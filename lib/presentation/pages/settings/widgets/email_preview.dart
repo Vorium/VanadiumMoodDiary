@@ -1,0 +1,112 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../domain/logic/email_template.dart';
+import '../../../../theme/app_tokens.dart';
+import '../../../providers/data_providers.dart';
+import '../../../widgets/page_scaffold.dart';
+
+/// 邮件预览页
+class EmailPreviewPage extends ConsumerWidget {
+  const EmailPreviewPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(userProfileProvider);
+    final contactsAsync = ref.watch(contactsProvider);
+    final medsAsync = ref.watch(medicationsProvider);
+
+    return PageScaffold(
+      title: '邮件预览',
+      child: profileAsync.when(
+        data: (profile) {
+          if (profile == null) {
+            return const Center(
+              child: Text('请先完成首次设置', style: TextStyle(color: AppTokens.textHint)),
+            );
+          }
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: AppTokens.spacingSm),
+                const Text(
+                  '这是你将收到的停药通知邮件预览：',
+                  style: TextStyle(fontSize: AppTokens.fontSizeBody, color: AppTokens.textSecondary),
+                ),
+                const SizedBox(height: AppTokens.spacingMd),
+                contactsAsync.when(
+                  data: (contacts) {
+                    final firstContact = contacts.isEmpty ? null : contacts.first;
+                    final medication = medsAsync.maybeWhen(
+                      data: (m) => m.isEmpty ? null : m.first,
+                      orElse: () => null,
+                    );
+
+                    final subject = EmailTemplate.buildSubject(
+                      userName: profile.userName,
+                      daysWithoutCheckIn: 2,
+                    );
+
+                    final body = EmailTemplate.buildBody(
+                      userName: profile.userName,
+                      daysWithoutCheckIn: 2,
+                      lastCheckIn: DateTime.now().subtract(const Duration(days: 2)),
+                      medication: medication,
+                      cycleHours: profile.checkInCycleHours,
+                    );
+
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTokens.spacingMd),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'To: ${firstContact?.email ?? "（无联系人）"}',
+                              style: const TextStyle(fontSize: AppTokens.fontSizeLabel, color: AppTokens.textSecondary),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Subject: $subject',
+                              style: const TextStyle(fontSize: AppTokens.fontSizeBody, fontWeight: FontWeight.w500),
+                            ),
+                            const Divider(height: AppTokens.spacingLg),
+                            SelectableText(
+                              body,
+                              style: const TextStyle(
+                                fontSize: AppTokens.fontSizeBody,
+                                height: 1.6,
+                                color: AppTokens.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Text('加载失败: $e'),
+                ),
+                const SizedBox(height: AppTokens.spacingMd),
+                Container(
+                  padding: const EdgeInsets.all(AppTokens.spacingSm),
+                  decoration: BoxDecoration(
+                    color: AppTokens.primaryLight,
+                    borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+                  ),
+                  child: const Text(
+                    '💡 这只是预览。实际邮件在你漏 2 天没打卡后自动发送。',
+                    style: TextStyle(fontSize: AppTokens.fontSizeLabel),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('加载失败: $e')),
+      ),
+    );
+  }
+}
