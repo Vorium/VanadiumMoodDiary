@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+
+import 'connection/connection.dart'
+    if (dart.library.html) 'connection/web.dart'
+    if (dart.library.io) 'connection/native.dart';
 
 import 'tables/check_ins.dart';
 import 'tables/contacts.dart';
@@ -17,7 +16,7 @@ part 'app_database.g.dart';
   tables: [CheckIns, Medications, Contacts, UserProfiles],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase() : super(openConnection());
 
   @override
   int get schemaVersion => 1;
@@ -121,12 +120,4 @@ class AppDatabase extends _$AppDatabase {
   Future<void> upsertUserProfile(UserProfilesCompanion entry) async {
     await into(userProfiles).insertOnConflictUpdate(entry);
   }
-}
-
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'chroniccare.sqlite'));
-    return NativeDatabase.createInBackground(file);
-  });
 }
