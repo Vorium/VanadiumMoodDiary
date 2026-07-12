@@ -37,3 +37,9 @@ ios/Pods/
 ios/.symlinks/
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
+
+# Scratch (subagent-driven-development)
+.superpowers/
+
+# Build artifacts & temp outputs
+target/
