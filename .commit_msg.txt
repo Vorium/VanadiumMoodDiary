@@ -1,0 +1,28 @@
+v0.14 round 15: 6 bug fixes from fourth code audit
+
+1. reminder_scheduler: 3 DateTime.now() + raw inDays
+   Same family as previous Bug B/F. Days-since + hours-since now use
+   a single captured checkNow and day-based diff via _daysBetween.
+
+2. notification_service: raw inDays in refill body text
+   "还剩约 X 天" now uses _daysUntilRefill (day-based) instead of
+   refilling the day-boundary bug.
+
+3. assessment_history: diff computed across mixed scale records
+   PHQ-9 and GAD-7 records were interleaved by timestamp, so the
+   "previous" reference could be a different scale, making the diff
+   meaningless. Now _findPreviousSameScale looks for the previous
+   record of the same scaleId.
+
+4. home_page: deep-link safety check race
+   Old guard `!_safetyCheckTriggered` made the deep-link re-run
+   unreachable once the initial postFrame callback had started.
+   Added _safetyRerunRequested flag + _runSafetyCheck(force: true).
+
+5. medications_list_widget: warning icon used raw isBefore
+   Icon and text color are now both sourced from the entity's
+   day-based isInRefillWindow/isRefillOverdue, so they always agree.
+
+6. main.dart: AppDatabase connection leak
+   Local AppDatabase created for the assessment reminder schedule
+   was never closed. Now wrapped in try/finally with close().

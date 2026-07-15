@@ -302,9 +302,9 @@ class _MedicationRow extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  med.refillAt != null &&
-                          med.refillAt!.isBefore(DateTime.now()
-                              .add(Duration(days: med.refillReminderDays)))
+                  // v0.14 fix: 跟文字同源（entity.isInRefillWindow），
+                  // 旧用 raw isBefore 会和 refillTextColor 不同步
+                  med.isInRefillWindow() || med.isRefillOverdue()
                       ? Icons.warning_amber_outlined
                       : Icons.event_outlined,
                   size: 14,

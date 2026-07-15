@@ -384,6 +384,17 @@ class NotificationService {
     return _refillBaseId + medicationId;
   }
 
+  /// 按"天"计算 refill 距今多少天（不直接用 Duration.inDays）
+  ///
+  /// 不直接用 Duration.inDays，因为：
+  /// - 23.98h 会被报成 0 天
+  /// - refill day 整天应该算"今天还有 X 天"，不能因时分秒而错
+  static int _daysUntilRefill(DateTime refillAt, DateTime now) {
+    final today = DateTime(now.year, now.month, now.day);
+    final refillDay = DateTime(refillAt.year, refillAt.month, refillAt.day);
+    return refillDay.difference(today).inDays;
+  }
+
   /// 计算续方提醒的触发时间（refillAt - reminderDays 当天 9 点本地时间）
   ///
   /// 纯函数，方便测试。
@@ -442,9 +453,7 @@ class NotificationService {
     final id = _refillNotificationId(medication.id);
     await _plugin.cancel(id); // 覆盖前一次
 
-    final daysLeft = medication.refillAt!
-        .difference(DateTime.now())
-        .inDays;
+    final daysLeft = _daysUntilRefill(medication.refillAt!, DateTime.now());
     final details = NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,

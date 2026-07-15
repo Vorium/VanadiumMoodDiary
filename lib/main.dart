@@ -116,17 +116,22 @@ Future<void> _scheduleAssessmentReminderOnStart(
 ) async {
   // 等 DB / provider tree ready — 一个 frame 就够
   await Future<void>.delayed(const Duration(milliseconds: 100));
+  // v0.14 fix: 独立建一条 db connection,函数结束必须 close
+  // 旧实现: db 从来没 close,每次启动泄漏一个 connection
+  AppDatabase? localDb;
   try {
     // 复用已 init 的 notificationService, 走 provider tree 拿 db
     // 这里不依赖 ProviderScope, 手动构造一条 service 跑
-    final db = AppDatabase();
+    localDb = AppDatabase();
     final service = AssessmentReminderService(
-      checkInRepo: CheckInRepositoryImpl(db),
+      checkInRepo: CheckInRepositoryImpl(localDb),
       notificationService: notificationService,
     );
     await service.onAppStart();
   } catch (e) {
     debugPrint('⚠️ AssessmentReminder.onAppStart 失败（不影响核心功能）：$e');
+  } finally {
+    await localDb?.close();
   }
 }
 

@@ -35,6 +35,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// SafetyWatch 启动检查是否已跑过（避免重复触发）
   bool _safetyCheckTriggered = false;
 
+  /// Deep link 强制重跑 safety 检查的请求（独立 flag，
+  /// v0.14 修：旧实现用 `!_safetyCheckTriggered` 守卫，结果第一次
+  /// 跑已起来后 deep link 路径永远走不进去）
+  bool _safetyRerunRequested = false;
+
   /// Deep link 自动打卡是否已处理（避免重复）
   bool _deepLinkHandled = false;
 
@@ -64,11 +69,14 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (medIdParam == null) {
       // 不是 deep link 跳来的,处理 safety reason
       final reason = GoRouterState.of(context).uri.queryParameters['reason'];
-      if (reason == 'safety' && !_safetyCheckTriggered) {
+      if (reason == 'safety') {
         // 强制重跑一次 (从通知跳来的场景)
+        // v0.14 fix: 用独立 flag，不受 _safetyCheckTriggered 影响
+        // 旧实现 `!_safetyCheckTriggered` 在第一跑已起来后永远 false
+        if (_safetyRerunRequested) return; // 已请求过
+        _safetyRerunRequested = true;
         await Future<void>.delayed(const Duration(milliseconds: 100));
-        _safetyCheckTriggered = false;
-        await _runSafetyCheck();
+        await _runSafetyCheck(force: true);
       }
       return;
     }
@@ -123,8 +131,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
-  Future<void> _runSafetyCheck() async {
-    if (_safetyCheckTriggered) return;
+  /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
+  ///
+  /// [force] = true 时忽略 [_safetyCheckTriggered] 守卫（用于 deep link 重跑）
+  Future<void> _runSafetyCheck({bool force = false}) async {
+    if (_safetyCheckTriggered && !force) return;
     _safetyCheckTriggered = true;
     try {
       final result =

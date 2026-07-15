@@ -409,12 +409,28 @@ class _HistoryList extends StatelessWidget {
             if (i > 0) const Divider(height: 1, indent: 56),
             _HistoryItem(
               record: records[i],
-              previous: i + 1 < records.length ? records[i + 1] : null,
+              // v0.14 fix: 找上一条**同量表**的记录，而不是 list 里前一条
+              // 旧实现：PHQ-9 和 GAD-7 混排时，diff 会拿不同量表对比（无意义）
+              previous: _findPreviousSameScale(records, i),
             ),
           ],
         ],
       ),
     );
+  }
+
+  /// 找 index i 之前，最近一条同 scaleId 的记录
+  ///
+  /// records 已按时间倒序排列
+  AssessmentRecord? _findPreviousSameScale(
+    List<AssessmentRecord> records,
+    int i,
+  ) {
+    final scaleId = records[i].scaleId;
+    for (int j = i + 1; j < records.length; j++) {
+      if (records[j].scaleId == scaleId) return records[j];
+    }
+    return null;
   }
 }
 

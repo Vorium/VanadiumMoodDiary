@@ -87,12 +87,15 @@ class ReminderService {
     final medications = await _medicationRepo.watchAll().first;
     final firstMed = medications.isEmpty ? null : medications.first;
 
+    // v0.14 fix: 统一在 await 之后重新拿一次 now，并按"天"算
+    // 旧实现：调 3 次 DateTime.now() + 用 raw inDays（23.9h 报 0 天）
+    final checkNow = DateTime.now();
     final daysSince = lastCheckIn == null
         ? 0
-        : DateTime.now().difference(lastCheckIn).inDays;
+        : _daysBetween(lastCheckIn, checkNow);
     final hoursSince = lastCheckIn == null
         ? 0
-        : DateTime.now().difference(lastCheckIn).inHours;
+        : checkNow.difference(lastCheckIn).inHours;
 
     developer.log('=' * 60, name: 'ReminderService');
     developer.log('⚠️ 失联检测', name: 'ReminderService');
@@ -170,6 +173,17 @@ class ReminderService {
     }
     buffer.writeln('—— 这是一条自动提醒，请勿回复');
     return buffer.toString();
+  }
+
+  /// 按"天"计算两时刻差（不直接用 Duration.inDays）
+  ///
+  /// 不直接用 Duration.inDays，因为：
+  /// - 23.98h 会被报成 0 天
+  /// - DST / 时区跨日可能少算 1 天
+  static int _daysBetween(DateTime a, DateTime b) {
+    final aDay = DateTime(a.year, a.month, a.day);
+    final bDay = DateTime(b.year, b.month, b.day);
+    return bDay.difference(aDay).inDays;
   }
 }
 
