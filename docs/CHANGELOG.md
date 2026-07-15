@@ -2,6 +2,29 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.15.0] - 2026-07-15
+
+### Added
+- **树洞（Vent / 私密倾诉空间）**
+  - 4 层架构落地：`VentEntryEntity` + `VentRepository` 抽象 + Drift 实现
+  - 新表 `vent_entries`（schemaVersion 6，v5 → v6 迁移）
+  - 支持文字 / 语音（m4a / aac）/ 混排三种记录形式
+  - 录音用 `record` 5.2.0，播放用 `audioplayers` 6.8.1
+  - 3 个页面：`/vent`（列表 + 长按删除）/ `/vent/compose`（文字 + 录音）/ `/vent/detail/:id`（详情 + 进度条）
+  - audio 文件存 `app docs/vent_audio/`，DB 仅存路径（SQLCipher 整体加密）
+  - 主页加"倾诉 🌲"入口按钮
+
+### 设计原则（关键）
+- **完全私密**：树洞不进入任何分析、趋势、评估、CareEngine、SafetyWatch
+- **不触发任何通知**：即使内容含"想死"也不通知家人（保护"私密空间"信任）
+- **文字 / 语音 至少一个**：否则 `ArgumentError` 拒绝保存
+- **命名约定**：domain 实体 `VentEntryEntity`（避免与 drift `@DataClassName('VentEntry')` 冲突）
+
+### Tests
+- 462 cases pass（v0.14 430 → v0.15 +32）
+- `test/domain/vent_entry_entity_round18_test.dart`（20 个实体：业务方法 / durationLabel / copyWith / 相等性）
+- `test/presentation/vent_list_round18_test.dart`（6 个 widget：空状态 / 文字条目 / 语音条目 / 混排 / 长截断 / 多条目）
+
 ## [0.14.0] - 2026-07-15
 
 ### Added

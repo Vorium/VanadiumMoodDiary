@@ -51,6 +51,8 @@ flutter test
 | 推送 | flutter_local_notifications 17 |
 | 加密 | flutter_secure_storage + encrypt (AES-256) |
 | 文件分享 | share_plus |
+| 录音 | record 5.2.0 |
+| 音频播放 | audioplayers 6.8.1 |
 
 ## 📁 目录结构（4 层架构）
 
@@ -87,6 +89,7 @@ lib/
 - 续方日期 + 提前 N 天提醒
 - 紧急联系人管理 + 失联自动通知
 - 心理评估（PHQ-9 抑郁 + GAD-7 焦虑 + 历史趋势图）
+- **树洞（v0.15 私密倾诉空间）**：文字 / 语音 / 混排，完全独立不参与任何分析
 
 ### 通知与提醒
 - 每天 20:00 通用打卡提醒
@@ -113,7 +116,7 @@ lib/
 ## 🧪 测试
 
 ```bash
-flutter test                          # 跑所有测试（430 cases）
+flutter test                          # 跑所有测试（462 cases）
 flutter test --coverage               # 覆盖率
 dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 ```
