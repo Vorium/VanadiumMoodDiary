@@ -1,11 +1,11 @@
-# 慢病管家（ChronicCare）产品需求文档 · v0.4 「停药通知」版
+# 慢病管家（ChronicCare）产品需求文档 · v0.8 「量表多选 + 趋势」版
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | **v0.4**（「停药通知」极简版）|
-| 编写日期 | 2026-07-11 |
+| 文档版本 | **v0.8**（量表多选 + 历史折线图）|
+| 编写日期 | 2026-07-13 |
 | 编写人 | Mavis（基于用户洞察调整）|
-| 文档状态 | 🟡 Phase 1 Sharpening 二次锐化（Q3 核心重置为"停药通知") |
+| 文档状态 | 🟢 v0.8 已完成；下一阶段 v0.9+ 真实平台对接 |
 | methodology 标签 | 🛡️ AI 偏见自查 + ✊ 主要矛盾 + 🍎 Jobs + ⏳ 持久战 + 🔄 Munger 反方 |
 
 ---
@@ -18,6 +18,10 @@
 | v0.2 | 2026-07-11 | MVP 病种=精神心理 | Mavis |
 | v0.3 | 2026-07-11 | 大砍刀：死了么模式 | Mavis |
 | **v0.4** | 2026-07-11 | **用户洞察：死了么模式 × 吃药打卡 = 「停药通知」** | Mavis |
+| v0.5 | 2026-07-12 | 极简 MVP：主页打卡 + 设置 + 首次引导 + drift 本地数据库 + go_router | Mavis |
+| v0.6 | 2026-07-12 | 多联系人邮件通知（SendGrid Mock）+ ReminderLevel 渐进 + 趋势页（热力图 + 柱状图 + streak）| Mavis |
+| v0.7 | 2026-07-12 | SMS 服务抽象（Mock + Aliyun）+ 多联系人 SMS 循环 + 药物时间点 zonedSchedule + 打卡反馈（haptic + 动态鼓励）+ 10am 软提醒 + 临时吃药关联到现有药物 + 数据导出/导入（JSON 剪贴板）+ **CareEngine 规则引擎 + LocalAiHook 接口** + **PHQ-9 抑郁量表**（带自杀念头危机警示）| Mavis |
+| **v0.8** | 2026-07-13 | **量表多选**（PHQ-9 + GAD-7 共用 AssessmentScale 抽象）+ **量表历史折线图**（多线趋势 + Tooltip 详情）+ Web 加载修复（dev 模式 worker 404 → production build + http.server）| Mavis |
 
 ---
 
@@ -297,3 +301,171 @@
 - **D**：Flutter 三端同时 → 2.5 周（一次写代码 3 端）
 
 你之前说"前期手机网页版测试，后期打包上架"——但网页版用户留存和付费转化都差，要不要重新考虑？
+
+---
+
+# 📦 附录：v0.5-v0.8 实际能力补充（2026-07-13 整理）
+
+> **目的**：v0.4 文档定下产品方向后，经过 4 个迭代（v0.5-v0.8）已经实现不少 v0.4 里"未来做"的功能。本附录记录实际状态，避免 PRD 与代码脱节。
+>
+> v0.4 洞察（极简 3 页 + 停药通知）依然有效，但产品实际形态已扩展为"**打卡 + 关怀 + 评估**"三件套。
+
+---
+
+## 附 A. 产品结构（v0.8 实际模块树）
+
+```
+慢病管家 v0.8
+├── 主页（Home）
+│   ├── 大按钮 1：「我今天吃了药」（每日 1 次 / normal）
+│   ├── 大按钮 2：「临时吃药 +」（感冒等 / temp，不影响 streak）
+│   ├── 连续天数 / 总打卡 / 总天数
+│   ├── 鼓励文案（按 streak 动态切换：第 1 天 / 重新开始 / 还在坚持）
+│   ├── 最后吃药时间 + 下次提醒（20:00）
+│   └── 快捷入口：趋势页 / 心理评估 / 设置
+├── 首次引导（Setup，两步 30s 搞定）
+│   ├── Step 1：姓名 + 紧急联系人手机号（1-3 个，按顺序）
+│   └── Step 2：常吃药（药名 / 剂量 / 单位 / 每日时间点）
+├── 设置（Settings）
+│   ├── 联系人管理（增删改、排序）
+│   ├── 吃药管理（增删改、时间点编辑）
+│   ├── 健康
+│   │   └── 心理评估量表列表（PHQ-9 / GAD-7）
+│   ├── 数据管理
+│   │   ├── 导出（JSON 剪贴板，v0.7；加密备份 v1.0+）
+│   │   └── 导入（JSON 粘贴）
+│   ├── 邮件预览（SendGrid 模板预览）
+│   └── 关于 / 免责声明 / 主题切换
+├── 趋势页（Trend）
+│   ├── 数据汇总：当前连续 / 最长连续 / 总打卡 / 总天数
+│   ├── 最近 30 天打卡热力图（GitHub style）
+│   ├── 最近 6 个月月度柱状图（按时率%）
+│   └── 心理评估历史折线图（PHQ-9 + GAD-7 多线）
+├── 心理评估（Assessment）
+│   ├── PHQ-9 抑郁筛查（9 题、0-3 分、0-27）
+│   │   └── 第 9 题（自杀念头）≥ 1 → 弹危机资源对话框
+│   └── GAD-7 焦虑筛查（7 题、0-3 分、0-21）
+└── 通知系统（v0.7 完善）
+    ├── 本地通知（flutter_local_notifications）
+    │   ├── 每日 20:00 通用打卡提醒
+    │   ├── 每个 medication 的每个 time 点 zonedSchedule
+    │   └── 10:00 软提醒（漏 1 天主动 push）
+    └── 失联通知（CareEngine 触发）
+        ├── 邮件：SendGrid（v0.6 Mock 实现）
+        └── 短信：Aliyun（v0.7 Mock 实现 + AliyunProvider 接口预留）
+```
+
+---
+
+## 附 B. 功能详细（v0.8 现状 vs v0.4 计划）
+
+| 模块 | v0.4 计划 | v0.8 实际 | 差异 |
+|---|---|---|---|
+| 打卡 | normal + temp | ✅ normal + temp（关联到现有药物）| v0.7 加了药物关联 |
+| 邮件通知 | SendGrid | ✅ Mock SendGrid | Aliyun 短信为 v0.7 补充 |
+| 短信通知 | v1.5 | ✅ **v0.7 提前做**（Mock + Aliyun 接口预留）| 实际不需要等 v1.5 |
+| 失联检测 | 48h 邮件 | ✅ 4 种 CareEngine 规则（secondDayMissed / lateCheckInHabit / weekPerfect / none）| 比 v0.4 复杂 |
+| 趋势图 | v1.5 | ✅ **v0.6 提前做** + **v0.8 加量表折线图**| 提前 |
+| 量表 | MVP 不做（P2+）| ✅ **v0.7 PHQ-9 + v0.8 GAD-7**（共用 AssessmentScale 抽象）| **超出原计划**——用户洞察认为"评估+打卡"是精神心理用户刚需 |
+| AI 关怀 | v2.0 | ✅ v0.7 CareEngine 规则 + **LocalAiHook 接口**（MedGemma 1.5 占位 v0.8+ 接入）| 提前 1 版本，规则先于 AI |
+| 本地加密 | AES-256 | ⚠️ v0.8 之前**未做**（drift 裸存）；加密备份 v1.0+ | **未达原计划**——风险 |
+| 跨平台 | Web → APK → iOS | ✅ Web（H5）跑通；APK/iOS 待打包 | 与计划一致 |
+| 0 注册 | ✅ | ✅ | 一致 |
+| 病耻感淡化 | ✅ | ✅（App 名「慢病管家」中性化）| 一致 |
+
+---
+
+## 附 C. 关键架构决策（v0.5-v0.8）
+
+### C.1 量表抽象（v0.8 新增）
+
+```
+domain/logic/
+├── assessment_scale.dart   // 抽象：AssessmentItem / AssessmentResult / CrisisSignal / AssessmentScale
+├── scale_registry.dart     // 聚合：allScales() / scaleById(id)
+├── phq9.dart               // PHQ-9 实现（含旧 API 兼容）
+└── gad7.dart               // GAD-7 实现（v0.8 新增）
+```
+
+**未来加量表只写 2 步**：
+1. 新建 `xxx_scale.dart`（items + computeResult + 可选 detectCrisis）
+2. 在 `scale_registry.dart` 加一行
+
+**建议下个量表**：PHQ-15（PHQ-9 扩展，评估躯体症状）、GAD-2（GAD-7 精简，2 题快速筛查）、ISI（失眠严重度）、PSS（感知压力量表）。
+
+### C.2 CareEngine 规则引擎（v0.7）
+
+```dart
+// 当前 4 种规则
+enum CareTriggerType {
+  none,                  // 不触发
+  secondDayMissed,       // 漏 1 天 + 14 点前未打卡 → 主动 push 安慰
+  lateCheckInHabit,      // 连续 3 天 22 点后打卡 → 建议早睡
+  weekPerfect,           // 最近 7 天每天 22 点前打卡 → 庆祝
+}
+```
+
+**未来扩展**：接 LocalAiHook（MedGemma 1.5 本地推理）后，用 LLM 替代规则做更细粒度关怀。
+
+### C.3 SMS / Email Provider 抽象（v0.7）
+
+```dart
+abstract class SmsProvider {
+  Future<bool> send({required String phone, required String message});
+}
+class MockSmsProvider implements SmsProvider { ... }       // 本地日志
+class AliyunSmsProvider implements SmsProvider { ... }     // 等真实 key 替换
+```
+
+### C.4 量表数据复用 check_ins 表
+
+```sql
+check_ins 表：
+  type='normal' | 'temp' | 'phq9' | 'gad7'
+  note=null  // normal/temp
+  note='{"scale":"phq9","scores":[1,2,...],"total":10}'  // phq9/gad7
+```
+
+**好处**：
+1. 不需要 schema 迁移
+2. streak 计算已按 `type='normal'` 过滤，量表不污染
+3. `watchAllCheckIns()` 一并拉取，趋势页统一展示
+
+---
+
+## 附 D. 测试与质量（v0.8）
+
+| 指标 | 状态 |
+|---|---|
+| 代码质量门 | 0 errors / 0 warnings（44 info：trailing comma / withOpacity deprecated）|
+| 测试覆盖 | **86 tests pass**（v0.7 是 57 → v0.8 加 29 个）|
+| 新增测试 | 量表 21 个（PHQ-9 / GAD-7 / Registry）+ AssessmentRecord 解析 8 个 |
+| 跑测 | `flutter test` ≈ 6 秒 |
+
+---
+
+## 附 E. 已知遗留（v0.8 → v0.9+）
+
+| 项 | 状态 | 优先级 |
+|---|---|---|
+| Web 平台 CanvasKit 走 CDN（国内 gstatic.com 污染）| ✅ **v0.8 修**：`--no-web-resources-cdn` 走本地 + production build + python http.server | P0 ✅ |
+| Web dev 模式（flutter run -d chrome）drift worker 404 → LateInitializationError | ✅ **v0.8 修**：切 production build 模式 | P0 ✅ |
+| 本地数据 AES-256 加密 | ❌ **未做**——drift 裸存；加密备份 v1.0+ | P1 |
+| MedGemma 1.5 本地 AI 接入 | ❌ **接口就位**（LocalAiHook），未接真实模型 | P2 |
+| 拍照识别药 / 医生联系 / 真实 SendGrid key | ❌ v1.0+ 平台对接 | P2 |
+| APK / iOS 打包上架 | ❌ v0.9+ | P1 |
+
+---
+
+## 附 F. 下一步问题（v0.9+）
+
+之前 v0.4 提的 Q4（平台选择）已经在 v0.5 决定（**Web 先行 ✅**）。新问题：
+
+**Q5**：v0.9 优先做什么？
+- **A**：本地加密补齐（drift + sqlcipher）—— 安全债
+- **B**：MedGemma 1.5 真实接入（需要设备 ≥6GB RAM）—— 差异化
+- **C**：APK 打包 + Android 9+ 灰度 —— 验证真实用户
+- **D**：拍照识别药盒（CameraX + TFLite）—— 降低录入摩擦
+
+建议 **A + C 并行**（先把安全债还清 + 真实用户验证），B/D 推后。
+

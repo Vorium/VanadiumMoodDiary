@@ -4,41 +4,42 @@
 /// v1.0+：改用 get_it / Riverpod
 library;
 
+import '../../domain/repositories/medication_repository.dart';
 import '../database/app_database.dart';
-import '../repositories/check_in_repository.dart';
-import '../repositories/contact_repository.dart';
-import '../repositories/medication_repository.dart';
+import '../repositories/check_in_repository_impl.dart';
+import '../repositories/contact_repository_impl.dart';
+import '../repositories/medication_repository_impl.dart';
 import '../repositories/user_profile_repository.dart';
-import 'email_service.dart';
-import 'notification_service.dart';
 import 'crypto_service.dart';
+import 'notification_service.dart';
 import 'reminder_scheduler.dart';
+import 'sms_service.dart';
 
 class AppServices {
   final AppDatabase database;
-  final CheckInRepository checkInRepo;
-  final ContactRepository contactRepo;
+  final CheckInRepositoryImpl checkInRepo;
+  final ContactRepositoryImpl contactRepo;
   final MedicationRepository medicationRepo;
   final UserProfileRepository userProfileRepo;
-  final EmailService emailService;
   final NotificationService notificationService;
   final CryptoService cryptoService;
+  final SmsService smsService;
   final ReminderService reminderService;
 
   AppServices({required this.database})
-      : checkInRepo = CheckInRepository(database),
-        contactRepo = ContactRepository(database),
-        medicationRepo = MedicationRepository(database),
+      : checkInRepo = CheckInRepositoryImpl(database),
+        contactRepo = ContactRepositoryImpl(database),
+        medicationRepo = MedicationRepositoryImpl(database),
         userProfileRepo = UserProfileRepository(database),
-        emailService = EmailService(),
         notificationService = NotificationService(),
         cryptoService = CryptoService(),
+        smsService = SmsService(),
         reminderService = ReminderService(
-          checkInRepo: CheckInRepository(database),
-          contactRepo: ContactRepository(database),
-          medicationRepo: MedicationRepository(database),
+          checkInRepo: CheckInRepositoryImpl(database),
+          contactRepo: ContactRepositoryImpl(database),
+          medicationRepo: MedicationRepositoryImpl(database),
           userProfileRepo: UserProfileRepository(database),
-          emailService: EmailService(),
+          smsService: SmsService(),
         );
 
   /// 初始化所有服务

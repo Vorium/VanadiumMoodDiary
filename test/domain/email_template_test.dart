@@ -7,11 +7,14 @@ void main() {
     final lastCheckIn = DateTime(2026, 7, 9, 20, 0);
     final medication = Medication(
       id: 1,
-      name: '舍曲林',
-      frequencyPerDay: 1,
-      timesJson: '["20:00"]',
+      name: '氟西汀',
+      dosage: 40,
+      dosageUnit: 'mg',
+      timesJson: '[{"h":8,"m":0},{"h":20,"m":0}]',
       startDate: DateTime(2026, 1, 1),
       endDate: null,
+      refillAt: null,
+      refillReminderDays: 7,
       isActive: true,
     );
 
@@ -36,7 +39,6 @@ void main() {
       expect(body, contains('小明'));
       expect(body, contains('请你方便的时候提醒我'));
       expect(body, contains('避免复发'));
-      // 不能有"死了""挂了""没了"等恐吓词
       expect(body, isNot(contains('死了')));
       expect(body, isNot(contains('挂了')));
     });
@@ -53,7 +55,7 @@ void main() {
       expect(body, contains('20:00'));
     });
 
-    test('buildBody 包含常吃药信息', () {
+    test('buildBody 包含常吃药信息（v0.6: 显示 dosage + unit）', () {
       final body = EmailTemplate.buildBody(
         userName: '小明',
         daysWithoutCheckIn: 2,
@@ -61,7 +63,9 @@ void main() {
         medication: medication,
         cycleHours: 48,
       );
-      expect(body, contains('舍曲林'));
+      expect(body, contains('氟西汀'));
+      expect(body, contains('40'));
+      expect(body, contains('mg'));
     });
 
     test('buildBody 包含免责声明', () {

@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/logic/reminder_scheduler.dart';
-import 'package:chroniccare/data/database/app_database.dart';
 
 void main() {
   group('ReminderScheduler', () {
     final now = DateTime(2026, 7, 11, 20, 0);
-    Contact makeContact({int sortOrder = 0, bool isActive = true}) {
-      return Contact(
+    ContactEntity makeContact({int sortOrder = 0, bool isActive = true}) {
+      return ContactEntity(
         id: sortOrder,
         name: 'Contact $sortOrder',
-        email: 'contact$sortOrder@example.com',
+        phone: '1380013800$sortOrder',
         sortOrder: sortOrder,
         isActive: isActive,
       );

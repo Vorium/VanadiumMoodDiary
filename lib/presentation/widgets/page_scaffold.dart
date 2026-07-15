@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../theme/app_tokens.dart';
 
-/// 通用页面骨架
+/// 通用页面骨架（响应式）
+///
+/// - 窄屏（< 840）：全宽 + pageMarginH/V
+/// - 宽屏（>= 840）：内容居中，最大 720 宽，左右留白
 class PageScaffold extends StatelessWidget {
   final String? title;
   final Widget child;
@@ -10,6 +13,7 @@ class PageScaffold extends StatelessWidget {
   final Widget? bottomNavigationBar;
   final List<Widget>? actions;
   final PreferredSizeWidget? appBarBottom;
+  final Widget? leading;
 
   const PageScaffold({
     super.key,
@@ -19,30 +23,47 @@ class PageScaffold extends StatelessWidget {
     this.bottomNavigationBar,
     this.actions,
     this.appBarBottom,
+    this.leading,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: title != null
-          ? AppBar(
-              title: Text(title!),
-              actions: actions,
-              bottom: appBarBottom,
-            )
-          : null,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTokens.pageMarginH,
-            vertical: AppTokens.pageMarginV,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= AppTokens.breakpointExpanded;
+        return Scaffold(
+          // 宽屏下不显示 AppBar（NavigationRail 在 AppShell 里负责导航）
+          appBar: (title != null && !isWide)
+              ? AppBar(
+                  title: Text(title!),
+                  actions: actions,
+                  bottom: appBarBottom,
+                  leading: leading,
+                )
+              : null,
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth:
+                      isWide ? AppTokens.contentMaxWidth : double.infinity,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isWide
+                        ? AppTokens.spacingLg
+                        : AppTokens.pageMarginH,
+                    vertical: AppTokens.pageMarginV,
+                  ),
+                  child: child,
+                ),
+              ),
+            ),
           ),
-          child: child,
-        ),
-      ),
-      floatingActionButton: floatingActionButton,
-      bottomNavigationBar: bottomNavigationBar,
-      backgroundColor: AppTokens.background,
+          floatingActionButton: floatingActionButton,
+          bottomNavigationBar: bottomNavigationBar,
+        );
+      },
     );
   }
 }

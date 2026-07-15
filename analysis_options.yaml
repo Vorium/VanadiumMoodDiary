@@ -10,6 +10,8 @@ analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    - "_archive_r11/**"
+    - "_archive_r12/**"
 
 linter:
   rules:

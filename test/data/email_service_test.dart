@@ -8,18 +8,21 @@ void main() {
       final service = EmailService(useMock: true);
 
       final success = await service.sendMedicationReminder(
-        to: 'test@example.com',
+        to: '13800138000', // v0.6: phone 替代 email
         userName: '小明',
         daysWithoutCheckIn: 2,
         lastCheckIn: DateTime(2026, 7, 9, 20, 0),
         medication: Medication(
           id: 1,
-          name: '舍曲林',
-          frequencyPerDay: 1,
-          timesJson: '["20:00"]',
+          name: '氟西汀',
+          dosage: 40,
+          dosageUnit: 'mg',
+          timesJson: '[{"h":8,"m":0}]',
           startDate: DateTime(2026, 1, 1),
           endDate: null,
           isActive: true,
+          refillAt: null,
+          refillReminderDays: 7,
         ),
         cycleHours: 48,
       );
@@ -30,7 +33,7 @@ void main() {
     test('Mock 模式不需要 API Key 也能发送', () async {
       final service = EmailService(useMock: true, apiKey: null);
       final success = await service.sendMedicationReminder(
-        to: 'test@example.com',
+        to: '13800138000',
         userName: '用户',
         daysWithoutCheckIn: 1,
         lastCheckIn: null,

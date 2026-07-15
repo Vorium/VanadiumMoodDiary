@@ -52,19 +52,28 @@ class Strings {
   static const settingsAbout = '关于';
   static const settingsDisclaimer = '免责声明';
   static const settingsExport = '导出数据';
+  static const settingsMedReport = '用药报告';
+  static const settingsMedReportSubtitle = '选时间窗口（7/14/30 天），给医生看';
+  static const settingsMedReportChooseTitle = '选择时间窗口';
+  static const settingsMedReportChooseSubtitle = '会统计这段时间内的所有常吃药 + 临时用药';
+  static const settingsMedReportWindow7 = '近 7 天';
+  static const settingsMedReportWindow14 = '近 14 天';
+  static const settingsMedReportWindow30 = '近 30 天';
+  static const settingsReportHistory = '报告历史';
+  static const settingsReportHistorySubtitle = '查看过去生成的用药报告';
 
-  // 邮件
+  // 通知（v0.6：邮件改 mock 短信，文案保留）
   static String emailSubject(String name, int days) =>
       '[停药提醒] $name 已经 $days 天没吃药了';
   static String emailBody(String userName, int days) =>
       '我是 $userName，已经 $days 天没在 App 里打卡了。\n'
       '请你方便的时候提醒我按时吃药，避免复发。';
   static String emailLastMed(String time) => '最后吃药：$time';
-  static String emailMedInfo(String name, int times) =>
-      '常吃药：$name / 每日 $times 次';
+  static String emailMedInfo(String name, double dosage, String unit) =>
+      '$name $dosage$unit';
   static String emailCycle(int hours) => '签到周期：$hours 小时';
-  static const emailFooter = '这是一封自动邮件，由慢病管家 App 发送。\n'
-      '本邮件不包含任何医疗建议。\n'
+  static const emailFooter = '这是一条自动通知，由慢病管家 App 发送。\n'
+      '本通知不包含任何医疗建议。\n'
       '如需停止接收，请在 App 设置中修改。';
 
   // 通用

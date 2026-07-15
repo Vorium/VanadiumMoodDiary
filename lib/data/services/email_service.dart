@@ -5,30 +5,28 @@ import 'package:dio/dio.dart';
 import '../../data/database/app_database.dart';
 import '../../domain/logic/email_template.dart';
 
-/// 邮件发送服务
+/// 失联通知服务
 ///
-/// MVP 阶段：Mock 实现，只打印日志
-/// v1.0+：接入 SendGrid API
+/// v0.6：联系人改 phone 后，"邮件发送" 改成 mock 短信。
+/// - MVP 阶段：useMock=true 时只打印日志，不发真实消息
+/// - v1.0+：接入真实 SMS provider（阿里云/腾讯云），`to` 字段语义改成手机号
 class EmailService {
+  // ignore: unused_field
   final Dio _dio;
   final String? _apiKey;
-  final String _fromEmail;
-  final String _fromName;
   final bool _useMock;
 
   EmailService({
     Dio? dio,
     String? apiKey,
-    String fromEmail = 'noreply@chroniccare.app',
-    String fromName = '慢病管家',
     bool useMock = true,
   })  : _dio = dio ?? Dio(),
         _apiKey = apiKey,
-        _fromEmail = fromEmail,
-        _fromName = fromName,
         _useMock = useMock;
 
-  /// 发送停药通知
+  /// 发送失联通知（mock 阶段只打日志）
+  ///
+  /// [to] 现在是手机号（v0.6 之前是 email）
   Future<bool> sendMedicationReminder({
     required String to,
     required String userName,
@@ -50,6 +48,7 @@ class EmailService {
       cycleHours: cycleHours,
     );
 
+    // ignore: unused_local_variable
     final html = EmailTemplate.buildHtml(
       userName: userName,
       daysWithoutCheckIn: daysWithoutCheckIn,
@@ -60,8 +59,8 @@ class EmailService {
 
     if (_useMock || _apiKey == null) {
       developer.log('=' * 60, name: 'EmailService');
-      developer.log('📧 [MOCK] 发送邮件', name: 'EmailService');
-      developer.log('  To: $to', name: 'EmailService');
+      developer.log('📱 [MOCK] 发送失联通知', name: 'EmailService');
+      developer.log('  To (phone): $to', name: 'EmailService');
       developer.log('  Subject: $subject', name: 'EmailService');
       developer.log('  ---', name: 'EmailService');
       developer.log(body, name: 'EmailService');
@@ -69,33 +68,12 @@ class EmailService {
       return true;
     }
 
+    // 真实 SMS provider 占位——v1.0+ 替换
     try {
-      final response = await _dio.post<Map<String, dynamic>>(
-        'https://api.sendgrid.com/v3/mail/send',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $_apiKey',
-            'Content-Type': 'application/json',
-          },
-        ),
-        data: {
-          'personalizations': [
-            {
-              'to': [{'email': to}],
-            }
-          ],
-          'from': {'email': _fromEmail, 'name': _fromName},
-          'subject': subject,
-          'content': [
-            {'type': 'text/plain', 'value': body},
-            {'type': 'text/html', 'value': html},
-          ],
-        },
-      );
-
-      return response.statusCode == 202;
+      developer.log('真实 SMS 发送未实现（v1.0+ TODO）', name: 'EmailService');
+      return false;
     } catch (e) {
-      developer.log('❌ 发送邮件失败: $e', name: 'EmailService');
+      developer.log('❌ 发送失败: $e', name: 'EmailService');
       return false;
     }
   }

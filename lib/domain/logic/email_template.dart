@@ -1,16 +1,13 @@
 import '../../data/database/app_database.dart';
 import '../../l10n/strings.dart';
 
-/// 邮件模板生成器
+/// 通知文案模板生成器
 ///
-/// 差异化核心（vs 死了么）：
-/// - 死了么："请检查我的状态"（被动的、死后确认）
-/// - 我们："请你方便的时候提醒我按时吃药"（主动的、可操作的）
+/// v0.6：从邮件改 mock 短信，文案保持温柔、主动、可操作。
 class EmailTemplate {
   EmailTemplate._();
 
-  /// 邮件主题
-  /// 例：[停药提醒] 小明 已经 2 天没吃药了
+  /// 主题
   static String buildSubject({
     required String userName,
     required int daysWithoutCheckIn,
@@ -18,7 +15,7 @@ class EmailTemplate {
     return Strings.emailSubject(userName, daysWithoutCheckIn);
   }
 
-  /// 邮件正文
+  /// 正文
   static String buildBody({
     required String userName,
     required int daysWithoutCheckIn,
@@ -28,11 +25,9 @@ class EmailTemplate {
   }) {
     final buffer = StringBuffer();
 
-    // 主文案
     buffer.writeln(Strings.emailBody(userName, daysWithoutCheckIn));
     buffer.writeln();
 
-    // 信息卡
     buffer.writeln('┌─────────────────────────────────┐');
 
     if (lastCheckIn != null) {
@@ -41,7 +36,7 @@ class EmailTemplate {
 
     if (medication != null) {
       buffer.writeln(
-        '💊 ${Strings.emailMedInfo(medication.name, medication.frequencyPerDay)}',
+        '💊 ${Strings.emailMedInfo(medication.name, medication.dosage, medication.dosageUnit)}',
       );
     }
 
@@ -49,14 +44,13 @@ class EmailTemplate {
     buffer.writeln('└─────────────────────────────────┘');
     buffer.writeln();
 
-    // 免责
     buffer.writeln('─────────────────────────────');
     buffer.writeln(Strings.emailFooter);
 
     return buffer.toString();
   }
 
-  /// 邮件 HTML 版本（更友好）
+  /// HTML 版本
   static String buildHtml({
     required String userName,
     required int daysWithoutCheckIn,
@@ -76,7 +70,7 @@ class EmailTemplate {
         ? '''
         <tr>
           <td style="padding: 8px 0; color: #666; font-size: 14px;">💊 常吃药</td>
-          <td style="padding: 8px 0; color: #1a1a1a; font-size: 14px; text-align: right;">${medication.name} / 每日 ${medication.frequencyPerDay} 次</td>
+          <td style="padding: 8px 0; color: #1a1a1a; font-size: 14px; text-align: right;">${Strings.emailMedInfo(medication.name, medication.dosage, medication.dosageUnit)}</td>
         </tr>'''
         : '';
 
@@ -108,8 +102,8 @@ class EmailTemplate {
       </div>
     </div>
     <div style="padding: 24px; border-top: 1px solid #f0f0f0; color: #999; font-size: 12px; line-height: 1.5;">
-      <p style="margin: 0 0 4px 0;">这是一封自动邮件，由慢病管家 App 发送。</p>
-      <p style="margin: 0 0 4px 0;">本邮件不包含任何医疗建议。</p>
+      <p style="margin: 0 0 4px 0;">这是一条自动通知，由慢病管家 App 发送。</p>
+      <p style="margin: 0 0 4px 0;">本通知不包含任何医疗建议。</p>
       <p style="margin: 0;">如需停止接收，请在 App 设置中修改。</p>
     </div>
   </div>

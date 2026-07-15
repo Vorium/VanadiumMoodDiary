@@ -1,0 +1,5 @@
+# pubspec_overrides.yaml — 用于解决 objective_c-9.4.1 与本机 Dart SDK (3.11.5) 的兼容性问题
+# 9.4.1 的预编译 kernel 二进制用更新的 SDK 编译（version 130），本机 SDK 只认 127
+# 暂时锁到 9.3.0，等 Dart SDK 升级或 objective_c 修复后移除
+dependency_overrides:
+  objective_c: 9.3.0

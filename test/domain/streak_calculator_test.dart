@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/logic/streak_calculator.dart';
-import 'package:chroniccare/data/database/app_database.dart';
 
 void main() {
   group('StreakCalculator', () {
@@ -11,11 +11,11 @@ void main() {
     DateTime daysAgo(int days) =>
         DateTime(2026, 7, 11 - days, 20, 0);
 
-    CheckIn makeCheckIn(DateTime time, {String type = 'normal'}) {
-      return CheckIn(
+    CheckInEntity makeCheckIn(DateTime time, {String type = 'normal'}) {
+      return CheckInEntity(
         id: time.millisecondsSinceEpoch,
         timestamp: time,
-        type: type,
+        type: CheckInType.fromWire(type),
         medicationId: null,
         note: null,
       );

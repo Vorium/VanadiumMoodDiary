@@ -1,4 +1,4 @@
-import '../../data/database/app_database.dart';
+import '../entities/contact_entity.dart';
 
 /// 失联检测调度器
 ///
@@ -41,7 +41,7 @@ class ReminderScheduler {
   ///
   /// MVP 阶段：按 sortOrder 顺序发给第一个启用的联系人
   /// v1.0+：可扩展为同时发给所有联系人
-  static Contact? selectFirstContact(List<Contact> contacts) {
+  static ContactEntity? selectFirstContact(List<ContactEntity> contacts) {
     if (contacts.isEmpty) return null;
     final active = contacts.where((c) => c.isActive).toList();
     if (active.isEmpty) return null;
@@ -50,7 +50,9 @@ class ReminderScheduler {
   }
 
   /// 选择所有启用的联系人
-  static List<Contact> selectAllActiveContacts(List<Contact> contacts) {
+  static List<ContactEntity> selectAllActiveContacts(
+    List<ContactEntity> contacts,
+  ) {
     final active = contacts.where((c) => c.isActive).toList();
     active.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     return active;

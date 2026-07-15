@@ -1,14 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database/app_database.dart';
-import '../../data/repositories/check_in_repository.dart';
-import '../../data/repositories/contact_repository.dart';
-import '../../data/repositories/medication_repository.dart';
+import '../../data/repositories/check_in_repository_impl.dart';
+import '../../data/repositories/contact_repository_impl.dart';
+import '../../data/repositories/medication_repository_impl.dart';
+import '../../data/repositories/mood_repository_impl.dart';
 import '../../data/repositories/user_profile_repository.dart';
+import '../../data/services/assessment_reminder_service.dart';
 import '../../data/services/crypto_service.dart';
-import '../../data/services/email_service.dart';
+import '../../data/services/data_export_service.dart';
 import '../../data/services/notification_service.dart';
 import '../../data/services/reminder_scheduler.dart';
+import '../../data/services/safety_watch_service.dart';
+import '../../data/services/sms_service.dart';
+import '../../domain/repositories/check_in_repository.dart';
+import '../../domain/repositories/contact_repository.dart';
+import '../../domain/repositories/medication_repository.dart';
+import '../../domain/repositories/mood_repository.dart';
 
 /// 数据库 Provider
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -17,29 +25,29 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   return db;
 });
 
-/// 仓库 Providers
+/// v0.14 (Round 12A) 4 层架构：domain 抽象 + data impl
 final checkInRepositoryProvider = Provider<CheckInRepository>(
-  (ref) => CheckInRepository(ref.watch(databaseProvider)),
+  (ref) => CheckInRepositoryImpl(ref.watch(databaseProvider)),
 );
 
 final contactRepositoryProvider = Provider<ContactRepository>(
-  (ref) => ContactRepository(ref.watch(databaseProvider)),
+  (ref) => ContactRepositoryImpl(ref.watch(databaseProvider)),
 );
 
 final medicationRepositoryProvider = Provider<MedicationRepository>(
-  (ref) => MedicationRepository(ref.watch(databaseProvider)),
+  (ref) => MedicationRepositoryImpl(ref.watch(databaseProvider)),
 );
 
 final userProfileRepositoryProvider = Provider<UserProfileRepository>(
   (ref) => UserProfileRepository(ref.watch(databaseProvider)),
 );
 
+final moodRepositoryProvider = Provider<MoodRepository>(
+  (ref) => MoodRepositoryImpl(ref.watch(databaseProvider)),
+);
+
 /// 服务 Providers
 final cryptoServiceProvider = Provider<CryptoService>((ref) => CryptoService());
-
-final emailServiceProvider = Provider<EmailService>(
-  (ref) => EmailService(),
-);
 
 final notificationServiceProvider = Provider<NotificationService>(
   (ref) => NotificationService(),
@@ -51,6 +59,42 @@ final reminderServiceProvider = Provider<ReminderService>(
     contactRepo: ref.watch(contactRepositoryProvider),
     medicationRepo: ref.watch(medicationRepositoryProvider),
     userProfileRepo: ref.watch(userProfileRepositoryProvider),
-    emailService: ref.watch(emailServiceProvider),
+    smsService: ref.watch(smsServiceProvider),
+  ),
+);
+
+/// SMS 服务 provider
+///
+/// 默认 MockSmsProvider。v1.0+ 接入阿里云时改成从 .env 读取 key 后
+/// 用 AliyunSmsProvider。
+final smsServiceProvider = Provider<SmsService>((ref) => SmsService());
+
+/// 数据导出服务 provider
+final dataExportServiceProvider = Provider<DataExportService>(
+  (ref) => DataExportService(ref.watch(databaseProvider)),
+);
+
+/// SafetyWatch 服务（v0.10 / Round 4 死了么思路）
+///
+/// 默认关闭。用户在 settings 里开启后，每次 app 启动 / 打卡后跑 check。
+final safetyWatchServiceProvider = Provider<SafetyWatchService>(
+  (ref) => SafetyWatchService(
+    checkInRepo: ref.watch(checkInRepositoryProvider),
+    contactRepo: ref.watch(contactRepositoryProvider),
+    userProfileRepo: ref.watch(userProfileRepositoryProvider),
+    smsService: ref.watch(smsServiceProvider),
+    notificationService: ref.watch(notificationServiceProvider),
+  ),
+);
+
+/// v0.13 (Round 7) 心理评估周期提醒服务
+///
+/// Apple Health 思路：每 N 天提醒做 PHQ-9 / GAD-7。
+/// 默认关闭。用户在 settings 开启 + 评估。
+final assessmentReminderServiceProvider =
+    Provider<AssessmentReminderService>(
+  (ref) => AssessmentReminderService(
+    checkInRepo: ref.watch(checkInRepositoryProvider),
+    notificationService: ref.watch(notificationServiceProvider),
   ),
 );

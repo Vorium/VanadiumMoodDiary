@@ -1,0 +1,99 @@
+// v0.13 (Round 11) MedicationRepositoryImpl — Drift 实现
+//
+// 这是 4 层架构中 "data" 层的实现：
+// - 实现 `domain/repositories/medication_repository.dart` 的 abstract
+// - 通过 `data/database/medication_mapper.dart` 在 Drift row 和
+//   `MedicationEntity` 之间翻译
+// - UI 永远只看到 entity，不直接看到 Drift
+library;
+
+import 'package:drift/drift.dart' show Value;
+import 'package:flutter/material.dart' show TimeOfDay;
+
+import '../../domain/entities/medication_entity.dart';
+import '../../domain/repositories/medication_repository.dart';
+import '../database/app_database.dart';
+import '../database/medication_mapper.dart';
+
+/// MedicationRepository 的 Drift 实现
+class MedicationRepositoryImpl implements MedicationRepository {
+  final AppDatabase _db;
+
+  MedicationRepositoryImpl(this._db);
+
+  @override
+  Stream<List<MedicationEntity>> watchAll() {
+    return _db.watchMedications().map(
+          (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
+        );
+  }
+
+  @override
+  Future<int> add({
+    required String name,
+    required double dosage,
+    required String dosageUnit,
+    required List<TimeOfDay> times,
+    DateTime? startDate,
+    DateTime? refillAt,
+    int refillReminderDays = 7,
+    bool isActive = true,
+    DateTime? endDate,
+  }) async {
+    // 构造临时 entity（id=0 表示新记录），用 toCompanion 走统一通道
+    final entity = MedicationEntity(
+      id: 0,
+      name: name,
+      dosage: dosage,
+      dosageUnit: dosageUnit,
+      times: times,
+      startDate: startDate ?? DateTime.now(),
+      endDate: endDate,
+      isActive: isActive,
+      refillAt: refillAt,
+      refillReminderDays: refillReminderDays,
+    );
+    return _db.insertMedication(entity.toCompanion());
+  }
+
+  @override
+  Future<bool> update(MedicationEntity medication) {
+    return _db.updateMedication(medication.toDriftRow());
+  }
+
+  @override
+  Future<bool> setActive({
+    required int medicationId,
+    required bool isActive,
+  }) async {
+    final row = await (_db.select(_db.medications)
+          ..where((t) => t.id.equals(medicationId)))
+        .getSingleOrNull();
+    if (row == null) return false;
+    final updated = row.toEntity().copyWith(
+      isActive: isActive,
+      endDate: Value(isActive ? null : DateTime.now()),
+    );
+    return _db.updateMedication(updated.toDriftRow());
+  }
+
+  @override
+  Future<int> delete(int id) => _db.deleteMedication(id);
+
+  @override
+  Future<bool> updateRefill({
+    required int medicationId,
+    required DateTime? refillAt,
+    int? reminderDays,
+  }) async {
+    final row = await (_db.select(_db.medications)
+          ..where((t) => t.id.equals(medicationId)))
+        .getSingleOrNull();
+    if (row == null) return false;
+    final updated = row.toEntity().copyWith(
+      refillAt: Value(refillAt),
+      refillReminderDays: reminderDays ?? row.refillReminderDays,
+    );
+    return _db.updateMedication(updated.toDriftRow());
+  }
+}

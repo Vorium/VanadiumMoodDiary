@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../data/database/medication_mapper.dart';
 import '../../../../domain/logic/email_template.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/data_providers.dart';
@@ -17,7 +18,7 @@ class EmailPreviewPage extends ConsumerWidget {
     final medsAsync = ref.watch(medicationsProvider);
 
     return PageScaffold(
-      title: '邮件预览',
+      title: '通知预览',
       child: profileAsync.when(
         data: (profile) {
           if (profile == null) {
@@ -31,15 +32,17 @@ class EmailPreviewPage extends ConsumerWidget {
               children: [
                 const SizedBox(height: AppTokens.spacingSm),
                 const Text(
-                  '这是你将收到的停药通知邮件预览：',
+                  '这是你将收到的失联通知预览：',
                   style: TextStyle(fontSize: AppTokens.fontSizeBody, color: AppTokens.textSecondary),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 contactsAsync.when(
                   data: (contacts) {
                     final firstContact = contacts.isEmpty ? null : contacts.first;
+                    // v0.13 (Round 11): entity → drift row 转换（email 模板还在用 Drift 类）
                     final medication = medsAsync.maybeWhen(
-                      data: (m) => m.isEmpty ? null : m.first,
+                      data: (m) =>
+                          m.isEmpty ? null : m.first.toDriftRow(),
                       orElse: () => null,
                     );
 
@@ -63,7 +66,7 @@ class EmailPreviewPage extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'To: ${firstContact?.email ?? "（无联系人）"}',
+                              'To: ${firstContact?.phone ?? "（无联系人）"}',
                               style: const TextStyle(fontSize: AppTokens.fontSizeLabel, color: AppTokens.textSecondary),
                             ),
                             const SizedBox(height: 4),
@@ -96,7 +99,7 @@ class EmailPreviewPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                   ),
                   child: const Text(
-                    '💡 这只是预览。实际邮件在你漏 2 天没打卡后自动发送。',
+                    '💡 这只是预览。实际短信通知在你漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。',
                     style: TextStyle(fontSize: AppTokens.fontSizeLabel),
                   ),
                 ),

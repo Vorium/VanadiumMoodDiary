@@ -14,13 +14,13 @@ class ContactRepository {
   /// 添加联系人
   Future<int> add({
     required String name,
-    required String email,
+    required String phone,
     int sortOrder = 0,
   }) {
     return _db.insertContact(
       ContactsCompanion.insert(
         name: name,
-        email: email,
+        phone: phone,
         sortOrder: Value(sortOrder),
       ),
     );

@@ -1,4 +1,4 @@
-import '../../data/database/app_database.dart';
+import '../entities/check_in_entity.dart';
 
 /// 连续打卡天数计算器
 ///
@@ -10,7 +10,7 @@ import '../../data/database/app_database.dart';
 ///
 /// 通知逻辑独立：48h 触发（看 ReminderScheduler，不归 0 触发）
 ///
-/// 临时吃药（type='temp'）**不计入** streak
+/// 临时吃药（type=temp）**不计入** streak
 class StreakCalculator {
   StreakCalculator._();
 
@@ -25,17 +25,22 @@ class StreakCalculator {
   /// 3. 倒序遍历，gap = 1 day 算连续，gap > 1 day 算中断
   /// 4. 距今天 > 36h 视为过期，streak 0
   static int calculate({
-    required List<CheckIn> checkIns,
+    required List<CheckInEntity> checkIns,
     required DateTime now,
   }) {
     if (checkIns.isEmpty) return 0;
 
-    final normal = checkIns.where((c) => c.type == 'normal').toList();
+    final normal = checkIns.where((c) => c.isNormal).toList();
     if (normal.isEmpty) return 0;
 
     // 1. 检查最新打卡是否在 36h 内
+    //
+    // P1 fix: 用 `inMinutes` 替代 `inHours` 避免整数截断。
+    // 之前 `inHours > 36` 在 36.5h 时因 inHours=36 而误判为"未过期",
+    // 用户漏 1.5 天仍能拿到 streak,违反业务规则。
     final latest = normal.first;
-    if (now.difference(latest.timestamp).inHours > expiryThresholdHours) {
+    final minutesSinceLatest = now.difference(latest.timestamp).inMinutes;
+    if (minutesSinceLatest >= expiryThresholdHours * 60) {
       return 0;
     }
 
@@ -72,10 +77,10 @@ class StreakCalculator {
   /// 判断是否需要显示"少 1 次没关系"提示
   /// 即：今天还没打卡
   static bool shouldShowStreakBroken({
-    required List<CheckIn> checkIns,
+    required List<CheckInEntity> checkIns,
     required DateTime now,
   }) {
-    final normal = checkIns.where((c) => c.type == 'normal').toList();
+    final normal = checkIns.where((c) => c.isNormal).toList();
     if (normal.isEmpty) return false;
 
     final lastCheckIn = normal.first;

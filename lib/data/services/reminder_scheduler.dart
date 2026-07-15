@@ -1,98 +1,207 @@
 import 'dart:developer' as developer;
 
-import 'email_service.dart';
-import '../repositories/contact_repository.dart';
-import '../repositories/medication_repository.dart';
-import '../repositories/check_in_repository.dart';
+import '../../domain/repositories/check_in_repository.dart';
+import '../../domain/repositories/contact_repository.dart';
+import '../../domain/repositories/medication_repository.dart';
 import '../repositories/user_profile_repository.dart';
 import '../../domain/logic/reminder_scheduler.dart' as logic;
+import 'sms_service.dart';
 
-/// 失联检测服务（应用层）
+/// 失联通知服务（应用层）
 ///
-/// 串联：
-/// 1. 数据库查询最后打卡 + 联系人 + 吃药
-/// 2. 判断是否需要发送
-/// 3. 调 EmailService 发送
-///
-/// MVP 阶段：手动触发（用户调按钮 / 调试用）
-/// v1.0+：定时任务 + 推送触发
+/// v0.7 升级：
+/// - 通知逻辑分级（24h / 36h / 48h / 72h+）
+/// - 多联系人轮询发送（不只是第一个）
+/// - 用 [SmsService] 真发短信（不再 mock log）
+/// - 发送状态记录在日志
 class ReminderService {
   final CheckInRepository _checkInRepo;
   final ContactRepository _contactRepo;
   final MedicationRepository _medicationRepo;
   final UserProfileRepository _userProfileRepo;
-  final EmailService _emailService;
+  final SmsService _smsService;
 
   ReminderService({
     required CheckInRepository checkInRepo,
     required ContactRepository contactRepo,
     required MedicationRepository medicationRepo,
     required UserProfileRepository userProfileRepo,
-    required EmailService emailService,
+    required SmsService smsService,
   })  : _checkInRepo = checkInRepo,
         _contactRepo = contactRepo,
         _medicationRepo = medicationRepo,
         _userProfileRepo = userProfileRepo,
-        _emailService = emailService;
+        _smsService = smsService;
 
-  /// 检查并发送失联通知
-  Future<bool> checkAndSend() async {
+  /// 失联分级：返回建议的通知级别
+  ///
+  /// - [RemindersLevel.none] - 正常
+  /// - [RemindersLevel.soft] - 24h 未打卡（用户自己内部提醒，不打扰紧急联系人）
+  /// - [RemindersLevel.medium] - 36h（通知紧急联系人邮件）
+  /// - [RemindersLevel.hard] - 48h+（通知紧急联系人短信 + 邮件）
+  /// - [RemindersLevel.urgent] - 72h+（每天重复，直到打卡）
+  ///
+  /// P18 fix: 用 inMinutes 替代 inHours,避免 24h/36h/48h 边界整数截断。
+  /// 之前 35.9h 误判为 soft,实际已经漏 1.5 天该升级 medium。
+  static ReminderLevel evaluateLevel({
+    required DateTime? lastCheckIn,
+    required int cycleHours,
+    required DateTime now,
+  }) {
+    if (lastCheckIn == null) return ReminderLevel.none;
+    final minutes = now.difference(lastCheckIn).inMinutes;
+    if (minutes < 24 * 60) return ReminderLevel.none;
+    if (minutes < 36 * 60) return ReminderLevel.soft;
+    if (minutes < 48 * 60) return ReminderLevel.medium;
+    if (minutes < 72 * 60) return ReminderLevel.hard;
+    return ReminderLevel.urgent;
+  }
+
+  /// 发送失联通知（按级别）
+  ///
+  /// 返回发送结果摘要
+  Future<ReminderResult> checkAndSend() async {
     final profile = await _userProfileRepo.get();
     if (profile == null) {
       developer.log('⚠️ 用户档案不存在，跳过', name: 'ReminderService');
-      return false;
+      return ReminderResult.empty();
     }
 
     final allCheckIns = await _checkInRepo.watchAll().first;
-    final normalCheckIns = allCheckIns.where((c) => c.type == 'normal').toList();
-    final lastCheckIn = normalCheckIns.isEmpty ? null : normalCheckIns.first.timestamp;
+    final normalCheckIns = allCheckIns.where((c) => c.isNormal).toList();
+    final lastCheckIn =
+        normalCheckIns.isEmpty ? null : normalCheckIns.first.timestamp;
 
-    final contacts = await _contactRepo.watchAll().first;
-    final medications = await _medicationRepo.watchAll().first;
-    final firstMed = medications.isEmpty ? null : medications.first;
-
-    final shouldSend = logic.ReminderScheduler.shouldSendAlert(
+    final level = evaluateLevel(
       lastCheckIn: lastCheckIn,
       cycleHours: profile.checkInCycleHours,
       now: DateTime.now(),
     );
 
-    if (!shouldSend) {
-      developer.log(
-        '✅ 距最后打卡 < ${profile.checkInCycleHours}h，不需要发送',
-        name: 'ReminderService',
-      );
-      return false;
+    // 24h 内不打扰
+    if (level == ReminderLevel.none) {
+      return ReminderResult.empty();
     }
 
-    final firstContact = logic.ReminderScheduler.selectFirstContact(contacts);
-    if (firstContact == null) {
-      developer.log('⚠️ 没有可用联系人', name: 'ReminderService');
-      return false;
-    }
+    final contacts = await _contactRepo.watchAll().first;
+    final medications = await _medicationRepo.watchAll().first;
+    final firstMed = medications.isEmpty ? null : medications.first;
 
-    final daysWithoutCheckIn = lastCheckIn == null
+    final daysSince = lastCheckIn == null
         ? 0
         : DateTime.now().difference(lastCheckIn).inDays;
+    final hoursSince = lastCheckIn == null
+        ? 0
+        : DateTime.now().difference(lastCheckIn).inHours;
 
-    final success = await _emailService.sendMedicationReminder(
-      to: firstContact.email,
-      userName: profile.userName,
-      daysWithoutCheckIn: daysWithoutCheckIn,
-      lastCheckIn: lastCheckIn,
-      medication: firstMed,
-      cycleHours: profile.checkInCycleHours,
-    );
+    developer.log('=' * 60, name: 'ReminderService');
+    developer.log('⚠️ 失联检测', name: 'ReminderService');
+    developer.log('  用户: ${profile.userName}', name: 'ReminderService');
+    developer.log('  距上次打卡: $hoursSince 小时 ($daysSince 天)',
+        name: 'ReminderService',);
+    developer.log('  级别: ${level.name}', name: 'ReminderService');
+    developer.log('  联系人: ${contacts.length} 个',
+        name: 'ReminderService',);
 
-    if (success) {
-      developer.log(
-        '✅ 邮件发送成功 → ${firstContact.email}',
-        name: 'ReminderService',
+    // soft 级别（24-36h）：只 UI 提示，不发紧急通知
+    if (level == ReminderLevel.soft) {
+      developer.log('  → soft 级别：仅用户内部提示，不打扰紧急联系人',
+          name: 'ReminderService',);
+      return ReminderResult(
+        level: level,
+        smsResults: const [],
       );
-    } else {
-      developer.log('❌ 邮件发送失败', name: 'ReminderService');
     }
 
-    return success;
+    // medium/hard/urgent 级别：发给所有启用的紧急联系人
+    final activeContacts =
+        logic.ReminderScheduler.selectAllActiveContacts(contacts);
+    if (activeContacts.isEmpty) {
+      developer.log('  ⚠️ 没有启用的紧急联系人', name: 'ReminderService');
+      return ReminderResult(level: level, smsResults: const []);
+    }
+
+    // 构造通知内容
+    final body = _buildSmsBody(
+      userName: profile.userName,
+      daysSince: daysSince,
+      hoursSince: hoursSince,
+      medication: firstMed,
+    );
+
+    // 轮询发送给所有联系人
+    final results = <SmsResultEntry>[];
+    for (final c in activeContacts) {
+      final r = await _smsService.send(to: c.phone, body: body);
+      results.add(SmsResultEntry(
+        contactId: c.id,
+        contactName: c.name,
+        phone: c.phone,
+        success: r.success,
+        error: r.error,
+      ),);
+      developer.log(
+        '  → ${c.name} (${c.phone}): ${r.success ? "✅" : "❌ ${r.error}"}',
+        name: 'ReminderService',
+      );
+    }
+
+    developer.log('=' * 60, name: 'ReminderService');
+    return ReminderResult(level: level, smsResults: results);
   }
+
+  /// 构造短信正文
+  String _buildSmsBody({
+    required String userName,
+    required int daysSince,
+    required int hoursSince,
+    required dynamic medication,
+  }) {
+    final buffer = StringBuffer();
+    if (daysSince >= 2) {
+      buffer.writeln('【慢病管家】$userName 已 $daysSince 天没打卡。');
+    } else {
+      buffer.writeln('【慢病管家】$userName 已 $hoursSince 小时没打卡。');
+    }
+    buffer.writeln('请你方便的时候提醒 TA 按时吃药。');
+    if (medication != null) {
+      buffer.writeln(
+          '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit}',);
+    }
+    buffer.writeln('—— 这是一条自动提醒，请勿回复');
+    return buffer.toString();
+  }
+}
+
+enum ReminderLevel { none, soft, medium, hard, urgent }
+
+/// 一次失联检查的结果
+class ReminderResult {
+  final ReminderLevel level;
+  final List<SmsResultEntry> smsResults;
+
+  const ReminderResult({required this.level, required this.smsResults});
+
+  factory ReminderResult.empty() =>
+      const ReminderResult(level: ReminderLevel.none, smsResults: []);
+
+  bool get hasSmsFailures => smsResults.any((r) => !r.success);
+  int get successCount => smsResults.where((r) => r.success).length;
+  int get failCount => smsResults.where((r) => !r.success).length;
+}
+
+class SmsResultEntry {
+  final int contactId;
+  final String contactName;
+  final String phone;
+  final bool success;
+  final String? error;
+
+  const SmsResultEntry({
+    required this.contactId,
+    required this.contactName,
+    required this.phone,
+    required this.success,
+    this.error,
+  });
 }

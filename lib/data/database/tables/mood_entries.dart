@@ -1,0 +1,23 @@
+import 'package:drift/drift.dart';
+
+/// 情绪日记表
+///
+/// 用户每天可记 1~N 次心情，存分数（1-5）+ 标签 JSON + 备注
+/// 设计：1=很差 / 2=差 / 3=一般 / 4=好 / 5=很好
+@DataClassName('MoodEntry')
+class MoodEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  /// 记录时间
+  DateTimeColumn get timestamp => dateTime()();
+
+  /// 情绪分数 1-5（必填）
+  IntColumn get score => integer()();
+
+  /// 情绪标签 JSON 数组：'["焦虑","失眠"]'
+  /// 选填，单选多个
+  TextColumn get tagsJson => text().withDefault(const Constant('[]'))();
+
+  /// 自由备注
+  TextColumn get note => text().nullable()();
+}
