@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+    branches: [master, main, develop]
+  pull_request:
+    branches: [master, main, develop]
+
+# 防止旧 run 抢资源
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: analyze + test (stable)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 装 JDK 17（Android 工具链依赖）
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: 装 Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.5'
+          cache: true
+
+      - name: 打印版本
+        run: |
+          flutter --version
+          dart --version
+
+      - name: 装依赖
+        run: flutter pub get
+
+      - name: 跑 Drift 代码生成
+        # v0.14 用 Drift 2.28，必须先跑 build_runner 才能 analyze / test
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: flutter analyze（0 error 才算过）
+        run: flutter analyze
+
+      - name: flutter test
+        run: flutter test --reporter expanded
+
+      - name: 上传覆盖率（可选）
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+        run: |
+          flutter test --coverage
+          # 不强制 codecov，开发者本地看

@@ -2,6 +2,82 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.14.0] - 2026-07-15
+
+### Added
+- **续方管理**（`/settings/refills`）：集中看所有药物的续方状态
+  - 顶部 4 统计：总药数 / 已设续方 / 提醒中 / 已过期
+  - 列表按状态优先级排序（已过期 > 提醒中 > 已设 > 未设置）
+  - 4 个状态徽章 + 颜色（绿/橙/红/灰）
+  - 行点击 → 跳到 EditMedicationDialog
+  - 入口：RemindersHub 续方卡的"管理续方"按钮 + settings page
+- **评估历史独立页**（`/assessment/history`）
+  - 顶部 3 卡统计：总评估 / 最近 PHQ-9 / 最近 GAD-7（带严重度色）
+  - 折线图：每个量表 1 张 fl_chart，至少 2 次评估才画
+  - 完整记录：倒序，每条带"上次对比 ↑↓ 分数"
+  - 严重度标签：正常/轻度/中度/重度（按临床标准分档）
+  - 空状态：友好提示 + "开始第一次评估"按钮
+  - 入口：home_page 心理评估图标 + settings page
+- **用药日历**（`/medication/calendar`）：医生视角的依从性热力图
+  - 行 = 1 种在用药物，列 = 1 天（7/30/90 三档可切）
+  - 颜色 = 打卡次数 / 期望次数：漏服/部分/100% 四档配色
+  - 图例卡 + 顶部说明
+  - 入口：settings page "用药" section
+- **提醒中心**（`/settings/reminders`）：集中管理所有提醒
+  - 5 张卡：每日打卡 / 用药 / 续方 / 周期评估 / 失联通知
+  - 每张卡配 sheet 配置 + 状态徽章
+  - 入口：settings page
+
+### Fixed（4 轮审查 + 16 修）
+- **路由顺序冲突**（Bug A）：`/assessment/history` 之前被 `/assessment/:id` 拦住，调整声明顺序
+- **日期边界 raw math**（Bug B + 续方 + 推送文案）：用 `_daysUntilRefill` / `_daysBetween` 按"天"算，refill day 整天都算 in window
+- **临床严重度分级**（Bug C）：PHQ-9 0-4/5-9/10-14/15-19/20+、GAD-7 0-4/5-9/10-14/15+（之前用百分比，错判 5 类）
+- **严重度配色统一**（Bug D）：抽出 `severityStyle()` 一处定义，chart dot / history 圆圈 / chip / summary 4 处同源
+- **代码重复**（Bug E）：删 3 处重复的 `_severity` / `_severityLevel`
+- **续方统计色**（Bug F）：inWindow 黄色 / overdue 红色（之前都红）
+- **用药日历 times=[]**（Bug G）：跳过无时间药的行 + 提示文案
+- **用药日历 O(n·m·k) 性能**（Bug H）：预 group `Map<int, Map<DateTime, int>>`
+- **chart 底轴 label 密度**（Bug I）：90 点 → 6 label
+- **失联检测 now/inDays**（Bug J）：捕获一次 now + 按天算
+- **推送文案 "还剩 X 天"**（Bug K）：用按天算法
+- **评估 diff 跨量表**（Bug L）：`_findPreviousSameScale` 找同量表前一条
+- **deep-link safety race**（Bug M）：独立 `_safetyRerunRequested` flag + `force: true`
+- **续方图标同步**（Bug N）：icon 和文字同源
+- **AppDatabase 泄漏**（Bug O）：try/finally + close()
+- **lint 清理**：13 个文件的 unused imports / variable
+
+### Changed
+- **架构升级到 4 层**：`presentation → domain ← data`，domain 层 0 Flutter 依赖
+  - `domain/entities/`：业务实体（MedicationEntity / CheckInEntity / ContactEntity / MoodEntryEntity）
+  - `domain/repositories/`：抽象接口（无实现）
+  - `domain/usecases/`：用例（RecordCheckInUseCase / RecordTempMedicationUseCase / TriggerReminderUseCase）
+  - `domain/logic/`：业务规则（量表/streak/care engine/报告/评估对比）
+- **数据层 0 Flutter 依赖**（mappers in data 层做 Entity ↔ Drift 转换）
+- **Repository 模式**：UI 不直接碰 Drift，only 调 use case
+- 通知 id 分段：1001=默认 / 2000+=药物时间 / 3000=软提醒 / 4000+=关怀
+- `AppTokens.warningStrong` 新增（中度档专用色 0xFFFF8A65）
+
+### Tests
+- 430 cases pass（v0.13 ~400 → v0.14 +30）
+- 4 轮全文件审查，每次新增 regression test 卡住 bug
+- domain 业务逻辑 + data round-trip + presentation widget 三层覆盖
+
+## [0.13.0] - 2026-07-14
+
+### Added
+- 多档案联系人（soft delete + 排序）
+- 续方提前提醒 N 天
+- 评估历史 + sparkline 在 result 页
+
+## [0.12.0] - 2026-07-14
+
+### Added
+- 邮件通知 + 安全开关
+- 临时吃药关联到现有药物
+- 趋势页（30 天热力图 + 6 月柱状图）
+- PHQ-9 抑郁量表
+- 用药报告（PDF + Markdown）
+
 ## [0.8.0] - 2026-07-13
 
 ### Added

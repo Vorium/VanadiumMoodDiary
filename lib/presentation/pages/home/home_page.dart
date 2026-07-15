@@ -22,6 +22,7 @@ import 'widgets/last_med_info.dart';
 import 'widgets/mood_dialog.dart';
 import 'widgets/mood_quick_button.dart';
 import 'widgets/temp_medication_dialog.dart';
+import 'widgets/today_med_schedule.dart';
 
 /// 主页
 class HomePage extends ConsumerStatefulWidget {
@@ -294,6 +295,11 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
           ),
+
+          const SizedBox(height: AppTokens.spacingSm),
+
+          // v0.14 (Round 17) 今日服药计划
+          const TodayMedSchedule(),
 
           const SizedBox(height: AppTokens.spacingSm),
 

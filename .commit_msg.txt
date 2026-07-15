@@ -1,14 +1,34 @@
-v0.14 round 16: lint cleanup - 0 errors, 0 warnings, 184 info (trailing comma)
+v0.14 round 17: docs, CI, archive cleanup, new home widget
 
-Removed unused imports and one unused local variable left over
-from earlier rounds. Most are in files I touched during round
-14 (assessment_history, medications_list_widget, refill_manage,
-medication_calendar) but a few are pre-existing in untouched
-files (app_database, medication_mapper, notification_payload,
-settings_page, edit_medication_dialog, 3 test files).
+README + CHANGELOG:
+- README.md: rewrite to reflect 4-layer architecture (presentation/domain/data)
+  + current Flutter 3.44.5, Drift 2.28, SQLCipher, etc.
+- docs/CHANGELOG.md: add v0.14.0 entry covering rounds 12-16
+  cumulative work (4 features + 15 bug fixes + 4-layer refactor)
 
-Also simplified notification_payload.parse: uri.host is
-non-nullable, the action == null branch was dead code.
+CI:
+- .github/workflows/ci.yml: GitHub Actions pipeline
+  - flutter-action v2 (3.44.5)
+  - pub get + build_runner + analyze + test
+  - triggers on push/PR to master/main/develop
 
-13 files changed, 21 lines removed (and 2 added for the
-notification_payload simplification).
+Archive cleanup:
+- delete _archive_r11/ (5 files: old reminders hub, record_check_in usecase,
+  old medication_repository)
+- delete _archive_r12/ (3 files: old _impl repository variants)
+- all unreferenced by current code (grep confirmed)
+
+New feature: TodayMedSchedule (home page widget)
+- lists today's medication schedule (med name + time slots)
+- shows done/total count (e.g. 2/3 doses taken)
+- check icon for done, clock icon for pending
+- "Wrap" layout handles many entries
+- file: lib/presentation/pages/home/widgets/today_med_schedule.dart
+- test: test/presentation/today_med_schedule_round17_test.dart (6 cases)
+
+home_page.dart:
+- import + insert TodayMedSchedule between main check-in and mood button
+
+Files: +202 / -178 (net +24 across 13 files)
+Tests: 436 passed (was 430 + 6 new for round 17)
+Analyze: 0 errors, 0 warnings
