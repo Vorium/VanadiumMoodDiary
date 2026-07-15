@@ -6,6 +6,7 @@ import '../../data/repositories/contact_repository_impl.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../data/repositories/mood_repository_impl.dart';
 import '../../data/repositories/user_profile_repository.dart';
+import '../../data/repositories/vent_repository_impl.dart';
 import '../../data/services/assessment_reminder_service.dart';
 import '../../data/services/crypto_service.dart';
 import '../../data/services/data_export_service.dart';
@@ -13,10 +14,13 @@ import '../../data/services/notification_service.dart';
 import '../../data/services/reminder_scheduler.dart';
 import '../../data/services/safety_watch_service.dart';
 import '../../data/services/sms_service.dart';
+import '../../data/services/vent_audio_storage.dart';
 import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../domain/repositories/mood_repository.dart';
+import '../../domain/entities/vent_entry.dart';
+import '../../domain/repositories/vent_repository.dart';
 
 /// 数据库 Provider
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -44,6 +48,26 @@ final userProfileRepositoryProvider = Provider<UserProfileRepository>(
 
 final moodRepositoryProvider = Provider<MoodRepository>(
   (ref) => MoodRepositoryImpl(ref.watch(databaseProvider)),
+);
+
+/// v0.15 (Round 18) 树洞仓库 provider
+final ventRepositoryProvider = Provider<VentRepository>(
+  (ref) => VentRepositoryImpl(ref.watch(databaseProvider), ref.watch(ventAudioStorageProvider)),
+);
+
+/// 树洞 audio 文件管理（独立 service）
+final ventAudioStorageProvider = Provider<VentAudioStorage>(
+  (ref) => VentAudioStorage(),
+);
+
+/// 树洞条目流（按时间倒序，UI 监听用）
+final ventEntriesProvider = StreamProvider<List<VentEntryEntity>>(
+  (ref) => ref.watch(ventRepositoryProvider).watchAll(),
+);
+
+/// 单条树洞（详情页用）
+final ventEntryByIdProvider = FutureProvider.family<VentEntryEntity?, int>(
+  (ref, id) => ref.watch(ventRepositoryProvider).getById(id),
 );
 
 /// 服务 Providers

@@ -14,6 +14,9 @@ import '../presentation/pages/settings/settings_page.dart';
 import '../presentation/pages/settings/widgets/email_preview.dart';
 import '../presentation/pages/setup/setup_page.dart';
 import '../presentation/pages/trend/trend_page.dart';
+import '../presentation/pages/vent/vent_compose_page.dart';
+import '../presentation/pages/vent/vent_detail_page.dart';
+import '../presentation/pages/vent/vent_list_page.dart';
 import '../presentation/providers/data_providers.dart';
 
 /// 路由 Provider
@@ -89,6 +92,23 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/medication/calendar',
             builder: (_, __) => const MedicationCalendarPage(),
+          ),
+          // ============== v0.15 (Round 18) 树洞 ==============
+          // 全屏深页（full-screen modal feel），不进 navigation rail
+          // 放在 ShellRoute 内但从主导航 items 隐藏（用户从 home 入口按钮进）
+          GoRoute(
+            path: '/vent',
+            builder: (_, __) => const VentListPage(),
+          ),
+          GoRoute(
+            path: '/vent/compose',
+            builder: (_, __) => const VentComposePage(),
+          ),
+          GoRoute(
+            path: '/vent/detail/:id',
+            builder: (_, state) => VentDetailPage(
+              id: int.parse(state.pathParameters['id'] ?? '0'),
+            ),
           ),
           // ============== Round 5: Deep Linking 路由 ==============
           // 点 medication 通知 → 直接跳 home 并自动打卡该药

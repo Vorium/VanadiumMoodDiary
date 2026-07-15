@@ -14,6 +14,7 @@ import 'tables/medications.dart';
 import 'tables/mood_entries.dart';
 import 'tables/report_histories.dart';
 import 'tables/user_profiles.dart';
+import 'tables/vent_entries.dart';
 
 part 'app_database.g.dart';
 
@@ -26,6 +27,7 @@ part 'app_database.g.dart';
     UserProfiles,
     ReportHistories,
     MoodEntries,
+    VentEntries,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -36,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -67,6 +69,10 @@ class AppDatabase extends _$AppDatabase {
           if (from <= 4) {
             await m.addColumn(medications, medications.refillAt);
             await m.addColumn(medications, medications.refillReminderDays);
+          }
+          // v5 → v6: 新增 vent_entries 表（树洞）
+          if (from <= 5) {
+            await m.createTable(ventEntries);
           }
         },
         beforeOpen: (details) async {
@@ -257,6 +263,25 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> deleteMoodEntry(int id) {
     return (delete(moodEntries)..where((t) => t.id.equals(id))).go();
+  }
+
+  // ============= VentEntries (v0.15 Round 18 树洞) =============
+
+  /// 监听所有树洞条目（按时间倒序）
+  Stream<List<VentEntry>> watchVentEntries() {
+    return (select(ventEntries)
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+          ]))
+        .watch();
+  }
+
+  Future<int> insertVentEntry(VentEntriesCompanion entry) {
+    return into(ventEntries).insert(entry);
+  }
+
+  Future<int> deleteVentEntry(int id) {
+    return (delete(ventEntries)..where((t) => t.id.equals(id))).go();
   }
 
   /// 完成首次设置：在同一个事务里写入用户档案、联系人、药物，

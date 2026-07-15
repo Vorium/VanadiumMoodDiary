@@ -308,6 +308,28 @@ class _HomePageState extends ConsumerState<HomePage> {
             onTap: () => MoodDialog.show(context, ref),
           ),
 
+          const SizedBox(height: AppTokens.spacingSm),
+
+          // v0.15 (Round 18) 树洞入口
+          // 与情绪日记完全独立：树洞不进任何分析、纯私密空间
+          HomeSecondaryButton(
+            onPressed: () => context.push('/vent'),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.forest_outlined, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  '倾诉 🌲',
+                  style: TextStyle(
+                    fontSize: AppTokens.fontSizeButton,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           const Spacer(flex: 1),
 
           // 底部信息
