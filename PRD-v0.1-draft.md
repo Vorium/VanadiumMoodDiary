@@ -1,11 +1,11 @@
-# 慢病管家（ChronicCare）产品需求文档 · v0.8 「量表多选 + 趋势」版
+# 慢病管家（ChronicCare）产品需求文档 · v0.15 「树洞 + 4 层架构」版
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | **v0.8**（量表多选 + 历史折线图）|
-| 编写日期 | 2026-07-13 |
+| 文档版本 | **v0.15**（树洞 + 4 层架构 + 提醒中心 + 用药日历 + 评估历史）|
+| 编写日期 | 2026-07-15 |
 | 编写人 | Mavis（基于用户洞察调整）|
-| 文档状态 | 🟢 v0.8 已完成；下一阶段 v0.9+ 真实平台对接 |
+| 文档状态 | 🟢 v0.15 已完成；下一阶段 v1.0 真实平台对接 + 加密备份 |
 | methodology 标签 | 🛡️ AI 偏见自查 + ✊ 主要矛盾 + 🍎 Jobs + ⏳ 持久战 + 🔄 Munger 反方 |
 
 ---
@@ -22,6 +22,13 @@
 | v0.6 | 2026-07-12 | 多联系人邮件通知（SendGrid Mock）+ ReminderLevel 渐进 + 趋势页（热力图 + 柱状图 + streak）| Mavis |
 | v0.7 | 2026-07-12 | SMS 服务抽象（Mock + Aliyun）+ 多联系人 SMS 循环 + 药物时间点 zonedSchedule + 打卡反馈（haptic + 动态鼓励）+ 10am 软提醒 + 临时吃药关联到现有药物 + 数据导出/导入（JSON 剪贴板）+ **CareEngine 规则引擎 + LocalAiHook 接口** + **PHQ-9 抑郁量表**（带自杀念头危机警示）| Mavis |
 | **v0.8** | 2026-07-13 | **量表多选**（PHQ-9 + GAD-7 共用 AssessmentScale 抽象）+ **量表历史折线图**（多线趋势 + Tooltip 详情）+ Web 加载修复（dev 模式 worker 404 → production build + http.server）| Mavis |
+| **v0.9** | 2026-07-13 | 情绪日记（5 级 emoji 评分 + 备注）+ 今日打卡状态强化 + 临时吃药关联到现有药物 UI 优化 | Mavis |
+| **v0.10** | 2026-07-13 | **SafetyWatch 失联检测**（启动跑一次 + 持续 1 小时监测 + SMS 通知家人）+ 5 分钟 Snooze 推迟 | Mavis |
+| **v0.11** | 2026-07-13 | **Deep Linking 路由**（`/check-in/medication/:id` 自动打卡 + `/check-in/today` 跳 home）| Mavis |
+| **v0.12** | 2026-07-14 | 邮件通知真实化（SendGrid Mock + 状态徽章）+ 安全开关（用户主动关闭通知）+ PHQ-9 评估独立页 + 评估结果 PDF / Markdown 报告 | Mavis |
+| **v0.13** | 2026-07-14 | **多档案联系人**（soft delete + 排序）+ **续方提前提醒 N 天**（每药独立配置 + 推送提醒）+ 评估历史 sparkline 在结果页 | Mavis |
+| **v0.14** | 2026-07-15 | **4 层架构升级**（presentation → domain ← data，domain 0 Flutter 依赖）+ **续方管理页**（`/settings/refills` 状态优先级排序）+ **评估历史独立页**（折线图 + 严重度色）+ **用药日历**（7/30/90 天热力图）+ **提醒中心**（5 张卡集中管理）+ 16 个 bug 修复（路由顺序 / 日期边界 / 严重度分级 / 性能）| Mavis |
+| **v0.15** | 2026-07-15 | **树洞（Vent / 私密倾诉空间）**——文字 + 语音（m4a）+ 混排，完全独立不参与任何分析 / 通知 / 关怀 / 趋势 + AGENTS.md 项目指引 + 文档体系完善 | Mavis |
 
 ---
 
@@ -312,27 +319,34 @@
 
 ---
 
-## 附 A. 产品结构（v0.8 实际模块树）
+## 附 A. 产品结构（v0.15 实际模块树）
 
 ```
-慢病管家 v0.8
+慢病管家 v0.15
 ├── 主页（Home）
 │   ├── 大按钮 1：「我今天吃了药」（每日 1 次 / normal）
-│   ├── 大按钮 2：「临时吃药 +」（感冒等 / temp，不影响 streak）
+│   ├── 大按钮 2：「临时吃药 +」（关联到现有药物 / temp，不影响 streak）
 │   ├── 连续天数 / 总打卡 / 总天数
 │   ├── 鼓励文案（按 streak 动态切换：第 1 天 / 重新开始 / 还在坚持）
-│   ├── 最后吃药时间 + 下次提醒（20:00）
-│   └── 快捷入口：趋势页 / 心理评估 / 设置
+│   ├── 今日服药计划（v0.14 round 17：列出每种药是否打卡）
+│   ├── 情绪日记快捷按钮（v0.9：5 级 emoji 评分）
+│   ├── 倾诉入口（v0.15：跳到 /vent 树洞）
+│   ├── 5 分钟 Snooze 推迟（v0.10）
+│   └── 底部信息：最后吃药时间 + 下次提醒（20:00）
 ├── 首次引导（Setup，两步 30s 搞定）
 │   ├── Step 1：姓名 + 紧急联系人手机号（1-3 个，按顺序）
 │   └── Step 2：常吃药（药名 / 剂量 / 单位 / 每日时间点）
 ├── 设置（Settings）
-│   ├── 联系人管理（增删改、排序）
-│   ├── 吃药管理（增删改、时间点编辑）
+│   ├── 联系人管理（v0.13 多档案 + soft delete + 排序）
+│   ├── 吃药管理（增删改、时间点编辑、停药/恢复、续方 N 天）
 │   ├── 健康
 │   │   └── 心理评估量表列表（PHQ-9 / GAD-7）
+│   ├── 通知
+│   │   ├── 提醒中心（v0.14：5 张卡集中管理）
+│   │   ├── 续方管理（v0.14：状态优先级 + 4 状态徽章）
+│   │   └── 安全开关（v0.12：用户主动关闭失联通知）
 │   ├── 数据管理
-│   │   ├── 导出（JSON 剪贴板，v0.7；加密备份 v1.0+）
+│   │   ├── 导出（JSON 剪贴板 + Markdown 报告）
 │   │   └── 导入（JSON 粘贴）
 │   ├── 邮件预览（SendGrid 模板预览）
 │   └── 关于 / 免责声明 / 主题切换
@@ -340,42 +354,99 @@
 │   ├── 数据汇总：当前连续 / 最长连续 / 总打卡 / 总天数
 │   ├── 最近 30 天打卡热力图（GitHub style）
 │   ├── 最近 6 个月月度柱状图（按时率%）
-│   └── 心理评估历史折线图（PHQ-9 + GAD-7 多线）
+│   ├── 心理评估历史折线图（PHQ-9 + GAD-7 多线）
+│   └── 情绪日记趋势（v0.9）
 ├── 心理评估（Assessment）
-│   ├── PHQ-9 抑郁筛查（9 题、0-3 分、0-27）
-│   │   └── 第 9 题（自杀念头）≥ 1 → 弹危机资源对话框
-│   └── GAD-7 焦虑筛查（7 题、0-3 分、0-21）
-└── 通知系统（v0.7 完善）
+│   ├── 评估页（PHQ-9 抑郁筛查 / GAD-7 焦虑筛查）
+│   │   ├── PHQ-9 第 9 题（自杀念头）≥ 1 → 弹危机资源对话框
+│   │   └── 评估结果页（带 sparkline + PDF / Markdown 报告导出）
+│   └── 评估历史独立页（v0.14：完整记录 + diff 徽章 + 严重度色）
+├── 用药日历（v0.14，医生视角）
+│   ├── 行 = 1 种在用药物，列 = 1 天
+│   ├── 7/30/90 三档可切
+│   └── 颜色 = 打卡次数 / 期望次数（漏服/部分/100% 四档）
+├── 树洞（v0.15，**完全私密**）
+│   ├── /vent 列表（按时间倒序，前 80 字预览 + 时长）
+│   ├── /vent/compose 撰写（文字 2000 字 / 录音 m4a / 混排）
+│   └── /vent/detail/:id 详情（完整内容 + 播放进度条）
+│   └── ⚠️ 树洞不进入任何分析 / 通知 / 关怀 / 趋势
+└── 通知系统（v0.15 完善）
     ├── 本地通知（flutter_local_notifications）
     │   ├── 每日 20:00 通用打卡提醒
     │   ├── 每个 medication 的每个 time 点 zonedSchedule
-    │   └── 10:00 软提醒（漏 1 天主动 push）
-    └── 失联通知（CareEngine 触发）
-        ├── 邮件：SendGrid（v0.6 Mock 实现）
-        └── 短信：Aliyun（v0.7 Mock 实现 + AliyunProvider 接口预留）
+    │   ├── 10:00 软提醒（漏 1 天主动 push）
+    │   └── 续方提前 N 天提醒（v0.13）
+    ├── Deep Linking 路由（v0.11）
+    │   ├── 通知点 medication → 自动打卡
+    │   └── 通知点 home → 跳主页
+    └── 失联通知（v0.10 SafetyWatch 完善）
+        ├── 邮件：SendGrid（v0.12 真实化 + 状态徽章）
+        ├── 短信：Aliyun（Mock 实现 + Provider 接口预留）
+        └── 启动检查 + 持续 1h 监测（v0.10）
 ```
 
 ---
 
-## 附 B. 功能详细（v0.8 现状 vs v0.4 计划）
+## 附 B. 功能详细（v0.15 现状 vs v0.4 计划）
 
-| 模块 | v0.4 计划 | v0.8 实际 | 差异 |
+| 模块 | v0.4 计划 | v0.15 实际 | 差异 |
 |---|---|---|---|
 | 打卡 | normal + temp | ✅ normal + temp（关联到现有药物）| v0.7 加了药物关联 |
-| 邮件通知 | SendGrid | ✅ Mock SendGrid | Aliyun 短信为 v0.7 补充 |
-| 短信通知 | v1.5 | ✅ **v0.7 提前做**（Mock + Aliyun 接口预留）| 实际不需要等 v1.5 |
-| 失联检测 | 48h 邮件 | ✅ 4 种 CareEngine 规则（secondDayMissed / lateCheckInHabit / weekPerfect / none）| 比 v0.4 复杂 |
-| 趋势图 | v1.5 | ✅ **v0.6 提前做** + **v0.8 加量表折线图**| 提前 |
-| 量表 | MVP 不做（P2+）| ✅ **v0.7 PHQ-9 + v0.8 GAD-7**（共用 AssessmentScale 抽象）| **超出原计划**——用户洞察认为"评估+打卡"是精神心理用户刚需 |
+| 邮件通知 | SendGrid | ✅ Mock SendGrid + 状态徽章 | v0.12 真实化 |
+| 短信通知 | v1.5 | ✅ **v0.7 提前做**（Mock + Aliyun 接口预留）+ **v0.10 SafetyWatch 失联自动通知**| 实际不需要等 v1.5 |
+| 失联检测 | 48h 邮件 | ✅ 4 种 CareEngine 规则 + SafetyWatch 启动检查 + 持续 1h 监测 | 比 v0.4 复杂 |
+| 趋势图 | v1.5 | ✅ **v0.6 提前做** + **v0.8 加量表折线图** + **v0.14 评估历史独立页**| 提前 |
+| 量表 | MVP 不做（P2+）| ✅ **v0.7 PHQ-9 + v0.8 GAD-7**（共用 AssessmentScale 抽象）+ 严重度分级 + 临床标准分档 | **超出原计划**——用户洞察认为"评估+打卡"是精神心理用户刚需 |
 | AI 关怀 | v2.0 | ✅ v0.7 CareEngine 规则 + **LocalAiHook 接口**（MedGemma 1.5 占位 v0.8+ 接入）| 提前 1 版本，规则先于 AI |
-| 本地加密 | AES-256 | ⚠️ v0.8 之前**未做**（drift 裸存）；加密备份 v1.0+ | **未达原计划**——风险 |
+| 本地加密 | AES-256 | ✅ **v0.14 修**：drift + **SQLCipher** 整体加密 + flutter_secure_storage 存密钥 | **v0.14 修**——v0.8 之前是裸存 |
+| 续方 | v1.0 | ✅ **v0.13 提前**：每药独立 N 天 + 推送提醒 + **v0.14 续方管理页**（状态优先级排序 + 4 状态徽章）| 提前 + 集中管理 |
+| 评估历史 | v1.0 | ✅ **v0.13 sparkline + v0.14 独立页**（折线图 + diff 徽章 + 严重度色）| 提前 + 增强 |
+| 用药日历 | v1.0 | ✅ **v0.14 提前**：7/30/90 天热力图（医生视角）| 提前 |
+| 提醒中心 | v1.0 | ✅ **v0.14 提前**：5 张卡（每日打卡/用药/续方/评估/失联通知）集中管理 | 提前 |
+| 情绪日记 | 未计划 | ✅ **v0.9 新增**：5 级 emoji 评分 + 备注 | **新需求**——情感维度补充 |
+| 树洞 | 未计划 | ✅ **v0.15 新增**：文字 / 语音（m4a）/ 混排，**完全私密不参与任何分析** | **新需求**——Munger 反方触发：保护"私密空间"信任 |
 | 跨平台 | Web → APK → iOS | ✅ Web（H5）跑通；APK/iOS 待打包 | 与计划一致 |
 | 0 注册 | ✅ | ✅ | 一致 |
-| 病耻感淡化 | ✅ | ✅（App 名「慢病管家」中性化）| 一致 |
+| 病耻感淡化 | ✅ | ✅（App 名「慢病管家」中性化 + 树洞完全独立）| 一致 |
 
 ---
 
-## 附 C. 关键架构决策（v0.5-v0.8）
+## 附 C. 关键架构决策（v0.5-v0.15）
+
+### C.0 4 层架构（v0.14 新增，v0.15 完善）
+
+```
+lib/
+├── presentation/         # UI 层
+│   ├── providers/        # Riverpod providers
+│   ├── pages/            # 1 个页面 = 1 个目录
+│   └── widgets/          # 通用组件
+├── domain/               # 领域层（0 Flutter 依赖）
+│   ├── entities/         # 业务实体（*Entity 后缀）
+│   ├── logic/            # 业务规则（量表/streak/care engine/报告）
+│   ├── repositories/     # 抽象接口（无实现）
+│   └── usecases/         # 用例（业务编排）
+└── data/                 # 基础设施层
+    ├── database/         # Drift 表 + 数据库 + 迁移
+    │   ├── tables/       # 1 个表 = 1 个文件
+    │   └── *_mapper.dart # row ↔ entity 翻译
+    ├── repositories/     # *RepositoryImpl
+    ├── services/         # 通知/邮件/SMS/录音/导出
+    └── utils/            # JSON 编解码、表单格式化
+```
+
+**依赖方向**：`presentation → domain ← data`。**domain 层不能 import `package:flutter/...`**。
+
+**核心约束**：
+- 命名：drift 表 `@DataClassName('X')` 单数 + domain 实体 `XEntity`（避免冲突）
+- mapper 放 `data/database/*_mapper.dart`，**不放** domain 层
+- presentation provider 暴露 `XRepository`（domain 接口），不暴露 impl
+- UI 路由用 `context.push(...)` / `context.pop()`（go_router 习惯）
+
+**带来的好处**：
+1. domain 层纯 Dart，可独立跑测试（fastest tier）
+2. 业务逻辑可移植到其他 framework（不强绑 Flutter）
+3. repo swap 容易（mock / fake / 多 impl）
 
 ### C.1 量表抽象（v0.8 新增）
 
@@ -393,7 +464,7 @@ domain/logic/
 
 **建议下个量表**：PHQ-15（PHQ-9 扩展，评估躯体症状）、GAD-2（GAD-7 精简，2 题快速筛查）、ISI（失眠严重度）、PSS（感知压力量表）。
 
-### C.2 CareEngine 规则引擎（v0.7）
+### C.2 CareEngine 规则引擎（v0.7 + v0.10 SafetyWatch）
 
 ```dart
 // 当前 4 种规则
@@ -403,6 +474,12 @@ enum CareTriggerType {
   lateCheckInHabit,      // 连续 3 天 22 点后打卡 → 建议早睡
   weekPerfect,           // 最近 7 天每天 22 点前打卡 → 庆祝
 }
+
+// v0.10 SafetyWatch：失联检测
+// - 启动时跑一次（onAppStart）
+// - 持续 1 小时监测（heartbeat）
+// - 48 小时未打卡 → SMS 通知紧急联系人
+// - v0.14 deep-link safety race fix：独立 _safetyRerunRequested flag
 ```
 
 **未来扩展**：接 LocalAiHook（MedGemma 1.5 本地推理）后，用 LLM 替代规则做更细粒度关怀。
@@ -431,41 +508,73 @@ check_ins 表：
 2. streak 计算已按 `type='normal'` 过滤，量表不污染
 3. `watchAllCheckIns()` 一并拉取，趋势页统一展示
 
+### C.5 树洞完全隔离（v0.15 新增，**关键隐私边界**）
+
+**Munger 反方触发**：如果树洞内容进入趋势 / CareEngine / SafetyWatch，会破坏"私密空间"信任，导致用户根本不用。
+
+**设计原则**：
+- 树洞**完全独立**的表（`vent_entries`），不进任何分析
+- 树洞**不触发**任何通知（即使内容含"想死"也不通知家人）
+- 树洞**不进** CareEngine / SafetyWatch / 续方 / 评估 / 任何 trend
+- 主页入口独立（"倾诉 🌲"按钮，不混入情绪日记）
+- 命名 `VentEntryEntity`（domain）vs `VentEntry`（drift）= 避免 import 混淆
+
+**audio 文件管理**：
+- 存 `app docs/vent_audio/`（独立目录）
+- DB 仅存**绝对路径**（文件大小、时长、时长秒数）
+- 删条目时 best-effort 删文件（失败不阻塞）
+
+**4 层落地参考**：v0.15 树洞是 4 层架构的"模板案例"——`VentEntryEntity` + `VentRepository`（abstract）+ `VentRepositoryImpl`（Drift）+ 3 个 presentation 页面。
+
 ---
 
-## 附 D. 测试与质量（v0.8）
+## 附 D. 测试与质量（v0.15）
 
 | 指标 | 状态 |
 |---|---|
-| 代码质量门 | 0 errors / 0 warnings（44 info：trailing comma / withOpacity deprecated）|
-| 测试覆盖 | **86 tests pass**（v0.7 是 57 → v0.8 加 29 个）|
-| 新增测试 | 量表 21 个（PHQ-9 / GAD-7 / Registry）+ AssessmentRecord 解析 8 个 |
-| 跑测 | `flutter test` ≈ 6 秒 |
+| 代码质量门 | ✅ **0 errors / 0 warnings**（v0.14 round 16 修）|
+| 测试覆盖 | **462 tests pass**（v0.8 86 → v0.15 +376：v0.9 89 + v0.10 113 + v0.12 142 + v0.13 184 + v0.14 430 + v0.15 +32 = 462）|
+| 新增测试（v0.15）| 树洞 entity 20 个（hasText/hasAudio/isMixed/durationLabel/copyWith/==）+ widget 6 个（空状态/文字/语音/混排/截断/多条目）|
+| 跑测 | `flutter test` ≈ 14 秒 |
+| 覆盖率（domain）| 量表 + CareEngine + 评估 + mood + vent 全覆盖 |
+| 4 轮代码审查 | v0.14 16 个 bug 修复 + 回归测试卡住 |
+
+**测试 3 层结构**：
+- **domain 业务**：纯 Dart，0 Flutter 依赖，最快（≈1s）
+- **data round-trip**：DB insert → entity → 校验字段
+- **presentation widget**：`ProviderScope` overrides + `MaterialApp` + `tester.pumpAndSettle`
 
 ---
 
-## 附 E. 已知遗留（v0.8 → v0.9+）
+## 附 E. 已知遗留（v0.15 → v1.0）
 
 | 项 | 状态 | 优先级 |
 |---|---|---|
-| Web 平台 CanvasKit 走 CDN（国内 gstatic.com 污染）| ✅ **v0.8 修**：`--no-web-resources-cdn` 走本地 + production build + python http.server | P0 ✅ |
-| Web dev 模式（flutter run -d chrome）drift worker 404 → LateInitializationError | ✅ **v0.8 修**：切 production build 模式 | P0 ✅ |
-| 本地数据 AES-256 加密 | ❌ **未做**——drift 裸存；加密备份 v1.0+ | P1 |
+| Web 平台 CanvasKit 走 CDN（国内 gstatic.com 污染）| ✅ **v0.8 修** | P0 ✅ |
+| Web dev 模式（flutter run -d chrome）drift worker 404 | ✅ **v0.8 修** | P0 ✅ |
+| 本地数据 AES-256 加密 | ✅ **v0.14 修**：drift + **SQLCipher** 整体加密 + flutter_secure_storage 存密钥 | P0 ✅ |
+| 4 层架构 | ✅ **v0.14 落地** + **v0.15 vent 验证** | P0 ✅ |
+| 多档案联系人 | ✅ **v0.13 修**：soft delete + 排序 | P0 ✅ |
+| 续方提前提醒 | ✅ **v0.13 + v0.14 续方管理页** | P0 ✅ |
+| 提醒中心 | ✅ **v0.14**：5 张卡集中管理 | P0 ✅ |
+| 树洞（私密倾诉）| ✅ **v0.15**：完全独立不参与分析 | P0 ✅ |
 | MedGemma 1.5 本地 AI 接入 | ❌ **接口就位**（LocalAiHook），未接真实模型 | P2 |
 | 拍照识别药 / 医生联系 / 真实 SendGrid key | ❌ v1.0+ 平台对接 | P2 |
-| APK / iOS 打包上架 | ❌ v0.9+ | P1 |
+| APK / iOS 打包上架 | ❌ v1.0 | P1 |
+| 加密备份（DB 导出 + 加密归档）| ❌ v1.0 | P1 |
+| 树洞全文搜索 / 时间轴可视化 | ❌ v1.x 体验增强 | P3 |
 
 ---
 
-## 附 F. 下一步问题（v0.9+）
+## 附 F. 下一步问题（v1.0）
 
-之前 v0.4 提的 Q4（平台选择）已经在 v0.5 决定（**Web 先行 ✅**）。新问题：
+之前 v0.4 提的 Q4（平台选择）✅ Web 先行。v0.14 提的 Q5（本地加密）✅ SQLCipher。v0.15 提的 Q6（私密倾诉）✅ vent。
 
-**Q5**：v0.9 优先做什么？
-- **A**：本地加密补齐（drift + sqlcipher）—— 安全债
-- **B**：MedGemma 1.5 真实接入（需要设备 ≥6GB RAM）—— 差异化
-- **C**：APK 打包 + Android 9+ 灰度 —— 验证真实用户
+**Q7**：v1.0 优先做什么？
+- **A**：APK 打包 + Android 9+ 灰度发布 —— 真实用户验证
+- **B**：加密备份（DB 导出 + AES 加密压缩包 + 跨设备导入）—— 数据资产保护
+- **C**：MedGemma 1.5 真实接入（需要设备 ≥6GB RAM）—— 差异化
 - **D**：拍照识别药盒（CameraX + TFLite）—— 降低录入摩擦
 
-建议 **A + C 并行**（先把安全债还清 + 真实用户验证），B/D 推后。
+建议 **A + B 并行**（真实用户 + 数据资产），C/D 推后到 v1.x。
 
