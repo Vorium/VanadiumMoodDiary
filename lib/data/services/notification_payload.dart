@@ -99,7 +99,7 @@ class NotificationDeepLink {
     if (uri.scheme != 'chroniccare') return null;
 
     final action = uri.host;
-    if (action == null || action.isEmpty) return null;
+    if (action.isEmpty) return null;
 
     switch (action) {
       case 'today':

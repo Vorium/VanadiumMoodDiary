@@ -2,7 +2,6 @@
 // 验证总分 → severity 映射 + AssessmentScale 接口契约
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/gad7.dart';
 
 void main() {
@@ -42,7 +41,6 @@ void main() {
   group('Gad7Scale.computeResult 严重度切分', () {
     final s = gad7Scale;
     List<int> scores(int n) => List.filled(n, 1).toList(); // n 个 1 分
-    int totalOf(int n) => n; // 全 1 分
 
     test('0 → 几乎没有', () {
       final r = s.computeResult([0, 0, 0, 0, 0, 0, 0]);

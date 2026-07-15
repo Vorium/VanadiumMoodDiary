@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../data/database/app_database.dart';
-import '../../../data/services/assessment_reminder_service.dart';
 import '../../../domain/logic/assessment_scale.dart';
 import '../../../domain/logic/medication_report.dart';
 import '../../../domain/logic/scale_registry.dart';

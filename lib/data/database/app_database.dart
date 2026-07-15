@@ -3,7 +3,6 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart' hide Table;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
-import '../repositories/medication_repository_impl.dart';
 import 'connection/connection.dart'
     if (dart.library.html) 'connection/web.dart'
     if (dart.library.io) 'connection/native.dart';

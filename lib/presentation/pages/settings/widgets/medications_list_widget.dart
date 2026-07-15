@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../data/database/app_database.dart';
 import '../../../../data/database/medication_mapper.dart';
-import '../../../../data/database/medication_times.dart';
-import '../../../../data/services/notification_service.dart';
 import '../../../../data/utils/formatters.dart';
 import '../../../../domain/entities/medication_entity.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/core_providers.dart';
-import '../../../providers/data_providers.dart';
 import 'edit_medication_dialog.dart';
 
 /// 常吃药列表（可编辑、可设置续方、可停药、可删除）

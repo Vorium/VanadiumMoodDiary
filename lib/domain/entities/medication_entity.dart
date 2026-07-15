@@ -13,8 +13,6 @@ library;
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart' show TimeOfDay;
 
-import '../../data/utils/json_codec.dart';
-
 /// 药物（领域实体）
 ///
 /// 字段含义见 `lib/data/database/tables/medications.dart`。

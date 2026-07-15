@@ -12,7 +12,6 @@
 library;
 
 import 'package:drift/drift.dart' show Value;
-import 'package:flutter/material.dart' show TimeOfDay;
 
 import '../../domain/entities/medication_entity.dart';
 import 'app_database.dart';

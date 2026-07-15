@@ -441,7 +441,6 @@ class _HistoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxScore = _maxScoreForScale(record.scaleId);
     final diff = previous == null ? null : record.total - previous!.total;
     final sev = severityStyle(record.scaleId, record.total);
     final color = sev.color;
