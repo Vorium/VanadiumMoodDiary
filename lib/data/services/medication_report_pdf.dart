@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../../data/utils/formatters.dart';
+import '../../shared/formatters.dart';
 import '../../domain/logic/medication_report.dart';
 
 /// 用药报告 PDF 生成器

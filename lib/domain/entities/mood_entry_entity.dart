@@ -11,7 +11,7 @@ library;
 
 import 'package:drift/drift.dart' show Value;
 
-import '../../data/utils/json_codec.dart';
+import '../../shared/json_codec.dart';
 
 /// 情绪记录（领域实体）
 ///

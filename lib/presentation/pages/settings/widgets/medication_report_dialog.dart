@@ -4,7 +4,7 @@ import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../data/services/medication_report_pdf.dart';
-import '../../../../data/utils/formatters.dart';
+import '../../../../shared/formatters.dart';
 import '../../../../domain/logic/medication_report.dart';
 import '../../../../l10n/strings.dart';
 import '../../../../theme/app_tokens.dart';

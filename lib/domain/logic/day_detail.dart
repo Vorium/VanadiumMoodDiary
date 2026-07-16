@@ -12,7 +12,7 @@
 // v0.14 升级：4 层架构 — 接受 CheckInEntity / MoodEntryEntity
 library;
 
-import '../../data/utils/json_codec.dart';
+import '../../shared/json_codec.dart';
 import '../entities/check_in_entity.dart';
 import '../entities/medication_entity.dart';
 import '../entities/mood_entry_entity.dart';

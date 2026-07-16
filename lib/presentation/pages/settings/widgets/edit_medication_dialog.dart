@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/database/medication_mapper.dart';
-import '../../../../data/utils/formatters.dart';
+import '../../../../shared/formatters.dart';
 import '../../../../domain/entities/medication_entity.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/core_providers.dart';

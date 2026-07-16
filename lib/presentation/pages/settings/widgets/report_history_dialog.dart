@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/database/app_database.dart';
-import '../../../../data/utils/formatters.dart';
+import '../../../../shared/formatters.dart';
 import '../../../../l10n/strings.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/core_providers.dart';

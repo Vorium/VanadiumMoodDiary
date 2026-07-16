@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/utils/formatters.dart';
-import '../../data/utils/json_codec.dart';
+import '../../shared/formatters.dart';
+import '../../shared/json_codec.dart';
 import '../entities/check_in_entity.dart';
 import '../entities/medication_entity.dart';
 

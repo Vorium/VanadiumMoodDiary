@@ -6,7 +6,7 @@ library;
 import 'package:drift/drift.dart' show Value;
 
 import '../../domain/entities/mood_entry_entity.dart';
-import '../../data/utils/json_codec.dart';
+import '../../shared/json_codec.dart';
 import 'app_database.dart';
 
 extension MoodEntryToEntity on MoodEntry {
