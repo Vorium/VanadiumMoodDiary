@@ -1,0 +1,59 @@
+// v0.16 (Round 19) ReportHistoryRepositoryImpl — data 层 Drift 实现
+//
+// 对应 domain/entities/report_history_entity.dart
+// UI 只用 ReportHistoryEntity，不直接碰 Drift row
+
+import 'package:drift/drift.dart' show Value;
+
+import '../../domain/entities/report_history_entity.dart';
+import '../../domain/repositories/report_history_repository.dart';
+import '../database/app_database.dart';
+
+class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
+  final AppDatabase _db;
+  ReportHistoryRepositoryImpl(this._db);
+
+  ReportHistoryEntity _toEntity(ReportHistory r) => ReportHistoryEntity(
+        id: r.id,
+        windowDays: r.windowDays,
+        generatedAt: r.generatedAt,
+        userName: r.userName,
+        reportText: r.reportText,
+      );
+
+  @override
+  Stream<List<ReportHistoryEntity>> watchAll() {
+    return _db
+        .watchReportHistories()
+        .map((rows) => rows.map(_toEntity).toList(growable: false));
+  }
+
+  @override
+  Future<List<ReportHistoryEntity>> getAll() async {
+    final rows = await _db.getAllReportHistories();
+    return rows.map(_toEntity).toList(growable: false);
+  }
+
+  @override
+  Future<int> delete(int id) => _db.deleteReportHistory(id);
+
+  @override
+  Future<int> clearAll() => _db.clearAllReportHistories();
+
+  @override
+  Future<int> insert({
+    required int windowDays,
+    required DateTime generatedAt,
+    required String userName,
+    required String reportText,
+  }) {
+    return _db.insertReportHistory(
+      ReportHistoriesCompanion.insert(
+        windowDays: windowDays,
+        generatedAt: generatedAt,
+        userName: userName,
+        reportText: reportText,
+      ),
+    );
+  }
+}
