@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chroniccare/core/data/services/data_export_service.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:drift/drift.dart' show Value;
@@ -122,5 +124,170 @@ void main() {
     final result = await svc.importFromJson('{"version": 99, "contacts":[]}');
     expect(result.success, false);
     expect(result.error, contains('版本'));
+  });
+
+  // ===== P0-3: vent_entries 导出/导入 (round 14 P0 batch) =====
+
+  test('P0-3: 导出包含 ventEntries 文字,不导出 audioPath', () async {
+    await db.insertVentEntry(
+      VentEntriesCompanion.insert(
+        timestamp: DateTime(2026, 7, 13, 22, 0),
+        contentText: const Value('今天好累'),
+        audioPath: const Value('/fake/path/vent_xxx.m4a'),
+        audioDurationSec: const Value(45),
+        audioSizeBytes: const Value(234567),
+      ),
+    );
+
+    final json = await svc.exportToJson();
+    expect(json, contains('"ventEntries"'));
+    expect(json, contains('今天好累'));
+    // audioPath 永远不进 export(跨设备不可用)
+    expect(json, isNot(contains('/fake/path/vent_xxx.m4a')));
+    // 但 hadAudio 标志会带
+    expect(json, contains('"hadAudio": true'));
+    // version bump 到 3
+    expect(json, contains('"version": 3'));
+  });
+
+  test('P0-3: 纯文字 vent 条目正常导出', () async {
+    await db.insertVentEntry(
+      VentEntriesCompanion.insert(
+        timestamp: DateTime(2026, 7, 13, 22, 0),
+        contentText: const Value('想哭'),
+      ),
+    );
+
+    final json = await svc.exportToJson();
+    final data = jsonDecode(json) as Map<String, dynamic>;
+    final vents = data['ventEntries'] as List;
+    expect(vents, hasLength(1));
+    final v = vents.first as Map<String, dynamic>;
+    expect(v['contentText'], '想哭');
+    expect(v.containsKey('hadAudio'), false,
+        reason: '纯文字条目不应有 hadAudio 标志');
+  });
+
+  test('P0-3: 导入 v3 ventEntries 文字 + 录音元数据,丢弃 audioPath', () async {
+    final json = '''
+{
+  "version": 3,
+  "exportedAt": "2026-07-13T12:00:00.000Z",
+  "profile": null,
+  "contacts": [],
+  "medications": [],
+  "checkIns": [],
+  "reportHistories": [],
+  "moodEntries": [],
+  "ventEntries": [
+    {
+      "timestamp": "2026-07-12T22:00:00.000Z",
+      "contentText": "导入的树洞文字",
+      "audioDurationSec": 60,
+      "audioSizeBytes": 300000,
+      "hadAudio": true
+    },
+    {
+      "timestamp": "2026-07-13T22:00:00.000Z",
+      "contentText": "第二条",
+      "audioDurationSec": 0,
+      "audioSizeBytes": 0
+    }
+  ]
+}
+''';
+    final result = await svc.importFromJson(json);
+    expect(result.success, true);
+    expect(result.ventEntryCount, 2);
+
+    final entries = await db.watchVentEntries().first;
+    expect(entries, hasLength(2));
+    // watchVentEntries 按 timestamp DESC 排,2026-07-13 在前
+    expect(entries.first.contentText, '第二条');
+    expect(entries.last.contentText, '导入的树洞文字');
+    expect(entries.last.audioPath, isNull,
+        reason: '导入时 audioPath 必须始终是 null(跨设备失效)');
+    expect(entries.last.audioDurationSec, 60);
+  });
+
+  test('P0-3: 导入 v2 (没 ventEntries 段) 也能成功,只是 ventCount = 0', () async {
+    final json = '''
+{
+  "version": 2,
+  "exportedAt": "2026-07-13T12:00:00.000Z",
+  "profile": null,
+  "contacts": [],
+  "medications": [],
+  "checkIns": [],
+  "reportHistories": [],
+  "moodEntries": []
+}
+''';
+    final result = await svc.importFromJson(json);
+    expect(result.success, true);
+    expect(result.ventEntryCount, 0);
+  });
+
+  test('P0-3: 导入 v3 但 ventEntries 是空数组 → ventCount = 0', () async {
+    final json = '''
+{
+  "version": 3,
+  "exportedAt": "2026-07-13T12:00:00.000Z",
+  "profile": null,
+  "contacts": [],
+  "medications": [],
+  "checkIns": [],
+  "reportHistories": [],
+  "moodEntries": [],
+  "ventEntries": []
+}
+''';
+    final result = await svc.importFromJson(json);
+    expect(result.success, true);
+    expect(result.ventEntryCount, 0);
+  });
+
+  test('P0-3: 导入时坏 vent 数据 (timestamp 无效) 跳过,不抛错', () async {
+    final json = '''
+{
+  "version": 3,
+  "exportedAt": "2026-07-13T12:00:00.000Z",
+  "profile": null,
+  "contacts": [],
+  "medications": [],
+  "checkIns": [],
+  "reportHistories": [],
+  "moodEntries": [],
+  "ventEntries": [
+    {"timestamp": "not-a-date", "contentText": "应该被跳过"},
+    {"timestamp": "2026-07-12T22:00:00.000Z", "contentText": "有效"}
+  ]
+}
+''';
+    final result = await svc.importFromJson(json);
+    expect(result.success, true);
+    expect(result.ventEntryCount, 1);
+  });
+
+  test('P0-3: 导入 v3 → 再导出, 文字保留 (round-trip)', () async {
+    await db.insertVentEntry(
+      VentEntriesCompanion.insert(
+        timestamp: DateTime(2026, 7, 13, 22, 0),
+        contentText: const Value('今天好累'),
+      ),
+    );
+
+    final export1 = await svc.exportToJson();
+    // 清空 (新数据库)
+    await db.delete(db.ventEntries).go();
+    expect((await db.watchVentEntries().first), isEmpty);
+
+    // 重新导入
+    final result = await svc.importFromJson(export1);
+    expect(result.ventEntryCount, 1);
+
+    // 二次导出, 文字保留
+    final export2 = await svc.exportToJson();
+    expect(export2, contains('今天好累'));
   });
 }

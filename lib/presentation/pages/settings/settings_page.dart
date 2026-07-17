@@ -236,6 +236,20 @@ class SettingsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text('把下面这串 JSON 保存到安全的地方：'),
+              // P0-3 fix: 透明告知用户 vent 导出范围(文字导出,录音不导出)。
+              const SizedBox(height: AppTokens.spacingXs),
+              Container(
+                padding: const EdgeInsets.all(AppTokens.spacingSm),
+                decoration: BoxDecoration(
+                  color: AppTokens.warning.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+                ),
+                child: const Text(
+                  '说明：树洞(私密倾诉)的文字会导出，但录音文件不导出——'
+                  '录音存在 App 本地，重装后路径失效，无法跨设备复用。',
+                  style: TextStyle(fontSize: 12, height: 1.4),
+                ),
+              ),
               const SizedBox(height: AppTokens.spacingSm),
               Container(
                 padding: const EdgeInsets.all(AppTokens.spacingSm),
