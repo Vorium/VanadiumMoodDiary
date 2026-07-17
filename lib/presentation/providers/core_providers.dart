@@ -22,6 +22,7 @@ import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../domain/repositories/mood_repository.dart';
+import '../../domain/repositories/reminder_checker.dart';
 import '../../domain/repositories/report_history_repository.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import '../../domain/repositories/vent_repository.dart';
@@ -95,6 +96,12 @@ final reminderServiceProvider = Provider<ReminderService>(
     userProfileRepo: ref.watch(userProfileRepositoryProvider),
     smsService: ref.watch(smsServiceProvider),
   ),
+);
+
+/// v0.16 (Round 7): ReminderChecker 抽象 provider
+/// UseCase 拿这个，不直接拿 ReminderService。
+final reminderCheckerProvider = Provider<ReminderChecker>(
+  (ref) => ref.watch(reminderServiceProvider),
 );
 
 /// SMS 服务 provider

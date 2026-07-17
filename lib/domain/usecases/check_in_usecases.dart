@@ -15,8 +15,8 @@
 // - TriggerReminderUseCase.trigger()       → 手动触发失联检测（debug 入口）
 library;
 
-import '../../data/services/reminder_scheduler.dart';
 import '../repositories/check_in_repository.dart';
+import '../repositories/reminder_checker.dart';
 
 /// 每日打卡 use case
 class RecordCheckInUseCase {
@@ -55,14 +55,14 @@ class RecordTempMedicationUseCase {
 
 /// 手动触发失联检测（debug / settings 入口）
 class TriggerReminderUseCase {
-  final ReminderService _reminderService;
-  TriggerReminderUseCase(this._reminderService);
+  final ReminderChecker _checker;
+  TriggerReminderUseCase(this._checker);
 
   /// 主动跑一次失联检测 + 发送通知
   ///
   /// 返回 true = 通知已发送，false = 跳过了（未到时间或没联系人）
   Future<bool> call() async {
-    final result = await _reminderService.checkAndSend();
+    final result = await _checker.checkAndSend();
     return result.level != ReminderLevel.none;
   }
 }

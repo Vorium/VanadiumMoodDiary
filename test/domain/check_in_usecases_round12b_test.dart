@@ -10,6 +10,7 @@ import 'package:chroniccare/data/services/reminder_scheduler.dart';
 import 'package:chroniccare/data/services/sms_service.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
+import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 import 'package:chroniccare/domain/usecases/check_in_usecases.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -68,19 +69,17 @@ class _FakeCheckInRepository implements CheckInRepository {
 }
 
 /// Stub ReminderService — 不发真实通知，只跑 checkAndSend 返回 stub 结果
-class _StubReminderService extends ReminderService {
-  _StubReminderService(this._result) : super(
-    checkInRepo: CheckInRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
-    contactRepo: ContactRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
-    medicationRepo: MedicationRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
-    userProfileRepo: UserProfileRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
-    smsService: SmsService(),
-  );
+///
+/// v0.16 (Round 7): extends ReminderService 不行了（ReminderService 现在
+/// `implements ReminderChecker`，不能用 _Stub 截 _result 当成员）。
+/// 改成 implements ReminderChecker 直接，更轻。
+class _StubReminderService implements ReminderChecker {
+  _StubReminderService(this._result);
 
-  final ReminderResult _result;
+  final ReminderCheckResult _result;
 
   @override
-  Future<ReminderResult> checkAndSend() async => _result;
+  Future<ReminderCheckResult> checkAndSend() async => _result;
 }
 
 void main() {
@@ -133,7 +132,7 @@ void main() {
   group('TriggerReminderUseCase', () {
     test('level=none → 返回 false', () async {
       final stub = _StubReminderService(
-        ReminderResult.empty(), // level = none
+        ReminderCheckResult.empty(), // level = none
       );
       final useCase = TriggerReminderUseCase(stub);
 
@@ -143,7 +142,10 @@ void main() {
 
     test('level=medium → 返回 true', () async {
       final stub = _StubReminderService(
-        const ReminderResult(level: ReminderLevel.medium, smsResults: []),
+        const ReminderCheckResult(
+          level: ReminderLevel.medium,
+          smsResults: [],
+        ),
       );
       final useCase = TriggerReminderUseCase(stub);
 

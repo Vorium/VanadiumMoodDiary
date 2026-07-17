@@ -72,5 +72,7 @@ final recordTempMedicationUseCaseProvider =
 );
 
 final triggerReminderUseCaseProvider = Provider<TriggerReminderUseCase>(
-  (ref) => TriggerReminderUseCase(ref.watch(reminderServiceProvider)),
+  (ref) => TriggerReminderUseCase(ref.watch(reminderCheckerProvider)),
 );
+// reminderCheckerProvider 是 ReminderService 通过 ReminderChecker 抽象
+// 暴露的版本。use case 不直接拿 ReminderService，避免 domain → data 反向依赖。

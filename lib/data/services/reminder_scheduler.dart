@@ -3,12 +3,13 @@ import 'dart:developer' as developer;
 import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';
 import '../../domain/repositories/medication_repository.dart';
+import '../../domain/repositories/reminder_checker.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import '../../domain/logic/reminder_scheduler.dart' as logic;
 import 'sms_service.dart';
 
-// ReminderLevel + ReminderResult 来自 domain（v0.16 Round 19 合并）
-// data 层用同一份 enum/result，UI/CareEngine 也用 domain 那一套
+// ReminderLevel / ReminderCheckResult / SmsResultEntry 已搬到 domain
+// (v0.16 Round 7 合并，data 层只管 SMS 真实发送，不重复定义业务结果)
 
 /// 失联通知服务（应用层）
 ///
@@ -17,7 +18,7 @@ import 'sms_service.dart';
 /// - 多联系人轮询发送（不只是第一个）
 /// - 用 [SmsService] 真发短信（不再 mock log）
 /// - 发送状态记录在日志
-class ReminderService {
+class ReminderService implements ReminderChecker {
   final CheckInRepository _checkInRepo;
   final ContactRepository _contactRepo;
   final MedicationRepository _medicationRepo;
@@ -63,11 +64,12 @@ class ReminderService {
   /// 发送失联通知（按级别）
   ///
   /// 返回发送结果摘要
-  Future<ReminderResult> checkAndSend() async {
+  @override
+  Future<ReminderCheckResult> checkAndSend() async {
     final profile = await _userProfileRepo.get();
     if (profile == null) {
       developer.log('⚠️ 用户档案不存在，跳过', name: 'ReminderService');
-      return ReminderResult.empty();
+      return ReminderCheckResult.empty();
     }
 
     final allCheckIns = await _checkInRepo.watchAll().first;
@@ -83,7 +85,7 @@ class ReminderService {
 
     // 24h 内不打扰
     if (level == ReminderLevel.none) {
-      return ReminderResult.empty();
+      return ReminderCheckResult.empty();
     }
 
     final contacts = await _contactRepo.watchAll().first;
@@ -113,7 +115,7 @@ class ReminderService {
     if (level == ReminderLevel.soft) {
       developer.log('  → soft 级别：仅用户内部提示，不打扰紧急联系人',
           name: 'ReminderService',);
-      return ReminderResult(
+      return ReminderCheckResult(
         level: level,
         smsResults: const [],
       );
@@ -124,7 +126,7 @@ class ReminderService {
         logic.ReminderScheduler.selectAllActiveContacts(contacts);
     if (activeContacts.isEmpty) {
       developer.log('  ⚠️ 没有启用的紧急联系人', name: 'ReminderService');
-      return ReminderResult(level: level, smsResults: const []);
+      return ReminderCheckResult(level: level, smsResults: const []);
     }
 
     // 构造通知内容
@@ -153,7 +155,7 @@ class ReminderService {
     }
 
     developer.log('=' * 60, name: 'ReminderService');
-    return ReminderResult(level: level, smsResults: results);
+    return ReminderCheckResult(level: level, smsResults: results);
   }
 
   /// 构造短信正文
@@ -188,37 +190,4 @@ class ReminderService {
     final bDay = DateTime(b.year, b.month, b.day);
     return bDay.difference(aDay).inDays;
   }
-}
-
-enum ReminderLevel { none, soft, medium, hard, urgent }
-
-/// 一次失联检查的结果
-class ReminderResult {
-  final ReminderLevel level;
-  final List<SmsResultEntry> smsResults;
-
-  const ReminderResult({required this.level, required this.smsResults});
-
-  factory ReminderResult.empty() =>
-      const ReminderResult(level: ReminderLevel.none, smsResults: []);
-
-  bool get hasSmsFailures => smsResults.any((r) => !r.success);
-  int get successCount => smsResults.where((r) => r.success).length;
-  int get failCount => smsResults.where((r) => !r.success).length;
-}
-
-class SmsResultEntry {
-  final int contactId;
-  final String contactName;
-  final String phone;
-  final bool success;
-  final String? error;
-
-  const SmsResultEntry({
-    required this.contactId,
-    required this.contactName,
-    required this.phone,
-    required this.success,
-    this.error,
-  });
 }
