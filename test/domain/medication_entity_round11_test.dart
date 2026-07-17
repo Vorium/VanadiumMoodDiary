@@ -3,6 +3,7 @@ import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/database/medication_mapper.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/shared/domain_value.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -268,8 +269,8 @@ void main() {
 
     test('copyWith: 可空字段用 Value<>, 能"清空" endDate', () {
       final original = _entity(endDate: DateTime(2026, 7, 15));
-      // 传 Value(null) 应该清空
-      final cleared = original.copyWith(endDate: const Value(null));
+      // 传 DomainValue(null) 应该清空
+      final cleared = original.copyWith(endDate: const DomainValue<DateTime?>(null));
       expect(cleared.endDate, isNull);
     });
 
@@ -288,7 +289,7 @@ void main() {
 
     test('copyWith: 传 Value(refillAt: null) 应清空', () {
       final original = _entity(refillAt: DateTime(2026, 7, 25));
-      final cleared = original.copyWith(refillAt: const Value(null));
+      final cleared = original.copyWith(refillAt: const DomainValue<DateTime?>(null));
       expect(cleared.refillAt, isNull);
     });
 

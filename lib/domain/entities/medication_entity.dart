@@ -10,8 +10,7 @@
 // - 含业务方法（isActive, hasRefill, isRefillOverdue），不只做数据容器
 library;
 
-import 'package:drift/drift.dart' show Value;
-
+import '../../shared/domain_value.dart';
 import 'hour_minute.dart';
 
 /// 药物（领域实体）
@@ -90,9 +89,9 @@ class MedicationEntity {
     String? dosageUnit,
     List<HourMinute>? times,
     DateTime? startDate,
-    Value<DateTime?>? endDate,
+    DomainValue<DateTime?>? endDate,
     bool? isActive,
-    Value<DateTime?>? refillAt,
+    DomainValue<DateTime?>? refillAt,
     int? refillReminderDays,
   }) {
     return MedicationEntity(

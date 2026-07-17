@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/database/medication_mapper.dart';
+import '../../../../shared/domain_value.dart';
 import '../../../../shared/formatters.dart';
 import '../../../../domain/entities/hour_minute.dart';
 import '../../../../domain/entities/medication_entity.dart';
@@ -111,8 +112,8 @@ class _EditMedicationDialogState
     // 2) isActive 变化时同步 endDate（停药/恢复的语义）
     if (isActiveChanged) {
       updated = _isActive
-          ? updated.copyWith(endDate: const Value(null)) // 恢复
-          : updated.copyWith(endDate: Value(DateTime.now())); // 停药
+          ? updated.copyWith(endDate: const DomainValue<DateTime?>(null)) // 恢复
+          : updated.copyWith(endDate: DomainValue<DateTime?>(DateTime.now())); // 停药
     }
 
     try {

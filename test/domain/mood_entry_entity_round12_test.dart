@@ -2,6 +2,7 @@
 import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/database/mood_entry_mapper.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/shared/domain_value.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -136,7 +137,7 @@ void main() {
       final original = MoodEntryEntity(
         id: 1, timestamp: DateTime(2026), score: 3, note: '备忘',
       );
-      final cleared = original.copyWith(note: const Value(null));
+      final cleared = original.copyWith(note: const DomainValue<String?>(null));
       expect(cleared.note, isNull);
     });
 

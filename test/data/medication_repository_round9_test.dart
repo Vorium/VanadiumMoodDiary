@@ -4,6 +4,7 @@ import 'package:chroniccare/data/database/medication_mapper.dart';
 import 'package:chroniccare/data/database/medication_times.dart';
 import 'package:chroniccare/data/repositories/medication_repository_impl.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/shared/domain_value.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -150,7 +151,7 @@ void main() {
 
       final updated = original.copyWith(
         isActive: false,
-        endDate: Value(DateTime(2026, 8, 15)),
+        endDate: DomainValue<DateTime?>(DateTime(2026, 8, 15)),
       );
       await repo.update(updated);
 

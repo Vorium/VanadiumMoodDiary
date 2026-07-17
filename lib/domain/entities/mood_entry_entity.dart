@@ -9,8 +9,7 @@
 // - `score` 用 int 1-5，含 `scoreEmoji` / `scoreLabel` 便捷方法（通过 MoodVisual）
 library;
 
-import 'package:drift/drift.dart' show Value;
-
+import '../../shared/domain_value.dart';
 import '../../shared/json_codec.dart';
 
 /// 情绪记录（领域实体）
@@ -52,7 +51,7 @@ class MoodEntryEntity {
     DateTime? timestamp,
     int? score,
     String? tagsJson,
-    Value<String?>? note,
+    DomainValue<String?>? note,
   }) {
     return MoodEntryEntity(
       id: id ?? this.id,

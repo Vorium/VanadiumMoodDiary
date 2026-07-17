@@ -11,7 +11,7 @@
 // - equals / hashCode / toString 标准实现
 library;
 
-import 'package:drift/drift.dart' show Value;
+import '../../shared/domain_value.dart';
 
 /// 打卡类型
 ///
@@ -110,8 +110,8 @@ class CheckInEntity {
     int? id,
     DateTime? timestamp,
     CheckInType? type,
-    Value<int?>? medicationId,
-    Value<String?>? note,
+    DomainValue<int?>? medicationId,
+    DomainValue<String?>? note,
   }) {
     return CheckInEntity(
       id: id ?? this.id,
