@@ -44,6 +44,8 @@
 - `flutter analyze`: 0 issues（无 warning、无 error、无 info）
 - 4 个 `RadioListTile` 迁移到 Flutter 3.32+ `RadioGroup` 祖先 API
 - 88 个文件 `dart format` + `dart fix --apply` 一键 cleanup（229 fixes）
+- `test/scripts/check_all_test.dart` 新增 5 个测试，覆盖 `package:chroniccare/` 绝对路径 + `../../` 相对路径检测
+- 修 `check_all.dart` 潜在 Windows 路径 bug：`package:chroniccare/data/bar.dart` 的 rel 部分 `/` 没转 `Platform.pathSeparator`，导致 marker `\lib\data\` 匹配不上
 
 ## [0.15.0] - 2026-07-15
 
