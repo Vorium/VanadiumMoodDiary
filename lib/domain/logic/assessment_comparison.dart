@@ -174,7 +174,8 @@ class AssessmentComparisonCalculator {
 
   /// 从历史 records 提取最近一次 + 上一次的对比
   ///
-  /// [records] 应为同一量表的全部历史，**按时间正序**（最早在前）
+  /// [records] 推荐按时间正序传入（最早在前），但函数内部也会显式 sort
+  /// （v0.16 round 19 修复：之前依赖 caller 传 ASC，否则 current/previous 取错）
   /// [scaleId] 用于查 severityRank
   /// [now] 默认 DateTime.now()，可注入测试
   static AssessmentComparison fromRecords({
@@ -185,8 +186,11 @@ class AssessmentComparisonCalculator {
     if (records.isEmpty) {
       throw ArgumentError('records 不能为空');
     }
-    final current = records.last;
-    final previous = records.length >= 2 ? records[records.length - 2] : null;
+    // 显式按 timestamp 升序（早→晚），防止 caller 传未排序数据时 current/previous 取错
+    final sorted = [...records]
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    final current = sorted.last;
+    final previous = sorted.length >= 2 ? sorted[sorted.length - 2] : null;
 
     final currentRank = severityRankFor(
       scaleId: scaleId,

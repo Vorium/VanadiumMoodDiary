@@ -327,6 +327,38 @@ void main() {
       expect(cmp.current.total, 8);
       expect(cmp.previous!.total, 5);
     });
+
+    // v0.16 round 19 regression: 之前依赖 caller 传 ASC, 内部没 sort
+    test('接受 DESC 排序输入也能正确算 current / previous', () {
+      final records = [
+        // 故意倒序（晚→早）
+        _rec(scaleId: 'phq9', total: 8, timestamp: DateTime(2026, 7, 15)),
+        _rec(scaleId: 'phq9', total: 5, timestamp: DateTime(2026, 7, 1)),
+      ];
+      final cmp = AssessmentComparisonCalculator.fromRecords(
+        records: records,
+        scaleId: 'phq9',
+        now: DateTime(2026, 7, 15),
+      );
+      expect(cmp.current.total, 8, reason: 'current 应是最晚的 (7/15)');
+      expect(cmp.previous!.total, 5, reason: 'previous 应是次晚的 (7/1)');
+    });
+
+    test('接受乱序输入也能正确算 current / previous', () {
+      final records = [
+        // 故意乱序: [晚, 早, 中]
+        _rec(scaleId: 'phq9', total: 8, timestamp: DateTime(2026, 7, 15)),
+        _rec(scaleId: 'phq9', total: 5, timestamp: DateTime(2026, 7, 1)),
+        _rec(scaleId: 'phq9', total: 12, timestamp: DateTime(2026, 7, 8)),
+      ];
+      final cmp = AssessmentComparisonCalculator.fromRecords(
+        records: records,
+        scaleId: 'phq9',
+        now: DateTime(2026, 7, 15),
+      );
+      expect(cmp.current.total, 8);
+      expect(cmp.previous!.total, 12, reason: 'previous 应是次晚的 7/8 不是最早的 7/1');
+    });
   });
 
   group('AssessmentHistory', () {
