@@ -39,32 +39,44 @@ class MoodDialog {
                     for (int s = 1; s <= 5; s++)
                       GestureDetector(
                         onTap: () => setLocal(() => selectedScore = s),
-                        child: Column(
-                          children: [
-                            Text(
-                              MoodVisual.emojiFor(s),
-                              style: TextStyle(
-                                fontSize: 32,
-                                color:
-                                    s == selectedScore ? null : Colors.black26,
+                        // v0.17 round 14 (P2-1): 用 InkWell + minSize 48 保证
+                        // touch target ≥ 44pt (Material accessibility 建议).
+                        // 之前 32px emoji + 2px gap + label ≈ 50px 高度,但
+                        // 水平方向只有 emoji 宽,容易误触相邻评分。
+                        behavior: HitTestBehavior.opaque,
+                        child: Padding(
+                          // 让每个评分 cell ≥ 56x56 (含 padding)
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                MoodVisual.emojiFor(s),
+                                style: TextStyle(
+                                  fontSize: 32,
+                                  color:
+                                      s == selectedScore ? null : Colors.black26,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              MoodVisual.labelFor(s),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: s == selectedScore
-                                    ? Theme.of(ctx).colorScheme.primary
-                                    : Theme.of(ctx)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                fontWeight: s == selectedScore
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
+                              const SizedBox(height: 2),
+                              Text(
+                                MoodVisual.labelFor(s),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: s == selectedScore
+                                      ? Theme.of(ctx).colorScheme.primary
+                                      : Theme.of(ctx)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                  fontWeight: s == selectedScore
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                   ],
