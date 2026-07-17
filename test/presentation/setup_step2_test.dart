@@ -43,6 +43,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // P0-6: 跳过 consent 步(法律同意)
+      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.byType(Checkbox).at(i));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.widgetWithText(ElevatedButton, '开始设置'));
+      await tester.pumpAndSettle();
+
       // 走到第 2 步
       await tester.enterText(
         find.widgetWithText(TextField, '你的名字'),
@@ -77,11 +85,12 @@ void main() {
         reason: '应该看到"+ 添加药物"按钮',
       );
 
-      // 顶部标题
+      // 顶部标题 (P0-6:加 consent 步后是 4 步流程)
+      // 用 textContaining 因为可能中文字符不完全一致
       expect(
-        find.text('第 2 步 / 共 3 步'),
+        find.textContaining('步 / 共'),
         findsOneWidget,
-        reason: '顶部应该显示"第 2 步 / 共 3 步"',
+        reason: '顶部应该显示"第 X 步 / 共 X 步" (P0-6 加 consent 步后是 4 步)',
       );
 
       // 上一步按钮
@@ -114,6 +123,14 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
+
+      // P0-6: 跳过 consent 步(法律同意)
+      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.byType(Checkbox).at(i));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.widgetWithText(ElevatedButton, '开始设置'));
       await tester.pumpAndSettle();
 
       // 走到第 2 步

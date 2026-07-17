@@ -78,4 +78,7 @@ flutter:
     - assets/shaders/ink_sparkle.frag
   assets:
     - assets/icons/
+    - assets/legal/user_agreement.md
+    - assets/legal/privacy_policy.md
+    - assets/legal/sensitive_data_consent.md
     - .env

@@ -38,8 +38,6 @@
   "setupAddContact": "+ 添加另一个联系人",
   "setupNext": "下一步 →",
   "setupMedName": "药名",
-  // P0-5 fix: 原 "舍曲林" 是真实处方药通用名,违反《广告法》第 16 条 +
-  // 《医疗广告管理办法》。改中性文案,提示用户按实际药盒填写。
   "setupMedNameHint": "请输入药盒上的名称（选填）",
   "setupMedFrequency": "每日次数",
   "setupMedTimes1": "1次",

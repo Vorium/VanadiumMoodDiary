@@ -49,11 +49,33 @@ Future<void> _pumpSetup(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// P0-6: setup 流程加 consent 步(法律同意)。这个 helper 帮 test 跳过 consent
+/// 直接测后面 3 步(原行为不变)。
+Future<void> _passConsent(WidgetTester tester) async {
+  // 勾 3 个 checkbox
+  final checkboxes = find.byType(Checkbox);
+  expect(checkboxes, findsNWidgets(3),
+      reason: 'P0-6: setup step 0 (consent) 应该有 3 个 Checkbox');
+  for (var i = 0; i < 3; i++) {
+    await tester.tap(checkboxes.at(i));
+    await tester.pumpAndSettle();
+  }
+  // 点"开始设置"
+  final startBtn = find.widgetWithText(ElevatedButton, '开始设置');
+  expect(startBtn, findsOneWidget);
+  await tester.tap(startBtn);
+  await tester.pumpAndSettle();
+  // 现在应该到 step 1 (welcome) — "你好,我是慢病管家"
+  expect(find.text('你好，我是慢病管家'), findsOneWidget,
+      reason: 'P0-6: 勾完 3 个法律同意后,应该进入 welcome 步骤');
+}
+
 void main() {
   testWidgets(
     'setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2',
     (tester) async {
       await _pumpSetup(tester);
+      await _passConsent(tester);
 
       expect(find.text('你好，我是慢病管家'), findsOneWidget);
 
@@ -96,11 +118,15 @@ void main() {
         reason: '所有必填项都填了，按钮应该 enabled',
       );
 
-      // 4) 点击进入 step 2
+      // 4) 点击进入 step 2 (P0-6 后是 medication = 第 2 步,共 4 步)
       await tester.tap(nextFinder);
       await tester.pumpAndSettle();
       expect(find.text('你常吃什么药？'), findsOneWidget);
-      expect(find.text('第 2 步 / 共 3 步'), findsOneWidget);
+      expect(
+        find.textContaining('步 / 共'),
+        findsOneWidget,
+        reason: 'P0-6: 顶部应该显示"第 X 步 / 共 X 步" (4 步流程)',
+      );
     },
   );
 
@@ -108,6 +134,7 @@ void main() {
     'setup 第一步: 手机号格式无效 → 按钮 disabled + 显示错误',
     (tester) async {
       await _pumpSetup(tester);
+      await _passConsent(tester);
 
       final userNameField = find.widgetWithText(TextField, '你的名字');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
@@ -140,6 +167,7 @@ void main() {
     'setup 第一步: 重复手机号 → 按钮 disabled + 显示错误',
     (tester) async {
       await _pumpSetup(tester);
+      await _passConsent(tester);
 
       final userNameField = find.widgetWithText(TextField, '你的名字');
 
@@ -183,6 +211,7 @@ void main() {
     'setup 第一步: 名字为空 → 按钮 disabled + 显示提示',
     (tester) async {
       await _pumpSetup(tester);
+      await _passConsent(tester);
 
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       await tester.enterText(phoneField, _phone('1380013', '8000'));

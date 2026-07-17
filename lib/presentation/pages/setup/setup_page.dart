@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,7 +28,14 @@ class SetupPage extends ConsumerStatefulWidget {
 }
 
 class _SetupPageState extends ConsumerState<SetupPage> {
+  /// P0-6 fix: 加 1 步 consent (法律同意),变 4 步流程 (0=consent, 1=welcome,
+  /// 2=medication, 3=done)。所有 3 勾选必勾才能继续。
   int _step = 0;
+
+  // P0-6: 3 个法律勾选状态
+  bool _consentUserAgreement = false;
+  bool _consentPrivacyPolicy = false;
+  bool _consentSensitiveData = false;
 
   // Step 1
   final _nameController = TextEditingController();
@@ -88,7 +96,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
-      title: AppLocalizations.of(context).setupStep(_step + 1, 3),
+      title: AppLocalizations.of(context).setupStep(_step + 1, 4),
       // v0.17 round 14 (P2-4): setup wizard step transition
       // 之前只设了 duration,没设 transitionBuilder / layoutBuilder.
       // 现在用 fade + slide-up (occasional 频度,user 1-3 次).
@@ -129,14 +137,101 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   Widget _buildStep() {
     switch (_step) {
       case 0:
-        return _buildStepWelcome();
+        return _buildStepConsent();
       case 1:
-        return _buildStepMedication();
+        return _buildStepWelcome();
       case 2:
+        return _buildStepMedication();
+      case 3:
         return _buildStepDone();
       default:
         return _buildStepWelcome();
     }
+  }
+
+  // ============== Step 0: 法律同意 (P0-6 PIPL) ==============
+  Widget _buildStepConsent() {
+    return SingleChildScrollView(
+      key: const ValueKey(0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: AppTokens.spacingLg),
+          const Icon(
+            Icons.gavel_outlined,
+            size: 56,
+            color: AppTokens.primary,
+          ),
+          const SizedBox(height: AppTokens.spacingMd),
+          const Text(
+            '使用前请阅读',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeTitle,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          const Text(
+            '为遵守《个人信息保护法》(PIPL),本 App 处理您的健康医疗等'
+            '敏感个人信息前,需要您明确、单独同意以下 3 份文件。',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeBody,
+              color: AppTokens.textSecondary,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingLg),
+          _ConsentCheckRow(
+            checked: _consentUserAgreement,
+            label: '我已阅读并同意《用户协议》',
+            onTap: () => setState(() => _consentUserAgreement = !_consentUserAgreement),
+            onView: () => _showLegalDocument(context, 'user_agreement'),
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          _ConsentCheckRow(
+            checked: _consentPrivacyPolicy,
+            label: '我已阅读并同意《隐私政策》',
+            onTap: () => setState(() => _consentPrivacyPolicy = !_consentPrivacyPolicy),
+            onView: () => _showLegalDocument(context, 'privacy_policy'),
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          _ConsentCheckRow(
+            checked: _consentSensitiveData,
+            label: '我已阅读并同意《敏感个人信息处理同意书》',
+            onTap: () => setState(() => _consentSensitiveData = !_consentSensitiveData),
+            onView: () => _showLegalDocument(context, 'sensitive_data_consent'),
+          ),
+          const SizedBox(height: AppTokens.spacingXl),
+          Builder(
+            builder: (_) {
+              final allChecked = _consentUserAgreement &&
+                  _consentPrivacyPolicy &&
+                  _consentSensitiveData;
+              return ElevatedButton(
+                onPressed: allChecked
+                    ? () => setState(() => _step = 1)
+                    : null,
+                child: const Text('开始设置'),
+              );
+            },
+          ),
+          const SizedBox(height: AppTokens.spacingMd),
+          const Text(
+            '提示:您可以随时在「设置 → 法律与隐私」撤回同意。'
+            '拒绝或撤回后,App 的相关功能将无法使用。',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeCaption,
+              color: AppTokens.textHint,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingLg),
+        ],
+      ),
+    );
   }
 
   // ============== Step 1：欢迎 + 联系人 ==============
@@ -240,7 +335,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                     ),
                   ElevatedButton(
                     onPressed:
-                        err == null ? () => setState(() => _step = 1) : null,
+                        err == null ? () => setState(() => _step = 2) : null,
                     child: Text(AppLocalizations.of(context).setupNext),
                   ),
                 ],
@@ -356,7 +451,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           Row(
             children: [
               TextButton(
-                onPressed: _saving ? null : () => setState(() => _step = 0),
+                onPressed: _saving ? null : () => setState(() => _step = 1),
                 child: const Text('← 上一步'),
               ),
               const Spacer(),
@@ -683,7 +778,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           Row(
             children: [
               TextButton(
-                onPressed: () => setState(() => _step = 1),
+                onPressed: () => setState(() => _step = 2),
                 child: const Text('← 上一步'),
               ),
               const Spacer(),
@@ -769,7 +864,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       if (!mounted) return;
 
       if (mounted) {
-        setState(() => _step = 2);
+        setState(() => _step = 3);
       }
     } catch (e, st) {
       if (mounted) {
@@ -819,4 +914,134 @@ class _TemplateApplyResult {
   final MedicationTemplate template;
   final bool append;
   const _TemplateApplyResult({required this.template, required this.append});
+}
+
+/// P0-6: 法律同意勾选行(checklist + 查看按钮)
+class _ConsentCheckRow extends StatelessWidget {
+  final bool checked;
+  final String label;
+  final VoidCallback onTap;
+  final VoidCallback onView;
+
+  const _ConsentCheckRow({
+    required this.checked,
+    required this.label,
+    required this.onTap,
+    required this.onView,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: checked
+            ? AppTokens.primaryLight
+            : AppTokens.surface,
+        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+        border: Border.all(
+          color: checked ? AppTokens.primary : AppTokens.border,
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Checkbox(
+            value: checked,
+            onChanged: (_) => onTap(),
+            activeColor: AppTokens.primary,
+          ),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeLabel,
+                color: checked
+                    ? AppTokens.textPrimary
+                    : AppTokens.textSecondary,
+                fontWeight: checked ? FontWeight.w500 : FontWeight.normal,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onView,
+            child: const Text('查看'),
+          ),
+          const SizedBox(width: AppTokens.spacingXs),
+        ],
+      ),
+    );
+  }
+}
+
+/// P0-6: 显示法律 markdown 文档
+Future<void> _showLegalDocument(
+  BuildContext context,
+  String name,
+) async {
+  await showDialog<void>(
+    context: context,
+    builder: (ctx) => _LegalDocumentDialog(name: name),
+  );
+}
+
+class _LegalDocumentDialog extends StatelessWidget {
+  final String name;
+  const _LegalDocumentDialog({required this.name});
+
+  String get _title {
+    switch (name) {
+      case 'user_agreement':
+        return '用户协议';
+      case 'privacy_policy':
+        return '隐私政策';
+      case 'sensitive_data_consent':
+        return '敏感个人信息处理同意书';
+      default:
+        return name;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(_title),
+      content: SizedBox(
+        width: double.maxFinite,
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: FutureBuilder<String>(
+          future: _loadAsset('assets/legal/$name.md'),
+          builder: (context, snap) {
+            if (snap.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snap.hasError || !snap.hasData) {
+              return const Center(
+                child: Text('加载失败,请检查网络或重新打开 App'),
+              );
+            }
+            return SingleChildScrollView(
+              child: Text(
+                snap.data!,
+                style: const TextStyle(
+                  fontSize: AppTokens.fontSizeCaption,
+                  height: 1.5,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('关闭'),
+        ),
+      ],
+    );
+  }
+
+  Future<String> _loadAsset(String path) async {
+    // 用 rootBundle 异步加载(避免 BuildContext 跨 async gap 警告)
+    return rootBundle.loadString(path);
+  }
 }
