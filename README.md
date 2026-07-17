@@ -54,7 +54,7 @@ flutter test
 | 录音 | record 5.2.0 |
 | 音频播放 | audioplayers 6.8.1 |
 
-## 📁 目录结构（4 层架构）
+## 📁 目录结构（4 层架构 + 共享层）
 
 ```
 lib/
@@ -66,20 +66,29 @@ lib/
 ├── data/                  # 基础设施层
 │   ├── database/         # Drift 表 + 数据库
 │   ├── repositories/     # 仓库实现（_impl.dart）
-│   ├── services/         # 通知/邮件/SMS/PDF/迁移
-│   └── utils/            # JSON 编解码、表单格式化
-├── domain/                # 领域层（纯 Dart，无 Flutter 依赖）
-│   ├── entities/          # 业务实体（MedicationEntity / CheckInEntity 等）
+│   └── services/         # 通知/邮件/SMS/PDF/录音
+├── domain/                # 领域层（纯 Dart，0 Flutter 0 Drift 依赖）
+│   ├── entities/          # 业务实体（*Entity 后缀）
 │   ├── logic/             # 业务规则（量表/streak/care engine/报告）
 │   ├── repositories/      # 抽象接口（无实现）
 │   └── usecases/          # 用例（业务编排）
+├── shared/                # 共享层：domain + data + presentation 都能用
+│   ├── formatters.dart    # 日期/时间格式化
+│   ├── json_codec.dart    # JSON 编解码
+│   ├── domain_value.dart  # DomainValue<T>（替代 drift Value<T>）
+│   └── mood_visual.dart   # 情绪分数 → emoji/label/ARGB int
 └── presentation/          # UI 层
     ├── providers/         # Riverpod providers
-    ├── pages/             # 页面（home/setup/settings/assessment/...）
+    ├── pages/             # 页面（home/setup/settings/assessment/vent/...）
     └── widgets/           # 通用组件
 ```
 
-**依赖方向**：`presentation → domain ← data`，domain 不知道 data/presentation 存在。
+**依赖方向**：`presentation → domain ← data`，**shared** 是 3 层都能用的横切层。
+**4 层纯度自动检查**：
+```bash
+dart run scripts/check_domain_purity.dart
+dart run scripts/check_architecture_consistency.dart
+```
 
 ## ✨ 功能
 
@@ -119,9 +128,13 @@ lib/
 flutter test                          # 跑所有测试（462 cases）
 flutter test --coverage               # 覆盖率
 dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
+
+# 4 层架构纯度 + 一致性检查（v0.16 Round 9-11）
+dart run scripts/check_domain_purity.dart
+dart run scripts/check_architecture_consistency.dart
 ```
 
-测试覆盖：domain 业务逻辑（量表、streak、报告、用药）+ data 仓库（round-trip）+ presentation widget（页面渲染、交互）。
+测试覆盖：domain 业务逻辑（量表、streak、报告、用药）+ data 仓库（round-trip）+ presentation widget（页面渲染、交互）。架构检查覆盖 import 依赖方向 + entity ↔ table 对应 + shared 工具使用率。
 
 ## 🛠 调试
 

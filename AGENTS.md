@@ -8,9 +8,9 @@
 
 **栈**：Flutter 3.44.5 / Dart 3.12.2 / Riverpod 2.6 / Drift 2.28 (SQLCipher) / go_router 14.6。
 
-**核心特性**：本地加密、零云端、4 层架构（`presentation → domain ← data`）。
+**核心特性**：本地加密、零云端、4 层架构（`presentation → domain ← data`）+ 共享层（`shared/`）。
 
-## 4 层架构
+## 4 层架构 + 共享层
 
 ```
 lib/
@@ -26,12 +26,17 @@ lib/
 │   │   └── app_database.dart
 │   ├── repositories/     # *RepositoryImpl（实现 domain 接口）
 │   ├── services/         # 通知/邮件/SMS/录音/导出
-│   └── utils/            # JSON 编解码、表单格式化
-├── domain/                # 领域层（0 Flutter 依赖！）
+│   └── (无 utils/ - 搬到 shared/ 了)
+├── domain/                # 领域层（0 Flutter 0 Drift 0 data 0 presentation）
 │   ├── entities/         # 业务实体（*Entity 后缀）
 │   ├── logic/            # 业务规则（量表/streak/care engine/报告）
 │   ├── repositories/     # 抽象接口（无实现）
 │   └── usecases/         # 用例（业务编排）
+├── shared/                # 共享层：domain + data + presentation 共用
+│   ├── formatters.dart    # 格式化工具
+│   ├── json_codec.dart    # JSON 编解码
+│   ├── domain_value.dart  # DomainValue<T>（替代 drift Value<T>）
+│   └── mood_visual.dart   # 情绪分数 → emoji/label/ARGB int
 └── presentation/          # UI 层
     ├── providers/         # Riverpod providers
     ├── pages/             # 1 个页面 = 1 个目录
@@ -135,6 +140,28 @@ dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 ```
 
 **dev 服务器坑**：web 平台不能用 `flutter run -d chrome`（drift worker 404），用 `flutter build web` + `python -m http.server 8358` 走 production 模式。
+
+## 架构检查脚本（v0.16 Round 9-11）
+
+2 个 CI 友好的脚本检查 4 层架构健康度：
+
+```bash
+dart run scripts/check_domain_purity.dart        # 验证 domain/shared 0 flutter/drift/data/presentation
+dart run scripts/check_architecture_consistency.dart  # 验证 entity ↔ table 对应 + shared 被 3 层用
+```
+
+**`check_domain_purity.dart`** 检查：
+- `domain/` 禁止 import `package:flutter/` / `package:drift/` / `package:chroniccare/data/` / `package:chroniccare/presentation/`
+- `shared/` 禁止 import 上述 4 个
+- `data/` 禁止 import `package:chroniccare/presentation/`
+- 违规时 exit code 1，CI 会 fail
+
+**`check_architecture_consistency.dart`** 检查：
+- 每个 domain `*Entity` 都对应一个 drift `@DataClassName('X')` table
+- 每个 drift table 都对应一个 domain `*Entity`
+- `shared/` 每个文件至少被 2 层用（否则考虑移进单层）
+
+**已知 bug 修复**：写这俩脚本时发现 Dart `RegExp` 默认 `^` 不 multi-line — 必须显式 `multiLine: true` 或用 `readAsLinesSync()` 逐行处理。
 
 ## 关键约束
 
