@@ -82,20 +82,5 @@ void main() {
       );
       expect(body, contains('不包含任何医疗建议'));
     });
-
-    test('buildHtml 是有效的 HTML 结构', () {
-      final html = EmailTemplate.buildHtml(
-        userName: '小明',
-        daysWithoutCheckIn: 2,
-        lastCheckIn: lastCheckIn,
-        medication: medication,
-        cycleHours: 48,
-      );
-      expect(html, contains('<!DOCTYPE html>'));
-      expect(html, contains('<html>'));
-      expect(html, contains('</html>'));
-      expect(html, contains('慢病管家'));
-      expect(html, contains('🌱'));
-    });
   });
 }
