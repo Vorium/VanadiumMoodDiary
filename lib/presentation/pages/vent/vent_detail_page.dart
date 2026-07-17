@@ -63,18 +63,31 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     _positionSub?.cancel();
     _completeSub?.cancel();
     _player.dispose();
+    // P0-2: 清理临时解密文件(以防用户离开页面时还在播)
+    if (_tempDecryptedPath != null) {
+      ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+      _tempDecryptedPath = null;
+    }
     super.dispose();
   }
+
+  /// P0-2: 当前播放用的临时解密文件,页面离开时清
+  String? _tempDecryptedPath;
 
   Future<void> _togglePlay(VentEntryEntity entry) async {
     final path = entry.audioPath;
     if (path == null) return;
     if (_isPlaying) {
       await _player.pause();
+      // 不删 temp(pause 后 resume 还要用)
       if (mounted) setState(() => _isPlaying = false);
     } else {
       try {
-        await _player.play(DeviceFileSource(path));
+        // P0-2: path 是 .m4a.enc 加密文件 → 先 decryptToTemp → audioplayer 播
+        final storage = ref.read(ventAudioStorageProvider);
+        // 如果已有 temp (从 pause 恢复),直接复用
+        _tempDecryptedPath ??= await storage.decryptToTemp(path);
+        await _player.play(DeviceFileSource(_tempDecryptedPath!));
         if (mounted) setState(() => _isPlaying = true);
       } catch (e) {
         if (mounted) {

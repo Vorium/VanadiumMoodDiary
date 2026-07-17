@@ -1,0 +1,124 @@
+// v0.18 round 14 (P0-2) EncryptionService — 树洞音频文件加密
+//
+// 设计目标:
+// - 设备绑定的 AES-256 加密 key,不存在应用目录外的任何地方
+// - 启动时 lazy load (第一次用时从 SecureStorage 取 / 生成)
+// - 加密 blob 自带随机 IV(每文件不同),格式: [16-byte IV][N-byte ciphertext]
+// - key 不存明文在磁盘,只在内存中
+//
+// 已知限制(v0.18):
+// - key 绑设备 SecureStorage,root 设备仍可拿到 key (SecureStorage 本身
+//   走 iOS Keychain / Android Keystore,普通用户访问不到)
+// - 跨设备/重装后无法恢复加密音频(因为 SecureStorage 跟着设备走)
+// - 换设备 → 旧录音无法回放(只能看文字,跟 data_export 行为一致)
+//
+// 改进方向(v1.0+):
+// - 改用用户密码派生的 key (PBKDF2 + salt),用户换设备输入密码恢复
+// - 备份时让用户输入密码导出加密包(类似 KeePass)
+//
+// v0.18 选设备绑定 key 的理由:
+// - 不需要 UI 流程 (不用让用户每次输密码)
+// - 不增加忘记密码的风险
+// - 仍然显著强于"完全明文" — 普通用户根本进不到 app docs
+//   (沙箱隔离,非 root 设备无法直接读)
+library;
+
+import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:encrypt/encrypt.dart' as enc;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+/// AES-256 加密 / 解密服务(树洞音频)
+class EncryptionService {
+  static const _keyName = 'vent_audio_encryption_key_v1';
+  static const _storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+  );
+
+  enc.Key? _cachedKey;
+
+  /// 取或创建 device-bound 32-byte key
+  ///
+  /// 第一次调用时:
+  /// 1. 从 SecureStorage 读 _keyName
+  /// 2. 不存在 → SecureRandom 生成 32 bytes → base64 存回 SecureStorage
+  /// 3. 缓存到内存
+  Future<enc.Key> getOrCreateKey() async {
+    if (_cachedKey != null) return _cachedKey!;
+
+    final existing = await _storage.read(key: _keyName);
+    Uint8List keyBytes;
+    if (existing != null) {
+      keyBytes = base64Decode(existing);
+      if (keyBytes.length != 32) {
+        // 异常长度,重新生成
+        keyBytes = _randomBytes(32);
+        await _storage.write(key: _keyName, value: base64Encode(keyBytes));
+      }
+    } else {
+      keyBytes = _randomBytes(32);
+      await _storage.write(key: _keyName, value: base64Encode(keyBytes));
+    }
+    _cachedKey = enc.Key(keyBytes);
+    return _cachedKey!;
+  }
+
+  /// 加密字节数组 → 加密 blob(IV + ciphertext 拼接)
+  ///
+  /// 格式: [16-byte IV][N-byte ciphertext]
+  /// 每文件用随机 IV,保证相同明文 + 相同 key 加密结果不同
+  Future<Uint8List> encrypt(Uint8List plaintext) async {
+    final key = await getOrCreateKey();
+    final iv = enc.IV(_randomBytes(16));
+    final encrypter = enc.Encrypter(
+      enc.AES(key, mode: enc.AESMode.cbc, padding: 'PKCS7'),
+    );
+    final encrypted = encrypter.encryptBytes(plaintext, iv: iv);
+    final out = Uint8List(iv.bytes.length + encrypted.bytes.length);
+    out.setRange(0, iv.bytes.length, iv.bytes);
+    out.setRange(iv.bytes.length, out.length, encrypted.bytes);
+    return out;
+  }
+
+  /// 解密 blob → 明文字节
+  ///
+  /// [blob] 必须是 [encrypt] 产生的格式([16-byte IV][ciphertext])
+  Future<Uint8List> decrypt(Uint8List blob) async {
+    if (blob.length < 16) {
+      throw const FormatException('Encrypted blob too short (< 16 bytes)');
+    }
+    final iv = enc.IV(blob.sublist(0, 16));
+    final ciphertext = blob.sublist(16);
+    final key = await getOrCreateKey();
+    final encrypter = enc.Encrypter(
+      enc.AES(key, mode: enc.AESMode.cbc, padding: 'PKCS7'),
+    );
+    return Uint8List.fromList(
+      encrypter.decryptBytes(enc.Encrypted(ciphertext), iv: iv),
+    );
+  }
+
+  /// 测试用: 重置 key (清缓存 + 删 SecureStorage)
+  Future<void> resetForTest() async {
+    _cachedKey = null;
+    await _storage.delete(key: _keyName);
+  }
+
+  /// 用 SecureRandom 生成 N 个随机字节
+  ///
+  /// `dart:math.Random.secure()` 在所有平台 (iOS / Android / Web) 都
+  /// 走 OS 的 CSPRNG,够安全。
+  static Uint8List _randomBytes(int n) {
+    final rng = Random.secure();
+    final out = Uint8List(n);
+    for (var i = 0; i < n; i++) {
+      out[i] = rng.nextInt(256);
+    }
+    return out;
+  }
+}

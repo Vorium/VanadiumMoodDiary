@@ -20,6 +20,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as p;
 import 'package:record/record.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -68,13 +69,36 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     if (_isRecording) {
       // 停止录音
       try {
-        final path = await _recorder.stop();
-        if (path != null && mounted) {
-          setState(() {
-            _audioPath = path;
-            _isRecording = false;
-          });
-          await _getAudioDuration(path);
+        final plainPath = await _recorder.stop();
+        if (plainPath != null && mounted) {
+          // P0-2: 录音停下后立刻加密,原 m4a 删掉
+          // 用 _audioPath 临时存加密后路径,UI 也用这个
+          final storage = ref.read(ventAudioStorageProvider);
+          final encryptedPath = await storage.newAudioPath();
+          try {
+            await storage.encryptAndWrite(
+              plainPath: plainPath,
+              encryptedPath: encryptedPath,
+            );
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                AppSnackBar.error(context, action: '加密录音', error: e),
+              );
+            }
+            // 加密失败 → 不保存音频,但 _isRecording 还是 false
+            setState(() {
+              _isRecording = false;
+            });
+            return;
+          }
+          if (mounted) {
+            setState(() {
+              _audioPath = encryptedPath;
+              _isRecording = false;
+            });
+            await _getAudioDuration(encryptedPath);
+          }
         }
       } catch (e) {
         if (mounted) {
@@ -96,16 +120,21 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
           }
           return;
         }
-        // 生成新路径
-        final storage = ref.read(ventAudioStorageProvider);
-        final path = await storage.newAudioPath();
+        // P0-2 fix: 录音写到 OS 临时目录(明文),stop 后立刻加密
+        // 存到 app docs/{dir}/vent_xxx.m4a.enc (DB 存的路径 = 加密路径)
+        // 之前的版本直接写到 newAudioPath() 但那是 .m4a.enc 后缀,
+        // record 写明文 m4a 会被理解为加密文件,bug。
+        final tempPath = p.join(
+          Directory.systemTemp.path,
+          'vent_record_${DateTime.now().millisecondsSinceEpoch}.m4a',
+        );
         await _recorder.start(
           const RecordConfig(
             encoder: AudioEncoder.aacLc, // m4a (aac)
             bitRate: 64000,
             sampleRate: 44100,
           ),
-          path: path,
+          path: tempPath,
         );
         if (mounted) setState(() => _isRecording = true);
       } catch (e) {
@@ -119,12 +148,16 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
   }
 
   Future<void> _getAudioDuration(String path) async {
-    // 用 audioplayers 探测时长
+    // P0-2 fix: path 是 .m4a.enc,audioplayer 不能直接吃。
+    // 先 decryptToTemp → 用 temp path 推时长 → 删 temp。
     // v0.16 round 19B: 用 try/finally 确保 player.dispose() 在异常路径也跑
     // 修前：setSource/getDuration 抛异常时直接走 catch，player 没 dispose → leak
     final player = AudioPlayer();
+    String? tempForDuration;
     try {
-      await player.setSource(DeviceFileSource(path));
+      final storage = ref.read(ventAudioStorageProvider);
+      tempForDuration = await storage.decryptToTemp(path);
+      await player.setSource(DeviceFileSource(tempForDuration));
       final d = await player.getDuration();
       if (mounted && d != null) {
         setState(() {
@@ -135,6 +168,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       // 时长探测失败不影响保存
     } finally {
       await player.dispose();
+      if (tempForDuration != null) {
+        await ref
+            .read(ventAudioStorageProvider)
+            .deleteTempFile(tempForDuration);
+      }
     }
   }
 
@@ -142,10 +180,22 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     if (_audioPath == null) return;
     if (_isPlaying) {
       await _player.stop();
+      // 清理临时解密文件
+      if (_tempDecryptedPath != null) {
+        await ref
+            .read(ventAudioStorageProvider)
+            .deleteTempFile(_tempDecryptedPath!);
+        _tempDecryptedPath = null;
+      }
       if (mounted) setState(() => _isPlaying = false);
     } else {
       try {
-        await _player.play(DeviceFileSource(_audioPath!));
+        // P0-2: _audioPath 是 .m4a.enc 加密文件,audioplayer 不能直接播。
+        // 先 decryptToTemp 到 temp dir,播完清。
+        final storage = ref.read(ventAudioStorageProvider);
+        final tempPath = await storage.decryptToTemp(_audioPath!);
+        _tempDecryptedPath = tempPath;
+        await _player.play(DeviceFileSource(tempPath));
         if (mounted) setState(() => _isPlaying = true);
       } catch (e) {
         if (mounted) {
@@ -156,6 +206,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       }
     }
   }
+
+  /// P0-2: 播放时生成的临时解密文件路径,dispose 时清理
+  String? _tempDecryptedPath;
 
   Future<void> _reRecord() async {
     if (_audioPath != null) {
