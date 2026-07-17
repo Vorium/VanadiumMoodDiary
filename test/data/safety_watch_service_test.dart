@@ -88,8 +88,12 @@ void main() {
     test('正常(<阈值) → ok', () async {
       await setupProfile(name: '张三');
       await setupContact(phone: '13800138000');
-      await checkInAt(DateTime.now().subtract(const Duration(hours: 6)));
-      final result = await safety.checkNow();
+      // P0-4 fix: 显式锚定 now,避免跨 midnight (00:00-06:00) 跑时
+      // `DateTime.now().subtract(hours: 6)` 落到前一天 → _daysBetween = 1
+      // 期望 0 实际 1 → flake。
+      final fixedNow = DateTime(2026, 7, 17, 10, 0);
+      await checkInAt(fixedNow.subtract(const Duration(hours: 6)));
+      final result = await safety.checkNow(now: fixedNow);
       expect(result.kind, SafetyCheckKind.ok);
       expect(result.daysSinceLast, 0);
     });
