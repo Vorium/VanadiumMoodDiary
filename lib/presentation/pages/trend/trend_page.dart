@@ -33,11 +33,14 @@ class TrendPage extends ConsumerStatefulWidget {
 class _TrendPageState extends ConsumerState<TrendPage> {
   _TrendView _view = _TrendView.list;
   // 日历视图：当前查看的月份（1 号 0 点）
-  DateTime _calendarMonth = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-    1,
-  );
+  // v0.16 round 19 fix: 之前用 2 次 DateTime.now() 跨 midnight 时 year/month 可能不一致
+  // （23:59:59.999 返回 (2026, 12)，00:00:00.001 返回 (2027, 1) → 错误的 month）
+  DateTime _calendarMonth = _initialCalendarMonth();
+
+  static DateTime _initialCalendarMonth() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, 1);
+  }
 
   @override
   Widget build(BuildContext context) {

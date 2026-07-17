@@ -172,13 +172,15 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     if (_editingRefill.contains(med.id)) return;
     setState(() => _editingRefill.add(med.id));
     try {
-      final initialDate =
-          med.refillAt ?? DateTime.now().add(const Duration(days: 30));
+      // v0.16 round 19 fix: 之前 3 次 DateTime.now() 跨 midnight 时 initialDate/firstDate/lastDate 可能不一致
+      // 统一在 await 之前算一次 now, 避免理论上 midnight 边界 race
+      final now = DateTime.now();
+      final initialDate = med.refillAt ?? now.add(const Duration(days: 30));
       final picked = await showDatePicker(
         context: context,
         initialDate: initialDate,
-        firstDate: DateTime.now().subtract(const Duration(days: 7)),
-        lastDate: DateTime.now().add(const Duration(days: 365)),
+        firstDate: now.subtract(const Duration(days: 7)),
+        lastDate: now.add(const Duration(days: 365)),
         helpText: '选择续方日期',
         cancelText: '取消',
         confirmText: '确定',
