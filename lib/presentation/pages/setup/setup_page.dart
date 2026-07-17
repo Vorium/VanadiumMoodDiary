@@ -89,9 +89,39 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   Widget build(BuildContext context) {
     return PageScaffold(
       title: AppLocalizations.of(context).setupStep(_step + 1, 3),
+      // v0.17 round 14 (P2-4): setup wizard step transition
+      // 之前只设了 duration,没设 transitionBuilder / layoutBuilder.
+      // 现在用 fade + slide-up (occasional 频度,user 1-3 次).
+      // layoutBuilder 让新旧 child 在切换瞬间叠加,避免 height 跳变.
       child: AnimatedSwitcher(
         duration: AppTokens.durNormal,
-        child: _buildStep(),
+        switchInCurve: AppTokens.curveDecelerate,
+        switchOutCurve: AppTokens.curveAccelerate,
+        transitionBuilder: (child, anim) {
+          return FadeTransition(
+            opacity: anim,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.04),
+                end: Offset.zero,
+              ).animate(anim),
+              child: child,
+            ),
+          );
+        },
+        layoutBuilder: (currentChild, previousChildren) {
+          return Stack(
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              ...previousChildren,
+              if (currentChild != null) currentChild,
+            ],
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey<int>(_step),
+          child: _buildStep(),
+        ),
       ),
     );
   }
