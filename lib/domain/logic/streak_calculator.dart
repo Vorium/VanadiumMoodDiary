@@ -21,9 +21,10 @@ class StreakCalculator {
   ///
   /// 算法：
   /// 1. 过滤 normal 类型
-  /// 2. 提取去重的 calendar day（一个 day 只算 1 次）
-  /// 3. 倒序遍历，gap = 1 day 算连续，gap > 1 day 算中断
-  /// 4. 距今天 > 36h 视为过期，streak 0
+  /// 2. 显式按 timestamp DESC 排序（callers 通常传已排序数据,但保险起见显式 sort）
+  /// 3. 提取去重的 calendar day（一个 day 只算 1 次）
+  /// 4. 倒序遍历，gap = 1 day 算连续，gap > 1 day 算中断
+  /// 5. 距今天 > 36h 视为过期，streak 0
   static int calculate({
     required List<CheckInEntity> checkIns,
     required DateTime now,
@@ -32,6 +33,10 @@ class StreakCalculator {
 
     final normal = checkIns.where((c) => c.isNormal).toList();
     if (normal.isEmpty) return 0;
+
+    // 0. 显式按 timestamp 倒序 — 防止 caller 传未排序数据时算错
+    //    (修复 v0.16 round 19 发现的隐式排序假设 bug)
+    normal.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
     // 1. 检查最新打卡是否在 36h 内
     //
@@ -83,6 +88,9 @@ class StreakCalculator {
   }) {
     final normal = checkIns.where((c) => c.isNormal).toList();
     if (normal.isEmpty) return false;
+
+    // 显式按 timestamp 倒序 (同 calculate 注释)
+    normal.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
     final lastCheckIn = normal.first;
     final hoursSinceLast = now.difference(lastCheckIn.timestamp).inHours;

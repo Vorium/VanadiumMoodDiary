@@ -123,5 +123,45 @@ void main() {
         );
       });
     });
+
+    // v0.16 round 19 regression: 之前依赖 caller 传已排序数据(Round 13 round 3 加 care_engine sort 之前的状态)
+    // 现在 calculate + shouldShowStreakBroken 内部都 sort,unsorted 也得算对
+    group('unsorted input（v0.16 round 19 fix）', () {
+      test('calculate 接受 ASC 排序的输入,结果跟 DESC 一致', () {
+        // 故意 ASC（旧 bug 状态：caller 传 unsorted 数据会算错）
+        final checkIns = [
+          makeCheckIn(daysAgo(2)),
+          makeCheckIn(daysAgo(1)),
+          makeCheckIn(now),
+        ];
+        // 重排：toReversed 不改变 list,我们这里直接传 ASC
+        final result = StreakCalculator.calculate(checkIns: checkIns, now: now);
+        expect(result, 3, reason: 'ASC 输入也应正确算出 3 天 streak');
+      });
+
+      test('calculate 接受乱序输入也能正确算', () {
+        // 故意乱序：[昨天, 今天, 前天]
+        final checkIns = [
+          makeCheckIn(daysAgo(1)),
+          makeCheckIn(now),
+          makeCheckIn(daysAgo(2)),
+        ];
+        final result = StreakCalculator.calculate(checkIns: checkIns, now: now);
+        expect(result, 3);
+      });
+
+      test('shouldShowStreakBroken 接受乱序输入也能正确判断', () {
+        // 故意 [前天, 今天] 乱序
+        final checkIns = [
+          makeCheckIn(daysAgo(2)),
+          makeCheckIn(now),
+        ];
+        expect(
+          StreakCalculator.shouldShowStreakBroken(checkIns: checkIns, now: now),
+          false,
+          reason: '今天有打卡,即使是乱序输入也该返回 false',
+        );
+      });
+    });
   });
 }
