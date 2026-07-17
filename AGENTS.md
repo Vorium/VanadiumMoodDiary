@@ -97,6 +97,7 @@ lib/
 ```bash
 flutter analyze    # 必须 0 error
 flutter test       # 必须全过（当前 528 cases）
+python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 检查)
 ```
 
 ## 隐私边界
@@ -190,6 +191,11 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **emil 动效 token 必须集中**（v0.17 round 1）：项目原本 `app_tokens.dart` 只有 `durFast/durNormal/durSlow`，缺 `curve*` 常量。各 widget 各写各的 `Curves.easeInOut` 风格不统一。修：4 个 curve token + emil 决策框架 doc 注释（100+/day 无动画, tens/day 微弱, occasional 标准, rare 可加 delight）
 - **go_router 默认无 transition**（v0.17 round 2）：`GoRoute.builder` 默认切换无动画。修：用 `pageBuilder` + `CustomTransitionPage`，3 类 transition（fade / slide-right / slide-up）按频度分类
 - **Material 3 InkWell + Flutter 3.44.5 widget test**（v0.17 round 8）：`tester.tap(InkWell) + pumpAndSettle()` 触发 ripple 时报 `Unsupported runtime stages format version. Expected 2, got 1.`。原因：3.44.5 runtime 期望 stage format 2，但 SDK 自带 + 项目 assets 里的 `ink_sparkle.frag` 都是 format 1，3.44.5 编译 pipeline 暂不匹配。**临时绕道**：1）测试里用 `tester.tap(...)` 后只 `pump()` 不 `pumpAndSettle()`，避免 ripple 动画完整播；2）或在 `pumpWidget` 前 `MaterialApp` 替换 `splashFactory: NoSplash.splashFactory` 禁用 ink_sparkle。**不要在 pubspec.yaml 加 `shaders:` 字段 + 复制 SDK 的 .frag**，runtime 仍会失败（3.44.5 + 3.41.9 shader format 不匹配）。找 bug 方法：`flutter test` 输出里有 `ink_sparkle` + `INVALID_ARGUMENT`/`format version`，不要复制 SDK shader 浪费时间
+- **跨 feature import 边界**（v0.17 round 12）：presentation/ 按 feature 拆（`pages/{check_in,medication,mood,vent,...}/`），但跨 feature 引入别的 feature 的 `presentation/pages/` 会导致耦合蔓延。**规则**：
+  - ✅ 允许跨 feature import `core/`, `domain/`, `data/`, `presentation/providers/`, `presentation/widgets/`
+  - ❌ 禁止 `presentation/pages/{feature A}/` import `presentation/pages/{feature B}/`（除 hub：`home` 和 `settings`）
+  - 验证：`python scripts/check_cross_feature.py`（CI 模式 `--ci` 退出码 1）
+  - 例外：通用 widget（"次要按钮"之类）放 `presentation/widgets/`，别放 `pages/home/widgets/`（否则 mood 之类 feature 用了会触发 lint）
 
 ## 决策记录
 

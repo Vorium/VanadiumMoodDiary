@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
-/// 主页辅助按钮（v0.9 重构：抽出共用 style）
+/// 通用次要按钮（v0.9 重构：抽出共用 style）
 ///
 /// 用途：临时吃药、记一下情绪等"次要操作"
 /// 视觉：主色描边 + 圆角 + label 居中,跟主打卡按钮视觉区分但不抢眼
 ///
 /// 之前 home_page、mood_quick_button、settings 等多处重复同样的
 /// `OutlinedButton.styleFrom(side: ... foregroundColor: ... shape: ...)`。
-class HomeSecondaryButton extends StatelessWidget {
+///
+/// v0.17 round 12: 从 presentation/pages/home/widgets/home_secondary_button.dart
+/// 移到 presentation/widgets/,类名 HomeSecondaryButton → SecondaryButton
+/// (实际是跨 feature 通用 widget,不是 home 专属)。
+class SecondaryButton extends StatelessWidget {
   final Widget child;
   final VoidCallback onPressed;
-  const HomeSecondaryButton({
+  const SecondaryButton({
     super.key,
     required this.onPressed,
     required this.child,

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/home_secondary_button.dart';
+import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 
 /// 主页情绪快捷按钮
 ///
@@ -25,7 +25,7 @@ class MoodQuickButton extends ConsumerWidget {
     final hasToday = latest != null;
 
     if (hasToday) {
-      return HomeSecondaryButton(
+      return SecondaryButton(
         onPressed: onTap,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +46,7 @@ class MoodQuickButton extends ConsumerWidget {
         ),
       );
     }
-    return HomeSecondaryButton(
+    return SecondaryButton(
       onPressed: onTap,
       child: const Text(
         '记一下情绪 ✏️',

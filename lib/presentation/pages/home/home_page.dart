@@ -17,7 +17,7 @@ import 'package:chroniccare/main.dart' show notificationInitResultProvider;
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
 import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/home_secondary_button.dart';
+import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 import 'package:chroniccare/presentation/pages/medication/last_med_info.dart';
 import 'package:chroniccare/presentation/pages/mood/mood_dialog.dart';
 import 'package:chroniccare/presentation/pages/mood/mood_quick_button.dart';
@@ -284,7 +284,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: AppTokens.spacingMd),
 
           // 临时吃药按钮
-          HomeSecondaryButton(
+          SecondaryButton(
             onPressed: () => TempMedicationDialog.show(context, ref),
             child: const Text(
               Strings.homeTempMed,
@@ -298,7 +298,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: AppTokens.spacingSm),
 
           // v0.10 (Round 4): Snooze 5min 按钮（参考 Pill Reminder）
-          HomeSecondaryButton(
+          SecondaryButton(
             onPressed: _snooze5Min,
             child: const Text(
               '⏰ 5 分钟后再提醒',
@@ -325,7 +325,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           // v0.15 (Round 18) 树洞入口
           // 与情绪日记完全独立：树洞不进任何分析、纯私密空间
-          HomeSecondaryButton(
+          SecondaryButton(
             onPressed: () => context.push('/vent'),
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
