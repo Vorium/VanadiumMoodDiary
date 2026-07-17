@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 主页大按钮：「我今天吃了药」
 class CheckInButton extends StatelessWidget {
@@ -113,7 +114,10 @@ class _StreakCounter extends StatelessWidget {
       curve: AppTokens.curveDecelerate, // 数字停止用 decelerate 比 delight 更克制
       builder: (context, animatedValue, child) {
         return Text(
-          '已坚持 ${animatedValue.round()} 天',
+          // v0.17 round 14 (P2-12): 走 ARB homeStreak 模板 (zh: 已坚持 X 天 /
+          // en: X-day streak)。emoji 不在 string 里 — 频度高 (10+/day),
+          // emoji 在大按钮里反视觉噪声。
+          AppLocalizations.of(context).homeStreak(animatedValue.round()),
           style: TextStyle(
             fontSize: AppTokens.fontSizeLabel,
             color: Colors.white.withValues(alpha: 0.85),

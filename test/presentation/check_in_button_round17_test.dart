@@ -11,6 +11,7 @@ import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,6 +44,11 @@ Widget _wrapButton({
 }) {
   return MaterialApp(
     theme: ThemeData.light(),
+    // v0.17 round 14 (P2-12): 加 localizations delegates 让
+    // homeStreak ARB 在 test 里可用
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    locale: const Locale('zh'),
     home: Scaffold(
       body: Center(
         child: SizedBox(
