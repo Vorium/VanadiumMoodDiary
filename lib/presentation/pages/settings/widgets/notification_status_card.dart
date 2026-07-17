@@ -177,7 +177,14 @@ class _NotificationStatusCardState
             leading: const Icon(Icons.notifications_active_outlined,
                 color: AppTokens.primary,),
             title: const Text('通知与提醒'),
-            subtitle: Text(statusText),
+            // v0.17 round 14 (P2-3): AnimatedSize 让 statusText 切换时
+            // 高度平滑过渡 (加载中 → 0 待发 → N 待发) 而不是突然跳变
+            subtitle: AnimatedSize(
+              duration: AppTokens.durNormal,
+              curve: AppTokens.curveStandard,
+              alignment: Alignment.topLeft,
+              child: Text(statusText),
+            ),
             trailing: IconButton(
               icon: _busy
                   ? const SizedBox(
