@@ -65,7 +65,12 @@ final checkInNotifierProvider =
 /// 在 Riverpod tree 里组装 UseCase + Repository 依赖。
 /// UI（Notifier）只拿 use case，不直接拿 repository。
 final recordCheckInUseCaseProvider = Provider<RecordCheckInUseCase>(
-  (ref) => RecordCheckInUseCase(ref.watch(checkInRepositoryProvider)),
+  // P0-10 fix: use case 加 userProfileRepositoryProvider 依赖,
+  // 让 check-in 后同步写 user_profiles.lastCheckInAt。
+  (ref) => RecordCheckInUseCase(
+    ref.watch(checkInRepositoryProvider),
+    ref.watch(userProfileRepositoryProvider),
+  ),
 );
 
 final recordTempMedicationUseCaseProvider =

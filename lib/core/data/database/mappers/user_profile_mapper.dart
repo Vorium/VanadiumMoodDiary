@@ -8,6 +8,10 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 
 /// Drift row → domain entity
+///
+/// P0-10 fix: 读 `lastCheckInAt` 列。schema 一直有这个列,之前 entity
+/// 不读 / `updateLastCheckIn` 0 处调用,现在 `RecordCheckInUseCase`
+/// 在 check-in 后写 → entity 必须读,否则 UI 永远看不到。
 UserProfileEntity? userProfileFromRow(UserProfile? row) {
   if (row == null) return null;
   return UserProfileEntity(
@@ -15,5 +19,6 @@ UserProfileEntity? userProfileFromRow(UserProfile? row) {
     userName: row.userName,
     checkInCycleHours: row.checkInCycleHours,
     firstLaunchAt: row.firstLaunchAt,
+    lastCheckInAt: row.lastCheckInAt,
   );
 }

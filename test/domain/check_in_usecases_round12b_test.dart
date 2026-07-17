@@ -2,8 +2,10 @@
 //
 // 3 个 use case × 2-3 case = 7-9 case
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
+import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/domain/usecases/check_in_usecases.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,6 +62,28 @@ class _FakeCheckInRepository implements CheckInRepository {
   }
 }
 
+/// P0-10 fix: in-memory user profile repo,记录 updateLastCheckIn 调用。
+class _FakeUserProfileRepository implements UserProfileRepository {
+  final List<DateTime> updated = [];
+
+  @override
+  Stream<UserProfileEntity?> watch() => Stream.value(null);
+
+  @override
+  Future<UserProfileEntity?> get() async => null;
+
+  @override
+  Future<void> save({
+    required String userName,
+    int checkInCycleHours = 48,
+  }) async {}
+
+  @override
+  Future<void> updateLastCheckIn(DateTime time) async {
+    updated.add(time);
+  }
+}
+
 /// Stub ReminderService — 不发真实通知，只跑 checkAndSend 返回 stub 结果
 ///
 /// v0.16 (Round 7): extends ReminderService 不行了（ReminderService 现在
@@ -78,7 +102,8 @@ void main() {
   group('RecordCheckInUseCase', () {
     test('调 repo.checkIn，medicationId 透传', () async {
       final repo = _FakeCheckInRepository();
-      final useCase = RecordCheckInUseCase(repo);
+      final profile = _FakeUserProfileRepository();
+      final useCase = RecordCheckInUseCase(repo, profile);
 
       final id = await useCase(medicationId: 7);
       expect(id, 1);
@@ -89,7 +114,8 @@ void main() {
 
     test('不传 medicationId = null', () async {
       final repo = _FakeCheckInRepository();
-      final useCase = RecordCheckInUseCase(repo);
+      final profile = _FakeUserProfileRepository();
+      final useCase = RecordCheckInUseCase(repo, profile);
 
       await useCase();
       expect(repo.inserted.first.medicationId, isNull);
@@ -97,11 +123,23 @@ void main() {
 
     test('at 注入时间（测试用）', () async {
       final repo = _FakeCheckInRepository();
-      final useCase = RecordCheckInUseCase(repo);
+      final profile = _FakeUserProfileRepository();
+      final useCase = RecordCheckInUseCase(repo, profile);
       final fixed = DateTime(2026, 7, 15, 8, 0);
 
       await useCase(at: fixed);
       expect(repo.inserted.first.timestamp, fixed);
+    });
+
+    test('P0-10: check-in 后同步调 userProfileRepo.updateLastCheckIn', () async {
+      final repo = _FakeCheckInRepository();
+      final profile = _FakeUserProfileRepository();
+      final useCase = RecordCheckInUseCase(repo, profile);
+      final fixed = DateTime(2026, 7, 15, 9, 30);
+
+      await useCase(at: fixed);
+      expect(profile.updated, hasLength(1));
+      expect(profile.updated.first, fixed);
     });
   });
 

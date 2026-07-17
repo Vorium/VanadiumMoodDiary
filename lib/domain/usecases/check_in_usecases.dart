@@ -17,11 +17,17 @@ library;
 
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
+import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 
 /// 每日打卡 use case
 class RecordCheckInUseCase {
-  final CheckInRepository _repo;
-  RecordCheckInUseCase(this._repo);
+  final CheckInRepository _checkInRepo;
+
+  /// P0-10 fix: check-in 后同步更新 user_profiles.lastCheckInAt。
+  /// 之前这个列是 write-only dead code,现在接上。
+  final UserProfileRepository _userProfileRepo;
+
+  RecordCheckInUseCase(this._checkInRepo, this._userProfileRepo);
 
   /// 记录一次"今天吃了药"打卡
   ///
@@ -29,8 +35,14 @@ class RecordCheckInUseCase {
   /// [at] 注入时间（测试用），默认 DateTime.now()
   ///
   /// 返回新插入的 check_in id
-  Future<int> call({int? medicationId, DateTime? at}) {
-    return _repo.checkIn(medicationId: medicationId, at: at);
+  ///
+  /// 副作用: 同时更新 user_profiles.lastCheckInAt,让 UI 快速拿到
+  /// 「上次打卡」而不必 JOIN check_ins 表。
+  Future<int> call({int? medicationId, DateTime? at}) async {
+    final time = at ?? DateTime.now();
+    final id = await _checkInRepo.checkIn(medicationId: medicationId, at: time);
+    await _userProfileRepo.updateLastCheckIn(time);
+    return id;
   }
 }
 

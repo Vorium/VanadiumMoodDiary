@@ -12,10 +12,16 @@ class UserProfileEntity {
   /// 首次启动时间（不可变）
   final DateTime firstLaunchAt;
 
+  /// 最后一次每日打卡时间（v0.17 P0-10 接上,反范式冗余列）。
+  /// 由 `RecordCheckInUseCase` 在 check-in 时写入。
+  /// 失联检测优先读 `check_ins.last_timestamp`,这个字段给 UI 快查用。
+  final DateTime? lastCheckInAt;
+
   const UserProfileEntity({
     required this.id,
     required this.userName,
     required this.checkInCycleHours,
     required this.firstLaunchAt,
+    this.lastCheckInAt,
   });
 }
