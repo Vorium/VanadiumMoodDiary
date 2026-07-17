@@ -1,4 +1,4 @@
-// 趋势页（v0.7 新增，v0.8 加量表折线图，v0.9 加情绪折线图，
+﻿// 趋势页（v0.7 新增，v0.8 加量表折线图，v0.9 加情绪折线图，
 //        v0.12 / Round 6 加 list ↔ calendar 切换 + mood 入日历，
 //        v0.13 / Round 10 展开"选中日详情"）
 // - 顶部：当前连续天数 / 最长连续 / 总打卡 / 总天数
@@ -11,7 +11,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../../domain/entities/check_in_entity.dart';
 import '../../../domain/entities/medication_entity.dart';
 import '../../../domain/entities/mood_entry_entity.dart';
-import '../../../domain/entities/mood_visual.dart';
+import '../../../shared/mood_visual.dart';
 import '../../../domain/logic/assessment_record.dart';
 import '../../../domain/logic/day_detail.dart';
 import '../../../domain/logic/scale_registry.dart';
@@ -781,7 +781,7 @@ class _MoodHistoryChart extends StatelessWidget {
                         show: true,
                         getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
                           radius: 5,
-                          color: MoodVisual.colorFor(spot.y.round()),
+                          color: Color(MoodVisual.colorArgbFor(spot.y.round())),
                           strokeWidth: 1.5,
                           strokeColor: Colors.white,
                         ),
@@ -867,7 +867,7 @@ class _MoodHistoryChart extends StatelessWidget {
                             '${dt.month}/${dt.day} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}\n'
                             '${MoodVisual.emojiFor(score)} ${MoodVisual.labelFor(score)}',
                             TextStyle(
-                              color: MoodVisual.colorFor(score),
+                              color: Color(MoodVisual.colorArgbFor(score)),
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),
@@ -1141,7 +1141,7 @@ class _CalendarCell extends StatelessWidget {
     } else if (day.hasNormalCheckIn) {
       bg = theme.colorScheme.primary.withValues(alpha: 0.85);
     } else if (day.moodScore != null) {
-      bg = MoodVisual.colorFor(day.moodScore!);
+      bg = Color(MoodVisual.colorArgbFor(day.moodScore!));
     } else {
       bg = null;
     }
@@ -1450,7 +1450,7 @@ class _EventRow extends StatelessWidget {
         return (
           Icons.mood_outlined,
           e.moodScore != null
-              ? MoodVisual.colorFor(e.moodScore!)
+              ? Color(MoodVisual.colorArgbFor(e.moodScore!))
               : theme.colorScheme.onSurfaceVariant,
           time,
         );

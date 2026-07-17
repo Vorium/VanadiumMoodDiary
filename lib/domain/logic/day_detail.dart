@@ -16,7 +16,7 @@ import '../../shared/json_codec.dart';
 import '../entities/check_in_entity.dart';
 import '../entities/medication_entity.dart';
 import '../entities/mood_entry_entity.dart';
-import '../entities/mood_visual.dart';
+import '../../shared/mood_visual.dart';
 
 /// 当天事件类型
 enum DayEventKind {

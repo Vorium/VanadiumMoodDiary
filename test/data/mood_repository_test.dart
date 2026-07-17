@@ -6,8 +6,7 @@
 //   - emojiFor / labelFor / colorFor → MoodVisual 静态方法
 import 'package:chroniccare/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
-import 'package:chroniccare/domain/entities/mood_visual.dart';
-import 'package:flutter/material.dart';
+import 'package:chroniccare/shared/mood_visual.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -79,10 +78,11 @@ void main() {
       expect(MoodVisual.labelFor(5), '很好');
     });
 
-    test('colorFor 返回有效颜色', () {
+    test('colorArgbFor 返回有效 ARGB int', () {
       for (int s = 1; s <= 5; s++) {
-        final c = MoodVisual.colorFor(s);
-        expect(c, isA<Color>());
+        final c = MoodVisual.colorArgbFor(s);
+        expect(c, isA<int>());
+        expect(c >> 24, 0xFF); // alpha = FF
       }
     });
   });

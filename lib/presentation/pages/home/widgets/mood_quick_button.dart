@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../domain/entities/mood_visual.dart';
+import '../../../../shared/mood_visual.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/data_providers.dart';
 import 'home_secondary_button.dart';

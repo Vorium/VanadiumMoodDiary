@@ -1,15 +1,10 @@
-// v0.14 (Round 12A) MoodVisual — 情绪分数 → emoji / 中文 / 颜色
+// v0.16 (Round 9) MoodVisual — 情绪分数 → emoji / 中文 / ARGB 颜色
 //
 // 从原来的 MoodRepository 静态方法中抽离。
-// 4 层架构：domain 层的"展示 helper"，和 MedicationEntity 一样
-// 允许使用 material 的 Color（只是数据类，非 UI 渲染）。
-//
-// 替代：MoodRepository.emojiFor / .labelFor / .colorFor / .decodeTags
-// - decodeTags 已迁到 MoodEntryEntity.tags getter
-// - 剩下三个（emoji/label/color）放本类
-library;
+// 4 层架构纯化：返回 int (ARGB) 而非 Color，UI 层 wrap 成 Color。
+// 这样 shared/ 不依赖 flutter，domain/ 也能用。
 
-import 'package:flutter/material.dart' show Color;
+// ignore_for_file: prefer_const_constructors
 
 /// 情绪分数 → 展示 helper
 class MoodVisual {
@@ -55,23 +50,26 @@ class MoodVisual {
     }
   }
 
-  // ===== 颜色 =====
+  // ===== 颜色（ARGB int，UI 层包成 Color）=====
 
-  /// 分数 → 颜色
-  static Color colorFor(int score) {
+  /// 分数 → ARGB int（0xAARRGGBB）
+  ///
+  /// 返回 int 而非 Color，shared/ 不依赖 flutter/material。
+  /// UI 层用 `Color(MoodVisual.colorArgbFor(score))` 包一下。
+  static int colorArgbFor(int score) {
     switch (score) {
       case 1:
-        return const Color(0xFF6B7280);
+        return 0xFF6B7280;
       case 2:
-        return const Color(0xFF60A5FA);
+        return 0xFF60A5FA;
       case 3:
-        return const Color(0xFF9CA3AF);
+        return 0xFF9CA3AF;
       case 4:
-        return const Color(0xFF6BCF7F);
+        return 0xFF6BCF7F;
       case 5:
-        return const Color(0xFF4FB05F);
+        return 0xFF4FB05F;
       default:
-        return const Color(0xFF9CA3AF);
+        return 0xFF9CA3AF;
     }
   }
 }

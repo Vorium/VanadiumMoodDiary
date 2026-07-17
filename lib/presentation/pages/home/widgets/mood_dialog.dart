@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../domain/entities/mood_visual.dart';
+import '../../../../shared/mood_visual.dart';
 import '../../../../l10n/strings.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/core_providers.dart';
