@@ -161,3 +161,68 @@ WindowSize windowSizeOf(double width) {
   if (width < AppTokens.breakpointExpanded) return WindowSize.medium;
   return WindowSize.expanded;
 }
+
+// ============= MotionScheme (v0.17 round 14 / P2-14) =============
+//
+// emil 决策框架: 4 档动画强度,按"用户一天看到几次"分。
+// 用 enum 强制 caller 选档,避免在 widget 里直接传
+// (Duration, Curve) 导致风格不统一。
+//
+// 用法:
+// ```dart
+// final motion = MotionScheme.standard;  // most UI
+// AnimatedContainer(
+//   duration: motion.duration,
+//   curve: motion.curve,
+//   ...
+// )
+// ```
+//
+// 选择规则:
+// - none:      100+/day (键盘 / 核心导航 / 日常按钮) → 用户已经熟,无动画
+// - subtle:    tens/day (hover / press feedback) → 微弱反馈
+// - standard:  occasional (modal / drawer / snackbar / 状态切换)
+// - delight:   rare (onboarding 首次 / 庆祝 / 解锁成就) → 弹性,可加 highlight
+enum MotionScheme {
+  /// 100+/day — 不加动画,直接切换
+  none,
+
+  /// tens/day — 微弱反馈 (e.g. button press)
+  subtle,
+
+  /// occasional — modal / drawer / snackbar 默认档
+  /// durNormal + curveStandard (easeOutCubic)
+  standard,
+
+  /// rare — onboarding 首次 / 庆祝 / 解锁
+  /// durSlow + curveDelight (elasticOut)
+  delight,
+}
+
+extension MotionSchemeTokens on MotionScheme {
+  Duration get duration {
+    switch (this) {
+      case MotionScheme.none:
+        return Duration.zero;
+      case MotionScheme.subtle:
+        return AppTokens.durFast;
+      case MotionScheme.standard:
+        return AppTokens.durNormal;
+      case MotionScheme.delight:
+        return AppTokens.durSlow;
+    }
+  }
+
+  Curve get curve {
+    switch (this) {
+      case MotionScheme.none:
+        return Curves.linear;
+      case MotionScheme.subtle:
+        return AppTokens.curveStandard;
+      case MotionScheme.standard:
+        return AppTokens.curveStandard;
+      case MotionScheme.delight:
+        return AppTokens.curveDelight;
+    }
+  }
+}
