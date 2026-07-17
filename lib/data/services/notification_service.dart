@@ -693,9 +693,6 @@ class NotificationService {
     required NotificationDetails details,
     String? payload,
   }) async {
-    if (!TimeOfDay(hour: hour, minute: minute).toString().contains(':')) {
-      // 防御性检查（实际上 TimeOfDay 不会到这）
-    }
     final now = tz.TZDateTime.now(tz.local);
     var scheduled = tz.TZDateTime(
       tz.local,

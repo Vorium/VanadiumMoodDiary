@@ -1,5 +1,6 @@
-// v0.14 (Round 13C) MedicationCalendarPage widget + 业务逻辑测试
+﻿// v0.14 (Round 13C) MedicationCalendarPage widget + 业务逻辑测试
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/presentation/pages/medication/medication_calendar_page.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -35,7 +36,7 @@ Widget _wrap({
 MedicationEntity _med({
   int id = 1,
   String name = '氟西汀',
-  List<TimeOfDay> times = const [TimeOfDay(hour: 8, minute: 0)],
+  List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
   bool isActive = true,
 }) {
   return MedicationEntity(

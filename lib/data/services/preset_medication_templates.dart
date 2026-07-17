@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import '../../domain/entities/hour_minute.dart';
 
 /// 一个药物草稿（用于预置方案 + 手动录入之间的桥梁）
 ///
 /// v0.10 (Round 4)：用户首次设置时点一下就能载入一整套方案，
 /// 不用从零开始手填。参考 Mood Tracker (3h3.com) 的"预置习惯库"思路。
+///
+/// v0.16 (Round 19): `times` 从 `List<HourMinute>` 改为 `List<HourMinute>`，消除 flutter 依赖
 class MedicationDraft {
   /// 药名（中文常见抗抑郁/抗焦虑/抗精神病药名）
   final String name;
@@ -12,7 +14,7 @@ class MedicationDraft {
   /// 单位：mg / 片
   final String dosageUnit;
   /// 服药时间点（一天可以多次）
-  final List<TimeOfDay> times;
+  final List<HourMinute> times;
 
   /// 可选：备注，标常见用途
   final String? hint;
@@ -60,7 +62,7 @@ const kMedicationTemplates = <MedicationTemplate>[
         name: 'SSRI 类抗抑郁药',
         dosage: 1,
         dosageUnit: '片',
-        times: [TimeOfDay(hour: 8, minute: 0)],
+        times: [HourMinute(hour: 8, minute: 0)],
         hint: '常见：氟西汀 / 舍曲林 / 帕罗西汀 / 艾司西酞普兰',
       ),
     ],
@@ -75,7 +77,7 @@ const kMedicationTemplates = <MedicationTemplate>[
         name: '情绪稳定剂',
         dosage: 1,
         dosageUnit: '片',
-        times: [TimeOfDay(hour: 8, minute: 0), TimeOfDay(hour: 20, minute: 0)],
+        times: [HourMinute(hour: 8, minute: 0), HourMinute(hour: 20, minute: 0)],
         hint: '常见：碳酸锂 / 丙戊酸钠 / 拉莫三嗪',
       ),
     ],
@@ -90,13 +92,13 @@ const kMedicationTemplates = <MedicationTemplate>[
         name: 'SSRI 类抗抑郁药',
         dosage: 1,
         dosageUnit: '片',
-        times: [TimeOfDay(hour: 8, minute: 0)],
+        times: [HourMinute(hour: 8, minute: 0)],
       ),
       MedicationDraft(
         name: '助眠药',
         dosage: 1,
         dosageUnit: '片',
-        times: [TimeOfDay(hour: 21, minute: 0)],
+        times: [HourMinute(hour: 21, minute: 0)],
         hint: '常见：阿普唑仑 / 艾司唑仑 / 佐匹克隆 / 褪黑素',
       ),
     ],
@@ -112,9 +114,9 @@ const kMedicationTemplates = <MedicationTemplate>[
         dosage: 1,
         dosageUnit: '片',
         times: [
-          TimeOfDay(hour: 8, minute: 0),
-          TimeOfDay(hour: 13, minute: 0),
-          TimeOfDay(hour: 20, minute: 0),
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 13, minute: 0),
+          HourMinute(hour: 20, minute: 0),
         ],
         hint: '常见：奥氮平 / 利培酮 / 阿立哌唑 / 喹硫平',
       ),
@@ -129,7 +131,7 @@ class MedicationTemplateHelper {
     name: '镇静/抗焦虑辅助',
     dosage: 1,
     dosageUnit: '片',
-    times: [TimeOfDay(hour: 21, minute: 30)],
+    times: [HourMinute(hour: 21, minute: 30)],
     hint: '常见：喹硫平（小剂量）/ 苯二氮卓类',
   );
 }

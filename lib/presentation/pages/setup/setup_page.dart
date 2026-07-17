@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../data/database/medication_mapper.dart';
 import '../../../data/services/preset_medication_templates.dart';
 import '../../../data/utils/phone_validator.dart';
+import '../../../domain/entities/hour_minute.dart';
 import '../../../l10n/strings.dart';
 import '../../../theme/app_tokens.dart';
 import '../../providers/core_providers.dart';
@@ -563,7 +564,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               ? d.dosage.toInt().toString()
               : d.dosage.toString()
           ..dosageUnit = d.dosageUnit
-          ..times.addAll(d.times);
+          ..times.addAll(d.times
+              .map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute)));
         m.attachListener(_onTextChanged);
         _meds.add(m);
       }
@@ -670,7 +672,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       String name,
       double dosage,
       String dosageUnit,
-      List<TimeOfDay> times,
+      List<HourMinute> times,
     })>[];
     for (final m in _meds) {
       final name = m.nameController.text.trim();
@@ -680,7 +682,9 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         name: name,
         dosage: dosage,
         dosageUnit: m.dosageUnit,
-        times: List<TimeOfDay>.from(m.times),
+        times: m.times
+            .map((t) => HourMinute(hour: t.hour, minute: t.minute))
+            .toList(),
       ),);
     }
 

@@ -6,8 +6,7 @@
 // 实现方在 `lib/data/repositories/medication_repository_impl.dart`。
 library;
 
-import 'package:flutter/material.dart' show TimeOfDay;
-
+import '../entities/hour_minute.dart';
 import '../entities/medication_entity.dart';
 
 /// 吃药信息仓库（domain 抽象接口）
@@ -22,7 +21,7 @@ abstract class MedicationRepository {
     required String name,
     required double dosage,
     required String dosageUnit,
-    required List<TimeOfDay> times,
+    required List<HourMinute> times,
     DateTime? startDate,
     DateTime? refillAt,
     int refillReminderDays,

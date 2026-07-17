@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-
 import '../../shared/formatters.dart';
 import '../../shared/json_codec.dart';
 import '../entities/check_in_entity.dart';
+import '../entities/hour_minute.dart';
 import '../entities/medication_entity.dart';
 
 /// 用药报告：最近 N 天（默认 14 天）的用药情况，给医生看的纯文本
@@ -178,7 +177,7 @@ class MedicationReport {
 class MedicationStat {
   // v0.13 (Round 11): 4 层架构 — 持有 domain entity
   final MedicationEntity medication;
-  final List<TimeOfDay> times;
+  final List<HourMinute> times;
   final int actualDoseDays;     // 窗口内实际服药的天数
   final List<DateTime> missedDates; // 漏服的具体日期
   final int actualDoseCount;    // 窗口内实际服药次数（一天多次算多次）

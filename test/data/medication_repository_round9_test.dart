@@ -1,8 +1,9 @@
-// v0.13 (Round 9) MedicationRepository.setActive + update 路径测试
+﻿// v0.13 (Round 9) MedicationRepository.setActive + update 路径测试
 import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/database/medication_mapper.dart';
 import 'package:chroniccare/data/database/medication_times.dart';
 import 'package:chroniccare/data/repositories/medication_repository_impl.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ void main() {
     String name = '氟西汀',
     double dosage = 40,
     String unit = 'mg',
-    List<TimeOfDay> times = const [TimeOfDay(hour: 8, minute: 0)],
+    List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
     bool isActive = true,
     DateTime? endDate,
   }) {
@@ -112,8 +113,8 @@ void main() {
       final updated = original.copyWith(
         name: '舍曲林',
         times: const [
-          TimeOfDay(hour: 8, minute: 0),
-          TimeOfDay(hour: 20, minute: 0),
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
         ],
       );
       final ok = await repo.update(updated);
@@ -197,7 +198,7 @@ void main() {
       var entity = med.toEntity().copyWith(
         name: '新药名',
         times: const [
-          TimeOfDay(hour: 9, minute: 30),
+          HourMinute(hour: 9, minute: 30),
         ],
       );
       await repo.update(entity);

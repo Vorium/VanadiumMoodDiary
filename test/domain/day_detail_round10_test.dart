@@ -1,10 +1,10 @@
-// v0.14 (Round 10) DayDetailCalculator 纯函数测试
+﻿// v0.14 (Round 10) DayDetailCalculator 纯函数测试
 // v0.14 (Round 12A) 4 层架构：CheckInEntity / MoodEntryEntity
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 MedicationEntity med({
@@ -12,7 +12,7 @@ MedicationEntity med({
   String name = '氟西汀',
   double dosage = 40,
   String unit = 'mg',
-  List<TimeOfDay> times = const [TimeOfDay(hour: 8, minute: 0)],
+  List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
 }) {
   return MedicationEntity(
     id: id,

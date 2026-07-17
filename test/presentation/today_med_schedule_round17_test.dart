@@ -1,5 +1,6 @@
-// v0.14 (Round 17) TodayMedSchedule widget 测试
+﻿// v0.14 (Round 17) TodayMedSchedule widget 测试
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/today_med_schedule.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -10,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 MedicationEntity _med({
   int id = 1,
   String name = '氟西汀',
-  List<TimeOfDay> times = const [TimeOfDay(hour: 8, minute: 0)],
+  List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
   bool isActive = true,
 }) {
   return MedicationEntity(
@@ -73,7 +74,7 @@ void main() {
 
   testWidgets('只有 1 种药 × 1 个时间点 → 显示 0/1', (tester) async {
     _setBigView(tester);
-    final meds = [_med(name: '氟西汀', times: const [TimeOfDay(hour: 8, minute: 0)])];
+    final meds = [_med(name: '氟西汀', times: const [HourMinute(hour: 8, minute: 0)])];
     await tester.pumpWidget(_wrap(meds: meds));
     await tester.pumpAndSettle();
 
@@ -97,8 +98,8 @@ void main() {
   testWidgets('多药多时间点 → 按时间排序', (tester) async {
     _setBigView(tester);
     final meds = [
-      _med(id: 1, name: '氟西汀', times: const [TimeOfDay(hour: 20, minute: 0)]),
-      _med(id: 2, name: '碳酸锂', times: const [TimeOfDay(hour: 8, minute: 0)]),
+      _med(id: 1, name: '氟西汀', times: const [HourMinute(hour: 20, minute: 0)]),
+      _med(id: 2, name: '碳酸锂', times: const [HourMinute(hour: 8, minute: 0)]),
     ];
     await tester.pumpWidget(_wrap(meds: meds));
     await tester.pumpAndSettle();

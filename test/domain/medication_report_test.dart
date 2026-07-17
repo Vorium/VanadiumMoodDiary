@@ -1,4 +1,5 @@
-import 'package:chroniccare/domain/entities/check_in_entity.dart';
+﻿import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ void main() {
     double dosage = 40,
     String unit = 'mg',
     String timesJson = '[{"h":8,"m":0}]', // 每日 1 次（保留旧 API 兼容）
-    List<TimeOfDay>? times,
+    List<HourMinute>? times,
     DateTime? startDate,
   }) {
     return MedicationEntity(
@@ -22,7 +23,7 @@ void main() {
       name: name,
       dosage: dosage,
       dosageUnit: unit,
-      times: times ?? const [TimeOfDay(hour: 8, minute: 0)],
+      times: times ?? const [HourMinute(hour: 8, minute: 0)],
       startDate: startDate ?? DateTime(2026, 5, 1),
       endDate: null,
       isActive: true,
@@ -115,8 +116,8 @@ void main() {
       final r = MedicationReport.compute(
         userName: '小明',
         meds: [med(times: const [
-          TimeOfDay(hour: 8, minute: 0),
-          TimeOfDay(hour: 20, minute: 0),
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
         ])],
         checkIns: const [],
         now: now,
@@ -242,10 +243,10 @@ void main() {
       final r = MedicationReport.compute(
         userName: '小明',
         meds: [
-          med(id: 1, name: '氟西汀', times: const [TimeOfDay(hour: 8, minute: 0)]),
+          med(id: 1, name: '氟西汀', times: const [HourMinute(hour: 8, minute: 0)]),
           med(id: 2, name: '碳酸锂', times: const [
-            TimeOfDay(hour: 8, minute: 0),
-            TimeOfDay(hour: 20, minute: 0),
+            HourMinute(hour: 8, minute: 0),
+            HourMinute(hour: 20, minute: 0),
           ]),
         ],
         checkIns: [
@@ -544,7 +545,7 @@ void main() {
         name: '氟西汀',
         dosage: 40,
         dosageUnit: 'mg',
-        times: const [TimeOfDay(hour: 8, minute: 0)],
+        times: const [HourMinute(hour: 8, minute: 0)],
         startDate: DateTime(2026, 5, 1),
         endDate: DateTime(2026, 7, 5),  // 7/5 停药
         isActive: false,  // 但已经在软删除

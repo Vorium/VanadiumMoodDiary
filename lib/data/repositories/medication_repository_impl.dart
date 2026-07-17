@@ -5,11 +5,14 @@
 // - 通过 `data/database/medication_mapper.dart` 在 Drift row 和
 //   `MedicationEntity` 之间翻译
 // - UI 永远只看到 entity，不直接看到 Drift
+//
+// v0.16 (Round 19): `times` 参数从 `List<TimeOfDay>` 改为 `List<HourMinute>`，
+// 消除 data → flutter/material 依赖。
 library;
 
 import 'package:drift/drift.dart' show Value;
-import 'package:flutter/material.dart' show TimeOfDay;
 
+import '../../domain/entities/hour_minute.dart';
 import '../../domain/entities/medication_entity.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../database/app_database.dart';
@@ -33,7 +36,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
     required String name,
     required double dosage,
     required String dosageUnit,
-    required List<TimeOfDay> times,
+    required List<HourMinute> times,
     DateTime? startDate,
     DateTime? refillAt,
     int refillReminderDays = 7,

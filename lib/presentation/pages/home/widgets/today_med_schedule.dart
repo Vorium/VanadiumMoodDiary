@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../domain/entities/check_in_entity.dart';
+import '../../../../domain/entities/hour_minute.dart';
 import '../../../../domain/entities/medication_entity.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/data_providers.dart';
@@ -20,7 +21,7 @@ import '../../../providers/data_providers.dart';
 /// 一行时间点：[已打卡 ✓] 氟西汀 08:00
 class _ScheduleEntry {
   final MedicationEntity med;
-  final TimeOfDay time;
+  final HourMinute time;
   final bool done;
   const _ScheduleEntry({
     required this.med,

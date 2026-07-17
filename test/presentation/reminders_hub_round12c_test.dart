@@ -1,7 +1,8 @@
-// v0.14 (Round 12C) RemindersHubPage widget 测试
+﻿// v0.14 (Round 12C) RemindersHubPage widget 测试
 //
 // 验证 5 个提醒卡片的渲染 + 状态显示
 import 'package:chroniccare/data/services/notification_service.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -113,7 +114,7 @@ void main() {
         name: '氟西汀',
         dosage: 40,
         dosageUnit: 'mg',
-        times: const [TimeOfDay(hour: 8, minute: 0), TimeOfDay(hour: 20, minute: 0)],
+        times: const [HourMinute(hour: 8, minute: 0), HourMinute(hour: 20, minute: 0)],
         startDate: DateTime(2026, 1, 1),
         isActive: true,
         refillReminderDays: 7,
@@ -123,7 +124,7 @@ void main() {
         name: '碳酸锂',
         dosage: 300,
         dosageUnit: 'mg',
-        times: const [TimeOfDay(hour: 12, minute: 0)],
+        times: const [HourMinute(hour: 12, minute: 0)],
         startDate: DateTime(2026, 1, 1),
         isActive: true,
         refillReminderDays: 7,

@@ -1,9 +1,9 @@
-// v0.12 (Round 6) MedicationRepository.updateRefill 集成测试
+﻿// v0.12 (Round 6) MedicationRepository.updateRefill 集成测试
 import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/repositories/medication_repository_impl.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -24,7 +24,7 @@ void main() {
       name: '氟西汀',
       dosage: 40,
       dosageUnit: 'mg',
-      times: const [TimeOfDay(hour: 8, minute: 0)],
+      times: const [HourMinute(hour: 8, minute: 0)],
       refillAt: refillAt,
       refillReminderDays: refillDays,
     );
@@ -136,7 +136,7 @@ void main() {
         name: '氟西汀',
         dosage: 40,
         dosageUnit: 'mg',
-        times: const [TimeOfDay(hour: 8, minute: 0)],
+        times: const [HourMinute(hour: 8, minute: 0)],
       );
       final med = await (db.select(db.medications)..where((t) => t.id.equals(id)))
           .getSingle();

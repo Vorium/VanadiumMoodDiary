@@ -1,6 +1,7 @@
-// v0.13 (Round 11) MedicationEntity / MedicationMapper 单元测试
+﻿// v0.13 (Round 11) MedicationEntity / MedicationMapper 单元测试
 import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/database/medication_mapper.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
@@ -12,7 +13,7 @@ Medication _driftRow({
   String name = '氟西汀',
   double dosage = 40,
   String unit = 'mg',
-  List<TimeOfDay> times = const [TimeOfDay(hour: 8, minute: 0)],
+  List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
   DateTime? refillAt,
   int refillReminderDays = 7,
   bool isActive = true,
@@ -37,7 +38,7 @@ MedicationEntity _entity({
   String name = '氟西汀',
   double dosage = 40,
   String unit = 'mg',
-  List<TimeOfDay> times = const [TimeOfDay(hour: 8, minute: 0)],
+  List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
   DateTime? refillAt,
   int refillReminderDays = 7,
   bool isActive = true,
@@ -71,10 +72,10 @@ void main() {
       expect(entity.refillReminderDays, row.refillReminderDays);
     });
 
-    test('timesJson 解析为 List<TimeOfDay>', () {
+    test('timesJson 解析为 List<HourMinute>', () {
       final row = _driftRow(times: const [
-        TimeOfDay(hour: 8, minute: 0),
-        TimeOfDay(hour: 20, minute: 30),
+        HourMinute(hour: 8, minute: 0),
+        HourMinute(hour: 20, minute: 30),
       ]);
       final entity = row.toEntity();
       expect(entity.times.length, 2);
@@ -125,8 +126,8 @@ void main() {
 
     test('times 序列化为 JSON', () {
       final entity = _entity(times: const [
-        TimeOfDay(hour: 8, minute: 0),
-        TimeOfDay(hour: 20, minute: 30),
+        HourMinute(hour: 8, minute: 0),
+        HourMinute(hour: 20, minute: 30),
       ]);
       final row = entity.toDriftRow();
       expect(row.timesJson, '[{"h":8,"m":0},{"h":20,"m":30}]');
@@ -146,8 +147,8 @@ void main() {
         dosage: 50,
         unit: 'mg',
         times: const [
-          TimeOfDay(hour: 8, minute: 0),
-          TimeOfDay(hour: 20, minute: 0),
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
         ],
         refillAt: DateTime(2026, 8, 1),
         refillReminderDays: 14,
@@ -301,9 +302,9 @@ void main() {
     });
 
     test('==, hashCode: times 列表也参与比较', () {
-      final a = _entity(times: const [TimeOfDay(hour: 8, minute: 0)]);
-      final b = _entity(times: const [TimeOfDay(hour: 8, minute: 0)]);
-      final c = _entity(times: const [TimeOfDay(hour: 8, minute: 30)]);
+      final a = _entity(times: const [HourMinute(hour: 8, minute: 0)]);
+      final b = _entity(times: const [HourMinute(hour: 8, minute: 0)]);
+      final c = _entity(times: const [HourMinute(hour: 8, minute: 30)]);
       expect(a, equals(b));
       expect(a, isNot(equals(c)));
     });

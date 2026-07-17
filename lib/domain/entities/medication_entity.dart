@@ -1,7 +1,7 @@
-// v0.13 (Round 11) MedicationEntity — 纯 Dart domain entity
+// v0.16 (Round 19) MedicationEntity — 纯 Dart domain entity
 //
 // 4 层架构示范：domain 层不依赖 Drift / Flutter UI 渲染。
-// 只依赖 `TimeOfDay`（material 的时间结构体，不是 widget）。
+// 用 `HourMinute` 纯 Dart 记录表示时间（替代 Flutter 的 `TimeOfDay`）。
 // `medication_times` 的 JSON 编解码放 mapper（infra 层）。
 //
 // 设计要点：
@@ -11,7 +11,8 @@
 library;
 
 import 'package:drift/drift.dart' show Value;
-import 'package:flutter/material.dart' show TimeOfDay;
+
+import 'hour_minute.dart';
 
 /// 药物（领域实体）
 ///
@@ -21,7 +22,7 @@ class MedicationEntity {
   final String name;
   final double dosage;
   final String dosageUnit;
-  final List<TimeOfDay> times;
+  final List<HourMinute> times;
   final DateTime startDate;
   final DateTime? endDate;
   final bool isActive;
@@ -87,7 +88,7 @@ class MedicationEntity {
     String? name,
     double? dosage,
     String? dosageUnit,
-    List<TimeOfDay>? times,
+    List<HourMinute>? times,
     DateTime? startDate,
     Value<DateTime?>? endDate,
     bool? isActive,
@@ -143,8 +144,8 @@ class MedicationEntity {
       'MedicationEntity(id=$id, name=$name, dosage=$dosage$dosageUnit, '
       'isActive=$isActive, refillAt=$refillAt)';
 
-  /// List<TimeOfDay> 相等比较（业务层用 ==,不能用默认 identity）
-  static bool _listEq(List<TimeOfDay> a, List<TimeOfDay> b) {
+  /// List<HourMinute> 相等比较（业务层用 ==,不能用默认 identity）
+  static bool _listEq(List<HourMinute> a, List<HourMinute> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
       if (a[i].hour != b[i].hour || a[i].minute != b[i].minute) return false;

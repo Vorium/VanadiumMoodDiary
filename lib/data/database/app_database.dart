@@ -3,6 +3,8 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart' hide Table;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
+import '../../domain/entities/hour_minute.dart';
+
 import 'connection/connection.dart'
     if (dart.library.html) 'connection/web.dart'
     if (dart.library.io) 'connection/native.dart';
@@ -293,7 +295,7 @@ class AppDatabase extends _$AppDatabase {
       String name,
       double dosage,
       String dosageUnit,
-      List<TimeOfDay> times,
+      List<HourMinute> times,
     })> medicationList,
   }) async {
     await transaction(() async {

@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../data/database/medication_mapper.dart';
 import '../../../../shared/formatters.dart';
+import '../../../../domain/entities/hour_minute.dart';
 import '../../../../domain/entities/medication_entity.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/core_providers.dart';
@@ -58,7 +59,9 @@ class _EditMedicationDialogState
           : m.dosage.toString(),
     );
     _dosageUnit = m.dosageUnit;
-    _times = List.from(m.times);
+    _times = m.times
+        .map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute))
+        .toList();
     _isActive = m.isActive;
   }
 
@@ -97,12 +100,12 @@ class _EditMedicationDialogState
     final isActiveChanged = _isActive != original.isActive;
 
     // 构造更新后的 Medication
-    // 1) 基础字段
+    // 1) 基础字段（UI 用 TimeOfDay，保存时转 HourMinute）
     var updated = original.copyWith(
       name: _nameController.text.trim(),
       dosage: dosage,
       dosageUnit: _dosageUnit,
-      times: _times,
+      times: _times.map((t) => HourMinute(hour: t.hour, minute: t.minute)).toList(),
       isActive: _isActive,
     );
     // 2) isActive 变化时同步 endDate（停药/恢复的语义）
