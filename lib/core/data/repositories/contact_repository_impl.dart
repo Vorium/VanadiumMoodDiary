@@ -6,7 +6,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/contact_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/contact/contact_mapper.dart';
 
 /// Contact 仓库的 Drift 实现
 class ContactRepositoryImpl implements ContactRepository {

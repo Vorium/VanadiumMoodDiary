@@ -15,7 +15,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/medication_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
 
 /// MedicationRepository 的 Drift 实现
 class MedicationRepositoryImpl implements MedicationRepository {

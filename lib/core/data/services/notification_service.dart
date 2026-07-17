@@ -8,7 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/medication_times.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/services/notification_navigation.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 

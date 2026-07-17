@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/data/database/medication_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';

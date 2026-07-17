@@ -6,7 +6,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/mood_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/mood_entry_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/mood/mood_entry_mapper.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
 
 /// Mood 仓库的 Drift 实现

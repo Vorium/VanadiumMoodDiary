@@ -9,7 +9,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/check_in_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/check_in/check_in_mapper.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
 
 /// CheckIn 仓库的 Drift 实现

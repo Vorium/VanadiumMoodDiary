@@ -9,14 +9,14 @@ import 'package:chroniccare/core/data/database/connection/connection.dart'
     if (dart.library.html) 'connection/web.dart'
     if (dart.library.io) 'connection/native.dart';
 
-import 'package:chroniccare/core/data/database/medication_times.dart';
-import 'package:chroniccare/core/data/database/tables/check_ins.dart';
-import 'package:chroniccare/core/data/database/tables/contacts.dart';
-import 'package:chroniccare/core/data/database/tables/medications.dart';
-import 'package:chroniccare/core/data/database/tables/mood_entries.dart';
-import 'package:chroniccare/core/data/database/tables/report_histories.dart';
-import 'package:chroniccare/core/data/database/tables/user_profiles.dart';
-import 'package:chroniccare/core/data/database/tables/vent_entries.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
+import 'package:chroniccare/core/data/database/tables/check_in/check_ins.dart';
+import 'package:chroniccare/core/data/database/tables/contact/contacts.dart';
+import 'package:chroniccare/core/data/database/tables/medication/medications.dart';
+import 'package:chroniccare/core/data/database/tables/mood/mood_entries.dart';
+import 'package:chroniccare/core/data/database/tables/report/report_histories.dart';
+import 'package:chroniccare/core/data/database/tables/user_profile/user_profiles.dart';
+import 'package:chroniccare/core/data/database/tables/vent/vent_entries.dart';
 
 part 'app_database.g.dart';
 

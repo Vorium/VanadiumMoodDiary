@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/data/database/medication_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';

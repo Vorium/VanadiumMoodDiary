@@ -1,7 +1,7 @@
 ﻿// v0.13 (Round 9) MedicationRepository.setActive + update 路径测试
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/medication_mapper.dart';
-import 'package:chroniccare/core/data/database/medication_times.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/repositories/medication_repository_impl.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';

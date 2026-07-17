@@ -1,6 +1,6 @@
 // v0.14 (Round 12A) MoodEntryEntity / mapper 单元测试
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/mood_entry_mapper.dart';
+import 'package:chroniccare/core/data/database/mappers/mood/mood_entry_mapper.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:drift/drift.dart' show Value;

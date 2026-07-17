@@ -15,7 +15,7 @@ import 'package:drift/drift.dart' show Value;
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/medication_times.dart';
+import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 
 /// Drift row → entity
 extension MedicationToEntity on Medication {
