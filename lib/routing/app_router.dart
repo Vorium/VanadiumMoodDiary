@@ -107,7 +107,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/vent/detail/:id',
             builder: (_, state) => VentDetailPage(
-              id: int.parse(state.pathParameters['id'] ?? '0'),
+              // v0.16 round 19C fix: 用 tryParse 替代 parse，URL 是 '/abc' 时
+              // 不会崩，回退到 0（找不到对应条目 → 详情页显示"找不到了"）
+              id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
             ),
           ),
           // ============== Round 5: Deep Linking 路由 ==============
