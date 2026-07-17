@@ -1,59 +1,68 @@
-name: ci
+name: CI
 
 on:
   push:
-    branches: [master, main, develop]
+    branches: [master, main]
   pull_request:
-    branches: [master, main, develop]
-
-# 防止旧 run 抢资源
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [master, main]
 
 jobs:
-  analyze-and-test:
-    name: analyze + test (stable)
+  test:
+    name: Flutter analyze + test
     runs-on: ubuntu-latest
-    timeout-minutes: 30
 
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: 装 JDK 17（Android 工具链依赖）
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: 装 Flutter stable
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.44.5'
-          cache: true
+          flutter-version: "3.41.9"
 
-      - name: 打印版本
-        run: |
-          flutter --version
-          dart --version
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
-      - name: 装依赖
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: 跑 Drift 代码生成
-        # v0.14 用 Drift 2.28，必须先跑 build_runner 才能 analyze / test
+      - name: Ensure .env exists (required by pubspec asset)
+        run: echo "PLACEHOLDER=test" > .env
+
+      - name: Generate drift code (app_database.g.dart)
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: flutter analyze（0 error 才算过）
+      - name: Verify ink_sparkle shader asset
+        run: |
+          test -f assets/shaders/ink_sparkle.frag || (echo "::error::ink_sparkle.frag missing" && exit 1)
+          grep -q "shaders:" pubspec.yaml || (echo "::error::pubspec.yaml missing shaders:" && exit 1)
+
+      - name: Static analysis
         run: flutter analyze
 
-      - name: flutter test
-        run: flutter test --reporter expanded
+      - name: Cross-feature import check
+        run: python scripts/check_cross_feature.py --ci
 
-      - name: 上传覆盖率（可选）
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
-        run: |
-          flutter test --coverage
-          # 不强制 codecov，开发者本地看
+      - name: Run tests
+        run: flutter test
+
+  architecture:
+    name: Architecture invariants
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Verify layer purity (domain/data/presentation 4-layer)
+        run: dart scripts/check_all.dart
