@@ -562,6 +562,23 @@ flutter build ios --release
 | 树洞独立表 | 隐私边界：绝对不进任何分析 / 通知 / 关怀 |
 | Audio 存本地文件 | DB 体积不能爆炸，文件用路径引用 |
 | `ProviderScope` overrides 测试 | 真实 DB 测试太慢，in-memory + override 足够覆盖 |
+| 3 层 hybrid (layer-first in `lib/{core,domain,data}/` + feature-first in `lib/presentation/pages/`) | entity 跨 feature 大量互引用，硬拆会循环依赖；只有 presentation 是 feature-driven (P3-6 经验) |
+| 拆 `core_providers` → 3 文件 (core / service / vent) | 单文件 25+ provider 跨 feature 修改容易冲突 |
+
+### 18.1 重构历史（v0.17 round 9–14 — P3-6 归档）
+
+| Round | 主题 | 关键 commit | 影响范围 |
+|---|---|---|---|
+| 9 | `lib/{data,theme,l10n,shared,routing}/` → `lib/core/{...}/` | `60a26c7` | 137 files / 593 +/- 421 LOC |
+| 10 | `presentation/pages/` 按 feature 拆 (14 dirs) | `df556f8` | 14 files moved, 19 imports updated |
+| 11 | drift tables + mappers 按 feature 拆 (13 files) | `e8c7a12` | 13 files moved, 24 imports updated |
+| 12 | `home_secondary_button.dart` → `presentation/widgets/secondary_button.dart` + `scripts/check_cross_feature.py` | `c6edf7d` | 1 file moved + 1 lint script added |
+| 13 | CI workflow + 修 `ink_sparkle` 矛盾 + `print`→`debugPrint` + LoadingSkeleton | `ecd3e25` | 3 files / 192 +/- 38 LOC |
+| 14 | 拆 `core_providers` (3 files) + animations/ subdir + l10n + swallowError + AppSnackBar + MotionScheme | `5610394` ... `ecc6865` | 50+ files / 1500+ LOC |
+
+每轮的完整 commit message 见 `git log --oneline`。代码侧决策细节在 `AGENTS.md` "决策记录" 段。
+
+
 | 主页底部按钮加"倾诉" | 用户主要路径 = 打卡 / 设置 / 倾诉 3 个核心动作 |
 | `RadioListTile` → `RadioGroup`（Flutter 3.32+） | 弃用警告 |
 | `try/finally` 资源释放 | 异常路径也要 release |
