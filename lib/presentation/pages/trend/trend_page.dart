@@ -16,7 +16,6 @@ import '../../../domain/logic/assessment_record.dart';
 import '../../../domain/logic/day_detail.dart';
 import '../../../domain/logic/scale_registry.dart';
 import '../../../domain/logic/trend_calculator.dart';
-import '../../../l10n/strings.dart';
 import '../../../theme/app_tokens.dart';
 import '../../providers/data_providers.dart';
 import '../../widgets/page_scaffold.dart';
@@ -392,10 +391,6 @@ class _MonthlyChart extends StatelessWidget {
     );
   }
 }
-
-// 避免未使用 import 警告
-// ignore: unused_element
-const _kAppName = Strings.appName;
 
 // =============================================================
 // 量表评估历史折线图

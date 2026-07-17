@@ -150,7 +150,7 @@ class RefillManagePage extends ConsumerWidget {
                   if (i > 0) const Divider(height: 1, indent: 56),
                   _RefillRow(
                     row: rows[i],
-                    onTap: () => _editMedication(context, ref, rows[i].med),
+                    onTap: () => _editMedication(context, rows[i].med),
                   ),
                 ],
               ],
@@ -196,10 +196,9 @@ class RefillManagePage extends ConsumerWidget {
 
   Future<void> _editMedication(
     BuildContext context,
-    WidgetRef ref,
     MedicationEntity med,
   ) async {
-    await showEditMedicationDialog(context, ref, med);
+    await showEditMedicationDialog(context, med);
   }
 }
 

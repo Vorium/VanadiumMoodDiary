@@ -17,21 +17,18 @@ import '../../../providers/core_providers.dart';
 /// 弹出编辑 dialog，返回 true 表示有保存成功，false/null = 取消
 Future<bool?> showEditMedicationDialog(
   BuildContext context,
-  WidgetRef ref,
   MedicationEntity med,
 ) {
   return showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (ctx) => _EditMedicationDialog(med: med, ref: ref),
+    builder: (ctx) => _EditMedicationDialog(med: med),
   );
 }
 
 class _EditMedicationDialog extends ConsumerStatefulWidget {
   final MedicationEntity med;
-  // ignore: unused_field
-  final WidgetRef ref;
-  const _EditMedicationDialog({required this.med, required this.ref});
+  const _EditMedicationDialog({required this.med});
 
   @override
   ConsumerState<_EditMedicationDialog> createState() =>

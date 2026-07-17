@@ -57,12 +57,8 @@ class EmailService {
     }
 
     // 真实 SMS provider 占位——v1.0+ 替换
-    try {
-      developer.log('真实 SMS 发送未实现（v1.0+ TODO）', name: 'EmailService');
-      return false;
-    } catch (e) {
-      developer.log('❌ 发送失败: $e', name: 'EmailService');
-      return false;
-    }
+    // 注：v1.0 接入真实 SDK 时，try/catch 应包住实际网络调用（参考 AliyunSmsProvider）
+    developer.log('真实 SMS 发送未实现（v1.0+ TODO）', name: 'EmailService');
+    return false;
   }
 }

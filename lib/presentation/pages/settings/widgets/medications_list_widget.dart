@@ -131,7 +131,7 @@ class _MedicationsListWidgetState
     if (_editing.contains(med.id)) return;
     setState(() => _editing.add(med.id));
     try {
-      final result = await showEditMedicationDialog(context, ref, med);
+      final result = await showEditMedicationDialog(context, med);
       if (!mounted) return;
       if (result == true) {
         ScaffoldMessenger.of(context).showSnackBar(
