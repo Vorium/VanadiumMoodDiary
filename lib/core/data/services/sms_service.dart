@@ -25,6 +25,14 @@ abstract class SmsProvider {
 }
 
 /// Mock 实现：只打日志，不真发
+///
+/// **P0-1 fix**: 之前 `return true` 让上层以为发出去了 — 实际只是日志。
+/// 改成抛 `UnimplementedError`,`SmsService.send` 会 catch 住并返
+/// `SmsResult.fail`,`SafetyWatchService` 把这次算 `contactsFailed`。
+/// UI 拿到 `error` kind,显示"未连接"。
+///
+/// ⚠️ 任何生产 release 都必须显式注入 `AliyunSmsProvider`(或其它真实 provider),
+/// 不能让 mock 进 release。
 class MockSmsProvider implements SmsProvider {
   @override
   String get name => 'mock';
@@ -36,14 +44,18 @@ class MockSmsProvider implements SmsProvider {
     String? templateId,
   }) async {
     developer.log('=' * 60, name: 'MockSmsProvider');
-    developer.log('📱 [MOCK SMS]', name: 'MockSmsProvider');
+    developer.log('📱 [MOCK SMS — NOT SENT]', name: 'MockSmsProvider');
     developer.log('  To: $to', name: 'MockSmsProvider');
     developer.log('  Body:', name: 'MockSmsProvider');
     for (final line in body.split('\n')) {
       developer.log('    $line', name: 'MockSmsProvider');
     }
     developer.log('=' * 60, name: 'MockSmsProvider');
-    return true;
+    // 仍 log 详细,方便 dev 看,但实际没发出去
+    throw UnimplementedError(
+      'MockSmsProvider.send() — no real SMS sent. '
+      'Production must inject AliyunSmsProvider (or other real provider).',
+    );
   }
 }
 
@@ -80,13 +92,12 @@ class AliyunSmsProvider implements SmsProvider {
     required String body,
     String? templateId,
   }) async {
-    // TODO(v1.0): 接入阿里云短信 SDK
-    // 当前未实现：调用 SDK 失败时降级到 Mock
-    developer.log(
-      '⚠️ AliyunSmsProvider.send() 未实现（v1.0+ TODO），降级到 mock log',
-      name: 'AliyunSmsProvider',
+    // P0-1 fix: 之前 silently 返 false,上层可能误判"已发送但失败"。
+    // 改成 throw UnimplementedError,SmsService.send catch 后返
+    // SmsResult.fail,UI 看到 error kind。
+    throw UnimplementedError(
+      'AliyunSmsProvider.send() 未实现 (v1.0+ TODO — 需要 accessKey/secret/signName)',
     );
-    return false;
   }
 }
 

@@ -73,9 +73,19 @@ final notificationServiceProvider = Provider<NotificationService>(
 
 /// SMS 服务 provider
 ///
-/// 默认 MockSmsProvider。v1.0+ 接入阿里云时改成从 .env 读取 key 后
+/// 默认 MockSmsProvider (开发/MVP)。v1.0+ 接入阿里云时改成从 .env 读取 key 后
 /// 用 AliyunSmsProvider。
+///
+/// **P0-1 fix**: MockSmsProvider.send() 现在 throw UnimplementedError,
+/// 任何生产 release 都必须显式注入真实 provider。UI 用
+/// [smsProviderNameProvider] 检测当前是不是 mock,在 reminders hub 显示
+/// 显眼"SMS 未连接"banner。
 final smsServiceProvider = Provider<SmsService>((ref) => SmsService());
+
+/// 当前 SMS provider 名称(给 UI 检测用)
+final smsProviderNameProvider = Provider<String>(
+  (ref) => ref.watch(smsServiceProvider).provider.name,
+);
 
 /// v0.17 round 14 提示: vent 相关的 repo / audio storage / stream provider 整组
 /// 挪到 lib/presentation/providers/vent_providers.dart (避免循环 import)。

@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -237,16 +238,49 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     }
     final enabled = _safetyEnabled ?? false;
     final threshold = _safetyThreshold ?? 2;
-    return _ReminderCard(
-      icon: Icons.shield_outlined,
-      title: '失联通知（安全开关）',
-      description: enabled
-          ? '连续 $threshold 天没打卡 → 自动 SMS 通知紧急联系人 + 本地推送'
-          : '关闭 · 不会自动通知紧急联系人',
-      statusText: enabled ? '已启用 · 阈值 $threshold 天' : '未启用',
-      statusActive: enabled,
-      actionLabel: '配置',
-      onAction: () => _showSafetySettings(context),
+    // P0-1 fix: 检测当前 SMS provider,如果还是 mock 状态,显示显眼 banner。
+    // 用户必须知道「失联通知」功能还没真接通 — 否则可能误以为已保护家人。
+    final providerName = ref.watch(smsProviderNameProvider);
+    final isMockSms = providerName == 'mock';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (isMockSms)
+          Container(
+            margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
+            padding: const EdgeInsets.all(AppTokens.spacingSm),
+            decoration: BoxDecoration(
+              color: AppTokens.error.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+              border: Border.all(color: AppTokens.error, width: 1),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.error_outline, color: AppTokens.error, size: 18),
+                SizedBox(width: AppTokens.spacingXs),
+                Expanded(
+                  child: Text(
+                    'SMS 通道未接通（当前使用 Mock）。失联触发时只会推本地通知,'
+                    '不会真发短信给紧急联系人。上 store 前必须接入真实 SMS provider。',
+                    style: TextStyle(fontSize: 12, height: 1.4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        _ReminderCard(
+          icon: Icons.shield_outlined,
+          title: '失联通知（安全开关）',
+          description: enabled
+              ? '连续 $threshold 天没打卡 → 自动 SMS 通知紧急联系人 + 本地推送'
+              : '关闭 · 不会自动通知紧急联系人',
+          statusText: enabled ? '已启用 · 阈值 $threshold 天' : '未启用',
+          statusActive: enabled,
+          actionLabel: '配置',
+          onAction: () => _showSafetySettings(context),
+        ),
+      ],
     );
   }
 }
