@@ -7,31 +7,22 @@ import 'package:drift/drift.dart' show Value;
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/mappers/user_profile_mapper.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepository {
   final AppDatabase _db;
 
   UserProfileRepositoryImpl(this._db);
 
-  UserProfileEntity? _toEntity(UserProfile? row) {
-    if (row == null) return null;
-    return UserProfileEntity(
-      id: row.id,
-      userName: row.userName,
-      checkInCycleHours: row.checkInCycleHours,
-      firstLaunchAt: row.firstLaunchAt,
-    );
-  }
-
   @override
   Stream<UserProfileEntity?> watch() {
-    return _db.watchUserProfile().map(_toEntity);
+    return _db.watchUserProfile().map(userProfileFromRow);
   }
 
   @override
   Future<UserProfileEntity?> get() async {
     final row = await _db.getUserProfile();
-    return _toEntity(row);
+    return userProfileFromRow(row);
   }
 
   @override

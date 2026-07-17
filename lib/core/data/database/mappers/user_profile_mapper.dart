@@ -1,0 +1,19 @@
+// v0.17 round 14 (P2-8): user_profile mapper 抽离
+//
+// 之前 _toEntity 内联在 UserProfileRepositoryImpl 里,跟其他 feature
+// (check_in / contact / medication / mood / vent) 不一致 — 那些都有
+// 独立的 mapper 文件 (round 11 抽的)。这次补齐。
+
+import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/domain/entities/user_profile_entity.dart';
+
+/// Drift row → domain entity
+UserProfileEntity? userProfileFromRow(UserProfile? row) {
+  if (row == null) return null;
+  return UserProfileEntity(
+    id: row.id,
+    userName: row.userName,
+    checkInCycleHours: row.checkInCycleHours,
+    firstLaunchAt: row.firstLaunchAt,
+  );
+}

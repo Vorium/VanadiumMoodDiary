@@ -6,30 +6,24 @@
 import 'package:chroniccare/domain/entities/report_history_entity.dart';
 import 'package:chroniccare/domain/repositories/report_history_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/mappers/report_history_mapper.dart';
 
 class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
   final AppDatabase _db;
   ReportHistoryRepositoryImpl(this._db);
 
-  ReportHistoryEntity _toEntity(ReportHistory r) => ReportHistoryEntity(
-        id: r.id,
-        windowDays: r.windowDays,
-        generatedAt: r.generatedAt,
-        userName: r.userName,
-        reportText: r.reportText,
-      );
-
   @override
   Stream<List<ReportHistoryEntity>> watchAll() {
     return _db
         .watchReportHistories()
-        .map((rows) => rows.map(_toEntity).toList(growable: false));
+        .map((rows) =>
+            rows.map(reportHistoryFromRow).toList(growable: false),);
   }
 
   @override
   Future<List<ReportHistoryEntity>> getAll() async {
     final rows = await _db.getAllReportHistories();
-    return rows.map(_toEntity).toList(growable: false);
+    return rows.map(reportHistoryFromRow).toList(growable: false);
   }
 
   @override
