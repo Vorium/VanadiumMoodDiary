@@ -200,6 +200,61 @@ void main() {
       expect(result.kind, SafetyCheckKind.ok);
     });
   });
+
+  group('v0.17 round 14 (P3-3) 边界 case', () {
+    test('阈值 = 1, daysSinceLast = 1 → 触发 (inclusive 边界)', () async {
+      await setupProfile(name: '张三');
+      await setupContact(phone: '13800138000');
+      await safety.setEnabled(true);
+      await safety.setThresholdDays(1);
+      // 24 小时前打卡 (跨 midnight 之后恰好 1 天)
+      await checkInAt(DateTime.now().subtract(const Duration(hours: 24)));
+      final result = await safety.checkNow();
+      // 阈值 1, days = 1 满足 "days >= threshold" → 触发
+      expect(result.kind, SafetyCheckKind.alerted);
+      expect(result.daysSinceLast, 1);
+    });
+
+    test('阈值 = 1, daysSinceLast = 0 → OK (0 < 1 不触发)', () async {
+      await setupProfile(name: '张三');
+      await setupContact(phone: '13800138000');
+      await safety.setEnabled(true);
+      await safety.setThresholdDays(1);
+      // 1 小时前打卡
+      await checkInAt(DateTime.now().subtract(const Duration(hours: 1)));
+      final result = await safety.checkNow();
+      expect(result.kind, SafetyCheckKind.ok);
+    });
+
+    test('DND 跨天 (22-08): 当前 hour 在范围内 → dndSuppressed', () async {
+      await setupProfile(name: '张三');
+      await setupContact(phone: '13800138000');
+      await safety.setEnabled(true);
+      await safety.setThresholdDays(2);
+      // DND 跨天: 22:00 - 08:00
+      // 拿当前 hour,如果是 22-23 或 0-7,直接是 dnd
+      // 否则选一个 in-range 区间
+      final hour = DateTime.now().hour;
+      int start;
+      int end;
+      if (hour >= 22 || hour < 8) {
+        // 当前已经在 dnd 跨天区间,用现有 22-08
+        start = 22;
+        end = 8;
+      } else {
+        // 白天: 用 hour 跨天包住现在 (e.g. hour=15, 设 14-16 同日, 但 14<16 是同一天
+        // 我们用 hour-1 到 hour+1 跨天: hour-1 ~ 24 + hour+1
+        start = (hour - 1 + 24) % 24;
+        end = (hour + 1) % 24;
+        // start > end 必为跨天
+      }
+      await safety.setDoNotDisturb(startHour: start, endHour: end);
+      await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
+      final result = await safety.checkNow();
+      expect(result.kind, SafetyCheckKind.dndSuppressed);
+      expect(sms.sent, isEmpty);
+    });
+  });
 }
 
 // ============== Test Doubles ==============
