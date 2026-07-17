@@ -6,6 +6,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../domain/repositories/notification_sender.dart';
 import '../database/app_database.dart';
 import '../database/medication_times.dart';
 import 'notification_navigation.dart';
@@ -17,7 +18,7 @@ import 'notification_payload.dart';
 /// - 每天 20:00 通用打卡提醒（保留）
 /// - **每个 medication 的每个 time 配 zonedSchedule 推送**
 /// - "漏 1 天"主动 push 安慰
-class NotificationService {
+class NotificationService implements NotificationSender {
   static const _channelId = 'chroniccare.medication';
   static const _channelName = '吃药提醒';
   static const _channelDesc = '到点提醒你吃药打卡';

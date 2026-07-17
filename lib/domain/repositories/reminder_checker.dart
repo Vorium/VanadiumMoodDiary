@@ -3,9 +3,9 @@
 /// ReminderService 实现此接口，domain 层业务逻辑（CareEngine 等）不直接依赖 data 层。
 
 /// 检测结果级别
-enum ReminderLevel { none, soft, medium, hard }
+enum ReminderLevel { none, soft, medium, hard, urgent }
 
-/// 检测结果
+/// 检测结果（domain 简化版）
 class ReminderCheckResult {
   final ReminderLevel level;
   const ReminderCheckResult({required this.level});

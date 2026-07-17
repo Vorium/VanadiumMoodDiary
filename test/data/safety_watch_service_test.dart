@@ -1,6 +1,6 @@
 import 'package:chroniccare/data/repositories/check_in_repository_impl.dart';
 import 'package:chroniccare/data/repositories/contact_repository_impl.dart';
-import 'package:chroniccare/data/repositories/user_profile_repository.dart';
+import 'package:chroniccare/data/repositories/user_profile_repository_impl.dart';
 import 'package:chroniccare/data/services/notification_service.dart';
 import 'package:chroniccare/data/services/safety_watch_service.dart';
 import 'package:chroniccare/data/services/sms_service.dart';
@@ -24,13 +24,13 @@ void main() {
   late StubNotificationService notif;
   late CheckInRepositoryImpl checkInRepo;
   late ContactRepositoryImpl contactRepo;
-  late UserProfileRepository userProfileRepo;
+  late UserProfileRepositoryImpl userProfileRepo;
 
   setUp(() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     checkInRepo = CheckInRepositoryImpl(db);
     contactRepo = ContactRepositoryImpl(db);
-    userProfileRepo = UserProfileRepository(db);
+    userProfileRepo = UserProfileRepositoryImpl(db);
     sms = MockSmsService();
     notif = StubNotificationService();
     safety = SafetyWatchService(

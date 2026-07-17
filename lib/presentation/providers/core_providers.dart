@@ -5,7 +5,8 @@ import '../../data/repositories/check_in_repository_impl.dart';
 import '../../data/repositories/contact_repository_impl.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../data/repositories/mood_repository_impl.dart';
-import '../../data/repositories/user_profile_repository.dart';
+import '../../data/repositories/report_history_repository_impl.dart';
+import '../../data/repositories/user_profile_repository_impl.dart';
 import '../../data/repositories/vent_repository_impl.dart';
 import '../../data/services/assessment_reminder_service.dart';
 import '../../data/services/crypto_service.dart';
@@ -15,11 +16,14 @@ import '../../data/services/reminder_scheduler.dart';
 import '../../data/services/safety_watch_service.dart';
 import '../../data/services/sms_service.dart';
 import '../../data/services/vent_audio_storage.dart';
+import '../../domain/entities/report_history_entity.dart';
+import '../../domain/entities/vent_entry.dart';
 import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../domain/repositories/mood_repository.dart';
-import '../../domain/entities/vent_entry.dart';
+import '../../domain/repositories/report_history_repository.dart';
+import '../../domain/repositories/user_profile_repository.dart';
 import '../../domain/repositories/vent_repository.dart';
 
 /// 数据库 Provider
@@ -42,8 +46,9 @@ final medicationRepositoryProvider = Provider<MedicationRepository>(
   (ref) => MedicationRepositoryImpl(ref.watch(databaseProvider)),
 );
 
+/// v0.16 (Round 19): data class → impl，provider 暴露 domain 接口
 final userProfileRepositoryProvider = Provider<UserProfileRepository>(
-  (ref) => UserProfileRepository(ref.watch(databaseProvider)),
+  (ref) => UserProfileRepositoryImpl(ref.watch(databaseProvider)),
 );
 
 final moodRepositoryProvider = Provider<MoodRepository>(
@@ -53,6 +58,11 @@ final moodRepositoryProvider = Provider<MoodRepository>(
 /// v0.15 (Round 18) 树洞仓库 provider
 final ventRepositoryProvider = Provider<VentRepository>(
   (ref) => VentRepositoryImpl(ref.watch(databaseProvider), ref.watch(ventAudioStorageProvider)),
+);
+
+/// v0.16 (Round 19): 报告历史仓库（domain 接口 + data impl）
+final reportHistoryRepositoryProvider = Provider<ReportHistoryRepository>(
+  (ref) => ReportHistoryRepositoryImpl(ref.watch(databaseProvider)),
 );
 
 /// 树洞 audio 文件管理（独立 service）

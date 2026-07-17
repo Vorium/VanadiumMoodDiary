@@ -16,6 +16,12 @@ abstract class MedicationRepository {
   /// 监听所有启用的药物
   Stream<List<MedicationEntity>> watchAll();
 
+  /// 监听所有药物（含已停药，给"用药报告"用）
+  ///
+  /// 历史用药可能在窗口内有打卡记录，但 medication.isActive=false，
+  /// 报告必须包含这些数据才能完整还原用户服药历史。
+  Stream<List<MedicationEntity>> watchAllIncludingInactive();
+
   /// 添加药物
   Future<int> add({
     required String name,

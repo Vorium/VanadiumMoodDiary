@@ -5,11 +5,12 @@
 library;
 
 import '../../domain/repositories/medication_repository.dart';
+import '../../domain/repositories/user_profile_repository.dart';
 import '../database/app_database.dart';
 import '../repositories/check_in_repository_impl.dart';
 import '../repositories/contact_repository_impl.dart';
 import '../repositories/medication_repository_impl.dart';
-import '../repositories/user_profile_repository.dart';
+import '../repositories/user_profile_repository_impl.dart';
 import 'crypto_service.dart';
 import 'notification_service.dart';
 import 'reminder_scheduler.dart';
@@ -30,7 +31,7 @@ class AppServices {
       : checkInRepo = CheckInRepositoryImpl(database),
         contactRepo = ContactRepositoryImpl(database),
         medicationRepo = MedicationRepositoryImpl(database),
-        userProfileRepo = UserProfileRepository(database),
+        userProfileRepo = UserProfileRepositoryImpl(database),
         notificationService = NotificationService(),
         cryptoService = CryptoService(),
         smsService = SmsService(),
@@ -38,7 +39,7 @@ class AppServices {
           checkInRepo: CheckInRepositoryImpl(database),
           contactRepo: ContactRepositoryImpl(database),
           medicationRepo: MedicationRepositoryImpl(database),
-          userProfileRepo: UserProfileRepository(database),
+          userProfileRepo: UserProfileRepositoryImpl(database),
           smsService: SmsService(),
         );
 

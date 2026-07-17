@@ -8,5 +8,6 @@ abstract class NotificationSender {
     required int id,
     required String title,
     required String body,
+    String? payload,
   });
 }

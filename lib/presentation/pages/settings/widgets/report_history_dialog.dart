@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../data/database/app_database.dart';
+import '../../../../domain/entities/report_history_entity.dart';
 import '../../../../shared/formatters.dart';
 import '../../../../l10n/strings.dart';
 import '../../../../theme/app_tokens.dart';
@@ -127,7 +127,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
     );
     if (ok != true) return;
     try {
-      await ref.read(databaseProvider).deleteReportHistory(id);
+      await ref.read(reportHistoryRepositoryProvider).delete(id);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -137,7 +137,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
     }
   }
 
-  void _openDetail(BuildContext context, ReportHistory h) {
+  void _openDetail(BuildContext context, ReportHistoryEntity h) {
     showDialog<void>(
       context: context,
       builder: (ctx) => MedicationReportDialog(

@@ -5,7 +5,7 @@ import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/repositories/check_in_repository_impl.dart';
 import 'package:chroniccare/data/repositories/contact_repository_impl.dart';
 import 'package:chroniccare/data/repositories/medication_repository_impl.dart';
-import 'package:chroniccare/data/repositories/user_profile_repository.dart';
+import 'package:chroniccare/data/repositories/user_profile_repository_impl.dart';
 import 'package:chroniccare/data/services/reminder_scheduler.dart';
 import 'package:chroniccare/data/services/sms_service.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
@@ -73,7 +73,7 @@ class _StubReminderService extends ReminderService {
     checkInRepo: CheckInRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
     contactRepo: ContactRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
     medicationRepo: MedicationRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
-    userProfileRepo: UserProfileRepository(AppDatabase.forTesting(NativeDatabase.memory())),
+    userProfileRepo: UserProfileRepositoryImpl(AppDatabase.forTesting(NativeDatabase.memory())),
     smsService: SmsService(),
   );
 

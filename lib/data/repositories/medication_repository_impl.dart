@@ -33,6 +33,13 @@ class MedicationRepositoryImpl implements MedicationRepository {
   }
 
   @override
+  Stream<List<MedicationEntity>> watchAllIncludingInactive() {
+    return _db.watchAllMedicationsIncludingInactive().map(
+          (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
+        );
+  }
+
+  @override
   Future<int> add({
     required String name,
     required double dosage,

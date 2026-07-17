@@ -3,9 +3,12 @@ import 'dart:developer' as developer;
 import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';
 import '../../domain/repositories/medication_repository.dart';
-import '../repositories/user_profile_repository.dart';
+import '../../domain/repositories/user_profile_repository.dart';
 import '../../domain/logic/reminder_scheduler.dart' as logic;
 import 'sms_service.dart';
+
+// ReminderLevel + ReminderResult 来自 domain（v0.16 Round 19 合并）
+// data 层用同一份 enum/result，UI/CareEngine 也用 domain 那一套
 
 /// 失联通知服务（应用层）
 ///

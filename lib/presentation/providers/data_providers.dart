@@ -1,16 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/database/app_database.dart';
-import '../../data/database/medication_mapper.dart';
 import '../../domain/entities/check_in_entity.dart';
 import '../../domain/entities/contact_entity.dart';
 import '../../domain/entities/medication_entity.dart';
 import '../../domain/entities/mood_entry_entity.dart';
+import '../../domain/entities/report_history_entity.dart';
+import '../../domain/entities/user_profile_entity.dart';
 import '../../domain/logic/streak_calculator.dart';
 import 'core_providers.dart';
 
-/// 用户档案
-final userProfileProvider = StreamProvider<UserProfile?>(
+/// 用户档案（v0.16: domain entity, no longer Drift row）
+final userProfileProvider = StreamProvider<UserProfileEntity?>(
   (ref) => ref.watch(userProfileRepositoryProvider).watch(),
 );
 
@@ -74,9 +74,11 @@ final medicationsProvider = StreamProvider<List<MedicationEntity>>(
 /// 历史用药可能在窗口内有打卡记录，但 medication.isActive=false，
 /// 报告必须包含这些数据才能完整还原用户服药历史。（B3 fix）
 final allMedicationsProvider = StreamProvider<List<MedicationEntity>>(
-  (ref) => ref.watch(databaseProvider)
-      .watchAllMedicationsIncludingInactive()
-      .map((rows) => rows.map((r) => r.toEntity()).toList(growable: false)),
+  (ref) {
+    final repo = ref.watch(medicationRepositoryProvider);
+    // v0.16: 新增 watchAllIncludingInactive() abstract method
+    return repo.watchAllIncludingInactive();
+  },
 );
 
 /// 所有评估记录（PHQ-9 / GAD-7，按时间正序）
@@ -84,9 +86,9 @@ final assessmentsProvider = StreamProvider<List<CheckInEntity>>(
   (ref) => ref.watch(checkInRepositoryProvider).watchAssessments(),
 );
 
-/// 报告历史（按生成时间倒序）
-final reportHistoriesProvider = StreamProvider<List<ReportHistory>>(
-  (ref) => ref.watch(databaseProvider).watchReportHistories(),
+/// 报告历史（按生成时间倒序）— v0.16: 用 domain entity
+final reportHistoriesProvider = StreamProvider<List<ReportHistoryEntity>>(
+  (ref) => ref.watch(reportHistoryRepositoryProvider).watchAll(),
 );
 
 /// 今日情绪记录
