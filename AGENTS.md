@@ -184,6 +184,11 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **AudioPlayer / recorder / 任何 acquire 资源的临时对象用 `try/finally`**（v0.16 round 19B）：`_getAudioDuration` 之前 try 内 `setSource` + `getDuration` + `dispose` 一气呵成，异常时 dispose 不跑 → resource leak。修：`final player = AudioPlayer(); try { ... } catch (_) {} finally { await player.dispose(); }`
 - **`scheduleRefillReminder` 这种"先判过期再算 daysLeft" 模式**（v0.16 round 19B）：之前 2 次 `DateTime.now()` 跨 midnight 不一致。修：函数入口 `final now = DateTime.now();` 一次，下面所有判断/计算复用
 - **国产 ROM 静默杀后台通知**（v0.16 round 20）：小米 / 华为 / OPPO / Vivo / 魅族 默认禁止 App 后台运行 + 自启动 + 精确闹钟。用户反映"20:00 没收到提醒"99% 是这个原因。**不要靠 `developer.log` 排查，用户看不到**。修：在设置页加 `NotificationStatusCard` 自检卡：状态显示 + 一键测试 + OEM 引导文字。`androidScheduleMode: exactAllowWhileIdle` 是必要条件但不充分。找 bug 方法：用户报"没收到提醒"先检查 ROM + 自检卡状态数 = 0
+- **Riverpod 3.x 升级 `valueOrNull` → `value`**（v0.17 round 3）：2.6 的 `AsyncValue.valueOrNull` 在 3.x 改成 `value`。找 bug 方法：升 3.x 报 `undefined_getter valueOrNull` 就是这个
+- **Riverpod 3.x `ref.mounted` 仅限 Notifier**（v0.17 round 3）：项目用 Provider/StreamProvider/ConsumerStatefulWidget，没法用 `ref.mounted` 替代 `if (!mounted) return;`。保持 30+ 处 `!mounted` check
+- **跨 midnight streak 不刷新**（v0.17 round 4）：streakSummaryProvider 在 build 内取 `DateTime.now()`，跨 23:59:59 后 widget 重建会拿新 now，但 streakSummaryProvider 自身没监听时间变化。修：AppRoot 挂 midnight timer，00:00:05 自动 `ref.invalidate(streakSummaryProvider)`。`nextMidnightRefresh(now)` 是 top-level 纯函数，跨月/跨年都正确。buffer 5s 防 race
+- **emil 动效 token 必须集中**（v0.17 round 1）：项目原本 `app_tokens.dart` 只有 `durFast/durNormal/durSlow`，缺 `curve*` 常量。各 widget 各写各的 `Curves.easeInOut` 风格不统一。修：4 个 curve token + emil 决策框架 doc 注释（100+/day 无动画, tens/day 微弱, occasional 标准, rare 可加 delight）
+- **go_router 默认无 transition**（v0.17 round 2）：`GoRoute.builder` 默认切换无动画。修：用 `pageBuilder` + `CustomTransitionPage`，3 类 transition（fade / slide-right / slide-up）按频度分类
 
 ## 决策记录
 

@@ -2,6 +2,42 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.17.0] - 2026-07-17
+
+### Changed
+- **架构升级（Round 1-5）**：从 3 个 skill（emilkowalski / superpowers-en / superpowers-zh）调研出的可优化点全部落地
+
+### Added (emil 动效)
+- **AppTokens 动画 token**（A1）：补 4 个 curve 常量（curveStandard/curveDecelerate/curveAccelerate/curveDelight）+ emil 决策框架 doc 注释
+- **CheckInButton 状态过渡**（A3）：AnimatedContainer 让背景色 + 圆角在 durNormal + curveStandard 下过渡；文字切走 AnimatedSwitcher fade + scale
+- **streak 数字 TweenAnimationBuilder**（A6）：数字从 0 → N 平滑递增
+- **go_router 3 类 page transition**（A2）：`_fadePage`（主导航 occasional）/ `_slideRightPage`（子页 slide-from-right）/ `_slideUpPage`（全屏深页 rare full-screen modal feel）
+- **vent 列表 → 详情 Hero**（A4）：Hero(tag: 'vent-avatar-{id}') 头像"飞"过去
+- **vent 空态 + 鼓励文案 fade + scale**（A8）
+
+### Added (process)
+- **跨 midnight 自动 refresh streak**（B3 design issue）：AppRoot 挂 midnight timer，00:00:05 自动 `ref.invalidate(streakSummaryProvider)`，避免 streak 跨日还显示昨日的值
+- **nextMidnightRefresh 纯函数**：抽 top-level `@visibleForTesting`，跨月/跨年边界都正确处理
+- **CareEngine 12 个 edge case test**（B5）：fire 3 态 + 4 个核心规则的边界（22:00 整点 / 周末 18:00 边界 / 36h + hour<10）
+
+### Fixed (Riverpod 3.0 升级)
+- **flutter_riverpod 2.6.1 → 3.3.2**：自动 retry + 指数退避、`Ref` 子类统一、`==` 过滤 StreamProvider
+- **AsyncValue.valueOrNull → .value**（2 处）：
+  - `lib/routing/app_router.dart:85` (profile 守卫)
+  - `lib/presentation/pages/home/widgets/temp_medication_dialog.dart:65` (meds list fallback)
+- **freezed 2.5.7 → 3.2.5**（Riverpod 3.x 依赖要求）
+
+### Tests
+- 516/516 pass（v0.16 491 → v0.17 +25）
+  - 7 个 round 1 emil 动效 test（AppTokens + CheckInButton + vent empty state）
+  - 6 个 round 4 midnight refresh test（跨月/跨年/buffer 边界）
+  - 12 个 round 5 CareEngine test（fire 3 态 + 4 规则边界）
+
+### Architecture
+- 4 层架构纯度 + 一致性保持：check_all.dart 仍全过
+- Riverpod 3.x 升级**冲击面极小**（项目 0 个 StateProvider / StateNotifierProvider / ChangeNotifierProvider / FamilyNotifier / AutoDispose*）
+- B1（!mounted → ref.mounted）实际上**无法迁移** — Riverpod 3 的 `ref.mounted` 是 `Notifier` 特性，项目全用 `Provider`/`StreamProvider`/`ConsumerStatefulWidget`，不能直接迁移。保持 30+ 处 `!mounted` check
+
 ## [0.16.0] - 2026-07-17
 
 ### Changed
