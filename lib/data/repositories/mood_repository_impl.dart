@@ -7,7 +7,7 @@ import '../../domain/entities/mood_entry_entity.dart';
 import '../../domain/repositories/mood_repository.dart';
 import '../database/app_database.dart';
 import '../database/mood_entry_mapper.dart';
-import '../utils/json_codec.dart';
+import '../../shared/json_codec.dart';
 
 /// Mood 仓库的 Drift 实现
 class MoodRepositoryImpl implements MoodRepository {

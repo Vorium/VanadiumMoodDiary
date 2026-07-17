@@ -1,6 +1,4 @@
 /// 统一格式化工具（共享层：domain + data + presentation 均可使用）
-///
-/// 从 `data/utils/formatters.dart` 迁移，消除 domain → data 依赖。
 class Formatters {
   Formatters._();
 

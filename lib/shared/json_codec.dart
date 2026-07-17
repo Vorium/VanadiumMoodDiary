@@ -2,8 +2,6 @@ import 'dart:convert';
 
 /// 统一 JSON 编解码工具（共享层：domain + data + presentation 均可使用）
 ///
-/// 从 `data/utils/json_codec.dart` 迁移，消除 domain → data 依赖。
-///
 /// 重要：所有存在 SQLite 中的 JSON 字段（mood tags、medication times、临时用药 note）
 /// 都应该通过本工具读写，避免格式漂移。
 class JsonCodec {

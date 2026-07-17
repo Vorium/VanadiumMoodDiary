@@ -10,7 +10,7 @@ import '../../domain/entities/check_in_entity.dart';
 import '../../domain/repositories/check_in_repository.dart';
 import '../database/app_database.dart';
 import '../database/check_in_mapper.dart';
-import '../utils/json_codec.dart';
+import '../../shared/json_codec.dart';
 
 /// CheckIn 仓库的 Drift 实现
 class CheckInRepositoryImpl implements CheckInRepository {

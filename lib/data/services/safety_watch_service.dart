@@ -6,7 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';
-import '../repositories/user_profile_repository.dart';
+import '../../domain/repositories/user_profile_repository.dart';
+import '../repositories/user_profile_repository_impl.dart';
 import 'email_service.dart';
 import 'notification_service.dart';
 import 'sms_service.dart';
