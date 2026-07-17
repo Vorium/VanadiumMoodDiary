@@ -43,17 +43,19 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
   String? _audioPath;
   int? _audioDurationSec;
   bool _isPlaying = false;
+  StreamSubscription<void>? _playerCompleteSub;
 
   @override
   void initState() {
     super.initState();
-    _player.onPlayerComplete.listen((_) {
+    _playerCompleteSub = _player.onPlayerComplete.listen((_) {
       if (mounted) setState(() => _isPlaying = false);
     });
   }
 
   @override
   void dispose() {
+    _playerCompleteSub?.cancel();
     _textController.dispose();
     _recorder.dispose();
     _player.dispose();

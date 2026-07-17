@@ -6,6 +6,8 @@
 // 删除按钮在右上角
 library;
 
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,17 +32,20 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
   bool _isPlaying = false;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
+  StreamSubscription<Duration>? _durationSub;
+  StreamSubscription<Duration>? _positionSub;
+  StreamSubscription<void>? _completeSub;
 
   @override
   void initState() {
     super.initState();
-    _player.onDurationChanged.listen((d) {
+    _durationSub = _player.onDurationChanged.listen((d) {
       if (mounted) setState(() => _duration = d);
     });
-    _player.onPositionChanged.listen((p) {
+    _positionSub = _player.onPositionChanged.listen((p) {
       if (mounted) setState(() => _position = p);
     });
-    _player.onPlayerComplete.listen((_) {
+    _completeSub = _player.onPlayerComplete.listen((_) {
       if (mounted) {
         setState(() {
           _isPlaying = false;
@@ -52,6 +57,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
 
   @override
   void dispose() {
+    _durationSub?.cancel();
+    _positionSub?.cancel();
+    _completeSub?.cancel();
     _player.dispose();
     super.dispose();
   }
