@@ -90,6 +90,26 @@
 - 486/486 pass（478 → 486：8 route param parsing 边界 case）
 - 新增 `test/routing/route_parsing_round19c_test.dart`：8 cases 覆盖 `int.tryParse` fallback 行为（valid int / empty / 'abc' / mixed / negative / whitespace / null path param）
 
+### Added (round 20 — 通知自检 + OEM 后台引导)
+- **`NotificationService.pendingCount`**：返回当前待发通知数；plugin 抛 PlatformException 时返回 -1（web/desktop 平台）
+- **设置页「通知与提醒」自检卡** (`NotificationStatusCard`)：
+  - 状态显示：当前已排队的待发通知数（0 / N / 不支持三态）
+  - **测试通知按钮**：点一下立即推一条，看到 = 通知工作正常
+  - **查看已排队通知**：弹 dialog 列出所有 `pendingNotificationRequests` 标题
+  - **国产手机后台引导**：折叠面板展开 5 大品牌（小米 / 华为 / OPPO / Vivo / 魅族）每家 2-3 步后台保活路径
+  - `kIsWeb` fallback：web 端显示"通知功能仅在 Android/iOS 可用"，隐藏功能按钮
+
+### Fixed (round 20)
+- **国产 ROM 静默杀通知没用户可见信号**：之前 20:00 提醒失败只在 log 里 `developer.log`，用户根本不知道。加自检卡后用户能主动验证 + 看到"没有待发通知"立即知道要排查
+
+### Tests (round 20)
+- 491/491 pass（486 → 491：5 widget test）
+- 新增 `test/presentation/notification_status_card_round20_test.dart`：5 cases 覆盖
+  - mobile 模式显示完整 card
+  - pendingCount 三种状态（5 / 0 / -1）的 UI 提示
+  - 点"测试通知"按钮 → 调 `showNow` 推一条
+  - 点刷新按钮 → 重新读 pendingCount
+
 ## [0.15.0] - 2026-07-15
 
 ### Added

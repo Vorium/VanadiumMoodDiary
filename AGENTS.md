@@ -183,6 +183,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **Notification id cancel range 公式必须匹配**（v0.16 round 19/19B）：cancel 范围要 ≥ `base + maxMedId * 系数`。修前 3 个 service 用 1000/100000 太窄。修后统一 200000，覆盖 medId 几万个，远超实际用户量。`int32` 安全（~2.1B）
 - **AudioPlayer / recorder / 任何 acquire 资源的临时对象用 `try/finally`**（v0.16 round 19B）：`_getAudioDuration` 之前 try 内 `setSource` + `getDuration` + `dispose` 一气呵成，异常时 dispose 不跑 → resource leak。修：`final player = AudioPlayer(); try { ... } catch (_) {} finally { await player.dispose(); }`
 - **`scheduleRefillReminder` 这种"先判过期再算 daysLeft" 模式**（v0.16 round 19B）：之前 2 次 `DateTime.now()` 跨 midnight 不一致。修：函数入口 `final now = DateTime.now();` 一次，下面所有判断/计算复用
+- **国产 ROM 静默杀后台通知**（v0.16 round 20）：小米 / 华为 / OPPO / Vivo / 魅族 默认禁止 App 后台运行 + 自启动 + 精确闹钟。用户反映"20:00 没收到提醒"99% 是这个原因。**不要靠 `developer.log` 排查，用户看不到**。修：在设置页加 `NotificationStatusCard` 自检卡：状态显示 + 一键测试 + OEM 引导文字。`androidScheduleMode: exactAllowWhileIdle` 是必要条件但不充分。找 bug 方法：用户报"没收到提醒"先检查 ROM + 自检卡状态数 = 0
 
 ## 决策记录
 
