@@ -19,7 +19,7 @@ import 'medication_times.dart';
 
 /// Drift row → entity
 extension MedicationToEntity on Medication {
-  /// 复用 MedicationTimes 扩展解析 timesJson 为 List<TimeOfDay>
+  /// 复用 MedicationTimes 扩展解析 timesJson 为 List<HourMinute>
   MedicationEntity toEntity() {
     return MedicationEntity(
       id: id,

@@ -147,6 +147,7 @@ dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 
 ```bash
 dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
+# 注：dart run 在本项目会触发 objective_c build hook 失败，用 dart 直接跑
 ```
 
 **`check_all.dart`** 检查：

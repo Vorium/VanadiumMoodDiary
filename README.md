@@ -87,6 +87,7 @@ lib/
 **4 层纯度 + 一致性自动检查**：
 ```bash
 dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
+# 注：dart run 在本项目会触发 objective_c build hook 失败，用 dart 直接跑
 ```
 
 ## ✨ 功能
@@ -130,6 +131,7 @@ dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 
 # 4 层架构纯度 + 一致性检查（v0.16 Round 13 起合并为 check_all.dart）
 dart scripts/check_all.dart
+# 注：dart run 在本项目会触发 objective_c build hook 失败，用 dart 直接跑
 ```
 
 测试覆盖：domain 业务逻辑（量表、streak、报告、用药）+ data 仓库（round-trip）+ presentation widget（页面渲染、交互）。架构检查覆盖 import 依赖方向 + entity ↔ table 对应 + shared 工具使用率。

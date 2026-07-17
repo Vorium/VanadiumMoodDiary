@@ -11,8 +11,9 @@
 //    - 每个 drift table data class 都对应一个 domain *Entity
 //    - shared/ 工具被 ≥2 层用（否则考虑移走）
 //
-// 用法：dart run scripts/check_all.dart
+// 用法：dart scripts/check_all.dart
 // 退出码：0 = 通过, 1 = 有违规
+// 注：dart run 在本项目会触发 objective_c build hook 失败，用 dart 直接跑即可。
 
 // ignore_for_file: avoid_print
 
