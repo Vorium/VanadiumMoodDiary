@@ -154,6 +154,24 @@ class NotificationService implements NotificationSender {
     await _plugin.cancelAll();
   }
 
+  /// 待发通知数量（用于 UI 自检展示）
+  ///
+  /// v0.16 round 20（OEM 后台引导）：让用户能在设置页直观看到
+  /// "我设的提醒都在排队",如果显示 0 条说明没设上或被 OEM 杀掉
+  /// 返回 -1 表示平台不支持（web / desktop）
+  Future<int> get pendingCount async {
+    await init();
+    try {
+      final list = await _plugin.pendingNotificationRequests();
+      return list.length;
+    } catch (e) {
+      // web 平台 / 未实现 plugin: pendingNotificationRequests 抛 PlatformException
+      developer.log('⚠️ pendingCount 读取失败（可能 web 端）: $e',
+          name: 'NotificationService',);
+      return -1;
+    }
+  }
+
   /// 重排所有 medication 的推送
   ///
   /// 每次 medications 表变化（增/删/改）时调用。

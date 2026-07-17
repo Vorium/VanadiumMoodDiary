@@ -16,6 +16,7 @@ import 'widgets/choose_window_dialog.dart';
 import 'widgets/contacts_list_widget.dart';
 import 'widgets/medication_report_dialog.dart';
 import 'widgets/medications_list_widget.dart';
+import 'widgets/notification_status_card.dart';
 import 'widgets/report_history_dialog.dart';
 
 /// 心理评估量表列表（设置页用）
@@ -133,6 +134,12 @@ class SettingsPage extends ConsumerWidget {
               ],
             ),
           ),
+
+          const SizedBox(height: AppTokens.spacingLg),
+
+          // v0.16 round 20: 通知自检卡（一键测试 + OEM 后台引导）
+          // 放在「提醒」section 末尾,跟「提醒中心/续方管理」配套
+          const NotificationStatusCard(),
 
           const SizedBox(height: AppTokens.spacingLg),
 
