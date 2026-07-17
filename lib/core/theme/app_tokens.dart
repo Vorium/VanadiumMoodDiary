@@ -226,3 +226,40 @@ extension MotionSchemeTokens on MotionScheme {
     }
   }
 }
+
+// ============= Motion (v0.18 round 14 / P0-7) =============
+//
+// **P0-7 fix**: 之前没有任何代码处理 `prefers-reduced-motion: reduce` 媒体查询。
+// 精神心理患者前庭功能敏感比例高于普通用户,长时间用 App 可能眩晕。
+// emil 原则第 8 条: reduced-motion 是 non-negotiable a11y 标准。
+//
+// 用法:
+// ```dart
+// AnimatedContainer(
+//   duration: Motion.duration(context, AppTokens.durNormal),
+//   curve: Motion.curve(context, AppTokens.curveStandard),
+//   ...
+// )
+// ```
+//
+// 系统没开 reduce motion → 走原 duration/curve
+// 系统开了 reduce motion → duration = 0 + curve = linear
+class Motion {
+  Motion._();
+
+  /// 系统是否启用了"减少动画"
+  ///
+  /// Flutter 内置 API: [MediaQuery.disableAnimations]
+  static bool prefersReduced(BuildContext context) =>
+      MediaQuery.of(context).disableAnimations;
+
+  /// 包装 duration: 系统开了 reduce motion → 0
+  ///
+  /// [base] 通常是 AppTokens.durNormal / durFast / durSlow。
+  static Duration duration(BuildContext context, Duration base) =>
+      prefersReduced(context) ? Duration.zero : base;
+
+  /// 包装 curve: 系统开了 reduce motion → linear (避免任何加速/减速)
+  static Curve curve(BuildContext context, Curve base) =>
+      prefersReduced(context) ? Curves.linear : base;
+}

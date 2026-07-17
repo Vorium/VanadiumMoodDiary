@@ -70,6 +70,17 @@ class _SlideUpState extends State<SlideUp>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // P0-7: 尊重系统 prefers-reduced-motion
+    if (MediaQuery.of(context).disableAnimations && _controller.value < 1.0) {
+      _controller.value = 1.0;
+      _delayTimer?.cancel();
+      _delayTimer = null;
+    }
+  }
+
+  @override
   void dispose() {
     _delayTimer?.cancel();
     _controller.dispose();

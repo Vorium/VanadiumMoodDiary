@@ -55,6 +55,16 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // P0-7: 尊重系统 prefers-reduced-motion。开了就直接跳到终态
+    // (opacity 会瞬时变 1.0,但 celebration overlay 通常 1.5s 后就消失,用户感知不到)
+    if (MediaQuery.of(context).disableAnimations && _controller.value < 1.0) {
+      _controller.value = 1.0;
+    }
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();

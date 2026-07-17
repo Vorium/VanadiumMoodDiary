@@ -72,6 +72,19 @@ class _FadeInState extends State<FadeIn>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // P0-7: 尊重系统 prefers-reduced-motion。
+    // 1) 首次 initState 后立即触发(系统开了就直接跳到 1.0)
+    // 2) 系统设置切换时再触发
+    if (MediaQuery.of(context).disableAnimations && _controller.value < 1.0) {
+      _controller.value = 1.0;
+      _delayTimer?.cancel();
+      _delayTimer = null;
+    }
+  }
+
+  @override
   void dispose() {
     _delayTimer?.cancel();
     _controller.dispose();
