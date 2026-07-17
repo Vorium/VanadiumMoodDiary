@@ -72,7 +72,8 @@ class CheckInRepositoryImpl implements CheckInRepository {
     required int total,
     DateTime? at,
   }) {
-    final note = '{"scale":"$scale","scores":${_encodeScores(scores)},"total":$total}';
+    final note =
+        '{"scale":"$scale","scores":${_encodeScores(scores)},"total":$total}';
     return _db.insertCheckIn(
       CheckInsCompanion.insert(
         timestamp: at ?? DateTime.now(),

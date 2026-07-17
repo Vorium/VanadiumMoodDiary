@@ -63,7 +63,7 @@ class SettingsPage extends ConsumerWidget {
               children: [
                 ListTile(
                   leading: const Icon(Icons.upload_outlined,
-                      color: AppTokens.primary),
+                      color: AppTokens.primary,),
                   title: const Text('导出数据'),
                   subtitle: const Text('生成 JSON，复制到安全地方'),
                   trailing: const Icon(Icons.chevron_right),
@@ -72,7 +72,7 @@ class SettingsPage extends ConsumerWidget {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.summarize_outlined,
-                      color: AppTokens.primary),
+                      color: AppTokens.primary,),
                   title: const Text(Strings.settingsMedReport),
                   subtitle: const Text(Strings.settingsMedReportSubtitle),
                   trailing: const Icon(Icons.chevron_right),
@@ -80,8 +80,7 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading:
-                      const Icon(Icons.history, color: AppTokens.primary),
+                  leading: const Icon(Icons.history, color: AppTokens.primary),
                   title: const Text(Strings.settingsReportHistory),
                   subtitle: const Text(Strings.settingsReportHistorySubtitle),
                   trailing: const Icon(Icons.chevron_right),
@@ -90,7 +89,7 @@ class SettingsPage extends ConsumerWidget {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.download_outlined,
-                      color: AppTokens.primary),
+                      color: AppTokens.primary,),
                   title: const Text('导入数据'),
                   subtitle: const Text('从 JSON 恢复（覆盖现有数据）'),
                   trailing: const Icon(Icons.chevron_right),
@@ -160,14 +159,16 @@ class SettingsPage extends ConsumerWidget {
                 for (int i = 0; i < _assessmentScales.length; i++) ...[
                   ListTile(
                     leading: Icon(
-                        _assessmentScales[i].id == 'phq9'
-                            ? Icons.psychology_outlined
-                            : Icons.psychology_alt_outlined,
-                        color: AppTokens.primary,),
+                      _assessmentScales[i].id == 'phq9'
+                          ? Icons.psychology_outlined
+                          : Icons.psychology_alt_outlined,
+                      color: AppTokens.primary,
+                    ),
                     title: Text(_assessmentScales[i].displayName),
                     subtitle: Text(_assessmentScales[i].shortDescription),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push('/assessment/${_assessmentScales[i].id}'),
+                    onTap: () =>
+                        context.push('/assessment/${_assessmentScales[i].id}'),
                   ),
                   if (i < _assessmentScales.length - 1)
                     const Divider(height: 1, indent: 56),
@@ -180,8 +181,8 @@ class SettingsPage extends ConsumerWidget {
 
           Card(
             child: ListTile(
-              leading: const Icon(Icons.email_outlined,
-                  color: AppTokens.primary),
+              leading:
+                  const Icon(Icons.email_outlined, color: AppTokens.primary),
               title: const Text(Strings.settingsEmailPreview),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/email-preview'),

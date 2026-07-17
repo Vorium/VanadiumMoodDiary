@@ -124,9 +124,8 @@ class _EntryCard extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: entry.hasAudio
-              ? AppTokens.primaryLight
-              : AppTokens.divider,
+          backgroundColor:
+              entry.hasAudio ? AppTokens.primaryLight : AppTokens.divider,
           child: Icon(
             entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
             color: entry.hasAudio ? AppTokens.primary : AppTokens.textSecondary,
@@ -176,7 +175,8 @@ class _EntryCard extends StatelessWidget {
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, VentEntryEntity entry) async {
+  Future<void> _confirmDelete(
+      BuildContext context, VentEntryEntity entry,) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -196,8 +196,8 @@ class _EntryCard extends StatelessWidget {
       ),
     );
     if (ok == true && context.mounted) {
-      final repo = ProviderScope.containerOf(context)
-          .read(ventRepositoryProvider);
+      final repo =
+          ProviderScope.containerOf(context).read(ventRepositoryProvider);
       await repo.delete(entry.id);
     }
   }

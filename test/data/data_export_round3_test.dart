@@ -26,13 +26,13 @@ void main() {
       generatedAt: DateTime(2026, 7, 13, 12, 0),
       userName: '小明',
       reportText: '测试报告内容',
-    ));
+    ),);
     await db.insertMoodEntry(MoodEntriesCompanion.insert(
       timestamp: DateTime(2026, 7, 13, 10, 0),
       score: 4,
       tagsJson: const Value('["好","平静"]'),
       note: const Value('今天心情不错'),
-    ));
+    ),);
 
     final json = await svc.exportToJson();
     expect(json, contains('"reportHistories"'));

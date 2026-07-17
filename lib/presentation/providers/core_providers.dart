@@ -57,7 +57,8 @@ final moodRepositoryProvider = Provider<MoodRepository>(
 
 /// v0.15 (Round 18) 树洞仓库 provider
 final ventRepositoryProvider = Provider<VentRepository>(
-  (ref) => VentRepositoryImpl(ref.watch(databaseProvider), ref.watch(ventAudioStorageProvider)),
+  (ref) => VentRepositoryImpl(
+      ref.watch(databaseProvider), ref.watch(ventAudioStorageProvider),),
 );
 
 /// v0.16 (Round 19): 报告历史仓库（domain 接口 + data impl）
@@ -131,8 +132,7 @@ final safetyWatchServiceProvider = Provider<SafetyWatchService>(
 ///
 /// Apple Health 思路：每 N 天提醒做 PHQ-9 / GAD-7。
 /// 默认关闭。用户在 settings 开启 + 评估。
-final assessmentReminderServiceProvider =
-    Provider<AssessmentReminderService>(
+final assessmentReminderServiceProvider = Provider<AssessmentReminderService>(
   (ref) => AssessmentReminderService(
     checkInRepo: ref.watch(checkInRepositoryProvider),
     notificationService: ref.watch(notificationServiceProvider),

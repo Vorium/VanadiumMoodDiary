@@ -63,10 +63,8 @@ void main() {
 
       // 用 labelText 找字段
       final userNameField = find.widgetWithText(TextField, Strings.setupName);
-      final contactNameField =
-          find.widgetWithText(TextField, '联系人 1 姓名');
-      final phoneField =
-          find.widgetWithText(TextField, '紧急联系人手机号 1');
+      final contactNameField = find.widgetWithText(TextField, '联系人 1 姓名');
+      final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       expect(userNameField, findsOneWidget);
       expect(contactNameField, findsOneWidget);
       expect(phoneField, findsOneWidget);
@@ -104,8 +102,7 @@ void main() {
       await _pumpSetup(tester);
 
       final userNameField = find.widgetWithText(TextField, Strings.setupName);
-      final phoneField =
-          find.widgetWithText(TextField, '紧急联系人手机号 1');
+      final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       final nextFinder = find.widgetWithText(ElevatedButton, Strings.setupNext);
       ElevatedButton nextBtn() => tester.widget(nextFinder);
 
@@ -179,8 +176,7 @@ void main() {
     (tester) async {
       await _pumpSetup(tester);
 
-      final phoneField =
-          find.widgetWithText(TextField, '紧急联系人手机号 1');
+      final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       await tester.enterText(phoneField, _phone('1380013', '8000'));
       await tester.pumpAndSettle();
 

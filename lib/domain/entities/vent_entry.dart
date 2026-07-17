@@ -42,8 +42,7 @@ class VentEntryEntity {
   // ===== 业务方法 =====
 
   /// 是否有文字内容
-  bool get hasText =>
-      contentText != null && contentText!.trim().isNotEmpty;
+  bool get hasText => contentText != null && contentText!.trim().isNotEmpty;
 
   /// 是否有录音
   bool get hasAudio => audioPath != null && audioPath!.isNotEmpty;
@@ -61,7 +60,7 @@ class VentEntryEntity {
     if (sec < 60) return '$sec秒';
     final m = sec ~/ 60;
     final s = sec % 60;
-    return s == 0 ? '$m分' : '${m}分${s.toString().padLeft(2, '0')}秒';
+    return s == 0 ? '$m分' : '$m分${s.toString().padLeft(2, '0')}秒';
   }
 
   VentEntryEntity copyWith({

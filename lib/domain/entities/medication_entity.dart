@@ -57,7 +57,9 @@ class MedicationEntity {
     final n = now ?? DateTime.now();
     final today = DateTime(n.year, n.month, n.day);
     final refillDay = DateTime(
-      refillAt!.year, refillAt!.month, refillAt!.day,
+      refillAt!.year,
+      refillAt!.month,
+      refillAt!.day,
     );
     return today.isAfter(refillDay);
   }
@@ -143,7 +145,7 @@ class MedicationEntity {
       'MedicationEntity(id=$id, name=$name, dosage=$dosage$dosageUnit, '
       'isActive=$isActive, refillAt=$refillAt)';
 
-  /// List<HourMinute> 相等比较（业务层用 ==,不能用默认 identity）
+  /// `List<HourMinute>` 相等比较（业务层用 ==,不能用默认 identity）
   static bool _listEq(List<HourMinute> a, List<HourMinute> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {

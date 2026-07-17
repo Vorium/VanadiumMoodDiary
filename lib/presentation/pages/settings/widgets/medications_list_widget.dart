@@ -22,8 +22,7 @@ class MedicationsListWidget extends ConsumerStatefulWidget {
       _MedicationsListWidgetState();
 }
 
-class _MedicationsListWidgetState
-    extends ConsumerState<MedicationsListWidget> {
+class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
   final Set<int> _deleting = {};
   final Set<int> _editingRefill = {};
   final Set<int> _editing = {};
@@ -52,7 +51,7 @@ class _MedicationsListWidgetState
           Card(
             child: ListTile(
               leading: const Icon(Icons.calendar_view_month,
-                  color: AppTokens.primary),
+                  color: AppTokens.primary,),
               title: const Text('用药日历'),
               subtitle: const Text('医生视角依从性热力图 · 7/30/90 天'),
               trailing: const Icon(Icons.chevron_right),
@@ -173,8 +172,8 @@ class _MedicationsListWidgetState
     if (_editingRefill.contains(med.id)) return;
     setState(() => _editingRefill.add(med.id));
     try {
-      final initialDate = med.refillAt ??
-          DateTime.now().add(const Duration(days: 30));
+      final initialDate =
+          med.refillAt ?? DateTime.now().add(const Duration(days: 30));
       final picked = await showDatePicker(
         context: context,
         initialDate: initialDate,
@@ -201,7 +200,8 @@ class _MedicationsListWidgetState
           );
 
       // 重排续方提醒
-      final meds = await ref.read(medicationRepositoryProvider).watchAll().first;
+      final meds =
+          await ref.read(medicationRepositoryProvider).watchAll().first;
       // v0.13 (Round 11): 4 层架构 — entity → Drift row 转换
       final driftRows = meds.map((e) => e.toDriftRow()).toList();
       await ref
@@ -341,7 +341,7 @@ class _MedicationRow extends StatelessWidget {
             if (!isStopped)
               IconButton(
                 icon: const Icon(Icons.event_available_outlined,
-                    color: AppTokens.primary),
+                    color: AppTokens.primary,),
                 tooltip: '设置续方',
                 onPressed: onEditRefill,
               ),
@@ -396,7 +396,7 @@ class _MedicationRow extends StatelessWidget {
     if (times.isEmpty) return dosage;
     final timesStr = times
         .map((t) =>
-            '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}')
+            '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',)
         .join(' / ');
     return '$dosage · $timesStr';
   }

@@ -7,9 +7,9 @@ import 'dart:convert';
 class JsonCodec {
   JsonCodec._();
 
-  // ====== List<String>（mood tags 等） ======
+  // ====== `List<String>`（mood tags 等） ======
 
-  /// 编码 List<String> → JSON 字符串
+  /// 编码 `List<String>` → JSON 字符串
   ///
   /// 空列表统一返回 `'[]'`，便于数据库默认值与空值比较。
   static String encodeStringList(List<String> values) {
@@ -17,7 +17,7 @@ class JsonCodec {
     return jsonEncode(values);
   }
 
-  /// 解码 JSON 字符串 → List<String>
+  /// 解码 JSON 字符串 → `List<String>`
   ///
   /// 容错：
   /// - 空字符串 / `'[]'` → `[]`

@@ -19,7 +19,7 @@ void main() {
           expect(m.name, isNotEmpty, reason: '${t.id} 药名空');
           expect(m.dosage, greaterThan(0), reason: '${t.id} 剂量 <= 0');
           expect(m.dosageUnit, anyOf('mg', '片'),
-              reason: '${t.id} 单位异常: ${m.dosageUnit}');
+              reason: '${t.id} 单位异常: ${m.dosageUnit}',);
           expect(m.times, isNotEmpty, reason: '${t.id} 时间空');
           for (final t in m.times) {
             expect(t.hour, inInclusiveRange(0, 23));
@@ -36,7 +36,7 @@ void main() {
           for (final t in med.times) {
             final key = t.hour * 60 + t.minute;
             expect(seen.contains(key), isFalse,
-                reason: '${template.id} ${med.name} 时间重复: $t');
+                reason: '${template.id} ${med.name} 时间重复: $t',);
             seen.add(key);
           }
         }
@@ -44,13 +44,12 @@ void main() {
     });
 
     test('联合方案 (combo_*) 至少 2 个药', () {
-      final combos = kMedicationTemplates
-          .where((t) => t.id.startsWith('combo_'))
-          .toList();
+      final combos =
+          kMedicationTemplates.where((t) => t.id.startsWith('combo_')).toList();
       expect(combos, isNotEmpty);
       for (final c in combos) {
         expect(c.meds.length, greaterThanOrEqualTo(2),
-            reason: '${c.id} 联合方案药数 < 2');
+            reason: '${c.id} 联合方案药数 < 2',);
       }
     });
   });

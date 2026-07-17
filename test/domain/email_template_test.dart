@@ -11,7 +11,10 @@ void main() {
       name: '氟西汀',
       dosage: 40,
       dosageUnit: 'mg',
-      times: const [HourMinute(hour: 8, minute: 0), HourMinute(hour: 20, minute: 0)],
+      times: const [
+        HourMinute(hour: 8, minute: 0),
+        HourMinute(hour: 20, minute: 0),
+      ],
       startDate: DateTime(2026, 1, 1),
       endDate: null,
       refillAt: null,

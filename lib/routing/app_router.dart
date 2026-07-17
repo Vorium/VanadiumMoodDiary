@@ -186,8 +186,7 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isWide =
-            constraints.maxWidth >= AppTokens.breakpointExpanded;
+        final isWide = constraints.maxWidth >= AppTokens.breakpointExpanded;
         if (!isWide) {
           // 窄屏：去掉各页面自己的 AppBar（shell 不管），child 自行处理
           return child;
@@ -200,8 +199,7 @@ class AppShell extends ConsumerWidget {
                 extended: true,
                 minWidth: AppTokens.navRailWidth,
                 selectedIndex: _currentIndex,
-                onDestinationSelected: (i) =>
-                    context.go(_destinations[i].path),
+                onDestinationSelected: (i) => context.go(_destinations[i].path),
                 leading: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(

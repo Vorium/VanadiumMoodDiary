@@ -3,8 +3,7 @@ import 'package:chroniccare/domain/logic/care_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  CheckInEntity ci(DateTime t, {String type = 'normal'}) =>
-      CheckInEntity(
+  CheckInEntity ci(DateTime t, {String type = 'normal'}) => CheckInEntity(
         id: t.millisecondsSinceEpoch,
         timestamp: t,
         type: CheckInType.fromWire(type),
@@ -48,8 +47,7 @@ void main() {
         // 1 年前晚打卡(应被忽略)
         ci(DateTime(2025, 7, 13, 23, 0)),
         // 最近 7 天都 21 点准时
-        for (int d = 0; d < 7; d++)
-          ci(DateTime(2026, 7, 7 + d, 21, 0)),
+        for (int d = 0; d < 7; d++) ci(DateTime(2026, 7, 7 + d, 21, 0)),
       ];
       final t = CareEngine.evaluate(checkIns: checks, now: now);
       expect(t.type, CareTriggerType.weekPerfect);
@@ -58,8 +56,7 @@ void main() {
     test('P3 fix: 最近 7 天内 1 次晚打卡 → 不触发 weekPerfect', () {
       final now = DateTime(2026, 7, 13, 10, 0);
       final checks = <CheckInEntity>[
-        for (int d = 0; d < 6; d++)
-          ci(DateTime(2026, 7, 7 + d, 21, 0)),
+        for (int d = 0; d < 6; d++) ci(DateTime(2026, 7, 7 + d, 21, 0)),
         ci(DateTime(2026, 7, 13, 23, 0)), // 今天 23 点晚打卡
       ];
       final t = CareEngine.evaluate(checkIns: checks, now: now);

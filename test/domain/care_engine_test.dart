@@ -23,7 +23,8 @@ void main() {
 
     test('漏 1 天后 14 点还没打卡 → secondDayMissed', () {
       // 2 天前 9 点打过卡
-      final checkIns = [now.subtract(const Duration(hours: 53))].map(_ci).toList();
+      final checkIns =
+          [now.subtract(const Duration(hours: 53))].map(_ci).toList();
       final t = CareEngine.evaluate(checkIns: checkIns, now: now);
       expect(t.type, CareTriggerType.secondDayMissed);
     });
@@ -41,7 +42,8 @@ void main() {
     test('最近 7 天每天 22 点前都打卡 → weekPerfect', () {
       // 构造最近 7 天每天 20 点的打卡
       final checkIns = [
-        for (int i = 0; i < 7; i++) now.subtract(Duration(days: i, hours: now.hour - 20))
+        for (int i = 0; i < 7; i++)
+          now.subtract(Duration(days: i, hours: now.hour - 20)),
       ].map(_ci).toList();
       final t = CareEngine.evaluate(checkIns: checkIns, now: now);
       expect(t.type, CareTriggerType.weekPerfect);

@@ -141,7 +141,8 @@ class CareEngine {
   // ===== 私有规则判断 =====
 
   /// 最近 3 天都在 22 点后打卡
-  static bool _isLateCheckInHabit(List<CheckInEntity> sortedDesc, DateTime now) {
+  static bool _isLateCheckInHabit(
+      List<CheckInEntity> sortedDesc, DateTime now,) {
     final today = DateTime(now.year, now.month, now.day);
     final lateDays = <DateTime>{};
     for (final c in sortedDesc) {
@@ -162,8 +163,7 @@ class CareEngine {
     final today = DateTime(now.year, now.month, now.day);
     for (int i = 0; i < 7; i++) {
       final day = today.subtract(Duration(days: i));
-      if (day.weekday != DateTime.saturday &&
-          day.weekday != DateTime.sunday) {
+      if (day.weekday != DateTime.saturday && day.weekday != DateTime.sunday) {
         continue;
       }
       // 今天（i==0）：必须已经过 18 点且今天没打卡才算漏
@@ -175,7 +175,7 @@ class CareEngine {
       final hasCheckIn = sortedDesc.any((c) =>
           c.timestamp.year == day.year &&
           c.timestamp.month == day.month &&
-          c.timestamp.day == day.day);
+          c.timestamp.day == day.day,);
       if (!hasCheckIn) return true;
     }
     return false;
@@ -200,7 +200,7 @@ class CareEngine {
           c.timestamp.year == day.year &&
           c.timestamp.month == day.month &&
           c.timestamp.day == day.day &&
-          c.timestamp.hour < 22);
+          c.timestamp.hour < 22,);
       if (!hasOnDay) return false;
     }
     return true;

@@ -131,7 +131,7 @@ List<PurityViolation> _scanPurity(
             i + 1,
             uri,
             '[$layer] 不应引用 $forbidden',
-          ));
+          ),);
         }
       }
     }
@@ -247,9 +247,9 @@ void _printPurityReport(List<PurityViolation> violations) {
 List<ConsistencyIssue> _runConsistencyCheck(String root) {
   final issues = <ConsistencyIssue>[];
   final entitiesDir = Directory(
-      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}domain${Platform.pathSeparator}entities');
+      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}domain${Platform.pathSeparator}entities',);
   final tablesDir = Directory(
-      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables');
+      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables',);
   final sharedDir =
       Directory('$root${Platform.pathSeparator}lib${Platform.pathSeparator}shared');
 
@@ -297,7 +297,7 @@ void _checkEntityTablePair(
       issues.add(ConsistencyIssue(
         'lib/domain/entities/$entityName.dart',
         "没有对应的 drift table（@DataClassName('$base') 找不到）",
-      ));
+      ),);
     }
   }
   // table → entity
@@ -307,7 +307,7 @@ void _checkEntityTablePair(
       issues.add(ConsistencyIssue(
         entry.value,
         "drift table data class '${entry.key}' 找不到对应 domain entity '$expected'",
-      ));
+      ),);
     }
   }
 }
@@ -350,12 +350,12 @@ void _checkSharedUsage(
       issues.add(ConsistencyIssue(
         f.path,
         'shared 工具没有任何层使用，考虑移走',
-      ));
+      ),);
     } else if (usedBy.length == 1) {
       issues.add(ConsistencyIssue(
         f.path,
         'shared 工具只被 [$usedBy] 用，考虑移进那个层',
-      ));
+      ),);
     }
   }
 }

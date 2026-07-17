@@ -135,14 +135,20 @@ class SmsService {
     try {
       final ok = await _provider.send(to: to, body: body);
       if (ok) {
-        developer.log('✅ SMS sent to $to via ${_provider.name}',
-            name: 'SmsService',);
+        developer.log(
+          '✅ SMS sent to $to via ${_provider.name}',
+          name: 'SmsService',
+        );
         return SmsResult.ok();
       }
       return SmsResult.fail('${_provider.name} returned false');
     } catch (e, st) {
-      developer.log('❌ SMS failed to $to: $e',
-          name: 'SmsService', error: e, stackTrace: st,);
+      developer.log(
+        '❌ SMS failed to $to: $e',
+        name: 'SmsService',
+        error: e,
+        stackTrace: st,
+      );
       return SmsResult.fail(e.toString());
     }
   }

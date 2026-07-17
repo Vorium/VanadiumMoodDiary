@@ -34,7 +34,8 @@ class EmailTemplate {
     buffer.writeln('┌─────────────────────────────────┐');
 
     if (lastCheckIn != null) {
-      buffer.writeln('🕐 ${Strings.emailLastMed(_formatDateTime(lastCheckIn))}');
+      buffer
+          .writeln('🕐 ${Strings.emailLastMed(_formatDateTime(lastCheckIn))}');
     }
 
     if (medication != null) {

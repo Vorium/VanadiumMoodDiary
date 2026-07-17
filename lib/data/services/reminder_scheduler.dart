@@ -95,26 +95,30 @@ class ReminderService implements ReminderChecker {
     // v0.14 fix: 统一在 await 之后重新拿一次 now，并按"天"算
     // 旧实现：调 3 次 DateTime.now() + 用 raw inDays（23.9h 报 0 天）
     final checkNow = DateTime.now();
-    final daysSince = lastCheckIn == null
-        ? 0
-        : _daysBetween(lastCheckIn, checkNow);
-    final hoursSince = lastCheckIn == null
-        ? 0
-        : checkNow.difference(lastCheckIn).inHours;
+    final daysSince =
+        lastCheckIn == null ? 0 : _daysBetween(lastCheckIn, checkNow);
+    final hoursSince =
+        lastCheckIn == null ? 0 : checkNow.difference(lastCheckIn).inHours;
 
     developer.log('=' * 60, name: 'ReminderService');
     developer.log('⚠️ 失联检测', name: 'ReminderService');
     developer.log('  用户: ${profile.userName}', name: 'ReminderService');
-    developer.log('  距上次打卡: $hoursSince 小时 ($daysSince 天)',
-        name: 'ReminderService',);
+    developer.log(
+      '  距上次打卡: $hoursSince 小时 ($daysSince 天)',
+      name: 'ReminderService',
+    );
     developer.log('  级别: ${level.name}', name: 'ReminderService');
-    developer.log('  联系人: ${contacts.length} 个',
-        name: 'ReminderService',);
+    developer.log(
+      '  联系人: ${contacts.length} 个',
+      name: 'ReminderService',
+    );
 
     // soft 级别（24-36h）：只 UI 提示，不发紧急通知
     if (level == ReminderLevel.soft) {
-      developer.log('  → soft 级别：仅用户内部提示，不打扰紧急联系人',
-          name: 'ReminderService',);
+      developer.log(
+        '  → soft 级别：仅用户内部提示，不打扰紧急联系人',
+        name: 'ReminderService',
+      );
       return ReminderCheckResult(
         level: level,
         smsResults: const [],
@@ -141,13 +145,15 @@ class ReminderService implements ReminderChecker {
     final results = <SmsResultEntry>[];
     for (final c in activeContacts) {
       final r = await _smsService.send(to: c.phone, body: body);
-      results.add(SmsResultEntry(
-        contactId: c.id,
-        contactName: c.name,
-        phone: c.phone,
-        success: r.success,
-        error: r.error,
-      ),);
+      results.add(
+        SmsResultEntry(
+          contactId: c.id,
+          contactName: c.name,
+          phone: c.phone,
+          success: r.success,
+          error: r.error,
+        ),
+      );
       developer.log(
         '  → ${c.name} (${c.phone}): ${r.success ? "✅" : "❌ ${r.error}"}',
         name: 'ReminderService',
@@ -174,7 +180,8 @@ class ReminderService implements ReminderChecker {
     buffer.writeln('请你方便的时候提醒 TA 按时吃药。');
     if (medication != null) {
       buffer.writeln(
-          '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit}',);
+        '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit}',
+      );
     }
     buffer.writeln('—— 这是一条自动提醒，请勿回复');
     return buffer.toString();

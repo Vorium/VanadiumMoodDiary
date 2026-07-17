@@ -24,7 +24,7 @@ class MoodEntryEntity {
 
   /// 标签 JSON 数组（数据库原值）
   ///
-  /// UI / 业务代码应当使用 [tags] getter 拿解析后的 List<String>。
+  /// UI / 业务代码应当使用 [tags] getter 拿解析后的 `List<String>`。
   final String tagsJson;
 
   /// 自由备注

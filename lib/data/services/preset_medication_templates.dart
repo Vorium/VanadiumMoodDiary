@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/hour_minute.dart';
+import '../../domain/entities/hour_minute.dart';
 
 /// 一个药物草稿（用于预置方案 + 手动录入之间的桥梁）
 ///
@@ -9,10 +9,13 @@
 class MedicationDraft {
   /// 药名（中文常见抗抑郁/抗焦虑/抗精神病药名）
   final String name;
+
   /// 每次剂量
   final double dosage;
+
   /// 单位：mg / 片
   final String dosageUnit;
+
   /// 服药时间点（一天可以多次）
   final List<HourMinute> times;
 
@@ -77,7 +80,10 @@ const kMedicationTemplates = <MedicationTemplate>[
         name: '情绪稳定剂',
         dosage: 1,
         dosageUnit: '片',
-        times: [HourMinute(hour: 8, minute: 0), HourMinute(hour: 20, minute: 0)],
+        times: [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
+        ],
         hint: '常见：碳酸锂 / 丙戊酸钠 / 拉莫三嗪',
       ),
     ],

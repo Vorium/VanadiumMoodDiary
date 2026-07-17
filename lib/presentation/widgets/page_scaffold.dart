@@ -50,9 +50,8 @@ class PageScaffold extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: isWide
-                        ? AppTokens.spacingLg
-                        : AppTokens.pageMarginH,
+                    horizontal:
+                        isWide ? AppTokens.spacingLg : AppTokens.pageMarginH,
                     vertical: AppTokens.pageMarginV,
                   ),
                   child: child,

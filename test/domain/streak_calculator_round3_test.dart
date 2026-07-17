@@ -3,8 +3,7 @@ import 'package:chroniccare/domain/logic/streak_calculator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  CheckInEntity ci(DateTime t, {String type = 'normal'}) =>
-      CheckInEntity(
+  CheckInEntity ci(DateTime t, {String type = 'normal'}) => CheckInEntity(
         id: t.millisecondsSinceEpoch,
         timestamp: t,
         type: CheckInType.fromWire(type),
@@ -35,8 +34,7 @@ void main() {
       // 注意:streak_calculator 依赖 `checkIns.first` 是最新的,
       // 真实数据流 (watchAllCheckIns) 保证倒序。测试要按倒序构造。
       final checks = [
-        for (int d = 3; d >= 0; d--)
-          ci(DateTime(2026, 7, 10 + d, 12, 0)),
+        for (int d = 3; d >= 0; d--) ci(DateTime(2026, 7, 10 + d, 12, 0)),
       ];
       final streak = StreakCalculator.calculate(checkIns: checks, now: now);
       expect(streak, 4);

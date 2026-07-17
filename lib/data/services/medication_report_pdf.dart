@@ -190,8 +190,10 @@ class MedicationReportPdf {
       final timesStr = s.times.isEmpty
           ? '未设置时间'
           : s.times
-              .map((t) =>
-                  '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',)
+              .map(
+                (t) =>
+                    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',
+              )
               .join(' / ');
       final freqStr =
           s.times.isEmpty ? '未设置' : '每日 ${s.times.length} 次（$timesStr）';
@@ -242,8 +244,7 @@ class MedicationReportPdf {
       headerDecoration: const pw.BoxDecoration(color: PdfColors.green700),
       cellStyle: const pw.TextStyle(fontSize: 10),
       cellAlignment: pw.Alignment.centerLeft,
-      cellPadding:
-          const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      cellPadding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       columnWidths: const {
         0: pw.FlexColumnWidth(2),
         1: pw.FlexColumnWidth(1.2),

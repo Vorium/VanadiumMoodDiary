@@ -72,23 +72,26 @@ class RefillManagePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref, List<MedicationEntity> meds) {
+  Widget _buildBody(
+      BuildContext context, WidgetRef ref, List<MedicationEntity> meds,) {
     final now = DateTime.now();
 
     // 给每种药计算状态
-    final rows = meds.map((m) => _Row(
-          med: m,
-          status: _statusFor(m, now),
-          daysUntil: _daysUntilRefill(m, now),
-        )).toList()
+    final rows = meds
+        .map((m) => _Row(
+              med: m,
+              status: _statusFor(m, now),
+              daysUntil: _daysUntilRefill(m, now),
+            ),)
+        .toList()
       ..sort((a, b) {
         // 状态优先级：已过期 > 提醒中 > 已设 > 未设置
         int rank(RefillStatus s) => switch (s) {
-          RefillStatus.overdue => 0,
-          RefillStatus.inWindow => 1,
-          RefillStatus.farFuture => 2,
-          RefillStatus.notConfigured => 3,
-        };
+              RefillStatus.overdue => 0,
+              RefillStatus.inWindow => 1,
+              RefillStatus.farFuture => 2,
+              RefillStatus.notConfigured => 3,
+            };
         final r = rank(a.status).compareTo(rank(b.status));
         if (r != 0) return r;
         // 续方日近的排前面
@@ -100,7 +103,8 @@ class RefillManagePage extends ConsumerWidget {
 
     // 顶部汇总
     final overdue = rows.where((r) => r.status == RefillStatus.overdue).length;
-    final inWindow = rows.where((r) => r.status == RefillStatus.inWindow).length;
+    final inWindow =
+        rows.where((r) => r.status == RefillStatus.inWindow).length;
     final configured = rows.where((r) => r.med.hasRefill).length;
 
     return ListView(
@@ -139,7 +143,8 @@ class RefillManagePage extends ConsumerWidget {
           const Padding(
             padding: EdgeInsets.all(AppTokens.spacingXl),
             child: Center(
-              child: Text('还没有添加药物', style: TextStyle(color: AppTokens.textHint)),
+              child:
+                  Text('还没有添加药物', style: TextStyle(color: AppTokens.textHint)),
             ),
           )
         else
@@ -250,7 +255,7 @@ class _RefillRow extends StatelessWidget {
         padding: const EdgeInsets.only(top: 4),
         child: Text(
           _subtitleFor(row),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: AppTokens.fontSizeCaption,
             color: AppTokens.textHint,
           ),

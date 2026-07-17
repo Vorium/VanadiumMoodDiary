@@ -1,4 +1,4 @@
-﻿// v0.12 (Round 6) MedicationRepository.updateRefill 集成测试
+// v0.12 (Round 6) MedicationRepository.updateRefill 集成测试
 import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/repositories/medication_repository_impl.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
@@ -36,7 +36,8 @@ void main() {
         refillAt: DateTime(2026, 8, 1),
         refillDays: 7,
       );
-      final med = await (db.select(db.medications)..where((t) => t.id.equals(id)))
+      final med = await (db.select(db.medications)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(med.refillAt, DateTime(2026, 8, 1));
       expect(med.refillReminderDays, 7);
@@ -44,7 +45,8 @@ void main() {
 
     test('不传 refillAt → 存为 null', () async {
       final id = await addMed();
-      final med = await (db.select(db.medications)..where((t) => t.id.equals(id)))
+      final med = await (db.select(db.medications)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(med.refillAt, isNull);
       expect(med.refillReminderDays, 7); // 默认
@@ -59,7 +61,8 @@ void main() {
         // 不传 reminderDays = 不变
       );
       expect(ok, isTrue);
-      final med = await (db.select(db.medications)..where((t) => t.id.equals(id)))
+      final med = await (db.select(db.medications)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(med.refillAt, DateTime(2026, 9, 15));
       expect(med.refillReminderDays, 7); // 保持默认
@@ -74,7 +77,8 @@ void main() {
         refillAt: DateTime(2026, 8, 1),
         reminderDays: 14,
       );
-      final med = await (db.select(db.medications)..where((t) => t.id.equals(id)))
+      final med = await (db.select(db.medications)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(med.refillAt, DateTime(2026, 8, 1));
       expect(med.refillReminderDays, 14);
@@ -87,7 +91,8 @@ void main() {
         medicationId: id,
         refillAt: null,
       );
-      final med = await (db.select(db.medications)..where((t) => t.id.equals(id)))
+      final med = await (db.select(db.medications)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(med.refillAt, isNull);
       // reminderDays 保持不变
@@ -138,7 +143,8 @@ void main() {
         dosageUnit: 'mg',
         times: const [HourMinute(hour: 8, minute: 0)],
       );
-      final med = await (db.select(db.medications)..where((t) => t.id.equals(id)))
+      final med = await (db.select(db.medications)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       // 字段存在 + 类型正确
       expect(med.refillAt, isNull);

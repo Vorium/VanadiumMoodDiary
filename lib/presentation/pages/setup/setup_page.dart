@@ -186,31 +186,33 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               child: const Text(Strings.setupAddContact),
             ),
           const SizedBox(height: AppTokens.spacingXl),
-          Builder(builder: (_) {
-            final err = _validateWelcomeForm();
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (err != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-                    child: Text(
-                      err,
-                      style: const TextStyle(
-                        color: AppTokens.error,
-                        fontSize: AppTokens.fontSizeLabel,
+          Builder(
+            builder: (_) {
+              final err = _validateWelcomeForm();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (err != null)
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: AppTokens.spacingSm),
+                      child: Text(
+                        err,
+                        style: const TextStyle(
+                          color: AppTokens.error,
+                          fontSize: AppTokens.fontSizeLabel,
+                        ),
                       ),
                     ),
+                  ElevatedButton(
+                    onPressed:
+                        err == null ? () => setState(() => _step = 1) : null,
+                    child: const Text(Strings.setupNext),
                   ),
-                ElevatedButton(
-                  onPressed: err == null
-                      ? () => setState(() => _step = 1)
-                      : null,
-                  child: const Text(Strings.setupNext),
-                ),
-              ],
-            );
-          },),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );
@@ -277,8 +279,11 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.info_outline,
-                      color: AppTokens.textSecondary, size: 20,),
+                  Icon(
+                    Icons.info_outline,
+                    color: AppTokens.textSecondary,
+                    size: 20,
+                  ),
                   SizedBox(width: AppTokens.spacingXs),
                   Expanded(
                     child: Text(
@@ -371,8 +376,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.delete_outline,
-                      color: AppTokens.error,),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: AppTokens.error,
+                  ),
                   tooltip: '删除这个药',
                   onPressed: () {
                     setState(() {
@@ -457,9 +464,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                       setState(() {
                         // 同时间不去重，让用户自己决定
                         m.times.add(picked);
-                        m.times.sort((a, b) =>
-                            (a.hour * 60 + a.minute)
-                                .compareTo(b.hour * 60 + b.minute),);
+                        m.times.sort(
+                          (a, b) => (a.hour * 60 + a.minute)
+                              .compareTo(b.hour * 60 + b.minute),
+                        );
                       });
                     }
                   },
@@ -532,14 +540,14 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               for (final t in kMedicationTemplates)
                 Card(
                   child: ListTile(
-                    leading: Text(t.emoji,
-                        style: const TextStyle(fontSize: 28)),
+                    leading:
+                        Text(t.emoji, style: const TextStyle(fontSize: 28)),
                     title: Text(t.name,
-                        style: const TextStyle(fontWeight: FontWeight.w500)),
+                        style: const TextStyle(fontWeight: FontWeight.w500),),
                     subtitle: Text(t.description),
                     trailing: const Icon(Icons.add_circle_outline),
-                    onTap: () => Navigator.of(ctx)
-                        .pop(_TemplateApplyResult(template: t, append: _meds.isNotEmpty)),
+                    onTap: () => Navigator.of(ctx).pop(_TemplateApplyResult(
+                        template: t, append: _meds.isNotEmpty,),),
                   ),
                 ),
               const SizedBox(height: AppTokens.spacingMd),
@@ -564,8 +572,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               ? d.dosage.toInt().toString()
               : d.dosage.toString()
           ..dosageUnit = d.dosageUnit
-          ..times.addAll(d.times
-              .map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute)));
+          ..times.addAll(
+              d.times.map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute)),);
         m.attachListener(_onTextChanged);
         _meds.add(m);
       }
@@ -574,7 +582,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('已载入：${result.template.name}（${result.template.meds.length} 个药）'
+        content: Text(
+            '已载入：${result.template.name}（${result.template.meds.length} 个药）'
             '请核对药名和剂量'),
         duration: const Duration(seconds: 3),
       ),
@@ -611,17 +620,25 @@ class _SetupPageState extends ConsumerState<SetupPage> {
             ),
           ),
           const SizedBox(height: AppTokens.spacingXl),
-          const Text(Strings.setupDailyRoutine,
-              style: TextStyle(
-                  fontSize: AppTokens.fontSizeBody, fontWeight: FontWeight.w500,),),
+          const Text(
+            Strings.setupDailyRoutine,
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeBody,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: AppTokens.spacingSm),
           const Text(Strings.setupReminder1),
           const Text(Strings.setupReminder2),
           const Text(Strings.setupReminder3),
           const SizedBox(height: AppTokens.spacingXl),
-          const Text(Strings.setupPrivacy,
-              style: TextStyle(
-                  fontSize: AppTokens.fontSizeBody, fontWeight: FontWeight.w500,),),
+          const Text(
+            Strings.setupPrivacy,
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeBody,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: AppTokens.spacingSm),
           const Text(Strings.setupPrivacy1),
           const Text(Strings.setupPrivacy2),
@@ -678,14 +695,16 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       final name = m.nameController.text.trim();
       if (name.isEmpty) continue; // 跳过空药物
       final dosage = double.tryParse(m.dosageController.text.trim()) ?? 0;
-      medicationList.add((
-        name: name,
-        dosage: dosage,
-        dosageUnit: m.dosageUnit,
-        times: m.times
-            .map((t) => HourMinute(hour: t.hour, minute: t.minute))
-            .toList(),
-      ),);
+      medicationList.add(
+        (
+          name: name,
+          dosage: dosage,
+          dosageUnit: m.dosageUnit,
+          times: m.times
+              .map((t) => HourMinute(hour: t.hour, minute: t.minute))
+              .toList(),
+        ),
+      );
     }
 
     try {
@@ -697,14 +716,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       if (!mounted) return;
 
       // v0.7：重排所有 medication 的本地推送（每个 time 一个 zonedSchedule）
-      final medications = await ref
-          .read(medicationRepositoryProvider)
-          .watchAll()
-          .first;
+      final medications =
+          await ref.read(medicationRepositoryProvider).watchAll().first;
       // v0.13 (Round 11): 4 层架构 — entity → Drift row 转换
-      await ref
-          .read(notificationServiceProvider)
-          .rescheduleMedicationReminders(
+      await ref.read(notificationServiceProvider).rescheduleMedicationReminders(
             medications.map((e) => e.toDriftRow()).toList(),
           );
       // 漏 1 天主动 push 安慰（上午 10 点检查）
@@ -729,8 +744,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           ),
         );
       }
-      developer.log('setup _finishSetup error',
-          name: 'SetupPage', error: e, stackTrace: st,);
+      developer.log(
+        'setup _finishSetup error',
+        name: 'SetupPage',
+        error: e,
+        stackTrace: st,
+      );
     } finally {
       if (mounted) {
         setState(() => _saving = false);

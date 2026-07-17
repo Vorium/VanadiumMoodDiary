@@ -22,7 +22,8 @@ class EmailPreviewPage extends ConsumerWidget {
         data: (profile) {
           if (profile == null) {
             return const Center(
-              child: Text('请先完成首次设置', style: TextStyle(color: AppTokens.textHint)),
+              child:
+                  Text('请先完成首次设置', style: TextStyle(color: AppTokens.textHint)),
             );
           }
           return SingleChildScrollView(
@@ -32,12 +33,15 @@ class EmailPreviewPage extends ConsumerWidget {
                 const SizedBox(height: AppTokens.spacingSm),
                 const Text(
                   '这是你将收到的失联通知预览：',
-                  style: TextStyle(fontSize: AppTokens.fontSizeBody, color: AppTokens.textSecondary),
+                  style: TextStyle(
+                      fontSize: AppTokens.fontSizeBody,
+                      color: AppTokens.textSecondary,),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 contactsAsync.when(
                   data: (contacts) {
-                    final firstContact = contacts.isEmpty ? null : contacts.first;
+                    final firstContact =
+                        contacts.isEmpty ? null : contacts.first;
                     // v0.16 (Round 12): email 模板改用 domain entity, 直接传 MedicationEntity 不再 toDriftRow()
                     final medication = medsAsync.maybeWhen(
                       data: (m) => m.isEmpty ? null : m.first,
@@ -52,7 +56,8 @@ class EmailPreviewPage extends ConsumerWidget {
                     final body = EmailTemplate.buildBody(
                       userName: profile.userName,
                       daysWithoutCheckIn: 2,
-                      lastCheckIn: DateTime.now().subtract(const Duration(days: 2)),
+                      lastCheckIn:
+                          DateTime.now().subtract(const Duration(days: 2)),
                       medication: medication,
                       cycleHours: profile.checkInCycleHours,
                     );
@@ -65,12 +70,16 @@ class EmailPreviewPage extends ConsumerWidget {
                           children: [
                             Text(
                               'To: ${firstContact?.phone ?? "（无联系人）"}',
-                              style: const TextStyle(fontSize: AppTokens.fontSizeLabel, color: AppTokens.textSecondary),
+                              style: const TextStyle(
+                                  fontSize: AppTokens.fontSizeLabel,
+                                  color: AppTokens.textSecondary,),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Subject: $subject',
-                              style: const TextStyle(fontSize: AppTokens.fontSizeBody, fontWeight: FontWeight.w500),
+                              style: const TextStyle(
+                                  fontSize: AppTokens.fontSizeBody,
+                                  fontWeight: FontWeight.w500,),
                             ),
                             const Divider(height: AppTokens.spacingLg),
                             SelectableText(
@@ -86,7 +95,8 @@ class EmailPreviewPage extends ConsumerWidget {
                       ),
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Text('加载失败: $e'),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),

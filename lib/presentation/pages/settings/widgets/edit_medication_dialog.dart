@@ -35,8 +35,7 @@ class _EditMedicationDialog extends ConsumerStatefulWidget {
       _EditMedicationDialogState();
 }
 
-class _EditMedicationDialogState
-    extends ConsumerState<_EditMedicationDialog> {
+class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _dosageController;
   late String _dosageUnit;
@@ -102,21 +101,25 @@ class _EditMedicationDialogState
       name: _nameController.text.trim(),
       dosage: dosage,
       dosageUnit: _dosageUnit,
-      times: _times.map((t) => HourMinute(hour: t.hour, minute: t.minute)).toList(),
+      times: _times
+          .map((t) => HourMinute(hour: t.hour, minute: t.minute))
+          .toList(),
       isActive: _isActive,
     );
     // 2) isActive 变化时同步 endDate（停药/恢复的语义）
     if (isActiveChanged) {
       updated = _isActive
           ? updated.copyWith(endDate: const DomainValue<DateTime?>(null)) // 恢复
-          : updated.copyWith(endDate: DomainValue<DateTime?>(DateTime.now())); // 停药
+          : updated.copyWith(
+              endDate: DomainValue<DateTime?>(DateTime.now()),); // 停药
     }
 
     try {
       await ref.read(medicationRepositoryProvider).update(updated);
       // 改完重排该药的所有相关推送
       final notif = ref.read(notificationServiceProvider);
-      final meds = await ref.read(medicationRepositoryProvider).watchAll().first;
+      final meds =
+          await ref.read(medicationRepositoryProvider).watchAll().first;
       // v0.13 (Round 11): 4 层架构 — entity → Drift row 转换
       final driftRows = meds.map((e) => e.toDriftRow()).toList();
       // medication reminders: 整个重排（停药会自然被 reschedule 排除）
@@ -136,9 +139,8 @@ class _EditMedicationDialogState
   }
 
   Future<void> _pickTime() async {
-    final initial = _times.isNotEmpty
-        ? _times.last
-        : const TimeOfDay(hour: 8, minute: 0);
+    final initial =
+        _times.isNotEmpty ? _times.last : const TimeOfDay(hour: 8, minute: 0);
     final picked = await showTimePicker(
       context: context,
       initialTime: initial,
@@ -147,7 +149,7 @@ class _EditMedicationDialogState
       setState(() {
         _times.add(picked);
         _times.sort((a, b) =>
-            (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
+            (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute),);
       });
     }
   }
@@ -179,17 +181,14 @@ class _EditMedicationDialogState
                   Icon(
                     _isActive ? Icons.check_circle_outline : Icons.pause_circle,
                     size: 16,
-                    color:
-                        _isActive ? AppTokens.primary : AppTokens.warning,
+                    color: _isActive ? AppTokens.primary : AppTokens.warning,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     _isActive ? '正在使用' : '已停药',
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: _isActive
-                          ? AppTokens.primary
-                          : AppTokens.warning,
+                      color: _isActive ? AppTokens.primary : AppTokens.warning,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -311,9 +310,7 @@ class _EditMedicationDialogState
                 ),
               ),
               subtitle: Text(
-                _isActive
-                    ? '软停：保留所有打卡历史，不再推送提醒'
-                    : '恢复：清空停药日期，恢复每日提醒',
+                _isActive ? '软停：保留所有打卡历史，不再推送提醒' : '恢复：清空停药日期，恢复每日提醒',
                 style: const TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
                   color: AppTokens.textHint,

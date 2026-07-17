@@ -1,4 +1,4 @@
-﻿// v0.14 (Round 17) TodayMedSchedule widget 测试
+// v0.14 (Round 17) TodayMedSchedule widget 测试
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -74,7 +74,9 @@ void main() {
 
   testWidgets('只有 1 种药 × 1 个时间点 → 显示 0/1', (tester) async {
     _setBigView(tester);
-    final meds = [_med(name: '氟西汀', times: const [HourMinute(hour: 8, minute: 0)])];
+    final meds = [
+      _med(name: '氟西汀', times: const [HourMinute(hour: 8, minute: 0)]),
+    ];
     await tester.pumpWidget(_wrap(meds: meds));
     await tester.pumpAndSettle();
 
@@ -107,7 +109,8 @@ void main() {
     // 没打卡 → 0 / 2
     expect(find.text('0 / 2'), findsOneWidget);
     // 应按时间顺序：08:00 碳酸锂 在前
-    final textWidgets = tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).toList();
+    final textWidgets =
+        tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).toList();
     final liIdx = textWidgets.indexOf('08:00');
     final fluIdx = textWidgets.indexOf('20:00');
     expect(liIdx, isNonNegative);

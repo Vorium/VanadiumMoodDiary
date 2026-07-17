@@ -24,24 +24,29 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
     );
     _scale = TweenSequence<double>([
       TweenSequenceItem(
-          tween: Tween(begin: 0.0, end: 1.2)
-              .chain(CurveTween(curve: Curves.easeOutBack)),
-          weight: 30,),
+        tween: Tween(begin: 0.0, end: 1.2)
+            .chain(CurveTween(curve: Curves.easeOutBack)),
+        weight: 30,
+      ),
       TweenSequenceItem(
-          tween: Tween(begin: 1.2, end: 1.0)
-              .chain(CurveTween(curve: Curves.easeIn)),
-          weight: 20,),
+        tween:
+            Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.easeIn)),
+        weight: 20,
+      ),
       TweenSequenceItem(
-          tween: ConstantTween(1.0), weight: 50,),
+        tween: ConstantTween(1.0),
+        weight: 50,
+      ),
     ]).animate(_controller);
     _opacity = TweenSequence<double>([
       TweenSequenceItem(tween: ConstantTween(0.0), weight: 5),
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 10),
       TweenSequenceItem(tween: ConstantTween(1.0), weight: 60),
       TweenSequenceItem(
-          tween: Tween(begin: 1.0, end: 0.0)
-              .chain(CurveTween(curve: Curves.easeOut)),
-          weight: 25,),
+        tween: Tween(begin: 1.0, end: 0.0)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 25,
+      ),
     ]).animate(_controller);
     _controller.forward();
   }

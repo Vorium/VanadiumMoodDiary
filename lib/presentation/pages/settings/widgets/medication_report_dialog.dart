@@ -113,9 +113,10 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                                   )
                                 : const Icon(Icons.picture_as_pdf, size: 18),
                             label: const Text('PDF'),
-                            onPressed: (widget.reportData == null || _pdfLoading)
-                                ? null
-                                : _exportPdf,
+                            onPressed:
+                                (widget.reportData == null || _pdfLoading)
+                                    ? null
+                                    : _exportPdf,
                           ),
                         ),
                         const SizedBox(width: AppTokens.spacingSm),

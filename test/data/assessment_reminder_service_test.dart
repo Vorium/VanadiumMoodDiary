@@ -256,7 +256,7 @@ void main() {
         timestamp: last,
         type: 'phq9',
         note: const Value('{"scale":"phq9","scores":[0],"total":1}'),
-      ));
+      ),);
       await service.setEnabled(true);
       await service.onAppStart();
       expect(notif.scheduled.length, 1);
@@ -264,7 +264,8 @@ void main() {
       final expectedDate = last.add(const Duration(days: 14));
       expect(
         notif.scheduled.first.fireAt,
-        DateTime(expectedDate.year, expectedDate.month, expectedDate.day, 10, 0),
+        DateTime(
+            expectedDate.year, expectedDate.month, expectedDate.day, 10, 0,),
       );
     });
 
@@ -277,7 +278,7 @@ void main() {
         timestamp: DateTime(2026, 8, 1, 16, 30),
         type: 'gad7',
         note: const Value('{"scale":"gad7","scores":[0],"total":1}'),
-      ));
+      ),);
       await service.onAppStart();
       // lastAssessmentAt 应被覆盖到 8/1 16:30（评估的实际时间）
       expect(
@@ -296,7 +297,7 @@ void main() {
         timestamp: DateTime(2026, 8, 1, 16, 30),
         type: 'phq9',
         note: const Value('{"scale":"phq9","scores":[0],"total":1}'),
-      ));
+      ),);
       await service.onAppStart();
       // last 不变（因为 8/1 比 8/15 老）
       expect(await service.getLastAssessmentAt(), DateTime(2026, 8, 15));

@@ -1,4 +1,4 @@
-﻿// v0.13 (Round 11) MedicationEntity / MedicationMapper 单元测试
+// v0.13 (Round 11) MedicationEntity / MedicationMapper 单元测试
 import 'package:chroniccare/data/database/app_database.dart';
 import 'package:chroniccare/data/database/medication_mapper.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
@@ -24,7 +24,8 @@ Medication _driftRow({
     name: name,
     dosage: dosage,
     dosageUnit: unit,
-    timesJson: '[${times.map((t) => '{"h":${t.hour},"m":${t.minute}}').join(',')}]',
+    timesJson:
+        '[${times.map((t) => '{"h":${t.hour},"m":${t.minute}}').join(',')}]',
     startDate: DateTime(2026, 1, 1),
     endDate: endDate,
     isActive: isActive,
@@ -76,7 +77,7 @@ void main() {
       final row = _driftRow(times: const [
         HourMinute(hour: 8, minute: 0),
         HourMinute(hour: 20, minute: 30),
-      ]);
+      ],);
       final entity = row.toEntity();
       expect(entity.times.length, 2);
       expect(entity.times[0].hour, 8);
@@ -128,7 +129,7 @@ void main() {
       final entity = _entity(times: const [
         HourMinute(hour: 8, minute: 0),
         HourMinute(hour: 20, minute: 30),
-      ]);
+      ],);
       final row = entity.toDriftRow();
       expect(row.timesJson, '[{"h":8,"m":0},{"h":20,"m":30}]');
     });
@@ -181,20 +182,17 @@ void main() {
       final now = DateTime(2026, 7, 15, 14, 0);
       // 7/14 (昨天) → 已过期
       expect(
-        _entity(refillAt: DateTime(2026, 7, 14))
-            .isRefillOverdue(now),
+        _entity(refillAt: DateTime(2026, 7, 14)).isRefillOverdue(now),
         isTrue,
       );
       // 7/15 (今天) → 还没过期（refill day 仍算"今天"）
       expect(
-        _entity(refillAt: DateTime(2026, 7, 15))
-            .isRefillOverdue(now),
+        _entity(refillAt: DateTime(2026, 7, 15)).isRefillOverdue(now),
         isFalse,
       );
       // 7/16 (明天) → 还没过期
       expect(
-        _entity(refillAt: DateTime(2026, 7, 16))
-            .isRefillOverdue(now),
+        _entity(refillAt: DateTime(2026, 7, 16)).isRefillOverdue(now),
         isFalse,
       );
       // null = 从未过期
@@ -269,7 +267,8 @@ void main() {
     test('copyWith: 可空字段用 Value<>, 能"清空" endDate', () {
       final original = _entity(endDate: DateTime(2026, 7, 15));
       // 传 DomainValue(null) 应该清空
-      final cleared = original.copyWith(endDate: const DomainValue<DateTime?>(null));
+      final cleared =
+          original.copyWith(endDate: const DomainValue<DateTime?>(null));
       expect(cleared.endDate, isNull);
     });
 
@@ -288,7 +287,8 @@ void main() {
 
     test('copyWith: 传 Value(refillAt: null) 应清空', () {
       final original = _entity(refillAt: DateTime(2026, 7, 25));
-      final cleared = original.copyWith(refillAt: const DomainValue<DateTime?>(null));
+      final cleared =
+          original.copyWith(refillAt: const DomainValue<DateTime?>(null));
       expect(cleared.refillAt, isNull);
     });
 
@@ -321,7 +321,7 @@ void main() {
         dosageUnit: 'mg',
         timesJson: const Value('[{"h":8,"m":0},{"h":20,"m":0}]'),
         startDate: DateTime(2026, 1, 1),
-      ));
+      ),);
 
       final rows = await db.watchAllMedicationsIncludingInactive().first;
       expect(rows.length, 1);

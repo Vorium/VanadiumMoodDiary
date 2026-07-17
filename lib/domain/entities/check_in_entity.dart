@@ -94,8 +94,7 @@ class CheckInEntity {
   bool get isTemp => type == CheckInType.temp;
 
   /// 是否心理量表评估
-  bool get isAssessment =>
-      type == CheckInType.phq9 || type == CheckInType.gad7;
+  bool get isAssessment => type == CheckInType.phq9 || type == CheckInType.gad7;
 
   /// 是否 PHQ-9
   bool get isPhq9 => type == CheckInType.phq9;
@@ -117,9 +116,8 @@ class CheckInEntity {
       id: id ?? this.id,
       timestamp: timestamp ?? this.timestamp,
       type: type ?? this.type,
-      medicationId: medicationId == null
-          ? this.medicationId
-          : medicationId.value,
+      medicationId:
+          medicationId == null ? this.medicationId : medicationId.value,
       note: note == null ? this.note : note.value,
     );
   }

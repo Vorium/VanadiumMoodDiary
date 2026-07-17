@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 
 /// 吃药信息表
 /// v0.6：删 frequencyPerDay，加 dosage + dosageUnit；timesJson 含义改为
-///       存 List<TimeOfDay> 序列化的 JSON，例如 [{"h":8,"m":0},{"h":20,"m":0}]
+///       存 `List<TimeOfDay>` 序列化的 JSON，例如 `[{"h":8,"m":0},{"h":20,"m":0}]`
 @DataClassName('Medication')
 class Medications extends Table {
   IntColumn get id => integer().autoIncrement()();

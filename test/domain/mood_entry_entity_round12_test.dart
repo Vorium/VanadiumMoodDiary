@@ -115,19 +115,35 @@ void main() {
 
     test('isValidScore 1-5 通过', () {
       for (int s = 1; s <= 5; s++) {
-        expect(MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: s).isValidScore, isTrue);
+        expect(
+            MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: s)
+                .isValidScore,
+            isTrue,);
       }
     });
 
     test('isValidScore 0 / 6 / -1 / 99 不通过', () {
-      expect(MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 0).isValidScore, isFalse);
-      expect(MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 6).isValidScore, isFalse);
-      expect(MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: -1).isValidScore, isFalse);
-      expect(MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 99).isValidScore, isFalse);
+      expect(
+          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 0)
+              .isValidScore,
+          isFalse,);
+      expect(
+          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 6)
+              .isValidScore,
+          isFalse,);
+      expect(
+          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: -1)
+              .isValidScore,
+          isFalse,);
+      expect(
+          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 99)
+              .isValidScore,
+          isFalse,);
     });
 
     test('copyWith 基础字段', () {
-      final original = MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 3);
+      final original =
+          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 3);
       final copy = original.copyWith(score: 5);
       expect(copy.score, 5);
       expect(copy.id, original.id);
@@ -135,7 +151,10 @@ void main() {
 
     test('copyWith 可空 note 用 Value<>, 能"清空"', () {
       final original = MoodEntryEntity(
-        id: 1, timestamp: DateTime(2026), score: 3, note: '备忘',
+        id: 1,
+        timestamp: DateTime(2026),
+        score: 3,
+        note: '备忘',
       );
       final cleared = original.copyWith(note: const DomainValue<String?>(null));
       expect(cleared.note, isNull);
@@ -143,7 +162,10 @@ void main() {
 
     test('copyWith 不传 note 保留原值', () {
       final original = MoodEntryEntity(
-        id: 1, timestamp: DateTime(2026), score: 3, note: '备忘',
+        id: 1,
+        timestamp: DateTime(2026),
+        score: 3,
+        note: '备忘',
       );
       final copy = original.copyWith(score: 5);
       expect(copy.note, '备忘');
@@ -166,8 +188,10 @@ void main() {
     });
 
     test('tagsJson 不同则不等', () {
-      final a = MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 3, tagsJson: '[]');
-      final b = MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 3, tagsJson: '["焦虑"]');
+      final a = MoodEntryEntity(
+          id: 1, timestamp: DateTime(2026), score: 3, tagsJson: '[]',);
+      final b = MoodEntryEntity(
+          id: 1, timestamp: DateTime(2026), score: 3, tagsJson: '["焦虑"]',);
       expect(a, isNot(equals(b)));
     });
   });
@@ -183,7 +207,7 @@ void main() {
         score: 4,
         tagsJson: const Value('["平静","能量高"]'),
         note: const Value('今天不错'),
-      ));
+      ),);
 
       final rows = await db.watchMoodEntries().first;
       expect(rows.length, 1);

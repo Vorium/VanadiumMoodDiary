@@ -108,9 +108,8 @@ class AppTheme {
           minimumSize: const Size(double.infinity, AppTokens.buttonHeight),
           backgroundColor: cs.primary,
           foregroundColor: cs.onPrimary,
-          disabledBackgroundColor: isDark
-              ? AppTokens.disabledDark
-              : AppTokens.disabled,
+          disabledBackgroundColor:
+              isDark ? AppTokens.disabledDark : AppTokens.disabled,
           disabledForegroundColor: cs.onSurface.withValues(alpha: 0.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTokens.radiusButton),

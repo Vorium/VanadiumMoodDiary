@@ -1,4 +1,4 @@
-﻿// 趋势页（v0.7 新增，v0.8 加量表折线图，v0.9 加情绪折线图，
+// 趋势页（v0.7 新增，v0.8 加量表折线图，v0.9 加情绪折线图，
 //        v0.12 / Round 6 加 list ↔ calendar 切换 + mood 入日历，
 //        v0.13 / Round 10 展开"选中日详情"）
 // - 顶部：当前连续天数 / 最长连续 / 总打卡 / 总天数
@@ -92,37 +92,41 @@ class _TrendPageState extends ConsumerState<TrendPage> {
 
   Widget _buildListView(BuildContext context, List<CheckInEntity> checkIns) {
     final daily = TrendCalculator.dailyBreakdown(checkIns: checkIns, days: 30);
-    final monthly = TrendCalculator.monthlyBreakdown(checkIns: checkIns, months: 6);
+    final monthly =
+        TrendCalculator.monthlyBreakdown(checkIns: checkIns, months: 6);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('最近 30 天',
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeLabel,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+        Text(
+          '最近 30 天',
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeLabel,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: AppTokens.spacingSm),
         _HeatmapGrid(daily: daily),
         const SizedBox(height: AppTokens.spacingLg),
-        Text('最近 6 个月',
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeLabel,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+        Text(
+          '最近 6 个月',
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeLabel,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: AppTokens.spacingSm),
         _MonthlyChart(monthly: monthly),
         const SizedBox(height: AppTokens.spacingLg),
-        Text('心理评估历史',
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeLabel,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+        Text(
+          '心理评估历史',
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeLabel,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: AppTokens.spacingSm),
         Consumer(
@@ -145,12 +149,13 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           },
         ),
         const SizedBox(height: AppTokens.spacingLg),
-        Text('情绪日记历史',
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeLabel,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
+        Text(
+          '情绪日记历史',
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeLabel,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: AppTokens.spacingSm),
         Consumer(
@@ -343,9 +348,9 @@ class _MonthlyChart extends StatelessWidget {
         ),
       );
     }
-    final maxY = (monthly.map((m) => m.rate * 100).fold<double>(0, (a, b) => a > b ? a : b))
-        .clamp(10, 100)
-        .toDouble();
+    final maxY = (monthly
+        .map((m) => m.rate * 100)
+        .fold<double>(0, (a, b) => a > b ? a : b)).clamp(10, 100).toDouble();
     return SizedBox(
       height: 200,
       child: BarChart(
@@ -415,19 +420,25 @@ class _AssessmentHistory extends StatelessWidget {
           padding: const EdgeInsets.all(AppTokens.spacingLg),
           child: Column(
             children: [
-              Icon(Icons.show_chart,
-                  size: 40,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,),
+              Icon(
+                Icons.show_chart,
+                size: 40,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(height: AppTokens.spacingSm),
-              const Text('还没有评估记录',
-                  style: TextStyle(fontWeight: FontWeight.w500),),
+              const Text(
+                '还没有评估记录',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
               const SizedBox(height: 4),
-              Text('完成一次心理评估后，折线图会自动出现在这里',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,),
+              Text(
+                '完成一次心理评估后，折线图会自动出现在这里',
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeCaption,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),
@@ -441,11 +452,14 @@ class _AssessmentHistory extends StatelessWidget {
     }
 
     // 找到所有评估里最早的日期，作为 x=0
-    final sortedAll = [...records]..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    final sortedAll = [...records]
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
     final firstMs = sortedAll.first.timestamp.millisecondsSinceEpoch;
     final lastMs = sortedAll.last.timestamp.millisecondsSinceEpoch;
     // 用"距离首日的秒数"作为 x 值（精度高于"天数"，避免同日多次评估重叠）
-    double xOf(DateTime t) => t.millisecondsSinceEpoch / 1000.0 / 86400.0 - firstMs / 1000.0 / 86400.0;
+    double xOf(DateTime t) =>
+        t.millisecondsSinceEpoch / 1000.0 / 86400.0 -
+        firstMs / 1000.0 / 86400.0;
 
     final xMax = (lastMs - firstMs) / 1000.0 / 86400.0;
     // 至少留 0.5 天的余量，避免最新点贴边
@@ -465,7 +479,8 @@ class _AssessmentHistory extends StatelessWidget {
     // B2 + B5 fix: 提前构造 (x, y) → record 元数据的反向索引。
     // tooltip 直接 O(1) 查原 record,避免浮点 == 几乎永远不匹配,
     // 也避免 tooltip 里再扫一遍 allScales。
-    final spotMeta = <_SpotKey, ({
+    final spotMeta = <_SpotKey,
+        ({
       AssessmentRecord rec,
       int rawMax,
       String name,
@@ -475,10 +490,12 @@ class _AssessmentHistory extends StatelessWidget {
       if (recs == null || recs.isEmpty) continue;
       final color = palette[colorIdx % palette.length];
       final spots = recs
-          .map((r) => FlSpot(
-                xOf(r.timestamp),
-                r.total / scale.totalRange * 100,
-              ),)
+          .map(
+            (r) => FlSpot(
+              xOf(r.timestamp),
+              r.total / scale.totalRange * 100,
+            ),
+          )
           .toList();
       for (int i = 0; i < recs.length; i++) {
         final key = _SpotKey(spots[i].x, spots[i].y);
@@ -488,25 +505,27 @@ class _AssessmentHistory extends StatelessWidget {
           name: scale.displayName,
         );
       }
-      lines.add(LineChartBarData(
-        spots: spots,
-        color: color,
-        barWidth: 2.5,
-        isCurved: spots.length > 1,
-        dotData: FlDotData(
-          show: true,
-          getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
-            radius: 3.5,
-            color: color,
-            strokeWidth: 1.5,
-            strokeColor: Colors.white,
+      lines.add(
+        LineChartBarData(
+          spots: spots,
+          color: color,
+          barWidth: 2.5,
+          isCurved: spots.length > 1,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
+              radius: 3.5,
+              color: color,
+              strokeWidth: 1.5,
+              strokeColor: Colors.white,
+            ),
+          ),
+          belowBarData: BarAreaData(
+            show: true,
+            color: color.withValues(alpha: 0.12),
           ),
         ),
-        belowBarData: BarAreaData(
-          show: true,
-          color: color.withValues(alpha: 0.12),
-        ),
-      ),);
+      );
       legendItems.add(_LegendDot(color: color, label: scale.displayName));
       colorIdx++;
     }
@@ -550,9 +569,11 @@ class _AssessmentHistory extends StatelessWidget {
                   borderData: FlBorderData(show: false),
                   titlesData: FlTitlesData(
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -568,12 +589,15 @@ class _AssessmentHistory extends StatelessWidget {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 22,
-                        interval: xMaxDisplay <= 1 ? 0.5 : (xMaxDisplay / 4).ceilToDouble(),
+                        interval: xMaxDisplay <= 1
+                            ? 0.5
+                            : (xMaxDisplay / 4).ceilToDouble(),
                         getTitlesWidget: (value, _) {
                           if (xMaxDisplay <= 1) {
                             // 全部在一天内：显示 HH:mm
                             final dt = DateTime.fromMillisecondsSinceEpoch(
-                                (firstMs + (value * 86400 * 1000).round()),);  // B5: round
+                              (firstMs + (value * 86400 * 1000).round()),
+                            ); // B5: round
                             return Text(
                               '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
                               style: const TextStyle(fontSize: 10),
@@ -581,7 +605,8 @@ class _AssessmentHistory extends StatelessWidget {
                           }
                           // 多天：显示 MM/DD
                           final dt = DateTime.fromMillisecondsSinceEpoch(
-                              (firstMs + (value * 86400 * 1000).round()),);  // B5: round
+                            (firstMs + (value * 86400 * 1000).round()),
+                          ); // B5: round
                           return Text(
                             '${dt.month}/${dt.day}',
                             style: const TextStyle(fontSize: 10),
@@ -602,7 +627,8 @@ class _AssessmentHistory extends StatelessWidget {
                           final rawTotal = meta?.rec.total ?? 0;
                           final rawMax = meta?.rawMax ?? 1;
                           final name = meta?.name ?? '';
-                          final pct = (rawMax == 0) ? 0.0 : (rawTotal / rawMax * 100);
+                          final pct =
+                              (rawMax == 0) ? 0.0 : (rawTotal / rawMax * 100);
                           return LineTooltipItem(
                             '${dt.month}/${dt.day} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}\n'
                             '$name $rawTotal/$rawMax (${pct.toStringAsFixed(0)}%)',
@@ -679,8 +705,10 @@ class _MoodHistoryChart extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              const Text('还没有情绪记录',
-                  style: TextStyle(fontWeight: FontWeight.w500),),
+              const Text(
+                '还没有情绪记录',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
               const SizedBox(height: 4),
               Text(
                 '在主页点击「记一下情绪」开始记录',
@@ -702,7 +730,8 @@ class _MoodHistoryChart extends StatelessWidget {
     final firstMs = sorted.first.timestamp.millisecondsSinceEpoch;
     final lastMs = sorted.last.timestamp.millisecondsSinceEpoch;
     double xOf(DateTime t) =>
-        t.millisecondsSinceEpoch / 1000.0 / 86400.0 - firstMs / 1000.0 / 86400.0;
+        t.millisecondsSinceEpoch / 1000.0 / 86400.0 -
+        firstMs / 1000.0 / 86400.0;
 
     final xMax = (lastMs - firstMs) / 1000.0 / 86400.0;
     final xMaxDisplay = xMax == 0 ? 1.0 : xMax + 0.5;
@@ -802,9 +831,11 @@ class _MoodHistoryChart extends StatelessWidget {
                   borderData: FlBorderData(show: false),
                   titlesData: FlTitlesData(
                     rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),),
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -820,23 +851,26 @@ class _MoodHistoryChart extends StatelessWidget {
                         },
                       ),
                     ),
-                                    bottomTitles: AxisTitles(
+                    bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 22,
-                        interval:
-                            xMaxDisplay <= 1 ? 0.5 : (xMaxDisplay / 4).ceilToDouble(),
+                        interval: xMaxDisplay <= 1
+                            ? 0.5
+                            : (xMaxDisplay / 4).ceilToDouble(),
                         getTitlesWidget: (value, _) {
                           if (xMaxDisplay <= 1) {
                             final dt = DateTime.fromMillisecondsSinceEpoch(
-                                (firstMs + (value * 86400 * 1000).round()),);  // B5: round
+                              (firstMs + (value * 86400 * 1000).round()),
+                            ); // B5: round
                             return Text(
                               '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
                               style: const TextStyle(fontSize: 10),
                             );
                           }
                           final dt = DateTime.fromMillisecondsSinceEpoch(
-                              (firstMs + (value * 86400 * 1000).round()),);  // B5: round
+                            (firstMs + (value * 86400 * 1000).round()),
+                          ); // B5: round
                           return Text(
                             '${dt.month}/${dt.day}',
                             style: const TextStyle(fontSize: 10),
@@ -886,8 +920,8 @@ class _MoodHistoryChart extends StatelessWidget {
 /// fl_chart 的 tooltip 只给 t.x / t.y，原代码用整数除法 + 浮点 ==
 /// 反向查 record，几乎永远不匹配。这里用 round 后的整数做 key。
 class _SpotKey {
-  final int x;  // round(x * 1e6) 微秒级精度
-  final int y;  // round(y * 100) 2 位小数
+  final int x; // round(x * 1e6) 微秒级精度
+  final int y; // round(y * 100) 2 位小数
   _SpotKey(double x, double y)
       : x = (x * 1e6).round(),
         y = (y * 100).round();
@@ -1076,15 +1110,16 @@ class _CalendarViewState extends State<_CalendarView> {
                   Expanded(
                     child: _CalendarCell(
                       day: widget.calendar.cells[row * 7 + col],
-                      inMonth: widget.calendar.cells[row * 7 + col].date.month ==
-                              widget.calendar.month.month &&
-                          widget.calendar.cells[row * 7 + col].date.year ==
-                              widget.calendar.month.year,
+                      inMonth:
+                          widget.calendar.cells[row * 7 + col].date.month ==
+                                  widget.calendar.month.month &&
+                              widget.calendar.cells[row * 7 + col].date.year ==
+                                  widget.calendar.month.year,
                       selected: _sameDate(
-                          widget.calendar.cells[row * 7 + col].date, _selected),
+                          widget.calendar.cells[row * 7 + col].date, _selected,),
                       isToday: _sameDate(
                           widget.calendar.cells[row * 7 + col].date,
-                          DateTime(_today.year, _today.month, _today.day)),
+                          DateTime(_today.year, _today.month, _today.day),),
                       onTap: () {
                         setState(() {
                           _selected = widget.calendar.cells[row * 7 + col].date;
@@ -1141,9 +1176,8 @@ class _CalendarCell extends StatelessWidget {
       bg = null;
     }
 
-    final fg = day.hasNormalCheckIn
-        ? Colors.white
-        : theme.colorScheme.onSurface;
+    final fg =
+        day.hasNormalCheckIn ? Colors.white : theme.colorScheme.onSurface;
     final opacity = inMonth ? 1.0 : 0.35;
 
     return AspectRatio(
@@ -1171,8 +1205,7 @@ class _CalendarCell extends StatelessWidget {
                       '${day.date.day}',
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight:
-                            isToday ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
                         color: fg,
                       ),
                     ),
@@ -1181,10 +1214,10 @@ class _CalendarCell extends StatelessWidget {
                     Positioned(
                       right: 2,
                       bottom: 1,
-                        child: Text(
-                          MoodVisual.emojiFor(day.moodScore!),
-                          style: const TextStyle(fontSize: 8),
-                        ),
+                      child: Text(
+                        MoodVisual.emojiFor(day.moodScore!),
+                        style: const TextStyle(fontSize: 8),
+                      ),
                     ),
                 ],
               ),
@@ -1293,7 +1326,8 @@ class _DayDetailCard extends StatelessWidget {
               ],
             ),
             // 情绪统计摘要（仅当有时显示）
-            if (detail.bestMoodScore != null && detail.worstMoodScore != null) ...[
+            if (detail.bestMoodScore != null &&
+                detail.worstMoodScore != null) ...[
               const SizedBox(height: AppTokens.spacingXs),
               Row(
                 children: [
@@ -1323,7 +1357,8 @@ class _DayDetailCard extends StatelessWidget {
             // 事件列表
             if (detail.events.isEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
                 child: Row(
                   children: [
                     Icon(
@@ -1346,8 +1381,7 @@ class _DayDetailCard extends StatelessWidget {
               Column(
                 children: [
                   for (int i = 0; i < detail.events.length; i++) ...[
-                    if (i > 0)
-                      const Divider(height: 1, indent: 32),
+                    if (i > 0) const Divider(height: 1, indent: 32),
                     _EventRow(event: detail.events[i]),
                   ],
                 ],

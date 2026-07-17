@@ -215,7 +215,8 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                               : 1,
                           onChanged: _duration.inMilliseconds > 0
                               ? (v) {
-                                  _player.seek(Duration(milliseconds: v.toInt()));
+                                  _player
+                                      .seek(Duration(milliseconds: v.toInt()));
                                 }
                               : null,
                         ),

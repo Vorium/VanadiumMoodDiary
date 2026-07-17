@@ -51,7 +51,7 @@ Future<void> main() async {
     if (shouldProceed != true) {
       // 用户取消：切到 abort UI。
       // abort UI 里的"重试"按钮会重新调 main(),重新走整个流程。
-      runApp(_MigrationAbortedApp(onRetry: main));
+      runApp(const _MigrationAbortedApp(onRetry: main));
       return;
     }
   }
@@ -228,7 +228,7 @@ class _MigrationAbortedApp extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.pause_circle_outline,
-                    size: 64, color: Colors.orange),
+                    size: 64, color: Colors.orange,),
                 SizedBox(height: 16),
                 Text(
                   '升级已取消',

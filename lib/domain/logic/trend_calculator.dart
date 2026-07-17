@@ -103,10 +103,12 @@ class TrendCalculator {
     }
     for (int i = days - 1; i >= 0; i--) {
       final d = today.subtract(Duration(days: i));
-      result.add(DailyCheckIn(
-        date: d,
-        checked: (byDate[d] ?? 0) > 0,
-      ),);
+      result.add(
+        DailyCheckIn(
+          date: d,
+          checked: (byDate[d] ?? 0) > 0,
+        ),
+      );
     }
     return result;
   }
@@ -133,11 +135,13 @@ class TrendCalculator {
       final nextMonth = DateTime(m.year, m.month + 1, 1);
       final totalDays = nextMonth.difference(m).inDays;
       final checkedDays = checkedByMonth[key]?.length ?? 0;
-      result.add(MonthlyCheckIn(
-        month: m,
-        totalDays: totalDays,
-        checkedDays: checkedDays,
-      ),);
+      result.add(
+        MonthlyCheckIn(
+          month: m,
+          totalDays: totalDays,
+          checkedDays: checkedDays,
+        ),
+      );
     }
     return result;
   }
@@ -150,8 +154,7 @@ class TrendCalculator {
     final today = now ?? DateTime.now();
     final normal = checkIns.where((c) => c.isNormal).toList();
     return StreakSummary(
-      currentStreak:
-          StreakCalculator.calculate(checkIns: normal, now: today),
+      currentStreak: StreakCalculator.calculate(checkIns: normal, now: today),
       longestStreak: _longestStreak(normal),
       totalCheckIns: normal.length,
       totalDays: _uniqueDays(normal).length,
@@ -185,7 +188,8 @@ class TrendCalculator {
 
   static DateTime _dateOnly(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
-  static String _monthKey(DateTime dt) => '${dt.year}-${dt.month.toString().padLeft(2, '0')}';
+  static String _monthKey(DateTime dt) =>
+      '${dt.year}-${dt.month.toString().padLeft(2, '0')}';
 
   // ============== v0.12 (Round 6) 日历视图 ==============
 
@@ -205,8 +209,7 @@ class TrendCalculator {
     // 我们想让周一作为一周的第一列, 所以偏移:
     // 当月 1 号的 weekday - 1 就是它前面有几格
     final leading = firstOfMonth.weekday - 1; // 0..6
-    final gridStart =
-        firstOfMonth.subtract(Duration(days: leading));
+    final gridStart = firstOfMonth.subtract(Duration(days: leading));
 
     // 按天 group
     final byDate = <DateTime, _DailyAgg>{};

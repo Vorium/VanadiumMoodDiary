@@ -75,7 +75,7 @@ class NotificationService implements NotificationSender {
     if (launchDetails?.didNotificationLaunchApp ?? false) {
       final payload = launchDetails?.notificationResponse?.payload;
       developer.log('🚀 App 由通知拉起, payload=$payload',
-          name: 'NotificationService');
+          name: 'NotificationService',);
       NotificationNavigation.setLaunchPayload(payload);
     }
 
@@ -85,8 +85,10 @@ class NotificationService implements NotificationSender {
       final localTzName = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(localTzName));
     } catch (e) {
-      developer.log('⚠️ 时区初始化失败（web 端不支持）: $e',
-          name: 'NotificationService',);
+      developer.log(
+        '⚠️ 时区初始化失败（web 端不支持）: $e',
+        name: 'NotificationService',
+      );
     }
 
     // 请求权限
@@ -105,7 +107,7 @@ class NotificationService implements NotificationSender {
   /// flutter_local_notifications 回调
   static void _onResponse(NotificationResponse response) {
     developer.log('👆 通知被点击, payload=${response.payload}',
-        name: 'NotificationService');
+        name: 'NotificationService',);
     _defaultOnTap(response.payload);
   }
 
@@ -156,7 +158,8 @@ class NotificationService implements NotificationSender {
   ///
   /// 每次 medications 表变化（增/删/改）时调用。
   /// 用稳定 hash 生成 notification id（避免冲突 + 同一药同一时间复用 id）。
-  Future<void> rescheduleMedicationReminders(List<Medication> medications) async {
+  Future<void> rescheduleMedicationReminders(
+      List<Medication> medications,) async {
     await init();
 
     // 先取消所有 medication 推送（保留 default + soft）
@@ -184,17 +187,16 @@ class NotificationService implements NotificationSender {
       if (!med.isActive) continue;
       for (int i = 0; i < med.times.length; i++) {
         final t = med.times[i];
-        final id = _medicationReminderBaseId +
-            (med.id * 10) +
-            i; // 同一药的同一时间点 id 稳定
+        final id =
+            _medicationReminderBaseId + (med.id * 10) + i; // 同一药的同一时间点 id 稳定
         try {
           // v0.11: payload 携带 medId,点通知直达该药打卡
-          final payload = NotificationDeepLink.medicationCheckIn(med.id).encode();
+          final payload =
+              NotificationDeepLink.medicationCheckIn(med.id).encode();
           await _zonedDaily(
             id: id,
             title: '💊 该吃药了：${med.name}',
-            body:
-                '${med.dosage}${med.dosageUnit} · 点一下 = 打卡',
+            body: '${med.dosage}${med.dosageUnit} · 点一下 = 打卡',
             hour: t.hour,
             minute: t.minute,
             details: details,
@@ -202,13 +204,17 @@ class NotificationService implements NotificationSender {
           );
           scheduled++;
         } catch (e) {
-          developer.log('❌ 推送调度失败 med=${med.name} t=$t: $e',
-              name: 'NotificationService',);
+          developer.log(
+            '❌ 推送调度失败 med=${med.name} t=$t: $e',
+            name: 'NotificationService',
+          );
         }
       }
     }
-    developer.log('✅ 重新调度 $scheduled 个 medication 推送',
-        name: 'NotificationService',);
+    developer.log(
+      '✅ 重新调度 $scheduled 个 medication 推送',
+      name: 'NotificationService',
+    );
   }
 
   /// 漏 1 天主动 push 安慰（不是通知紧急联系人）
@@ -241,8 +247,10 @@ class NotificationService implements NotificationSender {
         details: details,
         payload: payload,
       );
-      developer.log('✅ 设置漏 1 天主动安慰 push（每天 $hour:$minute）',
-          name: 'NotificationService',);
+      developer.log(
+        '✅ 设置漏 1 天主动安慰 push（每天 $hour:$minute）',
+        name: 'NotificationService',
+      );
     } catch (e) {
       developer.log('❌ 软提醒调度失败: $e', name: 'NotificationService');
     }
@@ -257,6 +265,7 @@ class NotificationService implements NotificationSender {
   /// 立即显示一条通知（不调度，立即推）
   ///
   /// 用于 CareEngine 触发的主动 push（不是定时任务）
+  @override
   Future<void> showNow({
     required int id,
     required String title,
@@ -299,7 +308,7 @@ class NotificationService implements NotificationSender {
   }) async {
     if (minutes <= 0 || minutes > 1440) {
       developer.log('⚠️ snoozeOnce: minutes=$minutes 越界（1..1440）',
-          name: 'NotificationService');
+          name: 'NotificationService',);
       return;
     }
     await init();
@@ -340,7 +349,7 @@ class NotificationService implements NotificationSender {
         payload: payload,
       );
       developer.log('✅ snooze ${minutes}min 后触发（med=$medicationId）',
-          name: 'NotificationService');
+          name: 'NotificationService',);
     } catch (e) {
       developer.log('❌ snooze 调度失败: $e', name: 'NotificationService');
     }
@@ -434,17 +443,19 @@ class NotificationService implements NotificationSender {
     );
     if (fireAt == null) {
       developer.log(
-          '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
-          name: 'NotificationService',);
+        '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
+        name: 'NotificationService',
+      );
       return;
     }
 
     // 已经过期的提醒不再调度（避免给历史数据"补响"）
     if (fireAt.isBefore(DateTime.now())) {
       developer.log(
-          '⏭️ scheduleRefillReminder: med=${medication.name} '
-          'fireAt=$fireAt 已过, 跳过',
-          name: 'NotificationService',);
+        '⏭️ scheduleRefillReminder: med=${medication.name} '
+        'fireAt=$fireAt 已过, 跳过',
+        name: 'NotificationService',
+      );
       // 但仍要取消旧的,避免过期通知还挂着
       await cancelRefillReminder(medication.id);
       return;
@@ -455,7 +466,7 @@ class NotificationService implements NotificationSender {
     await _plugin.cancel(id); // 覆盖前一次
 
     final daysLeft = _daysUntilRefill(medication.refillAt!, DateTime.now());
-    final details = NotificationDetails(
+    final details = const NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,
         _channelName,
@@ -465,7 +476,8 @@ class NotificationService implements NotificationSender {
       ),
       iOS: DarwinNotificationDetails(),
     );
-    final payload = NotificationDeepLink.medicationCheckIn(medication.id).encode();
+    final payload =
+        NotificationDeepLink.medicationCheckIn(medication.id).encode();
     final fireTz = tz.TZDateTime.from(fireAt, tz.local);
     try {
       await _plugin.zonedSchedule(
@@ -481,12 +493,12 @@ class NotificationService implements NotificationSender {
         payload: payload,
       );
       developer.log(
-          '✅ 续方提醒: med=${medication.name} '
-          'fireAt=$fireAt daysLeft=$daysLeft',
-          name: 'NotificationService',);
+        '✅ 续方提醒: med=${medication.name} '
+        'fireAt=$fireAt daysLeft=$daysLeft',
+        name: 'NotificationService',
+      );
     } catch (e) {
-      developer.log('❌ 续方提醒调度失败: $e',
-          name: 'NotificationService', error: e);
+      developer.log('❌ 续方提醒调度失败: $e', name: 'NotificationService', error: e);
     }
   }
 
@@ -516,8 +528,10 @@ class NotificationService implements NotificationSender {
       await scheduleRefillReminder(med);
       scheduled++;
     }
-    developer.log('✅ 重排 $scheduled 个 medication 的续方提醒',
-        name: 'NotificationService',);
+    developer.log(
+      '✅ 重排 $scheduled 个 medication 的续方提醒',
+      name: 'NotificationService',
+    );
   }
 
   // ============== Round 7: 心理评估周期提醒 ==============
@@ -542,8 +556,9 @@ class NotificationService implements NotificationSender {
 
     if (fireAt.isBefore(DateTime.now())) {
       developer.log(
-          '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
-          name: 'NotificationService',);
+        '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
+        name: 'NotificationService',
+      );
       return;
     }
 
@@ -564,7 +579,7 @@ class NotificationService implements NotificationSender {
         _assessmentReminderId,
         '🌿 心理评估时间到',
         '已经 $days 天没做 ${scaleId.toUpperCase()} 了，'
-        '抽 2 分钟看看最近状态',
+            '抽 2 分钟看看最近状态',
         fireTz,
         details,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -573,11 +588,11 @@ class NotificationService implements NotificationSender {
         payload: payload,
       );
       developer.log(
-          '✅ 评估提醒: scale=$scaleId fireAt=$fireAt days=$days',
-          name: 'NotificationService',);
+        '✅ 评估提醒: scale=$scaleId fireAt=$fireAt days=$days',
+        name: 'NotificationService',
+      );
     } catch (e) {
-      developer.log('❌ 评估提醒调度失败: $e',
-          name: 'NotificationService', error: e);
+      developer.log('❌ 评估提醒调度失败: $e', name: 'NotificationService', error: e);
     }
   }
 
@@ -624,7 +639,8 @@ class NotificationService implements NotificationSender {
         ? '从未打卡'
         : '${lastCheckIn.year}-${lastCheckIn.month.toString().padLeft(2, '0')}-${lastCheckIn.day.toString().padLeft(2, '0')}';
 
-    final payload = NotificationDeepLink.safetyAlert(daysWithoutCheckIn).encode();
+    final payload =
+        NotificationDeepLink.safetyAlert(daysWithoutCheckIn).encode();
     await _plugin.show(
       _safetyAlertId,
       '⚠️ $userName 已 $daysWithoutCheckIn 天未打卡',
@@ -680,7 +696,7 @@ class NotificationService implements NotificationSender {
       developer.log('✅ 角标已更新 = $count', name: 'NotificationService');
     } catch (e) {
       developer.log('⚠️ updateBadgeCount 失败（不影响功能）: $e',
-          name: 'NotificationService');
+          name: 'NotificationService',);
     }
   }
 

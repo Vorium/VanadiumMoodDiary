@@ -1,4 +1,4 @@
-﻿// v0.14 (Round 13A) RefillManagePage widget + 业务逻辑测试
+// v0.14 (Round 13A) RefillManagePage widget + 业务逻辑测试
 import 'package:chroniccare/data/services/notification_service.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -85,7 +85,8 @@ void main() {
     });
 
     test('refillAt 已过 → overdue', () {
-      final m = _med(refillAt: DateTime.now().subtract(const Duration(days: 3)));
+      final m =
+          _med(refillAt: DateTime.now().subtract(const Duration(days: 3)));
       expect(m.isRefillOverdue(), isTrue);
     });
 
@@ -106,8 +107,7 @@ void main() {
       // 模拟 refillAt = 今天的 00:00，now 是 14:00
       final todayMidnight = DateTime(now.year, now.month, now.day);
       final m = _med(refillAt: todayMidnight);
-      expect(m.isRefillOverdue(), isFalse,
-          reason: 'refill day 当天不应该算过期');
+      expect(m.isRefillOverdue(), isFalse, reason: 'refill day 当天不应该算过期');
     });
 
     test('refillAt 昨天 23:59 → overdue', () {
@@ -152,8 +152,14 @@ void main() {
     testWidgets('已过期的药显示"已过期" + 排第一', (tester) async {
       _setBigView(tester);
       final meds = [
-        _med(id: 1, name: '正常药', refillAt: DateTime.now().add(const Duration(days: 30))),
-        _med(id: 2, name: '过期药', refillAt: DateTime.now().subtract(const Duration(days: 3))),
+        _med(
+            id: 1,
+            name: '正常药',
+            refillAt: DateTime.now().add(const Duration(days: 30)),),
+        _med(
+            id: 2,
+            name: '过期药',
+            refillAt: DateTime.now().subtract(const Duration(days: 3)),),
       ];
       await tester.pumpWidget(_wrap(meds: meds));
       await tester.pumpAndSettle();
@@ -173,7 +179,8 @@ void main() {
 
     testWidgets('点击行 → 跳到编辑对话框', (tester) async {
       _setBigView(tester);
-      final med = _med(name: '氟西汀', refillAt: DateTime.now().add(const Duration(days: 30)));
+      final med = _med(
+          name: '氟西汀', refillAt: DateTime.now().add(const Duration(days: 30)),);
       await tester.pumpWidget(_wrap(meds: [med]));
       await tester.pumpAndSettle();
 

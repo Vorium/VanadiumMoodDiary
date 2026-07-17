@@ -7,6 +7,7 @@
 /// 注意：不加密（用户自己保管），不依赖云端
 /// 加密备份是后续 v1.0+ 增强
 library;
+
 import 'dart:convert';
 
 import 'package:drift/drift.dart' show Value;
@@ -136,7 +137,8 @@ class DataExportService {
         // profile
         if (data['profile'] != null) {
           final p = data['profile'] as Map<String, dynamic>;
-          final userName = _validateString(p['userName'], 'userName', maxLen: 50);
+          final userName =
+              _validateString(p['userName'], 'userName', maxLen: 50);
           if (userName != null) {
             await _db.upsertUserProfile(
               UserProfilesCompanion.insert(
@@ -144,7 +146,8 @@ class DataExportService {
                 checkInCycleHours: Value(
                   _validateIntOr(p['checkInCycleHours'], 48, min: 1, max: 168),
                 ),
-                firstLaunchAt: _validateDate(p['firstLaunchAt']) ?? DateTime.now(),
+                firstLaunchAt:
+                    _validateDate(p['firstLaunchAt']) ?? DateTime.now(),
               ),
             );
           }
@@ -156,7 +159,7 @@ class DataExportService {
           final m = c;
           final name = _validateString(m['name'], 'contact.name', maxLen: 50);
           final phone = _validateString(m['phone'], 'contact.phone',
-              maxLen: 20, pattern: RegExp(r'^\+?\d{6,20}$'));
+              maxLen: 20, pattern: RegExp(r'^\+?\d{6,20}$'),);
           if (name == null || phone == null) continue;
           await _db.insertContact(
             ContactsCompanion.insert(
@@ -185,7 +188,9 @@ class DataExportService {
               name: name,
               dosage: dosage,
               dosageUnit: unit,
-              timesJson: Value(_validateString(m['timesJson'], 'med.timesJson', maxLen: 1000) ?? '[]'),
+              timesJson: Value(_validateString(m['timesJson'], 'med.timesJson',
+                      maxLen: 1000,) ??
+                  '[]',),
               startDate: start,
               endDate: Value(_validateDate(m['endDate'])),
               isActive: Value(m['isActive'] as bool? ?? true),
@@ -206,7 +211,8 @@ class DataExportService {
               timestamp: ts,
               type: type,
               medicationId: Value(_validateInt(m['medicationId'], null)),
-              note: Value(_validateString(m['note'], 'checkIn.note', maxLen: 10000)),
+              note: Value(
+                  _validateString(m['note'], 'checkIn.note', maxLen: 10000),),
             ),
           );
           checkInCount++;
@@ -219,8 +225,11 @@ class DataExportService {
             final m = h;
             final days = _validateInt(m['windowDays'], null, min: 1, max: 365);
             final at = _validateDate(m['generatedAt']);
-            final userName = _validateString(m['userName'], 'report.userName', maxLen: 50) ?? '';
-            final text = _validateString(m['reportText'], 'report.text', maxLen: 100000);
+            final userName =
+                _validateString(m['userName'], 'report.userName', maxLen: 50) ??
+                    '';
+            final text =
+                _validateString(m['reportText'], 'report.text', maxLen: 100000);
             if (days == null || at == null || text == null) continue;
             await _reportRepo.insert(
               windowDays: days,
@@ -237,13 +246,16 @@ class DataExportService {
             final ts = _validateDate(m['timestamp']);
             final score = _validateIntOr(m['score'], 3, min: 1, max: 5);
             if (ts == null) continue;
-            final tags = _validateString(m['tagsJson'], 'mood.tags', maxLen: 5000) ?? '[]';
+            final tags =
+                _validateString(m['tagsJson'], 'mood.tags', maxLen: 5000) ??
+                    '[]';
             await _db.insertMoodEntry(
               MoodEntriesCompanion.insert(
                 timestamp: ts,
                 score: score,
                 tagsJson: Value(tags),
-                note: Value(_validateString(m['note'], 'mood.note', maxLen: 10000)),
+                note: Value(
+                    _validateString(m['note'], 'mood.note', maxLen: 10000),),
               ),
             );
             moodEntryCount++;
@@ -270,7 +282,7 @@ class DataExportService {
   // ===== 校验辅助 =====
 
   static String? _validateString(dynamic v, String field,
-      {int maxLen = 1000, RegExp? pattern}) {
+      {int maxLen = 1000, RegExp? pattern,}) {
     if (v == null) return null;
     if (v is! String) return null;
     if (v.isEmpty) return null;

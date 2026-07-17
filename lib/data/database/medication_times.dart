@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../../domain/entities/hour_minute.dart';
 import 'app_database.dart';
 
-/// Medication 的扩展方法：把 timesJson 解析成 List<HourMinute>
+/// Medication 的扩展方法：把 timesJson 解析成 `List<HourMinute>`
 ///
 /// 用法：`medication.times`
 ///
@@ -35,7 +35,7 @@ extension MedicationTimes on Medication {
   }
 }
 
-/// v0.13 (Round 11) 顶层函数：List<HourMinute> → JSON
+/// v0.13 (Round 11) 顶层函数：`List<HourMinute>` → JSON
 ///
 /// 从 [MedicationRepositoryImpl] 抽出来，放这里和 parser 成对。
 /// **JSON 格式必须保持向后兼容**：`[{"h":8,"m":0},{"h":20,"m":0}]`。

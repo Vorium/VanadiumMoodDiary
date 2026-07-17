@@ -198,7 +198,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
 
   Widget _buildAssessmentCard(BuildContext context) {
     if (_loading) {
-      return _ReminderCard(
+      return const _ReminderCard(
         icon: Icons.psychology_outlined,
         title: '周期评估提醒',
         description: '加载中...',
@@ -213,9 +213,8 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     return _ReminderCard(
       icon: Icons.psychology_outlined,
       title: '周期评估提醒',
-      description: enabled
-          ? '每 $days 天提醒做心理评估（PHQ-9 / GAD-7）'
-          : '关闭 · 不会推送评估提醒',
+      description:
+          enabled ? '每 $days 天提醒做心理评估（PHQ-9 / GAD-7）' : '关闭 · 不会推送评估提醒',
       statusText: enabled ? '已启用 · 每 $days 天' : '未启用',
       statusActive: enabled,
       actionLabel: '配置',
@@ -225,7 +224,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
 
   Widget _buildSafetyCard(BuildContext context) {
     if (_loading) {
-      return _ReminderCard(
+      return const _ReminderCard(
         icon: Icons.shield_outlined,
         title: '失联通知（安全开关）',
         description: '加载中...',
@@ -283,9 +282,8 @@ class _ReminderCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: statusActive
-                    ? AppTokens.primaryLight
-                    : AppTokens.divider,
+                color:
+                    statusActive ? AppTokens.primaryLight : AppTokens.divider,
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               ),
               child: Icon(icon, color: AppTokens.primary, size: 22),
@@ -377,11 +375,10 @@ class _MedicationReminderCard extends StatelessWidget {
       icon: Icons.medication_outlined,
       title: '用药提醒',
       description: active
-          ? '共 ${activeMeds.length} 种在用药物，${totalTimes} 个时间点会推送提醒'
+          ? '共 ${activeMeds.length} 种在用药物，$totalTimes 个时间点会推送提醒'
           : '还没有在用药物 · 添加后会自动启用',
-      statusText: active
-          ? '已启用 · ${activeMeds.length} 种 / ${totalTimes} 时间点'
-          : '未配置',
+      statusText:
+          active ? '已启用 · ${activeMeds.length} 种 / $totalTimes 时间点' : '未配置',
       statusActive: active,
       actionLabel: '管理用药',
       onAction: () => context.push('/settings'),
@@ -407,8 +404,7 @@ class _RefillReminderCard extends StatelessWidget {
     if (!active) {
       description = '未给任何药物设置续方日期 · 在"用药设置"中可加';
     } else if (overdue.isNotEmpty) {
-      description =
-          '${overdue.length} 种已过期续方 · ${inWindow.length} 种在提醒窗口内';
+      description = '${overdue.length} 种已过期续方 · ${inWindow.length} 种在提醒窗口内';
     } else {
       description = '${withRefill.length} 种药物已设续方 · 临近时会推送提醒';
     }

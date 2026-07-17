@@ -88,14 +88,12 @@ class DayDetail {
   bool get isEmpty => events.isEmpty;
 
   /// normal 打卡数
-  int get totalCheckIns => events
-      .where((e) => e.kind == DayEventKind.checkInNormal)
-      .length;
+  int get totalCheckIns =>
+      events.where((e) => e.kind == DayEventKind.checkInNormal).length;
 
   /// 临时吃药数
-  int get totalTempMeds => events
-      .where((e) => e.kind == DayEventKind.checkInTemp)
-      .length;
+  int get totalTempMeds =>
+      events.where((e) => e.kind == DayEventKind.checkInTemp).length;
 
   /// 情绪记录数
   int get totalMoodEntries =>
@@ -107,18 +105,16 @@ class DayDetail {
 
   /// 最高情绪分
   int? get bestMoodScore {
-    final scores = events
-        .where((e) => e.moodScore != null)
-        .map((e) => e.moodScore!);
+    final scores =
+        events.where((e) => e.moodScore != null).map((e) => e.moodScore!);
     if (scores.isEmpty) return null;
     return scores.reduce((a, b) => a > b ? a : b);
   }
 
   /// 最低情绪分
   int? get worstMoodScore {
-    final scores = events
-        .where((e) => e.moodScore != null)
-        .map((e) => e.moodScore!);
+    final scores =
+        events.where((e) => e.moodScore != null).map((e) => e.moodScore!);
     if (scores.isEmpty) return null;
     return scores.reduce((a, b) => a < b ? a : b);
   }
@@ -169,7 +165,7 @@ class DayDetailCalculator {
           subtitle: _timeLabel(c.timestamp),
           medicationId: c.medicationId,
           medicationName: med?.name,
-        ));
+        ),);
       } else if (c.isTemp) {
         final parsed = JsonCodec.parseTempMedNote(c.note);
         events.add(DayEvent(
@@ -179,7 +175,7 @@ class DayDetailCalculator {
           subtitle: parsed.description.isNotEmpty
               ? '${_timeLabel(c.timestamp)} · ${parsed.description}'
               : _timeLabel(c.timestamp),
-        ));
+        ),);
       } else if (c.isAssessment) {
         // 评估总分从 note JSON 解析（参考 AssessmentRecord.tryFromCheckIn）
         int? total;
@@ -201,7 +197,7 @@ class DayDetailCalculator {
               : _timeLabel(c.timestamp),
           assessmentTotal: total,
           assessmentScaleId: c.type.wire,
-        ));
+        ),);
       }
       // 其他 type 忽略
     }
@@ -228,7 +224,7 @@ class DayDetailCalculator {
         ].where((s) => s.isNotEmpty).join(' · '),
         moodScore: m.score,
         moodTags: tags,
-      ));
+      ),);
     }
 
     // 按时间正序

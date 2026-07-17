@@ -39,7 +39,8 @@ class TodayMedSchedule extends ConsumerWidget {
     final checkInsAsync = ref.watch(allCheckInsProvider);
     return medsAsync.when(
       data: (meds) {
-        final entries = _buildEntries(meds, checkInsAsync.value, DateTime.now());
+        final entries =
+            _buildEntries(meds, checkInsAsync.value, DateTime.now());
         if (entries.isEmpty) return const SizedBox.shrink();
         final done = entries.where((e) => e.done).length;
         return Card(
@@ -104,7 +105,8 @@ class TodayMedSchedule extends ConsumerWidget {
     List<CheckInEntity>? checkIns,
     DateTime now,
   ) {
-    final activeMeds = meds.where((m) => m.isInUse && m.times.isNotEmpty).toList();
+    final activeMeds =
+        meds.where((m) => m.isInUse && m.times.isNotEmpty).toList();
     if (activeMeds.isEmpty) return const [];
 
     // 收集今天已打卡的 medId（去重）
@@ -125,7 +127,7 @@ class TodayMedSchedule extends ConsumerWidget {
           med: m,
           time: t,
           done: todayMedIds.contains(m.id),
-        ));
+        ),);
       }
     }
     // 按时间排序
@@ -149,17 +151,14 @@ class _TimeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final e = entry;
     final color = e.done ? AppTokens.primary : AppTokens.textSecondary;
-    final bg = e.done
-        ? AppTokens.primary.withValues(alpha: 0.12)
-        : AppTokens.divider;
+    final bg =
+        e.done ? AppTokens.primary.withValues(alpha: 0.12) : AppTokens.divider;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-        border: e.done
-            ? null
-            : Border.all(color: AppTokens.border, width: 1),
+        border: e.done ? null : Border.all(color: AppTokens.border, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -167,12 +166,14 @@ class _TimeChip extends StatelessWidget {
           if (e.done)
             const Padding(
               padding: EdgeInsets.only(right: 4),
-              child: Icon(Icons.check_circle, color: AppTokens.primary, size: 14),
+              child:
+                  Icon(Icons.check_circle, color: AppTokens.primary, size: 14),
             )
           else
             const Padding(
               padding: EdgeInsets.only(right: 4),
-              child: Icon(Icons.access_time, color: AppTokens.textHint, size: 14),
+              child:
+                  Icon(Icons.access_time, color: AppTokens.textHint, size: 14),
             ),
           Text(
             '${_pad(e.time.hour)}:${_pad(e.time.minute)}',

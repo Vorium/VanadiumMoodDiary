@@ -26,8 +26,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       return const Card(
         child: Padding(
           padding: EdgeInsets.all(AppTokens.spacingMd),
-          child: Text('还没有联系人，请先添加',
-              style: TextStyle(color: AppTokens.textHint)),
+          child:
+              Text('还没有联系人，请先添加', style: TextStyle(color: AppTokens.textHint)),
         ),
       );
     }
@@ -53,7 +53,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                     )
                   : IconButton(
                       icon: const Icon(Icons.delete_outline,
-                          color: AppTokens.error),
+                          color: AppTokens.error,),
                       onPressed: () => _deleteContact(contacts[i].id),
                     ),
             ),
@@ -120,34 +120,36 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 child: const Text(Strings.commonCancel),
               ),
               ElevatedButton(
-                onPressed: saving ? null : () async {
-                  final phone = phoneController.text.trim();
-                  if (phone.isEmpty) return;
-                  if (!PhoneValidator.isValid(phone)) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      const SnackBar(content: Text('手机号格式不对（11 位数字）')),
-                    );
-                    return;
-                  }
-                  setLocal(() => saving = true);
-                  try {
-                    await ref.read(contactRepositoryProvider).add(
-                          name: nameController.text.trim().isEmpty
-                              ? 'Contact'
-                              : nameController.text.trim(),
-                          phone: PhoneValidator.normalize(phone) ?? phone,
-                          sortOrder: 99,
-                        );
-                    if (ctx.mounted) Navigator.pop(ctx);
-                  } catch (e) {
-                    if (ctx.mounted) {
-                      ScaffoldMessenger.of(ctx).showSnackBar(
-                        SnackBar(content: Text('保存失败：$e')),
-                      );
-                      setLocal(() => saving = false);
-                    }
-                  }
-                },
+                onPressed: saving
+                    ? null
+                    : () async {
+                        final phone = phoneController.text.trim();
+                        if (phone.isEmpty) return;
+                        if (!PhoneValidator.isValid(phone)) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            const SnackBar(content: Text('手机号格式不对（11 位数字）')),
+                          );
+                          return;
+                        }
+                        setLocal(() => saving = true);
+                        try {
+                          await ref.read(contactRepositoryProvider).add(
+                                name: nameController.text.trim().isEmpty
+                                    ? 'Contact'
+                                    : nameController.text.trim(),
+                                phone: PhoneValidator.normalize(phone) ?? phone,
+                                sortOrder: 99,
+                              );
+                          if (ctx.mounted) Navigator.pop(ctx);
+                        } catch (e) {
+                          if (ctx.mounted) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              SnackBar(content: Text('保存失败：$e')),
+                            );
+                            setLocal(() => saving = false);
+                          }
+                        }
+                      },
                 child: Stack(
                   alignment: Alignment.center,
                   children: [

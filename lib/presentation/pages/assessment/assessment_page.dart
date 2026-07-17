@@ -57,12 +57,12 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
   Widget build(BuildContext context) {
     // P5 fix: 路由给错 id 时显示 loading(下一帧 pop),而不是渲染 PHQ-9 替代
     if (_scale == null) {
-      return PageScaffold(
+      return const PageScaffold(
         title: '心理评估',
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
               Text('正在返回上一页...'),
@@ -230,7 +230,9 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
           Container(
             padding: const EdgeInsets.all(AppTokens.spacingLg),
             decoration: BoxDecoration(
-              color: isUrgent ? AppTokens.error.withValues(alpha: 0.1) : AppTokens.primaryLight,
+              color: isUrgent
+                  ? AppTokens.error.withValues(alpha: 0.1)
+                  : AppTokens.primaryLight,
               borderRadius: BorderRadius.circular(AppTokens.radiusCard),
             ),
             child: Column(
@@ -243,8 +245,10 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                     color: isUrgent ? AppTokens.error : AppTokens.primary,
                   ),
                 ),
-                Text('总分（0-${scale.totalRange}）',
-                    style: const TextStyle(color: AppTokens.textSecondary),),
+                Text(
+                  '总分（0-${scale.totalRange}）',
+                  style: const TextStyle(color: AppTokens.textSecondary),
+                ),
                 const SizedBox(height: AppTokens.spacingSm),
                 Text(
                   result.summary,
@@ -267,16 +271,18 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.medical_services_outlined,
-                        color: AppTokens.warning,),
+                    const Icon(
+                      Icons.medical_services_outlined,
+                      color: AppTokens.warning,
+                    ),
                     const SizedBox(width: AppTokens.spacingSm),
                     Expanded(
                       child: Text(
-                        isUrgent
-                            ? '强烈建议你尽快联系医生或心理治疗师。'
-                            : '建议你联系医生做进一步评估。',
+                        isUrgent ? '强烈建议你尽快联系医生或心理治疗师。' : '建议你联系医生做进一步评估。',
                         style: const TextStyle(
-                            color: AppTokens.textPrimary, fontSize: AppTokens.fontSizeBody,),
+                          color: AppTokens.textPrimary,
+                          fontSize: AppTokens.fontSizeBody,
+                        ),
                       ),
                     ),
                   ],
@@ -410,12 +416,12 @@ class _ComparisonCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.compare_arrows,
-                    color: AppTokens.primary, size: 20),
-                const SizedBox(width: AppTokens.spacingXs),
-                const Text(
+                Icon(Icons.compare_arrows,
+                    color: AppTokens.primary, size: 20,),
+                SizedBox(width: AppTokens.spacingXs),
+                Text(
                   '对比上次',
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeLabel,
@@ -449,11 +455,13 @@ class _ComparisonCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('上次',
-                            style: TextStyle(
-                              fontSize: AppTokens.fontSizeCaption,
-                              color: AppTokens.textSecondary,
-                            ),),
+                        const Text(
+                          '上次',
+                          style: TextStyle(
+                            fontSize: AppTokens.fontSizeCaption,
+                            color: AppTokens.textSecondary,
+                          ),
+                        ),
                         const SizedBox(height: 2),
                         Text(
                           '${cmp.previous!.total}',
@@ -474,17 +482,19 @@ class _ComparisonCard extends StatelessWidget {
                     ),
                   ),
                   Icon(Icons.arrow_forward,
-                      color: trendColor.withValues(alpha: 0.6)),
+                      color: trendColor.withValues(alpha: 0.6),),
                   const SizedBox(width: AppTokens.spacingSm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('本次',
-                            style: TextStyle(
-                              fontSize: AppTokens.fontSizeCaption,
-                              color: AppTokens.textSecondary,
-                            ),),
+                        const Text(
+                          '本次',
+                          style: TextStyle(
+                            fontSize: AppTokens.fontSizeCaption,
+                            color: AppTokens.textSecondary,
+                          ),
+                        ),
                         const SizedBox(height: 2),
                         Text(
                           '${cmp.current.total}',
@@ -560,7 +570,7 @@ class _AssessmentSparkline extends StatelessWidget {
             Row(
               children: [
                 const Icon(Icons.show_chart,
-                    color: AppTokens.primary, size: 20),
+                    color: AppTokens.primary, size: 20,),
                 const SizedBox(width: AppTokens.spacingXs),
                 const Text(
                   '历史趋势',

@@ -3,8 +3,7 @@ class Formatters {
   Formatters._();
 
   /// 完整日期：2026-07-13
-  static String date(DateTime d) =>
-      '${d.year}-${_pad(d.month)}-${_pad(d.day)}';
+  static String date(DateTime d) => '${d.year}-${_pad(d.month)}-${_pad(d.day)}';
 
   /// 月-日：07/13
   static String monthDay(DateTime d) => '${_pad(d.month)}/${_pad(d.day)}';

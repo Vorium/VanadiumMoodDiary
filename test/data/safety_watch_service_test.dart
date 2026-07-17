@@ -51,7 +51,7 @@ void main() {
       userName: name,
       checkInCycleHours: const Value(48),
       firstLaunchAt: DateTime(2026, 1, 1),
-    ));
+    ),);
   }
 
   Future<void> setupContact({required String phone}) async {
@@ -62,7 +62,7 @@ void main() {
     await db.insertCheckIn(CheckInsCompanion.insert(
       timestamp: at,
       type: 'normal',
-    ));
+    ),);
   }
 
   group('SafetyWatch 关闭时', () {
@@ -127,8 +127,7 @@ void main() {
       // 第二次
       final r2 = await safety.checkNow();
       expect(r2.kind, SafetyCheckKind.alertedToday);
-      expect(sms.sent, hasLength(1),
-          reason: '同一天不应该重复发短信');
+      expect(sms.sent, hasLength(1), reason: '同一天不应该重复发短信');
     });
 
     test('DND 时段内 → dndSuppressed', () async {
@@ -143,8 +142,7 @@ void main() {
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
       final result = await safety.checkNow();
       expect(result.kind, SafetyCheckKind.dndSuppressed);
-      expect(sms.sent, isEmpty,
-          reason: 'DND 时段不应该发短信');
+      expect(sms.sent, isEmpty, reason: 'DND 时段不应该发短信');
     });
 
     test('超阈值但没联系人 → noContacts', () async {
@@ -186,8 +184,7 @@ void main() {
     test('各 kind 都有非空文案', () {
       for (final kind in SafetyCheckKind.values) {
         final r = SafetyCheckResult(kind: kind);
-        expect(r.displayMessage, isNotEmpty,
-            reason: '$kind 没有 displayMessage');
+        expect(r.displayMessage, isNotEmpty, reason: '$kind 没有 displayMessage');
       }
     });
   });
@@ -252,7 +249,7 @@ class StubNotificationService implements NotificationService {
       userName: userName,
       daysWithoutCheckIn: daysWithoutCheckIn,
       lastCheckIn: lastCheckIn,
-    ));
+    ),);
   }
 
   // 其它方法 stub 掉,测试不调
@@ -288,5 +285,6 @@ class StubNotificationService implements NotificationService {
   Future<void> cancelAllSnoozes() async {}
   @override
   Future<void> updateBadgeCount(int count) async {}
+  @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

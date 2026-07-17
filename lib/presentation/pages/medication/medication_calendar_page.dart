@@ -68,7 +68,8 @@ class _MedicationCalendarPageState
 
           // 时间窗口选择
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
             child: SegmentedButton<int>(
               segments: const [
                 ButtonSegment(value: 7, label: Text('7 天')),
@@ -96,7 +97,8 @@ class _MedicationCalendarPageState
 
           // 图例
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
             child: _Legend(days: _days),
           ),
         ],
@@ -166,7 +168,7 @@ class _MedicationCalendarPageState
           day: day,
           actual: actual,
           expected: expectedPerDay,
-        ));
+        ),);
       }
       rows.add(_MedRow(med: m, cells: cells));
     }
@@ -181,8 +183,7 @@ class _MedicationCalendarPageState
             _HeaderRow(days: _days, startDay: startDay),
             const SizedBox(height: AppTokens.spacingXs),
             // 数据行
-            for (int i = 0; i < rows.length; i++)
-              _DataRow(row: rows[i]),
+            for (int i = 0; i < rows.length; i++) _DataRow(row: rows[i]),
           ],
         ),
       ),
@@ -200,7 +201,8 @@ class _Cell {
   final DateTime day;
   final int actual;
   final int expected;
-  const _Cell({required this.day, required this.actual, required this.expected});
+  const _Cell(
+      {required this.day, required this.actual, required this.expected,});
   double get ratio {
     if (expected == 0) return 0;
     return actual / expected;
@@ -216,7 +218,7 @@ class _HeaderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(width: _labelWidth, child: const Text('')),
+        const SizedBox(width: _labelWidth, child: Text('')),
         Expanded(
           child: Row(
             children: [
@@ -363,7 +365,8 @@ class _Legend extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: const TextStyle(fontSize: 10, color: AppTokens.textSecondary),
+            style:
+                const TextStyle(fontSize: 10, color: AppTokens.textSecondary),
           ),
         ],
       ),

@@ -103,7 +103,7 @@ void main() {
         timestamp: DateTime(2026, 7, 15, 10, 30),
         contentText: '今天有点累，先说一下吧',
       ),
-    ]));
+    ]),);
     await tester.pumpAndSettle();
 
     expect(find.text('今天有点累，先说一下吧'), findsOneWidget);
@@ -120,7 +120,7 @@ void main() {
         audioPath: '/fake/voice.m4a',
         audioDurationSec: 65,
       ),
-    ]));
+    ]),);
     await tester.pumpAndSettle();
 
     // audio 条目的预览文字 = "🎙️ 语音"
@@ -139,7 +139,7 @@ void main() {
         audioPath: '/fake/voice.m4a',
         audioDurationSec: 30,
       ),
-    ]));
+    ]),);
     await tester.pumpAndSettle();
 
     // 文字预览
@@ -158,7 +158,7 @@ void main() {
         timestamp: DateTime(2026, 7, 15, 10, 30),
         contentText: longText,
       ),
-    ]));
+    ]),);
     await tester.pumpAndSettle();
 
     expect(find.text(displayText), findsOneWidget);
@@ -182,7 +182,7 @@ void main() {
         timestamp: DateTime(2026, 7, 15, 12, 0),
         contentText: '第三条',
       ),
-    ]));
+    ]),);
     await tester.pumpAndSettle();
 
     expect(find.text('第一条'), findsOneWidget);

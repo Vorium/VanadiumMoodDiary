@@ -10,7 +10,8 @@ class UserProfiles extends Table {
   TextColumn get userName => text()();
 
   /// 失联判定周期（小时），默认 48
-  IntColumn get checkInCycleHours => integer().withDefault(const Constant(48))();
+  IntColumn get checkInCycleHours =>
+      integer().withDefault(const Constant(48))();
 
   /// 首次启动时间
   DateTimeColumn get firstLaunchAt => dateTime()();

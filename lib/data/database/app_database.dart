@@ -87,7 +87,8 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<CheckIn>> watchAllCheckIns() {
     return (select(checkIns)
           ..orderBy([
-            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
           ]))
         .watch();
   }
@@ -97,7 +98,8 @@ class AppDatabase extends _$AppDatabase {
     return (select(checkIns)
           ..where((t) => t.type.equals('phq9') | t.type.equals('gad7'))
           ..orderBy([
-            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
           ]))
         .watch();
   }
@@ -107,13 +109,15 @@ class AppDatabase extends _$AppDatabase {
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
     return (select(checkIns)
-          ..where((t) =>
-              t.timestamp.isBiggerOrEqualValue(startOfDay) &
-              t.timestamp.isSmallerThanValue(endOfDay) &
-              t.type.equals('normal'),
-        )
+          ..where(
+            (t) =>
+                t.timestamp.isBiggerOrEqualValue(startOfDay) &
+                t.timestamp.isSmallerThanValue(endOfDay) &
+                t.type.equals('normal'),
+          )
           ..orderBy([
-            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
           ])
           ..limit(1))
         .watchSingleOrNull();
@@ -199,7 +203,8 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<ReportHistory>> watchReportHistories() {
     return (select(reportHistories)
           ..orderBy([
-            (t) => OrderingTerm(expression: t.generatedAt, mode: OrderingMode.desc),
+            (t) => OrderingTerm(
+                expression: t.generatedAt, mode: OrderingMode.desc,),
           ]))
         .watch();
   }
@@ -220,7 +225,8 @@ class AppDatabase extends _$AppDatabase {
   Future<List<ReportHistory>> getAllReportHistories() {
     return (select(reportHistories)
           ..orderBy([
-            (t) => OrderingTerm(expression: t.generatedAt, mode: OrderingMode.desc),
+            (t) => OrderingTerm(
+                expression: t.generatedAt, mode: OrderingMode.desc,),
           ]))
         .get();
   }
@@ -230,7 +236,8 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<MoodEntry>> watchMoodEntries() {
     return (select(moodEntries)
           ..orderBy([
-            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
           ]))
         .watch();
   }
@@ -239,7 +246,8 @@ class AppDatabase extends _$AppDatabase {
   Future<List<MoodEntry>> getAllMoodEntries() {
     return (select(moodEntries)
           ..orderBy([
-            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
           ]))
         .get();
   }
@@ -250,11 +258,14 @@ class AppDatabase extends _$AppDatabase {
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
     return (select(moodEntries)
-          ..where((t) =>
-              t.timestamp.isBiggerOrEqualValue(startOfDay) &
-              t.timestamp.isSmallerThanValue(endOfDay),)
+          ..where(
+            (t) =>
+                t.timestamp.isBiggerOrEqualValue(startOfDay) &
+                t.timestamp.isSmallerThanValue(endOfDay),
+          )
           ..orderBy([
-            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
           ]))
         .watch();
   }
@@ -273,7 +284,8 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<VentEntry>> watchVentEntries() {
     return (select(ventEntries)
           ..orderBy([
-            (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
           ]))
         .watch();
   }
@@ -291,12 +303,14 @@ class AppDatabase extends _$AppDatabase {
   Future<void> saveSetup({
     required String userName,
     required List<({String name, String phone, int sortOrder})> contactList,
-    required List<({
-      String name,
-      double dosage,
-      String dosageUnit,
-      List<HourMinute> times,
-    })> medicationList,
+    required List<
+            ({
+              String name,
+              double dosage,
+              String dosageUnit,
+              List<HourMinute> times,
+            })>
+        medicationList,
   }) async {
     await transaction(() async {
       // upsert user profile（保留 firstLaunchAt）

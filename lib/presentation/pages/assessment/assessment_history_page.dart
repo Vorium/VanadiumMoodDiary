@@ -34,7 +34,7 @@ class AssessmentHistoryPage extends ConsumerWidget {
               .whereType<AssessmentRecord>()
               .toList();
           if (records.isEmpty) {
-            return _EmptyState();
+            return const _EmptyState();
           }
           return _buildBody(context, records);
         },
@@ -59,11 +59,11 @@ class AssessmentHistoryPage extends ConsumerWidget {
         _SummaryStrip(records: records),
         const SizedBox(height: AppTokens.spacingMd),
         // 折线图（每个量表一张）
-        if (phq9.length >= 1) ...[
+        if (phq9.isNotEmpty) ...[
           _ChartCard(scaleId: 'phq9', records: phq9),
           const SizedBox(height: AppTokens.spacingSm),
         ],
-        if (gad7.length >= 1) ...[
+        if (gad7.isNotEmpty) ...[
           _ChartCard(scaleId: 'gad7', records: gad7),
           const SizedBox(height: AppTokens.spacingSm),
         ],
@@ -85,7 +85,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.psychology_outlined,
               size: 64,
               color: AppTokens.textHint,
@@ -142,16 +142,16 @@ class _SummaryStrip extends StatelessWidget {
               child: _Stat(
                 label: '最近 PHQ-9',
                 value: latestPhq9 == null ? '—' : '${latestPhq9.total}',
-                sub: latestPhq9 == null ? '未做' : severityStyle('phq9', latestPhq9.total).label,
-                severity: latestPhq9 == null ? null : severityStyle('phq9', latestPhq9.total).color,
+                sub: latestPhq9 == null ? '未做' : _severityStyle('phq9', latestPhq9.total).label,
+                severity: latestPhq9 == null ? null : _severityStyle('phq9', latestPhq9.total).color,
               ),
             ),
             Expanded(
               child: _Stat(
                 label: '最近 GAD-7',
                 value: latestGad7 == null ? '—' : '${latestGad7.total}',
-                sub: latestGad7 == null ? '未做' : severityStyle('gad7', latestGad7.total).label,
-                severity: latestGad7 == null ? null : severityStyle('gad7', latestGad7.total).color,
+                sub: latestGad7 == null ? '未做' : _severityStyle('gad7', latestGad7.total).label,
+                severity: latestGad7 == null ? null : _severityStyle('gad7', latestGad7.total).color,
               ),
             ),
           ],
@@ -226,9 +226,11 @@ class _ChartCard extends StatelessWidget {
         child: ListTile(
           leading: Icon(_iconForScale(scaleId), color: AppTokens.primary),
           title: Text(_nameForScale(scaleId)),
-          subtitle: Text(records.isEmpty
-              ? '还没有数据'
-              : '只有 1 次评估，无法画趋势 — 至少需要 2 次'),
+          subtitle: Text(
+            records.isEmpty
+                ? '还没有数据'
+                : '只有 1 次评估，无法画趋势 — 至少需要 2 次',
+          ),
         ),
       );
     }
@@ -276,7 +278,7 @@ class _ChartCard extends StatelessWidget {
                     show: true,
                     drawVerticalLine: false,
                     horizontalInterval: maxScore / 4,
-                    getDrawingHorizontalLine: (_) => FlLine(
+                    getDrawingHorizontalLine: (_) => const FlLine(
                       color: AppTokens.divider,
                       strokeWidth: 0.5,
                     ),
@@ -333,7 +335,7 @@ class _ChartCard extends StatelessWidget {
                         show: true,
                         getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
                           radius: 4,
-                          color: severityStyle(scaleId, spot.y.toInt()).color,
+                          color: _severityStyle(scaleId, spot.y.toInt()).color,
                           strokeWidth: 1.5,
                           strokeColor: Colors.white,
                         ),
@@ -442,7 +444,7 @@ class _HistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final diff = previous == null ? null : record.total - previous!.total;
-    final sev = severityStyle(record.scaleId, record.total);
+    final sev = _severityStyle(record.scaleId, record.total);
     final color = sev.color;
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -541,7 +543,7 @@ class _SeverityChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sev = severityStyle(scaleId, score);
+    final sev = _severityStyle(scaleId, score);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
       decoration: BoxDecoration(
@@ -570,7 +572,7 @@ class _SeverityChip extends StatelessWidget {
 ///   - rank 1 (轻度) → warning
 ///   - rank 2 (中度) → warningStrong
 ///   - rank 3+ (重度) → error
-_SeverityStyle severityStyle(String scaleId, int score) {
+_SeverityStyle _severityStyle(String scaleId, int score) {
   final rank = AssessmentComparisonCalculator.severityRankFor(
     scaleId: scaleId,
     total: score,

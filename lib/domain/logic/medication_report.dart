@@ -29,7 +29,8 @@ class MedicationReport {
   }) {
     final generatedAt = now ?? DateTime.now();
     // 窗口：[today - days + 1, today]（含两端）
-    final today = DateTime(generatedAt.year, generatedAt.month, generatedAt.day);
+    final today =
+        DateTime(generatedAt.year, generatedAt.month, generatedAt.day);
     final periodStart = today.subtract(Duration(days: days - 1));
     final periodEnd = today;
 
@@ -123,7 +124,8 @@ class MedicationReport {
     }
 
     final missedDays = days - daysWithDose.length;
-    final missedDates = _buildMissedDates(periodStart, daysWithDose, missedDays);
+    final missedDates =
+        _buildMissedDates(periodStart, daysWithDose, missedDays);
 
     return MedicationStat(
       medication: med,
@@ -147,7 +149,7 @@ class MedicationReport {
         timestamp: c.timestamp,
         name: parsed.name,
         description: parsed.description.isEmpty ? '—' : parsed.description,
-      ));
+      ),);
     }
     return result;
   }
@@ -178,10 +180,10 @@ class MedicationStat {
   // v0.13 (Round 11): 4 层架构 — 持有 domain entity
   final MedicationEntity medication;
   final List<HourMinute> times;
-  final int actualDoseDays;     // 窗口内实际服药的天数
+  final int actualDoseDays; // 窗口内实际服药的天数
   final List<DateTime> missedDates; // 漏服的具体日期
-  final int actualDoseCount;    // 窗口内实际服药次数（一天多次算多次）
-  final int expectedDoseCount;  // 期望服药次数
+  final int actualDoseCount; // 窗口内实际服药次数（一天多次算多次）
+  final int expectedDoseCount; // 期望服药次数
 
   const MedicationStat({
     required this.medication,
@@ -257,7 +259,8 @@ class MedicationReportData {
     buf.writeln();
     buf.writeln('患者: ${userName.isEmpty ? '未设置' : userName}');
     buf.writeln(
-        '报告周期: ${Formatters.date(periodStart)} 至 ${Formatters.date(periodEnd)}（共 $windowDays 天）',);
+      '报告周期: ${Formatters.date(periodStart)} 至 ${Formatters.date(periodEnd)}（共 $windowDays 天）',
+    );
     buf.writeln('生成时间: ${Formatters.dateTime(generatedAt)}');
     buf.writeln();
 
@@ -284,16 +287,19 @@ class MedicationReportData {
         final timesStr = s.times.isEmpty
             ? '未设置时间'
             : s.times
-                .map((t) =>
-                    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',)
+                .map(
+                  (t) =>
+                      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',
+                )
                 .join(' / ');
-        final freqStr = s.times.isEmpty
-            ? '未设置'
-            : '每日 ${s.times.length} 次（$timesStr）';
-        buf.writeln('${i + 1}. ${m.name} ${Formatters.dosage(m.dosage, m.dosageUnit)} · $freqStr');
+        final freqStr =
+            s.times.isEmpty ? '未设置' : '每日 ${s.times.length} 次（$timesStr）';
+        buf.writeln(
+            '${i + 1}. ${m.name} ${Formatters.dosage(m.dosage, m.dosageUnit)} · $freqStr',);
         buf.writeln('   起始: ${Formatters.date(m.startDate)}');
         buf.writeln(
-            '   $windowDays 天内实际服药: ${s.actualDoseDays}/$windowDays 天 (${s.actualDoseCount}/${s.expectedDoseCount} 次)',);
+          '   $windowDays 天内实际服药: ${s.actualDoseDays}/$windowDays 天 (${s.actualDoseCount}/${s.expectedDoseCount} 次)',
+        );
         if (s.missedDates.isNotEmpty) {
           final missedStr = s.missedDates.map(Formatters.monthDay).join('、');
           buf.writeln('   ⚠️ 漏服: $missedStr');
@@ -313,7 +319,8 @@ class MedicationReportData {
     } else {
       for (final t in tempMedications) {
         buf.writeln(
-            '${Formatters.monthDay(t.timestamp)} ${Formatters.time(t.timestamp)}  ${t.name}  ${t.description}',);
+          '${Formatters.monthDay(t.timestamp)} ${Formatters.time(t.timestamp)}  ${t.name}  ${t.description}',
+        );
       }
       buf.writeln('共 ${tempMedications.length} 次');
       buf.writeln();

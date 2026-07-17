@@ -48,7 +48,8 @@ class StreakCalculator {
     final days = <DateTime>[];
     final seen = <String>{};
     for (final c in normal) {
-      final day = DateTime(c.timestamp.year, c.timestamp.month, c.timestamp.day);
+      final day =
+          DateTime(c.timestamp.year, c.timestamp.month, c.timestamp.day);
       final key = '${day.year}-${day.month}-${day.day}';
       if (seen.add(key)) {
         days.add(day);
@@ -59,8 +60,8 @@ class StreakCalculator {
     // 3. 计算连续
     int streak = 1;
     for (int i = 1; i < days.length; i++) {
-      final prev = days[i - 1];  // 较新的
-      final curr = days[i];      // 较老的
+      final prev = days[i - 1]; // 较新的
+      final curr = days[i]; // 较老的
       final daysDiff = prev.difference(curr).inDays;
 
       if (daysDiff == 1) {

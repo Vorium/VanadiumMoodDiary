@@ -139,8 +139,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (_safetyCheckTriggered && !force) return;
     _safetyCheckTriggered = true;
     try {
-      final result =
-          await ref.read(safetyWatchServiceProvider).onAppStart();
+      final result = await ref.read(safetyWatchServiceProvider).onAppStart();
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -168,7 +167,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final streakAsync = ref.watch(streakSummaryProvider);
     final streakSnapshot = streakAsync.maybeWhen(
       data: (s) => s,
-      orElse: () => const StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
+      orElse: () =>
+          const StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
     );
     // P17 fix: 通知初始化失败时,在主页顶部显示一条提示
     final notifResult = ref.watch(notificationInitResultProvider);
@@ -178,8 +178,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (next.hasError && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('打卡失败：${next.error.toString().split('\n').first}'),
+            content: Text('打卡失败：${next.error.toString().split('\n').first}'),
             backgroundColor: AppTokens.error,
           ),
         );
@@ -228,7 +227,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
 
           // P17 fix: 通知失败 banner（一次性提示,可关闭）
-          if (!notifResult.ok) _NotificationFailureBanner(error: notifResult.error),
+          if (!notifResult.ok)
+            _NotificationFailureBanner(error: notifResult.error),
 
           const Spacer(flex: 1),
 
@@ -286,7 +286,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           // v0.10 (Round 4): Snooze 5min 按钮（参考 Pill Reminder）
           HomeSecondaryButton(
-            onPressed: () => _snooze5Min(context),
+            onPressed: _snooze5Min,
             child: const Text(
               '⏰ 5 分钟后再提醒',
               style: TextStyle(
@@ -352,7 +352,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               Strings.homeStillOnline,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeBody,
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -415,8 +418,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Future<void> _fireCareEngine() async {
     try {
       final all = await ref.read(checkInRepositoryProvider).watchAll().first;
-      final trigger =
-          CareEngine.evaluate(checkIns: all, now: DateTime.now());
+      final trigger = CareEngine.evaluate(checkIns: all, now: DateTime.now());
       if (!trigger.shouldFire) return;
       final notif = ref.read(notificationServiceProvider);
       await CareEngine.fire(trigger, notif);
@@ -428,7 +430,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// Snooze 5min: 调度 5min 后的一次性本地通知
   ///
   /// 用 medicationId=0 表示"通用打卡提醒 snooze"（避开真实 med id）
-  Future<void> _snooze5Min(BuildContext context) async {
+  Future<void> _snooze5Min() async {
     HapticFeedback.lightImpact();
     try {
       await ref.read(notificationServiceProvider).snoozeOnce(
@@ -509,7 +511,8 @@ class _NotificationFailureBanner extends StatefulWidget {
       _NotificationFailureBannerState();
 }
 
-class _NotificationFailureBannerState extends State<_NotificationFailureBanner> {
+class _NotificationFailureBannerState
+    extends State<_NotificationFailureBanner> {
   bool _dismissed = false;
 
   @override
@@ -526,7 +529,7 @@ class _NotificationFailureBannerState extends State<_NotificationFailureBanner> 
       child: Row(
         children: [
           const Icon(Icons.notifications_off_outlined,
-              color: AppTokens.warning, size: 20),
+              color: AppTokens.warning, size: 20,),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

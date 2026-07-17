@@ -48,8 +48,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
             // 列表
             Expanded(
               child: asyncHistories.when(
-                loading: () =>
-                    const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: CircularProgressIndicator()),
                 error: (e, _) => Center(child: Text('加载失败：$e')),
                 data: (histories) {
                   if (histories.isEmpty) {

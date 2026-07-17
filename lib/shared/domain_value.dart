@@ -9,8 +9,7 @@ class DomainValue<T> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DomainValue<T> && other.value == value;
+      identical(this, other) || other is DomainValue<T> && other.value == value;
 
   @override
   int get hashCode => value.hashCode;

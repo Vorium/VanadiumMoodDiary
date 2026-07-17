@@ -116,14 +116,46 @@ void main() {
 
   group('业务方法', () {
     test('isNormal / isTemp / isAssessment / isPhq9 / isGad7', () {
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.normal).isNormal, isTrue);
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.normal).isTemp, isFalse);
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.temp).isTemp, isTrue);
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.phq9).isAssessment, isTrue);
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.gad7).isAssessment, isTrue);
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.phq9).isPhq9, isTrue);
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.gad7).isGad7, isTrue);
-      expect(CheckInEntity(id: 1, timestamp: DateTime(2026), type: CheckInType.normal).isAssessment, isFalse);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.normal,)
+              .isNormal,
+          isTrue,);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.normal,)
+              .isTemp,
+          isFalse,);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.temp,)
+              .isTemp,
+          isTrue,);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.phq9,)
+              .isAssessment,
+          isTrue,);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.gad7,)
+              .isAssessment,
+          isTrue,);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.phq9,)
+              .isPhq9,
+          isTrue,);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.gad7,)
+              .isGad7,
+          isTrue,);
+      expect(
+          CheckInEntity(
+                  id: 1, timestamp: DateTime(2026), type: CheckInType.normal,)
+              .isAssessment,
+          isFalse,);
     });
 
     test('isForMedication 严格相等', () {
@@ -156,7 +188,8 @@ void main() {
         type: CheckInType.normal,
         medicationId: 5,
       );
-      final cleared = original.copyWith(medicationId: const DomainValue<int?>(null));
+      final cleared =
+          original.copyWith(medicationId: const DomainValue<int?>(null));
       expect(cleared.medicationId, isNull);
     });
 
@@ -177,13 +210,19 @@ void main() {
   group('等值', () {
     test('== hashCode 字段全等才相等', () {
       final a = CheckInEntity(
-        id: 1, timestamp: DateTime(2026), type: CheckInType.normal,
+        id: 1,
+        timestamp: DateTime(2026),
+        type: CheckInType.normal,
       );
       final b = CheckInEntity(
-        id: 1, timestamp: DateTime(2026), type: CheckInType.normal,
+        id: 1,
+        timestamp: DateTime(2026),
+        type: CheckInType.normal,
       );
       final c = CheckInEntity(
-        id: 1, timestamp: DateTime(2026), type: CheckInType.temp,
+        id: 1,
+        timestamp: DateTime(2026),
+        type: CheckInType.temp,
       );
       expect(a, equals(b));
       expect(a.hashCode, b.hashCode);
@@ -202,7 +241,7 @@ void main() {
         type: 'normal',
         medicationId: const Value(3),
         note: const Value('备忘'),
-      ));
+      ),);
 
       final rows = await db.watchAllCheckIns().first;
       expect(rows.length, 1);

@@ -127,9 +127,8 @@ class SafetyWatchService {
   Future<SafetyCheckResult> onCheckIn() async {
     final result = await _checkAndAlert(trigger: 'check_in');
     if (result.kind == SafetyCheckKind.alerted) {
-      developer.log(
-          '⚠️ 用户打卡后仍触发告警 — 可能本地时间错乱或打卡未及时入库',
-          name: 'SafetyWatchService');
+      developer.log('⚠️ 用户打卡后仍触发告警 — 可能本地时间错乱或打卡未及时入库',
+          name: 'SafetyWatchService',);
     }
     return result;
   }
@@ -152,9 +151,8 @@ class SafetyWatchService {
 
       // 1. 拉最近一次正常打卡（type=normal）
       final allCheckIns = await _checkInRepo.watchAll().first;
-      final normalCheckIns = allCheckIns
-          .where((c) => c.isNormal)
-          .toList(growable: false);
+      final normalCheckIns =
+          allCheckIns.where((c) => c.isNormal).toList(growable: false);
       if (normalCheckIns.isEmpty) {
         // 用户从没打过卡，**不算异常**（新用户不打扰）
         return const SafetyCheckResult(kind: SafetyCheckKind.noData);
@@ -231,7 +229,7 @@ class SafetyWatchService {
       developer.log(
           '🚨 SafetyWatch 触发: trigger=$trigger days=$daysSinceLast '
           'smsOk=$smsOk smsFail=$smsFail',
-          name: 'SafetyWatchService');
+          name: 'SafetyWatchService',);
 
       return SafetyCheckResult(
         kind: SafetyCheckKind.alerted,
@@ -241,7 +239,7 @@ class SafetyWatchService {
       );
     } catch (e, st) {
       developer.log('❌ SafetyWatch error: $e',
-          name: 'SafetyWatchService', error: e, stackTrace: st);
+          name: 'SafetyWatchService', error: e, stackTrace: st,);
       return SafetyCheckResult(
         kind: SafetyCheckKind.error,
         errorMessage: e.toString(),

@@ -8,8 +8,7 @@ void main() {
     final now = DateTime(2026, 7, 11, 20, 0);
 
     /// 生成 N 天前 20:00 的时间
-    DateTime daysAgo(int days) =>
-        DateTime(2026, 7, 11 - days, 20, 0);
+    DateTime daysAgo(int days) => DateTime(2026, 7, 11 - days, 20, 0);
 
     CheckInEntity makeCheckIn(DateTime time, {String type = 'normal'}) {
       return CheckInEntity(

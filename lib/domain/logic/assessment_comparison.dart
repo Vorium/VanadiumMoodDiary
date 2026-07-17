@@ -119,10 +119,12 @@ class AssessmentHistory {
   }
 
   /// 最高分（null = 无记录）
-  int? get max => records.isEmpty ? null : totals.reduce((a, b) => a > b ? a : b);
+  int? get max =>
+      records.isEmpty ? null : totals.reduce((a, b) => a > b ? a : b);
 
   /// 最低分
-  int? get min => records.isEmpty ? null : totals.reduce((a, b) => a < b ? a : b);
+  int? get min =>
+      records.isEmpty ? null : totals.reduce((a, b) => a < b ? a : b);
 
   const AssessmentHistory({required this.records});
 }

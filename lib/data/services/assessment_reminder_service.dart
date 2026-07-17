@@ -180,8 +180,10 @@ class AssessmentReminderService {
       scaleId: 'phq9',
       days: days,
     );
-    developer.log('✅ 评估完成, 下次提醒: $fireAt (${days}天后)',
-        name: 'AssessmentReminderService',);
+    developer.log(
+      '✅ 评估完成, 下次提醒: $fireAt ($days天后)',
+      name: 'AssessmentReminderService',
+    );
   }
 
   /// 用户改设置后调用（settings 切换 enabled / days）

@@ -1,4 +1,4 @@
-﻿// v0.14 (Round 12C) RemindersHubPage widget 测试
+// v0.14 (Round 12C) RemindersHubPage widget 测试
 //
 // 验证 5 个提醒卡片的渲染 + 状态显示
 import 'package:chroniccare/data/services/notification_service.dart';
@@ -34,8 +34,7 @@ Widget _wrap({
 }) {
   return ProviderScope(
     overrides: [
-      notificationServiceProvider
-          .overrideWithValue(_NoopNotificationService()),
+      notificationServiceProvider.overrideWithValue(_NoopNotificationService()),
       medicationsProvider.overrideWith((ref) => Stream.value(meds)),
     ],
     child: MaterialApp(
@@ -114,7 +113,10 @@ void main() {
         name: '氟西汀',
         dosage: 40,
         dosageUnit: 'mg',
-        times: const [HourMinute(hour: 8, minute: 0), HourMinute(hour: 20, minute: 0)],
+        times: const [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
+        ],
         startDate: DateTime(2026, 1, 1),
         isActive: true,
         refillReminderDays: 7,

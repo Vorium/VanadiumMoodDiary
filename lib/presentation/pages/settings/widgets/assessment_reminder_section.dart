@@ -127,9 +127,7 @@ class _AssessmentReminderSectionState
             secondary: const Icon(Icons.event_repeat, color: AppTokens.primary),
             title: const Text('周期评估提醒'),
             subtitle: Text(
-              enabled
-                  ? '每 $days 天提醒我做一次心理评估'
-                  : '关闭 · 不会推送评估提醒',
+              enabled ? '每 $days 天提醒我做一次心理评估' : '关闭 · 不会推送评估提醒',
               style: TextStyle(
                 color: enabled
                     ? Theme.of(context).colorScheme.onSurface
@@ -169,7 +167,7 @@ class _AssessmentReminderSectionState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(Icons.lightbulb_outline,
-                      size: 18, color: AppTokens.textSecondary),
+                      size: 18, color: AppTokens.textSecondary,),
                   const SizedBox(width: AppTokens.spacingXs),
                   Expanded(
                     child: Text(

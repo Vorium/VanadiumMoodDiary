@@ -258,7 +258,8 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                   '$textLen / 2000',
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: textLen > 2000 ? AppTokens.error : AppTokens.textHint,
+                    color:
+                        textLen > 2000 ? AppTokens.error : AppTokens.textHint,
                   ),
                 ),
               ),
@@ -380,9 +381,7 @@ class _AudioSection extends StatelessWidget {
           const Icon(Icons.mic, color: AppTokens.primary, size: 18),
           const SizedBox(width: 6),
           Text(
-            audioDurationSec != null
-                ? _formatSec(audioDurationSec!)
-                : '录音',
+            audioDurationSec != null ? _formatSec(audioDurationSec!) : '录音',
             style: const TextStyle(
               fontSize: AppTokens.fontSizeBody,
               color: AppTokens.primary,
@@ -407,6 +406,6 @@ class _AudioSection extends StatelessWidget {
     if (sec < 60) return '$sec秒';
     final m = sec ~/ 60;
     final s = sec % 60;
-    return s == 0 ? '$m分' : '${m}分${s.toString().padLeft(2, '0')}秒';
+    return s == 0 ? '$m分' : '$m分${s.toString().padLeft(2, '0')}秒';
   }
 }

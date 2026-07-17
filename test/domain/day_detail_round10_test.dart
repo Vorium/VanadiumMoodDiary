@@ -1,4 +1,4 @@
-﻿// v0.14 (Round 10) DayDetailCalculator 纯函数测试
+// v0.14 (Round 10) DayDetailCalculator 纯函数测试
 // v0.14 (Round 12A) 4 层架构：CheckInEntity / MoodEntryEntity
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
@@ -51,9 +51,8 @@ MoodEntryEntity mood({
   List<String> tags = const [],
   String? note,
 }) {
-  final tagsJson = tags.isEmpty
-      ? '[]'
-      : '[${tags.map((t) => '"$t"').join(',')}]';
+  final tagsJson =
+      tags.isEmpty ? '[]' : '[${tags.map((t) => '"$t"').join(',')}]';
   return MoodEntryEntity(
     id: id,
     timestamp: timestamp,
@@ -139,7 +138,8 @@ void main() {
       expect(d.totalCheckIns, 1);
       expect(d.totalTempMeds, 1);
       // temp 事件的 title 包含药名
-      final temp = d.events.firstWhere((e) => e.kind == DayEventKind.checkInTemp);
+      final temp =
+          d.events.firstWhere((e) => e.kind == DayEventKind.checkInTemp);
       expect(temp.title, '临时 · 布洛芬');
     });
 
@@ -282,8 +282,11 @@ void main() {
       final d = DayDetailCalculator.fromData(
         date: DateTime(2026, 7, 15),
         checkIns: [
-          ci(id: 1, timestamp: DateTime(2026, 7, 15, 22), type: 'temp',
-            note: '{"name":"晚"}'),
+          ci(
+              id: 1,
+              timestamp: DateTime(2026, 7, 15, 22),
+              type: 'temp',
+              note: '{"name":"晚"}',),
           ci(id: 2, timestamp: DateTime(2026, 7, 15, 8), type: 'normal'),
         ],
         moodEntries: [
@@ -292,7 +295,7 @@ void main() {
         medications: const [],
       );
       expect(d.events.length, 3);
-      expect(d.events[0].time.hour, 8);  // normal 8:00
+      expect(d.events[0].time.hour, 8); // normal 8:00
       expect(d.events[1].time.hour, 12); // mood 12:00
       expect(d.events[2].time.hour, 22); // temp 22:00
     });

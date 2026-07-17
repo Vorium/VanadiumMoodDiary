@@ -65,7 +65,7 @@ class NotificationNavigation {
     final router = _router;
     if (router == null) {
       developer.log('⚠️ NotificationNavigation._goInternal: router 未绑定',
-          name: 'NotificationNavigation');
+          name: 'NotificationNavigation',);
       return;
     }
     final path = _pathFor(link);
@@ -73,10 +73,10 @@ class NotificationNavigation {
     try {
       router.go(path);
       developer.log('✅ Deep link → $path (fromLaunch=$fromLaunch)',
-          name: 'NotificationNavigation');
+          name: 'NotificationNavigation',);
     } catch (e) {
       developer.log('❌ Deep link go 失败: $e',
-          name: 'NotificationNavigation', error: e);
+          name: 'NotificationNavigation', error: e,);
     }
   }
 

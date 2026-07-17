@@ -17,7 +17,8 @@ class Strings {
   static const homeStreakBroken = '少 1 次没关系，明天继续';
 
   // 首次设置
-  static String setupStep(int current, int total) => '第 $current 步 / 共 $total 步';
+  static String setupStep(int current, int total) =>
+      '第 $current 步 / 共 $total 步';
   static const setupHello = '你好，我是慢病管家';
   static const setupIntro = '1 分钟设置好，然后每天 1 次打卡';
   static const setupName = '你的名字';

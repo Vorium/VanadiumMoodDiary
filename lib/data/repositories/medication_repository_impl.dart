@@ -1,4 +1,4 @@
-﻿// v0.13 (Round 11) MedicationRepositoryImpl — Drift 实现
+// v0.13 (Round 11) MedicationRepositoryImpl — Drift 实现
 //
 // 这是 4 层架构中 "data" 层的实现：
 // - 实现 `domain/repositories/medication_repository.dart` 的 abstract
@@ -80,9 +80,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
         .getSingleOrNull();
     if (row == null) return false;
     final updated = row.toEntity().copyWith(
-      isActive: isActive,
-      endDate: DomainValue<DateTime?>(isActive ? null : DateTime.now()),
-    );
+          isActive: isActive,
+          endDate: DomainValue<DateTime?>(isActive ? null : DateTime.now()),
+        );
     return _db.updateMedication(updated.toDriftRow());
   }
 
@@ -100,9 +100,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
         .getSingleOrNull();
     if (row == null) return false;
     final updated = row.toEntity().copyWith(
-      refillAt: DomainValue<DateTime?>(refillAt),
-      refillReminderDays: reminderDays ?? row.refillReminderDays,
-    );
+          refillAt: DomainValue<DateTime?>(refillAt),
+          refillReminderDays: reminderDays ?? row.refillReminderDays,
+        );
     return _db.updateMedication(updated.toDriftRow());
   }
 }

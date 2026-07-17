@@ -1,4 +1,4 @@
-﻿import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
@@ -114,10 +114,12 @@ void main() {
       // 每日 2 次 × 14 天 = 28
       final r = MedicationReport.compute(
         userName: '小明',
-        meds: [med(times: const [
-          HourMinute(hour: 8, minute: 0),
-          HourMinute(hour: 20, minute: 0),
-        ])],
+        meds: [
+          med(times: const [
+            HourMinute(hour: 8, minute: 0),
+            HourMinute(hour: 20, minute: 0),
+          ],),
+        ],
         checkIns: const [],
         now: now,
       );
@@ -166,7 +168,7 @@ void main() {
         checkIns.add(normalCI(
           medicationId: 1,
           at: day.add(const Duration(hours: 8)),
-        ));
+        ),);
       }
       final r = MedicationReport.compute(
         userName: '小明',
@@ -190,13 +192,13 @@ void main() {
         checkIns.add(normalCI(
           medicationId: 1,
           at: day.add(const Duration(hours: 8)),
-        ));
+        ),);
       }
       // 7/3 第二次
       checkIns.add(normalCI(
         medicationId: 1,
         at: DateTime(2026, 7, 3, 20, 0),
-      ));
+      ),);
       final r = MedicationReport.compute(
         userName: '小明',
         meds: [med()],
@@ -242,11 +244,14 @@ void main() {
       final r = MedicationReport.compute(
         userName: '小明',
         meds: [
-          med(id: 1, name: '氟西汀', times: const [HourMinute(hour: 8, minute: 0)]),
+          med(
+              id: 1,
+              name: '氟西汀',
+              times: const [HourMinute(hour: 8, minute: 0)],),
           med(id: 2, name: '碳酸锂', times: const [
             HourMinute(hour: 8, minute: 0),
             HourMinute(hour: 20, minute: 0),
-          ]),
+          ],),
         ],
         checkIns: [
           // 氟西汀：全 14 天
@@ -271,11 +276,13 @@ void main() {
       );
       expect(r.medicationStats.length, 2);
       // 氟西汀：14/14 天，0 漏服
-      final s1 = r.medicationStats.firstWhere((s) => s.medication.name == '氟西汀');
+      final s1 =
+          r.medicationStats.firstWhere((s) => s.medication.name == '氟西汀');
       expect(s1.actualDoseDays, 14);
       expect(s1.missedDates, isEmpty);
       // 碳酸锂：7/14 天，7 漏服
-      final s2 = r.medicationStats.firstWhere((s) => s.medication.name == '碳酸锂');
+      final s2 =
+          r.medicationStats.firstWhere((s) => s.medication.name == '碳酸锂');
       expect(s2.actualDoseDays, 7);
       expect(s2.missedDates.length, 7);
       // 总览：14 + 14 = 28 实际；14 + 28 = 42 期望
@@ -480,11 +487,13 @@ void main() {
       final checkIns = <CheckInEntity>[];
       for (int d = 0; d < 14; d++) {
         final day = DateTime(2026, 6, 30).add(Duration(days: d));
-        if (day == DateTime(2026, 7, 5) || day == DateTime(2026, 7, 10)) continue;
+        if (day == DateTime(2026, 7, 5) || day == DateTime(2026, 7, 10)) {
+          continue;
+        }
         checkIns.add(normalCI(
           medicationId: 1,
           at: day.add(const Duration(hours: 8)),
-        ));
+        ),);
       }
       final r = MedicationReport.compute(
         userName: '小明',
@@ -546,14 +555,14 @@ void main() {
         dosageUnit: 'mg',
         times: const [HourMinute(hour: 8, minute: 0)],
         startDate: DateTime(2026, 5, 1),
-        endDate: DateTime(2026, 7, 5),  // 7/5 停药
-        isActive: false,  // 但已经在软删除
+        endDate: DateTime(2026, 7, 5), // 7/5 停药
+        isActive: false, // 但已经在软删除
         refillAt: null,
         refillReminderDays: 7,
       );
       final r = MedicationReport.compute(
         userName: '小明',
-        meds: [stoppedMed],  // 报告里仍传入
+        meds: [stoppedMed], // 报告里仍传入
         checkIns: [
           for (int d = 0; d < 10; d++)
             normalCI(
@@ -643,7 +652,7 @@ void main() {
             timestamp: DateTime(2026, 7, 6, 22, 15),
             type: CheckInType.temp,
             medicationId: null,
-            note: '{"name":"右佐匹克隆","desc":"失眠"}',  // 新格式
+            note: '{"name":"右佐匹克隆","desc":"失眠"}', // 新格式
           ),
         ],
         now: now,
@@ -662,7 +671,7 @@ void main() {
             timestamp: DateTime(2026, 7, 6, 22, 15),
             type: CheckInType.temp,
             medicationId: null,
-            note: '右佐匹克隆: 失眠',  // 老格式
+            note: '右佐匹克隆: 失眠', // 老格式
           ),
         ],
         now: now,
@@ -702,7 +711,7 @@ void main() {
             timestamp: DateTime(2026, 7, 6, 22, 15),
             type: CheckInType.temp,
             medicationId: null,
-            note: '洛尔: 200mg: 头痛',  // 老格式多冒号
+            note: '洛尔: 200mg: 头痛', // 老格式多冒号
           ),
         ],
         now: now,
