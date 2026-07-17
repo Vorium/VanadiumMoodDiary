@@ -38,7 +38,7 @@ class EmailPreviewPage extends ConsumerWidget {
                 contactsAsync.when(
                   data: (contacts) {
                     final firstContact = contacts.isEmpty ? null : contacts.first;
-                    // v0.16 (Round 13): email 模板已支持 domain entity, 直接传 MedicationEntity
+                    // v0.16 (Round 12): email 模板改用 domain entity, 直接传 MedicationEntity 不再 toDriftRow()
                     final medication = medsAsync.maybeWhen(
                       data: (m) => m.isEmpty ? null : m.first,
                       orElse: () => null,

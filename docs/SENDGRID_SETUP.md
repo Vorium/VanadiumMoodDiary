@@ -84,14 +84,14 @@ import 'package:chroniccare/data/services/email_service.dart';
 
 void main() async {
   // ⚠️ 改成你的真实 API Key 和测试邮箱
+  // 注：v0.16 EmailService 是 mock-only，useMock:false 实际不会发邮件（v1.0+ 接入真实 SMS）
   final service = EmailService(
     apiKey: 'SG.你的真实key',
-    fromEmail: 'noreply@chroniccare.app',
     useMock: false,
   );
 
   final ok = await service.sendMedicationReminder(
-    to: '你的测试邮箱@gmail.com',
+    to: '13800138000', // v0.6: phone 替代 email
     userName: '测试小明',
     daysWithoutCheckIn: 2,
     lastCheckIn: DateTime.now().subtract(const Duration(days: 2)),
