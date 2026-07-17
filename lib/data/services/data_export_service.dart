@@ -12,12 +12,16 @@ import 'dart:convert';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/foundation.dart';
 
+import '../../domain/entities/report_history_entity.dart';
 import '../database/app_database.dart';
+import '../repositories/report_history_repository_impl.dart';
 
 class DataExportService {
   final AppDatabase _db;
+  final ReportHistoryRepositoryImpl _reportRepo;
 
-  DataExportService(this._db);
+  DataExportService(this._db, [ReportHistoryRepositoryImpl? reportRepo])
+      : _reportRepo = reportRepo ?? ReportHistoryRepositoryImpl(_db);
 
   /// 导出所有数据为 JSON 字符串
   ///
@@ -28,7 +32,7 @@ class DataExportService {
     final contacts = await _db.watchContacts().first;
     final medications = await _db.watchMedications().first;
     final checkIns = await _db.watchAllCheckIns().first;
-    final reportHistories = await _db.getAllReportHistories();
+    final reportHistories = await _reportRepo.getAll();
     final moodEntries = await _db.getAllMoodEntries();
 
     final data = {
@@ -219,13 +223,11 @@ class DataExportService {
             final userName = _validateString(m['userName'], 'report.userName', maxLen: 50) ?? '';
             final text = _validateString(m['reportText'], 'report.text', maxLen: 100000);
             if (days == null || at == null || text == null) continue;
-            await _db.insertReportHistory(
-              ReportHistoriesCompanion.insert(
-                windowDays: days,
-                generatedAt: at,
-                userName: userName,
-                reportText: text,
-              ),
+            await _reportRepo.insert(
+              windowDays: days,
+              generatedAt: at,
+              userName: userName,
+              reportText: text,
             );
             reportHistoryCount++;
           }

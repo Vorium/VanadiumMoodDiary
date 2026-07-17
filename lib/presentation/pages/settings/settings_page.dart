@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../data/database/app_database.dart';
 import '../../../domain/logic/assessment_scale.dart';
 import '../../../domain/logic/medication_report.dart';
 import '../../../domain/logic/scale_registry.dart';
@@ -320,13 +319,11 @@ class SettingsPage extends ConsumerWidget {
 
       // 写历史（在弹 dialog 前做，避免 dialog 关闭时 history provider 还没刷新）
       try {
-        await ref.read(databaseProvider).insertReportHistory(
-              ReportHistoriesCompanion.insert(
-                windowDays: days,
-                generatedAt: report.generatedAt,
-                userName: userName,
-                reportText: reportText,
-              ),
+        await ref.read(reportHistoryRepositoryProvider).insert(
+              windowDays: days,
+              generatedAt: report.generatedAt,
+              userName: userName,
+              reportText: reportText,
             );
       } catch (_) {
         // 写历史失败不影响主流程
