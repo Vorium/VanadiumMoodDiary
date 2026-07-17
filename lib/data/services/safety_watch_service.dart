@@ -7,8 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';
 import '../../domain/repositories/user_profile_repository.dart';
-import '../repositories/user_profile_repository_impl.dart';
-import 'email_service.dart';
 import 'notification_service.dart';
 import 'sms_service.dart';
 
@@ -48,9 +46,6 @@ class SafetyWatchService {
     required UserProfileRepository userProfileRepo,
     required SmsService smsService,
     required NotificationService notificationService,
-    // ignore: avoid_unused_constructor_parameters
-    // 保留参数：v1.0+ 接入真实邮件时使用
-    EmailService? emailService,
   })  : _checkInRepo = checkInRepo,
         _contactRepo = contactRepo,
         _userProfileRepo = userProfileRepo,

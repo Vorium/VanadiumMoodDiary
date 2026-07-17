@@ -5,9 +5,7 @@ import 'package:chroniccare/data/database/medication_times.dart';
 import 'package:chroniccare/data/repositories/medication_repository_impl.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/shared/domain_value.dart';
-import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

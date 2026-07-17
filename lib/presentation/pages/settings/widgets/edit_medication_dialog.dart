@@ -3,7 +3,6 @@
 // 复用 setup_page 的"药物卡片"字段：name / dosage / unit / times，
 // 但保存路径不同：调 MedicationRepository.update。
 // 同时加"停药 / 恢复"开关（isActive 软停，保留历史）。
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

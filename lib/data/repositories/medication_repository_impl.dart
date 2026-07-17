@@ -10,8 +10,6 @@
 // 消除 data → flutter/material 依赖。
 library;
 
-import 'package:drift/drift.dart' show Value;
-
 import '../../domain/entities/hour_minute.dart';
 import '../../domain/entities/medication_entity.dart';
 import '../../domain/repositories/medication_repository.dart';

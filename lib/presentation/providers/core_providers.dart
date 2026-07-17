@@ -16,7 +16,6 @@ import '../../data/services/reminder_scheduler.dart';
 import '../../data/services/safety_watch_service.dart';
 import '../../data/services/sms_service.dart';
 import '../../data/services/vent_audio_storage.dart';
-import '../../domain/entities/report_history_entity.dart';
 import '../../domain/entities/vent_entry.dart';
 import '../../domain/repositories/check_in_repository.dart';
 import '../../domain/repositories/contact_repository.dart';

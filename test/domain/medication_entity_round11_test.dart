@@ -6,7 +6,6 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/shared/domain_value.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Medication _driftRow({

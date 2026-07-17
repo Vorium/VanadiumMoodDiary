@@ -1,18 +1,10 @@
 // v0.14 (Round 12B) CheckIn UseCase 单元测试
 //
 // 3 个 use case × 2-3 case = 7-9 case
-import 'package:chroniccare/data/database/app_database.dart';
-import 'package:chroniccare/data/repositories/check_in_repository_impl.dart';
-import 'package:chroniccare/data/repositories/contact_repository_impl.dart';
-import 'package:chroniccare/data/repositories/medication_repository_impl.dart';
-import 'package:chroniccare/data/repositories/user_profile_repository_impl.dart';
-import 'package:chroniccare/data/services/reminder_scheduler.dart';
-import 'package:chroniccare/data/services/sms_service.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 import 'package:chroniccare/domain/usecases/check_in_usecases.dart';
-import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// In-memory check-in repo（不依赖 Drift / DB），纯 mock

@@ -1,15 +1,14 @@
 // v0.15 (Round 18) VentEntry — 树洞领域实体
 //
-// 4 层架构示范：domain 层 0 Flutter 依赖（用 'dart:io' 仅做 path 拼接）。
-// `audioPath` 存相对路径，audio 文件本身在 app docs 目录（encrypted DB 之外）。
+// 4 层架构示范：domain 层 0 Flutter 0 dart:io 依赖。
+// `audioPath` 存绝对路径，audio 文件本身在 app docs 目录（encrypted DB 之外）。
+// 录音文件存在性检查 / 删除是 data 层职责（`VentAudioStorage`），不在 domain。
 //
 // 设计要点：
 // - 不可变 + copyWith
 // - hasText / hasAudio / isEmpty 业务方法
 // - durationLabel 业务方法（"1分23秒"）
 library;
-
-import 'dart:io';
 
 /// 树洞条目（领域实体）
 ///
@@ -63,13 +62,6 @@ class VentEntryEntity {
     final m = sec ~/ 60;
     final s = sec % 60;
     return s == 0 ? '$m分' : '${m}分${s.toString().padLeft(2, '0')}秒';
-  }
-
-  /// 录音文件是否还存在
-  /// （用户可能手动从文件管理器删了文件，或迁移时丢）
-  Future<bool> audioExists() async {
-    if (audioPath == null) return false;
-    return File(audioPath!).exists();
   }
 
   VentEntryEntity copyWith({

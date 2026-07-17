@@ -3,8 +3,6 @@
 // 对应 domain/entities/report_history_entity.dart
 // UI 只用 ReportHistoryEntity，不直接碰 Drift row
 
-import 'package:drift/drift.dart' show Value;
-
 import '../../domain/entities/report_history_entity.dart';
 import '../../domain/repositories/report_history_repository.dart';
 import '../database/app_database.dart';

@@ -12,7 +12,6 @@ import 'dart:convert';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/foundation.dart';
 
-import '../../domain/entities/report_history_entity.dart';
 import '../database/app_database.dart';
 import '../repositories/report_history_repository_impl.dart';
 
