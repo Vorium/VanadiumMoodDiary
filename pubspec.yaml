@@ -73,6 +73,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  shaders:
+    - assets/shaders/ink_sparkle.frag
   assets:
     - assets/icons/
     - .env
