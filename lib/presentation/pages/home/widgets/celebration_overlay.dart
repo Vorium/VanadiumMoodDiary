@@ -29,8 +29,11 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
         weight: 30,
       ),
       TweenSequenceItem(
-        tween:
-            Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.easeIn)),
+        // P0-9 fix: easeIn 反 emil 原则("ease-in 延迟用户最关注的入场瞬间")。
+        // 改 easeOutCubic 跟项目 AppTokens.curveStandard 一致,弹跳收尾感觉"快到慢",
+        // 跟前面 0→1.2 的 easeOutBack 衔接顺。
+        tween: Tween(begin: 1.2, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeOutCubic)),
         weight: 20,
       ),
       TweenSequenceItem(

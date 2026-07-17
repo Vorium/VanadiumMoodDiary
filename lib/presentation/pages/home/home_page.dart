@@ -101,15 +101,18 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   Future<void> _autofireMedicationCheckIn(int medId) async {
     try {
-      // 先查 medication 名字,显示时用
+      await ref
+          .read(checkInNotifierProvider.notifier)
+          .checkIn(medicationId: medId);
+      if (!mounted) return;
+      // P0-11 fix: med 读挪到 mounted guard 之内,避免 widget 已 dispose 但
+      // 还在 race 读 provider;再加一道 mounted guard 防 await 间隙 unmount。
+      // (superpowers-en P0-11 原始 evidence: "med?.name 在 guard 之前读")
       final med = await ref
           .read(medicationRepositoryProvider)
           .watchAll()
           .first
           .then((list) => list.where((m) => m.id == medId).firstOrNull);
-      await ref
-          .read(checkInNotifierProvider.notifier)
-          .checkIn(medicationId: medId);
       if (!mounted) return;
       final medName = med?.name ?? '该药';
       HapticFeedback.mediumImpact();
