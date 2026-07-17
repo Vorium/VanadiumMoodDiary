@@ -23,6 +23,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class MedicationCalendarPage extends ConsumerWidget {
@@ -185,8 +186,14 @@ class MedicationCalendarPage extends ConsumerWidget {
             // 表头：日期标签
             _HeaderRow(days: days, startDay: startDay),
             const SizedBox(height: AppTokens.spacingXs),
-            // 数据行
-            for (int i = 0; i < rows.length; i++) _DataRow(row: rows[i]),
+            // v0.17 round 14 (P2-5): staggered fade-in
+            // 每行 delay 40ms (i * 40),让多药日历逐行出现而不是一起
+            // 用 FadeIn 抽的 widget (occasional 频度,user 1-2 次进日历)
+            for (int i = 0; i < rows.length; i++)
+              FadeIn(
+                delay: Duration(milliseconds: i * 40),
+                child: _DataRow(row: rows[i]),
+              ),
           ],
         ),
       ),
