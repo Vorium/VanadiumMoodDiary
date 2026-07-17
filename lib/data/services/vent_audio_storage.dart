@@ -13,6 +13,7 @@
 library;
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -33,11 +34,16 @@ class VentAudioStorage {
 
   /// 生成新的 audio 文件路径（不创建文件）
   ///
-  /// 路径格式：{app_docs}/vent_audio/vent_{timestamp_ms}.m4a
+  /// 路径格式：{app_docs}/vent_audio/vent_{timestamp_ms}_{rand4}.m4a
   /// 用 m4a 是 Android/iOS 都支持 + 体积小的格式。
+  ///
+  /// v0.16 round 19 fix: 之前只用 millisecondsSinceEpoch，同毫秒内录 2 段
+  ///   会文件名相同 → 后录的覆盖前录的。 加 4 位 random suffix 避免冲突
   Future<String> newAudioPath() async {
     final dir = await _dir();
-    final name = 'vent_${DateTime.now().millisecondsSinceEpoch}.m4a';
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    final rand = Random().nextInt(10000).toString().padLeft(4, '0');
+    final name = 'vent_${ts}_$rand.m4a';
     return p.join(dir.path, name);
   }
 
