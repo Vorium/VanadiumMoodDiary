@@ -156,7 +156,7 @@ String _resolveImportLayer(String importUri, String fromFile, String root) {
     String absPath;
     if (importUri.startsWith('package:chroniccare/')) {
       final rel = importUri.substring('package:chroniccare/'.length);
-      absPath = '$root${Platform.pathSeparator}lib${Platform.pathSeparator}$rel';
+      absPath = '$root${Platform.pathSeparator}lib${Platform.pathSeparator}${rel.replaceAll('/', Platform.pathSeparator)}';
     } else {
       // 相对路径（importUri 用 '/'，先转 Platform 分隔符才能让 _normalizePath 正确处理 ..）
       final fromDir = fromFile.substring(0, fromFile.lastIndexOf(Platform.pathSeparator));
