@@ -33,8 +33,17 @@
 - **共享层使用度**：所有 `shared/` 工具至少被 2 层用（被 check_all 验证）
 
 ### Tests
-- 462/462 pass（无新增/减少）
+- 461/461 pass（462 → 461：删 `buildHtml` 死代码 + 对应 test）
 - 新增 `test/data/email_service_test.dart`（用 `MedicationEntity` 替代之前的 drift row）
+
+### Removed
+- **`EmailTemplate.buildHtml()`**：60 行 HTML 模板，v0.6 改 mock 短信后整个 HTML 路径无生产调用
+- **`test/domain/email_template_test.dart` 中的 `buildHtml` 测试**：自测死代码
+
+### Final state
+- `flutter analyze`: 0 issues（无 warning、无 error、无 info）
+- 4 个 `RadioListTile` 迁移到 Flutter 3.32+ `RadioGroup` 祖先 API
+- 88 个文件 `dart format` + `dart fix --apply` 一键 cleanup（229 fixes）
 
 ## [0.15.0] - 2026-07-15
 
