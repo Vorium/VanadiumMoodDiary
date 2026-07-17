@@ -72,12 +72,21 @@ final ventAudioStorageProvider = Provider<VentAudioStorage>(
 );
 
 /// 树洞条目流（按时间倒序，UI 监听用）
-final ventEntriesProvider = StreamProvider<List<VentEntryEntity>>(
+///
+/// v0.17 round 8 (C5): 加 .autoDispose，离开 vent 列表页时 stream subscription 自动
+/// 取消，DB watch 释放。重新进页面 re-subscribe 一次性重 fetch。树洞数据通常
+/// 几十~几百条，re-fetch 成本可接受；好处是切到 home/settings 后不再后台
+/// 监听 vent 表的更新（隐私边界 + 省资源）。
+final ventEntriesProvider =
+    StreamProvider.autoDispose<List<VentEntryEntity>>(
   (ref) => ref.watch(ventRepositoryProvider).watchAll(),
 );
 
 /// 单条树洞（详情页用）
-final ventEntryByIdProvider = FutureProvider.family<VentEntryEntity?, int>(
+///
+/// v0.17 round 8 (C5): 加 .autoDispose，详情页 pop 后缓存自动清。
+final ventEntryByIdProvider =
+    FutureProvider.autoDispose.family<VentEntryEntity?, int>(
   (ref, id) => ref.watch(ventRepositoryProvider).getById(id),
 );
 

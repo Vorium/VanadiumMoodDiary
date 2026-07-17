@@ -96,7 +96,7 @@ lib/
 
 ```bash
 flutter analyze    # 必须 0 error
-flutter test       # 必须全过（当前 462 cases）
+flutter test       # 必须全过（当前 528 cases）
 ```
 
 ## 隐私边界
@@ -185,10 +185,11 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **`scheduleRefillReminder` 这种"先判过期再算 daysLeft" 模式**（v0.16 round 19B）：之前 2 次 `DateTime.now()` 跨 midnight 不一致。修：函数入口 `final now = DateTime.now();` 一次，下面所有判断/计算复用
 - **国产 ROM 静默杀后台通知**（v0.16 round 20）：小米 / 华为 / OPPO / Vivo / 魅族 默认禁止 App 后台运行 + 自启动 + 精确闹钟。用户反映"20:00 没收到提醒"99% 是这个原因。**不要靠 `developer.log` 排查，用户看不到**。修：在设置页加 `NotificationStatusCard` 自检卡：状态显示 + 一键测试 + OEM 引导文字。`androidScheduleMode: exactAllowWhileIdle` 是必要条件但不充分。找 bug 方法：用户报"没收到提醒"先检查 ROM + 自检卡状态数 = 0
 - **Riverpod 3.x 升级 `valueOrNull` → `value`**（v0.17 round 3）：2.6 的 `AsyncValue.valueOrNull` 在 3.x 改成 `value`。找 bug 方法：升 3.x 报 `undefined_getter valueOrNull` 就是这个
-- **Riverpod 3.x `ref.mounted` 仅限 Notifier**（v0.17 round 3）：项目用 Provider/StreamProvider/ConsumerStatefulWidget，没法用 `ref.mounted` 替代 `if (!mounted) return;`。保持 30+ 处 `!mounted` check
+- **Riverpod 3.x `ref.mounted` 仅限 Notifier**（v0.17 round 3）：项目用 Provider/StreamProvider/ConsumerStatefulWidget，没法用 `ref.mounted` 替代 `if (!mounted) return;`。保持 27 处 `!mounted` check（v0.17 round 7 实际数：1 处 ref.mounted + 27 处 !mounted）
 - **跨 midnight streak 不刷新**（v0.17 round 4）：streakSummaryProvider 在 build 内取 `DateTime.now()`，跨 23:59:59 后 widget 重建会拿新 now，但 streakSummaryProvider 自身没监听时间变化。修：AppRoot 挂 midnight timer，00:00:05 自动 `ref.invalidate(streakSummaryProvider)`。`nextMidnightRefresh(now)` 是 top-level 纯函数，跨月/跨年都正确。buffer 5s 防 race
 - **emil 动效 token 必须集中**（v0.17 round 1）：项目原本 `app_tokens.dart` 只有 `durFast/durNormal/durSlow`，缺 `curve*` 常量。各 widget 各写各的 `Curves.easeInOut` 风格不统一。修：4 个 curve token + emil 决策框架 doc 注释（100+/day 无动画, tens/day 微弱, occasional 标准, rare 可加 delight）
 - **go_router 默认无 transition**（v0.17 round 2）：`GoRoute.builder` 默认切换无动画。修：用 `pageBuilder` + `CustomTransitionPage`，3 类 transition（fade / slide-right / slide-up）按频度分类
+- **Material 3 InkWell + Flutter 3.44.5 widget test**（v0.17 round 8）：`tester.tap(InkWell) + pumpAndSettle()` 触发 ripple 时报 `Unsupported runtime stages format version. Expected 2, got 1.`。原因：3.44.5 runtime 期望 stage format 2，但 SDK 自带 + 项目 assets 里的 `ink_sparkle.frag` 都是 format 1，3.44.5 编译 pipeline 暂不匹配。**临时绕道**：1）测试里用 `tester.tap(...)` 后只 `pump()` 不 `pumpAndSettle()`，避免 ripple 动画完整播；2）或在 `pumpWidget` 前 `MaterialApp` 替换 `splashFactory: NoSplash.splashFactory` 禁用 ink_sparkle。**不要在 pubspec.yaml 加 `shaders:` 字段 + 复制 SDK 的 .frag**，runtime 仍会失败（3.44.5 + 3.41.9 shader format 不匹配）。找 bug 方法：`flutter test` 输出里有 `ink_sparkle` + `INVALID_ARGUMENT`/`format version`，不要复制 SDK shader 浪费时间
 
 ## 决策记录
 
