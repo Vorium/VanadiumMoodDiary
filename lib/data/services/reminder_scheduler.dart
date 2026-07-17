@@ -74,6 +74,9 @@ class ReminderService implements ReminderChecker {
 
     final allCheckIns = await _checkInRepo.watchAll().first;
     final normalCheckIns = allCheckIns.where((c) => c.isNormal).toList();
+    // v0.16 round 19 fix: 显式 sort by timestamp desc，不依赖 watchAll() 的隐式顺序
+    // 之前假设 watchAll() 返 DESC，drift orderBy 一改就 silent 算错
+    normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     final lastCheckIn =
         normalCheckIns.isEmpty ? null : normalCheckIns.first.timestamp;
 

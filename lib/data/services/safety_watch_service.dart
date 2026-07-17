@@ -158,6 +158,8 @@ class SafetyWatchService {
         return const SafetyCheckResult(kind: SafetyCheckKind.noData);
       }
 
+      // v0.16 round 19 fix: 显式 sort by timestamp desc，不依赖 watchAll() 隐式顺序
+      normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       final lastCheckIn = normalCheckIns.first.timestamp;
       final now = DateTime.now();
       final daysSinceLast = _daysBetween(lastCheckIn, now);

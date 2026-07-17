@@ -395,10 +395,14 @@ class NotificationService implements NotificationSender {
   // - 触发时机：refillAt - reminderDays 当天上午 9 点
   // - 一个药一条推送，id 稳定
 
-  /// 续方提醒通知 id 范围：[refillBase, refillBase + 1000)
+  /// 续方提醒通知 id 范围：[refillBase, refillBase + 200000)
   /// 一个 medication 一条预留 id 槽（id = refillBase + medId），
   /// 同一药多次重排 = 覆盖，不会叠加。
-  static int _refillNotificationId(int medicationId) {
+  ///
+  /// v0.16 round 19B: range 改 200000，配套 rescheduleRefillReminders
+  ///   的 cancel 范围。修前 1000 范围，medId >= 1000 漏 cancel。
+  @visibleForTesting
+  static int refillNotificationId(int medicationId) {
     return _refillBaseId + medicationId;
   }
 
@@ -457,8 +461,11 @@ class NotificationService implements NotificationSender {
       return;
     }
 
+    // v0.16 round 19 fix: 之前 2 次 DateTime.now() 跨 midnight 时可能不一致
+    // （fireAt 检查用 yesterday 23:59，daysLeft 计算用 today 00:00）
+    final now = DateTime.now();
     // 已经过期的提醒不再调度（避免给历史数据"补响"）
-    if (fireAt.isBefore(DateTime.now())) {
+    if (fireAt.isBefore(now)) {
       developer.log(
         '⏭️ scheduleRefillReminder: med=${medication.name} '
         'fireAt=$fireAt 已过, 跳过',
@@ -470,10 +477,10 @@ class NotificationService implements NotificationSender {
     }
 
     await init();
-    final id = _refillNotificationId(medication.id);
+    final id = refillNotificationId(medication.id);
     await _plugin.cancel(id); // 覆盖前一次
 
-    final daysLeft = _daysUntilRefill(medication.refillAt!, DateTime.now());
+    final daysLeft = _daysUntilRefill(medication.refillAt!, now);
     final details = const NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,
@@ -513,19 +520,23 @@ class NotificationService implements NotificationSender {
   /// 取消一个 medication 的续方提醒
   Future<void> cancelRefillReminder(int medicationId) async {
     await init();
-    await _plugin.cancel(_refillNotificationId(medicationId));
+    await _plugin.cancel(refillNotificationId(medicationId));
   }
 
   /// 重排所有 medication 的续方提醒
   ///
-  /// 在 medication 表变化（增/删/改）时统一调。
+  /// 在 medication 表变化（增/删/停药）时统一调。
   /// 一次性清空所有 refill 槽再重排。
+  ///
+  /// v0.16 round 19 fix: 之前 `_refillBaseId + 1000` 范围太窄，medId >= 1000 时
+  /// id 超过 7000 漏 cancel。重排会留下"幽灵通知"。
+  /// 改成 200000 覆盖 medId <= 199999（远超实际用户量，且 int32 安全）。
   Future<void> rescheduleRefillReminders(List<Medication> medications) async {
     await init();
     // 先清掉所有 refill 通知
     final pending = await _plugin.pendingNotificationRequests();
     for (final p in pending) {
-      if (p.id >= _refillBaseId && p.id < _refillBaseId + 1000) {
+      if (p.id >= _refillBaseId && p.id < _refillBaseId + 200000) {
         await _plugin.cancel(p.id);
       }
     }

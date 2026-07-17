@@ -179,6 +179,10 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **Stream subscription leak**：`_player.onXxx.listen(...)` 返回的 `StreamSubscription` 必须存字段，**`dispose()` 里 `.cancel()`**。`audioplayers` 之类第三方包的 listener 不取消 = 每次进/出页面都漏一个
 - **BuildContext 跨 async gap**：State class 里方法签名不要重复拿 `BuildContext context` 参数 — 用 `this.context`。否则 analyzer 警告 `use_build_context_synchronously`（mounted check 跟 context 是不同来源）
 - **`dart format` + `dart fix --apply` 组合**：批量清 `trailing_commas` / `prefer_const_constructors` 200+ info-level 警告。`dart format` 加换行后会让 trailing comma 数量变多，必须跟 `dart fix --apply` 配合才能净
+- **隐式排序假设是 silent bug**（v0.16 round 19/19B）：`.first` / `.last` 用时序数据必须显式 sort，不依赖 drift orderBy 的隐式顺序。修法：函数内部 `[...records]..sort((a, b) => b.timestamp.compareTo(a.timestamp))` 再 `.first`，加 unsorted input regression test。已修：`streak_calculator` / `assessment_comparison` / `reminder_scheduler` / `safety_watch_service` / `assessment_reminder_service`（用 `reduce(isAfter)` 找最新）
+- **Notification id cancel range 公式必须匹配**（v0.16 round 19/19B）：cancel 范围要 ≥ `base + maxMedId * 系数`。修前 3 个 service 用 1000/100000 太窄。修后统一 200000，覆盖 medId 几万个，远超实际用户量。`int32` 安全（~2.1B）
+- **AudioPlayer / recorder / 任何 acquire 资源的临时对象用 `try/finally`**（v0.16 round 19B）：`_getAudioDuration` 之前 try 内 `setSource` + `getDuration` + `dispose` 一气呵成，异常时 dispose 不跑 → resource leak。修：`final player = AudioPlayer(); try { ... } catch (_) {} finally { await player.dispose(); }`
+- **`scheduleRefillReminder` 这种"先判过期再算 daysLeft" 模式**（v0.16 round 19B）：之前 2 次 `DateTime.now()` 跨 midnight 不一致。修：函数入口 `final now = DateTime.now();` 一次，下面所有判断/计算复用
 
 ## 决策记录
 

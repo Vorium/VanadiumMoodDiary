@@ -118,11 +118,12 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
 
   Future<void> _getAudioDuration(String path) async {
     // 用 audioplayers 探测时长
+    // v0.16 round 19B: 用 try/finally 确保 player.dispose() 在异常路径也跑
+    // 修前：setSource/getDuration 抛异常时直接走 catch，player 没 dispose → leak
+    final player = AudioPlayer();
     try {
-      final player = AudioPlayer();
       await player.setSource(DeviceFileSource(path));
       final d = await player.getDuration();
-      await player.dispose();
       if (mounted && d != null) {
         setState(() {
           _audioDurationSec = d.inSeconds;
@@ -130,6 +131,8 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       }
     } catch (_) {
       // 时长探测失败不影响保存
+    } finally {
+      await player.dispose();
     }
   }
 

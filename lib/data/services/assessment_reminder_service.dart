@@ -140,7 +140,10 @@ class AssessmentReminderService {
     // 写 last 的逻辑没跑就升级 / 数据迁移）
     final assessments = await _checkInRepo.watchAssessments().first;
     if (assessments.isNotEmpty) {
-      final realLast = assessments.last.timestamp;
+      // v0.16 round 19 fix: 显式找最新（不依赖 watchAssessments() 的隐式 ASC 顺序）
+      final realLast = assessments
+          .map((c) => c.timestamp)
+          .reduce((a, b) => a.isAfter(b) ? a : b);
       if (last == null || realLast.isAfter(last)) {
         await setLastAssessmentAt(realLast);
       }
