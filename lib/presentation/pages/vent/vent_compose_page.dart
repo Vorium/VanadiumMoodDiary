@@ -23,6 +23,7 @@ import 'package:go_router/go_router.dart';
 import 'package:record/record.dart';
 
 import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -162,7 +163,15 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       try {
         final f = File(old);
         if (await f.exists()) await f.delete();
-      } catch (_) {}
+      } catch (e, st) {
+        // 文件可能已被用户/系统清掉;删失败不阻塞重录流程
+        swallowError(
+          where: 'vent_compose_page._reRecord',
+          error: e,
+          stack: st,
+          note: 'old audio delete failed, continuing re-record',
+        );
+      }
     }
     if (mounted) {
       setState(() {
@@ -195,7 +204,15 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       if (hasAudio) {
         try {
           sizeBytes = await File(_audioPath!).length();
-        } catch (_) {}
+        } catch (e, st) {
+          // size 读不到(可能文件被外部清掉),sizeBytes 留 null,DB 仍能存
+          swallowError(
+            where: 'vent_compose_page._onSave',
+            error: e,
+            stack: st,
+            note: 'audio file size unreadable, sizeBytes=null',
+          );
+        }
       }
       await ref.read(ventRepositoryProvider).add(
             text: hasText ? text : null,

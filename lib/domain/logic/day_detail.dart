@@ -12,6 +12,8 @@
 // v0.14 升级：4 层架构 — 接受 CheckInEntity / MoodEntryEntity
 library;
 
+import 'dart:developer' as developer;
+
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -187,7 +189,16 @@ class DayDetailCalculator {
               total = int.tryParse(match.group(1)!);
             }
           }
-        } catch (_) {}
+        } catch (e, st) {
+          // domain 层: 不能用 foundation.kDebugMode,直接 developer.log
+          // 解析失败 → total 留 null,event 仍正常显示（只是没分数）
+          developer.log(
+            'day_detail: assessment total parse failed, total=null',
+            name: 'domain',
+            error: e,
+            stackTrace: st,
+          );
+        }
         events.add(DayEvent(
           time: c.timestamp,
           kind: DayEventKind.assessment,

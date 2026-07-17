@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/domain/entities/vent_entry.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -107,7 +108,15 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
       // 停播放
       try {
         await _player.stop();
-      } catch (_) {}
+      } catch (e, st) {
+        // player.stop 失败不影响删除流程(可能已经停止),dev 模式可见
+        swallowError(
+          where: 'vent_detail_page._confirmDelete',
+          error: e,
+          stack: st,
+          note: 'player.stop failed, continuing to delete entry',
+        );
+      }
       // 删
       await ref.read(ventRepositoryProvider).delete(entry.id);
       if (mounted) context.pop();

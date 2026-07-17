@@ -18,6 +18,8 @@ import 'dart:math';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
+
 /// 树洞 audio 文件管理
 class VentAudioStorage {
   static const _dirName = 'vent_audio';
@@ -89,7 +91,16 @@ class VentAudioStorage {
       if (entity is File) {
         try {
           total += await entity.length();
-        } catch (_) {}
+        } catch (e, st) {
+          // 单文件 stat 失败 → 跳过这个文件,继续累加其它
+          // v0.17 round 14 (P1-5): 之前静默,现在 dev 模式可见
+          swallowError(
+            where: 'vent_audio_storage.totalSizeBytes',
+            error: e,
+            stack: st,
+            note: 'failed to stat audio file, skipping',
+          );
+        }
       }
     }
     return total;

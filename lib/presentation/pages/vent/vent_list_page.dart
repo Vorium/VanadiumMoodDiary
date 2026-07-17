@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/vent_entry.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class VentListPage extends ConsumerWidget {
@@ -54,23 +55,11 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingXl),
-        // v0.17 round 1 (A8 emil 动效): 空态首次进入用
-        // TweenAnimationBuilder 让图标 + 文字从 scale(0.92) + opacity:0
-        // 淡入。emil 决策:rare 频度(用户第一次进树洞 / 删完所有) → 可加 delight
-        // curve 用 curveDelight(elasticOut) 弹一下,但只用在"第一次"出现的元素
-        child: TweenAnimationBuilder<double>(
-          tween: Tween<double>(begin: 0, end: 1),
-          duration: AppTokens.durSlow,
-          curve: AppTokens.curveStandard,
-          builder: (context, t, child) {
-            return Opacity(
-              opacity: t,
-              child: Transform.scale(
-                scale: 0.92 + (0.08 * t),
-                child: child,
-              ),
-            );
-          },
+        // v0.17 round 14 (P1-1): 抽 FadeIn widget,代替内联
+        // TweenAnimationBuilder + Opacity + Transform.scale 三层嵌套。
+        // rare 频度 (用户第一次进树洞 / 删完所有) → withScale: true 弹一下
+        child: FadeIn(
+          withScale: true,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

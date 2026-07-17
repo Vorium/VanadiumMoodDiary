@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
+
+import 'package:flutter/foundation.dart';
 
 /// 统一 JSON 编解码工具（共享层：domain + data + presentation 均可使用）
 ///
@@ -46,7 +49,18 @@ class JsonCodec {
       if (decoded is Map) {
         return Map<String, dynamic>.from(decoded);
       }
-    } catch (_) {}
+    } catch (e, st) {
+      // 解析失败 → 返回空 map,这是 fallback 路径(损坏的 JSON 字段)。
+      // v0.17 round 14 (P1-5): 之前完全静默,现在 dev 模式 devtools 能看见。
+      if (kDebugMode) {
+        developer.log(
+          'json_codec.decodeMap: parse failed, returning const {}',
+          name: 'swallow',
+          error: e,
+          stackTrace: st,
+        );
+      }
+    }
     return const {};
   }
 

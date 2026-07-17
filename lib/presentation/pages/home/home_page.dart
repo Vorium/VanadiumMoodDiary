@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/domain/logic/care_engine.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/theme_toggle_button.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
@@ -400,7 +401,15 @@ class _HomePageState extends ConsumerState<HomePage> {
     try {
       await ref.read(notificationServiceProvider).cancelSoftReminder();
       await ref.read(notificationServiceProvider).cancelAllSnoozes();
-    } catch (_) {}
+    } catch (e, st) {
+      // 通知清理失败 → 主流程已完成,清理失败只意味着今天还可能再响一次
+      swallowError(
+        where: 'home_page._onCheckIn',
+        error: e,
+        stack: st,
+        note: 'cancel soft reminder / snoozes failed, today may ring once more',
+      );
+    }
     // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发,例如打卡是补卡)
     unawaited(_runAfterCheckIn());
     // AI 关怀：打卡后评估是否触发（rule-based）
@@ -425,7 +434,15 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         );
       }
-    } catch (_) {}
+    } catch (e, st) {
+      // SafetyWatch 失败 → 用户已经看到打卡成功的庆祝,失联检测后台再跑就行
+      swallowError(
+        where: 'home_page._runSafetyCheck',
+        error: e,
+        stack: st,
+        note: 'SafetyWatch failed, check-in celebration already shown',
+      );
+    }
   }
 
   /// CareEngine 触发（rule-based）

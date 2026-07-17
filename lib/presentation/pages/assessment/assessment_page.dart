@@ -15,6 +15,7 @@ import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -166,7 +167,14 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     // 失败也不影响主流程（用户看到的"结果"和"危机弹窗"优先）
     try {
       await ref.read(assessmentReminderServiceProvider).onAssessmentCompleted();
-    } catch (_) {}
+    } catch (e, st) {
+      swallowError(
+        where: 'assessment_page._onSubmit',
+        error: e,
+        stack: st,
+        note: 'reschedule assessment reminder failed, main flow unaffected',
+      );
+    }
 
     // 危机检测（PHQ-9 第 9 题阳性等）
     final crisis = scale.detectCrisis(scores, result);
