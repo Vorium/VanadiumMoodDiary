@@ -7,7 +7,7 @@ import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/medication_report_dialog.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_report_dialog.dart';
 
 /// 报告历史列表 dialog
 class ReportHistoryListDialog extends ConsumerWidget {

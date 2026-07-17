@@ -16,13 +16,13 @@ import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/main.dart' show notificationInitResultProvider;
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/check_in_button.dart';
+import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_secondary_button.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/last_med_info.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/mood_dialog.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/mood_quick_button.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/temp_medication_dialog.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/today_med_schedule.dart';
+import 'package:chroniccare/presentation/pages/medication/last_med_info.dart';
+import 'package:chroniccare/presentation/pages/mood/mood_dialog.dart';
+import 'package:chroniccare/presentation/pages/mood/mood_quick_button.dart';
+import 'package:chroniccare/presentation/pages/medication/temp_medication_dialog.dart';
+import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart';
 
 /// 主页
 class HomePage extends ConsumerStatefulWidget {

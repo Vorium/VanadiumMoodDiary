@@ -16,7 +16,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/edit_medication_dialog.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 
 /// 续方状态
 enum RefillStatus {

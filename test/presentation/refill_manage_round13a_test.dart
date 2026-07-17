@@ -2,7 +2,7 @@
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
-import 'package:chroniccare/presentation/pages/settings/refill_manage_page.dart';
+import 'package:chroniccare/presentation/pages/medication/refill_manage_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:flutter/material.dart';

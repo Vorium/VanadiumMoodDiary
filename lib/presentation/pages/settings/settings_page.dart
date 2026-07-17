@@ -11,11 +11,11 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/assessment_reminder_section.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/choose_window_dialog.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/contacts_list_widget.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/medication_report_dialog.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/medications_list_widget.dart';
+import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_reminder_section.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/choose_window_dialog.dart';
+import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_report_dialog.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
 

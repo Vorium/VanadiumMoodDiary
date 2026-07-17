@@ -8,10 +8,10 @@ import 'package:chroniccare/presentation/pages/assessment/assessment_history_pag
 import 'package:chroniccare/presentation/pages/assessment/assessment_page.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
 import 'package:chroniccare/presentation/pages/medication/medication_calendar_page.dart';
-import 'package:chroniccare/presentation/pages/settings/refill_manage_page.dart';
+import 'package:chroniccare/presentation/pages/medication/refill_manage_page.dart';
 import 'package:chroniccare/presentation/pages/settings/reminders_hub_page.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/email_preview.dart';
+import 'package:chroniccare/presentation/pages/settings/email_preview.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_compose_page.dart';
