@@ -183,7 +183,13 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **隐式排序假设是 silent bug**（v0.16 round 19/19B）：`.first` / `.last` 用时序数据必须显式 sort，不依赖 drift orderBy 的隐式顺序。修法：函数内部 `[...records]..sort((a, b) => b.timestamp.compareTo(a.timestamp))` 再 `.first`，加 unsorted input regression test。已修：`streak_calculator` / `assessment_comparison` / `reminder_scheduler` / `safety_watch_service` / `assessment_reminder_service`（用 `reduce(isAfter)` 找最新）
 - **Notification id cancel range 公式必须匹配**（v0.16 round 19/19B）：cancel 范围要 ≥ `base + maxMedId * 系数`。修前 3 个 service 用 1000/100000 太窄。修后统一 200000，覆盖 medId 几万个，远超实际用户量。`int32` 安全（~2.1B）
 - **AudioPlayer / recorder / 任何 acquire 资源的临时对象用 `try/finally`**（v0.16 round 19B）：`_getAudioDuration` 之前 try 内 `setSource` + `getDuration` + `dispose` 一气呵成，异常时 dispose 不跑 → resource leak。修：`final player = AudioPlayer(); try { ... } catch (_) {} finally { await player.dispose(); }`
-- **`scheduleRefillReminder` 这种"先判过期再算 daysLeft" 模式**（v0.16 round 19B）：之前 2 次 `DateTime.now()` 跨 midnight 不一致。修：函数入口 `final now = DateTime.now();` 一次，下面所有判断/计算复用
+- **`DateTime.now()` / `DateTime(y, m, d)` 多次调用 race**（v0.16 round 19B / 修正于 v0.17 round 14）：同一函数或同 field init 内多次调 `DateTime.now()` 跨 midnight 可能返回不同日期，跨月/跨年时 `DateTime(year, month, day)` 同函数多次调也可能不一致。常见模式：
+  - `showDatePicker(initialDate: now+30d, firstDate: now-7d, lastDate: now+365d)` 3 次 `now`
+  - `DateTime _calendarMonth = DateTime(now.year, now.month, 1)` 然后又 `DateTime(now.year, now.month + 1, 0)`
+  - "先判过期再算 daysLeft": `if (now.isAfter(...)) ...; final daysLeft = expiry.difference(now).inDays;` 跨 midnight 后 `now` 已变
+  - 修法：函数入口 `final now = DateTime.now();` 一次，下面所有判断/计算复用
+  - 找 bug 方法：`grep "DateTime\.now()"` 在 `lib/`，看同函数或同 field init 是否多次出现
+  - 例：`lib/core/data/services/reminder_scheduler.dart:97`（v0.14 修过同款 bug）
 - **国产 ROM 静默杀后台通知**（v0.16 round 20）：小米 / 华为 / OPPO / Vivo / 魅族 默认禁止 App 后台运行 + 自启动 + 精确闹钟。用户反映"20:00 没收到提醒"99% 是这个原因。**不要靠 `developer.log` 排查，用户看不到**。修：在设置页加 `NotificationStatusCard` 自检卡：状态显示 + 一键测试 + OEM 引导文字。`androidScheduleMode: exactAllowWhileIdle` 是必要条件但不充分。找 bug 方法：用户报"没收到提醒"先检查 ROM + 自检卡状态数 = 0
 - **Riverpod 3.x 升级 `valueOrNull` → `value`**（v0.17 round 3）：2.6 的 `AsyncValue.valueOrNull` 在 3.x 改成 `value`。找 bug 方法：升 3.x 报 `undefined_getter valueOrNull` 就是这个
 - **Riverpod 3.x `ref.mounted` 仅限 Notifier**（v0.17 round 3）：项目用 Provider/StreamProvider/ConsumerStatefulWidget，没法用 `ref.mounted` 替代 `if (!mounted) return;`。保持 27 处 `!mounted` check（v0.17 round 7 实际数：1 处 ref.mounted + 27 处 !mounted）
