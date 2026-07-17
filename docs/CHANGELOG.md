@@ -33,8 +33,13 @@
 - **共享层使用度**：所有 `shared/` 工具至少被 2 层用（被 check_all 验证）
 
 ### Tests
-- 461/461 pass（462 → 461：删 `buildHtml` 死代码 + 对应 test）
+- 471/471 pass（461 → 471：5 check_all + 3 streak unsorted + 2 assessment unsorted）
 - 新增 `test/data/email_service_test.dart`（用 `MedicationEntity` 替代之前的 drift row）
+- 新增 `test/scripts/check_all_test.dart`（5 个，验证 4 层架构检测 + 相对路径解析 + Windows path bug）
+
+### Fixed (latent bugs)
+- **`streak_calculator.dart` 隐式排序假设**：`calculate` + `shouldShowStreakBroken` 用 `.first` 假设 caller 传 DESC，调用方目前都传已排序数据（`watchAllCheckIns()` Drift orderBy DESC），但任何未来 caller 传未排序数据会算错 streak。加显式 sort + 3 个 unsorted input regression test
+- **`assessment_comparison.dart` 隐式排序假设**：`fromRecords` 用 `.last` 假设 caller 传 ASC，同样的 fragility。修：先 sort 再取。加 2 个 unsorted input test
 
 ### Removed
 - **`EmailTemplate.buildHtml()`**：60 行 HTML 模板，v0.6 改 mock 短信后整个 HTML 路径无生产调用
