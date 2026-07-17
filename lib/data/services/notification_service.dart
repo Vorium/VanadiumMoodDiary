@@ -163,10 +163,13 @@ class NotificationService implements NotificationSender {
     await init();
 
     // 先取消所有 medication 推送（保留 default + soft）
+    // medication reminder id 公式：base + medId * 10 + i
+    //   v0.16 round 19 fix: 之前 1000 范围太窄，medId >= 100 时 id 超过 3000 漏 cancel
+    //   改成 200000 覆盖 medId <= 19999（远超实际用户量，且 int32 安全）
     final pending = await _plugin.pendingNotificationRequests();
     for (final p in pending) {
       if (p.id >= _medicationReminderBaseId &&
-          p.id < _medicationReminderBaseId + 1000) {
+          p.id < _medicationReminderBaseId + 200000) {
         await _plugin.cancel(p.id);
       }
     }
