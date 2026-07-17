@@ -176,6 +176,9 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **audioplayers + record** 一起用：先 `dispose recorder` 再 `dispose player`，否则文件锁冲突
 - **SQLCipher 加密 + audio 文件**：audio 在 DB 之外（app docs），但 DB 路径仍受 SQLCipher 保护
 - **crash reporter 集成**：本项目不接 Firebase / Sentry，本地 SQLite 错误通过 `runZonedGuarded` 打印
+- **Stream subscription leak**：`_player.onXxx.listen(...)` 返回的 `StreamSubscription` 必须存字段，**`dispose()` 里 `.cancel()`**。`audioplayers` 之类第三方包的 listener 不取消 = 每次进/出页面都漏一个
+- **BuildContext 跨 async gap**：State class 里方法签名不要重复拿 `BuildContext context` 参数 — 用 `this.context`。否则 analyzer 警告 `use_build_context_synchronously`（mounted check 跟 context 是不同来源）
+- **`dart format` + `dart fix --apply` 组合**：批量清 `trailing_commas` / `prefer_const_constructors` 200+ info-level 警告。`dart format` 加换行后会让 trailing comma 数量变多，必须跟 `dart fix --apply` 配合才能净
 
 ## 决策记录
 
