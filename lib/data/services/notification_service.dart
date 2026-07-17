@@ -370,11 +370,16 @@ class NotificationService implements NotificationSender {
   }
 
   /// 取消所有 snooze（重排 medication reminders 时调）
+  ///
+  /// snooze id 公式：snoozeBase + medId * 1440 + minutes
+  ///   medId 上限：int32 安全 ~1.5M (medId <= 1000)，按当前用户量足够
+  /// v0.16 round 19 fix: 之前用 `_snoozeBaseId + 100000` 范围太窄，medId >= 72 时
+  ///   id 超过 104000 漏 cancel（虽然 snooze 5min 自动清除，但重排时残留）
   Future<void> cancelAllSnoozes() async {
     await init();
     final pending = await _plugin.pendingNotificationRequests();
     for (final p in pending) {
-      if (p.id >= _snoozeBaseId && p.id < _snoozeBaseId + 100000) {
+      if (p.id >= _snoozeBaseId && p.id < _snoozeBaseId + 2000000) {
         await _plugin.cancel(p.id);
       }
     }
