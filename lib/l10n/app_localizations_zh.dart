@@ -77,7 +77,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupMedName => '药名';
 
   @override
-  String get setupMedNameHint => '舍曲林';
+  String get setupMedNameHint => '请输入药盒上的名称（选填）';
 
   @override
   String get setupMedFrequency => '每日次数';

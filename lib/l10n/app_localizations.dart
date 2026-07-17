@@ -221,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupMedNameHint.
   ///
   /// In zh, this message translates to:
-  /// **'舍曲林'**
+  /// **'请输入药盒上的名称（选填）'**
   String get setupMedNameHint;
 
   /// No description provided for @setupMedFrequency.

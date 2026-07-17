@@ -66,7 +66,9 @@ const kMedicationTemplates = <MedicationTemplate>[
         dosage: 1,
         dosageUnit: '片',
         times: [HourMinute(hour: 8, minute: 0)],
-        hint: '常见：氟西汀 / 舍曲林 / 帕罗西汀 / 艾司西酞普兰',
+        // P0-5 fix: 改分类描述,避免《广告法》第 16 条 +
+        // 《医疗广告管理办法》风险(原列 4 个真实处方药通用名)。
+        hint: '常见 SSRI / SNRI 类抗抑郁药(具体药名以医生处方为准)',
       ),
     ],
   ),
@@ -124,7 +126,8 @@ const kMedicationTemplates = <MedicationTemplate>[
           HourMinute(hour: 13, minute: 0),
           HourMinute(hour: 20, minute: 0),
         ],
-        hint: '常见：奥氮平 / 利培酮 / 阿立哌唑 / 喹硫平',
+        // P0-5 fix: 改分类描述,避免广告法风险。
+        hint: '常见非典型抗精神病药(具体药名以医生处方为准)',
       ),
       MedicationTemplateHelper.bedtimeAntipsychotic,
     ],
@@ -138,6 +141,7 @@ class MedicationTemplateHelper {
     dosage: 1,
     dosageUnit: '片',
     times: [HourMinute(hour: 21, minute: 30)],
-    hint: '常见：喹硫平（小剂量）/ 苯二氮卓类',
+    // P0-5 fix: 改分类描述。
+    hint: '常见镇静/抗焦虑辅助药(具体药名以医生处方为准)',
   );
 }

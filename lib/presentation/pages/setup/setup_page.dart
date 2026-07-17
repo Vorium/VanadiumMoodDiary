@@ -428,7 +428,9 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               controller: m.nameController,
               decoration: const InputDecoration(
                 labelText: '药名',
-                hintText: '氟西汀 / 奥氮平',
+                // P0-5 fix: 改中性文案,避免《广告法》第 16 条 +《医疗广告
+                // 管理办法》风险(原预填真实处方药通用名)。
+                hintText: '请输入药盒上的名称（选填）',
               ),
             ),
             const SizedBox(height: AppTokens.spacingMd),

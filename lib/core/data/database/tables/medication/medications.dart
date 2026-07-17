@@ -7,7 +7,7 @@ import 'package:drift/drift.dart';
 class Medications extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  /// 药名（如"氟西汀"）
+  /// 药名（用户按药盒填写，不预填真实处方药通用名 — P0-5 广告法风险）
   TextColumn get name => text()();
 
   /// 剂量数值（如 40）

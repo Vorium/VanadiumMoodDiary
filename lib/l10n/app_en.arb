@@ -23,7 +23,7 @@
   "setupAddContact": "+ Add another contact",
   "setupNext": "Next →",
   "setupMedName": "Medication name",
-  "setupMedNameHint": "Sertraline",
+  "setupMedNameHint": "e.g. as printed on the box (optional)",
   "setupMedFrequency": "Daily frequency",
   "setupMedTimes1": "1x",
   "setupMedTimes2": "2x",

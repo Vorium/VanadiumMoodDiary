@@ -77,7 +77,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupMedName => 'Medication name';
 
   @override
-  String get setupMedNameHint => 'Sertraline';
+  String get setupMedNameHint => 'e.g. as printed on the box (optional)';
 
   @override
   String get setupMedFrequency => 'Daily frequency';

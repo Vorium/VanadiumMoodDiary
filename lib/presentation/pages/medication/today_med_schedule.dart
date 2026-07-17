@@ -18,7 +18,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 
-/// 一行时间点：[已打卡 ✓] 氟西汀 08:00
+/// 一行时间点：[已打卡 ✓] 药名 08:00
 class _ScheduleEntry {
   final MedicationEntity med;
   final HourMinute time;
