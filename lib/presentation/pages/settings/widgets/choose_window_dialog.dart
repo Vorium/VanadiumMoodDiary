@@ -7,6 +7,12 @@ import '../../../../theme/app_tokens.dart';
 ///
 /// 选项：近 7 / 14 / 30 天（默认 14）
 /// 返回：选中的天数（int），或 null（用户取消）
+///
+/// v0.17 round 7 (A7 emil 动效): AlertDialog 默认动画
+/// - showDialog() 默认 fade + scale from center (M3 标准)
+/// - emil 决策框架: modals 居中 + 150-300ms standard animation
+/// - 替代项: PageRouteBuilder 配合 CustomTransitionPage 可覆盖,但项目用默认够用
+/// - 找 bug 方法: 用户报"弹窗出现/消失太突兀"再考虑自定义
 class ChooseWindowDialog extends StatefulWidget {
   const ChooseWindowDialog({super.key});
 

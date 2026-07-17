@@ -10,6 +10,9 @@
 //
 // 用 CheckInEntity + MedicationEntity 计算
 // 不画新组件，直接 GridView + Container
+//
+// v0.17 round 7 (B1+B2): _days setState 状态提到 calendarWindowProvider
+// (Notifier). 跨 page 共享 + test 友好 + Notifier 内 ref.mounted 守卫
 library;
 
 import 'package:flutter/material.dart';
@@ -18,23 +21,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/check_in_entity.dart';
 import '../../../domain/entities/medication_entity.dart';
 import '../../../theme/app_tokens.dart';
+import '../../providers/calendar_window_provider.dart';
 import '../../providers/data_providers.dart';
 import '../../widgets/page_scaffold.dart';
 
-class MedicationCalendarPage extends ConsumerStatefulWidget {
+class MedicationCalendarPage extends ConsumerWidget {
   const MedicationCalendarPage({super.key});
 
   @override
-  ConsumerState<MedicationCalendarPage> createState() =>
-      _MedicationCalendarPageState();
-}
-
-class _MedicationCalendarPageState
-    extends ConsumerState<MedicationCalendarPage> {
-  int _days = 30;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // v0.17 round 7 (B1+B2): 状态从 setState 提到 Notifier
+    final days = ref.watch(calendarWindowProvider);
     final medsAsync = ref.watch(medicationsProvider);
     final checkInsAsync = ref.watch(allCheckInsProvider);
     return PageScaffold(
@@ -76,8 +73,10 @@ class _MedicationCalendarPageState
                 ButtonSegment(value: 30, label: Text('30 天')),
                 ButtonSegment(value: 90, label: Text('90 天')),
               ],
-              selected: {_days},
-              onSelectionChanged: (s) => setState(() => _days = s.first),
+              selected: {days},
+              onSelectionChanged: (s) => ref
+                  .read(calendarWindowProvider.notifier)
+                  .setDays(s.first),
             ),
           ),
 
@@ -85,7 +84,7 @@ class _MedicationCalendarPageState
 
           medsAsync.when(
             data: (meds) => checkInsAsync.when(
-              data: (checkIns) => _buildGrid(meds, checkIns),
+              data: (checkIns) => _buildGrid(meds, checkIns, days),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('加载打卡失败: $e')),
             ),
@@ -99,14 +98,18 @@ class _MedicationCalendarPageState
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
-            child: _Legend(days: _days),
+            child: _Legend(days: days),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildGrid(List<MedicationEntity> meds, List<CheckInEntity> checkIns) {
+  Widget _buildGrid(
+    List<MedicationEntity> meds,
+    List<CheckInEntity> checkIns,
+    int days,
+  ) {
     // Bug G fix: 排除没排程的药（times=[]），否则 expected=1 永远 0% 红色
     final schedulableMeds =
         meds.where((m) => m.isInUse && m.times.isNotEmpty).toList();
@@ -135,7 +138,7 @@ class _MedicationCalendarPageState
 
     final today = DateTime.now();
     final startDay = DateTime(today.year, today.month, today.day)
-        .subtract(Duration(days: _days - 1));
+        .subtract(Duration(days: days - 1));
 
     // Bug H fix: 预 group check-ins 到 Map<medId, Map<dayBucket, count>>
     // 把 O(meds·days·checkIns) 降到 O(meds·days + checkIns)
@@ -161,7 +164,7 @@ class _MedicationCalendarPageState
       final expectedPerDay = m.times.length;
       final medBuckets = checkInMap[m.id] ?? const <DateTime, int>{};
       final cells = <_Cell>[];
-      for (int i = 0; i < _days; i++) {
+      for (int i = 0; i < days; i++) {
         final day = startDay.add(Duration(days: i));
         final actual = medBuckets[day] ?? 0;
         cells.add(_Cell(
@@ -180,7 +183,7 @@ class _MedicationCalendarPageState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 表头：日期标签
-            _HeaderRow(days: _days, startDay: startDay),
+            _HeaderRow(days: days, startDay: startDay),
             const SizedBox(height: AppTokens.spacingXs),
             // 数据行
             for (int i = 0; i < rows.length; i++) _DataRow(row: rows[i]),
