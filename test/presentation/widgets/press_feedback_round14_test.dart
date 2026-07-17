@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  Widget _wrap({required Widget child, bool reduced = false}) {
+  Widget wrap({required Widget child, bool reduced = false}) {
     return MaterialApp(
       home: MediaQuery(
         data: MediaQueryData(disableAnimations: reduced),
@@ -21,11 +21,13 @@ void main() {
   }
 
   testWidgets('默认 scale = 1.0', (tester) async {
-    await tester.pumpWidget(_wrap(
-      child: const PressFeedback(
-        child: SizedBox(width: 100, height: 50, key: ValueKey('btn')),
+    await tester.pumpWidget(
+      wrap(
+        child: const PressFeedback(
+          child: SizedBox(width: 100, height: 50, key: ValueKey('btn')),
+        ),
       ),
-    ));
+    );
     final scale = tester.widget<AnimatedScale>(
       find.descendant(
         of: find.byType(PressFeedback),
@@ -37,15 +39,18 @@ void main() {
 
   testWidgets('P0-8: 按下 → scale 变 0.97', (tester) async {
     int tapCount = 0;
-    await tester.pumpWidget(_wrap(
-      child: PressFeedback(
-        onTap: () => tapCount++,
-        child: const SizedBox(width: 100, height: 50),
+    await tester.pumpWidget(
+      wrap(
+        child: PressFeedback(
+          onTap: () => tapCount++,
+          child: const SizedBox(width: 100, height: 50),
+        ),
       ),
-    ));
+    );
 
     // 按下
-    final gesture = await tester.startGesture(tester.getCenter(find.byType(PressFeedback)));
+    final gesture =
+        await tester.startGesture(tester.getCenter(find.byType(PressFeedback)));
     await tester.pump(const Duration(milliseconds: 50));
 
     final scale = tester.widget<AnimatedScale>(
@@ -72,12 +77,14 @@ void main() {
 
   testWidgets('P0-8: tap → onTap 触发', (tester) async {
     int tapCount = 0;
-    await tester.pumpWidget(_wrap(
-      child: PressFeedback(
-        onTap: () => tapCount++,
-        child: const Text('press me'),
+    await tester.pumpWidget(
+      wrap(
+        child: PressFeedback(
+          onTap: () => tapCount++,
+          child: const Text('press me'),
+        ),
       ),
-    ));
+    );
     await tester.tap(find.byType(PressFeedback));
     await tester.pump();
     expect(tapCount, 1);
@@ -86,13 +93,15 @@ void main() {
   testWidgets('P0-7 + P0-8: reduce motion → tap 仍然 work,duration 0',
       (tester) async {
     int tapCount = 0;
-    await tester.pumpWidget(_wrap(
-      child: PressFeedback(
-        onTap: () => tapCount++,
-        child: const SizedBox(width: 100, height: 50),
+    await tester.pumpWidget(
+      wrap(
+        child: PressFeedback(
+          onTap: () => tapCount++,
+          child: const SizedBox(width: 100, height: 50),
+        ),
+        reduced: true,
       ),
-      reduced: true,
-    ));
+    );
 
     // reduce motion 模式下,scale 反馈瞬时完成,onTap 仍正常
     final scale = tester.widget<AnimatedScale>(
@@ -110,13 +119,16 @@ void main() {
   });
 
   testWidgets('onTap = null → 按下不报错', (tester) async {
-    await tester.pumpWidget(_wrap(
-      child: const PressFeedback(
-        child: SizedBox(width: 100, height: 50),
+    await tester.pumpWidget(
+      wrap(
+        child: const PressFeedback(
+          child: SizedBox(width: 100, height: 50),
+        ),
       ),
-    ));
+    );
     // 单纯按下抬起,不触发 onTap,不报错
-    final gesture = await tester.startGesture(tester.getCenter(find.byType(PressFeedback)));
+    final gesture =
+        await tester.startGesture(tester.getCenter(find.byType(PressFeedback)));
     await tester.pump();
     await gesture.up();
     await tester.pump();

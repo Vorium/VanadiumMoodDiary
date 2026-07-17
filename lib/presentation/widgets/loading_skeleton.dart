@@ -42,12 +42,12 @@ class LoadingSkeleton extends StatelessWidget {
   /// 全屏 loading 工厂
   const LoadingSkeleton.fullScreen({super.key, this.message})
       : isFullScreen = true,
-          child = null;
+        child = null;
 
   /// 卡片骨架屏工厂
   const LoadingSkeleton.card({super.key, required this.child})
       : isFullScreen = false,
-          message = null;
+        message = null;
 
   @override
   Widget build(BuildContext context) {

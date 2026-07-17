@@ -64,7 +64,8 @@ class _TempMedicationDialogState extends State<TempMedicationDialog> {
   @override
   Widget build(BuildContext context) {
     // v0.17 round 3: Riverpod 3.x 改名为 .value（之前 .valueOrNull）
-    final meds = (widget.ref.read(medicationsProvider).value) ?? <MedicationEntity>[];
+    final meds =
+        (widget.ref.read(medicationsProvider).value) ?? <MedicationEntity>[];
     return AlertDialog(
       title: const Text('添加临时吃药'),
       content: Column(

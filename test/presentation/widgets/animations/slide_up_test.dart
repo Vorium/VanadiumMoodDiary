@@ -57,24 +57,28 @@ void main() {
       );
       // delay 期间 SlideUp 内的 FadeTransition opacity = 0
       await tester.pump(const Duration(milliseconds: 100));
-      final initialFade = tester.widgetList<FadeTransition>(
-        find.descendant(
-          of: find.byKey(testKey),
-          matching: find.byType(FadeTransition),
-        ),
-      ).toList();
+      final initialFade = tester
+          .widgetList<FadeTransition>(
+            find.descendant(
+              of: find.byKey(testKey),
+              matching: find.byType(FadeTransition),
+            ),
+          )
+          .toList();
       expect(initialFade, hasLength(1));
       expect(initialFade.first.opacity.value, 0.0);
 
       // 跑过 delay 500ms,推进动画,pumpAndSettle 等 controller 跑完
       await tester.pump(const Duration(milliseconds: 600));
       await tester.pumpAndSettle();
-      final finalFade = tester.widgetList<FadeTransition>(
-        find.descendant(
-          of: find.byKey(testKey),
-          matching: find.byType(FadeTransition),
-        ),
-      ).toList();
+      final finalFade = tester
+          .widgetList<FadeTransition>(
+            find.descendant(
+              of: find.byKey(testKey),
+              matching: find.byType(FadeTransition),
+            ),
+          )
+          .toList();
       expect(finalFade, hasLength(1));
       expect(finalFade.first.opacity.value, 1.0);
     });

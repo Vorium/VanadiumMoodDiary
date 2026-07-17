@@ -115,10 +115,12 @@ void main() {
       final r = MedicationReport.compute(
         userName: '小明',
         meds: [
-          med(times: const [
-            HourMinute(hour: 8, minute: 0),
-            HourMinute(hour: 20, minute: 0),
-          ],),
+          med(
+            times: const [
+              HourMinute(hour: 8, minute: 0),
+              HourMinute(hour: 20, minute: 0),
+            ],
+          ),
         ],
         checkIns: const [],
         now: now,
@@ -165,10 +167,12 @@ void main() {
       for (int d = 0; d < 14; d++) {
         final day = DateTime(2026, 6, 30).add(Duration(days: d));
         if (day == DateTime(2026, 7, 5)) continue;
-        checkIns.add(normalCI(
-          medicationId: 1,
-          at: day.add(const Duration(hours: 8)),
-        ),);
+        checkIns.add(
+          normalCI(
+            medicationId: 1,
+            at: day.add(const Duration(hours: 8)),
+          ),
+        );
       }
       final r = MedicationReport.compute(
         userName: '小明',
@@ -189,16 +193,20 @@ void main() {
       for (int d = 0; d < 14; d++) {
         final day = DateTime(2026, 6, 30).add(Duration(days: d));
         if (day == DateTime(2026, 7, 5)) continue;
-        checkIns.add(normalCI(
-          medicationId: 1,
-          at: day.add(const Duration(hours: 8)),
-        ),);
+        checkIns.add(
+          normalCI(
+            medicationId: 1,
+            at: day.add(const Duration(hours: 8)),
+          ),
+        );
       }
       // 7/3 第二次
-      checkIns.add(normalCI(
-        medicationId: 1,
-        at: DateTime(2026, 7, 3, 20, 0),
-      ),);
+      checkIns.add(
+        normalCI(
+          medicationId: 1,
+          at: DateTime(2026, 7, 3, 20, 0),
+        ),
+      );
       final r = MedicationReport.compute(
         userName: '小明',
         meds: [med()],
@@ -245,13 +253,18 @@ void main() {
         userName: '小明',
         meds: [
           med(
-              id: 1,
-              name: '氟西汀',
-              times: const [HourMinute(hour: 8, minute: 0)],),
-          med(id: 2, name: '碳酸锂', times: const [
-            HourMinute(hour: 8, minute: 0),
-            HourMinute(hour: 20, minute: 0),
-          ],),
+            id: 1,
+            name: '氟西汀',
+            times: const [HourMinute(hour: 8, minute: 0)],
+          ),
+          med(
+            id: 2,
+            name: '碳酸锂',
+            times: const [
+              HourMinute(hour: 8, minute: 0),
+              HourMinute(hour: 20, minute: 0),
+            ],
+          ),
         ],
         checkIns: [
           // 氟西汀：全 14 天
@@ -490,10 +503,12 @@ void main() {
         if (day == DateTime(2026, 7, 5) || day == DateTime(2026, 7, 10)) {
           continue;
         }
-        checkIns.add(normalCI(
-          medicationId: 1,
-          at: day.add(const Duration(hours: 8)),
-        ),);
+        checkIns.add(
+          normalCI(
+            medicationId: 1,
+            at: day.add(const Duration(hours: 8)),
+          ),
+        );
       }
       final r = MedicationReport.compute(
         userName: '小明',

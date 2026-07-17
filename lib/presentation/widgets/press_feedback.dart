@@ -70,15 +70,9 @@ class _PressFeedbackState extends State<PressFeedback> {
     final scale = _pressed ? widget.pressedScale : 1.0;
 
     return GestureDetector(
-      onTapDown: widget.onTap == null
-          ? null
-          : (_) => _setPressed(true),
-      onTapUp: widget.onTap == null
-          ? null
-          : (_) => _setPressed(false),
-      onTapCancel: widget.onTap == null
-          ? null
-          : () => _setPressed(false),
+      onTapDown: widget.onTap == null ? null : (_) => _setPressed(true),
+      onTapUp: widget.onTap == null ? null : (_) => _setPressed(false),
+      onTapCancel: widget.onTap == null ? null : () => _setPressed(false),
       onTap: widget.onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedScale(

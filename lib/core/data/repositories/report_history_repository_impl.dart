@@ -14,10 +14,9 @@ class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
 
   @override
   Stream<List<ReportHistoryEntity>> watchAll() {
-    return _db
-        .watchReportHistories()
-        .map((rows) =>
-            rows.map(reportHistoryFromRow).toList(growable: false),);
+    return _db.watchReportHistories().map(
+          (rows) => rows.map(reportHistoryFromRow).toList(growable: false),
+        );
   }
 
   @override

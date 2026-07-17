@@ -1119,10 +1119,13 @@ class _CalendarViewState extends State<_CalendarView> {
                               widget.calendar.cells[row * 7 + col].date.year ==
                                   widget.calendar.month.year,
                       selected: _sameDate(
-                          widget.calendar.cells[row * 7 + col].date, _selected,),
+                        widget.calendar.cells[row * 7 + col].date,
+                        _selected,
+                      ),
                       isToday: _sameDate(
-                          widget.calendar.cells[row * 7 + col].date,
-                          DateTime(_today.year, _today.month, _today.day),),
+                        widget.calendar.cells[row * 7 + col].date,
+                        DateTime(_today.year, _today.month, _today.day),
+                      ),
                       onTap: () {
                         setState(() {
                           _selected = widget.calendar.cells[row * 7 + col].date;

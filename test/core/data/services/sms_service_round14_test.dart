@@ -13,7 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('MockSmsProvider', () {
-    test('P0-1: send() throw UnimplementedError (不再 silently 返 true)', () async {
+    test('P0-1: send() throw UnimplementedError (不再 silently 返 true)',
+        () async {
       final provider = MockSmsProvider();
       expect(
         () => provider.send(
@@ -49,8 +50,7 @@ void main() {
   });
 
   group('SmsService (业务层)', () {
-    test('P0-1: provider 抛 throw → SmsService.send 返 SmsResult.fail',
-        () async {
+    test('P0-1: provider 抛 throw → SmsService.send 返 SmsResult.fail', () async {
       // 真实 mock provider 现在 throw,SmsService 应该 catch
       final svc = SmsService(provider: MockSmsProvider());
       final result = await svc.send(to: '13800138000', body: 'test');

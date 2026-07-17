@@ -38,8 +38,7 @@ class SlideUp extends StatefulWidget {
   State<SlideUp> createState() => _SlideUpState();
 }
 
-class _SlideUpState extends State<SlideUp>
-    with SingleTickerProviderStateMixin {
+class _SlideUpState extends State<SlideUp> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _t;
   late final Animation<Offset> _offset;

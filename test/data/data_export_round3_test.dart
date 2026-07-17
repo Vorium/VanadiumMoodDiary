@@ -23,18 +23,22 @@ void main() {
 
   test('P4 fix: 导出包含 reportHistories + moodEntries', () async {
     // 准备数据
-    await db.insertReportHistory(ReportHistoriesCompanion.insert(
-      windowDays: 14,
-      generatedAt: DateTime(2026, 7, 13, 12, 0),
-      userName: '小明',
-      reportText: '测试报告内容',
-    ),);
-    await db.insertMoodEntry(MoodEntriesCompanion.insert(
-      timestamp: DateTime(2026, 7, 13, 10, 0),
-      score: 4,
-      tagsJson: const Value('["好","平静"]'),
-      note: const Value('今天心情不错'),
-    ),);
+    await db.insertReportHistory(
+      ReportHistoriesCompanion.insert(
+        windowDays: 14,
+        generatedAt: DateTime(2026, 7, 13, 12, 0),
+        userName: '小明',
+        reportText: '测试报告内容',
+      ),
+    );
+    await db.insertMoodEntry(
+      MoodEntriesCompanion.insert(
+        timestamp: DateTime(2026, 7, 13, 10, 0),
+        score: 4,
+        tagsJson: const Value('["好","平静"]'),
+        note: const Value('今天心情不错'),
+      ),
+    );
 
     final json = await svc.exportToJson();
     expect(json, contains('"reportHistories"'));
@@ -164,8 +168,11 @@ void main() {
     expect(vents, hasLength(1));
     final v = vents.first as Map<String, dynamic>;
     expect(v['contentText'], '想哭');
-    expect(v.containsKey('hadAudio'), false,
-        reason: '纯文字条目不应有 hadAudio 标志');
+    expect(
+      v.containsKey('hadAudio'),
+      false,
+      reason: '纯文字条目不应有 hadAudio 标志',
+    );
   });
 
   test('P0-3: 导入 v3 ventEntries 文字 + 录音元数据,丢弃 audioPath', () async {
@@ -205,8 +212,11 @@ void main() {
     // watchVentEntries 按 timestamp DESC 排,2026-07-13 在前
     expect(entries.first.contentText, '第二条');
     expect(entries.last.contentText, '导入的树洞文字');
-    expect(entries.last.audioPath, isNull,
-        reason: '导入时 audioPath 必须始终是 null(跨设备失效)');
+    expect(
+      entries.last.audioPath,
+      isNull,
+      reason: '导入时 audioPath 必须始终是 null(跨设备失效)',
+    );
     expect(entries.last.audioDurationSec, 60);
   });
 

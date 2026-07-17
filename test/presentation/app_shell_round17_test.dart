@@ -80,10 +80,12 @@ class _DummyPage extends StatelessWidget {
 void main() {
   testWidgets('窄屏 (< 840) 不显示 NavigationRail', (tester) async {
     _setSize(tester, 400);
-    await tester.pumpWidget(_wrapShell(
-      currentLocation: '/',
-      width: 400,
-    ),);
+    await tester.pumpWidget(
+      _wrapShell(
+        currentLocation: '/',
+        width: 400,
+      ),
+    );
     await tester.pumpAndSettle();
     // 窄屏: child 出现
     expect(find.text('home'), findsOneWidget);
@@ -93,10 +95,12 @@ void main() {
 
   testWidgets('宽屏 (>= 840) 显示 NavigationRail,选中"打卡"', (tester) async {
     _setSize(tester, 1024);
-    await tester.pumpWidget(_wrapShell(
-      currentLocation: '/',
-      width: 1024,
-    ),);
+    await tester.pumpWidget(
+      _wrapShell(
+        currentLocation: '/',
+        width: 1024,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('home'), findsOneWidget);
     expect(find.byType(NavigationRail), findsOneWidget);
@@ -107,10 +111,12 @@ void main() {
 
   testWidgets('路由到 /settings → 选中"设置"', (tester) async {
     _setSize(tester, 1024);
-    await tester.pumpWidget(_wrapShell(
-      currentLocation: '/settings',
-      width: 1024,
-    ),);
+    await tester.pumpWidget(
+      _wrapShell(
+        currentLocation: '/settings',
+        width: 1024,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('settings'), findsOneWidget);
     // Rail 还在
@@ -119,10 +125,12 @@ void main() {
 
   testWidgets('路由到 /settings/reminders 算设置子页', (tester) async {
     _setSize(tester, 1024);
-    await tester.pumpWidget(_wrapShell(
-      currentLocation: '/settings/reminders',
-      width: 1024,
-    ),);
+    await tester.pumpWidget(
+      _wrapShell(
+        currentLocation: '/settings/reminders',
+        width: 1024,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('reminders'), findsOneWidget);
     expect(find.byType(NavigationRail), findsOneWidget);
@@ -130,10 +138,12 @@ void main() {
 
   testWidgets('点 NavigationRail 跳页', (tester) async {
     _setSize(tester, 1024);
-    await tester.pumpWidget(_wrapShell(
-      currentLocation: '/',
-      width: 1024,
-    ),);
+    await tester.pumpWidget(
+      _wrapShell(
+        currentLocation: '/',
+        width: 1024,
+      ),
+    );
     await tester.pumpAndSettle();
 
     // 找 rail 的 "设置" 按钮

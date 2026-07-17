@@ -178,8 +178,10 @@ class _NotificationStatusCardState
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.notifications_active_outlined,
-                color: AppTokens.primary,),
+            leading: const Icon(
+              Icons.notifications_active_outlined,
+              color: AppTokens.primary,
+            ),
             title: const Text('通知与提醒'),
             // v0.17 round 14 (P2-3): AnimatedSize 让 statusText 切换时
             // 高度平滑过渡 (加载中 → 0 待发 → N 待发) 而不是突然跳变

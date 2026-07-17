@@ -34,8 +34,9 @@ class EmailPreviewPage extends ConsumerWidget {
                 const Text(
                   '这是你将收到的失联通知预览：',
                   style: TextStyle(
-                      fontSize: AppTokens.fontSizeBody,
-                      color: AppTokens.textSecondary,),
+                    fontSize: AppTokens.fontSizeBody,
+                    color: AppTokens.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 contactsAsync.when(
@@ -71,15 +72,17 @@ class EmailPreviewPage extends ConsumerWidget {
                             Text(
                               'To: ${firstContact?.phone ?? "（无联系人）"}',
                               style: const TextStyle(
-                                  fontSize: AppTokens.fontSizeLabel,
-                                  color: AppTokens.textSecondary,),
+                                fontSize: AppTokens.fontSizeLabel,
+                                color: AppTokens.textSecondary,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Subject: $subject',
                               style: const TextStyle(
-                                  fontSize: AppTokens.fontSizeBody,
-                                  fontWeight: FontWeight.w500,),
+                                fontSize: AppTokens.fontSizeBody,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                             const Divider(height: AppTokens.spacingLg),
                             SelectableText(

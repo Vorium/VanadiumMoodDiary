@@ -96,8 +96,11 @@ void main() {
       ]) {
         final encoded = link.encode();
         final decoded = NotificationDeepLink.parse(encoded);
-        expect(decoded, equals(link),
-            reason: 'encode→parse 圆环失败: $link → $encoded → $decoded',);
+        expect(
+          decoded,
+          equals(link),
+          reason: 'encode→parse 圆环失败: $link → $encoded → $decoded',
+        );
       }
     });
   });
@@ -124,8 +127,11 @@ void main() {
         NotificationDeepLink.assessment('phq9'),
         NotificationDeepLink.safetyAlert(99),
       ]) {
-        expect(link.encode().length, lessThan(200),
-            reason: '${link.encode()} 太长',);
+        expect(
+          link.encode().length,
+          lessThan(200),
+          reason: '${link.encode()} 太长',
+        );
       }
     });
   });

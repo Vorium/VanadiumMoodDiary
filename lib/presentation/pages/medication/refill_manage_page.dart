@@ -73,16 +73,21 @@ class RefillManagePage extends ConsumerWidget {
   }
 
   Widget _buildBody(
-      BuildContext context, WidgetRef ref, List<MedicationEntity> meds,) {
+    BuildContext context,
+    WidgetRef ref,
+    List<MedicationEntity> meds,
+  ) {
     final now = DateTime.now();
 
     // 给每种药计算状态
     final rows = meds
-        .map((m) => _Row(
-              med: m,
-              status: _statusFor(m, now),
-              daysUntil: _daysUntilRefill(m, now),
-            ),)
+        .map(
+          (m) => _Row(
+            med: m,
+            status: _statusFor(m, now),
+            daysUntil: _daysUntilRefill(m, now),
+          ),
+        )
         .toList()
       ..sort((a, b) {
         // 状态优先级：已过期 > 提醒中 > 已设 > 未设置

@@ -75,9 +75,8 @@ class MedicationCalendarPage extends ConsumerWidget {
                 ButtonSegment(value: 90, label: Text('90 天')),
               ],
               selected: {days},
-              onSelectionChanged: (s) => ref
-                  .read(calendarWindowProvider.notifier)
-                  .setDays(s.first),
+              onSelectionChanged: (s) =>
+                  ref.read(calendarWindowProvider.notifier).setDays(s.first),
             ),
           ),
 
@@ -168,11 +167,13 @@ class MedicationCalendarPage extends ConsumerWidget {
       for (int i = 0; i < days; i++) {
         final day = startDay.add(Duration(days: i));
         final actual = medBuckets[day] ?? 0;
-        cells.add(_Cell(
-          day: day,
-          actual: actual,
-          expected: expectedPerDay,
-        ),);
+        cells.add(
+          _Cell(
+            day: day,
+            actual: actual,
+            expected: expectedPerDay,
+          ),
+        );
       }
       rows.add(_MedRow(med: m, cells: cells));
     }
@@ -211,8 +212,11 @@ class _Cell {
   final DateTime day;
   final int actual;
   final int expected;
-  const _Cell(
-      {required this.day, required this.actual, required this.expected,});
+  const _Cell({
+    required this.day,
+    required this.actual,
+    required this.expected,
+  });
   double get ratio {
     if (expected == 0) return 0;
     return actual / expected;

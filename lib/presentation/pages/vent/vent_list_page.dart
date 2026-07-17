@@ -149,7 +149,8 @@ class _EntryCard extends StatelessWidget {
                 entry.hasAudio ? AppTokens.primaryLight : AppTokens.divider,
             child: Icon(
               entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
-              color: entry.hasAudio ? AppTokens.primary : AppTokens.textSecondary,
+              color:
+                  entry.hasAudio ? AppTokens.primary : AppTokens.textSecondary,
               size: 20,
             ),
           ),
@@ -198,7 +199,9 @@ class _EntryCard extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(
-      BuildContext context, VentEntryEntity entry,) async {
+    BuildContext context,
+    VentEntryEntity entry,
+  ) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(

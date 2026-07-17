@@ -51,8 +51,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         if (activeMeds.isNotEmpty)
           Card(
             child: ListTile(
-              leading: const Icon(Icons.calendar_view_month,
-                  color: AppTokens.primary,),
+              leading: const Icon(
+                Icons.calendar_view_month,
+                color: AppTokens.primary,
+              ),
               title: const Text('用药日历'),
               subtitle: const Text('医生视角依从性热力图 · 7/30/90 天'),
               trailing: const Icon(Icons.chevron_right),
@@ -343,8 +345,10 @@ class _MedicationRow extends StatelessWidget {
             ),
             if (!isStopped)
               IconButton(
-                icon: const Icon(Icons.event_available_outlined,
-                    color: AppTokens.primary,),
+                icon: const Icon(
+                  Icons.event_available_outlined,
+                  color: AppTokens.primary,
+                ),
                 tooltip: '设置续方',
                 onPressed: onEditRefill,
               ),
@@ -398,8 +402,10 @@ class _MedicationRow extends StatelessWidget {
     final times = med.times;
     if (times.isEmpty) return dosage;
     final timesStr = times
-        .map((t) =>
-            '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',)
+        .map(
+          (t) =>
+              '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',
+        )
         .join(' / ');
     return '$dosage · $timesStr';
   }

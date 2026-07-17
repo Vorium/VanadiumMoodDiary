@@ -97,13 +97,15 @@ void main() {
 
   testWidgets('有文字条目：显示预览（前 80 字内）', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap([
-      VentEntryEntity(
-        id: 1,
-        timestamp: DateTime(2026, 7, 15, 10, 30),
-        contentText: '今天有点累，先说一下吧',
-      ),
-    ]),);
+    await tester.pumpWidget(
+      _wrap([
+        VentEntryEntity(
+          id: 1,
+          timestamp: DateTime(2026, 7, 15, 10, 30),
+          contentText: '今天有点累，先说一下吧',
+        ),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('今天有点累，先说一下吧'), findsOneWidget);
@@ -113,14 +115,16 @@ void main() {
 
   testWidgets('有 audio 条目：显示 mic 图标 + 时长', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap([
-      VentEntryEntity(
-        id: 1,
-        timestamp: DateTime(2026, 7, 15, 10, 30),
-        audioPath: '/fake/voice.m4a',
-        audioDurationSec: 65,
-      ),
-    ]),);
+    await tester.pumpWidget(
+      _wrap([
+        VentEntryEntity(
+          id: 1,
+          timestamp: DateTime(2026, 7, 15, 10, 30),
+          audioPath: '/fake/voice.m4a',
+          audioDurationSec: 65,
+        ),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     // audio 条目的预览文字 = "🎙️ 语音"
@@ -131,15 +135,17 @@ void main() {
 
   testWidgets('混合条目：显示文字预览 + mic 图标', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap([
-      VentEntryEntity(
-        id: 1,
-        timestamp: DateTime(2026, 7, 15, 10, 30),
-        contentText: '这段录音 + 文字',
-        audioPath: '/fake/voice.m4a',
-        audioDurationSec: 30,
-      ),
-    ]),);
+    await tester.pumpWidget(
+      _wrap([
+        VentEntryEntity(
+          id: 1,
+          timestamp: DateTime(2026, 7, 15, 10, 30),
+          contentText: '这段录音 + 文字',
+          audioPath: '/fake/voice.m4a',
+          audioDurationSec: 30,
+        ),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     // 文字预览
@@ -152,13 +158,15 @@ void main() {
     _setBigView(tester);
     final longText = '一' * 100; // 100 个字
     final displayText = '${'一' * 80}…';
-    await tester.pumpWidget(_wrap([
-      VentEntryEntity(
-        id: 1,
-        timestamp: DateTime(2026, 7, 15, 10, 30),
-        contentText: longText,
-      ),
-    ]),);
+    await tester.pumpWidget(
+      _wrap([
+        VentEntryEntity(
+          id: 1,
+          timestamp: DateTime(2026, 7, 15, 10, 30),
+          contentText: longText,
+        ),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text(displayText), findsOneWidget);
@@ -166,23 +174,25 @@ void main() {
 
   testWidgets('多条目：按列表顺序渲染（DB 已按时间倒序）', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap([
-      VentEntryEntity(
-        id: 1,
-        timestamp: DateTime(2026, 7, 15, 10, 0),
-        contentText: '第一条',
-      ),
-      VentEntryEntity(
-        id: 2,
-        timestamp: DateTime(2026, 7, 15, 11, 0),
-        contentText: '第二条',
-      ),
-      VentEntryEntity(
-        id: 3,
-        timestamp: DateTime(2026, 7, 15, 12, 0),
-        contentText: '第三条',
-      ),
-    ]),);
+    await tester.pumpWidget(
+      _wrap([
+        VentEntryEntity(
+          id: 1,
+          timestamp: DateTime(2026, 7, 15, 10, 0),
+          contentText: '第一条',
+        ),
+        VentEntryEntity(
+          id: 2,
+          timestamp: DateTime(2026, 7, 15, 11, 0),
+          contentText: '第二条',
+        ),
+        VentEntryEntity(
+          id: 3,
+          timestamp: DateTime(2026, 7, 15, 12, 0),
+          contentText: '第三条',
+        ),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('第一条'), findsOneWidget);

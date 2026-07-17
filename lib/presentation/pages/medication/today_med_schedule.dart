@@ -123,11 +123,13 @@ class TodayMedSchedule extends ConsumerWidget {
     final entries = <_ScheduleEntry>[];
     for (final m in activeMeds) {
       for (final t in m.times) {
-        entries.add(_ScheduleEntry(
-          med: m,
-          time: t,
-          done: todayMedIds.contains(m.id),
-        ),);
+        entries.add(
+          _ScheduleEntry(
+            med: m,
+            time: t,
+            done: todayMedIds.contains(m.id),
+          ),
+        );
       }
     }
     // 按时间排序

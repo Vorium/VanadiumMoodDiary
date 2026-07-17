@@ -116,29 +116,34 @@ void main() {
     test('isValidScore 1-5 通过', () {
       for (int s = 1; s <= 5; s++) {
         expect(
-            MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: s)
-                .isValidScore,
-            isTrue,);
+          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: s)
+              .isValidScore,
+          isTrue,
+        );
       }
     });
 
     test('isValidScore 0 / 6 / -1 / 99 不通过', () {
       expect(
-          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 0)
-              .isValidScore,
-          isFalse,);
+        MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 0)
+            .isValidScore,
+        isFalse,
+      );
       expect(
-          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 6)
-              .isValidScore,
-          isFalse,);
+        MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 6)
+            .isValidScore,
+        isFalse,
+      );
       expect(
-          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: -1)
-              .isValidScore,
-          isFalse,);
+        MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: -1)
+            .isValidScore,
+        isFalse,
+      );
       expect(
-          MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 99)
-              .isValidScore,
-          isFalse,);
+        MoodEntryEntity(id: 1, timestamp: DateTime(2026), score: 99)
+            .isValidScore,
+        isFalse,
+      );
     });
 
     test('copyWith 基础字段', () {
@@ -189,9 +194,17 @@ void main() {
 
     test('tagsJson 不同则不等', () {
       final a = MoodEntryEntity(
-          id: 1, timestamp: DateTime(2026), score: 3, tagsJson: '[]',);
+        id: 1,
+        timestamp: DateTime(2026),
+        score: 3,
+        tagsJson: '[]',
+      );
       final b = MoodEntryEntity(
-          id: 1, timestamp: DateTime(2026), score: 3, tagsJson: '["焦虑"]',);
+        id: 1,
+        timestamp: DateTime(2026),
+        score: 3,
+        tagsJson: '["焦虑"]',
+      );
       expect(a, isNot(equals(b)));
     });
   });
@@ -202,12 +215,14 @@ void main() {
       addTearDown(() async => await db.close());
 
       final ts = DateTime(2026, 7, 15, 21, 30);
-      await db.insertMoodEntry(MoodEntriesCompanion.insert(
-        timestamp: ts,
-        score: 4,
-        tagsJson: const Value('["平静","能量高"]'),
-        note: const Value('今天不错'),
-      ),);
+      await db.insertMoodEntry(
+        MoodEntriesCompanion.insert(
+          timestamp: ts,
+          score: 4,
+          tagsJson: const Value('["平静","能量高"]'),
+          note: const Value('今天不错'),
+        ),
+      );
 
       final rows = await db.watchMoodEntries().first;
       expect(rows.length, 1);

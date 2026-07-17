@@ -54,8 +54,11 @@ Future<void> _pumpSetup(WidgetTester tester) async {
 Future<void> _passConsent(WidgetTester tester) async {
   // 勾 3 个 checkbox
   final checkboxes = find.byType(Checkbox);
-  expect(checkboxes, findsNWidgets(3),
-      reason: 'P0-6: setup step 0 (consent) 应该有 3 个 Checkbox');
+  expect(
+    checkboxes,
+    findsNWidgets(3),
+    reason: 'P0-6: setup step 0 (consent) 应该有 3 个 Checkbox',
+  );
   for (var i = 0; i < 3; i++) {
     await tester.tap(checkboxes.at(i));
     await tester.pumpAndSettle();
@@ -66,8 +69,11 @@ Future<void> _passConsent(WidgetTester tester) async {
   await tester.tap(startBtn);
   await tester.pumpAndSettle();
   // 现在应该到 step 1 (welcome) — "你好,我是慢病管家"
-  expect(find.text('你好，我是慢病管家'), findsOneWidget,
-      reason: 'P0-6: 勾完 3 个法律同意后,应该进入 welcome 步骤');
+  expect(
+    find.text('你好，我是慢病管家'),
+    findsOneWidget,
+    reason: 'P0-6: 勾完 3 个法律同意后,应该进入 welcome 步骤',
+  );
 }
 
 void main() {

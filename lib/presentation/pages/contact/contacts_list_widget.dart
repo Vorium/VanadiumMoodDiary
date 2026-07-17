@@ -53,8 +53,10 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                       ),
                     )
                   : IconButton(
-                      icon: const Icon(Icons.delete_outline,
-                          color: AppTokens.error,),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: AppTokens.error,
+                      ),
                       onPressed: () => _deleteContact(contacts[i].id),
                     ),
             ),
@@ -128,7 +130,10 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         if (phone.isEmpty) return;
                         if (!PhoneValidator.isValid(phone)) {
                           ScaffoldMessenger.of(ctx).showSnackBar(
-                            AppSnackBar.info(context, AppLocalizations.of(context).snackbarPhoneInvalid),
+                            AppSnackBar.info(
+                                context,
+                                AppLocalizations.of(context)
+                                    .snackbarPhoneInvalid,),
                           );
                           return;
                         }
@@ -145,7 +150,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         } catch (e) {
                           if (ctx.mounted) {
                             ScaffoldMessenger.of(ctx).showSnackBar(
-                              AppSnackBar.error(context, action: '保存', error: e),
+                              AppSnackBar.error(context,
+                                  action: '保存', error: e,),
                             );
                             setLocal(() => saving = false);
                           }

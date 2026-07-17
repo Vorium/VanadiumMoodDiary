@@ -48,8 +48,7 @@ class FadeIn extends StatefulWidget {
   State<FadeIn> createState() => _FadeInState();
 }
 
-class _FadeInState extends State<FadeIn>
-    with SingleTickerProviderStateMixin {
+class _FadeInState extends State<FadeIn> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _t;
   Timer? _delayTimer;

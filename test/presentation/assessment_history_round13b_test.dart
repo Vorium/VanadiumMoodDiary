@@ -27,8 +27,11 @@ Widget _wrap({List<CheckInEntity> records = const []}) {
   );
 }
 
-CheckInEntity _phq9(
-    {required int total, required DateTime at, List<int>? scores,}) {
+CheckInEntity _phq9({
+  required int total,
+  required DateTime at,
+  List<int>? scores,
+}) {
   return CheckInEntity(
     id: at.millisecondsSinceEpoch,
     timestamp: at,
@@ -68,9 +71,13 @@ void main() {
 
   testWidgets('只有 1 次评估 → 不画图，显示提示', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 5, at: DateTime(2026, 7, 10)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 5, at: DateTime(2026, 7, 10)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     expect(find.text('评估历史'), findsOneWidget);
@@ -79,10 +86,14 @@ void main() {
 
   testWidgets('有 2 次 PHQ-9 → 显示折线图 + 完整记录', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 5, at: DateTime(2026, 7, 1)),
-      _phq9(total: 12, at: DateTime(2026, 7, 15)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 5, at: DateTime(2026, 7, 1)),
+          _phq9(total: 12, at: DateTime(2026, 7, 15)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // 顶部统计
@@ -100,12 +111,16 @@ void main() {
 
   testWidgets('PHQ-9 + GAD-7 混合 → 2 张图', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 5, at: DateTime(2026, 7, 1)),
-      _phq9(total: 10, at: DateTime(2026, 7, 15)),
-      _gad7(total: 8, at: DateTime(2026, 7, 5)),
-      _gad7(total: 15, at: DateTime(2026, 7, 20)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 5, at: DateTime(2026, 7, 1)),
+          _phq9(total: 10, at: DateTime(2026, 7, 15)),
+          _gad7(total: 8, at: DateTime(2026, 7, 5)),
+          _gad7(total: 15, at: DateTime(2026, 7, 20)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // 2 张图标题（每个量表的 chart + history list 项）
@@ -115,10 +130,14 @@ void main() {
 
   testWidgets('上次对比：diff 徽章', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 5, at: DateTime(2026, 7, 1)),
-      _phq9(total: 10, at: DateTime(2026, 7, 15)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 5, at: DateTime(2026, 7, 1)),
+          _phq9(total: 10, at: DateTime(2026, 7, 15)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // 10 - 5 = 5，应有向上的箭头 + 5
@@ -127,9 +146,13 @@ void main() {
 
   testWidgets('严重度：高分显示"重度" + 红色', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 25, at: DateTime(2026, 7, 1)), // 重度（> 75% × 27 = 20.25）
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 25, at: DateTime(2026, 7, 1)), // 重度（> 75% × 27 = 20.25）
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     expect(find.text('重度'), findsWidgets);
@@ -137,9 +160,13 @@ void main() {
 
   testWidgets('严重度：低分显示"正常"', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 3, at: DateTime(2026, 7, 1)), // 正常（< 25% × 27 = 6.75）
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 3, at: DateTime(2026, 7, 1)), // 正常（< 25% × 27 = 6.75）
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     expect(find.text('正常'), findsWidgets);
@@ -148,9 +175,13 @@ void main() {
   // v0.14 fix (Bug C): 严重度按临床标准，不是百分比
   testWidgets('严重度：PHQ-9 score=5 → "轻度"（百分比会错判为"正常"）', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 5, at: DateTime(2026, 7, 1)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 5, at: DateTime(2026, 7, 1)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // PHQ-9 临床: 0-4=正常, 5-9=轻度
@@ -159,9 +190,13 @@ void main() {
 
   testWidgets('严重度：PHQ-9 score=20 → "重度"（百分比会错判为"中度"）', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _phq9(total: 20, at: DateTime(2026, 7, 1)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _phq9(total: 20, at: DateTime(2026, 7, 1)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // PHQ-9 临床: 20+ = 重度
@@ -170,9 +205,13 @@ void main() {
 
   testWidgets('严重度：GAD-7 score=5 → "轻度"（百分比 23.8% 会错判为"正常"）', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _gad7(total: 5, at: DateTime(2026, 7, 1)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _gad7(total: 5, at: DateTime(2026, 7, 1)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // GAD-7 临床: 5-9 = 轻度
@@ -181,9 +220,13 @@ void main() {
 
   testWidgets('严重度：GAD-7 score=15 → "重度"（百分比 71.4% 会错判为"中度"）', (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(records: [
-      _gad7(total: 15, at: DateTime(2026, 7, 1)),
-    ],),);
+    await tester.pumpWidget(
+      _wrap(
+        records: [
+          _gad7(total: 15, at: DateTime(2026, 7, 1)),
+        ],
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     // GAD-7 临床: 15+ = 重度

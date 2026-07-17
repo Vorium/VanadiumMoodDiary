@@ -47,11 +47,13 @@ void main() {
   });
 
   Future<void> setupProfile({required String name}) async {
-    await db.upsertUserProfile(UserProfilesCompanion.insert(
-      userName: name,
-      checkInCycleHours: const Value(48),
-      firstLaunchAt: DateTime(2026, 1, 1),
-    ),);
+    await db.upsertUserProfile(
+      UserProfilesCompanion.insert(
+        userName: name,
+        checkInCycleHours: const Value(48),
+        firstLaunchAt: DateTime(2026, 1, 1),
+      ),
+    );
   }
 
   Future<void> setupContact({required String phone}) async {
@@ -59,10 +61,12 @@ void main() {
   }
 
   Future<void> checkInAt(DateTime at) async {
-    await db.insertCheckIn(CheckInsCompanion.insert(
-      timestamp: at,
-      type: 'normal',
-    ),);
+    await db.insertCheckIn(
+      CheckInsCompanion.insert(
+        timestamp: at,
+        type: 'normal',
+      ),
+    );
   }
 
   group('SafetyWatch 关闭时', () {
@@ -304,11 +308,13 @@ class StubNotificationService implements NotificationService {
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
   }) async {
-    alertsShown.add((
-      userName: userName,
-      daysWithoutCheckIn: daysWithoutCheckIn,
-      lastCheckIn: lastCheckIn,
-    ),);
+    alertsShown.add(
+      (
+        userName: userName,
+        daysWithoutCheckIn: daysWithoutCheckIn,
+        lastCheckIn: lastCheckIn,
+      ),
+    );
   }
 
   // 其它方法 stub 掉,测试不调

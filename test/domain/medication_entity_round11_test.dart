@@ -74,10 +74,12 @@ void main() {
     });
 
     test('timesJson 解析为 List<HourMinute>', () {
-      final row = _driftRow(times: const [
-        HourMinute(hour: 8, minute: 0),
-        HourMinute(hour: 20, minute: 30),
-      ],);
+      final row = _driftRow(
+        times: const [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 30),
+        ],
+      );
       final entity = row.toEntity();
       expect(entity.times.length, 2);
       expect(entity.times[0].hour, 8);
@@ -126,10 +128,12 @@ void main() {
     });
 
     test('times 序列化为 JSON', () {
-      final entity = _entity(times: const [
-        HourMinute(hour: 8, minute: 0),
-        HourMinute(hour: 20, minute: 30),
-      ],);
+      final entity = _entity(
+        times: const [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 30),
+        ],
+      );
       final row = entity.toDriftRow();
       expect(row.timesJson, '[{"h":8,"m":0},{"h":20,"m":30}]');
     });
@@ -315,13 +319,15 @@ void main() {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(() async => await db.close());
 
-      await db.insertMedication(MedicationsCompanion.insert(
-        name: '氟西汀',
-        dosage: 40,
-        dosageUnit: 'mg',
-        timesJson: const Value('[{"h":8,"m":0},{"h":20,"m":0}]'),
-        startDate: DateTime(2026, 1, 1),
-      ),);
+      await db.insertMedication(
+        MedicationsCompanion.insert(
+          name: '氟西汀',
+          dosage: 40,
+          dosageUnit: 'mg',
+          timesJson: const Value('[{"h":8,"m":0},{"h":20,"m":0}]'),
+          startDate: DateTime(2026, 1, 1),
+        ),
+      );
 
       final rows = await db.watchAllMedicationsIncludingInactive().first;
       expect(rows.length, 1);

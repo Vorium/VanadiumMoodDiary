@@ -115,7 +115,8 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         if (!hasPerm) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              AppSnackBar.info(context, AppLocalizations.of(context).snackbarNeedMicPermission),
+              AppSnackBar.info(context,
+                  AppLocalizations.of(context).snackbarNeedMicPermission,),
             );
           }
           return;
@@ -242,13 +243,15 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     final hasAudio = _audioPath != null;
     if (!hasText && !hasAudio) {
       ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(context, AppLocalizations.of(context).snackbarEmptyVent),
+        AppSnackBar.info(
+            context, AppLocalizations.of(context).snackbarEmptyVent,),
       );
       return;
     }
     if (_isRecording) {
       ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(context, AppLocalizations.of(context).snackbarStopRecording),
+        AppSnackBar.info(
+            context, AppLocalizations.of(context).snackbarStopRecording,),
       );
       return;
     }

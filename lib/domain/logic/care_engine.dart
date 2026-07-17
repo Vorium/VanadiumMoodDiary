@@ -142,7 +142,9 @@ class CareEngine {
 
   /// 最近 3 天都在 22 点后打卡
   static bool _isLateCheckInHabit(
-      List<CheckInEntity> sortedDesc, DateTime now,) {
+    List<CheckInEntity> sortedDesc,
+    DateTime now,
+  ) {
     final today = DateTime(now.year, now.month, now.day);
     final lateDays = <DateTime>{};
     for (final c in sortedDesc) {
@@ -172,10 +174,12 @@ class CareEngine {
         continue;
       }
       // 检查这一天有没有打过卡
-      final hasCheckIn = sortedDesc.any((c) =>
-          c.timestamp.year == day.year &&
-          c.timestamp.month == day.month &&
-          c.timestamp.day == day.day,);
+      final hasCheckIn = sortedDesc.any(
+        (c) =>
+            c.timestamp.year == day.year &&
+            c.timestamp.month == day.month &&
+            c.timestamp.day == day.day,
+      );
       if (!hasCheckIn) return true;
     }
     return false;
@@ -196,11 +200,13 @@ class CareEngine {
     // 检查最近 7 天每天都有打卡
     for (int i = 0; i < 7; i++) {
       final day = today.subtract(Duration(days: i));
-      final hasOnDay = sortedDesc.any((c) =>
-          c.timestamp.year == day.year &&
-          c.timestamp.month == day.month &&
-          c.timestamp.day == day.day &&
-          c.timestamp.hour < 22,);
+      final hasOnDay = sortedDesc.any(
+        (c) =>
+            c.timestamp.year == day.year &&
+            c.timestamp.month == day.month &&
+            c.timestamp.day == day.day &&
+            c.timestamp.hour < 22,
+      );
       if (!hasOnDay) return false;
     }
     return true;

@@ -153,13 +153,15 @@ void main() {
       _setBigView(tester);
       final meds = [
         _med(
-            id: 1,
-            name: '正常药',
-            refillAt: DateTime.now().add(const Duration(days: 30)),),
+          id: 1,
+          name: '正常药',
+          refillAt: DateTime.now().add(const Duration(days: 30)),
+        ),
         _med(
-            id: 2,
-            name: '过期药',
-            refillAt: DateTime.now().subtract(const Duration(days: 3)),),
+          id: 2,
+          name: '过期药',
+          refillAt: DateTime.now().subtract(const Duration(days: 3)),
+        ),
       ];
       await tester.pumpWidget(_wrap(meds: meds));
       await tester.pumpAndSettle();
@@ -180,7 +182,9 @@ void main() {
     testWidgets('点击行 → 跳到编辑对话框', (tester) async {
       _setBigView(tester);
       final med = _med(
-          name: '氟西汀', refillAt: DateTime.now().add(const Duration(days: 30)),);
+        name: '氟西汀',
+        refillAt: DateTime.now().add(const Duration(days: 30)),
+      );
       await tester.pumpWidget(_wrap(meds: [med]));
       await tester.pumpAndSettle();
 

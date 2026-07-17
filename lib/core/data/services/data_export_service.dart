@@ -186,8 +186,12 @@ class DataExportService {
           if (c is! Map) continue;
           final m = c;
           final name = _validateString(m['name'], 'contact.name', maxLen: 50);
-          final phone = _validateString(m['phone'], 'contact.phone',
-              maxLen: 20, pattern: RegExp(r'^\+?\d{6,20}$'),);
+          final phone = _validateString(
+            m['phone'],
+            'contact.phone',
+            maxLen: 20,
+            pattern: RegExp(r'^\+?\d{6,20}$'),
+          );
           if (name == null || phone == null) continue;
           await _db.insertContact(
             ContactsCompanion.insert(
@@ -216,9 +220,14 @@ class DataExportService {
               name: name,
               dosage: dosage,
               dosageUnit: unit,
-              timesJson: Value(_validateString(m['timesJson'], 'med.timesJson',
-                      maxLen: 1000,) ??
-                  '[]',),
+              timesJson: Value(
+                _validateString(
+                      m['timesJson'],
+                      'med.timesJson',
+                      maxLen: 1000,
+                    ) ??
+                    '[]',
+              ),
               startDate: start,
               endDate: Value(_validateDate(m['endDate'])),
               isActive: Value(m['isActive'] as bool? ?? true),
@@ -240,7 +249,8 @@ class DataExportService {
               type: type,
               medicationId: Value(_validateInt(m['medicationId'], null)),
               note: Value(
-                  _validateString(m['note'], 'checkIn.note', maxLen: 10000),),
+                _validateString(m['note'], 'checkIn.note', maxLen: 10000),
+              ),
             ),
           );
           checkInCount++;
@@ -283,7 +293,8 @@ class DataExportService {
                 score: score,
                 tagsJson: Value(tags),
                 note: Value(
-                    _validateString(m['note'], 'mood.note', maxLen: 10000),),
+                  _validateString(m['note'], 'mood.note', maxLen: 10000),
+                ),
               ),
             );
             moodEntryCount++;
@@ -310,9 +321,12 @@ class DataExportService {
                 contentText: Value(text),
                 // audioPath 永远 null — 旧路径在重装后失效
                 audioDurationSec: Value(
-                    _validateIntOr(m['audioDurationSec'], 0, min: 0, max: 86400),),
+                  _validateIntOr(m['audioDurationSec'], 0, min: 0, max: 86400),
+                ),
                 audioSizeBytes: Value(
-                    _validateIntOr(m['audioSizeBytes'], 0, min: 0, max: 1073741824),), // 1GB
+                  _validateIntOr(m['audioSizeBytes'], 0,
+                      min: 0, max: 1073741824,),
+                ), // 1GB
               ),
             );
             ventEntryCount++;
@@ -339,8 +353,12 @@ class DataExportService {
 
   // ===== 校验辅助 =====
 
-  static String? _validateString(dynamic v, String field,
-      {int maxLen = 1000, RegExp? pattern,}) {
+  static String? _validateString(
+    dynamic v,
+    String field, {
+    int maxLen = 1000,
+    RegExp? pattern,
+  }) {
     if (v == null) return null;
     if (v is! String) return null;
     if (v.isEmpty) return null;

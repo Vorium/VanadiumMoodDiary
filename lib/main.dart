@@ -227,8 +227,11 @@ class _MigrationAbortedApp extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.pause_circle_outline,
-                    size: 64, color: Colors.orange,),
+                Icon(
+                  Icons.pause_circle_outline,
+                  size: 64,
+                  color: Colors.orange,
+                ),
                 SizedBox(height: 16),
                 Text(
                   '升级已取消',

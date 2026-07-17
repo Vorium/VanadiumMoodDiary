@@ -142,16 +142,24 @@ class _SummaryStrip extends StatelessWidget {
               child: _Stat(
                 label: '最近 PHQ-9',
                 value: latestPhq9 == null ? '—' : '${latestPhq9.total}',
-                sub: latestPhq9 == null ? '未做' : _severityStyle('phq9', latestPhq9.total).label,
-                severity: latestPhq9 == null ? null : _severityStyle('phq9', latestPhq9.total).color,
+                sub: latestPhq9 == null
+                    ? '未做'
+                    : _severityStyle('phq9', latestPhq9.total).label,
+                severity: latestPhq9 == null
+                    ? null
+                    : _severityStyle('phq9', latestPhq9.total).color,
               ),
             ),
             Expanded(
               child: _Stat(
                 label: '最近 GAD-7',
                 value: latestGad7 == null ? '—' : '${latestGad7.total}',
-                sub: latestGad7 == null ? '未做' : _severityStyle('gad7', latestGad7.total).label,
-                severity: latestGad7 == null ? null : _severityStyle('gad7', latestGad7.total).color,
+                sub: latestGad7 == null
+                    ? '未做'
+                    : _severityStyle('gad7', latestGad7.total).label,
+                severity: latestGad7 == null
+                    ? null
+                    : _severityStyle('gad7', latestGad7.total).color,
               ),
             ),
           ],
@@ -227,15 +235,14 @@ class _ChartCard extends StatelessWidget {
           leading: Icon(_iconForScale(scaleId), color: AppTokens.primary),
           title: Text(_nameForScale(scaleId)),
           subtitle: Text(
-            records.isEmpty
-                ? '还没有数据'
-                : '只有 1 次评估，无法画趋势 — 至少需要 2 次',
+            records.isEmpty ? '还没有数据' : '只有 1 次评估，无法画趋势 — 至少需要 2 次',
           ),
         ),
       );
     }
     // 排序：最早在前（折线图从左到右时间正序）
-    final sorted = [...records]..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    final sorted = [...records]
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
     final maxScore = _maxScoreForScale(scaleId);
 
     return Card(
@@ -373,9 +380,7 @@ class _ChartCard extends StatelessWidget {
       ),
     );
   }
-
 }
-
 
 class _HistoryList extends StatelessWidget {
   final List<AssessmentRecord> records;

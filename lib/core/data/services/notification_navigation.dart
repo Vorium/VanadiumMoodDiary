@@ -64,19 +64,26 @@ class NotificationNavigation {
   }) {
     final router = _router;
     if (router == null) {
-      developer.log('⚠️ NotificationNavigation._goInternal: router 未绑定',
-          name: 'NotificationNavigation',);
+      developer.log(
+        '⚠️ NotificationNavigation._goInternal: router 未绑定',
+        name: 'NotificationNavigation',
+      );
       return;
     }
     final path = _pathFor(link);
     if (path == null) return;
     try {
       router.go(path);
-      developer.log('✅ Deep link → $path (fromLaunch=$fromLaunch)',
-          name: 'NotificationNavigation',);
+      developer.log(
+        '✅ Deep link → $path (fromLaunch=$fromLaunch)',
+        name: 'NotificationNavigation',
+      );
     } catch (e) {
-      developer.log('❌ Deep link go 失败: $e',
-          name: 'NotificationNavigation', error: e,);
+      developer.log(
+        '❌ Deep link go 失败: $e',
+        name: 'NotificationNavigation',
+        error: e,
+      );
     }
   }
 

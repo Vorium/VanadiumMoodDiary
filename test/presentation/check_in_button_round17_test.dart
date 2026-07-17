@@ -73,7 +73,9 @@ void main() {
       expect(AppTokens.durSlow.inMilliseconds, 500);
     });
 
-    test('curveStandard / curveDecelerate / curveAccelerate / curveDelight 都是 Curve', () {
+    test(
+        'curveStandard / curveDecelerate / curveAccelerate / curveDelight 都是 Curve',
+        () {
       expect(AppTokens.curveStandard, isA<Curve>());
       expect(AppTokens.curveDecelerate, isA<Curve>());
       expect(AppTokens.curveAccelerate, isA<Curve>());

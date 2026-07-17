@@ -283,10 +283,11 @@ void main() {
         date: DateTime(2026, 7, 15),
         checkIns: [
           ci(
-              id: 1,
-              timestamp: DateTime(2026, 7, 15, 22),
-              type: 'temp',
-              note: '{"name":"晚"}',),
+            id: 1,
+            timestamp: DateTime(2026, 7, 15, 22),
+            type: 'temp',
+            note: '{"name":"晚"}',
+          ),
           ci(id: 2, timestamp: DateTime(2026, 7, 15, 8), type: 'normal'),
         ],
         moodEntries: [

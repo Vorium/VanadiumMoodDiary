@@ -43,11 +43,17 @@ void main() {
     test('所有量表的 items / options / totalRange 一致', () {
       for (final s in allScales()) {
         // totalRange = items.length * 3（每题 0-3 分）
-        expect(s.totalRange, s.items.length * 3,
-            reason: '量表 ${s.id} 的 totalRange 与 items 不一致',);
+        expect(
+          s.totalRange,
+          s.items.length * 3,
+          reason: '量表 ${s.id} 的 totalRange 与 items 不一致',
+        );
         // options 必须是 0..3 四个值
-        expect(s.options.keys.toList()..sort(), [0, 1, 2, 3],
-            reason: '量表 ${s.id} 的 options 不是 0-3',);
+        expect(
+          s.options.keys.toList()..sort(),
+          [0, 1, 2, 3],
+          reason: '量表 ${s.id} 的 options 不是 0-3',
+        );
       }
     });
   });

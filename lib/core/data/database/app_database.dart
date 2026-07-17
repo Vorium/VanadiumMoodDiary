@@ -204,7 +204,9 @@ class AppDatabase extends _$AppDatabase {
     return (select(reportHistories)
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.generatedAt, mode: OrderingMode.desc,),
+                  expression: t.generatedAt,
+                  mode: OrderingMode.desc,
+                ),
           ]))
         .watch();
   }
@@ -226,7 +228,9 @@ class AppDatabase extends _$AppDatabase {
     return (select(reportHistories)
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.generatedAt, mode: OrderingMode.desc,),
+                  expression: t.generatedAt,
+                  mode: OrderingMode.desc,
+                ),
           ]))
         .get();
   }

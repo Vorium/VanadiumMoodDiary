@@ -108,15 +108,13 @@ void main() {
       expect(t.type, CareTriggerType.weekendMissed);
     });
 
-    test('_isWeekPerfect: 7 天前有 22 点后打卡,但最近 7 天 22 点前 → weekPerfect',
-        () {
+    test('_isWeekPerfect: 7 天前有 22 点后打卡,但最近 7 天 22 点前 → weekPerfect', () {
       // 8 天前 23 点打卡 (P3 fix 应该忽略)
       final longAgo = now.subtract(const Duration(days: 8, hours: -23 + 8));
       // 最近 7 天每天 21 点打卡
       final checkIns = <CheckInEntity>[
         _checkIn(longAgo), // 8 天前 23 点 → 被忽略
-        for (int i = 0; i < 7; i++)
-          _checkIn(DateTime(2026, 7, 17 - i, 21, 0)),
+        for (int i = 0; i < 7; i++) _checkIn(DateTime(2026, 7, 17 - i, 21, 0)),
       ];
       final t = CareEngine.evaluate(checkIns: checkIns, now: now);
       expect(t.type, CareTriggerType.weekPerfect);
@@ -151,8 +149,7 @@ void main() {
       expect(t.type, CareTriggerType.secondDayMissed);
     });
 
-    test('secondDayMissed: 36h 后但 now.hour < 10 (早上 8 点) → 不触发',
-        () {
+    test('secondDayMissed: 36h 后但 now.hour < 10 (早上 8 点) → 不触发', () {
       // 36h 前打卡,现在 8:00
       final morningNow = DateTime(2026, 7, 17, 8, 0);
       final t = CareEngine.evaluate(

@@ -38,7 +38,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('${AppLocalizations.of(context).settingsMedReport}（近 ${widget.windowDays} 天）'),
+          title: Text(
+              '${AppLocalizations.of(context).settingsMedReport}（近 ${widget.windowDays} 天）',),
           actions: [
             IconButton(
               icon: const Icon(Icons.close),

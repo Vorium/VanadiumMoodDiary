@@ -74,8 +74,10 @@ class NotificationService implements NotificationSender {
     final launchDetails = await _plugin.getNotificationAppLaunchDetails();
     if (launchDetails?.didNotificationLaunchApp ?? false) {
       final payload = launchDetails?.notificationResponse?.payload;
-      developer.log('🚀 App 由通知拉起, payload=$payload',
-          name: 'NotificationService',);
+      developer.log(
+        '🚀 App 由通知拉起, payload=$payload',
+        name: 'NotificationService',
+      );
       NotificationNavigation.setLaunchPayload(payload);
     }
 
@@ -106,8 +108,10 @@ class NotificationService implements NotificationSender {
 
   /// flutter_local_notifications 回调
   static void _onResponse(NotificationResponse response) {
-    developer.log('👆 通知被点击, payload=${response.payload}',
-        name: 'NotificationService',);
+    developer.log(
+      '👆 通知被点击, payload=${response.payload}',
+      name: 'NotificationService',
+    );
     _defaultOnTap(response.payload);
   }
 
@@ -166,8 +170,10 @@ class NotificationService implements NotificationSender {
       return list.length;
     } catch (e) {
       // web 平台 / 未实现 plugin: pendingNotificationRequests 抛 PlatformException
-      developer.log('⚠️ pendingCount 读取失败（可能 web 端）: $e',
-          name: 'NotificationService',);
+      developer.log(
+        '⚠️ pendingCount 读取失败（可能 web 端）: $e',
+        name: 'NotificationService',
+      );
       return -1;
     }
   }
@@ -177,7 +183,8 @@ class NotificationService implements NotificationSender {
   /// 每次 medications 表变化（增/删/改）时调用。
   /// 用稳定 hash 生成 notification id（避免冲突 + 同一药同一时间复用 id）。
   Future<void> rescheduleMedicationReminders(
-      List<Medication> medications,) async {
+    List<Medication> medications,
+  ) async {
     await init();
 
     // 先取消所有 medication 推送（保留 default + soft）
@@ -328,8 +335,10 @@ class NotificationService implements NotificationSender {
     String? body,
   }) async {
     if (minutes <= 0 || minutes > 1440) {
-      developer.log('⚠️ snoozeOnce: minutes=$minutes 越界（1..1440）',
-          name: 'NotificationService',);
+      developer.log(
+        '⚠️ snoozeOnce: minutes=$minutes 越界（1..1440）',
+        name: 'NotificationService',
+      );
       return;
     }
     await init();
@@ -369,8 +378,10 @@ class NotificationService implements NotificationSender {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
-      developer.log('✅ snooze ${minutes}min 后触发（med=$medicationId）',
-          name: 'NotificationService',);
+      developer.log(
+        '✅ snooze ${minutes}min 后触发（med=$medicationId）',
+        name: 'NotificationService',
+      );
     } catch (e) {
       developer.log('❌ snooze 调度失败: $e', name: 'NotificationService');
     }
@@ -732,8 +743,10 @@ class NotificationService implements NotificationSender {
       );
       developer.log('✅ 角标已更新 = $count', name: 'NotificationService');
     } catch (e) {
-      developer.log('⚠️ updateBadgeCount 失败（不影响功能）: $e',
-          name: 'NotificationService',);
+      developer.log(
+        '⚠️ updateBadgeCount 失败（不影响功能）: $e',
+        name: 'NotificationService',
+      );
     }
   }
 

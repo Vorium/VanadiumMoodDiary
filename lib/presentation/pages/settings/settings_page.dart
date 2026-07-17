@@ -49,7 +49,8 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          _SectionHeader(title: AppLocalizations.of(context).settingsMedication),
+          _SectionHeader(
+              title: AppLocalizations.of(context).settingsMedication,),
           const SizedBox(height: AppTokens.spacingSm),
           medsAsync.when(
             data: (meds) => MedicationsListWidget(meds: meds),
@@ -65,8 +66,10 @@ class SettingsPage extends ConsumerWidget {
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.upload_outlined,
-                      color: AppTokens.primary,),
+                  leading: const Icon(
+                    Icons.upload_outlined,
+                    color: AppTokens.primary,
+                  ),
                   title: const Text('导出数据'),
                   subtitle: const Text('生成 JSON，复制到安全地方'),
                   trailing: const Icon(Icons.chevron_right),
@@ -74,25 +77,32 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.summarize_outlined,
-                      color: AppTokens.primary,),
+                  leading: const Icon(
+                    Icons.summarize_outlined,
+                    color: AppTokens.primary,
+                  ),
                   title: Text(AppLocalizations.of(context).settingsMedReport),
-                  subtitle: Text(AppLocalizations.of(context).settingsMedReportSubtitle),
+                  subtitle: Text(
+                      AppLocalizations.of(context).settingsMedReportSubtitle,),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _chooseAndShowReport(context, ref),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.history, color: AppTokens.primary),
-                  title: Text(AppLocalizations.of(context).settingsReportHistory),
-                  subtitle: Text(AppLocalizations.of(context).settingsReportHistorySubtitle),
+                  title:
+                      Text(AppLocalizations.of(context).settingsReportHistory),
+                  subtitle: Text(AppLocalizations.of(context)
+                      .settingsReportHistorySubtitle,),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showReportHistory(context),
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.download_outlined,
-                      color: AppTokens.primary,),
+                  leading: const Icon(
+                    Icons.download_outlined,
+                    color: AppTokens.primary,
+                  ),
                   title: const Text('导入数据'),
                   subtitle: const Text('从 JSON 恢复（覆盖现有数据）'),
                   trailing: const Icon(Icons.chevron_right),
@@ -210,8 +220,8 @@ class SettingsPage extends ConsumerWidget {
 
           Card(
             child: ListTile(
-              leading:
-                  const Icon(Icons.shield_outlined, color: AppTokens.textSecondary),
+              leading: const Icon(Icons.shield_outlined,
+                  color: AppTokens.textSecondary,),
               title: Text(AppLocalizations.of(context).settingsDisclaimer),
               subtitle: const Text('本应用不提供医疗建议，所有功能仅供参考。'),
             ),
@@ -284,7 +294,8 @@ class SettingsPage extends ConsumerWidget {
                 await Clipboard.setData(ClipboardData(text: json));
                 if (ctx.mounted) {
                   ScaffoldMessenger.of(ctx).showSnackBar(
-                    AppSnackBar.info(context, AppLocalizations.of(context).snackbarCopied),
+                    AppSnackBar.info(
+                        context, AppLocalizations.of(context).snackbarCopied,),
                   );
                 }
               },
@@ -432,7 +443,8 @@ class SettingsPage extends ConsumerWidget {
                       } else {
                         setLocal(() => importing = false);
                         ScaffoldMessenger.of(ctx).showSnackBar(
-                          AppSnackBar.error(context, action: '导入', error: result.error),
+                          AppSnackBar.error(context,
+                              action: '导入', error: result.error,),
                         );
                       }
                     },

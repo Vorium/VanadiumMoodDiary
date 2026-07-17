@@ -47,15 +47,16 @@ Future<void> _pumpSetup(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('P0-6: step 0 显示 3 个 Checkbox + 3 个法律 label',
-      (tester) async {
+  testWidgets('P0-6: step 0 显示 3 个 Checkbox + 3 个法律 label', (tester) async {
     await _pumpSetup(tester);
 
     expect(find.byType(Checkbox), findsNWidgets(3));
     expect(find.text('我已阅读并同意《用户协议》'), findsOneWidget);
     expect(find.text('我已阅读并同意《隐私政策》'), findsOneWidget);
     expect(
-        find.text('我已阅读并同意《敏感个人信息处理同意书》'), findsOneWidget);
+      find.text('我已阅读并同意《敏感个人信息处理同意书》'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('P0-6: 初始 3 checkbox 全 unchecked → 开始设置按钮 disabled',
@@ -70,8 +71,11 @@ void main() {
     final btn = tester.widget<ElevatedButton>(
       find.widgetWithText(ElevatedButton, '开始设置'),
     );
-    expect(btn.onPressed, isNull,
-        reason: '3 个法律勾选都没勾,开始设置按钮必须 disabled');
+    expect(
+      btn.onPressed,
+      isNull,
+      reason: '3 个法律勾选都没勾,开始设置按钮必须 disabled',
+    );
   });
 
   testWidgets('P0-6: 勾任 1 或 2 个 → 开始设置仍 disabled', (tester) async {
@@ -108,8 +112,7 @@ void main() {
     expect(btn.onPressed, isNotNull);
   });
 
-  testWidgets('P0-6: 勾完 3 个点开始设置 → 进入 step 1 (welcome)',
-      (tester) async {
+  testWidgets('P0-6: 勾完 3 个点开始设置 → 进入 step 1 (welcome)', (tester) async {
     await _pumpSetup(tester);
 
     for (var i = 0; i < 3; i++) {
@@ -119,7 +122,10 @@ void main() {
     await tester.tap(find.widgetWithText(ElevatedButton, '开始设置'));
     await tester.pumpAndSettle();
 
-    expect(find.text('你好，我是慢病管家'), findsOneWidget,
-        reason: 'P0-6: 勾完 3 个法律同意后,应进入 welcome step');
+    expect(
+      find.text('你好，我是慢病管家'),
+      findsOneWidget,
+      reason: 'P0-6: 勾完 3 个法律同意后,应进入 welcome step',
+    );
   });
 }

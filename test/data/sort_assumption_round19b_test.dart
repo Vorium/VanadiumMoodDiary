@@ -65,13 +65,16 @@ void main() {
   group('v0.16 round 19B: explicit sort, no implicit DESC assumption', () {
     test('SafetyWatch 即使数据插入顺序不是按时间,lastCheckIn 仍是最新', () async {
       // 准备：profile + contact + 启用 + 阈值 2 天
-      await db.upsertUserProfile(UserProfilesCompanion.insert(
-        userName: '张三',
-        checkInCycleHours: const Value(48),
-        firstLaunchAt: DateTime(2026, 1, 1),
-      ),);
+      await db.upsertUserProfile(
+        UserProfilesCompanion.insert(
+          userName: '张三',
+          checkInCycleHours: const Value(48),
+          firstLaunchAt: DateTime(2026, 1, 1),
+        ),
+      );
       await db.insertContact(
-          ContactsCompanion.insert(name: '妈妈', phone: '13800138000'),);
+        ContactsCompanion.insert(name: '妈妈', phone: '13800138000'),
+      );
       await safety.setEnabled(true);
       await safety.setThresholdDays(2);
 
@@ -80,24 +83,33 @@ void main() {
       // 修前：watchAll 返插入顺序 [old, middle, latest]
       //   first = old → daysSinceLast = 5+ → 触发告警（错!）
       // 修后：显式 sort → first = latest → daysSinceLast = 0 → 不触发（对）
-      await db.insertCheckIn(CheckInsCompanion.insert(
-        timestamp: now.subtract(const Duration(days: 5)),
-        type: 'normal',
-      ),);
-      await db.insertCheckIn(CheckInsCompanion.insert(
-        timestamp: now.subtract(const Duration(days: 3)),
-        type: 'normal',
-      ),);
-      await db.insertCheckIn(CheckInsCompanion.insert(
-        timestamp: now.subtract(const Duration(hours: 1)), // 最新
-        type: 'normal',
-      ),);
+      await db.insertCheckIn(
+        CheckInsCompanion.insert(
+          timestamp: now.subtract(const Duration(days: 5)),
+          type: 'normal',
+        ),
+      );
+      await db.insertCheckIn(
+        CheckInsCompanion.insert(
+          timestamp: now.subtract(const Duration(days: 3)),
+          type: 'normal',
+        ),
+      );
+      await db.insertCheckIn(
+        CheckInsCompanion.insert(
+          timestamp: now.subtract(const Duration(hours: 1)), // 最新
+          type: 'normal',
+        ),
+      );
 
       final result = await safety.checkNow();
       // latest 是 1h 前 → < 2 天阈值 → ok
       expect(result.kind, SafetyCheckKind.ok, reason: 'latest = 1h 前应 < 2 天阈值');
-      expect(result.daysSinceLast, 0,
-          reason: 'daysSinceLast 应基于最新打卡（1h 前=0 天）',);
+      expect(
+        result.daysSinceLast,
+        0,
+        reason: 'daysSinceLast 应基于最新打卡（1h 前=0 天）',
+      );
 
       // SMS 不应发
       expect(sms.sent, isEmpty, reason: '最新打卡是 1h 前，不应触发告警');

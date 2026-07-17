@@ -6,7 +6,6 @@
 // 3. 篡改 ciphertext → decrypt 失败 (PKCS7 padding 检测)
 // 4. key 持久化 (mock SecureStorage)
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:flutter/services.dart';
@@ -66,14 +65,16 @@ void main() {
 
       expect(c1.length, c2.length);
       // IV 是前 16 字节,应该不同
-      expect(c1.sublist(0, 16), isNot(equals(c2.sublist(0, 16))),
-          reason: 'P0-2: 每次加密 IV 应该不同');
+      expect(
+        c1.sublist(0, 16),
+        isNot(equals(c2.sublist(0, 16))),
+        reason: 'P0-2: 每次加密 IV 应该不同',
+      );
       // ciphertext 也应该不同 (因为 IV 不同 → 加密块链状态不同)
       expect(c1, isNot(equals(c2)));
     });
 
-    test('P0-2: 篡改 ciphertext → decrypt 失败 (PKCS7 padding 检测)',
-        () async {
+    test('P0-2: 篡改 ciphertext → decrypt 失败 (PKCS7 padding 检测)', () async {
       final svc = EncryptionService();
       final plain = Uint8List.fromList(utf8.encode('秘密内容'));
       final encrypted = await svc.encrypt(plain);

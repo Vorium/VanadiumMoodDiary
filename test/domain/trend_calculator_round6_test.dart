@@ -25,11 +25,15 @@ void main() {
 
     test('跨大月（1月→2月 / 31天）', () {
       // 1月有 31 天, +1 = 2月1号
-      expect(TrendCalculator.shiftMonth(DateTime(2026, 1, 1), 1),
-          DateTime(2026, 2, 1),);
+      expect(
+        TrendCalculator.shiftMonth(DateTime(2026, 1, 1), 1),
+        DateTime(2026, 2, 1),
+      );
       // 3月有 31 天, -1 = 2月1号
-      expect(TrendCalculator.shiftMonth(DateTime(2026, 3, 1), -1),
-          DateTime(2026, 2, 1),);
+      expect(
+        TrendCalculator.shiftMonth(DateTime(2026, 3, 1), -1),
+        DateTime(2026, 2, 1),
+      );
     });
   });
 

@@ -93,7 +93,8 @@ class VentAudioStorage {
         where: 'vent_audio_storage.encryptAndWrite',
         error: e,
         stack: st,
-        note: 'failed to delete plain after encrypt (security: still encrypted file exists, but plain may linger)',
+        note:
+            'failed to delete plain after encrypt (security: still encrypted file exists, but plain may linger)',
       );
     }
   }

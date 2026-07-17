@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Motion (静态 helper)', () {
-    Widget _wrap({required bool reduced, required Widget child}) {
+    Widget wrap({required bool reduced, required Widget child}) {
       return MaterialApp(
         home: MediaQuery(
           data: MediaQueryData(disableAnimations: reduced),
@@ -23,66 +23,90 @@ void main() {
     }
 
     testWidgets('prefersReduced = true', (tester) async {
-      await tester.pumpWidget(_wrap(
-        reduced: true,
-        child: Builder(builder: (ctx) {
-          return Text(Motion.prefersReduced(ctx) ? 'reduced' : 'normal');
-        }),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          reduced: true,
+          child: Builder(
+            builder: (ctx) {
+              return Text(Motion.prefersReduced(ctx) ? 'reduced' : 'normal');
+            },
+          ),
+        ),
+      );
       expect(find.text('reduced'), findsOneWidget);
     });
 
     testWidgets('prefersReduced = false 默认', (tester) async {
-      await tester.pumpWidget(_wrap(
-        reduced: false,
-        child: Builder(builder: (ctx) {
-          return Text(Motion.prefersReduced(ctx) ? 'reduced' : 'normal');
-        }),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          reduced: false,
+          child: Builder(
+            builder: (ctx) {
+              return Text(Motion.prefersReduced(ctx) ? 'reduced' : 'normal');
+            },
+          ),
+        ),
+      );
       expect(find.text('normal'), findsOneWidget);
     });
 
     testWidgets('duration: reduce motion → 0', (tester) async {
-      await tester.pumpWidget(_wrap(
-        reduced: true,
-        child: Builder(builder: (ctx) {
-          return Text(
-              Motion.duration(ctx, const Duration(milliseconds: 300))
-                  .inMilliseconds
-                  .toString());
-        }),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          reduced: true,
+          child: Builder(
+            builder: (ctx) {
+              return Text(
+                Motion.duration(ctx, const Duration(milliseconds: 300))
+                    .inMilliseconds
+                    .toString(),
+              );
+            },
+          ),
+        ),
+      );
       expect(find.text('0'), findsOneWidget);
     });
 
     testWidgets('duration: 正常 → 透传', (tester) async {
-      await tester.pumpWidget(_wrap(
-        reduced: false,
-        child: Builder(builder: (ctx) {
-          return Text(
-              Motion.duration(ctx, const Duration(milliseconds: 300))
-                  .inMilliseconds
-                  .toString());
-        }),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          reduced: false,
+          child: Builder(
+            builder: (ctx) {
+              return Text(
+                Motion.duration(ctx, const Duration(milliseconds: 300))
+                    .inMilliseconds
+                    .toString(),
+              );
+            },
+          ),
+        ),
+      );
       expect(find.text('300'), findsOneWidget);
     });
 
     testWidgets('curve: reduce motion → linear', (tester) async {
-      await tester.pumpWidget(_wrap(
-        reduced: true,
-        child: Builder(builder: (ctx) {
-          return Text(Motion.curve(ctx, AppTokens.curveStandard) == Curves.linear
-              ? 'linear'
-              : 'other');
-        }),
-      ));
+      await tester.pumpWidget(
+        wrap(
+          reduced: true,
+          child: Builder(
+            builder: (ctx) {
+              return Text(
+                Motion.curve(ctx, AppTokens.curveStandard) == Curves.linear
+                    ? 'linear'
+                    : 'other',
+              );
+            },
+          ),
+        ),
+      );
       expect(find.text('linear'), findsOneWidget);
     });
   });
 
   group('FadeIn / SlideUp', () {
-    Widget _wrap({required bool reduced, required Widget child}) {
+    Widget wrap({required bool reduced, required Widget child}) {
       return MaterialApp(
         home: MediaQuery(
           data: MediaQueryData(disableAnimations: reduced),
@@ -91,24 +115,26 @@ void main() {
       );
     }
 
-    testWidgets('P0-7: FadeIn reduce motion = true → 立即到终态',
-        (tester) async {
-      await tester.pumpWidget(_wrap(
-        reduced: true,
-        child: const FadeIn(child: Text('hello')),
-      ));
+    testWidgets('P0-7: FadeIn reduce motion = true → 立即到终态', (tester) async {
+      await tester.pumpWidget(
+        wrap(
+          reduced: true,
+          child: const FadeIn(child: Text('hello')),
+        ),
+      );
       // 不需要 pumpAndSettle:reduced motion 立即到 opacity=1.0
       // Text 必须可见 → 渲染到 widget tree
       final textWidget = tester.widget<Text>(find.text('hello'));
       expect(textWidget, isNotNull);
     });
 
-    testWidgets('P0-7: SlideUp reduce motion = true → 立即到终态',
-        (tester) async {
-      await tester.pumpWidget(_wrap(
-        reduced: true,
-        child: const SlideUp(child: Text('hello')),
-      ));
+    testWidgets('P0-7: SlideUp reduce motion = true → 立即到终态', (tester) async {
+      await tester.pumpWidget(
+        wrap(
+          reduced: true,
+          child: const SlideUp(child: Text('hello')),
+        ),
+      );
       final textWidget = tester.widget<Text>(find.text('hello'));
       expect(textWidget, isNotNull);
     });

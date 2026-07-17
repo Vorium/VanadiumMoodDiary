@@ -56,8 +56,9 @@ class MoodDialog {
                                 MoodVisual.emojiFor(s),
                                 style: TextStyle(
                                   fontSize: 32,
-                                  color:
-                                      s == selectedScore ? null : Colors.black26,
+                                  color: s == selectedScore
+                                      ? null
+                                      : Colors.black26,
                                 ),
                               ),
                               const SizedBox(height: 2),

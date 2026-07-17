@@ -22,12 +22,16 @@ void main() {
     test('0-4 → 0 (minimal)', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 0,),
+          scaleId: 'phq9',
+          total: 0,
+        ),
         0,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 4,),
+          scaleId: 'phq9',
+          total: 4,
+        ),
         0,
       );
     });
@@ -35,12 +39,16 @@ void main() {
     test('5-9 → 1 (mild)', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 5,),
+          scaleId: 'phq9',
+          total: 5,
+        ),
         1,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 9,),
+          scaleId: 'phq9',
+          total: 9,
+        ),
         1,
       );
     });
@@ -48,12 +56,16 @@ void main() {
     test('10-14 → 2 (moderate)', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 10,),
+          scaleId: 'phq9',
+          total: 10,
+        ),
         2,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 14,),
+          scaleId: 'phq9',
+          total: 14,
+        ),
         2,
       );
     });
@@ -61,12 +73,16 @@ void main() {
     test('15-19 → 3 (moderatelySevere)', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 15,),
+          scaleId: 'phq9',
+          total: 15,
+        ),
         3,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 19,),
+          scaleId: 'phq9',
+          total: 19,
+        ),
         3,
       );
     });
@@ -74,12 +90,16 @@ void main() {
     test('20-27 → 4 (severe)', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 20,),
+          scaleId: 'phq9',
+          total: 20,
+        ),
         4,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'phq9', total: 27,),
+          scaleId: 'phq9',
+          total: 27,
+        ),
         4,
       );
     });
@@ -89,12 +109,16 @@ void main() {
     test('0-4 → 0', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 0,),
+          scaleId: 'gad7',
+          total: 0,
+        ),
         0,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 4,),
+          scaleId: 'gad7',
+          total: 4,
+        ),
         0,
       );
     });
@@ -102,12 +126,16 @@ void main() {
     test('5-9 → 1', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 5,),
+          scaleId: 'gad7',
+          total: 5,
+        ),
         1,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 9,),
+          scaleId: 'gad7',
+          total: 9,
+        ),
         1,
       );
     });
@@ -115,12 +143,16 @@ void main() {
     test('10-14 → 2', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 10,),
+          scaleId: 'gad7',
+          total: 10,
+        ),
         2,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 14,),
+          scaleId: 'gad7',
+          total: 14,
+        ),
         2,
       );
     });
@@ -128,12 +160,16 @@ void main() {
     test('15-21 → 3', () {
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 15,),
+          scaleId: 'gad7',
+          total: 15,
+        ),
         3,
       );
       expect(
         AssessmentComparisonCalculator.severityRankFor(
-            scaleId: 'gad7', total: 21,),
+          scaleId: 'gad7',
+          total: 21,
+        ),
         3,
       );
     });
@@ -143,17 +179,23 @@ void main() {
     test('PHQ-9 各档中文名', () {
       expect(
         AssessmentComparisonCalculator.severityLabelFor(
-            scaleId: 'phq9', total: 2,),
+          scaleId: 'phq9',
+          total: 2,
+        ),
         '几乎没有抑郁',
       );
       expect(
         AssessmentComparisonCalculator.severityLabelFor(
-            scaleId: 'phq9', total: 12,),
+          scaleId: 'phq9',
+          total: 12,
+        ),
         '中度抑郁',
       );
       expect(
         AssessmentComparisonCalculator.severityLabelFor(
-            scaleId: 'phq9', total: 25,),
+          scaleId: 'phq9',
+          total: 25,
+        ),
         '重度抑郁',
       );
     });
@@ -161,12 +203,16 @@ void main() {
     test('GAD-7 各档中文名', () {
       expect(
         AssessmentComparisonCalculator.severityLabelFor(
-            scaleId: 'gad7', total: 2,),
+          scaleId: 'gad7',
+          total: 2,
+        ),
         '几乎没有焦虑',
       );
       expect(
         AssessmentComparisonCalculator.severityLabelFor(
-            scaleId: 'gad7', total: 18,),
+          scaleId: 'gad7',
+          total: 18,
+        ),
         '重度焦虑',
       );
     });
@@ -416,7 +462,10 @@ void main() {
     test('trendSymbol 箭头', () {
       AssessmentComparison mk(ComparisonTrend t) => AssessmentComparison(
             current: _rec(
-                scaleId: 'phq9', total: 5, timestamp: DateTime(2026, 7, 15),),
+              scaleId: 'phq9',
+              total: 5,
+              timestamp: DateTime(2026, 7, 15),
+            ),
             previous: null,
             scoreDelta: null,
             trend: t,
@@ -448,11 +497,15 @@ void main() {
     test('deltaLabel：上升 / 下降 / 不变', () {
       AssessmentComparison mk(int delta) => AssessmentComparison(
             current: _rec(
-                scaleId: 'phq9', total: 8, timestamp: DateTime(2026, 7, 15),),
+              scaleId: 'phq9',
+              total: 8,
+              timestamp: DateTime(2026, 7, 15),
+            ),
             previous: _rec(
-                scaleId: 'phq9',
-                total: 8 - delta,
-                timestamp: DateTime(2026, 7, 1),),
+              scaleId: 'phq9',
+              total: 8 - delta,
+              timestamp: DateTime(2026, 7, 1),
+            ),
             scoreDelta: delta,
             trend: delta == 0
                 ? ComparisonTrend.unchanged

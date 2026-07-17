@@ -427,8 +427,11 @@ class _ComparisonCard extends StatelessWidget {
           children: [
             const Row(
               children: [
-                Icon(Icons.compare_arrows,
-                    color: AppTokens.primary, size: 20,),
+                Icon(
+                  Icons.compare_arrows,
+                  color: AppTokens.primary,
+                  size: 20,
+                ),
                 SizedBox(width: AppTokens.spacingXs),
                 Text(
                   '对比上次',
@@ -490,8 +493,10 @@ class _ComparisonCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward,
-                      color: trendColor.withValues(alpha: 0.6),),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: trendColor.withValues(alpha: 0.6),
+                  ),
                   const SizedBox(width: AppTokens.spacingSm),
                   Expanded(
                     child: Column(
@@ -578,8 +583,11 @@ class _AssessmentSparkline extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.show_chart,
-                    color: AppTokens.primary, size: 20,),
+                const Icon(
+                  Icons.show_chart,
+                  color: AppTokens.primary,
+                  size: 20,
+                ),
                 const SizedBox(width: AppTokens.spacingXs),
                 const Text(
                   '历史趋势',

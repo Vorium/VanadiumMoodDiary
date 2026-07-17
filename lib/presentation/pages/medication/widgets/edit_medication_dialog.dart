@@ -111,7 +111,8 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       updated = _isActive
           ? updated.copyWith(endDate: const DomainValue<DateTime?>(null)) // 恢复
           : updated.copyWith(
-              endDate: DomainValue<DateTime?>(DateTime.now()),); // 停药
+              endDate: DomainValue<DateTime?>(DateTime.now()),
+            ); // 停药
     }
 
     try {
@@ -148,8 +149,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
     if (picked != null) {
       setState(() {
         _times.add(picked);
-        _times.sort((a, b) =>
-            (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute),);
+        _times.sort(
+          (a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute),
+        );
       });
     }
   }

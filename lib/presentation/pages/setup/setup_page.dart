@@ -68,7 +68,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   }
 
   void _onTextChanged() {
-    // v0.16 round 19 fix: 之前直接 setState，在 dispose 时 _MedDraft.controller.dispose() 
+    // v0.16 round 19 fix: 之前直接 setState，在 dispose 时 _MedDraft.controller.dispose()
     // 触发 listener，State 已 defunct，setState assert 失败。
     // 加 mounted check，dispose 阶段直接吞掉
     if (!mounted) return;
@@ -186,21 +186,24 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           _ConsentCheckRow(
             checked: _consentUserAgreement,
             label: '我已阅读并同意《用户协议》',
-            onTap: () => setState(() => _consentUserAgreement = !_consentUserAgreement),
+            onTap: () =>
+                setState(() => _consentUserAgreement = !_consentUserAgreement),
             onView: () => _showLegalDocument(context, 'user_agreement'),
           ),
           const SizedBox(height: AppTokens.spacingSm),
           _ConsentCheckRow(
             checked: _consentPrivacyPolicy,
             label: '我已阅读并同意《隐私政策》',
-            onTap: () => setState(() => _consentPrivacyPolicy = !_consentPrivacyPolicy),
+            onTap: () =>
+                setState(() => _consentPrivacyPolicy = !_consentPrivacyPolicy),
             onView: () => _showLegalDocument(context, 'privacy_policy'),
           ),
           const SizedBox(height: AppTokens.spacingSm),
           _ConsentCheckRow(
             checked: _consentSensitiveData,
             label: '我已阅读并同意《敏感个人信息处理同意书》',
-            onTap: () => setState(() => _consentSensitiveData = !_consentSensitiveData),
+            onTap: () =>
+                setState(() => _consentSensitiveData = !_consentSensitiveData),
             onView: () => _showLegalDocument(context, 'sensitive_data_consent'),
           ),
           const SizedBox(height: AppTokens.spacingXl),
@@ -210,9 +213,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                   _consentPrivacyPolicy &&
                   _consentSensitiveData;
               return ElevatedButton(
-                onPressed: allChecked
-                    ? () => setState(() => _step = 1)
-                    : null,
+                onPressed: allChecked ? () => setState(() => _step = 1) : null,
                 child: const Text('开始设置'),
               );
             },
@@ -673,12 +674,18 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                   child: ListTile(
                     leading:
                         Text(t.emoji, style: const TextStyle(fontSize: 28)),
-                    title: Text(t.name,
-                        style: const TextStyle(fontWeight: FontWeight.w500),),
+                    title: Text(
+                      t.name,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
                     subtitle: Text(t.description),
                     trailing: const Icon(Icons.add_circle_outline),
-                    onTap: () => Navigator.of(ctx).pop(_TemplateApplyResult(
-                        template: t, append: _meds.isNotEmpty,),),
+                    onTap: () => Navigator.of(ctx).pop(
+                      _TemplateApplyResult(
+                        template: t,
+                        append: _meds.isNotEmpty,
+                      ),
+                    ),
                   ),
                 ),
               const SizedBox(height: AppTokens.spacingMd),
@@ -704,7 +711,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               : d.dosage.toString()
           ..dosageUnit = d.dosageUnit
           ..times.addAll(
-              d.times.map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute)),);
+            d.times.map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute)),
+          );
         m.attachListener(_onTextChanged);
         _meds.add(m);
       }
@@ -934,9 +942,7 @@ class _ConsentCheckRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: checked
-            ? AppTokens.primaryLight
-            : AppTokens.surface,
+        color: checked ? AppTokens.primaryLight : AppTokens.surface,
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
         border: Border.all(
           color: checked ? AppTokens.primary : AppTokens.border,
@@ -955,9 +961,8 @@ class _ConsentCheckRow extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeLabel,
-                color: checked
-                    ? AppTokens.textPrimary
-                    : AppTokens.textSecondary,
+                color:
+                    checked ? AppTokens.textPrimary : AppTokens.textSecondary,
                 fontWeight: checked ? FontWeight.w500 : FontWeight.normal,
               ),
             ),

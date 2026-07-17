@@ -28,9 +28,11 @@ void main() {
 
     test('domain/ 用相对路径 import data/ 应被检测到', () {
       // 构造：lib/domain/logic/foo.dart 引用 ../../data/bar.dart
-      final domainDir = Directory('${libDir.path}${Platform.pathSeparator}domain${Platform.pathSeparator}logic')
+      final domainDir = Directory(
+          '${libDir.path}${Platform.pathSeparator}domain${Platform.pathSeparator}logic',)
         ..createSync(recursive: true);
-      final fooFile = File('${domainDir.path}${Platform.pathSeparator}foo.dart');
+      final fooFile =
+          File('${domainDir.path}${Platform.pathSeparator}foo.dart');
       fooFile.writeAsStringSync('''
 import '../../data/bar.dart';
 void foo() {}
@@ -71,7 +73,8 @@ void foo() {}
     });
 
     test('domain/ import 同 domain/../entities 不算违规', () {
-      final fakePath = '/fake/lib/domain/logic/bar.dart'.replaceAll('/', Platform.pathSeparator);
+      final fakePath = '/fake/lib/domain/logic/bar.dart'
+          .replaceAll('/', Platform.pathSeparator);
       final resolved = _testResolveImportLayer(
         '../entities/foo.dart',
         fakePath,
@@ -94,9 +97,11 @@ String _testResolveImportLayer(String importUri, String fromFile, String root) {
     String absPath;
     if (importUri.startsWith('package:chroniccare/')) {
       final rel = importUri.substring('package:chroniccare/'.length);
-      absPath = '$root${Platform.pathSeparator}lib${Platform.pathSeparator}${rel.replaceAll('/', Platform.pathSeparator)}';
+      absPath =
+          '$root${Platform.pathSeparator}lib${Platform.pathSeparator}${rel.replaceAll('/', Platform.pathSeparator)}';
     } else {
-      final fromDir = fromFile.substring(0, fromFile.lastIndexOf(Platform.pathSeparator));
+      final fromDir =
+          fromFile.substring(0, fromFile.lastIndexOf(Platform.pathSeparator));
       absPath = _testNormalizePath(
         '$fromDir${Platform.pathSeparator}${importUri.replaceAll('/', Platform.pathSeparator)}',
       );

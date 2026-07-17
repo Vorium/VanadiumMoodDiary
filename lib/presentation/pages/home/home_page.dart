@@ -565,8 +565,11 @@ class _NotificationFailureBannerState
       ),
       child: Row(
         children: [
-          const Icon(Icons.notifications_off_outlined,
-              color: AppTokens.warning, size: 20,),
+          const Icon(
+            Icons.notifications_off_outlined,
+            color: AppTokens.warning,
+            size: 20,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

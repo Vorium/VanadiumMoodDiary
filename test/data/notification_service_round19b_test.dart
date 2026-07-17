@@ -37,8 +37,11 @@ void main() {
       expect(id, 7000);
       // 修前会失败: 7000 < 7000 = false (漏 cancel)
       // 修后通过: 7000 < 206000 = true
-      expect(id < 6000 + 200000, isTrue,
-          reason: 'medId=1000 的 id 必须被 reschedule 范围覆盖',);
+      expect(
+        id < 6000 + 200000,
+        isTrue,
+        reason: 'medId=1000 的 id 必须被 reschedule 范围覆盖',
+      );
     });
 
     test('medId=10000 → id=16000 (修前 OUT of range — bug!)', () {
@@ -54,8 +57,11 @@ void main() {
       // 极端场景：用户开 50000 个药（理论上限）
       final id = NotificationService.refillNotificationId(50000);
       expect(id, 56000);
-      expect(id < 6000 + 200000, isTrue,
-          reason: 'medId=50000 的 id 必须被 reschedule 范围覆盖',);
+      expect(
+        id < 6000 + 200000,
+        isTrue,
+        reason: 'medId=50000 的 id 必须被 reschedule 范围覆盖',
+      );
     });
   });
 }

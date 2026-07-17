@@ -47,19 +47,22 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 RadioListTile<int>(
-                  title: Text(AppLocalizations.of(context).settingsMedReportWindow7),
+                  title: Text(
+                      AppLocalizations.of(context).settingsMedReportWindow7,),
                   subtitle: const Text('一周内（适合周复诊）'),
                   value: 7,
                   contentPadding: EdgeInsets.zero,
                 ),
                 RadioListTile<int>(
-                  title: Text(AppLocalizations.of(context).settingsMedReportWindow14),
+                  title: Text(
+                      AppLocalizations.of(context).settingsMedReportWindow14,),
                   subtitle: const Text('两周内（推荐）'),
                   value: 14,
                   contentPadding: EdgeInsets.zero,
                 ),
                 RadioListTile<int>(
-                  title: Text(AppLocalizations.of(context).settingsMedReportWindow30),
+                  title: Text(
+                      AppLocalizations.of(context).settingsMedReportWindow30,),
                   subtitle: const Text('一个月内（适合月度评估）'),
                   value: 30,
                   contentPadding: EdgeInsets.zero,

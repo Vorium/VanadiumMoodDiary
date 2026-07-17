@@ -160,24 +160,28 @@ class DayDetailCalculator {
       }
       final med = c.medicationId == null ? null : medById[c.medicationId!];
       if (c.isNormal) {
-        events.add(DayEvent(
-          time: c.timestamp,
-          kind: DayEventKind.checkInNormal,
-          title: med != null ? '打卡 · ${med.name}' : '每日打卡',
-          subtitle: _timeLabel(c.timestamp),
-          medicationId: c.medicationId,
-          medicationName: med?.name,
-        ),);
+        events.add(
+          DayEvent(
+            time: c.timestamp,
+            kind: DayEventKind.checkInNormal,
+            title: med != null ? '打卡 · ${med.name}' : '每日打卡',
+            subtitle: _timeLabel(c.timestamp),
+            medicationId: c.medicationId,
+            medicationName: med?.name,
+          ),
+        );
       } else if (c.isTemp) {
         final parsed = JsonCodec.parseTempMedNote(c.note);
-        events.add(DayEvent(
-          time: c.timestamp,
-          kind: DayEventKind.checkInTemp,
-          title: parsed.name.isNotEmpty ? '临时 · ${parsed.name}' : '临时吃药',
-          subtitle: parsed.description.isNotEmpty
-              ? '${_timeLabel(c.timestamp)} · ${parsed.description}'
-              : _timeLabel(c.timestamp),
-        ),);
+        events.add(
+          DayEvent(
+            time: c.timestamp,
+            kind: DayEventKind.checkInTemp,
+            title: parsed.name.isNotEmpty ? '临时 · ${parsed.name}' : '临时吃药',
+            subtitle: parsed.description.isNotEmpty
+                ? '${_timeLabel(c.timestamp)} · ${parsed.description}'
+                : _timeLabel(c.timestamp),
+          ),
+        );
       } else if (c.isAssessment) {
         // 评估总分从 note JSON 解析（参考 AssessmentRecord.tryFromCheckIn）
         int? total;
@@ -199,16 +203,18 @@ class DayDetailCalculator {
             stackTrace: st,
           );
         }
-        events.add(DayEvent(
-          time: c.timestamp,
-          kind: DayEventKind.assessment,
-          title: _scaleName(c.type.wire),
-          subtitle: total != null
-              ? '${_timeLabel(c.timestamp)} · 总分 $total'
-              : _timeLabel(c.timestamp),
-          assessmentTotal: total,
-          assessmentScaleId: c.type.wire,
-        ),);
+        events.add(
+          DayEvent(
+            time: c.timestamp,
+            kind: DayEventKind.assessment,
+            title: _scaleName(c.type.wire),
+            subtitle: total != null
+                ? '${_timeLabel(c.timestamp)} · 总分 $total'
+                : _timeLabel(c.timestamp),
+            assessmentTotal: total,
+            assessmentScaleId: c.type.wire,
+          ),
+        );
       }
       // 其他 type 忽略
     }
@@ -224,18 +230,20 @@ class DayDetailCalculator {
       ];
       if (tags.isNotEmpty) parts.add(tags.join(' / '));
       if (m.note != null && m.note!.isNotEmpty) parts.add(m.note!);
-      events.add(DayEvent(
-        time: m.timestamp,
-        kind: DayEventKind.mood,
-        title: parts.first,
-        subtitle: [
-          _timeLabel(m.timestamp),
-          if (tags.isNotEmpty) tags.join(' / '),
-          if (m.note != null && m.note!.isNotEmpty) m.note!,
-        ].where((s) => s.isNotEmpty).join(' · '),
-        moodScore: m.score,
-        moodTags: tags,
-      ),);
+      events.add(
+        DayEvent(
+          time: m.timestamp,
+          kind: DayEventKind.mood,
+          title: parts.first,
+          subtitle: [
+            _timeLabel(m.timestamp),
+            if (tags.isNotEmpty) tags.join(' / '),
+            if (m.note != null && m.note!.isNotEmpty) m.note!,
+          ].where((s) => s.isNotEmpty).join(' · '),
+          moodScore: m.score,
+          moodTags: tags,
+        ),
+      );
     }
 
     // 按时间正序

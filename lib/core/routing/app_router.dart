@@ -48,7 +48,8 @@ Page<T> _slideRightPage<T>(LocalKey key, Widget child) {
         position: Tween<Offset>(
           begin: const Offset(0.1, 0),
           end: Offset.zero,
-        ).animate(CurvedAnimation(parent: anim, curve: AppTokens.curveStandard)),
+        ).animate(
+            CurvedAnimation(parent: anim, curve: AppTokens.curveStandard),),
         child: FadeTransition(opacity: anim, child: child),
       );
     },
@@ -66,7 +67,8 @@ Page<T> _slideUpPage<T>(LocalKey key, Widget child) {
         position: Tween<Offset>(
           begin: const Offset(0, 0.05),
           end: Offset.zero,
-        ).animate(CurvedAnimation(parent: anim, curve: AppTokens.curveStandard)),
+        ).animate(
+            CurvedAnimation(parent: anim, curve: AppTokens.curveStandard),),
         child: FadeTransition(opacity: anim, child: child),
       );
     },
@@ -95,7 +97,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 设置流程不进 shell（全屏引导）— rare 频度 → slide-up
       GoRoute(
         path: '/setup',
-        pageBuilder: (_, state) => _slideUpPage(state.pageKey, const SetupPage()),
+        pageBuilder: (_, state) =>
+            _slideUpPage(state.pageKey, const SetupPage()),
       ),
       // 主 app shell：宽屏带 NavigationRail，窄屏纯 body
       ShellRoute(
@@ -107,7 +110,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           // 主导航：occasional 频度 → fade
           GoRoute(
             path: '/',
-            pageBuilder: (_, state) => _fadePage(state.pageKey, const HomePage()),
+            pageBuilder: (_, state) =>
+                _fadePage(state.pageKey, const HomePage()),
           ),
           GoRoute(
             path: '/settings',

@@ -127,8 +127,10 @@ class SafetyWatchService {
   Future<SafetyCheckResult> onCheckIn() async {
     final result = await _checkAndAlert(trigger: 'check_in');
     if (result.kind == SafetyCheckKind.alerted) {
-      developer.log('⚠️ 用户打卡后仍触发告警 — 可能本地时间错乱或打卡未及时入库',
-          name: 'SafetyWatchService',);
+      developer.log(
+        '⚠️ 用户打卡后仍触发告警 — 可能本地时间错乱或打卡未及时入库',
+        name: 'SafetyWatchService',
+      );
     }
     return result;
   }
@@ -239,9 +241,10 @@ class SafetyWatchService {
       await _setLastAlertAt(effectiveNow);
 
       developer.log(
-          '🚨 SafetyWatch 触发: trigger=$trigger days=$daysSinceLast '
-          'smsOk=$smsOk smsFail=$smsFail',
-          name: 'SafetyWatchService',);
+        '🚨 SafetyWatch 触发: trigger=$trigger days=$daysSinceLast '
+        'smsOk=$smsOk smsFail=$smsFail',
+        name: 'SafetyWatchService',
+      );
 
       return SafetyCheckResult(
         kind: SafetyCheckKind.alerted,
@@ -250,8 +253,12 @@ class SafetyWatchService {
         contactsFailed: smsFail,
       );
     } catch (e, st) {
-      developer.log('❌ SafetyWatch error: $e',
-          name: 'SafetyWatchService', error: e, stackTrace: st,);
+      developer.log(
+        '❌ SafetyWatch error: $e',
+        name: 'SafetyWatchService',
+        error: e,
+        stackTrace: st,
+      );
       return SafetyCheckResult(
         kind: SafetyCheckKind.error,
         errorMessage: e.toString(),

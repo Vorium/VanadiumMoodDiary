@@ -145,11 +145,13 @@ class MedicationReport {
     for (final c in sorted) {
       if (!c.isTemp) continue;
       final parsed = JsonCodec.parseTempMedNote(c.note);
-      result.add(TempMedEntry(
-        timestamp: c.timestamp,
-        name: parsed.name,
-        description: parsed.description.isEmpty ? '—' : parsed.description,
-      ),);
+      result.add(
+        TempMedEntry(
+          timestamp: c.timestamp,
+          name: parsed.name,
+          description: parsed.description.isEmpty ? '—' : parsed.description,
+        ),
+      );
     }
     return result;
   }
@@ -295,7 +297,8 @@ class MedicationReportData {
         final freqStr =
             s.times.isEmpty ? '未设置' : '每日 ${s.times.length} 次（$timesStr）';
         buf.writeln(
-            '${i + 1}. ${m.name} ${Formatters.dosage(m.dosage, m.dosageUnit)} · $freqStr',);
+          '${i + 1}. ${m.name} ${Formatters.dosage(m.dosage, m.dosageUnit)} · $freqStr',
+        );
         buf.writeln('   起始: ${Formatters.date(m.startDate)}');
         buf.writeln(
           '   $windowDays 天内实际服药: ${s.actualDoseDays}/$windowDays 天 (${s.actualDoseCount}/${s.expectedDoseCount} 次)',

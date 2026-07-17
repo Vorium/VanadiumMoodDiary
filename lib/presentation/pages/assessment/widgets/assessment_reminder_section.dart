@@ -167,8 +167,11 @@ class _AssessmentReminderSectionState
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.lightbulb_outline,
-                      size: 18, color: AppTokens.textSecondary,),
+                  const Icon(
+                    Icons.lightbulb_outline,
+                    size: 18,
+                    color: AppTokens.textSecondary,
+                  ),
                   const SizedBox(width: AppTokens.spacingXs),
                   Expanded(
                     child: Text(
