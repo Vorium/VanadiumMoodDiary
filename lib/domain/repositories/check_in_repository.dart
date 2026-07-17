@@ -5,7 +5,7 @@
 // 现在改为返回 CheckInEntity，UI 不再看到 Drift 依赖。
 library;
 
-import '../entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
 
 /// 打卡仓库（domain 接口）
 ///

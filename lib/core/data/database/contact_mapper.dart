@@ -1,0 +1,45 @@
+// v0.14 (Round 12A) Contact 映射层
+//
+// Drift row ↔ ContactEntity 翻译官。
+library;
+
+import 'package:drift/drift.dart' show Value;
+
+import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+
+extension ContactToEntity on Contact {
+  /// Drift row → domain entity
+  ContactEntity toEntity() {
+    return ContactEntity(
+      id: id,
+      name: name,
+      phone: phone,
+      sortOrder: sortOrder,
+      isActive: isActive,
+    );
+  }
+}
+
+extension ContactEntityToDrift on ContactEntity {
+  /// domain entity → Drift `ContactsCompanion.insert`
+  ContactsCompanion toCompanion() {
+    return ContactsCompanion.insert(
+      name: name,
+      phone: phone,
+      sortOrder: Value(sortOrder),
+      isActive: Value(isActive),
+    );
+  }
+
+  /// domain entity → Drift row（用于 update 等需要完整 row 的方法）
+  Contact toDriftRow() {
+    return Contact(
+      id: id,
+      name: name,
+      phone: phone,
+      sortOrder: sortOrder,
+      isActive: isActive,
+    );
+  }
+}

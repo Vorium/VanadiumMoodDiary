@@ -1,9 +1,9 @@
 // v0.13 (Round 11) MedicationEntity / MedicationMapper 单元测试
-import 'package:chroniccare/data/database/app_database.dart';
-import 'package:chroniccare/data/database/medication_mapper.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/medication_mapper.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
-import 'package:chroniccare/shared/domain_value.dart';
+import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';

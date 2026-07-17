@@ -6,8 +6,8 @@
 // 实现方在 `lib/data/repositories/medication_repository_impl.dart`。
 library;
 
-import '../entities/hour_minute.dart';
-import '../entities/medication_entity.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 
 /// 吃药信息仓库（domain 抽象接口）
 ///

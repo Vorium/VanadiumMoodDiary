@@ -1,7 +1,7 @@
 // v0.14 (Round 12C) RemindersHubPage widget 测试
 //
 // 验证 5 个提醒卡片的渲染 + 状态显示
-import 'package:chroniccare/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

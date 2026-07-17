@@ -1,8 +1,8 @@
 // v0.13 (Round 7) AssessmentReminderService 单元测试
-import 'package:chroniccare/data/database/app_database.dart';
-import 'package:chroniccare/data/repositories/check_in_repository_impl.dart';
-import 'package:chroniccare/data/services/assessment_reminder_service.dart';
-import 'package:chroniccare/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/repositories/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';

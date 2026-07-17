@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'data/services/notification_navigation.dart';
-import 'l10n/strings.dart';
-import 'presentation/providers/data_providers.dart';
-import 'routing/app_router.dart';
-import 'theme/app_theme.dart';
-import 'theme/theme_provider.dart';
+import 'package:chroniccare/core/data/services/notification_navigation.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/core/routing/app_router.dart';
+import 'package:chroniccare/core/theme/app_theme.dart';
+import 'package:chroniccare/core/theme/theme_provider.dart';
 
 /// App 根 Widget
 class AppRoot extends ConsumerStatefulWidget {

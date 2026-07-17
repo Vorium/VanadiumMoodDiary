@@ -1,5 +1,5 @@
-import '../../l10n/strings.dart';
-import '../entities/medication_entity.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 
 /// 通知文案模板生成器
 ///

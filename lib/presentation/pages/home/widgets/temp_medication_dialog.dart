@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../domain/entities/medication_entity.dart';
-import '../../../../l10n/strings.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/check_in_notifier.dart';
-import '../../../providers/data_providers.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
 
 /// 临时吃药 dialog
 ///

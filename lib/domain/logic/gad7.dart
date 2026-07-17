@@ -10,7 +10,7 @@
 /// 15-21 → 重度（强烈建议就医）
 library;
 
-import 'assessment_scale.dart';
+import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
 const List<AssessmentItem> gad7Items = [
   AssessmentItem(0, '感到紧张、焦虑或急切'),

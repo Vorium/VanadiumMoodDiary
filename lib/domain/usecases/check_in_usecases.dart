@@ -15,8 +15,8 @@
 // - TriggerReminderUseCase.trigger()       → 手动触发失联检测（debug 入口）
 library;
 
-import '../repositories/check_in_repository.dart';
-import '../repositories/reminder_checker.dart';
+import 'package:chroniccare/domain/repositories/check_in_repository.dart';
+import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 
 /// 每日打卡 use case
 class RecordCheckInUseCase {

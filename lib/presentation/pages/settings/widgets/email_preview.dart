@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../domain/logic/email_template.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/data_providers.dart';
-import '../../../widgets/page_scaffold.dart';
+import 'package:chroniccare/domain/logic/email_template.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 邮件预览页
 class EmailPreviewPage extends ConsumerWidget {

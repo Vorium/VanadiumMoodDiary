@@ -13,11 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../domain/entities/vent_entry.dart';
-import '../../../l10n/strings.dart';
-import '../../../theme/app_tokens.dart';
-import '../../providers/core_providers.dart';
-import '../../widgets/page_scaffold.dart';
+import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class VentDetailPage extends ConsumerStatefulWidget {
   final int id;

@@ -12,8 +12,8 @@ library;
 
 import 'dart:developer' as developer;
 
-import '../entities/check_in_entity.dart';
-import '../repositories/notification_sender.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/repositories/notification_sender.dart';
 
 enum CareTriggerType {
   lateCheckInHabit, // 持续晚归

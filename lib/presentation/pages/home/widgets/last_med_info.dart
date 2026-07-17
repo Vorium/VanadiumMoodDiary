@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 副信息：最后吃药时间 / 下次提醒
 class LastMedInfo extends StatelessWidget {

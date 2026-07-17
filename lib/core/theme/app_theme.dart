@@ -1,0 +1,239 @@
+import 'package:flutter/material.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+
+/// Material 3 主题
+/// v0.5 加 dark() + 暗色适配
+class AppTheme {
+  AppTheme._();
+
+  static ThemeData light() => _build(brightness: Brightness.light);
+  static ThemeData dark() => _build(brightness: Brightness.dark);
+
+  static ThemeData _build({required Brightness brightness}) {
+    final isDark = brightness == Brightness.dark;
+
+    // M3 ColorScheme.fromSeed 自动派生一套语义颜色
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: AppTokens.primary,
+      brightness: brightness,
+      primary: AppTokens.primary,
+      onPrimary: Colors.white,
+      error: isDark ? AppTokens.errorDark : AppTokens.error,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor:
+          isDark ? AppTokens.backgroundDark : AppTokens.background,
+      visualDensity: VisualDensity.standard,
+      splashFactory: InkSparkle.splashFactory,
+      textTheme: _textTheme(colorScheme),
+      appBarTheme: _appBarTheme(colorScheme, isDark),
+      elevatedButtonTheme: _elevatedButtonTheme(colorScheme, isDark),
+      outlinedButtonTheme: _outlinedButtonTheme(colorScheme),
+      textButtonTheme: _textButtonTheme(colorScheme),
+      inputDecorationTheme: _inputDecorationTheme(colorScheme, isDark),
+      cardTheme: _cardThemeData(colorScheme, isDark),
+      navigationRailTheme: _navigationRailTheme(colorScheme),
+      dividerTheme: DividerThemeData(
+        color: isDark ? AppTokens.dividerDark : AppTokens.divider,
+        thickness: 1,
+        space: 1,
+      ),
+      // v0.17 round 7 (A5 emil 动效): 全局 splash factory
+      //
+      // emil 决策框架: tens+/day(列表点击 / Card 反馈)→ 标准 animation
+      // InkSparkle (M3 涟漪) 是 Flutter 3.16+ 默认,跟 M3 风格统一
+      // 替代 SplashFactory.inkRipple (旧版长方形涟漪,看起来像 Android 4)
+      //
+      // 找 bug 方法: 用户报"按钮点起来手感怪"先看这里
+      // splashFactory: InkSparkle.splashFactory,
+    );
+  }
+
+  // ============= 文字主题 =============
+  static TextTheme _textTheme(ColorScheme cs) => TextTheme(
+        displayLarge: TextStyle(
+          fontSize: AppTokens.fontSizeTitle,
+          fontWeight: FontWeight.w600,
+          color: cs.onSurface,
+          height: AppTokens.lineHeightTight,
+        ),
+        displayMedium: TextStyle(
+          fontSize: AppTokens.fontSizeHeadline,
+          fontWeight: FontWeight.w600,
+          color: cs.onSurface,
+          height: AppTokens.lineHeightTight,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: AppTokens.fontSizeBody,
+          fontWeight: FontWeight.w400,
+          color: cs.onSurface,
+          height: AppTokens.lineHeightNormal,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: AppTokens.fontSizeBody,
+          fontWeight: FontWeight.w400,
+          color: cs.onSurfaceVariant,
+          height: AppTokens.lineHeightNormal,
+        ),
+        labelLarge: TextStyle(
+          fontSize: AppTokens.fontSizeButton,
+          fontWeight: FontWeight.w500,
+          color: cs.onSurface,
+        ),
+        labelMedium: TextStyle(
+          fontSize: AppTokens.fontSizeLabel,
+          fontWeight: FontWeight.w400,
+          color: cs.onSurfaceVariant,
+        ),
+      );
+
+  // ============= AppBar =============
+  static AppBarTheme _appBarTheme(ColorScheme cs, bool isDark) => AppBarTheme(
+        backgroundColor:
+            isDark ? AppTokens.backgroundDark : AppTokens.background,
+        foregroundColor: cs.onSurface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontSize: AppTokens.fontSizeHeadline,
+          fontWeight: FontWeight.w600,
+          color: cs.onSurface,
+        ),
+      );
+
+  // ============= ElevatedButton =============
+  static ElevatedButtonThemeData _elevatedButtonTheme(
+    ColorScheme cs,
+    bool isDark,
+  ) =>
+      ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(double.infinity, AppTokens.buttonHeight),
+          backgroundColor: cs.primary,
+          foregroundColor: cs.onPrimary,
+          disabledBackgroundColor:
+              isDark ? AppTokens.disabledDark : AppTokens.disabled,
+          disabledForegroundColor: cs.onSurface.withValues(alpha: 0.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+          ),
+          textStyle: const TextStyle(
+            fontSize: AppTokens.fontSizeButton,
+            fontWeight: FontWeight.w600,
+            height: AppTokens.lineHeightTight,
+          ),
+          elevation: 0,
+        ),
+      );
+
+  // ============= OutlinedButton =============
+  static OutlinedButtonThemeData _outlinedButtonTheme(ColorScheme cs) =>
+      OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(double.infinity, AppTokens.buttonHeightSmall),
+          side: BorderSide(color: cs.primary, width: 1.5),
+          foregroundColor: cs.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+          ),
+          textStyle: const TextStyle(
+            fontSize: AppTokens.fontSizeButton,
+            fontWeight: FontWeight.w500,
+            height: AppTokens.lineHeightTight,
+          ),
+        ),
+      );
+
+  // ============= TextButton =============
+  static TextButtonThemeData _textButtonTheme(ColorScheme cs) =>
+      TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: cs.primary,
+          textStyle: const TextStyle(
+            fontSize: AppTokens.fontSizeBody,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+
+  // ============= InputDecoration =============
+  static InputDecorationTheme _inputDecorationTheme(
+    ColorScheme cs,
+    bool isDark,
+  ) =>
+      InputDecorationTheme(
+        filled: true,
+        fillColor: isDark ? AppTokens.surfaceDark : AppTokens.surface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppTokens.spacingMd,
+          vertical: AppTokens.spacingMd,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+          borderSide: BorderSide(
+            color: isDark ? AppTokens.borderDark : AppTokens.border,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+          borderSide: BorderSide(
+            color: isDark ? AppTokens.borderDark : AppTokens.border,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+          borderSide: BorderSide(color: cs.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+          borderSide: BorderSide(color: cs.error),
+        ),
+        labelStyle: TextStyle(
+          fontSize: AppTokens.fontSizeLabel,
+          color: cs.onSurfaceVariant,
+        ),
+        hintStyle: TextStyle(
+          fontSize: AppTokens.fontSizeBody,
+          color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+        ),
+      );
+
+  // ============= Card =============
+  static CardThemeData _cardThemeData(ColorScheme cs, bool isDark) =>
+      CardThemeData(
+        color: isDark ? AppTokens.surfaceDark : AppTokens.surface,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+          side: BorderSide(
+            color: isDark ? AppTokens.dividerDark : AppTokens.divider,
+          ),
+        ),
+      );
+
+  // ============= NavigationRail =============
+  static NavigationRailThemeData _navigationRailTheme(ColorScheme cs) =>
+      NavigationRailThemeData(
+        backgroundColor: cs.surface,
+        selectedIconTheme: IconThemeData(color: cs.primary, size: 28),
+        unselectedIconTheme:
+            IconThemeData(color: cs.onSurfaceVariant, size: 24),
+        selectedLabelTextStyle: TextStyle(
+          color: cs.primary,
+          fontWeight: FontWeight.w600,
+          fontSize: AppTokens.fontSizeLabel,
+        ),
+        unselectedLabelTextStyle: TextStyle(
+          color: cs.onSurfaceVariant,
+          fontSize: AppTokens.fontSizeLabel,
+        ),
+        indicatorColor: cs.primaryContainer,
+        useIndicator: true,
+      );
+}

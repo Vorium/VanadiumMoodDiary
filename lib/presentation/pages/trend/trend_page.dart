@@ -8,17 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../../../domain/entities/check_in_entity.dart';
-import '../../../domain/entities/medication_entity.dart';
-import '../../../domain/entities/mood_entry_entity.dart';
-import '../../../shared/mood_visual.dart';
-import '../../../domain/logic/assessment_record.dart';
-import '../../../domain/logic/day_detail.dart';
-import '../../../domain/logic/scale_registry.dart';
-import '../../../domain/logic/trend_calculator.dart';
-import '../../../theme/app_tokens.dart';
-import '../../providers/data_providers.dart';
-import '../../widgets/page_scaffold.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/core/shared/mood_visual.dart';
+import 'package:chroniccare/domain/logic/assessment_record.dart';
+import 'package:chroniccare/domain/logic/day_detail.dart';
+import 'package:chroniccare/domain/logic/scale_registry.dart';
+import 'package:chroniccare/domain/logic/trend_calculator.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// v0.12 (Round 6) 视图模式
 enum _TrendView { list, calendar }

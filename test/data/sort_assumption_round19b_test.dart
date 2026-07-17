@@ -19,18 +19,18 @@
 // 假设数据：[5 天前, 3 天前, 1 天前]（unsorted）
 // 修前：如果 mock 返 unsorted 顺序，first = 5 天前 → daysSinceLast 报 5（错的，应该是 1）
 // 修后：显式 sort → first = 1 天前 → daysSinceLast 报 1（对）
-import 'package:chroniccare/data/repositories/check_in_repository_impl.dart';
-import 'package:chroniccare/data/repositories/contact_repository_impl.dart';
-import 'package:chroniccare/data/repositories/user_profile_repository_impl.dart';
-import 'package:chroniccare/data/services/notification_service.dart';
-import 'package:chroniccare/data/services/safety_watch_service.dart';
-import 'package:chroniccare/data/services/sms_service.dart';
+import 'package:chroniccare/core/data/repositories/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/contact_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/user_profile_repository_impl.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/safety_watch_service.dart';
+import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:chroniccare/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
 
 void main() {
   setUp(() {

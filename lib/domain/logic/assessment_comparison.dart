@@ -11,7 +11,7 @@
 // 我们用 rank（0..N-1）来量化，等级下降 = 好转。
 library;
 
-import 'assessment_record.dart';
+import 'package:chroniccare/domain/logic/assessment_record.dart';
 
 /// 严重度排名方向
 enum ComparisonTrend {

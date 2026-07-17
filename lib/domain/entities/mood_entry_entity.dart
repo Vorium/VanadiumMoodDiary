@@ -9,8 +9,8 @@
 // - `score` 用 int 1-5，含 `scoreEmoji` / `scoreLabel` 便捷方法（通过 MoodVisual）
 library;
 
-import '../../shared/domain_value.dart';
-import '../../shared/json_codec.dart';
+import 'package:chroniccare/core/shared/domain_value.dart';
+import 'package:chroniccare/core/shared/json_codec.dart';
 
 /// 情绪记录（领域实体）
 ///

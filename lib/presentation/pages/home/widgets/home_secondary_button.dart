@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 主页辅助按钮（v0.9 重构：抽出共用 style）
 ///

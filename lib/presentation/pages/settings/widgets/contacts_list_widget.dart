@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../data/utils/phone_validator.dart';
-import '../../../../domain/entities/contact_entity.dart';
-import '../../../../l10n/strings.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/core_providers.dart';
+import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// 紧急联系人列表 + 添加按钮
 class ContactsListWidget extends ConsumerStatefulWidget {

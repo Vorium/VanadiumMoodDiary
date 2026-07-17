@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../../data/services/medication_report_pdf.dart';
-import '../../../../shared/formatters.dart';
-import '../../../../domain/logic/medication_report.dart';
-import '../../../../l10n/strings.dart';
-import '../../../../theme/app_tokens.dart';
+import 'package:chroniccare/core/data/services/medication_report_pdf.dart';
+import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/domain/logic/medication_report.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 用药报告全屏预览
 ///

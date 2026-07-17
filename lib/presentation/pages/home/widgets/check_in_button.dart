@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 主页大按钮：「我今天吃了药」
 class CheckInButton extends StatelessWidget {

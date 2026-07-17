@@ -1,4 +1,4 @@
-import 'package:chroniccare/data/services/notification_payload.dart';
+import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

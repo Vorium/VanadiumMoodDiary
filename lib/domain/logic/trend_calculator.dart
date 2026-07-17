@@ -7,9 +7,9 @@
 /// - [CalendarMonth] / [CalendarDay]：v0.12 (Round 6) 日历视图
 library;
 
-import '../entities/check_in_entity.dart';
-import '../entities/mood_entry_entity.dart';
-import 'streak_calculator.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/logic/streak_calculator.dart';
 
 class DailyCheckIn {
   final DateTime date; // 0 点

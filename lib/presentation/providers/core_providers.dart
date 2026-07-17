@@ -1,30 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/database/app_database.dart';
-import '../../data/repositories/check_in_repository_impl.dart';
-import '../../data/repositories/contact_repository_impl.dart';
-import '../../data/repositories/medication_repository_impl.dart';
-import '../../data/repositories/mood_repository_impl.dart';
-import '../../data/repositories/report_history_repository_impl.dart';
-import '../../data/repositories/user_profile_repository_impl.dart';
-import '../../data/repositories/vent_repository_impl.dart';
-import '../../data/services/assessment_reminder_service.dart';
-import '../../data/services/crypto_service.dart';
-import '../../data/services/data_export_service.dart';
-import '../../data/services/notification_service.dart';
-import '../../data/services/reminder_scheduler.dart';
-import '../../data/services/safety_watch_service.dart';
-import '../../data/services/sms_service.dart';
-import '../../data/services/vent_audio_storage.dart';
-import '../../domain/entities/vent_entry.dart';
-import '../../domain/repositories/check_in_repository.dart';
-import '../../domain/repositories/contact_repository.dart';
-import '../../domain/repositories/medication_repository.dart';
-import '../../domain/repositories/mood_repository.dart';
-import '../../domain/repositories/reminder_checker.dart';
-import '../../domain/repositories/report_history_repository.dart';
-import '../../domain/repositories/user_profile_repository.dart';
-import '../../domain/repositories/vent_repository.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/repositories/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/contact_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/medication_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/mood_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/report_history_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/user_profile_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/vent_repository_impl.dart';
+import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
+import 'package:chroniccare/core/data/services/crypto_service.dart';
+import 'package:chroniccare/core/data/services/data_export_service.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/reminder_scheduler.dart';
+import 'package:chroniccare/core/data/services/safety_watch_service.dart';
+import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
+import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/domain/repositories/check_in_repository.dart';
+import 'package:chroniccare/domain/repositories/contact_repository.dart';
+import 'package:chroniccare/domain/repositories/medication_repository.dart';
+import 'package:chroniccare/domain/repositories/mood_repository.dart';
+import 'package:chroniccare/domain/repositories/reminder_checker.dart';
+import 'package:chroniccare/domain/repositories/report_history_repository.dart';
+import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
+import 'package:chroniccare/domain/repositories/vent_repository.dart';
 
 /// 数据库 Provider
 final databaseProvider = Provider<AppDatabase>((ref) {

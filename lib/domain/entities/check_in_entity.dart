@@ -11,7 +11,7 @@
 // - equals / hashCode / toString 标准实现
 library;
 
-import '../../shared/domain_value.dart';
+import 'package:chroniccare/core/shared/domain_value.dart';
 
 /// 打卡类型
 ///

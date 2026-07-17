@@ -1,8 +1,8 @@
-import '../../shared/formatters.dart';
-import '../../shared/json_codec.dart';
-import '../entities/check_in_entity.dart';
-import '../entities/hour_minute.dart';
-import '../entities/medication_entity.dart';
+import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/core/shared/json_codec.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 
 /// 用药报告：最近 N 天（默认 14 天）的用药情况，给医生看的纯文本
 ///

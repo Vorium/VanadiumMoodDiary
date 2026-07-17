@@ -1,4 +1,4 @@
-import 'package:chroniccare/data/services/preset_medication_templates.dart';
+import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

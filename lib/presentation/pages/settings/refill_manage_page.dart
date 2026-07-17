@@ -12,11 +12,11 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../domain/entities/medication_entity.dart';
-import '../../../theme/app_tokens.dart';
-import '../../providers/data_providers.dart';
-import '../../widgets/page_scaffold.dart';
-import 'widgets/edit_medication_dialog.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/edit_medication_dialog.dart';
 
 /// 续方状态
 enum RefillStatus {

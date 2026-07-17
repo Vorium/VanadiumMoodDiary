@@ -1,0 +1,43 @@
+// v0.15 (Round 18) VentMapper — Drift row ↔ domain entity
+//
+// 边界处的翻译官。Drift schema 变化时只改这里，UI 拿到的 entity 保持稳定。
+library;
+
+import 'package:drift/drift.dart' show Value;
+
+import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+
+/// Drift row → entity
+extension VentToEntity on VentEntry {
+  VentEntryEntity toEntity() {
+    return VentEntryEntity(
+      id: id,
+      timestamp: timestamp,
+      contentText: contentText,
+      audioPath: audioPath,
+      audioDurationSec: audioDurationSec,
+      audioSizeBytes: audioSizeBytes,
+    );
+  }
+}
+
+/// entity → Drift row
+extension VentEntryEntityToDrift on VentEntryEntity {
+  /// 构造 insert 用的 Companion
+  VentEntriesCompanion toCompanion() {
+    return VentEntriesCompanion(
+      id: id == 0 ? const Value.absent() : Value(id),
+      timestamp: Value(timestamp),
+      contentText: Value(contentText),
+      audioPath: Value(audioPath),
+      audioDurationSec: Value(audioDurationSec),
+      audioSizeBytes: Value(audioSizeBytes),
+    );
+  }
+}
+
+// 因为 entity 跟 Drift row 同名（都是 VentEntry），需要给其中一个起别名
+// 这里用 `VentEntryEntity` 做 domain 实体名，Drift row 沿用 VentEntry。
+// 但 extension 用了 import 'app_database.dart' 拿到 Drift 的 VentEntry，
+// 所以这个文件里 VentEntry 默认指 Drift row。

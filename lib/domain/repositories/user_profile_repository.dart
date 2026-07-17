@@ -1,4 +1,4 @@
-import '../entities/user_profile_entity.dart';
+import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 
 /// 用户档案仓库（domain 抽象接口）
 ///

@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/entities/check_in_entity.dart';
-import '../../domain/entities/contact_entity.dart';
-import '../../domain/entities/medication_entity.dart';
-import '../../domain/entities/mood_entry_entity.dart';
-import '../../domain/entities/report_history_entity.dart';
-import '../../domain/entities/user_profile_entity.dart';
-import '../../domain/logic/streak_calculator.dart';
-import 'core_providers.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/entities/report_history_entity.dart';
+import 'package:chroniccare/domain/entities/user_profile_entity.dart';
+import 'package:chroniccare/domain/logic/streak_calculator.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// 用户档案（v0.16: domain entity, no longer Drift row）
 final userProfileProvider = StreamProvider<UserProfileEntity?>(

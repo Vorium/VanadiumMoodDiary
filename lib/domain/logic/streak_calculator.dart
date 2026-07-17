@@ -1,4 +1,4 @@
-import '../entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
 
 /// 连续打卡天数计算器
 ///

@@ -9,14 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../domain/logic/assessment_comparison.dart';
-import '../../../domain/logic/assessment_record.dart';
-import '../../../domain/logic/assessment_scale.dart';
-import '../../../domain/logic/scale_registry.dart';
-import '../../../theme/app_tokens.dart';
-import '../../providers/core_providers.dart';
-import '../../providers/data_providers.dart';
-import '../../widgets/page_scaffold.dart';
+import 'package:chroniccare/domain/logic/assessment_comparison.dart';
+import 'package:chroniccare/domain/logic/assessment_record.dart';
+import 'package:chroniccare/domain/logic/assessment_scale.dart';
+import 'package:chroniccare/domain/logic/scale_registry.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class AssessmentPage extends ConsumerStatefulWidget {
   final String scaleId; // 'phq9' / 'gad7'

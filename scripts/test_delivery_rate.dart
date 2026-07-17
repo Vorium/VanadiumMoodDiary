@@ -6,7 +6,7 @@
 
 // ignore_for_file: avoid_print
 
-import 'package:chroniccare/data/services/email_service.dart';
+import 'package:chroniccare/core/data/services/email_service.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

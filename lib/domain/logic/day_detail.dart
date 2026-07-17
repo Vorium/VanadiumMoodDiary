@@ -12,11 +12,11 @@
 // v0.14 升级：4 层架构 — 接受 CheckInEntity / MoodEntryEntity
 library;
 
-import '../../shared/json_codec.dart';
-import '../entities/check_in_entity.dart';
-import '../entities/medication_entity.dart';
-import '../entities/mood_entry_entity.dart';
-import '../../shared/mood_visual.dart';
+import 'package:chroniccare/core/shared/json_codec.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/core/shared/mood_visual.dart';
 
 /// 当天事件类型
 enum DayEventKind {

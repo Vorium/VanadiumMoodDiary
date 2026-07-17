@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../data/database/medication_mapper.dart';
-import '../../../../shared/formatters.dart';
-import '../../../../domain/entities/medication_entity.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/core_providers.dart';
-import 'edit_medication_dialog.dart';
+import 'package:chroniccare/core/data/database/medication_mapper.dart';
+import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/edit_medication_dialog.dart';
 
 /// 常吃药列表（可编辑、可设置续方、可停药、可删除）
 ///

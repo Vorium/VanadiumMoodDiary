@@ -4,7 +4,7 @@
 // 1. NotificationStatusCard 在 mobile 平台显示完整 Card
 // 2. 三个主按钮存在（测试通知 / 查看已排队 / 国产手机引导）
 // 3. pendingCount 三种状态（正常 / 0 / -1）的 UI 显示
-import 'package:chroniccare/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

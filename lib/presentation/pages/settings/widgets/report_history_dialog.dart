@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../domain/entities/report_history_entity.dart';
-import '../../../../shared/formatters.dart';
-import '../../../../l10n/strings.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/core_providers.dart';
-import '../../../providers/data_providers.dart';
-import 'medication_report_dialog.dart';
+import 'package:chroniccare/domain/entities/report_history_entity.dart';
+import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/medication_report_dialog.dart';
 
 /// 报告历史列表 dialog
 class ReportHistoryListDialog extends ConsumerWidget {

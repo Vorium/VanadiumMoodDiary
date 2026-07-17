@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'dart:async';
 
-import 'app.dart';
-import 'data/database/app_database.dart';
-import 'data/repositories/check_in_repository_impl.dart';
-import 'data/services/assessment_reminder_service.dart';
-import 'data/services/database_migration.dart';
-import 'data/services/notification_service.dart';
-import 'presentation/providers/core_providers.dart';
+import 'package:chroniccare/app.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/repositories/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
+import 'package:chroniccare/core/data/services/database_migration.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// 慢病管家 · App 入口
 ///

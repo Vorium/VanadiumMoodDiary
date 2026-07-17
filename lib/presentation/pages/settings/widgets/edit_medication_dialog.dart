@@ -6,13 +6,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../data/database/medication_mapper.dart';
-import '../../../../shared/domain_value.dart';
-import '../../../../shared/formatters.dart';
-import '../../../../domain/entities/hour_minute.dart';
-import '../../../../domain/entities/medication_entity.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/core_providers.dart';
+import 'package:chroniccare/core/data/database/medication_mapper.dart';
+import 'package:chroniccare/core/shared/domain_value.dart';
+import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// 弹出编辑 dialog，返回 true 表示有保存成功，false/null = 取消
 Future<bool?> showEditMedicationDialog(

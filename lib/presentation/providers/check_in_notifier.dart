@@ -6,8 +6,8 @@
 // - TriggerReminderUseCase       触发失联检测
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/usecases/check_in_usecases.dart';
-import 'core_providers.dart';
+import 'package:chroniccare/domain/usecases/check_in_usecases.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// 打卡操作 Notifier
 class CheckInNotifier extends Notifier<AsyncValue<void>> {

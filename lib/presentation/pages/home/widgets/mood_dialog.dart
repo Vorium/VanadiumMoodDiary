@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../shared/mood_visual.dart';
-import '../../../../l10n/strings.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/core_providers.dart';
+import 'package:chroniccare/core/shared/mood_visual.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// 情绪日记 dialog
 ///

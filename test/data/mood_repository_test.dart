@@ -4,9 +4,9 @@
 // 重构后:
 //   - decodeTags → MoodEntryEntity.tags getter（解析 tagsJson）
 //   - emojiFor / labelFor / colorFor → MoodVisual 静态方法
-import 'package:chroniccare/shared/json_codec.dart';
+import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
-import 'package:chroniccare/shared/mood_visual.dart';
+import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

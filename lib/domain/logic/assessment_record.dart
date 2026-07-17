@@ -6,7 +6,7 @@ library;
 
 import 'dart:convert';
 
-import '../entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
 
 class AssessmentRecord {
   /// 量表 id（'phq9' / 'gad7'）

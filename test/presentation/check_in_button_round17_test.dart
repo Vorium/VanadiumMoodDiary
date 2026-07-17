@@ -10,7 +10,7 @@ import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

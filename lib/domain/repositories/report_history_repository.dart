@@ -1,4 +1,4 @@
-import '../entities/report_history_entity.dart';
+import 'package:chroniccare/domain/entities/report_history_entity.dart';
 
 /// 报告历史仓库（domain 抽象接口）
 ///

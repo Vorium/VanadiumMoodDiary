@@ -1,5 +1,5 @@
-import 'package:chroniccare/data/services/data_export_service.dart';
-import 'package:chroniccare/data/database/app_database.dart';
+import 'package:chroniccare/core/data/services/data_export_service.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -18,12 +18,12 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../domain/entities/check_in_entity.dart';
-import '../../../domain/entities/medication_entity.dart';
-import '../../../theme/app_tokens.dart';
-import '../../providers/calendar_window_provider.dart';
-import '../../providers/data_providers.dart';
-import '../../widgets/page_scaffold.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class MedicationCalendarPage extends ConsumerWidget {
   const MedicationCalendarPage({super.key});

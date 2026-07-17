@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:chroniccare/l10n/strings.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
 
 class _NoopNotificationService extends NotificationService {
   @override

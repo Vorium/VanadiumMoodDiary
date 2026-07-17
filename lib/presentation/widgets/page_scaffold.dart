@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 通用页面骨架（响应式）
 ///

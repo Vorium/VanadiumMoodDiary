@@ -9,7 +9,7 @@
 // 修后漏 cancel 起点：medId = 194000（id = 200000, range 截止 206000）
 //
 // 这些测试通过 [refillNotificationId] 公式验证 id 落在 [6000, 206000) 内。
-import 'package:chroniccare/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

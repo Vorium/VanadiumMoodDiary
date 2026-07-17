@@ -10,8 +10,8 @@
 // - 含业务方法（isActive, hasRefill, isRefillOverdue），不只做数据容器
 library;
 
-import '../../shared/domain_value.dart';
-import 'hour_minute.dart';
+import 'package:chroniccare/core/shared/domain_value.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 
 /// 药物（领域实体）
 ///

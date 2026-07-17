@@ -1,8 +1,8 @@
 // v0.14 (Round 12A) CheckInEntity / mapper 单元测试
-import 'package:chroniccare/data/database/app_database.dart';
-import 'package:chroniccare/data/database/check_in_mapper.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/check_in_mapper.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
-import 'package:chroniccare/shared/domain_value.dart';
+import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';

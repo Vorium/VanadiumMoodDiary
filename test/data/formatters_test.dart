@@ -1,4 +1,4 @@
-import 'package:chroniccare/shared/formatters.dart';
+import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

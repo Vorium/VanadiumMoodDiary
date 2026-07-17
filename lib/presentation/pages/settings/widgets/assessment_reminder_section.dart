@@ -7,9 +7,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../data/services/assessment_reminder_service.dart';
-import '../../../../theme/app_tokens.dart';
-import '../../../providers/core_providers.dart';
+import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 class AssessmentReminderSection extends ConsumerStatefulWidget {
   const AssessmentReminderSection({super.key});

@@ -1,4 +1,4 @@
-import '../entities/contact_entity.dart';
+import 'package:chroniccare/domain/entities/contact_entity.dart';
 
 /// 失联检测调度器
 ///

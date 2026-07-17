@@ -5,24 +5,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../data/services/safety_watch_service.dart';
-import '../../../domain/logic/care_engine.dart';
-import '../../../l10n/strings.dart';
-import '../../../theme/app_tokens.dart';
-import '../../../theme/theme_toggle_button.dart';
-import '../../providers/check_in_notifier.dart';
-import '../../providers/core_providers.dart';
-import '../../providers/data_providers.dart';
-import '../../../main.dart' show notificationInitResultProvider;
-import '../../widgets/page_scaffold.dart';
-import 'widgets/celebration_overlay.dart';
-import 'widgets/check_in_button.dart';
-import 'widgets/home_secondary_button.dart';
-import 'widgets/last_med_info.dart';
-import 'widgets/mood_dialog.dart';
-import 'widgets/mood_quick_button.dart';
-import 'widgets/temp_medication_dialog.dart';
-import 'widgets/today_med_schedule.dart';
+import 'package:chroniccare/core/data/services/safety_watch_service.dart';
+import 'package:chroniccare/domain/logic/care_engine.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/theme_toggle_button.dart';
+import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/main.dart' show notificationInitResultProvider;
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/check_in_button.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/home_secondary_button.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/last_med_info.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/mood_dialog.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/mood_quick_button.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/temp_medication_dialog.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/today_med_schedule.dart';
 
 /// 主页
 class HomePage extends ConsumerStatefulWidget {

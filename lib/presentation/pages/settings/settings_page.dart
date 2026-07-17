@@ -3,21 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../domain/logic/assessment_scale.dart';
-import '../../../domain/logic/medication_report.dart';
-import '../../../domain/logic/scale_registry.dart';
-import '../../../l10n/strings.dart';
-import '../../../theme/app_tokens.dart';
-import '../../providers/core_providers.dart';
-import '../../providers/data_providers.dart';
-import '../../widgets/page_scaffold.dart';
-import 'widgets/assessment_reminder_section.dart';
-import 'widgets/choose_window_dialog.dart';
-import 'widgets/contacts_list_widget.dart';
-import 'widgets/medication_report_dialog.dart';
-import 'widgets/medications_list_widget.dart';
-import 'widgets/notification_status_card.dart';
-import 'widgets/report_history_dialog.dart';
+import 'package:chroniccare/domain/logic/assessment_scale.dart';
+import 'package:chroniccare/domain/logic/medication_report.dart';
+import 'package:chroniccare/domain/logic/scale_registry.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/assessment_reminder_section.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/choose_window_dialog.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/contacts_list_widget.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/medication_report_dialog.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/medications_list_widget.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
 
 /// 心理评估量表列表（设置页用）
 final List<AssessmentScale> _assessmentScales = allScales();

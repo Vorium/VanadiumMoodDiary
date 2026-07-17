@@ -13,7 +13,7 @@
 /// 危机信号：第 9 题（自杀念头）≥ 1 → 弹出危机资源
 library;
 
-import 'assessment_scale.dart';
+import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
 class Phq9Item {
   final String text;

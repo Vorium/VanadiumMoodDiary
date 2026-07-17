@@ -3,7 +3,7 @@
 // 4 层架构：domain 定义接口，data 层实现。
 library;
 
-import '../entities/contact_entity.dart';
+import 'package:chroniccare/domain/entities/contact_entity.dart';
 
 /// 紧急联系人仓库（domain 接口）
 abstract class ContactRepository {

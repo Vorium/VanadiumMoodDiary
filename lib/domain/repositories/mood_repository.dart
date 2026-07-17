@@ -3,7 +3,7 @@
 // 4 层架构：domain 定义接口，data 层实现。
 library;
 
-import '../entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 
 /// 情绪日记仓库（domain 接口）
 abstract class MoodRepository {

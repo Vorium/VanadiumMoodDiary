@@ -1,4 +1,4 @@
-import 'package:chroniccare/shared/json_codec.dart';
+import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

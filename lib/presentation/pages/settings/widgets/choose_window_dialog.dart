@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../l10n/strings.dart';
-import '../../../../theme/app_tokens.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 选择时间窗口的 AlertDialog
 ///

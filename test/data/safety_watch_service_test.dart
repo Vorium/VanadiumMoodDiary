@@ -1,15 +1,15 @@
-import 'package:chroniccare/data/repositories/check_in_repository_impl.dart';
-import 'package:chroniccare/data/repositories/contact_repository_impl.dart';
-import 'package:chroniccare/data/repositories/user_profile_repository_impl.dart';
-import 'package:chroniccare/data/services/notification_service.dart';
-import 'package:chroniccare/data/services/safety_watch_service.dart';
-import 'package:chroniccare/data/services/sms_service.dart';
+import 'package:chroniccare/core/data/repositories/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/contact_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/user_profile_repository_impl.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/safety_watch_service.dart';
+import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:chroniccare/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
 
 /// 内存数据库 + mock services，跑 SafetyWatch 逻辑测试
 void main() {

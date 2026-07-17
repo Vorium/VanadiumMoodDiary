@@ -1,6 +1,6 @@
 // v0.14 (Round 12A) ContactEntity / mapper 单元测试
-import 'package:chroniccare/data/database/app_database.dart';
-import 'package:chroniccare/data/database/contact_mapper.dart';
+import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/contact_mapper.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
