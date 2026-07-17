@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../data/database/medication_mapper.dart';
 import '../../../../domain/logic/email_template.dart';
 import '../../../../theme/app_tokens.dart';
 import '../../../providers/data_providers.dart';
@@ -39,10 +38,9 @@ class EmailPreviewPage extends ConsumerWidget {
                 contactsAsync.when(
                   data: (contacts) {
                     final firstContact = contacts.isEmpty ? null : contacts.first;
-                    // v0.13 (Round 11): entity → drift row 转换（email 模板还在用 Drift 类）
+                    // v0.16 (Round 13): email 模板已支持 domain entity, 直接传 MedicationEntity
                     final medication = medsAsync.maybeWhen(
-                      data: (m) =>
-                          m.isEmpty ? null : m.first.toDriftRow(),
+                      data: (m) => m.isEmpty ? null : m.first,
                       orElse: () => null,
                     );
 

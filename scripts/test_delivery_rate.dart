@@ -7,7 +7,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:chroniccare/data/services/email_service.dart';
-import 'package:chroniccare/data/database/app_database.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const testPhones = <String>[
@@ -38,12 +39,12 @@ Future<void> main() async {
         userName: '测试用户',
         daysWithoutCheckIn: 2,
         lastCheckIn: DateTime.now().subtract(const Duration(days: 2)),
-        medication: Medication(
+        medication: MedicationEntity(
           id: 0,
           name: '氟西汀',
           dosage: 40,
           dosageUnit: 'mg',
-          timesJson: '[{"h":8,"m":0}]',
+          times: const [HourMinute(hour: 8, minute: 0)],
           startDate: DateTime.now(),
           endDate: null,
           isActive: true,

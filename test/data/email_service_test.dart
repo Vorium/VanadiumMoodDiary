@@ -1,6 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/data/services/email_service.dart';
-import 'package:chroniccare/data/database/app_database.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('EmailService (Mock 模式)', () {
@@ -12,12 +13,12 @@ void main() {
         userName: '小明',
         daysWithoutCheckIn: 2,
         lastCheckIn: DateTime(2026, 7, 9, 20, 0),
-        medication: Medication(
+        medication: MedicationEntity(
           id: 1,
           name: '氟西汀',
           dosage: 40,
           dosageUnit: 'mg',
-          timesJson: '[{"h":8,"m":0}]',
+          times: const [HourMinute(hour: 8, minute: 0)],
           startDate: DateTime(2026, 1, 1),
           endDate: null,
           isActive: true,

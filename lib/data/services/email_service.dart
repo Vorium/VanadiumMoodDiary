@@ -1,8 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:dio/dio.dart';
-
-import '../../data/database/app_database.dart';
+import '../../domain/entities/medication_entity.dart';
 import '../../domain/logic/email_template.dart';
 
 /// 失联通知服务
@@ -10,18 +8,17 @@ import '../../domain/logic/email_template.dart';
 /// v0.6：联系人改 phone 后，"邮件发送" 改成 mock 短信。
 /// - MVP 阶段：useMock=true 时只打印日志，不发真实消息
 /// - v1.0+：接入真实 SMS provider（阿里云/腾讯云），`to` 字段语义改成手机号
+///
+/// v0.16 简化: 删除未用的 Dio 字段和未用的 html 变量。
+/// v0.16 抽象: 参数 Medication (drift row) → MedicationEntity (domain entity)。
 class EmailService {
-  // ignore: unused_field
-  final Dio _dio;
   final String? _apiKey;
   final bool _useMock;
 
   EmailService({
-    Dio? dio,
     String? apiKey,
     bool useMock = true,
-  })  : _dio = dio ?? Dio(),
-        _apiKey = apiKey,
+  })  : _apiKey = apiKey,
         _useMock = useMock;
 
   /// 发送失联通知（mock 阶段只打日志）
@@ -32,7 +29,7 @@ class EmailService {
     required String userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
-    required Medication? medication,
+    required MedicationEntity? medication,
     required int cycleHours,
   }) async {
     final subject = EmailTemplate.buildSubject(
@@ -41,15 +38,6 @@ class EmailService {
     );
 
     final body = EmailTemplate.buildBody(
-      userName: userName,
-      daysWithoutCheckIn: daysWithoutCheckIn,
-      lastCheckIn: lastCheckIn,
-      medication: medication,
-      cycleHours: cycleHours,
-    );
-
-    // ignore: unused_local_variable
-    final html = EmailTemplate.buildHtml(
       userName: userName,
       daysWithoutCheckIn: daysWithoutCheckIn,
       lastCheckIn: lastCheckIn,

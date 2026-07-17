@@ -1,9 +1,12 @@
-import '../../data/database/app_database.dart';
 import '../../l10n/strings.dart';
+import '../entities/medication_entity.dart';
 
 /// 通知文案模板生成器
 ///
 /// v0.6：从邮件改 mock 短信，文案保持温柔、主动、可操作。
+///
+/// v0.16：参数 Medication (drift row) → MedicationEntity (domain entity)，
+/// domain 层不再 import data 层。
 class EmailTemplate {
   EmailTemplate._();
 
@@ -20,7 +23,7 @@ class EmailTemplate {
     required String userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
-    required Medication? medication,
+    required MedicationEntity? medication,
     required int cycleHours,
   }) {
     final buffer = StringBuffer();
@@ -55,7 +58,7 @@ class EmailTemplate {
     required String userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
-    required Medication? medication,
+    required MedicationEntity? medication,
     required int cycleHours,
   }) {
     final lastMedHtml = lastCheckIn != null

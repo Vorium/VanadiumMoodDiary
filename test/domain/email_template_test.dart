@@ -1,16 +1,17 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/email_template.dart';
-import 'package:chroniccare/data/database/app_database.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('EmailTemplate', () {
     final lastCheckIn = DateTime(2026, 7, 9, 20, 0);
-    final medication = Medication(
+    final medication = MedicationEntity(
       id: 1,
       name: '氟西汀',
       dosage: 40,
       dosageUnit: 'mg',
-      timesJson: '[{"h":8,"m":0},{"h":20,"m":0}]',
+      times: const [HourMinute(hour: 8, minute: 0), HourMinute(hour: 20, minute: 0)],
       startDate: DateTime(2026, 1, 1),
       endDate: null,
       refillAt: null,
