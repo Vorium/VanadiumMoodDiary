@@ -60,6 +60,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   }
 
   void _onTextChanged() {
+    // v0.16 round 19 fix: 之前直接 setState，在 dispose 时 _MedDraft.controller.dispose() 
+    // 触发 listener，State 已 defunct，setState assert 失败。
+    // 加 mounted check，dispose 阶段直接吞掉
+    if (!mounted) return;
     setState(() {});
   }
 
