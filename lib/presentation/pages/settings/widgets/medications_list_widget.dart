@@ -424,20 +424,22 @@ class _RefillDaysDialogState extends State<_RefillDaysDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('提前几天提醒？'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final d in _options)
-            RadioListTile<int>(
-              value: d,
-              groupValue: _selected,
-              title: Text('$d 天'),
-              subtitle: Text(_hintFor(d)),
-              onChanged: (v) {
-                if (v != null) setState(() => _selected = v);
-              },
-            ),
-        ],
+      content: RadioGroup<int>(
+        groupValue: _selected,
+        onChanged: (v) {
+          if (v != null) setState(() => _selected = v);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final d in _options)
+              RadioListTile<int>(
+                value: d,
+                title: Text('$d 天'),
+                subtitle: Text(_hintFor(d)),
+              ),
+          ],
+        ),
       ),
       actions: [
         TextButton(

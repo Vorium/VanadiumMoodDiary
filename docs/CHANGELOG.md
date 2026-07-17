@@ -2,6 +2,40 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.16.0] - 2026-07-17
+
+### Changed
+- **架构整理（Round 1-19）**：
+  - 4 层架构纯度 + 一致性 合并到 `scripts/check_all.dart`（替代 2 个旧 script）
+  - check_all 支持 `package: 绝对路径` + `../../ 相对路径` 两种 import 检测
+  - 修了 `care_engine.dart` 用相对路径绕过 purity 检查的隐藏 bug — 切到 `NotificationSender` 抽象接口
+  - 修了 18 个 unused import + 1 个 dead try/catch + 2 个 dead `// ignore` 块 + 1 个 dead `audioExists()` 方法
+  - 修 4 个 Flutter 3.32+ `RadioListTile` deprecation（改用 `RadioGroup` 祖先）
+
+### Fixed
+- **Stream subscription leak**：树洞详情/撰写页 `_player.onXxx.listen()` 之前没存 subscription，dispose 没取消。修后存 `StreamSubscription?` 字段 + `dispose()` 取消
+- **`vent_entry.dart` 死代码**：删 `audioExists()` + 误导注释 + `dart:io` import（实际不是仅做 path 拼接，是磁盘 I/O）
+- **`safety_watch_service.dart` 死参数**：删 `EmailService? emailService` 构造参数（v1.0+ 占位，EmailService 整个在 production 没用）
+- **文档同步**：
+  - `SENDGRID_SETUP.md` 删 stale `fromEmail` 参数示例（构造函数早没这参数）+ 改 `to` 为手机号
+  - `AGENTS.md` / `README.md` 同步 `check_all.dart` + `dart scripts/check_all.dart`（不用 `dart run`，会触发 `objective_c` build hook 失败）
+  - `email_preview.dart` 修正 round 注释（之前写错 Round 13 → 实际 Round 12）
+
+### Removed
+- **`dio: ^5.7.0`** 依赖：清理后 `EmailService` 没有任何 `package:dio/dio` 引用
+- **`EmailService` 中的 `Dio` 字段 + 未用 `html` 变量**
+- **`EmailService` 的 `Medication?` drift row 参数**：改用 `MedicationEntity?`（domain entity），消除 domain → data 反向依赖
+- **`scripts/check_domain_purity.dart` + `scripts/check_architecture_consistency.dart`**：合并到 `check_all.dart`
+- **`scripts/debug_check.dart`**：占位文件
+
+### Architecture
+- **Domain 层严格 0 flutter / 0 drift / 0 data / 0 dart:io 依赖**（除 vent_entry 的 `audioPath` 字段类型用 String）
+- **共享层使用度**：所有 `shared/` 工具至少被 2 层用（被 check_all 验证）
+
+### Tests
+- 462/462 pass（无新增/减少）
+- 新增 `test/data/email_service_test.dart`（用 `MedicationEntity` 替代之前的 drift row）
+
 ## [0.15.0] - 2026-07-15
 
 ### Added

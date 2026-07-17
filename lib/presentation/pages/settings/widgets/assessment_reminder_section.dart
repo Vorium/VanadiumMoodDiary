@@ -233,16 +233,24 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
               ),
             ),
           ),
-          for (final opt in _options)
-            RadioListTile<int>(
-              value: opt.days,
-              groupValue: _selected,
-              title: Text('每 ${opt.days} 天'),
-              subtitle: Text(opt.hint),
-              onChanged: (v) {
-                if (v != null) setState(() => _selected = v);
-              },
+          // Flutter 3.32+: 用 RadioGroup 包裹代替每个 RadioListTile 单独传 groupValue/onChanged
+          RadioGroup<int>(
+            groupValue: _selected,
+            onChanged: (v) {
+              if (v != null) setState(() => _selected = v);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final opt in _options)
+                  RadioListTile<int>(
+                    value: opt.days,
+                    title: Text('每 ${opt.days} 天'),
+                    subtitle: Text(opt.hint),
+                  ),
+              ],
             ),
+          ),
           const SizedBox(height: AppTokens.spacingSm),
           Padding(
             padding: const EdgeInsets.all(AppTokens.spacingMd),
