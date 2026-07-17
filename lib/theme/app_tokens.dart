@@ -81,9 +81,33 @@ class AppTokens {
   static const double iconSizeLg = 32.0;
 
   // ============= 动画 =============
+  // v0.17 round 1 (emil 动效 token): 之前只有 duration 缺 curve / easing
+  // 各 widget 各写各的 → 风格不统一
+  // 频度决策（emil 框架）：
+  //   100+/day（键盘 / 核心导航）→ 无动画
+  //   tens/day（hover）→ 微弱
+  //   occasional（modal / drawer / snackbar）→ durNormal + curveStandard
+  //   rare（onboarding / 庆祝）→ durSlow + curveDelight
   static const Duration durFast = Duration(milliseconds: 200);
   static const Duration durNormal = Duration(milliseconds: 300);
   static const Duration durSlow = Duration(milliseconds: 500);
+
+  /// 标准进入/出场缓动 — `easeOutCubic`：开始快、收尾慢
+  /// 替代 Flutter 默认 `easeInOut`（emil: 延迟了用户最关注的入场瞬间）
+  /// 适用：modal / drawer / 状态切换 / fade in
+  static const Curve curveStandard = Curves.easeOutCubic;
+
+  /// 强减速缓动 — `easeOutQuart`：比 standard 更明显的"快速起步、缓慢收尾"
+  /// 适用：celebration / 大数字递增（streak 数字）
+  static const Curve curveDecelerate = Curves.easeOutQuart;
+
+  /// 入场缓动 — `easeInCubic`：开始慢、结束快
+  /// 适用：exit / dismiss 动画（离开屏幕要"果断"）
+  static const Curve curveAccelerate = Curves.easeInCubic;
+
+  /// 弹性缓动 — `elasticOut`：超过目标再回弹
+  /// 适用：onboarding 首次 / 庆祝反馈（rare 频度，emil: 禁滥用）
+  static const Curve curveDelight = Curves.elasticOut;
 
   // ============= 阴影 =============
   static const List<BoxShadow> shadowCard = [

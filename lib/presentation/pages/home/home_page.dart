@@ -233,15 +233,28 @@ class _HomePageState extends ConsumerState<HomePage> {
           const Spacer(flex: 1),
 
           // 鼓励文案（按 streak 动态切换）
+          // v0.17 round 1 (A8 emil 动效): AnimatedSwitcher 让文案
+          // 变化时 fade + 微缩放过渡。occasional 频度(每天看几次)
+          // → 标准 animation 适用
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
-            child: Text(
-              _encouragementFor(streakSnapshot.streak),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
+            child: AnimatedSwitcher(
+              duration: AppTokens.durNormal,
+              switchInCurve: AppTokens.curveStandard,
+              switchOutCurve: AppTokens.curveAccelerate,
+              transitionBuilder: (child, anim) => FadeTransition(
+                opacity: anim,
+                child: ScaleTransition(scale: anim, child: child),
+              ),
+              child: Text(
+                _encouragementFor(streakSnapshot.streak),
+                key: ValueKey<int>(streakSnapshot.streak),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeBody,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),

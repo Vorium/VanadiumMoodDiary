@@ -54,40 +54,58 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingXl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.forest_outlined,
-              size: 80,
-              color: AppTokens.textHint,
-            ),
-            const SizedBox(height: AppTokens.spacingMd),
-            const Text(
-              '树洞还是空的',
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeTitle,
-                fontWeight: FontWeight.w600,
-                color: AppTokens.textPrimary,
+        // v0.17 round 1 (A8 emil 动效): 空态首次进入用
+        // TweenAnimationBuilder 让图标 + 文字从 scale(0.92) + opacity:0
+        // 淡入。emil 决策:rare 频度(用户第一次进树洞 / 删完所有) → 可加 delight
+        // curve 用 curveDelight(elasticOut) 弹一下,但只用在"第一次"出现的元素
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0, end: 1),
+          duration: AppTokens.durSlow,
+          curve: AppTokens.curveStandard,
+          builder: (context, t, child) {
+            return Opacity(
+              opacity: t,
+              child: Transform.scale(
+                scale: 0.92 + (0.08 * t),
+                child: child,
               ),
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            const Text(
-              '想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                color: AppTokens.textSecondary,
-                height: 1.5,
+            );
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.forest_outlined,
+                size: 80,
+                color: AppTokens.textHint,
               ),
-            ),
-            const SizedBox(height: AppTokens.spacingLg),
-            ElevatedButton.icon(
-              onPressed: () => context.push('/vent/compose'),
-              icon: const Icon(Icons.edit_outlined),
-              label: const Text('写第一句'),
-            ),
-          ],
+              const SizedBox(height: AppTokens.spacingMd),
+              const Text(
+                '树洞还是空的',
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeTitle,
+                  fontWeight: FontWeight.w600,
+                  color: AppTokens.textPrimary,
+                ),
+              ),
+              const SizedBox(height: AppTokens.spacingSm),
+              const Text(
+                '想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeBody,
+                  color: AppTokens.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: AppTokens.spacingLg),
+              ElevatedButton.icon(
+                onPressed: () => context.push('/vent/compose'),
+                icon: const Icon(Icons.edit_outlined),
+                label: const Text('写第一句'),
+              ),
+            ],
+          ),
         ),
       ),
     );
