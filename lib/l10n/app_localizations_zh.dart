@@ -195,4 +195,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get commonError => '出错了，请重试';
+
+  @override
+  String snackbarErrorTemplate(String action, String error) {
+    return '$action失败：$error';
+  }
+
+  @override
+  String get snackbarCopied => '已复制到剪贴板';
+
+  @override
+  String get snackbarNeedMicPermission => '需要麦克风权限';
+
+  @override
+  String get snackbarEmptyVent => '写点东西或录一段吧';
+
+  @override
+  String get snackbarStopRecording => '请先停止录音';
+
+  @override
+  String get snackbarPhoneInvalid => '手机号格式不对（11 位数字）';
 }

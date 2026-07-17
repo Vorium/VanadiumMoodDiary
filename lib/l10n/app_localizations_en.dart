@@ -197,4 +197,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonError => 'Something went wrong, please retry';
+
+  @override
+  String snackbarErrorTemplate(String action, String error) {
+    return '$action failed: $error';
+  }
+
+  @override
+  String get snackbarCopied => 'Copied to clipboard';
+
+  @override
+  String get snackbarNeedMicPermission => 'Microphone permission needed';
+
+  @override
+  String get snackbarEmptyVent => 'Write something or record a voice note';
+
+  @override
+  String get snackbarStopRecording => 'Please stop recording first';
+
+  @override
+  String get snackbarPhoneInvalid => 'Phone format invalid (11 digits)';
 }

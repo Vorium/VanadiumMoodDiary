@@ -8,6 +8,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 常吃药列表（可编辑、可设置续方、可停药、可删除）
 ///
@@ -159,7 +160,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('删除失败：$e')),
+          AppSnackBar.error(context, action: '删除', error: e),
         );
       }
     } finally {
@@ -220,7 +221,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('设置失败：$e')),
+          AppSnackBar.error(context, action: '设置', error: e),
         );
       }
     } finally {

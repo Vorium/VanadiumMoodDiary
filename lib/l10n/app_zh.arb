@@ -79,5 +79,19 @@
   "commonDone": "完成",
   "commonConfirm": "确认",
   "commonLoading": "加载中...",
-  "commonError": "出错了，请重试"
+  "commonError": "出错了，请重试",
+
+  "snackbarErrorTemplate": "{action}失败：{error}",
+  "@snackbarErrorTemplate": {
+    "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action (保存/删除/导出/...)",
+    "placeholders": {
+      "action": { "type": "String" },
+      "error": { "type": "String" }
+    }
+  },
+  "snackbarCopied": "已复制到剪贴板",
+  "snackbarNeedMicPermission": "需要麦克风权限",
+  "snackbarEmptyVent": "写点东西或录一段吧",
+  "snackbarStopRecording": "请先停止录音",
+  "snackbarPhoneInvalid": "手机号格式不对（11 位数字）"
 }

@@ -20,6 +20,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 提醒中心
 class RemindersHubPage extends ConsumerStatefulWidget {
@@ -474,7 +475,7 @@ class _AssessmentReminderSheetState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败：$e')),
+          AppSnackBar.error(context, action: '保存', error: e),
         );
       }
     } finally {
@@ -603,7 +604,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败：$e')),
+          AppSnackBar.error(context, action: '保存', error: e),
         );
       }
     } finally {

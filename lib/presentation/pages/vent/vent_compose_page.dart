@@ -26,6 +26,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 class VentComposePage extends ConsumerStatefulWidget {
   const VentComposePage({super.key});
@@ -78,7 +79,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('录音失败：$e')),
+            AppSnackBar.error(context, action: '录音', error: e),
           );
           setState(() => _isRecording = false);
         }
@@ -90,7 +91,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         if (!hasPerm) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('需要麦克风权限')),
+              AppSnackBar.info(context, AppLocalizations.of(context).snackbarNeedMicPermission),
             );
           }
           return;
@@ -110,7 +111,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('开始录音失败：$e')),
+            AppSnackBar.error(context, action: '开始录音', error: e),
           );
         }
       }
@@ -149,7 +150,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('播放失败：$e')),
+            AppSnackBar.error(context, action: '播放', error: e),
           );
         }
       }
@@ -188,13 +189,13 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     final hasAudio = _audioPath != null;
     if (!hasText && !hasAudio) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('写点东西或录一段吧')),
+        AppSnackBar.info(context, AppLocalizations.of(context).snackbarEmptyVent),
       );
       return;
     }
     if (_isRecording) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请先停止录音')),
+        AppSnackBar.info(context, AppLocalizations.of(context).snackbarStopRecording),
       );
       return;
     }
@@ -227,7 +228,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败：$e')),
+          AppSnackBar.error(context, action: '保存', error: e),
         );
       }
     }

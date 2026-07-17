@@ -19,6 +19,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 class VentDetailPage extends ConsumerStatefulWidget {
   final int id;
@@ -78,7 +79,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('播放失败：$e')),
+            AppSnackBar.error(context, action: '播放', error: e),
           );
         }
       }

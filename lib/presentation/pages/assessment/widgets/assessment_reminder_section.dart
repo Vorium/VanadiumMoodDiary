@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 class AssessmentReminderSection extends ConsumerStatefulWidget {
   const AssessmentReminderSection({super.key});
@@ -63,7 +64,7 @@ class _AssessmentReminderSectionState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('设置失败：$e')),
+          AppSnackBar.error(context, action: '设置', error: e),
         );
       }
     } finally {
@@ -97,7 +98,7 @@ class _AssessmentReminderSectionState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('设置失败：$e')),
+          AppSnackBar.error(context, action: '设置', error: e),
         );
       }
     } finally {

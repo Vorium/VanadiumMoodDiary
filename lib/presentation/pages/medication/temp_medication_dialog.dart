@@ -6,6 +6,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 临时吃药 dialog
 ///
@@ -154,7 +155,7 @@ class _TempMedicationDialogState extends State<TempMedicationDialog> {
     } catch (e) {
       if (ctx.mounted) {
         ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(content: Text('保存失败：$e')),
+          AppSnackBar.error(ctx, action: '保存', error: e),
         );
         setState(() => saving = false);
       }

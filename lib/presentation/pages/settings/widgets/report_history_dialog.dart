@@ -8,6 +8,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_report_dialog.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 报告历史列表 dialog
 class ReportHistoryListDialog extends ConsumerWidget {
@@ -130,7 +131,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('删除失败：$e')),
+          AppSnackBar.error(context, action: '删除', error: e),
         );
       }
     }

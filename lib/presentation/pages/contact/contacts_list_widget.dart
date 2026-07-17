@@ -6,6 +6,7 @@ import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 紧急联系人列表 + 添加按钮
 class ContactsListWidget extends ConsumerStatefulWidget {
@@ -77,7 +78,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('删除失败：$e')),
+          AppSnackBar.error(context, action: '删除', error: e),
         );
       }
     } finally {
@@ -127,7 +128,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         if (phone.isEmpty) return;
                         if (!PhoneValidator.isValid(phone)) {
                           ScaffoldMessenger.of(ctx).showSnackBar(
-                            const SnackBar(content: Text('手机号格式不对（11 位数字）')),
+                            AppSnackBar.info(context, AppLocalizations.of(context).snackbarPhoneInvalid),
                           );
                           return;
                         }
@@ -144,7 +145,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         } catch (e) {
                           if (ctx.mounted) {
                             ScaffoldMessenger.of(ctx).showSnackBar(
-                              SnackBar(content: Text('保存失败：$e')),
+                              AppSnackBar.error(context, action: '保存', error: e),
                             );
                             setLocal(() => saving = false);
                           }

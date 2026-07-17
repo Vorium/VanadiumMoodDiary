@@ -8,6 +8,7 @@ import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 用药报告全屏预览
 ///
@@ -169,7 +170,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     await Clipboard.setData(ClipboardData(text: widget.report));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('已复制到剪贴板')),
+        AppSnackBar.info(context, AppLocalizations.of(context).snackbarCopied),
       );
     }
   }
@@ -183,7 +184,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('分享失败：$e')),
+          AppSnackBar.error(context, action: '分享', error: e),
         );
       }
     }
@@ -204,7 +205,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('生成 PDF 失败：$e')),
+          AppSnackBar.error(context, action: '生成 PDF ', error: e),
         );
       }
     } finally {

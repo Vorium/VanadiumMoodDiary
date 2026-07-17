@@ -457,6 +457,42 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'出错了，请重试'**
   String get commonError;
+
+  /// Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action (保存/删除/导出/...)
+  ///
+  /// In zh, this message translates to:
+  /// **'{action}失败：{error}'**
+  String snackbarErrorTemplate(String action, String error);
+
+  /// No description provided for @snackbarCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制到剪贴板'**
+  String get snackbarCopied;
+
+  /// No description provided for @snackbarNeedMicPermission.
+  ///
+  /// In zh, this message translates to:
+  /// **'需要麦克风权限'**
+  String get snackbarNeedMicPermission;
+
+  /// No description provided for @snackbarEmptyVent.
+  ///
+  /// In zh, this message translates to:
+  /// **'写点东西或录一段吧'**
+  String get snackbarEmptyVent;
+
+  /// No description provided for @snackbarStopRecording.
+  ///
+  /// In zh, this message translates to:
+  /// **'请先停止录音'**
+  String get snackbarStopRecording;
+
+  /// No description provided for @snackbarPhoneInvalid.
+  ///
+  /// In zh, this message translates to:
+  /// **'手机号格式不对（11 位数字）'**
+  String get snackbarPhoneInvalid;
 }
 
 class _AppLocalizationsDelegate

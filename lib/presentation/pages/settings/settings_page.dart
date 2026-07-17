@@ -19,6 +19,7 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medication_rep
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 心理评估量表列表（设置页用）
 final List<AssessmentScale> _assessmentScales = allScales();
@@ -269,7 +270,7 @@ class SettingsPage extends ConsumerWidget {
                 await Clipboard.setData(ClipboardData(text: json));
                 if (ctx.mounted) {
                   ScaffoldMessenger.of(ctx).showSnackBar(
-                    const SnackBar(content: Text('已复制到剪贴板')),
+                    AppSnackBar.info(context, AppLocalizations.of(context).snackbarCopied),
                   );
                 }
               },
@@ -280,7 +281,7 @@ class SettingsPage extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导出失败：$e')),
+          AppSnackBar.error(context, action: '导出', error: e),
         );
       }
     }
@@ -350,7 +351,7 @@ class SettingsPage extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('生成报告失败：$e')),
+          AppSnackBar.error(context, action: '生成报告', error: e),
         );
       }
     }
@@ -417,7 +418,7 @@ class SettingsPage extends ConsumerWidget {
                       } else {
                         setLocal(() => importing = false);
                         ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(content: Text('导入失败：${result.error}')),
+                          AppSnackBar.error(context, action: '导入', error: result.error),
                         );
                       }
                     },

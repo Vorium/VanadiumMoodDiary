@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 通知自检卡
 class NotificationStatusCard extends ConsumerStatefulWidget {
@@ -77,7 +78,7 @@ class _NotificationStatusCardState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('发送失败：$e')),
+        AppSnackBar.error(context, action: '发送', error: e),
       );
     } finally {
       if (mounted) setState(() => _busy = false);

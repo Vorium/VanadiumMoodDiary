@@ -64,5 +64,12 @@
   "commonDone": "Done",
   "commonConfirm": "Confirm",
   "commonLoading": "Loading...",
-  "commonError": "Something went wrong, please retry"
+  "commonError": "Something went wrong, please retry",
+
+  "snackbarErrorTemplate": "{action} failed: {error}",
+  "snackbarCopied": "Copied to clipboard",
+  "snackbarNeedMicPermission": "Microphone permission needed",
+  "snackbarEmptyVent": "Write something or record a voice note",
+  "snackbarStopRecording": "Please stop recording first",
+  "snackbarPhoneInvalid": "Phone format invalid (11 digits)"
 }
