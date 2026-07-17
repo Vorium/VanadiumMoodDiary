@@ -50,12 +50,15 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     // v0.10 (Round 4): 首帧后跑一次 SafetyWatch.onAppStart
+    // v0.17 round 14 (Bug-4): 用 unawaited 显式标记 fire-and-forget,
+    // 之前 _runSafetyCheck() 在 void 上下文里被默默丢弃, linter 看不出
+    // "哦这其实是 fire-and-forget" 的意图。unawaited 让代码自描述。
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _runSafetyCheck();
+      unawaited(_runSafetyCheck());
     });
     // v0.11 (Round 5): 首帧后处理 deep link query param
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _handleDeepLink();
+      unawaited(_handleDeepLink());
     });
   }
 

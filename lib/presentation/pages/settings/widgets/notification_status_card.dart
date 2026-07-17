@@ -12,6 +12,8 @@
 // - 用 `kIsWeb` 判断平台兼容性，比 dart:io 的 Platform 更轻
 // - 不跳转到系统设置（避免加包），只给文字 + 路径
 // - widget 是 ConsumerStatefulWidget，因为要管理"测试中" busy 状态
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -39,7 +41,9 @@ class _NotificationStatusCardState
   void initState() {
     super.initState();
     // 首次进入时刷新一次
-    WidgetsBinding.instance.addPostFrameCallback((_) => _refresh());
+    // v0.17 round 14 (Bug-4): 用 unawaited 包 _refresh(),
+    // 让 fire-and-forget 意图自描述 (虽然 addPostFrameCallback callback 是 void)
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_refresh()));
   }
 
   Future<void> _refresh() async {
