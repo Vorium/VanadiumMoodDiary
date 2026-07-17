@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 
@@ -109,7 +109,7 @@ class MoodDialog {
           actions: [
             TextButton(
               onPressed: saving ? null : () => Navigator.pop(ctx),
-              child: const Text(Strings.commonCancel),
+              child: Text(AppLocalizations.of(context).commonCancel),
             ),
             ElevatedButton(
               onPressed: saving
@@ -137,7 +137,7 @@ class MoodDialog {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Text(Strings.commonSave),
+                  Text(AppLocalizations.of(context).commonSave),
                   if (saving)
                     const IgnorePointer(
                       child: SizedBox(

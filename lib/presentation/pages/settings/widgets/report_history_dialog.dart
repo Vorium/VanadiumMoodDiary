@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/report_history_entity.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -29,9 +29,9 @@ class ReportHistoryListDialog extends ConsumerWidget {
               padding: const EdgeInsets.all(AppTokens.spacingMd),
               child: Row(
                 children: [
-                  const Text(
-                    Strings.settingsReportHistory,
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context).settingsReportHistory,
+                    style: const TextStyle(
                       fontSize: AppTokens.fontSizeHeadline,
                       fontWeight: FontWeight.w600,
                     ),
@@ -115,7 +115,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(Strings.commonCancel),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),

@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -38,7 +38,7 @@ class SettingsPage extends ConsumerWidget {
         children: [
           const SizedBox(height: AppTokens.spacingMd),
 
-          const _SectionHeader(title: Strings.settingsContacts),
+          _SectionHeader(title: AppLocalizations.of(context).settingsContacts),
           const SizedBox(height: AppTokens.spacingSm),
           contactsAsync.when(
             data: (contacts) => ContactsListWidget(contacts: contacts),
@@ -48,7 +48,7 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          const _SectionHeader(title: Strings.settingsMedication),
+          _SectionHeader(title: AppLocalizations.of(context).settingsMedication),
           const SizedBox(height: AppTokens.spacingSm),
           medsAsync.when(
             data: (meds) => MedicationsListWidget(meds: meds),
@@ -75,16 +75,16 @@ class SettingsPage extends ConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.summarize_outlined,
                       color: AppTokens.primary,),
-                  title: const Text(Strings.settingsMedReport),
-                  subtitle: const Text(Strings.settingsMedReportSubtitle),
+                  title: Text(AppLocalizations.of(context).settingsMedReport),
+                  subtitle: Text(AppLocalizations.of(context).settingsMedReportSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _chooseAndShowReport(context, ref),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.history, color: AppTokens.primary),
-                  title: const Text(Strings.settingsReportHistory),
-                  subtitle: const Text(Strings.settingsReportHistorySubtitle),
+                  title: Text(AppLocalizations.of(context).settingsReportHistory),
+                  subtitle: Text(AppLocalizations.of(context).settingsReportHistorySubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showReportHistory(context),
                 ),
@@ -191,7 +191,7 @@ class SettingsPage extends ConsumerWidget {
             child: ListTile(
               leading:
                   const Icon(Icons.email_outlined, color: AppTokens.primary),
-              title: const Text(Strings.settingsEmailPreview),
+              title: Text(AppLocalizations.of(context).settingsEmailPreview),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/email-preview'),
             ),
@@ -199,20 +199,20 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingMd),
 
-          const Card(
+          Card(
             child: ListTile(
-              leading: Icon(Icons.info_outline, color: AppTokens.primary),
-              title: Text(Strings.settingsAbout),
-              subtitle: Text('v0.1.0 · 我今天吃了药'),
+              leading: const Icon(Icons.info_outline, color: AppTokens.primary),
+              title: Text(AppLocalizations.of(context).settingsAbout),
+              subtitle: const Text('v0.1.0 · 我今天吃了药'),
             ),
           ),
 
-          const Card(
+          Card(
             child: ListTile(
               leading:
-                  Icon(Icons.shield_outlined, color: AppTokens.textSecondary),
-              title: Text(Strings.settingsDisclaimer),
-              subtitle: Text('本应用不提供医疗建议，所有功能仅供参考。'),
+                  const Icon(Icons.shield_outlined, color: AppTokens.textSecondary),
+              title: Text(AppLocalizations.of(context).settingsDisclaimer),
+              subtitle: const Text('本应用不提供医疗建议，所有功能仅供参考。'),
             ),
           ),
         ],

@@ -8,7 +8,7 @@ import 'package:chroniccare/core/data/database/mappers/medication/medication_map
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -88,7 +88,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
-      title: Strings.setupStep(_step + 1, 3),
+      title: AppLocalizations.of(context).setupStep(_step + 1, 3),
       child: AnimatedSwitcher(
         duration: AppTokens.durNormal,
         child: _buildStep(),
@@ -117,18 +117,18 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: AppTokens.spacingXl),
-          const Text(
-            Strings.setupHello,
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).setupHello,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeTitle,
               fontWeight: FontWeight.w600,
               height: 1.2,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          const Text(
-            Strings.setupIntro,
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).setupIntro,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeBody,
               color: AppTokens.textSecondary,
             ),
@@ -136,15 +136,15 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           const SizedBox(height: AppTokens.spacingXl),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: Strings.setupName,
-              hintText: Strings.setupNameHint,
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context).setupName,
+              hintText: AppLocalizations.of(context).setupNameHint,
             ),
           ),
           const SizedBox(height: AppTokens.spacingMd),
-          const Text(
-            Strings.setupContacts,
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).setupContacts,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeLabel,
               color: AppTokens.textSecondary,
             ),
@@ -187,7 +187,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                   _contactPhoneControllers.add(phoneC);
                 });
               },
-              child: const Text(Strings.setupAddContact),
+              child: Text(AppLocalizations.of(context).setupAddContact),
             ),
           const SizedBox(height: AppTokens.spacingXl),
           Builder(
@@ -211,7 +211,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                   ElevatedButton(
                     onPressed:
                         err == null ? () => setState(() => _step = 1) : null,
-                    child: const Text(Strings.setupNext),
+                    child: Text(AppLocalizations.of(context).setupNext),
                   ),
                 ],
               );
@@ -338,7 +338,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                   children: [
                     ElevatedButton(
                       onPressed: _saving ? null : _finishSetup,
-                      child: const Text(Strings.setupNext),
+                      child: Text(AppLocalizations.of(context).setupNext),
                     ),
                     if (_saving)
                       const IgnorePointer(
@@ -604,49 +604,49 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           const SizedBox(height: AppTokens.spacingXl),
           const Center(child: Text('🌱', style: TextStyle(fontSize: 64))),
           const SizedBox(height: AppTokens.spacingLg),
-          const Center(
+          Center(
             child: Text(
-              Strings.setupDoneTitle,
-              style: TextStyle(
+              AppLocalizations.of(context).setupDoneTitle,
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeTitle,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          const Center(
+          Center(
             child: Text(
-              Strings.setupDoneSubtitle,
-              style: TextStyle(
+              AppLocalizations.of(context).setupDoneSubtitle,
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeBody,
                 color: AppTokens.textSecondary,
               ),
             ),
           ),
           const SizedBox(height: AppTokens.spacingXl),
-          const Text(
-            Strings.setupDailyRoutine,
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).setupDailyRoutine,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeBody,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          const Text(Strings.setupReminder1),
-          const Text(Strings.setupReminder2),
-          const Text(Strings.setupReminder3),
+          Text(AppLocalizations.of(context).setupReminder1),
+          Text(AppLocalizations.of(context).setupReminder2),
+          Text(AppLocalizations.of(context).setupReminder3),
           const SizedBox(height: AppTokens.spacingXl),
-          const Text(
-            Strings.setupPrivacy,
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).setupPrivacy,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeBody,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          const Text(Strings.setupPrivacy1),
-          const Text(Strings.setupPrivacy2),
-          const Text(Strings.setupPrivacy3),
+          Text(AppLocalizations.of(context).setupPrivacy1),
+          Text(AppLocalizations.of(context).setupPrivacy2),
+          Text(AppLocalizations.of(context).setupPrivacy3),
           const SizedBox(height: AppTokens.spacingXl),
           Row(
             children: [
@@ -657,7 +657,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               const Spacer(),
               ElevatedButton(
                 onPressed: () => context.go('/'),
-                child: const Text(Strings.setupStart),
+                child: Text(AppLocalizations.of(context).setupStart),
               ),
             ],
           ),

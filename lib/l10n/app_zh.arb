@@ -1,0 +1,83 @@
+{
+  "@@locale": "zh",
+
+  "appName": "慢病管家",
+  "appTagline": "我今天吃了药",
+
+  "homeCheckIn": "我今天吃了药",
+  "homeCheckedIn": "今天已打卡 ✓",
+  "homeStreak": "已坚持 {days} 天",
+  "@homeStreak": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeLastMed": "最后吃药：{time}",
+  "@homeLastMed": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "homeNextReminder": "下次提醒：{time}",
+  "@homeNextReminder": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "homeStillOnline": "🌱 你还在线",
+  "homeTempMed": "临时吃药 +",
+  "homeStreakBroken": "少 1 次没关系，明天继续",
+
+  "setupStep": "第 {current} 步 / 共 {total} 步",
+  "@setupStep": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "setupHello": "你好，我是慢病管家",
+  "setupIntro": "1 分钟设置好，然后每天 1 次打卡",
+  "setupName": "你的名字",
+  "setupNameHint": "小明",
+  "setupContacts": "紧急联系人邮箱（至少 1 个）",
+  "setupContactHint": "mom@example.com",
+  "setupAddContact": "+ 添加另一个联系人",
+  "setupNext": "下一步 →",
+  "setupMedName": "药名",
+  "setupMedNameHint": "舍曲林",
+  "setupMedFrequency": "每日次数",
+  "setupMedTimes1": "1次",
+  "setupMedTimes2": "2次",
+  "setupMedTimes3": "3次",
+  "setupMedSchedule": "吃药时间（可填）",
+  "setupStart": "开始我的第 1 天",
+  "setupDoneTitle": "全部完成！",
+  "setupDoneSubtitle": "明天开始你的第 1 天",
+  "setupDailyRoutine": "我每天会做：",
+  "setupReminder1": "✓ 推送 1 次提醒",
+  "setupReminder2": "✓ 你点 1 下 = 打卡",
+  "setupReminder3": "✓ 漏 2 天我会联系紧急人",
+  "setupPrivacy": "你的数据：",
+  "setupPrivacy1": "• 本地加密",
+  "setupPrivacy2": "• 不会上传云端（除邮件通知）",
+  "setupPrivacy3": "• 你可以随时导出",
+
+  "settingsContacts": "紧急联系人",
+  "settingsMedication": "常吃药",
+  "settingsEmailPreview": "预览停药通知邮件",
+  "settingsAbout": "关于",
+  "settingsDisclaimer": "免责声明",
+  "settingsExport": "导出数据",
+  "settingsMedReport": "用药报告",
+  "settingsMedReportSubtitle": "选时间窗口（7/14/30 天），给医生看",
+  "settingsMedReportChooseTitle": "选择时间窗口",
+  "settingsMedReportChooseSubtitle": "会统计这段时间内的所有常吃药 + 临时用药",
+  "settingsMedReportWindow7": "近 7 天",
+  "settingsMedReportWindow14": "近 14 天",
+  "settingsMedReportWindow30": "近 30 天",
+  "settingsReportHistory": "报告历史",
+  "settingsReportHistorySubtitle": "查看过去生成的用药报告",
+
+  "commonSave": "保存",
+  "commonCancel": "取消",
+  "commonDelete": "删除",
+  "commonEdit": "编辑",
+  "commonDone": "完成",
+  "commonConfirm": "确认",
+  "commonLoading": "加载中...",
+  "commonError": "出错了，请重试"
+}

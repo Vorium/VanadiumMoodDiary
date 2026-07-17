@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
@@ -33,14 +33,19 @@ void main() {
               _NoopNotificationService(),
             ),
           ],
-          child: const MaterialApp(home: SetupPage()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale('zh'),
+            home: SetupPage(),
+          ),
         ),
       );
       await tester.pumpAndSettle();
 
       // 走到第 2 步
       await tester.enterText(
-        find.widgetWithText(TextField, Strings.setupName),
+        find.widgetWithText(TextField, '你的名字'),
         '小明',
       );
       await tester.enterText(
@@ -53,7 +58,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final nextFinder = find.widgetWithText(ElevatedButton, Strings.setupNext);
+      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       expect(nextFinder, findsOneWidget);
       await tester.tap(nextFinder);
       await tester.pumpAndSettle();
@@ -74,7 +79,7 @@ void main() {
 
       // 顶部标题
       expect(
-        find.text(Strings.setupStep(2, 3)),
+        find.text('第 2 步 / 共 3 步'),
         findsOneWidget,
         reason: '顶部应该显示"第 2 步 / 共 3 步"',
       );
@@ -101,14 +106,19 @@ void main() {
               _NoopNotificationService(),
             ),
           ],
-          child: const MaterialApp(home: SetupPage()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale('zh'),
+            home: SetupPage(),
+          ),
         ),
       );
       await tester.pumpAndSettle();
 
       // 走到第 2 步
       await tester.enterText(
-        find.widgetWithText(TextField, Strings.setupName),
+        find.widgetWithText(TextField, '你的名字'),
         '小明',
       );
       await tester.enterText(
@@ -117,7 +127,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tester.tap(
-        find.widgetWithText(ElevatedButton, Strings.setupNext),
+        find.widgetWithText(ElevatedButton, '下一步 →'),
       );
       await tester.pumpAndSettle();
 

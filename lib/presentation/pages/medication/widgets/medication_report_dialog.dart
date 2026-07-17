@@ -6,7 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:chroniccare/core/data/services/medication_report_pdf.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 用药报告全屏预览
@@ -37,7 +37,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('${Strings.settingsMedReport}（近 ${widget.windowDays} 天）'),
+          title: Text('${AppLocalizations.of(context).settingsMedReport}（近 ${widget.windowDays} 天）'),
           actions: [
             IconButton(
               icon: const Icon(Icons.close),

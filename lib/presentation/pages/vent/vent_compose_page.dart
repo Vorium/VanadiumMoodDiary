@@ -22,7 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:record/record.dart';
 
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -305,7 +305,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: _saving ? null : () => context.pop(),
-                    child: const Text(Strings.commonCancel),
+                    child: Text(AppLocalizations.of(context).commonCancel),
                   ),
                 ),
                 const SizedBox(width: AppTokens.spacingSm),

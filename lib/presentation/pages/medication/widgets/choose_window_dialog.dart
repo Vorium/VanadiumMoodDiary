@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 选择时间窗口的 AlertDialog
@@ -26,14 +26,14 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(Strings.settingsMedReportChooseTitle),
+      title: Text(AppLocalizations.of(context).settingsMedReportChooseTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            Strings.settingsMedReportChooseSubtitle,
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context).settingsMedReportChooseSubtitle,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeCaption,
               color: AppTokens.textSecondary,
             ),
@@ -43,24 +43,24 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
           RadioGroup<int>(
             groupValue: _selected,
             onChanged: (v) => setState(() => _selected = v ?? 14),
-            child: const Column(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 RadioListTile<int>(
-                  title: Text(Strings.settingsMedReportWindow7),
-                  subtitle: Text('一周内（适合周复诊）'),
+                  title: Text(AppLocalizations.of(context).settingsMedReportWindow7),
+                  subtitle: const Text('一周内（适合周复诊）'),
                   value: 7,
                   contentPadding: EdgeInsets.zero,
                 ),
                 RadioListTile<int>(
-                  title: Text(Strings.settingsMedReportWindow14),
-                  subtitle: Text('两周内（推荐）'),
+                  title: Text(AppLocalizations.of(context).settingsMedReportWindow14),
+                  subtitle: const Text('两周内（推荐）'),
                   value: 14,
                   contentPadding: EdgeInsets.zero,
                 ),
                 RadioListTile<int>(
-                  title: Text(Strings.settingsMedReportWindow30),
-                  subtitle: Text('一个月内（适合月度评估）'),
+                  title: Text(AppLocalizations.of(context).settingsMedReportWindow30),
+                  subtitle: const Text('一个月内（适合月度评估）'),
                   value: 30,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -72,7 +72,7 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text(Strings.commonCancel),
+          child: Text(AppLocalizations.of(context).commonCancel),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(context, _selected),

@@ -28,18 +28,7 @@ Thumbs.db
 **/*.freezed.dart
 **/*.config.dart
 
-# Coverage
-coverage/
-
-# Build outputs
-android/app/build/
-ios/Pods/
-ios/.symlinks/
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-
-# Scratch (subagent-driven-development)
-.superpowers/
-
-# Build artifacts & temp outputs
-target/
+# Python (pytest cache, venv)
+__pycache__/
+*.pyc
+.pytest_cache/

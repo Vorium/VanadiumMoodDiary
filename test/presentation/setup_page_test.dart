@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
@@ -35,7 +35,15 @@ Future<void> _pumpSetup(WidgetTester tester) async {
           _NoopNotificationService(),
         ),
       ],
-      child: const MaterialApp(home: SetupPage()),
+      child: const MaterialApp(
+        // v0.17 round 14 (P1-6): 加 localizations delegates 让
+        // SetupPage 内部 AppLocalizations.of(context) 可用
+        // 默认 zh,跟生产 app 一致 (项目整体中文优先)
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale('zh'),
+        home: SetupPage(),
+      ),
     ),
   );
   await tester.pumpAndSettle();
@@ -47,9 +55,9 @@ void main() {
     (tester) async {
       await _pumpSetup(tester);
 
-      expect(find.text(Strings.setupHello), findsOneWidget);
+      expect(find.text('你好，我是慢病管家'), findsOneWidget);
 
-      final nextFinder = find.widgetWithText(ElevatedButton, Strings.setupNext);
+      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       expect(nextFinder, findsOneWidget);
 
       ElevatedButton nextBtn() => tester.widget(nextFinder);
@@ -62,7 +70,7 @@ void main() {
       );
 
       // 用 labelText 找字段
-      final userNameField = find.widgetWithText(TextField, Strings.setupName);
+      final userNameField = find.widgetWithText(TextField, '你的名字');
       final contactNameField = find.widgetWithText(TextField, '联系人 1 姓名');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       expect(userNameField, findsOneWidget);
@@ -92,7 +100,7 @@ void main() {
       await tester.tap(nextFinder);
       await tester.pumpAndSettle();
       expect(find.text('你常吃什么药？'), findsOneWidget);
-      expect(find.text(Strings.setupStep(2, 3)), findsOneWidget);
+      expect(find.text('第 2 步 / 共 3 步'), findsOneWidget);
     },
   );
 
@@ -101,9 +109,9 @@ void main() {
     (tester) async {
       await _pumpSetup(tester);
 
-      final userNameField = find.widgetWithText(TextField, Strings.setupName);
+      final userNameField = find.widgetWithText(TextField, '你的名字');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
-      final nextFinder = find.widgetWithText(ElevatedButton, Strings.setupNext);
+      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       ElevatedButton nextBtn() => tester.widget(nextFinder);
 
       await tester.enterText(userNameField, '小明');
@@ -133,7 +141,7 @@ void main() {
     (tester) async {
       await _pumpSetup(tester);
 
-      final userNameField = find.widgetWithText(TextField, Strings.setupName);
+      final userNameField = find.widgetWithText(TextField, '你的名字');
 
       await tester.enterText(userNameField, '小明');
       await tester.enterText(
@@ -141,7 +149,7 @@ void main() {
         _phone('1380013', '8000'),
       );
       // 添加第二个联系人
-      await tester.tap(find.text(Strings.setupAddContact));
+      await tester.tap(find.text('+ 添加另一个联系人'));
       await tester.pumpAndSettle();
       // 填相同的手机号
       await tester.enterText(
@@ -150,7 +158,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final nextFinder = find.widgetWithText(ElevatedButton, Strings.setupNext);
+      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       ElevatedButton nextBtn() => tester.widget(nextFinder);
       expect(
         nextBtn().onPressed,
@@ -180,7 +188,7 @@ void main() {
       await tester.enterText(phoneField, _phone('1380013', '8000'));
       await tester.pumpAndSettle();
 
-      final nextFinder = find.widgetWithText(ElevatedButton, Strings.setupNext);
+      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       ElevatedButton nextBtn() => tester.widget(nextFinder);
       expect(
         nextBtn().onPressed,

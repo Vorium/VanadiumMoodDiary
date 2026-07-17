@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/domain/logic/care_engine.dart';
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/theme_toggle_button.dart';
@@ -188,7 +188,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
 
     return PageScaffold(
-      title: Strings.appName,
+      title: AppLocalizations.of(context).appName,
       actions: const [ThemeToggleButton()],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -223,7 +223,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               IconButton(
                 icon: const Icon(Icons.settings_outlined),
                 onPressed: () => context.push('/settings'),
-                tooltip: Strings.settingsAbout,
+                tooltip: AppLocalizations.of(context).settingsAbout,
               ),
             ],
           ),
@@ -288,9 +288,9 @@ class _HomePageState extends ConsumerState<HomePage> {
           // 临时吃药按钮
           SecondaryButton(
             onPressed: () => TempMedicationDialog.show(context, ref),
-            child: const Text(
-              Strings.homeTempMed,
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context).homeTempMed,
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeButton,
                 fontWeight: FontWeight.w500,
               ),
@@ -364,7 +364,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           Center(
             child: Text(
-              Strings.homeStillOnline,
+              AppLocalizations.of(context).homeStillOnline,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeBody,
                 color: Theme.of(context)

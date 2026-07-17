@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
-import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 
@@ -61,7 +61,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.add, color: AppTokens.primary),
-            title: const Text(Strings.setupAddContact),
+            title: Text(AppLocalizations.of(context).setupAddContact),
             onTap: () => _showAddContactDialog(context, ref),
           ),
         ],
@@ -117,7 +117,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
             actions: [
               TextButton(
                 onPressed: saving ? null : () => Navigator.pop(ctx),
-                child: const Text(Strings.commonCancel),
+                child: Text(AppLocalizations.of(context).commonCancel),
               ),
               ElevatedButton(
                 onPressed: saving
@@ -153,7 +153,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    const Text(Strings.commonSave),
+                    Text(AppLocalizations.of(context).commonSave),
                     if (saving)
                       const IgnorePointer(
                         child: SizedBox(
