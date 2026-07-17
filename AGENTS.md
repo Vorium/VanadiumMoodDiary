@@ -143,23 +143,18 @@ dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 
 ## 架构检查脚本（v0.16 Round 9-11）
 
-2 个 CI 友好的脚本检查 4 层架构健康度：
+1 个 CI 友好的脚本检查 4 层架构健康度（v0.16 Round 13 起合并）：
 
 ```bash
-dart run scripts/check_domain_purity.dart        # 验证 domain/shared 0 flutter/drift/data/presentation
-dart run scripts/check_architecture_consistency.dart  # 验证 entity ↔ table 对应 + shared 被 3 层用
+dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 ```
 
-**`check_domain_purity.dart`** 检查：
-- `domain/` 禁止 import `package:flutter/` / `package:drift/` / `package:chroniccare/data/` / `package:chroniccare/presentation/`
-- `shared/` 禁止 import 上述 4 个
-- `data/` 禁止 import `package:chroniccare/presentation/`
+**`check_all.dart`** 检查：
+- **[1/2] 纯度**：domain/shared/ 0 flutter / 0 drift / 0 data / 0 presentation；data 不依赖 presentation。同时检测 `package:` 绝对路径 + `../../` 相对路径
+- **[2/2] 一致性**：domain `*Entity` ↔ drift `@DataClassName('X')` 一一对应；shared/ 每个文件至少被 2 层用
 - 违规时 exit code 1，CI 会 fail
 
-**`check_architecture_consistency.dart`** 检查：
-- 每个 domain `*Entity` 都对应一个 drift `@DataClassName('X')` table
-- 每个 drift table 都对应一个 domain `*Entity`
-- `shared/` 每个文件至少被 2 层用（否则考虑移进单层）
+> Round 13 之前用的是 `check_domain_purity.dart` + `check_architecture_consistency.dart` 2 个 script，已合并删除。
 
 **已知 bug 修复**：写这俩脚本时发现 Dart `RegExp` 默认 `^` 不 multi-line — 必须显式 `multiLine: true` 或用 `readAsLinesSync()` 逐行处理。
 

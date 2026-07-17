@@ -12,8 +12,8 @@ library;
 
 import 'dart:developer' as developer;
 
-import '../../data/services/notification_service.dart';
 import '../entities/check_in_entity.dart';
+import '../repositories/notification_sender.dart';
 
 enum CareTriggerType {
   lateCheckInHabit, // 持续晚归
@@ -121,7 +121,7 @@ class CareEngine {
   /// 触发关怀（实际推送）
   static Future<void> fire(
     CareTrigger trigger,
-    NotificationService notificationService,
+    NotificationSender notificationService,
   ) async {
     if (!trigger.shouldFire) return;
     // 关怀通知 id：4000-4099 段，避免和其他通知冲突
