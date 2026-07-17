@@ -6,6 +6,7 @@
 // 删除按钮在右上角
 library;
 
+import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -16,7 +17,6 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/vent_entry.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class VentDetailPage extends ConsumerStatefulWidget {

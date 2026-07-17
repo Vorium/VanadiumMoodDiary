@@ -5,6 +5,7 @@
 // 总分 ≥ 推荐线 提示就医；自杀念头（PHQ-9 第 9 题）阳性立即弹危机资源
 // v0.13 (Round 8) 加：结果页显示"对比上次"面板 + sparkline 趋势
 
+import '../../providers/service_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

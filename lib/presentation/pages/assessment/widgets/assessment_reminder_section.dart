@@ -4,12 +4,12 @@
 // - 下方一个下拉/选择行：提醒间隔（7/14/30/60/90 天）
 // - 关闭时整体灰显
 // - 改完即生效（onSettingsChanged）
+import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 class AssessmentReminderSection extends ConsumerStatefulWidget {
   const AssessmentReminderSection({super.key});

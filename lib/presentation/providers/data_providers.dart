@@ -42,8 +42,10 @@ final allNormalCheckInsProvider = StreamProvider<List<CheckInEntity>>(
 class StreakSnapshot {
   final int streak;
   final bool shouldShowStreakBroken;
-  const StreakSnapshot(
-      {required this.streak, required this.shouldShowStreakBroken,});
+  const StreakSnapshot({
+    required this.streak,
+    required this.shouldShowStreakBroken,
+  });
 }
 
 final streakSummaryProvider = Provider<AsyncValue<StreakSnapshot>>((ref) {

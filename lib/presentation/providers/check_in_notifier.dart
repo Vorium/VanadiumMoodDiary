@@ -6,6 +6,8 @@
 // - TriggerReminderUseCase       触发失联检测
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/presentation/providers/service_providers.dart';
+
 import 'package:chroniccare/domain/usecases/check_in_usecases.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 

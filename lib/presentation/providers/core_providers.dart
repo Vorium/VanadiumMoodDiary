@@ -7,31 +7,35 @@ import 'package:chroniccare/core/data/repositories/medication_repository_impl.da
 import 'package:chroniccare/core/data/repositories/mood_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/report_history_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/vent_repository_impl.dart';
-import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/crypto_service.dart';
-import 'package:chroniccare/core/data/services/data_export_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
-import 'package:chroniccare/core/data/services/reminder_scheduler.dart';
-import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
-import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
-import 'package:chroniccare/domain/entities/vent_entry.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:chroniccare/domain/repositories/mood_repository.dart';
-import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 import 'package:chroniccare/domain/repositories/report_history_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
-import 'package:chroniccare/domain/repositories/vent_repository.dart';
 
-/// 数据库 Provider
+/// v0.17 round 14 (P1-3 拆 core_providers): 数据库 + 基础服务 + 仓库 provider
+///
+/// 之前一个文件 25+ provider (6.6KB),跨 feature 修改容易冲突。
+/// 拆 3 个文件:
+///   - core_providers.dart (本文件):  db + 基础服务 (crypto/notification/sms) + 7 个 repo
+///   - service_providers.dart:        reminder + safety watch + assessment reminder + data export
+///   - vent_providers.dart:           vent audio storage + vent entries stream + vent entry by id
+
+/// 数据库 Provider (跨 feature 共享)
 final databaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
   ref.onDispose(() => db.close());
   return db;
 });
+
+/// v0.16 (Round 19): data class → impl，provider 暴露 domain 接口
+final userProfileRepositoryProvider = Provider<UserProfileRepository>(
+  (ref) => UserProfileRepositoryImpl(ref.watch(databaseProvider)),
+);
 
 /// v0.14 (Round 12A) 4 层架构：domain 抽象 + data impl
 final checkInRepositoryProvider = Provider<CheckInRepository>(
@@ -46,71 +50,25 @@ final medicationRepositoryProvider = Provider<MedicationRepository>(
   (ref) => MedicationRepositoryImpl(ref.watch(databaseProvider)),
 );
 
-/// v0.16 (Round 19): data class → impl，provider 暴露 domain 接口
-final userProfileRepositoryProvider = Provider<UserProfileRepository>(
-  (ref) => UserProfileRepositoryImpl(ref.watch(databaseProvider)),
-);
-
 final moodRepositoryProvider = Provider<MoodRepository>(
   (ref) => MoodRepositoryImpl(ref.watch(databaseProvider)),
 );
 
-/// v0.15 (Round 18) 树洞仓库 provider
-final ventRepositoryProvider = Provider<VentRepository>(
-  (ref) => VentRepositoryImpl(
-      ref.watch(databaseProvider), ref.watch(ventAudioStorageProvider),),
-);
+/// v0.15 (Round 18) 树洞仓库 provider 已挪到 vent_providers.dart (round 14 避免循环 import)
 
 /// v0.16 (Round 19): 报告历史仓库（domain 接口 + data impl）
 final reportHistoryRepositoryProvider = Provider<ReportHistoryRepository>(
   (ref) => ReportHistoryRepositoryImpl(ref.watch(databaseProvider)),
 );
 
-/// 树洞 audio 文件管理（独立 service）
-final ventAudioStorageProvider = Provider<VentAudioStorage>(
-  (ref) => VentAudioStorage(),
-);
+/// 基础服务 provider (无 feature 依赖)
 
-/// 树洞条目流（按时间倒序，UI 监听用）
-///
-/// v0.17 round 8 (C5): 加 .autoDispose，离开 vent 列表页时 stream subscription 自动
-/// 取消，DB watch 释放。重新进页面 re-subscribe 一次性重 fetch。树洞数据通常
-/// 几十~几百条，re-fetch 成本可接受；好处是切到 home/settings 后不再后台
-/// 监听 vent 表的更新（隐私边界 + 省资源）。
-final ventEntriesProvider =
-    StreamProvider.autoDispose<List<VentEntryEntity>>(
-  (ref) => ref.watch(ventRepositoryProvider).watchAll(),
-);
-
-/// 单条树洞（详情页用）
-///
-/// v0.17 round 8 (C5): 加 .autoDispose，详情页 pop 后缓存自动清。
-final ventEntryByIdProvider =
-    FutureProvider.autoDispose.family<VentEntryEntity?, int>(
-  (ref, id) => ref.watch(ventRepositoryProvider).getById(id),
-);
-
-/// 服务 Providers
+/// 加密 / SQLCipher 密钥管理
 final cryptoServiceProvider = Provider<CryptoService>((ref) => CryptoService());
 
+/// 通知服务 (本地 + 自动展示)
 final notificationServiceProvider = Provider<NotificationService>(
   (ref) => NotificationService(),
-);
-
-final reminderServiceProvider = Provider<ReminderService>(
-  (ref) => ReminderService(
-    checkInRepo: ref.watch(checkInRepositoryProvider),
-    contactRepo: ref.watch(contactRepositoryProvider),
-    medicationRepo: ref.watch(medicationRepositoryProvider),
-    userProfileRepo: ref.watch(userProfileRepositoryProvider),
-    smsService: ref.watch(smsServiceProvider),
-  ),
-);
-
-/// v0.16 (Round 7): ReminderChecker 抽象 provider
-/// UseCase 拿这个，不直接拿 ReminderService。
-final reminderCheckerProvider = Provider<ReminderChecker>(
-  (ref) => ref.watch(reminderServiceProvider),
 );
 
 /// SMS 服务 provider
@@ -119,31 +77,7 @@ final reminderCheckerProvider = Provider<ReminderChecker>(
 /// 用 AliyunSmsProvider。
 final smsServiceProvider = Provider<SmsService>((ref) => SmsService());
 
-/// 数据导出服务 provider
-final dataExportServiceProvider = Provider<DataExportService>(
-  (ref) => DataExportService(ref.watch(databaseProvider)),
-);
-
-/// SafetyWatch 服务（v0.10 / Round 4 死了么思路）
-///
-/// 默认关闭。用户在 settings 里开启后，每次 app 启动 / 打卡后跑 check。
-final safetyWatchServiceProvider = Provider<SafetyWatchService>(
-  (ref) => SafetyWatchService(
-    checkInRepo: ref.watch(checkInRepositoryProvider),
-    contactRepo: ref.watch(contactRepositoryProvider),
-    userProfileRepo: ref.watch(userProfileRepositoryProvider),
-    smsService: ref.watch(smsServiceProvider),
-    notificationService: ref.watch(notificationServiceProvider),
-  ),
-);
-
-/// v0.13 (Round 7) 心理评估周期提醒服务
-///
-/// Apple Health 思路：每 N 天提醒做 PHQ-9 / GAD-7。
-/// 默认关闭。用户在 settings 开启 + 评估。
-final assessmentReminderServiceProvider = Provider<AssessmentReminderService>(
-  (ref) => AssessmentReminderService(
-    checkInRepo: ref.watch(checkInRepositoryProvider),
-    notificationService: ref.watch(notificationServiceProvider),
-  ),
-);
+/// v0.17 round 14 提示: vent 相关的 repo / audio storage / stream provider 整组
+/// 挪到 lib/presentation/providers/vent_providers.dart (避免循环 import)。
+/// reminder / safety / assessment / data export 服务挪到
+/// lib/presentation/providers/service_providers.dart。

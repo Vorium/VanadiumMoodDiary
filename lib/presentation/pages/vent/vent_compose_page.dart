@@ -12,6 +12,7 @@
 // 3. 录音完成（显示"重新录"和"播放"按钮）
 library;
 
+import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -23,7 +24,6 @@ import 'package:record/record.dart';
 
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class VentComposePage extends ConsumerStatefulWidget {
