@@ -19,6 +19,60 @@ import '../presentation/pages/vent/vent_detail_page.dart';
 import '../presentation/pages/vent/vent_list_page.dart';
 import '../presentation/providers/data_providers.dart';
 
+/// 路由切换动画辅助函数（v0.17 round 2 / A2 emil 动效）
+///
+/// 频度决策（emil 决策框架）：
+/// - 主导航（/, /settings）→ 偶尔切 → 简单 fade
+/// - 子页（/trend, /assessment/*, /settings/reminders）→ occasional → slide-from-right
+/// - 全屏深页（/setup, /vent/*）→ rare → slide-up + fade（full-screen modal 感）
+Page<T> _fadePage<T>(LocalKey key, Widget child) {
+  return CustomTransitionPage<T>(
+    key: key,
+    child: child,
+    transitionDuration: AppTokens.durNormal,
+    reverseTransitionDuration: AppTokens.durFast,
+    transitionsBuilder: (_, anim, __, child) =>
+        FadeTransition(opacity: anim, child: child),
+  );
+}
+
+Page<T> _slideRightPage<T>(LocalKey key, Widget child) {
+  return CustomTransitionPage<T>(
+    key: key,
+    child: child,
+    transitionDuration: AppTokens.durNormal,
+    reverseTransitionDuration: AppTokens.durFast,
+    transitionsBuilder: (_, anim, __, child) {
+      // 从右滑入 + 淡入（emil: 标准的 Material 风格 push 动画）
+      return SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0.1, 0),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(parent: anim, curve: AppTokens.curveStandard)),
+        child: FadeTransition(opacity: anim, child: child),
+      );
+    },
+  );
+}
+
+Page<T> _slideUpPage<T>(LocalKey key, Widget child) {
+  return CustomTransitionPage<T>(
+    key: key,
+    child: child,
+    transitionDuration: AppTokens.durSlow,
+    reverseTransitionDuration: AppTokens.durNormal,
+    transitionsBuilder: (_, anim, __, child) {
+      return SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.05),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(parent: anim, curve: AppTokens.curveStandard)),
+        child: FadeTransition(opacity: anim, child: child),
+      );
+    },
+  );
+}
+
 /// 路由 Provider
 final routerProvider = Provider<GoRouter>((ref) {
   // 监听用户档案，判断是否已设置
@@ -37,10 +91,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      // 设置流程不进 shell（全屏引导）
+      // 设置流程不进 shell（全屏引导）— rare 频度 → slide-up
       GoRoute(
         path: '/setup',
-        builder: (_, __) => const SetupPage(),
+        pageBuilder: (_, state) => _slideUpPage(state.pageKey, const SetupPage()),
       ),
       // 主 app shell：宽屏带 NavigationRail，窄屏纯 body
       ShellRoute(
@@ -49,28 +103,38 @@ final routerProvider = Provider<GoRouter>((ref) {
           child: child,
         ),
         routes: [
-          GoRoute(path: '/', builder: (_, __) => const HomePage()),
+          // 主导航：occasional 频度 → fade
           GoRoute(
-            path: '/settings',
-            builder: (_, __) => const SettingsPage(),
+            path: '/',
+            pageBuilder: (_, state) => _fadePage(state.pageKey, const HomePage()),
           ),
           GoRoute(
+            path: '/settings',
+            pageBuilder: (_, state) =>
+                _fadePage(state.pageKey, const SettingsPage()),
+          ),
+          // 子页：occasional → slide-from-right
+          GoRoute(
             path: '/email-preview',
-            builder: (_, __) => const EmailPreviewPage(),
+            pageBuilder: (_, state) =>
+                _slideRightPage(state.pageKey, const EmailPreviewPage()),
           ),
           // v0.14 (Round 12C) 提醒中心
           GoRoute(
             path: '/settings/reminders',
-            builder: (_, __) => const RemindersHubPage(),
+            pageBuilder: (_, state) =>
+                _slideRightPage(state.pageKey, const RemindersHubPage()),
           ),
           // v0.14 (Round 13A) 续方管理
           GoRoute(
             path: '/settings/refills',
-            builder: (_, __) => const RefillManagePage(),
+            pageBuilder: (_, state) =>
+                _slideRightPage(state.pageKey, const RefillManagePage()),
           ),
           GoRoute(
             path: '/trend',
-            builder: (_, __) => const TrendPage(),
+            pageBuilder: (_, state) =>
+                _slideRightPage(state.pageKey, const TrendPage()),
           ),
           GoRoute(
             path: '/assessment',
@@ -80,36 +144,43 @@ final routerProvider = Provider<GoRouter>((ref) {
           // ⚠️ 必须在 :id 之前声明，否则 :id 会先匹配（GoRouter 按声明顺序匹配）
           GoRoute(
             path: '/assessment/history',
-            builder: (_, __) => const AssessmentHistoryPage(),
+            pageBuilder: (_, state) =>
+                _slideRightPage(state.pageKey, const AssessmentHistoryPage()),
           ),
           GoRoute(
             path: '/assessment/:id',
-            builder: (_, state) => AssessmentPage(
-              scaleId: state.pathParameters['id'] ?? 'phq9',
+            pageBuilder: (_, state) => _slideRightPage(
+              state.pageKey,
+              AssessmentPage(scaleId: state.pathParameters['id'] ?? 'phq9'),
             ),
           ),
           // v0.14 (Round 13C) 用药日历（医生视角热力图）
           GoRoute(
             path: '/medication/calendar',
-            builder: (_, __) => const MedicationCalendarPage(),
+            pageBuilder: (_, state) =>
+                _slideRightPage(state.pageKey, const MedicationCalendarPage()),
           ),
           // ============== v0.15 (Round 18) 树洞 ==============
-          // 全屏深页（full-screen modal feel），不进 navigation rail
-          // 放在 ShellRoute 内但从主导航 items 隐藏（用户从 home 入口按钮进）
+          // 全屏深页（full-screen modal feel）— rare 频度 → slide-up
           GoRoute(
             path: '/vent',
-            builder: (_, __) => const VentListPage(),
+            pageBuilder: (_, state) =>
+                _slideUpPage(state.pageKey, const VentListPage()),
           ),
           GoRoute(
             path: '/vent/compose',
-            builder: (_, __) => const VentComposePage(),
+            pageBuilder: (_, state) =>
+                _slideUpPage(state.pageKey, const VentComposePage()),
           ),
           GoRoute(
             path: '/vent/detail/:id',
-            builder: (_, state) => VentDetailPage(
-              // v0.16 round 19C fix: 用 tryParse 替代 parse，URL 是 '/abc' 时
-              // 不会崩，回退到 0（找不到对应条目 → 详情页显示"找不到了"）
-              id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+            pageBuilder: (_, state) => _slideUpPage(
+              state.pageKey,
+              VentDetailPage(
+                // v0.16 round 19C fix: 用 tryParse 替代 parse，URL 是 '/abc' 时
+                // 不会崩，回退到 0（找不到对应条目 → 详情页显示"找不到了"）
+                id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+              ),
             ),
           ),
           // ============== Round 5: Deep Linking 路由 ==============

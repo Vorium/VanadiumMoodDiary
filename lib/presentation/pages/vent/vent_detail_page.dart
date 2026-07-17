@@ -144,12 +144,36 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _formatTime(entry.timestamp),
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
-                  ),
+                // v0.17 round 2 (A4 emil 动效): 顶部接收列表页 Hero
+                // — 头像从列表卡片"飞"过来。tag 必须跟 source 一致。
+                Row(
+                  children: [
+                    Hero(
+                      tag: 'vent-avatar-${entry.id}',
+                      child: CircleAvatar(
+                        backgroundColor: entry.hasAudio
+                            ? AppTokens.primaryLight
+                            : AppTokens.divider,
+                        child: Icon(
+                          entry.hasAudio
+                              ? Icons.mic
+                              : Icons.text_snippet_outlined,
+                          color: entry.hasAudio
+                              ? AppTokens.primary
+                              : AppTokens.textSecondary,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppTokens.spacingSm),
+                    Text(
+                      _formatTime(entry.timestamp),
+                      style: const TextStyle(
+                        fontSize: AppTokens.fontSizeCaption,
+                        color: AppTokens.textHint,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 if (entry.hasText)
@@ -190,6 +214,8 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                               onPressed: () => _togglePlay(entry),
                             ),
                             const SizedBox(width: AppTokens.spacingXs),
+                            // 之前是 Hero('vent-mic-...'),但 source 已统一到
+                            // 顶部的 CircleAvatar。这里只保留普通 mic icon (无 Hero)
                             const Icon(
                               Icons.mic,
                               color: AppTokens.primary,

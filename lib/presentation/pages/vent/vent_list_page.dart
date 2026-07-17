@@ -141,13 +141,20 @@ class _EntryCard extends StatelessWidget {
 
     return Card(
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor:
-              entry.hasAudio ? AppTokens.primaryLight : AppTokens.divider,
-          child: Icon(
-            entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
-            color: entry.hasAudio ? AppTokens.primary : AppTokens.textSecondary,
-            size: 20,
+        leading: Hero(
+          // v0.17 round 2 (A4 emil 动效): 列表 → 详情时头像
+          // "飞"过去。emil 决策:occasional 频度(用户偶尔看历史回听) → 可加
+          // Hero 过渡。tag 必须 unique per entry,无论有没有 audio 都包
+          // (详情页同步有对应 Hero 接收)
+          tag: 'vent-avatar-${entry.id}',
+          child: CircleAvatar(
+            backgroundColor:
+                entry.hasAudio ? AppTokens.primaryLight : AppTokens.divider,
+            child: Icon(
+              entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
+              color: entry.hasAudio ? AppTokens.primary : AppTokens.textSecondary,
+              size: 20,
+            ),
           ),
         ),
         title: Text(
