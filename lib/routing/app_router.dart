@@ -82,7 +82,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     debugLogDiagnostics: false,
     redirect: (context, state) {
-      final profile = profileAsync.valueOrNull;
+      // v0.17 round 3: Riverpod 3.x 改名为 .value（之前 .valueOrNull）
+      final profile = profileAsync.value;
       final isSetupDone = profile != null;
       final goingToSetup = state.matchedLocation == '/setup';
 
