@@ -162,8 +162,13 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         );
       }
-    } catch (_) {
-      // 静默
+    } catch (e, st) {
+      swallowError(
+        where: 'home_page._runSafetyCheck',
+        error: e,
+        stack: st,
+        note: 'safety check failed — user may not be notified',
+      );
     }
   }
 
@@ -346,8 +351,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (!trigger.shouldFire) return;
       final notif = ref.read(notificationServiceProvider);
       await CareEngine.fire(trigger, notif);
-    } catch (_) {
-      // 静默失败，不打扰用户
+    } catch (e, st) {
+      swallowError(
+        where: 'home_page._fireCareEngine',
+        error: e,
+        stack: st,
+        note: 'care engine failed — user may not receive care prompts',
+      );
     }
   }
 

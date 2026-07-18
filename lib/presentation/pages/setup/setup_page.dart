@@ -616,7 +616,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                           ? m.times.last
                           : const TimeOfDay(hour: 8, minute: 0),
                     );
-                    if (picked != null) {
+                    if (picked != null && mounted) {
                       setState(() {
                         // 同时间不去重，让用户自己决定
                         m.times.add(picked);
@@ -719,6 +719,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       ),
     );
     if (result == null) return;
+    if (!mounted) return;
 
     setState(() {
       // 释放旧 _meds 的 controller

@@ -62,7 +62,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     _recorder.dispose();
     _player.dispose();
     if (_tempDecryptedPath != null) {
-      ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+      try {
+        ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+      } catch (_) {
+        // provider scope may be gone during app teardown
+      }
       _tempDecryptedPath = null;
     }
     super.dispose();

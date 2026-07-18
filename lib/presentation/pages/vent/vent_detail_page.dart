@@ -66,7 +66,11 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     _player.dispose();
     // P0-2: 清理临时解密文件(以防用户离开页面时还在播)
     if (_tempDecryptedPath != null) {
-      ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+      try {
+        ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+      } catch (_) {
+        // provider scope may be gone during app teardown
+      }
       _tempDecryptedPath = null;
     }
     super.dispose();
