@@ -103,8 +103,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       // 现在用 fade + slide-up (occasional 频度,user 1-3 次).
       // layoutBuilder 让新旧 child 在切换瞬间叠加,避免 height 跳变.
       child: AnimatedSwitcher(
-        duration: AppTokens.durNormal,
-        switchInCurve: AppTokens.curveDecelerate,
+        // P1-7 fix: setup wizard step 切换 occasional 频度 →
+        // MotionScheme.standard token (durNormal + curveStandard)
+        duration: MotionScheme.standard.duration,
+        switchInCurve: MotionScheme.standard.curve,
         switchOutCurve: AppTokens.curveAccelerate,
         transitionBuilder: (child, anim) {
           return FadeTransition(

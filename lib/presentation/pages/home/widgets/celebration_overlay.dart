@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/core/theme/app_tokens.dart';
+
 /// 打卡成功的短暂庆祝动画
 class AnimatedCelebration extends StatefulWidget {
   final String message;
@@ -18,9 +20,11 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
   @override
   void initState() {
     super.initState();
+    // P1-7 fix: 改用 MotionScheme.delight token 显式标档位 (rare 庆祝频度)
+    // P1-12 fix: emil "rare/delight 频度上限 1000ms",之前 1500ms 偏长
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: MotionScheme.delight.duration,
     );
     _scale = TweenSequence<double>([
       TweenSequenceItem(
