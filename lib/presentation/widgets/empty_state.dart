@@ -39,6 +39,8 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // v0.18 (P1-5): 用 dynamic Color getter 替代硬编码 light 颜色,
+    // dark mode 下视觉正确。代价:TextStyle 不能 const(theme-aware 必须 dynamic)。
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingXl),
@@ -48,16 +50,16 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 64,
-              color: AppTokens.textHint,
+              color: AppTokens.textHintColor(context),
             ),
             const SizedBox(height: AppTokens.spacingMd),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppTokens.fontSizeHeadline,
                 fontWeight: FontWeight.w500,
-                color: AppTokens.textSecondary,
+                color: AppTokens.textSecondaryColor(context),
               ),
             ),
             if (subtitle != null) ...[
@@ -65,9 +67,9 @@ class EmptyState extends StatelessWidget {
               Text(
                 subtitle!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
-                  color: AppTokens.textHint,
+                  color: AppTokens.textHintColor(context),
                   height: 1.4,
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /// 慢病管家 · 设计 Token 规范
 /// v0.5 · 2026-07-12 增加 dark 颜色 + 响应式断点
+/// v0.18 · 2026-07-18 (P1-5) 增加 dynamic Color getter,支持 dark mode
 class AppTokens {
   AppTokens._();
 
@@ -43,6 +44,52 @@ class AppTokens {
   static const Color warningStrong = Color(0xFFFF8A65);
   static const Color error = Color(0xFFE57373);
   static const Color errorDark = Color(0xFFEF9A9A);
+
+  // ============= Dynamic Color getter (v0.18 P1-5) =============
+  //
+  // **dark mode 修复**:上面 9 个静态 const color (surface/background/textPrimary/
+  // textSecondary/textHint/border/divider) 是 light 模式的硬编码值。widget
+  // 直接用 `AppTokens.surface` 在 dark mode 下视觉错(背景白、文字白)。
+  //
+  // 修法:新增下面 7 个 dynamic getter,接受 BuildContext,从
+  // Theme.of(context).colorScheme 派生正确颜色(M3 已经按 light/dark 派生好)。
+  //
+  // 后续 widget 改造时:把 `const TextStyle(color: AppTokens.textHint)` 改成
+  // `TextStyle(color: AppTokens.textHintColor(context))`。
+  //
+  // 注意:dynamic getter 不能在 const constructor 里用(必须 const Color)。
+  // 这是 dark mode 支持的必要 trade-off,跟 const optimization 互斥。
+  //
+  // v0.18 (P1-5) batch 1: 加 7 个 getter + 替换 EmptyState + vent_list 最 critical 处。
+  // batch 2+ 替换剩余 90+ 处。
+
+  /// Theme-aware surface (卡片/容器背景)
+  static Color surfaceColor(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+
+  /// Theme-aware background (页面背景)
+  static Color backgroundColor(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+
+  /// Theme-aware text primary (主文字)
+  static Color textPrimaryColor(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
+  /// Theme-aware text secondary (次要文字,80% 透明度 onSurface)
+  static Color textSecondaryColor(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant;
+
+  /// Theme-aware text hint (提示文字,60% 透明度 onSurfaceVariant)
+  static Color textHintColor(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
+
+  /// Theme-aware border (边框)
+  static Color borderColor(BuildContext context) =>
+      Theme.of(context).colorScheme.outline;
+
+  /// Theme-aware divider (分割线)
+  static Color dividerColor(BuildContext context) =>
+      Theme.of(context).colorScheme.outlineVariant;
 
   // ============= 字体 =============
   static const double fontSizeTitle = 28.0;

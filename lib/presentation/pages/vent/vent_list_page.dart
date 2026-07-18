@@ -64,27 +64,28 @@ class _EmptyState extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              // v0.18 (P1-5): dark mode 改用 dynamic Color getter
+              Icon(
                 Icons.forest_outlined,
                 size: 80,
-                color: AppTokens.textHint,
+                color: AppTokens.textHintColor(context),
               ),
               const SizedBox(height: AppTokens.spacingMd),
-              const Text(
+              Text(
                 '树洞还是空的',
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeTitle,
                   fontWeight: FontWeight.w600,
-                  color: AppTokens.textPrimary,
+                  color: AppTokens.textPrimaryColor(context),
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              const Text(
+              Text(
                 '想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
-                  color: AppTokens.textSecondary,
+                  color: AppTokens.textSecondaryColor(context),
                   height: 1.5,
                 ),
               ),
@@ -168,31 +169,31 @@ class _EntryCard extends StatelessWidget {
             children: [
               Text(
                 _formatTime(entry.timestamp),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
-                  color: AppTokens.textHint,
+                  color: AppTokens.textHintColor(context),
                 ),
               ),
               if (entry.hasAudio) ...[
                 const SizedBox(width: AppTokens.spacingSm),
-                const Icon(
+                Icon(
                   Icons.access_time,
                   size: 12,
-                  color: AppTokens.textHint,
+                  color: AppTokens.textHintColor(context),
                 ),
                 const SizedBox(width: 2),
                 Text(
                   entry.durationLabel(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
               ],
             ],
           ),
         ),
-        trailing: const Icon(Icons.chevron_right, color: AppTokens.textHint),
+        trailing: Icon(Icons.chevron_right, color: AppTokens.textHintColor(context)),
         onTap: () => context.push('/vent/detail/${entry.id}'),
         onLongPress: () => _confirmDelete(context, entry),
       ),
