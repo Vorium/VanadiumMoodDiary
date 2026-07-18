@@ -8,7 +8,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// 让用户知道。显示原因 + "去系统设置"按钮 + 可关闭。
 ///
 /// 之前是 _NotificationFailureBanner 内联在 home_page.dart(300+ 行 private
-/// widget),现在抽到 home/widgets/ 下,方便复用 + 让 home_page god-page
+/// widget),现在抽到 home/widgets/ 下，方便复用 + 让 home_page god-page
 /// 减肥(P1-27 配套)。
 class NotificationFailureBanner extends StatefulWidget {
   final String? error;

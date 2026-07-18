@@ -21,7 +21,7 @@ class AppRoot extends ConsumerStatefulWidget {
 /// v0.17 round 4: 计算距离下一个 00:00:05 的 Duration
 ///
 /// 加 5s buffer,避免跨 00:00:00 race(00:00:00 跟 23:59:59 算 streak 结果不同)。
-/// 如果 now 已经在 00:00:00-00:00:05 区间内,用当天的 00:00:05(而不是下一天)。
+/// 如果 now 已经在 00:00:00-00:00:05 区间内，用当天的 00:00:05(而不是下一天)。
 /// 暴露成 top-level 函数(不是 _AppRootState 私有)让 test 能直接测。
 @visibleForTesting
 Duration nextMidnightRefresh(DateTime now) {
@@ -49,11 +49,11 @@ class _AppRootState extends ConsumerState<AppRoot> {
     });
     // v0.17 round 4: 跨 midnight 自动 refresh streak
     // 不挂 timer → 跨过 23:59:59 streak 还在用"昨天"算的 (B8 fix 只防 build 内多次,
-    // 跨 midnight 后新 build 会用 today 算,但 streak 数本身依赖 yesterday data)
+    // 跨 midnight 后新 build 会用 today 算，但 streak 数本身依赖 yesterday data)
     _scheduleMidnightRefresh();
   }
 
-  /// 算离 midnight 还差多少,挂一次性 timer,到点 invalidate streakSummaryProvider
+  /// 算离 midnight 还差多少，挂一次性 timer,到点 invalidate streakSummaryProvider
   /// 触发所有 watch streak 的 widget rebuild
   void _scheduleMidnightRefresh() {
     _midnightTimer?.cancel();

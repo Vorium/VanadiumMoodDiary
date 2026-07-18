@@ -11,23 +11,23 @@ import 'package:chroniccare/core/data/services/notification_payload.dart';
 /// 转换成 GoRouter 跳转。
 ///
 /// 设计要点:
-/// - 用静态 API,不绑死 widget(通知 callback 在 main 里调,那时没 widget)
+/// - 用静态 API,不绑死 widget(通知 callback 在 main 里调，那时没 widget)
 /// - bind() 在 AppRoot 第一次 build 后调(那时 GoRouter 已就绪)
 /// - 启动 payload 用 pendingPayload 缓存,bind() 时自动消费
 class NotificationNavigation {
   /// 已绑定的 GoRouter(在 AppRoot 第一次 build 时设置)
   static GoRouter? _router;
 
-  /// App 启动时收到的 launch payload(app 被杀着,用户点通知拉起)
+  /// App 启动时收到的 launch payload(app 被杀着，用户点通知拉起)
   ///
-  /// AppRoot bind() 时如果这里有值,会立即跳走并清空
+  /// AppRoot bind() 时如果这里有值，会立即跳走并清空
   static NotificationDeepLink? _pendingLaunchLink;
 
-  /// 通知 callback 触发的 deep link(可选,用于埋点)
+  /// 通知 callback 触发的 deep link(可选，用于埋点)
   static final ValueNotifier<NotificationDeepLink?> onLink =
       ValueNotifier(null);
 
-  /// 由 AppRoot.build() 调用,把 router 绑进来
+  /// 由 AppRoot.build() 调用，把 router 绑进来
   static void bind(GoRouter router) {
     _router = router;
     if (_pendingLaunchLink != null) {
@@ -37,7 +37,7 @@ class NotificationNavigation {
   }
 
   /// main.dart 在 init NotificationService 时传入
-  /// app 是被通知拉起时调用,记录 payload 等 router 就绪
+  /// app 是被通知拉起时调用，记录 payload 等 router 就绪
   static void setLaunchPayload(String? rawPayload) {
     final link = NotificationDeepLink.parse(rawPayload);
     if (link == null) return;

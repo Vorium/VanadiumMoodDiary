@@ -4,13 +4,13 @@
 // - 设备绑定的 AES-256 加密 key,不存在应用目录外的任何地方
 // - 启动时 lazy load (第一次用时从 SecureStorage 取 / 生成)
 // - 加密 blob 自带随机 IV(每文件不同),格式: [16-byte IV][N-byte ciphertext]
-// - key 不存明文在磁盘,只在内存中
+// - key 不存明文在磁盘，只在内存中
 //
 // 已知限制(v0.18):
 // - key 绑设备 SecureStorage,root 设备仍可拿到 key (SecureStorage 本身
 //   走 iOS Keychain / Android Keystore,普通用户访问不到)
 // - 跨设备/重装后无法恢复加密音频(因为 SecureStorage 跟着设备走)
-// - 换设备 → 旧录音无法回放(只能看文字,跟 data_export 行为一致)
+// - 换设备 → 旧录音无法回放(只能看文字，跟 data_export 行为一致)
 //
 // 改进方向(v1.0+):
 // - 改用用户密码派生的 key (PBKDF2 + salt),用户换设备输入密码恢复
@@ -20,7 +20,7 @@
 // - 不需要 UI 流程 (不用让用户每次输密码)
 // - 不增加忘记密码的风险
 // - 仍然显著强于"完全明文" — 普通用户根本进不到 app docs
-//   (沙箱隔离,非 root 设备无法直接读)
+//   (沙箱隔离，非 root 设备无法直接读)
 library;
 
 import 'dart:convert';
@@ -56,7 +56,7 @@ class EncryptionService {
     if (existing != null) {
       keyBytes = base64Decode(existing);
       if (keyBytes.length != 32) {
-        // 异常长度,重新生成
+        // 异常长度，重新生成
         keyBytes = _randomBytes(32);
         await _storage.write(key: _keyName, value: base64Encode(keyBytes));
       }

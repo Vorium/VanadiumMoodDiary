@@ -137,7 +137,7 @@ class SafetyWatchService {
 
   /// 主动查一次（settings_page 调试按钮 / 测试用）
   ///
-  /// [now] 用于测试注入,生产环境为 null → 内部取 `DateTime.now()`。
+  /// [now] 用于测试注入，生产环境为 null → 内部取 `DateTime.now()`。
   /// 不接受 `now` 时跨 midnight(00:00-06:00)会让 `DateTime.now().subtract(hours: 6)`
   /// 落到前一天,`_daysBetween` 算成 1,触发 flaky test。
   Future<SafetyCheckResult> checkNow({DateTime? now}) async {
@@ -170,7 +170,7 @@ class SafetyWatchService {
       // v0.16 round 19 fix: 显式 sort by timestamp desc，不依赖 watchAll() 隐式顺序
       normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       final lastCheckIn = normalCheckIns.first.timestamp;
-      // P0-4 fix: 接受外部 now 注入,避免测试跨 midnight flake。
+      // P0-4 fix: 接受外部 now 注入，避免测试跨 midnight flake。
       // 同一函数内不重复调 DateTime.now()(v0.16 round 19B 已立的规矩)。
       // 用 effectiveNow 避免跟参数 now 同名导致 Dart 推断为 nullable。
       final effectiveNow = now ?? DateTime.now();

@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 /// v0.17 round 14 (P1-5): 把"静默 catch"统一成可观测的 swallow
 ///
 /// 解决的问题:
-/// 之前 9 处 `} catch (_) {}` 完全吞错,出 bug 时排查没线索。改成:
+/// 之前 9 处 `} catch (_) {}` 完全吞错，出 bug 时排查没线索。改成:
 ///   1. 走 developer.log,kDebugMode 守卫 → dev 模式能看见
-///   2. 集中位置: 出错位置 + 失败原因 + 是否影响主流程,看 log 一目了然
+///   2. 集中位置: 出错位置 + 失败原因 + 是否影响主流程，看 log 一目了然
 ///
 /// 用法:
 /// ```dart
@@ -18,7 +18,7 @@ import 'package:flutter/foundation.dart';
 ///     where: 'home_page._onCheckIn',
 ///     error: e,
 ///     stack: st,
-///     note: '通知清理失败不影响主流程,重试下次打卡',
+///     note: '通知清理失败不影响主流程，重试下次打卡',
 ///   );
 /// }
 /// ```

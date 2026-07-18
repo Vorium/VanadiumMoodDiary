@@ -168,7 +168,7 @@ class CareEngine {
 
   /// 周末漏打卡（最近一个周末没打卡）
   ///
-  /// P7 fix: 之前 `day.isBefore(today)` 排除今天,导致周六整天没打卡
+  /// P7 fix: 之前 `day.isBefore(today)` 排除今天，导致周六整天没打卡
   /// 要等周日才看到提醒。改为"今天已经过 18 点且没打卡也算漏"。
   static bool _isWeekendMissed(List<CheckInEntity> sortedDesc, DateTime now) {
     final today = DateTime(now.year, now.month, now.day);
@@ -202,7 +202,7 @@ class CareEngine {
     final today = DateTime(now.year, now.month, now.day);
     final sevenDaysAgo = today.subtract(const Duration(days: 6)); // 含今天共 7 天
     for (final c in sortedDesc) {
-      // 早于 7 天前:忽略
+      // 早于 7 天前：忽略
       if (c.timestamp.isBefore(sevenDaysAgo)) break;
       if (c.timestamp.hour >= 22) return false; // 22 点后打卡不算"准时"
     }

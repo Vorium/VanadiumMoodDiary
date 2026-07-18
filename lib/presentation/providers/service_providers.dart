@@ -9,7 +9,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// v0.17 round 14 (P1-3 拆 core_providers): 业务服务 provider
 ///
-/// 之前在 core_providers.dart 里,现在按"业务服务"维度拆出来。
+/// 之前在 core_providers.dart 里，现在按"业务服务"维度拆出来。
 ///
 /// 包含:
 ///   - reminderService / reminderChecker: 提醒服务

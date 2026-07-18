@@ -5,7 +5,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
 
-/// 主页主操作行:打卡按钮 + 临时吃药 + snooze 5min
+/// 主页主操作行：打卡按钮 + 临时吃药 + snooze 5min
 ///
 /// v0.18 round 18 (P1-27): 从 home_page 抽出。
 /// 之前是 build 内联 3 个按钮 + spacing,现在隔离样式。

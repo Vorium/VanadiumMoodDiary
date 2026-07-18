@@ -1,6 +1,6 @@
 // v0.17 round 14 (P2-8): user_profile mapper 抽离
 //
-// 之前 _toEntity 内联在 UserProfileRepositoryImpl 里,跟其他 feature
+// 之前 _toEntity 内联在 UserProfileRepositoryImpl 里，跟其他 feature
 // (check_in / contact / medication / mood / vent) 不一致 — 那些都有
 // 独立的 mapper 文件 (round 11 抽的)。这次补齐。
 
@@ -9,9 +9,9 @@ import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 
 /// Drift row → domain entity
 ///
-/// P0-10 fix: 读 `lastCheckInAt` 列。schema 一直有这个列,之前 entity
-/// 不读 / `updateLastCheckIn` 0 处调用,现在 `RecordCheckInUseCase`
-/// 在 check-in 后写 → entity 必须读,否则 UI 永远看不到。
+/// P0-10 fix: 读 `lastCheckInAt` 列。schema 一直有这个列，之前 entity
+/// 不读 / `updateLastCheckIn` 0 处调用，现在 `RecordCheckInUseCase`
+/// 在 check-in 后写 → entity 必须读，否则 UI 永远看不到。
 UserProfileEntity? userProfileFromRow(UserProfile? row) {
   if (row == null) return null;
   return UserProfileEntity(

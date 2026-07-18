@@ -5,7 +5,7 @@
 /// 但 domain 层不能 import flutter,所以通知/邮件模板 (EmailTemplate) 仍用
 /// 这里 hardcode 字符串 (v0.6 mock 短信中文文案)。
 ///
-/// v1.0+ 计划: domain EmailTemplate 接收 i18n strings 作为参数,完全脱离本文件。
+/// v1.0+ 计划: domain EmailTemplate 接收 i18n strings 作为参数，完全脱离本文件。
 class Strings {
   Strings._();
 

@@ -17,7 +17,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// 用法:
 /// ```dart
 /// FadeIn(
-///   delay: Duration(milliseconds: 100),  // 可选,跟 stagger 配合
+///   delay: Duration(milliseconds: 100),  // 可选，跟 stagger 配合
 ///   withScale: true,                      // rare 才开
 ///   child: Text('Hello'),
 /// )

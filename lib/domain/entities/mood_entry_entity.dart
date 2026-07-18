@@ -29,7 +29,7 @@ class MoodEntryEntity {
   /// 睡眠分数 1-5（v0.18 P1-15 新增,1=很差 5=很好）
   final int? sleep;
 
-  /// 焦虑分数 1-5（v0.18 P1-15 新增,反向:1=严重 5=平静）
+  /// 焦虑分数 1-5（v0.18 P1-15 新增，反向:1=严重 5=平静）
   final int? anxiety;
 
   /// 标签 JSON 数组（数据库原值）

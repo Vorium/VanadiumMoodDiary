@@ -114,7 +114,7 @@ class _EntryList extends ConsumerWidget {
       itemCount: entries.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppTokens.spacingXs),
       // v0.17 round 14 (P2-6): staggered fade-in for vent entries
-      // 用户录完一条回到列表时,新条目 + 历史条目一起 fade in,
+      // 用户录完一条回到列表时，新条目 + 历史条目一起 fade in,
       // 视觉上"列表刚加载"的感觉更明显。
       // delay cap 400ms: 超过 10 条的列表只 stagger 前 10 条,
       // 避免后加载的长条等太久。

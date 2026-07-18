@@ -41,7 +41,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   bool _safetyCheckTriggered = false;
 
   /// Deep link 强制重跑 safety 检查的请求(独立 flag,
-  /// v0.14 修:旧实现用 `!_safetyCheckTriggered` 守卫,结果第一次
+  /// v0.14 修：旧实现用 `!_safetyCheckTriggered` 守卫，结果第一次
   /// 跑已起来后 deep link 路径永远走不进去)
   bool _safetyRerunRequested = false;
 
@@ -75,7 +75,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final autofire =
         GoRouterState.of(context).uri.queryParameters['autofire'] == '1';
     if (medIdParam == null) {
-      // 不是 deep link 跳来的,处理 safety reason
+      // 不是 deep link 跳来的，处理 safety reason
       final reason = GoRouterState.of(context).uri.queryParameters['reason'];
       if (reason == 'safety') {
         // 强制重跑一次 (从通知跳来的场景)
@@ -107,7 +107,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           .read(checkInNotifierProvider.notifier)
           .checkIn(medicationId: medId);
       if (!mounted) return;
-      // P0-11 fix: med 读挪到 mounted guard 之内,避免 widget 已 dispose 但
+      // P0-11 fix: med 读挪到 mounted guard 之内，避免 widget 已 dispose 但
       // 还在 race 读 provider;再加一道 mounted guard 防 await 间隙 unmount。
       // (superpowers-en P0-11 原始 evidence: "med?.name 在 guard 之前读")
       final med = await ref
@@ -173,14 +173,14 @@ class _HomePageState extends ConsumerState<HomePage> {
     final userProfileAsync = ref.watch(userProfileProvider);
     final checkInState = ref.watch(checkInNotifierProvider);
     final isChecking = checkInState.isLoading;
-    // P10 (B8) fix: streak 只算一次,所有 widget 看到同一个值
+    // P10 (B8) fix: streak 只算一次，所有 widget 看到同一个值
     final streakAsync = ref.watch(streakSummaryProvider);
     final streakSnapshot = streakAsync.maybeWhen(
       data: (s) => s,
       orElse: () =>
           const StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
     );
-    // P17 fix: 通知初始化失败时,在主页顶部显示一条提示
+    // P17 fix: 通知初始化失败时，在主页顶部显示一条提示
     final notifResult = ref.watch(notificationInitResultProvider);
 
     // 打卡失败时给用户一个反馈
@@ -211,7 +211,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           // 顶部 header
           HomeHeader(userName: userName),
 
-          // P17 fix: 通知失败 banner(一次性提示,可关闭)
+          // P17 fix: 通知失败 banner(一次性提示，可关闭)
           if (!notifResult.ok)
             NotificationFailureBanner(error: notifResult.error),
 
@@ -222,7 +222,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           const SizedBox(height: AppTokens.spacingSm),
 
-          // 主操作行:打卡按钮 + 临时吃药 + snooze 5min
+          // 主操作行：打卡按钮 + 临时吃药 + snooze 5min
           todayAsync.when(
             data: (today) => PrimaryActionRow(
               isChecked: today != null,
@@ -257,7 +257,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           const SizedBox(height: AppTokens.spacingSm),
 
-          // 次要操作行:情绪日记 + 树洞
+          // 次要操作行：情绪日记 + 树洞
           SecondaryActionRow(
             onMoodTap: () => MoodDialog.show(context, ref),
           ),
@@ -289,12 +289,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     final newStreak = currentStreak + 1;
     // 显示庆祝 overlay
     _showCelebrationOverlay(context, _celebrationFor(newStreak));
-    // 打卡成功:取消 soft 提醒 + snooze
+    // 打卡成功：取消 soft 提醒 + snooze
     try {
       await ref.read(notificationServiceProvider).cancelSoftReminder();
       await ref.read(notificationServiceProvider).cancelAllSnoozes();
     } catch (e, st) {
-      // 通知清理失败 → 主流程已完成,清理失败只意味着今天还可能再响一次
+      // 通知清理失败 → 主流程已完成，清理失败只意味着今天还可能再响一次
       swallowError(
         where: 'home_page._onCheckIn',
         error: e,
@@ -302,22 +302,22 @@ class _HomePageState extends ConsumerState<HomePage> {
         note: 'cancel soft reminder / snoozes failed, today may ring once more',
       );
     }
-    // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发,例如打卡是补卡)
+    // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发，例如打卡是补卡)
     unawaited(_runAfterCheckIn());
-    // AI 关怀:打卡后评估是否触发(rule-based)
+    // AI 关怀：打卡后评估是否触发(rule-based)
     unawaited(_fireCareEngine());
   }
 
   /// 打卡后跑 SafetyWatch
   ///
-  /// 设计:用户刚补卡理论上不该再触发,但系统可能因为日期错乱或打卡未及时入库
+  /// 设计：用户刚补卡理论上不该再触发，但系统可能因为日期错乱或打卡未及时入库
   /// 仍认为"长期没打卡",所以这里也调一次。
   Future<void> _runAfterCheckIn() async {
     try {
       final result = await ref.read(safetyWatchServiceProvider).onCheckIn();
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
-        // 罕见:打卡后仍触发告警
+        // 罕见：打卡后仍触发告警
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: AppTokens.error,
@@ -327,7 +327,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         );
       }
     } catch (e, st) {
-      // SafetyWatch 失败 → 用户已经看到打卡成功的庆祝,失联检测后台再跑就行
+      // SafetyWatch 失败 → 用户已经看到打卡成功的庆祝，失联检测后台再跑就行
       swallowError(
         where: 'home_page._runSafetyCheck',
         error: e,
@@ -346,7 +346,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       final notif = ref.read(notificationServiceProvider);
       await CareEngine.fire(trigger, notif);
     } catch (_) {
-      // 静默失败,不打扰用户
+      // 静默失败，不打扰用户
     }
   }
 
@@ -381,14 +381,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   String _celebrationFor(int streak) {
-    if (streak == 1) return '已记录!第 1 天 🌱';
-    if (streak < 7) return '已记录!连击 $streak 天 🌿';
-    if (streak < 30) return '已记录!连击 $streak 天 🌳';
+    if (streak == 1) return '已记录！第 1 天 🌱';
+    if (streak < 7) return '已记录！连击 $streak 天 🌿';
+    if (streak < 30) return '已记录！连击 $streak 天 🌳';
     if (streak < 100) return '已记录!$streak 天连击 🌲';
     return '已记录!$streak 天--你太厉害了 🏔️';
   }
 
-  /// 顶部 overlay 庆祝(短暂显示,自动消失)
+  /// 顶部 overlay 庆祝(短暂显示，自动消失)
   void _showCelebrationOverlay(BuildContext context, String message) {
     final overlay = Overlay.of(context);
     late OverlayEntry entry;

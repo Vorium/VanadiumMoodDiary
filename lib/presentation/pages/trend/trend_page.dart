@@ -751,8 +751,8 @@ class _MoodHistoryChart extends StatelessWidget {
     for (int i = 0; i < sorted.length; i++) {
       spotEntryIndex[_SpotKey(spots[i].x, spots[i].y)] = sorted[i];
     }
-    // P8 fix: 触摸在两个 spot 之间时,找 x 最接近的 spot。
-    // 之前 fallback 到 t.y.round() 会取两个 spot 间的插值,误导用户。
+    // P8 fix: 触摸在两个 spot 之间时，找 x 最接近的 spot。
+    // 之前 fallback 到 t.y.round() 会取两个 spot 间的插值，误导用户。
     // 排序 spot 列表后用二分查找。
     final nearestLookup = sorted.length == 1
         ? (double _) => sorted.first
@@ -889,11 +889,11 @@ class _MoodHistoryChart extends StatelessWidget {
                       getTooltipItems: (touched) {
                         return touched.map((t) {
                           // N22 fix: 用 spotEntryIndex 反向查原 entry,
-                          // 显示真实时间戳,不依赖浮点 round
+                          // 显示真实时间戳，不依赖浮点 round
                           final entry = spotEntryIndex[_SpotKey(t.x, t.y)];
-                          // P8 fix: 用户触摸在两个 spot 之间时,反向索引查不到,
+                          // P8 fix: 用户触摸在两个 spot 之间时，反向索引查不到,
                           // 用 nearestLookup 找 x 最接近的 spot,
-                          // 而不是用 t.y.round() (会取插值,误导)
+                          // 而不是用 t.y.round() (会取插值，误导)
                           final nearest = entry ?? nearestLookup(t.x);
                           final dt = nearest.timestamp;
                           final score = nearest.score.clamp(1, 5);
@@ -939,7 +939,7 @@ class _SpotKey {
   int get hashCode => Object.hash(x, y);
 }
 
-/// P8 fix: 给定 x 值,在按 x 升序排列的 spots/entries 中找 x 最接近的 entry
+/// P8 fix: 给定 x 值，在按 x 升序排列的 spots/entries 中找 x 最接近的 entry
 class _NearestByX {
   final List<double> _xs;
   final List<MoodEntryEntity> _entries;
@@ -1044,7 +1044,7 @@ class _CalendarViewState extends State<_CalendarView> {
   @override
   void didUpdateWidget(covariant _CalendarView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // 切月后,如果 selected 不在当月了,重置到当月 1 号
+    // 切月后，如果 selected 不在当月了，重置到当月 1 号
     if (_selected.year != widget.calendar.month.year ||
         _selected.month != widget.calendar.month.month) {
       _selected = widget.calendar.month;

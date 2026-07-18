@@ -238,7 +238,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     }
     final enabled = _safetyEnabled ?? false;
     final threshold = _safetyThreshold ?? 2;
-    // P0-1 fix: 检测当前 SMS provider,如果还是 mock 状态,显示显眼 banner。
+    // P0-1 fix: 检测当前 SMS provider,如果还是 mock 状态，显示显眼 banner。
     // 用户必须知道「失联通知」功能还没真接通 — 否则可能误以为已保护家人。
     final providerName = ref.watch(smsProviderNameProvider);
     final isMockSms = providerName == 'mock';

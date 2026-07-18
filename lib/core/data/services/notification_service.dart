@@ -75,7 +75,7 @@ class NotificationService implements NotificationSender {
       onDidReceiveNotificationResponse: _onResponse,
     );
 
-    // v0.11 (Round 5): 处理"app 被杀着,通过通知拉起"的情况
+    // v0.11 (Round 5): 处理"app 被杀着，通过通知拉起"的情况
     final launchDetails = await _plugin.getNotificationAppLaunchDetails();
     if (launchDetails?.didNotificationLaunchApp ?? false) {
       final payload = launchDetails?.notificationResponse?.payload;
@@ -257,7 +257,7 @@ class NotificationService implements NotificationSender {
   /// v0.18 (P1-11) @Deprecated: CareEngine 接管 secondDayMissed 推送,
   /// setup_page 不再调此方法。保留 API 是因为有些旧测试 / 未来合并 soft reminder
   /// 跟 CareEngine 时可能还要用。新代码请用 `CareEngine.evaluate` + `showNow`。
-  @Deprecated('v0.18 P1-11: CareEngine 接管,新代码请用 CareEngine.evaluate + showNow')
+  @Deprecated('v0.18 P1-11: CareEngine 接管，新代码请用 CareEngine.evaluate + showNow')
   Future<void> scheduleSoftReminder({int hour = 10, int minute = 0}) async {
     await init();
     await _plugin.cancel(_softReminderId);
@@ -327,7 +327,7 @@ class NotificationService implements NotificationSender {
   // ============== Round 4: Snooze + Badge ==============
   //
   // v0.18 round 18 (P1-28): Snooze 3 个 method 拆到 SnoozeManager
-  // 主 service 公共 API 保留,内部委托 _snoozeManager。
+  // 主 service 公共 API 保留，内部委托 _snoozeManager。
   // 这样:
   // - notification_service.dart 788 → 700 行 (-90)
   // - snooze 逻辑独立测试 (mock SnoozeManager 不用 mock 整个 notification)
@@ -454,7 +454,7 @@ class NotificationService implements NotificationSender {
         'fireAt=$fireAt 已过, 跳过',
         name: 'NotificationService',
       );
-      // 但仍要取消旧的,避免过期通知还挂着
+      // 但仍要取消旧的，避免过期通知还挂着
       await cancelRefillReminder(medication.id);
       return;
     }
@@ -607,7 +607,7 @@ class NotificationService implements NotificationSender {
   /// 推送"安全警报"通知（v0.10 / Round 4 — 死了么思路）
   ///
   /// 和普通 reminder 不同的 channel：高 importance + 震动 + 锁屏可见
-  /// v0.11 (Round 5): payload 携带天数,点通知直达 home + 显示告警
+  /// v0.11 (Round 5): payload 携带天数，点通知直达 home + 显示告警
   Future<void> showSafetyAlert({
     required String userName,
     required int daysWithoutCheckIn,

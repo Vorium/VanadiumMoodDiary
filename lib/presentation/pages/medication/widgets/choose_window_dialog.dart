@@ -11,7 +11,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// v0.17 round 7 (A7 emil 动效): AlertDialog 默认动画
 /// - showDialog() 默认 fade + scale from center (M3 标准)
 /// - emil 决策框架: modals 居中 + 150-300ms standard animation
-/// - 替代项: PageRouteBuilder 配合 CustomTransitionPage 可覆盖,但项目用默认够用
+/// - 替代项: PageRouteBuilder 配合 CustomTransitionPage 可覆盖，但项目用默认够用
 /// - 找 bug 方法: 用户报"弹窗出现/消失太突兀"再考虑自定义
 class ChooseWindowDialog extends StatefulWidget {
   const ChooseWindowDialog({super.key});

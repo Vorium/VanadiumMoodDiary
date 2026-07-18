@@ -34,7 +34,7 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
       ),
       TweenSequenceItem(
         // P0-9 fix: easeIn 反 emil 原则("ease-in 延迟用户最关注的入场瞬间")。
-        // 改 easeOutCubic 跟项目 AppTokens.curveStandard 一致,弹跳收尾感觉"快到慢",
+        // 改 easeOutCubic 跟项目 AppTokens.curveStandard 一致，弹跳收尾感觉"快到慢",
         // 跟前面 0→1.2 的 easeOutBack 衔接顺。
         tween: Tween(begin: 1.2, end: 1.0)
             .chain(CurveTween(curve: Curves.easeOutCubic)),
@@ -62,7 +62,7 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
   void didChangeDependencies() {
     super.didChangeDependencies();
     // P0-7: 尊重系统 prefers-reduced-motion。开了就直接跳到终态
-    // (opacity 会瞬时变 1.0,但 celebration overlay 通常 1.5s 后就消失,用户感知不到)
+    // (opacity 会瞬时变 1.0,但 celebration overlay 通常 1.5s 后就消失，用户感知不到)
     if (MediaQuery.of(context).disableAnimations && _controller.value < 1.0) {
       _controller.value = 1.0;
     }

@@ -45,8 +45,8 @@ class AppTheme {
       // v0.17 round 7 (A5 emil 动效): 全局 splash factory
       //
       // emil 决策框架: tens+/day(列表点击 / Card 反馈)→ 标准 animation
-      // InkSparkle (M3 涟漪) 是 Flutter 3.16+ 默认,跟 M3 风格统一
-      // 替代 SplashFactory.inkRipple (旧版长方形涟漪,看起来像 Android 4)
+      // InkSparkle (M3 涟漪) 是 Flutter 3.16+ 默认，跟 M3 风格统一
+      // 替代 SplashFactory.inkRipple (旧版长方形涟漪，看起来像 Android 4)
       //
       // 找 bug 方法: 用户报"按钮点起来手感怪"先看这里
       // splashFactory: InkSparkle.splashFactory,

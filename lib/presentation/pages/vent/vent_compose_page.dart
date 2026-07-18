@@ -71,7 +71,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       try {
         final plainPath = await _recorder.stop();
         if (plainPath != null && mounted) {
-          // P0-2: 录音停下后立刻加密,原 m4a 删掉
+          // P0-2: 录音停下后立刻加密，原 m4a 删掉
           // 用 _audioPath 临时存加密后路径,UI 也用这个
           final storage = ref.read(ventAudioStorageProvider);
           final encryptedPath = await storage.newAudioPath();
@@ -86,7 +86,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                 AppSnackBar.error(context, action: '加密录音', error: e),
               );
             }
-            // 加密失败 → 不保存音频,但 _isRecording 还是 false
+            // 加密失败 → 不保存音频，但 _isRecording 还是 false
             setState(() {
               _isRecording = false;
             });
@@ -219,7 +219,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         final f = File(old);
         if (await f.exists()) await f.delete();
       } catch (e, st) {
-        // 文件可能已被用户/系统清掉;删失败不阻塞重录流程
+        // 文件可能已被用户/系统清掉；删失败不阻塞重录流程
         swallowError(
           where: 'vent_compose_page._reRecord',
           error: e,

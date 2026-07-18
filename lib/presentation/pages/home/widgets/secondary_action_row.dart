@@ -5,12 +5,12 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 import 'package:chroniccare/presentation/pages/mood/mood_quick_button.dart';
 
-/// 主页次要操作行:情绪日记快速按钮 + 树洞入口
+/// 主页次要操作行：情绪日记快速按钮 + 树洞入口
 ///
 /// v0.18 round 18 (P1-27): 从 home_page 抽出。
 ///
 /// 隐私边界（AGENTS.md）: 情绪日记不进 vent / care engine。
-/// 树洞 (vent) 独立表,绝对不进任何分析、纯私密空间。
+/// 树洞 (vent) 独立表，绝对不进任何分析、纯私密空间。
 class SecondaryActionRow extends StatelessWidget {
   final VoidCallback onMoodTap;
 
@@ -23,7 +23,7 @@ class SecondaryActionRow extends StatelessWidget {
         MoodQuickButton(onTap: onMoodTap),
         const SizedBox(height: AppTokens.spacingSm),
         // v0.15 (Round 18) 树洞入口
-        // 与情绪日记完全独立:树洞不进任何分析、纯私密空间
+        // 与情绪日记完全独立：树洞不进任何分析、纯私密空间
         SecondaryButton(
           onPressed: () => context.push('/vent'),
           child: const Row(

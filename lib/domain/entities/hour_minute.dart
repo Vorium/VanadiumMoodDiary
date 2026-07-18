@@ -1,7 +1,7 @@
 /// 领域层时间结构体，替代 Flutter 的 `TimeOfDay`
 ///
 /// domain 层不依赖 `package:flutter/material.dart`，
-/// 用此纯 Dart 记录表示"时:分"。
+/// 用此纯 Dart 记录表示"时：分"。
 ///
 /// 用法：
 /// - domain entity 用 `List<HourMinute>`

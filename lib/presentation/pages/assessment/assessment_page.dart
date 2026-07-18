@@ -787,7 +787,7 @@ class _QuestionCard extends StatelessWidget {
   }
 }
 
-// P5 fix: 之前 `phq9ScaleFallback` 是死代码,直接调 `scaleById('phq9')!`,
+// P5 fix: 之前 `phq9ScaleFallback` 是死代码，直接调 `scaleById('phq9')!`,
 // 如果 phq9 不存在就 throw,实际意义是 0。现在 initState 改成 _scale = null
 // + 下一帧 pop,这个 fallback 不再需要。删了。
 // 如果未来真的需要"路由给错时返回某个默认量表",应该传具体 id: scaleById('phq9')!,

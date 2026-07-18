@@ -21,7 +21,7 @@ class StreakCalculator {
   ///
   /// 算法：
   /// 1. 过滤 normal 类型
-  /// 2. 显式按 timestamp DESC 排序（callers 通常传已排序数据,但保险起见显式 sort）
+  /// 2. 显式按 timestamp DESC 排序（callers 通常传已排序数据，但保险起见显式 sort）
   /// 3. 提取去重的 calendar day（一个 day 只算 1 次）
   /// 4. 倒序遍历，gap = 1 day 算连续，gap > 1 day 算中断
   /// 5. 距今天 > 36h 视为过期，streak 0

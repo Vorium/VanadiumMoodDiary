@@ -3,17 +3,17 @@
 // 文件存 app docs 目录（v0.7 data_export_service 已有类似模式），
 // 路径通过 `path_provider` 拿。
 //
-// **P0-2 fix (v0.18 round 14)**: 音频文件之前完全明文,设备 root 后能直接
+// **P0-2 fix (v0.18 round 14)**: 音频文件之前完全明文，设备 root 后能直接
 // 读出所有树洞录音。现在所有写入都走 [EncryptionService] 加密:
 //
 //   录音完 → 拿到明文 m4a → encryptAndWrite 加密 → 写 .m4a.enc → 删明文
 //   播放前 → decryptToTemp 解密 → 写临时 m4a → audioplayer 播 → 播完清临时
 //
 // 文件后缀从 .m4a 改 .m4a.enc,DB 存的路径也跟着改。
-// 迁移策略(详见 settings_page "音频加密迁移"按钮): 用户主动触发,扫描
+// 迁移策略(详见 settings_page "音频加密迁移"按钮): 用户主动触发，扫描
 // 旧 .m4a 文件逐个加密 in-place (rename + 写 .enc),删明文。
 //
-// 隐私边界: 加密 key 在 [EncryptionService] 用 SecureStorage 存,绑设备。
+// 隐私边界: 加密 key 在 [EncryptionService] 用 SecureStorage 存，绑设备。
 library;
 
 import 'dart:io';
@@ -71,7 +71,7 @@ class VentAudioStorage {
   /// 流程: 读 [plainPath] → 加密 → 写 [encryptedPath] → 删明文
   ///
   /// 调用方传 recorder.stop() 返回的明文路径 + newAudioPath() 生成的加密路径。
-  /// 任何一步失败都会抛错,已写的文件回滚(尽力)。
+  /// 任何一步失败都会抛错，已写的文件回滚(尽力)。
   Future<void> encryptAndWrite({
     required String plainPath,
     required String encryptedPath,
@@ -99,7 +99,7 @@ class VentAudioStorage {
     }
   }
 
-  /// P0-2: 解密加密 audio 到临时文件,返回临时路径
+  /// P0-2: 解密加密 audio 到临时文件，返回临时路径
   ///
   /// 播放时调用: 解密到 temp 目录 → audioplayer 播 → 播完自己删
   /// 临时文件命名: `vent_decrypt_{ts}_{rand}.m4a`
@@ -128,7 +128,7 @@ class VentAudioStorage {
         await f.delete();
       }
     } catch (_) {
-      // 临时文件删不掉不要紧,系统 temp 会自动清
+      // 临时文件删不掉不要紧，系统 temp 会自动清
     }
   }
 
@@ -175,8 +175,8 @@ class VentAudioStorage {
         try {
           total += await entity.length();
         } catch (e, st) {
-          // 单文件 stat 失败 → 跳过这个文件,继续累加其它
-          // v0.17 round 14 (P1-5): 之前静默,现在 dev 模式可见
+          // 单文件 stat 失败 → 跳过这个文件，继续累加其它
+          // v0.17 round 14 (P1-5): 之前静默，现在 dev 模式可见
           swallowError(
             where: 'vent_audio_storage.totalSizeBytes',
             error: e,

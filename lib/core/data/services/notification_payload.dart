@@ -1,7 +1,7 @@
 /// 通知 payload 编码/解析 — Deep Linking 基础设施
 ///
 /// v0.11 (Round 5) — 参考 HealthReminder:
-/// 点推送不要走 3 步首页,直接跳到对应"今天打卡"页。
+/// 点推送不要走 3 步首页，直接跳到对应"今天打卡"页。
 ///
 /// payload 格式: `chroniccare://<action>/<arg1>/<arg2>/...`
 /// **action 放在 host 位置**(`//` 之后第一段),不是 path 位置。
@@ -9,7 +9,7 @@
 /// 解析为 host,'today' 解析为 path,所以我们跟着这个习惯来。
 ///
 /// 注意:payload 是 iOS/Android 通知的有限字段(< 1KB),
-/// 这里用最小集合,不要往里塞大对象。
+/// 这里用最小集合，不要往里塞大对象。
 library;
 
 import 'package:flutter/foundation.dart';

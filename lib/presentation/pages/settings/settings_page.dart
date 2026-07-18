@@ -151,7 +151,7 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingLg),
 
           // v0.16 round 20: 通知自检卡（一键测试 + OEM 后台引导）
-          // 放在「提醒」section 末尾,跟「提醒中心/续方管理」配套
+          // 放在「提醒」section 末尾，跟「提醒中心/续方管理」配套
           const NotificationStatusCard(),
 
           const SizedBox(height: AppTokens.spacingLg),
@@ -247,7 +247,7 @@ class SettingsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text('把下面这串 JSON 保存到安全的地方：'),
-              // P0-3 fix: 透明告知用户 vent 导出范围(文字导出,录音不导出)。
+              // P0-3 fix: 透明告知用户 vent 导出范围(文字导出，录音不导出)。
               const SizedBox(height: AppTokens.spacingXs),
               Container(
                 padding: const EdgeInsets.all(AppTokens.spacingSm),

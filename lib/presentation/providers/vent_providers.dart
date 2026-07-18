@@ -9,7 +9,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 /// v0.17 round 14 (P1-3 拆 core_providers): vent-specific provider
 ///
 /// 之前在 core_providers.dart 里。vent 是独立 privacy 模块,stream provider
-/// 跟 vent 业务紧绑,放 core_providers 不合适。
+/// 跟 vent 业务紧绑，放 core_providers 不合适。
 ///
 /// 整组放这里 (含 vent repository, 跟 vent audio storage 同组), 避免
 /// core_providers ↔ vent_providers 循环 import。

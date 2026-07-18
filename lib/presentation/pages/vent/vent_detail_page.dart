@@ -72,7 +72,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     super.dispose();
   }
 
-  /// P0-2: 当前播放用的临时解密文件,页面离开时清
+  /// P0-2: 当前播放用的临时解密文件，页面离开时清
   String? _tempDecryptedPath;
 
   Future<void> _togglePlay(VentEntryEntity entry) async {

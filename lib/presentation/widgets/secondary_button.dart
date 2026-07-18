@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// 通用次要按钮（v0.9 重构：抽出共用 widget）
 ///
 /// 用途：临时吃药、记一下情绪等"次要操作"
-/// 视觉：主色描边 + 圆角 + label 居中,跟主打卡按钮视觉区分但不抢眼
+/// 视觉：主色描边 + 圆角 + label 居中，跟主打卡按钮视觉区分但不抢眼
 ///
 /// 之前 home_page、mood_quick_button、settings 等多处重复同样的
 /// `OutlinedButton.styleFrom(side: ... foregroundColor: ... shape: ...)`。
@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 /// v0.17 round 14 (P1-2): 简化 — 不再 wrapper styleFrom,直接用 OutlinedButton。
 /// 项目的 OutlinedButtonTheme (app_theme.dart:_outlinedButtonTheme) 已经设好
 /// minimumSize / side / foregroundColor / shape / textStyle,跟之前的
-/// manual styleFrom 完全一致。删除重复声明,避免 theme 改 style 后这边不同步。
+/// manual styleFrom 完全一致。删除重复声明，避免 theme 改 style 后这边不同步。
 class SecondaryButton extends StatelessWidget {
   final Widget child;
   final VoidCallback onPressed;

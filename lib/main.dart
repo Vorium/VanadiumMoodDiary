@@ -81,7 +81,7 @@ Future<void> main() async {
     return;
   } catch (e, st) {
     debugPrint('⚠️ 数据库迁移失败：$e\n$st');
-    // N31 fix: 给用户友好消息,详细错只 log
+    // N31 fix: 给用户友好消息，详细错只 log
     runApp(const _MigrationFailedApp(message: '无法初始化本地数据'));
     return;
   }
@@ -138,7 +138,7 @@ Future<void> _scheduleAssessmentReminderOnStart(
 
 /// 弹升级确认对话框
 ///
-/// **重要**:必须在 runApp 之后调用,否则 showDialog 拿不到 Navigator。
+/// **重要**:必须在 runApp 之后调用，否则 showDialog 拿不到 Navigator。
 /// 配合 [_MigrationPromptApp] 提供的 navigatorKey。
 Future<bool?> _showMigrationConfirmDialog(
   _MigrationPromptController controller,
@@ -212,7 +212,7 @@ class _MigrationPromptApp extends StatelessWidget {
 
 /// 用户取消升级时的占位 App
 ///
-/// **N12 fix**: "已备份,重试"按钮调 [main] 重启流程,不必杀进程。
+/// **N12 fix**: "已备份，重试"按钮调 [main] 重启流程，不必杀进程。
 class _MigrationAbortedApp extends StatelessWidget {
   final Future<void> Function() onRetry;
   const _MigrationAbortedApp({required this.onRetry});
@@ -261,7 +261,7 @@ class _MigrationAbortedApp extends StatelessWidget {
   }
 }
 
-/// 通知初始化结果（注入到 provider 树,首页用）
+/// 通知初始化结果（注入到 provider 树，首页用）
 class NotificationInitResult {
   final bool ok;
   final String? error;
@@ -274,7 +274,7 @@ final notificationInitResultProvider = Provider<NotificationInitResult>(
 
 /// 迁移失败时的占位 App
 ///
-/// **N31 fix**: 接受已脱敏的友好消息,不再直接显示内部异常
+/// **N31 fix**: 接受已脱敏的友好消息，不再直接显示内部异常
 class _MigrationFailedApp extends StatelessWidget {
   final String message;
   const _MigrationFailedApp({required this.message});

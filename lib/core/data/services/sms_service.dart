@@ -51,7 +51,7 @@ class MockSmsProvider implements SmsProvider {
       developer.log('    $line', name: 'MockSmsProvider');
     }
     developer.log('=' * 60, name: 'MockSmsProvider');
-    // 仍 log 详细,方便 dev 看,但实际没发出去
+    // 仍 log 详细，方便 dev 看，但实际没发出去
     throw UnimplementedError(
       'MockSmsProvider.send() — no real SMS sent. '
       'Production must inject AliyunSmsProvider (or other real provider).',

@@ -51,10 +51,10 @@ class AppTokens {
   // textSecondary/textHint/border/divider) 是 light 模式的硬编码值。widget
   // 直接用 `AppTokens.surface` 在 dark mode 下视觉错(背景白、文字白)。
   //
-  // 修法:新增下面 7 个 dynamic getter,接受 BuildContext,从
+  // 修法：新增下面 7 个 dynamic getter,接受 BuildContext,从
   // Theme.of(context).colorScheme 派生正确颜色(M3 已经按 light/dark 派生好)。
   //
-  // 后续 widget 改造时:把 `const TextStyle(color: AppTokens.textHint)` 改成
+  // 后续 widget 改造时：把 `const TextStyle(color: AppTokens.textHint)` 改成
   // `TextStyle(color: AppTokens.textHintColor(context))`。
   //
   // 注意:dynamic getter 不能在 const constructor 里用(必须 const Color)。
@@ -214,8 +214,8 @@ WindowSize windowSizeOf(double width) {
 
 // ============= MotionScheme (v0.17 round 14 / P2-14) =============
 //
-// emil 决策框架: 4 档动画强度,按"用户一天看到几次"分。
-// 用 enum 强制 caller 选档,避免在 widget 里直接传
+// emil 决策框架: 4 档动画强度，按"用户一天看到几次"分。
+// 用 enum 强制 caller 选档，避免在 widget 里直接传
 // (Duration, Curve) 导致风格不统一。
 //
 // 用法:
@@ -229,12 +229,12 @@ WindowSize windowSizeOf(double width) {
 // ```
 //
 // 选择规则:
-// - none:      100+/day (键盘 / 核心导航 / 日常按钮) → 用户已经熟,无动画
+// - none:      100+/day (键盘 / 核心导航 / 日常按钮) → 用户已经熟，无动画
 // - subtle:    tens/day (hover / press feedback) → 微弱反馈
 // - standard:  occasional (modal / drawer / snackbar / 状态切换)
-// - delight:   rare (onboarding 首次 / 庆祝 / 解锁成就) → 弹性,可加 highlight
+// - delight:   rare (onboarding 首次 / 庆祝 / 解锁成就) → 弹性，可加 highlight
 enum MotionScheme {
-  /// 100+/day — 不加动画,直接切换
+  /// 100+/day — 不加动画，直接切换
   none,
 
   /// tens/day — 微弱反馈 (e.g. button press)
@@ -280,7 +280,7 @@ extension MotionSchemeTokens on MotionScheme {
 // ============= Motion (v0.18 round 14 / P0-7) =============
 //
 // **P0-7 fix**: 之前没有任何代码处理 `prefers-reduced-motion: reduce` 媒体查询。
-// 精神心理患者前庭功能敏感比例高于普通用户,长时间用 App 可能眩晕。
+// 精神心理患者前庭功能敏感比例高于普通用户，长时间用 App 可能眩晕。
 // emil 原则第 8 条: reduced-motion 是 non-negotiable a11y 标准。
 //
 // 用法:

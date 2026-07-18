@@ -27,7 +27,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// ```
 ///
 /// 设计选择:
-/// - scale 0.97 (emil 标准,不是 0.9 / 0.95,大按钮也不变)
+/// - scale 0.97 (emil 标准，不是 0.9 / 0.95,大按钮也不变)
 /// - duration 160ms (Material 3 ripple 同档)
 ///
 /// **P0-7 fix**: 系统开了 prefers-reduced-motion → scale 反馈消失

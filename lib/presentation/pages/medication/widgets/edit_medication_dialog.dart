@@ -212,7 +212,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
               controller: _nameController,
               decoration: const InputDecoration(
                 labelText: '药名',
-                // P0-5 fix: 改中性文案,避免《广告法》第 16 条 +
+                // P0-5 fix: 改中性文案，避免《广告法》第 16 条 +
                 // 《医疗广告管理办法》风险。
                 hintText: '请输入药盒上的名称（选填）',
               ),

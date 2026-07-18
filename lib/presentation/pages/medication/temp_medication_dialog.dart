@@ -14,7 +14,7 @@ import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 /// v0.7：加关联常吃药字段（可选）。点"保存"插入 type='temp' 的 CheckIn。
 ///
 /// **N25 fix**: 之前用 `ValueNotifier<Medication?>` 配 ignore 注释,
-/// 改成纯 StatefulWidget + setState 模式,更清晰且无 lint 噪音。
+/// 改成纯 StatefulWidget + setState 模式，更清晰且无 lint 噪音。
 class TempMedicationDialog extends StatefulWidget {
   final WidgetRef ref;
   const TempMedicationDialog({super.key, required this.ref});

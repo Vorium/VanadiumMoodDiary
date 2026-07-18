@@ -8,10 +8,10 @@ class Formatters {
   /// 月-日：07/13
   static String monthDay(DateTime d) => '${_pad(d.month)}/${_pad(d.day)}';
 
-  /// 时:分：14:08
+  /// 时：分：14:08
   static String time(DateTime d) => '${_pad(d.hour)}:${_pad(d.minute)}';
 
-  /// 完整日期 + 时:分：2026-07-13 14:08
+  /// 完整日期 + 时：分：2026-07-13 14:08
   static String dateTime(DateTime d) => '${date(d)} ${time(d)}';
 
   /// 紧凑年月日（用于文件名）：20260713

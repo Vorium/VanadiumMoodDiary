@@ -101,7 +101,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       // v0.17 round 14 (P2-4): setup wizard step transition
       // 之前只设了 duration,没设 transitionBuilder / layoutBuilder.
       // 现在用 fade + slide-up (occasional 频度,user 1-3 次).
-      // layoutBuilder 让新旧 child 在切换瞬间叠加,避免 height 跳变.
+      // layoutBuilder 让新旧 child 在切换瞬间叠加，避免 height 跳变.
       child: AnimatedSwitcher(
         // P1-7 fix: setup wizard step 切换 occasional 频度 →
         // MotionScheme.standard token (durNormal + curveStandard)
@@ -177,7 +177,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           const SizedBox(height: AppTokens.spacingSm),
           const Text(
             '为遵守《个人信息保护法》(PIPL),本 App 处理您的健康医疗等'
-            '敏感个人信息前,需要您明确、单独同意以下 3 份文件。',
+            '敏感个人信息前，需要您明确、单独同意以下 3 份文件。',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
@@ -223,7 +223,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           ),
           const SizedBox(height: AppTokens.spacingMd),
           const Text(
-            '提示:您可以随时在「设置 → 法律与隐私」撤回同意。'
+            '提示：您可以随时在「设置 → 法律与隐私」撤回同意。'
             '拒绝或撤回后,App 的相关功能将无法使用。',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -362,7 +362,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       if (phone.isEmpty) continue;
       final normalized = PhoneValidator.normalize(phone);
       if (normalized == null) {
-        // v0.18 P1-14: 文案改通用,不再写死"11 位数字"
+        // v0.18 P1-14: 文案改通用，不再写死"11 位数字"
         return '第 ${i + 1} 个联系人号码格式不对（支持大陆/港澳台/国际）';
       }
       if (phones.contains(normalized)) {
@@ -529,7 +529,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               controller: m.nameController,
               decoration: const InputDecoration(
                 labelText: '药名',
-                // P0-5 fix: 改中性文案,避免《广告法》第 16 条 +《医疗广告
+                // P0-5 fix: 改中性文案，避免《广告法》第 16 条 +《医疗广告
                 // 管理办法》风险(原预填真实处方药通用名)。
                 hintText: '请输入药盒上的名称（选填）',
               ),
@@ -868,7 +868,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           );
       // v0.18 (P1-11) fix: 删 scheduleSoftReminder 双推
       // 之前 setup 调 scheduleSoftReminder(每天 10:00 push "你还好吗?")
-      // 跟 CareEngine.secondDayMissed 文案重复,用户每天 10 点收到 2 条。
+      // 跟 CareEngine.secondDayMissed 文案重复，用户每天 10 点收到 2 条。
       // 改 CareEngine 唯一负责 — onAppStart / onCheckIn 时 evaluate,
       // minutesSince >= 36h && hour >= 10 触发立即 push。
       // fallback 通用打卡提醒
@@ -1027,7 +1027,7 @@ class _LegalDocumentDialog extends StatelessWidget {
             }
             if (snap.hasError || !snap.hasData) {
               return const Center(
-                child: Text('加载失败,请检查网络或重新打开 App'),
+                child: Text('加载失败，请检查网络或重新打开 App'),
               );
             }
             return SingleChildScrollView(

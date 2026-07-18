@@ -29,9 +29,9 @@ class DataExportService {
   /// 否则 v0.9 引入的核心表完全无法通过备份恢复。
   ///
   /// **P0-3 fix**: v0.18 (round 14 P0 batch) 加上 `vent_entries` 文字。
-  /// 录音文件 (audioPath) **不**导出 — 文件在 app docs 目录,重装/跨设备
-  /// 路径失效,无法直接复用。文字可跨设备,所以导出。
-  /// 重装 → 导入后,树洞**文字**会恢复,但录音会标 `hasAudio=false`。
+  /// 录音文件 (audioPath) **不**导出 — 文件在 app docs 目录，重装/跨设备
+  /// 路径失效，无法直接复用。文字可跨设备，所以导出。
+  /// 重装 → 导入后，树洞**文字**会恢复，但录音会标 `hasAudio=false`。
   Future<String> exportToJson() async {
     final profile = await _db.getUserProfile();
     final contacts = await _db.watchContacts().first;
@@ -109,7 +109,7 @@ class DataExportService {
             'contentText': v.contentText,
             'audioDurationSec': v.audioDurationSec,
             'audioSizeBytes': v.audioSizeBytes,
-            // 标志:旧数据可能含 audioPath,我们导入时丢弃并提示
+            // 标志：旧数据可能含 audioPath,我们导入时丢弃并提示
             if (v.audioPath != null) 'hadAudio': true,
           },
       ],
@@ -122,8 +122,8 @@ class DataExportService {
   ///
   /// 返回导入条数摘要
   ///
-  /// **P12 fix**: 错误信息脱敏,不再直接 `'$e'` 暴露内部细节
-  /// **P13 fix**: 关键字段做长度/类型校验,坏数据不写 DB
+  /// **P12 fix**: 错误信息脱敏，不再直接 `'$e'` 暴露内部细节
+  /// **P13 fix**: 关键字段做长度/类型校验，坏数据不写 DB
   Future<ImportResult> importFromJson(String json) async {
     try {
       final data = jsonDecode(json) as Map<String, dynamic>;
@@ -144,7 +144,7 @@ class DataExportService {
         await _db.delete(_db.checkIns).go();
         await _db.delete(_db.medications).go();
         await _db.delete(_db.contacts).go();
-        // v0.9 新增表（v1 才存在,先 guard）
+        // v0.9 新增表（v1 才存在，先 guard）
         try {
           await _db.delete(_db.reportHistories).go();
         } catch (_) {
@@ -155,7 +155,7 @@ class DataExportService {
         } catch (_) {
           // 同上
         }
-        // P0-3: vent_entries 表(v0.15+ 存在,不需要 guard)
+        // P0-3: vent_entries 表(v0.15+ 存在，不需要 guard)
         try {
           await _db.delete(_db.ventEntries).go();
         } catch (_) {
@@ -301,8 +301,8 @@ class DataExportService {
           }
         }
 
-        // P0-3: vent_entries 文字导入(录音路径永远丢弃,跨设备不可用)。
-        // version 3+ 才有,老导出文件没这段也兼容。
+        // P0-3: vent_entries 文字导入(录音路径永远丢弃，跨设备不可用)。
+        // version 3+ 才有，老导出文件没这段也兼容。
         if (version >= 3) {
           for (final v in (data['ventEntries'] as List? ?? [])) {
             if (v is! Map) continue;
@@ -346,8 +346,8 @@ class DataExportService {
       if (kDebugMode) {
         debugPrint('importFromJson error: $e\n$st');
       }
-      // P12 fix: 脱敏,只告诉用户"解析失败",不暴露具体异常
-      return ImportResult.failure('解析失败：数据格式不正确,请确认是从本 App 导出的 JSON');
+      // P12 fix: 脱敏，只告诉用户"解析失败",不暴露具体异常
+      return ImportResult.failure('解析失败：数据格式不正确，请确认是从本 App 导出的 JSON');
     }
   }
 

@@ -6,7 +6,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 主页顶部 header:用户名 + 趋势/评估/设置 入口
 ///
-/// v0.18 round 18 (P1-27): 从 home_page 抽出,减少 god-page 行数。
+/// v0.18 round 18 (P1-27): 从 home_page 抽出，减少 god-page 行数。
 /// 之前是 build 方法内联 Row,现在单独 widget 隔离样式。
 class HomeHeader extends StatelessWidget {
   final String userName;

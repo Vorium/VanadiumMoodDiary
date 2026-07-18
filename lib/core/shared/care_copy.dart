@@ -22,7 +22,7 @@ class CareCopy {
 
   /// 按 trigger type 取文案
   ///
-  /// 注意:返回 (title, body) pair,Call site 自己拼 push 文本。
+  /// 注意：返回 (title, body) pair,Call site 自己拼 push 文本。
   static ({String title, String body}) forTrigger(CareTriggerType type) {
     switch (type) {
       case CareTriggerType.lateCheckInHabit:
@@ -50,7 +50,7 @@ class CareCopy {
     }
   }
 
-  /// 软提醒文案(setup 阶段兜底,跟 secondDayMissed 共用)
+  /// 软提醒文案(setup 阶段兜底，跟 secondDayMissed 共用)
   ///
   /// v0.18 (P1-11): 跟 CareEngine.secondDayMissed 共享同一份文案。
   /// setup 不再调 scheduleSoftReminder(已删),此方法目前仅供

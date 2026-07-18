@@ -66,7 +66,7 @@ const kMedicationTemplates = <MedicationTemplate>[
         dosage: 1,
         dosageUnit: '片',
         times: [HourMinute(hour: 8, minute: 0)],
-        // P0-5 fix: 改分类描述,避免《广告法》第 16 条 +
+        // P0-5 fix: 改分类描述，避免《广告法》第 16 条 +
         // 《医疗广告管理办法》风险(原列 4 个真实处方药通用名)。
         hint: '常见 SSRI / SNRI 类抗抑郁药(具体药名以医生处方为准)',
       ),
@@ -126,7 +126,7 @@ const kMedicationTemplates = <MedicationTemplate>[
           HourMinute(hour: 13, minute: 0),
           HourMinute(hour: 20, minute: 0),
         ],
-        // P0-5 fix: 改分类描述,避免广告法风险。
+        // P0-5 fix: 改分类描述，避免广告法风险。
         hint: '常见非典型抗精神病药(具体药名以医生处方为准)',
       ),
       MedicationTemplateHelper.bedtimeAntipsychotic,

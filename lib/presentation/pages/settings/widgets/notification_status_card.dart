@@ -70,7 +70,7 @@ class _NotificationStatusCardState
       await service.showNow(
         id: 99001, // 测试用 id,不会跟任何业务通知冲突（_refillBaseId 6000+）
         title: '🔔 通知自检',
-        body: '看到这条 = 通知工作正常。如果没看到,看下面的国产手机设置',
+        body: '看到这条 = 通知工作正常。如果没看到，看下面的国产手机设置',
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -112,7 +112,7 @@ class _NotificationStatusCardState
                 ? const Padding(
                     padding: EdgeInsets.all(AppTokens.spacingMd),
                     child: Text('当前没有任何待发通知。\n'
-                        '可能是没设提醒,或被系统后台清理了。'),
+                        '可能是没设提醒，或被系统后台清理了。'),
                   )
                 : ListView.builder(
                     shrinkWrap: true,
@@ -158,7 +158,7 @@ class _NotificationStatusCardState
           leading: Icon(Icons.info_outline, color: AppTokens.textHint),
           title: Text('通知功能仅在 Android / iOS 上可用'),
           subtitle: Text(
-            '当前是 web 端,通知由浏览器控制。请在手机上打开 App 测试。',
+            '当前是 web 端，通知由浏览器控制。请在手机上打开 App 测试。',
             style: TextStyle(color: AppTokens.textHint),
           ),
         ),
@@ -206,7 +206,7 @@ class _NotificationStatusCardState
           ListTile(
             leading: const Icon(Icons.send_outlined, color: AppTokens.primary),
             title: const Text('测试通知'),
-            subtitle: const Text('点一下立即推一条,确认通知能正常弹出'),
+            subtitle: const Text('点一下立即推一条，确认通知能正常弹出'),
             onTap: _busy ? null : _fireTest,
           ),
           const Divider(height: 1),
@@ -217,7 +217,7 @@ class _NotificationStatusCardState
             onTap: _busy ? null : _showDetails,
           ),
           const Divider(height: 1),
-          // OEM 引导 — 用 ExpansionTile 折叠,不抢主屏空间
+          // OEM 引导 — 用 ExpansionTile 折叠，不抢主屏空间
           const _OemBackgroundHint(),
         ],
       ),
@@ -232,13 +232,13 @@ class _OemBackgroundHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      // 去掉 ExpansionTile 默认的圆形图标背景,跟整体风格一致
+      // 去掉 ExpansionTile 默认的圆形图标背景，跟整体风格一致
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: const ExpansionTile(
         leading: Icon(Icons.phone_android, color: AppTokens.primary),
         title: Text('国产手机没收到通知?'),
         subtitle: Text(
-          '小米/华为/OPPO/Vivo 默认会杀后台,点这里看怎么设',
+          '小米/华为/OPPO/Vivo 默认会杀后台，点这里看怎么设',
           style: TextStyle(color: AppTokens.textSecondary, fontSize: 12),
         ),
         childrenPadding: EdgeInsets.fromLTRB(
