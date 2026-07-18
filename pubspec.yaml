@@ -24,7 +24,7 @@ dependencies:
 
   # 加密
   flutter_secure_storage: ^9.2.2
-  encrypt: ^5.0.3
+  pointycastle: ^3.9.1
 
   # 路由
   go_router: ^14.6.1

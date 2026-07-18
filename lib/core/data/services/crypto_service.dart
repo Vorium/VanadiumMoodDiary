@@ -2,13 +2,15 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/export.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// AES-256 加密服务
 ///
 /// 用于加密本地敏感数据（联系人邮箱、用户姓名等）
 /// Key 存在 flutter_secure_storage（iOS Keychain / Android Keystore）
+///
+/// v0.20 (Q4): 从 encrypt 包迁移到 pointycastle 直接使用
 class CryptoService {
   static const _keyStorageKey = 'chroniccare.aes.key';
   static const _secureStorage = FlutterSecureStorage(
@@ -20,48 +22,61 @@ class CryptoService {
   Future<String> encrypt(String plain) async {
     final key = await _getOrCreateKey();
     final iv = _generateIV();
-    final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
-    final encrypted = encrypter.encrypt(plain, iv: iv);
-    // 把 IV + 密文一起编码
-    return base64Encode(Uint8List.fromList(iv.bytes + encrypted.bytes));
+
+    final cipher = PaddedBlockCipher('AES/CBC/PKCS7');
+    cipher.init(
+      true,
+      PaddedBlockCipherParameters(
+        ParametersWithIV(KeyParameter(key), iv),
+        null,
+      ),
+    );
+    final encrypted = cipher.process(Uint8List.fromList(plain.codeUnits));
+    return base64Encode(Uint8List.fromList(iv + encrypted));
   }
 
   /// 解密字符串
   Future<String> decrypt(String encrypted) async {
     final key = await _getOrCreateKey();
     final bytes = base64Decode(encrypted);
-    final iv = IV(Uint8List.fromList(bytes.sublist(0, 16)));
-    final cipher = Encrypted(Uint8List.fromList(bytes.sublist(16)));
-    final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
-    return encrypter.decrypt(cipher, iv: iv);
+    final iv = bytes.sublist(0, 16);
+    final ciphertext = bytes.sublist(16);
+
+    final cipher = PaddedBlockCipher('AES/CBC/PKCS7');
+    cipher.init(
+      false,
+      PaddedBlockCipherParameters(
+        ParametersWithIV(KeyParameter(key), iv),
+        null,
+      ),
+    );
+    final decrypted = cipher.process(ciphertext);
+    return String.fromCharCodes(decrypted);
   }
 
   /// 获取或创建 AES-256 Key
-  Future<Key> _getOrCreateKey() async {
+  Future<Uint8List> _getOrCreateKey() async {
     final stored = await _secureStorage.read(key: _keyStorageKey);
     if (stored != null) {
-      return Key.fromBase64(stored);
+      return base64Decode(stored);
     }
-    // 生成新 Key
     final random = Random.secure();
     final keyBytes = Uint8List.fromList(
       List<int>.generate(32, (_) => random.nextInt(256)),
     );
-    final key = Key(keyBytes);
     await _secureStorage.write(
       key: _keyStorageKey,
-      value: key.base64,
+      value: base64Encode(keyBytes),
     );
-    return key;
+    return keyBytes;
   }
 
   /// 生成 16 字节 IV
-  IV _generateIV() {
+  Uint8List _generateIV() {
     final random = Random.secure();
-    final ivBytes = Uint8List.fromList(
+    return Uint8List.fromList(
       List<int>.generate(16, (_) => random.nextInt(256)),
     );
-    return IV(ivBytes);
   }
 
   /// 删除 Key（危险操作，仅用于完全重置）

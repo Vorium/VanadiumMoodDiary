@@ -6,28 +6,16 @@
 // - 加密 blob 自带随机 IV(每文件不同),格式: [16-byte IV][N-byte ciphertext]
 // - key 不存明文在磁盘，只在内存中
 //
-// 已知限制(v0.18):
-// - key 绑设备 SecureStorage,root 设备仍可拿到 key (SecureStorage 本身
-//   走 iOS Keychain / Android Keystore,普通用户访问不到)
-// - 跨设备/重装后无法恢复加密音频(因为 SecureStorage 跟着设备走)
-// - 换设备 → 旧录音无法回放(只能看文字，跟 data_export 行为一致)
-//
-// 改进方向(v1.0+):
-// - 改用用户密码派生的 key (PBKDF2 + salt),用户换设备输入密码恢复
-// - 备份时让用户输入密码导出加密包(类似 KeePass)
-//
-// v0.18 选设备绑定 key 的理由:
-// - 不需要 UI 流程 (不用让用户每次输密码)
-// - 不增加忘记密码的风险
-// - 仍然显著强于"完全明文" — 普通用户根本进不到 app docs
-//   (沙箱隔离，非 root 设备无法直接读)
+// v0.20 (Q4): 从 encrypt 包迁移到 pointycastle 直接使用
+// - encrypt 包自 2022 年停维，pointycastle 是其底层依赖且持续维护
+// - 保持 AES-256-CBC + PKCS7 padding，加密格式完全兼容
 library;
 
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:encrypt/encrypt.dart' as enc;
+import 'package:pointycastle/export.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// AES-256 加密 / 解密服务(树洞音频)
@@ -40,15 +28,10 @@ class EncryptionService {
     ),
   );
 
-  enc.Key? _cachedKey;
+  Uint8List? _cachedKey;
 
   /// 取或创建 device-bound 32-byte key
-  ///
-  /// 第一次调用时:
-  /// 1. 从 SecureStorage 读 _keyName
-  /// 2. 不存在 → SecureRandom 生成 32 bytes → base64 存回 SecureStorage
-  /// 3. 缓存到内存
-  Future<enc.Key> getOrCreateKey() async {
+  Future<Uint8List> getOrCreateKey() async {
     if (_cachedKey != null) return _cachedKey!;
 
     final existing = await _storage.read(key: _keyName);
@@ -56,7 +39,6 @@ class EncryptionService {
     if (existing != null) {
       keyBytes = base64Decode(existing);
       if (keyBytes.length != 32) {
-        // 异常长度，重新生成
         keyBytes = _randomBytes(32);
         await _storage.write(key: _keyName, value: base64Encode(keyBytes));
       }
@@ -64,24 +46,30 @@ class EncryptionService {
       keyBytes = _randomBytes(32);
       await _storage.write(key: _keyName, value: base64Encode(keyBytes));
     }
-    _cachedKey = enc.Key(keyBytes);
+    _cachedKey = keyBytes;
     return _cachedKey!;
   }
 
   /// 加密字节数组 → 加密 blob(IV + ciphertext 拼接)
   ///
   /// 格式: [16-byte IV][N-byte ciphertext]
-  /// 每文件用随机 IV,保证相同明文 + 相同 key 加密结果不同
   Future<Uint8List> encrypt(Uint8List plaintext) async {
     final key = await getOrCreateKey();
-    final iv = enc.IV(_randomBytes(16));
-    final encrypter = enc.Encrypter(
-      enc.AES(key, mode: enc.AESMode.cbc, padding: 'PKCS7'),
+    final iv = _randomBytes(16);
+
+    final cipher = PaddedBlockCipher('AES/CBC/PKCS7');
+    cipher.init(
+      true, // encrypt
+      PaddedBlockCipherParameters(
+        ParametersWithIV(KeyParameter(key), iv),
+        null,
+      ),
     );
-    final encrypted = encrypter.encryptBytes(plaintext, iv: iv);
-    final out = Uint8List(iv.bytes.length + encrypted.bytes.length);
-    out.setRange(0, iv.bytes.length, iv.bytes);
-    out.setRange(iv.bytes.length, out.length, encrypted.bytes);
+    final encrypted = cipher.process(plaintext);
+
+    final out = Uint8List(iv.length + encrypted.length);
+    out.setRange(0, iv.length, iv);
+    out.setRange(iv.length, out.length, encrypted);
     return out;
   }
 
@@ -92,15 +80,19 @@ class EncryptionService {
     if (blob.length < 16) {
       throw const FormatException('Encrypted blob too short (< 16 bytes)');
     }
-    final iv = enc.IV(blob.sublist(0, 16));
+    final iv = blob.sublist(0, 16);
     final ciphertext = blob.sublist(16);
     final key = await getOrCreateKey();
-    final encrypter = enc.Encrypter(
-      enc.AES(key, mode: enc.AESMode.cbc, padding: 'PKCS7'),
+
+    final cipher = PaddedBlockCipher('AES/CBC/PKCS7');
+    cipher.init(
+      false, // decrypt
+      PaddedBlockCipherParameters(
+        ParametersWithIV(KeyParameter(key), iv),
+        null,
+      ),
     );
-    return Uint8List.fromList(
-      encrypter.decryptBytes(enc.Encrypted(ciphertext), iv: iv),
-    );
+    return cipher.process(ciphertext);
   }
 
   /// 测试用: 重置 key (清缓存 + 删 SecureStorage)
@@ -110,9 +102,6 @@ class EncryptionService {
   }
 
   /// 用 SecureRandom 生成 N 个随机字节
-  ///
-  /// `dart:math.Random.secure()` 在所有平台 (iOS / Android / Web) 都
-  /// 走 OS 的 CSPRNG,够安全。
   static Uint8List _randomBytes(int n) {
     final rng = Random.secure();
     final out = Uint8List(n);
