@@ -127,8 +127,13 @@ class VentAudioStorage {
       if (await f.exists()) {
         await f.delete();
       }
-    } catch (_) {
-      // 临时文件删不掉不要紧，系统 temp 会自动清
+    } catch (e, st) {
+      swallowError(
+        where: 'vent_audio_storage.deleteTempFile',
+        error: e,
+        stack: st,
+        note: 'temp file delete failed — OS will clean',
+      );
     }
   }
 
@@ -142,7 +147,13 @@ class VentAudioStorage {
         await f.delete();
       }
       return true;
-    } catch (_) {
+    } catch (e, st) {
+      swallowError(
+        where: 'vent_audio_storage.deleteAudio',
+        error: e,
+        stack: st,
+        note: 'audio file delete failed',
+      );
       return false;
     }
   }
@@ -157,8 +168,13 @@ class VentAudioStorage {
         try {
           await entity.delete();
           count++;
-        } catch (_) {
-          // 跳过无法删除的
+        } catch (e, st) {
+          swallowError(
+            where: 'vent_audio_storage.deleteAll',
+            error: e,
+            stack: st,
+            note: 'skip un deletable file in batch clear',
+          );
         }
       }
     }

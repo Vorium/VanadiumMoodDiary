@@ -174,8 +174,13 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
           _audioDurationSec = d.inSeconds;
         });
       }
-    } catch (_) {
-      // 时长探测失败不影响保存
+    } catch (e, st) {
+      swallowError(
+        where: 'vent_compose_page._getAudioDuration',
+        error: e,
+        stack: st,
+        note: 'audio duration probe failed — non-critical',
+      );
     } finally {
       await player.dispose();
       if (tempForDuration != null) {
