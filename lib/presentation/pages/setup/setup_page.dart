@@ -5,7 +5,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
@@ -866,8 +865,9 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       final medications =
           await ref.read(medicationRepositoryProvider).watchAll().first;
       // v0.13 (Round 11): 4 层架构 — entity → Drift row 转换
+      // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       await ref.read(notificationServiceProvider).rescheduleMedicationReminders(
-            medications.map((e) => e.toDriftRow()).toList(),
+            medications,
           );
       // v0.18 (P1-11) fix: 删 scheduleSoftReminder 双推
       // 之前 setup 调 scheduleSoftReminder(每天 10:00 push "你还好吗?")

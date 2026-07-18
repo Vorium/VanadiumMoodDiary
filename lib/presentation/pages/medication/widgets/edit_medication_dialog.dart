@@ -6,7 +6,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
@@ -121,12 +120,11 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       final notif = ref.read(notificationServiceProvider);
       final meds =
           await ref.read(medicationRepositoryProvider).watchAll().first;
-      // v0.13 (Round 11): 4 层架构 — entity → Drift row 转换
-      final driftRows = meds.map((e) => e.toDriftRow()).toList();
+      // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       // medication reminders: 整个重排（停药会自然被 reschedule 排除）
-      await notif.rescheduleMedicationReminders(driftRows);
+      await notif.rescheduleMedicationReminders(meds);
       // refill reminders: 整个重排
-      await notif.rescheduleRefillReminders(driftRows);
+      await notif.rescheduleRefillReminders(meds);
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (e) {

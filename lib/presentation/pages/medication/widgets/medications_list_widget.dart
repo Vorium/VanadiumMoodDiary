@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -207,11 +206,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       // 重排续方提醒
       final meds =
           await ref.read(medicationRepositoryProvider).watchAll().first;
-      // v0.13 (Round 11): 4 层架构 — entity → Drift row 转换
-      final driftRows = meds.map((e) => e.toDriftRow()).toList();
+      // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       await ref
           .read(notificationServiceProvider)
-          .rescheduleRefillReminders(driftRows);
+          .rescheduleRefillReminders(meds);
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

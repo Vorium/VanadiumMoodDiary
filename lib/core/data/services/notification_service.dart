@@ -6,9 +6,9 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/services/notification_navigation.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
@@ -179,8 +179,11 @@ class NotificationService implements NotificationSender {
   ///
   /// 每次 medications 表变化（增/删/改）时调用。
   /// 用稳定 hash 生成 notification id（避免冲突 + 同一药同一时间复用 id）。
+  ///
+  /// v0.18 (P2-P0-2): 改接受 [MedicationEntity] (domain) 而非 [Medication] (Drift row),
+  /// 避免 presentation 层 import data mapper (4 层架构违规)。
   Future<void> rescheduleMedicationReminders(
-    List<Medication> medications,
+    List<MedicationEntity> medications,
   ) async {
     await init();
 
@@ -417,7 +420,7 @@ class NotificationService implements NotificationSender {
   /// - 触发时间：`refillAt - reminderDays` 当天 9:00
   /// - 同一 med 多次调用 = 覆盖前一次（id 稳定）
   /// - payload = medicationCheckIn(medId) — 点通知直达打卡
-  Future<void> scheduleRefillReminder(Medication medication) async {
+  Future<void> scheduleRefillReminder(MedicationEntity medication) async {
     final fireAt = computeRefillFireTime(
       refillAt: medication.refillAt,
       reminderDays: medication.refillReminderDays,
@@ -498,7 +501,9 @@ class NotificationService implements NotificationSender {
   /// v0.16 round 19 fix: 之前 `_refillBaseId + 1000` 范围太窄，medId >= 1000 时
   /// id 超过 7000 漏 cancel。重排会留下"幽灵通知"。
   /// 改成 200000 覆盖 medId <= 199999（远超实际用户量，且 int32 安全）。
-  Future<void> rescheduleRefillReminders(List<Medication> medications) async {
+  ///
+  /// v0.18 (P2-P0-2): 接受 [MedicationEntity] (domain) 而非 [Medication] (Drift row)
+  Future<void> rescheduleRefillReminders(List<MedicationEntity> medications) async {
     await init();
     // 先清掉所有 refill 通知
     final pending = await _plugin.pendingNotificationRequests();
