@@ -11,7 +11,6 @@ import 'package:chroniccare/domain/logic/care_engine.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/core/theme/theme_toggle_button.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -19,14 +18,15 @@ import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/main.dart' show notificationInitResultProvider;
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/home_header.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/notification_failure_banner.dart';
-import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
-import 'package:chroniccare/presentation/widgets/secondary_button.dart';
-import 'package:chroniccare/presentation/pages/medication/last_med_info.dart';
-import 'package:chroniccare/presentation/pages/mood/mood_dialog.dart';
-import 'package:chroniccare/presentation/pages/mood/mood_quick_button.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/secondary_action_row.dart';
 import 'package:chroniccare/presentation/pages/medication/temp_medication_dialog.dart';
 import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart';
+import 'package:chroniccare/presentation/pages/mood/mood_dialog.dart';
 
 /// 主页
 class HomePage extends ConsumerStatefulWidget {
@@ -195,46 +195,21 @@ class _HomePageState extends ConsumerState<HomePage> {
       }
     });
 
+    final userName = userProfileAsync.maybeWhen(
+      data: (profile) => profile?.userName ?? '',
+      orElse: () => '',
+    );
+    final nextReminder = _nextReminderTime();
+
     return PageScaffold(
       title: AppLocalizations.of(context).appName,
       actions: const [ThemeToggleButton()],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 顶部:用户名 + 趋势 + 设置
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  userProfileAsync.maybeWhen(
-                    data: (profile) => '${profile?.userName ?? "我"} 还在坚持',
-                    orElse: () => '慢病管家',
-                  ),
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeHeadline,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.show_chart),
-                onPressed: () => context.push('/trend'),
-                tooltip: '查看趋势',
-              ),
-              IconButton(
-                icon: const Icon(Icons.psychology_outlined),
-                onPressed: () => context.push('/assessment/history'),
-                tooltip: '评估历史',
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                onPressed: () => context.push('/settings'),
-                tooltip: AppLocalizations.of(context).settingsAbout,
-              ),
-            ],
-          ),
+          // v0.18 (P1-27) fix: home_page god-page 拆 5 widget,build 主体减肥
+          // 顶部 header
+          HomeHeader(userName: userName),
 
           // P17 fix: 通知失败 banner(一次性提示,可关闭)
           if (!notifResult.ok)
@@ -243,70 +218,35 @@ class _HomePageState extends ConsumerState<HomePage> {
           const Spacer(flex: 1),
 
           // 鼓励文案(按 streak 动态切换)
-          // P1-8 fix: emil 决策 - streak 文案 100+/day 频度(用户每天看 N 次),
-          // 之前用 durNormal + scale/fade 过渡感觉"迟疑",像在"庆祝"打卡。
-          // 改 100+/day 频度 → MotionScheme.none → 直接切换无动画。
-          // P1-7 fix: 用 MotionScheme token 显式标档位,避免随手传 (Duration, Curve)。
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
-            child: Text(
-              _encouragementFor(streakSnapshot.streak),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+          EncouragementText(streak: streakSnapshot.streak),
 
           const SizedBox(height: AppTokens.spacingSm),
 
-          // 主打卡按钮
+          // 主操作行:打卡按钮 + 临时吃药 + snooze 5min
           todayAsync.when(
-            data: (today) {
-              return CheckInButton(
-                isChecked: today != null,
-                streakDays: streakSnapshot.streak,
-                isLoading: isChecking,
-                onPressed: isChecking
-                    ? () {}
-                    : () => _onCheckIn(context, streakSnapshot.streak),
-              );
-            },
-            loading: () => LoadingSkeleton.fullScreen(),
-            error: (_, __) => CheckInButton(
+            data: (today) => PrimaryActionRow(
+              isChecked: today != null,
+              streakDays: streakSnapshot.streak,
+              isLoading: isChecking,
+              onCheckIn: () => _onCheckIn(context, streakSnapshot.streak),
+              onTempMed: () => TempMedicationDialog.show(context, ref),
+              onSnooze: _snooze5Min,
+            ),
+            loading: () => const PrimaryActionRow(
               isChecked: false,
               streakDays: 0,
-              onPressed: () {},
+              isLoading: true,
+              onCheckIn: _noop,
+              onTempMed: _noop,
+              onSnooze: _noop,
             ),
-          ),
-
-          const SizedBox(height: AppTokens.spacingMd),
-
-          // 临时吃药按钮
-          SecondaryButton(
-            onPressed: () => TempMedicationDialog.show(context, ref),
-            child: Text(
-              AppLocalizations.of(context).homeTempMed,
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeButton,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: AppTokens.spacingSm),
-
-          // v0.10 (Round 4): Snooze 5min 按钮(参考 Pill Reminder)
-          SecondaryButton(
-            onPressed: _snooze5Min,
-            child: const Text(
-              '⏰ 5 分钟后再提醒',
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeButton,
-                fontWeight: FontWeight.w500,
-              ),
+            error: (_, __) => const PrimaryActionRow(
+              isChecked: false,
+              streakDays: 0,
+              isLoading: false,
+              onCheckIn: _noop,
+              onTempMed: _noop,
+              onSnooze: _noop,
             ),
           ),
 
@@ -317,76 +257,29 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           const SizedBox(height: AppTokens.spacingSm),
 
-          // 情绪日记按钮(v0.9 新增)
-          MoodQuickButton(
-            onTap: () => MoodDialog.show(context, ref),
-          ),
-
-          const SizedBox(height: AppTokens.spacingSm),
-
-          // v0.15 (Round 18) 树洞入口
-          // 与情绪日记完全独立:树洞不进任何分析、纯私密空间
-          SecondaryButton(
-            onPressed: () => context.push('/vent'),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.forest_outlined, size: 20),
-                SizedBox(width: 8),
-                Text(
-                  '倾诉 🌲',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeButton,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+          // 次要操作行:情绪日记 + 树洞
+          SecondaryActionRow(
+            onMoodTap: () => MoodDialog.show(context, ref),
           ),
 
           const Spacer(flex: 1),
 
           // 底部信息
           todayAsync.when(
-            data: (today) {
-              return LastMedInfo(
-                lastCheckIn: today?.timestamp,
-                nextReminder: _nextReminderTime(),
-                showStreakBroken: streakSnapshot.shouldShowStreakBroken,
-              );
-            },
+            data: (today) => HomeFooter(
+              lastCheckIn: today,
+              nextReminder: nextReminder,
+              showStreakBroken: streakSnapshot.shouldShowStreakBroken,
+            ),
             loading: () => const SizedBox.shrink(),
             error: (_, __) => const SizedBox.shrink(),
-          ),
-
-          const SizedBox(height: AppTokens.spacingXl),
-
-          Center(
-            child: Text(
-              AppLocalizations.of(context).homeStillOnline,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurfaceVariant
-                    .withValues(alpha: 0.6),
-              ),
-            ),
           ),
         ],
       ),
     );
   }
 
-  /// 按 streak 切换鼓励文案
-  String _encouragementFor(int streak) {
-    if (streak <= 0) return '今天重新开始,加油 🌱';
-    if (streak == 1) return '第 1 天,迈出第一步 🌱';
-    if (streak < 7) return '坚持 $streak 天,继续 🌿';
-    if (streak < 30) return '已坚持 $streak 天,真棒 🌳';
-    if (streak < 100) return '$streak 天连击,太厉害了 🌲';
-    return '$streak 天--你已经是这个习惯的主人了 🏔️';
-  }
+  static void _noop() {}
 
   /// 打卡:haptic + 触发实际打卡
   Future<void> _onCheckIn(BuildContext context, int currentStreak) async {
