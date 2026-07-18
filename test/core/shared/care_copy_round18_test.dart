@@ -46,15 +46,12 @@ void main() {
   });
 
   group('CareCopy.softReminder', () {
-    test('跟 secondDayMissed 共享同一份文案(防双推)', () {
-      // v0.18 P1-11 fix: softReminder 跟 CareEngine secondDayMissed
-      // 文案必须一致,因为 setup 不再调 scheduleSoftReminder,但旧测试
-      // / 未来代码可能还会引到 softReminder 路径,确保文案统一。
-      // ignore: deprecated_member_use_from_same_package
-      final soft = CareCopy.softReminder();
+    // v0.18 (P2-P0-5): softReminder() 整段删除 (死代码,0 caller)
+    // secondDayMissed 文案一致性改为 forTrigger() 单点测试覆盖
+    test('secondDayMissed 文案存在且稳定', () {
       final missed = CareCopy.forTrigger(CareTriggerType.secondDayMissed);
-      expect(soft.title, missed.title);
-      expect(soft.body, missed.body);
+      expect(missed.title, isNotEmpty);
+      expect(missed.body, isNotEmpty);
     });
   });
 }

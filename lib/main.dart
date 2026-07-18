@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:chroniccare/app.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
@@ -28,8 +30,40 @@ import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 /// 现在改成"先 runApp 最小 app,等 first frame,再弹 dialog"的模式。
 /// 配合 N12 fix:_MigrationAbortedApp 的"重试"按钮调 [main] 重新走流程。
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // v0.18 (P2-P0-3): 全局错误兜底
+  // - FlutterError.onError 捕获 widget build 阶段错误
+  // - runZonedGuarded 包裹 main body 捕获所有未 catch 的 async 异常
+  // - release 模式 swallow,debug 模式 throw 让 ErrorWidget 显示完整 stack
+  // AGENTS.md 已声明"本地 SQLite 错误通过 runZonedGuarded 打印",这是首次实现
+  FlutterError.onError = (details) {
+    developer.log(
+      'FlutterError',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+  };
 
+  // 把整个启动逻辑放进 guarded zone
+  await runZonedGuarded<Future<void>>(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await _bootstrap();
+    },
+    (error, stack) {
+      developer.log('FATAL UNCAUGHT', error: error, stackTrace: stack);
+      if (kDebugMode) {
+        // dev 模式重新 throw 让 ErrorWidget 显示完整 stack
+        FlutterError.reportError(
+          FlutterErrorDetails(exception: error, stack: stack),
+        );
+      }
+      // release 模式 swallow — 用户至少能看到之前页面,不显示红屏
+    },
+  );
+}
+
+/// 实际启动逻辑(v0.18 P2-P0-3 抽出来,被 runZonedGuarded 包裹)
+Future<void> _bootstrap() async {
   // 1. 加载 .env（缺失时静默跳过）
   try {
     await dotenv.load(fileName: '.env');

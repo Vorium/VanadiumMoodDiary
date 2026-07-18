@@ -241,49 +241,8 @@ class NotificationService implements NotificationSender {
     );
   }
 
-  /// 漏 1 天主动 push 安慰（不是通知紧急联系人）
-  ///
-  /// [hour] 通常是上午 10 点
-  ///
-  /// v0.18 (P1-11) @Deprecated: CareEngine 接管 secondDayMissed 推送,
-  /// setup_page 不再调此方法。保留 API 是因为有些旧测试 / 未来合并 soft reminder
-  /// 跟 CareEngine 时可能还要用。新代码请用 `CareEngine.evaluate` + `showNow`。
-  @Deprecated('v0.18 P1-11: CareEngine 接管，新代码请用 CareEngine.evaluate + showNow')
-  Future<void> scheduleSoftReminder({int hour = 10, int minute = 0}) async {
-    await init();
-    await _plugin.cancel(_softReminderId);
-
-    const details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        _channelId,
-        _channelName,
-        channelDescription: _channelDesc,
-        importance: Importance.defaultImportance,
-        priority: Priority.defaultPriority,
-      ),
-      iOS: DarwinNotificationDetails(),
-    );
-
-    try {
-      // v0.11: payload = today check-in
-      const payload = 'chroniccare://check-in/today';
-      await _zonedDaily(
-        id: _softReminderId,
-        title: '🌿 你还好吗？',
-        body: '少 1 次没关系——但记得吃药哦',
-        hour: hour,
-        minute: minute,
-        details: details,
-        payload: payload,
-      );
-      piiSafeLog('NotificationService', '✅ 设置漏 1 天主动安慰 push（每天 $hour:$minute）',
-      );
-    } catch (e) {
-      piiSafeLog('NotificationService', '❌ 软提醒调度失败: $e');
-    }
-  }
-
-  /// 取消软提醒（用户打卡后调用）
+  /// 取消软提醒占位 id（v0.18 P2-P0-5: scheduleSoftReminder 整段删除后,
+  /// 此方法仅清占位 id,实际已无对应 schedule,保留以防历史通知残留）
   Future<void> cancelSoftReminder() async {
     await init();
     await _plugin.cancel(_softReminderId);
@@ -540,11 +499,15 @@ class NotificationService implements NotificationSender {
     String scaleId = 'phq9',
     int days = 14,
   }) async {
+    // v0.18 (P2-P0-4): 函数入口统一取 now,避免多次 DateTime.now() 跨 midnight race
+    final now = DateTime.now();
     await init();
     await _plugin.cancel(_assessmentReminderId);
 
-    if (fireAt.isBefore(DateTime.now())) {
-      piiSafeLog('NotificationService', '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
+    if (fireAt.isBefore(now)) {
+      piiSafeLog(
+        'NotificationService',
+        '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
       );
       return;
     }

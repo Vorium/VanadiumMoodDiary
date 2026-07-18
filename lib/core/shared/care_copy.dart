@@ -49,14 +49,4 @@ class CareCopy {
         return (title: '', body: '');
     }
   }
-
-  /// 软提醒文案(setup 阶段兜底，跟 secondDayMissed 共用)
-  ///
-  /// v0.18 (P1-11): 跟 CareEngine.secondDayMissed 共享同一份文案。
-  /// setup 不再调 scheduleSoftReminder(已删),此方法目前仅供
-  /// notification_service scheduleSoftReminder @Deprecated 路径使用。
-  @Deprecated('v0.18 P1-11: CareEngine 接管,setup_page 不再 scheduleSoftReminder')
-  static ({String title, String body}) softReminder() => forTrigger(
-        CareTriggerType.secondDayMissed,
-      );
 }

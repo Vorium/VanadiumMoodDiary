@@ -221,36 +221,3 @@ class CareEngine {
     return true;
   }
 }
-
-/// 长期 hook：本地 AI 推理（v2.0+）
-///
-/// 接入 MedGemma 1.5 的接口：
-/// ```dart
-/// abstract class LocalAiHook {
-///   Future<String> reason(String prompt);
-/// }
-///
-/// class MedGemmaHook implements LocalAiHook {
-///   // 调用本地 GPU 服务
-///   @override
-///   Future<String> reason(String prompt) async {
-///     final response = await dio.post('http://localhost:6006/api/chat',
-///       data: {'query': prompt});
-///     return response.data['answer'];
-///   }
-/// }
-/// ```
-///
-/// v0.7 用 rule-based 兜底，v2.0+ 接入真实 AI。
-abstract class LocalAiHook {
-  Future<String> reason(String prompt);
-  Future<bool> isAvailable();
-}
-
-class NoopLocalAiHook implements LocalAiHook {
-  @override
-  Future<String> reason(String prompt) async => '';
-
-  @override
-  Future<bool> isAvailable() async => false;
-}
