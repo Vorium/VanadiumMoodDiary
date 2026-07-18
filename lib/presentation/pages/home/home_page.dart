@@ -188,7 +188,8 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (next.hasError && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('打卡失败:${next.error.toString().split('\n').first}'),
+            content: Text(AppLocalizations.of(context)
+                .commonCheckinFailed(next.error.toString().split('\n').first)),
             backgroundColor: AppTokens.error,
           ),
         );

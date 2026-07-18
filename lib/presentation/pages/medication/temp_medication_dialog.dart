@@ -96,8 +96,8 @@ class _TempMedicationDialogState extends State<TempMedicationDialog> {
           const SizedBox(height: AppTokens.spacingSm),
           TextField(
             controller: nameController,
-            decoration: const InputDecoration(
-              labelText: '药名',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context).commonMedName,
               hintText: '如：布洛芬',
             ),
           ),

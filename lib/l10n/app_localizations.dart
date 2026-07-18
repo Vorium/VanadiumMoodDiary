@@ -533,8 +533,50 @@ abstract class AppLocalizations {
   /// No description provided for @snackbarPhoneInvalid.
   ///
   /// In zh, this message translates to:
-  /// **'手机号格式不对（11 位数字）'**
+  /// **'号码格式不对（支持大陆/港澳台/国际）'**
   String get snackbarPhoneInvalid;
+
+  /// No description provided for @commonConfirmOk.
+  ///
+  /// In zh, this message translates to:
+  /// **'确定'**
+  String get commonConfirmOk;
+
+  /// No description provided for @commonTakePhoto.
+  ///
+  /// In zh, this message translates to:
+  /// **'拍照'**
+  String get commonTakePhoto;
+
+  /// No description provided for @commonMedName.
+  ///
+  /// In zh, this message translates to:
+  /// **'药名'**
+  String get commonMedName;
+
+  /// No description provided for @commonDoseUnit.
+  ///
+  /// In zh, this message translates to:
+  /// **'片'**
+  String get commonDoseUnit;
+
+  /// No description provided for @commonAutoCheckinFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动打卡失败：{error}'**
+  String commonAutoCheckinFailed(String error);
+
+  /// No description provided for @commonCheckinFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'打卡失败：{error}'**
+  String commonCheckinFailed(String error);
+
+  /// No description provided for @commonVentDeleteWarning.
+  ///
+  /// In zh, this message translates to:
+  /// **'删了就没了。文字和录音都会一起删。'**
+  String get commonVentDeleteWarning;
 }
 
 class _AppLocalizationsDelegate

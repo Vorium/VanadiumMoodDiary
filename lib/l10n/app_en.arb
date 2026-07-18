@@ -81,5 +81,19 @@
   "snackbarNeedMicPermission": "Microphone permission needed",
   "snackbarEmptyVent": "Write something or record a voice note",
   "snackbarStopRecording": "Please stop recording first",
-  "snackbarPhoneInvalid": "Phone format invalid (CN/HK/MO/TW/intl)"
+  "snackbarPhoneInvalid": "Phone format invalid (CN/HK/MO/TW/intl)",
+
+  "commonConfirmOk": "OK",
+  "commonTakePhoto": "Take photo",
+  "commonMedName": "Medication",
+  "commonDoseUnit": "tablet",
+  "commonAutoCheckinFailed": "Auto check-in failed: {error}",
+  "@commonAutoCheckinFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "commonCheckinFailed": "Check-in failed: {error}",
+  "@commonCheckinFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "commonVentDeleteWarning": "Once deleted, it's gone. Text and audio will be removed together."
 }

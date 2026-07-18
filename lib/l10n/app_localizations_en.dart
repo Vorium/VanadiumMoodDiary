@@ -238,4 +238,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get snackbarPhoneInvalid => 'Phone format invalid (CN/HK/MO/TW/intl)';
+
+  @override
+  String get commonConfirmOk => 'OK';
+
+  @override
+  String get commonTakePhoto => 'Take photo';
+
+  @override
+  String get commonMedName => 'Medication';
+
+  @override
+  String get commonDoseUnit => 'tablet';
+
+  @override
+  String commonAutoCheckinFailed(String error) => 'Auto check-in failed: $error';
+
+  @override
+  String commonCheckinFailed(String error) => 'Check-in failed: $error';
+
+  @override
+  String get commonVentDeleteWarning =>
+      'Once deleted, it\'s gone. Text and audio will be removed together.';
 }

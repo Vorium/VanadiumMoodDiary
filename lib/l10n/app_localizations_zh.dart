@@ -236,4 +236,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get snackbarPhoneInvalid => '号码格式不对（支持大陆/港澳台/国际）';
+
+  @override
+  String get commonConfirmOk => '确定';
+
+  @override
+  String get commonTakePhoto => '拍照';
+
+  @override
+  String get commonMedName => '药名';
+
+  @override
+  String get commonDoseUnit => '片';
+
+  @override
+  String commonAutoCheckinFailed(String error) => '自动打卡失败：$error';
+
+  @override
+  String commonCheckinFailed(String error) => '打卡失败：$error';
+
+  @override
+  String get commonVentDeleteWarning => '删了就没了。文字和录音都会一起删。';
 }
