@@ -95,8 +95,23 @@ class _SetupPageState extends ConsumerState<SetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PageScaffold(
-      title: AppLocalizations.of(context).setupStep(_step + 1, 4),
+    // v0.18 (P2-P0-13): step 0 (法律同意) 是 PIPL 强制 gate,
+    // 用户必须勾选 3 个 checkbox 才能进入下一步,不能 swipe 返回。
+    // 拦截系统返回键 / 手势返回 → 弹"必须完成设置"提示
+    return PopScope(
+      canPop: _step != 0,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        // step 0 拦截,提示用户不能返回
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('请先完成法律文件阅读与同意'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      },
+      child: PageScaffold(
+        title: AppLocalizations.of(context).setupStep(_step + 1, 4),
       // v0.17 round 14 (P2-4): setup wizard step transition
       // 之前只设了 duration,没设 transitionBuilder / layoutBuilder.
       // 现在用 fade + slide-up (occasional 频度,user 1-3 次).
@@ -132,6 +147,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           key: ValueKey<int>(_step),
           child: _buildStep(),
         ),
+      ),
       ),
     );
   }
