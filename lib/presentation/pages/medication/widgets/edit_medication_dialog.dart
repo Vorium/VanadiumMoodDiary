@@ -144,7 +144,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       context: context,
       initialTime: initial,
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() {
         _times.add(picked);
         _times.sort(

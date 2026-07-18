@@ -61,6 +61,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     _textController.dispose();
     _recorder.dispose();
     _player.dispose();
+    if (_tempDecryptedPath != null) {
+      ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+      _tempDecryptedPath = null;
+    }
     super.dispose();
   }
 
@@ -84,11 +88,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 AppSnackBar.error(context, action: '加密录音', error: e),
               );
+              // 加密失败 → 不保存音频，但 _isRecording 还是 false
+              setState(() {
+                _isRecording = false;
+              });
             }
-            // 加密失败 → 不保存音频，但 _isRecording 还是 false
-            setState(() {
-              _isRecording = false;
-            });
             return;
           }
           if (mounted) {
@@ -213,6 +217,14 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
   String? _tempDecryptedPath;
 
   Future<void> _reRecord() async {
+    // 停止正在播放的音频并清理临时文件
+    if (_isPlaying) {
+      await _player.stop();
+    }
+    if (_tempDecryptedPath != null) {
+      await ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+      _tempDecryptedPath = null;
+    }
     if (_audioPath != null) {
       final old = _audioPath!;
       // 删旧文件（DB 里还没存，所以可以删）
