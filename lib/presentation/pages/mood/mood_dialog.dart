@@ -37,14 +37,18 @@ class MoodDialog {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     for (int s = 1; s <= 5; s++)
-                      GestureDetector(
-                        onTap: () => setLocal(() => selectedScore = s),
-                        // v0.17 round 14 (P2-1): 用 InkWell + minSize 48 保证
-                        // touch target ≥ 44pt (Material accessibility 建议).
-                        // 之前 32px emoji + 2px gap + label ≈ 50px 高度,但
-                        // 水平方向只有 emoji 宽,容易误触相邻评分。
-                        behavior: HitTestBehavior.opaque,
-                        child: Padding(
+                      // P1-24 fix: GestureDetector 改 InkWell + Material。
+                      // InkWell 配 M3 splash 给"评分被点"的视觉反馈,GestureDetector 没有。
+                      // 包 Material(color: transparent) 才能让 InkWell 显示 ripple。
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => setLocal(() => selectedScore = s),
+                          // 让每个评分 cell ≥ 56x56 (含 padding)
+                          borderRadius: BorderRadius.circular(
+                            AppTokens.radiusChip,
+                          ),
+                          child: Padding(
                           // 让每个评分 cell ≥ 56x56 (含 padding)
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -79,6 +83,7 @@ class MoodDialog {
                             ],
                           ),
                         ),
+                      ),
                       ),
                   ],
                 ),

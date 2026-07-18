@@ -474,7 +474,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             medicationId: 0, // 0 = 通用 snooze
             minutes: 5,
             title: '⏰ 该打卡了（5min 后）',
-            body: '刚才你点了"snooze"，是时候点一下 = 打卡了',
+            body: '刚才你点了「snooze」，是时候点一下 = 打卡了',
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
