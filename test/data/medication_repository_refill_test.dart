@@ -1,6 +1,6 @@
 // v0.12 (Round 6) MedicationRepository.updateRefill 集成测试
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/repositories/medication_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:drift/native.dart';

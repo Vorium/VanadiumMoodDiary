@@ -1,6 +1,6 @@
-import 'package:chroniccare/core/data/repositories/check_in_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/contact_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/user_profile_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';

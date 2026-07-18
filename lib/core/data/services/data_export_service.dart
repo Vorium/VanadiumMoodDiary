@@ -14,7 +14,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/foundation.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/repositories/report_history_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
 
 class DataExportService {
   final AppDatabase _db;

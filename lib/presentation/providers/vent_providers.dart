@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/data/repositories/vent_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/vent/vent_repository_impl.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/domain/entities/vent_entry.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';

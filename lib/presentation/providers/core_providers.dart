@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/repositories/check_in_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/contact_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/medication_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/mood_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/report_history_repository_impl.dart';
-import 'package:chroniccare/core/data/repositories/user_profile_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/mood/mood_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
 import 'package:chroniccare/core/data/services/crypto_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
