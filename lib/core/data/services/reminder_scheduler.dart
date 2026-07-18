@@ -81,10 +81,14 @@ class ReminderService implements ReminderChecker {
     final lastCheckIn =
         normalCheckIns.isEmpty ? null : normalCheckIns.first.timestamp;
 
+    // v0.19: 缓存 now 一次，避免跨 await 后 DateTime.now() 不一致
+    // （之前 evaluateLevel 和 daysSince 各调一次，跨 2 个 await，可能跨阈值边界）
+    final now = DateTime.now();
+
     final level = evaluateLevel(
       lastCheckIn: lastCheckIn,
       cycleHours: profile.checkInCycleHours,
-      now: DateTime.now(),
+      now: now,
     );
 
     // 24h 内不打扰
@@ -96,13 +100,10 @@ class ReminderService implements ReminderChecker {
     final medications = await _medicationRepo.watchAll().first;
     final firstMed = medications.isEmpty ? null : medications.first;
 
-    // v0.14 fix: 统一在 await 之后重新拿一次 now，并按"天"算
-    // 旧实现：调 3 次 DateTime.now() + 用 raw inDays（23.9h 报 0 天）
-    final checkNow = DateTime.now();
     final daysSince =
-        lastCheckIn == null ? 0 : _daysBetween(lastCheckIn, checkNow);
+        lastCheckIn == null ? 0 : _daysBetween(lastCheckIn, now);
     final hoursSince =
-        lastCheckIn == null ? 0 : checkNow.difference(lastCheckIn).inHours;
+        lastCheckIn == null ? 0 : now.difference(lastCheckIn).inHours;
 
     piiSafeLog('ReminderService', '=' * 60);
     piiSafeLog('ReminderService', '⚠️ 失联检测');
