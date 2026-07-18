@@ -19,6 +19,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 class AssessmentHistoryPage extends ConsumerWidget {
   const AssessmentHistoryPage({super.key});
@@ -40,7 +41,7 @@ class AssessmentHistoryPage extends ConsumerWidget {
           return _buildBody(context, records);
         },
         loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

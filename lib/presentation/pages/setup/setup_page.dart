@@ -1045,7 +1045,7 @@ class _LegalDocumentDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('关闭'),
+          child: Text(AppLocalizations.of(context).commonClose),
         ),
       ],
     );

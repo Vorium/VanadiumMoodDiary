@@ -434,6 +434,48 @@ abstract class AppLocalizations {
   /// **'编辑'**
   String get commonEdit;
 
+  /// No description provided for @commonClose.
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭'**
+  String get commonClose;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In zh, this message translates to:
+  /// **'重试'**
+  String get commonRetry;
+
+  /// No description provided for @commonGotIt.
+  ///
+  /// In zh, this message translates to:
+  /// **'我知道了'**
+  String get commonGotIt;
+
+  /// No description provided for @commonConfirmDelete.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除这条？'**
+  String get commonConfirmDelete;
+
+  /// No description provided for @commonLoadFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'加载失败：{error}'**
+  String commonLoadFailed(String error);
+
+  /// No description provided for @commonDeleteWarning.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除后无法恢复'**
+  String get commonDeleteWarning;
+
+  /// No description provided for @commonEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有'**
+  String get commonEmpty;
+
   /// No description provided for @commonDone.
   ///
   /// In zh, this message translates to:

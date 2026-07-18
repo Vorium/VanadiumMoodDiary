@@ -43,7 +43,7 @@ class VentListPage extends ConsumerWidget {
           return _EntryList(entries: entries);
         },
         loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }
@@ -206,7 +206,7 @@ class _EntryCard extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除这条？'),
+        title: Text(AppLocalizations.of(context).commonConfirmDelete),
         content: const Text('删了就没了。文字和录音都会一起删。'),
         actions: [
           TextButton(

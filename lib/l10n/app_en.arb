@@ -65,6 +65,16 @@
   "commonConfirm": "Confirm",
   "commonLoading": "Loading...",
   "commonError": "Something went wrong, please retry",
+  "commonClose": "Close",
+  "commonRetry": "Retry",
+  "commonGotIt": "Got it",
+  "commonConfirmDelete": "Delete this?",
+  "commonLoadFailed": "Load failed: {error}",
+  "@commonLoadFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "commonDeleteWarning": "Cannot be restored after deletion",
+  "commonEmpty": "Empty",
 
   "snackbarErrorTemplate": "{action} failed: {error}",
   "snackbarCopied": "Copied to clipboard",

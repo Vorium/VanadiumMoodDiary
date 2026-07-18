@@ -80,6 +80,16 @@
   "commonConfirm": "确认",
   "commonLoading": "加载中...",
   "commonError": "出错了，请重试",
+  "commonClose": "关闭",
+  "commonRetry": "重试",
+  "commonGotIt": "我知道了",
+  "commonConfirmDelete": "删除这条？",
+  "commonLoadFailed": "加载失败：{error}",
+  "@commonLoadFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "commonDeleteWarning": "删除后无法恢复",
+  "commonEmpty": "还没有",
 
   "snackbarErrorTemplate": "{action}失败：{error}",
   "@snackbarErrorTemplate": {

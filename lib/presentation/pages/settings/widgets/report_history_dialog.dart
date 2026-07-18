@@ -51,7 +51,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
             Expanded(
               child: asyncHistories.when(
                 loading: () => LoadingSkeleton.fullScreen(),
-                error: (e, _) => Center(child: Text('加载失败：$e')),
+                error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
                 data: (histories) {
                   if (histories.isEmpty) {
                     return const Padding(

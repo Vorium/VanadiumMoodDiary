@@ -190,6 +190,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonDone => 'Done';
 
   @override
+  String get commonClose => 'Close';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get commonGotIt => 'Got it';
+
+  @override
+  String get commonConfirmDelete => 'Delete this?';
+
+  @override
+  String commonLoadFailed(String error) => 'Load failed: $error';
+
+  @override
+  String get commonDeleteWarning => 'Cannot be restored after deletion';
+
+  @override
+  String get commonEmpty => 'Empty';
+
+  @override
   String get commonConfirm => 'Confirm';
 
   @override

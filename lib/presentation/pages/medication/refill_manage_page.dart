@@ -11,6 +11,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -68,7 +69,7 @@ class RefillManagePage extends ConsumerWidget {
       child: medsAsync.when(
         data: (meds) => _buildBody(context, ref, meds),
         loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

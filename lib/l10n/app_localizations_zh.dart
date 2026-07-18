@@ -188,6 +188,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonDone => '完成';
 
   @override
+  String get commonClose => '关闭';
+
+  @override
+  String get commonRetry => '重试';
+
+  @override
+  String get commonGotIt => '我知道了';
+
+  @override
+  String get commonConfirmDelete => '删除这条？';
+
+  @override
+  String commonLoadFailed(String error) => '加载失败：$error';
+
+  @override
+  String get commonDeleteWarning => '删除后无法恢复';
+
+  @override
+  String get commonEmpty => '还没有';
+
+  @override
   String get commonConfirm => '确认';
 
   @override

@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -220,7 +221,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('我知道了'),
+            child: Text(AppLocalizations.of(context).commonGotIt),
           ),
         ],
       ),

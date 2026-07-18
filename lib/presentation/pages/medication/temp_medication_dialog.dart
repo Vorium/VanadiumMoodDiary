@@ -36,7 +36,7 @@ class TempMedicationDialog extends StatefulWidget {
       ),
       error: (e, _) => showDialog<void>(
         context: context,
-        builder: (_) => Center(child: Text('加载失败: $e')),
+        builder: (_) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

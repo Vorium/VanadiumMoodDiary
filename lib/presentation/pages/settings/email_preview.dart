@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/domain/logic/email_template.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -101,7 +102,7 @@ class EmailPreviewPage extends ConsumerWidget {
                   },
                   loading: () =>
                       LoadingSkeleton.fullScreen(),
-                  error: (e, _) => Text('加载失败: $e'),
+                  error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 Container(
@@ -120,7 +121,7 @@ class EmailPreviewPage extends ConsumerWidget {
           );
         },
         loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text('加载失败: $e')),
+        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

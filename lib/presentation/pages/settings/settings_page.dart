@@ -45,7 +45,7 @@ class SettingsPage extends ConsumerWidget {
           contactsAsync.when(
             data: (contacts) => ContactsListWidget(contacts: contacts),
             loading: () => LoadingSkeleton.fullScreen(),
-            error: (e, _) => Text('加载失败: $e'),
+            error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
@@ -56,7 +56,7 @@ class SettingsPage extends ConsumerWidget {
           medsAsync.when(
             data: (meds) => MedicationsListWidget(meds: meds),
             loading: () => LoadingSkeleton.fullScreen(),
-            error: (e, _) => Text('加载失败: $e'),
+            error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
@@ -286,7 +286,7 @@ class SettingsPage extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('关闭'),
+              child: Text(AppLocalizations.of(context).commonClose),
             ),
             ElevatedButton.icon(
               icon: const Icon(Icons.copy, size: 18),

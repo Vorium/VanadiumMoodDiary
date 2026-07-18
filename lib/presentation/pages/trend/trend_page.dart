@@ -17,6 +17,7 @@ import 'package:chroniccare/domain/logic/day_detail.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -59,7 +60,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           return _buildBody(context, checkIns, moodEntries);
         },
         loading: () => LoadingSkeleton.fullScreen(),
-        error: (Object e, _) => Center(child: Text('加载失败: $e')),
+        error: (Object e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }
@@ -148,7 +149,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: 200,
                 child: LoadingSkeleton.fullScreen(),
               ),
-              error: (e, _) => Text('加载失败: $e'),
+              error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
             );
           },
         ),
@@ -171,7 +172,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: 200,
                 child: LoadingSkeleton.fullScreen(),
               ),
-              error: (e, _) => Text('加载失败: $e'),
+              error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
             );
           },
         ),
