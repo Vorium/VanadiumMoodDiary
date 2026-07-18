@@ -360,13 +360,15 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     for (int i = 0; i < _contactPhoneControllers.length; i++) {
       final phone = _contactPhoneControllers[i].text.trim();
       if (phone.isEmpty) continue;
-      if (!PhoneValidator.isValid(phone)) {
-        return '第 ${i + 1} 个联系人手机号格式不对（11 位数字）';
+      final normalized = PhoneValidator.normalize(phone);
+      if (normalized == null) {
+        // v0.18 P1-14: 文案改通用,不再写死"11 位数字"
+        return '第 ${i + 1} 个联系人号码格式不对（支持大陆/港澳台/国际）';
       }
-      if (phones.contains(phone)) {
+      if (phones.contains(normalized)) {
         return '第 ${i + 1} 个联系人手机号重复了';
       }
-      phones.add(phone);
+      phones.add(normalized);
     }
     if (phones.isEmpty) {
       return '至少填 1 个紧急联系人手机号';

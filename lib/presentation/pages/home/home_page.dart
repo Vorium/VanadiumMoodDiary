@@ -19,6 +19,7 @@ import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/main.dart' show notificationInitResultProvider;
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/notification_failure_banner.dart';
 import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
 import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 import 'package:chroniccare/presentation/pages/medication/last_med_info.dart';
@@ -36,15 +37,15 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  /// SafetyWatch 启动检查是否已跑过（避免重复触发）
+  /// SafetyWatch 启动检查是否已跑过(避免重复触发)
   bool _safetyCheckTriggered = false;
 
-  /// Deep link 强制重跑 safety 检查的请求（独立 flag，
-  /// v0.14 修：旧实现用 `!_safetyCheckTriggered` 守卫，结果第一次
-  /// 跑已起来后 deep link 路径永远走不进去）
+  /// Deep link 强制重跑 safety 检查的请求(独立 flag,
+  /// v0.14 修:旧实现用 `!_safetyCheckTriggered` 守卫,结果第一次
+  /// 跑已起来后 deep link 路径永远走不进去)
   bool _safetyRerunRequested = false;
 
-  /// Deep link 自动打卡是否已处理（避免重复）
+  /// Deep link 自动打卡是否已处理(避免重复)
   bool _deepLinkHandled = false;
 
   @override
@@ -78,7 +79,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       final reason = GoRouterState.of(context).uri.queryParameters['reason'];
       if (reason == 'safety') {
         // 强制重跑一次 (从通知跳来的场景)
-        // v0.14 fix: 用独立 flag，不受 _safetyCheckTriggered 影响
+        // v0.14 fix: 用独立 flag,不受 _safetyCheckTriggered 影响
         // 旧实现 `!_safetyCheckTriggered` 在第一跑已起来后永远 false
         if (_safetyRerunRequested) return; // 已请求过
         _safetyRerunRequested = true;
@@ -117,7 +118,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (!mounted) return;
       final medName = med?.name ?? '该药';
       HapticFeedback.mediumImpact();
-      _showCelebrationOverlay(context, '已打卡：$medName ✅');
+      _showCelebrationOverlay(context, '已打卡:$medName ✅');
       // 清除 query 防止刷新页面重复触发
       GoRouter.of(context).go('/');
     } catch (e) {
@@ -125,7 +126,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: AppTokens.error,
-          content: Text('自动打卡失败：${e.toString().split('\n').first}'),
+          content: Text('自动打卡失败:${e.toString().split('\n').first}'),
         ),
       );
     }
@@ -143,7 +144,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
   /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
   ///
-  /// [force] = true 时忽略 [_safetyCheckTriggered] 守卫（用于 deep link 重跑）
+  /// [force] = true 时忽略 [_safetyCheckTriggered] 守卫(用于 deep link 重跑)
   Future<void> _runSafetyCheck({bool force = false}) async {
     if (_safetyCheckTriggered && !force) return;
     _safetyCheckTriggered = true;
@@ -155,7 +156,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           SnackBar(
             backgroundColor: AppTokens.error,
             content: Text(
-              '⚠️ ${result.displayMessage}（请尽快打卡或联系家人）',
+              '⚠️ ${result.displayMessage}(请尽快打卡或联系家人)',
             ),
             duration: const Duration(seconds: 6),
           ),
@@ -187,7 +188,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (next.hasError && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('打卡失败：${next.error.toString().split('\n').first}'),
+            content: Text('打卡失败:${next.error.toString().split('\n').first}'),
             backgroundColor: AppTokens.error,
           ),
         );
@@ -200,7 +201,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 顶部：用户名 + 趋势 + 设置
+          // 顶部:用户名 + 趋势 + 设置
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -235,14 +236,14 @@ class _HomePageState extends ConsumerState<HomePage> {
             ],
           ),
 
-          // P17 fix: 通知失败 banner（一次性提示,可关闭）
+          // P17 fix: 通知失败 banner(一次性提示,可关闭)
           if (!notifResult.ok)
-            _NotificationFailureBanner(error: notifResult.error),
+            NotificationFailureBanner(error: notifResult.error),
 
           const Spacer(flex: 1),
 
-          // 鼓励文案（按 streak 动态切换）
-          // P1-8 fix: emil 决策 — streak 文案 100+/day 频度(用户每天看 N 次),
+          // 鼓励文案(按 streak 动态切换)
+          // P1-8 fix: emil 决策 - streak 文案 100+/day 频度(用户每天看 N 次),
           // 之前用 durNormal + scale/fade 过渡感觉"迟疑",像在"庆祝"打卡。
           // 改 100+/day 频度 → MotionScheme.none → 直接切换无动画。
           // P1-7 fix: 用 MotionScheme token 显式标档位,避免随手传 (Duration, Curve)。
@@ -297,7 +298,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           const SizedBox(height: AppTokens.spacingSm),
 
-          // v0.10 (Round 4): Snooze 5min 按钮（参考 Pill Reminder）
+          // v0.10 (Round 4): Snooze 5min 按钮(参考 Pill Reminder)
           SecondaryButton(
             onPressed: _snooze5Min,
             child: const Text(
@@ -316,7 +317,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           const SizedBox(height: AppTokens.spacingSm),
 
-          // 情绪日记按钮（v0.9 新增）
+          // 情绪日记按钮(v0.9 新增)
           MoodQuickButton(
             onTap: () => MoodDialog.show(context, ref),
           ),
@@ -324,7 +325,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: AppTokens.spacingSm),
 
           // v0.15 (Round 18) 树洞入口
-          // 与情绪日记完全独立：树洞不进任何分析、纯私密空间
+          // 与情绪日记完全独立:树洞不进任何分析、纯私密空间
           SecondaryButton(
             onPressed: () => context.push('/vent'),
             child: const Row(
@@ -379,15 +380,15 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   /// 按 streak 切换鼓励文案
   String _encouragementFor(int streak) {
-    if (streak <= 0) return '今天重新开始，加油 🌱';
-    if (streak == 1) return '第 1 天，迈出第一步 🌱';
-    if (streak < 7) return '坚持 $streak 天，继续 🌿';
-    if (streak < 30) return '已坚持 $streak 天，真棒 🌳';
-    if (streak < 100) return '$streak 天连击，太厉害了 🌲';
-    return '$streak 天——你已经是这个习惯的主人了 🏔️';
+    if (streak <= 0) return '今天重新开始,加油 🌱';
+    if (streak == 1) return '第 1 天,迈出第一步 🌱';
+    if (streak < 7) return '坚持 $streak 天,继续 🌿';
+    if (streak < 30) return '已坚持 $streak 天,真棒 🌳';
+    if (streak < 100) return '$streak 天连击,太厉害了 🌲';
+    return '$streak 天--你已经是这个习惯的主人了 🏔️';
   }
 
-  /// 打卡：haptic + 触发实际打卡
+  /// 打卡:haptic + 触发实际打卡
   Future<void> _onCheckIn(BuildContext context, int currentStreak) async {
     HapticFeedback.mediumImpact();
     await ref.read(checkInNotifierProvider.notifier).checkIn();
@@ -395,7 +396,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final newStreak = currentStreak + 1;
     // 显示庆祝 overlay
     _showCelebrationOverlay(context, _celebrationFor(newStreak));
-    // 打卡成功：取消 soft 提醒 + snooze
+    // 打卡成功:取消 soft 提醒 + snooze
     try {
       await ref.read(notificationServiceProvider).cancelSoftReminder();
       await ref.read(notificationServiceProvider).cancelAllSnoozes();
@@ -410,13 +411,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
     // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发,例如打卡是补卡)
     unawaited(_runAfterCheckIn());
-    // AI 关怀：打卡后评估是否触发（rule-based）
+    // AI 关怀:打卡后评估是否触发(rule-based)
     unawaited(_fireCareEngine());
   }
 
   /// 打卡后跑 SafetyWatch
   ///
-  /// 设计：用户刚补卡理论上不该再触发,但系统可能因为日期错乱或打卡未及时入库
+  /// 设计:用户刚补卡理论上不该再触发,但系统可能因为日期错乱或打卡未及时入库
   /// 仍认为"长期没打卡",所以这里也调一次。
   Future<void> _runAfterCheckIn() async {
     try {
@@ -443,7 +444,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  /// CareEngine 触发（rule-based）
+  /// CareEngine 触发(rule-based)
   Future<void> _fireCareEngine() async {
     try {
       final all = await ref.read(checkInRepositoryProvider).watchAll().first;
@@ -452,26 +453,26 @@ class _HomePageState extends ConsumerState<HomePage> {
       final notif = ref.read(notificationServiceProvider);
       await CareEngine.fire(trigger, notif);
     } catch (_) {
-      // 静默失败，不打扰用户
+      // 静默失败,不打扰用户
     }
   }
 
   /// Snooze 5min: 调度 5min 后的一次性本地通知
   ///
-  /// 用 medicationId=0 表示"通用打卡提醒 snooze"（避开真实 med id）
+  /// 用 medicationId=0 表示"通用打卡提醒 snooze"(避开真实 med id)
   Future<void> _snooze5Min() async {
     HapticFeedback.lightImpact();
     try {
       await ref.read(notificationServiceProvider).snoozeOnce(
             medicationId: 0, // 0 = 通用 snooze
             minutes: 5,
-            title: '⏰ 该打卡了（5min 后）',
-            body: '刚才你点了「snooze」，是时候点一下 = 打卡了',
+            title: '⏰ 该打卡了(5min 后)',
+            body: '刚才你点了「snooze」,是时候点一下 = 打卡了',
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('好，5 分钟后会再提醒你 👌'),
+          content: Text('好,5 分钟后会再提醒你 👌'),
           duration: Duration(seconds: 2),
         ),
       );
@@ -480,21 +481,21 @@ class _HomePageState extends ConsumerState<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: AppTokens.error,
-          content: Text('Snooze 失败：${e.toString().split('\n').first}'),
+          content: Text('Snooze 失败:${e.toString().split('\n').first}'),
         ),
       );
     }
   }
 
   String _celebrationFor(int streak) {
-    if (streak == 1) return '已记录！第 1 天 🌱';
-    if (streak < 7) return '已记录！连击 $streak 天 🌿';
-    if (streak < 30) return '已记录！连击 $streak 天 🌳';
-    if (streak < 100) return '已记录！$streak 天连击 🌲';
-    return '已记录！$streak 天——你太厉害了 🏔️';
+    if (streak == 1) return '已记录!第 1 天 🌱';
+    if (streak < 7) return '已记录!连击 $streak 天 🌿';
+    if (streak < 30) return '已记录!连击 $streak 天 🌳';
+    if (streak < 100) return '已记录!$streak 天连击 🌲';
+    return '已记录!$streak 天--你太厉害了 🏔️';
   }
 
-  /// 顶部 overlay 庆祝（短暂显示，自动消失）
+  /// 顶部 overlay 庆祝(短暂显示,自动消失)
   void _showCelebrationOverlay(BuildContext context, String message) {
     final overlay = Overlay.of(context);
     late OverlayEntry entry;
@@ -516,7 +517,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
-  /// 计算下次提醒时间（每天 20:00）
+  /// 计算下次提醒时间(每天 20:00)
   DateTime? _nextReminderTime() {
     final now = DateTime.now();
     var next = DateTime(now.year, now.month, now.day, 20, 0);
@@ -529,58 +530,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
 /// P17 fix: 通知初始化失败时显示的顶部 banner
 ///
-/// 用户点了主打卡按钮 = 信任 app 在后台提醒。提醒没设上必须让用户知道。
-/// 显示原因 + "去系统设置"按钮 + 可关闭。
-class _NotificationFailureBanner extends StatefulWidget {
-  final String? error;
-  const _NotificationFailureBanner({this.error});
-
-  @override
-  State<_NotificationFailureBanner> createState() =>
-      _NotificationFailureBannerState();
-}
-
-class _NotificationFailureBannerState
-    extends State<_NotificationFailureBanner> {
-  bool _dismissed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    if (_dismissed) return const SizedBox.shrink();
-    return Container(
-      margin: const EdgeInsets.only(top: AppTokens.spacingSm),
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
-      decoration: BoxDecoration(
-        color: AppTokens.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-        border: Border.all(color: AppTokens.warning.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.notifications_off_outlined,
-            color: AppTokens.warning,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              '提醒没设上,可能错过打卡。请到系统设置允许通知。',
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close, size: 18),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-            onPressed: () => setState(() => _dismissed = true),
-            tooltip: '知道了',
-          ),
-        ],
-      ),
-    );
-  }
-}
+/// v0.18 (P1-21) fix: 抽到 home/widgets/notification_failure_banner.dart
+/// 之前是 _NotificationFailureBanner 内联在 home_page.dart(300+ 行 private
+/// widget),现在 import 抽出的 public NotificationFailureBanner 让
+/// home_page god-page 减肥。
+// (banner widget moved to widgets/notification_failure_banner.dart)

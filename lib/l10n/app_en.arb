@@ -71,5 +71,5 @@
   "snackbarNeedMicPermission": "Microphone permission needed",
   "snackbarEmptyVent": "Write something or record a voice note",
   "snackbarStopRecording": "Please stop recording first",
-  "snackbarPhoneInvalid": "Phone format invalid (11 digits)"
+  "snackbarPhoneInvalid": "Phone format invalid (CN/HK/MO/TW/intl)"
 }

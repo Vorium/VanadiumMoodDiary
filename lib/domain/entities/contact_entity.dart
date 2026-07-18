@@ -26,10 +26,32 @@ class ContactEntity {
   /// 是否启用
   bool get active => isActive;
 
-  /// 是否手机号格式正确（中国大陆 11 位，可选 +86 前缀）
+  /// 是否手机号格式正确
+  ///
+  /// v0.18 P1-14: 扩展支持 5 个 region（cn / hk / mo / tw / intl）。
+  /// 必须跟 `lib/core/data/utils/phone_validator.dart` 保持同步
+  /// （domain 不能 import data,regex 复制一份）。
+  /// CI 用 `phone_validator_sync_test.dart` 验证两边 regex 一致。
   bool get isValidPhone {
-    final digits = phone.replaceFirst(RegExp(r'^\+?86'), '');
-    return RegExp(r'^\d{11}$').hasMatch(digits);
+    final s = phone.trim();
+    if (s.isEmpty) return false;
+
+    // 1. 带 + 前缀
+    if (s.startsWith('+')) {
+      if (RegExp(r'^(\+?86[-\s]?)?1[3-9]\d{9}$').hasMatch(s)) return true;
+      if (RegExp(r'^(\+?852[-\s]?)?[45789]\d{7}$').hasMatch(s)) return true;
+      if (RegExp(r'^(\+?853[-\s]?)?6\d{7}$').hasMatch(s)) return true;
+      if (RegExp(r'^(\+?886[-\s]?)?9\d{8}$').hasMatch(s)) return true;
+      if (RegExp(r'^\+\d{6,15}$').hasMatch(s)) return true;
+      return false;
+    }
+
+    // 2. 纯数字:cn(11) > tw(9) > hk(8) > mo(8)
+    if (RegExp(r'^1[3-9]\d{9}$').hasMatch(s)) return true;
+    if (RegExp(r'^9\d{8}$').hasMatch(s)) return true;
+    if (RegExp(r'^[45789]\d{7}$').hasMatch(s)) return true;
+    if (RegExp(r'^6\d{7}$').hasMatch(s)) return true;
+    return false;
   }
 
   /// 用于排序 / 选择最低 sortOrder 优先

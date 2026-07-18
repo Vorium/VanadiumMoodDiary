@@ -93,5 +93,5 @@
   "snackbarNeedMicPermission": "需要麦克风权限",
   "snackbarEmptyVent": "写点东西或录一段吧",
   "snackbarStopRecording": "请先停止录音",
-  "snackbarPhoneInvalid": "手机号格式不对（11 位数字）"
+  "snackbarPhoneInvalid": "号码格式不对（支持大陆/港澳台/国际）"
 }

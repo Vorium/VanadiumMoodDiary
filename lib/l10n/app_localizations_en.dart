@@ -216,5 +216,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snackbarStopRecording => 'Please stop recording first';
 
   @override
-  String get snackbarPhoneInvalid => 'Phone format invalid (11 digits)';
+  String get snackbarPhoneInvalid => 'Phone format invalid (CN/HK/MO/TW/intl)';
 }

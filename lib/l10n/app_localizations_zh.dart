@@ -214,5 +214,5 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snackbarStopRecording => '请先停止录音';
 
   @override
-  String get snackbarPhoneInvalid => '手机号格式不对（11 位数字）';
+  String get snackbarPhoneInvalid => '号码格式不对（支持大陆/港澳台/国际）';
 }
