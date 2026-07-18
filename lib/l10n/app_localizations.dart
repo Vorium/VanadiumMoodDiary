@@ -434,6 +434,30 @@ abstract class AppLocalizations {
   /// **'编辑'**
   String get commonEdit;
 
+  /// No description provided for @commonDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成'**
+  String get commonDone;
+
+  /// No description provided for @commonConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认'**
+  String get commonConfirm;
+
+  /// No description provided for @commonLoading.
+  ///
+  /// In zh, this message translates to:
+  /// **'加载中...'**
+  String get commonLoading;
+
+  /// No description provided for @commonError.
+  ///
+  /// In zh, this message translates to:
+  /// **'出错了，请重试'**
+  String get commonError;
+
   /// No description provided for @commonClose.
   ///
   /// In zh, this message translates to:
@@ -475,30 +499,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'还没有'**
   String get commonEmpty;
-
-  /// No description provided for @commonDone.
-  ///
-  /// In zh, this message translates to:
-  /// **'完成'**
-  String get commonDone;
-
-  /// No description provided for @commonConfirm.
-  ///
-  /// In zh, this message translates to:
-  /// **'确认'**
-  String get commonConfirm;
-
-  /// No description provided for @commonLoading.
-  ///
-  /// In zh, this message translates to:
-  /// **'加载中...'**
-  String get commonLoading;
-
-  /// No description provided for @commonError.
-  ///
-  /// In zh, this message translates to:
-  /// **'出错了，请重试'**
-  String get commonError;
 
   /// Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action (保存/删除/导出/...)
   ///

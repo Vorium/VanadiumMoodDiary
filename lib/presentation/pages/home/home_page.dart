@@ -1,4 +1,4 @@
-import '../../providers/service_providers.dart';
+import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';

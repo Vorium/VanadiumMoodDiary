@@ -190,6 +190,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonDone => 'Done';
 
   @override
+  String get commonConfirm => 'Confirm';
+
+  @override
+  String get commonLoading => 'Loading...';
+
+  @override
+  String get commonError => 'Something went wrong, please retry';
+
+  @override
   String get commonClose => 'Close';
 
   @override
@@ -202,22 +211,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonConfirmDelete => 'Delete this?';
 
   @override
-  String commonLoadFailed(String error) => 'Load failed: $error';
+  String commonLoadFailed(String error) {
+    return 'Load failed: $error';
+  }
 
   @override
   String get commonDeleteWarning => 'Cannot be restored after deletion';
 
   @override
   String get commonEmpty => 'Empty';
-
-  @override
-  String get commonConfirm => 'Confirm';
-
-  @override
-  String get commonLoading => 'Loading...';
-
-  @override
-  String get commonError => 'Something went wrong, please retry';
 
   @override
   String snackbarErrorTemplate(String action, String error) {
@@ -252,10 +254,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonDoseUnit => 'tablet';
 
   @override
-  String commonAutoCheckinFailed(String error) => 'Auto check-in failed: $error';
+  String commonAutoCheckinFailed(String error) {
+    return 'Auto check-in failed: $error';
+  }
 
   @override
-  String commonCheckinFailed(String error) => 'Check-in failed: $error';
+  String commonCheckinFailed(String error) {
+    return 'Check-in failed: $error';
+  }
 
   @override
   String get commonVentDeleteWarning =>

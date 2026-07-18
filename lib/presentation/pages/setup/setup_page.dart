@@ -13,6 +13,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 
 /// 首次设置引导页（3 步）
 ///
@@ -47,7 +48,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   ];
 
   // Step 2：多药物列表
-  final List<_MedDraft> _meds = [];
+  final List<MedDraft> _meds = [];
 
   // 防止完成按钮被重复点击导致重复 insert
   bool _saving = false;
@@ -68,7 +69,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   }
 
   void _onTextChanged() {
-    // v0.16 round 19 fix: 之前直接 setState，在 dispose 时 _MedDraft.controller.dispose()
+    // v0.16 round 19 fix: 之前直接 setState，在 dispose 时 MedDraft.controller.dispose()
     // 触发 listener，State 已 defunct，setState assert 失败。
     // 加 mounted check，dispose 阶段直接吞掉
     if (!mounted) return;
@@ -201,7 +202,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
             ),
           ),
           const SizedBox(height: AppTokens.spacingLg),
-          _ConsentCheckRow(
+          ConsentCheckRow(
             checked: _consentUserAgreement,
             label: '我已阅读并同意《用户协议》',
             onTap: () =>
@@ -209,7 +210,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
             onView: () => _showLegalDocument(context, 'user_agreement'),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          _ConsentCheckRow(
+          ConsentCheckRow(
             checked: _consentPrivacyPolicy,
             label: '我已阅读并同意《隐私政策》',
             onTap: () =>
@@ -217,7 +218,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
             onView: () => _showLegalDocument(context, 'privacy_policy'),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          _ConsentCheckRow(
+          ConsentCheckRow(
             checked: _consentSensitiveData,
             label: '我已阅读并同意《敏感个人信息处理同意书》',
             onTap: () =>
@@ -453,7 +454,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           OutlinedButton.icon(
             onPressed: () {
               setState(() {
-                final m = _MedDraft();
+                final m = MedDraft();
                 m.attachListener(_onTextChanged);
                 _meds.add(m);
               });
@@ -657,7 +658,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   /// v0.10 (Round 4) — 参考 Mood Tracker 预置习惯库。
   /// 选完方案后，_meds 列表被预填（替换或追加，二选一由用户决定）。
   Future<void> _showPresetTemplatesSheet() async {
-    final result = await showModalBottomSheet<_TemplateApplyResult>(
+    final result = await showModalBottomSheet<TemplateApplyResult<MedicationTemplate>>(
       context: context,
       isScrollControlled: true,
       builder: (ctx) => SafeArea(
@@ -704,7 +705,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                     subtitle: Text(t.description),
                     trailing: const Icon(Icons.add_circle_outline),
                     onTap: () => Navigator.of(ctx).pop(
-                      _TemplateApplyResult(
+                      TemplateApplyResult(
                         template: t,
                         append: _meds.isNotEmpty,
                       ),
@@ -727,7 +728,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       _meds.clear();
 
       for (final d in result.template.meds) {
-        final m = _MedDraft()
+        final m = MedDraft()
           ..nameController.text = d.name
           ..dosageController.text = d.dosage == d.dosage.toInt()
               ? d.dosage.toInt().toString()
@@ -921,85 +922,6 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         _saving = false;
       }
     }
-  }
-}
-
-/// 内存态的药物草稿
-class _MedDraft {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController dosageController = TextEditingController();
-  String dosageUnit = 'mg';
-  final List<TimeOfDay> times = [];
-
-  void attachListener(VoidCallback cb) {
-    nameController.addListener(cb);
-    dosageController.addListener(cb);
-  }
-
-  void dispose() {
-    nameController.dispose();
-    dosageController.dispose();
-  }
-}
-
-/// 预置方案应用结果（bottom sheet 返回）
-class _TemplateApplyResult {
-  final MedicationTemplate template;
-  final bool append;
-  const _TemplateApplyResult({required this.template, required this.append});
-}
-
-/// P0-6: 法律同意勾选行(checklist + 查看按钮)
-class _ConsentCheckRow extends StatelessWidget {
-  final bool checked;
-  final String label;
-  final VoidCallback onTap;
-  final VoidCallback onView;
-
-  const _ConsentCheckRow({
-    required this.checked,
-    required this.label,
-    required this.onTap,
-    required this.onView,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: checked ? AppTokens.primaryLight : AppTokens.surface,
-        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-        border: Border.all(
-          color: checked ? AppTokens.primary : AppTokens.border,
-          width: 1.5,
-        ),
-      ),
-      child: Row(
-        children: [
-          Checkbox(
-            value: checked,
-            onChanged: (_) => onTap(),
-            activeColor: AppTokens.primary,
-          ),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeLabel,
-                color:
-                    checked ? AppTokens.textPrimary : AppTokens.textSecondary,
-                fontWeight: checked ? FontWeight.w500 : FontWeight.normal,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: onView,
-            child: const Text('查看'),
-          ),
-          const SizedBox(width: AppTokens.spacingXs),
-        ],
-      ),
-    );
   }
 }
 

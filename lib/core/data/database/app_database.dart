@@ -1,6 +1,4 @@
 import 'package:drift/drift.dart';
-// 隐藏 Flutter 的 Table，避免跟 drift 的 Table 冲突
-import 'package:flutter/material.dart' hide Table;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'package:chroniccare/domain/entities/hour_minute.dart';

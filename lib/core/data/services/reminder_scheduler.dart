@@ -1,5 +1,6 @@
 import 'package:chroniccare/core/shared/pii_safe_log.dart';
 
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
@@ -164,7 +165,7 @@ class ReminderService implements ReminderChecker {
     required String userName,
     required int daysSince,
     required int hoursSince,
-    required dynamic medication,
+    required MedicationEntity? medication,
   }) {
     final buffer = StringBuffer();
     if (daysSince >= 2) {

@@ -188,6 +188,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonDone => '完成';
 
   @override
+  String get commonConfirm => '确认';
+
+  @override
+  String get commonLoading => '加载中...';
+
+  @override
+  String get commonError => '出错了，请重试';
+
+  @override
   String get commonClose => '关闭';
 
   @override
@@ -200,22 +209,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonConfirmDelete => '删除这条？';
 
   @override
-  String commonLoadFailed(String error) => '加载失败：$error';
+  String commonLoadFailed(String error) {
+    return '加载失败：$error';
+  }
 
   @override
   String get commonDeleteWarning => '删除后无法恢复';
 
   @override
   String get commonEmpty => '还没有';
-
-  @override
-  String get commonConfirm => '确认';
-
-  @override
-  String get commonLoading => '加载中...';
-
-  @override
-  String get commonError => '出错了，请重试';
 
   @override
   String snackbarErrorTemplate(String action, String error) {
@@ -250,10 +252,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonDoseUnit => '片';
 
   @override
-  String commonAutoCheckinFailed(String error) => '自动打卡失败：$error';
+  String commonAutoCheckinFailed(String error) {
+    return '自动打卡失败：$error';
+  }
 
   @override
-  String commonCheckinFailed(String error) => '打卡失败：$error';
+  String commonCheckinFailed(String error) {
+    return '打卡失败：$error';
+  }
 
   @override
   String get commonVentDeleteWarning => '删了就没了。文字和录音都会一起删。';

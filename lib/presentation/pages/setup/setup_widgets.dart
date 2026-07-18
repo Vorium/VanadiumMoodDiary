@@ -1,0 +1,86 @@
+// setup_widgets.dart — 首次设置引导页拆分出的辅助类和组件
+//
+// 从 setup_page.dart 拆分，v0.19 (P1-15)
+import 'package:flutter/material.dart';
+
+import 'package:chroniccare/core/theme/app_tokens.dart';
+
+/// 内存态的药物草稿
+class MedDraft {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController dosageController = TextEditingController();
+  String dosageUnit = 'mg';
+  final List<TimeOfDay> times = [];
+
+  void attachListener(VoidCallback cb) {
+    nameController.addListener(cb);
+    dosageController.addListener(cb);
+  }
+
+  void dispose() {
+    nameController.dispose();
+    dosageController.dispose();
+  }
+}
+
+/// 预置方案应用结果（bottom sheet 返回）
+class TemplateApplyResult<T> {
+  final T template;
+  final bool append;
+  const TemplateApplyResult({required this.template, required this.append});
+}
+
+/// 法律同意勾选行（checklist + 查看按钮）
+class ConsentCheckRow extends StatelessWidget {
+  final bool checked;
+  final String label;
+  final VoidCallback onTap;
+  final VoidCallback onView;
+
+  const ConsentCheckRow({
+    super.key,
+    required this.checked,
+    required this.label,
+    required this.onTap,
+    required this.onView,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: checked ? AppTokens.primaryLight : AppTokens.surface,
+        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+        border: Border.all(
+          color: checked ? AppTokens.primary : AppTokens.border,
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Checkbox(
+            value: checked,
+            onChanged: (_) => onTap(),
+            activeColor: AppTokens.primary,
+          ),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeLabel,
+                color:
+                    checked ? AppTokens.textPrimary : AppTokens.textSecondary,
+                fontWeight: checked ? FontWeight.w500 : FontWeight.normal,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onView,
+            child: const Text('查看'),
+          ),
+          const SizedBox(width: AppTokens.spacingXs),
+        ],
+      ),
+    );
+  }
+}

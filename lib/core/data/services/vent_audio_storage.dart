@@ -165,6 +165,16 @@ class VentAudioStorage {
     return count;
   }
 
+  /// 临时目录路径（录音明文写入目标）
+  Future<String> getTempDirPath() async => Directory.systemTemp.path;
+
+  /// 单个 audio 文件大小（字节）
+  Future<int> fileSizeBytes(String path) async {
+    final f = File(path);
+    if (!await f.exists()) return 0;
+    return f.length();
+  }
+
   /// audio 文件总大小（字节），用于统计 / 警告用户
   Future<int> totalSizeBytes() async {
     final dir = await _dir();

@@ -14,7 +14,6 @@ library;
 
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'dart:async';
-import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -125,8 +124,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         // 存到 app docs/{dir}/vent_xxx.m4a.enc (DB 存的路径 = 加密路径)
         // 之前的版本直接写到 newAudioPath() 但那是 .m4a.enc 后缀,
         // record 写明文 m4a 会被理解为加密文件,bug。
+        final storage = ref.read(ventAudioStorageProvider);
+        final tempDirPath = await storage.getTempDirPath();
         final tempPath = p.join(
-          Directory.systemTemp.path,
+          tempDirPath,
           'vent_record_${DateTime.now().millisecondsSinceEpoch}.m4a',
         );
         await _recorder.start(
@@ -216,8 +217,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       final old = _audioPath!;
       // 删旧文件（DB 里还没存，所以可以删）
       try {
-        final f = File(old);
-        if (await f.exists()) await f.delete();
+        await ref.read(ventAudioStorageProvider).deleteAudio(old);
       } catch (e, st) {
         // 文件可能已被用户/系统清掉；删失败不阻塞重录流程
         swallowError(
@@ -260,7 +260,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       int? sizeBytes;
       if (hasAudio) {
         try {
-          sizeBytes = await File(_audioPath!).length();
+          sizeBytes = await ref
+              .read(ventAudioStorageProvider)
+              .fileSizeBytes(_audioPath!);
         } catch (e, st) {
           // size 读不到(可能文件被外部清掉),sizeBytes 留 null,DB 仍能存
           swallowError(

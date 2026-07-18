@@ -5,7 +5,7 @@
 // 总分 ≥ 推荐线 提示就医；自杀念头（PHQ-9 第 9 题）阳性立即弹危机资源
 // v0.13 (Round 8) 加：结果页显示"对比上次"面板 + sparkline 趋势
 
-import '../../providers/service_providers.dart';
+import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +20,7 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/pages/assessment/assessment_widgets.dart';
 
 class AssessmentPage extends ConsumerStatefulWidget {
   final String scaleId; // 'phq9' / 'gad7'
@@ -121,7 +122,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
           child: ListView.builder(
             padding: const EdgeInsets.all(AppTokens.spacingMd),
             itemCount: scale.items.length,
-            itemBuilder: (ctx, i) => _QuestionCard(
+            itemBuilder: (ctx, i) => QuestionCard(
               index: i + 1,
               item: scale.items[i],
               options: scale.options,
@@ -160,8 +161,13 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
             scores: scores,
             total: result.total,
           );
-    } catch (_) {
-      // 静默失败——结果仍展示
+    } catch (e, st) {
+      swallowError(
+        where: 'assessment_page._onSubmit.saveAssessment',
+        error: e,
+        stack: st,
+        note: 'assessment save failed — result still shown to user',
+      );
     }
 
     // v0.13 (Round 7): 评估完成 → 重排下次评估提醒
@@ -374,7 +380,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
       const SizedBox(height: AppTokens.spacingSm),
       // sparkline
       if (history.records.length >= 2)
-        _AssessmentSparkline(
+        AssessmentSparkline(
           history: history,
           scaleId: scaleId,
         ),
@@ -567,228 +573,3 @@ class _ComparisonCard extends StatelessWidget {
     return '${t.year}-${t.month.toString().padLeft(2, '0')}-${t.day.toString().padLeft(2, '0')}';
   }
 }
-
-/// 评估趋势 sparkline（简易自绘，避免再引第三方）
-class _AssessmentSparkline extends StatelessWidget {
-  final AssessmentHistory history;
-  final String scaleId;
-  const _AssessmentSparkline({required this.history, required this.scaleId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.show_chart,
-                  color: AppTokens.primary,
-                  size: 20,
-                ),
-                const SizedBox(width: AppTokens.spacingXs),
-                const Text(
-                  '历史趋势',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeLabel,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Spacer(),
-                if (history.average != null)
-                  Text(
-                    '平均 ${history.average!.toStringAsFixed(1)}',
-                    style: const TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textSecondary,
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            SizedBox(
-              height: 80,
-              child: CustomPaint(
-                size: Size.infinite,
-                painter: _SparklinePainter(
-                  totals: history.totals,
-                  timestamps: history.timestamps,
-                  maxTotal: scaleId == 'phq9' ? 27 : 21,
-                  lineColor: AppTokens.primary,
-                  averageLine: history.average,
-                  averageColor: AppTokens.textHint,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '共 ${history.records.length} 次',
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
-                  ),
-                ),
-                if (history.min != null && history.max != null)
-                  Text(
-                    '最低 ${history.min} / 最高 ${history.max}',
-                    style: const TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textHint,
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SparklinePainter extends CustomPainter {
-  final List<int> totals;
-  final List<DateTime> timestamps;
-  final int maxTotal;
-  final Color lineColor;
-  final double? averageLine;
-  final Color averageColor;
-
-  _SparklinePainter({
-    required this.totals,
-    required this.timestamps,
-    required this.maxTotal,
-    required this.lineColor,
-    required this.averageLine,
-    required this.averageColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (totals.isEmpty) return;
-    final n = totals.length;
-
-    // 平均线（虚线）
-    if (averageLine != null) {
-      final avgY = size.height - (averageLine! / maxTotal) * size.height;
-      final avgPaint = Paint()
-        ..color = averageColor
-        ..strokeWidth = 1
-        ..style = PaintingStyle.stroke;
-      const dashWidth = 4.0;
-      const dashSpace = 3.0;
-      double startX = 0;
-      while (startX < size.width) {
-        canvas.drawLine(
-          Offset(startX, avgY),
-          Offset(startX + dashWidth, avgY),
-          avgPaint,
-        );
-        startX += dashWidth + dashSpace;
-      }
-    }
-
-    // 主线 + 圆点
-    final linePaint = Paint()
-      ..color = lineColor
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke
-      ..strokeJoin = StrokeJoin.round
-      ..strokeCap = StrokeCap.round;
-
-    final dotPaint = Paint()..color = lineColor;
-    final dotStrokePaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-
-    final points = <Offset>[];
-    for (int i = 0; i < n; i++) {
-      final x = n == 1 ? size.width / 2 : (i / (n - 1)) * size.width;
-      final y = size.height - (totals[i] / maxTotal) * size.height;
-      points.add(Offset(x, y));
-    }
-
-    if (n >= 2) {
-      final path = Path()..moveTo(points.first.dx, points.first.dy);
-      for (int i = 1; i < points.length; i++) {
-        path.lineTo(points[i].dx, points[i].dy);
-      }
-      canvas.drawPath(path, linePaint);
-    }
-
-    for (final p in points) {
-      canvas.drawCircle(p, 3.5, dotPaint);
-      canvas.drawCircle(p, 3.5, dotStrokePaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _SparklinePainter old) {
-    return old.totals != totals ||
-        old.maxTotal != maxTotal ||
-        old.averageLine != averageLine;
-  }
-}
-
-class _QuestionCard extends StatelessWidget {
-  final int index;
-  final AssessmentItem item;
-  final Map<int, String> options;
-  final int? selected;
-  final ValueChanged<int> onChanged;
-
-  const _QuestionCard({
-    required this.index,
-    required this.item,
-    required this.options,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Q$index. ${item.text}',
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            Wrap(
-              spacing: AppTokens.spacingXs,
-              runSpacing: AppTokens.spacingXs,
-              children: [
-                for (final entry in options.entries)
-                  ChoiceChip(
-                    label: Text(entry.value),
-                    selected: selected == entry.key,
-                    onSelected: (_) => onChanged(entry.key),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// P5 fix: 之前 `phq9ScaleFallback` 是死代码，直接调 `scaleById('phq9')!`,
-// 如果 phq9 不存在就 throw,实际意义是 0。现在 initState 改成 _scale = null
-// + 下一帧 pop,这个 fallback 不再需要。删了。
-// 如果未来真的需要"路由给错时返回某个默认量表",应该传具体 id: scaleById('phq9')!,
-// 不要在 null safety 之上再加一层 wrapper。

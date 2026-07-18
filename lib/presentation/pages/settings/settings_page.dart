@@ -1,4 +1,4 @@
-import '../../providers/service_providers.dart';
+import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

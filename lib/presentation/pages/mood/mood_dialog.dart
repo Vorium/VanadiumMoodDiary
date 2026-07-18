@@ -127,7 +127,7 @@ class MoodDialog {
                       } catch (e) {
                         if (ctx.mounted) {
                           ScaffoldMessenger.of(ctx).showSnackBar(
-                            AppSnackBar.error(context, action: '保存', error: e),
+                            AppSnackBar.error(ctx, action: '保存', error: e),
                           );
                           setLocal(() => saving = false);
                         }
