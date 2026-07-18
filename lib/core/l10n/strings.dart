@@ -1,1 +1,25 @@
-﻿/// 国际化字符串 — domain 层专用 fallback////// v0.17 round 14 (P1-6): presentation 文字迁到 flutter_localizations/// (`lib/l10n/app_zh.arb` / `app_en.arb`)。/// 但 domain 层不能 import flutter,所以通知/邮件模板 (EmailTemplate) 仍用/// 这里 hardcode 字符串 (v0.6 mock 短信中文文案)。////// v1.0+ 计划: domain EmailTemplate 接收 i18n strings 作为参数,完全脱离本文件。class Strings {  Strings._();  // 通知 / 邮件模板 (outgoing message, 通常单语言, 暂用中文)  static String emailSubject(String name, int days) =>      '[停药提醒] $name 已经 $days 天没吃药了';  static String emailBody(String userName, int days) =>      '我是 $userName，已经 $days 天没在 App 里打卡了。\n'      '请你方便的时候提醒我按时吃药，避免复发。';  static String emailLastMed(String time) => '最后吃药：$time';  static String emailMedInfo(String name, double dosage, String unit) =>      '$name $dosage$unit';  static String emailCycle(int hours) => '签到周期：$hours 小时';  static const emailFooter = '这是一条自动通知，由慢病管家 App 发送。\n'      '本通知不包含任何医疗建议。\n'      '如需停止接收，请在 App 设置中修改。';}
+/// 国际化字符串 — domain 层专用 fallback
+///
+/// v0.17 round 14 (P1-6): presentation 文字迁到 flutter_localizations
+/// (`lib/l10n/app_zh.arb` / `app_en.arb`)。
+/// 但 domain 层不能 import flutter,所以通知/邮件模板 (EmailTemplate) 仍用
+/// 这里 hardcode 字符串 (v0.6 mock 短信中文文案)。
+///
+/// v1.0+ 计划: domain EmailTemplate 接收 i18n strings 作为参数,完全脱离本文件。
+class Strings {
+  Strings._();
+
+  // 通知 / 邮件模板 (outgoing message, 通常单语言, 暂用中文)
+  static String emailSubject(String name, int days) =>
+      '[停药提醒] $name 已经 $days 天没吃药了';
+  static String emailBody(String userName, int days) =>
+      '我是 $userName，已经 $days 天没在 App 里打卡了。\n'
+      '请你方便的时候提醒我按时吃药，避免复发。';
+  static String emailLastMed(String time) => '最后吃药：$time';
+  static String emailMedInfo(String name, double dosage, String unit) =>
+      '$name $dosage$unit';
+  static String emailCycle(int hours) => '签到周期：$hours 小时';
+  static const emailFooter = '这是一条自动通知，由慢病管家 App 发送。\n'
+      '本通知不包含任何医疗建议。\n'
+      '如需停止接收，请在 App 设置中修改。';
+}

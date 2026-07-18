@@ -1,1 +1,22 @@
-﻿import 'package:drift/drift.dart';/// 打卡记录表/// 记录每一次"今天吃了药"打卡@DataClassName('CheckIn')class CheckIns extends Table {  IntColumn get id => integer().autoIncrement()();  /// 打卡时间  DateTimeColumn get timestamp => dateTime()();  /// 类型：normal=每日打卡 / temp=临时吃药  /// normal 计入 streak；temp 仅计入健康档案  TextColumn get type => text().withLength(min: 1, max: 20)();  /// 关联 medication_id（临时吃药可为空）  /// MVP 阶段不建外键约束（Drift 生成顺序问题），v1.0+ 加回  IntColumn get medicationId => integer().nullable()();  /// 临时吃药备注  TextColumn get note => text().nullable()();}
+import 'package:drift/drift.dart';
+
+/// 打卡记录表
+/// 记录每一次"今天吃了药"打卡
+@DataClassName('CheckIn')
+class CheckIns extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  /// 打卡时间
+  DateTimeColumn get timestamp => dateTime()();
+
+  /// 类型：normal=每日打卡 / temp=临时吃药
+  /// normal 计入 streak；temp 仅计入健康档案
+  TextColumn get type => text().withLength(min: 1, max: 20)();
+
+  /// 关联 medication_id（临时吃药可为空）
+  /// MVP 阶段不建外键约束（Drift 生成顺序问题），v1.0+ 加回
+  IntColumn get medicationId => integer().nullable()();
+
+  /// 临时吃药备注
+  TextColumn get note => text().nullable()();
+}

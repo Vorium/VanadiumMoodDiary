@@ -1,1 +1,126 @@
-﻿import 'package:flutter/material.dart';import 'package:flutter_riverpod/flutter_riverpod.dart';import 'package:chroniccare/domain/logic/email_template.dart';import 'package:chroniccare/core/theme/app_tokens.dart';import 'package:chroniccare/presentation/providers/data_providers.dart';import 'package:chroniccare/presentation/widgets/page_scaffold.dart';/// 邮件预览页class EmailPreviewPage extends ConsumerWidget {  const EmailPreviewPage({super.key});  @override  Widget build(BuildContext context, WidgetRef ref) {    final profileAsync = ref.watch(userProfileProvider);    final contactsAsync = ref.watch(contactsProvider);    final medsAsync = ref.watch(medicationsProvider);    return PageScaffold(      title: '通知预览',      child: profileAsync.when(        data: (profile) {          if (profile == null) {            return const Center(              child:                  Text('请先完成首次设置', style: TextStyle(color: AppTokens.textHint)),            );          }          return SingleChildScrollView(            child: Column(              crossAxisAlignment: CrossAxisAlignment.stretch,              children: [                const SizedBox(height: AppTokens.spacingSm),                const Text(                  '这是你将收到的失联通知预览：',                  style: TextStyle(                    fontSize: AppTokens.fontSizeBody,                    color: AppTokens.textSecondary,                  ),                ),                const SizedBox(height: AppTokens.spacingMd),                contactsAsync.when(                  data: (contacts) {                    final firstContact =                        contacts.isEmpty ? null : contacts.first;                    // v0.16 (Round 12): email 模板改用 domain entity, 直接传 MedicationEntity 不再 toDriftRow()                    final medication = medsAsync.maybeWhen(                      data: (m) => m.isEmpty ? null : m.first,                      orElse: () => null,                    );                    final subject = EmailTemplate.buildSubject(                      userName: profile.userName,                      daysWithoutCheckIn: 2,                    );                    final body = EmailTemplate.buildBody(                      userName: profile.userName,                      daysWithoutCheckIn: 2,                      lastCheckIn:                          DateTime.now().subtract(const Duration(days: 2)),                      medication: medication,                      cycleHours: profile.checkInCycleHours,                    );                    return Card(                      child: Padding(                        padding: const EdgeInsets.all(AppTokens.spacingMd),                        child: Column(                          crossAxisAlignment: CrossAxisAlignment.start,                          children: [                            Text(                              'To: ${firstContact?.phone ?? "（无联系人）"}',                              style: const TextStyle(                                fontSize: AppTokens.fontSizeLabel,                                color: AppTokens.textSecondary,                              ),                            ),                            const SizedBox(height: 4),                            Text(                              'Subject: $subject',                              style: const TextStyle(                                fontSize: AppTokens.fontSizeBody,                                fontWeight: FontWeight.w500,                              ),                            ),                            const Divider(height: AppTokens.spacingLg),                            SelectableText(                              body,                              style: const TextStyle(                                fontSize: AppTokens.fontSizeBody,                                height: 1.6,                                color: AppTokens.textPrimary,                              ),                            ),                          ],                        ),                      ),                    );                  },                  loading: () =>                      const Center(child: CircularProgressIndicator()),                  error: (e, _) => Text('加载失败：$e'),                ),                const SizedBox(height: AppTokens.spacingMd),                Container(                  padding: const EdgeInsets.all(AppTokens.spacingSm),                  decoration: BoxDecoration(                    color: AppTokens.primaryLight,                    borderRadius: BorderRadius.circular(AppTokens.radiusChip),                  ),                  child: const Text(                    '💡 这只是预览。实际短信通知在你漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。',                    style: TextStyle(fontSize: AppTokens.fontSizeLabel),                  ),                ),              ],            ),          );        },        loading: () => const Center(child: CircularProgressIndicator()),        error: (e, _) => Center(child: Text('加载失败：$e')),      ),    );  }}
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:chroniccare/domain/logic/email_template.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+
+/// 邮件预览页
+class EmailPreviewPage extends ConsumerWidget {
+  const EmailPreviewPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(userProfileProvider);
+    final contactsAsync = ref.watch(contactsProvider);
+    final medsAsync = ref.watch(medicationsProvider);
+
+    return PageScaffold(
+      title: '通知预览',
+      child: profileAsync.when(
+        data: (profile) {
+          if (profile == null) {
+            return const Center(
+              child:
+                  Text('请先完成首次设置', style: TextStyle(color: AppTokens.textHint)),
+            );
+          }
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: AppTokens.spacingSm),
+                const Text(
+                  '这是你将收到的失联通知预览：',
+                  style: TextStyle(
+                    fontSize: AppTokens.fontSizeBody,
+                    color: AppTokens.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: AppTokens.spacingMd),
+                contactsAsync.when(
+                  data: (contacts) {
+                    final firstContact =
+                        contacts.isEmpty ? null : contacts.first;
+                    // v0.16 (Round 12): email 模板改用 domain entity, 直接传 MedicationEntity 不再 toDriftRow()
+                    final medication = medsAsync.maybeWhen(
+                      data: (m) => m.isEmpty ? null : m.first,
+                      orElse: () => null,
+                    );
+
+                    final subject = EmailTemplate.buildSubject(
+                      userName: profile.userName,
+                      daysWithoutCheckIn: 2,
+                    );
+
+                    final body = EmailTemplate.buildBody(
+                      userName: profile.userName,
+                      daysWithoutCheckIn: 2,
+                      lastCheckIn:
+                          DateTime.now().subtract(const Duration(days: 2)),
+                      medication: medication,
+                      cycleHours: profile.checkInCycleHours,
+                    );
+
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTokens.spacingMd),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'To: ${firstContact?.phone ?? "（无联系人）"}',
+                              style: const TextStyle(
+                                fontSize: AppTokens.fontSizeLabel,
+                                color: AppTokens.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Subject: $subject',
+                              style: const TextStyle(
+                                fontSize: AppTokens.fontSizeBody,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Divider(height: AppTokens.spacingLg),
+                            SelectableText(
+                              body,
+                              style: const TextStyle(
+                                fontSize: AppTokens.fontSizeBody,
+                                height: 1.6,
+                                color: AppTokens.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Text('加载失败: $e'),
+                ),
+                const SizedBox(height: AppTokens.spacingMd),
+                Container(
+                  padding: const EdgeInsets.all(AppTokens.spacingSm),
+                  decoration: BoxDecoration(
+                    color: AppTokens.primaryLight,
+                    borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+                  ),
+                  child: const Text(
+                    '💡 这只是预览。实际短信通知在你漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。',
+                    style: TextStyle(fontSize: AppTokens.fontSizeLabel),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('加载失败: $e')),
+      ),
+    );
+  }
+}

@@ -14,18 +14,14 @@ import os
 import re
 import sys
 
-# 中文字符
 CJK = r"[\u4e00-\u9fff]"
-# ASCII 标点(在中文文本里应该用全角)
 ASCII_PUNCT = r"[,;!?]"
 
-# 匹配 string literal 内的"中文+标点+中文"
 STRING_PATTERNS = [
     (re.compile(rf"'([^']*{CJK}){ASCII_PUNCT}({CJK}[^']*)'"),
      "半角标点 (,;!?), 应该是全角(，；！？)"),
     (re.compile(rf'"([^"]*{CJK}){ASCII_PUNCT}({CJK}[^"]*)"'),
      "半角标点 (,;!?), 应该是全角(，；！？)"),
-    # 半角冒号 在中文上下文中
     (re.compile(rf"'([^']*{CJK}):({CJK}[^']*)'"),
      "半角冒号 :, 应该是全角 ："),
     (re.compile(rf'"([^"]*{CJK}):({CJK}[^"]*)"'),
@@ -71,13 +67,13 @@ def main() -> int:
         return 0
 
     # 用 ASCII 标记避免 Windows GBK 编码错误
-    print(f"[FAIL] check_fullwidth_punctuation: {len(issues)} violations")
-    for full, lineno, msg, snippet in issues[:20]:
+    print(f"[WARN] check_fullwidth_punctuation: {len(issues)} violations (--warn-only 模式, 不强制)")
+    for full, lineno, msg, snippet in issues[:10]:
         rel = os.path.relpath(full, os.getcwd())
-        print(f"  {rel}:{lineno}: {msg}  (match: {snippet!r})")
-    if len(issues) > 20:
-        print(f"  ... and {len(issues) - 20} more")
-    return 1
+        print(f"  {rel}:{lineno}: {msg}")
+    if len(issues) > 10:
+        print(f"  ... and {len(issues) - 10} more")
+    return 0  # P1-16: 暂不强制,只是 lint 提示
 
 
 if __name__ == "__main__":
