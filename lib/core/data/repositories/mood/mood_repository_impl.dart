@@ -35,11 +35,17 @@ class MoodRepositoryImpl implements MoodRepository {
     required List<String> tags,
     String? note,
     DateTime? at,
+    int? energy,
+    int? sleep,
+    int? anxiety,
   }) {
     return _db.insertMoodEntry(
       MoodEntriesCompanion.insert(
         timestamp: at ?? DateTime.now(),
         score: score,
+        energy: Value(energy),
+        sleep: Value(sleep),
+        anxiety: Value(anxiety),
         tagsJson: Value(JsonCodec.encodeStringList(tags)),
         note: Value(note),
       ),

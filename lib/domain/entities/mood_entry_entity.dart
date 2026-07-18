@@ -19,8 +19,18 @@ class MoodEntryEntity {
   final int id;
   final DateTime timestamp;
 
-  /// 情绪分数 1-5
+  /// 情绪分数 1-5（必填,1=很差 5=很好）
   final int score;
+
+  /// 精力分数 1-5（v0.18 P1-15 新增,1=很低 5=充沛）
+  /// 老数据为 null(单 score 模式)
+  final int? energy;
+
+  /// 睡眠分数 1-5（v0.18 P1-15 新增,1=很差 5=很好）
+  final int? sleep;
+
+  /// 焦虑分数 1-5（v0.18 P1-15 新增,反向:1=严重 5=平静）
+  final int? anxiety;
 
   /// 标签 JSON 数组（数据库原值）
   ///
@@ -34,6 +44,9 @@ class MoodEntryEntity {
     required this.id,
     required this.timestamp,
     required this.score,
+    this.energy,
+    this.sleep,
+    this.anxiety,
     this.tagsJson = '[]',
     this.note,
   });
@@ -46,10 +59,16 @@ class MoodEntryEntity {
   /// 分数是否在 1-5 范围内
   bool get isValidScore => score >= 1 && score <= 5;
 
+  /// 是否 4 维度全填（v0.18 P1-15 新增）
+  bool get isFull4D => energy != null && sleep != null && anxiety != null;
+
   MoodEntryEntity copyWith({
     int? id,
     DateTime? timestamp,
     int? score,
+    int? energy,
+    int? sleep,
+    int? anxiety,
     String? tagsJson,
     DomainValue<String?>? note,
   }) {
@@ -57,6 +76,9 @@ class MoodEntryEntity {
       id: id ?? this.id,
       timestamp: timestamp ?? this.timestamp,
       score: score ?? this.score,
+      energy: energy ?? this.energy,
+      sleep: sleep ?? this.sleep,
+      anxiety: anxiety ?? this.anxiety,
       tagsJson: tagsJson ?? this.tagsJson,
       note: note == null ? this.note : note.value,
     );
@@ -69,14 +91,19 @@ class MoodEntryEntity {
         other.id == id &&
         other.timestamp == timestamp &&
         other.score == score &&
+        other.energy == energy &&
+        other.sleep == sleep &&
+        other.anxiety == anxiety &&
         other.tagsJson == tagsJson &&
         other.note == note;
   }
 
   @override
-  int get hashCode => Object.hash(id, timestamp, score, tagsJson, note);
+  int get hashCode =>
+      Object.hash(id, timestamp, score, energy, sleep, anxiety, tagsJson, note);
 
   @override
-  String toString() =>
-      'MoodEntryEntity(id=$id, score=$score, tags=$tags, at=$timestamp)';
+  String toString() => 'MoodEntryEntity('
+      'id=$id, score=$score, energy=$energy, sleep=$sleep, anxiety=$anxiety, '
+      'tags=$tags, at=$timestamp)';
 }

@@ -39,8 +39,12 @@ class AppDatabase extends _$AppDatabase {
   @visibleForTesting
   AppDatabase.forTesting(super.executor);
 
+  // v0.18 round 18 (P1-15): schemaVersion 6 → 7
+  // - mood_entries 加 energy / sleep / anxiety 3 个 nullable column
+  // - 老数据自动有 null 3 字段(单 score 模式)
+  // - 新数据 4 维全填
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -75,6 +79,13 @@ class AppDatabase extends _$AppDatabase {
           // v5 → v6: 新增 vent_entries 表（树洞）
           if (from <= 5) {
             await m.createTable(ventEntries);
+          }
+          // v6 → v7: mood_entries 加 4 维度 3 个新列 (energy / sleep / anxiety)
+          // 老数据 3 列默认 null(单 score 模式),新数据 4 维全填
+          if (from <= 6) {
+            await m.addColumn(moodEntries, moodEntries.energy);
+            await m.addColumn(moodEntries, moodEntries.sleep);
+            await m.addColumn(moodEntries, moodEntries.anxiety);
           }
         },
         beforeOpen: (details) async {

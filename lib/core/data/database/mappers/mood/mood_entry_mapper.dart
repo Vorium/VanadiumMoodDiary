@@ -16,6 +16,9 @@ extension MoodEntryToEntity on MoodEntry {
       id: id,
       timestamp: timestamp,
       score: score,
+      energy: energy,
+      sleep: sleep,
+      anxiety: anxiety,
       tagsJson: tagsJson,
       note: note,
     );
@@ -28,6 +31,9 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
     return MoodEntriesCompanion.insert(
       timestamp: timestamp,
       score: score,
+      energy: Value(energy),
+      sleep: Value(sleep),
+      anxiety: Value(anxiety),
       tagsJson: Value(tagsJson),
       note: Value(note),
     );
@@ -35,17 +41,26 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
 }
 
 /// 从原始 (score, tags, note) 构造 entity（无需先有 Drift row）
+///
+/// v0.18 (P1-15) 4 维: energy / sleep / anxiety 3 个 optional 参数,
+/// 老调用方不传时返回单 score 模式 entity。
 MoodEntryEntity buildMoodEntryEntity({
   required int id,
   required DateTime timestamp,
   required int score,
   required List<String> tags,
   String? note,
+  int? energy,
+  int? sleep,
+  int? anxiety,
 }) {
   return MoodEntryEntity(
     id: id,
     timestamp: timestamp,
     score: score,
+    energy: energy,
+    sleep: sleep,
+    anxiety: anxiety,
     tagsJson: JsonCodec.encodeStringList(tags),
     note: note,
   );

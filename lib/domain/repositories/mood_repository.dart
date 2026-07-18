@@ -14,11 +14,17 @@ abstract class MoodRepository {
   Stream<List<MoodEntryEntity>> watchToday();
 
   /// 添加一条
+  ///
+  /// v0.18 (P1-15) 4 维: energy / sleep / anxiety 3 个 optional,
+  /// 不传 = 单 score 模式(向后兼容老调用方)。
   Future<int> add({
     required int score,
     required List<String> tags,
     String? note,
     DateTime? at,
+    int? energy,
+    int? sleep,
+    int? anxiety,
   });
 
   /// 删除一条
