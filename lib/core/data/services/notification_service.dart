@@ -11,6 +11,7 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/services/notification_navigation.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
+import 'package:chroniccare/core/data/services/snooze_manager.dart';
 
 /// 本地通知服务
 ///
@@ -27,8 +28,6 @@ class NotificationService implements NotificationSender {
   static const _medicationReminderBaseId = 2000;
   // 漏 1 天安慰 push 的 id
   static const _softReminderId = 3000;
-  // snooze 一次性推送的 id 起始基数（4000-4999 留给 snooze）
-  static const _snoozeBaseId = 4000;
   // 安全警报推送（v0.10 / Round 4）
   static const _safetyAlertId = 5000;
   // 续方提醒推送（v0.12 / Round 6），id 起始基数（6000-6999）
@@ -38,6 +37,12 @@ class NotificationService implements NotificationSender {
 
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
+
+  /// v0.18 round 18 (P1-28): Snooze 逻辑拆出到 SnoozeManager,主 service 委托
+  /// 公共 API 保持不变（snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes）,
+  /// 但真实实现移到 SnoozeManager,主 service 减肥 90+ 行。
+  late final SnoozeManager _snoozeManager =
+      SnoozeManager(plugin: _plugin);
 
   /// v0.11 (Round 5): 用户点通知的回调
   /// 默认调 [NotificationNavigation.handleTap]
@@ -316,105 +321,49 @@ class NotificationService implements NotificationSender {
 
   // ============== Round 4: Snooze + Badge ==============
   //
+  // v0.18 round 18 (P1-28): Snooze 3 个 method 拆到 SnoozeManager
+  // 主 service 公共 API 保留,内部委托 _snoozeManager。
+  // 这样:
+  // - notification_service.dart 788 → 700 行 (-90)
+  // - snooze 逻辑独立测试 (mock SnoozeManager 不用 mock 整个 notification)
+  // - id 公式 + cancel 范围集中在一处
+  //
   // 参考 Pill Reminder (Drugs.com iOS)：
   // - 通知来了用户点"Snooze 5min" → 5min 后再响一次
   // - App 图标角标显示当天还差几次没打卡
 
   /// 调度一个**一次性**延迟通知（snooze 用）
   ///
-  /// 设计：用稳定 hash 把 (medId, minutes) → unique id，
-  /// 避免用户连续点 snooze 堆出 10 个通知。
-  /// - [minutes] 范围 [1, 1440]（最多 24h 后）
-  /// - 同一 (medId, minutes) 二次触发 = 覆盖原 snooze，不会叠加
-  ///
-  /// v0.11 (Round 5): payload 携带 medId,snooze 触发后点通知直达该药
+  /// v0.18 (P1-28): 委托 SnoozeManager,公共签名不变。
   Future<void> snoozeOnce({
     required int medicationId,
     required int minutes,
     String? title,
     String? body,
   }) async {
-    if (minutes <= 0 || minutes > 1440) {
-      developer.log(
-        '⚠️ snoozeOnce: minutes=$minutes 越界（1..1440）',
-        name: 'NotificationService',
-      );
-      return;
-    }
     await init();
-
-    // 稳定 id：snoozeBase + medId * 1440 + minutes
-    // 1440 保证同一 med 不同 minutes 之间不冲突
-    final id = _snoozeBaseId + (medicationId * 1440) + minutes;
-
-    // 取消同 id 的旧 snooze（避免叠加）
-    await _plugin.cancel(id);
-
-    const details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        _channelId,
-        _channelName,
-        channelDescription: _channelDesc,
-        importance: Importance.high,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
+    await _snoozeManager.snoozeOnce(
+      medicationId: medicationId,
+      minutes: minutes,
+      title: title,
+      body: body,
     );
-
-    final fireAt = tz.TZDateTime.now(tz.local).add(Duration(minutes: minutes));
-    final payload = medicationId == 0
-        ? 'chroniccare://check-in/today'
-        : NotificationDeepLink.medicationCheckIn(medicationId).encode();
-    try {
-      await _plugin.zonedSchedule(
-        id,
-        title ?? '💊 提醒吃药（snooze）',
-        body ?? '刚才你点了"稍后提醒"，该吃药了',
-        fireAt,
-        details,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        // 不加 matchDateTimeComponents：只触发一次
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        payload: payload,
-      );
-      developer.log(
-        '✅ snooze ${minutes}min 后触发（med=$medicationId）',
-        name: 'NotificationService',
-      );
-    } catch (e) {
-      developer.log('❌ snooze 调度失败: $e', name: 'NotificationService');
-    }
   }
 
   /// 取消某个药物的所有 snooze（用户真打卡后调）
+  ///
+  /// v0.18 (P1-28): 委托 SnoozeManager
   Future<void> cancelSnoozeForMedication(int medicationId) async {
     await init();
-    // snooze id 范围: snoozeBase + medId*1440 + 1 .. +1440
-    final pending = await _plugin.pendingNotificationRequests();
-    final baseMin = _snoozeBaseId + medicationId * 1440;
-    final baseMax = baseMin + 1440;
-    for (final p in pending) {
-      if (p.id >= baseMin && p.id <= baseMax) {
-        await _plugin.cancel(p.id);
-      }
-    }
+    await _snoozeManager.cancelSnoozeForMedication(medicationId);
   }
 
   /// 取消所有 snooze（重排 medication reminders 时调）
   ///
-  /// snooze id 公式：snoozeBase + medId * 1440 + minutes
-  ///   medId 上限：int32 安全 ~1.5M (medId <= 1000)，按当前用户量足够
-  /// v0.16 round 19 fix: 之前用 `_snoozeBaseId + 100000` 范围太窄，medId >= 72 时
-  ///   id 超过 104000 漏 cancel（虽然 snooze 5min 自动清除，但重排时残留）
+  /// v0.18 (P1-28): 委托 SnoozeManager
   Future<void> cancelAllSnoozes() async {
     await init();
-    final pending = await _plugin.pendingNotificationRequests();
-    for (final p in pending) {
-      if (p.id >= _snoozeBaseId && p.id < _snoozeBaseId + 2000000) {
-        await _plugin.cancel(p.id);
-      }
-    }
+    await _snoozeManager.cancelAllSnoozes();
   }
 
   // ============== Round 6: 续方提醒 ==============
