@@ -866,10 +866,11 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       await ref.read(notificationServiceProvider).rescheduleMedicationReminders(
             medications.map((e) => e.toDriftRow()).toList(),
           );
-      // 漏 1 天主动 push 安慰（上午 10 点检查）
-      await ref
-          .read(notificationServiceProvider)
-          .scheduleSoftReminder(hour: 10, minute: 0);
+      // v0.18 (P1-11) fix: 删 scheduleSoftReminder 双推
+      // 之前 setup 调 scheduleSoftReminder(每天 10:00 push "你还好吗?")
+      // 跟 CareEngine.secondDayMissed 文案重复,用户每天 10 点收到 2 条。
+      // 改 CareEngine 唯一负责 — onAppStart / onCheckIn 时 evaluate,
+      // minutesSince >= 36h && hour >= 10 触发立即 push。
       // fallback 通用打卡提醒
       await ref
           .read(notificationServiceProvider)

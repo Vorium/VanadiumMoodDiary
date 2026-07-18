@@ -8,10 +8,15 @@
 /// - 周末漏打卡 → 主动 push "周末也要记得吃药"
 /// - 漏 1 天后第二天 10 点还没打卡 → 主动 push "你还好吗？"（不是通知家人）
 /// - 连续 7 天准时 → 庆祝 push "你真棒！"
+///
+/// v0.18 round 18 (P1-11) fix: 文案集中到 core/shared/care_copy.dart,
+/// 不再 const string inline。trigger 4 个文案 + 软提醒共用一份 source of truth,
+/// 避免双推 (setup 软提醒 + CareEngine 立即 push 文案重复)。
 library;
 
 import 'dart:developer' as developer;
 
+import 'package:chroniccare/core/shared/care_copy.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 
@@ -77,37 +82,41 @@ class CareEngine {
 
     // 规则 1: 漏 1 天后第二天 10 点还没打卡
     if (minutesSince >= 36 * 60 && now.hour >= 10) {
-      return const CareTrigger(
+      final copy = CareCopy.forTrigger(CareTriggerType.secondDayMissed);
+      return CareTrigger(
         type: CareTriggerType.secondDayMissed,
-        title: '🌿 你还好吗？',
-        body: '少 1 次没关系——但记得吃药哦',
+        title: copy.title,
+        body: copy.body,
       );
     }
 
     // 规则 2: 持续晚归（最近 3 天都在 22 点后）
     if (_isLateCheckInHabit(normal, now)) {
-      return const CareTrigger(
+      final copy = CareCopy.forTrigger(CareTriggerType.lateCheckInHabit);
+      return CareTrigger(
         type: CareTriggerType.lateCheckInHabit,
-        title: '🛏️ 记得早点休息',
-        body: '你这几天都 22 点后才打卡——规律作息对药效有影响',
+        title: copy.title,
+        body: copy.body,
       );
     }
 
     // 规则 3: 周末漏打卡
     if (_isWeekendMissed(normal, now)) {
-      return const CareTrigger(
+      final copy = CareCopy.forTrigger(CareTriggerType.weekendMissed);
+      return CareTrigger(
         type: CareTriggerType.weekendMissed,
-        title: '☀️ 周末也要记得',
-        body: '周末容易忘记——现在打卡，让家人放心',
+        title: copy.title,
+        body: copy.body,
       );
     }
 
     // 规则 4: 最近 7 天每天 22 点前都打卡
     if (_isWeekPerfect(normal, now)) {
-      return const CareTrigger(
+      final copy = CareCopy.forTrigger(CareTriggerType.weekPerfect);
+      return CareTrigger(
         type: CareTriggerType.weekPerfect,
-        title: '🌟 一整周都准时！',
-        body: '你真棒——保持下去',
+        title: copy.title,
+        body: copy.body,
       );
     }
 

@@ -253,6 +253,11 @@ class NotificationService implements NotificationSender {
   /// 漏 1 天主动 push 安慰（不是通知紧急联系人）
   ///
   /// [hour] 通常是上午 10 点
+  ///
+  /// v0.18 (P1-11) @Deprecated: CareEngine 接管 secondDayMissed 推送,
+  /// setup_page 不再调此方法。保留 API 是因为有些旧测试 / 未来合并 soft reminder
+  /// 跟 CareEngine 时可能还要用。新代码请用 `CareEngine.evaluate` + `showNow`。
+  @Deprecated('v0.18 P1-11: CareEngine 接管,新代码请用 CareEngine.evaluate + showNow')
   Future<void> scheduleSoftReminder({int hour = 10, int minute = 0}) async {
     await init();
     await _plugin.cancel(_softReminderId);
