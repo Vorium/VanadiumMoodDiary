@@ -12,42 +12,79 @@
 
 ## 4 层架构 + 共享层
 
+**v0.18 (round 12 之后):** `data/shared/theme/routing/l10n` 5 个子层并入 `lib/core/`
+作为 umbrella。所以实际是 **5 层 + 共享 umbrella**:
+- `lib/core/data/` — 基础设施(Database / Repositories / Services)
+- `lib/core/shared/` — 跨层共享(formatters / json_codec / mood_visual)
+- `lib/core/theme/` — AppTokens + M3 主题
+- `lib/core/routing/` — go_router
+- `lib/core/l10n/` — domain 层 strings(供通知/邮件用)
+- `lib/l10n/` — presentation 层 flutter_localizations(供 UI 用)
+- `lib/domain/` — 0 Flutter 0 Drift 业务层
+- `lib/presentation/` — UI 层
+
 ```
 lib/
-├── main.dart              # 入口（含通知 init）
+├── main.dart              # 入口（启动顺序 + SQLCipher + 通知 init）
 ├── app.dart               # App 根 + ProviderScope
-├── routing/               # go_router 配置（app_router.dart）
-├── theme/                 # AppTokens + Material 3 主题
-├── l10n/                  # Strings 静态常量（中文）
-├── data/                  # 基础设施层
-│   ├── database/         # Drift 表 / 数据库 / 迁移
-│   │   ├── tables/       # 1 个表 = 1 个文件（*_entries.dart）
-│   │   ├── *mapper.dart  # row ↔ entity 翻译
-│   │   └── app_database.dart
-│   ├── repositories/     # *RepositoryImpl（实现 domain 接口）
-│   ├── services/         # 通知/邮件/SMS/录音/导出
-│   └── (无 utils/ - 搬到 shared/ 了)
-├── domain/                # 领域层（0 Flutter 0 Drift 0 data 0 presentation）
-│   ├── entities/         # 业务实体（*Entity 后缀）
-│   ├── logic/            # 业务规则（量表/streak/care engine/报告）
+├── core/                  # 基础设施 umbrella
+│   ├── data/              # data 层（DB / Repositories / Services / Utils）
+│   │   ├── database/     # Drift 表 / 数据库 / 迁移
+│   │   │   ├── tables/   # 1 个表 = 1 子目录（check_in/, contact/, ...）
+│   │   │   ├── mappers/  # row ↔ entity 翻译（1 文件 1 mapper）
+│   │   │   ├── connection/  # conditional import (web / native)
+│   │   │   └── app_database.dart
+│   │   ├── repositories/  # *RepositoryImpl（按 feature 平铺, 计划按 feature 子目录）
+│   │   ├── services/     # 通知/邮件/SMS/录音/导出/加密
+│   │   └── utils/         # phone_validator 等
+│   ├── shared/            # 跨层共享（domain + data + presentation 都可用）
+│   │   ├── formatters.dart
+│   │   ├── json_codec.dart
+│   │   ├── domain_value.dart  # DomainValue<T>（替代 drift Value<T>）
+│   │   └── mood_visual.dart   # 情绪分数 → emoji/label
+│   ├── theme/             # AppTokens + M3 主题 + dark mode
+│   │   ├── app_tokens.dart   # 颜色/字体/间距/圆角/动画/阴影/breakpoint
+│   │   ├── app_theme.dart    # light + dark ThemeData
+│   │   ├── theme_provider.dart   # Riverpod ThemeMode
+│   │   └── theme_toggle_button.dart
+│   ├── routing/           # go_router 配置
+│   │   └── app_router.dart  # 所有路由 + fade/slide-right/slide-up 3 类 transition
+│   └── l10n/              # domain 层 strings（通知/邮件 fallback）
+│       └── strings.dart
+├── l10n/                  # presentation 层 flutter_localizations
+│   ├── app_zh.arb         # 中文文案源
+│   ├── app_en.arb         # 英文文案源
+│   ├── app_localizations.dart
+│   ├── app_localizations_zh.dart
+│   └── app_localizations_en.dart
+├── domain/                # 0 Flutter 0 Drift 业务层
+│   ├── entities/         # *Entity 后缀
+│   ├── logic/            # 业务规则（量表/streak/care engine/报告/email 模板）
 │   ├── repositories/     # 抽象接口（无实现）
 │   └── usecases/         # 用例（业务编排）
-├── shared/                # 共享层：domain + data + presentation 共用
-│   ├── formatters.dart    # 格式化工具
-│   ├── json_codec.dart    # JSON 编解码
-│   ├── domain_value.dart  # DomainValue<T>（替代 drift Value<T>）
-│   └── mood_visual.dart   # 情绪分数 → emoji/label/ARGB int
 └── presentation/          # UI 层
-    ├── providers/         # Riverpod providers
-    ├── pages/             # 1 个页面 = 1 个目录
-    │   ├── home/
-    │   ├── setup/
-    │   ├── settings/
-    │   ├── trend/
-    │   ├── assessment/
-    │   ├── medication/
-    │   └── vent/         # v0.15 树洞
-    └── widgets/           # 通用组件（*_button.dart / page_scaffold.dart 等）
+    ├── providers/         # Riverpod providers（按职责拆 3 文件）
+    │   ├── core_providers.dart   # DB + 基础服务 + 7 个 repo
+    │   ├── service_providers.dart  # reminder / safety / assessment / data export
+    │   └── vent_providers.dart   # vent audio + entries
+    ├── pages/             # 1 个页面 = 1 个目录（按 feature 拆 8 个）
+    │   ├── home/         # 主页（打卡 / 庆祝 / mood / vent 入口）
+    │   ├── setup/        # 首次设置（4 步：consent / welcome / medication / done）
+    │   ├── settings/     # 设置（含 settings/widgets/ 子组件 + reminders_hub）
+    │   ├── trend/        # 趋势（list + calendar 视图）
+    │   ├── assessment/   # 心理评估（答题 + 历史 + 提醒 section）
+    │   ├── check_in/     # 打卡按钮
+    │   ├── contact/      # 紧急联系人列表
+    │   ├── medication/   # 用药（calendar / refill / today / report / dialogs）
+    │   ├── mood/         # 情绪（dialog + quick button）
+    │   └── vent/         # 树洞（list / compose / detail）
+    └── widgets/           # 通用组件
+        ├── page_scaffold.dart
+        ├── app_snack_bar.dart
+        ├── loading_skeleton.dart  # 统一 loading（fullScreen / card / Spinner）
+        ├── secondary_button.dart
+        ├── press_feedback.dart    # v0.18: 按钮 :active scale 反馈
+        └── animations/    # 通用动效（FadeIn / SlideUp）
 ```
 
 **依赖方向**：`presentation → domain ← data`。`domain/` 下任何文件都不能 `import 'package:flutter/...'`。验证方式：`flutter analyze` + `flutter test`，以及 0 error。
