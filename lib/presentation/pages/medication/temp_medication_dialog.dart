@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -31,7 +32,7 @@ class TempMedicationDialog extends StatefulWidget {
       ),
       loading: () => showDialog<void>(
         context: context,
-        builder: (_) => const Center(child: CircularProgressIndicator()),
+        builder: (_) => LoadingSkeleton.fullScreen(),
       ),
       error: (e, _) => showDialog<void>(
         context: context,

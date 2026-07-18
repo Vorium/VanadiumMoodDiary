@@ -5,6 +5,7 @@ import 'package:chroniccare/domain/entities/report_history_entity.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_report_dialog.dart';
@@ -49,7 +50,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
             // 列表
             Expanded(
               child: asyncHistories.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => LoadingSkeleton.fullScreen(),
                 error: (e, _) => Center(child: Text('加载失败：$e')),
                 data: (histories) {
                   if (histories.isEmpty) {

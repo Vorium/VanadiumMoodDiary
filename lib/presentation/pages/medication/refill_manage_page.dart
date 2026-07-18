@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
@@ -66,7 +67,7 @@ class RefillManagePage extends ConsumerWidget {
       title: '续方管理',
       child: medsAsync.when(
         data: (meds) => _buildBody(context, ref, meds),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(child: Text('加载失败: $e')),
       ),
     );

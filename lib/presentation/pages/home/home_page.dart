@@ -11,6 +11,7 @@ import 'package:chroniccare/domain/logic/care_engine.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/core/theme/theme_toggle_button.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -281,7 +282,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     : () => _onCheckIn(context, streakSnapshot.streak),
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => LoadingSkeleton.fullScreen(),
             error: (_, __) => CheckInButton(
               isChecked: false,
               streakDays: 0,

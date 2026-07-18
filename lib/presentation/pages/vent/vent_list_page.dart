@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/vent_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -41,7 +42,7 @@ class VentListPage extends ConsumerWidget {
           if (entries.isEmpty) return const _EmptyState();
           return _EntryList(entries: entries);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(child: Text('加载失败: $e')),
       ),
     );

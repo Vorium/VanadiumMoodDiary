@@ -11,6 +11,7 @@ import 'package:chroniccare/core/data/utils/phone_validator.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -1017,7 +1018,7 @@ class _LegalDocumentDialog extends StatelessWidget {
           future: _loadAsset('assets/legal/$name.md'),
           builder: (context, snap) {
             if (snap.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
+              return LoadingSkeleton.fullScreen();
             }
             if (snap.hasError || !snap.hasData) {
               return const Center(

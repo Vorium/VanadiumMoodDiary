@@ -9,6 +9,7 @@ import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -43,7 +44,7 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingSm),
           contactsAsync.when(
             data: (contacts) => ContactsListWidget(contacts: contacts),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => LoadingSkeleton.fullScreen(),
             error: (e, _) => Text('加载失败: $e'),
           ),
 
@@ -54,7 +55,7 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingSm),
           medsAsync.when(
             data: (meds) => MedicationsListWidget(meds: meds),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => LoadingSkeleton.fullScreen(),
             error: (e, _) => Text('加载失败: $e'),
           ),
 

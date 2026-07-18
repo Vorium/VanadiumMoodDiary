@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/logic/email_template.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -99,7 +100,7 @@ class EmailPreviewPage extends ConsumerWidget {
                     );
                   },
                   loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                      LoadingSkeleton.fullScreen(),
                   error: (e, _) => Text('加载失败: $e'),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
@@ -118,7 +119,7 @@ class EmailPreviewPage extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(child: Text('加载失败: $e')),
       ),
     );

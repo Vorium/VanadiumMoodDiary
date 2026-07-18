@@ -11,6 +11,7 @@ import 'package:chroniccare/core/data/services/assessment_reminder_service.dart'
 import 'package:chroniccare/core/data/services/database_migration.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
 /// 慢病管家 · App 入口
 ///
@@ -203,7 +204,7 @@ class _MigrationPromptApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       navigatorKey: controller.navigatorKey,
       home: const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: LoadingSkeleton.fullScreen(),
       ),
     );
   }

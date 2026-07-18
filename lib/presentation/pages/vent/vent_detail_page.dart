@@ -18,6 +18,7 @@ import 'package:chroniccare/domain/entities/vent_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
@@ -304,7 +305,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(child: Text('加载失败: $e')),
       ),
     );

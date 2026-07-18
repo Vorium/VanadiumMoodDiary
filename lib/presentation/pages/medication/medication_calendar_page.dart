@@ -21,6 +21,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
@@ -85,10 +86,10 @@ class MedicationCalendarPage extends ConsumerWidget {
           medsAsync.when(
             data: (meds) => checkInsAsync.when(
               data: (checkIns) => _buildGrid(meds, checkIns, days),
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => LoadingSkeleton.fullScreen(),
               error: (e, _) => Center(child: Text('加载打卡失败: $e')),
             ),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => LoadingSkeleton.fullScreen(),
             error: (e, _) => Center(child: Text('加载药物失败: $e')),
           ),
 

@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -38,7 +39,7 @@ class AssessmentHistoryPage extends ConsumerWidget {
           }
           return _buildBody(context, records);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(child: Text('加载失败: $e')),
       ),
     );

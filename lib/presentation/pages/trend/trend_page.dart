@@ -17,6 +17,7 @@ import 'package:chroniccare/domain/logic/day_detail.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -57,7 +58,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           );
           return _buildBody(context, checkIns, moodEntries);
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => LoadingSkeleton.fullScreen(),
         error: (Object e, _) => Center(child: Text('加载失败: $e')),
       ),
     );
@@ -145,7 +146,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
               },
               loading: () => const SizedBox(
                 height: 200,
-                child: Center(child: CircularProgressIndicator()),
+                child: LoadingSkeleton.fullScreen(),
               ),
               error: (e, _) => Text('加载失败: $e'),
             );
@@ -168,7 +169,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
               data: _MoodHistoryChart.new,
               loading: () => const SizedBox(
                 height: 200,
-                child: Center(child: CircularProgressIndicator()),
+                child: LoadingSkeleton.fullScreen(),
               ),
               error: (e, _) => Text('加载失败: $e'),
             );
