@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:developer' as developer;
+import 'package:chroniccare/core/shared/pii_safe_log.dart';
 
 /// SMS 服务抽象层
 ///
@@ -43,14 +43,14 @@ class MockSmsProvider implements SmsProvider {
     required String body,
     String? templateId,
   }) async {
-    developer.log('=' * 60, name: 'MockSmsProvider');
-    developer.log('📱 [MOCK SMS — NOT SENT]', name: 'MockSmsProvider');
-    developer.log('  To: $to', name: 'MockSmsProvider');
-    developer.log('  Body:', name: 'MockSmsProvider');
+    piiSafeLog('MockSmsProvider', '=' * 60);
+    piiSafeLog('MockSmsProvider', '📱 [MOCK SMS — NOT SENT]');
+    piiSafeLog('MockSmsProvider', '  To: \${maskPhone(to)}');
+    piiSafeLog('MockSmsProvider', '  Body:');
     for (final line in body.split('\n')) {
-      developer.log('    $line', name: 'MockSmsProvider');
+      piiSafeLog('MockSmsProvider', '    $line');
     }
-    developer.log('=' * 60, name: 'MockSmsProvider');
+    piiSafeLog('MockSmsProvider', '=' * 60);
     // 仍 log 详细，方便 dev 看，但实际没发出去
     throw UnimplementedError(
       'MockSmsProvider.send() — no real SMS sent. '
@@ -146,17 +146,13 @@ class SmsService {
     try {
       final ok = await _provider.send(to: to, body: body);
       if (ok) {
-        developer.log(
-          '✅ SMS sent to $to via ${_provider.name}',
-          name: 'SmsService',
+        piiSafeLog('SmsService', '✅ SMS sent to $to via ${_provider.name}',
         );
         return SmsResult.ok();
       }
       return SmsResult.fail('${_provider.name} returned false');
     } catch (e, st) {
-      developer.log(
-        '❌ SMS failed to $to: $e',
-        name: 'SmsService',
+      piiSafeLog('SmsService', '❌ SMS failed to $to: $e',
         error: e,
         stackTrace: st,
       );

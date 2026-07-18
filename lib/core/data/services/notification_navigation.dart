@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'package:chroniccare/core/shared/pii_safe_log.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -64,9 +64,7 @@ class NotificationNavigation {
   }) {
     final router = _router;
     if (router == null) {
-      developer.log(
-        '⚠️ NotificationNavigation._goInternal: router 未绑定',
-        name: 'NotificationNavigation',
+      piiSafeLog('NotificationNavigation', '⚠️ NotificationNavigation._goInternal: router 未绑定',
       );
       return;
     }
@@ -74,14 +72,10 @@ class NotificationNavigation {
     if (path == null) return;
     try {
       router.go(path);
-      developer.log(
-        '✅ Deep link → $path (fromLaunch=$fromLaunch)',
-        name: 'NotificationNavigation',
+      piiSafeLog('NotificationNavigation', '✅ Deep link → $path (fromLaunch=$fromLaunch)',
       );
     } catch (e) {
-      developer.log(
-        '❌ Deep link go 失败: $e',
-        name: 'NotificationNavigation',
+      piiSafeLog('NotificationNavigation', '❌ Deep link go 失败: $e',
         error: e,
       );
     }

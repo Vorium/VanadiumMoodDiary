@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'package:chroniccare/core/shared/pii_safe_log.dart';
 
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
@@ -68,7 +68,7 @@ class ReminderService implements ReminderChecker {
   Future<ReminderCheckResult> checkAndSend() async {
     final profile = await _userProfileRepo.get();
     if (profile == null) {
-      developer.log('⚠️ 用户档案不存在，跳过', name: 'ReminderService');
+      piiSafeLog('ReminderService', '⚠️ 用户档案不存在，跳过');
       return ReminderCheckResult.empty();
     }
 
@@ -103,24 +103,18 @@ class ReminderService implements ReminderChecker {
     final hoursSince =
         lastCheckIn == null ? 0 : checkNow.difference(lastCheckIn).inHours;
 
-    developer.log('=' * 60, name: 'ReminderService');
-    developer.log('⚠️ 失联检测', name: 'ReminderService');
-    developer.log('  用户: ${profile.userName}', name: 'ReminderService');
-    developer.log(
-      '  距上次打卡: $hoursSince 小时 ($daysSince 天)',
-      name: 'ReminderService',
+    piiSafeLog('ReminderService', '=' * 60);
+    piiSafeLog('ReminderService', '⚠️ 失联检测');
+    piiSafeLog('ReminderService', '  用户: \${maskName(profile.userName)}');
+    piiSafeLog('ReminderService', '  距上次打卡: $hoursSince 小时 ($daysSince 天)',
     );
-    developer.log('  级别: ${level.name}', name: 'ReminderService');
-    developer.log(
-      '  联系人: ${contacts.length} 个',
-      name: 'ReminderService',
+    piiSafeLog('ReminderService', '  级别: ${level.name}');
+    piiSafeLog('ReminderService', '  联系人: ${contacts.length} 个',
     );
 
     // soft 级别（24-36h）：只 UI 提示，不发紧急通知
     if (level == ReminderLevel.soft) {
-      developer.log(
-        '  → soft 级别：仅用户内部提示，不打扰紧急联系人',
-        name: 'ReminderService',
+      piiSafeLog('ReminderService', '  → soft 级别：仅用户内部提示，不打扰紧急联系人',
       );
       return ReminderCheckResult(
         level: level,
@@ -132,7 +126,7 @@ class ReminderService implements ReminderChecker {
     final activeContacts =
         logic.ReminderScheduler.selectAllActiveContacts(contacts);
     if (activeContacts.isEmpty) {
-      developer.log('  ⚠️ 没有启用的紧急联系人', name: 'ReminderService');
+      piiSafeLog('ReminderService', '  ⚠️ 没有启用的紧急联系人');
       return ReminderCheckResult(level: level, smsResults: const []);
     }
 
@@ -157,13 +151,11 @@ class ReminderService implements ReminderChecker {
           error: r.error,
         ),
       );
-      developer.log(
-        '  → ${c.name} (${c.phone}): ${r.success ? "✅" : "❌ ${r.error}"}',
-        name: 'ReminderService',
+      piiSafeLog('ReminderService', '  → ${c.name} (${c.phone}): ${r.success ? "✅" : "❌ ${r.error}"}',
       );
     }
 
-    developer.log('=' * 60, name: 'ReminderService');
+    piiSafeLog('ReminderService', '=' * 60);
     return ReminderCheckResult(level: level, smsResults: results);
   }
 

@@ -11,7 +11,7 @@
 // - 同一 (medId, minutes) 二次触发 = 覆盖原 snooze，不会叠加
 // - 打卡后 cancel 该 med 的所有 snooze
 
-import 'dart:developer' as developer;
+import 'package:chroniccare/core/shared/pii_safe_log.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -56,9 +56,7 @@ class SnoozeManager {
     String? body,
   }) async {
     if (minutes <= 0 || minutes > minutesPerMedication) {
-      developer.log(
-        '⚠️ snoozeOnce: minutes=$minutes 越界（1..$minutesPerMedication）',
-        name: 'SnoozeManager',
+      piiSafeLog('SnoozeManager', '⚠️ snoozeOnce: minutes=$minutes 越界（1..$minutesPerMedication）',
       );
       return;
     }
@@ -98,12 +96,12 @@ class SnoozeManager {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
-      developer.log(
+      piiSafeLog(
+        'SnoozeManager',
         '✅ snooze ${minutes}min 后触发（med=$medicationId）',
-        name: 'SnoozeManager',
       );
     } catch (e) {
-      developer.log('❌ snooze 调度失败: $e', name: 'SnoozeManager');
+      piiSafeLog('SnoozeManager', '❌ snooze 调度失败: $e');
     }
   }
 

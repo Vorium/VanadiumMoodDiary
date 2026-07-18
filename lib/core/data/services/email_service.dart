@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'package:chroniccare/core/shared/pii_safe_log.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/email_template.dart';
@@ -46,19 +46,19 @@ class EmailService {
     );
 
     if (_useMock || _apiKey == null) {
-      developer.log('=' * 60, name: 'EmailService');
-      developer.log('📱 [MOCK] 发送失联通知', name: 'EmailService');
-      developer.log('  To (phone): $to', name: 'EmailService');
-      developer.log('  Subject: $subject', name: 'EmailService');
-      developer.log('  ---', name: 'EmailService');
-      developer.log(body, name: 'EmailService');
-      developer.log('=' * 60, name: 'EmailService');
+      piiSafeLog('EmailService', '=' * 60);
+      piiSafeLog('EmailService', '📱 [MOCK] 发送失联通知');
+      piiSafeLog('EmailService', '  To (phone): \${maskPhone(to)}');
+      piiSafeLog('EmailService', '  Subject: $subject');
+      piiSafeLog('EmailService', '  ---');
+      piiSafeLog('EmailService', body);
+      piiSafeLog('EmailService', '=' * 60);
       return true;
     }
 
     // 真实 SMS provider 占位——v1.0+ 替换
     // 注：v1.0 接入真实 SDK 时，try/catch 应包住实际网络调用（参考 AliyunSmsProvider）
-    developer.log('真实 SMS 发送未实现（v1.0+ TODO）', name: 'EmailService');
+    piiSafeLog('EmailService', '真实 SMS 发送未实现（v1.0+ TODO）');
     return false;
   }
 }

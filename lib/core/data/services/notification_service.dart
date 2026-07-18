@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'package:chroniccare/core/shared/pii_safe_log.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -79,9 +79,7 @@ class NotificationService implements NotificationSender {
     final launchDetails = await _plugin.getNotificationAppLaunchDetails();
     if (launchDetails?.didNotificationLaunchApp ?? false) {
       final payload = launchDetails?.notificationResponse?.payload;
-      developer.log(
-        '🚀 App 由通知拉起, payload=$payload',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '🚀 App 由通知拉起, payload=$payload',
       );
       NotificationNavigation.setLaunchPayload(payload);
     }
@@ -92,9 +90,7 @@ class NotificationService implements NotificationSender {
       final localTzName = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(localTzName));
     } catch (e) {
-      developer.log(
-        '⚠️ 时区初始化失败（web 端不支持）: $e',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '⚠️ 时区初始化失败（web 端不支持）: $e',
       );
     }
 
@@ -113,9 +109,7 @@ class NotificationService implements NotificationSender {
 
   /// flutter_local_notifications 回调
   static void _onResponse(NotificationResponse response) {
-    developer.log(
-      '👆 通知被点击, payload=${response.payload}',
-      name: 'NotificationService',
+    piiSafeLog('NotificationService', '👆 通知被点击, payload=${response.payload}',
     );
     _defaultOnTap(response.payload);
   }
@@ -151,9 +145,9 @@ class NotificationService implements NotificationSender {
         details: details,
         payload: payload,
       );
-      developer.log('✅ 设置每日 $hour:$minute 提醒', name: 'NotificationService');
+      piiSafeLog('NotificationService', '✅ 设置每日 $hour:$minute 提醒');
     } catch (e) {
-      developer.log('❌ 设置提醒失败: $e', name: 'NotificationService');
+      piiSafeLog('NotificationService', '❌ 设置提醒失败: $e');
     }
   }
 
@@ -175,9 +169,7 @@ class NotificationService implements NotificationSender {
       return list.length;
     } catch (e) {
       // web 平台 / 未实现 plugin: pendingNotificationRequests 抛 PlatformException
-      developer.log(
-        '⚠️ pendingCount 读取失败（可能 web 端）: $e',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '⚠️ pendingCount 读取失败（可能 web 端）: $e',
       );
       return -1;
     }
@@ -237,16 +229,12 @@ class NotificationService implements NotificationSender {
           );
           scheduled++;
         } catch (e) {
-          developer.log(
-            '❌ 推送调度失败 med=${med.name} t=$t: $e',
-            name: 'NotificationService',
+          piiSafeLog('NotificationService', '❌ 推送调度失败 med=${med.name} t=$t: $e',
           );
         }
       }
     }
-    developer.log(
-      '✅ 重新调度 $scheduled 个 medication 推送',
-      name: 'NotificationService',
+    piiSafeLog('NotificationService', '✅ 重新调度 $scheduled 个 medication 推送',
     );
   }
 
@@ -285,12 +273,10 @@ class NotificationService implements NotificationSender {
         details: details,
         payload: payload,
       );
-      developer.log(
-        '✅ 设置漏 1 天主动安慰 push（每天 $hour:$minute）',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '✅ 设置漏 1 天主动安慰 push（每天 $hour:$minute）',
       );
     } catch (e) {
-      developer.log('❌ 软提醒调度失败: $e', name: 'NotificationService');
+      piiSafeLog('NotificationService', '❌ 软提醒调度失败: $e');
     }
   }
 
@@ -437,9 +423,7 @@ class NotificationService implements NotificationSender {
       reminderDays: medication.refillReminderDays,
     );
     if (fireAt == null) {
-      developer.log(
-        '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
       );
       return;
     }
@@ -449,10 +433,10 @@ class NotificationService implements NotificationSender {
     final now = DateTime.now();
     // 已经过期的提醒不再调度（避免给历史数据"补响"）
     if (fireAt.isBefore(now)) {
-      developer.log(
+      piiSafeLog(
+        'NotificationService',
         '⏭️ scheduleRefillReminder: med=${medication.name} '
         'fireAt=$fireAt 已过, 跳过',
-        name: 'NotificationService',
       );
       // 但仍要取消旧的，避免过期通知还挂着
       await cancelRefillReminder(medication.id);
@@ -490,13 +474,13 @@ class NotificationService implements NotificationSender {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
-      developer.log(
+      piiSafeLog(
+        'NotificationService',
         '✅ 续方提醒: med=${medication.name} '
         'fireAt=$fireAt daysLeft=$daysLeft',
-        name: 'NotificationService',
       );
     } catch (e) {
-      developer.log('❌ 续方提醒调度失败: $e', name: 'NotificationService', error: e);
+      piiSafeLog('NotificationService', '❌ 续方提醒调度失败: $e', error: e);
     }
   }
 
@@ -530,9 +514,7 @@ class NotificationService implements NotificationSender {
       await scheduleRefillReminder(med);
       scheduled++;
     }
-    developer.log(
-      '✅ 重排 $scheduled 个 medication 的续方提醒',
-      name: 'NotificationService',
+    piiSafeLog('NotificationService', '✅ 重排 $scheduled 个 medication 的续方提醒',
     );
   }
 
@@ -557,9 +539,7 @@ class NotificationService implements NotificationSender {
     await _plugin.cancel(_assessmentReminderId);
 
     if (fireAt.isBefore(DateTime.now())) {
-      developer.log(
-        '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
       );
       return;
     }
@@ -589,12 +569,10 @@ class NotificationService implements NotificationSender {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
-      developer.log(
-        '✅ 评估提醒: scale=$scaleId fireAt=$fireAt days=$days',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '✅ 评估提醒: scale=$scaleId fireAt=$fireAt days=$days',
       );
     } catch (e) {
-      developer.log('❌ 评估提醒调度失败: $e', name: 'NotificationService', error: e);
+      piiSafeLog('NotificationService', '❌ 评估提醒调度失败: $e', error: e);
     }
   }
 
@@ -695,11 +673,9 @@ class NotificationService implements NotificationSender {
         '',
         details,
       );
-      developer.log('✅ 角标已更新 = $count', name: 'NotificationService');
+      piiSafeLog('NotificationService', '✅ 角标已更新 = $count');
     } catch (e) {
-      developer.log(
-        '⚠️ updateBadgeCount 失败（不影响功能）: $e',
-        name: 'NotificationService',
+      piiSafeLog('NotificationService', '⚠️ updateBadgeCount 失败（不影响功能）: $e',
       );
     }
   }
