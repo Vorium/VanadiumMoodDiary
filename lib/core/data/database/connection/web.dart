@@ -1,39 +1,31 @@
-// v0.17 round 14 (P2-9): web platform DB connection.
+// v0.18 (P2-P0-7) Web 平台 DB connection.
 //
-// IMPORTANT: Web 端不支持 SQLCipher（WASM 没法调 SQLite Encryption
-// Extension）。本文件是 fallback,实际从未被调用 — v0.7 起项目主平台是
-// Android/iOS,Web build 只在 CI smoke test 跑过。
+// 之前: web 端 IndexedDB 落明文 PII(姓名/电话/用药/情绪/树洞)
+//      违反项目"零云端 + 本地加密"核心承诺。
 //
-// 如果未来 contributor 真的要在 Web 跑，需要重新评估:
-//   - 数据库无加密: 跟项目的 "零云端 + 本地加密" 隐私边界冲突
-//   - drift_worker.js / sqlite3.wasm asset 打包 (v0.7 文档提到 404 问题)
-//   - SQLCipher 替代: IndexedDB 加密 API (Web Crypto + PBKDF2),但会引
-//     入 ~50KB crypto polyfill
+// 现在: 启动时抛 UnsupportedError,production build 阻断 web 端使用。
+//  精神心理患者 PII 在浏览器沙箱中"裸奔"风险,选 1 (阻断) 比选 2/3
+//  (允许但加密) 更安全,代价是 web 端暂不可用。
 //
-// v0.17 起只在 dev / CI 跑 flutter test 时被 conditional import 加载,
-// 生产 build (flutter build apk / ipa) 不会调用本文件。
-//
-// 之前 v0.9 留下的 TODO (Web Crypto 加密) 仍未做，优先级低，见 round 8 决策。
+// 未来 (v1.0+): 接 Web Crypto API + PBKDF2 + 用户首次启动设密码,
+//  失败 3 次清数据,选 2 折中方案 (用户接受 + 加密)。
+//  见 docs/P2_SYSTEM_REVIEW.md P0-7。
 
 import 'package:drift/drift.dart';
-import 'package:drift/wasm.dart';
 
-/// Web 端不支持 sqlcipher（WASM 没法调 SQLite Encryption Extension）
+/// v0.18 (P2-P0-7) Web 端阻断
 ///
-/// 策略：v0.9 之后 Web 端**不加密**本地数据，但提示用户：
-///   "Web 端数据未加密（浏览器沙箱限制），请用 APK 版本获得完整加密保护"
-///
-/// TODO v1.0：考虑用 IndexedDB 加密 API（Web Crypto API + PBKDF2）
-///  目前不做，避免引入 crypto-js 这类大依赖
+/// Web 端暂不支持(精神心理 PII 不能落明文 IndexedDB)。
+/// 用户看到此异常应该被 main.dart runZonedGuarded 捕获并显示友好提示。
+/// Production build 用户根本不会走到这里(Android/iOS 才用 sqlcipher)。
 QueryExecutor openConnection() {
   return DatabaseConnection.delayed(
-    Future(() async {
-      final db = await WasmDatabase.open(
-        databaseName: 'chroniccare',
-        sqlite3Uri: Uri.parse('sqlite3.wasm'),
-        driftWorkerUri: Uri.parse('drift_worker.dart.js'),
-      );
-      return db.resolvedExecutor;
-    }),
+    Future.error(
+      UnsupportedError(
+        'Web 平台暂不支持,精神心理患者 PII 不能落明文 IndexedDB。\n'
+        '请用 Android / iOS 客户端获得完整加密保护。\n'
+        '详细原因见 docs/P2_SYSTEM_REVIEW.md P0-7。',
+      ),
+    ),
   );
 }

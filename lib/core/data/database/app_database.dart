@@ -43,8 +43,10 @@ class AppDatabase extends _$AppDatabase {
   // - mood_entries 加 energy / sleep / anxiety 3 个 nullable column
   // - 老数据自动有 null 3 字段(单 score 模式)
   // - 新数据 4 维全填
+  // v0.18 round 18 (P2-P0-8): schemaVersion 7 → 8
+  // - 4 个查询索引(check_ins / mood_entries / vent_entries / medications)
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -86,6 +88,25 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(moodEntries, moodEntries.energy);
             await m.addColumn(moodEntries, moodEntries.sleep);
             await m.addColumn(moodEntries, moodEntries.anxiety);
+          }
+          // v7 → v8: 加 4 个查询索引,大表(1 年+ 用户)避免全表扫
+          // - check_ins (timestamp, type) — 覆盖 streak / 评估 / watchAll
+          // - mood_entries (timestamp) — 按天/月查情绪
+          // - vent_entries (timestamp DESC) — 树洞 watchAll 倒序
+          // - medications (isActive, startDate) — watchAll 过滤 + 续方排序
+          if (from <= 7) {
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_checkin_ts_type ON check_ins(timestamp, type)',
+            );
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_mood_ts ON mood_entries(timestamp)',
+            );
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_vent_ts ON vent_entries(timestamp DESC)',
+            );
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_med_active_start ON medications(is_active, start_date)',
+            );
           }
         },
         beforeOpen: (details) async {
