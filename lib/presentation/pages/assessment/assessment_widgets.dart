@@ -1,6 +1,6 @@
 // assessment_widgets.dart — 心理评估页拆分出的独立组件
 //
-// 从 assessment_page.dart 拆分，v0.19 (P1-15)
+// 从 assessment_page.dart 拆分，v0.19 (P1-15 + Q3)
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
@@ -223,5 +223,191 @@ class QuestionCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// =============================================================
+// v0.13 (Round 8) 评估历史对比 widget
+// =============================================================
+
+/// "对比上次" 卡片
+///
+/// - 首次评估：显示提示
+/// - 有上次：显示 Δ 分数 + 严重度变化方向 + 距上次天数
+class ComparisonCard extends StatelessWidget {
+  final AssessmentComparison comparison;
+  const ComparisonCard({super.key, required this.comparison});
+
+  @override
+  Widget build(BuildContext context) {
+    final cmp = comparison;
+    final isFirst = cmp.trend == ComparisonTrend.firstAssessment;
+
+    Color trendColor;
+    IconData trendIcon;
+    switch (cmp.trend) {
+      case ComparisonTrend.improved:
+        trendColor = AppTokens.primary;
+        trendIcon = Icons.arrow_downward;
+        break;
+      case ComparisonTrend.worsened:
+        trendColor = AppTokens.error;
+        trendIcon = Icons.arrow_upward;
+        break;
+      case ComparisonTrend.unchanged:
+        trendColor = AppTokens.textSecondary;
+        trendIcon = Icons.horizontal_rule;
+        break;
+      case ComparisonTrend.firstAssessment:
+        trendColor = AppTokens.primary;
+        trendIcon = Icons.fiber_new;
+        break;
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(
+                  Icons.compare_arrows,
+                  color: AppTokens.primary,
+                  size: 20,
+                ),
+                SizedBox(width: AppTokens.spacingXs),
+                Text(
+                  '对比上次',
+                  style: TextStyle(
+                    fontSize: AppTokens.fontSizeLabel,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTokens.spacingSm),
+            if (isFirst)
+              Row(
+                children: [
+                  Icon(trendIcon, color: trendColor, size: 28),
+                  const SizedBox(width: AppTokens.spacingXs),
+                  const Expanded(
+                    child: Text(
+                      '这是你的第一次评估。下次评估后会显示和这次的对比。',
+                      style: TextStyle(
+                        fontSize: AppTokens.fontSizeBody,
+                        color: AppTokens.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            else ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '上次',
+                          style: TextStyle(
+                            fontSize: AppTokens.fontSizeCaption,
+                            color: AppTokens.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${cmp.previous!.total}',
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                            color: AppTokens.textSecondary,
+                          ),
+                        ),
+                        Text(
+                          _dateLabel(cmp.previous!.timestamp),
+                          style: const TextStyle(
+                            fontSize: AppTokens.fontSizeCaption,
+                            color: AppTokens.textHint,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: trendColor.withValues(alpha: 0.6),
+                  ),
+                  const SizedBox(width: AppTokens.spacingSm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '本次',
+                          style: TextStyle(
+                            fontSize: AppTokens.fontSizeCaption,
+                            color: AppTokens.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${cmp.current.total}',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
+                            color: trendColor,
+                          ),
+                        ),
+                        Text(
+                          _dateLabel(cmp.current.timestamp),
+                          style: const TextStyle(
+                            fontSize: AppTokens.fontSizeCaption,
+                            color: AppTokens.textHint,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppTokens.spacingSm),
+              Row(
+                children: [
+                  Icon(trendIcon, color: trendColor, size: 18),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${cmp.trendSymbol} ${cmp.trendLabel} · ${cmp.deltaLabel}',
+                    style: TextStyle(
+                      fontSize: AppTokens.fontSizeBody,
+                      fontWeight: FontWeight.w500,
+                      color: trendColor,
+                    ),
+                  ),
+                ],
+              ),
+              if (cmp.daysSincePrevious != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  '距上次 ${cmp.daysSincePrevious} 天',
+                  style: const TextStyle(
+                    fontSize: AppTokens.fontSizeCaption,
+                    color: AppTokens.textHint,
+                  ),
+                ),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  static String _dateLabel(DateTime t) {
+    return '${t.year}-${t.month.toString().padLeft(2, '0')}-${t.day.toString().padLeft(2, '0')}';
   }
 }
