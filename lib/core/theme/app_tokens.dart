@@ -71,6 +71,9 @@ class AppTokens {
   static const double radiusCard = 16.0;
   static const double radiusInput = 12.0;
   static const double radiusChip = 8.0;
+  // P1-4 fix: 极小圆角(热力图 cell / 日历 cell),2-4px
+  static const double radiusCell = 2.0;
+  static const double radiusCellLg = 4.0;
 
   // ============= 尺寸 =============
   static const double buttonHeight = 88.0;
