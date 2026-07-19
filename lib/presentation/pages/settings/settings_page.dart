@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
@@ -35,7 +38,7 @@ class SettingsPage extends ConsumerWidget {
     final medsAsync = ref.watch(medicationsProvider);
 
     return PageScaffold(
-      title: '设置',
+      title: AppLocalizations.of(context).settingsTitle,
       child: ListView(
         children: [
           const SizedBox(height: AppTokens.spacingMd),
@@ -61,7 +64,7 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          const _SectionHeader(title: '数据管理'),
+          _SectionHeader(title: AppLocalizations.of(context).settingsDataManagement),
           const SizedBox(height: AppTokens.spacingSm),
           Card(
             child: Column(
@@ -71,8 +74,8 @@ class SettingsPage extends ConsumerWidget {
                     Icons.upload_outlined,
                     color: AppTokens.primary,
                   ),
-                  title: const Text('导出数据'),
-                  subtitle: const Text('生成 JSON，复制到安全地方'),
+                  title: Text(AppLocalizations.of(context).settingsExportData),
+                  subtitle: Text(AppLocalizations.of(context).settingsExportSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _exportData(context, ref),
                 ),
@@ -104,8 +107,8 @@ class SettingsPage extends ConsumerWidget {
                     Icons.download_outlined,
                     color: AppTokens.primary,
                   ),
-                  title: const Text('导入数据'),
-                  subtitle: const Text('从 JSON 恢复（覆盖现有数据）'),
+                  title: Text(AppLocalizations.of(context).settingsImportData),
+                  subtitle: Text(AppLocalizations.of(context).settingsImportSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showImportDialog(context, ref),
                 ),
@@ -116,7 +119,7 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingLg),
 
           // v0.14 (Round 12C) 提醒中心入口
-          const _SectionHeader(title: '提醒'),
+          _SectionHeader(title: AppLocalizations.of(context).settingsReminders),
           const SizedBox(height: AppTokens.spacingSm),
           Card(
             child: Column(
@@ -126,9 +129,9 @@ class SettingsPage extends ConsumerWidget {
                     Icons.notifications_active_outlined,
                     color: AppTokens.primary,
                   ),
-                  title: const Text('提醒中心'),
-                  subtitle: const Text(
-                    '管理所有提醒：每日打卡、用药时间、续方、心理评估、失联通知',
+                  title: Text(AppLocalizations.of(context).settingsReminderCenter),
+                  subtitle: Text(
+                    AppLocalizations.of(context).settingsReminderCenterSubtitle,
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/settings/reminders'),
@@ -139,8 +142,8 @@ class SettingsPage extends ConsumerWidget {
                     Icons.shopping_cart_outlined,
                     color: AppTokens.primary,
                   ),
-                  title: const Text('续方管理'),
-                  subtitle: const Text('集中查看所有药物的续方状态'),
+                  title: Text(AppLocalizations.of(context).settingsRefillManagement),
+                  subtitle: Text(AppLocalizations.of(context).settingsRefillManagementSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/settings/refills'),
                 ),
@@ -156,14 +159,14 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          const _SectionHeader(title: '心理评估'),
+          _SectionHeader(title: AppLocalizations.of(context).settingsAssessment),
           const SizedBox(height: AppTokens.spacingSm),
           // v0.14 (Round 13B) 评估历史入口
           Card(
             child: ListTile(
               leading: const Icon(Icons.history, color: AppTokens.primary),
-              title: const Text('评估历史'),
-              subtitle: const Text('查看所有 PHQ-9 / GAD-7 评估的折线图与对比'),
+              title: Text(AppLocalizations.of(context).settingsAssessmentHistory),
+              subtitle: Text(AppLocalizations.of(context).settingsAssessmentHistorySubtitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/assessment/history'),
             ),
@@ -215,7 +218,7 @@ class SettingsPage extends ConsumerWidget {
             child: ListTile(
               leading: const Icon(Icons.info_outline, color: AppTokens.primary),
               title: Text(AppLocalizations.of(context).settingsAbout),
-              subtitle: const Text('v0.1.0 · 我今天吃了药'),
+              subtitle: Text(AppLocalizations.of(context).settingsAboutVersion),
             ),
           ),
 
@@ -224,7 +227,7 @@ class SettingsPage extends ConsumerWidget {
               leading: const Icon(Icons.shield_outlined,
                   color: AppTokens.textSecondary,),
               title: Text(AppLocalizations.of(context).settingsDisclaimer),
-              subtitle: const Text('本应用不提供医疗建议，所有功能仅供参考。'),
+              subtitle: Text(AppLocalizations.of(context).settingsDisclaimerText),
             ),
           ),
         ],
@@ -241,12 +244,12 @@ class SettingsPage extends ConsumerWidget {
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('导出数据'),
+          title: Text(AppLocalizations.of(context).settingsExportDialogTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('把下面这串 JSON 保存到安全的地方：'),
+              Text(AppLocalizations.of(context).settingsExportInstruction),
               // P0-3 fix: 透明告知用户 vent 导出范围(文字导出，录音不导出)。
               const SizedBox(height: AppTokens.spacingXs),
               Container(
@@ -255,10 +258,9 @@ class SettingsPage extends ConsumerWidget {
                   color: AppTokens.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                 ),
-                child: const Text(
-                  '说明：树洞(私密倾诉)的文字会导出，但录音文件不导出——'
-                  '录音存在 App 本地，重装后路径失效，无法跨设备复用。',
-                  style: TextStyle(fontSize: 12, height: 1.4),
+                child: Text(
+                  AppLocalizations.of(context).settingsExportVentWarning,
+                  style: const TextStyle(fontSize: 12, height: 1.4),
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
@@ -290,7 +292,7 @@ class SettingsPage extends ConsumerWidget {
             ),
             ElevatedButton.icon(
               icon: const Icon(Icons.copy, size: 18),
-              label: const Text('复制'),
+              label: Text(AppLocalizations.of(context).settingsCopy),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: json));
                 if (ctx.mounted) {
@@ -307,7 +309,7 @@ class SettingsPage extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '导出', error: e),
+          AppSnackBar.error(context, action: AppLocalizations.of(context).settingsActionExport, error: e),
         );
       }
     }
@@ -337,11 +339,15 @@ class SettingsPage extends ConsumerWidget {
     required int days,
   }) async {
     try {
-      // 三路数据：userName + meds（含已停药）+ allCheckIns
-      // B3 fix: meds 用 allMedicationsProvider，让已停药的历史打卡也能进报告
-      final userProfile = await ref.read(userProfileProvider.future);
-      final meds = await ref.read(allMedicationsProvider.future);
-      final checkIns = await ref.read(allCheckInsProvider.future);
+      // P0 fix: 并行获取三路数据（互相独立）
+      final results = await Future.wait([
+        ref.read(userProfileProvider.future),
+        ref.read(allMedicationsProvider.future),
+        ref.read(allCheckInsProvider.future),
+      ]);
+      final userProfile = results[0] as UserProfileEntity?;
+      final meds = results[1] as List<MedicationEntity>;
+      final checkIns = results[2] as List<CheckInEntity>;
 
       if (!context.mounted) return;
       final userName = userProfile?.userName ?? '';
@@ -377,7 +383,7 @@ class SettingsPage extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '生成报告', error: e),
+          AppSnackBar.error(context, action: AppLocalizations.of(context).settingsActionGenerateReport, error: e),
         );
       }
     }
@@ -401,18 +407,18 @@ class SettingsPage extends ConsumerWidget {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AlertDialog(
-          title: const Text('导入数据'),
+          title: Text(AppLocalizations.of(context).settingsImportDialogTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('⚠️ 会覆盖现有所有数据，确定后再继续'),
+              Text(AppLocalizations.of(context).settingsImportWarning),
               const SizedBox(height: AppTokens.spacingSm),
               TextField(
                 controller: controller,
                 maxLines: 8,
-                decoration: const InputDecoration(
-                  hintText: '把导出的 JSON 粘贴到这里',
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context).settingsImportHint,
                   border: OutlineInputBorder(),
                 ),
                 style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
@@ -422,7 +428,7 @@ class SettingsPage extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: importing ? null : () => Navigator.pop(ctx),
-              child: const Text('取消'),
+              child: Text(AppLocalizations.of(context).commonCancel),
             ),
             ElevatedButton(
               onPressed: importing
@@ -438,21 +444,21 @@ class SettingsPage extends ConsumerWidget {
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('导入完成：${result.summary}'),
+                            content: Text(AppLocalizations.of(context).settingsImportSuccess(result.summary)),
                           ),
                         );
                       } else {
                         setLocal(() => importing = false);
                         ScaffoldMessenger.of(ctx).showSnackBar(
                           AppSnackBar.error(context,
-                              action: '导入', error: result.error,),
+                              action: AppLocalizations.of(context).settingsActionImport, error: result.error,),
                         );
                       }
                     },
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Text('导入并覆盖'),
+                  Text(AppLocalizations.of(context).settingsImportAndOverwrite),
                   if (importing)
                     const IgnorePointer(
                       child: SizedBox(

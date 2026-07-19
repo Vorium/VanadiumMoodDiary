@@ -10,7 +10,6 @@ import 'package:drift/drift.dart';
 /// - text 内容直接存 [contentText]
 /// - audio 存本地加密文件，[audioPath] 存相对路径
 /// - 同一行可同时有 text + audio（先录后补文字，或反过来）
-@DriftDatabase(tables: [VentEntries])
 @DataClassName('VentEntry')
 class VentEntries extends Table {
   IntColumn get id => integer().autoIncrement()();

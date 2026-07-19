@@ -56,6 +56,37 @@
   "settingsMedReportWindow30": "Last 30 days",
   "settingsReportHistory": "Report history",
   "settingsReportHistorySubtitle": "View past medication reports",
+  "settingsTitle": "Settings",
+  "settingsDataManagement": "Data Management",
+  "settingsExportData": "Export Data",
+  "settingsExportSubtitle": "Generate JSON and save it somewhere safe",
+  "settingsImportData": "Import Data",
+  "settingsImportSubtitle": "Restore from JSON (overwrites existing data)",
+  "settingsReminders": "Reminders",
+  "settingsReminderCenter": "Reminder Center",
+  "settingsReminderCenterSubtitle": "Manage all reminders: daily check-in, medication times, refills, assessment, safety watch",
+  "settingsRefillManagement": "Refill Management",
+  "settingsRefillManagementSubtitle": "View refill status for all medications",
+  "settingsAssessment": "Assessment",
+  "settingsAssessmentHistory": "Assessment History",
+  "settingsAssessmentHistorySubtitle": "View line charts and comparisons for all PHQ-9 / GAD-7 assessments",
+  "settingsAboutVersion": "v0.1.0 · I took my meds today",
+  "settingsDisclaimerText": "This app does not provide medical advice. All features are for reference only.",
+  "settingsExportDialogTitle": "Export Data",
+  "settingsExportInstruction": "Save the JSON below to a safe place:",
+  "settingsExportVentWarning": "Note: Text from vent (private diary) will be exported, but audio recordings will not — audio is stored locally and becomes inaccessible after reinstall.",
+  "settingsCopy": "Copy",
+  "settingsActionExport": "Export",
+  "settingsActionGenerateReport": "Generate report",
+  "settingsImportDialogTitle": "Import Data",
+  "settingsImportWarning": "⚠️ This will overwrite all existing data. Please confirm before continuing.",
+  "settingsImportHint": "Paste your exported JSON here",
+  "settingsImportSuccess": "Import complete: {summary}",
+  "@settingsImportSuccess": {
+    "placeholders": { "summary": { "type": "String" } }
+  },
+  "settingsActionImport": "Import",
+  "settingsImportAndOverwrite": "Import & Overwrite",
 
   "commonSave": "Save",
   "commonCancel": "Cancel",
@@ -87,6 +118,7 @@
   "commonTakePhoto": "Take photo",
   "commonMedName": "Medication",
   "commonDoseUnit": "tablet",
+  "commonSetup": "Set up",
   "commonAutoCheckinFailed": "Auto check-in failed: {error}",
   "@commonAutoCheckinFailed": {
     "placeholders": { "error": { "type": "String" } }
@@ -95,5 +127,178 @@
   "@commonCheckinFailed": {
     "placeholders": { "error": { "type": "String" } }
   },
-  "commonVentDeleteWarning": "Once deleted, it's gone. Text and audio will be removed together."
+  "commonVentDeleteWarning": "Once deleted, it's gone. Text and audio will be removed together.",
+
+  "medsListEmpty": "No medications added yet",
+  "medsCalendarTitle": "Medication Calendar",
+  "medsCalendarSubtitle": "Doctor's adherence heatmap · 7/30/90 days",
+  "medsListNoActive": "No active medications",
+  "medsListStoppedSection": "Stopped",
+  "medsSnackUpdated": "Updated",
+  "medsSnackUpdatedSoftStop": "Updated · Soft-stopped",
+  "medsRefillPickDate": "Pick refill date",
+  "medsRefillSet": "Refill set: {date}, remind {days} days before",
+  "@medsRefillSet": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  },
+  "medsActionRefill": "Set refill",
+  "medsRefillOverdue": "Overdue by {days} days · Remind {reminderDays} days before",
+  "@medsRefillOverdue": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "reminderDays": { "type": "int" }
+    }
+  },
+  "medsRefillUpcoming": "Refill: {date} ({days} days left) · Remind {reminderDays} days before",
+  "@medsRefillUpcoming": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "days": { "type": "int" },
+      "reminderDays": { "type": "int" }
+    }
+  },
+  "medsRefillDaysTitle": "Remind how many days before?",
+  "medsRefillDaysUnit": "{days} days",
+  "@medsRefillDaysUnit": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillHint3": "Last push",
+  "medsRefillHint5": "Pretty tight",
+  "medsRefillHint7": "Recommended (default)",
+  "medsRefillHint14": "Two weeks to book",
+  "medsRefillHint30": "One-month cycle",
+
+  "notificationStatusCardTestTitle": "🔔 Notification Test",
+  "notificationStatusCardTestBody": "If you see this, notifications work. If not, check the phone settings below",
+  "notificationStatusCardTestSent": "Test notification sent — should arrive in a few seconds",
+  "notificationStatusCardActionSend": "Send",
+  "notificationStatusCardQueuedTitle": "Queued Notifications",
+  "notificationStatusCardEmpty": "No pending notifications.\nReminders may not be set, or the system killed background tasks.",
+  "notificationStatusCardNoTitle": "(No title)",
+  "notificationStatusCardWebTitle": "Notifications are only available on Android / iOS",
+  "notificationStatusCardWebSubtitle": "You're on the web. Notifications are controlled by the browser. Please test on your phone.",
+  "notificationStatusCardStatusLoading": "Loading…",
+  "notificationStatusCardStatusUnsupported": "Unsupported on this platform",
+  "notificationStatusCardStatusNone": "⚠️ No pending notifications — reminders may not be set",
+  "notificationStatusCardStatusCount": "✓ {count} notification(s) queued",
+  "@notificationStatusCardStatusCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "notificationStatusCardTitle": "Notifications & Reminders",
+  "notificationStatusCardTestButtonTitle": "Test Notification",
+  "notificationStatusCardTestButtonSubtitle": "Tap to send a test notification now",
+  "notificationStatusCardViewButtonTitle": "View Queued Notifications",
+  "notificationStatusCardViewButtonSubtitle": "Show all pending reminders",
+  "notificationStatusCardOemTitle": "Not receiving notifications?",
+  "notificationStatusCardOemSubtitle": "Xiaomi/Huawei/OPPO/Vivo kill background tasks by default. Tap to learn how to fix",
+  "notificationStatusCardOemBrandXiaomi": "Xiaomi / Redmi",
+  "notificationStatusCardOemStepXiaomi1": "Settings → Apps → Chronic Care → Autostart → Enable",
+  "notificationStatusCardOemStepXiaomi2": "Settings → Apps → Chronic Care → Battery → No restrictions",
+  "notificationStatusCardOemStepXiaomi3": "Settings → Notifications → Chronic Care → Allow + Lock screen",
+  "notificationStatusCardOemBrandHuawei": "Huawei / Honor",
+  "notificationStatusCardOemStepHuawei1": "Settings → Apps → Chronic Care → Battery → Launch → Allow auto-launch",
+  "notificationStatusCardOemStepHuawei2": "Settings → Apps → Chronic Care → Notifications → Enable all",
+  "notificationStatusCardOemStepHuawei3": "Phone Manager → App Launch → Disable \"Auto-management\"",
+  "notificationStatusCardOemBrandOppo": "OPPO / realme / OnePlus",
+  "notificationStatusCardOemStepOppo1": "Settings → Battery → Power saving → Chronic Care → Allow background",
+  "notificationStatusCardOemStepOppo2": "Settings → Notifications → Chronic Care → Enable all",
+  "notificationStatusCardOemStepOppo3": "In Recent Tasks, lock the app (swipe down on the lock icon)",
+  "notificationStatusCardOemBrandVivo": "Vivo / iQOO",
+  "notificationStatusCardOemStepVivo1": "Settings → Battery → High background power → Chronic Care → Allow",
+  "notificationStatusCardOemStepVivo2": "Settings → Notifications → Chronic Care → Enable all",
+  "notificationStatusCardOemStepVivo3": "In Recent Tasks, lock the app",
+  "notificationStatusCardOemBrandMeizu": "Meizu",
+  "notificationStatusCardOemStepMeizu1": "Settings → App Management → Chronic Care → Permissions → Autostart → Allow",
+  "notificationStatusCardOemStepMeizu2": "Settings → Notification Management → Chronic Care → Enable all",
+  "notificationStatusCardOemGeneralTip": "General tip: When exact alarms are silently blocked by some ROMs, the system will ask \"Allow?\" on first launch — please select \"Allow\".",
+
+  "reminderHubDescription": "Manage all reminders in one place: daily check-in, medication times, refill dates, assessment, safety watch.",
+  "reminderHubDailyTitle": "Daily Check-in Reminder",
+  "reminderHubDailyDesc": "Pushes \"time to check in\" at 20:00 daily — missing once is fine",
+  "reminderHubDailyStatus": "Enabled · Daily at 20:00",
+  "reminderHubDailyAction": "Preview notification",
+  "reminderHubMedicationTitle": "Medication Reminder",
+  "reminderHubStatusError": "Error",
+  "reminderHubRefillTitle": "Refill Reminder",
+  "reminderHubAssessmentTitle": "Periodic Assessment Reminder",
+  "reminderHubAssessmentDescEnabled": "Remind every {days} days to take assessment (PHQ-9 / GAD-7)",
+  "@reminderHubAssessmentDescEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "reminderHubAssessmentDescDisabled": "Off · No assessment reminders",
+  "reminderHubAssessmentStatusEnabled": "Enabled · Every {days} days",
+  "@reminderHubAssessmentStatusEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "reminderHubStatusDisabled": "Disabled",
+  "reminderHubConfigure": "Configure",
+  "reminderHubSafetyTitle": "Safety Watch (Safety Switch)",
+  "reminderHubSmsMockWarning": "SMS channel not connected (using Mock). When safety watch triggers, only local notifications are sent — no real SMS to emergency contacts. Must integrate a real SMS provider before store launch.",
+  "reminderHubSafetyDescEnabled": "{threshold} consecutive missed check-ins → auto SMS to emergency contacts + local push",
+  "@reminderHubSafetyDescEnabled": {
+    "placeholders": { "threshold": { "type": "int" } }
+  },
+  "reminderHubSafetyDescDisabled": "Off · Won't auto-notify emergency contacts",
+  "reminderHubSafetyStatusEnabled": "Enabled · Threshold {threshold} days",
+  "@reminderHubSafetyStatusEnabled": {
+    "placeholders": { "threshold": { "type": "int" } }
+  },
+  "reminderHubMedicationDescActive": "{count} active medications, reminders at {times} time slots",
+  "@reminderHubMedicationDescActive": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "times": { "type": "int" }
+    }
+  },
+  "reminderHubMedicationDescInactive": "No active medications · Auto-enabled after adding one",
+  "reminderHubMedicationStatusActive": "Enabled · {count} meds / {times} slots",
+  "@reminderHubMedicationStatusActive": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "times": { "type": "int" }
+    }
+  },
+  "reminderHubStatusNotConfigured": "Not configured",
+  "reminderHubManageMedication": "Manage medications",
+  "reminderHubRefillDescNone": "No refill dates set · Add in \"Medication Settings\"",
+  "reminderHubRefillDescOverdue": "{overdue} overdue refills · {inWindow} in reminder window",
+  "@reminderHubRefillDescOverdue": {
+    "placeholders": {
+      "overdue": { "type": "int" },
+      "inWindow": { "type": "int" }
+    }
+  },
+  "reminderHubRefillDescActive": "{count} medications with refill dates · Reminders sent when due",
+  "@reminderHubRefillDescActive": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubRefillStatusOverdue": "{count} overdue",
+  "@reminderHubRefillStatusOverdue": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubRefillStatusInWindow": "Reminding {count}",
+  "@reminderHubRefillStatusInWindow": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubRefillStatusActive": "Enabled · {count} meds",
+  "@reminderHubRefillStatusActive": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubManageRefill": "Manage refills",
+  "reminderHubEnable": "Enable",
+  "reminderHubAssessmentSubtitle": "Get a psychological assessment reminder every N days",
+  "reminderHubInterval": "Reminder interval",
+  "reminderHubEveryNDays": "Every {days} days",
+  "@reminderHubEveryNDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "reminderHubSafetyDescription": "N consecutive missed check-ins → auto SMS to all enabled emergency contacts + local push",
+  "reminderHubTriggerThreshold": "Trigger threshold (consecutive N days missed)",
+  "reminderHubNDays": "{days} days",
+  "@reminderHubNDays": {
+    "placeholders": { "days": { "type": "int" } }
+  }
 }

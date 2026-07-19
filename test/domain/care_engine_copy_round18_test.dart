@@ -6,7 +6,7 @@ library;
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:chroniccare/core/shared/care_copy.dart';
+import 'package:chroniccare/domain/logic/care_copy.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/logic/care_engine.dart';
 

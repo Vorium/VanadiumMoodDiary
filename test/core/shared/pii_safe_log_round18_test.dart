@@ -10,7 +10,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:chroniccare/core/shared/pii_safe_log.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 
 void main() {
   group('maskPhone', () {

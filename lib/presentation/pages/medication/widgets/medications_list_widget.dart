@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:chroniccare/l10n/app_localizations.dart';
+
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
@@ -35,10 +38,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         widget.meds.where((m) => !m.isActive).toList(growable: false);
 
     if (widget.meds.isEmpty) {
-      return const Card(
+      return Card(
         child: Padding(
           padding: EdgeInsets.all(AppTokens.spacingMd),
-          child: Text('还没添加常吃药', style: TextStyle(color: AppTokens.textHint)),
+          child: Text(AppLocalizations.of(context).medsListEmpty, style: TextStyle(color: AppTokens.textHint)),
         ),
       );
     }
@@ -54,19 +57,19 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
                 Icons.calendar_view_month,
                 color: AppTokens.primary,
               ),
-              title: const Text('用药日历'),
-              subtitle: const Text('医生视角依从性热力图 · 7/30/90 天'),
+              title: Text(AppLocalizations.of(context).medsCalendarTitle),
+              subtitle: Text(AppLocalizations.of(context).medsCalendarSubtitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/medication/calendar'),
             ),
           ),
         // 在用列表
         if (activeMeds.isEmpty)
-          const Card(
+          Card(
             child: Padding(
               padding: EdgeInsets.all(AppTokens.spacingMd),
               child: Text(
-                '没有在用的药',
+                AppLocalizations.of(context).medsListNoActive,
                 style: TextStyle(color: AppTokens.textHint),
               ),
             ),
@@ -93,10 +96,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         // 已停药列表（v0.13 Round 9）
         if (stoppedMeds.isNotEmpty) ...[
           const SizedBox(height: AppTokens.spacingSm),
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(left: 4, top: AppTokens.spacingXs),
             child: Text(
-              '已停药',
+              AppLocalizations.of(context).medsListStoppedSection,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
                 color: AppTokens.textHint,
@@ -138,7 +141,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              med.isActive ? '已更新' : '已更新 · 软停',
+              med.isActive ? AppLocalizations.of(context).medsSnackUpdated : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
             ),
             duration: const Duration(seconds: 2),
           ),
@@ -161,7 +164,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '删除', error: e),
+          AppSnackBar.error(context, action: AppLocalizations.of(context).commonDelete, error: e),
         );
       }
     } finally {
@@ -183,9 +186,9 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         initialDate: initialDate,
         firstDate: now.subtract(const Duration(days: 7)),
         lastDate: now.add(const Duration(days: 365)),
-        helpText: '选择续方日期',
-        cancelText: '取消',
-        confirmText: '确定',
+        helpText: AppLocalizations.of(context).medsRefillPickDate,
+        cancelText: AppLocalizations.of(context).commonCancel,
+        confirmText: AppLocalizations.of(context).commonConfirmOk,
       );
       if (picked == null) return;
       if (!mounted) return;
@@ -203,9 +206,8 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
             reminderDays: days,
           );
 
-      // 重排续方提醒
-      final meds =
-          await ref.read(medicationRepositoryProvider).watchAll().first;
+      // P0 fix: 复用 provider 树已缓存的药物数据
+      final meds = ref.read(medicationsProvider).value ?? [];
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       await ref
           .read(notificationServiceProvider)
@@ -214,14 +216,14 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('已设置：${Formatters.date(picked)} 续方，提前 $days 天提醒'),
+          content: Text(AppLocalizations.of(context).medsRefillSet(Formatters.date(picked), days)),
           duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '设置', error: e),
+          AppSnackBar.error(context, action: AppLocalizations.of(context).commonSetup, error: e),
         );
       }
     } finally {
@@ -251,7 +253,7 @@ class _MedicationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final refillText = _refillSubtitle(med);
+    final refillText = _refillSubtitle(med, context);
     final isStopped = !med.isActive;
     return ListTile(
       leading: Icon(
@@ -280,8 +282,8 @@ class _MedicationRow extends StatelessWidget {
                 color: AppTokens.warning.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               ),
-              child: const Text(
-                '已停药',
+              child: Text(
+                AppLocalizations.of(context).medsListStoppedSection,
                 style: TextStyle(
                   fontSize: 10,
                   color: AppTokens.warning,
@@ -338,7 +340,7 @@ class _MedicationRow extends StatelessWidget {
             // 编辑按钮（v0.13 Round 9）
             IconButton(
               icon: const Icon(Icons.edit_outlined, color: AppTokens.primary),
-              tooltip: '编辑',
+              tooltip: AppLocalizations.of(context).commonEdit,
               onPressed: onEdit,
             ),
             if (!isStopped)
@@ -347,14 +349,14 @@ class _MedicationRow extends StatelessWidget {
                   Icons.event_available_outlined,
                   color: AppTokens.primary,
                 ),
-                tooltip: '设置续方',
+                tooltip: AppLocalizations.of(context).medsActionRefill,
                 onPressed: onEditRefill,
               ),
           ],
           if (!isDeleting && !isEditing && !isEditingRefill)
             IconButton(
               icon: const Icon(Icons.delete_outline, color: AppTokens.error),
-              tooltip: '删除',
+              tooltip: AppLocalizations.of(context).commonDelete,
               onPressed: onDelete,
             ),
         ],
@@ -370,17 +372,21 @@ class _MedicationRow extends StatelessWidget {
     return AppTokens.textSecondary;
   }
 
-  String? _refillSubtitle(MedicationEntity med) {
+  String? _refillSubtitle(MedicationEntity med, BuildContext context) {
     if (med.refillAt == null) {
-      return null; // 没设过续方日期 = 不显示这行
+      return null;
     }
     final now = DateTime.now();
     final days = _daysUntilRefill(med, now);
+    final l10n = AppLocalizations.of(context);
     if (med.isRefillOverdue(now)) {
-      return '已过期 ${-days} 天 · 提前 ${med.refillReminderDays} 天提醒';
+      return l10n.medsRefillOverdue(-days, med.refillReminderDays);
     }
-    return '续方：${Formatters.date(med.refillAt!)} '
-        '($days 天后) · 提前 ${med.refillReminderDays} 天提醒';
+    return l10n.medsRefillUpcoming(
+      Formatters.date(med.refillAt!),
+      days,
+      med.refillReminderDays,
+    );
   }
 
   /// 按"天"计算 refill 距今多少天（负数=已过期）
@@ -430,7 +436,7 @@ class _RefillDaysDialogState extends State<_RefillDaysDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('提前几天提醒？'),
+      title: Text(AppLocalizations.of(context).medsRefillDaysTitle),
       content: RadioGroup<int>(
         groupValue: _selected,
         onChanged: (v) {
@@ -442,8 +448,8 @@ class _RefillDaysDialogState extends State<_RefillDaysDialog> {
             for (final d in _options)
               RadioListTile<int>(
                 value: d,
-                title: Text('$d 天'),
-                subtitle: Text(_hintFor(d)),
+                title: Text(AppLocalizations.of(context).medsRefillDaysUnit(d)),
+                subtitle: Text(_hintFor(d, context)),
               ),
           ],
         ),
@@ -451,28 +457,29 @@ class _RefillDaysDialogState extends State<_RefillDaysDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, null),
-          child: const Text('取消'),
+          child: Text(AppLocalizations.of(context).commonCancel),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(context, _selected),
-          child: const Text('确定'),
+          child: Text(AppLocalizations.of(context).commonConfirmOk),
         ),
       ],
     );
   }
 
-  String _hintFor(int d) {
+  String _hintFor(int d, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (d) {
       case 3:
-        return '最后冲刺期';
+        return l10n.medsRefillHint3;
       case 5:
-        return '比较紧';
+        return l10n.medsRefillHint5;
       case 7:
-        return '推荐（默认）';
+        return l10n.medsRefillHint7;
       case 14:
-        return '两周时间挂号';
+        return l10n.medsRefillHint14;
       case 30:
-        return '一个月周期';
+        return l10n.medsRefillHint30;
       default:
         return '';
     }

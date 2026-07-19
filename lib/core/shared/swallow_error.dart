@@ -1,7 +1,5 @@
 import 'dart:developer' as developer;
 
-import 'package:flutter/foundation.dart';
-
 /// v0.17 round 14 (P1-5): 把"静默 catch"统一成可观测的 swallow
 ///
 /// 解决的问题:
@@ -28,13 +26,17 @@ import 'package:flutter/foundation.dart';
 /// - 阻塞 → fire-and-forget,调用方继续
 /// - 静默 → dev 模式 devtools / `flutter logs` 看得到
 
+// release 模式下为 true，debug/profile 为 false（替代 kDebugMode，无 Flutter 依赖）
+const bool _isProduct =
+    bool.fromEnvironment('dart.vm.product', defaultValue: false);
+
 void swallowError({
   required String where,
   required Object error,
   StackTrace? stack,
   String? note,
 }) {
-  if (kDebugMode) {
+  if (!_isProduct) {
     developer.log(
       note == null ? '$where failed' : '$where failed: $note',
       name: 'swallow',

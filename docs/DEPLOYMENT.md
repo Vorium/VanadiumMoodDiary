@@ -11,8 +11,8 @@
 # 1. 装 Xcode（App Store 搜 Xcode）
 # 2. 装 Flutter
 brew install fvm
-fvm install 3.41.9
-fvm use 3.41.9
+fvm install 3.44.5
+fvm use 3.44.5
 
 # 3. 装 Android Studio（要 SDK + JDK）
 brew install --cask android-studio
@@ -36,7 +36,7 @@ cd chroniccare
 fvm use 3.41.9
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
-flutter test                  # 32 个测试应该全过
+flutter test                  # 全部测试应该全过
 flutter run -d chrome         # 跑 Web 版看 UI
 ```
 

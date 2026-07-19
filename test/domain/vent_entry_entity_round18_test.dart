@@ -7,7 +7,7 @@
 // - == / hashCode 一致
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 
 VentEntryEntity _e({
   int id = 1,

@@ -14,10 +14,10 @@
 //
 // 注意:不是所有 developer.log 都是 PII。技术性 log(如"✅ 调度成功")
 // 可以保持原样(无 PII)。本 helper 用于"含 PII 的 log"。
+//
+// P1 fix: 从 core/shared/ 移入 core/data/services/（仅 data 层使用，不满足 shared 2+ 层规则）
 
 import 'dart:developer' as developer;
-
-import 'package:flutter/foundation.dart';
 
 /// PII 安全日志 - release 模式自动 swallow
 ///
@@ -37,6 +37,14 @@ import 'package:flutter/foundation.dart';
 ///
 /// error / stackTrace 透传给 developer.log(用于 debug 模式排查)
 /// release 模式不打印,所以 error/stackTrace 也被 swallow
+///
+/// 注意: 使用 `bool.fromEnvironment('dart.vm.product')` 替代 `kReleaseMode`
+/// 以避免在 shared 层引入 Flutter 依赖。
+
+// release 模式下为 true，debug/profile 为 false
+const bool _isProduct =
+    bool.fromEnvironment('dart.vm.product', defaultValue: false);
+
 void piiSafeLog(
   String tag,
   String message, {
@@ -44,7 +52,7 @@ void piiSafeLog(
   StackTrace? stackTrace,
 }) {
   // release 模式 swallow — 避免 PII 进入 logcat
-  if (kReleaseMode) return;
+  if (_isProduct) return;
   developer.log(
     message,
     name: tag,
@@ -63,41 +71,26 @@ String maskPhone(String phone) {
   final hasPlus = phone.startsWith('+');
   final digits = phone.replaceAll(RegExp(r'[^\d]'), '');
   if (digits.length < 7) return phone;
-  // 检测是否有国家码(开头 1-3 位数字 + 后续明显是本体)
-  // 简化:如果 digits 长度 >= 11 视作"有国家码",前 1-3 位是国家码
-  // 大陆 11 位 + 86 = 13 位,前 2 位是国家码
-  // HK 8 位 + 852 = 11 位,前 3 位是国家码
-  // 实际:按 digits 长度推断 — 11 位 = 86 + 11,13 位 = + 1 + 12 位手机号(国际)
-  // 简化:11 位 = 大陆无 prefix,12 位 = + 大陆,13 位 = 86 + 大陆,...
   if (digits.length >= 11) {
-    // 检测大陆 11 位(无 prefix)/ 12-13 位(有 prefix)
-    // 简化:13 位 = 86 (2 位 country code) + 11 位
-    //      12 位 = 1 位 country code + 11 位
-    //      11 位 = 11 位本体
     if (digits.length == 11) {
-      // 大陆 11 位,prefix = 138
       final prefix = digits.substring(0, 3);
       final suffix = digits.substring(7);
       return '$prefix****$suffix';
     } else if (digits.length == 13) {
-      // 86 + 11 位,prefix = 86 138
       final country = digits.substring(0, 2);
       final prefix = digits.substring(2, 5);
       final suffix = digits.substring(9);
       return '+$country $prefix****$suffix';
     } else if (digits.length == 12) {
-      // 1 位 country code + 11 位
       final country = digits.substring(0, 1);
       final prefix = digits.substring(1, 4);
       final suffix = digits.substring(8);
       return '+$country $prefix****$suffix';
     }
-    // 兜底
     final prefix = digits.substring(0, 3);
     final suffix = digits.substring(digits.length - 4);
     return hasPlus ? '+$prefix****$suffix' : '$prefix****$suffix';
   }
-  // 短号(8/9 位港澳台)prefix 取前 3,suffix 取后 4
   final prefix = digits.substring(0, 3);
   final suffix = digits.substring(digits.length - 4);
   return hasPlus ? '+$prefix****$suffix' : '$prefix****$suffix';
@@ -111,12 +104,10 @@ String maskPhone(String phone) {
 /// John Smith → J*** S****
 String maskName(String name) {
   if (name.isEmpty) return '';
-  // 中文:保留第 1 字,后续每字 1 个 *
   if (RegExp(r'^[\u4e00-\u9fff]').hasMatch(name)) {
     if (name.length == 1) return name;
     return name[0] + ('*' * (name.length - 1));
   }
-  // 英文/其他:按 space 分词,每词保留首字母 + 后续每字符 1 个 *
   return name
       .split(RegExp(r'\s+'))
       .map((word) {

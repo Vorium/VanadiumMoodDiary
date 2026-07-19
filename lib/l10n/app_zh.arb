@@ -71,6 +71,37 @@
   "settingsMedReportWindow30": "近 30 天",
   "settingsReportHistory": "报告历史",
   "settingsReportHistorySubtitle": "查看过去生成的用药报告",
+  "settingsTitle": "设置",
+  "settingsDataManagement": "数据管理",
+  "settingsExportData": "导出数据",
+  "settingsExportSubtitle": "生成 JSON，复制到安全地方",
+  "settingsImportData": "导入数据",
+  "settingsImportSubtitle": "从 JSON 恢复（覆盖现有数据）",
+  "settingsReminders": "提醒",
+  "settingsReminderCenter": "提醒中心",
+  "settingsReminderCenterSubtitle": "管理所有提醒：每日打卡、用药时间、续方、心理评估、失联通知",
+  "settingsRefillManagement": "续方管理",
+  "settingsRefillManagementSubtitle": "集中查看所有药物的续方状态",
+  "settingsAssessment": "心理评估",
+  "settingsAssessmentHistory": "评估历史",
+  "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 / GAD-7 评估的折线图与对比",
+  "settingsAboutVersion": "v0.1.0 · 我今天吃了药",
+  "settingsDisclaimerText": "本应用不提供医疗建议，所有功能仅供参考。",
+  "settingsExportDialogTitle": "导出数据",
+  "settingsExportInstruction": "把下面这串 JSON 保存到安全的地方：",
+  "settingsExportVentWarning": "说明：树洞(私密倾诉)的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。",
+  "settingsCopy": "复制",
+  "settingsActionExport": "导出",
+  "settingsActionGenerateReport": "生成报告",
+  "settingsImportDialogTitle": "导入数据",
+  "settingsImportWarning": "⚠️ 会覆盖现有所有数据，确定后再继续",
+  "settingsImportHint": "把导出的 JSON 粘贴到这里",
+  "settingsImportSuccess": "导入完成：{summary}",
+  "@settingsImportSuccess": {
+    "placeholders": { "summary": { "type": "String" } }
+  },
+  "settingsActionImport": "导入",
+  "settingsImportAndOverwrite": "导入并覆盖",
 
   "commonSave": "保存",
   "commonCancel": "取消",
@@ -109,6 +140,7 @@
   "commonTakePhoto": "拍照",
   "commonMedName": "药名",
   "commonDoseUnit": "片",
+  "commonSetup": "设置",
   "commonAutoCheckinFailed": "自动打卡失败：{error}",
   "@commonAutoCheckinFailed": {
     "placeholders": { "error": { "type": "String" } }
@@ -117,5 +149,178 @@
   "@commonCheckinFailed": {
     "placeholders": { "error": { "type": "String" } }
   },
-  "commonVentDeleteWarning": "删了就没了。文字和录音都会一起删。"
+  "commonVentDeleteWarning": "删了就没了。文字和录音都会一起删。",
+
+  "medsListEmpty": "还没添加常吃药",
+  "medsCalendarTitle": "用药日历",
+  "medsCalendarSubtitle": "医生视角依从性热力图 · 7/30/90 天",
+  "medsListNoActive": "没有在用的药",
+  "medsListStoppedSection": "已停药",
+  "medsSnackUpdated": "已更新",
+  "medsSnackUpdatedSoftStop": "已更新 · 软停",
+  "medsRefillPickDate": "选择续方日期",
+  "medsRefillSet": "已设置：{date} 续方，提前 {days} 天提醒",
+  "@medsRefillSet": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  },
+  "medsActionRefill": "设置续方",
+  "medsRefillOverdue": "已过期 {days} 天 · 提前 {reminderDays} 天提醒",
+  "@medsRefillOverdue": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "reminderDays": { "type": "int" }
+    }
+  },
+  "medsRefillUpcoming": "续方：{date}（{days} 天后）· 提前 {reminderDays} 天提醒",
+  "@medsRefillUpcoming": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "days": { "type": "int" },
+      "reminderDays": { "type": "int" }
+    }
+  },
+  "medsRefillDaysTitle": "提前几天提醒？",
+  "medsRefillDaysUnit": "{days} 天",
+  "@medsRefillDaysUnit": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillHint3": "最后冲刺期",
+  "medsRefillHint5": "比较紧",
+  "medsRefillHint7": "推荐（默认）",
+  "medsRefillHint14": "两周时间挂号",
+  "medsRefillHint30": "一个月周期",
+
+  "notificationStatusCardTestTitle": "🔔 通知自检",
+  "notificationStatusCardTestBody": "看到这条 = 通知工作正常。如果没看到，看下面的国产手机设置",
+  "notificationStatusCardTestSent": "已发送测试通知 — 几秒内应该能收到",
+  "notificationStatusCardActionSend": "发送",
+  "notificationStatusCardQueuedTitle": "已排队的通知",
+  "notificationStatusCardEmpty": "当前没有任何待发通知。\n可能是没设提醒，或被系统后台清理了。",
+  "notificationStatusCardNoTitle": "(无标题)",
+  "notificationStatusCardWebTitle": "通知功能仅在 Android / iOS 上可用",
+  "notificationStatusCardWebSubtitle": "当前是 web 端，通知由浏览器控制。请在手机上打开 App 测试。",
+  "notificationStatusCardStatusLoading": "加载中…",
+  "notificationStatusCardStatusUnsupported": "当前平台不支持查询",
+  "notificationStatusCardStatusNone": "⚠️ 没有待发通知 — 提醒可能没设上",
+  "notificationStatusCardStatusCount": "✓ 已排队 {count} 条待发通知",
+  "@notificationStatusCardStatusCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "notificationStatusCardTitle": "通知与提醒",
+  "notificationStatusCardTestButtonTitle": "测试通知",
+  "notificationStatusCardTestButtonSubtitle": "点一下立即推一条，确认通知能正常弹出",
+  "notificationStatusCardViewButtonTitle": "查看已排队通知",
+  "notificationStatusCardViewButtonSubtitle": "展示当前所有待发的提醒",
+  "notificationStatusCardOemTitle": "国产手机没收到通知?",
+  "notificationStatusCardOemSubtitle": "小米/华为/OPPO/Vivo 默认会杀后台，点这里看怎么设",
+  "notificationStatusCardOemBrandXiaomi": "小米 / Redmi",
+  "notificationStatusCardOemStepXiaomi1": "设置 → 应用 → 慢病管家 → 自启动 → 开启",
+  "notificationStatusCardOemStepXiaomi2": "设置 → 应用 → 慢病管家 → 省电策略 → 无限制",
+  "notificationStatusCardOemStepXiaomi3": "设置 → 通知 → 慢病管家 → 允许通知 + 锁屏通知",
+  "notificationStatusCardOemBrandHuawei": "华为 / 荣耀",
+  "notificationStatusCardOemStepHuawei1": "设置 → 应用 → 慢病管家 → 电池 → 启动管理 → 允许自启动",
+  "notificationStatusCardOemStepHuawei2": "设置 → 应用 → 慢病管家 → 通知 → 全部开启",
+  "notificationStatusCardOemStepHuawei3": "手机管家 → 应用启动管理 → 关闭「自动管理」",
+  "notificationStatusCardOemBrandOppo": "OPPO / realme / 一加",
+  "notificationStatusCardOemStepOppo1": "设置 → 电池 → 耗电保护 → 慢病管家 → 允许后台运行",
+  "notificationStatusCardOemStepOppo2": "设置 → 通知 → 慢病管家 → 全部开启",
+  "notificationStatusCardOemStepOppo3": "「最近任务」界面上锁 App（下滑小锁图标）",
+  "notificationStatusCardOemBrandVivo": "Vivo / iQOO",
+  "notificationStatusCardOemStepVivo1": "设置 → 电池 → 后台高耗电 → 慢病管家 → 允许",
+  "notificationStatusCardOemStepVivo2": "设置 → 通知 → 慢病管家 → 全部开启",
+  "notificationStatusCardOemStepVivo3": "「最近任务」界面上锁 App",
+  "notificationStatusCardOemBrandMeizu": "魅族",
+  "notificationStatusCardOemStepMeizu1": "设置 → 应用管理 → 慢病管家 → 权限管理 → 自启动 → 允许",
+  "notificationStatusCardOemStepMeizu2": "设置 → 通知管理 → 慢病管家 → 全部开启",
+  "notificationStatusCardOemGeneralTip": "通用建议：精确闹钟被某些 ROM 静默拒绝时,首次启动 App 时系统会弹「是否允许」,请选「允许」。",
+
+  "reminderHubDescription": "集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估、失联通知。",
+  "reminderHubDailyTitle": "每日打卡提醒",
+  "reminderHubDailyDesc": "每天 20:00 推送「记得打卡」，漏 1 次没关系",
+  "reminderHubDailyStatus": "已启用 · 每天 20:00",
+  "reminderHubDailyAction": "查看通知预览",
+  "reminderHubMedicationTitle": "用药提醒",
+  "reminderHubStatusError": "出错",
+  "reminderHubRefillTitle": "续方提醒",
+  "reminderHubAssessmentTitle": "周期评估提醒",
+  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做心理评估（PHQ-9 / GAD-7）",
+  "@reminderHubAssessmentDescEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "reminderHubAssessmentDescDisabled": "关闭 · 不会推送评估提醒",
+  "reminderHubAssessmentStatusEnabled": "已启用 · 每 {days} 天",
+  "@reminderHubAssessmentStatusEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "reminderHubStatusDisabled": "未启用",
+  "reminderHubConfigure": "配置",
+  "reminderHubSafetyTitle": "失联通知（安全开关）",
+  "reminderHubSmsMockWarning": "SMS 通道未接通（当前使用 Mock）。失联触发时只会推本地通知，不会真发短信给紧急联系人。上 store 前必须接入真实 SMS provider。",
+  "reminderHubSafetyDescEnabled": "连续 {threshold} 天没打卡 → 自动 SMS 通知紧急联系人 + 本地推送",
+  "@reminderHubSafetyDescEnabled": {
+    "placeholders": { "threshold": { "type": "int" } }
+  },
+  "reminderHubSafetyDescDisabled": "关闭 · 不会自动通知紧急联系人",
+  "reminderHubSafetyStatusEnabled": "已启用 · 阈值 {threshold} 天",
+  "@reminderHubSafetyStatusEnabled": {
+    "placeholders": { "threshold": { "type": "int" } }
+  },
+  "reminderHubMedicationDescActive": "共 {count} 种在用药物，{times} 个时间点会推送提醒",
+  "@reminderHubMedicationDescActive": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "times": { "type": "int" }
+    }
+  },
+  "reminderHubMedicationDescInactive": "还没有在用药物 · 添加后会自动启用",
+  "reminderHubMedicationStatusActive": "已启用 · {count} 种 / {times} 时间点",
+  "@reminderHubMedicationStatusActive": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "times": { "type": "int" }
+    }
+  },
+  "reminderHubStatusNotConfigured": "未配置",
+  "reminderHubManageMedication": "管理用药",
+  "reminderHubRefillDescNone": "未给任何药物设置续方日期 · 在「用药设置」中可加",
+  "reminderHubRefillDescOverdue": "{overdue} 种已过期续方 · {inWindow} 种在提醒窗口内",
+  "@reminderHubRefillDescOverdue": {
+    "placeholders": {
+      "overdue": { "type": "int" },
+      "inWindow": { "type": "int" }
+    }
+  },
+  "reminderHubRefillDescActive": "{count} 种药物已设续方 · 临近时会推送提醒",
+  "@reminderHubRefillDescActive": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubRefillStatusOverdue": "已过期 {count}",
+  "@reminderHubRefillStatusOverdue": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubRefillStatusInWindow": "提醒中 {count}",
+  "@reminderHubRefillStatusInWindow": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubRefillStatusActive": "已启用 · {count} 种",
+  "@reminderHubRefillStatusActive": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reminderHubManageRefill": "管理续方",
+  "reminderHubEnable": "启用",
+  "reminderHubAssessmentSubtitle": "每隔 N 天推送一次心理评估",
+  "reminderHubInterval": "提醒间隔",
+  "reminderHubEveryNDays": "每 {days} 天",
+  "@reminderHubEveryNDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "reminderHubSafetyDescription": "连续 N 天没打卡 → 自动 SMS 通知所有启用的紧急联系人 + 本地推送",
+  "reminderHubTriggerThreshold": "触发阈值（连续 N 天没打卡）",
+  "reminderHubNDays": "{days} 天",
+  "@reminderHubNDays": {
+    "placeholders": { "days": { "type": "int" } }
+  }
 }

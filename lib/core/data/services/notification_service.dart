@@ -1,4 +1,4 @@
-import 'package:chroniccare/core/shared/pii_safe_log.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -9,7 +9,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/services/notification_navigation.dart';
+import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
 

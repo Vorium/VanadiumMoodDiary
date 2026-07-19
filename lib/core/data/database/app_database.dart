@@ -153,6 +153,42 @@ class AppDatabase extends _$AppDatabase {
         .watchSingleOrNull();
   }
 
+  /// 监听所有 normal 类型打卡（DB 级 WHERE type='normal'，避免全表扫描）
+  Stream<List<CheckIn>> watchNormalCheckIns() {
+    return (select(checkIns)
+          ..where((t) => t.type.equals('normal'))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+          ]))
+        .watch();
+  }
+
+  /// 获取最近一次 normal 打卡（单条，DB 级 LIMIT 1）
+  Future<CheckIn?> getLatestNormalCheckIn() {
+    return (select(checkIns)
+          ..where((t) => t.type.equals('normal'))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  /// 获取最近一次评估时间戳（DB 级 LIMIT 1，避免全表 reduce）
+  Future<DateTime?> getLatestAssessmentTimestamp() async {
+    final row = await (select(checkIns)
+          ..where((t) => t.type.equals('phq9') | t.type.equals('gad7'))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+    return row?.timestamp;
+  }
+
   Future<int> insertCheckIn(CheckInsCompanion entry) {
     return into(checkIns).insert(entry);
   }

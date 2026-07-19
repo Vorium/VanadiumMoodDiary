@@ -25,13 +25,9 @@ final allCheckInsProvider = StreamProvider<List<CheckInEntity>>(
 );
 
 /// 所有 normal 类型打卡（用于计算 streak）
+/// P0 fix: DB 级 WHERE type='normal'，不再全表扫描+Dart 过滤
 final allNormalCheckInsProvider = StreamProvider<List<CheckInEntity>>(
-  (ref) {
-    return ref
-        .watch(checkInRepositoryProvider)
-        .watchAll()
-        .map((all) => all.where((c) => c.isNormal).toList());
-  },
+  (ref) => ref.watch(checkInRepositoryProvider).watchNormalCheckIns(),
 );
 
 /// 当前 streak + 是否断签（B8 fix: 在 build 顶部算一次）

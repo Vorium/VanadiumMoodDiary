@@ -8,7 +8,6 @@
 // 3. 续方提醒（medication.refillAt - refillReminderDays）
 // 4. 心理评估提醒（AssessmentReminderService）
 // 5. 失联通知（SafetyWatchService - 死了么/撸了么）
-library;
 
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +65,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   Widget build(BuildContext context) {
     final medsAsync = ref.watch(medicationsProvider);
     return PageScaffold(
-      title: '提醒中心',
+      title: AppLocalizations.of(context).settingsReminderCenter,
       child: ListView(
         children: [
           const SizedBox(height: AppTokens.spacingMd),
@@ -78,17 +77,17 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
               color: AppTokens.primaryLight,
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.notifications_active_outlined,
                   color: AppTokens.primary,
                 ),
-                SizedBox(width: AppTokens.spacingSm),
+                const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
                   child: Text(
-                    '集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估、失联通知。',
-                    style: TextStyle(fontSize: AppTokens.fontSizeBody),
+                    AppLocalizations.of(context).reminderHubDescription,
+                    style: const TextStyle(fontSize: AppTokens.fontSizeBody),
                   ),
                 ),
               ],
@@ -100,11 +99,11 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           // 1. 每日打卡提醒
           _ReminderCard(
             icon: Icons.check_circle_outline,
-            title: '每日打卡提醒',
-            description: '每天 20:00 推送"记得打卡"，漏 1 次没关系',
-            statusText: '已启用 · 每天 20:00',
+            title: AppLocalizations.of(context).reminderHubDailyTitle,
+            description: AppLocalizations.of(context).reminderHubDailyDesc,
+            statusText: AppLocalizations.of(context).reminderHubDailyStatus,
             statusActive: true,
-            actionLabel: '查看通知预览',
+            actionLabel: AppLocalizations.of(context).reminderHubDailyAction,
             onAction: () => context.push('/email-preview'),
           ),
 
@@ -113,10 +112,10 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           // 2. 用药提醒
           medsAsync.when(
             data: (meds) => _MedicationReminderCard(meds: meds),
-            loading: () => const _ReminderCard(
+            loading: () => _ReminderCard(
               icon: Icons.medication_outlined,
-              title: '用药提醒',
-              description: '加载中...',
+              title: AppLocalizations.of(context).reminderHubMedicationTitle,
+              description: AppLocalizations.of(context).commonLoading,
               statusText: '',
               statusActive: false,
               actionLabel: '',
@@ -124,9 +123,9 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             ),
             error: (e, _) => _ReminderCard(
               icon: Icons.medication_outlined,
-              title: '用药提醒',
-              description: '加载失败: $e',
-              statusText: '出错',
+              title: AppLocalizations.of(context).reminderHubMedicationTitle,
+              description: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+              statusText: AppLocalizations.of(context).reminderHubStatusError,
               statusActive: false,
               actionLabel: '',
               onAction: null,
@@ -138,10 +137,10 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           // 3. 续方提醒
           medsAsync.when(
             data: (meds) => _RefillReminderCard(meds: meds),
-            loading: () => const _ReminderCard(
+            loading: () => _ReminderCard(
               icon: Icons.shopping_cart_outlined,
-              title: '续方提醒',
-              description: '加载中...',
+              title: AppLocalizations.of(context).reminderHubRefillTitle,
+              description: AppLocalizations.of(context).commonLoading,
               statusText: '',
               statusActive: false,
               actionLabel: '',
@@ -149,9 +148,9 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             ),
             error: (e, _) => _ReminderCard(
               icon: Icons.shopping_cart_outlined,
-              title: '续方提醒',
-              description: '加载失败: $e',
-              statusText: '出错',
+              title: AppLocalizations.of(context).reminderHubRefillTitle,
+              description: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+              statusText: AppLocalizations.of(context).reminderHubStatusError,
               statusActive: false,
               actionLabel: '',
               onAction: null,
@@ -200,10 +199,10 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
 
   Widget _buildAssessmentCard(BuildContext context) {
     if (_loading) {
-      return const _ReminderCard(
+      return _ReminderCard(
         icon: Icons.psychology_outlined,
-        title: '周期评估提醒',
-        description: '加载中...',
+        title: AppLocalizations.of(context).reminderHubAssessmentTitle,
+        description: AppLocalizations.of(context).commonLoading,
         statusText: '',
         statusActive: false,
         actionLabel: '',
@@ -214,22 +213,25 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     final days = _assessmentDays ?? 14;
     return _ReminderCard(
       icon: Icons.psychology_outlined,
-      title: '周期评估提醒',
-      description:
-          enabled ? '每 $days 天提醒做心理评估（PHQ-9 / GAD-7）' : '关闭 · 不会推送评估提醒',
-      statusText: enabled ? '已启用 · 每 $days 天' : '未启用',
+      title: AppLocalizations.of(context).reminderHubAssessmentTitle,
+      description: enabled
+          ? AppLocalizations.of(context).reminderHubAssessmentDescEnabled(days)
+          : AppLocalizations.of(context).reminderHubAssessmentDescDisabled,
+      statusText: enabled
+          ? AppLocalizations.of(context).reminderHubAssessmentStatusEnabled(days)
+          : AppLocalizations.of(context).reminderHubStatusDisabled,
       statusActive: enabled,
-      actionLabel: '配置',
+      actionLabel: AppLocalizations.of(context).reminderHubConfigure,
       onAction: () => _showAssessmentSettings(context),
     );
   }
 
   Widget _buildSafetyCard(BuildContext context) {
     if (_loading) {
-      return const _ReminderCard(
+      return _ReminderCard(
         icon: Icons.shield_outlined,
-        title: '失联通知（安全开关）',
-        description: '加载中...',
+        title: AppLocalizations.of(context).reminderHubSafetyTitle,
+        description: AppLocalizations.of(context).commonLoading,
         statusText: '',
         statusActive: false,
         actionLabel: '',
@@ -255,15 +257,14 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               border: Border.all(color: AppTokens.error, width: 1),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.error_outline, color: AppTokens.error, size: 18),
-                SizedBox(width: AppTokens.spacingXs),
+                const Icon(Icons.error_outline, color: AppTokens.error, size: 18),
+                const SizedBox(width: AppTokens.spacingXs),
                 Expanded(
                   child: Text(
-                    'SMS 通道未接通（当前使用 Mock）。失联触发时只会推本地通知,'
-                    '不会真发短信给紧急联系人。上 store 前必须接入真实 SMS provider。',
-                    style: TextStyle(fontSize: 12, height: 1.4),
+                    AppLocalizations.of(context).reminderHubSmsMockWarning,
+                    style: const TextStyle(fontSize: 12, height: 1.4),
                   ),
                 ),
               ],
@@ -271,13 +272,15 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           ),
         _ReminderCard(
           icon: Icons.shield_outlined,
-          title: '失联通知（安全开关）',
+          title: AppLocalizations.of(context).reminderHubSafetyTitle,
           description: enabled
-              ? '连续 $threshold 天没打卡 → 自动 SMS 通知紧急联系人 + 本地推送'
-              : '关闭 · 不会自动通知紧急联系人',
-          statusText: enabled ? '已启用 · 阈值 $threshold 天' : '未启用',
+              ? AppLocalizations.of(context).reminderHubSafetyDescEnabled(threshold)
+              : AppLocalizations.of(context).reminderHubSafetyDescDisabled,
+          statusText: enabled
+              ? AppLocalizations.of(context).reminderHubSafetyStatusEnabled(threshold)
+              : AppLocalizations.of(context).reminderHubStatusDisabled,
           statusActive: enabled,
-          actionLabel: '配置',
+          actionLabel: AppLocalizations.of(context).reminderHubConfigure,
           onAction: () => _showSafetySettings(context),
         ),
       ],
@@ -408,14 +411,15 @@ class _MedicationReminderCard extends StatelessWidget {
 
     return _ReminderCard(
       icon: Icons.medication_outlined,
-      title: '用药提醒',
+      title: AppLocalizations.of(context).reminderHubMedicationTitle,
       description: active
-          ? '共 ${activeMeds.length} 种在用药物，$totalTimes 个时间点会推送提醒'
-          : '还没有在用药物 · 添加后会自动启用',
-      statusText:
-          active ? '已启用 · ${activeMeds.length} 种 / $totalTimes 时间点' : '未配置',
+          ? AppLocalizations.of(context).reminderHubMedicationDescActive(activeMeds.length, totalTimes)
+          : AppLocalizations.of(context).reminderHubMedicationDescInactive,
+      statusText: active
+          ? AppLocalizations.of(context).reminderHubMedicationStatusActive(activeMeds.length, totalTimes)
+          : AppLocalizations.of(context).reminderHubStatusNotConfigured,
       statusActive: active,
-      actionLabel: '管理用药',
+      actionLabel: AppLocalizations.of(context).reminderHubManageMedication,
       onAction: () => context.push('/settings'),
     );
   }
@@ -437,26 +441,26 @@ class _RefillReminderCard extends StatelessWidget {
 
     String description;
     if (!active) {
-      description = '未给任何药物设置续方日期 · 在"用药设置"中可加';
+      description = AppLocalizations.of(context).reminderHubRefillDescNone;
     } else if (overdue.isNotEmpty) {
-      description = '${overdue.length} 种已过期续方 · ${inWindow.length} 种在提醒窗口内';
+      description = AppLocalizations.of(context).reminderHubRefillDescOverdue(overdue.length, inWindow.length);
     } else {
-      description = '${withRefill.length} 种药物已设续方 · 临近时会推送提醒';
+      description = AppLocalizations.of(context).reminderHubRefillDescActive(withRefill.length);
     }
 
     return _ReminderCard(
       icon: Icons.shopping_cart_outlined,
-      title: '续方提醒',
+      title: AppLocalizations.of(context).reminderHubRefillTitle,
       description: description,
       statusText: active
           ? overdue.isNotEmpty
-              ? '已过期 ${overdue.length}'
+              ? AppLocalizations.of(context).reminderHubRefillStatusOverdue(overdue.length)
               : inWindow.isNotEmpty
-                  ? '提醒中 ${inWindow.length}'
-                  : '已启用 · ${withRefill.length} 种'
-          : '未配置',
+                  ? AppLocalizations.of(context).reminderHubRefillStatusInWindow(inWindow.length)
+                  : AppLocalizations.of(context).reminderHubRefillStatusActive(withRefill.length)
+          : AppLocalizations.of(context).reminderHubStatusNotConfigured,
       statusActive: active,
-      actionLabel: '管理续方',
+      actionLabel: AppLocalizations.of(context).reminderHubManageRefill,
       onAction: () => context.push('/settings/refills'),
     );
   }
@@ -509,7 +513,7 @@ class _AssessmentReminderSheetState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '保存', error: e),
+          AppSnackBar.error(context, action: AppLocalizations.of(context).commonSave, error: e),
         );
       }
     } finally {
@@ -519,6 +523,7 @@ class _AssessmentReminderSheetState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingMd),
@@ -526,9 +531,9 @@ class _AssessmentReminderSheetState
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              '周期评估提醒',
-              style: TextStyle(
+            Text(
+              loc.reminderHubAssessmentTitle,
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeTitle,
                 fontWeight: FontWeight.w600,
               ),
@@ -536,16 +541,16 @@ class _AssessmentReminderSheetState
             const SizedBox(height: AppTokens.spacingMd),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('启用'),
-              subtitle: const Text('每隔 N 天推送一次心理评估'),
+              title: Text(loc.reminderHubEnable),
+              subtitle: Text(loc.reminderHubAssessmentSubtitle),
               value: _enabled,
               onChanged: _busy ? null : (v) => setState(() => _enabled = v),
             ),
             if (_enabled) ...[
               const Divider(),
-              const Text(
-                '提醒间隔',
-                style: TextStyle(
+              Text(
+                loc.reminderHubInterval,
+                style: const TextStyle(
                   fontSize: AppTokens.fontSizeLabel,
                   fontWeight: FontWeight.w500,
                 ),
@@ -557,7 +562,7 @@ class _AssessmentReminderSheetState
                 children: [
                   for (final d in _options)
                     ChoiceChip(
-                      label: Text('每 $d 天'),
+                      label: Text(loc.reminderHubEveryNDays(d)),
                       selected: _days == d,
                       onSelected: _busy
                           ? null
@@ -574,14 +579,14 @@ class _AssessmentReminderSheetState
                 Expanded(
                   child: OutlinedButton(
                     onPressed: _busy ? null : () => Navigator.pop(context),
-                    child: Text(AppLocalizations.of(context).commonCancel),
+                    child: Text(loc.commonCancel),
                   ),
                 ),
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _busy ? null : _save,
-                    child: Text(AppLocalizations.of(context).commonSave),
+                    child: Text(loc.commonSave),
                   ),
                 ),
               ],
@@ -638,7 +643,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '保存', error: e),
+          AppSnackBar.error(context, action: AppLocalizations.of(context).commonSave, error: e),
         );
       }
     } finally {
@@ -648,6 +653,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingMd),
@@ -655,16 +661,16 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              '失联通知（安全开关）',
-              style: TextStyle(
+            Text(
+              loc.reminderHubSafetyTitle,
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeTitle,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: AppTokens.spacingSm),
             Text(
-              '连续 N 天没打卡 → 自动 SMS 通知所有启用的紧急联系人 + 本地推送',
+              loc.reminderHubSafetyDescription,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -673,15 +679,15 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
             const SizedBox(height: AppTokens.spacingMd),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('启用'),
+              title: Text(loc.reminderHubEnable),
               value: _enabled,
               onChanged: _busy ? null : (v) => setState(() => _enabled = v),
             ),
             if (_enabled) ...[
               const Divider(),
-              const Text(
-                '触发阈值（连续 N 天没打卡）',
-                style: TextStyle(
+              Text(
+                loc.reminderHubTriggerThreshold,
+                style: const TextStyle(
                   fontSize: AppTokens.fontSizeLabel,
                   fontWeight: FontWeight.w500,
                 ),
@@ -693,7 +699,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
                 children: [
                   for (final d in _options)
                     ChoiceChip(
-                      label: Text('$d 天'),
+                      label: Text(loc.reminderHubNDays(d)),
                       selected: _threshold == d,
                       onSelected: _busy
                           ? null
@@ -710,14 +716,14 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: _busy ? null : () => Navigator.pop(context),
-                    child: Text(AppLocalizations.of(context).commonCancel),
+                    child: Text(loc.commonCancel),
                   ),
                 ),
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _busy ? null : _save,
-                    child: Text(AppLocalizations.of(context).commonSave),
+                    child: Text(loc.commonSave),
                   ),
                 ),
               ],

@@ -1,4 +1,4 @@
-import 'package:chroniccare/core/shared/pii_safe_log.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +14,8 @@ import 'package:chroniccare/core/data/services/notification_payload.dart';
 /// - 用静态 API,不绑死 widget(通知 callback 在 main 里调，那时没 widget)
 /// - bind() 在 AppRoot 第一次 build 后调(那时 GoRouter 已就绪)
 /// - 启动 payload 用 pendingPayload 缓存,bind() 时自动消费
+///
+/// P1 fix: 从 core/data/services/ 移入 core/routing/（本体是路由逻辑，不应在 data 层）
 class NotificationNavigation {
   /// 已绑定的 GoRouter(在 AppRoot 第一次 build 时设置)
   static GoRouter? _router;

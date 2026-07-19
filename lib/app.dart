@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/data/services/notification_navigation.dart';
+import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/core/routing/app_router.dart';

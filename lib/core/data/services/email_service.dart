@@ -1,4 +1,4 @@
-import 'package:chroniccare/core/shared/pii_safe_log.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/email_template.dart';

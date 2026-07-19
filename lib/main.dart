@@ -121,6 +121,8 @@ Future<void> _bootstrap() async {
   }
 
   // 5. 启动完整 App
+  // P0 fix: 创建单一 AppDatabase 实例，provider tree 和 assessment reminder 共用
+  final sharedDb = AppDatabase();
   runApp(
     ProviderScope(
       overrides: [
@@ -135,6 +137,8 @@ Future<void> _bootstrap() async {
         // v0.13 (Round 7): 把已经初始化好的 notification service 注入,
         // 避免子 service 重新创建实例
         notificationServiceProvider.overrideWithValue(notificationService),
+        // P0 fix: 注入共享 db 实例，避免 provider tree 再创建第二个连接
+        databaseProvider.overrideWithValue(sharedDb),
       ],
       child: const AppRoot(),
     ),
@@ -142,31 +146,24 @@ Future<void> _bootstrap() async {
 
   // 6. v0.13 (Round 7): App 启动后异步跑一次 AssessmentReminder.onAppStart
   //    用 unawaited 防止阻塞 runApp
-  //    不放到 runApp 内的 ProviderScope 是因为我们要 db 已经 ready
-  unawaited(_scheduleAssessmentReminderOnStart(notificationService));
+  unawaited(_scheduleAssessmentReminderOnStart(sharedDb, notificationService));
 }
 
 Future<void> _scheduleAssessmentReminderOnStart(
+  AppDatabase sharedDb,
   NotificationService notificationService,
 ) async {
   // 等 DB / provider tree ready — 一个 frame 就够
   await Future<void>.delayed(const Duration(milliseconds: 100));
-  // v0.14 fix: 独立建一条 db connection,函数结束必须 close
-  // 旧实现: db 从来没 close,每次启动泄漏一个 connection
-  AppDatabase? localDb;
+  // P0 fix: 复用共享 db 实例，不再创建第二个 SQLCipher 连接
   try {
-    // 复用已 init 的 notificationService, 走 provider tree 拿 db
-    // 这里不依赖 ProviderScope, 手动构造一条 service 跑
-    localDb = AppDatabase();
     final service = AssessmentReminderService(
-      checkInRepo: CheckInRepositoryImpl(localDb),
+      checkInRepo: CheckInRepositoryImpl(sharedDb),
       notificationService: notificationService,
     );
     await service.onAppStart();
   } catch (e) {
     debugPrint('⚠️ AssessmentReminder.onAppStart 失败（不影响核心功能）：$e');
-  } finally {
-    await localDb?.close();
   }
 }
 

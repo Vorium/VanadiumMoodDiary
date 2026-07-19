@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 
@@ -62,6 +63,9 @@ Widget _wrap(_StubNotificationService service) {
     ],
     child: MaterialApp(
       theme: ThemeData.light(),
+      locale: const Locale('zh'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const Scaffold(body: NotificationStatusCard()),
     ),
   );

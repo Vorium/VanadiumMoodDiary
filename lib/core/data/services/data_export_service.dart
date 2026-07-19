@@ -42,7 +42,7 @@ class DataExportService {
     final ventEntries = await _db.watchVentEntries().first;
 
     final data = {
-      'version': 3, // P0-3 bump: 加入 ventEntries
+      'version': 4, // v0.18 bump: 加入 4D 情绪 (energy/sleep/anxiety)
       'exportedAt': DateTime.now().toIso8601String(),
       'profile': profile == null
           ? null
@@ -97,6 +97,10 @@ class DataExportService {
           {
             'timestamp': m.timestamp.toIso8601String(),
             'score': m.score,
+            // v0.18 4D 情绪: energy / sleep / anxiety (nullable, 老数据为 null)
+            if (m.energy != null) 'energy': m.energy,
+            if (m.sleep != null) 'sleep': m.sleep,
+            if (m.anxiety != null) 'anxiety': m.anxiety,
             'tagsJson': m.tagsJson,
             'note': m.note,
           },
@@ -128,8 +132,8 @@ class DataExportService {
     try {
       final data = jsonDecode(json) as Map<String, dynamic>;
       final version = data['version'];
-      if (version is! int || version < 1 || version > 3) {
-        return ImportResult.failure('数据版本不匹配（期望 1-3，实际 $version）');
+      if (version is! int || version < 1 || version > 4) {
+        return ImportResult.failure('数据版本不匹配（期望 1-4，实际 $version）');
       }
 
       int contactCount = 0;
@@ -291,6 +295,12 @@ class DataExportService {
               MoodEntriesCompanion.insert(
                 timestamp: ts,
                 score: score,
+                // v0.18 4D 情绪: 老导出文件(v1-3)无这些字段时为 null
+                energy: Value(_validateInt(m['energy'], null, min: 1, max: 5)),
+                sleep: Value(_validateInt(m['sleep'], null, min: 1, max: 5)),
+                anxiety: Value(
+                  _validateInt(m['anxiety'], null, min: 1, max: 5),
+                ),
                 tagsJson: Value(tags),
                 note: Value(
                   _validateString(m['note'], 'mood.note', maxLen: 10000),

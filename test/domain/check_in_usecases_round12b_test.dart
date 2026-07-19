@@ -60,6 +60,27 @@ class _FakeCheckInRepository implements CheckInRepository {
   }) async {
     return -1;
   }
+
+  @override
+  Stream<List<CheckInEntity>> watchNormalCheckIns() => Stream.value(
+        inserted.where((c) => c.isNormal).toList(),
+      );
+
+  @override
+  Future<CheckInEntity?> getLatestNormalCheckIn() async {
+    final normals = inserted.where((c) => c.isNormal).toList()
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return normals.isEmpty ? null : normals.first;
+  }
+
+  @override
+  Future<DateTime?> getLatestAssessmentTimestamp() async {
+    final assessments = inserted
+        .where((c) => c.type == CheckInType.phq9 || c.type == CheckInType.gad7)
+        .toList()
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return assessments.isEmpty ? null : assessments.first.timestamp;
+  }
 }
 
 /// P0-10 fix: in-memory user profile repo,记录 updateLastCheckIn 调用。

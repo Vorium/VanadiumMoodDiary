@@ -38,6 +38,24 @@ class CheckInRepositoryImpl implements CheckInRepository {
   }
 
   @override
+  Stream<List<CheckInEntity>> watchNormalCheckIns() {
+    return _db.watchNormalCheckIns().map(
+          (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
+        );
+  }
+
+  @override
+  Future<CheckInEntity?> getLatestNormalCheckIn() async {
+    final row = await _db.getLatestNormalCheckIn();
+    return row?.toEntity();
+  }
+
+  @override
+  Future<DateTime?> getLatestAssessmentTimestamp() {
+    return _db.getLatestAssessmentTimestamp();
+  }
+
+  @override
   Future<int> checkIn({DateTime? at, int? medicationId}) {
     return _db.insertCheckIn(
       CheckInsCompanion.insert(

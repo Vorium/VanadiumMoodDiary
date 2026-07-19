@@ -158,18 +158,13 @@ class SafetyWatchService {
 
       final threshold = await getThresholdDays();
 
-      // 1. 拉最近一次正常打卡（type=normal）
-      final allCheckIns = await _checkInRepo.watchAll().first;
-      final normalCheckIns =
-          allCheckIns.where((c) => c.isNormal).toList(growable: false);
-      if (normalCheckIns.isEmpty) {
+      // 1. 拉最近一次正常打卡（P0 fix: DB 级 LIMIT 1，不再全表扫描）
+      final latestNormal = await _checkInRepo.getLatestNormalCheckIn();
+      if (latestNormal == null) {
         // 用户从没打过卡，**不算异常**（新用户不打扰）
         return const SafetyCheckResult(kind: SafetyCheckKind.noData);
       }
-
-      // v0.16 round 19 fix: 显式 sort by timestamp desc，不依赖 watchAll() 隐式顺序
-      normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-      final lastCheckIn = normalCheckIns.first.timestamp;
+      final lastCheckIn = latestNormal.timestamp;
       // P0-4 fix: 接受外部 now 注入，避免测试跨 midnight flake。
       // 同一函数内不重复调 DateTime.now()(v0.16 round 19B 已立的规矩)。
       // 用 effectiveNow 避免跟参数 now 同名导致 Dart 推断为 nullable。

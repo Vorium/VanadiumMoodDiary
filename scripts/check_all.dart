@@ -1,4 +1,4 @@
-// 4 层架构综合检查（v0.16 Round 13）
+// 4 层架构综合检查（v0.18 Round 19 — 更新路径至 core/ umbrella 结构）
 //
 // 跑一次出两份报告：
 // 1) 纯度（purity）—— 4 层之间不能跨层引用
@@ -23,13 +23,13 @@ const _purityRules = <String, List<String>>{
   'domain': [
     'package:flutter/',
     'package:drift/',
-    'package:chroniccare/data/',
+    'package:chroniccare/core/data/',
     'package:chroniccare/presentation/',
   ],
   'shared': [
     'package:flutter/',
     'package:drift/',
-    'package:chroniccare/data/',
+    'package:chroniccare/core/data/',
     'package:chroniccare/presentation/',
   ],
   'data': [
@@ -40,8 +40,8 @@ const _purityRules = <String, List<String>>{
 
 const _layerDirs = <String, String>{
   'domain': 'domain',
-  'shared': 'shared',
-  'data': 'data',
+  'shared': 'core/shared',
+  'data': 'core/data',
   'presentation': 'presentation',
 };
 
@@ -76,7 +76,7 @@ void main() {
   final consistencyIssues = _runConsistencyCheck(root);
 
   print('=' * 60);
-  print('4 层架构综合检查（v0.16 Round 13）');
+  print('4 层架构综合检查（v0.18 Round 19）');
   print('=' * 60);
 
   _printPurityReport(purityViolations);
@@ -249,9 +249,9 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
   final entitiesDir = Directory(
       '$root${Platform.pathSeparator}lib${Platform.pathSeparator}domain${Platform.pathSeparator}entities',);
   final tablesDir = Directory(
-      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables',);
+      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables',);
   final sharedDir =
-      Directory('$root${Platform.pathSeparator}lib${Platform.pathSeparator}shared');
+      Directory('$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}shared');
 
   if (entitiesDir.existsSync() && tablesDir.existsSync()) {
     _checkEntityTablePair(entitiesDir, tablesDir, issues);
@@ -330,10 +330,10 @@ void _checkSharedUsage(
         final uri = m.group(1)!;
         // 规范化路径：处理 ../ 和 ./
         final normalized = _normalizeImportUri(uri);
-        final matches = normalized == 'package:chroniccare/shared/$fileName' ||
-            normalized == 'package:chroniccare/shared/$baseNameNoExt.dart' ||
-            normalized.endsWith('shared/$fileName') ||
-            normalized.endsWith('shared/$baseNameNoExt.dart');
+        final matches = normalized == 'package:chroniccare/core/shared/$fileName' ||
+            normalized == 'package:chroniccare/core/shared/$baseNameNoExt.dart' ||
+            normalized.endsWith('core/shared/$fileName') ||
+            normalized.endsWith('core/shared/$baseNameNoExt.dart');
         if (matches) {
           if (entity.path.contains('${Platform.pathSeparator}domain${Platform.pathSeparator}')) {
             usedBy.add('domain');

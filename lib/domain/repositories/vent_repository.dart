@@ -4,7 +4,7 @@
 // 树洞数据完全独立于情绪日记，本仓库也不参与任何分析/通知/关怀。
 library;
 
-import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 
 /// 树洞仓库（domain 接口）
 ///

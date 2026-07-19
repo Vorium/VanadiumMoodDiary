@@ -2,7 +2,7 @@
 //
 // 测试 NotificationNavigation 的 deep link 路由映射 + 状态管理
 import 'package:flutter_test/flutter_test.dart';
-import 'package:chroniccare/core/data/services/notification_navigation.dart';
+import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 
 void main() {

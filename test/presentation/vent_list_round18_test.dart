@@ -5,7 +5,7 @@
 // - 有条目：列表渲染（首条预览、时长）
 // - 有 audio 的条目：显示 mic 图标 + 时长
 // - "+"按钮 + 写第一句按钮都跳到 compose
-import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';

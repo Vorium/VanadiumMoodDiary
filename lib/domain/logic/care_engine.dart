@@ -9,14 +9,14 @@
 /// - 漏 1 天后第二天 10 点还没打卡 → 主动 push "你还好吗？"（不是通知家人）
 /// - 连续 7 天准时 → 庆祝 push "你真棒！"
 ///
-/// v0.18 round 18 (P1-11) fix: 文案集中到 core/shared/care_copy.dart,
+/// v0.18 round 18 (P1-11) fix: 文案集中到 domain/logic/care_copy.dart,
 /// 不再 const string inline。trigger 4 个文案 + 软提醒共用一份 source of truth,
 /// 避免双推 (setup 软提醒 + CareEngine 立即 push 文案重复)。
 library;
 
 import 'dart:developer' as developer;
 
-import 'package:chroniccare/core/shared/care_copy.dart';
+import 'package:chroniccare/domain/logic/care_copy.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 

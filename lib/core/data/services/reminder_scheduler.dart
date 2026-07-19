@@ -1,5 +1,6 @@
-import 'package:chroniccare/core/shared/pii_safe_log.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 
+import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
@@ -73,13 +74,9 @@ class ReminderService implements ReminderChecker {
       return ReminderCheckResult.empty();
     }
 
-    final allCheckIns = await _checkInRepo.watchAll().first;
-    final normalCheckIns = allCheckIns.where((c) => c.isNormal).toList();
-    // v0.16 round 19 fix: 显式 sort by timestamp desc，不依赖 watchAll() 的隐式顺序
-    // 之前假设 watchAll() 返 DESC，drift orderBy 一改就 silent 算错
-    normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-    final lastCheckIn =
-        normalCheckIns.isEmpty ? null : normalCheckIns.first.timestamp;
+    // P0 fix: DB 级查询最近一次 normal 打卡，不再全表扫描+Dart 过滤
+    final latestNormal = await _checkInRepo.getLatestNormalCheckIn();
+    final lastCheckIn = latestNormal?.timestamp;
 
     // v0.19: 缓存 now 一次，避免跨 await 后 DateTime.now() 不一致
     // （之前 evaluateLevel 和 daysSince 各调一次，跨 2 个 await，可能跨阈值边界）
@@ -96,8 +93,13 @@ class ReminderService implements ReminderChecker {
       return ReminderCheckResult.empty();
     }
 
-    final contacts = await _contactRepo.watchAll().first;
-    final medications = await _medicationRepo.watchAll().first;
+    // P0 fix: 并行获取联系人和药物（互相独立）
+    final fetched = await Future.wait([
+      _contactRepo.watchAll().first,
+      _medicationRepo.watchAll().first,
+    ]);
+    final contacts = fetched[0] as List<ContactEntity>;
+    final medications = fetched[1] as List<MedicationEntity>;
     final firstMed = medications.isEmpty ? null : medications.first;
 
     final daysSince =

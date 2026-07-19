@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/reminders_hub_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -39,6 +40,9 @@ Widget _wrap({
     ],
     child: MaterialApp(
       theme: ThemeData.light(),
+      locale: const Locale('zh'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const Scaffold(body: RemindersHubPage()),
     ),
   );

@@ -24,8 +24,8 @@ class ReminderScheduler {
   }) {
     if (lastCheckIn == null) return false;
 
-    final hoursSinceLast = now.difference(lastCheckIn).inHours;
-    return hoursSinceLast >= cycleHours;
+    final minutesSinceLast = now.difference(lastCheckIn).inMinutes;
+    return minutesSinceLast >= cycleHours * 60;
   }
 
   /// 计算距离最后打卡的小时数

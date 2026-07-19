@@ -136,14 +136,9 @@ class AssessmentReminderService {
     }
     final days = await getDays();
     final last = await getLastAssessmentAt();
-    // 顺便从数据库拉一次最新评估, 覆盖 last（防止用户做完评估但
-    // 写 last 的逻辑没跑就升级 / 数据迁移）
-    final assessments = await _checkInRepo.watchAssessments().first;
-    if (assessments.isNotEmpty) {
-      // v0.16 round 19 fix: 显式找最新（不依赖 watchAssessments() 的隐式 ASC 顺序）
-      final realLast = assessments
-          .map((c) => c.timestamp)
-          .reduce((a, b) => a.isAfter(b) ? a : b);
+    // P0 fix: DB 级查询最近评估时间戳，不再全表 reduce
+    final realLast = await _checkInRepo.getLatestAssessmentTimestamp();
+    if (realLast != null) {
       if (last == null || realLast.isAfter(last)) {
         await setLastAssessmentAt(realLast);
       }

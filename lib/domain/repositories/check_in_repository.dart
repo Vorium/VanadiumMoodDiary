@@ -26,6 +26,15 @@ abstract class CheckInRepository {
   /// 监听今天的每日打卡（type=normal）
   Stream<CheckInEntity?> watchToday();
 
+  /// 监听所有 normal 类型打卡（DB 级过滤，避免全表扫描）
+  Stream<List<CheckInEntity>> watchNormalCheckIns();
+
+  /// 获取最近一次 normal 打卡（单条查询，DB 级 LIMIT 1）
+  Future<CheckInEntity?> getLatestNormalCheckIn();
+
+  /// 获取最近一次评估的时间戳（DB 级 LIMIT 1）
+  Future<DateTime?> getLatestAssessmentTimestamp();
+
   /// 新增每日打卡
   Future<int> checkIn({DateTime? at, int? medicationId});
 

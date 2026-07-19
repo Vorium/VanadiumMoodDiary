@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-import 'package:flutter/foundation.dart';
-
 /// 统一 JSON 编解码工具（共享层：domain + data + presentation 均可使用）
 ///
 /// 重要：所有存在 SQLite 中的 JSON 字段（mood tags、medication times、临时用药 note）
 /// 都应该通过本工具读写，避免格式漂移。
 class JsonCodec {
   JsonCodec._();
+
+  // release 模式下为 true，debug/profile 为 false（替代 kDebugMode，无 Flutter 依赖）
+  static const _isProduct =
+      bool.fromEnvironment('dart.vm.product', defaultValue: false);
 
   // ====== `List<String>`（mood tags 等） ======
 
@@ -52,7 +54,7 @@ class JsonCodec {
     } catch (e, st) {
       // 解析失败 → 返回空 map,这是 fallback 路径(损坏的 JSON 字段)。
       // v0.17 round 14 (P1-5): 之前完全静默，现在 dev 模式 devtools 能看见。
-      if (kDebugMode) {
+      if (!_isProduct) {
         developer.log(
           'json_codec.decodeMap: parse failed, returning const {}',
           name: 'swallow',

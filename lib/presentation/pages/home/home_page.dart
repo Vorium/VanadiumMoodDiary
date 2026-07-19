@@ -107,14 +107,9 @@ class _HomePageState extends ConsumerState<HomePage> {
           .read(checkInNotifierProvider.notifier)
           .checkIn(medicationId: medId);
       if (!mounted) return;
-      // P0-11 fix: med 读挪到 mounted guard 之内，避免 widget 已 dispose 但
-      // 还在 race 读 provider;再加一道 mounted guard 防 await 间隙 unmount。
-      // (superpowers-en P0-11 原始 evidence: "med?.name 在 guard 之前读")
-      final med = await ref
-          .read(medicationRepositoryProvider)
-          .watchAll()
-          .first
-          .then((list) => list.where((m) => m.id == medId).firstOrNull);
+      // P0 fix: 复用 provider 树已缓存的药物数据，不再重复查库
+      final meds = ref.read(medicationsProvider).value ?? [];
+      final med = meds.where((m) => m.id == medId).firstOrNull;
       if (!mounted) return;
       final medName = med?.name ?? '该药';
       HapticFeedback.mediumImpact();
@@ -141,7 +136,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
   /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
   ///
   /// [force] = true 时忽略 [_safetyCheckTriggered] 守卫(用于 deep link 重跑)
@@ -193,8 +187,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (next.hasError && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)
-                .commonCheckinFailed(next.error.toString().split('\n').first)),
+            content: Text(
+              AppLocalizations.of(context)
+                  .commonCheckinFailed(next.error.toString().split('\n').first),
+            ),
             backgroundColor: AppTokens.error,
           ),
         );
@@ -346,7 +342,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// CareEngine 触发(rule-based)
   Future<void> _fireCareEngine() async {
     try {
-      final all = await ref.read(checkInRepositoryProvider).watchAll().first;
+      // P0 fix: 复用 provider 树已缓存的打卡数据，不再重复查库
+      final all = ref.read(allCheckInsProvider).value ?? [];
       final trigger = CareEngine.evaluate(checkIns: all, now: DateTime.now());
       if (!trigger.shouldFire) return;
       final notif = ref.read(notificationServiceProvider);

@@ -20,6 +20,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
@@ -67,22 +68,27 @@ class _NotificationStatusCardState
     setState(() => _busy = true);
     try {
       final service = ref.read(notificationServiceProvider);
+      final l10n = AppLocalizations.of(context);
       await service.showNow(
         id: 99001, // 测试用 id,不会跟任何业务通知冲突（_refillBaseId 6000+）
-        title: '🔔 通知自检',
-        body: '看到这条 = 通知工作正常。如果没看到，看下面的国产手机设置',
+        title: l10n.notificationStatusCardTestTitle,
+        body: l10n.notificationStatusCardTestBody,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('已发送测试通知 — 几秒内应该能收到'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(l10n.notificationStatusCardTestSent),
+          duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.error(context, action: '发送', error: e),
+        AppSnackBar.error(
+          context,
+          action: AppLocalizations.of(context).notificationStatusCardActionSend,
+          error: e,
+        ),
       );
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -102,17 +108,17 @@ class _NotificationStatusCardState
         // web 平台抛 PlatformException
       }
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('已排队的通知'),
+          title: Text(l10n.notificationStatusCardQueuedTitle),
           content: SizedBox(
             width: double.maxFinite,
             child: pending.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(AppTokens.spacingMd),
-                    child: Text('当前没有任何待发通知。\n'
-                        '可能是没设提醒，或被系统后台清理了。'),
+                ? Padding(
+                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    child: Text(l10n.notificationStatusCardEmpty),
                   )
                 : ListView.builder(
                     shrinkWrap: true,
@@ -123,7 +129,7 @@ class _NotificationStatusCardState
                         dense: true,
                         leading: const Icon(Icons.notifications_outlined),
                         title: Text(
-                          p.title ?? '(无标题)',
+                          p.title ?? l10n.notificationStatusCardNoTitle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -139,7 +145,7 @@ class _NotificationStatusCardState
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('关闭'),
+              child: Text(l10n.commonClose),
             ),
           ],
         ),
@@ -153,26 +159,28 @@ class _NotificationStatusCardState
   Widget build(BuildContext context) {
     // web / desktop 平台提示
     if (kIsWeb) {
-      return const Card(
+      final l10n = AppLocalizations.of(context);
+      return Card(
         child: ListTile(
-          leading: Icon(Icons.info_outline, color: AppTokens.textHint),
-          title: Text('通知功能仅在 Android / iOS 上可用'),
+          leading: const Icon(Icons.info_outline, color: AppTokens.textHint),
+          title: Text(l10n.notificationStatusCardWebTitle),
           subtitle: Text(
-            '当前是 web 端，通知由浏览器控制。请在手机上打开 App 测试。',
-            style: TextStyle(color: AppTokens.textHint),
+            l10n.notificationStatusCardWebSubtitle,
+            style: const TextStyle(color: AppTokens.textHint),
           ),
         ),
       );
     }
 
+    final l10n = AppLocalizations.of(context);
     final pending = _pending;
     final statusText = pending == null
-        ? '加载中…'
+        ? l10n.notificationStatusCardStatusLoading
         : pending < 0
-            ? '当前平台不支持查询'
+            ? l10n.notificationStatusCardStatusUnsupported
             : pending == 0
-                ? '⚠️ 没有待发通知 — 提醒可能没设上'
-                : '✓ 已排队 $pending 条待发通知';
+                ? l10n.notificationStatusCardStatusNone
+                : l10n.notificationStatusCardStatusCount(pending);
 
     return Card(
       child: Column(
@@ -182,7 +190,7 @@ class _NotificationStatusCardState
               Icons.notifications_active_outlined,
               color: AppTokens.primary,
             ),
-            title: const Text('通知与提醒'),
+            title: Text(l10n.notificationStatusCardTitle),
             // v0.17 round 14 (P2-3): AnimatedSize 让 statusText 切换时
             // 高度平滑过渡 (加载中 → 0 待发 → N 待发) 而不是突然跳变
             subtitle: AnimatedSize(
@@ -205,15 +213,15 @@ class _NotificationStatusCardState
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.send_outlined, color: AppTokens.primary),
-            title: const Text('测试通知'),
-            subtitle: const Text('点一下立即推一条，确认通知能正常弹出'),
+            title: Text(l10n.notificationStatusCardTestButtonTitle),
+            subtitle: Text(l10n.notificationStatusCardTestButtonSubtitle),
             onTap: _busy ? null : _fireTest,
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.list_alt, color: AppTokens.primary),
-            title: const Text('查看已排队通知'),
-            subtitle: const Text('展示当前所有待发的提醒'),
+            title: Text(l10n.notificationStatusCardViewButtonTitle),
+            subtitle: Text(l10n.notificationStatusCardViewButtonSubtitle),
             onTap: _busy ? null : _showDetails,
           ),
           const Divider(height: 1),
@@ -231,17 +239,18 @@ class _OemBackgroundHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Theme(
       // 去掉 ExpansionTile 默认的圆形图标背景，跟整体风格一致
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: const ExpansionTile(
-        leading: Icon(Icons.phone_android, color: AppTokens.primary),
-        title: Text('国产手机没收到通知?'),
+      child: ExpansionTile(
+        leading: const Icon(Icons.phone_android, color: AppTokens.primary),
+        title: Text(l10n.notificationStatusCardOemTitle),
         subtitle: Text(
-          '小米/华为/OPPO/Vivo 默认会杀后台，点这里看怎么设',
-          style: TextStyle(color: AppTokens.textSecondary, fontSize: 12),
+          l10n.notificationStatusCardOemSubtitle,
+          style: const TextStyle(color: AppTokens.textSecondary, fontSize: 12),
         ),
-        childrenPadding: EdgeInsets.fromLTRB(
+        childrenPadding: const EdgeInsets.fromLTRB(
           AppTokens.spacingMd,
           0,
           AppTokens.spacingMd,
@@ -249,53 +258,52 @@ class _OemBackgroundHint extends StatelessWidget {
         ),
         children: [
           _OemBrand(
-            brand: '小米 / Redmi',
+            brand: l10n.notificationStatusCardOemBrandXiaomi,
             steps: [
-              '设置 → 应用 → 慢病管家 → 自启动 → 开启',
-              '设置 → 应用 → 慢病管家 → 省电策略 → 无限制',
-              '设置 → 通知 → 慢病管家 → 允许通知 + 锁屏通知',
+              l10n.notificationStatusCardOemStepXiaomi1,
+              l10n.notificationStatusCardOemStepXiaomi2,
+              l10n.notificationStatusCardOemStepXiaomi3,
             ],
           ),
-          SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingSm),
           _OemBrand(
-            brand: '华为 / 荣耀',
+            brand: l10n.notificationStatusCardOemBrandHuawei,
             steps: [
-              '设置 → 应用 → 慢病管家 → 电池 → 启动管理 → 允许自启动',
-              '设置 → 应用 → 慢病管家 → 通知 → 全部开启',
-              '手机管家 → 应用启动管理 → 关闭「自动管理」',
+              l10n.notificationStatusCardOemStepHuawei1,
+              l10n.notificationStatusCardOemStepHuawei2,
+              l10n.notificationStatusCardOemStepHuawei3,
             ],
           ),
-          SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingSm),
           _OemBrand(
-            brand: 'OPPO / realme / 一加',
+            brand: l10n.notificationStatusCardOemBrandOppo,
             steps: [
-              '设置 → 电池 → 耗电保护 → 慢病管家 → 允许后台运行',
-              '设置 → 通知 → 慢病管家 → 全部开启',
-              '「最近任务」界面上锁 App（下滑小锁图标）',
+              l10n.notificationStatusCardOemStepOppo1,
+              l10n.notificationStatusCardOemStepOppo2,
+              l10n.notificationStatusCardOemStepOppo3,
             ],
           ),
-          SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingSm),
           _OemBrand(
-            brand: 'Vivo / iQOO',
+            brand: l10n.notificationStatusCardOemBrandVivo,
             steps: [
-              '设置 → 电池 → 后台高耗电 → 慢病管家 → 允许',
-              '设置 → 通知 → 慢病管家 → 全部开启',
-              '「最近任务」界面上锁 App',
+              l10n.notificationStatusCardOemStepVivo1,
+              l10n.notificationStatusCardOemStepVivo2,
+              l10n.notificationStatusCardOemStepVivo3,
             ],
           ),
-          SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingSm),
           _OemBrand(
-            brand: '魅族',
+            brand: l10n.notificationStatusCardOemBrandMeizu,
             steps: [
-              '设置 → 应用管理 → 慢病管家 → 权限管理 → 自启动 → 允许',
-              '设置 → 通知管理 → 慢病管家 → 全部开启',
+              l10n.notificationStatusCardOemStepMeizu1,
+              l10n.notificationStatusCardOemStepMeizu2,
             ],
           ),
-          SizedBox(height: AppTokens.spacingMd),
+          const SizedBox(height: AppTokens.spacingMd),
           Text(
-            '通用建议：精确闹钟被某些 ROM 静默拒绝时,'
-            '首次启动 App 时系统会弹「是否允许」,请选「允许」。',
-            style: TextStyle(
+            l10n.notificationStatusCardOemGeneralTip,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeCaption,
               color: AppTokens.textHint,
             ),

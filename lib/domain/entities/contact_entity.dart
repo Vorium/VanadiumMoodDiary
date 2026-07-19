@@ -32,25 +32,36 @@ class ContactEntity {
   /// 必须跟 `lib/core/data/utils/phone_validator.dart` 保持同步
   /// （domain 不能 import data,regex 复制一份）。
   /// CI 用 `phone_validator_sync_test.dart` 验证两边 regex 一致。
+  // 缓存正则（避免每次 isValidPhone 调用创建 8 个 RegExp）
+  static final _cnWithPrefix = RegExp(r'^(\+?86[-\s]?)?1[3-9]\d{9}$');
+  static final _hkWithPrefix = RegExp(r'^(\+?852[-\s]?)?[45789]\d{7}$');
+  static final _moWithPrefix = RegExp(r'^(\+?853[-\s]?)?6\d{7}$');
+  static final _twWithPrefix = RegExp(r'^(\+?886[-\s]?)?9\d{8}$');
+  static final _intlWithPrefix = RegExp(r'^\+\d{6,15}$');
+  static final _cnPure = RegExp(r'^1[3-9]\d{9}$');
+  static final _twPure = RegExp(r'^9\d{8}$');
+  static final _hkPure = RegExp(r'^[45789]\d{7}$');
+  static final _moPure = RegExp(r'^6\d{7}$');
+
   bool get isValidPhone {
     final s = phone.trim();
     if (s.isEmpty) return false;
 
     // 1. 带 + 前缀
     if (s.startsWith('+')) {
-      if (RegExp(r'^(\+?86[-\s]?)?1[3-9]\d{9}$').hasMatch(s)) return true;
-      if (RegExp(r'^(\+?852[-\s]?)?[45789]\d{7}$').hasMatch(s)) return true;
-      if (RegExp(r'^(\+?853[-\s]?)?6\d{7}$').hasMatch(s)) return true;
-      if (RegExp(r'^(\+?886[-\s]?)?9\d{8}$').hasMatch(s)) return true;
-      if (RegExp(r'^\+\d{6,15}$').hasMatch(s)) return true;
+      if (_cnWithPrefix.hasMatch(s)) return true;
+      if (_hkWithPrefix.hasMatch(s)) return true;
+      if (_moWithPrefix.hasMatch(s)) return true;
+      if (_twWithPrefix.hasMatch(s)) return true;
+      if (_intlWithPrefix.hasMatch(s)) return true;
       return false;
     }
 
     // 2. 纯数字:cn(11) > tw(9) > hk(8) > mo(8)
-    if (RegExp(r'^1[3-9]\d{9}$').hasMatch(s)) return true;
-    if (RegExp(r'^9\d{8}$').hasMatch(s)) return true;
-    if (RegExp(r'^[45789]\d{7}$').hasMatch(s)) return true;
-    if (RegExp(r'^6\d{7}$').hasMatch(s)) return true;
+    if (_cnPure.hasMatch(s)) return true;
+    if (_twPure.hasMatch(s)) return true;
+    if (_hkPure.hasMatch(s)) return true;
+    if (_moPure.hasMatch(s)) return true;
     return false;
   }
 

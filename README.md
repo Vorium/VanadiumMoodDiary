@@ -44,15 +44,15 @@ flutter test
 |---|---|
 | Flutter | 3.44.5 stable |
 | Dart | 3.12.2 |
-| 状态管理 | Riverpod 2.6 |
-| 本地数据库 | Drift 2.28 + SQLCipher 加密 |
+| 状态管理 | Riverpod 3.3.2 |
+| 本地数据库 | Drift 2.20.3 + SQLCipher 加密 |
 | 路由 | go_router 14.6 |
 | 图表 | fl_chart |
 | 推送 | flutter_local_notifications 17 |
 | 加密 | flutter_secure_storage + encrypt (AES-256) |
 | 文件分享 | share_plus |
 | 录音 | record 5.2.0 |
-| 音频播放 | audioplayers 6.8.1 |
+| 音频播放 | audioplayers 6.1.0 |
 
 ## 📁 目录结构（4 层架构 + 共享层）
 
@@ -60,30 +60,25 @@ flutter test
 lib/
 ├── main.dart              # 入口
 ├── app.dart               # App 根 + Riverpod
-├── routing/               # go_router 配置
-├── theme/                 # 设计 Token + Material 3 主题
-├── l10n/                  # 国际化字符串
-├── data/                  # 基础设施层
-│   ├── database/         # Drift 表 + 数据库
-│   ├── repositories/     # 仓库实现（_impl.dart）
-│   └── services/         # 通知/邮件/SMS/PDF/录音
+├── core/                  # 基础设施 umbrella
+│   ├── data/              # data 层（DB / Repositories / Services / Utils）
+│   ├── shared/            # 跨层共享（formatters / json_codec / mood_visual）
+│   ├── theme/             # AppTokens + M3 主题
+│   ├── routing/           # go_router
+│   └── l10n/              # domain 层 strings（通知/邮件用）
+├── l10n/                  # presentation 层 flutter_localizations（UI 用）
 ├── domain/                # 领域层（纯 Dart，0 Flutter 0 Drift 依赖）
 │   ├── entities/          # 业务实体（*Entity 后缀）
 │   ├── logic/             # 业务规则（量表/streak/care engine/报告）
 │   ├── repositories/      # 抽象接口（无实现）
 │   └── usecases/          # 用例（业务编排）
-├── shared/                # 共享层：domain + data + presentation 都能用
-│   ├── formatters.dart    # 日期/时间格式化
-│   ├── json_codec.dart    # JSON 编解码
-│   ├── domain_value.dart  # DomainValue<T>（替代 drift Value<T>）
-│   └── mood_visual.dart   # 情绪分数 → emoji/label/ARGB int
 └── presentation/          # UI 层
     ├── providers/         # Riverpod providers
     ├── pages/             # 页面（home/setup/settings/assessment/vent/...）
     └── widgets/           # 通用组件
 ```
 
-**依赖方向**：`presentation → domain ← data`，**shared** 是 3 层都能用的横切层。
+**依赖方向**：`presentation → domain ← data`。
 **4 层纯度 + 一致性自动检查**：
 ```bash
 dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
@@ -125,7 +120,7 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 ## 🧪 测试
 
 ```bash
-flutter test                          # 跑所有测试（462 cases）
+flutter test                          # 跑所有测试（702 cases）
 flutter test --coverage               # 覆盖率
 dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 

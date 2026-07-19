@@ -6,7 +6,7 @@ library;
 
 import 'package:drift/drift.dart' show Value;
 
-import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/vent/vent_mapper.dart';

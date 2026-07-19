@@ -10,8 +10,7 @@
 // 3. notification_service.scheduleSoftReminder 标 @Deprecated 但保留
 //    (未来 soft reminder 跟 CareEngine 合并时彻底删)
 //
-// shared/ 位置:domain 业务文案 + data notification 推送都要用,
-// 不能只放 domain。放 core/shared/ 是 shared umbrella 的 utility。
+// P1 fix: 从 core/shared/ 移入 domain/logic/（仅 domain 层使用，不满足 shared 2+ 层规则）
 library;
 
 import 'package:chroniccare/domain/logic/care_engine.dart';

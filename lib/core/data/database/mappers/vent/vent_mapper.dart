@@ -5,7 +5,7 @@ library;
 
 import 'package:drift/drift.dart' show Value;
 
-import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 
 /// Drift row → entity

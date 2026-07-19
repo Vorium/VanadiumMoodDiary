@@ -105,5 +105,5 @@ class MoodEntryEntity {
   @override
   String toString() => 'MoodEntryEntity('
       'id=$id, score=$score, energy=$energy, sleep=$sleep, anxiety=$anxiety, '
-      'tags=$tags, at=$timestamp)';
+      'tagsJson=$tagsJson, at=$timestamp)';
 }

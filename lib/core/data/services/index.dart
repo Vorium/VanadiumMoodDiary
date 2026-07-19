@@ -36,11 +36,11 @@ class AppServices {
         cryptoService = CryptoService(),
         smsService = SmsService(),
         reminderService = ReminderService(
-          checkInRepo: CheckInRepositoryImpl(database),
-          contactRepo: ContactRepositoryImpl(database),
-          medicationRepo: MedicationRepositoryImpl(database),
-          userProfileRepo: UserProfileRepositoryImpl(database),
-          smsService: SmsService(),
+          checkInRepo: checkInRepo,
+          contactRepo: contactRepo,
+          medicationRepo: medicationRepo,
+          userProfileRepo: userProfileRepo,
+          smsService: smsService,
         );
 
   /// 初始化所有服务

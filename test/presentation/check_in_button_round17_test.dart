@@ -5,7 +5,7 @@
 // 2. CheckInButton 状态切换时背景色 + 文字过渡（AnimatedContainer + AnimatedSwitcher）
 // 3. streak 数字 tween 递增（TweenAnimationBuilder）
 // 4. vent 空态有 fade + scale 入场动画
-import 'package:chroniccare/domain/entities/vent_entry.dart';
+import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';

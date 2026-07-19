@@ -6,7 +6,7 @@
   - 允许跨 feature import 的目录:
     - core/ (共享层)
     - domain/ (entity 跨 feature 共享,layer-first 设计)
-    - data/ (data layer 跨 feature 共享,repository 注入)
+    - core/data/ (data layer 跨 feature 共享,repository 注入)
     - presentation/providers/ (Riverpod 跨 feature 共享 provider)
     - presentation/widgets/ (通用 widget)
 
@@ -34,7 +34,6 @@ HUB_FEATURES = {"home", "settings"}
 ALLOWED_CROSS_FEATURE_PREFIXES = (
     "package:chroniccare/core/",
     "package:chroniccare/domain/",
-    "package:chroniccare/data/",
     "package:chroniccare/presentation/providers/",
     "package:chroniccare/presentation/widgets/",
 )

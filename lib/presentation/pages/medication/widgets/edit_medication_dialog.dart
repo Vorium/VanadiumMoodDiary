@@ -12,6 +12,7 @@ import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
 
 /// 弹出编辑 dialog，返回 true 表示有保存成功，false/null = 取消
 Future<bool?> showEditMedicationDialog(
@@ -118,8 +119,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       await ref.read(medicationRepositoryProvider).update(updated);
       // 改完重排该药的所有相关推送
       final notif = ref.read(notificationServiceProvider);
-      final meds =
-          await ref.read(medicationRepositoryProvider).watchAll().first;
+      // P0 fix: 复用 provider 树已缓存的药物数据
+      ref.invalidate(medicationsProvider);
+      final meds = ref.read(medicationsProvider).value ?? [];
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       // medication reminders: 整个重排（停药会自然被 reschedule 排除）
       await notif.rescheduleMedicationReminders(meds);
