@@ -25,9 +25,7 @@ class HomeHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            userName.isEmpty
-                ? (fallbackTitle ?? '慢病管家')
-                : '$userName 还在坚持',
+            userName.isEmpty ? (fallbackTitle ?? '慢病管家') : '$userName 还在坚持',
             style: TextStyle(
               fontSize: AppTokens.fontSizeHeadline,
               fontWeight: FontWeight.w600,

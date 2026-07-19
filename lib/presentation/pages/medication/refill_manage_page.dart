@@ -68,8 +68,10 @@ class RefillManagePage extends ConsumerWidget {
       title: '续方管理',
       child: medsAsync.when(
         data: (meds) => _buildBody(context, ref, meds),
-        loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+        loading: () => const LoadingSkeleton.fullScreen(),
+        error: (e, _) => Center(
+            child: Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

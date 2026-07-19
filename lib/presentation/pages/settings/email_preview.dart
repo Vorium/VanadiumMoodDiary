@@ -100,9 +100,9 @@ class EmailPreviewPage extends ConsumerWidget {
                       ),
                     );
                   },
-                  loading: () =>
-                      LoadingSkeleton.fullScreen(),
-                  error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
+                  loading: () => const LoadingSkeleton.fullScreen(),
+                  error: (e, _) => Text(AppLocalizations.of(context)
+                      .commonLoadFailed(e.toString())),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 Container(
@@ -120,8 +120,10 @@ class EmailPreviewPage extends ConsumerWidget {
             ),
           );
         },
-        loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+        loading: () => const LoadingSkeleton.fullScreen(),
+        error: (e, _) => Center(
+            child: Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

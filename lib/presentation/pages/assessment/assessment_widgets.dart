@@ -11,7 +11,8 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 class AssessmentSparkline extends StatelessWidget {
   final AssessmentHistory history;
   final String scaleId;
-  const AssessmentSparkline({super.key, required this.history, required this.scaleId});
+  const AssessmentSparkline(
+      {super.key, required this.history, required this.scaleId});
 
   @override
   Widget build(BuildContext context) {

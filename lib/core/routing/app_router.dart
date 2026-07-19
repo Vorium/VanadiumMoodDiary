@@ -49,7 +49,8 @@ Page<T> _slideRightPage<T>(LocalKey key, Widget child) {
           begin: const Offset(0.1, 0),
           end: Offset.zero,
         ).animate(
-            CurvedAnimation(parent: anim, curve: AppTokens.curveStandard),),
+          CurvedAnimation(parent: anim, curve: AppTokens.curveStandard),
+        ),
         child: FadeTransition(opacity: anim, child: child),
       );
     },
@@ -68,7 +69,8 @@ Page<T> _slideUpPage<T>(LocalKey key, Widget child) {
           begin: const Offset(0, 0.05),
           end: Offset.zero,
         ).animate(
-            CurvedAnimation(parent: anim, curve: AppTokens.curveStandard),),
+          CurvedAnimation(parent: anim, curve: AppTokens.curveStandard),
+        ),
         child: FadeTransition(opacity: anim, child: child),
       );
     },

@@ -50,7 +50,8 @@ void main() {
   group('deleteAudio', () {
     test('non-existent file returns true (idempotent)', () async {
       final storage = VentAudioStorage();
-      final result = await storage.deleteAudio('/nonexistent/path/file.m4a.enc');
+      final result =
+          await storage.deleteAudio('/nonexistent/path/file.m4a.enc');
       expect(result, isTrue);
     });
   });

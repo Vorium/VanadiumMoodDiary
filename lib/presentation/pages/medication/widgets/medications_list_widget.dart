@@ -40,8 +40,9 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     if (widget.meds.isEmpty) {
       return Card(
         child: Padding(
-          padding: EdgeInsets.all(AppTokens.spacingMd),
-          child: Text(AppLocalizations.of(context).medsListEmpty, style: TextStyle(color: AppTokens.textHint)),
+          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          child: Text(AppLocalizations.of(context).medsListEmpty,
+              style: const TextStyle(color: AppTokens.textHint)),
         ),
       );
     }
@@ -67,10 +68,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         if (activeMeds.isEmpty)
           Card(
             child: Padding(
-              padding: EdgeInsets.all(AppTokens.spacingMd),
+              padding: const EdgeInsets.all(AppTokens.spacingMd),
               child: Text(
                 AppLocalizations.of(context).medsListNoActive,
-                style: TextStyle(color: AppTokens.textHint),
+                style: const TextStyle(color: AppTokens.textHint),
               ),
             ),
           )
@@ -97,10 +98,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         if (stoppedMeds.isNotEmpty) ...[
           const SizedBox(height: AppTokens.spacingSm),
           Padding(
-            padding: EdgeInsets.only(left: 4, top: AppTokens.spacingXs),
+            padding: const EdgeInsets.only(left: 4, top: AppTokens.spacingXs),
             child: Text(
               AppLocalizations.of(context).medsListStoppedSection,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
                 color: AppTokens.textHint,
                 fontWeight: FontWeight.w500,
@@ -141,7 +142,9 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              med.isActive ? AppLocalizations.of(context).medsSnackUpdated : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
+              med.isActive
+                  ? AppLocalizations.of(context).medsSnackUpdated
+                  : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
             ),
             duration: const Duration(seconds: 2),
           ),
@@ -164,7 +167,8 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: AppLocalizations.of(context).commonDelete, error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonDelete, error: e),
         );
       }
     } finally {
@@ -216,14 +220,16 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context).medsRefillSet(Formatters.date(picked), days)),
+          content: Text(AppLocalizations.of(context)
+              .medsRefillSet(Formatters.date(picked), days)),
           duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: AppLocalizations.of(context).commonSetup, error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonSetup, error: e),
         );
       }
     } finally {
@@ -284,7 +290,7 @@ class _MedicationRow extends StatelessWidget {
               ),
               child: Text(
                 AppLocalizations.of(context).medsListStoppedSection,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 10,
                   color: AppTokens.warning,
                   fontWeight: FontWeight.w500,

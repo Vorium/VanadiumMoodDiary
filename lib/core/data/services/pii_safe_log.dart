@@ -108,11 +108,8 @@ String maskName(String name) {
     if (name.length == 1) return name;
     return name[0] + ('*' * (name.length - 1));
   }
-  return name
-      .split(RegExp(r'\s+'))
-      .map((word) {
-        if (word.isEmpty) return '';
-        return word[0] + ('*' * (word.length - 1));
-      })
-      .join(' ');
+  return name.split(RegExp(r'\s+')).map((word) {
+    if (word.isEmpty) return '';
+    return word[0] + ('*' * (word.length - 1));
+  }).join(' ');
 }

@@ -102,23 +102,28 @@ class ReminderService implements ReminderChecker {
     final medications = fetched[1] as List<MedicationEntity>;
     final firstMed = medications.isEmpty ? null : medications.first;
 
-    final daysSince =
-        lastCheckIn == null ? 0 : _daysBetween(lastCheckIn, now);
+    final daysSince = lastCheckIn == null ? 0 : _daysBetween(lastCheckIn, now);
     final hoursSince =
         lastCheckIn == null ? 0 : now.difference(lastCheckIn).inHours;
 
     piiSafeLog('ReminderService', '=' * 60);
     piiSafeLog('ReminderService', '⚠️ 失联检测');
     piiSafeLog('ReminderService', '  用户: \${maskName(profile.userName)}');
-    piiSafeLog('ReminderService', '  距上次打卡: $hoursSince 小时 ($daysSince 天)',
+    piiSafeLog(
+      'ReminderService',
+      '  距上次打卡: $hoursSince 小时 ($daysSince 天)',
     );
     piiSafeLog('ReminderService', '  级别: ${level.name}');
-    piiSafeLog('ReminderService', '  联系人: ${contacts.length} 个',
+    piiSafeLog(
+      'ReminderService',
+      '  联系人: ${contacts.length} 个',
     );
 
     // soft 级别（24-36h）：只 UI 提示，不发紧急通知
     if (level == ReminderLevel.soft) {
-      piiSafeLog('ReminderService', '  → soft 级别：仅用户内部提示，不打扰紧急联系人',
+      piiSafeLog(
+        'ReminderService',
+        '  → soft 级别：仅用户内部提示，不打扰紧急联系人',
       );
       return ReminderCheckResult(
         level: level,
@@ -155,7 +160,9 @@ class ReminderService implements ReminderChecker {
           error: r.error,
         ),
       );
-      piiSafeLog('ReminderService', '  → ${c.name} (${c.phone}): ${r.success ? "✅" : "❌ ${r.error}"}',
+      piiSafeLog(
+        'ReminderService',
+        '  → ${c.name} (${c.phone}): ${r.success ? "✅" : "❌ ${r.error}"}',
       );
     }
 

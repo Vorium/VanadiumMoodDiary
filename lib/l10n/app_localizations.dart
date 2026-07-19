@@ -1333,6 +1333,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{days} 天'**
   String reminderHubNDays(int days);
+
+  /// No description provided for @setupContactNameLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'联系人 {index} 姓名'**
+  String setupContactNameLabel(int index);
+
+  /// No description provided for @setupContactNameHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'称呼（选填）'**
+  String get setupContactNameHint;
+
+  /// No description provided for @setupContactPhoneLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'紧急联系人手机号 {index}'**
+  String setupContactPhoneLabel(int index);
+
+  /// No description provided for @setupContactPhoneHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'13800138000'**
+  String get setupContactPhoneHint;
 }
 
 class _AppLocalizationsDelegate

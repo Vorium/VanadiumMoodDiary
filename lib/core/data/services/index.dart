@@ -25,7 +25,7 @@ class AppServices {
   final NotificationService notificationService;
   final CryptoService cryptoService;
   final SmsService smsService;
-  final ReminderService reminderService;
+  late final ReminderService reminderService;
 
   AppServices({required this.database})
       : checkInRepo = CheckInRepositoryImpl(database),
@@ -34,14 +34,15 @@ class AppServices {
         userProfileRepo = UserProfileRepositoryImpl(database),
         notificationService = NotificationService(),
         cryptoService = CryptoService(),
-        smsService = SmsService(),
-        reminderService = ReminderService(
-          checkInRepo: checkInRepo,
-          contactRepo: contactRepo,
-          medicationRepo: medicationRepo,
-          userProfileRepo: userProfileRepo,
-          smsService: smsService,
-        );
+        smsService = SmsService() {
+    reminderService = ReminderService(
+      checkInRepo: checkInRepo,
+      contactRepo: contactRepo,
+      medicationRepo: medicationRepo,
+      userProfileRepo: userProfileRepo,
+      smsService: smsService,
+    );
+  }
 
   /// 初始化所有服务
   Future<void> init() async {

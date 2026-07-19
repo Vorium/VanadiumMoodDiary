@@ -57,8 +57,10 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           );
           return _buildBody(context, checkIns, moodEntries);
         },
-        loading: () => LoadingSkeleton.fullScreen(),
-        error: (Object e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+        loading: () => const LoadingSkeleton.fullScreen(),
+        error: (Object e, _) => Center(
+            child: Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }
@@ -146,7 +148,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: 200,
                 child: LoadingSkeleton.fullScreen(),
               ),
-              error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
+              error: (e, _) => Text(
+                  AppLocalizations.of(context).commonLoadFailed(e.toString())),
             );
           },
         ),
@@ -169,7 +172,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: 200,
                 child: LoadingSkeleton.fullScreen(),
               ),
-              error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
+              error: (e, _) => Text(
+                  AppLocalizations.of(context).commonLoadFailed(e.toString())),
             );
           },
         ),

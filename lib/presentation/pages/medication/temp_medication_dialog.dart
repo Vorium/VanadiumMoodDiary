@@ -32,11 +32,13 @@ class TempMedicationDialog extends StatefulWidget {
       ),
       loading: () => showDialog<void>(
         context: context,
-        builder: (_) => LoadingSkeleton.fullScreen(),
+        builder: (_) => const LoadingSkeleton.fullScreen(),
       ),
       error: (e, _) => showDialog<void>(
         context: context,
-        builder: (_) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+        builder: (_) => Center(
+            child: Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

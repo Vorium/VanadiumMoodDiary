@@ -322,5 +322,15 @@
   "reminderHubNDays": "{days} 天",
   "@reminderHubNDays": {
     "placeholders": { "days": { "type": "int" } }
-  }
+  },
+  "setupContactNameLabel": "联系人 {index} 姓名",
+  "@setupContactNameLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "setupContactNameHint": "称呼（选填）",
+  "setupContactPhoneLabel": "紧急联系人手机号 {index}",
+  "@setupContactPhoneLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "setupContactPhoneHint": "13800138000"
 }

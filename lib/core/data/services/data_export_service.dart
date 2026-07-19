@@ -334,8 +334,12 @@ class DataExportService {
                   _validateIntOr(m['audioDurationSec'], 0, min: 0, max: 86400),
                 ),
                 audioSizeBytes: Value(
-                  _validateIntOr(m['audioSizeBytes'], 0,
-                      min: 0, max: 1073741824,),
+                  _validateIntOr(
+                    m['audioSizeBytes'],
+                    0,
+                    min: 0,
+                    max: 1073741824,
+                  ),
                 ), // 1GB
               ),
             );

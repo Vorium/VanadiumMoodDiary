@@ -82,14 +82,20 @@ void main() {
     test('active == isActive', () {
       expect(
         const ContactEntity(
-                id: 1, name: 'A', phone: '13800138000', isActive: true,)
-            .active,
+          id: 1,
+          name: 'A',
+          phone: '13800138000',
+          isActive: true,
+        ).active,
         isTrue,
       );
       expect(
         const ContactEntity(
-                id: 1, name: 'A', phone: '13800138000', isActive: false,)
-            .active,
+          id: 1,
+          name: 'A',
+          phone: '13800138000',
+          isActive: false,
+        ).active,
         isFalse,
       );
     });
@@ -123,11 +129,23 @@ void main() {
 
     test('bySortOrder 静态比较器', () {
       final a = const ContactEntity(
-          id: 1, name: 'A', phone: '13800138000', sortOrder: 2,);
+        id: 1,
+        name: 'A',
+        phone: '13800138000',
+        sortOrder: 2,
+      );
       final b = const ContactEntity(
-          id: 2, name: 'B', phone: '13800138001', sortOrder: 1,);
+        id: 2,
+        name: 'B',
+        phone: '13800138001',
+        sortOrder: 1,
+      );
       final c = const ContactEntity(
-          id: 3, name: 'C', phone: '13800138002', sortOrder: 3,);
+        id: 3,
+        name: 'C',
+        phone: '13800138002',
+        sortOrder: 3,
+      );
       final list = [a, b, c]..sort(ContactEntity.bySortOrder);
       expect(list[0].id, 2);
       expect(list[1].id, 1);
@@ -144,7 +162,11 @@ void main() {
 
     test('copyWith isActive', () {
       final original = const ContactEntity(
-          id: 1, name: 'A', phone: '13800138000', isActive: true,);
+        id: 1,
+        name: 'A',
+        phone: '13800138000',
+        isActive: true,
+      );
       final copy = original.copyWith(isActive: false);
       expect(copy.isActive, isFalse);
     });
@@ -153,11 +175,23 @@ void main() {
   group('等值', () {
     test('== hashCode 字段全等才相等', () {
       final a = const ContactEntity(
-          id: 1, name: 'A', phone: '13800138000', sortOrder: 0,);
+        id: 1,
+        name: 'A',
+        phone: '13800138000',
+        sortOrder: 0,
+      );
       final b = const ContactEntity(
-          id: 1, name: 'A', phone: '13800138000', sortOrder: 0,);
+        id: 1,
+        name: 'A',
+        phone: '13800138000',
+        sortOrder: 0,
+      );
       final c = const ContactEntity(
-          id: 1, name: 'B', phone: '13800138000', sortOrder: 0,);
+        id: 1,
+        name: 'B',
+        phone: '13800138000',
+        sortOrder: 0,
+      );
       expect(a, equals(b));
       expect(a.hashCode, b.hashCode);
       expect(a, isNot(equals(c)));

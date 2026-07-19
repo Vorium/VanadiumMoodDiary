@@ -124,7 +124,8 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             error: (e, _) => _ReminderCard(
               icon: Icons.medication_outlined,
               title: AppLocalizations.of(context).reminderHubMedicationTitle,
-              description: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+              description:
+                  AppLocalizations.of(context).commonLoadFailed(e.toString()),
               statusText: AppLocalizations.of(context).reminderHubStatusError,
               statusActive: false,
               actionLabel: '',
@@ -149,7 +150,8 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             error: (e, _) => _ReminderCard(
               icon: Icons.shopping_cart_outlined,
               title: AppLocalizations.of(context).reminderHubRefillTitle,
-              description: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+              description:
+                  AppLocalizations.of(context).commonLoadFailed(e.toString()),
               statusText: AppLocalizations.of(context).reminderHubStatusError,
               statusActive: false,
               actionLabel: '',
@@ -218,7 +220,8 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           ? AppLocalizations.of(context).reminderHubAssessmentDescEnabled(days)
           : AppLocalizations.of(context).reminderHubAssessmentDescDisabled,
       statusText: enabled
-          ? AppLocalizations.of(context).reminderHubAssessmentStatusEnabled(days)
+          ? AppLocalizations.of(context)
+              .reminderHubAssessmentStatusEnabled(days)
           : AppLocalizations.of(context).reminderHubStatusDisabled,
       statusActive: enabled,
       actionLabel: AppLocalizations.of(context).reminderHubConfigure,
@@ -259,7 +262,8 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.error_outline, color: AppTokens.error, size: 18),
+                const Icon(Icons.error_outline,
+                    color: AppTokens.error, size: 18),
                 const SizedBox(width: AppTokens.spacingXs),
                 Expanded(
                   child: Text(
@@ -274,10 +278,12 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           icon: Icons.shield_outlined,
           title: AppLocalizations.of(context).reminderHubSafetyTitle,
           description: enabled
-              ? AppLocalizations.of(context).reminderHubSafetyDescEnabled(threshold)
+              ? AppLocalizations.of(context)
+                  .reminderHubSafetyDescEnabled(threshold)
               : AppLocalizations.of(context).reminderHubSafetyDescDisabled,
           statusText: enabled
-              ? AppLocalizations.of(context).reminderHubSafetyStatusEnabled(threshold)
+              ? AppLocalizations.of(context)
+                  .reminderHubSafetyStatusEnabled(threshold)
               : AppLocalizations.of(context).reminderHubStatusDisabled,
           statusActive: enabled,
           actionLabel: AppLocalizations.of(context).reminderHubConfigure,
@@ -413,10 +419,12 @@ class _MedicationReminderCard extends StatelessWidget {
       icon: Icons.medication_outlined,
       title: AppLocalizations.of(context).reminderHubMedicationTitle,
       description: active
-          ? AppLocalizations.of(context).reminderHubMedicationDescActive(activeMeds.length, totalTimes)
+          ? AppLocalizations.of(context)
+              .reminderHubMedicationDescActive(activeMeds.length, totalTimes)
           : AppLocalizations.of(context).reminderHubMedicationDescInactive,
       statusText: active
-          ? AppLocalizations.of(context).reminderHubMedicationStatusActive(activeMeds.length, totalTimes)
+          ? AppLocalizations.of(context)
+              .reminderHubMedicationStatusActive(activeMeds.length, totalTimes)
           : AppLocalizations.of(context).reminderHubStatusNotConfigured,
       statusActive: active,
       actionLabel: AppLocalizations.of(context).reminderHubManageMedication,
@@ -443,9 +451,11 @@ class _RefillReminderCard extends StatelessWidget {
     if (!active) {
       description = AppLocalizations.of(context).reminderHubRefillDescNone;
     } else if (overdue.isNotEmpty) {
-      description = AppLocalizations.of(context).reminderHubRefillDescOverdue(overdue.length, inWindow.length);
+      description = AppLocalizations.of(context)
+          .reminderHubRefillDescOverdue(overdue.length, inWindow.length);
     } else {
-      description = AppLocalizations.of(context).reminderHubRefillDescActive(withRefill.length);
+      description = AppLocalizations.of(context)
+          .reminderHubRefillDescActive(withRefill.length);
     }
 
     return _ReminderCard(
@@ -454,10 +464,13 @@ class _RefillReminderCard extends StatelessWidget {
       description: description,
       statusText: active
           ? overdue.isNotEmpty
-              ? AppLocalizations.of(context).reminderHubRefillStatusOverdue(overdue.length)
+              ? AppLocalizations.of(context)
+                  .reminderHubRefillStatusOverdue(overdue.length)
               : inWindow.isNotEmpty
-                  ? AppLocalizations.of(context).reminderHubRefillStatusInWindow(inWindow.length)
-                  : AppLocalizations.of(context).reminderHubRefillStatusActive(withRefill.length)
+                  ? AppLocalizations.of(context)
+                      .reminderHubRefillStatusInWindow(inWindow.length)
+                  : AppLocalizations.of(context)
+                      .reminderHubRefillStatusActive(withRefill.length)
           : AppLocalizations.of(context).reminderHubStatusNotConfigured,
       statusActive: active,
       actionLabel: AppLocalizations.of(context).reminderHubManageRefill,
@@ -513,7 +526,8 @@ class _AssessmentReminderSheetState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: AppLocalizations.of(context).commonSave, error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonSave, error: e),
         );
       }
     } finally {
@@ -643,7 +657,8 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: AppLocalizations.of(context).commonSave, error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonSave, error: e),
         );
       }
     } finally {

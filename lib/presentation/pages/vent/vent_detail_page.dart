@@ -309,8 +309,10 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
             ),
           );
         },
-        loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+        loading: () => const LoadingSkeleton.fullScreen(),
+        error: (e, _) => Center(
+            child: Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }

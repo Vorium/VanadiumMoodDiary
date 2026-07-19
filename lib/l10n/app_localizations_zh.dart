@@ -694,4 +694,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String reminderHubNDays(int days) {
     return '$days 天';
   }
+
+  @override
+  String setupContactNameLabel(int index) {
+    return '联系人 $index 姓名';
+  }
+
+  @override
+  String get setupContactNameHint => '称呼（选填）';
+
+  @override
+  String setupContactPhoneLabel(int index) {
+    return '紧急联系人手机号 $index';
+  }
+
+  @override
+  String get setupContactPhoneHint => '13800138000';
 }

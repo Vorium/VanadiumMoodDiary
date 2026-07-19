@@ -146,13 +146,17 @@ class SmsService {
     try {
       final ok = await _provider.send(to: to, body: body);
       if (ok) {
-        piiSafeLog('SmsService', '✅ SMS sent to $to via ${_provider.name}',
+        piiSafeLog(
+          'SmsService',
+          '✅ SMS sent to $to via ${_provider.name}',
         );
         return SmsResult.ok();
       }
       return SmsResult.fail('${_provider.name} returned false');
     } catch (e, st) {
-      piiSafeLog('SmsService', '❌ SMS failed to $to: $e',
+      piiSafeLog(
+        'SmsService',
+        '❌ SMS failed to $to: $e',
         error: e,
         stackTrace: st,
       );

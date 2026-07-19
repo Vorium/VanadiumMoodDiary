@@ -47,24 +47,28 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingSm),
           contactsAsync.when(
             data: (contacts) => ContactsListWidget(contacts: contacts),
-            loading: () => LoadingSkeleton.fullScreen(),
-            error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
+            loading: () => const LoadingSkeleton.fullScreen(),
+            error: (e, _) => Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString())),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
 
           _SectionHeader(
-              title: AppLocalizations.of(context).settingsMedication,),
+            title: AppLocalizations.of(context).settingsMedication,
+          ),
           const SizedBox(height: AppTokens.spacingSm),
           medsAsync.when(
             data: (meds) => MedicationsListWidget(meds: meds),
-            loading: () => LoadingSkeleton.fullScreen(),
-            error: (e, _) => Text(AppLocalizations.of(context).commonLoadFailed(e.toString())),
+            loading: () => const LoadingSkeleton.fullScreen(),
+            error: (e, _) => Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString())),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          _SectionHeader(title: AppLocalizations.of(context).settingsDataManagement),
+          _SectionHeader(
+              title: AppLocalizations.of(context).settingsDataManagement),
           const SizedBox(height: AppTokens.spacingSm),
           Card(
             child: Column(
@@ -75,7 +79,8 @@ class SettingsPage extends ConsumerWidget {
                     color: AppTokens.primary,
                   ),
                   title: Text(AppLocalizations.of(context).settingsExportData),
-                  subtitle: Text(AppLocalizations.of(context).settingsExportSubtitle),
+                  subtitle:
+                      Text(AppLocalizations.of(context).settingsExportSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _exportData(context, ref),
                 ),
@@ -87,7 +92,8 @@ class SettingsPage extends ConsumerWidget {
                   ),
                   title: Text(AppLocalizations.of(context).settingsMedReport),
                   subtitle: Text(
-                      AppLocalizations.of(context).settingsMedReportSubtitle,),
+                    AppLocalizations.of(context).settingsMedReportSubtitle,
+                  ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _chooseAndShowReport(context, ref),
                 ),
@@ -96,8 +102,9 @@ class SettingsPage extends ConsumerWidget {
                   leading: const Icon(Icons.history, color: AppTokens.primary),
                   title:
                       Text(AppLocalizations.of(context).settingsReportHistory),
-                  subtitle: Text(AppLocalizations.of(context)
-                      .settingsReportHistorySubtitle,),
+                  subtitle: Text(
+                    AppLocalizations.of(context).settingsReportHistorySubtitle,
+                  ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showReportHistory(context),
                 ),
@@ -108,7 +115,8 @@ class SettingsPage extends ConsumerWidget {
                     color: AppTokens.primary,
                   ),
                   title: Text(AppLocalizations.of(context).settingsImportData),
-                  subtitle: Text(AppLocalizations.of(context).settingsImportSubtitle),
+                  subtitle:
+                      Text(AppLocalizations.of(context).settingsImportSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showImportDialog(context, ref),
                 ),
@@ -129,7 +137,8 @@ class SettingsPage extends ConsumerWidget {
                     Icons.notifications_active_outlined,
                     color: AppTokens.primary,
                   ),
-                  title: Text(AppLocalizations.of(context).settingsReminderCenter),
+                  title:
+                      Text(AppLocalizations.of(context).settingsReminderCenter),
                   subtitle: Text(
                     AppLocalizations.of(context).settingsReminderCenterSubtitle,
                   ),
@@ -142,8 +151,10 @@ class SettingsPage extends ConsumerWidget {
                     Icons.shopping_cart_outlined,
                     color: AppTokens.primary,
                   ),
-                  title: Text(AppLocalizations.of(context).settingsRefillManagement),
-                  subtitle: Text(AppLocalizations.of(context).settingsRefillManagementSubtitle),
+                  title: Text(
+                      AppLocalizations.of(context).settingsRefillManagement),
+                  subtitle: Text(AppLocalizations.of(context)
+                      .settingsRefillManagementSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/settings/refills'),
                 ),
@@ -159,14 +170,17 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          _SectionHeader(title: AppLocalizations.of(context).settingsAssessment),
+          _SectionHeader(
+              title: AppLocalizations.of(context).settingsAssessment),
           const SizedBox(height: AppTokens.spacingSm),
           // v0.14 (Round 13B) 评估历史入口
           Card(
             child: ListTile(
               leading: const Icon(Icons.history, color: AppTokens.primary),
-              title: Text(AppLocalizations.of(context).settingsAssessmentHistory),
-              subtitle: Text(AppLocalizations.of(context).settingsAssessmentHistorySubtitle),
+              title:
+                  Text(AppLocalizations.of(context).settingsAssessmentHistory),
+              subtitle: Text(AppLocalizations.of(context)
+                  .settingsAssessmentHistorySubtitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/assessment/history'),
             ),
@@ -224,10 +238,13 @@ class SettingsPage extends ConsumerWidget {
 
           Card(
             child: ListTile(
-              leading: const Icon(Icons.shield_outlined,
-                  color: AppTokens.textSecondary,),
+              leading: const Icon(
+                Icons.shield_outlined,
+                color: AppTokens.textSecondary,
+              ),
               title: Text(AppLocalizations.of(context).settingsDisclaimer),
-              subtitle: Text(AppLocalizations.of(context).settingsDisclaimerText),
+              subtitle:
+                  Text(AppLocalizations.of(context).settingsDisclaimerText),
             ),
           ),
         ],
@@ -298,7 +315,9 @@ class SettingsPage extends ConsumerWidget {
                 if (ctx.mounted) {
                   ScaffoldMessenger.of(ctx).showSnackBar(
                     AppSnackBar.info(
-                        context, AppLocalizations.of(context).snackbarCopied,),
+                      context,
+                      AppLocalizations.of(context).snackbarCopied,
+                    ),
                   );
                 }
               },
@@ -309,7 +328,9 @@ class SettingsPage extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: AppLocalizations.of(context).settingsActionExport, error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).settingsActionExport,
+              error: e),
         );
       }
     }
@@ -383,7 +404,9 @@ class SettingsPage extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: AppLocalizations.of(context).settingsActionGenerateReport, error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).settingsActionGenerateReport,
+              error: e),
         );
       }
     }
@@ -419,7 +442,7 @@ class SettingsPage extends ConsumerWidget {
                 maxLines: 8,
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context).settingsImportHint,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
                 style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
               ),
@@ -444,14 +467,19 @@ class SettingsPage extends ConsumerWidget {
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(AppLocalizations.of(context).settingsImportSuccess(result.summary)),
+                            content: Text(AppLocalizations.of(context)
+                                .settingsImportSuccess(result.summary)),
                           ),
                         );
                       } else {
                         setLocal(() => importing = false);
                         ScaffoldMessenger.of(ctx).showSnackBar(
-                          AppSnackBar.error(context,
-                              action: AppLocalizations.of(context).settingsActionImport, error: result.error,),
+                          AppSnackBar.error(
+                            context,
+                            action: AppLocalizations.of(context)
+                                .settingsActionImport,
+                            error: result.error,
+                          ),
                         );
                       }
                     },

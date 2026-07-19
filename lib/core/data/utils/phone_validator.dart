@@ -20,29 +20,25 @@ class PhoneValidator {
   static final _cn = RegExp(r'^1[3-9]\d{9}$');
 
   /// 中国大陆 11 位，可选 +86 / 86 / +86- / +86 空格 前缀
-  static final _cnWithPrefix =
-      RegExp(r'^(\+?86[-\s]?)?1[3-9]\d{9}$');
+  static final _cnWithPrefix = RegExp(r'^(\+?86[-\s]?)?1[3-9]\d{9}$');
 
   /// 中国香港 8 位手机（4/5/7/8/9 开头,6 开头已停用归澳门）
   static final _hk = RegExp(r'^[45789]\d{7}$');
 
   /// 中国香港 8 位，可选 +852 / 852 前缀
-  static final _hkWithPrefix =
-      RegExp(r'^(\+?852[-\s]?)?[45789]\d{7}$');
+  static final _hkWithPrefix = RegExp(r'^(\+?852[-\s]?)?[45789]\d{7}$');
 
   /// 中国澳门 8 位（6 开头）
   static final _mo = RegExp(r'^6\d{7}$');
 
   /// 中国澳门 8 位，可选 +853 / 853 前缀
-  static final _moWithPrefix =
-      RegExp(r'^(\+?853[-\s]?)?6\d{7}$');
+  static final _moWithPrefix = RegExp(r'^(\+?853[-\s]?)?6\d{7}$');
 
   /// 中国台湾 9 位（9 开头，实际是 09xxxxxxxx 共 10 位去掉 0）
   static final _tw = RegExp(r'^9\d{8}$');
 
   /// 中国台湾 9 位，可选 +886 / 886 前缀
-  static final _twWithPrefix =
-      RegExp(r'^(\+?886[-\s]?)?9\d{8}$');
+  static final _twWithPrefix = RegExp(r'^(\+?886[-\s]?)?9\d{8}$');
 
   /// 国际 E.164: `+` 后 6-15 位数字
   static final _intl = RegExp(r'^\+\d{6,15}$');
@@ -97,10 +93,10 @@ class PhoneValidator {
     // "8613800138000" 这种写法 86 跟 1 直接拼在一起 = 12 位数字,regex 不匹配。
     // 手动按区号长度拆分重试。
     for (final entry in const [
-      ('86', PhoneRegion.cn, 11),  // 86 + 11 位
-      ('852', PhoneRegion.hk, 8),  // 852 + 8 位
-      ('853', PhoneRegion.mo, 8),  // 853 + 8 位
-      ('886', PhoneRegion.tw, 9),  // 886 + 9 位
+      ('86', PhoneRegion.cn, 11), // 86 + 11 位
+      ('852', PhoneRegion.hk, 8), // 852 + 8 位
+      ('853', PhoneRegion.mo, 8), // 853 + 8 位
+      ('886', PhoneRegion.tw, 9), // 886 + 9 位
     ]) {
       if (s.startsWith(entry.$1) && s.length == entry.$1.length + entry.$3) {
         final tail = s.substring(entry.$1.length);
@@ -240,9 +236,7 @@ class PhoneNumber {
 
   @override
   bool operator ==(Object other) =>
-      other is PhoneNumber &&
-      other.region == region &&
-      other.digits == digits;
+      other is PhoneNumber && other.region == region && other.digits == digits;
 
   @override
   int get hashCode => Object.hash(region, digits);

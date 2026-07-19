@@ -77,8 +77,7 @@ void main() {
       final now = DateTime(2026, 7, 18, 10, 0);
       // 7 天前到今天,每天 1 次 22 点前打卡
       final checkIns = [
-        for (int i = 0; i < 7; i++)
-          _checkIn(DateTime(2026, 7, 18 - i, 10, 0)),
+        for (int i = 0; i < 7; i++) _checkIn(DateTime(2026, 7, 18 - i, 10, 0)),
       ];
       final trigger = CareEngine.evaluate(
         checkIns: checkIns,

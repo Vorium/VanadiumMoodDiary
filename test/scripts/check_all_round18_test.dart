@@ -29,8 +29,8 @@ void main() {
     test('domain/ 用相对路径 import data/ 应被检测到', () {
       // 构造：lib/domain/logic/foo.dart 引用 ../../data/bar.dart
       final domainDir = Directory(
-          '${libDir.path}${Platform.pathSeparator}domain${Platform.pathSeparator}logic',)
-        ..createSync(recursive: true);
+        '${libDir.path}${Platform.pathSeparator}domain${Platform.pathSeparator}logic',
+      )..createSync(recursive: true);
       final fooFile =
           File('${domainDir.path}${Platform.pathSeparator}foo.dart');
       fooFile.writeAsStringSync('''

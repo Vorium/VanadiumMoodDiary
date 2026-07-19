@@ -87,8 +87,7 @@ class SetupStepConsent extends StatelessWidget {
           ConsentCheckRow(
             checked: consentSensitiveData,
             label: '我已阅读并同意《敏感个人信息处理同意书》',
-            onTap: () =>
-                onConsentSensitiveDataChanged(!consentSensitiveData),
+            onTap: () => onConsentSensitiveDataChanged(!consentSensitiveData),
             onView: onViewSensitiveData,
           ),
           const SizedBox(height: AppTokens.spacingXl),

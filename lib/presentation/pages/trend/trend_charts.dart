@@ -213,7 +213,8 @@ class AssessmentHistoryChart extends StatelessWidget {
     final lines = <LineChartBarData>[];
     final legendItems = <Widget>[];
     int colorIdx = 0;
-    final spotMeta = <SpotKey, ({AssessmentRecord rec, int rawMax, String name})>{};
+    final spotMeta =
+        <SpotKey, ({AssessmentRecord rec, int rawMax, String name})>{};
     for (final scale in allScales()) {
       final recs = byScale[scale.id];
       if (recs == null || recs.isEmpty) continue;

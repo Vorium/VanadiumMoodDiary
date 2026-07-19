@@ -50,7 +50,7 @@ class _FakePlugin implements FlutterLocalNotificationsPlugin {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-        bool androidAllowWhileIdle = false,
+    bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
@@ -178,9 +178,9 @@ void main() {
       final fake = _FakePlugin();
       // 设 pending: med=1 有 snooze 5min/10min,med=2 有 snooze 5min
       fake.pending.addAll([
-        PendingNotificationRequest(4000 + 1 * 1440 + 5, 'a', 'b', null),
-        PendingNotificationRequest(4000 + 1 * 1440 + 10, 'c', 'd', null),
-        PendingNotificationRequest(4000 + 2 * 1440 + 5, 'e', 'f', null),
+        const PendingNotificationRequest(4000 + 1 * 1440 + 5, 'a', 'b', null),
+        const PendingNotificationRequest(4000 + 1 * 1440 + 10, 'c', 'd', null),
+        const PendingNotificationRequest(4000 + 2 * 1440 + 5, 'e', 'f', null),
       ]);
       final manager = SnoozeManager(plugin: fake);
 
@@ -193,7 +193,7 @@ void main() {
     test('pending 没该 med 的 snooze → 静默 no-op', () async {
       final fake = _FakePlugin();
       fake.pending.addAll([
-        PendingNotificationRequest(4000 + 2 * 1440 + 5, 'e', 'f', null),
+        const PendingNotificationRequest(4000 + 2 * 1440 + 5, 'e', 'f', null),
       ]);
       final manager = SnoozeManager(plugin: fake);
 
@@ -207,19 +207,21 @@ void main() {
     test('cancel snooze 范围所有 pending', () async {
       final fake = _FakePlugin();
       fake.pending.addAll([
-        PendingNotificationRequest(4000 + 1 * 1440 + 5, 'a', 'b', null),
-        PendingNotificationRequest(4000 + 5 * 1440 + 30, 'c', 'd', null),
+        const PendingNotificationRequest(4000 + 1 * 1440 + 5, 'a', 'b', null),
+        const PendingNotificationRequest(4000 + 5 * 1440 + 30, 'c', 'd', null),
         // 非 snooze id (1001 是 daily,3000 是 soft)
-        PendingNotificationRequest(1001, 'e', 'f', null),
-        PendingNotificationRequest(3000, 'g', 'h', null),
+        const PendingNotificationRequest(1001, 'e', 'f', null),
+        const PendingNotificationRequest(3000, 'g', 'h', null),
       ]);
       final manager = SnoozeManager(plugin: fake);
 
       await manager.cancelAllSnoozes();
 
       // 2 个 snooze id 被 cancel,2 个非 snooze 不动
-      expect(fake.cancelledIds,
-          [4000 + 1 * 1440 + 5, 4000 + 5 * 1440 + 30]);
+      expect(
+        fake.cancelledIds,
+        [4000 + 1 * 1440 + 5, 4000 + 5 * 1440 + 30],
+      );
     });
 
     test('pending 空 → 静默 no-op', () async {

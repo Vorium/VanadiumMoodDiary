@@ -728,4 +728,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String reminderHubNDays(int days) {
     return '$days days';
   }
+
+  @override
+  String setupContactNameLabel(int index) {
+    return 'Contact $index name';
+  }
+
+  @override
+  String get setupContactNameHint => 'Name (optional)';
+
+  @override
+  String setupContactPhoneLabel(int index) {
+    return 'Emergency contact phone $index';
+  }
+
+  @override
+  String get setupContactPhoneHint => '13800138000';
 }

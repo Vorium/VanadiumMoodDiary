@@ -56,7 +56,9 @@ class SnoozeManager {
     String? body,
   }) async {
     if (minutes <= 0 || minutes > minutesPerMedication) {
-      piiSafeLog('SnoozeManager', '⚠️ snoozeOnce: minutes=$minutes 越界（1..$minutesPerMedication）',
+      piiSafeLog(
+        'SnoozeManager',
+        '⚠️ snoozeOnce: minutes=$minutes 越界（1..$minutesPerMedication）',
       );
       return;
     }

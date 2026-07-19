@@ -326,7 +326,6 @@ class StubNotificationService implements NotificationService {
   Future<void> cancelAll() async {}
   @override
   Future<void> rescheduleMedicationReminders(List<dynamic> medications) async {}
-  @override
   Future<void> scheduleSoftReminder({int hour = 10, int minute = 0}) async {}
   @override
   Future<void> cancelSoftReminder() async {}

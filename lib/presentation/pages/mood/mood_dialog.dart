@@ -220,9 +220,8 @@ class _DimensionRow extends StatelessWidget {
                           '$s',
                           style: TextStyle(
                             fontSize: 24,
-                            fontWeight: s == value
-                                ? FontWeight.w700
-                                : FontWeight.w400,
+                            fontWeight:
+                                s == value ? FontWeight.w700 : FontWeight.w400,
                             color: s == value
                                 ? Theme.of(context).colorScheme.primary
                                 : AppTokens.textHintColor(context),

@@ -66,7 +66,9 @@ class NotificationNavigation {
   }) {
     final router = _router;
     if (router == null) {
-      piiSafeLog('NotificationNavigation', '⚠️ NotificationNavigation._goInternal: router 未绑定',
+      piiSafeLog(
+        'NotificationNavigation',
+        '⚠️ NotificationNavigation._goInternal: router 未绑定',
       );
       return;
     }
@@ -74,10 +76,14 @@ class NotificationNavigation {
     if (path == null) return;
     try {
       router.go(path);
-      piiSafeLog('NotificationNavigation', '✅ Deep link → $path (fromLaunch=$fromLaunch)',
+      piiSafeLog(
+        'NotificationNavigation',
+        '✅ Deep link → $path (fromLaunch=$fromLaunch)',
       );
     } catch (e) {
-      piiSafeLog('NotificationNavigation', '❌ Deep link go 失败: $e',
+      piiSafeLog(
+        'NotificationNavigation',
+        '❌ Deep link go 失败: $e',
         error: e,
       );
     }

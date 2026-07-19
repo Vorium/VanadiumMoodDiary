@@ -300,5 +300,15 @@
   "reminderHubNDays": "{days} days",
   "@reminderHubNDays": {
     "placeholders": { "days": { "type": "int" } }
-  }
+  },
+  "setupContactNameLabel": "Contact {index} name",
+  "@setupContactNameLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "setupContactNameHint": "Name (optional)",
+  "setupContactPhoneLabel": "Emergency contact phone {index}",
+  "@setupContactPhoneLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "setupContactPhoneHint": "13800138000"
 }

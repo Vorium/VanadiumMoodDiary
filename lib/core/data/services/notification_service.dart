@@ -41,8 +41,7 @@ class NotificationService implements NotificationSender {
   /// v0.18 round 18 (P1-28): Snooze 逻辑拆出到 SnoozeManager,主 service 委托
   /// 公共 API 保持不变（snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes）,
   /// 但真实实现移到 SnoozeManager,主 service 减肥 90+ 行。
-  late final SnoozeManager _snoozeManager =
-      SnoozeManager(plugin: _plugin);
+  late final SnoozeManager _snoozeManager = SnoozeManager(plugin: _plugin);
 
   /// v0.11 (Round 5): 用户点通知的回调
   /// 默认调 [NotificationNavigation.handleTap]
@@ -79,7 +78,9 @@ class NotificationService implements NotificationSender {
     final launchDetails = await _plugin.getNotificationAppLaunchDetails();
     if (launchDetails?.didNotificationLaunchApp ?? false) {
       final payload = launchDetails?.notificationResponse?.payload;
-      piiSafeLog('NotificationService', '🚀 App 由通知拉起, payload=$payload',
+      piiSafeLog(
+        'NotificationService',
+        '🚀 App 由通知拉起, payload=$payload',
       );
       NotificationNavigation.setLaunchPayload(payload);
     }
@@ -90,7 +91,9 @@ class NotificationService implements NotificationSender {
       final localTzName = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(localTzName));
     } catch (e) {
-      piiSafeLog('NotificationService', '⚠️ 时区初始化失败（web 端不支持）: $e',
+      piiSafeLog(
+        'NotificationService',
+        '⚠️ 时区初始化失败（web 端不支持）: $e',
       );
     }
 
@@ -109,7 +112,9 @@ class NotificationService implements NotificationSender {
 
   /// flutter_local_notifications 回调
   static void _onResponse(NotificationResponse response) {
-    piiSafeLog('NotificationService', '👆 通知被点击, payload=${response.payload}',
+    piiSafeLog(
+      'NotificationService',
+      '👆 通知被点击, payload=${response.payload}',
     );
     _defaultOnTap(response.payload);
   }
@@ -169,7 +174,9 @@ class NotificationService implements NotificationSender {
       return list.length;
     } catch (e) {
       // web 平台 / 未实现 plugin: pendingNotificationRequests 抛 PlatformException
-      piiSafeLog('NotificationService', '⚠️ pendingCount 读取失败（可能 web 端）: $e',
+      piiSafeLog(
+        'NotificationService',
+        '⚠️ pendingCount 读取失败（可能 web 端）: $e',
       );
       return -1;
     }
@@ -232,12 +239,16 @@ class NotificationService implements NotificationSender {
           );
           scheduled++;
         } catch (e) {
-          piiSafeLog('NotificationService', '❌ 推送调度失败 med=${med.name} t=$t: $e',
+          piiSafeLog(
+            'NotificationService',
+            '❌ 推送调度失败 med=${med.name} t=$t: $e',
           );
         }
       }
     }
-    piiSafeLog('NotificationService', '✅ 重新调度 $scheduled 个 medication 推送',
+    piiSafeLog(
+      'NotificationService',
+      '✅ 重新调度 $scheduled 个 medication 推送',
     );
   }
 
@@ -385,7 +396,9 @@ class NotificationService implements NotificationSender {
       reminderDays: medication.refillReminderDays,
     );
     if (fireAt == null) {
-      piiSafeLog('NotificationService', '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
+      piiSafeLog(
+        'NotificationService',
+        '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
       );
       return;
     }
@@ -398,7 +411,7 @@ class NotificationService implements NotificationSender {
       piiSafeLog(
         'NotificationService',
         '⏭️ scheduleRefillReminder: med=${medication.name} '
-        'fireAt=$fireAt 已过, 跳过',
+            'fireAt=$fireAt 已过, 跳过',
       );
       // 但仍要取消旧的，避免过期通知还挂着
       await cancelRefillReminder(medication.id);
@@ -439,7 +452,7 @@ class NotificationService implements NotificationSender {
       piiSafeLog(
         'NotificationService',
         '✅ 续方提醒: med=${medication.name} '
-        'fireAt=$fireAt daysLeft=$daysLeft',
+            'fireAt=$fireAt daysLeft=$daysLeft',
       );
     } catch (e) {
       piiSafeLog('NotificationService', '❌ 续方提醒调度失败: $e', error: e);
@@ -462,7 +475,8 @@ class NotificationService implements NotificationSender {
   /// 改成 200000 覆盖 medId <= 199999（远超实际用户量，且 int32 安全）。
   ///
   /// v0.18 (P2-P0-2): 接受 [MedicationEntity] (domain) 而非 [Medication] (Drift row)
-  Future<void> rescheduleRefillReminders(List<MedicationEntity> medications) async {
+  Future<void> rescheduleRefillReminders(
+      List<MedicationEntity> medications) async {
     await init();
     // 先清掉所有 refill 通知
     final pending = await _plugin.pendingNotificationRequests();
@@ -478,7 +492,9 @@ class NotificationService implements NotificationSender {
       await scheduleRefillReminder(med);
       scheduled++;
     }
-    piiSafeLog('NotificationService', '✅ 重排 $scheduled 个 medication 的续方提醒',
+    piiSafeLog(
+      'NotificationService',
+      '✅ 重排 $scheduled 个 medication 的续方提醒',
     );
   }
 
@@ -537,7 +553,9 @@ class NotificationService implements NotificationSender {
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
-      piiSafeLog('NotificationService', '✅ 评估提醒: scale=$scaleId fireAt=$fireAt days=$days',
+      piiSafeLog(
+        'NotificationService',
+        '✅ 评估提醒: scale=$scaleId fireAt=$fireAt days=$days',
       );
     } catch (e) {
       piiSafeLog('NotificationService', '❌ 评估提醒调度失败: $e', error: e);
@@ -643,7 +661,9 @@ class NotificationService implements NotificationSender {
       );
       piiSafeLog('NotificationService', '✅ 角标已更新 = $count');
     } catch (e) {
-      piiSafeLog('NotificationService', '⚠️ updateBadgeCount 失败（不影响功能）: $e',
+      piiSafeLog(
+        'NotificationService',
+        '⚠️ updateBadgeCount 失败（不影响功能）: $e',
       );
     }
   }

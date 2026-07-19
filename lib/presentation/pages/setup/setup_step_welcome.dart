@@ -83,9 +83,9 @@ class SetupStepWelcome extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          Text(
+          const Text(
             '（至少填 1 个手机号，用于失联时通知）',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
               color: AppTokens.textSecondary,
             ),
@@ -147,16 +147,16 @@ class _ContactRow extends StatelessWidget {
             TextField(
               controller: nameController,
               decoration: InputDecoration(
-                labelText: '联系人 ${index + 1} 姓名',
-                hintText: '称呼（选填）',
+                labelText: l10n.setupContactNameLabel(index + 1),
+                hintText: l10n.setupContactNameHint,
               ),
             ),
             const SizedBox(height: AppTokens.spacingSm),
             TextField(
               controller: phoneController,
               decoration: InputDecoration(
-                labelText: '紧急联系人手机号 ${index + 1}',
-                hintText: '13800138000',
+                labelText: l10n.setupContactPhoneLabel(index + 1),
+                hintText: l10n.setupContactPhoneHint,
               ),
               keyboardType: TextInputType.phone,
             ),

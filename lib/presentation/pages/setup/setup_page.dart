@@ -6,7 +6,6 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
@@ -244,7 +243,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   }
 
   Future<void> _showPresetTemplatesSheet() async {
-    final result = await showModalBottomSheet<TemplateApplyResult<MedicationTemplate>>(
+    final result =
+        await showModalBottomSheet<TemplateApplyResult<MedicationTemplate>>(
       context: context,
       isScrollControlled: true,
       builder: (ctx) => SafeArea(

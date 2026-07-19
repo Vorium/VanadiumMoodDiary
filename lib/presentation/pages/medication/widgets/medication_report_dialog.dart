@@ -39,7 +39,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-              '${AppLocalizations.of(context).settingsMedReport}（近 ${widget.windowDays} 天）',),
+            '${AppLocalizations.of(context).settingsMedReport}（近 ${widget.windowDays} 天）',
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.close),

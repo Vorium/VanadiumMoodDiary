@@ -131,9 +131,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         if (!PhoneValidator.isValid(phone)) {
                           ScaffoldMessenger.of(ctx).showSnackBar(
                             AppSnackBar.info(
-                                context,
-                                AppLocalizations.of(context)
-                                    .snackbarPhoneInvalid,),
+                              context,
+                              AppLocalizations.of(context).snackbarPhoneInvalid,
+                            ),
                           );
                           return;
                         }
@@ -150,8 +150,11 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         } catch (e) {
                           if (ctx.mounted) {
                             ScaffoldMessenger.of(ctx).showSnackBar(
-                              AppSnackBar.error(context,
-                                  action: '保存', error: e,),
+                              AppSnackBar.error(
+                                context,
+                                action: '保存',
+                                error: e,
+                              ),
                             );
                             setLocal(() => saving = false);
                           }

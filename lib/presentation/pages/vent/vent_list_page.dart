@@ -42,8 +42,10 @@ class VentListPage extends ConsumerWidget {
           if (entries.isEmpty) return const _EmptyState();
           return _EntryList(entries: entries);
         },
-        loading: () => LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(child: Text(AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+        loading: () => const LoadingSkeleton.fullScreen(),
+        error: (e, _) => Center(
+            child: Text(
+                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
       ),
     );
   }
@@ -193,7 +195,8 @@ class _EntryCard extends StatelessWidget {
             ],
           ),
         ),
-        trailing: Icon(Icons.chevron_right, color: AppTokens.textHintColor(context)),
+        trailing:
+            Icon(Icons.chevron_right, color: AppTokens.textHintColor(context)),
         onTap: () => context.push('/vent/detail/${entry.id}'),
         onLongPress: () => _confirmDelete(context, entry),
       ),

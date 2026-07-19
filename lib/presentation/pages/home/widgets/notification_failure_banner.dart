@@ -19,8 +19,7 @@ class NotificationFailureBanner extends StatefulWidget {
       _NotificationFailureBannerState();
 }
 
-class _NotificationFailureBannerState
-    extends State<NotificationFailureBanner> {
+class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
   bool _dismissed = false;
 
   @override

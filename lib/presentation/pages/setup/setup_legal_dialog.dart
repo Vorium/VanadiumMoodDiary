@@ -44,7 +44,7 @@ class LegalDocumentDialog extends StatelessWidget {
           future: rootBundle.loadString('assets/legal/$name.md'),
           builder: (context, snap) {
             if (snap.connectionState != ConnectionState.done) {
-              return LoadingSkeleton.fullScreen();
+              return const LoadingSkeleton.fullScreen();
             }
             if (snap.hasError || !snap.hasData) {
               return const Center(

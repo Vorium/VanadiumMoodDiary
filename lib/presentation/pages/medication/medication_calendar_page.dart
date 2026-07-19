@@ -86,10 +86,10 @@ class MedicationCalendarPage extends ConsumerWidget {
           medsAsync.when(
             data: (meds) => checkInsAsync.when(
               data: (checkIns) => _buildGrid(meds, checkIns, days),
-              loading: () => LoadingSkeleton.fullScreen(),
+              loading: () => const LoadingSkeleton.fullScreen(),
               error: (e, _) => Center(child: Text('加载打卡失败: $e')),
             ),
-            loading: () => LoadingSkeleton.fullScreen(),
+            loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, _) => Center(child: Text('加载药物失败: $e')),
           ),
 
