@@ -6,6 +6,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 情绪日记 dialog
 ///
@@ -221,36 +222,41 @@ class _DimensionRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               for (int s = 1; s <= 5; s++)
-                Semantics(
-                  button: true,
-                  inMutuallyExclusiveGroup: true,
-                  selected: s == value,
-                  label: '$s 分${s == value ? ", 已选" : ""}',
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () => onChanged(s),
-                      borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              '$s',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: s == value
-                                    ? FontWeight.w700
-                                    : FontWeight.w400,
-                                color: s == value
-                                    ? Theme.of(context).colorScheme.primary
-                                    : AppTokens.textHintColor(context),
+                // v0.22 round 29 (emil-18): 外包 PressFeedback 给 scale 反馈
+                // (emil 决策框架要求 10+/day 频度按钮 :active 一致)
+                PressFeedback(
+                  child: Semantics(
+                    button: true,
+                    inMutuallyExclusiveGroup: true,
+                    selected: s == value,
+                    label: '$s 分${s == value ? ", 已选" : ""}',
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => onChanged(s),
+                        borderRadius:
+                            BorderRadius.circular(AppTokens.radiusChip),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                '$s',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: s == value
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                  color: s == value
+                                      ? Theme.of(context).colorScheme.primary
+                                      : AppTokens.textHintColor(context),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
