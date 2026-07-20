@@ -75,27 +75,33 @@ class MedicationCalendarPage extends ConsumerWidget {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
-            child: SegmentedButton<int>(
-              segments: [
-                ButtonSegment(
-                    value: 7,
-                    label:
-                        Text(AppLocalizations.of(context).medsCalendarWindow7),),
-                ButtonSegment(
-                    value: 30,
-                    label: Text(
-                        AppLocalizations.of(context).medsCalendarWindow30,),),
-                ButtonSegment(
-                    value: 90,
-                    label: Text(
-                        AppLocalizations.of(context).medsCalendarWindow90,),),
-              ],
-              selected: {days},
-              // v0.22 round 29 (emil-49): 跟 trend_page.dart:252 一致 showSelectedIcon: false
-              // (避免 list/calendar 切换时 check 图标跳动)
-              showSelectedIcon: false,
-              onSelectionChanged: (s) =>
-                  ref.read(calendarWindowProvider.notifier).setDays(s.first),
+            // v0.22 round 29 (emil-34): Semantics 描述时间窗口
+            // (TalkBack 读"时间窗口 7/30/90 天,当前 30" 让用户知道是单选)
+            child: Semantics(
+              container: true,
+              label: '时间窗口 $days 天, 7/30/90 单选',
+              child: SegmentedButton<int>(
+                segments: [
+                  ButtonSegment(
+                      value: 7,
+                      label:
+                          Text(AppLocalizations.of(context).medsCalendarWindow7),),
+                  ButtonSegment(
+                      value: 30,
+                      label: Text(
+                          AppLocalizations.of(context).medsCalendarWindow30,),),
+                  ButtonSegment(
+                      value: 90,
+                      label: Text(
+                          AppLocalizations.of(context).medsCalendarWindow90,),),
+                ],
+                selected: {days},
+                // v0.22 round 29 (emil-49): 跟 trend_page.dart:252 一致 showSelectedIcon: false
+                // (避免 list/calendar 切换时 check 图标跳动)
+                showSelectedIcon: false,
+                onSelectionChanged: (s) =>
+                    ref.read(calendarWindowProvider.notifier).setDays(s.first),
+              ),
             ),
           ),
 

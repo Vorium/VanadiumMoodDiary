@@ -180,7 +180,9 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
       // Flutter 默认有 200ms 淡入,但部分场景不触发(例如冷启动 dark→light)
       // 显式声明 durNormal + curveDecelerate 让切换永远平滑
       themeAnimationDuration: AppTokens.durNormal,
-      themeAnimationCurve: AppTokens.curveDecelerate,
+      // v0.22 round 29 (emil-36): 改 curveStandard (easeOutCubic) 替代
+      // curveDecelerate (easeOutQuart 偏慢, 主题切换显得迟疑)
+      themeAnimationCurve: AppTokens.curveStandard,
       // v0.17 round 14 (P1-6): 接 flutter_localizations,
       // 让 presentation 文字走 AppLocalizations.of(context) 而不是 Strings.xxx
       localizationsDelegates: AppLocalizations.localizationsDelegates,
