@@ -6,22 +6,47 @@
 ///
 /// 注意：不加密（用户自己保管），不依赖云端
 /// 加密备份是后续 v1.0+ 增强
+///
+/// v0.21 Round 22 (P0-1 修复): vent 文字导出时 decrypt → 用户拿 JSON 时是
+/// 明文（跨设备恢复需要）；导入时再 encrypt 写回 DB。
 library;
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show Value;
-import 'package:flutter/foundation.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
+import 'package:chroniccare/core/data/services/encryption_service.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+
+/// v0.21 (P0-3 fix): 导出时统一 toUtc() 让 ISO 字符串带 'Z' 后缀。
+///
+/// **bug 现象**: 之前用 `DateTime.now().toIso8601String()` 输出
+/// `2026-07-20T04:15:55.123`（**不带**时区后缀）。Dart `DateTime.parse()`
+/// 对无后缀字符串**按 local 解析**。用户在北京导出 (UTC+8)，飞机到纽约 (UTC-5)
+/// 再导入 → 同一个字符串 "04:15:55" 在两个时区都被当 local 解析 → 跨时区
+/// 打卡记录"瞬移" 12 小时。
+///
+/// **修法**: 导出统一 `.toUtc().toIso8601String()` 输出
+/// `2026-07-19T20:15:55.123Z`（带 'Z'），`DateTime.parse()` 自动按 UTC 解析
+/// 存进 drift → drift 转回 local 时按目标时区正确显示。
+///
+/// 9 处调用全部走这个 helper, 避免漏改 + 未来加新字段直接用。
+String _isoUtc(DateTime d) => d.toUtc().toIso8601String();
 
 class DataExportService {
   final AppDatabase _db;
   final ReportHistoryRepositoryImpl _reportRepo;
+  final EncryptionService _ventTextEncryption;
 
-  DataExportService(this._db, [ReportHistoryRepositoryImpl? reportRepo])
-      : _reportRepo = reportRepo ?? ReportHistoryRepositoryImpl(_db);
+  DataExportService(
+    this._db, [
+    ReportHistoryRepositoryImpl? reportRepo,
+    EncryptionService? ventTextEncryption,
+  ])  : _reportRepo = reportRepo ?? ReportHistoryRepositoryImpl(_db),
+        _ventTextEncryption = ventTextEncryption ?? EncryptionService();
 
   /// 导出所有数据为 JSON 字符串
   ///
@@ -32,7 +57,7 @@ class DataExportService {
   /// 录音文件 (audioPath) **不**导出 — 文件在 app docs 目录，重装/跨设备
   /// 路径失效，无法直接复用。文字可跨设备，所以导出。
   /// 重装 → 导入后，树洞**文字**会恢复，但录音会标 `hasAudio=false`。
-  Future<String> exportToJson() async {
+  Future<String> exportToJson({DateTime? now}) async {
     final profile = await _db.getUserProfile();
     final contacts = await _db.watchContacts().first;
     final medications = await _db.watchMedications().first;
@@ -43,16 +68,16 @@ class DataExportService {
 
     final data = {
       'version': 4, // v0.18 bump: 加入 4D 情绪 (energy/sleep/anxiety)
-      'exportedAt': DateTime.now().toIso8601String(),
+      'exportedAt': _isoUtc(now ?? DateTime.now()),
       'profile': profile == null
           ? null
           : {
               'userName': profile.userName,
               'checkInCycleHours': profile.checkInCycleHours,
-              'firstLaunchAt': profile.firstLaunchAt.toIso8601String(),
+              'firstLaunchAt': _isoUtc(profile.firstLaunchAt),
               // P0-10: 顺便带上 lastCheckInAt,导入后立即可见
               if (profile.lastCheckInAt != null)
-                'lastCheckInAt': profile.lastCheckInAt!.toIso8601String(),
+                'lastCheckInAt': _isoUtc(profile.lastCheckInAt!),
             },
       'contacts': [
         for (final c in contacts)
@@ -70,14 +95,14 @@ class DataExportService {
             'dosage': m.dosage,
             'dosageUnit': m.dosageUnit,
             'timesJson': m.timesJson,
-            'startDate': m.startDate.toIso8601String(),
+            'startDate': _isoUtc(m.startDate),
             'isActive': m.isActive,
           },
       ],
       'checkIns': [
         for (final c in checkIns)
           {
-            'timestamp': c.timestamp.toIso8601String(),
+            'timestamp': _isoUtc(c.timestamp),
             'type': c.type,
             'medicationId': c.medicationId,
             'note': c.note,
@@ -87,7 +112,7 @@ class DataExportService {
         for (final h in reportHistories)
           {
             'windowDays': h.windowDays,
-            'generatedAt': h.generatedAt.toIso8601String(),
+            'generatedAt': _isoUtc(h.generatedAt),
             'userName': h.userName,
             'reportText': h.reportText,
           },
@@ -95,7 +120,7 @@ class DataExportService {
       'moodEntries': [
         for (final m in moodEntries)
           {
-            'timestamp': m.timestamp.toIso8601String(),
+            'timestamp': _isoUtc(m.timestamp),
             'score': m.score,
             // v0.18 4D 情绪: energy / sleep / anxiety (nullable, 老数据为 null)
             if (m.energy != null) 'energy': m.energy,
@@ -107,19 +132,39 @@ class DataExportService {
       ],
       'ventEntries': [
         // P0-3: 导出文字 + 元数据 (duration / size),**不**导出 audioPath。
-        for (final v in ventEntries)
-          {
-            'timestamp': v.timestamp.toIso8601String(),
-            'contentText': v.contentText,
-            'audioDurationSec': v.audioDurationSec,
-            'audioSizeBytes': v.audioSizeBytes,
-            // 标志：旧数据可能含 audioPath,我们导入时丢弃并提示
-            if (v.audioPath != null) 'hadAudio': true,
-          },
+        // v0.21 Round 22: contentText 字段加密后,导出时 decrypt 给用户明文
+        // (跨设备恢复需要明文)。导入时再 encrypt 写回。
+        for (final v in ventEntries) await _buildVentEntryExport(v),
       ],
     };
     const encoder = JsonEncoder.withIndent('  ');
     return encoder.convert(data);
+  }
+
+  /// 把单条 vent 导出为 JSON map (decrypt text)
+  ///
+  /// decrypt 失败 = 旧数据 / key 损坏 → text 字段为 null,用户能在 import
+  /// log 里看到（不抛异常，避免一份坏数据毁掉整个导出）
+  Future<Map<String, dynamic>> _buildVentEntryExport(VentEntry v) async {
+    String? text;
+    final blob = v.contentTextEnc;
+    if (blob != null) {
+      try {
+        final plain =
+            await _ventTextEncryption.decrypt(Uint8List.fromList(blob));
+        text = utf8.decode(plain);
+      } on Exception {
+        // 解密失败 → 视为无文字(不该发生,migration 应已迁移所有数据)
+      }
+    }
+    return {
+      'timestamp': _isoUtc(v.timestamp),
+      'contentText': text,
+      'audioDurationSec': v.audioDurationSec,
+      'audioSizeBytes': v.audioSizeBytes,
+      // 标志：旧数据可能含 audioPath,我们导入时丢弃并提示
+      if (v.audioPath != null) 'hadAudio': true,
+    };
   }
 
   /// 从 JSON 字符串导入数据（覆盖现有）
@@ -313,6 +358,7 @@ class DataExportService {
 
         // P0-3: vent_entries 文字导入(录音路径永远丢弃，跨设备不可用)。
         // version 3+ 才有，老导出文件没这段也兼容。
+        // v0.21 Round 22: 文字从 JSON 读出是明文,导入时 encrypt 写回 BLOB。
         if (version >= 3) {
           for (final v in (data['ventEntries'] as List? ?? [])) {
             if (v is! Map) continue;
@@ -325,10 +371,15 @@ class DataExportService {
               'vent.text',
               maxLen: 100000,
             );
+            Uint8List? encText;
+            if (text != null && text.isNotEmpty) {
+              encText = await _ventTextEncryption
+                  .encrypt(Uint8List.fromList(utf8.encode(text)));
+            }
             await _db.insertVentEntry(
               VentEntriesCompanion.insert(
                 timestamp: ts,
-                contentText: Value(text),
+                contentTextEnc: Value(encText),
                 // audioPath 永远 null — 旧路径在重装后失效
                 audioDurationSec: Value(
                   _validateIntOr(m['audioDurationSec'], 0, min: 0, max: 86400),
@@ -357,9 +408,7 @@ class DataExportService {
         ventEntryCount: ventEntryCount,
       );
     } catch (e, st) {
-      if (kDebugMode) {
-        debugPrint('importFromJson error: $e\n$st');
-      }
+      piiSafeLog('DataExportService', 'importFromJson error: $e\n$st');
       // P12 fix: 脱敏，只告诉用户"解析失败",不暴露具体异常
       return ImportResult.failure('解析失败：数据格式不正确，请确认是从本 App 导出的 JSON');
     }
@@ -404,11 +453,10 @@ class DataExportService {
 
   static DateTime? _validateDate(dynamic v) {
     if (v is! String) return null;
-    try {
-      return DateTime.parse(v);
-    } catch (_) {
-      return null;
-    }
+    // v0.21 (P0-2 fix): 用 tryParse 替代 try/catch + DateTime.parse。
+    // 之前 try/catch 是反模式——DateTime.parse 失败是**预期内**的情况(用户导入了
+    // 格式异常的历史数据),不是异常。try/catch 在 hot path 上还有 stack 捕获开销。
+    return DateTime.tryParse(v);
   }
 }
 

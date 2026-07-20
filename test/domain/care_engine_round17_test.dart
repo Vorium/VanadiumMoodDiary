@@ -47,8 +47,8 @@ void main() {
       );
       await CareEngine.fire(trigger, fake);
       expect(fake.showedNow, isTrue);
-      // id = 4000 + type.index
-      expect(fake.showNowId, 4000 + CareTriggerType.lateCheckInHabit.index);
+      // v0.18 round 18: id = 8000 + type.index (避开 snooze 4000+medId*1440+min 段)
+      expect(fake.showNowId, 8000 + CareTriggerType.lateCheckInHabit.index);
       expect(fake.showNowTitle, '记得早点休息');
       expect(fake.showNowBody, '你最近都晚睡');
     });

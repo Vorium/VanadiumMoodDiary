@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/l10n/app_localizations.dart';
+
 class _NoopNotificationService extends NotificationService {
   @override
   Future<void> init() async {}
@@ -34,6 +36,9 @@ Widget _wrap({List<MedicationEntity> meds = const []}) {
     ],
     child: MaterialApp(
       theme: ThemeData.light(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('zh'),
       home: const Scaffold(body: RefillManagePage()),
     ),
   );

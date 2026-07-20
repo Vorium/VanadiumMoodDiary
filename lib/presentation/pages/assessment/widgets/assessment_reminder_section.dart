@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
@@ -54,10 +55,10 @@ class _AssessmentReminderSectionState
       if (!mounted) return;
       setState(() => _enabled = v);
       if (v && mounted) {
-        final daysText = '${_days ?? 14}';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('已开启：每 $daysText 天提醒做心理评估'),
+            content: Text(AppLocalizations.of(context)
+                .assessmentReminderEnabled(_days ?? 14),),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -65,7 +66,8 @@ class _AssessmentReminderSectionState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '设置', error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonSetup, error: e,),
         );
       }
     } finally {
@@ -91,7 +93,8 @@ class _AssessmentReminderSectionState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('已改为：每 $picked 天提醒'),
+            content: Text(
+                AppLocalizations.of(context).assessmentReminderChanged(picked),),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -99,7 +102,8 @@ class _AssessmentReminderSectionState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '设置', error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonSetup, error: e,),
         );
       }
     } finally {
@@ -127,13 +131,18 @@ class _AssessmentReminderSectionState
         children: [
           SwitchListTile(
             secondary: const Icon(Icons.event_repeat, color: AppTokens.primary),
-            title: const Text('周期评估提醒'),
+            title:
+                Text(AppLocalizations.of(context).reminderHubAssessmentTitle),
             subtitle: Text(
-              enabled ? '每 $days 天提醒我做一次心理评估' : '关闭 · 不会推送评估提醒',
+              enabled
+                  ? AppLocalizations.of(context)
+                      .assessmentReminderSubtitleEnabled(days)
+                  : AppLocalizations.of(context)
+                      .reminderHubAssessmentDescDisabled,
               style: TextStyle(
                 color: enabled
                     ? Theme.of(context).colorScheme.onSurface
-                    : AppTokens.textHint,
+                    : AppTokens.textHintColor(context),
               ),
             ),
             value: enabled,
@@ -143,12 +152,12 @@ class _AssessmentReminderSectionState
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.schedule, color: AppTokens.primary),
-              title: const Text('提醒间隔'),
+              title: Text(AppLocalizations.of(context).reminderHubInterval),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '$days 天',
+                    AppLocalizations.of(context).reminderHubNDays(days),
                     style: const TextStyle(
                       fontSize: AppTokens.fontSizeBody,
                       fontWeight: FontWeight.w500,
@@ -168,16 +177,15 @@ class _AssessmentReminderSectionState
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.lightbulb_outline,
                     size: 18,
-                    color: AppTokens.textSecondary,
+                    color: AppTokens.textSecondaryColor(context),
                   ),
                   const SizedBox(width: AppTokens.spacingXs),
                   Expanded(
                     child: Text(
-                      '完成一次评估后，下次提醒会从今天重新算起。\n'
-                      '评估结果仅你自己看得到。',
+                      AppLocalizations.of(context).assessmentReminderHelpText,
                       style: TextStyle(
                         fontSize: AppTokens.fontSizeCaption,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -211,26 +219,32 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
     _selected = widget.initial;
   }
 
-  static const _options = [
-    (days: 7, hint: '高强度监测（适合急性期）'),
-    (days: 14, hint: '推荐（精神科常用）'),
-    (days: 30, hint: '稳定期 / 月度复盘'),
-    (days: 60, hint: '维持治疗期'),
-    (days: 90, hint: '长期随访'),
-  ];
+  static const _days = [7, 14, 30, 60, 90];
+
+  String _hintForDays(AppLocalizations l10n, int days) {
+    return switch (days) {
+      7 => l10n.assessmentReminderHintAcute,
+      14 => l10n.assessmentReminderHintCommon,
+      30 => l10n.assessmentReminderHintStable,
+      60 => l10n.assessmentReminderHintMaintenance,
+      90 => l10n.assessmentReminderHintLongTerm,
+      _ => '',
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(AppTokens.spacingMd),
+          Padding(
+            padding: const EdgeInsets.all(AppTokens.spacingMd),
             child: Text(
-              '提醒间隔',
-              style: TextStyle(
+              l10n.reminderHubInterval,
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeTitle,
                 fontWeight: FontWeight.w600,
               ),
@@ -245,11 +259,11 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                for (final opt in _options)
+                for (final d in _days)
                   RadioListTile<int>(
-                    value: opt.days,
-                    title: Text('每 ${opt.days} 天'),
-                    subtitle: Text(opt.hint),
+                    value: d,
+                    title: Text(l10n.reminderHubEveryNDays(d)),
+                    subtitle: Text(_hintForDays(l10n, d)),
                   ),
               ],
             ),
@@ -262,14 +276,14 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('取消'),
+                    child: Text(l10n.commonCancel),
                   ),
                 ),
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context, _selected),
-                    child: const Text('确定'),
+                    child: Text(l10n.commonConfirmOk),
                   ),
                 ),
               ],

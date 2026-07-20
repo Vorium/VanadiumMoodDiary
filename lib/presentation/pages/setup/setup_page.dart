@@ -22,6 +22,13 @@ import 'package:chroniccare/presentation/pages/setup/setup_step_done.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 
 /// 首次设置引导页（4 步 wizard coordinator）
+
+/// v0.21 Round 22 (P1-22 修复): 协议版本号
+///
+/// 升级时 bump 这个值 (e.g. v0.22-2026-08-01),
+/// 重新 setup 时会写新版本号,留 audit trail。
+const _kLegalVersion = 'v0.21-2026-07-20';
+
 ///
 /// 0=consent, 1=welcome, 2=medication, 3=done
 /// 各 step 的 UI 在独立文件中，本文件只管状态 + 切换。
@@ -98,16 +105,17 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('请先完成法律文件阅读与同意'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).setupConsentRequired),
+            duration: const Duration(seconds: 2),
           ),
         );
       },
       child: PageScaffold(
         title: AppLocalizations.of(context).setupStep(_step + 1, 4),
         child: AnimatedSwitcher(
-          duration: MotionScheme.standard.duration,
+          // v0.21 Round 22 (P1-13 修复): wrap Motion.duration
+          duration: Motion.duration(context, MotionScheme.standard.duration),
           switchInCurve: MotionScheme.standard.curve,
           switchOutCurve: AppTokens.curveAccelerate,
           transitionBuilder: (child, anim) {
@@ -218,31 +226,33 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   }
 
   String? _validateWelcomeForm() {
+    final l10n = AppLocalizations.of(context);
     if (_nameController.text.trim().isEmpty) {
-      return '请输入您的名字';
+      return l10n.setupValidationNameRequired;
     }
     final filledPhones = _contactPhoneControllers
         .map((c) => c.text.trim())
         .where((p) => p.isNotEmpty)
         .toList();
     if (filledPhones.isEmpty) {
-      return '至少填 1 个紧急联系人手机号';
+      return l10n.setupValidationContactRequired;
     }
     // 检查手机号格式
     for (final phone in filledPhones) {
       if (!PhoneValidator.isValid(phone)) {
-        return '手机号格式不对';
+        return l10n.setupValidationPhoneInvalid;
       }
     }
     // 检查重复手机号
     final unique = filledPhones.toSet();
     if (unique.length != filledPhones.length) {
-      return '紧急联系人手机号不能重复';
+      return l10n.setupValidationPhoneDuplicate;
     }
     return null;
   }
 
   Future<void> _showPresetTemplatesSheet() async {
+    final l10n = AppLocalizations.of(context);
     final result =
         await showModalBottomSheet<TemplateApplyResult<MedicationTemplate>>(
       context: context,
@@ -257,23 +267,23 @@ class _SetupPageState extends ConsumerState<SetupPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
                 child: Text(
-                  '📋 选择预置方案',
-                  style: TextStyle(
+                  l10n.setupPresetTitle,
+                  style: const TextStyle(
                     fontSize: AppTokens.fontSizeTitle,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: AppTokens.spacingSm),
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppTokens.spacingSm),
                 child: Text(
-                  '预置方案会填好药名 + 时间，你可以接着改。'
-                  '最终服药请按医嘱核对。',
+                  l10n.setupPresetDescription,
                   style: TextStyle(
-                    color: AppTokens.textSecondary,
+                    color: AppTokens.textSecondaryColor(context),
                     fontSize: AppTokens.fontSizeLabel,
                   ),
                 ),
@@ -331,9 +341,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-            '已载入：${result.template.name}（${result.template.meds.length} 个药）'
-            '请核对药名和剂量'),
+        content: Text(AppLocalizations.of(context).setupPresetLoaded(
+            result.template.name, result.template.meds.length,),),
         duration: const Duration(seconds: 3),
       ),
     );
@@ -389,6 +398,14 @@ class _SetupPageState extends ConsumerState<SetupPage> {
             contactList: contactList,
             medicationList: medicationList,
           );
+      // v0.21 Round 22 (P1-22 修复): PIPL §14 同意记录
+      // setup 步骤 0 勾选完成时,记录同意时刻 + 协议版本号,
+      // 后续可证明"用户当时同意了哪一版协议"
+      if (!mounted) return;
+      await ref.read(userProfileRepositoryProvider).recordConsent(
+            userAgreementVersion: _kLegalVersion,
+            privacyPolicyVersion: _kLegalVersion,
+          );
       if (!mounted) return;
 
       final medications =
@@ -408,7 +425,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('保存失败：${e.toString().split('\n').first}'),
+            content: Text(AppLocalizations.of(context)
+                .setupSaveFailed(e.toString().split('\n').first),),
             backgroundColor: AppTokens.error,
           ),
         );

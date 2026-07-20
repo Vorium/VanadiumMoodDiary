@@ -45,7 +45,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.pop(context),
-              tooltip: '关闭',
+              tooltip: AppLocalizations.of(context).commonClose,
             ),
           ],
         ),
@@ -58,11 +58,11 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppTokens.spacingMd),
                   color: AppTokens.primary.withValues(alpha: 0.08),
-                  child: const Text(
-                    '可全选复制、生成 PDF 或分享给医生',
+                  child: Text(
+                    AppLocalizations.of(context).medReportCopyHint,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeBody,
-                      color: AppTokens.textSecondary,
+                      color: AppTokens.textSecondaryColor(context),
                     ),
                   ),
                 ),
@@ -71,15 +71,15 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(AppTokens.spacingMd),
-                    color: AppTokens.surface,
+                    color: AppTokens.surfaceColor(context),
                     child: SingleChildScrollView(
                       child: SelectableText(
                         widget.report,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'monospace',
                           fontSize: 13,
                           height: 1.5,
-                          color: AppTokens.textPrimary,
+                          color: AppTokens.textPrimaryColor(context),
                         ),
                       ),
                     ),
@@ -90,15 +90,18 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                   top: false,
                   child: Container(
                     padding: const EdgeInsets.all(AppTokens.spacingMd),
-                    decoration: const BoxDecoration(
-                      border: Border(top: BorderSide(color: AppTokens.divider)),
+                    decoration: BoxDecoration(
+                      border: Border(
+                          top: BorderSide(
+                              color: AppTokens.dividerColor(context),),),
                     ),
                     child: Row(
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
                             icon: const Icon(Icons.copy, size: 18),
-                            label: const Text('复制'),
+                            label:
+                                Text(AppLocalizations.of(context).settingsCopy),
                             onPressed: _copy,
                           ),
                         ),
@@ -115,7 +118,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                                     ),
                                   )
                                 : const Icon(Icons.picture_as_pdf, size: 18),
-                            label: const Text('PDF'),
+                            label: Text(
+                                AppLocalizations.of(context).medReportPdfLabel,),
                             onPressed:
                                 (widget.reportData == null || _pdfLoading)
                                     ? null
@@ -126,7 +130,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                         Expanded(
                           child: OutlinedButton.icon(
                             icon: const Icon(Icons.share, size: 18),
-                            label: const Text('分享'),
+                            label: Text(AppLocalizations.of(context)
+                                .medReportShareLabel,),
                             onPressed: _share,
                           ),
                         ),
@@ -138,23 +143,24 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
             ),
             // PDF 生成时的全屏遮罩
             if (_pdfLoading)
-              const Positioned.fill(
+              Positioned.fill(
                 child: ColoredBox(
                   color: Colors.black54,
                   child: Center(
                     child: Card(
                       child: Padding(
-                        padding: EdgeInsets.all(AppTokens.spacingMd),
+                        padding: const EdgeInsets.all(AppTokens.spacingMd),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
-                            SizedBox(width: AppTokens.spacingSm),
-                            Text('生成 PDF 中...'),
+                            const SizedBox(width: AppTokens.spacingSm),
+                            Text(AppLocalizations.of(context)
+                                .medReportPdfLoading,),
                           ],
                         ),
                       ),
@@ -181,12 +187,14 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     try {
       await Share.share(
         widget.report,
-        subject: '慢病管家 · 用药报告',
+        subject: AppLocalizations.of(context).medReportShareSubject,
       );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '分享', error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).snackbarActionShare,
+              error: e,),
         );
       }
     }
@@ -202,12 +210,15 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       if (!mounted) return;
       await Printing.layoutPdf(
         onLayout: (_) async => bytes,
-        name: '用药报告_${Formatters.dateCompact(data.periodEnd)}',
+        name: AppLocalizations.of(context)
+            .medReportFileName(Formatters.dateCompact(data.periodEnd)),
       );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '生成 PDF ', error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).snackbarActionGeneratePdf,
+              error: e,),
         );
       }
     } finally {

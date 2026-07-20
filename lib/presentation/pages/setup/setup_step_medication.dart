@@ -40,19 +40,19 @@ class SetupStepMedication extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: AppTokens.spacingXl),
-          const Text(
-            '你常吃什么药？',
-            style: TextStyle(
+          Text(
+            l10n.setupMedWhatDoYouTake,
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeTitle,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          const Text(
-            '（可加多个药，每个药配自己的时间和剂量；跳过不影响打卡）',
+          Text(
+            l10n.setupMedMultiDrugHint,
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondary,
+              color: AppTokens.textSecondaryColor(context),
             ),
           ),
           const SizedBox(height: AppTokens.spacingXl),
@@ -68,23 +68,23 @@ class SetupStepMedication extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTokens.spacingMd),
               decoration: BoxDecoration(
-                color: AppTokens.primaryLight,
+                color: AppTokens.primaryLightColor(context),
                 borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-                border: Border.all(color: AppTokens.border),
+                border: Border.all(color: AppTokens.borderColor(context)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
                   Icon(
                     Icons.info_outline,
-                    color: AppTokens.textSecondary,
+                    color: AppTokens.textSecondaryColor(context),
                     size: 20,
                   ),
-                  SizedBox(width: AppTokens.spacingXs),
+                  const SizedBox(width: AppTokens.spacingXs),
                   Expanded(
                     child: Text(
-                      '还没添加药物。可以跳过——打卡不需要药物信息。',
+                      l10n.setupMedEmptyHint,
                       style: TextStyle(
-                        color: AppTokens.textSecondary,
+                        color: AppTokens.textSecondaryColor(context),
                         fontSize: AppTokens.fontSizeLabel,
                       ),
                     ),
@@ -98,20 +98,20 @@ class SetupStepMedication extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: onAddMed,
             icon: const Icon(Icons.add),
-            label: const Text('+ 添加药物'),
+            label: Text(l10n.setupMedAddDrug),
           ),
           const SizedBox(height: AppTokens.spacingSm),
           TextButton.icon(
             onPressed: onShowPresets,
             icon: const Icon(Icons.auto_awesome_outlined, size: 18),
-            label: const Text('📋 载入预置方案（4 种常见模式）'),
+            label: Text(l10n.setupMedLoadPreset),
           ),
           const SizedBox(height: AppTokens.spacingXl),
           Row(
             children: [
               TextButton(
                 onPressed: saving ? null : onBack,
-                child: const Text('← 上一步'),
+                child: Text(l10n.setupBack),
               ),
               const Spacer(),
               SizedBox(
@@ -171,7 +171,7 @@ class MedCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '药物 ${index + 1}',
+                  l10n.setupMedDrugNumber(index + 1),
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: AppTokens.fontSizeBody,
@@ -183,7 +183,7 @@ class MedCard extends StatelessWidget {
                     Icons.delete_outline,
                     color: AppTokens.error,
                   ),
-                  tooltip: '删除这个药',
+                  tooltip: l10n.setupMedDeleteDrug,
                   onPressed: onRemove,
                 ),
               ],
@@ -192,7 +192,7 @@ class MedCard extends StatelessWidget {
               controller: med.nameController,
               decoration: InputDecoration(
                 labelText: l10n.commonMedName,
-                hintText: '请输入药盒上的名称（选填）',
+                hintText: l10n.setupMedNameHint,
               ),
             ),
             const SizedBox(height: AppTokens.spacingMd),
@@ -204,8 +204,8 @@ class MedCard extends StatelessWidget {
                     controller: med.dosageController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
-                      labelText: '剂量',
+                    decoration: InputDecoration(
+                      labelText: l10n.setupMedDosage,
                       hintText: '40',
                     ),
                   ),
@@ -214,7 +214,7 @@ class MedCard extends StatelessWidget {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     initialValue: med.dosageUnit,
-                    decoration: const InputDecoration(labelText: '单位'),
+                    decoration: InputDecoration(labelText: l10n.setupMedUnit),
                     items: [
                       const DropdownMenuItem(value: 'mg', child: Text('mg')),
                       DropdownMenuItem(
@@ -232,11 +232,11 @@ class MedCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppTokens.spacingMd),
-            const Text(
-              '吃药时间（点 + 加）',
+            Text(
+              l10n.setupMedTimeHint,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeLabel,
-                color: AppTokens.textSecondary,
+                color: AppTokens.textSecondaryColor(context),
               ),
             ),
             const SizedBox(height: AppTokens.spacingXs),
@@ -251,7 +251,7 @@ class MedCard extends StatelessWidget {
                   ),
                 ActionChip(
                   avatar: const Icon(Icons.add, size: 18),
-                  label: const Text('加时间'),
+                  label: Text(l10n.setupMedAddTime),
                   onPressed: () async {
                     final picked = await showTimePicker(
                       context: context,
@@ -271,13 +271,13 @@ class MedCard extends StatelessWidget {
               ],
             ),
             if (med.times.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(top: 4),
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  '（不设置时间 = 不调度提醒，仅记录）',
+                  l10n.setupMedTimeOptional,
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
               ),

@@ -16,6 +16,7 @@ import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 
 /// 一行时间点：[已打卡 ✓] 药名 08:00
@@ -57,9 +58,9 @@ class TodayMedSchedule extends ConsumerWidget {
                       size: 20,
                     ),
                     const SizedBox(width: AppTokens.spacingXs),
-                    const Text(
-                      '今日服药计划',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).medsTodaySchedule,
+                      style: const TextStyle(
                         fontSize: AppTokens.fontSizeBody,
                         fontWeight: FontWeight.w600,
                       ),
@@ -71,7 +72,7 @@ class TodayMedSchedule extends ConsumerWidget {
                         fontSize: AppTokens.fontSizeCaption,
                         color: done == entries.length
                             ? AppTokens.primary
-                            : AppTokens.textHint,
+                            : AppTokens.textHintColor(context),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -152,15 +153,19 @@ class _TimeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final e = entry;
-    final color = e.done ? AppTokens.primary : AppTokens.textSecondary;
-    final bg =
-        e.done ? AppTokens.primary.withValues(alpha: 0.12) : AppTokens.divider;
+    final color =
+        e.done ? AppTokens.primary : AppTokens.textSecondaryColor(context);
+    final bg = e.done
+        ? AppTokens.tintedPrimarySoft(context)
+        : AppTokens.dividerColor(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-        border: e.done ? null : Border.all(color: AppTokens.border, width: 1),
+        border: e.done
+            ? null
+            : Border.all(color: AppTokens.borderColor(context), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -172,10 +177,10 @@ class _TimeChip extends StatelessWidget {
                   Icon(Icons.check_circle, color: AppTokens.primary, size: 14),
             )
           else
-            const Padding(
-              padding: EdgeInsets.only(right: 4),
-              child:
-                  Icon(Icons.access_time, color: AppTokens.textHint, size: 14),
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Icon(Icons.access_time,
+                  color: AppTokens.textHintColor(context), size: 14,),
             ),
           Text(
             '${_pad(e.time.hour)}:${_pad(e.time.minute)}',
@@ -190,7 +195,9 @@ class _TimeChip extends StatelessWidget {
             e.med.name,
             style: TextStyle(
               fontSize: 12,
-              color: e.done ? AppTokens.textPrimary : AppTokens.textSecondary,
+              color: e.done
+                  ? AppTokens.textPrimaryColor(context)
+                  : AppTokens.textSecondaryColor(context),
             ),
           ),
         ],

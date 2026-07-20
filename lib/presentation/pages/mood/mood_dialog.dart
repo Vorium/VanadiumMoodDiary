@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 情绪日记 dialog
@@ -24,43 +25,51 @@ class MoodDialog {
     int selectedSleep = 3;
     int selectedAnxiety = 3;
     final selectedTags = <String>{};
-    const presetTags = ['焦虑', '抑郁', '平静', '失眠', '烦躁', '能量低'];
+    final l10n = AppLocalizations.of(context);
+    final presetTags = [
+      l10n.moodTagAnxiety,
+      l10n.moodTagDepression,
+      l10n.moodTagCalm,
+      l10n.moodTagInsomnia,
+      l10n.moodTagIrritable,
+      l10n.moodTagLowEnergy,
+    ];
     bool saving = false;
 
     return showDialog<void>(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AlertDialog(
-          title: const Text('今天怎么样？'),
+          title: Text(AppLocalizations.of(context).moodDialogTitle),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _DimensionRow(
-                  label: '情绪',
-                  hint: '1=很差 5=很好',
+                  label: AppLocalizations.of(context).moodDimensionMood,
+                  hint: AppLocalizations.of(context).moodDimensionMoodHint,
                   value: selectedScore,
                   onChanged: (v) => setLocal(() => selectedScore = v),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 _DimensionRow(
-                  label: '精力',
-                  hint: '1=很低 5=充沛',
+                  label: AppLocalizations.of(context).moodDimensionEnergy,
+                  hint: AppLocalizations.of(context).moodDimensionEnergyHint,
                   value: selectedEnergy,
                   onChanged: (v) => setLocal(() => selectedEnergy = v),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 _DimensionRow(
-                  label: '睡眠',
-                  hint: '1=很差 5=很好',
+                  label: AppLocalizations.of(context).moodDimensionSleep,
+                  hint: AppLocalizations.of(context).moodDimensionSleepHint,
                   value: selectedSleep,
                   onChanged: (v) => setLocal(() => selectedSleep = v),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 _DimensionRow(
-                  label: '焦虑',
-                  hint: '1=严重 5=平静',
+                  label: AppLocalizations.of(context).moodDimensionAnxiety,
+                  hint: AppLocalizations.of(context).moodDimensionAnxietyHint,
                   value: selectedAnxiety,
                   onChanged: (v) => setLocal(() => selectedAnxiety = v),
                 ),
@@ -93,10 +102,10 @@ class MoodDialog {
                 TextField(
                   controller: noteController,
                   maxLines: 2,
-                  decoration: const InputDecoration(
-                    labelText: '备注（可选）',
-                    hintText: '今天发生什么？',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context).moodNoteLabel,
+                    hintText: AppLocalizations.of(context).moodNoteHint,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ],
@@ -127,7 +136,10 @@ class MoodDialog {
                       } catch (e) {
                         if (ctx.mounted) {
                           ScaffoldMessenger.of(ctx).showSnackBar(
-                            AppSnackBar.error(ctx, action: '保存', error: e),
+                            AppSnackBar.error(ctx,
+                                action: AppLocalizations.of(context)
+                                    .snackbarActionSave,
+                                error: e,),
                           );
                           setLocal(() => saving = false);
                         }
@@ -142,8 +154,8 @@ class MoodDialog {
                       child: SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
+                        child: LoadingSpinner(
+                          size: 18,
                           color: Colors.white,
                         ),
                       ),

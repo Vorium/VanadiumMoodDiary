@@ -10,12 +10,10 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 /// 之前是 build 方法内联 Row,现在单独 widget 隔离样式。
 class HomeHeader extends StatelessWidget {
   final String userName;
-  final String? fallbackTitle;
 
   const HomeHeader({
     super.key,
     required this.userName,
-    this.fallbackTitle,
   });
 
   @override
@@ -25,7 +23,9 @@ class HomeHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            userName.isEmpty ? (fallbackTitle ?? '慢病管家') : '$userName 还在坚持',
+            userName.isEmpty
+                ? AppLocalizations.of(context).homeHeaderDefaultTitle
+                : AppLocalizations.of(context).homeHeaderKeepGoing(userName),
             style: TextStyle(
               fontSize: AppTokens.fontSizeHeadline,
               fontWeight: FontWeight.w600,
@@ -36,12 +36,12 @@ class HomeHeader extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.show_chart),
           onPressed: () => context.push('/trend'),
-          tooltip: '查看趋势',
+          tooltip: AppLocalizations.of(context).homeTooltipTrend,
         ),
         IconButton(
           icon: const Icon(Icons.psychology_outlined),
           onPressed: () => context.push('/assessment/history'),
-          tooltip: '评估历史',
+          tooltip: AppLocalizations.of(context).homeTooltipAssessmentHistory,
         ),
         IconButton(
           icon: const Icon(Icons.settings_outlined),

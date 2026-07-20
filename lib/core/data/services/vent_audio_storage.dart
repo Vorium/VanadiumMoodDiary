@@ -52,6 +52,21 @@ class VentAudioStorage {
     return dir;
   }
 
+  /// v0.21 (P1-3 fix): 生成临时录音文件路径（明文，在 OS temp 目录）
+  ///
+  /// **bug 现象**: 之前 `vent_compose_page.dart:141` 临时文件路径用
+  /// `vent_record_${DateTime.now().millisecondsSinceEpoch}.m4a`,
+  /// 同毫秒内录 2 段 → 文件名相同 → 后录的覆盖前录的（数据丢失）。
+  ///
+  /// **修法**: 跟 [newAudioPath] / [decryptToTemp] 一样加 4 位 random suffix
+  /// `vent_record_{ts}_{rand4}.m4a`。helper 集中避免各处漂移。
+  Future<String> newTempRecordPath() async {
+    final tempDir = await getTempDirPath();
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    final rand = Random().nextInt(10000).toString().padLeft(4, '0');
+    return p.join(tempDir, 'vent_record_${ts}_$rand.m4a');
+  }
+
   /// 生成新的加密 audio 文件路径（不创建文件）
   ///
   /// 路径格式：{app_docs}/vent_audio/vent_{timestamp_ms}_{rand4}.m4a.enc

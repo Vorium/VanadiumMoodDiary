@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// v0.18 round 14 (P1-21): 通知初始化失败时显示的顶部 banner
 ///
@@ -29,7 +30,7 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
       margin: const EdgeInsets.only(top: AppTokens.spacingSm),
       padding: const EdgeInsets.all(AppTokens.spacingMd),
       decoration: BoxDecoration(
-        color: AppTokens.warning.withValues(alpha: 0.1),
+        color: AppTokens.tintedWarningSoft(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
         border: Border.all(color: AppTokens.warning.withValues(alpha: 0.3)),
       ),
@@ -43,7 +44,7 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              '提醒没设上，可能错过打卡。请到系统设置允许通知。',
+              AppLocalizations.of(context).homeNotifBannerText,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -55,7 +56,7 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             onPressed: () => setState(() => _dismissed = true),
-            tooltip: '知道了',
+            tooltip: AppLocalizations.of(context).homeNotifBannerDismiss,
           ),
         ],
       ),

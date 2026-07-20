@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 副信息：最后吃药时间 / 下次提醒
@@ -28,32 +29,34 @@ class LastMedInfo extends StatelessWidget {
               vertical: AppTokens.spacingXs,
             ),
             decoration: BoxDecoration(
-              color: AppTokens.warning.withValues(alpha: 0.1),
+              color: AppTokens.tintedWarningSoft(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
-            child: const Text(
-              '少 1 次没关系，明天继续 🌱',
+            child: Text(
+              AppLocalizations.of(context).homeStreakBroken,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeLabel,
-                color: AppTokens.textSecondary,
+                color: AppTokens.textSecondaryColor(context),
               ),
             ),
           ),
         if (lastCheckIn != null)
           Text(
-            '最后吃药：${_formatDateTime(lastCheckIn!)}',
-            style: const TextStyle(
+            AppLocalizations.of(context)
+                .homeLastMed(_formatDateTime(lastCheckIn!)),
+            style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondary,
+              color: AppTokens.textSecondaryColor(context),
             ),
           ),
         if (nextReminder != null) ...[
           const SizedBox(height: AppTokens.spacingXs),
           Text(
-            '下次提醒：${_formatTime(nextReminder!)}',
-            style: const TextStyle(
+            AppLocalizations.of(context)
+                .homeNextReminder(_formatTime(nextReminder!)),
+            style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondary,
+              color: AppTokens.textSecondaryColor(context),
             ),
           ),
         ],

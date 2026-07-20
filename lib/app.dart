@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
+import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/core/routing/app_router.dart';
 import 'package:chroniccare/core/theme/app_theme.dart';
@@ -35,22 +38,112 @@ Duration nextMidnightRefresh(DateTime now) {
   return tomorrow.difference(now);
 }
 
-class _AppRootState extends ConsumerState<AppRoot> {
+/// v0.21 (P0-4 fix): 判断 `now` 跟 `lastCheck` 之间是否跨过至少一次 00:00:05。
+///
+/// **bug 现象**: 之前只有"app 一直前台"的 timer,无法覆盖:
+/// 1. 用户后台挂着 → 系统时钟漂移 / 时区切换 / 系统时间被改 → timer 失效
+/// 2. app 被杀后重启 → 第一次回前台时如果跨过 midnight, streak 不会自动刷新
+/// 3. 飞国际航班 (UTC+8 → UTC-5) → 跨日 0 点被跳过
+///
+/// **修法**: app 每次回前台(resumed) + 首次 initState 时, 用本函数检查
+/// "上次记录时间 跟 现在 是否跨过 00:00:05", 如果跨了 → invalidate streak
+/// + reschedule 安全网 timer。
+///
+/// 暴露成 top-level 让 test 直接测,跟 [nextMidnightRefresh] 风格一致。
+@visibleForTesting
+bool crossedMidnightSince(DateTime lastCheck, DateTime now) {
+  if (lastCheck.isAfter(now)) return true; // 系统时间被拨回
+  // 跨过 0:00:05 的判定: 两次都在 00:00:05 之后 且 日期不一样
+  final lastCutoff = DateTime(
+    lastCheck.year,
+    lastCheck.month,
+    lastCheck.day,
+    0,
+    0,
+    5,
+  );
+  final nowCutoff = DateTime(now.year, now.month, now.day, 0, 0, 5);
+  // 如果 now 还在今天的 00:00:00-00:00:04 之间,nowCutoff 是**昨天**的 00:00:05
+  // (因为 DateTime(2026,7,20,0,0,5) 当 now=2026-07-20 00:00:02 时是对的)
+  if (now.isBefore(nowCutoff)) {
+    // now 在 00:00:00-00:00:04: nowCutoff 已经是当天的 00:00:05, 没问题
+  }
+  return nowCutoff.isAfter(lastCutoff);
+}
+
+class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
   Timer? _midnightTimer;
+  // v0.21 (P0-4 fix): 记录"上次检查时间", 用于 didChangeAppLifecycleState 检测跨日
+  DateTime? _lastCheck;
 
   @override
   void initState() {
     super.initState();
+    // v0.21 (P0-4 fix): 注册 WidgetsBindingObserver 监听 app 生命周期
+    // 回前台时检查跨日 + invalidate streak
+    WidgetsBinding.instance.addObserver(this);
     // v0.11 (Round 5): AppRoot 第一帧后绑定 GoRouter 到 NotificationNavigation
     // 让通知回调能用 router 跳页
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final router = ref.read(routerProvider);
       NotificationNavigation.bind(router);
     });
+    // v0.21 (P2-3 fix): 把 AssessmentReminderService.onAppStart() 从 main.dart
+    // 移到 AppRoot.initState 的 addPostFrameCallback。
+    // 之前 main.dart 用 Future.delayed(100ms) 等待 DB ready — 100ms 是 magic
+    // number, 弱机可能 100ms 内 DB 还没 ready。 改用 addPostFrameCallback
+    // 保证 provider tree 跟 DB 都就绪后跑。
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_runAssessmentReminderOnStart());
+    });
     // v0.17 round 4: 跨 midnight 自动 refresh streak
     // 不挂 timer → 跨过 23:59:59 streak 还在用"昨天"算的 (B8 fix 只防 build 内多次,
     // 跨 midnight 后新 build 会用 today 算，但 streak 数本身依赖 yesterday data)
+    _lastCheck = DateTime.now();
     _scheduleMidnightRefresh();
+  }
+
+  /// v0.21 (P2-3 fix): 跑 AssessmentReminderService.onAppStart() (app 启动时)
+  ///
+  /// 从 main.dart 的 _scheduleAssessmentReminderOnStart 迁过来。
+  /// 之前用 Future.delayed(100ms) 等待 DB ready, 现在改用
+  /// addPostFrameCallback 确定性等 widget tree 就绪。
+  Future<void> _runAssessmentReminderOnStart() async {
+    try {
+      final sharedDb = ref.read(databaseProvider);
+      final notificationService = ref.read(notificationServiceProvider);
+      final service = AssessmentReminderService(
+        checkInRepo: CheckInRepositoryImpl(sharedDb),
+        notificationService: notificationService,
+      );
+      await service.onAppStart();
+    } catch (e) {
+      // swallow — 评估提醒失败不影响核心功能
+      // v0.18 (P2-P0-3): global error handler 已捕获, 这里只 log
+      // ignore: avoid_print
+      print('⚠️ AssessmentReminder.onAppStart 失败: $e');
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (!mounted) return;
+    // v0.21 (P0-4 fix): app 回前台时检查跨日
+    // 覆盖: 1) 飞国际航班改时区  2) 系统时间被改  3) app 被杀后重启跨日
+    if (state == AppLifecycleState.resumed) {
+      final now = DateTime.now();
+      final last = _lastCheck;
+      if (last != null && crossedMidnightSince(last, now)) {
+        ref.invalidate(streakSummaryProvider);
+        // v0.21 (P0-6 fix): 同时 tick 显式的"今天已变更" provider,
+        // 让 medication_calendar_page 等 watch 它的 widget 也跨日 rebuild
+        ref.read(dayChangeTickProvider.notifier).tick();
+        // 跨日后重置 timer, 防止 timer 在错误时间触发
+        _scheduleMidnightRefresh();
+      }
+      _lastCheck = now;
+    }
   }
 
   /// 算离 midnight 还差多少，挂一次性 timer,到点 invalidate streakSummaryProvider
@@ -62,6 +155,8 @@ class _AppRootState extends ConsumerState<AppRoot> {
       if (!mounted) return;
       // 触发所有 watch streakSummaryProvider 的 widget 重建
       ref.invalidate(streakSummaryProvider);
+      // v0.21 (P0-6 fix): tick dayChangeTickProvider 通知所有 watch 它的 widget
+      ref.read(dayChangeTickProvider.notifier).tick();
       // 递归挂下一天的
       _scheduleMidnightRefresh();
     });
@@ -69,6 +164,7 @@ class _AppRootState extends ConsumerState<AppRoot> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _midnightTimer?.cancel();
     super.dispose();
   }

@@ -21,6 +21,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart';
 
 class VentDetailPage extends ConsumerStatefulWidget {
   final int id;
@@ -93,32 +94,39 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         // 如果已有 temp (从 pause 恢复),直接复用
         _tempDecryptedPath ??= await storage.decryptToTemp(path);
         await _player.play(DeviceFileSource(_tempDecryptedPath!));
-        if (mounted) setState(() => _isPlaying = true);
+        if (context.mounted) setState(() => _isPlaying = true);
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            AppSnackBar.error(context, action: '播放', error: e),
-          );
-        }
+        if (!mounted) return;
+        if (!context.mounted) return;
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          AppSnackBar.error(context,
+              action: l10n.snackbarActionPlay,
+              error: e,),
+        );
       }
     }
   }
 
   Future<void> _delete(VentEntryEntity entry) async {
+    // v0.21 Round 22 (P1-14 修复): 删除前重触感警示
+    final l10n = AppLocalizations.of(context);
+    await Haptics.warning();
+    if (!mounted) return;
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(context).commonConfirmDelete),
-        content: const Text('删了就没了。文字和录音都会一起删。'),
+      builder: (dialogCtx) => AlertDialog(
+        title: Text(l10n.commonConfirmDelete),
+        content: Text(l10n.commonVentDeleteWarning),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(AppLocalizations.of(context).commonCancel),
+            onPressed: () => Navigator.pop(dialogCtx, false),
+            child: Text(l10n.commonCancel),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
+            onPressed: () => Navigator.pop(dialogCtx, true),
             style: TextButton.styleFrom(foregroundColor: AppTokens.error),
-            child: const Text('删除'),
+            child: Text(l10n.commonDelete),
           ),
         ],
       ),
@@ -151,12 +159,12 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
   Widget build(BuildContext context) {
     final entryAsync = ref.watch(ventEntryByIdProvider(widget.id));
     return PageScaffold(
-      title: '树洞',
+      title: AppLocalizations.of(context).ventDetailTitle,
       actions: [
         entryAsync.maybeWhen(
           data: (entry) => IconButton(
             icon: const Icon(Icons.delete_outline, color: AppTokens.error),
-            tooltip: '删除',
+            tooltip: AppLocalizations.of(context).commonDelete,
             onPressed: entry == null ? null : () => _delete(entry),
           ),
           orElse: () => const SizedBox.shrink(),
@@ -165,7 +173,8 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
       child: entryAsync.when(
         data: (entry) {
           if (entry == null) {
-            return const Center(child: Text('找不到了'));
+            return Center(
+                child: Text(AppLocalizations.of(context).ventDetailNotFound),);
           }
           return SingleChildScrollView(
             padding: const EdgeInsets.all(AppTokens.spacingMd),
@@ -180,15 +189,15 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                       tag: 'vent-avatar-${entry.id}',
                       child: CircleAvatar(
                         backgroundColor: entry.hasAudio
-                            ? AppTokens.primaryLight
-                            : AppTokens.divider,
+                            ? AppTokens.primaryLightColor(context)
+                            : AppTokens.dividerColor(context),
                         child: Icon(
                           entry.hasAudio
                               ? Icons.mic
                               : Icons.text_snippet_outlined,
                           color: entry.hasAudio
                               ? AppTokens.primary
-                              : AppTokens.textSecondary,
+                              : AppTokens.textSecondaryColor(context),
                           size: 20,
                         ),
                       ),
@@ -196,9 +205,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                     const SizedBox(width: AppTokens.spacingSm),
                     Text(
                       _formatTime(entry.timestamp),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: AppTokens.fontSizeCaption,
-                        color: AppTokens.textHint,
+                        color: AppTokens.textHintColor(context),
                       ),
                     ),
                   ],
@@ -209,7 +218,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(AppTokens.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTokens.background,
+                      color: AppTokens.surfaceColor(context),
                       borderRadius: BorderRadius.circular(AppTokens.radiusCard),
                     ),
                     child: Text(
@@ -225,7 +234,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                   Container(
                     padding: const EdgeInsets.all(AppTokens.spacingMd),
                     decoration: BoxDecoration(
-                      color: AppTokens.primaryLight,
+                      color: AppTokens.primaryLightColor(context),
                       borderRadius: BorderRadius.circular(AppTokens.radiusCard),
                     ),
                     child: Column(
@@ -279,16 +288,16 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                           children: [
                             Text(
                               _formatDur(_position),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
-                                color: AppTokens.textHint,
+                                color: AppTokens.textHintColor(context),
                               ),
                             ),
                             Text(
                               _formatDur(_duration),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
-                                color: AppTokens.textHint,
+                                color: AppTokens.textHintColor(context),
                               ),
                             ),
                           ],
@@ -298,11 +307,11 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                   ),
                 ],
                 const SizedBox(height: AppTokens.spacingXl),
-                const Text(
-                  '🔒 私密 · 只有你能看到',
+                Text(
+                  AppLocalizations.of(context).ventDetailPrivacy,
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
               ],
@@ -312,7 +321,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         loading: () => const LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(
             child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
       ),
     );
   }

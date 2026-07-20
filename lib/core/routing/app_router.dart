@@ -3,7 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/theme_toggle_button.dart';
+
+/// go_router 璺敱閰嶇疆
+///
+/// **鏋舵瀯璇存槑**: 姝ゆ枃浠朵綅浜?core/routing/ 浣?import 浜?presentation/pages/锛?
+/// 杩欐槸 go_router 鐨勫浐鏈?tension 鈥?璺敱蹇呴』鐭ラ亾椤甸潰 widget 鎵嶈兘鏋勯€犺矾鐢便€?
+/// 灏嗗叾绉昏嚦 presentation/ 浼氬鑷村惊鐜緷璧栵紙presentation 鈫?core for theme/l10n锛?
+/// core 鈫?presentation for pages锛夈€傛帴鍙楁 trade-off锛屽凡鍦?AGENTS.md 鏋舵瀯妫€鏌ヤ腑璞佸厤銆?
 import 'package:chroniccare/presentation/pages/assessment/assessment_history_page.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_page.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
@@ -11,6 +19,7 @@ import 'package:chroniccare/presentation/pages/medication/medication_calendar_pa
 import 'package:chroniccare/presentation/pages/medication/refill_manage_page.dart';
 import 'package:chroniccare/presentation/pages/settings/reminders_hub_page.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
+import 'package:chroniccare/presentation/pages/settings/legal_page.dart';
 import 'package:chroniccare/presentation/pages/settings/email_preview.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
@@ -19,31 +28,38 @@ import 'package:chroniccare/presentation/pages/vent/vent_detail_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 
-/// 路由切换动画辅助函数（v0.17 round 2 / A2 emil 动效）
+/// 璺敱鍒囨崲鍔ㄧ敾杈呭姪鍑芥暟锛坴0.17 round 2 / A2 emil 鍔ㄦ晥锛?
 ///
-/// 频度决策（emil 决策框架）：
-/// - 主导航（/, /settings）→ 偶尔切 → 简单 fade
-/// - 子页（/trend, /assessment/*, /settings/reminders）→ occasional → slide-from-right
-/// - 全屏深页（/setup, /vent/*）→ rare → slide-up + fade（full-screen modal 感）
-Page<T> _fadePage<T>(LocalKey key, Widget child) {
+/// 棰戝害鍐崇瓥锛坋mil 鍐崇瓥妗嗘灦锛夛細
+/// - 涓诲鑸紙/, /settings锛夆啋 鍋跺皵鍒?鈫?绠€鍗?fade
+/// - 瀛愰〉锛?trend, /assessment/*, /settings/reminders锛夆啋 occasional 鈫?slide-from-right
+/// - 鍏ㄥ睆娣遍〉锛?setup, /vent/*锛夆啋 rare 鈫?slide-up + fade锛坒ull-screen modal 鎰燂級
+///
+/// v0.21 Round 22 (P1-13 淇): helper 鎺ュ彈 BuildContext 鐢ㄤ簬
+/// 灏婇噸 prefers-reduced-motion (Motion.duration 璋?銆?
+Page<T> _fadePage<T>(LocalKey key, Widget child, BuildContext context) {
   return CustomTransitionPage<T>(
     key: key,
     child: child,
-    transitionDuration: AppTokens.durNormal,
-    reverseTransitionDuration: AppTokens.durFast,
+    transitionDuration: Motion.duration(context, AppTokens.durNormal),
+    reverseTransitionDuration: Motion.duration(context, AppTokens.durFast),
     transitionsBuilder: (_, anim, __, child) =>
         FadeTransition(opacity: anim, child: child),
   );
 }
 
-Page<T> _slideRightPage<T>(LocalKey key, Widget child) {
+Page<T> _slideRightPage<T>(
+  LocalKey key,
+  Widget child,
+  BuildContext context,
+) {
   return CustomTransitionPage<T>(
     key: key,
     child: child,
-    transitionDuration: AppTokens.durNormal,
-    reverseTransitionDuration: AppTokens.durFast,
+    transitionDuration: Motion.duration(context, AppTokens.durNormal),
+    reverseTransitionDuration: Motion.duration(context, AppTokens.durFast),
     transitionsBuilder: (_, anim, __, child) {
-      // 从右滑入 + 淡入（emil: 标准的 Material 风格 push 动画）
+      // 浠庡彸婊戝叆 + 娣″叆锛坋mil: 鏍囧噯鐨?Material 椋庢牸 push 鍔ㄧ敾锛?
       return SlideTransition(
         position: Tween<Offset>(
           begin: const Offset(0.1, 0),
@@ -57,12 +73,12 @@ Page<T> _slideRightPage<T>(LocalKey key, Widget child) {
   );
 }
 
-Page<T> _slideUpPage<T>(LocalKey key, Widget child) {
+Page<T> _slideUpPage<T>(LocalKey key, Widget child, BuildContext context) {
   return CustomTransitionPage<T>(
     key: key,
     child: child,
-    transitionDuration: AppTokens.durSlow,
-    reverseTransitionDuration: AppTokens.durNormal,
+    transitionDuration: Motion.duration(context, AppTokens.durSlow),
+    reverseTransitionDuration: Motion.duration(context, AppTokens.durNormal),
     transitionsBuilder: (_, anim, __, child) {
       return SlideTransition(
         position: Tween<Offset>(
@@ -77,16 +93,16 @@ Page<T> _slideUpPage<T>(LocalKey key, Widget child) {
   );
 }
 
-/// 路由 Provider
+/// 璺敱 Provider
 final routerProvider = Provider<GoRouter>((ref) {
-  // 监听用户档案，判断是否已设置
+  // 鐩戝惉鐢ㄦ埛妗ｆ锛屽垽鏂槸鍚﹀凡璁剧疆
   final profileAsync = ref.watch(userProfileProvider);
 
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false,
     redirect: (context, state) {
-      // v0.17 round 3: Riverpod 3.x 改名为 .value（之前 .valueOrNull）
+      // v0.17 round 3: Riverpod 3.x 鏀瑰悕涓?.value锛堜箣鍓?.valueOrNull锛?
       final profile = profileAsync.value;
       final isSetupDone = profile != null;
       final goingToSetup = state.matchedLocation == '/setup';
@@ -96,103 +112,111 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      // 设置流程不进 shell（全屏引导）— rare 频度 → slide-up
+      // 璁剧疆娴佺▼涓嶈繘 shell锛堝叏灞忓紩瀵硷級鈥?rare 棰戝害 鈫?slide-up
       GoRoute(
         path: '/setup',
-        pageBuilder: (_, state) =>
-            _slideUpPage(state.pageKey, const SetupPage()),
+        pageBuilder: (context, state) =>
+            _slideUpPage(state.pageKey, const SetupPage(), context),
       ),
-      // 主 app shell：宽屏带 NavigationRail，窄屏纯 body
+      // 涓?app shell锛氬灞忓甫 NavigationRail锛岀獎灞忕函 body
       ShellRoute(
         builder: (context, state, child) => AppShell(
           currentLocation: state.matchedLocation,
           child: child,
         ),
         routes: [
-          // 主导航：occasional 频度 → fade
+          // 涓诲鑸細occasional 棰戝害 鈫?fade
           GoRoute(
             path: '/',
-            pageBuilder: (_, state) =>
-                _fadePage(state.pageKey, const HomePage()),
+            pageBuilder: (context, state) =>
+                _fadePage(state.pageKey, const HomePage(), context),
           ),
           GoRoute(
             path: '/settings',
-            pageBuilder: (_, state) =>
-                _fadePage(state.pageKey, const SettingsPage()),
+            pageBuilder: (context, state) =>
+                _fadePage(state.pageKey, const SettingsPage(), context),
           ),
-          // 子页：occasional → slide-from-right
+          // 瀛愰〉锛歰ccasional 鈫?slide-from-right
           GoRoute(
             path: '/email-preview',
-            pageBuilder: (_, state) =>
-                _slideRightPage(state.pageKey, const EmailPreviewPage()),
+            pageBuilder: (context, state) => _slideRightPage(
+                state.pageKey, const EmailPreviewPage(), context,),
           ),
-          // v0.14 (Round 12C) 提醒中心
+          // v0.14 (Round 12C) 鎻愰啋涓績
           GoRoute(
             path: '/settings/reminders',
-            pageBuilder: (_, state) =>
-                _slideRightPage(state.pageKey, const RemindersHubPage()),
+            pageBuilder: (context, state) => _slideRightPage(
+                state.pageKey, const RemindersHubPage(), context,),
           ),
-          // v0.14 (Round 13A) 续方管理
+          // v0.14 (Round 13A) 缁柟绠＄悊
           GoRoute(
             path: '/settings/refills',
-            pageBuilder: (_, state) =>
-                _slideRightPage(state.pageKey, const RefillManagePage()),
+            pageBuilder: (context, state) => _slideRightPage(
+                state.pageKey, const RefillManagePage(), context,),
+          ),
+          // v0.21 Round 22 (P0-2): 娉曞緥涓庨殣绉侀〉
+          GoRoute(
+            path: '/settings/legal',
+            pageBuilder: (context, state) =>
+                _slideRightPage(state.pageKey, const LegalPage(), context),
           ),
           GoRoute(
             path: '/trend',
-            pageBuilder: (_, state) =>
-                _slideRightPage(state.pageKey, const TrendPage()),
+            pageBuilder: (context, state) =>
+                _slideRightPage(state.pageKey, const TrendPage(), context),
           ),
           GoRoute(
             path: '/assessment',
             redirect: (_, __) => '/assessment/phq9',
           ),
-          // v0.14 (Round 13B) 评估历史独立页
-          // ⚠️ 必须在 :id 之前声明，否则 :id 会先匹配（GoRouter 按声明顺序匹配）
+          // v0.14 (Round 13B) 璇勪及鍘嗗彶鐙珛椤?
+          // 鈿狅笍 蹇呴』鍦?:id 涔嬪墠澹版槑锛屽惁鍒?:id 浼氬厛鍖归厤锛圙oRouter 鎸夊０鏄庨『搴忓尮閰嶏級
           GoRoute(
             path: '/assessment/history',
-            pageBuilder: (_, state) =>
-                _slideRightPage(state.pageKey, const AssessmentHistoryPage()),
+            pageBuilder: (context, state) => _slideRightPage(
+                state.pageKey, const AssessmentHistoryPage(), context,),
           ),
           GoRoute(
             path: '/assessment/:id',
-            pageBuilder: (_, state) => _slideRightPage(
+            pageBuilder: (context, state) => _slideRightPage(
               state.pageKey,
               AssessmentPage(scaleId: state.pathParameters['id'] ?? 'phq9'),
+              context,
             ),
           ),
-          // v0.14 (Round 13C) 用药日历（医生视角热力图）
+          // v0.14 (Round 13C) 鐢ㄨ嵂鏃ュ巻锛堝尰鐢熻瑙掔儹鍔涘浘锛?
           GoRoute(
             path: '/medication/calendar',
-            pageBuilder: (_, state) =>
-                _slideRightPage(state.pageKey, const MedicationCalendarPage()),
+            pageBuilder: (context, state) => _slideRightPage(
+                state.pageKey, const MedicationCalendarPage(), context,),
           ),
-          // ============== v0.15 (Round 18) 树洞 ==============
-          // 全屏深页（full-screen modal feel）— rare 频度 → slide-up
+          // ============== v0.15 (Round 18) 鏍戞礊 ==============
+          // 鍏ㄥ睆娣遍〉锛坒ull-screen modal feel锛夆€?rare 棰戝害 鈫?slide-up
           GoRoute(
             path: '/vent',
-            pageBuilder: (_, state) =>
-                _slideUpPage(state.pageKey, const VentListPage()),
+            pageBuilder: (context, state) =>
+                _slideUpPage(state.pageKey, const VentListPage(), context),
           ),
           GoRoute(
             path: '/vent/compose',
-            pageBuilder: (_, state) =>
-                _slideUpPage(state.pageKey, const VentComposePage()),
+            pageBuilder: (context, state) =>
+                _slideUpPage(state.pageKey, const VentComposePage(), context),
           ),
           GoRoute(
             path: '/vent/detail/:id',
-            pageBuilder: (_, state) => _slideUpPage(
+            pageBuilder: (context, state) => _slideUpPage(
               state.pageKey,
               VentDetailPage(
-                // v0.16 round 19C fix: 用 tryParse 替代 parse，URL 是 '/abc' 时
-                // 不会崩，回退到 0（找不到对应条目 → 详情页显示"找不到了"）
+                // v0.16 round 19C fix: 鐢?tryParse 鏇夸唬 parse锛孶RL 鏄?'/abc' 鏃?
+                // 涓嶄細宕╋紝鍥為€€鍒?0锛堟壘涓嶅埌瀵瑰簲鏉＄洰 鈫?璇︽儏椤垫樉绀?鎵句笉鍒颁簡"锛?
                 id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
               ),
+              context,
             ),
           ),
-          // ============== Round 5: Deep Linking 路由 ==============
-          // 点 medication 通知 → 直接跳 home 并自动打卡该药
-          // 不经过 3 步首页流程（参考 HealthReminder）
+          // ============== Round 5: Deep Linking 璺敱 ==============
+          // 鐐?medication 閫氱煡 鈫?鐩存帴璺?home 骞惰嚜鍔ㄦ墦鍗¤鑽?
+          // 涓嶇粡杩?3 姝ラ椤垫祦绋嬶紙鍙傝€?HealthReminder锛?
           GoRoute(
             path: '/check-in/medication/:id',
             redirect: (_, state) {
@@ -200,7 +224,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               return '/?medId=$medId&autofire=1';
             },
           ),
-          // 点 default / soft 通知 → 跳 home
+          // 鐐?default / soft 閫氱煡 鈫?璺?home
           GoRoute(
             path: '/check-in/today',
             redirect: (_, state) {
@@ -214,17 +238,57 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
     ],
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text('页面不存在: ${state.matchedLocation}'),
-      ),
-    ),
+    errorBuilder: (context, state) {
+      // v0.21 (P2-2 fix): 涔嬪墠 error page 鍙湁涓€涓?Text, 鐢ㄦ埛鍗′綇娌℃湁鍑哄彛
+      // emil UX 鍘熷垯: error 鍑虹幇 = 鐢ㄦ埛鍗′綇, 蹇呴』缁欐槑纭嚭鍙?(icon + hint + 寮曞鎸夐挳)
+      final l10n =
+          Localizations.of<AppLocalizations>(context, AppLocalizations);
+      return Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.help_outline,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: AppTokens.spacingMd),
+                Text(
+                  l10n?.errorPageNotFound(state.matchedLocation) ??
+                      '椤甸潰涓嶅瓨鍦? ${state.matchedLocation}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTokens.spacingSm),
+                Text(
+                  l10n?.errorPageHint ?? '',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppTokens.spacingMd),
+                FilledButton.icon(
+                  onPressed: () => GoRouter.of(context).go('/'),
+                  icon: const Icon(Icons.home),
+                  label: Text(l10n?.errorPageBackHome ?? '杩斿洖棣栭〉'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
   );
 });
 
-/// 响应式 shell：
-/// - 窄屏（< 840）：只显示 child（页面），无侧栏
-/// - 宽屏（>= 840）：左侧 NavigationRail（extended 模式，显示文字）+ 右侧 child
+/// 鍝嶅簲寮?shell锛?
+/// - 绐勫睆锛? 840锛夛細鍙樉绀?child锛堥〉闈級锛屾棤渚ф爮
+/// - 瀹藉睆锛?= 840锛夛細宸︿晶 NavigationRail锛坋xtended 妯″紡锛屾樉绀烘枃瀛楋級+ 鍙充晶 child
 class AppShell extends ConsumerWidget {
   final Widget child;
   final String currentLocation;
@@ -235,26 +299,30 @@ class AppShell extends ConsumerWidget {
     required this.currentLocation,
   });
 
-  static const _destinations = [
-    _NavDest(
-      label: '打卡',
-      icon: Icons.check_circle_outline,
-      selectedIcon: Icons.check_circle,
-      path: '/',
-    ),
-    _NavDest(
-      label: '设置',
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings,
-      path: '/settings',
-    ),
-  ];
+  static List<_NavDest> _destinations(BuildContext context) {
+    final l10n = Localizations.of<AppLocalizations>(context, AppLocalizations);
+    return [
+      _NavDest(
+        label: l10n?.navCheckIn ?? '鎵撳崱',
+        icon: Icons.check_circle_outline,
+        selectedIcon: Icons.check_circle,
+        path: '/',
+      ),
+      _NavDest(
+        label: l10n?.navSettings ?? '璁剧疆',
+        icon: Icons.settings_outlined,
+        selectedIcon: Icons.settings,
+        path: '/settings',
+      ),
+    ];
+  }
 
-  int get _currentIndex {
-    for (int i = 0; i < _destinations.length; i++) {
-      if (currentLocation == _destinations[i].path) return i;
-      // /email-preview 算设置子页
-      if (_destinations[i].path == '/settings' &&
+  int _currentIndex(BuildContext context) {
+    final dests = _destinations(context);
+    for (int i = 0; i < dests.length; i++) {
+      if (currentLocation == dests[i].path) return i;
+      // /email-preview 绠楄缃瓙椤?
+      if (dests[i].path == '/settings' &&
           currentLocation.startsWith('/settings')) {
         return i;
       }
@@ -268,7 +336,7 @@ class AppShell extends ConsumerWidget {
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= AppTokens.breakpointExpanded;
         if (!isWide) {
-          // 窄屏：去掉各页面自己的 AppBar（shell 不管），child 自行处理
+          // 绐勫睆锛氬幓鎺夊悇椤甸潰鑷繁鐨?AppBar锛坰hell 涓嶇锛夛紝child 鑷澶勭悊
           return child;
         }
         return Row(
@@ -278,8 +346,9 @@ class AppShell extends ConsumerWidget {
               child: NavigationRail(
                 extended: true,
                 minWidth: AppTokens.navRailWidth,
-                selectedIndex: _currentIndex,
-                onDestinationSelected: (i) => context.go(_destinations[i].path),
+                selectedIndex: _currentIndex(context),
+                onDestinationSelected: (i) =>
+                    context.go(_destinations(context)[i].path),
                 leading: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(
@@ -291,7 +360,10 @@ class AppShell extends ConsumerWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '慢病管家',
+                        Localizations.of<AppLocalizations>(
+                                    context, AppLocalizations,)
+                                ?.navAppName ??
+                            '鎱㈢梾绠″',
                         style: TextStyle(
                           fontSize: AppTokens.fontSizeLabel,
                           fontWeight: FontWeight.w600,
@@ -304,7 +376,7 @@ class AppShell extends ConsumerWidget {
                   ),
                 ),
                 destinations: [
-                  for (final d in _destinations)
+                  for (final d in _destinations(context))
                     NavigationRailDestination(
                       icon: Icon(d.icon),
                       selectedIcon: Icon(d.selectedIcon),

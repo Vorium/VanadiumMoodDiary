@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 
@@ -36,7 +37,7 @@ class MoodQuickButton extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              '今日情绪：${MoodVisual.labelFor(latest.score)}',
+              '${AppLocalizations.of(context).moodTodayLabel}${MoodVisual.labelFor(latest.score)}',
               style: const TextStyle(
                 fontSize: AppTokens.fontSizeLabel,
                 fontWeight: FontWeight.w500,
@@ -48,9 +49,9 @@ class MoodQuickButton extends ConsumerWidget {
     }
     return SecondaryButton(
       onPressed: onTap,
-      child: const Text(
-        '记一下情绪 ✏️',
-        style: TextStyle(
+      child: Text(
+        AppLocalizations.of(context).moodRecordButton,
+        style: const TextStyle(
           fontSize: AppTokens.fontSizeButton,
           fontWeight: FontWeight.w500,
         ),

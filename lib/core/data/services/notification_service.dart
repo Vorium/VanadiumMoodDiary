@@ -476,7 +476,7 @@ class NotificationService implements NotificationSender {
   ///
   /// v0.18 (P2-P0-2): 接受 [MedicationEntity] (domain) 而非 [Medication] (Drift row)
   Future<void> rescheduleRefillReminders(
-      List<MedicationEntity> medications) async {
+      List<MedicationEntity> medications,) async {
     await init();
     // 先清掉所有 refill 通知
     final pending = await _plugin.pendingNotificationRequests();

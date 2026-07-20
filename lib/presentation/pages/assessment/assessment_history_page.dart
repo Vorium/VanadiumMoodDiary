@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -28,7 +29,7 @@ class AssessmentHistoryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(assessmentsProvider);
     return PageScaffold(
-      title: '评估历史',
+      title: AppLocalizations.of(context).settingsAssessmentHistory,
       child: async.when(
         data: (all) {
           final records = all
@@ -36,14 +37,14 @@ class AssessmentHistoryPage extends ConsumerWidget {
               .whereType<AssessmentRecord>()
               .toList();
           if (records.isEmpty) {
-            return const _EmptyState();
+            return _AssessmentHistoryEmptyState();
           }
           return _buildBody(context, records);
         },
         loading: () => const LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(
             child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
       ),
     );
   }
@@ -79,43 +80,16 @@ class AssessmentHistoryPage extends ConsumerWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+/// v0.21 Round 22 (P0-11 修复): 改用统一 EmptyState
+class _AssessmentHistoryEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingXl),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.psychology_outlined,
-              size: 64,
-              color: AppTokens.textHint,
-            ),
-            const SizedBox(height: AppTokens.spacingMd),
-            const Text(
-              '还没有评估记录',
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeTitle,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            const Text(
-              '完成一次心理评估后，记录会显示在这里',
-              style: TextStyle(color: AppTokens.textHint),
-            ),
-            const SizedBox(height: AppTokens.spacingLg),
-            ElevatedButton.icon(
-              onPressed: () => context.push('/assessment/phq9'),
-              icon: const Icon(Icons.play_arrow),
-              label: const Text('开始第一次评估'),
-            ),
-          ],
-        ),
-      ),
+    return EmptyState(
+      icon: Icons.psychology_outlined,
+      title: AppLocalizations.of(context).assessmentHistoryEmpty,
+      subtitle: AppLocalizations.of(context).assessmentHistoryEmptyHint,
+      actionLabel: AppLocalizations.of(context).assessmentHistoryStartFirst,
+      onAction: () => context.push('/assessment/phq9'),
     );
   }
 }
@@ -130,6 +104,7 @@ class _SummaryStrip extends StatelessWidget {
     final latestPhq9 = _latest(records, 'phq9');
     final latestGad7 = _latest(records, 'gad7');
     final totalCount = records.length;
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingMd),
@@ -137,33 +112,33 @@ class _SummaryStrip extends StatelessWidget {
           children: [
             Expanded(
               child: _Stat(
-                label: '总评估',
+                label: l10n.assessmentHistoryTotalAssessments,
                 value: '$totalCount',
-                sub: '次',
+                sub: l10n.assessmentHistoryTimes,
               ),
             ),
             Expanded(
               child: _Stat(
-                label: '最近 PHQ-9',
+                label: l10n.assessmentHistoryLatestPhq9,
                 value: latestPhq9 == null ? '—' : '${latestPhq9.total}',
                 sub: latestPhq9 == null
-                    ? '未做'
-                    : _severityStyle('phq9', latestPhq9.total).label,
+                    ? l10n.assessmentHistoryNotDone
+                    : _severityStyle('phq9', latestPhq9.total, l10n).label,
                 severity: latestPhq9 == null
                     ? null
-                    : _severityStyle('phq9', latestPhq9.total).color,
+                    : _severityStyle('phq9', latestPhq9.total, l10n).color,
               ),
             ),
             Expanded(
               child: _Stat(
-                label: '最近 GAD-7',
+                label: l10n.assessmentHistoryLatestGad7,
                 value: latestGad7 == null ? '—' : '${latestGad7.total}',
                 sub: latestGad7 == null
-                    ? '未做'
-                    : _severityStyle('gad7', latestGad7.total).label,
+                    ? l10n.assessmentHistoryNotDone
+                    : _severityStyle('gad7', latestGad7.total, l10n).label,
                 severity: latestGad7 == null
                     ? null
-                    : _severityStyle('gad7', latestGad7.total).color,
+                    : _severityStyle('gad7', latestGad7.total, l10n).color,
               ),
             ),
           ],
@@ -199,9 +174,9 @@ class _Stat extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: AppTokens.fontSizeCaption,
-            color: AppTokens.textHint,
+            color: AppTokens.textHintColor(context),
           ),
         ),
         const SizedBox(height: 2),
@@ -217,7 +192,7 @@ class _Stat extends StatelessWidget {
             sub!,
             style: TextStyle(
               fontSize: 12,
-              color: severity ?? AppTokens.textHint,
+              color: severity ?? AppTokens.textHintColor(context),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -233,13 +208,16 @@ class _ChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (records.length < 2) {
       return Card(
         child: ListTile(
           leading: Icon(_iconForScale(scaleId), color: AppTokens.primary),
-          title: Text(_nameForScale(scaleId)),
+          title: Text(_nameForScale(scaleId, l10n)),
           subtitle: Text(
-            records.isEmpty ? '还没有数据' : '只有 1 次评估，无法画趋势 — 至少需要 2 次',
+            records.isEmpty
+                ? l10n.assessmentChartNoData
+                : l10n.assessmentChartNeedMore,
           ),
         ),
       );
@@ -260,7 +238,7 @@ class _ChartCard extends StatelessWidget {
                 Icon(_iconForScale(scaleId), color: AppTokens.primary),
                 const SizedBox(width: AppTokens.spacingSm),
                 Text(
-                  _nameForScale(scaleId),
+                  _nameForScale(scaleId, l10n),
                   style: const TextStyle(
                     fontSize: AppTokens.fontSizeBody,
                     fontWeight: FontWeight.w600,
@@ -268,10 +246,11 @@ class _ChartCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${sorted.length} 次评估',
-                  style: const TextStyle(
+                  AppLocalizations.of(context)
+                      .assessmentChartRecordCount(sorted.length),
+                  style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
               ],
@@ -289,8 +268,8 @@ class _ChartCard extends StatelessWidget {
                     show: true,
                     drawVerticalLine: false,
                     horizontalInterval: maxScore / 4,
-                    getDrawingHorizontalLine: (_) => const FlLine(
-                      color: AppTokens.divider,
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: AppTokens.dividerColor(context),
                       strokeWidth: 0.5,
                     ),
                   ),
@@ -346,7 +325,8 @@ class _ChartCard extends StatelessWidget {
                         show: true,
                         getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
                           radius: 4,
-                          color: _severityStyle(scaleId, spot.y.toInt()).color,
+                          color: _severityStyle(scaleId, spot.y.toInt(), l10n)
+                              .color,
                           strokeWidth: 1.5,
                           strokeColor: Colors.white,
                         ),
@@ -365,7 +345,7 @@ class _ChartCard extends StatelessWidget {
                           return LineTooltipItem(
                             '${r.timestamp.month}/${r.timestamp.day} '
                             '${r.timestamp.hour.toString().padLeft(2, '0')}:${r.timestamp.minute.toString().padLeft(2, '0')}\n'
-                            '总分 ${r.total}/$maxScore',
+                            '${AppLocalizations.of(context).assessmentChartTotalScore(r.total, maxScore)}',
                             const TextStyle(
                               color: Colors.white,
                               fontSize: 11,
@@ -395,8 +375,8 @@ class _HistoryList extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
               AppTokens.spacingMd,
               AppTokens.spacingMd,
               AppTokens.spacingMd,
@@ -404,11 +384,11 @@ class _HistoryList extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.history, color: AppTokens.primary, size: 20),
-                SizedBox(width: AppTokens.spacingSm),
+                const Icon(Icons.history, color: AppTokens.primary, size: 20),
+                const SizedBox(width: AppTokens.spacingSm),
                 Text(
-                  '完整记录',
-                  style: TextStyle(
+                  AppLocalizations.of(context).assessmentHistoryFullRecord,
+                  style: const TextStyle(
                     fontSize: AppTokens.fontSizeBody,
                     fontWeight: FontWeight.w600,
                   ),
@@ -453,7 +433,8 @@ class _HistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final diff = previous == null ? null : record.total - previous!.total;
-    final sev = _severityStyle(record.scaleId, record.total);
+    final sev = _severityStyle(
+        record.scaleId, record.total, AppLocalizations.of(context),);
     final color = sev.color;
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -488,7 +469,8 @@ class _HistoryItem extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      _nameForScale(record.scaleId),
+                      _nameForScale(
+                          record.scaleId, AppLocalizations.of(context),),
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
@@ -498,9 +480,9 @@ class _HistoryItem extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   _formatDateTime(record.timestamp),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
               ],
@@ -552,7 +534,7 @@ class _SeverityChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sev = _severityStyle(scaleId, score);
+    final sev = _severityStyle(scaleId, score, AppLocalizations.of(context));
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
       decoration: BoxDecoration(
@@ -581,15 +563,27 @@ class _SeverityChip extends StatelessWidget {
 ///   - rank 1 (轻度) → warning
 ///   - rank 2 (中度) → warningStrong
 ///   - rank 3+ (重度) → error
-_SeverityStyle _severityStyle(String scaleId, int score) {
+_SeverityStyle _severityStyle(
+    String scaleId, int score, AppLocalizations l10n,) {
   final rank = AssessmentComparisonCalculator.severityRankFor(
     scaleId: scaleId,
     total: score,
   );
   final labels = switch (scaleId) {
-    'phq9' => const ['正常', '轻度', '中度', '中重度', '重度'],
-    'gad7' => const ['正常', '轻度', '中度', '重度'],
-    _ => const ['未知'],
+    'phq9' => [
+        l10n.assessmentSeverityNormal,
+        l10n.assessmentSeverityMild,
+        l10n.assessmentSeverityModerate,
+        l10n.assessmentSeverityModeratelySevere,
+        l10n.assessmentSeveritySevere,
+      ],
+    'gad7' => [
+        l10n.assessmentSeverityNormal,
+        l10n.assessmentSeverityMild,
+        l10n.assessmentSeverityModerate,
+        l10n.assessmentSeveritySevere,
+      ],
+    _ => [l10n.assessmentSeverityUnknown],
   };
   final label = rank < labels.length ? labels[rank] : labels.last;
   final color = switch (rank) {
@@ -625,8 +619,10 @@ IconData _iconForScale(String scaleId) {
       : Icons.psychology_alt_outlined;
 }
 
-String _nameForScale(String scaleId) {
-  return scaleId == 'phq9' ? 'PHQ-9 抑郁筛查' : 'GAD-7 焦虑筛查';
+String _nameForScale(String scaleId, AppLocalizations l10n) {
+  return scaleId == 'phq9'
+      ? l10n.assessmentScalePhq9
+      : l10n.assessmentScaleGad7;
 }
 
 int _maxScoreForScale(String scaleId) {

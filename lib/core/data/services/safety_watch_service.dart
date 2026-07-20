@@ -212,7 +212,6 @@ class SafetyWatchService {
       int smsOk = 0;
       int smsFail = 0;
       for (final c in contacts) {
-        if (!c.isActive) continue;
         final body = _buildAlertSms(
           userName: profile.userName,
           daysSinceLast: daysSinceLast,

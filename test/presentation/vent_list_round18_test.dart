@@ -7,6 +7,7 @@
 // - "+"按钮 + 写第一句按钮都跳到 compose
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,9 @@ Widget _wrap(List<VentEntryEntity> entries) {
     ],
     child: MaterialApp.router(
       theme: ThemeData.light(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('zh'),
       routerConfig: GoRouter(
         initialLocation: '/vent',
         routes: [

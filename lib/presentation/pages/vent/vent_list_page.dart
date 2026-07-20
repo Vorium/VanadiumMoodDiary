@@ -20,6 +20,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
+import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class VentListPage extends ConsumerWidget {
@@ -28,78 +29,44 @@ class VentListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entriesAsync = ref.watch(ventEntriesProvider);
+    final l10n = AppLocalizations.of(context);
     return PageScaffold(
-      title: '我的树洞',
+      title: l10n.ventListTitle,
       actions: [
         IconButton(
           icon: const Icon(Icons.add),
-          tooltip: '写一条',
+          tooltip: l10n.ventListWriteTooltip,
           onPressed: () => context.push('/vent/compose'),
         ),
       ],
       child: entriesAsync.when(
         data: (entries) {
-          if (entries.isEmpty) return const _EmptyState();
+          if (entries.isEmpty) return const _VentEmptyState();
           return _EntryList(entries: entries);
         },
         loading: () => const LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(
             child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
       ),
     );
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
+/// v0.21 Round 22 (P0-11 修复): 改用统一 EmptyState + FadeIn(withScale)
+/// 保留 emil "rare 频度 + 弹一下" 的 delight 动画 (P1-1)
+class _VentEmptyState extends StatelessWidget {
+  const _VentEmptyState();
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingXl),
-        // v0.17 round 14 (P1-1): 抽 FadeIn widget,代替内联
-        // TweenAnimationBuilder + Opacity + Transform.scale 三层嵌套。
-        // rare 频度 (用户第一次进树洞 / 删完所有) → withScale: true 弹一下
-        child: FadeIn(
-          withScale: true,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // v0.18 (P1-5): dark mode 改用 dynamic Color getter
-              Icon(
-                Icons.forest_outlined,
-                size: 80,
-                color: AppTokens.textHintColor(context),
-              ),
-              const SizedBox(height: AppTokens.spacingMd),
-              Text(
-                '树洞还是空的',
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeTitle,
-                  fontWeight: FontWeight.w600,
-                  color: AppTokens.textPrimaryColor(context),
-                ),
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              Text(
-                '想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeBody,
-                  color: AppTokens.textSecondaryColor(context),
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: AppTokens.spacingLg),
-              ElevatedButton.icon(
-                onPressed: () => context.push('/vent/compose'),
-                icon: const Icon(Icons.edit_outlined),
-                label: const Text('写第一句'),
-              ),
-            ],
-          ),
-        ),
+    return FadeIn(
+      withScale: true,
+      child: EmptyState(
+        icon: Icons.forest_outlined,
+        title: AppLocalizations.of(context).ventEmptyTitle,
+        subtitle: AppLocalizations.of(context).ventEmptySubtitle,
+        actionLabel: AppLocalizations.of(context).ventEmptyAction,
+        onAction: () => context.push('/vent/compose'),
       ),
     );
   }
@@ -138,7 +105,7 @@ class _EntryCard extends StatelessWidget {
         ? (entry.contentText!.length > 80
             ? '${entry.contentText!.substring(0, 80)}…'
             : entry.contentText!)
-        : '🎙️ 语音';
+        : AppLocalizations.of(context).ventVoiceLabel;
 
     return Card(
       child: ListTile(
@@ -149,12 +116,14 @@ class _EntryCard extends StatelessWidget {
           // (详情页同步有对应 Hero 接收)
           tag: 'vent-avatar-${entry.id}',
           child: CircleAvatar(
-            backgroundColor:
-                entry.hasAudio ? AppTokens.primaryLight : AppTokens.divider,
+            backgroundColor: entry.hasAudio
+                ? AppTokens.primaryLightColor(context)
+                : AppTokens.dividerColor(context),
             child: Icon(
               entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
-              color:
-                  entry.hasAudio ? AppTokens.primary : AppTokens.textSecondary,
+              color: entry.hasAudio
+                  ? AppTokens.primary
+                  : AppTokens.textSecondaryColor(context),
               size: 20,
             ),
           ),
@@ -170,7 +139,7 @@ class _EntryCard extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                _formatTime(entry.timestamp),
+                _formatTime(context, entry.timestamp),
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
                   color: AppTokens.textHintColor(context),
@@ -211,7 +180,7 @@ class _EntryCard extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(AppLocalizations.of(context).commonConfirmDelete),
-        content: const Text('删了就没了。文字和录音都会一起删。'),
+        content: Text(AppLocalizations.of(context).commonVentDeleteWarning),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -220,7 +189,7 @@ class _EntryCard extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: AppTokens.error),
-            child: const Text('删除'),
+            child: Text(AppLocalizations.of(context).commonDelete),
           ),
         ],
       ),
@@ -232,15 +201,15 @@ class _EntryCard extends StatelessWidget {
     }
   }
 
-  String _formatTime(DateTime dt) {
+  String _formatTime(BuildContext context, DateTime dt) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final dtDay = DateTime(dt.year, dt.month, dt.day);
     if (dtDay == today) {
-      return '今天 ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      return '${AppLocalizations.of(context).ventToday} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
     }
     if (dtDay == today.subtract(const Duration(days: 1))) {
-      return '昨天 ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      return '${AppLocalizations.of(context).ventYesterday} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
     }
     return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} '
         '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';

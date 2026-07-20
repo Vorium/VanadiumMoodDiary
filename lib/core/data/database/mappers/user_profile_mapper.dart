@@ -20,5 +20,10 @@ UserProfileEntity? userProfileFromRow(UserProfile? row) {
     checkInCycleHours: row.checkInCycleHours,
     firstLaunchAt: row.firstLaunchAt,
     lastCheckInAt: row.lastCheckInAt,
+    // v0.21 Round 22 (P1-22 修复): PIPL §14 consent 4 字段
+    userAgreementVersion: row.userAgreementVersion,
+    privacyPolicyVersion: row.privacyPolicyVersion,
+    sensitiveDataConsentAt: row.sensitiveDataConsentAt,
+    consentRevokedAt: row.consentRevokedAt,
   );
 }

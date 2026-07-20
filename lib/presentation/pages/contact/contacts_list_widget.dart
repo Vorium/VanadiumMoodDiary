@@ -7,6 +7,10 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/empty_state.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:go_router/go_router.dart';
 
 /// 紧急联系人列表 + 添加按钮
 class ContactsListWidget extends ConsumerStatefulWidget {
@@ -24,12 +28,12 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
   Widget build(BuildContext context) {
     final contacts = widget.contacts;
     if (contacts.isEmpty) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(AppTokens.spacingMd),
-          child:
-              Text('还没有联系人，请先添加', style: TextStyle(color: AppTokens.textHint)),
-        ),
+      // v0.21 Round 22 (P0-11 修复): 改用统一 EmptyState
+      return EmptyState(
+        icon: Icons.contacts_outlined,
+        title: AppLocalizations.of(context).contactEmptyList,
+        actionLabel: AppLocalizations.of(context).contactAddAction,
+        onAction: () => GoRouter.of(context).push('/contacts/new'),
       );
     }
 
@@ -49,7 +53,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                       height: 24,
                       child: Padding(
                         padding: EdgeInsets.all(4),
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: LoadingSpinner(size: 16),
                       ),
                     )
                   : IconButton(
@@ -76,11 +80,15 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
     if (_deleting.contains(id)) return;
     setState(() => _deleting.add(id));
     try {
+      // v0.21 Round 22 (P1-14 修复): 删除前重触感警示
+      await Haptics.warning();
       await ref.read(contactRepositoryProvider).delete(id);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '删除', error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonActionDelete,
+              error: e,),
         );
       }
     } finally {
@@ -98,20 +106,21 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) {
           return AlertDialog(
-            title: const Text('添加紧急联系人'),
+            title: Text(AppLocalizations.of(context).contactAddTitle),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(labelText: '姓名'),
+                  decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context).contactNameLabel,),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 TextField(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: '手机号',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context).contactPhoneLabel,
                     hintText: '13800138000',
                   ),
                 ),
@@ -152,7 +161,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                             ScaffoldMessenger.of(ctx).showSnackBar(
                               AppSnackBar.error(
                                 context,
-                                action: '保存',
+                                action: AppLocalizations.of(context)
+                                    .commonActionSave,
                                 error: e,
                               ),
                             );
@@ -166,13 +176,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                     Text(AppLocalizations.of(context).commonSave),
                     if (saving)
                       const IgnorePointer(
-                        child: SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
+                        child: LoadingSpinner(
+                          size: 18,
+                          color: Colors.white,
                         ),
                       ),
                   ],

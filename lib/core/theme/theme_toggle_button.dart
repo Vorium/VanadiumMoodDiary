@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/theme_provider.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 主题切换按钮（在 system / light / dark 之间循环）
 ///
@@ -26,15 +27,19 @@ class ThemeToggleButton extends ConsumerWidget {
       ThemeMode.dark => Icons.dark_mode,
     };
     return IconButton(
-      tooltip: '主题：${_modeLabel(mode)}（点击切换）',
+      tooltip:
+          AppLocalizations.of(context).themeTooltip(_modeLabel(context, mode)),
       icon: Icon(icon),
       onPressed: () => notifier.set(next),
     );
   }
 
-  String _modeLabel(ThemeMode m) => switch (m) {
-        ThemeMode.system => '跟随系统',
-        ThemeMode.light => '亮色',
-        ThemeMode.dark => '暗色',
-      };
+  String _modeLabel(BuildContext context, ThemeMode m) {
+    final l10n = AppLocalizations.of(context);
+    return switch (m) {
+      ThemeMode.system => l10n.themeModeSystem,
+      ThemeMode.light => l10n.themeModeLight,
+      ThemeMode.dark => l10n.themeModeDark,
+    };
+  }
 }

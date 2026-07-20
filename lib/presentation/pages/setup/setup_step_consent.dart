@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 
 /// Step 0: 法律同意
@@ -38,6 +39,7 @@ class SetupStepConsent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       key: const ValueKey(0),
       child: Column(
@@ -50,43 +52,42 @@ class SetupStepConsent extends StatelessWidget {
             color: AppTokens.primary,
           ),
           const SizedBox(height: AppTokens.spacingMd),
-          const Text(
-            '使用前请阅读',
+          Text(
+            l10n.setupConsentTitle,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: AppTokens.fontSizeTitle,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          const Text(
-            '为遵守《个人信息保护法》(PIPL),本 App 处理您的健康医疗等'
-            '敏感个人信息前，需要您明确、单独同意以下 3 份文件。',
+          Text(
+            l10n.setupConsentDescription,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondary,
+              color: AppTokens.textSecondaryColor(context),
               height: 1.5,
             ),
           ),
           const SizedBox(height: AppTokens.spacingLg),
           ConsentCheckRow(
             checked: consentUserAgreement,
-            label: '我已阅读并同意《用户协议》',
+            label: l10n.setupConsentUserAgreement,
             onTap: () => onConsentUserAgreementChanged(!consentUserAgreement),
             onView: onViewUserAgreement,
           ),
           const SizedBox(height: AppTokens.spacingSm),
           ConsentCheckRow(
             checked: consentPrivacyPolicy,
-            label: '我已阅读并同意《隐私政策》',
+            label: l10n.setupConsentPrivacyPolicy,
             onTap: () => onConsentPrivacyPolicyChanged(!consentPrivacyPolicy),
             onView: onViewPrivacyPolicy,
           ),
           const SizedBox(height: AppTokens.spacingSm),
           ConsentCheckRow(
             checked: consentSensitiveData,
-            label: '我已阅读并同意《敏感个人信息处理同意书》',
+            label: l10n.setupConsentSensitiveData,
             onTap: () => onConsentSensitiveDataChanged(!consentSensitiveData),
             onView: onViewSensitiveData,
           ),
@@ -98,18 +99,17 @@ class SetupStepConsent extends StatelessWidget {
                   consentSensitiveData;
               return ElevatedButton(
                 onPressed: allChecked ? onContinue : null,
-                child: const Text('开始设置'),
+                child: Text(l10n.setupConsentStart),
               );
             },
           ),
           const SizedBox(height: AppTokens.spacingMd),
-          const Text(
-            '提示：您可以随时在「设置 → 法律与隐私」撤回同意。'
-            '拒绝或撤回后,App 的相关功能将无法使用。',
+          Text(
+            l10n.setupConsentWithdrawHint,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHint,
+              color: AppTokens.textHintColor(context),
               height: 1.4,
             ),
           ),

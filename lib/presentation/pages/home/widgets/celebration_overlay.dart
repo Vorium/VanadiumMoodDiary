@@ -91,12 +91,15 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: const [
+          // v0.21 (P1-10 fix): 改用 token (radiusButton = 24.0)
+          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x33000000),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppTokens.shadowCardDark.first.color
+                  : AppTokens.shadowCard.first.color,
               blurRadius: 8,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),

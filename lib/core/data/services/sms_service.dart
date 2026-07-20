@@ -45,7 +45,7 @@ class MockSmsProvider implements SmsProvider {
   }) async {
     piiSafeLog('MockSmsProvider', '=' * 60);
     piiSafeLog('MockSmsProvider', '📱 [MOCK SMS — NOT SENT]');
-    piiSafeLog('MockSmsProvider', '  To: \${maskPhone(to)}');
+    piiSafeLog('MockSmsProvider', '  To: ${maskPhone(to)}');
     piiSafeLog('MockSmsProvider', '  Body:');
     for (final line in body.split('\n')) {
       piiSafeLog('MockSmsProvider', '    $line');
@@ -148,7 +148,7 @@ class SmsService {
       if (ok) {
         piiSafeLog(
           'SmsService',
-          '✅ SMS sent to $to via ${_provider.name}',
+          '✅ SMS sent to ${maskPhone(to)} via ${_provider.name}',
         );
         return SmsResult.ok();
       }
@@ -156,7 +156,7 @@ class SmsService {
     } catch (e, st) {
       piiSafeLog(
         'SmsService',
-        '❌ SMS failed to $to: $e',
+        '❌ SMS failed to ${maskPhone(to)}: $e',
         error: e,
         stackTrace: st,
       );

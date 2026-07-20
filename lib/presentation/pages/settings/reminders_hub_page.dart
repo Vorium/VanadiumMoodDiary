@@ -36,7 +36,6 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   int? _assessmentDays;
   bool? _safetyEnabled;
   int? _safetyThreshold;
-  bool _loading = true;
 
   @override
   void initState() {
@@ -57,7 +56,6 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
       _assessmentDays = aDays;
       _safetyEnabled = sEnabled;
       _safetyThreshold = sThreshold;
-      _loading = false;
     });
   }
 
@@ -74,7 +72,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           Container(
             padding: const EdgeInsets.all(AppTokens.spacingMd),
             decoration: BoxDecoration(
-              color: AppTokens.primaryLight,
+              color: AppTokens.primaryLightColor(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
             child: Row(
@@ -200,53 +198,80 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   }
 
   Widget _buildAssessmentCard(BuildContext context) {
-    if (_loading) {
-      return _ReminderCard(
-        icon: Icons.psychology_outlined,
-        title: AppLocalizations.of(context).reminderHubAssessmentTitle,
-        description: AppLocalizations.of(context).commonLoading,
-        statusText: '',
-        statusActive: false,
-        actionLabel: '',
-        onAction: null,
-      );
-    }
-    final enabled = _assessmentEnabled ?? false;
-    final days = _assessmentDays ?? 14;
-    return _ReminderCard(
-      icon: Icons.psychology_outlined,
-      title: AppLocalizations.of(context).reminderHubAssessmentTitle,
-      description: enabled
-          ? AppLocalizations.of(context).reminderHubAssessmentDescEnabled(days)
-          : AppLocalizations.of(context).reminderHubAssessmentDescDisabled,
-      statusText: enabled
-          ? AppLocalizations.of(context)
-              .reminderHubAssessmentStatusEnabled(days)
-          : AppLocalizations.of(context).reminderHubStatusDisabled,
-      statusActive: enabled,
-      actionLabel: AppLocalizations.of(context).reminderHubConfigure,
-      onAction: () => _showAssessmentSettings(context),
+    return _AssessmentReminderCard(
+      enabled: _assessmentEnabled,
+      days: _assessmentDays,
+      onConfigure: () => _showAssessmentSettings(context),
     );
   }
 
   Widget _buildSafetyCard(BuildContext context) {
-    if (_loading) {
-      return _ReminderCard(
-        icon: Icons.shield_outlined,
-        title: AppLocalizations.of(context).reminderHubSafetyTitle,
-        description: AppLocalizations.of(context).commonLoading,
-        statusText: '',
-        statusActive: false,
-        actionLabel: '',
-        onAction: null,
-      );
-    }
-    final enabled = _safetyEnabled ?? false;
-    final threshold = _safetyThreshold ?? 2;
-    // P0-1 fix: 检测当前 SMS provider,如果还是 mock 状态，显示显眼 banner。
-    // 用户必须知道「失联通知」功能还没真接通 — 否则可能误以为已保护家人。
-    final providerName = ref.watch(smsProviderNameProvider);
-    final isMockSms = providerName == 'mock';
+    return _SafetyReminderCard(
+      enabled: _safetyEnabled,
+      threshold: _safetyThreshold,
+      // P0-1 fix: 检测当前 SMS provider,如果是 mock 状态显示 banner
+      isMockSms: ref.watch(smsProviderNameProvider) == 'mock',
+      onConfigure: () => _showSafetySettings(context),
+    );
+  }
+}
+
+/// 心理评估提醒卡片 (v0.21 Round 22 P1-19 拆分自 _RemindersHubPageState)
+class _AssessmentReminderCard extends StatelessWidget {
+  final bool? enabled;
+  final int? days;
+  final VoidCallback onConfigure;
+  const _AssessmentReminderCard({
+    required this.enabled,
+    required this.days,
+    required this.onConfigure,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isLoading = enabled == null;
+    final isEnabled = enabled ?? false;
+    final d = days ?? 14;
+    return _ReminderCard(
+      icon: Icons.psychology_outlined,
+      title: l10n.reminderHubAssessmentTitle,
+      description: isLoading
+          ? l10n.commonLoading
+          : isEnabled
+              ? l10n.reminderHubAssessmentDescEnabled(d)
+              : l10n.reminderHubAssessmentDescDisabled,
+      statusText: isLoading
+          ? ''
+          : isEnabled
+              ? l10n.reminderHubAssessmentStatusEnabled(d)
+              : l10n.reminderHubStatusDisabled,
+      statusActive: isEnabled,
+      actionLabel: l10n.reminderHubConfigure,
+      onAction: isLoading ? null : onConfigure,
+    );
+  }
+}
+
+/// 失联通知提醒卡片 (v0.21 Round 22 P1-19 拆分自 _RemindersHubPageState)
+class _SafetyReminderCard extends StatelessWidget {
+  final bool? enabled;
+  final int? threshold;
+  final bool isMockSms;
+  final VoidCallback onConfigure;
+  const _SafetyReminderCard({
+    required this.enabled,
+    required this.threshold,
+    required this.isMockSms,
+    required this.onConfigure,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isLoading = enabled == null;
+    final isEnabled = enabled ?? false;
+    final t = threshold ?? 2;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -256,18 +281,18 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
             padding: const EdgeInsets.all(AppTokens.spacingSm),
             decoration: BoxDecoration(
-              color: AppTokens.error.withValues(alpha: 0.1),
+              color: AppTokens.tintedErrorSoft(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               border: Border.all(color: AppTokens.error, width: 1),
             ),
             child: Row(
               children: [
                 const Icon(Icons.error_outline,
-                    color: AppTokens.error, size: 18),
+                    color: AppTokens.error, size: 18,),
                 const SizedBox(width: AppTokens.spacingXs),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context).reminderHubSmsMockWarning,
+                    l10n.reminderHubSmsMockWarning,
                     style: const TextStyle(fontSize: 12, height: 1.4),
                   ),
                 ),
@@ -276,18 +301,20 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           ),
         _ReminderCard(
           icon: Icons.shield_outlined,
-          title: AppLocalizations.of(context).reminderHubSafetyTitle,
-          description: enabled
-              ? AppLocalizations.of(context)
-                  .reminderHubSafetyDescEnabled(threshold)
-              : AppLocalizations.of(context).reminderHubSafetyDescDisabled,
-          statusText: enabled
-              ? AppLocalizations.of(context)
-                  .reminderHubSafetyStatusEnabled(threshold)
-              : AppLocalizations.of(context).reminderHubStatusDisabled,
-          statusActive: enabled,
-          actionLabel: AppLocalizations.of(context).reminderHubConfigure,
-          onAction: () => _showSafetySettings(context),
+          title: l10n.reminderHubSafetyTitle,
+          description: isLoading
+              ? l10n.commonLoading
+              : isEnabled
+                  ? l10n.reminderHubSafetyDescEnabled(t)
+                  : l10n.reminderHubSafetyDescDisabled,
+          statusText: isLoading
+              ? ''
+              : isEnabled
+                  ? l10n.reminderHubSafetyStatusEnabled(t)
+                  : l10n.reminderHubStatusDisabled,
+          statusActive: isEnabled,
+          actionLabel: l10n.reminderHubConfigure,
+          onAction: isLoading ? null : onConfigure,
         ),
       ],
     );
@@ -326,8 +353,9 @@ class _ReminderCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color:
-                    statusActive ? AppTokens.primaryLight : AppTokens.divider,
+                color: statusActive
+                    ? AppTokens.primaryLightColor(context)
+                    : AppTokens.dividerColor(context),
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               ),
               child: Icon(icon, color: AppTokens.primary, size: 22),
@@ -356,8 +384,8 @@ class _ReminderCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: statusActive
-                                ? AppTokens.primary.withValues(alpha: 0.12)
-                                : AppTokens.divider,
+                                ? AppTokens.tintedPrimarySoft(context)
+                                : AppTokens.dividerColor(context),
                             borderRadius:
                                 BorderRadius.circular(AppTokens.radiusChip),
                           ),
@@ -367,7 +395,7 @@ class _ReminderCard extends StatelessWidget {
                               fontSize: AppTokens.fontSizeCaption,
                               color: statusActive
                                   ? AppTokens.primary
-                                  : AppTokens.textHint,
+                                  : AppTokens.textHintColor(context),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -527,7 +555,7 @@ class _AssessmentReminderSheetState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonSave, error: e),
+              action: AppLocalizations.of(context).commonSave, error: e,),
         );
       }
     } finally {
@@ -658,7 +686,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonSave, error: e),
+              action: AppLocalizations.of(context).commonSave, error: e,),
         );
       }
     } finally {

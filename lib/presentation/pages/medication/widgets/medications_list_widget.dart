@@ -11,6 +11,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/empty_state.dart';
 
 /// 常吃药列表（可编辑、可设置续方、可停药、可删除）
 ///
@@ -38,12 +39,12 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         widget.meds.where((m) => !m.isActive).toList(growable: false);
 
     if (widget.meds.isEmpty) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
-          child: Text(AppLocalizations.of(context).medsListEmpty,
-              style: const TextStyle(color: AppTokens.textHint)),
-        ),
+      // v0.21 Round 22 (P0-11 修复): 改用统一 EmptyState
+      return EmptyState(
+        icon: Icons.medication_outlined,
+        title: AppLocalizations.of(context).medsListEmpty,
+        actionLabel: AppLocalizations.of(context).medsListAddAction,
+        onAction: () => GoRouter.of(context).push('/medication/new'),
       );
     }
 
@@ -66,14 +67,13 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
           ),
         // 在用列表
         if (activeMeds.isEmpty)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTokens.spacingMd),
-              child: Text(
-                AppLocalizations.of(context).medsListNoActive,
-                style: const TextStyle(color: AppTokens.textHint),
-              ),
-            ),
+          // v0.21 Round 22 (P0-11 修复): 改用统一 EmptyState
+          EmptyState(
+            icon: Icons.check_circle_outline,
+            title: AppLocalizations.of(context).medsListNoActive,
+            subtitle: AppLocalizations.of(context).medsListNoActiveHint,
+            actionLabel: AppLocalizations.of(context).medsListAddAction,
+            onAction: () => GoRouter.of(context).push('/medication/new'),
           )
         else
           Card(
@@ -101,9 +101,9 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
             padding: const EdgeInsets.only(left: 4, top: AppTokens.spacingXs),
             child: Text(
               AppLocalizations.of(context).medsListStoppedSection,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textHint,
+                color: AppTokens.textHintColor(context),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -168,7 +168,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonDelete, error: e),
+              action: AppLocalizations.of(context).commonDelete, error: e,),
         );
       }
     } finally {
@@ -221,7 +221,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)
-              .medsRefillSet(Formatters.date(picked), days)),
+              .medsRefillSet(Formatters.date(picked), days),),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -229,7 +229,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonSetup, error: e),
+              action: AppLocalizations.of(context).commonSetup, error: e,),
         );
       }
     } finally {
@@ -264,7 +264,7 @@ class _MedicationRow extends StatelessWidget {
     return ListTile(
       leading: Icon(
         isStopped ? Icons.medication_outlined : Icons.medication_outlined,
-        color: isStopped ? AppTokens.textHint : AppTokens.primary,
+        color: isStopped ? AppTokens.textHintColor(context) : AppTokens.primary,
       ),
       title: Row(
         children: [
@@ -273,7 +273,7 @@ class _MedicationRow extends StatelessWidget {
               med.name,
               style: TextStyle(
                 decoration: isStopped ? TextDecoration.lineThrough : null,
-                color: isStopped ? AppTokens.textHint : null,
+                color: isStopped ? AppTokens.textHintColor(context) : null,
               ),
             ),
           ),
@@ -315,7 +315,7 @@ class _MedicationRow extends StatelessWidget {
                       ? Icons.warning_amber_outlined
                       : Icons.event_outlined,
                   size: 14,
-                  color: refillTextColor(med),
+                  color: refillTextColor(med, context),
                 ),
                 const SizedBox(width: 4),
                 Expanded(
@@ -323,7 +323,7 @@ class _MedicationRow extends StatelessWidget {
                     refillText,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: refillTextColor(med),
+                      color: refillTextColor(med, context),
                     ),
                   ),
                 ),
@@ -370,12 +370,12 @@ class _MedicationRow extends StatelessWidget {
     );
   }
 
-  static Color refillTextColor(MedicationEntity med) {
-    if (med.refillAt == null) return AppTokens.textHint;
+  static Color refillTextColor(MedicationEntity med, BuildContext context) {
+    if (med.refillAt == null) return AppTokens.textHintColor(context);
     // v0.14 fix: 用 entity 的"按天判断"方法，refill day 整天都算 in window
     if (med.isRefillOverdue()) return AppTokens.error;
     if (med.isInRefillWindow()) return AppTokens.warning;
-    return AppTokens.textSecondary;
+    return AppTokens.textSecondaryColor(context);
   }
 
   String? _refillSubtitle(MedicationEntity med, BuildContext context) {

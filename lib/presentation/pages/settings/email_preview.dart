@@ -19,13 +19,14 @@ class EmailPreviewPage extends ConsumerWidget {
     final medsAsync = ref.watch(medicationsProvider);
 
     return PageScaffold(
-      title: '通知预览',
+      title: AppLocalizations.of(context).emailPreviewTitle,
       child: profileAsync.when(
         data: (profile) {
           if (profile == null) {
-            return const Center(
-              child:
-                  Text('请先完成首次设置', style: TextStyle(color: AppTokens.textHint)),
+            return Center(
+              child: Text(
+                  AppLocalizations.of(context).emailPreviewSetupRequired,
+                  style: TextStyle(color: AppTokens.textHintColor(context)),),
             );
           }
           return SingleChildScrollView(
@@ -33,11 +34,11 @@ class EmailPreviewPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: AppTokens.spacingSm),
-                const Text(
-                  '这是你将收到的失联通知预览：',
+                Text(
+                  AppLocalizations.of(context).emailPreviewDescription,
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeBody,
-                    color: AppTokens.textSecondary,
+                    color: AppTokens.textSecondaryColor(context),
                   ),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
@@ -72,10 +73,10 @@ class EmailPreviewPage extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'To: ${firstContact?.phone ?? "（无联系人）"}',
-                              style: const TextStyle(
+                              'To: ${firstContact?.phone ?? AppLocalizations.of(context).emailPreviewNoContact}',
+                              style: TextStyle(
                                 fontSize: AppTokens.fontSizeLabel,
-                                color: AppTokens.textSecondary,
+                                color: AppTokens.textSecondaryColor(context),
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -89,10 +90,10 @@ class EmailPreviewPage extends ConsumerWidget {
                             const Divider(height: AppTokens.spacingLg),
                             SelectableText(
                               body,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: AppTokens.fontSizeBody,
                                 height: 1.6,
-                                color: AppTokens.textPrimary,
+                                color: AppTokens.textPrimaryColor(context),
                               ),
                             ),
                           ],
@@ -102,18 +103,18 @@ class EmailPreviewPage extends ConsumerWidget {
                   },
                   loading: () => const LoadingSkeleton.fullScreen(),
                   error: (e, _) => Text(AppLocalizations.of(context)
-                      .commonLoadFailed(e.toString())),
+                      .commonLoadFailed(e.toString()),),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 Container(
                   padding: const EdgeInsets.all(AppTokens.spacingSm),
                   decoration: BoxDecoration(
-                    color: AppTokens.primaryLight,
+                    color: AppTokens.primaryLightColor(context),
                     borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                   ),
-                  child: const Text(
-                    '💡 这只是预览。实际短信通知在你漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。',
-                    style: TextStyle(fontSize: AppTokens.fontSizeLabel),
+                  child: Text(
+                    AppLocalizations.of(context).emailPreviewDisclaimer,
+                    style: const TextStyle(fontSize: AppTokens.fontSizeLabel),
                   ),
                 ),
               ],
@@ -123,7 +124,7 @@ class EmailPreviewPage extends ConsumerWidget {
         loading: () => const LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(
             child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
       ),
     );
   }

@@ -54,7 +54,7 @@
 
 ## 8. 联系方式
 
-- 开发者邮箱:support@example.com(占位,正式上线前替换为真实邮箱)
+- 开发者邮箱:support@chroniccare.app(占位,正式上线前替换为真实邮箱)
 - GitHub Issues:https://github.com/example/chroniccare/issues(占位)
 
 ---

@@ -33,8 +33,8 @@
   "setupIntro": "1 分钟设置好，然后每天 1 次打卡",
   "setupName": "你的名字",
   "setupNameHint": "小明",
-  "setupContacts": "紧急联系人邮箱（至少 1 个）",
-  "setupContactHint": "mom@example.com",
+  "setupContacts": "紧急联系人手机号（至少 1 个）",
+  "setupContactHint": "13800138000",
   "setupAddContact": "+ 添加另一个联系人",
   "setupNext": "下一步 →",
   "setupMedName": "药名",
@@ -53,7 +53,7 @@
   "setupReminder3": "✓ 漏 2 天我会联系紧急人",
   "setupPrivacy": "你的数据：",
   "setupPrivacy1": "• 本地加密",
-  "setupPrivacy2": "• 不会上传云端（除邮件通知）",
+  "setupPrivacy2": "• 不会上传到任何云端服务器",
   "setupPrivacy3": "• 你可以随时导出",
 
   "settingsContacts": "紧急联系人",
@@ -102,6 +102,15 @@
   },
   "settingsActionImport": "导入",
   "settingsImportAndOverwrite": "导入并覆盖",
+
+  "@_v0.21_round_22_settings_clear_all_data": {},
+  "settingsClearAllData": "清空所有数据",
+  "settingsClearAllDataSubtitle": "删除全部打卡 / 用药 / 评估 / 树洞 / 联系人(无法恢复)",
+  "settingsClearAllDataDialogTitle": "确认清空所有数据?",
+  "settingsClearAllDataDialogBody": "以下数据将被永久删除,无法恢复:\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞(文字+录音)\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
+  "settingsClearAllDataConfirm": "我已备份,确认清空",
+  "settingsClearAllDataSuccess": "已清空所有数据",
+  "settingsClearAllDataFailed": "清空失败: {error}",
 
   "commonSave": "保存",
   "commonCancel": "取消",
@@ -155,6 +164,8 @@
   "medsCalendarTitle": "用药日历",
   "medsCalendarSubtitle": "医生视角依从性热力图 · 7/30/90 天",
   "medsListNoActive": "没有在用的药",
+  "medsListNoActiveHint": "所有药物都已停用,去添加新药物开始新一阶段",
+  "medsListAddAction": "添加药物",
   "medsListStoppedSection": "已停药",
   "medsSnackUpdated": "已更新",
   "medsSnackUpdatedSoftStop": "已更新 · 软停",
@@ -332,5 +343,509 @@
   "@setupContactPhoneLabel": {
     "placeholders": { "index": { "type": "int" } }
   },
-  "setupContactPhoneHint": "13800138000"
+  "setupContactPhoneHint": "13800138000",
+
+  "ventListTitle": "我的树洞",
+  "ventListWriteTooltip": "写一条",
+  "ventEmptyTitle": "树洞还是空的",
+  "ventEmptySubtitle": "想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。",
+  "ventEmptyAction": "写第一句",
+  "ventVoiceLabel": "🎙️ 语音",
+  "ventDetailTitle": "树洞",
+  "ventDetailNotFound": "找不到了",
+  "ventDetailPrivacy": "🔒 私密 · 只有你能看到",
+  "ventToday": "今天",
+  "ventYesterday": "昨天",
+  "ventComposeTitle": "放进树洞",
+  "ventComposeHint": "今天过得怎么样……",
+  "ventRecordIdle": "按一下开始录音",
+  "ventRecordActive": "正在录音… 点停止",
+  "ventAudioLabel": "录音",
+  "ventRerecord": "重录",
+  "ventDurationSeconds": "{seconds}秒",
+  "@ventDurationSeconds": {
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+  "ventDurationMinutes": "{minutes}分",
+  "@ventDurationMinutes": {
+    "placeholders": { "minutes": { "type": "int" } }
+  },
+  "ventDurationMinutesSeconds": "{minutes}分{seconds}秒",
+  "@ventDurationMinutesSeconds": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "seconds": { "type": "int" }
+    }
+  },
+  "moodDialogTitle": "今天怎么样？",
+  "moodDimensionMood": "情绪",
+  "moodDimensionMoodHint": "1=很差 5=很好",
+  "moodDimensionEnergy": "精力",
+  "moodDimensionEnergyHint": "1=很低 5=充沛",
+  "moodDimensionSleep": "睡眠",
+  "moodDimensionSleepHint": "1=很差 5=很好",
+  "moodDimensionAnxiety": "焦虑",
+  "moodDimensionAnxietyHint": "1=严重 5=平静",
+  "moodTagAnxiety": "焦虑",
+  "moodTagDepression": "抑郁",
+  "moodTagCalm": "平静",
+  "moodTagInsomnia": "失眠",
+  "moodTagIrritable": "烦躁",
+  "moodTagLowEnergy": "能量低",
+  "moodNoteLabel": "备注（可选）",
+  "moodNoteHint": "今天发生什么？",
+  "medsTodaySchedule": "今日服药计划",
+  "medsTotal": "总药数",
+  "medsRefillSetCount": "已设续方",
+  "medsRefillReminding": "提醒中",
+  "refillManageOverdue": "已过期",
+  "medsNoMedicationsAdded": "还没有添加药物",
+  "medsRefillEditHint": "点击任一行可编辑续方日期。提醒窗口：续方前 N 天（N=reminderDays）。",
+  "medsRefillStatusNotConfigured": "未设置",
+  "medsRefillStatusSet": "已设",
+  "medsRefillStatusReminding": "提醒中",
+  "medsRefillStatusOverdue": "已过期",
+  "medsRefillNotSetSubtitle": "未设续方日期 · 提醒窗口 {days} 天",
+  "@medsRefillNotSetSubtitle": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillExpiredDays": "已过 {days} 天",
+  "@medsRefillExpiredDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillToday": "今天",
+  "medsRefillRemainingDays": "还有 {days} 天",
+  "@medsRefillRemainingDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillSubtitleTemplate": "{date} {suffix} · 提前 {reminderDays} 天提醒",
+  "@medsRefillSubtitleTemplate": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "suffix": { "type": "String" },
+      "reminderDays": { "type": "int" }
+    }
+  },
+  "assessmentLoadingBack": "正在返回上一页...",
+  "assessmentAnsweredProgress": "已答 {answered} / {total}",
+  "@assessmentAnsweredProgress": {
+    "placeholders": {
+      "answered": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "assessmentSubmit": "提交并查看结果",
+  "assessmentScoreTotal": "总分（0-{max}）",
+  "@assessmentScoreTotal": {
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "assessmentRecommendUrgent": "强烈建议你尽快联系医生或心理治疗师。",
+  "assessmentRecommend": "建议你联系医生做进一步评估。",
+  "assessmentDisclaimer": "⚠️ 本评估仅供参考，不能代替专业诊断。\n如感到困扰，请咨询医生。",
+  "assessmentBack": "返回",
+  "assessmentRetake": "再做一次",
+  "homeHeaderDefaultTitle": "慢病管家",
+  "homeHeaderKeepGoing": "{name} 还在坚持",
+  "@homeHeaderKeepGoing": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeTooltipTrend": "查看趋势",
+  "homeTooltipAssessmentHistory": "评估历史",
+  "homeStreakRestart": "今天重新开始，加油 🌱",
+  "homeStreakDay1": "第 1 天，迈出第一步 🌱",
+  "homeStreakDays": "坚持 {days} 天，继续 🌿",
+  "@homeStreakDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeStreakGreat": "已坚持 {days} 天，真棒 🌳",
+  "@homeStreakGreat": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeStreakAmazing": "{days} 天连击，太厉害了 🌲",
+  "@homeStreakAmazing": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeStreakMaster": "{days} 天--你已经是这个习惯的主人了 🏔️",
+  "@homeStreakMaster": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+
+  "navCheckIn": "打卡",
+  "navSettings": "设置",
+  "navAppName": "慢病管家",
+  "errorPageNotFound": "页面不存在: {path}",
+  "@errorPageNotFound": {
+    "placeholders": { "path": { "type": "String" } }
+  },
+  "errorPageHint": "这个地址可能已经失效,或者链接有误。",
+  "errorPageBackHome": "返回首页",
+
+  "assessmentReminderEnabled": "已开启：每 {days} 天提醒做心理评估",
+  "@assessmentReminderEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "assessmentReminderChanged": "已改为：每 {days} 天提醒",
+  "@assessmentReminderChanged": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "assessmentReminderSubtitleEnabled": "每 {days} 天提醒我做一次心理评估",
+  "@assessmentReminderSubtitleEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "assessmentReminderHelpText": "完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅你自己看得到。",
+  "assessmentReminderHintAcute": "高强度监测（适合急性期）",
+  "assessmentReminderHintCommon": "推荐（精神科常用）",
+  "assessmentReminderHintStable": "稳定期 / 月度复盘",
+  "assessmentReminderHintMaintenance": "维持治疗期",
+  "assessmentReminderHintLongTerm": "长期随访",
+
+  "assessmentHistoryTrend": "历史趋势",
+  "assessmentAverageScore": "平均 {score}",
+  "@assessmentAverageScore": {
+    "placeholders": { "score": { "type": "String" } }
+  },
+  "assessmentTotalRecords": "共 {count} 次",
+  "@assessmentTotalRecords": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "assessmentScoreRange": "最低 {min} / 最高 {max}",
+  "@assessmentScoreRange": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "assessmentComparePrevious": "对比上次",
+  "assessmentFirstAssessmentHint": "这是你的第一次评估。下次评估后会显示和这次的对比。",
+  "assessmentPrevious": "上次",
+  "assessmentCurrent": "本次",
+  "assessmentDaysSincePrevious": "距上次 {days} 天",
+  "@assessmentDaysSincePrevious": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+
+  "assessmentHistoryEmpty": "还没有评估记录",
+  "assessmentHistoryEmptyHint": "完成一次心理评估后，记录会显示在这里",
+  "assessmentHistoryStartFirst": "开始第一次评估",
+  "assessmentHistoryTotalAssessments": "总评估",
+  "assessmentHistoryTimes": "次",
+  "assessmentHistoryLatestPhq9": "最近 PHQ-9",
+  "assessmentHistoryLatestGad7": "最近 GAD-7",
+  "assessmentHistoryNotDone": "未做",
+  "assessmentChartNoData": "还没有数据",
+  "assessmentChartNeedMore": "只有 1 次评估，无法画趋势 — 至少需要 2 次",
+  "assessmentChartRecordCount": "{count} 次评估",
+  "@assessmentChartRecordCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "assessmentChartTotalScore": "总分 {score}/{max}",
+  "@assessmentChartTotalScore": {
+    "placeholders": {
+      "score": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "assessmentHistoryFullRecord": "完整记录",
+  "assessmentSeverityNormal": "正常",
+  "assessmentSeverityMild": "轻度",
+  "assessmentSeverityModerate": "中度",
+  "assessmentSeverityModeratelySevere": "中重度",
+  "assessmentSeveritySevere": "重度",
+  "assessmentSeverityUnknown": "未知",
+  "assessmentScalePhq9": "PHQ-9 抑郁筛查",
+  "assessmentScaleGad7": "GAD-7 焦虑筛查",
+
+  "setupConsentRequired": "请先完成法律文件阅读与同意",
+  "setupValidationNameRequired": "请输入您的名字",
+  "setupValidationContactRequired": "至少填 1 个紧急联系人手机号",
+  "setupValidationPhoneInvalid": "手机号格式不对",
+  "setupValidationPhoneDuplicate": "紧急联系人手机号不能重复",
+  "setupPresetTitle": "📋 选择预置方案",
+  "setupPresetDescription": "预置方案会填好药名 + 时间，你可以接着改。最终服药请按医嘱核对。",
+  "setupPresetLoaded": "已载入：{name}（{count} 个药）请核对药名和剂量",
+  "@setupPresetLoaded": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "setupSaveFailed": "保存失败：{error}",
+  "@setupSaveFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+
+  "setupMedWhatDoYouTake": "你常吃什么药？",
+  "setupMedMultiDrugHint": "（可加多个药，每个药配自己的时间和剂量；跳过不影响打卡）",
+  "setupMedEmptyHint": "还没添加药物。可以跳过——打卡不需要药物信息。",
+  "setupMedAddDrug": "+ 添加药物",
+  "setupMedLoadPreset": "📋 载入预置方案（4 种常见模式）",
+  "setupBack": "← 上一步",
+  "setupMedDrugNumber": "药物 {number}",
+  "@setupMedDrugNumber": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "setupMedDeleteDrug": "删除这个药",
+  "setupMedDosage": "剂量",
+  "setupMedUnit": "单位",
+  "setupMedTimeHint": "吃药时间（点 + 加）",
+  "setupMedAddTime": "加时间",
+  "setupMedTimeOptional": "（不设置时间 = 不调度提醒，仅记录）",
+
+  "setupConsentTitle": "使用前请阅读",
+  "setupConsentDescription": "为遵守《个人信息保护法》(PIPL),本 App 处理您的健康医疗等敏感个人信息前，需要您明确、单独同意以下 3 份文件。",
+  "setupConsentUserAgreement": "我已阅读并同意《用户协议》",
+  "setupConsentPrivacyPolicy": "我已阅读并同意《隐私政策》",
+  "setupConsentSensitiveData": "我已阅读并同意《敏感个人信息处理同意书》",
+  "setupConsentStart": "开始设置",
+  "setupConsentWithdrawHint": "提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后,App 的相关功能将无法使用。",
+
+  "setupWelcomeContactHint": "（至少填 1 个手机号，用于失联时通知）",
+
+  "setupLegalUserAgreement": "用户协议",
+  "setupLegalPrivacyPolicy": "隐私政策",
+  "setupLegalSensitiveData": "敏感个人信息处理同意书",
+  "setupLegalLoadFailed": "加载失败，请检查网络或重新打开 App",
+
+  "setupConsentView": "查看",
+
+  "@_v0_21_round_22_legal_page": {},
+  "settingsLegalAndPrivacy": "法律与隐私",
+  "settingsLegalAndPrivacySubtitle": "查看协议、隐私政策、撤回同意",
+  "legalPageTitle": "法律与隐私",
+  "legalPageDocuments": "法律文档",
+  "legalPageWithdrawTitle": "撤回同意",
+  "legalPageWithdrawDescription": "撤回某项同意后,相关功能立即停用(数据不删除,可重新打开)。",
+  "legalPageWithdrawSafety": "撤回失联通知同意",
+  "legalPageWithdrawSafetySubtitle": "不再因漏打卡触发短信/邮件通知给紧急联系人",
+  "legalPageWithdrawVent": "撤回树洞(敏感倾诉)处理同意",
+  "legalPageWithdrawVentSubtitle": "停止存储新树洞文字/录音(已有数据保留,需手动删除)",
+  "legalPageWithdrawAnalytics": "撤回评估/情绪分析同意",
+  "legalPageWithdrawAnalyticsSubtitle": "停止将评估/情绪记录纳入趋势分析(数据保留,不再入图表)",
+  "legalPageConsentRecorded": "撤回时间: {time}",
+  "legalPageConsentNever": "从未撤回",
+  "legalPageResetConsent": "重新同意",
+
+  "emailPreviewTitle": "通知预览",
+  "emailPreviewSetupRequired": "请先完成首次设置",
+  "emailPreviewDescription": "这是你将收到的失联通知预览：",
+  "emailPreviewNoContact": "（无联系人）",
+  "emailPreviewDisclaimer": "💡 这只是预览。实际短信通知在你漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。",
+
+  "reportHistoryEmpty": "还没有报告历史\n生成一次报告后会自动记录",
+  "reportHistoryItemTitle": "{date} · 近 {days} 天",
+  "@reportHistoryItemTitle": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  },
+  "reportHistoryItemPatient": "患者: {name}",
+  "@reportHistoryItemPatient": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "reportHistoryItemNotSet": "未设置",
+  "reportHistoryDeleteTitle": "删除这条报告？",
+  "reportHistoryDeleteContent": "删除后无法恢复，但可以重新生成。",
+
+  "homeCelebrationDay1": "已记录！第 1 天 🌱",
+  "homeCelebrationStreakShort": "已记录！连击 {days} 天 🌿",
+  "@homeCelebrationStreakShort": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeCelebrationStreakMedium": "已记录！连击 {days} 天 🌳",
+  "@homeCelebrationStreakMedium": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeCelebrationStreakLong": "已记录!{days} 天连击 🌲",
+  "@homeCelebrationStreakLong": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeCelebrationStreakMaster": "已记录!{days} 天--你太厉害了 🏔️",
+  "@homeCelebrationStreakMaster": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeAutofireCelebration": "已打卡:{name} ✅",
+  "@homeAutofireCelebration": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeAutofireFallbackName": "该药",
+  "homeMedHint": "💊 准备打卡药物 #{id}",
+  "@homeMedHint": {
+    "placeholders": { "id": { "type": "int" } }
+  },
+  "homeSafetyAlertSuffix": "(请尽快打卡或联系家人)",
+  "homeSnoozeTitle": "⏰ 该打卡了(5min 后)",
+  "homeSnoozeBody": "刚才你点了「snooze」,是时候点一下 = 打卡了",
+  "homeSnoozeConfirmed": "好,5 分钟后会再提醒你 👌",
+  "homeSnoozeFailed": "Snooze 失败:{error}",
+  "@homeSnoozeFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "homeSnoozeButton": "⏰ 5 分钟后再提醒",
+  "homeVentButton": "倾诉 🌲",
+  "homeNotifBannerText": "提醒没设上，可能错过打卡。请到系统设置允许通知。",
+  "homeNotifBannerDismiss": "知道了",
+
+  "themeTooltip": "主题：{mode}（点击切换）",
+  "@themeTooltip": {
+    "placeholders": { "mode": { "type": "String" } }
+  },
+  "themeModeSystem": "跟随系统",
+  "themeModeLight": "亮色",
+  "themeModeDark": "暗色",
+
+  "trendTitle": "我的趋势",
+  "trendLast30Days": "最近 30 天",
+  "trendLast6Months": "最近 6 个月",
+  "trendAssessmentHistory": "心理评估历史",
+  "trendMoodHistory": "情绪日记历史",
+  "trendViewList": "列表",
+  "trendViewCalendar": "日历",
+
+  "trendWeekdayMon": "一",
+  "trendWeekdayTue": "二",
+  "trendWeekdayWed": "三",
+  "trendWeekdayThu": "四",
+  "trendWeekdayFri": "五",
+  "trendWeekdaySat": "六",
+  "trendWeekdaySun": "日",
+  "trendPrevMonth": "上个月",
+  "trendNextMonth": "下个月",
+  "trendMonthYear": "{year} 年 {month} 月",
+  "@trendMonthYear": {
+    "placeholders": {
+      "year": { "type": "int" },
+      "month": { "type": "int" }
+    }
+  },
+  "trendCheckedIn": "已打卡",
+  "trendNotCheckedIn": "未打卡",
+  "trendEventCount": "{count} 个事件",
+  "@trendEventCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "trendMoodEntriesSame": "{count} 条情绪记录 · {emoji}",
+  "@trendMoodEntriesSame": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "emoji": { "type": "String" }
+    }
+  },
+  "trendMoodEntriesRange": "情绪 {count} 条 · {lowEmoji}→{highEmoji}",
+  "@trendMoodEntriesRange": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "lowEmoji": { "type": "String" },
+      "highEmoji": { "type": "String" }
+    }
+  },
+  "trendNoRecords": "这一天没有记录",
+
+  "trendStatCurrentStreak": "当前连续",
+  "trendStatLongestStreak": "最长连续",
+  "trendStatTotalCheckIns": "总打卡",
+  "trendStatTotalDays": "总天数",
+  "trendStatDaysValue": "{count} 天",
+  "@trendStatDaysValue": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "trendMonthLabel": "{month}月",
+  "@trendMonthLabel": {
+    "placeholders": { "month": { "type": "int" } }
+  },
+  "trendNoAssessments": "还没有评估记录",
+  "trendNoAssessmentsHint": "完成一次心理评估后，折线图会自动出现在这里",
+  "trendNoMoodEntries": "还没有情绪记录",
+  "trendNoMoodEntriesHint": "在主页点击「记一下情绪」开始记录",
+
+  "contactEmptyList": "还没有联系人，请先添加",
+  "contactAddAction": "添加联系人",
+  "contactAddTitle": "添加紧急联系人",
+  "contactNameLabel": "姓名",
+  "contactPhoneLabel": "手机号",
+  "commonActionDelete": "删除",
+  "commonActionSave": "保存",
+
+  "editMedDialogTitle": "编辑药物",
+  "editMedValidationNameRequired": "请填写药名",
+  "editMedValidationDosageInvalid": "剂量必须是大于 0 的数字",
+  "editMedValidationUnitInvalid": "单位必须是 mg 或 片",
+  "editMedSaveFailed": "保存失败：{error}",
+  "@editMedSaveFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "editMedStatusActive": "正在使用",
+  "editMedStatusStopped": "已停药",
+  "editMedStoppedDate": "{date} 停药",
+  "@editMedStoppedDate": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "editMedNameHint": "请输入药盒上的名称（选填）",
+  "editMedDosageLabel": "剂量",
+  "editMedUnitLabel": "单位",
+  "editMedTimeSectionLabel": "吃药时间（点 + 加）",
+  "editMedAddTime": "加时间",
+  "editMedNoTimeHint": "（不设置时间 = 不调度提醒，仅记录）",
+  "editMedStopAction": "停用此药",
+  "editMedResumeAction": "重新启用",
+  "editMedStopHint": "软停：保留所有打卡历史，不再推送提醒",
+  "editMedResumeHint": "恢复：清空停药日期，恢复每日提醒",
+
+  "medReportCopyHint": "可全选复制、生成 PDF 或分享给医生",
+  "medReportPdfLabel": "PDF",
+  "medReportShareLabel": "分享",
+  "medReportPdfLoading": "生成 PDF 中...",
+  "medReportShareSubject": "慢病管家 · 用药报告",
+  "medReportGenPdfAction": "生成 PDF",
+
+  "tempMedDialogTitle": "添加临时吃药",
+  "tempMedLinkLabel": "关联到常吃药（可选）",
+  "tempMedLinkHint": "不选 = 临时事件",
+  "tempMedNoLink": "不关联",
+  "tempMedNameHint": "如：布洛芬",
+  "tempMedReasonLabel": "原因",
+  "tempMedReasonHint": "如：感冒",
+
+  "medsCalendarHeatmapDesc": "以药为单位的依从性热力图。颜色越深 = 当天打卡次数越接近期望次数。",
+  "medsCalendarWindow7": "7 天",
+  "medsCalendarWindow30": "30 天",
+  "medsCalendarWindow90": "90 天",
+  "medsCalendarLoadCheckinFailed": "加载打卡失败: {error}",
+  "@medsCalendarLoadCheckinFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "medsCalendarLoadMedFailed": "加载药物失败: {error}",
+  "@medsCalendarLoadMedFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "medsCalendarNoActive": "还没有在用药物",
+  "medsCalendarNoSchedule": "在用药物未设置服用时间，无法生成依从性日历",
+  "medsCalendarNoScheduleHint": "在设置页给药物加上服药时间后,这里会显示服药日历",
+  "medsCalendarNoActiveAction": "添加药物",
+  "medsCalendarNoScheduleAction": "去设置时间",
+  "medsCalendarLegendLabel": "依从：",
+  "medsCalendarLegendMissed": "漏服",
+
+  "window7Subtitle": "一周内（适合周复诊）",
+  "window14Subtitle": "两周内（推荐）",
+  "window30Subtitle": "一个月内（适合月度评估）",
+
+  "snackbarActionSave": "保存",
+  "snackbarActionShare": "分享",
+  "snackbarActionGeneratePdf": "生成 PDF",
+  "snackbarActionPlay": "播放",
+  "snackbarActionEncryptRecording": "加密录音",
+  "snackbarActionRecord": "录音",
+  "snackbarActionStartRecording": "开始录音",
+  "snackbarActionCheckin": "打卡",
+  "snackbarActionSnooze": "推迟提醒",
+  "snackbarActionAutoCheckin": "自动打卡",
+
+  "moodTodayLabel": "今日情绪：",
+  "moodRecordButton": "记一下情绪 ✏️",
+  "medReportFileName": "用药报告_{date}",
+  "@medReportFileName": {
+    "placeholders": { "date": { "type": "String" } }
+  }
 }

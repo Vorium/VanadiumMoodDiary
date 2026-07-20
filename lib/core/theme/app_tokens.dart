@@ -45,6 +45,10 @@ class AppTokens {
   static const Color error = Color(0xFFE57373);
   static const Color errorDark = Color(0xFFEF9A9A);
 
+  // 依从性热力图色阶（浅色变体，用于部分达标/接近达标）
+  static const Color adherencePartial = Color(0xFFFFCC80); // 浅橙 < 50%
+  static const Color adherenceAlmost = Color(0xFFA5D6A7); // 浅绿 < 100%
+
   // ============= Dynamic Color getter (v0.18 P1-5) =============
   //
   // **dark mode 修复**:上面 9 个静态 const color (surface/background/textPrimary/
@@ -90,6 +94,51 @@ class AppTokens {
   /// Theme-aware divider (分割线)
   static Color dividerColor(BuildContext context) =>
       Theme.of(context).colorScheme.outlineVariant;
+
+  /// Theme-aware primary light (主色浅底 / 选中背景)
+  static Color primaryLightColor(BuildContext context) =>
+      Theme.of(context).colorScheme.primaryContainer;
+
+  /// v0.21 (P1-9 fix): Theme-aware disabled
+  ///
+  /// batch 1 (v0.18 P1-5) 漏了 disabled, 此前 widget 直接用
+  /// `AppTokens.disabled` 在 dark mode 下是浅灰 (BDBDBD), 看不见。
+  /// 这里补上 getter 跟其它 8 个 dynamic color 保持一致。
+  static Color disabledColor(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark
+        ? const Color(0xFF4A4A4A)
+        : const Color(0xFFBDBDBD);
+  }
+
+  // ============= v0.21 (P2-1 fix): Tinted surface tokens =============
+  //
+  // emil 原则 "good defaults matter more than options":
+  // 全代码库出现 21+ 次 `X.withValues(alpha: 0.X)`, 多数是
+  // warning/error/primary 的浅色背景 (提示/警告/选中态)
+  // 抽成 named token 让:
+  // 1. 调用点更可读 (tintedWarningSoft vs warning.withValues(alpha: 0.1))
+  // 2. 未来调 alpha 集中改, 不用 grep
+  // 3. 命名暗示"这是 浅色背景"用途, 防止误用
+  //
+  // 命名: tintedXxxSoft = alpha 0.1 左右 (默认浅背景)
+  //      tintedXxxStrong = alpha 0.15+ (稍深)
+
+  /// 主色浅色背景 (选中态, 强调底) — primary @ alpha 0.1
+  static Color tintedPrimarySoft(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.1);
+
+  /// 主色更深浅色背景 — primary @ alpha 0.15
+  static Color tintedPrimaryDeep(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.15);
+
+  /// 警告浅色背景 (提醒卡片) — warning @ alpha 0.1
+  static Color tintedWarningSoft(BuildContext context) =>
+      AppTokens.warning.withValues(alpha: 0.1);
+
+  /// 错误浅色背景 (错误卡片) — error @ alpha 0.1
+  static Color tintedErrorSoft(BuildContext context) =>
+      Theme.of(context).colorScheme.error.withValues(alpha: 0.1);
 
   // ============= 字体 =============
   static const double fontSizeTitle = 28.0;

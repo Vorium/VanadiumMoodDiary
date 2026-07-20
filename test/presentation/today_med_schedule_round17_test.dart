@@ -2,6 +2,7 @@
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,9 @@ Widget _wrap({
     ],
     child: MaterialApp(
       theme: ThemeData.light(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('zh'),
       home: const Scaffold(body: TodayMedSchedule()),
     ),
   );

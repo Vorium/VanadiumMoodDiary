@@ -1,4 +1,5 @@
 import 'package:chroniccare/presentation/providers/service_providers.dart';
+import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -27,6 +29,80 @@ import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// 心理评估量表列表（设置页用）
 final List<AssessmentScale> _assessmentScales = allScales();
+
+/// 提醒 section (v0.21 Round 22 P1-20 拆分)
+class _RemindersSection extends StatelessWidget {
+  const _RemindersSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        children: [
+          // v0.21 Round 22 (P0-9): 高频入口外包 PressFeedback 提供 scale 反馈
+          PressFeedback(
+            child: ListTile(
+              leading: const Icon(
+                Icons.notifications_active_outlined,
+                color: AppTokens.primary,
+              ),
+              title: Text(
+                AppLocalizations.of(context).settingsReminderCenter,
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context).settingsReminderCenterSubtitle,
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/settings/reminders'),
+            ),
+          ),
+          const Divider(height: 1),
+          PressFeedback(
+            child: ListTile(
+              leading: const Icon(
+                Icons.shopping_cart_outlined,
+                color: AppTokens.primary,
+              ),
+              title: Text(
+                AppLocalizations.of(context).settingsRefillManagement,
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context).settingsRefillManagementSubtitle,
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/settings/refills'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 法律与隐私 section (v0.21 Round 22 P1-20 拆分)
+class _LegalSection extends StatelessWidget {
+  const _LegalSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: const Icon(
+          Icons.gavel_outlined,
+          color: AppTokens.primary,
+        ),
+        title: Text(
+          AppLocalizations.of(context).settingsLegalAndPrivacy,
+        ),
+        subtitle: Text(
+          AppLocalizations.of(context).settingsLegalAndPrivacySubtitle,
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => context.push('/settings/legal'),
+      ),
+    );
+  }
+}
 
 /// 设置页
 class SettingsPage extends ConsumerWidget {
@@ -49,7 +125,7 @@ class SettingsPage extends ConsumerWidget {
             data: (contacts) => ContactsListWidget(contacts: contacts),
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, _) => Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString())),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
@@ -62,13 +138,13 @@ class SettingsPage extends ConsumerWidget {
             data: (meds) => MedicationsListWidget(meds: meds),
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, _) => Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString())),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
 
           _SectionHeader(
-              title: AppLocalizations.of(context).settingsDataManagement),
+              title: AppLocalizations.of(context).settingsDataManagement,),
           const SizedBox(height: AppTokens.spacingSm),
           Card(
             child: Column(
@@ -120,47 +196,46 @@ class SettingsPage extends ConsumerWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showImportDialog(context, ref),
                 ),
+                const Divider(height: 1),
+                // v0.21 Round 22 (P0-8 修复): PIPL §47 主动删除权
+                // 隐私政策 §7 写"在 App 内删除单条/全部",此前 UI 无入口 = 自我违约
+                ListTile(
+                  leading: const Icon(
+                    Icons.delete_forever_outlined,
+                    color: AppTokens.error,
+                  ),
+                  title: Text(
+                    AppLocalizations.of(context).settingsClearAllData,
+                    style: const TextStyle(color: AppTokens.error),
+                  ),
+                  subtitle: Text(
+                    AppLocalizations.of(context).settingsClearAllDataSubtitle,
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showClearAllDataDialog(context, ref),
+                ),
               ],
             ),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
 
+          // v0.21 Round 22 (P0-2): 法律与隐私入口
+          // 修复 setup 步骤 0 写"可在 设置 → 法律与隐私 撤回同意"的虚假告知
+          // v0.21 Round 22 (P1-20 修复): 抽 _LegalSection
+          _SectionHeader(
+            title: AppLocalizations.of(context).settingsLegalAndPrivacy,
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          const _LegalSection(),
+
+          const SizedBox(height: AppTokens.spacingLg),
+
           // v0.14 (Round 12C) 提醒中心入口
+          // v0.21 Round 22 (P1-20 修复): 抽 _RemindersSection
           _SectionHeader(title: AppLocalizations.of(context).settingsReminders),
           const SizedBox(height: AppTokens.spacingSm),
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(
-                    Icons.notifications_active_outlined,
-                    color: AppTokens.primary,
-                  ),
-                  title:
-                      Text(AppLocalizations.of(context).settingsReminderCenter),
-                  subtitle: Text(
-                    AppLocalizations.of(context).settingsReminderCenterSubtitle,
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/settings/reminders'),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(
-                    Icons.shopping_cart_outlined,
-                    color: AppTokens.primary,
-                  ),
-                  title: Text(
-                      AppLocalizations.of(context).settingsRefillManagement),
-                  subtitle: Text(AppLocalizations.of(context)
-                      .settingsRefillManagementSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/settings/refills'),
-                ),
-              ],
-            ),
-          ),
+          const _RemindersSection(),
 
           const SizedBox(height: AppTokens.spacingLg),
 
@@ -171,18 +246,24 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingLg),
 
           _SectionHeader(
-              title: AppLocalizations.of(context).settingsAssessment),
+              title: AppLocalizations.of(context).settingsAssessment,),
           const SizedBox(height: AppTokens.spacingSm),
           // v0.14 (Round 13B) 评估历史入口
+          // v0.21 Round 22 (P0-9): 外包 PressFeedback
           Card(
-            child: ListTile(
-              leading: const Icon(Icons.history, color: AppTokens.primary),
-              title:
-                  Text(AppLocalizations.of(context).settingsAssessmentHistory),
-              subtitle: Text(AppLocalizations.of(context)
-                  .settingsAssessmentHistorySubtitle),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/assessment/history'),
+            child: PressFeedback(
+              child: ListTile(
+                leading: const Icon(Icons.history, color: AppTokens.primary),
+                title: Text(
+                  AppLocalizations.of(context).settingsAssessmentHistory,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(context)
+                      .settingsAssessmentHistorySubtitle,
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/assessment/history'),
+              ),
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
@@ -194,18 +275,20 @@ class SettingsPage extends ConsumerWidget {
             child: Column(
               children: [
                 for (int i = 0; i < _assessmentScales.length; i++) ...[
-                  ListTile(
-                    leading: Icon(
-                      _assessmentScales[i].id == 'phq9'
-                          ? Icons.psychology_outlined
-                          : Icons.psychology_alt_outlined,
-                      color: AppTokens.primary,
+                  PressFeedback(
+                    child: ListTile(
+                      leading: Icon(
+                        _assessmentScales[i].id == 'phq9'
+                            ? Icons.psychology_outlined
+                            : Icons.psychology_alt_outlined,
+                        color: AppTokens.primary,
+                      ),
+                      title: Text(_assessmentScales[i].displayName),
+                      subtitle: Text(_assessmentScales[i].shortDescription),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => context
+                          .push('/assessment/${_assessmentScales[i].id}'),
                     ),
-                    title: Text(_assessmentScales[i].displayName),
-                    subtitle: Text(_assessmentScales[i].shortDescription),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () =>
-                        context.push('/assessment/${_assessmentScales[i].id}'),
                   ),
                   if (i < _assessmentScales.length - 1)
                     const Divider(height: 1, indent: 56),
@@ -217,12 +300,14 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingMd),
 
           Card(
-            child: ListTile(
-              leading:
-                  const Icon(Icons.email_outlined, color: AppTokens.primary),
-              title: Text(AppLocalizations.of(context).settingsEmailPreview),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/email-preview'),
+            child: PressFeedback(
+              child: ListTile(
+                leading:
+                    const Icon(Icons.email_outlined, color: AppTokens.primary),
+                title: Text(AppLocalizations.of(context).settingsEmailPreview),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/email-preview'),
+              ),
             ),
           ),
 
@@ -238,9 +323,9 @@ class SettingsPage extends ConsumerWidget {
 
           Card(
             child: ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.shield_outlined,
-                color: AppTokens.textSecondary,
+                color: AppTokens.textSecondaryColor(context),
               ),
               title: Text(AppLocalizations.of(context).settingsDisclaimer),
               subtitle:
@@ -272,7 +357,7 @@ class SettingsPage extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(AppTokens.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTokens.warning.withValues(alpha: 0.1),
+                  color: AppTokens.tintedWarningSoft(context),
                   borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                 ),
                 child: Text(
@@ -284,7 +369,7 @@ class SettingsPage extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(AppTokens.spacingSm),
                 decoration: BoxDecoration(
-                  color: AppTokens.divider,
+                  color: AppTokens.dividerColor(context),
                   borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                 ),
                 child: ConstrainedBox(
@@ -315,8 +400,8 @@ class SettingsPage extends ConsumerWidget {
                 if (ctx.mounted) {
                   ScaffoldMessenger.of(ctx).showSnackBar(
                     AppSnackBar.info(
-                      context,
-                      AppLocalizations.of(context).snackbarCopied,
+                      ctx,
+                      AppLocalizations.of(ctx).snackbarCopied,
                     ),
                   );
                 }
@@ -330,7 +415,7 @@ class SettingsPage extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           AppSnackBar.error(context,
               action: AppLocalizations.of(context).settingsActionExport,
-              error: e),
+              error: e,),
         );
       }
     }
@@ -406,7 +491,7 @@ class SettingsPage extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           AppSnackBar.error(context,
               action: AppLocalizations.of(context).settingsActionGenerateReport,
-              error: e),
+              error: e,),
         );
       }
     }
@@ -419,6 +504,63 @@ class SettingsPage extends ConsumerWidget {
       context: context,
       builder: (ctx) => const ReportHistoryListDialog(),
     );
+  }
+
+  /// 清空所有数据 (P0-8 修复, PIPL §47 主动删除权)
+  ///
+  /// 二次确认 → 调 AppDatabase.clearAllUserData + VentAudioStorage.deleteAll
+  /// → 跳回 /setup 重新走首次设置
+  Future<void> _showClearAllDataDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.settingsClearAllDataDialogTitle),
+        content: SingleChildScrollView(
+          child: Text(l10n.settingsClearAllDataDialogBody),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.commonCancel),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTokens.error,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.settingsClearAllDataConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+
+    // 1. 清 DB 所有用户表
+    // 2. 清 vent audio 文件
+    // 3. 跳 /setup 重走流程
+    final db = ref.read(databaseProvider);
+    final ventAudio = ref.read(ventAudioStorageProvider);
+    final navigator = GoRouter.of(context);
+
+    try {
+      await db.clearAllUserData();
+      await ventAudio.deleteAll();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.settingsClearAllDataSuccess)),
+      );
+      navigator.go('/setup');
+    } on Exception catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.settingsClearAllDataFailed(e.toString()))),
+      );
+    }
   }
 
   /// 导入：弹 Dialog → 粘贴 JSON → 验证 → 覆盖
@@ -468,7 +610,7 @@ class SettingsPage extends ConsumerWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(AppLocalizations.of(context)
-                                .settingsImportSuccess(result.summary)),
+                                .settingsImportSuccess(result.summary),),
                           ),
                         );
                       } else {
@@ -489,13 +631,9 @@ class SettingsPage extends ConsumerWidget {
                   Text(AppLocalizations.of(context).settingsImportAndOverwrite),
                   if (importing)
                     const IgnorePointer(
-                      child: SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
+                      child: LoadingSpinner(
+                        size: 18,
+                        color: Colors.white,
                       ),
                     ),
                 ],
@@ -516,9 +654,9 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: AppTokens.fontSizeLabel,
-        color: AppTokens.textSecondary,
+        color: AppTokens.textSecondaryColor(context),
         fontWeight: FontWeight.w500,
       ),
     );

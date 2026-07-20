@@ -108,7 +108,7 @@ class ReminderService implements ReminderChecker {
 
     piiSafeLog('ReminderService', '=' * 60);
     piiSafeLog('ReminderService', '⚠️ 失联检测');
-    piiSafeLog('ReminderService', '  用户: \${maskName(profile.userName)}');
+    piiSafeLog('ReminderService', '  用户: ${maskName(profile.userName)}');
     piiSafeLog(
       'ReminderService',
       '  距上次打卡: $hoursSince 小时 ($daysSince 天)',
@@ -162,7 +162,7 @@ class ReminderService implements ReminderChecker {
       );
       piiSafeLog(
         'ReminderService',
-        '  → ${c.name} (${c.phone}): ${r.success ? "✅" : "❌ ${r.error}"}',
+        '  → ${maskName(c.name)} (${maskPhone(c.phone)}): ${r.success ? "✅" : "❌ ${r.error}"}',
       );
     }
 

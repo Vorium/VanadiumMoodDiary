@@ -19,7 +19,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart' as p;
 import 'package:record/record.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -90,7 +89,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
           } catch (e) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                AppSnackBar.error(context, action: '加密录音', error: e),
+                AppSnackBar.error(context,
+                    action: AppLocalizations.of(context)
+                        .snackbarActionEncryptRecording,
+                    error: e,),
               );
               // 加密失败 → 不保存音频，但 _isRecording 还是 false
               setState(() {
@@ -110,7 +112,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            AppSnackBar.error(context, action: '录音', error: e),
+            AppSnackBar.error(context,
+                action: AppLocalizations.of(context).snackbarActionRecord,
+                error: e,),
           );
           setState(() => _isRecording = false);
         }
@@ -134,12 +138,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         // 存到 app docs/{dir}/vent_xxx.m4a.enc (DB 存的路径 = 加密路径)
         // 之前的版本直接写到 newAudioPath() 但那是 .m4a.enc 后缀,
         // record 写明文 m4a 会被理解为加密文件,bug。
+        // v0.21 (P1-3 fix): 临时文件路径走 storage.newTempRecordPath() —
+        // 同毫秒录 2 段也加 4 位 random suffix 避免覆盖, 跟 newAudioPath 一致。
         final storage = ref.read(ventAudioStorageProvider);
-        final tempDirPath = await storage.getTempDirPath();
-        final tempPath = p.join(
-          tempDirPath,
-          'vent_record_${DateTime.now().millisecondsSinceEpoch}.m4a',
-        );
+        final tempPath = await storage.newTempRecordPath();
         await _recorder.start(
           const RecordConfig(
             encoder: AudioEncoder.aacLc, // m4a (aac)
@@ -152,7 +154,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            AppSnackBar.error(context, action: '开始录音', error: e),
+            AppSnackBar.error(context,
+                action:
+                    AppLocalizations.of(context).snackbarActionStartRecording,
+                error: e,),
           );
         }
       }
@@ -217,7 +222,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            AppSnackBar.error(context, action: '播放', error: e),
+            AppSnackBar.error(context,
+                action: AppLocalizations.of(context).snackbarActionPlay,
+                error: e,),
           );
         }
       }
@@ -315,7 +322,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '保存', error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).snackbarActionSave,
+              error: e,),
         );
       }
     }
@@ -325,18 +334,18 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
   Widget build(BuildContext context) {
     final textLen = _textController.text.length;
     return PageScaffold(
-      title: '放进树洞',
+      title: AppLocalizations.of(context).ventComposeTitle,
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingMd),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 顶部说明
-            const Text(
-              '想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。',
+            Text(
+              AppLocalizations.of(context).ventEmptySubtitle,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeBody,
-                color: AppTokens.textSecondary,
+                color: AppTokens.textSecondaryColor(context),
                 height: 1.5,
               ),
             ),
@@ -351,10 +360,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                 maxLength: 2000,
                 textAlignVertical: TextAlignVertical.top,
                 style: const TextStyle(fontSize: AppTokens.fontSizeBody),
-                decoration: const InputDecoration(
-                  hintText: '今天过得怎么样……',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.all(AppTokens.spacingSm),
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context).ventComposeHint,
+                  border: const OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.all(AppTokens.spacingSm),
                 ),
                 onChanged: (_) => setState(() {}),
               ),
@@ -366,8 +375,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                   '$textLen / 2000',
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color:
-                        textLen > 2000 ? AppTokens.error : AppTokens.textHint,
+                    color: textLen > 2000
+                        ? AppTokens.error
+                        : AppTokens.textHintColor(context),
                   ),
                 ),
               ),
@@ -404,7 +414,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        const Text('放进树洞'),
+                        Text(AppLocalizations.of(context).ventComposeTitle),
                         if (_saving)
                           const IgnorePointer(
                             child: SizedBox(
@@ -461,7 +471,9 @@ class _AudioSection extends StatelessWidget {
             size: 28,
           ),
           label: Text(
-            isRecording ? '正在录音… 点停止' : '按一下开始录音',
+            isRecording
+                ? AppLocalizations.of(context).ventRecordActive
+                : AppLocalizations.of(context).ventRecordIdle,
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
               color: isRecording ? AppTokens.error : AppTokens.primary,
@@ -474,7 +486,7 @@ class _AudioSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppTokens.spacingSm),
       decoration: BoxDecoration(
-        color: AppTokens.primaryLight,
+        color: AppTokens.primaryLightColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),
       ),
       child: Row(
@@ -489,7 +501,9 @@ class _AudioSection extends StatelessWidget {
           const Icon(Icons.mic, color: AppTokens.primary, size: 18),
           const SizedBox(width: 6),
           Text(
-            audioDurationSec != null ? _formatSec(audioDurationSec!) : '录音',
+            audioDurationSec != null
+                ? _formatSec(context, audioDurationSec!)
+                : AppLocalizations.of(context).ventAudioLabel,
             style: const TextStyle(
               fontSize: AppTokens.fontSizeBody,
               color: AppTokens.primary,
@@ -500,9 +514,9 @@ class _AudioSection extends StatelessWidget {
           TextButton.icon(
             onPressed: onReRecord,
             icon: const Icon(Icons.refresh, size: 18),
-            label: const Text('重录'),
+            label: Text(AppLocalizations.of(context).ventRerecord),
             style: TextButton.styleFrom(
-              foregroundColor: AppTokens.textSecondary,
+              foregroundColor: AppTokens.textSecondaryColor(context),
             ),
           ),
         ],
@@ -510,10 +524,13 @@ class _AudioSection extends StatelessWidget {
     );
   }
 
-  String _formatSec(int sec) {
-    if (sec < 60) return '$sec秒';
+  String _formatSec(BuildContext context, int sec) {
+    final l10n = AppLocalizations.of(context);
+    if (sec < 60) return l10n.ventDurationSeconds(sec);
     final m = sec ~/ 60;
     final s = sec % 60;
-    return s == 0 ? '$m分' : '$m分${s.toString().padLeft(2, '0')}秒';
+    return s == 0
+        ? l10n.ventDurationMinutes(m)
+        : l10n.ventDurationMinutesSeconds(m, s);
   }
 }

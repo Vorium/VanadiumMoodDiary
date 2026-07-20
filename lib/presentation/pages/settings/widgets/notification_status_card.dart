@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -162,11 +163,12 @@ class _NotificationStatusCardState
       final l10n = AppLocalizations.of(context);
       return Card(
         child: ListTile(
-          leading: const Icon(Icons.info_outline, color: AppTokens.textHint),
+          leading:
+              Icon(Icons.info_outline, color: AppTokens.textHintColor(context)),
           title: Text(l10n.notificationStatusCardWebTitle),
           subtitle: Text(
             l10n.notificationStatusCardWebSubtitle,
-            style: const TextStyle(color: AppTokens.textHint),
+            style: TextStyle(color: AppTokens.textHintColor(context)),
           ),
         ),
       );
@@ -194,7 +196,8 @@ class _NotificationStatusCardState
             // v0.17 round 14 (P2-3): AnimatedSize 让 statusText 切换时
             // 高度平滑过渡 (加载中 → 0 待发 → N 待发) 而不是突然跳变
             subtitle: AnimatedSize(
-              duration: AppTokens.durNormal,
+              // v0.21 Round 22 (P1-13 修复): wrap Motion.duration
+              duration: Motion.duration(context, AppTokens.durNormal),
               curve: AppTokens.curveStandard,
               alignment: Alignment.topLeft,
               child: Text(statusText),
@@ -204,7 +207,7 @@ class _NotificationStatusCardState
                   ? const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: LoadingSpinner(size: 16),
                     )
                   : const Icon(Icons.refresh),
               onPressed: _busy ? null : _refresh,
@@ -248,7 +251,8 @@ class _OemBackgroundHint extends StatelessWidget {
         title: Text(l10n.notificationStatusCardOemTitle),
         subtitle: Text(
           l10n.notificationStatusCardOemSubtitle,
-          style: const TextStyle(color: AppTokens.textSecondary, fontSize: 12),
+          style: TextStyle(
+              color: AppTokens.textSecondaryColor(context), fontSize: 12,),
         ),
         childrenPadding: const EdgeInsets.fromLTRB(
           AppTokens.spacingMd,
@@ -303,9 +307,9 @@ class _OemBackgroundHint extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingMd),
           Text(
             l10n.notificationStatusCardOemGeneralTip,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHint,
+              color: AppTokens.textHintColor(context),
             ),
           ),
         ],
@@ -325,7 +329,7 @@ class _OemBrand extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppTokens.spacingSm),
       decoration: BoxDecoration(
-        color: AppTokens.divider,
+        color: AppTokens.dividerColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),
       ),
       child: Column(
@@ -342,9 +346,9 @@ class _OemBrand extends StatelessWidget {
           for (int i = 0; i < steps.length; i++) ...[
             Text(
               '${i + 1}. ${steps[i]}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textSecondary,
+                color: AppTokens.textSecondaryColor(context),
               ),
             ),
           ],

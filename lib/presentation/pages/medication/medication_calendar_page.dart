@@ -17,14 +17,17 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
+import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class MedicationCalendarPage extends ConsumerWidget {
@@ -36,8 +39,11 @@ class MedicationCalendarPage extends ConsumerWidget {
     final days = ref.watch(calendarWindowProvider);
     final medsAsync = ref.watch(medicationsProvider);
     final checkInsAsync = ref.watch(allCheckInsProvider);
+    // v0.21 (P0-6 fix): watch dayChangeTickProvider 让跨 midnight 时本页自动 rebuild,
+    // 否则 "今天" 格子 / 窗口起算日 还显示昨天的数据
+    ref.watch(dayChangeTickProvider);
     return PageScaffold(
-      title: '用药日历',
+      title: AppLocalizations.of(context).medsCalendarTitle,
       child: ListView(
         children: [
           const SizedBox(height: AppTokens.spacingMd),
@@ -46,17 +52,17 @@ class MedicationCalendarPage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(AppTokens.spacingMd),
             decoration: BoxDecoration(
-              color: AppTokens.primaryLight,
+              color: AppTokens.primaryLightColor(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.medication_outlined, color: AppTokens.primary),
-                SizedBox(width: AppTokens.spacingSm),
+                const Icon(Icons.medication_outlined, color: AppTokens.primary),
+                const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
                   child: Text(
-                    '以药为单位的依从性热力图。颜色越深 = 当天打卡次数越接近期望次数。',
-                    style: TextStyle(fontSize: AppTokens.fontSizeBody),
+                    AppLocalizations.of(context).medsCalendarHeatmapDesc,
+                    style: const TextStyle(fontSize: AppTokens.fontSizeBody),
                   ),
                 ),
               ],
@@ -70,10 +76,19 @@ class MedicationCalendarPage extends ConsumerWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
             child: SegmentedButton<int>(
-              segments: const [
-                ButtonSegment(value: 7, label: Text('7 天')),
-                ButtonSegment(value: 30, label: Text('30 天')),
-                ButtonSegment(value: 90, label: Text('90 天')),
+              segments: [
+                ButtonSegment(
+                    value: 7,
+                    label:
+                        Text(AppLocalizations.of(context).medsCalendarWindow7),),
+                ButtonSegment(
+                    value: 30,
+                    label: Text(
+                        AppLocalizations.of(context).medsCalendarWindow30,),),
+                ButtonSegment(
+                    value: 90,
+                    label: Text(
+                        AppLocalizations.of(context).medsCalendarWindow90,),),
               ],
               selected: {days},
               onSelectionChanged: (s) =>
@@ -85,12 +100,16 @@ class MedicationCalendarPage extends ConsumerWidget {
 
           medsAsync.when(
             data: (meds) => checkInsAsync.when(
-              data: (checkIns) => _buildGrid(meds, checkIns, days),
+              data: (checkIns) => _buildGrid(meds, checkIns, days, context),
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, _) => Center(child: Text('加载打卡失败: $e')),
+              error: (e, _) => Center(
+                  child: Text(AppLocalizations.of(context)
+                      .medsCalendarLoadCheckinFailed(e.toString()),),),
             ),
             loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, _) => Center(child: Text('加载药物失败: $e')),
+            error: (e, _) => Center(
+                child: Text(AppLocalizations.of(context)
+                    .medsCalendarLoadMedFailed(e.toString()),),),
           ),
 
           const SizedBox(height: AppTokens.spacingMd),
@@ -110,30 +129,28 @@ class MedicationCalendarPage extends ConsumerWidget {
     List<MedicationEntity> meds,
     List<CheckInEntity> checkIns,
     int days,
+    BuildContext context,
   ) {
     // Bug G fix: 排除没排程的药（times=[]），否则 expected=1 永远 0% 红色
     final schedulableMeds =
         meds.where((m) => m.isInUse && m.times.isNotEmpty).toList();
     if (meds.where((m) => m.isInUse).isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(AppTokens.spacingXl),
-        child: Center(
-          child: Text(
-            '还没有在用药物',
-            style: TextStyle(color: AppTokens.textHint),
-          ),
-        ),
+      // v0.21 Round 22 (P0-11 修复): 改用统一 EmptyState
+      return EmptyState(
+        icon: Icons.medication_outlined,
+        title: AppLocalizations.of(context).medsCalendarNoActive,
+        actionLabel: AppLocalizations.of(context).medsCalendarNoActiveAction,
+        onAction: () => GoRouter.of(context).push('/medication/new'),
       );
     }
     if (schedulableMeds.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(AppTokens.spacingXl),
-        child: Center(
-          child: Text(
-            '在用药物未设置服用时间，无法生成依从性日历',
-            style: TextStyle(color: AppTokens.textHint),
-          ),
-        ),
+      // v0.21 Round 22 (P0-11 修复): 改用统一 EmptyState
+      return EmptyState(
+        icon: Icons.schedule_outlined,
+        title: AppLocalizations.of(context).medsCalendarNoSchedule,
+        subtitle: AppLocalizations.of(context).medsCalendarNoScheduleHint,
+        actionLabel: AppLocalizations.of(context).medsCalendarNoScheduleAction,
+        onAction: () => GoRouter.of(context).push('/medication/list'),
       );
     }
 
@@ -242,9 +259,9 @@ class _HeaderRow extends StatelessWidget {
                   child: Center(
                     child: Text(
                       _dayLabel(i),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 8,
-                        color: AppTokens.textHint,
+                        color: AppTokens.textHintColor(context),
                       ),
                     ),
                   ),
@@ -318,18 +335,19 @@ class _CellBox extends StatelessWidget {
         aspectRatio: 1,
         child: Container(
           decoration: BoxDecoration(
-            color: _colorFor(cell.ratio),
-            borderRadius: BorderRadius.circular(2),
+            color: _colorFor(cell.ratio, context),
+            // v0.21 (P1-10 fix): 改用 token,统一设计语言
+            borderRadius: BorderRadius.circular(AppTokens.radiusCell),
           ),
         ),
       ),
     );
   }
 
-  Color _colorFor(double ratio) {
-    if (ratio == 0) return AppTokens.divider; // 漏服 - 灰
-    if (ratio < 0.5) return Colors.orange.shade200; // 部分 - 浅橙
-    if (ratio < 1) return Colors.lightGreen.shade200; // 接近但未满
+  Color _colorFor(double ratio, BuildContext context) {
+    if (ratio == 0) return AppTokens.dividerColor(context); // 漏服 - 灰
+    if (ratio < 0.5) return AppTokens.adherencePartial; // 部分 - 浅橙
+    if (ratio < 1) return AppTokens.adherenceAlmost; // 接近但未满
     return AppTokens.primary; // 满 - 深绿
   }
 }
@@ -345,25 +363,26 @@ class _Legend extends StatelessWidget {
         padding: const EdgeInsets.all(AppTokens.spacingSm),
         child: Row(
           children: [
-            const Text(
-              '依从：',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context).medsCalendarLegendLabel,
+              style: const TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
                 fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(width: AppTokens.spacingSm),
-            _legendItem(AppTokens.divider, '漏服'),
-            _legendItem(Colors.orange.shade200, '< 50%'),
-            _legendItem(Colors.lightGreen.shade200, '< 100%'),
-            _legendItem(AppTokens.primary, '100%'),
+            _legendItem(AppTokens.dividerColor(context),
+                AppLocalizations.of(context).medsCalendarLegendMissed, context,),
+            _legendItem(AppTokens.adherencePartial, '< 50%', context),
+            _legendItem(AppTokens.adherenceAlmost, '< 100%', context),
+            _legendItem(AppTokens.primary, '100%', context),
           ],
         ),
       ),
     );
   }
 
-  Widget _legendItem(Color c, String label) {
+  Widget _legendItem(Color c, String label, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: AppTokens.spacingSm),
       child: Row(
@@ -374,14 +393,15 @@ class _Legend extends StatelessWidget {
             height: 12,
             decoration: BoxDecoration(
               color: c,
-              borderRadius: BorderRadius.circular(2),
+              // v0.21 (P1-10 fix): 改用 token
+              borderRadius: BorderRadius.circular(AppTokens.radiusCell),
             ),
           ),
           const SizedBox(width: 4),
           Text(
             label,
-            style:
-                const TextStyle(fontSize: 10, color: AppTokens.textSecondary),
+            style: TextStyle(
+                fontSize: 10, color: AppTokens.textSecondaryColor(context),),
           ),
         ],
       ),

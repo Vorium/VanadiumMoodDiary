@@ -17,6 +17,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/main.dart' show notificationInitResultProvider;
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
@@ -111,17 +112,20 @@ class _HomePageState extends ConsumerState<HomePage> {
       final meds = ref.read(medicationsProvider).value ?? [];
       final med = meds.where((m) => m.id == medId).firstOrNull;
       if (!mounted) return;
-      final medName = med?.name ?? '该药';
+      final medName =
+          med?.name ?? AppLocalizations.of(context).homeAutofireFallbackName;
       HapticFeedback.mediumImpact();
-      _showCelebrationOverlay(context, '已打卡:$medName ✅');
+      _showCelebrationOverlay(context,
+          AppLocalizations.of(context).homeAutofireCelebration(medName),);
       // 清除 query 防止刷新页面重复触发
       GoRouter.of(context).go('/');
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppTokens.error,
-          content: Text('自动打卡失败:${e.toString().split('\n').first}'),
+        AppSnackBar.error(
+          context,
+          action: AppLocalizations.of(context).snackbarActionAutoCheckin,
+          error: e,
         ),
       );
     }
@@ -129,9 +133,9 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _showMedicationHint(int medId) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('💊 准备打卡药物 #$medId'),
-        duration: const Duration(seconds: 2),
+      AppSnackBar.info(
+        context,
+        AppLocalizations.of(context).homeMedHint(medId),
       ),
     );
   }
@@ -146,13 +150,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       final result = await ref.read(safetyWatchServiceProvider).onAppStart();
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
+        // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
+        // 失联告警重要,延长到 6s 保留给用户时间读完
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppTokens.error,
-            content: Text(
-              '⚠️ ${result.displayMessage}(请尽快打卡或联系家人)',
-            ),
-            duration: const Duration(seconds: 6),
+          AppSnackBar.error(
+            context,
+            action: '⚠️ ${result.displayMessage}',
+            error: AppLocalizations.of(context).homeSafetyAlertSuffix,
           ),
         );
       }
@@ -186,12 +190,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     ref.listen<AsyncValue<void>>(checkInNotifierProvider, (prev, next) {
       if (next.hasError && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)
-                  .commonCheckinFailed(next.error.toString().split('\n').first),
-            ),
-            backgroundColor: AppTokens.error,
+          AppSnackBar.error(
+            context,
+            action: AppLocalizations.of(context).snackbarActionCheckin,
+            error: next.error,
           ),
         );
       }
@@ -290,7 +292,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (!context.mounted) return;
     final newStreak = currentStreak + 1;
     // 显示庆祝 overlay
-    _showCelebrationOverlay(context, _celebrationFor(newStreak));
+    _showCelebrationOverlay(context, _celebrationFor(context, newStreak));
     // 打卡成功：取消 soft 提醒 + snooze
     try {
       await ref.read(notificationServiceProvider).cancelSoftReminder();
@@ -320,11 +322,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         // 罕见：打卡后仍触发告警
+        // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppTokens.error,
-            content: Text('⚠️ ${result.displayMessage}'),
-            duration: const Duration(seconds: 5),
+          AppSnackBar.error(
+            context,
+            action: '⚠️ ${result.displayMessage}',
+            error: AppLocalizations.of(context).homeSafetyAlertSuffix,
           ),
         );
       }
@@ -367,33 +370,35 @@ class _HomePageState extends ConsumerState<HomePage> {
       await ref.read(notificationServiceProvider).snoozeOnce(
             medicationId: 0, // 0 = 通用 snooze
             minutes: 5,
-            title: '⏰ 该打卡了(5min 后)',
-            body: '刚才你点了「snooze」,是时候点一下 = 打卡了',
+            title: AppLocalizations.of(context).homeSnoozeTitle,
+            body: AppLocalizations.of(context).homeSnoozeBody,
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('好,5 分钟后会再提醒你 👌'),
-          duration: Duration(seconds: 2),
+        AppSnackBar.info(
+          context,
+          AppLocalizations.of(context).homeSnoozeConfirmed,
         ),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppTokens.error,
-          content: Text('Snooze 失败:${e.toString().split('\n').first}'),
+        AppSnackBar.error(
+          context,
+          action: AppLocalizations.of(context).snackbarActionSnooze,
+          error: e,
         ),
       );
     }
   }
 
-  String _celebrationFor(int streak) {
-    if (streak == 1) return '已记录！第 1 天 🌱';
-    if (streak < 7) return '已记录！连击 $streak 天 🌿';
-    if (streak < 30) return '已记录！连击 $streak 天 🌳';
-    if (streak < 100) return '已记录!$streak 天连击 🌲';
-    return '已记录!$streak 天--你太厉害了 🏔️';
+  String _celebrationFor(BuildContext context, int streak) {
+    final l10n = AppLocalizations.of(context);
+    if (streak == 1) return l10n.homeCelebrationDay1;
+    if (streak < 7) return l10n.homeCelebrationStreakShort(streak);
+    if (streak < 30) return l10n.homeCelebrationStreakMedium(streak);
+    if (streak < 100) return l10n.homeCelebrationStreakLong(streak);
+    return l10n.homeCelebrationStreakMaster(streak);
   }
 
   /// 顶部 overlay 庆祝(短暂显示，自动消失)

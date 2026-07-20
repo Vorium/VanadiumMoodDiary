@@ -12,9 +12,15 @@ class Strings {
   // 通知 / 邮件模板 (outgoing message, 通常单语言, 暂用中文)
   static String emailSubject(String name, int days) =>
       '[停药提醒] $name 已经 $days 天没吃药了';
-  static String emailBody(String userName, int days) =>
-      '我是 $userName，已经 $days 天没在 App 里打卡了。\n'
-      '请你方便的时候提醒我按时吃药，避免复发。';
+  // v0.21 Round 22 (P0-7 修复): PIPL §6 最小化原则。
+  // 之前强加 userName 字段,userName 为空 / 用户不想暴露真名时模板崩。
+  // 现在 userName 走 fallback:空/纯空白 → "用户" (默认代称),不强行暴露。
+  static String emailBody(String userName, int days) {
+    final name = userName.trim().isEmpty ? '用户' : userName.trim();
+    return '我是 $name，已经 $days 天没在 App 里打卡了。\n'
+        '请你方便的时候提醒我按时吃药，避免复发。';
+  }
+
   static String emailLastMed(String time) => '最后吃药：$time';
   static String emailMedInfo(String name, double dosage, String unit) =>
       '$name $dosage$unit';

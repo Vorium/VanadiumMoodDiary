@@ -42,15 +42,6 @@ class MedicationReport {
           c.timestamp.isBefore(periodEndExclusive);
     }).toList();
 
-    // ===== 合并"已停药但窗口内有过打卡"的 med =====
-    // 否则停药后那段历史会消失（B3 fix）
-    final medById = <int, MedicationEntity>{for (final m in meds) m.id: m};
-    for (final c in inWindow) {
-      final mid = c.medicationId;
-      if (mid != null && !medById.containsKey(mid)) {
-        // 找不到对应 med（应该不会发生，但兜底）
-      }
-    }
     // 注意：如果 stop 后 medication 行被硬删（目前是软删 isActive=false），
     // 当前 meds 列表（仅 isActive=true）会漏。我们用 callSite 的 medsAllProvider 解决。
     // 这里仅做防御：medById 仍以 meds 入参为准。

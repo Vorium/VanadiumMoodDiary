@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 内存态的药物草稿
 class MedDraft {
@@ -49,10 +50,12 @@ class ConsentCheckRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: checked ? AppTokens.primaryLight : AppTokens.surface,
+        color: checked
+            ? AppTokens.primaryLightColor(context)
+            : AppTokens.surfaceColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
         border: Border.all(
-          color: checked ? AppTokens.primary : AppTokens.border,
+          color: checked ? AppTokens.primary : AppTokens.borderColor(context),
           width: 1.5,
         ),
       ),
@@ -68,15 +71,16 @@ class ConsentCheckRow extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeLabel,
-                color:
-                    checked ? AppTokens.textPrimary : AppTokens.textSecondary,
+                color: checked
+                    ? AppTokens.textPrimaryColor(context)
+                    : AppTokens.textSecondaryColor(context),
                 fontWeight: checked ? FontWeight.w500 : FontWeight.normal,
               ),
             ),
           ),
           TextButton(
             onPressed: onView,
-            child: const Text('查看'),
+            child: Text(AppLocalizations.of(context).setupConsentView),
           ),
           const SizedBox(width: AppTokens.spacingXs),
         ],

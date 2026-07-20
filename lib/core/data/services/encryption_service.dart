@@ -15,10 +15,11 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:pointycastle/export.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// AES-256 加密 / 解密服务(树洞音频)
+/// AES-256 加密 / 解密服务(树洞音频 + 文字 v0.21 Round 22+)
 class EncryptionService {
   static const _keyName = 'vent_audio_encryption_key_v1';
   static const _storage = FlutterSecureStorage(
@@ -28,7 +29,27 @@ class EncryptionService {
     ),
   );
 
+  /// 全局共享单例 —— 同一进程内所有 mapper / repository / service
+  /// 用同一份 key cache,避免测试环境 setKeyForTest 后 mapper 仍用
+  /// 独立 instance 拿不到 key。
+  static final EncryptionService _shared = EncryptionService._internal();
+  factory EncryptionService() => _shared;
+  EncryptionService._internal();
+
   Uint8List? _cachedKey;
+
+  /// 测试用：直接注入固定 key,跳过 SecureStorage (platform channel 不可用)
+  ///
+  /// 单元测试 / widget test 环境下 `FlutterSecureStorage` 走 platform channel
+  /// 抛 `MissingPluginException`,导致 encrypt/decrypt 失败。设这个 flag 后
+  /// 用注入的 key 加解密,不走 storage。
+  @visibleForTesting
+  void setKeyForTest(Uint8List key) {
+    if (key.length != 32) {
+      throw ArgumentError('key must be 32 bytes (AES-256)');
+    }
+    _cachedKey = key;
+  }
 
   /// 取或创建 device-bound 32-byte key
   Future<Uint8List> getOrCreateKey() async {

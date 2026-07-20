@@ -7,6 +7,8 @@ import 'package:chroniccare/core/data/database/connection/connection.dart'
     if (dart.library.html) 'connection/web.dart'
     if (dart.library.io) 'connection/native.dart';
 
+import 'dart:convert';
+
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/database/tables/check_in/check_ins.dart';
 import 'package:chroniccare/core/data/database/tables/contact/contacts.dart';
@@ -15,6 +17,7 @@ import 'package:chroniccare/core/data/database/tables/mood/mood_entries.dart';
 import 'package:chroniccare/core/data/database/tables/report/report_histories.dart';
 import 'package:chroniccare/core/data/database/tables/user_profile/user_profiles.dart';
 import 'package:chroniccare/core/data/database/tables/vent/vent_entries.dart';
+import 'package:chroniccare/core/data/services/encryption_service.dart';
 
 part 'app_database.g.dart';
 
@@ -43,8 +46,12 @@ class AppDatabase extends _$AppDatabase {
   // - 新数据 4 维全填
   // v0.18 round 18 (P2-P0-8): schemaVersion 7 → 8
   // - 4 个查询索引(check_ins / mood_entries / vent_entries / medications)
+  // v0.21 round 22 (P0-1 修复): schemaVersion 8 → 9
+  // - vent_entries 加 contentTextEnc (BLOB, AES-256 加密) 列
+  // - 一次性把旧 contentText (TEXT, 明文) 全部加密写回新列
+  // - 旧 contentText 列保留(代码层不再用),后续 v10+ 彻底 DROP
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -105,6 +112,38 @@ class AppDatabase extends _$AppDatabase {
             await customStatement(
               'CREATE INDEX IF NOT EXISTS idx_med_active_start ON medications(is_active, start_date)',
             );
+          }
+          // v8 → v9: vent 文字字段级加密 (P0-1 修复)
+          // - 加 contentTextEnc (BLOB nullable) 列
+          // - 读旧 contentText 加密写回新列
+          // - 旧 contentText 列保留(代码层不再用),后续 v10+ 彻底清理
+          if (from <= 8) {
+            await m.addColumn(ventEntries, ventEntries.contentTextEnc);
+            // 一次性加密所有历史 vent 文字
+            // 关键: 必须用 drift 的 typed select(ventEntries),不能用 raw query —
+            // raw query 走的是新 schema,row 拿不到 contentText 字段
+            final oldRows = await select(ventEntries).get();
+            final enc = EncryptionService();
+            for (final row in oldRows) {
+              final oldText = row.contentText;
+              if (oldText == null || oldText.isEmpty) continue;
+              final encrypted =
+                  await enc.encrypt(Uint8List.fromList(utf8.encode(oldText)));
+              await (update(ventEntries)..where((t) => t.id.equals(row.id)))
+                  .write(VentEntriesCompanion(
+                contentTextEnc: Value(encrypted),
+              ),);
+            }
+          }
+          // v9 → v10: UserProfile 加 4 个 consent 字段 (P1-22 修复)
+          // - 4 字段都 nullable,旧数据自动为 null
+          // - setup 步骤 0 完成后会写版本号 + timestamp
+          if (from <= 9) {
+            await m.addColumn(userProfiles, userProfiles.userAgreementVersion);
+            await m.addColumn(userProfiles, userProfiles.privacyPolicyVersion);
+            await m.addColumn(
+                userProfiles, userProfiles.sensitiveDataConsentAt,);
+            await m.addColumn(userProfiles, userProfiles.consentRevokedAt);
           }
         },
         beforeOpen: (details) async {
@@ -382,6 +421,10 @@ class AppDatabase extends _$AppDatabase {
             })>
         medicationList,
   }) async {
+    // v0.21 (P1-2 fix): 函数入口取一次 now, 避免 2 个 await 之间跨 midnight
+    // firstLaunchAt 跟 medStart 用了不同 DateTime.now() → 同一次 setup
+    // 在 23:59:59.x 跨过 0 点时,两个时间戳差 1 天。
+    final now = DateTime.now();
     await transaction(() async {
       // upsert user profile（保留 firstLaunchAt）
       final existing = await getUserProfile();
@@ -389,7 +432,7 @@ class AppDatabase extends _$AppDatabase {
         UserProfilesCompanion.insert(
           userName: userName,
           checkInCycleHours: const Value(48),
-          firstLaunchAt: existing?.firstLaunchAt ?? DateTime.now(),
+          firstLaunchAt: existing?.firstLaunchAt ?? now,
         ),
       );
 
@@ -405,8 +448,8 @@ class AppDatabase extends _$AppDatabase {
       }
 
       // insert medications
-      // startDate 提到循环外：所有 medication 用同一个时间点，语义更清晰
-      final medStart = DateTime.now();
+      // startDate 用同一个 now,确保 firstLaunchAt 跟 medStart 一致
+      final medStart = now;
       for (final m in medicationList) {
         await into(medications).insert(
           MedicationsCompanion.insert(
@@ -418,6 +461,32 @@ class AppDatabase extends _$AppDatabase {
           ),
         );
       }
+    });
+  }
+
+  // ============= 隐私 / 清空数据 (v0.21 Round 22, P0-8 修复) =============
+
+  /// 清空所有用户数据表 (PIPL §47 主动删除权)
+  ///
+  /// **不**重置 schemaVersion,**不**删 DB 文件 — 保留表结构,只清数据。
+  /// 调用方需自己处理后续(跳 setup / 通知用户)。
+  ///
+  /// 不删:无 (用户档案 / 联系人 / 药物 / 打卡 / 报告 / 情绪 / 树洞 都可清)。
+  /// 保留:无 (AppDatabase 无非用户表)。
+  ///
+  /// **不**清 vent audio 文件 (文件不在 DB),调用方需自己调
+  /// [VentAudioStorage.deleteAll] 删文件。
+  Future<void> clearAllUserData() async {
+    await transaction(() async {
+      // 顺序重要:外键依赖先清
+      // (当前 schema 无外键,顺序不重要,但保持防御性)
+      await delete(checkIns).go();
+      await delete(medications).go();
+      await delete(contacts).go();
+      await delete(userProfiles).go();
+      await delete(reportHistories).go();
+      await delete(moodEntries).go();
+      await delete(ventEntries).go();
     });
   }
 

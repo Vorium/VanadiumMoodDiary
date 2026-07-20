@@ -53,16 +53,17 @@ class ReportHistoryListDialog extends ConsumerWidget {
                 loading: () => const LoadingSkeleton.fullScreen(),
                 error: (e, _) => Center(
                     child: Text(AppLocalizations.of(context)
-                        .commonLoadFailed(e.toString()))),
+                        .commonLoadFailed(e.toString()),),),
                 data: (histories) {
                   if (histories.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(AppTokens.spacingLg),
+                    return Padding(
+                      padding: const EdgeInsets.all(AppTokens.spacingLg),
                       child: Center(
                         child: Text(
-                          '还没有报告历史\n生成一次报告后会自动记录',
+                          AppLocalizations.of(context).reportHistoryEmpty,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppTokens.textHint),
+                          style: TextStyle(
+                              color: AppTokens.textHintColor(context),),
                         ),
                       ),
                     );
@@ -78,16 +79,22 @@ class ReportHistoryListDialog extends ConsumerWidget {
                           color: AppTokens.primary,
                         ),
                         title: Text(
-                          '${Formatters.dateTime(h.generatedAt)} · 近 ${h.windowDays} 天',
+                          AppLocalizations.of(context).reportHistoryItemTitle(
+                              Formatters.dateTime(h.generatedAt), h.windowDays,),
                           style: const TextStyle(
                             fontSize: AppTokens.fontSizeLabel,
                           ),
                         ),
                         subtitle: Text(
-                          '患者: ${h.userName.isEmpty ? '未设置' : h.userName}',
-                          style: const TextStyle(
+                          AppLocalizations.of(context).reportHistoryItemPatient(
+                            h.userName.isEmpty
+                                ? AppLocalizations.of(context)
+                                    .reportHistoryItemNotSet
+                                : h.userName,
+                          ),
+                          style: TextStyle(
                             fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textHint,
+                            color: AppTokens.textHintColor(context),
                           ),
                         ),
                         trailing: IconButton(
@@ -114,8 +121,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('删除这条报告？'),
-        content: const Text('删除后无法恢复，但可以重新生成。'),
+        title: Text(AppLocalizations.of(context).reportHistoryDeleteTitle),
+        content: Text(AppLocalizations.of(context).reportHistoryDeleteContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -123,7 +130,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('删除', style: TextStyle(color: AppTokens.error)),
+            child: Text(AppLocalizations.of(context).commonDelete,
+                style: const TextStyle(color: AppTokens.error),),
           ),
         ],
       ),
@@ -134,7 +142,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context, action: '删除', error: e),
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonDelete, error: e,),
         );
       }
     }

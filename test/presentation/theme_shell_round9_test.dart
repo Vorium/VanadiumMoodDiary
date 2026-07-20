@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/theme/app_theme.dart';
 import 'package:chroniccare/core/theme/theme_provider.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 ThemeModeNotifier _mem() => ThemeModeNotifier(useStorage: false);
 
@@ -18,6 +19,9 @@ Widget _wrap(ProviderContainer c) {
           theme: AppTheme.light(),
           darkTheme: AppTheme.dark(),
           themeMode: mode,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('zh'),
           home: const Scaffold(body: Text('hello')),
         );
       },

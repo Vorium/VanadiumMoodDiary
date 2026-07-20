@@ -12,6 +12,13 @@ class HourMinute {
 
   const HourMinute({required this.hour, required this.minute});
 
+  HourMinute copyWith({int? hour, int? minute}) {
+    return HourMinute(
+      hour: hour ?? this.hour,
+      minute: minute ?? this.minute,
+    );
+  }
+
   /// 从 "HH:mm" 字符串解析
   factory HourMinute.fromString(String s) {
     final parts = s.split(':');
@@ -32,7 +39,7 @@ class HourMinute {
       other is HourMinute && other.hour == hour && other.minute == minute;
 
   @override
-  int get hashCode => hour.hashCode ^ minute.hashCode;
+  int get hashCode => Object.hash(hour, minute);
 
   @override
   String toString() => toTimeString();

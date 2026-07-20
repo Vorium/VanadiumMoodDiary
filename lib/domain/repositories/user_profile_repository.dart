@@ -18,4 +18,18 @@ abstract class UserProfileRepository {
 
   /// 更新最后打卡时间（用于失联检测）
   Future<void> updateLastCheckIn(DateTime time);
+
+  // v0.21 Round 22 (P1-22 修复): PIPL §14 consent 记录
+
+  /// setup 完成时调用,记录同意时刻 + 协议版本
+  Future<void> recordConsent({
+    required String userAgreementVersion,
+    required String privacyPolicyVersion,
+  });
+
+  /// 撤回全部同意(记录撤回时刻,数据保留)
+  Future<void> withdrawConsent();
+
+  /// 重新同意(清空撤回时刻)
+  Future<void> resetConsent();
 }

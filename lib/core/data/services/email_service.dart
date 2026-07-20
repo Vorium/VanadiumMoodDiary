@@ -48,7 +48,7 @@ class EmailService {
     if (_useMock || _apiKey == null) {
       piiSafeLog('EmailService', '=' * 60);
       piiSafeLog('EmailService', '📱 [MOCK] 发送失联通知');
-      piiSafeLog('EmailService', '  To (phone): \${maskPhone(to)}');
+      piiSafeLog('EmailService', '  To (phone): ${maskPhone(to)}');
       piiSafeLog('EmailService', '  Subject: $subject');
       piiSafeLog('EmailService', '  ---');
       piiSafeLog('EmailService', body);

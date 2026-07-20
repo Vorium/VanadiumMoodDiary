@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
 /// 主页大按钮：「我今天吃了药」
 class CheckInButton extends StatelessWidget {
@@ -26,10 +27,15 @@ class CheckInButton extends StatelessWidget {
       child: AnimatedContainer(
         // v0.17 round 1 (A3 emil 动效): isChecked 切换时背景色 +
         // 圆角缓慢过渡。durations + curve 来自 AppTokens,统一项目风格。
-        duration: AppTokens.durNormal,
+        // v0.21 Round 22 (P1-13 修复): wrap Motion.duration
+        // 让系统开 reduce-motion 时动效瞬时完成
+        duration: Motion.duration(context, AppTokens.durNormal),
         curve: AppTokens.curveStandard,
         decoration: BoxDecoration(
-          color: isChecked ? AppTokens.disabled : AppTokens.primary,
+          // v0.21 (P1-9 fix): 用 disabledColor 跟 theme 走,
+          // 之前用静态 AppTokens.disabled 在 dark mode 下是浅灰看不见
+          color:
+              isChecked ? AppTokens.disabledColor(context) : AppTokens.primary,
           borderRadius: BorderRadius.circular(AppTokens.radiusButton),
         ),
         child: Material(
@@ -57,7 +63,9 @@ class CheckInButton extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        isChecked ? '今天已打卡 ✓' : '我今天吃了药',
+                        isChecked
+                            ? AppLocalizations.of(context).homeCheckedIn
+                            : AppLocalizations.of(context).homeCheckIn,
                         style: const TextStyle(
                           fontSize: AppTokens.fontSizeButton,
                           fontWeight: FontWeight.w600,
@@ -77,13 +85,9 @@ class CheckInButton extends StatelessWidget {
                 ),
                 if (isLoading)
                   const IgnorePointer(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.white,
-                      ),
+                    child: LoadingSpinner(
+                      size: 24,
+                      color: Colors.white,
                     ),
                   ),
               ],

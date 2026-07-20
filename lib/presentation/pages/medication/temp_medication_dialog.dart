@@ -15,20 +15,23 @@ import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 ///
 /// **N25 fix**: 之前用 `ValueNotifier<Medication?>` 配 ignore 注释,
 /// 改成纯 StatefulWidget + setState 模式，更清晰且无 lint 噪音。
-class TempMedicationDialog extends StatefulWidget {
-  final WidgetRef ref;
-  const TempMedicationDialog({super.key, required this.ref});
+///
+/// **WidgetRef fix**: 改为 ConsumerStatefulWidget，不再通过构造参数传 WidgetRef，
+/// 避免 WidgetRef 脱离创建它的 widget 作用域。
+class TempMedicationDialog extends ConsumerStatefulWidget {
+  const TempMedicationDialog({super.key});
 
   @override
-  State<TempMedicationDialog> createState() => _TempMedicationDialogState();
+  ConsumerState<TempMedicationDialog> createState() =>
+      _TempMedicationDialogState();
 
-  /// 入口：读 meds provider,转给 StatefulWidget
+  /// 入口：读 meds provider,转给 ConsumerStatefulWidget
   static Future<void> show(BuildContext context, WidgetRef ref) {
     final medsAsync = ref.read(medicationsProvider);
     return medsAsync.when(
       data: (meds) => showDialog<void>(
         context: context,
-        builder: (_) => TempMedicationDialog(ref: ref),
+        builder: (_) => const TempMedicationDialog(),
       ),
       loading: () => showDialog<void>(
         context: context,
@@ -38,13 +41,13 @@ class TempMedicationDialog extends StatefulWidget {
         context: context,
         builder: (_) => Center(
             child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
       ),
     );
   }
 }
 
-class _TempMedicationDialogState extends State<TempMedicationDialog> {
+class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
   late final TextEditingController nameController;
   late final TextEditingController noteController;
   MedicationEntity? selectedMed;
@@ -67,23 +70,22 @@ class _TempMedicationDialogState extends State<TempMedicationDialog> {
   @override
   Widget build(BuildContext context) {
     // v0.17 round 3: Riverpod 3.x 改名为 .value（之前 .valueOrNull）
-    final meds =
-        (widget.ref.read(medicationsProvider).value) ?? <MedicationEntity>[];
+    final meds = (ref.read(medicationsProvider).value) ?? <MedicationEntity>[];
     return AlertDialog(
-      title: const Text('添加临时吃药'),
+      title: Text(AppLocalizations.of(context).tempMedDialogTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           DropdownButtonFormField<MedicationEntity?>(
             initialValue: selectedMed,
-            decoration: const InputDecoration(
-              labelText: '关联到常吃药（可选）',
-              hintText: '不选 = 临时事件',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context).tempMedLinkLabel,
+              hintText: AppLocalizations.of(context).tempMedLinkHint,
             ),
             items: [
-              const DropdownMenuItem<MedicationEntity?>(
+              DropdownMenuItem<MedicationEntity?>(
                 value: null,
-                child: Text('不关联'),
+                child: Text(AppLocalizations.of(context).tempMedNoLink),
               ),
               for (final m in meds)
                 DropdownMenuItem<MedicationEntity?>(
@@ -100,15 +102,15 @@ class _TempMedicationDialogState extends State<TempMedicationDialog> {
             controller: nameController,
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context).commonMedName,
-              hintText: '如：布洛芬',
+              hintText: AppLocalizations.of(context).tempMedNameHint,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
           TextField(
             controller: noteController,
-            decoration: const InputDecoration(
-              labelText: '原因',
-              hintText: '如：感冒',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context).tempMedReasonLabel,
+              hintText: AppLocalizations.of(context).tempMedReasonHint,
             ),
           ),
         ],
@@ -149,7 +151,6 @@ class _TempMedicationDialogState extends State<TempMedicationDialog> {
     final name = nameController.text.trim();
     final note = noteController.text.trim();
     final ctx = context;
-    final ref = widget.ref;
     try {
       await ref.read(checkInNotifierProvider.notifier).addTempMedication(
             name: name,
@@ -157,12 +158,14 @@ class _TempMedicationDialogState extends State<TempMedicationDialog> {
           );
       if (ctx.mounted) Navigator.pop(ctx);
     } catch (e) {
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          AppSnackBar.error(ctx, action: '保存', error: e),
-        );
-        setState(() => saving = false);
-      }
+      if (!ctx.mounted) return;
+      final l10n = AppLocalizations.of(ctx);
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        AppSnackBar.error(ctx,
+            action: l10n.snackbarActionSave,
+            error: e,),
+      );
+      setState(() => saving = false);
     }
   }
 }

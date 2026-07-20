@@ -143,6 +143,9 @@ void main() {
           ],
           child: MaterialApp(
             theme: ThemeData.light(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('zh'),
             home: const VentListPage(),
           ),
         ),

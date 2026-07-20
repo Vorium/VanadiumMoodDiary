@@ -33,9 +33,9 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
         children: [
           Text(
             AppLocalizations.of(context).settingsMedReportChooseSubtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textSecondary,
+              color: AppTokens.textSecondaryColor(context),
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
@@ -50,7 +50,7 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
                   title: Text(
                     AppLocalizations.of(context).settingsMedReportWindow7,
                   ),
-                  subtitle: const Text('一周内（适合周复诊）'),
+                  subtitle: Text(AppLocalizations.of(context).window7Subtitle),
                   value: 7,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -58,7 +58,7 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
                   title: Text(
                     AppLocalizations.of(context).settingsMedReportWindow14,
                   ),
-                  subtitle: const Text('两周内（推荐）'),
+                  subtitle: Text(AppLocalizations.of(context).window14Subtitle),
                   value: 14,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -66,7 +66,7 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
                   title: Text(
                     AppLocalizations.of(context).settingsMedReportWindow30,
                   ),
-                  subtitle: const Text('一个月内（适合月度评估）'),
+                  subtitle: Text(AppLocalizations.of(context).window30Subtitle),
                   value: 30,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -82,7 +82,8 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(context, _selected),
-          child: const Text('生成报告'),
+          child:
+              Text(AppLocalizations.of(context).settingsActionGenerateReport),
         ),
       ],
     );

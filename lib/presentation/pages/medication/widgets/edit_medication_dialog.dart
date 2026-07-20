@@ -10,6 +10,7 @@ import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -69,18 +70,23 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
   }
 
   /// 表单验证，返回 null = 通过
-  String? _validate() {
-    if (_nameController.text.trim().isEmpty) return '请填写药名';
+  String? _validate(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (_nameController.text.trim().isEmpty) {
+      return l10n.editMedValidationNameRequired;
+    }
     final dosage = double.tryParse(_dosageController.text.trim());
-    if (dosage == null || dosage <= 0) return '剂量必须是大于 0 的数字';
+    if (dosage == null || dosage <= 0) {
+      return l10n.editMedValidationDosageInvalid;
+    }
     if (_dosageUnit != 'mg' && _dosageUnit != '片') {
-      return '单位必须是 mg 或 片';
+      return l10n.editMedValidationUnitInvalid;
     }
     return null;
   }
 
   Future<void> _save() async {
-    final err = _validate();
+    final err = _validate(context);
     if (err != null) {
       setState(() => _errorText = err);
       return;
@@ -91,7 +97,18 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       _errorText = null;
     });
 
-    final dosage = double.parse(_dosageController.text.trim());
+    // v0.21 (P0-1 fix): 之前用 double.parse,虽然 _validate 已 tryParse 校验过,
+    // 但这是不规范模式——若未来有人改 _validate 漏校验,会直接崩。
+    // 改 tryParse + 二次校验(防御性),失败时回滚 _saving 状态。
+    final dosage = double.tryParse(_dosageController.text.trim());
+    if (dosage == null || dosage <= 0) {
+      setState(() {
+        _saving = false;
+        _errorText =
+            AppLocalizations.of(context).editMedValidationDosageInvalid;
+      });
+      return;
+    }
     final original = widget.med;
     final isActiveChanged = _isActive != original.isActive;
 
@@ -133,7 +150,8 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       if (mounted) {
         setState(() {
           _saving = false;
-          _errorText = '保存失败：${e.toString().split('\n').first}';
+          _errorText = AppLocalizations.of(context)
+              .editMedSaveFailed(e.toString().split('\n').first);
         });
       }
     }
@@ -160,7 +178,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
   Widget build(BuildContext context) {
     final m = widget.med;
     return AlertDialog(
-      title: const Text('编辑药物'),
+      title: Text(AppLocalizations.of(context).editMedDialogTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -174,8 +192,8 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
               ),
               decoration: BoxDecoration(
                 color: _isActive
-                    ? AppTokens.primaryLight
-                    : AppTokens.warning.withValues(alpha: 0.1),
+                    ? AppTokens.primaryLightColor(context)
+                    : AppTokens.tintedWarningSoft(context),
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               ),
               child: Row(
@@ -187,7 +205,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    _isActive ? '正在使用' : '已停药',
+                    _isActive
+                        ? AppLocalizations.of(context).editMedStatusActive
+                        : AppLocalizations.of(context).editMedStatusStopped,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
                       color: _isActive ? AppTokens.primary : AppTokens.warning,
@@ -197,10 +217,11 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   if (m.endDate != null && !_isActive) ...[
                     const Spacer(),
                     Text(
-                      '${Formatters.date(m.endDate!)} 停药',
-                      style: const TextStyle(
+                      AppLocalizations.of(context)
+                          .editMedStoppedDate(Formatters.date(m.endDate!)),
+                      style: TextStyle(
                         fontSize: AppTokens.fontSizeCaption,
-                        color: AppTokens.textHint,
+                        color: AppTokens.textHintColor(context),
                       ),
                     ),
                   ],
@@ -210,11 +231,11 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
             const SizedBox(height: AppTokens.spacingSm),
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: '药名',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).commonMedName,
                 // P0-5 fix: 改中性文案，避免《广告法》第 16 条 +
                 // 《医疗广告管理办法》风险。
-                hintText: '请输入药盒上的名称（选填）',
+                hintText: AppLocalizations.of(context).editMedNameHint,
               ),
               onChanged: (_) {
                 if (_errorText != null) {
@@ -231,8 +252,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                     controller: _dosageController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
-                      labelText: '剂量',
+                    decoration: InputDecoration(
+                      labelText:
+                          AppLocalizations.of(context).editMedDosageLabel,
                       hintText: '40',
                     ),
                     onChanged: (_) {
@@ -246,10 +268,15 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     initialValue: _dosageUnit,
-                    decoration: const InputDecoration(labelText: '单位'),
-                    items: const [
-                      DropdownMenuItem(value: 'mg', child: Text('mg')),
-                      DropdownMenuItem(value: '片', child: Text('片')),
+                    decoration: InputDecoration(
+                        labelText:
+                            AppLocalizations.of(context).editMedUnitLabel,),
+                    items: [
+                      const DropdownMenuItem(value: 'mg', child: Text('mg')),
+                      DropdownMenuItem(
+                          value: '片',
+                          child: Text(
+                              AppLocalizations.of(context).commonDoseUnit,),),
                     ],
                     onChanged: (v) {
                       if (v != null) {
@@ -261,13 +288,13 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
               ],
             ),
             const SizedBox(height: AppTokens.spacingSm),
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                '吃药时间（点 + 加）',
+                AppLocalizations.of(context).editMedTimeSectionLabel,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeLabel,
-                  color: AppTokens.textSecondary,
+                  color: AppTokens.textSecondaryColor(context),
                 ),
               ),
             ),
@@ -285,19 +312,19 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   ),
                 ActionChip(
                   avatar: const Icon(Icons.add, size: 18),
-                  label: const Text('加时间'),
+                  label: Text(AppLocalizations.of(context).editMedAddTime),
                   onPressed: _saving ? null : _pickTime,
                 ),
               ],
             ),
             if (_times.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(top: 4),
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  '（不设置时间 = 不调度提醒，仅记录）',
+                  AppLocalizations.of(context).editMedNoTimeHint,
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
               ),
@@ -307,17 +334,21 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
               contentPadding: EdgeInsets.zero,
               dense: true,
               title: Text(
-                _isActive ? '停用此药' : '重新启用',
+                _isActive
+                    ? AppLocalizations.of(context).editMedStopAction
+                    : AppLocalizations.of(context).editMedResumeAction,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
                   color: _isActive ? AppTokens.warning : AppTokens.primary,
                 ),
               ),
               subtitle: Text(
-                _isActive ? '软停：保留所有打卡历史，不再推送提醒' : '恢复：清空停药日期，恢复每日提醒',
-                style: const TextStyle(
+                _isActive
+                    ? AppLocalizations.of(context).editMedStopHint
+                    : AppLocalizations.of(context).editMedResumeHint,
+                style: TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
-                  color: AppTokens.textHint,
+                  color: AppTokens.textHintColor(context),
                 ),
               ),
               value: _isActive,
@@ -343,7 +374,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.of(context).pop(false),
-          child: const Text('取消'),
+          child: Text(AppLocalizations.of(context).commonCancel),
         ),
         ElevatedButton(
           onPressed: _saving ? null : _save,
@@ -356,7 +387,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                     color: Colors.white,
                   ),
                 )
-              : const Text('保存'),
+              : Text(AppLocalizations.of(context).commonSave),
         ),
       ],
     );

@@ -18,8 +18,8 @@
   "setupIntro": "1 minute setup, then 1 tap per day",
   "setupName": "Your name",
   "setupNameHint": "Alex",
-  "setupContacts": "Emergency contact emails (at least 1)",
-  "setupContactHint": "mom@example.com",
+  "setupContacts": "Emergency contact phones (at least 1)",
+  "setupContactHint": "13800138000",
   "setupAddContact": "+ Add another contact",
   "setupNext": "Next →",
   "setupMedName": "Medication name",
@@ -38,7 +38,7 @@
   "setupReminder3": "✓ 2 missed days → I'll alert your contact",
   "setupPrivacy": "Your data:",
   "setupPrivacy1": "• Encrypted on device",
-  "setupPrivacy2": "• Never uploaded to cloud (except email)",
+  "setupPrivacy2": "• Never uploaded to any server",
   "setupPrivacy3": "• Exportable anytime",
 
   "settingsContacts": "Emergency contacts",
@@ -88,6 +88,15 @@
   "settingsActionImport": "Import",
   "settingsImportAndOverwrite": "Import & Overwrite",
 
+  "@_v0_21_round_22_settings_clear_all_data": {},
+  "settingsClearAllData": "Clear all data",
+  "settingsClearAllDataSubtitle": "Delete all check-ins / meds / assessments / vent / contacts (irreversible)",
+  "settingsClearAllDataDialogTitle": "Clear all data?",
+  "settingsClearAllDataDialogBody": "The following data will be permanently deleted:\n• Check-in history\n• Medication and dose history\n• Assessment results\n• Mood journal\n• Vent (text + audio)\n• Emergency contacts\n\nAfter clearing, the app returns to first-time setup. We recommend exporting a JSON backup first.",
+  "settingsClearAllDataConfirm": "I have backed up, clear it",
+  "settingsClearAllDataSuccess": "All data cleared",
+  "settingsClearAllDataFailed": "Clear failed: {error}",
+
   "commonSave": "Save",
   "commonCancel": "Cancel",
   "commonDelete": "Delete",
@@ -133,6 +142,8 @@
   "medsCalendarTitle": "Medication Calendar",
   "medsCalendarSubtitle": "Doctor's adherence heatmap · 7/30/90 days",
   "medsListNoActive": "No active medications",
+  "medsListNoActiveHint": "All medications have been stopped. Add a new one to start a new phase.",
+  "medsListAddAction": "Add medication",
   "medsListStoppedSection": "Stopped",
   "medsSnackUpdated": "Updated",
   "medsSnackUpdatedSoftStop": "Updated · Soft-stopped",
@@ -310,5 +321,509 @@
   "@setupContactPhoneLabel": {
     "placeholders": { "index": { "type": "int" } }
   },
-  "setupContactPhoneHint": "13800138000"
+  "setupContactPhoneHint": "13800138000",
+
+  "ventListTitle": "My Vent",
+  "ventListWriteTooltip": "Write one",
+  "ventEmptyTitle": "Vent is empty",
+  "ventEmptySubtitle": "Say what's on your mind. Text or voice, whatever feels right.\nOnly you can see these words.",
+  "ventEmptyAction": "Write the first line",
+  "ventVoiceLabel": "🎙️ Voice",
+  "ventDetailTitle": "Vent",
+  "ventDetailNotFound": "Not found",
+  "ventDetailPrivacy": "🔒 Private · Only you can see",
+  "ventToday": "Today",
+  "ventYesterday": "Yesterday",
+  "ventComposeTitle": "Vent",
+  "ventComposeHint": "How was your day...",
+  "ventRecordIdle": "Tap to start recording",
+  "ventRecordActive": "Recording... tap to stop",
+  "ventAudioLabel": "Recording",
+  "ventRerecord": "Re-record",
+  "ventDurationSeconds": "{seconds}s",
+  "@ventDurationSeconds": {
+    "placeholders": { "seconds": { "type": "int" } }
+  },
+  "ventDurationMinutes": "{minutes}m",
+  "@ventDurationMinutes": {
+    "placeholders": { "minutes": { "type": "int" } }
+  },
+  "ventDurationMinutesSeconds": "{minutes}m{seconds}s",
+  "@ventDurationMinutesSeconds": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "seconds": { "type": "int" }
+    }
+  },
+  "moodDialogTitle": "How are you today?",
+  "moodDimensionMood": "Mood",
+  "moodDimensionMoodHint": "1=very bad 5=great",
+  "moodDimensionEnergy": "Energy",
+  "moodDimensionEnergyHint": "1=very low 5=energized",
+  "moodDimensionSleep": "Sleep",
+  "moodDimensionSleepHint": "1=very bad 5=great",
+  "moodDimensionAnxiety": "Anxiety",
+  "moodDimensionAnxietyHint": "1=severe 5=calm",
+  "moodTagAnxiety": "Anxious",
+  "moodTagDepression": "Depressed",
+  "moodTagCalm": "Calm",
+  "moodTagInsomnia": "Insomnia",
+  "moodTagIrritable": "Irritable",
+  "moodTagLowEnergy": "Low energy",
+  "moodNoteLabel": "Note (optional)",
+  "moodNoteHint": "What happened today?",
+  "medsTodaySchedule": "Today's Medication Schedule",
+  "medsTotal": "Total",
+  "medsRefillSetCount": "Set",
+  "medsRefillReminding": "Reminding",
+  "refillManageOverdue": "Overdue",
+  "medsNoMedicationsAdded": "No medications added yet",
+  "medsRefillEditHint": "Tap any row to edit the refill date. Reminder window: N days before refill (N=reminderDays).",
+  "medsRefillStatusNotConfigured": "Not set",
+  "medsRefillStatusSet": "Set",
+  "medsRefillStatusReminding": "Reminding",
+  "medsRefillStatusOverdue": "Overdue",
+  "medsRefillNotSetSubtitle": "No refill date set · Reminder window {days} days",
+  "@medsRefillNotSetSubtitle": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillExpiredDays": "Overdue by {days} days",
+  "@medsRefillExpiredDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillToday": "Today",
+  "medsRefillRemainingDays": "{days} days left",
+  "@medsRefillRemainingDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "medsRefillSubtitleTemplate": "{date} {suffix} · Remind {reminderDays} days before",
+  "@medsRefillSubtitleTemplate": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "suffix": { "type": "String" },
+      "reminderDays": { "type": "int" }
+    }
+  },
+  "assessmentLoadingBack": "Returning...",
+  "assessmentAnsweredProgress": "Answered {answered} / {total}",
+  "@assessmentAnsweredProgress": {
+    "placeholders": {
+      "answered": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "assessmentSubmit": "Submit & View Results",
+  "assessmentScoreTotal": "Total score (0-{max})",
+  "@assessmentScoreTotal": {
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "assessmentRecommendUrgent": "Strongly recommend contacting a doctor or therapist as soon as possible.",
+  "assessmentRecommend": "Consider consulting your doctor for further evaluation.",
+  "assessmentDisclaimer": "⚠️ This assessment is for reference only and cannot replace professional diagnosis.\nIf you feel distressed, please consult a doctor.",
+  "assessmentBack": "Back",
+  "assessmentRetake": "Take Again",
+  "homeHeaderDefaultTitle": "Chronic Care",
+  "homeHeaderKeepGoing": "{name} is still going strong",
+  "@homeHeaderKeepGoing": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeTooltipTrend": "View trend",
+  "homeTooltipAssessmentHistory": "Assessment history",
+  "homeStreakRestart": "Start fresh today 🌱",
+  "homeStreakDay1": "Day 1, taking the first step 🌱",
+  "homeStreakDays": "{days}-day streak, keep going 🌿",
+  "@homeStreakDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeStreakGreat": "{days}-day streak, great work 🌳",
+  "@homeStreakGreat": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeStreakAmazing": "{days}-day streak, amazing! 🌲",
+  "@homeStreakAmazing": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeStreakMaster": "{days} days — you've mastered this habit! 🏔️",
+  "@homeStreakMaster": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+
+  "navCheckIn": "Check in",
+  "navSettings": "Settings",
+  "navAppName": "Chronic Care",
+  "errorPageNotFound": "Page not found: {path}",
+  "@errorPageNotFound": {
+    "placeholders": { "path": { "type": "String" } }
+  },
+  "errorPageHint": "This address may have expired or the link is incorrect.",
+  "errorPageBackHome": "Back to home",
+
+  "assessmentReminderEnabled": "Enabled: psychological assessment reminder every {days} days",
+  "@assessmentReminderEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "assessmentReminderChanged": "Changed to: reminder every {days} days",
+  "@assessmentReminderChanged": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "assessmentReminderSubtitleEnabled": "Remind me to take a psychological assessment every {days} days",
+  "@assessmentReminderSubtitleEnabled": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "assessmentReminderHelpText": "After completing an assessment, the next reminder will be recalculated from today.\nAssessment results are only visible to you.",
+  "assessmentReminderHintAcute": "High-frequency monitoring (for acute phase)",
+  "assessmentReminderHintCommon": "Recommended (standard in psychiatry)",
+  "assessmentReminderHintStable": "Stable phase / Monthly review",
+  "assessmentReminderHintMaintenance": "Maintenance phase",
+  "assessmentReminderHintLongTerm": "Long-term follow-up",
+
+  "assessmentHistoryTrend": "Historical Trend",
+  "assessmentAverageScore": "Average {score}",
+  "@assessmentAverageScore": {
+    "placeholders": { "score": { "type": "String" } }
+  },
+  "assessmentTotalRecords": "{count} times",
+  "@assessmentTotalRecords": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "assessmentScoreRange": "Min {min} / Max {max}",
+  "@assessmentScoreRange": {
+    "placeholders": {
+      "min": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "assessmentComparePrevious": "Compare with Last",
+  "assessmentFirstAssessmentHint": "This is your first assessment. Comparison will be shown after your next assessment.",
+  "assessmentPrevious": "Last",
+  "assessmentCurrent": "This time",
+  "assessmentDaysSincePrevious": "{days} days since last",
+  "@assessmentDaysSincePrevious": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+
+  "assessmentHistoryEmpty": "No assessment records yet",
+  "assessmentHistoryEmptyHint": "Records will appear here after completing a psychological assessment",
+  "assessmentHistoryStartFirst": "Start First Assessment",
+  "assessmentHistoryTotalAssessments": "Total Assessments",
+  "assessmentHistoryTimes": "times",
+  "assessmentHistoryLatestPhq9": "Latest PHQ-9",
+  "assessmentHistoryLatestGad7": "Latest GAD-7",
+  "assessmentHistoryNotDone": "Not done",
+  "assessmentChartNoData": "No data yet",
+  "assessmentChartNeedMore": "Only 1 assessment — need at least 2 to show trend",
+  "assessmentChartRecordCount": "{count} assessments",
+  "@assessmentChartRecordCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "assessmentChartTotalScore": "Total {score}/{max}",
+  "@assessmentChartTotalScore": {
+    "placeholders": {
+      "score": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "assessmentHistoryFullRecord": "Full Record",
+  "assessmentSeverityNormal": "Normal",
+  "assessmentSeverityMild": "Mild",
+  "assessmentSeverityModerate": "Moderate",
+  "assessmentSeverityModeratelySevere": "Moderately Severe",
+  "assessmentSeveritySevere": "Severe",
+  "assessmentSeverityUnknown": "Unknown",
+  "assessmentScalePhq9": "PHQ-9 Depression Screening",
+  "assessmentScaleGad7": "GAD-7 Anxiety Screening",
+
+  "setupConsentRequired": "Please read and agree to the legal documents first",
+  "setupValidationNameRequired": "Please enter your name",
+  "setupValidationContactRequired": "At least 1 emergency contact phone number is required",
+  "setupValidationPhoneInvalid": "Invalid phone number format",
+  "setupValidationPhoneDuplicate": "Emergency contact phone numbers cannot be duplicated",
+  "setupPresetTitle": "📋 Choose a Preset",
+  "setupPresetDescription": "Presets fill in medication names + times. You can modify them. Always follow your doctor's instructions.",
+  "setupPresetLoaded": "Loaded: {name} ({count} medications). Please verify names and dosages.",
+  "@setupPresetLoaded": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "setupSaveFailed": "Save failed: {error}",
+  "@setupSaveFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+
+  "setupMedWhatDoYouTake": "What medications do you take?",
+  "setupMedMultiDrugHint": "(Add multiple medications, each with its own time and dosage; skipping won't affect check-in)",
+  "setupMedEmptyHint": "No medications added yet. You can skip — check-in doesn't require medication info.",
+  "setupMedAddDrug": "+ Add Medication",
+  "setupMedLoadPreset": "📋 Load Preset (4 common patterns)",
+  "setupBack": "← Back",
+  "setupMedDrugNumber": "Medication {number}",
+  "@setupMedDrugNumber": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "setupMedDeleteDrug": "Delete this medication",
+  "setupMedDosage": "Dosage",
+  "setupMedUnit": "Unit",
+  "setupMedTimeHint": "Dose times (tap + to add)",
+  "setupMedAddTime": "Add time",
+  "setupMedTimeOptional": "(No time set = no reminder scheduled, record only)",
+
+  "setupConsentTitle": "Please Read Before Use",
+  "setupConsentDescription": "To comply with PIPL, this app requires your explicit consent before processing your sensitive health data. Please review and agree to the following 3 documents.",
+  "setupConsentUserAgreement": "I have read and agree to the User Agreement",
+  "setupConsentPrivacyPolicy": "I have read and agree to the Privacy Policy",
+  "setupConsentSensitiveData": "I have read and agree to the Sensitive Data Consent",
+  "setupConsentStart": "Start Setup",
+  "setupConsentWithdrawHint": "Tip: You can withdraw consent anytime in Settings → Legal & Privacy. Some features will be unavailable after withdrawal.",
+
+  "setupWelcomeContactHint": "(At least 1 phone number, used for safety notifications)",
+
+  "setupLegalUserAgreement": "User Agreement",
+  "setupLegalPrivacyPolicy": "Privacy Policy",
+  "setupLegalSensitiveData": "Sensitive Data Consent",
+  "setupLegalLoadFailed": "Failed to load. Please check your network or reopen the app.",
+
+  "setupConsentView": "View",
+
+  "@_v0_21_round_22_legal_page": {},
+  "settingsLegalAndPrivacy": "Legal & privacy",
+  "settingsLegalAndPrivacySubtitle": "View agreement, privacy policy, withdraw consent",
+  "legalPageTitle": "Legal & privacy",
+  "legalPageDocuments": "Legal documents",
+  "legalPageWithdrawTitle": "Withdraw consent",
+  "legalPageWithdrawDescription": "After withdrawing, the related feature is immediately disabled (data is kept, can be re-enabled).",
+  "legalPageWithdrawSafety": "Withdraw safety notification consent",
+  "legalPageWithdrawSafetySubtitle": "Stop sending SMS/email to emergency contacts when you miss check-ins",
+  "legalPageWithdrawVent": "Withdraw vent (sensitive) consent",
+  "legalPageWithdrawVentSubtitle": "Stop storing new vent text/audio (existing data kept, delete manually)",
+  "legalPageWithdrawAnalytics": "Withdraw assessment/mood analytics consent",
+  "legalPageWithdrawAnalyticsSubtitle": "Stop including assessments/mood in trend analysis (data kept, charts skip)",
+  "legalPageConsentRecorded": "Withdrawn at: {time}",
+  "legalPageConsentNever": "Never withdrawn",
+  "legalPageResetConsent": "Re-consent",
+
+  "emailPreviewTitle": "Notification Preview",
+  "emailPreviewSetupRequired": "Please complete the initial setup first",
+  "emailPreviewDescription": "This is a preview of the safety notification you'll receive:",
+  "emailPreviewNoContact": "(No contacts)",
+  "emailPreviewDisclaimer": "💡 This is only a preview. Actual SMS is sent automatically after 2 missed check-ins (mock in v0.6, real SMS provider in v1.0+).",
+
+  "reportHistoryEmpty": "No report history yet\nReports will be recorded automatically after generation",
+  "reportHistoryItemTitle": "{date} · Last {days} days",
+  "@reportHistoryItemTitle": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  },
+  "reportHistoryItemPatient": "Patient: {name}",
+  "@reportHistoryItemPatient": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "reportHistoryItemNotSet": "Not set",
+  "reportHistoryDeleteTitle": "Delete this report?",
+  "reportHistoryDeleteContent": "Cannot be restored after deletion, but can be regenerated.",
+
+  "homeCelebrationDay1": "Recorded! Day 1 🌱",
+  "homeCelebrationStreakShort": "Recorded! {days}-day streak 🌿",
+  "@homeCelebrationStreakShort": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeCelebrationStreakMedium": "Recorded! {days}-day streak 🌳",
+  "@homeCelebrationStreakMedium": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeCelebrationStreakLong": "Recorded! {days}-day streak 🌲",
+  "@homeCelebrationStreakLong": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeCelebrationStreakMaster": "Recorded! {days} days — you're on fire! 🏔️",
+  "@homeCelebrationStreakMaster": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "homeAutofireCelebration": "Checked in: {name} ✅",
+  "@homeAutofireCelebration": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeAutofireFallbackName": "this med",
+  "homeMedHint": "💊 Ready to check in medication #{id}",
+  "@homeMedHint": {
+    "placeholders": { "id": { "type": "int" } }
+  },
+  "homeSafetyAlertSuffix": "(please check in or contact family soon)",
+  "homeSnoozeTitle": "⏰ Time to check in (in 5 min)",
+  "homeSnoozeBody": "You snoozed earlier — time to tap and check in",
+  "homeSnoozeConfirmed": "OK, will remind you again in 5 min 👌",
+  "homeSnoozeFailed": "Snooze failed: {error}",
+  "@homeSnoozeFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "homeSnoozeButton": "⏰ Remind again in 5 min",
+  "homeVentButton": "Vent 🌲",
+  "homeNotifBannerText": "Reminders not set — you may miss check-ins. Please enable notifications in system settings.",
+  "homeNotifBannerDismiss": "Got it",
+
+  "themeTooltip": "Theme: {mode} (tap to switch)",
+  "@themeTooltip": {
+    "placeholders": { "mode": { "type": "String" } }
+  },
+  "themeModeSystem": "System",
+  "themeModeLight": "Light",
+  "themeModeDark": "Dark",
+
+  "trendTitle": "My Trend",
+  "trendLast30Days": "Last 30 Days",
+  "trendLast6Months": "Last 6 Months",
+  "trendAssessmentHistory": "Assessment History",
+  "trendMoodHistory": "Mood History",
+  "trendViewList": "List",
+  "trendViewCalendar": "Calendar",
+
+  "trendWeekdayMon": "Mo",
+  "trendWeekdayTue": "Tu",
+  "trendWeekdayWed": "We",
+  "trendWeekdayThu": "Th",
+  "trendWeekdayFri": "Fr",
+  "trendWeekdaySat": "Sa",
+  "trendWeekdaySun": "Su",
+  "trendPrevMonth": "Previous month",
+  "trendNextMonth": "Next month",
+  "trendMonthYear": "{month}/{year}",
+  "@trendMonthYear": {
+    "placeholders": {
+      "year": { "type": "int" },
+      "month": { "type": "int" }
+    }
+  },
+  "trendCheckedIn": "Checked in",
+  "trendNotCheckedIn": "Not checked in",
+  "trendEventCount": "{count} events",
+  "@trendEventCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "trendMoodEntriesSame": "{count} mood entries · {emoji}",
+  "@trendMoodEntriesSame": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "emoji": { "type": "String" }
+    }
+  },
+  "trendMoodEntriesRange": "Mood {count} entries · {lowEmoji}→{highEmoji}",
+  "@trendMoodEntriesRange": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "lowEmoji": { "type": "String" },
+      "highEmoji": { "type": "String" }
+    }
+  },
+  "trendNoRecords": "No records for this day",
+
+  "trendStatCurrentStreak": "Current Streak",
+  "trendStatLongestStreak": "Longest Streak",
+  "trendStatTotalCheckIns": "Total Check-ins",
+  "trendStatTotalDays": "Total Days",
+  "trendStatDaysValue": "{count} days",
+  "@trendStatDaysValue": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "trendMonthLabel": "{month}",
+  "@trendMonthLabel": {
+    "placeholders": { "month": { "type": "int" } }
+  },
+  "trendNoAssessments": "No assessment records yet",
+  "trendNoAssessmentsHint": "Complete an assessment and the chart will appear here",
+  "trendNoMoodEntries": "No mood entries yet",
+  "trendNoMoodEntriesHint": "Tap \"Log Mood\" on the home page to start tracking",
+
+  "contactEmptyList": "No contacts yet — add one",
+  "contactAddAction": "Add contact",
+  "contactAddTitle": "Add Emergency Contact",
+  "contactNameLabel": "Name",
+  "contactPhoneLabel": "Phone",
+  "commonActionDelete": "Delete",
+  "commonActionSave": "Save",
+
+  "editMedDialogTitle": "Edit Medication",
+  "editMedValidationNameRequired": "Please enter medication name",
+  "editMedValidationDosageInvalid": "Dosage must be greater than 0",
+  "editMedValidationUnitInvalid": "Unit must be mg or tablet",
+  "editMedSaveFailed": "Save failed: {error}",
+  "@editMedSaveFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "editMedStatusActive": "In use",
+  "editMedStatusStopped": "Stopped",
+  "editMedStoppedDate": "{date} stopped",
+  "@editMedStoppedDate": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "editMedNameHint": "Name as printed on the box (optional)",
+  "editMedDosageLabel": "Dosage",
+  "editMedUnitLabel": "Unit",
+  "editMedTimeSectionLabel": "Dose times (tap + to add)",
+  "editMedAddTime": "Add time",
+  "editMedNoTimeHint": "(No time set = no reminders, record only)",
+  "editMedStopAction": "Stop this medication",
+  "editMedResumeAction": "Re-enable",
+  "editMedStopHint": "Soft stop: keeps all history, no more reminders",
+  "editMedResumeHint": "Resume: clear stop date, resume daily reminders",
+
+  "medReportCopyHint": "Select all to copy, generate PDF, or share with your doctor",
+  "medReportPdfLabel": "PDF",
+  "medReportShareLabel": "Share",
+  "medReportPdfLoading": "Generating PDF...",
+  "medReportShareSubject": "Chronic Care · Medication Report",
+  "medReportGenPdfAction": "Generate PDF",
+
+  "tempMedDialogTitle": "Add Temporary Medication",
+  "tempMedLinkLabel": "Link to regular medication (optional)",
+  "tempMedLinkHint": "None = one-time event",
+  "tempMedNoLink": "No link",
+  "tempMedNameHint": "e.g. Ibuprofen",
+  "tempMedReasonLabel": "Reason",
+  "tempMedReasonHint": "e.g. cold",
+
+  "medsCalendarHeatmapDesc": "Adherence heatmap by medication. Darker = closer to expected daily doses.",
+  "medsCalendarWindow7": "7 days",
+  "medsCalendarWindow30": "30 days",
+  "medsCalendarWindow90": "90 days",
+  "medsCalendarLoadCheckinFailed": "Failed to load check-ins: {error}",
+  "@medsCalendarLoadCheckinFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "medsCalendarLoadMedFailed": "Failed to load medications: {error}",
+  "@medsCalendarLoadMedFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "medsCalendarNoActive": "No active medications yet",
+  "medsCalendarNoSchedule": "Active medications have no dose times set, cannot generate adherence calendar",
+  "medsCalendarNoScheduleHint": "After you add dose times on the medication page, the adherence calendar will appear here.",
+  "medsCalendarNoActiveAction": "Add medication",
+  "medsCalendarNoScheduleAction": "Add schedule",
+  "medsCalendarLegendLabel": "Adherence:",
+  "medsCalendarLegendMissed": "Missed",
+
+  "window7Subtitle": "Within a week (good for weekly visits)",
+  "window14Subtitle": "Within two weeks (recommended)",
+  "window30Subtitle": "Within a month (good for monthly reviews)",
+
+  "snackbarActionSave": "Save",
+  "snackbarActionShare": "Share",
+  "snackbarActionGeneratePdf": "Generate PDF",
+  "snackbarActionPlay": "Play",
+  "snackbarActionEncryptRecording": "Encrypt recording",
+  "snackbarActionRecord": "Record",
+  "snackbarActionStartRecording": "Start recording",
+  "snackbarActionCheckin": "Check-in",
+  "snackbarActionSnooze": "Snooze",
+  "snackbarActionAutoCheckin": "Auto check-in",
+
+  "moodTodayLabel": "Mood: ",
+  "moodRecordButton": "Log mood ✏️",
+  "medReportFileName": "Med Report_{date}",
+  "@medReportFileName": {
+    "placeholders": { "date": { "type": "String" } }
+  }
 }

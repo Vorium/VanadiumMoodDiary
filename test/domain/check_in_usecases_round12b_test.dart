@@ -103,6 +103,19 @@ class _FakeUserProfileRepository implements UserProfileRepository {
   Future<void> updateLastCheckIn(DateTime time) async {
     updated.add(time);
   }
+
+  // v0.21 Round 22 (P1-22): 3 个新 consent 方法 stub
+  @override
+  Future<void> recordConsent({
+    required String userAgreementVersion,
+    required String privacyPolicyVersion,
+  }) async {}
+
+  @override
+  Future<void> withdrawConsent() async {}
+
+  @override
+  Future<void> resetConsent() async {}
 }
 
 /// Stub ReminderService — 不发真实通知，只跑 checkAndSend 返回 stub 结果

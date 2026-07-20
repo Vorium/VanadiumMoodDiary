@@ -93,7 +93,8 @@ class StreakCalculator {
     normal.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
     final lastCheckIn = normal.first;
-    final hoursSinceLast = now.difference(lastCheckIn.timestamp).inHours;
+    final hoursSinceLast =
+        now.difference(lastCheckIn.timestamp).inMinutes ~/ 60;
     return hoursSinceLast >= 24;
   }
 }

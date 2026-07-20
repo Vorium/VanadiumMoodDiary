@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 评估趋势 sparkline（简易自绘，避免再引第三方）
 class AssessmentSparkline extends StatelessWidget {
   final AssessmentHistory history;
   final String scaleId;
   const AssessmentSparkline(
-      {super.key, required this.history, required this.scaleId});
+      {super.key, required this.history, required this.scaleId,});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +31,9 @@ class AssessmentSparkline extends StatelessWidget {
                   size: 20,
                 ),
                 const SizedBox(width: AppTokens.spacingXs),
-                const Text(
-                  '历史趋势',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context).assessmentHistoryTrend,
+                  style: const TextStyle(
                     fontSize: AppTokens.fontSizeLabel,
                     fontWeight: FontWeight.w500,
                   ),
@@ -40,10 +41,11 @@ class AssessmentSparkline extends StatelessWidget {
                 const Spacer(),
                 if (history.average != null)
                   Text(
-                    '平均 ${history.average!.toStringAsFixed(1)}',
-                    style: const TextStyle(
+                    AppLocalizations.of(context).assessmentAverageScore(
+                        history.average!.toStringAsFixed(1),),
+                    style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textSecondary,
+                      color: AppTokens.textSecondaryColor(context),
                     ),
                   ),
               ],
@@ -59,7 +61,7 @@ class AssessmentSparkline extends StatelessWidget {
                   maxTotal: scaleId == 'phq9' ? 27 : 21,
                   lineColor: AppTokens.primary,
                   averageLine: history.average,
-                  averageColor: AppTokens.textHint,
+                  averageColor: AppTokens.textHintColor(context),
                 ),
               ),
             ),
@@ -68,18 +70,20 @@ class AssessmentSparkline extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '共 ${history.records.length} 次',
-                  style: const TextStyle(
+                  AppLocalizations.of(context)
+                      .assessmentTotalRecords(history.records.length),
+                  style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
                 if (history.min != null && history.max != null)
                   Text(
-                    '最低 ${history.min} / 最高 ${history.max}',
-                    style: const TextStyle(
+                    AppLocalizations.of(context)
+                        .assessmentScoreRange(history.min!, history.max!),
+                    style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textHint,
+                      color: AppTokens.textHintColor(context),
                     ),
                   ),
               ],
@@ -256,7 +260,7 @@ class ComparisonCard extends StatelessWidget {
         trendIcon = Icons.arrow_upward;
         break;
       case ComparisonTrend.unchanged:
-        trendColor = AppTokens.textSecondary;
+        trendColor = AppTokens.textSecondaryColor(context);
         trendIcon = Icons.horizontal_rule;
         break;
       case ComparisonTrend.firstAssessment:
@@ -271,17 +275,17 @@ class ComparisonCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.compare_arrows,
                   color: AppTokens.primary,
                   size: 20,
                 ),
-                SizedBox(width: AppTokens.spacingXs),
+                const SizedBox(width: AppTokens.spacingXs),
                 Text(
-                  '对比上次',
-                  style: TextStyle(
+                  AppLocalizations.of(context).assessmentComparePrevious,
+                  style: const TextStyle(
                     fontSize: AppTokens.fontSizeLabel,
                     fontWeight: FontWeight.w500,
                   ),
@@ -294,12 +298,13 @@ class ComparisonCard extends StatelessWidget {
                 children: [
                   Icon(trendIcon, color: trendColor, size: 28),
                   const SizedBox(width: AppTokens.spacingXs),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      '这是你的第一次评估。下次评估后会显示和这次的对比。',
+                      AppLocalizations.of(context)
+                          .assessmentFirstAssessmentHint,
                       style: TextStyle(
                         fontSize: AppTokens.fontSizeBody,
-                        color: AppTokens.textSecondary,
+                        color: AppTokens.textSecondaryColor(context),
                       ),
                     ),
                   ),
@@ -313,27 +318,27 @@ class ComparisonCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '上次',
+                        Text(
+                          AppLocalizations.of(context).assessmentPrevious,
                           style: TextStyle(
                             fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textSecondary,
+                            color: AppTokens.textSecondaryColor(context),
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           '${cmp.previous!.total}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w600,
-                            color: AppTokens.textSecondary,
+                            color: AppTokens.textSecondaryColor(context),
                           ),
                         ),
                         Text(
                           _dateLabel(cmp.previous!.timestamp),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textHint,
+                            color: AppTokens.textHintColor(context),
                           ),
                         ),
                       ],
@@ -348,11 +353,11 @@ class ComparisonCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '本次',
+                        Text(
+                          AppLocalizations.of(context).assessmentCurrent,
                           style: TextStyle(
                             fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textSecondary,
+                            color: AppTokens.textSecondaryColor(context),
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -366,9 +371,9 @@ class ComparisonCard extends StatelessWidget {
                         ),
                         Text(
                           _dateLabel(cmp.current.timestamp),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textHint,
+                            color: AppTokens.textHintColor(context),
                           ),
                         ),
                       ],
@@ -394,10 +399,11 @@ class ComparisonCard extends StatelessWidget {
               if (cmp.daysSincePrevious != null) ...[
                 const SizedBox(height: 4),
                 Text(
-                  '距上次 ${cmp.daysSincePrevious} 天',
-                  style: const TextStyle(
+                  AppLocalizations.of(context)
+                      .assessmentDaysSincePrevious(cmp.daysSincePrevious!),
+                  style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHint,
+                    color: AppTokens.textHintColor(context),
                   ),
                 ),
               ],

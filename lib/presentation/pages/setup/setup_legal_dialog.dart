@@ -20,14 +20,14 @@ class LegalDocumentDialog extends StatelessWidget {
   final String name;
   const LegalDocumentDialog({super.key, required this.name});
 
-  String get _title {
+  String _title(AppLocalizations l10n) {
     switch (name) {
       case 'user_agreement':
-        return '用户协议';
+        return l10n.setupLegalUserAgreement;
       case 'privacy_policy':
-        return '隐私政策';
+        return l10n.setupLegalPrivacyPolicy;
       case 'sensitive_data_consent':
-        return '敏感个人信息处理同意书';
+        return l10n.setupLegalSensitiveData;
       default:
         return name;
     }
@@ -35,8 +35,9 @@ class LegalDocumentDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(_title),
+      title: Text(_title(l10n)),
       content: SizedBox(
         width: double.maxFinite,
         height: MediaQuery.of(context).size.height * 0.6,
@@ -47,8 +48,8 @@ class LegalDocumentDialog extends StatelessWidget {
               return const LoadingSkeleton.fullScreen();
             }
             if (snap.hasError || !snap.hasData) {
-              return const Center(
-                child: Text('加载失败，请检查网络或重新打开 App'),
+              return Center(
+                child: Text(l10n.setupLegalLoadFailed),
               );
             }
             return SingleChildScrollView(

@@ -1,25 +1,40 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:chroniccare/core/data/services/data_export_service.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/database/mappers/vent/vent_mapper.dart';
+import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// 第三轮审查 fix: data_export_service 加 report_histories + mood_entries,
 /// 加上字段校验
+///
+/// v0.21 Round 22 (P0-1): vent 文字字段级加密。
+/// 测试环境 FlutterSecureStorage 不可用 → 注入固定 32-byte key 走 in-memory。
 void main() {
   late AppDatabase db;
   late DataExportService svc;
+  late EncryptionService enc;
 
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
-    svc = DataExportService(db);
+    enc = EncryptionService();
+    // 32-byte 固定 key,测试环境不走 SecureStorage
+    enc.setKeyForTest(Uint8List.fromList(List<int>.filled(32, 0x42)));
+    svc = DataExportService(db, null, enc);
   });
 
   tearDown(() async {
     await db.close();
   });
+
+  /// 单元测试用:把明文用注入的 key 加密成 Uint8List,写入 contentTextEnc 字段
+  Future<Uint8List> encText(String s) async {
+    return enc.encrypt(Uint8List.fromList(utf8.encode(s)));
+  }
 
   test('P4 fix: 导出包含 reportHistories + moodEntries', () async {
     // 准备数据
@@ -136,7 +151,7 @@ void main() {
     await db.insertVentEntry(
       VentEntriesCompanion.insert(
         timestamp: DateTime(2026, 7, 13, 22, 0),
-        contentText: const Value('今天好累'),
+        contentTextEnc: Value(await encText('今天好累')),
         audioPath: const Value('/fake/path/vent_xxx.m4a'),
         audioDurationSec: const Value(45),
         audioSizeBytes: const Value(234567),
@@ -150,15 +165,15 @@ void main() {
     expect(json, isNot(contains('/fake/path/vent_xxx.m4a')));
     // 但 hadAudio 标志会带
     expect(json, contains('"hadAudio": true'));
-    // version bump 到 3
-    expect(json, contains('"version": 3'));
+    // version bump 到 4 (v0.18 4D 情绪: energy/sleep/anxiety)
+    expect(json, contains('"version": 4'));
   });
 
   test('P0-3: 纯文字 vent 条目正常导出', () async {
     await db.insertVentEntry(
       VentEntriesCompanion.insert(
         timestamp: DateTime(2026, 7, 13, 22, 0),
-        contentText: const Value('想哭'),
+        contentTextEnc: Value(await encText('想哭')),
       ),
     );
 
@@ -207,7 +222,10 @@ void main() {
     expect(result.success, true);
     expect(result.ventEntryCount, 2);
 
-    final entries = await db.watchVentEntries().first;
+    // v0.21 Round 22 (P0-1): vent 文字字段级加密,需经 mapper.toEntity() decrypt
+    // 拿到 entity.contentText (明文),不能直接读 Drift row 的 contentText (旧字段)。
+    final rows = await db.watchVentEntries().first;
+    final entries = await Future.wait(rows.map((r) => r.toEntity()));
     expect(entries, hasLength(2));
     // watchVentEntries 按 timestamp DESC 排,2026-07-13 在前
     expect(entries.first.contentText, '第二条');
@@ -283,7 +301,7 @@ void main() {
     await db.insertVentEntry(
       VentEntriesCompanion.insert(
         timestamp: DateTime(2026, 7, 13, 22, 0),
-        contentText: const Value('今天好累'),
+        contentTextEnc: Value(await encText('今天好累')),
       ),
     );
 

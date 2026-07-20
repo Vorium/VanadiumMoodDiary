@@ -133,8 +133,8 @@ class CareEngine {
     NotificationSender notificationService,
   ) async {
     if (!trigger.shouldFire) return;
-    // 关怀通知 id：4000-4099 段，避免和其他通知冲突
-    final id = 4000 + trigger.type.index;
+    // 关怀通知 id：8000-8099 段，避免和 snooze（4000+medId*1440+min）冲突
+    final id = 8000 + trigger.type.index;
     try {
       await notificationService.showNow(
         id: id,

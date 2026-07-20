@@ -8,10 +8,9 @@ import 'dart:developer' as developer;
 
 import 'package:chroniccare/app.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
-import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/database_migration.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
@@ -68,7 +67,7 @@ Future<void> _bootstrap() async {
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
-    debugPrint('⚠️ .env 加载失败（首次启动正常）：$e');
+    piiSafeLog('Main', '⚠️ .env 加载失败（首次启动正常）：$e');
   }
 
   // 2. 升级检查
@@ -102,7 +101,7 @@ Future<void> _bootstrap() async {
     await notificationService.scheduleDailyReminder(hour: 20, minute: 0);
     notificationOk = true;
   } catch (e) {
-    debugPrint('⚠️ 通知服务初始化失败（不影响核心功能）：$e');
+    piiSafeLog('Main', '⚠️ 通知服务初始化失败（不影响核心功能）：$e');
     notificationError = e.toString();
   }
 
@@ -114,7 +113,7 @@ Future<void> _bootstrap() async {
     runApp(_MigrationFailedApp(message: e.message));
     return;
   } catch (e, st) {
-    debugPrint('⚠️ 数据库迁移失败：$e\n$st');
+    piiSafeLog('Main', '⚠️ 数据库迁移失败：$e\n$st');
     // N31 fix: 给用户友好消息，详细错只 log
     runApp(const _MigrationFailedApp(message: '无法初始化本地数据'));
     return;
@@ -144,27 +143,9 @@ Future<void> _bootstrap() async {
     ),
   );
 
-  // 6. v0.13 (Round 7): App 启动后异步跑一次 AssessmentReminder.onAppStart
-  //    用 unawaited 防止阻塞 runApp
-  unawaited(_scheduleAssessmentReminderOnStart(sharedDb, notificationService));
-}
-
-Future<void> _scheduleAssessmentReminderOnStart(
-  AppDatabase sharedDb,
-  NotificationService notificationService,
-) async {
-  // 等 DB / provider tree ready — 一个 frame 就够
-  await Future<void>.delayed(const Duration(milliseconds: 100));
-  // P0 fix: 复用共享 db 实例，不再创建第二个 SQLCipher 连接
-  try {
-    final service = AssessmentReminderService(
-      checkInRepo: CheckInRepositoryImpl(sharedDb),
-      notificationService: notificationService,
-    );
-    await service.onAppStart();
-  } catch (e) {
-    debugPrint('⚠️ AssessmentReminder.onAppStart 失败（不影响核心功能）：$e');
-  }
+  // 6. v0.21 (P2-3 fix): AssessmentReminder.onAppStart() 已经从 main.dart
+  //    移到 AppRoot.initState 的 addPostFrameCallback — 等待 widget tree
+  //    就绪而非 magic 100ms。这里不再需要。
 }
 
 /// 弹升级确认对话框
@@ -177,7 +158,7 @@ Future<bool?> _showMigrationConfirmDialog(
   final ctx = controller.navigatorKey.currentContext;
   if (ctx == null) {
     // 极少见：endOfFrame 后还没拿到 context
-    debugPrint('⚠️ migration dialog: navigator context 仍为 null，降级放行');
+    piiSafeLog('Main', '⚠️ migration dialog: navigator context 仍为 null，降级放行');
     return true;
   }
   return showDialog<bool>(

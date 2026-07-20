@@ -1,5 +1,6 @@
 // v0.14 (Round 13B) AssessmentHistoryPage widget 测试
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_history_page.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ Widget _wrap({List<CheckInEntity> records = const []}) {
     ],
     child: MaterialApp(
       theme: ThemeData.light(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('zh'),
       home: const Scaffold(body: AssessmentHistoryPage()),
     ),
   );

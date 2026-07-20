@@ -62,10 +62,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupNameHint => 'Alex';
 
   @override
-  String get setupContacts => 'Emergency contact emails (at least 1)';
+  String get setupContacts => 'Emergency contact phones (at least 1)';
 
   @override
-  String get setupContactHint => 'mom@example.com';
+  String get setupContactHint => '13800138000';
 
   @override
   String get setupAddContact => '+ Add another contact';
@@ -122,7 +122,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupPrivacy1 => '• Encrypted on device';
 
   @override
-  String get setupPrivacy2 => '• Never uploaded to cloud (except email)';
+  String get setupPrivacy2 => '• Never uploaded to any server';
 
   @override
   String get setupPrivacy3 => '• Exportable anytime';
@@ -270,6 +270,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsImportAndOverwrite => 'Import & Overwrite';
 
   @override
+  String get settingsClearAllData => 'Clear all data';
+
+  @override
+  String get settingsClearAllDataSubtitle =>
+      'Delete all check-ins / meds / assessments / vent / contacts (irreversible)';
+
+  @override
+  String get settingsClearAllDataDialogTitle => 'Clear all data?';
+
+  @override
+  String get settingsClearAllDataDialogBody =>
+      'The following data will be permanently deleted:\n• Check-in history\n• Medication and dose history\n• Assessment results\n• Mood journal\n• Vent (text + audio)\n• Emergency contacts\n\nAfter clearing, the app returns to first-time setup. We recommend exporting a JSON backup first.';
+
+  @override
+  String get settingsClearAllDataConfirm => 'I have backed up, clear it';
+
+  @override
+  String get settingsClearAllDataSuccess => 'All data cleared';
+
+  @override
+  String settingsClearAllDataFailed(Object error) {
+    return 'Clear failed: $error';
+  }
+
+  @override
   String get commonSave => 'Save';
 
   @override
@@ -377,6 +402,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get medsListNoActive => 'No active medications';
+
+  @override
+  String get medsListNoActiveHint =>
+      'All medications have been stopped. Add a new one to start a new phase.';
+
+  @override
+  String get medsListAddAction => 'Add medication';
 
   @override
   String get medsListStoppedSection => 'Stopped';
@@ -744,4 +776,1047 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setupContactPhoneHint => '13800138000';
+
+  @override
+  String get ventListTitle => 'My Vent';
+
+  @override
+  String get ventListWriteTooltip => 'Write one';
+
+  @override
+  String get ventEmptyTitle => 'Vent is empty';
+
+  @override
+  String get ventEmptySubtitle =>
+      'Say what\'s on your mind. Text or voice, whatever feels right.\nOnly you can see these words.';
+
+  @override
+  String get ventEmptyAction => 'Write the first line';
+
+  @override
+  String get ventVoiceLabel => '🎙️ Voice';
+
+  @override
+  String get ventDetailTitle => 'Vent';
+
+  @override
+  String get ventDetailNotFound => 'Not found';
+
+  @override
+  String get ventDetailPrivacy => '🔒 Private · Only you can see';
+
+  @override
+  String get ventToday => 'Today';
+
+  @override
+  String get ventYesterday => 'Yesterday';
+
+  @override
+  String get ventComposeTitle => 'Vent';
+
+  @override
+  String get ventComposeHint => 'How was your day...';
+
+  @override
+  String get ventRecordIdle => 'Tap to start recording';
+
+  @override
+  String get ventRecordActive => 'Recording... tap to stop';
+
+  @override
+  String get ventAudioLabel => 'Recording';
+
+  @override
+  String get ventRerecord => 'Re-record';
+
+  @override
+  String ventDurationSeconds(int seconds) {
+    return '${seconds}s';
+  }
+
+  @override
+  String ventDurationMinutes(int minutes) {
+    return '${minutes}m';
+  }
+
+  @override
+  String ventDurationMinutesSeconds(int minutes, int seconds) {
+    return '${minutes}m${seconds}s';
+  }
+
+  @override
+  String get moodDialogTitle => 'How are you today?';
+
+  @override
+  String get moodDimensionMood => 'Mood';
+
+  @override
+  String get moodDimensionMoodHint => '1=very bad 5=great';
+
+  @override
+  String get moodDimensionEnergy => 'Energy';
+
+  @override
+  String get moodDimensionEnergyHint => '1=very low 5=energized';
+
+  @override
+  String get moodDimensionSleep => 'Sleep';
+
+  @override
+  String get moodDimensionSleepHint => '1=very bad 5=great';
+
+  @override
+  String get moodDimensionAnxiety => 'Anxiety';
+
+  @override
+  String get moodDimensionAnxietyHint => '1=severe 5=calm';
+
+  @override
+  String get moodTagAnxiety => 'Anxious';
+
+  @override
+  String get moodTagDepression => 'Depressed';
+
+  @override
+  String get moodTagCalm => 'Calm';
+
+  @override
+  String get moodTagInsomnia => 'Insomnia';
+
+  @override
+  String get moodTagIrritable => 'Irritable';
+
+  @override
+  String get moodTagLowEnergy => 'Low energy';
+
+  @override
+  String get moodNoteLabel => 'Note (optional)';
+
+  @override
+  String get moodNoteHint => 'What happened today?';
+
+  @override
+  String get medsTodaySchedule => 'Today\'s Medication Schedule';
+
+  @override
+  String get medsTotal => 'Total';
+
+  @override
+  String get medsRefillSetCount => 'Set';
+
+  @override
+  String get medsRefillReminding => 'Reminding';
+
+  @override
+  String get refillManageOverdue => 'Overdue';
+
+  @override
+  String get medsNoMedicationsAdded => 'No medications added yet';
+
+  @override
+  String get medsRefillEditHint =>
+      'Tap any row to edit the refill date. Reminder window: N days before refill (N=reminderDays).';
+
+  @override
+  String get medsRefillStatusNotConfigured => 'Not set';
+
+  @override
+  String get medsRefillStatusSet => 'Set';
+
+  @override
+  String get medsRefillStatusReminding => 'Reminding';
+
+  @override
+  String get medsRefillStatusOverdue => 'Overdue';
+
+  @override
+  String medsRefillNotSetSubtitle(int days) {
+    return 'No refill date set · Reminder window $days days';
+  }
+
+  @override
+  String medsRefillExpiredDays(int days) {
+    return 'Overdue by $days days';
+  }
+
+  @override
+  String get medsRefillToday => 'Today';
+
+  @override
+  String medsRefillRemainingDays(int days) {
+    return '$days days left';
+  }
+
+  @override
+  String medsRefillSubtitleTemplate(
+      String date, String suffix, int reminderDays) {
+    return '$date $suffix · Remind $reminderDays days before';
+  }
+
+  @override
+  String get assessmentLoadingBack => 'Returning...';
+
+  @override
+  String assessmentAnsweredProgress(int answered, int total) {
+    return 'Answered $answered / $total';
+  }
+
+  @override
+  String get assessmentSubmit => 'Submit & View Results';
+
+  @override
+  String assessmentScoreTotal(int max) {
+    return 'Total score (0-$max)';
+  }
+
+  @override
+  String get assessmentRecommendUrgent =>
+      'Strongly recommend contacting a doctor or therapist as soon as possible.';
+
+  @override
+  String get assessmentRecommend =>
+      'Consider consulting your doctor for further evaluation.';
+
+  @override
+  String get assessmentDisclaimer =>
+      '⚠️ This assessment is for reference only and cannot replace professional diagnosis.\nIf you feel distressed, please consult a doctor.';
+
+  @override
+  String get assessmentBack => 'Back';
+
+  @override
+  String get assessmentRetake => 'Take Again';
+
+  @override
+  String get homeHeaderDefaultTitle => 'Chronic Care';
+
+  @override
+  String homeHeaderKeepGoing(String name) {
+    return '$name is still going strong';
+  }
+
+  @override
+  String get homeTooltipTrend => 'View trend';
+
+  @override
+  String get homeTooltipAssessmentHistory => 'Assessment history';
+
+  @override
+  String get homeStreakRestart => 'Start fresh today 🌱';
+
+  @override
+  String get homeStreakDay1 => 'Day 1, taking the first step 🌱';
+
+  @override
+  String homeStreakDays(int days) {
+    return '$days-day streak, keep going 🌿';
+  }
+
+  @override
+  String homeStreakGreat(int days) {
+    return '$days-day streak, great work 🌳';
+  }
+
+  @override
+  String homeStreakAmazing(int days) {
+    return '$days-day streak, amazing! 🌲';
+  }
+
+  @override
+  String homeStreakMaster(int days) {
+    return '$days days — you\'ve mastered this habit! 🏔️';
+  }
+
+  @override
+  String get navCheckIn => 'Check in';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get navAppName => 'Chronic Care';
+
+  @override
+  String errorPageNotFound(String path) {
+    return 'Page not found: $path';
+  }
+
+  @override
+  String get errorPageHint =>
+      'This address may have expired or the link is incorrect.';
+
+  @override
+  String get errorPageBackHome => 'Back to home';
+
+  @override
+  String assessmentReminderEnabled(int days) {
+    return 'Enabled: psychological assessment reminder every $days days';
+  }
+
+  @override
+  String assessmentReminderChanged(int days) {
+    return 'Changed to: reminder every $days days';
+  }
+
+  @override
+  String assessmentReminderSubtitleEnabled(int days) {
+    return 'Remind me to take a psychological assessment every $days days';
+  }
+
+  @override
+  String get assessmentReminderHelpText =>
+      'After completing an assessment, the next reminder will be recalculated from today.\nAssessment results are only visible to you.';
+
+  @override
+  String get assessmentReminderHintAcute =>
+      'High-frequency monitoring (for acute phase)';
+
+  @override
+  String get assessmentReminderHintCommon =>
+      'Recommended (standard in psychiatry)';
+
+  @override
+  String get assessmentReminderHintStable => 'Stable phase / Monthly review';
+
+  @override
+  String get assessmentReminderHintMaintenance => 'Maintenance phase';
+
+  @override
+  String get assessmentReminderHintLongTerm => 'Long-term follow-up';
+
+  @override
+  String get assessmentHistoryTrend => 'Historical Trend';
+
+  @override
+  String assessmentAverageScore(String score) {
+    return 'Average $score';
+  }
+
+  @override
+  String assessmentTotalRecords(int count) {
+    return '$count times';
+  }
+
+  @override
+  String assessmentScoreRange(int min, int max) {
+    return 'Min $min / Max $max';
+  }
+
+  @override
+  String get assessmentComparePrevious => 'Compare with Last';
+
+  @override
+  String get assessmentFirstAssessmentHint =>
+      'This is your first assessment. Comparison will be shown after your next assessment.';
+
+  @override
+  String get assessmentPrevious => 'Last';
+
+  @override
+  String get assessmentCurrent => 'This time';
+
+  @override
+  String assessmentDaysSincePrevious(int days) {
+    return '$days days since last';
+  }
+
+  @override
+  String get assessmentHistoryEmpty => 'No assessment records yet';
+
+  @override
+  String get assessmentHistoryEmptyHint =>
+      'Records will appear here after completing a psychological assessment';
+
+  @override
+  String get assessmentHistoryStartFirst => 'Start First Assessment';
+
+  @override
+  String get assessmentHistoryTotalAssessments => 'Total Assessments';
+
+  @override
+  String get assessmentHistoryTimes => 'times';
+
+  @override
+  String get assessmentHistoryLatestPhq9 => 'Latest PHQ-9';
+
+  @override
+  String get assessmentHistoryLatestGad7 => 'Latest GAD-7';
+
+  @override
+  String get assessmentHistoryNotDone => 'Not done';
+
+  @override
+  String get assessmentChartNoData => 'No data yet';
+
+  @override
+  String get assessmentChartNeedMore =>
+      'Only 1 assessment — need at least 2 to show trend';
+
+  @override
+  String assessmentChartRecordCount(int count) {
+    return '$count assessments';
+  }
+
+  @override
+  String assessmentChartTotalScore(int score, int max) {
+    return 'Total $score/$max';
+  }
+
+  @override
+  String get assessmentHistoryFullRecord => 'Full Record';
+
+  @override
+  String get assessmentSeverityNormal => 'Normal';
+
+  @override
+  String get assessmentSeverityMild => 'Mild';
+
+  @override
+  String get assessmentSeverityModerate => 'Moderate';
+
+  @override
+  String get assessmentSeverityModeratelySevere => 'Moderately Severe';
+
+  @override
+  String get assessmentSeveritySevere => 'Severe';
+
+  @override
+  String get assessmentSeverityUnknown => 'Unknown';
+
+  @override
+  String get assessmentScalePhq9 => 'PHQ-9 Depression Screening';
+
+  @override
+  String get assessmentScaleGad7 => 'GAD-7 Anxiety Screening';
+
+  @override
+  String get setupConsentRequired =>
+      'Please read and agree to the legal documents first';
+
+  @override
+  String get setupValidationNameRequired => 'Please enter your name';
+
+  @override
+  String get setupValidationContactRequired =>
+      'At least 1 emergency contact phone number is required';
+
+  @override
+  String get setupValidationPhoneInvalid => 'Invalid phone number format';
+
+  @override
+  String get setupValidationPhoneDuplicate =>
+      'Emergency contact phone numbers cannot be duplicated';
+
+  @override
+  String get setupPresetTitle => '📋 Choose a Preset';
+
+  @override
+  String get setupPresetDescription =>
+      'Presets fill in medication names + times. You can modify them. Always follow your doctor\'s instructions.';
+
+  @override
+  String setupPresetLoaded(String name, int count) {
+    return 'Loaded: $name ($count medications). Please verify names and dosages.';
+  }
+
+  @override
+  String setupSaveFailed(String error) {
+    return 'Save failed: $error';
+  }
+
+  @override
+  String get setupMedWhatDoYouTake => 'What medications do you take?';
+
+  @override
+  String get setupMedMultiDrugHint =>
+      '(Add multiple medications, each with its own time and dosage; skipping won\'t affect check-in)';
+
+  @override
+  String get setupMedEmptyHint =>
+      'No medications added yet. You can skip — check-in doesn\'t require medication info.';
+
+  @override
+  String get setupMedAddDrug => '+ Add Medication';
+
+  @override
+  String get setupMedLoadPreset => '📋 Load Preset (4 common patterns)';
+
+  @override
+  String get setupBack => '← Back';
+
+  @override
+  String setupMedDrugNumber(int number) {
+    return 'Medication $number';
+  }
+
+  @override
+  String get setupMedDeleteDrug => 'Delete this medication';
+
+  @override
+  String get setupMedDosage => 'Dosage';
+
+  @override
+  String get setupMedUnit => 'Unit';
+
+  @override
+  String get setupMedTimeHint => 'Dose times (tap + to add)';
+
+  @override
+  String get setupMedAddTime => 'Add time';
+
+  @override
+  String get setupMedTimeOptional =>
+      '(No time set = no reminder scheduled, record only)';
+
+  @override
+  String get setupConsentTitle => 'Please Read Before Use';
+
+  @override
+  String get setupConsentDescription =>
+      'To comply with PIPL, this app requires your explicit consent before processing your sensitive health data. Please review and agree to the following 3 documents.';
+
+  @override
+  String get setupConsentUserAgreement =>
+      'I have read and agree to the User Agreement';
+
+  @override
+  String get setupConsentPrivacyPolicy =>
+      'I have read and agree to the Privacy Policy';
+
+  @override
+  String get setupConsentSensitiveData =>
+      'I have read and agree to the Sensitive Data Consent';
+
+  @override
+  String get setupConsentStart => 'Start Setup';
+
+  @override
+  String get setupConsentWithdrawHint =>
+      'Tip: You can withdraw consent anytime in Settings → Legal & Privacy. Some features will be unavailable after withdrawal.';
+
+  @override
+  String get setupWelcomeContactHint =>
+      '(At least 1 phone number, used for safety notifications)';
+
+  @override
+  String get setupLegalUserAgreement => 'User Agreement';
+
+  @override
+  String get setupLegalPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get setupLegalSensitiveData => 'Sensitive Data Consent';
+
+  @override
+  String get setupLegalLoadFailed =>
+      'Failed to load. Please check your network or reopen the app.';
+
+  @override
+  String get setupConsentView => 'View';
+
+  @override
+  String get settingsLegalAndPrivacy => 'Legal & privacy';
+
+  @override
+  String get settingsLegalAndPrivacySubtitle =>
+      'View agreement, privacy policy, withdraw consent';
+
+  @override
+  String get legalPageTitle => 'Legal & privacy';
+
+  @override
+  String get legalPageDocuments => 'Legal documents';
+
+  @override
+  String get legalPageWithdrawTitle => 'Withdraw consent';
+
+  @override
+  String get legalPageWithdrawDescription =>
+      'After withdrawing, the related feature is immediately disabled (data is kept, can be re-enabled).';
+
+  @override
+  String get legalPageWithdrawSafety => 'Withdraw safety notification consent';
+
+  @override
+  String get legalPageWithdrawSafetySubtitle =>
+      'Stop sending SMS/email to emergency contacts when you miss check-ins';
+
+  @override
+  String get legalPageWithdrawVent => 'Withdraw vent (sensitive) consent';
+
+  @override
+  String get legalPageWithdrawVentSubtitle =>
+      'Stop storing new vent text/audio (existing data kept, delete manually)';
+
+  @override
+  String get legalPageWithdrawAnalytics =>
+      'Withdraw assessment/mood analytics consent';
+
+  @override
+  String get legalPageWithdrawAnalyticsSubtitle =>
+      'Stop including assessments/mood in trend analysis (data kept, charts skip)';
+
+  @override
+  String legalPageConsentRecorded(Object time) {
+    return 'Withdrawn at: $time';
+  }
+
+  @override
+  String get legalPageConsentNever => 'Never withdrawn';
+
+  @override
+  String get legalPageResetConsent => 'Re-consent';
+
+  @override
+  String get emailPreviewTitle => 'Notification Preview';
+
+  @override
+  String get emailPreviewSetupRequired =>
+      'Please complete the initial setup first';
+
+  @override
+  String get emailPreviewDescription =>
+      'This is a preview of the safety notification you\'ll receive:';
+
+  @override
+  String get emailPreviewNoContact => '(No contacts)';
+
+  @override
+  String get emailPreviewDisclaimer =>
+      '💡 This is only a preview. Actual SMS is sent automatically after 2 missed check-ins (mock in v0.6, real SMS provider in v1.0+).';
+
+  @override
+  String get reportHistoryEmpty =>
+      'No report history yet\nReports will be recorded automatically after generation';
+
+  @override
+  String reportHistoryItemTitle(String date, int days) {
+    return '$date · Last $days days';
+  }
+
+  @override
+  String reportHistoryItemPatient(String name) {
+    return 'Patient: $name';
+  }
+
+  @override
+  String get reportHistoryItemNotSet => 'Not set';
+
+  @override
+  String get reportHistoryDeleteTitle => 'Delete this report?';
+
+  @override
+  String get reportHistoryDeleteContent =>
+      'Cannot be restored after deletion, but can be regenerated.';
+
+  @override
+  String get homeCelebrationDay1 => 'Recorded! Day 1 🌱';
+
+  @override
+  String homeCelebrationStreakShort(int days) {
+    return 'Recorded! $days-day streak 🌿';
+  }
+
+  @override
+  String homeCelebrationStreakMedium(int days) {
+    return 'Recorded! $days-day streak 🌳';
+  }
+
+  @override
+  String homeCelebrationStreakLong(int days) {
+    return 'Recorded! $days-day streak 🌲';
+  }
+
+  @override
+  String homeCelebrationStreakMaster(int days) {
+    return 'Recorded! $days days — you\'re on fire! 🏔️';
+  }
+
+  @override
+  String homeAutofireCelebration(String name) {
+    return 'Checked in: $name ✅';
+  }
+
+  @override
+  String get homeAutofireFallbackName => 'this med';
+
+  @override
+  String homeMedHint(int id) {
+    return '💊 Ready to check in medication #$id';
+  }
+
+  @override
+  String get homeSafetyAlertSuffix =>
+      '(please check in or contact family soon)';
+
+  @override
+  String get homeSnoozeTitle => '⏰ Time to check in (in 5 min)';
+
+  @override
+  String get homeSnoozeBody => 'You snoozed earlier — time to tap and check in';
+
+  @override
+  String get homeSnoozeConfirmed => 'OK, will remind you again in 5 min 👌';
+
+  @override
+  String homeSnoozeFailed(String error) {
+    return 'Snooze failed: $error';
+  }
+
+  @override
+  String get homeSnoozeButton => '⏰ Remind again in 5 min';
+
+  @override
+  String get homeVentButton => 'Vent 🌲';
+
+  @override
+  String get homeNotifBannerText =>
+      'Reminders not set — you may miss check-ins. Please enable notifications in system settings.';
+
+  @override
+  String get homeNotifBannerDismiss => 'Got it';
+
+  @override
+  String themeTooltip(String mode) {
+    return 'Theme: $mode (tap to switch)';
+  }
+
+  @override
+  String get themeModeSystem => 'System';
+
+  @override
+  String get themeModeLight => 'Light';
+
+  @override
+  String get themeModeDark => 'Dark';
+
+  @override
+  String get trendTitle => 'My Trend';
+
+  @override
+  String get trendLast30Days => 'Last 30 Days';
+
+  @override
+  String get trendLast6Months => 'Last 6 Months';
+
+  @override
+  String get trendAssessmentHistory => 'Assessment History';
+
+  @override
+  String get trendMoodHistory => 'Mood History';
+
+  @override
+  String get trendViewList => 'List';
+
+  @override
+  String get trendViewCalendar => 'Calendar';
+
+  @override
+  String get trendWeekdayMon => 'Mo';
+
+  @override
+  String get trendWeekdayTue => 'Tu';
+
+  @override
+  String get trendWeekdayWed => 'We';
+
+  @override
+  String get trendWeekdayThu => 'Th';
+
+  @override
+  String get trendWeekdayFri => 'Fr';
+
+  @override
+  String get trendWeekdaySat => 'Sa';
+
+  @override
+  String get trendWeekdaySun => 'Su';
+
+  @override
+  String get trendPrevMonth => 'Previous month';
+
+  @override
+  String get trendNextMonth => 'Next month';
+
+  @override
+  String trendMonthYear(int year, int month) {
+    return '$month/$year';
+  }
+
+  @override
+  String get trendCheckedIn => 'Checked in';
+
+  @override
+  String get trendNotCheckedIn => 'Not checked in';
+
+  @override
+  String trendEventCount(int count) {
+    return '$count events';
+  }
+
+  @override
+  String trendMoodEntriesSame(int count, String emoji) {
+    return '$count mood entries · $emoji';
+  }
+
+  @override
+  String trendMoodEntriesRange(int count, String lowEmoji, String highEmoji) {
+    return 'Mood $count entries · $lowEmoji→$highEmoji';
+  }
+
+  @override
+  String get trendNoRecords => 'No records for this day';
+
+  @override
+  String get trendStatCurrentStreak => 'Current Streak';
+
+  @override
+  String get trendStatLongestStreak => 'Longest Streak';
+
+  @override
+  String get trendStatTotalCheckIns => 'Total Check-ins';
+
+  @override
+  String get trendStatTotalDays => 'Total Days';
+
+  @override
+  String trendStatDaysValue(int count) {
+    return '$count days';
+  }
+
+  @override
+  String trendMonthLabel(int month) {
+    return '$month';
+  }
+
+  @override
+  String get trendNoAssessments => 'No assessment records yet';
+
+  @override
+  String get trendNoAssessmentsHint =>
+      'Complete an assessment and the chart will appear here';
+
+  @override
+  String get trendNoMoodEntries => 'No mood entries yet';
+
+  @override
+  String get trendNoMoodEntriesHint =>
+      'Tap \"Log Mood\" on the home page to start tracking';
+
+  @override
+  String get contactEmptyList => 'No contacts yet — add one';
+
+  @override
+  String get contactAddAction => 'Add contact';
+
+  @override
+  String get contactAddTitle => 'Add Emergency Contact';
+
+  @override
+  String get contactNameLabel => 'Name';
+
+  @override
+  String get contactPhoneLabel => 'Phone';
+
+  @override
+  String get commonActionDelete => 'Delete';
+
+  @override
+  String get commonActionSave => 'Save';
+
+  @override
+  String get editMedDialogTitle => 'Edit Medication';
+
+  @override
+  String get editMedValidationNameRequired => 'Please enter medication name';
+
+  @override
+  String get editMedValidationDosageInvalid => 'Dosage must be greater than 0';
+
+  @override
+  String get editMedValidationUnitInvalid => 'Unit must be mg or tablet';
+
+  @override
+  String editMedSaveFailed(String error) {
+    return 'Save failed: $error';
+  }
+
+  @override
+  String get editMedStatusActive => 'In use';
+
+  @override
+  String get editMedStatusStopped => 'Stopped';
+
+  @override
+  String editMedStoppedDate(String date) {
+    return '$date stopped';
+  }
+
+  @override
+  String get editMedNameHint => 'Name as printed on the box (optional)';
+
+  @override
+  String get editMedDosageLabel => 'Dosage';
+
+  @override
+  String get editMedUnitLabel => 'Unit';
+
+  @override
+  String get editMedTimeSectionLabel => 'Dose times (tap + to add)';
+
+  @override
+  String get editMedAddTime => 'Add time';
+
+  @override
+  String get editMedNoTimeHint => '(No time set = no reminders, record only)';
+
+  @override
+  String get editMedStopAction => 'Stop this medication';
+
+  @override
+  String get editMedResumeAction => 'Re-enable';
+
+  @override
+  String get editMedStopHint =>
+      'Soft stop: keeps all history, no more reminders';
+
+  @override
+  String get editMedResumeHint =>
+      'Resume: clear stop date, resume daily reminders';
+
+  @override
+  String get medReportCopyHint =>
+      'Select all to copy, generate PDF, or share with your doctor';
+
+  @override
+  String get medReportPdfLabel => 'PDF';
+
+  @override
+  String get medReportShareLabel => 'Share';
+
+  @override
+  String get medReportPdfLoading => 'Generating PDF...';
+
+  @override
+  String get medReportShareSubject => 'Chronic Care · Medication Report';
+
+  @override
+  String get medReportGenPdfAction => 'Generate PDF';
+
+  @override
+  String get tempMedDialogTitle => 'Add Temporary Medication';
+
+  @override
+  String get tempMedLinkLabel => 'Link to regular medication (optional)';
+
+  @override
+  String get tempMedLinkHint => 'None = one-time event';
+
+  @override
+  String get tempMedNoLink => 'No link';
+
+  @override
+  String get tempMedNameHint => 'e.g. Ibuprofen';
+
+  @override
+  String get tempMedReasonLabel => 'Reason';
+
+  @override
+  String get tempMedReasonHint => 'e.g. cold';
+
+  @override
+  String get medsCalendarHeatmapDesc =>
+      'Adherence heatmap by medication. Darker = closer to expected daily doses.';
+
+  @override
+  String get medsCalendarWindow7 => '7 days';
+
+  @override
+  String get medsCalendarWindow30 => '30 days';
+
+  @override
+  String get medsCalendarWindow90 => '90 days';
+
+  @override
+  String medsCalendarLoadCheckinFailed(String error) {
+    return 'Failed to load check-ins: $error';
+  }
+
+  @override
+  String medsCalendarLoadMedFailed(String error) {
+    return 'Failed to load medications: $error';
+  }
+
+  @override
+  String get medsCalendarNoActive => 'No active medications yet';
+
+  @override
+  String get medsCalendarNoSchedule =>
+      'Active medications have no dose times set, cannot generate adherence calendar';
+
+  @override
+  String get medsCalendarNoScheduleHint =>
+      'After you add dose times on the medication page, the adherence calendar will appear here.';
+
+  @override
+  String get medsCalendarNoActiveAction => 'Add medication';
+
+  @override
+  String get medsCalendarNoScheduleAction => 'Add schedule';
+
+  @override
+  String get medsCalendarLegendLabel => 'Adherence:';
+
+  @override
+  String get medsCalendarLegendMissed => 'Missed';
+
+  @override
+  String get window7Subtitle => 'Within a week (good for weekly visits)';
+
+  @override
+  String get window14Subtitle => 'Within two weeks (recommended)';
+
+  @override
+  String get window30Subtitle => 'Within a month (good for monthly reviews)';
+
+  @override
+  String get snackbarActionSave => 'Save';
+
+  @override
+  String get snackbarActionShare => 'Share';
+
+  @override
+  String get snackbarActionGeneratePdf => 'Generate PDF';
+
+  @override
+  String get snackbarActionPlay => 'Play';
+
+  @override
+  String get snackbarActionEncryptRecording => 'Encrypt recording';
+
+  @override
+  String get snackbarActionRecord => 'Record';
+
+  @override
+  String get snackbarActionStartRecording => 'Start recording';
+
+  @override
+  String get snackbarActionCheckin => 'Check-in';
+
+  @override
+  String get snackbarActionSnooze => 'Snooze';
+
+  @override
+  String get snackbarActionAutoCheckin => 'Auto check-in';
+
+  @override
+  String get moodTodayLabel => 'Mood: ';
+
+  @override
+  String get moodRecordButton => 'Log mood ✏️';
+
+  @override
+  String medReportFileName(String date) {
+    return 'Med Report_$date';
+  }
 }

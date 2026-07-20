@@ -39,9 +39,9 @@ class SetupStepDone extends StatelessWidget {
           Center(
             child: Text(
               l10n.setupDoneSubtitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppTokens.fontSizeBody,
-                color: AppTokens.textSecondary,
+                color: AppTokens.textSecondaryColor(context),
               ),
             ),
           ),
@@ -74,7 +74,7 @@ class SetupStepDone extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: onBack,
-                child: const Text('← 上一步'),
+                child: Text(AppLocalizations.of(context).setupBack),
               ),
               const Spacer(),
               ElevatedButton(

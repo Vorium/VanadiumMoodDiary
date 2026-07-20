@@ -50,9 +50,9 @@ class SetupStepWelcome extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingSm),
           Text(
             l10n.setupIntro,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondary,
+              color: AppTokens.textSecondaryColor(context),
             ),
           ),
           const SizedBox(height: AppTokens.spacingXl),
@@ -83,11 +83,11 @@ class SetupStepWelcome extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          const Text(
-            '（至少填 1 个手机号，用于失联时通知）',
+          Text(
+            l10n.setupWelcomeContactHint,
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondary,
+              color: AppTokens.textSecondaryColor(context),
             ),
           ),
           const SizedBox(height: AppTokens.spacingMd),
@@ -109,7 +109,7 @@ class SetupStepWelcome extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: onBack,
-                child: const Text('← 上一步'),
+                child: Text(l10n.setupBack),
               ),
               const Spacer(),
               ElevatedButton(

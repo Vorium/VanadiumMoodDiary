@@ -36,21 +36,22 @@ enum RefillStatus {
 }
 
 extension RefillStatusX on RefillStatus {
-  String get label {
+  String labelOf(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (this) {
       case RefillStatus.notConfigured:
-        return '未设置';
+        return l10n.medsRefillStatusNotConfigured;
       case RefillStatus.farFuture:
-        return '已设';
+        return l10n.medsRefillStatusSet;
       case RefillStatus.inWindow:
-        return '提醒中';
+        return l10n.medsRefillStatusReminding;
       case RefillStatus.overdue:
-        return '已过期';
+        return l10n.medsRefillStatusOverdue;
     }
   }
 
-  Color get color => switch (this) {
-        RefillStatus.notConfigured => AppTokens.textHint,
+  Color colorOf(BuildContext context) => switch (this) {
+        RefillStatus.notConfigured => AppTokens.textHintColor(context),
         RefillStatus.farFuture => AppTokens.primary,
         RefillStatus.inWindow => AppTokens.warning,
         RefillStatus.overdue => AppTokens.error,
@@ -65,13 +66,13 @@ class RefillManagePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final medsAsync = ref.watch(medicationsProvider);
     return PageScaffold(
-      title: '续方管理',
+      title: AppLocalizations.of(context).settingsRefillManagement,
       child: medsAsync.when(
         data: (meds) => _buildBody(context, ref, meds),
         loading: () => const LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(
             child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()))),
+                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
       ),
     );
   }
@@ -126,18 +127,22 @@ class RefillManagePage extends ConsumerWidget {
             padding: const EdgeInsets.all(AppTokens.spacingMd),
             child: Row(
               children: [
-                _Stat(label: '总药数', value: '${meds.length}'),
-                const SizedBox(width: AppTokens.spacingMd),
-                _Stat(label: '已设续方', value: '$configured'),
+                _Stat(
+                    label: AppLocalizations.of(context).medsTotal,
+                    value: '${meds.length}',),
                 const SizedBox(width: AppTokens.spacingMd),
                 _Stat(
-                  label: '提醒中',
+                    label: AppLocalizations.of(context).medsRefillSetCount,
+                    value: '$configured',),
+                const SizedBox(width: AppTokens.spacingMd),
+                _Stat(
+                  label: AppLocalizations.of(context).medsRefillReminding,
                   value: '$inWindow',
                   valueColor: inWindow > 0 ? AppTokens.warning : null,
                 ),
                 const SizedBox(width: AppTokens.spacingMd),
                 _Stat(
-                  label: '已过期',
+                  label: AppLocalizations.of(context).refillManageOverdue,
                   value: '$overdue',
                   valueColor: overdue > 0 ? AppTokens.error : null,
                 ),
@@ -149,11 +154,11 @@ class RefillManagePage extends ConsumerWidget {
         const SizedBox(height: AppTokens.spacingMd),
 
         if (rows.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(AppTokens.spacingXl),
+          Padding(
+            padding: const EdgeInsets.all(AppTokens.spacingXl),
             child: Center(
-              child:
-                  Text('还没有添加药物', style: TextStyle(color: AppTokens.textHint)),
+              child: Text(AppLocalizations.of(context).medsNoMedicationsAdded,
+                  style: TextStyle(color: AppTokens.textHintColor(context)),),
             ),
           )
         else
@@ -172,13 +177,13 @@ class RefillManagePage extends ConsumerWidget {
           ),
 
         const SizedBox(height: AppTokens.spacingMd),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
           child: Text(
-            '点击任一行可编辑续方日期。提醒窗口：续方前 N 天（N=reminderDays）。',
+            AppLocalizations.of(context).medsRefillEditHint,
             style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHint,
+              color: AppTokens.textHintColor(context),
             ),
           ),
         ),
@@ -231,7 +236,7 @@ class _RefillRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final m = row.med;
-    final statusColor = row.status.color;
+    final statusColor = row.status.colorOf(context);
     return ListTile(
       onTap: onTap,
       leading: _StatusDot(status: row.status),
@@ -250,7 +255,7 @@ class _RefillRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
             child: Text(
-              row.status.label,
+              row.status.labelOf(context),
               style: TextStyle(
                 fontSize: 11,
                 color: statusColor,
@@ -263,34 +268,37 @@ class _RefillRow extends StatelessWidget {
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 4),
         child: Text(
-          _subtitleFor(row),
-          style: const TextStyle(
+          _subtitleFor(context, row),
+          style: TextStyle(
             fontSize: AppTokens.fontSizeCaption,
-            color: AppTokens.textHint,
+            color: AppTokens.textHintColor(context),
           ),
         ),
       ),
-      trailing: const Icon(Icons.chevron_right, color: AppTokens.textHint),
+      trailing:
+          Icon(Icons.chevron_right, color: AppTokens.textHintColor(context)),
     );
   }
 
-  String _subtitleFor(_Row r) {
+  String _subtitleFor(BuildContext context, _Row r) {
+    final l10n = AppLocalizations.of(context);
     final m = r.med;
     if (!m.hasRefill) {
-      return '未设续方日期 · 提醒窗口 ${m.refillReminderDays} 天';
+      return l10n.medsRefillNotSetSubtitle(m.refillReminderDays);
     }
     final dateStr =
         '${m.refillAt!.year}-${m.refillAt!.month.toString().padLeft(2, '0')}-${m.refillAt!.day.toString().padLeft(2, '0')}';
     final days = r.daysUntil!;
     String suffix;
     if (days < 0) {
-      suffix = '（已过 ${-days} 天）';
+      suffix = l10n.medsRefillExpiredDays(-days);
     } else if (days == 0) {
-      suffix = '（今天）';
+      suffix = l10n.medsRefillToday;
     } else {
-      suffix = '（还有 $days 天）';
+      suffix = l10n.medsRefillRemainingDays(days);
     }
-    return '$dateStr $suffix · 提前 ${m.refillReminderDays} 天提醒';
+    return l10n.medsRefillSubtitleTemplate(
+        dateStr, suffix, m.refillReminderDays,);
   }
 
   String _formatDose(double d, String u) {
@@ -309,7 +317,7 @@ class _StatusDot extends StatelessWidget {
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: status.color.withValues(alpha: 0.15),
+        color: status.colorOf(context).withValues(alpha: 0.15),
         shape: BoxShape.circle,
       ),
       child: Icon(
@@ -319,7 +327,7 @@ class _StatusDot extends StatelessWidget {
           RefillStatus.inWindow => Icons.notifications_active,
           RefillStatus.overdue => Icons.warning_amber,
         },
-        color: status.color,
+        color: status.colorOf(context),
         size: 18,
       ),
     );
@@ -340,9 +348,9 @@ class _Stat extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHint,
+              color: AppTokens.textHintColor(context),
             ),
           ),
           const SizedBox(height: 2),
@@ -351,7 +359,7 @@ class _Stat extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: valueColor ?? AppTokens.textPrimary,
+              color: valueColor ?? AppTokens.textPrimaryColor(context),
             ),
           ),
         ],

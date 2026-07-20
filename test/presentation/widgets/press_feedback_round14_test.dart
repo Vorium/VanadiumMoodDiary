@@ -6,6 +6,7 @@
 // 3. 抬起 → 回到 1.0
 // 4. onTap 触发回调
 // 5. prefers-reduced-motion 时 scale 反馈消失(duration=0)
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,6 +14,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   Widget wrap({required Widget child, bool reduced = false}) {
     return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('zh'),
       home: MediaQuery(
         data: MediaQueryData(disableAnimations: reduced),
         child: Scaffold(body: Center(child: child)),

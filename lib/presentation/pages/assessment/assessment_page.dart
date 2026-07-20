@@ -6,6 +6,7 @@
 // v0.13 (Round 8) 加：结果页显示"对比上次"面板 + sparkline 趋势
 
 import 'package:chroniccare/presentation/providers/service_providers.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -61,15 +62,15 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
   Widget build(BuildContext context) {
     // P5 fix: 路由给错 id 时显示 loading(下一帧 pop),而不是渲染 PHQ-9 替代
     if (_scale == null) {
-      return const PageScaffold(
-        title: '心理评估',
+      return PageScaffold(
+        title: AppLocalizations.of(context).settingsAssessment,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('正在返回上一页...'),
+              const LoadingSpinner(),
+              const SizedBox(height: 16),
+              Text(AppLocalizations.of(context).assessmentLoadingBack),
             ],
           ),
         ),
@@ -90,7 +91,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
       children: [
         Container(
           padding: const EdgeInsets.all(AppTokens.spacingMd),
-          color: AppTokens.primaryLight,
+          color: AppTokens.primaryLightColor(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -103,16 +104,17 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               ),
               const SizedBox(height: AppTokens.spacingXs),
               Text(
-                '已答 $_answered / ${scale.items.length}',
-                style: const TextStyle(
-                  color: AppTokens.textSecondary,
+                AppLocalizations.of(context)
+                    .assessmentAnsweredProgress(_answered, scale.items.length),
+                style: TextStyle(
+                  color: AppTokens.textSecondaryColor(context),
                   fontSize: AppTokens.fontSizeCaption,
                 ),
               ),
               const SizedBox(height: AppTokens.spacingXs),
               LinearProgressIndicator(
                 value: _answered / scale.items.length,
-                backgroundColor: AppTokens.divider,
+                backgroundColor: AppTokens.dividerColor(context),
                 color: AppTokens.primary,
               ),
             ],
@@ -140,7 +142,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               height: AppTokens.buttonHeight,
               child: ElevatedButton(
                 onPressed: _canSubmit ? _submit : null,
-                child: const Text('提交并查看结果'),
+                child: Text(AppLocalizations.of(context).assessmentSubmit),
               ),
             ),
           ),
@@ -247,8 +249,8 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
             padding: const EdgeInsets.all(AppTokens.spacingLg),
             decoration: BoxDecoration(
               color: isUrgent
-                  ? AppTokens.error.withValues(alpha: 0.1)
-                  : AppTokens.primaryLight,
+                  ? AppTokens.tintedErrorSoft(context)
+                  : AppTokens.primaryLightColor(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusCard),
             ),
             child: Column(
@@ -262,8 +264,10 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                   ),
                 ),
                 Text(
-                  '总分（0-${scale.totalRange}）',
-                  style: const TextStyle(color: AppTokens.textSecondary),
+                  AppLocalizations.of(context)
+                      .assessmentScoreTotal(scale.totalRange),
+                  style:
+                      TextStyle(color: AppTokens.textSecondaryColor(context)),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 Text(
@@ -281,7 +285,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
           const SizedBox(height: AppTokens.spacingMd),
           if (recommend)
             Card(
-              color: AppTokens.warning.withValues(alpha: 0.1),
+              color: AppTokens.tintedWarningSoft(context),
               child: Padding(
                 padding: const EdgeInsets.all(AppTokens.spacingMd),
                 child: Row(
@@ -294,9 +298,12 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                     const SizedBox(width: AppTokens.spacingSm),
                     Expanded(
                       child: Text(
-                        isUrgent ? '强烈建议你尽快联系医生或心理治疗师。' : '建议你联系医生做进一步评估。',
-                        style: const TextStyle(
-                          color: AppTokens.textPrimary,
+                        isUrgent
+                            ? AppLocalizations.of(context)
+                                .assessmentRecommendUrgent
+                            : AppLocalizations.of(context).assessmentRecommend,
+                        style: TextStyle(
+                          color: AppTokens.textPrimaryColor(context),
                           fontSize: AppTokens.fontSizeBody,
                         ),
                       ),
@@ -306,13 +313,12 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               ),
             ),
           const SizedBox(height: AppTokens.spacingMd),
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(AppTokens.spacingMd),
+              padding: const EdgeInsets.all(AppTokens.spacingMd),
               child: Text(
-                '⚠️ 本评估仅供参考，不能代替专业诊断。\n'
-                '如感到困扰，请咨询医生。',
-                style: TextStyle(color: AppTokens.textSecondary),
+                AppLocalizations.of(context).assessmentDisclaimer,
+                style: TextStyle(color: AppTokens.textSecondaryColor(context)),
               ),
             ),
           ),
@@ -322,7 +328,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('返回'),
+                  child: Text(AppLocalizations.of(context).assessmentBack),
                 ),
               ),
               const SizedBox(width: AppTokens.spacingSm),
@@ -338,7 +344,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                       }
                     });
                   },
-                  child: const Text('再做一次'),
+                  child: Text(AppLocalizations.of(context).assessmentRetake),
                 ),
               ),
             ],

@@ -86,7 +86,10 @@ const kMedicationTemplates = <MedicationTemplate>[
           HourMinute(hour: 8, minute: 0),
           HourMinute(hour: 20, minute: 0),
         ],
-        hint: '常见：碳酸锂 / 丙戊酸钠 / 拉莫三嗪',
+        // v0.21 Round 22 (P0-3 修复): 改分类描述。
+        // 原 hint 列真实处方药通用名（碳酸锂 / 丙戊酸钠 / 拉莫三嗪），
+        // 违反《广告法》§15（处方药不得在大众媒体做广告）。
+        hint: '常见情绪稳定剂类(具体药名以医生处方为准)',
       ),
     ],
   ),
@@ -107,7 +110,10 @@ const kMedicationTemplates = <MedicationTemplate>[
         dosage: 1,
         dosageUnit: '片',
         times: [HourMinute(hour: 21, minute: 0)],
-        hint: '常见：阿普唑仑 / 艾司唑仑 / 佐匹克隆 / 褪黑素',
+        // v0.21 Round 22 (P0-3 修复): 阿普唑仑 / 艾司唑仑是国家管制的
+        // 二类精神药品（《精神药品品种目录》收录），褪黑素是保健品。
+        // 改分类描述，避免《广告法》§15 处方药广告违规。
+        hint: '常见苯二氮卓类/助眠药(具体药名以医生处方为准)',
       ),
     ],
   ),

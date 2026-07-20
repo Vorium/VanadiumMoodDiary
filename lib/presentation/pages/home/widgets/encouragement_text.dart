@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 主页鼓励文案（按 streak 动态切换）
 ///
@@ -19,7 +20,7 @@ class EncouragementText extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
       child: Text(
-        _textFor(streak),
+        _textFor(context, streak),
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: AppTokens.fontSizeBody,
@@ -30,12 +31,13 @@ class EncouragementText extends StatelessWidget {
     );
   }
 
-  static String _textFor(int streak) {
-    if (streak <= 0) return '今天重新开始，加油 🌱';
-    if (streak == 1) return '第 1 天，迈出第一步 🌱';
-    if (streak < 7) return '坚持 $streak 天，继续 🌿';
-    if (streak < 30) return '已坚持 $streak 天，真棒 🌳';
-    if (streak < 100) return '$streak 天连击，太厉害了 🌲';
-    return '$streak 天--你已经是这个习惯的主人了 🏔️';
+  static String _textFor(BuildContext context, int streak) {
+    final l10n = AppLocalizations.of(context);
+    if (streak <= 0) return l10n.homeStreakRestart;
+    if (streak == 1) return l10n.homeStreakDay1;
+    if (streak < 7) return l10n.homeStreakDays(streak);
+    if (streak < 30) return l10n.homeStreakGreat(streak);
+    if (streak < 100) return l10n.homeStreakAmazing(streak);
+    return l10n.homeStreakMaster(streak);
   }
 }

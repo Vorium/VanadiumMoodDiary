@@ -6,6 +6,7 @@
 // 3. Motion.curve(ctx, base) 在 reduce motion 时返 Curves.linear
 // 4. FadeIn / SlideUp 在 reduce motion 时立即到终态 (controller.value = 1.0)
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/animations/fade_in.dart';
 import 'package:chroniccare/presentation/widgets/animations/slide_up.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,9 @@ void main() {
   group('Motion (静态 helper)', () {
     Widget wrap({required bool reduced, required Widget child}) {
       return MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
         home: MediaQuery(
           data: MediaQueryData(disableAnimations: reduced),
           child: child,
@@ -108,6 +112,9 @@ void main() {
   group('FadeIn / SlideUp', () {
     Widget wrap({required bool reduced, required Widget child}) {
       return MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
         home: MediaQuery(
           data: MediaQueryData(disableAnimations: reduced),
           child: Scaffold(body: child),
