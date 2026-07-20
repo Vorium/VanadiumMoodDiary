@@ -59,7 +59,7 @@ class _AssessmentReminderSectionState
           SnackBar(
             content: Text(AppLocalizations.of(context)
                 .assessmentReminderEnabled(_days ?? 14),),
-            duration: const Duration(seconds: 2),
+            duration: AppTokens.snackBarDurationShort,
           ),
         );
       }
@@ -95,7 +95,7 @@ class _AssessmentReminderSectionState
           SnackBar(
             content: Text(
                 AppLocalizations.of(context).assessmentReminderChanged(picked),),
-            duration: const Duration(seconds: 2),
+            duration: AppTokens.snackBarDurationShort,
           ),
         );
       }

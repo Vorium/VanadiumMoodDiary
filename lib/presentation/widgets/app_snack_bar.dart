@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// v0.17 round 14 (P1-7): 集中 SnackBar 文案 + 时长
@@ -38,7 +39,7 @@ class AppSnackBar {
     );
     return SnackBar(
       content: Text(msg),
-      duration: const Duration(seconds: 4),
+      duration: AppTokens.snackBarDurationLong,
     );
   }
 
@@ -46,7 +47,7 @@ class AppSnackBar {
   static SnackBar info(BuildContext context, String message) {
     return SnackBar(
       content: Text(message),
-      duration: const Duration(seconds: 2),
+      duration: AppTokens.snackBarDurationShort,
     );
   }
 
@@ -65,7 +66,7 @@ class AppSnackBar {
     final l10n = AppLocalizations.of(context);
     return SnackBar(
       content: Text(message),
-      duration: const Duration(seconds: 4),
+      duration: AppTokens.snackBarDurationLong,
       action: SnackBarAction(
         label: l10n.snackbarActionUndo,
         onPressed: () {

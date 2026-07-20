@@ -79,7 +79,7 @@ class _NotificationStatusCardState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.notificationStatusCardTestSent),
-          duration: const Duration(seconds: 2),
+          duration: AppTokens.snackBarDurationShort,
         ),
       );
     } catch (e) {

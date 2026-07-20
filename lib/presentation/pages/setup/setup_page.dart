@@ -107,7 +107,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context).setupConsentRequired),
-            duration: const Duration(seconds: 2),
+            duration: AppTokens.snackBarDurationShort,
           ),
         );
       },
@@ -343,7 +343,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       SnackBar(
         content: Text(AppLocalizations.of(context).setupPresetLoaded(
             result.template.name, result.template.meds.length,),),
-        duration: const Duration(seconds: 3),
+        duration: AppTokens.snackBarDurationMedium,
       ),
     );
   }

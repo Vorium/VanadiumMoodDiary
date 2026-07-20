@@ -149,7 +149,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
                   ? AppLocalizations.of(context).medsSnackUpdated
                   : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
             ),
-            duration: const Duration(seconds: 2),
+            duration: AppTokens.snackBarDurationShort,
           ),
         );
       }
@@ -272,7 +272,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         SnackBar(
           content: Text(AppLocalizations.of(context)
               .medsRefillSet(Formatters.date(picked), days),),
-          duration: const Duration(seconds: 2),
+          duration: AppTokens.snackBarDurationShort,
         ),
       );
     } catch (e) {

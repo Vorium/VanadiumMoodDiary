@@ -104,31 +104,82 @@ class CheckInButton extends StatelessWidget {
 /// 状态切换瞬间数字从 0 跳到 N 太突兀,tween 让它"飞"过去。
 /// duration 用 durSlow(500ms) + curveDelight(elasticOut) 制造"弹一下"的感觉。
 /// 性能: 数字变化频度极低(tens/day),不担心 rebuild 成本。
-class _StreakCounter extends StatelessWidget {
+///
+/// v0.21 Round 25 (P2 polish): 起始值用上次 value 而非 0
+/// 之前 `Tween(begin: 0, end: value)` 在父级 rebuild 时也会触发 tween 0→value
+/// 例如: 用户已坚持 30 天,父级 setState 后 _StreakCounter 重建,数字会从 0 飞回 30
+/// 修法: StatefulWidget 缓存 _lastValue, 仅在 value 真的变了时 tween
+class _StreakCounter extends StatefulWidget {
   final int value;
   final bool isChecked;
   const _StreakCounter({required this.value, required this.isChecked});
 
   @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      // tween 0 → value,内部自动 lerp
-      tween: Tween<double>(begin: 0, end: value.toDouble()),
+  State<_StreakCounter> createState() => _StreakCounterState();
+}
+
+class _StreakCounterState extends State<_StreakCounter>
+    with SingleTickerProviderStateMixin {
+  int _lastValue = 0;
+  late AnimationController _controller;
+  late double _currentAnimated;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentAnimated = widget.value.toDouble();
+    _controller = AnimationController(
+      vsync: this, // State 本身实现 TickerProvider (SingleTickerProviderStateMixin)
       duration: AppTokens.durSlow,
-      curve: AppTokens.curveDecelerate, // 数字停止用 decelerate 比 delight 更克制
-      builder: (context, animatedValue, child) {
-        return Text(
-          // v0.17 round 14 (P2-12): 走 ARB homeStreak 模板 (zh: 已坚持 X 天 /
-          // en: X-day streak)。emoji 不在 string 里 — 频度高 (10+/day),
-          // emoji 在大按钮里反视觉噪声。
-          AppLocalizations.of(context).homeStreak(animatedValue.round()),
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeLabel,
-            color: Colors.white.withValues(alpha: 0.85),
-            height: 1.2,
-          ),
-        );
-      },
+    );
+    _controller.addListener(_onTick);
+  }
+
+  void _onTick() {
+    setState(() {
+      // tween 从 _lastValue 到 widget.value, 已用 curve 平滑
+      _currentAnimated = _controller.value;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _StreakCounter old) {
+    super.didUpdateWidget(old);
+    if (old.value != widget.value) {
+      // 起始用上次 value 而非 0,避免父级 rebuild 时数字"飞回 0"
+      final from = _lastValue.toDouble();
+      final to = widget.value.toDouble();
+      _currentAnimated = from;
+      _controller
+        ..reset()
+        ..addListener(() {
+          setState(() {
+            _currentAnimated = from + (to - from) * _controller.value;
+          });
+        })
+        ..forward();
+      _lastValue = widget.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      // v0.17 round 14 (P2-12): 走 ARB homeStreak 模板 (zh: 已坚持 X 天 /
+      // en: X-day streak)。emoji 不在 string 里 — 频度高 (10+/day),
+      // emoji 在大按钮里反视觉噪声。
+      AppLocalizations.of(context).homeStreak(_currentAnimated.round()),
+      style: TextStyle(
+        fontSize: AppTokens.fontSizeLabel,
+        color: Colors.white.withValues(alpha: 0.85),
+        height: 1.2,
+      ),
     );
   }
 }

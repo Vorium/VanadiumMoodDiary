@@ -191,6 +191,16 @@ class AppTokens {
   static const Duration durNormal = Duration(milliseconds: 300);
   static const Duration durSlow = Duration(milliseconds: 500);
 
+  // v0.21 Round 25 (P2 polish): snackbar 时长统一
+  // 之前 10+ 处 SnackBar duration: const Duration(seconds: 2|3|4) 硬编码
+  // 频度: occasional (偶尔 1 次) → 标准时长
+  // - short (2s): 普通 info / 成功提示
+  // - medium (3s): 多行 info
+  // - long (4s): error 错误信息 (用户需要时间读) + Undo 撤销操作 (4s 反应窗口)
+  static const Duration snackBarDurationShort = Duration(seconds: 2);
+  static const Duration snackBarDurationMedium = Duration(seconds: 3);
+  static const Duration snackBarDurationLong = Duration(seconds: 4);
+
   /// 标准进入/出场缓动 — `easeOutCubic`：开始快、收尾慢
   /// 替代 Flutter 默认 `easeInOut`（emil: 延迟了用户最关注的入场瞬间）
   /// 适用：modal / drawer / 状态切换 / fade in
