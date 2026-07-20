@@ -123,6 +123,10 @@ class _StreakCounterState extends State<_StreakCounter>
   int _lastValue = 0;
   late AnimationController _controller;
   late double _currentAnimated;
+  // v0.22 round 28 (emil-bug-03): 抽 _tickListener 字段复用,避免 didUpdateWidget
+  // 每次 value 变化都新 add 1 个匿名 listener → controller 持有 N 个 listener,
+  // 每次 tick 触发 N 次 setState → 指数级 rebuild 风险
+  late final VoidCallback _tickListener;
 
   @override
   void initState() {
@@ -132,38 +136,33 @@ class _StreakCounterState extends State<_StreakCounter>
       vsync: this, // State 本身实现 TickerProvider (SingleTickerProviderStateMixin)
       duration: AppTokens.durSlow,
     );
-    _controller.addListener(_onTick);
-  }
-
-  void _onTick() {
-    setState(() {
-      // tween 从 _lastValue 到 widget.value, 已用 curve 平滑
-      _currentAnimated = _controller.value;
-    });
+    // 1 个稳定引用,didUpdateWidget 复用
+    _tickListener = () {
+      setState(() {
+        // tween 从 _lastValue 到当前 widget.value (用最新 widget 字段而非闭包捕获)
+        _currentAnimated =
+            _lastValue + (widget.value - _lastValue) * _controller.value;
+      });
+    };
+    _controller.addListener(_tickListener);
   }
 
   @override
   void didUpdateWidget(covariant _StreakCounter old) {
     super.didUpdateWidget(old);
     if (old.value != widget.value) {
-      // 起始用上次 value 而非 0,避免父级 rebuild 时数字"飞回 0"
-      final from = _lastValue.toDouble();
-      final to = widget.value.toDouble();
-      _currentAnimated = from;
+      // 起始用上次动画结束时的值 (_currentAnimated.round),避免父级 rebuild
+      // 时数字"飞回 0" (v0.21 P2-12 修过 0 跳回 bug,本 round 加 listener leak fix)
+      _lastValue = _currentAnimated.round();
       _controller
         ..reset()
-        ..addListener(() {
-          setState(() {
-            _currentAnimated = from + (to - from) * _controller.value;
-          });
-        })
         ..forward();
-      _lastValue = widget.value;
     }
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_tickListener);
     _controller.dispose();
     super.dispose();
   }

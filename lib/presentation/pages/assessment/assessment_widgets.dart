@@ -197,21 +197,28 @@ class QuestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-      child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Q$index. ${item.text}',
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                fontWeight: FontWeight.w500,
+    // v0.22 round 28 (emil-bug-05): Semantics container 让读屏用户知道
+    // 4 个 ChoiceChip 是同题选项,题号+题文+当前选择 1 次性念出
+    final selectedLabel = selected != null ? options[selected!] : '未选';
+    return Semantics(
+      container: true,
+      label:
+          '评估题 $index: ${item.text}, 4 项单选, 当前: $selectedLabel',
+      child: Card(
+        margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
+        child: Padding(
+          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Q$index. ${item.text}',
+                style: const TextStyle(
+                  fontSize: AppTokens.fontSizeBody,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
+              const SizedBox(height: AppTokens.spacingSm),
             Wrap(
               spacing: AppTokens.spacingXs,
               runSpacing: AppTokens.spacingXs,
@@ -227,6 +234,7 @@ class QuestionCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

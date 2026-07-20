@@ -212,39 +212,52 @@ class _DimensionRow extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppTokens.spacingXs),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            for (int s = 1; s <= 5; s++)
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => onChanged(s),
-                  borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          '$s',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight:
-                                s == value ? FontWeight.w700 : FontWeight.w400,
-                            color: s == value
-                                ? Theme.of(context).colorScheme.primary
-                                : AppTokens.textHintColor(context),
-                          ),
+        // v0.22 round 28 (emil-bug-04): 外层 Semantics container + 每按钮 Semantics
+        // 让 TalkBack / VoiceOver 知道 5 按钮是同组 1-5 分单选
+        Semantics(
+          container: true,
+          label: '情绪评分, 1 到 5 分制, 5 分最积极',
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              for (int s = 1; s <= 5; s++)
+                Semantics(
+                  button: true,
+                  inMutuallyExclusiveGroup: true,
+                  selected: s == value,
+                  label: '$s 分${s == value ? ", 已选" : ""}',
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onChanged(s),
+                      borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
-                      ],
+                        child: Column(
+                          children: [
+                            Text(
+                              '$s',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: s == value
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                color: s == value
+                                    ? Theme.of(context).colorScheme.primary
+                                    : AppTokens.textHintColor(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ],
     );

@@ -1,7 +1,10 @@
 // trend_calendar.dart — 趋势页日历视图组件
 //
 // 从 trend_page.dart 拆分，v0.19 (P1-15)
+// v0.22 round 28: 改 ConsumerStatefulWidget watch dayChangeTickProvider (spen-bug-10 跨日不刷)
+// + 6 处静态 AppTokens.{divider,textHint,textSecondary} → dynamic getter (emil-bug-01 dark mode silent bug)
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -10,6 +13,7 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/data_providers.dart';
 
 /// 日历视图
 ///
@@ -18,7 +22,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// - 上月/下月灰显
 /// - 选中日有边框高亮
 /// - 下方显示选中日详情（v0.13 Round 10 展开）
-class CalendarView extends StatefulWidget {
+class CalendarView extends ConsumerStatefulWidget {
   final CalendarMonth calendar;
   final List<CheckInEntity> allCheckIns;
   final List<MoodEntryEntity> moodEntries;
@@ -36,17 +40,19 @@ class CalendarView extends StatefulWidget {
   });
 
   @override
-  State<CalendarView> createState() => _CalendarViewState();
+  ConsumerState<CalendarView> createState() => _CalendarViewState();
 }
 
-class _CalendarViewState extends State<CalendarView> {
+class _CalendarViewState extends ConsumerState<CalendarView> {
   late DateTime _selected;
-  final _today = DateTime.now();
+  // v0.22 round 28: _today 改成 build 内取,跨日时 dayChangeTickProvider 触发 rebuild 自动刷新"今天"高亮
+  // (v0.21 P0-6 修了 streakSummaryProvider 跨日,本 round 补 trend 页同样问题)
 
   @override
   void initState() {
     super.initState();
-    final today = DateTime(_today.year, _today.month, _today.day);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     if (today.year == widget.calendar.month.year &&
         today.month == widget.calendar.month.month) {
       _selected = today;
@@ -68,6 +74,11 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    // v0.22 round 28: watch dayChangeTickProvider 让跨日时本页 rebuild,修复 trend 页
+    // "今天" 格子 / _selected 不刷新 (跟 medication_calendar_page 同款 fix)
+    ref.watch(dayChangeTickProvider);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,7 +147,7 @@ class _CalendarViewState extends State<CalendarView> {
                       ),
                       isToday: _sameDate(
                         widget.calendar.cells[row * 7 + col].date,
-                        DateTime(_today.year, _today.month, _today.day),
+                        today,
                       ),
                       onTap: () {
                         setState(() {
@@ -314,14 +325,14 @@ class _DayDetailCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTokens.divider,
+                      color: AppTokens.dividerColor(context),
                       borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                     ),
-                    child: const Text(
+                    child: Text(
                       '未打卡',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppTokens.textHint,
+                        color: AppTokens.textHintColor(context),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -330,9 +341,9 @@ class _DayDetailCard extends StatelessWidget {
                 if (detail.events.isNotEmpty)
                   Text(
                     '${detail.events.length} 个事件',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textHint,
+                      color: AppTokens.textHintColor(context),
                     ),
                   ),
               ],
@@ -354,9 +365,9 @@ class _DayDetailCard extends StatelessWidget {
                         : '情绪 ${detail.totalMoodEntries} 条 · '
                             '${MoodVisual.emojiFor(detail.worstMoodScore!)}→'
                             '${MoodVisual.emojiFor(detail.bestMoodScore!)}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textSecondary,
+                      color: AppTokens.textSecondaryColor(context),
                     ),
                   ),
                 ],
@@ -377,10 +388,10 @@ class _DayDetailCard extends StatelessWidget {
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
+                    Text(
                       '这一天没有记录',
                       style: TextStyle(
-                        color: AppTokens.textHint,
+                        color: AppTokens.textHintColor(context),
                         fontSize: AppTokens.fontSizeBody,
                       ),
                     ),
@@ -422,9 +433,9 @@ class _EventRow extends StatelessWidget {
             width: 36,
             child: Text(
               timePrefix,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textHint,
+                color: AppTokens.textHintColor(context),
                 fontWeight: FontWeight.w500,
               ),
             ),
