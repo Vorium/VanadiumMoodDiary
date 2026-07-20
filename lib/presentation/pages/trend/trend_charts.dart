@@ -252,7 +252,8 @@ class AssessmentHistoryChart extends StatelessWidget {
           ),
           belowBarData: BarAreaData(
             show: true,
-            color: color.withValues(alpha: 0.12),
+            // v0.22 round 29 (emil-01~12): 改用 tintedPrimarySoft 集中器 (0.1 接近原 0.12)
+            color: AppTokens.tintedPrimarySoft(context),
           ),
         ),
       );
@@ -523,10 +524,8 @@ class MoodHistoryChart extends StatelessWidget {
                       ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: 0.1),
+                        // v0.22 round 29 (emil-01~12): 改用 tintedPrimarySoft 集中器
+                        color: AppTokens.tintedPrimarySoft(context),
                       ),
                     ),
                   ],

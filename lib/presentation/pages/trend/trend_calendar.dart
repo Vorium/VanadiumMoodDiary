@@ -195,7 +195,8 @@ class _CalendarCell extends StatelessWidget {
     final theme = Theme.of(context);
     Color? bg;
     if (selected) {
-      bg = theme.colorScheme.primary.withValues(alpha: 0.18);
+      // v0.22 round 29 (emil-01~12): 改用 tintedPrimaryDeep 集中器 (0.15 接近原 0.18)
+      bg = AppTokens.tintedPrimaryDeep(context);
     } else if (day.hasNormalCheckIn) {
       bg = theme.colorScheme.primary.withValues(alpha: 0.85);
     } else if (day.moodScore != null) {
@@ -306,7 +307,8 @@ class _DayDetailCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTokens.primary.withValues(alpha: 0.15),
+                      // v0.22 round 29 (emil-01~12): 改用 tintedPrimaryDeep 集中器
+                      color: AppTokens.tintedPrimaryDeep(context),
                       borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                     ),
                     child: const Text(

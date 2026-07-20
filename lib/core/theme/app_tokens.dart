@@ -132,6 +132,10 @@ class AppTokens {
   static Color tintedPrimaryDeep(BuildContext context) =>
       Theme.of(context).colorScheme.primary.withValues(alpha: 0.15);
 
+  /// v0.22 round 29 (emil-01~12): 主色最浅背景 (alpha 0.08) — 报告提示 / 选中极浅态
+  static Color tintedPrimaryLight(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.08);
+
   /// 警告浅色背景 (提醒卡片) — warning @ alpha 0.1
   static Color tintedWarningSoft(BuildContext context) =>
       AppTokens.warning.withValues(alpha: 0.1);
@@ -147,6 +151,9 @@ class AppTokens {
   static const double fontSizeBody = 18.0;
   static const double fontSizeLabel = 16.0;
   static const double fontSizeCaption = 14.0;
+  // v0.22 round 29 (emil-16): 微小字 (10 / 8) 集中器, 日历 cell + 小标签统一
+  static const double fontSizeMicro = 10.0;
+  static const double fontSizeXxxSmall = 8.0;
 
   static const double lineHeightTight = 1.2;
   static const double lineHeightNormal = 1.5;
@@ -239,6 +246,16 @@ class AppTokens {
     BoxShadow(
       color: Color(0x1F000000),
       blurRadius: 12,
+      offset: Offset(0, 4),
+    ),
+  ];
+
+  /// v0.22 round 29 (emil-15): 庆祝 / 浮层轻阴影 (比 shadowDialog 更弱)
+  /// 用于 celebration_overlay 等浮在内容上的轻提示, emil rare 频度可加 delight
+  static const List<BoxShadow> shadowOverlay = [
+    BoxShadow(
+      color: Color(0x14000000),
+      blurRadius: 8,
       offset: Offset(0, 4),
     ),
   ];

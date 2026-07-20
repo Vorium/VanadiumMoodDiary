@@ -93,15 +93,8 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
           color: Theme.of(context).colorScheme.primary,
           // v0.21 (P1-10 fix): 改用 token (radiusButton = 24.0)
           borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? AppTokens.shadowCardDark.first.color
-                  : AppTokens.shadowCard.first.color,
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          // v0.22 round 29 (emil-15): 改用 AppTokens.shadowOverlay token
+          boxShadow: AppTokens.shadowOverlay,
         ),
         child: Text(
           widget.message,

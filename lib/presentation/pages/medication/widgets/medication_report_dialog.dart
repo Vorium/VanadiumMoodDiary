@@ -57,7 +57,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppTokens.spacingMd),
-                  color: AppTokens.primary.withValues(alpha: 0.08),
+                  // v0.22 round 29 (emil-01~12): 改用 tintedPrimaryLight 集中器
+                  color: AppTokens.tintedPrimaryLight(context),
                   child: Text(
                     AppLocalizations.of(context).medReportCopyHint,
                     style: TextStyle(
