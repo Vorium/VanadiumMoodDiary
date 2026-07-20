@@ -25,7 +25,15 @@ class SetupStepDone extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: AppTokens.spacingXl),
-          const Center(child: Text('🌱', style: TextStyle(fontSize: 64))),
+          // v0.22 round 29 (emil-22): 用 Icon.check_circle 替代 emoji '🌱' + 64pt 字号 hack
+          // (M3 Image / Icon 风格统一, 自动 dark mode 适配)
+          Center(
+            child: Icon(
+              Icons.check_circle,
+              size: 64,
+              color: AppTokens.primary,
+            ),
+          ),
           const SizedBox(height: AppTokens.spacingLg),
           Center(
             child: Text(

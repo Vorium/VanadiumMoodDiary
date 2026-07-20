@@ -218,11 +218,28 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
             Text(crisis.message),
             const SizedBox(height: 16),
             for (final h in crisis.hotlines) ...[
-              Text(
-                '📞 ${h.label}\n   ${h.number}',
-                style: const TextStyle(fontWeight: FontWeight.w500),
+              // v0.22 round 29 (emil-21): 拆 '📞 ${h.label}\n   ${h.number}' emoji hack
+              // → Row(Icon(phone), Text(h.label)) + 单独 Text(h.number)
+              // (a11y 屏幕阅读器能识别 Icon 跟 Text 是不同元素, 不用解释空格 hack)
+              Row(
+                children: [
+                  const Icon(Icons.phone, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      h.label,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.only(left: 26, top: 2, bottom: 8),
+                child: Text(
+                  h.number,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
             ],
           ],
         ),
