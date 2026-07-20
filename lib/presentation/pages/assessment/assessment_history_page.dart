@@ -17,6 +17,7 @@ import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -42,9 +43,12 @@ class AssessmentHistoryPage extends ConsumerWidget {
           return _buildBody(context, ref, records);
         },
         loading: () => const LoadingSkeleton.fullScreen(),
-        error: (e, _) => Center(
-            child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
+        // v0.22 round 29 (emil-44): 改用 ErrorState 集中器, 加 retry 入口
+        error: (e, _) => ErrorState(
+          title: AppLocalizations.of(context).commonLoadFailed(''),
+          detail: e.toString(),
+          onRetry: () => ref.invalidate(assessmentsProvider),
+        ),
       ),
     );
   }

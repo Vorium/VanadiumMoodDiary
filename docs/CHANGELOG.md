@@ -261,6 +261,30 @@
 - 703/703 pass
 - `flutter analyze` 0 issues
 
+## [0.22.1] - 2026-07-20
+
+### Fixed (round 29 — 三视角审视 P2 架构 + 底层)
+- **SENDGRID_SETUP.md 6 处文档错误**（spzh-bug-25）：L72 test path 错（`email_service_test.dart` → `email_service_round9_test.dart`）/ L83 import path 错（`data/services` → `core/data/services`）/ L88-91 `EmailService` 构造签名错（apiKey 可选 + useMock 默认 true）/ L94 phone 注释保持 / L98 `medication: null` 类型改 `MedicationEntity?` / L100 `cycleHours` 改 int 48 不是 Duration；头部加 v0.22 状态说明（当前 `EmailService` mock-only，真实发送 v1.0+）
+- **删 `_softReminderId` + `cancelSoftReminder` 死代码**（spen-bug-04）：v0.18 P2-P0-5 删 `scheduleSoftReminder` 后留下的 no-op 整条链。删 `notification_service.dart:30` const + L255-260 方法 + `home_page.dart:298` 调用 + `swallow_error.dart:13` 文档示例 + `safety_watch_service_round12_test.dart:333` mock override
+- **删 `app.dart` 空 if 块**（spen-bug-05）：L69-71 `if (now.isBefore(nowCutoff))` 块内只有注释，编译为 no-op；注释与逻辑矛盾
+
+### Added (round 29 P2)
+- **ErrorState 集中器**（emil-44）：跟 `EmptyState` 对仗。`lib/presentation/widgets/error_state.dart` 新文件，5+ 字段（icon / title / detail / onRetry / retryLabel），用 M3 `colorScheme.error` 自动适配 dark mode。替换 3 处 `Center(child: Text('加载失败: xxx'))` 一行字错误态：assessment_history / vent_list / vent_detail，每处加 `onRetry: () => ref.invalidate(provider)` 入口
+
+### Fixed (round 29 P2 一致性)
+- **SegmentedButton `showSelectedIcon` 一致性**（emil-49）：`medication_calendar_page.dart:78` 默认 true（Flutter 默认），跟 `trend_page.dart:252` `showSelectedIcon: false` 不一致。改 medication_calendar 加 `showSelectedIcon: false`，避免 list/calendar 切换时 check 图标跳动
+- **Checkbox M3 deprecation**（emil-50）：`setup_widgets.dart:65` 用 `activeColor: AppTokens.primary` 是 Flutter 3.32+ deprecated API。改用 `side: BorderSide(...)` + `fillColor: WidgetStateProperty.resolveWith(...)`（M3 标准）
+
+### Skipped (round 29)
+- **emil-43 `LoadingSkeleton.card` 工厂 0 处使用**：工厂本身合法（设计就支持），但精神心理患者全屏 loading 比卡片 loading 更明确"页面在加载"。不强求改用
+- **emil-01~12 tinted token 全量替换**（2h）：`.withValues(alpha:)` 12+ 处 散落，token 体系已加 `tintedPrimarySoft/Deep` 等但部分 widget 仍用 `withValues`，按"调 alpha 集中改"目标逐个替换收益递减，留给后续 round
+- **emil-15~16 fontSize token 缺口**（1h）：缺 `fontSizeMicro(10) / fontSizeXxxSmall(8) / 大字(22/32/64)` 6 文件 50+ 处用 `fontSize: 8/10/11/12/22/32/64` 硬编码，加 token 后批量替换
+- **WHITEPAPER.md 重写**（sub-agent 4-6h 进行中）：§5/§6/§13/§14.3 同步 v0.22，本 round 单独 commit
+
+### Tests
+- 703/703 pass
+- `flutter analyze` 0 issues
+
 ## [0.16.0] - 2026-07-17
 
 ### Changed

@@ -64,11 +64,7 @@ bool crossedMidnightSince(DateTime lastCheck, DateTime now) {
     5,
   );
   final nowCutoff = DateTime(now.year, now.month, now.day, 0, 0, 5);
-  // 如果 now 还在今天的 00:00:00-00:00:04 之间,nowCutoff 是**昨天**的 00:00:05
-  // (因为 DateTime(2026,7,20,0,0,5) 当 now=2026-07-20 00:00:02 时是对的)
-  if (now.isBefore(nowCutoff)) {
-    // now 在 00:00:00-00:00:04: nowCutoff 已经是当天的 00:00:05, 没问题
-  }
+  // v0.22 round 29 (spen-bug-05): 删空 if 块 (注释与逻辑矛盾, 编译为 no-op)
   return nowCutoff.isAfter(lastCutoff);
 }
 

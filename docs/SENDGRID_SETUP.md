@@ -2,6 +2,11 @@
 
 > 慢病管家用 SendGrid 发"停药通知"邮件。本文档告诉你**15 分钟内**完成配置。
 
+> **⚠️ v0.22 round 29 状态说明**：当前 `EmailService` 是 **mock-only**（v0.16 删 dio 依赖，
+> v0.7 后改 mock 短信），实际不发邮件。本文档描述的是 v1.0+ 接入 SendGrid 的路径，
+> 当前 .env `EMAIL_USE_MOCK=true` 时所有邮件走 mock 日志。要做真实发送需先接入
+> dio + SendGrid SDK（参考 §6 v1.0+ 章节）。**6 处文档错误已修**（path / import / 构造签名 / type）。
+
 ---
 
 ## 1. 注册 SendGrid（5 分钟）
@@ -69,10 +74,10 @@ EMAIL_USE_MOCK=false
 ### 5.1 单元测试（mock 模式）
 
 ```bash
-flutter test test/data/email_service_test.dart
+flutter test test/data/email_service_round9_test.dart
 ```
 
-应该看到 2 个测试通过。
+应该看到 2 个 mock 模式测试通过（v0.22 round 9 后缀命名）。
 
 ### 5.2 真实发送测试（用真实 API Key）
 
@@ -80,14 +85,20 @@ flutter test test/data/email_service_test.dart
 
 ```bash
 cat > /tmp/test_sendgrid.dart <<'EOF'
-import 'package:chroniccare/data/services/email_service.dart';
+import 'package:chroniccare/core/data/services/email_service.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 
 void main() async {
-  // ⚠️ 改成你的真实 API Key 和测试邮箱
-  // 注：v0.16 EmailService 是 mock-only，useMock:false 实际不会发邮件（v1.0+ 接入真实 SMS）
+  // v0.22 round 29 修正:
+  // - import path: data/services → core/data/services (v0.18 改 umbrella)
+  // - 构造: apiKey 可选, useMock 默认 true
+  // - 实际当前 EmailService mock-only, useMock:false 仍走 mock (dio 依赖已删)
+  // - to 仍是 String, phone 替代 email (v0.6 设计) — 注释保持
+  // - medication 类型: MedicationEntity? (v0.16 domain entity 化)
+  // - cycleHours: int 48 不是 Duration (v0.21 P0-7 改)
   final service = EmailService(
     apiKey: 'SG.你的真实key',
-    useMock: false,
+    useMock: true, // v0.22 当前必须 true, 真实发送 v1.0+
   );
 
   final ok = await service.sendMedicationReminder(
@@ -95,11 +106,11 @@ void main() async {
     userName: '测试小明',
     daysWithoutCheckIn: 2,
     lastCheckIn: DateTime.now().subtract(const Duration(days: 2)),
-    medication: null,
-    cycleHours: 48,
+    medication: null, // MedicationEntity? v0.16
+    cycleHours: 48, // int (v0.21 P0-7)
   );
 
-  print(ok ? '✅ 发送成功' : '❌ 发送失败');
+  print(ok ? '✅ 发送成功(mock)' : '❌ 发送失败');
 }
 EOF
 

@@ -91,6 +91,9 @@ class MedicationCalendarPage extends ConsumerWidget {
                         AppLocalizations.of(context).medsCalendarWindow90,),),
               ],
               selected: {days},
+              // v0.22 round 29 (emil-49): 跟 trend_page.dart:252 一致 showSelectedIcon: false
+              // (避免 list/calendar 切换时 check 图标跳动)
+              showSelectedIcon: false,
               onSelectionChanged: (s) =>
                   ref.read(calendarWindowProvider.notifier).setDays(s.first),
             ),

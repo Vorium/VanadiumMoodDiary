@@ -10,7 +10,7 @@ import 'dart:developer' as developer;
 /// 用法:
 /// ```dart
 /// try {
-///   await ref.read(notificationServiceProvider).cancelSoftReminder();
+///   await ref.read(notificationServiceProvider).cancelAllSnoozes();
 /// } catch (e, st) {
 ///   swallowError(
 ///     where: 'home_page._onCheckIn',

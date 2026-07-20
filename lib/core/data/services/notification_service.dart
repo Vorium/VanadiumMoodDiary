@@ -26,8 +26,6 @@ class NotificationService implements NotificationSender {
   static const _defaultReminderId = 1001;
   // medication.time 推送的 id 起始基数（避免冲突）
   static const _medicationReminderBaseId = 2000;
-  // 漏 1 天安慰 push 的 id
-  static const _softReminderId = 3000;
   // 安全警报推送（v0.10 / Round 4）
   static const _safetyAlertId = 5000;
   // 续方提醒推送（v0.12 / Round 6），id 起始基数（6000-6999）
@@ -250,13 +248,6 @@ class NotificationService implements NotificationSender {
       'NotificationService',
       '✅ 重新调度 $scheduled 个 medication 推送',
     );
-  }
-
-  /// 取消软提醒占位 id（v0.18 P2-P0-5: scheduleSoftReminder 整段删除后,
-  /// 此方法仅清占位 id,实际已无对应 schedule,保留以防历史通知残留）
-  Future<void> cancelSoftReminder() async {
-    await init();
-    await _plugin.cancel(_softReminderId);
   }
 
   /// 立即显示一条通知（不调度，立即推）

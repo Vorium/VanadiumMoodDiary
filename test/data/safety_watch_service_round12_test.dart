@@ -329,8 +329,8 @@ class StubNotificationService implements NotificationService {
   @override
   Future<void> rescheduleMedicationReminders(List<dynamic> medications) async {}
   Future<void> scheduleSoftReminder({int hour = 10, int minute = 0}) async {}
-  @override
-  Future<void> cancelSoftReminder() async {}
+  // v0.22 round 29 (spen-bug-04): cancelSoftReminder 死代码删除
+  // (scheduleSoftReminder 也是 dead, 但 mock 留作兼容, 真实代码已删)
   @override
   Future<void> showNow({
     required int id,

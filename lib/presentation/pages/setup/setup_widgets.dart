@@ -62,10 +62,21 @@ class ConsentCheckRow extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // v0.22 round 29 (emil-50): activeColor 已 deprecated (Flutter 3.32+),
+          // 改用 side + fillColor 控制 (M3 标准用法)
           Checkbox(
             value: checked,
             onChanged: (_) => onTap(),
-            activeColor: AppTokens.primary,
+            side: BorderSide(
+              color: AppTokens.borderColor(context),
+              width: 1.5,
+            ),
+            fillColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return AppTokens.primary;
+              }
+              return null;
+            }),
           ),
           Expanded(
             child: Text(

@@ -293,9 +293,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     final newStreak = currentStreak + 1;
     // 显示庆祝 overlay
     _showCelebrationOverlay(context, _celebrationFor(context, newStreak));
-    // 打卡成功：取消 soft 提醒 + snooze
+    // 打卡成功：取消所有 snooze
+    // v0.22 round 29 (spen-bug-04): 删 cancelSoftReminder 死代码 (scheduleSoftReminder
+    // 已在 v0.18 P2-P0-5 删除, cancelSoftReminder 跟着成 no-op)
     try {
-      await ref.read(notificationServiceProvider).cancelSoftReminder();
       await ref.read(notificationServiceProvider).cancelAllSnoozes();
     } catch (e, st) {
       // 通知清理失败 → 主流程已完成，清理失败只意味着今天还可能再响一次
