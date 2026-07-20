@@ -72,8 +72,19 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   ) {
     final summary = TrendCalculator.streakSummary(checkIns: checkIns);
 
-    return SingleChildScrollView(
-      child: Column(
+    // v0.21 Round 23 (P1-27): 下拉刷新 — emil 决策: occasional 频度
+    // (用户偶尔回头看历史) → 标准,RefreshIndicator 即可。
+    // invalidate provider 让 Stream 重新订阅 → 最新数据自动渲染。
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(allCheckInsProvider);
+        ref.invalidate(allMoodProvider);
+        // 给个最小可见时长,不然一闪而过体验差
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: AppTokens.spacingMd),
@@ -90,6 +101,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             _buildCalendarView(context, checkIns, moodEntries),
           const SizedBox(height: AppTokens.spacingXl),
         ],
+      ),
       ),
     );
   }
@@ -179,7 +191,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         ),
       ],
     );
-  }
+}
 
   Widget _buildCalendarView(
     BuildContext context,

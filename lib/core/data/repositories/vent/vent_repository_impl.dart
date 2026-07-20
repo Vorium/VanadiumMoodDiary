@@ -100,4 +100,18 @@ class VentRepositoryImpl implements VentRepository {
     if (row == null) return null;
     return row.toEntity();
   }
+
+  @override
+  Future<int> restore(VentEntryEntity entry) async {
+    // v0.21 Round 23 (P1-26): Dismissible Undo → 重新插入原内容
+    // 注意: audio 文件在 delete 时已删,restore 只恢复 text(音频无法复活)
+    // 用 add + at 注入原时间,新 id 由 drift auto-increment 生成
+    return add(
+      text: entry.contentText,
+      audioPath: null,
+      audioDurationSec: null,
+      audioSizeBytes: null,
+      at: entry.timestamp,
+    );
+  }
 }

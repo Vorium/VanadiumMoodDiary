@@ -42,27 +42,42 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
         children: [
           for (int i = 0; i < contacts.length; i++) ...[
             if (i > 0) const Divider(height: 1),
-            ListTile(
-              leading:
-                  const Icon(Icons.person_outline, color: AppTokens.primary),
-              title: Text(contacts[i].name),
-              subtitle: Text(contacts[i].phone),
-              trailing: _deleting.contains(contacts[i].id)
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Padding(
-                        padding: EdgeInsets.all(4),
-                        child: LoadingSpinner(size: 16),
+            // v0.21 Round 23 (P1-26): swipe-to-dismiss 左滑删除
+            Dismissible(
+              key: ValueKey('contact-${contacts[i].id}'),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                alignment: Alignment.centerRight,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
+                color: AppTokens.error,
+                child: const Icon(Icons.delete_outline, color: Colors.white),
+              ),
+              onDismissed: (_) => _swipeDeleteContact(contacts[i]),
+              child: ListTile(
+                leading: const Icon(
+                  Icons.person_outline,
+                  color: AppTokens.primary,
+                ),
+                title: Text(contacts[i].name),
+                subtitle: Text(contacts[i].phone),
+                trailing: _deleting.contains(contacts[i].id)
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Padding(
+                          padding: EdgeInsets.all(4),
+                          child: LoadingSpinner(size: 16),
+                        ),
+                      )
+                    : IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: AppTokens.error,
+                        ),
+                        onPressed: () => _deleteContact(contacts[i].id),
                       ),
-                    )
-                  : IconButton(
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: AppTokens.error,
-                      ),
-                      onPressed: () => _deleteContact(contacts[i].id),
-                    ),
+              ),
             ),
           ],
           const Divider(height: 1),
@@ -93,6 +108,36 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(id));
+    }
+  }
+
+  /// v0.21 Round 23 (P1-26): swipe-to-dismiss 触发
+  ///
+  /// 跟 IconButton 删除共享底层逻辑,但加 Undo snackbar 给反悔窗口。
+  Future<void> _swipeDeleteContact(ContactEntity contact) async {
+    if (_deleting.contains(contact.id)) return;
+    setState(() => _deleting.add(contact.id));
+    try {
+      await ref.read(contactRepositoryProvider).delete(contact.id);
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      AppSnackBar.undo(
+        context,
+        message: l10n.contactDeleted,
+        onUndo: () async {
+          await ref.read(contactRepositoryProvider).restore(contact);
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonActionDelete,
+              error: e,),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _deleting.remove(contact.id));
     }
   }
 

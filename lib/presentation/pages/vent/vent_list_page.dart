@@ -18,6 +18,8 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
@@ -42,7 +44,14 @@ class VentListPage extends ConsumerWidget {
       child: entriesAsync.when(
         data: (entries) {
           if (entries.isEmpty) return const _VentEmptyState();
-          return _EntryList(entries: entries);
+          // v0.21 Round 23 (P1-27): 下拉刷新
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(ventEntriesProvider);
+              await Future<void>.delayed(const Duration(milliseconds: 400));
+            },
+            child: _EntryList(entries: entries),
+          );
         },
         loading: () => const LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(
@@ -78,8 +87,12 @@ class _EntryList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // v0.21 Round 23 (P1-26): swipe-to-dismiss 左滑删除
+    // emil 决策: tens/day(情绪低谷时多条查看历史) → 微弱 + 实操价值高
+    // (不必进详情 → 点删除 → 确认 → 退出)。P1-14 已接 Haptics.warning。
     return ListView.separated(
       padding: const EdgeInsets.all(AppTokens.spacingSm),
+      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: entries.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppTokens.spacingXs),
       // v0.17 round 14 (P2-6): staggered fade-in for vent entries
@@ -87,10 +100,79 @@ class _EntryList extends ConsumerWidget {
       // 视觉上"列表刚加载"的感觉更明显。
       // delay cap 400ms: 超过 10 条的列表只 stagger 前 10 条,
       // 避免后加载的长条等太久。
-      itemBuilder: (_, i) => FadeIn(
-        delay: Duration(milliseconds: (i * 40).clamp(0, 400)),
-        child: _EntryCard(entry: entries[i]),
+      itemBuilder: (_, i) {
+        final entry = entries[i];
+        return FadeIn(
+          delay: Duration(milliseconds: (i * 40).clamp(0, 400)),
+          child: Dismissible(
+            key: ValueKey('vent-entry-${entry.id}'),
+            direction: DismissDirection.endToStart,
+            background: const _SwipeDeleteBackground(),
+            confirmDismiss: (_) async {
+              // 触感警示 + 二次确认: 情绪低谷误删不可逆
+              await Haptics.warning();
+              if (!context.mounted) return false;
+              final l10n = AppLocalizations.of(context);
+              final ok = await showDialog<bool>(
+                context: context,
+                builder: (dialogCtx) => AlertDialog(
+                  title: Text(l10n.commonConfirmDelete),
+                  content: Text(l10n.commonVentDeleteWarning),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogCtx, false),
+                      child: Text(l10n.commonCancel),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogCtx, true),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppTokens.error,
+                      ),
+                      child: Text(l10n.commonDelete),
+                    ),
+                  ],
+                ),
+              );
+              return ok ?? false;
+            },
+            onDismissed: (_) async {
+              // 二次确认已通过 → 真正删 + Undo snackbar
+              final deleted = entry;
+              await ref.read(ventRepositoryProvider).delete(deleted.id);
+              if (!context.mounted) return;
+              final l10n = AppLocalizations.of(context);
+              AppSnackBar.undo(
+                context,
+                message: l10n.ventEntryDeleted,
+                onUndo: () async {
+                  // Undo: 重新插入(保留原 id + 时间)
+                  await ref
+                      .read(ventRepositoryProvider)
+                      .restore(deleted);
+                },
+              );
+            },
+            child: _EntryCard(entry: entry),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SwipeDeleteBackground extends StatelessWidget {
+  const _SwipeDeleteBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
+      decoration: BoxDecoration(
+        color: AppTokens.error,
+        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
       ),
+      child: const Icon(Icons.delete_outline, color: Colors.white),
     );
   }
 }

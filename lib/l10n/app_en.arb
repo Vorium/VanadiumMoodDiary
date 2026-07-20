@@ -819,6 +819,14 @@
   "snackbarActionCheckin": "Check-in",
   "snackbarActionSnooze": "Snooze",
   "snackbarActionAutoCheckin": "Auto check-in",
+  "snackbarActionUndo": "Undo",
+  "snackbarActionPlay": "Play",
+  "snackbarActionSave": "Save",
+
+  "listSwipeDeleteHint": "Swipe left to delete",
+  "ventEntryDeleted": "Vent entry deleted",
+  "contactDeleted": "Contact deleted",
+  "medicationDeleted": "Medication deleted",
 
   "moodTodayLabel": "Mood: ",
   "moodRecordButton": "Log mood ✏️",

@@ -49,4 +49,30 @@ class AppSnackBar {
       duration: const Duration(seconds: 2),
     );
   }
+
+  /// v0.21 Round 23 (P1-26): 带 Undo 操作的 SnackBar
+  ///
+  /// 用于 Dismissible swipe-to-dismiss 后,让用户反悔。
+  /// 时长 4 秒,长于 info(2s),给用户反应窗口。
+  /// [onUndo] 异步操作(重新插入条目),在 Scaffold 关闭前完成。
+  /// 注意: caller 需保证 [onUndo] 内部捕获异常(不应让 undo 失败再
+  /// 触发另一个 error SnackBar)。
+  static SnackBar undo(
+    BuildContext context, {
+    required String message,
+    required Future<void> Function() onUndo,
+  }) {
+    final l10n = AppLocalizations.of(context);
+    return SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 4),
+      action: SnackBarAction(
+        label: l10n.snackbarActionUndo,
+        onPressed: () {
+          // fire-and-forget: undo 操作内部应自带错误处理
+          onUndo();
+        },
+      ),
+    );
+  }
 }

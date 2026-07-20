@@ -1733,6 +1733,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snackbarActionAutoCheckin => '自动打卡';
 
   @override
+  String get snackbarActionUndo => '撤销';
+
+  @override
+  String get listSwipeDeleteHint => '左滑删除';
+
+  @override
+  String get ventEntryDeleted => '已删除树洞条目';
+
+  @override
+  String get contactDeleted => '已删除联系人';
+
+  @override
+  String get medicationDeleted => '已删除药物';
+
+  @override
   String get moodTodayLabel => '今日情绪：';
 
   @override

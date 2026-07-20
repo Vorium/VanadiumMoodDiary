@@ -43,4 +43,12 @@ abstract class VentRepository {
 
   /// 单条查询（按 id）
   Future<VentEntryEntity?> getById(int id);
+
+  /// 恢复单条（用于 Dismissible 误删 Undo）
+  ///
+  /// 重新插入原 entry（id 会变 — drift auto-increment），
+  /// 保留原 text / audio / 时长 / 大小。
+  /// [originalTimestamp] 保留原 timestamp（用 add 的 at 参数注入）。
+  /// 返回新 id。
+  Future<int> restore(VentEntryEntity entry);
 }

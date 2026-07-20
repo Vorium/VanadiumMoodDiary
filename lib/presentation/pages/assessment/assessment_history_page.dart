@@ -39,7 +39,7 @@ class AssessmentHistoryPage extends ConsumerWidget {
           if (records.isEmpty) {
             return _AssessmentHistoryEmptyState();
           }
-          return _buildBody(context, records);
+          return _buildBody(context, ref, records);
         },
         loading: () => const LoadingSkeleton.fullScreen(),
         error: (e, _) => Center(
@@ -49,7 +49,11 @@ class AssessmentHistoryPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, List<AssessmentRecord> records) {
+  Widget _buildBody(
+    BuildContext context,
+    WidgetRef ref,
+    List<AssessmentRecord> records,
+  ) {
     // 按时间倒序
     records.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
@@ -57,8 +61,15 @@ class AssessmentHistoryPage extends ConsumerWidget {
     final phq9 = records.where((r) => r.scaleId == 'phq9').toList();
     final gad7 = records.where((r) => r.scaleId == 'gad7').toList();
 
-    return ListView(
-      children: [
+    // v0.21 Round 23 (P1-27): 下拉刷新 — emil 决策: occasional 频度
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(assessmentsProvider);
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+      },
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
         const SizedBox(height: AppTokens.spacingMd),
         // 顶部汇总
         _SummaryStrip(records: records),
@@ -76,6 +87,7 @@ class AssessmentHistoryPage extends ConsumerWidget {
         _HistoryList(records: records),
         const SizedBox(height: AppTokens.spacingLg),
       ],
+      ),
     );
   }
 }

@@ -43,4 +43,14 @@ class ContactRepositoryImpl implements ContactRepository {
 
   @override
   Future<int> delete(int id) => _db.deleteContact(id);
+
+  @override
+  Future<int> restore(ContactEntity contact) {
+    // v0.21 Round 23 (P1-26): Dismissible Undo → 重新插入原内容
+    return add(
+      name: contact.name,
+      phone: contact.phone,
+      sortOrder: contact.sortOrder,
+    );
+  }
 }

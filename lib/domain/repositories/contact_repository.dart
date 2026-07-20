@@ -22,4 +22,9 @@ abstract class ContactRepository {
 
   /// 删除（物理删除）
   Future<int> delete(int id);
+
+  /// v0.21 Round 23 (P1-26): 恢复单条(用于 Dismissible 误删 Undo)
+  ///
+  /// 重新插入原 contact (id 会变,sortOrder/name/phone 保留)
+  Future<int> restore(ContactEntity contact);
 }

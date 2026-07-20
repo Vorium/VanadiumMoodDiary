@@ -841,6 +841,14 @@
   "snackbarActionCheckin": "打卡",
   "snackbarActionSnooze": "推迟提醒",
   "snackbarActionAutoCheckin": "自动打卡",
+  "snackbarActionUndo": "撤销",
+  "snackbarActionPlay": "播放",
+  "snackbarActionSave": "保存",
+
+  "listSwipeDeleteHint": "左滑删除",
+  "ventEntryDeleted": "已删除树洞条目",
+  "contactDeleted": "已删除联系人",
+  "medicationDeleted": "已删除药物",
 
   "moodTodayLabel": "今日情绪：",
   "moodRecordButton": "记一下情绪 ✏️",

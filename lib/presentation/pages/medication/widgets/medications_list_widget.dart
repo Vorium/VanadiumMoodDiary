@@ -12,6 +12,7 @@ import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart';
 
 /// 常吃药列表（可编辑、可设置续方、可停药、可删除）
 ///
@@ -89,6 +90,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
                     onDelete: () => _deleteMedication(activeMeds[i].id),
                     onEdit: () => _editMedication(activeMeds[i]),
                     onEditRefill: () => _editRefill(activeMeds[i]),
+                    onSwipeDelete: (m) => _swipeDeleteMedication(m),
                   ),
                 ],
               ],
@@ -122,6 +124,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
                     onDelete: () => _deleteMedication(stoppedMeds[i].id),
                     onEdit: () => _editMedication(stoppedMeds[i]),
                     onEditRefill: () {}, // 停药不调
+                    onSwipeDelete: (m) => _swipeDeleteMedication(m),
                   ),
                 ],
               ],
@@ -173,6 +176,53 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(id));
+    }
+  }
+
+  /// v0.21 Round 23 (P1-26): swipe-to-dismiss 触发
+  ///
+  /// 与 IconButton 删除共享底层逻辑,但跳过 explicit dialog
+  /// (Dismissible 的 swipe gesture 本身已表达删除意图,
+  /// Undo snackbar 给反悔窗口)。
+  Future<void> _swipeDeleteMedication(MedicationEntity med) async {
+    if (_deleting.contains(med.id)) return;
+    setState(() => _deleting.add(med.id));
+    await Haptics.warning();
+    try {
+      final notif = ref.read(notificationServiceProvider);
+      await notif.cancelRefillReminder(med.id);
+      await notif.cancelSnoozeForMedication(med.id);
+      await ref.read(medicationRepositoryProvider).delete(med.id);
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      AppSnackBar.undo(
+        context,
+        message: l10n.medicationDeleted,
+        onUndo: () async {
+          // 简化: 重新插入(保留 name/dosage/unit/times/startDate/refill)
+          // id 会变, 时间戳为 now
+          await ref.read(medicationRepositoryProvider).add(
+                name: med.name,
+                dosage: med.dosage,
+                dosageUnit: med.dosageUnit,
+                times: med.times,
+                refillAt: med.refillAt,
+                refillReminderDays: med.refillReminderDays,
+                startDate: med.startDate,
+                endDate: med.endDate,
+                isActive: med.isActive,
+              );
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          AppSnackBar.error(context,
+              action: AppLocalizations.of(context).commonDelete, error: e,),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _deleting.remove(med.id));
     }
   }
 
@@ -247,6 +297,7 @@ class _MedicationRow extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onEdit;
   final VoidCallback onEditRefill;
+  final Future<void> Function(MedicationEntity) onSwipeDelete;
   const _MedicationRow({
     required this.med,
     required this.isDeleting,
@@ -255,13 +306,27 @@ class _MedicationRow extends StatelessWidget {
     required this.onDelete,
     required this.onEdit,
     required this.onEditRefill,
+    required this.onSwipeDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     final refillText = _refillSubtitle(med, context);
     final isStopped = !med.isActive;
-    return ListTile(
+    // v0.21 Round 23 (P1-26): swipe-to-dismiss 左滑删除
+    return Dismissible(
+      key: ValueKey('medication-${med.id}'),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
+        color: AppTokens.error,
+        child: const Icon(Icons.delete_outline, color: Colors.white),
+      ),
+      // IconButton 路径已走 onDelete (含 confirm);
+      // swipe 路径走 onSwipeDelete (无 dialog, Undo 兜底)
+      onDismissed: (_) => onSwipeDelete(med),
+      child: ListTile(
       leading: Icon(
         isStopped ? Icons.medication_outlined : Icons.medication_outlined,
         color: isStopped ? AppTokens.textHintColor(context) : AppTokens.primary,
@@ -366,6 +431,7 @@ class _MedicationRow extends StatelessWidget {
               onPressed: onDelete,
             ),
         ],
+      ),
       ),
     );
   }

@@ -35,6 +35,9 @@ class _EmptyVentRepo implements VentRepository {
 
   @override
   Future<bool> delete(int id) async => true;
+
+  @override
+  Future<int> restore(VentEntryEntity entry) async => 0;
 }
 
 Widget _wrapButton({

@@ -1810,6 +1810,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snackbarActionAutoCheckin => 'Auto check-in';
 
   @override
+  String get snackbarActionUndo => 'Undo';
+
+  @override
+  String get listSwipeDeleteHint => 'Swipe left to delete';
+
+  @override
+  String get ventEntryDeleted => 'Vent entry deleted';
+
+  @override
+  String get contactDeleted => 'Contact deleted';
+
+  @override
+  String get medicationDeleted => 'Medication deleted';
+
+  @override
   String get moodTodayLabel => 'Mood: ';
 
   @override

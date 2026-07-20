@@ -3189,6 +3189,36 @@ abstract class AppLocalizations {
   /// **'自动打卡'**
   String get snackbarActionAutoCheckin;
 
+  /// No description provided for @snackbarActionUndo.
+  ///
+  /// In zh, this message translates to:
+  /// **'撤销'**
+  String get snackbarActionUndo;
+
+  /// No description provided for @listSwipeDeleteHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'左滑删除'**
+  String get listSwipeDeleteHint;
+
+  /// No description provided for @ventEntryDeleted.
+  ///
+  /// In zh, this message translates to:
+  /// **'已删除树洞条目'**
+  String get ventEntryDeleted;
+
+  /// No description provided for @contactDeleted.
+  ///
+  /// In zh, this message translates to:
+  /// **'已删除联系人'**
+  String get contactDeleted;
+
+  /// No description provided for @medicationDeleted.
+  ///
+  /// In zh, this message translates to:
+  /// **'已删除药物'**
+  String get medicationDeleted;
+
   /// No description provided for @moodTodayLabel.
   ///
   /// In zh, this message translates to:

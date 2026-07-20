@@ -42,6 +42,14 @@ class _FakeVentRepository implements VentRepository {
     _entries.removeWhere((e) => e.id == id);
     return true;
   }
+
+  @override
+  Future<int> restore(VentEntryEntity entry) async {
+    // 测试 fake: 重新插入,id 自增
+    final newId = (_entries.isEmpty ? 0 : _entries.last.id) + 1;
+    _entries.add(entry.copyWith(id: newId));
+    return newId;
+  }
 }
 
 void _setBigView(WidgetTester tester) {
