@@ -314,7 +314,9 @@ class _DayDetailCard extends StatelessWidget {
                     child: const Text(
                       '已打卡',
                       style: TextStyle(
-                        fontSize: 11,
+                        // v0.22 round 29 (emil-16): emil 报告原文用 11, 实际是 10 微小字
+                        // 改用 fontSizeMicro token
+                        fontSize: AppTokens.fontSizeMicro,
                         color: AppTokens.primary,
                         fontWeight: FontWeight.w500,
                       ),

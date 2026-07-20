@@ -269,7 +269,8 @@ class _HeaderRow extends StatelessWidget {
                     child: Text(
                       _dayLabel(i),
                       style: TextStyle(
-                        fontSize: 8,
+                        // v0.22 round 29 (emil-16): 用 fontSizeXxxSmall token
+                        fontSize: AppTokens.fontSizeXxxSmall,
                         color: AppTokens.textHintColor(context),
                       ),
                     ),
@@ -313,7 +314,8 @@ class _DataRow extends StatelessWidget {
               row.med.name,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 10,
+                // v0.22 round 29 (emil-16): 用 fontSizeMicro token
+                fontSize: AppTokens.fontSizeMicro,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -410,7 +412,9 @@ class _Legend extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-                fontSize: 10, color: AppTokens.textSecondaryColor(context),),
+                // v0.22 round 29 (emil-16): 用 fontSizeMicro token
+                fontSize: AppTokens.fontSizeMicro,
+                color: AppTokens.textSecondaryColor(context),),
           ),
         ],
       ),
