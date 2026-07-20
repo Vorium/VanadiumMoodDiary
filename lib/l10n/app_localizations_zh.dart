@@ -56,7 +56,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupIntro => '1 分钟设置好，然后每天 1 次打卡';
 
   @override
-  String get setupName => '你的名字';
+  String get setupName => '你的名字（选填）';
 
   @override
   String get setupNameHint => '小明';
@@ -69,6 +69,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get setupAddContact => '+ 添加另一个联系人';
+
+  @override
+  String get setupContactConsent => '我已告知上述联系人,App 会在我失联时给他们发通知';
 
   @override
   String get setupNext => '下一步 →';
@@ -229,7 +232,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsExportVentWarning =>
-      '说明：树洞(私密倾诉)的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。';
+      '说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。';
 
   @override
   String get settingsCopy => '复制';
@@ -265,24 +268,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsClearAllDataSubtitle =>
-      '删除全部打卡 / 用药 / 评估 / 树洞 / 联系人(无法恢复)';
+      '删除全部打卡 / 用药 / 评估 / 树洞 / 联系人（无法恢复）';
 
   @override
-  String get settingsClearAllDataDialogTitle => '确认清空所有数据?';
+  String get settingsClearAllDataDialogTitle => '确认清空所有数据？';
 
   @override
   String get settingsClearAllDataDialogBody =>
-      '以下数据将被永久删除,无法恢复:\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞(文字+录音)\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。';
+      '以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。';
 
   @override
-  String get settingsClearAllDataConfirm => '我已备份,确认清空';
+  String get settingsClearAllDataConfirm => '我已备份，确认清空';
 
   @override
   String get settingsClearAllDataSuccess => '已清空所有数据';
 
   @override
   String settingsClearAllDataFailed(Object error) {
-    return '清空失败: $error';
+    return '清空失败：$error';
   }
 
   @override
@@ -393,7 +396,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medsListNoActive => '没有在用的药';
 
   @override
-  String get medsListNoActiveHint => '所有药物都已停用,去添加新药物开始新一阶段';
+  String get medsListNoActiveHint => '所有药物都已停用，去添加新药物开始新一阶段。';
 
   @override
   String get medsListAddAction => '添加药物';
@@ -470,7 +473,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationStatusCardEmpty => '当前没有任何待发通知。\n可能是没设提醒，或被系统后台清理了。';
 
   @override
-  String get notificationStatusCardNoTitle => '(无标题)';
+  String get notificationStatusCardNoTitle => '（无标题）';
 
   @override
   String get notificationStatusCardWebTitle => '通知功能仅在 Android / iOS 上可用';
@@ -509,7 +512,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationStatusCardViewButtonSubtitle => '展示当前所有待发的提醒';
 
   @override
-  String get notificationStatusCardOemTitle => '国产手机没收到通知?';
+  String get notificationStatusCardOemTitle => '国产手机没收到通知？';
 
   @override
   String get notificationStatusCardOemSubtitle =>
@@ -582,7 +585,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemGeneralTip =>
-      '通用建议：精确闹钟被某些 ROM 静默拒绝时,首次启动 App 时系统会弹「是否允许」,请选「允许」。';
+      '通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。';
 
   @override
   String get reminderHubDescription => '集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估、失联通知。';
@@ -998,11 +1001,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String errorPageNotFound(String path) {
-    return '页面不存在: $path';
+    return '页面不存在：$path';
   }
 
   @override
-  String get errorPageHint => '这个地址可能已经失效,或者链接有误。';
+  String get errorPageHint => '这个地址可能已经失效，或者链接有误。';
 
   @override
   String get errorPageBackHome => '返回首页';
@@ -1220,7 +1223,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get setupConsentDescription =>
-      '为遵守《个人信息保护法》(PIPL),本 App 处理您的健康医疗等敏感个人信息前，需要您明确、单独同意以下 3 份文件。';
+      '为遵守《个人信息保护法》(PIPL)，本 App 处理您的健康医疗等敏感个人信息前，需要您明确、单独同意以下 3 份文件。';
 
   @override
   String get setupConsentUserAgreement => '我已阅读并同意《用户协议》';
@@ -1236,7 +1239,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get setupConsentWithdrawHint =>
-      '提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后,App 的相关功能将无法使用。';
+      '提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。';
 
   @override
   String get setupWelcomeContactHint => '（至少填 1 个手机号，用于失联时通知）';
@@ -1272,7 +1275,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legalPageWithdrawTitle => '撤回同意';
 
   @override
-  String get legalPageWithdrawDescription => '撤回某项同意后,相关功能立即停用(数据不删除,可重新打开)。';
+  String get legalPageWithdrawDescription => '撤回某项同意后，相关功能立即停用（数据不删除，可重新打开）。';
 
   @override
   String get legalPageWithdrawSafety => '撤回失联通知同意';
@@ -1281,21 +1284,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legalPageWithdrawSafetySubtitle => '不再因漏打卡触发短信/邮件通知给紧急联系人';
 
   @override
-  String get legalPageWithdrawVent => '撤回树洞(敏感倾诉)处理同意';
+  String get legalPageWithdrawVent => '撤回树洞（敏感倾诉）处理同意';
 
   @override
-  String get legalPageWithdrawVentSubtitle => '停止存储新树洞文字/录音(已有数据保留,需手动删除)';
+  String get legalPageWithdrawVentSubtitle => '停止存储新树洞文字/录音（已有数据保留，需手动删除）';
 
   @override
   String get legalPageWithdrawAnalytics => '撤回评估/情绪分析同意';
 
   @override
   String get legalPageWithdrawAnalyticsSubtitle =>
-      '停止将评估/情绪记录纳入趋势分析(数据保留,不再入图表)';
+      '停止将评估/情绪记录纳入趋势分析（数据保留，不再入图表）';
 
   @override
   String legalPageConsentRecorded(Object time) {
-    return '撤回时间: $time';
+    return '撤回时间：$time';
   }
 
   @override
@@ -1330,7 +1333,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String reportHistoryItemPatient(String name) {
-    return '患者: $name';
+    return '患者：$name';
   }
 
   @override
@@ -1357,17 +1360,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String homeCelebrationStreakLong(int days) {
-    return '已记录!$days 天连击 🌲';
+    return '已记录！$days 天连击 🌲';
   }
 
   @override
   String homeCelebrationStreakMaster(int days) {
-    return '已记录!$days 天--你太厉害了 🏔️';
+    return '已记录！$days 天--你太厉害了 🏔️';
   }
 
   @override
   String homeAutofireCelebration(String name) {
-    return '已打卡:$name ✅';
+    return '已打卡：$name ✅';
   }
 
   @override
@@ -1379,20 +1382,20 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeSafetyAlertSuffix => '(请尽快打卡或联系家人)';
+  String get homeSafetyAlertSuffix => '（请尽快打卡或联系家人）';
 
   @override
-  String get homeSnoozeTitle => '⏰ 该打卡了(5min 后)';
+  String get homeSnoozeTitle => '⏰ 该打卡了（5min 后）';
 
   @override
-  String get homeSnoozeBody => '刚才你点了「snooze」,是时候点一下 = 打卡了';
+  String get homeSnoozeBody => '刚才你点了「snooze」，是时候点一下 = 打卡了';
 
   @override
-  String get homeSnoozeConfirmed => '好,5 分钟后会再提醒你 👌';
+  String get homeSnoozeConfirmed => '好，5 分钟后会再提醒你 👌';
 
   @override
   String homeSnoozeFailed(String error) {
-    return 'Snooze 失败:$error';
+    return 'Snooze 失败：$error';
   }
 
   @override
@@ -1664,12 +1667,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String medsCalendarLoadCheckinFailed(String error) {
-    return '加载打卡失败: $error';
+    return '加载打卡失败：$error';
   }
 
   @override
   String medsCalendarLoadMedFailed(String error) {
-    return '加载药物失败: $error';
+    return '加载药物失败：$error';
   }
 
   @override
@@ -1679,7 +1682,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medsCalendarNoSchedule => '在用药物未设置服用时间，无法生成依从性日历';
 
   @override
-  String get medsCalendarNoScheduleHint => '在设置页给药物加上服药时间后,这里会显示服药日历';
+  String get medsCalendarNoScheduleHint => '在设置页给药物加上服药时间后，这里会显示服药日历';
 
   @override
   String get medsCalendarNoActiveAction => '添加药物';

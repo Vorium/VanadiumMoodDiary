@@ -219,7 +219,8 @@ class DataExportService {
           if (userName != null) {
             await _db.upsertUserProfile(
               UserProfilesCompanion.insert(
-                userName: userName,
+                // v0.21 Round 23 (P1-24): userName nullable
+                userName: Value(userName),
                 checkInCycleHours: Value(
                   _validateIntOr(p['checkInCycleHours'], 48, min: 1, max: 168),
                 ),

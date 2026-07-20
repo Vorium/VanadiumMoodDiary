@@ -56,7 +56,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupIntro => '1 minute setup, then 1 tap per day';
 
   @override
-  String get setupName => 'Your name';
+  String get setupName => 'Your name (optional)';
 
   @override
   String get setupNameHint => 'Alex';
@@ -69,6 +69,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setupAddContact => '+ Add another contact';
+
+  @override
+  String get setupContactConsent =>
+      'I\'ve told the above contacts that the app will notify them if I\'m unreachable';
 
   @override
   String get setupNext => 'Next →';

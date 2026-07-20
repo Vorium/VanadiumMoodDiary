@@ -95,7 +95,8 @@ class _FakeUserProfileRepository implements UserProfileRepository {
 
   @override
   Future<void> save({
-    required String userName,
+    // v0.21 Round 23 (P1-24): userName 改 nullable
+    String? userName,
     int checkInCycleHours = 48,
   }) async {}
 

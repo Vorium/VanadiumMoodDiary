@@ -15,7 +15,8 @@ class ReportHistories extends Table {
   DateTimeColumn get generatedAt => dateTime()();
 
   /// 当时的用户名（避免日后改名混淆）
-  TextColumn get userName => text()();
+  /// v0.21 Round 23 (P1-24): 改 nullable,允许匿名报告
+  TextColumn get userName => text().nullable()();
 
   /// 报告全文（纯文本）
   TextColumn get reportText => text()();

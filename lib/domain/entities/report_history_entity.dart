@@ -5,7 +5,8 @@ class ReportHistoryEntity {
   final int id;
   final int windowDays;
   final DateTime generatedAt;
-  final String userName;
+  // v0.21 Round 23 (P1-24): userName 改 nullable
+  final String? userName;
   final String reportText;
 
   const ReportHistoryEntity({

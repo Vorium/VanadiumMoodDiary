@@ -42,7 +42,8 @@ void main() {
       ReportHistoriesCompanion.insert(
         windowDays: 14,
         generatedAt: DateTime(2026, 7, 13, 12, 0),
-        userName: '小明',
+        // v0.21 Round 23 (P1-24): userName 改 nullable
+        userName: const Value('小明'),
         reportText: '测试报告内容',
       ),
     );

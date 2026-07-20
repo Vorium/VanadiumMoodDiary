@@ -11,8 +11,12 @@ abstract class UserProfileRepository {
   Future<UserProfileEntity?> get();
 
   /// 创建或更新（setup / 修改用户名 / 改失联周期）
+  ///
+  /// v0.21 Round 23 (P1-24): userName 改 nullable
+  /// 隐私考虑: 一些用户不愿透露真实姓名,可传 null
+  /// UI 端 "我是 XXX" 模板退化: null → "朋友",空字符串 → "朋友"
   Future<void> save({
-    required String userName,
+    String? userName,
     int checkInCycleHours = 48,
   });
 

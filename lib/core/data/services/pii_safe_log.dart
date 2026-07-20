@@ -102,7 +102,10 @@ String maskPhone(String phone) {
 /// 张三丰 → 张**
 /// John → J***
 /// John Smith → J*** S****
-String maskName(String name) {
+///
+/// v0.21 Round 23 (P1-24): userName 改 nullable,这里接受 null
+String maskName(String? name) {
+  if (name == null || name.isEmpty) return '';
   if (name.isEmpty) return '';
   if (RegExp(r'^[\u4e00-\u9fff]').hasMatch(name)) {
     if (name.length == 1) return name;

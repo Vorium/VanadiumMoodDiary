@@ -263,11 +263,15 @@ class SafetyWatchService {
   /// 构造发给联系人的短信内容
   ///
   /// 短信有长度限制（中文 70 字 / 条），精简到一屏
+  ///
+  /// v0.21 Round 23 (P1-24): userName 改 nullable
+  /// 未填姓名时退化为 "您的家人",保持短信语法自然
   String _buildAlertSms({
-    required String userName,
+    String? userName,
     required int daysSinceLast,
   }) {
-    return '[慢病管家] $userName 已 $daysSinceLast 天未打卡吃药。'
+    final name = (userName == null || userName.isEmpty) ? '您的家人' : userName;
+    return '[慢病管家] $name 已 $daysSinceLast 天未打卡吃药。'
         '如确认安全请回复 1，无回复请联系本人或社区。';
   }
 

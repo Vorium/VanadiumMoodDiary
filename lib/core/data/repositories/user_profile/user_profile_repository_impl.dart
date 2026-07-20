@@ -27,13 +27,15 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Future<void> save({
-    required String userName,
+    // v0.21 Round 23 (P1-24): userName 改 nullable
+    // 调用方可传 null (用户跳过填姓名)
+    String? userName,
     int checkInCycleHours = 48,
   }) async {
     final existing = await _db.getUserProfile();
     await _db.upsertUserProfile(
       UserProfilesCompanion.insert(
-        userName: userName,
+        userName: Value(userName),
         checkInCycleHours: Value(checkInCycleHours),
         firstLaunchAt: existing?.firstLaunchAt ?? DateTime.now(),
       ),
@@ -46,7 +48,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     if (existing != null) {
       await _db.upsertUserProfile(
         UserProfilesCompanion.insert(
-          userName: existing.userName,
+          // v0.21 Round 23 (P1-24): userName nullable,保留原值
+          userName: Value(existing.userName),
           checkInCycleHours: Value(existing.checkInCycleHours),
           firstLaunchAt: existing.firstLaunchAt,
           lastCheckInAt: Value(time),
@@ -66,7 +69,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     if (existing == null) return;
     await _db.upsertUserProfile(
       UserProfilesCompanion.insert(
-        userName: existing.userName,
+        // v0.21 Round 23 (P1-24): userName nullable,保留原值
+        userName: Value(existing.userName),
         checkInCycleHours: Value(existing.checkInCycleHours),
         firstLaunchAt: existing.firstLaunchAt,
         lastCheckInAt: Value(existing.lastCheckInAt),
@@ -85,7 +89,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     if (existing == null) return;
     await _db.upsertUserProfile(
       UserProfilesCompanion.insert(
-        userName: existing.userName,
+        // v0.21 Round 23 (P1-24): userName nullable,保留原值
+        userName: Value(existing.userName),
         checkInCycleHours: Value(existing.checkInCycleHours),
         firstLaunchAt: existing.firstLaunchAt,
         lastCheckInAt: Value(existing.lastCheckInAt),
@@ -103,7 +108,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     if (existing == null) return;
     await _db.upsertUserProfile(
       UserProfilesCompanion.insert(
-        userName: existing.userName,
+        // v0.21 Round 23 (P1-24): userName nullable,保留原值
+        userName: Value(existing.userName),
         checkInCycleHours: Value(existing.checkInCycleHours),
         firstLaunchAt: existing.firstLaunchAt,
         lastCheckInAt: Value(existing.lastCheckInAt),

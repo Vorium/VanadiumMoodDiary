@@ -86,7 +86,7 @@ void main() {
     expect(find.text('测试通知'), findsOneWidget);
     expect(find.text('查看已排队通知'), findsOneWidget);
     // OEM 引导折叠
-    expect(find.text('国产手机没收到通知?'), findsOneWidget);
+    expect(find.text('国产手机没收到通知？'), findsOneWidget);
   });
 
   testWidgets('pendingCount == 0 时提示"提醒可能没设上"', (tester) async {

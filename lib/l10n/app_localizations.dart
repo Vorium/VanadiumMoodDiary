@@ -179,7 +179,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupName.
   ///
   /// In zh, this message translates to:
-  /// **'你的名字'**
+  /// **'你的名字（选填）'**
   String get setupName;
 
   /// No description provided for @setupNameHint.
@@ -205,6 +205,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'+ 添加另一个联系人'**
   String get setupAddContact;
+
+  /// No description provided for @setupContactConsent.
+  ///
+  /// In zh, this message translates to:
+  /// **'我已告知上述联系人,App 会在我失联时给他们发通知'**
+  String get setupContactConsent;
 
   /// No description provided for @setupNext.
   ///
@@ -521,7 +527,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExportVentWarning.
   ///
   /// In zh, this message translates to:
-  /// **'说明：树洞(私密倾诉)的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。'**
+  /// **'说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。'**
   String get settingsExportVentWarning;
 
   /// No description provided for @settingsCopy.
@@ -587,25 +593,25 @@ abstract class AppLocalizations {
   /// No description provided for @settingsClearAllDataSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'删除全部打卡 / 用药 / 评估 / 树洞 / 联系人(无法恢复)'**
+  /// **'删除全部打卡 / 用药 / 评估 / 树洞 / 联系人（无法恢复）'**
   String get settingsClearAllDataSubtitle;
 
   /// No description provided for @settingsClearAllDataDialogTitle.
   ///
   /// In zh, this message translates to:
-  /// **'确认清空所有数据?'**
+  /// **'确认清空所有数据？'**
   String get settingsClearAllDataDialogTitle;
 
   /// No description provided for @settingsClearAllDataDialogBody.
   ///
   /// In zh, this message translates to:
-  /// **'以下数据将被永久删除,无法恢复:\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞(文字+录音)\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。'**
+  /// **'以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。'**
   String get settingsClearAllDataDialogBody;
 
   /// No description provided for @settingsClearAllDataConfirm.
   ///
   /// In zh, this message translates to:
-  /// **'我已备份,确认清空'**
+  /// **'我已备份，确认清空'**
   String get settingsClearAllDataConfirm;
 
   /// No description provided for @settingsClearAllDataSuccess.
@@ -617,7 +623,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsClearAllDataFailed.
   ///
   /// In zh, this message translates to:
-  /// **'清空失败: {error}'**
+  /// **'清空失败：{error}'**
   String settingsClearAllDataFailed(Object error);
 
   /// No description provided for @commonSave.
@@ -710,7 +716,7 @@ abstract class AppLocalizations {
   /// **'还没有'**
   String get commonEmpty;
 
-  /// Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action (保存/删除/导出/...)
+  /// Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)
   ///
   /// In zh, this message translates to:
   /// **'{action}失败：{error}'**
@@ -821,7 +827,7 @@ abstract class AppLocalizations {
   /// No description provided for @medsListNoActiveHint.
   ///
   /// In zh, this message translates to:
-  /// **'所有药物都已停用,去添加新药物开始新一阶段'**
+  /// **'所有药物都已停用，去添加新药物开始新一阶段。'**
   String get medsListNoActiveHint;
 
   /// No description provided for @medsListAddAction.
@@ -959,7 +965,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardNoTitle.
   ///
   /// In zh, this message translates to:
-  /// **'(无标题)'**
+  /// **'（无标题）'**
   String get notificationStatusCardNoTitle;
 
   /// No description provided for @notificationStatusCardWebTitle.
@@ -1031,7 +1037,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemTitle.
   ///
   /// In zh, this message translates to:
-  /// **'国产手机没收到通知?'**
+  /// **'国产手机没收到通知？'**
   String get notificationStatusCardOemTitle;
 
   /// No description provided for @notificationStatusCardOemSubtitle.
@@ -1157,7 +1163,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemGeneralTip.
   ///
   /// In zh, this message translates to:
-  /// **'通用建议：精确闹钟被某些 ROM 静默拒绝时,首次启动 App 时系统会弹「是否允许」,请选「允许」。'**
+  /// **'通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。'**
   String get notificationStatusCardOemGeneralTip;
 
   /// No description provided for @reminderHubDescription.
@@ -1866,13 +1872,13 @@ abstract class AppLocalizations {
   /// No description provided for @errorPageNotFound.
   ///
   /// In zh, this message translates to:
-  /// **'页面不存在: {path}'**
+  /// **'页面不存在：{path}'**
   String errorPageNotFound(String path);
 
   /// No description provided for @errorPageHint.
   ///
   /// In zh, this message translates to:
-  /// **'这个地址可能已经失效,或者链接有误。'**
+  /// **'这个地址可能已经失效，或者链接有误。'**
   String get errorPageHint;
 
   /// No description provided for @errorPageBackHome.
@@ -2256,7 +2262,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupConsentDescription.
   ///
   /// In zh, this message translates to:
-  /// **'为遵守《个人信息保护法》(PIPL),本 App 处理您的健康医疗等敏感个人信息前，需要您明确、单独同意以下 3 份文件。'**
+  /// **'为遵守《个人信息保护法》(PIPL)，本 App 处理您的健康医疗等敏感个人信息前，需要您明确、单独同意以下 3 份文件。'**
   String get setupConsentDescription;
 
   /// No description provided for @setupConsentUserAgreement.
@@ -2286,7 +2292,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupConsentWithdrawHint.
   ///
   /// In zh, this message translates to:
-  /// **'提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后,App 的相关功能将无法使用。'**
+  /// **'提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。'**
   String get setupConsentWithdrawHint;
 
   /// No description provided for @setupWelcomeContactHint.
@@ -2358,7 +2364,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPageWithdrawDescription.
   ///
   /// In zh, this message translates to:
-  /// **'撤回某项同意后,相关功能立即停用(数据不删除,可重新打开)。'**
+  /// **'撤回某项同意后，相关功能立即停用（数据不删除，可重新打开）。'**
   String get legalPageWithdrawDescription;
 
   /// No description provided for @legalPageWithdrawSafety.
@@ -2376,13 +2382,13 @@ abstract class AppLocalizations {
   /// No description provided for @legalPageWithdrawVent.
   ///
   /// In zh, this message translates to:
-  /// **'撤回树洞(敏感倾诉)处理同意'**
+  /// **'撤回树洞（敏感倾诉）处理同意'**
   String get legalPageWithdrawVent;
 
   /// No description provided for @legalPageWithdrawVentSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'停止存储新树洞文字/录音(已有数据保留,需手动删除)'**
+  /// **'停止存储新树洞文字/录音（已有数据保留，需手动删除）'**
   String get legalPageWithdrawVentSubtitle;
 
   /// No description provided for @legalPageWithdrawAnalytics.
@@ -2394,13 +2400,13 @@ abstract class AppLocalizations {
   /// No description provided for @legalPageWithdrawAnalyticsSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'停止将评估/情绪记录纳入趋势分析(数据保留,不再入图表)'**
+  /// **'停止将评估/情绪记录纳入趋势分析（数据保留，不再入图表）'**
   String get legalPageWithdrawAnalyticsSubtitle;
 
   /// No description provided for @legalPageConsentRecorded.
   ///
   /// In zh, this message translates to:
-  /// **'撤回时间: {time}'**
+  /// **'撤回时间：{time}'**
   String legalPageConsentRecorded(Object time);
 
   /// No description provided for @legalPageConsentNever.
@@ -2460,7 +2466,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportHistoryItemPatient.
   ///
   /// In zh, this message translates to:
-  /// **'患者: {name}'**
+  /// **'患者：{name}'**
   String reportHistoryItemPatient(String name);
 
   /// No description provided for @reportHistoryItemNotSet.
@@ -2502,19 +2508,19 @@ abstract class AppLocalizations {
   /// No description provided for @homeCelebrationStreakLong.
   ///
   /// In zh, this message translates to:
-  /// **'已记录!{days} 天连击 🌲'**
+  /// **'已记录！{days} 天连击 🌲'**
   String homeCelebrationStreakLong(int days);
 
   /// No description provided for @homeCelebrationStreakMaster.
   ///
   /// In zh, this message translates to:
-  /// **'已记录!{days} 天--你太厉害了 🏔️'**
+  /// **'已记录！{days} 天--你太厉害了 🏔️'**
   String homeCelebrationStreakMaster(int days);
 
   /// No description provided for @homeAutofireCelebration.
   ///
   /// In zh, this message translates to:
-  /// **'已打卡:{name} ✅'**
+  /// **'已打卡：{name} ✅'**
   String homeAutofireCelebration(String name);
 
   /// No description provided for @homeAutofireFallbackName.
@@ -2532,31 +2538,31 @@ abstract class AppLocalizations {
   /// No description provided for @homeSafetyAlertSuffix.
   ///
   /// In zh, this message translates to:
-  /// **'(请尽快打卡或联系家人)'**
+  /// **'（请尽快打卡或联系家人）'**
   String get homeSafetyAlertSuffix;
 
   /// No description provided for @homeSnoozeTitle.
   ///
   /// In zh, this message translates to:
-  /// **'⏰ 该打卡了(5min 后)'**
+  /// **'⏰ 该打卡了（5min 后）'**
   String get homeSnoozeTitle;
 
   /// No description provided for @homeSnoozeBody.
   ///
   /// In zh, this message translates to:
-  /// **'刚才你点了「snooze」,是时候点一下 = 打卡了'**
+  /// **'刚才你点了「snooze」，是时候点一下 = 打卡了'**
   String get homeSnoozeBody;
 
   /// No description provided for @homeSnoozeConfirmed.
   ///
   /// In zh, this message translates to:
-  /// **'好,5 分钟后会再提醒你 👌'**
+  /// **'好，5 分钟后会再提醒你 👌'**
   String get homeSnoozeConfirmed;
 
   /// No description provided for @homeSnoozeFailed.
   ///
   /// In zh, this message translates to:
-  /// **'Snooze 失败:{error}'**
+  /// **'Snooze 失败：{error}'**
   String homeSnoozeFailed(String error);
 
   /// No description provided for @homeSnoozeButton.
@@ -3060,13 +3066,13 @@ abstract class AppLocalizations {
   /// No description provided for @medsCalendarLoadCheckinFailed.
   ///
   /// In zh, this message translates to:
-  /// **'加载打卡失败: {error}'**
+  /// **'加载打卡失败：{error}'**
   String medsCalendarLoadCheckinFailed(String error);
 
   /// No description provided for @medsCalendarLoadMedFailed.
   ///
   /// In zh, this message translates to:
-  /// **'加载药物失败: {error}'**
+  /// **'加载药物失败：{error}'**
   String medsCalendarLoadMedFailed(String error);
 
   /// No description provided for @medsCalendarNoActive.
@@ -3084,7 +3090,7 @@ abstract class AppLocalizations {
   /// No description provided for @medsCalendarNoScheduleHint.
   ///
   /// In zh, this message translates to:
-  /// **'在设置页给药物加上服药时间后,这里会显示服药日历'**
+  /// **'在设置页给药物加上服药时间后，这里会显示服药日历'**
   String get medsCalendarNoScheduleHint;
 
   /// No description provided for @medsCalendarNoActiveAction.

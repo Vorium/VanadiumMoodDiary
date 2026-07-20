@@ -17,10 +17,13 @@ abstract class ReportHistoryRepository {
   Future<int> clearAll();
 
   /// 插入一条
+  ///
+  /// v0.21 Round 23 (P1-24): userName 改 nullable
+  /// 报告里 "我是 XXX" 模板在 entity.render 内部处理
   Future<int> insert({
     required int windowDays,
     required DateTime generatedAt,
-    required String userName,
+    String? userName,
     required String reportText,
   });
 }

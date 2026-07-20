@@ -67,7 +67,8 @@ void main() {
       // 准备：profile + contact + 启用 + 阈值 2 天
       await db.upsertUserProfile(
         UserProfilesCompanion.insert(
-          userName: '张三',
+          // v0.21 Round 23 (P1-24): userName 改 nullable
+          userName: const Value('张三'),
           checkInCycleHours: const Value(48),
           firstLaunchAt: DateTime(2026, 1, 1),
         ),
@@ -153,7 +154,8 @@ class MockSms implements SmsProvider {
 class StubNotificationService implements NotificationService {
   @override
   Future<void> showSafetyAlert({
-    required String userName,
+    // v0.21 Round 23 (P1-24): userName 改 nullable
+    String? userName,
     required int daysWithoutCheckIn,
     DateTime? lastCheckIn,
   }) async {}

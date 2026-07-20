@@ -49,7 +49,8 @@ void main() {
   Future<void> setupProfile({required String name}) async {
     await db.upsertUserProfile(
       UserProfilesCompanion.insert(
-        userName: name,
+        // v0.21 Round 23 (P1-24): userName 改 nullable
+        userName: Value(name),
         checkInCycleHours: const Value(48),
         firstLaunchAt: DateTime(2026, 1, 1),
       ),
@@ -299,12 +300,13 @@ class MockSms implements SmsProvider {
 }
 
 class StubNotificationService implements NotificationService {
-  final List<({String userName, int daysWithoutCheckIn, DateTime? lastCheckIn})>
+  final List<({String? userName, int daysWithoutCheckIn, DateTime? lastCheckIn})>
       alertsShown = [];
 
   @override
   Future<void> showSafetyAlert({
-    required String userName,
+    // v0.21 Round 23 (P1-24): userName 改 nullable
+    String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
   }) async {

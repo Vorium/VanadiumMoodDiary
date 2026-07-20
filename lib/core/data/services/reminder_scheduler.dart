@@ -171,17 +171,21 @@ class ReminderService implements ReminderChecker {
   }
 
   /// 构造短信正文
+  ///
+  /// v0.21 Round 23 (P1-24): userName 改 nullable
+  /// 未填姓名时退化为 "您的家人",保持短信语法自然
   String _buildSmsBody({
-    required String userName,
+    String? userName,
     required int daysSince,
     required int hoursSince,
     required MedicationEntity? medication,
   }) {
+    final name = (userName == null || userName.isEmpty) ? '您的家人' : userName;
     final buffer = StringBuffer();
     if (daysSince >= 2) {
-      buffer.writeln('【慢病管家】$userName 已 $daysSince 天没打卡。');
+      buffer.writeln('【慢病管家】$name 已 $daysSince 天没打卡。');
     } else {
-      buffer.writeln('【慢病管家】$userName 已 $hoursSince 小时没打卡。');
+      buffer.writeln('【慢病管家】$name 已 $hoursSince 小时没打卡。');
     }
     buffer.writeln('请你方便的时候提醒 TA 按时吃药。');
     if (medication != null) {

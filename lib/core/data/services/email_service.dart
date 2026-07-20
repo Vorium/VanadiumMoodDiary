@@ -24,9 +24,11 @@ class EmailService {
   /// 发送失联通知（mock 阶段只打日志）
   ///
   /// [to] 现在是手机号（v0.6 之前是 email）
+  /// v0.21 Round 23 (P1-24): userName 改 nullable
+  /// 未填姓名时退化为 "您的家人",保持邮件/短信语法自然
   Future<bool> sendMedicationReminder({
     required String to,
-    required String userName,
+    String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
     required MedicationEntity? medication,

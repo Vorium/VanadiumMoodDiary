@@ -7,6 +7,7 @@ import 'package:chroniccare/domain/entities/report_history_entity.dart';
 import 'package:chroniccare/domain/repositories/report_history_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/report_history_mapper.dart';
+import 'package:drift/drift.dart' show Value;
 
 class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
   final AppDatabase _db;
@@ -35,14 +36,15 @@ class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
   Future<int> insert({
     required int windowDays,
     required DateTime generatedAt,
-    required String userName,
+    // v0.21 Round 23 (P1-24): userName 改 nullable
+    String? userName,
     required String reportText,
   }) {
     return _db.insertReportHistory(
       ReportHistoriesCompanion.insert(
         windowDays: windowDays,
         generatedAt: generatedAt,
-        userName: userName,
+        userName: Value(userName),
         reportText: reportText,
       ),
     );

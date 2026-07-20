@@ -50,8 +50,18 @@ class AppDatabase extends _$AppDatabase {
   // - vent_entries 加 contentTextEnc (BLOB, AES-256 加密) 列
   // - 一次性把旧 contentText (TEXT, 明文) 全部加密写回新列
   // - 旧 contentText 列保留(代码层不再用),后续 v10+ 彻底 DROP
+  // v0.21 round 22 (P1-22 修复): schemaVersion 9 → 10
+  // - user_profiles 加 4 个 consent 字段
+  // v0.21 round 23 (P1-24 修复): schemaVersion 10 → 11
+  // - user_profiles.userName 改 nullable
+  // - report_histories.userName 改 nullable
+  // - 老数据 "" 仍写回 "" (空字符串),但允许 null
+  // - 实际: drift 的 alter table 不支持改列属性,SQLite 也没有 ALTER COLUMN
+  //   所以这条变更**只在 createAll 里生效** (新装用户自动是新 schema)
+  //   升级用户 schema 没改,代码层判断 if (userName?.isNotEmpty ?? false)
+  //   兼容老数据 "" 和新数据 null
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -145,6 +155,13 @@ class AppDatabase extends _$AppDatabase {
                 userProfiles, userProfiles.sensitiveDataConsentAt,);
             await m.addColumn(userProfiles, userProfiles.consentRevokedAt);
           }
+          // v10 → v11: userName 改 nullable (P1-24 修复)
+          // - user_profiles.userName + report_histories.userName
+          // - 老数据 "" 仍写回 "" (空字符串),但允许 null
+          // - 实际: drift 的 alter table 不支持改列属性,SQLite 也没有 ALTER COLUMN
+          //   所以这条变更**只在 createAll 里生效** (新装用户自动是新 schema)
+          //   升级用户 schema 没改,代码层判断 if (userName?.isNotEmpty ?? false)
+          //   兼容老数据 "" 和新数据 null
         },
         beforeOpen: (details) async {
           // 启用外键
@@ -430,7 +447,9 @@ class AppDatabase extends _$AppDatabase {
       final existing = await getUserProfile();
       await into(userProfiles).insertOnConflictUpdate(
         UserProfilesCompanion.insert(
-          userName: userName,
+          // v0.21 Round 23 (P1-24): userName 改 nullable
+          // 接受 null,UI "我是" 时退化为 "Friend" 或空
+          userName: Value(userName),
           checkInCycleHours: const Value(48),
           firstLaunchAt: existing?.firstLaunchAt ?? now,
         ),

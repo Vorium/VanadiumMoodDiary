@@ -72,9 +72,23 @@ Future<void> _passConsent(WidgetTester tester) async {
   expect(
     find.text('你好，我是慢病管家'),
     findsOneWidget,
-    reason: 'P0-6: 勾完 3 个法律同意后,应该进入 welcome 步骤',
   );
+
+  // v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
+  // _passConsent 后已在 step 1,直接勾选 consent
+  final consentCheckbox = find.byType(Checkbox);
+  expect(
+    consentCheckbox,
+    findsOneWidget,
+    reason: 'P1-23: setup step 1 (welcome) 应该有 1 个 contact consent Checkbox',
+  );
+  await tester.tap(consentCheckbox);
+  await tester.pumpAndSettle();
 }
+
+// v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
+// 在 setup step 1 末尾,点下一步前必须勾选
+// (实际逻辑已合并到 _passConsent 末尾)
 
 void main() {
   testWidgets(
@@ -98,7 +112,7 @@ void main() {
       );
 
       // 用 labelText 找字段
-      final userNameField = find.widgetWithText(TextField, '你的名字');
+      final userNameField = find.widgetWithText(TextField, '你的名字（选填）');
       final contactNameField = find.widgetWithText(TextField, '联系人 1 姓名');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       expect(userNameField, findsOneWidget);
@@ -142,7 +156,7 @@ void main() {
       await _pumpSetup(tester);
       await _passConsent(tester);
 
-      final userNameField = find.widgetWithText(TextField, '你的名字');
+      final userNameField = find.widgetWithText(TextField, '你的名字（选填）');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       ElevatedButton nextBtn() => tester.widget(nextFinder);
@@ -175,7 +189,7 @@ void main() {
       await _pumpSetup(tester);
       await _passConsent(tester);
 
-      final userNameField = find.widgetWithText(TextField, '你的名字');
+      final userNameField = find.widgetWithText(TextField, '你的名字（选填）');
 
       await tester.enterText(userNameField, '小明');
       await tester.enterText(
@@ -239,7 +253,7 @@ void main() {
       expect(
         allText.any((s) => s.contains('名字')),
         isTrue,
-        reason: '应该显示"请填写你的名字"提示',
+        reason: '应该显示"请输入你的名字（可选）（选填）"提示',
       );
     },
   );

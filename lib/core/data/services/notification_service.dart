@@ -572,12 +572,16 @@ class NotificationService implements NotificationSender {
   ///
   /// 和普通 reminder 不同的 channel：高 importance + 震动 + 锁屏可见
   /// v0.11 (Round 5): payload 携带天数，点通知直达 home + 显示告警
+  /// v0.21 Round 23 (P1-24): userName 改 nullable
+  /// 未填姓名时退化为 "您",避免 "⚠️  已 3 天未打卡" 这种空
   Future<void> showSafetyAlert({
-    required String userName,
+    String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
   }) async {
     await init();
+
+    final name = (userName == null || userName.isEmpty) ? '您' : userName;
 
     // 用单独的 channel id，让系统/用户能区分"安全警报"和"普通提醒"
     const safetyChannelId = 'chroniccare.safety';
@@ -609,7 +613,7 @@ class NotificationService implements NotificationSender {
         NotificationDeepLink.safetyAlert(daysWithoutCheckIn).encode();
     await _plugin.show(
       _safetyAlertId,
-      '⚠️ $userName 已 $daysWithoutCheckIn 天未打卡',
+      '⚠️ $name 已 $daysWithoutCheckIn 天未打卡',
       '上次打卡：$lastStr。已自动通知紧急联系人，请确认安全。',
       details,
       payload: payload,

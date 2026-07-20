@@ -86,11 +86,12 @@ class ReportHistoryListDialog extends ConsumerWidget {
                           ),
                         ),
                         subtitle: Text(
+                          // v0.21 Round 23 (P1-24): userName nullable
                           AppLocalizations.of(context).reportHistoryItemPatient(
-                            h.userName.isEmpty
+                            (h.userName ?? '').isEmpty
                                 ? AppLocalizations.of(context)
                                     .reportHistoryItemNotSet
-                                : h.userName,
+                                : h.userName!,
                           ),
                           style: TextStyle(
                             fontSize: AppTokens.fontSizeCaption,

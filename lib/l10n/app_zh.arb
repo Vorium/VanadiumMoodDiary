@@ -31,11 +31,12 @@
   },
   "setupHello": "你好，我是慢病管家",
   "setupIntro": "1 分钟设置好，然后每天 1 次打卡",
-  "setupName": "你的名字",
+  "setupName": "你的名字（选填）",
   "setupNameHint": "小明",
   "setupContacts": "紧急联系人手机号（至少 1 个）",
   "setupContactHint": "13800138000",
   "setupAddContact": "+ 添加另一个联系人",
+  "setupContactConsent": "我已告知上述联系人,App 会在我失联时给他们发通知",
   "setupNext": "下一步 →",
   "setupMedName": "药名",
   "setupMedNameHint": "请输入药盒上的名称（选填）",
@@ -89,7 +90,7 @@
   "settingsDisclaimerText": "本应用不提供医疗建议，所有功能仅供参考。",
   "settingsExportDialogTitle": "导出数据",
   "settingsExportInstruction": "把下面这串 JSON 保存到安全的地方：",
-  "settingsExportVentWarning": "说明：树洞(私密倾诉)的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。",
+  "settingsExportVentWarning": "说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。",
   "settingsCopy": "复制",
   "settingsActionExport": "导出",
   "settingsActionGenerateReport": "生成报告",
@@ -105,12 +106,12 @@
 
   "@_v0.21_round_22_settings_clear_all_data": {},
   "settingsClearAllData": "清空所有数据",
-  "settingsClearAllDataSubtitle": "删除全部打卡 / 用药 / 评估 / 树洞 / 联系人(无法恢复)",
-  "settingsClearAllDataDialogTitle": "确认清空所有数据?",
-  "settingsClearAllDataDialogBody": "以下数据将被永久删除,无法恢复:\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞(文字+录音)\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
-  "settingsClearAllDataConfirm": "我已备份,确认清空",
+  "settingsClearAllDataSubtitle": "删除全部打卡 / 用药 / 评估 / 树洞 / 联系人（无法恢复）",
+  "settingsClearAllDataDialogTitle": "确认清空所有数据？",
+  "settingsClearAllDataDialogBody": "以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
+  "settingsClearAllDataConfirm": "我已备份，确认清空",
   "settingsClearAllDataSuccess": "已清空所有数据",
-  "settingsClearAllDataFailed": "清空失败: {error}",
+  "settingsClearAllDataFailed": "清空失败：{error}",
 
   "commonSave": "保存",
   "commonCancel": "取消",
@@ -133,7 +134,7 @@
 
   "snackbarErrorTemplate": "{action}失败：{error}",
   "@snackbarErrorTemplate": {
-    "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action (保存/删除/导出/...)",
+    "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)",
     "placeholders": {
       "action": { "type": "String" },
       "error": { "type": "String" }
@@ -164,7 +165,7 @@
   "medsCalendarTitle": "用药日历",
   "medsCalendarSubtitle": "医生视角依从性热力图 · 7/30/90 天",
   "medsListNoActive": "没有在用的药",
-  "medsListNoActiveHint": "所有药物都已停用,去添加新药物开始新一阶段",
+  "medsListNoActiveHint": "所有药物都已停用，去添加新药物开始新一阶段。",
   "medsListAddAction": "添加药物",
   "medsListStoppedSection": "已停药",
   "medsSnackUpdated": "已更新",
@@ -210,7 +211,7 @@
   "notificationStatusCardActionSend": "发送",
   "notificationStatusCardQueuedTitle": "已排队的通知",
   "notificationStatusCardEmpty": "当前没有任何待发通知。\n可能是没设提醒，或被系统后台清理了。",
-  "notificationStatusCardNoTitle": "(无标题)",
+  "notificationStatusCardNoTitle": "（无标题）",
   "notificationStatusCardWebTitle": "通知功能仅在 Android / iOS 上可用",
   "notificationStatusCardWebSubtitle": "当前是 web 端，通知由浏览器控制。请在手机上打开 App 测试。",
   "notificationStatusCardStatusLoading": "加载中…",
@@ -225,7 +226,7 @@
   "notificationStatusCardTestButtonSubtitle": "点一下立即推一条，确认通知能正常弹出",
   "notificationStatusCardViewButtonTitle": "查看已排队通知",
   "notificationStatusCardViewButtonSubtitle": "展示当前所有待发的提醒",
-  "notificationStatusCardOemTitle": "国产手机没收到通知?",
+  "notificationStatusCardOemTitle": "国产手机没收到通知？",
   "notificationStatusCardOemSubtitle": "小米/华为/OPPO/Vivo 默认会杀后台，点这里看怎么设",
   "notificationStatusCardOemBrandXiaomi": "小米 / Redmi",
   "notificationStatusCardOemStepXiaomi1": "设置 → 应用 → 慢病管家 → 自启动 → 开启",
@@ -246,7 +247,7 @@
   "notificationStatusCardOemBrandMeizu": "魅族",
   "notificationStatusCardOemStepMeizu1": "设置 → 应用管理 → 慢病管家 → 权限管理 → 自启动 → 允许",
   "notificationStatusCardOemStepMeizu2": "设置 → 通知管理 → 慢病管家 → 全部开启",
-  "notificationStatusCardOemGeneralTip": "通用建议：精确闹钟被某些 ROM 静默拒绝时,首次启动 App 时系统会弹「是否允许」,请选「允许」。",
+  "notificationStatusCardOemGeneralTip": "通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。",
 
   "reminderHubDescription": "集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估、失联通知。",
   "reminderHubDailyTitle": "每日打卡提醒",
@@ -473,11 +474,11 @@
   "navCheckIn": "打卡",
   "navSettings": "设置",
   "navAppName": "慢病管家",
-  "errorPageNotFound": "页面不存在: {path}",
+  "errorPageNotFound": "页面不存在：{path}",
   "@errorPageNotFound": {
     "placeholders": { "path": { "type": "String" } }
   },
-  "errorPageHint": "这个地址可能已经失效,或者链接有误。",
+  "errorPageHint": "这个地址可能已经失效，或者链接有误。",
   "errorPageBackHome": "返回首页",
 
   "assessmentReminderEnabled": "已开启：每 {days} 天提醒做心理评估",
@@ -592,12 +593,12 @@
   "setupMedTimeOptional": "（不设置时间 = 不调度提醒，仅记录）",
 
   "setupConsentTitle": "使用前请阅读",
-  "setupConsentDescription": "为遵守《个人信息保护法》(PIPL),本 App 处理您的健康医疗等敏感个人信息前，需要您明确、单独同意以下 3 份文件。",
+  "setupConsentDescription": "为遵守《个人信息保护法》(PIPL)，本 App 处理您的健康医疗等敏感个人信息前，需要您明确、单独同意以下 3 份文件。",
   "setupConsentUserAgreement": "我已阅读并同意《用户协议》",
   "setupConsentPrivacyPolicy": "我已阅读并同意《隐私政策》",
   "setupConsentSensitiveData": "我已阅读并同意《敏感个人信息处理同意书》",
   "setupConsentStart": "开始设置",
-  "setupConsentWithdrawHint": "提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后,App 的相关功能将无法使用。",
+  "setupConsentWithdrawHint": "提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。",
 
   "setupWelcomeContactHint": "（至少填 1 个手机号，用于失联时通知）",
 
@@ -614,14 +615,14 @@
   "legalPageTitle": "法律与隐私",
   "legalPageDocuments": "法律文档",
   "legalPageWithdrawTitle": "撤回同意",
-  "legalPageWithdrawDescription": "撤回某项同意后,相关功能立即停用(数据不删除,可重新打开)。",
+  "legalPageWithdrawDescription": "撤回某项同意后，相关功能立即停用（数据不删除，可重新打开）。",
   "legalPageWithdrawSafety": "撤回失联通知同意",
   "legalPageWithdrawSafetySubtitle": "不再因漏打卡触发短信/邮件通知给紧急联系人",
-  "legalPageWithdrawVent": "撤回树洞(敏感倾诉)处理同意",
-  "legalPageWithdrawVentSubtitle": "停止存储新树洞文字/录音(已有数据保留,需手动删除)",
+  "legalPageWithdrawVent": "撤回树洞（敏感倾诉）处理同意",
+  "legalPageWithdrawVentSubtitle": "停止存储新树洞文字/录音（已有数据保留，需手动删除）",
   "legalPageWithdrawAnalytics": "撤回评估/情绪分析同意",
-  "legalPageWithdrawAnalyticsSubtitle": "停止将评估/情绪记录纳入趋势分析(数据保留,不再入图表)",
-  "legalPageConsentRecorded": "撤回时间: {time}",
+  "legalPageWithdrawAnalyticsSubtitle": "停止将评估/情绪记录纳入趋势分析（数据保留，不再入图表）",
+  "legalPageConsentRecorded": "撤回时间：{time}",
   "legalPageConsentNever": "从未撤回",
   "legalPageResetConsent": "重新同意",
 
@@ -639,7 +640,7 @@
       "days": { "type": "int" }
     }
   },
-  "reportHistoryItemPatient": "患者: {name}",
+  "reportHistoryItemPatient": "患者：{name}",
   "@reportHistoryItemPatient": {
     "placeholders": { "name": { "type": "String" } }
   },
@@ -656,15 +657,15 @@
   "@homeCelebrationStreakMedium": {
     "placeholders": { "days": { "type": "int" } }
   },
-  "homeCelebrationStreakLong": "已记录!{days} 天连击 🌲",
+  "homeCelebrationStreakLong": "已记录！{days} 天连击 🌲",
   "@homeCelebrationStreakLong": {
     "placeholders": { "days": { "type": "int" } }
   },
-  "homeCelebrationStreakMaster": "已记录!{days} 天--你太厉害了 🏔️",
+  "homeCelebrationStreakMaster": "已记录！{days} 天--你太厉害了 🏔️",
   "@homeCelebrationStreakMaster": {
     "placeholders": { "days": { "type": "int" } }
   },
-  "homeAutofireCelebration": "已打卡:{name} ✅",
+  "homeAutofireCelebration": "已打卡：{name} ✅",
   "@homeAutofireCelebration": {
     "placeholders": { "name": { "type": "String" } }
   },
@@ -673,11 +674,11 @@
   "@homeMedHint": {
     "placeholders": { "id": { "type": "int" } }
   },
-  "homeSafetyAlertSuffix": "(请尽快打卡或联系家人)",
-  "homeSnoozeTitle": "⏰ 该打卡了(5min 后)",
-  "homeSnoozeBody": "刚才你点了「snooze」,是时候点一下 = 打卡了",
-  "homeSnoozeConfirmed": "好,5 分钟后会再提醒你 👌",
-  "homeSnoozeFailed": "Snooze 失败:{error}",
+  "homeSafetyAlertSuffix": "（请尽快打卡或联系家人）",
+  "homeSnoozeTitle": "⏰ 该打卡了（5min 后）",
+  "homeSnoozeBody": "刚才你点了「snooze」，是时候点一下 = 打卡了",
+  "homeSnoozeConfirmed": "好，5 分钟后会再提醒你 👌",
+  "homeSnoozeFailed": "Snooze 失败：{error}",
   "@homeSnoozeFailed": {
     "placeholders": { "error": { "type": "String" } }
   },
@@ -811,17 +812,17 @@
   "medsCalendarWindow7": "7 天",
   "medsCalendarWindow30": "30 天",
   "medsCalendarWindow90": "90 天",
-  "medsCalendarLoadCheckinFailed": "加载打卡失败: {error}",
+  "medsCalendarLoadCheckinFailed": "加载打卡失败：{error}",
   "@medsCalendarLoadCheckinFailed": {
     "placeholders": { "error": { "type": "String" } }
   },
-  "medsCalendarLoadMedFailed": "加载药物失败: {error}",
+  "medsCalendarLoadMedFailed": "加载药物失败：{error}",
   "@medsCalendarLoadMedFailed": {
     "placeholders": { "error": { "type": "String" } }
   },
   "medsCalendarNoActive": "还没有在用药物",
   "medsCalendarNoSchedule": "在用药物未设置服用时间，无法生成依从性日历",
-  "medsCalendarNoScheduleHint": "在设置页给药物加上服药时间后,这里会显示服药日历",
+  "medsCalendarNoScheduleHint": "在设置页给药物加上服药时间后，这里会显示服药日历",
   "medsCalendarNoActiveAction": "添加药物",
   "medsCalendarNoScheduleAction": "去设置时间",
   "medsCalendarLegendLabel": "依从：",

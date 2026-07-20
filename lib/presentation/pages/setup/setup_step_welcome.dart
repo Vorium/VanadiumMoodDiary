@@ -10,7 +10,11 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 ///
 /// 用户输入姓名 + 紧急联系人手机号。
 /// 状态（TextEditingControllers）由父级管理。
-class SetupStepWelcome extends StatelessWidget {
+///
+/// v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
+/// 法律要求: 给第三方(紧急联系人)发通知前,必须先获得用户声明已告知第三方
+/// (PIPL §23 + 个人信息保护法 + 民法典人格权)
+class SetupStepWelcome extends StatefulWidget {
   final TextEditingController nameController;
   final List<TextEditingController> contactNameControllers;
   final List<TextEditingController> contactPhoneControllers;
@@ -31,8 +35,17 @@ class SetupStepWelcome extends StatelessWidget {
   });
 
   @override
+  State<SetupStepWelcome> createState() => _SetupStepWelcomeState();
+}
+
+class _SetupStepWelcomeState extends State<SetupStepWelcome> {
+  bool _contactConsentConfirmed = false;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // v0.21 Round 23 (P1-23): 未勾选"已告知联系人" → 阻止进入下一步
+    final canContinue = widget.validationError == null && _contactConsentConfirmed;
     return SingleChildScrollView(
       key: const ValueKey(1),
       child: Column(
@@ -57,17 +70,17 @@ class SetupStepWelcome extends StatelessWidget {
           ),
           const SizedBox(height: AppTokens.spacingXl),
           TextField(
-            controller: nameController,
+            controller: widget.nameController,
             decoration: InputDecoration(
               labelText: l10n.setupName,
               hintText: l10n.setupNameHint,
             ),
             textCapitalization: TextCapitalization.words,
           ),
-          if (validationError != null) ...[
+          if (widget.validationError != null) ...[
             const SizedBox(height: AppTokens.spacingXs),
             Text(
-              validationError!,
+              widget.validationError!,
               style: const TextStyle(
                 color: AppTokens.error,
                 fontSize: AppTokens.fontSizeCaption,
@@ -91,29 +104,51 @@ class SetupStepWelcome extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppTokens.spacingMd),
-          for (int i = 0; i < contactPhoneControllers.length; i++) ...[
+          for (int i = 0; i < widget.contactPhoneControllers.length; i++) ...[
             _ContactRow(
               index: i,
-              nameController: contactNameControllers[i],
-              phoneController: contactPhoneControllers[i],
+              nameController: widget.contactNameControllers[i],
+              phoneController: widget.contactPhoneControllers[i],
             ),
             const SizedBox(height: AppTokens.spacingSm),
           ],
           OutlinedButton.icon(
-            onPressed: onAddContact,
+            onPressed: widget.onAddContact,
             icon: const Icon(Icons.add),
             label: Text(l10n.setupAddContact),
           ),
-          const SizedBox(height: AppTokens.spacingXl),
+          const SizedBox(height: AppTokens.spacingMd),
+          // v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
+          // 法律合规: 给第三方(联系人)发通知前,用户必须声明已告知联系人
+          // (PIPL §23 个人信息处理者向第三方提供应取得个人同意)
+          CheckboxListTile(
+            value: _contactConsentConfirmed,
+            onChanged: (v) {
+              setState(() {
+                _contactConsentConfirmed = v ?? false;
+              });
+            },
+            title: Text(
+              l10n.setupContactConsent,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeBody,
+                color: AppTokens.textPrimaryColor(context),
+              ),
+            ),
+            controlAffinity: ListTileControlAffinity.leading,
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+          ),
+          const SizedBox(height: AppTokens.spacingLg),
           Row(
             children: [
               TextButton(
-                onPressed: onBack,
+                onPressed: widget.onBack,
                 child: Text(l10n.setupBack),
               ),
               const Spacer(),
               ElevatedButton(
-                onPressed: validationError != null ? null : onContinue,
+                onPressed: canContinue ? widget.onContinue : null,
                 child: Text(l10n.setupNext),
               ),
             ],

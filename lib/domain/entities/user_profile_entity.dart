@@ -4,7 +4,10 @@
 class UserProfileEntity {
   /// 永远只有 1 行（id=1）
   final int id;
-  final String userName;
+
+  /// v0.21 Round 23 (P1-24): userName 改 nullable
+  /// 不愿提供真实姓名也可,UI "我是 XXX" 时退化为空字符串或"朋友"
+  final String? userName;
 
   /// 失联检测周期（小时），默认 48
   final int checkInCycleHours;
@@ -25,7 +28,8 @@ class UserProfileEntity {
 
   const UserProfileEntity({
     required this.id,
-    required this.userName,
+    // v0.21 Round 23 (P1-24): userName 不再 required — 改 nullable
+    this.userName,
     required this.checkInCycleHours,
     required this.firstLaunchAt,
     this.lastCheckInAt,

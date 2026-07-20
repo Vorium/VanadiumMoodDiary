@@ -6,8 +6,12 @@ import 'package:drift/drift.dart';
 class UserProfiles extends Table {
   IntColumn get id => integer().withDefault(const Constant(1))();
 
-  /// 用户姓名（用于邮件中"我是 XXX"）
-  TextColumn get userName => text()();
+  /// 用户姓名（用于邮件中"我是 XXX"，可空 — 不愿透露真实姓名也可）
+  ///
+  /// v0.21 Round 23 (P1-24 修复): 从 `text()()` 改 `text().nullable()`
+  /// 隐私考虑: 部分用户不愿提供真实姓名, 也不希望 App 默认用 "" 或 "Friend" 占位
+  /// — 留 null, UI 端 "我是" 时退化为空字符串
+  TextColumn get userName => text().nullable()();
 
   /// 失联判定周期（小时），默认 48
   IntColumn get checkInCycleHours =>
