@@ -76,11 +76,9 @@ class _NotificationStatusCardState
         body: l10n.notificationStatusCardTestBody,
       );
       if (!mounted) return;
+      // v0.22 round 29 (emil-42): 走 AppSnackBar.info 集中器
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.notificationStatusCardTestSent),
-          duration: AppTokens.snackBarDurationShort,
-        ),
+        AppSnackBar.info(context, l10n.notificationStatusCardTestSent),
       );
     } catch (e) {
       if (!mounted) return;

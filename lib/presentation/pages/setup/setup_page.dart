@@ -13,6 +13,7 @@ import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_consent.dart';
@@ -104,10 +105,11 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       canPop: _step != 0,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
+        // v0.22 round 29 (emil-38): 走 AppSnackBar.info 集中器
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).setupConsentRequired),
-            duration: AppTokens.snackBarDurationShort,
+          AppSnackBar.info(
+            context,
+            AppLocalizations.of(context).setupConsentRequired,
           ),
         );
       },
@@ -339,11 +341,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     });
 
     if (!mounted) return;
+    // v0.22 round 29 (emil-39): 走 AppSnackBar.info 集中器
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).setupPresetLoaded(
-            result.template.name, result.template.meds.length,),),
-        duration: AppTokens.snackBarDurationMedium,
+      AppSnackBar.info(
+        context,
+        AppLocalizations.of(context).setupPresetLoaded(
+            result.template.name, result.template.meds.length,),
       ),
     );
   }

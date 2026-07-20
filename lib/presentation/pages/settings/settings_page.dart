@@ -551,8 +551,9 @@ class SettingsPage extends ConsumerWidget {
       await db.clearAllUserData();
       await ventAudio.deleteAll();
       if (!context.mounted) return;
+      // v0.22 round 29 (emil-40): 走 AppSnackBar.info 集中器
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.settingsClearAllDataSuccess)),
+        AppSnackBar.info(context, l10n.settingsClearAllDataSuccess),
       );
       navigator.go('/setup');
     } on Exception catch (e) {
@@ -607,10 +608,12 @@ class SettingsPage extends ConsumerWidget {
                       if (!ctx.mounted) return;
                       if (result.success) {
                         Navigator.pop(ctx);
+                        // v0.22 round 29 (emil-41): 走 AppSnackBar.info 集中器
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(AppLocalizations.of(context)
-                                .settingsImportSuccess(result.summary),),
+                          AppSnackBar.info(
+                            context,
+                            AppLocalizations.of(context)
+                                .settingsImportSuccess(result.summary),
                           ),
                         );
                       } else {
