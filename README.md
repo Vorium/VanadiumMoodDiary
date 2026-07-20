@@ -49,7 +49,7 @@ flutter test
 | 路由 | go_router 14.6 |
 | 图表 | fl_chart |
 | 推送 | flutter_local_notifications 17 |
-| 加密 | flutter_secure_storage + encrypt (AES-256) |
+| 加密 | flutter_secure_storage + pointycastle (AES-256, v0.20 迁) |
 | 文件分享 | share_plus |
 | 录音 | record 5.2.0 |
 | 音频播放 | audioplayers 6.1.0 |

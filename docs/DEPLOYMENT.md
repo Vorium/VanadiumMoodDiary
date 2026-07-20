@@ -11,8 +11,8 @@
 # 1. 装 Xcode（App Store 搜 Xcode）
 # 2. 装 Flutter
 brew install fvm
-fvm install 3.44.5
-fvm use 3.44.5
+fvm install 3.41.9
+fvm use 3.41.9
 
 # 3. 装 Android Studio（要 SDK + JDK）
 brew install --cask android-studio
@@ -37,7 +37,9 @@ fvm use 3.41.9
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 flutter test                  # 全部测试应该全过
-flutter run -d chrome         # 跑 Web 版看 UI
+flutter build web             # web 端 drift worker 走 production 模式
+python -m http.server 8358    # 替代 flutter run -d chrome (drift worker 404)
+# 浏览器打开 http://localhost:8358
 ```
 
 ---
@@ -149,13 +151,13 @@ open ios/Runner.xcworkspace
 ✓ 0 注册 0 账号 0 手机号，30 秒开始用
 
 【为什么需要这个 App】
-精神心理疾病患者最大的健康风险不是"突然死了"，而是"突然停药"。
+精神心理疾病患者最大的健康风险不是"突发意外"，而是"突然停药"。
 - 突然停 SSRI 类抗抑郁药 → 撤药反应（头晕、恶心、电击感）
 - 停药 2 周是复发高峰
-- 复发一次，再治愈更难
+- 复发一次，再规律更难
 
-慢病管家用"死了么"模式 + 精神心理专版，把"善后"变成"主动干预"。
-紧急联系人的角色从"发现死亡"变成"提醒吃药"。
+慢病管家用"关怀提醒"模式 + 精神心理专版，把"善后"变成"主动干预"。
+紧急联系人的角色从"发现异常"变成"提醒吃药"。
 
 【隐私第一】
 • 0 注册，开箱即用

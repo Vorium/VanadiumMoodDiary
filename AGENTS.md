@@ -6,7 +6,7 @@
 
 **产品**：精神心理患者吃药打卡 App（参考"死了么"模式做私域加强版）。
 
-**栈**：Flutter 3.44.5 / Dart 3.12.2 / Riverpod 3.3.2 / Drift 2.20.3 (SQLCipher) / go_router 14.6。
+**栈**：Flutter 3.41.9 / Dart 3.12.2 / Riverpod 3.3.2 / Drift 2.20.3 (SQLCipher) / go_router 14.6。
 
 **核心特性**：本地加密、零云端、4 层架构（`presentation → domain ← data`）+ 共享层（`shared/`）。
 
@@ -101,7 +101,7 @@ lib/
 进项目先扫这 5 个：
 
 1. `lib/main.dart` — 启动顺序、SQLCipher 初始化、通知 init
-2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 8，所有表 + migration
+2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 11，所有表 + migration
 3. `lib/domain/logic/care_engine.dart` — 失联检测 / 续方 / 通知触发核心规则
 4. `lib/presentation/providers/core_providers.dart` — 全局 provider 注册表
 5. `lib/routing/app_router.dart` — 所有页面路由 + shell（NavigationRail）
@@ -133,7 +133,7 @@ lib/
 
 ```bash
 flutter analyze    # 必须 0 error
-flutter test       # 必须全过（当前 702 cases）
+flutter test       # 必须全过（当前 703 cases）
 python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 检查)
 ```
 

@@ -232,8 +232,16 @@
 ### Added (round 28 文档补完)
 - **CHANGELOG 补 v0.18/19/20/21 整段**：v0.17 段后缺失的 4 个 minor version 段补全，50+ commit 按 P0/P1/P2 分组 + 测试数变化（491 → 565 → 702 → 702 → 703）
 
+### Fixed (round 28 P1 架构文档)
+- **sensitive_data_consent.md L49 PIPL 告知不实**（spzh-bug-02）：原文"树洞录音 \| 本地(当前未加密,v1.0+ 加密)" — v0.18 P0-2 已 AES-256 加密，告知错误。改为"本地加密存储(AES-256,密钥设备绑定,2026-07 起启用)"
+- **DEPLOYMENT.md 4 处法律风险措辞**（spzh-bug-03）："突然死了"→"突发意外"；"再治愈更难"→"再规律更难"；"死了么"模式→"关怀提醒"模式；"发现死亡"→"发现异常"
+- **commit 规范 2 份自相矛盾**（spzh-bug-04）：`CHINESE_COMMIT_GUIDE.md` 写"项目 commit 历史全部中文"但实际最近 30 commit 80% 英文；`WHITEPAPER.md 14.3` 写"commit message 用纯英文"。修：2 份文档都改为"接受 conventional commit 双轨：英文 prefix + 中文/英文 subject"，并标注 PowerShell `$variable` 解析坑（推荐 `git commit -F file`）
+- **AGENTS.md 同步当前数字**（spzh-bug-07）：Flutter 版本 3.44.5 → 3.41.9（实测 + pubspec 约束 `>=3.41.0`）；schemaVersion 8 → 11（v0.18→v0.21 加 9/10/11 三步迁移）；测试数 702 → 703
+- **DEPLOYMENT.md 同步 Flutter 版本 + web 端**：`fvm install/use 3.44.5` → 3.41.9；`flutter run -d chrome` → `flutter build web + python -m http.server 8358`（drift worker 404 修复，参考 AGENTS.md "dev 服务器坑"）
+- **README.md 同步加密库**：表里"encrypt (AES-256)" → "pointycastle (AES-256, v0.20 迁)"
+
 ### Tests
-- 703/703 pass（P0 修复未引入新测试，下个 round 加 regression）
+- 703/703 pass（P0 + P1 文档修复未引入新测试，下个 round 加 regression）
 - `flutter analyze` 0 issues
 
 ## [0.16.0] - 2026-07-17

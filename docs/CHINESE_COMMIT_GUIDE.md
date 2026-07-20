@@ -14,9 +14,11 @@
 
 - ✅ 开头: `<version> round <N>:`  (例: `v0.17 round 14: P1-3 split core_providers into 3 files`)
 - ✅ 标题: 中文, 动词开头 (split / add / fix / migrate / extract)
-- ❌ 不用英文 (项目 commit 历史全部中文)
+- ✅ 接受 conventional commit 双轨：英文 prefix (fix/refactor/feat/docs/test/chore) + 中文/英文 subject
+- ⚠️ 实际项目历史 (v0.21 round 22-26) 80% 英文 / 20% 中文,本指南偏理想；WHITEPAPER 14.3 偏实用,两边已统一
 - ❌ 不用 emoji (除 `🔒` 等真正能传达的)
 - ❌ 不写具体行号 (cherry-pick 时会过时)
+- ⚠️ PowerShell 解析限制：`git commit -m '...'` 单引号包裹的 message 不会被 `$variable` 解析,但 message 内部避免单独一行 `$varname`(会被 git 当参数)。**推荐**：长 message 用 `git commit -F commit_msg.txt` 文件方式 (参考 v0.22 round 28)
 
 ## Body 规则
 

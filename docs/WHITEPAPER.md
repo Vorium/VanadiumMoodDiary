@@ -467,7 +467,10 @@ lib/
 
 ### 14.3 沟通规范
 
-- **commit message 用纯英文**（PowerShell 路径解析限制，中文标点会被吞）
+- **commit message 接受 conventional commit 双轨**：英文 prefix (fix/refactor/feat/docs/test/chore) + 中文/英文 subject
+  - 历史原因：v0.17 round 14 之前要求纯中文（CHINESE_COMMIT_GUIDE.md），但 v0.21 round 22-26 80% 英文（中文标题在 PowerShell `git commit -m "..."` 会被 `$variable` 解析坑，详见 AGENTS.md "PowerShell Set-Content 破坏 UTF-8 中文"）
+  - 推荐实践：长 message 用 `git commit -F commit_msg.txt` 文件方式，规避 PowerShell 解析
+  - subject 必含 `<version> round <N>:` 头部
 - AGENTS.md 给 AI Agent 看（不是人看，但人是 source of truth）
 - CHANGELOG 跟代码同步更新（每个 commit 前 / 后）
 
@@ -584,7 +587,7 @@ flutter build ios --release
 | `try/finally` 资源释放 | 异常路径也要 release |
 | `int.tryParse` 替代 `int.parse` | GoRouter 路径参数 fallback |
 | `reduce(isAfter)` 替代 `.last` | 不依赖 list 顺序 |
-| commit message 用纯英文 | PowerShell 路径解析限制 |
+| commit message 接受 conventional commit 双轨 | PowerShell `$variable` 解析坑 + 长 message 用 `-F file` |
 | 8 元一次性买断，无订阅 | 用户人群 + 商业模式 |
 | emil 动效频度决策 | 100+/day 无，tens 微，occasional 标准，rare 可 delight |
 | **feature-first 重构（v0.17 round 8）** | 拆 lib/ 按 feature，让每个 feature 自洽 |
