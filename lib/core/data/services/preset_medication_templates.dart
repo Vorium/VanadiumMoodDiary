@@ -68,7 +68,7 @@ const kMedicationTemplates = <MedicationTemplate>[
         times: [HourMinute(hour: 8, minute: 0)],
         // P0-5 fix: 改分类描述，避免《广告法》第 16 条 +
         // 《医疗广告管理办法》风险(原列 4 个真实处方药通用名)。
-        hint: '常见 SSRI / SNRI 类抗抑郁药(具体药名以医生处方为准)',
+        hint: '常见 SSRI / SNRI 类抗抑郁药（具体药名以医生处方为准）',
       ),
     ],
   ),
@@ -89,7 +89,7 @@ const kMedicationTemplates = <MedicationTemplate>[
         // v0.21 Round 22 (P0-3 修复): 改分类描述。
         // 原 hint 列真实处方药通用名（碳酸锂 / 丙戊酸钠 / 拉莫三嗪），
         // 违反《广告法》§15（处方药不得在大众媒体做广告）。
-        hint: '常见情绪稳定剂类(具体药名以医生处方为准)',
+        hint: '常见情绪稳定剂类（具体药名以医生处方为准）',
       ),
     ],
   ),
@@ -113,7 +113,7 @@ const kMedicationTemplates = <MedicationTemplate>[
         // v0.21 Round 22 (P0-3 修复): 阿普唑仑 / 艾司唑仑是国家管制的
         // 二类精神药品（《精神药品品种目录》收录），褪黑素是保健品。
         // 改分类描述，避免《广告法》§15 处方药广告违规。
-        hint: '常见苯二氮卓类/助眠药(具体药名以医生处方为准)',
+        hint: '常见苯二氮卓类/助眠药（具体药名以医生处方为准）',
       ),
     ],
   ),
@@ -133,7 +133,7 @@ const kMedicationTemplates = <MedicationTemplate>[
           HourMinute(hour: 20, minute: 0),
         ],
         // P0-5 fix: 改分类描述，避免广告法风险。
-        hint: '常见非典型抗精神病药(具体药名以医生处方为准)',
+        hint: '常见非典型抗精神病药（具体药名以医生处方为准）',
       ),
       MedicationTemplateHelper.bedtimeAntipsychotic,
     ],
@@ -148,6 +148,6 @@ class MedicationTemplateHelper {
     dosageUnit: '片',
     times: [HourMinute(hour: 21, minute: 30)],
     // P0-5 fix: 改分类描述。
-    hint: '常见镇静/抗焦虑辅助药(具体药名以医生处方为准)',
+    hint: '常见镇静/抗焦虑辅助药（具体药名以医生处方为准）',
   );
 }
