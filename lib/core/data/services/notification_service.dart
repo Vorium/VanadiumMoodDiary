@@ -197,12 +197,14 @@ class NotificationService implements NotificationSender {
     //   v0.16 round 19 fix: 之前 1000 范围太窄，medId >= 100 时 id 超过 3000 漏 cancel
     //   改成 200000 覆盖 medId <= 19999（远超实际用户量，且 int32 安全）
     final pending = await _plugin.pendingNotificationRequests();
-    for (final p in pending) {
-      if (p.id >= _medicationReminderBaseId &&
-          p.id < _medicationReminderBaseId + 200000) {
-        await _plugin.cancel(p.id);
-      }
-    }
+    // v0.22 round 29 (spen-16): Future.wait 并发 cancel, 避免串行 await 平台调用阻塞
+    await Future.wait(
+      pending
+          .where((p) =>
+              p.id >= _medicationReminderBaseId &&
+              p.id < _medicationReminderBaseId + 200000)
+          .map((p) => _plugin.cancel(p.id)),
+    );
 
     const details = NotificationDetails(
       android: AndroidNotificationDetails(
