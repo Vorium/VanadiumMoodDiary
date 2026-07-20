@@ -9,6 +9,12 @@
 // v0.20 (Q4): 从 encrypt 包迁移到 pointycastle 直接使用
 // - encrypt 包自 2022 年停维，pointycastle 是其底层依赖且持续维护
 // - 保持 AES-256-CBC + PKCS7 padding，加密格式完全兼容
+//
+// v0.22 round 28 (spen-01 + spen-bug-09): 合并 v0.7 旧 CryptoService
+// - CryptoService 用 String.codeUnits (UTF-16) 不标准, 无单例, 每次 new
+// - 实际 lib/ 0 业务引用 (v0.17 round 12 code review 已记录 dead code)
+// - 加 encryptString/decryptString 用 utf8 编码 Uint8List → base64 包装
+// - 老 key 不兼容 (key 名称不同), 但无用户数据依赖
 library;
 
 import 'dart:convert';
@@ -114,6 +120,24 @@ class EncryptionService {
       ),
     );
     return cipher.process(ciphertext);
+  }
+
+  /// 加密字符串 → base64 字符串 (v0.22 round 28 合并 CryptoService 后的统一 String API)
+  ///
+  /// v0.7 CryptoService 旧 API 是 String ↔ String (用 codeUnits 不标准),
+  /// 现在统一用 utf8 编码 Uint8List → encrypt → base64(iv+ciphertext)
+  /// 老 key 不兼容 (key 名称不同),但 v0.7 之后没人用 CryptoService (spen-01 验证 0 引用)
+  Future<String> encryptString(String plain) async {
+    final bytes = Uint8List.fromList(utf8.encode(plain));
+    final encrypted = await encrypt(bytes);
+    return base64Encode(encrypted);
+  }
+
+  /// 解密 base64 字符串 → 明文字符串 (跟 [encryptString] 配对)
+  Future<String> decryptString(String base64) async {
+    final blob = base64Decode(base64);
+    final bytes = await decrypt(blob);
+    return utf8.decode(bytes);
   }
 
   /// 测试用: 重置 key (清缓存 + 删 SecureStorage)

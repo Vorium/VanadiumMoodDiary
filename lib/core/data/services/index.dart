@@ -11,7 +11,7 @@ import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/crypto_service.dart';
+import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/reminder_scheduler.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
@@ -23,7 +23,8 @@ class AppServices {
   final MedicationRepository medicationRepo;
   final UserProfileRepository userProfileRepo;
   final NotificationService notificationService;
-  final CryptoService cryptoService;
+  // v0.22 round 28 (spen-01 + spen-bug-09): CryptoService 删除, 统一用 EncryptionService 单例
+  final EncryptionService encryptionService;
   final SmsService smsService;
   late final ReminderService reminderService;
 
@@ -33,7 +34,7 @@ class AppServices {
         medicationRepo = MedicationRepositoryImpl(database),
         userProfileRepo = UserProfileRepositoryImpl(database),
         notificationService = NotificationService(),
-        cryptoService = CryptoService(),
+        encryptionService = EncryptionService(),
         smsService = SmsService() {
     reminderService = ReminderService(
       checkInRepo: checkInRepo,

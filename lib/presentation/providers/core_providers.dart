@@ -7,7 +7,7 @@ import 'package:chroniccare/core/data/repositories/medication/medication_reposit
 import 'package:chroniccare/core/data/repositories/mood/mood_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/crypto_service.dart';
+import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
@@ -63,8 +63,9 @@ final reportHistoryRepositoryProvider = Provider<ReportHistoryRepository>(
 
 /// 基础服务 provider (无 feature 依赖)
 
-/// 加密 / SQLCipher 密钥管理
-final cryptoServiceProvider = Provider<CryptoService>((ref) => CryptoService());
+/// 加密服务 (v0.22 round 28 合并自 CryptoService, 走 EncryptionService 单例 + String API)
+final encryptionServiceProvider =
+    Provider<EncryptionService>((ref) => EncryptionService());
 
 /// 通知服务 (本地 + 自动展示)
 final notificationServiceProvider = Provider<NotificationService>(
