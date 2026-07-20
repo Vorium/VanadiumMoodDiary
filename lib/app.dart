@@ -10,6 +10,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/core/routing/app_router.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/app_theme.dart';
 import 'package:chroniccare/core/theme/theme_provider.dart';
 
@@ -179,6 +180,11 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
+      // v0.21 Round 25 (P3-1): 主题切换淡入动画
+      // Flutter 默认有 200ms 淡入,但部分场景不触发(例如冷启动 dark→light)
+      // 显式声明 durNormal + curveDecelerate 让切换永远平滑
+      themeAnimationDuration: AppTokens.durNormal,
+      themeAnimationCurve: AppTokens.curveDecelerate,
       // v0.17 round 14 (P1-6): 接 flutter_localizations,
       // 让 presentation 文字走 AppLocalizations.of(context) 而不是 Strings.xxx
       localizationsDelegates: AppLocalizations.localizationsDelegates,
