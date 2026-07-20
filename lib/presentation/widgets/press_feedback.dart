@@ -82,7 +82,8 @@ class _PressFeedbackState extends State<PressFeedback> {
     final scaledChild = AnimatedScale(
       scale: scale,
       duration: effectiveDuration,
-      curve: Curves.easeOut,
+      // v0.22 round 29 (emil-13): 走 AppTokens.curveStandard token
+      curve: AppTokens.curveStandard,
       child: widget.child,
     );
 

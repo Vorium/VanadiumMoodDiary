@@ -33,11 +33,10 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
         weight: 30,
       ),
       TweenSequenceItem(
-        // P0-9 fix: easeIn 反 emil 原则("ease-in 延迟用户最关注的入场瞬间")。
-        // 改 easeOutCubic 跟项目 AppTokens.curveStandard 一致，弹跳收尾感觉"快到慢",
-        // 跟前面 0→1.2 的 easeOutBack 衔接顺。
+        // v0.22 round 29 (emil-14): 改用 AppTokens.curveStandard token
+        // (easeOutCubic, 跟项目动效体系一致)
         tween: Tween(begin: 1.2, end: 1.0)
-            .chain(CurveTween(curve: Curves.easeOutCubic)),
+            .chain(CurveTween(curve: AppTokens.curveStandard)),
         weight: 20,
       ),
       TweenSequenceItem(
@@ -50,8 +49,9 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 10),
       TweenSequenceItem(tween: ConstantTween(1.0), weight: 60),
       TweenSequenceItem(
+        // v0.22 round 29 (emil-14): 改用 AppTokens.curveStandard token
         tween: Tween(begin: 1.0, end: 0.0)
-            .chain(CurveTween(curve: Curves.easeOut)),
+            .chain(CurveTween(curve: AppTokens.curveStandard)),
         weight: 25,
       ),
     ]).animate(_controller);
