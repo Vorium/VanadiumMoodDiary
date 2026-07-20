@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart' show MissingPluginException;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -29,10 +30,22 @@ class DatabaseMigration {
   /// 检查是否需要迁移（不实际删除，给 UI 弹确认用）
   ///
   /// 返回 `true` 表示"有旧非加密 DB 等待升级"。
+  ///
+  /// v0.22 round 28 (spen-bug-01): web 端 `dart:io` 抛 `UnsupportedError`,
+  /// 之前 main.dart:76 无 try/catch → web 端启动直接崩。修：内部吞
+  /// UnsupportedError 返回 false (web 端无文件系统, 永远不需要迁移)。
   static Future<bool> needsMigration() async {
     if (await DbKeyService.hasKey()) return false;
-    final dbFolder = await getApplicationDocumentsDirectory();
-    return File(p.join(dbFolder.path, _dbFileName)).existsSync();
+    try {
+      final dbFolder = await getApplicationDocumentsDirectory();
+      return File(p.join(dbFolder.path, _dbFileName)).existsSync();
+    } on MissingPluginException {
+      // 测试环境 path_provider plugin 不可用
+      return false;
+    } on UnsupportedError {
+      // web 端 dart:io 不可用 (MissingPluginException 已 catch, 这兜底其他)
+      return false;
+    }
   }
 
   /// 检测 + 迁移

@@ -15,7 +15,9 @@ import 'package:chroniccare/presentation/pages/mood/mood_quick_button.dart';
 /// 树洞 (vent) 独立表，绝对不进任何分析、纯私密空间。
 ///
 /// v0.21 Round 22 (P0-9): 树洞入口外包 PressFeedback 提供 scale 反馈。
-/// MoodQuickButton 内部已自己处理 scale,不再外包。
+/// v0.22 round 28 (emil-28): MoodQuickButton 也外包 PressFeedback (之前注释
+/// 撒谎说"内部已处理"实际 SecondaryButton 无 scale)。现在 2 个按钮都外包,
+/// 主页次要操作行 :active 反馈一致。
 class SecondaryActionRow extends StatelessWidget {
   final VoidCallback onMoodTap;
 

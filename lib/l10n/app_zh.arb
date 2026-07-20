@@ -36,7 +36,7 @@
   "setupContacts": "紧急联系人手机号（至少 1 个）",
   "setupContactHint": "13800138000",
   "setupAddContact": "+ 添加另一个联系人",
-  "setupContactConsent": "我已告知上述联系人,App 会在我失联时给他们发通知",
+  "setupContactConsent": "我已告知上述联系人，App 会在我失联时给他们发通知",
   "setupNext": "下一步 →",
   "setupMedName": "药名",
   "setupMedNameHint": "请输入药盒上的名称（选填）",
@@ -119,7 +119,7 @@
   "commonEdit": "编辑",
   "commonDone": "完成",
   "commonConfirm": "确认",
-  "commonLoading": "加载中...",
+  "commonLoading": "加载中……",
   "commonError": "出错了，请重试",
   "commonClose": "关闭",
   "commonRetry": "重试",
@@ -427,7 +427,7 @@
       "reminderDays": { "type": "int" }
     }
   },
-  "assessmentLoadingBack": "正在返回上一页...",
+  "assessmentLoadingBack": "正在返回上一页……",
   "assessmentAnsweredProgress": "已答 {answered} / {total}",
   "@assessmentAnsweredProgress": {
     "placeholders": {
@@ -796,7 +796,7 @@
   "medReportCopyHint": "可全选复制、生成 PDF 或分享给医生",
   "medReportPdfLabel": "PDF",
   "medReportShareLabel": "分享",
-  "medReportPdfLoading": "生成 PDF 中...",
+  "medReportPdfLoading": "生成 PDF 中……",
   "medReportShareSubject": "慢病管家 · 用药报告",
   "medReportGenPdfAction": "生成 PDF",
 

@@ -96,6 +96,17 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         await _player.play(DeviceFileSource(_tempDecryptedPath!));
         if (context.mounted) setState(() => _isPlaying = true);
       } catch (e) {
+        // v0.22 round 28 (spen-bug-02): 失败时清 temp file 避免堆积
+        if (_tempDecryptedPath != null) {
+          try {
+            await ref
+                .read(ventAudioStorageProvider)
+                .deleteTempFile(_tempDecryptedPath!);
+          } catch (_) {
+            // best-effort 清理, 失败不影响用户提示
+          }
+          _tempDecryptedPath = null;
+        }
         if (!mounted) return;
         if (!context.mounted) return;
         final l10n = AppLocalizations.of(context);

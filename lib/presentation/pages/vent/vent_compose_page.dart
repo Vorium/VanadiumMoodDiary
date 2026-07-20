@@ -220,6 +220,18 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         await _player.play(DeviceFileSource(tempPath));
         if (mounted) setState(() => _isPlaying = true);
       } catch (e) {
+        // v0.22 round 28 (spen-bug-02): 失败时清 temp file 避免堆积
+        // (之前 _tempDecryptedPath 已被设, _player.play 抛异常时 temp 泄漏)
+        if (_tempDecryptedPath != null) {
+          try {
+            await ref
+                .read(ventAudioStorageProvider)
+                .deleteTempFile(_tempDecryptedPath!);
+          } catch (_) {
+            // best-effort 清理, 失败不影响用户提示
+          }
+          _tempDecryptedPath = null;
+        }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             AppSnackBar.error(context,

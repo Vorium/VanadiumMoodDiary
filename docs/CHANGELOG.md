@@ -244,6 +244,23 @@
 - 703/703 pass（P0 + P1 文档修复未引入新测试，下个 round 加 regression）
 - `flutter analyze` 0 issues
 
+### Fixed (round 28 P1 架构技术债)
+- **合并 CryptoService → EncryptionService**（spen-01 + spen-bug-09）：v0.7 旧 CryptoService 用 `String.codeUnits`（UTF-16）不标准 + 无单例 + 每次 new 读 SecureStorage 慢 + 无 test 注入。**实际 lib/ 0 业务引用**（v0.17 round 12 code review 已确认 dead code）。修：删 `crypto_service.dart`（86 行）；给 `EncryptionService` 加 `encryptString(String) → Future<String>` + `decryptString(String) → Future<String>`（utf8 → Uint8List → base64 包装）；`cryptoServiceProvider` → `encryptionServiceProvider`；`AppServices.cryptoService` → `encryptionService`
+
+### Fixed (round 28 P1 底层)
+- **web 端 database_migration 启动崩溃**（spen-bug-01）：`DatabaseMigration.needsMigration()` 内部用 `File.existsSync()` 抛 `UnsupportedError`，main.dart 无 try/catch。修：内部加 `on MissingPluginException` + `on UnsupportedError` catch 返回 false（web 端无文件系统永远不需要迁移）
+- **vent `_togglePlay` 失败时 temp file 堆积泄漏**（spen-bug-02）：`vent_compose_page._togglePlay` + `vent_detail_page._togglePlay` 之前 catch 内不删 `_tempDecryptedPath`，连续失败会堆积 temp 文件。修：catch 内 try/finally 调 `deleteTempFile` 清 temp
+- **mood_quick_button 漏 PressFeedback**（emil-28）：emil 决策框架要求 10+/day 频度按钮 :active scale 反馈，但 `SecondaryButton` 无 PressFeedback 包。`secondary_action_row.dart` 注释撒谎说"内部已处理"实际无。修：外包 PressFeedback + 修注释
+- **setup "查看" TextButton + "开始" ElevatedButton 漏 PressFeedback**（emil-30 + emil-31）：`ConsentCheckRow` 的"查看"按钮 + `setup_step_done` 的"开始"按钮都缺 PressFeedback。修：外包 PressFeedback
+- **app_zh.arb 4 处半角标点**（spzh-bug-05）：`setupContactConsent` 半角 `,` → 全角 `，`（**关键法律文案** v0.21 P1-16 漏修）；`commonLoading` / `assessmentLoadingBack` / `medReportPdfLoading` 3 处 `...` → `……`（全角省略号）
+
+### Skipped (round 28)
+- **emil-29 medication_calendar `_DataRow` 漏 PressFeedback**：emil 报告说"整行 ListTile 没有 PressFeedback wrap"，但实际 `_DataRow` 是只读热力图 `Row`（不是 ListTile），无 onTap handler，加 PressFeedback 无视觉效果。emil 报告误解。后续如果加 onTap → 跳详情 再加 PressFeedback
+
+### Tests
+- 703/703 pass
+- `flutter analyze` 0 issues
+
 ## [0.16.0] - 2026-07-17
 
 ### Changed

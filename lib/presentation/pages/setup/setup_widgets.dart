@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 内存态的药物草稿
 class MedDraft {
@@ -78,9 +79,13 @@ class ConsentCheckRow extends StatelessWidget {
               ),
             ),
           ),
-          TextButton(
-            onPressed: onView,
-            child: Text(AppLocalizations.of(context).setupConsentView),
+          // v0.22 round 28 (emil-30): "查看" TextButton 外包 PressFeedback 给 scale 反馈
+          // (10+/day 频度, emil 决策框架要求 :active 反馈)
+          PressFeedback(
+            child: TextButton(
+              onPressed: onView,
+              child: Text(AppLocalizations.of(context).setupConsentView),
+            ),
           ),
           const SizedBox(width: AppTokens.spacingXs),
         ],
