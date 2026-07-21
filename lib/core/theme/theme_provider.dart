@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
+
 /// 主题模式（系统 / 亮 / 暗）
 ///
 /// 持久化用 [FlutterSecureStorage]（复用已有依赖）。
@@ -30,8 +32,10 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
       final i = int.tryParse(raw);
       if (i == null || i < 0 || i >= ThemeMode.values.length) return;
       state = ThemeMode.values[i];
-    } catch (_) {
-      // 读失败保持系统模式
+    } catch (e, st) {
+      // v0.22 round 30 (sp-en P1-3): 走 swallowError, dev 模式能看见
+      // 之前 catch(_) 完全静默, 主题持久化失败时排查无线索
+      swallowError(where: 'theme_provider._load', error: e, stack: st);
     }
   }
 
@@ -40,8 +44,9 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
     if (!useStorage) return;
     try {
       await _storage.write(key: _key, value: mode.index.toString());
-    } catch (_) {
-      // 写失败不影响 UI
+    } catch (e, st) {
+      // v0.22 round 30 (sp-en P1-3): 走 swallowError
+      swallowError(where: 'theme_provider._save', error: e, stack: st);
     }
   }
 }

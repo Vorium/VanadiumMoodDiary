@@ -38,7 +38,10 @@ class AppTokens {
   static const Color primaryLightDark = Color(0xFF1F3A26);
 
   // 状态色（仅 3 个，亮/暗共用，error 在暗色下提亮）
-  static const Color success = primary;
+  // v0.22 round 30 (emil P1-8): success 之前 = primary（等于没用）,
+  // 改成跟 warning/error 平行的 distinct green（dev 阶段提示用）
+  // 实际绿色调一致（嫩绿系列），但语义独立，调用点更清晰
+  static const Color success = Color(0xFF66BB6A);
   static const Color warning = Color(0xFFFFB74D);
   // v0.14 加重度色阶：比 warning 更橙，用于"中度"档（比"轻度"更警示）
   static const Color warningStrong = Color(0xFFFF8A65);
@@ -144,6 +147,22 @@ class AppTokens {
   static Color tintedErrorSoft(BuildContext context) =>
       Theme.of(context).colorScheme.error.withValues(alpha: 0.1);
 
+  /// v0.22 round 30 (sp-zh P2-3): 错误更深浅色背景 — error @ alpha 0.15
+  /// 替代散落 3 处 `error.withValues(alpha: 0.15)` 硬编码
+  static Color tintedErrorDeep(BuildContext context) =>
+      Theme.of(context).colorScheme.error.withValues(alpha: 0.15);
+
+  // v0.22 round 30 (emil P2-6): 前景色 helper 替代 Colors.white/black54
+  // 之前 18 处直接 `Colors.white` (含 .withValues(alpha: 0.85)),
+  // dark mode 下反白失效 (check_in_button:205 是已知 case)。
+  // 用 theme-aware 替代, 自动适配 light/dark
+  static Color fgOnPrimary(BuildContext context) =>
+      Theme.of(context).colorScheme.onPrimary;
+  static Color fgOnError(BuildContext context) =>
+      Theme.of(context).colorScheme.onError;
+  static Color fgOnSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
   // ============= 字体 =============
   static const double fontSizeTitle = 28.0;
   static const double fontSizeHeadline = 24.0;
@@ -158,6 +177,10 @@ class AppTokens {
   static const double lineHeightTight = 1.2;
   static const double lineHeightNormal = 1.5;
   static const double lineHeightLoose = 1.8;
+  // v0.22 round 30 (emil P0-4): 中间档 — legal/邮件/条款正文 (1.4) + 长文/日记 (1.6)
+  // 之前散落 14+ 处 `height: 1.X` 硬编码
+  static const double lineHeightSnug = 1.4;
+  static const double lineHeightRelaxed = 1.6;
 
   // ============= 间距 =============
   static const double spacingXs = 8.0;
@@ -165,6 +188,22 @@ class AppTokens {
   static const double spacingMd = 24.0;
   static const double spacingLg = 40.0;
   static const double spacingXl = 80.0;
+
+  // v0.22 round 30 (emil P1-3): stagger 公式抽 token
+  // 之前 vent_list_page.dart:110 + medication_calendar_page.dart:222 各 1 次
+  // `Duration(milliseconds: i * 40)` 硬编码, 40ms / clamp 0-400 是 magic
+  static const int staggerStepMs = 40;
+  static const int staggerCapMs = 400;
+
+  // v0.22 round 30 (emil P2-7): 微小 padding 集中器
+  // 之前散落 5+ 处 `EdgeInsets.symmetric(horizontal: 8/6/10, vertical: 2/1/6)` magic
+  static const double spacingXxs = 4.0;  // 微小 (cell padding 上下)
+  static const double spacingXxxs = 2.0;  // 极小 (chip 内部)
+  static const double spacingChipGap = 6.0;  // chip 与 text 间距
+
+  // v0.22 round 30 (emil P2-8): 庆祝 overlay delay 1800ms 抽 token
+  // 之前 home_page.dart:422 硬编码 `Future.delayed(Duration(milliseconds: 1800))`
+  static const int celebrationDisplayMs = 1800;
 
   static const double pageMarginH = 16.0;
   static const double pageMarginV = 24.0;
@@ -259,6 +298,124 @@ class AppTokens {
       offset: Offset(0, 4),
     ),
   ];
+
+  // ============= TextStyle token (v0.22 round 30 / emil P0-4) =============
+  //
+  // **架构级修复**: 之前 60+ 处直接 `TextStyle(fontSize, fontWeight, height)`
+  // 散在 trend / assessment / medication / settings 等 8+ page。
+  // 跟动效 token 化水平严重不匹配（动效 85%，文字 40%）。
+  //
+  // 命名规则:
+  //   textStyle{Size}{Weight?} = size + 重量
+  //   末尾加 Strong = w600（默认是 w400）
+  //   末尾加 Inverse = 用 onPrimary 颜色（按钮反白）
+  //
+  // 用法:
+  // ```dart
+  // Text('hello', style: AppTokens.textStyleBody(context))
+  // ```
+  //
+  // 全部 dynamic（接受 BuildContext），color 走 theme-aware getter
+  // → 修复 dark mode 文字色 + 行高不一致 + 减 60+ 处硬编码
+  //
+  // 注意: 不能在 const constructor 里用 (跟 const optimization 互斥, 同 surfaceColor)
+
+  /// 28/w700 页面大标题 (用于主屏 Greeting)
+  static TextStyle textStyleTitle(BuildContext context) => TextStyle(
+        fontSize: fontSizeTitle,
+        fontWeight: FontWeight.w700,
+        height: lineHeightTight,
+        color: textPrimaryColor(context),
+      );
+
+  /// 24/w700 副标题
+  static TextStyle textStyleHeadline(BuildContext context) => TextStyle(
+        fontSize: fontSizeHeadline,
+        fontWeight: FontWeight.w700,
+        height: lineHeightTight,
+        color: textPrimaryColor(context),
+      );
+
+  /// 18/w400 正文
+  static TextStyle textStyleBody(BuildContext context) => TextStyle(
+        fontSize: fontSizeBody,
+        fontWeight: FontWeight.w400,
+        height: lineHeightNormal,
+        color: textPrimaryColor(context),
+      );
+
+  /// 18/w600 正文加粗 (用于 trend summary 数字)
+  static TextStyle textStyleBodyStrong(BuildContext context) => TextStyle(
+        fontSize: fontSizeBody,
+        fontWeight: FontWeight.w600,
+        height: lineHeightNormal,
+        color: textPrimaryColor(context),
+      );
+
+  /// 16/w400 label/正文
+  static TextStyle textStyleLabel(BuildContext context) => TextStyle(
+        fontSize: fontSizeLabel,
+        fontWeight: FontWeight.w400,
+        height: lineHeightNormal,
+        color: textPrimaryColor(context),
+      );
+
+  /// 16/w600 label 加粗 (ListTile title / section header)
+  static TextStyle textStyleLabelStrong(BuildContext context) => TextStyle(
+        fontSize: fontSizeLabel,
+        fontWeight: FontWeight.w600,
+        height: lineHeightNormal,
+        color: textPrimaryColor(context),
+      );
+
+  /// 20/w600 按钮文字
+  static TextStyle textStyleButton(BuildContext context) => TextStyle(
+        fontSize: fontSizeButton,
+        fontWeight: FontWeight.w600,
+        height: lineHeightTight,
+        color: textPrimaryColor(context),
+      );
+
+  /// 20/w600 按钮反白 (onPrimary 底色按钮, 文字用 onPrimary 颜色)
+  static TextStyle textStyleButtonInverse(BuildContext context) => TextStyle(
+        fontSize: fontSizeButton,
+        fontWeight: FontWeight.w600,
+        height: lineHeightTight,
+        color: Theme.of(context).colorScheme.onPrimary,
+      );
+
+  /// 14/w400 caption / 小字 / hint
+  static TextStyle textStyleCaption(BuildContext context) => TextStyle(
+        fontSize: fontSizeCaption,
+        fontWeight: FontWeight.w400,
+        height: lineHeightNormal,
+        color: textSecondaryColor(context),
+      );
+
+  /// 14/w600 caption 加粗 (dialog 标题 / 状态数字)
+  static TextStyle textStyleCaptionStrong(BuildContext context) => TextStyle(
+        fontSize: fontSizeCaption,
+        fontWeight: FontWeight.w600,
+        height: lineHeightNormal,
+        color: textPrimaryColor(context),
+      );
+
+  /// 10/w400 微小字 (日历 cell / 微标签 / 趋势小数字)
+  static TextStyle textStyleMicro(BuildContext context) => TextStyle(
+        fontSize: fontSizeMicro,
+        fontWeight: FontWeight.w400,
+        height: lineHeightNormal,
+        color: textSecondaryColor(context),
+      );
+
+  /// 12/w400 法律/邮件/条款正文 (lineHeightSnug 1.4)
+  /// 替代散落 8+ 处 `TextStyle(fontSize: 12, height: 1.4)`
+  static TextStyle textStyleLegal(BuildContext context) => TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        height: lineHeightSnug,
+        color: textSecondaryColor(context),
+      );
 
   // ============= 响应式断点 =============
   // Material 3 推荐的 window size class 边界
