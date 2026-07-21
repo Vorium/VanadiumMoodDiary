@@ -14,13 +14,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/reminder_cards.dart';
 
 /// 提醒中心
 class RemindersHubPage extends ConsumerStatefulWidget {
@@ -95,7 +95,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           const SizedBox(height: AppTokens.spacingMd),
 
           // 1. 每日打卡提醒
-          _ReminderCard(
+          ReminderCard(
             icon: Icons.check_circle_outline,
             title: AppLocalizations.of(context).reminderHubDailyTitle,
             description: AppLocalizations.of(context).reminderHubDailyDesc,
@@ -109,8 +109,8 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
 
           // 2. 用药提醒
           medsAsync.when(
-            data: (meds) => _MedicationReminderCard(meds: meds),
-            loading: () => _ReminderCard(
+            data: (meds) => MedicationReminderCard(meds: meds),
+            loading: () => ReminderCard(
               icon: Icons.medication_outlined,
               title: AppLocalizations.of(context).reminderHubMedicationTitle,
               description: AppLocalizations.of(context).commonLoading,
@@ -119,7 +119,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
               actionLabel: '',
               onAction: null,
             ),
-            error: (e, _) => _ReminderCard(
+            error: (e, _) => ReminderCard(
               icon: Icons.medication_outlined,
               title: AppLocalizations.of(context).reminderHubMedicationTitle,
               description:
@@ -135,8 +135,8 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
 
           // 3. 续方提醒
           medsAsync.when(
-            data: (meds) => _RefillReminderCard(meds: meds),
-            loading: () => _ReminderCard(
+            data: (meds) => RefillReminderCard(meds: meds),
+            loading: () => ReminderCard(
               icon: Icons.shopping_cart_outlined,
               title: AppLocalizations.of(context).reminderHubRefillTitle,
               description: AppLocalizations.of(context).commonLoading,
@@ -145,7 +145,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
               actionLabel: '',
               onAction: null,
             ),
-            error: (e, _) => _ReminderCard(
+            error: (e, _) => ReminderCard(
               icon: Icons.shopping_cart_outlined,
               title: AppLocalizations.of(context).reminderHubRefillTitle,
               description:
@@ -198,7 +198,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   }
 
   Widget _buildAssessmentCard(BuildContext context) {
-    return _AssessmentReminderCard(
+    return AssessmentReminderCard(
       enabled: _assessmentEnabled,
       days: _assessmentDays,
       onConfigure: () => _showAssessmentSettings(context),
@@ -206,303 +206,12 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   }
 
   Widget _buildSafetyCard(BuildContext context) {
-    return _SafetyReminderCard(
+    return SafetyReminderCard(
       enabled: _safetyEnabled,
       threshold: _safetyThreshold,
       // P0-1 fix: 检测当前 SMS provider,如果是 mock 状态显示 banner
       isMockSms: ref.watch(smsProviderNameProvider) == 'mock',
       onConfigure: () => _showSafetySettings(context),
-    );
-  }
-}
-
-/// 心理评估提醒卡片 (v0.21 Round 22 P1-19 拆分自 _RemindersHubPageState)
-class _AssessmentReminderCard extends StatelessWidget {
-  final bool? enabled;
-  final int? days;
-  final VoidCallback onConfigure;
-  const _AssessmentReminderCard({
-    required this.enabled,
-    required this.days,
-    required this.onConfigure,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final isLoading = enabled == null;
-    final isEnabled = enabled ?? false;
-    final d = days ?? 14;
-    return _ReminderCard(
-      icon: Icons.psychology_outlined,
-      title: l10n.reminderHubAssessmentTitle,
-      description: isLoading
-          ? l10n.commonLoading
-          : isEnabled
-              ? l10n.reminderHubAssessmentDescEnabled(d)
-              : l10n.reminderHubAssessmentDescDisabled,
-      statusText: isLoading
-          ? ''
-          : isEnabled
-              ? l10n.reminderHubAssessmentStatusEnabled(d)
-              : l10n.reminderHubStatusDisabled,
-      statusActive: isEnabled,
-      actionLabel: l10n.reminderHubConfigure,
-      onAction: isLoading ? null : onConfigure,
-    );
-  }
-}
-
-/// 失联通知提醒卡片 (v0.21 Round 22 P1-19 拆分自 _RemindersHubPageState)
-class _SafetyReminderCard extends StatelessWidget {
-  final bool? enabled;
-  final int? threshold;
-  final bool isMockSms;
-  final VoidCallback onConfigure;
-  const _SafetyReminderCard({
-    required this.enabled,
-    required this.threshold,
-    required this.isMockSms,
-    required this.onConfigure,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final isLoading = enabled == null;
-    final isEnabled = enabled ?? false;
-    final t = threshold ?? 2;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (isMockSms)
-          Container(
-            margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-            padding: const EdgeInsets.all(AppTokens.spacingSm),
-            decoration: BoxDecoration(
-              color: AppTokens.tintedErrorSoft(context),
-              borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-              border: Border.all(color: AppTokens.error, width: 1),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.error_outline,
-                    color: AppTokens.error, size: 18,),
-                const SizedBox(width: AppTokens.spacingXs),
-                Expanded(
-                  child: Text(
-                    l10n.reminderHubSmsMockWarning,
-                    style: AppTokens.textStyleLegal(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        _ReminderCard(
-          icon: Icons.shield_outlined,
-          title: l10n.reminderHubSafetyTitle,
-          description: isLoading
-              ? l10n.commonLoading
-              : isEnabled
-                  ? l10n.reminderHubSafetyDescEnabled(t)
-                  : l10n.reminderHubSafetyDescDisabled,
-          statusText: isLoading
-              ? ''
-              : isEnabled
-                  ? l10n.reminderHubSafetyStatusEnabled(t)
-                  : l10n.reminderHubStatusDisabled,
-          statusActive: isEnabled,
-          actionLabel: l10n.reminderHubConfigure,
-          onAction: isLoading ? null : onConfigure,
-        ),
-      ],
-    );
-  }
-}
-
-/// 通用提醒卡片
-class _ReminderCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final String statusText;
-  final bool statusActive;
-  final String actionLabel;
-  final VoidCallback? onAction;
-
-  const _ReminderCard({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.statusText,
-    required this.statusActive,
-    required this.actionLabel,
-    required this.onAction,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: statusActive
-                    ? AppTokens.primaryLightColor(context)
-                    : AppTokens.dividerColor(context),
-                borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-              ),
-              child: Icon(icon, color: AppTokens.primary, size: 22),
-            ),
-            const SizedBox(width: AppTokens.spacingMd),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: AppTokens.fontSizeBody,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      if (statusText.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusActive
-                                ? AppTokens.tintedPrimarySoft(context)
-                                : AppTokens.dividerColor(context),
-                            borderRadius:
-                                BorderRadius.circular(AppTokens.radiusChip),
-                          ),
-                          child: Text(
-                            statusText,
-                            style: TextStyle(
-                              fontSize: AppTokens.fontSizeCaption,
-                              color: statusActive
-                                  ? AppTokens.primary
-                                  : AppTokens.textHintColor(context),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  if (onAction != null && actionLabel.isNotEmpty) ...[
-                    const SizedBox(height: AppTokens.spacingSm),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton.icon(
-                        onPressed: onAction,
-                        icon: const Icon(Icons.tune, size: 18),
-                        label: Text(actionLabel),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 用药提醒卡片
-class _MedicationReminderCard extends StatelessWidget {
-  final List<MedicationEntity> meds;
-  const _MedicationReminderCard({required this.meds});
-
-  @override
-  Widget build(BuildContext context) {
-    final activeMeds = meds.where((m) => m.isInUse).toList();
-    final totalTimes =
-        activeMeds.fold<int>(0, (sum, m) => sum + m.times.length);
-    final active = activeMeds.isNotEmpty;
-
-    return _ReminderCard(
-      icon: Icons.medication_outlined,
-      title: AppLocalizations.of(context).reminderHubMedicationTitle,
-      description: active
-          ? AppLocalizations.of(context)
-              .reminderHubMedicationDescActive(activeMeds.length, totalTimes)
-          : AppLocalizations.of(context).reminderHubMedicationDescInactive,
-      statusText: active
-          ? AppLocalizations.of(context)
-              .reminderHubMedicationStatusActive(activeMeds.length, totalTimes)
-          : AppLocalizations.of(context).reminderHubStatusNotConfigured,
-      statusActive: active,
-      actionLabel: AppLocalizations.of(context).reminderHubManageMedication,
-      onAction: () => context.push('/settings'),
-    );
-  }
-}
-
-/// 续方提醒卡片
-class _RefillReminderCard extends StatelessWidget {
-  final List<MedicationEntity> meds;
-  const _RefillReminderCard({required this.meds});
-
-  @override
-  Widget build(BuildContext context) {
-    final withRefill = meds.where((m) => m.hasRefill && m.isInUse).toList();
-    final overdue = withRefill.where((m) => m.isRefillOverdue()).toList();
-    final inWindow = withRefill
-        .where((m) => m.isInRefillWindow() && !m.isRefillOverdue())
-        .toList();
-    final active = withRefill.isNotEmpty;
-
-    String description;
-    if (!active) {
-      description = AppLocalizations.of(context).reminderHubRefillDescNone;
-    } else if (overdue.isNotEmpty) {
-      description = AppLocalizations.of(context)
-          .reminderHubRefillDescOverdue(overdue.length, inWindow.length);
-    } else {
-      description = AppLocalizations.of(context)
-          .reminderHubRefillDescActive(withRefill.length);
-    }
-
-    return _ReminderCard(
-      icon: Icons.shopping_cart_outlined,
-      title: AppLocalizations.of(context).reminderHubRefillTitle,
-      description: description,
-      statusText: active
-          ? overdue.isNotEmpty
-              ? AppLocalizations.of(context)
-                  .reminderHubRefillStatusOverdue(overdue.length)
-              : inWindow.isNotEmpty
-                  ? AppLocalizations.of(context)
-                      .reminderHubRefillStatusInWindow(inWindow.length)
-                  : AppLocalizations.of(context)
-                      .reminderHubRefillStatusActive(withRefill.length)
-          : AppLocalizations.of(context).reminderHubStatusNotConfigured,
-      statusActive: active,
-      actionLabel: AppLocalizations.of(context).reminderHubManageRefill,
-      onAction: () => context.push('/settings/refills'),
     );
   }
 }
