@@ -1079,7 +1079,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'小米/华为/OPPO/Vivo 默认会杀后台，点这里看怎么设'**
+  /// **'小米/华为/OPPO/Vivo/三星 默认会杀后台，点这里看怎么设'**
   String get notificationStatusCardOemSubtitle;
 
   /// No description provided for @notificationStatusCardOemBrandXiaomi.
@@ -1195,6 +1195,42 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'设置 → 通知管理 → 慢病管家 → 全部开启'**
   String get notificationStatusCardOemStepMeizu2;
+
+  /// No description provided for @notificationStatusCardOemBrandSamsung.
+  ///
+  /// In zh, this message translates to:
+  /// **'三星 (OneUI)'**
+  String get notificationStatusCardOemBrandSamsung;
+
+  /// No description provided for @notificationStatusCardOemStepSamsung1.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置 → 应用程序 → 慢病管家 → 通知 → 全部开启'**
+  String get notificationStatusCardOemStepSamsung1;
+
+  /// No description provided for @notificationStatusCardOemStepSamsung2.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置 → 电池 → 后台使用限制 → 慢病管家 → 改为「不受限」'**
+  String get notificationStatusCardOemStepSamsung2;
+
+  /// No description provided for @notificationStatusCardOemBrandOthers.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他（中兴/努比亚/红魔/联想/三星 Knox）'**
+  String get notificationStatusCardOemBrandOthers;
+
+  /// No description provided for @notificationStatusCardOemStepOthers1.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置 → 应用 → 慢病管家 → 通知 → 全部开启'**
+  String get notificationStatusCardOemStepOthers1;
+
+  /// No description provided for @notificationStatusCardOemStepOthers2.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置 → 电池 → 后台运行 → 改为「允许」'**
+  String get notificationStatusCardOemStepOthers2;
 
   /// No description provided for @notificationStatusCardOemGeneralTip.
   ///

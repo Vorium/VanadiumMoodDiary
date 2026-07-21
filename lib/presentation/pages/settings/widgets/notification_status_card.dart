@@ -302,6 +302,24 @@ class _OemBackgroundHint extends StatelessWidget {
               l10n.notificationStatusCardOemStepMeizu2,
             ],
           ),
+          // v0.22 round 33 (sp-zh T-11): 扩到 7 品牌, 覆盖企业用户(Knox) + 小众品牌
+          // OPPO/Vivo 已含 realme/一加/iQOO, 实际还是 7 个 brand 行
+          const SizedBox(height: AppTokens.spacingSm),
+          _OemBrand(
+            brand: l10n.notificationStatusCardOemBrandSamsung,
+            steps: [
+              l10n.notificationStatusCardOemStepSamsung1,
+              l10n.notificationStatusCardOemStepSamsung2,
+            ],
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          _OemBrand(
+            brand: l10n.notificationStatusCardOemBrandOthers,
+            steps: [
+              l10n.notificationStatusCardOemStepOthers1,
+              l10n.notificationStatusCardOemStepOthers2,
+            ],
+          ),
           const SizedBox(height: AppTokens.spacingMd),
           Text(
             l10n.notificationStatusCardOemGeneralTip,

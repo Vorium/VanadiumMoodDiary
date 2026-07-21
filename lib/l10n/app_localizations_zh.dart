@@ -539,7 +539,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemSubtitle =>
-      '小米/华为/OPPO/Vivo 默认会杀后台，点这里看怎么设';
+      '小米/华为/OPPO/Vivo/三星 默认会杀后台，点这里看怎么设';
 
   @override
   String get notificationStatusCardOemBrandXiaomi => '小米 / Redmi';
@@ -605,6 +605,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepMeizu2 => '设置 → 通知管理 → 慢病管家 → 全部开启';
+
+  @override
+  String get notificationStatusCardOemBrandSamsung => '三星 (OneUI)';
+
+  @override
+  String get notificationStatusCardOemStepSamsung1 =>
+      '设置 → 应用程序 → 慢病管家 → 通知 → 全部开启';
+
+  @override
+  String get notificationStatusCardOemStepSamsung2 =>
+      '设置 → 电池 → 后台使用限制 → 慢病管家 → 改为「不受限」';
+
+  @override
+  String get notificationStatusCardOemBrandOthers => '其他（中兴/努比亚/红魔/联想/三星 Knox）';
+
+  @override
+  String get notificationStatusCardOemStepOthers1 =>
+      '设置 → 应用 → 慢病管家 → 通知 → 全部开启';
+
+  @override
+  String get notificationStatusCardOemStepOthers2 => '设置 → 电池 → 后台运行 → 改为「允许」';
 
   @override
   String get notificationStatusCardOemGeneralTip =>

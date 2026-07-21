@@ -1,5 +1,6 @@
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -592,7 +593,14 @@ class SettingsPage extends ConsumerWidget {
 
     try {
       await db.clearAllUserData();
-      await ventAudio.deleteAll();
+      // v0.22 round 33 (sp-en P0): DB 提交后 audio 删除失败 = vent 录音残留
+      // 改用 deleteAllWithRetry (3 次重试) 把残留概率压到最低
+      final audioDeleted = await ventAudio.deleteAllWithRetry();
+      if (audioDeleted == 0 && await ventAudio.totalSizeBytes() > 0) {
+        // 极端情况:3 次重试仍 0 删除 + 总大小 > 0
+        // 仅打 log 不弹错误(用户已确认清空,不应反复骚扰)
+        piiSafeLog('Settings', '⚠️ vent audio delete failed after 3 retries');
+      }
       if (!context.mounted) return;
       // v0.22 round 29 (emil-40): 走 AppSnackBar.info 集中器
       ScaffoldMessenger.of(context).showSnackBar(

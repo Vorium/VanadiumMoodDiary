@@ -10,6 +10,7 @@ import 'package:chroniccare/app.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/services/database_migration.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -56,7 +57,10 @@ Future<void> main() async {
           FlutterErrorDetails(exception: error, stack: stack),
         );
       }
-      // release 模式 swallow — 用户至少能看到之前页面,不显示红屏
+      // v0.22 round 33 (sp-en P0): release 模式之前直接 swallow, 用户连
+      // "哪里出错了"都看不到。改成 LastErrorCapture 记录, 下次启动 AppRoot
+      // 检测到就显示顶部 banner "上次启动出错,请截图反馈"。
+      LastErrorCapture.record(error, stack);
     },
   );
 }

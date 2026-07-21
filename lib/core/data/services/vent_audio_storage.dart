@@ -196,6 +196,75 @@ class VentAudioStorage {
     return count;
   }
 
+  /// v0.22 round 33 (sp-en P0): 删所有音频文件,**重试 3 次**。
+  ///
+  /// 跟 [AppDatabase.clearAllUserData] 配对（settings_page 清空数据流程）:
+  /// DB 事务提交后 audio 文件删除失败 = vent 录音残留（sp-en 标 P0 风险）。
+  /// DB 和 FS 是 2 个独立子系统,无法强一致。重试 + swallow 把残留概率压到最低。
+  ///
+  /// 返回最终成功的删除数。调用方拿到 0 应当提示用户"部分残留"。
+  Future<int> deleteAllWithRetry() async {
+    for (var attempt = 1; attempt <= 3; attempt++) {
+      try {
+        return await deleteAll();
+      } catch (e, st) {
+        swallowError(
+          where: 'vent_audio_storage.deleteAllWithRetry',
+          error: e,
+          stack: st,
+          note: 'attempt $attempt failed, retrying',
+        );
+        if (attempt < 3) {
+          await Future<void>.delayed(Duration(milliseconds: 100 * attempt));
+        }
+      }
+    }
+    return 0; // 3 次都失败
+  }
+
+  /// v0.22 round 33 (sp-en P0): 清理孤儿旧明文 .m4a 文件。
+  ///
+  /// v0.18 round 14 P0-2 修后所有录音都走加密 (.m4a.enc),但**用户没触发
+  /// "音频加密迁移"按钮的**,旧 .m4a 仍可能在磁盘上(纯垃圾,DB 已经指向 .m4a.enc)。
+  /// 隐私风险:老明文树洞录音残留。
+  ///
+  /// 启动时扫一遍,删任何没有对应 .m4a.enc 的 .m4a 文件(孤儿)。
+  /// 调用方: AppRoot 启动时调 1 次。
+  Future<int> purgeOrphanPlainFiles() async {
+    final dir = await _dir();
+    if (!await dir.exists()) return 0;
+    var purged = 0;
+    final encNames = <String>{};
+    await for (final entity in dir.list()) {
+      if (entity is File && entity.path.endsWith(encryptedSuffix)) {
+        encNames.add(
+          p.basenameWithoutExtension(
+            p.basenameWithoutExtension(entity.path),
+          ),
+        );
+      }
+    }
+    await for (final entity in dir.list()) {
+      if (entity is File && entity.path.endsWith(legacyPlainSuffix)) {
+        final base = p.basenameWithoutExtension(entity.path);
+        if (!encNames.contains(base)) {
+          try {
+            await entity.delete();
+            purged++;
+          } catch (e, st) {
+            swallowError(
+              where: 'vent_audio_storage.purgeOrphanPlainFiles',
+              error: e,
+              stack: st,
+              note: 'orphan plain delete failed',
+            );
+          }
+        }
+      }
+    }
+    return purged;
+  }
+
   /// 临时目录路径（录音明文写入目标）
   Future<String> getTempDirPath() async => Directory.systemTemp.path;
 
