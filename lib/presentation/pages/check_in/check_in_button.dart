@@ -51,9 +51,13 @@ class CheckInButton extends StatelessWidget {
                 // 文字颜色 + 字号都自动过渡,emil 决策框架:occasional 频度
                 // (一天看几次) → 标准 animation 适用
                 AnimatedSwitcher(
-                  duration: AppTokens.durNormal,
-                  switchInCurve: AppTokens.curveStandard,
-                  switchOutCurve: AppTokens.curveAccelerate,
+                  // v0.22 round 30 (emil P1-6): wrap Motion 让 reduce-motion
+                  // 时切页瞬时完成, 精神心理患者前庭敏感
+                  duration: Motion.duration(context, AppTokens.durNormal),
+                  switchInCurve:
+                      Motion.curve(context, AppTokens.curveStandard),
+                  switchOutCurve:
+                      Motion.curve(context, AppTokens.curveAccelerate),
                   transitionBuilder: (child, anim) => FadeTransition(
                     opacity: anim,
                     child: ScaleTransition(scale: anim, child: child),
@@ -66,11 +70,12 @@ class CheckInButton extends StatelessWidget {
                         isChecked
                             ? AppLocalizations.of(context).homeCheckedIn
                             : AppLocalizations.of(context).homeCheckIn,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: AppTokens.fontSizeButton,
                           fontWeight: FontWeight.w600,
-                          height: 1.2,
-                          color: Colors.white,
+                          height: AppTokens.lineHeightTight,
+                          // v0.22 round 30 (emil P2-6): 走 fgOnPrimary (theme-aware)
+                          color: AppTokens.fgOnPrimary(context),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -84,10 +89,11 @@ class CheckInButton extends StatelessWidget {
                   ),
                 ),
                 if (isLoading)
-                  const IgnorePointer(
+                  IgnorePointer(
                     child: LoadingSpinner(
                       size: 24,
-                      color: Colors.white,
+                      // v0.22 round 30 (emil P2-6): 走 fgOnPrimary
+                      color: AppTokens.fgOnPrimary(context),
                     ),
                   ),
               ],
@@ -134,6 +140,10 @@ class _StreakCounterState extends State<_StreakCounter>
     _currentAnimated = widget.value.toDouble();
     _controller = AnimationController(
       vsync: this, // State 本身实现 TickerProvider (SingleTickerProviderStateMixin)
+      // v0.22 round 30 (emil P1-6): wrap Motion 让 reduce-motion 时 streak 数字
+      // 递增瞬时完成(从 0 跳到 target),不弹一下
+      // 注意: initState 不能读 MediaQuery (跟 loading_skeleton 同款 fix)
+      // → 用 AppTokens.durSlow 默认值,didChangeDependencies 同步
       duration: AppTokens.durSlow,
     );
     // 1 个稳定引用,didUpdateWidget 复用
@@ -145,6 +155,15 @@ class _StreakCounterState extends State<_StreakCounter>
       });
     };
     _controller.addListener(_tickListener);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // v0.22 round 30 (emil P1-6): reduce-motion 同步 duration
+    // 系统开 reduce-motion → _controller.duration = 0 (瞬时完成)
+    // 跟 loading_skeleton._maybeShimmer 同款逻辑
+    _controller.duration = Motion.duration(context, AppTokens.durSlow);
   }
 
   @override
@@ -169,15 +188,28 @@ class _StreakCounterState extends State<_StreakCounter>
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      // v0.17 round 14 (P2-12): 走 ARB homeStreak 模板 (zh: 已坚持 X 天 /
-      // en: X-day streak)。emoji 不在 string 里 — 频度高 (10+/day),
-      // emoji 在大按钮里反视觉噪声。
-      AppLocalizations.of(context).homeStreak(_currentAnimated.round()),
+    // v0.22 round 30 (sp-zh P1-17): Semantics 容器 + live region
+    // 让 TalkBack / VoiceOver 在数字递增动画时能播报变化
+    // (emil a11y 必备: 精神心理患者屏幕阅读器用户能感知 streak 数字)
+    return Semantics(
+      container: true,
+      label: AppLocalizations.of(context).homeStreak(_currentAnimated.round()),
+      liveRegion: true,
+      child: ExcludeSemantics(
+        // 内部 Text 不再单独播报（避免重复）
+        child: Text(
+          // v0.17 round 14 (P2-12): 走 ARB homeStreak 模板 (zh: 已坚持 X 天 /
+          // en: X-day streak)。emoji 不在 string 里 — 频度高 (10+/day),
+          // emoji 在大按钮里反视觉噪声。
+          AppLocalizations.of(context).homeStreak(_currentAnimated.round()),
       style: TextStyle(
         fontSize: AppTokens.fontSizeLabel,
-        color: Colors.white.withValues(alpha: 0.85),
-        height: 1.2,
+        // v0.22 round 30 (emil P2-6): 走 fgOnPrimary (onPrimary @ 85% 透明)
+        // 之前 Colors.white.withValues(alpha: 0.85) 在 dark mode 下不变,反白失效
+        color: AppTokens.fgOnPrimary(context).withValues(alpha: 0.85),
+        height: AppTokens.lineHeightTight,
+      ),
+        ),
       ),
     );
   }

@@ -159,7 +159,10 @@ class _TimeChip extends StatelessWidget {
         ? AppTokens.tintedPrimarySoft(context)
         : AppTokens.dividerColor(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTokens.spacingChipGap,
+        vertical: AppTokens.spacingChipGap,
+      ),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),

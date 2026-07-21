@@ -143,13 +143,12 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       if (!mounted) return;
       if (result == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              med.isActive
-                  ? AppLocalizations.of(context).medsSnackUpdated
-                  : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
-            ),
-            duration: AppTokens.snackBarDurationShort,
+          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
+          AppSnackBar.info(
+            context,
+            med.isActive
+                ? AppLocalizations.of(context).medsSnackUpdated
+                : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
           ),
         );
       }
@@ -269,10 +268,11 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)
-              .medsRefillSet(Formatters.date(picked), days),),
-          duration: AppTokens.snackBarDurationShort,
+        // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
+        AppSnackBar.info(
+          context,
+          AppLocalizations.of(context)
+              .medsRefillSet(Formatters.date(picked), days),
         ),
       );
     } catch (e) {
@@ -321,7 +321,11 @@ class _MedicationRow extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
         color: AppTokens.error,
-        child: const Icon(Icons.delete_outline, color: Colors.white),
+        child: Icon(
+          Icons.delete_outline,
+          // v0.22 round 30 (emil P2-6): 走 fgOnError
+          color: AppTokens.fgOnError(context),
+        ),
       ),
       // IconButton 路径已走 onDelete (含 confirm);
       // swipe 路径走 onSwipeDelete (无 dialog, Undo 兜底)
@@ -346,11 +350,11 @@ class _MedicationRow extends StatelessWidget {
             const SizedBox(width: 6),
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 2,
+                horizontal: AppTokens.spacingChipGap,
+                vertical: AppTokens.spacingXxxs,
               ),
               decoration: BoxDecoration(
-                color: AppTokens.warning.withValues(alpha: 0.15),
+                color: AppTokens.tintedWarningSoft(context),  // 0.1 接近原 0.15
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               ),
               child: Text(

@@ -198,10 +198,7 @@ class _Stat extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-          ),
+          style: AppTokens.textStyleHeadline(context),
         ),
         if (sub != null)
           Text(
@@ -304,7 +301,7 @@ class _ChartCard extends StatelessWidget {
                         interval: maxScore / 4,
                         getTitlesWidget: (value, _) => Text(
                           value.toInt().toString(),
-                          style: const TextStyle(fontSize: 10),
+                          style: AppTokens.textStyleMicro(context),
                         ),
                       ),
                     ),
@@ -322,7 +319,7 @@ class _ChartCard extends StatelessWidget {
                           final dt = sorted[i].timestamp;
                           return Text(
                             '${dt.month}/${dt.day}',
-                            style: const TextStyle(fontSize: 9),
+                            style: AppTokens.textStyleMicro(context),
                           );
                         },
                       ),
@@ -463,14 +460,16 @@ class _HistoryItem extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              // v0.22 round 30 (sp-zh P2-3): 走 tintedXxxDeep 集中器
+              color: color == AppTokens.primary
+                  ? AppTokens.tintedPrimaryDeep(context)
+                  : AppTokens.tintedErrorDeep(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
             child: Center(
               child: Text(
                 '${record.total}',
-                style: TextStyle(
-                  fontSize: 14,
+                style: AppTokens.textStyleCaption(context).copyWith(
                   fontWeight: FontWeight.w700,
                   color: color,
                 ),
@@ -487,7 +486,7 @@ class _HistoryItem extends StatelessWidget {
                     Text(
                       _nameForScale(
                           record.scaleId, AppLocalizations.of(context),),
-                      style: const TextStyle(fontWeight: FontWeight.w500),
+                      style: AppTokens.textStyleCaptionStrong(context),
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
                     _SeverityChip(scaleId: record.scaleId, score: record.total),
@@ -506,10 +505,15 @@ class _HistoryItem extends StatelessWidget {
           ),
           if (diff != null && diff != 0)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.spacingXs,
+                vertical: AppTokens.spacingXxxs,
+              ),
               decoration: BoxDecoration(
-                color: (diff < 0 ? AppTokens.primary : AppTokens.error)
-                    .withValues(alpha: 0.15),
+                // v0.22 round 30 (sp-zh P2-3): 走 tintedXxxDeep 集中器
+                color: diff < 0
+                    ? AppTokens.tintedPrimaryDeep(context)
+                    : AppTokens.tintedErrorDeep(context),
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               ),
               child: Row(
@@ -523,8 +527,7 @@ class _HistoryItem extends StatelessWidget {
                   const SizedBox(width: 2),
                   Text(
                     '${diff.abs()}',
-                    style: TextStyle(
-                      fontSize: 11,
+                    style: AppTokens.textStyleMicro(context).copyWith(
                       fontWeight: FontWeight.w600,
                       color: diff < 0 ? AppTokens.primary : AppTokens.error,
                     ),
@@ -552,15 +555,20 @@ class _SeverityChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final sev = _severityStyle(scaleId, score, AppLocalizations.of(context));
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTokens.spacingChipGap,
+        vertical: AppTokens.spacingXxxs,
+      ),
       decoration: BoxDecoration(
-        color: sev.color.withValues(alpha: 0.15),
+        // v0.22 round 30 (sp-zh P2-3): 走 tintedXxxDeep 集中器
+        color: sev.color == AppTokens.primary
+            ? AppTokens.tintedPrimaryDeep(context)
+            : AppTokens.tintedErrorDeep(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),
       ),
       child: Text(
         sev.label,
-        style: TextStyle(
-          fontSize: 10,
+        style: AppTokens.textStyleMicro(context).copyWith(
           color: sev.color,
           fontWeight: FontWeight.w600,
         ),

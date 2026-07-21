@@ -245,19 +245,21 @@ class _RefillRow extends StatelessWidget {
           Expanded(
             child: Text(
               '${m.name} ${_formatDose(m.dosage, m.dosageUnit)}',
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: AppTokens.textStyleLabelStrong(context),
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.spacingXs,
+              vertical: AppTokens.spacingXxxs,
+            ),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
             child: Text(
               row.status.labelOf(context),
-              style: TextStyle(
-                fontSize: 11,
+              style: AppTokens.textStyleMicro(context).copyWith(
                 color: statusColor,
                 fontWeight: FontWeight.w600,
               ),
@@ -266,7 +268,7 @@ class _RefillRow extends StatelessWidget {
         ],
       ),
       subtitle: Padding(
-        padding: const EdgeInsets.only(top: 4),
+        padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
         child: Text(
           _subtitleFor(context, row),
           style: TextStyle(
@@ -356,8 +358,7 @@ class _Stat extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 20,
+            style: AppTokens.textStyleButton(context).copyWith(
               fontWeight: FontWeight.w700,
               color: valueColor ?? AppTokens.textPrimaryColor(context),
             ),
