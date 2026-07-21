@@ -70,8 +70,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     if (_tempDecryptedPath != null) {
       try {
         ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
-      } catch (_) {
-        // provider scope may be gone during app teardown
+      } catch (e, st) {
+        // v0.22 round 30 (sp-en P1-3): 走 swallowError (app teardown 期间)
+        swallowError(where: 'vent_detail_page.dispose', error: e, stack: st);
       }
       _tempDecryptedPath = null;
     }
@@ -103,8 +104,13 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
             await ref
                 .read(ventAudioStorageProvider)
                 .deleteTempFile(_tempDecryptedPath!);
-          } catch (_) {
-            // best-effort 清理, 失败不影响用户提示
+          } catch (e, st) {
+            // v0.22 round 30 (sp-en P1-3): 走 swallowError
+            swallowError(
+              where: 'vent_detail_page._togglePlay.failCleanup',
+              error: e,
+              stack: st,
+            );
           }
           _tempDecryptedPath = null;
         }
@@ -237,7 +243,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                       entry.contentText!,
                       style: const TextStyle(
                         fontSize: AppTokens.fontSizeBody,
-                        height: 1.6,
+                        height: AppTokens.lineHeightRelaxed,
                       ),
                     ),
                   ),
