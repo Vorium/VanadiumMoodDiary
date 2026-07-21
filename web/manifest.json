@@ -1,11 +1,11 @@
 {
-    "name": "chroniccare",
-    "short_name": "chroniccare",
+    "name": "慢病管家",
+    "short_name": "慢病管家",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#6BCF7F",
+    "theme_color": "#6BCF7F",
+    "description": "我今天吃了药 - 精神心理患者吃药打卡 + 停药通知",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
