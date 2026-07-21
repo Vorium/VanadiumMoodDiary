@@ -199,7 +199,10 @@ class QuestionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // v0.22 round 28 (emil-bug-05): Semantics container 让读屏用户知道
     // 4 个 ChoiceChip 是同题选项,题号+题文+当前选择 1 次性念出
-    final selectedLabel = selected != null ? options[selected!] : '未选';
+    // v0.22 round 30 (sp-zh P2-5): '未选' 走 l10n, en 模式可用
+    final selectedLabel = selected != null
+        ? options[selected!]
+        : AppLocalizations.of(context).commonOptionNotSelected;
     return Semantics(
       container: true,
       label:

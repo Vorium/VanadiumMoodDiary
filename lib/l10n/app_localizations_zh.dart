@@ -71,7 +71,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupAddContact => '+ 添加另一个联系人';
 
   @override
-  String get setupContactConsent => '我已告知上述联系人,App 会在我失联时给他们发通知';
+  String get setupContactConsent => '我已告知上述联系人，App 会在我失联时给他们发通知';
 
   @override
   String get setupNext => '下一步 →';
@@ -235,6 +235,16 @@ class AppLocalizationsZh extends AppLocalizations {
       '说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。';
 
   @override
+  String get settingsExportVentConfirmTitle => '导出含敏感内容';
+
+  @override
+  String get settingsExportVentConfirmBody =>
+      '即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 你将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中';
+
+  @override
+  String get settingsExportVentConfirmConfirm => '我了解，继续导出';
+
+  @override
   String get settingsCopy => '复制';
 
   @override
@@ -307,7 +317,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonConfirm => '确认';
 
   @override
-  String get commonLoading => '加载中...';
+  String get commonLoading => '加载中……';
 
   @override
   String get commonError => '出错了，请重试';
@@ -323,6 +333,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get commonConfirmDelete => '删除这条？';
+
+  @override
+  String get commonOptionNotSelected => '未选';
+
+  @override
+  String legalConsentWithdrawn(int current, int total) {
+    return '已撤回 ($current/$total)';
+  }
+
+  @override
+  String legalConsentReAgreed(int current, int total) {
+    return '已重新同意 ($current/$total)';
+  }
 
   @override
   String commonLoadFailed(String error) {
@@ -920,7 +943,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get assessmentLoadingBack => '正在返回上一页...';
+  String get assessmentLoadingBack => '正在返回上一页……';
 
   @override
   String assessmentAnsweredProgress(int answered, int total) {
@@ -1624,7 +1647,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medReportShareLabel => '分享';
 
   @override
-  String get medReportPdfLoading => '生成 PDF 中...';
+  String get medReportPdfLoading => '生成 PDF 中……';
 
   @override
   String get medReportShareSubject => '慢病管家 · 用药报告';

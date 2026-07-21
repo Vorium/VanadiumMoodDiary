@@ -244,6 +244,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Note: Text from vent (private diary) will be exported, but audio recordings will not — audio is stored locally and becomes inaccessible after reinstall.';
 
   @override
+  String get settingsExportVentConfirmTitle =>
+      'Export contains sensitive content';
+
+  @override
+  String get settingsExportVentConfirmBody =>
+      'About to export your vent (private diary) text. Mental-health patients may share personal or sensitive content; the exported JSON is plaintext, and anything in your clipboard or saved file can potentially be seen by others.\n\nPlease confirm:\n• You\'ll store it in a safe place (e.g. encrypted disk)\n• You won\'t share it with anyone unauthorized\n• Vent audio recordings are NOT included';
+
+  @override
+  String get settingsExportVentConfirmConfirm => 'I understand, continue';
+
+  @override
   String get settingsCopy => 'Copy';
 
   @override
@@ -333,6 +344,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonConfirmDelete => 'Delete this?';
+
+  @override
+  String get commonOptionNotSelected => 'Not selected';
+
+  @override
+  String legalConsentWithdrawn(int current, int total) {
+    return 'Withdrawn ($current/$total)';
+  }
+
+  @override
+  String legalConsentReAgreed(int current, int total) {
+    return 'Re-agreed ($current/$total)';
+  }
 
   @override
   String commonLoadFailed(String error) {

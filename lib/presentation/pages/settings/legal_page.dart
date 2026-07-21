@@ -16,6 +16,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 class LegalPage extends ConsumerStatefulWidget {
   const LegalPage({super.key});
@@ -59,12 +60,15 @@ class _LegalPageState extends ConsumerState<LegalPage> {
     if (mounted) {
       setState(() => _withdrawn[kind] = withdraw);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            withdraw
-                ? '已撤回 (${ConsentKind.values.indexOf(kind) + 1}/3)'
-                : '已重新同意 (${ConsentKind.values.indexOf(kind) + 1}/3)',
-          ),
+        // v0.22 round 30 (sp-zh P1-16 + P3-2): 走 AppSnackBar.info 集中器
+        // + legalConsentWithdrawn/ReAgreed l10n key (en 模式可用)
+        AppSnackBar.info(
+          context,
+          withdraw
+              ? AppLocalizations.of(context).legalConsentWithdrawn(
+                  ConsentKind.values.indexOf(kind) + 1, 3,)
+              : AppLocalizations.of(context).legalConsentReAgreed(
+                  ConsentKind.values.indexOf(kind) + 1, 3,),
         ),
       );
     }
@@ -126,7 +130,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                   ),
                   child: Text(
                     l10n.legalPageWithdrawDescription,
-                    style: const TextStyle(fontSize: 12, height: 1.4),
+                    style: AppTokens.textStyleLegal(context),
                   ),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
@@ -266,7 +270,7 @@ class _ConsentTile extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTokens.textHintColor(context),
-                        height: 1.4,
+                        height: AppTokens.lineHeightSnug,
                       ),
                     ),
                   ],
@@ -280,7 +284,7 @@ class _ConsentTile extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
             child: Text(
               timeText,
               style: TextStyle(

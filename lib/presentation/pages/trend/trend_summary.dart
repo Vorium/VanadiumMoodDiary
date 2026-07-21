@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 class SummaryCard extends StatelessWidget {
   final StreakSummary summary;
@@ -12,18 +13,19 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingMd),
         child: Row(
           children: [
-            _Stat(label: '当前连续', value: '${summary.currentStreak} 天'),
+            _Stat(label: l10n.trendStatCurrentStreak, value: '${summary.currentStreak} 天'),
             const SizedBox(width: AppTokens.spacingMd),
-            _Stat(label: '最长连续', value: '${summary.longestStreak} 天'),
+            _Stat(label: l10n.trendStatLongestStreak, value: '${summary.longestStreak} 天'),
             const SizedBox(width: AppTokens.spacingMd),
-            _Stat(label: '总打卡', value: '${summary.totalCheckIns}'),
+            _Stat(label: l10n.trendStatTotalCheckIns, value: '${summary.totalCheckIns}'),
             const SizedBox(width: AppTokens.spacingMd),
-            _Stat(label: '总天数', value: '${summary.totalDays}'),
+            _Stat(label: l10n.trendStatTotalDays, value: '${summary.totalDays}'),
           ],
         ),
       ),

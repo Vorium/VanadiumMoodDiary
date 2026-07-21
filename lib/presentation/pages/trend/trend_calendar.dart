@@ -13,6 +13,7 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 
 /// 日历视图
@@ -70,13 +71,24 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
     }
   }
 
-  static const _weekdayLabels = ['一', '二', '三', '四', '五', '六', '日'];
+  // v0.22 round 30 (sp-zh P0-2): 改用 l10n.trendWeekdayMon-Sun (build() 内取)
+  // 之前 static const _weekdayLabels 7 个中文字符串硬编码, en 模式 100% 降级。
 
   @override
   Widget build(BuildContext context) {
     // v0.22 round 28: watch dayChangeTickProvider 让跨日时本页 rebuild,修复 trend 页
     // "今天" 格子 / _selected 不刷新 (跟 medication_calendar_page 同款 fix)
     ref.watch(dayChangeTickProvider);
+    final l10n = AppLocalizations.of(context);
+    final weekdayLabels = [
+      l10n.trendWeekdayMon,
+      l10n.trendWeekdayTue,
+      l10n.trendWeekdayWed,
+      l10n.trendWeekdayThu,
+      l10n.trendWeekdayFri,
+      l10n.trendWeekdaySat,
+      l10n.trendWeekdaySun,
+    ];
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final theme = Theme.of(context);
@@ -88,7 +100,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             IconButton(
               icon: const Icon(Icons.chevron_left),
               onPressed: widget.onPrevMonth,
-              tooltip: '上个月',
+              tooltip: l10n.trendPrevMonth,
             ),
             Expanded(
               child: Center(
@@ -105,13 +117,13 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             IconButton(
               icon: const Icon(Icons.chevron_right),
               onPressed: widget.onNextMonth,
-              tooltip: '下个月',
+              tooltip: l10n.trendNextMonth,
             ),
           ],
         ),
         Row(
           children: [
-            for (final l in _weekdayLabels)
+            for (final l in weekdayLabels)
               Expanded(
                 child: Center(
                   child: Text(
@@ -245,7 +257,7 @@ class _CalendarCell extends StatelessWidget {
                       bottom: 1,
                       child: Text(
                         MoodVisual.emojiFor(day.moodScore!),
-                        style: const TextStyle(fontSize: 8),
+                        style: AppTokens.textStyleMicro(context),
                       ),
                     ),
                 ],
@@ -273,6 +285,7 @@ class _DayDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final detail = DayDetailCalculator.fromData(
       date: date,
@@ -311,9 +324,9 @@ class _DayDetailCard extends StatelessWidget {
                       color: AppTokens.tintedPrimaryDeep(context),
                       borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                     ),
-                    child: const Text(
-                      '已打卡',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.trendCheckedIn,
+                      style: const TextStyle(
                         // v0.22 round 29 (emil-16): emil 报告原文用 11, 实际是 10 微小字
                         // 改用 fontSizeMicro token
                         fontSize: AppTokens.fontSizeMicro,
@@ -333,9 +346,8 @@ class _DayDetailCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                     ),
                     child: Text(
-                      '未打卡',
-                      style: TextStyle(
-                        fontSize: 11,
+                      l10n.trendNotCheckedIn,
+                      style: AppTokens.textStyleMicro(context).copyWith(
                         color: AppTokens.textHintColor(context),
                         fontWeight: FontWeight.w500,
                       ),
@@ -393,7 +405,7 @@ class _DayDetailCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '这一天没有记录',
+                      l10n.trendNoRecords,
                       style: TextStyle(
                         color: AppTokens.textHintColor(context),
                         fontSize: AppTokens.fontSizeBody,

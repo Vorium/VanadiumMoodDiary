@@ -10,6 +10,7 @@ import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_utils.dart';
 
 // =============================================================
@@ -119,7 +120,7 @@ class MonthlyChart extends StatelessWidget {
                 reservedSize: 32,
                 getTitlesWidget: (value, _) => Text(
                   '${value.toInt()}%',
-                  style: const TextStyle(fontSize: 11),
+                  style: AppTokens.textStyleMicro(context),
                 ),
               ),
             ),
@@ -134,7 +135,7 @@ class MonthlyChart extends StatelessWidget {
                   final m = monthly[idx].month;
                   return Text(
                     '${m.month}月',
-                    style: const TextStyle(fontSize: 11),
+                    style: AppTokens.textStyleMicro(context),
                   );
                 },
               ),
@@ -168,9 +169,9 @@ class AssessmentHistoryChart extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              const Text(
-                '还没有评估记录',
-                style: TextStyle(fontWeight: FontWeight.w500),
+              Text(
+                AppLocalizations.of(context).trendNoAssessments,
+                style: AppTokens.textStyleCaptionStrong(context),
               ),
               const SizedBox(height: 4),
               Text(
@@ -311,7 +312,7 @@ class AssessmentHistoryChart extends StatelessWidget {
                         interval: 25,
                         getTitlesWidget: (value, _) => Text(
                           '${value.toInt()}%',
-                          style: const TextStyle(fontSize: 11),
+                          style: AppTokens.textStyleMicro(context),
                         ),
                       ),
                     ),
@@ -329,7 +330,7 @@ class AssessmentHistoryChart extends StatelessWidget {
                             );
                             return Text(
                               '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
-                              style: const TextStyle(fontSize: 10),
+                              style: AppTokens.textStyleMicro(context),
                             );
                           }
                           final dt = DateTime.fromMillisecondsSinceEpoch(
@@ -337,7 +338,7 @@ class AssessmentHistoryChart extends StatelessWidget {
                           );
                           return Text(
                             '${dt.month}/${dt.day}',
-                            style: const TextStyle(fontSize: 10),
+                            style: AppTokens.textStyleMicro(context),
                           );
                         },
                       ),
@@ -397,7 +398,7 @@ class _LegendDot extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label, style: AppTokens.textStyleLegal(context)),
       ],
     );
   }
@@ -425,9 +426,9 @@ class MoodHistoryChart extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              const Text(
-                '还没有情绪记录',
-                style: TextStyle(fontWeight: FontWeight.w500),
+              Text(
+                AppLocalizations.of(context).trendNoMoodEntries,
+                style: AppTokens.textStyleCaptionStrong(context),
               ),
               const SizedBox(height: 4),
               Text(
@@ -487,12 +488,12 @@ class MoodHistoryChart extends StatelessWidget {
                     children: [
                       Text(
                         MoodVisual.emojiFor(s),
-                        style: const TextStyle(fontSize: 14),
+                        style: AppTokens.textStyleCaption(context),
                       ),
                       const SizedBox(width: 2),
                       Text(
                         MoodVisual.labelFor(s),
-                        style: const TextStyle(fontSize: 11),
+                        style: AppTokens.textStyleMicro(context),
                       ),
                     ],
                   ),
@@ -556,7 +557,7 @@ class MoodHistoryChart extends StatelessWidget {
                           if (s < 1 || s > 5) return const SizedBox.shrink();
                           return Text(
                             MoodVisual.emojiFor(s),
-                            style: const TextStyle(fontSize: 14),
+                            style: AppTokens.textStyleCaption(context),
                           );
                         },
                       ),
@@ -575,7 +576,7 @@ class MoodHistoryChart extends StatelessWidget {
                             );
                             return Text(
                               '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
-                              style: const TextStyle(fontSize: 10),
+                              style: AppTokens.textStyleMicro(context),
                             );
                           }
                           final dt = DateTime.fromMillisecondsSinceEpoch(
@@ -583,7 +584,7 @@ class MoodHistoryChart extends StatelessWidget {
                           );
                           return Text(
                             '${dt.month}/${dt.day}',
-                            style: const TextStyle(fontSize: 10),
+                            style: AppTokens.textStyleMicro(context),
                           );
                         },
                       ),

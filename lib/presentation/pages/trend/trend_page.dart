@@ -48,7 +48,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     final moodAsync = ref.watch(allMoodProvider);
 
     return PageScaffold(
-      title: '我的趋势',
+      title: AppLocalizations.of(context).trendTitle,
       child: checkInsAsync.when(
         data: (List<CheckInEntity> checkIns) {
           final moodEntries = moodAsync.maybeWhen(
@@ -137,7 +137,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         MonthlyChart(monthly: monthly),
         const SizedBox(height: AppTokens.spacingLg),
         Text(
-          '心理评估历史',
+          AppLocalizations.of(context).trendAssessmentHistory,
           style: TextStyle(
             fontSize: AppTokens.fontSizeLabel,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -167,7 +167,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         ),
         const SizedBox(height: AppTokens.spacingLg),
         Text(
-          '情绪日记历史',
+          AppLocalizations.of(context).trendMoodHistory,
           style: TextStyle(
             fontSize: AppTokens.fontSizeLabel,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -235,16 +235,16 @@ class _ViewToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SegmentedButton<_TrendView>(
-      segments: const [
+      segments: [
         ButtonSegment(
           value: _TrendView.list,
-          label: Text('列表'),
-          icon: Icon(Icons.view_list, size: 18),
+          label: Text(AppLocalizations.of(context).trendViewList),
+          icon: const Icon(Icons.view_list, size: 18),
         ),
         ButtonSegment(
           value: _TrendView.calendar,
-          label: Text('日历'),
-          icon: Icon(Icons.calendar_month, size: 18),
+          label: Text(AppLocalizations.of(context).trendViewCalendar),
+          icon: const Icon(Icons.calendar_month, size: 18),
         ),
       ],
       selected: {current},

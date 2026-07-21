@@ -76,6 +76,9 @@
   "settingsExportDialogTitle": "Export Data",
   "settingsExportInstruction": "Save the JSON below to a safe place:",
   "settingsExportVentWarning": "Note: Text from vent (private diary) will be exported, but audio recordings will not — audio is stored locally and becomes inaccessible after reinstall.",
+  "settingsExportVentConfirmTitle": "Export contains sensitive content",
+  "settingsExportVentConfirmBody": "About to export your vent (private diary) text. Mental-health patients may share personal or sensitive content; the exported JSON is plaintext, and anything in your clipboard or saved file can potentially be seen by others.\n\nPlease confirm:\n• You'll store it in a safe place (e.g. encrypted disk)\n• You won't share it with anyone unauthorized\n• Vent audio recordings are NOT included",
+  "settingsExportVentConfirmConfirm": "I understand, continue",
   "settingsCopy": "Copy",
   "settingsActionExport": "Export",
   "settingsActionGenerateReport": "Generate report",
@@ -110,6 +113,21 @@
   "commonRetry": "Retry",
   "commonGotIt": "Got it",
   "commonConfirmDelete": "Delete this?",
+  "commonOptionNotSelected": "Not selected",
+  "legalConsentWithdrawn": "Withdrawn ({current}/{total})",
+  "@legalConsentWithdrawn": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "legalConsentReAgreed": "Re-agreed ({current}/{total})",
+  "@legalConsentReAgreed": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "commonLoadFailed": "Load failed: {error}",
   "@commonLoadFailed": {
     "placeholders": { "error": { "type": "String" } }

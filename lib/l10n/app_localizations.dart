@@ -209,7 +209,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupContactConsent.
   ///
   /// In zh, this message translates to:
-  /// **'我已告知上述联系人,App 会在我失联时给他们发通知'**
+  /// **'我已告知上述联系人，App 会在我失联时给他们发通知'**
   String get setupContactConsent;
 
   /// No description provided for @setupNext.
@@ -530,6 +530,24 @@ abstract class AppLocalizations {
   /// **'说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。'**
   String get settingsExportVentWarning;
 
+  /// No description provided for @settingsExportVentConfirmTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'导出含敏感内容'**
+  String get settingsExportVentConfirmTitle;
+
+  /// No description provided for @settingsExportVentConfirmBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 你将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中'**
+  String get settingsExportVentConfirmBody;
+
+  /// No description provided for @settingsExportVentConfirmConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'我了解，继续导出'**
+  String get settingsExportVentConfirmConfirm;
+
   /// No description provided for @settingsCopy.
   ///
   /// In zh, this message translates to:
@@ -665,7 +683,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonLoading.
   ///
   /// In zh, this message translates to:
-  /// **'加载中...'**
+  /// **'加载中……'**
   String get commonLoading;
 
   /// No description provided for @commonError.
@@ -697,6 +715,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'删除这条？'**
   String get commonConfirmDelete;
+
+  /// No description provided for @commonOptionNotSelected.
+  ///
+  /// In zh, this message translates to:
+  /// **'未选'**
+  String get commonOptionNotSelected;
+
+  /// No description provided for @legalConsentWithdrawn.
+  ///
+  /// In zh, this message translates to:
+  /// **'已撤回 ({current}/{total})'**
+  String legalConsentWithdrawn(int current, int total);
+
+  /// No description provided for @legalConsentReAgreed.
+  ///
+  /// In zh, this message translates to:
+  /// **'已重新同意 ({current}/{total})'**
+  String legalConsentReAgreed(int current, int total);
 
   /// No description provided for @commonLoadFailed.
   ///
@@ -1740,7 +1776,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentLoadingBack.
   ///
   /// In zh, this message translates to:
-  /// **'正在返回上一页...'**
+  /// **'正在返回上一页……'**
   String get assessmentLoadingBack;
 
   /// No description provided for @assessmentAnsweredProgress.
@@ -2982,7 +3018,7 @@ abstract class AppLocalizations {
   /// No description provided for @medReportPdfLoading.
   ///
   /// In zh, this message translates to:
-  /// **'生成 PDF 中...'**
+  /// **'生成 PDF 中……'**
   String get medReportPdfLoading;
 
   /// No description provided for @medReportShareSubject.
