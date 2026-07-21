@@ -299,7 +299,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                 Card(
                   child: ListTile(
                     leading:
-                        Text(t.emoji, style: const TextStyle(fontSize: 28)),
+                        Text(t.emoji, style: const TextStyle(fontSize: AppTokens.fontSizeTitle)),
                     title: Text(
                       t.name,
                       style: const TextStyle(fontWeight: FontWeight.w500),

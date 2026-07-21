@@ -79,7 +79,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                         widget.report,
                         style: TextStyle(
                           fontFamily: 'monospace',
-                          fontSize: 13,
+                          fontSize: AppTokens.fontSizeBodySm,
                           height: AppTokens.lineHeightNormal,
                           color: AppTokens.textPrimaryColor(context),
                         ),
@@ -119,12 +119,13 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                             // (reportData == null || _pdfLoading)
                             child: FilledButton.icon(
                               icon: _pdfLoading
-                                  ? const SizedBox(
+                                  ? SizedBox(
                                       width: 18,
                                       height: 18,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Colors.white,
+                                        // v0.22 round 36: 去掉 const (fgOnPrimary 是函数调用)
+                                        color: AppTokens.fgOnPrimary(context),
                                       ),
                                     )
                                   : const Icon(Icons.picture_as_pdf, size: 18),

@@ -127,13 +127,13 @@ class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
             children: [
               Text(AppLocalizations.of(context).commonSave),
               if (saving)
-                const IgnorePointer(
+                IgnorePointer(
                   child: SizedBox(
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: AppTokens.fgOnPrimary(context),
                     ),
                   ),
                 ),

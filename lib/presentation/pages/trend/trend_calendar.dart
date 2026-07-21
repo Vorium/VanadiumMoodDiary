@@ -218,7 +218,7 @@ class _CalendarCell extends StatelessWidget {
     }
 
     final fg =
-        day.hasNormalCheckIn ? Colors.white : theme.colorScheme.onSurface;
+        day.hasNormalCheckIn ? AppTokens.fgOnPrimary(context) : theme.colorScheme.onSurface;
     final opacity = inMonth ? 1.0 : 0.35;
 
     return AspectRatio(
@@ -245,7 +245,7 @@ class _CalendarCell extends StatelessWidget {
                     child: Text(
                       '${day.date.day}',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: AppTokens.fontSizeBodySm,
                         fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
                         color: fg,
                       ),

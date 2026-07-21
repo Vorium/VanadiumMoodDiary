@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 主页顶部 header:用户名 + 趋势/评估/设置 入口
 ///
@@ -33,20 +34,32 @@ class HomeHeader extends StatelessWidget {
             ),
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.show_chart),
-          onPressed: () => context.push('/trend'),
-          tooltip: AppLocalizations.of(context).homeTooltipTrend,
+        // v0.22 round 36 (emil C1/A-opp-1 P1): 3 个 IconButton 外包
+        // PressFeedback (tens/day 频度, 缺 scale 反馈) — 跟 secondary_action_row
+        // 模式一致 (emil-28 修过 Vent 按钮)
+        PressFeedback(
+          onTap: () => context.push('/trend'),
+          child: IconButton(
+            icon: const Icon(Icons.show_chart),
+            onPressed: null, // 实际触发由 PressFeedback
+            tooltip: AppLocalizations.of(context).homeTooltipTrend,
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.psychology_outlined),
-          onPressed: () => context.push('/assessment/history'),
-          tooltip: AppLocalizations.of(context).homeTooltipAssessmentHistory,
+        PressFeedback(
+          onTap: () => context.push('/assessment/history'),
+          child: IconButton(
+            icon: const Icon(Icons.psychology_outlined),
+            onPressed: null,
+            tooltip: AppLocalizations.of(context).homeTooltipAssessmentHistory,
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.settings_outlined),
-          onPressed: () => context.push('/settings'),
-          tooltip: AppLocalizations.of(context).settingsAbout,
+        PressFeedback(
+          onTap: () => context.push('/settings'),
+          child: IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: null,
+            tooltip: AppLocalizations.of(context).settingsAbout,
+          ),
         ),
       ],
     );

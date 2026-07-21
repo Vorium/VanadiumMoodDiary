@@ -205,7 +205,7 @@ class _StreakCounterState extends State<_StreakCounter>
       style: TextStyle(
         fontSize: AppTokens.fontSizeLabel,
         // v0.22 round 30 (emil P2-6): 走 fgOnPrimary (onPrimary @ 85% 透明)
-        // 之前 Colors.white.withValues(alpha: 0.85) 在 dark mode 下不变,反白失效
+        // 之前 AppTokens.fgOnPrimary(context).withValues(alpha: 0.85) 在 dark mode 下不变,反白失效
         color: AppTokens.fgOnPrimary(context).withValues(alpha: 0.85),
         height: AppTokens.lineHeightTight,
       ),

@@ -62,6 +62,8 @@ class AssessmentSparkline extends StatelessWidget {
                   lineColor: AppTokens.primary,
                   averageLine: history.average,
                   averageColor: AppTokens.textHintColor(context),
+                  // v0.22 round 36: dot stroke 用 fgOnPrimary (dark mode 反白)
+                  dotStrokeColor: AppTokens.fgOnPrimary(context),
                 ),
               ),
             ),
@@ -102,6 +104,8 @@ class SparklinePainter extends CustomPainter {
   final Color lineColor;
   final double? averageLine;
   final Color averageColor;
+  // v0.22 round 36: dot stroke 色从 build() 传进来 (paint() 方法无 context)
+  final Color dotStrokeColor;
 
   SparklinePainter({
     required this.totals,
@@ -110,6 +114,7 @@ class SparklinePainter extends CustomPainter {
     required this.lineColor,
     required this.averageLine,
     required this.averageColor,
+    required this.dotStrokeColor,
   });
 
   @override
@@ -144,8 +149,10 @@ class SparklinePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final dotPaint = Paint()..color = lineColor;
+    // v0.22 round 36: dot stroke 用 app_tokens surface 色, dark mode 兼容
+    // (之前 Colors.white 在 dark mode 下不反白)
     final dotStrokePaint = Paint()
-      ..color = Colors.white
+      ..color = dotStrokeColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
@@ -340,7 +347,7 @@ class ComparisonCard extends StatelessWidget {
                         Text(
                           '${cmp.previous!.total}',
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: AppTokens.fontSizeScoreXl,
                             fontWeight: FontWeight.w600,
                             color: AppTokens.textSecondaryColor(context),
                           ),
@@ -375,7 +382,7 @@ class ComparisonCard extends StatelessWidget {
                         Text(
                           '${cmp.current.total}',
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: AppTokens.fontSizeScoreXl,
                             fontWeight: FontWeight.w600,
                             color: trendColor,
                           ),

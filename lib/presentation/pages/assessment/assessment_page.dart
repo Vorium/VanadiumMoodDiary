@@ -275,7 +275,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                 Text(
                   '${result.total}',
                   style: TextStyle(
-                    fontSize: 64,
+                    fontSize: AppTokens.fontSizeScoreXxl,
                     fontWeight: FontWeight.bold,
                     color: isUrgent ? AppTokens.error : AppTokens.primary,
                   ),

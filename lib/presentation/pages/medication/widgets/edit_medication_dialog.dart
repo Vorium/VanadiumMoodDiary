@@ -379,12 +379,13 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
         ElevatedButton(
           onPressed: _saving ? null : _save,
           child: _saving
-              ? const SizedBox(
+              ? SizedBox(
                   width: 16,
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    // v0.22 round 36: 去掉 const (fgOnPrimary 是函数调用)
+                    color: AppTokens.fgOnPrimary(context),
                   ),
                 )
               : Text(AppLocalizations.of(context).commonSave),

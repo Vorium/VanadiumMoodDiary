@@ -204,7 +204,7 @@ class _Stat extends StatelessWidget {
           Text(
             sub!,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: AppTokens.fontSizeCaptionSm,
               color: severity ?? AppTokens.textHintColor(context),
               fontWeight: FontWeight.w500,
             ),
@@ -341,7 +341,7 @@ class _ChartCard extends StatelessWidget {
                           color: _severityStyle(scaleId, spot.y.toInt(), l10n)
                               .color,
                           strokeWidth: 1.5,
-                          strokeColor: Colors.white,
+                          strokeColor: AppTokens.fgOnPrimary(context),
                         ),
                       ),
                     ),
@@ -359,9 +359,9 @@ class _ChartCard extends StatelessWidget {
                             '${r.timestamp.month}/${r.timestamp.day} '
                             '${r.timestamp.hour.toString().padLeft(2, '0')}:${r.timestamp.minute.toString().padLeft(2, '0')}\n'
                             '${AppLocalizations.of(context).assessmentChartTotalScore(r.total, maxScore)}',
-                            const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
+                            TextStyle(
+                              color: AppTokens.fgOnPrimary(context),
+                              fontSize: AppTokens.fontSizeLabelSm,
                               fontWeight: FontWeight.w500,
                             ),
                           );

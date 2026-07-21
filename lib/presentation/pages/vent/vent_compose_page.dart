@@ -434,13 +434,14 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                       children: [
                         Text(AppLocalizations.of(context).ventComposeTitle),
                         if (_saving)
-                          const IgnorePointer(
+                          IgnorePointer(
                             child: SizedBox(
                               width: 18,
                               height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                // v0.22 round 36: 去掉 const (fgOnPrimary 是函数调用)
+                                color: AppTokens.fgOnPrimary(context),
                               ),
                             ),
                           ),

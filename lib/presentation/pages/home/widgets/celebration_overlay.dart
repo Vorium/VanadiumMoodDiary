@@ -98,9 +98,9 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
         ),
         child: Text(
           widget.message,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
+          style: TextStyle(
+            color: AppTokens.fgOnPrimary(context),
+            fontSize: AppTokens.fontSizeBody,
             fontWeight: FontWeight.w600,
           ),
         ),

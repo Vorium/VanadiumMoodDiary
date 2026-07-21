@@ -268,7 +268,7 @@ class _ConsentTile extends StatelessWidget {
                     Text(
                       subtitle,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: AppTokens.fontSizeCaptionSm,
                         color: AppTokens.textHintColor(context),
                         height: AppTokens.lineHeightSnug,
                       ),
@@ -288,7 +288,7 @@ class _ConsentTile extends StatelessWidget {
             child: Text(
               timeText,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: AppTokens.fontSizeLabelSm,
                 color: withdrawn
                     ? AppTokens.error
                     : AppTokens.textHintColor(context),

@@ -224,10 +224,10 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                   children: [
                     Text(AppLocalizations.of(context).commonSave),
                     if (saving)
-                      const IgnorePointer(
+                      IgnorePointer(
                         child: LoadingSpinner(
                           size: 18,
-                          color: Colors.white,
+                          color: AppTokens.fgOnPrimary(context),
                         ),
                       ),
                   ],

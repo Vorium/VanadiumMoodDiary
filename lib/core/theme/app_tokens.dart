@@ -174,6 +174,16 @@ class AppTokens {
   static const double fontSizeMicro = 10.0;
   static const double fontSizeXxxSmall = 8.0;
 
+  // v0.22 round 36 (emil 7.2): 中间档 + score 数字集中器
+  // 11 / 12 / 13 是 Body / Label / Caption 之间的过渡尺寸
+  // 24 / 32 / 64 是 3 个大数字 score (评估 24h / 周报 / 季度)
+  static const double fontSizeBodySm = 13.0;
+  static const double fontSizeCaptionSm = 12.0;
+  static const double fontSizeLabelSm = 11.0;
+  static const double fontSizeScoreLg = 24.0;
+  static const double fontSizeScoreXl = 32.0;
+  static const double fontSizeScoreXxl = 64.0;
+
   static const double lineHeightTight = 1.2;
   static const double lineHeightNormal = 1.5;
   static const double lineHeightLoose = 1.8;

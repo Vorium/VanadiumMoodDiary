@@ -307,14 +307,14 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                             Text(
                               _formatDur(_position),
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: AppTokens.fontSizeLabelSm,
                                 color: AppTokens.textHintColor(context),
                               ),
                             ),
                             Text(
                               _formatDur(_duration),
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: AppTokens.fontSizeLabelSm,
                                 color: AppTokens.textHintColor(context),
                               ),
                             ),

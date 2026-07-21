@@ -360,7 +360,7 @@ class _MedicationRow extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context).medsListStoppedSection,
                 style: const TextStyle(
-                  fontSize: 10,
+                  fontSize: AppTokens.fontSizeMicro,
                   color: AppTokens.warning,
                   fontWeight: FontWeight.w500,
                 ),

@@ -151,13 +151,13 @@ class MoodDialog {
                 children: [
                   Text(AppLocalizations.of(context).commonSave),
                   if (saving)
-                    const IgnorePointer(
+                    IgnorePointer(
                       child: SizedBox(
                         width: 18,
                         height: 18,
                         child: LoadingSpinner(
                           size: 18,
-                          color: Colors.white,
+                          color: AppTokens.fgOnPrimary(context),
                         ),
                       ),
                     ),
@@ -246,7 +246,7 @@ class _DimensionRow extends StatelessWidget {
                               Text(
                                 '$s',
                                 style: TextStyle(
-                                  fontSize: 24,
+                                  fontSize: AppTokens.fontSizeScoreLg,
                                   fontWeight: s == value
                                       ? FontWeight.w700
                                       : FontWeight.w400,

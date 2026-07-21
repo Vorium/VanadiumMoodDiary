@@ -250,7 +250,7 @@ class _OemBackgroundHint extends StatelessWidget {
         subtitle: Text(
           l10n.notificationStatusCardOemSubtitle,
           style: TextStyle(
-              color: AppTokens.textSecondaryColor(context), fontSize: 12,),
+              color: AppTokens.textSecondaryColor(context), fontSize: AppTokens.fontSizeCaptionSm,),
         ),
         childrenPadding: const EdgeInsets.fromLTRB(
           AppTokens.spacingMd,

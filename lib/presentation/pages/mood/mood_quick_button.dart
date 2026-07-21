@@ -39,7 +39,7 @@ class MoodQuickButton extends ConsumerWidget {
             children: [
               Text(
                 MoodVisual.emojiFor(latest.score),
-                style: const TextStyle(fontSize: 22),
+                style: const TextStyle(fontSize: AppTokens.fontSizeBodySm),
               ),
               const SizedBox(width: 8),
               Text(

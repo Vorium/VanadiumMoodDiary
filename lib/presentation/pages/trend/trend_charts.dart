@@ -248,7 +248,7 @@ class AssessmentHistoryChart extends StatelessWidget {
               radius: 3.5,
               color: color,
               strokeWidth: 1.5,
-              strokeColor: Colors.white,
+              strokeColor: AppTokens.fgOnPrimary(context),
             ),
           ),
           belowBarData: BarAreaData(
@@ -362,7 +362,7 @@ class AssessmentHistoryChart extends StatelessWidget {
                             TextStyle(
                               color: t.bar.color,
                               fontWeight: FontWeight.w600,
-                              fontSize: 12,
+                              fontSize: AppTokens.fontSizeCaptionSm,
                             ),
                           );
                         }).toList();
@@ -520,7 +520,7 @@ class MoodHistoryChart extends StatelessWidget {
                           radius: 5,
                           color: Color(MoodVisual.colorArgbFor(spot.y.round())),
                           strokeWidth: 1.5,
-                          strokeColor: Colors.white,
+                          strokeColor: AppTokens.fgOnPrimary(context),
                         ),
                       ),
                       belowBarData: BarAreaData(
@@ -604,7 +604,7 @@ class MoodHistoryChart extends StatelessWidget {
                             TextStyle(
                               color: Color(MoodVisual.colorArgbFor(score)),
                               fontWeight: FontWeight.w600,
-                              fontSize: 12,
+                              fontSize: AppTokens.fontSizeCaptionSm,
                             ),
                           );
                         }).toList();

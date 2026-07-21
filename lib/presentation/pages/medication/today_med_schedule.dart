@@ -188,7 +188,7 @@ class _TimeChip extends StatelessWidget {
           Text(
             '${_pad(e.time.hour)}:${_pad(e.time.minute)}',
             style: TextStyle(
-              fontSize: 13,
+              fontSize: AppTokens.fontSizeBodySm,
               fontWeight: FontWeight.w600,
               color: color,
             ),
@@ -197,7 +197,7 @@ class _TimeChip extends StatelessWidget {
           Text(
             e.med.name,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: AppTokens.fontSizeCaptionSm,
               color: e.done
                   ? AppTokens.textPrimaryColor(context)
                   : AppTokens.textSecondaryColor(context),

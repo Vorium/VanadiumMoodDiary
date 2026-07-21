@@ -423,7 +423,7 @@ class SettingsPage extends ConsumerWidget {
                       json,
                       style: const TextStyle(
                         fontFamily: 'monospace',
-                        fontSize: 12,
+                        fontSize: AppTokens.fontSizeCaptionSm,
                       ),
                     ),
                   ),
@@ -688,10 +688,10 @@ class SettingsPage extends ConsumerWidget {
                 children: [
                   Text(AppLocalizations.of(context).settingsImportAndOverwrite),
                   if (importing)
-                    const IgnorePointer(
+                    IgnorePointer(
                       child: LoadingSpinner(
                         size: 18,
-                        color: Colors.white,
+                        color: AppTokens.fgOnPrimary(context),
                       ),
                     ),
                 ],
