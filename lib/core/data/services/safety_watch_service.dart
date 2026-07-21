@@ -108,12 +108,16 @@ class SafetyWatchService {
     final prefs = await SharedPreferences.getInstance();
     final s = prefs.getString(_kLastAlertAt);
     if (s == null) return null;
-    return DateTime.tryParse(s);
+    // v0.22 round 30 (sp-zh P1-1): _setLastAlertAt 改用 toUtc 存
+    // → get 时转 local 保持原 _isSameDay 行为(local day 比较)
+    return DateTime.tryParse(s)?.toLocal();
   }
 
   Future<void> _setLastAlertAt(DateTime when) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kLastAlertAt, when.toIso8601String());
+    // v0.22 round 30 (sp-zh P1-1): 显式 toUtc,跟 v0.21 round 22 P0-3 data_export_service 一致。
+    // 之前无 Z 后缀 → DateTime.parse() 按 local 解析,跨时区 drift (e.g. 北京用户飞纽约后从 backup 恢复会差 13h)。
+    await prefs.setString(_kLastAlertAt, when.toUtc().toIso8601String());
   }
 
   // ============== 触发入口 ==============

@@ -100,7 +100,13 @@ class ReminderService implements ReminderChecker {
     ]);
     final contacts = fetched[0] as List<ContactEntity>;
     final medications = fetched[1] as List<MedicationEntity>;
-    final firstMed = medications.isEmpty ? null : medications.first;
+    // v0.22 round 30 (sp-en P0-1): 显式按 startDate 升序取 firstMed。
+    // drift `watchAll()` 无 `orderBy`（已 grep 确认）→ 返回值是插入序。
+    // 之前 v0.16 round 19 修过 5 个 service 的 `.first` 隐式序，
+    // 这里漏了第 6 个。reminder UI 显示"当前药物"会随机。
+    final sortedMeds = [...medications]
+      ..sort((a, b) => a.startDate.compareTo(b.startDate));
+    final firstMed = sortedMeds.isEmpty ? null : sortedMeds.first;
 
     final daysSince = lastCheckIn == null ? 0 : _daysBetween(lastCheckIn, now);
     final hoursSince =

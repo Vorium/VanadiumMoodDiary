@@ -63,8 +63,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     if (_tempDecryptedPath != null) {
       try {
         ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
-      } catch (_) {
-        // provider scope may be gone during app teardown
+      } catch (e, st) {
+        // v0.22 round 30 (sp-en P1-3): 走 swallowError (app teardown 期间)
+        swallowError(where: 'vent_compose_page.dispose', error: e, stack: st);
       }
       _tempDecryptedPath = null;
     }
@@ -227,8 +228,13 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             await ref
                 .read(ventAudioStorageProvider)
                 .deleteTempFile(_tempDecryptedPath!);
-          } catch (_) {
-            // best-effort 清理, 失败不影响用户提示
+          } catch (e, st) {
+            // v0.22 round 30 (sp-en P1-3): 走 swallowError
+            swallowError(
+              where: 'vent_compose_page.failCleanup',
+              error: e,
+              stack: st,
+            );
           }
           _tempDecryptedPath = null;
         }
@@ -358,7 +364,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
               style: TextStyle(
                 fontSize: AppTokens.fontSizeBody,
                 color: AppTokens.textSecondaryColor(context),
-                height: 1.5,
+                height: AppTokens.lineHeightNormal,
               ),
             ),
             const SizedBox(height: AppTokens.spacingMd),
@@ -382,7 +388,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             ),
             if (textLen > 1800)
               Padding(
-                padding: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
                 child: Text(
                   '$textLen / 2000',
                   style: TextStyle(

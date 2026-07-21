@@ -203,8 +203,10 @@ void main() {
       );
       expect(await service.getLastAssessmentAt(), isNull);
       await service.setLastAssessmentAt(DateTime(2026, 7, 15, 16, 30));
+      // v0.22 round 30 (sp-zh P1-1): setLastAssessmentAt 改用 toUtc 存 SharedPreferences,
+      // getLastAssessmentAt 读回 UTC DateTime → 转 local 比较(跟 set 输入一致)。
       expect(
-        await service.getLastAssessmentAt(),
+        (await service.getLastAssessmentAt())?.toLocal(),
         DateTime(2026, 7, 15, 16, 30),
       );
     });
@@ -290,8 +292,9 @@ void main() {
       );
       await service.onAppStart();
       // lastAssessmentAt 应被覆盖到 8/1 16:30（评估的实际时间）
+      // v0.22 round 30 (sp-zh P1-1): .toLocal() 因为现在 service 存 UTC
       expect(
-        await service.getLastAssessmentAt(),
+        (await service.getLastAssessmentAt())?.toLocal(),
         DateTime(2026, 8, 1, 16, 30),
       );
       // 8/1 + 14 = 8/15 10:00
@@ -311,7 +314,11 @@ void main() {
       );
       await service.onAppStart();
       // last 不变（因为 8/1 比 8/15 老）
-      expect(await service.getLastAssessmentAt(), DateTime(2026, 8, 15));
+      // v0.22 round 30 (sp-zh P1-1): .toLocal() 因为现在 service 存 UTC
+      expect(
+        (await service.getLastAssessmentAt())?.toLocal(),
+        DateTime(2026, 8, 15),
+      );
       // 8/15 + 14 = 8/29 10:00
       expect(notif.scheduled.first.fireAt, DateTime(2026, 8, 29, 10, 0));
     });

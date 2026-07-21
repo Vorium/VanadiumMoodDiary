@@ -15,6 +15,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -86,19 +87,23 @@ class _LegalSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        leading: const Icon(
-          Icons.gavel_outlined,
-          color: AppTokens.primary,
-        ),
-        title: Text(
-          AppLocalizations.of(context).settingsLegalAndPrivacy,
-        ),
-        subtitle: Text(
-          AppLocalizations.of(context).settingsLegalAndPrivacySubtitle,
-        ),
-        trailing: const Icon(Icons.chevron_right),
+      // v0.22 round 30 (emil P1-1): 包 PressFeedback 让 ListTile 按下有 scale 反馈
+      // 跟前面 4 个 section header ListTile 手感一致
+      child: PressFeedback(
         onTap: () => context.push('/settings/legal'),
+        child: ListTile(
+          leading: const Icon(
+            Icons.gavel_outlined,
+            color: AppTokens.primary,
+          ),
+          title: Text(
+            AppLocalizations.of(context).settingsLegalAndPrivacy,
+          ),
+          subtitle: Text(
+            AppLocalizations.of(context).settingsLegalAndPrivacySubtitle,
+          ),
+          trailing: const Icon(Icons.chevron_right),
+        ),
       ),
     );
   }
@@ -124,8 +129,11 @@ class SettingsPage extends ConsumerWidget {
           contactsAsync.when(
             data: (contacts) => ContactsListWidget(contacts: contacts),
             loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, _) => Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()),),
+            error: (e, _) => ErrorState(
+              title: AppLocalizations.of(context).commonLoadFailed(''),
+              detail: e.toString(),
+              onRetry: () => ref.invalidate(contactsProvider),
+            ),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
@@ -137,8 +145,11 @@ class SettingsPage extends ConsumerWidget {
           medsAsync.when(
             data: (meds) => MedicationsListWidget(meds: meds),
             loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, _) => Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()),),
+            error: (e, _) => ErrorState(
+              title: AppLocalizations.of(context).commonLoadFailed(''),
+              detail: e.toString(),
+              onRetry: () => ref.invalidate(medicationsProvider),
+            ),
           ),
 
           const SizedBox(height: AppTokens.spacingLg),
@@ -314,22 +325,29 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingMd),
 
           Card(
-            child: ListTile(
-              leading: const Icon(Icons.info_outline, color: AppTokens.primary),
-              title: Text(AppLocalizations.of(context).settingsAbout),
-              subtitle: Text(AppLocalizations.of(context).settingsAboutVersion),
+            // v0.22 round 30 (emil P1-1): 关于卡片 (无 onTap) 包 PressFeedback
+            // 仅获得 scale 视觉反馈, 不影响 child
+            child: PressFeedback(
+              child: ListTile(
+                leading: const Icon(Icons.info_outline, color: AppTokens.primary),
+                title: Text(AppLocalizations.of(context).settingsAbout),
+                subtitle: Text(AppLocalizations.of(context).settingsAboutVersion),
+              ),
             ),
           ),
 
           Card(
-            child: ListTile(
-              leading: Icon(
-                Icons.shield_outlined,
-                color: AppTokens.textSecondaryColor(context),
+            // v0.22 round 30 (emil P1-1): 免责声明卡片 (无 onTap) 包 PressFeedback
+            child: PressFeedback(
+              child: ListTile(
+                leading: Icon(
+                  Icons.shield_outlined,
+                  color: AppTokens.textSecondaryColor(context),
+                ),
+                title: Text(AppLocalizations.of(context).settingsDisclaimer),
+                subtitle:
+                    Text(AppLocalizations.of(context).settingsDisclaimerText),
               ),
-              title: Text(AppLocalizations.of(context).settingsDisclaimer),
-              subtitle:
-                  Text(AppLocalizations.of(context).settingsDisclaimerText),
             ),
           ),
         ],
@@ -339,6 +357,31 @@ class SettingsPage extends ConsumerWidget {
 
   /// 导出：生成 JSON → 弹 Dialog → 用户点"复制到剪贴板"
   Future<void> _exportData(BuildContext context, WidgetRef ref) async {
+    // v0.22 round 30 (sp-zh P0-3): 二次确认 dialog,精神心理患者 vent 可能含敏感内容。
+    // 之前点"导出"→ 立即生成 vent 明文 JSON → 弹 dialog 显示。**无导出前确认**。
+    // 现在先弹"含敏感内容"警告 → 用户点确认才继续生成。
+    if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.settingsExportVentConfirmTitle),
+        content: Text(l10n.settingsExportVentConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.settingsExportVentConfirmConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+
     final service = ref.read(dataExportServiceProvider);
     try {
       final json = await service.exportToJson();
@@ -362,7 +405,7 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 child: Text(
                   AppLocalizations.of(context).settingsExportVentWarning,
-                  style: const TextStyle(fontSize: 12, height: 1.4),
+                  style: AppTokens.textStyleLegal(context),
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
@@ -559,7 +602,11 @@ class SettingsPage extends ConsumerWidget {
     } on Exception catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.settingsClearAllDataFailed(e.toString()))),
+        AppSnackBar.error(
+          context,
+          action: l10n.settingsClearAllData,
+          error: e,
+        ),
       );
     }
   }

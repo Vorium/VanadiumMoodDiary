@@ -80,12 +80,18 @@ class AssessmentReminderService {
     final prefs = await SharedPreferences.getInstance();
     final s = prefs.getString(_kLastAssessmentAt);
     if (s == null) return null;
-    return DateTime.tryParse(s);
+    // v0.22 round 30 (sp-zh P1-1): setLastAssessmentAt 改用 toUtc 存
+    // (避免 local 字符串跨时区漂移),get 时 tryParse 返回 UTC DateTime
+    // → 转 local 让 service 内部 fireAt 计算 (DateTime(fire.year, ...))
+    // 跟原 local-time 行为一致。
+    return DateTime.tryParse(s)?.toLocal();
   }
 
   Future<void> setLastAssessmentAt(DateTime when) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kLastAssessmentAt, when.toIso8601String());
+    // v0.22 round 30 (sp-zh P1-1): 显式 toUtc,跟 data_export_service 同款修复
+    // 详见 safety_watch_service._setLastAlertAt 注释
+    await prefs.setString(_kLastAssessmentAt, when.toUtc().toIso8601String());
   }
 
   // ============== 纯函数：下次触发时间 ==============

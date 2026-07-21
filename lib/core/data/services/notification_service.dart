@@ -10,6 +10,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
+import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
 
@@ -32,6 +33,8 @@ class NotificationService implements NotificationSender {
   static const _refillBaseId = 6000;
   // 心理评估周期提醒（v0.13 / Round 7 — Apple Health 思路）
   static const _assessmentReminderId = 7000;
+  // v0.22 round 30 (sp-en P2-1): 角标虚拟 id 拆到 BadgeSyncService.badgeVirtualId
+  // 这里不再需要, 委托给 BadgeSyncService
 
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
@@ -40,6 +43,11 @@ class NotificationService implements NotificationSender {
   /// 公共 API 保持不变（snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes）,
   /// 但真实实现移到 SnoozeManager,主 service 减肥 90+ 行。
   late final SnoozeManager _snoozeManager = SnoozeManager(plugin: _plugin);
+
+  // v0.22 round 30 (sp-en P2-1): Badge 角标逻辑拆出到 BadgeSyncService
+  // updateBadgeCount 的 iOS DarwinNotificationDetails 封装移走
+  // 主 service 仅保留委托,减肥 40+ 行, 同步补单测机会
+  late final BadgeSyncService _badgeSync = BadgeSyncService(plugin: _plugin);
 
   /// v0.11 (Round 5): 用户点通知的回调
   /// 默认调 [NotificationNavigation.handleTap]
@@ -198,12 +206,19 @@ class NotificationService implements NotificationSender {
     //   改成 200000 覆盖 medId <= 19999（远超实际用户量，且 int32 安全）
     final pending = await _plugin.pendingNotificationRequests();
     // v0.22 round 29 (spen-16): Future.wait 并发 cancel, 避免串行 await 平台调用阻塞
+    // v0.22 round 30 (sp-en P2-2): 包 .timeout(5s) 兜底, plugin 平台 channel 退化
+    // 串行时也不会无限阻塞 — 之前无 timeout 如果 plugin 实现卡死会 hang
     await Future.wait(
       pending
           .where((p) =>
               p.id >= _medicationReminderBaseId &&
-              p.id < _medicationReminderBaseId + 200000)
+              p.id < _medicationReminderBaseId + 200000,)
           .map((p) => _plugin.cancel(p.id)),
+    ).timeout(const Duration(seconds: 5), onTimeout: () => <void>[]);
+
+    piiSafeLog(
+      'NotificationService',
+      '✅ medication reminders 全部 cancel + 重新调度',
     );
 
     const details = NotificationDetails(
@@ -618,51 +633,17 @@ class NotificationService implements NotificationSender {
   /// v0.10 (Round 4) 参考 Pill Reminder (Drugs.com iOS)：
   /// "App 图标右上角小红点显示今天还差几次没打卡"
   ///
+  /// v0.22 round 30 (sp-en P2-1): 实现已抽到 [BadgeSyncService]，
+  /// 这里仅保留委托 (向后兼容 NotificationSender 抽象)。
+  ///
   /// 限制：flutter_local_notifications 17.x **没有** setBadgeCount 原生 API。
-  /// 退而求其次：发一条**带 badgeNumber** 的"空"通知（iOS 自动更新角标）。
   /// - iOS：[DarwinNotificationDetails] 的 badgeNumber 字段是公开 API
   /// - Android：暂无稳定方案。v0.10+ TODO: 集成 flutter_app_badge_control 插件
   ///
   /// [count] 传 0 即清零
   Future<void> updateBadgeCount(int count) async {
-    if (count < 0) count = 0;
     await init();
-    try {
-      // iOS 路径：发一条"空"通知带 badgeNumber
-      // 用一个稳定的"虚拟"id 覆盖之前那条
-      const virtualId = 9999;
-      final details = NotificationDetails(
-        android: const AndroidNotificationDetails(
-          _channelId,
-          _channelName,
-          channelDescription: _channelDesc,
-          importance: Importance.min, // 不弹不响
-          priority: Priority.min,
-          ongoing: true,
-          autoCancel: false,
-        ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: false,
-          presentBadge: true,
-          presentSound: false,
-          badgeNumber: count,
-        ),
-      );
-      // 先取消旧的虚拟通知
-      await _plugin.cancel(virtualId);
-      await _plugin.show(
-        virtualId,
-        '',
-        '',
-        details,
-      );
-      piiSafeLog('NotificationService', '✅ 角标已更新 = $count');
-    } catch (e) {
-      piiSafeLog(
-        'NotificationService',
-        '⚠️ updateBadgeCount 失败（不影响功能）: $e',
-      );
-    }
+    await _badgeSync.updateBadgeCount(count);
   }
 
   /// 用 tz 包一层 zonedSchedule，web 上 catch 异常
