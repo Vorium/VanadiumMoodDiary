@@ -503,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsAboutVersion.
   ///
   /// In zh, this message translates to:
-  /// **'v0.1.0 · 我今天吃了药'**
+  /// **'v0.22.0 · 我今天吃了药'**
   String get settingsAboutVersion;
 
   /// No description provided for @settingsDisclaimerText.

@@ -71,7 +71,7 @@
   "settingsAssessment": "Assessment",
   "settingsAssessmentHistory": "Assessment History",
   "settingsAssessmentHistorySubtitle": "View line charts and comparisons for all PHQ-9 / GAD-7 assessments",
-  "settingsAboutVersion": "v0.1.0 · I took my meds today",
+  "settingsAboutVersion": "v0.22.0 · I took my meds today",
   "settingsDisclaimerText": "This app does not provide medical advice. All features are for reference only.",
   "settingsExportDialogTitle": "Export Data",
   "settingsExportInstruction": "Save the JSON below to a safe place:",

@@ -22,8 +22,8 @@
 # 1. 装 Flutter（如果没装）
 # macOS:
 brew install fvm
-fvm install 3.44.5
-fvm use 3.44.5
+fvm install 3.41.9
+fvm use 3.41.9
 
 # 2. 装依赖
 flutter pub get
@@ -42,7 +42,7 @@ flutter test
 
 | 组件 | 版本 |
 |---|---|
-| Flutter | 3.44.5 stable |
+| Flutter | 3.41.9 stable |
 | Dart | 3.12.2 |
 | 状态管理 | Riverpod 3.3.2 |
 | 本地数据库 | Drift 2.20.3 + SQLCipher 加密 |

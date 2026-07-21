@@ -219,7 +219,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '查看所有 PHQ-9 / GAD-7 评估的折线图与对比';
 
   @override
-  String get settingsAboutVersion => 'v0.1.0 · 我今天吃了药';
+  String get settingsAboutVersion => 'v0.22.0 · 我今天吃了药';
 
   @override
   String get settingsDisclaimerText => '本应用不提供医疗建议，所有功能仅供参考。';

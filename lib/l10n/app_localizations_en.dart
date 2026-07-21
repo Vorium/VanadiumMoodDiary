@@ -226,7 +226,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'View line charts and comparisons for all PHQ-9 / GAD-7 assessments';
 
   @override
-  String get settingsAboutVersion => 'v0.1.0 · I took my meds today';
+  String get settingsAboutVersion => 'v0.22.0 · I took my meds today';
 
   @override
   String get settingsDisclaimerText =>

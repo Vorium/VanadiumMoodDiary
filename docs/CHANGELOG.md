@@ -285,114 +285,6 @@
 - 703/703 pass
 - `flutter analyze` 0 issues
 
-## [0.16.0] - 2026-07-17
-
-### Changed
-- **架构整理（Round 1-19）**：
-  - 4 层架构纯度 + 一致性 合并到 `scripts/check_all.dart`（替代 2 个旧 script）
-  - check_all 支持 `package: 绝对路径` + `../../ 相对路径` 两种 import 检测
-  - 修了 `care_engine.dart` 用相对路径绕过 purity 检查的隐藏 bug — 切到 `NotificationSender` 抽象接口
-  - 修了 18 个 unused import + 1 个 dead try/catch + 2 个 dead `// ignore` 块 + 1 个 dead `audioExists()` 方法
-  - 修 4 个 Flutter 3.32+ `RadioListTile` deprecation（改用 `RadioGroup` 祖先）
-
-### Fixed
-- **Stream subscription leak**：树洞详情/撰写页 `_player.onXxx.listen()` 之前没存 subscription，dispose 没取消。修后存 `StreamSubscription?` 字段 + `dispose()` 取消
-- **`vent_entry.dart` 死代码**：删 `audioExists()` + 误导注释 + `dart:io` import（实际不是仅做 path 拼接，是磁盘 I/O）
-- **`safety_watch_service.dart` 死参数**：删 `EmailService? emailService` 构造参数（v1.0+ 占位，EmailService 整个在 production 没用）
-- **文档同步**：
-  - `SENDGRID_SETUP.md` 删 stale `fromEmail` 参数示例（构造函数早没这参数）+ 改 `to` 为手机号
-  - `AGENTS.md` / `README.md` 同步 `check_all.dart` + `dart scripts/check_all.dart`（不用 `dart run`，会触发 `objective_c` build hook 失败）
-  - `email_preview.dart` 修正 round 注释（之前写错 Round 13 → 实际 Round 12）
-
-### Removed
-- **`dio: ^5.7.0`** 依赖：清理后 `EmailService` 没有任何 `package:dio/dio` 引用
-- **`EmailService` 中的 `Dio` 字段 + 未用 `html` 变量**
-- **`EmailService` 的 `Medication?` drift row 参数**：改用 `MedicationEntity?`（domain entity），消除 domain → data 反向依赖
-- **`scripts/check_domain_purity.dart` + `scripts/check_architecture_consistency.dart`**：合并到 `check_all.dart`
-- **`scripts/debug_check.dart`**：占位文件
-
-### Architecture
-- **Domain 层严格 0 flutter / 0 drift / 0 data / 0 dart:io 依赖**（除 vent_entry 的 `audioPath` 字段类型用 String）
-- **共享层使用度**：所有 `shared/` 工具至少被 2 层用（被 check_all 验证）
-
-### Tests
-- 471/471 pass（461 → 471：5 check_all + 3 streak unsorted + 2 assessment unsorted）
-- 新增 `test/data/email_service_test.dart`（用 `MedicationEntity` 替代之前的 drift row）
-- 新增 `test/scripts/check_all_test.dart`（5 个，验证 4 层架构检测 + 相对路径解析 + Windows path bug）
-
-### Fixed (latent bugs)
-- **`streak_calculator.dart` 隐式排序假设**：`calculate` + `shouldShowStreakBroken` 用 `.first` 假设 caller 传 DESC，调用方目前都传已排序数据（`watchAllCheckIns()` Drift orderBy DESC），但任何未来 caller 传未排序数据会算错 streak。加显式 sort + 3 个 unsorted input regression test
-- **`assessment_comparison.dart` 隐式排序假设**：`fromRecords` 用 `.last` 假设 caller 传 ASC，同样的 fragility。修：先 sort 再取。加 2 个 unsorted input test
-- **`medications_list_widget.dart` 多次 `DateTime.now()` race**：`_editRefill` 之前 3 次 `DateTime.now()` 算 initialDate/firstDate/lastDate，跨 midnight 时三者可能不一致（`reminder_scheduler.dart:97` v0.14 已有同款 fix）。修：先算 `now` 一次再复用
-- **`trend_page.dart:36-39` field 初始化多次 `DateTime.now()`**：`_calendarMonth` 用 2 次 `.now()` 算 year 和 month，跨 midnight 边界可能 month 不一致（23:59 → 12，00:00 → 1）。修：抽成 `_initialCalendarMonth()` 静态方法算 1 次
-- **`notification_service.dart` 2 个 cancel id 范围过窄**：
-  - `cancelAllSnoozes` 之前 `[4000, 104000)` 范围，snooze id 公式 `4000 + medId * 1440 + minutes`，medId ≥ 72 漏 cancel
-  - `rescheduleMedicationReminders` 之前 `[2000, 3000)` 范围，med reminder id 公式 `2000 + medId * 10 + i`，medId ≥ 100 漏 cancel
-  - 修：范围都放宽到 200000+（covers medId 几万个，远超实际用户量）
-- **`vent_audio_storage.dart` 文件名 collision 风险**：`newAudioPath` 之前只用 `DateTime.now().millisecondsSinceEpoch` 作后缀，同毫秒内录 2 段会文件名相同 → 后录的覆盖前录的。修：加 4 位 random suffix (`vent_{ms}_{rand4}.m4a`)，同毫秒冲突概率 1/10000
-
-### Removed
-- **`EmailTemplate.buildHtml()`**：60 行 HTML 模板，v0.6 改 mock 短信后整个 HTML 路径无生产调用
-- **`test/domain/email_template_test.dart` 中的 `buildHtml` 测试**：自测死代码
-
-### Final state
-- `flutter analyze`: 0 issues（无 warning、无 error、无 info）
-- 4 个 `RadioListTile` 迁移到 Flutter 3.32+ `RadioGroup` 祖先 API
-- 88 个文件 `dart format` + `dart fix --apply` 一键 cleanup（229 fixes）
-- `test/scripts/check_all_test.dart` 新增 5 个测试，覆盖 `package:chroniccare/` 绝对路径 + `../../` 相对路径检测
-- 修 `check_all.dart` 潜在 Windows 路径 bug：`package:chroniccare/data/bar.dart` 的 rel 部分 `/` 没转 `Platform.pathSeparator`，导致 marker `\lib\data\` 匹配不上
-
-### Fixed (round 19B — 第 8 轮 code review 新发现的 6 个 bug)
-- **`notification_service.rescheduleRefillReminders` cancel range 过窄**：
-  - 之前 `_refillBaseId + 1000` 范围，refill id 公式 `_refillBaseId + medId`（`6000 + medId`），medId ≥ 1000 漏 cancel
-  - 修：范围放到 200000（同 round 19 medication reminder 的修法），覆盖 medId 几万个
-  - 配套把 `_refillNotificationId` 改 `@visibleForTesting` 暴露成 `refillNotificationId` 便于测试
-- **`reminder_scheduler.dart` 隐式排序假设**：`normalCheckIns.first.timestamp` 假设 `watchAll()` 返 DESC，drift orderBy 一改就 silent 算错
-  - 修：显式 `normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp))` 后再 `.first`
-- **`safety_watch_service.dart` 隐式排序假设**：同款 `normalCheckIns.first.timestamp` 隐式 DESC。修：同上显式 sort
-- **`assessment_reminder_service.dart` 隐式排序假设**：`assessments.last.timestamp` 假设 `watchAssessments()` 返 ASC（"最后"= list 末尾），drift orderBy 一改漏取最新评估
-  - 修：用 `assessments.map((c) => c.timestamp).reduce((a, b) => a.isAfter(b) ? a : b)` 显式找最新，不依赖 list 顺序
-- **`scheduleRefillReminder` 多次 `DateTime.now()` race**：
-  - 之前 2 次 `DateTime.now()`（fireAt 过期判断 + daysLeft 计算），跨 midnight 时可能用不同日期
-  - 修：先 `final now = DateTime.now();` 一次，下面两处复用
-- **`vent_compose_page._getAudioDuration` AudioPlayer leak**：
-  - 之前 try 块内 `await player.setSource(...)` + `await player.getDuration()` + `await player.dispose()` 一气呵成；任一环节抛异常都直接走 catch，`dispose()` 不会跑 → AudioPlayer 资源泄漏
-  - 修：把 `dispose()` 移到 `finally` 块，确保异常路径也释放
-
-### Tests (round 19B)
-- 478/478 pass（471 → 478：6 refill id range + 1 safety_watch unsorted data）
-- 新增 `test/data/notification_service_round19b_test.dart`：6 cases 覆盖 refill id 公式 + cancel range 范围（medId=0/1/999/1000/10000/50000 都验证）
-- 新增 `test/data/sort_assumption_round19b_test.dart`：1 case 用 unsorted 顺序插入 3 条打卡（5天前/3天前/1小时前），验证 SafetyWatch 取 latest = 1小时前（修前会取 5天前误报触发告警）
-
-### Fixed (round 19C — 第 9 轮 code review 新发现)
-- **`app_router.dart:110` 路由参数 unsafe parse**：
-  - 之前 `int.parse(state.pathParameters['id'] ?? '0')` 处理 `/vent/detail/abc` 时 `int.parse('abc')` 抛 FormatException
-  - 修：改用 `int.tryParse(...) ?? 0`，invalid id fallback 到 0（详情页会显示"找不到了"，不崩 app）
-
-### Tests (round 19C)
-- 486/486 pass（478 → 486：8 route param parsing 边界 case）
-- 新增 `test/routing/route_parsing_round19c_test.dart`：8 cases 覆盖 `int.tryParse` fallback 行为（valid int / empty / 'abc' / mixed / negative / whitespace / null path param）
-
-### Added (round 20 — 通知自检 + OEM 后台引导)
-- **`NotificationService.pendingCount`**：返回当前待发通知数；plugin 抛 PlatformException 时返回 -1（web/desktop 平台）
-- **设置页「通知与提醒」自检卡** (`NotificationStatusCard`)：
-  - 状态显示：当前已排队的待发通知数（0 / N / 不支持三态）
-  - **测试通知按钮**：点一下立即推一条，看到 = 通知工作正常
-  - **查看已排队通知**：弹 dialog 列出所有 `pendingNotificationRequests` 标题
-  - **国产手机后台引导**：折叠面板展开 5 大品牌（小米 / 华为 / OPPO / Vivo / 魅族）每家 2-3 步后台保活路径
-  - `kIsWeb` fallback：web 端显示"通知功能仅在 Android/iOS 可用"，隐藏功能按钮
-
-### Fixed (round 20)
-- **国产 ROM 静默杀通知没用户可见信号**：之前 20:00 提醒失败只在 log 里 `developer.log`，用户根本不知道。加自检卡后用户能主动验证 + 看到"没有待发通知"立即知道要排查
-
-### Tests (round 20)
-- 491/491 pass（486 → 491：5 widget test）
-- 新增 `test/presentation/notification_status_card_round20_test.dart`：5 cases 覆盖
-  - mobile 模式显示完整 card
-  - pendingCount 三种状态（5 / 0 / -1）的 UI 提示
-  - 点"测试通知"按钮 → 调 `showNow` 推一条
-  - 点刷新按钮 → 重新读 pendingCount
-
 ## [0.15.0] - 2026-07-15
 
 ### Added
@@ -583,3 +475,112 @@
 - Day 8-9：SendGrid 真实集成
 - Day 10-11：APK + iOS 打包
 - Day 12-14：上架准备
+
+## [0.16.0] - 2026-07-17
+
+### Changed
+- **架构整理（Round 1-19）**：
+  - 4 层架构纯度 + 一致性 合并到 `scripts/check_all.dart`（替代 2 个旧 script）
+  - check_all 支持 `package: 绝对路径` + `../../ 相对路径` 两种 import 检测
+  - 修了 `care_engine.dart` 用相对路径绕过 purity 检查的隐藏 bug — 切到 `NotificationSender` 抽象接口
+  - 修了 18 个 unused import + 1 个 dead try/catch + 2 个 dead `// ignore` 块 + 1 个 dead `audioExists()` 方法
+  - 修 4 个 Flutter 3.32+ `RadioListTile` deprecation（改用 `RadioGroup` 祖先）
+
+### Fixed
+- **Stream subscription leak**：树洞详情/撰写页 `_player.onXxx.listen()` 之前没存 subscription，dispose 没取消。修后存 `StreamSubscription?` 字段 + `dispose()` 取消
+- **`vent_entry.dart` 死代码**：删 `audioExists()` + 误导注释 + `dart:io` import（实际不是仅做 path 拼接，是磁盘 I/O）
+- **`safety_watch_service.dart` 死参数**：删 `EmailService? emailService` 构造参数（v1.0+ 占位，EmailService 整个在 production 没用）
+- **文档同步**：
+  - `SENDGRID_SETUP.md` 删 stale `fromEmail` 参数示例（构造函数早没这参数）+ 改 `to` 为手机号
+  - `AGENTS.md` / `README.md` 同步 `check_all.dart` + `dart scripts/check_all.dart`（不用 `dart run`，会触发 `objective_c` build hook 失败）
+  - `email_preview.dart` 修正 round 注释（之前写错 Round 13 → 实际 Round 12）
+
+### Removed
+- **`dio: ^5.7.0`** 依赖：清理后 `EmailService` 没有任何 `package:dio/dio` 引用
+- **`EmailService` 中的 `Dio` 字段 + 未用 `html` 变量**
+- **`EmailService` 的 `Medication?` drift row 参数**：改用 `MedicationEntity?`（domain entity），消除 domain → data 反向依赖
+- **`scripts/check_domain_purity.dart` + `scripts/check_architecture_consistency.dart`**：合并到 `check_all.dart`
+- **`scripts/debug_check.dart`**：占位文件
+
+### Architecture
+- **Domain 层严格 0 flutter / 0 drift / 0 data / 0 dart:io 依赖**（除 vent_entry 的 `audioPath` 字段类型用 String）
+- **共享层使用度**：所有 `shared/` 工具至少被 2 层用（被 check_all 验证）
+
+### Tests
+- 471/471 pass（461 → 471：5 check_all + 3 streak unsorted + 2 assessment unsorted）
+- 新增 `test/data/email_service_test.dart`（用 `MedicationEntity` 替代之前的 drift row）
+- 新增 `test/scripts/check_all_test.dart`（5 个，验证 4 层架构检测 + 相对路径解析 + Windows path bug）
+
+### Fixed (latent bugs)
+- **`streak_calculator.dart` 隐式排序假设**：`calculate` + `shouldShowStreakBroken` 用 `.first` 假设 caller 传 DESC，调用方目前都传已排序数据（`watchAllCheckIns()` Drift orderBy DESC），但任何未来 caller 传未排序数据会算错 streak。加显式 sort + 3 个 unsorted input regression test
+- **`assessment_comparison.dart` 隐式排序假设**：`fromRecords` 用 `.last` 假设 caller 传 ASC，同样的 fragility。修：先 sort 再取。加 2 个 unsorted input test
+- **`medications_list_widget.dart` 多次 `DateTime.now()` race**：`_editRefill` 之前 3 次 `DateTime.now()` 算 initialDate/firstDate/lastDate，跨 midnight 时三者可能不一致（`reminder_scheduler.dart:97` v0.14 已有同款 fix）。修：先算 `now` 一次再复用
+- **`trend_page.dart:36-39` field 初始化多次 `DateTime.now()`**：`_calendarMonth` 用 2 次 `.now()` 算 year 和 month，跨 midnight 边界可能 month 不一致（23:59 → 12，00:00 → 1）。修：抽成 `_initialCalendarMonth()` 静态方法算 1 次
+- **`notification_service.dart` 2 个 cancel id 范围过窄**：
+  - `cancelAllSnoozes` 之前 `[4000, 104000)` 范围，snooze id 公式 `4000 + medId * 1440 + minutes`，medId ≥ 72 漏 cancel
+  - `rescheduleMedicationReminders` 之前 `[2000, 3000)` 范围，med reminder id 公式 `2000 + medId * 10 + i`，medId ≥ 100 漏 cancel
+  - 修：范围都放宽到 200000+（covers medId 几万个，远超实际用户量）
+- **`vent_audio_storage.dart` 文件名 collision 风险**：`newAudioPath` 之前只用 `DateTime.now().millisecondsSinceEpoch` 作后缀，同毫秒内录 2 段会文件名相同 → 后录的覆盖前录的。修：加 4 位 random suffix (`vent_{ms}_{rand4}.m4a`)，同毫秒冲突概率 1/10000
+
+### Removed
+- **`EmailTemplate.buildHtml()`**：60 行 HTML 模板，v0.6 改 mock 短信后整个 HTML 路径无生产调用
+- **`test/domain/email_template_test.dart` 中的 `buildHtml` 测试**：自测死代码
+
+### Final state
+- `flutter analyze`: 0 issues（无 warning、无 error、无 info）
+- 4 个 `RadioListTile` 迁移到 Flutter 3.32+ `RadioGroup` 祖先 API
+- 88 个文件 `dart format` + `dart fix --apply` 一键 cleanup（229 fixes）
+- `test/scripts/check_all_test.dart` 新增 5 个测试，覆盖 `package:chroniccare/` 绝对路径 + `../../` 相对路径检测
+- 修 `check_all.dart` 潜在 Windows 路径 bug：`package:chroniccare/data/bar.dart` 的 rel 部分 `/` 没转 `Platform.pathSeparator`，导致 marker `\lib\data\` 匹配不上
+
+### Fixed (round 19B — 第 8 轮 code review 新发现的 6 个 bug)
+- **`notification_service.rescheduleRefillReminders` cancel range 过窄**：
+  - 之前 `_refillBaseId + 1000` 范围，refill id 公式 `_refillBaseId + medId`（`6000 + medId`），medId ≥ 1000 漏 cancel
+  - 修：范围放到 200000（同 round 19 medication reminder 的修法），覆盖 medId 几万个
+  - 配套把 `_refillNotificationId` 改 `@visibleForTesting` 暴露成 `refillNotificationId` 便于测试
+- **`reminder_scheduler.dart` 隐式排序假设**：`normalCheckIns.first.timestamp` 假设 `watchAll()` 返 DESC，drift orderBy 一改就 silent 算错
+  - 修：显式 `normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp))` 后再 `.first`
+- **`safety_watch_service.dart` 隐式排序假设**：同款 `normalCheckIns.first.timestamp` 隐式 DESC。修：同上显式 sort
+- **`assessment_reminder_service.dart` 隐式排序假设**：`assessments.last.timestamp` 假设 `watchAssessments()` 返 ASC（"最后"= list 末尾），drift orderBy 一改漏取最新评估
+  - 修：用 `assessments.map((c) => c.timestamp).reduce((a, b) => a.isAfter(b) ? a : b)` 显式找最新，不依赖 list 顺序
+- **`scheduleRefillReminder` 多次 `DateTime.now()` race**：
+  - 之前 2 次 `DateTime.now()`（fireAt 过期判断 + daysLeft 计算），跨 midnight 时可能用不同日期
+  - 修：先 `final now = DateTime.now();` 一次，下面两处复用
+- **`vent_compose_page._getAudioDuration` AudioPlayer leak**：
+  - 之前 try 块内 `await player.setSource(...)` + `await player.getDuration()` + `await player.dispose()` 一气呵成；任一环节抛异常都直接走 catch，`dispose()` 不会跑 → AudioPlayer 资源泄漏
+  - 修：把 `dispose()` 移到 `finally` 块，确保异常路径也释放
+
+### Tests (round 19B)
+- 478/478 pass（471 → 478：6 refill id range + 1 safety_watch unsorted data）
+- 新增 `test/data/notification_service_round19b_test.dart`：6 cases 覆盖 refill id 公式 + cancel range 范围（medId=0/1/999/1000/10000/50000 都验证）
+- 新增 `test/data/sort_assumption_round19b_test.dart`：1 case 用 unsorted 顺序插入 3 条打卡（5天前/3天前/1小时前），验证 SafetyWatch 取 latest = 1小时前（修前会取 5天前误报触发告警）
+
+### Fixed (round 19C — 第 9 轮 code review 新发现)
+- **`app_router.dart:110` 路由参数 unsafe parse**：
+  - 之前 `int.parse(state.pathParameters['id'] ?? '0')` 处理 `/vent/detail/abc` 时 `int.parse('abc')` 抛 FormatException
+  - 修：改用 `int.tryParse(...) ?? 0`，invalid id fallback 到 0（详情页会显示"找不到了"，不崩 app）
+
+### Tests (round 19C)
+- 486/486 pass（478 → 486：8 route param parsing 边界 case）
+- 新增 `test/routing/route_parsing_round19c_test.dart`：8 cases 覆盖 `int.tryParse` fallback 行为（valid int / empty / 'abc' / mixed / negative / whitespace / null path param）
+
+### Added (round 20 — 通知自检 + OEM 后台引导)
+- **`NotificationService.pendingCount`**：返回当前待发通知数；plugin 抛 PlatformException 时返回 -1（web/desktop 平台）
+- **设置页「通知与提醒」自检卡** (`NotificationStatusCard`)：
+  - 状态显示：当前已排队的待发通知数（0 / N / 不支持三态）
+  - **测试通知按钮**：点一下立即推一条，看到 = 通知工作正常
+  - **查看已排队通知**：弹 dialog 列出所有 `pendingNotificationRequests` 标题
+  - **国产手机后台引导**：折叠面板展开 5 大品牌（小米 / 华为 / OPPO / Vivo / 魅族）每家 2-3 步后台保活路径
+  - `kIsWeb` fallback：web 端显示"通知功能仅在 Android/iOS 可用"，隐藏功能按钮
+
+### Fixed (round 20)
+- **国产 ROM 静默杀通知没用户可见信号**：之前 20:00 提醒失败只在 log 里 `developer.log`，用户根本不知道。加自检卡后用户能主动验证 + 看到"没有待发通知"立即知道要排查
+
+### Tests (round 20)
+- 491/491 pass（486 → 491：5 widget test）
+- 新增 `test/presentation/notification_status_card_round20_test.dart`：5 cases 覆盖
+  - mobile 模式显示完整 card
+  - pendingCount 三种状态（5 / 0 / -1）的 UI 提示
+  - 点"测试通知"按钮 → 调 `showNow` 推一条
+  - 点刷新按钮 → 重新读 pendingCount
+
