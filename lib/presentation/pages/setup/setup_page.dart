@@ -117,9 +117,13 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         title: AppLocalizations.of(context).setupStep(_step + 1, 4),
         child: AnimatedSwitcher(
           // v0.21 Round 22 (P1-13 修复): wrap Motion.duration
+          // v0.22 round 30 (emil P2-9): switchOutCurve 也走 Motion.curve
+          // 让 reduce-motion 时切出也瞬时 (之前只 wrap duration, curve 还是 hard)
           duration: Motion.duration(context, MotionScheme.standard.duration),
-          switchInCurve: MotionScheme.standard.curve,
-          switchOutCurve: AppTokens.curveAccelerate,
+          switchInCurve:
+              Motion.curve(context, MotionScheme.standard.curve),
+          switchOutCurve:
+              Motion.curve(context, AppTokens.curveAccelerate),
           transitionBuilder: (child, anim) {
             return FadeTransition(
               opacity: anim,
@@ -427,10 +431,11 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     } catch (e, st) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)
-                .setupSaveFailed(e.toString().split('\n').first),),
-            backgroundColor: AppTokens.error,
+          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.error 集中器
+          AppSnackBar.error(
+            context,
+            action: AppLocalizations.of(context).settingsActionGenerateReport,
+            error: e,
           ),
         );
       }

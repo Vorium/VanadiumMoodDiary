@@ -107,7 +107,10 @@ class _EntryList extends ConsumerWidget {
       itemBuilder: (_, i) {
         final entry = entries[i];
         return FadeIn(
-          delay: Duration(milliseconds: (i * 40).clamp(0, 400)),
+          delay: Duration(
+            milliseconds: (i * AppTokens.staggerStepMs)
+                .clamp(0, AppTokens.staggerCapMs),
+          ),
           child: Dismissible(
             key: ValueKey('vent-entry-${entry.id}'),
             direction: DismissDirection.endToStart,
@@ -176,7 +179,11 @@ class _SwipeDeleteBackground extends StatelessWidget {
         color: AppTokens.error,
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
       ),
-      child: const Icon(Icons.delete_outline, color: Colors.white),
+      child: Icon(
+        Icons.delete_outline,
+        // v0.22 round 30 (emil P2-6): 走 fgOnError (delete bg 是 error 底)
+        color: AppTokens.fgOnError(context),
+      ),
     );
   }
 }
@@ -221,7 +228,7 @@ class _EntryCard extends StatelessWidget {
           style: const TextStyle(fontSize: AppTokens.fontSizeBody),
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
           child: Row(
             children: [
               Text(

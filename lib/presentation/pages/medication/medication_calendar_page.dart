@@ -219,7 +219,10 @@ class MedicationCalendarPage extends ConsumerWidget {
             // 用 FadeIn 抽的 widget (occasional 频度,user 1-2 次进日历)
             for (int i = 0; i < rows.length; i++)
               FadeIn(
-                delay: Duration(milliseconds: i * 40),
+                delay: Duration(
+                  milliseconds: (i * AppTokens.staggerStepMs)
+                      .clamp(0, AppTokens.staggerCapMs),
+                ),
                 child: _DataRow(row: rows[i]),
               ),
           ],

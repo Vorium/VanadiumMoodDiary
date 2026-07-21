@@ -67,7 +67,7 @@ class SetupStepConsent extends StatelessWidget {
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
               color: AppTokens.textSecondaryColor(context),
-              height: 1.5,
+              height: AppTokens.lineHeightNormal,
             ),
           ),
           const SizedBox(height: AppTokens.spacingLg),
@@ -110,7 +110,7 @@ class SetupStepConsent extends StatelessWidget {
             style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
               color: AppTokens.textHintColor(context),
-              height: 1.4,
+              height: AppTokens.lineHeightSnug,
             ),
           ),
           const SizedBox(height: AppTokens.spacingLg),

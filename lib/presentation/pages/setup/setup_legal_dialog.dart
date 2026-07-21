@@ -57,7 +57,7 @@ class LegalDocumentDialog extends StatelessWidget {
                 snap.data!,
                 style: const TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
-                  height: 1.5,
+                  height: AppTokens.lineHeightNormal,
                 ),
               ),
             );

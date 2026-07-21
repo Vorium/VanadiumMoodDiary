@@ -9,6 +9,7 @@ import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 用药报告全屏预览
 ///
@@ -79,7 +80,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                         style: TextStyle(
                           fontFamily: 'monospace',
                           fontSize: 13,
-                          height: 1.5,
+                          height: AppTokens.lineHeightNormal,
                           color: AppTokens.textPrimaryColor(context),
                         ),
                       ),
@@ -99,41 +100,52 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: OutlinedButton.icon(
-                            icon: const Icon(Icons.copy, size: 18),
-                            label:
-                                Text(AppLocalizations.of(context).settingsCopy),
-                            onPressed: _copy,
+                          // v0.22 round 30 (emil P1-1): 复制按钮包 PressFeedback 接管 tap
+                          child: PressFeedback(
+                            onTap: _copy,
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.copy, size: 18),
+                              label: Text(
+                                  AppLocalizations.of(context).settingsCopy,),
+                              onPressed: null, // 委托给 PressFeedback
+                            ),
                           ),
                         ),
                         const SizedBox(width: AppTokens.spacingSm),
                         Expanded(
-                          child: FilledButton.icon(
-                            icon: _pdfLoading
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Icon(Icons.picture_as_pdf, size: 18),
-                            label: Text(
-                                AppLocalizations.of(context).medReportPdfLabel,),
-                            onPressed:
-                                (widget.reportData == null || _pdfLoading)
-                                    ? null
-                                    : _exportPdf,
+                          child: PressFeedback(
+                            // v0.22 round 30 (emil P1-1): 不接管 onTap,
+                            // 让 button.onPressed 自己处理 disabled 状态
+                            // (reportData == null || _pdfLoading)
+                            child: FilledButton.icon(
+                              icon: _pdfLoading
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Icon(Icons.picture_as_pdf, size: 18),
+                              label: Text(
+                                  AppLocalizations.of(context).medReportPdfLabel,),
+                              onPressed:
+                                  (widget.reportData == null || _pdfLoading)
+                                      ? null
+                                      : _exportPdf,
+                            ),
                           ),
                         ),
                         const SizedBox(width: AppTokens.spacingSm),
                         Expanded(
-                          child: OutlinedButton.icon(
-                            icon: const Icon(Icons.share, size: 18),
-                            label: Text(AppLocalizations.of(context)
-                                .medReportShareLabel,),
-                            onPressed: _share,
+                          child: PressFeedback(
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.share, size: 18),
+                              label: Text(AppLocalizations.of(context)
+                                  .medReportShareLabel,),
+                              onPressed: _share,
+                            ),
                           ),
                         ),
                       ],

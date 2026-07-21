@@ -216,6 +216,8 @@ class MedCard extends StatelessWidget {
                     initialValue: med.dosageUnit,
                     decoration: InputDecoration(labelText: l10n.setupMedUnit),
                     items: [
+                      // v0.22 round 30 (sp-zh P2-5): 'mg' 是国际单位不翻译,
+                      // '片' 走 l10n commonDoseUnit (zh: "片" / en: "tablet")
                       const DropdownMenuItem(value: 'mg', child: Text('mg')),
                       DropdownMenuItem(
                         value: '片',
@@ -272,7 +274,7 @@ class MedCard extends StatelessWidget {
             ),
             if (med.times.isEmpty)
               Padding(
-                padding: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
                 child: Text(
                   l10n.setupMedTimeOptional,
                   style: TextStyle(

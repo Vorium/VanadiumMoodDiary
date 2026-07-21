@@ -92,7 +92,7 @@ class EmailPreviewPage extends ConsumerWidget {
                               body,
                               style: TextStyle(
                                 fontSize: AppTokens.fontSizeBody,
-                                height: 1.6,
+                                height: AppTokens.lineHeightRelaxed,
                                 color: AppTokens.textPrimaryColor(context),
                               ),
                             ),

@@ -56,10 +56,11 @@ class _AssessmentReminderSectionState
       setState(() => _enabled = v);
       if (v && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)
-                .assessmentReminderEnabled(_days ?? 14),),
-            duration: AppTokens.snackBarDurationShort,
+          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
+          AppSnackBar.info(
+            context,
+            AppLocalizations.of(context)
+                .assessmentReminderEnabled(_days ?? 14),
           ),
         );
       }
@@ -92,10 +93,10 @@ class _AssessmentReminderSectionState
       setState(() => _days = picked);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                AppLocalizations.of(context).assessmentReminderChanged(picked),),
-            duration: AppTokens.snackBarDurationShort,
+          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
+          AppSnackBar.info(
+            context,
+            AppLocalizations.of(context).assessmentReminderChanged(picked),
           ),
         );
       }

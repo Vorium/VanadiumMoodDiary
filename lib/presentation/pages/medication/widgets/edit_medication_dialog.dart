@@ -319,7 +319,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
             ),
             if (_times.isEmpty)
               Padding(
-                padding: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
                 child: Text(
                   AppLocalizations.of(context).editMedNoTimeHint,
                   style: TextStyle(

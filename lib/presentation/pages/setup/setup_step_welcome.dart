@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// Step 1: 欢迎 + 紧急联系人
 ///
@@ -57,7 +58,7 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
             style: const TextStyle(
               fontSize: AppTokens.fontSizeTitle,
               fontWeight: FontWeight.w600,
-              height: 1.2,
+              height: AppTokens.lineHeightTight,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
@@ -112,10 +113,14 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
             ),
             const SizedBox(height: AppTokens.spacingSm),
           ],
-          OutlinedButton.icon(
-            onPressed: widget.onAddContact,
-            icon: const Icon(Icons.add),
-            label: Text(l10n.setupAddContact),
+          // v0.22 round 30 (emil P3-5): 包 PressFeedback 接管 tap
+          PressFeedback(
+            onTap: widget.onAddContact,
+            child: OutlinedButton.icon(
+              onPressed: null, // 委托给 PressFeedback
+              icon: const Icon(Icons.add),
+              label: Text(l10n.setupAddContact),
+            ),
           ),
           const SizedBox(height: AppTokens.spacingMd),
           // v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox

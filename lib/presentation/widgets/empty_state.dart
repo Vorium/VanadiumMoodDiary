@@ -70,7 +70,7 @@ class EmptyState extends StatelessWidget {
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
                   color: AppTokens.textHintColor(context),
-                  height: 1.4,
+                  height: AppTokens.lineHeightSnug,
                 ),
               ),
             ],

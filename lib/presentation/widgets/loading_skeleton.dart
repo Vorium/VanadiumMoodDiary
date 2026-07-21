@@ -121,26 +121,23 @@ class _ShimmerState extends State<_Shimmer>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    // v0.21 Round 22 (P1-13 修复): 尊重系统 prefers-reduced-motion
+    // v0.22 round 30 (emil P1-5): 不在 initState 启动 controller
+    // 因为 initState 不能读 MediaQuery (context 还没绑)
+    // → 之前 _maybeShimmer() 总是 _controller.repeat(reduce-motion 也启动)
+    // 然后 didChangeDependencies 才停 → **首次 build 仍短暂动画**
     // 精神心理患者前庭敏感比例高,1.2s 永久循环 shimmer 不可接受
-    // 开 reduce-motion → 停循环 + 设终态 (0.7 = 满 opacity)
-    _maybeShimmer();
-  }
-
-  void _maybeShimmer() {
-    // 默认重复
-    _controller.repeat(reverse: true);
+    // 现在留给 didChangeDependencies 同步根据 MediaQuery 决定
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 监听系统 reduce-motion 变化
+    // 监听系统 reduce-motion 变化 + 首次 build 同步
     final reduce = MediaQuery.of(context).disableAnimations;
-    if (reduce && _controller.isAnimating) {
-      _controller.stop();
+    if (reduce) {
+      if (_controller.isAnimating) _controller.stop();
       _controller.value = 1.0; // 跳到终态(满 opacity)
-    } else if (!reduce && !_controller.isAnimating) {
+    } else if (!_controller.isAnimating) {
       _controller.repeat(reverse: true);
     }
   }

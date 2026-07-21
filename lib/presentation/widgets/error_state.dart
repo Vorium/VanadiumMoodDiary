@@ -72,7 +72,7 @@ class ErrorState extends StatelessWidget {
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
                   color: AppTokens.textHintColor(context),
-                  height: 1.4,
+                  height: AppTokens.lineHeightSnug,
                 ),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,

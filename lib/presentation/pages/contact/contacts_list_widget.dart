@@ -51,7 +51,11 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
                 color: AppTokens.error,
-                child: const Icon(Icons.delete_outline, color: Colors.white),
+                child: Icon(
+                  Icons.delete_outline,
+                  // v0.22 round 30 (emil P2-6): 走 fgOnError
+                  color: AppTokens.fgOnError(context),
+                ),
               ),
               onDismissed: (_) => _swipeDeleteContact(contacts[i]),
               child: ListTile(

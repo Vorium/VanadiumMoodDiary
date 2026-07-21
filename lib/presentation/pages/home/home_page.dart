@@ -2,7 +2,6 @@ import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,6 +16,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/main.dart' show notificationInitResultProvider;
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
@@ -114,7 +114,9 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (!mounted) return;
       final medName =
           med?.name ?? AppLocalizations.of(context).homeAutofireFallbackName;
-      HapticFeedback.mediumImpact();
+      // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
+      // (打卡成功触感,emil 频度: tens/day)
+      Haptics.success();
       _showCelebrationOverlay(context,
           AppLocalizations.of(context).homeAutofireCelebration(medName),);
       // 清除 query 防止刷新页面重复触发
@@ -287,7 +289,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   /// 打卡:haptic + 触发实际打卡
   Future<void> _onCheckIn(BuildContext context, int currentStreak) async {
-    HapticFeedback.mediumImpact();
+    // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
+    Haptics.success();
     await ref.read(checkInNotifierProvider.notifier).checkIn();
     if (!context.mounted) return;
     final newStreak = currentStreak + 1;
@@ -366,7 +369,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   ///
   /// 用 medicationId=0 表示"通用打卡提醒 snooze"(避开真实 med id)
   Future<void> _snooze5Min() async {
-    HapticFeedback.lightImpact();
+    // v0.22 round 30 (emil P2-4): 走 Haptics.light 集中器
+    Haptics.light();
     try {
       await ref.read(notificationServiceProvider).snoozeOnce(
             medicationId: 0, // 0 = 通用 snooze
@@ -419,9 +423,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
     overlay.insert(entry);
-    Future.delayed(const Duration(milliseconds: 1800), () {
-      if (entry.mounted) entry.remove();
-    });
+    Future.delayed(
+      const Duration(milliseconds: AppTokens.celebrationDisplayMs),
+      () {
+        if (entry.mounted) entry.remove();
+      },
+    );
   }
 
   /// 计算下次提醒时间(每天 20:00)

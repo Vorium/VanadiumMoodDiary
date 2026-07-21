@@ -293,7 +293,7 @@ class _SafetyReminderCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     l10n.reminderHubSmsMockWarning,
-                    style: const TextStyle(fontSize: 12, height: 1.4),
+                    style: AppTokens.textStyleLegal(context),
                   ),
                 ),
               ],
