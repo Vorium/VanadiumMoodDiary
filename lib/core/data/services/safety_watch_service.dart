@@ -9,6 +9,7 @@ import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/core/shared/user_name_helper.dart';
 
 /// "安全开关" 服务 — 死了么/撸了么 思路
 ///
@@ -274,7 +275,7 @@ class SafetyWatchService {
     String? userName,
     required int daysSinceLast,
   }) {
-    final name = (userName == null || userName.isEmpty) ? '您的家人' : userName;
+    final name = safeUserName(userName, fallback: '您的家人');
     return '[慢病管家] $name 已 $daysSinceLast 天未打卡吃药。'
         '如确认安全请回复 1，无回复请联系本人或社区。';
   }

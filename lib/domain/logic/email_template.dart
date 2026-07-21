@@ -1,4 +1,5 @@
 import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/shared/user_name_helper.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 
 /// 通知文案模板生成器
@@ -18,7 +19,7 @@ class EmailTemplate {
     String? userName,
     required int daysWithoutCheckIn,
   }) {
-    final name = (userName == null || userName.isEmpty) ? '您的家人' : userName;
+    final name = safeUserName(userName, fallback: '您的家人');
     return Strings.emailSubject(name, daysWithoutCheckIn);
   }
 
@@ -32,7 +33,7 @@ class EmailTemplate {
   }) {
     final buffer = StringBuffer();
 
-    final name = (userName == null || userName.isEmpty) ? '您的家人' : userName;
+    final name = safeUserName(userName, fallback: '您的家人');
     buffer.writeln(Strings.emailBody(name, daysWithoutCheckIn));
     buffer.writeln();
 

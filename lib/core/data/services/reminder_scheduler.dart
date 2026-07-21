@@ -1,4 +1,5 @@
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/shared/user_name_helper.dart';
 
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -186,7 +187,7 @@ class ReminderService implements ReminderChecker {
     required int hoursSince,
     required MedicationEntity? medication,
   }) {
-    final name = (userName == null || userName.isEmpty) ? '您的家人' : userName;
+    final name = safeUserName(userName, fallback: '您的家人');
     final buffer = StringBuffer();
     if (daysSince >= 2) {
       buffer.writeln('【慢病管家】$name 已 $daysSince 天没打卡。');

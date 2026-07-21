@@ -66,3 +66,45 @@ jobs:
 
       - name: Verify layer purity (domain/data/presentation 4-layer)
         run: dart scripts/check_all.dart
+
+  build:
+    # v0.22 round 31 (sp-en P0-2): 加 release build job
+    # 之前 CI 只跑 flutter analyze + test,**从不跑 build apk/web**。
+    # dev 模式能跑 ≠ release 模式能 build 成功（minify / R8 / shader 编译 / aot 都有可能炸）。
+    # 这是 `superpowers:verification-before-completion` 在 release 模式的硬性要求。
+    name: Flutter build (apk + web)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.44.5"
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Ensure .env exists (required by pubspec asset)
+        run: echo "PLACEHOLDER=test" > .env
+
+      - name: Generate drift code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build APK (debug, fastest signal)
+        run: flutter build apk --debug
+
+      - name: Build Web (production)
+        run: flutter build web --release

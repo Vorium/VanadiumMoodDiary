@@ -1,4 +1,5 @@
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/shared/user_name_helper.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -589,7 +590,7 @@ class NotificationService implements NotificationSender {
   }) async {
     await init();
 
-    final name = (userName == null || userName.isEmpty) ? '您' : userName;
+    final name = safeUserName(userName);
 
     // 用单独的 channel id，让系统/用户能区分"安全警报"和"普通提醒"
     const safetyChannelId = 'chroniccare.safety';

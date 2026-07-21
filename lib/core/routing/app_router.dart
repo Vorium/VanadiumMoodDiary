@@ -6,12 +6,12 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/theme_toggle_button.dart';
 
-/// go_router 璺敱閰嶇疆
+/// go_router 路由配置
 ///
-/// **鏋舵瀯璇存槑**: 姝ゆ枃浠朵綅浜?core/routing/ 浣?import 浜?presentation/pages/锛?
-/// 杩欐槸 go_router 鐨勫浐鏈?tension 鈥?璺敱蹇呴』鐭ラ亾椤甸潰 widget 鎵嶈兘鏋勯€犺矾鐢便€?
-/// 灏嗗叾绉昏嚦 presentation/ 浼氬鑷村惊鐜緷璧栵紙presentation 鈫?core for theme/l10n锛?
-/// core 鈫?presentation for pages锛夈€傛帴鍙楁 trade-off锛屽凡鍦?AGENTS.md 鏋舵瀯妫€鏌ヤ腑璞佸厤銆?
+/// **架构说明**: 此文件位于 core/routing/ 并 import 了 presentation/pages/，
+/// 这是 go_router 的固有限制 —— 路由必须知道页面 widget 才能构建路由。
+/// 将其移至 presentation/ 会导致循环依赖（presentation → core for theme/l10n，
+/// core → presentation for pages）。接受此 trade-off，已在 AGENTS.md 架构检查中豁免。
 import 'package:chroniccare/presentation/pages/assessment/assessment_history_page.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_page.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';

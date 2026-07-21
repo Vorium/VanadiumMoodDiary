@@ -160,8 +160,9 @@ class AppDatabase extends _$AppDatabase {
           // - 老数据 "" 仍写回 "" (空字符串),但允许 null
           // - 实际: drift 的 alter table 不支持改列属性,SQLite 也没有 ALTER COLUMN
           //   所以这条变更**只在 createAll 里生效** (新装用户自动是新 schema)
-          //   升级用户 schema 没改,代码层判断 if (userName?.isNotEmpty ?? false)
-          //   兼容老数据 "" 和新数据 null
+          //   升级用户 schema 没改,**统一走 `core/shared/user_name_helper.dart`
+          //   的 `safeUserName()` 兼容老数据 "" 和新数据 null**
+          //   (v0.22 round 31 sp-en P0-3 抽 helper 集中 5+ 处散落判断)
         },
         beforeOpen: (details) async {
           // 启用外键

@@ -158,8 +158,14 @@ Future<bool?> _showMigrationConfirmDialog(
   final ctx = controller.navigatorKey.currentContext;
   if (ctx == null) {
     // 极少见：endOfFrame 后还没拿到 context
-    piiSafeLog('Main', '⚠️ migration dialog: navigator context 仍为 null，降级放行');
-    return true;
+    // v0.22 round 31 (sp-en P0-4): 之前降级返 `true` 会**自动确认删旧数据**，
+    // race 时用户没看到 dialog 数据就丢了。改成降级返 `false`（保守拒绝），
+    // 触发 caller 的 `_MigrationAbortedApp` abort UI，用户点"重试"再走一次。
+    piiSafeLog(
+      'Main',
+      '⚠️ migration dialog: navigator context 仍为 null，降级拒绝（保守）',
+    );
+    return false;
   }
   return showDialog<bool>(
     context: ctx,
