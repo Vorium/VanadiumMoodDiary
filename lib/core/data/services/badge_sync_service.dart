@@ -15,6 +15,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
 
 /// 角标同步 (iOS badge 数字)
 class BadgeSyncService {
@@ -29,8 +30,8 @@ class BadgeSyncService {
   // 跟 notification_service 共用 channel (避免创建新 channel 浪费权限)
   // badge 用 importance.min (不弹不响), 共用 medication channel 没事
   static const String _channelId = 'chroniccare.medication';
-  static const String _channelName = '吃药提醒';
-  static const String _channelDesc = '到点提醒你吃药打卡';
+  static const String _channelName = Strings.notifChannelMedicationName;
+  static const String _channelDesc = Strings.notifChannelMedicationDesc;
 
   BadgeSyncService({required FlutterLocalNotificationsPlugin plugin})
       : _plugin = plugin;

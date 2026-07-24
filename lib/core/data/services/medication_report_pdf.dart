@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
@@ -23,9 +25,9 @@ class MedicationReportPdf {
   /// 构建 PDF
   static Future<Uint8List> build(MedicationReportData data) async {
     final doc = pw.Document(
-      title: '慢病管家 · 用药报告',
-      author: '慢病管家',
-      subject: '${data.windowDays} 天用药情况',
+      title: Strings.pdfTitle,
+      author: Strings.pdfAuthor,
+      subject: Strings.pdfSubject(data.windowDays),
     );
 
     doc.addPage(
@@ -37,19 +39,19 @@ class MedicationReportPdf {
         build: (ctx) => [
           _patientInfoBlock(data),
           pw.SizedBox(height: 16),
-          _sectionTitle('常吃药方案'),
+          _sectionTitle(Strings.pdfSectionRoutineMeds),
           if (data.medicationStats.isEmpty)
-            _emptyLine('（无）')
+            _emptyLine(Strings.pdfNoValue)
           else
             ..._medicationBlocks(data),
           pw.SizedBox(height: 16),
-          _sectionTitle('临时用药'),
+          _sectionTitle(Strings.pdfSectionTempMeds),
           if (data.tempMedications.isEmpty)
-            _emptyLine('（无）')
+            _emptyLine(Strings.pdfNoValue)
           else
             _tempMedTable(data),
           pw.SizedBox(height: 16),
-          _sectionTitle('总览'),
+          _sectionTitle(Strings.pdfSectionSummary),
           _summaryBlock(data),
         ],
       ),
@@ -72,14 +74,14 @@ class MedicationReportPdf {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(
-            '慢病管家 · 用药报告',
+            Strings.pdfTitle,
             style: pw.TextStyle(
               fontSize: 18,
               fontWeight: pw.FontWeight.bold,
             ),
           ),
           pw.Text(
-            '近 ${data.windowDays} 天',
+            Strings.pdfRecentDays(data.windowDays),
             style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
           ),
         ],
@@ -99,11 +101,11 @@ class MedicationReportPdf {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(
-            '本报告由「慢病管家」App 自动生成 · 本应用不提供医疗建议',
+            Strings.pdfFooterNotice,
             style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
           ),
           pw.Text(
-            '第 ${ctx.pageNumber} / ${ctx.pagesCount} 页',
+            Strings.pdfPageN(ctx.pageNumber, ctx.pagesCount),
             style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
           ),
         ],
@@ -121,13 +123,22 @@ class MedicationReportPdf {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          _kv('患者', data.userName.isEmpty ? '未设置' : data.userName),
+          // v0.23 round 39 (P1-7 fix): userName 走 maskName
+          // 之前直接显示真实姓名,医生收到的 PDF 是患者敏感信息
+          // 改成"张**"形式,既保留 PII 又有可读性
           _kv(
-            '报告周期',
-            '${Formatters.date(data.periodStart)} 至 ${Formatters.date(data.periodEnd)}'
-                '（共 ${data.windowDays} 天）',
+            Strings.pdfLabelPatient,
+            data.userName.isEmpty ? Strings.pdfUnset : maskName(data.userName),
           ),
-          _kv('生成时间', Formatters.dateTime(data.generatedAt)),
+          _kv(
+            Strings.pdfLabelReportPeriod,
+            Strings.pdfReportPeriodValue(
+              Formatters.date(data.periodStart),
+              Formatters.date(data.periodEnd),
+              data.windowDays,
+            ),
+          ),
+          _kv(Strings.pdfLabelGeneratedAt, Formatters.dateTime(data.generatedAt)),
         ],
       ),
     );
@@ -189,15 +200,16 @@ class MedicationReportPdf {
       final s = data.medicationStats[i];
       final m = s.medication;
       final timesStr = s.times.isEmpty
-          ? '未设置时间'
+          ? Strings.pdfUnsetTime
           : s.times
               .map(
                 (t) =>
                     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',
               )
               .join(' / ');
-      final freqStr =
-          s.times.isEmpty ? '未设置' : '每日 ${s.times.length} 次（$timesStr）';
+      final freqStr = s.times.isEmpty
+          ? Strings.pdfUnset
+          : Strings.pdfDailyNTimes(s.times.length, timesStr);
 
       widgets.add(
         pw.Container(
@@ -218,15 +230,23 @@ class MedicationReportPdf {
                 ),
               ),
               pw.SizedBox(height: 4),
-              _kv('起始', Formatters.date(m.startDate)),
+              _kv(Strings.pdfLabelStart, Formatters.date(m.startDate)),
               _kv(
-                '服药统计',
-                '${s.actualDoseDays}/${data.windowDays} 天 · ${s.actualDoseCount}/${s.expectedDoseCount} 次',
+                Strings.pdfLabelMedicationStats,
+                Strings.pdfMedicationStatsValue(
+                  s.actualDoseDays,
+                  data.windowDays,
+                  s.actualDoseCount,
+                  s.expectedDoseCount,
+                ),
               ),
               if (s.missedDates.isNotEmpty)
-                _kv('漏服', s.missedDates.map(Formatters.monthDay).join('、'))
+                _kv(
+                  Strings.pdfLabelMissed,
+                  s.missedDates.map(Formatters.monthDay).join('、'),
+                )
               else
-                _kv('漏服', '✓ 无'),
+                _kv(Strings.pdfLabelMissed, Strings.pdfNoMissed),
             ],
           ),
         ),
@@ -252,7 +272,12 @@ class MedicationReportPdf {
         2: pw.FlexColumnWidth(2),
         3: pw.FlexColumnWidth(2),
       },
-      headers: const ['日期', '时间', '药名', '备注'],
+      headers: const [
+        Strings.pdfColumnDate,
+        Strings.pdfColumnTime,
+        Strings.pdfColumnMed,
+        Strings.pdfColumnNote,
+      ],
       data: [
         for (final t in data.tempMedications)
           [
@@ -268,13 +293,12 @@ class MedicationReportPdf {
   static pw.Widget _summaryBlock(MedicationReportData data) {
     // B6 fix: 期望为 0 时显示 "—" 而不是 0%
     final adh = data.adherencePct;
-    final adhStr = adh == null ? '—（无可比较的常吃药）' : '$adh%';
     final lines = <String>[
-      '按时服药: ${data.onTimeDoses} 次',
-      '漏服: ${data.missedDoses} 次',
-      if (data.extraDoses > 0) '补服: ${data.extraDoses} 次',
-      '临时用药: ${data.tempMedications.length} 次',
-      '依从率: $adhStr',
+      Strings.pdfOnTime(data.onTimeDoses),
+      Strings.pdfMissed(data.missedDoses),
+      if (data.extraDoses > 0) Strings.pdfExtra(data.extraDoses),
+      Strings.pdfTempN(data.tempMedications.length),
+      Strings.pdfAdherencePct(adh),
     ];
     return pw.Container(
       padding: const pw.EdgeInsets.all(10),

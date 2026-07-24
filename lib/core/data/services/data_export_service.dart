@@ -20,6 +20,8 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// v0.21 (P0-3 fix): 导出时统一 toUtc() 让 ISO 字符串带 'Z' 后缀。
 ///
@@ -153,8 +155,18 @@ class DataExportService {
         final plain =
             await _ventTextEncryption.decrypt(Uint8List.fromList(blob));
         text = utf8.decode(plain);
-      } on Exception {
-        // 解密失败 → 视为无文字(不该发生,migration 应已迁移所有数据)
+      } catch (e, st) {
+        // v0.23 round 39 (P1-5 fix): catch all
+        // 之前 `on Exception` 漏 catch `InvalidArgument` (PKCS7 pad 错误)
+        // → 整条 vent 导出炸 → 整个 export 失败
+        // 改成 catch all,text = null
+        // swallowError 走 developer.log
+        swallowError(
+          where: 'DataExportService._buildVentEntryExport',
+          error: e,
+          stack: st,
+          note: 'vent 文字 decrypt 失败 (PKCS7 pad / data corruption), 视为无文字',
+        );
       }
     }
     return {
@@ -196,19 +208,36 @@ class DataExportService {
         // v0.9 新增表（v1 才存在，先 guard）
         try {
           await _db.delete(_db.reportHistories).go();
-        } catch (_) {
-          // 表不存在（旧 schema），忽略
+        } catch (e, st) {
+          // v0.23 round 39 (P1-10 fix): 不再 `catch (_)` 完全静默,
+          // 走 swallowError 集中器,便于排查异常 schema
+          swallowError(
+            where: 'DataExportService.import — reportHistories.delete',
+            error: e,
+            stack: st,
+            note: '表不存在(旧 schema),忽略',
+          );
         }
         try {
           await _db.delete(_db.moodEntries).go();
-        } catch (_) {
-          // 同上
+        } catch (e, st) {
+          swallowError(
+            where: 'DataExportService.import — moodEntries.delete',
+            error: e,
+            stack: st,
+            note: '表不存在(旧 schema),忽略',
+          );
         }
         // P0-3: vent_entries 表(v0.15+ 存在，不需要 guard)
         try {
           await _db.delete(_db.ventEntries).go();
-        } catch (_) {
-          // 表不存在(老 schema),忽略
+        } catch (e, st) {
+          swallowError(
+            where: 'DataExportService.import — ventEntries.delete',
+            error: e,
+            stack: st,
+            note: '表不存在(老 schema),忽略',
+          );
         }
 
         // profile
@@ -508,13 +537,19 @@ class ImportResult {
   /// 一句话摘要
   String get summary {
     final parts = <String>[
-      '$contactCount 联系人',
-      '$medicationCount 药',
-      '$checkInCount 打卡',
+      Strings.importSummaryContact(contactCount),
+      Strings.importSummaryMedication(medicationCount),
+      Strings.importSummaryCheckIn(checkInCount),
     ];
-    if (reportHistoryCount > 0) parts.add('$reportHistoryCount 报告');
-    if (moodEntryCount > 0) parts.add('$moodEntryCount 情绪');
-    if (ventEntryCount > 0) parts.add('$ventEntryCount 树洞');
+    if (reportHistoryCount > 0) {
+      parts.add(Strings.importSummaryReport(reportHistoryCount));
+    }
+    if (moodEntryCount > 0) {
+      parts.add(Strings.importSummaryMood(moodEntryCount));
+    }
+    if (ventEntryCount > 0) {
+      parts.add(Strings.importSummaryVent(ventEntryCount));
+    }
     return parts.join(' / ');
   }
 }

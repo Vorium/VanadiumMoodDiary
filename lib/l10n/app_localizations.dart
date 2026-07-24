@@ -692,6 +692,12 @@ abstract class AppLocalizations {
   /// **'出错了，请重试'**
   String get commonError;
 
+  /// No description provided for @lastStartupErrorBannerBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'上次启动出错，请截图反馈'**
+  String get lastStartupErrorBannerBody;
+
   /// No description provided for @commonClose.
   ///
   /// In zh, this message translates to:

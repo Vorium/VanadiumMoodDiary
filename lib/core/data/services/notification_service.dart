@@ -1,4 +1,5 @@
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/user_name_helper.dart';
 
 import 'package:flutter/material.dart';
@@ -24,8 +25,8 @@ import 'package:chroniccare/core/data/services/snooze_manager.dart';
 /// - "漏 1 天"主动 push 安慰
 class NotificationService implements NotificationSender {
   static const _channelId = 'chroniccare.medication';
-  static const _channelName = '吃药提醒';
-  static const _channelDesc = '到点提醒你吃药打卡';
+  static const _channelName = Strings.notifChannelMedicationName;
+  static const _channelDesc = Strings.notifChannelMedicationDesc;
   static const _defaultReminderId = 1001;
   // medication.time 推送的 id 起始基数（避免冲突）
   static const _medicationReminderBaseId = 2000;
@@ -154,8 +155,8 @@ class NotificationService implements NotificationSender {
       const payload = 'chroniccare://check-in/today';
       await _dispatcher.zonedDaily(
         id: _defaultReminderId,
-        title: '🌱 今天吃了药吗？',
-        body: '点一下 = 打卡，让家人放心',
+        title: Strings.notifDailyCheckInTitle,
+        body: Strings.notifDailyCheckInBody,
         hour: hour,
         minute: minute,
         details: details,
@@ -230,8 +231,8 @@ class NotificationService implements NotificationSender {
               NotificationDeepLink.medicationCheckIn(med.id).encode();
           await _dispatcher.zonedDaily(
             id: id,
-            title: '💊 该吃药了：${med.name}',
-            body: '${med.dosage}${med.dosageUnit} · 点一下 = 打卡',
+            title: Strings.notifMedicationTitle(med.name),
+            body: Strings.notifMedicationBody(med.dosage, med.dosageUnit),
             hour: t.hour,
             minute: t.minute,
             details: details,
@@ -422,8 +423,8 @@ class NotificationService implements NotificationSender {
     try {
       await _dispatcher.zonedAt(
         id: id,
-        title: '💊 该续方了：${medication.name}',
-        body: '还剩约 $daysLeft 天断药，记得去医院或线上开药',
+        title: Strings.notifRefillTitle(medication.name),
+        body: Strings.notifRefillBody(daysLeft),
         fireAt: fireAt,
         details: details,
         payload: payload,
@@ -507,9 +508,8 @@ class NotificationService implements NotificationSender {
     try {
       await _dispatcher.zonedAt(
         id: _assessmentReminderId,
-        title: '🌿 心理评估时间到',
-        body: '已经 $days 天没做 ${scaleId.toUpperCase()} 了，'
-            '抽 2 分钟看看最近状态',
+        title: Strings.notifAssessmentTitle(),
+        body: Strings.notifAssessmentBody(days, scaleId.toUpperCase()),
         fireAt: fireAt,
         details: details,
         payload: payload,
@@ -546,8 +546,8 @@ class NotificationService implements NotificationSender {
 
     // 用单独的 channel id，让系统/用户能区分"安全警报"和"普通提醒"
     const safetyChannelId = 'chroniccare.safety';
-    const safetyChannelName = '安全警报';
-    const safetyChannelDesc = '长时间未打卡时提醒';
+    const safetyChannelName = Strings.notifChannelSafetyName;
+    const safetyChannelDesc = Strings.notifChannelSafetyDesc;
 
     const details = NotificationDetails(
       android: AndroidNotificationDetails(

@@ -124,6 +124,7 @@
   "commonConfirm": "确认",
   "commonLoading": "加载中……",
   "commonError": "出错了，请重试",
+  "lastStartupErrorBannerBody": "上次启动出错，请截图反馈",
   "commonClose": "关闭",
   "commonRetry": "重试",
   "commonGotIt": "我知道了",

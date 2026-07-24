@@ -61,7 +61,12 @@ class EmailTemplate {
   }
 
   static String _formatDateTime(DateTime dt) {
-    return '${dt.year}-${_pad(dt.month)}-${_pad(dt.day)} ${_pad(dt.hour)}:${_pad(dt.minute)}';
+    // v0.23 round 39 (P1-12 fix): 加时区标注 (北京时间 UTC+8)
+    // 失联通知邮件接收方跨国/跨时区时,没时区会混淆
+    // PIPL §17 数据准确性要求时区清晰
+    return '${dt.year}-${_pad(dt.month)}-${_pad(dt.day)} '
+        '${_pad(dt.hour)}:${_pad(dt.minute)} '
+        '(UTC+8 北京时间)';
   }
 
   static String _pad(int n) => n.toString().padLeft(2, '0');

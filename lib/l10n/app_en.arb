@@ -109,6 +109,7 @@
   "commonConfirm": "Confirm",
   "commonLoading": "Loading...",
   "commonError": "Something went wrong, please retry",
+  "lastStartupErrorBannerBody": "Last startup error, please screenshot and report",
   "commonClose": "Close",
   "commonRetry": "Retry",
   "commonGotIt": "Got it",

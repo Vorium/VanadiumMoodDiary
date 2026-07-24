@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// "上次启动出错" 顶部 banner
 ///
@@ -41,6 +42,7 @@ class _LastStartupErrorBannerState extends State<LastStartupErrorBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final showBanner = _lastError != null && !_dismissed;
     return Stack(
       children: [
@@ -69,7 +71,8 @@ class _LastStartupErrorBannerState extends State<LastStartupErrorBanner> {
                       const SizedBox(width: AppTokens.spacingSm),
                       Expanded(
                         child: Text(
-                          '上次启动出错，请截图反馈',
+                          // v0.23 round 39 (P1-9 fix): 走 ARB i18n
+                          l10n.lastStartupErrorBannerBody,
                           style: AppTokens.textStyleLabel(context).copyWith(
                             color: AppTokens.fgOnError(context),
                           ),
@@ -82,7 +85,7 @@ class _LastStartupErrorBannerState extends State<LastStartupErrorBanner> {
                           color: AppTokens.fgOnError(context),
                         ),
                         onPressed: () => setState(() => _dismissed = true),
-                        tooltip: '关闭',
+                        tooltip: l10n.commonClose,
                       ),
                     ],
                   ),

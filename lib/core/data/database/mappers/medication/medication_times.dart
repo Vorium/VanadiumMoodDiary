@@ -1,14 +1,15 @@
 import 'dart:convert';
 
-import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 
 /// Medication 的扩展方法：把 timesJson 解析成 `List<HourMinute>`
 ///
 /// 用法：`medication.times`
 ///
 /// 格式：`[{"h":8,"m":0},{"h":20,"m":0}]`
-/// 容错：解析失败返回空列表
+/// 容错：解析失败返回空列表(通过 [swallowError] 集中记录,便于排查)
 ///
 /// v0.16 (Round 19): 从 `List<TimeOfDay>` 改成 `List<HourMinute>`，消除 data → flutter/material 依赖
 extension MedicationTimes on Medication {
@@ -29,7 +30,15 @@ extension MedicationTimes on Medication {
         }
       }
       return result;
-    } catch (_) {
+    } catch (e, st) {
+      // v0.23 round 39 (P1-10 fix): 不再 `catch (_)` 完全静默,
+      // 走 swallowError 集中器。release 模式不打印,debug 模式打 developer.log
+      swallowError(
+        where: 'MedicationTimes.times',
+        error: e,
+        stack: st,
+        note: 'timesJson 解析失败: 返回空列表',
+      );
       return const [];
     }
   }

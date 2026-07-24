@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'dart:developer' as developer;
 
 /// 统一 JSON 编解码工具（共享层：domain + data + presentation 均可使用）
@@ -27,6 +29,8 @@ class JsonCodec {
   /// 容错：
   /// - 空字符串 / `'[]'` → `[]`
   /// - 解析失败 → `[]`（不抛异常，因为显示层宁愿空也不能崩）
+  /// - 解析失败时通过 [swallowError] 记录,release 不打,debug 模式
+  ///   走 `developer.log` 给排查留线索
   static List<String> decodeStringList(String? raw) {
     if (raw == null || raw.isEmpty || raw == '[]') return const [];
     try {
@@ -34,8 +38,15 @@ class JsonCodec {
       if (decoded is List) {
         return decoded.whereType<String>().toList(growable: false);
       }
-    } catch (_) {
-      // 解析失败：返回空列表
+    } catch (e, st) {
+      // v0.23 round 39 (P1-10 fix): 不再 `catch (_)` 完全静默,
+      // 走 swallowError 集中器,release 模式不打印,debug 模式打 developer.log
+      swallowError(
+        where: 'JsonCodec.decodeStringList',
+        error: e,
+        stack: st,
+        note: '解析失败: 返回空列表',
+      );
     }
     return const [];
   }

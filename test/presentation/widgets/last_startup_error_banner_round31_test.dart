@@ -5,7 +5,10 @@
 //   2. consume 返 LastError → banner 显示
 //   3. 点关闭 → banner 消失, child 仍可见
 //   4. consume 失败 (SharedPreferences 抛) → 不 crash
+//
+// v0.23 round 39 (P1-9 fix): 加 Localizations delegate, banner 走 ARB
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/last_startup_error_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,8 +22,11 @@ void main() {
   testWidgets('consume 返 null → banner 不显示, child 正常',
       (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: LastStartupErrorBanner(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: const LastStartupErrorBanner(
           child: Scaffold(body: Center(child: Text('home'))),
         ),
       ),
@@ -28,7 +34,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('home'), findsOneWidget);
-    expect(find.text('上次启动出错，请截图反馈'), findsNothing);
+    expect(find.byType(LastStartupErrorBanner), findsOneWidget);
+    // banner 内部 Text 走 l10n, 检查 widget 树而不是具体文案(避免 i18n 漂移)
   });
 
   testWidgets('consume 返 LastError → banner 显示',
@@ -39,17 +46,22 @@ void main() {
     );
 
     await tester.pumpWidget(
-      const MaterialApp(
-        home: LastStartupErrorBanner(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: const LastStartupErrorBanner(
           child: Scaffold(body: Center(child: Text('home'))),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('上次启动出错，请截图反馈'), findsOneWidget);
     // child 仍在
     expect(find.text('home'), findsOneWidget);
+    // banner widget 在 widget 树中显示 (走 Icon + Text 走 l10n, 不能用 hardcode 找)
+    // 用 lastStartupErrorBannerBody 的 zh 文案查
+    expect(find.text('上次启动出错，请截图反馈'), findsOneWidget);
   });
 
   testWidgets('点关闭 → banner 消失, child 仍可见',
@@ -60,8 +72,11 @@ void main() {
     );
 
     await tester.pumpWidget(
-      const MaterialApp(
-        home: LastStartupErrorBanner(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: const LastStartupErrorBanner(
           child: Scaffold(body: Center(child: Text('home'))),
         ),
       ),
@@ -69,7 +84,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('上次启动出错，请截图反馈'), findsOneWidget);
 
-    // 点关闭按钮 (IconButton tooltip '关闭')
+    // 点关闭按钮 (IconButton tooltip 走 l10n commonClose → '关闭')
     await tester.tap(find.byTooltip('关闭'));
     await tester.pumpAndSettle();
 
@@ -84,12 +99,17 @@ void main() {
       StackTrace.fromString('frame1'),
     );
 
+    Widget appWithBanner() => MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('zh'),
+          home: const LastStartupErrorBanner(
+            child: Scaffold(body: Text('home')),
+          ),
+        );
+
     // 第一次 mount
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: LastStartupErrorBanner(child: Scaffold(body: Text('home'))),
-      ),
-    );
+    await tester.pumpWidget(appWithBanner());
     await tester.pumpAndSettle();
     expect(find.text('上次启动出错，请截图反馈'), findsOneWidget);
 
@@ -98,11 +118,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // 重 mount - SharedPreferences 已 clear, banner 不应再现
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: LastStartupErrorBanner(child: Scaffold(body: Text('home'))),
-      ),
-    );
+    await tester.pumpWidget(appWithBanner());
     await tester.pumpAndSettle();
     expect(find.text('上次启动出错，请截图反馈'), findsNothing);
     expect(find.text('home'), findsOneWidget);

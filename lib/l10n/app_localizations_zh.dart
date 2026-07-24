@@ -323,6 +323,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonError => '出错了，请重试';
 
   @override
+  String get lastStartupErrorBannerBody => '上次启动出错，请截图反馈';
+
+  @override
   String get commonClose => '关闭';
 
   @override

@@ -55,7 +55,11 @@ class EmailService {
       piiSafeLog('EmailService', '  ---');
       piiSafeLog('EmailService', body);
       piiSafeLog('EmailService', '=' * 60);
-      return true;
+      // v0.23 round 39 (P1-8 fix): mock 状态 user-facing 透明
+      // 之前返 true 让上层以为"已发送",实际只是 log
+      // 改成返 false + 把 mock 标记透过 UI 提示
+      // 真实接入 SDK 后这里返 true,SafetyWatchService 算 smsOk
+      return false;
     }
 
     // 真实 SMS provider 占位——v1.0+ 替换
@@ -63,4 +67,11 @@ class EmailService {
     piiSafeLog('EmailService', '真实 SMS 发送未实现（v1.0+ TODO）');
     return false;
   }
+
+  /// v0.23 round 39 (P1-8 fix): 当前是否 mock 模式(给 UI 检测)
+  ///
+  /// reminders_hub 的 SafetyReminderCard 之前用 `smsProviderNameProvider == 'mock'`
+  /// 检测 SMS provider,EmailService mock 状态没有对应 API。加这个 getter 让
+  /// UI 能一致显示"未配置"banner。
+  bool get isMock => _useMock || _apiKey == null;
 }

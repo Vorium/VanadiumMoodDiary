@@ -1,27 +1,53 @@
-v0.23 round 38: fix(P0) SMS fail-fast + safety_watch timeout + app.dart 复用 provider (3 项 P0 + 1 项 P1)
+v0.23 round 39: refactor(P1) 8 项 P1 (catch(_)→swallowError + i18n 38 处 + PDF mask + 50+ test)
 
-P0-1: SMS provider release-mode 守卫
-- 加 SmsProviderNotConfiguredError 异常 + SmsService.validateForRelease() 静态方法
-- SmsProvider 新增 isProductionReady getter (Mock=false, Aliyun=true)
-- main.dart bootstrap 调 validateForRelease,release + mock → 抛错 → runZonedGuarded → LastErrorCapture
-- 12 新 test (sms_service_round38_test.dart)
-- 同步 3 个 mock SmsProvider test 文件加 isProductionReady 实现
+P1-5: data_export_service 加 50+ case 测试
+- 24 新 test (data_export_round39_test.dart)
+- 覆盖 profile / contact (isActive 过滤) / medication / check-in / mood 4D / vent 加密 / 错误处理
+- 顺手修: _buildVentEntryExport catch (InvalidArgument PKCS7 pad) → 改 catch all + swallowError
+- 之前 on Exception 漏 catch InvalidArgument → 整条 vent 导出炸
 
-P0-3: safety_watch_service watchAll().first 加 5s timeout + 异常降级
-- 之前 hang → SMS 通知永远不发出
-- 加 contactWatchTimeout 构造参数 (默认 5s, test 注入 50ms)
-- 内部异常也 catch, 降级到 noContacts kind
-- 2 新 test (timeout hang + 异常降级)
+P1-6: medication_report_pdf 加 30+ case 测试
+- 27 新 test (medication_report_pdf_round39_test.dart)
+- toReportString 关键字段 (含 P1-7 mask + P1-9 Strings 验证)
+- MedicationReportPdf.build smoke test (Uint8List magic + 长度合理)
+- PDF binary 边界 case (空 stats / 中文 4 字 / 英文 / 依从率 null)
 
-P0-4: app.dart 复用 checkInRepositoryProvider
-- 之前 _runAssessmentReminderOnStart 直接 new CheckInRepositoryImpl(sharedDb) → 第 2 个 repo 实例
-- drift stream 重复订阅内存漏
-- 改用 ref.read(checkInRepositoryProvider) 复用单例
-- 同步 print → piiSafeLog (P1-11 也并了)
+P1-7: PDF userName 走 maskName
+- medication_report_pdf.dart:124 data.userName 改 maskName(data.userName)
+- 之前直接显示真实姓名 → 医生 PDF 文档含患者敏感信息
+- 改成"张**"形式
 
-P0-2 (SKIP): Android 12+ SCHEDULE_EXACT_ALARM 权限
-- 项目 .metadata 只有 root + web 平台, 无 android/ 目录
-- 当前 web-only, 此 P0 不适用
-- 移到 P3 长期 (等用户上 Android 时再补)
+P1-8: EmailService mock 状态 user-facing 透明
+- sendMedicationReminder mock 模式返 false (之前返 true 让上层以为已发送)
+- 加 isMock getter 给 UI 检测
 
-Verify: flutter analyze 0; flutter test 794/794 pass (从 780 增 14)
+P1-9: 13+ 处 service hardcode 中文 → l10n (38 处)
+- notification_service.dart 6 处 title/body/channel 走 Strings.notif*
+- badge_sync_service.dart 2 处 channel 走 Strings.notifChannelMedication*
+- medication_report_pdf.dart 20+ 处走 Strings.pdf* (title/author/subject/header/footer/section/kv)
+- data_export_service.dart 7 处 summary 走 Strings.importSummary*
+- last_startup_error_banner.dart 2 处走 ARB lastStartupErrorBannerBody + commonClose
+- error_state.dart 1 处走 ARB commonRetry
+- 加 Strings 类 30+ getter
+- 加 lastStartupErrorBannerBody ARB key (zh+en)
+- 加 EmailService.isMock getter
+
+P1-10: 4 个 catch (_) 残留走 swallowError
+- lib/core/shared/json_codec.dart (decodeStringList)
+- lib/domain/logic/assessment_record.dart (tryParse)
+- lib/core/data/services/data_export_service.dart (3 个 schema 兼容 catch)
+- lib/core/data/database/mappers/medication/medication_times.dart
+- 全走 swallowError(where, error, stack, note)
+
+P1-11: app.dart print → piiSafeLog (跟 P0-4 合并,见 round 38)
+
+P1-12: email_template 时区标注
+- _formatDateTime 加 "(UTC+8 北京时间)" 后缀
+- PIPL §17 数据准确性 + 海外华人 DST 友好
+
+P1-13: 法律 .md 占位邮箱显式标 TODO
+- user_agreement.md §8 占位邮箱加 "TODO 占位,上 store 前必须注册"
+- privacy_policy.md §1 表加 "敏感" 列 (PIPL §28)
+- privacy_policy.md 加 §10 未成年人保护段 (PIPL §31 / 未保法 §44)
+
+Verify: flutter analyze 0 error; flutter test 845/845 pass (从 794 增 51)

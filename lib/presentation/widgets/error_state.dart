@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// v0.22 round 29 (emil-44): 通用错误态 widget
 ///
@@ -42,6 +43,8 @@ class ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // v0.23 round 39 (P1-9 fix): retryLabel 兜底走 ARB i18n
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTokens.spacingXl),
@@ -83,7 +86,7 @@ class ErrorState extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh, size: 18),
-                label: Text(retryLabel ?? '重试'),
+                label: Text(retryLabel ?? l10n.commonRetry),
               ),
             ],
           ],

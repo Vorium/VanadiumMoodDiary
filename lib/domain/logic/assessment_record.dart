@@ -6,6 +6,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 
 class AssessmentRecord {
@@ -48,7 +49,15 @@ class AssessmentRecord {
         total: total,
         scores: scores,
       );
-    } catch (_) {
+    } catch (e, st) {
+      // v0.23 round 39 (P1-10 fix): 不再 `catch (_)` 完全静默,
+      // 走 swallowError 集中器,release 模式不打印,debug 模式打 developer.log
+      swallowError(
+        where: 'AssessmentRecord.tryParse',
+        error: e,
+        stack: st,
+        note: 'note JSON 解析失败: 返回 null',
+      );
       return null;
     }
   }

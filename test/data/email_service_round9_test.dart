@@ -28,7 +28,11 @@ void main() {
         cycleHours: 48,
       );
 
-      expect(success, true);
+      // v0.23 round 39 (P1-8 fix): mock 状态 user-facing 透明
+      // 之前返 true 让上层以为"已发送",实际只是 log
+      // 改成返 false + 把 mock 标记透过 UI 提示
+      // 真实接入 SDK 后这里返 true,SafetyWatchService 算 smsOk
+      expect(success, false);
     });
 
     test('Mock 模式不需要 API Key 也能发送', () async {
@@ -41,7 +45,8 @@ void main() {
         medication: null,
         cycleHours: 48,
       );
-      expect(success, true);
+      // v0.23 round 39 (P1-8 fix): 跟上一个 test 同样原因, mock 模式返 false
+      expect(success, false);
     });
   });
 }

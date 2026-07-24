@@ -334,6 +334,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonError => 'Something went wrong, please retry';
 
   @override
+  String get lastStartupErrorBannerBody =>
+      'Last startup error, please screenshot and report';
+
+  @override
   String get commonClose => 'Close';
 
   @override
