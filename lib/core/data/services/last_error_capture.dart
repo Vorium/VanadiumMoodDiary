@@ -34,7 +34,11 @@ class LastErrorCapture {
           errorStr.length > _maxErrorLen
               ? '${errorStr.substring(0, _maxErrorLen)}…'
               : errorStr;
-      final payload = '${DateTime.now().toIso8601String()}\n'
+      // v0.23 round 40 (sp-zh fix): .toUtc().toIso8601String() 配 'Z' 后缀
+      // 之前 `DateTime.now().toIso8601String()` 输出无时区,Dart DateTime.parse
+      // 按 local 解析,跨时区用户 (海外华人) 重启 App 后时间漂移
+      // 已知 bug 模式 (data_export_service.dart 注释里说明)
+      final payload = '${DateTime.now().toUtc().toIso8601String()}\n'
           'ERROR: $truncatedError\n'
           'STACK:\n$truncatedStack';
       await prefs.setString(_key, payload);

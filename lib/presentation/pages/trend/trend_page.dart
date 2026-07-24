@@ -16,6 +16,7 @@ import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
@@ -117,36 +118,16 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          '最近 30 天',
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeLabel,
-            color: AppTokens.textSecondaryColor(context),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        // v0.23 round 40 (emil F4 fix): 4 处 inline section header 改用 SectionHeader
+        const SectionHeader(title: '最近 30 天'),
         const SizedBox(height: AppTokens.spacingSm),
         HeatmapGrid(daily: daily),
         const SizedBox(height: AppTokens.spacingLg),
-        Text(
-          '最近 6 个月',
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeLabel,
-            color: AppTokens.textSecondaryColor(context),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        const SectionHeader(title: '最近 6 个月'),
         const SizedBox(height: AppTokens.spacingSm),
         MonthlyChart(monthly: monthly),
         const SizedBox(height: AppTokens.spacingLg),
-        Text(
-          AppLocalizations.of(context).trendAssessmentHistory,
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeLabel,
-            color: AppTokens.textSecondaryColor(context),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        SectionHeader(title: AppLocalizations.of(context).trendAssessmentHistory),
         const SizedBox(height: AppTokens.spacingSm),
         Consumer(
           builder: (context, ref, _) {
@@ -174,14 +155,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           },
         ),
         const SizedBox(height: AppTokens.spacingLg),
-        Text(
-          AppLocalizations.of(context).trendMoodHistory,
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeLabel,
-            color: AppTokens.textSecondaryColor(context),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        SectionHeader(title: AppLocalizations.of(context).trendMoodHistory),
         const SizedBox(height: AppTokens.spacingSm),
         Consumer(
           builder: (context, ref, _) {

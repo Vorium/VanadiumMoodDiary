@@ -4,6 +4,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/last_med_info.dart';
+import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 
 /// 主页底部信息:last med + 底部"你还在线"文案
 ///
@@ -25,21 +26,30 @@ class HomeFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        LastMedInfo(
-          lastCheckIn: lastCheckIn?.timestamp,
-          nextReminder: nextReminder,
-          showStreakBroken: showStreakBroken,
+        // v0.23 round 40 (emil F11 fix): stagger fade-in
+        // 主页内容"逐项落入"的细微高级感,emil "30-80ms stagger = 累积成高级感"
+        // HomeFooter 2 项 (LastMedInfo + homeStillOnline), 各 delay staggerStepMs
+        FadeIn(
+          delay: Duration(milliseconds: 0 * AppTokens.staggerStepMs),
+          child: LastMedInfo(
+            lastCheckIn: lastCheckIn?.timestamp,
+            nextReminder: nextReminder,
+            showStreakBroken: showStreakBroken,
+          ),
         ),
         const SizedBox(height: AppTokens.spacingXl),
-        Center(
-          child: Text(
-            AppLocalizations.of(context).homeStillOnline,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.6),
+        FadeIn(
+          delay: Duration(milliseconds: 1 * AppTokens.staggerStepMs),
+          child: Center(
+            child: Text(
+              AppLocalizations.of(context).homeStillOnline,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeBody,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.6),
+              ),
             ),
           ),
         ),

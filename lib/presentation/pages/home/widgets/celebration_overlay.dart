@@ -29,7 +29,9 @@ class _AnimatedCelebrationState extends State<AnimatedCelebration>
     _scale = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(begin: 0.0, end: 1.2)
-            .chain(CurveTween(curve: Curves.easeOutBack)),
+            // v0.23 round 40 (emil F2 fix): 曲线走 AppTokens.curveBackOut token
+            // 之前 hardcode `Curves.easeOutBack` 逃逸 token 化,emil "破窗堵漏"
+            .chain(CurveTween(curve: AppTokens.curveBackOut)),
         weight: 30,
       ),
       TweenSequenceItem(

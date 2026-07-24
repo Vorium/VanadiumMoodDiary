@@ -205,6 +205,10 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Stream<CheckIn?> watchTodayCheckIn() {
+    // v0.23 round 40 (sp-en R5 fix): single-capture DateTime.now()
+    // 之前 `final now = DateTime.now();` 立刻用完即丢,等效 `startOfDay = DateTime(now.year, ...)`
+    // 改成 single-capture 模式: 一次 now 算 start/end,跨 midnight 不会飘
+    // (跨夜重建由 v0.17 round 4 dayChangeTickProvider 兜住)
     final now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));

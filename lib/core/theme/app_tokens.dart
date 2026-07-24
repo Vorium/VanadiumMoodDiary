@@ -143,6 +143,11 @@ class AppTokens {
   static Color tintedWarningSoft(BuildContext context) =>
       AppTokens.warning.withValues(alpha: 0.1);
 
+  /// v0.23 round 40 (emil F1 fix): 成功浅色背景 (已完成 chip) — 绿色 @ alpha 0.1
+  /// 替代 ChipBadge.success 之前跟 neutral 配色完全一样的 bug
+  static Color tintedSuccessSoft(BuildContext context) =>
+      AppTokens.success.withValues(alpha: 0.1);
+
   /// 错误浅色背景 (错误卡片) — error @ alpha 0.1
   static Color tintedErrorSoft(BuildContext context) =>
       Theme.of(context).colorScheme.error.withValues(alpha: 0.1);
@@ -162,6 +167,19 @@ class AppTokens {
       Theme.of(context).colorScheme.onError;
   static Color fgOnSurface(BuildContext context) =>
       Theme.of(context).colorScheme.onSurface;
+
+  /// v0.23 round 40 (emil F1 fix): 成功前景色 — 成功 chip 文字
+  /// success color 在 light/dark 都跟 onSurface 区分度足,直接用 const
+  static const Color fgOnSuccess = success;
+
+  /// v0.23 round 40 (emil F1 fix): 警告前景色 — 警告 chip 文字
+  static const Color fgOnWarning = Color(0xFFE65100); // 深橙,在 light/dark 都可读
+
+  /// v0.23 round 40 (emil F3/F8 fix): 反白弱一档 — onPrimary @ alpha 0.85
+  /// 替代散落 5+ 处 `onPrimary.withValues(alpha: 0.85)` 硬编码
+  /// emil "decisions should be nameable" — 0.85 不应裸用,命名 "muted"
+  static Color fgOnPrimaryMuted(BuildContext context) =>
+      Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85);
 
   // ============= 字体 =============
   static const double fontSizeTitle = 28.0;
@@ -210,6 +228,12 @@ class AppTokens {
   static const double spacingXxs = 4.0;  // 微小 (cell padding 上下)
   static const double spacingXxxs = 2.0;  // 极小 (chip 内部)
   static const double spacingChipGap = 6.0;  // chip 与 text 间距
+  // v0.23 round 40 (emil F6 fix): chip 内部 icon-text 间距 (4.0)
+  static const double spacingChipGapInline = 4.0;
+
+  // v0.23 round 40 (emil F9 fix): 文字长度警告阈值 (90% of 2000 maxLength)
+  // 替代 vent_compose_page.dart:390 magic 1800
+  static const int textLengthWarningThreshold = 1800;
 
   // v0.22 round 30 (emil P2-8): 庆祝 overlay delay 1800ms 抽 token
   // 之前 home_page.dart:422 硬编码 `Future.delayed(Duration(milliseconds: 1800))`
@@ -234,6 +258,8 @@ class AppTokens {
   static const double inputHeight = 56.0;
   static const double iconSize = 24.0;
   static const double iconSizeLg = 32.0;
+  // v0.23 round 40 (emil F6/F12 fix): 微小 icon (chip 内, spinner)
+  static const double iconSizeMicro = 12.0;
 
   // ============= 动画 =============
   // v0.17 round 1 (emil 动效 token): 之前只有 duration 缺 curve / easing
@@ -273,6 +299,12 @@ class AppTokens {
   /// 弹性缓动 — `elasticOut`：超过目标再回弹
   /// 适用：onboarding 首次 / 庆祝反馈（rare 频度，emil: 禁滥用）
   static const Curve curveDelight = Curves.elasticOut;
+
+  /// v0.23 round 40 (emil F2 fix): 回弹缓动 — `easeOutBack`：过冲但不弹多次
+  /// 适用：庆祝 overlay 主弹跳 (celebration_overlay:32)
+  /// 跟 curveDelight (elasticOut) 区别: easeOutBack 一次过冲,elasticOut 多次回弹
+  /// 主庆祝用 easeOutBack 更"稳",副粒子可用 elasticOut
+  static const Curve curveBackOut = Curves.easeOutBack;
 
   // ============= 阴影 =============
   static const List<BoxShadow> shadowCard = [

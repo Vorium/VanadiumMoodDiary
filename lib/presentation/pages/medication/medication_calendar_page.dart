@@ -169,9 +169,10 @@ class MedicationCalendarPage extends ConsumerWidget {
       );
     }
 
-    final today = DateTime.now();
-    final startDay = DateTime(today.year, today.month, today.day)
-        .subtract(Duration(days: days - 1));
+    // v0.23 round 40 (sp-en R8 fix): 抽 _computeWindow pure function
+    // 之前 `final today = DateTime.now()` 紧接 `DateTime(today.year, today.month, today.day)`
+    // 虽然 single-capture 但 inline 不易测试,跨 0:00:05 由 dayChangeTickProvider 兜住
+    final startDay = _computeWindowStartDay(DateTime.now(), days);
 
     // Bug H fix: 预 group check-ins 到 Map<medId, Map<dayBucket, count>>
     // 把 O(meds·days·checkIns) 降到 O(meds·days + checkIns)
@@ -432,3 +433,13 @@ class _Legend extends StatelessWidget {
 }
 
 const double _labelWidth = 60;
+
+/// v0.23 round 40 (sp-en R8 fix): 抽 pure function 让 window 起点可测
+///
+/// 算"近 N 天"窗口的起点: 今天 00:00 - (N-1) 天
+///
+/// 跨 0:00:05 由 v0.17 round 4 dayChangeTickProvider 兜住 invalidate
+DateTime _computeWindowStartDay(DateTime now, int days) {
+  final today = DateTime(now.year, now.month, now.day);
+  return today.subtract(Duration(days: days - 1));
+}

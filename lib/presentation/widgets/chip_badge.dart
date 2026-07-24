@@ -35,20 +35,21 @@ class ChipBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // v0.22 round 34: token 复用 — 暂用 tintedPrimarySoft 当 success / warning 兜底
-    // (v0.22 round 39 集中清理时补 tintedSuccessSoft / tintedWarningSoft token)
+    // v0.23 round 40 (emil F1 fix): 4 tone 配色独立
+    // 之前 success / warning 跟 neutral 配色完全一样 = 抽类目标失败
+    // (emil "good defaults" — 调用方写 success 视觉零区别 → 退化成 neutral)
     final (bg, fg) = switch (tone) {
       ChipBadgeTone.neutral => (
           AppTokens.tintedPrimarySoft(context),
           AppTokens.fgOnPrimary(context),
         ),
       ChipBadgeTone.success => (
-          AppTokens.tintedPrimarySoft(context),
-          AppTokens.fgOnPrimary(context),
+          AppTokens.tintedSuccessSoft(context),
+          AppTokens.fgOnSuccess,
         ),
       ChipBadgeTone.warning => (
-          AppTokens.tintedPrimarySoft(context),
-          AppTokens.fgOnPrimary(context),
+          AppTokens.tintedWarningSoft(context),
+          AppTokens.fgOnWarning,
         ),
       ChipBadgeTone.error => (
           AppTokens.tintedErrorSoft(context),
@@ -68,8 +69,10 @@ class ChipBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 12, color: fg),
-            const SizedBox(width: 4),
+            // v0.23 round 40 (emil F6/F12 fix): icon size 走 token
+            Icon(icon, size: AppTokens.iconSizeMicro, color: fg),
+            // v0.23 round 40 (emil F6 fix): chip icon-text gap 走 token
+            const SizedBox(width: AppTokens.spacingChipGapInline),
           ],
           Text(
             label,

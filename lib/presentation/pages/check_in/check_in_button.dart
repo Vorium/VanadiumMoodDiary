@@ -206,7 +206,10 @@ class _StreakCounterState extends State<_StreakCounter>
         fontSize: AppTokens.fontSizeLabel,
         // v0.22 round 30 (emil P2-6): 走 fgOnPrimary (onPrimary @ 85% 透明)
         // 之前 AppTokens.fgOnPrimary(context).withValues(alpha: 0.85) 在 dark mode 下不变,反白失效
-        color: AppTokens.fgOnPrimary(context).withValues(alpha: 0.85),
+        // v0.23 round 40 (emil F3 fix): 0.85 alpha 走 fgOnPrimaryMuted token
+        // 之前 hardcode `withValues(alpha: 0.85)` 散落 5+ 处,emil "decisions
+        // should be nameable" — 0.85 命名 "muted" 集中改
+        color: AppTokens.fgOnPrimaryMuted(context),
         height: AppTokens.lineHeightTight,
       ),
         ),

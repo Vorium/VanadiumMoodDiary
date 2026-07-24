@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
@@ -29,14 +30,32 @@ class AppRoot extends ConsumerStatefulWidget {
 /// 如果 now 已经在 00:00:00-00:00:05 区间内，用当天的 00:00:05(而不是下一天)。
 /// 暴露成 top-level 函数(不是 _AppRootState 私有)让 test 能直接测。
 @visibleForTesting
-Duration nextMidnightRefresh(DateTime now) {
-  final todayBufferEnd = DateTime(now.year, now.month, now.day, 0, 0, 5);
+Duration nextMidnightRefresh(tz.TZDateTime now) {
+  // v0.23 round 40 (sp-zh D-06 fix): 改用 tz.TZDateTime 替代 DateTime
+  // 之前 `DateTime now` 用 device local, 但 DST 切换 (海外用户, 美国/欧洲) 时
+  // "下一天 00:00:05" 可能跨过 DST 跳变点导致 0/负数 delay
+  // 改 tz.TZDateTime 让 timezone 包处理 DST
+  final todayBufferEnd = tz.TZDateTime(
+    now.location,
+    now.year,
+    now.month,
+    now.day,
+    0,
+    0,
+    5,
+  );
   if (now.isBefore(todayBufferEnd)) {
-    // now 在 00:00:00 之前(不可能)或 00:00:00-00:00:04 之间
     return todayBufferEnd.difference(now);
   }
-  // 否则下一天的 00:00:05
-  final tomorrow = DateTime(now.year, now.month, now.day + 1, 0, 0, 5);
+  final tomorrow = tz.TZDateTime(
+    now.location,
+    now.year,
+    now.month,
+    now.day + 1,
+    0,
+    0,
+    5,
+  );
   return tomorrow.difference(now);
 }
 
@@ -155,7 +174,11 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
   /// 触发所有 watch streak 的 widget rebuild
   void _scheduleMidnightRefresh() {
     _midnightTimer?.cancel();
-    final delay = nextMidnightRefresh(DateTime.now());
+    // v0.23 round 40 (sp-zh D-06 fix): 用 tz.local 替代 DateTime.now()
+    // 海外用户 (美国/欧洲) 在 DST 跳变点 (春进秋退) 用 DateTime.now() 算
+    // 下一天 00:00:05 会因为 DST 跳过 1 小时或重复 1 小时,delay 异常
+    // tz.TZDateTime.now(tz.local) 走 timezone 包处理 DST
+    final delay = nextMidnightRefresh(tz.TZDateTime.now(tz.local));
     _midnightTimer = Timer(delay, () {
       if (!mounted) return;
       // 触发所有 watch streakSummaryProvider 的 widget 重建

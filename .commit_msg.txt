@@ -1,53 +1,66 @@
-v0.23 round 39: refactor(P1) 8 项 P1 (catch(_)→swallowError + i18n 38 处 + PDF mask + 50+ test)
+v0.23 round 40: refactor(emil/spen/spzh) P2 集中清理 12 项 (token 化 + 抽类 + Z 后缀 + tz.local)
 
-P1-5: data_export_service 加 50+ case 测试
-- 24 新 test (data_export_round39_test.dart)
-- 覆盖 profile / contact (isActive 过滤) / medication / check-in / mood 4D / vent 加密 / 错误处理
-- 顺手修: _buildVentEntryExport catch (InvalidArgument PKCS7 pad) → 改 catch all + swallowError
-- 之前 on Exception 漏 catch InvalidArgument → 整条 vent 导出炸
+P2-15 (emil F1): ChipBadge 4 tone 配色独立
+- AppTokens 新增 tintedSuccessSoft + fgOnSuccess + fgOnWarning
+- chip_badge.dart 之前 success/warning 跟 neutral 配色完全一样 (emil bug)
+- 改 switch 各 tone 用独立 token
 
-P1-6: medication_report_pdf 加 30+ case 测试
-- 27 新 test (medication_report_pdf_round39_test.dart)
-- toReportString 关键字段 (含 P1-7 mask + P1-9 Strings 验证)
-- MedicationReportPdf.build smoke test (Uint8List magic + 长度合理)
-- PDF binary 边界 case (空 stats / 中文 4 字 / 英文 / 依从率 null)
+P2-16 (emil F6/F12): 抽 iconSizeMicro + spacingChipGapInline token
+- chip_badge.dart 内 12 (icon) / 4 (gap) 走 token
+- 替代散落 5+ 处 magic SizedBox
 
-P1-7: PDF userName 走 maskName
-- medication_report_pdf.dart:124 data.userName 改 maskName(data.userName)
-- 之前直接显示真实姓名 → 医生 PDF 文档含患者敏感信息
-- 改成"张**"形式
+P2-17 (emil F2): celebration_overlay 曲线走 token
+- AppTokens 新增 curveBackOut (easeOutBack)
+- 替代 hardcode `Curves.easeOutBack`,emil "破窗堵漏"
 
-P1-8: EmailService mock 状态 user-facing 透明
-- sendMedicationReminder mock 模式返 false (之前返 true 让上层以为已发送)
-- 加 isMock getter 给 UI 检测
+P2-18 (emil F3): fgOnPrimaryMuted token (反白 0.85)
+- AppTokens 新增 fgOnPrimaryMuted
+- check_in_button.dart:209 改用 token (emil "decisions should be nameable")
 
-P1-9: 13+ 处 service hardcode 中文 → l10n (38 处)
-- notification_service.dart 6 处 title/body/channel 走 Strings.notif*
-- badge_sync_service.dart 2 处 channel 走 Strings.notifChannelMedication*
-- medication_report_pdf.dart 20+ 处走 Strings.pdf* (title/author/subject/header/footer/section/kv)
-- data_export_service.dart 7 处 summary 走 Strings.importSummary*
-- last_startup_error_banner.dart 2 处走 ARB lastStartupErrorBannerBody + commonClose
-- error_state.dart 1 处走 ARB commonRetry
-- 加 Strings 类 30+ getter
-- 加 lastStartupErrorBannerBody ARB key (zh+en)
-- 加 EmailService.isMock getter
+P2-19 (emil F4): 抽 public SectionHeader widget
+- 新建 presentation/widgets/section_header.dart
+- trend_page.dart 4 处 inline 改用 SectionHeader
+- settings_page.dart _SectionHeader 之后可统一 (后续 round)
 
-P1-10: 4 个 catch (_) 残留走 swallowError
-- lib/core/shared/json_codec.dart (decodeStringList)
-- lib/domain/logic/assessment_record.dart (tryParse)
-- lib/core/data/services/data_export_service.dart (3 个 schema 兼容 catch)
-- lib/core/data/database/mappers/medication/medication_times.dart
-- 全走 swallowError(where, error, stack, note)
+P2-20 (emil F5/F7): setup 改 PageTransitionSwitcher
+- PageTransitionSwitcher 加 transitionBuilder 参数
+- setup_page.dart 40+ 行 inline AnimatedSwitcher 改用集中器
+- animations.dart barrel 加 export page_transition_switcher
 
-P1-11: app.dart print → piiSafeLog (跟 P0-4 合并,见 round 38)
+P2-21 (emil F10): vent_list + theme_toggle IconButton 包 PressFeedback
+- vent_list_page.dart 右上角 "+" 包 PressFeedback
+- theme_toggle_button.dart IconButton 包 PressFeedback
+- emil "occasional 频度应 standard animation"
 
-P1-12: email_template 时区标注
-- _formatDateTime 加 "(UTC+8 北京时间)" 后缀
-- PIPL §17 数据准确性 + 海外华人 DST 友好
+P2-22 (spen R5): app_database.dart:207 注释 single-capture
+- 实际代码已经 single-capture (final now = ...; final startOfDay = DateTime(now.year, ...))
+- 加注释解释: 跨 midnight 由 v0.17 round 4 dayChangeTickProvider 兜住
 
-P1-13: 法律 .md 占位邮箱显式标 TODO
-- user_agreement.md §8 占位邮箱加 "TODO 占位,上 store 前必须注册"
-- privacy_policy.md §1 表加 "敏感" 列 (PIPL §28)
-- privacy_policy.md 加 §10 未成年人保护段 (PIPL §31 / 未保法 §44)
+P2-23 (spen R7): notification_service scheduleRefillReminder cancel 异常吞
+- line 411 await cancelRefillReminder 之前抛异常破整个 schedule 流程
+- 改 try/catch + piiSafeLog, 单药过期不卡其他 medication
 
-Verify: flutter analyze 0 error; flutter test 845/845 pass (从 794 增 51)
+P2-24 (spen R8): medication_calendar 抽 _computeWindowStartDay 纯函数
+- 之前 inline DateTime.now() + DateTime(now.year, ...).subtract() 不易测
+- 抽成 top-level pure function
+
+P2-25 (spzh D-06): nextMidnightRefresh 改 tz.local (DST 安全)
+- 函数签名: DateTime now → tz.TZDateTime now
+- caller `_scheduleMidnightRefresh` 传 tz.TZDateTime.now(tz.local)
+- 海外用户 (美国/欧洲) DST 跳变点 delay 异常风险消除
+- 同步修 6 个 test (app_root_round17_midnight_test.dart) 改用 TZDateTime
+
+P2-26 (spzh): Z 后缀复查
+- last_error_capture.dart:37 DateTime.now().toIso8601String() → .toUtc().toIso8601String()
+- data_export_service 已用 _isoUtc helper ✓
+- assessment_reminder_service / safety_watch_service 已 .toUtc() ✓
+
+P2-11 (emil F9): textLengthWarningThreshold token
+- AppTokens 新增 textLengthWarningThreshold = 1800
+- vent_compose_page.dart:390 改用 token
+
+P2-8 (emil F8): trend_calendar.dart:212 0.85 alpha 注释
+- 这是 primary 实色浅一档 (选中),不是 tintedPrimarySoft (0.1)
+- 加注释解释为何不抽 token (跟 tintedPrimarySoft 语义不同)
+
+Verify: flutter analyze 0 error; flutter test 845/845 pass

@@ -408,7 +408,19 @@ class NotificationService implements NotificationSender {
             'fireAt=$fireAt 已过, 跳过',
       );
       // 但仍要取消旧的，避免过期通知还挂着
-      await cancelRefillReminder(medication.id);
+      // v0.23 round 40 (sp-en R7 fix): cancel 抛异常不破整个 schedule 流程
+      // 之前 await cancelRefillReminder 抛 PlatformException → 整个
+      // reschedule 退出,导致其他 medication 漏排
+      try {
+        await cancelRefillReminder(medication.id);
+      } catch (e, st) {
+        piiSafeLog(
+          'NotificationService',
+          '⚠️ cancelRefillReminder 失败 (med=${medication.name}): $e',
+          error: e,
+          stackTrace: st,
+        );
+      }
       return;
     }
 

@@ -14,6 +14,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_consent.dart';
@@ -115,15 +116,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       },
       child: PageScaffold(
         title: AppLocalizations.of(context).setupStep(_step + 1, 4),
-        child: AnimatedSwitcher(
-          // v0.21 Round 22 (P1-13 修复): wrap Motion.duration
-          // v0.22 round 30 (emil P2-9): switchOutCurve 也走 Motion.curve
-          // 让 reduce-motion 时切出也瞬时 (之前只 wrap duration, curve 还是 hard)
+        // v0.23 round 40 (emil F5/F7 fix): 改用 PageTransitionSwitcher 集中器
+        // 之前 inline AnimatedSwitcher + 自定义 transitionBuilder (40+ 行)
+        // 抽到 PageTransitionSwitcher.transitionBuilder 后 setup 这里只 1 个 widget
+        child: PageTransitionSwitcher(
+          switchKey: _step,
           duration: Motion.duration(context, MotionScheme.standard.duration),
-          switchInCurve:
-              Motion.curve(context, MotionScheme.standard.curve),
-          switchOutCurve:
-              Motion.curve(context, AppTokens.curveAccelerate),
           transitionBuilder: (child, anim) {
             return FadeTransition(
               opacity: anim,
@@ -134,15 +132,6 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                 ).animate(anim),
                 child: child,
               ),
-            );
-          },
-          layoutBuilder: (currentChild, previousChildren) {
-            return Stack(
-              alignment: Alignment.topCenter,
-              children: <Widget>[
-                ...previousChildren,
-                if (currentChild != null) currentChild,
-              ],
             );
           },
           child: KeyedSubtree(

@@ -21,6 +21,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
@@ -36,10 +37,15 @@ class VentListPage extends ConsumerWidget {
     return PageScaffold(
       title: l10n.ventListTitle,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          tooltip: l10n.ventListWriteTooltip,
-          onPressed: () => context.push('/vent/compose'),
+        // v0.23 round 40 (emil F10 fix): IconButton 包 PressFeedback
+        // 之前 IconButton 无 :active scale 反馈,settings 的 theme_toggle 也是
+        // emil "occasional 频度应 standard animation" — 体感一致
+        PressFeedback(
+          child: IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: l10n.ventListWriteTooltip,
+            onPressed: () => context.push('/vent/compose'),
+          ),
         ),
       ],
       child: entriesAsync.when(

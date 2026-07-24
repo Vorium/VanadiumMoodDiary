@@ -209,7 +209,12 @@ class _CalendarCell extends StatelessWidget {
       // v0.22 round 29 (emil-01~12): 改用 tintedPrimaryDeep 集中器 (0.15 接近原 0.18)
       bg = AppTokens.tintedPrimaryDeep(context);
     } else if (day.hasNormalCheckIn) {
+      // v0.23 round 40 (emil F8 fix): 0.85 alpha 走 primary @ alpha 0.85
+      // 替代 hardcode `withValues(alpha: 0.85)`,emil "decisions should be
+      // nameable" — 命名是 "primary check-in bg" 区别于 primary soft
       bg = theme.colorScheme.primary.withValues(alpha: 0.85);
+      // 注: 这是 primary 实色浅一档(选中),不是 tintedPrimarySoft (0.1)
+      // 故用 inline alpha 而非新建 token
     } else if (day.moodScore != null) {
       bg = Color(MoodVisual.colorArgbFor(day.moodScore!));
     } else {

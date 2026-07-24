@@ -387,7 +387,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                 onChanged: (_) => setState(() {}),
               ),
             ),
-            if (textLen > 1800)
+            if (textLen > AppTokens.textLengthWarningThreshold)
               Padding(
                 padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
                 child: Text(

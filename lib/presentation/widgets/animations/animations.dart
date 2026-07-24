@@ -5,4 +5,5 @@
 // import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 // ```
 export 'fade_in.dart';
+export 'page_transition_switcher.dart';
 export 'slide_up.dart';
