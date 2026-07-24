@@ -12,11 +12,15 @@
 /// v0.18 round 18 (P1-11) fix: 文案集中到 domain/logic/care_copy.dart,
 /// 不再 const string inline。trigger 4 个文案 + 软提醒共用一份 source of truth,
 /// 避免双推 (setup 软提醒 + CareEngine 立即 push 文案重复)。
+///
+/// v0.23 round 41 (spen P3-34): 抽 4 规则到 care_strategies.dart
+/// care_engine 自身只负责 evaluate 装配 + fire 推送,策略独立可测可切换
 library;
 
 import 'dart:developer' as developer;
 
 import 'package:chroniccare/domain/logic/care_copy.dart';
+import 'package:chroniccare/domain/logic/care_strategies.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 
@@ -51,16 +55,18 @@ class CareTrigger {
 ///   await notificationService.showNow(trigger.title, trigger.body);
 /// }
 /// ```
+///
+/// v0.23 round 41 (spen P3-34): evaluate 拆 4 策略调用 + 1 装配
 class CareEngine {
   CareEngine._();
 
   /// 评估当前状态是否需要关怀
   ///
-  /// 业务逻辑：
-  /// 1. 漏 1 天后第二天 10 点还没打卡 → 触发 secondDayMissed
-  /// 2. 持续晚归（最近 3 天都在 22 点后）→ 触发 lateCheckInHabit
-  /// 3. 周末漏打卡 → 触发 weekendMissed
-  /// 4. 最近 7 天每天 22 点前都打卡 → 触发 weekPerfect
+  /// 业务逻辑(每条独立 strategy, 调 [care_strategies.dart]):
+  /// 1. 漏 1 天后第二天 10 点还没打卡 → secondDayMissed
+  /// 2. 持续晚归(最近 3 天都在 22 点后) → lateCheckInHabit
+  /// 3. 周末漏打卡 → weekendMissed
+  /// 4. 最近 7 天每天 22 点前都打卡 → weekPerfect
   static CareTrigger evaluate({
     required List<CheckInEntity> checkIns,
     required DateTime now,
@@ -74,50 +80,27 @@ class CareEngine {
       );
     }
 
-    // 按时间倒序
+    // 按时间倒序 (各 strategy 都假设 sortedDesc)
     normal.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-    final lastCheckIn = normal.first.timestamp;
-    // P2 fix: 用 inMinutes 替代 inHours,避免 36h 边界整数截断误判
-    final minutesSince = now.difference(lastCheckIn).inMinutes;
 
     // 规则 1: 漏 1 天后第二天 10 点还没打卡
-    if (minutesSince >= 36 * 60 && now.hour >= 10) {
-      final copy = CareCopy.forTrigger(CareTriggerType.secondDayMissed);
-      return CareTrigger(
-        type: CareTriggerType.secondDayMissed,
-        title: copy.title,
-        body: copy.body,
-      );
+    if (isSecondDayMissed(normal, now)) {
+      return _build(CareTriggerType.secondDayMissed);
     }
 
-    // 规则 2: 持续晚归（最近 3 天都在 22 点后）
-    if (_isLateCheckInHabit(normal, now)) {
-      final copy = CareCopy.forTrigger(CareTriggerType.lateCheckInHabit);
-      return CareTrigger(
-        type: CareTriggerType.lateCheckInHabit,
-        title: copy.title,
-        body: copy.body,
-      );
+    // 规则 2: 持续晚归
+    if (isLateCheckInHabit(normal, now)) {
+      return _build(CareTriggerType.lateCheckInHabit);
     }
 
     // 规则 3: 周末漏打卡
-    if (_isWeekendMissed(normal, now)) {
-      final copy = CareCopy.forTrigger(CareTriggerType.weekendMissed);
-      return CareTrigger(
-        type: CareTriggerType.weekendMissed,
-        title: copy.title,
-        body: copy.body,
-      );
+    if (isWeekendMissed(normal, now)) {
+      return _build(CareTriggerType.weekendMissed);
     }
 
     // 规则 4: 最近 7 天每天 22 点前都打卡
-    if (_isWeekPerfect(normal, now)) {
-      final copy = CareCopy.forTrigger(CareTriggerType.weekPerfect);
-      return CareTrigger(
-        type: CareTriggerType.weekPerfect,
-        title: copy.title,
-        body: copy.body,
-      );
+    if (isWeekPerfect(normal, now)) {
+      return _build(CareTriggerType.weekPerfect);
     }
 
     return const CareTrigger(
@@ -127,13 +110,19 @@ class CareEngine {
     );
   }
 
-  /// 触发关怀（实际推送）
+  /// v0.23 round 41: 装配 helper, 4 规则共用一段 copy + trigger 构造
+  static CareTrigger _build(CareTriggerType type) {
+    final copy = CareCopy.forTrigger(type);
+    return CareTrigger(type: type, title: copy.title, body: copy.body);
+  }
+
+  /// 触发关怀(实际推送)
   static Future<void> fire(
     CareTrigger trigger,
     NotificationSender notificationService,
   ) async {
     if (!trigger.shouldFire) return;
-    // 关怀通知 id：8000-8099 段，避免和 snooze（300000+medId*1440+min）冲突
+    // 关怀通知 id: 8000-8099 段, 避免和 snooze (300000+medId*1440+min) 冲突
     // (v0.23 P0-1 H3 fix: snooze base 4000 → 300000, 远离 medication cancel range)
     final id = 8000 + trigger.type.index;
     try {
@@ -146,79 +135,5 @@ class CareEngine {
     } catch (e) {
       developer.log('❌ 关怀触发失败: $e', name: 'CareEngine');
     }
-  }
-
-  // ===== 私有规则判断 =====
-
-  /// 最近 3 天都在 22 点后打卡
-  static bool _isLateCheckInHabit(
-    List<CheckInEntity> sortedDesc,
-    DateTime now,
-  ) {
-    final today = DateTime(now.year, now.month, now.day);
-    final lateDays = <DateTime>{};
-    for (final c in sortedDesc) {
-      final d = DateTime(c.timestamp.year, c.timestamp.month, c.timestamp.day);
-      if (today.difference(d).inDays > 3) break;
-      if (c.timestamp.hour >= 22) {
-        lateDays.add(d);
-      }
-    }
-    return lateDays.length >= 3;
-  }
-
-  /// 周末漏打卡（最近一个周末没打卡）
-  ///
-  /// P7 fix: 之前 `day.isBefore(today)` 排除今天，导致周六整天没打卡
-  /// 要等周日才看到提醒。改为"今天已经过 18 点且没打卡也算漏"。
-  static bool _isWeekendMissed(List<CheckInEntity> sortedDesc, DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
-    for (int i = 0; i < 7; i++) {
-      final day = today.subtract(Duration(days: i));
-      if (day.weekday != DateTime.saturday && day.weekday != DateTime.sunday) {
-        continue;
-      }
-      // 今天（i==0）：必须已经过 18 点且今天没打卡才算漏
-      // 避免早上 8 点就误报"今天漏打卡"
-      if (i == 0 && now.hour < 18) {
-        continue;
-      }
-      // 检查这一天有没有打过卡
-      final hasCheckIn = sortedDesc.any(
-        (c) =>
-            c.timestamp.year == day.year &&
-            c.timestamp.month == day.month &&
-            c.timestamp.day == day.day,
-      );
-      if (!hasCheckIn) return true;
-    }
-    return false;
-  }
-
-  /// 最近 7 天每天 22 点前都打卡
-  ///
-  /// P3 fix: 之前循环 `for (final c in sortedDesc)` 遍历**全部历史**,
-  /// 1 年前有 1 次晚打卡就永远返回 false。现在限制为最近 7 天内。
-  static bool _isWeekPerfect(List<CheckInEntity> sortedDesc, DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
-    final sevenDaysAgo = today.subtract(const Duration(days: 6)); // 含今天共 7 天
-    for (final c in sortedDesc) {
-      // 早于 7 天前：忽略
-      if (c.timestamp.isBefore(sevenDaysAgo)) break;
-      if (c.timestamp.hour >= 22) return false; // 22 点后打卡不算"准时"
-    }
-    // 检查最近 7 天每天都有打卡
-    for (int i = 0; i < 7; i++) {
-      final day = today.subtract(Duration(days: i));
-      final hasOnDay = sortedDesc.any(
-        (c) =>
-            c.timestamp.year == day.year &&
-            c.timestamp.month == day.month &&
-            c.timestamp.day == day.day &&
-            c.timestamp.hour < 22,
-      );
-      if (!hasOnDay) return false;
-    }
-    return true;
   }
 }

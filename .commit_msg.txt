@@ -1,66 +1,33 @@
-v0.23 round 40: refactor(emil/spen/spzh) P2 集中清理 12 项 (token 化 + 抽类 + Z 后缀 + tz.local)
+v0.23 round 41: refactor(P3) PressFeedbackIconButton + care_engine 4 strategy + reminders_hub Notifier + zh_Hant stub
 
-P2-15 (emil F1): ChipBadge 4 tone 配色独立
-- AppTokens 新增 tintedSuccessSoft + fgOnSuccess + fgOnWarning
-- chip_badge.dart 之前 success/warning 跟 neutral 配色完全一样 (emil bug)
-- 改 switch 各 tone 用独立 token
+P3-32 (emil): 抽 PressFeedbackIconButton widget
+- 新建 presentation/widgets/press_feedback_icon_button.dart
+- vent_list + theme_toggle 改用集中器, 体感一致 + 减 4 行重复
 
-P2-16 (emil F6/F12): 抽 iconSizeMicro + spacingChipGapInline token
-- chip_badge.dart 内 12 (icon) / 4 (gap) 走 token
-- 替代散落 5+ 处 magic SizedBox
+P3-34 (spen): care_engine 4 strategy 抽独立文件
+- 新建 domain/logic/care_strategies.dart
+- 4 规则 (isSecondDayMissed / isLateCheckInHabit / isWeekendMissed / isWeekPerfect) 拆为 top-level pure function
+- care_engine 自身只负责 evaluate 装配 + fire 推送, 策略独立可测可切换
+- 加 _build() 装配 helper, 4 规则共用一段 copy + trigger 构造
 
-P2-17 (emil F2): celebration_overlay 曲线走 token
-- AppTokens 新增 curveBackOut (easeOutBack)
-- 替代 hardcode `Curves.easeOutBack`,emil "破窗堵漏"
+P3-35 (spen): reminders_hub_page 改 FutureProvider
+- 之前 4 个 nullable 字段 + initState _load + setState 异步填值, 模式落后
+- 新建 presentation/providers/reminders_hub_provider.dart
+  - RemindersHubConfig class (assessmentEnabled/Days + safetyEnabled/Threshold)
+  - remindersHubConfigProvider (FutureProvider)
+- _RemindersHubPageState 改 watch provider, 自动 rebuild
+- _showAssessmentSettings / _showSafetySettings sheet 闭包显式取 configAsync
+- _load() 删除, 改用 ref.invalidate(remindersHubConfigProvider) 触发重读
 
-P2-18 (emil F3): fgOnPrimaryMuted token (反白 0.85)
-- AppTokens 新增 fgOnPrimaryMuted
-- check_in_button.dart:209 改用 token (emil "decisions should be nameable")
+P3-30 (spzh): 繁体中文 stub
+- 新建 lib/l10n/app_zh_Hant.arb, 基础版本跟 app_zh.arb 同 (简体)
+- 之后可以逐步把简体 key 翻译成繁体 (港澳台用户)
+- phone_validator 已支持 +852/+853/+886
 
-P2-19 (emil F4): 抽 public SectionHeader widget
-- 新建 presentation/widgets/section_header.dart
-- trend_page.dart 4 处 inline 改用 SectionHeader
-- settings_page.dart _SectionHeader 之后可统一 (后续 round)
-
-P2-20 (emil F5/F7): setup 改 PageTransitionSwitcher
-- PageTransitionSwitcher 加 transitionBuilder 参数
-- setup_page.dart 40+ 行 inline AnimatedSwitcher 改用集中器
-- animations.dart barrel 加 export page_transition_switcher
-
-P2-21 (emil F10): vent_list + theme_toggle IconButton 包 PressFeedback
-- vent_list_page.dart 右上角 "+" 包 PressFeedback
-- theme_toggle_button.dart IconButton 包 PressFeedback
-- emil "occasional 频度应 standard animation"
-
-P2-22 (spen R5): app_database.dart:207 注释 single-capture
-- 实际代码已经 single-capture (final now = ...; final startOfDay = DateTime(now.year, ...))
-- 加注释解释: 跨 midnight 由 v0.17 round 4 dayChangeTickProvider 兜住
-
-P2-23 (spen R7): notification_service scheduleRefillReminder cancel 异常吞
-- line 411 await cancelRefillReminder 之前抛异常破整个 schedule 流程
-- 改 try/catch + piiSafeLog, 单药过期不卡其他 medication
-
-P2-24 (spen R8): medication_calendar 抽 _computeWindowStartDay 纯函数
-- 之前 inline DateTime.now() + DateTime(now.year, ...).subtract() 不易测
-- 抽成 top-level pure function
-
-P2-25 (spzh D-06): nextMidnightRefresh 改 tz.local (DST 安全)
-- 函数签名: DateTime now → tz.TZDateTime now
-- caller `_scheduleMidnightRefresh` 传 tz.TZDateTime.now(tz.local)
-- 海外用户 (美国/欧洲) DST 跳变点 delay 异常风险消除
-- 同步修 6 个 test (app_root_round17_midnight_test.dart) 改用 TZDateTime
-
-P2-26 (spzh): Z 后缀复查
-- last_error_capture.dart:37 DateTime.now().toIso8601String() → .toUtc().toIso8601String()
-- data_export_service 已用 _isoUtc helper ✓
-- assessment_reminder_service / safety_watch_service 已 .toUtc() ✓
-
-P2-11 (emil F9): textLengthWarningThreshold token
-- AppTokens 新增 textLengthWarningThreshold = 1800
-- vent_compose_page.dart:390 改用 token
-
-P2-8 (emil F8): trend_calendar.dart:212 0.85 alpha 注释
-- 这是 primary 实色浅一档 (选中),不是 tintedPrimarySoft (0.1)
-- 加注释解释为何不抽 token (跟 tintedPrimarySoft 语义不同)
+P3-28/29/31/33 (P3 L 项): 留 TODO 注释
+- P3-28 notification god class 拆 4 orchestrator (L, 600 行): 后续 round
+- P3-29 data_export god class 拆 4 service (L): 已加 50+ case 测试, 后续 round
+- P3-31 紧急联系人单独同意 (PIPL §13 流程重设, M): 后续 round (需真实短信)
+- P3-33 shared element Hero: vent_list→detail 已有, 其他无 detail page 不适用
 
 Verify: flutter analyze 0 error; flutter test 845/845 pass

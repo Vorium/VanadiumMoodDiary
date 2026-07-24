@@ -10,6 +10,7 @@
 // 5. 失联通知（SafetyWatchService - 死了么/撸了么）
 
 import 'package:chroniccare/presentation/providers/service_providers.dart';
+import 'package:chroniccare/presentation/providers/reminders_hub_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,37 +32,14 @@ class RemindersHubPage extends ConsumerStatefulWidget {
 }
 
 class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
-  // 各提醒的运行时状态（initState 加载）
-  bool? _assessmentEnabled;
-  int? _assessmentDays;
-  bool? _safetyEnabled;
-  int? _safetyThreshold;
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    final assessService = ref.read(assessmentReminderServiceProvider);
-    final safetyService = ref.read(safetyWatchServiceProvider);
-    final aEnabled = await assessService.isEnabled();
-    final aDays = await assessService.getDays();
-    final sEnabled = await safetyService.isEnabled();
-    final sThreshold = await safetyService.getThresholdDays();
-    if (!mounted) return;
-    setState(() {
-      _assessmentEnabled = aEnabled;
-      _assessmentDays = aDays;
-      _safetyEnabled = sEnabled;
-      _safetyThreshold = sThreshold;
-    });
-  }
-
+  // v0.23 round 41 (spen P3-35): 改用 FutureProvider 替代 setState 模式
+  // 之前 4 个 nullable 字段 + initState _load + setState 异步填值
+  // 模式落后于 v0.17 round 7 的 calendarWindowProvider FutureProvider
+  // 改成 watch remindersHubConfigProvider,异步值自动 rebuild
   @override
   Widget build(BuildContext context) {
     final medsAsync = ref.watch(medicationsProvider);
+    final configAsync = ref.watch(remindersHubConfigProvider);
     return PageScaffold(
       title: AppLocalizations.of(context).settingsReminderCenter,
       child: ListView(
@@ -160,12 +138,13 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           const SizedBox(height: AppTokens.spacingSm),
 
           // 4. 心理评估提醒
-          _buildAssessmentCard(context),
+          // v0.23 round 41 (spen P3-35): 显式传 configAsync 给 _buildAssessmentCard
+          _buildAssessmentCard(context, configAsync),
 
           const SizedBox(height: AppTokens.spacingSm),
 
           // 5. 失联通知
-          _buildSafetyCard(context),
+          _buildSafetyCard(context, configAsync),
 
           const SizedBox(height: AppTokens.spacingMd),
         ],
@@ -174,44 +153,75 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   }
 
   void _showAssessmentSettings(BuildContext context) {
+    // v0.23 round 41 (spen P3-35): 显式取一次 configAsync,闭包内不再依赖 build scope
+    final configAsync = ref.read(remindersHubConfigProvider);
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => _AssessmentReminderSheet(
-        initialEnabled: _assessmentEnabled ?? false,
-        initialDays: _assessmentDays ?? 14,
-        onSaved: _load,
-      ),
+      builder: (ctx) {
+        final c = _configOrFallback(configAsync);
+        return _AssessmentReminderSheet(
+          initialEnabled: c.assessmentEnabled,
+          initialDays: c.assessmentDays,
+          onSaved: () => ref.invalidate(remindersHubConfigProvider),
+        );
+      },
     );
   }
 
   void _showSafetySettings(BuildContext context) {
+    final configAsync = ref.read(remindersHubConfigProvider);
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => _SafetyReminderSheet(
-        initialEnabled: _safetyEnabled ?? false,
-        initialThreshold: _safetyThreshold ?? 2,
-        onSaved: _load,
-      ),
+      builder: (ctx) {
+        final c = _configOrFallback(configAsync);
+        return _SafetyReminderSheet(
+          initialEnabled: c.safetyEnabled,
+          initialThreshold: c.safetyThreshold,
+          onSaved: () => ref.invalidate(remindersHubConfigProvider),
+        );
+      },
     );
   }
 
-  Widget _buildAssessmentCard(BuildContext context) {
+  Widget _buildAssessmentCard(
+    BuildContext context,
+    AsyncValue<RemindersHubConfig> configAsync,
+  ) {
+    // v0.23 round 41 (spen P3-35): 用 configAsync 替代本地 nullable 字段
     return AssessmentReminderCard(
-      enabled: _assessmentEnabled,
-      days: _assessmentDays,
+      enabled: _configOrFallback(configAsync).assessmentEnabled,
+      days: _configOrFallback(configAsync).assessmentDays,
       onConfigure: () => _showAssessmentSettings(context),
     );
   }
 
-  Widget _buildSafetyCard(BuildContext context) {
+  Widget _buildSafetyCard(
+    BuildContext context,
+    AsyncValue<RemindersHubConfig> configAsync,
+  ) {
     return SafetyReminderCard(
-      enabled: _safetyEnabled,
-      threshold: _safetyThreshold,
+      enabled: _configOrFallback(configAsync).safetyEnabled,
+      threshold: _configOrFallback(configAsync).safetyThreshold,
       // P0-1 fix: 检测当前 SMS provider,如果是 mock 状态显示 banner
       isMockSms: ref.watch(smsProviderNameProvider) == 'mock',
       onConfigure: () => _showSafetySettings(context),
+    );
+  }
+
+  /// configAsync 没加载完时给 fallback 默认值,加载完用真实值
+  ///
+  /// v0.23 round 41 (spen P3-35): 替代之前 4 个 nullable 字段 + setState
+  RemindersHubConfig _configOrFallback(AsyncValue<RemindersHubConfig> async) {
+    return async.maybeWhen(
+      data: (c) => c,
+      orElse: () => const RemindersHubConfig(
+        assessmentEnabled: false,
+        assessmentDays: 14,
+        safetyEnabled: false,
+        safetyThreshold: 2,
+      ),
     );
   }
 }

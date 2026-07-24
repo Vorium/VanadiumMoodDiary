@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/theme_provider.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 主题切换按钮（在 system / light / dark 之间循环）
 ///
@@ -27,16 +27,13 @@ class ThemeToggleButton extends ConsumerWidget {
       ThemeMode.light => Icons.light_mode,
       ThemeMode.dark => Icons.dark_mode,
     };
-    // v0.23 round 40 (emil F10 fix): 包 PressFeedback
-    // 之前 IconButton 无 :active scale,跟 vent_list 右上角"+"体感不一致
-    // emil "occasional 频度应 standard animation"
-    return PressFeedback(
-      child: IconButton(
-        tooltip:
-            AppLocalizations.of(context).themeTooltip(_modeLabel(context, mode)),
-        icon: Icon(icon),
-        onPressed: () => notifier.set(next),
-      ),
+    // v0.23 round 41 (emil P3-32): 改用 PressFeedbackIconButton 集中器
+    // 之前 v0.23 round 40 inline `PressFeedback(child: IconButton(...))`,
+    // 抽集中器跟 vent_list 体感一致 + 减 4 行重复
+    return PressFeedbackIconButton(
+      icon: icon,
+      tooltip: AppLocalizations.of(context).themeTooltip(_modeLabel(context, mode)),
+      onPressed: () => notifier.set(next),
     );
   }
 
