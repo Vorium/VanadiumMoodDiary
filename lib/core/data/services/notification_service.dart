@@ -6,6 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
+
+/// v0.23 round 41 (spen P3-28 TODO): 架构债务 — notification_service god class
+///
+/// 已抽 facade 子服务:
+///   - SnoozeManager (v0.22 round 19 抽)
+///   - BadgeSyncService (v0.22 round 30 抽)
+///   - ReminderDispatcher (v0.22 round 37 抽)
+///   - SafetyWatchService (v0.10 round 4 独立 service)
+///   - AssessmentReminderService (v0.12 round 12 独立 service)
+///
+/// 通知编排 facade 自身已瘦身, 但 4 类通知 (medication / refill / assessment /
+/// safety) 仍在本类内串联调用 dispatcher + safety/assessment service。
+/// 后续 round 候选: 抽 MedicationReminderOrchestrator / RefillReminderOrchestrator
+/// 把每类通知的"schedule/cancel"流程独立成单一职责的 orchestrator, 各 200 行内。
+/// 当前 (2026-07-24) 22KB / 600+ 行已可工作, 优先级 P3 L 项。
+
 import 'package:timezone/timezone.dart' as tz;
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';

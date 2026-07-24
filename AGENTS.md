@@ -197,6 +197,18 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 **已知 bug 修复**：写这俩脚本时发现 Dart `RegExp` 默认 `^` 不 multi-line — 必须显式 `multiLine: true` 或用 `readAsLinesSync()` 逐行处理。
 
+## v0.23 P0-P3 集中清理 (round 38-41)
+
+按"三视角审视"报告 (emil / superpowers-en / superpowers-zh) 全修:
+
+- **P0 (round 38)**: SMS release fail-fast + safety_watch timeout + app.dart 复用 provider (3 项,1 项 Android 跳过因 web-only)
+- **P1 (round 39)**: 8 项 — catch(_)→swallowError (4 处) + i18n 38 处 + PDF mask + 50+ case 测试
+- **P2 (round 40)**: 12 项 — emil token 化 (tintedSuccessSoft/fgOnPrimaryMuted/iconSizeMicro/...) + 抽 SectionHeader + setup 改 PageTransitionSwitcher + tz.local
+- **P3 (round 41)**: 4 项实做 + 5 项 TODO 注释 — PressFeedbackIconButton + care_engine 4 strategy + reminders_hub Notifier + zh_Hant stub
+- **P3 L 项 TODO**: notification god class (已抽 3 facade 子) + data_export god class (已加 50+ test) + 紧急联系人单独同意 (待 SMS 接入)
+
+总计: 845 tests pass, 0 analyzer error, 4 守护脚本全绿.
+
 ## 关键约束
 
 - `dart:io` 只在 `data/` 下用（domain 层用 `dart:io` 拼路径 OK，但不能用 `package:flutter/...`）

@@ -1,33 +1,22 @@
-v0.23 round 41: refactor(P3) PressFeedbackIconButton + care_engine 4 strategy + reminders_hub Notifier + zh_Hant stub
+v0.23 round 42: docs(AGENTS) + 4 处 P3 L 项架构债务 TODO 注释
 
-P3-32 (emil): 抽 PressFeedbackIconButton widget
-- 新建 presentation/widgets/press_feedback_icon_button.dart
-- vent_list + theme_toggle 改用集中器, 体感一致 + 减 4 行重复
+- AGENTS.md 新增 "v0.23 P0-P3 集中清理 (round 38-41)" 段
+  记录 P0 (3) / P1 (8) / P2 (12) / P3 (4 实做 + 5 TODO) 完整进展
+- notification_service.dart 头部加 P3-28 TODO 注释
+  - 已抽 3 facade (SnoozeManager / BadgeSync / ReminderDispatcher)
+  - 后续: MedicationReminderOrchestrator / RefillReminderOrchestrator
+- data_export_service.dart 头部加 P3-29 TODO 注释
+  - 已加 50+ test (round 39)
+  - 后续: 抽 4 entity service (Profile / Medication / CheckIn / ImportValidator)
+- setup_legal_dialog.dart 头部加 P3-31 TODO 注释
+  - PIPL §13/§23 紧急联系人单独同意完整流程
+  - 依赖真实 SMS provider 接入 (AliyunSmsProvider send() 真实实现)
 
-P3-34 (spen): care_engine 4 strategy 抽独立文件
-- 新建 domain/logic/care_strategies.dart
-- 4 规则 (isSecondDayMissed / isLateCheckInHabit / isWeekendMissed / isWeekPerfect) 拆为 top-level pure function
-- care_engine 自身只负责 evaluate 装配 + fire 推送, 策略独立可测可切换
-- 加 _build() 装配 helper, 4 规则共用一段 copy + trigger 构造
-
-P3-35 (spen): reminders_hub_page 改 FutureProvider
-- 之前 4 个 nullable 字段 + initState _load + setState 异步填值, 模式落后
-- 新建 presentation/providers/reminders_hub_provider.dart
-  - RemindersHubConfig class (assessmentEnabled/Days + safetyEnabled/Threshold)
-  - remindersHubConfigProvider (FutureProvider)
-- _RemindersHubPageState 改 watch provider, 自动 rebuild
-- _showAssessmentSettings / _showSafetySettings sheet 闭包显式取 configAsync
-- _load() 删除, 改用 ref.invalidate(remindersHubConfigProvider) 触发重读
-
-P3-30 (spzh): 繁体中文 stub
-- 新建 lib/l10n/app_zh_Hant.arb, 基础版本跟 app_zh.arb 同 (简体)
-- 之后可以逐步把简体 key 翻译成繁体 (港澳台用户)
-- phone_validator 已支持 +852/+853/+886
-
-P3-28/29/31/33 (P3 L 项): 留 TODO 注释
-- P3-28 notification god class 拆 4 orchestrator (L, 600 行): 后续 round
-- P3-29 data_export god class 拆 4 service (L): 已加 50+ case 测试, 后续 round
-- P3-31 紧急联系人单独同意 (PIPL §13 流程重设, M): 后续 round (需真实短信)
-- P3-33 shared element Hero: vent_list→detail 已有, 其他无 detail page 不适用
+P3 L 项汇总 (已记录但未实施):
+- #28 notification god class 拆 4 orchestrator (L, 600 行重写)
+- #29 data_export god class 拆 4 service (L, 已加 50+ test 缓解)
+- #31 紧急联系人单独同意 (M, 4-8h, 需真实 SMS 通道)
+- #33 shared element Hero (M, vent 已有, 其他无 detail page)
+- #27 厂商通道 (L, 2-3 周, 仅 Android 适用, web-only 项目当前不适用)
 
 Verify: flutter analyze 0 error; flutter test 845/845 pass

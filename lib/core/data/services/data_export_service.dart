@@ -9,6 +9,18 @@
 ///
 /// v0.21 Round 22 (P0-1 修复): vent 文字导出时 decrypt → 用户拿 JSON 时是
 /// 明文（跨设备恢复需要）；导入时再 encrypt 写回 DB。
+///
+/// v0.23 round 39 (P1-5): 加 50+ case test (data_export_round39_test.dart)
+/// 覆盖 profile / contact / medication / check-in / mood 4D / vent 加密 / 错误处理
+///
+/// v0.23 round 41 (spen P3-29 TODO): 架构债务 — data_export god class
+/// 545 行单文件, 2 个 public method (exportToJson + importFromJson) + ImportResult class
+/// 后续 round 候选: 抽 4 entity service
+///   - ProfileExportService (profile 段)
+///   - MedicationExportService (medication 段)
+///   - CheckInExportService (check_in / vent / mood / report_history 段)
+///   - ImportValidator (JSON schema 校验 + 导入编排)
+/// 当前已加 50+ test 关键路径覆盖, 优先级 P3 L 项 (2-3 周)。
 library;
 
 import 'dart:convert';
