@@ -83,6 +83,9 @@ class _AlwaysOkProvider implements SmsProvider {
   String get name => 'always-ok-test';
 
   @override
+  bool get isProductionReady => true;
+
+  @override
   Future<bool> send({
     required String to,
     required String body,
@@ -95,6 +98,9 @@ class _AlwaysOkProvider implements SmsProvider {
 class _AlwaysFailProvider implements SmsProvider {
   @override
   String get name => 'always-fail-test';
+
+  @override
+  bool get isProductionReady => true;
 
   @override
   Future<bool> send({

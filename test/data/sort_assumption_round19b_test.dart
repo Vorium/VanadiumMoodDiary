@@ -142,6 +142,9 @@ class MockSms implements SmsProvider {
   String get name => 'mock-test';
 
   @override
+  bool get isProductionReady => true;
+
+  @override
   Future<bool> send({
     required String to,
     required String body,

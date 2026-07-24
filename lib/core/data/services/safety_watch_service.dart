@@ -4,10 +4,12 @@ import 'dart:developer' as developer;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/shared/user_name_helper.dart';
 
@@ -41,17 +43,23 @@ class SafetyWatchService {
   final SmsService _smsService;
   final NotificationService _notificationService;
 
+  /// v0.23 round 38 (P0-3 fix): _contactRepo.watchAll().first 的 timeout 时长
+  /// 默认 5s,测试可注入短值(50ms)避免 5s 等待
+  final Duration _contactWatchTimeout;
+
   SafetyWatchService({
     required CheckInRepository checkInRepo,
     required ContactRepository contactRepo,
     required UserProfileRepository userProfileRepo,
     required SmsService smsService,
     required NotificationService notificationService,
+    Duration contactWatchTimeout = const Duration(seconds: 5),
   })  : _checkInRepo = checkInRepo,
         _contactRepo = contactRepo,
         _userProfileRepo = userProfileRepo,
         _smsService = smsService,
-        _notificationService = notificationService;
+        _notificationService = notificationService,
+        _contactWatchTimeout = contactWatchTimeout;
 
   // ============== 配置 API（给 settings_page 用）==============
 
@@ -205,7 +213,32 @@ class SafetyWatchService {
       if (profile == null) {
         return const SafetyCheckResult(kind: SafetyCheckKind.noData);
       }
-      final contacts = await _contactRepo.watchAll().first;
+      // v0.23 round 38 (P0-3 fix): 加 5s timeout + 异常降级
+      // 之前 `_contactRepo.watchAll().first` 在以下情况会 hang:
+      //   a) drift stream 内部异常 (罕见,通常是 DB lock)
+      //   b) stream 关闭 (没关闭 listener)
+      // 整个 `_checkAndAlert` 阻塞 → 失联检测核心路径失败 → SMS 通知永远不发出
+      // 修法: [_contactWatchTimeout] 默认 5s 返回空列表,降级到 noContacts kind
+      //      内部异常也 catch,降级到 noContacts
+      //      safety_watch_service 自身不动 — 整个降级链路最简
+      final List<ContactEntity> contacts;
+      try {
+        contacts = await _contactRepo
+            .watchAll()
+            .first
+            .timeout(_contactWatchTimeout, onTimeout: () => const <ContactEntity>[]);
+      } catch (e, st) {
+        piiSafeLog(
+          'SafetyWatchService',
+          '⚠️ _contactRepo.watchAll().first 异常: $e — 降级到 noContacts',
+          error: e,
+          stackTrace: st,
+        );
+        return SafetyCheckResult(
+          kind: SafetyCheckKind.noContacts,
+          daysSinceLast: daysSinceLast,
+        );
+      }
       if (contacts.isEmpty) {
         return SafetyCheckResult(
           kind: SafetyCheckKind.noContacts,

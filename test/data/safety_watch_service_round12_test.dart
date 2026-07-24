@@ -4,6 +4,8 @@ import 'package:chroniccare/core/data/repositories/user_profile/user_profile_rep
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -264,6 +266,70 @@ void main() {
       expect(sms.sent, isEmpty);
     });
   });
+
+  group('v0.23 round 38 (P0-3) — _contactRepo.watchAll().first timeout 降级', () {
+    test('watchAll() 永不 emit → 5s timeout → 降级 noContacts (用 50ms 注入)', () async {
+      // 注入一个永不 emit 的 stream,timeout 50ms 触发
+      final hangingRepo = _HangingContactRepo();
+      final localSafety = SafetyWatchService(
+        checkInRepo: checkInRepo,
+        contactRepo: hangingRepo,
+        userProfileRepo: userProfileRepo,
+        smsService: sms,
+        notificationService: notif,
+        contactWatchTimeout: const Duration(milliseconds: 50),
+      );
+      await setupProfile(name: '张三');
+      // 触发条件: 3 天没打卡
+      await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
+      await localSafety.setEnabled(true);
+      await localSafety.setThresholdDays(2);
+      // 不应 hang,50ms 内返 noContacts
+      final result = await localSafety.checkNow();
+      expect(result.kind, SafetyCheckKind.noContacts);
+      expect(sms.sent, isEmpty); // 没真发
+    });
+
+    test('watchAll() 抛异常 → catch 降级 noContacts', () async {
+      final errorRepo = _ErrorContactRepo();
+      final localSafety = SafetyWatchService(
+        checkInRepo: checkInRepo,
+        contactRepo: errorRepo,
+        userProfileRepo: userProfileRepo,
+        smsService: sms,
+        notificationService: notif,
+        contactWatchTimeout: const Duration(milliseconds: 50),
+      );
+      await setupProfile(name: '张三');
+      await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
+      await localSafety.setEnabled(true);
+      await localSafety.setThresholdDays(2);
+      final result = await localSafety.checkNow();
+      expect(result.kind, SafetyCheckKind.noContacts);
+      expect(sms.sent, isEmpty);
+    });
+  });
+}
+
+/// 永不 emit 的 ContactRepository mock
+class _HangingContactRepo implements ContactRepository {
+  @override
+  Stream<List<ContactEntity>> watchAll() async* {
+    // 永不 emit
+    await Future<void>.delayed(const Duration(days: 1));
+  }
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// emit 异常的 ContactRepository mock
+class _ErrorContactRepo implements ContactRepository {
+  @override
+  Stream<List<ContactEntity>> watchAll() async* {
+    throw StateError('mock db lock');
+  }
+  @override
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 // ============== Test Doubles ==============
@@ -288,6 +354,9 @@ class MockSmsService extends SmsService {
 class MockSms implements SmsProvider {
   @override
   String get name => 'mock-test';
+
+  @override
+  bool get isProductionReady => true;
 
   @override
   Future<bool> send({

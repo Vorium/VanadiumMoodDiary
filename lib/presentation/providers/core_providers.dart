@@ -77,10 +77,16 @@ final notificationServiceProvider = Provider<NotificationService>(
 /// 默认 MockSmsProvider (开发/MVP)。v1.0+ 接入阿里云时改成从 .env 读取 key 后
 /// 用 AliyunSmsProvider。
 ///
-/// **P0-1 fix**: MockSmsProvider.send() 现在 throw UnimplementedError,
+/// **P0-1 fix (v0.22)**: MockSmsProvider.send() 现在 throw UnimplementedError,
 /// 任何生产 release 都必须显式注入真实 provider。UI 用
 /// [smsProviderNameProvider] 检测当前是不是 mock,在 reminders hub 显示
 /// 显眼"SMS 未连接"banner。
+///
+/// **P0-1 fix (v0.23 round 38)**: 启动时 main.dart bootstrap 调
+/// [SmsService.validateForRelease],release 模式 + 未配置 provider →
+/// 抛 [SmsProviderNotConfiguredError],被 runZonedGuarded 抓住,LastErrorCapture
+/// 记录,AppRoot 启动后顶部 banner 显眼提示。比之前"send() 时静默 fail +
+/// UI 显示 banner"更前置,把"假成功"风险降到 0。
 final smsServiceProvider = Provider<SmsService>((ref) => SmsService());
 
 /// 当前 SMS provider 名称(给 UI 检测用)

@@ -12,6 +12,7 @@ import 'package:chroniccare/core/data/services/database_migration.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -110,6 +111,13 @@ Future<void> _bootstrap() async {
     piiSafeLog('Main', '⚠️ 通知服务初始化失败（不影响核心功能）：$e');
     notificationError = e.toString();
   }
+
+  // 3.5 v0.23 round 38 (P0-1 fix): release 模式启动 SMS 守卫
+  //     release + mock → 抛 SmsProviderNotConfiguredError
+  //     被 runZonedGuarded 抓住,LastErrorCapture 记录,AppRoot banner 提示
+  //     dev/profile 模式: 静默通过(mock 是 dev 工具)
+  //     这里故意不用 try/catch:让异常冒泡到外层 runZonedGuarded
+  SmsService.validateForRelease(SmsService().provider);
 
   // 4. 执行迁移（migrateIfNeeded 失败必须 throw,见 database_migration.dart）
   try {

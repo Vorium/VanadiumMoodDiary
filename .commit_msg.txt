@@ -1,12 +1,27 @@
-v0.22 round 37: refactor(services) BadgeSyncService + ReminderDispatcher 抽类 + mood audio service/storage + database_migration 同步
+v0.23 round 38: fix(P0) SMS fail-fast + safety_watch timeout + app.dart 复用 provider (3 项 P0 + 1 项 P1)
 
-- 抽 BadgeSyncService (通知角标同步)
-- 抽 ReminderDispatcher (通知分发 facade, 替代 notification_service 内联)
-- 新增 mood_audio_service + mood_audio_storage (v0.23 mood 日记录音基础设施)
-- database_migration 加 mood audio path + dosage_unit entity
-- 8 个新 test 覆盖 mood audio round-trip + BadgeSync/ReminderDispatcher/migration
-- 同步 settings_page / trend / mood_dialog / reminders_hub / email_preview / last_startup_error_banner 适配新 service
-- 同步 l10n + presentation providers (mood_providers)
-- 同步 4 个 check_*.py 守护脚本适配新 code
+P0-1: SMS provider release-mode 守卫
+- 加 SmsProviderNotConfiguredError 异常 + SmsService.validateForRelease() 静态方法
+- SmsProvider 新增 isProductionReady getter (Mock=false, Aliyun=true)
+- main.dart bootstrap 调 validateForRelease,release + mock → 抛错 → runZonedGuarded → LastErrorCapture
+- 12 新 test (sms_service_round38_test.dart)
+- 同步 3 个 mock SmsProvider test 文件加 isProductionReady 实现
 
-Verify: flutter analyze 0; flutter test 780/780 pass; check_arb_keys 0; check_fullwidth 0; check_datetime_race[2] 0
+P0-3: safety_watch_service watchAll().first 加 5s timeout + 异常降级
+- 之前 hang → SMS 通知永远不发出
+- 加 contactWatchTimeout 构造参数 (默认 5s, test 注入 50ms)
+- 内部异常也 catch, 降级到 noContacts kind
+- 2 新 test (timeout hang + 异常降级)
+
+P0-4: app.dart 复用 checkInRepositoryProvider
+- 之前 _runAssessmentReminderOnStart 直接 new CheckInRepositoryImpl(sharedDb) → 第 2 个 repo 实例
+- drift stream 重复订阅内存漏
+- 改用 ref.read(checkInRepositoryProvider) 复用单例
+- 同步 print → piiSafeLog (P1-11 也并了)
+
+P0-2 (SKIP): Android 12+ SCHEDULE_EXACT_ALARM 权限
+- 项目 .metadata 只有 root + web 平台, 无 android/ 目录
+- 当前 web-only, 此 P0 不适用
+- 移到 P3 长期 (等用户上 Android 时再补)
+
+Verify: flutter analyze 0; flutter test 794/794 pass (从 780 增 14)

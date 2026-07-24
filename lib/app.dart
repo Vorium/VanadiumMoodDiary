@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
-import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -106,20 +106,27 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
   /// 从 main.dart 的 _scheduleAssessmentReminderOnStart 迁过来。
   /// 之前用 Future.delayed(100ms) 等待 DB ready, 现在改用
   /// addPostFrameCallback 确定性等 widget tree 就绪。
+  ///
+  /// v0.23 round 38 (P0-4 fix): 复用 [checkInRepositoryProvider] 而不是
+  /// `new CheckInRepositoryImpl(sharedDb)`,避免第 2 个 CheckInRepository
+  /// 实例(每个实例会 subscribe drift stream,导致 stream 重复订阅内存漏)。
   Future<void> _runAssessmentReminderOnStart() async {
     try {
-      final sharedDb = ref.read(databaseProvider);
       final notificationService = ref.read(notificationServiceProvider);
       final service = AssessmentReminderService(
-        checkInRepo: CheckInRepositoryImpl(sharedDb),
+        checkInRepo: ref.read(checkInRepositoryProvider),
         notificationService: notificationService,
       );
       await service.onAppStart();
     } catch (e) {
       // swallow — 评估提醒失败不影响核心功能
       // v0.18 (P2-P0-3): global error handler 已捕获, 这里只 log
-      // ignore: avoid_print
-      print('⚠️ AssessmentReminder.onAppStart 失败: $e');
+      // v0.23 round 38 (P1-11): 改用 piiSafeLog,不再 print
+      piiSafeLog(
+        'AppRoot._runAssessmentReminderOnStart',
+        '⚠️ AssessmentReminder.onAppStart 失败: $e',
+        error: e,
+      );
     }
   }
 
