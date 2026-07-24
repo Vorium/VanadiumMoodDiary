@@ -4,6 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
 
 /// 用药报告 PDF 生成器
@@ -162,7 +163,7 @@ class MedicationReportPdf {
       padding: const pw.EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       decoration: pw.BoxDecoration(
         color: PdfColors.green50,
-        borderRadius: pw.BorderRadius.circular(4),
+        borderRadius: pw.BorderRadius.circular(AppTokens.radiusCellLg),
       ),
       child: pw.Text(
         s,
@@ -204,7 +205,7 @@ class MedicationReportPdf {
           padding: const pw.EdgeInsets.all(10),
           decoration: pw.BoxDecoration(
             border: pw.Border.all(color: PdfColors.grey300, width: 0.5),
-            borderRadius: pw.BorderRadius.circular(4),
+            borderRadius: pw.BorderRadius.circular(AppTokens.radiusCellLg),
           ),
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -279,7 +280,7 @@ class MedicationReportPdf {
       padding: const pw.EdgeInsets.all(10),
       decoration: pw.BoxDecoration(
         color: PdfColors.grey50,
-        borderRadius: pw.BorderRadius.circular(4),
+        borderRadius: pw.BorderRadius.circular(AppTokens.radiusCellLg),
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,

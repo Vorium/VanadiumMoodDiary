@@ -1712,6 +1712,120 @@ abstract class AppLocalizations {
   /// **'今天发生什么？'**
   String get moodNoteHint;
 
+  /// No description provided for @moodAudioRecordButton.
+  ///
+  /// In zh, this message translates to:
+  /// **'录语音'**
+  String get moodAudioRecordButton;
+
+  /// No description provided for @moodAudioRecording.
+  ///
+  /// In zh, this message translates to:
+  /// **'录音中… {elapsed}'**
+  String moodAudioRecording(String elapsed);
+
+  /// No description provided for @moodAudioRecorded.
+  ///
+  /// In zh, this message translates to:
+  /// **'已录 {duration}'**
+  String moodAudioRecorded(String duration);
+
+  /// No description provided for @moodAudioRerecord.
+  ///
+  /// In zh, this message translates to:
+  /// **'重录'**
+  String get moodAudioRerecord;
+
+  /// No description provided for @moodAudioDeleteRecording.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除录音'**
+  String get moodAudioDeleteRecording;
+
+  /// No description provided for @moodAudioTranscriptLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'识别文字'**
+  String get moodAudioTranscriptLabel;
+
+  /// No description provided for @moodAudioTranscriptEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'未识别到内容'**
+  String get moodAudioTranscriptEmpty;
+
+  /// No description provided for @moodAudioTranscriptPartialHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'（仅识别前 60 秒）'**
+  String get moodAudioTranscriptPartialHint;
+
+  /// No description provided for @moodAudioSttListening.
+  ///
+  /// In zh, this message translates to:
+  /// **'识别中…'**
+  String get moodAudioSttListening;
+
+  /// No description provided for @moodAudioSttFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'识别失败，已仅保存录音'**
+  String get moodAudioSttFailed;
+
+  /// No description provided for @moodAudioSttUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'该设备暂不支持语音转文字'**
+  String get moodAudioSttUnavailable;
+
+  /// No description provided for @moodAudioMaxReached.
+  ///
+  /// In zh, this message translates to:
+  /// **'已达 3 分钟上限'**
+  String get moodAudioMaxReached;
+
+  /// No description provided for @moodAudioSavedWithPlay.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪已保存'**
+  String get moodAudioSavedWithPlay;
+
+  /// No description provided for @moodAudioPlayAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'回放'**
+  String get moodAudioPlayAction;
+
+  /// No description provided for @moodAudioDurationTemplate.
+  ///
+  /// In zh, this message translates to:
+  /// **'{minutes}:{seconds}'**
+  String moodAudioDurationTemplate(String minutes, String seconds);
+
+  /// No description provided for @moodAudioErrorStart.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始录音失败'**
+  String get moodAudioErrorStart;
+
+  /// No description provided for @moodAudioErrorStop.
+  ///
+  /// In zh, this message translates to:
+  /// **'停止录音失败'**
+  String get moodAudioErrorStop;
+
+  /// No description provided for @moodAudioErrorEncrypt.
+  ///
+  /// In zh, this message translates to:
+  /// **'加密录音失败'**
+  String get moodAudioErrorEncrypt;
+
+  /// No description provided for @moodAudioErrorPlay.
+  ///
+  /// In zh, this message translates to:
+  /// **'播放失败'**
+  String get moodAudioErrorPlay;
+
   /// No description provided for @medsTodaySchedule.
   ///
   /// In zh, this message translates to:
@@ -3314,6 +3428,84 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'用药报告_{date}'**
   String medReportFileName(String date);
+
+  /// No description provided for @migrationPromptTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'升级到 v0.9'**
+  String get migrationPromptTitle;
+
+  /// No description provided for @migrationPromptDetectedOld.
+  ///
+  /// In zh, this message translates to:
+  /// **'检测到本地有旧版本数据。'**
+  String get migrationPromptDetectedOld;
+
+  /// No description provided for @migrationPromptChangesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'本次升级会：'**
+  String get migrationPromptChangesTitle;
+
+  /// No description provided for @migrationPromptChangeEncrypt.
+  ///
+  /// In zh, this message translates to:
+  /// **'• 启用数据库加密（保护你的隐私）'**
+  String get migrationPromptChangeEncrypt;
+
+  /// No description provided for @migrationPromptChangeClear.
+  ///
+  /// In zh, this message translates to:
+  /// **'• 清空旧版本的所有打卡记录'**
+  String get migrationPromptChangeClear;
+
+  /// No description provided for @migrationPromptChangeWarning.
+  ///
+  /// In zh, this message translates to:
+  /// **'（旧版本没有\"导出数据\"功能，原始数据无法恢复）'**
+  String get migrationPromptChangeWarning;
+
+  /// No description provided for @migrationPromptRecommendExport.
+  ///
+  /// In zh, this message translates to:
+  /// **'建议：先在旧版 App 内完成\"导出数据\"备份，再升级。'**
+  String get migrationPromptRecommendExport;
+
+  /// No description provided for @migrationPromptDirectContinue.
+  ///
+  /// In zh, this message translates to:
+  /// **'若旧版已卸载无法导出，可以直接点\"继续升级\"。'**
+  String get migrationPromptDirectContinue;
+
+  /// No description provided for @migrationPromptCancel.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消'**
+  String get migrationPromptCancel;
+
+  /// No description provided for @migrationPromptContinue.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续升级'**
+  String get migrationPromptContinue;
+
+  /// No description provided for @migrationAbortedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'升级已取消'**
+  String get migrationAbortedTitle;
+
+  /// No description provided for @migrationAbortedBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'请先在旧版本 App 内完成\"导出数据\"备份，\n备份完成后点下方按钮继续升级。'**
+  String get migrationAbortedBody;
+
+  /// No description provided for @migrationAbortedRetry.
+  ///
+  /// In zh, this message translates to:
+  /// **'已备份，继续升级'**
+  String get migrationAbortedRetry;
 }
 
 class _AppLocalizationsDelegate

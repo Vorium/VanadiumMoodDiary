@@ -28,6 +28,7 @@ import 'package:chroniccare/presentation/providers/calendar_window_provider.dart
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 class MedicationCalendarPage extends ConsumerWidget {
@@ -76,7 +77,7 @@ class MedicationCalendarPage extends ConsumerWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
             // v0.22 round 29 (emil-34): Semantics 描述时间窗口
-            // (TalkBack 读"时间窗口 7/30/90 天,当前 30" 让用户知道是单选)
+            // (TalkBack 读"时间窗口 7/30/90 天，当前 30" 让用户知道是单选)
             child: Semantics(
               container: true,
               label: '时间窗口 $days 天, 7/30/90 单选',
@@ -111,14 +112,19 @@ class MedicationCalendarPage extends ConsumerWidget {
             data: (meds) => checkInsAsync.when(
               data: (checkIns) => _buildGrid(meds, checkIns, days, context),
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, _) => Center(
-                  child: Text(AppLocalizations.of(context)
-                      .medsCalendarLoadCheckinFailed(e.toString()),),),
+              error: (e, _) => ErrorState(
+                title: AppLocalizations.of(context)
+                    .medsCalendarLoadCheckinFailed(''),
+                detail: e.toString(),
+                onRetry: () => ref.invalidate(allCheckInsProvider),
+              ),
             ),
             loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, _) => Center(
-                child: Text(AppLocalizations.of(context)
-                    .medsCalendarLoadMedFailed(e.toString()),),),
+            error: (e, _) => ErrorState(
+              title: AppLocalizations.of(context).medsCalendarLoadMedFailed(''),
+              detail: e.toString(),
+              onRetry: () => ref.invalidate(medicationsProvider),
+            ),
           ),
 
           const SizedBox(height: AppTokens.spacingMd),

@@ -88,9 +88,9 @@ void main() {
 
       // 两次调用 = 2 次 cancel (前一个 cancel 自身) + 2 次 zonedSchedule
       // 但 cancel 是在 zonedSchedule 之前的:第一次 cancel + schedule,第二次 cancel + schedule
-      expect(fake.cancelledIds, [5 * 1440 + 5 + 4000, 5 * 1440 + 5 + 4000]);
+      expect(fake.cancelledIds, [5 * 1440 + 5 + 300000, 5 * 1440 + 5 + 300000]);
       expect(fake.zonedSchedules.length, 2);
-      expect(fake.zonedSchedules[0]['id'], 4000 + 5 * 1440 + 5);
+      expect(fake.zonedSchedules[0]['id'], 300000 + 5 * 1440 + 5);
     });
 
     test('不同 (medId, minutes) id 互不干扰', () async {
@@ -103,9 +103,9 @@ void main() {
 
       // 3 个不同 id
       expect(fake.zonedSchedules.length, 3);
-      expect(fake.zonedSchedules[0]['id'], 4000 + 1 * 1440 + 5);
-      expect(fake.zonedSchedules[1]['id'], 4000 + 1 * 1440 + 10);
-      expect(fake.zonedSchedules[2]['id'], 4000 + 2 * 1440 + 5);
+      expect(fake.zonedSchedules[0]['id'], 300000 + 1 * 1440 + 5);
+      expect(fake.zonedSchedules[1]['id'], 300000 + 1 * 1440 + 10);
+      expect(fake.zonedSchedules[2]['id'], 300000 + 2 * 1440 + 5);
     });
 
     test('medicationId=0 通用 snooze payload = today check-in', () async {
@@ -178,22 +178,22 @@ void main() {
       final fake = _FakePlugin();
       // 设 pending: med=1 有 snooze 5min/10min,med=2 有 snooze 5min
       fake.pending.addAll([
-        const PendingNotificationRequest(4000 + 1 * 1440 + 5, 'a', 'b', null),
-        const PendingNotificationRequest(4000 + 1 * 1440 + 10, 'c', 'd', null),
-        const PendingNotificationRequest(4000 + 2 * 1440 + 5, 'e', 'f', null),
+        const PendingNotificationRequest(300000 + 1 * 1440 + 5, 'a', 'b', null),
+        const PendingNotificationRequest(300000 + 1 * 1440 + 10, 'c', 'd', null),
+        const PendingNotificationRequest(300000 + 2 * 1440 + 5, 'e', 'f', null),
       ]);
       final manager = SnoozeManager(plugin: fake);
 
       await manager.cancelSnoozeForMedication(1);
 
       // med=1 的 2 个 snooze 被 cancel,med=2 不动
-      expect(fake.cancelledIds, [4000 + 1 * 1440 + 5, 4000 + 1 * 1440 + 10]);
+      expect(fake.cancelledIds, [300000 + 1 * 1440 + 5, 300000 + 1 * 1440 + 10]);
     });
 
     test('pending 没该 med 的 snooze → 静默 no-op', () async {
       final fake = _FakePlugin();
       fake.pending.addAll([
-        const PendingNotificationRequest(4000 + 2 * 1440 + 5, 'e', 'f', null),
+        const PendingNotificationRequest(300000 + 2 * 1440 + 5, 'e', 'f', null),
       ]);
       final manager = SnoozeManager(plugin: fake);
 
@@ -207,8 +207,8 @@ void main() {
     test('cancel snooze 范围所有 pending', () async {
       final fake = _FakePlugin();
       fake.pending.addAll([
-        const PendingNotificationRequest(4000 + 1 * 1440 + 5, 'a', 'b', null),
-        const PendingNotificationRequest(4000 + 5 * 1440 + 30, 'c', 'd', null),
+        const PendingNotificationRequest(300000 + 1 * 1440 + 5, 'a', 'b', null),
+        const PendingNotificationRequest(300000 + 5 * 1440 + 30, 'c', 'd', null),
         // 非 snooze id (1001 是 daily,3000 是 soft)
         const PendingNotificationRequest(1001, 'e', 'f', null),
         const PendingNotificationRequest(3000, 'g', 'h', null),
@@ -220,7 +220,7 @@ void main() {
       // 2 个 snooze id 被 cancel,2 个非 snooze 不动
       expect(
         fake.cancelledIds,
-        [4000 + 1 * 1440 + 5, 4000 + 5 * 1440 + 30],
+        [300000 + 1 * 1440 + 5, 300000 + 5 * 1440 + 30],
       );
     });
 

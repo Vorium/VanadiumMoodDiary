@@ -636,25 +636,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Settings → Notification Management → Chronic Care → Enable all';
 
   @override
-  String get notificationStatusCardOemBrandSamsung => '三星 (OneUI)';
+  String get notificationStatusCardOemBrandSamsung => 'Samsung (OneUI)';
 
   @override
   String get notificationStatusCardOemStepSamsung1 =>
-      '设置 → 应用程序 → 慢病管家 → 通知 → 全部开启';
+      'Settings → Apps → Chronic Care → Notifications → Enable all';
 
   @override
   String get notificationStatusCardOemStepSamsung2 =>
-      '设置 → 电池 → 后台使用限制 → 慢病管家 → 改为「不受限」';
+      'Settings → Battery → Background usage limits → Chronic Care → Unrestricted';
 
   @override
-  String get notificationStatusCardOemBrandOthers => '其他（中兴/努比亚/红魔/联想/三星 Knox）';
+  String get notificationStatusCardOemBrandOthers =>
+      'Others (ZTE / Nubia / Red Magic / Lenovo / Samsung Knox)';
 
   @override
   String get notificationStatusCardOemStepOthers1 =>
-      '设置 → 应用 → 慢病管家 → 通知 → 全部开启';
+      'Settings → Apps → Chronic Care → Notifications → Enable all';
 
   @override
-  String get notificationStatusCardOemStepOthers2 => '设置 → 电池 → 后台运行 → 改为「允许」';
+  String get notificationStatusCardOemStepOthers2 =>
+      'Settings → Battery → Background running → Allow';
 
   @override
   String get notificationStatusCardOemGeneralTip =>
@@ -943,6 +945,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodNoteHint => 'What happened today?';
+
+  @override
+  String get moodAudioRecordButton => 'Record voice';
+
+  @override
+  String moodAudioRecording(String elapsed) {
+    return 'Recording… $elapsed';
+  }
+
+  @override
+  String moodAudioRecorded(String duration) {
+    return 'Recorded $duration';
+  }
+
+  @override
+  String get moodAudioRerecord => 'Re-record';
+
+  @override
+  String get moodAudioDeleteRecording => 'Delete recording';
+
+  @override
+  String get moodAudioTranscriptLabel => 'Transcript';
+
+  @override
+  String get moodAudioTranscriptEmpty => 'No speech detected';
+
+  @override
+  String get moodAudioTranscriptPartialHint =>
+      '(only the first 60s recognized)';
+
+  @override
+  String get moodAudioSttListening => 'Recognizing…';
+
+  @override
+  String get moodAudioSttFailed => 'Recognition failed; audio saved only';
+
+  @override
+  String get moodAudioSttUnavailable =>
+      'Speech-to-text not available on this device';
+
+  @override
+  String get moodAudioMaxReached => 'Reached 3-minute limit';
+
+  @override
+  String get moodAudioSavedWithPlay => 'Mood saved';
+
+  @override
+  String get moodAudioPlayAction => 'Play';
+
+  @override
+  String moodAudioDurationTemplate(String minutes, String seconds) {
+    return '$minutes:$seconds';
+  }
+
+  @override
+  String get moodAudioErrorStart => 'Failed to start recording';
+
+  @override
+  String get moodAudioErrorStop => 'Failed to stop recording';
+
+  @override
+  String get moodAudioErrorEncrypt => 'Failed to encrypt recording';
+
+  @override
+  String get moodAudioErrorPlay => 'Failed to play';
 
   @override
   String get medsTodaySchedule => 'Today\'s Medication Schedule';
@@ -1883,4 +1950,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String medReportFileName(String date) {
     return 'Med Report_$date';
   }
+
+  @override
+  String get migrationPromptTitle => 'Upgrading to v0.9';
+
+  @override
+  String get migrationPromptDetectedOld =>
+      'Old version data detected on this device.';
+
+  @override
+  String get migrationPromptChangesTitle => 'This upgrade will:';
+
+  @override
+  String get migrationPromptChangeEncrypt =>
+      '• Enable database encryption (protects your privacy)';
+
+  @override
+  String get migrationPromptChangeClear => '• Clear all old check-in records';
+
+  @override
+  String get migrationPromptChangeWarning =>
+      '(The old version had no \"Export data\" feature, so the original data cannot be recovered)';
+
+  @override
+  String get migrationPromptRecommendExport =>
+      'Recommendation: First complete \"Export data\" in the old version, then upgrade.';
+
+  @override
+  String get migrationPromptDirectContinue =>
+      'If the old version is already uninstalled, you can tap \"Continue upgrade\" directly.';
+
+  @override
+  String get migrationPromptCancel => 'Cancel';
+
+  @override
+  String get migrationPromptContinue => 'Continue upgrade';
+
+  @override
+  String get migrationAbortedTitle => 'Upgrade cancelled';
+
+  @override
+  String get migrationAbortedBody =>
+      'Please complete \"Export data\" in the old version first,\nthen tap the button below to continue the upgrade.';
+
+  @override
+  String get migrationAbortedRetry => 'Already backed up, continue';
 }

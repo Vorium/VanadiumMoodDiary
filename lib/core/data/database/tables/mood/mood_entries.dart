@@ -9,6 +9,13 @@ import 'package:drift/drift.dart';
 /// - score 仍是必填(情绪，老 schema 兼容)
 /// - energy / sleep / anxiety 3 个新列 nullable(老数据没值，新数据 4 维全填)
 /// - 焦虑反向计分: 1=严重 / 5=平静(UI 提示 "1=焦虑严重 5=完全平静")
+///
+/// v0.23 round 31 (P0 新功能): 语音录入 3 字段
+/// - audioPath: 加密文件路径 (.m4a.enc), 独立 mood_audio/ 目录
+/// - audioTranscript: 本地 STT 识别文字 (mobile 平台 speech_to_text 7.x
+///   + web 平台 Chrome Web Speech API, 单次识别 60s 上限)
+/// - audioDurationMs: 录音时长(毫秒), UI 显示用
+/// - 3 列都 nullable, 老数据 / 纯文字模式自动为 null
 @DataClassName('MoodEntry')
 class MoodEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -34,4 +41,26 @@ class MoodEntries extends Table {
 
   /// 自由备注
   TextColumn get note => text().nullable()();
+
+  // ===== v0.23 (Round 31) 语音录入字段 =====
+
+  /// 加密 audio 文件路径（.m4a.enc）
+  ///
+  /// 独立于 vent audio，存储在 app docs/mood_audio/ 目录。
+  /// 老数据 / 纯文字模式 = null。
+  TextColumn get audioPath => text().nullable()();
+
+  /// 本地 STT 识别文字
+  ///
+  /// 限制:
+  /// - mobile: speech_to_text 7.x 平台内置 STT (on-device 优先)
+  /// - web: Chrome Web Speech API (单次识别 60s 上限)
+  /// - 3min 录音时只能识别前 60s
+  /// 设备不支持 / 失败 = null(graceful degrade)。
+  TextColumn get audioTranscript => text().nullable()();
+
+  /// 录音时长(毫秒)
+  ///
+  /// 存储精度 = ms,UI 按秒/分秒显示。
+  IntColumn get audioDurationMs => integer().nullable()();
 }

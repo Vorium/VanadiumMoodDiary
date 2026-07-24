@@ -101,7 +101,7 @@ lib/
 进项目先扫这 5 个：
 
 1. `lib/main.dart` — 启动顺序、SQLCipher 初始化、通知 init
-2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 11，所有表 + migration
+2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 12，所有表 + migration
 3. `lib/domain/logic/care_engine.dart` — 失联检测 / 续方 / 通知触发核心规则
 4. `lib/presentation/providers/core_providers.dart` — 全局 provider 注册表
 5. `lib/routing/app_router.dart` — 所有页面路由 + shell（NavigationRail）

@@ -13,6 +13,7 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
+import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
 
 /// 本地通知服务
@@ -44,6 +45,18 @@ class NotificationService implements NotificationSender {
   /// 公共 API 保持不变（snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes）,
   /// 但真实实现移到 SnoozeManager,主 service 减肥 90+ 行。
   late final SnoozeManager _snoozeManager = SnoozeManager(plugin: _plugin);
+
+  /// v0.23 (Round 37) P1-架构: 抽 [ReminderDispatcher] 集中调度
+  ///
+  /// 之前 4 类通知 (medication / refill / assessment / safety) 各自重复
+  /// `cancel by id range + NotificationDetails + zonedSchedule`。
+  /// 抽到 dispatcher 后, 主 service 委托, 业务编排保留。
+  late final ReminderDispatcher _dispatcher = ReminderDispatcher(
+    plugin: _plugin,
+    channelId: _channelId,
+    channelName: _channelName,
+    channelDescription: _channelDesc,
+  );
 
   // v0.22 round 30 (sp-en P2-1): Badge 角标逻辑拆出到 BadgeSyncService
   // updateBadgeCount 的 iOS DarwinNotificationDetails 封装移走
@@ -134,21 +147,12 @@ class NotificationService implements NotificationSender {
     await init();
     await _plugin.cancel(_defaultReminderId);
 
-    const details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        _channelId,
-        _channelName,
-        channelDescription: _channelDesc,
-        importance: Importance.high,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
-    );
+    final details = _dispatcher.buildChannelDetails();
 
     try {
       // v0.11: payload = "chroniccare://check-in/today"
       const payload = 'chroniccare://check-in/today';
-      await _zonedDaily(
+      await _dispatcher.zonedDaily(
         id: _defaultReminderId,
         title: '🌱 今天吃了药吗？',
         body: '点一下 = 打卡，让家人放心',
@@ -201,37 +205,17 @@ class NotificationService implements NotificationSender {
   ) async {
     await init();
 
-    // 先取消所有 medication 推送（保留 default + soft）
-    // medication reminder id 公式：base + medId * 10 + i
-    //   v0.16 round 19 fix: 之前 1000 范围太窄，medId >= 100 时 id 超过 3000 漏 cancel
-    //   改成 200000 覆盖 medId <= 19999（远超实际用户量，且 int32 安全）
-    final pending = await _plugin.pendingNotificationRequests();
-    // v0.22 round 29 (spen-16): Future.wait 并发 cancel, 避免串行 await 平台调用阻塞
-    // v0.22 round 30 (sp-en P2-2): 包 .timeout(5s) 兜底, plugin 平台 channel 退化
-    // 串行时也不会无限阻塞 — 之前无 timeout 如果 plugin 实现卡死会 hang
-    await Future.wait(
-      pending
-          .where((p) =>
-              p.id >= _medicationReminderBaseId &&
-              p.id < _medicationReminderBaseId + 200000,)
-          .map((p) => _plugin.cancel(p.id)),
-    ).timeout(const Duration(seconds: 5), onTimeout: () => <void>[]);
+    // medication reminder id 公式: base + medId * 10 + i
+    // cancel 范围走 dispatcher 集中, base 200000 覆盖 medId 几万个
+    // (v0.16 round 19 修, v0.23 round 37 抽 dispatcher)
+    await _dispatcher.cancelByIdRange(_medicationReminderBaseId);
 
     piiSafeLog(
       'NotificationService',
       '✅ medication reminders 全部 cancel + 重新调度',
     );
 
-    const details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        _channelId,
-        _channelName,
-        channelDescription: _channelDesc,
-        importance: Importance.high,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
-    );
+    final details = _dispatcher.buildChannelDetails();
 
     int scheduled = 0;
     for (final med in medications) {
@@ -244,7 +228,7 @@ class NotificationService implements NotificationSender {
           // v0.11: payload 携带 medId,点通知直达该药打卡
           final payload =
               NotificationDeepLink.medicationCheckIn(med.id).encode();
-          await _zonedDaily(
+          await _dispatcher.zonedDaily(
             id: id,
             title: '💊 该吃药了：${med.name}',
             body: '${med.dosage}${med.dosageUnit} · 点一下 = 打卡',
@@ -380,7 +364,7 @@ class NotificationService implements NotificationSender {
   }) {
     if (refillAt == null) return null;
     if (reminderDays < 1) {
-      throw ArgumentError('reminderDays 必须 >= 1, 实际: $reminderDays');
+      throw ArgumentError('reminderDays must be >= 1; got: $reminderDays');
     }
     // 续方日期当天的 0 点，再 - reminderDays 天，再 + 9 小时
     final day = DateTime(refillAt.year, refillAt.month, refillAt.day);
@@ -432,30 +416,16 @@ class NotificationService implements NotificationSender {
     await _plugin.cancel(id); // 覆盖前一次
 
     final daysLeft = _daysUntilRefill(medication.refillAt!, now);
-    final details = const NotificationDetails(
-      android: AndroidNotificationDetails(
-        _channelId,
-        _channelName,
-        channelDescription: _channelDesc,
-        importance: Importance.high,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
-    );
+    final details = _dispatcher.buildChannelDetails();
     final payload =
         NotificationDeepLink.medicationCheckIn(medication.id).encode();
-    final fireTz = tz.TZDateTime.from(fireAt, tz.local);
     try {
-      await _plugin.zonedSchedule(
-        id,
-        '💊 该续方了：${medication.name}',
-        '还剩约 $daysLeft 天断药，记得去医院或线上开药',
-        fireTz,
-        details,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        // 只触发一次（不加 matchDateTimeComponents）
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+      await _dispatcher.zonedAt(
+        id: id,
+        title: '💊 该续方了：${medication.name}',
+        body: '还剩约 $daysLeft 天断药，记得去医院或线上开药',
+        fireAt: fireAt,
+        details: details,
         payload: payload,
       );
       piiSafeLog(
@@ -487,13 +457,8 @@ class NotificationService implements NotificationSender {
   Future<void> rescheduleRefillReminders(
       List<MedicationEntity> medications,) async {
     await init();
-    // 先清掉所有 refill 通知
-    final pending = await _plugin.pendingNotificationRequests();
-    for (final p in pending) {
-      if (p.id >= _refillBaseId && p.id < _refillBaseId + 200000) {
-        await _plugin.cancel(p.id);
-      }
-    }
+    // v0.23 (Round 37): cancel 范围走 dispatcher 集中
+    await _dispatcher.cancelByIdRange(_refillBaseId);
     int scheduled = 0;
     for (final med in medications) {
       if (!med.isActive) continue;
@@ -537,29 +502,16 @@ class NotificationService implements NotificationSender {
       return;
     }
 
-    const details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        _channelId,
-        _channelName,
-        channelDescription: _channelDesc,
-        importance: Importance.high,
-        priority: Priority.high,
-      ),
-      iOS: DarwinNotificationDetails(),
-    );
+    final details = _dispatcher.buildChannelDetails();
     final payload = NotificationDeepLink.assessment(scaleId).encode();
-    final fireTz = tz.TZDateTime.from(fireAt, tz.local);
     try {
-      await _plugin.zonedSchedule(
-        _assessmentReminderId,
-        '🌿 心理评估时间到',
-        '已经 $days 天没做 ${scaleId.toUpperCase()} 了，'
+      await _dispatcher.zonedAt(
+        id: _assessmentReminderId,
+        title: '🌿 心理评估时间到',
+        body: '已经 $days 天没做 ${scaleId.toUpperCase()} 了，'
             '抽 2 分钟看看最近状态',
-        fireTz,
-        details,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        fireAt: fireAt,
+        details: details,
         payload: payload,
       );
       piiSafeLog(
@@ -645,41 +597,5 @@ class NotificationService implements NotificationSender {
   Future<void> updateBadgeCount(int count) async {
     await init();
     await _badgeSync.updateBadgeCount(count);
-  }
-
-  /// 用 tz 包一层 zonedSchedule，web 上 catch 异常
-  Future<void> _zonedDaily({
-    required int id,
-    required String title,
-    required String body,
-    required int hour,
-    required int minute,
-    required NotificationDetails details,
-    String? payload,
-  }) async {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minute,
-    );
-    if (scheduled.isBefore(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
-    }
-    await _plugin.zonedSchedule(
-      id,
-      title,
-      body,
-      scheduled,
-      details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time, // 每天重复
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      payload: payload,
-    );
   }
 }

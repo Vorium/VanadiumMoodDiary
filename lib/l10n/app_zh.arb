@@ -419,6 +419,38 @@
   "moodTagLowEnergy": "能量低",
   "moodNoteLabel": "备注（可选）",
   "moodNoteHint": "今天发生什么？",
+
+  "moodAudioRecordButton": "录语音",
+  "moodAudioRecording": "录音中… {elapsed}",
+  "@moodAudioRecording": {
+    "placeholders": { "elapsed": { "type": "String" } }
+  },
+  "moodAudioRecorded": "已录 {duration}",
+  "@moodAudioRecorded": {
+    "placeholders": { "duration": { "type": "String" } }
+  },
+  "moodAudioRerecord": "重录",
+  "moodAudioDeleteRecording": "删除录音",
+  "moodAudioTranscriptLabel": "识别文字",
+  "moodAudioTranscriptEmpty": "未识别到内容",
+  "moodAudioTranscriptPartialHint": "（仅识别前 60 秒）",
+  "moodAudioSttListening": "识别中…",
+  "moodAudioSttFailed": "识别失败，已仅保存录音",
+  "moodAudioSttUnavailable": "该设备暂不支持语音转文字",
+  "moodAudioMaxReached": "已达 3 分钟上限",
+  "moodAudioSavedWithPlay": "情绪已保存",
+  "moodAudioPlayAction": "回放",
+  "moodAudioDurationTemplate": "{minutes}:{seconds}",
+  "@moodAudioDurationTemplate": {
+    "placeholders": {
+      "minutes": { "type": "String" },
+      "seconds": { "type": "String" }
+    }
+  },
+  "moodAudioErrorStart": "开始录音失败",
+  "moodAudioErrorStop": "停止录音失败",
+  "moodAudioErrorEncrypt": "加密录音失败",
+  "moodAudioErrorPlay": "播放失败",
   "medsTodaySchedule": "今日服药计划",
   "medsTotal": "总药数",
   "medsRefillSetCount": "已设续方",
@@ -880,5 +912,19 @@
   "medReportFileName": "用药报告_{date}",
   "@medReportFileName": {
     "placeholders": { "date": { "type": "String" } }
-  }
+  },
+
+  "migrationPromptTitle": "升级到 v0.9",
+  "migrationPromptDetectedOld": "检测到本地有旧版本数据。",
+  "migrationPromptChangesTitle": "本次升级会：",
+  "migrationPromptChangeEncrypt": "• 启用数据库加密（保护你的隐私）",
+  "migrationPromptChangeClear": "• 清空旧版本的所有打卡记录",
+  "migrationPromptChangeWarning": "（旧版本没有\"导出数据\"功能，原始数据无法恢复）",
+  "migrationPromptRecommendExport": "建议：先在旧版 App 内完成\"导出数据\"备份，再升级。",
+  "migrationPromptDirectContinue": "若旧版已卸载无法导出，可以直接点\"继续升级\"。",
+  "migrationPromptCancel": "取消",
+  "migrationPromptContinue": "继续升级",
+  "migrationAbortedTitle": "升级已取消",
+  "migrationAbortedBody": "请先在旧版本 App 内完成\"导出数据\"备份，\n备份完成后点下方按钮继续升级。",
+  "migrationAbortedRetry": "已备份，继续升级"
 }

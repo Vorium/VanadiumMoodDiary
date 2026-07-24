@@ -1,0 +1,26 @@
+﻿=== int.parse / DateTime.parse 路径参数 ===
+lib\core\data\services\data_export_service.dart - 4 处
+
+=== 详细行 (int.parse / DateTime.parse) ===
+lib\core\data\services\data_export_service.dart:27 /// `2026-07-20T04:15:55.123`（**不带**时区后缀）。Dart `DateTime.parse()`
+lib\core\data\services\data_export_service.dart:33 /// `2026-07-19T20:15:55.123Z`（带 'Z'），`DateTime.parse()` 自动按 UTC 解析
+lib\core\data\services\data_export_service.dart:457 // v0.21 (P0-2 fix): 用 tryParse 替代 try/catch + DateTime.parse。
+lib\core\data\services\data_export_service.dart:458 // 之前 try/catch 是反模式——DateTime.parse 失败是**预期内**的情况(用户导入了
+
+=== as 强转 (sample) ===
+lib\core\data\services\data_export_service.dart - 8 处
+lib\core\data\services\reminder_scheduler.dart - 2 处
+lib\core\shared\json_codec.dart - 2 处
+lib\domain\logic\assessment_record.dart - 2 处
+lib\presentation\pages\settings\settings_page.dart - 3 处
+
+=== catch 块空实现 / dead code ===
+lib\core\data\services\vent_audio_storage.dart:106 } catch (e, st) {
+lib\core\data\services\vent_audio_storage.dart:145 } catch (e, st) {
+lib\core\data\services\vent_audio_storage.dart:165 } catch (e, st) {
+lib\core\data\services\vent_audio_storage.dart:186 } catch (e, st) {
+lib\presentation\pages\assessment\assessment_page.dart:166 } catch (e, st) {
+lib\presentation\pages\assessment\assessment_page.dart:179 } catch (e, st) {
+lib\presentation\pages\home\home_page.dart:163 } catch (e, st) {
+lib\presentation\pages\home\home_page.dart:354 } catch (e, st) {
+lib\presentation\pages\vent\vent_compose_page.dart:184 } catch (e, st) {

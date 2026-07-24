@@ -1,7 +1,7 @@
 // v0.22 round 33 (sp-en P0): 上次启动 error banner
 //
 // 配 [LastErrorCapture]: 如果上次启动有未捕获 error, 启动后顶部显示一个
-// 可关闭的 banner 提示用户"上次启动出错,请截图反馈", 避免 release 模式
+// 可关闭的 banner 提示用户"上次启动出错，请截图反馈"，避免 release 模式
 // 静默 swallow 让用户 / 开发者看不到任何信号。
 import 'package:flutter/material.dart';
 

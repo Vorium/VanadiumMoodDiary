@@ -418,6 +418,24 @@ class AppTokens {
         color: textSecondaryColor(context),
       );
 
+  /// v0.23 (P0-3 emil): 16/w500 label medium (历史标题 / section header
+  /// 之前用 (fontSizeLabel + w500) 直拼, 跟 w600 label strong 区分)
+  static TextStyle textStyleLabelMedium(BuildContext context) => TextStyle(
+        fontSize: fontSizeLabel,
+        fontWeight: FontWeight.w500,
+        height: lineHeightNormal,
+        color: textPrimaryColor(context),
+      );
+
+  /// v0.23 (P0-3 emil): 14/w400 caption + hint color (次要 hint 文字, 比
+  /// textStyleCaption 更弱的提示, 例 "上次回答 X 月 X 日")
+  static TextStyle textStyleCaptionHint(BuildContext context) => TextStyle(
+        fontSize: fontSizeCaption,
+        fontWeight: FontWeight.w400,
+        height: lineHeightNormal,
+        color: textHintColor(context),
+      );
+
   /// 12/w400 法律/邮件/条款正文 (lineHeightSnug 1.4)
   /// 替代散落 8+ 处 `TextStyle(fontSize: 12, height: 1.4)`
   static TextStyle textStyleLegal(BuildContext context) => TextStyle(

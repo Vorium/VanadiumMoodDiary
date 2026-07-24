@@ -907,6 +907,69 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodNoteHint => '今天发生什么？';
 
   @override
+  String get moodAudioRecordButton => '录语音';
+
+  @override
+  String moodAudioRecording(String elapsed) {
+    return '录音中… $elapsed';
+  }
+
+  @override
+  String moodAudioRecorded(String duration) {
+    return '已录 $duration';
+  }
+
+  @override
+  String get moodAudioRerecord => '重录';
+
+  @override
+  String get moodAudioDeleteRecording => '删除录音';
+
+  @override
+  String get moodAudioTranscriptLabel => '识别文字';
+
+  @override
+  String get moodAudioTranscriptEmpty => '未识别到内容';
+
+  @override
+  String get moodAudioTranscriptPartialHint => '（仅识别前 60 秒）';
+
+  @override
+  String get moodAudioSttListening => '识别中…';
+
+  @override
+  String get moodAudioSttFailed => '识别失败，已仅保存录音';
+
+  @override
+  String get moodAudioSttUnavailable => '该设备暂不支持语音转文字';
+
+  @override
+  String get moodAudioMaxReached => '已达 3 分钟上限';
+
+  @override
+  String get moodAudioSavedWithPlay => '情绪已保存';
+
+  @override
+  String get moodAudioPlayAction => '回放';
+
+  @override
+  String moodAudioDurationTemplate(String minutes, String seconds) {
+    return '$minutes:$seconds';
+  }
+
+  @override
+  String get moodAudioErrorStart => '开始录音失败';
+
+  @override
+  String get moodAudioErrorStop => '停止录音失败';
+
+  @override
+  String get moodAudioErrorEncrypt => '加密录音失败';
+
+  @override
+  String get moodAudioErrorPlay => '播放失败';
+
+  @override
   String get medsTodaySchedule => '今日服药计划';
 
   @override
@@ -1804,4 +1867,44 @@ class AppLocalizationsZh extends AppLocalizations {
   String medReportFileName(String date) {
     return '用药报告_$date';
   }
+
+  @override
+  String get migrationPromptTitle => '升级到 v0.9';
+
+  @override
+  String get migrationPromptDetectedOld => '检测到本地有旧版本数据。';
+
+  @override
+  String get migrationPromptChangesTitle => '本次升级会：';
+
+  @override
+  String get migrationPromptChangeEncrypt => '• 启用数据库加密（保护你的隐私）';
+
+  @override
+  String get migrationPromptChangeClear => '• 清空旧版本的所有打卡记录';
+
+  @override
+  String get migrationPromptChangeWarning => '（旧版本没有\"导出数据\"功能，原始数据无法恢复）';
+
+  @override
+  String get migrationPromptRecommendExport => '建议：先在旧版 App 内完成\"导出数据\"备份，再升级。';
+
+  @override
+  String get migrationPromptDirectContinue => '若旧版已卸载无法导出，可以直接点\"继续升级\"。';
+
+  @override
+  String get migrationPromptCancel => '取消';
+
+  @override
+  String get migrationPromptContinue => '继续升级';
+
+  @override
+  String get migrationAbortedTitle => '升级已取消';
+
+  @override
+  String get migrationAbortedBody =>
+      '请先在旧版本 App 内完成\"导出数据\"备份，\n备份完成后点下方按钮继续升级。';
+
+  @override
+  String get migrationAbortedRetry => '已备份，继续升级';
 }

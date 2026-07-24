@@ -15,6 +15,7 @@ import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -28,6 +29,7 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medications_li
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// 心理评估量表列表（设置页用）
 final List<AssessmentScale> _assessmentScales = allScales();
@@ -161,70 +163,84 @@ class SettingsPage extends ConsumerWidget {
           Card(
             child: Column(
               children: [
-                ListTile(
-                  leading: const Icon(
-                    Icons.upload_outlined,
-                    color: AppTokens.primary,
+                // v0.23 (Round 31 P0-8): 数据管理 5 个 ListTile 补 PressFeedback,
+                // 跟上面 _RemindersSection / _LegalSection 保持一致体感
+                PressFeedback(
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.upload_outlined,
+                      color: AppTokens.primary,
+                    ),
+                    title: Text(AppLocalizations.of(context).settingsExportData),
+                    subtitle: Text(
+                      AppLocalizations.of(context).settingsExportSubtitle,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _exportData(context, ref),
                   ),
-                  title: Text(AppLocalizations.of(context).settingsExportData),
-                  subtitle:
-                      Text(AppLocalizations.of(context).settingsExportSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _exportData(context, ref),
                 ),
                 const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(
-                    Icons.summarize_outlined,
-                    color: AppTokens.primary,
+                PressFeedback(
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.summarize_outlined,
+                      color: AppTokens.primary,
+                    ),
+                    title: Text(AppLocalizations.of(context).settingsMedReport),
+                    subtitle: Text(
+                      AppLocalizations.of(context).settingsMedReportSubtitle,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _chooseAndShowReport(context, ref),
                   ),
-                  title: Text(AppLocalizations.of(context).settingsMedReport),
-                  subtitle: Text(
-                    AppLocalizations.of(context).settingsMedReportSubtitle,
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _chooseAndShowReport(context, ref),
                 ),
                 const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.history, color: AppTokens.primary),
-                  title:
-                      Text(AppLocalizations.of(context).settingsReportHistory),
-                  subtitle: Text(
-                    AppLocalizations.of(context).settingsReportHistorySubtitle,
+                PressFeedback(
+                  child: ListTile(
+                    leading: const Icon(Icons.history, color: AppTokens.primary),
+                    title:
+                        Text(AppLocalizations.of(context).settingsReportHistory),
+                    subtitle: Text(
+                      AppLocalizations.of(context).settingsReportHistorySubtitle,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _showReportHistory(context),
                   ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showReportHistory(context),
                 ),
                 const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(
-                    Icons.download_outlined,
-                    color: AppTokens.primary,
+                PressFeedback(
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.download_outlined,
+                      color: AppTokens.primary,
+                    ),
+                    title: Text(AppLocalizations.of(context).settingsImportData),
+                    subtitle: Text(
+                      AppLocalizations.of(context).settingsImportSubtitle,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _showImportDialog(context, ref),
                   ),
-                  title: Text(AppLocalizations.of(context).settingsImportData),
-                  subtitle:
-                      Text(AppLocalizations.of(context).settingsImportSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showImportDialog(context, ref),
                 ),
                 const Divider(height: 1),
                 // v0.21 Round 22 (P0-8 修复): PIPL §47 主动删除权
                 // 隐私政策 §7 写"在 App 内删除单条/全部",此前 UI 无入口 = 自我违约
-                ListTile(
-                  leading: const Icon(
-                    Icons.delete_forever_outlined,
-                    color: AppTokens.error,
+                PressFeedback(
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.delete_forever_outlined,
+                      color: AppTokens.error,
+                    ),
+                    title: Text(
+                      AppLocalizations.of(context).settingsClearAllData,
+                      style: const TextStyle(color: AppTokens.error),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context).settingsClearAllDataSubtitle,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => _showClearAllDataDialog(context, ref),
                   ),
-                  title: Text(
-                    AppLocalizations.of(context).settingsClearAllData,
-                    style: const TextStyle(color: AppTokens.error),
-                  ),
-                  subtitle: Text(
-                    AppLocalizations.of(context).settingsClearAllDataSubtitle,
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showClearAllDataDialog(context, ref),
                 ),
               ],
             ),
@@ -517,8 +533,14 @@ class SettingsPage extends ConsumerWidget {
               userName: userName,
               reportText: reportText,
             );
-      } catch (_) {
-        // 写历史失败不影响主流程
+      } catch (e, st) {
+        // v0.23 (Round 37 P0): 走 swallowError, dev mode 能看到失败
+        swallowError(
+          where: 'settings_page._generateReport.writeHistory',
+          error: e,
+          stack: st,
+          note: '写历史失败不影响主流程',
+        );
       }
 
       if (!context.mounted) return;
@@ -651,51 +673,36 @@ class SettingsPage extends ConsumerWidget {
               onPressed: importing ? null : () => Navigator.pop(ctx),
               child: Text(AppLocalizations.of(context).commonCancel),
             ),
-            ElevatedButton(
-              onPressed: importing
-                  ? null
-                  : () async {
-                      final input = controller.text.trim();
-                      if (input.isEmpty) return;
-                      setLocal(() => importing = true);
-                      final service = ref.read(dataExportServiceProvider);
-                      final result = await service.importFromJson(input);
-                      if (!ctx.mounted) return;
-                      if (result.success) {
-                        Navigator.pop(ctx);
-                        // v0.22 round 29 (emil-41): 走 AppSnackBar.info 集中器
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          AppSnackBar.info(
-                            context,
-                            AppLocalizations.of(context)
-                                .settingsImportSuccess(result.summary),
-                          ),
-                        );
-                      } else {
-                        setLocal(() => importing = false);
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          AppSnackBar.error(
-                            context,
-                            action: AppLocalizations.of(context)
-                                .settingsActionImport,
-                            error: result.error,
-                          ),
-                        );
-                      }
-                    },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Text(AppLocalizations.of(context).settingsImportAndOverwrite),
-                  if (importing)
-                    IgnorePointer(
-                      child: LoadingSpinner(
-                        size: 18,
-                        color: AppTokens.fgOnPrimary(context),
-                      ),
+            LoadingTextButton(
+              label: AppLocalizations.of(context).settingsImportAndOverwrite,
+              isLoading: importing,
+              onPressed: () async {
+                final input = controller.text.trim();
+                if (input.isEmpty) return;
+                setLocal(() => importing = true);
+                final service = ref.read(dataExportServiceProvider);
+                final result = await service.importFromJson(input);
+                if (!ctx.mounted) return;
+                if (result.success) {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    AppSnackBar.info(
+                      context,
+                      AppLocalizations.of(context)
+                          .settingsImportSuccess(result.summary),
                     ),
-                ],
-              ),
+                  );
+                } else {
+                  setLocal(() => importing = false);
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    AppSnackBar.error(
+                      context,
+                      action: AppLocalizations.of(context).settingsActionImport,
+                      error: result.error,
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),

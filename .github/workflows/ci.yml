@@ -50,6 +50,18 @@ jobs:
       - name: Cross-feature import check
         run: python scripts/check_cross_feature.py --ci
 
+      - name: ARB key bidirectional check
+        run: python scripts/check_arb_keys.py
+
+      - name: Drift namespace check
+        run: python scripts/check_drift_namespace.py --strict
+
+      - name: DateTime race check
+        run: python scripts/check_datetime_race2.py
+
+      - name: Fullwidth punctuation check
+        run: python scripts/check_fullwidth_punctuation.py --ci
+
       - name: Run tests
         run: flutter test
 

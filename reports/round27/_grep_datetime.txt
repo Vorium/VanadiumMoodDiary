@@ -1,0 +1,101 @@
+﻿=== DateTime.now() 全文 ===
+lib\app.dart: 3
+lib\core\data\database\app_database.dart: 4
+lib\core\data\repositories\check_in\check_in_repository_impl.dart: 3
+lib\core\data\repositories\medication\medication_repository_impl.dart: 2
+lib\core\data\repositories\mood\mood_repository_impl.dart: 1
+lib\core\data\repositories\user_profile\user_profile_repository_impl.dart: 4
+lib\core\data\repositories\vent\vent_repository_impl.dart: 1
+lib\core\data\services\assessment_reminder_service.dart: 3
+lib\core\data\services\data_export_service.dart: 3
+lib\core\data\services\notification_service.dart: 4
+lib\core\data\services\reminder_scheduler.dart: 2
+lib\core\data\services\safety_watch_service.dart: 4
+lib\core\data\services\vent_audio_storage.dart: 4
+lib\domain\entities\medication_entity.dart: 2
+lib\domain\logic\assessment_comparison.dart: 2
+lib\domain\logic\medication_report.dart: 1
+lib\domain\logic\trend_calculator.dart: 3
+lib\domain\repositories\vent_repository.dart: 1
+lib\domain\usecases\check_in_usecases.dart: 2
+lib\presentation\pages\home\home_page.dart: 2
+lib\presentation\pages\medication\medication_calendar_page.dart: 1
+lib\presentation\pages\medication\refill_manage_page.dart: 1
+lib\presentation\pages\medication\today_med_schedule.dart: 1
+lib\presentation\pages\medication\widgets\edit_medication_dialog.dart: 1
+lib\presentation\pages\medication\widgets\medications_list_widget.dart: 3
+lib\presentation\pages\settings\email_preview.dart: 1
+lib\presentation\pages\settings\legal_page.dart: 1
+lib\presentation\pages\trend\trend_calendar.dart: 1
+lib\presentation\pages\trend\trend_page.dart: 1
+lib\presentation\pages\vent\vent_list_page.dart: 1
+lib\presentation\providers\data_providers.dart: 2
+lib\presentation\providers\legal_consent_provider.dart: 1
+
+=== 详细行 ===
+lib\app.dart: 103 _lastCheck = DateTime.now();
+lib\app.dart: 136 final now = DateTime.now();
+lib\app.dart: 154 final delay = nextMidnightRefresh(DateTime.now());
+lib\core\data\database\app_database.dart: 194 final now = DateTime.now();
+lib\core\data\database\app_database.dart: 383 final now = DateTime.now();
+lib\core\data\database\app_database.dart: 442 // firstLaunchAt 跟 medStart 用了不同 DateTime.now() → 同一次 setup
+lib\core\data\database\app_database.dart: 444 final now = DateTime.now();
+lib\core\data\repositories\check_in\check_in_repository_impl.dart: 62 timestamp: at ?? DateTime.now(),
+lib\core\data\repositories\check_in\check_in_repository_impl.dart: 77 timestamp: at ?? DateTime.now(),
+lib\core\data\repositories\check_in\check_in_repository_impl.dart: 97 timestamp: at ?? DateTime.now(),
+lib\core\data\repositories\medication\medication_repository_impl.dart: 59 startDate: startDate ?? DateTime.now(),
+lib\core\data\repositories\medication\medication_repository_impl.dart: 84 endDate: DomainValue<DateTime?>(isActive ? null : DateTime.now()),
+lib\core\data\repositories\mood\mood_repository_impl.dart: 44 timestamp: at ?? DateTime.now(),
+lib\core\data\repositories\user_profile\user_profile_repository_impl.dart: 40 firstLaunchAt: existing?.firstLaunchAt ?? DateTime.now(),
+lib\core\data\repositories\user_profile\user_profile_repository_impl.dart: 79 sensitiveDataConsentAt: Value(DateTime.now()),
+lib\core\data\repositories\user_profile\user_profile_repository_impl.dart: 100 consentRevokedAt: Value(DateTime.now()),
+lib\core\data\repositories\user_profile\user_profile_repository_impl.dart: 119 sensitiveDataConsentAt: Value(DateTime.now()),
+lib\core\data\repositories\vent\vent_repository_impl.dart: 66 timestamp: at ?? DateTime.now(),
+lib\core\data\services\assessment_reminder_service.dart: 101 /// [now] 默认 DateTime.now()，可注入方便测试。
+lib\core\data\services\assessment_reminder_service.dart: 113 final n = now ?? DateTime.now();
+lib\core\data\services\assessment_reminder_service.dart: 166 final now = DateTime.now();
+lib\core\data\services\data_export_service.dart: 26 /// **bug 现象**: 之前用 `DateTime.now().toIso8601String()` 输出
+lib\core\data\services\data_export_service.dart: 71 'exportedAt': _isoUtc(now ?? DateTime.now()),
+lib\core\data\services\data_export_service.dart: 228 _validateDate(p['firstLaunchAt']) ?? DateTime.now(),
+lib\core\data\services\notification_service.dart: 406 // v0.16 round 19 fix: 之前 2 次 DateTime.now() 跨 midnight 时可能不一致
+lib\core\data\services\notification_service.dart: 408 final now = DateTime.now();
+lib\core\data\services\notification_service.dart: 518 // v0.18 (P2-P0-4): 函数入口统一取 now,避免多次 DateTime.now() 跨 midnight race
+lib\core\data\services\notification_service.dart: 519 final now = DateTime.now();
+lib\core\data\services\reminder_scheduler.dart: 81 // v0.19: 缓存 now 一次，避免跨 await 后 DateTime.now() 不一致
+lib\core\data\services\reminder_scheduler.dart: 83 final now = DateTime.now();
+lib\core\data\services\safety_watch_service.dart: 140 /// [now] 用于测试注入，生产环境为 null → 内部取 `DateTime.now()`。
+lib\core\data\services\safety_watch_service.dart: 141 /// 不接受 `now` 时跨 midnight(00:00-06:00)会让 `DateTime.now().subtract(hours: 6)`
+lib\core\data\services\safety_watch_service.dart: 169 // 同一函数内不重复调 DateTime.now()(v0.16 round 19B 已立的规矩)。
+lib\core\data\services\safety_watch_service.dart: 171 final effectiveNow = now ?? DateTime.now();
+lib\core\data\services\vent_audio_storage.dart: 58 /// `vent_record_${DateTime.now().millisecondsSinceEpoch}.m4a`,
+lib\core\data\services\vent_audio_storage.dart: 65 final ts = DateTime.now().millisecondsSinceEpoch;
+lib\core\data\services\vent_audio_storage.dart: 78 final ts = DateTime.now().millisecondsSinceEpoch;
+lib\core\data\services\vent_audio_storage.dart: 131 final ts = DateTime.now().millisecondsSinceEpoch;
+lib\domain\entities\medication_entity.dart: 57 final n = now ?? DateTime.now();
+lib\domain\entities\medication_entity.dart: 72 final n = now ?? DateTime.now();
+lib\domain\logic\assessment_comparison.dart: 180 /// [now] 默认 DateTime.now()，可注入测试
+lib\domain\logic\assessment_comparison.dart: 225 final days = _daysBetween(previous.timestamp, now ?? DateTime.now());
+lib\domain\logic\medication_report.dart: 30 final generatedAt = now ?? DateTime.now();
+lib\domain\logic\trend_calculator.dart: 95 final today = _dateOnly(now ?? DateTime.now());
+lib\domain\logic\trend_calculator.dart: 122 final today = now ?? DateTime.now();
+lib\domain\logic\trend_calculator.dart: 154 final today = now ?? DateTime.now();
+lib\domain\repositories\vent_repository.dart: 26 /// [at] 注入时间（测试用），默认 DateTime.now()
+lib\domain\usecases\check_in_usecases.dart: 35 /// [at] 注入时间（测试用），默认 DateTime.now()
+lib\domain\usecases\check_in_usecases.dart: 42 final time = at ?? DateTime.now();
+lib\presentation\pages\home\home_page.dart: 350 final trigger = CareEngine.evaluate(checkIns: all, now: DateTime.now());
+lib\presentation\pages\home\home_page.dart: 428 final now = DateTime.now();
+lib\presentation\pages\medication\medication_calendar_page.dart: 157 final today = DateTime.now();
+lib\presentation\pages\medication\refill_manage_page.dart: 85 final now = DateTime.now();
+lib\presentation\pages\medication\today_med_schedule.dart: 44 _buildEntries(meds, checkInsAsync.value, DateTime.now());
+lib\presentation\pages\medication\widgets\edit_medication_dialog.dart: 131 endDate: DomainValue<DateTime?>(DateTime.now()),
+lib\presentation\pages\medication\widgets\medications_list_widget.dart: 234 // v0.16 round 19 fix: 之前 3 次 DateTime.now() 跨 midnight 时 initialDate/firstDate/lastDate 可能不一致
+lib\presentation\pages\medication\widgets\medications_list_widget.dart: 236 final now = DateTime.now();
+lib\presentation\pages\medication\widgets\medications_list_widget.dart: 451 final now = DateTime.now();
+lib\presentation\pages\settings\email_preview.dart: 64 DateTime.now().subtract(const Duration(days: 2)),
+lib\presentation\pages\settings\legal_page.dart: 54 _withdrawnAt[kind] = DateTime.now();
+lib\presentation\pages\trend\trend_calendar.dart: 44 final _today = DateTime.now();
+lib\presentation\pages\trend\trend_page.dart: 41 final now = DateTime.now();
+lib\presentation\pages\vent\vent_list_page.dart: 287 final now = DateTime.now();
+lib\presentation\providers\data_providers.dart: 55 final now = DateTime.now();
+lib\presentation\providers\data_providers.dart: 113 /// `medication_calendar_page` 跟 `trend_calendar` 用 `DateTime.now()` 算
+lib\presentation\providers\legal_consent_provider.dart: 51 DateTime.now().millisecondsSinceEpoch,

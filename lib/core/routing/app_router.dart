@@ -254,7 +254,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 Icon(
                   Icons.help_outline,
                   size: 64,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: AppTokens.textSecondaryColor(context),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),
                 Text(
@@ -267,7 +267,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 Text(
                   l10n?.errorPageHint ?? '',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: AppTokens.textSecondaryColor(context),
                       ),
                   textAlign: TextAlign.center,
                 ),

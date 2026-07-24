@@ -26,6 +26,7 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 
 class VentComposePage extends ConsumerStatefulWidget {
   const VentComposePage({super.key});
@@ -427,26 +428,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
                   flex: 2,
-                  child: ElevatedButton(
+                  child: LoadingTextButton(
+                    label: AppLocalizations.of(context).ventComposeTitle,
+                    isLoading: _saving,
                     onPressed: _saving ? null : _save,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Text(AppLocalizations.of(context).ventComposeTitle),
-                        if (_saving)
-                          IgnorePointer(
-                            child: SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                // v0.22 round 36: 去掉 const (fgOnPrimary 是函数调用)
-                                color: AppTokens.fgOnPrimary(context),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
                   ),
                 ),
               ],

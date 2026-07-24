@@ -33,20 +33,14 @@ class AssessmentSparkline extends StatelessWidget {
                 const SizedBox(width: AppTokens.spacingXs),
                 Text(
                   AppLocalizations.of(context).assessmentHistoryTrend,
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeLabel,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: AppTokens.textStyleLabelMedium(context),
                 ),
                 const Spacer(),
                 if (history.average != null)
                   Text(
                     AppLocalizations.of(context).assessmentAverageScore(
                         history.average!.toStringAsFixed(1),),
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textSecondaryColor(context),
-                    ),
+                    style: AppTokens.textStyleCaption(context),
                   ),
               ],
             ),
@@ -74,19 +68,13 @@ class AssessmentSparkline extends StatelessWidget {
                 Text(
                   AppLocalizations.of(context)
                       .assessmentTotalRecords(history.records.length),
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHintColor(context),
-                  ),
+                  style: AppTokens.textStyleCaptionHint(context),
                 ),
                 if (history.min != null && history.max != null)
                   Text(
                     AppLocalizations.of(context)
                         .assessmentScoreRange(history.min!, history.max!),
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textHintColor(context),
-                    ),
+                    style: AppTokens.textStyleCaptionHint(context),
                   ),
               ],
             ),
@@ -303,10 +291,7 @@ class ComparisonCard extends StatelessWidget {
                 const SizedBox(width: AppTokens.spacingXs),
                 Text(
                   AppLocalizations.of(context).assessmentComparePrevious,
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeLabel,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: AppTokens.textStyleLabelMedium(context),
                 ),
               ],
             ),
@@ -338,10 +323,7 @@ class ComparisonCard extends StatelessWidget {
                       children: [
                         Text(
                           AppLocalizations.of(context).assessmentPrevious,
-                          style: TextStyle(
-                            fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textSecondaryColor(context),
-                          ),
+                          style: AppTokens.textStyleCaption(context),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -354,10 +336,7 @@ class ComparisonCard extends StatelessWidget {
                         ),
                         Text(
                           _dateLabel(cmp.previous!.timestamp),
-                          style: TextStyle(
-                            fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textHintColor(context),
-                          ),
+                          style: AppTokens.textStyleCaptionHint(context),
                         ),
                       ],
                     ),
@@ -373,10 +352,7 @@ class ComparisonCard extends StatelessWidget {
                       children: [
                         Text(
                           AppLocalizations.of(context).assessmentCurrent,
-                          style: TextStyle(
-                            fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textSecondaryColor(context),
-                          ),
+                          style: AppTokens.textStyleCaption(context),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -389,10 +365,7 @@ class ComparisonCard extends StatelessWidget {
                         ),
                         Text(
                           _dateLabel(cmp.current.timestamp),
-                          style: TextStyle(
-                            fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textHintColor(context),
-                          ),
+                          style: AppTokens.textStyleCaptionHint(context),
                         ),
                       ],
                     ),

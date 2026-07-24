@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <title>慢病管家 · App 图标 Showcase</title>
+  <style>
+    :root {
+      --green: #6BCF7F;
+      --green-dark: #4FB05F;
+      --ink: #1A1A1A;
+      --ink-soft: #666;
+      --bg: #FAFAFA;
+      --bg-dark: #121212;
+      --card: #FFFFFF;
+      --card-dark: #1E1E1E;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 48px 24px 96px;
+      line-height: 1.5;
+    }
+
+    .wrap { max-width: 1080px; margin: 0 auto; }
+
+    h1 { font-size: 32px; margin: 0 0 8px; font-weight: 700; }
+    .lede { color: var(--ink-soft); font-size: 16px; margin: 0 0 48px; }
+
+    h2 {
+      font-size: 18px;
+      margin: 56px 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #E0E0E0;
+      font-weight: 600;
+    }
+
+    .grid { display: grid; gap: 24px; }
+    .row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 32px; }
+    .cell { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .cell .label { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+    .icon { display: block; }
+    .icon.rounded { border-radius: 22.4%; /* iOS ~22.37% */ }
+    .icon.ios { border-radius: 22.4%; box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .icon.android { border-radius: 50%; background: #fff; padding: 18%; }
+    .icon.flat { border-radius: 0; }
+
+    /* swatch tiles */
+    .swatch-row { display: flex; flex-wrap: wrap; gap: 16px; }
+    .swatch {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px; border-radius: 16px; min-width: 280px;
+    }
+    .swatch.light { background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .swatch.gray  { background: #F0F0F0; }
+    .swatch.green { background: var(--green); }
+    .swatch.dark  { background: #1E1E1E; color: #fff; }
+    .swatch.black { background: #000; color: #fff; }
+    .swatch img   { width: 40px; height: 40px; border-radius: 9px; }
+    .swatch .name { font-weight: 600; }
+    .swatch .sub  { font-size: 12px; opacity: 0.7; }
+
+    .frame {
+      display: flex; flex-direction: column; gap: 6px; align-items: center;
+    }
+    .frame .name { font-size: 12px; color: var(--ink-soft); }
+
+    .home-tile {
+      width: 60px; height: 60px; border-radius: 14px;
+      background: linear-gradient(180deg, #f8f9fc 0%, #eceef3 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .home-tile img { width: 80%; height: 80%; border-radius: 10px; }
+
+    .scale-row { align-items: center; }
+    .scale-row .icon { border-radius: 22.4%; }
+
+    .pwa-card {
+      width: 320px; background: #fff; border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15); padding: 18px;
+      display: flex; gap: 14px; align-items: center;
+    }
+    .pwa-card img { width: 64px; height: 64px; border-radius: 14px; }
+    .pwa-card .name { font-weight: 600; font-size: 15px; }
+    .pwa-card .desc { font-size: 12px; color: #666; }
+    .pwa-card .install { margin-left: auto; background: var(--green); color: #fff; border: none; padding: 8px 14px; border-radius: 999px; font-weight: 600; font-size: 13px; }
+
+    .footer-note { color: var(--ink-soft); font-size: 13px; margin-top: 64px; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>慢病管家 · App 图标</h1>
+    <p class="lede">设计理念：胶囊药丸（吃药）+ 嫩芽（还在坚持）+ 嫩绿主色（<code>#6BCF7F</code>）<br/>语义：吃药打卡核心动作 + 品牌信条「不靠意志力，靠系统」</p>
+
+    <h2>1 · 主图标（master 1024×1024）</h2>
+    <div class="row">
+      <div class="cell">
+        <img class="icon ios" src="../assets/brand/app_icon_master.png" width="256" height="256" alt="iOS rounded" />
+        <div class="label">iOS rounded</div>
+      </div>
+      <div class="cell">
+        <img class="icon flat" src="../assets/brand/app_icon_master.png" width="256" height="256" alt="Square" />
+        <div class="label">原图（无圆角）</div>
+      </div>
+    </div>
+
+    <h2>2 · Android adaptive（maskable 1024×1024）</h2>
+    <p class="lede">所有关键元素都在 720px 直径的 inner safe zone 内，即使被设备 mask 切角也不丢失内容。</p>
+    <div class="row">
+      <div class="cell">
+        <img class="icon flat" src="../assets/brand/app_icon_maskable.png" width="256" height="256" alt="Maskable" />
+        <div class="label">maskable safe zone</div>
+      </div>
+      <div class="cell">
+        <div class="icon android" style="width:256px;height:256px;">
+          <img src="../assets/brand/app_icon_maskable.png" style="width:100%;height:100%;border-radius:50%;" />
+        </div>
+        <div class="label">模拟圆形 mask</div>
+      </div>
+    </div>
+
+    <h2>3 · 多尺寸缩放（验证可识别性）</h2>
+    <div class="row scale-row">
+      <div class="cell"><img class="icon" src="../assets/brand/app_icon_master.png" width="256" /><div class="label">256 px</div></div>
+      <div class="cell"><img class="icon" src="../assets/brand/app_icon_master.png" width="128" /><div class="label">128 px</div></div>
+      <div class="cell"><img class="icon" src="../assets/brand/app_icon_master.png" width="64"  /><div class="label">64 px</div></div>
+      <div class="cell"><img class="icon" src="../assets/brand/app_icon_master.png" width="48"  /><div class="label">48 px</div></div>
+      <div class="cell"><img class="icon" src="../assets/brand/app_icon_master.png" width="32"  /><div class="label">32 px (favicon)</div></div>
+      <div class="cell"><img class="icon" src="../assets/brand/app_icon_master.png" width="16"  /><div class="label">16 px</div></div>
+    </div>
+
+    <h2>4 · 浏览器 tab + PWA 安装卡片</h2>
+    <div class="grid">
+      <div class="swatch-row">
+        <div class="swatch light">
+          <img src="../web/favicon.png" />
+          <div><div class="name">慢病管家</div><div class="sub">light tab · 浅底</div></div>
+        </div>
+        <div class="swatch gray">
+          <img src="../web/favicon.png" />
+          <div><div class="name">慢病管家</div><div class="sub">light tab · 灰底</div></div>
+        </div>
+        <div class="swatch green">
+          <img src="../web/favicon.png" />
+          <div><div class="name">慢病管家</div><div class="sub">brand 绿底</div></div>
+        </div>
+        <div class="swatch dark">
+          <img src="../web/favicon.png" />
+          <div><div class="name" style="color:#fff">慢病管家</div><div class="sub">dark mode</div></div>
+        </div>
+        <div class="swatch black">
+          <img src="../web/favicon.png" />
+          <div><div class="name" style="color:#fff">慢病管家</div><div class="sub">纯黑</div></div>
+        </div>
+      </div>
+
+      <div class="pwa-card" style="margin-top: 20px;">
+        <img src="../web/icons/Icon-192.png" />
+        <div>
+          <div class="name">慢病管家</div>
+          <div class="desc">我今天吃了药</div>
+        </div>
+        <button class="install">安装</button>
+      </div>
+    </div>
+
+    <h2>5 · 手机主屏模拟</h2>
+    <div class="row">
+      <div class="cell">
+        <div class="home-tile"><img src="../web/icons/Icon-192.png" /></div>
+        <div class="label">iOS home tile</div>
+      </div>
+      <div class="cell">
+        <div class="home-tile" style="border-radius: 24px; background: linear-gradient(180deg, #2a2a2a 0%, #0d0d0d 100%);">
+          <img src="../web/icons/Icon-192.png" />
+        </div>
+        <div class="label">Android adaptive</div>
+      </div>
+    </div>
+
+    <p class="footer-note">文件：<code>assets/brand/app_icon_master.png</code> · <code>assets/brand/app_icon_maskable.png</code><br/>
+    生成脚本：<code>scripts/resize_icons.py</code>（自动产出 favicon / 192 / 512 / maskable 全套）</p>
+  </div>
+</body>
+</html>

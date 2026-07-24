@@ -24,6 +24,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// 通知自检卡
 class NotificationStatusCard extends ConsumerStatefulWidget {
@@ -103,8 +104,14 @@ class _NotificationStatusCardState
       List<PendingNotificationRequest> pending = const [];
       try {
         pending = await plugin.pendingNotificationRequests();
-      } catch (_) {
-        // web 平台抛 PlatformException
+      } catch (e, st) {
+        // v0.23 (Round 37 P0): 走 swallowError, dev mode 能看到失败
+        swallowError(
+          where: 'notification_status_card._showDetails.pending',
+          error: e,
+          stack: st,
+          note: 'web 平台不支持 pendingNotificationRequests,降级空列表',
+        );
       }
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);

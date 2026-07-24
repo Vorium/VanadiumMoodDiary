@@ -1,7 +1,7 @@
 name: chroniccare
 description: "我今天吃了药 - 精神心理患者吃药打卡 + 停药通知"
 publish_to: 'none'
-version: 0.22.0+1
+version: 0.22.0+2
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -54,6 +54,11 @@ dependencies:
   # 录音（树洞 audio）
   record: ^5.2.0
   audioplayers: ^6.1.0
+
+  # v0.23 (Round 31 in development) 情绪日记语音录入 — 本地 STT
+  # 7.x: mobile 走平台 on-device / cloud STT, web 走 Chrome Web Speech API
+  # 注意: version 仍 0.22.0+2 (build 号 +1 不改 minor), v0.23 release 时一起升
+  speech_to_text: ^7.0.0
 
 dev_dependencies:
   flutter_test:

@@ -75,7 +75,7 @@ class SafetyWatchService {
 
   Future<void> setThresholdDays(int days) async {
     if (days < 1 || days > 14) {
-      throw ArgumentError('阈值必须在 1..14 天之间');
+      throw ArgumentError('threshold must be between 1 and 14 days');
     }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_kThresholdDays, days);

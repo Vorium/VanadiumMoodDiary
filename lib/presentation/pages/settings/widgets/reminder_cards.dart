@@ -216,7 +216,7 @@ class ReminderCard extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: AppTokens.textSecondaryColor(context),
                     ),
                   ),
                   if (onAction != null && actionLabel.isNotEmpty) ...[

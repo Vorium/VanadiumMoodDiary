@@ -259,8 +259,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
             reminderDays: days,
           );
 
-      // P0 fix: 复用 provider 树已缓存的药物数据
-      final meds = ref.read(medicationsProvider).value ?? [];
+      // v0.23 (P0-3 H2 fix): await updateRefill 写完 DB, 但 stream 还在 broadcast
+      // 旧值, ref.read 拿 stale list → rescheduleRefillReminders 用旧 refillAt
+      // 修: refresh(provider.future) 等 stream 重新 emit, 直接用返回的新值
+      final meds = await ref.refresh(medicationsProvider.future);
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       await ref
           .read(notificationServiceProvider)

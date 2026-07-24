@@ -189,7 +189,7 @@ class _AssessmentReminderSectionState
                       AppLocalizations.of(context).assessmentReminderHelpText,
                       style: TextStyle(
                         fontSize: AppTokens.fontSizeCaption,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: AppTokens.textSecondaryColor(context),
                       ),
                     ),
                   ),

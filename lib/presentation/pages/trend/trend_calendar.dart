@@ -91,7 +91,6 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
     ];
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -130,7 +129,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
                     l,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: AppTokens.textSecondaryColor(context),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -286,7 +285,6 @@ class _DayDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
     final detail = DayDetailCalculator.fromData(
       date: date,
       checkIns: allCheckIns,
@@ -308,7 +306,7 @@ class _DayDetailCard extends StatelessWidget {
                   dateStr,
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeLabel,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: AppTokens.textSecondaryColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -372,7 +370,7 @@ class _DayDetailCard extends StatelessWidget {
                   Icon(
                     Icons.mood_outlined,
                     size: 14,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: AppTokens.textSecondaryColor(context),
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -401,7 +399,7 @@ class _DayDetailCard extends StatelessWidget {
                     Icon(
                       Icons.inbox_outlined,
                       size: 20,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: AppTokens.textSecondaryColor(context),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -437,8 +435,7 @@ class _EventRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final (icon, color, timePrefix) = _kindVisuals(event, theme);
+    final (icon, color, timePrefix) = _kindVisuals(event, context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXs),
@@ -475,7 +472,7 @@ class _EventRow extends StatelessWidget {
                     event.subtitle!,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: AppTokens.textSecondaryColor(context),
                     ),
                   ),
                 ],
@@ -487,7 +484,8 @@ class _EventRow extends StatelessWidget {
     );
   }
 
-  (IconData, Color, String) _kindVisuals(DayEvent e, ThemeData theme) {
+  (IconData, Color, String) _kindVisuals(DayEvent e, BuildContext context) {
+    final theme = Theme.of(context);
     final time = '${e.time.hour.toString().padLeft(2, '0')}:'
         '${e.time.minute.toString().padLeft(2, '0')}';
     switch (e.kind) {
@@ -502,7 +500,7 @@ class _EventRow extends StatelessWidget {
           Icons.mood_outlined,
           e.moodScore != null
               ? Color(MoodVisual.colorArgbFor(e.moodScore!))
-              : theme.colorScheme.onSurfaceVariant,
+              : AppTokens.textSecondaryColor(context),
           time,
         );
     }

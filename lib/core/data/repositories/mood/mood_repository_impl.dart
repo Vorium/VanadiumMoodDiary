@@ -1,4 +1,7 @@
 // v0.14 (Round 12A) MoodRepositoryImpl — data 层 Drift 实现
+//
+// v0.23 (Round 31) 语音录入: add() 加 3 个 audio 参数,纯文字模式老调用方
+// 不传 = 行为完全不变(audioPath null = 不会写 audio 文件)。
 library;
 
 import 'package:drift/drift.dart' show Value;
@@ -38,6 +41,9 @@ class MoodRepositoryImpl implements MoodRepository {
     int? energy,
     int? sleep,
     int? anxiety,
+    String? audioPath,
+    String? audioTranscript,
+    int? audioDurationMs,
   }) {
     return _db.insertMoodEntry(
       MoodEntriesCompanion.insert(
@@ -48,6 +54,9 @@ class MoodRepositoryImpl implements MoodRepository {
         anxiety: Value(anxiety),
         tagsJson: Value(JsonCodec.encodeStringList(tags)),
         note: Value(note),
+        audioPath: Value(audioPath),
+        audioTranscript: Value(audioTranscript),
+        audioDurationMs: Value(audioDurationMs),
       ),
     );
   }

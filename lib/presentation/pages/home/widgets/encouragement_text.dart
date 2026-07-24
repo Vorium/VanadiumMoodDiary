@@ -24,7 +24,7 @@ class EncouragementText extends StatelessWidget {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: AppTokens.fontSizeBody,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          color: AppTokens.textSecondaryColor(context),
           fontWeight: FontWeight.w500,
         ),
       ),

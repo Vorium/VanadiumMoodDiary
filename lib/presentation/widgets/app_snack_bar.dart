@@ -76,4 +76,88 @@ class AppSnackBar {
       ),
     );
   }
+
+  /// v0.23 (Round 31): 带 action 按钮的持久 SnackBar
+  ///
+  /// 用于"已保存情绪日记" + "回放"按钮 场景:默认 4 秒不够用户点回放,
+  /// 加 [persistentDuration] = 6 秒 (>= long 但不超过 8 秒避免占屏太久)。
+  ///
+  /// [onAction] 异步或同步操作,内部应自行处理异常 (fire-and-forget)。
+  /// action 文字走 l10n.moodActionPlay 复用现有 '回放' 翻译键。
+  static SnackBar withAction(
+    BuildContext context, {
+    required String message,
+    required String actionLabel,
+    required Future<void> Function() onAction,
+  }) {
+    return SnackBar(
+      content: Text(message),
+      duration: AppTokens.snackBarDurationLong * 2, // 8 秒 — 比 undo 长
+      action: SnackBarAction(
+        label: actionLabel,
+        onPressed: () {
+          onAction();
+        },
+      ),
+    );
+  }
+
+  // ============= v0.23 (Round 37) P1: showX 便捷工厂 =============
+  //
+  // 之前 55+ 处直接 `ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(...)))`
+  // 绕开集中器。补 showX 系列直接接管 showSnackBar,调用方 1 行搞定。
+  //
+  // 用法:
+  // ```dart
+  // AppSnackBar.showInfo(context, l10n.someKey);
+  // AppSnackBar.showError(context, action: '保存', error: e);
+  // AppSnackBar.showUndo(context, message: l10n.deletedMsg, onUndo: () => ...);
+  // AppSnackBar.showWithAction(context, message: ..., actionLabel: ..., onAction: ...);
+  // ```
+
+  /// 弹出 error SnackBar
+  static void showError(
+    BuildContext context, {
+    required String action,
+    Object? error,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      AppSnackBar.error(context, action: action, error: error),
+    );
+  }
+
+  /// 弹出 info SnackBar
+  static void showInfo(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      AppSnackBar.info(context, message),
+    );
+  }
+
+  /// 弹出 undo SnackBar
+  static void showUndo(
+    BuildContext context, {
+    required String message,
+    required Future<void> Function() onUndo,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      AppSnackBar.undo(context, message: message, onUndo: onUndo),
+    );
+  }
+
+  /// 弹出带 action SnackBar
+  static void showWithAction(
+    BuildContext context, {
+    required String message,
+    required String actionLabel,
+    required Future<void> Function() onAction,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      AppSnackBar.withAction(
+        context,
+        message: message,
+        actionLabel: actionLabel,
+        onAction: onAction,
+      ),
+    );
+  }
 }

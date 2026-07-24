@@ -64,7 +64,7 @@ class AssessmentReminderService {
 
   Future<void> setDays(int days) async {
     if (!allowedDays.contains(days)) {
-      throw ArgumentError('评估提醒间隔必须是 $allowedDays 之一, 实际: $days');
+      throw ArgumentError('assessment reminder interval must be one of $allowedDays; got: $days');
     }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_kDays, days);
@@ -114,7 +114,7 @@ class AssessmentReminderService {
   }) {
     if (!enabled) return null;
     if (!allowedDays.contains(days)) {
-      throw ArgumentError('days 必须在 $allowedDays, 实际: $days');
+      throw ArgumentError('days must be in $allowedDays; got: $days');
     }
     final n = now ?? DateTime.now();
     final base = lastAssessmentAt ?? n;

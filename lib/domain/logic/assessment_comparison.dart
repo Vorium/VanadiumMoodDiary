@@ -154,7 +154,7 @@ class AssessmentComparisonCalculator {
       return 3; // severe
     }
     // 未知量表 — 兜底：按 totalRange 5 等分
-    throw ArgumentError('未知量表: $scaleId');
+    throw ArgumentError('unknown scale: $scaleId');
   }
 
   /// 严重度档位名（中文）
@@ -184,7 +184,7 @@ class AssessmentComparisonCalculator {
     DateTime? now,
   }) {
     if (records.isEmpty) {
-      throw ArgumentError('records 不能为空');
+      throw ArgumentError('records must not be empty');
     }
     // 显式按 timestamp 升序（早→晚），防止 caller 传未排序数据时 current/previous 取错
     final sorted = [...records]

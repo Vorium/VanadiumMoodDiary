@@ -12,6 +12,8 @@ import 'package:chroniccare/core/data/services/database_migration.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
@@ -58,8 +60,8 @@ Future<void> main() async {
         );
       }
       // v0.22 round 33 (sp-en P0): release 模式之前直接 swallow, 用户连
-      // "哪里出错了"都看不到。改成 LastErrorCapture 记录, 下次启动 AppRoot
-      // 检测到就显示顶部 banner "上次启动出错,请截图反馈"。
+      // "哪里出错了"都看不到。改成 LastErrorCapture 记录，下次启动 AppRoot
+      // 检测到就显示顶部 banner "上次启动出错，请截图反馈"。
       LastErrorCapture.record(error, stack);
     },
   );
@@ -174,38 +176,41 @@ Future<bool?> _showMigrationConfirmDialog(
   return showDialog<bool>(
     context: ctx,
     barrierDismissible: false,
-    builder: (ctx) => AlertDialog(
-      title: const Text('升级到 v0.9'),
-      content: const SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('检测到本地有旧版本数据。'),
-            SizedBox(height: 12),
-            Text('本次升级会：'),
-            SizedBox(height: 4),
-            Text('• 启用数据库加密（保护你的隐私）'),
-            Text('• 清空旧版本的所有打卡记录'),
-            Text('（旧版本没有"导出数据"功能，原始数据无法恢复）'),
-            SizedBox(height: 12),
-            Text('建议：先在旧版 App 内完成"导出数据"备份，再升级。'),
-            SizedBox(height: 4),
-            Text('若旧版已卸载无法导出，可以直接点"继续升级"。'),
-          ],
+    builder: (ctx) {
+      final l10n = AppLocalizations.of(ctx);
+      return AlertDialog(
+        title: Text(l10n.migrationPromptTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.migrationPromptDetectedOld),
+              const SizedBox(height: 12),
+              Text(l10n.migrationPromptChangesTitle),
+              const SizedBox(height: 4),
+              Text(l10n.migrationPromptChangeEncrypt),
+              Text(l10n.migrationPromptChangeClear),
+              Text(l10n.migrationPromptChangeWarning),
+              const SizedBox(height: 12),
+              Text(l10n.migrationPromptRecommendExport),
+              const SizedBox(height: 4),
+              Text(l10n.migrationPromptDirectContinue),
+            ],
+          ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(false),
-          child: const Text('取消'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.of(ctx).pop(true),
-          child: const Text('继续升级'),
-        ),
-      ],
-    ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.migrationPromptCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.migrationPromptContinue),
+          ),
+        ],
+      );
+    },
   );
 }
 
@@ -241,29 +246,32 @@ class _MigrationAbortedApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: const Center(
+        body: Center(
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.pause_circle_outline,
                   size: 64,
                   color: Colors.orange,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
-                  '升级已取消',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  l10n.migrationAbortedTitle,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
-                  '请先在旧版本 App 内完成"导出数据"备份，\n'
-                  '备份完成后点下方按钮继续升级。',
+                  l10n.migrationAbortedBody,
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -276,7 +284,7 @@ class _MigrationAbortedApp extends StatelessWidget {
             onRetry();
           },
           icon: const Icon(Icons.refresh),
-          label: const Text('已备份，继续升级'),
+          label: Text(l10n.migrationAbortedRetry),
         ),
       ),
     );
@@ -337,7 +345,10 @@ class _MigrationFailedApp extends StatelessWidget {
             child: Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
+              style: TextStyle(
+                fontSize: 12,
+                color: AppTokens.textHintColor(context),
+              ),
             ),
           ),
         ),

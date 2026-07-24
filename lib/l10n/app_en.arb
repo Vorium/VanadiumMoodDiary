@@ -243,6 +243,12 @@
   "notificationStatusCardOemBrandMeizu": "Meizu",
   "notificationStatusCardOemStepMeizu1": "Settings → App Management → Chronic Care → Permissions → Autostart → Allow",
   "notificationStatusCardOemStepMeizu2": "Settings → Notification Management → Chronic Care → Enable all",
+  "notificationStatusCardOemBrandSamsung": "Samsung (OneUI)",
+  "notificationStatusCardOemStepSamsung1": "Settings → Apps → Chronic Care → Notifications → Enable all",
+  "notificationStatusCardOemStepSamsung2": "Settings → Battery → Background usage limits → Chronic Care → Unrestricted",
+  "notificationStatusCardOemBrandOthers": "Others (ZTE / Nubia / Red Magic / Lenovo / Samsung Knox)",
+  "notificationStatusCardOemStepOthers1": "Settings → Apps → Chronic Care → Notifications → Enable all",
+  "notificationStatusCardOemStepOthers2": "Settings → Battery → Background running → Allow",
   "notificationStatusCardOemGeneralTip": "General tip: When exact alarms are silently blocked by some ROMs, the system will ask \"Allow?\" on first launch — please select \"Allow\".",
 
   "reminderHubDescription": "Manage all reminders in one place: daily check-in, medication times, refill dates, assessment, safety watch.",
@@ -391,6 +397,38 @@
   "moodTagLowEnergy": "Low energy",
   "moodNoteLabel": "Note (optional)",
   "moodNoteHint": "What happened today?",
+
+  "moodAudioRecordButton": "Record voice",
+  "moodAudioRecording": "Recording… {elapsed}",
+  "@moodAudioRecording": {
+    "placeholders": { "elapsed": { "type": "String" } }
+  },
+  "moodAudioRecorded": "Recorded {duration}",
+  "@moodAudioRecorded": {
+    "placeholders": { "duration": { "type": "String" } }
+  },
+  "moodAudioRerecord": "Re-record",
+  "moodAudioDeleteRecording": "Delete recording",
+  "moodAudioTranscriptLabel": "Transcript",
+  "moodAudioTranscriptEmpty": "No speech detected",
+  "moodAudioTranscriptPartialHint": "(only the first 60s recognized)",
+  "moodAudioSttListening": "Recognizing…",
+  "moodAudioSttFailed": "Recognition failed; audio saved only",
+  "moodAudioSttUnavailable": "Speech-to-text not available on this device",
+  "moodAudioMaxReached": "Reached 3-minute limit",
+  "moodAudioSavedWithPlay": "Mood saved",
+  "moodAudioPlayAction": "Play",
+  "moodAudioDurationTemplate": "{minutes}:{seconds}",
+  "@moodAudioDurationTemplate": {
+    "placeholders": {
+      "minutes": { "type": "String" },
+      "seconds": { "type": "String" }
+    }
+  },
+  "moodAudioErrorStart": "Failed to start recording",
+  "moodAudioErrorStop": "Failed to stop recording",
+  "moodAudioErrorEncrypt": "Failed to encrypt recording",
+  "moodAudioErrorPlay": "Failed to play",
   "medsTodaySchedule": "Today's Medication Schedule",
   "medsTotal": "Total",
   "medsRefillSetCount": "Set",
@@ -852,5 +890,19 @@
   "medReportFileName": "Med Report_{date}",
   "@medReportFileName": {
     "placeholders": { "date": { "type": "String" } }
-  }
+  },
+
+  "migrationPromptTitle": "Upgrading to v0.9",
+  "migrationPromptDetectedOld": "Old version data detected on this device.",
+  "migrationPromptChangesTitle": "This upgrade will:",
+  "migrationPromptChangeEncrypt": "• Enable database encryption (protects your privacy)",
+  "migrationPromptChangeClear": "• Clear all old check-in records",
+  "migrationPromptChangeWarning": "(The old version had no \"Export data\" feature, so the original data cannot be recovered)",
+  "migrationPromptRecommendExport": "Recommendation: First complete \"Export data\" in the old version, then upgrade.",
+  "migrationPromptDirectContinue": "If the old version is already uninstalled, you can tap \"Continue upgrade\" directly.",
+  "migrationPromptCancel": "Cancel",
+  "migrationPromptContinue": "Continue upgrade",
+  "migrationAbortedTitle": "Upgrade cancelled",
+  "migrationAbortedBody": "Please complete \"Export data\" in the old version first,\nthen tap the button below to continue the upgrade.",
+  "migrationAbortedRetry": "Already backed up, continue"
 }

@@ -425,7 +425,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
               loc.reminderHubSafetyDescription,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: AppTokens.textSecondaryColor(context),
               ),
             ),
             const SizedBox(height: AppTokens.spacingMd),

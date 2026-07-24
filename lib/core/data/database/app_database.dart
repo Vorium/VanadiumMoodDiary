@@ -60,8 +60,12 @@ class AppDatabase extends _$AppDatabase {
   //   所以这条变更**只在 createAll 里生效** (新装用户自动是新 schema)
   //   升级用户 schema 没改,代码层判断 if (userName?.isNotEmpty ?? false)
   //   兼容老数据 "" 和新数据 null
+  // v0.23 round 31 (P0 新功能): schemaVersion 11 → 12
+  // - mood_entries 加 audioPath / audioTranscript / audioDurationMs 3 个 nullable 列
+  // - 老数据自动为 null(纯文字模式行为不变)
+  // - audioPath 引用独立 mood_audio/ 目录的加密 .m4a.enc 文件
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -163,6 +167,15 @@ class AppDatabase extends _$AppDatabase {
           //   升级用户 schema 没改,**统一走 `core/shared/user_name_helper.dart`
           //   的 `safeUserName()` 兼容老数据 "" 和新数据 null**
           //   (v0.22 round 31 sp-en P0-3 抽 helper 集中 5+ 处散落判断)
+          // v11 → v12: mood_entries 加语音录入 3 字段 (v0.23 round 31)
+          // - audioPath / audioTranscript / audioDurationMs 全部 nullable
+          // - 老数据自动为 null,纯文字模式行为完全不变
+          // - 新数据:audioPath 必有(录音一定有文件),transcript/durationMs 可空
+          if (from <= 11) {
+            await m.addColumn(moodEntries, moodEntries.audioPath);
+            await m.addColumn(moodEntries, moodEntries.audioTranscript);
+            await m.addColumn(moodEntries, moodEntries.audioDurationMs);
+          }
         },
         beforeOpen: (details) async {
           // 启用外键

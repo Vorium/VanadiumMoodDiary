@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""精确扫: 同函数体内裸调 DateTime.now() 出现 >=2 次（没用 final now 缓存）"""
+"""精确扫: 同函数体内裸调 DateTime.now() 出现 >=2 次（没用 final now 缓存）
+
+v0.23 (P0-14): 改 ROOT 为相对路径, 兼容 CI (ubuntu) 和本地 (Windows)
+"""
+import os
 import re
+import sys
 from pathlib import Path
 
-ROOT = Path(r'D:\Batch\chroniccare\lib')
+ROOT = Path(os.getcwd()) / "lib"
 # 函数体匹配: 找 `() { ... }` 块, 统计 `DateTime.now()` 出现次数
 # Dart 函数通常有返回类型, 找 `... {` 开头 + `}` 结尾 (粗略花括号匹配)
 

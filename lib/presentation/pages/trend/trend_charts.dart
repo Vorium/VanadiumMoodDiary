@@ -64,7 +64,7 @@ class _HeatCell extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(AppTokens.radiusCellLg),
         ),
       ),
     );
@@ -92,7 +92,7 @@ class MonthlyChart extends StatelessWidget {
               toY: monthly[i].rate * 100,
               width: 18,
               color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(AppTokens.radiusCellLg),
             ),
           ],
         ),
@@ -166,7 +166,7 @@ class AssessmentHistoryChart extends StatelessWidget {
               Icon(
                 Icons.show_chart,
                 size: 40,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: AppTokens.textSecondaryColor(context),
               ),
               const SizedBox(height: AppTokens.spacingSm),
               Text(
@@ -178,7 +178,7 @@ class AssessmentHistoryChart extends StatelessWidget {
                 '完成一次心理评估后，折线图会自动出现在这里',
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: AppTokens.textSecondaryColor(context),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -423,7 +423,7 @@ class MoodHistoryChart extends StatelessWidget {
               Icon(
                 Icons.mood_outlined,
                 size: 40,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: AppTokens.textSecondaryColor(context),
               ),
               const SizedBox(height: AppTokens.spacingSm),
               Text(
@@ -435,7 +435,7 @@ class MoodHistoryChart extends StatelessWidget {
                 '在主页点击「记一下情绪」开始记录',
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: AppTokens.textSecondaryColor(context),
                 ),
                 textAlign: TextAlign.center,
               ),

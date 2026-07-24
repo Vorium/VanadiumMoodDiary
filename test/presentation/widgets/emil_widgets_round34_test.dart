@@ -56,7 +56,7 @@ void main() {
   group('ChipBadge — emil A2', () {
     testWidgets('neutral tone 显示 label', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ChipBadge(label: '已打卡', tone: ChipBadgeTone.neutral),
           ),
@@ -67,7 +67,7 @@ void main() {
 
     testWidgets('error tone 渲染 Container with radius', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ChipBadge(label: '错误', tone: ChipBadgeTone.error),
           ),
@@ -81,7 +81,7 @@ void main() {
   group('SeverityIndicator — emil A3', () {
     testWidgets('ok level 显示 label + 圆点', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeverityIndicator(
               level: SeverityLevel.ok,
@@ -96,7 +96,7 @@ void main() {
 
     testWidgets('error level 渲染不同颜色', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: SeverityIndicator(
               level: SeverityLevel.error,
@@ -147,11 +147,11 @@ void main() {
   group('PageTransitionSwitcher — emil A5', () {
     testWidgets('switchKey 变化 → fade 切换 + 旧 child 消失', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: PageTransitionSwitcher(
               switchKey: 'list',
-              child: const Text('list 视图'),
+              child: Text('list 视图'),
             ),
           ),
         ),
@@ -159,11 +159,11 @@ void main() {
       expect(find.text('list 视图'), findsOneWidget);
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: PageTransitionSwitcher(
               switchKey: 'calendar',
-              child: const Text('calendar 视图'),
+              child: Text('calendar 视图'),
             ),
           ),
         ),

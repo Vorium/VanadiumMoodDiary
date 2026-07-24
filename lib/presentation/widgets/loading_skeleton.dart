@@ -66,7 +66,7 @@ class LoadingSkeleton extends StatelessWidget {
                 message!,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: AppTokens.textSecondaryColor(context),
                 ),
               ),
             ],

@@ -55,7 +55,7 @@ class _Stat extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: AppTokens.textSecondaryColor(context),
             ),
             textAlign: TextAlign.center,
           ),

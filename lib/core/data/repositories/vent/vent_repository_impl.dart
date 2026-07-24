@@ -50,7 +50,7 @@ class VentRepositoryImpl implements VentRepository {
     final hasText = text != null && text.trim().isNotEmpty;
     final hasAudio = audioPath != null && audioPath.isNotEmpty;
     if (!hasText && !hasAudio) {
-      throw ArgumentError('text 和 audio 至少要有一个');
+      throw ArgumentError('text and audio: at least one is required');
     }
 
     Uint8List? encText;

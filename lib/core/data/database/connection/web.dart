@@ -22,7 +22,7 @@ QueryExecutor openConnection() {
   return DatabaseConnection.delayed(
     Future.error(
       UnsupportedError(
-        'Web 平台暂不支持,精神心理患者 PII 不能落明文 IndexedDB。\n'
+        'Web 平台暂不支持，精神心理患者 PII 不能落明文 IndexedDB。\n'
         '请用 Android / iOS 客户端获得完整加密保护。\n'
         '详细原因见 docs/P2_SYSTEM_REVIEW.md P0-7。',
       ),

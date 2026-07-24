@@ -8,6 +8,8 @@ import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
+import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 
 /// 临时吃药 dialog
 ///
@@ -39,9 +41,10 @@ class TempMedicationDialog extends ConsumerStatefulWidget {
       ),
       error: (e, _) => showDialog<void>(
         context: context,
-        builder: (_) => Center(
-            child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
+        builder: (_) => ErrorState(
+          title: AppLocalizations.of(context).commonLoadFailed(''),
+          detail: e.toString(),
+        ),
       ),
     );
   }
@@ -120,25 +123,10 @@ class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
           onPressed: saving ? null : () => Navigator.pop(context),
           child: Text(AppLocalizations.of(context).commonCancel),
         ),
-        ElevatedButton(
+        LoadingTextButton(
+          label: AppLocalizations.of(context).commonSave,
+          isLoading: saving,
           onPressed: saving ? null : _onSave,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Text(AppLocalizations.of(context).commonSave),
-              if (saving)
-                IgnorePointer(
-                  child: SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppTokens.fgOnPrimary(context),
-                    ),
-                  ),
-                ),
-            ],
-          ),
         ),
       ],
     );

@@ -25,7 +25,7 @@ import 'package:chroniccare/core/data/services/notification_payload.dart';
 class SnoozeManager {
   final FlutterLocalNotificationsPlugin _plugin;
 
-  /// snooze id 起始基数（4000-4999 留给 snooze）
+  /// snooze id 起始基数（300000+ 范围，远离 medication/reminder cancel range）
   final int snoozeBaseId;
 
   /// 每次 1 个 med 最多 1440 个不同 minutes
@@ -36,7 +36,13 @@ class SnoozeManager {
 
   SnoozeManager({
     required FlutterLocalNotificationsPlugin plugin,
-    this.snoozeBaseId = 4000,
+    // v0.23 (P0-1 H3 fix): snooze base 从 4000 挪到 300000, 避免被
+    //   _dispatcher.cancelByIdRange(2000) [范围 2000..202000) 误杀
+    //   旧公式 4000 + medId*1440 + minutes 范围 [5441, 6880] (medId=1) 落入
+    //   medication cancel range
+    // 新公式 300000 + medId*1440 + minutes 范围 [301441, ...] 远超所有
+    //   medication/refill/assessment cancel range (200000 宽)
+    this.snoozeBaseId = 300000,
     this.minutesPerMedication = 1440,
     this.cancelRange = 2000000,
   }) : _plugin = plugin;

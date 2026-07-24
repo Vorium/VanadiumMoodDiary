@@ -18,6 +18,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_summary.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_charts.dart';
@@ -58,9 +59,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           return _buildBody(context, checkIns, moodEntries);
         },
         loading: () => const LoadingSkeleton.fullScreen(),
-        error: (Object e, _) => Center(
-            child: Text(
-                AppLocalizations.of(context).commonLoadFailed(e.toString()),),),
+        error: (Object e, _) => ErrorState(
+          title: AppLocalizations.of(context).commonLoadFailed(''),
+          detail: e.toString(),
+          onRetry: () => ref.invalidate(allCheckInsProvider),
+        ),
       ),
     );
   }
@@ -118,7 +121,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           '最近 30 天',
           style: TextStyle(
             fontSize: AppTokens.fontSizeLabel,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: AppTokens.textSecondaryColor(context),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -129,7 +132,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           '最近 6 个月',
           style: TextStyle(
             fontSize: AppTokens.fontSizeLabel,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: AppTokens.textSecondaryColor(context),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -140,7 +143,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           AppLocalizations.of(context).trendAssessmentHistory,
           style: TextStyle(
             fontSize: AppTokens.fontSizeLabel,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: AppTokens.textSecondaryColor(context),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -160,8 +163,13 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: 200,
                 child: LoadingSkeleton.fullScreen(),
               ),
-              error: (e, _) => Text(
-                  AppLocalizations.of(context).commonLoadFailed(e.toString()),),
+              error: (e, _) => SizedBox(
+                height: 200,
+                child: ErrorState(
+                  title: AppLocalizations.of(context).commonLoadFailed(''),
+                  detail: e.toString(),
+                ),
+              ),
             );
           },
         ),
@@ -170,7 +178,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           AppLocalizations.of(context).trendMoodHistory,
           style: TextStyle(
             fontSize: AppTokens.fontSizeLabel,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: AppTokens.textSecondaryColor(context),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -184,8 +192,13 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: 200,
                 child: LoadingSkeleton.fullScreen(),
               ),
-              error: (e, _) => Text(
-                  AppLocalizations.of(context).commonLoadFailed(e.toString()),),
+              error: (e, _) => SizedBox(
+                height: 200,
+                child: ErrorState(
+                  title: AppLocalizations.of(context).commonLoadFailed(''),
+                  detail: e.toString(),
+                ),
+              ),
             );
           },
         ),

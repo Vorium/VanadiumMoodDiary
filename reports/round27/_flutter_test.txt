@@ -1,0 +1,714 @@
+﻿flutter : Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+所在位置 行:1 字符: 134
++ ... Encoding]::UTF8; cd 'D:\Batch\chroniccare'; flutter test 2>&1 | Out-F ...
++                                                 ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Flutter assets ...st this source!:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+00:00 +0: loading D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart
+00:00 +0: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: encrypt → decrypt round-trip
+00:00 +1: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 大块数据 (1MB) round-trip
+00:00 +2: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 大块数据 (1MB) round-trip
+00:00 +3: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 大块数据 (1MB) round-trip
+00:00 +4: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 大块数据 (1MB) round-trip
+00:00 +5: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 大块数据 (1MB) round-trip
+00:00 +6: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 大块数据 (1MB) round-trip
+00:00 +7: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 大块数据 (1MB) round-trip
+00:00 +8: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 相同明文加密 2 次 → 不同 ciphertext (IV 随机)
+00:00 +9: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: 篡改 ciphertext → decrypt 失败 (PKCS7 padding 检测)
+00:00 +10: D:/Batch/chroniccare/test/core/data/services/encryption_round14_test.dart: EncryptionService P0-2: blob 太短 (< 16 字节) → FormatException
+00:00 +11: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: (setUpAll)
+00:00 +11: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce 同 (medId, minutes) 二次调用 = 覆盖,id 公式稳定
+00:00 +12: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce 不同 (medId, minutes) id 互不干扰
+00:00 +13: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce medicationId=0 通用 snooze payload = today check-in
+00:00 +14: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce medicationId=具体值 payload = medicationCheckIn
+00:00 +15: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce minutes=0 越界 → 静默 no-op
+00:00 +16: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce minutes=1441 越界 → 静默 no-op
+00:00 +17: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce 自定义 title/body 透传
+00:00 +18: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.snoozeOnce 默认 title/body
+00:00 +19: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.cancelSnoozeForMedication 只 cancel 该 med 范围的 id
+00:00 +20: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.cancelSnoozeForMedication pending 没该 med 的 snooze → 静默 no-op
+00:00 +21: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.cancelAllSnoozes cancel snooze 范围所有 pending
+00:00 +22: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: SnoozeManager.cancelAllSnoozes pending 空 → 静默 no-op
+00:00 +23: D:/Batch/chroniccare/test/core/data/services/snooze_manager_round18_test.dart: (tearDownAll)
+00:00 +23: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国大陆 11 位 1[3-9] 开头全部有效
+00:00 +24: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国大陆 10 / 12 位 1 开头无效
+00:00 +25: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国大陆 11 位 1[0-2] 开头无效(非手机号段)
+00:00 +26: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国大陆 +86 / 86 / +86- / +86 空格前缀都解析为大陆
+00:00 +27: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国香港 8 位 [45789] 开头有效
+00:00 +28: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国香港 8 位 6 开头归澳门(优先级 mo > hk)
+00:00 +29: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国香港 8 位 2/3 开头无效(2/3 是 HK 座机,不是手机)
+00:00 +30: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国香港 +852 / 852 / +852- 前缀都解析为香港
+00:00 +31: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国澳门 8 位 6 开头有效
+00:00 +32: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国澳门 +853 前缀
+00:00 +33: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国台湾 9 位 9 开头有效
+00:00 +34: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国台湾 +886 前缀
+00:00 +35: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 中国台湾 10 位 09 开头无效(用户应填 9xxxxxxxx 不带 0)
+00:00 +36: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 国际 E.164 + 后 6-15 位数字有效
+00:00 +37: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 国际 E.164 + 后 < 6 位或 > 15 位无效
+00:00 +38: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 国际 E.164 + 后有非数字无效
+00:00 +39: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 边界 case 空字符串 / 纯空格 / null-like 全部 null
+00:00 +40: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 边界 case 前后空格自动 trim
+00:00 +41: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 边界 case 未带 + 但 0 开头 11 位无效(防大陆座机)
+00:00 +42: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.parse - 边界 case + 但区号跟号码不匹配无效
+00:00 +43: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.isValid parse 返回非 null 则 isValid = true
+00:00 +44: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.isValid parse 返回 null 则 isValid = false
+00:00 +45: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.normalize - E.164 输出 大陆返回 +86 + 11 位
+00:00 +46: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.normalize - E.164 输出 HK 返回 +852 + 8 位
+00:00 +47: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.normalize - E.164 输出 MO 返回 +853 + 8 位
+00:00 +48: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.normalize - E.164 输出 TW 返回 +886 + 9 位
+00:00 +49: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.normalize - E.164 输出 国际返回原 + 号码
+00:00 +50: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.normalize - E.164 输出 无效返回 null
+00:00 +51: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneNumber.e164 + display cn display 加 86 前缀 + 分组
+00:00 +52: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneNumber.e164 + display hk display 加 852 前缀 + 分组
+00:00 +53: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneNumber.e164 + display mo display 加 853 前缀 + 分组
+00:00 +54: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneNumber.e164 + display tw display 加 886 前缀 + 分组
+00:00 +55: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneNumber.e164 + display intl display = e164(无固定分组)
+00:00 +56: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneRegion - displayName / dialCode cn / hk / mo / tw / intl 都有 displayName
+00:00 +57: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneRegion - displayName / dialCode cn / hk / mo / tw / intl 都有 dialCode
+00:00 +58: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.isStrictValid - 旧 API 兼容 11 位大陆 1[3-9] 有效
+00:00 +59: D:/Batch/chroniccare/test/core/data/utils/phone_validator_round18_test.dart: PhoneValidator.isStrictValid - 旧 API 兼容 带 +86 前缀 11 位严格模式失败(只接受纯 11 位)
+00:01 +60: D:/Batch/chroniccare/test/core/shared/care_copy_round18_test.dart: CareCopy.forTrigger secondDayMissed: 漏 1 天文案
+00:01 +61: D:/Batch/chroniccare/test/core/shared/care_copy_round18_test.dart: CareCopy.forTrigger lateCheckInHabit: 晚归文案
+00:01 +62: D:/Batch/chroniccare/test/core/shared/care_copy_round18_test.dart: CareCopy.forTrigger weekendMissed: 周末漏打卡文案
+00:01 +63: D:/Batch/chroniccare/test/core/shared/care_copy_round18_test.dart: CareCopy.forTrigger weekPerfect: 连续 7 天准时文案
+00:01 +64: D:/Batch/chroniccare/test/core/shared/care_copy_round18_test.dart: CareCopy.forTrigger none: 空字符串
+00:01 +65: D:/Batch/chroniccare/test/core/shared/care_copy_round18_test.dart: CareCopy.softReminder secondDayMissed 文案存在且稳定
+00:01 +66: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskPhone 大陆 11 位 → 138****8000
+00:01 +67: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskPhone +86 前缀 → +86 138****8000
+00:01 +68: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskPhone 带空格 +86 138 0013 8000 → 同样掩码
+00:01 +69: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskPhone 短号 < 7 位原样返回
+00:01 +70: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskPhone 港澳台 8-9 位也能掩码
+00:01 +71: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskName 中文 2 字 → 张*
+00:01 +72: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskName 中文 1 字原样
+00:01 +73: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskName 中文 3 字 → 张**
+00:01 +74: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskName 英文按词保留首字母
+00:01 +75: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: maskName 空字符串
+00:01 +76: D:/Batch/chroniccare/test/core/shared/pii_safe_log_round18_test.dart: piiSafeLog debug 模式:不抛异常(developer.log 在 test 跑通)
+00:01 +77: D:/Batch/chroniccare/test/core/shared/swallow_error_round14_test.dart: swallowError does not throw on basic call
+00:01 +78: D:/Batch/chroniccare/test/core/shared/swallow_error_round14_test.dart: swallowError accepts stack trace + note
+00:01 +79: D:/Batch/chroniccare/test/core/shared/swallow_error_round14_test.dart: swallowError all params null-safe defaults
+00:02 +80: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light mode: dynamic getter 返回 ColorScheme 派生值
+00:02 +81: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light mode: dynamic getter 返回 ColorScheme 派生值
+00:02 +82: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light mode: dynamic getter 返回 ColorScheme 派生值
+00:02 +83: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light mode: dynamic getter 返回 ColorScheme 派生值
+00:02 +84: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light mode: dynamic getter 返回 ColorScheme 派生值
+00:02 +85: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light mode: dynamic getter 返回 ColorScheme 派生值
+00:02 +86: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: dark mode: dynamic getter 返回 dark 派生值
+00:02 +87: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light vs dark: surface / textPrimary 必须不同
+00:03 +88: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: light vs dark: surface / textPrimary 必须不同
+00:03 +89: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: computeNextFireTime (纯函数) 无历史 + enabled → now + days 天, 锁定 10:00
+00:03 +90: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: light mode text contrast >= 4.5:1
+00:03 +91: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: light mode text contrast >= 4.5:1
+00:03 +92: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: light mode text contrast >= 4.5:1
+00:03 +93: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: light mode text contrast >= 4.5:1
+00:03 +94: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: light mode text contrast >= 4.5:1
+00:03 +95: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: light mode text contrast >= 4.5:1
+00:03 +96: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: 配置 API 默认 enabled=false
+00:03 +97: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: dark mode text contrast >= 4.5:1
+00:03 +98: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: dark mode text contrast >= 4.5:1
+00:03 +99: D:/Batch/chroniccare/test/core/theme/app_tokens_dark_round18_test.dart: P1-22 a11y: dark mode text contrast >= 4.5:1
+00:03 +100: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: 配置 API setDays 接受 7/14/30/60/90
+00:03 +101: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: 配置 API setDays 非法值抛 ArgumentError
+00:03 +102: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: 配置 API getDays 对非法值降级到 14
+00:03 +103: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: 配置 API lastAssessmentAt 读写
+00:03 +104: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart disabled → 取消任何待响推送
+00:03 +105: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart enabled + 无评估 → 调度 now + 14 天
+00:03 +106: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart enabled + 无评估 → 调度 now + 14 天
+00:03 +107: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart enabled + 无评估 → 调度 now + 14 天
+00:03 +108: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart enabled + 无评估 → 调度 now + 14 天
+00:03 +109: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart enabled + 无评估 → 调度 now + 14 天
+00:03 +110: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart enabled + 无评估 → 调度 now + 14 天
+00:03 +111: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart enabled + 有评估 → 调度 last + 14 天
+00:03 +112: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart 有更新评估但 lastAssessmentAt 旧 → 自动同步
+00:03 +113: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAppStart 有更新评估但 lastAssessmentAt 更新 → 不覆盖
+00:03 +114: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAssessmentCompleted disabled → 不调度
+00:03 +115: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAssessmentCompleted enabled → 写 last = now + 调度 now + 14 天
+00:03 +116: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onAssessmentCompleted enabled + 30 天 → 调度 30 天后
+00:03 +117: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onSettingsChanged 等价于 onAppStart：disabled → cancel
+00:03 +118: D:/Batch/chroniccare/test/data/assessment_reminder_service_round12_test.dart: onSettingsChanged 等价于 onAppStart：enabled → 调度
+00:03 +119: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P4 fix: 导出包含 reportHistories + moodEntries
+00:03 +120: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P4 fix: 导入 v2 JSON → reportHistories + moodEntries 也被恢复
+00:03 +121: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P12 fix: 错误信息脱敏,不再泄露内部异常
+00:03 +122: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P13 fix: 坏数据不写 DB,只跳过
+00:03 +123: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: version 不匹配 → 友好错误
+00:03 +124: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P0-3: 导出包含 ventEntries 文字,不导出 audioPath
+00:03 +125: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P0-3: 纯文字 vent 条目正常导出
+00:03 +126: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P0-3: 导入 v3 ventEntries 文字 + 录音元数据,丢弃 audioPath
+00:03 +127: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P0-3: 导入 v2 (没 ventEntries 段) 也能成功,只是 ventCount = 0
+00:03 +128: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P0-3: 导入 v3 但 ventEntries 是空数组 → ventCount = 0
+00:03 +129: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P0-3: 导入时坏 vent 数据 (timestamp 无效) 跳过,不抛错
+00:03 +130: D:/Batch/chroniccare/test/data/email_service_round9_test.dart: EmailService (Mock 模式) Mock 模式发送成功
+00:03 +131: D:/Batch/chroniccare/test/data/data_export_round3_test.dart: P0-3: 导入 v3 → 再导出, 文字保留 (round-trip)
+00:03 +132: D:/Batch/chroniccare/test/data/email_service_round9_test.dart: EmailService (Mock 模式) Mock 模式不需要 API Key 也能发送
+00:04 +133: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.date 2026-07-13 → "2026-07-13"
+00:04 +134: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.date 补 0：1 月 → "01"
+00:04 +135: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.monthDay 5 月 3 日 → "05/03"
+00:04 +136: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.time 14:08 → "14:08"
+00:04 +137: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.dosage 整数剂量不显示小数
+00:04 +138: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.dosage 小数剂量显示小数
+00:04 +139: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.dosage N23 fix: 浮点边界值仍按整数显示
+00:04 +140: D:/Batch/chroniccare/test/data/formatters_round9_test.dart: Formatters.dateCompact 用于文件名：20260713
+00:04 +141: D:/Batch/chroniccare/test/data/json_codec_round3_test.dart: JsonCodec.parseTempMedNote 第二轮回归 空 JSON 对象 "{}" → fallback 到老格式 "name: desc" 解析（不会 crash）
+00:04 +142: D:/Batch/chroniccare/test/data/json_codec_round3_test.dart: JsonCodec.parseTempMedNote 第二轮回归 非法 JSON → fallback 老格式 "name: desc" 解析
+00:04 +143: D:/Batch/chroniccare/test/data/json_codec_round3_test.dart: JsonCodec.parseTempMedNote 第二轮回归 老格式 "name: desc" 含 name 中的冒号被截断（已知遗留）
+00:04 +144: D:/Batch/chroniccare/test/data/json_codec_round3_test.dart: JsonCodec.parseTempMedNote 第二轮回归 新格式: name 缺失 / null → name 空字符串
+00:04 +145: D:/Batch/chroniccare/test/data/json_codec_round3_test.dart: JsonCodec.parseTempMedNote 第二轮回归 name 含 emoji
+00:04 +146: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.encodeStringList / decodeStringList 空列表 → "[]"
+00:04 +147: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.encodeStringList / decodeStringList 中文列表
+00:04 +148: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.encodeStringList / decodeStringList 空字符串/[] 容错
+00:04 +149: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.encodeStringList / decodeStringList 非法 JSON 不抛异常
+00:04 +150: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.encodeStringList / decodeStringList 特殊字符正确转义
+00:04 +151: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.parseTempMedNote - 向后兼容 新格式 JSON：完整解析
+00:04 +152: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.parseTempMedNote - 向后兼容 老格式 "name: desc"：fallback 解析
+00:04 +153: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.parseTempMedNote - 向后兼容 老格式 没有冒号：整段作为 name
+00:04 +154: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.parseTempMedNote - 向后兼容 空/null：空字符串
+00:04 +155: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.parseTempMedNote - 向后兼容 JSON 但 name 缺失：name 为空
+00:04 +156: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.parseTempMedNote - 向后兼容 buildTempMedNote → parseTempMedNote 往返一致
+00:04 +157: D:/Batch/chroniccare/test/data/json_codec_round9_test.dart: JsonCodec.parseTempMedNote - 向后兼容 buildTempMedNote description 为空
+00:04 +158: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill 添加时直接设续方日期
+00:05 +159: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill 不传 refillAt → 存为 null
+00:05 +160: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill updateRefill 只更新续方日期, 保留其他字段
+00:05 +161: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill updateRefill 同时改提醒天数
+00:05 +162: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill updateRefill 传 null 清除续方日期
+00:05 +163: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill 不存在的 id → 返回 false
+00:05 +164: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill watchAll 仍能监听到 refillAt 变化
+00:05 +165: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: MedicationRepository.updateRefill 多个药各自独立续方设置
+00:05 +166: D:/Batch/chroniccare/test/data/medication_repository_refill_round9_test.dart: Medication schema v5 medication 包含 refillAt + refillReminderDays 字段
+00:05 +167: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +168: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +169: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +170: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +171: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +172: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +173: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +174: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +175: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +176: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → stopped: isActive=false, endDate=now
+00:05 +177: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 stopped → active: isActive=true, endDate 清空
+00:05 +178: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 active → active: 幂等（endDate 不变）
+00:05 +179: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 不存在的 id → 返回 false
+00:05 +180: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: setActive - 软停药/恢复 watchAll（含 inactive）能监听到 isActive 变化
+00:05 +181: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: update - 改 name/times/dosage 保留其他字段 改 name + times
+00:05 +182: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: update - 改 name/times/dosage 保留其他字段 改 dosage + unit
+00:05 +183: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: update - 改 name/times/dosage 保留其他字段 改 isActive + endDate（模拟对话框里的停药操作）
+00:05 +184: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: update - 改 name/times/dosage 保留其他字段 多次 update 都成功（id 不变）
+00:05 +185: D:/Batch/chroniccare/test/data/medication_repository_round9_test.dart: round 9 集成：完整编辑流程 add → setActive(false) → setActive(true) → update
+00:05 +186: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: pathFor (via handleTap + onLink) todayCheckIn → /check-in/today
+00:05 +187: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: pathFor (via handleTap + onLink) medicationCheckIn → /check-in/medication/{id}
+00:05 +188: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: pathFor (via handleTap + onLink) assessment → /assessment/{scaleId}
+00:05 +189: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: pathFor (via handleTap + onLink) safetyAlert → /check-in/today?reason=safety
+00:05 +190: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: handleTap null payload → no link set
+00:05 +191: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: handleTap empty payload → no link set
+00:05 +192: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: handleTap invalid payload → no link set
+00:05 +193: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: setLaunchPayload valid payload without router → buffered
+00:05 +194: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: setLaunchPayload null payload → no-op
+00:05 +195: D:/Batch/chroniccare/test/data/notification_navigation_round20_test.dart: reset clears all state
+00:06 +196: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse today check-in
+00:06 +197: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse medication check-in
+00:06 +198: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse medication id 必须是数字
+00:06 +199: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse assessment (PHQ-9)
+00:06 +200: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse assessment (GAD-7)
+00:06 +201: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse safety alert
+00:06 +202: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse null/空 payload
+00:06 +203: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse 错误 scheme
+00:06 +204: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse 未知 action
+00:06 +205: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.parse 空 host
+00:06 +206: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.encode 双向 today check-in
+00:06 +207: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.encode 双向 medication check-in id=42
+00:06 +208: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.encode 双向 assessment phq9
+00:06 +209: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.encode 双向 safety-alert days=3
+00:06 +210: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink.encode 双向 encode → parse 圆环对称
+00:06 +211: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink 等价 同 target + 同 args 相等
+00:06 +212: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: NotificationDeepLink 等价 不同 medId 不等
+00:06 +213: D:/Batch/chroniccare/test/data/notification_payload_round18_test.dart: payload 长度 所有 payload 都 < 200 字符（通知字段限制）
+00:06 +214: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime refillAt = null → null
+00:06 +215: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime reminderDays = 7：触发时间 = 续方日期前 7 天 9 点
+00:06 +216: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime reminderDays = 14：触发时间 = 续方日期前 14 天 9 点
+00:06 +217: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime reminderDays = 3：触发时间 = 续方日期前 3 天 9 点
+00:06 +218: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime 跨月：refillAt 8/5, reminderDays=10 → 7/26
+00:06 +219: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime 跨年：refillAt 2027-1-5, reminderDays=7 → 2026-12-29
+00:06 +220: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime 触发时间永远是 9:00（无时分秒漂移）
+00:06 +221: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime reminderDays = 0 抛 ArgumentError
+00:06 +222: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime reminderDays 负数抛 ArgumentError
+00:06 +223: D:/Batch/chroniccare/test/data/notification_service_refill_round9_test.dart: NotificationService.computeRefillFireTime 触发时间在续方日期之前（不会同日触发）
+00:06 +224: D:/Batch/chroniccare/test/data/notification_service_round19b_test.dart: NotificationService.refillNotificationId — v0.16 round 19B medId=0 → id=6000 (in range)
+00:06 +225: D:/Batch/chroniccare/test/data/notification_service_round19b_test.dart: NotificationService.refillNotificationId — v0.16 round 19B medId=1 → id=6001 (in range)
+00:06 +226: D:/Batch/chroniccare/test/data/notification_service_round19b_test.dart: NotificationService.refillNotificationId — v0.16 round 19B medId=999 → id=6999 (修前 in range [6000, 7000))
+00:06 +227: D:/Batch/chroniccare/test/data/notification_service_round19b_test.dart: NotificationService.refillNotificationId — v0.16 round 19B medId=1000 → id=7000 (修前 OUT of range [6000, 7000) — bug!)
+00:06 +228: D:/Batch/chroniccare/test/data/notification_service_round19b_test.dart: NotificationService.refillNotificationId — v0.16 round 19B medId=10000 → id=16000 (修前 OUT of range — bug!)
+00:06 +229: D:/Batch/chroniccare/test/data/notification_service_round19b_test.dart: NotificationService.refillNotificationId — v0.16 round 19B medId=50000 → id=56000 (修前 OUT of range — bug!)
+00:06 +230: D:/Batch/chroniccare/test/data/notification_service_round4_test.dart: NotificationService 常量 snooze base id 是 4000（避免和 medication / soft reminder 冲突）
+00:07 +231: D:/Batch/chroniccare/test/data/preset_medication_templates_round18_test.dart: preset_medication_templates 4 个预置方案全部存在
+00:07 +232: D:/Batch/chroniccare/test/data/preset_medication_templates_round18_test.dart: preset_medication_templates 每个方案的 id 唯一
+00:07 +233: D:/Batch/chroniccare/test/data/preset_medication_templates_round18_test.dart: preset_medication_templates 每个方案至少 1 个药、每个药有剂量+单位+时间
+00:07 +234: D:/Batch/chroniccare/test/data/preset_medication_templates_round18_test.dart: preset_medication_templates 同一药内时间点不重复
+00:07 +235: D:/Batch/chroniccare/test/data/preset_medication_templates_round18_test.dart: preset_medication_templates 联合方案 (combo_*) 至少 2 个药
+00:07 +236: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 关闭时 不触发,即使长期没打卡
+00:07 +237: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 开启时 正常(<阈值) → ok
+00:07 +238: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 开启时 新用户(没数据) → noData
+00:07 +239: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 开启时 超过阈值 + 有联系人 → 触发告警 + 发短信 + 推本地
+00:07 +240: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 开启时 同一天第二次触发 → alertedToday（不重复发）
+00:07 +241: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 开启时 DND 时段内 → dndSuppressed
+00:07 +242: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 开启时 超阈值但没联系人 → noContacts
+00:07 +243: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: SafetyWatch 开启时 SMS 全失败 → contactsFailed > 0
+00:07 +244: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: 阈值合法性 拒绝 < 1 天的阈值
+00:07 +245: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: 阈值合法性 拒绝 > 14 天的阈值
+00:07 +246: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: displayMessage 各 kind 都有非空文案
+00:07 +247: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: onCheckIn 集成 onCheckIn 在阈值内 → ok,不发短信
+00:07 +248: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: v0.17 round 14 (P3-3) 边界 case 阈值 = 1, daysSinceLast = 1 → 触发 (inclusive 边界)
+00:07 +249: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: v0.17 round 14 (P3-3) 边界 case 阈值 = 1, daysSinceLast = 0 → OK (0 < 1 不触发)
+00:07 +250: D:/Batch/chroniccare/test/data/safety_watch_service_round12_test.dart: v0.17 round 14 (P3-3) 边界 case DND 跨天 (22-08): 当前 hour 在范围内 → dndSuppressed
+00:07 +251: D:/Batch/chroniccare/test/data/sort_assumption_round19b_test.dart: v0.16 round 19B: explicit sort, no implicit DESC assumption SafetyWatch 即使数据插入顺序不是按时间,lastCheckIn 仍是最新
+00:08 +252: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: VentAudioStorage constants encryptedSuffix is .m4a.enc
+00:08 +253: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: VentAudioStorage constants legacyPlainSuffix is .m4a
+00:08 +254: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: VentAudioStorage constructor can be created with default EncryptionService
+00:08 +255: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: VentAudioStorage constructor can be created with injected EncryptionService
+00:08 +256: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: newAudioPath returns path ending with encryptedSuffix
+00:08 +257: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: deleteTempFile non-existent file does not throw
+00:08 +258: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: deleteAudio non-existent file returns true (idempotent)
+00:08 +259: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: deleteAll non-existent directory returns 0
+00:08 +260: D:/Batch/chroniccare/test/data/vent_audio_storage_round20_test.dart: totalSizeBytes non-existent directory returns 0
+00:08 +261: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - PHQ-9 0-4 → 0 (minimal)
+00:08 +262: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - PHQ-9 5-9 → 1 (mild)
+00:08 +263: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - PHQ-9 10-14 → 2 (moderate)
+00:08 +264: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - PHQ-9 15-19 → 3 (moderatelySevere)
+00:08 +265: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - PHQ-9 20-27 → 4 (severe)
+00:08 +266: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - GAD-7 0-4 → 0
+00:08 +267: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - GAD-7 5-9 → 1
+00:08 +268: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - GAD-7 10-14 → 2
+00:08 +269: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityRankFor - GAD-7 15-21 → 3
+00:08 +270: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityLabelFor PHQ-9 各档中文名
+00:08 +271: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: severityLabelFor GAD-7 各档中文名
+00:08 +272: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 空 records 抛 ArgumentError
+00:08 +273: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 只有 1 条记录 → firstAssessment
+00:08 +274: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 2 条记录：分数下降 + 严重度下降 = improved
+00:08 +275: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 2 条记录：分数上升 + 严重度上升 = worsened
+00:08 +276: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 2 条记录：分数上升但严重度不变 = unchanged
+00:08 +277: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 2 条记录：分数下降但严重度不变 = unchanged
+00:08 +278: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 3+ 条记录：取最后两条
+00:08 +279: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords GAD-7 量表独立工作
+00:08 +280: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 跨边界：4 → 5 算 improved（rank 0 → 1）
+00:08 +281: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 同一时间多次评估：用 records.last（最晚）作为 current
+00:08 +282: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 接受 DESC 排序输入也能正确算 current / previous
+00:08 +283: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: fromRecords 接受乱序输入也能正确算 current / previous
+00:08 +284: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: AssessmentHistory 空 records
+00:08 +285: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: AssessmentHistory 多条记录的平均/最小/最大
+00:08 +286: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: AssessmentHistory 单条记录
+00:08 +287: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: AssessmentComparison getters (UI helper) trendLabel 中文
+00:08 +288: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: AssessmentComparison getters (UI helper) trendSymbol 箭头
+00:08 +289: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: AssessmentComparison getters (UI helper) deltaLabel：null 当无 previous
+00:08 +290: D:/Batch/chroniccare/test/domain/assessment_comparison_round18_test.dart: AssessmentComparison getters (UI helper) deltaLabel：上升 / 下降 / 不变
+00:08 +291: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity type=normal → null（不是量表）
+00:08 +292: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity type=temp → null
+00:08 +293: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity type=phq9 但 note 为空 → null
+00:08 +294: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity type=phq9 + 合法 JSON → 正确反序列化
+00:09 +295: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity type=gad7 + 合法 JSON → 正确反序列化
+00:09 +296: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity JSON 损坏 → null（不抛异常）
+00:09 +297: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity JSON 缺 total 字段 → total=0
+00:09 +298: D:/Batch/chroniccare/test/domain/assessment_record_round12_test.dart: AssessmentRecord.tryFromEntity JSON 缺 scores 字段 → scores=[]
+00:09 +299: D:/Batch/chroniccare/test/domain/care_engine_copy_round18_test.dart: CareEngine 文案 ↔ CareCopy 一致性 secondDayMissed: 漏 1 天后第二天 10 点后
+00:09 +300: D:/Batch/chroniccare/test/domain/care_engine_copy_round18_test.dart: CareEngine 文案 ↔ CareCopy 一致性 lateCheckInHabit: 最近 3 天 22 点后打卡
+00:09 +301: D:/Batch/chroniccare/test/domain/care_engine_copy_round18_test.dart: CareEngine 文案 ↔ CareCopy 一致性 weekendMissed: 周末漏打卡
+00:09 +302: D:/Batch/chroniccare/test/domain/care_engine_copy_round18_test.dart: CareEngine 文案 ↔ CareCopy 一致性 weekPerfect: 最近 7 天每天 22 点前都打卡
+00:09 +303: D:/Batch/chroniccare/test/domain/care_engine_copy_round18_test.dart: CareEngine 文案 ↔ CareCopy 一致性 none: 空 trigger (打卡列表空)
+00:09 +304: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine fire() (v0.17 round 5) trigger.shouldFire = false → 不调 notificationService.showNow
+00:09 +305: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine fire() (v0.17 round 5) trigger.shouldFire = true → 调 showNow + 标题+body+id
+00:09 +306: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine fire() (v0.17 round 5) showNow 抛异常 → 不崩 (try/catch 包了)
+00:09 +307: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case 空 checkIns 列表 → none
+00:09 +308: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case 传入未排序数据也能正确取最近一条 (P2 隐式 sort 修复)
+00:09 +309: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case _isWeekendMissed: 周六 17:59 不应触发 (now.hour < 18)
+00:09 +310: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case _isWeekendMissed: 周六 18:01 应触发
+00:09 +311: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case _isWeekPerfect: 7 天前有 22 点后打卡,但最近 7 天 22 点前 → weekPerfect
+00:09 +312: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case _isLateCheckInHabit: 22:00 整点打卡算 "22 点后"
+00:09 +313: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case secondDayMissed: 36h 内 (< 36) → 不触发
+00:09 +314: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case secondDayMissed: 36h 后 + now.hour >= 10 → 触发
+00:09 +315: D:/Batch/chroniccare/test/domain/care_engine_round17_test.dart: CareEngine 边界 case secondDayMissed: 36h 后但 now.hour < 10 (早上 8 点) → 不触发
+00:09 +316: D:/Batch/chroniccare/test/domain/care_engine_round19_test.dart: CareEngine.evaluate 空列表 → none
+00:09 +317: D:/Batch/chroniccare/test/domain/care_engine_round19_test.dart: CareEngine.evaluate 漏 1 天后 14 点还没打卡 → secondDayMissed
+00:09 +318: D:/Batch/chroniccare/test/domain/care_engine_round19_test.dart: CareEngine.evaluate 最近 3 天都在 22 点后打卡 → lateCheckInHabit
+00:09 +319: D:/Batch/chroniccare/test/domain/care_engine_round19_test.dart: CareEngine.evaluate 最近 7 天每天 22 点前都打卡 → weekPerfect
+00:09 +320: D:/Batch/chroniccare/test/domain/care_engine_round19_test.dart: CareEngine.evaluate type!=normal 不参与评估
+00:09 +321: D:/Batch/chroniccare/test/domain/care_engine_round19_test.dart: shouldFire none → false
+00:09 +322: D:/Batch/chroniccare/test/domain/care_engine_round19_test.dart: shouldFire 其他类型 → true
+00:09 +323: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P2 fix: 36.5h 触发 secondDayMissed (inMinutes 不用 inHours)
+00:10 +324: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P2 fix: 35.5h 不触发 secondDayMissed
+00:10 +325: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P3 fix: 1 年前 1 次晚打卡,最近 7 天都 21 点准时 → 触发 weekPerfect
+00:10 +326: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P3 fix: 最近 7 天内 1 次晚打卡 → 不触发 weekPerfect
+00:10 +327: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P7 fix: 周六 20 点还没打卡 → 触发 weekendMissed
+00:10 +328: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P7 fix: 周六 10 点,前一个周日打了卡 → 不触发 (今天没过 18 点)
+00:10 +329: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P7 fix: 周六 20 点,前一个周日打了卡 → 优先 secondDayMissed (36h+ 远间隔)
+00:10 +330: D:/Batch/chroniccare/test/domain/care_engine_round3_test.dart: CareEngine 第三轮审查 fix P7 fix: 周六 20 点,周日 7-5 没打卡(只周五 7-10) → weekendMissed
+00:10 +331: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: CheckInToEntity (Drift → Entity) 基础字段正确映射
+00:10 +332: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: CheckInToEntity (Drift → Entity) type string → CheckInType 枚举
+00:10 +333: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: CheckInToEntity (Drift → Entity) 未知 type 字符串 fallback 到 normal
+00:10 +334: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: CheckInToEntity (Drift → Entity) medicationId / note 可空
+00:10 +335: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: CheckInEntityToDrift (Entity → Companion) type enum → wire string
+00:10 +336: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: CheckInEntityToDrift (Entity → Companion) 可空字段用 Value<T?> 包装
+00:10 +337: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: Round trip (Drift → Entity → Drift) 完整数据无丢失
+00:10 +338: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: Round trip (Drift → Entity → Drift) 所有 4 种 type round-trip
+00:10 +339: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: 业务方法 isNormal / isTemp / isAssessment / isPhq9 / isGad7
+00:10 +340: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: 业务方法 isForMedication 严格相等
+00:10 +341: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: 业务方法 copyWith 基础字段
+00:10 +342: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: 业务方法 copyWith 可空字段用 Value<>, 能"清空"
+00:10 +343: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: 业务方法 copyWith 不传可空字段保留原值
+00:10 +344: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: 等值 == hashCode 字段全等才相等
+00:10 +345: D:/Batch/chroniccare/test/domain/check_in_entity_round12_test.dart: 集成：从 DB 读 CheckIn → toEntity → UI 流程 内存 DB 写一条 → 读 → 转 entity → 字段一致
+00:10 +346: D:/Batch/chroniccare/test/domain/check_in_usecases_round12b_test.dart: RecordCheckInUseCase 调 repo.checkIn，medicationId 透传
+00:10 +347: D:/Batch/chroniccare/test/domain/check_in_usecases_round12b_test.dart: RecordCheckInUseCase 不传 medicationId = null
+00:10 +348: D:/Batch/chroniccare/test/domain/check_in_usecases_round12b_test.dart: RecordCheckInUseCase at 注入时间（测试用）
+00:10 +349: D:/Batch/chroniccare/test/domain/check_in_usecases_round12b_test.dart: RecordCheckInUseCase P0-10: check-in 后同步调 userProfileRepo.updateLastCheckIn
+00:10 +350: D:/Batch/chroniccare/test/domain/check_in_usecases_round12b_test.dart: RecordTempMedicationUseCase 调 repo.addTempMedication，name/note 透传
+00:10 +351: D:/Batch/chroniccare/test/domain/check_in_usecases_round12b_test.dart: TriggerReminderUseCase level=none → 返回 false
+00:10 +352: D:/Batch/chroniccare/test/domain/check_in_usecases_round12b_test.dart: TriggerReminderUseCase level=medium → 返回 true
+00:10 +353: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: ContactToEntity (Drift → Entity) 基础字段正确映射
+00:10 +354: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: ContactToEntity (Drift → Entity) isActive=true 是默认（与 schema 一致）
+00:10 +355: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: ContactEntityToDrift (Entity → row / Companion) toDriftRow 完整 row
+00:10 +356: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: ContactEntityToDrift (Entity → row / Companion) toCompanion 默认 sortOrder=0 isActive=true
+00:10 +357: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: Round trip (Drift → Entity → Drift) 完整数据无丢失
+00:10 +358: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 业务方法 active == isActive
+00:10 +359: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 业务方法 isValidPhone 11 位数字通过
+00:10 +360: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 业务方法 isValidPhone +86 前缀通过
+00:10 +361: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 业务方法 isValidPhone 非数字 / 长度错
+00:10 +362: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 业务方法 bySortOrder 静态比较器
+00:10 +363: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 业务方法 copyWith 基础字段
+00:10 +364: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 业务方法 copyWith isActive
+00:10 +365: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 等值 == hashCode 字段全等才相等
+00:10 +366: D:/Batch/chroniccare/test/domain/contact_entity_round12_test.dart: 集成：从 DB 读 Contact → toEntity → UI 流程 内存 DB 写一条 → 读 → 转 entity → 字段一致
+00:11 +367: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 中国大陆 11 位 1[3-9] 开头有效
+00:11 +368: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 中国大陆 +86 前缀有效
+00:11 +369: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 中国大陆 1[0-2] 开头无效
+00:11 +370: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 港澳台/国际 HK 8 位 [45789] 有效
+00:11 +371: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 港澳台/国际 MO 8 位 6 开头有效
+00:11 +372: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 港澳台/国际 TW 9 位 9 开头有效
+00:11 +373: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 港澳台/国际 国际 E.164 有效
+00:11 +374: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 边界 空 / 纯空格 / null-like 无效
+00:11 +375: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 边界 0 开头 11 位无效(防大陆座机)
+00:11 +376: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 边界 + 后面 5 位或 17 位无效
+00:11 +377: D:/Batch/chroniccare/test/domain/contact_entity_round18_test.dart: ContactEntity.isValidPhone - 边界 + 但区号跟号码不匹配:8 位 6 开头带 + 走 intl
+00:11 +378: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 完全空：events=[]
+00:11 +379: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 跨日截断：前一天的打卡不算
+00:11 +380: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 跨日截断：次日凌晨 0 点不算当天
+00:11 +381: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData normal 打卡：算入 totalCheckIns
+00:11 +382: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData temp 打卡：独立计数
+00:11 +383: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData temp 打卡老格式 "name: desc" 也能解析
+00:11 +384: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 评估 phq9：解析 total 字段
+00:11 +385: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData gad7 评估：title 正确
+00:11 +386: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData medicationId 反查 name
+00:11 +387: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData medicationId 在 medications 列表里找不到 → 退化为"每日打卡"
+00:11 +388: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 情绪记录：emoji + 标签 + 备注
+00:11 +389: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 多条情绪：bestMoodScore / worstMoodScore
+00:11 +390: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 事件按时间正序
+00:11 +391: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 混合：normal + temp + assessment + mood 全部识别
+00:11 +392: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData 空 note 的 temp：title 退化
+00:11 +393: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData note 为 null 的 temp：title 退化
+00:11 +394: D:/Batch/chroniccare/test/domain/day_detail_round10_test.dart: DayDetailCalculator.fromData date 接受任意时间：内部取日期
+00:11 +395: D:/Batch/chroniccare/test/domain/email_template_round19_test.dart: EmailTemplate buildSubject 包含用户姓名和天数
+00:11 +396: D:/Batch/chroniccare/test/domain/email_template_round19_test.dart: EmailTemplate buildBody 包含温柔措辞
+00:11 +397: D:/Batch/chroniccare/test/domain/email_template_round19_test.dart: EmailTemplate buildBody 包含最后吃药时间
+00:11 +398: D:/Batch/chroniccare/test/domain/email_template_round19_test.dart: EmailTemplate buildBody 包含常吃药信息（v0.6: 显示 dosage + unit）
+00:11 +399: D:/Batch/chroniccare/test/domain/email_template_round19_test.dart: EmailTemplate buildBody 包含免责声明
+00:11 +400: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: gad7 常量 7 道题
+00:11 +401: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: gad7 常量 4 个选项 0-3
+00:11 +402: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale 接口契约 id = gad7
+00:11 +403: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale 接口契约 displayName 非空
+00:11 +404: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale 接口契约 totalRange = 21
+00:11 +405: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale 接口契约 items / options 不为空且长度一致
+00:11 +406: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 0 → 几乎没有
+00:11 +407: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 4 → 几乎没有（边界）
+00:11 +408: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 5 → 轻度
+00:11 +409: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 9 → 轻度（边界）
+00:11 +410: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 10 → 中度（开始建议就医）
+00:11 +411: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 14 → 中度（边界）
+00:11 +412: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 15 → 重度（强烈建议就医）
+00:11 +413: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.computeResult 严重度切分 21 → 重度（最大）
+00:11 +414: D:/Batch/chroniccare/test/domain/gad7_round16_test.dart: Gad7Scale.detectCrisis GAD-7 不触发危机（无自杀念头相关题）
+00:12 +415: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationToEntity (Drift → Entity) 基础字段正确映射
+00:12 +416: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationToEntity (Drift → Entity) timesJson 解析为 List<HourMinute>
+00:12 +417: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationToEntity (Drift → Entity) 空 timesJson → times = const []
+00:12 +418: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationToEntity (Drift → Entity) 续方字段（refillAt / refillReminderDays）保留
+00:12 +419: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntityToDrift (Entity → Drift row) 基础字段正确
+00:12 +420: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntityToDrift (Entity → Drift row) times 序列化为 JSON
+00:12 +421: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntityToDrift (Entity → Drift row) 空 times → "[]"
+00:12 +422: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: Round trip (Drift → Entity → Drift) 完整数据无丢失
+00:12 +423: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 isInUse = isActive
+00:12 +424: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 hasRefill: refillAt != null
+00:12 +425: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 isRefillOverdue: refillAt 过了"次日" → true
+00:12 +426: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 isRefillOverdue: 不依赖时分秒，只比日期
+00:12 +427: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 isInRefillWindow: [refillAt - reminderDays, refillAt 当天] 都算窗口
+00:12 +428: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 isInRefillWindow: 边界 — windowStart 当天算 in
+00:12 +429: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 copyWith: 基础字段
+00:12 +430: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 copyWith: 可空字段用 Value<>, 能"清空" endDate
+00:12 +431: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 copyWith: 不传 endDate 应保留原值
+00:12 +432: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 copyWith: 不传 refillAt 应保留原值
+00:12 +433: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 copyWith: 传 Value(refillAt: null) 应清空
+00:12 +434: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 ==, hashCode: 字段全等才相等
+00:12 +435: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: MedicationEntity 业务方法 ==, hashCode: times 列表也参与比较
+00:12 +436: D:/Batch/chroniccare/test/domain/medication_entity_round11_test.dart: 集成：从 DB 读 Medication → toEntity → UI 流程 内存 DB 写一条 → 读 → 转 entity → 字段一致
+00:12 +437: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 空数据：报告标记 hasAnyData=false
+00:12 +438: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 窗口边界：[today - 13, today]（共 14 天）
+00:12 +439: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 窗口 = 7 天：[today - 6, today]
+00:12 +440: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 窗口 = 30 天：[today - 29, today]
+00:12 +441: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 期望次数 = 每日次数 × 窗口天数
+00:12 +442: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute timesJson 为空：按每日 1 次计算（兜底）
+00:12 +443: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 完全按时服药：依从率 100%，无漏服
+00:12 +444: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 漏服 1 天：实际天数 13/14
+00:12 +445: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 同一天多次打卡：按"天"算 1 天，次数照加
+00:12 +446: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 窗口外的打卡不计入
+00:12 +447: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 窗口外的打卡不影响漏服日期
+00:12 +448: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 多药独立统计
+00:12 +449: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 用户多打：补服维度拆出，依从率 clamp 到 100%
+00:12 +450: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 按时/漏服都有的混合场景
+00:12 +451: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 补服 + 漏服混合：按时 = onTimeDoses
+00:12 +452: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 临时用药：按时间倒序，note "药名: 备注" 解析
+00:12 +453: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 临时用药：note 没有冒号 → 整段作为药名
+00:12 +454: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReport.compute 非 normal 非 temp 的打卡（如 phq9 评估）不计入
+00:12 +455: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReportData.toReportString 空数据：渲染"暂无用药数据"
+00:12 +456: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReportData.toReportString 完整数据：含常吃药 + 临时用药 + 总览
+00:12 +457: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReportData.toReportString 漏服时显示具体日期
+00:12 +458: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReportData.toReportString 整数剂量不显示小数点
+00:12 +459: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReportData.toReportString 小数剂量显示小数
+00:12 +460: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: MedicationReportData.toReportString 用户名为空时显示"未设置"
+00:12 +461: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B3: 已停药历史保留 isActive=false 的药仍计入报告
+00:12 +462: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B6: adherencePct 无期望时返回 null 空 meds + 空 checkIns：adherencePct 为 null
+00:12 +463: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B6: adherencePct 无期望时返回 null 只有临时用药：adherencePct 仍为 null（无常吃药）
+00:12 +464: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B6: adherencePct 无期望时返回 null 有常吃药且按时：adherencePct = 100
+00:12 +465: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B6: adherencePct 无期望时返回 null 报告文本：无期望时显示 "—"，不显示 "0%"
+00:12 +466: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B7: 临时用药 JSON 格式 新格式 note 直接被识别
+00:12 +467: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B7: 临时用药 JSON 格式 老格式 "name: desc" 仍兼容
+00:12 +468: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B7: 临时用药 JSON 格式 name 中含冒号：新格式正确切分
+00:12 +469: D:/Batch/chroniccare/test/domain/medication_report_round18_test.dart: B7: 临时用药 JSON 格式 老格式下 name 含冒号会被截断（已知遗留，等老数据迁移完移除）
+00:12 +470: D:/Batch/chroniccare/test/domain/mood_entry_4d_round18_test.dart: MoodEntryEntity 4 维度 老数据(只 score)isFull4D = false
+00:12 +471: D:/Batch/chroniccare/test/domain/mood_entry_4d_round18_test.dart: MoodEntryEntity 4 维度 新数据 4 维全填 isFull4D = true
+00:12 +472: D:/Batch/chroniccare/test/domain/mood_entry_4d_round18_test.dart: MoodEntryEntity 4 维度 部分填(只有 energy)isFull4D = false
+00:12 +473: D:/Batch/chroniccare/test/domain/mood_entry_4d_round18_test.dart: MoodEntryEntity 4 维度 copyWith 保留 4 维
+00:12 +474: D:/Batch/chroniccare/test/domain/mood_entry_4d_round18_test.dart: MoodEntryEntity 4 维度 == 和 hashCode 包含 4 维
+00:13 +475: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: MoodEntryToEntity (Drift → Entity) 基础字段正确映射
+00:13 +476: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: MoodEntryToEntity (Drift → Entity) tagsJson 完整保留（不解析在 toEntity 阶段）
+00:13 +477: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: MoodEntryEntityToDrift (Entity → Companion) toCompanion 字段全包
+00:13 +478: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: Round trip (Drift → Entity → Drift) 完整数据无丢失
+00:13 +479: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 tags getter 解析 tagsJson
+00:13 +480: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 tags getter 非法 JSON 兜底为空
+00:13 +481: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 tags getter 空 tagsJson 兜底为空
+00:13 +482: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 isValidScore 1-5 通过
+00:13 +483: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 isValidScore 0 / 6 / -1 / 99 不通过
+00:13 +484: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 copyWith 基础字段
+00:13 +485: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 copyWith 可空 note 用 Value<>, 能"清空"
+00:13 +486: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 copyWith 不传 note 保留原值
+00:13 +487: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 业务方法 默认值 tagsJson="[]"
+00:13 +488: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 等值 == hashCode 字段全等才相等
+00:13 +489: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 等值 tagsJson 不同则不等
+00:13 +490: D:/Batch/chroniccare/test/domain/mood_entry_entity_round12_test.dart: 集成：从 DB 读 MoodEntry → toEntity → UI 流程 内存 DB 写一条 → 读 → 转 entity → 字段一致
+00:13 +491: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 0 → minimal
+00:13 +492: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 4 → minimal（边界）
+00:13 +493: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 5 → mild
+00:13 +494: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 9 → mild（边界）
+00:13 +495: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 10 → moderate（开始建议就医）
+00:13 +496: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 19 → moderatelySevere
+00:13 +497: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 20 → severe（强烈建议就医）
+00:13 +498: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: Phq9Result.fromTotal 27 → severe（最大）
+00:13 +499: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: phq9 常量 9 道题
+00:13 +500: D:/Batch/chroniccare/test/domain/phq9_round12_test.dart: phq9 常量 4 个选项 0-3
+00:13 +501: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler shouldSendAlert 没最后打卡 → false
+00:13 +502: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler shouldSendAlert 24h 没打卡（< 48h）→ false
+00:13 +503: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler shouldSendAlert 48h 没打卡 → true
+00:13 +504: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler shouldSendAlert 72h 没打卡 → true
+00:13 +505: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler selectFirstContact 空列表 → null
+00:13 +506: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler selectFirstContact 只有禁用联系人 → null
+00:13 +507: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler selectFirstContact 1 个联系人 → 返回该联系人
+00:13 +508: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler selectFirstContact 多个联系人 → 返回 sortOrder 最小
+00:13 +509: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler selectFirstContact 多个联系人 + 禁用 → 跳过禁用返回第一个启用的
+00:13 +510: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler hoursSinceLastCheckIn - 没记录 → -1
+00:13 +511: D:/Batch/chroniccare/test/domain/reminder_scheduler_round12_test.dart: ReminderScheduler hoursSinceLastCheckIn - 24h 前 → 24
+00:13 +512: D:/Batch/chroniccare/test/domain/scale_registry_round18_test.dart: ScaleRegistry.allScales 至少包含 PHQ-9 + GAD-7
+00:13 +513: D:/Batch/chroniccare/test/domain/scale_registry_round18_test.dart: ScaleRegistry.allScales 顺序固定：PHQ-9 在前
+00:13 +514: D:/Batch/chroniccare/test/domain/scale_registry_round18_test.dart: ScaleRegistry.scaleById phq9 → Phq9Scale
+00:13 +515: D:/Batch/chroniccare/test/domain/scale_registry_round18_test.dart: ScaleRegistry.scaleById gad7 → Gad7Scale
+00:14 +516: D:/Batch/chroniccare/test/domain/scale_registry_round18_test.dart: ScaleRegistry.scaleById 未知 id → null
+00:14 +517: D:/Batch/chroniccare/test/domain/scale_registry_round18_test.dart: 量表数据完整性 所有量表的 items / options / totalRange 一致
+00:14 +518: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 空列表 → 0
+00:14 +519: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 只有临时吃药 → 0
+00:14 +520: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 今天打卡 → 1
+00:14 +521: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 连续 3 天（24h 间隔）→ 3
+00:14 +522: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 连续 7 天 → 7
+00:14 +523: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 今天 + 前天（漏昨天，gap 48h）→ 1（中断）
+00:14 +524: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 今天 + 昨天 + 前天（漏 1 天）→ 2
+00:14 +525: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 今天 + 3 天前（gap 72h+）→ 0
+00:14 +526: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 同一天多次打卡 → 算 1 天
+00:14 +527: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 24h 间隔刚好边界 → 连续
+00:14 +528: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator 48h 间隔 → 中断
+00:14 +529: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator shouldShowStreakBroken 今天打卡了 → false
+00:14 +530: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator shouldShowStreakBroken 昨天没打卡（gap 24h+）→ true
+00:14 +531: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator unsorted input（v0.16 round 19 fix） calculate 接受 ASC 排序的输入,结果跟 DESC 一致
+00:14 +532: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator unsorted input（v0.16 round 19 fix） calculate 接受乱序输入也能正确算
+00:14 +533: D:/Batch/chroniccare/test/domain/streak_calculator_round19_test.dart: StreakCalculator unsorted input（v0.16 round 19 fix） shouldShowStreakBroken 接受乱序输入也能正确判断
+00:14 +534: D:/Batch/chroniccare/test/domain/streak_calculator_round3_test.dart: P1 fix: streak_calculator 36h 边界 (inMinutes vs inHours) 36.5h 前最后一次打卡 → streak = 0 (旧逻辑会误判为非零)
+00:14 +535: D:/Batch/chroniccare/test/domain/streak_calculator_round3_test.dart: P1 fix: streak_calculator 36h 边界 (inMinutes vs inHours) 35.5h 前最后一次打卡 → streak = 1 (35.5h 内, 连续 1 天)
+00:14 +536: D:/Batch/chroniccare/test/domain/streak_calculator_round3_test.dart: P1 fix: streak_calculator 36h 边界 (inMinutes vs inHours) 完全连续 3 天:36h 边界之上仍能算连续 3 天
+00:14 +537: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.shiftMonth 正数 = 下个月
+00:14 +538: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.shiftMonth 负数 = 上个月
+00:14 +539: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.shiftMonth 跨年
+00:14 +540: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.shiftMonth 跨大月（1月→2月 / 31天）
+00:14 +541: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar 返回 42 格（6行 × 7列）
+00:14 +542: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar cell.weekday 从 1 周一开始（周一=1, ..., 周日=7）
+00:14 +543: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar byDate 只含当月日期（不含上月末尾/下月开头）
+00:14 +544: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar 空数据：所有 cell.isEmpty=true
+00:14 +545: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar normal 打卡计入 hasNormalCheckIn
+00:14 +546: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar temp 打卡计入 checkInCount 但不计入 hasNormalCheckIn
+00:14 +547: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar assessment 计入 checkInCount（药报告 + 评估合并）
+00:14 +548: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar 当天最高情绪分：多次 moodEntry 取 max
+00:14 +549: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar 打卡 + 情绪 同时存在：两个字段都填
+00:14 +550: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar 跨天打卡：只算当天
+00:14 +551: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar 2月（28 / 29天）byDate 长度正确
+00:14 +552: D:/Batch/chroniccare/test/domain/trend_calculator_round6_test.dart: TrendCalculator.monthlyCalendar 1月1日是周五：周一是 12/30
+00:14 +553: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: VentEntryEntity 业务方法 空条目（text=null, audio=null）→ isEmpty=true, 其他 false
+00:15 +554: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: VentEntryEntity 业务方法 text 空字符串 → hasText=false（trim 后为空）
+00:15 +555: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: VentEntryEntity 业务方法 text 有内容 → hasText=true
+00:15 +556: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: VentEntryEntity 业务方法 audio 路径有内容 → hasAudio=true
+00:15 +557: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: VentEntryEntity 业务方法 audio 路径是空字符串 → hasAudio=false
+00:15 +558: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: VentEntryEntity 业务方法 text + audio 同时有 → isMixed=true
+00:15 +559: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: durationLabel null → 空字符串
+00:15 +560: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: durationLabel 0 秒 → "0秒"
+00:15 +561: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: durationLabel 23 秒 → "23秒"
+00:15 +562: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: durationLabel 60 秒（整分）→ "1分"（不带秒数）
+00:15 +563: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: durationLabel 83 秒 → "1分23秒"
+00:15 +564: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: durationLabel 65 秒 → "1分05秒"（秒数补 0）
+00:15 +565: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: durationLabel 300 秒 → "5分"
+00:15 +566: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: copyWith 不传任何字段 → 复制所有原字段
+00:15 +567: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: copyWith 只改 id → 其他不动
+00:15 +568: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: copyWith 改时间戳 → 其他不动
+00:15 +569: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: copyWith 改 audioPath → 其他不动
+00:15 +570: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: 相等性 字段全相同 → ==
+00:15 +571: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: 相等性 id 不同 → !=
+00:15 +572: D:/Batch/chroniccare/test/domain/vent_entry_entity_round18_test.dart: 相等性 contentText 不同 → !=
+00:15 +573: D:/Batch/chroniccare/test/presentation/app_root_round17_midnight_test.dart: nextMidnightRefresh (v0.17 round 4 跨 midnight 自动 refresh) 0:00:00 时返回 ~5 秒（buffer）
+00:15 +574: D:/Batch/chroniccare/test/presentation/app_root_round17_midnight_test.dart: nextMidnightRefresh (v0.17 round 4 跨 midnight 自动 refresh) 12:00:00 时返回 12h + 5s
+00:15 +575: D:/Batch/chroniccare/test/presentation/app_root_round17_midnight_test.dart: nextMidnightRefresh (v0.17 round 4 跨 midnight 自动 refresh) 23:59:30 时返回 35s
+00:15 +576: D:/Batch/chroniccare/test/presentation/app_root_round17_midnight_test.dart: nextMidnightRefresh (v0.17 round 4 跨 midnight 自动 refresh) 跨月边界 7月31 23:59:50 → 8月1 00:00:05 = 15s
+00:15 +577: D:/Batch/chroniccare/test/presentation/app_root_round17_midnight_test.dart: nextMidnightRefresh (v0.17 round 4 跨 midnight 自动 refresh) 跨年边界 12月31 23:59:55 → 1月1 00:00:05 = 10s
+00:15 +578: D:/Batch/chroniccare/test/presentation/app_root_round17_midnight_test.dart: nextMidnightRefresh (v0.17 round 4 跨 midnight 自动 refresh) 永远是正数（即便调用时刻紧贴 00:00:05 后）
+00:16 +579: D:/Batch/chroniccare/test/presentation/app_shell_round17_test.dart: 窄屏 (< 840) 不显示 NavigationRail
+00:17 +580: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:17 +581: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:17 +582: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:17 +583: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:17 +584: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:17 +585: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:17 +586: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:17 +587: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:18 +588: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:18 +589: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:18 +590: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:18 +591: D:/Batch/chroniccare/test/presentation/assessment_history_round13b_test.dart: 空记录 → "还没有评估记录"
+00:18 +592: D:/Batch/chroniccare/test/presentation/app_shell_round17_test.dart: 点 NavigationRail 跳页
+00:18 +593: D:/Batch/chroniccare/test/presentation/check_in_button_round17_test.dart: CheckInButton 状态过渡（v0.17 round 1 / A3） 未打卡 → 已打卡 文字切换（AnimatedSwitcher）
+00:18 +594: D:/Batch/chroniccare/test/presentation/check_in_button_round17_test.dart: CheckInButton 状态过渡（v0.17 round 1 / A3） 未打卡 → 已打卡 文字切换（AnimatedSwitcher）
+00:19 +595: D:/Batch/chroniccare/test/presentation/check_in_button_round17_test.dart: CheckInButton 状态过渡（v0.17 round 1 / A3） 未打卡 → 已打卡 文字切换（AnimatedSwitcher）
+00:19 +596: D:/Batch/chroniccare/test/presentation/check_in_button_round17_test.dart: CheckInButton 状态过渡（v0.17 round 1 / A3） 未打卡 → 已打卡 文字切换（AnimatedSwitcher）
+00:19 +597: D:/Batch/chroniccare/test/presentation/check_in_button_round17_test.dart: CheckInButton 状态过渡（v0.17 round 1 / A3） 未打卡 → 已打卡 文字切换（AnimatedSwitcher）
+00:19 +598: D:/Batch/chroniccare/test/presentation/check_in_button_round17_test.dart: CheckInButton 状态过渡（v0.17 round 1 / A3） 未打卡 → 已打卡 文字切换（AnimatedSwitcher）
+00:19 +599: D:/Batch/chroniccare/test/presentation/check_in_button_round17_test.dart: CheckInButton 状态过渡（v0.17 round 1 / A3） 未打卡 → 已打卡 文字切换（AnimatedSwitcher）
+00:20 +600: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +601: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +602: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +603: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +604: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +605: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +606: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +607: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +608: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +609: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +610: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +611: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +612: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +613: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +614: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +615: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:20 +616: D:/Batch/chroniccare/test/presentation/medication_calendar_round13c_test.dart: 空药物 → "还没有在用药物"
+00:21 +617: D:/Batch/chroniccare/test/presentation/notification_status_card_round20_test.dart: mobile 模式显示完整 card（3 个入口）
+00:21 +618: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:21 +619: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:21 +620: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:22 +621: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:22 +622: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:22 +623: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:22 +624: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:22 +625: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 页面渲染 + 顶部 4 个统计
+00:22 +626: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:22 +627: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:22 +628: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:23 +629: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:23 +630: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:23 +631: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:23 +632: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:23 +633: D:/Batch/chroniccare/test/presentation/reminders_hub_round12c_test.dart: reminders hub 渲染 5 个核心卡片标题
+00:23 +634: D:/Batch/chroniccare/test/presentation/setup_consent_round14_test.dart: P0-6: step 0 显示 3 个 Checkbox + 3 个法律 label
+00:23 +635: D:/Batch/chroniccare/test/presentation/setup_consent_round14_test.dart: P0-6: step 0 显示 3 个 Checkbox + 3 个法律 label
+00:24 +636: D:/Batch/chroniccare/test/presentation/setup_consent_round14_test.dart: P0-6: step 0 显示 3 个 Checkbox + 3 个法律 label
+00:24 +637: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 点击行 → 跳到编辑对话框
+00:24 +638: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 点击行 → 跳到编辑对话框
+00:24 +639: D:/Batch/chroniccare/test/presentation/refill_manage_round13a_test.dart: widget: RefillManagePage 点击行 → 跳到编辑对话框
+00:24 +640: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:24 +641: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:24 +642: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:24 +643: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:25 +644: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:25 +645: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:26 +646: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:26 +647: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:26 +648: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 初始 disabled, 输入有效手机号后 enabled, 点击进入 step 2
+00:27 +649: D:/Batch/chroniccare/test/presentation/setup_step2_round14_test.dart: setup 第 2 步: 显示药物列表（可添加、可配时间）
+00:27 +650: D:/Batch/chroniccare/test/presentation/setup_step2_round14_test.dart: setup 第 2 步: 显示药物列表（可添加、可配时间）
+00:28 +651: D:/Batch/chroniccare/test/presentation/setup_step2_round14_test.dart: setup 第 2 步: 显示药物列表（可添加、可配时间）
+00:28 +652: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:28 +653: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:28 +654: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:28 +655: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:28 +656: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:28 +657: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:29 +658: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:29 +659: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 空状态：显示"树洞还是空的" + 写第一句按钮
+00:29 +660: D:/Batch/chroniccare/test/presentation/setup_step2_round14_test.dart: setup 第 2 步: 添加药物后能看到药物卡片
+00:29 +661: D:/Batch/chroniccare/test/presentation/setup_step2_round14_test.dart: setup 第 2 步: 添加药物后能看到药物卡片
+00:29 +662: D:/Batch/chroniccare/test/presentation/setup_step2_round14_test.dart: setup 第 2 步: 添加药物后能看到药物卡片
+00:29 +663: D:/Batch/chroniccare/test/presentation/widgets/animations/slide_up_round14_test.dart: SlideUp renders child
+00:29 +664: D:/Batch/chroniccare/test/presentation/widgets/animations/slide_up_round14_test.dart: SlideUp renders child
+00:29 +665: D:/Batch/chroniccare/test/presentation/widgets/animations/slide_up_round14_test.dart: SlideUp renders child
+00:29 +666: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 名字为空 → 按钮 disabled + 显示提示
+00:29 +667: D:/Batch/chroniccare/test/presentation/setup_page_round18_test.dart: setup 第一步: 名字为空 → 按钮 disabled + 显示提示
+00:29 +668: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 有 audio 条目：显示 mic 图标 + 时长
+00:29 +669: D:/Batch/chroniccare/test/presentation/widgets/animations/slide_up_round14_test.dart: SlideUp delay > 0 keeps child in initial position
+00:29 +670: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 混合条目：显示文字预览 + mic 图标
+00:30 +671: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 长文字超过 80 字符：截断显示 "…"
+00:30 +672: D:/Batch/chroniccare/test/presentation/vent_list_round18_test.dart: 多条目：按列表顺序渲染（DB 已按时间倒序）
+00:30 +673: D:/Batch/chroniccare/test/presentation/widgets/app_snack_bar_round14_test.dart: AppSnackBar.error returns SnackBar with action+error template
+00:31 +674: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +675: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +676: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +677: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +678: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +679: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +680: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +681: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +682: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +683: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +684: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +685: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +686: D:/Batch/chroniccare/test/presentation/widgets/motion_round14_test.dart: Motion (静态 helper) prefersReduced = true
+00:31 +687: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +688: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +689: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +690: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +691: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +692: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +693: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +694: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +695: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:31 +696: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:32 +697: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:32 +698: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: 默认 scale = 1.0
+00:32 +699: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: P0-8: 按下 → scale 变 0.97
+00:32 +700: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: P0-8: tap → onTap 触发
+00:32 +701: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: P0-7 + P0-8: reduce motion → tap 仍然 work,duration 0
+00:32 +702: D:/Batch/chroniccare/test/presentation/widgets/press_feedback_round14_test.dart: onTap = null → 按下不报错
+00:32 +703: All tests passed!

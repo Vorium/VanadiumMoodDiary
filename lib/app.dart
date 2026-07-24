@@ -192,7 +192,7 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
       // v0.22 round 33 (sp-en P0): LastStartupErrorBanner
       // release 模式 runZonedGuarded 之前直接 swallow, 用户看不到任何信号。
       // 改: error 存 SharedPreferences, 下次启动 AppRoot 通过 builder 显示
-      // 顶部 banner "上次启动出错,请截图反馈"。
+      // 顶部 banner "上次启动出错，请截图反馈"。
       builder: (context, child) =>
           LastStartupErrorBanner(child: child ?? const SizedBox.shrink()),
     );

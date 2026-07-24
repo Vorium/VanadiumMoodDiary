@@ -1,6 +1,9 @@
 // v0.14 (Round 12A) MoodEntry 映射层
 //
 // Drift row ↔ MoodEntryEntity 翻译官。
+//
+// v0.23 (Round 31) 语音录入: 加 audioPath / audioTranscript / audioDurationMs
+// 3 个字段的双向映射。
 library;
 
 import 'package:drift/drift.dart' show Value;
@@ -21,6 +24,9 @@ extension MoodEntryToEntity on MoodEntry {
       anxiety: anxiety,
       tagsJson: tagsJson,
       note: note,
+      audioPath: audioPath,
+      audioTranscript: audioTranscript,
+      audioDurationMs: audioDurationMs,
     );
   }
 }
@@ -36,6 +42,9 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
       anxiety: Value(anxiety),
       tagsJson: Value(tagsJson),
       note: Value(note),
+      audioPath: Value(audioPath),
+      audioTranscript: Value(audioTranscript),
+      audioDurationMs: Value(audioDurationMs),
     );
   }
 }
@@ -44,6 +53,9 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
 ///
 /// v0.18 (P1-15) 4 维: energy / sleep / anxiety 3 个 optional 参数,
 /// 老调用方不传时返回单 score 模式 entity。
+///
+/// v0.23 (Round 31) 语音录入: audioPath / audioTranscript / audioDurationMs
+/// 3 个 optional 参数,老调用方不传 = null(纯文字模式)。
 MoodEntryEntity buildMoodEntryEntity({
   required int id,
   required DateTime timestamp,
@@ -53,6 +65,9 @@ MoodEntryEntity buildMoodEntryEntity({
   int? energy,
   int? sleep,
   int? anxiety,
+  String? audioPath,
+  String? audioTranscript,
+  int? audioDurationMs,
 }) {
   return MoodEntryEntity(
     id: id,
@@ -63,5 +78,8 @@ MoodEntryEntity buildMoodEntryEntity({
     anxiety: anxiety,
     tagsJson: JsonCodec.encodeStringList(tags),
     note: note,
+    audioPath: audioPath,
+    audioTranscript: audioTranscript,
+    audioDurationMs: audioDurationMs,
   );
 }

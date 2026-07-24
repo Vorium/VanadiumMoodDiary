@@ -8,11 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 
 /// 弹出编辑 dialog，返回 true 表示有保存成功，false/null = 取消
@@ -79,7 +81,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
     if (dosage == null || dosage <= 0) {
       return l10n.editMedValidationDosageInvalid;
     }
-    if (_dosageUnit != 'mg' && _dosageUnit != '片') {
+    if (_dosageUnit != DosageUnit.mg.id && _dosageUnit != DosageUnit.tablet.id) {
       return l10n.editMedValidationUnitInvalid;
     }
     return null;
@@ -136,9 +138,10 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       await ref.read(medicationRepositoryProvider).update(updated);
       // 改完重排该药的所有相关推送
       final notif = ref.read(notificationServiceProvider);
-      // P0 fix: 复用 provider 树已缓存的药物数据
-      ref.invalidate(medicationsProvider);
-      final meds = ref.read(medicationsProvider).value ?? [];
+      // v0.23 (P0-2 H1 fix): invalidate + read 同步 race 拿到 stale meds
+      // → rescheduleMedicationReminders 用旧 ID 公式, 通知时间错位
+      // 修: refresh(provider.future) 强制等 stream 重新 emit, 直接用返回的新值
+      final meds = await ref.refresh(medicationsProvider.future);
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       // medication reminders: 整个重排（停药会自然被 reschedule 排除）
       await notif.rescheduleMedicationReminders(meds);
@@ -272,9 +275,12 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                         labelText:
                             AppLocalizations.of(context).editMedUnitLabel,),
                     items: [
-                      const DropdownMenuItem(value: 'mg', child: Text('mg')),
-                      DropdownMenuItem(
-                          value: '片',
+                      DropdownMenuItem<String>(
+                          value: DosageUnit.mg.id,
+                          child: const Text('mg'),
+                      ),
+                      DropdownMenuItem<String>(
+                          value: DosageUnit.tablet.id,
                           child: Text(
                               AppLocalizations.of(context).commonDoseUnit,),),
                     ],
@@ -304,16 +310,20 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
               runSpacing: 8,
               children: [
                 for (int i = 0; i < _times.length; i++)
-                  InputChip(
-                    label: Text(_formatTime(_times[i])),
-                    onDeleted: () {
-                      setState(() => _times.removeAt(i));
-                    },
+                  PressFeedback(
+                    child: InputChip(
+                      label: Text(_formatTime(_times[i])),
+                      onDeleted: () {
+                        setState(() => _times.removeAt(i));
+                      },
+                    ),
                   ),
-                ActionChip(
-                  avatar: const Icon(Icons.add, size: 18),
-                  label: Text(AppLocalizations.of(context).editMedAddTime),
-                  onPressed: _saving ? null : _pickTime,
+                PressFeedback(
+                  child: ActionChip(
+                    avatar: const Icon(Icons.add, size: 18),
+                    label: Text(AppLocalizations.of(context).editMedAddTime),
+                    onPressed: _saving ? null : _pickTime,
+                  ),
                 ),
               ],
             ),

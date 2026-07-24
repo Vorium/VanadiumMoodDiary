@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// Step 2: 药物列表
 ///
@@ -219,9 +221,14 @@ class MedCard extends StatelessWidget {
                     items: [
                       // v0.22 round 30 (sp-zh P2-5): 'mg' 是国际单位不翻译,
                       // '片' 走 l10n commonDoseUnit (zh: "片" / en: "tablet")
-                      const DropdownMenuItem(value: 'mg', child: Text('mg')),
-                      DropdownMenuItem(
-                        value: '片',
+                      // v0.23 (P0-11): 'mg' / '片' 改 DosageUnit enum.id, 去 const
+                      //   (Dart const 表达式不支持 enum instance property access)
+                      DropdownMenuItem<String>(
+                          value: DosageUnit.mg.id,
+                          child: const Text('mg'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: DosageUnit.tablet.id,
                         child: Text(l10n.commonDoseUnit),
                       ),
                     ],
@@ -248,28 +255,32 @@ class MedCard extends StatelessWidget {
               runSpacing: 8,
               children: [
                 for (int tIdx = 0; tIdx < med.times.length; tIdx++)
-                  InputChip(
-                    label: Text(_formatTime(med.times[tIdx])),
-                    onDeleted: () => med.times.removeAt(tIdx),
+                  PressFeedback(
+                    child: InputChip(
+                      label: Text(_formatTime(med.times[tIdx])),
+                      onDeleted: () => med.times.removeAt(tIdx),
+                    ),
                   ),
-                ActionChip(
-                  avatar: const Icon(Icons.add, size: 18),
-                  label: Text(l10n.setupMedAddTime),
-                  onPressed: () async {
-                    final picked = await showTimePicker(
-                      context: context,
-                      initialTime: med.times.isNotEmpty
-                          ? med.times.last
-                          : const TimeOfDay(hour: 8, minute: 0),
-                    );
-                    if (picked != null && context.mounted) {
-                      med.times.add(picked);
-                      med.times.sort(
-                        (a, b) => (a.hour * 60 + a.minute)
-                            .compareTo(b.hour * 60 + b.minute),
+                PressFeedback(
+                  child: ActionChip(
+                    avatar: const Icon(Icons.add, size: 18),
+                    label: Text(l10n.setupMedAddTime),
+                    onPressed: () async {
+                      final picked = await showTimePicker(
+                        context: context,
+                        initialTime: med.times.isNotEmpty
+                            ? med.times.last
+                            : const TimeOfDay(hour: 8, minute: 0),
                       );
-                    }
-                  },
+                      if (picked != null && context.mounted) {
+                        med.times.add(picked);
+                        med.times.sort(
+                          (a, b) => (a.hour * 60 + a.minute)
+                              .compareTo(b.hour * 60 + b.minute),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
