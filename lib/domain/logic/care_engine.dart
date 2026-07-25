@@ -19,6 +19,7 @@ library;
 
 import 'dart:developer' as developer;
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/logic/care_copy.dart';
 import 'package:chroniccare/domain/logic/care_strategies.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
@@ -132,8 +133,13 @@ class CareEngine {
         body: trigger.body,
       );
       developer.log('✅ 关怀触发: ${trigger.type.name}', name: 'CareEngine');
-    } catch (e) {
-      developer.log('❌ 关怀触发失败: $e', name: 'CareEngine');
+    } catch (e, st) {
+      swallowError(
+        where: 'CareEngine.fire',
+        error: e,
+        stack: st,
+        note: '关怀触发失败',
+      );
     }
   }
 }

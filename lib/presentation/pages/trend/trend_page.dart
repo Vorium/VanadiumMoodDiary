@@ -16,6 +16,7 @@ import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -99,10 +100,14 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             onChanged: (v) => setState(() => _view = v),
           ),
           const SizedBox(height: AppTokens.spacingMd),
-          if (_view == _TrendView.list)
-            _buildListView(context, checkIns)
-          else
-            _buildCalendarView(context, checkIns, moodEntries),
+          // v0.24 round 43 (emil P1-01 H-04 / D-08):
+          // list ↔ calendar 切换 100ms fade (occasional 频度, emil rare 可加 delight)
+          PageTransitionSwitcher(
+            switchKey: _view,
+            child: _view == _TrendView.list
+                ? _buildListView(context, checkIns)
+                : _buildCalendarView(context, checkIns, moodEntries),
+          ),
           const SizedBox(height: AppTokens.spacingXl),
         ],
       ),
@@ -119,11 +124,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // v0.23 round 40 (emil F4 fix): 4 处 inline section header 改用 SectionHeader
-        const SectionHeader(title: '最近 30 天'),
+        SectionHeader(title: AppLocalizations.of(context).trendLast30Days),
         const SizedBox(height: AppTokens.spacingSm),
         HeatmapGrid(daily: daily),
         const SizedBox(height: AppTokens.spacingLg),
-        const SectionHeader(title: '最近 6 个月'),
+        SectionHeader(title: AppLocalizations.of(context).trendLast6Months),
         const SizedBox(height: AppTokens.spacingSm),
         MonthlyChart(monthly: monthly),
         const SizedBox(height: AppTokens.spacingLg),

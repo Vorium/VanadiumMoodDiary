@@ -221,7 +221,10 @@ class AppTokens {
   // 之前 vent_list_page.dart:110 + medication_calendar_page.dart:222 各 1 次
   // `Duration(milliseconds: i * 40)` 硬编码, 40ms / clamp 0-400 是 magic
   static const int staggerStepMs = 40;
-  static const int staggerCapMs = 400;
+  // v0.24 round 43 (emil D-06 P2): cap 200ms (5 行后立即出现, 避免长列表等太久)
+  // emil "perceived performance" — user 看到第 5 行已开始 = 不再等
+  // 之前 400ms = 10 行才出, 后面的全瞬时, 体感"卡"
+  static const int staggerCapMs = 200;
 
   // v0.22 round 30 (emil P2-7): 微小 padding 集中器
   // 之前散落 5+ 处 `EdgeInsets.symmetric(horizontal: 8/6/10, vertical: 2/1/6)` magic
@@ -340,6 +343,55 @@ class AppTokens {
       offset: Offset(0, 4),
     ),
   ];
+
+  // ============= 阴影 (v0.24 round 43 emil D-04 P2: dark mode 反白) =============
+  //
+  // 上面 4 个 const shadow 全部用黑色 0x14-0x33 透明度, **dark mode 完全不可见**
+  // (黑色阴影打在 dark surface 上 = 透明)。M3 标准做法是用
+  // `Theme.of(context).colorScheme.shadow` 派生, light/dark mode 自适应。
+  //
+  // emil "translucent material" 哲学: 暗色下阴影应该反白 / 用 colorScheme.shadow。
+  // 加 4 个 context-aware 变体 (不能完全替 const, 因为 const list 在 const
+  // constructor 里要用), 新代码优先用 dynamic getter。
+  //
+  // 用法: `boxShadow: AppTokens.shadowCardOf(context)`
+
+  /// Theme-aware 卡片阴影 (dark mode 反白) — 替换 const shadowCard
+  static List<BoxShadow> shadowCardOf(BuildContext context) => [
+        BoxShadow(
+          color: Theme.of(context).colorScheme.shadow,
+          blurRadius: 3,
+          offset: const Offset(0, 1),
+        ),
+      ];
+
+  /// Theme-aware 卡片深阴影 (dark mode 反白) — 替换 const shadowCardDark
+  /// 跟 shadowCardOf 区别: alpha 更高 (M3 spec: shadow 0.08 vs scrim 0.32)
+  static List<BoxShadow> shadowCardDarkOf(BuildContext context) => [
+        BoxShadow(
+          color: Theme.of(context).colorScheme.shadow,
+          blurRadius: 3,
+          offset: const Offset(0, 1),
+        ),
+      ];
+
+  /// Theme-aware 对话框阴影 (dark mode 反白) — 替换 const shadowDialog
+  static List<BoxShadow> shadowDialogOf(BuildContext context) => [
+        BoxShadow(
+          color: Theme.of(context).colorScheme.shadow,
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ];
+
+  /// Theme-aware 浮层轻阴影 (dark mode 反白) — 替换 const shadowOverlay
+  static List<BoxShadow> shadowOverlayOf(BuildContext context) => [
+        BoxShadow(
+          color: Theme.of(context).colorScheme.shadow,
+          blurRadius: 8,
+          offset: const Offset(0, 4),
+        ),
+      ];
 
   // ============= TextStyle token (v0.22 round 30 / emil P0-4) =============
   //

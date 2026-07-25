@@ -21,10 +21,11 @@ import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_reminder_section.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/choose_window_dialog.dart';
 import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
-import 'package:chroniccare/presentation/pages/medication/widgets/medication_report_dialog.dart';
+import 'package:chroniccare/presentation/widgets/medication_report_dialog.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
@@ -127,7 +128,7 @@ class SettingsPage extends ConsumerWidget {
         children: [
           const SizedBox(height: AppTokens.spacingMd),
 
-          _SectionHeader(title: AppLocalizations.of(context).settingsContacts),
+          SectionHeader(title: AppLocalizations.of(context).settingsContacts),
           const SizedBox(height: AppTokens.spacingSm),
           contactsAsync.when(
             data: (contacts) => ContactsListWidget(contacts: contacts),
@@ -141,7 +142,7 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          _SectionHeader(
+          SectionHeader(
             title: AppLocalizations.of(context).settingsMedication,
           ),
           const SizedBox(height: AppTokens.spacingSm),
@@ -157,7 +158,7 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          _SectionHeader(
+          SectionHeader(
               title: AppLocalizations.of(context).settingsDataManagement,),
           const SizedBox(height: AppTokens.spacingSm),
           Card(
@@ -251,7 +252,7 @@ class SettingsPage extends ConsumerWidget {
           // v0.21 Round 22 (P0-2): 法律与隐私入口
           // 修复 setup 步骤 0 写"可在 设置 → 法律与隐私 撤回同意"的虚假告知
           // v0.21 Round 22 (P1-20 修复): 抽 _LegalSection
-          _SectionHeader(
+          SectionHeader(
             title: AppLocalizations.of(context).settingsLegalAndPrivacy,
           ),
           const SizedBox(height: AppTokens.spacingSm),
@@ -261,7 +262,7 @@ class SettingsPage extends ConsumerWidget {
 
           // v0.14 (Round 12C) 提醒中心入口
           // v0.21 Round 22 (P1-20 修复): 抽 _RemindersSection
-          _SectionHeader(title: AppLocalizations.of(context).settingsReminders),
+          SectionHeader(title: AppLocalizations.of(context).settingsReminders),
           const SizedBox(height: AppTokens.spacingSm),
           const _RemindersSection(),
 
@@ -273,7 +274,7 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingLg),
 
-          _SectionHeader(
+          SectionHeader(
               title: AppLocalizations.of(context).settingsAssessment,),
           const SizedBox(height: AppTokens.spacingSm),
           // v0.14 (Round 13B) 评估历史入口
@@ -708,22 +709,5 @@ class SettingsPage extends ConsumerWidget {
         ),
       ),
     ).then((_) => controller.dispose());
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: AppTokens.fontSizeLabel,
-        color: AppTokens.textSecondaryColor(context),
-        fontWeight: FontWeight.w500,
-      ),
-    );
   }
 }

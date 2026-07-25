@@ -6,6 +6,7 @@ import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
@@ -85,7 +86,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
             ),
           ],
           const Divider(height: 1),
-          ListTile(
+          // v0.24 round 43 (emil D-05 P2): 添加联系人入口包 AppListTile
+          // → 隐式获得 PressFeedback scale 反馈 (tens/day 频度)
+          AppListTile(
             leading: const Icon(Icons.add, color: AppTokens.primary),
             title: Text(AppLocalizations.of(context).setupAddContact),
             onTap: () => _showAddContactDialog(context, ref),

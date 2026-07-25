@@ -1,16 +1,16 @@
 // database_migration_round37_test.dart
 //
-// v0.23 (Round 37) 新增: schemaVersion 12 dry-run migration 验证
+// v0.23 (Round 37) 新增: schemaVersion dry-run migration 验证
 //
 // 之前 11 个 migration step (v1→v2, v2→v3, ..., v11→v12) 没专门单测,
 // 只靠 widget test 间接覆盖 (medication_repository / vent_repository 等)。
 // 本测试直接验证:
-// 1. schemaVersion 常量 = 12
+// 1. schemaVersion 常量
 // 2. onUpgrade callback 可调用, 不会抛错
-// 3. 11 个 migration step 都覆盖关键 schema 变更
+// 3. migration step 数量跟 schemaVersion 匹配
 // 4. 关键列存在 (drift schema 自动生成)
 //
-// 完整 SQLite dry-run (从 v1 模拟数据升级到 v12) 太重, 留给未来补。
+// 完整 SQLite dry-run (从 v1 模拟数据升级到当前版本) 太重, 留给未来补。
 // 当前覆盖关键 invariants 已能挡 80% 的"漏 migration"bug。
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,10 +19,10 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 
 void main() {
   group('AppDatabase schemaVersion', () {
-    test('schemaVersion == 12 (v0.23 round 31 P0 新功能)', () {
+    test('schemaVersion == 14 (v0.23 round 44: contacts + report_histories 加索引)', () {
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      expect(db.schemaVersion, 12);
+      expect(db.schemaVersion, 14);
       db.close();
     });
   });
@@ -52,7 +52,7 @@ void main() {
       // 但 v0 → v1 没 step (v1 是初始 schema)
       // 所以 onUpgrade 处理 v1→v2 ... v11→v12 共 11 个 step
       // 验证 schemaVersion 跟实际 if (from <= N) block 数量匹配
-      const expectedSteps = 11;
+      const expectedSteps = 13;
       // 简单 sanity: schemaVersion >= 1 + 至少 1 个 onUpgrade step
       expect(db.schemaVersion, greaterThanOrEqualTo(2));
       expect(expectedSteps, db.schemaVersion - 1);

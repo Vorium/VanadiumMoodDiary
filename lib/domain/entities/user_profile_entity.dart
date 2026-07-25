@@ -1,6 +1,8 @@
 /// 用户档案（domain 实体）
 ///
 /// 对应 Drift 表 `user_profiles`。
+import 'package:chroniccare/core/shared/domain_value.dart';
+
 class UserProfileEntity {
   /// 永远只有 1 行（id=1）
   final int id;
@@ -41,26 +43,34 @@ class UserProfileEntity {
 
   UserProfileEntity copyWith({
     int? id,
-    String? userName,
+    DomainValue<String?>? userName,
     int? checkInCycleHours,
     DateTime? firstLaunchAt,
-    DateTime? lastCheckInAt,
-    String? userAgreementVersion,
-    String? privacyPolicyVersion,
-    DateTime? sensitiveDataConsentAt,
-    DateTime? consentRevokedAt,
+    DomainValue<DateTime?>? lastCheckInAt,
+    DomainValue<String?>? userAgreementVersion,
+    DomainValue<String?>? privacyPolicyVersion,
+    DomainValue<DateTime?>? sensitiveDataConsentAt,
+    DomainValue<DateTime?>? consentRevokedAt,
   }) {
     return UserProfileEntity(
       id: id ?? this.id,
-      userName: userName ?? this.userName,
+      userName: userName == null ? this.userName : userName.value,
       checkInCycleHours: checkInCycleHours ?? this.checkInCycleHours,
       firstLaunchAt: firstLaunchAt ?? this.firstLaunchAt,
-      lastCheckInAt: lastCheckInAt ?? this.lastCheckInAt,
-      userAgreementVersion: userAgreementVersion ?? this.userAgreementVersion,
-      privacyPolicyVersion: privacyPolicyVersion ?? this.privacyPolicyVersion,
-      sensitiveDataConsentAt:
-          sensitiveDataConsentAt ?? this.sensitiveDataConsentAt,
-      consentRevokedAt: consentRevokedAt ?? this.consentRevokedAt,
+      lastCheckInAt:
+          lastCheckInAt == null ? this.lastCheckInAt : lastCheckInAt.value,
+      userAgreementVersion: userAgreementVersion == null
+          ? this.userAgreementVersion
+          : userAgreementVersion.value,
+      privacyPolicyVersion: privacyPolicyVersion == null
+          ? this.privacyPolicyVersion
+          : privacyPolicyVersion.value,
+      sensitiveDataConsentAt: sensitiveDataConsentAt == null
+          ? this.sensitiveDataConsentAt
+          : sensitiveDataConsentAt.value,
+      consentRevokedAt: consentRevokedAt == null
+          ? this.consentRevokedAt
+          : consentRevokedAt.value,
     );
   }
 

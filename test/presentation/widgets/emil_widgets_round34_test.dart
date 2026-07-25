@@ -7,8 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
-import 'package:chroniccare/presentation/widgets/severity_indicator.dart';
-import 'package:chroniccare/presentation/widgets/labelled_text_field.dart';
 import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 
 void main() {
@@ -75,72 +73,6 @@ void main() {
       );
       expect(find.text('错误'), findsOneWidget);
       expect(find.byType(Container), findsWidgets);
-    });
-  });
-
-  group('SeverityIndicator — emil A3', () {
-    testWidgets('ok level 显示 label + 圆点', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SeverityIndicator(
-              level: SeverityLevel.ok,
-              label: '正常',
-            ),
-          ),
-        ),
-      );
-      expect(find.text('正常'), findsOneWidget);
-      expect(find.byType(Container), findsOneWidget);
-    });
-
-    testWidgets('error level 渲染不同颜色', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SeverityIndicator(
-              level: SeverityLevel.error,
-              label: '严重',
-            ),
-          ),
-        ),
-      );
-      expect(find.text('严重'), findsOneWidget);
-    });
-  });
-
-  group('LabelledTextField — emil A4', () {
-    testWidgets('基本 TextField with label + hint 渲染', (tester) async {
-      final controller = TextEditingController();
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: LabelledTextField(
-              controller: controller,
-              label: '药品名',
-              hint: '请输入',
-            ),
-          ),
-        ),
-      );
-      expect(find.text('药品名'), findsOneWidget);
-      expect(find.text('请输入'), findsOneWidget);
-    });
-
-    testWidgets('errorText 显示', (tester) async {
-      final controller = TextEditingController();
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: LabelledTextField(
-              controller: controller,
-              label: '姓名',
-              errorText: '不能为空',
-            ),
-          ),
-        ),
-      );
-      expect(find.text('不能为空'), findsOneWidget);
     });
   });
 

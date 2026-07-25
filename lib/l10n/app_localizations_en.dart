@@ -226,7 +226,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'View line charts and comparisons for all PHQ-9 / GAD-7 assessments';
 
   @override
-  String get settingsAboutVersion => 'v0.22.0 · I took my meds today';
+  String get settingsAboutVersion => 'v0.23.0 · I took my meds today';
 
   @override
   String get settingsDisclaimerText =>
@@ -1083,6 +1083,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assessmentSubmit => 'Submit & View Results';
+
+  @override
+  String assessmentQuestionLabel(int index, String text, String selected) {
+    return 'Question $index: $text, 4 options, current: $selected';
+  }
 
   @override
   String assessmentScoreTotal(int max) {

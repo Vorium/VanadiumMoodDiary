@@ -86,7 +86,7 @@
   "settingsAssessment": "心理评估",
   "settingsAssessmentHistory": "评估历史",
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 / GAD-7 评估的折线图与对比",
-  "settingsAboutVersion": "v0.22.0 · 我今天吃了药",
+  "settingsAboutVersion": "v0.23.0 · 我今天吃了药",
   "settingsDisclaimerText": "本应用不提供医疗建议，所有功能仅供参考。",
   "settingsExportDialogTitle": "导出数据",
   "settingsExportInstruction": "把下面这串 JSON 保存到安全的地方：",
@@ -493,6 +493,14 @@
     }
   },
   "assessmentSubmit": "提交并查看结果",
+  "assessmentQuestionLabel": "評估題 {index}：{text}，4 項單選，當前：{selected}",
+  "@assessmentQuestionLabel": {
+    "placeholders": {
+      "index": { "type": "int" },
+      "text": { "type": "String" },
+      "selected": { "type": "String" }
+    }
+  },
   "assessmentScoreTotal": "总分（0-{max}）",
   "@assessmentScoreTotal": {
     "placeholders": { "max": { "type": "int" } }

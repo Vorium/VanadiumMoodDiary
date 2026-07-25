@@ -64,8 +64,15 @@ class AppDatabase extends _$AppDatabase {
   // - mood_entries 加 audioPath / audioTranscript / audioDurationMs 3 个 nullable 列
   // - 老数据自动为 null(纯文字模式行为不变)
   // - audioPath 引用独立 mood_audio/ 目录的加密 .m4a.enc 文件
+  //
+  // v0.23 round 43: schemaVersion 12 → 13
+  // - check_ins 加 medicationId 索引（优化药物打卡查询）
+  //
+  // v0.23 round 44: schemaVersion 13 → 14
+  // - contacts 加 (is_active, sort_order) 复合索引
+  // - report_histories 加 generated_at 索引
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -139,14 +146,19 @@ class AppDatabase extends _$AppDatabase {
             final oldRows = await select(ventEntries).get();
             final enc = EncryptionService();
             for (final row in oldRows) {
-              final oldText = row.contentText;
-              if (oldText == null || oldText.isEmpty) continue;
-              final encrypted =
-                  await enc.encrypt(Uint8List.fromList(utf8.encode(oldText)));
-              await (update(ventEntries)..where((t) => t.id.equals(row.id)))
-                  .write(VentEntriesCompanion(
-                contentTextEnc: Value(encrypted),
-              ),);
+              try {
+                final oldText = row.contentText;
+                if (oldText == null || oldText.isEmpty) continue;
+                final encrypted =
+                    await enc.encrypt(Uint8List.fromList(utf8.encode(oldText)));
+                await (update(ventEntries)..where((t) => t.id.equals(row.id)))
+                    .write(VentEntriesCompanion(
+                  contentTextEnc: Value(encrypted),
+                ),);
+              } catch (e) {
+                // 单条加密失败不阻塞整个升级，该行 contentTextEnc 保持 null
+                // 用户打开该条树洞时 VentMapper.toEntity 会兜底显示空内容
+              }
             }
           }
           // v9 → v10: UserProfile 加 4 个 consent 字段 (P1-22 修复)
@@ -175,6 +187,22 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(moodEntries, moodEntries.audioPath);
             await m.addColumn(moodEntries, moodEntries.audioTranscript);
             await m.addColumn(moodEntries, moodEntries.audioDurationMs);
+          }
+          // v12 → v13: check_ins 加 medicationId 索引 (P2 优化)
+          // - 药物打卡查询按 medicationId 过滤,无索引走全表扫描
+          if (from <= 12) {
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_checkin_med_id ON check_ins(medication_id)',
+            );
+          }
+          // v13 → v14: contacts + report_histories 加索引 (P2 优化)
+          if (from <= 13) {
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_contact_active_sort ON contacts(is_active, sort_order)',
+            );
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_report_gen_at ON report_histories(generated_at)',
+            );
           }
         },
         beforeOpen: (details) async {

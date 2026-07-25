@@ -95,7 +95,8 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('zh')
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
   /// No description provided for @appName.
@@ -371,7 +372,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsMedReportSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'选时间窗口（7/14/30 天），给医生看'**
+  /// **'选时间窗口（7／14／30 天），给医生看'**
   String get settingsMedReportSubtitle;
 
   /// No description provided for @settingsMedReportChooseTitle.
@@ -497,13 +498,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsAssessmentHistorySubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'查看所有 PHQ-9 / GAD-7 评估的折线图与对比'**
+  /// **'查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比'**
   String get settingsAssessmentHistorySubtitle;
 
   /// No description provided for @settingsAboutVersion.
   ///
   /// In zh, this message translates to:
-  /// **'v0.22.0 · 我今天吃了药'**
+  /// **'v0.23.0 · 我今天吃了药'**
   String get settingsAboutVersion;
 
   /// No description provided for @settingsDisclaimerText.
@@ -791,7 +792,7 @@ abstract class AppLocalizations {
   /// No description provided for @snackbarPhoneInvalid.
   ///
   /// In zh, this message translates to:
-  /// **'号码格式不对（支持大陆/港澳台/国际）'**
+  /// **'号码格式不对（支持大陆／港澳台／国际）'**
   String get snackbarPhoneInvalid;
 
   /// No description provided for @commonConfirmOk.
@@ -857,7 +858,7 @@ abstract class AppLocalizations {
   /// No description provided for @medsCalendarSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'医生视角依从性热力图 · 7/30/90 天'**
+  /// **'医生视角依从性热力图 · 7／30／90 天'**
   String get medsCalendarSubtitle;
 
   /// No description provided for @medsListNoActive.
@@ -1025,7 +1026,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardStatusLoading.
   ///
   /// In zh, this message translates to:
-  /// **'加载中…'**
+  /// **'加载中……'**
   String get notificationStatusCardStatusLoading;
 
   /// No description provided for @notificationStatusCardStatusUnsupported.
@@ -1085,7 +1086,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'小米/华为/OPPO/Vivo/三星 默认会杀后台，点这里看怎么设'**
+  /// **'小米／华为／OPPO／Vivo／三星 默认会杀后台，点这里看怎么设'**
   String get notificationStatusCardOemSubtitle;
 
   /// No description provided for @notificationStatusCardOemBrandXiaomi.
@@ -1223,7 +1224,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemBrandOthers.
   ///
   /// In zh, this message translates to:
-  /// **'其他（中兴/努比亚/红魔/联想/三星 Knox）'**
+  /// **'其他（中兴／努比亚／红魔／联想／三星 Knox）'**
   String get notificationStatusCardOemBrandOthers;
 
   /// No description provided for @notificationStatusCardOemStepOthers1.
@@ -1301,7 +1302,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderHubAssessmentDescEnabled.
   ///
   /// In zh, this message translates to:
-  /// **'每 {days} 天提醒做心理评估（PHQ-9 / GAD-7）'**
+  /// **'每 {days} 天提醒做心理评估（PHQ-9 ／ GAD-7）'**
   String reminderHubAssessmentDescEnabled(int days);
 
   /// No description provided for @reminderHubAssessmentDescDisabled.
@@ -1373,7 +1374,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderHubMedicationStatusActive.
   ///
   /// In zh, this message translates to:
-  /// **'已启用 · {count} 种 / {times} 时间点'**
+  /// **'已启用 · {count} 种 ／ {times} 时间点'**
   String reminderHubMedicationStatusActive(int count, int times);
 
   /// No description provided for @reminderHubStatusNotConfigured.
@@ -1583,7 +1584,7 @@ abstract class AppLocalizations {
   /// No description provided for @ventRecordActive.
   ///
   /// In zh, this message translates to:
-  /// **'正在录音… 点停止'**
+  /// **'正在录音……点停止'**
   String get ventRecordActive;
 
   /// No description provided for @ventAudioLabel.
@@ -1727,7 +1728,7 @@ abstract class AppLocalizations {
   /// No description provided for @moodAudioRecording.
   ///
   /// In zh, this message translates to:
-  /// **'录音中… {elapsed}'**
+  /// **'录音中……{elapsed}'**
   String moodAudioRecording(String elapsed);
 
   /// No description provided for @moodAudioRecorded.
@@ -1769,7 +1770,7 @@ abstract class AppLocalizations {
   /// No description provided for @moodAudioSttListening.
   ///
   /// In zh, this message translates to:
-  /// **'识别中…'**
+  /// **'识别中……'**
   String get moodAudioSttListening;
 
   /// No description provided for @moodAudioSttFailed.
@@ -1938,7 +1939,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentAnsweredProgress.
   ///
   /// In zh, this message translates to:
-  /// **'已答 {answered} / {total}'**
+  /// **'已答 {answered} ／ {total}'**
   String assessmentAnsweredProgress(int answered, int total);
 
   /// No description provided for @assessmentSubmit.
@@ -1946,6 +1947,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'提交并查看结果'**
   String get assessmentSubmit;
+
+  /// No description provided for @assessmentQuestionLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'评估题 {index}：{text}，4 项单选，当前：{selected}'**
+  String assessmentQuestionLabel(int index, String text, String selected);
 
   /// No description provided for @assessmentScoreTotal.
   ///
@@ -2118,7 +2125,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentReminderHintStable.
   ///
   /// In zh, this message translates to:
-  /// **'稳定期 / 月度复盘'**
+  /// **'稳定期 ／ 月度复盘'**
   String get assessmentReminderHintStable;
 
   /// No description provided for @assessmentReminderHintMaintenance.
@@ -2154,7 +2161,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentScoreRange.
   ///
   /// In zh, this message translates to:
-  /// **'最低 {min} / 最高 {max}'**
+  /// **'最低 {min} ／ 最高 {max}'**
   String assessmentScoreRange(int min, int max);
 
   /// No description provided for @assessmentComparePrevious.
@@ -3532,6 +3539,18 @@ class _AppLocalizationsDelegate
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hant':
+            return AppLocalizationsZhHant();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en':

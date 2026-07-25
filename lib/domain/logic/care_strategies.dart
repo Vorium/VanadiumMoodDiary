@@ -12,12 +12,15 @@ import 'package:chroniccare/domain/entities/check_in_entity.dart';
 /// 最近 3 天都在 22 点后打卡
 ///
 /// 排序: [sortedDesc] 是按 timestamp 倒序的 normal check-ins
+///
+/// v0.23 round 43 (spen-3) off-by-one fix: 之前 `> 3` break 实际处理 4 天
+/// (day 0,1,2,3),跟注释"最近 3 天"不符。改为 `> 2` 处理 3 天 (day 0,1,2)。
 bool isLateCheckInHabit(List<CheckInEntity> sortedDesc, DateTime now) {
   final today = DateTime(now.year, now.month, now.day);
   final lateDays = <DateTime>{};
   for (final c in sortedDesc) {
     final d = DateTime(c.timestamp.year, c.timestamp.month, c.timestamp.day);
-    if (today.difference(d).inDays > 3) break;
+    if (today.difference(d).inDays > 2) break;
     if (c.timestamp.hour >= 22) {
       lateDays.add(d);
     }

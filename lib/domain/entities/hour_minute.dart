@@ -10,12 +10,14 @@ class HourMinute {
   final int hour;
   final int minute;
 
-  const HourMinute({required this.hour, required this.minute});
+  const HourMinute({required this.hour, required this.minute})
+      : assert(hour >= 0 && hour <= 23, 'hour must be 0-23, got $hour'),
+        assert(minute >= 0 && minute <= 59, 'minute must be 0-59, got $minute');
 
   HourMinute copyWith({int? hour, int? minute}) {
     return HourMinute(
-      hour: hour ?? this.hour,
-      minute: minute ?? this.minute,
+      hour: (hour ?? this.hour).clamp(0, 23),
+      minute: (minute ?? this.minute).clamp(0, 59),
     );
   }
 
@@ -24,8 +26,8 @@ class HourMinute {
     final parts = s.split(':');
     if (parts.length != 2) return const HourMinute(hour: 0, minute: 0);
     return HourMinute(
-      hour: int.tryParse(parts[0]) ?? 0,
-      minute: int.tryParse(parts[1]) ?? 0,
+      hour: (int.tryParse(parts[0]) ?? 0).clamp(0, 23),
+      minute: (int.tryParse(parts[1]) ?? 0).clamp(0, 59),
     );
   }
 

@@ -1,29 +1,24 @@
 // v0.17 round 14 (P2-8): user_profile mapper 抽离
-//
-// 之前 _toEntity 内联在 UserProfileRepositoryImpl 里，跟其他 feature
-// (check_in / contact / medication / mood / vent) 不一致 — 那些都有
-// 独立的 mapper 文件 (round 11 抽的)。这次补齐。
+// v0.23 round 44: 函数风格 → extension 风格，与其他 mapper 统一
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 
 /// Drift row → domain entity
-///
-/// P0-10 fix: 读 `lastCheckInAt` 列。schema 一直有这个列，之前 entity
-/// 不读 / `updateLastCheckIn` 0 处调用，现在 `RecordCheckInUseCase`
-/// 在 check-in 后写 → entity 必须读，否则 UI 永远看不到。
-UserProfileEntity? userProfileFromRow(UserProfile? row) {
-  if (row == null) return null;
-  return UserProfileEntity(
-    id: row.id,
-    userName: row.userName,
-    checkInCycleHours: row.checkInCycleHours,
-    firstLaunchAt: row.firstLaunchAt,
-    lastCheckInAt: row.lastCheckInAt,
-    // v0.21 Round 22 (P1-22 修复): PIPL §14 consent 4 字段
-    userAgreementVersion: row.userAgreementVersion,
-    privacyPolicyVersion: row.privacyPolicyVersion,
-    sensitiveDataConsentAt: row.sensitiveDataConsentAt,
-    consentRevokedAt: row.consentRevokedAt,
-  );
+extension UserProfileToEntity on UserProfile {
+  UserProfileEntity toEntity() => UserProfileEntity(
+        id: id,
+        userName: userName,
+        checkInCycleHours: checkInCycleHours,
+        firstLaunchAt: firstLaunchAt,
+        lastCheckInAt: lastCheckInAt,
+        userAgreementVersion: userAgreementVersion,
+        privacyPolicyVersion: privacyPolicyVersion,
+        sensitiveDataConsentAt: sensitiveDataConsentAt,
+        consentRevokedAt: consentRevokedAt,
+      );
 }
+
+/// Nullable Drift row → nullable domain entity
+UserProfileEntity? userProfileFromRow(UserProfile? row) =>
+    row?.toEntity();

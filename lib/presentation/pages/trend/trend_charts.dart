@@ -134,7 +134,7 @@ class MonthlyChart extends StatelessWidget {
                   }
                   final m = monthly[idx].month;
                   return Text(
-                    '${m.month}月',
+                    AppLocalizations.of(context).trendMonthLabel(m.month),
                     style: AppTokens.textStyleMicro(context),
                   );
                 },
@@ -175,7 +175,7 @@ class AssessmentHistoryChart extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '完成一次心理评估后，折线图会自动出现在这里',
+                AppLocalizations.of(context).trendNoAssessmentsHint,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
                   color: AppTokens.textSecondaryColor(context),
@@ -432,7 +432,7 @@ class MoodHistoryChart extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '在主页点击「记一下情绪」开始记录',
+                AppLocalizations.of(context).trendNoMoodEntriesHint,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeCaption,
                   color: AppTokens.textSecondaryColor(context),

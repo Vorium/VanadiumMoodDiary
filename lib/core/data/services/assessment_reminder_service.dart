@@ -12,11 +12,11 @@
 // - 评估 type='phq9' / 'gad7'（沿用 v0.8 设计）
 // - 跨时区：fireAt 用本地时间（与 medication reminders 一致）
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 
@@ -184,9 +184,9 @@ class AssessmentReminderService {
       scaleId: 'phq9',
       days: days,
     );
-    developer.log(
+    piiSafeLog(
+      'AssessmentReminderService',
       '✅ 评估完成, 下次提醒: $fireAt ($days天后)',
-      name: 'AssessmentReminderService',
     );
   }
 

@@ -32,30 +32,33 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     String? userName,
     int checkInCycleHours = 48,
   }) async {
-    final existing = await _db.getUserProfile();
-    await _db.upsertUserProfile(
-      UserProfilesCompanion.insert(
-        userName: Value(userName),
-        checkInCycleHours: Value(checkInCycleHours),
-        firstLaunchAt: existing?.firstLaunchAt ?? DateTime.now(),
-      ),
-    );
+    await _db.transaction(() async {
+      final existing = await _db.getUserProfile();
+      await _db.upsertUserProfile(
+        UserProfilesCompanion.insert(
+          userName: Value(userName),
+          checkInCycleHours: Value(checkInCycleHours),
+          firstLaunchAt: existing?.firstLaunchAt ?? DateTime.now(),
+        ),
+      );
+    });
   }
 
   @override
   Future<void> updateLastCheckIn(DateTime time) async {
-    final existing = await _db.getUserProfile();
-    if (existing != null) {
-      await _db.upsertUserProfile(
-        UserProfilesCompanion.insert(
-          // v0.21 Round 23 (P1-24): userName nullable,保留原值
-          userName: Value(existing.userName),
-          checkInCycleHours: Value(existing.checkInCycleHours),
-          firstLaunchAt: existing.firstLaunchAt,
-          lastCheckInAt: Value(time),
-        ),
-      );
-    }
+    await _db.transaction(() async {
+      final existing = await _db.getUserProfile();
+      if (existing != null) {
+        await _db.upsertUserProfile(
+          UserProfilesCompanion.insert(
+            userName: Value(existing.userName),
+            checkInCycleHours: Value(existing.checkInCycleHours),
+            firstLaunchAt: existing.firstLaunchAt,
+            lastCheckInAt: Value(time),
+          ),
+        );
+      }
+    });
   }
 
   // v0.21 Round 22 (P1-22 修复): PIPL §14 consent 记录方法
@@ -65,60 +68,61 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     required String userAgreementVersion,
     required String privacyPolicyVersion,
   }) async {
-    final existing = await _db.getUserProfile();
-    if (existing == null) return;
-    await _db.upsertUserProfile(
-      UserProfilesCompanion.insert(
-        // v0.21 Round 23 (P1-24): userName nullable,保留原值
-        userName: Value(existing.userName),
-        checkInCycleHours: Value(existing.checkInCycleHours),
-        firstLaunchAt: existing.firstLaunchAt,
-        lastCheckInAt: Value(existing.lastCheckInAt),
-        userAgreementVersion: Value(userAgreementVersion),
-        privacyPolicyVersion: Value(privacyPolicyVersion),
-        sensitiveDataConsentAt: Value(DateTime.now()),
-        // 重新记录时清空撤回时刻(用户重新同意)
-        consentRevokedAt: const Value.absent(),
-      ),
-    );
+    await _db.transaction(() async {
+      final existing = await _db.getUserProfile();
+      if (existing == null) return;
+      await _db.upsertUserProfile(
+        UserProfilesCompanion.insert(
+          userName: Value(existing.userName),
+          checkInCycleHours: Value(existing.checkInCycleHours),
+          firstLaunchAt: existing.firstLaunchAt,
+          lastCheckInAt: Value(existing.lastCheckInAt),
+          userAgreementVersion: Value(userAgreementVersion),
+          privacyPolicyVersion: Value(privacyPolicyVersion),
+          sensitiveDataConsentAt: Value(DateTime.now()),
+          consentRevokedAt: const Value.absent(),
+        ),
+      );
+    });
   }
 
   @override
   Future<void> withdrawConsent() async {
-    final existing = await _db.getUserProfile();
-    if (existing == null) return;
-    await _db.upsertUserProfile(
-      UserProfilesCompanion.insert(
-        // v0.21 Round 23 (P1-24): userName nullable,保留原值
-        userName: Value(existing.userName),
-        checkInCycleHours: Value(existing.checkInCycleHours),
-        firstLaunchAt: existing.firstLaunchAt,
-        lastCheckInAt: Value(existing.lastCheckInAt),
-        userAgreementVersion: Value(existing.userAgreementVersion),
-        privacyPolicyVersion: Value(existing.privacyPolicyVersion),
-        sensitiveDataConsentAt: Value(existing.sensitiveDataConsentAt),
-        consentRevokedAt: Value(DateTime.now()),
-      ),
-    );
+    await _db.transaction(() async {
+      final existing = await _db.getUserProfile();
+      if (existing == null) return;
+      await _db.upsertUserProfile(
+        UserProfilesCompanion.insert(
+          userName: Value(existing.userName),
+          checkInCycleHours: Value(existing.checkInCycleHours),
+          firstLaunchAt: existing.firstLaunchAt,
+          lastCheckInAt: Value(existing.lastCheckInAt),
+          userAgreementVersion: Value(existing.userAgreementVersion),
+          privacyPolicyVersion: Value(existing.privacyPolicyVersion),
+          sensitiveDataConsentAt: Value(existing.sensitiveDataConsentAt),
+          consentRevokedAt: Value(DateTime.now()),
+        ),
+      );
+    });
   }
 
   @override
   Future<void> resetConsent() async {
-    final existing = await _db.getUserProfile();
-    if (existing == null) return;
-    await _db.upsertUserProfile(
-      UserProfilesCompanion.insert(
-        // v0.21 Round 23 (P1-24): userName nullable,保留原值
-        userName: Value(existing.userName),
-        checkInCycleHours: Value(existing.checkInCycleHours),
-        firstLaunchAt: existing.firstLaunchAt,
-        lastCheckInAt: Value(existing.lastCheckInAt),
-        userAgreementVersion: Value(existing.userAgreementVersion),
-        privacyPolicyVersion: Value(existing.privacyPolicyVersion),
-        // 重新记录同意时刻
-        sensitiveDataConsentAt: Value(DateTime.now()),
-        consentRevokedAt: const Value.absent(),
-      ),
-    );
+    await _db.transaction(() async {
+      final existing = await _db.getUserProfile();
+      if (existing == null) return;
+      await _db.upsertUserProfile(
+        UserProfilesCompanion.insert(
+          userName: Value(existing.userName),
+          checkInCycleHours: Value(existing.checkInCycleHours),
+          firstLaunchAt: existing.firstLaunchAt,
+          lastCheckInAt: Value(existing.lastCheckInAt),
+          userAgreementVersion: Value(existing.userAgreementVersion),
+          privacyPolicyVersion: Value(existing.privacyPolicyVersion),
+          sensitiveDataConsentAt: Value(DateTime.now()),
+          consentRevokedAt: const Value.absent(),
+        ),
+      );
+    });
   }
 }

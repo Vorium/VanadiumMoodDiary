@@ -4,6 +4,8 @@
 // 所有读路径都 .toEntity() 转 entity，UI 看到的是 entity 不是 Drift row。
 library;
 
+import 'dart:convert' show jsonEncode;
+
 import 'package:drift/drift.dart' show Value;
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
@@ -90,8 +92,11 @@ class CheckInRepositoryImpl implements CheckInRepository {
     required int total,
     DateTime? at,
   }) {
-    final note =
-        '{"scale":"$scale","scores":${_encodeScores(scores)},"total":$total}';
+    final note = jsonEncode({
+      'scale': scale,
+      'scores': scores,
+      'total': total,
+    });
     return _db.insertCheckIn(
       CheckInsCompanion.insert(
         timestamp: at ?? DateTime.now(),
@@ -100,7 +105,4 @@ class CheckInRepositoryImpl implements CheckInRepository {
       ),
     );
   }
-
-  /// 编码评分列表为 JSON
-  static String _encodeScores(List<int> scores) => '[${scores.join(',')}]';
 }

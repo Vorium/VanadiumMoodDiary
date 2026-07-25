@@ -75,15 +75,17 @@ class MedicationRepositoryImpl implements MedicationRepository {
     required int medicationId,
     required bool isActive,
   }) async {
-    final row = await (_db.select(_db.medications)
-          ..where((t) => t.id.equals(medicationId)))
-        .getSingleOrNull();
-    if (row == null) return false;
-    final updated = row.toEntity().copyWith(
-          isActive: isActive,
-          endDate: DomainValue<DateTime?>(isActive ? null : DateTime.now()),
-        );
-    return _db.updateMedication(updated.toDriftRow());
+    return _db.transaction(() async {
+      final row = await (_db.select(_db.medications)
+            ..where((t) => t.id.equals(medicationId)))
+          .getSingleOrNull();
+      if (row == null) return false;
+      final updated = row.toEntity().copyWith(
+            isActive: isActive,
+            endDate: DomainValue<DateTime?>(isActive ? null : DateTime.now()),
+          );
+      return _db.updateMedication(updated.toDriftRow());
+    });
   }
 
   @override
@@ -95,14 +97,16 @@ class MedicationRepositoryImpl implements MedicationRepository {
     required DateTime? refillAt,
     int? reminderDays,
   }) async {
-    final row = await (_db.select(_db.medications)
-          ..where((t) => t.id.equals(medicationId)))
-        .getSingleOrNull();
-    if (row == null) return false;
-    final updated = row.toEntity().copyWith(
-          refillAt: DomainValue<DateTime?>(refillAt),
-          refillReminderDays: reminderDays ?? row.refillReminderDays,
-        );
-    return _db.updateMedication(updated.toDriftRow());
+    return _db.transaction(() async {
+      final row = await (_db.select(_db.medications)
+            ..where((t) => t.id.equals(medicationId)))
+          .getSingleOrNull();
+      if (row == null) return false;
+      final updated = row.toEntity().copyWith(
+            refillAt: DomainValue<DateTime?>(refillAt),
+            refillReminderDays: reminderDays ?? row.refillReminderDays,
+          );
+      return _db.updateMedication(updated.toDriftRow());
+    });
   }
 }

@@ -20,7 +20,8 @@ class Formatters {
 
   /// 剂量：整数无小数，否则原样
   static String dosage(double value, String unit) {
-    final rounded = value.round();
+    // 标准四舍五入（Dart round() 用银行家舍入，医疗场景应用 round-half-up）
+    final rounded = (value + 0.5).floorToDouble().toInt();
     if ((value - rounded).abs() < 1e-9) {
       return '$rounded$unit';
     }

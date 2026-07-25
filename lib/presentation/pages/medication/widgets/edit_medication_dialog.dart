@@ -14,6 +14,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 
@@ -386,19 +387,12 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
           onPressed: _saving ? null : () => Navigator.of(context).pop(false),
           child: Text(AppLocalizations.of(context).commonCancel),
         ),
-        ElevatedButton(
-          onPressed: _saving ? null : _save,
-          child: _saving
-              ? SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    // v0.22 round 36: 去掉 const (fgOnPrimary 是函数调用)
-                    color: AppTokens.fgOnPrimary(context),
-                  ),
-                )
-              : Text(AppLocalizations.of(context).commonSave),
+        // v0.24 round 43 (emil P1-01 H-03): 改用 LoadingTextButton
+        // 替代内联 ElevatedButton + CircularProgressIndicator
+        LoadingTextButton(
+          label: AppLocalizations.of(context).commonSave,
+          isLoading: _saving,
+          onPressed: _save,
         ),
       ],
     );

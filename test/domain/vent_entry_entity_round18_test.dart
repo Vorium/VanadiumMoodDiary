@@ -7,6 +7,7 @@
 // - == / hashCode 一致
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 
 VentEntryEntity _e({
@@ -145,7 +146,7 @@ void main() {
 
     test('改 audioPath → 其他不动', () {
       final e = _e(timestamp: t1, audioPath: '/a.m4a');
-      final c = e.copyWith(audioPath: '/b.m4a');
+      final c = e.copyWith(audioPath: const DomainValue('/b.m4a'));
       expect(c.audioPath, '/b.m4a');
     });
   });

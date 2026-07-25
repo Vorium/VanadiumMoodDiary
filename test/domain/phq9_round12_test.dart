@@ -53,10 +53,6 @@ void main() {
   });
 
   group('phq9 常量', () {
-    test('9 道题', () {
-      expect(phq9Items.length, 9);
-    });
-
     test('4 个选项 0-3', () {
       expect(phq9Options.length, 4);
       expect(phq9Options[0], '完全不会');

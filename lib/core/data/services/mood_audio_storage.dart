@@ -12,204 +12,56 @@
 // - 加密 key 在 EncryptionService 用 SecureStorage 存,绑设备
 //
 // **P0-2 fix 复用 vent 的教训**: 必须每个 storage 实例独立,不能跨隐私模块共享。
+//
+// **v0.23 (Round 43 spen-2)**: 99% 同构的 encrypt/decrypt/file 管理抽到
+// [EncryptedAudioStorage] 基类,本文件只剩 mood-specific 配置 (目录名 + 前缀)。
 library;
 
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
+import 'package:chroniccare/core/data/privacy/encrypted_audio_storage.dart';
 
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-
-import 'package:chroniccare/core/data/services/encryption_service.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+export 'package:chroniccare/core/data/privacy/encrypted_audio_storage.dart'
+    show EncryptedAudioStorage;
 
 /// 情绪日记 audio 文件管理
 ///
 /// 独立于 VentAudioStorage,各自的目录 + 各自的清理策略。
-class MoodAudioStorage {
+/// 大部分 file 管理逻辑在 [EncryptedAudioStorage] 基类。
+class MoodAudioStorage extends EncryptedAudioStorage {
   static const _dirName = 'mood_audio';
 
+  /// 临时录音文件名前缀 (明文, OS temp dir)
+  static const _tempRecordPrefix = 'mood_record_';
+
+  /// 临时解密文件名前缀 (OS temp dir)
+  static const _decryptPrefix = 'mood_decrypt_';
+
+  /// 加密文件名前缀
+  static const _filePrefix = 'mood_';
+
   /// 加密文件后缀。DB 存的 audioPath 都是 .m4a.enc 格式
-  static const encryptedSuffix = '.m4a.enc';
+  ///
+  /// 向后兼容: 老代码引用 `MoodAudioStorage.encryptedSuffix`,现指向
+  /// 基类常量。
+  static const String encryptedSuffix = EncryptedAudioStorage.encryptedSuffix;
 
   /// 旧明文文件后缀 (迁移前存在, 跟 vent 一致)
-  static const legacyPlainSuffix = '.m4a';
+  static const String legacyPlainSuffix =
+      EncryptedAudioStorage.legacyPlainSuffix;
 
-  /// 加密/解密服务注入(便于 test 替换)
-  final EncryptionService _encryption;
+  MoodAudioStorage({super.encryption});
 
-  MoodAudioStorage({EncryptionService? encryption})
-      : _encryption = encryption ?? EncryptionService();
+  @override
+  String get dirName => _dirName;
 
-  /// 取 audio 目录(不存在则创建)
-  Future<Directory> _dir() async {
-    final docs = await getApplicationDocumentsDirectory();
-    final dir = Directory(p.join(docs.path, _dirName));
-    if (!await dir.exists()) {
-      await dir.create(recursive: true);
-    }
-    return dir;
-  }
+  @override
+  String get filePrefix => _filePrefix;
 
-  /// 生成临时录音文件路径(明文, OS temp 目录)
-  ///
-  /// 跟 [newAudioPath] 一样加 4 位 random suffix,避免同毫秒录 2 段覆盖。
-  Future<String> newTempRecordPath() async {
-    final tempDir = Directory.systemTemp;
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final rand = Random().nextInt(10000).toString().padLeft(4, '0');
-    return p.join(tempDir.path, 'mood_record_${ts}_$rand.m4a');
-  }
+  @override
+  String get tempRecordPrefix => _tempRecordPrefix;
 
-  /// 生成新的加密 audio 文件路径(不创建文件)
-  ///
-  /// 路径格式: {app_docs}/mood_audio/mood_{timestamp_ms}_{rand4}.m4a.enc
-  Future<String> newAudioPath() async {
-    final dir = await _dir();
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final rand = Random().nextInt(10000).toString().padLeft(4, '0');
-    final name = 'mood_${ts}_$rand$encryptedSuffix';
-    return p.join(dir.path, name);
-  }
+  @override
+  String get decryptPrefix => _decryptPrefix;
 
-  /// 加密明文 audio 并写到 [encryptedPath]
-  ///
-  /// 流程: 读 [plainPath] → 加密 → 写 [encryptedPath] → 删明文
-  /// 任何一步失败都会抛错,已写的文件回滚(尽力)。
-  Future<void> encryptAndWrite({
-    required String plainPath,
-    required String encryptedPath,
-  }) async {
-    final plainFile = File(plainPath);
-    final encFile = File(encryptedPath);
-
-    if (!await plainFile.exists()) {
-      throw FileSystemException('Plain audio not found', plainPath);
-    }
-    final bytes = await plainFile.readAsBytes();
-    final encrypted = await _encryption.encrypt(Uint8List.fromList(bytes));
-    await encFile.writeAsBytes(encrypted, flush: true);
-    // 删明文 (best-effort, 失败不抛)
-    try {
-      await plainFile.delete();
-    } catch (e, st) {
-      swallowError(
-        where: 'mood_audio_storage.encryptAndWrite',
-        error: e,
-        stack: st,
-        note: 'failed to delete plain after encrypt '
-            '(security: still encrypted file exists, but plain may linger)',
-      );
-    }
-  }
-
-  /// 解密加密 audio 到临时文件, 返回临时路径
-  ///
-  /// 播放时调用: 解密到 temp 目录 → audioplayer 播 → 播完自己删
-  Future<String> decryptToTemp(String encryptedPath) async {
-    final encFile = File(encryptedPath);
-    if (!await encFile.exists()) {
-      throw FileSystemException('Encrypted audio not found', encryptedPath);
-    }
-    final blob = await encFile.readAsBytes();
-    final plain = await _encryption.decrypt(Uint8List.fromList(blob));
-
-    final tempDir = Directory.systemTemp;
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final rand = Random().nextInt(10000).toString().padLeft(4, '0');
-    final tempPath = p.join(tempDir.path, 'mood_decrypt_${ts}_$rand.m4a');
-    await File(tempPath).writeAsBytes(plain, flush: true);
-    return tempPath;
-  }
-
-  /// 清理临时解密文件(播放完成调)
-  Future<void> deleteTempFile(String tempPath) async {
-    try {
-      final f = File(tempPath);
-      if (await f.exists()) {
-        await f.delete();
-      }
-    } catch (e, st) {
-      swallowError(
-        where: 'mood_audio_storage.deleteTempFile',
-        error: e,
-        stack: st,
-        note: 'temp file delete failed — OS will clean',
-      );
-    }
-  }
-
-  /// 删除单个 audio 文件
-  ///
-  /// 文件不存在视为成功 (idempotent)。
-  Future<bool> deleteAudio(String path) async {
-    try {
-      final f = File(path);
-      if (await f.exists()) {
-        await f.delete();
-      }
-      return true;
-    } catch (e, st) {
-      swallowError(
-        where: 'mood_audio_storage.deleteAudio',
-        error: e,
-        stack: st,
-        note: 'audio file delete failed',
-      );
-      return false;
-    }
-  }
-
-  /// 清空所有 audio 文件(用于"清空所有数据"功能 / 隐私清除)
-  Future<int> deleteAll() async {
-    final dir = await _dir();
-    if (!await dir.exists()) return 0;
-    var count = 0;
-    await for (final entity in dir.list()) {
-      if (entity is File) {
-        try {
-          await entity.delete();
-          count++;
-        } catch (e, st) {
-          swallowError(
-            where: 'mood_audio_storage.deleteAll',
-            error: e,
-            stack: st,
-            note: 'skip un deletable file in batch clear',
-          );
-        }
-      }
-    }
-    return count;
-  }
-
-  /// 单个 audio 文件大小(字节)
-  Future<int> fileSizeBytes(String path) async {
-    final f = File(path);
-    if (!await f.exists()) return 0;
-    return f.length();
-  }
-
-  /// audio 文件总大小(字节),用于统计 / 警告用户
-  Future<int> totalSizeBytes() async {
-    final dir = await _dir();
-    if (!await dir.exists()) return 0;
-    var total = 0;
-    await for (final entity in dir.list()) {
-      if (entity is File) {
-        try {
-          total += await entity.length();
-        } catch (e, st) {
-          swallowError(
-            where: 'mood_audio_storage.totalSizeBytes',
-            error: e,
-            stack: st,
-            note: 'failed to stat audio file, skipping',
-          );
-        }
-      }
-    }
-    return total;
-  }
+  @override
+  String get debugTag => 'mood_audio_storage';
 }

@@ -30,10 +30,15 @@ void main() {
     });
 
     test('最近 3 天都在 22 点后打卡 → lateCheckInHabit', () {
+      // v0.23 round 43 (spen-3): off-by-one 修后窗口缩为 3 天(day 0/1/2)
+      // 之前用 day 1/2/3 是依赖 bug,现在改用 day 0/1/2
+      // 同时补 7-11 周六打卡,避免 weekendMissed 抢先触发
       final checkIns = [
-        now.subtract(const Duration(days: 1)).copyWith(hour: 23),
-        now.subtract(const Duration(days: 2)).copyWith(hour: 22, minute: 30),
-        now.subtract(const Duration(days: 3)).copyWith(hour: 23),
+        now.copyWith(hour: 23),
+        now.subtract(const Duration(days: 1)).copyWith(hour: 22, minute: 30),
+        now.subtract(const Duration(days: 2)).copyWith(hour: 23),
+        // 补 7-11 (周六) 打卡,排除 weekendMissed
+        now.subtract(const Duration(days: 4)).copyWith(hour: 20),
       ].map(_ci).toList();
       final t = CareEngine.evaluate(checkIns: checkIns, now: now);
       expect(t.type, CareTriggerType.lateCheckInHabit);

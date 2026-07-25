@@ -86,10 +86,11 @@ abstract class MoodAudioService {
   /// stopStt() 被调。每条是 partial result (Web Speech API 风格)。
   Stream<String> get sttTranscriptStream;
 
-  /// 停止 STT 监听, 返回 final transcript
+  /// 停止 STT 监听
   ///
-  /// 录音停止后页面需要这个把 STT 也停掉。返回 final recognized text。
-  Future<String?> stopStt();
+  /// 录音停止后页面需要这个把 STT 也停掉。
+  /// 最终文本由 [sttTranscriptStream] 的最后一条推送决定。
+  Future<void> stopStt();
 
   /// 释放所有资源 (AudioRecorder / SpeechToText / Timer / stream)
   Future<void> dispose();
@@ -123,13 +124,22 @@ class MoodAudioServiceImpl implements MoodAudioService {
   // 100ms tick interval
   static const Duration _tickInterval = Duration(milliseconds: 100);
 
+  // v0.23 round 43 (spen-4 test helper): 测试可注入短 maxDuration + tickInterval
+  // 默认 3min / 100ms,真实使用不变。test 用 100ms / 1s 加速跑完。
+  final Duration _effectiveMaxDuration;
+  final Duration _effectiveTickInterval;
+
   MoodAudioServiceImpl({
     AudioRecorder? recorder,
     SpeechToText? stt,
     MoodAudioStorage? storage,
+    Duration? maxDuration,
+    Duration? tickInterval,
   })  : _recorder = recorder ?? AudioRecorder(),
         _stt = stt ?? SpeechToText(),
-        _storage = storage ?? MoodAudioStorage();
+        _storage = storage ?? MoodAudioStorage(),
+        _effectiveMaxDuration = maxDuration ?? _maxDuration,
+        _effectiveTickInterval = tickInterval ?? _tickInterval;
 
   @override
   bool get isRecording => _isRecording;
@@ -233,15 +243,32 @@ class MoodAudioServiceImpl implements MoodAudioService {
 
     // 5. 启动 100ms tick Timer
     _recordingTimer?.cancel();
-    _recordingTimer = Timer.periodic(_tickInterval, (_) {
+    _recordingTimer = Timer.periodic(_effectiveTickInterval, (_) {
       if (!_isRecording || _recordingStart == null) return;
       _recordingElapsed = DateTime.now().difference(_recordingStart!);
       _onTickCb?.call(_recordingElapsed);
       if (_recordingElapsed >= _maxDuration) {
         // 6. 到 3min 自动 stop
+        // v0.23 round 43 (spen-4) fix: 之前只 cancel timer + fire onMaxReached,
+        // **不**强制 stop recorder,导致录音继续吃 mic 资源 + 累计空文件。
+        // 修法: cancel timer → fire callback → 立刻 unawaited(stopRecording)
+        // 强制关闭 recorder + 释放 mic。stopRecording 内部 idempotent
+        // (_isRecording check),即使 page 也在调 cancelRecording 也安全。
         _recordingTimer?.cancel();
         _onMaxReachedCb?.call();
-        // 不在这里调 stopRecording — page 状态决定怎么走(可能直接 encrypt 保存)
+        // 强制 stop recorder (footgun: callback 抛错时录音仍继续)
+        unawaited(
+          stopRecording().catchError((Object e, StackTrace st) {
+            swallowError(
+              where: 'mood_audio_service._recordingTimer.maxDuration',
+              error: e,
+              stack: st,
+              note:
+                  'auto-stop recorder at 3min failed — page may need manual cancel',
+            );
+            return null;
+          }),
+        );
       }
     });
   }
@@ -285,8 +312,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
   Stream<String> get sttTranscriptStream => _sttController.stream;
 
   @override
-  Future<String?> stopStt() async {
-    String? finalText;
+  Future<void> stopStt() async {
     try {
       if (_isSttListening) {
         await _stt.stop();
@@ -301,9 +327,8 @@ class MoodAudioServiceImpl implements MoodAudioService {
       );
     }
     _isSttListening = false;
-    // finalText 由 stream 推过来的最后 1 条 final result 决定
+    // 最终文本由 sttTranscriptStream 的最后一条推送决定
     // (page 端会收集 stream 里的 final recognized text 存到 mood_entry)
-    return finalText;
   }
 
   Future<void> _stopSttInternal() async {

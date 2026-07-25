@@ -18,7 +18,7 @@
   "@homeNextReminder": {
     "placeholders": { "time": { "type": "String" } }
   },
-  "homeStillOnline": "🌱 你还在线",
+  "homeStillOnline": "🌱 您还在线",
   "homeTempMed": "临时吃药 +",
   "homeStreakBroken": "少 1 次没关系，明天继续",
 
@@ -29,9 +29,9 @@
       "total": { "type": "int" }
     }
   },
-  "setupHello": "你好，我是慢病管家",
+  "setupHello": "您好，我是慢病管家",
   "setupIntro": "1 分钟设置好，然后每天 1 次打卡",
-  "setupName": "你的名字（选填）",
+  "setupName": "您的名字（选填）",
   "setupNameHint": "小明",
   "setupContacts": "紧急联系人手机号（至少 1 个）",
   "setupContactHint": "13800138000",
@@ -47,15 +47,15 @@
   "setupMedSchedule": "吃药时间（可填）",
   "setupStart": "开始我的第 1 天",
   "setupDoneTitle": "全部完成！",
-  "setupDoneSubtitle": "明天开始你的第 1 天",
+  "setupDoneSubtitle": "明天开始您的第 1 天",
   "setupDailyRoutine": "我每天会做：",
   "setupReminder1": "✓ 推送 1 次提醒",
-  "setupReminder2": "✓ 你点 1 下 = 打卡",
+  "setupReminder2": "✓ 您点 1 下 = 打卡",
   "setupReminder3": "✓ 漏 2 天我会联系紧急人",
-  "setupPrivacy": "你的数据：",
+  "setupPrivacy": "您的数据：",
   "setupPrivacy1": "• 本地加密",
   "setupPrivacy2": "• 不会上传到任何云端服务器",
-  "setupPrivacy3": "• 你可以随时导出",
+  "setupPrivacy3": "• 您可以随时导出",
 
   "settingsContacts": "紧急联系人",
   "settingsMedication": "常吃药",
@@ -64,7 +64,7 @@
   "settingsDisclaimer": "免责声明",
   "settingsExport": "导出数据",
   "settingsMedReport": "用药报告",
-  "settingsMedReportSubtitle": "选时间窗口（7/14/30 天），给医生看",
+  "settingsMedReportSubtitle": "选时间窗口（7／14／30 天），给医生看",
   "settingsMedReportChooseTitle": "选择时间窗口",
   "settingsMedReportChooseSubtitle": "会统计这段时间内的所有常吃药 + 临时用药",
   "settingsMedReportWindow7": "近 7 天",
@@ -85,14 +85,14 @@
   "settingsRefillManagementSubtitle": "集中查看所有药物的续方状态",
   "settingsAssessment": "心理评估",
   "settingsAssessmentHistory": "评估历史",
-  "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 / GAD-7 评估的折线图与对比",
-  "settingsAboutVersion": "v0.22.0 · 我今天吃了药",
+  "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比",
+  "settingsAboutVersion": "v0.23.0 · 我今天吃了药",
   "settingsDisclaimerText": "本应用不提供医疗建议，所有功能仅供参考。",
   "settingsExportDialogTitle": "导出数据",
   "settingsExportInstruction": "把下面这串 JSON 保存到安全的地方：",
   "settingsExportVentWarning": "说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。",
   "settingsExportVentConfirmTitle": "导出含敏感内容",
-  "settingsExportVentConfirmBody": "即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 你将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中",
+  "settingsExportVentConfirmBody": "即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 您将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中",
   "settingsExportVentConfirmConfirm": "我了解，继续导出",
   "settingsCopy": "复制",
   "settingsActionExport": "导出",
@@ -109,7 +109,7 @@
 
   "@_v0.21_round_22_settings_clear_all_data": {},
   "settingsClearAllData": "清空所有数据",
-  "settingsClearAllDataSubtitle": "删除全部打卡 / 用药 / 评估 / 树洞 / 联系人（无法恢复）",
+  "settingsClearAllDataSubtitle": "删除全部打卡 ／ 用药 ／ 评估 ／ 树洞 ／ 联系人（无法恢复）",
   "settingsClearAllDataDialogTitle": "确认清空所有数据？",
   "settingsClearAllDataDialogBody": "以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
   "settingsClearAllDataConfirm": "我已备份，确认清空",
@@ -163,7 +163,7 @@
   "snackbarNeedMicPermission": "需要麦克风权限",
   "snackbarEmptyVent": "写点东西或录一段吧",
   "snackbarStopRecording": "请先停止录音",
-  "snackbarPhoneInvalid": "号码格式不对（支持大陆/港澳台/国际）",
+  "snackbarPhoneInvalid": "号码格式不对（支持大陆／港澳台／国际）",
 
   "commonConfirmOk": "确定",
   "commonTakePhoto": "拍照",
@@ -182,7 +182,7 @@
 
   "medsListEmpty": "还没添加常吃药",
   "medsCalendarTitle": "用药日历",
-  "medsCalendarSubtitle": "医生视角依从性热力图 · 7/30/90 天",
+  "medsCalendarSubtitle": "医生视角依从性热力图 · 7／30／90 天",
   "medsListNoActive": "没有在用的药",
   "medsListNoActiveHint": "所有药物都已停用，去添加新药物开始新一阶段。",
   "medsListAddAction": "添加药物",
@@ -233,7 +233,7 @@
   "notificationStatusCardNoTitle": "（无标题）",
   "notificationStatusCardWebTitle": "通知功能仅在 Android / iOS 上可用",
   "notificationStatusCardWebSubtitle": "当前是 web 端，通知由浏览器控制。请在手机上打开 App 测试。",
-  "notificationStatusCardStatusLoading": "加载中…",
+  "notificationStatusCardStatusLoading": "加载中……",
   "notificationStatusCardStatusUnsupported": "当前平台不支持查询",
   "notificationStatusCardStatusNone": "⚠️ 没有待发通知 — 提醒可能没设上",
   "notificationStatusCardStatusCount": "✓ 已排队 {count} 条待发通知",
@@ -246,12 +246,12 @@
   "notificationStatusCardViewButtonTitle": "查看已排队通知",
   "notificationStatusCardViewButtonSubtitle": "展示当前所有待发的提醒",
   "notificationStatusCardOemTitle": "国产手机没收到通知？",
-  "notificationStatusCardOemSubtitle": "小米/华为/OPPO/Vivo/三星 默认会杀后台，点这里看怎么设",
+  "notificationStatusCardOemSubtitle": "小米／华为／OPPO／Vivo／三星 默认会杀后台，点这里看怎么设",
   "notificationStatusCardOemBrandXiaomi": "小米 / Redmi",
   "notificationStatusCardOemStepXiaomi1": "设置 → 应用 → 慢病管家 → 自启动 → 开启",
   "notificationStatusCardOemStepXiaomi2": "设置 → 应用 → 慢病管家 → 省电策略 → 无限制",
   "notificationStatusCardOemStepXiaomi3": "设置 → 通知 → 慢病管家 → 允许通知 + 锁屏通知",
-  "notificationStatusCardOemBrandHuawei": "华为 / 荣耀",
+  "notificationStatusCardOemBrandHuawei": "华为 ／ 荣耀",
   "notificationStatusCardOemStepHuawei1": "设置 → 应用 → 慢病管家 → 电池 → 启动管理 → 允许自启动",
   "notificationStatusCardOemStepHuawei2": "设置 → 应用 → 慢病管家 → 通知 → 全部开启",
   "notificationStatusCardOemStepHuawei3": "手机管家 → 应用启动管理 → 关闭「自动管理」",
@@ -269,7 +269,7 @@
   "notificationStatusCardOemBrandSamsung": "三星 (OneUI)",
   "notificationStatusCardOemStepSamsung1": "设置 → 应用程序 → 慢病管家 → 通知 → 全部开启",
   "notificationStatusCardOemStepSamsung2": "设置 → 电池 → 后台使用限制 → 慢病管家 → 改为「不受限」",
-  "notificationStatusCardOemBrandOthers": "其他（中兴/努比亚/红魔/联想/三星 Knox）",
+  "notificationStatusCardOemBrandOthers": "其他（中兴／努比亚／红魔／联想／三星 Knox）",
   "notificationStatusCardOemStepOthers1": "设置 → 应用 → 慢病管家 → 通知 → 全部开启",
   "notificationStatusCardOemStepOthers2": "设置 → 电池 → 后台运行 → 改为「允许」",
   "notificationStatusCardOemGeneralTip": "通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。",
@@ -283,7 +283,7 @@
   "reminderHubStatusError": "出错",
   "reminderHubRefillTitle": "续方提醒",
   "reminderHubAssessmentTitle": "周期评估提醒",
-  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做心理评估（PHQ-9 / GAD-7）",
+  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做心理评估（PHQ-9 ／ GAD-7）",
   "@reminderHubAssessmentDescEnabled": {
     "placeholders": { "days": { "type": "int" } }
   },
@@ -313,7 +313,7 @@
     }
   },
   "reminderHubMedicationDescInactive": "还没有在用药物 · 添加后会自动启用",
-  "reminderHubMedicationStatusActive": "已启用 · {count} 种 / {times} 时间点",
+  "reminderHubMedicationStatusActive": "已启用 · {count} 种 ／ {times} 时间点",
   "@reminderHubMedicationStatusActive": {
     "placeholders": {
       "count": { "type": "int" },
@@ -374,18 +374,18 @@
   "ventListTitle": "我的树洞",
   "ventListWriteTooltip": "写一条",
   "ventEmptyTitle": "树洞还是空的",
-  "ventEmptySubtitle": "想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。",
+  "ventEmptySubtitle": "想说什么就说出来。文字、语音都可以。\n这些话只有您自己能看到。",
   "ventEmptyAction": "写第一句",
   "ventVoiceLabel": "🎙️ 语音",
   "ventDetailTitle": "树洞",
   "ventDetailNotFound": "找不到了",
-  "ventDetailPrivacy": "🔒 私密 · 只有你能看到",
+  "ventDetailPrivacy": "🔒 私密 · 只有您能看到",
   "ventToday": "今天",
   "ventYesterday": "昨天",
   "ventComposeTitle": "放进树洞",
   "ventComposeHint": "今天过得怎么样……",
   "ventRecordIdle": "按一下开始录音",
-  "ventRecordActive": "正在录音… 点停止",
+  "ventRecordActive": "正在录音……点停止",
   "ventAudioLabel": "录音",
   "ventRerecord": "重录",
   "ventDurationSeconds": "{seconds}秒",
@@ -422,7 +422,7 @@
   "moodNoteHint": "今天发生什么？",
 
   "moodAudioRecordButton": "录语音",
-  "moodAudioRecording": "录音中… {elapsed}",
+  "moodAudioRecording": "录音中……{elapsed}",
   "@moodAudioRecording": {
     "placeholders": { "elapsed": { "type": "String" } }
   },
@@ -435,7 +435,7 @@
   "moodAudioTranscriptLabel": "识别文字",
   "moodAudioTranscriptEmpty": "未识别到内容",
   "moodAudioTranscriptPartialHint": "（仅识别前 60 秒）",
-  "moodAudioSttListening": "识别中…",
+  "moodAudioSttListening": "识别中……",
   "moodAudioSttFailed": "识别失败，已仅保存录音",
   "moodAudioSttUnavailable": "该设备暂不支持语音转文字",
   "moodAudioMaxReached": "已达 3 分钟上限",
@@ -485,7 +485,7 @@
     }
   },
   "assessmentLoadingBack": "正在返回上一页……",
-  "assessmentAnsweredProgress": "已答 {answered} / {total}",
+  "assessmentAnsweredProgress": "已答 {answered} ／ {total}",
   "@assessmentAnsweredProgress": {
     "placeholders": {
       "answered": { "type": "int" },
@@ -493,12 +493,20 @@
     }
   },
   "assessmentSubmit": "提交并查看结果",
+  "assessmentQuestionLabel": "评估题 {index}：{text}，4 项单选，当前：{selected}",
+  "@assessmentQuestionLabel": {
+    "placeholders": {
+      "index": { "type": "int" },
+      "text": { "type": "String" },
+      "selected": { "type": "String" }
+    }
+  },
   "assessmentScoreTotal": "总分（0-{max}）",
   "@assessmentScoreTotal": {
     "placeholders": { "max": { "type": "int" } }
   },
-  "assessmentRecommendUrgent": "强烈建议你尽快联系医生或心理治疗师。",
-  "assessmentRecommend": "建议你联系医生做进一步评估。",
+  "assessmentRecommendUrgent": "强烈建议您尽快联系医生或心理治疗师。",
+  "assessmentRecommend": "建议您联系医生做进一步评估。",
   "assessmentDisclaimer": "⚠️ 本评估仅供参考，不能代替专业诊断。\n如感到困扰，请咨询医生。",
   "assessmentBack": "返回",
   "assessmentRetake": "再做一次",
@@ -523,7 +531,7 @@
   "@homeStreakAmazing": {
     "placeholders": { "days": { "type": "int" } }
   },
-  "homeStreakMaster": "{days} 天--你已经是这个习惯的主人了 🏔️",
+  "homeStreakMaster": "{days} 天--您已经是这个习惯的主人了 🏔️",
   "@homeStreakMaster": {
     "placeholders": { "days": { "type": "int" } }
   },
@@ -550,10 +558,10 @@
   "@assessmentReminderSubtitleEnabled": {
     "placeholders": { "days": { "type": "int" } }
   },
-  "assessmentReminderHelpText": "完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅你自己看得到。",
+  "assessmentReminderHelpText": "完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅您自己看得到。",
   "assessmentReminderHintAcute": "高强度监测（适合急性期）",
   "assessmentReminderHintCommon": "推荐（精神科常用）",
-  "assessmentReminderHintStable": "稳定期 / 月度复盘",
+  "assessmentReminderHintStable": "稳定期 ／ 月度复盘",
   "assessmentReminderHintMaintenance": "维持治疗期",
   "assessmentReminderHintLongTerm": "长期随访",
 
@@ -566,7 +574,7 @@
   "@assessmentTotalRecords": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "assessmentScoreRange": "最低 {min} / 最高 {max}",
+  "assessmentScoreRange": "最低 {min} ／ 最高 {max}",
   "@assessmentScoreRange": {
     "placeholders": {
       "min": { "type": "int" },
@@ -574,7 +582,7 @@
     }
   },
   "assessmentComparePrevious": "对比上次",
-  "assessmentFirstAssessmentHint": "这是你的第一次评估。下次评估后会显示和这次的对比。",
+  "assessmentFirstAssessmentHint": "这是您的第一次评估。下次评估后会显示和这次的对比。",
   "assessmentPrevious": "上次",
   "assessmentCurrent": "本次",
   "assessmentDaysSincePrevious": "距上次 {days} 天",
@@ -619,7 +627,7 @@
   "setupValidationPhoneInvalid": "手机号格式不对",
   "setupValidationPhoneDuplicate": "紧急联系人手机号不能重复",
   "setupPresetTitle": "📋 选择预置方案",
-  "setupPresetDescription": "预置方案会填好药名 + 时间，你可以接着改。最终服药请按医嘱核对。",
+  "setupPresetDescription": "预置方案会填好药名 + 时间，您可以接着改。最终服药请按医嘱核对。",
   "setupPresetLoaded": "已载入：{name}（{count} 个药）请核对药名和剂量",
   "@setupPresetLoaded": {
     "placeholders": {
@@ -632,7 +640,7 @@
     "placeholders": { "error": { "type": "String" } }
   },
 
-  "setupMedWhatDoYouTake": "你常吃什么药？",
+  "setupMedWhatDoYouTake": "您常吃什么药？",
   "setupMedMultiDrugHint": "（可加多个药，每个药配自己的时间和剂量；跳过不影响打卡）",
   "setupMedEmptyHint": "还没添加药物。可以跳过——打卡不需要药物信息。",
   "setupMedAddDrug": "+ 添加药物",
@@ -674,10 +682,10 @@
   "legalPageWithdrawTitle": "撤回同意",
   "legalPageWithdrawDescription": "撤回某项同意后，相关功能立即停用（数据不删除，可重新打开）。",
   "legalPageWithdrawSafety": "撤回失联通知同意",
-  "legalPageWithdrawSafetySubtitle": "不再因漏打卡触发短信/邮件通知给紧急联系人",
+  "legalPageWithdrawSafetySubtitle": "不再因漏打卡触发短信／邮件通知给紧急联系人",
   "legalPageWithdrawVent": "撤回树洞（敏感倾诉）处理同意",
-  "legalPageWithdrawVentSubtitle": "停止存储新树洞文字/录音（已有数据保留，需手动删除）",
-  "legalPageWithdrawAnalytics": "撤回评估/情绪分析同意",
+  "legalPageWithdrawVentSubtitle": "停止存储新树洞文字／录音（已有数据保留，需手动删除）",
+  "legalPageWithdrawAnalytics": "撤回评估／情绪分析同意",
   "legalPageWithdrawAnalyticsSubtitle": "停止将评估/情绪记录纳入趋势分析（数据保留，不再入图表）",
   "legalPageConsentRecorded": "撤回时间：{time}",
   "legalPageConsentNever": "从未撤回",
@@ -685,9 +693,9 @@
 
   "emailPreviewTitle": "通知预览",
   "emailPreviewSetupRequired": "请先完成首次设置",
-  "emailPreviewDescription": "这是你将收到的失联通知预览：",
+  "emailPreviewDescription": "这是您将收到的失联通知预览：",
   "emailPreviewNoContact": "（无联系人）",
-  "emailPreviewDisclaimer": "💡 这只是预览。实际短信通知在你漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。",
+  "emailPreviewDisclaimer": "💡 这只是预览。实际短信通知在您漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。",
 
   "reportHistoryEmpty": "还没有报告历史\n生成一次报告后会自动记录",
   "reportHistoryItemTitle": "{date} · 近 {days} 天",
@@ -718,7 +726,7 @@
   "@homeCelebrationStreakLong": {
     "placeholders": { "days": { "type": "int" } }
   },
-  "homeCelebrationStreakMaster": "已记录！{days} 天--你太厉害了 🏔️",
+  "homeCelebrationStreakMaster": "已记录！{days} 天--您太厉害了 🏔️",
   "@homeCelebrationStreakMaster": {
     "placeholders": { "days": { "type": "int" } }
   },
@@ -733,8 +741,8 @@
   },
   "homeSafetyAlertSuffix": "（请尽快打卡或联系家人）",
   "homeSnoozeTitle": "⏰ 该打卡了（5min 后）",
-  "homeSnoozeBody": "刚才你点了「snooze」，是时候点一下 = 打卡了",
-  "homeSnoozeConfirmed": "好，5 分钟后会再提醒你 👌",
+  "homeSnoozeBody": "刚才您点了「snooze」，是时候点一下 = 打卡了",
+  "homeSnoozeConfirmed": "好，5 分钟后会再提醒您 👌",
   "homeSnoozeFailed": "Snooze 失败：{error}",
   "@homeSnoozeFailed": {
     "placeholders": { "error": { "type": "String" } }
@@ -918,7 +926,7 @@
   "migrationPromptTitle": "升级到 v0.9",
   "migrationPromptDetectedOld": "检测到本地有旧版本数据。",
   "migrationPromptChangesTitle": "本次升级会：",
-  "migrationPromptChangeEncrypt": "• 启用数据库加密（保护你的隐私）",
+  "migrationPromptChangeEncrypt": "• 启用数据库加密（保护您的隐私）",
   "migrationPromptChangeClear": "• 清空旧版本的所有打卡记录",
   "migrationPromptChangeWarning": "（旧版本没有\"导出数据\"功能，原始数据无法恢复）",
   "migrationPromptRecommendExport": "建议：先在旧版 App 内完成\"导出数据\"备份，再升级。",

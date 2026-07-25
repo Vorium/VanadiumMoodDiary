@@ -29,6 +29,17 @@ class AssessmentRecord {
     required this.scores,
   });
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AssessmentRecord &&
+          other.scaleId == scaleId &&
+          other.timestamp == timestamp &&
+          other.total == total;
+
+  @override
+  int get hashCode => Object.hash(scaleId, timestamp, total);
+
   /// 从 CheckInEntity 反序列化
   ///
   /// 失败返回 null：

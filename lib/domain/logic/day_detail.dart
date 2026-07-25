@@ -12,12 +12,11 @@
 // v0.14 升级：4 层架构 — 接受 CheckInEntity / MoodEntryEntity
 library;
 
-import 'dart:developer' as developer;
-
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
 
 /// 当天事件类型
@@ -183,26 +182,9 @@ class DayDetailCalculator {
           ),
         );
       } else if (c.isAssessment) {
-        // 评估总分从 note JSON 解析（参考 AssessmentRecord.tryFromCheckIn）
-        int? total;
-        try {
-          if (c.note != null && c.note!.isNotEmpty) {
-            // 简单解析：找到 "total" 字段
-            final match = RegExp(r'"total"\s*:\s*(\d+)').firstMatch(c.note!);
-            if (match != null) {
-              total = int.tryParse(match.group(1)!);
-            }
-          }
-        } catch (e, st) {
-          // domain 层: 不能用 foundation.kDebugMode,直接 developer.log
-          // 解析失败 → total 留 null,event 仍正常显示（只是没分数）
-          developer.log(
-            'day_detail: assessment total parse failed, total=null',
-            name: 'domain',
-            error: e,
-            stackTrace: st,
-          );
-        }
+        // 评估总分：复用 AssessmentRecord.tryFromEntity 的正规 JSON 解析
+        final record = AssessmentRecord.tryFromEntity(c);
+        final total = record?.total;
         events.add(
           DayEvent(
             time: c.timestamp,

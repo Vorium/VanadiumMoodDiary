@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' as developer;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -140,9 +139,9 @@ class SafetyWatchService {
   Future<SafetyCheckResult> onCheckIn() async {
     final result = await _checkAndAlert(trigger: 'check_in');
     if (result.kind == SafetyCheckKind.alerted) {
-      developer.log(
+      piiSafeLog(
+        'SafetyWatchService',
         '⚠️ 用户打卡后仍触发告警 — 可能本地时间错乱或打卡未及时入库',
-        name: 'SafetyWatchService',
       );
     }
     return result;
@@ -272,10 +271,10 @@ class SafetyWatchService {
       // 7. 写 audit log
       await _setLastAlertAt(effectiveNow);
 
-      developer.log(
+      piiSafeLog(
+        'SafetyWatchService',
         '🚨 SafetyWatch 触发: trigger=$trigger days=$daysSinceLast '
         'smsOk=$smsOk smsFail=$smsFail',
-        name: 'SafetyWatchService',
       );
 
       return SafetyCheckResult(
@@ -285,9 +284,9 @@ class SafetyWatchService {
         contactsFailed: smsFail,
       );
     } catch (e, st) {
-      developer.log(
+      piiSafeLog(
+        'SafetyWatchService',
         '❌ SafetyWatch error: $e',
-        name: 'SafetyWatchService',
         error: e,
         stackTrace: st,
       );

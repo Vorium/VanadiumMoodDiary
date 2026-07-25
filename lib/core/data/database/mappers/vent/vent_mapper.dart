@@ -11,6 +11,7 @@ import 'dart:typed_data';
 import 'package:drift/drift.dart' show Value;
 
 import 'package:chroniccare/core/data/services/encryption_service.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 
@@ -27,10 +28,11 @@ extension VentToEntity on VentEntry {
         final plain =
             await _ventTextEncryption.decrypt(Uint8List.fromList(blob));
         text = utf8.decode(plain);
-      } on Exception {
+      } catch (e, st) {
         // 解密失败 = 旧 schema 残留 / key 损坏 / 迁移失败 → 视为空。
         // SchemaVersion 9 migration 应该已经一次性加密所有旧数据,
         // 这里只是兜底,**不应**正常触发。
+        swallowError(where: 'VentMapper.toEntity', error: e, stack: st);
       }
     }
     return VentEntryEntity(

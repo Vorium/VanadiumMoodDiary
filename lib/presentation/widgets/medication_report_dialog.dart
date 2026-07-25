@@ -9,6 +9,7 @@ import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 用药报告全屏预览
@@ -117,20 +118,14 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                             // v0.22 round 30 (emil P1-1): 不接管 onTap,
                             // 让 button.onPressed 自己处理 disabled 状态
                             // (reportData == null || _pdfLoading)
-                            child: FilledButton.icon(
-                              icon: _pdfLoading
-                                  ? SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        // v0.22 round 36: 去掉 const (fgOnPrimary 是函数调用)
-                                        color: AppTokens.fgOnPrimary(context),
-                                      ),
-                                    )
-                                  : const Icon(Icons.picture_as_pdf, size: 18),
-                              label: Text(
-                                  AppLocalizations.of(context).medReportPdfLabel,),
+                            // v0.24 round 43 (emil P1-01 H-03): 改用
+                            // LoadingTextButton + icon 参数,
+                            // 替代内联 FilledButton.icon + Spinner
+                            child: LoadingTextButton(
+                              label: AppLocalizations.of(context)
+                                  .medReportPdfLabel,
+                              icon: Icons.picture_as_pdf,
+                              isLoading: _pdfLoading,
                               onPressed:
                                   (widget.reportData == null || _pdfLoading)
                                       ? null

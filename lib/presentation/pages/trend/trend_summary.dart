@@ -19,9 +19,9 @@ class SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.all(AppTokens.spacingMd),
         child: Row(
           children: [
-            _Stat(label: l10n.trendStatCurrentStreak, value: '${summary.currentStreak} 天'),
+            _Stat(label: l10n.trendStatCurrentStreak, value: l10n.trendStatDaysValue(summary.currentStreak)),
             const SizedBox(width: AppTokens.spacingMd),
-            _Stat(label: l10n.trendStatLongestStreak, value: '${summary.longestStreak} 天'),
+            _Stat(label: l10n.trendStatLongestStreak, value: l10n.trendStatDaysValue(summary.longestStreak)),
             const SizedBox(width: AppTokens.spacingMd),
             _Stat(label: l10n.trendStatTotalCheckIns, value: '${summary.totalCheckIns}'),
             const SizedBox(width: AppTokens.spacingMd),

@@ -195,13 +195,15 @@ class QuestionCard extends StatelessWidget {
     // v0.22 round 28 (emil-bug-05): Semantics container 让读屏用户知道
     // 4 个 ChoiceChip 是同题选项,题号+题文+当前选择 1 次性念出
     // v0.22 round 30 (sp-zh P2-5): '未选' 走 l10n, en 模式可用
+    // v0.24 round 43 (emil D-07 P2): 评估题 Semantics 标签走 l10n
+    // (en 模式 TalkBack 读 "Question 1: ...", 不再硬编码中文)
+    final l10n = AppLocalizations.of(context);
     final selectedLabel = selected != null
         ? options[selected!]
-        : AppLocalizations.of(context).commonOptionNotSelected;
+        : l10n.commonOptionNotSelected;
     return Semantics(
       container: true,
-      label:
-          '评估题 $index: ${item.text}, 4 项单选, 当前: $selectedLabel',
+      label: l10n.assessmentQuestionLabel(index, item.text, selectedLabel),
       child: Card(
         margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
         child: Padding(

@@ -11,6 +11,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/mood_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/dimension_row.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
@@ -208,10 +209,9 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
   Future<void> _stopRecording() async {
     try {
       final result = await _service.stopRecording();
-      // STT 拿 final
-      String? sttFinal;
+      // STT 停止（最终文本由 stream 推送，不依赖返回值）
       try {
-        sttFinal = await _service.stopStt();
+        await _service.stopStt();
       } catch (e, st) {
         swallowError(
           where: 'mood_dialog.stopStt',
@@ -250,9 +250,9 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
         return;
       }
 
-      // final transcript: 优先 stopStt 返回;否则用最后一个 liveTranscript
-      final transcript = sttFinal ?? _liveTranscript;
-      final sttFailed = sttFinal == null && transcript.isEmpty && _sttAvailable;
+      // final transcript: 由 sttTranscriptStream 最后一条推送决定
+      final transcript = _liveTranscript;
+      final sttFailed = transcript.isEmpty && _sttAvailable;
 
       if (!mounted) return;
       setState(() {
@@ -384,18 +384,14 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
             audioDurationMs: _audioDurationMs,
           );
       if (!mounted) return;
-      // 关闭 dialog
-      Navigator.pop(context);
-      // 保存成功后,如果在 home_page 调用,要回放需要 audioPath + audioStorage
-      // — 但 dialog 已经 pop,context 已失效。snackbar 仍可用。
-      // 简化: snackbar 提示保存成功 + 行动按钮"查看"
-      // (回放完整需要历史页, v0.23 round 31 不实现)
+      // 先展示 snackbar，再 pop — pop 后 context 可能已失效
       ScaffoldMessenger.of(context).showSnackBar(
         AppSnackBar.info(
           context,
           AppLocalizations.of(context).moodAudioSavedWithPlay,
         ),
       );
+      Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -427,28 +423,28 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _DimensionRow(
+            DimensionRow(
               label: l10n.moodDimensionMood,
               hint: l10n.moodDimensionMoodHint,
               value: _score,
               onChanged: (v) => setState(() => _score = v),
             ),
             const SizedBox(height: AppTokens.spacingSm),
-            _DimensionRow(
+            DimensionRow(
               label: l10n.moodDimensionEnergy,
               hint: l10n.moodDimensionEnergyHint,
               value: _energy,
               onChanged: (v) => setState(() => _energy = v),
             ),
             const SizedBox(height: AppTokens.spacingSm),
-            _DimensionRow(
+            DimensionRow(
               label: l10n.moodDimensionSleep,
               hint: l10n.moodDimensionSleepHint,
               value: _sleep,
               onChanged: (v) => setState(() => _sleep = v),
             ),
             const SizedBox(height: AppTokens.spacingSm),
-            _DimensionRow(
+            DimensionRow(
               label: l10n.moodDimensionAnxiety,
               hint: l10n.moodDimensionAnxietyHint,
               value: _anxiety,
@@ -519,95 +515,6 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
           label: l10n.commonSave,
           isLoading: _saving,
           onPressed: _saving ? null : _save,
-        ),
-      ],
-    );
-  }
-}
-
-/// 4 维度评分行: label + 1-5 评分按钮
-class _DimensionRow extends StatelessWidget {
-  final String label;
-  final String hint;
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  const _DimensionRow({
-    required this.label,
-    required this.hint,
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: AppTokens.textStyleBodyStrong(context),
-            ),
-            Text(
-              hint,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textHintColor(context),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTokens.spacingXs),
-        Semantics(
-          container: true,
-          label: '情绪评分，1 到 5 分制，5 分最积极',
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              for (int s = 1; s <= 5; s++)
-                PressFeedback(
-                  child: Semantics(
-                    button: true,
-                    inMutuallyExclusiveGroup: true,
-                    selected: s == value,
-                    label: '$s 分${s == value ? "，已选" : ""}',
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => onChanged(s),
-                        borderRadius:
-                            BorderRadius.circular(AppTokens.radiusChip),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                '$s',
-                                style: TextStyle(
-                                  fontSize: AppTokens.fontSizeScoreLg,
-                                  fontWeight: s == value
-                                      ? FontWeight.w700
-                                      : FontWeight.w400,
-                                  color: s == value
-                                      ? Theme.of(context).colorScheme.primary
-                                      : AppTokens.textHintColor(context),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
         ),
       ],
     );

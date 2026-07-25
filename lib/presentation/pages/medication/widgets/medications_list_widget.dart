@@ -11,6 +11,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 
@@ -350,23 +351,11 @@ class _MedicationRow extends StatelessWidget {
           ),
           if (isStopped) ...[
             const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.spacingChipGap,
-                vertical: AppTokens.spacingXxxs,
-              ),
-              decoration: BoxDecoration(
-                color: AppTokens.tintedWarningSoft(context),  // 0.1 接近原 0.15
-                borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-              ),
-              child: Text(
-                AppLocalizations.of(context).medsListStoppedSection,
-                style: const TextStyle(
-                  fontSize: AppTokens.fontSizeMicro,
-                  color: AppTokens.warning,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+            // v0.24 round 43 (emil P1-01 H-05): 改用 ChipBadge 集中器
+            // 替代内联 Container + BoxDecoration + Text
+            ChipBadge(
+              label: AppLocalizations.of(context).medsListStoppedSection,
+              tone: ChipBadgeTone.warning,
             ),
           ],
         ],

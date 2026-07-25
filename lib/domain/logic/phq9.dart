@@ -15,25 +15,6 @@ library;
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
-class Phq9Item {
-  final String text;
-  final int index; // 0-8
-
-  const Phq9Item(this.index, this.text);
-}
-
-const List<Phq9Item> phq9Items = [
-  Phq9Item(0, '做事时提不起劲或没有兴趣'),
-  Phq9Item(1, '感到心情低落、沮丧或绝望'),
-  Phq9Item(2, '入睡困难、睡不安稳或睡得过多'),
-  Phq9Item(3, '感觉疲倦或没有活力'),
-  Phq9Item(4, '食欲不振或吃太多'),
-  Phq9Item(5, '觉得自己很糟、很失败，或让自己和家人失望'),
-  Phq9Item(6, '对事物专注有困难，例如看报纸或看电视时'),
-  Phq9Item(7, '动作或说话速度缓慢到别人能察觉？\n或正好相反——烦躁或坐立不安'),
-  Phq9Item(8, '有不如死掉或用某种方式伤害自己的念头'),
-];
-
 /// 频率选项（0-3）
 const Map<int, String> phq9Options = {
   0: '完全不会',

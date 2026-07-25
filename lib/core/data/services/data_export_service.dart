@@ -73,12 +73,26 @@ class DataExportService {
   /// 重装 → 导入后，树洞**文字**会恢复，但录音会标 `hasAudio=false`。
   Future<String> exportToJson({DateTime? now}) async {
     final profile = await _db.getUserProfile();
-    final contacts = await _db.watchContacts().first;
-    final medications = await _db.watchMedications().first;
-    final checkIns = await _db.watchAllCheckIns().first;
+    // v0.23: 加 5s timeout 防 drift stream hang 导致导出阻塞
+    const _streamTimeout = Duration(seconds: 5);
+    final contacts = await _db
+        .watchContacts()
+        .first
+        .timeout(_streamTimeout, onTimeout: () => const []);
+    final medications = await _db
+        .watchMedications()
+        .first
+        .timeout(_streamTimeout, onTimeout: () => const []);
+    final checkIns = await _db
+        .watchAllCheckIns()
+        .first
+        .timeout(_streamTimeout, onTimeout: () => const []);
     final reportHistories = await _reportRepo.getAll();
     final moodEntries = await _db.getAllMoodEntries();
-    final ventEntries = await _db.watchVentEntries().first;
+    final ventEntries = await _db
+        .watchVentEntries()
+        .first
+        .timeout(_streamTimeout, onTimeout: () => const []);
 
     final data = {
       'version': 4, // v0.18 bump: 加入 4D 情绪 (energy/sleep/anxiety)

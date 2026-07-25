@@ -104,8 +104,10 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             Expanded(
               child: Center(
                 child: Text(
-                  '${widget.calendar.month.year} 年 '
-                  '${widget.calendar.month.month} 月',
+                  l10n.trendMonthYear(
+                    widget.calendar.month.year,
+                    widget.calendar.month.month,
+                  ),
                   style: const TextStyle(
                     fontSize: AppTokens.fontSizeBody,
                     fontWeight: FontWeight.w600,
@@ -359,7 +361,7 @@ class _DayDetailCard extends StatelessWidget {
                 const Spacer(),
                 if (detail.events.isNotEmpty)
                   Text(
-                    '${detail.events.length} 个事件',
+                    l10n.trendEventCount(detail.events.length),
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
                       color: AppTokens.textHintColor(context),
@@ -380,10 +382,15 @@ class _DayDetailCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     detail.bestMoodScore == detail.worstMoodScore
-                        ? '${detail.totalMoodEntries} 条情绪记录 · ${MoodVisual.emojiFor(detail.bestMoodScore!)}'
-                        : '情绪 ${detail.totalMoodEntries} 条 · '
-                            '${MoodVisual.emojiFor(detail.worstMoodScore!)}→'
-                            '${MoodVisual.emojiFor(detail.bestMoodScore!)}',
+                        ? l10n.trendMoodEntriesSame(
+                            detail.totalMoodEntries,
+                            MoodVisual.emojiFor(detail.bestMoodScore!),
+                          )
+                        : l10n.trendMoodEntriesRange(
+                            detail.totalMoodEntries,
+                            MoodVisual.emojiFor(detail.worstMoodScore!),
+                            MoodVisual.emojiFor(detail.bestMoodScore!),
+                          ),
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
                       color: AppTokens.textSecondaryColor(context),

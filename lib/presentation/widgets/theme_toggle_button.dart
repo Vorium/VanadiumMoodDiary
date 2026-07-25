@@ -27,9 +27,6 @@ class ThemeToggleButton extends ConsumerWidget {
       ThemeMode.light => Icons.light_mode,
       ThemeMode.dark => Icons.dark_mode,
     };
-    // v0.23 round 41 (emil P3-32): 改用 PressFeedbackIconButton 集中器
-    // 之前 v0.23 round 40 inline `PressFeedback(child: IconButton(...))`,
-    // 抽集中器跟 vent_list 体感一致 + 减 4 行重复
     return PressFeedbackIconButton(
       icon: icon,
       tooltip: AppLocalizations.of(context).themeTooltip(_modeLabel(context, mode)),

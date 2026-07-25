@@ -24,6 +24,7 @@ import 'package:record/record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
@@ -452,6 +453,11 @@ class _AudioSection extends StatelessWidget {
   final VoidCallback onTogglePlay;
   final VoidCallback onReRecord;
 
+  // v0.24 round 43 (emil P1-01 H-04 / D-01): audio 3 态
+  // idle (待录) / recording (录中) / recorded (录完)
+  // 走 PageTransitionSwitcher 平滑切换, 跟 mic 按钮位置锚定
+  // _AudioState 实际只用 3 个 case (idle / recording / recorded)
+
   const _AudioSection({
     required this.isRecording,
     required this.audioPath,
@@ -464,28 +470,45 @@ class _AudioSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (audioPath == null) {
-      // 没有录音
-      return Center(
-        child: TextButton.icon(
-          onPressed: isRecording ? null : onToggleRecord,
-          icon: Icon(
-            isRecording ? Icons.stop_circle : Icons.mic,
+    // v0.24 round 43 (emil P1-01 H-04 / D-01):
+    // 3 态 (idle / recording / recorded) 走 PageTransitionSwitcher,
+    // 让 mic 位置 crossfade 给用户"我刚按下"的位置感 (emil spatial consistency)
+    final state = audioPath == null
+        ? (isRecording ? _AudioState.recording : _AudioState.idle)
+        : _AudioState.recorded;
+    return PageTransitionSwitcher(
+      switchKey: state,
+      child: switch (state) {
+        _AudioState.idle => _buildIdleButton(context),
+        _AudioState.recording => _buildIdleButton(context),
+        _AudioState.recorded => _buildRecordedRow(context),
+      },
+    );
+  }
+
+  Widget _buildIdleButton(BuildContext context) {
+    return Center(
+      child: TextButton.icon(
+        onPressed: isRecording ? null : onToggleRecord,
+        icon: Icon(
+          isRecording ? Icons.stop_circle : Icons.mic,
+          color: isRecording ? AppTokens.error : AppTokens.primary,
+          size: 28,
+        ),
+        label: Text(
+          isRecording
+              ? AppLocalizations.of(context).ventRecordActive
+              : AppLocalizations.of(context).ventRecordIdle,
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeBody,
             color: isRecording ? AppTokens.error : AppTokens.primary,
-            size: 28,
-          ),
-          label: Text(
-            isRecording
-                ? AppLocalizations.of(context).ventRecordActive
-                : AppLocalizations.of(context).ventRecordIdle,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              color: isRecording ? AppTokens.error : AppTokens.primary,
-            ),
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
+
+  Widget _buildRecordedRow(BuildContext context) {
     // 有录音：显示播放 / 重录
     return Container(
       padding: const EdgeInsets.all(AppTokens.spacingSm),
@@ -538,3 +561,6 @@ class _AudioSection extends StatelessWidget {
         : l10n.ventDurationMinutesSeconds(m, s);
   }
 }
+
+/// v0.24 round 43 (emil P1-01 H-04 / D-01): audio 3 态枚举
+enum _AudioState { idle, recording, recorded }

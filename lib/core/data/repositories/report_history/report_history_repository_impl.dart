@@ -16,14 +16,14 @@ class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
   @override
   Stream<List<ReportHistoryEntity>> watchAll() {
     return _db.watchReportHistories().map(
-          (rows) => rows.map(reportHistoryFromRow).toList(growable: false),
+          (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
         );
   }
 
   @override
   Future<List<ReportHistoryEntity>> getAll() async {
     final rows = await _db.getAllReportHistories();
-    return rows.map(reportHistoryFromRow).toList(growable: false);
+    return rows.map((r) => r.toEntity()).toList(growable: false);
   }
 
   @override

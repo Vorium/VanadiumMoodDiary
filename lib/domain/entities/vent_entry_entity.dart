@@ -10,6 +10,8 @@
 // - durationLabel 业务方法（"1分23秒"）
 library;
 
+import 'package:chroniccare/core/shared/domain_value.dart';
+
 /// 树洞条目（领域实体）
 ///
 /// 一条记录可同时有 text 和 audio（用户先录后补文字，或反过来）。
@@ -66,18 +68,20 @@ class VentEntryEntity {
   VentEntryEntity copyWith({
     int? id,
     DateTime? timestamp,
-    String? contentText,
-    String? audioPath,
-    int? audioDurationSec,
-    int? audioSizeBytes,
+    DomainValue<String?>? contentText,
+    DomainValue<String?>? audioPath,
+    DomainValue<int?>? audioDurationSec,
+    DomainValue<int?>? audioSizeBytes,
   }) {
     return VentEntryEntity(
       id: id ?? this.id,
       timestamp: timestamp ?? this.timestamp,
-      contentText: contentText ?? this.contentText,
-      audioPath: audioPath ?? this.audioPath,
-      audioDurationSec: audioDurationSec ?? this.audioDurationSec,
-      audioSizeBytes: audioSizeBytes ?? this.audioSizeBytes,
+      contentText: contentText == null ? this.contentText : contentText.value,
+      audioPath: audioPath == null ? this.audioPath : audioPath.value,
+      audioDurationSec:
+          audioDurationSec == null ? this.audioDurationSec : audioDurationSec.value,
+      audioSizeBytes:
+          audioSizeBytes == null ? this.audioSizeBytes : audioSizeBytes.value,
     );
   }
 

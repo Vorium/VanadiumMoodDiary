@@ -9,6 +9,10 @@
 // emil 原则 4 "Handle edge cases invisibly" — spinner 中心对齐 + 不响应点击
 // + 颜色不破坏 button 文字 = 4 个属性要每次手写,违反"good defaults matter more
 // than options"。抽 1 个 widget 一行替代。
+//
+// v0.24 round 43 (emil P1-01 H-03): 加可选 `icon` 参数,让
+// medication_report_dialog 的 FilledButton.icon 也能用集中器
+// (icon 位置也在 loading 时切 spinner)
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -27,6 +31,7 @@ class LoadingTextButton extends StatelessWidget {
     required this.isLoading,
     required this.onPressed,
     this.variant = LoadingTextButtonVariant.filled,
+    this.icon,
   });
 
   /// 按钮文字
@@ -41,20 +46,35 @@ class LoadingTextButton extends StatelessWidget {
   /// 样式: filled (主操作) / text (次要操作) / tonal (中性)
   final LoadingTextButtonVariant variant;
 
+  /// 可选 icon (loading 时切 spinner)
+  final IconData? icon;
+
   @override
   Widget build(BuildContext context) {
     return switch (variant) {
       LoadingTextButtonVariant.filled => FilledButton(
           onPressed: isLoading ? null : onPressed,
-          child: _ChildStack(label: label, isLoading: isLoading),
+          child: _ChildStack(
+            label: label,
+            isLoading: isLoading,
+            icon: icon,
+          ),
         ),
       LoadingTextButtonVariant.text => TextButton(
           onPressed: isLoading ? null : onPressed,
-          child: _ChildStack(label: label, isLoading: isLoading),
+          child: _ChildStack(
+            label: label,
+            isLoading: isLoading,
+            icon: icon,
+          ),
         ),
       LoadingTextButtonVariant.tonal => FilledButton.tonal(
           onPressed: isLoading ? null : onPressed,
-          child: _ChildStack(label: label, isLoading: isLoading),
+          child: _ChildStack(
+            label: label,
+            isLoading: isLoading,
+            icon: icon,
+          ),
         ),
     };
   }
@@ -63,18 +83,49 @@ class LoadingTextButton extends StatelessWidget {
 enum LoadingTextButtonVariant { filled, text, tonal }
 
 class _ChildStack extends StatelessWidget {
-  const _ChildStack({required this.label, required this.isLoading});
+  const _ChildStack({
+    required this.label,
+    required this.isLoading,
+    this.icon,
+  });
 
   final String label;
   final bool isLoading;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
+    // v0.24 round 43 (emil P1-01 H-03): 支持可选 icon 槽位
+    // (icon 存在时,loading 切 spinner 占位 icon 位置, 跟 FilledButton.icon 体感一致)
+    final iconWidget = (icon != null)
+        ? SizedBox(
+            width: 18,
+            height: 18,
+            child: isLoading
+                ? LoadingSpinner(
+                    size: 18,
+                    color: AppTokens.fgOnPrimary(context),
+                  )
+                : Icon(icon, size: 18),
+          )
+        : null;
+
     return Stack(
       alignment: Alignment.center,
       children: [
-        Text(label),
-        if (isLoading)
+        // 真实内容: icon + label (loading 时, label 仍可见, 但 icon 切 spinner)
+        if (iconWidget == null)
+          Text(label)
+        else
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              iconWidget,
+              const SizedBox(width: AppTokens.spacingXs),
+              Text(label),
+            ],
+          ),
+        if (isLoading && iconWidget == null)
           IgnorePointer(
             child: SizedBox(
               width: 18,

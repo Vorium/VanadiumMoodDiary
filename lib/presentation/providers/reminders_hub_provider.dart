@@ -28,7 +28,7 @@ class RemindersHubConfig {
 ///
 /// 失败 / 未加载完时返 fallback 默认值,跟 widget 兼容
 final remindersHubConfigProvider =
-    FutureProvider<RemindersHubConfig>((ref) async {
+    FutureProvider.autoDispose<RemindersHubConfig>((ref) async {
   final assess = ref.watch(assessmentReminderServiceProvider);
   final safety = ref.watch(safetyWatchServiceProvider);
   final aEnabled = await assess.isEnabled();

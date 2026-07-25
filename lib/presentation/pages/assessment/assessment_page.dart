@@ -6,6 +6,7 @@
 // v0.13 (Round 8) 加：结果页显示"对比上次"面板 + sparkline 趋势
 
 import 'package:chroniccare/presentation/providers/service_providers.dart';
+import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,9 +79,15 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     }
     return PageScaffold(
       title: _scale!.displayName,
-      child: _submitted && _result != null
-          ? _buildResultView(_result!)
-          : _buildQuizView(),
+      // v0.24 round 43 (emil P1-01 H-04 / D-03):
+      // 用 PageTransitionSwitcher 让 quiz→result 平滑切换(100ms fade)
+      // 精神心理患者对长时动效敏感,只用 fade 不用 slide
+      child: PageTransitionSwitcher(
+        switchKey: (_submitted && _result != null) ? 'result' : 'quiz',
+        child: (_submitted && _result != null)
+            ? _buildResultView(_result!)
+            : _buildQuizView(),
+      ),
     );
   }
 

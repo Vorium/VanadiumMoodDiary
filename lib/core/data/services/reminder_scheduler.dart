@@ -28,17 +28,23 @@ class ReminderService implements ReminderChecker {
   final UserProfileRepository _userProfileRepo;
   final SmsService _smsService;
 
+  /// v0.23 round 38 (P0-3 pattern): drift stream .first 的 timeout 时长
+  /// 默认 5s,测试可注入短值避免等待
+  final Duration _streamTimeout;
+
   ReminderService({
     required CheckInRepository checkInRepo,
     required ContactRepository contactRepo,
     required MedicationRepository medicationRepo,
     required UserProfileRepository userProfileRepo,
     required SmsService smsService,
+    Duration streamTimeout = const Duration(seconds: 5),
   })  : _checkInRepo = checkInRepo,
         _contactRepo = contactRepo,
         _medicationRepo = medicationRepo,
         _userProfileRepo = userProfileRepo,
-        _smsService = smsService;
+        _smsService = smsService,
+        _streamTimeout = streamTimeout;
 
   /// 失联分级：返回建议的通知级别
   ///
@@ -95,12 +101,33 @@ class ReminderService implements ReminderChecker {
     }
 
     // P0 fix: 并行获取联系人和药物（互相独立）
-    final fetched = await Future.wait([
-      _contactRepo.watchAll().first,
-      _medicationRepo.watchAll().first,
-    ]);
-    final contacts = fetched[0] as List<ContactEntity>;
-    final medications = fetched[1] as List<MedicationEntity>;
+    // v0.23 round 38 (P0-3 pattern): 加 5s timeout + 异常降级,
+    // 防止 drift stream hang 导致失联检测核心路径阻塞
+    List<ContactEntity> contacts;
+    List<MedicationEntity> medications;
+    try {
+      final fetched = await Future.wait([
+        _contactRepo
+            .watchAll()
+            .first
+            .timeout(_streamTimeout, onTimeout: () => const <ContactEntity>[]),
+        _medicationRepo
+            .watchAll()
+            .first
+            .timeout(_streamTimeout, onTimeout: () => const <MedicationEntity>[]),
+      ]);
+      contacts = fetched[0] as List<ContactEntity>;
+      medications = fetched[1] as List<MedicationEntity>;
+    } catch (e, st) {
+      piiSafeLog(
+        'ReminderService',
+        '⚠️ watchAll().first 异常: $e — 降级到空数据',
+        error: e,
+        stackTrace: st,
+      );
+      contacts = const [];
+      medications = const [];
+    }
     // v0.22 round 30 (sp-en P0-1): 显式按 startDate 升序取 firstMed。
     // drift `watchAll()` 无 `orderBy`（已 grep 确认）→ 返回值是插入序。
     // 之前 v0.16 round 19 修过 5 个 service 的 `.first` 隐式序，

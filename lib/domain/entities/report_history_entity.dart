@@ -1,6 +1,8 @@
 /// 报告历史（domain 实体）
 ///
 /// 对应 Drift 表 `report_histories`，row → entity 翻译在 data 层 mapper 里。
+import 'package:chroniccare/core/shared/domain_value.dart';
+
 class ReportHistoryEntity {
   final int id;
   final int windowDays;
@@ -21,14 +23,14 @@ class ReportHistoryEntity {
     int? id,
     int? windowDays,
     DateTime? generatedAt,
-    String? userName,
+    DomainValue<String?>? userName,
     String? reportText,
   }) {
     return ReportHistoryEntity(
       id: id ?? this.id,
       windowDays: windowDays ?? this.windowDays,
       generatedAt: generatedAt ?? this.generatedAt,
-      userName: userName ?? this.userName,
+      userName: userName == null ? this.userName : userName.value,
       reportText: reportText ?? this.reportText,
     );
   }

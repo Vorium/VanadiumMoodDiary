@@ -101,7 +101,13 @@ class MedicationReport {
   }) {
     final times = med.times;
     final dosesPerDay = times.isEmpty ? 1 : times.length;
-    final expected = dosesPerDay * days;
+    // 考虑药物 startDate：如果药物在报告窗口中途才开始，
+    // expected 应按实际可服药天数计算，避免依从率虚低
+    final effectiveStart =
+        med.startDate.isAfter(periodStart) ? med.startDate : periodStart;
+    final effectiveDays =
+        periodStart.add(Duration(days: days)).difference(effectiveStart).inDays;
+    final expected = dosesPerDay * effectiveDays.clamp(0, days);
 
     // 按"天"去重：一颗药同一天多次打卡算 1 天
     final daysWithDose = <String>{};

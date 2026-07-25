@@ -153,8 +153,8 @@ class AssessmentComparisonCalculator {
       if (total <= 14) return 2; // moderate
       return 3; // severe
     }
-    // 未知量表 — 兜底：按 totalRange 5 等分
-    throw ArgumentError('unknown scale: $scaleId');
+    // 未知量表 — 兜底：按 total 每 5 分一档
+    return (total / 5).floor().clamp(0, 4);
   }
 
   /// 严重度档位名（中文）
