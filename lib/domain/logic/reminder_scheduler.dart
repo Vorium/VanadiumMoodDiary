@@ -43,18 +43,26 @@ class ReminderScheduler {
   /// v1.0+：可扩展为同时发给所有联系人
   static ContactEntity? selectFirstContact(List<ContactEntity> contacts) {
     if (contacts.isEmpty) return null;
-    final active = contacts.where((c) => c.isActive).toList();
-    if (active.isEmpty) return null;
-    active.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
-    return active.first;
+    // v0.24 round 48 (sp-en P1-12) defensive copy:
+    // 之前 `final active = contacts.where((c) => c.isActive).toList()`
+    // 然后 `active.sort(...)`, 看起来 where().toList() 已返回新 list (不 mutate
+    // caller), 但 v0.16 round 19 立的"隐式排序假设"反模式: 哪天有人手抖
+    // 改成 `contacts.sort(...)` (省 .where() 一行) 就 silently 翻车。
+    // 显式 spread `[...filtered]..sort(...)` 让"sort 的是 copy"在源码层
+    // 表达, 双重保险。
+    final filtered = contacts.where((c) => c.isActive).toList();
+    if (filtered.isEmpty) return null;
+    final sorted = [...filtered]..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    return sorted.first;
   }
 
   /// 选择所有启用的联系人
   static List<ContactEntity> selectAllActiveContacts(
     List<ContactEntity> contacts,
   ) {
-    final active = contacts.where((c) => c.isActive).toList();
-    active.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
-    return active;
+    // v0.24 round 48 (sp-en P1-12) defensive copy: 同上, spread 让 copy 显式
+    final filtered = contacts.where((c) => c.isActive).toList();
+    final sorted = [...filtered]..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    return sorted;
   }
 }
