@@ -1965,6 +1965,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String setupContactFallbackName(int index) {
     return '联系人 $index';
   }
+
+  @override
+  String emailBodyI18n(String name, int days) {
+    return '我是 $name，已经 $days 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。';
+  }
+
+  @override
+  String get emailFooterI18n =>
+      '这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。';
+
+  @override
+  String get notifChannelMedicationNameI18n => '吃药提醒';
+
+  @override
+  String get notifChannelMedicationDescI18n => '到点提醒你吃药打卡';
+
+  @override
+  String get notifDailyCheckInTitleI18n => '🌱 今天吃了药吗？';
+
+  @override
+  String get notifDailyCheckInBodyI18n => '点一下 = 打卡，让家人放心';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

@@ -927,5 +927,18 @@
   "setupContactFallbackName": "Contact {index}",
   "@setupContactFallbackName": {
     "placeholders": { "index": { "type": "int" } }
-  }
+  },
+
+  "emailBodyI18n": "I'm {name}. I haven't checked in on the app for {days} days.\nCould you remind me to take my medication on time when convenient, to avoid relapse?",
+  "@emailBodyI18n": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  },
+  "emailFooterI18n": "This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings.",
+  "notifChannelMedicationNameI18n": "Medication Reminder",
+  "notifChannelMedicationDescI18n": "Reminds you to take your medication and check in",
+  "notifDailyCheckInTitleI18n": "🌱 Did you take your meds today?",
+  "notifDailyCheckInBodyI18n": "One tap = check-in. Let your family know you're okay."
 }

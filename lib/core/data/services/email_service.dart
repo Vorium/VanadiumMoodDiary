@@ -26,6 +26,9 @@ class EmailService {
   /// [to] 现在是手机号（v0.6 之前是 email）
   /// v0.21 Round 23 (P1-24): userName 改 nullable
   /// 未填姓名时退化为 "您的家人",保持邮件/短信语法自然
+  ///
+  /// v0.24 round 48 (spen P0-4): 传 `DateTime.now()` 给 referenceNow,
+  /// 让邮件时区基于当前系统 tz 推断(海外紧急联系人看到正确时区)
   Future<bool> sendMedicationReminder({
     required String to,
     String? userName,
@@ -34,6 +37,7 @@ class EmailService {
     required MedicationEntity? medication,
     required int cycleHours,
   }) async {
+    final now = DateTime.now();
     final subject = EmailTemplate.buildSubject(
       userName: userName,
       daysWithoutCheckIn: daysWithoutCheckIn,
@@ -45,6 +49,7 @@ class EmailService {
       lastCheckIn: lastCheckIn,
       medication: medication,
       cycleHours: cycleHours,
+      referenceNow: now,
     );
 
     if (_useMock || _apiKey == null) {

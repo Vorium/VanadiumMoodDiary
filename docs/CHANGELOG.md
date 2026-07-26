@@ -2,264 +2,62 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
-## [0.17.0] - 2026-07-17
+## [0.24.0] - 2026-07-26
 
-### Changed
-- **架构升级（Round 1-5）**：从 3 个 skill（emilkowalski / superpowers-en / superpowers-zh）调研出的可优化点全部落地
+### Added (round 45-47 emil god-class 续拆 + token 化 + 集中器)
+- **mood_dialog god-class 拆 5 子 widget**（`7412138`）：738→199 行（-73%），按职责拆 MoodScoreSection / MoodTagSelector / MoodEnergySelector / MoodNoteInput / MoodAudioRecorder
+- **notification_service god-class 拆 3 子**（`84b7a1b`）：629→353 行（-44%），抽 NotificationChannelManager / NotificationScheduleBuilder / NotificationHistoryLog
+- **data_export_service god-class 拆 3 子**（`da110ce`）：582→538 行 + 73 test
+- **medications_list god-class 拆 4 子 widget**（`020b8e4`）：554→203 行（-63%）
+- **assessment_history_page god-class 续拆**（`436706a`）：624→105 orchestrator + 4 子 widget
+- **trend_charts god-class 续拆**（`1c14b2d`）：595→0 + 4 子 widget 拆到 `widgets/`
+- **vent_compose_page god-class 续拆**（`c6523d5`）：537→274 orchestrator + 3 子 widget
+- **settings_page 拆 4 子 section widget**（`68dfcba`）：96 行 orchestrator
+- **AppSemantics 集中器**（`1646e0e`）：a11y 集中器抽离，6 处 widget 替换
+- **AppListTile 集中器**（`54c0fb0`）：settings 4 子 widget 13 处 PressFeedback+ListTile 改 AppListTile
+- **AppSnackBar 47 处收敛**（`e095b1c`）：`ScaffoldMessenger.of(...).showSnackBar(AppSnackBar.xxx(...))` 全代码库统一
+- **token 化 9 项**（`79d2a49` `d47df84` `578df2c`）：6 token + 6 处 hardcode duration/color 替换 / 3 token + 3 处 ListTile 集中化 / 2 处 withValues / textStyleLegal fontSize 改 token
+- **MedicationEntity.dosageUnit 强类型**（`bb755fb`）：`String → DosageUnit` enum 转换，spzh mojibake 修真联动
+- **data_providers → shared_providers 改名**（`05dfd9a`）：语义更准确
 
-### Added (emil 动效)
-- **AppTokens 动画 token**（A1）：补 4 个 curve 常量（curveStandard/curveDecelerate/curveAccelerate/curveDelight）+ emil 决策框架 doc 注释
-- **CheckInButton 状态过渡**（A3）：AnimatedContainer 让背景色 + 圆角在 durNormal + curveStandard 下过渡；文字切走 AnimatedSwitcher fade + scale
-- **streak 数字 TweenAnimationBuilder**（A6）：数字从 0 → N 平滑递增
-- **go_router 3 类 page transition**（A2）：`_fadePage`（主导航 occasional）/ `_slideRightPage`（子页 slide-from-right）/ `_slideUpPage`（全屏深页 rare full-screen modal feel）
-- **vent 列表 → 详情 Hero**（A4）：Hero(tag: 'vent-avatar-{id}') 头像"飞"过去
-- **vent 空态 + 鼓励文案 fade + scale**（A8）
+### Added (round 45-47 spen 数据驱动化 + widget 测)
+- **gad7/phq9 数据驱动化**（`2454dce`）：`severityCutoffs` 集中阈值表，新增评估量表只需加 1 条
+- **check_arb_keys.py 加 --staged 模式**（`4d5d5ed`）：PR-time 只看 staged 文件
+- **settings_page 3 case widget 测**（`465b827`）：Sprint #6 中段
+- **trend_page 2 case widget 测**（`6ab2676`）：Sprint #6 中段 3/3
+- **contacts_list_widget 4 case widget 测**（`8790710`）：Sprint #6 中段
+- **WIP god-class 续拆 + 错误处理集中 + magic number 抽 const**（`1a8adef` `19a29c1`）
 
-### Added (process)
-- **跨 midnight 自动 refresh streak**（B3 design issue）：AppRoot 挂 midnight timer，00:00:05 自动 `ref.invalidate(streakSummaryProvider)`，避免 streak 跨日还显示昨日的值
-- **nextMidnightRefresh 纯函数**：抽 top-level `@visibleForTesting`，跨月/跨年边界都正确处理
-- **CareEngine 12 个 edge case test**（B5）：fire 3 态 + 4 个核心规则的边界（22:00 整点 / 周末 18:00 边界 / 36h + hour<10）
+### Fixed (round 45-47 spzh i18n 修真)
+- **main.dart _MigrationFailedApp 4 处 hardcode 中文 i18n 化**（`ce44acc`）：+ 3 处 TextStyle 改 token，精神心理患者崩溃时看到友好文案
+- **zh_Hant.arb 简体副本修真**（`cf61948`）：OpenCC s2tw 真繁化 401 key（`@@locale` + 行 21 "您→你" 之外全部繁化）
+- **app_router mojibake 修真**（`9e9e6de`）：v0.22 round 31 漏修真一处
+- **strings.dart DosageUnit 强类型**（`9e9e6de`）：notification_service 调用 `dosageUnit.id` 强类型化
 
-### Fixed (Riverpod 3.0 升级)
-- **flutter_riverpod 2.6.1 → 3.3.2**：自动 retry + 指数退避、`Ref` 子类统一、`==` 过滤 StreamProvider
-- **AsyncValue.valueOrNull → .value**（2 处）：
-  - `lib/routing/app_router.dart:85` (profile 守卫)
-  - `lib/presentation/pages/home/widgets/temp_medication_dialog.dart:65` (meds list fallback)
-- **freezed 2.5.7 → 3.2.5**（Riverpod 3.x 依赖要求）
+### CI
+- **check_no_pua.py 守门员**（`45b773b`）：扫 PUA 字符（v0.22 round 31 mojibake 修真后无守护）
+- **9 个 1-shot 脚本归档到 _archive/**（`4d08510`）：保留历史可追溯
+
+### Known issues (v0.25 必修 — 三视角审视发现)
+- **合规 5 项 12 round 0 修**（spzh P0-of-P0）：3 份法律文档 v0.22 草稿 / PIPL §1 vs §3 自相矛盾 / 5 厂商 push 通道未接 / DEPLOYMENT.md 敏感措辞 / 法务未确认 NMPA — 4 store 上架阻塞
+- **CHANGELOG 顺序乱**（spzh）：[0.16.0] 排到 [0.1.0+1] 后 / [0.22.1] 排到 [0.23.0] 后 / [0.15.0] 排到 [0.14.0] 后 — 时间倒置（v0.24.0 release 收尾修真）
+- **pubspec 0.23.0+1 没 bump**（spzh）：v0.24 发布 30 commit 仍 0.23.0+1
+- **EmailTemplate._formatDateTime 硬编码 UTC+8**（spen P0）：PIPL §17 跨境合规风险
+- **strings.dart 35+ hardcode 中文**（spzh P0）：通知/PDF/import summary/SMS 模板海外用户无法看
+- **crossedMidnightSince 无 direct test**（spen P1）：v0.21 P0-4 关键防御 test gap
+- **vent_compose._togglePlay 暂停路径 temp file 释放顺序脆弱**（spen P1）：audioplayers 6.x 已知 PlatformException
+- **emil token 化最后 5%**（emil P1）：14 处裸 TextStyle / 12 处裸 EdgeInsets / MotionScheme.subtle curve 虚设 / DimensionRow Motion 包装 / CelebrationOverlay 自研动效
 
 ### Tests
-- 516/516 pass（v0.16 491 → v0.17 +25）
-  - 7 个 round 1 emil 动效 test（AppTokens + CheckInButton + vent empty state）
-  - 6 个 round 4 midnight refresh test（跨月/跨年/buffer 边界）
-  - 12 个 round 5 CareEngine test（fire 3 态 + 4 规则边界）
+- 876+ cases pass
+- `flutter analyze` 0 errors
+- 8 守护脚本全绿（含 v0.24 新增 check_no_pua.py）
 
 ### Architecture
-- 4 层架构纯度 + 一致性保持：check_all.dart 仍全过
-- Riverpod 3.x 升级**冲击面极小**（项目 0 个 StateProvider / StateNotifierProvider / ChangeNotifierProvider / FamilyNotifier / AutoDispose*）
-- B1（!mounted → ref.mounted）实际上**无法迁移** — Riverpod 3 的 `ref.mounted` 是 `Notifier` 特性，项目全用 `Provider`/`StreamProvider`/`ConsumerStatefulWidget`，不能直接迁移。保持 30+ 处 `!mounted` check
-
-## [0.18.0] - 2026-07-18
-
-### Added (P0 安全 / 隐私 / 稳定)
-- **PII 安全日志**（`pii_safe_log.dart` `b046f13`）：release 模式 swallow 错误日志，dev 模式完整堆栈
-- **树洞录音 AES-256 加密**（`4f2f196`）：录音文件加密存盘（`[16-byte IV][ciphertext]`），SQLCipher 之外的第二层保护
-- **PII 数据导出透明告知**（`00fcfaa`）：vent 文字导出前弹 dialog 说明内容会被读
-- **P0-2 4 层修复**（`4c69e91`）：`notification_service` 接受 entity，消除 domain → data 反向依赖
-- **全局错误处理**（`a1aa700`）：`runZonedGuarded` 兜底 + 9 处 silent catch 改 `swallowError` 统一可观测性
-- **P0-7 web 端阻断**（`ee72529`）：web 平台抛明确 PlatformException，不静默失败
-- **P0-8 4 表查询索引**（`ee72529`）：`check_ins` / `medications` / `contacts` / `assessments` 加 `(user_id, timestamp)` 复合索引，N+1 显著减少
-- **P0-13 step 0 法律同意 PopScope**（`ddb9009`）：首次进入 setup 拦截物理返回键，强制勾选同意
-- **PIPL 3 份草稿文档**（`d9bae94`）：隐私政策 / 用户协议 / 数据收集说明
-
-### Added (P1 UI/UX 体系)
-- **LoadingSkeleton 统一**（`5b6f3c3`）：19 处裸 `CircularProgressIndicator` 替换为 3 形态骨架（fullScreen / card / Spinner）
-- **EmptyState 通用组件**（`8d7b456`）：8+ 处空态文案 + 图标 + CTA 抽统一组件
-- **radiusCell / radiusCellLg token**（`8d7b456`）：6+ 处硬编码圆角收口
-- **dark mode token API**（`6366d3c`）：`AppTokens` 加 dark variant，8 处 widget 切换主题 token
-- **MotionScheme 应用**（`296d623`）：3 widget 应用 emil 决策框架
-- **WCAG contrast test**（`43695ee`）：color token 自动验证 4.5:1 / 3:1 对比度
-- **home_page god-page 拆 5 widget**（`df0a394`）：header / streak / check-in / temp-med / vent-entry 各 1 文件
-- **SnoozeManager 拆子 service**（`85d0253`）：从 `notification_service` 独立
-- **core_providers 拆 3 文件**（`5610394`）：按职责 `core` / `service` / `vent` providers
-- **repositories 按 feature 拆子目录**（`1a501ce`）：`data/repositories/{check_in,medication,contact,...}/`
-- **5 层 umbrella 目录树重写**（`7b95d41`）：`core/data|shared|theme|routing|l10n` 物理分层文档化
-
-### Added (P1 i18n / a11y)
-- **i18n batch 1+2**（`befdbe5` `7ff087a`）：提取 16 个共用 string，23 处 widget 替换
-- **P1-16 全角标点批量修复**（`731f975`）：173 处中文文案统一
-- **P1-17 引号统一**（`24dcf81`）：英文 `'` → 中文 `''`
-- **P1-19/P1-20 a11y 文档化**（`43695ee`）：reduced motion / screen reader 行为说明
-- **全局尊重 prefers-reduced-motion**（`0ad8e79`）：检测系统级动效偏好自动禁用
-- **港澳台/国际区号扩展**（`388ce92`）：`phone_validator` 支持 +852/+853/+886/+1/+44 等
-- **联系人 banner 抽 widget**（`388ce92`）：`ContactListBanner` 通用
-
-### Added (P1 数据层)
-- **mood schema 4 维度**（`bf5b866`）：schemaVersion 6→7，`mood_entries` 加精力 / 睡眠 / 焦虑 3 列
-- **user_profiles.lastCheckInAt live write**（`0412692`）：打卡后回写，失联检测不再用旧值
-- **CareCopy 抽离**（`ee6cd3b`）：CareEngine 文案集中 1 处
-- **删 setup 软提醒双推**（`ee6cd3b`）：之前 setup 完成后会推 2 条软提醒
-
-### Fixed
-- **MockSmsProvider/AliyunSmsProvider 显式 throw + UI banner**（`d62fa2f`）：失败不再静默
-- **inject now param to SafetyWatchService.checkNow**（`c20261d`）：flaky test 修，测试时间可控
-- **药名 hint 中性文案**（`8e0b98c`）：避免广告法风险
-
-### Tests
-- 565/565 pass（v0.17 491 → v0.18 +74）
-  - `pii_safe_log_round18_test.dart`：release swallow 行为
-  - `snooze_manager_round18_test.dart`：snooze 逻辑独立测试
-  - `app_tokens_dark_round18_test.dart`：dark mode token 153 行覆盖
-  - `check_all_round18_test.dart`：4 层 + cross-feature 检测回归
-  - `care_engine_copy_round18_test.dart`：CareCopy 抽离回归
-  - WCAG contrast 自动验证（4.5:1 / 3:1 边界）
-  - vent encryption round-trip：加密 → 解密字节级一致
-
-### Architecture
-- **5 层 umbrella 落地**：`core/data|shared|theme|routing|l10n` 物理分层，`presentation → domain ← data` 方向不变
-- **P0-2 vent-encryption 跨层落地**：data 层加密 + domain 层透明（`VentEntryEntity` 不暴露 IV）
-- **dart format + dart fix 批量 cleanup**（`07b748b` `3f42cd7` `6800d72`）：28 个 trailing comma + 多处 prefer_const_constructors 一键净
-
-## [0.19.0] - 2026-07-18
-
-### Changed
-- **v0.19 大文件拆分 + 架构违规修复**（`31c86f3`）：god-file 治理 + 反向依赖清除
-  - `trend_page.dart` 1496→216 行，拆为 `trend_charts` / `trend_calendar` / `trend_summary` / `trend_utils` 5 文件
-  - `assessment_page.dart` 794→570 行，提取 sparkline + question card → `assessment_widgets.dart`
-  - `setup_page.dart` 1077→999 行，提取 `MedDraft` / `TemplateApplyResult` / `ConsentCheckRow` → `setup_widgets.dart`
-  - 4 文件相对路径 import 统一为绝对 `package:` 路径
-  - `pubspec.yaml` 移除未使用的 `freezed` / `json_serializable` 依赖
-
-### Refactored
-- **`setup_page.dart` 1000 行拆 7 文件**（`4cd0bf0`）：setup flow 按步骤拆 widget
-- **`ComparisonCard` 提取到 `assessment_widgets.dart`**（`d5693e8`）：评估页 widget 收口
-
-### Fixed (latent bugs)
-- **`reminder_scheduler` 缓存 `DateTime.now()`**（`a435903`）：跨 await 阈值不一致修复（同款 v0.14 / v0.16 修过 3 次）
-- **4 处 `setState` / 资源清理 bug**（`0971139`）：dispose 之前先取消 subscription
-- **6 处 mounted 检查 + 错误处理 + 资源清理**（`7b7d516`）：widget 生命周期一致性
-- **4 处空 catch 改 `swallowError`**（`2449a63`）：统一错误可观测性
-- **`mood_dialog.dart` 修 context vs ctx async gap**（`31c86f3`）：`use_build_context_synchronously` 警告消除
-- **`reminder_scheduler.dart` dynamic → MedicationEntity? 类型安全**（`31c86f3`）：去掉 dynamic
-- **`vent_compose_page.dart` 移除 `dart:io` import**（`31c86f3`）：委托 `VentAudioStorage`
-
-### Added (测试)
-- **29 个测试文件补全 roundN 命名后缀**（`20bd10e`）：统一 `{module}_roundNN_test.dart` 命名
-- **`notification_navigation` + `vent_audio_storage` 测试**（`0758894`）：service 行为 lock
-- **`database_migration` 测试**（`dbeeaff`）：schemaVersion 1→8 全迁移路径覆盖
-
-### Tests
-- 702/702 pass（v0.18 565 → v0.19 +137）
-  - rename 29 个测试文件（`20bd10e`）：纯命名整理，不改行为
-  - `database_migration` 全 schemaVersion 路径覆盖
-  - `notification_navigation` / `vent_audio_storage` service 行为 lock
-  - `reminder_scheduler` + 6 处 mounted bug 回归
-  - 配合文档同步 `AGENTS.md` 测试数 679 → 706（`17091e0`）
-
-### Architecture
-- **setup flow 模块化**：1000 行 `setup_page.dart` → 7 个独立 widget 文件
-- **评估 widget 收口**：`ComparisonCard` 集中到 `assessment_widgets.dart`
-- **5 层 umbrella 保持**：跨拆分不破坏 4 层架构
-- **未使用依赖清理**：从 `pubspec.yaml` 删 `freezed` / `json_serializable`（实测 0 引用）
-
-## [0.20.0] - 2026-07-18
-
-### Changed
-- **加密依赖迁移：encrypt → pointycastle**（`97476d5`）：encrypt 包自 2022 年停维，pointycastle 是其底层依赖且持续维护
-  - `encryption_service.dart` / `crypto_service.dart` 重写：pointycastle AES-256-CBC + PKCS7
-  - **加密格式完全兼容**：`[16-byte IV][ciphertext]` 格式不变，老数据可正常解密
-  - `pubspec.yaml`：删 `encrypt`，加 `pointycastle: ^3.9.1`
-  - 涉及 3 个文件 / 65+ / 61-
-
-### Tests
-- 702/702 pass（v0.19 702 → v0.20 0）
-  - 无新增测试（依赖迁移靠现有 encryption round-trip 覆盖）
-
-### Architecture
-- **依赖健康度**：pointycastle 持续维护，encrypt 停维 4 年
-- **零迁移成本**：加密 blob 格式不变，无需 schema 升级
-- **依赖收敛**：少 1 个 transitive 依赖（encrypt 内部也用 pointycastle）
-
-## [0.21.0] - 2026-07-20
-
-### Changed
-- **analyzer 全清 + dart fix + dart format**（`9c305ed`）：0 errors / 0 warnings / 43 info
-  - 修 5 处 `implicit_this_reference_in_initializer`（`index.dart` 用 `late final` + constructor body）
-  - 删 `setup_page.dart` 死 import `go_router`
-  - 抽 4 处硬编码 string 到 ARB（`setup_step_welcome.dart`）
-  - 修 stale `@override` on deleted `scheduleSoftReminder` in test
-  - `dart fix --apply`：48 个 auto-fix（prefer_const_constructors / require_trailing_commas / prefer_function_declarations_over_variables）
-  - `dart format`：39 个文件重排
-  - 涉及 49 个文件 / 528+ / 265-
-
-### Added (P0 性能 / 架构纯化)
-- **N+1 query 修**（`eec9d9a`）：
-  - DB 层加 `watchNormalCheckIns` / `getLatestNormalCheckIn` / `getLatestAssessmentTimestamp`
-  - Services 用 DB query 替代全表 scan + Dart filter
-  - Providers 复用缓存数据，不再每次 re-fetch
-  - 删 `main.dart` 重复 `AppDatabase()` connection
-  - 独立 async 用 `Future.wait` 并行化
-- **Architecture purity**（`eec9d9a`）：
-  - `care_copy.dart` 从 `shared/` 移到 `domain/logic/`（仅 domain 用）
-  - `pii_safe_log.dart` 从 `shared/` 移到 `data/services/`（仅 data 用）
-  - `notification_navigation.dart` 从 `data/services/` 移到 `routing/`（是 routing 逻辑）
-- **P0 隐私 / UI / 同意 batch 1**（`94e0803`）：综合
-
-### Added (P1 UX)
-- **P1-21 中文本土化**（`2e24e7f`）：HUD 文案中文优化
-- **P1-23 联系人同意**（`2e24e7f`）：添加联系人前弹同意 dialog
-- **P1-24 userName nullable**（`2e24e7f`）：数据库列 nullable 化，无 userName 不阻塞 setup
-- **P1-26 Dismissible**（`295d4b3`）：列表项滑动删除
-- **P1-27 RefreshIndicator**（`295d4b3`）：下拉刷新统一组件
-
-### Added (P2 / P3 polish)
-- **P2 polish**（`b0b9757`）：snackbar token 收口 + streak 数字 tween + legal 文案同步
-- **P3-1 主题切换淡入动画**（`419df9c`）：dark/light 切换时页面内容淡入过渡
-
-### Added (L10N 全面化)
-- **~125 个硬编码中文抽到 ARB**（`eec9d9a`）：`settings_page` 28 / `reminders_hub_page` 38 / `notification_status_card` 37 / `medications_list_widget` 20
-- 中英 ARB 文件键对齐（各 108+ keys）
-
-### Added (清理)
-- **删 14 个一次性 migration scripts**（`eec9d9a`）：从 `scripts/` 物理删除
-- **`vent_entry.dart` → `vent_entry_entity.dart`**（`eec9d9a`）：命名一致性，9 个 import 同步
-- **`PRD-v0.1-draft.md` 从根目录移到 `docs/`**（`eec9d9a`）
-
-### Fixed
-- **Pubspec 版本号 → `0.21.0+1`**（`eec9d9a`）
-- **Flutter 版本统一到 3.44.5**（`eec9d9a`）：pubspec / README / CI 三处对齐
-
-### Tests
-- 703/703 pass（v0.20 702 → v0.21 +1）
-  - N+1 query 修回归测试
-  - `Dismissible` / `RefreshIndicator` widget 测试
-  - 主题切换淡入动画测试
-  - 之前 1 个 pre-existing failure（`data_export` version mismatch）仍存在
-
-### Architecture
-- **4 层架构保持纯净**：`architecture purity` 仍 0 违规
-- **L10N 双层分明**：presentation 走 `flutter_localizations`（`l10n/`），domain 走 `core/l10n/`
-- **依赖健康度**：删未用 `freezed` / `json_serializable`（v0.19 净），`encrypt` 已迁 `pointycastle`（v0.20 净）
-
-## [0.22.0] - 2026-07-20
-
-### Fixed (round 28 — 三视角审视 P0 必修)
-- **trend_calendar 6 处 dark mode silent bug**（emil-bug-01，`lib/presentation/pages/trend/trend_calendar.dart`）：v0.21 P1-5 修 dark mode 加 8 个 dynamic color getter，但 `_DayDetailCard` + `_EventRow` 漏了 6 处静态 `AppTokens.divider` / `AppTokens.textHint` / `AppTokens.textSecondary`。在 dark mode 下白底白字 silent bug。修：全部换成 `AppTokens.dividerColor(context)` / `textHintColor(context)` / `textSecondaryColor(context)`，去掉外层 `const` 让 BuildContext 可用
-- **trend_calendar 跨日不刷新**（spen-bug-10，同文件）：`CalendarView` 原是 `StatefulWidget`，`_today = DateTime.now()` 在 field init 取一次永远不变；用户跨过 00:00:05 后 today 高亮 + `_selected` 仍指向昨天。修：改 `ConsumerStatefulWidget` + 在 build 加 `ref.watch(dayChangeTickProvider)` 触发跨日 rebuild（跟 `medication_calendar_page.dart:44` 同款 fix）
-- **\_StreakCounter listener leak**（emil-bug-03，`lib/presentation/pages/check_in/check_in_button.dart:152-160`）：之前 `didUpdateWidget` 每次 value 变化都 `_controller.addListener(() { setState... })` 匿名闭包但**没移除旧 listener**。controller 持有 N 个 listener，每次 tick 触发 N 次 setState → 指数级 rebuild 风险。修：抽 `_tickListener` 字段稳定引用，`initState` 注册 1 次，`didUpdateWidget` 复用同一 listener + 改 `_lastValue = _currentAnimated.round()`，`dispose` 移除
-- **mood 5 评分无 Semantics wrapper**（emil-bug-04，`lib/presentation/pages/mood/mood_dialog.dart:215-248`）：5 个评分按钮无 `Semantics` 包装，TalkBack 读 5 个孤立"1 2 3 4 5"，精神心理患者辅助技术体验极差。修：外层 `Semantics(container: true, label: '情绪评分, 1 到 5 分制, 5 分最积极')` + 每按钮 `Semantics(button: true, inMutuallyExclusiveGroup: true, selected: ..., label: '$s 分, 已选')`
-- **评估 ChoiceChip 4 选项无 group Semantics**（emil-bug-05，`lib/presentation/pages/assessment/assessment_widgets.dart:182-239`）：9 题 × 4 选项 = 36 个孤立读屏项。修：QuestionCard 外层 `Semantics(container: true, label: '评估题 $index: ${item.text}, 4 项单选, 当前: $selectedLabel')` 一次性念出题号 + 题文 + 当前选择
-
-### Added (round 28 文档补完)
-- **CHANGELOG 补 v0.18/19/20/21 整段**：v0.17 段后缺失的 4 个 minor version 段补全，50+ commit 按 P0/P1/P2 分组 + 测试数变化（491 → 565 → 702 → 702 → 703）
-
-### Fixed (round 28 P1 架构文档)
-- **sensitive_data_consent.md L49 PIPL 告知不实**（spzh-bug-02）：原文"树洞录音 \| 本地(当前未加密,v1.0+ 加密)" — v0.18 P0-2 已 AES-256 加密，告知错误。改为"本地加密存储(AES-256,密钥设备绑定,2026-07 起启用)"
-- **DEPLOYMENT.md 4 处法律风险措辞**（spzh-bug-03）："突然死了"→"突发意外"；"再治愈更难"→"再规律更难"；"死了么"模式→"关怀提醒"模式；"发现死亡"→"发现异常"
-- **commit 规范 2 份自相矛盾**（spzh-bug-04）：`CHINESE_COMMIT_GUIDE.md` 写"项目 commit 历史全部中文"但实际最近 30 commit 80% 英文；`WHITEPAPER.md 14.3` 写"commit message 用纯英文"。修：2 份文档都改为"接受 conventional commit 双轨：英文 prefix + 中文/英文 subject"，并标注 PowerShell `$variable` 解析坑（推荐 `git commit -F file`）
-- **AGENTS.md 同步当前数字**（spzh-bug-07）：Flutter 版本 3.44.5 → 3.41.9（实测 + pubspec 约束 `>=3.41.0`）；schemaVersion 8 → 11（v0.18→v0.21 加 9/10/11 三步迁移）；测试数 702 → 703
-- **DEPLOYMENT.md 同步 Flutter 版本 + web 端**：`fvm install/use 3.44.5` → 3.41.9；`flutter run -d chrome` → `flutter build web + python -m http.server 8358`（drift worker 404 修复，参考 AGENTS.md "dev 服务器坑"）
-- **README.md 同步加密库**：表里"encrypt (AES-256)" → "pointycastle (AES-256, v0.20 迁)"
-
-### Tests
-- 703/703 pass（P0 + P1 文档修复未引入新测试，下个 round 加 regression）
-- `flutter analyze` 0 issues
-
-### Fixed (round 28 P1 架构技术债)
-- **合并 CryptoService → EncryptionService**（spen-01 + spen-bug-09）：v0.7 旧 CryptoService 用 `String.codeUnits`（UTF-16）不标准 + 无单例 + 每次 new 读 SecureStorage 慢 + 无 test 注入。**实际 lib/ 0 业务引用**（v0.17 round 12 code review 已确认 dead code）。修：删 `crypto_service.dart`（86 行）；给 `EncryptionService` 加 `encryptString(String) → Future<String>` + `decryptString(String) → Future<String>`（utf8 → Uint8List → base64 包装）；`cryptoServiceProvider` → `encryptionServiceProvider`；`AppServices.cryptoService` → `encryptionService`
-
-### Fixed (round 28 P1 底层)
-- **web 端 database_migration 启动崩溃**（spen-bug-01）：`DatabaseMigration.needsMigration()` 内部用 `File.existsSync()` 抛 `UnsupportedError`，main.dart 无 try/catch。修：内部加 `on MissingPluginException` + `on UnsupportedError` catch 返回 false（web 端无文件系统永远不需要迁移）
-- **vent `_togglePlay` 失败时 temp file 堆积泄漏**（spen-bug-02）：`vent_compose_page._togglePlay` + `vent_detail_page._togglePlay` 之前 catch 内不删 `_tempDecryptedPath`，连续失败会堆积 temp 文件。修：catch 内 try/finally 调 `deleteTempFile` 清 temp
-- **mood_quick_button 漏 PressFeedback**（emil-28）：emil 决策框架要求 10+/day 频度按钮 :active scale 反馈，但 `SecondaryButton` 无 PressFeedback 包。`secondary_action_row.dart` 注释撒谎说"内部已处理"实际无。修：外包 PressFeedback + 修注释
-- **setup "查看" TextButton + "开始" ElevatedButton 漏 PressFeedback**（emil-30 + emil-31）：`ConsentCheckRow` 的"查看"按钮 + `setup_step_done` 的"开始"按钮都缺 PressFeedback。修：外包 PressFeedback
-- **app_zh.arb 4 处半角标点**（spzh-bug-05）：`setupContactConsent` 半角 `,` → 全角 `，`（**关键法律文案** v0.21 P1-16 漏修）；`commonLoading` / `assessmentLoadingBack` / `medReportPdfLoading` 3 处 `...` → `……`（全角省略号）
-
-### Skipped (round 28)
-- **emil-29 medication_calendar `_DataRow` 漏 PressFeedback**：emil 报告说"整行 ListTile 没有 PressFeedback wrap"，但实际 `_DataRow` 是只读热力图 `Row`（不是 ListTile），无 onTap handler，加 PressFeedback 无视觉效果。emil 报告误解。后续如果加 onTap → 跳详情 再加 PressFeedback
-
-### Tests
-- 703/703 pass
-- `flutter analyze` 0 issues
+- 4 层架构纯度 + 一致性 100% 保持（`check_all.dart` 全过）
+- god-class 治理大幅推进（mood_dialog -73% / notification_service -44% / medications_list -63%）
+- token 体系 8.4/10 接近工业级（剩余 5% polish）
+- i18n zh_Hant 修真完成（v1.0+ 海外发布就绪）
 
 ## [0.23.0] - 2026-07-25
 
@@ -326,6 +124,373 @@
 ### Tests
 - 703/703 pass
 - `flutter analyze` 0 issues
+
+## [0.22.0] - 2026-07-20
+
+### Fixed (round 28 — 三视角审视 P0 必修)
+- **trend_calendar 6 处 dark mode silent bug**（emil-bug-01，`lib/presentation/pages/trend/trend_calendar.dart`）：v0.21 P1-5 修 dark mode 加 8 个 dynamic color getter，但 `_DayDetailCard` + `_EventRow` 漏了 6 处静态 `AppTokens.divider` / `AppTokens.textHint` / `AppTokens.textSecondary`。在 dark mode 下白底白字 silent bug。修：全部换成 `AppTokens.dividerColor(context)` / `textHintColor(context)` / `textSecondaryColor(context)`，去掉外层 `const` 让 BuildContext 可用
+- **trend_calendar 跨日不刷新**（spen-bug-10，同文件）：`CalendarView` 原是 `StatefulWidget`，`_today = DateTime.now()` 在 field init 取一次永远不变；用户跨过 00:00:05 后 today 高亮 + `_selected` 仍指向昨天。修：改 `ConsumerStatefulWidget` + 在 build 加 `ref.watch(dayChangeTickProvider)` 触发跨日 rebuild（跟 `medication_calendar_page.dart:44` 同款 fix）
+- **\_StreakCounter listener leak**（emil-bug-03，`lib/presentation/pages/check_in/check_in_button.dart:152-160`）：之前 `didUpdateWidget` 每次 value 变化都 `_controller.addListener(() { setState... })` 匿名闭包但**没移除旧 listener**。controller 持有 N 个 listener，每次 tick 触发 N 次 setState → 指数级 rebuild 风险。修：抽 `_tickListener` 字段稳定引用，`initState` 注册 1 次，`didUpdateWidget` 复用同一 listener + 改 `_lastValue = _currentAnimated.round()`，`dispose` 移除
+- **mood 5 评分无 Semantics wrapper**（emil-bug-04，`lib/presentation/pages/mood/mood_dialog.dart:215-248`）：5 个评分按钮无 `Semantics` 包装，TalkBack 读 5 个孤立"1 2 3 4 5"，精神心理患者辅助技术体验极差。修：外层 `Semantics(container: true, label: '情绪评分, 1 到 5 分制, 5 分最积极')` + 每按钮 `Semantics(button: true, inMutuallyExclusiveGroup: true, selected: ..., label: '$s 分, 已选')`
+- **评估 ChoiceChip 4 选项无 group Semantics**（emil-bug-05，`lib/presentation/pages/assessment/assessment_widgets.dart:182-239`）：9 题 × 4 选项 = 36 个孤立读屏项。修：QuestionCard 外层 `Semantics(container: true, label: '评估题 $index: ${item.text}, 4 项单选, 当前: $selectedLabel')` 一次性念出题号 + 题文 + 当前选择
+
+### Added (round 28 文档补完)
+- **CHANGELOG 补 v0.18/19/20/21 整段**：v0.17 段后缺失的 4 个 minor version 段补全，50+ commit 按 P0/P1/P2 分组 + 测试数变化（491 → 565 → 702 → 702 → 703）
+
+### Fixed (round 28 P1 架构文档)
+- **sensitive_data_consent.md L49 PIPL 告知不实**（spzh-bug-02）：原文"树洞录音 \| 本地(当前未加密,v1.0+ 加密)" — v0.18 P0-2 已 AES-256 加密，告知错误。改为"本地加密存储(AES-256,密钥设备绑定,2026-07 起启用)"
+- **DEPLOYMENT.md 4 处法律风险措辞**（spzh-bug-03）："突然死了"→"突发意外"；"再治愈更难"→"再规律更难"；"死了么"模式→"关怀提醒"模式；"发现死亡"→"发现异常"
+- **commit 规范 2 份自相矛盾**（spzh-bug-04）：`CHINESE_COMMIT_GUIDE.md` 写"项目 commit 历史全部中文"但实际最近 30 commit 80% 英文；`WHITEPAPER.md 14.3` 写"commit message 用纯英文"。修：2 份文档都改为"接受 conventional commit 双轨：英文 prefix + 中文/英文 subject"，并标注 PowerShell `$variable` 解析坑（推荐 `git commit -F file`）
+- **AGENTS.md 同步当前数字**（spzh-bug-07）：Flutter 版本 3.44.5 → 3.41.9（实测 + pubspec 约束 `>=3.41.0`）；schemaVersion 8 → 11（v0.18→v0.21 加 9/10/11 三步迁移）；测试数 702 → 703
+- **DEPLOYMENT.md 同步 Flutter 版本 + web 端**：`fvm install/use 3.44.5` → 3.41.9；`flutter run -d chrome` → `flutter build web + python -m http.server 8358`（drift worker 404 修复，参考 AGENTS.md "dev 服务器坑"）
+- **README.md 同步加密库**：表里"encrypt (AES-256)" → "pointycastle (AES-256, v0.20 迁)"
+
+### Tests
+- 703/703 pass（P0 + P1 文档修复未引入新测试，下个 round 加 regression）
+- `flutter analyze` 0 issues
+
+### Fixed (round 28 P1 架构技术债)
+- **合并 CryptoService → EncryptionService**（spen-01 + spen-bug-09）：v0.7 旧 CryptoService 用 `String.codeUnits`（UTF-16）不标准 + 无单例 + 每次 new 读 SecureStorage 慢 + 无 test 注入。**实际 lib/ 0 业务引用**（v0.17 round 12 code review 已确认 dead code）。修：删 `crypto_service.dart`（86 行）；给 `EncryptionService` 加 `encryptString(String) → Future<String>` + `decryptString(String) → Future<String>`（utf8 → Uint8List → base64 包装）；`cryptoServiceProvider` → `encryptionServiceProvider`；`AppServices.cryptoService` → `encryptionService`
+
+### Fixed (round 28 P1 底层)
+- **web 端 database_migration 启动崩溃**（spen-bug-01）：`DatabaseMigration.needsMigration()` 内部用 `File.existsSync()` 抛 `UnsupportedError`，main.dart 无 try/catch。修：内部加 `on MissingPluginException` + `on UnsupportedError` catch 返回 false（web 端无文件系统永远不需要迁移）
+- **vent `_togglePlay` 失败时 temp file 堆积泄漏**（spen-bug-02）：`vent_compose_page._togglePlay` + `vent_detail_page._togglePlay` 之前 catch 内不删 `_tempDecryptedPath`，连续失败会堆积 temp 文件。修：catch 内 try/finally 调 `deleteTempFile` 清 temp
+- **mood_quick_button 漏 PressFeedback**（emil-28）：emil 决策框架要求 10+/day 频度按钮 :active scale 反馈，但 `SecondaryButton` 无 PressFeedback 包。`secondary_action_row.dart` 注释撒谎说"内部已处理"实际无。修：外包 PressFeedback + 修注释
+- **setup "查看" TextButton + "开始" ElevatedButton 漏 PressFeedback**（emil-30 + emil-31）：`ConsentCheckRow` 的"查看"按钮 + `setup_step_done` 的"开始"按钮都缺 PressFeedback。修：外包 PressFeedback
+- **app_zh.arb 4 处半角标点**（spzh-bug-05）：`setupContactConsent` 半角 `,` → 全角 `，`（**关键法律文案** v0.21 P1-16 漏修）；`commonLoading` / `assessmentLoadingBack` / `medReportPdfLoading` 3 处 `...` → `……`（全角省略号）
+
+### Skipped (round 28)
+- **emil-29 medication_calendar `_DataRow` 漏 PressFeedback**：emil 报告说"整行 ListTile 没有 PressFeedback wrap"，但实际 `_DataRow` 是只读热力图 `Row`（不是 ListTile），无 onTap handler，加 PressFeedback 无视觉效果。emil 报告误解。后续如果加 onTap → 跳详情 再加 PressFeedback
+
+### Tests
+- 703/703 pass
+- `flutter analyze` 0 issues
+
+## [0.21.0] - 2026-07-20
+
+### Changed
+- **analyzer 全清 + dart fix + dart format**（`9c305ed`）：0 errors / 0 warnings / 43 info
+  - 修 5 处 `implicit_this_reference_in_initializer`（`index.dart` 用 `late final` + constructor body）
+  - 删 `setup_page.dart` 死 import `go_router`
+  - 抽 4 处硬编码 string 到 ARB（`setup_step_welcome.dart`）
+  - 修 stale `@override` on deleted `scheduleSoftReminder` in test
+  - `dart fix --apply`：48 个 auto-fix（prefer_const_constructors / require_trailing_commas / prefer_function_declarations_over_variables）
+  - `dart format`：39 个文件重排
+  - 涉及 49 个文件 / 528+ / 265-
+
+### Added (P0 性能 / 架构纯化)
+- **N+1 query 修**（`eec9d9a`）：
+  - DB 层加 `watchNormalCheckIns` / `getLatestNormalCheckIn` / `getLatestAssessmentTimestamp`
+  - Services 用 DB query 替代全表 scan + Dart filter
+  - Providers 复用缓存数据，不再每次 re-fetch
+  - 删 `main.dart` 重复 `AppDatabase()` connection
+  - 独立 async 用 `Future.wait` 并行化
+- **Architecture purity**（`eec9d9a`）：
+  - `care_copy.dart` 从 `shared/` 移到 `domain/logic/`（仅 domain 用）
+  - `pii_safe_log.dart` 从 `shared/` 移到 `data/services/`（仅 data 用）
+  - `notification_navigation.dart` 从 `data/services/` 移到 `routing/`（是 routing 逻辑）
+- **P0 隐私 / UI / 同意 batch 1**（`94e0803`）：综合
+
+### Added (P1 UX)
+- **P1-21 中文本土化**（`2e24e7f`）：HUD 文案中文优化
+- **P1-23 联系人同意**（`2e24e7f`）：添加联系人前弹同意 dialog
+- **P1-24 userName nullable**（`2e24e7f`）：数据库列 nullable 化，无 userName 不阻塞 setup
+- **P1-26 Dismissible**（`295d4b3`）：列表项滑动删除
+- **P1-27 RefreshIndicator**（`295d4b3`）：下拉刷新统一组件
+
+### Added (P2 / P3 polish)
+- **P2 polish**（`b0b9757`）：snackbar token 收口 + streak 数字 tween + legal 文案同步
+- **P3-1 主题切换淡入动画**（`419df9c`）：dark/light 切换时页面内容淡入过渡
+
+### Added (L10N 全面化)
+- **~125 个硬编码中文抽到 ARB**（`eec9d9a`）：`settings_page` 28 / `reminders_hub_page` 38 / `notification_status_card` 37 / `medications_list_widget` 20
+- 中英 ARB 文件键对齐（各 108+ keys）
+
+### Added (清理)
+- **删 14 个一次性 migration scripts**（`eec9d9a`）：从 `scripts/` 物理删除
+- **`vent_entry.dart` → `vent_entry_entity.dart`**（`eec9d9a`）：命名一致性，9 个 import 同步
+- **`PRD-v0.1-draft.md` 从根目录移到 `docs/`**（`eec9d9a`）
+
+### Fixed
+- **Pubspec 版本号 → `0.21.0+1`**（`eec9d9a`）
+- **Flutter 版本统一到 3.44.5**（`eec9d9a`）：pubspec / README / CI 三处对齐
+
+### Tests
+- 703/703 pass（v0.20 702 → v0.21 +1）
+  - N+1 query 修回归测试
+  - `Dismissible` / `RefreshIndicator` widget 测试
+  - 主题切换淡入动画测试
+  - 之前 1 个 pre-existing failure（`data_export` version mismatch）仍存在
+
+### Architecture
+- **4 层架构保持纯净**：`architecture purity` 仍 0 违规
+- **L10N 双层分明**：presentation 走 `flutter_localizations`（`l10n/`），domain 走 `core/l10n/`
+- **依赖健康度**：删未用 `freezed` / `json_serializable`（v0.19 净），`encrypt` 已迁 `pointycastle`（v0.20 净）
+
+## [0.20.0] - 2026-07-18
+
+### Changed
+- **加密依赖迁移：encrypt → pointycastle**（`97476d5`）：encrypt 包自 2022 年停维，pointycastle 是其底层依赖且持续维护
+  - `encryption_service.dart` / `crypto_service.dart` 重写：pointycastle AES-256-CBC + PKCS7
+  - **加密格式完全兼容**：`[16-byte IV][ciphertext]` 格式不变，老数据可正常解密
+  - `pubspec.yaml`：删 `encrypt`，加 `pointycastle: ^3.9.1`
+  - 涉及 3 个文件 / 65+ / 61-
+
+### Tests
+- 702/702 pass（v0.19 702 → v0.20 0）
+  - 无新增测试（依赖迁移靠现有 encryption round-trip 覆盖）
+
+### Architecture
+- **依赖健康度**：pointycastle 持续维护，encrypt 停维 4 年
+- **零迁移成本**：加密 blob 格式不变，无需 schema 升级
+- **依赖收敛**：少 1 个 transitive 依赖（encrypt 内部也用 pointycastle）
+
+## [0.19.0] - 2026-07-18
+
+### Changed
+- **v0.19 大文件拆分 + 架构违规修复**（`31c86f3`）：god-file 治理 + 反向依赖清除
+  - `trend_page.dart` 1496→216 行，拆为 `trend_charts` / `trend_calendar` / `trend_summary` / `trend_utils` 5 文件
+  - `assessment_page.dart` 794→570 行，提取 sparkline + question card → `assessment_widgets.dart`
+  - `setup_page.dart` 1077→999 行，提取 `MedDraft` / `TemplateApplyResult` / `ConsentCheckRow` → `setup_widgets.dart`
+  - 4 文件相对路径 import 统一为绝对 `package:` 路径
+  - `pubspec.yaml` 移除未使用的 `freezed` / `json_serializable` 依赖
+
+### Refactored
+- **`setup_page.dart` 1000 行拆 7 文件**（`4cd0bf0`）：setup flow 按步骤拆 widget
+- **`ComparisonCard` 提取到 `assessment_widgets.dart`**（`d5693e8`）：评估页 widget 收口
+
+### Fixed (latent bugs)
+- **`reminder_scheduler` 缓存 `DateTime.now()`**（`a435903`）：跨 await 阈值不一致修复（同款 v0.14 / v0.16 修过 3 次）
+- **4 处 `setState` / 资源清理 bug**（`0971139`）：dispose 之前先取消 subscription
+- **6 处 mounted 检查 + 错误处理 + 资源清理**（`7b7d516`）：widget 生命周期一致性
+- **4 处空 catch 改 `swallowError`**（`2449a63`）：统一错误可观测性
+- **`mood_dialog.dart` 修 context vs ctx async gap**（`31c86f3`）：`use_build_context_synchronously` 警告消除
+- **`reminder_scheduler.dart` dynamic → MedicationEntity? 类型安全**（`31c86f3`）：去掉 dynamic
+- **`vent_compose_page.dart` 移除 `dart:io` import**（`31c86f3`）：委托 `VentAudioStorage`
+
+### Added (测试)
+- **29 个测试文件补全 roundN 命名后缀**（`20bd10e`）：统一 `{module}_roundNN_test.dart` 命名
+- **`notification_navigation` + `vent_audio_storage` 测试**（`0758894`）：service 行为 lock
+- **`database_migration` 测试**（`dbeeaff`）：schemaVersion 1→8 全迁移路径覆盖
+
+### Tests
+- 702/702 pass（v0.18 565 → v0.19 +137）
+  - rename 29 个测试文件（`20bd10e`）：纯命名整理，不改行为
+  - `database_migration` 全 schemaVersion 路径覆盖
+  - `notification_navigation` / `vent_audio_storage` service 行为 lock
+  - `reminder_scheduler` + 6 处 mounted bug 回归
+  - 配合文档同步 `AGENTS.md` 测试数 679 → 706（`17091e0`）
+
+### Architecture
+- **setup flow 模块化**：1000 行 `setup_page.dart` → 7 个独立 widget 文件
+- **评估 widget 收口**：`ComparisonCard` 集中到 `assessment_widgets.dart`
+- **5 层 umbrella 保持**：跨拆分不破坏 4 层架构
+- **未使用依赖清理**：从 `pubspec.yaml` 删 `freezed` / `json_serializable`（实测 0 引用）
+
+## [0.18.0] - 2026-07-18
+
+### Added (P0 安全 / 隐私 / 稳定)
+- **PII 安全日志**（`pii_safe_log.dart` `b046f13`）：release 模式 swallow 错误日志，dev 模式完整堆栈
+- **树洞录音 AES-256 加密**（`4f2f196`）：录音文件加密存盘（`[16-byte IV][ciphertext]`），SQLCipher 之外的第二层保护
+- **PII 数据导出透明告知**（`00fcfaa`）：vent 文字导出前弹 dialog 说明内容会被读
+- **P0-2 4 层修复**（`4c69e91`）：`notification_service` 接受 entity，消除 domain → data 反向依赖
+- **全局错误处理**（`a1aa700`）：`runZonedGuarded` 兜底 + 9 处 silent catch 改 `swallowError` 统一可观测性
+- **P0-7 web 端阻断**（`ee72529`）：web 平台抛明确 PlatformException，不静默失败
+- **P0-8 4 表查询索引**（`ee72529`）：`check_ins` / `medications` / `contacts` / `assessments` 加 `(user_id, timestamp)` 复合索引，N+1 显著减少
+- **P0-13 step 0 法律同意 PopScope**（`ddb9009`）：首次进入 setup 拦截物理返回键，强制勾选同意
+- **PIPL 3 份草稿文档**（`d9bae94`）：隐私政策 / 用户协议 / 数据收集说明
+
+### Added (P1 UI/UX 体系)
+- **LoadingSkeleton 统一**（`5b6f3c3`）：19 处裸 `CircularProgressIndicator` 替换为 3 形态骨架（fullScreen / card / Spinner）
+- **EmptyState 通用组件**（`8d7b456`）：8+ 处空态文案 + 图标 + CTA 抽统一组件
+- **radiusCell / radiusCellLg token**（`8d7b456`）：6+ 处硬编码圆角收口
+- **dark mode token API**（`6366d3c`）：`AppTokens` 加 dark variant，8 处 widget 切换主题 token
+- **MotionScheme 应用**（`296d623`）：3 widget 应用 emil 决策框架
+- **WCAG contrast test**（`43695ee`）：color token 自动验证 4.5:1 / 3:1 对比度
+- **home_page god-page 拆 5 widget**（`df0a394`）：header / streak / check-in / temp-med / vent-entry 各 1 文件
+- **SnoozeManager 拆子 service**（`85d0253`）：从 `notification_service` 独立
+- **core_providers 拆 3 文件**（`5610394`）：按职责 `core` / `service` / `vent` providers
+- **repositories 按 feature 拆子目录**（`1a501ce`）：`data/repositories/{check_in,medication,contact,...}/`
+- **5 层 umbrella 目录树重写**（`7b95d41`）：`core/data|shared|theme|routing|l10n` 物理分层文档化
+
+### Added (P1 i18n / a11y)
+- **i18n batch 1+2**（`befdbe5` `7ff087a`）：提取 16 个共用 string，23 处 widget 替换
+- **P1-16 全角标点批量修复**（`731f975`）：173 处中文文案统一
+- **P1-17 引号统一**（`24dcf81`）：英文 `'` → 中文 `''`
+- **P1-19/P1-20 a11y 文档化**（`43695ee`）：reduced motion / screen reader 行为说明
+- **全局尊重 prefers-reduced-motion**（`0ad8e79`）：检测系统级动效偏好自动禁用
+- **港澳台/国际区号扩展**（`388ce92`）：`phone_validator` 支持 +852/+853/+886/+1/+44 等
+- **联系人 banner 抽 widget**（`388ce92`）：`ContactListBanner` 通用
+
+### Added (P1 数据层)
+- **mood schema 4 维度**（`bf5b866`）：schemaVersion 6→7，`mood_entries` 加精力 / 睡眠 / 焦虑 3 列
+- **user_profiles.lastCheckInAt live write**（`0412692`）：打卡后回写，失联检测不再用旧值
+- **CareCopy 抽离**（`ee6cd3b`）：CareEngine 文案集中 1 处
+- **删 setup 软提醒双推**（`ee6cd3b`）：之前 setup 完成后会推 2 条软提醒
+
+### Fixed
+- **MockSmsProvider/AliyunSmsProvider 显式 throw + UI banner**（`d62fa2f`）：失败不再静默
+- **inject now param to SafetyWatchService.checkNow**（`c20261d`）：flaky test 修，测试时间可控
+- **药名 hint 中性文案**（`8e0b98c`）：避免广告法风险
+
+### Tests
+- 565/565 pass（v0.17 491 → v0.18 +74）
+  - `pii_safe_log_round18_test.dart`：release swallow 行为
+  - `snooze_manager_round18_test.dart`：snooze 逻辑独立测试
+  - `app_tokens_dark_round18_test.dart`：dark mode token 153 行覆盖
+  - `check_all_round18_test.dart`：4 层 + cross-feature 检测回归
+  - `care_engine_copy_round18_test.dart`：CareCopy 抽离回归
+  - WCAG contrast 自动验证（4.5:1 / 3:1 边界）
+  - vent encryption round-trip：加密 → 解密字节级一致
+
+### Architecture
+- **5 层 umbrella 落地**：`core/data|shared|theme|routing|l10n` 物理分层，`presentation → domain ← data` 方向不变
+- **P0-2 vent-encryption 跨层落地**：data 层加密 + domain 层透明（`VentEntryEntity` 不暴露 IV）
+- **dart format + dart fix 批量 cleanup**（`07b748b` `3f42cd7` `6800d72`）：28 个 trailing comma + 多处 prefer_const_constructors 一键净
+
+## [0.17.0] - 2026-07-17
+
+### Changed
+- **架构升级（Round 1-5）**：从 3 个 skill（emilkowalski / superpowers-en / superpowers-zh）调研出的可优化点全部落地
+
+### Added (emil 动效)
+- **AppTokens 动画 token**（A1）：补 4 个 curve 常量（curveStandard/curveDecelerate/curveAccelerate/curveDelight）+ emil 决策框架 doc 注释
+- **CheckInButton 状态过渡**（A3）：AnimatedContainer 让背景色 + 圆角在 durNormal + curveStandard 下过渡；文字切走 AnimatedSwitcher fade + scale
+- **streak 数字 TweenAnimationBuilder**（A6）：数字从 0 → N 平滑递增
+- **go_router 3 类 page transition**（A2）：`_fadePage`（主导航 occasional）/ `_slideRightPage`（子页 slide-from-right）/ `_slideUpPage`（全屏深页 rare full-screen modal feel）
+- **vent 列表 → 详情 Hero**（A4）：Hero(tag: 'vent-avatar-{id}') 头像"飞"过去
+- **vent 空态 + 鼓励文案 fade + scale**（A8）
+
+### Added (process)
+- **跨 midnight 自动 refresh streak**（B3 design issue）：AppRoot 挂 midnight timer，00:00:05 自动 `ref.invalidate(streakSummaryProvider)`，避免 streak 跨日还显示昨日的值
+- **nextMidnightRefresh 纯函数**：抽 top-level `@visibleForTesting`，跨月/跨年边界都正确处理
+- **CareEngine 12 个 edge case test**（B5）：fire 3 态 + 4 个核心规则的边界（22:00 整点 / 周末 18:00 边界 / 36h + hour<10）
+
+### Fixed (Riverpod 3.0 升级)
+- **flutter_riverpod 2.6.1 → 3.3.2**：自动 retry + 指数退避、`Ref` 子类统一、`==` 过滤 StreamProvider
+- **AsyncValue.valueOrNull → .value**（2 处）：
+  - `lib/routing/app_router.dart:85` (profile 守卫)
+  - `lib/presentation/pages/home/widgets/temp_medication_dialog.dart:65` (meds list fallback)
+- **freezed 2.5.7 → 3.2.5**（Riverpod 3.x 依赖要求）
+
+### Tests
+- 516/516 pass（v0.16 491 → v0.17 +25）
+  - 7 个 round 1 emil 动效 test（AppTokens + CheckInButton + vent empty state）
+  - 6 个 round 4 midnight refresh test（跨月/跨年/buffer 边界）
+  - 12 个 round 5 CareEngine test（fire 3 态 + 4 规则边界）
+
+### Architecture
+- 4 层架构纯度 + 一致性保持：check_all.dart 仍全过
+- Riverpod 3.x 升级**冲击面极小**（项目 0 个 StateProvider / StateNotifierProvider / ChangeNotifierProvider / FamilyNotifier / AutoDispose*）
+- B1（!mounted → ref.mounted）实际上**无法迁移** — Riverpod 3 的 `ref.mounted` 是 `Notifier` 特性，项目全用 `Provider`/`StreamProvider`/`ConsumerStatefulWidget`，不能直接迁移。保持 30+ 处 `!mounted` check
+
+## [0.16.0] - 2026-07-17
+
+### Changed
+- **架构整理（Round 1-19）**：
+  - 4 层架构纯度 + 一致性 合并到 `scripts/check_all.dart`（替代 2 个旧 script）
+  - check_all 支持 `package: 绝对路径` + `../../ 相对路径` 两种 import 检测
+  - 修了 `care_engine.dart` 用相对路径绕过 purity 检查的隐藏 bug — 切到 `NotificationSender` 抽象接口
+  - 修了 18 个 unused import + 1 个 dead try/catch + 2 个 dead `// ignore` 块 + 1 个 dead `audioExists()` 方法
+  - 修 4 个 Flutter 3.32+ `RadioListTile` deprecation（改用 `RadioGroup` 祖先）
+
+### Fixed
+- **Stream subscription leak**：树洞详情/撰写页 `_player.onXxx.listen()` 之前没存 subscription，dispose 没取消。修后存 `StreamSubscription?` 字段 + `dispose()` 取消
+- **`vent_entry.dart` 死代码**：删 `audioExists()` + 误导注释 + `dart:io` import（实际不是仅做 path 拼接，是磁盘 I/O）
+- **`safety_watch_service.dart` 死参数**：删 `EmailService? emailService` 构造参数（v1.0+ 占位，EmailService 整个在 production 没用）
+- **文档同步**：
+  - `SENDGRID_SETUP.md` 删 stale `fromEmail` 参数示例（构造函数早没这参数）+ 改 `to` 为手机号
+  - `AGENTS.md` / `README.md` 同步 `check_all.dart` + `dart scripts/check_all.dart`（不用 `dart run`，会触发 `objective_c` build hook 失败）
+  - `email_preview.dart` 修正 round 注释（之前写错 Round 13 → 实际 Round 12）
+
+### Removed
+- **`dio: ^5.7.0`** 依赖：清理后 `EmailService` 没有任何 `package:dio/dio` 引用
+- **`EmailService` 中的 `Dio` 字段 + 未用 `html` 变量**
+- **`EmailService` 的 `Medication?` drift row 参数**：改用 `MedicationEntity?`（domain entity），消除 domain → data 反向依赖
+- **`scripts/check_domain_purity.dart` + `scripts/check_architecture_consistency.dart`**：合并到 `check_all.dart`
+- **`scripts/debug_check.dart`**：占位文件
+
+### Architecture
+- **Domain 层严格 0 flutter / 0 drift / 0 data / 0 dart:io 依赖**（除 vent_entry 的 `audioPath` 字段类型用 String）
+- **共享层使用度**：所有 `shared/` 工具至少被 2 层用（被 check_all 验证）
+
+### Tests
+- 471/471 pass（461 → 471：5 check_all + 3 streak unsorted + 2 assessment unsorted）
+- 新增 `test/data/email_service_test.dart`（用 `MedicationEntity` 替代之前的 drift row）
+- 新增 `test/scripts/check_all_test.dart`（5 个，验证 4 层架构检测 + 相对路径解析 + Windows path bug）
+
+### Fixed (latent bugs)
+- **`streak_calculator.dart` 隐式排序假设**：`calculate` + `shouldShowStreakBroken` 用 `.first` 假设 caller 传 DESC，调用方目前都传已排序数据（`watchAllCheckIns()` Drift orderBy DESC），但任何未来 caller 传未排序数据会算错 streak。加显式 sort + 3 个 unsorted input regression test
+- **`assessment_comparison.dart` 隐式排序假设**：`fromRecords` 用 `.last` 假设 caller 传 ASC，同样的 fragility。修：先 sort 再取。加 2 个 unsorted input test
+- **`medications_list_widget.dart` 多次 `DateTime.now()` race**：`_editRefill` 之前 3 次 `DateTime.now()` 算 initialDate/firstDate/lastDate，跨 midnight 时三者可能不一致（`reminder_scheduler.dart:97` v0.14 已有同款 fix）。修：先算 `now` 一次再复用
+- **`trend_page.dart:36-39` field 初始化多次 `DateTime.now()`**：`_calendarMonth` 用 2 次 `.now()` 算 year 和 month，跨 midnight 边界可能 month 不一致（23:59 → 12，00:00 → 1）。修：抽成 `_initialCalendarMonth()` 静态方法算 1 次
+- **`notification_service.dart` 2 个 cancel id 范围过窄**：
+  - `cancelAllSnoozes` 之前 `[4000, 104000)` 范围，snooze id 公式 `4000 + medId * 1440 + minutes`，medId ≥ 72 漏 cancel
+  - `rescheduleMedicationReminders` 之前 `[2000, 3000)` 范围，med reminder id 公式 `2000 + medId * 10 + i`，medId ≥ 100 漏 cancel
+  - 修：范围都放宽到 200000+（covers medId 几万个，远超实际用户量）
+- **`vent_audio_storage.dart` 文件名 collision 风险**：`newAudioPath` 之前只用 `DateTime.now().millisecondsSinceEpoch` 作后缀，同毫秒内录 2 段会文件名相同 → 后录的覆盖前录的。修：加 4 位 random suffix (`vent_{ms}_{rand4}.m4a`)，同毫秒冲突概率 1/10000
+
+### Removed
+- **`EmailTemplate.buildHtml()`**：60 行 HTML 模板，v0.6 改 mock 短信后整个 HTML 路径无生产调用
+- **`test/domain/email_template_test.dart` 中的 `buildHtml` 测试**：自测死代码
+
+### Final state
+- `flutter analyze`: 0 issues（无 warning、无 error、无 info）
+- 4 个 `RadioListTile` 迁移到 Flutter 3.32+ `RadioGroup` 祖先 API
+- 88 个文件 `dart format` + `dart fix --apply` 一键 cleanup（229 fixes）
+- `test/scripts/check_all_test.dart` 新增 5 个测试，覆盖 `package:chroniccare/` 绝对路径 + `../../` 相对路径检测
+- 修 `check_all.dart` 潜在 Windows 路径 bug：`package:chroniccare/data/bar.dart` 的 rel 部分 `/` 没转 `Platform.pathSeparator`，导致 marker `\lib\data\` 匹配不上
+
+### Fixed (round 19B — 第 8 轮 code review 新发现的 6 个 bug)
+- **`notification_service.rescheduleRefillReminders` cancel range 过窄**：
+  - 之前 `_refillBaseId + 1000` 范围，refill id 公式 `_refillBaseId + medId`（`6000 + medId`），medId ≥ 1000 漏 cancel
+  - 修：范围放到 200000（同 round 19 medication reminder 的修法），覆盖 medId 几万个
+  - 配套把 `_refillNotificationId` 改 `@visibleForTesting` 暴露成 `refillNotificationId` 便于测试
+- **`reminder_scheduler.dart` 隐式排序假设**：`normalCheckIns.first.timestamp` 假设 `watchAll()` 返 DESC，drift orderBy 一改就 silent 算错
+  - 修：显式 `normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp))` 后再 `.first`
+- **`safety_watch_service.dart` 隐式排序假设**：同款 `normalCheckIns.first.timestamp` 隐式 DESC。修：同上显式 sort
+- **`assessment_reminder_service.dart` 隐式排序假设**：`assessments.last.timestamp` 假设 `watchAssessments()` 返 ASC（"最后"= list 末尾），drift orderBy 一改漏取最新评估
+  - 修：用 `assessments.map((c) => c.timestamp).reduce((a, b) => a.isAfter(b) ? a : b)` 显式找最新，不依赖 list 顺序
+- **`scheduleRefillReminder` 多次 `DateTime.now()` race**：
+  - 之前 2 次 `DateTime.now()`（fireAt 过期判断 + daysLeft 计算），跨 midnight 时可能用不同日期
+  - 修：先 `final now = DateTime.now();` 一次，下面两处复用
+- **`vent_compose_page._getAudioDuration` AudioPlayer leak**：
+  - 之前 try 块内 `await player.setSource(...)` + `await player.getDuration()` + `await player.dispose()` 一气呵成；任一环节抛异常都直接走 catch，`dispose()` 不会跑 → AudioPlayer 资源泄漏
+  - 修：把 `dispose()` 移到 `finally` 块，确保异常路径也释放
+
+### Tests (round 19B)
+- 478/478 pass（471 → 478：6 refill id range + 1 safety_watch unsorted data）
+- 新增 `test/data/notification_service_round19b_test.dart`：6 cases 覆盖 refill id 公式 + cancel range 范围（medId=0/1/999/1000/10000/50000 都验证）
+- 新增 `test/data/sort_assumption_round19b_test.dart`：1 case 用 unsorted 顺序插入 3 条打卡（5天前/3天前/1小时前），验证 SafetyWatch 取 latest = 1小时前（修前会取 5天前误报触发告警）
+
+### Fixed (round 19C — 第 9 轮 code review 新发现)
+- **`app_router.dart:110` 路由参数 unsafe parse**：
+  - 之前 `int.parse(state.pathParameters['id'] ?? '0')` 处理 `/vent/detail/abc` 时 `int.parse('abc')` 抛 FormatException
+  - 修：改用 `int.tryParse(...) ?? 0`，invalid id fallback 到 0（详情页会显示"找不到了"，不崩 app）
+
+### Tests (round 19C)
+- 486/486 pass（478 → 486：8 route param parsing 边界 case）
+- 新增 `test/routing/route_parsing_round19c_test.dart`：8 cases 覆盖 `int.tryParse` fallback 行为（valid int / empty / 'abc' / mixed / negative / whitespace / null path param）
+
+### Added (round 20 — 通知自检 + OEM 后台引导)
+- **`NotificationService.pendingCount`**：返回当前待发通知数；plugin 抛 PlatformException 时返回 -1（web/desktop 平台）
+- **设置页「通知与提醒」自检卡** (`NotificationStatusCard`)：
+  - 状态显示：当前已排队的待发通知数（0 / N / 不支持三态）
+  - **测试通知按钮**：点一下立即推一条，看到 = 通知工作正常
+  - **查看已排队通知**：弹 dialog 列出所有 `pendingNotificationRequests` 标题
+  - **国产手机后台引导**：折叠面板展开 5 大品牌（小米 / 华为 / OPPO / Vivo / 魅族）每家 2-3 步后台保活路径
+  - `kIsWeb` fallback：web 端显示"通知功能仅在 Android/iOS 可用"，隐藏功能按钮
+
+### Fixed (round 20)
+- **国产 ROM 静默杀通知没用户可见信号**：之前 20:00 提醒失败只在 log 里 `developer.log`，用户根本不知道。加自检卡后用户能主动验证 + 看到"没有待发通知"立即知道要排查
+
+### Tests (round 20)
+- 491/491 pass（486 → 491：5 widget test）
+- 新增 `test/presentation/notification_status_card_round20_test.dart`：5 cases 覆盖
+  - mobile 模式显示完整 card
+  - pendingCount 三种状态（5 / 0 / -1）的 UI 提示
+  - 点"测试通知"按钮 → 调 `showNow` 推一条
+  - 点刷新按钮 → 重新读 pendingCount
 
 ## [0.15.0] - 2026-07-15
 
@@ -517,112 +682,4 @@
 - Day 8-9：SendGrid 真实集成
 - Day 10-11：APK + iOS 打包
 - Day 12-14：上架准备
-
-## [0.16.0] - 2026-07-17
-
-### Changed
-- **架构整理（Round 1-19）**：
-  - 4 层架构纯度 + 一致性 合并到 `scripts/check_all.dart`（替代 2 个旧 script）
-  - check_all 支持 `package: 绝对路径` + `../../ 相对路径` 两种 import 检测
-  - 修了 `care_engine.dart` 用相对路径绕过 purity 检查的隐藏 bug — 切到 `NotificationSender` 抽象接口
-  - 修了 18 个 unused import + 1 个 dead try/catch + 2 个 dead `// ignore` 块 + 1 个 dead `audioExists()` 方法
-  - 修 4 个 Flutter 3.32+ `RadioListTile` deprecation（改用 `RadioGroup` 祖先）
-
-### Fixed
-- **Stream subscription leak**：树洞详情/撰写页 `_player.onXxx.listen()` 之前没存 subscription，dispose 没取消。修后存 `StreamSubscription?` 字段 + `dispose()` 取消
-- **`vent_entry.dart` 死代码**：删 `audioExists()` + 误导注释 + `dart:io` import（实际不是仅做 path 拼接，是磁盘 I/O）
-- **`safety_watch_service.dart` 死参数**：删 `EmailService? emailService` 构造参数（v1.0+ 占位，EmailService 整个在 production 没用）
-- **文档同步**：
-  - `SENDGRID_SETUP.md` 删 stale `fromEmail` 参数示例（构造函数早没这参数）+ 改 `to` 为手机号
-  - `AGENTS.md` / `README.md` 同步 `check_all.dart` + `dart scripts/check_all.dart`（不用 `dart run`，会触发 `objective_c` build hook 失败）
-  - `email_preview.dart` 修正 round 注释（之前写错 Round 13 → 实际 Round 12）
-
-### Removed
-- **`dio: ^5.7.0`** 依赖：清理后 `EmailService` 没有任何 `package:dio/dio` 引用
-- **`EmailService` 中的 `Dio` 字段 + 未用 `html` 变量**
-- **`EmailService` 的 `Medication?` drift row 参数**：改用 `MedicationEntity?`（domain entity），消除 domain → data 反向依赖
-- **`scripts/check_domain_purity.dart` + `scripts/check_architecture_consistency.dart`**：合并到 `check_all.dart`
-- **`scripts/debug_check.dart`**：占位文件
-
-### Architecture
-- **Domain 层严格 0 flutter / 0 drift / 0 data / 0 dart:io 依赖**（除 vent_entry 的 `audioPath` 字段类型用 String）
-- **共享层使用度**：所有 `shared/` 工具至少被 2 层用（被 check_all 验证）
-
-### Tests
-- 471/471 pass（461 → 471：5 check_all + 3 streak unsorted + 2 assessment unsorted）
-- 新增 `test/data/email_service_test.dart`（用 `MedicationEntity` 替代之前的 drift row）
-- 新增 `test/scripts/check_all_test.dart`（5 个，验证 4 层架构检测 + 相对路径解析 + Windows path bug）
-
-### Fixed (latent bugs)
-- **`streak_calculator.dart` 隐式排序假设**：`calculate` + `shouldShowStreakBroken` 用 `.first` 假设 caller 传 DESC，调用方目前都传已排序数据（`watchAllCheckIns()` Drift orderBy DESC），但任何未来 caller 传未排序数据会算错 streak。加显式 sort + 3 个 unsorted input regression test
-- **`assessment_comparison.dart` 隐式排序假设**：`fromRecords` 用 `.last` 假设 caller 传 ASC，同样的 fragility。修：先 sort 再取。加 2 个 unsorted input test
-- **`medications_list_widget.dart` 多次 `DateTime.now()` race**：`_editRefill` 之前 3 次 `DateTime.now()` 算 initialDate/firstDate/lastDate，跨 midnight 时三者可能不一致（`reminder_scheduler.dart:97` v0.14 已有同款 fix）。修：先算 `now` 一次再复用
-- **`trend_page.dart:36-39` field 初始化多次 `DateTime.now()`**：`_calendarMonth` 用 2 次 `.now()` 算 year 和 month，跨 midnight 边界可能 month 不一致（23:59 → 12，00:00 → 1）。修：抽成 `_initialCalendarMonth()` 静态方法算 1 次
-- **`notification_service.dart` 2 个 cancel id 范围过窄**：
-  - `cancelAllSnoozes` 之前 `[4000, 104000)` 范围，snooze id 公式 `4000 + medId * 1440 + minutes`，medId ≥ 72 漏 cancel
-  - `rescheduleMedicationReminders` 之前 `[2000, 3000)` 范围，med reminder id 公式 `2000 + medId * 10 + i`，medId ≥ 100 漏 cancel
-  - 修：范围都放宽到 200000+（covers medId 几万个，远超实际用户量）
-- **`vent_audio_storage.dart` 文件名 collision 风险**：`newAudioPath` 之前只用 `DateTime.now().millisecondsSinceEpoch` 作后缀，同毫秒内录 2 段会文件名相同 → 后录的覆盖前录的。修：加 4 位 random suffix (`vent_{ms}_{rand4}.m4a`)，同毫秒冲突概率 1/10000
-
-### Removed
-- **`EmailTemplate.buildHtml()`**：60 行 HTML 模板，v0.6 改 mock 短信后整个 HTML 路径无生产调用
-- **`test/domain/email_template_test.dart` 中的 `buildHtml` 测试**：自测死代码
-
-### Final state
-- `flutter analyze`: 0 issues（无 warning、无 error、无 info）
-- 4 个 `RadioListTile` 迁移到 Flutter 3.32+ `RadioGroup` 祖先 API
-- 88 个文件 `dart format` + `dart fix --apply` 一键 cleanup（229 fixes）
-- `test/scripts/check_all_test.dart` 新增 5 个测试，覆盖 `package:chroniccare/` 绝对路径 + `../../` 相对路径检测
-- 修 `check_all.dart` 潜在 Windows 路径 bug：`package:chroniccare/data/bar.dart` 的 rel 部分 `/` 没转 `Platform.pathSeparator`，导致 marker `\lib\data\` 匹配不上
-
-### Fixed (round 19B — 第 8 轮 code review 新发现的 6 个 bug)
-- **`notification_service.rescheduleRefillReminders` cancel range 过窄**：
-  - 之前 `_refillBaseId + 1000` 范围，refill id 公式 `_refillBaseId + medId`（`6000 + medId`），medId ≥ 1000 漏 cancel
-  - 修：范围放到 200000（同 round 19 medication reminder 的修法），覆盖 medId 几万个
-  - 配套把 `_refillNotificationId` 改 `@visibleForTesting` 暴露成 `refillNotificationId` 便于测试
-- **`reminder_scheduler.dart` 隐式排序假设**：`normalCheckIns.first.timestamp` 假设 `watchAll()` 返 DESC，drift orderBy 一改就 silent 算错
-  - 修：显式 `normalCheckIns.sort((a, b) => b.timestamp.compareTo(a.timestamp))` 后再 `.first`
-- **`safety_watch_service.dart` 隐式排序假设**：同款 `normalCheckIns.first.timestamp` 隐式 DESC。修：同上显式 sort
-- **`assessment_reminder_service.dart` 隐式排序假设**：`assessments.last.timestamp` 假设 `watchAssessments()` 返 ASC（"最后"= list 末尾），drift orderBy 一改漏取最新评估
-  - 修：用 `assessments.map((c) => c.timestamp).reduce((a, b) => a.isAfter(b) ? a : b)` 显式找最新，不依赖 list 顺序
-- **`scheduleRefillReminder` 多次 `DateTime.now()` race**：
-  - 之前 2 次 `DateTime.now()`（fireAt 过期判断 + daysLeft 计算），跨 midnight 时可能用不同日期
-  - 修：先 `final now = DateTime.now();` 一次，下面两处复用
-- **`vent_compose_page._getAudioDuration` AudioPlayer leak**：
-  - 之前 try 块内 `await player.setSource(...)` + `await player.getDuration()` + `await player.dispose()` 一气呵成；任一环节抛异常都直接走 catch，`dispose()` 不会跑 → AudioPlayer 资源泄漏
-  - 修：把 `dispose()` 移到 `finally` 块，确保异常路径也释放
-
-### Tests (round 19B)
-- 478/478 pass（471 → 478：6 refill id range + 1 safety_watch unsorted data）
-- 新增 `test/data/notification_service_round19b_test.dart`：6 cases 覆盖 refill id 公式 + cancel range 范围（medId=0/1/999/1000/10000/50000 都验证）
-- 新增 `test/data/sort_assumption_round19b_test.dart`：1 case 用 unsorted 顺序插入 3 条打卡（5天前/3天前/1小时前），验证 SafetyWatch 取 latest = 1小时前（修前会取 5天前误报触发告警）
-
-### Fixed (round 19C — 第 9 轮 code review 新发现)
-- **`app_router.dart:110` 路由参数 unsafe parse**：
-  - 之前 `int.parse(state.pathParameters['id'] ?? '0')` 处理 `/vent/detail/abc` 时 `int.parse('abc')` 抛 FormatException
-  - 修：改用 `int.tryParse(...) ?? 0`，invalid id fallback 到 0（详情页会显示"找不到了"，不崩 app）
-
-### Tests (round 19C)
-- 486/486 pass（478 → 486：8 route param parsing 边界 case）
-- 新增 `test/routing/route_parsing_round19c_test.dart`：8 cases 覆盖 `int.tryParse` fallback 行为（valid int / empty / 'abc' / mixed / negative / whitespace / null path param）
-
-### Added (round 20 — 通知自检 + OEM 后台引导)
-- **`NotificationService.pendingCount`**：返回当前待发通知数；plugin 抛 PlatformException 时返回 -1（web/desktop 平台）
-- **设置页「通知与提醒」自检卡** (`NotificationStatusCard`)：
-  - 状态显示：当前已排队的待发通知数（0 / N / 不支持三态）
-  - **测试通知按钮**：点一下立即推一条，看到 = 通知工作正常
-  - **查看已排队通知**：弹 dialog 列出所有 `pendingNotificationRequests` 标题
-  - **国产手机后台引导**：折叠面板展开 5 大品牌（小米 / 华为 / OPPO / Vivo / 魅族）每家 2-3 步后台保活路径
-  - `kIsWeb` fallback：web 端显示"通知功能仅在 Android/iOS 可用"，隐藏功能按钮
-
-### Fixed (round 20)
-- **国产 ROM 静默杀通知没用户可见信号**：之前 20:00 提醒失败只在 log 里 `developer.log`，用户根本不知道。加自检卡后用户能主动验证 + 看到"没有待发通知"立即知道要排查
-
-### Tests (round 20)
-- 491/491 pass（486 → 491：5 widget test）
-- 新增 `test/presentation/notification_status_card_round20_test.dart`：5 cases 覆盖
-  - mobile 模式显示完整 card
-  - pendingCount 三种状态（5 / 0 / -1）的 UI 提示
-  - 点"测试通知"按钮 → 调 `showNow` 推一条
-  - 点刷新按钮 → 重新读 pendingCount
 

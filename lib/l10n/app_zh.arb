@@ -949,5 +949,18 @@
   "setupContactFallbackName": "联系人 {index}",
   "@setupContactFallbackName": {
     "placeholders": { "index": { "type": "int" } }
-  }
+  },
+
+  "emailBodyI18n": "我是 {name}，已经 {days} 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。",
+  "@emailBodyI18n": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  },
+  "emailFooterI18n": "这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。",
+  "notifChannelMedicationNameI18n": "吃药提醒",
+  "notifChannelMedicationDescI18n": "到点提醒你吃药打卡",
+  "notifDailyCheckInTitleI18n": "🌱 今天吃了药吗？",
+  "notifDailyCheckInBodyI18n": "点一下 = 打卡，让家人放心"
 }

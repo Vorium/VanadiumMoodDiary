@@ -3591,6 +3591,42 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'联系人 {index}'**
   String setupContactFallbackName(int index);
+
+  /// No description provided for @emailBodyI18n.
+  ///
+  /// In zh, this message translates to:
+  /// **'我是 {name}，已经 {days} 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。'**
+  String emailBodyI18n(String name, int days);
+
+  /// No description provided for @emailFooterI18n.
+  ///
+  /// In zh, this message translates to:
+  /// **'这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。'**
+  String get emailFooterI18n;
+
+  /// No description provided for @notifChannelMedicationNameI18n.
+  ///
+  /// In zh, this message translates to:
+  /// **'吃药提醒'**
+  String get notifChannelMedicationNameI18n;
+
+  /// No description provided for @notifChannelMedicationDescI18n.
+  ///
+  /// In zh, this message translates to:
+  /// **'到点提醒你吃药打卡'**
+  String get notifChannelMedicationDescI18n;
+
+  /// No description provided for @notifDailyCheckInTitleI18n.
+  ///
+  /// In zh, this message translates to:
+  /// **'🌱 今天吃了药吗？'**
+  String get notifDailyCheckInTitleI18n;
+
+  /// No description provided for @notifDailyCheckInBodyI18n.
+  ///
+  /// In zh, this message translates to:
+  /// **'点一下 = 打卡，让家人放心'**
+  String get notifDailyCheckInBodyI18n;
 }
 
 class _AppLocalizationsDelegate

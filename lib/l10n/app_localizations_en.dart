@@ -2055,4 +2055,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String setupContactFallbackName(int index) {
     return 'Contact $index';
   }
+
+  @override
+  String emailBodyI18n(String name, int days) {
+    return 'I\'m $name. I haven\'t checked in on the app for $days days.\nCould you remind me to take my medication on time when convenient, to avoid relapse?';
+  }
+
+  @override
+  String get emailFooterI18n =>
+      'This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings.';
+
+  @override
+  String get notifChannelMedicationNameI18n => 'Medication Reminder';
+
+  @override
+  String get notifChannelMedicationDescI18n =>
+      'Reminds you to take your medication and check in';
+
+  @override
+  String get notifDailyCheckInTitleI18n => '🌱 Did you take your meds today?';
+
+  @override
+  String get notifDailyCheckInBodyI18n =>
+      'One tap = check-in. Let your family know you\'re okay.';
 }

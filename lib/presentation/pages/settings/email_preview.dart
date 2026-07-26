@@ -53,9 +53,16 @@ class EmailPreviewPage extends ConsumerWidget {
                       orElse: () => null,
                     );
 
+                    // v0.24 round 48 (spzh P0-5): 传 i18n 字符串,海外用户看英文
+                    final l10n = AppLocalizations.of(context);
+                    final safeName = (profile.userName ?? '').trim().isEmpty
+                        ? '您的家人'
+                        : profile.userName!.trim();
                     final subject = EmailTemplate.buildSubject(
                       userName: profile.userName,
                       daysWithoutCheckIn: 2,
+                      subjectOverride:
+                          '[Medication Reminder] $safeName missed check-in for 2 days',
                     );
 
                     final body = EmailTemplate.buildBody(
@@ -65,6 +72,8 @@ class EmailPreviewPage extends ConsumerWidget {
                           DateTime.now().subtract(const Duration(days: 2)),
                       medication: medication,
                       cycleHours: profile.checkInCycleHours,
+                      bodyOverride: l10n.emailBodyI18n(safeName, 2),
+                      footerOverride: l10n.emailFooterI18n,
                     );
 
                     return Card(
