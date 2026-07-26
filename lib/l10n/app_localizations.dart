@@ -3532,6 +3532,12 @@ abstract class AppLocalizations {
   /// **'无法初始化本地数据。\n请尝试：\n1) 重启 App\n2) 卸载后重装\n如反复出现，请反馈给我们。'**
   String get migrationFailedBody;
 
+  /// No description provided for @migrationFailedReassure.
+  ///
+  /// In zh, this message translates to:
+  /// **'请别担心，您的数据是加密的。我们会尽快解决。'**
+  String get migrationFailedReassure;
+
   /// No description provided for @moodRatingSemantics.
   ///
   /// In zh, this message translates to:

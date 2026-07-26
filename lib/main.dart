@@ -347,6 +347,19 @@ class _MigrationFailedApp extends StatelessWidget {
                   l10n.migrationFailedBody,
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 16),
+                // v0.24 round 48 (sp-zh P1-16): 失败时给用户安抚句,降低焦虑。
+                // 中文用户尤其敏感 — 精神心理患者迁移失败时最怕"数据丢了"。
+                // 这条文案用 l10n key,中英文都友好。
+                Text(
+                  l10n.migrationFailedReassure,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppTokens.fontSizeCaption,
+                    color: AppTokens.textHintColor(context),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
               ],
             ),
           ),

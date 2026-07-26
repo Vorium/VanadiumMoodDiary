@@ -914,6 +914,7 @@
   "migrationAbortedRetry": "Already backed up, continue",
   "migrationFailedTitle": "Failed to start",
   "migrationFailedBody": "Unable to initialize local data.\nPlease try:\n1) Restart the app\n2) Uninstall and reinstall\nIf the problem persists, please contact us.",
+  "migrationFailedReassure": "Don't worry, your data is encrypted. We'll resolve this soon.",
 
   "moodRatingSemantics": "Mood rating, 1 to 5 scale, 5 is best",
   "moodRatingButtonSemantics": "{score} out of 5{selected, select, true{, selected} other{}}",

@@ -936,6 +936,7 @@
   "migrationAbortedRetry": "已备份，继续升级",
   "migrationFailedTitle": "启动失败",
   "migrationFailedBody": "无法初始化本地数据。\n请尝试：\n1) 重启 App\n2) 卸载后重装\n如反复出现，请反馈给我们。",
+  "migrationFailedReassure": "请别担心，您的数据是加密的。我们会尽快解决。",
 
   "moodRatingSemantics": "情绪评分，1 到 5 分制，5 分最积极",
   "moodRatingButtonSemantics": "{score} 分{selected, select, true{，已选} other{}}",

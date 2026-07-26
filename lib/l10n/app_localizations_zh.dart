@@ -1924,6 +1924,9 @@ class AppLocalizationsZh extends AppLocalizations {
       '无法初始化本地数据。\n请尝试：\n1) 重启 App\n2) 卸载后重装\n如反复出现，请反馈给我们。';
 
   @override
+  String get migrationFailedReassure => '请别担心，您的数据是加密的。我们会尽快解决。';
+
+  @override
   String get moodRatingSemantics => '情绪评分，1 到 5 分制，5 分最积极';
 
   @override
@@ -3908,6 +3911,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '無法初始化本地數據。\n請嘗試：\n1) 重啟 App\n2) 卸載後重裝\n如反覆出現，請反饋給我們。';
 
   @override
+  String get migrationFailedReassure => '請別擔心，您的數據是加密的。我們會盡快解決。';
+
+  @override
   String get moodRatingSemantics => '情緒評分，1 到 5 分制，5 分最積極';
 
   @override
@@ -3949,4 +3955,25 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String setupContactFallbackName(int index) {
     return '聯繫人 $index';
   }
+
+  @override
+  String emailBodyI18n(String name, int days) {
+    return '我是 $name，已經 $days 天沒在 App 裏打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。';
+  }
+
+  @override
+  String get emailFooterI18n =>
+      '這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。';
+
+  @override
+  String get notifChannelMedicationNameI18n => '吃藥提醒';
+
+  @override
+  String get notifChannelMedicationDescI18n => '到點提醒你吃藥打卡';
+
+  @override
+  String get notifDailyCheckInTitleI18n => '🌱 今天吃了藥嗎？';
+
+  @override
+  String get notifDailyCheckInBodyI18n => '點一下 = 打卡，讓家人放心';
 }

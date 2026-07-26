@@ -2013,6 +2013,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unable to initialize local data.\nPlease try:\n1) Restart the app\n2) Uninstall and reinstall\nIf the problem persists, please contact us.';
 
   @override
+  String get migrationFailedReassure =>
+      'Don\'t worry, your data is encrypted. We\'ll resolve this soon.';
+
+  @override
   String get moodRatingSemantics => 'Mood rating, 1 to 5 scale, 5 is best';
 
   @override
