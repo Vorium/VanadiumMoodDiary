@@ -200,7 +200,7 @@ class DataManagementSection extends ConsumerWidget {
       if (context.mounted) {
         AppSnackBar.showError(context,
               action: AppLocalizations.of(context).settingsActionExport,
-              error: e);
+              error: e,);
       }
     }
   }
@@ -273,7 +273,7 @@ class DataManagementSection extends ConsumerWidget {
       if (context.mounted) {
         AppSnackBar.showError(context,
               action: AppLocalizations.of(context).settingsActionGenerateReport,
-              error: e);
+              error: e,);
       }
     }
   }

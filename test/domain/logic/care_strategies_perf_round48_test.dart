@@ -56,7 +56,7 @@ void main() {
       // 当前实现 O(N×7) 在 1000 checkIns 实际 < 50ms 但 >= 10ms
       // Set<DateTime> 改法后 O(N+7) 应稳定 < 5ms
       expect(avgMs, lessThan(10.0),
-          reason: '1000 checkIns × 5 次 = $avgMs ms, 期望 < 10ms (Set 优化目标)');
+          reason: '1000 checkIns × 5 次 = $avgMs ms, 期望 < 10ms (Set 优化目标)',);
     });
 
     test('5000 checkIns (10 年重度用户) → < 30ms (P1-13 RED 扩展)', () {
@@ -79,7 +79,7 @@ void main() {
       sw.stop();
       final elapsedMs = sw.elapsedMicroseconds / 1000;
       expect(elapsedMs, lessThan(30.0),
-          reason: '5000 checkIns 单次 = ${elapsedMs}ms, 期望 < 30ms');
+          reason: '5000 checkIns 单次 = ${elapsedMs}ms, 期望 < 30ms',);
     });
 
     test('20000 checkIns (40 年极端 case) → < 100ms (P1-13 RED 极端)', () {
@@ -105,7 +105,7 @@ void main() {
       print('P1-13 perf probe: 20000 checkIns isWeekPerfect = ${elapsedMs}ms');
       // 20000 entries 单次: 100ms 锁定未来不退化
       expect(elapsedMs, lessThan(100.0),
-          reason: '20000 checkIns 单次 = ${elapsedMs}ms, 期望 < 100ms');
+          reason: '20000 checkIns 单次 = ${elapsedMs}ms, 期望 < 100ms',);
     });
 
     test('1000 checkIns 全部是最近 7 天 → true (正确性 + 性能)', () {
@@ -129,9 +129,9 @@ void main() {
       final result = isWeekPerfect(checkIns, now);
       sw.stop();
       expect(result, isTrue,
-          reason: '每天都有准时 checkIn, 7 天都齐');
+          reason: '每天都有准时 checkIn, 7 天都齐',);
       expect(sw.elapsedMilliseconds, lessThan(50),
-          reason: '极端 case 7×1000 ops 期望 < 50ms');
+          reason: '极端 case 7×1000 ops 期望 < 50ms',);
     });
 
     test('Set 重写后行为不变: 7 天全打卡 → true', () {

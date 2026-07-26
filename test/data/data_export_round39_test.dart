@@ -53,7 +53,7 @@ void main() {
         userName: const Value('张三'),
         checkInCycleHours: const Value(48),
         firstLaunchAt: DateTime.utc(2026, 1, 1),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson(now: DateTime.utc(2026, 7, 1)));
       final profile = json['profile'] as Map<String, dynamic>;
       expect(profile['userName'], '张三');
@@ -70,7 +70,7 @@ void main() {
       await db.upsertUserProfile(UserProfilesCompanion.insert(
         checkInCycleHours: const Value(24),
         firstLaunchAt: DateTime.utc(2026, 1, 1),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       expect(json['profile'], isNotNull);
       // userName 不存在 (nullable, v0.21 P1-24)
@@ -83,7 +83,7 @@ void main() {
         checkInCycleHours: const Value(24),
         firstLaunchAt: DateTime.utc(2026, 1, 1),
         lastCheckInAt: const Value.absent(),
-      ));
+      ),);
       // 模拟有 lastCheckIn
       final profile = await db.getUserProfile();
       expect(profile, isNotNull);
@@ -101,10 +101,10 @@ void main() {
     test('导出多 contact 保留 name/phone/sortOrder/isActive', () async {
       await db.insertContact(ContactsCompanion.insert(
         name: '妈妈', phone: '13800138001', sortOrder: const Value(0),
-      ));
+      ),);
       await db.insertContact(ContactsCompanion.insert(
         name: '爸爸', phone: '13800138002', sortOrder: const Value(1),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       final contacts = json['contacts'] as List;
       // 2 个都是 isActive=true (默认),全导出
@@ -121,7 +121,7 @@ void main() {
       await db.insertContact(ContactsCompanion.insert(
         name: '已删除', phone: '13800138099',
         isActive: const Value(false),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       expect(json['contacts'], isEmpty);
     });
@@ -143,7 +143,7 @@ void main() {
         timesJson: const Value('[{"h":8,"m":0},{"h":20,"m":0}]'),
         startDate: DateTime.utc(2026, 1, 1),
         isActive: const Value(true),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       final meds = json['medications'] as List;
       expect(meds.length, 1);
@@ -169,12 +169,12 @@ void main() {
       await db.insertCheckIn(CheckInsCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 1, 20, 0),
         type: 'normal',
-      ));
+      ),);
       await db.insertCheckIn(CheckInsCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 2, 20, 0),
         type: 'phq9',
         note: const Value('{"total":10,"scores":[1,1,1,1,1,1,1,1,1,1]}'),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       final checkIns = json['checkIns'] as List;
       expect(checkIns.length, 2);
@@ -199,7 +199,7 @@ void main() {
         anxiety: const Value(3),
         tagsJson: const Value('["工作","累"]'),
         note: const Value('今天还ok'),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       final moods = json['moodEntries'] as List;
       expect(moods.length, 1);
@@ -217,7 +217,7 @@ void main() {
         timestamp: DateTime.utc(2026, 6, 1, 10, 0),
         score: 5,
         tagsJson: const Value('[]'),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       final m = (json['moodEntries'] as List)[0] as Map<String, dynamic>;
       expect(m.containsKey('energy'), isFalse);
@@ -235,7 +235,7 @@ void main() {
       await db.insertVentEntry(VentEntriesCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 1),
         contentTextEnc: Value(encrypted),
-      ));
+      ),);
       // export → 明文
       final exportedJson = parseJson(await svc.exportToJson());
       final vents = exportedJson['ventEntries'] as List;
@@ -252,7 +252,7 @@ void main() {
       await db.insertVentEntry(VentEntriesCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 1),
         contentTextEnc: Value(Uint8List.fromList(List.filled(32, 0xff))),
-      ));
+      ),);
       final json = parseJson(await svc.exportToJson());
       final v = (json['ventEntries'] as List)[0] as Map;
       // decrypt 失败 → text 为 null,不抛错

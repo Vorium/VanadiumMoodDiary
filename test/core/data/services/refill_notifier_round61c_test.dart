@@ -198,9 +198,8 @@ void main() {
 /// buildChannelDetails / cancelByIdRange) 以满足 interface 实现约束。
 class _MockReminderDispatcher implements ReminderDispatcher {
   final void Function() onZonedAt;
-  final void Function() onCancel;
 
-  _MockReminderDispatcher({this.onZonedAt = _noop, this.onCancel = _noop});
+  _MockReminderDispatcher({this.onZonedAt = _noop});
 
   static void _noop() {}
 
@@ -245,7 +244,8 @@ class _MockReminderDispatcher implements ReminderDispatcher {
 
   @override
   Future<void> cancelByIdRange(int base) async {
-    onCancel();
+    // 本测试不覆盖 cancelByIdRange 路径 (走 _plugin.cancel 旁路),
+    // 实现满足 interface 即可
   }
 
   // ReminderDispatcher 3 个 final 字段 (channelId/Name/Description),

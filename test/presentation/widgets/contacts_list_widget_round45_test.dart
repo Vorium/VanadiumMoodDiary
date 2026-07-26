@@ -102,19 +102,19 @@ void main() {
           name: 'A',
           phone: '13800000001',
           sortOrder: 0,
-          isActive: true),
+          isActive: true,),
       ContactEntity(
           id: 2,
           name: 'B',
           phone: '13800000002',
           sortOrder: 1,
-          isActive: true),
+          isActive: true,),
       ContactEntity(
           id: 3,
           name: 'C',
           phone: '13800000003',
           sortOrder: 2,
-          isActive: true),
+          isActive: true,),
     ];
     await tester.pumpWidget(
       MaterialApp.router(

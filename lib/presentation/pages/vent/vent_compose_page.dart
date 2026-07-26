@@ -105,7 +105,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
               AppSnackBar.showError(context,
                     action: AppLocalizations.of(context)
                         .snackbarActionEncryptRecording,
-                    error: e);
+                    error: e,);
               // 加密失败 → 不保存音频，但 _isRecording 还是 false
               setState(() {
                 _isRecording = false;
@@ -125,7 +125,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         if (mounted) {
           AppSnackBar.showError(context,
                 action: AppLocalizations.of(context).snackbarActionRecord,
-                error: e);
+                error: e,);
           setState(() => _isRecording = false);
         }
       }
@@ -163,7 +163,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
           AppSnackBar.showError(context,
                 action:
                     AppLocalizations.of(context).snackbarActionStartRecording,
-                error: e);
+                error: e,);
         }
       }
     }
@@ -252,7 +252,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         if (mounted) {
           AppSnackBar.showError(context,
                 action: AppLocalizations.of(context).snackbarActionPlay,
-                error: e);
+                error: e,);
         }
       }
     }
@@ -341,7 +341,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         setState(() => _saving = false);
         AppSnackBar.showError(context,
               action: AppLocalizations.of(context).snackbarActionSave,
-              error: e);
+              error: e,);
       }
     }
   }

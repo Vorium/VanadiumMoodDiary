@@ -72,7 +72,7 @@ class AssessmentSection extends StatelessWidget {
         Card(
           child: AppListTile(
             leading:Icon(
-                Icons.email_outlined, color: AppTokens.primaryColor(context)),
+                Icons.email_outlined, color: AppTokens.primaryColor(context),),
             title:
                 Text(AppLocalizations.of(context).settingsEmailPreview),
             trailing: const Icon(Icons.chevron_right),
@@ -103,7 +103,7 @@ class AssessmentSection extends StatelessWidget {
             title:
                 Text(AppLocalizations.of(context).settingsDisclaimer),
             subtitle: Text(
-                AppLocalizations.of(context).settingsDisclaimerText),
+                AppLocalizations.of(context).settingsDisclaimerText,),
           ),
         ),
       ],

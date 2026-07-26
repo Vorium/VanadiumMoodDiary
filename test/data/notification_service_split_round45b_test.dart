@@ -220,7 +220,7 @@ void main() {
       final id = NotificationService.refillNotificationId(1000);
       expect(id, 7000);
       expect(id >= 6000 && id < 6000 + 200000, isTrue,
-          reason: 'medId=1000 的 id 必须被 200000 range 覆盖');
+          reason: 'medId=1000 的 id 必须被 200000 range 覆盖',);
     });
 
     test('medId=50000 → id=56000 (极端场景)', () {

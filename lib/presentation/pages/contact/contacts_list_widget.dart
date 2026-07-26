@@ -109,7 +109,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       if (mounted) {
         AppSnackBar.showError(context,
               action: AppLocalizations.of(context).commonActionDelete,
-              error: e);
+              error: e,);
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(id));
@@ -137,7 +137,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       if (mounted) {
         AppSnackBar.showError(context,
               action: AppLocalizations.of(context).commonActionDelete,
-              error: e);
+              error: e,);
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(contact.id));

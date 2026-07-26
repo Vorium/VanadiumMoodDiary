@@ -146,7 +146,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonDelete, error: e);
+              action: AppLocalizations.of(context).commonDelete, error: e,);
       }
     }
   }

@@ -11,7 +11,7 @@ class ReportDao {
     return (_db.select(_db.reportHistories)
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.generatedAt, mode: OrderingMode.desc),
+                expression: t.generatedAt, mode: OrderingMode.desc,),
           ]))
         .watch();
   }

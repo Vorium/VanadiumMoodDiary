@@ -68,7 +68,7 @@ class _AssessmentReminderSectionState
     } catch (e) {
       if (mounted) {
         AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonSetup, error: e);
+              action: AppLocalizations.of(context).commonSetup, error: e,);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -102,7 +102,7 @@ class _AssessmentReminderSectionState
     } catch (e) {
       if (mounted) {
         AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonSetup, error: e);
+              action: AppLocalizations.of(context).commonSetup, error: e,);
       }
     } finally {
       if (mounted) setState(() => _busy = false);

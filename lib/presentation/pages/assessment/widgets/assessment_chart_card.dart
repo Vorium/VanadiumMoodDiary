@@ -142,7 +142,7 @@ class AssessmentChartCard extends StatelessWidget {
                             FlDotCirclePainter(
                           radius: 4,
                           color: assessmentSeverityStyle(
-                                  context, scaleId, spot.y.toInt(), l10n)
+                                  context, scaleId, spot.y.toInt(), l10n,)
                               .color,
                           strokeWidth: 1.5,
                           strokeColor: AppTokens.fgOnPrimary(context),

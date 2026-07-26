@@ -46,7 +46,7 @@ class CheckInDao {
     return (_db.select(_db.checkIns)
           ..where((t) =>
               t.timestamp.isBiggerOrEqualValue(startOfDay) &
-              t.timestamp.isSmallerThanValue(endOfDay))
+              t.timestamp.isSmallerThanValue(endOfDay),)
           ..orderBy([
             (t) =>
                 OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),

@@ -202,7 +202,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       if (mounted) {
         AppSnackBar.showError(context,
               action: AppLocalizations.of(context).snackbarActionShare,
-              error: e);
+              error: e,);
       }
     }
   }
@@ -224,7 +224,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       if (mounted) {
         AppSnackBar.showError(context,
               action: AppLocalizations.of(context).snackbarActionGeneratePdf,
-              error: e);
+              error: e,);
       }
     } finally {
       if (mounted) setState(() => _pdfLoading = false);

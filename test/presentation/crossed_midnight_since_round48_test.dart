@@ -81,11 +81,11 @@ void main() {
       // 跨日, 无论 now 在 0:00:04 / 0:00:05 / 0:00:06 都应该 true
       // (cutoff 用"当天 00:00:05"作为标记, 日期变了 cutoff 必然晚 1 天)
       expect(crossedMidnightSince(lastCheck, t1), isTrue,
-          reason: 'lastCheck 17-23:30 vs now 18-00:00:04 (跨日)');
+          reason: 'lastCheck 17-23:30 vs now 18-00:00:04 (跨日)',);
       expect(crossedMidnightSince(lastCheck, t2), isTrue,
-          reason: 'lastCheck 17-23:30 vs now 18-00:00:05 (buffer 边界)');
+          reason: 'lastCheck 17-23:30 vs now 18-00:00:05 (buffer 边界)',);
       expect(crossedMidnightSince(lastCheck, t3), isTrue,
-          reason: 'lastCheck 17-23:30 vs now 18-00:00:06 (buffer 之后)');
+          reason: 'lastCheck 17-23:30 vs now 18-00:00:06 (buffer 之后)',);
     });
 
     test('00:00:05 边界反向 (lastCheck 0:00:04 vs now 0:00:04 同日) → false', () {

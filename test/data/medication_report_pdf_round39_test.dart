@@ -127,7 +127,7 @@ void main() {
     test('medication 漏服 → 列表含"⚠️ 漏服"', () {
       final s = _buildData(medStats: [
         _buildStat(missedDates: [DateTime(2026, 6, 5), DateTime(2026, 6, 10)]),
-      ]).toReportString();
+      ],).toReportString();
       expect(s, contains('⚠️ 漏服'));
       // Formatters.monthDay 格式 "MM/dd"
       expect(s, contains('06/05'));
@@ -146,7 +146,7 @@ void main() {
           name: '泰诺',
           description: '头痛',
         ),
-      ]).toReportString();
+      ],).toReportString();
       expect(s, contains('泰诺'));
       expect(s, contains('头痛'));
     });
@@ -237,17 +237,17 @@ void main() {
             description: '头痛',
           ),
         ],
-      ));
+      ),);
       expect(bytes.length, greaterThan(1000));
     });
 
     test('多个 medication → 文件更大 (含多个 stat block)', () async {
       final small = await MedicationReportPdf.build(_buildData(
         medStats: [_buildStat()],
-      ));
+      ),);
       final big = await MedicationReportPdf.build(_buildData(
         medStats: List.generate(5, (i) => _buildStat(name: '药$i')),
-      ));
+      ),);
       expect(big.length, greaterThan(small.length));
     });
 
@@ -272,7 +272,7 @@ void main() {
       final bytes = await MedicationReportPdf.build(_buildData(
         expectedDoses: 0,
         onTimeDoses: 0,
-      ));
+      ),);
       expect(bytes, isNotEmpty);
       expect(String.fromCharCodes(bytes.take(5)), '%PDF-');
     });
@@ -280,7 +280,7 @@ void main() {
     test('windowDays = 0 → 仍生成 (空 data 兜底)', () async {
       final bytes = await MedicationReportPdf.build(_buildData(
         windowDays: 0,
-      ));
+      ),);
       expect(bytes, isNotEmpty);
     });
 
@@ -288,21 +288,21 @@ void main() {
       // 因为 report 是 PDF binary, 文本不易直接验证,只确认 build 不 crash
       final bytes = await MedicationReportPdf.build(_buildData(
         medStats: [_buildStat(times: const [])],
-      ));
+      ),);
       expect(bytes, isNotEmpty);
     });
 
     test('userName 中文 4 字 → build 不 crash (maskName 长度自适应)', () async {
       final bytes = await MedicationReportPdf.build(_buildData(
         userName: '欧阳明月',
-      ));
+      ),);
       expect(bytes, isNotEmpty);
     });
 
     test('userName 英文 → build 不 crash', () async {
       final bytes = await MedicationReportPdf.build(_buildData(
         userName: 'John Smith',
-      ));
+      ),);
       expect(bytes, isNotEmpty);
     });
   });

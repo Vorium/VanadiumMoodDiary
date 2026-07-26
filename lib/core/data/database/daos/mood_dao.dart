@@ -11,7 +11,7 @@ class MoodDao {
     return (_db.select(_db.moodEntries)
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.timestamp, mode: OrderingMode.desc),
+                expression: t.timestamp, mode: OrderingMode.desc,),
           ]))
         .watch();
   }
@@ -26,10 +26,10 @@ class MoodDao {
     return (_db.select(_db.moodEntries)
           ..where((t) =>
               t.timestamp.isBiggerOrEqualValue(startOfDay) &
-              t.timestamp.isSmallerThanValue(endOfDay))
+              t.timestamp.isSmallerThanValue(endOfDay),)
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.timestamp, mode: OrderingMode.desc),
+                expression: t.timestamp, mode: OrderingMode.desc,),
           ]))
         .watch();
   }

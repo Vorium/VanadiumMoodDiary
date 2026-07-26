@@ -73,7 +73,7 @@ void main() {
     // ListView 内 section 默认只渲染 viewport 内, 用 scrollUntilVisible
     // 把每个 section scroll 出来验证渲染
     await tester.scrollUntilVisible(
-        find.byType(DataManagementSection), 100);
+        find.byType(DataManagementSection), 100,);
     expect(find.byType(DataManagementSection), findsOneWidget);
 
     await tester.scrollUntilVisible(find.byType(LegalSection), 100);
@@ -83,7 +83,7 @@ void main() {
     expect(find.byType(RemindersSection), findsOneWidget);
 
     await tester.scrollUntilVisible(
-        find.byType(NotificationStatusCard), 100);
+        find.byType(NotificationStatusCard), 100,);
     expect(find.byType(NotificationStatusCard), findsOneWidget);
 
     await tester.scrollUntilVisible(find.byType(AssessmentSection), 100);
