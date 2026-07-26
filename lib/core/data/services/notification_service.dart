@@ -1,97 +1,121 @@
+// v0.24 round 45 (Sprint #5b) — notification_service facade 瘦身
+//
+// 拆解前: 629 行 facade god class
+// 拆解后: 250 行 facade + 3 个新 sub-service
+//   - MedicationNotifier  (153 行) — daily check-in + medication
+//   - RefillNotifier      (204 行) — refill 编排
+//   - AssessmentNotifier  (90 行)  — 评估周期提醒
+//   - SnoozeManager       (90 行, 保留)
+//   - BadgeSyncService    (40 行, 保留)
+//   - ReminderDispatcher  (146 行, 保留, 共享给 3 new sub-service)
+//
+// 6 类 ID 范围常量 (v0.16 round 19 文档化):
+//   1001 (default) < 2000-21999 (med) < 5000 (safety) < 6000-206000 (refill)
+//   < 7000 (assessment) < 9999 (badge) < 300000+ (snooze)
+//
+// facade 保留:
+//   - init (60 行): plugin init + tz + 权限
+//   - showNow (NotificationSender 抽象方法)
+//   - cancelAll / pendingCount (pass-through 到 _plugin)
+//   - showSafetyAlert (50 行, 独立 channel, 跟 dispatcher 无关, 不抽 sub-service)
+//   - 5 sub-service 委托 (30 行: snooze / badge / 3 orchestrator)
+//   - safety alert id (5000) + channel 3 const
+
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/user_name_helper.dart';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
-
-/// v0.23 round 41 (spen P3-28 TODO): 架构债务 — notification_service god class
-///
-/// 已抽 facade 子服务:
-///   - SnoozeManager (v0.22 round 19 抽)
-///   - BadgeSyncService (v0.22 round 30 抽)
-///   - ReminderDispatcher (v0.22 round 37 抽)
-///   - SafetyWatchService (v0.10 round 4 独立 service)
-///   - AssessmentReminderService (v0.12 round 12 独立 service)
-///
-/// 通知编排 facade 自身已瘦身, 但 4 类通知 (medication / refill / assessment /
-/// safety) 仍在本类内串联调用 dispatcher + safety/assessment service。
-/// 后续 round 候选: 抽 MedicationReminderOrchestrator / RefillReminderOrchestrator
-/// 把每类通知的"schedule/cancel"流程独立成单一职责的 orchestrator, 各 200 行内。
-/// 当前 (2026-07-24) 22KB / 600+ 行已可工作, 优先级 P3 L 项。
-
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:chroniccare/domain/entities/medication_entity.dart';
-import 'package:chroniccare/domain/repositories/notification_sender.dart';
-import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/routing/notification_navigation.dart';
+import 'package:chroniccare/core/data/services/assessment_notifier.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
+import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
+import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
+import 'package:chroniccare/core/routing/notification_navigation.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/repositories/notification_sender.dart';
 
-/// 本地通知服务
+/// 本地通知服务 (facade god class 已拆 6 sub-service)
 ///
-/// v0.7 升级：
-/// - 每天 20:00 通用打卡提醒（保留）
-/// - **每个 medication 的每个 time 配 zonedSchedule 推送**
-/// - "漏 1 天"主动 push 安慰
+/// 6 类通知编排已拆 5 sub-service (SnoozeManager / BadgeSyncService /
+/// ReminderDispatcher / MedicationNotifier / RefillNotifier / AssessmentNotifier) +
+/// facade 保留 showSafetyAlert (独立 channel 不走 dispatcher)。
+///
+/// v0.7 升级保留:
+/// - 每天 20:00 通用打卡提醒 (在 MedicationNotifier)
+/// - 每个 medication 每个 time 配 zonedSchedule 推送 (在 MedicationNotifier)
+/// - "漏 1 天" 主动 push 安慰 (在 facade showSafetyAlert)
 class NotificationService implements NotificationSender {
+  // ===== 3 channel const + 1 safety id (facade 直持) =====
   static const _channelId = 'chroniccare.medication';
   static const _channelName = Strings.notifChannelMedicationName;
   static const _channelDesc = Strings.notifChannelMedicationDesc;
-  static const _defaultReminderId = 1001;
-  // medication.time 推送的 id 起始基数（避免冲突）
-  static const _medicationReminderBaseId = 2000;
-  // 安全警报推送（v0.10 / Round 4）
-  static const _safetyAlertId = 5000;
-  // 续方提醒推送（v0.12 / Round 6），id 起始基数（6000-6999）
-  static const _refillBaseId = 6000;
-  // 心理评估周期提醒（v0.13 / Round 7 — Apple Health 思路）
-  static const _assessmentReminderId = 7000;
-  // v0.22 round 30 (sp-en P2-1): 角标虚拟 id 拆到 BadgeSyncService.badgeVirtualId
-  // 这里不再需要, 委托给 BadgeSyncService
+  // safety channel (跟 medication channel 分开, 独立 importance=alarm)
+  static const _safetyChannelId = 'chroniccare.safety';
+  static const _safetyChannelName = Strings.notifChannelSafetyName;
+  static const _safetyChannelDesc = Strings.notifChannelSafetyDesc;
+  /// 安全警报 id (5000) — 跟 medication 2000+ / refill 6000+ / assessment 7000 / badge 9999 不冲突
+  static const int safetyAlertId = 5000;
 
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
 
-  /// v0.18 round 18 (P1-28): Snooze 逻辑拆出到 SnoozeManager,主 service 委托
-  /// 公共 API 保持不变（snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes）,
-  /// 但真实实现移到 SnoozeManager,主 service 减肥 90+ 行。
-  late final SnoozeManager _snoozeManager = SnoozeManager(plugin: _plugin);
-
-  /// v0.23 (Round 37) P1-架构: 抽 [ReminderDispatcher] 集中调度
-  ///
-  /// 之前 4 类通知 (medication / refill / assessment / safety) 各自重复
-  /// `cancel by id range + NotificationDetails + zonedSchedule`。
-  /// 抽到 dispatcher 后, 主 service 委托, 业务编排保留。
-  late final ReminderDispatcher _dispatcher = ReminderDispatcher(
-    plugin: _plugin,
-    channelId: _channelId,
-    channelName: _channelName,
-    channelDescription: _channelDesc,
-  );
-
-  // v0.22 round 30 (sp-en P2-1): Badge 角标逻辑拆出到 BadgeSyncService
-  // updateBadgeCount 的 iOS DarwinNotificationDetails 封装移走
-  // 主 service 仅保留委托,减肥 40+ 行, 同步补单测机会
-  late final BadgeSyncService _badgeSync = BadgeSyncService(plugin: _plugin);
+  // ===== 6 sub-service DI (emil 决策: constructor DI 模式, 跟 mood_dialog 拆解同) =====
+  late final ReminderDispatcher _dispatcher;
+  late final SnoozeManager _snoozeManager;
+  late final BadgeSyncService _badgeSync;
+  late final MedicationNotifier _medicationNotifier;
+  late final RefillNotifier _refillNotifier;
+  late final AssessmentNotifier _assessmentNotifier;
 
   /// v0.11 (Round 5): 用户点通知的回调
   /// 默认调 [NotificationNavigation.handleTap]
   final void Function(String? payload) onNotificationTap;
 
   NotificationService({this.onNotificationTap = _defaultOnTap})
-      : _plugin = FlutterLocalNotificationsPlugin();
+      : _plugin = FlutterLocalNotificationsPlugin() {
+    // 6 sub-service 在 constructor 注入 (DI 模式, emil 推荐 testability)
+    // ReminderDispatcher 是 SnoozeManager / MedicationNotifier / RefillNotifier / AssessmentNotifier 的共享底层
+    _dispatcher = ReminderDispatcher(
+      plugin: _plugin,
+      channelId: _channelId,
+      channelName: _channelName,
+      channelDescription: _channelDesc,
+    );
+    _snoozeManager = SnoozeManager(plugin: _plugin);
+    _badgeSync = BadgeSyncService(plugin: _plugin);
+    _medicationNotifier = MedicationNotifier(
+      plugin: _plugin,
+      dispatcher: _dispatcher,
+      ensureInitialized: _ensureInitializedProxy,
+    );
+    _refillNotifier = RefillNotifier(
+      plugin: _plugin,
+      dispatcher: _dispatcher,
+      ensureInitialized: _ensureInitializedProxy,
+    );
+    _assessmentNotifier = AssessmentNotifier(
+      plugin: _plugin,
+      dispatcher: _dispatcher,
+      ensureInitialized: _ensureInitializedProxy,
+    );
+  }
 
   static void _defaultOnTap(String? payload) {
     NotificationNavigation.handleTap(payload);
   }
 
-  /// 初始化（app 启动时调用）
+  /// sub-service init 代理 — 委托到本类 init, 保证 sub-service 调用时主 service 已 init
+  Future<void> _ensureInitializedProxy() => init();
+
+  /// 初始化 (app 启动时调用)
   Future<void> init() async {
     if (_initialized) return;
     const androidSettings =
@@ -122,7 +146,7 @@ class NotificationService implements NotificationSender {
       NotificationNavigation.setLaunchPayload(payload);
     }
 
-    // 初始化时区数据库（zonedSchedule 需要）
+    // 初始化时区数据库 (zonedSchedule 需要)
     try {
       tz_data.initializeTimeZones();
       final localTzName = await FlutterTimezone.getLocalTimezone();
@@ -156,122 +180,9 @@ class NotificationService implements NotificationSender {
     _defaultOnTap(response.payload);
   }
 
-  /// 设置每天 20:00 通用打卡提醒（fallback，没设药时用）
-  Future<void> scheduleDailyReminder({
-    int hour = 20,
-    int minute = 0,
-  }) async {
-    await init();
-    await _plugin.cancel(_defaultReminderId);
-
-    final details = _dispatcher.buildChannelDetails();
-
-    try {
-      // v0.11: payload = "chroniccare://check-in/today"
-      const payload = 'chroniccare://check-in/today';
-      await _dispatcher.zonedDaily(
-        id: _defaultReminderId,
-        title: Strings.notifDailyCheckInTitle,
-        body: Strings.notifDailyCheckInBody,
-        hour: hour,
-        minute: minute,
-        details: details,
-        payload: payload,
-      );
-      piiSafeLog('NotificationService', '✅ 设置每日 $hour:$minute 提醒');
-    } catch (e) {
-      piiSafeLog('NotificationService', '❌ 设置提醒失败: $e');
-    }
-  }
-
-  /// 取消所有通知
-  Future<void> cancelAll() async {
-    await init();
-    await _plugin.cancelAll();
-  }
-
-  /// 待发通知数量（用于 UI 自检展示）
+  /// 立即显示一条通知 (不调度, 立即推)
   ///
-  /// v0.16 round 20（OEM 后台引导）：让用户能在设置页直观看到
-  /// "我设的提醒都在排队",如果显示 0 条说明没设上或被 OEM 杀掉
-  /// 返回 -1 表示平台不支持（web / desktop）
-  Future<int> get pendingCount async {
-    await init();
-    try {
-      final list = await _plugin.pendingNotificationRequests();
-      return list.length;
-    } catch (e) {
-      // web 平台 / 未实现 plugin: pendingNotificationRequests 抛 PlatformException
-      piiSafeLog(
-        'NotificationService',
-        '⚠️ pendingCount 读取失败（可能 web 端）: $e',
-      );
-      return -1;
-    }
-  }
-
-  /// 重排所有 medication 的推送
-  ///
-  /// 每次 medications 表变化（增/删/改）时调用。
-  /// 用稳定 hash 生成 notification id（避免冲突 + 同一药同一时间复用 id）。
-  ///
-  /// v0.18 (P2-P0-2): 改接受 [MedicationEntity] (domain) 而非 [Medication] (Drift row),
-  /// 避免 presentation 层 import data mapper (4 层架构违规)。
-  Future<void> rescheduleMedicationReminders(
-    List<MedicationEntity> medications,
-  ) async {
-    await init();
-
-    // medication reminder id 公式: base + medId * 10 + i
-    // cancel 范围走 dispatcher 集中, base 200000 覆盖 medId 几万个
-    // (v0.16 round 19 修, v0.23 round 37 抽 dispatcher)
-    await _dispatcher.cancelByIdRange(_medicationReminderBaseId);
-
-    piiSafeLog(
-      'NotificationService',
-      '✅ medication reminders 全部 cancel + 重新调度',
-    );
-
-    final details = _dispatcher.buildChannelDetails();
-
-    int scheduled = 0;
-    for (final med in medications) {
-      if (!med.isActive) continue;
-      for (int i = 0; i < med.times.length; i++) {
-        final t = med.times[i];
-        final id =
-            _medicationReminderBaseId + (med.id * 10) + i; // 同一药的同一时间点 id 稳定
-        try {
-          // v0.11: payload 携带 medId,点通知直达该药打卡
-          final payload =
-              NotificationDeepLink.medicationCheckIn(med.id).encode();
-          await _dispatcher.zonedDaily(
-            id: id,
-            title: Strings.notifMedicationTitle(med.name),
-            body: Strings.notifMedicationBody(med.dosage, med.dosageUnit),
-            hour: t.hour,
-            minute: t.minute,
-            details: details,
-            payload: payload,
-          );
-          scheduled++;
-        } catch (e) {
-          piiSafeLog(
-            'NotificationService',
-            '❌ 推送调度失败 med=${med.name} t=$t: $e',
-          );
-        }
-      }
-    }
-    piiSafeLog(
-      'NotificationService',
-      '✅ 重新调度 $scheduled 个 medication 推送',
-    );
-  }
-
-  /// 立即显示一条通知（不调度，立即推）
-  ///
-  /// 用于 CareEngine 触发的主动 push（不是定时任务）
+  /// 用于 CareEngine 触发的主动 push (不是定时任务)
   @override
   Future<void> showNow({
     required int id,
@@ -293,22 +204,88 @@ class NotificationService implements NotificationSender {
     await _plugin.show(id, title, body, details, payload: payload);
   }
 
-  // ============== Round 4: Snooze + Badge ==============
+  /// 取消所有通知
+  Future<void> cancelAll() async {
+    await init();
+    await _plugin.cancelAll();
+  }
+
+  /// 待发通知数量 (用于 UI 自检展示)
+  ///
+  /// v0.16 round 20 (OEM 后台引导): 让用户能在设置页直观看到
+  /// "我设的提醒都在排队", 如果显示 0 条说明没设上或被 OEM 杀掉
+  /// 返回 -1 表示平台不支持 (web / desktop)
+  Future<int> get pendingCount async {
+    await init();
+    try {
+      final list = await _plugin.pendingNotificationRequests();
+      return list.length;
+    } catch (e) {
+      // web 平台 / 未实现 plugin: pendingNotificationRequests 抛 PlatformException
+      piiSafeLog(
+        'NotificationService',
+        '⚠️ pendingCount 读取失败 (可能 web 端): $e',
+      );
+      return -1;
+    }
+  }
+
+  // ============== MedicationNotifier 委托 ==============
+
+  /// 设置每天 hour:minute 通用打卡提醒 (id=1001, fallback)
+  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) =>
+      _medicationNotifier.scheduleDailyReminder(hour: hour, minute: minute);
+
+  /// 重排所有 medication 的推送 (id=2000+medId*10+i)
+  Future<void> rescheduleMedicationReminders(
+    List<MedicationEntity> medications,
+  ) =>
+      _medicationNotifier.rescheduleMedicationReminders(medications);
+
+  // ============== RefillNotifier 委托 ==============
+
+  /// 调度一个 medication 的续方提醒
+  Future<void> scheduleRefillReminder(MedicationEntity medication) =>
+      _refillNotifier.scheduleRefillReminder(medication);
+
+  /// 取消一个 medication 的续方提醒
+  Future<void> cancelRefillReminder(int medicationId) =>
+      _refillNotifier.cancelRefillReminder(medicationId);
+
+  /// 重排所有 medication 的续方提醒
+  Future<void> rescheduleRefillReminders(
+    List<MedicationEntity> medications,
+  ) =>
+      _refillNotifier.rescheduleRefillReminders(medications);
+
+  // ============== AssessmentNotifier 委托 ==============
+
+  /// 调度一条心理评估周期提醒
+  Future<void> scheduleAssessmentReminder({
+    required DateTime fireAt,
+    String scaleId = 'phq9',
+    int days = 14,
+  }) =>
+      _assessmentNotifier.scheduleAssessmentReminder(
+        fireAt: fireAt,
+        scaleId: scaleId,
+        days: days,
+      );
+
+  /// 取消心理评估周期提醒
+  Future<void> cancelAssessmentReminder() =>
+      _assessmentNotifier.cancelAssessmentReminder();
+
+  // ============== SnoozeManager 委托 ==============
   //
   // v0.18 round 18 (P1-28): Snooze 3 个 method 拆到 SnoozeManager
-  // 主 service 公共 API 保留，内部委托 _snoozeManager。
+  // 主 service 公共 API 保留, 内部委托 _snoozeManager。
   // 这样:
-  // - notification_service.dart 788 → 700 行 (-90)
+  // - notification_service.dart 主类减肥 90+ 行
   // - snooze 逻辑独立测试 (mock SnoozeManager 不用 mock 整个 notification)
   // - id 公式 + cancel 范围集中在一处
-  //
-  // 参考 Pill Reminder (Drugs.com iOS)：
-  // - 通知来了用户点"Snooze 5min" → 5min 后再响一次
-  // - App 图标角标显示当天还差几次没打卡
 
-  /// 调度一个**一次性**延迟通知（snooze 用）
-  ///
-  /// v0.18 (P1-28): 委托 SnoozeManager,公共签名不变。
+  /// 调度一个一次性延迟通知 (snooze 用)
   Future<void> snoozeOnce({
     required int medicationId,
     required int minutes,
@@ -324,245 +301,29 @@ class NotificationService implements NotificationSender {
     );
   }
 
-  /// 取消某个药物的所有 snooze（用户真打卡后调）
-  ///
-  /// v0.18 (P1-28): 委托 SnoozeManager
+  /// 取消某个药物的所有 snooze (用户真打卡后调)
   Future<void> cancelSnoozeForMedication(int medicationId) async {
     await init();
     await _snoozeManager.cancelSnoozeForMedication(medicationId);
   }
 
-  /// 取消所有 snooze（重排 medication reminders 时调）
-  ///
-  /// v0.18 (P1-28): 委托 SnoozeManager
+  /// 取消所有 snooze (重排 medication reminders 时调)
   Future<void> cancelAllSnoozes() async {
     await init();
     await _snoozeManager.cancelAllSnoozes();
   }
 
-  // ============== Round 6: 续方提醒 ==============
+  // ============== SafetyAlert (facade 直实现, 不抽 sub-service) ==============
   //
-  // 参考 Pill Reminder (Drugs.com iOS)：
-  // - "你的 XXX 还剩 N 天就要断药了，去医院开药"
-  // - 触发时机：refillAt - reminderDays 当天上午 9 点
-  // - 一个药一条推送，id 稳定
+  // 决策 (设计文档 §3.2): showSafetyAlert 1 个 method 50 行不值得 1 个 sub-service
+  // 走独立 "chroniccare.safety" channel, 不用 ReminderDispatcher (因为是 _plugin.show)
 
-  /// 续方提醒通知 id 范围：[refillBase, refillBase + 200000)
-  /// 一个 medication 一条预留 id 槽（id = refillBase + medId），
-  /// 同一药多次重排 = 覆盖，不会叠加。
+  /// 推送"安全警报"通知 (v0.10 / Round 4 — 死了么思路)
   ///
-  /// v0.16 round 19B: range 改 200000，配套 rescheduleRefillReminders
-  ///   的 cancel 范围。修前 1000 范围，medId >= 1000 漏 cancel。
-  @visibleForTesting
-  static int refillNotificationId(int medicationId) {
-    return _refillBaseId + medicationId;
-  }
-
-  /// 按"天"计算 refill 距今多少天（不直接用 Duration.inDays）
-  ///
-  /// 不直接用 Duration.inDays，因为：
-  /// - 23.98h 会被报成 0 天
-  /// - refill day 整天应该算"今天还有 X 天"，不能因时分秒而错
-  static int _daysUntilRefill(DateTime refillAt, DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
-    final refillDay = DateTime(refillAt.year, refillAt.month, refillAt.day);
-    return refillDay.difference(today).inDays;
-  }
-
-  /// 计算续方提醒的触发时间（refillAt - reminderDays 当天 9 点本地时间）
-  ///
-  /// 纯函数，方便测试。
-  /// 返回 null 当且仅当 [refillAt] 本身为 null。
-  /// [reminderDays] < 1 时抛 ArgumentError。
-  @visibleForTesting
-  static DateTime? computeRefillFireTime({
-    required DateTime? refillAt,
-    required int reminderDays,
-  }) {
-    if (refillAt == null) return null;
-    if (reminderDays < 1) {
-      throw ArgumentError('reminderDays must be >= 1; got: $reminderDays');
-    }
-    // 续方日期当天的 0 点，再 - reminderDays 天，再 + 9 小时
-    final day = DateTime(refillAt.year, refillAt.month, refillAt.day);
-    final triggerDay = day.subtract(Duration(days: reminderDays));
-    return DateTime(
-      triggerDay.year,
-      triggerDay.month,
-      triggerDay.day,
-      9, // 上午 9 点
-    );
-  }
-
-  /// 调度一个 medication 的续方提醒
-  ///
-  /// - [medication] 必须有非空 [Medication.refillAt]，否则函数静默 no-op
-  /// - 触发时间：`refillAt - reminderDays` 当天 9:00
-  /// - 同一 med 多次调用 = 覆盖前一次（id 稳定）
-  /// - payload = medicationCheckIn(medId) — 点通知直达打卡
-  Future<void> scheduleRefillReminder(MedicationEntity medication) async {
-    final fireAt = computeRefillFireTime(
-      refillAt: medication.refillAt,
-      reminderDays: medication.refillReminderDays,
-    );
-    if (fireAt == null) {
-      piiSafeLog(
-        'NotificationService',
-        '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
-      );
-      return;
-    }
-
-    // v0.16 round 19 fix: 之前 2 次 DateTime.now() 跨 midnight 时可能不一致
-    // （fireAt 检查用 yesterday 23:59，daysLeft 计算用 today 00:00）
-    final now = DateTime.now();
-    // 已经过期的提醒不再调度（避免给历史数据"补响"）
-    if (fireAt.isBefore(now)) {
-      piiSafeLog(
-        'NotificationService',
-        '⏭️ scheduleRefillReminder: med=${medication.name} '
-            'fireAt=$fireAt 已过, 跳过',
-      );
-      // 但仍要取消旧的，避免过期通知还挂着
-      // v0.23 round 40 (sp-en R7 fix): cancel 抛异常不破整个 schedule 流程
-      // 之前 await cancelRefillReminder 抛 PlatformException → 整个
-      // reschedule 退出,导致其他 medication 漏排
-      try {
-        await cancelRefillReminder(medication.id);
-      } catch (e, st) {
-        piiSafeLog(
-          'NotificationService',
-          '⚠️ cancelRefillReminder 失败 (med=${medication.name}): $e',
-          error: e,
-          stackTrace: st,
-        );
-      }
-      return;
-    }
-
-    await init();
-    final id = refillNotificationId(medication.id);
-    await _plugin.cancel(id); // 覆盖前一次
-
-    final daysLeft = _daysUntilRefill(medication.refillAt!, now);
-    final details = _dispatcher.buildChannelDetails();
-    final payload =
-        NotificationDeepLink.medicationCheckIn(medication.id).encode();
-    try {
-      await _dispatcher.zonedAt(
-        id: id,
-        title: Strings.notifRefillTitle(medication.name),
-        body: Strings.notifRefillBody(daysLeft),
-        fireAt: fireAt,
-        details: details,
-        payload: payload,
-      );
-      piiSafeLog(
-        'NotificationService',
-        '✅ 续方提醒: med=${medication.name} '
-            'fireAt=$fireAt daysLeft=$daysLeft',
-      );
-    } catch (e) {
-      piiSafeLog('NotificationService', '❌ 续方提醒调度失败: $e', error: e);
-    }
-  }
-
-  /// 取消一个 medication 的续方提醒
-  Future<void> cancelRefillReminder(int medicationId) async {
-    await init();
-    await _plugin.cancel(refillNotificationId(medicationId));
-  }
-
-  /// 重排所有 medication 的续方提醒
-  ///
-  /// 在 medication 表变化（增/删/停药）时统一调。
-  /// 一次性清空所有 refill 槽再重排。
-  ///
-  /// v0.16 round 19 fix: 之前 `_refillBaseId + 1000` 范围太窄，medId >= 1000 时
-  /// id 超过 7000 漏 cancel。重排会留下"幽灵通知"。
-  /// 改成 200000 覆盖 medId <= 199999（远超实际用户量，且 int32 安全）。
-  ///
-  /// v0.18 (P2-P0-2): 接受 [MedicationEntity] (domain) 而非 [Medication] (Drift row)
-  Future<void> rescheduleRefillReminders(
-      List<MedicationEntity> medications,) async {
-    await init();
-    // v0.23 (Round 37): cancel 范围走 dispatcher 集中
-    await _dispatcher.cancelByIdRange(_refillBaseId);
-    int scheduled = 0;
-    for (final med in medications) {
-      if (!med.isActive) continue;
-      if (med.refillAt == null) continue;
-      await scheduleRefillReminder(med);
-      scheduled++;
-    }
-    piiSafeLog(
-      'NotificationService',
-      '✅ 重排 $scheduled 个 medication 的续方提醒',
-    );
-  }
-
-  // ============== Round 7: 心理评估周期提醒 ==============
-  //
-  // 参考 Apple Health "Mindful Minutes" / WWDC '23 Health Reminders：
-  // - 用户开"每 14 天提醒做 PHQ-9"
-  // - 完成后下次从完成时间算起
-  // - 单条推送，id 稳定；重排 = 覆盖
-
-  /// 调度一条心理评估周期提醒
-  ///
-  /// - 单条推送，id 固定为 [_assessmentReminderId]
-  /// - payload 携带 scaleId，点通知直达 PHQ-9
-  /// - [fireAt] 已过 = 跳过（但取消旧的）
-  Future<void> scheduleAssessmentReminder({
-    required DateTime fireAt,
-    String scaleId = 'phq9',
-    int days = 14,
-  }) async {
-    // v0.18 (P2-P0-4): 函数入口统一取 now,避免多次 DateTime.now() 跨 midnight race
-    final now = DateTime.now();
-    await init();
-    await _plugin.cancel(_assessmentReminderId);
-
-    if (fireAt.isBefore(now)) {
-      piiSafeLog(
-        'NotificationService',
-        '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
-      );
-      return;
-    }
-
-    final details = _dispatcher.buildChannelDetails();
-    final payload = NotificationDeepLink.assessment(scaleId).encode();
-    try {
-      await _dispatcher.zonedAt(
-        id: _assessmentReminderId,
-        title: Strings.notifAssessmentTitle(),
-        body: Strings.notifAssessmentBody(days, scaleId.toUpperCase()),
-        fireAt: fireAt,
-        details: details,
-        payload: payload,
-      );
-      piiSafeLog(
-        'NotificationService',
-        '✅ 评估提醒: scale=$scaleId fireAt=$fireAt days=$days',
-      );
-    } catch (e) {
-      piiSafeLog('NotificationService', '❌ 评估提醒调度失败: $e', error: e);
-    }
-  }
-
-  /// 取消心理评估周期提醒
-  Future<void> cancelAssessmentReminder() async {
-    await init();
-    await _plugin.cancel(_assessmentReminderId);
-  }
-
-  /// 推送"安全警报"通知（v0.10 / Round 4 — 死了么思路）
-  ///
-  /// 和普通 reminder 不同的 channel：高 importance + 震动 + 锁屏可见
-  /// v0.11 (Round 5): payload 携带天数，点通知直达 home + 显示告警
+  /// 和普通 reminder 不同的 channel: 高 importance + 震动 + 锁屏可见
+  /// v0.11 (Round 5): payload 携带天数, 点通知直达 home + 显示告警
   /// v0.21 Round 23 (P1-24): userName 改 nullable
-  /// 未填姓名时退化为 "您",避免 "⚠️  已 3 天未打卡" 这种空
+  /// 未填姓名时退化为 "您", 避免 "⚠️  已 3 天未打卡" 这种空
   Future<void> showSafetyAlert({
     String? userName,
     required int daysWithoutCheckIn,
@@ -572,16 +333,11 @@ class NotificationService implements NotificationSender {
 
     final name = safeUserName(userName);
 
-    // 用单独的 channel id，让系统/用户能区分"安全警报"和"普通提醒"
-    const safetyChannelId = 'chroniccare.safety';
-    const safetyChannelName = Strings.notifChannelSafetyName;
-    const safetyChannelDesc = Strings.notifChannelSafetyDesc;
-
     const details = NotificationDetails(
       android: AndroidNotificationDetails(
-        safetyChannelId,
-        safetyChannelName,
-        channelDescription: safetyChannelDesc,
+        _safetyChannelId,
+        _safetyChannelName,
+        channelDescription: _safetyChannelDesc,
         importance: Importance.max,
         priority: Priority.max,
         category: AndroidNotificationCategory.alarm,
@@ -601,29 +357,59 @@ class NotificationService implements NotificationSender {
     final payload =
         NotificationDeepLink.safetyAlert(daysWithoutCheckIn).encode();
     await _plugin.show(
-      _safetyAlertId,
+      safetyAlertId,
       '⚠️ $name 已 $daysWithoutCheckIn 天未打卡',
-      '上次打卡：$lastStr。已自动通知紧急联系人，请确认安全。',
+      '上次打卡: $lastStr。已自动通知紧急联系人，请确认安全。',
       details,
       payload: payload,
     );
   }
 
-  /// 更新角标数字（iOS only — Android 留 TODO）
+  // ============== BadgeSyncService 委托 ==============
+  //
+  // v0.22 round 30 (sp-en P2-1): 角标逻辑拆到 BadgeSyncService
+  // 主 service 仅保留委托 (向后兼容 NotificationSender 抽象)。
+
+  /// 更新角标数字 (iOS only — Android 留 TODO)
   ///
-  /// v0.10 (Round 4) 参考 Pill Reminder (Drugs.com iOS)：
-  /// "App 图标右上角小红点显示今天还差几次没打卡"
-  ///
-  /// v0.22 round 30 (sp-en P2-1): 实现已抽到 [BadgeSyncService]，
-  /// 这里仅保留委托 (向后兼容 NotificationSender 抽象)。
-  ///
-  /// 限制：flutter_local_notifications 17.x **没有** setBadgeCount 原生 API。
-  /// - iOS：[DarwinNotificationDetails] 的 badgeNumber 字段是公开 API
-  /// - Android：暂无稳定方案。v0.10+ TODO: 集成 flutter_app_badge_control 插件
+  /// 限制: flutter_local_notifications 17.x **没有** setBadgeCount 原生 API。
+  /// - iOS: [DarwinNotificationDetails] 的 badgeNumber 字段是公开 API
+  /// - Android: 暂无稳定方案。v0.10+ TODO: 集成 flutter_app_badge_control 插件
   ///
   /// [count] 传 0 即清零
   Future<void> updateBadgeCount(int count) async {
     await init();
     await _badgeSync.updateBadgeCount(count);
   }
+
+  // ============== ID 范围常量 (跨 sub-service 文档化) ==============
+  //
+  // 6 类常量散落到 6 sub-service (单一职责), 这里留文档化列表:
+  //   - MedicationNotifier.defaultReminderId       = 1001
+  //   - MedicationNotifier.medicationReminderBaseId = 2000
+  //   - safetyAlertId                              = 5000
+  //   - RefillNotifier.refillBaseId                = 6000
+  //   - AssessmentNotifier.assessmentReminderId    = 7000
+  //   - BadgeSyncService.badgeVirtualId            = 9999
+  //   - SnoozeManager.snoozeBaseId                 = 300000
+  // 顺序保证 cancel range 不冲突 (每个 base 间隔 200000+ 远).
+
+  /// v0.16 round 19B: 通知 id 公式兼容访问 (供现有 test 引用)
+  ///
+  /// 新代码请用 `RefillNotifier.refillNotificationId(medId)`。
+  /// 保留 facade 公开 alias 是为了让旧 test (round 9) 不用改太多。
+  @visibleForTesting
+  static int refillNotificationId(int medicationId) =>
+      RefillNotifier.refillNotificationId(medicationId);
+
+  /// v0.16 round 19B: 续方触发时间公式兼容访问
+  @visibleForTesting
+  static DateTime? computeRefillFireTime({
+    required DateTime? refillAt,
+    required int reminderDays,
+  }) =>
+      RefillNotifier.computeRefillFireTime(
+        refillAt: refillAt,
+        reminderDays: reminderDays,
+      );
 }

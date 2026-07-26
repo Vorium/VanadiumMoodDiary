@@ -12,7 +12,7 @@
 /// 这里用最小集合，不要往里塞大对象。
 library;
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable;
 
 /// 支持的 deep link 目标
 enum DeepLinkTarget {
