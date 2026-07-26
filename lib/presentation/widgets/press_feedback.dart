@@ -39,6 +39,11 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 ///
 /// **P0-7 fix**: 系统开了 prefers-reduced-motion → scale 反馈消失
 /// (有 InkWell ripple 兜底)。
+///
+/// **v0.24 round 48 (emil P2-7) 决策**: API 设计 OK, 不加 inheritPress 参数
+/// 当前 onTap 默认 null = 模式 2 (不接管 tap, child 自带 onTap 正常),
+/// 是 30+ 调用点的预期行为。emil 决策 "good defaults matter more than options":
+/// 默认 = 30+ 调用点的实际行为 (child 自带 onTap)。
 class PressFeedback extends StatefulWidget {
   final Widget child;
 

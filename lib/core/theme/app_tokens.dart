@@ -261,6 +261,13 @@ class AppTokens {
   // v0.23 round 40 (emil F6 fix): chip 内部 icon-text 间距 (4.0)
   static const double spacingChipGapInline = 4.0;
 
+  // v0.24 round 48 (emil P2-4): chip 内部 padding token
+  // 之前 1 处散落 `EdgeInsets.symmetric(horizontal: 12, vertical: 8)` (mood_recorder)
+  // 12 是 chip 视觉心理学最佳值 (不跟 token sequence 8/16 重复)
+  // 8 等同 spacingXs 但语义清晰 (chip 内部用, 跟外部 spacingXs 区分)
+  static const double spacingChipPaddingH = 12.0;
+  static const double spacingChipPaddingV = 8.0;
+
   // v0.23 round 40 (emil F9 fix): 文字长度警告阈值 (90% of 2000 maxLength)
   // 替代 vent_compose_page.dart:390 magic 1800
   static const int textLengthWarningThreshold = 1800;

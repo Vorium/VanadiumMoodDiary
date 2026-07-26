@@ -401,9 +401,10 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
                     onTap: _toggleRecord,
                     borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                     child: Container(
+                      // v0.24 round 48 (emil P2-4): 走 spacingChipPadding token
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
+                        horizontal: AppTokens.spacingChipPaddingH,
+                        vertical: AppTokens.spacingChipPaddingV,
                       ),
                       decoration: BoxDecoration(
                         color: _isRecording
