@@ -16,9 +16,9 @@ import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/medication_report_dialog.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/choose_window_dialog.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
 
@@ -33,80 +33,69 @@ class DataManagementSection extends ConsumerWidget {
     return Card(
       child: Column(
         children: [
-          PressFeedback(
-            child: ListTile(
-              leading: const Icon(
-                Icons.upload_outlined,
-                color: AppTokens.primary,
-              ),
-              title: Text(AppLocalizations.of(context).settingsExportData),
-              subtitle: Text(
-                AppLocalizations.of(context).settingsExportSubtitle,
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _exportData(context, ref),
+          AppListTile(
+            leading: const Icon(
+              Icons.upload_outlined,
+              color: AppTokens.primary,
             ),
+            title: Text(AppLocalizations.of(context).settingsExportData),
+            subtitle: Text(
+              AppLocalizations.of(context).settingsExportSubtitle,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _exportData(context, ref),
           ),
           const Divider(height: 1),
-          PressFeedback(
-            child: ListTile(
-              leading: const Icon(
-                Icons.summarize_outlined,
-                color: AppTokens.primary,
-              ),
-              title: Text(AppLocalizations.of(context).settingsMedReport),
-              subtitle: Text(
-                AppLocalizations.of(context).settingsMedReportSubtitle,
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _chooseAndShowReport(context, ref),
+          AppListTile(
+            leading: const Icon(
+              Icons.summarize_outlined,
+              color: AppTokens.primary,
             ),
+            title: Text(AppLocalizations.of(context).settingsMedReport),
+            subtitle: Text(
+              AppLocalizations.of(context).settingsMedReportSubtitle,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _chooseAndShowReport(context, ref),
           ),
           const Divider(height: 1),
-          PressFeedback(
-            child: ListTile(
-              leading: const Icon(Icons.history, color: AppTokens.primary),
-              title:
-                  Text(AppLocalizations.of(context).settingsReportHistory),
-              subtitle: Text(
-                AppLocalizations.of(context).settingsReportHistorySubtitle,
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _showReportHistory(context),
+          AppListTile(
+            leading: const Icon(Icons.history, color: AppTokens.primary),
+            title: Text(AppLocalizations.of(context).settingsReportHistory),
+            subtitle: Text(
+              AppLocalizations.of(context).settingsReportHistorySubtitle,
             ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showReportHistory(context),
           ),
           const Divider(height: 1),
-          PressFeedback(
-            child: ListTile(
-              leading: const Icon(
-                Icons.download_outlined,
-                color: AppTokens.primary,
-              ),
-              title: Text(AppLocalizations.of(context).settingsImportData),
-              subtitle: Text(
-                AppLocalizations.of(context).settingsImportSubtitle,
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _showImportDialog(context, ref),
+          AppListTile(
+            leading: const Icon(
+              Icons.download_outlined,
+              color: AppTokens.primary,
             ),
+            title: Text(AppLocalizations.of(context).settingsImportData),
+            subtitle: Text(
+              AppLocalizations.of(context).settingsImportSubtitle,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showImportDialog(context, ref),
           ),
           const Divider(height: 1),
-          PressFeedback(
-            child: ListTile(
-              leading: const Icon(
-                Icons.delete_forever_outlined,
-                color: AppTokens.error,
-              ),
-              title: Text(
-                AppLocalizations.of(context).settingsClearAllData,
-                style: const TextStyle(color: AppTokens.error),
-              ),
-              subtitle: Text(
-                AppLocalizations.of(context).settingsClearAllDataSubtitle,
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => _showClearAllDataDialog(context, ref),
+          AppListTile(
+            leading: const Icon(
+              Icons.delete_forever_outlined,
+              color: AppTokens.error,
             ),
+            title: Text(
+              AppLocalizations.of(context).settingsClearAllData,
+              style: const TextStyle(color: AppTokens.error),
+            ),
+            subtitle: Text(
+              AppLocalizations.of(context).settingsClearAllDataSubtitle,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _showClearAllDataDialog(context, ref),
           ),
         ],
       ),
