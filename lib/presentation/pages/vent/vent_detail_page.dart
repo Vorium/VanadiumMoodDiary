@@ -21,6 +21,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 
@@ -189,8 +190,12 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
       child: entryAsync.when(
         data: (entry) {
           if (entry == null) {
-            return Center(
-                child: Text(AppLocalizations.of(context).ventDetailNotFound),);
+            // v0.25 round 56d (spen P0 #15 cleanup): 改用 EmptyState 统一风格
+            // (跟 vent_list / assessment_history / medication_calendar 等 5+ 处一致)
+            return EmptyState(
+              icon: Icons.search_off,
+              title: AppLocalizations.of(context).ventDetailNotFound,
+            );
           }
           return SingleChildScrollView(
             padding: const EdgeInsets.all(AppTokens.spacingMd),
