@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 4 维度评分行: label + 1-5 评分按钮
@@ -23,6 +25,7 @@ class DimensionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,19 +46,17 @@ class DimensionRow extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppTokens.spacingXs),
-        Semantics(
-          container: true,
-          label: '情绪评分，1 到 5 分制，5 分最积极',
+        AppSemantics.container(
+          label: l10n.moodRatingSemantics,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               for (int s = 1; s <= 5; s++)
                 PressFeedback(
-                  child: Semantics(
-                    button: true,
+                  child: AppSemantics.button(
                     inMutuallyExclusiveGroup: true,
                     selected: s == value,
-                    label: '$s 分${s == value ? "，已选" : ""}',
+                    label: l10n.moodRatingButtonSemantics(s, s == value ? 'true' : 'false'),
                     child: Material(
                       color: Colors.transparent,
                       child: AnimatedContainer(

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 评估趋势 sparkline（简易自绘，避免再引第三方）
@@ -199,10 +200,9 @@ class QuestionCard extends StatelessWidget {
     // (en 模式 TalkBack 读 "Question 1: ...", 不再硬编码中文)
     final l10n = AppLocalizations.of(context);
     final selectedLabel = selected != null
-        ? options[selected!]
+        ? options[selected!]!
         : l10n.commonOptionNotSelected;
-    return Semantics(
-      container: true,
+    return AppSemantics.container(
       label: l10n.assessmentQuestionLabel(index, item.text, selectedLabel),
       child: Card(
         margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),

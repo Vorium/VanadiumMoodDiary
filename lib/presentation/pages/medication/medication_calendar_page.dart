@@ -23,6 +23,7 @@ import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -78,9 +79,8 @@ class MedicationCalendarPage extends ConsumerWidget {
                 const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
             // v0.22 round 29 (emil-34): Semantics 描述时间窗口
             // (TalkBack 读"时间窗口 7/30/90 天，当前 30" 让用户知道是单选)
-            child: Semantics(
-              container: true,
-              label: '时间窗口 $days 天, 7/30/90 单选',
+            child: AppSemantics.container(
+              label: AppLocalizations.of(context).medicationTimeWindowSemantics(days),
               child: SegmentedButton<int>(
                 segments: [
                   ButtonSegment(
