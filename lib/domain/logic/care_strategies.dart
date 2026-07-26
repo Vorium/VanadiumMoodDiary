@@ -70,6 +70,12 @@ bool isWeekendMissed(List<CheckInEntity> sortedDesc, DateTime now) {
 ///
 /// P3 fix: 之前循环遍历**全部历史**, 1 年前有 1 次晚打卡就永远返 false。
 /// 现在限制为最近 7 天内。
+///
+/// v0.24 round 48 (sp-en P1-13) 性能验证: 探索过 Set<DateTime> 改法
+/// (期望 O(N+7)), 实测**反而慢 4 倍** (20000 entry 28ms → 100ms) —
+/// DateTime.hashCode + Set.add 开销大。原 .any() 因 short-circuit
+/// 实际 O(N+7×k) ≈ O(N), 20000 entry 28ms 已够快 (RTX 4090 desktop)。
+/// 改回原实现, 但保留 perf test 作为 regression guard。
 bool isWeekPerfect(List<CheckInEntity> sortedDesc, DateTime now) {
   final today = DateTime(now.year, now.month, now.day);
   final sevenDaysAgo = today.subtract(const Duration(days: 6)); // 含今天共 7 天
