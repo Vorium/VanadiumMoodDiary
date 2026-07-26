@@ -345,6 +345,9 @@ class ComparisonCard extends StatelessWidget {
                   ),
                   Icon(
                     Icons.arrow_forward,
+                    // 趋势指示箭头 (中间色, 暗示'从 X 到 Y'过渡)
+                    // trendColor 由 assessment score 动态算出, alpha 0.6 表达"非极端值"
+                    // emil "decisions should be nameable" — 0.6 是'中间值'语义, 不抽 token
                     color: trendColor.withValues(alpha: 0.6),
                   ),
                   const SizedBox(width: AppTokens.spacingSm),
