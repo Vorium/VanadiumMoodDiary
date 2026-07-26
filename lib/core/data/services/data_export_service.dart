@@ -100,25 +100,27 @@ class DataExportService {
   /// **v0.23 round 40 (P2)**: 加 5s timeout 防 drift stream hang 导致导出阻塞
   Future<String> exportToJson({DateTime? now}) async {
     final profile = await _db.getUserProfile();
-    const _streamTimeout = Duration(seconds: 5);
+    // v0.24 round 48 (sp-en P2-14): 改名为 streamTimeout 去掉下划线
+    // (no_leading_underscores_for_local_identifiers lint)
+    const streamTimeout = Duration(seconds: 5);
     final contacts = await _db
         .watchContacts()
         .first
-        .timeout(_streamTimeout, onTimeout: () => const []);
+        .timeout(streamTimeout, onTimeout: () => const []);
     final medications = await _db
         .watchMedications()
         .first
-        .timeout(_streamTimeout, onTimeout: () => const []);
+        .timeout(streamTimeout, onTimeout: () => const []);
     final checkIns = await _db
         .watchAllCheckIns()
         .first
-        .timeout(_streamTimeout, onTimeout: () => const []);
+        .timeout(streamTimeout, onTimeout: () => const []);
     final reportHistories = await _reportRepo.getAll();
     final moodEntries = await _db.getAllMoodEntries();
     final ventEntries = await _db
         .watchVentEntries()
         .first
-        .timeout(_streamTimeout, onTimeout: () => const []);
+        .timeout(streamTimeout, onTimeout: () => const []);
 
     final data = {
       'version': ExportSchemaService.currentVersion,

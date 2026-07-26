@@ -119,6 +119,11 @@ class AppTheme {
           disabledBackgroundColor:
               isDark ? AppTokens.disabledDark : AppTokens.disabled,
           disabledForegroundColor: cs.onSurface.withValues(alpha: 0.5),
+          // v0.24 round 48 (emil P2-3): 暂不抽 fgDisabled token
+          // buildTheme 是 ThemeData 工厂, 没 BuildContext context
+          // 改 token 需要 buildTheme 接受 context 参数, 改动较大
+          // 当前保持 inline, 跟 v0.23 round 45 状态一致
+          // TODO v0.25: 评估 buildTheme 接受 context (会变更 ThemeProvider 接口)
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTokens.radiusButton),
           ),
@@ -200,6 +205,7 @@ class AppTheme {
         hintStyle: TextStyle(
           fontSize: AppTokens.fontSizeBody,
           color: cs.onSurfaceVariant.withValues(alpha: 0.6),
+          // v0.24 round 48 (emil P2-3): 暂不抽 fgHintInput token (同 _elevatedButtonTheme 原因)
         ),
       );
 

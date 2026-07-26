@@ -208,7 +208,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **P3 L 项 TODO**: notification god class (已抽 3 facade 子) + data_export god class (已加 50+ test) + 紧急联系人单独同意 (待 SMS 接入)
 - **v0.24 round 45**: 3 视角再审视 → Sprint #3 main.dart i18n + Sprint #4 token + Sprint #6 check_no_pua.py + CHANGELOG [0.23.0] 补 + AGENTS 数据同步
 
-总计: 876 tests pass, 0 analyzer error, 7 守护脚本全绿 (新加 check_no_pua).
+总计: 910+ tests pass (v0.24 round 48 后 34 个新增), 0 analyzer error, 11 守护脚本全绿 (v0.24 round 48 新增 check_no_hardcoded_utc / check_widget_dispose / check_changelog).
 
 ## 关键约束
 

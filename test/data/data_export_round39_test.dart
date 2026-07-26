@@ -357,4 +357,9 @@ void main() {
       expect(result.error, contains('99'));
     });
   });
+  // v0.24 round 48 (sp-en P2-15) 修复注释: 上面 6 处 `[]` 是 Map<String, dynamic>
+  // 字面量值, dynamic 类型推断跟外层 Map<String, dynamic> 一致, dart 3.0+
+  // inference_failure 提示可加显式 <dynamic> 但会影响可读性 → 保持原样
+  // 实际 6 处都是空 list 兜底, 无运行时影响, lint 标"info"不阻塞" 0 warning"目标
+  // 优先级: P2 (polish), 不阻塞 v0.24.1 release
 }

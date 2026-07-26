@@ -3,3 +3,7 @@ template-arb-file: app_zh.arb
 output-localization-file: app_localizations.dart
 output-class: AppLocalizations
 nullable-getter: false
+# v0.24 round 48 (sp-zh P2-19): 显式 baseLocale
+# Flutter l10n 工具链默认 baseLocale = "en", 但本项目中文为主, en 是翻译副本
+# 显式声明避免工具链版本升级时 baseLocale 变动导致 zh/en 互换
+baseLocale: zh
