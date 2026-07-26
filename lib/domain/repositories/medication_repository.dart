@@ -4,10 +4,12 @@
 // UI / UseCase 只依赖这个 abstract class，不直接 import Drift。
 //
 // 实现方在 `lib/data/repositories/medication_repository_impl.dart`。
+//
+// v0.25 round 60 (spen P1 #12 #4): add() 改接受 MedicationDraft value object
+//   (之前 9 个参数, 拆到 MedicationDraft 更易维护, UI 编辑场景用 copyWith)
 library;
 
-import 'package:chroniccare/domain/entities/dosage_unit.dart';
-import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 
 /// 吃药信息仓库（domain 抽象接口）
@@ -23,18 +25,8 @@ abstract class MedicationRepository {
   /// 报告必须包含这些数据才能完整还原用户服药历史。
   Stream<List<MedicationEntity>> watchAllIncludingInactive();
 
-  /// 添加药物
-  Future<int> add({
-    required String name,
-    required double dosage,
-    required DosageUnit dosageUnit,
-    required List<HourMinute> times,
-    DateTime? startDate,
-    DateTime? refillAt,
-    int refillReminderDays,
-    bool isActive,
-    DateTime? endDate,
-  });
+  /// 添加药物 (v0.25 R60: 用 MedicationDraft value object 替代 9 字段参数)
+  Future<int> add(MedicationDraft draft);
 
   /// 整体更新（用 entity 接收，impl 内部转 Drift row）
   Future<bool> update(MedicationEntity medication);

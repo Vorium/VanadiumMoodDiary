@@ -10,8 +10,7 @@
 // 消除 data → flutter/material 依赖。
 library;
 
-import 'package:chroniccare/domain/entities/dosage_unit.dart';
-import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
@@ -39,29 +38,20 @@ class MedicationRepositoryImpl implements MedicationRepository {
   }
 
   @override
-  Future<int> add({
-    required String name,
-    required double dosage,
-    required DosageUnit dosageUnit,
-    required List<HourMinute> times,
-    DateTime? startDate,
-    DateTime? refillAt,
-    int refillReminderDays = 7,
-    bool isActive = true,
-    DateTime? endDate,
-  }) async {
-    // 构造临时 entity（id=0 表示新记录），用 toCompanion 走统一通道
+  Future<int> add(MedicationDraft draft) async {
+    // v0.25 R60: 用 MedicationDraft value object 替代 9 字段参数
+    // 构造临时 entity (id=0 表示新记录), 用 toCompanion 走统一通道
     final entity = MedicationEntity(
       id: 0,
-      name: name,
-      dosage: dosage,
-      dosageUnit: dosageUnit,
-      times: times,
-      startDate: startDate ?? DateTime.now(),
-      endDate: endDate,
-      isActive: isActive,
-      refillAt: refillAt,
-      refillReminderDays: refillReminderDays,
+      name: draft.name,
+      dosage: draft.dosage,
+      dosageUnit: draft.dosageUnit,
+      times: draft.times,
+      startDate: draft.startDate ?? DateTime.now(),
+      endDate: draft.endDate,
+      isActive: draft.isActive,
+      refillAt: draft.refillAt,
+      refillReminderDays: draft.refillReminderDays,
     );
     return _db.insertMedication(entity.toCompanion());
   }

@@ -5,6 +5,7 @@ import 'package:chroniccare/core/data/database/mappers/medication/medication_tim
 import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,12 +32,14 @@ void main() {
     DateTime? endDate,
   }) {
     return repo.add(
-      name: name,
-      dosage: dosage,
-      dosageUnit: unit,
-      times: times,
-      isActive: isActive,
-      endDate: endDate,
+      MedicationDraft(
+        name: name,
+        dosage: dosage,
+        dosageUnit: unit,
+        times: times,
+        isActive: isActive,
+        endDate: endDate,
+      ),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,12 +23,14 @@ void main() {
 
   Future<int> addMed({DateTime? refillAt, int refillDays = 7}) async {
     return repo.add(
-      name: '氟西汀',
-      dosage: 40,
-      dosageUnit: DosageUnit.mg,
-      times: const [HourMinute(hour: 8, minute: 0)],
-      refillAt: refillAt,
-      refillReminderDays: refillDays,
+      MedicationDraft(
+        name: '氟西汀',
+        dosage: 40,
+        dosageUnit: DosageUnit.mg,
+        times: const [HourMinute(hour: 8, minute: 0)],
+        refillAt: refillAt,
+        refillReminderDays: refillDays,
+      ),
     );
   }
 
@@ -139,10 +142,12 @@ void main() {
   group('Medication schema v5', () {
     test('medication 包含 refillAt + refillReminderDays 字段', () async {
       final id = await repo.add(
-        name: '氟西汀',
-        dosage: 40,
-        dosageUnit: DosageUnit.mg,
-        times: const [HourMinute(hour: 8, minute: 0)],
+        MedicationDraft(
+          name: '氟西汀',
+          dosage: 40,
+          dosageUnit: DosageUnit.mg,
+          times: const [HourMinute(hour: 8, minute: 0)],
+        ),
       );
       final med = await (db.select(db.medications)
             ..where((t) => t.id.equals(id)))

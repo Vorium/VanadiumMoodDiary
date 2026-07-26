@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
@@ -121,16 +122,19 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
         onUndo: () async {
           // 简化: 重新插入(保留 name/dosage/unit/times/startDate/refill)
           // id 会变, 时间戳为 now
+          // v0.25 R60: 用 MedicationDraft value object 替代 9 字段 named 参数
           await ref.read(medicationRepositoryProvider).add(
-                name: med.name,
-                dosage: med.dosage,
-                dosageUnit: med.dosageUnit,
-                times: med.times,
-                refillAt: med.refillAt,
-                refillReminderDays: med.refillReminderDays,
-                startDate: med.startDate,
-                endDate: med.endDate,
-                isActive: med.isActive,
+                MedicationDraft(
+                  name: med.name,
+                  dosage: med.dosage,
+                  dosageUnit: med.dosageUnit,
+                  times: med.times,
+                  refillAt: med.refillAt,
+                  refillReminderDays: med.refillReminderDays,
+                  startDate: med.startDate,
+                  endDate: med.endDate,
+                  isActive: med.isActive,
+                ),
               );
         },
       );

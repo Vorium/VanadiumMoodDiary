@@ -9,6 +9,7 @@
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -35,17 +36,7 @@ class _StubMedicationRepository implements MedicationRepository {
   @override
   Future<int> delete(int id) async => 1;
   @override
-  Future<int> add({
-    required String name,
-    required double dosage,
-    required DosageUnit dosageUnit,
-    required List<HourMinute> times,
-    DateTime? startDate,
-    DateTime? refillAt,
-    int refillReminderDays = 7,
-    bool isActive = true,
-    DateTime? endDate,
-  }) async {
+  Future<int> add(MedicationDraft draft) async {
     return 1;
   }
   @override
