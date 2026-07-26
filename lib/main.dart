@@ -273,7 +273,7 @@ class _MigrationAbortedApp extends StatelessWidget {
                 Text(
                   l10n.migrationAbortedTitle,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: AppTokens.fontSizeButton,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -313,34 +313,38 @@ final notificationInitResultProvider = Provider<NotificationInitResult>(
 /// 迁移失败时的占位 App
 ///
 /// **N31 fix**: 接受已脱敏的友好消息，不再直接显示内部异常
+///
+/// **v0.24 round 45 (P0 fix)**: 之前 hardcode 中文，en 模式用户看到中文。
+/// 改成走 l10n，跟 [_MigrationAbortedApp] 同样模式（顶层 fallback MaterialApp
+/// + `AppLocalizations.of(context)`，由 MaterialApp 自动注入 Localizations）。
 class _MigrationFailedApp extends StatelessWidget {
   final String message;
   const _MigrationFailedApp({required this.message});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: const Center(
+        body: Center(
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 64, color: Colors.red),
-                SizedBox(height: 16),
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
                 Text(
-                  '启动失败',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  l10n.migrationFailedTitle,
+                  style: const TextStyle(
+                    fontSize: AppTokens.fontSizeButton,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
-                  '无法初始化本地数据。\n'
-                  '请尝试：\n'
-                  '1) 重启 App\n'
-                  '2) 卸载后重装\n'
-                  '如反复出现，请反馈给我们。',
+                  l10n.migrationFailedBody,
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -354,7 +358,7 @@ class _MigrationFailedApp extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: AppTokens.fontSizeCaption,
                 color: AppTokens.textHintColor(context),
               ),
             ),

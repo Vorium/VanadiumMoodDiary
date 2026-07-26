@@ -908,8 +908,6 @@
   "snackbarActionSnooze": "推迟提醒",
   "snackbarActionAutoCheckin": "自动打卡",
   "snackbarActionUndo": "撤销",
-  "snackbarActionPlay": "播放",
-  "snackbarActionSave": "保存",
 
   "listSwipeDeleteHint": "左滑删除",
   "ventEntryDeleted": "已删除树洞条目",
@@ -935,5 +933,21 @@
   "migrationPromptContinue": "继续升级",
   "migrationAbortedTitle": "升级已取消",
   "migrationAbortedBody": "请先在旧版本 App 内完成\"导出数据\"备份，\n备份完成后点下方按钮继续升级。",
-  "migrationAbortedRetry": "已备份，继续升级"
+  "migrationAbortedRetry": "已备份，继续升级",
+  "migrationFailedTitle": "启动失败",
+  "migrationFailedBody": "无法初始化本地数据。\n请尝试：\n1) 重启 App\n2) 卸载后重装\n如反复出现，请反馈给我们。",
+
+  "moodRatingSemantics": "情绪评分，1 到 5 分制，5 分最积极",
+  "moodRatingButtonSemantics": "{score} 分{selected, select, true{，已选} other{}}",
+  "medicationTimeWindowSemantics": "时间窗口 {days} 天，7/30/90 单选",
+  "assessmentSaveFailed": "评估结果已显示，但保存失败。请稍后重试。",
+  "moodLabel1": "很差",
+  "moodLabel2": "差",
+  "moodLabel3": "一般",
+  "moodLabel4": "好",
+  "moodLabel5": "很好",
+  "setupContactFallbackName": "联系人 {index}",
+  "@setupContactFallbackName": {
+    "placeholders": { "index": { "type": "int" } }
+  }
 }

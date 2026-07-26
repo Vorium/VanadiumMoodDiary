@@ -886,8 +886,6 @@
   "snackbarActionSnooze": "Snooze",
   "snackbarActionAutoCheckin": "Auto check-in",
   "snackbarActionUndo": "Undo",
-  "snackbarActionPlay": "Play",
-  "snackbarActionSave": "Save",
 
   "listSwipeDeleteHint": "Swipe left to delete",
   "ventEntryDeleted": "Vent entry deleted",
@@ -913,5 +911,21 @@
   "migrationPromptContinue": "Continue upgrade",
   "migrationAbortedTitle": "Upgrade cancelled",
   "migrationAbortedBody": "Please complete \"Export data\" in the old version first,\nthen tap the button below to continue the upgrade.",
-  "migrationAbortedRetry": "Already backed up, continue"
+  "migrationAbortedRetry": "Already backed up, continue",
+  "migrationFailedTitle": "Failed to start",
+  "migrationFailedBody": "Unable to initialize local data.\nPlease try:\n1) Restart the app\n2) Uninstall and reinstall\nIf the problem persists, please contact us.",
+
+  "moodRatingSemantics": "Mood rating, 1 to 5 scale, 5 is best",
+  "moodRatingButtonSemantics": "{score} out of 5{selected, select, true{, selected} other{}}",
+  "medicationTimeWindowSemantics": "Time window {days} days, 7/30/90 single select",
+  "assessmentSaveFailed": "Result shown but save failed. Please try again later.",
+  "moodLabel1": "Very poor",
+  "moodLabel2": "Poor",
+  "moodLabel3": "Neutral",
+  "moodLabel4": "Good",
+  "moodLabel5": "Very good",
+  "setupContactFallbackName": "Contact {index}",
+  "@setupContactFallbackName": {
+    "placeholders": { "index": { "type": "int" } }
+  }
 }
