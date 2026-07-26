@@ -23,8 +23,11 @@ import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_summary.dart';
-import 'package:chroniccare/presentation/pages/trend/trend_charts.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_calendar.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_heatmap_grid.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_monthly_chart.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_assessment_chart.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_mood_chart.dart';
 
 /// v0.12 (Round 6) 视图模式
 enum _TrendView { list, calendar }

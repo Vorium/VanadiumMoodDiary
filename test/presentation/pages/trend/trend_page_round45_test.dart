@@ -18,8 +18,11 @@
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/trend/trend_charts.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_heatmap_grid.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_monthly_chart.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_assessment_chart.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_mood_chart.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:flutter/material.dart';
