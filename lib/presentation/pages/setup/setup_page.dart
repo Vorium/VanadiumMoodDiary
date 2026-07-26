@@ -285,6 +285,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                 Card(
                   child: ListTile(
                     leading:
+                        // v0.24 round 48 (sp-zh P1-17): emoji 视觉 < 文字,保持 fontSizeTitle 不变
+                        // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
                         Text(t.emoji, style: const TextStyle(fontSize: AppTokens.fontSizeTitle)),
                     title: Text(
                       t.name,
