@@ -4,7 +4,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/secondary_button.dart';
-import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
+import 'package:chroniccare/presentation/widgets/check_in_button.dart';
 
 /// 主页主操作行：打卡按钮 + 临时吃药 + snooze 5min
 ///

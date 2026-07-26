@@ -12,6 +12,7 @@
 // - 打卡后 cancel 该 med 的所有 snooze
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -94,8 +95,8 @@ class SnoozeManager {
     try {
       await _plugin.zonedSchedule(
         id,
-        title ?? '💊 提醒吃药（snooze）',
-        body ?? '刚才你点了"稍后提醒"，该吃药了',
+        title ?? Strings.snoozeTitle,
+        body ?? Strings.snoozeBody,
         fireAt,
         details,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,

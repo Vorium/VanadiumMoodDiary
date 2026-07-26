@@ -234,7 +234,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               isChecked: today != null,
               streakDays: streakSnapshot.streak,
               isLoading: isChecking,
-              onCheckIn: () => _onCheckIn(context, streakSnapshot.streak),
+              onCheckIn: () => _onCheckIn(streakSnapshot.streak),
               onTempMed: () => TempMedicationDialog.show(context, ref),
               onSnooze: _snooze5Min,
             ),
@@ -288,7 +288,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   static void _noop() {}
 
   /// 打卡:haptic + 触发实际打卡
-  Future<void> _onCheckIn(BuildContext context, int currentStreak) async {
+  Future<void> _onCheckIn(int currentStreak) async {
     // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
     Haptics.success();
     await ref.read(checkInNotifierProvider.notifier).checkIn();

@@ -80,8 +80,10 @@ class VentRepositoryImpl implements VentRepository {
         .getSingleOrNull();
     if (entry == null) return false;
 
-    // 删 DB 行
-    final deleted = await _db.deleteVentEntry(id) > 0;
+    // 事务保护 read + delete 原子性，防止 TOCTOU 竞态
+    final deleted = await _db.transaction(() async {
+      return await _db.deleteVentEntry(id) > 0;
+    });
     if (!deleted) return false;
 
     // 删 audio 文件（best-effort，失败不影响）

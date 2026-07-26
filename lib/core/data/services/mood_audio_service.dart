@@ -247,7 +247,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
       if (!_isRecording || _recordingStart == null) return;
       _recordingElapsed = DateTime.now().difference(_recordingStart!);
       _onTickCb?.call(_recordingElapsed);
-      if (_recordingElapsed >= _maxDuration) {
+      if (_recordingElapsed >= _effectiveMaxDuration) {
         // 6. 到 3min 自动 stop
         // v0.23 round 43 (spen-4) fix: 之前只 cancel timer + fire onMaxReached,
         // **不**强制 stop recorder,导致录音继续吃 mic 资源 + 累计空文件。

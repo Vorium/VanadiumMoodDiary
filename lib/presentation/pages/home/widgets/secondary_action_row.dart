@@ -5,7 +5,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/secondary_button.dart';
-import 'package:chroniccare/presentation/pages/mood/mood_quick_button.dart';
+import 'package:chroniccare/presentation/widgets/mood_quick_button.dart';
 
 /// 主页次要操作行：情绪日记快速按钮 + 树洞入口
 ///

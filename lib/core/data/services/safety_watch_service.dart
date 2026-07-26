@@ -307,7 +307,7 @@ class SafetyWatchService {
     String? userName,
     required int daysSinceLast,
   }) {
-    final name = safeUserName(userName, fallback: '您的家人');
+    final name = safeUserName(userName);
     return '[慢病管家] $name 已 $daysSinceLast 天未打卡吃药。'
         '如确认安全请回复 1，无回复请联系本人或社区。';
   }

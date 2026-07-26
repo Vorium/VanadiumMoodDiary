@@ -2,7 +2,7 @@
 //
 // v0.19 (Q2): 拆分为 4 个 step widget + legal dialog
 // 本文件只负责状态管理和步骤切换。
-import 'dart:developer' as developer;
+import 'package:chroniccare/core/shared/swallow_error.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -361,7 +361,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       if (phone.isEmpty) continue;
       final normalized = PhoneValidator.normalize(phone) ?? phone;
       final name = _contactNameControllers[i].text.trim().isEmpty
-          ? 'Contact ${i + 1}'
+          ? AppLocalizations.of(context).setupContactFallbackName(i + 1)
           : _contactNameControllers[i].text.trim();
       contactList.add((name: name, phone: normalized, sortOrder: i));
     }
@@ -428,11 +428,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           ),
         );
       }
-      developer.log(
-        'setup _finishSetup error',
-        name: 'SetupPage',
+      swallowError(
+        where: 'SetupPage._finishSetup',
         error: e,
-        stackTrace: st,
+        stack: st,
       );
     } finally {
       if (mounted) {

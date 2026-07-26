@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 
 /// SMS 服务抽象层
 ///

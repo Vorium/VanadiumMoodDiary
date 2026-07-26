@@ -9,6 +9,17 @@ library;
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 
+/// 关怀策略阈值常量
+///
+/// 与 streak_calculator.dart 的 expiryThresholdHours = 36 有意独立:
+/// care_strategies 判定"漏打卡"的阈值可能随业务调整而不同于 streak 过期阈值。
+const _lateHourThreshold = 22;
+const _lateHabitDays = 3;
+const _lateHabitDayRange = 2;
+const _weekendGuardHour = 18;
+const _secondDayMissedMinutes = 36 * 60;
+const _secondDayMissedHour = 10;
+
 /// 最近 3 天都在 22 点后打卡
 ///
 /// 排序: [sortedDesc] 是按 timestamp 倒序的 normal check-ins
@@ -20,12 +31,12 @@ bool isLateCheckInHabit(List<CheckInEntity> sortedDesc, DateTime now) {
   final lateDays = <DateTime>{};
   for (final c in sortedDesc) {
     final d = DateTime(c.timestamp.year, c.timestamp.month, c.timestamp.day);
-    if (today.difference(d).inDays > 2) break;
-    if (c.timestamp.hour >= 22) {
+    if (today.difference(d).inDays > _lateHabitDayRange) break;
+    if (c.timestamp.hour >= _lateHourThreshold) {
       lateDays.add(d);
     }
   }
-  return lateDays.length >= 3;
+  return lateDays.length >= _lateHabitDays;
 }
 
 /// 周末漏打卡（最近一个周末没打卡）
@@ -41,7 +52,7 @@ bool isWeekendMissed(List<CheckInEntity> sortedDesc, DateTime now) {
     }
     // 今天（i==0）：必须已经过 18 点且今天没打卡才算漏
     // 避免早上 8 点就误报"今天漏打卡"
-    if (i == 0 && now.hour < 18) {
+    if (i == 0 && now.hour < _weekendGuardHour) {
       continue;
     }
     final hasCheckIn = sortedDesc.any(
@@ -65,7 +76,7 @@ bool isWeekPerfect(List<CheckInEntity> sortedDesc, DateTime now) {
   for (final c in sortedDesc) {
     // 早于 7 天前：忽略
     if (c.timestamp.isBefore(sevenDaysAgo)) break;
-    if (c.timestamp.hour >= 22) return false; // 22 点后打卡不算"准时"
+    if (c.timestamp.hour >= _lateHourThreshold) return false; // 22 点后打卡不算"准时"
   }
   // 检查最近 7 天每天都有打卡
   for (int i = 0; i < 7; i++) {
@@ -75,7 +86,7 @@ bool isWeekPerfect(List<CheckInEntity> sortedDesc, DateTime now) {
           c.timestamp.year == day.year &&
           c.timestamp.month == day.month &&
           c.timestamp.day == day.day &&
-          c.timestamp.hour < 22,
+          c.timestamp.hour < _lateHourThreshold,
     );
     if (!hasOnDay) return false;
   }
@@ -90,5 +101,5 @@ bool isSecondDayMissed(List<CheckInEntity> sortedDesc, DateTime now) {
   if (sortedDesc.isEmpty) return false;
   final lastCheckIn = sortedDesc.first.timestamp;
   final minutesSince = now.difference(lastCheckIn).inMinutes;
-  return minutesSince >= 36 * 60 && now.hour >= 10;
+  return minutesSince >= _secondDayMissedMinutes && now.hour >= _secondDayMissedHour;
 }

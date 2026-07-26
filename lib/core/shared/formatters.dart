@@ -1,3 +1,5 @@
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
+
 /// 统一格式化工具（共享层：domain + data + presentation 均可使用）
 class Formatters {
   Formatters._();
@@ -19,13 +21,13 @@ class Formatters {
       '${d.year}${_pad(d.month)}${_pad(d.day)}';
 
   /// 剂量：整数无小数，否则原样
-  static String dosage(double value, String unit) {
+  static String dosage(double value, DosageUnit unit) {
     // 标准四舍五入（Dart round() 用银行家舍入，医疗场景应用 round-half-up）
     final rounded = (value + 0.5).floorToDouble().toInt();
     if ((value - rounded).abs() < 1e-9) {
-      return '$rounded$unit';
+      return '$rounded${unit.id}';
     }
-    return '$value$unit';
+    return '$value${unit.id}';
   }
 
   static String _pad(int n) => n.toString().padLeft(2, '0');

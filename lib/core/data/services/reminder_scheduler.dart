@@ -224,7 +224,7 @@ class ReminderService implements ReminderChecker {
     buffer.writeln('请你方便的时候提醒 TA 按时吃药。');
     if (medication != null) {
       buffer.writeln(
-        '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit}',
+        '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit.id}',
       );
     }
     buffer.writeln('—— 这是一条自动提醒，请勿回复');

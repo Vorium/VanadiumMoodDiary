@@ -17,8 +17,6 @@
 /// care_engine 自身只负责 evaluate 装配 + fire 推送,策略独立可测可切换
 library;
 
-import 'dart:developer' as developer;
-
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/logic/care_copy.dart';
 import 'package:chroniccare/domain/logic/care_strategies.dart';
@@ -132,7 +130,11 @@ class CareEngine {
         title: trigger.title,
         body: trigger.body,
       );
-      developer.log('✅ 关怀触发: ${trigger.type.name}', name: 'CareEngine');
+      swallowError(
+        where: 'CareEngine.fire',
+        error: '关怀触发: ${trigger.type.name}',
+        note: 'success',
+      );
     } catch (e, st) {
       swallowError(
         where: 'CareEngine.fire',

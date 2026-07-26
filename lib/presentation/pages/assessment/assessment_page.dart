@@ -18,6 +18,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/data_providers.dart';
@@ -164,6 +165,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     final scores = _answers!.cast<int>();
     final result = scale.computeResult(scores);
 
+    bool saveFailed = false;
     try {
       await ref.read(checkInRepositoryProvider).saveAssessment(
             scale: scale.id,
@@ -171,6 +173,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
             total: result.total,
           );
     } catch (e, st) {
+      saveFailed = true;
       swallowError(
         where: 'assessment_page._onSubmit.saveAssessment',
         error: e,
@@ -204,6 +207,15 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
       _submitted = true;
       _result = result;
     });
+
+    if (saveFailed && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        AppSnackBar.info(
+          context,
+          AppLocalizations.of(context).assessmentSaveFailed,
+        ),
+      );
+    }
   }
 
   Future<void> _showCrisisDialog(CrisisSignal crisis) async {
