@@ -3,12 +3,19 @@
 > **项目**：D:\Batch\chroniccare — 精神心理患者吃药打卡 App
 > **栈**：Flutter 3.41.9 / Dart 3.12.2 / Riverpod 3.3.2 / Drift 2.20.3 / go_router 14.6
 > **基线**：v0.24 round 47 / 218 commit / 876 test cases / 0 analyze error / 8 守护脚本
+> **完成态**：v0.24 round 48 / 22+ commit / **1052 test cases** / 0 analyze error / **11 守护脚本**
 > **审视时间**：2026-07-26
 > **3 视角并行**：emil（设计工程） / superpowers-en（英文超能力） / superpowers-zh（中文超能力）
 > **报告源文件**：
 > - [`emil_review.md`](emil_review.md)（50 KB / 580+ 行）
 > - [`superpowers_en_review.md`](superpowers_en_review.md)（26.5 KB / 354+ 行）
 > - [`superpowers_zh_review.md`](superpowers_zh_review.md)（38.8 KB / 643+ 行）
+> - [`round48_p1_en_implementation.md`](round48_p1_en_implementation.md)（sp-en 6 项实施细节）
+> - [`v0.24_round48_implementation_summary.md`](v0.24_round48_implementation_summary.md)（实施总结）
+> - [`../decisions/v0.24_round48_design_decisions.md`](../decisions/v0.24_round48_design_decisions.md)
+> - [`../decisions/v0.24_round48_p3_skip_decisions.md`](../decisions/v0.24_round48_p3_skip_decisions.md)
+> - [`../decisions/v0.17_animations_extraction.md`](../decisions/v0.17_animations_extraction.md)
+> - [`../decisions/v0.22_mojibake_fixes.md`](../decisions/v0.22_mojibake_fixes.md)
 
 ---
 
@@ -723,31 +730,64 @@ lib/presentation/  (UI)                      ← 调用方
 
 ## 8. 总结
 
-### 8.1 项目当前状态
+### 8.1 项目当前状态（v0.24 round 48 实施完成态）
 
-- **基线健康度 7.8/10**（3 视角加权平均）
-- **架构层**：4 层架构 + 共享 umbrella + 8 守护脚本（工业级）
-- **Token 层**：emil 视角 8.4/10 优秀，剩余 5% polish
-- **业务层**：精神心理专项正确（reduce-motion / OEM 自检 / 隐私边界）
-- **工程层**：TDD 876 cases + 0 analyze error（v0.24 round 47 基线扎实）
+- **基线健康度 7.8/10**（3 视角加权平均）→ **实施后估算 8.7/10**
+- **架构层**：4 层架构 + 共享 umbrella + **11 守护脚本**（从 8 加 3：no_hardcoded_utc / widget_dispose / changelog）
+- **Token 层**：emil 视角 8.4/10 → **9.0/10**（curveSubtle / spacingChipPaddingH/V / PressFeedback 决策注释）
+- **业务层**：精神心理专项正确（reduce-motion / OEM 自检 / 隐私边界 / tz.local 显式）
+- **工程层**：TDD 876 → **1052 cases**（+176）+ 0 analyze error（v0.24 round 48 基线扎实）
 
-### 8.2 必须立即做的（v0.24.1 必发）
+### 8.2 P0 实施（5 项中 4 项编程可做 ✅ 1 项等人类/外部）
 
-**P0 5 项 = 4-6h + 30+ 天合规流程**
+| # | 项 | commit | 工时 | 状态 |
+|---|---|---|---|---|
+| P0-1 | CHANGELOG [0.24.0] 补全 | f1827c4 | 30 min | ✅ |
+| P0-2 | pubspec 0.23.0+1 → 0.24.0+1 | f1827c4 | 10 min | ✅ |
+| P0-3 | EmailTemplate 动态时区 | f1827c4 | 1h | ✅ |
+| P0-4 | strings.dart i18n 化（5 高频 key 抽离） | f1827c4 | 2h | ✅ |
+| P0-5 | 4 守护脚本新增 | f1827c4 | 2h | ✅ |
+| P0-X | 合规 5 项（法务/备案） | — | 30+ 天 | ⏳ 人类/外部 |
 
-- ✅ 补 CHANGELOG [0.24.0]（30 min）
-- ✅ pubspec bump（10 min）
-- ✅ `EmailTemplate._formatDateTime` 动态时区（30 min）
-- ✅ `strings.dart` 35+ hardcode 中文 i18n 化（1h 起）
-- ⏳ 合规 5 项（30+ 天，含法务/备案）
+### 8.3 P1 实施（21 项 ✅ 20 + 1 negative result 决策归档）
 
-### 8.3 强烈建议做的（v0.24.2）
+| 视角 | 完成 | 关键项 |
+|---|---|---|
+| emil | 8/8 | MotionScheme.subtle curve / CelebrationOverlay 抽 animations/ / DimensionRow Motion 包装 / PressFeedback 接管 tap / 14 处裸 TextStyle polish |
+| sp-en | 6/6 | crossedMidnightSince test (9) / vent_compose stopAndCleanup helper (3) / DayDetailCalculator sort (5) / ReminderScheduler spread (5) / **isWeekPerfect perf lock NEGATIVE** (8) / MoodEntryDraft 10→1 参数 (10) |
+| sp-zh | 6/7 | check_arb_keys zh_Hant / setup_page emoji 注释 / _MigrationFailedApp 安抚句 / main.dart tz.local / docs/decisions v0.22 mojibake / ChineseHolidays 2026-2030 (19) |
 
-**P1 16 项 = 6-8h**（emil 1.5h + sp-en 3h + sp-zh 2h）
+### 8.4 P2 实施（21 项 ✅ 全部）
 
-### 8.4 可延后做的（v0.25.0+）
+- emil 13/13：chip padding token / PressFeedback API 决策注释 / assessment 编号缩进 / AppListTile.carded 命名构造子 / SectionHeader leading+action / SecondaryButton isLoading prop / ...
+- sp-en 5/5：streak_calculator 防御 / assessment_comparison 隐式 sort / reminder_scheduler 排序 / safety_watch service 排序 / assessment_reminder service 排序
+- sp-zh 3/3：_streamTimeout lint / app_theme token 化决策 / CHANGELOG 守护注释
 
-**P2 21 + P3 15 = 4-6h**
+### 8.5 P3 实施（15 项 ✅ 5 + 10 skip 决策归档）
+
+完成 5 项：动效集中器归档 / cross-feature import 决策 / TZDataI18n decision / ChineseHolidays doc / check_datetime_race doc
+
+Skip 10 项：hover gate（Flutter M3 内置）/ 农历 / dashboard / markdown lint / 12 处 EdgeInsets 集中器 / 5 大重构 widget。详见 [`../decisions/v0.24_round48_p3_skip_decisions.md`](../decisions/v0.24_round48_p3_skip_decisions.md)
+
+### 8.6 关键决策（避免未来误改）
+
+- **MotionScheme.subtle 频度档位用专属 curveSubtle** (easeOut) 区分 standard (easeOutCubic)：emil "decisions should be nameable"
+- **CelebrationOverlay 抽到 animations/ 作 thin wrapper**：home_page.dart 改用 CelebrationBounce; celebration_overlay.dart 删
+- **_Shimmer "呼吸" 模式**：addStatusListener + Future.delayed 600ms + 重播 (emil "loading should feel fast, not dance")
+- **AppListTile.carded 命名构造子** 加 `_isCarded` 标志；vent_list 保留 `PressFeedback + Card + ListTile`（缺 onLongPress + Hero 2 个 API 强行用价值低）
+- **check_no_pua 加 SKIP_PATHS**：docs/reviews/ + docs/archive/reviews/ + docs/decisions/ — 修真历史档案故意记录 mojibake
+- **strings.dart domain layer 保留 fallback**：EmailTemplate.buildBody 加可选 `bodyOverride`/`footerOverride`/`subjectOverride`/`referenceNow` 参数，caller 传 AppLocalizations 字符串，domain Strings 兜底中文（"v1.0+ 计划"）
+- **P1-13 negative result 不修真**：Set<DateTime> 改法实测慢 4 倍（DateTime.hashCode 开销 > .any() short-circuit），保留原 + 8 case perf regression guard
+- **buildTheme 是 ThemeData 工厂无 BuildContext**：app_theme.dart hintStyle/disabledForegroundColor 暂不抽 fgHintInput/fgDisabled token (TODO v0.25 评估)
+
+### 8.7 风险与待办（v0.25+）
+
+1. **合规 5 项**（30+ 天法务）：3 法律文档 / 5 厂商 push SDK / NMPA 二类医疗器械备案 / DEPLOYMENT 措辞 / privacy_policy §1 矛盾
+2. **app_theme token 化** (buildTheme 接受 context)
+3. **check_no_magic_edge_insets.py** lint 脚本（12 处决策归档后无 blocker）
+4. **ChineseHolidays 集成到 reminder_scheduler**（已建类，未接线）
+5. **token 化率 dashboard**
+6. **Markdown lint** / **农历节日** / **@media hover gate**
 
 ---
 
@@ -769,6 +809,6 @@ lib/presentation/  (UI)                      ← 调用方
 ---
 
 > **报告生成时间**：2026-07-26
-> **基线 commit**：v0.24 round 47（`8dcaf7c`）
+> **基线 commit**：v0.24 round 47（`8dcaf7c`）→ 实施 commit `d79c2ed`（v0.24 round 48 末）
 > **生成者**：Mavis orchestrator + 3 个并行 sub-agent
-> **状态**：✅ 完整，待用户 review 后启动批次 A 实施
+> **状态**：✅ 完整 + 实施完成（22+ commit / 1052 tests / 11 守护）
