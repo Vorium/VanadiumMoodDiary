@@ -36,9 +36,9 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.notifications_off_outlined,
-            color: AppTokens.warning,
+            color: AppTokens.warningColor(context),
             size: 20,
           ),
           const SizedBox(width: 8),

@@ -205,7 +205,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   Icon(
                     _isActive ? Icons.check_circle_outline : Icons.pause_circle,
                     size: 16,
-                    color: _isActive ? AppTokens.primary : AppTokens.warning,
+                    color: _isActive ? AppTokens.primaryColor(context) : AppTokens.warningColor(context),
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -214,7 +214,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                         : AppLocalizations.of(context).editMedStatusStopped,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: _isActive ? AppTokens.primary : AppTokens.warning,
+                      color: _isActive ? AppTokens.primaryColor(context) : AppTokens.warningColor(context),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -350,7 +350,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                     : AppLocalizations.of(context).editMedResumeAction,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
-                  color: _isActive ? AppTokens.warning : AppTokens.primary,
+                  color: _isActive ? AppTokens.warningColor(context) : AppTokens.primaryColor(context),
                 ),
               ),
               subtitle: Text(
@@ -373,8 +373,8 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
               const SizedBox(height: AppTokens.spacingXs),
               Text(
                 _errorText!,
-                style: const TextStyle(
-                  color: AppTokens.error,
+                style:TextStyle(
+                  color: AppTokens.errorColor(context),
                   fontSize: AppTokens.fontSizeLabel,
                 ),
               ),

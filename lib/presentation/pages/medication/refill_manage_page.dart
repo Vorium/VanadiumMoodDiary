@@ -54,9 +54,9 @@ extension RefillStatusX on RefillStatus {
 
   Color colorOf(BuildContext context) => switch (this) {
         RefillStatus.notConfigured => AppTokens.textHintColor(context),
-        RefillStatus.farFuture => AppTokens.primary,
-        RefillStatus.inWindow => AppTokens.warning,
-        RefillStatus.overdue => AppTokens.error,
+        RefillStatus.farFuture => AppTokens.primaryColor(context),
+        RefillStatus.inWindow => AppTokens.warningColor(context),
+        RefillStatus.overdue => AppTokens.errorColor(context),
       };
 }
 
@@ -142,13 +142,13 @@ class RefillManagePage extends ConsumerWidget {
                 _Stat(
                   label: AppLocalizations.of(context).medsRefillReminding,
                   value: '$inWindow',
-                  valueColor: inWindow > 0 ? AppTokens.warning : null,
+                  valueColor: inWindow > 0 ? AppTokens.warningColor(context) : null,
                 ),
                 const SizedBox(width: AppTokens.spacingMd),
                 _Stat(
                   label: AppLocalizations.of(context).refillManageOverdue,
                   value: '$overdue',
-                  valueColor: overdue > 0 ? AppTokens.error : null,
+                  valueColor: overdue > 0 ? AppTokens.errorColor(context) : null,
                 ),
               ],
             ),

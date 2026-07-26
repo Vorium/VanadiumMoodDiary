@@ -54,7 +54,7 @@ class VentAudioSection extends StatelessWidget {
         onPressed: isRecording ? null : onToggleRecord,
         icon: Icon(
           isRecording ? Icons.stop_circle : Icons.mic,
-          color: isRecording ? AppTokens.error : AppTokens.primary,
+          color: isRecording ? AppTokens.errorColor(context) : AppTokens.primaryColor(context),
           size: 28,
         ),
         label: Text(
@@ -63,7 +63,7 @@ class VentAudioSection extends StatelessWidget {
               : AppLocalizations.of(context).ventRecordIdle,
           style: TextStyle(
             fontSize: AppTokens.fontSizeBody,
-            color: isRecording ? AppTokens.error : AppTokens.primary,
+            color: isRecording ? AppTokens.errorColor(context) : AppTokens.primaryColor(context),
           ),
         ),
       ),
@@ -83,19 +83,19 @@ class VentAudioSection extends StatelessWidget {
           IconButton(
             icon: Icon(
               isPlaying ? Icons.stop : Icons.play_arrow,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
             onPressed: onTogglePlay,
           ),
-          const Icon(Icons.mic, color: AppTokens.primary, size: 18),
+          Icon(Icons.mic, color: AppTokens.primaryColor(context), size: 18),
           const SizedBox(width: 6),
           Text(
             audioDurationSec != null
                 ? _formatSec(context, audioDurationSec!)
                 : AppLocalizations.of(context).ventAudioLabel,
-            style: const TextStyle(
+            style:TextStyle(
               fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
           ),
           const Spacer(),

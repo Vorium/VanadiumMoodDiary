@@ -25,7 +25,7 @@ class AssessmentSection extends StatelessWidget {
         // 评估历史入口
         Card(
           child: AppListTile(
-            leading: const Icon(Icons.history, color: AppTokens.primary),
+            leading:Icon(Icons.history, color: AppTokens.primaryColor(context)),
             title: Text(
               AppLocalizations.of(context).settingsAssessmentHistory,
             ),
@@ -51,7 +51,7 @@ class AssessmentSection extends StatelessWidget {
                     _scales[i].id == 'phq9'
                         ? Icons.psychology_outlined
                         : Icons.psychology_alt_outlined,
-                    color: AppTokens.primary,
+                    color: AppTokens.primaryColor(context),
                   ),
                   title: Text(_scales[i].displayName),
                   subtitle: Text(_scales[i].shortDescription),
@@ -71,8 +71,8 @@ class AssessmentSection extends StatelessWidget {
         // 邮件预览
         Card(
           child: AppListTile(
-            leading: const Icon(
-                Icons.email_outlined, color: AppTokens.primary),
+            leading:Icon(
+                Icons.email_outlined, color: AppTokens.primaryColor(context)),
             title:
                 Text(AppLocalizations.of(context).settingsEmailPreview),
             trailing: const Icon(Icons.chevron_right),
@@ -86,7 +86,7 @@ class AssessmentSection extends StatelessWidget {
         Card(
           child: AppListTile(
             leading:
-                const Icon(Icons.info_outline, color: AppTokens.primary),
+                Icon(Icons.info_outline, color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).settingsAbout),
             subtitle:
                 Text(AppLocalizations.of(context).settingsAboutVersion),

@@ -30,6 +30,7 @@ class AssessmentSeverityStyle {
 }
 
 AssessmentSeverityStyle assessmentSeverityStyle(
+  BuildContext context,
   String scaleId,
   int score,
   AppLocalizations l10n,
@@ -56,10 +57,10 @@ AssessmentSeverityStyle assessmentSeverityStyle(
   };
   final label = rank < labels.length ? labels[rank] : labels.last;
   final color = switch (rank) {
-    0 => AppTokens.primary,
-    1 => AppTokens.warning,
+    0 => AppTokens.primaryColor(context),
+    1 => AppTokens.warningColor(context),
     2 => AppTokens.warningStrong,
-    _ => AppTokens.error,
+    _ => AppTokens.errorColor(context),
   };
   return AssessmentSeverityStyle(rank: rank, label: label, color: color);
 }

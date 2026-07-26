@@ -27,7 +27,7 @@ class AssessmentChartCard extends StatelessWidget {
     if (records.length < 2) {
       return Card(
         child: ListTile(
-          leading: Icon(iconForScale(scaleId), color: AppTokens.primary),
+          leading: Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
           title: Text(nameForScale(scaleId, l10n)),
           subtitle: Text(
             records.isEmpty
@@ -50,7 +50,7 @@ class AssessmentChartCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(iconForScale(scaleId), color: AppTokens.primary),
+                Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
                 const SizedBox(width: AppTokens.spacingSm),
                 Text(
                   nameForScale(scaleId, l10n),
@@ -133,7 +133,7 @@ class AssessmentChartCard extends StatelessWidget {
                         for (int i = 0; i < sorted.length; i++)
                           FlSpot(i.toDouble(), sorted[i].total.toDouble()),
                       ],
-                      color: AppTokens.primary,
+                      color: AppTokens.primaryColor(context),
                       barWidth: 2.5,
                       isCurved: false,
                       dotData: FlDotData(
@@ -142,7 +142,7 @@ class AssessmentChartCard extends StatelessWidget {
                             FlDotCirclePainter(
                           radius: 4,
                           color: assessmentSeverityStyle(
-                                  scaleId, spot.y.toInt(), l10n)
+                                  context, scaleId, spot.y.toInt(), l10n)
                               .color,
                           strokeWidth: 1.5,
                           strokeColor: AppTokens.fgOnPrimary(context),

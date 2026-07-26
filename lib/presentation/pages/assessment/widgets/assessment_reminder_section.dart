@@ -128,7 +128,7 @@ class _AssessmentReminderSectionState
       child: Column(
         children: [
           SwitchListTile(
-            secondary: const Icon(Icons.event_repeat, color: AppTokens.primary),
+            secondary:Icon(Icons.event_repeat, color: AppTokens.primaryColor(context)),
             title:
                 Text(AppLocalizations.of(context).reminderHubAssessmentTitle),
             subtitle: Text(
@@ -149,7 +149,7 @@ class _AssessmentReminderSectionState
           if (enabled) ...[
             const Divider(height: 1),
             AppListTile(
-              leading: const Icon(Icons.schedule, color: AppTokens.primary),
+              leading:Icon(Icons.schedule, color: AppTokens.primaryColor(context)),
               title: Text(AppLocalizations.of(context).reminderHubInterval),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,

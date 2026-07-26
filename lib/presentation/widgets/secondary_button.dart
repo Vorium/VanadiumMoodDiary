@@ -39,14 +39,14 @@ class SecondaryButton extends StatelessWidget {
     // 视觉跟之前完全一样 (项目 OutlinedButtonTheme 提供 side/shape/textStyle)
     // v0.24 round 48 (emil P2-11): loading 模式 → 显示小 spinner + 禁用按钮
     if (isLoading) {
-      return const OutlinedButton(
+      return OutlinedButton(
         onPressed: null, // 禁用
         child: SizedBox(
           height: 16,
           width: 16,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            color: AppTokens.primary,
+            color: AppTokens.primaryColor(context),
           ),
         ),
       );

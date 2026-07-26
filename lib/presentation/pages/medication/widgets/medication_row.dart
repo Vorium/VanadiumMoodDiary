@@ -56,7 +56,7 @@ class MedicationRow extends StatelessWidget {
     final tile = ListTile(
       leading: Icon(
         isStopped ? Icons.medication : Icons.medication_outlined,
-        color: isStopped ? AppTokens.textHintColor(context) : AppTokens.primary,
+        color: isStopped ? AppTokens.textHintColor(context) : AppTokens.primaryColor(context),
       ),
       title: Row(
         children: [
@@ -125,15 +125,15 @@ class MedicationRow extends StatelessWidget {
           else ...[
             // 编辑按钮（v0.13 Round 9）
             IconButton(
-              icon: const Icon(Icons.edit_outlined, color: AppTokens.primary),
+              icon:Icon(Icons.edit_outlined, color: AppTokens.primaryColor(context)),
               tooltip: AppLocalizations.of(context).commonEdit,
               onPressed: onEdit,
             ),
             if (!isStopped)
               IconButton(
-                icon: const Icon(
+                icon:Icon(
                   Icons.event_available_outlined,
-                  color: AppTokens.primary,
+                  color: AppTokens.primaryColor(context),
                 ),
                 tooltip: AppLocalizations.of(context).medsActionRefill,
                 onPressed: onEditRefill,
@@ -141,7 +141,7 @@ class MedicationRow extends StatelessWidget {
           ],
           if (!isDeleting && !isEditing && !isEditingRefill)
             IconButton(
-              icon: const Icon(Icons.delete_outline, color: AppTokens.error),
+              icon:Icon(Icons.delete_outline, color: AppTokens.errorColor(context)),
               tooltip: AppLocalizations.of(context).commonDelete,
               onPressed: onDelete,
             ),
@@ -158,7 +158,7 @@ class MedicationRow extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
-        color: AppTokens.error,
+        color: AppTokens.errorColor(context),
         child: Icon(
           Icons.delete_outline,
           // v0.22 round 30 (emil P2-6): 走 fgOnError
@@ -175,8 +175,8 @@ class MedicationRow extends StatelessWidget {
   /// v0.14 fix: 用 entity 的"按天判断"方法，refill day 整天都算 in window
   static Color refillTextColor(MedicationEntity med, BuildContext context) {
     if (med.refillAt == null) return AppTokens.textHintColor(context);
-    if (med.isRefillOverdue()) return AppTokens.error;
-    if (med.isInRefillWindow()) return AppTokens.warning;
+    if (med.isRefillOverdue()) return AppTokens.errorColor(context);
+    if (med.isInRefillWindow()) return AppTokens.warningColor(context);
     return AppTokens.textSecondaryColor(context);
   }
 

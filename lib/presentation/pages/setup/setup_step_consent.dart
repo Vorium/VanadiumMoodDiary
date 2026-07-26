@@ -46,10 +46,10 @@ class SetupStepConsent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: AppTokens.spacingLg),
-          const Icon(
+          Icon(
             Icons.gavel_outlined,
             size: 56,
-            color: AppTokens.primary,
+            color: AppTokens.primaryColor(context),
           ),
           const SizedBox(height: AppTokens.spacingMd),
           Text(

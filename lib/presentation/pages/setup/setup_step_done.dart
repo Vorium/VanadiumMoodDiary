@@ -27,11 +27,11 @@ class SetupStepDone extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingXl),
           // v0.22 round 29 (emil-22): 用 Icon.check_circle 替代 emoji '🌱' + 64pt 字号 hack
           // (M3 Image / Icon 风格统一, 自动 dark mode 适配)
-          const Center(
+          Center(
             child: Icon(
               Icons.check_circle,
               size: 64,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
           ),
           const SizedBox(height: AppTokens.spacingLg),

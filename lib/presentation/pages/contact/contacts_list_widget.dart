@@ -51,7 +51,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 alignment: Alignment.centerRight,
                 padding:
                     const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
-                color: AppTokens.error,
+                color: AppTokens.errorColor(context),
                 child: Icon(
                   Icons.delete_outline,
                   // v0.22 round 30 (emil P2-6): 走 fgOnError
@@ -60,9 +60,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
               ),
               onDismissed: (_) => _swipeDeleteContact(contacts[i]),
               child: ListTile(
-                leading: const Icon(
+                leading:Icon(
                   Icons.person_outline,
-                  color: AppTokens.primary,
+                  color: AppTokens.primaryColor(context),
                 ),
                 title: Text(contacts[i].name),
                 subtitle: Text(contacts[i].phone),
@@ -76,9 +76,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         ),
                       )
                     : IconButton(
-                        icon: const Icon(
+                        icon:Icon(
                           Icons.delete_outline,
-                          color: AppTokens.error,
+                          color: AppTokens.errorColor(context),
                         ),
                         onPressed: () => _deleteContact(contacts[i].id),
                       ),
@@ -89,7 +89,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
           // v0.24 round 43 (emil D-05 P2): 添加联系人入口包 AppListTile
           // → 隐式获得 PressFeedback scale 反馈 (tens/day 频度)
           AppListTile(
-            leading: const Icon(Icons.add, color: AppTokens.primary),
+            leading:Icon(Icons.add, color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).setupAddContact),
             onTap: () => _showAddContactDialog(context, ref),
           ),

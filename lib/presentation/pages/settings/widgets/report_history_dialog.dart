@@ -76,9 +76,9 @@ class ReportHistoryListDialog extends ConsumerWidget {
                     itemBuilder: (ctx, i) {
                       final h = histories[i];
                       return ListTile(
-                        leading: const Icon(
+                        leading:Icon(
                           Icons.description_outlined,
-                          color: AppTokens.primary,
+                          color: AppTokens.primaryColor(context),
                         ),
                         title: Text(
                           AppLocalizations.of(context).reportHistoryItemTitle(
@@ -101,9 +101,9 @@ class ReportHistoryListDialog extends ConsumerWidget {
                           ),
                         ),
                         trailing: IconButton(
-                          icon: const Icon(
+                          icon:Icon(
                             Icons.delete_outline,
-                            color: AppTokens.error,
+                            color: AppTokens.errorColor(context),
                           ),
                           onPressed: () => _deleteOne(context, ref, h.id),
                         ),
@@ -135,7 +135,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(AppLocalizations.of(context).commonDelete,
                 style: AppTokens.textStyleBody(context)
-                    .copyWith(color: AppTokens.error),),
+                    .copyWith(color: AppTokens.errorColor(context)),),
           ),
         ],
       ),

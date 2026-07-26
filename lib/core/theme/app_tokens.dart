@@ -70,6 +70,31 @@ class AppTokens {
   // v0.18 (P1-5) batch 1: 加 7 个 getter + 替换 EmptyState + vent_list 最 critical 处。
   // batch 2+ 替换剩余 90+ 处。
 
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware 主色 (status bar / icon 64pt /
+  /// 评估大数字 / 续方 chip / 通知 banner)
+  /// 之前 35+ 处裸用 `color: AppTokens.primary` (static const 0xFF6BCF7F),
+  /// dark mode 下该色在深色背景上对比度崩 → 用户视觉错。
+  /// 修法:用 M3 colorScheme.primary 自动适配 light/dark
+  static Color primaryColor(BuildContext context) =>
+      Theme.of(context).colorScheme.primary;
+
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware 错误色 (错误 banner / 危机分数 / 评估 "重度" 标签)
+  /// 之前 8+ 处裸用 `color: AppTokens.error` (static const 0xFFE57373)
+  /// 修法:用 M3 colorScheme.error 自动适配
+  static Color errorColor(BuildContext context) =>
+      Theme.of(context).colorScheme.error;
+
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware 警告色
+  /// 之前 3+ 处裸用 `color: AppTokens.warning` (static const 0xFFFFB74D)
+  /// 修法:warning 状态色亮暗都用,沿用 const (不破坏 M3 contrast)
+  static Color warningColor(BuildContext context) => AppTokens.warning;
+
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware onSurface 弱一档 (50% alpha)
+  /// 替代散落 4+ 处 `cs.onSurface.withValues(alpha: 0.5)` 硬编码
+  /// 用途:次要文字 / icon disabled / list 副标题
+  static Color onSurfaceMuted(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+
   /// Theme-aware surface (卡片/容器背景)
   static Color surfaceColor(BuildContext context) =>
       Theme.of(context).colorScheme.surface;

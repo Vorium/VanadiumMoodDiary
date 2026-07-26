@@ -408,7 +408,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
                       ),
                       decoration: BoxDecoration(
                         color: _isRecording
-                            ? AppTokens.error
+                            ? AppTokens.errorColor(context)
                             : Theme.of(context).colorScheme.primary,
                         borderRadius:
                             BorderRadius.circular(AppTokens.radiusChip),
@@ -508,9 +508,9 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
             const SizedBox(height: AppTokens.spacingXs),
             Text(
               l10n.moodAudioMaxReached,
-              style: const TextStyle(
+              style:TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.error,
+                color: AppTokens.errorColor(context),
               ),
             ),
           ],

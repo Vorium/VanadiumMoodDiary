@@ -51,7 +51,7 @@ class VentTextInput extends StatelessWidget {
               style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
                 color: textLen > maxLength
-                    ? AppTokens.error
+                    ? AppTokens.errorColor(context)
                     : AppTokens.textHintColor(context),
               ),
             ),

@@ -69,8 +69,8 @@ class AssessmentHistoryChart extends StatelessWidget {
 
     final palette = [
       Theme.of(context).colorScheme.primary,
-      AppTokens.warning,
-      AppTokens.error,
+      AppTokens.warningColor(context),
+      AppTokens.errorColor(context),
     ];
 
     final lines = <LineChartBarData>[];

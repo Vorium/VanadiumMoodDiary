@@ -88,13 +88,13 @@ class SafetyReminderCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppTokens.tintedErrorSoft(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-              border: Border.all(color: AppTokens.error, width: 1),
+              border: Border.all(color: AppTokens.errorColor(context), width: 1),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.error_outline,
-                  color: AppTokens.error,
+                  color: AppTokens.errorColor(context),
                   size: 18,
                 ),
                 const SizedBox(width: AppTokens.spacingXs),
@@ -167,7 +167,7 @@ class ReminderCard extends StatelessWidget {
                     : AppTokens.dividerColor(context),
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),
               ),
-              child: Icon(icon, color: AppTokens.primary, size: 22),
+              child: Icon(icon, color: AppTokens.primaryColor(context), size: 22),
             ),
             const SizedBox(width: AppTokens.spacingMd),
             Expanded(
@@ -203,7 +203,7 @@ class ReminderCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: AppTokens.fontSizeCaption,
                               color: statusActive
-                                  ? AppTokens.primary
+                                  ? AppTokens.primaryColor(context)
                                   : AppTokens.textHintColor(context),
                               fontWeight: FontWeight.w500,
                             ),

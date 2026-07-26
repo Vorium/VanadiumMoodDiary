@@ -141,7 +141,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx, true),
-            style: TextButton.styleFrom(foregroundColor: AppTokens.error),
+            style: TextButton.styleFrom(foregroundColor: AppTokens.errorColor(context)),
             child: Text(l10n.commonDelete),
           ),
         ],
@@ -179,7 +179,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
       actions: [
         entryAsync.maybeWhen(
           data: (entry) => IconButton(
-            icon: const Icon(Icons.delete_outline, color: AppTokens.error),
+            icon:Icon(Icons.delete_outline, color: AppTokens.errorColor(context)),
             tooltip: AppLocalizations.of(context).commonDelete,
             onPressed: entry == null ? null : () => _delete(entry),
           ),
@@ -212,7 +212,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                               ? Icons.mic
                               : Icons.text_snippet_outlined,
                           color: entry.hasAudio
-                              ? AppTokens.primary
+                              ? AppTokens.primaryColor(context)
                               : AppTokens.textSecondaryColor(context),
                           size: 20,
                         ),
@@ -261,7 +261,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                             IconButton(
                               icon: Icon(
                                 _isPlaying ? Icons.pause : Icons.play_arrow,
-                                color: AppTokens.primary,
+                                color: AppTokens.primaryColor(context),
                                 size: 32,
                               ),
                               onPressed: () => _togglePlay(entry),
@@ -269,17 +269,17 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                             const SizedBox(width: AppTokens.spacingXs),
                             // 之前是 Hero('vent-mic-...'),但 source 已统一到
                             // 顶部的 CircleAvatar。这里只保留普通 mic icon (无 Hero)
-                            const Icon(
+                            Icon(
                               Icons.mic,
-                              color: AppTokens.primary,
+                              color: AppTokens.primaryColor(context),
                               size: 18,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               entry.durationLabel(),
-                              style: const TextStyle(
+                              style:TextStyle(
                                 fontSize: AppTokens.fontSizeBody,
-                                color: AppTokens.primary,
+                                color: AppTokens.primaryColor(context),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

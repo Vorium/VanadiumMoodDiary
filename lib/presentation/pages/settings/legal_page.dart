@@ -206,7 +206,7 @@ class _DocTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: AppTokens.primary),
+      leading: Icon(icon, color: AppTokens.primaryColor(context)),
       title: Text(title),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
@@ -279,7 +279,7 @@ class _ConsentTile extends StatelessWidget {
               Switch(
                 value: withdrawn,
                 onChanged: onToggle,
-                activeThumbColor: AppTokens.error,
+                activeThumbColor: AppTokens.errorColor(context),
               ),
             ],
           ),
@@ -290,7 +290,7 @@ class _ConsentTile extends StatelessWidget {
               style: TextStyle(
                 fontSize: AppTokens.fontSizeLabelSm,
                 color: withdrawn
-                    ? AppTokens.error
+                    ? AppTokens.errorColor(context)
                     : AppTokens.textHintColor(context),
               ),
             ),

@@ -56,7 +56,7 @@ class ConsentCheckRow extends StatelessWidget {
             : AppTokens.surfaceColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
         border: Border.all(
-          color: checked ? AppTokens.primary : AppTokens.borderColor(context),
+          color: checked ? AppTokens.primaryColor(context) : AppTokens.borderColor(context),
           width: 1.5,
         ),
       ),
@@ -73,7 +73,7 @@ class ConsentCheckRow extends StatelessWidget {
             ),
             fillColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return AppTokens.primary;
+                return AppTokens.primaryColor(context);
               }
               return null;
             }),

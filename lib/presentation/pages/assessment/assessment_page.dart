@@ -123,7 +123,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               LinearProgressIndicator(
                 value: _answered / scale.items.length,
                 backgroundColor: AppTokens.dividerColor(context),
-                color: AppTokens.primary,
+                color: AppTokens.primaryColor(context),
               ),
             ],
           ),
@@ -222,7 +222,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.warning_amber, color: AppTokens.error),
+            Icon(Icons.warning_amber, color: AppTokens.errorColor(context)),
             const SizedBox(width: 8),
             Expanded(child: Text(crisis.title)),
           ],
@@ -301,7 +301,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeScoreXxl,
                     fontWeight: FontWeight.bold,
-                    color: isUrgent ? AppTokens.error : AppTokens.primary,
+                    color: isUrgent ? AppTokens.errorColor(context) : AppTokens.primaryColor(context),
                   ),
                 ),
                 Text(
@@ -332,9 +332,9 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.medical_services_outlined,
-                      color: AppTokens.warning,
+                      color: AppTokens.warningColor(context),
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
                     Expanded(

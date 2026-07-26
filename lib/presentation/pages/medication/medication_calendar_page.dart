@@ -59,7 +59,7 @@ class MedicationCalendarPage extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.medication_outlined, color: AppTokens.primary),
+                Icon(Icons.medication_outlined, color: AppTokens.primaryColor(context)),
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
                   child: Text(
@@ -369,7 +369,7 @@ class _CellBox extends StatelessWidget {
     if (ratio == 0) return AppTokens.dividerColor(context); // 漏服 - 灰
     if (ratio < 0.5) return AppTokens.adherencePartial; // 部分 - 浅橙
     if (ratio < 1) return AppTokens.adherenceAlmost; // 接近但未满
-    return AppTokens.primary; // 满 - 深绿
+    return AppTokens.primaryColor(context); // 满 - 深绿
   }
 }
 
@@ -396,7 +396,7 @@ class _Legend extends StatelessWidget {
                 AppLocalizations.of(context).medsCalendarLegendMissed, context,),
             _legendItem(AppTokens.adherencePartial, '< 50%', context),
             _legendItem(AppTokens.adherenceAlmost, '< 100%', context),
-            _legendItem(AppTokens.primary, '100%', context),
+            _legendItem(AppTokens.primaryColor(context), '100%', context),
           ],
         ),
       ),

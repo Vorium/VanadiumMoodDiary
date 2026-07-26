@@ -33,7 +33,7 @@ class CheckInButton extends StatelessWidget {
         curve: AppTokens.curveStandard,
         decoration: BoxDecoration(
           color:
-              isChecked ? AppTokens.disabledColor(context) : AppTokens.primary,
+              isChecked ? AppTokens.disabledColor(context) : AppTokens.primaryColor(context),
           borderRadius: BorderRadius.circular(AppTokens.radiusButton),
         ),
         child: Material(

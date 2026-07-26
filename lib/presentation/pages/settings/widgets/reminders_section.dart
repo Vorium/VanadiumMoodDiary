@@ -19,9 +19,9 @@ class RemindersSection extends StatelessWidget {
       child: Column(
         children: [
           AppListTile(
-            leading: const Icon(
+            leading:Icon(
               Icons.notifications_active_outlined,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
             title: Text(
               AppLocalizations.of(context).settingsReminderCenter,
@@ -34,9 +34,9 @@ class RemindersSection extends StatelessWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading: const Icon(
+            leading:Icon(
               Icons.shopping_cart_outlined,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
             title: Text(
               AppLocalizations.of(context).settingsRefillManagement,

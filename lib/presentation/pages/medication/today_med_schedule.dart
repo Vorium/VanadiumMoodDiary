@@ -52,9 +52,9 @@ class TodayMedSchedule extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.schedule_outlined,
-                      color: AppTokens.primary,
+                      color: AppTokens.primaryColor(context),
                       size: 20,
                     ),
                     const SizedBox(width: AppTokens.spacingXs),
@@ -71,7 +71,7 @@ class TodayMedSchedule extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: AppTokens.fontSizeCaption,
                         color: done == entries.length
-                            ? AppTokens.primary
+                            ? AppTokens.primaryColor(context)
                             : AppTokens.textHintColor(context),
                         fontWeight: FontWeight.w600,
                       ),
@@ -154,7 +154,7 @@ class _TimeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final e = entry;
     final color =
-        e.done ? AppTokens.primary : AppTokens.textSecondaryColor(context);
+        e.done ? AppTokens.primaryColor(context) : AppTokens.textSecondaryColor(context);
     final bg = e.done
         ? AppTokens.tintedPrimarySoft(context)
         : AppTokens.dividerColor(context);
@@ -174,10 +174,10 @@ class _TimeChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (e.done)
-            const Padding(
-              padding: EdgeInsets.only(right: 4),
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
               child:
-                  Icon(Icons.check_circle, color: AppTokens.primary, size: 14),
+                  Icon(Icons.check_circle, color: AppTokens.primaryColor(context), size: 14),
             )
           else
             Padding(

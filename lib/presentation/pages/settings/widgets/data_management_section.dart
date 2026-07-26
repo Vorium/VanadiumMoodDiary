@@ -34,9 +34,9 @@ class DataManagementSection extends ConsumerWidget {
       child: Column(
         children: [
           AppListTile(
-            leading: const Icon(
+            leading:Icon(
               Icons.upload_outlined,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
             title: Text(AppLocalizations.of(context).settingsExportData),
             subtitle: Text(
@@ -47,9 +47,9 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading: const Icon(
+            leading:Icon(
               Icons.summarize_outlined,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
             title: Text(AppLocalizations.of(context).settingsMedReport),
             subtitle: Text(
@@ -60,7 +60,7 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading: const Icon(Icons.history, color: AppTokens.primary),
+            leading:Icon(Icons.history, color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).settingsReportHistory),
             subtitle: Text(
               AppLocalizations.of(context).settingsReportHistorySubtitle,
@@ -70,9 +70,9 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading: const Icon(
+            leading:Icon(
               Icons.download_outlined,
-              color: AppTokens.primary,
+              color: AppTokens.primaryColor(context),
             ),
             title: Text(AppLocalizations.of(context).settingsImportData),
             subtitle: Text(
@@ -83,14 +83,14 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading: const Icon(
+            leading:Icon(
               Icons.delete_forever_outlined,
-              color: AppTokens.error,
+              color: AppTokens.errorColor(context),
             ),
             title: Text(
               AppLocalizations.of(context).settingsClearAllData,
               style: AppTokens.textStyleBody(context)
-                  .copyWith(color: AppTokens.error),
+                  .copyWith(color: AppTokens.errorColor(context)),
             ),
             subtitle: Text(
               AppLocalizations.of(context).settingsClearAllDataSubtitle,
@@ -305,7 +305,7 @@ class DataManagementSection extends ConsumerWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTokens.error,
+              backgroundColor: AppTokens.errorColor(context),
             ),
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(l10n.settingsClearAllDataConfirm),

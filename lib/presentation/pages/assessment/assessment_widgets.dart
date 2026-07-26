@@ -26,9 +26,9 @@ class AssessmentSparkline extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.show_chart,
-                  color: AppTokens.primary,
+                  color: AppTokens.primaryColor(context),
                   size: 20,
                 ),
                 const SizedBox(width: AppTokens.spacingXs),
@@ -54,7 +54,7 @@ class AssessmentSparkline extends StatelessWidget {
                   totals: history.totals,
                   timestamps: history.timestamps,
                   maxTotal: scaleId == 'phq9' ? 27 : 21,
-                  lineColor: AppTokens.primary,
+                  lineColor: AppTokens.primaryColor(context),
                   averageLine: history.average,
                   averageColor: AppTokens.textHintColor(context),
                   // v0.22 round 36: dot stroke 用 fgOnPrimary (dark mode 反白)
@@ -260,11 +260,11 @@ class ComparisonCard extends StatelessWidget {
     IconData trendIcon;
     switch (cmp.trend) {
       case ComparisonTrend.improved:
-        trendColor = AppTokens.primary;
+        trendColor = AppTokens.primaryColor(context);
         trendIcon = Icons.arrow_downward;
         break;
       case ComparisonTrend.worsened:
-        trendColor = AppTokens.error;
+        trendColor = AppTokens.errorColor(context);
         trendIcon = Icons.arrow_upward;
         break;
       case ComparisonTrend.unchanged:
@@ -272,7 +272,7 @@ class ComparisonCard extends StatelessWidget {
         trendIcon = Icons.horizontal_rule;
         break;
       case ComparisonTrend.firstAssessment:
-        trendColor = AppTokens.primary;
+        trendColor = AppTokens.primaryColor(context);
         trendIcon = Icons.fiber_new;
         break;
     }
@@ -285,9 +285,9 @@ class ComparisonCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.compare_arrows,
-                  color: AppTokens.primary,
+                  color: AppTokens.primaryColor(context),
                   size: 20,
                 ),
                 const SizedBox(width: AppTokens.spacingXs),

@@ -182,9 +182,9 @@ class MedCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(
+                  icon:Icon(
                     Icons.delete_outline,
-                    color: AppTokens.error,
+                    color: AppTokens.errorColor(context),
                   ),
                   tooltip: l10n.setupMedDeleteDrug,
                   onPressed: onRemove,

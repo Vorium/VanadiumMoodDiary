@@ -82,8 +82,8 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
             const SizedBox(height: AppTokens.spacingXs),
             Text(
               widget.validationError!,
-              style: const TextStyle(
-                color: AppTokens.error,
+              style:TextStyle(
+                color: AppTokens.errorColor(context),
                 fontSize: AppTokens.fontSizeCaption,
               ),
             ),

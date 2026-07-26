@@ -329,11 +329,11 @@ class _DayDetailCard extends StatelessWidget {
                     ),
                     child: Text(
                       l10n.trendCheckedIn,
-                      style: const TextStyle(
+                      style: TextStyle(
                         // v0.22 round 29 (emil-16): emil 报告原文用 11, 实际是 10 微小字
                         // 改用 fontSizeMicro token
                         fontSize: AppTokens.fontSizeMicro,
-                        color: AppTokens.primary,
+                        color: AppTokens.primaryColor(context),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -500,9 +500,9 @@ class _EventRow extends StatelessWidget {
         '${e.time.minute.toString().padLeft(2, '0')}';
     switch (e.kind) {
       case DayEventKind.checkInNormal:
-        return (Icons.check_circle, AppTokens.primary, time);
+        return (Icons.check_circle, AppTokens.primaryColor(context), time);
       case DayEventKind.checkInTemp:
-        return (Icons.healing_outlined, AppTokens.warning, time);
+        return (Icons.healing_outlined, AppTokens.warningColor(context), time);
       case DayEventKind.assessment:
         return (Icons.psychology_outlined, theme.colorScheme.tertiary, time);
       case DayEventKind.mood:

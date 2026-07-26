@@ -55,9 +55,9 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.notifications_active_outlined,
-                  color: AppTokens.primary,
+                  color: AppTokens.primaryColor(context),
                 ),
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(

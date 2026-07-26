@@ -56,9 +56,9 @@ class LoadingSkeleton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(
+            CircularProgressIndicator(
               strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(AppTokens.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(AppTokens.primaryColor(context)),
             ),
             if (message != null) ...[
               const SizedBox(height: AppTokens.spacingMd),
@@ -94,7 +94,7 @@ class LoadingSpinner extends StatelessWidget {
       child: CircularProgressIndicator(
         strokeWidth: 2.5,
         valueColor: AlwaysStoppedAnimation<Color>(
-          color ?? AppTokens.primary,
+          color ?? AppTokens.primaryColor(context),
         ),
       ),
     );

@@ -138,7 +138,7 @@ class _EntryList extends ConsumerWidget {
                     TextButton(
                       onPressed: () => Navigator.pop(dialogCtx, true),
                       style: TextButton.styleFrom(
-                        foregroundColor: AppTokens.error,
+                        foregroundColor: AppTokens.errorColor(context),
                       ),
                       child: Text(l10n.commonDelete),
                     ),
@@ -181,7 +181,7 @@ class _SwipeDeleteBackground extends StatelessWidget {
       alignment: Alignment.centerRight,
       padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
       decoration: BoxDecoration(
-        color: AppTokens.error,
+        color: AppTokens.errorColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
       ),
       child: Icon(
@@ -229,7 +229,7 @@ class _EntryCard extends StatelessWidget {
               child: Icon(
                 entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
                 color: entry.hasAudio
-                    ? AppTokens.primary
+                    ? AppTokens.primaryColor(context)
                     : AppTokens.textSecondaryColor(context),
                 size: AppTokens.iconSize,
               ),
@@ -292,7 +292,7 @@ class _EntryCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppTokens.error),
+            style: TextButton.styleFrom(foregroundColor: AppTokens.errorColor(context)),
             child: Text(AppLocalizations.of(context).commonDelete),
           ),
         ],

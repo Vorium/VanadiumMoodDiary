@@ -79,9 +79,9 @@ class MedicationListView extends StatelessWidget {
   Widget _buildCalendarEntry(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const Icon(
+        leading:Icon(
           Icons.calendar_view_month,
-          color: AppTokens.primary,
+          color: AppTokens.primaryColor(context),
         ),
         title: Text(AppLocalizations.of(context).medsCalendarTitle),
         subtitle: Text(AppLocalizations.of(context).medsCalendarSubtitle),

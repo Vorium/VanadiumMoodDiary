@@ -17,9 +17,9 @@ class LegalSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: AppListTile(
-        leading: const Icon(
+        leading:Icon(
           Icons.gavel_outlined,
-          color: AppTokens.primary,
+          color: AppTokens.primaryColor(context),
         ),
         title: Text(
           AppLocalizations.of(context).settingsLegalAndPrivacy,
