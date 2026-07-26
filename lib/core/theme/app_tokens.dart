@@ -607,6 +607,33 @@ class AppTokens {
         color: textSecondaryColor(context),
       );
 
+  /// v0.25 round 50 (emil R50): 24/w700 评估大数字 (单日分数 / 危机分)
+  /// 替代散落 5+ 处 `TextStyle(fontSize: 24, fontWeight: w700)` (PHQ-9 分数 / 评估大数字)
+  static TextStyle textStyleScoreLg(BuildContext context) => TextStyle(
+        fontSize: fontSizeScoreLg,
+        fontWeight: FontWeight.w700,
+        height: lineHeightTight,
+        color: textPrimaryColor(context),
+      );
+
+  /// v0.25 round 50 (emil R50): 32/w700 周报大数字
+  /// 替代散落 3+ 处 `TextStyle(fontSize: 32, fontWeight: w700)` (周报 / 月报 数字)
+  static TextStyle textStyleScoreXl(BuildContext context) => TextStyle(
+        fontSize: fontSizeScoreXl,
+        fontWeight: FontWeight.w700,
+        height: lineHeightTight,
+        color: textPrimaryColor(context),
+      );
+
+  /// v0.25 round 50 (emil R50): 64/w700 季度大数字 (空态 / setup done check)
+  /// 替代散落 3+ 处 `TextStyle(fontSize: 64, fontWeight: w700)` (setup_step_done / empty state)
+  static TextStyle textStyleScoreXxl(BuildContext context) => TextStyle(
+        fontSize: fontSizeScoreXxl,
+        fontWeight: FontWeight.w700,
+        height: lineHeightTight,
+        color: textPrimaryColor(context),
+      );
+
   // ============= 响应式断点 =============
   // Material 3 推荐的 window size class 边界
   /// 紧凑（手机竖屏）：< 600
