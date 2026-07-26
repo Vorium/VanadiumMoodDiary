@@ -12,9 +12,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appName => '慢病管家';
 
   @override
-  String get appTagline => '我今天吃了药';
-
-  @override
   String get homeCheckIn => '我今天吃了药';
 
   @override
@@ -65,9 +62,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupContacts => '紧急联系人手机号（至少 1 个）';
 
   @override
-  String get setupContactHint => '13800138000';
-
-  @override
   String get setupAddContact => '+ 添加另一个联系人';
 
   @override
@@ -77,25 +71,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupNext => '下一步 →';
 
   @override
-  String get setupMedName => '药名';
-
-  @override
   String get setupMedNameHint => '请输入药盒上的名称（选填）';
-
-  @override
-  String get setupMedFrequency => '每日次数';
-
-  @override
-  String get setupMedTimes1 => '1次';
-
-  @override
-  String get setupMedTimes2 => '2次';
-
-  @override
-  String get setupMedTimes3 => '3次';
-
-  @override
-  String get setupMedSchedule => '吃药时间（可填）';
 
   @override
   String get setupStart => '开始我的第 1 天';
@@ -144,9 +120,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsDisclaimer => '免责声明';
-
-  @override
-  String get settingsExport => '导出数据';
 
   @override
   String get settingsMedReport => '用药报告';
@@ -294,11 +267,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsClearAllDataSuccess => '已清空所有数据';
 
   @override
-  String settingsClearAllDataFailed(Object error) {
-    return '清空失败：$error';
-  }
-
-  @override
   String get commonSave => '保存';
 
   @override
@@ -311,16 +279,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonEdit => '编辑';
 
   @override
-  String get commonDone => '完成';
-
-  @override
-  String get commonConfirm => '确认';
-
-  @override
   String get commonLoading => '加载中……';
-
-  @override
-  String get commonError => '出错了，请重试';
 
   @override
   String get lastStartupErrorBannerBody => '上次启动出错，请截图反馈';
@@ -356,12 +315,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get commonDeleteWarning => '删除后无法恢复';
-
-  @override
-  String get commonEmpty => '还没有';
-
-  @override
   String snackbarErrorTemplate(String action, String error) {
     return '$action失败：$error';
   }
@@ -385,9 +338,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonConfirmOk => '确定';
 
   @override
-  String get commonTakePhoto => '拍照';
-
-  @override
   String get commonMedName => '药名';
 
   @override
@@ -395,16 +345,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get commonSetup => '设置';
-
-  @override
-  String commonAutoCheckinFailed(String error) {
-    return '自动打卡失败：$error';
-  }
-
-  @override
-  String commonCheckinFailed(String error) {
-    return '打卡失败：$error';
-  }
 
   @override
   String get commonVentDeleteWarning => '删了就没了。文字和录音都会一起删。';
@@ -844,21 +784,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventRerecord => '重录';
 
   @override
-  String ventDurationSeconds(int seconds) {
-    return '$seconds秒';
-  }
-
-  @override
-  String ventDurationMinutes(int minutes) {
-    return '$minutes分';
-  }
-
-  @override
-  String ventDurationMinutesSeconds(int minutes, int seconds) {
-    return '$minutes分$seconds秒';
-  }
-
-  @override
   String get moodDialogTitle => '今天怎么样？';
 
   @override
@@ -913,11 +838,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodAudioRecordButton => '录语音';
 
   @override
-  String moodAudioRecording(String elapsed) {
-    return '录音中……$elapsed';
-  }
-
-  @override
   String moodAudioRecorded(String duration) {
     return '已录 $duration';
   }
@@ -926,13 +846,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodAudioRerecord => '重录';
 
   @override
-  String get moodAudioDeleteRecording => '删除录音';
-
-  @override
   String get moodAudioTranscriptLabel => '识别文字';
-
-  @override
-  String get moodAudioTranscriptEmpty => '未识别到内容';
 
   @override
   String get moodAudioTranscriptPartialHint => '（仅识别前 60 秒）';
@@ -954,11 +868,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodAudioPlayAction => '回放';
-
-  @override
-  String moodAudioDurationTemplate(String minutes, String seconds) {
-    return '$minutes:$seconds';
-  }
 
   @override
   String get moodAudioErrorStart => '开始录音失败';
@@ -1288,11 +1197,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String setupSaveFailed(String error) {
-    return '保存失败：$error';
-  }
-
-  @override
   String get setupMedWhatDoYouTake => '您常吃什么药？';
 
   @override
@@ -1420,9 +1324,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legalPageConsentNever => '从未撤回';
 
   @override
-  String get legalPageResetConsent => '重新同意';
-
-  @override
   String get emailPreviewTitle => '通知预览';
 
   @override
@@ -1507,11 +1408,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeSnoozeConfirmed => '好，5 分钟后会再提醒您 👌';
-
-  @override
-  String homeSnoozeFailed(String error) {
-    return 'Snooze 失败：$error';
-  }
 
   @override
   String get homeSnoozeButton => '⏰ 5 分钟后再提醒';
@@ -1745,9 +1641,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medReportShareSubject => '慢病管家 · 用药报告';
 
   @override
-  String get medReportGenPdfAction => '生成 PDF';
-
-  @override
   String get tempMedDialogTitle => '添加临时吃药';
 
   @override
@@ -1854,9 +1747,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snackbarActionUndo => '撤销';
 
   @override
-  String get listSwipeDeleteHint => '左滑删除';
-
-  @override
   String get ventEntryDeleted => '已删除树洞条目';
 
   @override
@@ -1950,21 +1840,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentSaveFailed => '评估结果已显示，但保存失败。请稍后重试。';
 
   @override
-  String get moodLabel1 => '很差';
-
-  @override
-  String get moodLabel2 => '差';
-
-  @override
-  String get moodLabel3 => '一般';
-
-  @override
-  String get moodLabel4 => '好';
-
-  @override
-  String get moodLabel5 => '很好';
-
-  @override
   String setupContactFallbackName(int index) {
     return '联系人 $index';
   }
@@ -1977,18 +1852,6 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get emailFooterI18n =>
       '这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。';
-
-  @override
-  String get notifChannelMedicationNameI18n => '吃药提醒';
-
-  @override
-  String get notifChannelMedicationDescI18n => '到点提醒你吃药打卡';
-
-  @override
-  String get notifDailyCheckInTitleI18n => '🌱 今天吃了药吗？';
-
-  @override
-  String get notifDailyCheckInBodyI18n => '点一下 = 打卡，让家人放心';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -1997,9 +1860,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get appName => '慢病管家';
-
-  @override
-  String get appTagline => '我今天吃了藥';
 
   @override
   String get homeCheckIn => '我今天吃了藥';
@@ -2052,9 +1912,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupContacts => '緊急聯繫人手機號（至少 1 個）';
 
   @override
-  String get setupContactHint => '13800138000';
-
-  @override
   String get setupAddContact => '+ 添加另一個聯繫人';
 
   @override
@@ -2064,25 +1921,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupNext => '下一步 →';
 
   @override
-  String get setupMedName => '藥名';
-
-  @override
   String get setupMedNameHint => '請輸入藥盒上的名稱（選填）';
-
-  @override
-  String get setupMedFrequency => '每日次數';
-
-  @override
-  String get setupMedTimes1 => '1次';
-
-  @override
-  String get setupMedTimes2 => '2次';
-
-  @override
-  String get setupMedTimes3 => '3次';
-
-  @override
-  String get setupMedSchedule => '吃藥時間（可填）';
 
   @override
   String get setupStart => '開始我的第 1 天';
@@ -2131,9 +1970,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsDisclaimer => '免責聲明';
-
-  @override
-  String get settingsExport => '導出數據';
 
   @override
   String get settingsMedReport => '用藥報告';
@@ -2281,11 +2117,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsClearAllDataSuccess => '已清空所有數據';
 
   @override
-  String settingsClearAllDataFailed(Object error) {
-    return '清空失敗：$error';
-  }
-
-  @override
   String get commonSave => '保存';
 
   @override
@@ -2298,16 +2129,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get commonEdit => '編輯';
 
   @override
-  String get commonDone => '完成';
-
-  @override
-  String get commonConfirm => '確認';
-
-  @override
   String get commonLoading => '加載中……';
-
-  @override
-  String get commonError => '出錯了，請重試';
 
   @override
   String get lastStartupErrorBannerBody => '上次啟動出錯，請截圖反饋';
@@ -2343,12 +2165,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get commonDeleteWarning => '刪除後無法恢復';
-
-  @override
-  String get commonEmpty => '還沒有';
-
-  @override
   String snackbarErrorTemplate(String action, String error) {
     return '$action失敗：$error';
   }
@@ -2372,9 +2188,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get commonConfirmOk => '確定';
 
   @override
-  String get commonTakePhoto => '拍照';
-
-  @override
   String get commonMedName => '藥名';
 
   @override
@@ -2382,16 +2195,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get commonSetup => '設置';
-
-  @override
-  String commonAutoCheckinFailed(String error) {
-    return '自動打卡失敗：$error';
-  }
-
-  @override
-  String commonCheckinFailed(String error) {
-    return '打卡失敗：$error';
-  }
 
   @override
   String get commonVentDeleteWarning => '刪了就沒了。文字和錄音都會一起刪。';
@@ -2831,21 +2634,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventRerecord => '重錄';
 
   @override
-  String ventDurationSeconds(int seconds) {
-    return '$seconds秒';
-  }
-
-  @override
-  String ventDurationMinutes(int minutes) {
-    return '$minutes分';
-  }
-
-  @override
-  String ventDurationMinutesSeconds(int minutes, int seconds) {
-    return '$minutes分$seconds秒';
-  }
-
-  @override
   String get moodDialogTitle => '今天怎麼樣？';
 
   @override
@@ -2900,11 +2688,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodAudioRecordButton => '錄語音';
 
   @override
-  String moodAudioRecording(String elapsed) {
-    return '錄音中… $elapsed';
-  }
-
-  @override
   String moodAudioRecorded(String duration) {
     return '已錄 $duration';
   }
@@ -2913,13 +2696,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodAudioRerecord => '重錄';
 
   @override
-  String get moodAudioDeleteRecording => '刪除錄音';
-
-  @override
   String get moodAudioTranscriptLabel => '識別文字';
-
-  @override
-  String get moodAudioTranscriptEmpty => '未識別到內容';
 
   @override
   String get moodAudioTranscriptPartialHint => '（僅識別前 60 秒）';
@@ -2941,11 +2718,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodAudioPlayAction => '回放';
-
-  @override
-  String moodAudioDurationTemplate(String minutes, String seconds) {
-    return '$minutes:$seconds';
-  }
 
   @override
   String get moodAudioErrorStart => '開始錄音失敗';
@@ -3275,11 +3047,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String setupSaveFailed(String error) {
-    return '保存失敗：$error';
-  }
-
-  @override
   String get setupMedWhatDoYouTake => '您常吃什麼藥？';
 
   @override
@@ -3407,9 +3174,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get legalPageConsentNever => '從未撤回';
 
   @override
-  String get legalPageResetConsent => '重新同意';
-
-  @override
   String get emailPreviewTitle => '通知預覽';
 
   @override
@@ -3494,11 +3258,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeSnoozeConfirmed => '好，5 分鐘後會再提醒您 👌';
-
-  @override
-  String homeSnoozeFailed(String error) {
-    return 'Snooze 失敗：$error';
-  }
 
   @override
   String get homeSnoozeButton => '⏰ 5 分鐘後再提醒';
@@ -3732,9 +3491,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medReportShareSubject => '慢病管家 · 用藥報告';
 
   @override
-  String get medReportGenPdfAction => '生成 PDF';
-
-  @override
   String get tempMedDialogTitle => '添加臨時吃藥';
 
   @override
@@ -3841,9 +3597,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get snackbarActionUndo => '撤銷';
 
   @override
-  String get listSwipeDeleteHint => '左滑刪除';
-
-  @override
   String get ventEntryDeleted => '已刪除樹洞條目';
 
   @override
@@ -3937,21 +3690,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentSaveFailed => '評估結果已顯示，但儲存失敗。請稍後重試。';
 
   @override
-  String get moodLabel1 => '很差';
-
-  @override
-  String get moodLabel2 => '差';
-
-  @override
-  String get moodLabel3 => '一般';
-
-  @override
-  String get moodLabel4 => '好';
-
-  @override
-  String get moodLabel5 => '很好';
-
-  @override
   String setupContactFallbackName(int index) {
     return '聯繫人 $index';
   }
@@ -3964,16 +3702,4 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get emailFooterI18n =>
       '這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。';
-
-  @override
-  String get notifChannelMedicationNameI18n => '吃藥提醒';
-
-  @override
-  String get notifChannelMedicationDescI18n => '到點提醒你吃藥打卡';
-
-  @override
-  String get notifDailyCheckInTitleI18n => '🌱 今天吃了藥嗎？';
-
-  @override
-  String get notifDailyCheckInBodyI18n => '點一下 = 打卡，讓家人放心';
 }

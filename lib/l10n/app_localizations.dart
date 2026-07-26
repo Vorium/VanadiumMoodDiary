@@ -105,12 +105,6 @@ abstract class AppLocalizations {
   /// **'慢病管家'**
   String get appName;
 
-  /// No description provided for @appTagline.
-  ///
-  /// In zh, this message translates to:
-  /// **'我今天吃了药'**
-  String get appTagline;
-
   /// No description provided for @homeCheckIn.
   ///
   /// In zh, this message translates to:
@@ -195,12 +189,6 @@ abstract class AppLocalizations {
   /// **'紧急联系人手机号（至少 1 个）'**
   String get setupContacts;
 
-  /// No description provided for @setupContactHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'13800138000'**
-  String get setupContactHint;
-
   /// No description provided for @setupAddContact.
   ///
   /// In zh, this message translates to:
@@ -219,47 +207,11 @@ abstract class AppLocalizations {
   /// **'下一步 →'**
   String get setupNext;
 
-  /// No description provided for @setupMedName.
-  ///
-  /// In zh, this message translates to:
-  /// **'药名'**
-  String get setupMedName;
-
   /// No description provided for @setupMedNameHint.
   ///
   /// In zh, this message translates to:
   /// **'请输入药盒上的名称（选填）'**
   String get setupMedNameHint;
-
-  /// No description provided for @setupMedFrequency.
-  ///
-  /// In zh, this message translates to:
-  /// **'每日次数'**
-  String get setupMedFrequency;
-
-  /// No description provided for @setupMedTimes1.
-  ///
-  /// In zh, this message translates to:
-  /// **'1次'**
-  String get setupMedTimes1;
-
-  /// No description provided for @setupMedTimes2.
-  ///
-  /// In zh, this message translates to:
-  /// **'2次'**
-  String get setupMedTimes2;
-
-  /// No description provided for @setupMedTimes3.
-  ///
-  /// In zh, this message translates to:
-  /// **'3次'**
-  String get setupMedTimes3;
-
-  /// No description provided for @setupMedSchedule.
-  ///
-  /// In zh, this message translates to:
-  /// **'吃药时间（可填）'**
-  String get setupMedSchedule;
 
   /// No description provided for @setupStart.
   ///
@@ -356,12 +308,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'免责声明'**
   String get settingsDisclaimer;
-
-  /// No description provided for @settingsExport.
-  ///
-  /// In zh, this message translates to:
-  /// **'导出数据'**
-  String get settingsExport;
 
   /// No description provided for @settingsMedReport.
   ///
@@ -639,12 +585,6 @@ abstract class AppLocalizations {
   /// **'已清空所有数据'**
   String get settingsClearAllDataSuccess;
 
-  /// No description provided for @settingsClearAllDataFailed.
-  ///
-  /// In zh, this message translates to:
-  /// **'清空失败：{error}'**
-  String settingsClearAllDataFailed(Object error);
-
   /// No description provided for @commonSave.
   ///
   /// In zh, this message translates to:
@@ -669,29 +609,11 @@ abstract class AppLocalizations {
   /// **'编辑'**
   String get commonEdit;
 
-  /// No description provided for @commonDone.
-  ///
-  /// In zh, this message translates to:
-  /// **'完成'**
-  String get commonDone;
-
-  /// No description provided for @commonConfirm.
-  ///
-  /// In zh, this message translates to:
-  /// **'确认'**
-  String get commonConfirm;
-
   /// No description provided for @commonLoading.
   ///
   /// In zh, this message translates to:
   /// **'加载中……'**
   String get commonLoading;
-
-  /// No description provided for @commonError.
-  ///
-  /// In zh, this message translates to:
-  /// **'出错了，请重试'**
-  String get commonError;
 
   /// No description provided for @lastStartupErrorBannerBody.
   ///
@@ -747,18 +669,6 @@ abstract class AppLocalizations {
   /// **'加载失败：{error}'**
   String commonLoadFailed(String error);
 
-  /// No description provided for @commonDeleteWarning.
-  ///
-  /// In zh, this message translates to:
-  /// **'删除后无法恢复'**
-  String get commonDeleteWarning;
-
-  /// No description provided for @commonEmpty.
-  ///
-  /// In zh, this message translates to:
-  /// **'还没有'**
-  String get commonEmpty;
-
   /// Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)
   ///
   /// In zh, this message translates to:
@@ -801,12 +711,6 @@ abstract class AppLocalizations {
   /// **'确定'**
   String get commonConfirmOk;
 
-  /// No description provided for @commonTakePhoto.
-  ///
-  /// In zh, this message translates to:
-  /// **'拍照'**
-  String get commonTakePhoto;
-
   /// No description provided for @commonMedName.
   ///
   /// In zh, this message translates to:
@@ -824,18 +728,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'设置'**
   String get commonSetup;
-
-  /// No description provided for @commonAutoCheckinFailed.
-  ///
-  /// In zh, this message translates to:
-  /// **'自动打卡失败：{error}'**
-  String commonAutoCheckinFailed(String error);
-
-  /// No description provided for @commonCheckinFailed.
-  ///
-  /// In zh, this message translates to:
-  /// **'打卡失败：{error}'**
-  String commonCheckinFailed(String error);
 
   /// No description provided for @commonVentDeleteWarning.
   ///
@@ -1599,24 +1491,6 @@ abstract class AppLocalizations {
   /// **'重录'**
   String get ventRerecord;
 
-  /// No description provided for @ventDurationSeconds.
-  ///
-  /// In zh, this message translates to:
-  /// **'{seconds}秒'**
-  String ventDurationSeconds(int seconds);
-
-  /// No description provided for @ventDurationMinutes.
-  ///
-  /// In zh, this message translates to:
-  /// **'{minutes}分'**
-  String ventDurationMinutes(int minutes);
-
-  /// No description provided for @ventDurationMinutesSeconds.
-  ///
-  /// In zh, this message translates to:
-  /// **'{minutes}分{seconds}秒'**
-  String ventDurationMinutesSeconds(int minutes, int seconds);
-
   /// No description provided for @moodDialogTitle.
   ///
   /// In zh, this message translates to:
@@ -1725,12 +1599,6 @@ abstract class AppLocalizations {
   /// **'录语音'**
   String get moodAudioRecordButton;
 
-  /// No description provided for @moodAudioRecording.
-  ///
-  /// In zh, this message translates to:
-  /// **'录音中……{elapsed}'**
-  String moodAudioRecording(String elapsed);
-
   /// No description provided for @moodAudioRecorded.
   ///
   /// In zh, this message translates to:
@@ -1743,23 +1611,11 @@ abstract class AppLocalizations {
   /// **'重录'**
   String get moodAudioRerecord;
 
-  /// No description provided for @moodAudioDeleteRecording.
-  ///
-  /// In zh, this message translates to:
-  /// **'删除录音'**
-  String get moodAudioDeleteRecording;
-
   /// No description provided for @moodAudioTranscriptLabel.
   ///
   /// In zh, this message translates to:
   /// **'识别文字'**
   String get moodAudioTranscriptLabel;
-
-  /// No description provided for @moodAudioTranscriptEmpty.
-  ///
-  /// In zh, this message translates to:
-  /// **'未识别到内容'**
-  String get moodAudioTranscriptEmpty;
 
   /// No description provided for @moodAudioTranscriptPartialHint.
   ///
@@ -1802,12 +1658,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'回放'**
   String get moodAudioPlayAction;
-
-  /// No description provided for @moodAudioDurationTemplate.
-  ///
-  /// In zh, this message translates to:
-  /// **'{minutes}:{seconds}'**
-  String moodAudioDurationTemplate(String minutes, String seconds);
 
   /// No description provided for @moodAudioErrorStart.
   ///
@@ -2368,12 +2218,6 @@ abstract class AppLocalizations {
   /// **'已载入：{name}（{count} 个药）请核对药名和剂量'**
   String setupPresetLoaded(String name, int count);
 
-  /// No description provided for @setupSaveFailed.
-  ///
-  /// In zh, this message translates to:
-  /// **'保存失败：{error}'**
-  String setupSaveFailed(String error);
-
   /// No description provided for @setupMedWhatDoYouTake.
   ///
   /// In zh, this message translates to:
@@ -2614,12 +2458,6 @@ abstract class AppLocalizations {
   /// **'从未撤回'**
   String get legalPageConsentNever;
 
-  /// No description provided for @legalPageResetConsent.
-  ///
-  /// In zh, this message translates to:
-  /// **'重新同意'**
-  String get legalPageResetConsent;
-
   /// No description provided for @emailPreviewTitle.
   ///
   /// In zh, this message translates to:
@@ -2757,12 +2595,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'好，5 分钟后会再提醒您 👌'**
   String get homeSnoozeConfirmed;
-
-  /// No description provided for @homeSnoozeFailed.
-  ///
-  /// In zh, this message translates to:
-  /// **'Snooze 失败：{error}'**
-  String homeSnoozeFailed(String error);
 
   /// No description provided for @homeSnoozeButton.
   ///
@@ -3190,12 +3022,6 @@ abstract class AppLocalizations {
   /// **'慢病管家 · 用药报告'**
   String get medReportShareSubject;
 
-  /// No description provided for @medReportGenPdfAction.
-  ///
-  /// In zh, this message translates to:
-  /// **'生成 PDF'**
-  String get medReportGenPdfAction;
-
   /// No description provided for @tempMedDialogTitle.
   ///
   /// In zh, this message translates to:
@@ -3400,12 +3226,6 @@ abstract class AppLocalizations {
   /// **'撤销'**
   String get snackbarActionUndo;
 
-  /// No description provided for @listSwipeDeleteHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'左滑删除'**
-  String get listSwipeDeleteHint;
-
   /// No description provided for @ventEntryDeleted.
   ///
   /// In zh, this message translates to:
@@ -3562,36 +3382,6 @@ abstract class AppLocalizations {
   /// **'评估结果已显示，但保存失败。请稍后重试。'**
   String get assessmentSaveFailed;
 
-  /// No description provided for @moodLabel1.
-  ///
-  /// In zh, this message translates to:
-  /// **'很差'**
-  String get moodLabel1;
-
-  /// No description provided for @moodLabel2.
-  ///
-  /// In zh, this message translates to:
-  /// **'差'**
-  String get moodLabel2;
-
-  /// No description provided for @moodLabel3.
-  ///
-  /// In zh, this message translates to:
-  /// **'一般'**
-  String get moodLabel3;
-
-  /// No description provided for @moodLabel4.
-  ///
-  /// In zh, this message translates to:
-  /// **'好'**
-  String get moodLabel4;
-
-  /// No description provided for @moodLabel5.
-  ///
-  /// In zh, this message translates to:
-  /// **'很好'**
-  String get moodLabel5;
-
   /// No description provided for @setupContactFallbackName.
   ///
   /// In zh, this message translates to:
@@ -3609,30 +3399,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。'**
   String get emailFooterI18n;
-
-  /// No description provided for @notifChannelMedicationNameI18n.
-  ///
-  /// In zh, this message translates to:
-  /// **'吃药提醒'**
-  String get notifChannelMedicationNameI18n;
-
-  /// No description provided for @notifChannelMedicationDescI18n.
-  ///
-  /// In zh, this message translates to:
-  /// **'到点提醒你吃药打卡'**
-  String get notifChannelMedicationDescI18n;
-
-  /// No description provided for @notifDailyCheckInTitleI18n.
-  ///
-  /// In zh, this message translates to:
-  /// **'🌱 今天吃了药吗？'**
-  String get notifDailyCheckInTitleI18n;
-
-  /// No description provided for @notifDailyCheckInBodyI18n.
-  ///
-  /// In zh, this message translates to:
-  /// **'点一下 = 打卡，让家人放心'**
-  String get notifDailyCheckInBodyI18n;
 }
 
 class _AppLocalizationsDelegate

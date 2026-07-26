@@ -1,32 +1,44 @@
 {
   "@@locale": "zh_Hant",
-
   "appName": "慢病管家",
-  "appTagline": "我今天吃了藥",
-
   "homeCheckIn": "我今天吃了藥",
   "homeCheckedIn": "今天已打卡 ✓",
   "homeStreak": "已堅持 {days} 天",
   "@homeStreak": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeLastMed": "最後吃藥：{time}",
   "@homeLastMed": {
-    "placeholders": { "time": { "type": "String" } }
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   },
   "homeNextReminder": "下次提醒：{time}",
   "@homeNextReminder": {
-    "placeholders": { "time": { "type": "String" } }
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   },
   "homeStillOnline": "🌱 您還在線",
   "homeTempMed": "臨時吃藥 +",
   "homeStreakBroken": "少 1 次沒關係，明天繼續",
-
   "setupStep": "第 {current} 步 / 共 {total} 步",
   "@setupStep": {
     "placeholders": {
-      "current": { "type": "int" },
-      "total": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "setupHello": "您好，我是慢病管家",
@@ -34,17 +46,10 @@
   "setupName": "您的名字（選填）",
   "setupNameHint": "小明",
   "setupContacts": "緊急聯繫人手機號（至少 1 個）",
-  "setupContactHint": "13800138000",
   "setupAddContact": "+ 添加另一個聯繫人",
   "setupContactConsent": "我已告知上述聯繫人，App 會在我失聯時給他們發通知",
   "setupNext": "下一步 →",
-  "setupMedName": "藥名",
   "setupMedNameHint": "請輸入藥盒上的名稱（選填）",
-  "setupMedFrequency": "每日次數",
-  "setupMedTimes1": "1次",
-  "setupMedTimes2": "2次",
-  "setupMedTimes3": "3次",
-  "setupMedSchedule": "吃藥時間（可填）",
   "setupStart": "開始我的第 1 天",
   "setupDoneTitle": "全部完成！",
   "setupDoneSubtitle": "明天開始您的第 1 天",
@@ -56,13 +61,11 @@
   "setupPrivacy1": "• 本地加密",
   "setupPrivacy2": "• 不會上傳到任何雲端服務器",
   "setupPrivacy3": "• 您可以隨時導出",
-
   "settingsContacts": "緊急聯繫人",
   "settingsMedication": "常吃藥",
   "settingsEmailPreview": "預覽停藥通知郵件",
   "settingsAbout": "關於",
   "settingsDisclaimer": "免責聲明",
-  "settingsExport": "導出數據",
   "settingsMedReport": "用藥報告",
   "settingsMedReportSubtitle": "選時間窗口（7／14／30 天），給醫生看",
   "settingsMedReportChooseTitle": "選擇時間窗口",
@@ -102,11 +105,14 @@
   "settingsImportHint": "把導出的 JSON 粘貼到這裡",
   "settingsImportSuccess": "導入完成：{summary}",
   "@settingsImportSuccess": {
-    "placeholders": { "summary": { "type": "String" } }
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
   },
   "settingsActionImport": "導入",
   "settingsImportAndOverwrite": "導入並覆蓋",
-
   "@_v0.21_round_22_settings_clear_all_data": {},
   "settingsClearAllData": "清空所有數據",
   "settingsClearAllDataSubtitle": "刪除全部打卡 ／ 用藥 ／ 評估 ／ 樹洞 ／ 聯繫人（無法恢復）",
@@ -114,16 +120,11 @@
   "settingsClearAllDataDialogBody": "以下數據將被永久刪除，無法恢復：\n• 打卡記錄\n• 用藥與服藥歷史\n• 心理評估結果\n• 情緒日記\n• 樹洞（文字+錄音）\n• 緊急聯繫人\n\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。",
   "settingsClearAllDataConfirm": "我已備份，確認清空",
   "settingsClearAllDataSuccess": "已清空所有數據",
-  "settingsClearAllDataFailed": "清空失敗：{error}",
-
   "commonSave": "保存",
   "commonCancel": "取消",
   "commonDelete": "刪除",
   "commonEdit": "編輯",
-  "commonDone": "完成",
-  "commonConfirm": "確認",
   "commonLoading": "加載中……",
-  "commonError": "出錯了，請重試",
   "lastStartupErrorBannerBody": "上次啟動出錯，請截圖反饋",
   "commonClose": "關閉",
   "commonRetry": "重試",
@@ -133,30 +134,43 @@
   "legalConsentWithdrawn": "已撤回 ({current}/{total})",
   "@legalConsentWithdrawn": {
     "placeholders": {
-      "current": { "type": "int" },
-      "total": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "legalConsentReAgreed": "已重新同意 ({current}/{total})",
   "@legalConsentReAgreed": {
     "placeholders": {
-      "current": { "type": "int" },
-      "total": { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "commonLoadFailed": "加載失敗：{error}",
   "@commonLoadFailed": {
-    "placeholders": { "error": { "type": "String" } }
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
-  "commonDeleteWarning": "刪除後無法恢復",
-  "commonEmpty": "還沒有",
-
   "snackbarErrorTemplate": "{action}失敗：{error}",
   "@snackbarErrorTemplate": {
     "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)",
     "placeholders": {
-      "action": { "type": "String" },
-      "error": { "type": "String" }
+      "action": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
     }
   },
   "snackbarCopied": "已複製到剪貼板",
@@ -164,22 +178,11 @@
   "snackbarEmptyVent": "寫點東西或錄一段吧",
   "snackbarStopRecording": "請先停止錄音",
   "snackbarPhoneInvalid": "號碼格式不對（支持大陸／港澳臺／國際）",
-
   "commonConfirmOk": "確定",
-  "commonTakePhoto": "拍照",
   "commonMedName": "藥名",
   "commonDoseUnit": "片",
   "commonSetup": "設置",
-  "commonAutoCheckinFailed": "自動打卡失敗：{error}",
-  "@commonAutoCheckinFailed": {
-    "placeholders": { "error": { "type": "String" } }
-  },
-  "commonCheckinFailed": "打卡失敗：{error}",
-  "@commonCheckinFailed": {
-    "placeholders": { "error": { "type": "String" } }
-  },
   "commonVentDeleteWarning": "刪了就沒了。文字和錄音都會一起刪。",
-
   "medsListEmpty": "還沒添加常吃藥",
   "medsCalendarTitle": "用藥日曆",
   "medsCalendarSubtitle": "醫生視角依從性熱力圖 · 7／30／90 天",
@@ -193,37 +196,54 @@
   "medsRefillSet": "已設置：{date} 續方，提前 {days} 天提醒",
   "@medsRefillSet": {
     "placeholders": {
-      "date": { "type": "String" },
-      "days": { "type": "int" }
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
     }
   },
   "medsActionRefill": "設置續方",
   "medsRefillOverdue": "已過期 {days} 天 · 提前 {reminderDays} 天提醒",
   "@medsRefillOverdue": {
     "placeholders": {
-      "days": { "type": "int" },
-      "reminderDays": { "type": "int" }
+      "days": {
+        "type": "int"
+      },
+      "reminderDays": {
+        "type": "int"
+      }
     }
   },
   "medsRefillUpcoming": "續方：{date}（{days} 天后）· 提前 {reminderDays} 天提醒",
   "@medsRefillUpcoming": {
     "placeholders": {
-      "date": { "type": "String" },
-      "days": { "type": "int" },
-      "reminderDays": { "type": "int" }
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      },
+      "reminderDays": {
+        "type": "int"
+      }
     }
   },
   "medsRefillDaysTitle": "提前幾天提醒？",
   "medsRefillDaysUnit": "{days} 天",
   "@medsRefillDaysUnit": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "medsRefillHint3": "最後衝刺期",
   "medsRefillHint5": "比較緊",
   "medsRefillHint7": "推薦（默認）",
   "medsRefillHint14": "兩週時間掛號",
   "medsRefillHint30": "一個月週期",
-
   "notificationStatusCardTestTitle": "🔔 通知自檢",
   "notificationStatusCardTestBody": "看到這條 = 通知工作正常。如果沒看到，看下面的國產手機設置",
   "notificationStatusCardTestSent": "已發送測試通知 — 幾秒內應該能收到",
@@ -238,7 +258,11 @@
   "notificationStatusCardStatusNone": "⚠️ 沒有待發通知 — 提醒可能沒設上",
   "notificationStatusCardStatusCount": "✓ 已排隊 {count} 條待發通知",
   "@notificationStatusCardStatusCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "notificationStatusCardTitle": "通知與提醒",
   "notificationStatusCardTestButtonTitle": "測試通知",
@@ -273,7 +297,6 @@
   "notificationStatusCardOemStepOthers1": "設置 → 應用 → 慢病管家 → 通知 → 全部開啟",
   "notificationStatusCardOemStepOthers2": "設置 → 電池 → 後臺運行 → 改為「允許」",
   "notificationStatusCardOemGeneralTip": "通用建議：精確鬧鐘被某些 ROM 靜默拒絕時，首次啟動 App 時系統會彈「是否允許」，請選「允許」。",
-
   "reminderHubDescription": "集中管理所有提醒：每天打卡、用藥時間、續方日期、心理評估、失聯通知。",
   "reminderHubDailyTitle": "每日打卡提醒",
   "reminderHubDailyDesc": "每天 20:00 推送「記得打卡」，漏 1 次沒關係",
@@ -285,12 +308,20 @@
   "reminderHubAssessmentTitle": "週期評估提醒",
   "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做心理評估（PHQ-9 ／ GAD-7）",
   "@reminderHubAssessmentDescEnabled": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubAssessmentDescDisabled": "關閉 · 不會推送評估提醒",
   "reminderHubAssessmentStatusEnabled": "已啟用 · 每 {days} 天",
   "@reminderHubAssessmentStatusEnabled": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubStatusDisabled": "未啟用",
   "reminderHubConfigure": "配置",
@@ -298,26 +329,42 @@
   "reminderHubSmsMockWarning": "SMS 通道未接通（當前使用 Mock）。失聯觸發時只會推本地通知，不會真發短信給緊急聯繫人。上 store 前必須接入真實 SMS provider。",
   "reminderHubSafetyDescEnabled": "連續 {threshold} 天沒打卡 → 自動 SMS 通知緊急聯繫人 + 本地推送",
   "@reminderHubSafetyDescEnabled": {
-    "placeholders": { "threshold": { "type": "int" } }
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubSafetyDescDisabled": "關閉 · 不會自動通知緊急聯繫人",
   "reminderHubSafetyStatusEnabled": "已啟用 · 閾值 {threshold} 天",
   "@reminderHubSafetyStatusEnabled": {
-    "placeholders": { "threshold": { "type": "int" } }
+    "placeholders": {
+      "threshold": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubMedicationDescActive": "共 {count} 種在用藥物，{times} 個時間點會推送提醒",
   "@reminderHubMedicationDescActive": {
     "placeholders": {
-      "count": { "type": "int" },
-      "times": { "type": "int" }
+      "count": {
+        "type": "int"
+      },
+      "times": {
+        "type": "int"
+      }
     }
   },
   "reminderHubMedicationDescInactive": "還沒有在用藥物 · 添加後會自動啟用",
   "reminderHubMedicationStatusActive": "已啟用 · {count} 種 ／ {times} 時間點",
   "@reminderHubMedicationStatusActive": {
     "placeholders": {
-      "count": { "type": "int" },
-      "times": { "type": "int" }
+      "count": {
+        "type": "int"
+      },
+      "times": {
+        "type": "int"
+      }
     }
   },
   "reminderHubStatusNotConfigured": "未配置",
@@ -326,25 +373,45 @@
   "reminderHubRefillDescOverdue": "{overdue} 種已過期續方 · {inWindow} 種在提醒窗口內",
   "@reminderHubRefillDescOverdue": {
     "placeholders": {
-      "overdue": { "type": "int" },
-      "inWindow": { "type": "int" }
+      "overdue": {
+        "type": "int"
+      },
+      "inWindow": {
+        "type": "int"
+      }
     }
   },
   "reminderHubRefillDescActive": "{count} 種藥物已設續方 · 臨近時會推送提醒",
   "@reminderHubRefillDescActive": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubRefillStatusOverdue": "已過期 {count}",
   "@reminderHubRefillStatusOverdue": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubRefillStatusInWindow": "提醒中 {count}",
   "@reminderHubRefillStatusInWindow": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubRefillStatusActive": "已啟用 · {count} 種",
   "@reminderHubRefillStatusActive": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubManageRefill": "管理續方",
   "reminderHubEnable": "啟用",
@@ -352,25 +419,40 @@
   "reminderHubInterval": "提醒間隔",
   "reminderHubEveryNDays": "每 {days} 天",
   "@reminderHubEveryNDays": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "reminderHubSafetyDescription": "連續 N 天沒打卡 → 自動 SMS 通知所有啟用的緊急聯繫人 + 本地推送",
   "reminderHubTriggerThreshold": "觸發閾值（連續 N 天沒打卡）",
   "reminderHubNDays": "{days} 天",
   "@reminderHubNDays": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "setupContactNameLabel": "聯繫人 {index} 姓名",
   "@setupContactNameLabel": {
-    "placeholders": { "index": { "type": "int" } }
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
   },
   "setupContactNameHint": "稱呼（選填）",
   "setupContactPhoneLabel": "緊急聯繫人手機號 {index}",
   "@setupContactPhoneLabel": {
-    "placeholders": { "index": { "type": "int" } }
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
   },
   "setupContactPhoneHint": "13800138000",
-
   "ventListTitle": "我的樹洞",
   "ventListWriteTooltip": "寫一條",
   "ventEmptyTitle": "樹洞還是空的",
@@ -388,21 +470,6 @@
   "ventRecordActive": "正在錄音… 點停止",
   "ventAudioLabel": "錄音",
   "ventRerecord": "重錄",
-  "ventDurationSeconds": "{seconds}秒",
-  "@ventDurationSeconds": {
-    "placeholders": { "seconds": { "type": "int" } }
-  },
-  "ventDurationMinutes": "{minutes}分",
-  "@ventDurationMinutes": {
-    "placeholders": { "minutes": { "type": "int" } }
-  },
-  "ventDurationMinutesSeconds": "{minutes}分{seconds}秒",
-  "@ventDurationMinutesSeconds": {
-    "placeholders": {
-      "minutes": { "type": "int" },
-      "seconds": { "type": "int" }
-    }
-  },
   "moodDialogTitle": "今天怎麼樣？",
   "moodDimensionMood": "情緒",
   "moodDimensionMoodHint": "1=很差 5=很好",
@@ -420,20 +487,17 @@
   "moodTagLowEnergy": "能量低",
   "moodNoteLabel": "備註（可選）",
   "moodNoteHint": "今天發生什麼？",
-
   "moodAudioRecordButton": "錄語音",
-  "moodAudioRecording": "錄音中… {elapsed}",
-  "@moodAudioRecording": {
-    "placeholders": { "elapsed": { "type": "String" } }
-  },
   "moodAudioRecorded": "已錄 {duration}",
   "@moodAudioRecorded": {
-    "placeholders": { "duration": { "type": "String" } }
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
   },
   "moodAudioRerecord": "重錄",
-  "moodAudioDeleteRecording": "刪除錄音",
   "moodAudioTranscriptLabel": "識別文字",
-  "moodAudioTranscriptEmpty": "未識別到內容",
   "moodAudioTranscriptPartialHint": "（僅識別前 60 秒）",
   "moodAudioSttListening": "識別中…",
   "moodAudioSttFailed": "識別失敗，已僅保存錄音",
@@ -441,13 +505,6 @@
   "moodAudioMaxReached": "已達 3 分鐘上限",
   "moodAudioSavedWithPlay": "情緒已保存",
   "moodAudioPlayAction": "回放",
-  "moodAudioDurationTemplate": "{minutes}:{seconds}",
-  "@moodAudioDurationTemplate": {
-    "placeholders": {
-      "minutes": { "type": "String" },
-      "seconds": { "type": "String" }
-    }
-  },
   "moodAudioErrorStart": "開始錄音失敗",
   "moodAudioErrorStop": "停止錄音失敗",
   "moodAudioErrorEncrypt": "加密錄音失敗",
@@ -465,45 +522,77 @@
   "medsRefillStatusOverdue": "已過期",
   "medsRefillNotSetSubtitle": "未設續方日期 · 提醒窗口 {days} 天",
   "@medsRefillNotSetSubtitle": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "medsRefillExpiredDays": "已過 {days} 天",
   "@medsRefillExpiredDays": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "medsRefillToday": "今天",
   "medsRefillRemainingDays": "還有 {days} 天",
   "@medsRefillRemainingDays": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "medsRefillSubtitleTemplate": "{date} {suffix} · 提前 {reminderDays} 天提醒",
   "@medsRefillSubtitleTemplate": {
     "placeholders": {
-      "date": { "type": "String" },
-      "suffix": { "type": "String" },
-      "reminderDays": { "type": "int" }
+      "date": {
+        "type": "String"
+      },
+      "suffix": {
+        "type": "String"
+      },
+      "reminderDays": {
+        "type": "int"
+      }
     }
   },
   "assessmentLoadingBack": "正在返回上一頁……",
   "assessmentAnsweredProgress": "已答 {answered} ／ {total}",
   "@assessmentAnsweredProgress": {
     "placeholders": {
-      "answered": { "type": "int" },
-      "total": { "type": "int" }
+      "answered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "assessmentSubmit": "提交併查看結果",
   "assessmentQuestionLabel": "評估題 {index}：{text}，4 項單選，當前：{selected}",
   "@assessmentQuestionLabel": {
     "placeholders": {
-      "index": { "type": "int" },
-      "text": { "type": "String" },
-      "selected": { "type": "String" }
+      "index": {
+        "type": "int"
+      },
+      "text": {
+        "type": "String"
+      },
+      "selected": {
+        "type": "String"
+      }
     }
   },
   "assessmentScoreTotal": "總分（0-{max}）",
   "@assessmentScoreTotal": {
-    "placeholders": { "max": { "type": "int" } }
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
   },
   "assessmentRecommendUrgent": "強烈建議您儘快聯繫醫生或心理治療師。",
   "assessmentRecommend": "建議您聯繫醫生做進一步評估。",
@@ -513,7 +602,11 @@
   "homeHeaderDefaultTitle": "慢病管家",
   "homeHeaderKeepGoing": "{name} 還在堅持",
   "@homeHeaderKeepGoing": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "homeTooltipTrend": "查看趨勢",
   "homeTooltipAssessmentHistory": "評估歷史",
@@ -521,42 +614,72 @@
   "homeStreakDay1": "第 1 天，邁出第一步 🌱",
   "homeStreakDays": "堅持 {days} 天，繼續 🌿",
   "@homeStreakDays": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeStreakGreat": "已堅持 {days} 天，真棒 🌳",
   "@homeStreakGreat": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeStreakAmazing": "{days} 天連擊，太厲害了 🌲",
   "@homeStreakAmazing": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeStreakMaster": "{days} 天--您已經是這個習慣的主人了 🏔️",
   "@homeStreakMaster": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
-
   "navCheckIn": "打卡",
   "navSettings": "設置",
   "navAppName": "慢病管家",
   "errorPageNotFound": "頁面不存在：{path}",
   "@errorPageNotFound": {
-    "placeholders": { "path": { "type": "String" } }
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
   },
   "errorPageHint": "這個地址可能已經失效，或者鏈接有誤。",
   "errorPageBackHome": "返回首頁",
-
   "assessmentReminderEnabled": "已開啟：每 {days} 天提醒做心理評估",
   "@assessmentReminderEnabled": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "assessmentReminderChanged": "已改為：每 {days} 天提醒",
   "@assessmentReminderChanged": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "assessmentReminderSubtitleEnabled": "每 {days} 天提醒我做一次心理評估",
   "@assessmentReminderSubtitleEnabled": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "assessmentReminderHelpText": "完成一次評估後，下次提醒會從今天重新算起。\n評估結果僅您自己看得到。",
   "assessmentReminderHintAcute": "高強度監測（適合急性期）",
@@ -564,21 +687,32 @@
   "assessmentReminderHintStable": "穩定期 ／ 月度覆盤",
   "assessmentReminderHintMaintenance": "維持治療期",
   "assessmentReminderHintLongTerm": "長期隨訪",
-
   "assessmentHistoryTrend": "歷史趨勢",
   "assessmentAverageScore": "平均 {score}",
   "@assessmentAverageScore": {
-    "placeholders": { "score": { "type": "String" } }
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
   },
   "assessmentTotalRecords": "共 {count} 次",
   "@assessmentTotalRecords": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "assessmentScoreRange": "最低 {min} ／ 最高 {max}",
   "@assessmentScoreRange": {
     "placeholders": {
-      "min": { "type": "int" },
-      "max": { "type": "int" }
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
     }
   },
   "assessmentComparePrevious": "對比上次",
@@ -587,9 +721,12 @@
   "assessmentCurrent": "本次",
   "assessmentDaysSincePrevious": "距上次 {days} 天",
   "@assessmentDaysSincePrevious": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
-
   "assessmentHistoryEmpty": "還沒有評估記錄",
   "assessmentHistoryEmptyHint": "完成一次心理評估後，記錄會顯示在這裡",
   "assessmentHistoryStartFirst": "開始第一次評估",
@@ -602,13 +739,21 @@
   "assessmentChartNeedMore": "只有 1 次評估，無法畫趨勢 — 至少需要 2 次",
   "assessmentChartRecordCount": "{count} 次評估",
   "@assessmentChartRecordCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "assessmentChartTotalScore": "總分 {score}/{max}",
   "@assessmentChartTotalScore": {
     "placeholders": {
-      "score": { "type": "int" },
-      "max": { "type": "int" }
+      "score": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
     }
   },
   "assessmentHistoryFullRecord": "完整記錄",
@@ -620,7 +765,6 @@
   "assessmentSeverityUnknown": "未知",
   "assessmentScalePhq9": "PHQ-9 抑鬱篩查",
   "assessmentScaleGad7": "GAD-7 焦慮篩查",
-
   "setupConsentRequired": "請先完成法律文件閱讀與同意",
   "setupValidationNameRequired": "請輸入您的名字",
   "setupValidationContactRequired": "至少填 1 個緊急聯繫人手機號",
@@ -631,15 +775,14 @@
   "setupPresetLoaded": "已載入：{name}（{count} 個藥）請核對藥名和劑量",
   "@setupPresetLoaded": {
     "placeholders": {
-      "name": { "type": "String" },
-      "count": { "type": "int" }
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
     }
   },
-  "setupSaveFailed": "保存失敗：{error}",
-  "@setupSaveFailed": {
-    "placeholders": { "error": { "type": "String" } }
-  },
-
   "setupMedWhatDoYouTake": "您常吃什麼藥？",
   "setupMedMultiDrugHint": "（可加多個藥，每個藥配自己的時間和劑量；跳過不影響打卡）",
   "setupMedEmptyHint": "還沒添加藥物。可以跳過——打卡不需要藥物信息。",
@@ -648,7 +791,11 @@
   "setupBack": "← 上一步",
   "setupMedDrugNumber": "藥物 {number}",
   "@setupMedDrugNumber": {
-    "placeholders": { "number": { "type": "int" } }
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
   },
   "setupMedDeleteDrug": "刪除這個藥",
   "setupMedDosage": "劑量",
@@ -656,7 +803,6 @@
   "setupMedTimeHint": "吃藥時間（點 + 加）",
   "setupMedAddTime": "加時間",
   "setupMedTimeOptional": "（不設置時間 = 不調度提醒，僅記錄）",
-
   "setupConsentTitle": "使用前請閱讀",
   "setupConsentDescription": "為遵守《個人信息保護法》(PIPL)，本 App 處理您的健康醫療等敏感個人信息前，需要您明確、單獨同意以下 3 份文件。",
   "setupConsentUserAgreement": "我已閱讀並同意《用戶協議》",
@@ -664,16 +810,12 @@
   "setupConsentSensitiveData": "我已閱讀並同意《敏感個人信息處理同意書》",
   "setupConsentStart": "開始設置",
   "setupConsentWithdrawHint": "提示：您可以隨時在「設置 → 法律與隱私」撤回同意。拒絕或撤回後，App 的相關功能將無法使用。",
-
   "setupWelcomeContactHint": "（至少填 1 個手機號，用於失聯時通知）",
-
   "setupLegalUserAgreement": "用戶協議",
   "setupLegalPrivacyPolicy": "隱私政策",
   "setupLegalSensitiveData": "敏感個人信息處理同意書",
   "setupLegalLoadFailed": "加載失敗，請檢查網絡或重新打開 App",
-
   "setupConsentView": "查看",
-
   "@_v0_21_round_22_legal_page": {},
   "settingsLegalAndPrivacy": "法律與隱私",
   "settingsLegalAndPrivacySubtitle": "查看協議、隱私政策、撤回同意",
@@ -689,77 +831,103 @@
   "legalPageWithdrawAnalyticsSubtitle": "停止將評估/情緒記錄納入趨勢分析（數據保留，不再入圖表）",
   "legalPageConsentRecorded": "撤回時間：{time}",
   "legalPageConsentNever": "從未撤回",
-  "legalPageResetConsent": "重新同意",
-
   "emailPreviewTitle": "通知預覽",
   "emailPreviewSetupRequired": "請先完成首次設置",
   "emailPreviewDescription": "這是您將收到的失聯通知預覽：",
   "emailPreviewNoContact": "（無聯繫人）",
   "emailPreviewDisclaimer": "💡 這只是預覽。實際短信通知在您漏 2 天沒打卡後自動發送（v0.6 mock 階段只打日誌，v1.0+ 接真實 SMS provider）。",
-
   "reportHistoryEmpty": "還沒有報告歷史\n生成一次報告後會自動記錄",
   "reportHistoryItemTitle": "{date} · 近 {days} 天",
   "@reportHistoryItemTitle": {
     "placeholders": {
-      "date": { "type": "String" },
-      "days": { "type": "int" }
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
     }
   },
   "reportHistoryItemPatient": "患者：{name}",
   "@reportHistoryItemPatient": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "reportHistoryItemNotSet": "未設置",
   "reportHistoryDeleteTitle": "刪除這條報告？",
   "reportHistoryDeleteContent": "刪除後無法恢復，但可以重新生成。",
-
   "homeCelebrationDay1": "已記錄！第 1 天 🌱",
   "homeCelebrationStreakShort": "已記錄！連擊 {days} 天 🌿",
   "@homeCelebrationStreakShort": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeCelebrationStreakMedium": "已記錄！連擊 {days} 天 🌳",
   "@homeCelebrationStreakMedium": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeCelebrationStreakLong": "已記錄！{days} 天連擊 🌲",
   "@homeCelebrationStreakLong": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeCelebrationStreakMaster": "已記錄！{days} 天--您太厲害了 🏔️",
   "@homeCelebrationStreakMaster": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "homeAutofireCelebration": "已打卡：{name} ✅",
   "@homeAutofireCelebration": {
-    "placeholders": { "name": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   },
   "homeAutofireFallbackName": "該藥",
   "homeMedHint": "💊 準備打卡藥物 #{id}",
   "@homeMedHint": {
-    "placeholders": { "id": { "type": "int" } }
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
   },
   "homeSafetyAlertSuffix": "（請儘快打卡或聯繫家人）",
   "homeSnoozeTitle": "⏰ 該打卡了（5min 後）",
   "homeSnoozeBody": "剛才您點了「snooze」，是時候點一下 = 打卡了",
   "homeSnoozeConfirmed": "好，5 分鐘後會再提醒您 👌",
-  "homeSnoozeFailed": "Snooze 失敗：{error}",
-  "@homeSnoozeFailed": {
-    "placeholders": { "error": { "type": "String" } }
-  },
   "homeSnoozeButton": "⏰ 5 分鐘後再提醒",
   "homeVentButton": "傾訴 🌲",
   "homeNotifBannerText": "提醒沒設上，可能錯過打卡。請到系統設置允許通知。",
   "homeNotifBannerDismiss": "知道了",
-
   "themeTooltip": "主題：{mode}（點擊切換）",
   "@themeTooltip": {
-    "placeholders": { "mode": { "type": "String" } }
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
   },
   "themeModeSystem": "跟隨系統",
   "themeModeLight": "亮色",
   "themeModeDark": "暗色",
-
   "trendTitle": "我的趨勢",
   "trendLast30Days": "最近 30 天",
   "trendLast6Months": "最近 6 個月",
@@ -767,7 +935,6 @@
   "trendMoodHistory": "情緒日記歷史",
   "trendViewList": "列表",
   "trendViewCalendar": "日曆",
-
   "trendWeekdayMon": "一",
   "trendWeekdayTue": "二",
   "trendWeekdayWed": "三",
@@ -780,51 +947,74 @@
   "trendMonthYear": "{year} 年 {month} 月",
   "@trendMonthYear": {
     "placeholders": {
-      "year": { "type": "int" },
-      "month": { "type": "int" }
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      }
     }
   },
   "trendCheckedIn": "已打卡",
   "trendNotCheckedIn": "未打卡",
   "trendEventCount": "{count} 個事件",
   "@trendEventCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "trendMoodEntriesSame": "{count} 條情緒記錄 · {emoji}",
   "@trendMoodEntriesSame": {
     "placeholders": {
-      "count": { "type": "int" },
-      "emoji": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "emoji": {
+        "type": "String"
+      }
     }
   },
   "trendMoodEntriesRange": "情緒 {count} 條 · {lowEmoji}→{highEmoji}",
   "@trendMoodEntriesRange": {
     "placeholders": {
-      "count": { "type": "int" },
-      "lowEmoji": { "type": "String" },
-      "highEmoji": { "type": "String" }
+      "count": {
+        "type": "int"
+      },
+      "lowEmoji": {
+        "type": "String"
+      },
+      "highEmoji": {
+        "type": "String"
+      }
     }
   },
   "trendNoRecords": "這一天沒有記錄",
-
   "trendStatCurrentStreak": "當前連續",
   "trendStatLongestStreak": "最長連續",
   "trendStatTotalCheckIns": "總打卡",
   "trendStatTotalDays": "總天數",
   "trendStatDaysValue": "{count} 天",
   "@trendStatDaysValue": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "trendMonthLabel": "{month}月",
   "@trendMonthLabel": {
-    "placeholders": { "month": { "type": "int" } }
+    "placeholders": {
+      "month": {
+        "type": "int"
+      }
+    }
   },
   "trendNoAssessments": "還沒有評估記錄",
   "trendNoAssessmentsHint": "完成一次心理評估後，折線圖會自動出現在這裡",
   "trendNoMoodEntries": "還沒有情緒記錄",
   "trendNoMoodEntriesHint": "在主頁點擊「記一下情緒」開始記錄",
-
   "contactEmptyList": "還沒有聯繫人，請先添加",
   "contactAddAction": "添加聯繫人",
   "contactAddTitle": "添加緊急聯繫人",
@@ -832,20 +1022,27 @@
   "contactPhoneLabel": "手機號",
   "commonActionDelete": "刪除",
   "commonActionSave": "保存",
-
   "editMedDialogTitle": "編輯藥物",
   "editMedValidationNameRequired": "請填寫藥名",
   "editMedValidationDosageInvalid": "劑量必須是大於 0 的數字",
   "editMedValidationUnitInvalid": "單位必須是 mg 或 片",
   "editMedSaveFailed": "保存失敗：{error}",
   "@editMedSaveFailed": {
-    "placeholders": { "error": { "type": "String" } }
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
   "editMedStatusActive": "正在使用",
   "editMedStatusStopped": "已停藥",
   "editMedStoppedDate": "{date} 停藥",
   "@editMedStoppedDate": {
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
   "editMedNameHint": "請輸入藥盒上的名稱（選填）",
   "editMedDosageLabel": "劑量",
@@ -857,14 +1054,11 @@
   "editMedResumeAction": "重新啟用",
   "editMedStopHint": "軟停：保留所有打卡歷史，不再推送提醒",
   "editMedResumeHint": "恢復：清空停藥日期，恢復每日提醒",
-
   "medReportCopyHint": "可全選複製、生成 PDF 或分享給醫生",
   "medReportPdfLabel": "PDF",
   "medReportShareLabel": "分享",
   "medReportPdfLoading": "生成 PDF 中……",
   "medReportShareSubject": "慢病管家 · 用藥報告",
-  "medReportGenPdfAction": "生成 PDF",
-
   "tempMedDialogTitle": "添加臨時吃藥",
   "tempMedLinkLabel": "關聯到常吃藥（可選）",
   "tempMedLinkHint": "不選 = 臨時事件",
@@ -872,18 +1066,25 @@
   "tempMedNameHint": "如：布洛芬",
   "tempMedReasonLabel": "原因",
   "tempMedReasonHint": "如：感冒",
-
   "medsCalendarHeatmapDesc": "以藥為單位的依從性熱力圖。顏色越深 = 當天打卡次數越接近期望次數。",
   "medsCalendarWindow7": "7 天",
   "medsCalendarWindow30": "30 天",
   "medsCalendarWindow90": "90 天",
   "medsCalendarLoadCheckinFailed": "加載打卡失敗：{error}",
   "@medsCalendarLoadCheckinFailed": {
-    "placeholders": { "error": { "type": "String" } }
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
   "medsCalendarLoadMedFailed": "加載藥物失敗：{error}",
   "@medsCalendarLoadMedFailed": {
-    "placeholders": { "error": { "type": "String" } }
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
   "medsCalendarNoActive": "還沒有在用藥物",
   "medsCalendarNoSchedule": "在用藥物未設置服用時間，無法生成依從性日曆",
@@ -892,11 +1093,9 @@
   "medsCalendarNoScheduleAction": "去設置時間",
   "medsCalendarLegendLabel": "依從：",
   "medsCalendarLegendMissed": "漏服",
-
   "window7Subtitle": "一週內（適合周複診）",
   "window14Subtitle": "兩週內（推薦）",
   "window30Subtitle": "一個月內（適合月度評估）",
-
   "snackbarActionSave": "保存",
   "snackbarActionShare": "分享",
   "snackbarActionGeneratePdf": "生成 PDF",
@@ -908,19 +1107,19 @@
   "snackbarActionSnooze": "推遲提醒",
   "snackbarActionAutoCheckin": "自動打卡",
   "snackbarActionUndo": "撤銷",
-
-  "listSwipeDeleteHint": "左滑刪除",
   "ventEntryDeleted": "已刪除樹洞條目",
   "contactDeleted": "已刪除聯繫人",
   "medicationDeleted": "已刪除藥物",
-
   "moodTodayLabel": "今日情緒：",
   "moodRecordButton": "記一下情緒 ✏️",
   "medReportFileName": "用藥報告_{date}",
   "@medReportFileName": {
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
-
   "migrationPromptTitle": "升級到 v0.9",
   "migrationPromptDetectedOld": "檢測到本地有舊版本數據。",
   "migrationPromptChangesTitle": "本次升級會：",
@@ -937,31 +1136,28 @@
   "migrationFailedTitle": "啟動失敗",
   "migrationFailedBody": "無法初始化本地數據。\n請嘗試：\n1) 重啟 App\n2) 卸載後重裝\n如反覆出現，請反饋給我們。",
   "migrationFailedReassure": "請別擔心，您的數據是加密的。我們會盡快解決。",
-
   "moodRatingSemantics": "情緒評分，1 到 5 分制，5 分最積極",
   "moodRatingButtonSemantics": "{score} 分{selected, select, true{，已選} other{}}",
   "medicationTimeWindowSemantics": "時間窗口 {days} 天，7/30/90 單選",
   "assessmentSaveFailed": "評估結果已顯示，但儲存失敗。請稍後重試。",
-  "moodLabel1": "很差",
-  "moodLabel2": "差",
-  "moodLabel3": "一般",
-  "moodLabel4": "好",
-  "moodLabel5": "很好",
   "setupContactFallbackName": "聯繫人 {index}",
   "@setupContactFallbackName": {
-    "placeholders": { "index": { "type": "int" } }
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
   },
-
   "emailBodyI18n": "我是 {name}，已經 {days} 天沒在 App 裏打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。",
   "@emailBodyI18n": {
     "placeholders": {
-      "name": { "type": "String" },
-      "days": { "type": "int" }
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
     }
   },
-  "emailFooterI18n": "這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。",
-  "notifChannelMedicationNameI18n": "吃藥提醒",
-  "notifChannelMedicationDescI18n": "到點提醒你吃藥打卡",
-  "notifDailyCheckInTitleI18n": "🌱 今天吃了藥嗎？",
-  "notifDailyCheckInBodyI18n": "點一下 = 打卡，讓家人放心"
+  "emailFooterI18n": "這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。"
 }

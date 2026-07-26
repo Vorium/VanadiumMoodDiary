@@ -12,9 +12,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Chronic Care';
 
   @override
-  String get appTagline => 'I took my meds today';
-
-  @override
   String get homeCheckIn => 'I took my meds today';
 
   @override
@@ -65,9 +62,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupContacts => 'Emergency contact phones (at least 1)';
 
   @override
-  String get setupContactHint => '13800138000';
-
-  @override
   String get setupAddContact => '+ Add another contact';
 
   @override
@@ -78,25 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupNext => 'Next →';
 
   @override
-  String get setupMedName => 'Medication name';
-
-  @override
   String get setupMedNameHint => 'e.g. as printed on the box (optional)';
-
-  @override
-  String get setupMedFrequency => 'Daily frequency';
-
-  @override
-  String get setupMedTimes1 => '1x';
-
-  @override
-  String get setupMedTimes2 => '2x';
-
-  @override
-  String get setupMedTimes3 => '3x';
-
-  @override
-  String get setupMedSchedule => 'Dose times (optional)';
 
   @override
   String get setupStart => 'Start day 1';
@@ -145,9 +121,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDisclaimer => 'Disclaimer';
-
-  @override
-  String get settingsExport => 'Export data';
 
   @override
   String get settingsMedReport => 'Medication report';
@@ -305,11 +278,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsClearAllDataSuccess => 'All data cleared';
 
   @override
-  String settingsClearAllDataFailed(Object error) {
-    return 'Clear failed: $error';
-  }
-
-  @override
   String get commonSave => 'Save';
 
   @override
@@ -322,16 +290,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonEdit => 'Edit';
 
   @override
-  String get commonDone => 'Done';
-
-  @override
-  String get commonConfirm => 'Confirm';
-
-  @override
   String get commonLoading => 'Loading...';
-
-  @override
-  String get commonError => 'Something went wrong, please retry';
 
   @override
   String get lastStartupErrorBannerBody =>
@@ -368,12 +327,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get commonDeleteWarning => 'Cannot be restored after deletion';
-
-  @override
-  String get commonEmpty => 'Empty';
-
-  @override
   String snackbarErrorTemplate(String action, String error) {
     return '$action failed: $error';
   }
@@ -397,9 +350,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonConfirmOk => 'OK';
 
   @override
-  String get commonTakePhoto => 'Take photo';
-
-  @override
   String get commonMedName => 'Medication';
 
   @override
@@ -407,16 +357,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonSetup => 'Set up';
-
-  @override
-  String commonAutoCheckinFailed(String error) {
-    return 'Auto check-in failed: $error';
-  }
-
-  @override
-  String commonCheckinFailed(String error) {
-    return 'Check-in failed: $error';
-  }
 
   @override
   String get commonVentDeleteWarning =>
@@ -885,21 +825,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventRerecord => 'Re-record';
 
   @override
-  String ventDurationSeconds(int seconds) {
-    return '${seconds}s';
-  }
-
-  @override
-  String ventDurationMinutes(int minutes) {
-    return '${minutes}m';
-  }
-
-  @override
-  String ventDurationMinutesSeconds(int minutes, int seconds) {
-    return '${minutes}m${seconds}s';
-  }
-
-  @override
   String get moodDialogTitle => 'How are you today?';
 
   @override
@@ -954,11 +879,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodAudioRecordButton => 'Record voice';
 
   @override
-  String moodAudioRecording(String elapsed) {
-    return 'Recording… $elapsed';
-  }
-
-  @override
   String moodAudioRecorded(String duration) {
     return 'Recorded $duration';
   }
@@ -967,13 +887,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodAudioRerecord => 'Re-record';
 
   @override
-  String get moodAudioDeleteRecording => 'Delete recording';
-
-  @override
   String get moodAudioTranscriptLabel => 'Transcript';
-
-  @override
-  String get moodAudioTranscriptEmpty => 'No speech detected';
 
   @override
   String get moodAudioTranscriptPartialHint =>
@@ -997,11 +911,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodAudioPlayAction => 'Play';
-
-  @override
-  String moodAudioDurationTemplate(String minutes, String seconds) {
-    return '$minutes:$seconds';
-  }
 
   @override
   String get moodAudioErrorStart => 'Failed to start recording';
@@ -1345,11 +1254,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String setupSaveFailed(String error) {
-    return 'Save failed: $error';
-  }
-
-  @override
   String get setupMedWhatDoYouTake => 'What medications do you take?';
 
   @override
@@ -1490,9 +1394,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legalPageConsentNever => 'Never withdrawn';
 
   @override
-  String get legalPageResetConsent => 'Re-consent';
-
-  @override
   String get emailPreviewTitle => 'Notification Preview';
 
   @override
@@ -1582,11 +1483,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeSnoozeConfirmed => 'OK, will remind you again in 5 min 👌';
-
-  @override
-  String homeSnoozeFailed(String error) {
-    return 'Snooze failed: $error';
-  }
 
   @override
   String get homeSnoozeButton => '⏰ Remind again in 5 min';
@@ -1826,9 +1722,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medReportShareSubject => 'Chronic Care · Medication Report';
 
   @override
-  String get medReportGenPdfAction => 'Generate PDF';
-
-  @override
   String get tempMedDialogTitle => 'Add Temporary Medication';
 
   @override
@@ -1938,9 +1831,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snackbarActionUndo => 'Undo';
 
   @override
-  String get listSwipeDeleteHint => 'Swipe left to delete';
-
-  @override
   String get ventEntryDeleted => 'Vent entry deleted';
 
   @override
@@ -2041,21 +1931,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Result shown but save failed. Please try again later.';
 
   @override
-  String get moodLabel1 => 'Very poor';
-
-  @override
-  String get moodLabel2 => 'Poor';
-
-  @override
-  String get moodLabel3 => 'Neutral';
-
-  @override
-  String get moodLabel4 => 'Good';
-
-  @override
-  String get moodLabel5 => 'Very good';
-
-  @override
   String setupContactFallbackName(int index) {
     return 'Contact $index';
   }
@@ -2068,18 +1943,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get emailFooterI18n =>
       'This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings.';
-
-  @override
-  String get notifChannelMedicationNameI18n => 'Medication Reminder';
-
-  @override
-  String get notifChannelMedicationDescI18n =>
-      'Reminds you to take your medication and check in';
-
-  @override
-  String get notifDailyCheckInTitleI18n => '🌱 Did you take your meds today?';
-
-  @override
-  String get notifDailyCheckInBodyI18n =>
-      'One tap = check-in. Let your family know you\'re okay.';
 }
