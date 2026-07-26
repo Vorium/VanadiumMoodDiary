@@ -39,7 +39,7 @@ class AppListTile extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
-  });
+  }) : _isCarded = false;
 
   final Widget leading;
   final Widget title;
@@ -50,29 +50,30 @@ class AppListTile extends StatelessWidget {
   /// 不传则 PressFeedback 只做 scale 视觉, 适用于 nested ListTile.onTap
   final VoidCallback? onTap;
 
+  /// v0.24 round 48 (emil P2-8): carded 模式标志
+  final bool _isCarded;
+
   @override
   Widget build(BuildContext context) {
-    // 模式 1 (onTap != null): PressFeedback 接管 tap, ListTile 自身 onTap 置 null
-    // 模式 2 (onTap == null): PressFeedback 只做 scale 视觉, 透传 onTap 给 ListTile
-    if (onTap != null) {
-      return PressFeedback(
-        onTap: onTap,
-        child: ListTile(
-          leading: leading,
-          title: title,
-          subtitle: subtitle,
-          trailing: trailing,
-        ),
-      );
-    }
-    return PressFeedback(
-      child: ListTile(
-        leading: leading,
-        title: title,
-        subtitle: subtitle,
-        trailing: trailing,
-        onTap: onTap,
-      ),
+    final listTile = ListTile(
+      leading: leading,
+      title: title,
+      subtitle: subtitle,
+      trailing: trailing,
+      // 模式 1 (onTap != null): PressFeedback 接管 tap, ListTile 自身 onTap 置 null
+      // 模式 2 (onTap == null): PressFeedback 只做 scale 视觉, 透传 onTap 给 ListTile
+      onTap: onTap != null ? null : onTap,
     );
+
+    final core = onTap != null
+        ? PressFeedback(onTap: onTap, child: listTile)
+        : PressFeedback(child: listTile);
+
+    // v0.24 round 48 (emil P2-8): carded 模式 — 包 Card 提升视觉层级
+    // (settings 平面 list vs content 区 Card 阴影)
+    if (_isCarded) {
+      return Card(child: core);
+    }
+    return core;
   }
 }

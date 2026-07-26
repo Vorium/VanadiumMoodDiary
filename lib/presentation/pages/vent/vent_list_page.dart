@@ -208,6 +208,11 @@ class _EntryCard extends StatelessWidget {
     // v0.24 round 48 (emil P1-8): 加 PressFeedback 跟其他 list 行体感一致
     // 之前 Card(child: ListTile) 无 scale 反馈,只有 InkWell ripple
     // 树洞列表 tens/day 频度(情绪低谷时频繁查看历史) 体感应跟 settings 列表一致
+    //
+    // v0.24 round 48 (emil P2-8) 决策: 保留 `PressFeedback + Card + ListTile` 不用 AppListTile.carded
+    // 因为 _EntryCard 需要 onLongPress (长按删除) + Hero 过渡
+    // AppListTile 当前不支持这 2 个参数, 强行用要扩 API → 价值低
+    // emil 决策: 1 处用 + 缺 2 个关键 API = 不抽, 注释说明 deliberate
     return PressFeedback(
       child: Card(
         child: ListTile(
