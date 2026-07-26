@@ -157,6 +157,16 @@ class AppTokens {
   static Color tintedErrorDeep(BuildContext context) =>
       Theme.of(context).colorScheme.error.withValues(alpha: 0.15);
 
+  /// v0.24 round 45 (emil P1-13): 主色中度透明 (alpha 0.5)
+  /// 替代散落 5+ 处 `primary.withValues(alpha: 0.5)` 硬编码（chip / 卡片 / 弹层背景）
+  static Color tintedPrimaryMid(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.5);
+
+  /// v0.24 round 45 (emil P1-13): 主色高透明 (alpha 0.85)
+  /// 替代散落 5+ 处 `primary.withValues(alpha: 0.85)` 硬编码（强调态 / 选中态强调）
+  static Color tintedPrimaryHigh(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.85);
+
   // v0.22 round 30 (emil P2-6): 前景色 helper 替代 Colors.white/black54
   // 之前 18 处直接 `Colors.white` (含 .withValues(alpha: 0.85)),
   // dark mode 下反白失效 (check_in_button:205 是已知 case)。
@@ -275,6 +285,17 @@ class AppTokens {
   static const Duration durFast = Duration(milliseconds: 200);
   static const Duration durNormal = Duration(milliseconds: 300);
   static const Duration durSlow = Duration(milliseconds: 500);
+
+  // v0.24 round 45 (emil P1-16): 4 个细小 duration 抽 token
+  // emil "magic numbers should be named" — 之前散落 6 处 hardcode
+  // - durPress: PressFeedback 按下→回弹周期 (160ms, 比 durFast 短 — 必须感觉"快")
+  // - shimmerCycleMs: LoadingSkeleton shimmer 完整循环周期 (1200ms, 是 magic 不是动画)
+  // - durPageTransition: PageTransitionSwitcher fade 100ms (默认 fade 100, override 时)
+  // - refreshMinVisibleMs: pull-to-refresh 最小可见时间 400ms (避免 "瞬闪" 感觉没刷新)
+  static const Duration durPress = Duration(milliseconds: 160);
+  static const int shimmerCycleMs = 1200;
+  static const Duration durPageTransition = Duration(milliseconds: 100);
+  static const int refreshMinVisibleMs = 400;
 
   // v0.21 Round 25 (P2 polish): snackbar 时长统一
   // 之前 10+ 处 SnackBar duration: const Duration(seconds: 2|3|4) 硬编码

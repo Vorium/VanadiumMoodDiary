@@ -57,7 +57,7 @@ class PressFeedback extends StatefulWidget {
     required this.child,
     this.onTap,
     this.pressedScale = 0.97,
-    this.duration = const Duration(milliseconds: 160),
+    this.duration = AppTokens.durPress,
   });
 
   @override

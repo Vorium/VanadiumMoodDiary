@@ -119,7 +119,7 @@ class _ShimmerState extends State<_Shimmer>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: Duration(milliseconds: AppTokens.shimmerCycleMs),
     );
     // v0.22 round 30 (emil P1-5): 不在 initState 启动 controller
     // 因为 initState 不能读 MediaQuery (context 还没绑)

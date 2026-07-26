@@ -85,7 +85,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         ref.invalidate(allCheckInsProvider);
         ref.invalidate(allMoodProvider);
         // 给个最小可见时长,不然一闪而过体验差
-        await Future<void>.delayed(const Duration(milliseconds: 400));
+        await Future<void>.delayed(Duration(milliseconds: AppTokens.refreshMinVisibleMs));
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),

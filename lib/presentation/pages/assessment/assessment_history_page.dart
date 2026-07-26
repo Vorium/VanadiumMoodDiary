@@ -69,7 +69,7 @@ class AssessmentHistoryPage extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () async {
         ref.invalidate(assessmentsProvider);
-        await Future<void>.delayed(const Duration(milliseconds: 400));
+        await Future<void>.delayed(Duration(milliseconds: AppTokens.refreshMinVisibleMs));
       },
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),

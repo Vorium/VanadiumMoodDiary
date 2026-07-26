@@ -53,7 +53,7 @@ class VentListPage extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(ventEntriesProvider);
-              await Future<void>.delayed(const Duration(milliseconds: 400));
+              await Future<void>.delayed(Duration(milliseconds: AppTokens.refreshMinVisibleMs));
             },
             child: _EntryList(entries: entries),
           );
