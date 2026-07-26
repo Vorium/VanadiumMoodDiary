@@ -10,6 +10,13 @@
 // 1. 文字输入中（默认）
 // 2. 录音中（红色按钮 + 波形进度条 + 时长）
 // 3. 录音完成（显示"重新录"和"播放"按钮）
+//
+// v0.24 round 46 (emil B-13 god class 续拆): 从 537 行瘦身到 ~270 行 orchestrator
+// 3 个 section widgets 已提取到 vent/widgets/:
+//   - VentAudioSection (录音 / 播放 / 重录 3 态切换)
+//   - VentTextInput (文字输入 + 字符计数)
+//   - VentSaveBar (取消 / 保存按钮)
+// audio 状态机保留在 orchestrator state (recorder + player + temp file 生命周期紧密)
 library;
 
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
@@ -24,10 +31,11 @@ import 'package:record/record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
-import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
+import 'package:chroniccare/presentation/pages/vent/widgets/vent_audio_section.dart';
+import 'package:chroniccare/presentation/pages/vent/widgets/vent_text_input.dart';
+import 'package:chroniccare/presentation/pages/vent/widgets/vent_save_bar.dart';
 
 class VentComposePage extends ConsumerStatefulWidget {
   const VentComposePage({super.key});
@@ -47,6 +55,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
   int? _audioDurationSec;
   bool _isPlaying = false;
   StreamSubscription<void>? _playerCompleteSub;
+
+  /// P0-2: 播放时生成的临时解密文件路径,dispose 时清理
+  String? _tempDecryptedPath;
 
   @override
   void initState() {
@@ -251,9 +262,6 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     }
   }
 
-  /// P0-2: 播放时生成的临时解密文件路径,dispose 时清理
-  String? _tempDecryptedPath;
-
   Future<void> _reRecord() async {
     // 停止正在播放的音频并清理临时文件
     if (_isPlaying) {
@@ -352,7 +360,6 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
 
   @override
   Widget build(BuildContext context) {
-    final textLen = _textController.text.length;
     return PageScaffold(
       title: AppLocalizations.of(context).ventComposeTitle,
       child: Padding(
@@ -372,40 +379,14 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             const SizedBox(height: AppTokens.spacingMd),
 
             // 文字输入
-            Expanded(
-              child: TextField(
-                controller: _textController,
-                maxLines: null,
-                expands: true,
-                maxLength: 2000,
-                textAlignVertical: TextAlignVertical.top,
-                style: const TextStyle(fontSize: AppTokens.fontSizeBody),
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context).ventComposeHint,
-                  border: const OutlineInputBorder(),
-                  contentPadding: const EdgeInsets.all(AppTokens.spacingSm),
-                ),
-                onChanged: (_) => setState(() {}),
-              ),
+            VentTextInput(
+              controller: _textController,
+              onChanged: (_) => setState(() {}),
             ),
-            if (textLen > AppTokens.textLengthWarningThreshold)
-              Padding(
-                padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
-                child: Text(
-                  '$textLen / 2000',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: textLen > 2000
-                        ? AppTokens.error
-                        : AppTokens.textHintColor(context),
-                  ),
-                ),
-              ),
-
             const SizedBox(height: AppTokens.spacingMd),
 
             // 录音 / 播放区域
-            _AudioSection(
+            VentAudioSection(
               isRecording: _isRecording,
               audioPath: _audioPath,
               audioDurationSec: _audioDurationSec,
@@ -418,24 +399,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             const SizedBox(height: AppTokens.spacingMd),
 
             // 保存按钮
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _saving ? null : () => context.pop(),
-                    child: Text(AppLocalizations.of(context).commonCancel),
-                  ),
-                ),
-                const SizedBox(width: AppTokens.spacingSm),
-                Expanded(
-                  flex: 2,
-                  child: LoadingTextButton(
-                    label: AppLocalizations.of(context).ventComposeTitle,
-                    isLoading: _saving,
-                    onPressed: _saving ? null : _save,
-                  ),
-                ),
-              ],
+            VentSaveBar(
+              isSaving: _saving,
+              saveLabel: AppLocalizations.of(context).ventComposeTitle,
+              onCancel: () => context.pop(),
+              onSave: _save,
             ),
           ],
         ),
@@ -443,124 +411,3 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     );
   }
 }
-
-class _AudioSection extends StatelessWidget {
-  final bool isRecording;
-  final String? audioPath;
-  final int? audioDurationSec;
-  final bool isPlaying;
-  final VoidCallback onToggleRecord;
-  final VoidCallback onTogglePlay;
-  final VoidCallback onReRecord;
-
-  // v0.24 round 43 (emil P1-01 H-04 / D-01): audio 3 态
-  // idle (待录) / recording (录中) / recorded (录完)
-  // 走 PageTransitionSwitcher 平滑切换, 跟 mic 按钮位置锚定
-  // _AudioState 实际只用 3 个 case (idle / recording / recorded)
-
-  const _AudioSection({
-    required this.isRecording,
-    required this.audioPath,
-    required this.audioDurationSec,
-    required this.isPlaying,
-    required this.onToggleRecord,
-    required this.onTogglePlay,
-    required this.onReRecord,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // v0.24 round 43 (emil P1-01 H-04 / D-01):
-    // 3 态 (idle / recording / recorded) 走 PageTransitionSwitcher,
-    // 让 mic 位置 crossfade 给用户"我刚按下"的位置感 (emil spatial consistency)
-    final state = audioPath == null
-        ? (isRecording ? _AudioState.recording : _AudioState.idle)
-        : _AudioState.recorded;
-    return PageTransitionSwitcher(
-      switchKey: state,
-      child: switch (state) {
-        _AudioState.idle => _buildIdleButton(context),
-        _AudioState.recording => _buildIdleButton(context),
-        _AudioState.recorded => _buildRecordedRow(context),
-      },
-    );
-  }
-
-  Widget _buildIdleButton(BuildContext context) {
-    return Center(
-      child: TextButton.icon(
-        onPressed: isRecording ? null : onToggleRecord,
-        icon: Icon(
-          isRecording ? Icons.stop_circle : Icons.mic,
-          color: isRecording ? AppTokens.error : AppTokens.primary,
-          size: 28,
-        ),
-        label: Text(
-          isRecording
-              ? AppLocalizations.of(context).ventRecordActive
-              : AppLocalizations.of(context).ventRecordIdle,
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeBody,
-            color: isRecording ? AppTokens.error : AppTokens.primary,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecordedRow(BuildContext context) {
-    // 有录音：显示播放 / 重录
-    return Container(
-      padding: const EdgeInsets.all(AppTokens.spacingSm),
-      decoration: BoxDecoration(
-        color: AppTokens.primaryLightColor(context),
-        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(
-              isPlaying ? Icons.stop : Icons.play_arrow,
-              color: AppTokens.primary,
-            ),
-            onPressed: onTogglePlay,
-          ),
-          const Icon(Icons.mic, color: AppTokens.primary, size: 18),
-          const SizedBox(width: 6),
-          Text(
-            audioDurationSec != null
-                ? _formatSec(context, audioDurationSec!)
-                : AppLocalizations.of(context).ventAudioLabel,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const Spacer(),
-          TextButton.icon(
-            onPressed: onReRecord,
-            icon: const Icon(Icons.refresh, size: 18),
-            label: Text(AppLocalizations.of(context).ventRerecord),
-            style: TextButton.styleFrom(
-              foregroundColor: AppTokens.textSecondaryColor(context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatSec(BuildContext context, int sec) {
-    final l10n = AppLocalizations.of(context);
-    if (sec < 60) return l10n.ventDurationSeconds(sec);
-    final m = sec ~/ 60;
-    final s = sec % 60;
-    return s == 0
-        ? l10n.ventDurationMinutes(m)
-        : l10n.ventDurationMinutesSeconds(m, s);
-  }
-}
-
-/// v0.24 round 43 (emil P1-01 H-04 / D-01): audio 3 态枚举
-enum _AudioState { idle, recording, recorded }
