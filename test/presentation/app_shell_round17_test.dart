@@ -10,6 +10,7 @@
 // 3. 跳到 /settings → 选中 index 1
 // 4. 跳到 /settings/reminders → 选中 index 1 (startsWith /settings)
 import 'package:chroniccare/core/routing/app_router.dart';
+import 'package:chroniccare/core/routing/app_shell.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
