@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timezone/data/latest_all.dart' as tz_data;
+import 'package:timezone/timezone.dart' as tz;
 
 import 'dart:async';
 import 'dart:developer' as developer;
@@ -76,6 +78,16 @@ Future<void> _bootstrap() async {
   } catch (e) {
     piiSafeLog('Main', '⚠️ .env 加载失败（首次启动正常）：$e');
   }
+
+  // 1.5 v0.24 round 48 (sp-zh P1-18): 显式初始化 timezone 数据库 + 设 local tz
+  //   背景: 之前未调 tz_data.initializeTimeZones(),tz.local 默认是 UTC
+  //   → 所有 .add(Duration(hours: 8)) 之类的"中国时区近似"在海外/系统时区错乱场景
+  //     会出现 reminder 跨日漂移、邮件时间错位等 bug
+  //   修法: 启动时加载所有 tz 数据,设默认 Asia/Shanghai (中国用户基线)
+  //   pubspec.yaml 已有 timezone: ^0.9.4
+  //   v1.0+ 计划: settings 里加 "时区" 选项,用户可改
+  tz_data.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Asia/Shanghai'));
 
   // 2. 升级检查
   //    如果没有旧 DB（全新安装），直接进入步骤 3
