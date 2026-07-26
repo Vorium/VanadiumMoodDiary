@@ -33,9 +33,11 @@ SKIP_PATTERNS = ['.g.dart', '.freezed.dart', '.png', '.jpg', '.ico', '.jar']
 # v0.24 round 48 (spzh P1-15): 历史修真档案豁免
 # docs/reviews/ 和 docs/archive/reviews/ 故意记录 mojibake 现象作为"修真前状态"
 # 修真历史档案保留原样（"实际看到的 mojibake" 反引号块 + 对照正确字符）
+# v0.24 round 48 (spzh P1-20): docs/decisions/ 也豁免 — mojibake 修真历史归档
 SKIP_PATHS = [
     re.compile(r'docs[\\/]reviews[\\/].*\.md$'),
     re.compile(r'docs[\\/]archive[\\/].*\.md$'),
+    re.compile(r'docs[\\/]decisions[\\/].*\.md$'),
 ]
 
 # 扫的扩展名

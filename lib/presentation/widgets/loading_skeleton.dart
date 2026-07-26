@@ -113,6 +113,7 @@ class _Shimmer extends StatefulWidget {
 class _ShimmerState extends State<_Shimmer>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  bool _isBreathing = false;
 
   @override
   void initState() {
@@ -121,6 +122,18 @@ class _ShimmerState extends State<_Shimmer>
       vsync: this,
       duration: Duration(milliseconds: AppTokens.shimmerCycleMs),
     );
+    // v0.24 round 48 (emil P1-6): 单次动画完成 → 暂停 600ms → 重播
+    // 实现"呼吸"模式, 代替之前 repeat(reverse: true) 永久脉动
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed && _isBreathing) {
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (mounted && _isBreathing) {
+            _controller.value = 0.0;
+            _controller.forward();
+          }
+        });
+      }
+    });
     // v0.22 round 30 (emil P1-5): 不在 initState 启动 controller
     // 因为 initState 不能读 MediaQuery (context 还没绑)
     // → 之前 _maybeShimmer() 总是 _controller.repeat(reduce-motion 也启动)
@@ -137,13 +150,21 @@ class _ShimmerState extends State<_Shimmer>
     if (reduce) {
       if (_controller.isAnimating) _controller.stop();
       _controller.value = 1.0; // 跳到终态(满 opacity)
-    } else if (!_controller.isAnimating) {
-      _controller.repeat(reverse: true);
+      _isBreathing = false;
+    } else if (!_isBreathing) {
+      // v0.24 round 48 (emil P1-6): "呼吸" 模式
+      // 之前 _controller.repeat(reverse: true) 永久 0.4-0.7 脉动,精神心理 App 高刺激度
+      // emil "loading should feel fast, not dance" 哲学
+      // 现在: 单次 0.4→0.7 (1.2s) + 暂停 600ms + 重播 → 体感 "呼吸" 而非 "脉动"
+      _isBreathing = true;
+      _controller.value = 0.0;
+      _controller.forward();
     }
   }
 
   @override
   void dispose() {
+    _isBreathing = false; // 阻止 status listener 重启动画
     _controller.dispose();
     super.dispose();
   }

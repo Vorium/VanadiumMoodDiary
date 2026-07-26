@@ -63,7 +63,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context).reminderHubDescription,
-                    style: const TextStyle(fontSize: AppTokens.fontSizeBody),
+                    style: AppTokens.textStyleBody(context),
                   ),
                 ),
               ],

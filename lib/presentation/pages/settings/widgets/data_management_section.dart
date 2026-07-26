@@ -89,7 +89,8 @@ class DataManagementSection extends ConsumerWidget {
             ),
             title: Text(
               AppLocalizations.of(context).settingsClearAllData,
-              style: const TextStyle(color: AppTokens.error),
+              style: AppTokens.textStyleBody(context)
+                  .copyWith(color: AppTokens.error),
             ),
             subtitle: Text(
               AppLocalizations.of(context).settingsClearAllDataSubtitle,

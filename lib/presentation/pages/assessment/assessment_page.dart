@@ -299,8 +299,8 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                 Text(
                   AppLocalizations.of(context)
                       .assessmentScoreTotal(scale.totalRange),
-                  style:
-                      TextStyle(color: AppTokens.textSecondaryColor(context)),
+                  style: AppTokens.textStyleBody(context)
+                      .copyWith(color: AppTokens.textSecondaryColor(context)),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 Text(
@@ -351,7 +351,8 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               padding: const EdgeInsets.all(AppTokens.spacingMd),
               child: Text(
                 AppLocalizations.of(context).assessmentDisclaimer,
-                style: TextStyle(color: AppTokens.textSecondaryColor(context)),
+                style: AppTokens.textStyleBody(context)
+                    .copyWith(color: AppTokens.textSecondaryColor(context)),
               ),
             ),
           ),

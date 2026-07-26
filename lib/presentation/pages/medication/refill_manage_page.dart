@@ -162,7 +162,8 @@ class RefillManagePage extends ConsumerWidget {
             padding: const EdgeInsets.all(AppTokens.spacingXl),
             child: Center(
               child: Text(AppLocalizations.of(context).medsNoMedicationsAdded,
-                  style: TextStyle(color: AppTokens.textHintColor(context)),),
+                  style: AppTokens.textStyleBody(context)
+                      .copyWith(color: AppTokens.textHintColor(context)),),
             ),
           )
         else

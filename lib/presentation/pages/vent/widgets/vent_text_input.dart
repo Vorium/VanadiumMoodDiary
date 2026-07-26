@@ -34,7 +34,7 @@ class VentTextInput extends StatelessWidget {
             expands: true,
             maxLength: maxLength,
             textAlignVertical: TextAlignVertical.top,
-            style: const TextStyle(fontSize: AppTokens.fontSizeBody),
+            style: AppTokens.textStyleBody(context),
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context).ventComposeHint,
               border: const OutlineInputBorder(),

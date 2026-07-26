@@ -27,7 +27,8 @@ class EmailPreviewPage extends ConsumerWidget {
             return Center(
               child: Text(
                   AppLocalizations.of(context).emailPreviewSetupRequired,
-                  style: TextStyle(color: AppTokens.textHintColor(context)),),
+                  style: AppTokens.textStyleBody(context)
+                      .copyWith(color: AppTokens.textHintColor(context)),),
             );
           }
           return SingleChildScrollView(
@@ -129,7 +130,7 @@ class EmailPreviewPage extends ConsumerWidget {
                   ),
                   child: Text(
                     AppLocalizations.of(context).emailPreviewDisclaimer,
-                    style: const TextStyle(fontSize: AppTokens.fontSizeLabel),
+                    style: AppTokens.textStyleLabel(context),
                   ),
                 ),
               ],

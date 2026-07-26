@@ -64,7 +64,7 @@ class MedicationCalendarPage extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context).medsCalendarHeatmapDesc,
-                    style: const TextStyle(fontSize: AppTokens.fontSizeBody),
+                    style: AppTokens.textStyleBody(context),
                   ),
                 ),
               ],

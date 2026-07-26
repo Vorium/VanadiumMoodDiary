@@ -169,7 +169,8 @@ class _NotificationStatusCardState
           title: Text(l10n.notificationStatusCardWebTitle),
           subtitle: Text(
             l10n.notificationStatusCardWebSubtitle,
-            style: TextStyle(color: AppTokens.textHintColor(context)),
+            style: AppTokens.textStyleBody(context)
+                .copyWith(color: AppTokens.textHintColor(context)),
           ),
         ),
       );

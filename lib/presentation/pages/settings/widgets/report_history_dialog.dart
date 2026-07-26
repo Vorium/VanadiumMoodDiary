@@ -134,7 +134,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(AppLocalizations.of(context).commonDelete,
-                style: const TextStyle(color: AppTokens.error),),
+                style: AppTokens.textStyleBody(context)
+                    .copyWith(color: AppTokens.error),),
           ),
         ],
       ),
