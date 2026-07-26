@@ -250,7 +250,15 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 26, top: 2, bottom: 8),
+                // v0.24 round 48 (emil P2-13): 修真 3 个裸数字 → spacing token
+                // left: 26 ≈ 评估题 1-9 编号对齐 (跟缩进编号文字视觉对齐)
+                // top: 2 + bottom: 8 ≈ 跟 options 列表行高对齐
+                // 26 不在 token sequence, 加注释说明 design decision (1 处用, 不抽 token)
+                padding: const EdgeInsets.only(
+                  left: 26,  // 编号缩进对齐 (deliberate, 不抽 token)
+                  top: AppTokens.spacingXxxs,  // 2
+                  bottom: AppTokens.spacingXs,  // 8
+                ),
                 child: Text(
                   h.number,
                   style: const TextStyle(fontWeight: FontWeight.w500),
