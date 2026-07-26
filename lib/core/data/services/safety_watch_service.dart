@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
+import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
-import 'package:chroniccare/core/shared/user_name_helper.dart';
 
 /// "安全开关" 服务 — 死了么/撸了么 思路
 ///
@@ -26,14 +25,14 @@ import 'package:chroniccare/core/shared/user_name_helper.dart';
 /// - 用 SharedPreferences 存配置（避免动 schema 迁移）
 /// - 不在每次 check-in 都发，只在**超过阈值**才发
 /// - 同一天最多触发一次
+///
+/// v0.25 round 57 (spen P1 #12 god class 拆分): 拆 2 sub
+///   - SafetyConfigService: 8 个 SharedPreferences 配置 API
+///   - SafetyAlertDispatcher:  SMS + 本地通知 + audit log
+/// safety_watch_service 退化为 facade, 协调 _checkAndAlert 核心
 class SafetyWatchService {
-  static const _kEnabled = 'safety_watch_enabled';
-  static const _kThresholdDays = 'safety_watch_threshold_days';
-  static const _kLastAlertAt = 'safety_watch_last_alert_at';
-  static const _kDoNotDisturbStart = 'safety_watch_dnd_start'; // "22"
-  static const _kDoNotDisturbEnd = 'safety_watch_dnd_end'; // "08"
-
-  /// 默认阈值：2 天
+  // v0.25 round 57: 旧 key 常量移到 SafetyConfigService 内部 (private)
+  // 保留 defaultThresholdDays 静态常量兼容旧调用方
   static const int defaultThresholdDays = 2;
 
   final CheckInRepository _checkInRepo;
@@ -41,6 +40,15 @@ class SafetyWatchService {
   final UserProfileRepository _userProfileRepo;
   final SmsService _smsService;
   final NotificationService _notificationService;
+
+  /// v0.25 round 57: 2 个 sub
+  late final SafetyConfigService _config =
+      SafetyConfigService();
+  late final SafetyAlertDispatcher _alertDispatcher = SafetyAlertDispatcher(
+    smsService: _smsService,
+    notificationService: _notificationService,
+    config: _config,
+  );
 
   /// v0.23 round 38 (P0-3 fix): _contactRepo.watchAll().first 的 timeout 时长
   /// 默认 5s,测试可注入短值(50ms)避免 5s 等待
@@ -60,73 +68,28 @@ class SafetyWatchService {
         _notificationService = notificationService,
         _contactWatchTimeout = contactWatchTimeout;
 
-  // ============== 配置 API（给 settings_page 用）==============
+  // ============== 配置 API（给 settings_page 用，R57 facade 委托）==============
 
   /// 是否启用安全开关
-  Future<bool> isEnabled() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_kEnabled) ?? false;
-  }
+  Future<bool> isEnabled() => _config.isEnabled();
 
   /// 切换启用状态
-  Future<void> setEnabled(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_kEnabled, value);
-  }
+  Future<void> setEnabled(bool value) => _config.setEnabled(value);
 
   /// 阈值天数（连续多少天没打卡触发）
-  Future<int> getThresholdDays() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(_kThresholdDays) ?? defaultThresholdDays;
-  }
+  Future<int> getThresholdDays() => _config.getThresholdDays();
 
-  Future<void> setThresholdDays(int days) async {
-    if (days < 1 || days > 14) {
-      throw ArgumentError('threshold must be between 1 and 14 days');
-    }
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_kThresholdDays, days);
-  }
+  Future<void> setThresholdDays(int days) => _config.setThresholdDays(days);
 
   /// DND 时段（小时，24h 制，start < end 同一天；跨天用 start > end 表示）
-  Future<({int? start, int? end})> getDoNotDisturb() async {
-    final prefs = await SharedPreferences.getInstance();
-    return (
-      start: prefs.getInt(_kDoNotDisturbStart),
-      end: prefs.getInt(_kDoNotDisturbEnd),
-    );
-  }
+  Future<({int? start, int? end})> getDoNotDisturb() =>
+      _config.getDoNotDisturb();
 
-  Future<void> setDoNotDisturb({int? startHour, int? endHour}) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (startHour == null) {
-      await prefs.remove(_kDoNotDisturbStart);
-    } else {
-      await prefs.setInt(_kDoNotDisturbStart, startHour);
-    }
-    if (endHour == null) {
-      await prefs.remove(_kDoNotDisturbEnd);
-    } else {
-      await prefs.setInt(_kDoNotDisturbEnd, endHour);
-    }
-  }
+  Future<void> setDoNotDisturb({int? startHour, int? endHour}) =>
+      _config.setDoNotDisturb(startHour: startHour, endHour: endHour);
 
   /// 上次告警时间（ISO string）
-  Future<DateTime?> getLastAlertAt() async {
-    final prefs = await SharedPreferences.getInstance();
-    final s = prefs.getString(_kLastAlertAt);
-    if (s == null) return null;
-    // v0.22 round 30 (sp-zh P1-1): _setLastAlertAt 改用 toUtc 存
-    // → get 时转 local 保持原 _isSameDay 行为(local day 比较)
-    return DateTime.tryParse(s)?.toLocal();
-  }
-
-  Future<void> _setLastAlertAt(DateTime when) async {
-    final prefs = await SharedPreferences.getInstance();
-    // v0.22 round 30 (sp-zh P1-1): 显式 toUtc,跟 v0.21 round 22 P0-3 data_export_service 一致。
-    // 之前无 Z 后缀 → DateTime.parse() 按 local 解析,跨时区 drift (e.g. 北京用户飞纽约后从 backup 恢复会差 13h)。
-    await prefs.setString(_kLastAlertAt, when.toUtc().toIso8601String());
-  }
+  Future<DateTime?> getLastAlertAt() => _config.getLastAlertAt();
 
   // ============== 触发入口 ==============
 
@@ -181,7 +144,7 @@ class SafetyWatchService {
       // 同一函数内不重复调 DateTime.now()(v0.16 round 19B 已立的规矩)。
       // 用 effectiveNow 避免跟参数 now 同名导致 Dart 推断为 nullable。
       final effectiveNow = now ?? DateTime.now();
-      final daysSinceLast = _daysBetween(lastCheckIn, effectiveNow);
+      final daysSinceLast = SafetyConfigService.daysBetween(lastCheckIn, effectiveNow);
 
       if (daysSinceLast < threshold) {
         return SafetyCheckResult(
@@ -192,7 +155,7 @@ class SafetyWatchService {
 
       // 2. 超过阈值：检查今天是不是已经发过了
       final lastAlert = await getLastAlertAt();
-      if (lastAlert != null && _isSameDay(lastAlert, effectiveNow)) {
+      if (lastAlert != null && SafetyConfigService.isSameDay(lastAlert, effectiveNow)) {
         return SafetyCheckResult(
           kind: SafetyCheckKind.alertedToday,
           daysSinceLast: daysSinceLast,
@@ -200,7 +163,7 @@ class SafetyWatchService {
       }
 
       // 3. 检查 DND 时段
-      if (await _isInDnd(effectiveNow)) {
+      if (await _config.isInDnd(effectiveNow)) {
         return SafetyCheckResult(
           kind: SafetyCheckKind.dndSuppressed,
           daysSinceLast: daysSinceLast,
@@ -245,48 +208,22 @@ class SafetyWatchService {
         );
       }
 
-      // 5. 发短信给所有联系人
-      int smsOk = 0;
-      int smsFail = 0;
-      int smsMock = 0; // v0.25 round 52 (spen P0 #12): 单独 mock 计数
-      for (final c in contacts) {
-        final body = _buildAlertSms(
-          userName: profile.userName,
-          daysSinceLast: daysSinceLast,
-        );
-        final result = await _smsService.send(to: c.phone, body: body);
-        // v0.25 round 52: mock 模式单独计数,不算 ok 也不算 fail
-        switch (result.kind) {
-          case SmsResultKind.ok:
-            smsOk++;
-          case SmsResultKind.fail:
-            smsFail++;
-          case SmsResultKind.mock:
-            smsMock++;
-        }
-      }
-
-      // 6. 推本地通知（用户可能只是忘了打卡）
-      await _notificationService.showSafetyAlert(
+      // 5+6+7. v0.25 round 57 (god class 拆分): 委托给 SafetyAlertDispatcher
+      // 发 SMS + 推本地通知 + 写 audit log + 计数
+      final dispatched = await _alertDispatcher.dispatchAlert(
+        contacts: contacts,
         userName: profile.userName,
-        daysWithoutCheckIn: daysSinceLast,
+        daysSinceLast: daysSinceLast,
         lastCheckIn: lastCheckIn,
-      );
-
-      // 7. 写 audit log
-      await _setLastAlertAt(effectiveNow);
-
-      piiSafeLog(
-        'SafetyWatchService',
-        '🚨 SafetyWatch 触发: trigger=$trigger days=$daysSinceLast '
-        'smsOk=$smsOk smsFail=$smsFail',
+        effectiveNow: effectiveNow,
+        trigger: trigger,
       );
 
       return SafetyCheckResult(
         kind: SafetyCheckKind.alerted,
         daysSinceLast: daysSinceLast,
-        contactsNotified: smsOk,
-        contactsFailed: smsFail,
+        contactsNotified: dispatched.smsOk,
+        contactsFailed: dispatched.smsFail,
       );
     } catch (e, st) {
       piiSafeLog(
@@ -302,47 +239,10 @@ class SafetyWatchService {
     }
   }
 
-  /// 构造发给联系人的短信内容
-  ///
-  /// 短信有长度限制（中文 70 字 / 条），精简到一屏
-  ///
-  /// v0.21 Round 23 (P1-24): userName 改 nullable
-  /// 未填姓名时退化为 "您的家人",保持短信语法自然
-  String _buildAlertSms({
-    String? userName,
-    required int daysSinceLast,
-  }) {
-    final name = safeUserName(userName);
-    return '[慢病管家] $name 已 $daysSinceLast 天未打卡吃药。'
-        '如确认安全请回复 1，无回复请联系本人或社区。';
-  }
-
-  // ============== 工具 ==============
-
-  /// 跨日的"日历差"
-  ///
-  /// 不直接用 Duration.inDays，因为 DST / 时区可能导致 23.98 小时 ≈ 1 天之类边界
-  static int _daysBetween(DateTime a, DateTime b) {
-    final aDay = DateTime(a.year, a.month, a.day);
-    final bDay = DateTime(b.year, b.month, b.day);
-    return bDay.difference(aDay).inDays;
-  }
-
-  static bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  Future<bool> _isInDnd(DateTime now) async {
-    final dnd = await getDoNotDisturb();
-    if (dnd.start == null || dnd.end == null) return false;
-    final h = now.hour;
-    if (dnd.start! < dnd.end!) {
-      return h >= dnd.start! && h < dnd.end!;
-    } else {
-      // 跨天：例如 22 ~ 08 表示 22:00-08:00
-      return h >= dnd.start! || h < dnd.end!;
-    }
-  }
+  // v0.25 round 57: _buildAlertSms 跟 _setLastAlertAt 已移到
+  // SafetyAlertDispatcher / SafetyConfigService, safety_watch_service
+  // 作为 facade 不再持有这些 method. caller 可通过 dispatcher / config
+  // 直接调, 或继续用 facade 的 8 个 public method 转发.
 }
 
 /// 安全检查结果
