@@ -206,14 +206,21 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
   Future<void> _togglePlay() async {
     if (_audioPath == null) return;
     if (_isPlaying) {
-      await _player.stop();
-      // 清理临时解密文件
-      if (_tempDecryptedPath != null) {
-        await ref
-            .read(ventAudioStorageProvider)
-            .deleteTempFile(_tempDecryptedPath!);
-        _tempDecryptedPath = null;
-      }
+      final tempPath = _tempDecryptedPath;
+      // v0.24 round 48 (sp-en P1-10) refactor: stop + temp cleanup 抽到
+      // top-level helper,加 try/catch + swallowError 防御 audioplayers
+      // iOS 偶发 PlatformException (锁文件 / 系统打断 / 后台被杀)
+      // 之前 stop 抛异常 → deleteTemp 不调 → temp m4a 泄漏
+      await stopAndCleanup(
+        stop: _player.stop,
+        deleteTempFile: () async {
+          if (tempPath != null) {
+            await ref.read(ventAudioStorageProvider).deleteTempFile(tempPath);
+          }
+        },
+        where: 'vent_compose_page._togglePlay',
+      );
+      _tempDecryptedPath = null;
       if (mounted) setState(() => _isPlaying = false);
     } else {
       try {
@@ -390,5 +397,40 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         ),
       ),
     );
+  }
+}
+
+// ============================================================
+// v0.24 round 48 (sp-en P1-10): 抽 stop + temp cleanup 为可测的 helper
+//
+// 之前 _togglePlay 的"暂停"分支直接 await _player.stop() + deleteTempFile,
+// 没 try/catch。audioplayers 在 iOS 上偶发 PlatformException (锁文件 /
+// 系统打断 / 后台被杀等),stop 抛异常会直接 propagate 出去,导致后续
+// deleteTempFile 永远不调 → temp 文件泄漏 (DB 之外的 m4a 残留在 temp dir,
+// 反复播放就堆一堆)。
+//
+// helper 把"stop + deleteTemp"封成 @visibleForTesting 的 top-level 函数,
+// 测试可注入抛 PlatformException 的 stop callback,验证 deleteTemp 仍调用。
+// RED 阶段 helper 没有 try/catch — 验证"stop 抛异常 → deleteTemp 仍被调"
+// 这条 spec 当前实现不满足 → FAIL。
+// ============================================================
+@visibleForTesting
+Future<void> stopAndCleanup({
+  required Future<void> Function() stop,
+  required Future<void> Function() deleteTempFile,
+  required String where,
+}) async {
+  // v0.24 round 48 (sp-en P1-10) GREEN: 加 try/catch + swallowError
+  // 之前: stop 抛异常直接 propagate, deleteTemp 不调 → temp 文件泄漏
+  // 现在: stop 异常被吞,deleteTemp 仍跑, 异常仅 developer.log 记录
+  try {
+    await stop();
+  } catch (e, st) {
+    swallowError(where: '$where.stop', error: e, stack: st);
+  }
+  try {
+    await deleteTempFile();
+  } catch (e, st) {
+    swallowError(where: '$where.deleteTemp', error: e, stack: st);
   }
 }
