@@ -329,6 +329,13 @@ class AppTokens {
   /// 适用：modal / drawer / 状态切换 / fade in
   static const Curve curveStandard = Curves.easeOutCubic;
 
+  /// 微弱缓动 — `easeOut`：比 standard 弱 30%，"几乎察觉不到"
+  /// v0.24 round 48 (emil P1-1): 之前 MotionScheme.subtle 跟 standard 共用 curveStandard
+  /// 导致 subtle 频度档位虚设（emil "decisions should be nameable"）
+  /// 现在 subtle 用专属 curve，频度档位可命名
+  /// 适用：tens/day 微弱反馈（hover 类 / list item 选中态）
+  static const Curve curveSubtle = Curves.easeOut;
+
   /// 强减速缓动 — `easeOutQuart`：比 standard 更明显的"快速起步、缓慢收尾"
   /// 适用：celebration / 大数字递增（streak 数字）
   static const Curve curveDecelerate = Curves.easeOutQuart;
@@ -652,7 +659,9 @@ extension MotionSchemeTokens on MotionScheme {
       case MotionScheme.none:
         return Curves.linear;
       case MotionScheme.subtle:
-        return AppTokens.curveStandard;
+        // v0.24 round 48 (emil P1-1): 之前跟 standard 共用 curveStandard
+        // 频度档位虚设。现在用 curveSubtle (Curves.easeOut) 跟 standard 区分
+        return AppTokens.curveSubtle;
       case MotionScheme.standard:
         return AppTokens.curveStandard;
       case MotionScheme.delight:

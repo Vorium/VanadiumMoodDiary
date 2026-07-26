@@ -60,8 +60,12 @@ class DimensionRow extends StatelessWidget {
                     child: Material(
                       color: Colors.transparent,
                       child: AnimatedContainer(
-                        duration: AppTokens.durFast,
-                        curve: AppTokens.curveStandard,
+                        // v0.24 round 48 (emil P1-5): 之前用 AppTokens.durFast / curveStandard 直拼
+                        // 系统开了 reduce-motion → 仍有 200ms 动画,违反 P0-7 reduce-motion non-negotiable
+                        // 精神心理患者前庭敏感用户直接触发不适
+                        // 现在走 Motion.duration / Motion.curve 包装,reduce-motion 自动归零
+                        duration: Motion.duration(context, AppTokens.durFast),
+                        curve: Motion.curve(context, AppTokens.curveStandard),
                         decoration: BoxDecoration(
                           color: s == value
                               ? AppTokens.tintedPrimarySoft(context)
@@ -75,12 +79,12 @@ class DimensionRow extends StatelessWidget {
                               BorderRadius.circular(AppTokens.radiusChip),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                              horizontal: AppTokens.spacingSm,
+                              vertical: AppTokens.spacingXs,
                             ),
                             child: AnimatedDefaultTextStyle(
-                              duration: AppTokens.durFast,
-                              curve: AppTokens.curveStandard,
+                              duration: Motion.duration(context, AppTokens.durFast),
+                              curve: Motion.curve(context, AppTokens.curveStandard),
                               style: TextStyle(
                                 fontSize: AppTokens.fontSizeScoreLg,
                                 fontWeight: s == value

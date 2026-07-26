@@ -30,9 +30,14 @@ class MoodQuickButton extends ConsumerWidget {
     final hasToday = latest != null;
 
     if (hasToday) {
+      // v0.24 round 48 (emil P1-7): 改用接管 tap 模式
+      // 之前 PressFeedback(child: SecondaryButton(onPressed: onTap)) 嵌套
+      // PressFeedback scale 160ms + InkWell ripple 300ms 叠 → pointer 抬起时 scale 先恢复 + ripple 还在扩散 → 体感"分裂"
+      // 现在 PressFeedback 接管 tap + SecondaryButton onPressed: () {} 不重复触发
       return PressFeedback(
+        onTap: onTap,
         child: SecondaryButton(
-          onPressed: onTap,
+          onPressed: () {},
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -40,7 +45,7 @@ class MoodQuickButton extends ConsumerWidget {
                 MoodVisual.emojiFor(latest.score),
                 style: const TextStyle(fontSize: AppTokens.fontSizeBodySm),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppTokens.spacingXs),
               Text(
                 '${AppLocalizations.of(context).moodTodayLabel}${MoodVisual.labelFor(latest.score)}',
                 style: const TextStyle(
@@ -54,8 +59,9 @@ class MoodQuickButton extends ConsumerWidget {
       );
     }
     return PressFeedback(
+      onTap: onTap,
       child: SecondaryButton(
-        onPressed: onTap,
+        onPressed: () {},
         child: Text(
           AppLocalizations.of(context).moodRecordButton,
           style: const TextStyle(

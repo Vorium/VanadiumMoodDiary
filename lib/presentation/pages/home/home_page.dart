@@ -18,7 +18,7 @@ import 'package:chroniccare/main.dart' show notificationInitResultProvider;
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/celebration_overlay.dart';
+import 'package:chroniccare/presentation/widgets/animations/celebration_bounce.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_header.dart';
@@ -396,7 +396,9 @@ class _HomePageState extends ConsumerState<HomePage> {
         right: 0,
         child: IgnorePointer(
           child: Center(
-            child: AnimatedCelebration(message: message),
+            // v0.24 round 48 (emil P1-2): 实际走 CelebrationBounce via typedef @Deprecated
+            // 未来 v0.25+ 全部迁移后, 可删 celebration_overlay.dart 整个文件
+            child: CelebrationBounce(message: message),
           ),
         ),
       ),

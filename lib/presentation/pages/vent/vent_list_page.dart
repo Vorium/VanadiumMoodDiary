@@ -26,6 +26,7 @@ import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 class VentListPage extends ConsumerWidget {
   const VentListPage({super.key});
@@ -204,67 +205,68 @@ class _EntryCard extends StatelessWidget {
             : entry.contentText!)
         : AppLocalizations.of(context).ventVoiceLabel;
 
-    return Card(
-      child: ListTile(
-        leading: Hero(
-          // v0.17 round 2 (A4 emil 动效): 列表 → 详情时头像
-          // "飞"过去。emil 决策:occasional 频度(用户偶尔看历史回听) → 可加
-          // Hero 过渡。tag 必须 unique per entry,无论有没有 audio 都包
-          // (详情页同步有对应 Hero 接收)
-          tag: 'vent-avatar-${entry.id}',
-          child: CircleAvatar(
-            backgroundColor: entry.hasAudio
-                ? AppTokens.primaryLightColor(context)
-                : AppTokens.dividerColor(context),
-            child: Icon(
-              entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
-              color: entry.hasAudio
-                  ? AppTokens.primary
-                  : AppTokens.textSecondaryColor(context),
-              size: 20,
+    // v0.24 round 48 (emil P1-8): 加 PressFeedback 跟其他 list 行体感一致
+    // 之前 Card(child: ListTile) 无 scale 反馈,只有 InkWell ripple
+    // 树洞列表 tens/day 频度(情绪低谷时频繁查看历史) 体感应跟 settings 列表一致
+    return PressFeedback(
+      child: Card(
+        child: ListTile(
+          leading: Hero(
+            // v0.17 round 2 (A4 emil 动效): 列表 → 详情时头像
+            // "飞"过去。emil 决策:occasional 频度(用户偶尔看历史回听) → 可加
+            // Hero 过渡。tag 必须 unique per entry,无论有没有 audio 都包
+            // (详情页同步有对应 Hero 接收)
+            tag: 'vent-avatar-${entry.id}',
+            child: CircleAvatar(
+              backgroundColor: entry.hasAudio
+                  ? AppTokens.primaryLightColor(context)
+                  : AppTokens.dividerColor(context),
+              child: Icon(
+                entry.hasAudio ? Icons.mic : Icons.text_snippet_outlined,
+                color: entry.hasAudio
+                    ? AppTokens.primary
+                    : AppTokens.textSecondaryColor(context),
+                size: AppTokens.iconSize,
+              ),
             ),
           ),
-        ),
-        title: Text(
-          preview,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: AppTokens.fontSizeBody),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
-          child: Row(
-            children: [
-              Text(
-                _formatTime(context, entry.timestamp),
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeCaption,
-                  color: AppTokens.textHintColor(context),
-                ),
-              ),
-              if (entry.hasAudio) ...[
-                const SizedBox(width: AppTokens.spacingSm),
-                Icon(
-                  Icons.access_time,
-                  size: 12,
-                  color: AppTokens.textHintColor(context),
-                ),
-                const SizedBox(width: 2),
+          title: Text(
+            preview,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTokens.textStyleBody(context),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
+            child: Row(
+              children: [
                 Text(
-                  entry.durationLabel(),
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
+                  _formatTime(context, entry.timestamp),
+                  style: AppTokens.textStyleCaption(context)
+                      .copyWith(color: AppTokens.textHintColor(context)),
+                ),
+                if (entry.hasAudio) ...[
+                  const SizedBox(width: AppTokens.spacingSm),
+                  Icon(
+                    Icons.access_time,
+                    size: AppTokens.iconSizeMicro,
                     color: AppTokens.textHintColor(context),
                   ),
-                ),
+                  const SizedBox(width: AppTokens.spacingXxs),
+                  Text(
+                    entry.durationLabel(),
+                    style: AppTokens.textStyleCaption(context)
+                        .copyWith(color: AppTokens.textHintColor(context)),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
+          trailing:
+              Icon(Icons.chevron_right, color: AppTokens.textHintColor(context)),
+          onTap: () => context.push('/vent/detail/${entry.id}'),
+          onLongPress: () => _confirmDelete(context, entry),
         ),
-        trailing:
-            Icon(Icons.chevron_right, color: AppTokens.textHintColor(context)),
-        onTap: () => context.push('/vent/detail/${entry.id}'),
-        onLongPress: () => _confirmDelete(context, entry),
       ),
     );
   }
