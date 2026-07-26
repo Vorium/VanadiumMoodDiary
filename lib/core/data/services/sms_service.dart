@@ -137,20 +137,36 @@ class AliyunSmsProvider implements SmsProvider {
 }
 
 /// SMS 发送结果
+///
+/// v0.25 round 52 (spen P0 #12): 加 [kind] 区分 ok / fail / mock。
+/// 之前 mock 模式抛 UnimplementedError → SmsService.send catch 返
+/// SmsResult.fail → safety_watch 算 smsFail++ → UI 显示"已通知 0 位
+/// (X 失败)" 实际根本没发。改成 mock 独立 kind,SafetyWatch 跳过
+/// 既不算 ok 也不算 fail。
+enum SmsResultKind {
+  ok,
+  fail,
+  /// Mock 模式: 没真发,不算 ok 也不算 fail。
+  /// 上层 (SafetyWatch / Settings) 应在 UI 显示 "未配置" 状态。
+  mock,
+}
+
 class SmsResult {
-  final bool success;
+  final SmsResultKind kind;
+  bool get success => kind == SmsResultKind.ok;
   final String? error;
   final String? providerMessageId;
 
   const SmsResult({
-    required this.success,
+    required this.kind,
     this.error,
     this.providerMessageId,
   });
 
-  factory SmsResult.ok() => const SmsResult(success: true);
+  factory SmsResult.ok() => const SmsResult(kind: SmsResultKind.ok);
   factory SmsResult.fail(String error) =>
-      SmsResult(success: false, error: error);
+      SmsResult(kind: SmsResultKind.fail, error: error);
+  factory SmsResult.mock() => const SmsResult(kind: SmsResultKind.mock);
 }
 
 /// SMS 服务（业务层）
@@ -204,6 +220,16 @@ class SmsService {
     required String to,
     required String body,
   }) async {
+    // v0.25 round 52 (spen P0 #12): mock provider 直接返 SmsResult.mock,
+    // 避免 catch UnimplementedError 误判为 fail。mock 模式只 log, 不算
+    // smsOk 也不算 smsFail — SafetyWatch 看到 kind=mock 跳过。
+    if (!_provider.isProductionReady) {
+      piiSafeLog(
+        'SmsService',
+        '🟡 [MOCK] SMS to ${maskPhone(to)} via ${_provider.name} (no real send)',
+      );
+      return SmsResult.mock();
+    }
     try {
       final ok = await _provider.send(to: to, body: body);
       if (ok) {

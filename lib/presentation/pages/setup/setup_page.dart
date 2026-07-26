@@ -400,8 +400,14 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           );
       if (!mounted) return;
 
-      final medications =
-          await ref.read(medicationRepositoryProvider).watchAll().first;
+      // v0.25 round 52 (spen P0 #13): 加 5s timeout 防御 drift stream hang
+      // (DB lock 时罕见),参考 data_export_service.dart:108-123 4 处
+      // stream.first.timeout(5s) 模式。timeout 返空 list 走"无 medication"路径
+      final medications = await ref
+          .read(medicationRepositoryProvider)
+          .watchAll()
+          .first
+          .timeout(const Duration(seconds: 5), onTimeout: () => const []);
       await ref.read(notificationServiceProvider).rescheduleMedicationReminders(
             medications,
           );

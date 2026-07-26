@@ -20,6 +20,8 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
+
 /// v0.16 round 19/19B 教训: cancel range 必须 ≥ base + maxId * 系数。
 /// 统一给 200000, 覆盖 medId 几万个 (远超实际用户量, int32 安全 ~2.1B)。
 @visibleForTesting
@@ -52,13 +54,25 @@ class ReminderDispatcher {
   /// v0.22 round 30 (sp-en P2-2): 5s timeout 兜底, 不会无限阻塞
   Future<void> cancelByIdRange(int base) async {
     final pending = await _plugin.pendingNotificationRequests();
-    await Future.wait(
-      pending
-          .where(
-            (p) => p.id >= base && p.id < base + kReminderCancelRange,
-          )
-          .map((p) => _plugin.cancel(p.id)),
-    ).timeout(kCancelRangeTimeout, onTimeout: () => <void>[]);
+    // v0.25 round 52 (spen P0 #8): Future.wait + outer timeout 不取消子
+    // future, hang 的 cancel 会继续在后台跑, 长时 hang 浪费资源。
+    // 改成 for + 各 cancel 加 2s timeout, 任何 hang 都限时收尾。
+    final toCancel = pending
+        .where((p) => p.id >= base && p.id < base + kReminderCancelRange)
+        .map((p) => p.id)
+        .toList();
+    for (final id in toCancel) {
+      try {
+        await _plugin.cancel(id).timeout(const Duration(seconds: 2));
+      } catch (e, st) {
+        swallowError(
+          where: 'reminder_dispatcher.cancelByIdRange',
+          error: e,
+          stack: st,
+          note: 'cancel id=$id timed out or failed',
+        );
+      }
+    }
   }
 
   /// 构造 Android/iOS 通知详情 (channel + importance)

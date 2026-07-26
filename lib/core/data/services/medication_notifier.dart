@@ -138,9 +138,11 @@ class MedicationNotifier {
           );
           scheduled++;
         } catch (e) {
+          // v0.25 round 52 (spen P0 #10): med.name 是 PII (精神心理患者药名)
+          // 改用 medId 数字 + 错误信息走 swallowError
           piiSafeLog(
             'MedicationNotifier',
-            '❌ 推送调度失败 med=${med.name} t=$t: $e',
+            '❌ 推送调度失败 medId=${med.id} t=$t: $e',
           );
         }
       }

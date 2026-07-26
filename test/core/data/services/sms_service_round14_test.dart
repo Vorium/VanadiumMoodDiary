@@ -50,28 +50,33 @@ void main() {
   });
 
   group('SmsService (业务层)', () {
-    test('P0-1: provider 抛 throw → SmsService.send 返 SmsResult.fail', () async {
-      // 真实 mock provider 现在 throw,SmsService 应该 catch
-      final svc = SmsService(provider: MockSmsProvider());
-      final result = await svc.send(to: '13800138000', body: 'test');
-      expect(result.success, false);
-      expect(result.error, isNotNull);
-    });
+    test(
+      'P0-1 + R52: mock provider → SmsService.send 返 SmsResult.mock '
+      '(spen P0 #12 修复: 不再算 fail 也不算 ok)',
+      () async {
+        final svc = SmsService(provider: MockSmsProvider());
+        final result = await svc.send(to: '13800138000', body: 'test');
+        expect(result.kind, SmsResultKind.mock);
+        expect(result.success, isFalse); // mock 既不算成功也不算失败
+      },
+    );
 
-    test('provider 返 true → SmsService.send 返 SmsResult.ok', () async {
+    test('provider 返 true (isProductionReady=true) → SmsResult.ok', () async {
       // 自定义 provider 返 true (用于 test / dev 接管)
       final svc = SmsService(
         provider: _AlwaysOkProvider(),
       );
       final result = await svc.send(to: '13800138000', body: 'test');
+      expect(result.kind, SmsResultKind.ok);
       expect(result.success, true);
     });
 
-    test('provider 返 false → SmsService.send 返 SmsResult.fail', () async {
+    test('provider 返 false (isProductionReady=true) → SmsResult.fail', () async {
       final svc = SmsService(
         provider: _AlwaysFailProvider(),
       );
       final result = await svc.send(to: '13800138000', body: 'test');
+      expect(result.kind, SmsResultKind.fail);
       expect(result.success, false);
       expect(result.error, isNotNull);
     });

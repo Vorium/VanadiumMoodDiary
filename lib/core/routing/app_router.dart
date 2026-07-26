@@ -303,13 +303,16 @@ class AppShell extends ConsumerWidget {
     final l10n = Localizations.of<AppLocalizations>(context, AppLocalizations);
     return [
       _NavDest(
-        label: l10n?.navCheckIn ?? '鎵撳崱',
+        // v0.25 round 52 (spen P0 #11): i18n 失败时 fallback 改英文,
+        // 不再用 mojibake 中文 ('鎵撳崱' / '璁剧疆' 是 Big5 错码后的乱码)
+        label: l10n?.navCheckIn ?? 'Check-in',
         icon: Icons.check_circle_outline,
         selectedIcon: Icons.check_circle,
         path: '/',
       ),
       _NavDest(
-        label: l10n?.navSettings ?? '璁剧疆',
+        // v0.25 round 52: 同上 'Settings' fallback
+        label: l10n?.navSettings ?? 'Settings',
         icon: Icons.settings_outlined,
         selectedIcon: Icons.settings,
         path: '/settings',
@@ -364,7 +367,9 @@ class AppShell extends ConsumerWidget {
                         Localizations.of<AppLocalizations>(
                                     context, AppLocalizations,)
                                 ?.navAppName ??
-                            '慢病管家',
+                            // v0.25 round 52 (spen P0 #11): i18n 失败 fallback
+                            // 改英文 'ChronicCare', 不用 '慢病管家' 硬编
+                            'ChronicCare',
                         style: TextStyle(
                           fontSize: AppTokens.fontSizeLabel,
                           fontWeight: FontWeight.w600,

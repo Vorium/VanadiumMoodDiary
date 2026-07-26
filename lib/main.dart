@@ -86,8 +86,10 @@ Future<void> _bootstrap() async {
   //   修法: 启动时加载所有 tz 数据,设默认 Asia/Shanghai (中国用户基线)
   //   pubspec.yaml 已有 timezone: ^0.9.4
   //   v1.0+ 计划: settings 里加 "时区" 选项,用户可改
+  //   v0.25 round 52 (spen P0 #9): 删 Asia/Shanghai 硬编码。设默认 tz 由
+  //   notification_service.init() 负责 (用 flutter_timezone 拿 device tz),
+  //   避免海外用户 tz 错位。
   tz_data.initializeTimeZones();
-  tz.setLocalLocation(tz.getLocation('Asia/Shanghai'));
 
   // 2. 升级检查
   //    如果没有旧 DB（全新安装），直接进入步骤 3

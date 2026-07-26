@@ -111,7 +111,7 @@ class RefillNotifier {
     if (fireAt == null) {
       piiSafeLog(
         'RefillNotifier',
-        '⏭️ scheduleRefillReminder: med=${medication.name} 无 refillAt, 跳过',
+        '⏭️ scheduleRefillReminder: medId=${medication.id} 无 refillAt, 跳过',
       );
       return;
     }
@@ -123,19 +123,20 @@ class RefillNotifier {
     if (fireAt.isBefore(now)) {
       piiSafeLog(
         'RefillNotifier',
-        '⏭️ scheduleRefillReminder: med=${medication.name} '
+        '⏭️ scheduleRefillReminder: medId=${medication.id} '
             'fireAt=$fireAt 已过, 跳过',
       );
       // 但仍要取消旧的, 避免过期通知还挂着
       // v0.23 round 40 (sp-en R7 fix): cancel 抛异常不破整个 schedule 流程
       // 之前 await cancelRefillReminder 抛 PlatformException → 整个
       // reschedule 退出, 导致其他 medication 漏排
+      // v0.25 round 52 (spen P0 #10): med.name 是 PII, 改 medId
       try {
         await cancelRefillReminder(medication.id);
       } catch (e, st) {
         piiSafeLog(
           'RefillNotifier',
-          '⚠️ cancelRefillReminder 失败 (med=${medication.name}): $e',
+          '⚠️ cancelRefillReminder 失败 (medId=${medication.id}): $e',
           error: e,
           stackTrace: st,
         );
@@ -160,9 +161,10 @@ class RefillNotifier {
         details: details,
         payload: payload,
       );
+      // v0.25 round 52 (spen P0 #10): med.name 是 PII, 改 medId
       piiSafeLog(
         'RefillNotifier',
-        '✅ 续方提醒: med=${medication.name} '
+        '✅ 续方提醒: medId=${medication.id} '
             'fireAt=$fireAt daysLeft=$daysLeft',
       );
     } catch (e) {

@@ -248,16 +248,21 @@ class SafetyWatchService {
       // 5. 发短信给所有联系人
       int smsOk = 0;
       int smsFail = 0;
+      int smsMock = 0; // v0.25 round 52 (spen P0 #12): 单独 mock 计数
       for (final c in contacts) {
         final body = _buildAlertSms(
           userName: profile.userName,
           daysSinceLast: daysSinceLast,
         );
         final result = await _smsService.send(to: c.phone, body: body);
-        if (result.success) {
-          smsOk++;
-        } else {
-          smsFail++;
+        // v0.25 round 52: mock 模式单独计数,不算 ok 也不算 fail
+        switch (result.kind) {
+          case SmsResultKind.ok:
+            smsOk++;
+          case SmsResultKind.fail:
+            smsFail++;
+          case SmsResultKind.mock:
+            smsMock++;
         }
       }
 

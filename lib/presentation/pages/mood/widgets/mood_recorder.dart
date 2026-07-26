@@ -147,48 +147,74 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
   void dispose() {
     _playerCompleteSub?.cancel();
     _sttSub?.cancel();
-    // 取消录音 (如果还在录)
-    if (_isRecording) {
-      _service.cancelRecording().catchError((Object e, StackTrace st) {
+    // v0.25 round 52 (spen P0 #7): State.dispose() 是 sync, 不能 await future,
+    // 但 fire-and-forget 必须显式 unawaited 标记 (避免 unhandled async error
+    // 跟 implicit linter warning)。race 风险: widget 已 defunct 时 future
+    // 仍可能跑 — 每个都 catchError 走 swallowError 兜底 + unawaited 跟踪。
+    unawaited(
+      _disposeResources().catchError((Object e, StackTrace st) {
         swallowError(
-          where: 'mood_recorder.dispose',
+          where: 'mood_recorder.dispose._disposeResources',
           error: e,
           stack: st,
-          note: 'cancel recording on dispose failed',
+          note: 'dispose resources chain failed',
         );
-      });
-    }
-    // 停 player + 清理临时文件
-    _player.stop().then((_) {
-      _player.dispose();
-    }).catchError((Object e, StackTrace st) {
+      }),
+    );
+    super.dispose();
+  }
+
+  /// 顺序释放: 停 player → 清理临时文件 → cancel recording → service dispose
+  /// 之前 4 个 fire-and-forget 是 race (spen P0 #7), 现在串行 + 显式 await。
+  Future<void> _disposeResources() async {
+    // 1) 停 player (如果还在播)
+    try {
+      await _player.stop();
+      await _player.dispose();
+    } catch (e, st) {
       swallowError(
         where: 'mood_recorder.dispose.playerStop',
         error: e,
         stack: st,
       );
-    });
+    }
+    // 2) 清理临时解密文件
     if (_tempDecryptedPath != null) {
-      ref
-          .read(moodAudioStorageProvider)
-          .deleteTempFile(_tempDecryptedPath!)
-          .catchError((Object e, StackTrace st) {
+      try {
+        await ref
+            .read(moodAudioStorageProvider)
+            .deleteTempFile(_tempDecryptedPath!);
+      } catch (e, st) {
         swallowError(
           where: 'mood_recorder.dispose.deleteTemp',
           error: e,
           stack: st,
         );
-      });
+      }
     }
-    // service dispose (释放 AudioRecorder + SpeechToText)
-    _service.dispose().catchError((Object e, StackTrace st) {
+    // 3) 取消录音 (如果还在录)
+    if (_isRecording) {
+      try {
+        await _service.cancelRecording();
+      } catch (e, st) {
+        swallowError(
+          where: 'mood_recorder.dispose.cancelRecording',
+          error: e,
+          stack: st,
+          note: 'cancel recording on dispose failed',
+        );
+      }
+    }
+    // 4) service dispose (释放 AudioRecorder + SpeechToText)
+    try {
+      await _service.dispose();
+    } catch (e, st) {
       swallowError(
         where: 'mood_recorder.dispose.service',
         error: e,
         stack: st,
       );
-    });
-    super.dispose();
+    }
   }
 
   // ===== 录音流程 =====

@@ -80,45 +80,48 @@ void main() {
     });
   });
 
-  group('v0.23 round 38 (P0-1) — SmsService.send', () {
-    test('default provider = mock → send() 返 SmsResult.fail', () async {
+  group('v0.25 round 52 (spen P0 #12) — SmsService.send kind 区分', () {
+    test('default provider = mock → send() 返 SmsResult.mock (v0.25 R52)', () async {
       // SmsService() 不传 provider,默认 MockSmsProvider
+      // v0.25 R52 改成 mock 独立 kind, 不算 fail 也不算 ok
       final service = SmsService();
       final result = await service.send(
         to: '13800138000',
         body: 'test message',
       );
+      expect(result.kind, SmsResultKind.mock);
       expect(result.success, isFalse);
-      expect(result.error, isNotNull);
-      expect(result.error, contains('UnimplementedError'));
     });
 
-    test('显式注入 mock → send() 返 SmsResult.fail', () async {
+    test('显式注入 mock → send() 返 SmsResult.mock', () async {
       final service = SmsService(provider: MockSmsProvider());
       final result = await service.send(
         to: '13800138000',
         body: 'test',
       );
-      expect(result.success, isFalse);
-      expect(result.error, contains('MockSmsProvider'));
+      expect(result.kind, SmsResultKind.mock);
     });
 
-    test('注入 aliyun (未实现) → send() 返 SmsResult.fail (不是抛 UnimplementedError)', () async {
-      final service = SmsService(
-        provider: AliyunSmsProvider(
-          accessKeyId: 'a',
-          accessKeySecret: 'b',
-          signName: 'c',
-          templateCode: 'd',
-        ),
-      );
-      final result = await service.send(
-        to: '13800138000',
-        body: 'test',
-      );
-      expect(result.success, isFalse);
-      expect(result.error, contains('AliyunSmsProvider'));
-    });
+    test(
+      '注入 aliyun (未实现但 isProductionReady=true) → send() 返 SmsResult.fail',
+      () async {
+        final service = SmsService(
+          provider: AliyunSmsProvider(
+            accessKeyId: 'a',
+            accessKeySecret: 'b',
+            signName: 'c',
+            templateCode: 'd',
+          ),
+        );
+        final result = await service.send(
+          to: '13800138000',
+          body: 'test',
+        );
+        // aliyun isProductionReady=true,所以走真 send 路径 → throw → catch → fail
+        expect(result.kind, SmsResultKind.fail);
+        expect(result.error, contains('AliyunSmsProvider'));
+      },
+    );
   });
 
   group('v0.23 round 38 (P0-1) — SmsService.provider getter', () {
