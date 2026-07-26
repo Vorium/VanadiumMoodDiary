@@ -492,8 +492,8 @@ void main() {
       // 总览段
       expect(s, contains('━━━ 总览 ━━━'));
       expect(s, contains('依从率: 100%'));
-      // 免责声明
-      expect(s, contains('本应用不提供医疗建议，仅供医生参考'));
+      // 免责声明 (v0.25 round 56h: 改用 Strings.pdfFooterNotice 单一 source)
+      expect(s, contains('本应用不提供医疗建议'));
     });
 
     test('漏服时显示具体日期', () {

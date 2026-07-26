@@ -1,3 +1,4 @@
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
@@ -181,10 +182,14 @@ class MedicationReportData {
   }
 
   /// 渲染为纯文本报告
+  ///
+  /// v0.25 round 56h (spzh P1 #9 toReportString 重复硬编): 改用 Strings 单一 source
+  /// 跟 medication_report_pdf.dart 的 Strings.pdfTitle / pdfFooterNotice /
+  /// pdfSection* 保持一致 (PDF + text 双格式同源).
   String toReportString() {
     final buf = StringBuffer();
     buf.writeln('═══════════════════════════════════');
-    buf.writeln('  慢病管家 · 用药报告');
+    buf.writeln('  ${Strings.pdfTitle}');
     buf.writeln('═══════════════════════════════════');
     buf.writeln();
     buf.writeln('患者: ${userName.isEmpty ? '未设置' : userName}');
@@ -198,14 +203,13 @@ class MedicationReportData {
       buf.writeln('—— 暂无用药数据 ——');
       buf.writeln();
       buf.writeln('═══════════════════════════════════');
-      buf.writeln('本报告由「慢病管家」App 自动生成');
-      buf.writeln('本应用不提供医疗建议，仅供医生参考');
+      buf.writeln(Strings.pdfFooterNotice);
       buf.writeln('═══════════════════════════════════');
       return buf.toString();
     }
 
     // === 常吃药方案 ===
-    buf.writeln('━━━ 常吃药方案 ━━━');
+    buf.writeln('━━━ ${Strings.pdfSectionRoutineMeds} ━━━');
     buf.writeln();
     if (medicationStats.isEmpty) {
       buf.writeln('  （无）');
@@ -242,7 +246,7 @@ class MedicationReportData {
     }
 
     // === 临时用药 ===
-    buf.writeln('━━━ 临时用药 ━━━');
+    buf.writeln('━━━ ${Strings.pdfSectionTempMeds} ━━━');
     buf.writeln();
     if (tempMedications.isEmpty) {
       buf.writeln('  （无）');
@@ -258,7 +262,7 @@ class MedicationReportData {
     }
 
     // === 总览 ===
-    buf.writeln('━━━ 总览 ━━━');
+    buf.writeln('━━━ ${Strings.pdfSectionSummary} ━━━');
     buf.writeln();
     buf.writeln('按时服药: $onTimeDoses 次');
     buf.writeln('漏服: $missedDoses 次');
@@ -270,8 +274,7 @@ class MedicationReportData {
     buf.writeln('依从率: ${adh == null ? '—' : '$adh%'}');
     buf.writeln();
     buf.writeln('═══════════════════════════════════');
-    buf.writeln('本报告由「慢病管家」App 自动生成');
-    buf.writeln('本应用不提供医疗建议，仅供医生参考');
+    buf.writeln(Strings.pdfFooterNotice);
     buf.writeln('═══════════════════════════════════');
     return buf.toString();
   }
