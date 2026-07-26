@@ -133,7 +133,7 @@ lib/
 
 ```bash
 flutter analyze    # 必须 0 error
-flutter test       # 必须全过（当前 876 cases）
+flutter test       # 必须全过（当前 1098 cases, v0.25 round 56e 后）
 python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 检查)
 ```
 
@@ -209,6 +209,38 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **v0.24 round 45**: 3 视角再审视 → Sprint #3 main.dart i18n + Sprint #4 token + Sprint #6 check_no_pua.py + CHANGELOG [0.23.0] 补 + AGENTS 数据同步
 
 总计: 910+ tests pass (v0.24 round 48 后 34 个新增), 0 analyzer error, 11 守护脚本全绿 (v0.24 round 48 新增 check_no_hardcoded_utc / check_widget_dispose / check_changelog).
+
+## v0.25 spen P0 #15 TDD + 杂项清理 (round 56b-56e)
+
+按 spen P0 #15 (sub-service 0 test) + spen 杂项 全修:
+
+- **R56b**: P1(emil) spacing SizedBox 走 token — 46 处 magic 修复 (spacingXxxs/Xxs/chipGap/Xs/Sm/Md/Lg/Xl)
+- **R56c**: TDD 续 — db_key_service +5 unit test (FlutterSecureStorage MethodChannel mock 模式)
+- **R56c'**: TDD 续 — refill_notifier +10 (id 公式 + computeRefillFireTime 纯函数 + scheduleRefillReminder instance)
+- **R56c''**: TDD 续 — medication_notifier +10 (ID 常量 + scheduleDailyReminder + rescheduleMedicationReminders)
+- **R56c'''**: TDD 续 — assessment_notifier +4 + safety_alert_dispatcher +7 + mood_audio_service +10 = +21
+- **R56d**: 杂项清理 — formatters 走 intl DateFormat + vent_detail_page 改 EmptyState
+- **R56e**: 守门员 — check_orphan_arb_keys.py + 一次性清 39 个 orphan (677 → 550 zh ARB key)
+
+总计 (本批): 1057 → 1098 tests (+41), 0 analyzer error, 12 守护脚本全绿 (新增 check_orphan_arb_keys).
+
+**12 守护脚本清单** (v0.25 round 56e 后):
+1. `python scripts/check_arb_keys.py` — zh / en / zh_Hant ARB 同步
+2. `python scripts/check_changelog.py` — pubspec 版本号 + CHANGELOG 顺序
+3. `python scripts/check_cross_feature.py` — 跨 feature import 边界
+4. `python scripts/check_datetime_race.py` — 跨函数 DateTime.now() 多次调用
+5. `python scripts/check_datetime_race2.py` — 跨 DateTime(year,month,day) 多次调用
+6. `python scripts/check_drift_namespace.py` — @DataClassName 唯一
+7. `python scripts/check_fullwidth_punctuation.py` — 全角标点 (warn-only)
+8. `python scripts/check_no_hardcoded_utc.py` — UTC 硬编码
+9. `python scripts/check_no_pua.py` — PUA 字符
+10. `python scripts/check_widget_dispose.py` — 资源泄漏
+11. `python scripts/check_orphan_arb_keys.py` — **R56e 新增** — ARB key 定义但未引用
+12. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
+
+**待办 (外部依赖, 非本批)**:
+- R55 真接阿里云 SMS (依赖法务 1-2 月模板审核 + 阿里云 AccessKey 申请)
+- R51b PHQ-9 题目 + 严重度 + 危机电话完整走 ARB (v1.0 大工程, 当前仅 hotline 6 region 走 hot path)
 
 ## 关键约束
 
