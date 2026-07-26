@@ -7,6 +7,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:chroniccare/core/data/services/email_service.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -43,7 +44,7 @@ Future<void> main() async {
           id: 0,
           name: '氟西汀',
           dosage: 40,
-          dosageUnit: 'mg',
+          dosageUnit: DosageUnit.mg,
           times: const [HourMinute(hour: 8, minute: 0)],
           startDate: DateTime.now(),
           endDate: null,
