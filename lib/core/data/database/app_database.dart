@@ -9,6 +9,13 @@ import 'package:chroniccare/core/data/database/connection/connection.dart'
 
 import 'dart:convert';
 
+import 'package:chroniccare/core/data/database/daos/check_in_dao.dart';
+import 'package:chroniccare/core/data/database/daos/contact_dao.dart';
+import 'package:chroniccare/core/data/database/daos/medication_dao.dart';
+import 'package:chroniccare/core/data/database/daos/mood_dao.dart';
+import 'package:chroniccare/core/data/database/daos/report_dao.dart';
+import 'package:chroniccare/core/data/database/daos/user_profile_dao.dart';
+import 'package:chroniccare/core/data/database/daos/vent_dao.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/database/tables/check_in/check_ins.dart';
 import 'package:chroniccare/core/data/database/tables/contact/contacts.dart';
@@ -211,264 +218,71 @@ class AppDatabase extends _$AppDatabase {
         },
       );
 
-  // ============= CheckIns =============
-  Stream<List<CheckIn>> watchAllCheckIns() {
-    return (select(checkIns)
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ]))
-        .watch();
-  }
+  // ============= CheckIns (v0.25 R53a: 委托给 CheckInDao) =============
 
-  /// 监听所有评估记录（type='phq9' / 'gad7'），按时间正序（折线图用）
-  Stream<List<CheckIn>> watchAssessments() {
-    return (select(checkIns)
-          ..where((t) => t.type.equals('phq9') | t.type.equals('gad7'))
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
-          ]))
-        .watch();
-  }
+  // v0.25 round 53a (spen P1 #12 god class 拆分): 抽 7 DAO + app_database
+  // 改成 1 行委托。caller 暂时不动 (保留 facade 兼容), 后续 R53b 渐进迁移。
+  late final checkInDao = CheckInDao(this);
+  late final medicationDao = MedicationDao(this);
+  late final contactDao = ContactDao(this);
+  late final userProfileDao = UserProfileDao(this);
+  late final reportDao = ReportDao(this);
+  late final moodDao = MoodDao(this);
+  late final ventDao = VentDao(this);
 
-  Stream<CheckIn?> watchTodayCheckIn() {
-    // v0.23 round 40 (sp-en R5 fix): single-capture DateTime.now()
-    // 之前 `final now = DateTime.now();` 立刻用完即丢,等效 `startOfDay = DateTime(now.year, ...)`
-    // 改成 single-capture 模式: 一次 now 算 start/end,跨 midnight 不会飘
-    // (跨夜重建由 v0.17 round 4 dayChangeTickProvider 兜住)
-    final now = DateTime.now();
-    final startOfDay = DateTime(now.year, now.month, now.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
-    return (select(checkIns)
-          ..where(
-            (t) =>
-                t.timestamp.isBiggerOrEqualValue(startOfDay) &
-                t.timestamp.isSmallerThanValue(endOfDay) &
-                t.type.equals('normal'),
-          )
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ])
-          ..limit(1))
-        .watchSingleOrNull();
-  }
+  // ============= CheckIns (facade 委托, 旧 caller 兼容) =============
+  Stream<List<CheckIn>> watchAllCheckIns() => checkInDao.watchAll();
+  Stream<List<CheckIn>> watchAssessments() => checkInDao.watchAssessments();
+  Stream<CheckIn?> watchTodayCheckIn() => checkInDao.watchToday();
+  Stream<List<CheckIn>> watchNormalCheckIns() => checkInDao.watchNormal();
+  Future<CheckIn?> getLatestNormalCheckIn() => checkInDao.getLatestNormal();
+  Future<DateTime?> getLatestAssessmentTimestamp() =>
+      checkInDao.getLatestAssessmentTimestamp();
+  Future<int> insertCheckIn(CheckInsCompanion entry) => checkInDao.insert(entry);
 
-  /// 监听所有 normal 类型打卡（DB 级 WHERE type='normal'，避免全表扫描）
-  Stream<List<CheckIn>> watchNormalCheckIns() {
-    return (select(checkIns)
-          ..where((t) => t.type.equals('normal'))
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ]))
-        .watch();
-  }
+  // ============= Medications (facade 委托) =============
+  Stream<List<Medication>> watchMedications() => medicationDao.watchActive();
+  Stream<List<Medication>> watchAllMedicationsIncludingInactive() =>
+      medicationDao.watchAllIncludingInactive();
+  Future<int> insertMedication(MedicationsCompanion entry) =>
+      medicationDao.insert(entry);
+  Future<bool> updateMedication(Medication medication) =>
+      medicationDao.update(medication);
+  Future<int> deleteMedication(int id) => medicationDao.delete(id);
 
-  /// 获取最近一次 normal 打卡（单条，DB 级 LIMIT 1）
-  Future<CheckIn?> getLatestNormalCheckIn() {
-    return (select(checkIns)
-          ..where((t) => t.type.equals('normal'))
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ])
-          ..limit(1))
-        .getSingleOrNull();
-  }
+  // ============= Contacts (facade 委托) =============
+  Stream<List<Contact>> watchContacts() => contactDao.watchActive();
+  Future<int> insertContact(ContactsCompanion entry) => contactDao.insert(entry);
+  Future<bool> updateContact(Contact contact) => contactDao.update(contact);
+  Future<int> deleteContact(int id) => contactDao.delete(id);
 
-  /// 获取最近一次评估时间戳（DB 级 LIMIT 1，避免全表 reduce）
-  Future<DateTime?> getLatestAssessmentTimestamp() async {
-    final row = await (select(checkIns)
-          ..where((t) => t.type.equals('phq9') | t.type.equals('gad7'))
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ])
-          ..limit(1))
-        .getSingleOrNull();
-    return row?.timestamp;
-  }
+  // ============= UserProfile (facade 委托) =============
+  Stream<UserProfile?> watchUserProfile() => userProfileDao.watch();
+  Future<UserProfile?> getUserProfile() => userProfileDao.get();
+  Future<void> upsertUserProfile(UserProfilesCompanion entry) =>
+      userProfileDao.upsert(entry);
 
-  Future<int> insertCheckIn(CheckInsCompanion entry) {
-    return into(checkIns).insert(entry);
-  }
+  // ============= ReportHistories (facade 委托) =============
+  Stream<List<ReportHistory>> watchReportHistories() => reportDao.watchAll();
+  Future<int> insertReportHistory(ReportHistoriesCompanion entry) =>
+      reportDao.insert(entry);
+  Future<int> deleteReportHistory(int id) => reportDao.delete(id);
+  Future<int> clearAllReportHistories() => reportDao.clearAll();
+  Future<List<ReportHistory>> getAllReportHistories() => reportDao.getAll();
 
-  // ============= Medications =============
-  Stream<List<Medication>> watchMedications() {
-    return (select(medications)
-          ..where((t) => t.isActive.equals(true))
-          ..orderBy([
-            (t) => OrderingTerm(expression: t.startDate),
-          ]))
-        .watch();
-  }
+  // ============= MoodEntries (facade 委托) =============
+  Stream<List<MoodEntry>> watchMoodEntries() => moodDao.watchAll();
+  Future<List<MoodEntry>> getAllMoodEntries() => moodDao.getAll();
+  Stream<List<MoodEntry>> watchTodayMoodEntries() => moodDao.watchToday();
+  Future<int> insertMoodEntry(MoodEntriesCompanion entry) =>
+      moodDao.insert(entry);
+  Future<int> deleteMoodEntry(int id) => moodDao.delete(id);
 
-  /// 监听所有 medication（含已停药）
-  ///
-  /// 给"用药报告"用：用户可能上个月停了一个药，但历史打卡还在，
-  /// 报告里不应该把这段历史吃掉。（B3 fix）
-  Stream<List<Medication>> watchAllMedicationsIncludingInactive() {
-    return (select(medications)
-          ..orderBy([
-            (t) => OrderingTerm(expression: t.startDate),
-          ]))
-        .watch();
-  }
-
-  Future<int> insertMedication(MedicationsCompanion entry) {
-    return into(medications).insert(entry);
-  }
-
-  Future<bool> updateMedication(Medication medication) {
-    return update(medications).replace(medication);
-  }
-
-  Future<int> deleteMedication(int id) {
-    return (delete(medications)..where((t) => t.id.equals(id))).go();
-  }
-
-  // ============= Contacts =============
-  Stream<List<Contact>> watchContacts() {
-    return (select(contacts)
-          ..where((t) => t.isActive.equals(true))
-          ..orderBy([
-            (t) => OrderingTerm(expression: t.sortOrder),
-          ]))
-        .watch();
-  }
-
-  Future<int> insertContact(ContactsCompanion entry) {
-    return into(contacts).insert(entry);
-  }
-
-  Future<bool> updateContact(Contact contact) {
-    return update(contacts).replace(contact);
-  }
-
-  Future<int> deleteContact(int id) {
-    return (delete(contacts)..where((t) => t.id.equals(id))).go();
-  }
-
-  // ============= UserProfile =============
-  Stream<UserProfile?> watchUserProfile() {
-    return (select(userProfiles)..where((t) => t.id.equals(1)))
-        .watchSingleOrNull();
-  }
-
-  Future<UserProfile?> getUserProfile() {
-    return (select(userProfiles)..where((t) => t.id.equals(1)))
-        .getSingleOrNull();
-  }
-
-  Future<void> upsertUserProfile(UserProfilesCompanion entry) async {
-    await into(userProfiles).insertOnConflictUpdate(entry);
-  }
-
-  // ============= ReportHistories =============
-  /// 监听所有报告历史，按生成时间倒序
-  Stream<List<ReportHistory>> watchReportHistories() {
-    return (select(reportHistories)
-          ..orderBy([
-            (t) => OrderingTerm(
-                  expression: t.generatedAt,
-                  mode: OrderingMode.desc,
-                ),
-          ]))
-        .watch();
-  }
-
-  Future<int> insertReportHistory(ReportHistoriesCompanion entry) {
-    return into(reportHistories).insert(entry);
-  }
-
-  Future<int> deleteReportHistory(int id) {
-    return (delete(reportHistories)..where((t) => t.id.equals(id))).go();
-  }
-
-  Future<int> clearAllReportHistories() {
-    return delete(reportHistories).go();
-  }
-
-  /// 一次性拉所有报告历史（给导出用）
-  Future<List<ReportHistory>> getAllReportHistories() {
-    return (select(reportHistories)
-          ..orderBy([
-            (t) => OrderingTerm(
-                  expression: t.generatedAt,
-                  mode: OrderingMode.desc,
-                ),
-          ]))
-        .get();
-  }
-
-  // ============= MoodEntries =============
-  /// 监听所有情绪记录（按时间正序，折线图用）
-  Stream<List<MoodEntry>> watchMoodEntries() {
-    return (select(moodEntries)
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
-          ]))
-        .watch();
-  }
-
-  /// 一次性拉所有情绪记录（给导出用）
-  Future<List<MoodEntry>> getAllMoodEntries() {
-    return (select(moodEntries)
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
-          ]))
-        .get();
-  }
-
-  /// 监听今日情绪记录（0~N 条）
-  Stream<List<MoodEntry>> watchTodayMoodEntries() {
-    final now = DateTime.now();
-    final startOfDay = DateTime(now.year, now.month, now.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
-    return (select(moodEntries)
-          ..where(
-            (t) =>
-                t.timestamp.isBiggerOrEqualValue(startOfDay) &
-                t.timestamp.isSmallerThanValue(endOfDay),
-          )
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ]))
-        .watch();
-  }
-
-  Future<int> insertMoodEntry(MoodEntriesCompanion entry) {
-    return into(moodEntries).insert(entry);
-  }
-
-  Future<int> deleteMoodEntry(int id) {
-    return (delete(moodEntries)..where((t) => t.id.equals(id))).go();
-  }
-
-  // ============= VentEntries (v0.15 Round 18 树洞) =============
-
-  /// 监听所有树洞条目（按时间倒序）
-  Stream<List<VentEntry>> watchVentEntries() {
-    return (select(ventEntries)
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ]))
-        .watch();
-  }
-
-  Future<int> insertVentEntry(VentEntriesCompanion entry) {
-    return into(ventEntries).insert(entry);
-  }
-
-  Future<int> deleteVentEntry(int id) {
-    return (delete(ventEntries)..where((t) => t.id.equals(id))).go();
-  }
+  // ============= VentEntries (facade 委托) =============
+  Stream<List<VentEntry>> watchVentEntries() => ventDao.watchAll();
+  Future<int> insertVentEntry(VentEntriesCompanion entry) =>
+      ventDao.insert(entry);
+  Future<int> deleteVentEntry(int id) => ventDao.delete(id);
 
   /// 完成首次设置：在同一个事务里写入用户档案、联系人、药物，
   /// 任何一个失败整体回滚，避免半成品数据
