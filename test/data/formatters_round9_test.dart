@@ -1,4 +1,5 @@
 import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -26,21 +27,21 @@ void main() {
 
   group('Formatters.dosage', () {
     test('整数剂量不显示小数', () {
-      expect(Formatters.dosage(40, 'mg'), '40mg');
-      expect(Formatters.dosage(0, 'mg'), '0mg');
-      expect(Formatters.dosage(1, '片'), '1片');
+      expect(Formatters.dosage(40, DosageUnit.mg), '40mg');
+      expect(Formatters.dosage(0, DosageUnit.mg), '0mg');
+      expect(Formatters.dosage(1, DosageUnit.tablet), '1片');
     });
 
     test('小数剂量显示小数', () {
-      expect(Formatters.dosage(0.4, 'mg'), '0.4mg');
-      expect(Formatters.dosage(1.5, '片'), '1.5片');
+      expect(Formatters.dosage(0.4, DosageUnit.mg), '0.4mg');
+      expect(Formatters.dosage(1.5, DosageUnit.tablet), '1.5片');
     });
 
     test('N23 fix: 浮点边界值仍按整数显示', () {
       // 41.0 在浮点里可能存成 41.0000000001
       // 旧逻辑 == roundToDouble 会失败,新逻辑用极小容差
-      expect(Formatters.dosage(40.0, 'mg'), '40mg');
-      expect(Formatters.dosage(1.0, '片'), '1片');
+      expect(Formatters.dosage(40.0, DosageUnit.mg), '40mg');
+      expect(Formatters.dosage(1.0, DosageUnit.tablet), '1片');
     });
   });
 

@@ -7,7 +7,7 @@
 // 4. vent 空态有 fade + scale 入场动画
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
-import 'package:chroniccare/presentation/pages/check_in/check_in_button.dart';
+import 'package:chroniccare/presentation/widgets/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';

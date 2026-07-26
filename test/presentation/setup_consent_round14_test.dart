@@ -123,7 +123,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.text('你好，我是慢病管家'),
+      find.text('您好，我是慢病管家'),
       findsOneWidget,
       reason: 'P0-6: 勾完 3 个法律同意后,应进入 welcome step',
     );

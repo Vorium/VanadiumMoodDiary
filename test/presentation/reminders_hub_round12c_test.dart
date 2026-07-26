@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/reminders_hub_page.dart';
@@ -116,7 +117,7 @@ void main() {
         id: 1,
         name: '氟西汀',
         dosage: 40,
-        dosageUnit: 'mg',
+        dosageUnit: DosageUnit.mg,
         times: const [
           HourMinute(hour: 8, minute: 0),
           HourMinute(hour: 20, minute: 0),
@@ -129,7 +130,7 @@ void main() {
         id: 2,
         name: '碳酸锂',
         dosage: 300,
-        dosageUnit: 'mg',
+        dosageUnit: DosageUnit.mg,
         times: const [HourMinute(hour: 12, minute: 0)],
         startDate: DateTime(2026, 1, 1),
         isActive: true,
@@ -140,7 +141,7 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     expect(
-      find.text('已启用 · 2 种 / 3 时间点'),
+      find.text('已启用 · 2 种 ／ 3 时间点'),
       findsOneWidget,
     );
     expect(

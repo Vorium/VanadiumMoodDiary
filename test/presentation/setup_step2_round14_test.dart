@@ -53,7 +53,7 @@ void main() {
 
       // 走到第 2 步
       await tester.enterText(
-        find.widgetWithText(TextField, '你的名字（选填）'),
+        find.widgetWithText(TextField, '您的名字（选填）'),
         '小明',
       );
       await tester.enterText(
@@ -84,7 +84,7 @@ void main() {
 
       // 验证 step 2 标题
       expect(
-        find.text('你常吃什么药？'),
+        find.text('您常吃什么药？'),
         findsOneWidget,
         reason: '应该看到药名问题的标题',
       );
@@ -146,7 +146,7 @@ void main() {
 
       // 走到第 2 步
       await tester.enterText(
-        find.widgetWithText(TextField, '你的名字（选填）'),
+        find.widgetWithText(TextField, '您的名字（选填）'),
         '小明',
       );
       await tester.enterText(

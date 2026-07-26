@@ -68,9 +68,9 @@ Future<void> _passConsent(WidgetTester tester) async {
   expect(startBtn, findsOneWidget);
   await tester.tap(startBtn);
   await tester.pumpAndSettle();
-  // 现在应该到 step 1 (welcome) — "你好,我是慢病管家"
+  // 现在应该到 step 1 (welcome) — "您好,我是慢病管家"
   expect(
-    find.text('你好，我是慢病管家'),
+    find.text('您好，我是慢病管家'),
     findsOneWidget,
   );
 
@@ -97,7 +97,7 @@ void main() {
       await _pumpSetup(tester);
       await _passConsent(tester);
 
-      expect(find.text('你好，我是慢病管家'), findsOneWidget);
+      expect(find.text('您好，我是慢病管家'), findsOneWidget);
 
       final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       expect(nextFinder, findsOneWidget);
@@ -112,7 +112,7 @@ void main() {
       );
 
       // 用 labelText 找字段
-      final userNameField = find.widgetWithText(TextField, '你的名字（选填）');
+      final userNameField = find.widgetWithText(TextField, '您的名字（选填）');
       final contactNameField = find.widgetWithText(TextField, '联系人 1 姓名');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       expect(userNameField, findsOneWidget);
@@ -141,7 +141,7 @@ void main() {
       // 4) 点击进入 step 2 (P0-6 后是 medication = 第 2 步,共 4 步)
       await tester.tap(nextFinder);
       await tester.pumpAndSettle();
-      expect(find.text('你常吃什么药？'), findsOneWidget);
+      expect(find.text('您常吃什么药？'), findsOneWidget);
       expect(
         find.textContaining('步 / 共'),
         findsOneWidget,
@@ -156,7 +156,7 @@ void main() {
       await _pumpSetup(tester);
       await _passConsent(tester);
 
-      final userNameField = find.widgetWithText(TextField, '你的名字（选填）');
+      final userNameField = find.widgetWithText(TextField, '您的名字（选填）');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
       final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
       ElevatedButton nextBtn() => tester.widget(nextFinder);
@@ -189,7 +189,7 @@ void main() {
       await _pumpSetup(tester);
       await _passConsent(tester);
 
-      final userNameField = find.widgetWithText(TextField, '你的名字（选填）');
+      final userNameField = find.widgetWithText(TextField, '您的名字（选填）');
 
       await tester.enterText(userNameField, '小明');
       await tester.enterText(
