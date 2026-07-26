@@ -69,7 +69,7 @@ class CheckInButton extends StatelessWidget {
                           color: AppTokens.fgOnPrimary(context),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppTokens.spacingXxs),
                       _StreakCounter(
                         value: streakDays,
                         isChecked: isChecked,

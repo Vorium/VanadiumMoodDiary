@@ -274,7 +274,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                               color: AppTokens.primaryColor(context),
                               size: AppTokens.iconSizeInline,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: AppTokens.spacingChipGap),
                             Text(
                               entry.durationLabel(),
                               style:TextStyle(

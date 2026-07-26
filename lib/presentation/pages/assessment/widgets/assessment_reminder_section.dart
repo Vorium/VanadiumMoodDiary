@@ -116,7 +116,7 @@ class _AssessmentReminderSectionState
         child: Padding(
           padding: EdgeInsets.all(AppTokens.spacingMd),
           child: SizedBox(
-            height: 80,
+            height: AppTokens.spacingXl,
             child: LoadingSkeleton.fullScreen(),
           ),
         ),

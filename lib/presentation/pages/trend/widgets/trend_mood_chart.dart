@@ -35,7 +35,7 @@ class MoodHistoryChart extends StatelessWidget {
                 AppLocalizations.of(context).trendNoMoodEntries,
                 style: AppTokens.textStyleCaptionStrong(context),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppTokens.spacingXxs),
               Text(
                 AppLocalizations.of(context).trendNoMoodEntriesHint,
                 style: TextStyle(
@@ -95,7 +95,7 @@ class MoodHistoryChart extends StatelessWidget {
                         MoodVisual.emojiFor(s),
                         style: AppTokens.textStyleCaption(context),
                       ),
-                      const SizedBox(width: 2),
+                      const SizedBox(width: AppTokens.spacingXxxs),
                       Text(
                         MoodVisual.labelFor(s),
                         style: AppTokens.textStyleMicro(context),

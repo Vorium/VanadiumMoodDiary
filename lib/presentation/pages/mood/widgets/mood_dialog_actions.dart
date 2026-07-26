@@ -8,6 +8,7 @@
 // - emil 频度决策: tens/day 频度, 走 PressFeedback 标准反馈
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 
@@ -36,7 +37,7 @@ class MoodDialogActions extends StatelessWidget {
           onPressed: saving ? null : onCancel,
           child: Text(l10n.commonCancel),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppTokens.spacingXs),
         LoadingTextButton(
           label: l10n.commonSave,
           isLoading: saving,

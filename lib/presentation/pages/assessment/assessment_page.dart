@@ -71,7 +71,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const LoadingSpinner(),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppTokens.spacingSm),
               Text(AppLocalizations.of(context).assessmentLoadingBack),
             ],
           ),
@@ -225,7 +225,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
         title: Row(
           children: [
             Icon(Icons.warning_amber, color: AppTokens.errorColor(context)),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppTokens.spacingXs),
             Expanded(child: Text(crisis.title)),
           ],
         ),
@@ -234,7 +234,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(crisis.message),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppTokens.spacingSm),
             for (final h in crisis.hotlines) ...[
               // v0.22 round 29 (emil-21): 拆 '📞 ${h.label}\n   ${h.number}' emoji hack
               // → Row(Icon(phone), Text(h.label)) + 单独 Text(h.number)
@@ -242,7 +242,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               Row(
                 children: [
                   const Icon(Icons.phone, size: AppTokens.iconSizeInline),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppTokens.spacingXs),
                   Expanded(
                     child: Text(
                       h.label,

@@ -360,7 +360,7 @@ class _Stat extends StatelessWidget {
               color: AppTokens.textHintColor(context),
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AppTokens.spacingXxxs),
           Text(
             value,
             style: AppTokens.textStyleButton(context).copyWith(

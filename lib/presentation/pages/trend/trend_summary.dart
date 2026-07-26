@@ -50,7 +50,7 @@ class _Stat extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppTokens.spacingXxs),
           Text(
             label,
             style: TextStyle(

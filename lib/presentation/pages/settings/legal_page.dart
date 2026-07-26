@@ -264,7 +264,7 @@ class _ConsentTile extends StatelessWidget {
                         color: AppTokens.textPrimaryColor(context),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppTokens.spacingXxs),
                     Text(
                       subtitle,
                       style: TextStyle(

@@ -207,7 +207,7 @@ class _NotificationStatusCardState
             trailing: IconButton(
               icon: _busy
                   ? const SizedBox(
-                      width: 16,
+                      width: AppTokens.spacingSm,
                       height: 16,
                       child: LoadingSpinner(size: 16),
                     )
@@ -362,7 +362,7 @@ class _OemBrand extends StatelessWidget {
               fontSize: AppTokens.fontSizeBody,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppTokens.spacingXxs),
           for (int i = 0; i < steps.length; i++) ...[
             Text(
               '${i + 1}. ${steps[i]}',

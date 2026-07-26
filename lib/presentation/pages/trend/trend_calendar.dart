@@ -377,7 +377,7 @@ class _DayDetailCard extends StatelessWidget {
                     size: AppTokens.iconSizeSmall,
                     color: AppTokens.textSecondaryColor(context),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppTokens.spacingXxs),
                   Text(
                     detail.bestMoodScore == detail.worstMoodScore
                         ? l10n.trendMoodEntriesSame(
@@ -411,7 +411,7 @@ class _DayDetailCard extends StatelessWidget {
                       size: 20,
                       color: AppTokens.textSecondaryColor(context),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppTokens.spacingXs),
                     Text(
                       l10n.trendNoRecords,
                       style: TextStyle(
@@ -464,7 +464,7 @@ class _EventRow extends StatelessWidget {
             ),
           ),
           Icon(icon, size: AppTokens.iconSizeInline, color: color),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppTokens.spacingXs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -477,7 +477,7 @@ class _EventRow extends StatelessWidget {
                   ),
                 ),
                 if (event.subtitle != null && event.subtitle!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppTokens.spacingXxxs),
                   Text(
                     event.subtitle!,
                     style: TextStyle(

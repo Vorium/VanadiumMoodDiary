@@ -68,7 +68,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 subtitle: Text(contacts[i].phone),
                 trailing: _deleting.contains(contacts[i].id)
                     ? const SizedBox(
-                        width: 24,
+                        width: AppTokens.spacingMd,
                         height: 24,
                         child: Padding(
                           padding: EdgeInsets.all(4),

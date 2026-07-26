@@ -418,7 +418,7 @@ class _Legend extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppTokens.radiusCell),
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: AppTokens.spacingXxs),
           Text(
             label,
             style: TextStyle(

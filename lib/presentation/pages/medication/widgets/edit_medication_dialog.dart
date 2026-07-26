@@ -207,7 +207,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                     size: 16,
                     color: _isActive ? AppTokens.primaryColor(context) : AppTokens.warningColor(context),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppTokens.spacingChipGap),
                   Text(
                     _isActive
                         ? AppLocalizations.of(context).editMedStatusActive

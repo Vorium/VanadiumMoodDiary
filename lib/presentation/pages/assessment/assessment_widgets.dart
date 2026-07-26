@@ -47,7 +47,7 @@ class AssessmentSparkline extends StatelessWidget {
             ),
             const SizedBox(height: AppTokens.spacingSm),
             SizedBox(
-              height: 80,
+              height: AppTokens.spacingXl,
               child: CustomPaint(
                 size: Size.infinite,
                 painter: SparklinePainter(
@@ -62,7 +62,7 @@ class AssessmentSparkline extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppTokens.spacingXxs),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -327,7 +327,7 @@ class ComparisonCard extends StatelessWidget {
                           AppLocalizations.of(context).assessmentPrevious,
                           style: AppTokens.textStyleCaption(context),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppTokens.spacingXxxs),
                         Text(
                           '${cmp.previous!.total}',
                           style: TextStyle(
@@ -359,7 +359,7 @@ class ComparisonCard extends StatelessWidget {
                           AppLocalizations.of(context).assessmentCurrent,
                           style: AppTokens.textStyleCaption(context),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppTokens.spacingXxxs),
                         Text(
                           '${cmp.current.total}',
                           style: TextStyle(
@@ -381,7 +381,7 @@ class ComparisonCard extends StatelessWidget {
               Row(
                 children: [
                   Icon(trendIcon, color: trendColor, size: AppTokens.iconSizeInline),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppTokens.spacingXxs),
                   Text(
                     '${cmp.trendSymbol} ${cmp.trendLabel} · ${cmp.deltaLabel}',
                     style: TextStyle(
@@ -393,7 +393,7 @@ class ComparisonCard extends StatelessWidget {
                 ],
               ),
               if (cmp.daysSincePrevious != null) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: AppTokens.spacingXxs),
                 Text(
                   AppLocalizations.of(context)
                       .assessmentDaysSincePrevious(cmp.daysSincePrevious!),

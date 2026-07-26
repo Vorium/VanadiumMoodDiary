@@ -39,7 +39,7 @@ class SecondaryActionRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.forest_outlined, size: 20),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppTokens.spacingXs),
                 Text(
                   AppLocalizations.of(context).homeVentButton,
                   style: const TextStyle(

@@ -41,7 +41,7 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
             color: AppTokens.warningColor(context),
             size: 20,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppTokens.spacingXs),
           Expanded(
             child: Text(
               AppLocalizations.of(context).homeNotifBannerText,

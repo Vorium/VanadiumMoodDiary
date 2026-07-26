@@ -211,7 +211,7 @@ class ReminderCard extends StatelessWidget {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppTokens.spacingXxs),
                   Text(
                     description,
                     style: TextStyle(

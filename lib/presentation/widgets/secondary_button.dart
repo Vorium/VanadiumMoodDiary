@@ -42,7 +42,7 @@ class SecondaryButton extends StatelessWidget {
       return OutlinedButton(
         onPressed: null, // 禁用
         child: SizedBox(
-          height: 16,
+          height: AppTokens.spacingSm,
           width: 16,
           child: CircularProgressIndicator(
             strokeWidth: 2,

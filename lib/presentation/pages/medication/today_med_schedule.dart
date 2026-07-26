@@ -193,7 +193,7 @@ class _TimeChip extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppTokens.spacingChipGap),
           Text(
             e.med.name,
             style: TextStyle(

@@ -124,7 +124,7 @@ class _HistoryItem extends StatelessWidget {
                     _SeverityChip(scaleId: record.scaleId, score: record.total),
                   ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppTokens.spacingXxxs),
                 Text(
                   _formatDateTime(record.timestamp),
                   style: TextStyle(
@@ -156,7 +156,7 @@ class _HistoryItem extends StatelessWidget {
                     size: 12,
                     color: diff < 0 ? AppTokens.primaryColor(context) : AppTokens.errorColor(context),
                   ),
-                  const SizedBox(width: 2),
+                  const SizedBox(width: AppTokens.spacingXxxs),
                   Text(
                     '${diff.abs()}',
                     style: AppTokens.textStyleMicro(context).copyWith(

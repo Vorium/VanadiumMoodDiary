@@ -70,7 +70,7 @@ class MedicationRow extends StatelessWidget {
             ),
           ),
           if (isStopped) ...[
-            const SizedBox(width: 6),
+            const SizedBox(width: AppTokens.spacingChipGap),
             // v0.24 round 43 (emil P1-01 H-05): 改用 ChipBadge 集中器
             // 替代内联 Container + BoxDecoration + Text
             ChipBadge(
@@ -85,7 +85,7 @@ class MedicationRow extends StatelessWidget {
         children: [
           Text(_medSubtitle(med)),
           if (refillText != null && !isStopped) ...[
-            const SizedBox(height: 2),
+            const SizedBox(height: AppTokens.spacingXxxs),
             Row(
               children: [
                 Icon(
@@ -97,7 +97,7 @@ class MedicationRow extends StatelessWidget {
                   size: AppTokens.iconSizeSmall,
                   color: refillTextColor(med, context),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppTokens.spacingXxs),
                 Expanded(
                   child: Text(
                     refillText,

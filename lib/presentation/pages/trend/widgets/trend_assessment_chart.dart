@@ -35,7 +35,7 @@ class AssessmentHistoryChart extends StatelessWidget {
                 AppLocalizations.of(context).trendNoAssessments,
                 style: AppTokens.textStyleCaptionStrong(context),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppTokens.spacingXxs),
               Text(
                 AppLocalizations.of(context).trendNoAssessmentsHint,
                 style: TextStyle(
@@ -259,7 +259,7 @@ class _LegendDot extends StatelessWidget {
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: AppTokens.spacingChipGap),
         Text(label, style: AppTokens.textStyleLegal(context)),
       ],
     );

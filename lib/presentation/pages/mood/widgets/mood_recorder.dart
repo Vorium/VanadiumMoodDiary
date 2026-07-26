@@ -447,7 +447,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
                             size: AppTokens.iconSizeInline,
                             color: AppTokens.fgOnPrimary(context),
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppTokens.spacingXxs),
                           Text(
                             _isRecording
                                 ? l10n.commonCancel
@@ -492,7 +492,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
                           color: AppTokens.textHintColor(context),
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppTokens.spacingXxs),
                       Text(
                         l10n.moodAudioSttListening,
                         style: AppTokens.textStyleCaptionHint(context),
@@ -565,7 +565,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
             ),
             if (snap.audioDurationMs != null &&
                 snap.audioDurationMs! > 60000) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: AppTokens.spacingXxxs),
               Text(
                 l10n.moodAudioTranscriptPartialHint,
                 style: TextStyle(

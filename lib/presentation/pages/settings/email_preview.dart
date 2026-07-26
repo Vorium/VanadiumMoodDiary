@@ -90,7 +90,7 @@ class EmailPreviewPage extends ConsumerWidget {
                                 color: AppTokens.textSecondaryColor(context),
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: AppTokens.spacingXxs),
                             Text(
                               'Subject: $subject',
                               style: const TextStyle(
