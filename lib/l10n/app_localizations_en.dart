@@ -2004,4 +2004,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get migrationAbortedRetry => 'Already backed up, continue';
+
+  @override
+  String get migrationFailedTitle => 'Failed to start';
+
+  @override
+  String get migrationFailedBody =>
+      'Unable to initialize local data.\nPlease try:\n1) Restart the app\n2) Uninstall and reinstall\nIf the problem persists, please contact us.';
+
+  @override
+  String get moodRatingSemantics => 'Mood rating, 1 to 5 scale, 5 is best';
+
+  @override
+  String moodRatingButtonSemantics(Object score, String selected) {
+    String _temp0 = intl.Intl.selectLogic(
+      selected,
+      {
+        'true': ', selected',
+        'other': '',
+      },
+    );
+    return '$score out of 5$_temp0';
+  }
+
+  @override
+  String medicationTimeWindowSemantics(Object days) {
+    return 'Time window $days days, 7/30/90 single select';
+  }
+
+  @override
+  String get assessmentSaveFailed =>
+      'Result shown but save failed. Please try again later.';
+
+  @override
+  String get moodLabel1 => 'Very poor';
+
+  @override
+  String get moodLabel2 => 'Poor';
+
+  @override
+  String get moodLabel3 => 'Neutral';
+
+  @override
+  String get moodLabel4 => 'Good';
+
+  @override
+  String get moodLabel5 => 'Very good';
+
+  @override
+  String setupContactFallbackName(int index) {
+    return 'Contact $index';
+  }
 }

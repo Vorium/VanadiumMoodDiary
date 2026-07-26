@@ -144,7 +144,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeStillOnline.
   ///
   /// In zh, this message translates to:
-  /// **'🌱 你还在线'**
+  /// **'🌱 您还在线'**
   String get homeStillOnline;
 
   /// No description provided for @homeTempMed.
@@ -168,7 +168,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupHello.
   ///
   /// In zh, this message translates to:
-  /// **'你好，我是慢病管家'**
+  /// **'您好，我是慢病管家'**
   String get setupHello;
 
   /// No description provided for @setupIntro.
@@ -180,7 +180,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupName.
   ///
   /// In zh, this message translates to:
-  /// **'你的名字（选填）'**
+  /// **'您的名字（选填）'**
   String get setupName;
 
   /// No description provided for @setupNameHint.
@@ -276,7 +276,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupDoneSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'明天开始你的第 1 天'**
+  /// **'明天开始您的第 1 天'**
   String get setupDoneSubtitle;
 
   /// No description provided for @setupDailyRoutine.
@@ -294,7 +294,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupReminder2.
   ///
   /// In zh, this message translates to:
-  /// **'✓ 你点 1 下 = 打卡'**
+  /// **'✓ 您点 1 下 = 打卡'**
   String get setupReminder2;
 
   /// No description provided for @setupReminder3.
@@ -306,7 +306,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupPrivacy.
   ///
   /// In zh, this message translates to:
-  /// **'你的数据：'**
+  /// **'您的数据：'**
   String get setupPrivacy;
 
   /// No description provided for @setupPrivacy1.
@@ -324,7 +324,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupPrivacy3.
   ///
   /// In zh, this message translates to:
-  /// **'• 你可以随时导出'**
+  /// **'• 您可以随时导出'**
   String get setupPrivacy3;
 
   /// No description provided for @settingsContacts.
@@ -540,7 +540,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExportVentConfirmBody.
   ///
   /// In zh, this message translates to:
-  /// **'即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 你将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中'**
+  /// **'即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 您将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中'**
   String get settingsExportVentConfirmBody;
 
   /// No description provided for @settingsExportVentConfirmConfirm.
@@ -612,7 +612,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsClearAllDataSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'删除全部打卡 / 用药 / 评估 / 树洞 / 联系人（无法恢复）'**
+  /// **'删除全部打卡 ／ 用药 ／ 评估 ／ 树洞 ／ 联系人（无法恢复）'**
   String get settingsClearAllDataSubtitle;
 
   /// No description provided for @settingsClearAllDataDialogTitle.
@@ -1116,7 +1116,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemBrandHuawei.
   ///
   /// In zh, this message translates to:
-  /// **'华为 / 荣耀'**
+  /// **'华为 ／ 荣耀'**
   String get notificationStatusCardOemBrandHuawei;
 
   /// No description provided for @notificationStatusCardOemStepHuawei1.
@@ -1518,7 +1518,7 @@ abstract class AppLocalizations {
   /// No description provided for @ventEmptySubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'想说什么就说出来。文字、语音都可以。\n这些话只有你自己能看到。'**
+  /// **'想说什么就说出来。文字、语音都可以。\n这些话只有您自己能看到。'**
   String get ventEmptySubtitle;
 
   /// No description provided for @ventEmptyAction.
@@ -1548,7 +1548,7 @@ abstract class AppLocalizations {
   /// No description provided for @ventDetailPrivacy.
   ///
   /// In zh, this message translates to:
-  /// **'🔒 私密 · 只有你能看到'**
+  /// **'🔒 私密 · 只有您能看到'**
   String get ventDetailPrivacy;
 
   /// No description provided for @ventToday.
@@ -1963,13 +1963,13 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentRecommendUrgent.
   ///
   /// In zh, this message translates to:
-  /// **'强烈建议你尽快联系医生或心理治疗师。'**
+  /// **'强烈建议您尽快联系医生或心理治疗师。'**
   String get assessmentRecommendUrgent;
 
   /// No description provided for @assessmentRecommend.
   ///
   /// In zh, this message translates to:
-  /// **'建议你联系医生做进一步评估。'**
+  /// **'建议您联系医生做进一步评估。'**
   String get assessmentRecommend;
 
   /// No description provided for @assessmentDisclaimer.
@@ -2047,7 +2047,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeStreakMaster.
   ///
   /// In zh, this message translates to:
-  /// **'{days} 天--你已经是这个习惯的主人了 🏔️'**
+  /// **'{days} 天--您已经是这个习惯的主人了 🏔️'**
   String homeStreakMaster(int days);
 
   /// No description provided for @navCheckIn.
@@ -2107,7 +2107,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentReminderHelpText.
   ///
   /// In zh, this message translates to:
-  /// **'完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅你自己看得到。'**
+  /// **'完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅您自己看得到。'**
   String get assessmentReminderHelpText;
 
   /// No description provided for @assessmentReminderHintAcute.
@@ -2173,7 +2173,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentFirstAssessmentHint.
   ///
   /// In zh, this message translates to:
-  /// **'这是你的第一次评估。下次评估后会显示和这次的对比。'**
+  /// **'这是您的第一次评估。下次评估后会显示和这次的对比。'**
   String get assessmentFirstAssessmentHint;
 
   /// No description provided for @assessmentPrevious.
@@ -2359,7 +2359,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupPresetDescription.
   ///
   /// In zh, this message translates to:
-  /// **'预置方案会填好药名 + 时间，你可以接着改。最终服药请按医嘱核对。'**
+  /// **'预置方案会填好药名 + 时间，您可以接着改。最终服药请按医嘱核对。'**
   String get setupPresetDescription;
 
   /// No description provided for @setupPresetLoaded.
@@ -2377,7 +2377,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupMedWhatDoYouTake.
   ///
   /// In zh, this message translates to:
-  /// **'你常吃什么药？'**
+  /// **'您常吃什么药？'**
   String get setupMedWhatDoYouTake;
 
   /// No description provided for @setupMedMultiDrugHint.
@@ -2575,7 +2575,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPageWithdrawSafetySubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'不再因漏打卡触发短信/邮件通知给紧急联系人'**
+  /// **'不再因漏打卡触发短信／邮件通知给紧急联系人'**
   String get legalPageWithdrawSafetySubtitle;
 
   /// No description provided for @legalPageWithdrawVent.
@@ -2587,13 +2587,13 @@ abstract class AppLocalizations {
   /// No description provided for @legalPageWithdrawVentSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'停止存储新树洞文字/录音（已有数据保留，需手动删除）'**
+  /// **'停止存储新树洞文字／录音（已有数据保留，需手动删除）'**
   String get legalPageWithdrawVentSubtitle;
 
   /// No description provided for @legalPageWithdrawAnalytics.
   ///
   /// In zh, this message translates to:
-  /// **'撤回评估/情绪分析同意'**
+  /// **'撤回评估／情绪分析同意'**
   String get legalPageWithdrawAnalytics;
 
   /// No description provided for @legalPageWithdrawAnalyticsSubtitle.
@@ -2635,7 +2635,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailPreviewDescription.
   ///
   /// In zh, this message translates to:
-  /// **'这是你将收到的失联通知预览：'**
+  /// **'这是您将收到的失联通知预览：'**
   String get emailPreviewDescription;
 
   /// No description provided for @emailPreviewNoContact.
@@ -2647,7 +2647,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailPreviewDisclaimer.
   ///
   /// In zh, this message translates to:
-  /// **'💡 这只是预览。实际短信通知在你漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。'**
+  /// **'💡 这只是预览。实际短信通知在您漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。'**
   String get emailPreviewDisclaimer;
 
   /// No description provided for @reportHistoryEmpty.
@@ -2713,7 +2713,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeCelebrationStreakMaster.
   ///
   /// In zh, this message translates to:
-  /// **'已记录！{days} 天--你太厉害了 🏔️'**
+  /// **'已记录！{days} 天--您太厉害了 🏔️'**
   String homeCelebrationStreakMaster(int days);
 
   /// No description provided for @homeAutofireCelebration.
@@ -2749,13 +2749,13 @@ abstract class AppLocalizations {
   /// No description provided for @homeSnoozeBody.
   ///
   /// In zh, this message translates to:
-  /// **'刚才你点了「snooze」，是时候点一下 = 打卡了'**
+  /// **'刚才您点了「snooze」，是时候点一下 = 打卡了'**
   String get homeSnoozeBody;
 
   /// No description provided for @homeSnoozeConfirmed.
   ///
   /// In zh, this message translates to:
-  /// **'好，5 分钟后会再提醒你 👌'**
+  /// **'好，5 分钟后会再提醒您 👌'**
   String get homeSnoozeConfirmed;
 
   /// No description provided for @homeSnoozeFailed.
@@ -3463,7 +3463,7 @@ abstract class AppLocalizations {
   /// No description provided for @migrationPromptChangeEncrypt.
   ///
   /// In zh, this message translates to:
-  /// **'• 启用数据库加密（保护你的隐私）'**
+  /// **'• 启用数据库加密（保护您的隐私）'**
   String get migrationPromptChangeEncrypt;
 
   /// No description provided for @migrationPromptChangeClear.
@@ -3519,6 +3519,78 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'已备份，继续升级'**
   String get migrationAbortedRetry;
+
+  /// No description provided for @migrationFailedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'启动失败'**
+  String get migrationFailedTitle;
+
+  /// No description provided for @migrationFailedBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法初始化本地数据。\n请尝试：\n1) 重启 App\n2) 卸载后重装\n如反复出现，请反馈给我们。'**
+  String get migrationFailedBody;
+
+  /// No description provided for @moodRatingSemantics.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪评分，1 到 5 分制，5 分最积极'**
+  String get moodRatingSemantics;
+
+  /// No description provided for @moodRatingButtonSemantics.
+  ///
+  /// In zh, this message translates to:
+  /// **'{score} 分{selected, select, true{，已选} other{}}'**
+  String moodRatingButtonSemantics(Object score, String selected);
+
+  /// No description provided for @medicationTimeWindowSemantics.
+  ///
+  /// In zh, this message translates to:
+  /// **'时间窗口 {days} 天，7/30/90 单选'**
+  String medicationTimeWindowSemantics(Object days);
+
+  /// No description provided for @assessmentSaveFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'评估结果已显示，但保存失败。请稍后重试。'**
+  String get assessmentSaveFailed;
+
+  /// No description provided for @moodLabel1.
+  ///
+  /// In zh, this message translates to:
+  /// **'很差'**
+  String get moodLabel1;
+
+  /// No description provided for @moodLabel2.
+  ///
+  /// In zh, this message translates to:
+  /// **'差'**
+  String get moodLabel2;
+
+  /// No description provided for @moodLabel3.
+  ///
+  /// In zh, this message translates to:
+  /// **'一般'**
+  String get moodLabel3;
+
+  /// No description provided for @moodLabel4.
+  ///
+  /// In zh, this message translates to:
+  /// **'好'**
+  String get moodLabel4;
+
+  /// No description provided for @moodLabel5.
+  ///
+  /// In zh, this message translates to:
+  /// **'很好'**
+  String get moodLabel5;
+
+  /// No description provided for @setupContactFallbackName.
+  ///
+  /// In zh, this message translates to:
+  /// **'联系人 {index}'**
+  String setupContactFallbackName(int index);
 }
 
 class _AppLocalizationsDelegate

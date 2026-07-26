@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -136,7 +136,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) =>
                 _fadePage(state.pageKey, const SettingsPage(), context),
           ),
-          // 瀛愰〉锛歰ccasional 鈫?slide-from-right
+          // 子页（occasional → slide-from-right）
           GoRoute(
             path: '/email-preview',
             pageBuilder: (context, state) => _slideRightPage(
@@ -286,7 +286,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-/// 鍝嶅簲寮?shell锛?
+/// 响应式 shell
 /// - 窄屏（< 840）：只显示 child（页面），无侧栏
 /// - 宽屏（>= 840）：左侧 NavigationRail（extended 模式，显示文字）+ 右侧 child
 class AppShell extends ConsumerWidget {

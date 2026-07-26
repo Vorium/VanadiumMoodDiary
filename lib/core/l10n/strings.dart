@@ -1,3 +1,5 @@
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
+
 /// 国际化字符串 — domain 层专用 fallback
 ///
 /// v0.17 round 14 (P1-6): presentation 文字迁到 flutter_localizations
@@ -26,8 +28,8 @@ class Strings {
   }
 
   static String emailLastMed(String time) => '最后吃药：$time';
-  static String emailMedInfo(String name, double dosage, String unit) =>
-      '$name $dosage$unit';
+  static String emailMedInfo(String name, double dosage, DosageUnit unit) =>
+      '$name $dosage${unit.id}';
   static String emailCycle(int hours) => '签到周期：$hours 小时';
   static const emailFooter = '这是一条自动通知，由慢病管家 App 发送。\n'
       '本通知不包含任何医疗建议。\n'
@@ -48,8 +50,8 @@ class Strings {
 
   // 用药提醒 (按 medication 单独排)
   static String notifMedicationTitle(String medName) => '💊 该吃药了：$medName';
-  static String notifMedicationBody(double dosage, String unit) =>
-      '$dosage$unit · 点一下 = 打卡';
+  static String notifMedicationBody(double dosage, DosageUnit unit) =>
+      '$dosage${unit.id} · 点一下 = 打卡';
 
   // 续方提醒
   static String notifRefillTitle(String medName) => '💊 该续方了：$medName';
@@ -127,4 +129,19 @@ class Strings {
   static String importSummaryReport(int n) => '$n 报告';
   static String importSummaryMood(int n) => '$n 情绪';
   static String importSummaryVent(int n) => '$n 树洞';
+
+  // ============== 情绪标签（domain 层 fallback） ==============
+  // presentation 层应使用 AppLocalizations 的 moodLabelN 键
+  static String moodLabel(int score) => switch (score) {
+        1 => '很差',
+        2 => '差',
+        3 => '一般',
+        4 => '好',
+        5 => '很好',
+        _ => '一般',
+      };
+
+  // ============== Snooze 通知文案 ==============
+  static const snoozeTitle = '💊 提醒吃药（snooze）';
+  static const snoozeBody = '刚才您点了"稍后提醒"，该吃药了';
 }
