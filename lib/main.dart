@@ -280,7 +280,7 @@ class _MigrationAbortedApp extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.pause_circle_outline,
-                  size: 64,
+                  size: AppTokens.iconSizeEmpty,
                   color: Colors.orange,
                 ),
                 const SizedBox(height: 16),
@@ -347,7 +347,7 @@ class _MigrationFailedApp extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const Icon(Icons.error_outline, size: AppTokens.iconSizeEmpty, color: Colors.red),
                 const SizedBox(height: 16),
                 Text(
                   l10n.migrationFailedTitle,

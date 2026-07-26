@@ -335,7 +335,7 @@ class _StatusDot extends StatelessWidget {
           RefillStatus.overdue => Icons.warning_amber,
         },
         color: status.colorOf(context),
-        size: 18,
+        size: AppTokens.iconSizeInline,
       ),
     );
   }

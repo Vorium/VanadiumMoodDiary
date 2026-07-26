@@ -52,7 +52,7 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.close, size: 18),
+            icon: const Icon(Icons.close, size: AppTokens.iconSizeInline),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             onPressed: () => setState(() => _dismissed = true),

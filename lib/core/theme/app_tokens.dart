@@ -322,6 +322,28 @@ class AppTokens {
   static const double iconSizeLg = 32.0;
   // v0.23 round 40 (emil F6/F12 fix): 微小 icon (chip 内, spinner)
   static const double iconSizeMicro = 12.0;
+  // v0.25 round 56 (emil P1 #3 + #4): icon 尺寸集中器
+  // 替代散落 30+ 处 `size: 18` / `size: 14` / `size: 64` / `size: 56`
+  // - iconSizeInline=18 按钮内 / 列表项 (介于 iconSize=24 跟 iconSizeMicro=12 之间)
+  // - iconSizeSmall=14  时间 chip / 日历 cell 内部小 icon
+  // - iconSizeEmpty=64   empty state 大 icon
+  // - iconSizeError=56   error state 大 icon
+  static const double iconSizeInline = 18.0;
+  static const double iconSizeSmall = 14.0;
+  static const double iconSizeEmpty = 64.0;
+  static const double iconSizeError = 56.0;
+
+  // v0.25 round 56 (emil P1): chart 占位 + sparkline 高度集中器
+  // 替代散落 5+ 处 `SizedBox(height: 200)` / `height: 80` magic
+  static const double chartPlaceholderHeight = 200.0;
+  static const double sparklineHeight = 80.0;
+  static const double heatmapLabelWidth = 60.0;
+  static const double eventTimeColWidth = 36.0;
+
+  // v0.25 round 56 (emil A3 续): shimmer 配套 (已有 shimmerCycleMs, 缺 pause)
+  // v0.24 round 45 加了 shimmerCycleMs=1200, 缺配套的 pause 时长。
+  // emil "decisions should be nameable" — 600ms magic 应命名。
+  static const int shimmerPauseMs = 600;
 
   // ============= 动画 =============
   // v0.17 round 1 (emil 动效 token): 之前只有 duration 缺 curve / easing

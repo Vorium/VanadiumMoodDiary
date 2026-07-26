@@ -177,13 +177,13 @@ class _TimeChip extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 4),
               child:
-                  Icon(Icons.check_circle, color: AppTokens.primaryColor(context), size: 14),
+                  Icon(Icons.check_circle, color: AppTokens.primaryColor(context), size: AppTokens.iconSizeSmall),
             )
           else
             Padding(
               padding: const EdgeInsets.only(right: 4),
               child: Icon(Icons.access_time,
-                  color: AppTokens.textHintColor(context), size: 14,),
+                  color: AppTokens.textHintColor(context), size: AppTokens.iconSizeSmall,),
             ),
           Text(
             '${_pad(e.time.hour)}:${_pad(e.time.minute)}',

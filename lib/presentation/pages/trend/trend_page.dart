@@ -234,12 +234,12 @@ class _ViewToggle extends StatelessWidget {
         ButtonSegment(
           value: _TrendView.list,
           label: Text(AppLocalizations.of(context).trendViewList),
-          icon: const Icon(Icons.view_list, size: 18),
+          icon: const Icon(Icons.view_list, size: AppTokens.iconSizeInline),
         ),
         ButtonSegment(
           value: _TrendView.calendar,
           label: Text(AppLocalizations.of(context).trendViewCalendar),
-          icon: const Icon(Icons.calendar_month, size: 18),
+          icon: const Icon(Icons.calendar_month, size: AppTokens.iconSizeInline),
         ),
       ],
       selected: {current},

@@ -53,7 +53,7 @@ class ErrorState extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 56,
+              size: AppTokens.iconSizeError,
               // M3 colorScheme.error 自动适配 light/dark mode
               color: Theme.of(context).colorScheme.error,
             ),
@@ -85,7 +85,7 @@ class ErrorState extends StatelessWidget {
               const SizedBox(height: AppTokens.spacingLg),
               ElevatedButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh, size: 18),
+                icon: const Icon(Icons.refresh, size: AppTokens.iconSizeInline),
                 label: Text(retryLabel ?? l10n.commonRetry),
               ),
             ],

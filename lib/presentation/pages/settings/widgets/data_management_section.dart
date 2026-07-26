@@ -179,7 +179,7 @@ class DataManagementSection extends ConsumerWidget {
               child: Text(AppLocalizations.of(context).commonClose),
             ),
             ElevatedButton.icon(
-              icon: const Icon(Icons.copy, size: 18),
+              icon: const Icon(Icons.copy, size: AppTokens.iconSizeInline),
               label: Text(AppLocalizations.of(context).settingsCopy),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: json));

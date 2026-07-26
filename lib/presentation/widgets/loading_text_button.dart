@@ -103,10 +103,10 @@ class _ChildStack extends StatelessWidget {
             height: 18,
             child: isLoading
                 ? LoadingSpinner(
-                    size: 18,
+                    size: AppTokens.iconSizeInline,
                     color: AppTokens.fgOnPrimary(context),
                   )
-                : Icon(icon, size: 18),
+                : Icon(icon, size: AppTokens.iconSizeInline),
           )
         : null;
 
@@ -131,7 +131,7 @@ class _ChildStack extends StatelessWidget {
               width: 18,
               height: 18,
               child: LoadingSpinner(
-                size: 18,
+                size: AppTokens.iconSizeInline,
                 // v0.22 round 34: fgOnPrimary 是函数, 没法在 const 构造里用,
                 // 把 IgnorePointer 改成 runtime 版本 (去掉 const)
                 color: AppTokens.fgOnPrimary(context),

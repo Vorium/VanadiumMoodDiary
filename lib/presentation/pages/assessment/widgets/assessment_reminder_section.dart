@@ -177,7 +177,7 @@ class _AssessmentReminderSectionState
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    size: 18,
+                    size: AppTokens.iconSizeInline,
                     color: AppTokens.textSecondaryColor(context),
                   ),
                   const SizedBox(width: AppTokens.spacingXs),

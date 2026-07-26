@@ -272,7 +272,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                             Icon(
                               Icons.mic,
                               color: AppTokens.primaryColor(context),
-                              size: 18,
+                              size: AppTokens.iconSizeInline,
                             ),
                             const SizedBox(width: 6),
                             Text(

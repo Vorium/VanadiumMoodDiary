@@ -105,7 +105,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                           child: PressFeedback(
                             onTap: _copy,
                             child: OutlinedButton.icon(
-                              icon: const Icon(Icons.copy, size: 18),
+                              icon: const Icon(Icons.copy, size: AppTokens.iconSizeInline),
                               label: Text(
                                   AppLocalizations.of(context).settingsCopy,),
                               onPressed: null, // 委托给 PressFeedback
@@ -137,7 +137,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                         Expanded(
                           child: PressFeedback(
                             child: OutlinedButton.icon(
-                              icon: const Icon(Icons.share, size: 18),
+                              icon: const Icon(Icons.share, size: AppTokens.iconSizeInline),
                               label: Text(AppLocalizations.of(context)
                                   .medReportShareLabel,),
                               onPressed: _share,

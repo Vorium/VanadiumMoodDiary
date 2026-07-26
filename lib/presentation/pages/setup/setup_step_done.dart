@@ -30,7 +30,7 @@ class SetupStepDone extends StatelessWidget {
           Center(
             child: Icon(
               Icons.check_circle,
-              size: 64,
+              size: AppTokens.iconSizeEmpty,
               color: AppTokens.primaryColor(context),
             ),
           ),

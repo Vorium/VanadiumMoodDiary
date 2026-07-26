@@ -241,7 +241,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               // (a11y 屏幕阅读器能识别 Icon 跟 Text 是不同元素, 不用解释空格 hack)
               Row(
                 children: [
-                  const Icon(Icons.phone, size: 18),
+                  const Icon(Icons.phone, size: AppTokens.iconSizeInline),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

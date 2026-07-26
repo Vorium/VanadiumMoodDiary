@@ -225,7 +225,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                     if (saving)
                       IgnorePointer(
                         child: LoadingSpinner(
-                          size: 18,
+                          size: AppTokens.iconSizeInline,
                           color: AppTokens.fgOnPrimary(context),
                         ),
                       ),

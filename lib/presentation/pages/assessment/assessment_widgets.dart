@@ -380,7 +380,7 @@ class ComparisonCard extends StatelessWidget {
               const SizedBox(height: AppTokens.spacingSm),
               Row(
                 children: [
-                  Icon(trendIcon, color: trendColor, size: 18),
+                  Icon(trendIcon, color: trendColor, size: AppTokens.iconSizeInline),
                   const SizedBox(width: 4),
                   Text(
                     '${cmp.trendSymbol} ${cmp.trendLabel} · ${cmp.deltaLabel}',

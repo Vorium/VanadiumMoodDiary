@@ -321,7 +321,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   ),
                 PressFeedback(
                   child: ActionChip(
-                    avatar: const Icon(Icons.add, size: 18),
+                    avatar: const Icon(Icons.add, size: AppTokens.iconSizeInline),
                     label: Text(AppLocalizations.of(context).editMedAddTime),
                     onPressed: _saving ? null : _pickTime,
                   ),

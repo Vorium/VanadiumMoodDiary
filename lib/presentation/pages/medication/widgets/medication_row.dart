@@ -94,7 +94,7 @@ class MedicationRow extends StatelessWidget {
                   med.isInRefillWindow() || med.isRefillOverdue()
                       ? Icons.warning_amber_outlined
                       : Icons.event_outlined,
-                  size: 14,
+                  size: AppTokens.iconSizeSmall,
                   color: refillTextColor(med, context),
                 ),
                 const SizedBox(width: 4),

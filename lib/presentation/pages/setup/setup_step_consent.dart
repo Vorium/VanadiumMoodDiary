@@ -48,7 +48,7 @@ class SetupStepConsent extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingLg),
           Icon(
             Icons.gavel_outlined,
-            size: 56,
+            size: AppTokens.iconSizeError,
             color: AppTokens.primaryColor(context),
           ),
           const SizedBox(height: AppTokens.spacingMd),

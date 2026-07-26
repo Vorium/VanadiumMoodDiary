@@ -444,7 +444,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
                         children: [
                           Icon(
                             _isRecording ? Icons.stop : Icons.mic,
-                            size: 18,
+                            size: AppTokens.iconSizeInline,
                             color: AppTokens.fgOnPrimary(context),
                           ),
                           const SizedBox(width: 4),

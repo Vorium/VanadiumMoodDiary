@@ -105,7 +105,7 @@ class SetupStepMedication extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingSm),
           TextButton.icon(
             onPressed: onShowPresets,
-            icon: const Icon(Icons.auto_awesome_outlined, size: 18),
+            icon: const Icon(Icons.auto_awesome_outlined, size: AppTokens.iconSizeInline),
             label: Text(l10n.setupMedLoadPreset),
           ),
           const SizedBox(height: AppTokens.spacingXl),
@@ -263,7 +263,7 @@ class MedCard extends StatelessWidget {
                   ),
                 PressFeedback(
                   child: ActionChip(
-                    avatar: const Icon(Icons.add, size: 18),
+                    avatar: const Icon(Icons.add, size: AppTokens.iconSizeInline),
                     label: Text(l10n.setupMedAddTime),
                     onPressed: () async {
                       final picked = await showTimePicker(

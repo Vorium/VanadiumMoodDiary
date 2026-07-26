@@ -95,7 +95,7 @@ class SafetyReminderCard extends StatelessWidget {
                 Icon(
                   Icons.error_outline,
                   color: AppTokens.errorColor(context),
-                  size: 18,
+                  size: AppTokens.iconSizeInline,
                 ),
                 const SizedBox(width: AppTokens.spacingXs),
                 Expanded(
@@ -225,7 +225,7 @@ class ReminderCard extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: TextButton.icon(
                         onPressed: onAction,
-                        icon: const Icon(Icons.tune, size: 18),
+                        icon: const Icon(Icons.tune, size: AppTokens.iconSizeInline),
                         label: Text(actionLabel),
                       ),
                     ),

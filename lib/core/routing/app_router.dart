@@ -253,7 +253,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               children: [
                 Icon(
                   Icons.help_outline,
-                  size: 64,
+                  size: AppTokens.iconSizeEmpty,
                   color: AppTokens.textSecondaryColor(context),
                 ),
                 const SizedBox(height: AppTokens.spacingMd),

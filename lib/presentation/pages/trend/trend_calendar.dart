@@ -374,7 +374,7 @@ class _DayDetailCard extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.mood_outlined,
-                    size: 14,
+                    size: AppTokens.iconSizeSmall,
                     color: AppTokens.textSecondaryColor(context),
                   ),
                   const SizedBox(width: 4),
@@ -463,7 +463,7 @@ class _EventRow extends StatelessWidget {
               ),
             ),
           ),
-          Icon(icon, size: 18, color: color),
+          Icon(icon, size: AppTokens.iconSizeInline, color: color),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
