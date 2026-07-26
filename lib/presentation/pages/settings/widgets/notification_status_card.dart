@@ -79,18 +79,13 @@ class _NotificationStatusCardState
       );
       if (!mounted) return;
       // v0.22 round 29 (emil-42): 走 AppSnackBar.info 集中器
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(context, l10n.notificationStatusCardTestSent),
-      );
+      AppSnackBar.showInfo(context, l10n.notificationStatusCardTestSent);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.error(
+      AppSnackBar.showError(
           context,
           action: AppLocalizations.of(context).notificationStatusCardActionSend,
-          error: e,
-        ),
-      );
+          error: e,);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

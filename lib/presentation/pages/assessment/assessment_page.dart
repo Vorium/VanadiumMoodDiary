@@ -209,12 +209,9 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     });
 
     if (saveFailed && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(
+      AppSnackBar.showInfo(
           context,
-          AppLocalizations.of(context).assessmentSaveFailed,
-        ),
-      );
+          AppLocalizations.of(context).assessmentSaveFailed,);
     }
   }
 

@@ -144,10 +144,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
       await ref.read(reportHistoryRepositoryProvider).delete(id);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonDelete, error: e,),
-        );
+        AppSnackBar.showError(context,
+              action: AppLocalizations.of(context).commonDelete, error: e);
       }
     }
   }

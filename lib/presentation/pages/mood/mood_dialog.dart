@@ -106,9 +106,7 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
       MoodRecorderErrorKind.encrypt => l10n.moodAudioErrorEncrypt,
       MoodRecorderErrorKind.play => l10n.moodAudioErrorPlay,
     };
-    ScaffoldMessenger.of(context).showSnackBar(
-      AppSnackBar.error(context, action: actionText, error: error),
-    );
+    AppSnackBar.showError(context, action: actionText, error: error);
   }
 
   // ===== 保存 =====
@@ -118,12 +116,9 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
     final snap = _recorderController.snapshot.value;
     final hasAudio = snap.audioPath != null;
     if (!hasText && !hasAudio) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(
+      AppSnackBar.showInfo(
           context,
-          AppLocalizations.of(context).moodNoteHint,
-        ),
-      );
+          AppLocalizations.of(context).moodNoteHint,);
       return;
     }
     setState(() => _saving = true);
@@ -143,23 +138,17 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
           );
       if (!mounted) return;
       // 先展示 snackbar，再 pop — pop 后 context 可能已失效
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(
+      AppSnackBar.showInfo(
           context,
-          AppLocalizations.of(context).moodAudioSavedWithPlay,
-        ),
-      );
+          AppLocalizations.of(context).moodAudioSavedWithPlay,);
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.error(
+      AppSnackBar.showError(
           context,
           action: AppLocalizations.of(context).snackbarActionSave,
-          error: e,
-        ),
-      );
+          error: e,);
     }
   }
 

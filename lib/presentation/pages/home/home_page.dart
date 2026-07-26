@@ -123,23 +123,17 @@ class _HomePageState extends ConsumerState<HomePage> {
       GoRouter.of(context).go('/');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.error(
+      AppSnackBar.showError(
           context,
           action: AppLocalizations.of(context).snackbarActionAutoCheckin,
-          error: e,
-        ),
-      );
+          error: e,);
     }
   }
 
   void _showMedicationHint(int medId) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      AppSnackBar.info(
+    AppSnackBar.showInfo(
         context,
-        AppLocalizations.of(context).homeMedHint(medId),
-      ),
-    );
+        AppLocalizations.of(context).homeMedHint(medId),);
   }
 
   /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
@@ -154,13 +148,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (result.kind == SafetyCheckKind.alerted) {
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
         // 失联告警重要,延长到 6s 保留给用户时间读完
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(
+        AppSnackBar.showError(
             context,
             action: '⚠️ ${result.displayMessage}',
-            error: AppLocalizations.of(context).homeSafetyAlertSuffix,
-          ),
-        );
+            error: AppLocalizations.of(context).homeSafetyAlertSuffix,);
       }
     } catch (e, st) {
       swallowError(
@@ -191,13 +182,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     // 打卡失败时给用户一个反馈
     ref.listen<AsyncValue<void>>(checkInNotifierProvider, (prev, next) {
       if (next.hasError && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(
+        AppSnackBar.showError(
             context,
             action: AppLocalizations.of(context).snackbarActionCheckin,
-            error: next.error,
-          ),
-        );
+            error: next.error,);
       }
     });
 
@@ -327,13 +315,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (result.kind == SafetyCheckKind.alerted) {
         // 罕见：打卡后仍触发告警
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(
+        AppSnackBar.showError(
             context,
             action: '⚠️ ${result.displayMessage}',
-            error: AppLocalizations.of(context).homeSafetyAlertSuffix,
-          ),
-        );
+            error: AppLocalizations.of(context).homeSafetyAlertSuffix,);
       }
     } catch (e, st) {
       // SafetyWatch 失败 → 用户已经看到打卡成功的庆祝，失联检测后台再跑就行
@@ -379,21 +364,15 @@ class _HomePageState extends ConsumerState<HomePage> {
             body: AppLocalizations.of(context).homeSnoozeBody,
           );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(
+      AppSnackBar.showInfo(
           context,
-          AppLocalizations.of(context).homeSnoozeConfirmed,
-        ),
-      );
+          AppLocalizations.of(context).homeSnoozeConfirmed,);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.error(
+      AppSnackBar.showError(
           context,
           action: AppLocalizations.of(context).snackbarActionSnooze,
-          error: e,
-        ),
-      );
+          error: e,);
     }
   }
 

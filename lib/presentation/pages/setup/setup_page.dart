@@ -107,12 +107,9 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         // v0.22 round 29 (emil-38): 走 AppSnackBar.info 集中器
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.info(
+        AppSnackBar.showInfo(
             context,
-            AppLocalizations.of(context).setupConsentRequired,
-          ),
-        );
+            AppLocalizations.of(context).setupConsentRequired,);
       },
       child: PageScaffold(
         title: AppLocalizations.of(context).setupStep(_step + 1, 4),
@@ -335,13 +332,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
 
     if (!mounted) return;
     // v0.22 round 29 (emil-39): 走 AppSnackBar.info 集中器
-    ScaffoldMessenger.of(context).showSnackBar(
-      AppSnackBar.info(
+    AppSnackBar.showInfo(
         context,
         AppLocalizations.of(context).setupPresetLoaded(
-            result.template.name, result.template.meds.length,),
-      ),
-    );
+            result.template.name, result.template.meds.length,),);
   }
 
   Future<void> _finishSetup() async {

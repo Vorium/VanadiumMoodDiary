@@ -188,9 +188,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
   Future<void> _copy() async {
     await Clipboard.setData(ClipboardData(text: widget.report));
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(context, AppLocalizations.of(context).snackbarCopied),
-      );
+      AppSnackBar.showInfo(context, AppLocalizations.of(context).snackbarCopied);
     }
   }
 
@@ -202,11 +200,9 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
+        AppSnackBar.showError(context,
               action: AppLocalizations.of(context).snackbarActionShare,
-              error: e,),
-        );
+              error: e);
       }
     }
   }
@@ -226,11 +222,9 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
+        AppSnackBar.showError(context,
               action: AppLocalizations.of(context).snackbarActionGeneratePdf,
-              error: e,),
-        );
+              error: e);
       }
     } finally {
       if (mounted) setState(() => _pdfLoading = false);

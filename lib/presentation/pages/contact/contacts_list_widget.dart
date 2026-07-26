@@ -107,11 +107,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       await ref.read(contactRepositoryProvider).delete(id);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
+        AppSnackBar.showError(context,
               action: AppLocalizations.of(context).commonActionDelete,
-              error: e,),
-        );
+              error: e);
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(id));
@@ -137,11 +135,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
+        AppSnackBar.showError(context,
               action: AppLocalizations.of(context).commonActionDelete,
-              error: e,),
-        );
+              error: e);
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(contact.id));

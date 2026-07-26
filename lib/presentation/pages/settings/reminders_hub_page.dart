@@ -272,10 +272,8 @@ class _AssessmentReminderSheetState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonSave, error: e,),
-        );
+        AppSnackBar.showError(context,
+              action: AppLocalizations.of(context).commonSave, error: e);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -403,10 +401,8 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonSave, error: e,),
-        );
+        AppSnackBar.showError(context,
+              action: AppLocalizations.of(context).commonSave, error: e);
       }
     } finally {
       if (mounted) setState(() => _busy = false);

@@ -117,11 +117,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         if (!mounted) return;
         if (!context.mounted) return;
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
+        AppSnackBar.showError(context,
               action: l10n.snackbarActionPlay,
-              error: e,),
-        );
+              error: e);
       }
     }
   }

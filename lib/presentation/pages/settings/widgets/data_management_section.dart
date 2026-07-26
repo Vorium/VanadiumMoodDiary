@@ -197,11 +197,9 @@ class DataManagementSection extends ConsumerWidget {
       );
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
+        AppSnackBar.showError(context,
               action: AppLocalizations.of(context).settingsActionExport,
-              error: e,),
-        );
+              error: e);
       }
     }
   }
@@ -272,11 +270,9 @@ class DataManagementSection extends ConsumerWidget {
       );
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
+        AppSnackBar.showError(context,
               action: AppLocalizations.of(context).settingsActionGenerateReport,
-              error: e,),
-        );
+              error: e);
       }
     }
   }
@@ -330,19 +326,14 @@ class DataManagementSection extends ConsumerWidget {
         piiSafeLog('Settings', '⚠️ vent audio delete failed after 3 retries');
       }
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.info(context, l10n.settingsClearAllDataSuccess),
-      );
+      AppSnackBar.showInfo(context, l10n.settingsClearAllDataSuccess);
       navigator.go('/setup');
     } on Exception catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        AppSnackBar.error(
+      AppSnackBar.showError(
           context,
           action: l10n.settingsClearAllData,
-          error: e,
-        ),
-      );
+          error: e,);
     }
   }
 
@@ -389,13 +380,10 @@ class DataManagementSection extends ConsumerWidget {
                 if (!ctx.mounted) return;
                 if (result.success) {
                   Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    AppSnackBar.info(
+                  AppSnackBar.showInfo(
                       context,
                       AppLocalizations.of(context)
-                          .settingsImportSuccess(result.summary),
-                    ),
-                  );
+                          .settingsImportSuccess(result.summary),);
                 } else {
                   setLocal(() => importing = false);
                   ScaffoldMessenger.of(ctx).showSnackBar(

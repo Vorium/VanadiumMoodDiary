@@ -67,10 +67,8 @@ class _AssessmentReminderSectionState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonSetup, error: e,),
-        );
+        AppSnackBar.showError(context,
+              action: AppLocalizations.of(context).commonSetup, error: e);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -103,10 +101,8 @@ class _AssessmentReminderSectionState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(context,
-              action: AppLocalizations.of(context).commonSetup, error: e,),
-        );
+        AppSnackBar.showError(context,
+              action: AppLocalizations.of(context).commonSetup, error: e);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
