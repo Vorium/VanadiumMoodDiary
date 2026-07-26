@@ -18,6 +18,7 @@ import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
 /// 慢病管家 · App 入口
@@ -313,16 +314,11 @@ class _MigrationAbortedApp extends StatelessWidget {
   }
 }
 
-/// 通知初始化结果（注入到 provider 树，首页用）
-class NotificationInitResult {
-  final bool ok;
-  final String? error;
-  const NotificationInitResult({required this.ok, this.error});
-}
-
-final notificationInitResultProvider = Provider<NotificationInitResult>(
-  (ref) => const NotificationInitResult(ok: true, error: null),
-);
+/// 通知初始化结果(注入到 provider 树，首页用)
+///
+/// v0.25 round 56g (spen P1 #1 cross-layer import 修):
+/// 抽到 `lib/presentation/providers/notification_init_provider.dart`,
+/// main.dart 和 home_page.dart 都从那里 import, 消除 presentation → main 反向依赖.
 
 /// 迁移失败时的占位 App
 ///

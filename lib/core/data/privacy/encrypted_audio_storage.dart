@@ -207,7 +207,7 @@ abstract class EncryptedAudioStorage {
     final tempDir = Directory.systemTemp;
     final ts = DateTime.now().millisecondsSinceEpoch;
     final rand = Random().nextInt(10000).toString().padLeft(4, '0');
-    final tempPath = p.join(tempDir.path, '${decryptPrefix}_${ts}_$rand.m4a');
+    final tempPath = p.join(tempDir.path, '${decryptPrefix}${ts}_$rand.m4a');
     await File(tempPath).writeAsBytes(plain, flush: true);
     return tempPath;
   }

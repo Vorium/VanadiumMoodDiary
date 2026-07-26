@@ -128,7 +128,7 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 ## 🧪 测试
 
 ```bash
-flutter test                          # 跑所有测试（v0.25 round 48 后 1052 cases）
+flutter test                          # 跑所有测试（v0.25 round 56e 后 1098 cases）
 flutter test --coverage               # 覆盖率
 dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 

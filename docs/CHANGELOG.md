@@ -2,6 +2,43 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.25.0] - 2026-07-26 (R49-R60 + R56b-R56f)
+
+### Tests
+- 1098/1098 pass (1057 → 1098, +41)
+- `flutter analyze` 0 errors (28 info-level, prefer_const_constructors 历史遗留)
+- 12 守护脚本全绿（含 R56e 新增 `check_orphan_arb_keys.py`）
+
+### Architecture (round 49-60 emil/spen god-class 续拆 + token 化)
+- **R49** dark mode 颜色 60+ 处 → 3 dynamic getter (`primaryColor` / `errorColor` / `warningColor`) + `severity_style.dart` 加 `context` 参数
+- **R50** 3 个 score TextStyle helper (`textStyleScoreLg` / `Xl` / `Xxl`)
+- **R51** PHQ-9 危机电话 6 region 路由 (`cn` / `us` / `hk` / `tw` / `sg` / `uk`) via `HotlineRegion` enum + `hotlineByRegion` Map
+- **R52** 7 个 P0 bug — `mood_recorder dispose race` / `Future.wait + timeout race` / `main.dart:90 删 Asia/Shanghai` / `piiSafeLog 改 medId` / `app_router 乱码改英文 fallback` / `SmsResult 加 SmsResultKind enum` / `setup_page.dart:404 加 5s timeout`
+- **R53a** `app_database` 559 → 305 行 (-45%), 抽 7 DAO
+- **R54** `DEPLOYMENT.md` + `privacy_policy.md` + `README.md` 合规 — 阶段 8 / 附录 A (NMPA / HIPAA / GDPR / PIPL) / `privacy_policy` §11 跨境 + §12 PIPL §13 进度
+- **R55** `docs/PUSH_PROVIDERS.md` (5 厂商 plan) + `docs/SMS_PROVIDERS.md` (AliyunSms plan) + `AliyunSmsProvider.send()` 加 7 步真接骨架注释
+- **R56** emil icon size 5 个新 token (`iconSizeInline` / `Small` / `Empty` / `Error`) + chart 4 个尺寸 + 32 处 magic 替换
+- **R57** `safety_watch_service` 425 → 325 行 (-24%), 抽 `SafetyConfigService` + `SafetyAlertDispatcher`
+- **R58** `medication_report` 拆 3 纯函数类 (`MedicationStatCalculator` + `MissedDateBuilder` + `TempEntryExtractor`)
+- **R59** `app_router` 418 → 51 行 (-88%), 抽 `app_routes.dart` + `app_shell.dart`
+- **R60** `MedicationDraft` value object, `MedicationRepository.add()` 9 参数 → 1 参数
+- **R56b** P1(emil) spacing SizedBox 46 处 → `AppTokens` token (`spacingXxxs` / `Xxs` / `chipGap` / `Xs` / `Sm` / `Md` / `Lg` / `Xl`)
+
+### TDD 补全 (round 56c-R56c''' spen P0 #15)
+- **R56c** `db_key_service` +5 unit test (FlutterSecureStorage MethodChannel mock 模式)
+- **R56c'** `refill_notifier` +10 (id 公式 + `computeRefillFireTime` 纯函数 + `scheduleRefillReminder` instance)
+- **R56c''** `medication_notifier` +10 (ID 常量 + `scheduleDailyReminder` + `rescheduleMedicationReminders`)
+- **R56c'''** `assessment_notifier` +4 + `safety_alert_dispatcher` +7 + `mood_audio_service` +10
+
+### Cleanup (round 56d-R56f)
+- **R56d** `formatters.dart` 走 intl `DateFormat` + `vent_detail_page.dart:191` 改 `EmptyState`
+- **R56e** 新增 `scripts/check_orphan_arb_keys.py` 守门员 + 一次性清 39 个 orphan (677 → 550 zh ARB key)
+- **R56f** `AGENTS.md` 同步 (R56 系列汇总 + 12 守门员清单展开 + test count 1098)
+
+### Pending (外部依赖)
+- R55 真接阿里云 SMS (法务 1-2 月模板审核 + 阿里云 AccessKey 申请)
+- R51b PHQ-9 题目 + 严重度 + 危机电话完整走 ARB (v1.0 大工程)
+
 ## [0.24.0] - 2026-07-26
 
 ### Added (round 45-47 emil god-class 续拆 + token 化 + 集中器)
