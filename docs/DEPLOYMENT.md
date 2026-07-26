@@ -212,4 +212,152 @@ open ios/Runner.xcworkspace
 - 短信通知（已加到 plan）
 - 量表自评
 - 趋势图
-- 多语言
+
+---
+
+## 阶段 8: 国内 store + 5 厂商 push 通道 (v0.25 R54 增补)
+
+> **背景:** spzh 视角 P0 #5: 之前 DEPLOYMENT.md 只简略提 Google Play + App
+> Store,**国内 5 大应用市场** + **5 厂商 push 通道** 0 提及 = 国产 ROM
+> 静默杀后台通知 → 推送送达率 < 70% → 失联通知失效 → 用户死亡风险。
+
+### 8.1 国内 5 大应用市场 (必须上)
+
+| # | 商店 | 备案要求 | 上架材料 | 周期 |
+|---|------|----------|----------|------|
+| 1 | **华为应用市场** | 实名认证 + 营业执照 + ICP 备案 | AAB + 隐私 URL + 软件著作权 | 1-3 天审核 |
+| 2 | **小米应用商店** | 实名认证 + 营业执照 | AAB + 隐私 URL | 1-2 天 |
+| 3 | **OPPO 软件商店** | 实名认证 + 营业执照 + ICP 备案 | AAB + 隐私 URL | 1-3 天 |
+| 4 | **vivo 应用商店** | 实名认证 + 营业执照 | AAB + 隐私 URL | 1-2 天 |
+| 5 | **腾讯应用宝** | 实名认证 + 营业执照 + ICP 备案 | AAB + 隐私 URL | 1-3 天 |
+
+> **共性材料准备:** 隐私政策 URL (`assets/legal/privacy_policy.md`
+> 上传到 GitHub Pages 或自有域名) + 软件著作权登记证书 (CPDA
+> 受理 1-2 月) + 营业执照 + ICP 备案 (域名备案 7-15 天)。
+
+### 8.2 5 厂商 push 通道接入 (送达率 95%+)
+
+**问题:** 国产 ROM (MIUI / EMUI / ColorOS / OriginOS / Flyme) 默认
+禁止 App 后台运行 + 自启动 + 精确闹钟 + 静默杀后台推送。`flutter_local_
+notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
+(走系统级 push 通道,不受 ROM 静默杀限制)。
+
+**接入步骤(每厂商 1-2 周):**
+
+1. **小米推送 (Mi Push)**
+   - 注册: https://dev.mi.com/console/appservice/push.html
+   - SDK: `mipush: ^5.0.0` 或 `xiaomi-push: ^1.0.0`
+   - AndroidManifest: `<service android:name="com.xiaomi.push.service.XMPushService" />`
+   - 厂商审核: 1 周
+
+2. **华为 PUSH (HMS Core Push)**
+   - 注册: https://developer.huawei.com/consumer/cn/hms/huawei-pushkit
+   - SDK: `huawei_push: ^6.11.0`
+   - 厂商审核: 2 周
+
+3. **OPPO PUSH (PUSH 2.0)**
+   - 注册: https://push.oppo.com/
+   - SDK: 集成 OPPO Pusher SDK
+   - 厂商审核: 2 周
+
+4. **vivo PUSH**
+   - 注册: https://dev.vivo.com.cn/push
+   - 厂商审核: 1 周
+
+5. **魅族 PUSH (Flyme Push)**
+   - 注册: https://open.flyme.cn/
+   - 厂商审核: 1 周
+
+> **总周期: 1-2 月全部接入。** 同时保留 `flutter_local_notifications` 作为
+> 兜底通道(其他 Android 设备 + 海外)。
+
+**架构:** `NotificationService` 抽象 `PushProvider` 接口(类似
+`SmsProvider`),按设备型号路由到对应厂商 SDK,统一封装。
+
+### 8.3 上架材料 checklist (4 store 共用)
+
+- [ ] 软件著作权登记证书 (CPDA 受理 1-2 月)
+- [ ] 营业执照副本
+- [ ] ICP 备案 (域名 7-15 天)
+- [ ] 隐私政策 URL (GitHub Pages)
+- [ ] 3 项法律协议 (用户协议 / 隐私政策 / 敏感数据同意书) 见 `assets/legal/`
+- [ ] 应用图标 (1024×1024 高清 PNG)
+- [ ] 5+ 张应用截图 (1920×1080)
+- [ ] 视频预览 (可选,30s)
+- [ ] 应用描述 (见阶段 5 模板)
+- [ ] "非医疗器械" 声明 PDF (见附录 A)
+
+---
+
+## 附录 A: 合规声明模板 (NMPA / HIPAA / GDPR)
+
+> **背景:** spzh 视角 P0 #4: 之前 DEPLOYMENT.md 提"非医疗器械"但没具体
+> 模板。App Store / Google Play 审核需要正式声明 PDF。本附录提供 4 类
+> 合规声明模板,法务过审后使用。
+
+### A.1 NMPA "非医疗器械" 声明 (中国大陆上架必需)
+
+> **声明**
+>
+> 本应用「慢病管家」(chroniccare) 经开发者自查,符合以下全部条件:
+>
+> 1. **不涉及疾病诊断**:本应用不提供任何医学诊断,所有 PHQ-9 / GAD-7
+>    评估结果仅供用户自我参考,**不替代医生诊断**。
+> 2. **不涉及治疗方案**:本应用不推荐任何药物或治疗方案,所有用药
+>    提醒由用户**自行**或**医生**配置。
+> 3. **不作为医疗决策依据**:本应用的失联通知机制是用户主动设置
+>    的"安全网"功能,**不构成医疗监护**。
+> 4. **未申请医疗器械注册**:本应用未在国家药品监督管理局(NMPA)
+>    申请任何医疗器械注册证。
+>
+> 依据《医疗器械分类目录》和《医疗器械监督管理条例》,本应用属于
+> **非医疗器械**,**不属于** 6810 类 (疾病诊断 / 治疗 / 监护仪器)
+> 监管范围。
+>
+> 开发者: [公司名] | 日期: [YYYY-MM-DD] | 法人签字: [ ]
+
+### A.2 HIPAA Compliance Statement (美国上架推荐)
+
+> This application does not create, receive, maintain, or transmit
+> Protected Health Information (PHI) on behalf of a Covered Entity
+> or Business Associate. All user data is stored locally on the
+> user's device, encrypted with AES-256, and is not transmitted to
+> any cloud server or third party. This application is therefore
+> not subject to HIPAA regulations.
+
+### A.3 GDPR Compliance Statement (欧洲上架必需)
+
+> This application does not transfer personal data outside the
+> European Economic Area. All processing is performed locally on
+> the user's device. No cookies, tracking pixels, or third-party
+> analytics are used. The user can exercise all GDPR rights
+> (access, rectification, erasure, restriction, portability)
+> through in-app settings.
+
+### A.4 PIPL Compliance Summary (中国法律汇总)
+
+> 本应用严格遵守《中华人民共和国个人信息保护法》(PIPL):
+>
+> - §13/§14 处理 PII 前取得用户单独同意
+> - §23 向紧急联系人提供 PII 前取得单独告知
+> - §28 处理敏感 PII(健康医疗)取得单独同意
+> - §38/§39 跨境 PII 传输合规(详见 `privacy_policy.md` §11)
+> - §47 用户删除权(应用内一键删除 + 卸载清除)
+> - §54 PII 处理活动记录(本地审计日志)
+
+---
+
+## 附录 B: 已知 v0.25 阻塞上 store 的合规 TODO
+
+| # | 阻塞项 | 依赖 | 估时 | 计划 round |
+|---|--------|------|------|-----------|
+| 1 | **PIPL §13 单独同意实现** (联系人回复 Y) | SMS provider 真接 | 4-8h | R55 |
+| 2 | **AliyunSmsProvider 真接** | 阿里云备案 + 签名 + 模板审核 | 2+ 月 | R55 |
+| 3 | **5 厂商 push SDK 接入** | 各厂商审核 | 1-2 月 | R55 |
+| 4 | **软件著作权登记** | CPDA 受理 | 1-2 月 | 法务负责 |
+| 5 | **ICP 备案** | 域名注册 | 7-15 天 | 法务负责 |
+| 6 | **法务 review 3 法律文档** | 律师 | 1-2 周 | 法务负责 |
+| 7 | **HIPAA / GDPR 律师过审** | 国际律师 | 1-2 周 | 法务负责 |
+
+> 上 store 路径: 4 store 缺一不可 + 5 厂商 push 缺一不可 + 法务 review 缺一不可。
+> 估总: 3-6 月 (法务 + 厂商审核是瓶颈)。- 多语言

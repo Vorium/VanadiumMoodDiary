@@ -128,7 +128,7 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 ## 🧪 测试
 
 ```bash
-flutter test                          # 跑所有测试（876 cases）
+flutter test                          # 跑所有测试（v0.25 round 48 后 1052 cases）
 flutter test --coverage               # 覆盖率
 dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 
@@ -163,18 +163,39 @@ flutter build ios --release
 # 输出：ios/Runner.xcarchive
 ```
 
-## 🐛 已知约束
+## 🐛 已知约束 (v0.25 round 48)
 
 - `flutter_secure_storage` 在部分 Android 设备上首次启动有 ~200ms 延迟
 - Web 平台用 `sqlite3.wasm` 走 IndexedDB，Chrome 隐身模式可能失败
 - iOS 推送需要真机测试（模拟器无 APNs）
-- SMS 走阿里云占位（v1.0 上正式接入）
+- SMS 走阿里云占位（v0.25 R55 上正式接入）
+- 国产 ROM 静默杀后台通知：需接入 5 厂商 push (小米 / 华为 / OPPO / Vivo / 魅族)
+  才能让推送送达率达 95%+ (R55 计划)
 
 ## 📄 文档
 
-- `PRD-v0.1-draft.md`：产品需求
 - `docs/CHANGELOG.md`：版本变更
+- `docs/DEPLOYMENT.md`：部署指南（含阶段 8 国内 5 store + 5 厂商 push + 附录合规清单）
 - `docs/`：设计规格、token 规范、实施 plan
+
+## 📜 法律与合规 (v0.25 R54 增补)
+
+**3 份法律协议** (`assets/legal/`)：
+- `user_agreement.md` — 用户协议 (通用条款)
+- `privacy_policy.md` — 隐私政策 (PIPL / HIPAA / GDPR 完整合规)
+- `sensitive_data_consent.md` — 敏感个人信息处理同意书 (健康 / 树洞)
+
+**上 store 前必修:**
+- [ ] 律师过审 3 份法律文档 (法务负责)
+- [ ] NMPA "非医疗器械" 声明 (见 `docs/DEPLOYMENT.md` 附录 A)
+- [ ] 软件著作权登记证书 (CPDA 受理 1-2 月)
+- [ ] ICP 备案 (域名 7-15 天)
+- [ ] 5 厂商 push SDK 接入 (送达率 95%+, R55 计划)
+- [ ] 阿里云 SMS provider 真接 (失联通知 production 必需, R55 计划)
+- [ ] PIPL §13 单独同意实现 (联系人回复 Y, R55 计划)
+
+**合规清单详情见 `docs/DEPLOYMENT.md` 附录 A (NMPA / HIPAA / GDPR /
+PIPL) + 附录 B (v0.25 阻塞 TODO + 估时)。**
 
 ## 📜 许可
 
