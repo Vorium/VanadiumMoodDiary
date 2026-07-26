@@ -103,6 +103,14 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 - 失联通知（连续 N 天没打卡 → SMS）
 - 续方提前 N 天提醒
 
+### 国产 ROM 适配（v0.16 round 20）
+- **设置页"通知状态自检卡"**：用户首次安装可一键检测通知是否被系统拦截，状态显示 + 一键测试
+- **OEM 品牌引导**：自动识别 Xiaomi/Huawei/OPPO/vivo/Samsung/Meizu 等 7 品牌，按品牌给"自启动 + 精确闹钟 + 省电白名单"3 步引导
+- **iOS 17 / Android 13+ 通知权限**：首次安装时显式申请，符合系统规范
+- 已知问题：90%+ 国产 ROM 默认杀后台进程 + 拦截自启动 + 禁用精确闹钟，必须用户手动开启白名单
+
+
+
 ### 报告与分析
 - 主页打卡趋势
 - 趋势页（30 天热力图 + 6 月柱状图 + 评估折线）
@@ -120,7 +128,7 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 ## 🧪 测试
 
 ```bash
-flutter test                          # 跑所有测试（702 cases）
+flutter test                          # 跑所有测试（876 cases）
 flutter test --coverage               # 覆盖率
 dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 

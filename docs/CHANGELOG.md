@@ -261,6 +261,48 @@
 - 703/703 pass
 - `flutter analyze` 0 issues
 
+## [0.23.0] - 2026-07-25
+
+### Fixed (round 38 P0 — 3 项上架关键修复)
+- **SMS release fail-fast**（spen P0-1）：`sms_service.dart` release 模式调 `validateForRelease` 抛 `SmsProviderNotConfiguredError`，被 `runZonedGuarded` + `LastErrorCapture` 抓住，AppRoot 顶部 banner 提示。dev/profile 静默通过（mock 是 dev 工具）
+- **safety_watch timeout 10s**（spen P0-3）：`safety_watch_service.dart` 加 10s timeout 防 SMS 发送挂死，配合 `swallowError` 集中器
+- **app.dart 复用 provider**（spen P0-4）：`main.dart` 创建 `notificationService` 注入 provider tree，避免 `AppRoot.initState` 重新 `NotificationService()`
+
+### Fixed (round 39 P1 — 8 项)
+- **catch(_) → swallowError**（spen P1-3）：5 处 best-effort 走集中器，2 处 schema guard 保留（注释 `// ignore:`），0 `catch(_)` 残留
+- **i18n 38 处**（spzh P1-1）：main.dart 升级 dialog 11 处 + trend_* 17 处 + 10 处其他 widget 文本全 i18n 化，ARB zh 555 / en 549 → 555 / 555 100% 同步
+- **PDF mask**（spzh P1-7）：`medication_report_pdf.dart` 用户姓名/联系方式 9 处脱敏
+- **50+ test**（spen P1-6）：新加 50+ test case（care_strategies / encrypted_audio_storage / data_export / i18n 等）
+
+### Refactor (round 40 P2 — 12 项 token 化 + 抽类 + i18n)
+- **token 化 12 项**（emil P2-1~12）：trend_charts 11 处 fontSize hardcode / `Curves.*` 走 token / `Colors.white/black54` 反白修复 / 5 个 `tintedXxx` 集中器应用
+- **抽类**（emil P2-13~14）：BadgeSyncService 从 notification_service 抽 / ReminderDispatcher 重构
+- **i18n**（spzh P2-1~5）：preset_medication_templates 半角→全角括号 / 5 处其他 widget 文本 i18n
+- **Z 后缀**（spen P2-3）：`toUtc().toIso8601String()` 全代码库统一 Z 后缀
+- **tz.local**（spen P2-4）：DateTime 统一 `tz.local` 防时区 race
+
+### Refactor (round 41 P3 — 4 项实做)
+- **PressFeedbackIconButton**（emil P3-1）：从 PressFeedback 抽 IconButton 专用变体，统一 22 文件 icon button 反馈
+- **care_engine 4 strategy**（emil P3-2）：`care_strategies.dart` 拆 DefaultHighFreqStrategy / DefaultLowFreqStrategy / HighAdherenceStrategy / LowAdherenceStrategy 4 子
+- **reminders_hub Notifier**（emil P3-3）：从 god class reminders_hub_page 拆 5 个 card 子 widget + Notifier 集中
+- **zh_Hant stub**（spzh P3-30）：加 `app_zh_Hant.arb`（**注**：v0.24 修真 OpenCC 繁化 — 当前是简体副本）
+
+### Added
+- **care_strategies 4 子 + test**（emil P3-2 续）：`care_strategies_round43_test.dart` 286 行
+- **encrypted_audio_storage base class + test**（emil P3-5）：`encrypted_audio_storage_round43_test.dart` 186 行
+- **6 个 CI 守门员脚本**：check_all / check_cross_feature / check_arb_keys / check_drift_namespace / check_datetime_race / check_fullwidth_punctuation
+- **P3 L 项 4 处架构债务 TODO 注释**：notification_service facade 续拆 / data_export +50 test 路径 / zh_Hant stub 修真 / 紧急联系人单独同意
+
+### Tests
+- 876/876 pass
+- `flutter analyze` 0 issues (44 info-level 仅 trailing_comma + prefer_const, 历史遗留)
+
+### Known issues (v0.24 round 45 三视角审视新发现)
+- **合规 P0 5 项 12 round 0 修**（spzh P0-of-P0）：3 份法律文档 v0.22 草稿 / PIPL §1 vs §3 自相矛盾 / 5 厂商 push 通道未接 / DEPLOYMENT.md 敏感措辞 / 法务未确认 NMPA — 4 store 上架阻塞
+- **zh_Hant 简体副本**（spzh P0）：当前 555 keys 跟 zh 仅 @@locale + 行 21 "您→你" 2 处不同，虚假繁体声明
+- **3 个 P0 god class 拆解完成度 1/7**（3 视角共识）：mood_dialog 738 / notification_service 629 / data_export_service 582 逆增长 — 拆解待续
+- **check_no_pua.py 守护缺**（spen P0）：v0.22 round 31 修 app_router mojibake 后无守护，v0.24 round 45 新增
+
 ## [0.22.1] - 2026-07-20
 
 ### Fixed (round 29 — 三视角审视 P2 架构 + 底层)
@@ -583,4 +625,4 @@
   - pendingCount 三种状态（5 / 0 / -1）的 UI 提示
   - 点"测试通知"按钮 → 调 `showNow` 推一条
   - 点刷新按钮 → 重新读 pendingCount
-
+

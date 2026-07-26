@@ -133,7 +133,7 @@ lib/
 
 ```bash
 flutter analyze    # 必须 0 error
-flutter test       # 必须全过（当前 703 cases）
+flutter test       # 必须全过（当前 876 cases）
 python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 检查)
 ```
 
@@ -197,7 +197,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 **已知 bug 修复**：写这俩脚本时发现 Dart `RegExp` 默认 `^` 不 multi-line — 必须显式 `multiLine: true` 或用 `readAsLinesSync()` 逐行处理。
 
-## v0.23 P0-P3 集中清理 (round 38-41)
+## v0.23 P0-P3 集中清理 (round 38-44)
 
 按"三视角审视"报告 (emil / superpowers-en / superpowers-zh) 全修:
 
@@ -206,8 +206,9 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **P2 (round 40)**: 12 项 — emil token 化 (tintedSuccessSoft/fgOnPrimaryMuted/iconSizeMicro/...) + 抽 SectionHeader + setup 改 PageTransitionSwitcher + tz.local
 - **P3 (round 41)**: 4 项实做 + 5 项 TODO 注释 — PressFeedbackIconButton + care_engine 4 strategy + reminders_hub Notifier + zh_Hant stub
 - **P3 L 项 TODO**: notification god class (已抽 3 facade 子) + data_export god class (已加 50+ test) + 紧急联系人单独同意 (待 SMS 接入)
+- **v0.24 round 45**: 3 视角再审视 → Sprint #3 main.dart i18n + Sprint #4 token + Sprint #6 check_no_pua.py + CHANGELOG [0.23.0] 补 + AGENTS 数据同步
 
-总计: 845 tests pass, 0 analyzer error, 4 守护脚本全绿.
+总计: 876 tests pass, 0 analyzer error, 7 守护脚本全绿 (新加 check_no_pua).
 
 ## 关键约束
 
