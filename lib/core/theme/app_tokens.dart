@@ -560,8 +560,9 @@ class AppTokens {
 
   /// 12/w400 法律/邮件/条款正文 (lineHeightSnug 1.4)
   /// 替代散落 8+ 处 `TextStyle(fontSize: 12, height: 1.4)`
+  /// v0.24 round 46: 内部 `fontSize: 12` 改 `fontSizeCaptionSm` (复用既有 token, 不另造 fontSizeLegal)
   static TextStyle textStyleLegal(BuildContext context) => TextStyle(
-        fontSize: 12,
+        fontSize: fontSizeCaptionSm,
         fontWeight: FontWeight.w400,
         height: lineHeightSnug,
         color: textSecondaryColor(context),
