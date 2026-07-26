@@ -56,37 +56,25 @@ class Gad7Scale implements AssessmentScale {
   int get totalRange => 21;
 
   @override
+  List<SeverityCutoff> get severityCutoffs => const [
+        SeverityCutoff(threshold: 4, rank: 0, label: '几乎没有焦虑', summary: '几乎没有焦虑倾向'),
+        SeverityCutoff(threshold: 9, rank: 1, label: '轻度焦虑', summary: '轻度焦虑倾向'),
+        SeverityCutoff(threshold: 14, rank: 2, label: '中度焦虑', summary: '中度焦虑倾向'),
+        SeverityCutoff(threshold: 21, rank: 3, label: '重度焦虑', summary: '重度焦虑倾向'),
+      ];
+
+  @override
   AssessmentResult computeResult(List<int> scores) {
     final total = scores.fold<int>(0, (a, b) => a + b);
-    if (total <= 4) {
-      return AssessmentResult(
-        total: total,
-        summary: '几乎没有焦虑倾向',
-        recommendDoctorVisit: false,
-        urgentDoctorVisit: false,
-      );
-    }
-    if (total <= 9) {
-      return AssessmentResult(
-        total: total,
-        summary: '轻度焦虑倾向',
-        recommendDoctorVisit: false,
-        urgentDoctorVisit: false,
-      );
-    }
-    if (total <= 14) {
-      return AssessmentResult(
-        total: total,
-        summary: '中度焦虑倾向',
-        recommendDoctorVisit: true,
-        urgentDoctorVisit: false,
-      );
-    }
+    final cutoff = severityCutoffs.firstWhere(
+      (c) => total <= c.threshold,
+      orElse: () => severityCutoffs.last,
+    );
     return AssessmentResult(
       total: total,
-      summary: '重度焦虑倾向',
-      recommendDoctorVisit: true,
-      urgentDoctorVisit: true,
+      summary: cutoff.summary,
+      recommendDoctorVisit: cutoff.rank >= 2,
+      urgentDoctorVisit: cutoff.rank >= 3,
     );
   }
 

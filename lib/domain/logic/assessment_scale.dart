@@ -46,6 +46,26 @@ class CrisisSignal {
   });
 }
 
+/// 严重度切分点
+///
+/// [threshold] 该档的上界（含），如 PHQ-9 的 4 表示 total <= 4 为该档。
+/// [rank] 严重度等级（越大越严重）。
+/// [label] 短标签（图表/对比用），如 "轻度抑郁"。
+/// [summary] 完整描述（结果页用），如 "轻度抑郁倾向"。
+class SeverityCutoff {
+  final int threshold;
+  final int rank;
+  final String label;
+  final String summary;
+
+  const SeverityCutoff({
+    required this.threshold,
+    required this.rank,
+    required this.label,
+    required this.summary,
+  });
+}
+
 /// 量表抽象
 abstract class AssessmentScale {
   /// 唯一 id（写入 check_ins.type）
@@ -68,6 +88,16 @@ abstract class AssessmentScale {
 
   /// 总分上限（显示用，"总分（0-27）"）
   int get totalRange;
+
+  /// 严重度切分点（单一数据源）
+  ///
+  /// 按 threshold 升序排列。最后一个 entry 的 threshold 应为理论最大值
+  /// （如 PHQ-9 的 27），作为"以上所有"的兜底。
+  ///
+  /// 用于：
+  /// - `computeResult()` 映射 total → summary + flags
+  /// - `AssessmentComparisonCalculator.severityRankFor()` 映射 total → rank
+  List<SeverityCutoff> get severityCutoffs;
 
   /// 根据 raw scores 计算结果
   AssessmentResult computeResult(List<int> scores);

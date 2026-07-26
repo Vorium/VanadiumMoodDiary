@@ -39,19 +39,11 @@ class Phq9Result {
   const Phq9Result(this.total, this.severity, this.summary);
 
   static Phq9Result fromTotal(int total) {
-    if (total <= 4) {
-      return Phq9Result(total, Phq9Severity.minimal, '几乎没有抑郁倾向');
-    }
-    if (total <= 9) {
-      return Phq9Result(total, Phq9Severity.mild, '轻度抑郁倾向');
-    }
-    if (total <= 14) {
-      return Phq9Result(total, Phq9Severity.moderate, '中度抑郁倾向');
-    }
-    if (total <= 19) {
-      return Phq9Result(total, Phq9Severity.moderatelySevere, '中重度抑郁倾向');
-    }
-    return Phq9Result(total, Phq9Severity.severe, '重度抑郁倾向');
+    final cutoff = phq9Scale.severityCutoffs.firstWhere(
+      (c) => total <= c.threshold,
+      orElse: () => phq9Scale.severityCutoffs.last,
+    );
+    return Phq9Result(total, Phq9Severity.values[cutoff.rank], cutoff.summary);
   }
 }
 
@@ -101,6 +93,15 @@ class Phq9Scale implements AssessmentScale {
 
   @override
   int get totalRange => 27;
+
+  @override
+  List<SeverityCutoff> get severityCutoffs => const [
+        SeverityCutoff(threshold: 4, rank: 0, label: '几乎没有抑郁', summary: '几乎没有抑郁倾向'),
+        SeverityCutoff(threshold: 9, rank: 1, label: '轻度抑郁', summary: '轻度抑郁倾向'),
+        SeverityCutoff(threshold: 14, rank: 2, label: '中度抑郁', summary: '中度抑郁倾向'),
+        SeverityCutoff(threshold: 19, rank: 3, label: '中重度抑郁', summary: '中重度抑郁倾向'),
+        SeverityCutoff(threshold: 27, rank: 4, label: '重度抑郁', summary: '重度抑郁倾向'),
+      ];
 
   @override
   AssessmentResult computeResult(List<int> scores) {

@@ -12,6 +12,7 @@
 library;
 
 import 'package:chroniccare/domain/logic/assessment_record.dart';
+import 'package:chroniccare/domain/logic/scale_registry.dart';
 
 /// 严重度排名方向
 enum ComparisonTrend {
@@ -135,40 +136,39 @@ class AssessmentComparisonCalculator {
 
   /// 计算给定 [total] 在 [scaleId] 量表中的严重度 rank
   ///
-  /// rank 越大越严重。
+  /// rank 越大越严重。数据源为各量表的 [AssessmentScale.severityCutoffs]。
   static int severityRankFor({
     required String scaleId,
     required int total,
   }) {
-    if (scaleId == 'phq9') {
-      if (total <= 4) return 0; // minimal
-      if (total <= 9) return 1; // mild
-      if (total <= 14) return 2; // moderate
-      if (total <= 19) return 3; // moderatelySevere
-      return 4; // severe
-    }
-    if (scaleId == 'gad7') {
-      if (total <= 4) return 0; // minimal
-      if (total <= 9) return 1; // mild
-      if (total <= 14) return 2; // moderate
-      return 3; // severe
+    final scale = scaleById(scaleId);
+    if (scale != null) {
+      final cutoff = scale.severityCutoffs.firstWhere(
+        (c) => total <= c.threshold,
+        orElse: () => scale.severityCutoffs.last,
+      );
+      return cutoff.rank;
     }
     // 未知量表 — 兜底：按 total 每 5 分一档
     return (total / 5).floor().clamp(0, 4);
   }
 
   /// 严重度档位名（中文）
+  ///
+  /// 数据源为各量表的 [AssessmentScale.severityCutoffs]。
   static String severityLabelFor({
     required String scaleId,
     required int total,
   }) {
+    final scale = scaleById(scaleId);
+    if (scale != null) {
+      final cutoff = scale.severityCutoffs.firstWhere(
+        (c) => total <= c.threshold,
+        orElse: () => scale.severityCutoffs.last,
+      );
+      return cutoff.label;
+    }
     final rank = severityRankFor(scaleId: scaleId, total: total);
-    if (scaleId == 'phq9') {
-      return const ['几乎没有抑郁', '轻度抑郁', '中度抑郁', '中重度抑郁', '重度抑郁'][rank];
-    }
-    if (scaleId == 'gad7') {
-      return const ['几乎没有焦虑', '轻度焦虑', '中度焦虑', '重度焦虑'][rank];
-    }
     return '等级 $rank';
   }
 
