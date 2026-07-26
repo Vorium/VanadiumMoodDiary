@@ -79,7 +79,12 @@ class Gad7Scale implements AssessmentScale {
   }
 
   @override
-  CrisisSignal? detectCrisis(List<int> scores, AssessmentResult result) => null;
+  CrisisSignal? detectCrisis(
+    List<int> scores,
+    AssessmentResult result, {
+    HotlineRegion region = HotlineRegion.cn,
+  }) =>
+      null;
 }
 
 /// GAD-7 单例（注册表用）

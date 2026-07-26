@@ -116,16 +116,17 @@ class Phq9Scale implements AssessmentScale {
   }
 
   @override
-  CrisisSignal? detectCrisis(List<int> scores, AssessmentResult result) {
+  CrisisSignal? detectCrisis(
+    List<int> scores,
+    AssessmentResult result, {
+    HotlineRegion region = HotlineRegion.cn,
+  }) {
     // 第 9 题（index 8）≥ 1 → 自杀念头阳性
     if (scores.length > 8 && scores[8] >= 1) {
-      return const CrisisSignal(
+      return CrisisSignal(
         title: '我们关心你',
         message: '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。',
-        hotlines: [
-          (label: '全国24小时心理援助热线', number: '400-161-9995'),
-          (label: '北京心理危机研究与干预中心', number: '010-82951332'),
-        ],
+        hotlines: hotlineByRegion[region]!,
       );
     }
     return null;

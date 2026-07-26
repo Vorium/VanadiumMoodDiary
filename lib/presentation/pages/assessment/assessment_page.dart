@@ -196,6 +196,8 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     }
 
     // 危机检测（PHQ-9 第 9 题阳性等）
+    // v0.25 round 51: region 默认 cn — 后续 R51b 让用户从设置选 region
+    // 或者从 emergency contact phone region 推断
     final crisis = scale.detectCrisis(scores, result);
     if (crisis != null) {
       if (!mounted) return;
