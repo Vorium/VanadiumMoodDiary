@@ -11,6 +11,7 @@
 //   4. PDF 内 section 标题 + footer 走 Strings (P1-9 fix 验证)
 //   5. 边界 case: 空 medicationStats / 空 tempMedications / 无 expectedDoses
 import 'package:chroniccare/core/data/services/medication_report_pdf.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
@@ -50,7 +51,7 @@ MedicationReportData _buildData({
 MedicationStat _buildStat({
   String name = '碳酸锂',
   double dosage = 0.3,
-  String unit = 'g',
+  DosageUnit unit = DosageUnit.mg,
   List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
   DateTime? startDate,
   int actualDoseDays = 25,
@@ -118,7 +119,7 @@ void main() {
     test('medication 1 项 → 含药名+剂量+频次', () {
       final s = _buildData(medStats: [_buildStat()]).toReportString();
       expect(s, contains('碳酸锂'));
-      expect(s, contains('0.3g'));
+      expect(s, contains('0.3mg'));
       expect(s, contains('每日 1 次'));
       expect(s, contains('08:00'));
     });

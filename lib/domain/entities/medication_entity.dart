@@ -11,6 +11,7 @@
 library;
 
 import 'package:chroniccare/core/shared/domain_value.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 
 /// 药物（领域实体）
@@ -20,7 +21,7 @@ class MedicationEntity {
   final int id;
   final String name;
   final double dosage;
-  final String dosageUnit;
+  final DosageUnit dosageUnit;
   final List<HourMinute> times;
   final DateTime startDate;
   final DateTime? endDate;
@@ -88,7 +89,7 @@ class MedicationEntity {
     int? id,
     String? name,
     double? dosage,
-    String? dosageUnit,
+    DosageUnit? dosageUnit,
     List<HourMinute>? times,
     DateTime? startDate,
     DomainValue<DateTime?>? endDate,
@@ -142,7 +143,7 @@ class MedicationEntity {
 
   @override
   String toString() =>
-      'MedicationEntity(id=$id, name=$name, dosage=$dosage$dosageUnit, '
+      'MedicationEntity(id=$id, name=$name, dosage=$dosage${dosageUnit.id}, '
       'isActive=$isActive, refillAt=$refillAt)';
 
   /// `List<HourMinute>` 相等比较（业务层用 ==,不能用默认 identity）

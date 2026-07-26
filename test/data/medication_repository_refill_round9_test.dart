@@ -1,6 +1,7 @@
 // v0.12 (Round 6) MedicationRepository.updateRefill 集成测试
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:drift/native.dart';
@@ -23,7 +24,7 @@ void main() {
     return repo.add(
       name: '氟西汀',
       dosage: 40,
-      dosageUnit: 'mg',
+      dosageUnit: DosageUnit.mg,
       times: const [HourMinute(hour: 8, minute: 0)],
       refillAt: refillAt,
       refillReminderDays: refillDays,
@@ -140,7 +141,7 @@ void main() {
       final id = await repo.add(
         name: '氟西汀',
         dosage: 40,
-        dosageUnit: 'mg',
+        dosageUnit: DosageUnit.mg,
         times: const [HourMinute(hour: 8, minute: 0)],
       );
       final med = await (db.select(db.medications)

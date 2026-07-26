@@ -6,6 +6,7 @@
 // 实现方在 `lib/data/repositories/medication_repository_impl.dart`。
 library;
 
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 
@@ -26,7 +27,7 @@ abstract class MedicationRepository {
   Future<int> add({
     required String name,
     required double dosage,
-    required String dosageUnit,
+    required DosageUnit dosageUnit,
     required List<HourMinute> times,
     DateTime? startDate,
     DateTime? refillAt,

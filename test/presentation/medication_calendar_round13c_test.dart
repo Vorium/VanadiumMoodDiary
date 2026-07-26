@@ -1,5 +1,6 @@
 // v0.14 (Round 13C) MedicationCalendarPage widget + 业务逻辑测试
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -47,7 +48,7 @@ MedicationEntity _med({
     id: id,
     name: name,
     dosage: 40,
-    dosageUnit: 'mg',
+    dosageUnit: DosageUnit.mg,
     times: times,
     startDate: DateTime(2026, 1, 1),
     isActive: isActive,

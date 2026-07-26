@@ -1,8 +1,9 @@
-﻿// v0.13 (Round 9) MedicationRepository.setActive + update 路径测试
+// v0.13 (Round 9) MedicationRepository.setActive + update 路径测试
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:drift/native.dart';
@@ -24,7 +25,7 @@ void main() {
   Future<int> addMed({
     String name = '氟西汀',
     double dosage = 40,
-    String unit = 'mg',
+    DosageUnit unit = DosageUnit.mg,
     List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
     bool isActive = true,
     DateTime? endDate,
@@ -123,7 +124,7 @@ void main() {
       expect(after.name, '舍曲林');
       expect(after.times.length, 2);
       expect(after.dosage, original.dosage); // 保留
-      expect(after.dosageUnit, original.dosageUnit); // 保留
+      expect(after.dosageUnit, original.dosageUnit.id); // 保留
     });
 
     test('改 dosage + unit', () async {
@@ -132,14 +133,14 @@ void main() {
 
       final updated = original.copyWith(
         dosage: 60,
-        dosageUnit: '片',
+        dosageUnit: DosageUnit.tablet,
       );
       final ok = await repo.update(updated);
       expect(ok, isTrue);
 
       final after = await getMed(id);
       expect(after.dosage, 60);
-      expect(after.dosageUnit, '片');
+      expect(after.dosageUnit, DosageUnit.tablet.id);
       expect(after.name, original.name); // 保留
     });
 

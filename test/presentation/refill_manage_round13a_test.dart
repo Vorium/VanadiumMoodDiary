@@ -1,5 +1,6 @@
 // v0.14 (Round 13A) RefillManagePage widget + 业务逻辑测试
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/presentation/pages/medication/refill_manage_page.dart';
@@ -48,7 +49,7 @@ MedicationEntity _med({
   int id = 1,
   String name = '氟西汀',
   double dosage = 40,
-  String unit = 'mg',
+  DosageUnit unit = DosageUnit.mg,
   bool isActive = true,
   DateTime? refillAt,
   int reminderDays = 7,

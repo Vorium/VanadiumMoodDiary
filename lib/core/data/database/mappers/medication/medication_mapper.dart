@@ -13,6 +13,7 @@ library;
 
 import 'package:drift/drift.dart' show Value;
 
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
@@ -25,7 +26,7 @@ extension MedicationToEntity on Medication {
       id: id,
       name: name,
       dosage: dosage,
-      dosageUnit: dosageUnit,
+      dosageUnit: DosageUnit.fromId(dosageUnit),
       times: times, // 用 MedicationTimes 扩展的 getter
       startDate: startDate,
       endDate: endDate,
@@ -44,7 +45,7 @@ extension MedicationEntityToDrift on MedicationEntity {
       id: id,
       name: name,
       dosage: dosage,
-      dosageUnit: dosageUnit,
+      dosageUnit: dosageUnit.id,
       timesJson: encodeTimes(times),
       startDate: startDate,
       endDate: endDate,
@@ -59,10 +60,10 @@ extension MedicationEntityToDrift on MedicationEntity {
   /// 用 [Value.absent] 处理可空字段的"不传 = 用 SQL 默认"
   MedicationsCompanion toCompanion() {
     return MedicationsCompanion(
-      id: id == 0 ? const Value.absent() : Value(id),
+      id: const Value.absent(),
       name: Value(name),
       dosage: Value(dosage),
-      dosageUnit: Value(dosageUnit),
+      dosageUnit: Value(dosageUnit.id),
       timesJson: Value(encodeTimes(times)),
       startDate: Value(startDate),
       endDate: Value(endDate),

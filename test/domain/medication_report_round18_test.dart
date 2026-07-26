@@ -1,4 +1,5 @@
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
@@ -12,7 +13,7 @@ void main() {
     int id = 1,
     String name = '氟西汀',
     double dosage = 40,
-    String unit = 'mg',
+    DosageUnit unit = DosageUnit.mg,
     String timesJson = '[{"h":8,"m":0}]', // 每日 1 次（保留旧 API 兼容）
     List<HourMinute>? times,
     DateTime? startDate,
@@ -526,7 +527,7 @@ void main() {
     test('整数剂量不显示小数点', () {
       final r = MedicationReport.compute(
         userName: '小明',
-        meds: [med(dosage: 40, unit: 'mg')],
+        meds: [med(dosage: 40, unit: DosageUnit.mg)],
         checkIns: const [],
         now: now,
       );
@@ -538,7 +539,7 @@ void main() {
     test('小数剂量显示小数', () {
       final r = MedicationReport.compute(
         userName: '小明',
-        meds: [med(dosage: 0.4, unit: 'mg')],
+        meds: [med(dosage: 0.4, unit: DosageUnit.mg)],
         checkIns: const [],
         now: now,
       );
@@ -567,7 +568,7 @@ void main() {
         id: 1,
         name: '氟西汀',
         dosage: 40,
-        dosageUnit: 'mg',
+        dosageUnit: DosageUnit.mg,
         times: const [HourMinute(hour: 8, minute: 0)],
         startDate: DateTime(2026, 5, 1),
         endDate: DateTime(2026, 7, 5), // 7/5 停药

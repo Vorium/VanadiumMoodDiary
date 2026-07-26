@@ -1,6 +1,7 @@
 // v0.13 (Round 11) MedicationEntity / MedicationMapper 单元测试
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
@@ -38,7 +39,7 @@ MedicationEntity _entity({
   int id = 1,
   String name = '氟西汀',
   double dosage = 40,
-  String unit = 'mg',
+  DosageUnit unit = DosageUnit.mg,
   List<HourMinute> times = const [HourMinute(hour: 8, minute: 0)],
   DateTime? refillAt,
   int refillReminderDays = 7,
@@ -68,7 +69,7 @@ void main() {
       expect(entity.id, row.id);
       expect(entity.name, row.name);
       expect(entity.dosage, row.dosage);
-      expect(entity.dosageUnit, row.dosageUnit);
+      expect(entity.dosageUnit.id, row.dosageUnit);
       expect(entity.isActive, row.isActive);
       expect(entity.refillReminderDays, row.refillReminderDays);
     });
@@ -122,7 +123,7 @@ void main() {
       expect(row.id, entity.id);
       expect(row.name, entity.name);
       expect(row.dosage, entity.dosage);
-      expect(row.dosageUnit, entity.dosageUnit);
+      expect(row.dosageUnit, entity.dosageUnit.id);
       expect(row.isActive, entity.isActive);
       expect(row.refillReminderDays, entity.refillReminderDays);
     });
@@ -335,7 +336,7 @@ void main() {
       final entity = rows.first.toEntity();
       expect(entity.name, '氟西汀');
       expect(entity.dosage, 40);
-      expect(entity.dosageUnit, 'mg');
+      expect(entity.dosageUnit, DosageUnit.mg);
       expect(entity.times.length, 2);
       expect(entity.times[0].hour, 8);
       expect(entity.times[1].hour, 20);

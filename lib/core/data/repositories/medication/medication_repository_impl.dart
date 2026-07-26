@@ -10,6 +10,7 @@
 // 消除 data → flutter/material 依赖。
 library;
 
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
@@ -41,7 +42,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
   Future<int> add({
     required String name,
     required double dosage,
-    required String dosageUnit,
+    required DosageUnit dosageUnit,
     required List<HourMinute> times,
     DateTime? startDate,
     DateTime? refillAt,
