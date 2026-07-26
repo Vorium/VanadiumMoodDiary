@@ -1,15 +1,22 @@
 import 'package:chroniccare/core/shared/formatters.dart';
-import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/logic/medication_stat_calculator.dart';
+import 'package:chroniccare/domain/logic/temp_entry_extractor.dart';
 
 /// 用药报告：最近 N 天（默认 14 天）的用药情况，给医生看的纯文本
 ///
 /// 设计原则：
 /// - 受众是医生，不是用户备份：所以不复用 data_export_service 的 JSON 格式
-/// - 按"天"统计实际服药（不是按打卡次数），符合医患沟通习惯
+/// - 按"天"统计实际服药（不是按打卡次数），符合医患沟通习惯）
 /// - 纯函数：compute() 不读 IO，方便单测
+///
+/// v0.25 round 58 (spen P1 #12 god class 拆分): 拆 3 纯函数类
+///   - MedicationStatCalculator: 单个药统计
+///   - TempEntryExtractor:       临时用药提取
+///   - MissedDateBuilder:        漏服日期构造
+/// MedicationReport 退化为 facade, 协调 3 纯函数 + 累计 stats
 class MedicationReport {
   MedicationReport._();
 
@@ -46,16 +53,16 @@ class MedicationReport {
     // 当前 meds 列表（仅 isActive=true）会漏。我们用 callSite 的 medsAllProvider 解决。
     // 这里仅做防御：medById 仍以 meds 入参为准。
 
-    // ===== 临时用药 =====
-    final tempEntries = _calcTempEntries(inWindow);
+    // ===== 临时用药 (R58 抽到 TempEntryExtractor) =====
+    final tempEntries = TempEntryExtractor.extract(inWindow);
 
-    // ===== 常吃药统计 =====
+    // ===== 常吃药统计 (R58 抽到 MedicationStatCalculator) =====
     final medStats = <MedicationStat>[];
     int expectedDoses = 0;
     int actualDoses = 0;
 
     for (final med in meds) {
-      final stat = _calcMedStat(
+      final stat = MedicationStatCalculator.calculate(
         med: med,
         days: days,
         inWindow: inWindow,
@@ -91,87 +98,11 @@ class MedicationReport {
     );
   }
 
-  /// 单个药的统计（v0.9 重构：拆出独立函数）
-  /// v0.13 (Round 11): 接受 MedicationEntity（domain 抽象）
-  static MedicationStat _calcMedStat({
-    required MedicationEntity med,
-    required int days,
-    required List<CheckInEntity> inWindow,
-    required DateTime periodStart,
-  }) {
-    final times = med.times;
-    final dosesPerDay = times.isEmpty ? 1 : times.length;
-    // 考虑药物 startDate：如果药物在报告窗口中途才开始，
-    // expected 应按实际可服药天数计算，避免依从率虚低
-    final effectiveStart =
-        med.startDate.isAfter(periodStart) ? med.startDate : periodStart;
-    final effectiveDays =
-        periodStart.add(Duration(days: days)).difference(effectiveStart).inDays;
-    final expected = dosesPerDay * effectiveDays.clamp(0, days);
-
-    // 按"天"去重：一颗药同一天多次打卡算 1 天
-    final daysWithDose = <String>{};
-    int actualForMed = 0;
-
-    for (final c in inWindow) {
-      if (!c.isNormal) continue;
-      if (c.medicationId != med.id) continue;
-      daysWithDose.add(_dayKey(c.timestamp));
-      actualForMed++;
-    }
-
-    final missedDays = days - daysWithDose.length;
-    final missedDates =
-        _buildMissedDates(periodStart, daysWithDose, missedDays);
-
-    return MedicationStat(
-      medication: med,
-      times: times,
-      actualDoseDays: daysWithDose.length,
-      missedDates: missedDates,
-      actualDoseCount: actualForMed,
-      expectedDoseCount: expected,
-    );
-  }
-
-  /// 临时用药条目（按时间倒序）
-  static List<TempMedEntry> _calcTempEntries(List<CheckInEntity> inWindow) {
-    final result = <TempMedEntry>[];
-    final sorted = [...inWindow]
-      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
-    for (final c in sorted) {
-      if (!c.isTemp) continue;
-      final parsed = JsonCodec.parseTempMedNote(c.note);
-      result.add(
-        TempMedEntry(
-          timestamp: c.timestamp,
-          name: parsed.name,
-          description: parsed.description.isEmpty ? '—' : parsed.description,
-        ),
-      );
-    }
-    return result;
-  }
-
-  static String _dayKey(DateTime dt) => Formatters.date(dt);
-
-  /// 构造漏服日期列表：按时间正序，填前 missedDays 天未服药的日子
-  static List<DateTime> _buildMissedDates(
-    DateTime periodStart,
-    Set<String> daysWithDose,
-    int missedDays,
-  ) {
-    if (missedDays <= 0) return const [];
-    final missed = <DateTime>[];
-    for (int d = 0; d < daysWithDose.length + missedDays; d++) {
-      final day = periodStart.add(Duration(days: d));
-      if (!daysWithDose.contains(_dayKey(day))) {
-        missed.add(day);
-        if (missed.length >= missedDays) break;
-      }
-    }
-    return missed;
-  }
+  // v0.25 round 58: 4 个 private static method (_calcMedStat /
+  // _calcTempEntries / _dayKey / _buildMissedDates) 已拆到
+  // MedicationStatCalculator + MissedDateBuilder + TempEntryExtractor.
+  // 保留 MedicationStat / TempMedEntry / MedicationReportData 3 个
+  // data class (跨纯函数类共享, 不拆).
 }
 
 /// 单个药的统计
