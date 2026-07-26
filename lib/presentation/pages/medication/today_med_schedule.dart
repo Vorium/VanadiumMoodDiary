@@ -17,7 +17,7 @@ import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 
 /// 一行时间点：[已打卡 ✓] 药名 08:00
 class _ScheduleEntry {

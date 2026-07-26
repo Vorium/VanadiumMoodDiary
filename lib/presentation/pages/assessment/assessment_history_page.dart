@@ -24,7 +24,7 @@ import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_summary_strip.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_chart_card.dart';

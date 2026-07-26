@@ -23,7 +23,7 @@ import 'package:chroniccare/presentation/pages/trend/widgets/trend_heatmap_grid.
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_monthly_chart.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_assessment_chart.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_mood_chart.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

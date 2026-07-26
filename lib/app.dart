@@ -9,7 +9,7 @@ import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/core/routing/app_router.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/app_theme.dart';

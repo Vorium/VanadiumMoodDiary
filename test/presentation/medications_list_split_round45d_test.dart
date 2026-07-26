@@ -18,7 +18,7 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medication_row
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/refill_days_dialog.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

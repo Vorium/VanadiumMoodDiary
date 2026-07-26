@@ -25,7 +25,7 @@ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

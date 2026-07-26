@@ -16,7 +16,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 
 /// 弹出编辑 dialog，返回 true 表示有保存成功，false/null = 取消
 Future<bool?> showEditMedicationDialog(

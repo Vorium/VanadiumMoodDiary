@@ -22,7 +22,7 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medication_emp
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_list_view.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/refill_days_dialog.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 

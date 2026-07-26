@@ -26,7 +26,7 @@ import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_compose_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_detail_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
-import 'package:chroniccare/presentation/providers/data_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 
 /// 路由切换动画辅助函数（v0.17 round 2 / A2 emil 动效）
 ///
