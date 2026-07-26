@@ -22,6 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_dialog_actions.dart';
@@ -123,18 +124,21 @@ class _MoodDialogContentState extends ConsumerState<_MoodDialogContent> {
     }
     setState(() => _saving = true);
     try {
+      // v0.24 round 48 (sp-en P1-14): add() 10 参 → MoodEntryDraft 参数对象
       await ref.read(moodRepositoryProvider).add(
-            score: _score,
-            tags: _tags.toList(),
-            note: hasText ? _noteController.text.trim() : null,
-            energy: _energy,
-            sleep: _sleep,
-            anxiety: _anxiety,
-            audioPath: snap.audioPath,
-            audioTranscript: snap.finalTranscript.isEmpty
-                ? null
-                : snap.finalTranscript,
-            audioDurationMs: snap.audioDurationMs,
+            draft: MoodEntryDraft(
+              score: _score,
+              tags: _tags.toList(),
+              note: hasText ? _noteController.text.trim() : null,
+              energy: _energy,
+              sleep: _sleep,
+              anxiety: _anxiety,
+              audioPath: snap.audioPath,
+              audioTranscript: snap.finalTranscript.isEmpty
+                  ? null
+                  : snap.finalTranscript,
+              audioDurationMs: snap.audioDurationMs,
+            ),
           );
       if (!mounted) return;
       // 先展示 snackbar，再 pop — pop 后 context 可能已失效

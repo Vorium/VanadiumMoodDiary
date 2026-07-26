@@ -2,10 +2,13 @@
 //
 // v0.23 (Round 31) 语音录入: add() 加 3 个 audio 参数,纯文字模式老调用方
 // 不传 = 行为完全不变(audioPath null = 不会写 audio 文件)。
+//
+// v0.24 round 48 (sp-en P1-14) add() 10 参 → MoodEntryDraft 参数对象
 library;
 
 import 'package:drift/drift.dart' show Value;
 
+import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/mood_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
@@ -33,30 +36,19 @@ class MoodRepositoryImpl implements MoodRepository {
   }
 
   @override
-  Future<int> add({
-    required int score,
-    required List<String> tags,
-    String? note,
-    DateTime? at,
-    int? energy,
-    int? sleep,
-    int? anxiety,
-    String? audioPath,
-    String? audioTranscript,
-    int? audioDurationMs,
-  }) {
+  Future<int> add({required MoodEntryDraft draft}) {
     return _db.insertMoodEntry(
       MoodEntriesCompanion.insert(
-        timestamp: at ?? DateTime.now(),
-        score: score,
-        energy: Value(energy),
-        sleep: Value(sleep),
-        anxiety: Value(anxiety),
-        tagsJson: Value(JsonCodec.encodeStringList(tags)),
-        note: Value(note),
-        audioPath: Value(audioPath),
-        audioTranscript: Value(audioTranscript),
-        audioDurationMs: Value(audioDurationMs),
+        timestamp: draft.at ?? DateTime.now(),
+        score: draft.score,
+        energy: Value(draft.energy),
+        sleep: Value(draft.sleep),
+        anxiety: Value(draft.anxiety),
+        tagsJson: Value(JsonCodec.encodeStringList(draft.tags)),
+        note: Value(draft.note),
+        audioPath: Value(draft.audioPath),
+        audioTranscript: Value(draft.audioTranscript),
+        audioDurationMs: Value(draft.audioDurationMs),
       ),
     );
   }

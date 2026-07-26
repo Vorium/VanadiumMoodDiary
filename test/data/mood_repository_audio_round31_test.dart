@@ -2,8 +2,11 @@
 //
 // 测试 add() 加 audioPath / audioTranscript / audioDurationMs,
 // watchAll() / watchToday() 拿回来的 entity 包含 3 字段。
+//
+// v0.24 round 48 (sp-en P1-14): 改用 MoodEntryDraft 参数对象,替代 10 参 add
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/mood/mood_repository_impl.dart';
+import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -22,7 +25,9 @@ void main() {
 
   group('add() 加 audio 字段 (v0.23 Round 31)', () {
     test('纯文字模式 — audio 3 字段全 null (向后兼容)', () async {
-      final id = await repo.add(score: 3, tags: const ['焦虑']);
+      final id = await repo.add(
+        draft: const MoodEntryDraft(score: 3, tags: ['焦虑']),
+      );
       final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.audioPath, isNull);
@@ -32,11 +37,13 @@ void main() {
 
     test('完整 audio 字段 round-trip', () async {
       final id = await repo.add(
-        score: 4,
-        tags: const ['平静'],
-        audioPath: '/docs/mood_audio/mood_12345.m4a.enc',
-        audioTranscript: '今天心情不错',
-        audioDurationMs: 12500,
+        draft: const MoodEntryDraft(
+          score: 4,
+          tags: ['平静'],
+          audioPath: '/docs/mood_audio/mood_12345.m4a.enc',
+          audioTranscript: '今天心情不错',
+          audioDurationMs: 12500,
+        ),
       );
       final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
           .getSingle();
@@ -48,9 +55,11 @@ void main() {
     test('只传 audioPath 不传 transcript — transcript 仍 null', () async {
       // 真实场景: STT 失败 → audio 录音保存但 transcript = null
       final id = await repo.add(
-        score: 2,
-        tags: const ['抑郁'],
-        audioPath: '/a.m4a.enc',
+        draft: const MoodEntryDraft(
+          score: 2,
+          tags: ['抑郁'],
+          audioPath: '/a.m4a.enc',
+        ),
       );
       final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
           .getSingle();
@@ -61,11 +70,13 @@ void main() {
 
     test('3min 录音 — durationMs = 180000', () async {
       final id = await repo.add(
-        score: 3,
-        tags: const [],
-        audioPath: '/a.m4a.enc',
-        audioTranscript: '识别 60s',
-        audioDurationMs: 180000,
+        draft: const MoodEntryDraft(
+          score: 3,
+          tags: [],
+          audioPath: '/a.m4a.enc',
+          audioTranscript: '识别 60s',
+          audioDurationMs: 180000,
+        ),
       );
       final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
           .getSingle();
@@ -80,13 +91,17 @@ void main() {
     });
 
     test('混合 纯文字 / 录音 2 条 — entity 字段全部带过来', () async {
-      await repo.add(score: 3, tags: const ['焦虑']);
       await repo.add(
-        score: 4,
-        tags: const ['平静'],
-        audioPath: '/b.m4a.enc',
-        audioTranscript: 'good day',
-        audioDurationMs: 8000,
+        draft: const MoodEntryDraft(score: 3, tags: ['焦虑']),
+      );
+      await repo.add(
+        draft: const MoodEntryDraft(
+          score: 4,
+          tags: ['平静'],
+          audioPath: '/b.m4a.enc',
+          audioTranscript: 'good day',
+          audioDurationMs: 8000,
+        ),
       );
       final all = await repo.watchAll().first;
       expect(all.length, 2);

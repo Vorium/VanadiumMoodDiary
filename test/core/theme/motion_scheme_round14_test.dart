@@ -18,9 +18,9 @@ void main() {
       expect(MotionScheme.none.curve, Curves.linear);
     });
 
-    test('subtle: fast duration, standard curve', () {
+    test('subtle: fast duration, subtle curve (v0.24 round 48 emil P1-1)', () {
       expect(MotionScheme.subtle.duration, AppTokens.durFast);
-      expect(MotionScheme.subtle.curve, AppTokens.curveStandard);
+      expect(MotionScheme.subtle.curve, AppTokens.curveSubtle);
     });
 
     test('standard: normal duration, standard curve', () {
