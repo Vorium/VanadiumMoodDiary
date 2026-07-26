@@ -127,11 +127,36 @@ class AliyunSmsProvider implements SmsProvider {
     required String body,
     String? templateId,
   }) async {
-    // P0-1 fix: 之前 silently 返 false,上层可能误判"已发送但失败"。
-    // 改成 throw UnimplementedError,SmsService.send catch 后返
-    // SmsResult.fail,UI 看到 error kind。
+    // v0.25 round 55 (spzh P0 #6): 真接阿里云 SMS 计划。
+    // 当前 throw UnimplementedError, release 模式失联通知不可用。
+    //
+    // 完整接入 plan 见 docs/SMS_PROVIDERS.md §1。
+    //
+    // 真接步骤 (R55 PR 待做):
+    // 1. pubspec.yaml 加 `dio: ^5.0.0` (HTTP) + `crypto: ^3.0.0` (HMAC-SHA1)
+    // 2. 申请阿里云 AccessKey + 短信签名 + 模板 (法务, 1-2 月)
+    // 3. .env 加 ALIYUN_ACCESS_KEY_ID / ALIYUN_ACCESS_KEY_SECRET /
+    //    ALIYUN_SIGN_NAME / ALIYUN_TEMPLATE_CODE_CARE /
+    //    ALIYUN_TEMPLATE_CODE_LOST (存 flutter_secure_storage)
+    // 4. 实现 _signRequest() (HMAC-SHA1 签名, 见 docs/SMS_PROVIDERS.md §1.3)
+    // 5. POST https://dysmsapi.aliyuncs.com/  (5s timeout + 3 次重试)
+    // 6. 解析响应: Code='OK' 返 true, 其他走 swallowError
+    // 7. 错误处理: 限流/余额不足/模板错误 分别对应不同 SmsResult.fail
+    //
+    // 模板审核技巧 (法务):
+    // - 避用"药"/"病"等敏感词
+    // - 措辞示例: "我是${userName}, 已${days}天没打卡App, 请方便时提醒"
+    // - 平均需 2-3 次驳回重提
+    //
+    // 跨境 PIPL §38:
+    // - +86 大陆号段 → AliyunSms
+    // - +1/+44/+852 海外号段 → TwilioSmsProvider (需 Twilio 境内代理备案)
+    // - SmsService.send 入口加号码归属地路由 (R55+)
+
     throw UnimplementedError(
-      'AliyunSmsProvider.send() 未实现 (v1.0+ TODO — 需要 accessKey/secret/signName)',
+      'AliyunSmsProvider.send() R55 真接 TODO — '
+      '需 accessKey/secret/signName + 法务过审模板。\n'
+      '完整 plan 见 docs/SMS_PROVIDERS.md §1。',
     );
   }
 }
