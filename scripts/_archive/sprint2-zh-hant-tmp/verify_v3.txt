@@ -1,0 +1,50 @@
+﻿修真后真简体残留: 14
+  setupPrivacy2: '• 不會上傳到任何雲端服務器' (['器'])
+  settingsExportVentWarning: '說明：樹洞（私密傾訴）的文字會導出，但錄音文件不導出——錄音存在 App 本地，重裝後路徑失效，無法跨設備複用。' (['路'])
+  settingsClearAllDataDialogBody: '以下數據將被永久刪除，無法恢復：\\n• 打卡記錄\\n• 用藥與服藥歷史\\n• 心理評估結果\\n• 情緒日記\\n• 樹洞（文字+錄音）\\n• 緊急聯繫人\\n\\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。' (['程'])
+  snackbarPhoneInvalid: '號碼格式不對（支持大陸／港澳臺／國際）' (['式'])
+  notificationStatusCardTestBody: '看到這條 = 通知工作正常。如果沒看到，看下面的國產手機設置' (['作'])
+  notificationStatusCardWebSubtitle: '當前是 web 端，通知由瀏覽器控制。請在手機上打開 App 測試。' (['器'])
+  notificationStatusCardOemStepOppo1: '設置 → 電池 → 耗電保護 → 慢病管家 → 允許後臺運行' (['行'])
+  notificationStatusCardOemStepSamsung1: '設置 → 應用程序 → 慢病管家 → 通知 → 全部開啟' (['程'])
+  notificationStatusCardOemStepOthers2: '設置 → 電池 → 後臺運行 → 改為「允許」' (['行'])
+  medsRefillEditHint: '點擊任一行可編輯續方日期。提醒窗口：續方前 N 天（N=reminderDays）。' (['行'])
+  setupValidationPhoneInvalid: '手機號格式不對' (['式'])
+  setupPresetTitle: '📋 選擇預置方案' (['案'])
+  setupPresetDescription: '預置方案會填好藥名 + 時間，您可以接著改。最終服藥請按醫囑核對。' (['案'])
+  setupMedLoadPreset: '📋 載入預置方案（4 種常見模式）' (['案', '式'])
+
+=== 修真后跟 zh 完全一样的 key (无真简体字) ===
+共 131 个, 占总 22.5%
+  appName: '慢病管家'
+  homeCheckedIn: '今天已打卡 ✓'
+  homeNextReminder: '下次提醒：{time}'
+  setupStep: '第 {current} 步 / 共 {total} 步'
+  setupHello: '您好，我是慢病管家'
+  setupNameHint: '小明'
+  setupContactHint: '13800138000'
+  setupNext: '下一步 →'
+  setupMedTimes1: '1次'
+  setupMedTimes2: '2次'
+  setupMedTimes3: '3次'
+  setupDoneTitle: '全部完成！'
+  setupReminder1: '✓ 推送 1 次提醒'
+  setupPrivacy1: '• 本地加密'
+  settingsMedReportWindow7: '近 7 天'
+
+修真后真繁化: 451 个, 占总 77.5%
+  appTagline:
+    zh:   '我今天吃了药'
+    hant: '我今天吃了藥'
+  homeCheckIn:
+    zh:   '我今天吃了药'
+    hant: '我今天吃了藥'
+  homeStreak:
+    zh:   '已坚持 {days} 天'
+    hant: '已堅持 {days} 天'
+  homeLastMed:
+    zh:   '最后吃药：{time}'
+    hant: '最後吃藥：{time}'
+  homeStillOnline:
+    zh:   '🌱 您还在线'
+    hant: '🌱 您還在線'

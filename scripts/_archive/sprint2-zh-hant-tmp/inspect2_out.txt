@@ -1,0 +1,42 @@
+﻿assessmentAnsweredProgress @ line 488: '  ""assessmentAnsweredProgress": "已答 {answered} ／ {total}"",'
+  line 487: '  "assessmentLoadingBack": "正在返回上一页……",'
+  line 488: '  ""assessmentAnsweredProgress": "已答 {answered} ／ {total}"",'
+  line 489: '  "@assessmentAnsweredProgress": {'
+  line 490: '    "placeholders": {'
+  line 491: '      "answered": { "type": "int" },'
+---
+=== rg for assessmentAnsweredProgress ===
+python : Traceback (most recent call last):
+所在位置 行:1 字符: 165
++ ... env:PYTHONIOENCODING="utf-8"; python scripts/inspect2.py 2>&1 | Out-F ...
++                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "D:\Batch\chroniccare\scripts\inspect2.py", line 22, in <module>
+    res = subprocess.run(['rg', '-n', 'assessmentAnsweredProgress', r'lib/l10n/app_zh_Hant.arb'], capture_output=True, 
+text=True)
+  File "D:\Batch\Software\anaconda3\Lib\subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Batch\Software\anaconda3\Lib\subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Batch\Software\anaconda3\Lib\subprocess.py", line 1554, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+                             # no special security
+                             ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+                             cwd,
+                             ^^^^
+                             startupinfo)
+                             ^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。

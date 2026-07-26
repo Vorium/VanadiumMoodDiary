@@ -1,0 +1,112 @@
+﻿=== zh vs new 标点对比 ===
+                 zh      new     diff
+  ／              28        0      -28
+  /              15       43      +28
+  ……              8        4       -4
+
+=== 标点不一致的 key (zh vs new) ===
+  settingsMedReportSubtitle: zh='选时间窗口（7／14／30 天），给医生看'
+         new='選時間窗口（7/14/30 天），給醫生看'
+  settingsAssessmentHistorySubtitle: zh='查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比'
+         new='查看所有 PHQ-9 / GAD-7 評估的折線圖與對比'
+  settingsClearAllDataSubtitle: zh='删除全部打卡 ／ 用药 ／ 评估 ／ 树洞 ／ 联系人（无法恢复）'
+         new='刪除全部打卡 / 用藥 / 評估 / 樹洞 / 聯繫人（無法恢復）'
+  snackbarPhoneInvalid: zh='号码格式不对（支持大陆／港澳台／国际）'
+         new='號碼格式不對（支持大陸/港澳臺/國際）'
+  medsCalendarSubtitle: zh='医生视角依从性热力图 · 7／30／90 天'
+         new='醫生視角依從性熱力圖 · 7/30/90 天'
+  notificationStatusCardOemSubtitle: zh='小米／华为／OPPO／Vivo／三星 默认会杀后台，点这里看怎么设'
+         new='小米/華為/OPPO/Vivo/三星 默認會殺後臺，點這裡看怎麼設'
+  notificationStatusCardOemBrandHuawei: zh='华为 ／ 荣耀'
+         new='華為 / 榮耀'
+  notificationStatusCardOemBrandOthers: zh='其他（中兴／努比亚／红魔／联想／三星 Knox）'
+         new='其他（中興/努比亞/紅魔/聯想/三星 Knox）'
+  reminderHubAssessmentDescEnabled: zh='每 {days} 天提醒做心理评估（PHQ-9 ／ GAD-7）'
+         new='每 {days} 天提醒做心理評估（PHQ-9 / GAD-7）'
+  reminderHubMedicationStatusActive: zh='已启用 · {count} 种 ／ {times} 时间点'
+         new='已啟用 · {count} 種 / {times} 時間點'
+  assessmentAnsweredProgress: zh='已答 {answered} ／ {total}'
+         new='已答 {answered} / {total}'
+  assessmentReminderHintStable: zh='稳定期 ／ 月度复盘'
+         new='穩定期 / 月度覆盤'
+  assessmentScoreRange: zh='最低 {min} ／ 最高 {max}'
+         new='最低 {min} / 最高 {max}'
+  legalPageWithdrawSafetySubtitle: zh='不再因漏打卡触发短信／邮件通知给紧急联系人'
+         new='不再因漏打卡觸發短信/郵件通知給緊急聯繫人'
+  legalPageWithdrawVentSubtitle: zh='停止存储新树洞文字／录音（已有数据保留，需手动删除）'
+         new='停止存儲新樹洞文字/錄音（已有數據保留，需手動刪除）'
+  legalPageWithdrawAnalytics: zh='撤回评估／情绪分析同意'
+         new='撤回評估/情緒分析同意'
+  moodRatingButtonSemantics: zh='{score} 分{selected, select, true{，已选} other{}}'
+         new='{score} 分{selected, select, true{，已選} other{}}'
+
+=== 您/你 不一致 ===
+  homeStillOnline:
+    zh:   '🌱 您还在线'
+    new:  '🌱 你还在线'
+  setupHello:
+    zh:   '您好，我是慢病管家'
+    new:  '你好，我是慢病管家'
+  setupName:
+    zh:   '您的名字（选填）'
+    new:  '你的名字（选填）'
+  setupDoneSubtitle:
+    zh:   '明天开始您的第 1 天'
+    new:  '明天開始你的第 1 天'
+  setupReminder2:
+    zh:   '✓ 您点 1 下 = 打卡'
+    new:  '✓ 你点 1 下 = 打卡'
+  setupPrivacy:
+    zh:   '您的数据：'
+    new:  '你的数据：'
+  setupPrivacy3:
+    zh:   '• 您可以随时导出'
+    new:  '• 你可以隨時導出'
+  settingsExportVentConfirmBody:
+    zh:   '即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\\n\\n请确认:\\n• 您将把它存到安全的地方（如加密磁盘）\\n• 不会分享给未授权的人\\n• 树洞录音文件不包含在导出中'
+    new:  '即將導出樹洞的文字內容。精神心理患者的傾訴可能涉及個人隱私或敏感話題，導出的 JSON 是明文，存放在剪貼板或文件裡都可能被他人看到。\\n\\n請確認:\\n• 你將把它存到安全的地方（如加密磁盤）\\n• 不會分享給未授權的人\\n• 樹洞錄音文件不包含在導出中'
+  ventEmptySubtitle:
+    zh:   '想说什么就说出来。文字、语音都可以。\\n这些话只有您自己能看到。'
+    new:  '想說什麼就說出來。文字、語音都可以。\\n這些話只有你自己能看到。'
+  ventDetailPrivacy:
+    zh:   '🔒 私密 · 只有您能看到'
+    new:  '🔒 私密 · 只有你能看到'
+  assessmentRecommendUrgent:
+    zh:   '强烈建议您尽快联系医生或心理治疗师。'
+    new:  '強烈建議你儘快聯繫醫生或心理治療師。'
+  assessmentRecommend:
+    zh:   '建议您联系医生做进一步评估。'
+    new:  '建議你聯繫醫生做進一步評估。'
+  homeStreakMaster:
+    zh:   '{days} 天--您已经是这个习惯的主人了 🏔️'
+    new:  '{days} 天--你已經是這個習慣的主人了 🏔️'
+  assessmentReminderHelpText:
+    zh:   '完成一次评估后，下次提醒会从今天重新算起。\\n评估结果仅您自己看得到。'
+    new:  '完成一次評估後，下次提醒會從今天重新算起。\\n評估結果僅你自己看得到。'
+  assessmentFirstAssessmentHint:
+    zh:   '这是您的第一次评估。下次评估后会显示和这次的对比。'
+    new:  '這是你的第一次評估。下次評估後會顯示和這次的對比。'
+  setupPresetDescription:
+    zh:   '预置方案会填好药名 + 时间，您可以接着改。最终服药请按医嘱核对。'
+    new:  '預置方案會填好藥名 + 時間，你可以接著改。最終服藥請按醫囑核對。'
+  setupMedWhatDoYouTake:
+    zh:   '您常吃什么药？'
+    new:  '你常吃什麼藥？'
+  emailPreviewDescription:
+    zh:   '这是您将收到的失联通知预览：'
+    new:  '這是你將收到的失聯通知預覽：'
+  emailPreviewDisclaimer:
+    zh:   '💡 这只是预览。实际短信通知在您漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。'
+    new:  '💡 這只是預覽。實際短信通知在你漏 2 天沒打卡後自動發送（v0.6 mock 階段只打日誌，v1.0+ 接真實 SMS provider）。'
+  homeCelebrationStreakMaster:
+    zh:   '已记录！{days} 天--您太厉害了 🏔️'
+    new:  '已記錄！{days} 天--你太厲害了 🏔️'
+  homeSnoozeBody:
+    zh:   '刚才您点了「snooze」，是时候点一下 = 打卡了'
+    new:  '剛才你點了「snooze」，是時候點一下 = 打卡了'
+  homeSnoozeConfirmed:
+    zh:   '好，5 分钟后会再提醒您 👌'
+    new:  '好，5 分鐘後會再提醒你 👌'
+  migrationPromptChangeEncrypt:
+    zh:   '• 启用数据库加密（保护您的隐私）'
+    new:  '• 啟用數據庫加密（保護你的隱私）'

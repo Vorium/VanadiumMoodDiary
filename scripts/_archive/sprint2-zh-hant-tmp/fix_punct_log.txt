@@ -1,0 +1,24 @@
+﻿Fixed 8 more keys with / → ／:
+  settingsMedReportSubtitle
+  snackbarPhoneInvalid
+  medsCalendarSubtitle
+  notificationStatusCardOemSubtitle
+  notificationStatusCardOemBrandOthers
+  legalPageWithdrawSafetySubtitle
+  legalPageWithdrawVentSubtitle
+  legalPageWithdrawAnalytics
+
+新 hant 全文 "/" 计数: 7
+新 hant 全文 "／" 计数: 28
+
+=== 仍含 / 的 key (排除 path 引用) ===
+  setupStep: '第 {current} 步 / 共 {total} 步'
+  legalConsentWithdrawn: '已撤回 ({current}/{total})'
+  legalConsentReAgreed: '已重新同意 ({current}/{total})'
+  notificationStatusCardWebTitle: '通知功能僅在 Android / iOS 上可用'
+  notificationStatusCardOemBrandXiaomi: '小米 / Redmi'
+  notificationStatusCardOemBrandOppo: 'OPPO / realme / 一加'
+  notificationStatusCardOemBrandVivo: 'Vivo / iQOO'
+  assessmentChartTotalScore: '總分 {score}/{max}'
+  legalPageWithdrawAnalyticsSubtitle: '停止將評估/情緒記錄納入趨勢分析（數據保留，不再入圖表）'
+  medicationTimeWindowSemantics: '時間窗口 {days} 天，7/30/90 單選'

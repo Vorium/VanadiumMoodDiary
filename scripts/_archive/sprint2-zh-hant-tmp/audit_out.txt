@@ -1,0 +1,66 @@
+﻿zh keys: 582
+hant keys: 582
+missing in hant: 0
+extra in hant: 0
+完全相同 (简体副本): 533
+已繁化 (不同): 49
+
+=== 简体副本样例 (前 8 个) ===
+  moodDialogTitle: '今天怎么样？'
+  homeStreakDay1: '第 1 天，迈出第一步 🌱'
+  tempMedDialogTitle: '添加临时吃药'
+  ventDurationMinutes: '{minutes}分'
+  setupConsentStart: '开始设置'
+  trendNotCheckedIn: '未打卡'
+  medsTotal: '总药数'
+  moodLabel3: '一般'
+
+=== 已繁化样例 (前 15 个) ===
+  emailPreviewDescription:
+    zh:   '这是您将收到的失联通知预览：'
+    hant: '这是你将收到的失联通知预览：'
+  homeSnoozeBody:
+    zh:   '刚才您点了「snooze」，是时候点一下 = 打卡了'
+    hant: '刚才你点了「snooze」，是时候点一下 = 打卡了'
+  medicationTimeWindowSemantics:
+    zh:   '时间窗口 {days} 天，7/30/90 单选'
+    hant: '時間窗口 {days} 天，7/30/90 單選'
+  migrationPromptChangeEncrypt:
+    zh:   '• 启用数据库加密（保护您的隐私）'
+    hant: '• 启用数据库加密（保护你的隐私）'
+  reminderHubMedicationStatusActive:
+    zh:   '已启用 · {count} 种 ／ {times} 时间点'
+    hant: '已启用 · {count} 种 / {times} 时间点'
+  moodRatingButtonSemantics:
+    zh:   '{score} 分{selected, select, true{，已选} ot'
+    hant: '{score} 分{selected, select, true{，已選} ot'
+  assessmentFirstAssessmentHint:
+    zh:   '这是您的第一次评估。下次评估后会显示和这次的对比。'
+    hant: '这是你的第一次评估。下次评估后会显示和这次的对比。'
+  notificationStatusCardOemSubtitle:
+    zh:   '小米／华为／OPPO／Vivo／三星 默认会杀后台，点这里看怎么设'
+    hant: '小米/华为/OPPO/Vivo/三星 默认会杀后台，点这里看怎么设'
+  assessmentAnsweredProgress:
+    zh:   '已答 {answered} ／ {total}'
+    hant: '已答 {answered} / {total}'
+  setupHello:
+    zh:   '您好，我是慢病管家'
+    hant: '你好，我是慢病管家'
+  settingsClearAllDataSubtitle:
+    zh:   '删除全部打卡 ／ 用药 ／ 评估 ／ 树洞 ／ 联系人（无法恢复）'
+    hant: '删除全部打卡 / 用药 / 评估 / 树洞 / 联系人（无法恢复）'
+  notificationStatusCardStatusLoading:
+    zh:   '加载中……'
+    hant: '加载中…'
+  moodAudioSttListening:
+    zh:   '识别中……'
+    hant: '识别中…'
+  setupMedWhatDoYouTake:
+    zh:   '您常吃什么药？'
+    hant: '你常吃什么药？'
+  homeStreakMaster:
+    zh:   '{days} 天--您已经是这个习惯的主人了 🏔️'
+    hant: '{days} 天--你已经是这个习惯的主人了 🏔️'
+
+简体副本中出现的简体中文字符种数: 542
+前 50 个: ['一', '三', '上', '下', '不', '与', '专', '业', '东', '两', '严', '个', '中', '串', '临', '为', '主', '久', '么', '书', '了', '事', '二', '于', '云', '五', '些', '交', '产', '享', '亮', '人', '什', '仅', '今', '从', '他', '代', '以', '们', '件', '任', '份', '会', '传', '估', '但', '位', '低', '何']

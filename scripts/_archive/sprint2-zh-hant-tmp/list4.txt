@@ -1,0 +1,14 @@
+﻿
+
+    目录: D:\Batch\chroniccare\scripts
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+d-----        2026/7/26      8:23                sprint2-zh-hant-tmp                                                   
+-a----        2026/7/26      8:22           4063 audit_zh_hant.py                                                      
+-a----        2026/7/18     22:43          13577 check_all.dart                                                        
+-a----        2026/7/26      8:23              0 list4.txt                                                             
+-a----        2026/7/25     15:03           2125 test_delivery_rate.dart                                               
+
+

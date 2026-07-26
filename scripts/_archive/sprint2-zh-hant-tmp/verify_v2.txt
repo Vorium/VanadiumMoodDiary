@@ -1,0 +1,33 @@
+﻿zh keys: 582
+hant keys: 582
+key 一致: True
+修真后真简体残留: 18
+  setupPrivacy2: '• 不會上傳到任何雲端服務器' (['器'])
+  settingsExportVentWarning: '說明：樹洞（私密傾訴）的文字會導出，但錄音文件不導出——錄音存在 App 本地，重裝後路徑失效，無法跨設備複用。' (['路'])
+  settingsClearAllDataDialogBody: '以下數據將被永久刪除，無法恢復：\\n• 打卡記錄\\n• 用藥與服藥歷史\\n• 心理評估結果\\n• 情緒日記\\n• 樹洞（文字+錄音）\\n• 緊急聯繫人\\n\\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。' (['程'])
+  snackbarPhoneInvalid: '號碼格式不對（支持大陸／港澳臺／國際）' (['式'])
+  notificationStatusCardTestBody: '看到這條 = 通知工作正常。如果沒看到，看下面的國產手機設置' (['作'])
+  notificationStatusCardWebSubtitle: '當前是 web 端，通知由瀏覽器控制。請在手機上打開 App 測試。' (['器'])
+  notificationStatusCardOemStepOppo1: '設置 → 電池 → 耗電保護 → 慢病管家 → 允許後臺運行' (['行'])
+  notificationStatusCardOemStepSamsung1: '設置 → 應用程序 → 慢病管家 → 通知 → 全部開啟' (['程'])
+  notificationStatusCardOemStepOthers2: '設置 → 電池 → 後臺運行 → 改為「允許」' (['行'])
+  medsRefillEditHint: '點擊任一行可編輯續方日期。提醒窗口：續方前 N 天（N=reminderDays）。' (['行'])
+  setupValidationPhoneInvalid: '手機號格式不對' (['式'])
+  setupPresetTitle: '📋 選擇預置方案' (['案'])
+  setupPresetDescription: '預置方案會填好藥名 + 時間，您可以接著改。最終服藥請按醫囑核對。' (['案'])
+  setupMedEmptyHint: '還沒添加藥物。可以跳過——打卡不需要藥物信息。' (['息'])
+  setupMedLoadPreset: '📋 載入預置方案（4 種常見模式）' (['案', '式'])
+  setupConsentDescription: '為遵守《個人信息保護法》(PIPL)，本 App 處理您的健康醫療等敏感個人信息前，需要您明確、單獨同意以下 3 份文件。' (['息', '息'])
+  setupConsentSensitiveData: '我已閱讀並同意《敏感個人信息處理同意書》' (['息'])
+  setupLegalSensitiveData: '敏感個人信息處理同意書' (['息'])
+
+修真后跟 zh 完全一样 (同形字 / 品牌名 / 占位符等): 131
+
+修真后 hant "／" 计数: 28
+修真后 hant "/" 计数: 15
+修真后 hant "……" 计数: 4
+修真后 hant "..." 计数: 1
+修真后 hant "—" 计数: 7
+修真后 hant "--" 计数: 2
+修真后 hant "您" 计数: 27
+修真后 hant "你" 计数: 0

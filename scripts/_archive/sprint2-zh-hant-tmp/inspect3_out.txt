@@ -1,0 +1,6 @@
+﻿Bug lines: 39
+  line 21: '  ""homeStillOnline": "🌱 您还在线"",'
+  line 32: '  ""setupHello": "您好，我是慢病管家"",'
+  line 34: '  ""setupName": "您的名字（选填）"",'
+  line 50: '  ""setupDoneSubtitle": "明天開始您的第 1 天"",'
+  line 53: '  ""setupReminder2": "✓ 您点 1 下 = 打卡"",'

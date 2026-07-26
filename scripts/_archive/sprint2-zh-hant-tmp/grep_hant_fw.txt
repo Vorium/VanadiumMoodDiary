@@ -1,0 +1,24 @@
+﻿
+  "setupStep": "第 {current} 步 / 共 {total} 步",
+  "settingsMedReportSubtitle": "选时间窗口（7/14/30 天），给医生看",
+  "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 / GAD-7 评估的折线图与对比",
+  "settingsClearAllDataSubtitle": "删除全部打卡 / 用药 / 评估 / 树洞 / 联系人（无法恢复）",
+  "legalConsentWithdrawn": "已撤回 ({current}/{total})",
+  "legalConsentReAgreed": "已重新同意 ({current}/{total})",
+    "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)
+",
+  "snackbarPhoneInvalid": "号码格式不对（支持大陆/港澳台/国际）",
+  "medsCalendarSubtitle": "医生视角依从性热力图 · 7/30/90 天",
+  "notificationStatusCardWebTitle": "通知功能仅在 Android / iOS 上可用",
+  "notificationStatusCardOemSubtitle": "小米/华为/OPPO/Vivo/三星 默认会杀后台，点这里看怎么设",
+  "notificationStatusCardOemBrandXiaomi": "小米 / Redmi",
+  "notificationStatusCardOemBrandHuawei": "华为 / 荣耀",
+  "notificationStatusCardOemBrandOppo": "OPPO / realme / 一加",
+  "notificationStatusCardOemBrandVivo": "Vivo / iQOO",
+  "notificationStatusCardOemBrandOthers": "其他（中兴/努比亚/红魔/联想/三星 Knox）",
+  "reminderHubAssessmentDescEnabled": "每 {days} 天提醒做心理评估（PHQ-9 / GAD-7）",
+  "reminderHubMedicationStatusActive": "已启用 · {count} 种 / {times} 时间点",
+  "assessmentAnsweredProgress": "已答 {answered} / {total}",
+  "assessmentReminderHintStable": "稳定期 / 月度复盘",
+
+

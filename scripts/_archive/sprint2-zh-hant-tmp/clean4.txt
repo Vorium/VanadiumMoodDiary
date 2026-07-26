@@ -1,0 +1,8 @@
+﻿mavis-trash : 'node' is not recognized as an internal or external command,
+所在位置 行:1 字符: 107
++ ... oding = [System.Text.Encoding]::UTF8; mavis-trash --help 2>&1 | Out-F ...
++                                           ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('node' is not r...ternal command,:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+operable program or batch file.

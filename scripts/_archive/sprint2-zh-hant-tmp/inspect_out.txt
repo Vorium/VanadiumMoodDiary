@@ -1,0 +1,9 @@
+﻿zh PAT_KEY: 582
+hant PAT_KEY: 543
+多行 value 开始行数: 0
+missing in hant (zh has, hant does not): 39
+  assessmentAnsweredProgress
+  assessmentFirstAssessmentHint
+  assessmentRecommend
+  assessmentRecommendUrgent
+  assessmentReminderHelpText

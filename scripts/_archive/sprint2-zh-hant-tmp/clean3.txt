@@ -1,0 +1,8 @@
+﻿mavis-trash : 'node' is not recognized as an internal or external command,
+所在位置 行:1 字符: 134
++ ... roniccare"; mavis-trash scripts/audit_zh_hant_state.py scripts/test_o ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('node' is not r...ternal command,:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+operable program or batch file.

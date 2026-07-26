@@ -1,0 +1,5 @@
+﻿
+  "legalPageWithdrawAnalyticsSubtitle": "停止将评估/情绪记录纳入趋势分析（数据保留，不再入图表）",
+  "medicationTimeWindowSemantics": "时间窗口 {days} 天，7/30/90 单选",
+
+

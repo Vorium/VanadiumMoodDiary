@@ -1,0 +1,81 @@
+﻿修真前 zh_Hant 跟 zh 完全一样: 533
+修真前 zh_Hant 已繁化: 49
+修真后 zh_Hant 跟 zh 完全一样: 364
+修真后 zh_Hant 已繁化: 218
+
+=== 修真后剩余 364 个 key 还有差异 (前 25 个) ===
+  appTagline:
+    zh:   '我今天吃了药'
+    hant: '我今天吃了藥'
+  homeCheckIn:
+    zh:   '我今天吃了药'
+    hant: '我今天吃了藥'
+  homeStreak:
+    zh:   '已坚持 {days} 天'
+    hant: '已堅持 {days} 天'
+  homeLastMed:
+    zh:   '最后吃药：{time}'
+    hant: '最後吃藥：{time}'
+  homeStillOnline:
+    zh:   '🌱 您还在线'
+    hant: '🌱 你还在线'
+  homeTempMed:
+    zh:   '临时吃药 +'
+    hant: '臨時吃藥 +'
+  homeStreakBroken:
+    zh:   '少 1 次没关系，明天继续'
+    hant: '少 1 次沒關係，明天繼續'
+  setupHello:
+    zh:   '您好，我是慢病管家'
+    hant: '你好，我是慢病管家'
+  setupIntro:
+    zh:   '1 分钟设置好，然后每天 1 次打卡'
+    hant: '1 分鐘設置好，然後每天 1 次打卡'
+  setupName:
+    zh:   '您的名字（选填）'
+    hant: '你的名字（选填）'
+  setupContacts:
+    zh:   '紧急联系人手机号（至少 1 个）'
+    hant: '緊急聯繫人手機號（至少 1 個）'
+  setupAddContact:
+    zh:   '+ 添加另一个联系人'
+    hant: '+ 添加另一個聯繫人'
+  setupContactConsent:
+    zh:   '我已告知上述联系人，App 会在我失联时给他们发通知'
+    hant: '我已告知上述聯繫人，App 會在我失聯時給他們發通知'
+  setupMedName:
+    zh:   '药名'
+    hant: '藥名'
+  setupMedNameHint:
+    zh:   '请输入药盒上的名称（选填）'
+    hant: '請輸入藥盒上的名稱（選填）'
+  setupMedSchedule:
+    zh:   '吃药时间（可填）'
+    hant: '吃藥時間（可填）'
+  setupStart:
+    zh:   '开始我的第 1 天'
+    hant: '開始我的第 1 天'
+  setupDoneSubtitle:
+    zh:   '明天开始您的第 1 天'
+    hant: '明天開始你的第 1 天'
+  setupDailyRoutine:
+    zh:   '我每天会做：'
+    hant: '我每天會做：'
+  setupReminder2:
+    zh:   '✓ 您点 1 下 = 打卡'
+    hant: '✓ 你点 1 下 = 打卡'
+  setupReminder3:
+    zh:   '✓ 漏 2 天我会联系紧急人'
+    hant: '✓ 漏 2 天我會聯繫緊急人'
+  setupPrivacy:
+    zh:   '您的数据：'
+    hant: '你的数据：'
+  setupPrivacy2:
+    zh:   '• 不会上传到任何云端服务器'
+    hant: '• 不會上傳到任何雲端服務器'
+  setupPrivacy3:
+    zh:   '• 您可以随时导出'
+    hant: '• 你可以隨時導出'
+  settingsContacts:
+    zh:   '紧急联系人'
+    hant: '緊急聯繫人'

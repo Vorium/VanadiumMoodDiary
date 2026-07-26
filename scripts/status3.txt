@@ -1,0 +1,15 @@
+﻿
+	modified:   scripts/test_delivery_rate.dart
+	scripts/audit_zh_hant.py
+	scripts/diff_stat.txt
+	scripts/final_stats_for_report.txt
+	scripts/gitlog.txt
+	scripts/gitlog2.txt
+	scripts/list6.txt
+	scripts/list7.txt
+	scripts/sprint2-zh-hant-tmp/
+	scripts/status.txt
+	scripts/status2.txt
+	scripts/status3.txt
+
+

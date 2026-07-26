@@ -1,0 +1,34 @@
+﻿修真后跟 zh 完全一样: 226
+样例:
+  appName: '慢病管家'
+  homeCheckedIn: '今天已打卡 ✓'
+  homeNextReminder: '下次提醒：{time}'
+  homeStillOnline: '🌱 您还在线'
+  setupStep: '第 {current} 步 / 共 {total} 步'
+  setupHello: '您好，我是慢病管家'
+  setupName: '您的名字（选填）'
+  setupNameHint: '小明'
+  setupContactHint: '13800138000'
+  setupNext: '下一步 →'
+  setupMedFrequency: '每日次数'
+  setupMedTimes1: '1次'
+  setupMedTimes2: '2次'
+  setupMedTimes3: '3次'
+  setupDoneTitle: '全部完成！'
+  setupReminder1: '✓ 推送 1 次提醒'
+  setupReminder2: '✓ 您点 1 下 = 打卡'
+  setupPrivacy: '您的数据：'
+  setupPrivacy1: '• 本地加密'
+  settingsDisclaimer: '免责声明'
+
+修真后"跟 zh 一样"但仍含真简体字的: 12
+  setupReminder2: '✓ 您点 1 下 = 打卡' (['点'])
+  commonEdit: '编辑' (['编'])
+  notificationStatusCardTestTitle: '🔔 通知自检' (['通'])
+  notificationStatusCardQueuedTitle: '已排队的通知' (['通'])
+  notificationStatusCardTitle: '通知与提醒' (['通'])
+  notificationStatusCardViewButtonTitle: '查看已排队通知' (['通'])
+  notificationStatusCardOemTitle: '国产手机没收到通知？' (['通'])
+  reminderHubDailyAction: '查看通知预览' (['通'])
+  setupPresetTitle: '📋 选择预置方案' (['案'])
+  setupConsentPrivacyPolicy: '我已阅读并同意《隐私政策》' (['读'])
