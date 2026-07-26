@@ -42,7 +42,7 @@ class _EditMedicationDialog extends ConsumerStatefulWidget {
 class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
   late final TextEditingController _nameController;
   late final TextEditingController _dosageController;
-  late String _dosageUnit;
+  late DosageUnit _dosageUnit;
   late List<TimeOfDay> _times;
   late bool _isActive;
   bool _saving = false;
@@ -82,7 +82,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
     if (dosage == null || dosage <= 0) {
       return l10n.editMedValidationDosageInvalid;
     }
-    if (_dosageUnit != DosageUnit.mg.id && _dosageUnit != DosageUnit.tablet.id) {
+    if (_dosageUnit != DosageUnit.mg && _dosageUnit != DosageUnit.tablet) {
       return l10n.editMedValidationUnitInvalid;
     }
     return null;
@@ -270,18 +270,18 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                 ),
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
-                  child: DropdownButtonFormField<String>(
+                  child: DropdownButtonFormField<DosageUnit>(
                     initialValue: _dosageUnit,
                     decoration: InputDecoration(
                         labelText:
                             AppLocalizations.of(context).editMedUnitLabel,),
                     items: [
-                      DropdownMenuItem<String>(
-                          value: DosageUnit.mg.id,
+                      DropdownMenuItem<DosageUnit>(
+                          value: DosageUnit.mg,
                           child: const Text('mg'),
                       ),
-                      DropdownMenuItem<String>(
-                          value: DosageUnit.tablet.id,
+                      DropdownMenuItem<DosageUnit>(
+                          value: DosageUnit.tablet,
                           child: Text(
                               AppLocalizations.of(context).commonDoseUnit,),),
                     ],

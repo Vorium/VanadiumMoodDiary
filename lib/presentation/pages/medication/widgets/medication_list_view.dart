@@ -1,0 +1,159 @@
+// v0.14 (Round 13C) 用药日历入口 + 药物列表渲染
+//
+// v0.24 (Round 45) 从 medications_list_widget.dart 抽到独立文件
+// (god class 拆解样板 · 跟 mood_score_form 同模式: presentation-only 抽出)
+//
+// 全 StatelessWidget, 状态由 parent 透传 (3 Set 引用)。
+// 渲染:
+// 1. 用药日历入口 Card (v0.14 round 13C)
+// 2. active list: MedicationRow × N (Dismissible swipe 启用)
+//    或 active empty state (MedicationEmptyState.noActive)
+// 3. stopped list (可选): MedicationRow × N (Dismissible 关闭)
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_empty_state.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_row.dart';
+
+/// 药物列表渲染 (header card + active list + stopped list)
+///
+/// presentation-only, 业务流程全在 parent (medications_list_widget state class)。
+class MedicationListView extends StatelessWidget {
+  final List<MedicationEntity> meds;
+
+  /// 3 个状态 Set (引用 parent state, 不复制)
+  final Set<int> deleting;
+  final Set<int> editing;
+  final Set<int> editingRefill;
+
+  /// 4 个业务流程回调 (parent handler)
+  final Future<void> Function(int id) onDelete;
+  final Future<void> Function(MedicationEntity med) onEdit;
+  final Future<void> Function(MedicationEntity med) onEditRefill;
+  final Future<void> Function(MedicationEntity med) onSwipeDelete;
+
+  const MedicationListView({
+    super.key,
+    required this.meds,
+    required this.deleting,
+    required this.editing,
+    required this.editingRefill,
+    required this.onDelete,
+    required this.onEdit,
+    required this.onEditRefill,
+    required this.onSwipeDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final activeMeds =
+        meds.where((m) => m.isActive).toList(growable: false);
+    final stoppedMeds =
+        meds.where((m) => !m.isActive).toList(growable: false);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // v0.14 (Round 13C) 用药日历入口
+        if (activeMeds.isNotEmpty) _buildCalendarEntry(context),
+        // 在用列表 (或空态)
+        if (activeMeds.isEmpty)
+          const MedicationEmptyState(kind: MedicationEmptyKind.noActive)
+        else
+          _buildActiveList(context, activeMeds),
+        // 已停药列表（v0.13 Round 9）
+        if (stoppedMeds.isNotEmpty) ...[
+          const SizedBox(height: AppTokens.spacingSm),
+          _buildStoppedHeader(context),
+          const SizedBox(height: AppTokens.spacingXs),
+          _buildStoppedList(context, stoppedMeds),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCalendarEntry(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: const Icon(
+          Icons.calendar_view_month,
+          color: AppTokens.primary,
+        ),
+        title: Text(AppLocalizations.of(context).medsCalendarTitle),
+        subtitle: Text(AppLocalizations.of(context).medsCalendarSubtitle),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => context.push('/medication/calendar'),
+      ),
+    );
+  }
+
+  Widget _buildActiveList(
+    BuildContext context,
+    List<MedicationEntity> activeMeds,
+  ) {
+    return Card(
+      child: Column(
+        children: [
+          for (int i = 0; i < activeMeds.length; i++) ...[
+            if (i > 0) const Divider(height: 1),
+            MedicationRow(
+              med: activeMeds[i],
+              isDeleting: deleting.contains(activeMeds[i].id),
+              isEditing: editing.contains(activeMeds[i].id),
+              isEditingRefill: editingRefill.contains(activeMeds[i].id),
+              onDelete: () => onDelete(activeMeds[i].id),
+              onEdit: () => onEdit(activeMeds[i]),
+              onEditRefill: () => onEditRefill(activeMeds[i]),
+              onSwipeDelete: (m) => onSwipeDelete(m),
+              enableSwipe: true,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStoppedHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, top: AppTokens.spacingXs),
+      child: Text(
+        AppLocalizations.of(context).medsListStoppedSection,
+        style: TextStyle(
+          fontSize: AppTokens.fontSizeCaption,
+          color: AppTokens.textHintColor(context),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStoppedList(
+    BuildContext context,
+    List<MedicationEntity> stoppedMeds,
+  ) {
+    return Card(
+      child: Column(
+        children: [
+          for (int i = 0; i < stoppedMeds.length; i++) ...[
+            if (i > 0) const Divider(height: 1),
+            MedicationRow(
+              med: stoppedMeds[i],
+              isDeleting: deleting.contains(stoppedMeds[i].id),
+              isEditing: editing.contains(stoppedMeds[i].id),
+              isEditingRefill: false, // 停药不显示续方按钮
+              onDelete: () => onDelete(stoppedMeds[i].id),
+              onEdit: () => onEdit(stoppedMeds[i]),
+              onEditRefill: () {}, // 停药不调
+              onSwipeDelete: (m) => onSwipeDelete(m),
+              enableSwipe: false, // 停药不启用 swipe
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

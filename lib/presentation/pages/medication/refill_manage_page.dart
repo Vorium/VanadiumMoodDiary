@@ -11,6 +11,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -306,9 +307,9 @@ class _RefillRow extends StatelessWidget {
         dateStr, suffix, m.refillReminderDays,);
   }
 
-  String _formatDose(double d, String u) {
+  String _formatDose(double d, DosageUnit u) {
     final isInt = d == d.truncateToDouble();
-    return '${isInt ? d.toInt() : d}$u';
+    return '${isInt ? d.toInt() : d}${u.id}';
   }
 }
 

@@ -94,7 +94,7 @@ class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
                 DropdownMenuItem<MedicationEntity?>(
                   value: m,
                   child: Text(
-                    '${m.name} ${m.dosage}${m.dosageUnit}',
+                    '${m.name} ${m.dosage}${m.dosageUnit.id}',
                   ),
                 ),
             ],
