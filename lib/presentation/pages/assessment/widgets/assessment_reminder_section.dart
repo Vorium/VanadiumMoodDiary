@@ -12,6 +12,7 @@ import 'package:chroniccare/core/data/services/assessment_reminder_service.dart'
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 class AssessmentReminderSection extends ConsumerStatefulWidget {
@@ -151,7 +152,7 @@ class _AssessmentReminderSectionState
           ),
           if (enabled) ...[
             const Divider(height: 1),
-            ListTile(
+            AppListTile(
               leading: const Icon(Icons.schedule, color: AppTokens.primary),
               title: Text(AppLocalizations.of(context).reminderHubInterval),
               trailing: Row(

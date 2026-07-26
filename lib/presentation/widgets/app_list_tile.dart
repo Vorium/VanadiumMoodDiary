@@ -16,7 +16,6 @@
 //   跟 PressFeedback 模式 2 一致)
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// ListTile + PressFeedback 集中器

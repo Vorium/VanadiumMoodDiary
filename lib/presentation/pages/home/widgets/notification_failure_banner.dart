@@ -32,7 +32,7 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
       decoration: BoxDecoration(
         color: AppTokens.tintedWarningSoft(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-        border: Border.all(color: AppTokens.warning.withValues(alpha: 0.3)),
+        border: Border.all(color: AppTokens.tintedWarningBorder(context)),
       ),
       child: Row(
         children: [

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/medication/last_med_info.dart';
+import 'package:chroniccare/presentation/widgets/last_med_info.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 
 /// 主页底部信息:last med + 底部"你还在线"文案
@@ -45,10 +45,7 @@ class HomeFooter extends StatelessWidget {
               AppLocalizations.of(context).homeStillOnline,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeBody,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurfaceVariant
-                    .withValues(alpha: 0.6),
+                color: AppTokens.fgHintInput(context),
               ),
             ),
           ),

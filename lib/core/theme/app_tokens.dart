@@ -167,6 +167,23 @@ class AppTokens {
   static Color tintedPrimaryHigh(BuildContext context) =>
       Theme.of(context).colorScheme.primary.withValues(alpha: 0.85);
 
+  /// v0.24 round 45 (emil P1-13 续): onSurface 50% — 按钮 disabled 前景色
+  /// M3 标准是 0.38, 但项目偏弱化 0.5 (跟 textHint 区分)
+  /// 替代 app_theme.dart:121 `cs.onSurface.withValues(alpha: 0.5)`
+  static Color fgDisabled(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+
+  /// v0.24 round 45 (emil P1-13 续): onSurfaceVariant 60% — InputDecoration hint
+  /// M3 standard placeholder / caption text 颜色
+  /// 替代 app_theme.dart:202 + home_footer.dart:51 两处 `cs.onSurfaceVariant.withValues(alpha: 0.6)`
+  static Color fgHintInput(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
+
+  /// v0.24 round 45 (emil P1-13 续): warning 边框 30% (notification_failure_banner)
+  /// 替代 `AppTokens.warning.withValues(alpha: 0.3)` 硬编码
+  static Color tintedWarningBorder(BuildContext context) =>
+      AppTokens.warning.withValues(alpha: 0.3);
+
   // v0.22 round 30 (emil P2-6): 前景色 helper 替代 Colors.white/black54
   // 之前 18 处直接 `Colors.white` (含 .withValues(alpha: 0.85)),
   // dark mode 下反白失效 (check_in_button:205 是已知 case)。

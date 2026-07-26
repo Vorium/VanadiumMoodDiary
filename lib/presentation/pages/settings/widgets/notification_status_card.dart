@@ -24,6 +24,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// 通知自检卡
@@ -219,14 +220,14 @@ class _NotificationStatusCardState
             ),
           ),
           const Divider(height: 1),
-          ListTile(
+          AppListTile(
             leading: const Icon(Icons.send_outlined, color: AppTokens.primary),
             title: Text(l10n.notificationStatusCardTestButtonTitle),
             subtitle: Text(l10n.notificationStatusCardTestButtonSubtitle),
             onTap: _busy ? null : _fireTest,
           ),
           const Divider(height: 1),
-          ListTile(
+          AppListTile(
             leading: const Icon(Icons.list_alt, color: AppTokens.primary),
             title: Text(l10n.notificationStatusCardViewButtonTitle),
             subtitle: Text(l10n.notificationStatusCardViewButtonSubtitle),
