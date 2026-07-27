@@ -45,7 +45,23 @@ class MedicationStatCalculator {
         med.startDate.isAfter(periodStart) ? med.startDate : periodStart;
     final effectiveDays =
         periodStart.add(Duration(days: days)).difference(effectiveStart).inDays;
-    final expected = dosesPerDay * effectiveDays.clamp(0, days);
+    final effectiveDaysClamped = effectiveDays.clamp(0, days);
+
+    // v0.27 round 60 (审计 M1 修真): medication 未开始 (startDate > periodEnd)
+    // 时早返 all-zero stat, 避免 phantom missedDates (报告生成 14 天
+    // 假漏服). 修真前: 用户添加"未来某日开始"的药 (如预约挂号开药),
+    // 立刻在报告里看到 14 天漏服警告, 显示错误.
+    if (effectiveDaysClamped == 0) {
+      return MedicationStat(
+        medication: med,
+        times: times,
+        actualDoseDays: 0,
+        missedDates: const [],
+        actualDoseCount: 0,
+        expectedDoseCount: 0,
+      );
+    }
+    final expected = dosesPerDay * effectiveDaysClamped;
 
     // 按"天"去重: 一颗药同一天多次打卡算 1 天
     final daysWithDose = <String>{};
@@ -58,7 +74,12 @@ class MedicationStatCalculator {
       actualForMed++;
     }
 
-    final missedDays = days - daysWithDose.length;
+    // v0.27 round 60 (审计 M1 修真): missedDays 用 effectiveDaysClamped
+    // 而非 full days, 跟 expected 一致. 修真前窗口中途开始的药仍报 14
+    // 天漏服 (e.g. startDate = periodStart + 7, 实际只 7 天可服药, 但
+    // 旧逻辑 days - daysWithDose = 14 - 0 = 14 phantom 漏服).
+    final missedDays =
+        (effectiveDaysClamped - daysWithDose.length).clamp(0, days).toInt();
     final missedDates = MissedDateBuilder.build(
       periodStart: periodStart,
       daysWithDose: daysWithDose,
