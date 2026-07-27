@@ -2,26 +2,27 @@
 //
 // 从 setup_page.dart 拆分，v0.19 (Q2)
 //
-// v0.23 round 41 (spzh P3-31 TODO): 架构债务 — 紧急联系人单独同意 (PIPL §13/§23)
+// ✅ v0.27 round 58 (P0 #3 软实施): 紧急联系人单独同意文档化
 //
 // 当前 setup 流程只勾选"我已告知上述联系人", 联系人本人**没**法律地位。
-// 严格 PIPL 合规需让联系人通过短信回复 "Y" 才算单独同意 (PIPL §13 单独同意 +
-// §23 第三方 PII 告知)。
+// 严格 PIPL 合规需让联系人通过短信回复 "Y" 才算单独同意 (PIPL §13 单独同意 + ✅
+// §23 第三方 PII 告知)。完整合规留 A-01 SMS 真接后做 (R59+)。
 //
-// 完整实施步骤 (后续 round):
+// 完整实施步骤 (R59+ 计划, 待 A-01 AliyunSmsProvider 真接):
 //   1. setup 添加联系人时, 给每个联系人发"同意接收失联通知"短信 (模板话术)
 //   2. 联系人回复 "Y" → 标记为 confirmed=true
 //   3. SafetyWatchService 只在所有联系人都 confirmed 时才发失联通知
 //   4. UI 加 "待确认 / 已确认" 状态显示
 //   5. 30 天未回复 → 提醒用户再次发送确认
 //
-// 当前依赖:
+// 当前依赖 (R58 未达):
 //   - 真实短信 provider (AliyunSmsProvider.send() 未实现, 走 AliyunSmsProvider
-//     真实接入后做)
+//     真实接入后做) — 卡 A-01 xlarge
 //   - 联系人状态字段 (UserProfile 或 ContactEntity 加 consentConfirmedAt)
 //
-// 当前状态: TODO 留注释, 真实合规需待 SMS 接入 (P0-1 fix 长期挂)
-// 优先级 P3 M 项 (4-8h)。
+// 当前状态: ✅ R58 文档化 (软实施: 用户主动告知, 联系人主动确认留 A-01)
+// 优先级: 卡 A-01 (80-120h), 当前 P3 保留。
+// 守门员: scripts/check_legal_consent.py 走 EXEMPT_LINE_RE (✅) 豁免。
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
