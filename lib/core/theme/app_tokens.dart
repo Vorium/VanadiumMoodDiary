@@ -629,32 +629,11 @@ class AppTokens {
         color: textSecondaryColor(context),
       );
 
-  /// v0.25 round 50 (emil R50): 24/w700 评估大数字 (单日分数 / 危机分)
-  /// 替代散落 5+ 处 `TextStyle(fontSize: 24, fontWeight: w700)` (PHQ-9 分数 / 评估大数字)
-  static TextStyle textStyleScoreLg(BuildContext context) => TextStyle(
-        fontSize: fontSizeScoreLg,
-        fontWeight: FontWeight.w700,
-        height: lineHeightTight,
-        color: textPrimaryColor(context),
-      );
-
-  /// v0.25 round 50 (emil R50): 32/w700 周报大数字
-  /// 替代散落 3+ 处 `TextStyle(fontSize: 32, fontWeight: w700)` (周报 / 月报 数字)
-  static TextStyle textStyleScoreXl(BuildContext context) => TextStyle(
-        fontSize: fontSizeScoreXl,
-        fontWeight: FontWeight.w700,
-        height: lineHeightTight,
-        color: textPrimaryColor(context),
-      );
-
-  /// v0.25 round 50 (emil R50): 64/w700 季度大数字 (空态 / setup done check)
-  /// 替代散落 3+ 处 `TextStyle(fontSize: 64, fontWeight: w700)` (setup_step_done / empty state)
-  static TextStyle textStyleScoreXxl(BuildContext context) => TextStyle(
-        fontSize: fontSizeScoreXxl,
-        fontWeight: FontWeight.w700,
-        height: lineHeightTight,
-        color: textPrimaryColor(context),
-      );
+  // v0.25 round 50 (emil R50) 添加的 textStyleScoreLg / Xl / Xxl 在 v0.26 round 57
+  // 修真中被清掉: 经全代码库 grep, 这 3 个集中器 0 处使用 (R57 subagent 漏做
+  // inline TextStyle 替换)。如果未来需要 (PHQ-9 分数 / 周报数字), 优先用
+  // textStyleTitle/Headline 而非加新集中器 — emil 原则: "good defaults matter
+  // more than options", 集中器过多反而增加选择成本。
 
   /// v0.26 round 57 (emil EMIL-INC-03): monospace 集中器
   /// 替代散落 3 处 `TextStyle(fontFamily: 'monospace', fontSize: 12)` 硬编

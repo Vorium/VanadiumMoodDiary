@@ -1896,7 +1896,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String setupStep(int current, int total) {
-    return '第 $current 步 / 共 $total 步';
+    return '第 $current 步 ／ 共 $total 步';
   }
 
   @override
@@ -2298,14 +2298,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get notificationStatusCardNoTitle => '（無標題）';
 
   @override
-  String get notificationStatusCardWebTitle => '通知功能僅在 Android / iOS 上可用';
+  String get notificationStatusCardWebTitle => '通知功能僅在 Android ／ iOS 上可用';
 
   @override
   String get notificationStatusCardWebSubtitle =>
       '當前是 web 端，通知由瀏覽器控制。請在手機上打開 App 測試。';
 
   @override
-  String get notificationStatusCardStatusLoading => '加載中…';
+  String get notificationStatusCardStatusLoading => '加載中……';
 
   @override
   String get notificationStatusCardStatusUnsupported => '當前平臺不支持查詢';
@@ -2341,7 +2341,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '小米／華為／OPPO／Vivo／三星 默認會殺後臺，點這裡看怎麼設';
 
   @override
-  String get notificationStatusCardOemBrandXiaomi => '小米 / Redmi';
+  String get notificationStatusCardOemBrandXiaomi => '小米 ／ Redmi';
 
   @override
   String get notificationStatusCardOemStepXiaomi1 =>
@@ -2370,7 +2370,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get notificationStatusCardOemStepHuawei3 => '手機管家 → 應用啟動管理 → 關閉「自動管理」';
 
   @override
-  String get notificationStatusCardOemBrandOppo => 'OPPO / realme / 一加';
+  String get notificationStatusCardOemBrandOppo => 'OPPO ／ realme ／ 一加';
 
   @override
   String get notificationStatusCardOemStepOppo1 =>
@@ -2383,7 +2383,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get notificationStatusCardOemStepOppo3 => '「最近任務」界面上鎖 App（下滑小鎖圖標）';
 
   @override
-  String get notificationStatusCardOemBrandVivo => 'Vivo / iQOO';
+  String get notificationStatusCardOemBrandVivo => 'Vivo ／ iQOO';
 
   @override
   String get notificationStatusCardOemStepVivo1 =>
@@ -2631,7 +2631,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventRecordIdle => '按一下開始錄音';
 
   @override
-  String get ventRecordActive => '正在錄音… 點停止';
+  String get ventRecordActive => '正在錄音……點停止';
 
   @override
   String get ventAudioLabel => '錄音';
@@ -2708,7 +2708,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodAudioTranscriptPartialHint => '（僅識別前 60 秒）';
 
   @override
-  String get moodAudioSttListening => '識別中…';
+  String get moodAudioSttListening => '識別中……';
 
   @override
   String get moodAudioSttFailed => '識別失敗，已僅保存錄音';
@@ -3169,7 +3169,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get legalPageWithdrawAnalyticsSubtitle =>
-      '停止將評估/情緒記錄納入趨勢分析（數據保留，不再入圖表）';
+      '停止將評估／情緒記錄納入趨勢分析（數據保留，不再入圖表）';
 
   @override
   String legalPageConsentRecorded(Object time) {
@@ -3689,11 +3689,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String medicationTimeWindowSemantics(Object days) {
-    return '時間窗口 $days 天，7/30/90 單選';
+    return '時間窗口 $days 天，7／30／90 單選';
   }
 
   @override
-  String get assessmentSaveFailed => '評估結果已顯示，但儲存失敗。請稍後重試。';
+  String get assessmentSaveFailed => '評估結果已顯示，但保存失敗。請稍後重試。';
 
   @override
   String setupContactFallbackName(int index) {
@@ -3702,7 +3702,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String emailBodyI18n(String name, int days) {
-    return '我是 $name，已經 $days 天沒在 App 裏打卡了。\n請您方便的時候提醒我按時吃藥，避免復發。';
+    return '我是 $name，已經 $days 天沒在 App 裡打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。';
   }
 
   @override

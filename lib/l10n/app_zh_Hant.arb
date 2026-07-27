@@ -30,7 +30,7 @@
   "homeStillOnline": "🌱 您還在線",
   "homeTempMed": "臨時吃藥 +",
   "homeStreakBroken": "少 1 次沒關係，明天繼續",
-  "setupStep": "第 {current} 步 / 共 {total} 步",
+  "setupStep": "第 {current} 步 ／ 共 {total} 步",
   "@setupStep": {
     "placeholders": {
       "current": {
@@ -252,9 +252,9 @@
   "notificationStatusCardQueuedTitle": "已排隊的通知",
   "notificationStatusCardEmpty": "當前沒有任何待發通知。\n可能是沒設提醒，或被系統後臺清理了。",
   "notificationStatusCardNoTitle": "（無標題）",
-  "notificationStatusCardWebTitle": "通知功能僅在 Android / iOS 上可用",
+  "notificationStatusCardWebTitle": "通知功能僅在 Android ／ iOS 上可用",
   "notificationStatusCardWebSubtitle": "當前是 web 端，通知由瀏覽器控制。請在手機上打開 App 測試。",
-  "notificationStatusCardStatusLoading": "加載中…",
+  "notificationStatusCardStatusLoading": "加載中……",
   "notificationStatusCardStatusUnsupported": "當前平臺不支持查詢",
   "notificationStatusCardStatusNone": "⚠️ 沒有待發通知 — 提醒可能沒設上",
   "notificationStatusCardStatusCount": "✓ 已排隊 {count} 條待發通知",
@@ -272,7 +272,7 @@
   "notificationStatusCardViewButtonSubtitle": "展示當前所有待發的提醒",
   "notificationStatusCardOemTitle": "國產手機沒收到通知？",
   "notificationStatusCardOemSubtitle": "小米／華為／OPPO／Vivo／三星 默認會殺後臺，點這裡看怎麼設",
-  "notificationStatusCardOemBrandXiaomi": "小米 / Redmi",
+  "notificationStatusCardOemBrandXiaomi": "小米 ／ Redmi",
   "notificationStatusCardOemStepXiaomi1": "設置 → 應用 → 慢病管家 → 自啟動 → 開啟",
   "notificationStatusCardOemStepXiaomi2": "設置 → 應用 → 慢病管家 → 省電策略 → 無限制",
   "notificationStatusCardOemStepXiaomi3": "設置 → 通知 → 慢病管家 → 允許通知 + 鎖屏通知",
@@ -280,11 +280,11 @@
   "notificationStatusCardOemStepHuawei1": "設置 → 應用 → 慢病管家 → 電池 → 啟動管理 → 允許自啟動",
   "notificationStatusCardOemStepHuawei2": "設置 → 應用 → 慢病管家 → 通知 → 全部開啟",
   "notificationStatusCardOemStepHuawei3": "手機管家 → 應用啟動管理 → 關閉「自動管理」",
-  "notificationStatusCardOemBrandOppo": "OPPO / realme / 一加",
+  "notificationStatusCardOemBrandOppo": "OPPO ／ realme ／ 一加",
   "notificationStatusCardOemStepOppo1": "設置 → 電池 → 耗電保護 → 慢病管家 → 允許後臺運行",
   "notificationStatusCardOemStepOppo2": "設置 → 通知 → 慢病管家 → 全部開啟",
   "notificationStatusCardOemStepOppo3": "「最近任務」界面上鎖 App（下滑小鎖圖標）",
-  "notificationStatusCardOemBrandVivo": "Vivo / iQOO",
+  "notificationStatusCardOemBrandVivo": "Vivo ／ iQOO",
   "notificationStatusCardOemStepVivo1": "設置 → 電池 → 後臺高耗電 → 慢病管家 → 允許",
   "notificationStatusCardOemStepVivo2": "設置 → 通知 → 慢病管家 → 全部開啟",
   "notificationStatusCardOemStepVivo3": "「最近任務」界面上鎖 App",
@@ -468,7 +468,7 @@
   "ventComposeTitle": "放進樹洞",
   "ventComposeHint": "今天過得怎麼樣……",
   "ventRecordIdle": "按一下開始錄音",
-  "ventRecordActive": "正在錄音… 點停止",
+  "ventRecordActive": "正在錄音……點停止",
   "ventAudioLabel": "錄音",
   "ventRerecord": "重錄",
   "moodDialogTitle": "今天怎麼樣？",
@@ -500,7 +500,7 @@
   "moodAudioRerecord": "重錄",
   "moodAudioTranscriptLabel": "識別文字",
   "moodAudioTranscriptPartialHint": "（僅識別前 60 秒）",
-  "moodAudioSttListening": "識別中…",
+  "moodAudioSttListening": "識別中……",
   "moodAudioSttFailed": "識別失敗，已僅保存錄音",
   "moodAudioSttUnavailable": "該設備暫不支持語音轉文字",
   "moodAudioMaxReached": "已達 3 分鐘上限",
@@ -829,7 +829,7 @@
   "legalPageWithdrawVent": "撤回樹洞（敏感傾訴）處理同意",
   "legalPageWithdrawVentSubtitle": "停止存儲新樹洞文字／錄音（已有數據保留，需手動刪除）",
   "legalPageWithdrawAnalytics": "撤回評估／情緒分析同意",
-  "legalPageWithdrawAnalyticsSubtitle": "停止將評估/情緒記錄納入趨勢分析（數據保留，不再入圖表）",
+  "legalPageWithdrawAnalyticsSubtitle": "停止將評估／情緒記錄納入趨勢分析（數據保留，不再入圖表）",
   "legalPageConsentRecorded": "撤回時間：{time}",
   "legalPageConsentNever": "從未撤回",
   "emailPreviewTitle": "通知預覽",
@@ -1139,8 +1139,8 @@
   "migrationFailedReassure": "請別擔心，您的數據是加密的。我們會盡快解決。",
   "moodRatingSemantics": "情緒評分，1 到 5 分制，5 分最積極",
   "moodRatingButtonSemantics": "{score} 分{selected, select, true{，已選} other{}}",
-  "medicationTimeWindowSemantics": "時間窗口 {days} 天，7/30/90 單選",
-  "assessmentSaveFailed": "評估結果已顯示，但儲存失敗。請稍後重試。",
+  "medicationTimeWindowSemantics": "時間窗口 {days} 天，7／30／90 單選",
+  "assessmentSaveFailed": "評估結果已顯示，但保存失敗。請稍後重試。",
   "setupContactFallbackName": "聯繫人 {index}",
   "@setupContactFallbackName": {
     "placeholders": {
@@ -1149,7 +1149,7 @@
       }
     }
   },
-  "emailBodyI18n": "我是 {name}，已經 {days} 天沒在 App 裏打卡了。\n請您方便的時候提醒我按時吃藥，避免復發。",
+  "emailBodyI18n": "我是 {name}，已經 {days} 天沒在 App 裡打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。",
   "@emailBodyI18n": {
     "placeholders": {
       "name": {
