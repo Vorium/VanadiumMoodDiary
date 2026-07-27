@@ -112,7 +112,9 @@ class _CelebrationBounceState extends State<CelebrationBounce>
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-          boxShadow: AppTokens.shadowOverlay,
+          // v0.27 round 59 (emil EMIL-T29): 修真走 theme-aware shadowOverlayOf,
+          // 防 R49 同款 silent bug (黑色阴影在 dark mode = 透明)。
+          boxShadow: AppTokens.shadowOverlayOf(context),
         ),
         child: Text(
           widget.message,

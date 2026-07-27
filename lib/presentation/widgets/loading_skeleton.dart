@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 通用 loading 占位（v0.17 round 13 P0-4）
+
+import 'dart:async';
 ///
 /// 情感患者 App：spinner 太"机械"易引发焦虑。用柔和的骨架屏
 /// 让用户知道"在加载"但不刺眼。
@@ -114,6 +116,9 @@ class _ShimmerState extends State<_Shimmer>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   bool _isBreathing = false;
+  // v0.27 round 59 (emil EMIL-T21): 存 timer 字段, dispose 可 cancel,
+  // 修真之前 Future.delayed 不可 cancel 导致的 race condition。
+  Timer? _pauseTimer;
 
   @override
   void initState() {
@@ -128,12 +133,19 @@ class _ShimmerState extends State<_Shimmer>
       if (status == AnimationStatus.completed && _isBreathing) {
         // v0.26 round 57 (emil C-10): 走 shimmerPauseMs 集中器
         // 替代 inline Duration(milliseconds: 600) magic
-        Future.delayed(const Duration(milliseconds: AppTokens.shimmerPauseMs), () {
-          if (mounted && _isBreathing) {
-            _controller.value = 0.0;
-            _controller.forward();
-          }
-        });
+        // v0.27 round 59: 改 Timer (可 cancel) 替代 Future.delayed
+        // dispose 取消 timer, 修真"dispose race → _controller 已 dispose
+        // 但 callback 仍 fire → flutter assertion" 风险
+        _pauseTimer?.cancel();
+        _pauseTimer = Timer(
+          const Duration(milliseconds: AppTokens.shimmerPauseMs),
+          () {
+            if (mounted && _isBreathing) {
+              _controller.value = 0.0;
+              _controller.forward();
+            }
+          },
+        );
       }
     });
     // v0.22 round 30 (emil P1-5): 不在 initState 启动 controller
@@ -167,6 +179,8 @@ class _ShimmerState extends State<_Shimmer>
   @override
   void dispose() {
     _isBreathing = false; // 阻止 status listener 重启动画
+    // v0.27 round 59 (emil EMIL-T21): cancel timer 防 race
+    _pauseTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }

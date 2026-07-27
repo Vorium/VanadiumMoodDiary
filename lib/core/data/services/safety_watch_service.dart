@@ -77,6 +77,10 @@ class SafetyWatchService {
   //
   // 进度: 已加 @Deprecated 注解, caller 暂时仍能编译 (注释 warning), 后续
   // R58+ 大改时再移除, 跟 R53a (app_database 拆 7 DAO) 模式一致。
+  //
+  // v0.27 round 59: spen 报告"0 外部调用方"是 stale finding, 实际 reminders_hub_page /
+  // reminders_hub_provider / 内部 _checkAndAlert + test 4 处都调 facade, 删除会
+  // 编译 fail。R60 修真 `safetyConfigServiceProvider` (新加 provider) 后再删 facade。
 
   /// 是否启用安全开关
   ///

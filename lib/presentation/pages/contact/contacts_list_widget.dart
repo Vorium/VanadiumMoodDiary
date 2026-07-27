@@ -189,11 +189,10 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         final phone = phoneController.text.trim();
                         if (phone.isEmpty) return;
                         if (!PhoneValidator.isValid(phone)) {
-                          ScaffoldMessenger.of(ctx).showSnackBar(
-                            AppSnackBar.info(
-                              context,
-                              AppLocalizations.of(context).snackbarPhoneInvalid,
-                            ),
+                          // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+                          AppSnackBar.showInfo(
+                            context,
+                            AppLocalizations.of(context).snackbarPhoneInvalid,
                           );
                           return;
                         }
@@ -209,13 +208,12 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                           if (ctx.mounted) Navigator.pop(ctx);
                         } catch (e) {
                           if (ctx.mounted) {
-                            ScaffoldMessenger.of(ctx).showSnackBar(
-                              AppSnackBar.error(
-                                context,
-                                action: AppLocalizations.of(context)
-                                    .commonActionSave,
-                                error: e,
-                              ),
+                            // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
+                            AppSnackBar.showError(
+                              context,
+                              action: AppLocalizations.of(context)
+                                  .commonActionSave,
+                              error: e,
                             );
                             setLocal(() => saving = false);
                           }

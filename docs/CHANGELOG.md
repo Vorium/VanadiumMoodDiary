@@ -30,6 +30,34 @@
 - **R56c''** `medication_notifier` +10 (ID 常量 + `scheduleDailyReminder` + `rescheduleMedicationReminders`)
 - **R56c'''** `assessment_notifier` +4 + `safety_alert_dispatcher` +7 + `mood_audio_service` +10
 
+### Architecture & Refactor (round 58-59 v0.27 启动 + 三视角审视修真)
+- **v0.27 round 58** 三视角审视 (emil / spen / spzh) 启动:
+  - emil: 35 发现 (P0×1 + P1×17 + P2×12 + P3×5) → `docs/reviews/v0.27/review-emilkowalski-v027.md` (42KB)
+  - spen: 66 发现 (P0×4 + P1×16 + P2×30 + P3×16) → `docs/reviews/review-superpowers-en-v027.md` (47KB)
+  - spzh: 126 spzh 独有发现 (P0×0 + P1×5 + P2×35 + P3×86) → `docs/reviews/review-superpowers-zh-v027.md` (48KB)
+- **v0.27 round 59** 三视角 P0/P1 修真批次 1 (XS+S 修真 7 项):
+  - **P0-3** (spen §5#18 latent P0 fix): `setup_page.dart:404` 修真 fail-soft `onTimeout: () => const []` 丢数据 → fail-loud (让 TimeoutException 抛出 → setup 失败 + UI 提示)
+  - **EMIL-T29**: 删 4 个 const shadow token (`shadowCard` / `shadowCardDark` / `shadowDialog` / `shadowOverlay`) + 修真 `celebration_bounce.dart:115` 走 theme-aware `shadowOverlayOf(context)` (防 R49 同款 silent bug 重现)
+  - **EMIL-T21**: `loading_skeleton.dart:127-138` dispose race 修真 `Future.delayed` → `Timer?` 字段可 cancel (修真 race condition 风险)
+  - **EMIL-T13**: 11 处 `ScaffoldMessenger.of(ctx).showSnackBar(AppSnackBar.x(...))` → `AppSnackBar.showX(ctx, ...)` 集中器化 (1 行调用, 修真 7 文件 11 处)
+  - **SPZH §5#1**: `check_fullwidth_punctuation.py` 修真 `…` (U+2026) 误报 (47→45 violations, 加 `(?<!…)/(?!…)` 双向负向断言, `……` 修真不报)
+  - **SPZH §2.2**: `preset_medication_templates.dart` 修真 3 处真实半角斜杠 (`SSRI / SNRI` → `SSRI ／ SNRI` 等) (medical abbreviation 风格)
+  - **SPZH §3#1-2**: 新建 `docs/terminology.md` 集中术语表 (App/应用/客户端 / i18n/国际化/本地化 / PHQ-9/GAD-7 / 隐私 / 用药 5 大类), spec 文档化, R60 修真 14 处中文 ARB
+- **v0.27 round 59** Stale findings (不修真, 移到下 round):
+  - P0-2 (email test): 实际已修真, spen 报告 stale
+  - EMIL-T08 (3 dead tokens): R57 已修真 (注释 line 632-636 标注), stale
+  - SPEN-§4#1 (8 @Deprecated facade 删除): 需新加 `safetyConfigServiceProvider` provider 路径, 修真 reminders_hub_page / reminders_hub_provider / test 4 处 caller, R60 修真
+- **v0.27 round 59** R60 修真计划 (修真后):
+  - SPEN-§4#1: 修真 `safetyConfigServiceProvider` provider + 4 处 caller 迁移, 删 8 facade
+  - SPEN-§4#2: `_showSafetyAlert` 50 行 inline 移 `SafetyAlertDispatcher` (1-2h 重构)
+  - SPZH 14 处 "App" 修真 → "本应用" / "慢病管家"
+  - 5 systematic-debugging regression tests (跨 midnight / 隐式序 / dispose race / stream leak / setState after dispose)
+  - 7 god page 拆 (trend_calendar / reminders_hub / data_mgmt / edit_med / mood_recorder / assessment_widgets / setup)
+  - `app_tokens.dart` 779 行 god file 拆 5 子模块
+  - 文字 token 化 36% → 80% (191 inline TextStyle 集中器化)
+  - `home_page.dart` widget test (P0, 每日用户路径 0 test)
+  - `mood_recorder.dart` god class split (P0, R52 修真 dispose race 但 0 regression test)
+
 ### Cleanup (round 56d-R56f)
 - **R56d** `formatters.dart` 走 intl `DateFormat` + `vent_detail_page.dart:191` 改 `EmptyState`
 - **R56e** 新增 `scripts/check_orphan_arb_keys.py` 守门员 + 一次性清 39 个 orphan (677 → 550 zh ARB key)

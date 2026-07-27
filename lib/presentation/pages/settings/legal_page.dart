@@ -60,17 +60,14 @@ class _LegalPageState extends ConsumerState<LegalPage> {
     }
     if (mounted) {
       setState(() => _withdrawn[kind] = withdraw);
-      ScaffoldMessenger.of(context).showSnackBar(
-        // v0.22 round 30 (sp-zh P1-16 + P3-2): 走 AppSnackBar.info 集中器
-        // + legalConsentWithdrawn/ReAgreed l10n key (en 模式可用)
-        AppSnackBar.info(
-          context,
-          withdraw
-              ? AppLocalizations.of(context).legalConsentWithdrawn(
-                  ConsentKind.values.indexOf(kind) + 1, 3,)
-              : AppLocalizations.of(context).legalConsentReAgreed(
-                  ConsentKind.values.indexOf(kind) + 1, 3,),
-        ),
+      // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+      AppSnackBar.showInfo(
+        context,
+        withdraw
+            ? AppLocalizations.of(context).legalConsentWithdrawn(
+                ConsentKind.values.indexOf(kind) + 1, 3,)
+            : AppLocalizations.of(context).legalConsentReAgreed(
+                ConsentKind.values.indexOf(kind) + 1, 3,),
       );
     }
   }

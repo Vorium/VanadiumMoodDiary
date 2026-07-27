@@ -186,11 +186,10 @@ class DataManagementSection extends ConsumerWidget {
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: json));
                 if (ctx.mounted) {
-                  ScaffoldMessenger.of(ctx).showSnackBar(
-                    AppSnackBar.info(
-                      ctx,
-                      AppLocalizations.of(ctx).snackbarCopied,
-                    ),
+                  // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+                  AppSnackBar.showInfo(
+                    ctx,
+                    AppLocalizations.of(ctx).snackbarCopied,
                   );
                 }
               },
@@ -395,12 +394,11 @@ class DataManagementSection extends ConsumerWidget {
                           .settingsImportSuccess(result.summary),);
                 } else {
                   setLocal(() => importing = false);
-                  ScaffoldMessenger.of(ctx).showSnackBar(
-                    AppSnackBar.error(
-                      context,
-                      action: AppLocalizations.of(context).settingsActionImport,
-                      error: result.error,
-                    ),
+                  // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
+                  AppSnackBar.showError(
+                    context,
+                    action: AppLocalizations.of(context).settingsActionImport,
+                    error: result.error,
                   );
                 }
               },

@@ -402,14 +402,15 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           );
       if (!mounted) return;
 
-      // v0.25 round 52 (spen P0 #13): 加 5s timeout 防御 drift stream hang
-      // (DB lock 时罕见),参考 data_export_service.dart:108-123 4 处
-      // stream.first.timeout(5s) 模式。timeout 返空 list 走"无 medication"路径
+      // v0.27 round 59 (spen §5#18 latent P0 fix): 修真 fail-soft timeout 丢数据
+      // R52 加 5s timeout 防御 drift stream hang (DB lock 时罕见)
+      // 但 fail-soft onTimeout: () => const [] 让"用户若有 N 个药"被吞成 0 个 → 失通知
+      // 修真成 fail-loud: 让 TimeoutException 抛出 → 落入外层 catch → setup 失败 + UI 提示
       final medications = await ref
           .read(medicationRepositoryProvider)
           .watchAll()
           .first
-          .timeout(const Duration(seconds: 5), onTimeout: () => const []);
+          .timeout(const Duration(seconds: 5));
       await ref.read(notificationServiceProvider).rescheduleMedicationReminders(
             medications,
           );
@@ -423,13 +424,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       }
     } catch (e, st) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.error 集中器
-          AppSnackBar.error(
-            context,
-            action: AppLocalizations.of(context).settingsActionGenerateReport,
-            error: e,
-          ),
+        // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.error 集中器
+        // v0.27 round 59 修真: 用 showError 集中器 + action 修真为"完成设置"
+        AppSnackBar.showError(
+          context,
+          action: '完成设置',
+          error: e,
         );
       }
       swallowError(

@@ -66,14 +66,12 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       final result = await showEditMedicationDialog(context, med);
       if (!mounted) return;
       if (result == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
-          AppSnackBar.info(
-            context,
-            med.isActive
-                ? AppLocalizations.of(context).medsSnackUpdated
-                : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
-          ),
+        // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+        AppSnackBar.showInfo(
+          context,
+          med.isActive
+              ? AppLocalizations.of(context).medsSnackUpdated
+              : AppLocalizations.of(context).medsSnackUpdatedSoftStop,
         );
       }
     } finally {
@@ -192,13 +190,11 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
           .rescheduleRefillReminders(meds);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
-        AppSnackBar.info(
-          context,
-          AppLocalizations.of(context)
-              .medsRefillSet(Formatters.date(picked), days),
-        ),
+      // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+      AppSnackBar.showInfo(
+        context,
+        AppLocalizations.of(context)
+            .medsRefillSet(Formatters.date(picked), days),
       );
     } catch (e) {
       if (mounted) {

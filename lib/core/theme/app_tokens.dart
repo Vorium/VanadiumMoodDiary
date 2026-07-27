@@ -408,54 +408,21 @@ class AppTokens {
   /// 主庆祝用 easeOutBack 更"稳",副粒子可用 elasticOut
   static const Curve curveBackOut = Curves.easeOutBack;
 
-  // ============= 阴影 =============
-  static const List<BoxShadow> shadowCard = [
-    BoxShadow(
-      color: Color(0x14000000),
-      blurRadius: 3,
-      offset: Offset(0, 1),
-    ),
-  ];
-
-  static const List<BoxShadow> shadowCardDark = [
-    BoxShadow(
-      color: Color(0x33000000),
-      blurRadius: 3,
-      offset: Offset(0, 1),
-    ),
-  ];
-
-  static const List<BoxShadow> shadowDialog = [
-    BoxShadow(
-      color: Color(0x1F000000),
-      blurRadius: 12,
-      offset: Offset(0, 4),
-    ),
-  ];
-
-  /// v0.22 round 29 (emil-15): 庆祝 / 浮层轻阴影 (比 shadowDialog 更弱)
-  /// 用于 celebration_overlay 等浮在内容上的轻提示, emil rare 频度可加 delight
-  static const List<BoxShadow> shadowOverlay = [
-    BoxShadow(
-      color: Color(0x14000000),
-      blurRadius: 8,
-      offset: Offset(0, 4),
-    ),
-  ];
-
-  // ============= 阴影 (v0.24 round 43 emil D-04 P2: dark mode 反白) =============
+  // ============= 阴影 (v0.27 round 59 emil EMIL-T29: 删 4 个 const shadow) =============
   //
-  // 上面 4 个 const shadow 全部用黑色 0x14-0x33 透明度, **dark mode 完全不可见**
-  // (黑色阴影打在 dark surface 上 = 透明)。M3 标准做法是用
-  // `Theme.of(context).colorScheme.shadow` 派生, light/dark mode 自适应。
+  // 历史: v0.22 round 29 加 4 个 const shadow (shadowCard / shadowCardDark /
+  // shadowDialog / shadowOverlay), 全黑色 0x14-0x33 透明度。
+  // **dark mode 完全不可见** (黑色阴影打在 dark surface 上 = 透明),
+  // 这是 R49 修真过的 60+ 处 silent bug 同款风险。
   //
-  // emil "translucent material" 哲学: 暗色下阴影应该反白 / 用 colorScheme.shadow。
-  // 加 4 个 context-aware 变体 (不能完全替 const, 因为 const list 在 const
-  // constructor 里要用), 新代码优先用 dynamic getter。
+  // v0.24 round 43 (emil D-04 P2) 加 4 个 theme-aware 替代 (走 Theme.of(context)
+  // .colorScheme.shadow) 但保留 const 版本以兼容 const constructor。
+  // v0.27 round 59 (emil EMIL-T29): 删 4 个 const 版本, **强制** 所有用法走
+  // theme-aware getter, 避免后续 R49 同款 silent bug 重现。
   //
   // 用法: `boxShadow: AppTokens.shadowCardOf(context)`
 
-  /// Theme-aware 卡片阴影 (dark mode 反白) — 替换 const shadowCard
+  /// Theme-aware 卡片阴影 (dark mode 反白) — 替换原 const shadowCard
   static List<BoxShadow> shadowCardOf(BuildContext context) => [
         BoxShadow(
           color: Theme.of(context).colorScheme.shadow,
@@ -464,7 +431,7 @@ class AppTokens {
         ),
       ];
 
-  /// Theme-aware 卡片深阴影 (dark mode 反白) — 替换 const shadowCardDark
+  /// Theme-aware 卡片深阴影 (dark mode 反白) — 替换原 const shadowCardDark
   /// 跟 shadowCardOf 区别: alpha 更高 (M3 spec: shadow 0.08 vs scrim 0.32)
   static List<BoxShadow> shadowCardDarkOf(BuildContext context) => [
         BoxShadow(
@@ -474,7 +441,7 @@ class AppTokens {
         ),
       ];
 
-  /// Theme-aware 对话框阴影 (dark mode 反白) — 替换 const shadowDialog
+  /// Theme-aware 对话框阴影 (dark mode 反白) — 替换原 const shadowDialog
   static List<BoxShadow> shadowDialogOf(BuildContext context) => [
         BoxShadow(
           color: Theme.of(context).colorScheme.shadow,
@@ -483,7 +450,7 @@ class AppTokens {
         ),
       ];
 
-  /// Theme-aware 浮层轻阴影 (dark mode 反白) — 替换 const shadowOverlay
+  /// Theme-aware 浮层轻阴影 (dark mode 反白) — 替换原 const shadowOverlay
   static List<BoxShadow> shadowOverlayOf(BuildContext context) => [
         BoxShadow(
           color: Theme.of(context).colorScheme.shadow,

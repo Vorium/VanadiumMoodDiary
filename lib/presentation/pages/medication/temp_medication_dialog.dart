@@ -148,11 +148,10 @@ class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
     } catch (e) {
       if (!ctx.mounted) return;
       final l10n = AppLocalizations.of(ctx);
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        AppSnackBar.error(ctx,
-            action: l10n.snackbarActionSave,
-            error: e,),
-      );
+      // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
+      AppSnackBar.showError(ctx,
+          action: l10n.snackbarActionSave,
+          error: e,);
       setState(() => saving = false);
     }
   }

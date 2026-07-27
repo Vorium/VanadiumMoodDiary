@@ -56,13 +56,11 @@ class _AssessmentReminderSectionState
       if (!mounted) return;
       setState(() => _enabled = v);
       if (v && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
-          AppSnackBar.info(
-            context,
-            AppLocalizations.of(context)
-                .assessmentReminderEnabled(_days ?? 14),
-          ),
+        // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器 (1 行)
+        AppSnackBar.showInfo(
+          context,
+          AppLocalizations.of(context)
+              .assessmentReminderEnabled(_days ?? 14),
         );
       }
     } catch (e) {
@@ -91,12 +89,10 @@ class _AssessmentReminderSectionState
       if (!mounted) return;
       setState(() => _days = picked);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.info 集中器
-          AppSnackBar.info(
-            context,
-            AppLocalizations.of(context).assessmentReminderChanged(picked),
-          ),
+        // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+        AppSnackBar.showInfo(
+          context,
+          AppLocalizations.of(context).assessmentReminderChanged(picked),
         );
       }
     } catch (e) {
