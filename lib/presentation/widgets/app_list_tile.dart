@@ -20,18 +20,33 @@ import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// ListTile + PressFeedback 集中器
 ///
+/// 3 种命名构造:
+/// - [AppListTile.standard] — 普通设置行 (PressFeedback + ListTile)
+/// - [AppListTile.carded]   — Card 包裹, 用于 content 区 (提升视觉层级)
+/// - [AppListTile.destructive] — 危险操作 (红色 leading/trailing, 暗示删除)
+///
 /// 用法:
 /// ```dart
-/// AppListTile(
+/// AppListTile.standard(
 ///   leading: Icon(Icons.history, color: AppTokens.primary),
 ///   title: Text('历史'),
 ///   onTap: () => context.push('/history'),
+/// )
+///
+/// AppListTile.carded(
+///   leading: Icon(Icons.notifications),
+///   title: Text('通知状态'),
+///   subtitle: Text('当前: 已开启'),
 /// )
 /// ```
 ///
 /// v0.24 round 43 (emil U3 P2): 抽 1 个集中器统一 settings_page 8+ 处
 /// `PressFeedback + ListTile` 重复模式
+/// v0.26 round 57 (emil C-12): 加 standard/carded/destructive 3 命名构造
+/// + 透传 dense/contentPadding/onLongPress, 让 ListTile → AppListTile
+/// 转换不需要丢 ListTile 特性
 class AppListTile extends StatelessWidget {
+  /// 普通设置行 (unnamed constructor 跟 .standard 等价)
   const AppListTile({
     super.key,
     required this.leading,
@@ -39,7 +54,58 @@ class AppListTile extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
-  }) : _isCarded = false;
+    this.dense,
+    this.isThreeLine,
+    this.contentPadding,
+    this.onLongPress,
+  })  : _isCarded = false,
+        _isDestructive = false;
+
+  /// v0.26 round 57 (emil C-12): 显式 .standard 命名构造
+  /// 跟 unnamed constructor 等价, 让调用方一眼看出"标准行, 非 carded 非 destructive"
+  const AppListTile.standard({
+    super.key,
+    required this.leading,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.dense,
+    this.isThreeLine,
+    this.contentPadding,
+    this.onLongPress,
+  })  : _isCarded = false,
+        _isDestructive = false;
+
+  /// Card 包裹, 用于 content 区
+  const AppListTile.carded({
+    super.key,
+    required this.leading,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.dense,
+    this.isThreeLine,
+    this.contentPadding,
+    this.onLongPress,
+  })  : _isCarded = true,
+        _isDestructive = false;
+
+  /// 危险操作 (留 API 入口, v0.26 未启用具体颜色定制)
+  const AppListTile.destructive({
+    super.key,
+    required this.leading,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.dense,
+    this.isThreeLine,
+    this.contentPadding,
+    this.onLongPress,
+  })  : _isCarded = false,
+        _isDestructive = true;
 
   final Widget leading;
   final Widget title;
@@ -50,11 +116,30 @@ class AppListTile extends StatelessWidget {
   /// 不传则 PressFeedback 只做 scale 视觉, 适用于 nested ListTile.onTap
   final VoidCallback? onTap;
 
+  /// v0.26 round 57 (emil C-12): 透传 ListTile.dense (紧凑布局)
+  final bool? dense;
+
+  /// v0.26 round 57 (emil C-12): 透传 ListTile.isThreeLine (3 行布局)
+  final bool? isThreeLine;
+
+  /// v0.26 round 57 (emil C-12): 透传 ListTile.contentPadding
+  final EdgeInsetsGeometry? contentPadding;
+
+  /// v0.26 round 57 (emil C-12): 透传 ListTile.onLongPress
+  final VoidCallback? onLongPress;
+
   /// v0.24 round 48 (emil P2-8): carded 模式标志
   final bool _isCarded;
 
+  /// v0.26 round 57 (emil C-12): destructive 模式标志
+  /// (留 API 入口, 当前实现跟 standard 一样, 未来可加红色 leading tint)
+  final bool _isDestructive;
+
   @override
   Widget build(BuildContext context) {
+    assert(!(_isCarded && _isDestructive),
+        'AppListTile: carded + destructive 不能同时设置');
+
     final listTile = ListTile(
       leading: leading,
       title: title,
@@ -63,6 +148,10 @@ class AppListTile extends StatelessWidget {
       // 模式 1 (onTap != null): PressFeedback 接管 tap, ListTile 自身 onTap 置 null
       // 模式 2 (onTap == null): PressFeedback 只做 scale 视觉, 透传 onTap 给 ListTile
       onTap: onTap != null ? null : onTap,
+      dense: dense,
+      isThreeLine: isThreeLine,
+      contentPadding: contentPadding,
+      onLongPress: onLongPress,
     );
 
     final core = onTap != null

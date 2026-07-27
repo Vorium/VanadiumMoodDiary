@@ -190,6 +190,53 @@ void main() {
       // cancel 行为单独在 medication_repository_refill_round9_test.dart 覆盖
     });
   });
+
+  // ============ v0.26 round 57 (spen P0 TDD 续): systematic-debugging 5 类 regression ============
+  //
+  // 锁 1+2: 跨 midnight race (DateTime.now() 多次调用) + 隐式 fire-time
+  // computeRefillFireTime 是纯函数, 测跨月/跨年 + 边界时间 (00:00:00 / 23:59:59)
+
+  group('RefillNotifier systematic-debugging regression guards', () {
+    test('跨 midnight: refillAt 在 00:00:00 → fireTime 不变 (不走前一天)', () {
+      // bug 模式: 之前 `_daysUntilRefill` 用 `DateTime(y,m,d)` 拼 today
+      // 跟 `DateTime.now()` 调多次, 跨 midnight 后 today 可能漂移到前一天
+      // → daysLeft 算错, fireTime 也错
+      // 锁: refillAt 本身就是 00:00:00, compute 不退化
+      final fireTime = RefillNotifier.computeRefillFireTime(
+        refillAt: DateTime(2026, 9, 15, 0, 0, 0),
+        reminderDays: 7,
+      );
+      // refillAt 当天 0:00 - 7 天 + 9 小时 = 9月8日 9:00
+      expect(fireTime, DateTime(2026, 9, 8, 9, 0));
+    });
+
+    test('跨 midnight: refillAt 在 23:59:59 → fireTime 仍是 9:00 当天 (不漂移)', () {
+      // 反向: refillAt 23:59:59 时, 整日期部分仍是 9/15, fireTime 应 = 9/8 9:00
+      final fireTime = RefillNotifier.computeRefillFireTime(
+        refillAt: DateTime(2026, 9, 15, 23, 59, 59),
+        reminderDays: 7,
+      );
+      expect(fireTime, DateTime(2026, 9, 8, 9, 0));
+    });
+
+    test('跨月: refillAt = 月底 (9/30) - 7 天 → 9/23 9:00 (DateTime 自动处理月/30/31 天)', () {
+      // 跨月边界: 9/30 - 7 = 9/23 (本月末-7天不会跨月)
+      final fireTime = RefillNotifier.computeRefillFireTime(
+        refillAt: DateTime(2026, 9, 30),
+        reminderDays: 7,
+      );
+      expect(fireTime, DateTime(2026, 9, 23, 9, 0));
+    });
+
+    test('跨年: refillAt = 2026/01/05, reminderDays=7 → 2025/12/29 9:00 (上一年)', () {
+      // 跨年边界: 1/5 - 7 = 上一年 12/29
+      final fireTime = RefillNotifier.computeRefillFireTime(
+        refillAt: DateTime(2026, 1, 5),
+        reminderDays: 7,
+      );
+      expect(fireTime, DateTime(2025, 12, 29, 9, 0));
+    });
+  });
 }
 
 /// 简易 mock: 只跟踪关键调用, 不实际调 plugin

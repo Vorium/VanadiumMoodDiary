@@ -11,6 +11,7 @@ import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:go_router/go_router.dart';
 
 /// 紧急联系人列表 + 添加按钮
@@ -59,7 +60,9 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 ),
               ),
               onDismissed: (_) => _swipeDeleteContact(contacts[i]),
-              child: ListTile(
+              // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+              // 替代 inline ListTile (Dismissible 包裹, 不影响 ListTile 本身)
+              child: AppListTile.standard(
                 leading:Icon(
                   Icons.person_outline,
                   color: AppTokens.primaryColor(context),
@@ -75,13 +78,13 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                           child: LoadingSpinner(size: 16),
                         ),
                       )
-                    : IconButton(
-                        icon:Icon(
-                          Icons.delete_outline,
-                          color: AppTokens.errorColor(context),
-                        ),
-                        onPressed: () => _deleteContact(contacts[i].id),
-                      ),
+                    : // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
+                    PressFeedbackIconButton(
+                      icon: Icons.delete_outline,
+                      tooltip: AppLocalizations.of(context).commonDelete,
+                      onPressed: () => _deleteContact(contacts[i].id),
+                      color: AppTokens.errorColor(context),
+                    ),
               ),
             ),
           ],

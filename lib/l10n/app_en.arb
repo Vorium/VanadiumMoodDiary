@@ -96,6 +96,7 @@
   "commonLoading": "Loading...",
   "lastStartupErrorBannerBody": "Last startup error, please screenshot and report",
   "commonClose": "Close",
+  "commonRefresh": "Refresh",
   "commonRetry": "Retry",
   "commonGotIt": "Got it",
   "commonConfirmDelete": "Delete this?",

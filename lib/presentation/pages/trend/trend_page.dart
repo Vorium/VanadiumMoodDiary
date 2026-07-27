@@ -149,11 +149,15 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 return AssessmentHistoryChart(records: records);
               },
               loading: () => const SizedBox(
-                height: 200,
+                // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+                // 替代 inline height: 200 magic
+                height: AppTokens.chartPlaceholderHeight,
                 child: LoadingSkeleton.fullScreen(),
               ),
               error: (e, _) => SizedBox(
-                height: 200,
+                // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+                // 替代 inline height: 200 magic
+                height: AppTokens.chartPlaceholderHeight,
                 child: ErrorState(
                   title: AppLocalizations.of(context).commonLoadFailed(''),
                   detail: e.toString(),
@@ -171,11 +175,15 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             return async.when(
               data: (entries) => MoodHistoryChart(entries: entries),
               loading: () => const SizedBox(
-                height: 200,
+                // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+                // 替代 inline height: 200 magic
+                height: AppTokens.chartPlaceholderHeight,
                 child: LoadingSkeleton.fullScreen(),
               ),
               error: (e, _) => SizedBox(
-                height: 200,
+                // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+                // 替代 inline height: 200 magic
+                height: AppTokens.chartPlaceholderHeight,
                 child: ErrorState(
                   title: AppLocalizations.of(context).commonLoadFailed(''),
                   detail: e.toString(),

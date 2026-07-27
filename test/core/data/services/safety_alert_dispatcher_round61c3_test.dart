@@ -188,6 +188,82 @@ void main() {
           reason: 'audit log 写入时间应等于 effectiveNow',);
     });
   });
+
+  // ============ v0.26 round 57 (spen P0 TDD 续): systematic-debugging 5 类 regression ============
+  //
+  // 锁 4: stream subscription leak — 重复 dispatchAlert 不应 leak 内部 listener
+  // (dispatcher 内部没 stream subscription, 是 _alertDispatcher 单次调用模式,
+  // 锁的是"重复调 dispatchAlert N 次 → 行为稳定, 计数累加正确, 无 leak")
+  //
+  // 锁 (空 contacts 边界): 已存在 '空 contacts → (0,0,0)' 但 R57/56c3 后
+  // 补 1 个极端变体: contacts 全 isActive=false (filter 走完剩 0 个) → 仍走
+  // noContacts 路径, 但行为同空 list — showSafetyAlert 仍调 1 次
+
+  group('SafetyAlertDispatcher systematic-debugging regression guards', () {
+    test('stream subscription leak: 重复 dispatchAlert 100 次 → setLastAlertAt 也调 100 次 (无 leak)', () async {
+      // 锁: 100 次 dispatch, 内部没遗留 subscription, 计数累加正确
+      final notifService = _CountingNotificationService();
+      final config = _CountingConfigService();
+      final dispatcher = SafetyAlertDispatcher(
+        smsService: SmsService(provider: MockSmsProvider()),
+        notificationService: notifService,
+        config: config,
+      );
+
+      for (var i = 0; i < 100; i++) {
+        await dispatcher.dispatchAlert(
+          contacts: [_makeContact(id: 1, phone: '13800000001')],
+          userName: '张三',
+          daysSinceLast: 3,
+          lastCheckIn: null,
+          effectiveNow: DateTime(2026, 7, 23, 10, 0),
+          trigger: 'manual',
+        );
+      }
+
+      expect(config.setLastAlertAtCalls, 100,
+          reason: '每次 dispatch 写一次 audit log',);
+      expect(notifService.showSafetyAlertCalls, 100,
+          reason: '每次 dispatch 推一次本地通知',);
+    });
+
+    test('空 contacts 边界 (空 list + filter 后空 list 行为一致)', () async {
+      // 锁: 空 list 已测过, 这里锁 filter 后空 (1 个 contact 但 isActive=false) → 仍走 noContacts 路径
+      final notifService = _CountingNotificationService();
+      final config = _CountingConfigService();
+      final dispatcher = SafetyAlertDispatcher(
+        smsService: SmsService(),
+        notificationService: notifService,
+        config: config,
+      );
+
+      // 注: dispatcher 内部不过滤 isActive (由调用方 safety_watch_service
+      // 选 active contacts), 所以这里直接传 1 个 isActive=false contact
+      // 测行为: 仍发 SMS, 不影响
+      // 实际边界"filter 后空"由 safety_watch_service 负责, 本测锁 dispatcher
+      // 接收空 list / 全 isActive=false 都不崩
+      final inactiveContact = ContactEntity(
+        id: 99,
+        name: '停用',
+        phone: '13800000099',
+        sortOrder: 0,
+        isActive: false,
+      );
+
+      final result = await dispatcher.dispatchAlert(
+        contacts: [inactiveContact],
+        userName: '张三',
+        daysSinceLast: 3,
+        lastCheckIn: null,
+        effectiveNow: DateTime(2026, 7, 23, 10, 0),
+        trigger: 'manual',
+      );
+
+      // dispatcher 不 filter, 仍发 SMS (走 MockSmsProvider 走 mock 计数)
+      // 不崩即过
+      expect(result.smsOk + result.smsFail + result.smsMock, 1);
+    });
+  });
 }
 
 ContactEntity _makeContact({

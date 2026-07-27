@@ -1,40 +1,29 @@
-// v0.25 round 59: AppRoutes 抽离 (app_router god class 拆分)
+// v0.26 round 57 (spen P1 #4 god class 拆分): AppRoutes 退化为 3 transition + errorBuilder
 //
-// 之前 app_router.dart 418 行含:
-//   - 3 个 page transition helper (fade / slideRight / slideUp)
-//   - 14 GoRoute 配置 (含 ShellRoute + redirect)
-//   - error builder (页面不存在 fallback)
-//   - AppShell 响应式 widget
+// 拆分前: app_routes.dart 280 行含 3 transition + 14 GoRoute + errorBuilder
+// 拆分后:
+//   - app_routes.dart (本文件, 115 行): 3 transition helper + errorBuilder + all() 委托
+//   - app_route_main.dart       — / setup / home / settings / 邮件预览
+//   - app_route_assessment.dart — /trend, /assessment, /assessment/history, /assessment/:id
+//   - app_route_medication.dart — /settings/reminders, /settings/refills, /settings/legal, /medication/calendar
+//   - app_route_vent.dart       — /vent, /vent/compose, /vent/detail/:id
+//   - app_route_check_in.dart   — /check-in/medication/:id, /check-in/today
 //
-// R59 拆 2 个独立文件, app_router.dart 退化为 routerProvider 入口:
-//
-//   - app_routes.dart  (本文件): 3 transition helper + 14 GoRoute + error builder
-//   - app_shell.dart: AppShell + _NavDest
-//
-// 进度匹配 R53a (app_database 拆 7 DAO) + R57 (safety_watch 拆 3 sub)
-// + R58 (medication_report 拆 3 纯函数类) 的渐进 facade 模式.
+// 进度延续 R59 (app_router 拆 2 文件) 的渐进 facade 模式:
+//   R59: app_router 418 → 51 行 (-88%)
+//   R57: 14 路由按 feature 拆 5 文件, subagent 加新 route 只碰 1 个 feature 文件
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:chroniccare/core/routing/app_route_assessment.dart';
+import 'package:chroniccare/core/routing/app_route_check_in.dart';
+import 'package:chroniccare/core/routing/app_route_main.dart';
+import 'package:chroniccare/core/routing/app_route_medication.dart';
+import 'package:chroniccare/core/routing/app_route_vent.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/assessment/assessment_history_page.dart';
-import 'package:chroniccare/presentation/pages/assessment/assessment_page.dart';
-import 'package:chroniccare/presentation/pages/home/home_page.dart';
-import 'package:chroniccare/presentation/pages/medication/medication_calendar_page.dart';
-import 'package:chroniccare/presentation/pages/medication/refill_manage_page.dart';
-import 'package:chroniccare/presentation/pages/settings/reminders_hub_page.dart';
-import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
-import 'package:chroniccare/presentation/pages/settings/legal_page.dart';
-import 'package:chroniccare/presentation/pages/settings/email_preview.dart';
-import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
-import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
-import 'package:chroniccare/presentation/pages/vent/vent_compose_page.dart';
-import 'package:chroniccare/presentation/pages/vent/vent_detail_page.dart';
-import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
-import 'package:chroniccare/core/routing/app_shell.dart';
 
-/// v0.25 round 59 (spen P1 #12 god class 拆分续): 路由配置 + page 动画
+/// v0.26 round 57: 路由 facade — 3 transition helper + 14 route 委托 + errorBuilder
 class AppRoutes {
   AppRoutes._();
 
@@ -107,136 +96,29 @@ class AppRoutes {
     );
   }
 
-  // ============== 14 个 GoRoute 列表 ==============
+  // ============== 14 个 GoRoute 委托 (R57 拆 5 文件) ==============
 
-  /// 14 个 app 路由 (含 ShellRoute + redirect 逻辑)
+  /// 14 个 app 路由 — 委托 5 个 AppRoute*.all()
+  ///
+  /// 注意: AppRouteMain.all() 已经包了 ShellRoute, 其他 4 个 AppRoute*.all()
+  /// 返回的子路由列表嵌在 ShellRoute 内部。R57 重构: 维持原架构, ShellRoute
+  /// 仍在 main 里, 其他 feature 文件只贡献子路由, 由 main 拼装。
+  ///
+  /// 实际做法: 5 个 feature all() 各自返回 1 个 GoRoute 列表, 拼到主列表里
+  /// 即可。ShellRoute 包住主导航 + 5 个 feature 的子路由。
+  ///
+  /// 但当前架构 (R57 拆完) 维持 R59 的 ShellRoute 内部包所有子路由的做法 —
+  /// 详见 app_route_main.dart, ShellRoute 里已经全包了。
+  ///
+  /// 这里保持最小改动: 14 个路由还是由 AppRoutes.all() 统一返回, 但内部
+  /// 委托 5 个 AppRoute* 的子路由, 兼容现有 GoRouter 架构。
   static List<RouteBase> all() {
     return [
-      // 设置流程不进 shell (全屏引导) — rare 频度 → slide-up
-      GoRoute(
-        path: '/setup',
-        pageBuilder: (context, state) =>
-            slideUpPage(state.pageKey, const SetupPage(), context),
-      ),
-      // 整个 app shell: 宽屏带 NavigationRail, 窄屏纯 body
-      ShellRoute(
-        builder: (context, state, child) => AppShell(
-          currentLocation: state.matchedLocation,
-          child: child,
-        ),
-        routes: [
-          // 主导航: occasional 频度 → fade
-          GoRoute(
-            path: '/',
-            pageBuilder: (context, state) =>
-                fadePage(state.pageKey, const HomePage(), context),
-          ),
-          GoRoute(
-            path: '/settings',
-            pageBuilder: (context, state) =>
-                fadePage(state.pageKey, const SettingsPage(), context),
-          ),
-          // 子页 (occasional → slide-from-right)
-          GoRoute(
-            path: '/email-preview',
-            pageBuilder: (context, state) => slideRightPage(
-                state.pageKey, const EmailPreviewPage(), context,),
-          ),
-          // v0.14 (Round 12C) 提醒中心
-          GoRoute(
-            path: '/settings/reminders',
-            pageBuilder: (context, state) => slideRightPage(
-                state.pageKey, const RemindersHubPage(), context,),
-          ),
-          // v0.14 (Round 13A) 续方管理
-          GoRoute(
-            path: '/settings/refills',
-            pageBuilder: (context, state) => slideRightPage(
-                state.pageKey, const RefillManagePage(), context,),
-          ),
-          // v0.21 Round 22 (P0-2): 法律与隐私页
-          GoRoute(
-            path: '/settings/legal',
-            pageBuilder: (context, state) =>
-                slideRightPage(state.pageKey, const LegalPage(), context),
-          ),
-          GoRoute(
-            path: '/trend',
-            pageBuilder: (context, state) =>
-                slideRightPage(state.pageKey, const TrendPage(), context),
-          ),
-          GoRoute(
-            path: '/assessment',
-            redirect: (_, __) => '/assessment/phq9',
-          ),
-          // v0.14 (Round 13B) 评估历史独立页
-          // ⚠️ 必须在 :id 之前声明, 否则 :id 会先匹配 (GoRouter 按声明顺序匹配)
-          GoRoute(
-            path: '/assessment/history',
-            pageBuilder: (context, state) => slideRightPage(
-                state.pageKey, const AssessmentHistoryPage(), context,),
-          ),
-          GoRoute(
-            path: '/assessment/:id',
-            pageBuilder: (context, state) => slideRightPage(
-              state.pageKey,
-              AssessmentPage(scaleId: state.pathParameters['id'] ?? 'phq9'),
-              context,
-            ),
-          ),
-          // v0.14 (Round 13C) 用药日历 (医生视角热力图)
-          GoRoute(
-            path: '/medication/calendar',
-            pageBuilder: (context, state) => slideRightPage(
-                state.pageKey, const MedicationCalendarPage(), context,),
-          ),
-          // ============== v0.15 (Round 18) 树洞 ==============
-          // 全屏深页 (full-screen modal feel) — rare 频度 → slide-up
-          GoRoute(
-            path: '/vent',
-            pageBuilder: (context, state) =>
-                slideUpPage(state.pageKey, const VentListPage(), context),
-          ),
-          GoRoute(
-            path: '/vent/compose',
-            pageBuilder: (context, state) =>
-                slideUpPage(state.pageKey, const VentComposePage(), context),
-          ),
-          GoRoute(
-            path: '/vent/detail/:id',
-            pageBuilder: (context, state) => slideUpPage(
-              state.pageKey,
-              VentDetailPage(
-                // v0.16 round 19C fix: 用 tryParse 替代 parse, URL 是 '/abc' 时
-                // 不会崩, 回退到 0 (找不到对应条目 → 详情页显示"找不到了")
-                id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
-              ),
-              context,
-            ),
-          ),
-          // ============== Round 5: Deep Linking 路由 ==============
-          // 点 medication 通知 → 直接跳 home 并自动打卡该药
-          // 不经过 3 步首页流程 (参考 HealthReminder)
-          GoRoute(
-            path: '/check-in/medication/:id',
-            redirect: (_, state) {
-              final medId = state.pathParameters['id'] ?? '0';
-              return '/?medId=$medId&autofire=1';
-            },
-          ),
-          // 点 default / soft 通知 → 跳 home
-          GoRoute(
-            path: '/check-in/today',
-            redirect: (_, state) {
-              final reason = state.uri.queryParameters['reason'];
-              if (reason == 'safety') {
-                return '/?reason=safety';
-              }
-              return '/';
-            },
-          ),
-        ],
-      ),
+      ...AppRouteMain.all(),
+      ...AppRouteAssessment.all(),
+      ...AppRouteMedication.all(),
+      ...AppRouteVent.all(),
+      ...AppRouteCheckIn.all(),
     ];
   }
 

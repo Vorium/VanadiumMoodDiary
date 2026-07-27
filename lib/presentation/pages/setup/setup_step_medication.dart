@@ -8,6 +8,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// Step 2: 药物列表
 ///
@@ -181,13 +182,12 @@ class MedCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                IconButton(
-                  icon:Icon(
-                    Icons.delete_outline,
-                    color: AppTokens.errorColor(context),
-                  ),
+                // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
+                PressFeedbackIconButton(
+                  icon: Icons.delete_outline,
                   tooltip: l10n.setupMedDeleteDrug,
                   onPressed: onRemove,
+                  color: AppTokens.errorColor(context),
                 ),
               ],
             ),

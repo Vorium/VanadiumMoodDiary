@@ -32,3 +32,6 @@ Thumbs.db
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# In-progress test scaffolds (R57+ AliyunSmsProvider 等依赖未加 pubspec 时用)
+*.disabled

@@ -1,0 +1,43 @@
+v0.25 round 56c''': TDD 补全 (spen P0 #15) — 3 个 sub-service +21 unit test
+
+3 个 0-test sub-service 补 unit test:
+
+1. AssessmentNotifier +4 (4 个 test):
+   - const assessmentReminderId = 7000
+   - scheduleAssessmentReminder: fireAt=未来 → zonedAt 调 1 次, id=7000
+   - scheduleAssessmentReminder: fireAt=过去 → 跳过 (R52 P0-3 race 修)
+   - cancelAssessmentReminder: 走 plugin 通道 1 次 (id=7000)
+
+2. SafetyAlertDispatcher +7 (7 个 test):
+   - buildAlertSms: userName 给定 → 包含 "3 天未打卡"
+   - buildAlertSms: userName=null → 退化为 "您" (R23 P1-24 safeUserName fallback)
+   - buildAlertSms: days=1 singular
+   - dispatchAlert: 3 contact, 2 ok + 1 fail → 返 (2,1,0)
+   - dispatchAlert: mock provider → (0,0,N) (R52 spen P0 #12 修复)
+   - dispatchAlert: 空 contacts → (0,0,0) + showSafetyAlert 仍调 1 次
+   - dispatchAlert: 写 audit log (setLastAlertAt = effectiveNow)
+
+3. MoodAudioService +10 (10 个 test):
+   - 构造不抛 (注入 maxDuration + tickInterval 是 spen-4 test helper)
+   - 初始 isRecording=false / recordingElapsed=zero / isSttListening=false
+   - sttTranscriptStream 是 broadcast Stream<String>
+   - 未 start stopRecording → null (idempotent)
+   - 未 start cancelRecording → 不抛 (idempotent)
+   - dispose 不抛
+   - dispose 后 stop/cancel 仍 idempotent
+   - dispose 后 stream 已 close (新 listen 立即 onDone)
+
+技术细节:
+- AssessmentNotifier mock 走 ReminderDispatcher interface (跟 refill_notifier 同模式)
+- SafetyAlertDispatcher 用了 _CountingNotificationService / _CountingConfigService
+  subclass 覆盖 showSafetyAlert / setLastAlertAt (避免 init() + SharedPreferences
+  静态 API 复杂 mock)
+- _ScriptedSmsProvider 按 phone 号码返不同 SmsResult,覆盖 ok/fail/mock 3 kind
+- MoodAudioServiceImpl 测只覆盖"不需 platform channel"的部分 (构造 + 状态 +
+  dispose);完整录音生命周期测试需要 mock record + speech_to_text + path_provider
+  3 个 channel,后续可加 R56c'''' 大 round
+
+verify:
+- flutter analyze: 0 error (28 info, prefer_const_constructors)
+- flutter test: 1098 全过 (1077 → 1098, +21)
+- 11 守门员脚本: 全绿

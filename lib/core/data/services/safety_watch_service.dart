@@ -69,26 +69,54 @@ class SafetyWatchService {
         _contactWatchTimeout = contactWatchTimeout;
 
   // ============== 配置 API（给 settings_page 用，R57 facade 委托）==============
+  //
+  // v0.26 round 57 (spen P2 #7): 8 个 config 1-line facade 公开 API 重复,
+  // deprecate 8 个 facade 方法 → 建议 caller 改用 `safetyConfigServiceProvider`
+  // 直接拿 [SafetyConfigService] 调。R57 之后 facade 留 _checkAndAlert 编排入口
+  // 即可, 配置 API 全下沉到 sub-service。
+  //
+  // 进度: 已加 @Deprecated 注解, caller 暂时仍能编译 (注释 warning), 后续
+  // R58+ 大改时再移除, 跟 R53a (app_database 拆 7 DAO) 模式一致。
 
   /// 是否启用安全开关
+  ///
+  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`
+  /// 拿到 [SafetyConfigService] 后调 `isEnabled()`。
+  @Deprecated('Use safetyConfigServiceProvider directly')
   Future<bool> isEnabled() => _config.isEnabled();
 
   /// 切换启用状态
+  ///
+  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
+  @Deprecated('Use safetyConfigServiceProvider directly')
   Future<void> setEnabled(bool value) => _config.setEnabled(value);
 
   /// 阈值天数（连续多少天没打卡触发）
+  ///
+  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
+  @Deprecated('Use safetyConfigServiceProvider directly')
   Future<int> getThresholdDays() => _config.getThresholdDays();
 
+  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
+  @Deprecated('Use safetyConfigServiceProvider directly')
   Future<void> setThresholdDays(int days) => _config.setThresholdDays(days);
 
   /// DND 时段（小时，24h 制，start < end 同一天；跨天用 start > end 表示）
+  ///
+  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
+  @Deprecated('Use safetyConfigServiceProvider directly')
   Future<({int? start, int? end})> getDoNotDisturb() =>
       _config.getDoNotDisturb();
 
+  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
+  @Deprecated('Use safetyConfigServiceProvider directly')
   Future<void> setDoNotDisturb({int? startHour, int? endHour}) =>
       _config.setDoNotDisturb(startHour: startHour, endHour: endHour);
 
   /// 上次告警时间（ISO string）
+  ///
+  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
+  @Deprecated('Use safetyConfigServiceProvider directly')
   Future<DateTime?> getLastAlertAt() => _config.getLastAlertAt();
 
   // ============== 触发入口 ==============

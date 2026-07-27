@@ -335,9 +335,9 @@ class AppTokens {
 
   // v0.25 round 56 (emil P1): chart 占位 + sparkline 高度集中器
   // 替代散落 5+ 处 `SizedBox(height: 200)` / `height: 80` magic
+  // v0.26 round 57 (emil C-10): 删 sparklineHeight + heatmapLabelWidth
+  // (R56 加了但 0 引用, R57 修真后确认无合适使用场景, 删 const 避免 dead token)
   static const double chartPlaceholderHeight = 200.0;
-  static const double sparklineHeight = 80.0;
-  static const double heatmapLabelWidth = 60.0;
   static const double eventTimeColWidth = 36.0;
 
   // v0.25 round 56 (emil A3 续): shimmer 配套 (已有 shimmerCycleMs, 缺 pause)
@@ -653,6 +653,18 @@ class AppTokens {
         fontSize: fontSizeScoreXxl,
         fontWeight: FontWeight.w700,
         height: lineHeightTight,
+        color: textPrimaryColor(context),
+      );
+
+  /// v0.26 round 57 (emil EMIL-INC-03): monospace 集中器
+  /// 替代散落 3 处 `TextStyle(fontFamily: 'monospace', fontSize: 12)` 硬编
+  /// 缺省 fontSize = fontSizeBodySm (13) — 接近代码阅读舒适尺寸
+  /// 透传 size 给 3 个使用场景 (fontSizeBodySm 13 / fontSizeCaptionSm 12)
+  static TextStyle textStyleMono(BuildContext context, {double? size}) =>
+      TextStyle(
+        fontFamily: 'monospace',
+        fontSize: size ?? fontSizeBodySm,
+        height: lineHeightNormal,
         color: textPrimaryColor(context),
       );
 

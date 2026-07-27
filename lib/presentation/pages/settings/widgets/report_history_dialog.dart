@@ -11,6 +11,8 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/medication_report_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 报告历史列表 dialog
 class ReportHistoryListDialog extends ConsumerWidget {
@@ -40,8 +42,11 @@ class ReportHistoryListDialog extends ConsumerWidget {
                     ),
                   ),
                   const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close),
+                  // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
+                  // 原 IconButton 缺 tooltip, 这里加 commonClose 走无障碍标准
+                  PressFeedbackIconButton(
+                    icon: Icons.close,
+                    tooltip: AppLocalizations.of(context).commonClose,
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -75,7 +80,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (ctx, i) {
                       final h = histories[i];
-                      return ListTile(
+                      // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+                      return AppListTile.standard(
                         leading:Icon(
                           Icons.description_outlined,
                           color: AppTokens.primaryColor(context),
@@ -83,9 +89,9 @@ class ReportHistoryListDialog extends ConsumerWidget {
                         title: Text(
                           AppLocalizations.of(context).reportHistoryItemTitle(
                               Formatters.dateTime(h.generatedAt), h.windowDays,),
-                          style: const TextStyle(
-                            fontSize: AppTokens.fontSizeLabel,
-                          ),
+                          // v0.26 round 57 (emil B-10): 走 textStyleLabel 集中器
+                          // 替代内联 TextStyle(fontSizeLabel) (ListTile title)
+                          style: AppTokens.textStyleLabel(context),
                         ),
                         subtitle: Text(
                           // v0.21 Round 23 (P1-24): userName nullable
@@ -95,17 +101,16 @@ class ReportHistoryListDialog extends ConsumerWidget {
                                     .reportHistoryItemNotSet
                                 : h.userName!,
                           ),
-                          style: TextStyle(
-                            fontSize: AppTokens.fontSizeCaption,
-                            color: AppTokens.textHintColor(context),
-                          ),
+                          // v0.26 round 57 (emil B-10): 走 textStyleCaptionHint 集中器
+                          // 替代内联 TextStyle(fontSizeCaption, textHintColor)
+                          style: AppTokens.textStyleCaptionHint(context),
                         ),
-                        trailing: IconButton(
-                          icon:Icon(
-                            Icons.delete_outline,
-                            color: AppTokens.errorColor(context),
-                          ),
+                        trailing: // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
+                            PressFeedbackIconButton(
+                          icon: Icons.delete_outline,
+                          tooltip: AppLocalizations.of(context).commonDelete,
                           onPressed: () => _deleteOne(context, ref, h.id),
+                          color: AppTokens.errorColor(context),
                         ),
                         onTap: () => _openDetail(context, h),
                       );

@@ -156,7 +156,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupStep.
   ///
   /// In zh, this message translates to:
-  /// **'第 {current} 步 / 共 {total} 步'**
+  /// **'第 {current} 步 ／ 共 {total} 步'**
   String setupStep(int current, int total);
 
   /// No description provided for @setupHello.
@@ -627,6 +627,12 @@ abstract class AppLocalizations {
   /// **'关闭'**
   String get commonClose;
 
+  /// No description provided for @commonRefresh.
+  ///
+  /// In zh, this message translates to:
+  /// **'刷新'**
+  String get commonRefresh;
+
   /// No description provided for @commonRetry.
   ///
   /// In zh, this message translates to:
@@ -906,7 +912,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardWebTitle.
   ///
   /// In zh, this message translates to:
-  /// **'通知功能仅在 Android / iOS 上可用'**
+  /// **'通知功能仅在 Android ／ iOS 上可用'**
   String get notificationStatusCardWebTitle;
 
   /// No description provided for @notificationStatusCardWebSubtitle.
@@ -984,7 +990,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemBrandXiaomi.
   ///
   /// In zh, this message translates to:
-  /// **'小米 / Redmi'**
+  /// **'小米 ／ Redmi'**
   String get notificationStatusCardOemBrandXiaomi;
 
   /// No description provided for @notificationStatusCardOemStepXiaomi1.
@@ -1032,7 +1038,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemBrandOppo.
   ///
   /// In zh, this message translates to:
-  /// **'OPPO / realme / 一加'**
+  /// **'OPPO ／ realme ／ 一加'**
   String get notificationStatusCardOemBrandOppo;
 
   /// No description provided for @notificationStatusCardOemStepOppo1.
@@ -1056,7 +1062,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemBrandVivo.
   ///
   /// In zh, this message translates to:
-  /// **'Vivo / iQOO'**
+  /// **'Vivo ／ iQOO'**
   String get notificationStatusCardOemBrandVivo;
 
   /// No description provided for @notificationStatusCardOemStepVivo1.
@@ -2443,7 +2449,7 @@ abstract class AppLocalizations {
   /// No description provided for @legalPageWithdrawAnalyticsSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'停止将评估/情绪记录纳入趋势分析（数据保留，不再入图表）'**
+  /// **'停止将评估／情绪记录纳入趋势分析（数据保留，不再入图表）'**
   String get legalPageWithdrawAnalyticsSubtitle;
 
   /// No description provided for @legalPageConsentRecorded.
@@ -3373,7 +3379,7 @@ abstract class AppLocalizations {
   /// No description provided for @medicationTimeWindowSemantics.
   ///
   /// In zh, this message translates to:
-  /// **'时间窗口 {days} 天，7/30/90 单选'**
+  /// **'时间窗口 {days} 天，7／30／90 单选'**
   String medicationTimeWindowSemantics(Object days);
 
   /// No description provided for @assessmentSaveFailed.

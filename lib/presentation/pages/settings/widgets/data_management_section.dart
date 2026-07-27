@@ -163,9 +163,11 @@ class DataManagementSection extends ConsumerWidget {
                   child: SingleChildScrollView(
                     child: SelectableText(
                       json,
-                      style: const TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: AppTokens.fontSizeCaptionSm,
+                      // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
+                      // 替代内联 TextStyle('monospace', fontSizeCaptionSm)
+                      style: AppTokens.textStyleMono(
+                        context,
+                        size: AppTokens.fontSizeCaptionSm,
                       ),
                     ),
                   ),
@@ -360,7 +362,13 @@ class DataManagementSection extends ConsumerWidget {
                   hintText: AppLocalizations.of(context).settingsImportHint,
                   border: const OutlineInputBorder(),
                 ),
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
+                // 替代内联 TextStyle('monospace', fontSize: 12)
+                // 注: 12.0 = fontSizeCaptionSm, 等价
+                style: AppTokens.textStyleMono(
+                  context,
+                  size: AppTokens.fontSizeCaptionSm,
+                ),
               ),
             ],
           ),

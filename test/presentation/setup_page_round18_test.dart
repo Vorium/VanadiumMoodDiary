@@ -143,9 +143,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('您常吃什么药？'), findsOneWidget);
       expect(
-        find.textContaining('步 / 共'),
+        find.textContaining('步 ／ 共'),
         findsOneWidget,
-        reason: 'P0-6: 顶部应该显示"第 X 步 / 共 X 步" (4 步流程)',
+        reason: 'P0-6: 顶部应该显示"第 X 步 ／ 共 X 步" (4 步流程, spzh v0.26 半角→全角规范化)',
       );
     },
   );

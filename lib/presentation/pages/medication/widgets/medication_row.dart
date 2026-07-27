@@ -13,6 +13,8 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 /// 单个药物行 (含 Dismissible swipe-to-dismiss + 3 IconButton)
 class MedicationRow extends StatelessWidget {
@@ -53,7 +55,9 @@ class MedicationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final refillText = _refillSubtitle(med, context);
     final isStopped = !med.isActive;
-    final tile = ListTile(
+    // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+    // 替代 inline ListTile (Dismissible 包裹, 不影响 ListTile 本身)
+    final tile = AppListTile.standard(
       leading: Icon(
         isStopped ? Icons.medication : Icons.medication_outlined,
         color: isStopped ? AppTokens.textHintColor(context) : AppTokens.primaryColor(context),
@@ -63,6 +67,9 @@ class MedicationRow extends StatelessWidget {
           Flexible(
             child: Text(
               med.name,
+              // 注: 不走 textStyleBody 集中器, 因为原 inline TextStyle
+              // 没 fontSize, 走 ListTile.title 默认 (16/w400) 视觉一致
+              // 故意保留 TextStyle 透传给 ListTile 内嵌标题
               style: TextStyle(
                 decoration: isStopped ? TextDecoration.lineThrough : null,
                 color: isStopped ? AppTokens.textHintColor(context) : null,
@@ -124,26 +131,28 @@ class MedicationRow extends StatelessWidget {
             )
           else ...[
             // 编辑按钮（v0.13 Round 9）
-            IconButton(
-              icon:Icon(Icons.edit_outlined, color: AppTokens.primaryColor(context)),
+            // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
+            PressFeedbackIconButton(
+              icon: Icons.edit_outlined,
               tooltip: AppLocalizations.of(context).commonEdit,
               onPressed: onEdit,
+              color: AppTokens.primaryColor(context),
             ),
             if (!isStopped)
-              IconButton(
-                icon:Icon(
-                  Icons.event_available_outlined,
-                  color: AppTokens.primaryColor(context),
-                ),
+              PressFeedbackIconButton(
+                icon: Icons.event_available_outlined,
                 tooltip: AppLocalizations.of(context).medsActionRefill,
                 onPressed: onEditRefill,
+                color: AppTokens.primaryColor(context),
               ),
           ],
           if (!isDeleting && !isEditing && !isEditingRefill)
-            IconButton(
-              icon:Icon(Icons.delete_outline, color: AppTokens.errorColor(context)),
+            // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
+            PressFeedbackIconButton(
+              icon: Icons.delete_outline,
               tooltip: AppLocalizations.of(context).commonDelete,
               onPressed: onDelete,
+              color: AppTokens.errorColor(context),
             ),
         ],
       ),

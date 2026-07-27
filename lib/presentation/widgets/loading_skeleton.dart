@@ -126,7 +126,9 @@ class _ShimmerState extends State<_Shimmer>
     // 实现"呼吸"模式, 代替之前 repeat(reverse: true) 永久脉动
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed && _isBreathing) {
-        Future.delayed(const Duration(milliseconds: 600), () {
+        // v0.26 round 57 (emil C-10): 走 shimmerPauseMs 集中器
+        // 替代 inline Duration(milliseconds: 600) magic
+        Future.delayed(const Duration(milliseconds: AppTokens.shimmerPauseMs), () {
           if (mounted && _isBreathing) {
             _controller.value = 0.0;
             _controller.forward();

@@ -78,11 +78,12 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                     child: SingleChildScrollView(
                       child: SelectableText(
                         widget.report,
-                        style: TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: AppTokens.fontSizeBodySm,
-                          height: AppTokens.lineHeightNormal,
-                          color: AppTokens.textPrimaryColor(context),
+                        // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
+                        // 替代内联 TextStyle('monospace', fontSizeBodySm, lineHeight, color)
+                        // textStyleMono 自带 lineHeightNormal + textPrimaryColor
+                        style: AppTokens.textStyleMono(
+                          context,
+                          size: AppTokens.fontSizeBodySm,
                         ),
                       ),
                     ),

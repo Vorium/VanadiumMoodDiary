@@ -105,8 +105,10 @@ class MoodHistoryChart extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppTokens.spacingSm),
+            // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+            // 替代 inline height: 200 magic (LineChart 标准高度)
             SizedBox(
-              height: 200,
+              height: AppTokens.chartPlaceholderHeight,
               child: LineChart(
                 LineChartData(
                   minX: 0,

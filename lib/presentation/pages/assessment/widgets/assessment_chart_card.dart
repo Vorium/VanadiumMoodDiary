@@ -11,6 +11,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_severity_style.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 class AssessmentChartCard extends StatelessWidget {
   final String scaleId;
@@ -25,15 +26,15 @@ class AssessmentChartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     if (records.length < 2) {
-      return Card(
-        child: ListTile(
-          leading: Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
-          title: Text(nameForScale(scaleId, l10n)),
-          subtitle: Text(
-            records.isEmpty
-                ? l10n.assessmentChartNoData
-                : l10n.assessmentChartNeedMore,
-          ),
+      // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
+      // carded 命名构造自带 Card 包裹, 替代 inline Card(child: ListTile)
+      return AppListTile.carded(
+        leading: Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
+        title: Text(nameForScale(scaleId, l10n)),
+        subtitle: Text(
+          records.isEmpty
+              ? l10n.assessmentChartNoData
+              : l10n.assessmentChartNeedMore,
         ),
       );
     }

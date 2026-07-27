@@ -18,6 +18,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_empty_state.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_row.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 /// 药物列表渲染 (header card + active list + stopped list)
 ///
@@ -77,17 +78,16 @@ class MedicationListView extends StatelessWidget {
   }
 
   Widget _buildCalendarEntry(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading:Icon(
-          Icons.calendar_view_month,
-          color: AppTokens.primaryColor(context),
-        ),
-        title: Text(AppLocalizations.of(context).medsCalendarTitle),
-        subtitle: Text(AppLocalizations.of(context).medsCalendarSubtitle),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.push('/medication/calendar'),
+    // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
+    return AppListTile.carded(
+      leading:Icon(
+        Icons.calendar_view_month,
+        color: AppTokens.primaryColor(context),
       ),
+      title: Text(AppLocalizations.of(context).medsCalendarTitle),
+      subtitle: Text(AppLocalizations.of(context).medsCalendarSubtitle),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => context.push('/medication/calendar'),
     );
   }
 

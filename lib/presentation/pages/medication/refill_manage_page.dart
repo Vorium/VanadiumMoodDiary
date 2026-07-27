@@ -21,6 +21,7 @@ import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 /// 续方状态
 enum RefillStatus {
@@ -242,7 +243,9 @@ class _RefillRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final m = row.med;
     final statusColor = row.status.colorOf(context);
-    return ListTile(
+    // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+    // 替代 inline ListTile + PressFeedback
+    return AppListTile.standard(
       onTap: onTap,
       leading: _StatusDot(status: row.status),
       title: Row(
@@ -276,10 +279,9 @@ class _RefillRow extends StatelessWidget {
         padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
         child: Text(
           _subtitleFor(context, row),
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeCaption,
-            color: AppTokens.textHintColor(context),
-          ),
+          // v0.26 round 57 (emil B-10): 走 textStyleCaptionHint 集中器
+          // 替代内联 TextStyle(fontSizeCaption, textHintColor)
+          style: AppTokens.textStyleCaptionHint(context),
         ),
       ),
       trailing:

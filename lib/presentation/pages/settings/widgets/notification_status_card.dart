@@ -26,6 +26,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 通知自检卡
 class NotificationStatusCard extends ConsumerStatefulWidget {
@@ -127,7 +128,9 @@ class _NotificationStatusCardState
                     itemCount: pending.length,
                     itemBuilder: (_, i) {
                       final p = pending[i];
-                      return ListTile(
+                      // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+                      // dense + maxLines 透传
+                      return AppListTile.standard(
                         dense: true,
                         leading: const Icon(Icons.notifications_outlined),
                         title: Text(
@@ -162,16 +165,16 @@ class _NotificationStatusCardState
     // web / desktop 平台提示
     if (kIsWeb) {
       final l10n = AppLocalizations.of(context);
-      return Card(
-        child: ListTile(
-          leading:
-              Icon(Icons.info_outline, color: AppTokens.textHintColor(context)),
-          title: Text(l10n.notificationStatusCardWebTitle),
-          subtitle: Text(
-            l10n.notificationStatusCardWebSubtitle,
-            style: AppTokens.textStyleBody(context)
-                .copyWith(color: AppTokens.textHintColor(context)),
-          ),
+      // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
+      // carded 命名构造自带 Card 包裹
+      return AppListTile.carded(
+        leading:
+            Icon(Icons.info_outline, color: AppTokens.textHintColor(context)),
+        title: Text(l10n.notificationStatusCardWebTitle),
+        subtitle: Text(
+          l10n.notificationStatusCardWebSubtitle,
+          style: AppTokens.textStyleBody(context)
+              .copyWith(color: AppTokens.textHintColor(context)),
         ),
       );
     }
@@ -189,7 +192,9 @@ class _NotificationStatusCardState
     return Card(
       child: Column(
         children: [
-          ListTile(
+          // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+          // 替代 inline ListTile (在 Card > Column 内, 不用 carded 避免 Card 嵌套)
+          AppListTile.standard(
             leading:Icon(
               Icons.notifications_active_outlined,
               color: AppTokens.primaryColor(context),
@@ -204,16 +209,19 @@ class _NotificationStatusCardState
               alignment: Alignment.topLeft,
               child: Text(statusText),
             ),
-            trailing: IconButton(
-              icon: _busy
-                  ? const SizedBox(
-                      width: AppTokens.spacingSm,
-                      height: 16,
-                      child: LoadingSpinner(size: 16),
-                    )
-                  : const Icon(Icons.refresh),
-              onPressed: _busy ? null : _refresh,
-            ),
+            // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
+            // _busy 状态保留原 spinner 视觉 (大小匹配), 非 busy 走集中器
+            trailing: _busy
+                ? const SizedBox(
+                    width: AppTokens.spacingSm,
+                    height: 16,
+                    child: LoadingSpinner(size: 16),
+                  )
+                : PressFeedbackIconButton(
+                    icon: Icons.refresh,
+                    tooltip: AppLocalizations.of(context).commonRefresh,
+                    onPressed: _refresh,
+                  ),
           ),
           const Divider(height: 1),
           AppListTile(

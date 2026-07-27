@@ -31,6 +31,7 @@ import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 class MedicationCalendarPage extends ConsumerWidget {
   const MedicationCalendarPage({super.key});
@@ -81,7 +82,10 @@ class MedicationCalendarPage extends ConsumerWidget {
             // (TalkBack 读"时间窗口 7/30/90 天，当前 30" 让用户知道是单选)
             child: AppSemantics.container(
               label: AppLocalizations.of(context).medicationTimeWindowSemantics(days),
-              child: SegmentedButton<int>(
+              // v0.26 round 57 (emil EMIL-INC-06): 走 PressFeedback 集中器
+              // 替代裸 SegmentedButton (无 :active scale 反馈)
+              child: PressFeedback(
+                child: SegmentedButton<int>(
                 segments: [
                   ButtonSegment(
                       value: 7,
@@ -102,6 +106,7 @@ class MedicationCalendarPage extends ConsumerWidget {
                 showSelectedIcon: false,
                 onSelectionChanged: (s) =>
                     ref.read(calendarWindowProvider.notifier).setDays(s.first),
+                ),
               ),
             ),
           ),

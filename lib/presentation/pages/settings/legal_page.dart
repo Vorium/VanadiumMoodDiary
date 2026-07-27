@@ -17,6 +17,7 @@ import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 class LegalPage extends ConsumerStatefulWidget {
   const LegalPage({super.key});
@@ -205,7 +206,9 @@ class _DocTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+    // 替代 inline ListTile + PressFeedback
+    return AppListTile.standard(
       leading: Icon(icon, color: AppTokens.primaryColor(context)),
       title: Text(title),
       trailing: const Icon(Icons.chevron_right),

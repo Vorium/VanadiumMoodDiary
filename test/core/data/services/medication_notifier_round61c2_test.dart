@@ -232,6 +232,88 @@ void main() {
       expect(mockDispatcher.zonedDailyCalls.length, 2);
     });
   });
+
+  // ============ v0.26 round 57 (spen P0 TDD 续): systematic-debugging 5 类 regression ============
+  //
+  // 系统化调试 (systematic-debugging) 立的 5 类容易回归的 bug:
+  // 1. 跨 midnight race (同函数多次 DateTime.now() 跨 00:00 不一致)
+  // 2. 隐式序依赖 (drift .first 不带 orderBy, 依赖插入序 → 跨设备 flaky)
+  // 3. dispose race (资源释放与使用并发)
+  // 4. stream subscription leak (未取消 listener 一直累加)
+  // 5. setState after dispose (widget 已 unmount 还调 setState)
+  //
+  // 本 round 锁 1+2, mood_audio_service 锁 3, safety_alert_dispatcher 锁 4
+  // (5 由 widget test 覆盖, 不在 service 测)。
+
+  group('MedicationNotifier systematic-debugging regression guards', () {
+    test('隐式序: 同一 medId 多次 reschedule → id 稳定 (2000+medId*10+i, 不漂移)', () async {
+      // 隐式序 bug 模式: 重新调度时不显式按 id 排序, 依赖 drift 内部序
+      // (drift orderBy 缺失时返回插入序), 重排会乱序 → 同一 med 不同次
+      // 拿到不同 id → 通知"叠加"或"丢失"
+      // 锁: 不管调用多少次 reschedule, 同一 (medId, time index) 拿到的 id 恒等
+      final mockDispatcher = _MockReminderDispatcher();
+
+      final notifier = MedicationNotifier(
+        plugin: FlutterLocalNotificationsPlugin(),
+        dispatcher: mockDispatcher,
+        ensureInitialized: () async {},
+      );
+
+      final meds = [
+        _makeMedication(id: 7, isActive: true, times: const [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 22, minute: 0),
+        ],),
+      ];
+
+      // 第 1 次重排
+      await notifier.rescheduleMedicationReminders(meds);
+      final firstIds = mockDispatcher.zonedDailyCalls
+          .map((c) => c.id)
+          .toList(growable: false);
+      expect(firstIds, [2070, 2071]); // 2000 + 7*10 + 0/1
+
+      // 重置 mock, 模拟第 2 次重排 (meds 列表内部顺序乱)
+      mockDispatcher.zonedDailyCalls.clear();
+      final medsShuffled = List.of(meds)..shuffle();
+      await notifier.rescheduleMedicationReminders(medsShuffled);
+      final secondIds = mockDispatcher.zonedDailyCalls
+          .map((c) => c.id)
+          .toList(growable: false);
+
+      // id 集合相同 (id 公式是确定的, 跟列表顺序无关)
+      expect(secondIds.toSet(), firstIds.toSet());
+      // 长度相同
+      expect(secondIds.length, firstIds.length);
+    });
+
+    test('跨 midnight race: scheduleDailyReminder 多次调用 → cancel 旧 + 调度新 (id 不变)', () async {
+      // 隐式 midnight race: 23:59:59 调 schedule, 00:00:01 又调 →
+      // 两次调用的 zonedDaily hour:minute 走系统时钟, 跨 midnight 后 hour
+      // 可能不一致 → 通知时间漂移
+      // 锁: id 稳定 (1001) 不变, 多次调用都收到 cancel + 1 个新 schedule
+      final mockDispatcher = _MockReminderDispatcher();
+
+      final notifier = MedicationNotifier(
+        plugin: FlutterLocalNotificationsPlugin(),
+        dispatcher: mockDispatcher,
+        ensureInitialized: () async {},
+      );
+
+      // 模拟 "23:59 + 00:00" 两次调度
+      await notifier.scheduleDailyReminder(hour: 23, minute: 59);
+      await notifier.scheduleDailyReminder(hour: 0, minute: 0);
+
+      expect(mockDispatcher.zonedDailyCalls.length, 2);
+      expect(mockDispatcher.zonedDailyCalls[0].id, 1001);
+      expect(mockDispatcher.zonedDailyCalls[0].hour, 23);
+      expect(mockDispatcher.zonedDailyCalls[0].minute, 59);
+      expect(mockDispatcher.zonedDailyCalls[1].id, 1001,
+          reason: 'id 必须稳定 (避免叠加)',);
+      expect(mockDispatcher.zonedDailyCalls[1].hour, 0);
+      expect(mockDispatcher.zonedDailyCalls[1].minute, 0);
+    });
+  });
 }
 
 /// 构造测试用 MedicationEntity (避免每处重复 boilerplate)

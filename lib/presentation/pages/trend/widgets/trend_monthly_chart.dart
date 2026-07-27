@@ -38,7 +38,9 @@ class MonthlyChart extends StatelessWidget {
         .map((m) => m.rate * 100)
         .fold<double>(0, (a, b) => a > b ? a : b)).clamp(10, 100).toDouble();
     return SizedBox(
-      height: 200,
+      // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+      // 替代 inline height: 200 magic (BarChart 标准高度)
+      height: AppTokens.chartPlaceholderHeight,
       child: BarChart(
         BarChartData(
           maxY: maxY,

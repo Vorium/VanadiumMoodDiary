@@ -43,7 +43,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String setupStep(int current, int total) {
-    return '第 $current 步 / 共 $total 步';
+    return '第 $current 步 ／ 共 $total 步';
   }
 
   @override
@@ -288,6 +288,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonClose => '关闭';
 
   @override
+  String get commonRefresh => '刷新';
+
+  @override
   String get commonRetry => '重试';
 
   @override
@@ -442,7 +445,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationStatusCardNoTitle => '（无标题）';
 
   @override
-  String get notificationStatusCardWebTitle => '通知功能仅在 Android / iOS 上可用';
+  String get notificationStatusCardWebTitle => '通知功能仅在 Android ／ iOS 上可用';
 
   @override
   String get notificationStatusCardWebSubtitle =>
@@ -485,7 +488,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '小米／华为／OPPO／Vivo／三星 默认会杀后台，点这里看怎么设';
 
   @override
-  String get notificationStatusCardOemBrandXiaomi => '小米 / Redmi';
+  String get notificationStatusCardOemBrandXiaomi => '小米 ／ Redmi';
 
   @override
   String get notificationStatusCardOemStepXiaomi1 =>
@@ -514,7 +517,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationStatusCardOemStepHuawei3 => '手机管家 → 应用启动管理 → 关闭「自动管理」';
 
   @override
-  String get notificationStatusCardOemBrandOppo => 'OPPO / realme / 一加';
+  String get notificationStatusCardOemBrandOppo => 'OPPO ／ realme ／ 一加';
 
   @override
   String get notificationStatusCardOemStepOppo1 =>
@@ -527,7 +530,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get notificationStatusCardOemStepOppo3 => '「最近任务」界面上锁 App（下滑小锁图标）';
 
   @override
-  String get notificationStatusCardOemBrandVivo => 'Vivo / iQOO';
+  String get notificationStatusCardOemBrandVivo => 'Vivo ／ iQOO';
 
   @override
   String get notificationStatusCardOemStepVivo1 =>
@@ -1313,7 +1316,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get legalPageWithdrawAnalyticsSubtitle =>
-      '停止将评估/情绪记录纳入趋势分析（数据保留，不再入图表）';
+      '停止将评估／情绪记录纳入趋势分析（数据保留，不再入图表）';
 
   @override
   String legalPageConsentRecorded(Object time) {
@@ -1833,7 +1836,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String medicationTimeWindowSemantics(Object days) {
-    return '时间窗口 $days 天，7/30/90 单选';
+    return '时间窗口 $days 天，7／30／90 单选';
   }
 
   @override
@@ -2136,6 +2139,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get commonClose => '關閉';
+
+  @override
+  String get commonRefresh => '刷新';
 
   @override
   String get commonRetry => '重試';
@@ -3696,7 +3702,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String emailBodyI18n(String name, int days) {
-    return '我是 $name，已經 $days 天沒在 App 裏打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。';
+    return '我是 $name，已經 $days 天沒在 App 裏打卡了。\n請您方便的時候提醒我按時吃藥，避免復發。';
   }
 
   @override

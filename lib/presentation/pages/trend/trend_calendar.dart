@@ -453,13 +453,16 @@ class _EventRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 36,
+            // v0.26 round 57 (emil C-10): 走 eventTimeColWidth 集中器
+            // 替代 inline width: 36 magic (timeline event 时间列宽)
+            width: AppTokens.eventTimeColWidth,
             child: Text(
               timePrefix,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textHintColor(context),
+              // v0.26 round 57 (emil B-10): 走 textStyleCaption 集中器
+              // 替代内联 TextStyle(fontSizeCaption, w500, textHintColor)
+              style: AppTokens.textStyleCaption(context).copyWith(
                 fontWeight: FontWeight.w500,
+                color: AppTokens.textHintColor(context),
               ),
             ),
           ),

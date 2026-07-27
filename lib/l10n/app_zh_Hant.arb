@@ -127,6 +127,7 @@
   "commonLoading": "加載中……",
   "lastStartupErrorBannerBody": "上次啟動出錯，請截圖反饋",
   "commonClose": "關閉",
+  "commonRefresh": "刷新",
   "commonRetry": "重試",
   "commonGotIt": "我知道了",
   "commonConfirmDelete": "刪除這條？",
@@ -1148,7 +1149,7 @@
       }
     }
   },
-  "emailBodyI18n": "我是 {name}，已經 {days} 天沒在 App 裏打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。",
+  "emailBodyI18n": "我是 {name}，已經 {days} 天沒在 App 裏打卡了。\n請您方便的時候提醒我按時吃藥，避免復發。",
   "@emailBodyI18n": {
     "placeholders": {
       "name": {

@@ -98,10 +98,11 @@ void main() {
 
       // 顶部标题 (P0-6:加 consent 步后是 4 步流程)
       // 用 textContaining 因为可能中文字符不完全一致
+      // v0.26 round 57 spzh: 半角 / 改全角 ／ (中文标点规范化)
       expect(
-        find.textContaining('步 / 共'),
+        find.textContaining('步 ／ 共'),
         findsOneWidget,
-        reason: '顶部应该显示"第 X 步 / 共 X 步" (P0-6 加 consent 步后是 4 步)',
+        reason: '顶部应该显示"第 X 步 ／ 共 X 步" (P0-6 加 consent 步后是 4 步)',
       );
 
       // 上一步按钮

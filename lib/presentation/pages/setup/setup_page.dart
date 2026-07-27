@@ -22,6 +22,7 @@ import 'package:chroniccare/presentation/pages/setup/setup_step_welcome.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_medication.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_done.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 /// 首次设置引导页（4 步 wizard coordinator）
 
@@ -282,23 +283,24 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               ),
               const SizedBox(height: AppTokens.spacingSm),
               for (final t in kMedicationTemplates)
-                Card(
-                  child: ListTile(
-                    leading:
-                        // v0.24 round 48 (sp-zh P1-17): emoji 视觉 < 文字,保持 fontSizeTitle 不变
-                        // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
-                        Text(t.emoji, style: const TextStyle(fontSize: AppTokens.fontSizeTitle)),
-                    title: Text(
-                      t.name,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    subtitle: Text(t.description),
-                    trailing: const Icon(Icons.add_circle_outline),
-                    onTap: () => Navigator.of(ctx).pop(
-                      TemplateApplyResult(
-                        template: t,
-                        append: _meds.isNotEmpty,
-                      ),
+                // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
+                AppListTile.carded(
+                  leading:
+                      // v0.24 round 48 (sp-zh P1-17): emoji 视觉 < 文字,保持 fontSizeTitle 不变
+                      // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
+                      Text(t.emoji, style: const TextStyle(fontSize: AppTokens.fontSizeTitle)),
+                  title: Text(
+                    t.name,
+                    // v0.26 round 57 (emil B-10): 走 textStyleLabelMedium 集中器
+                    // 替代内联 TextStyle(w500)  (ListTile.title 默认 fontSizeLabel)
+                    style: AppTokens.textStyleLabelMedium(context),
+                  ),
+                  subtitle: Text(t.description),
+                  trailing: const Icon(Icons.add_circle_outline),
+                  onTap: () => Navigator.of(ctx).pop(
+                    TemplateApplyResult(
+                      template: t,
+                      append: _meds.isNotEmpty,
                     ),
                   ),
                 ),
