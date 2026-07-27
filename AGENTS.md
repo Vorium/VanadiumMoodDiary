@@ -224,7 +224,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 总计 (本批): 1057 → 1098 tests (+41), 0 analyzer error, 12 守护脚本全绿 (新增 check_orphan_arb_keys).
 
-**12 守护脚本清单** (v0.25 round 56e 后):
+**16 守护脚本清单** (v0.27 round 60 修真, 此前 12 漏 4 个 v0.26 R57 新增):
 1. `python scripts/check_arb_keys.py` — zh / en / zh_Hant ARB 同步
 2. `python scripts/check_changelog.py` — pubspec 版本号 + CHANGELOG 顺序
 3. `python scripts/check_cross_feature.py` — 跨 feature import 边界
@@ -236,7 +236,11 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 9. `python scripts/check_no_pua.py` — PUA 字符
 10. `python scripts/check_widget_dispose.py` — 资源泄漏
 11. `python scripts/check_orphan_arb_keys.py` — **R56e 新增** — ARB key 定义但未引用
-12. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
+12. `python scripts/check_legal_consent.py` — **v0.26 R57 新增** — 单独同意 / PIPL §13 / §14 检测
+13. `python scripts/check_sms_release_ready.py` — **v0.26 R57 新增** (v0.27 R58 降为 warn-only) — SMS 上线前 checklist
+14. `python scripts/check_strings_hardcoded.py` — **v0.26 R57 新增** — 硬编码中文 string 检测
+15. `python scripts/check_zh_hant_consistency.py` — **v0.26 R57 新增** — 繁简一致性 (OpenCC s2tw)
+16. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
 
 **待办 (外部依赖, 非本批)**:
 - R55 真接阿里云 SMS (依赖法务 1-2 月模板审核 + 阿里云 AccessKey 申请)
