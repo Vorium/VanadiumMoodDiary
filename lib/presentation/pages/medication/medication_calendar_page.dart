@@ -274,7 +274,7 @@ class _HeaderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const SizedBox(width: _labelWidth, child: Text('')),
+        const SizedBox(width: AppTokens.calendarLabelWidth, child: Text('')),
         Expanded(
           child: Row(
             children: [
@@ -324,7 +324,7 @@ class _DataRow extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: _labelWidth,
+            width: AppTokens.calendarLabelWidth,
             child: Text(
               row.med.name,
               overflow: TextOverflow.ellipsis,
@@ -436,8 +436,6 @@ class _Legend extends StatelessWidget {
     );
   }
 }
-
-const double _labelWidth = 60;
 
 /// v0.23 round 40 (sp-en R8 fix): 抽 pure function 让 window 起点可测
 ///

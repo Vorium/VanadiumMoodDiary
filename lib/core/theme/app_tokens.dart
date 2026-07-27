@@ -340,6 +340,11 @@ class AppTokens {
   static const double chartPlaceholderHeight = 200.0;
   static const double eventTimeColWidth = 36.0;
 
+  // v0.27 round 60 (审计 M11 修真): medication_calendar label 列宽集中器
+  // 替代 `medication_calendar_page.dart:440` file-private `const _labelWidth = 60`
+  // (3 处使用: 周几 label + 时段 label 列宽). 加 token 后 design system 一致.
+  static const double calendarLabelWidth = 60.0;
+
   // v0.25 round 56 (emil A3 续): shimmer 配套 (已有 shimmerCycleMs, 缺 pause)
   // v0.24 round 45 加了 shimmerCycleMs=1200, 缺配套的 pause 时长。
   // emil "decisions should be nameable" — 600ms magic 应命名。
