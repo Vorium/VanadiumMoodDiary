@@ -390,10 +390,12 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
   Future<void> _save() async {
     setState(() => _busy = true);
     try {
-      final service = ref.read(safetyWatchServiceProvider);
-      await service.setEnabled(_enabled);
+      // v0.27 round 61 (P1-12 拆分收尾): 改走 safetyConfigServiceProvider
+      // 直接写 SharedPreferences, 不再走 safetyWatchServiceProvider facade。
+      final config = ref.read(safetyConfigServiceProvider);
+      await config.setEnabled(_enabled);
       if (_enabled) {
-        await service.setThresholdDays(_threshold);
+        await config.setThresholdDays(_threshold);
       }
       if (mounted) {
         widget.onSaved();

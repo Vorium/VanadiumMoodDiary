@@ -428,6 +428,8 @@
   "ventRecordIdle": "Tap to start recording",
   "ventRecordActive": "Recording... tap to stop",
   "ventAudioLabel": "Recording",
+  "ventAudioPlayTooltip": "Play recording",
+  "ventAudioPauseTooltip": "Pause recording",
   "ventRerecord": "Re-record",
   "moodDialogTitle": "How are you today?",
   "moodDimensionMood": "Mood",
@@ -869,6 +871,39 @@
     }
   },
   "homeSafetyAlertSuffix": "(please check in or contact family soon)",
+  "@homeSafetyAlertSuffix": {
+    "description": "Snackbar suffix paired with displayMessage — nudges user to check in or contact family"
+  },
+  "safetyAlertBodySent": "Last check-in: {date}. Auto-notified emergency contacts. Please confirm safety.",
+  "@safetyAlertBodySent": {
+    "description": "SafetyAlert body — SMS actually sent branch (P0-3 three-state fix, v0.27 R60)",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
+  "safetyAlertBodyMocked": "Last check-in: {date}. Lost-contact detection triggered, but currently in dev mode — emergency contacts were **NOT** actually notified.",
+  "@safetyAlertBodyMocked": {
+    "description": "SafetyAlert body — SMS mocked branch (avoid dev/release confusion, P0-3 three-state fix)",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
+  "safetyAlertBodyFailed": "Last check-in: {date}. Lost-contact detection triggered, but notification failed. Please check network.",
+  "@safetyAlertBodyFailed": {
+    "description": "SafetyAlert body — SMS failed branch (P0-3 three-state fix)",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
   "homeSnoozeTitle": "⏰ Time to check in (in 5 min)",
   "homeSnoozeBody": "You snoozed earlier — time to tap and check in",
   "homeSnoozeConfirmed": "OK, will remind you again in 5 min 👌",
@@ -977,6 +1012,21 @@
   "contactEmptyList": "No contacts yet — add one",
   "contactAddAction": "Add contact",
   "contactAddTitle": "Add Emergency Contact",
+  "contactConsentTitle": "Informed Consent",
+  "contactConsentBody": "You are about to save this contact's phone number in the local database. If you don't check in for {threshold} consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 13**, please confirm you have informed the contact of the above purpose and obtained their consent.",
+  "@contactConsentBody": {
+    "description": "PIPL §13 standalone consent dialog body",
+    "placeholders": {
+      "threshold": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "contactConsentAgree": "I have informed and obtained consent",
+  "contactConsentReject": "Decline for now",
+  "contactConsentVersion": "v1 · 2026-07-31",
+  "contactDefaultName": "Contact",
   "contactNameLabel": "Name",
   "contactPhoneLabel": "Phone",
   "commonActionDelete": "Delete",
@@ -1065,6 +1115,7 @@
   "snackbarActionCheckin": "Check-in",
   "snackbarActionSnooze": "Snooze",
   "snackbarActionAutoCheckin": "Auto check-in",
+  "snackbarActionFinishSetup": "Finish setup",
   "snackbarActionUndo": "Undo",
   "ventEntryDeleted": "Vent entry deleted",
   "contactDeleted": "Contact deleted",
@@ -1118,5 +1169,43 @@
       }
     }
   },
-  "emailFooterI18n": "This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings."
+  "emailFooterI18n": "This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings.",
+  "medicationUnitMg": "mg",
+  "medicationUnitTablet": "tablet",
+  "safetyCheckResultDisabled": "Safety watch is disabled",
+  "safetyCheckResultOk": "OK (last check-in {days} days ago)",
+  "@safetyCheckResultOk": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "safetyCheckResultNoData": "New user, no check-ins yet",
+  "safetyCheckResultAlertedToday": "Alert already sent today (last check-in {days} days ago)",
+  "@safetyCheckResultAlertedToday": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "safetyCheckResultDndSuppressed": "DND window, alert skipped",
+  "safetyCheckResultNoContacts": "No emergency contacts, alert not sent",
+  "safetyCheckResultAlertedMocked": "**Dev mode**, contacts not actually notified (mock: {mocked})",
+  "@safetyCheckResultAlertedMocked": {
+    "placeholders": {
+      "mocked": { "type": "int" }
+    }
+  },
+  "safetyCheckResultAlerted": "Alerted: {days} days since last check-in, {notified} contact(s) notified ({failed} failed)",
+  "@safetyCheckResultAlerted": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "notified": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "safetyCheckResultError": "Error: {message}",
+  "@safetyCheckResultError": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  }
 }

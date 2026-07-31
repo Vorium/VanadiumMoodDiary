@@ -1,4 +1,4 @@
-# AGENTS.md
+﻿# AGENTS.md
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 
@@ -224,7 +224,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 总计 (本批): 1057 → 1098 tests (+41), 0 analyzer error, 12 守护脚本全绿 (新增 check_orphan_arb_keys).
 
-**16 守护脚本清单** (v0.27 round 60 修真, 此前 12 漏 4 个 v0.26 R57 新增):
+**16 守护脚本清单** (v0.27 round 60 修正, 此前 12 漏 4 个 v0.26 R57 新增):
 1. `python scripts/check_arb_keys.py` — zh / en / zh_Hant ARB 同步
 2. `python scripts/check_changelog.py` — pubspec 版本号 + CHANGELOG 顺序
 3. `python scripts/check_cross_feature.py` — 跨 feature import 边界

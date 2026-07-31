@@ -25,7 +25,7 @@ class EmailTemplate {
     String? subjectOverride,
   }) {
     if (subjectOverride != null) return subjectOverride;
-    final name = safeUserName(userName, fallback: '您的家人');
+    final name = safeUserName(userName, fallback: Strings.userNameFamily);
     return Strings.emailSubject(name, daysWithoutCheckIn);
   }
 
@@ -52,7 +52,7 @@ class EmailTemplate {
   }) {
     final buffer = StringBuffer();
 
-    final name = safeUserName(userName, fallback: '您的家人');
+    final name = safeUserName(userName, fallback: Strings.userNameFamily);
     if (bodyOverride != null) {
       buffer.writeln(bodyOverride);
     } else {

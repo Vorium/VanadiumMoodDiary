@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 /// 慢病管家 · 设计 Token 规范
 /// v0.5 · 2026-07-12 增加 dark 颜色 + 响应式断点
@@ -301,6 +301,13 @@ class AppTokens {
   // 之前 home_page.dart:422 硬编码 `Future.delayed(Duration(milliseconds: 1800))`
   static const int celebrationDisplayMs = 1800;
 
+  /// v0.27 round 62 (P1-9 修复): Deep link race guard 100ms
+  ///
+  /// 之前 `home_page.dart:87` 用 `Future.delayed(Duration(milliseconds: 100))`
+  /// 等 GoRouter 把 query param 完整传过来再跑 safety check, 避免 race。
+  /// 现在用命名 token 替代裸值, 跨文件复用 + grep 找得到。
+  static const Duration kDeepLinkRaceGuard = Duration(milliseconds: 100);
+
   static const double pageMarginH = 16.0;
   static const double pageMarginV = 24.0;
 
@@ -336,11 +343,11 @@ class AppTokens {
   // v0.25 round 56 (emil P1): chart 占位 + sparkline 高度集中器
   // 替代散落 5+ 处 `SizedBox(height: 200)` / `height: 80` magic
   // v0.26 round 57 (emil C-10): 删 sparklineHeight + heatmapLabelWidth
-  // (R56 加了但 0 引用, R57 修真后确认无合适使用场景, 删 const 避免 dead token)
+  // (R56 加了但 0 引用, R57 修正后确认无合适使用场景, 删 const 避免 dead token)
   static const double chartPlaceholderHeight = 200.0;
   static const double eventTimeColWidth = 36.0;
 
-  // v0.27 round 60 (审计 M11 修真): medication_calendar label 列宽集中器
+  // v0.27 round 60 (审计 M11 修正): medication_calendar label 列宽集中器
   // 替代 `medication_calendar_page.dart:440` file-private `const _labelWidth = 60`
   // (3 处使用: 周几 label + 时段 label 列宽). 加 token 后 design system 一致.
   static const double calendarLabelWidth = 60.0;
@@ -418,7 +425,7 @@ class AppTokens {
   // 历史: v0.22 round 29 加 4 个 const shadow (shadowCard / shadowCardDark /
   // shadowDialog / shadowOverlay), 全黑色 0x14-0x33 透明度。
   // **dark mode 完全不可见** (黑色阴影打在 dark surface 上 = 透明),
-  // 这是 R49 修真过的 60+ 处 silent bug 同款风险。
+  // 这是 R49 修正过的 60+ 处 silent bug 同款风险。
   //
   // v0.24 round 43 (emil D-04 P2) 加 4 个 theme-aware 替代 (走 Theme.of(context)
   // .colorScheme.shadow) 但保留 const 版本以兼容 const constructor。
@@ -602,7 +609,7 @@ class AppTokens {
       );
 
   // v0.25 round 50 (emil R50) 添加的 textStyleScoreLg / Xl / Xxl 在 v0.26 round 57
-  // 修真中被清掉: 经全代码库 grep, 这 3 个集中器 0 处使用 (R57 subagent 漏做
+  // 修正中被清掉: 经全代码库 grep, 这 3 个集中器 0 处使用 (R57 subagent 漏做
   // inline TextStyle 替换)。如果未来需要 (PHQ-9 分数 / 周报数字), 优先用
   // textStyleTitle/Headline 而非加新集中器 — emil 原则: "good defaults matter
   // more than options", 集中器过多反而增加选择成本。

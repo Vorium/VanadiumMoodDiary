@@ -260,4 +260,20 @@ class Strings {
   static const snoozeBody = '刚才您点了"稍后提醒"，该吃药了';
   static String snoozeTitleText({String? override}) => override ?? snoozeTitle;
   static String snoozeBodyText({String? override}) => override ?? snoozeBody;
+
+  // ============== v0.27 round 62 (P1-8 修复): 用户名 fallback 集中 ==============
+  // 之前 user_name_helper / email_template / reminder_scheduler /
+  // safety_alert_dispatcher / notification_service 5+ 处 hardcode "您" / "您的家人" /
+  // "用户" 中文字符串, 集中在 Strings 类方便后续 i18n (override 模式)。
+  // 注: SMS / 邮件场景发的是中国紧急联系人, 中文是合理 fallback;
+  //   en 模式 UI 显示走 AppLocalizations (override 模式)。
+  static const userNameDefault = '用户';
+  static const userNamePolite = '您';
+  static const userNameFamily = '您的家人';
+  static String userNameDefaultText({String? override}) =>
+      override ?? userNameDefault;
+  static String userNamePoliteText({String? override}) =>
+      override ?? userNamePolite;
+  static String userNameFamilyText({String? override}) =>
+      override ?? userNameFamily;
 }

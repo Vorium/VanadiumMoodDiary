@@ -1491,6 +1491,18 @@ abstract class AppLocalizations {
   /// **'录音'**
   String get ventAudioLabel;
 
+  /// No description provided for @ventAudioPlayTooltip.
+  ///
+  /// In zh, this message translates to:
+  /// **'播放录音'**
+  String get ventAudioPlayTooltip;
+
+  /// No description provided for @ventAudioPauseTooltip.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂停录音'**
+  String get ventAudioPauseTooltip;
+
   /// No description provided for @ventRerecord.
   ///
   /// In zh, this message translates to:
@@ -2578,11 +2590,29 @@ abstract class AppLocalizations {
   /// **'💊 准备打卡药物 #{id}'**
   String homeMedHint(int id);
 
-  /// No description provided for @homeSafetyAlertSuffix.
+  /// Snackbar 后缀 — 跟 displayMessage 组合显示，提醒用户尽快打卡或联系家人
   ///
   /// In zh, this message translates to:
   /// **'（请尽快打卡或联系家人）'**
   String get homeSafetyAlertSuffix;
+
+  /// SafetyAlert 通知 body — SMS 实际发送成功分支（P0-3 三态修正，v0.27 R60）
+  ///
+  /// In zh, this message translates to:
+  /// **'上次打卡: {date}。已自动通知紧急联系人，请确认安全。'**
+  String safetyAlertBodySent(String date);
+
+  /// SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三态修正）
+  ///
+  /// In zh, this message translates to:
+  /// **'上次打卡: {date}。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。'**
+  String safetyAlertBodyMocked(String date);
+
+  /// SafetyAlert 通知 body — SMS 实际发送失败分支（P0-3 三态修正）
+  ///
+  /// In zh, this message translates to:
+  /// **'上次打卡: {date}。失联检测已触发，但通知发送失败。请检查网络。'**
+  String safetyAlertBodyFailed(String date);
 
   /// No description provided for @homeSnoozeTitle.
   ///
@@ -2865,6 +2895,42 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'添加紧急联系人'**
   String get contactAddTitle;
+
+  /// No description provided for @contactConsentTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'知情同意'**
+  String get contactConsentTitle;
+
+  /// PIPL §13 单独同意 dialog 正文, 精神心理患者保护专用
+  ///
+  /// In zh, this message translates to:
+  /// **'您即将把这位联系人的手机号保存在本地数据库中。当您连续 {threshold} 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 13 条**，请确认您已告知该联系人上述用途，并取得其同意。'**
+  String contactConsentBody(int threshold);
+
+  /// No description provided for @contactConsentAgree.
+  ///
+  /// In zh, this message translates to:
+  /// **'已告知并取得同意'**
+  String get contactConsentAgree;
+
+  /// No description provided for @contactConsentReject.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂不同意'**
+  String get contactConsentReject;
+
+  /// No description provided for @contactConsentVersion.
+  ///
+  /// In zh, this message translates to:
+  /// **'v1 · 2026-07-31'**
+  String get contactConsentVersion;
+
+  /// No description provided for @contactDefaultName.
+  ///
+  /// In zh, this message translates to:
+  /// **'联系人'**
+  String get contactDefaultName;
 
   /// No description provided for @contactNameLabel.
   ///
@@ -3226,6 +3292,12 @@ abstract class AppLocalizations {
   /// **'自动打卡'**
   String get snackbarActionAutoCheckin;
 
+  /// No description provided for @snackbarActionFinishSetup.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成设置'**
+  String get snackbarActionFinishSetup;
+
   /// No description provided for @snackbarActionUndo.
   ///
   /// In zh, this message translates to:
@@ -3405,6 +3477,72 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。'**
   String get emailFooterI18n;
+
+  /// No description provided for @medicationUnitMg.
+  ///
+  /// In zh, this message translates to:
+  /// **'mg'**
+  String get medicationUnitMg;
+
+  /// No description provided for @medicationUnitTablet.
+  ///
+  /// In zh, this message translates to:
+  /// **'片'**
+  String get medicationUnitTablet;
+
+  /// No description provided for @safetyCheckResultDisabled.
+  ///
+  /// In zh, this message translates to:
+  /// **'安全开关已关闭'**
+  String get safetyCheckResultDisabled;
+
+  /// No description provided for @safetyCheckResultOk.
+  ///
+  /// In zh, this message translates to:
+  /// **'正常（{days} 天前打卡）'**
+  String safetyCheckResultOk(int days);
+
+  /// No description provided for @safetyCheckResultNoData.
+  ///
+  /// In zh, this message translates to:
+  /// **'新用户，暂无打卡'**
+  String get safetyCheckResultNoData;
+
+  /// No description provided for @safetyCheckResultAlertedToday.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天已经发过告警（{days} 天前打卡）'**
+  String safetyCheckResultAlertedToday(int days);
+
+  /// No description provided for @safetyCheckResultDndSuppressed.
+  ///
+  /// In zh, this message translates to:
+  /// **'DND 时段，跳过告警'**
+  String get safetyCheckResultDndSuppressed;
+
+  /// No description provided for @safetyCheckResultNoContacts.
+  ///
+  /// In zh, this message translates to:
+  /// **'无紧急联系人，未发送'**
+  String get safetyCheckResultNoContacts;
+
+  /// No description provided for @safetyCheckResultAlertedMocked.
+  ///
+  /// In zh, this message translates to:
+  /// **'**开发模式**，未实际通知联系人（mock: {mocked}）'**
+  String safetyCheckResultAlertedMocked(int mocked);
+
+  /// No description provided for @safetyCheckResultAlerted.
+  ///
+  /// In zh, this message translates to:
+  /// **'已告警：{days} 天前打卡，已通知 {notified} 位联系人（{failed} 失败）'**
+  String safetyCheckResultAlerted(int days, int notified, int failed);
+
+  /// No description provided for @safetyCheckResultError.
+  ///
+  /// In zh, this message translates to:
+  /// **'错误：{message}'**
+  String safetyCheckResultError(String message);
 }
 
 class _AppLocalizationsDelegate

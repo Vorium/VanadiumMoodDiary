@@ -14,10 +14,18 @@
 /// `mood_visual` 同类。
 library;
 
+import 'package:chroniccare/core/l10n/strings.dart';
+
 /// 把可空的 `userName` 转为可显示的展示文本。
 ///
-/// [fallback] 默认 `"您"`，但通知 / 邮件场景常用 `"您的家人"` 更礼貌。
-String safeUserName(String? value, {String fallback = '您'}) {
+/// [fallback] 默认 `Strings.userNamePolite` ("您")。
+/// 通知 / 邮件场景常用 `Strings.userNameFamily` ("您的家人") 更礼貌。
+///
+/// v0.27 round 62 (P1-8 修复): 把 hardcode 中文默认值从 '您'
+/// 改到 `Strings.userNamePolite` 集中常量, 跟 email_template /
+/// reminder_scheduler / safety_alert_dispatcher / notification_service
+/// 4 处 hardcode 一起走 Strings 集中, 方便后续 i18n override 模式。
+String safeUserName(String? value, {String fallback = Strings.userNamePolite}) {
   if (value == null || value.isEmpty) return fallback;
   return value;
 }

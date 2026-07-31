@@ -13,6 +13,7 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 
@@ -96,8 +97,9 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
       children: [
         Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.chevron_left),
+            // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+            PressFeedbackIconButton(
+              icon: Icons.chevron_left,
               onPressed: widget.onPrevMonth,
               tooltip: l10n.trendPrevMonth,
             ),
@@ -115,8 +117,9 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
                 ),
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.chevron_right),
+            // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+            PressFeedbackIconButton(
+              icon: Icons.chevron_right,
               onPressed: widget.onNextMonth,
               tooltip: l10n.trendNextMonth,
             ),

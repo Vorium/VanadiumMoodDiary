@@ -784,6 +784,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventAudioLabel => '录音';
 
   @override
+  String get ventAudioPlayTooltip => '播放录音';
+
+  @override
+  String get ventAudioPauseTooltip => '暂停录音';
+
+  @override
   String get ventRerecord => '重录';
 
   @override
@@ -1404,6 +1410,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeSafetyAlertSuffix => '（请尽快打卡或联系家人）';
 
   @override
+  String safetyAlertBodySent(String date) {
+    return '上次打卡: $date。已自动通知紧急联系人，请确认安全。';
+  }
+
+  @override
+  String safetyAlertBodyMocked(String date) {
+    return '上次打卡: $date。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。';
+  }
+
+  @override
+  String safetyAlertBodyFailed(String date) {
+    return '上次打卡: $date。失联检测已触发，但通知发送失败。请检查网络。';
+  }
+
+  @override
   String get homeSnoozeTitle => '⏰ 该打卡了（5min 后）';
 
   @override
@@ -1557,6 +1578,26 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get contactAddTitle => '添加紧急联系人';
+
+  @override
+  String get contactConsentTitle => '知情同意';
+
+  @override
+  String contactConsentBody(int threshold) {
+    return '您即将把这位联系人的手机号保存在本地数据库中。当您连续 $threshold 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 13 条**，请确认您已告知该联系人上述用途，并取得其同意。';
+  }
+
+  @override
+  String get contactConsentAgree => '已告知并取得同意';
+
+  @override
+  String get contactConsentReject => '暂不同意';
+
+  @override
+  String get contactConsentVersion => 'v1 · 2026-07-31';
+
+  @override
+  String get contactDefaultName => '联系人';
 
   @override
   String get contactNameLabel => '姓名';
@@ -1747,6 +1788,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snackbarActionAutoCheckin => '自动打卡';
 
   @override
+  String get snackbarActionFinishSetup => '完成设置';
+
+  @override
   String get snackbarActionUndo => '撤销';
 
   @override
@@ -1855,6 +1899,49 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get emailFooterI18n =>
       '这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。';
+
+  @override
+  String get medicationUnitMg => 'mg';
+
+  @override
+  String get medicationUnitTablet => '片';
+
+  @override
+  String get safetyCheckResultDisabled => '安全开关已关闭';
+
+  @override
+  String safetyCheckResultOk(int days) {
+    return '正常（$days 天前打卡）';
+  }
+
+  @override
+  String get safetyCheckResultNoData => '新用户，暂无打卡';
+
+  @override
+  String safetyCheckResultAlertedToday(int days) {
+    return '今天已经发过告警（$days 天前打卡）';
+  }
+
+  @override
+  String get safetyCheckResultDndSuppressed => 'DND 时段，跳过告警';
+
+  @override
+  String get safetyCheckResultNoContacts => '无紧急联系人，未发送';
+
+  @override
+  String safetyCheckResultAlertedMocked(int mocked) {
+    return '**开发模式**，未实际通知联系人（mock: $mocked）';
+  }
+
+  @override
+  String safetyCheckResultAlerted(int days, int notified, int failed) {
+    return '已告警：$days 天前打卡，已通知 $notified 位联系人（$failed 失败）';
+  }
+
+  @override
+  String safetyCheckResultError(String message) {
+    return '错误：$message';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2637,6 +2724,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventAudioLabel => '錄音';
 
   @override
+  String get ventAudioPlayTooltip => '播放錄音';
+
+  @override
+  String get ventAudioPauseTooltip => '暫停錄音';
+
+  @override
   String get ventRerecord => '重錄';
 
   @override
@@ -3257,6 +3350,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeSafetyAlertSuffix => '（請儘快打卡或聯繫家人）';
 
   @override
+  String safetyAlertBodySent(String date) {
+    return '上次打卡: $date。已自動通知緊急聯繫人，請確認安全。';
+  }
+
+  @override
+  String safetyAlertBodyMocked(String date) {
+    return '上次打卡: $date。失聯檢測已觸發，但當前為開發模式，**未實際通知**緊急聯繫人。';
+  }
+
+  @override
+  String safetyAlertBodyFailed(String date) {
+    return '上次打卡: $date。失聯檢測已觸發，但通知發送失敗。請檢查網絡。';
+  }
+
+  @override
   String get homeSnoozeTitle => '⏰ 該打卡了（5min 後）';
 
   @override
@@ -3410,6 +3518,26 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get contactAddTitle => '添加緊急聯繫人';
+
+  @override
+  String get contactConsentTitle => '知情同意';
+
+  @override
+  String contactConsentBody(int threshold) {
+    return '您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 $threshold 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 13 條**，請確認您已告知該聯繫人上述用途，並取得其同意。';
+  }
+
+  @override
+  String get contactConsentAgree => '已告知並取得同意';
+
+  @override
+  String get contactConsentReject => '暫不同意';
+
+  @override
+  String get contactConsentVersion => 'v1 · 2026-07-31';
+
+  @override
+  String get contactDefaultName => '聯繫人';
 
   @override
   String get contactNameLabel => '姓名';
@@ -3600,6 +3728,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get snackbarActionAutoCheckin => '自動打卡';
 
   @override
+  String get snackbarActionFinishSetup => '完成設置';
+
+  @override
   String get snackbarActionUndo => '撤銷';
 
   @override
@@ -3708,4 +3839,47 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get emailFooterI18n =>
       '這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。';
+
+  @override
+  String get medicationUnitMg => 'mg';
+
+  @override
+  String get medicationUnitTablet => '片';
+
+  @override
+  String get safetyCheckResultDisabled => '安全開關已關閉';
+
+  @override
+  String safetyCheckResultOk(int days) {
+    return '正常（$days 天前打卡）';
+  }
+
+  @override
+  String get safetyCheckResultNoData => '新用戶，暫無打卡';
+
+  @override
+  String safetyCheckResultAlertedToday(int days) {
+    return '今天已經發過告警（$days 天前打卡）';
+  }
+
+  @override
+  String get safetyCheckResultDndSuppressed => 'DND 時段，跳過告警';
+
+  @override
+  String get safetyCheckResultNoContacts => '無緊急聯繫人，未發送';
+
+  @override
+  String safetyCheckResultAlertedMocked(int mocked) {
+    return '**開發模式**，未實際通知聯繫人（mock: $mocked）';
+  }
+
+  @override
+  String safetyCheckResultAlerted(int days, int notified, int failed) {
+    return '已告警：$days 天前打卡，已通知 $notified 位聯繫人（$failed 失敗）';
+  }
+
+  @override
+  String safetyCheckResultError(String message) {
+    return '錯誤：$message';
+  }
 }

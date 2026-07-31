@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
@@ -117,7 +117,7 @@ class _ShimmerState extends State<_Shimmer>
   late final AnimationController _controller;
   bool _isBreathing = false;
   // v0.27 round 59 (emil EMIL-T21): 存 timer 字段, dispose 可 cancel,
-  // 修真之前 Future.delayed 不可 cancel 导致的 race condition。
+  // 修正之前 Future.delayed 不可 cancel 导致的 race condition。
   Timer? _pauseTimer;
 
   @override
@@ -134,7 +134,7 @@ class _ShimmerState extends State<_Shimmer>
         // v0.26 round 57 (emil C-10): 走 shimmerPauseMs 集中器
         // 替代 inline Duration(milliseconds: 600) magic
         // v0.27 round 59: 改 Timer (可 cancel) 替代 Future.delayed
-        // dispose 取消 timer, 修真"dispose race → _controller 已 dispose
+        // dispose 取消 timer, 修正"dispose race → _controller 已 dispose
         // 但 callback 仍 fire → flutter assertion" 风险
         _pauseTimer?.cancel();
         _pauseTimer = Timer(

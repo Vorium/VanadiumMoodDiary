@@ -27,14 +27,19 @@ class RemindersHubConfig {
 /// FutureProvider — 异步加载 assessment + safety 配置
 ///
 /// 失败 / 未加载完时返 fallback 默认值,跟 widget 兼容
+///
+/// v0.27 round 61 (P1-12 god class 拆分收尾): 改用 `safetyConfigServiceProvider`
+/// 直接读 SharedPreferences, 不再走 `safetyWatchServiceProvider` facade。
+/// `safetyWatchServiceProvider` 是 facade 只留触发入口 (`onAppStart` / `onCheckIn`
+/// / `checkNow`), 配置 API 走 sub-service 集中器。
 final remindersHubConfigProvider =
     FutureProvider.autoDispose<RemindersHubConfig>((ref) async {
   final assess = ref.watch(assessmentReminderServiceProvider);
-  final safety = ref.watch(safetyWatchServiceProvider);
+  final safetyConfig = ref.watch(safetyConfigServiceProvider);
   final aEnabled = await assess.isEnabled();
   final aDays = await assess.getDays();
-  final sEnabled = await safety.isEnabled();
-  final sThreshold = await safety.getThresholdDays();
+  final sEnabled = await safetyConfig.isEnabled();
+  final sThreshold = await safetyConfig.getThresholdDays();
   return RemindersHubConfig(
     assessmentEnabled: aEnabled,
     assessmentDays: aDays,

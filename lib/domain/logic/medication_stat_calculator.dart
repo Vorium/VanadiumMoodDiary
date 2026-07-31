@@ -1,4 +1,4 @@
-// v0.25 round 58: MedicationStatCalculator 抽离 (medication_report god class 拆分)
+﻿// v0.25 round 58: MedicationStatCalculator 抽离 (medication_report god class 拆分)
 //
 // 之前 medication_report.dart 347 行含 5 个 static method + 3 个 data
 // class + toReportString, god class 标签。R58 拆 3 纯函数类:
@@ -47,9 +47,9 @@ class MedicationStatCalculator {
         periodStart.add(Duration(days: days)).difference(effectiveStart).inDays;
     final effectiveDaysClamped = effectiveDays.clamp(0, days);
 
-    // v0.27 round 60 (审计 M1 修真): medication 未开始 (startDate > periodEnd)
+    // v0.27 round 60 (审计 M1 修正): medication 未开始 (startDate > periodEnd)
     // 时早返 all-zero stat, 避免 phantom missedDates (报告生成 14 天
-    // 假漏服). 修真前: 用户添加"未来某日开始"的药 (如预约挂号开药),
+    // 假漏服). 修正前: 用户添加"未来某日开始"的药 (如预约挂号开药),
     // 立刻在报告里看到 14 天漏服警告, 显示错误.
     if (effectiveDaysClamped == 0) {
       return MedicationStat(
@@ -74,8 +74,8 @@ class MedicationStatCalculator {
       actualForMed++;
     }
 
-    // v0.27 round 60 (审计 M1 修真): missedDays 用 effectiveDaysClamped
-    // 而非 full days, 跟 expected 一致. 修真前窗口中途开始的药仍报 14
+    // v0.27 round 60 (审计 M1 修正): missedDays 用 effectiveDaysClamped
+    // 而非 full days, 跟 expected 一致. 修正前窗口中途开始的药仍报 14
     // 天漏服 (e.g. startDate = periodStart + 7, 实际只 7 天可服药, 但
     // 旧逻辑 days - daysWithDose = 14 - 0 = 14 phantom 漏服).
     final missedDays =

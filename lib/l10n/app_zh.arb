@@ -470,6 +470,8 @@
   "ventRecordIdle": "按一下开始录音",
   "ventRecordActive": "正在录音……点停止",
   "ventAudioLabel": "录音",
+  "ventAudioPlayTooltip": "播放录音",
+  "ventAudioPauseTooltip": "暂停录音",
   "ventRerecord": "重录",
   "moodDialogTitle": "今天怎么样？",
   "moodDimensionMood": "情绪",
@@ -911,6 +913,39 @@
     }
   },
   "homeSafetyAlertSuffix": "（请尽快打卡或联系家人）",
+  "@homeSafetyAlertSuffix": {
+    "description": "Snackbar 后缀 — 跟 displayMessage 组合显示，提醒用户尽快打卡或联系家人"
+  },
+  "safetyAlertBodySent": "上次打卡: {date}。已自动通知紧急联系人，请确认安全。",
+  "@safetyAlertBodySent": {
+    "description": "SafetyAlert 通知 body — SMS 实际发送成功分支（P0-3 三态修正，v0.27 R60）",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
+  "safetyAlertBodyMocked": "上次打卡: {date}。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。",
+  "@safetyAlertBodyMocked": {
+    "description": "SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三态修正）",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
+  "safetyAlertBodyFailed": "上次打卡: {date}。失联检测已触发，但通知发送失败。请检查网络。",
+  "@safetyAlertBodyFailed": {
+    "description": "SafetyAlert 通知 body — SMS 实际发送失败分支（P0-3 三态修正）",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
   "homeSnoozeTitle": "⏰ 该打卡了（5min 后）",
   "homeSnoozeBody": "刚才您点了「snooze」，是时候点一下 = 打卡了",
   "homeSnoozeConfirmed": "好，5 分钟后会再提醒您 👌",
@@ -1019,6 +1054,21 @@
   "contactEmptyList": "还没有联系人，请先添加",
   "contactAddAction": "添加联系人",
   "contactAddTitle": "添加紧急联系人",
+  "contactConsentTitle": "知情同意",
+  "contactConsentBody": "您即将把这位联系人的手机号保存在本地数据库中。当您连续 {threshold} 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 13 条**，请确认您已告知该联系人上述用途，并取得其同意。",
+  "@contactConsentBody": {
+    "description": "PIPL §13 单独同意 dialog 正文, 精神心理患者保护专用",
+    "placeholders": {
+      "threshold": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "contactConsentAgree": "已告知并取得同意",
+  "contactConsentReject": "暂不同意",
+  "contactConsentVersion": "v1 · 2026-07-31",
+  "contactDefaultName": "联系人",
   "contactNameLabel": "姓名",
   "contactPhoneLabel": "手机号",
   "commonActionDelete": "删除",
@@ -1107,6 +1157,7 @@
   "snackbarActionCheckin": "打卡",
   "snackbarActionSnooze": "推迟提醒",
   "snackbarActionAutoCheckin": "自动打卡",
+  "snackbarActionFinishSetup": "完成设置",
   "snackbarActionUndo": "撤销",
   "ventEntryDeleted": "已删除树洞条目",
   "contactDeleted": "已删除联系人",
@@ -1160,5 +1211,43 @@
       }
     }
   },
-  "emailFooterI18n": "这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。"
+  "emailFooterI18n": "这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。",
+  "medicationUnitMg": "mg",
+  "medicationUnitTablet": "片",
+  "safetyCheckResultDisabled": "安全开关已关闭",
+  "safetyCheckResultOk": "正常（{days} 天前打卡）",
+  "@safetyCheckResultOk": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "safetyCheckResultNoData": "新用户，暂无打卡",
+  "safetyCheckResultAlertedToday": "今天已经发过告警（{days} 天前打卡）",
+  "@safetyCheckResultAlertedToday": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "safetyCheckResultDndSuppressed": "DND 时段，跳过告警",
+  "safetyCheckResultNoContacts": "无紧急联系人，未发送",
+  "safetyCheckResultAlertedMocked": "**开发模式**，未实际通知联系人（mock: {mocked}）",
+  "@safetyCheckResultAlertedMocked": {
+    "placeholders": {
+      "mocked": { "type": "int" }
+    }
+  },
+  "safetyCheckResultAlerted": "已告警：{days} 天前打卡，已通知 {notified} 位联系人（{failed} 失败）",
+  "@safetyCheckResultAlerted": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "notified": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "safetyCheckResultError": "错误：{message}",
+  "@safetyCheckResultError": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  }
 }

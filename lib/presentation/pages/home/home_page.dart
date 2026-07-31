@@ -1,4 +1,4 @@
-import 'package:chroniccare/presentation/providers/service_providers.dart';
+﻿import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -49,6 +49,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// Deep link 自动打卡是否已处理(避免重复)
   bool _deepLinkHandled = false;
 
+  /// 庆祝 overlay 的 Timer (v0.27 round 62 P1-6 修)
+  ///
+  /// 之前用 `Future.delayed` 不可 cancel，widget dispose 后 fire 引起 race。
+  /// 改 Timer 存字段 + dispose 时 `cancel()`。
+  Timer? _celebrationTimer;
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +69,16 @@ class _HomePageState extends ConsumerState<HomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_handleDeepLink());
     });
+  }
+
+  @override
+  void dispose() {
+    // v0.27 round 62 (P1-6 修复): 取消庆祝 overlay 的 Timer,
+    // 避免 widget 已 dispose 后回调 fire 触发 `entry.mounted` 检查
+    // 已经无效, 进而打 "OverlayEntry removed too many times" 警告。
+    _celebrationTimer?.cancel();
+    _celebrationTimer = null;
+    super.dispose();
   }
 
   /// v0.11 (Round 5): 处理 ?medId=N&autofire=1
@@ -84,7 +100,9 @@ class _HomePageState extends ConsumerState<HomePage> {
         // 旧实现 `!_safetyCheckTriggered` 在第一跑已起来后永远 false
         if (_safetyRerunRequested) return; // 已请求过
         _safetyRerunRequested = true;
-        await Future<void>.delayed(const Duration(milliseconds: 100));
+        // v0.27 round 62 (P1-9 修复): 用命名 token 替代裸值,
+        // 跨文件复用 + 集中维护。
+        await Future<void>.delayed(AppTokens.kDeepLinkRaceGuard);
         await _runSafetyCheck(force: true);
       }
       return;
@@ -143,7 +161,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (_safetyCheckTriggered && !force) return;
     _safetyCheckTriggered = true;
     try {
-      final result = await ref.read(safetyWatchServiceProvider).onAppStart();
+      // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
+      final l10n = AppLocalizations.of(context);
+      final result = await ref.read(safetyWatchServiceProvider).onAppStart(l10n: l10n);
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
@@ -151,7 +171,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         AppSnackBar.showError(
             context,
             action: '⚠️ ${result.displayMessage}',
-            error: AppLocalizations.of(context).homeSafetyAlertSuffix,);
+            error: l10n.homeSafetyAlertSuffix,);
       }
     } catch (e, st) {
       swallowError(
@@ -310,7 +330,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// 仍认为"长期没打卡",所以这里也调一次。
   Future<void> _runAfterCheckIn() async {
     try {
-      final result = await ref.read(safetyWatchServiceProvider).onCheckIn();
+      // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
+      final l10n = AppLocalizations.of(context);
+      final result = await ref.read(safetyWatchServiceProvider).onCheckIn(l10n: l10n);
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         // 罕见：打卡后仍触发告警
@@ -318,7 +340,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         AppSnackBar.showError(
             context,
             action: '⚠️ ${result.displayMessage}',
-            error: AppLocalizations.of(context).homeSafetyAlertSuffix,);
+            error: l10n.homeSafetyAlertSuffix,);
       }
     } catch (e, st) {
       // SafetyWatch 失败 → 用户已经看到打卡成功的庆祝，失联检测后台再跑就行
@@ -404,10 +426,14 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
     overlay.insert(entry);
-    Future.delayed(
+    // v0.27 round 62 (P1-6 修复): 用 Timer 替代 Future.delayed,
+    // 存字段, dispose 时 cancel, 避免 widget 销毁后回调 fire 引起 race。
+    _celebrationTimer?.cancel();
+    _celebrationTimer = Timer(
       const Duration(milliseconds: AppTokens.celebrationDisplayMs),
       () {
         if (entry.mounted) entry.remove();
+        _celebrationTimer = null;
       },
     );
   }

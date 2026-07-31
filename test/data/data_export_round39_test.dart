@@ -344,12 +344,12 @@ void main() {
         'version': 99,
         'exportedAt': '2026-01-01T00:00:00.000Z',
         'profile': null,
-        'contacts': [],
-        'medications': [],
-        'checkIns': [],
-        'moodEntries': [],
-        'ventEntries': [],
-        'reportHistories': [],
+        'contacts': <dynamic>[],
+        'medications': <dynamic>[],
+        'checkIns': <dynamic>[],
+        'moodEntries': <dynamic>[],
+        'ventEntries': <dynamic>[],
+        'reportHistories': <dynamic>[],
       });
       final result = await svc.importFromJson(json);
       expect(result.success, isFalse);

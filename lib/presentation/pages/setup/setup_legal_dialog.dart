@@ -3,12 +3,16 @@
 // 从 setup_page.dart 拆分，v0.19 (Q2)
 //
 // ✅ v0.27 round 58 (P0 #3 软实施): 紧急联系人单独同意文档化
+// ✅ v0.27 round 62 (P0-2 修复): 升级到 ConsentDialog 强制流程
+//    - 修复前: setup 流程只勾选"我已告知上述联系人", 联系人本人**没**法律地位。
+//      add(contact) 0 consent 流程 → PIPL §13 违规。
+//    - 修复后: 主页 contacts_list_widget 的 _showAddContactDialog 在 add()
+//      前**必须**先弹 ConsentDialog (`lib/presentation/widgets/consent_dialog.dart`)
+//      用户确认"已告知并取得同意"才能 add。ConsentArtifact 走 piiSafeLog
+//      留痕 (grantedAt / version)。
+//    - 简化版: 用户**担保**已告知联系人 (本人确认), 不强制联系人独立确认。
 //
-// 当前 setup 流程只勾选"我已告知上述联系人", 联系人本人**没**法律地位。
-// 严格 PIPL 合规需让联系人通过短信回复 "Y" 才算单独同意 (PIPL §13 单独同意 + ✅
-// §23 第三方 PII 告知)。完整合规留 A-01 SMS 真接后做 (R59+)。
-//
-// 完整实施步骤 (R59+ 计划, 待 A-01 AliyunSmsProvider 真接):
+// v1.0 严格 PIPL §13 + §23 升级 (待 A-01 AliyunSmsProvider 真接 + 模板过审):
 //   1. setup 添加联系人时, 给每个联系人发"同意接收失联通知"短信 (模板话术)
 //   2. 联系人回复 "Y" → 标记为 confirmed=true
 //   3. SafetyWatchService 只在所有联系人都 confirmed 时才发失联通知

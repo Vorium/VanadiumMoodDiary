@@ -1,4 +1,4 @@
-// 心理评估页（v0.8 重构：支持多量表，v0.13 加历史对比 + sparkline）
+﻿// 心理评估页（v0.8 重构：支持多量表，v0.13 加历史对比 + sparkline）
 //
 // 路由：/assessment/:id （id = 'phq9' / 'gad7'）
 // 用户填题 → 提交 → 显示结果 + 写入 DB
@@ -252,7 +252,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                 ],
               ),
               Padding(
-                // v0.24 round 48 (emil P2-13): 修真 3 个裸数字 → spacing token
+                // v0.24 round 48 (emil P2-13): 修正 3 个裸数字 → spacing token
                 // left: 26 ≈ 评估题 1-9 编号对齐 (跟缩进编号文字视觉对齐)
                 // top: 2 + bottom: 8 ≈ 跟 options 列表行高对齐
                 // 26 不在 token sequence, 加注释说明 design decision (1 处用, 不抽 token)

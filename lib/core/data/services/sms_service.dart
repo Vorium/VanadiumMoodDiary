@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
@@ -118,8 +118,23 @@ class AliyunSmsProvider implements SmsProvider {
   @override
   String get name => 'aliyun';
 
-  @override
-  bool get isProductionReady => true;
+  /// v0.27 round 62 (P0-1 修复): isProductionReady 改根据**真实配置**返回,
+  /// 不再硬编码 true。
+  ///
+  /// 修复前: 永远 `return true`,即使 accessKey/secret/signName/templateCode
+  /// 全是空字符串。`SmsService.validateForRelease` 看到 true 就放行,
+  /// release 模式启动时不阻断, 后续 `send()` 抛 UnimplementedError → 上层
+  /// 走 `SmsResult.fail` 路径 → UI 提示"未连接"。
+  ///
+  /// 修复后: 必须 4 个字段全部非空才返 true。任一为空 → false →
+  /// release 模式启动时 `validateForRelease` 抛 `SmsProviderNotConfiguredError`,
+  /// runZonedGuarded 抓住 → LastErrorCapture 记录 → AppRoot 顶部 banner
+  /// 显眼提示,精神心理患者和家属不被"假通知"骗。
+  bool get isProductionReady =>
+      accessKeyId.isNotEmpty &&
+      accessKeySecret.isNotEmpty &&
+      signName.isNotEmpty &&
+      templateCode.isNotEmpty;
 
   @override
   Future<bool> send({
@@ -193,6 +208,24 @@ class SmsResult {
       SmsResult(kind: SmsResultKind.fail, error: error);
   factory SmsResult.mock() => const SmsResult(kind: SmsResultKind.mock);
 }
+
+/// v0.27 round 60 (P0-3 修正): 一批 SMS 发送的 3 态计数
+///
+/// `SafetyAlertDispatcher.dispatchAlert` 返这个 record, `NotificationService
+/// .showSafetyAlert` 用它决定通知文案走 `sent` / `mocked` / `failed` 哪一支。
+///
+/// 修正前: 通知 hardcode "已自动通知紧急联系人", 哪怕 mock 模式 / 全部失败
+/// 也这么说, 对精神心理患者形成"谎言"。修正后 3 态明确分流。
+///
+/// 选择规则 (在 NotificationService._resolveSafetyAlertBody):
+/// - `smsOk > 0` → sent
+/// - `smsOk == 0 && smsMock > 0` → mocked (dev 模式常态)
+/// - `smsOk == 0 && smsFail > 0` → failed
+typedef SmsDispatchOutcome = ({
+  int smsOk,
+  int smsFail,
+  int smsMock,
+});
 
 /// SMS 服务（业务层）
 ///

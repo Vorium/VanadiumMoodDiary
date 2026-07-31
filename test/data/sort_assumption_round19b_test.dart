@@ -1,4 +1,4 @@
-// v0.16 (Round 19B) regression test for implicit sort assumption
+﻿// v0.16 (Round 19B) regression test for implicit sort assumption
 //
 // 之前 reminder_scheduler.dart 和 safety_watch_service.dart 都有：
 //   final allCheckIns = await repo.watchAll().first;
@@ -23,14 +23,20 @@ import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
+
+/// v0.27 round 60 (P0-3 修正): test helper
+AppLocalizations _testL10n() => AppLocalizationsZh();
 
 void main() {
   setUp(() {
@@ -39,6 +45,8 @@ void main() {
 
   late AppDatabase db;
   late SafetyWatchService safety;
+  // v0.27 round 61 (P1-12 拆分收尾): 改用 SafetyConfigService 直接配置
+  late SafetyConfigService safetyConfig;
   late MockSmsService sms;
   late StubNotificationService notif;
 
@@ -49,6 +57,7 @@ void main() {
     final userProfileRepo = UserProfileRepositoryImpl(db);
     sms = MockSmsService();
     notif = StubNotificationService();
+    safetyConfig = SafetyConfigService();
     safety = SafetyWatchService(
       checkInRepo: checkInRepo,
       contactRepo: contactRepo,
@@ -76,8 +85,9 @@ void main() {
       await db.insertContact(
         ContactsCompanion.insert(name: '妈妈', phone: '13800138000'),
       );
-      await safety.setEnabled(true);
-      await safety.setThresholdDays(2);
+      // v0.27 round 61: 改用 safetyConfig 直接写 SharedPreferences
+      await safetyConfig.setEnabled(true);
+      await safetyConfig.setThresholdDays(2);
 
       final now = DateTime.now();
       // **故意 unsorted** 顺序插入 3 条打卡
@@ -103,7 +113,7 @@ void main() {
         ),
       );
 
-      final result = await safety.checkNow();
+      final result = await safety.checkNow(l10n: _testL10n());
       // latest 是 1h 前 → < 2 天阈值 → ok
       expect(result.kind, SafetyCheckKind.ok, reason: 'latest = 1h 前应 < 2 天阈值');
       expect(
@@ -158,9 +168,12 @@ class StubNotificationService implements NotificationService {
   @override
   Future<void> showSafetyAlert({
     // v0.21 Round 23 (P1-24): userName 改 nullable
+    // v0.27 round 60 (P0-3 修正): 加 outcome + l10n 参数
     String? userName,
     required int daysWithoutCheckIn,
-    DateTime? lastCheckIn,
+    required DateTime? lastCheckIn,
+    required SmsDispatchOutcome outcome,
+    required AppLocalizations l10n,
   }) async {}
   // 其他方法的 stub 在本 test 用不到,显式 throw 提醒
   @override

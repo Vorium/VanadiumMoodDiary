@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/medication_unit_label.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
@@ -94,7 +95,9 @@ class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
                 DropdownMenuItem<MedicationEntity?>(
                   value: m,
                   child: Text(
-                    '${m.name} ${m.dosage}${m.dosageUnit.id}',
+                    // v0.27 round 61 (P2): 走 dosageUnitLabel 走 ARB i18n
+                    // 之前 `m.dosageUnit.id` 返回 'mg'/'片' 字符串, en 用户看 '片' 困惑
+                    '${m.name} ${m.dosage}${dosageUnitLabel(context, m.dosageUnit)}',
                   ),
                 ),
             ],

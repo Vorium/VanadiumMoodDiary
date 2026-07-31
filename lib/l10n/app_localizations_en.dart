@@ -825,6 +825,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventAudioLabel => 'Recording';
 
   @override
+  String get ventAudioPlayTooltip => 'Play recording';
+
+  @override
+  String get ventAudioPauseTooltip => 'Pause recording';
+
+  @override
   String get ventRerecord => 'Re-record';
 
   @override
@@ -1479,6 +1485,21 @@ class AppLocalizationsEn extends AppLocalizations {
       '(please check in or contact family soon)';
 
   @override
+  String safetyAlertBodySent(String date) {
+    return 'Last check-in: $date. Auto-notified emergency contacts. Please confirm safety.';
+  }
+
+  @override
+  String safetyAlertBodyMocked(String date) {
+    return 'Last check-in: $date. Lost-contact detection triggered, but currently in dev mode — emergency contacts were **NOT** actually notified.';
+  }
+
+  @override
+  String safetyAlertBodyFailed(String date) {
+    return 'Last check-in: $date. Lost-contact detection triggered, but notification failed. Please check network.';
+  }
+
+  @override
   String get homeSnoozeTitle => '⏰ Time to check in (in 5 min)';
 
   @override
@@ -1635,6 +1656,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactAddTitle => 'Add Emergency Contact';
+
+  @override
+  String get contactConsentTitle => 'Informed Consent';
+
+  @override
+  String contactConsentBody(int threshold) {
+    return 'You are about to save this contact\'s phone number in the local database. If you don\'t check in for $threshold consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 13**, please confirm you have informed the contact of the above purpose and obtained their consent.';
+  }
+
+  @override
+  String get contactConsentAgree => 'I have informed and obtained consent';
+
+  @override
+  String get contactConsentReject => 'Decline for now';
+
+  @override
+  String get contactConsentVersion => 'v1 · 2026-07-31';
+
+  @override
+  String get contactDefaultName => 'Contact';
 
   @override
   String get contactNameLabel => 'Name';
@@ -1831,6 +1872,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snackbarActionAutoCheckin => 'Auto check-in';
 
   @override
+  String get snackbarActionFinishSetup => 'Finish setup';
+
+  @override
   String get snackbarActionUndo => 'Undo';
 
   @override
@@ -1946,4 +1990,48 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get emailFooterI18n =>
       'This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings.';
+
+  @override
+  String get medicationUnitMg => 'mg';
+
+  @override
+  String get medicationUnitTablet => 'tablet';
+
+  @override
+  String get safetyCheckResultDisabled => 'Safety watch is disabled';
+
+  @override
+  String safetyCheckResultOk(int days) {
+    return 'OK (last check-in $days days ago)';
+  }
+
+  @override
+  String get safetyCheckResultNoData => 'New user, no check-ins yet';
+
+  @override
+  String safetyCheckResultAlertedToday(int days) {
+    return 'Alert already sent today (last check-in $days days ago)';
+  }
+
+  @override
+  String get safetyCheckResultDndSuppressed => 'DND window, alert skipped';
+
+  @override
+  String get safetyCheckResultNoContacts =>
+      'No emergency contacts, alert not sent';
+
+  @override
+  String safetyCheckResultAlertedMocked(int mocked) {
+    return '**Dev mode**, contacts not actually notified (mock: $mocked)';
+  }
+
+  @override
+  String safetyCheckResultAlerted(int days, int notified, int failed) {
+    return 'Alerted: $days days since last check-in, $notified contact(s) notified ($failed failed)';
+  }
+
+  @override
+  String safetyCheckResultError(String message) {
+    return 'Error: $message';
+  }
 }

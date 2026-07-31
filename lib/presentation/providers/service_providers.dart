@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
 import 'package:chroniccare/core/data/services/reminder_scheduler.dart';
+import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -48,6 +49,19 @@ final safetyWatchServiceProvider = Provider<SafetyWatchService>(
     smsService: ref.watch(smsServiceProvider),
     notificationService: ref.watch(notificationServiceProvider),
   ),
+);
+
+/// v0.27 round 61 (P1-12 god class 拆分收尾): SafetyConfigService 独立 provider
+///
+/// 之前 8 个 SharedPreferences 配置 API (`isEnabled` / `setEnabled` /
+/// `getThresholdDays` / `setThresholdDays` / `getDoNotDisturb` /
+/// `setDoNotDisturb` / `getLastAlertAt` / `setLastAlertAt`) 标了
+/// `@Deprecated` 但 `safetyConfigServiceProvider` 一直没加, caller
+/// (reminders_hub_provider + 3 个 test) 只能继续走 facade。
+///
+/// R61: 加本 provider, caller 改走本 provider, 然后删 facade 那 8 个 method。
+final safetyConfigServiceProvider = Provider<SafetyConfigService>(
+  (ref) => SafetyConfigService(),
 );
 
 /// v0.13 (Round 7) 心理评估周期提醒服务

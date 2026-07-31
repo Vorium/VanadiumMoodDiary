@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/core/data/services/safety_config_service.dart';
+import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -198,11 +201,41 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         }
                         setLocal(() => saving = true);
                         try {
+                          // v0.27 round 62 (P0-2 修复): 先弹 ConsentDialog
+                          // (PIPL §13 单独同意) → 用户同意才进 add()。
+                          // 拒绝 → 弹 snackbar 提示, 不保存。
+                          if (!ctx.mounted) return;
+                          // v0.27 round 62 (P0-2 修复): 拿当前用户配置的失联阈值,
+                          // 让 consent dialog 文案里的"连续 N 天"是用户自己的值。
+                          final thresholdDays = await SafetyConfigService()
+                              .getThresholdDays();
+                          final consent = await ConsentDialog.show(
+                            context,
+                            kind: ConsentKind.emergencyContactSharing,
+                            thresholdDays: thresholdDays,
+                          );
+                          if (consent == null) {
+                            // 用户拒绝, 退出 add 流程
+                            if (ctx.mounted) {
+                              setLocal(() => saving = false);
+                              AppSnackBar.showInfo(
+                                context,
+                                AppLocalizations.of(context)
+                                    .contactConsentReject,
+                              );
+                            }
+                            return;
+                          }
                           await ref.read(contactRepositoryProvider).add(
+                                // v0.27 round 62 (P1-10 修复): 改用 l10n key 而非
+                                // hardcode 英文 'Contact'。 en/zh/zh_Hant 三种语言
+                                // 都用 i18n key, 没填姓名时给合理的本地化默认值。
                                 name: nameController.text.trim().isEmpty
-                                    ? 'Contact'
+                                    ? AppLocalizations.of(context)
+                                        .contactDefaultName
                                     : nameController.text.trim(),
                                 phone: PhoneValidator.normalize(phone) ?? phone,
+                                consentArtifact: consent,
                                 sortOrder: 99,
                               );
                           if (ctx.mounted) Navigator.pop(ctx);

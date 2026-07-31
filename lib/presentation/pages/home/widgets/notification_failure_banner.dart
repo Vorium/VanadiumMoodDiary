@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// v0.18 round 14 (P1-21): 通知初始化失败时显示的顶部 banner
 ///
@@ -51,8 +52,10 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.close, size: AppTokens.iconSizeInline),
+          // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+          PressFeedbackIconButton(
+            icon: Icons.close,
+            size: AppTokens.iconSizeInline,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             onPressed: () => setState(() => _dismissed = true),

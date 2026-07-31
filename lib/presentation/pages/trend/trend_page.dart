@@ -19,6 +19,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -237,22 +238,26 @@ class _ViewToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<_TrendView>(
-      segments: [
-        ButtonSegment(
-          value: _TrendView.list,
-          label: Text(AppLocalizations.of(context).trendViewList),
-          icon: const Icon(Icons.view_list, size: AppTokens.iconSizeInline),
-        ),
-        ButtonSegment(
-          value: _TrendView.calendar,
-          label: Text(AppLocalizations.of(context).trendViewCalendar),
-          icon: const Icon(Icons.calendar_month, size: AppTokens.iconSizeInline),
-        ),
-      ],
-      selected: {current},
-      onSelectionChanged: (s) => onChanged(s.first),
-      showSelectedIcon: false,
+    // v0.27 round 62 (P1-16 修复): 走 PressFeedback 集中器
+    // (emil "频度: occasional (切视图)")。替代裸 SegmentedButton, 加 :active scale 反馈。
+    return PressFeedback(
+      child: SegmentedButton<_TrendView>(
+        segments: [
+          ButtonSegment(
+            value: _TrendView.list,
+            label: Text(AppLocalizations.of(context).trendViewList),
+            icon: const Icon(Icons.view_list, size: AppTokens.iconSizeInline),
+          ),
+          ButtonSegment(
+            value: _TrendView.calendar,
+            label: Text(AppLocalizations.of(context).trendViewCalendar),
+            icon: const Icon(Icons.calendar_month, size: AppTokens.iconSizeInline),
+          ),
+        ],
+        selected: {current},
+        onSelectionChanged: (s) => onChanged(s.first),
+        showSelectedIcon: false,
+      ),
     );
   }
 }

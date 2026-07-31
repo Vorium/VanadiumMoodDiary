@@ -39,6 +39,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/mood_providers.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 录音机的当前快照 — parent 在 save 时拉
 @immutable
@@ -145,6 +146,13 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
 
   @override
   void dispose() {
+    // v0.27 round 61 (P0-1 fix): 先同步设 _isRecording = false, 阻止
+    // _disposeResources 链 (await service.cancelRecording) 触发的 onTick
+    // / onMaxReached 回调 setState 撞 defunct assert。dispose 之前
+    // _isRecording=true 是 race 条件源: service.stopRecording 内部仍可能
+    // 走完一次 onTick, 该 setState 落到 disposed widget 触发 assert。
+    // 同步 set 之后所有后续检查 `if (_isRecording)` 都返 false, 安全跳过。
+    _isRecording = false;
     _playerCompleteSub?.cancel();
     _sttSub?.cancel();
     // v0.25 round 52 (spen P0 #7): State.dispose() 是 sync, 不能 await future,
@@ -502,28 +510,22 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
               ] else if (hasRecording) ...[
                 Text(
                   l10n.moodAudioRecorded(_formatDuration(snap.audioDurationMs)),
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeBody,
-                    color: AppTokens.textPrimaryColor(context),
-                  ),
+                  style: AppTokens.textStyleBody(context),
                 ),
               ],
               const Spacer(),
               if (hasRecording && !_isRecording) ...[
-                IconButton(
+                // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+                PressFeedbackIconButton(
                   onPressed: _togglePlay,
-                  icon: Icon(
-                    _isPlaying ? Icons.pause : Icons.play_arrow,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  icon: _isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: Theme.of(context).colorScheme.primary,
                   tooltip: l10n.moodAudioPlayAction,
                 ),
-                IconButton(
+                PressFeedbackIconButton(
                   onPressed: _reRecord,
-                  icon: Icon(
-                    Icons.refresh,
-                    color: AppTokens.textSecondaryColor(context),
-                  ),
+                  icon: Icons.refresh,
+                  color: AppTokens.textSecondaryColor(context),
                   tooltip: l10n.moodAudioRerecord,
                 ),
               ],
@@ -534,8 +536,9 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
             const SizedBox(height: AppTokens.spacingXs),
             Text(
               l10n.moodAudioMaxReached,
-              style:TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
+              // v0.27 round 61 (P2): 走 textStyleCaption + copyWith 注入 error 色
+              // 之前 inline TextStyle, 6 处 magic 走 token
+              style: AppTokens.textStyleCaption(context).copyWith(
                 color: AppTokens.errorColor(context),
               ),
             ),
@@ -545,9 +548,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
             const SizedBox(height: AppTokens.spacingXs),
             Text(
               _liveTranscript,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textSecondaryColor(context),
+              style: AppTokens.textStyleCaption(context).copyWith(
                 fontStyle: FontStyle.italic,
               ),
               maxLines: 2,
@@ -568,10 +569,9 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
               const SizedBox(height: AppTokens.spacingXxxs),
               Text(
                 l10n.moodAudioTranscriptPartialHint,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeCaption - 1,
-                  color: AppTokens.textHintColor(context),
-                ),
+                // v0.27 round 61 (P2): 走 textStyleCaptionHint
+                // (fontSizeCaptionSm=12 + hint color), 替代之前 fontSizeCaption-1=13 magic
+                style: AppTokens.textStyleCaptionHint(context),
               ),
             ],
           ],
@@ -587,10 +587,8 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
             const SizedBox(height: AppTokens.spacingXs),
             Text(
               l10n.moodAudioSttUnavailable,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textHintColor(context),
-              ),
+              // v0.27 round 61 (P2): 走 textStyleCaptionHint
+              style: AppTokens.textStyleCaptionHint(context),
             ),
           ],
         ],

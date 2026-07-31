@@ -11,6 +11,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 用药报告全屏预览
 ///
@@ -44,8 +45,9 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
             '${AppLocalizations.of(context).settingsMedReport}（近 ${widget.windowDays} 天）',
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.close),
+            // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+            PressFeedbackIconButton(
+              icon: Icons.close,
               onPressed: () => Navigator.pop(context),
               tooltip: AppLocalizations.of(context).commonClose,
             ),

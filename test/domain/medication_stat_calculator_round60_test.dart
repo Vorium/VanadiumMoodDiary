@@ -1,4 +1,4 @@
-// v0.27 round 60 (审计 M1): medication_stat_calculator 修真 — 药物未开始
+﻿// v0.27 round 60 (审计 M1): medication_stat_calculator 修正 — 药物未开始
 // (startDate > periodEnd) 时不应报告 phantom missedDates.
 //
 // Bug 背景 (audit-domain-layer 3.2):
@@ -7,7 +7,7 @@
 //   - 但 daysWithDose = {} → missedDays = 14 → MissedDateBuilder.build 返回 14 个日期
 //   - 报告渲染: "⚠️ 漏服: 7/1、7/2、..." 给"还没开始吃的药"
 //
-// 修真: 入口检查 `if (effectiveDays <= 0)` → 早返 empty stat.
+// 修正: 入口检查 `if (effectiveDays <= 0)` → 早返 empty stat.
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
@@ -60,8 +60,8 @@ void main() {
 
     test('startDate 在 periodEnd 之后 1 天 (medication 未开始) → 不应有 phantom missedDates',
         () {
-      // 修真前: 14 个 phantom 漏服日期
-      // 修真后: empty stat (expected=0, missedDates=[])
+      // 修正前: 14 个 phantom 漏服日期
+      // 修正后: empty stat (expected=0, missedDates=[])
       final futureStart = periodEnd.add(const Duration(days: 1));
       final stat = MedicationStatCalculator.calculate(
         med: med(startDate: futureStart),
@@ -123,8 +123,8 @@ void main() {
     });
 
     test('startDate 在未来 + 已有打卡 (edge case): 未来打卡不算 → 仍 empty', () {
-      // 修真后行为: effectiveDays ≤ 0 → 早返, 任何 checkIn (哪怕时间在窗口内) 都忽略
-      // 这是修真应该有的语义: 药物未开始时, 不管打没打卡, 都不应计入"漏服"
+      // 修正后行为: effectiveDays ≤ 0 → 早返, 任何 checkIn (哪怕时间在窗口内) 都忽略
+      // 这是修正应该有的语义: 药物未开始时, 不管打没打卡, 都不应计入"漏服"
       // (因为用户可能误打卡, 不应让"漏服"列表把未来打卡前的"空窗期"算成漏服)
       final futureStart = periodEnd.add(const Duration(days: 1));
       final stat = MedicationStatCalculator.calculate(

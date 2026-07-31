@@ -1,4 +1,4 @@
-// setup_page.dart — 首次设置引导页（4 步 wizard coordinator）
+﻿// setup_page.dart — 首次设置引导页（4 步 wizard coordinator）
 //
 // v0.19 (Q2): 拆分为 4 个 step widget + legal dialog
 // 本文件只负责状态管理和步骤切换。
@@ -402,10 +402,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           );
       if (!mounted) return;
 
-      // v0.27 round 59 (spen §5#18 latent P0 fix): 修真 fail-soft timeout 丢数据
+      // v0.27 round 59 (spen §5#18 latent P0 fix): 修正 fail-soft timeout 丢数据
       // R52 加 5s timeout 防御 drift stream hang (DB lock 时罕见)
       // 但 fail-soft onTimeout: () => const [] 让"用户若有 N 个药"被吞成 0 个 → 失通知
-      // 修真成 fail-loud: 让 TimeoutException 抛出 → 落入外层 catch → setup 失败 + UI 提示
+      // 修正成 fail-loud: 让 TimeoutException 抛出 → 落入外层 catch → setup 失败 + UI 提示
       final medications = await ref
           .read(medicationRepositoryProvider)
           .watchAll()
@@ -425,10 +425,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     } catch (e, st) {
       if (mounted) {
         // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.error 集中器
-        // v0.27 round 59 修真: 用 showError 集中器 + action 修真为"完成设置"
+        // v0.27 round 59 修正: 用 showError 集中器 + action 修正为"完成设置"
         AppSnackBar.showError(
           context,
-          action: '完成设置',
+          // v0.27 round 62 (P1-7 修复): 改用 l10n key 而非 hardcode 中文,
+          // en 模式用户也能看到 "Finish setup"。
+          action: AppLocalizations.of(context).snackbarActionFinishSetup,
           error: e,
         );
       }

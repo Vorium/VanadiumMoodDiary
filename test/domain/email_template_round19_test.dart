@@ -1,4 +1,4 @@
-import 'package:chroniccare/domain/entities/dosage_unit.dart';
+﻿import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/email_template.dart';
@@ -95,7 +95,7 @@ void main() {
         cycleHours: 48,
       );
       // 之前 v0.23 round 39 硬编码 "(UTC+8 北京时间)"
-      // v0.24 round 48 spen P0-4 修真: 动态推断 caller 时区
+      // v0.24 round 48 spen P0-4 修正: 动态推断 caller 时区
       expect(body, isNot(contains('UTC+8 北京时间')));
       expect(body, isNot(contains('北京时间')));
     });

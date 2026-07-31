@@ -1,8 +1,8 @@
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/core/shared/user_name_helper.dart';
 
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/logic/lost_contact_sms.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
@@ -208,27 +208,24 @@ class ReminderService implements ReminderChecker {
   ///
   /// v0.21 Round 23 (P1-24): userName 改 nullable
   /// 未填姓名时退化为 "您的家人",保持短信语法自然
+  ///
+  /// v0.27 round 62 (P1-5 修复): 改走 `buildLostContactSms` 单一 source,
+  /// 跟 SafetyAlertDispatcher 共享模板逻辑, 措辞一致 + 模板集中维护。
+  /// `LostContactSmsKind.reminder` 走"鼓励式提醒"分支 (区别于 safetyAlert
+  /// 走"如确认安全请回复 1"严肃场景)。
   String _buildSmsBody({
     String? userName,
     required int daysSince,
     required int hoursSince,
     required MedicationEntity? medication,
   }) {
-    final name = safeUserName(userName, fallback: '您的家人');
-    final buffer = StringBuffer();
-    if (daysSince >= 2) {
-      buffer.writeln('【慢病管家】$name 已 $daysSince 天没打卡。');
-    } else {
-      buffer.writeln('【慢病管家】$name 已 $hoursSince 小时没打卡。');
-    }
-    buffer.writeln('请你方便的时候提醒 TA 按时吃药。');
-    if (medication != null) {
-      buffer.writeln(
-        '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit.id}',
-      );
-    }
-    buffer.writeln('—— 这是一条自动提醒，请勿回复');
-    return buffer.toString();
+    return buildLostContactSms(
+      kind: LostContactSmsKind.reminder,
+      userName: userName,
+      daysSince: daysSince,
+      hoursSince: hoursSince,
+      medication: medication,
+    );
   }
 
   /// 按"天"计算两时刻差（不直接用 Duration.inDays）

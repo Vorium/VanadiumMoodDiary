@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 
@@ -80,12 +81,14 @@ class VentAudioSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: Icon(
-              isPlaying ? Icons.stop : Icons.play_arrow,
-              color: AppTokens.primaryColor(context),
-            ),
+          // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+          PressFeedbackIconButton(
+            icon: isPlaying ? Icons.stop : Icons.play_arrow,
+            color: AppTokens.primaryColor(context),
             onPressed: onTogglePlay,
+            tooltip: isPlaying
+                ? AppLocalizations.of(context).ventAudioPauseTooltip
+                : AppLocalizations.of(context).ventAudioPlayTooltip,
           ),
           Icon(Icons.mic, color: AppTokens.primaryColor(context), size: AppTokens.iconSizeInline),
           const SizedBox(width: AppTokens.spacingChipGap),

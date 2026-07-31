@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 
 import 'package:chroniccare/domain/entities/contact_entity.dart';
@@ -10,6 +10,8 @@ import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/l10n/app_localizations.dart'
+    show AppLocalizations;
 
 /// "安全开关" 服务 — 死了么/撸了么 思路
 ///
@@ -68,71 +70,33 @@ class SafetyWatchService {
         _notificationService = notificationService,
         _contactWatchTimeout = contactWatchTimeout;
 
-  // ============== 配置 API（给 settings_page 用，R57 facade 委托）==============
+  // ============== 配置 API 已下沉到 SafetyConfigService ==============
   //
-  // v0.26 round 57 (spen P2 #7): 8 个 config 1-line facade 公开 API 重复,
-  // deprecate 8 个 facade 方法 → 建议 caller 改用 `safetyConfigServiceProvider`
-  // 直接拿 [SafetyConfigService] 调。R57 之后 facade 留 _checkAndAlert 编排入口
-  // 即可, 配置 API 全下沉到 sub-service。
+  // v0.27 round 61 (P1-12 god class 拆分收尾): 之前 8 个 facade 配置 method
+  // (`isEnabled` / `setEnabled` / `getThresholdDays` / `setThresholdDays` /
+  // `getDoNotDisturb` / `setDoNotDisturb` / `getLastAlertAt` / `setLastAlertAt`)
+  // 全删, caller 改用 `safetyConfigServiceProvider` 直接拿
+  // [SafetyConfigService] 调。
   //
-  // 进度: 已加 @Deprecated 注解, caller 暂时仍能编译 (注释 warning), 后续
-  // R58+ 大改时再移除, 跟 R53a (app_database 拆 7 DAO) 模式一致。
-  //
-  // v0.27 round 59: spen 报告"0 外部调用方"是 stale finding, 实际 reminders_hub_page /
-  // reminders_hub_provider / 内部 _checkAndAlert + test 4 处都调 facade, 删除会
-  // 编译 fail。R60 修真 `safetyConfigServiceProvider` (新加 provider) 后再删 facade。
-
-  /// 是否启用安全开关
-  ///
-  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`
-  /// 拿到 [SafetyConfigService] 后调 `isEnabled()`。
-  @Deprecated('Use safetyConfigServiceProvider directly')
-  Future<bool> isEnabled() => _config.isEnabled();
-
-  /// 切换启用状态
-  ///
-  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
-  @Deprecated('Use safetyConfigServiceProvider directly')
-  Future<void> setEnabled(bool value) => _config.setEnabled(value);
-
-  /// 阈值天数（连续多少天没打卡触发）
-  ///
-  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
-  @Deprecated('Use safetyConfigServiceProvider directly')
-  Future<int> getThresholdDays() => _config.getThresholdDays();
-
-  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
-  @Deprecated('Use safetyConfigServiceProvider directly')
-  Future<void> setThresholdDays(int days) => _config.setThresholdDays(days);
-
-  /// DND 时段（小时，24h 制，start < end 同一天；跨天用 start > end 表示）
-  ///
-  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
-  @Deprecated('Use safetyConfigServiceProvider directly')
-  Future<({int? start, int? end})> getDoNotDisturb() =>
-      _config.getDoNotDisturb();
-
-  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
-  @Deprecated('Use safetyConfigServiceProvider directly')
-  Future<void> setDoNotDisturb({int? startHour, int? endHour}) =>
-      _config.setDoNotDisturb(startHour: startHour, endHour: endHour);
-
-  /// 上次告警时间（ISO string）
-  ///
-  /// **Deprecated**: v0.26 round 57 — 改用 `safetyConfigServiceProvider`。
-  @Deprecated('Use safetyConfigServiceProvider directly')
-  Future<DateTime?> getLastAlertAt() => _config.getLastAlertAt();
+  // facade 仅保留 3 个触发入口 (`onAppStart` / `onCheckIn` / `checkNow`)
+  // + `_checkAndAlert` 编排, 跟 R57 design 一致 (sub-service 自包含, facade
+  // 只协调)。
 
   // ============== 触发入口 ==============
 
   /// App 启动时调用（main.dart 调）
-  Future<SafetyCheckResult> onAppStart() async {
-    return _checkAndAlert(trigger: 'app_start');
+  ///
+  /// v0.27 round 60 (P0-3 修正): 加 `l10n` 参数, 修正 P0-3 通知 3 态分流
+  /// (NotificationService.showSafetyAlert 需要 l10n 走 i18n key)。
+  /// 修正前 hardcode "已自动通知紧急联系人", 即使 SMS mock / 失败也这么说,
+  /// 对精神心理患者形成"谎言"。修正后 3 态明确。
+  Future<SafetyCheckResult> onAppStart({required AppLocalizations l10n}) async {
+    return _checkAndAlert(trigger: 'app_start', l10n: l10n);
   }
 
   /// 打卡成功后调用（home_page 调）
-  Future<SafetyCheckResult> onCheckIn() async {
-    final result = await _checkAndAlert(trigger: 'check_in');
+  Future<SafetyCheckResult> onCheckIn({required AppLocalizations l10n}) async {
+    final result = await _checkAndAlert(trigger: 'check_in', l10n: l10n);
     if (result.kind == SafetyCheckKind.alerted) {
       piiSafeLog(
         'SafetyWatchService',
@@ -147,8 +111,11 @@ class SafetyWatchService {
   /// [now] 用于测试注入，生产环境为 null → 内部取 `DateTime.now()`。
   /// 不接受 `now` 时跨 midnight(00:00-06:00)会让 `DateTime.now().subtract(hours: 6)`
   /// 落到前一天,`_daysBetween` 算成 1,触发 flaky test。
-  Future<SafetyCheckResult> checkNow({DateTime? now}) async {
-    return _checkAndAlert(trigger: 'manual', now: now);
+  Future<SafetyCheckResult> checkNow({
+    required AppLocalizations l10n,
+    DateTime? now,
+  }) async {
+    return _checkAndAlert(trigger: 'manual', now: now, l10n: l10n);
   }
 
   // ============== 核心 ==============
@@ -156,14 +123,16 @@ class SafetyWatchService {
   Future<SafetyCheckResult> _checkAndAlert({
     required String trigger,
     DateTime? now,
+    required AppLocalizations l10n,
   }) async {
     try {
-      final enabled = await isEnabled();
+      // v0.27 round 61 (P1-12 拆分收尾): 直接调 _config, 不走 facade
+      final enabled = await _config.isEnabled();
       if (!enabled) {
         return const SafetyCheckResult(kind: SafetyCheckKind.disabled);
       }
 
-      final threshold = await getThresholdDays();
+      final threshold = await _config.getThresholdDays();
 
       // 1. 拉最近一次正常打卡（P0 fix: DB 级 LIMIT 1，不再全表扫描）
       final latestNormal = await _checkInRepo.getLatestNormalCheckIn();
@@ -186,7 +155,7 @@ class SafetyWatchService {
       }
 
       // 2. 超过阈值：检查今天是不是已经发过了
-      final lastAlert = await getLastAlertAt();
+      final lastAlert = await _config.getLastAlertAt();
       if (lastAlert != null && SafetyConfigService.isSameDay(lastAlert, effectiveNow)) {
         return SafetyCheckResult(
           kind: SafetyCheckKind.alertedToday,
@@ -242,6 +211,8 @@ class SafetyWatchService {
 
       // 5+6+7. v0.25 round 57 (god class 拆分): 委托给 SafetyAlertDispatcher
       // 发 SMS + 推本地通知 + 写 audit log + 计数
+      //
+      // v0.27 round 60 (P0-3 修正): 传 l10n, 通知文案走 3 态分流 i18n
       final dispatched = await _alertDispatcher.dispatchAlert(
         contacts: contacts,
         userName: profile.userName,
@@ -249,6 +220,7 @@ class SafetyWatchService {
         lastCheckIn: lastCheckIn,
         effectiveNow: effectiveNow,
         trigger: trigger,
+        l10n: l10n,
       );
 
       return SafetyCheckResult(
@@ -256,6 +228,7 @@ class SafetyWatchService {
         daysSinceLast: daysSinceLast,
         contactsNotified: dispatched.smsOk,
         contactsFailed: dispatched.smsFail,
+        contactsMocked: dispatched.smsMock,
       );
     } catch (e, st) {
       piiSafeLog(
@@ -309,6 +282,7 @@ class SafetyCheckResult {
   final int? daysSinceLast;
   final int contactsNotified;
   final int contactsFailed;
+  final int contactsMocked;
   final String? errorMessage;
 
   const SafetyCheckResult({
@@ -316,30 +290,90 @@ class SafetyCheckResult {
     this.daysSinceLast,
     this.contactsNotified = 0,
     this.contactsFailed = 0,
+    this.contactsMocked = 0,
     this.errorMessage,
   });
 
   /// 给 UI 用的可读文案
+  ///
+  /// v0.27 round 61 (P1-4 修正): 之前 hardcode 中文, 修正后走 i18n key
+  /// (`safetyCheckResult{Disabled|Ok|NoData|AlertedToday|DndSuppressed|
+  /// NoContacts|Alerted|AlertedMocked|Error}`), UI 端拿 `AppLocalizations` 调。
+  ///
+  /// **重要**: 修正 3 态分流 (P0-3) + 修正 i18n (P1-4) 已合 R61。
+  /// 已修正字段:
+  /// - `alerted` 分支加 `contactsMocked` 显示 ("已通知 X 位联系人 (Y mock)")
+  /// - 新 `AlertedMocked` 文案: "**开发模式**,未实际通知联系人"
+  /// - 全部 8 个 kind 走 ARB i18n, zh / en / zh_Hant 同步翻译
   String get displayMessage {
+    // v0.27 round 61 (P1-4): 走 ARB i18n, 8 个 kind + 3 态分流
+    // data 层 (0 flutter 边界): 拿不到 AppLocalizations, 这里返 key 字符串
+    // 让 UI 层 (presentation 调此 getter 处) 显式调 AppLocalizations.of(context)
+    // 翻译。本 getter 保留向后兼容, 走 key 让旧 caller 不破; UI 改用
+    // SafetyCheckResult.displayMessageL10n(l10n) 拿翻译后字符串。
+    return _displayKey;
+  }
+
+  /// v0.27 round 61 (P1-4): 走 l10n 翻译版
+  ///
+  /// caller (UI widget) 传 l10n 拿 i18n 字符串。data 层 0 flutter 仍用
+  /// [displayMessage] (返 i18n key) 兼容老 caller (会显示 key, 但不会崩)。
+  ///
+  /// 8 个 kind 全部覆盖:
+  /// - disabled / ok / noData / alertedToday / dndSuppressed / noContacts
+  /// - alerted (3 态: ok / mocked / failed)
+  /// - error
+  String displayMessageL10n(AppLocalizations l10n) {
     switch (kind) {
       case SafetyCheckKind.disabled:
-        return '安全开关已关闭';
+        return l10n.safetyCheckResultDisabled;
       case SafetyCheckKind.ok:
-        return '正常（$daysSinceLast 天前打卡）';
+        return l10n.safetyCheckResultOk(daysSinceLast ?? 0);
       case SafetyCheckKind.noData:
-        return '新用户，暂无打卡';
+        return l10n.safetyCheckResultNoData;
       case SafetyCheckKind.alertedToday:
-        return '今天已经发过告警（$daysSinceLast 天前打卡）';
+        return l10n.safetyCheckResultAlertedToday(daysSinceLast ?? 0);
       case SafetyCheckKind.dndSuppressed:
-        return 'DND 时段，跳过告警';
+        return l10n.safetyCheckResultDndSuppressed;
       case SafetyCheckKind.noContacts:
-        return '无紧急联系人，未发送';
+        return l10n.safetyCheckResultNoContacts;
       case SafetyCheckKind.alerted:
-        return '已告警：$daysSinceLast 天前打卡，'
-            '已通知 $contactsNotified 位联系人'
-            '${contactsFailed > 0 ? '（$contactsFailed 失败）' : ''}';
+        // 3 态: ok > mock > fail (跟 NotificationService._resolveSafetyAlertBody 一致)
+        if (contactsMocked > 0 && contactsNotified == 0) {
+          return l10n.safetyCheckResultAlertedMocked(contactsMocked);
+        }
+        return l10n.safetyCheckResultAlerted(
+          daysSinceLast ?? 0,
+          contactsNotified,
+          contactsFailed,
+        );
       case SafetyCheckKind.error:
-        return '错误：$errorMessage';
+        return l10n.safetyCheckResultError(errorMessage ?? '');
+    }
+  }
+
+  /// v0.27 round 61 (P1-4): i18n key 集中器 — data 层 0 flutter 时用
+  String get _displayKey {
+    switch (kind) {
+      case SafetyCheckKind.disabled:
+        return 'safetyCheckResultDisabled';
+      case SafetyCheckKind.ok:
+        return 'safetyCheckResultOk';
+      case SafetyCheckKind.noData:
+        return 'safetyCheckResultNoData';
+      case SafetyCheckKind.alertedToday:
+        return 'safetyCheckResultAlertedToday';
+      case SafetyCheckKind.dndSuppressed:
+        return 'safetyCheckResultDndSuppressed';
+      case SafetyCheckKind.noContacts:
+        return 'safetyCheckResultNoContacts';
+      case SafetyCheckKind.alerted:
+        if (contactsMocked > 0 && contactsNotified == 0) {
+          return 'safetyCheckResultAlertedMocked';
+        }
+        return 'safetyCheckResultAlerted';
+      case SafetyCheckKind.error:
+        return 'safetyCheckResultError';
     }
   }
 

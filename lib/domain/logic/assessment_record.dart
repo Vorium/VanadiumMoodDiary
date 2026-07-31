@@ -1,4 +1,4 @@
-/// 评估记录模型
+﻿/// 评估记录模型
 ///
 /// 把 CheckInEntity 里 type ∈ {phq9, gad7} 的 note JSON 解析为强类型 record，
 /// 方便趋势页折线图使用。
@@ -30,15 +30,42 @@ class AssessmentRecord {
   });
 
   @override
+  // v0.27 round 60 (审计 M9 修复): `==` 加上 scores element-based 比较
+  //
+  // 修复前 bug: `==` 只比较 scaleId / timestamp / total, 忽略 scores。
+  // 后果: 两个 AssessmentRecord 的 scaleId + timestamp + total 相同但
+  // scores 不同 → `==` 判 true → Set / Map round-trip 漏去重
+  // (e.g. `Set<AssessmentRecord>` 去重依赖 `==`)。
+  //
+  // 修复方法: 比较 scores 长度 + element-based 比较。
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AssessmentRecord &&
           other.scaleId == scaleId &&
           other.timestamp == timestamp &&
-          other.total == total;
+          other.total == total &&
+          _listEquals(other.scores, scores);
 
   @override
-  int get hashCode => Object.hash(scaleId, timestamp, total);
+  // v0.27 round 60 (审计 M9 修复): `hashCode` 加上 scores element-based hash
+  //
+  // `Object.hashAll(List<T>)` 走 element-based 哈希, 不是 identity-based。
+  // Dart 3.12.2 验证: 6/6 contract test pass。
+  // 必须保持 `==` 和 `hashCode` 都基于 element-based, 否则 Set / Map
+  // 不一致 → 同样的对象在不同容器里算不同 key。
+  int get hashCode => Object.hash(scaleId, timestamp, total, Object.hashAll(scores));
+
+  /// Element-based 列表相等 (长度相同 + 各 index 元素相同)。
+  ///
+  /// 不走 `List.equals` 库函数: 保持零依赖, 纯 Dart 内置。
+  static bool _listEquals(List<int> a, List<int> b) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
 
   /// 从 CheckInEntity 反序列化
   ///

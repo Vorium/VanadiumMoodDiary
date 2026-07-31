@@ -470,6 +470,8 @@
   "ventRecordIdle": "按一下開始錄音",
   "ventRecordActive": "正在錄音……點停止",
   "ventAudioLabel": "錄音",
+  "ventAudioPlayTooltip": "播放錄音",
+  "ventAudioPauseTooltip": "暫停錄音",
   "ventRerecord": "重錄",
   "moodDialogTitle": "今天怎麼樣？",
   "moodDimensionMood": "情緒",
@@ -911,6 +913,36 @@
     }
   },
   "homeSafetyAlertSuffix": "（請儘快打卡或聯繫家人）",
+  "safetyAlertBodySent": "上次打卡: {date}。已自動通知緊急聯繫人，請確認安全。",
+  "@safetyAlertBodySent": {
+    "description": "SafetyAlert 通知 body — SMS 實際發送成功分支（P0-3 三態修正，v0.27 R60）",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
+  "safetyAlertBodyMocked": "上次打卡: {date}。失聯檢測已觸發，但當前為開發模式，**未實際通知**緊急聯繫人。",
+  "@safetyAlertBodyMocked": {
+    "description": "SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三態修正）",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
+  "safetyAlertBodyFailed": "上次打卡: {date}。失聯檢測已觸發，但通知發送失敗。請檢查網絡。",
+  "@safetyAlertBodyFailed": {
+    "description": "SafetyAlert 通知 body — SMS 實際發送失敗分支（P0-3 三態修正）",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-07-30"
+      }
+    }
+  },
   "homeSnoozeTitle": "⏰ 該打卡了（5min 後）",
   "homeSnoozeBody": "剛才您點了「snooze」，是時候點一下 = 打卡了",
   "homeSnoozeConfirmed": "好，5 分鐘後會再提醒您 👌",
@@ -1019,6 +1051,21 @@
   "contactEmptyList": "還沒有聯繫人，請先添加",
   "contactAddAction": "添加聯繫人",
   "contactAddTitle": "添加緊急聯繫人",
+  "contactConsentTitle": "知情同意",
+  "contactConsentBody": "您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 {threshold} 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 13 條**，請確認您已告知該聯繫人上述用途，並取得其同意。",
+  "@contactConsentBody": {
+    "description": "PIPL §13 單獨同意 dialog 正文, 精神心理患者保護專用",
+    "placeholders": {
+      "threshold": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "contactConsentAgree": "已告知並取得同意",
+  "contactConsentReject": "暫不同意",
+  "contactConsentVersion": "v1 · 2026-07-31",
+  "contactDefaultName": "聯繫人",
   "contactNameLabel": "姓名",
   "contactPhoneLabel": "手機號",
   "commonActionDelete": "刪除",
@@ -1107,6 +1154,7 @@
   "snackbarActionCheckin": "打卡",
   "snackbarActionSnooze": "推遲提醒",
   "snackbarActionAutoCheckin": "自動打卡",
+  "snackbarActionFinishSetup": "完成設置",
   "snackbarActionUndo": "撤銷",
   "ventEntryDeleted": "已刪除樹洞條目",
   "contactDeleted": "已刪除聯繫人",
@@ -1160,5 +1208,43 @@
       }
     }
   },
-  "emailFooterI18n": "這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。"
+  "emailFooterI18n": "這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。",
+  "medicationUnitMg": "mg",
+  "medicationUnitTablet": "片",
+  "safetyCheckResultDisabled": "安全開關已關閉",
+  "safetyCheckResultOk": "正常（{days} 天前打卡）",
+  "@safetyCheckResultOk": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "safetyCheckResultNoData": "新用戶，暫無打卡",
+  "safetyCheckResultAlertedToday": "今天已經發過告警（{days} 天前打卡）",
+  "@safetyCheckResultAlertedToday": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "safetyCheckResultDndSuppressed": "DND 時段，跳過告警",
+  "safetyCheckResultNoContacts": "無緊急聯繫人，未發送",
+  "safetyCheckResultAlertedMocked": "**開發模式**，未實際通知聯繫人（mock: {mocked}）",
+  "@safetyCheckResultAlertedMocked": {
+    "placeholders": {
+      "mocked": { "type": "int" }
+    }
+  },
+  "safetyCheckResultAlerted": "已告警：{days} 天前打卡，已通知 {notified} 位聯繫人（{failed} 失敗）",
+  "@safetyCheckResultAlerted": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "notified": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "safetyCheckResultError": "錯誤：{message}",
+  "@safetyCheckResultError": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  }
 }

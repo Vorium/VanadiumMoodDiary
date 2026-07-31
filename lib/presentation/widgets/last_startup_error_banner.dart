@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// "上次启动出错" 顶部 banner
 ///
@@ -78,12 +79,11 @@ class _LastStartupErrorBannerState extends State<LastStartupErrorBanner> {
                           ),
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          size: AppTokens.iconSize,
-                          color: AppTokens.fgOnError(context),
-                        ),
+                      // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+                      PressFeedbackIconButton(
+                        icon: Icons.close,
+                        size: AppTokens.iconSize,
+                        color: AppTokens.fgOnError(context),
                         onPressed: () => setState(() => _dismissed = true),
                         tooltip: l10n.commonClose,
                       ),

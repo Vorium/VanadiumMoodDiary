@@ -24,6 +24,7 @@ import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 class VentDetailPage extends ConsumerStatefulWidget {
   final int id;
@@ -179,8 +180,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
       title: AppLocalizations.of(context).ventDetailTitle,
       actions: [
         entryAsync.maybeWhen(
-          data: (entry) => IconButton(
-            icon:Icon(Icons.delete_outline, color: AppTokens.errorColor(context)),
+          data: (entry) => PressFeedbackIconButton(
+            icon: Icons.delete_outline,
+            color: AppTokens.errorColor(context),
             tooltip: AppLocalizations.of(context).commonDelete,
             onPressed: entry == null ? null : () => _delete(entry),
           ),
@@ -263,13 +265,15 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                       children: [
                         Row(
                           children: [
-                            IconButton(
-                              icon: Icon(
-                                _isPlaying ? Icons.pause : Icons.play_arrow,
-                                color: AppTokens.primaryColor(context),
-                                size: 32,
-                              ),
+                            // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+                            PressFeedbackIconButton(
+                              icon: _isPlaying ? Icons.pause : Icons.play_arrow,
+                              color: AppTokens.primaryColor(context),
+                              size: 32,
                               onPressed: () => _togglePlay(entry),
+                              tooltip: _isPlaying
+                                  ? AppLocalizations.of(context).ventAudioPauseTooltip
+                                  : AppLocalizations.of(context).ventAudioPlayTooltip,
                             ),
                             const SizedBox(width: AppTokens.spacingXs),
                             // 之前是 Hero('vent-mic-...'),但 source 已统一到

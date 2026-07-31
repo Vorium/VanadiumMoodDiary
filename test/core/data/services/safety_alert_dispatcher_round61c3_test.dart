@@ -1,4 +1,4 @@
-// v0.25 round 56c''' (spen P0 #15 TDD 续): SafetyAlertDispatcher test
+﻿// v0.25 round 56c''' (spen P0 #15 TDD 续): SafetyAlertDispatcher test
 //
 // 之前 0 test (v0.25 round 57 拆 sub-service 时只加 facade).
 // R56c''' 补 2 个核心 method 测, 共 7 test cases.
@@ -13,6 +13,8 @@
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -98,6 +100,7 @@ void main() {
         userName: '张三',
         daysSinceLast: 3,
         lastCheckIn: DateTime(2026, 7, 20),
+        l10n: _testL10n(),
         effectiveNow: DateTime(2026, 7, 23, 10, 0),
         trigger: 'threshold',
       );
@@ -130,6 +133,7 @@ void main() {
         lastCheckIn: null,
         effectiveNow: DateTime(2026, 7, 23, 10, 0),
         trigger: 'threshold',
+        l10n: _testL10n(),
       );
 
       // R52 修复: mock 模式独立计数, 不算 ok 也不算 fail
@@ -154,6 +158,7 @@ void main() {
         lastCheckIn: null,
         effectiveNow: DateTime(2026, 7, 23, 10, 0),
         trigger: 'threshold',
+        l10n: _testL10n(),
       );
 
       expect(result.smsOk, 0);
@@ -180,6 +185,7 @@ void main() {
         lastCheckIn: null,
         effectiveNow: effectiveNow,
         trigger: 'manual',
+        l10n: _testL10n(),
       );
 
       expect(notifService.showSafetyAlertCalls, 1);
@@ -218,6 +224,7 @@ void main() {
           lastCheckIn: null,
           effectiveNow: DateTime(2026, 7, 23, 10, 0),
           trigger: 'manual',
+          l10n: _testL10n(),
         );
       }
 
@@ -257,6 +264,7 @@ void main() {
         lastCheckIn: null,
         effectiveNow: DateTime(2026, 7, 23, 10, 0),
         trigger: 'manual',
+        l10n: _testL10n(),
       );
 
       // dispatcher 不 filter, 仍发 SMS (走 MockSmsProvider 走 mock 计数)
@@ -265,6 +273,12 @@ void main() {
     });
   });
 }
+
+/// v0.27 round 60 (P0-3 修正): test helper - 拿 test 用的 mock l10n
+///
+/// `AppLocalizations` 是 abstract, 不能直接 new, 用 `AppLocalizationsZh()` 拿
+/// 中文实例。具体文案在 widget test / i18n test 里覆盖, 这里只测业务逻辑。
+AppLocalizations _testL10n() => AppLocalizationsZh();
 
 ContactEntity _makeContact({
   required int id,
@@ -286,6 +300,7 @@ class _CountingNotificationService extends NotificationService {
   String? lastUserName;
   int? lastDays;
   DateTime? lastCheckIn;
+  SmsDispatchOutcome? lastOutcome;
 
   _CountingNotificationService() : super();
 
@@ -294,11 +309,14 @@ class _CountingNotificationService extends NotificationService {
     String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
+    required SmsDispatchOutcome outcome,
+    required AppLocalizations l10n,
   }) async {
     showSafetyAlertCalls++;
     lastUserName = userName;
     lastDays = daysWithoutCheckIn;
     lastCheckIn = lastCheckIn;
+    lastOutcome = outcome;
   }
 }
 

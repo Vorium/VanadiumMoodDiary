@@ -1,9 +1,8 @@
-import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
-import 'package:timezone/timezone.dart' as tz;
 
 import 'dart:async';
 import 'dart:developer' as developer;
@@ -20,6 +19,21 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+
+/// v0.27 round 62 (P0-3 修复): 全局静态 SmsService 入口
+///
+/// 修复前: `_bootstrap()` 里 `SmsService.validateForRelease(SmsService().provider)`
+/// 创建**临时** SmsService 实例, 跟 `smsServiceProvider` (core_providers 注册)
+/// 里的实例不是同一份。State 错位风险 + 注释承诺的"全局静态"未实施。
+///
+/// 修复后: 顶层 `_smsService` 是 bootstrap + provider tree 共用的**唯一**实例。
+/// runApp 时 `smsServiceProvider.overrideWithValue(_smsService)` 把同一份
+/// 注入 ProviderScope, 任何 `ref.watch(smsServiceProvider)` 拿到同一对象。
+///
+/// 注: SmsService 本身是无状态 facade (state 全在 SmsProvider 注入对象里),
+/// 所以即使 2 个实例也不会立即崩, 但 P0 安全场景下必须 1 个实例保证
+/// `isProductionReady` 检查结果一致。
+SmsService _smsService = SmsService();
 
 /// 慢病管家 · App 入口
 ///
@@ -132,7 +146,12 @@ Future<void> _bootstrap() async {
   //     被 runZonedGuarded 抓住,LastErrorCapture 记录,AppRoot banner 提示
   //     dev/profile 模式: 静默通过(mock 是 dev 工具)
   //     这里故意不用 try/catch:让异常冒泡到外层 runZonedGuarded
-  SmsService.validateForRelease(SmsService().provider);
+  //
+  // v0.27 round 62 (P0-3 修复): 改用顶层 static `_smsService` (同一份实例),
+  // runApp 时 `smsServiceProvider.overrideWithValue(_smsService)` 把同一份
+  // 注入 ProviderScope, 避免 state 错位。修复了 R60 注释承诺但未实施的
+  // "全局静态 _currentSmsService 入口"。
+  SmsService.validateForRelease(_smsService.provider);
 
   // 4. 执行迁移（migrateIfNeeded 失败必须 throw,见 database_migration.dart）
   try {
@@ -167,6 +186,9 @@ Future<void> _bootstrap() async {
         notificationServiceProvider.overrideWithValue(notificationService),
         // P0 fix: 注入共享 db 实例，避免 provider tree 再创建第二个连接
         databaseProvider.overrideWithValue(sharedDb),
+        // v0.27 round 62 (P0-3 修复): 注入顶层 static SmsService 实例,
+        // 跟 _bootstrap 用的 _smsService 是同一份, 避免 state 错位。
+        smsServiceProvider.overrideWithValue(_smsService),
       ],
       child: const AppRoot(),
     ),

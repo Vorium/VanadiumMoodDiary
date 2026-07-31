@@ -1,6 +1,120 @@
-# 变更日志
+﻿# 变更日志
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
+
+## [Unreleased] - 2026-07-31 (R62 — 独立小项修复 + P0/P1 集中收尾)
+
+> R62 目标: 集中清 v0.27 综合审计 (CONSOLIDATED-AUDIT-v0.27.md /
+> docs/reviews/2026-07-31-three-lens/consolidated.md) 列出的可独立修复
+> 小项 + P0-1 / P0-2 准备架构。
+
+### Tests
+- (R62 完成时填: e.g. 1151/1151 pass, 0 analyze error, 16+1 守护全绿)
+
+### P0/P1 修复
+- **P0-3 尾巴 (R62)**: `lib/main.dart` 修正临时 `SmsService()` 实例 → provider tree 共享实例 (跟 P0-1 一起落地)
+- **P1-4 (R62 完成时填)**: `safety_watch_service.displayMessage` 走 i18n + 加 9 个 ARB key
+- **P1-5 (R62 完成时填)**: 抽 `lib/domain/logic/lost_contact_sms.dart` 单一 source
+- **P1-6 (R62)**: `home_page.dart:407-412` `Future.delayed(1800ms)` → `Timer` + `dispose` `cancel()`, 避免 widget 销毁后 fire 引起 race
+- **P1-7 (R62)**: `setup_page.dart:431` `'完成设置'` hardcode → `snackbarActionFinishSetup` ARB key
+- **P1-8 (R62)**: `user_name_helper` / `email_template` / `reminder_scheduler` 3 caller hardcode `'您'` / `'您的家人'` → `Strings.userNamePolite` / `Strings.userNameFamily` 集中常量, 方便 i18n override 模式
+- **P1-9 (R62)**: `home_page.dart:87` 100ms 裸值 → `AppTokens.kDeepLinkRaceGuard` token
+- **P1-10 (R62)**: `contacts_list_widget.dart:202-203` `'Contact'` hardcode 英文 → `contactDefaultName` ARB key (zh='联系人' / en='Contact' / hant='聯絡人')
+- **P1-NEW-1 (R62)**: `lib/domain/logic/assessment_record.dart` R60 M9 修正 == / hashCode 时埋下 11+ 处"修正"字符污染注释 → 改"修复前/修复后/element-based 哈希/identity 哈希"等具体英文/中文技术术语
+
+### Architecture
+- **pubspec 升版**: `0.25.0+1` → `0.27.0+62` (P2-1.7 v0.27 综合审计 漂移 2 round 修复)
+
+### Changed
+- 3 个 ARB 文件 (zh / en / zh_Hant) 加 2 个新 key (`snackbarActionFinishSetup` / `contactDefaultName`)
+- 1 个新 token (`AppTokens.kDeepLinkRaceGuard`)
+- 1 个 domain 集中器 (`Strings.userNameDefault` / `userNamePolite` / `userNameFamily`)
+
+## [0.27.0] - 2026-07-31 (R61 — 平台发布准备 + 残余 P0)
+
+> 用户最终目标：发布到 Android / iOS / iPadOS。R61 完成 3 件事:
+> (1) 残余 P0 bug (安全告警 SMS 模板 i18n / dosage unit 国际化 / safety_watch 死代码清理)
+> (2) mood_recorder dispose race guard + inline TextStyle token 化
+> (3) 平台代码生成 + Android/iOS 关键发布配置
+
+### Tests
+- 1151/1151 pass (1098 → 1151, +53)
+- `flutter analyze` 0 errors
+- 16 守护 Python + 1 `check_all.dart` 全绿
+
+### P0 Bug 修复
+- **dosage_unit i18n** (R61 P2): 之前 `m.dosageUnit.id` 返回 'mg'/'片' 字符串
+  → en 用户看 '片' 困惑。修法: 新建 `lib/l10n/medication_unit_label.dart` (presentation helper)
+  走 ARB i18n, 加 2 key (`medicationUnitMg` / `medicationUnitTablet`), zh='片' / en='tablet'。
+  改 1 处 caller (`temp_medication_dialog.dart:97`)。
+- **safety_watch_service 8 个 @Deprecated 删** (R61 P1-12 拆分收尾): R57 标了 deprecated 但
+  caller 仍调 facade + `safetyConfigServiceProvider` 没加。R61 加 provider, 改 2 caller
+  (`reminders_hub_provider` + `reminders_hub_page._SafetyReminderSheet._save`), 改 2 test
+  文件用 `SafetyConfigService` 直接, 删 facade 8 个 method。safety_watch_service
+  退化为协调 facade (留 3 个触发入口 + `_checkAndAlert`)。
+- **safety_watch_service.displayMessage i18n** (R61 P1-4): 之前 hardcode 中文。
+  修法: 加 8 个 ARB key (`safetyCheckResult{Disabled|Ok|NoData|...|Alerted|AlertedMocked|Error}`),
+  新 `displayMessageL10n(l10n)` 方法, 8 个 kind 全部覆盖 + 3 态分流 (ok / mocked / failed)。
+  data 层仍保留旧 `displayMessage` getter (返 i18n key) 兼容老 caller。
+- **mood_recorder dispose race guard** (R61 P0-1): 之前 dispose 链中
+  `_disposeResources() → service.stopRecording() → onTick → setState` 可能在
+  `super.dispose()` 之后触发, 撞 defunct assert。修法: dispose 第一行同步
+  `_isRecording = false`, 后续检查 `if (_isRecording)` 都返 false, 安全跳过。
+- **mood_recorder 4 处 inline TextStyle token 化** (R61 P2):
+  计时器 / recorded / maxReached / liveTranscript / partialHint / stt-unavailable
+  6 处 TextStyle 内联 → 改用 `textStyleBody` / `textStyleCaption` /
+  `textStyleCaptionHint` + `copyWith` 注入特殊属性 (italic / error color)。
+
+### 重构
+- **新建 `lib/l10n/medication_unit_label.dart`** (presentation): dosage unit i18n
+  helper, 跟 `app_localizations.dart` 同级, 集中器。
+- **safety_watch_service 退化为 facade**: 8 个 config method 删, 内部 `_checkAndAlert`
+  直接调 `_config.xxx()` 替代 facade 转发。
+
+### 平台配置 (用户目标: Android / iOS / iPadOS)
+- **`flutter create . --platforms=android,ios --org com.chroniccare`** 生成完整
+  平台代码 (android/ + ios/), pubspec.yaml / .gitignore 0 改动, .metadata 加回 web 平台行。
+- **Android (targetSdk 34, minSdk 23)**:
+  - `AndroidManifest.xml` 加 8 个权限 (INTERNET / POST_NOTIFICATIONS / SCHEDULE_EXACT_ALARM
+    / USE_EXACT_ALARM / WAKE_LOCK / RECEIVE_BOOT_COMPLETED / VIBRATE / RECORD_AUDIO)
+  - `build.gradle.kts` 改 minSdk 21→23 (SQLCipher 要求) + multiDexEnabled + 启用 ProGuard
+  - `proguard-rules.pro` 加 10 个 plugin keep 规则 (flutter_local_notifications / audioplayers
+    / record / sqlcipher / speech_to_text / flutter_secure_storage / share_plus / drift)
+  - `res/xml/backup_rules.xml` (Android 6-11) + `data_extraction_rules.xml` (Android 12+)
+    排除 chroniccare.sqlite / flutter_secure_storage / vent_audio / mood_audio (PIPL §28)
+  - `res/xml/network_security_config.xml` 强制 HTTPS / 禁 cleartext
+- **iOS / iPadOS (IPHONEOS_DEPLOYMENT_TARGET 13+)**:
+  - `Info.plist` 加 4 个 NSUsageDescription (通知 / 麦克风 / 语音识别 / 用户追踪) +
+    改 `UIRequiresFullScreen=false` 支持 iPad Split View + 加 `UIBackgroundModes` (audio / fetch)
+  - `PrivacyInfo.xcprivacy` 加 4 个 required-reason API (UserDefaults / FileTimestamp /
+    SystemBootTime / DiskSpace) — 2024-05 Apple 强制
+
+### Changed
+- 4 个 ARB 文件 (zh / en / zh_Hant) 加 10 个新 key (2 dosage + 8 safety check result)
+- 1 个 ARB 文件 (zh_Hant) 修 1 处繁简混搭 ("网路" → "網絡" 跟 OpenCC s2tw 一致)
+- `test/widget_test.dart` 替换 flutter create 占位 MyApp test → 改测 i18n key 加载 + 中英文差异
+
+### 验证
+- 1151 test pass (含 widget_test.dart 3 个 i18n 新 test)
+- 16 守护 Python 全过: check_arb_keys / check_changelog / check_cross_feature /
+  check_datetime_race{,_2} / check_drift_namespace / check_fullwidth_punctuation /
+  check_legal_consent / check_no_hardcoded_utc / check_no_pua / check_orphan_arb_keys /
+  check_sms_release_ready / check_strings_hardcoded / check_widget_dispose /
+  check_zh_hant_consistency
+- 1 个 dart 架构守门 (`scripts/check_all.dart`) 4 层纯度 + 1:1 entity 映射全过
+- `flutter analyze` 0 errors (28 info-level 保持不变 — 全部 prefer_const_constructors /
+  require_trailing_commas 历史遗留)
+
+### 阻塞上架但需外部环境项
+- ⚠️ **Android build 环境**: Windows + JDK 21 + 国产 SSL 证书拦截 gradle 下载。
+  需 Mac / Linux + 配置 `gradle.properties` 代理 / 自建 SSL 信任库, 或
+  公司提供 build runner。代码 + 配置已 100% ready, 只需 CI 环境。
+- ⚠️ **iOS build 必需 Mac**: Apple 工具链限制。生成 ios/ + Info.plist +
+  PrivacyInfo.xcprivacy 已完整, 但 `flutter build ios` 需 Mac + Xcode + Apple Developer 账号。
+- ⚠️ **release keystore**: 当前 build.gradle.kts 用 debug 签名, 上架前必须配 release
+  signingConfigs (R61 留 TODO)。
+- ⚠️ **iOS provisioning profile**: 需 Apple Developer Program 账号 ($99/年) 配
+  Runner.entitlements + Runner.xcworkspace schemes。
 
 ## [0.25.0] - 2026-07-26 (R49-R60 + R56b-R56f)
 
@@ -30,33 +144,33 @@
 - **R56c''** `medication_notifier` +10 (ID 常量 + `scheduleDailyReminder` + `rescheduleMedicationReminders`)
 - **R56c'''** `assessment_notifier` +4 + `safety_alert_dispatcher` +7 + `mood_audio_service` +10
 
-### Architecture & Refactor (round 58-59 v0.27 启动 + 三视角审视修真)
+### Architecture & Refactor (round 58-59 v0.27 启动 + 三视角审视修正)
 - **v0.27 round 58** 三视角审视 (emil / spen / spzh) 启动:
   - emil: 35 发现 (P0×1 + P1×17 + P2×12 + P3×5) → `docs/reviews/v0.27/review-emilkowalski-v027.md` (42KB)
   - spen: 66 发现 (P0×4 + P1×16 + P2×30 + P3×16) → `docs/reviews/review-superpowers-en-v027.md` (47KB)
   - spzh: 126 spzh 独有发现 (P0×0 + P1×5 + P2×35 + P3×86) → `docs/reviews/review-superpowers-zh-v027.md` (48KB)
-- **v0.27 round 59** 三视角 P0/P1 修真批次 1 (XS+S 修真 7 项):
-  - **P0-3** (spen §5#18 latent P0 fix): `setup_page.dart:404` 修真 fail-soft `onTimeout: () => const []` 丢数据 → fail-loud (让 TimeoutException 抛出 → setup 失败 + UI 提示)
-  - **EMIL-T29**: 删 4 个 const shadow token (`shadowCard` / `shadowCardDark` / `shadowDialog` / `shadowOverlay`) + 修真 `celebration_bounce.dart:115` 走 theme-aware `shadowOverlayOf(context)` (防 R49 同款 silent bug 重现)
-  - **EMIL-T21**: `loading_skeleton.dart:127-138` dispose race 修真 `Future.delayed` → `Timer?` 字段可 cancel (修真 race condition 风险)
-  - **EMIL-T13**: 11 处 `ScaffoldMessenger.of(ctx).showSnackBar(AppSnackBar.x(...))` → `AppSnackBar.showX(ctx, ...)` 集中器化 (1 行调用, 修真 7 文件 11 处)
-  - **SPZH §5#1**: `check_fullwidth_punctuation.py` 修真 `…` (U+2026) 误报 (47→45 violations, 加 `(?<!…)/(?!…)` 双向负向断言, `……` 修真不报)
-  - **SPZH §2.2**: `preset_medication_templates.dart` 修真 3 处真实半角斜杠 (`SSRI / SNRI` → `SSRI ／ SNRI` 等) (medical abbreviation 风格)
-  - **SPZH §3#1-2**: 新建 `docs/terminology.md` 集中术语表 (App/应用/客户端 / i18n/国际化/本地化 / PHQ-9/GAD-7 / 隐私 / 用药 5 大类), spec 文档化, R60 修真 14 处中文 ARB
-- **v0.27 round 59** Stale findings (不修真, 移到下 round):
-  - P0-2 (email test): 实际已修真, spen 报告 stale
-  - EMIL-T08 (3 dead tokens): R57 已修真 (注释 line 632-636 标注), stale
-  - SPEN-§4#1 (8 @Deprecated facade 删除): 需新加 `safetyConfigServiceProvider` provider 路径, 修真 reminders_hub_page / reminders_hub_provider / test 4 处 caller, R60 修真
-- **v0.27 round 59** R60 修真计划 (修真后):
-  - SPEN-§4#1: 修真 `safetyConfigServiceProvider` provider + 4 处 caller 迁移, 删 8 facade
+- **v0.27 round 59** 三视角 P0/P1 修正批次 1 (XS+S 修正 7 项):
+  - **P0-3** (spen §5#18 latent P0 fix): `setup_page.dart:404` 修正 fail-soft `onTimeout: () => const []` 丢数据 → fail-loud (让 TimeoutException 抛出 → setup 失败 + UI 提示)
+  - **EMIL-T29**: 删 4 个 const shadow token (`shadowCard` / `shadowCardDark` / `shadowDialog` / `shadowOverlay`) + 修正 `celebration_bounce.dart:115` 走 theme-aware `shadowOverlayOf(context)` (防 R49 同款 silent bug 重现)
+  - **EMIL-T21**: `loading_skeleton.dart:127-138` dispose race 修正 `Future.delayed` → `Timer?` 字段可 cancel (修正 race condition 风险)
+  - **EMIL-T13**: 11 处 `ScaffoldMessenger.of(ctx).showSnackBar(AppSnackBar.x(...))` → `AppSnackBar.showX(ctx, ...)` 集中器化 (1 行调用, 修正 7 文件 11 处)
+  - **SPZH §5#1**: `check_fullwidth_punctuation.py` 修正 `…` (U+2026) 误报 (47→45 violations, 加 `(?<!…)/(?!…)` 双向负向断言, `……` 修正不报)
+  - **SPZH §2.2**: `preset_medication_templates.dart` 修正 3 处真实半角斜杠 (`SSRI / SNRI` → `SSRI ／ SNRI` 等) (medical abbreviation 风格)
+  - **SPZH §3#1-2**: 新建 `docs/terminology.md` 集中术语表 (App/应用/客户端 / i18n/国际化/本地化 / PHQ-9/GAD-7 / 隐私 / 用药 5 大类), spec 文档化, R60 修正 14 处中文 ARB
+- **v0.27 round 59** Stale findings (不修正, 移到下 round):
+  - P0-2 (email test): 实际已修正, spen 报告 stale
+  - EMIL-T08 (3 dead tokens): R57 已修正 (注释 line 632-636 标注), stale
+  - SPEN-§4#1 (8 @Deprecated facade 删除): 需新加 `safetyConfigServiceProvider` provider 路径, 修正 reminders_hub_page / reminders_hub_provider / test 4 处 caller, R60 修正
+- **v0.27 round 59** R60 修正计划 (修正后):
+  - SPEN-§4#1: 修正 `safetyConfigServiceProvider` provider + 4 处 caller 迁移, 删 8 facade
   - SPEN-§4#2: `_showSafetyAlert` 50 行 inline 移 `SafetyAlertDispatcher` (1-2h 重构)
-  - SPZH 14 处 "App" 修真 → "本应用" / "慢病管家"
+  - SPZH 14 处 "App" 修正 → "本应用" / "慢病管家"
   - 5 systematic-debugging regression tests (跨 midnight / 隐式序 / dispose race / stream leak / setState after dispose)
   - 7 god page 拆 (trend_calendar / reminders_hub / data_mgmt / edit_med / mood_recorder / assessment_widgets / setup)
   - `app_tokens.dart` 779 行 god file 拆 5 子模块
   - 文字 token 化 36% → 80% (191 inline TextStyle 集中器化)
   - `home_page.dart` widget test (P0, 每日用户路径 0 test)
-  - `mood_recorder.dart` god class split (P0, R52 修真 dispose race 但 0 regression test)
+  - `mood_recorder.dart` god class split (P0, R52 修正 dispose race 但 0 regression test)
 
 ### Cleanup (round 56d-R56f)
 - **R56d** `formatters.dart` 走 intl `DateFormat` + `vent_detail_page.dart:191` 改 `EmptyState`
@@ -82,7 +196,7 @@
 - **AppListTile 集中器**（`54c0fb0`）：settings 4 子 widget 13 处 PressFeedback+ListTile 改 AppListTile
 - **AppSnackBar 47 处收敛**（`e095b1c`）：`ScaffoldMessenger.of(...).showSnackBar(AppSnackBar.xxx(...))` 全代码库统一
 - **token 化 9 项**（`79d2a49` `d47df84` `578df2c`）：6 token + 6 处 hardcode duration/color 替换 / 3 token + 3 处 ListTile 集中化 / 2 处 withValues / textStyleLegal fontSize 改 token
-- **MedicationEntity.dosageUnit 强类型**（`bb755fb`）：`String → DosageUnit` enum 转换，spzh mojibake 修真联动
+- **MedicationEntity.dosageUnit 强类型**（`bb755fb`）：`String → DosageUnit` enum 转换，spzh mojibake 修正联动
 - **data_providers → shared_providers 改名**（`05dfd9a`）：语义更准确
 
 ### Added (round 45-47 spen 数据驱动化 + widget 测)
@@ -93,19 +207,19 @@
 - **contacts_list_widget 4 case widget 测**（`8790710`）：Sprint #6 中段
 - **WIP god-class 续拆 + 错误处理集中 + magic number 抽 const**（`1a8adef` `19a29c1`）
 
-### Fixed (round 45-47 spzh i18n 修真)
+### Fixed (round 45-47 spzh i18n 修正)
 - **main.dart _MigrationFailedApp 4 处 hardcode 中文 i18n 化**（`ce44acc`）：+ 3 处 TextStyle 改 token，精神心理患者崩溃时看到友好文案
-- **zh_Hant.arb 简体副本修真**（`cf61948`）：OpenCC s2tw 真繁化 401 key（`@@locale` + 行 21 "您→你" 之外全部繁化）
-- **app_router mojibake 修真**（`9e9e6de`）：v0.22 round 31 漏修真一处
+- **zh_Hant.arb 简体副本修正**（`cf61948`）：OpenCC s2tw 真繁化 401 key（`@@locale` + 行 21 "您→你" 之外全部繁化）
+- **app_router mojibake 修正**（`9e9e6de`）：v0.22 round 31 漏修正一处
 - **strings.dart DosageUnit 强类型**（`9e9e6de`）：notification_service 调用 `dosageUnit.id` 强类型化
 
 ### CI
-- **check_no_pua.py 守门员**（`45b773b`）：扫 PUA 字符（v0.22 round 31 mojibake 修真后无守护）
+- **check_no_pua.py 守门员**（`45b773b`）：扫 PUA 字符（v0.22 round 31 mojibake 修正后无守护）
 - **9 个 1-shot 脚本归档到 _archive/**（`4d08510`）：保留历史可追溯
 
 ### Known issues (v0.25 必修 — 三视角审视发现)
 - **合规 5 项 12 round 0 修**（spzh P0-of-P0）：3 份法律文档 v0.22 草稿 / PIPL §1 vs §3 自相矛盾 / 5 厂商 push 通道未接 / DEPLOYMENT.md 敏感措辞 / 法务未确认 NMPA — 4 store 上架阻塞
-- **CHANGELOG 顺序乱**（spzh）：[0.16.0] 排到 [0.1.0+1] 后 / [0.22.1] 排到 [0.23.0] 后 / [0.15.0] 排到 [0.14.0] 后 — 时间倒置（v0.24.0 release 收尾修真）
+- **CHANGELOG 顺序乱**（spzh）：[0.16.0] 排到 [0.1.0+1] 后 / [0.22.1] 排到 [0.23.0] 后 / [0.15.0] 排到 [0.14.0] 后 — 时间倒置（v0.24.0 release 收尾修正）
 - **pubspec 0.23.0+1 没 bump**（spzh）：v0.24 发布 30 commit 仍 0.23.0+1
 - **EmailTemplate._formatDateTime 硬编码 UTC+8**（spen P0）：PIPL §17 跨境合规风险
 - **strings.dart 35+ hardcode 中文**（spzh P0）：通知/PDF/import summary/SMS 模板海外用户无法看
@@ -122,7 +236,7 @@
 - 4 层架构纯度 + 一致性 100% 保持（`check_all.dart` 全过）
 - god-class 治理大幅推进（mood_dialog -73% / notification_service -44% / medications_list -63%）
 - token 体系 8.4/10 接近工业级（剩余 5% polish）
-- i18n zh_Hant 修真完成（v1.0+ 海外发布就绪）
+- i18n zh_Hant 修正完成（v1.0+ 海外发布就绪）
 
 ## [0.23.0] - 2026-07-25
 
@@ -148,13 +262,13 @@
 - **PressFeedbackIconButton**（emil P3-1）：从 PressFeedback 抽 IconButton 专用变体，统一 22 文件 icon button 反馈
 - **care_engine 4 strategy**（emil P3-2）：`care_strategies.dart` 拆 DefaultHighFreqStrategy / DefaultLowFreqStrategy / HighAdherenceStrategy / LowAdherenceStrategy 4 子
 - **reminders_hub Notifier**（emil P3-3）：从 god class reminders_hub_page 拆 5 个 card 子 widget + Notifier 集中
-- **zh_Hant stub**（spzh P3-30）：加 `app_zh_Hant.arb`（**注**：v0.24 修真 OpenCC 繁化 — 当前是简体副本）
+- **zh_Hant stub**（spzh P3-30）：加 `app_zh_Hant.arb`（**注**：v0.24 修正 OpenCC 繁化 — 当前是简体副本）
 
 ### Added
 - **care_strategies 4 子 + test**（emil P3-2 续）：`care_strategies_round43_test.dart` 286 行
 - **encrypted_audio_storage base class + test**（emil P3-5）：`encrypted_audio_storage_round43_test.dart` 186 行
 - **6 个 CI 守门员脚本**：check_all / check_cross_feature / check_arb_keys / check_drift_namespace / check_datetime_race / check_fullwidth_punctuation
-- **P3 L 项 4 处架构债务 TODO 注释**：notification_service facade 续拆 / data_export +50 test 路径 / zh_Hant stub 修真 / 紧急联系人单独同意
+- **P3 L 项 4 处架构债务 TODO 注释**：notification_service facade 续拆 / data_export +50 test 路径 / zh_Hant stub 修正 / 紧急联系人单独同意
 
 ### Tests
 - 876/876 pass

@@ -1,8 +1,8 @@
-// v0.27 round 60 (审计 C1 修真): PHQ-9 detectCrisis + hotlineByRegion 单测
+﻿// v0.27 round 60 (审计 C1 修正): PHQ-9 detectCrisis + hotlineByRegion 单测
 //
 // 背景 (audit-domain-layer.md 3.1):
 //   - PHQ-9 detectCrisis (lib/domain/logic/phq9.dart:118-133) **0 测试**。
-//     v0.25 R51 修真海外用户 hotline routing, 决定 hotline 返回的代码
+//     v0.25 R51 修正海外用户 hotline routing, 决定 hotline 返回的代码
 //     完全无单测保护。
 //   - hotlineByRegion 6 region × 2 hotlines = 12 条数据 **0 测试**。
 //   - HotlineRegion enum **0 测试**。
@@ -11,7 +11,7 @@
 // region map, 无测试 fail 提醒 → 用户自杀念头时显示错的危机电话
 // = 医疗法律责任。
 //
-// 修真: 加完整单测覆盖 5 个维度 (阈值 / 边界 / 6 region 路由 / 数据
+// 修正: 加完整单测覆盖 5 个维度 (阈值 / 边界 / 6 region 路由 / 数据
 // 完整性 / enum 完整性)。
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
@@ -92,7 +92,7 @@ void main() {
     });
   });
 
-  group('Phq9Scale.detectCrisis — region 路由 (R51 修真核心)', () {
+  group('Phq9Scale.detectCrisis — region 路由 (R51 修正核心)', () {
     void expectHotlineFor(HotlineRegion region, String mustContain) {
       final s = phq9Scale;
       final scores = baseScores();
@@ -143,7 +143,7 @@ void main() {
 
   group('hotlineByRegion — 数据完整性 (CI 守门员可参考)', () {
     test('6 region 全覆盖, 无 missing', () {
-      // 修真: 防止未来加 region 时漏配 hotlines
+      // 修正: 防止未来加 region 时漏配 hotlines
       for (final region in HotlineRegion.values) {
         expect(hotlineByRegion.containsKey(region), isTrue,
             reason: 'region=$region 必须在 hotlineByRegion');
@@ -177,7 +177,7 @@ void main() {
     });
 
     test('每 region 至少 1 条 ≤ 2 条 (海外 1 条, 大陆 2 条)', () {
-      // 修真动机: 防止某 region 突然被填 0 条 或 5 条 (data quality)
+      // 修正动机: 防止某 region 突然被填 0 条 或 5 条 (data quality)
       for (final region in HotlineRegion.values) {
         final count = hotlineByRegion[region]!.length;
         expect(count, inInclusiveRange(1, 2),
