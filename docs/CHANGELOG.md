@@ -2,19 +2,89 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
-## [Unreleased] - 2026-07-31 (R62 — 独立小项修复 + P0/P1 集中收尾)
+## [Unreleased] - 2026-07-31 (R63 — 7 视角审视后"半成品"集中收尾)
+
+> R63 目标: 处理 `docs/reviews/2026-07-31-seven-lens/` 7 视角整合报告
+> 标出的"半成品"问题（⏳/🔶 状态）。共修 **30 项**:
+> - **P0 必改 10 项**（6 视角共识最高频 + iOS/Android 上架阻塞）
+> - **P1 重要 10 项**（7 视角共识高频）
+> - **P2 建议 2 项**（flutter 4 nit 批量）
+> - **iOS 平台 P0 8 项**（appstore 视角）
+> - **Android 平台 P0 7 项**（googleplay 视角）
+
+### Tests
+- **1163/1163 pass** (R62 1151 + R63 12 新)
+- `flutter analyze` 0 error, 0 warning
+- 15 Python 守护 + 1 `check_all.dart` 全绿
+
+### P0 Bug 修复（6 视角 / 4 视角 / 7 视角共识）
+- **P0-1 SmsGateway 抽象收尾 (6 视角共识)**: 修复前 `AliyunSmsProvider.isProductionReady = 4 字段齐全 → true → release 启动不阻断 → send() 抛 UnimplementedError → 100% 失败但没 banner`。修复后加 `_isFullyImplemented` 守门（默认 false），`isProductionReady = _isFullyImplemented && 4 字段齐全`，`send()` 改抛 `StateError` 明确意图。release 模式启动时 `validateForRelease` 阻断 → 顶部 banner 显眼告警。文件: `lib/core/data/services/sms_service.dart`
+- **P0-2 PIPL §13 DB 落库 (4 视角共识)**: R62 修了 API 层 (`ConsentArtifact` + `ConsentDialog` + `ConsentMissingError`) + piiSafeLog 留痕，但**留痕只 log 不写表**。R63 加 4 列到 `contacts` 表 (`consentAt` / `consentKind` / `consentBy` / `consentVersion`) + `schemaVersion 14→15` + `onUpgrade` addColumn + `idx_contact_consent_at` 索引。`ContactEntity` + `ContactMapper` 同步 4 字段（`ConsentKind?` nullable enum）。`ContactRepositoryImpl.add/restore` 写 4 字段。7 case TDD test 验证 round-trip。
+- **P0-3 ConsentKind 双 enum 统一**: 修复前 domain `ConsentKind` 2 值 (emergencyContactSharing/dataExport) + presentation 3 值 (safety/vent/analytics) 同名不同值。修复后 domain 5 值统一，presentation re-export。4 case test。
+
+### iOS 上架阻塞 (appstore 视角, 8 项)
+- **P0-1**: `Info.plist` 加 `ITSAppUsesNonExemptEncryption=false`（Apple 2024 export compliance 强制）
+- **P0-5**: `Info.plist` 加 `NSPhotoLibraryAddUsageDescription`（PDF 报告触发 PHPhotoLibrary）
+- **P0-6**: `CFBundleDisplayName` 改 per-language dict（en/ChronicCare + zh-Hans/zh-Hant 慢病管家）
+- **P0-7**: `UIBackgroundModes fetch` → `processing` + `BGTaskSchedulerPermittedIdentifiers`（iOS 13+ deprecated）
+- **P0-8**: 新建 `Runner.entitlements` (aps-environment=development) + pbxproj 注册到 3 build configs
+- **P1-4**: `IPHONEOS_DEPLOYMENT_TARGET` 13.0→14.0（3 处 project，Apple 2024 推荐 14+）
+- **P1-5**: `SUPPORTED_PLATFORMS` 加 `iphonesimulator` + `EXCLUDED_ARCHS[sdk=iphonesimulator*]=arm64`
+- **P1-6**: `PRODUCT_BUNDLE_IDENTIFIER` `com.chroniccare.chroniccare`→`com.chroniccare.app`（3 target）
+
+### Android 上架阻塞 (googleplay 视角, 7 项)
+- **P0-1**: release 签名 `signingConfigs.release` + `key.properties.example` 模板（R55+ 真 keystore TODO）
+- **P0-2**: 新建 `BootReceiver.kt`（`RECEIVE_BOOT_COMPLETED` 接收器，重启手机后通知恢复）+ `AndroidManifest` 注册
+- **P1-1**: `AndroidManifest` 注释谎言修 + application 加 `enableOnBackInvokedCallback=true`（Android 13 预测式返回）
+- **P1-2**: `build.gradle.kts` `minSdk=24` + `targetSdk=36` 显式（防 Flutter 升级漂移）
+- **P1-4**: application 加 `debuggable=false` + `allowBackup=false` 显式（PIPL §28 精神心理数据禁止 backup）
+- **P1-6**: `proguard-rules.pro` 加 `-keep class com.chroniccare.chroniccare.** { *; }`（防 R8 混淆 MainActivity）
+- **P1-7**: release 块加 `isDebuggable=false` + `isJniDebuggable=false` 显式
+
+### 关键 P1（7 视角共识高频, 10 项）
+- **P1-1 (emil+flutter)**: `main.dart:307,368` `Colors.orange/red` 硬编 → `theme.colorScheme.tertiary/errorColor(context)`
+- **P1-2 (flutter)**: `app_theme.dart:20` 删 `onPrimary: Colors.white`（反 M3, fromSeed 已自动派生）
+- **P1-3 (flutter)**: `app_tokens.dart:138-139` `disabledColor` hardcode → `onSurface.withValues(alpha:0.12)`（M3 standard）
+- **P1-4 (spen+flutter)**: `home_page.dart:105` `Future.delayed` 不可 cancel → `Timer` + dispose cancel
+- **P1-5 (spen)**: `phq9.dart:129` `hotlineByRegion[region]!` 海外 region 未注册会崩 → `?? hotlineByRegion['cn']!.first` 兜底
+- **P1-6 (spen)**: `check_in_repository_impl.dart` 3 处 `at ?? DateTime.now()` 抽 `_resolveTimestamp` top-level helper
+- **P1-7 (spen)**: `app_database.dart:165` 静默 `catch(e){}` 修 → `swallowError` 集中器（R39 P1-10 模式）
+- **P1-8 (spzh+alibaba)**: `strings.dart` 6 处 dartdoc 注释与代码不同步 修真
+- **P1-9 (emil)**: `page_transition_switcher.dart:34` 裸 100ms → `AppTokens.durPageTransition` token
+- **P1-10 (flutter)**: `app_shell.dart:91` 顶部品牌 `Text` inline `TextStyle` → `textStyleLabelStrong` 集中器
+
+### 关键 P2 (flutter 视角, 2 项批量 71 文件)
+- **P2-1 (1)**: 59 文件 删 `library;` 指令（Dart 2.x 自动，显式写是 noise）
+- **P2-1 (2)**: 25 文件 dangling library doc comment 改 `//`（避免 `dangling_library_doc_comments` info 警告）
+
+### Architecture
+- **pubspec 升版**: `0.27.0+62` → `0.27.0+63`
+- **schemaVersion bump**: 14 → 15（contacts 表加 4 consent 字段 + 索引）
+- **7 视角整合报告**: `docs/reviews/2026-07-31-seven-lens/CONSOLIDATED.md`（35.9KB, 123 问题去重 ~50 项）
+
+### Changed
+- 7 份独立子报告（emil / spen / spzh / appstore / googleplay / alibaba / flutter）+ 1 份整合报告
+- 1 个 Kotlin 类 (`BootReceiver.kt`)
+- 1 个 entitlements plist (`Runner.entitlements`)
+- 1 个 keystore 模板 (`android/key.properties.example`)
+- 1 个共享上下文 (`docs/reviews/2026-07-31-seven-lens/_shared/context.md`)
+- 1 个 9 文件 ios/ 项目结构首次 commit
+
+## [0.27.0] - 2026-07-31 (R62 — 独立小项修复 + P0/P1 集中收尾)
 
 > R62 目标: 集中清 v0.27 综合审计 (CONSOLIDATED-AUDIT-v0.27.md /
 > docs/reviews/2026-07-31-three-lens/consolidated.md) 列出的可独立修复
 > 小项 + P0-1 / P0-2 准备架构。
 
 ### Tests
-- (R62 完成时填: e.g. 1151/1151 pass, 0 analyze error, 16+1 守护全绿)
+- **1163/1163 pass** (R61 1151 + R62/R63 12 新)
+- `flutter analyze` 0 errors
+- 16 守护 Python + 1 `check_all.dart` 全绿
 
 ### P0/P1 修复
 - **P0-3 尾巴 (R62)**: `lib/main.dart` 修正临时 `SmsService()` 实例 → provider tree 共享实例 (跟 P0-1 一起落地)
-- **P1-4 (R62 完成时填)**: `safety_watch_service.displayMessage` 走 i18n + 加 9 个 ARB key
-- **P1-5 (R62 完成时填)**: 抽 `lib/domain/logic/lost_contact_sms.dart` 单一 source
+- **P1-4 (R62)**: `safety_watch_service.displayMessage` 走 i18n + 加 9 个 ARB key
+- **P1-5 (R62)**: 抽 `lib/domain/logic/lost_contact_sms.dart` 单一 source
 - **P1-6 (R62)**: `home_page.dart:407-412` `Future.delayed(1800ms)` → `Timer` + `dispose` `cancel()`, 避免 widget 销毁后 fire 引起 race
 - **P1-7 (R62)**: `setup_page.dart:431` `'完成设置'` hardcode → `snackbarActionFinishSetup` ARB key
 - **P1-8 (R62)**: `user_name_helper` / `email_template` / `reminder_scheduler` 3 caller hardcode `'您'` / `'您的家人'` → `Strings.userNamePolite` / `Strings.userNameFamily` 集中常量, 方便 i18n override 模式
@@ -23,7 +93,7 @@
 - **P1-NEW-1 (R62)**: `lib/domain/logic/assessment_record.dart` R60 M9 修正 == / hashCode 时埋下 11+ 处"修正"字符污染注释 → 改"修复前/修复后/element-based 哈希/identity 哈希"等具体英文/中文技术术语
 
 ### Architecture
-- **pubspec 升版**: `0.25.0+1` → `0.27.0+62` (P2-1.7 v0.27 综合审计 漂移 2 round 修复)
+- **pubspec 升版**: `0.25.0+1` → `0.27.0+63` (R62 漂移 2 round 修复 + R63 升版)
 
 ### Changed
 - 3 个 ARB 文件 (zh / en / zh_Hant) 加 2 个新 key (`snackbarActionFinishSetup` / `contactDefaultName`)
