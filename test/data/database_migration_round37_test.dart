@@ -19,7 +19,9 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 
 void main() {
   group('AppDatabase schemaVersion', () {
-    test('schemaVersion == 15 (v0.27 round 63 P0-2: contacts 加 4 consent 字段 + index)', () {
+    test(
+        'schemaVersion == 15 (v0.27 round 63 P0-2: contacts 加 4 consent 字段 + index)',
+        () {
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       expect(db.schemaVersion, 15);
@@ -73,9 +75,11 @@ void main() {
     test('mood_entries 加 3 字段 (audio)', () async {
       // v11 → v12: audioPath / audioTranscript / audioDurationMs
       // 通过 raw query 验证 schema
-      final result = await db.customSelect(
-        "PRAGMA table_info(mood_entries)",
-      ).get();
+      final result = await db
+          .customSelect(
+            "PRAGMA table_info(mood_entries)",
+          )
+          .get();
       final columns = result.map((r) => r.read<String>('name')).toSet();
       expect(columns, contains('audio_path'));
       expect(columns, contains('audio_transcript'));
@@ -84,9 +88,11 @@ void main() {
 
     test('user_profiles 加 4 字段 (consent)', () async {
       // v9 → v10: consent 字段
-      final result = await db.customSelect(
-        "PRAGMA table_info(user_profiles)",
-      ).get();
+      final result = await db
+          .customSelect(
+            "PRAGMA table_info(user_profiles)",
+          )
+          .get();
       final columns = result.map((r) => r.read<String>('name')).toSet();
       expect(columns, contains('user_agreement_version'));
       expect(columns, contains('privacy_policy_version'));
@@ -95,17 +101,21 @@ void main() {
     });
 
     test('vent_entries 加 content_text_enc 字段 (v8 → v9)', () async {
-      final result = await db.customSelect(
-        "PRAGMA table_info(vent_entries)",
-      ).get();
+      final result = await db
+          .customSelect(
+            "PRAGMA table_info(vent_entries)",
+          )
+          .get();
       final columns = result.map((r) => r.read<String>('name')).toSet();
       expect(columns, contains('content_text_enc'));
     });
 
     test('mood_entries 加 4 维度 3 字段 (v6 → v7)', () async {
-      final result = await db.customSelect(
-        "PRAGMA table_info(mood_entries)",
-      ).get();
+      final result = await db
+          .customSelect(
+            "PRAGMA table_info(mood_entries)",
+          )
+          .get();
       final columns = result.map((r) => r.read<String>('name')).toSet();
       expect(columns, contains('energy'));
       expect(columns, contains('sleep'));
@@ -125,9 +135,11 @@ void main() {
     });
 
     test('5 个核心表都存在', () async {
-      final tables = await db.customSelect(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
-      ).get();
+      final tables = await db
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+          )
+          .get();
       final names = tables.map((r) => r.read<String>('name')).toSet();
       // 核心 5 表
       expect(names, contains('check_ins'));

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/widgets/primary_button.dart';
+import 'package:chroniccare/presentation/widgets/dialog_actions_row.dart';
 
 /// 选择时间窗口的 AlertDialog
 ///
@@ -77,15 +77,13 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context).commonCancel),
-        ),
-        PrimaryButton(
-          isFullWidth: false,
-          onPressed: () => Navigator.pop(context, _selected),
-          child:
-              Text(AppLocalizations.of(context).settingsActionGenerateReport),
+        // v0.27 round 67 (C-3): 走 DialogActionsRow 集中器
+        DialogActionsRow(
+          cancelLabel: AppLocalizations.of(context).commonCancel,
+          onCancel: () => Navigator.pop(context),
+          confirmLabel:
+              AppLocalizations.of(context).settingsActionGenerateReport,
+          onConfirm: () => Navigator.pop(context, _selected),
         ),
       ],
     );

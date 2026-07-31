@@ -102,8 +102,12 @@ void main() {
   // 不能再触发 onMaxReached 回调 (因为 Timer.periodic 已被 cancel), 也不能再 emit
   // stream (因为 stream 已 close)。
 
-  group('MoodAudioServiceImpl systematic-debugging regression guards (dispose race)', () {
-    test('dispose race: stopRecording → dispose 串行 → 都安全 (no throw, no double-stop)', () async {
+  group(
+      'MoodAudioServiceImpl systematic-debugging regression guards (dispose race)',
+      () {
+    test(
+        'dispose race: stopRecording → dispose 串行 → 都安全 (no throw, no double-stop)',
+        () async {
       // bug 模式 (R52 修过同款): _recordingTimer.periodic 在 stopRecording 后
       // 仍可能在 dispose 之前 fire onMaxReached, 触发 unawaited(stopRecording())
       // 但 recorder 已 dispose → 抛 LateError / StateError
@@ -124,7 +128,8 @@ void main() {
       await expectLater(svc.dispose(), completes);
     });
 
-    test('dispose race: 多次连续 dispose → 不抛 (StreamController.close idempotent)', () async {
+    test('dispose race: 多次连续 dispose → 不抛 (StreamController.close idempotent)',
+        () async {
       // bug 模式: StreamController.close() 二次调用会抛 StateError
       // 锁: dispose 实现内部应 swallow "already closed" 错误
       final svc = MoodAudioServiceImpl();
@@ -134,7 +139,8 @@ void main() {
       await expectLater(svc.dispose(), completes);
     });
 
-    test('dispose race: stopStt 在 dispose 之后 → 不抛 (already-stopped safe)', () async {
+    test('dispose race: stopStt 在 dispose 之后 → 不抛 (already-stopped safe)',
+        () async {
       // bug 模式: dispose 内部已 _stopSttInternal + cancel timer, 之后用户代码
       // 调 stopStt 不应抛 "Stream closed" / "not listening"
       final svc = MoodAudioServiceImpl();

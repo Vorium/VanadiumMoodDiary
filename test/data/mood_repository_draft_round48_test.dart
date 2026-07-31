@@ -35,7 +35,8 @@ void main() {
       final id = await repo.add(
         draft: const MoodEntryDraft(score: 4, tags: ['平静']),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.score, 4);
       expect(entry.tagsJson, '["平静"]');
@@ -49,7 +50,8 @@ void main() {
           note: '今天有点累',
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.note, '今天有点累');
     });
@@ -62,7 +64,8 @@ void main() {
           at: fixedTime,
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.timestamp, fixedTime);
     });
@@ -73,11 +76,15 @@ void main() {
         draft: const MoodEntryDraft(score: 3, tags: []),
       );
       final after = DateTime.now();
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       // entry.timestamp 应该在 before..after 之间
-      expect(entry.timestamp.isAfter(before.subtract(const Duration(seconds: 1))), isTrue);
-      expect(entry.timestamp.isBefore(after.add(const Duration(seconds: 1))), isTrue);
+      expect(
+          entry.timestamp.isAfter(before.subtract(const Duration(seconds: 1))),
+          isTrue);
+      expect(entry.timestamp.isBefore(after.add(const Duration(seconds: 1))),
+          isTrue);
     });
 
     test('4 维字段 (energy / sleep / anxiety) 全部映射 (P1-14 GREEN-2)', () async {
@@ -90,7 +97,8 @@ void main() {
           anxiety: 5,
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.energy, 2);
       expect(entry.sleep, 4);
@@ -101,7 +109,8 @@ void main() {
       final id = await repo.add(
         draft: const MoodEntryDraft(score: 3, tags: []),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.energy, isNull);
       expect(entry.sleep, isNull);
@@ -118,7 +127,8 @@ void main() {
           audioDurationMs: 8000,
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.audioPath, '/docs/mood_audio/m1.m4a.enc');
       expect(entry.audioTranscript, '心情不错');
@@ -129,7 +139,8 @@ void main() {
       final id = await repo.add(
         draft: const MoodEntryDraft(score: 3, tags: []),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.tagsJson, '[]');
     });
@@ -141,7 +152,8 @@ void main() {
           tags: ['焦虑', '失眠'],
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.tagsJson, '["焦虑","失眠"]');
     });

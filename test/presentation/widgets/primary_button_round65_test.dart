@@ -22,8 +22,7 @@ void main() {
     );
   }
 
-  testWidgets('R65-PB-1: 默认 (isFullWidth=true) 包 SizedBox 全宽',
-      (tester) async {
+  testWidgets('R65-PB-1: 默认 (isFullWidth=true) 包 SizedBox 全宽', (tester) async {
     await tester.pumpWidget(
       wrap(
         child: PrimaryButton(
@@ -97,7 +96,8 @@ void main() {
     expect(tapCount, 1, reason: 'onPressed 应该被调用 1 次');
   });
 
-  testWidgets('R65-PB-4: onPressed=null → FilledButton disabled', (tester) async {
+  testWidgets('R65-PB-4: onPressed=null → FilledButton disabled',
+      (tester) async {
     await tester.pumpWidget(
       wrap(
         child: const PrimaryButton(

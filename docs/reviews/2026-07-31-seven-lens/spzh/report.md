@@ -86,7 +86,7 @@
 | **P0-B** | `lib/core/data/database/tables/contact/contacts.dart` + `app_database.dart:82` | `Contact` 表 5 列（id/name/phone/sortOrder/isActive），**0 consent 字段**；`schemaVersion=14` 未为 R62 bump | 加 `consentAt` / `consentKind` / `consentBy` / `consentVersion` 4 列；bump `schemaVersion=15` + `onUpgrade` 迁移 | 架构 | M | **P0** | 上一条的前置；不改 schema = 上条无解 |
 | **P0-C** | `lib/domain/entities/consent_artifact.dart:33-39` + `lib/presentation/providers/legal_consent_provider.dart:20-29` | **两个 `ConsentKind` enum 同名不同值**：domain `{emergencyContactSharing, dataExport}` vs presentation `{safety, vent, analytics}`。`legal_page.dart:139-162` 用 presentation，`ConsentDialog` + `contact_repository_impl` 用 domain，**两者无任何 import 关系** | domain `ConsentKind` 加 `safety/vent/analytics` 3 个值；presentation `legal_consent_provider.dart` 删本地 enum，import domain 的 | 架构 | M | **P0** | 同名 enum 是未来踩雷的根源（`ref.watch(streamProviderFamily<bool, ConsentKind>)` 类型推断错误） |
 | **P1-A** | `lib/domain/logic/phq9.dart:19-24, 70-103, 119-133` + `gad7.dart:15-31, 41-65` | 9 + 7 = 16 道题 + 5 + 4 = 9 档严重度 + 6 region 危机电话 label 全部 `const` 硬编中文。R60 commit 98fb42b 加了 21 case test 但**只测数据完整性**（hotlineByRegion keys / length），**没测 i18n** | `AssessmentScale` 改 abstract 注入 `ScaleTranslations` 包装（domain 0 flutter 边界用 override 模式同 `Strings`）；4 档选项 / 9 道题 / 9 档严重度全走 `phq9Options(int score, {String? override})` 函数版 | 架构 | L | P1 | 评估核心 + 海外华人危机电话 label 中文 = 法律风险 |
-| **P1-B** | `lib/core/l10n/strings.dart:248-256` (moodLabel) + `:135-141` (PdfAuthor 等) + 多处通知/邮件 | `Strings` 50+ 处 fallback 中文虽支持 override，但**关键 path 没传 override**（看 `notification_service.dart`、`reminder_scheduler.dart`、`safety_alert_dispatcher.dart` caller）→ en 模式 fallback 中文的概率 > 0 | 跑 `check_no_pua` 风格脚本 `check_strings_override.py`：grep 所有 `Strings.xxx` / `Strings.xxxText()` caller，标出"未传 override"的 → 修真 caller | 底层 | M | P1 | 即使 `Strings` 50+ 处硬编是架构选择（domain 0 flutter），**override 没用 = 跟没改一样** |
+| **P1-B** | `lib/core/l10n/strings.dart:248-256` (moodLabel) + `:135-141` (PdfAuthor 等) + 多处通知/邮件 | `Strings` 50+ 处 fallback 中文虽支持 override，但**关键 path 没传 override**（看 `notification_service.dart`、`reminder_scheduler.dart`、`safety_alert_dispatcher.dart` caller）→ en 模式 fallback 中文的概率 > 0 | 跑 `check_no_pua` 风格脚本 `check_strings_override.py`：grep 所有 `Strings.xxx` / `Strings.xxxText()` caller，标出"未传 override"的 → 修正 caller | 底层 | M | P1 | 即使 `Strings` 50+ 处硬编是架构选择（domain 0 flutter），**override 没用 = 跟没改一样** |
 | **P1-C** | `lib/main.dart:23-35, 151-191` | R62 把 `SmsService` 提为顶层 `_smsService` 静态实例 + `smsServiceProvider.overrideWithValue(_smsService)` ✅。R60 报告的"main.dart:140 注释撒谎"已修 | 没问题，仅确认 ✅ | 底层 | — | — | 上次报告项已修 |
 | **P2-A** | `lib/core/data/services/safety_watch_service.dart:308-315` | `String get displayMessage` 仍返 i18n key（如 `'safetyCheckResultDisabled'`），老 caller（如果有）会显示裸 key。`displayMessageL10n(l10n)` 是新方法 | 跑 `rg "\.displayMessage\b"` grep 所有 caller，升级到 `.displayMessageL10n(l10n)`；删 getter | 底层 | S | P2 | 防御性：避免未来 caller 误用 |
 | **P2-B** | `lib/core/data/services/safety_watch_service.dart:381-387` | `toJson` 没序列化 `contactsMocked` 字段（P0-3 3 态分流时加的字段）→ JSON 输出少一个字段，调试/audit 看到 `smsOk/smsFail` 但 `smsMock` 不见 | `toJson` 加 `'contactsMocked': contactsMocked` | 底层 | S | P2 | audit log 完整性 |
@@ -267,7 +267,7 @@
 
 4. **P1-B `Strings` override 覆盖率从 20% → 80%**（M 难度）
    - 文件：所有 `Strings.xxx` / `Strings.xxxText()` caller（约 30+ 处）
-   - 步骤：(1) 新建 `scripts/check_strings_override.py` 守护（找"未传 override"）(2) 跑脚本标出 30+ 违规 caller (3) 分批修真（medication_notifier / refill_notifier / snooze_manager / notification_service 优先）
+   - 步骤：(1) 新建 `scripts/check_strings_override.py` 守护（找"未传 override"）(2) 跑脚本标出 30+ 违规 caller (3) 分批修正（medication_notifier / refill_notifier / snooze_manager / notification_service 优先）
    - 关联：P2-E 通知 Channel 同步修
 
 ### 路线 C（P2/P3 — 1-3 月）
@@ -291,7 +291,7 @@
 | `check_no_pua.py` / `check_fullwidth_punctuation.py` / `check_changelog.py` / `check_arb_keys.py` / `check_cross_feature.py` / `check_no_hardcoded_utc.py` / `check_datetime_race.py` / `check_datetime_race2.py` / `check_drift_namespace.py` / `check_widget_dispose.py` / `check_all.dart` | ✅ | 11 个全绿 |
 
 **建议新增 2 个守护脚本**：
-- `check_strings_override.py`：grep 所有 `Strings.xxx` / `Strings.xxxText()` caller，标"未传 override"的 → 修真（关联 P1-B）
+- `check_strings_override.py`：grep 所有 `Strings.xxx` / `Strings.xxxText()` caller，标"未传 override"的 → 修正（关联 P1-B）
 - `check_consent_persisted.py`：grep `consentArtifact:` 出现位置 + 验证 DB 落库 + 验证 schemaVersion bump（关联 P0-A/B）
 
 ---

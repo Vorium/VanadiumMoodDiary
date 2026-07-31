@@ -115,11 +115,28 @@ class CareEngine {
   }
 
   /// 触发关怀(实际推送)
+  ///
+  /// v0.27 round 67 (Sprint 1 上架前 P0, spzh C-P0-6):
+  /// PIPL §14 撤回同意 → fire 直接 return, 不推通知。
+  /// `isSafetyConsentWithdrawn` 是可选回调, 返 true = 撤回。
+  /// 不传 / 返 false = 已同意 (默认行为, 跟 R67 前兼容)。
+  ///
+  /// caller 注入来源:
+  /// - presentation 层 (home_page / setup 软提醒) 调时:
+  ///   `(await ref.read(legalConsentStoreProvider).isWithdrawn(ConsentKind.safety))`
+  /// - use case (FireCareStrategyUseCase, R65) 调时: 用 config.enabled
   static Future<void> fire(
     CareTrigger trigger,
-    NotificationSender notificationService,
-  ) async {
+    NotificationSender notificationService, {
+    Future<bool> Function()? isSafetyConsentWithdrawn,
+  }) async {
     if (!trigger.shouldFire) return;
+
+    // v0.27 round 67: PIPL §14 撤回 safety 同意 → 不触发
+    // 缺省 = 未撤回 (跟 R67 前兼容, 但 R67 后 home_page 应注入)
+    if (isSafetyConsentWithdrawn != null && await isSafetyConsentWithdrawn()) {
+      return;
+    }
     // 关怀通知 id: 8000-8099 段, 避免和 snooze (300000+medId*1440+min) 冲突
     // (v0.23 P0-1 H3 fix: snooze base 4000 → 300000, 远离 medication cancel range)
     final id = 8000 + trigger.type.index;

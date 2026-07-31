@@ -12,6 +12,7 @@
 import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
+import 'package:chroniccare/core/shared/date_time_resolver.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_mapper.dart';
@@ -46,7 +47,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
       dosage: draft.dosage,
       dosageUnit: draft.dosageUnit,
       times: draft.times,
-      startDate: draft.startDate ?? DateTime.now(),
+      startDate: DateTimeResolvers.at(draft.startDate),
       endDate: draft.endDate,
       isActive: draft.isActive,
       refillAt: draft.refillAt,

@@ -46,14 +46,17 @@ class AppRouteMain {
           ),
           GoRoute(
             path: '/settings',
-            pageBuilder: (context, state) =>
-                AppRoutes.fadePage(state.pageKey, const SettingsPage(), context),
+            pageBuilder: (context, state) => AppRoutes.fadePage(
+                state.pageKey, const SettingsPage(), context),
           ),
           // 子页 (occasional → slide-from-right)
           GoRoute(
             path: '/email-preview',
             pageBuilder: (context, state) => AppRoutes.slideRightPage(
-                state.pageKey, const EmailPreviewPage(), context,),
+              state.pageKey,
+              const EmailPreviewPage(),
+              context,
+            ),
           ),
         ],
       ),

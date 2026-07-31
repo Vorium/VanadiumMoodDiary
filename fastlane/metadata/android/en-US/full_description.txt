@@ -10,8 +10,10 @@ Did you take your medication today? A single tap records it. Build a streak. Cel
 • Medication reminders
 Schedule multiple daily reminders. Never miss a dose. Customizable snooze, refill tracking, and "I'm running low" alerts.
 
-• Lost-contact safety net
+• Lost-contact safety net (coming soon — currently disabled)
 If you stop checking in for 2+ days, ChronicCare can automatically notify your trusted contacts. As a chronic patient, you don't have to worry about being alone.
+
+NOTE: This feature is currently disabled in this release. The SMS / email delivery pipeline is pending legal review and SMS provider onboarding (target: v1.0). Setup → Trusted contacts flow is preserved so your data is ready when the feature ships.
 
 • Mood & mental health journal
 Daily mood check-ins with optional voice notes (encrypted and stored only on your device). Track your emotional patterns over weeks and months.

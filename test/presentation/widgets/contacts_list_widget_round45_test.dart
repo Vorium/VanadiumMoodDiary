@@ -75,8 +75,7 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) =>
-                  const ContactsListWidget(contacts: [contact]),
+              builder: (_, __) => const ContactsListWidget(contacts: [contact]),
             ),
           ],
         ),
@@ -94,27 +93,29 @@ void main() {
     expect(find.byIcon(Icons.contacts_outlined), findsNothing);
   });
 
-  testWidgets('contacts 3 → 渲染 3 个 Dismissible + 2 个 Divider',
-      (tester) async {
+  testWidgets('contacts 3 → 渲染 3 个 Dismissible + 2 个 Divider', (tester) async {
     const contacts = [
       ContactEntity(
-          id: 1,
-          name: 'A',
-          phone: '13800000001',
-          sortOrder: 0,
-          isActive: true,),
+        id: 1,
+        name: 'A',
+        phone: '13800000001',
+        sortOrder: 0,
+        isActive: true,
+      ),
       ContactEntity(
-          id: 2,
-          name: 'B',
-          phone: '13800000002',
-          sortOrder: 1,
-          isActive: true,),
+        id: 2,
+        name: 'B',
+        phone: '13800000002',
+        sortOrder: 1,
+        isActive: true,
+      ),
       ContactEntity(
-          id: 3,
-          name: 'C',
-          phone: '13800000003',
-          sortOrder: 2,
-          isActive: true,),
+        id: 3,
+        name: 'C',
+        phone: '13800000003',
+        sortOrder: 2,
+        isActive: true,
+      ),
     ];
     await tester.pumpWidget(
       MaterialApp.router(
@@ -126,8 +127,7 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) =>
-                  const ContactsListWidget(contacts: contacts),
+              builder: (_, __) => const ContactsListWidget(contacts: contacts),
             ),
           ],
         ),
@@ -141,7 +141,8 @@ void main() {
     expect(find.text('C'), findsOneWidget);
   });
 
-  testWidgets('EmptyState action button 触发 onAction → context.push(/contacts/new)',
+  testWidgets(
+      'EmptyState action button 触发 onAction → context.push(/contacts/new)',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp.router(

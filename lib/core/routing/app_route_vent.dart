@@ -23,7 +23,10 @@ class AppRouteVent {
       GoRoute(
         path: '/vent/compose',
         pageBuilder: (context, state) => AppRoutes.slideUpPage(
-            state.pageKey, const VentComposePage(), context,),
+          state.pageKey,
+          const VentComposePage(),
+          context,
+        ),
       ),
       GoRoute(
         path: '/vent/detail/:id',

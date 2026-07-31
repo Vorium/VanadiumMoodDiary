@@ -98,8 +98,10 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                     padding: const EdgeInsets.all(AppTokens.spacingMd),
                     decoration: BoxDecoration(
                       border: Border(
-                          top: BorderSide(
-                              color: AppTokens.dividerColor(context),),),
+                        top: BorderSide(
+                          color: AppTokens.dividerColor(context),
+                        ),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -108,9 +110,11 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                           child: PressFeedback(
                             onTap: _copy,
                             child: OutlinedButton.icon(
-                              icon: const Icon(Icons.copy, size: AppTokens.iconSizeInline),
+                              icon: const Icon(Icons.copy,
+                                  size: AppTokens.iconSizeInline),
                               label: Text(
-                                  AppLocalizations.of(context).settingsCopy,),
+                                AppLocalizations.of(context).settingsCopy,
+                              ),
                               onPressed: null, // 委托给 PressFeedback
                             ),
                           ),
@@ -140,9 +144,12 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                         Expanded(
                           child: PressFeedback(
                             child: OutlinedButton.icon(
-                              icon: const Icon(Icons.share, size: AppTokens.iconSizeInline),
-                              label: Text(AppLocalizations.of(context)
-                                  .medReportShareLabel,),
+                              icon: const Icon(Icons.share,
+                                  size: AppTokens.iconSizeInline),
+                              label: Text(
+                                AppLocalizations.of(context)
+                                    .medReportShareLabel,
+                              ),
                               onPressed: _share,
                             ),
                           ),
@@ -176,8 +183,9 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                             const SizedBox(width: AppTokens.spacingSm),
-                            Text(AppLocalizations.of(context)
-                                .medReportPdfLoading,),
+                            Text(
+                              AppLocalizations.of(context).medReportPdfLoading,
+                            ),
                           ],
                         ),
                       ),
@@ -194,7 +202,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
   Future<void> _copy() async {
     await Clipboard.setData(ClipboardData(text: widget.report));
     if (mounted) {
-      AppSnackBar.showInfo(context, AppLocalizations.of(context).snackbarCopied);
+      AppSnackBar.showInfo(
+          context, AppLocalizations.of(context).snackbarCopied);
     }
   }
 
@@ -206,9 +215,11 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       );
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).snackbarActionShare,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).snackbarActionShare,
+          error: e,
+        );
       }
     }
   }
@@ -228,9 +239,11 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       );
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).snackbarActionGeneratePdf,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).snackbarActionGeneratePdf,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _pdfLoading = false);

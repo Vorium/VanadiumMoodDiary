@@ -90,8 +90,9 @@ class AppShell extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         Localizations.of<AppLocalizations>(
-                                    context, AppLocalizations,)
-                                ?.navAppName ??
+                              context,
+                              AppLocalizations,
+                            )?.navAppName ??
                             // v0.25 round 52 (spen P0 #11): i18n 失败 fallback
                             // 改英文 'ChronicCare', 不用 '慢病管家' 硬编
                             'ChronicCare',

@@ -106,5 +106,6 @@ bool isSecondDayMissed(List<CheckInEntity> sortedDesc, DateTime now) {
   if (sortedDesc.isEmpty) return false;
   final lastCheckIn = sortedDesc.first.timestamp;
   final minutesSince = now.difference(lastCheckIn).inMinutes;
-  return minutesSince >= _secondDayMissedMinutes && now.hour >= _secondDayMissedHour;
+  return minutesSince >= _secondDayMissedMinutes &&
+      now.hour >= _secondDayMissedHour;
 }

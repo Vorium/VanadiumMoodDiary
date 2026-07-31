@@ -29,6 +29,7 @@ import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
+import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
@@ -51,24 +52,10 @@ class MedicationCalendarPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingMd),
 
           // 顶部说明
-          Container(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
-            decoration: BoxDecoration(
-              color: AppTokens.primaryLightColor(context),
-              borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.medication_outlined, color: AppTokens.primaryColor(context)),
-                const SizedBox(width: AppTokens.spacingSm),
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(context).medsCalendarHeatmapDesc,
-                    style: AppTokens.textStyleBody(context),
-                  ),
-                ),
-              ],
-            ),
+          // v0.27 round 67 (C-2): 走 InfoBanner 集中器
+          InfoBanner(
+            icon: Icons.medication_outlined,
+            text: AppLocalizations.of(context).medsCalendarHeatmapDesc,
           ),
 
           const SizedBox(height: AppTokens.spacingSm),
@@ -80,31 +67,38 @@ class MedicationCalendarPage extends ConsumerWidget {
             // v0.22 round 29 (emil-34): Semantics 描述时间窗口
             // (TalkBack 读"时间窗口 7/30/90 天，当前 30" 让用户知道是单选)
             child: AppSemantics.container(
-              label: AppLocalizations.of(context).medicationTimeWindowSemantics(days),
+              label: AppLocalizations.of(context)
+                  .medicationTimeWindowSemantics(days),
               // v0.26 round 57 (emil EMIL-INC-06): 走 PressFeedback 集中器
               // 替代裸 SegmentedButton (无 :active scale 反馈)
               child: PressFeedback(
                 child: SegmentedButton<int>(
-                segments: [
-                  ButtonSegment(
+                  segments: [
+                    ButtonSegment(
                       value: 7,
-                      label:
-                          Text(AppLocalizations.of(context).medsCalendarWindow7),),
-                  ButtonSegment(
+                      label: Text(
+                          AppLocalizations.of(context).medsCalendarWindow7),
+                    ),
+                    ButtonSegment(
                       value: 30,
                       label: Text(
-                          AppLocalizations.of(context).medsCalendarWindow30,),),
-                  ButtonSegment(
+                        AppLocalizations.of(context).medsCalendarWindow30,
+                      ),
+                    ),
+                    ButtonSegment(
                       value: 90,
                       label: Text(
-                          AppLocalizations.of(context).medsCalendarWindow90,),),
-                ],
-                selected: {days},
-                // v0.22 round 29 (emil-49): 跟 trend_page.dart:252 一致 showSelectedIcon: false
-                // (避免 list/calendar 切换时 check 图标跳动)
-                showSelectedIcon: false,
-                onSelectionChanged: (s) =>
-                    ref.read(calendarWindowProvider.notifier).setDays(s.first),
+                        AppLocalizations.of(context).medsCalendarWindow90,
+                      ),
+                    ),
+                  ],
+                  selected: {days},
+                  // v0.22 round 29 (emil-49): 跟 trend_page.dart:252 一致 showSelectedIcon: false
+                  // (避免 list/calendar 切换时 check 图标跳动)
+                  showSelectedIcon: false,
+                  onSelectionChanged: (s) => ref
+                      .read(calendarWindowProvider.notifier)
+                      .setDays(s.first),
                 ),
               ),
             ),
@@ -396,8 +390,11 @@ class _Legend extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppTokens.spacingSm),
-            _legendItem(AppTokens.dividerColor(context),
-                AppLocalizations.of(context).medsCalendarLegendMissed, context,),
+            _legendItem(
+              AppTokens.dividerColor(context),
+              AppLocalizations.of(context).medsCalendarLegendMissed,
+              context,
+            ),
             _legendItem(AppTokens.adherencePartial, '< 50%', context),
             _legendItem(AppTokens.adherenceAlmost, '< 100%', context),
             _legendItem(AppTokens.primaryColor(context), '100%', context),
@@ -426,9 +423,10 @@ class _Legend extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-                // v0.22 round 29 (emil-16): 用 fontSizeMicro token
-                fontSize: AppTokens.fontSizeMicro,
-                color: AppTokens.textSecondaryColor(context),),
+              // v0.22 round 29 (emil-16): 用 fontSizeMicro token
+              fontSize: AppTokens.fontSizeMicro,
+              color: AppTokens.textSecondaryColor(context),
+            ),
           ),
         ],
       ),

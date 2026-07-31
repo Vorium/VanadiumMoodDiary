@@ -29,7 +29,8 @@ class AssessmentChartCard extends StatelessWidget {
       // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
       // carded 命名构造自带 Card 包裹, 替代 inline Card(child: ListTile)
       return AppListTile.carded(
-        leading: Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
+        leading:
+            Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
         title: Text(nameForScale(scaleId, l10n)),
         subtitle: Text(
           records.isEmpty
@@ -51,7 +52,8 @@ class AssessmentChartCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
+                Icon(iconForScale(scaleId),
+                    color: AppTokens.primaryColor(context)),
                 const SizedBox(width: AppTokens.spacingSm),
                 Text(
                   nameForScale(scaleId, l10n),
@@ -139,12 +141,14 @@ class AssessmentChartCard extends StatelessWidget {
                       isCurved: false,
                       dotData: FlDotData(
                         show: true,
-                        getDotPainter: (spot, _, __, ___) =>
-                            FlDotCirclePainter(
+                        getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
                           radius: 4,
                           color: assessmentSeverityStyle(
-                                  context, scaleId, spot.y.toInt(), l10n,)
-                              .color,
+                            context,
+                            scaleId,
+                            spot.y.toInt(),
+                            l10n,
+                          ).color,
                           strokeWidth: 1.5,
                           strokeColor: AppTokens.fgOnPrimary(context),
                         ),

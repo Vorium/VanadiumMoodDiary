@@ -15,7 +15,8 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   const svc = ExportAudioService();
 
-  group('v0.24 round 45 (Sprint #5c) — ExportAudioService.buildAudioMetadata', () {
+  group('v0.24 round 45 (Sprint #5c) — ExportAudioService.buildAudioMetadata',
+      () {
     test('3 字段全有 + 有 audioPath → hadAudio=true', () {
       final result = svc.buildAudioMetadata(
         audioDurationSec: 30,
@@ -62,7 +63,9 @@ void main() {
     });
   });
 
-  group('v0.24 round 45 (Sprint #5c) — ExportAudioService.parseAudioDurationSec', () {
+  group(
+      'v0.24 round 45 (Sprint #5c) — ExportAudioService.parseAudioDurationSec',
+      () {
     test('正常 int 30 → 30', () {
       expect(svc.parseAudioDurationSec(30), 30);
     });
@@ -100,7 +103,8 @@ void main() {
     });
   });
 
-  group('v0.24 round 45 (Sprint #5c) — ExportAudioService.parseAudioSizeBytes', () {
+  group('v0.24 round 45 (Sprint #5c) — ExportAudioService.parseAudioSizeBytes',
+      () {
     test('正常 int 1024 → 1024', () {
       expect(svc.parseAudioSizeBytes(1024), 1024);
     });

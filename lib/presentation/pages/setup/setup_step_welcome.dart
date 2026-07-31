@@ -1,6 +1,14 @@
 // setup_step_welcome.dart — 首次设置 Step 1: 欢迎 + 联系人
 //
-// 从 setup_page.dart 拆分，v0.19 (Q2)
+// 从 setup_page.dart 拆分,v0.19 (Q2)
+//
+// 2026-07-31 联系人软隐藏 (病耻感 + 失联通信业务暂停):
+// - 紧急联系人表单**完全可选**,不强制
+// - 移除"已告知联系人" checkbox (PIPL §23 在实际填了之后才需要,纯表单阶段不需要)
+// - 保留 `setupContactConsent` key 作为"提示性"段落(让用户知道将来真发通知时
+//   需要先告知),但不强制勾选
+// - canContinue 只看 `validationError == null`(父级已经校验过名字必填 +
+//   手机号格式/重复)
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -8,14 +16,12 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
-/// Step 1: 欢迎 + 紧急联系人
+/// Step 1: 欢迎 + 紧急联系人(可选)
 ///
-/// 用户输入姓名 + 紧急联系人手机号。
-/// 状态（TextEditingControllers）由父级管理。
+/// 用户输入姓名 + 可选紧急联系人手机号。
+/// 状态(TextEditingControllers)由父级管理。
 ///
-/// v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
-/// 法律要求: 给第三方(紧急联系人)发通知前,必须先获得用户声明已告知第三方
-/// (PIPL §23 + 个人信息保护法 + 民法典人格权)
+/// v0.21 Round 23 (P1-23): 原"已告知联系人" checkbox 已移除,见上方注释。
 class SetupStepWelcome extends StatefulWidget {
   final TextEditingController nameController;
   final List<TextEditingController> contactNameControllers;
@@ -41,13 +47,11 @@ class SetupStepWelcome extends StatefulWidget {
 }
 
 class _SetupStepWelcomeState extends State<SetupStepWelcome> {
-  bool _contactConsentConfirmed = false;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    // v0.21 Round 23 (P1-23): 未勾选"已告知联系人" → 阻止进入下一步
-    final canContinue = widget.validationError == null && _contactConsentConfirmed;
+    // 2026-07-31: 紧急联系人完全可选 → canContinue 只看父级校验
+    final canContinue = widget.validationError == null;
     return SingleChildScrollView(
       key: const ValueKey(1),
       child: Column(
@@ -83,7 +87,7 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
             const SizedBox(height: AppTokens.spacingXs),
             Text(
               widget.validationError!,
-              style:TextStyle(
+              style: TextStyle(
                 color: AppTokens.errorColor(context),
                 fontSize: AppTokens.fontSizeCaption,
               ),
@@ -123,28 +127,21 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
               label: Text(l10n.setupAddContact),
             ),
           ),
-          const SizedBox(height: AppTokens.spacingMd),
-          // v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
-          // 法律合规: 给第三方(联系人)发通知前,用户必须声明已告知联系人
-          // (PIPL §23 个人信息处理者向第三方提供应取得个人同意)
-          CheckboxListTile(
-            value: _contactConsentConfirmed,
-            onChanged: (v) {
-              setState(() {
-                _contactConsentConfirmed = v ?? false;
-              });
-            },
-            title: Text(
-              l10n.setupContactConsent,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                color: AppTokens.textPrimaryColor(context),
+          // 2026-07-31: 把"已告知联系人" 改为**提示性**段落(非强制勾选)。
+          // 复用 `setupContactConsent` 文案 key — 保留 key 避免 ARB orphan。
+          // 文案含义从"必须勾选"弱化为"如添加请告知对方"提示。
+          if (widget.contactPhoneControllers
+              .any((c) => c.text.trim().isNotEmpty))
+            Padding(
+              padding: const EdgeInsets.only(top: AppTokens.spacingSm),
+              child: Text(
+                l10n.setupContactConsent,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeCaption,
+                  color: AppTokens.textSecondaryColor(context),
+                ),
               ),
             ),
-            controlAffinity: ListTileControlAffinity.leading,
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
           const SizedBox(height: AppTokens.spacingLg),
           Row(
             children: [

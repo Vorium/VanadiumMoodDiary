@@ -30,10 +30,9 @@ class LastErrorCapture {
       final stackLines = stack.toString().split('\n');
       final truncatedStack = stackLines.take(_maxStackLines).join('\n');
       final errorStr = error.toString();
-      final truncatedError =
-          errorStr.length > _maxErrorLen
-              ? '${errorStr.substring(0, _maxErrorLen)}…'
-              : errorStr;
+      final truncatedError = errorStr.length > _maxErrorLen
+          ? '${errorStr.substring(0, _maxErrorLen)}…'
+          : errorStr;
       // v0.23 round 40 (sp-zh fix): .toUtc().toIso8601String() 配 'Z' 后缀
       // 之前 `DateTime.now().toIso8601String()` 输出无时区,Dart DateTime.parse
       // 按 local 解析,跨时区用户 (海外华人) 重启 App 后时间漂移

@@ -19,25 +19,37 @@ class AppRouteMedication {
       GoRoute(
         path: '/settings/reminders',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
-            state.pageKey, const RemindersHubPage(), context,),
+          state.pageKey,
+          const RemindersHubPage(),
+          context,
+        ),
       ),
       // v0.14 (Round 13A) 续方管理
       GoRoute(
         path: '/settings/refills',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
-            state.pageKey, const RefillManagePage(), context,),
+          state.pageKey,
+          const RefillManagePage(),
+          context,
+        ),
       ),
       // v0.21 Round 22 (P0-2): 法律与隐私页
       GoRoute(
         path: '/settings/legal',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
-            state.pageKey, const LegalPage(), context,),
+          state.pageKey,
+          const LegalPage(),
+          context,
+        ),
       ),
       // v0.14 (Round 13C) 用药日历 (医生视角热力图)
       GoRoute(
         path: '/medication/calendar',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
-            state.pageKey, const MedicationCalendarPage(), context,),
+          state.pageKey,
+          const MedicationCalendarPage(),
+          context,
+        ),
       ),
     ];
   }

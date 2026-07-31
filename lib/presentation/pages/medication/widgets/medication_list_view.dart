@@ -51,10 +51,8 @@ class MedicationListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeMeds =
-        meds.where((m) => m.isActive).toList(growable: false);
-    final stoppedMeds =
-        meds.where((m) => !m.isActive).toList(growable: false);
+    final activeMeds = meds.where((m) => m.isActive).toList(growable: false);
+    final stoppedMeds = meds.where((m) => !m.isActive).toList(growable: false);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,7 +78,7 @@ class MedicationListView extends StatelessWidget {
   Widget _buildCalendarEntry(BuildContext context) {
     // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
     return AppListTile.carded(
-      leading:Icon(
+      leading: Icon(
         Icons.calendar_view_month,
         color: AppTokens.primaryColor(context),
       ),

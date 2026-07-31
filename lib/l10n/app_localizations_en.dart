@@ -59,14 +59,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupNameHint => 'Alex';
 
   @override
-  String get setupContacts => 'Emergency contact phones (at least 1)';
+  String get setupContacts => 'Emergency contact (optional)';
 
   @override
   String get setupAddContact => '+ Add another contact';
 
   @override
   String get setupContactConsent =>
-      'I\'ve told the above contacts that the app will notify them if I\'m unreachable';
+      'If you add a contact, please notify them that the app may send them a safety message (required by law)';
 
   @override
   String get setupNext => 'Next →';
@@ -1240,10 +1240,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupValidationNameRequired => 'Please enter your name';
 
   @override
-  String get setupValidationContactRequired =>
-      'At least 1 emergency contact phone number is required';
-
-  @override
   String get setupValidationPhoneInvalid => 'Invalid phone number format';
 
   @override
@@ -1334,7 +1330,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setupWelcomeContactHint =>
-      '(At least 1 phone number, used for safety notifications)';
+      '(Optional — you can add later in Settings)';
 
   @override
   String get setupLegalUserAgreement => 'User Agreement';
@@ -1555,6 +1551,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trendViewCalendar => 'Calendar';
+
+  @override
+  String get trendWithdrawnTitle => 'Trend analysis paused';
+
+  @override
+  String get trendWithdrawnSubtitle =>
+      'You withdrew consent for \"Trend analysis\" (PIPL §14). Your data is not deleted — re-enable anytime to restore the charts.';
+
+  @override
+  String get trendWithdrawnAction => 'Re-enable';
 
   @override
   String get trendWeekdayMon => 'Mo';

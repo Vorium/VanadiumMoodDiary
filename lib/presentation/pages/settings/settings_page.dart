@@ -44,20 +44,10 @@ class SettingsPage extends ConsumerWidget {
         children: [
           const SizedBox(height: AppTokens.spacingMd),
 
-          // === 联系人 ===
-          SectionHeader(title: AppLocalizations.of(context).settingsContacts),
-          const SizedBox(height: AppTokens.spacingSm),
-          contactsAsync.when(
-            data: (contacts) => ContactsListWidget(contacts: contacts),
-            loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, _) => ErrorState(
-              title: AppLocalizations.of(context).commonLoadFailed(''),
-              detail: e.toString(),
-              onRetry: () => ref.invalidate(contactsProvider),
-            ),
-          ),
-
-          const SizedBox(height: AppTokens.spacingLg),
+          // 2026-07-31 联系人软隐藏: 联系人 section 已挪到**最底部**
+          // (有用户反馈"病耻感", 不希望一进设置就看到联系人相关 UI)。
+          // 联系人相关业务 (失联通知) 整体已用 [FeatureFlags.emergencyContactEnabled]
+          // 暂停,数据模型/repository 全部保留,后续要启用零成本。
 
           // === 升级到 Pro (IAP, v0.27 round 65 appstore P0-4) ===
           // 仅未购买时显示; 已购后隐藏 (避免反复提示)
@@ -116,8 +106,7 @@ class SettingsPage extends ConsumerWidget {
                       ),
                       const SizedBox(height: AppTokens.spacingSm),
                       Text(
-                        AppLocalizations.of(context)
-                            .settingsIapUpgradeSubtitle,
+                        AppLocalizations.of(context).settingsIapUpgradeSubtitle,
                         style: TextStyle(
                           fontSize: AppTokens.fontSizeBody,
                           color: AppColors.textSecondaryColor(context),
@@ -139,8 +128,7 @@ class SettingsPage extends ConsumerWidget {
                           );
                         },
                         child: Text(
-                          AppLocalizations.of(context)
-                              .settingsIapUpgradeTitle,
+                          AppLocalizations.of(context).settingsIapUpgradeTitle,
                         ),
                       ),
                     ],
@@ -205,6 +193,25 @@ class SettingsPage extends ConsumerWidget {
           ),
           const SizedBox(height: AppTokens.spacingSm),
           const AssessmentSection(),
+
+          const SizedBox(height: AppTokens.spacingLg),
+
+          // === 联系人 (2026-07-31 挪到最底部, 病耻感考量) ===
+          // 跟其他 section 一样仍可访问, 但不在用户进入设置时第一眼看到。
+          // 联系人 section 内的 "添加联系人" 仍会触发 ConsentDialog (PIPL §13),
+          // 业务跑 [FeatureFlags.emergencyContactEnabled] gate 后整个失联通信
+          // 链路不会发出去。
+          SectionHeader(title: AppLocalizations.of(context).settingsContacts),
+          const SizedBox(height: AppTokens.spacingSm),
+          contactsAsync.when(
+            data: (contacts) => ContactsListWidget(contacts: contacts),
+            loading: () => const LoadingSkeleton.fullScreen(),
+            error: (e, _) => ErrorState(
+              title: AppLocalizations.of(context).commonLoadFailed(''),
+              detail: e.toString(),
+              onRetry: () => ref.invalidate(contactsProvider),
+            ),
+          ),
 
           const SizedBox(height: AppTokens.spacingMd),
         ],

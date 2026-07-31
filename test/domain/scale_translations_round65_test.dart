@@ -52,8 +52,8 @@ void main() {
     });
 
     test('crisisHotlineLabel override 优先', () {
-      expect(t.crisisHotlineLabel(HotlineRegion.cn, override: 'Custom'),
-          'Custom');
+      expect(
+          t.crisisHotlineLabel(HotlineRegion.cn, override: 'Custom'), 'Custom');
     });
   });
 
@@ -88,8 +88,7 @@ void main() {
     test('crisisHotlineLabel hk 返中文/繁 hotline (tw 走 intl fallback)', () {
       final l10n = AppLocalizationsZh();
       final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.hk),
-          contains('撒玛利亚'));
+      expect(t.crisisHotlineLabel(HotlineRegion.hk), contains('撒玛利亚'));
     });
   });
 
@@ -126,22 +125,19 @@ void main() {
     test('tw 走 intl fallback', () {
       final l10n = AppLocalizationsZh();
       final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.tw),
-          l10n.scaleHotlineIntl);
+      expect(t.crisisHotlineLabel(HotlineRegion.tw), l10n.scaleHotlineIntl);
     });
 
     test('sg 走 intl fallback', () {
       final l10n = AppLocalizationsZh();
       final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.sg),
-          l10n.scaleHotlineIntl);
+      expect(t.crisisHotlineLabel(HotlineRegion.sg), l10n.scaleHotlineIntl);
     });
 
     test('uk 走 intl fallback', () {
       final l10n = AppLocalizationsEn();
       final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.uk),
-          l10n.scaleHotlineIntl);
+      expect(t.crisisHotlineLabel(HotlineRegion.uk), l10n.scaleHotlineIntl);
     });
   });
 

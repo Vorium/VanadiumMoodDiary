@@ -11,16 +11,14 @@ import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/check_in/check_in_mapper.dart';
+import 'package:chroniccare/core/shared/date_time_resolver.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
 
-/// v0.27 round 63 (P1-6 修复): 抽 _resolveTimestamp 顶层 helper
+/// v0.27 round 67 (C-1 重构): `_resolveTimestamp` 提到 `core/shared/date_time_resolver.dart`
 ///
-/// 之前 3 处 `at ?? DateTime.now()` 重复 pattern (checkIn / addTempMedication /
-/// saveAssessment)。caller 不传 timestamp 时调, 跨 midnight 同一函数多次调
-/// `DateTime.now()` 理论会拿到不同秒 (R19B DateTime race 纪律)。
-/// 抽 helper 强制 1 次取, 防止未来 caller 复用 pattern 时再写错。
-DateTime _resolveTimestamp(DateTime? at) => at ?? DateTime.now();
-
+/// 之前 R63 P1-6 抽 file-private helper, round 67 公开给 4 处 caller
+/// (vent / mood / medication / use case) 复用, 防止同款 `at ?? DateTime.now()`
+/// pattern 散落。
 /// CheckIn 仓库的 Drift 实现
 class CheckInRepositoryImpl implements CheckInRepository {
   final AppDatabase _db;
@@ -68,7 +66,7 @@ class CheckInRepositoryImpl implements CheckInRepository {
   Future<int> checkIn({DateTime? at, int? medicationId}) {
     return _db.checkInDao.insert(
       CheckInsCompanion.insert(
-        timestamp: _resolveTimestamp(at),
+        timestamp: DateTimeResolvers.at(at),
         type: CheckInType.normal.wire,
         medicationId: Value(medicationId),
       ),
@@ -83,7 +81,7 @@ class CheckInRepositoryImpl implements CheckInRepository {
   }) {
     return _db.checkInDao.insert(
       CheckInsCompanion.insert(
-        timestamp: _resolveTimestamp(at),
+        timestamp: DateTimeResolvers.at(at),
         type: CheckInType.temp.wire,
         note: Value(
           JsonCodec.buildTempMedNote(name: name, description: note),
@@ -106,7 +104,7 @@ class CheckInRepositoryImpl implements CheckInRepository {
     });
     return _db.checkInDao.insert(
       CheckInsCompanion.insert(
-        timestamp: _resolveTimestamp(at),
+        timestamp: DateTimeResolvers.at(at),
         type: scale, // 'phq9' / 'gad7' (wire 与 id 同名)
         note: Value(note),
       ),

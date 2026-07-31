@@ -24,7 +24,8 @@ void main() {
     });
   });
 
-  group('v0.24 round 45 (Sprint #5c) — ExportSchemaService.validateVersion', () {
+  group('v0.24 round 45 (Sprint #5c) — ExportSchemaService.validateVersion',
+      () {
     test('1 → 1 (最小)', () {
       expect(svc.validateVersion(1), 1);
     });

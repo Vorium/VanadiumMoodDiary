@@ -11,7 +11,9 @@ class MoodDao {
     return (_db.select(_db.moodEntries)
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.timestamp, mode: OrderingMode.desc,),
+                  expression: t.timestamp,
+                  mode: OrderingMode.desc,
+                ),
           ]))
         .watch();
   }
@@ -24,12 +26,16 @@ class MoodDao {
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
     return (_db.select(_db.moodEntries)
-          ..where((t) =>
-              t.timestamp.isBiggerOrEqualValue(startOfDay) &
-              t.timestamp.isSmallerThanValue(endOfDay),)
+          ..where(
+            (t) =>
+                t.timestamp.isBiggerOrEqualValue(startOfDay) &
+                t.timestamp.isSmallerThanValue(endOfDay),
+          )
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.timestamp, mode: OrderingMode.desc,),
+                  expression: t.timestamp,
+                  mode: OrderingMode.desc,
+                ),
           ]))
         .watch();
   }

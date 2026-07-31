@@ -32,7 +32,8 @@ void main() {
     return enc.encrypt(Uint8List.fromList(utf8.encode(s)));
   }
 
-  group('v0.24 round 45 (Sprint #5c) — ExportCryptoService.decryptVentText', () {
+  group('v0.24 round 45 (Sprint #5c) — ExportCryptoService.decryptVentText',
+      () {
     test('null blob → null (老数据兼容)', () async {
       final result = await svc.decryptVentText(null);
       expect(result, isNull);
@@ -58,7 +59,8 @@ void main() {
     });
   });
 
-  group('v0.24 round 45 (Sprint #5c) — ExportCryptoService.encryptVentText', () {
+  group('v0.24 round 45 (Sprint #5c) — ExportCryptoService.encryptVentText',
+      () {
     test('null → null', () async {
       final result = await svc.encryptVentText(null);
       expect(result, isNull);

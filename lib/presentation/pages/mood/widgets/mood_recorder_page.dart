@@ -141,9 +141,8 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
               sleep: _sleep,
               anxiety: _anxiety,
               audioPath: snap.audioPath,
-              audioTranscript: snap.finalTranscript.isEmpty
-                  ? null
-                  : snap.finalTranscript,
+              audioTranscript:
+                  snap.finalTranscript.isEmpty ? null : snap.finalTranscript,
               audioDurationMs: snap.audioDurationMs,
             ),
           );

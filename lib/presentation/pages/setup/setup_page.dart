@@ -1,4 +1,4 @@
-﻿// setup_page.dart — 首次设置引导页（4 步 wizard coordinator）
+// setup_page.dart — 首次设置引导页（4 步 wizard coordinator）
 //
 // v0.19 (Q2): 拆分为 4 个 step widget + legal dialog
 // 本文件只负责状态管理和步骤切换。
@@ -109,8 +109,9 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         if (didPop) return;
         // v0.22 round 29 (emil-38): 走 AppSnackBar.info 集中器
         AppSnackBar.showInfo(
-            context,
-            AppLocalizations.of(context).setupConsentRequired,);
+          context,
+          AppLocalizations.of(context).setupConsentRequired,
+        );
       },
       child: PageScaffold(
         title: AppLocalizations.of(context).setupStep(_step + 1, 4),
@@ -223,23 +224,24 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     if (_nameController.text.trim().isEmpty) {
       return l10n.setupValidationNameRequired;
     }
+    // 2026-07-31 联系人软隐藏 (病耻感 + 失联通信业务暂停):
+    // 紧急联系人表单**完全可选**, 移除"必填 1 个"校验。
+    // 用户可以留空跳过, 后续在 settings 自行添加。
     final filledPhones = _contactPhoneControllers
         .map((c) => c.text.trim())
         .where((p) => p.isNotEmpty)
         .toList();
-    if (filledPhones.isEmpty) {
-      return l10n.setupValidationContactRequired;
-    }
-    // 检查手机号格式
-    for (final phone in filledPhones) {
-      if (!PhoneValidator.isValid(phone)) {
-        return l10n.setupValidationPhoneInvalid;
+    // 只校验用户**实际填了**的手机号 — 格式 + 重复
+    if (filledPhones.isNotEmpty) {
+      for (final phone in filledPhones) {
+        if (!PhoneValidator.isValid(phone)) {
+          return l10n.setupValidationPhoneInvalid;
+        }
       }
-    }
-    // 检查重复手机号
-    final unique = filledPhones.toSet();
-    if (unique.length != filledPhones.length) {
-      return l10n.setupValidationPhoneDuplicate;
+      final unique = filledPhones.toSet();
+      if (unique.length != filledPhones.length) {
+        return l10n.setupValidationPhoneDuplicate;
+      }
     }
     return null;
   }
@@ -288,7 +290,9 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                   leading:
                       // v0.24 round 48 (sp-zh P1-17): emoji 视觉 < 文字,保持 fontSizeTitle 不变
                       // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
-                      Text(t.emoji, style: const TextStyle(fontSize: AppTokens.fontSizeTitle)),
+                      Text(t.emoji,
+                          style: const TextStyle(
+                              fontSize: AppTokens.fontSizeTitle)),
                   title: Text(
                     // v0.28 round 65 (spzh P2-G): name 走 i18n
                     t.nameL10n(l10n),
@@ -341,10 +345,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
     // v0.22 round 29 (emil-39): 走 AppSnackBar.info 集中器
     // v0.28 round 65 (spzh P2-G): template.name 走 i18n
     AppSnackBar.showInfo(
-        context,
-        AppLocalizations.of(context).setupPresetLoaded(
-            result.template.nameL10n(AppLocalizations.of(context)),
-            result.template.meds.length,),);
+      context,
+      AppLocalizations.of(context).setupPresetLoaded(
+        result.template.nameL10n(AppLocalizations.of(context)),
+        result.template.meds.length,
+      ),
+    );
   }
 
   Future<void> _finishSetup() async {

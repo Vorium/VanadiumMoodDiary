@@ -42,8 +42,10 @@ Widget _wrap(ThemeData theme) => MaterialApp(
         builder: (context) => Scaffold(
           body: Column(
             children: [
-              Text('a',
-                  style: TextStyle(color: AppTokens.surfaceColor(context)),),
+              Text(
+                'a',
+                style: TextStyle(color: AppTokens.surfaceColor(context)),
+              ),
               Text(
                 'b',
                 style: TextStyle(color: AppTokens.backgroundColor(context)),
@@ -56,12 +58,18 @@ Widget _wrap(ThemeData theme) => MaterialApp(
                 'd',
                 style: TextStyle(color: AppTokens.textSecondaryColor(context)),
               ),
-              Text('e',
-                  style: TextStyle(color: AppTokens.textHintColor(context)),),
-              Text('f',
-                  style: TextStyle(color: AppTokens.borderColor(context)),),
-              Text('g',
-                  style: TextStyle(color: AppTokens.dividerColor(context)),),
+              Text(
+                'e',
+                style: TextStyle(color: AppTokens.textHintColor(context)),
+              ),
+              Text(
+                'f',
+                style: TextStyle(color: AppTokens.borderColor(context)),
+              ),
+              Text(
+                'g',
+                style: TextStyle(color: AppTokens.dividerColor(context)),
+              ),
             ],
           ),
         ),

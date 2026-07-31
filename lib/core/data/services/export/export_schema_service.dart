@@ -67,8 +67,7 @@ class ExportSchemaService {
       await db.delete(table).go();
     } catch (e, st) {
       swallowError(
-        where:
-            'ExportSchemaService.deleteOldDataSafely(${label ?? 'unknown'})',
+        where: 'ExportSchemaService.deleteOldDataSafely(${label ?? 'unknown'})',
         error: e,
         stack: st,
         note: '表不存在(旧 schema),忽略',

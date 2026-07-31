@@ -20,5 +20,4 @@ extension UserProfileToEntity on UserProfile {
 }
 
 /// Nullable Drift row → nullable domain entity
-UserProfileEntity? userProfileFromRow(UserProfile? row) =>
-    row?.toEntity();
+UserProfileEntity? userProfileFromRow(UserProfile? row) => row?.toEntity();

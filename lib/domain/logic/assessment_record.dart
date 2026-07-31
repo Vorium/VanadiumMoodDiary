@@ -1,4 +1,4 @@
-﻿/// 评估记录模型
+/// 评估记录模型
 ///
 /// 把 CheckInEntity 里 type ∈ {phq9, gad7} 的 note JSON 解析为强类型 record，
 /// 方便趋势页折线图使用。
@@ -52,7 +52,8 @@ class AssessmentRecord {
   // Dart 3.12.2 验证: 6/6 contract test pass。
   // 必须保持 `==` 和 `hashCode` 都基于 element-based, 否则 Set / Map
   // 不一致 → 同样的对象在不同容器里算不同 key。
-  int get hashCode => Object.hash(scaleId, timestamp, total, Object.hashAll(scores));
+  int get hashCode =>
+      Object.hash(scaleId, timestamp, total, Object.hashAll(scores));
 
   /// Element-based 列表相等 (长度相同 + 各 index 元素相同)。
   ///

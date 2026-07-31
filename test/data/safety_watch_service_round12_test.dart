@@ -5,6 +5,7 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -24,6 +25,11 @@ AppLocalizations _testL10n() => AppLocalizationsZh();
 
 /// 内存数据库 + mock services，跑 SafetyWatch 逻辑测试
 void main() {
+  // 2026-07-31 联系人软隐藏: 失联通信业务默认 disabled,
+  // test 期间临时 enable 走真实业务,tearDown 恢复避免污染其他 test。
+  setUp(FeatureFlags.enableForTest);
+  tearDown(FeatureFlags.resetForTest);
+
   // SharedPreferences 静态初始化（SafetyWatch 用）
   setUp(() {
     SharedPreferences.setMockInitialValues({});
@@ -74,7 +80,8 @@ void main() {
 
   Future<void> setupContact({required String phone}) async {
     // v0.27 round 61: 改用 safetyConfig 直接写 SharedPreferences
-    await db.contactDao.insert(ContactsCompanion.insert(name: '妈妈', phone: phone));
+    await db.contactDao
+        .insert(ContactsCompanion.insert(name: '妈妈', phone: phone));
   }
 
   Future<void> checkInAt(DateTime at) async {
@@ -284,7 +291,8 @@ void main() {
   });
 
   group('v0.23 round 38 (P0-3) — _contactRepo.watchAll().first timeout 降级', () {
-    test('watchAll() 永不 emit → 5s timeout → 降级 noContacts (用 50ms 注入)', () async {
+    test('watchAll() 永不 emit → 5s timeout → 降级 noContacts (用 50ms 注入)',
+        () async {
       // 注入一个永不 emit 的 stream,timeout 50ms 触发
       final hangingRepo = _HangingContactRepo();
       final localSafety = SafetyWatchService(
@@ -334,6 +342,7 @@ class _HangingContactRepo implements ContactRepository {
     // 永不 emit
     await Future<void>.delayed(const Duration(days: 1));
   }
+
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -344,6 +353,7 @@ class _ErrorContactRepo implements ContactRepository {
   Stream<List<ContactEntity>> watchAll() async* {
     throw StateError('mock db lock');
   }
+
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -385,8 +395,13 @@ class MockSms implements SmsProvider {
 }
 
 class StubNotificationService implements NotificationService {
-  final List<({String? userName, int daysWithoutCheckIn, DateTime? lastCheckIn, SmsDispatchOutcome outcome})>
-      alertsShown = [];
+  final List<
+      ({
+        String? userName,
+        int daysWithoutCheckIn,
+        DateTime? lastCheckIn,
+        SmsDispatchOutcome outcome
+      })> alertsShown = [];
 
   @override
   Future<void> showSafetyAlert({

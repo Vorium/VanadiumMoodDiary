@@ -58,12 +58,14 @@ void main() {
       // fireAt = (refillAt - reminderDays 天) 当天 9:00
       // now=7/15 10:00 之后, fireAt=7/17 9:00 未过期
       final s = usecase(
-        medications: [_med(
-          id: 1,
-          isActive: true,
-          refillAt: DateTime(2026, 7, 20),
-          reminderDays: 3,
-        )],
+        medications: [
+          _med(
+            id: 1,
+            isActive: true,
+            refillAt: DateTime(2026, 7, 20),
+            reminderDays: 3,
+          )
+        ],
         now: now,
       );
       expect(s.first.fireAt, DateTime(2026, 7, 17, 9, 0));
@@ -73,12 +75,14 @@ void main() {
     test('reminderDays=0 → 抛 ArgumentError (跟 computeRefillFireTime 1:1)', () {
       expect(
         () => usecase(
-          medications: [_med(
-            id: 1,
-            isActive: true,
-            refillAt: DateTime(2026, 7, 20),
-            reminderDays: 0,
-          )],
+          medications: [
+            _med(
+              id: 1,
+              isActive: true,
+              refillAt: DateTime(2026, 7, 20),
+              reminderDays: 0,
+            )
+          ],
           now: now,
         ),
         throwsArgumentError,
@@ -88,12 +92,14 @@ void main() {
     test('fireAt < now → isExpired=true (跳过调度, 走 cancel)', () {
       // refillAt = 7/10, reminderDays = 7 → fireAt = 7/3 9:00 (已过)
       final s = usecase(
-        medications: [_med(
-          id: 1,
-          isActive: true,
-          refillAt: DateTime(2026, 7, 10),
-          reminderDays: 7,
-        )],
+        medications: [
+          _med(
+            id: 1,
+            isActive: true,
+            refillAt: DateTime(2026, 7, 10),
+            reminderDays: 7,
+          )
+        ],
         now: now,
       );
       expect(s.first.fireAt, DateTime(2026, 7, 3, 9, 0));

@@ -20,4 +20,3 @@ String regionDisplayName(
   String? override,
 }) =>
     region.displayNameL10n(override: override);
-

@@ -43,6 +43,7 @@ class PageTransitionSwitcher extends StatelessWidget {
   final Object switchKey;
   final Widget child;
   final Duration duration;
+
   /// 自定义 transition builder。默认 FadeTransition,setup 用 fade + slide
   final Widget Function(Widget child, Animation<double> animation)?
       transitionBuilder;

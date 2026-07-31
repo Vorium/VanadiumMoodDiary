@@ -64,7 +64,8 @@ class AssessmentReminderService {
 
   Future<void> setDays(int days) async {
     if (!allowedDays.contains(days)) {
-      throw ArgumentError('assessment reminder interval must be one of $allowedDays; got: $days');
+      throw ArgumentError(
+          'assessment reminder interval must be one of $allowedDays; got: $days');
     }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_kDays, days);

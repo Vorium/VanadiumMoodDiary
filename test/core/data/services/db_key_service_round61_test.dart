@@ -94,8 +94,11 @@ void main() {
       expect(first, isNotEmpty);
 
       final second = await DbKeyService.getOrCreate();
-      expect(second, equals(first),
-          reason: '第二次调应返 SecureStorage 已有 key, 不重新生成',);
+      expect(
+        second,
+        equals(first),
+        reason: '第二次调应返 SecureStorage 已有 key, 不重新生成',
+      );
 
       // SecureStorage 仍只 1 个 key (没被覆盖)
       expect(mockStorage.length, 1);
@@ -106,8 +109,11 @@ void main() {
       mockStorage['db_encryption_key'] = preFilled;
 
       final key = await DbKeyService.getOrCreate();
-      expect(key, equals(preFilled),
-          reason: '预填的 key 应优先使用, 不重新生成',);
+      expect(
+        key,
+        equals(preFilled),
+        reason: '预填的 key 应优先使用, 不重新生成',
+      );
     });
   });
 

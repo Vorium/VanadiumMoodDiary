@@ -28,7 +28,8 @@ void main() {
       final id = await repo.add(
         draft: const MoodEntryDraft(score: 3, tags: ['焦虑']),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.audioPath, isNull);
       expect(entry.audioTranscript, isNull);
@@ -45,7 +46,8 @@ void main() {
           audioDurationMs: 12500,
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.audioPath, '/docs/mood_audio/mood_12345.m4a.enc');
       expect(entry.audioTranscript, '今天心情不错');
@@ -61,7 +63,8 @@ void main() {
           audioPath: '/a.m4a.enc',
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.audioPath, '/a.m4a.enc');
       expect(entry.audioTranscript, isNull);
@@ -78,7 +81,8 @@ void main() {
           audioDurationMs: 180000,
         ),
       );
-      final entry = await (db.select(db.moodEntries)..where((t) => t.id.equals(id)))
+      final entry = await (db.select(db.moodEntries)
+            ..where((t) => t.id.equals(id)))
           .getSingle();
       expect(entry.audioDurationMs, 180000);
     });

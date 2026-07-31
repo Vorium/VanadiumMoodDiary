@@ -125,9 +125,12 @@ void main() {
     });
 
     test('medication 漏服 → 列表含"⚠️ 漏服"', () {
-      final s = _buildData(medStats: [
-        _buildStat(missedDates: [DateTime(2026, 6, 5), DateTime(2026, 6, 10)]),
-      ],).toReportString();
+      final s = _buildData(
+        medStats: [
+          _buildStat(
+              missedDates: [DateTime(2026, 6, 5), DateTime(2026, 6, 10)]),
+        ],
+      ).toReportString();
       expect(s, contains('⚠️ 漏服'));
       // Formatters.monthDay 格式 "MM/dd"
       expect(s, contains('06/05'));
@@ -140,13 +143,15 @@ void main() {
     });
 
     test('临时用药含表头 + 行', () {
-      final s = _buildData(tempMeds: [
-        TempMedEntry(
-          timestamp: DateTime(2026, 6, 15, 14, 30),
-          name: '泰诺',
-          description: '头痛',
-        ),
-      ],).toReportString();
+      final s = _buildData(
+        tempMeds: [
+          TempMedEntry(
+            timestamp: DateTime(2026, 6, 15, 14, 30),
+            name: '泰诺',
+            description: '头痛',
+          ),
+        ],
+      ).toReportString();
       expect(s, contains('泰诺'));
       expect(s, contains('头痛'));
     });
@@ -219,7 +224,8 @@ void main() {
   // ============== PDF build (Uint8List smoke test) ==============
   group('v0.23 round 39 (P1-6) — MedicationReportPdf.build smoke test', () {
     test('空数据 → 返 Uint8List (非空 + 长度合理)', () async {
-      final bytes = await MedicationReportPdf.build(_buildData(medStats: const []));
+      final bytes =
+          await MedicationReportPdf.build(_buildData(medStats: const []));
       expect(bytes, isA<List<int>>());
       // PDF 文件头 %PDF-1.x, 至少几 KB
       expect(bytes.length, greaterThan(500));
@@ -228,30 +234,37 @@ void main() {
     });
 
     test('含 medication + tempMeds → 返 Uint8List (内容长度 > 1KB)', () async {
-      final bytes = await MedicationReportPdf.build(_buildData(
-        medStats: [_buildStat()],
-        tempMeds: [
-          TempMedEntry(
-            timestamp: DateTime(2026, 6, 15, 14, 30),
-            name: '泰诺',
-            description: '头痛',
-          ),
-        ],
-      ),);
+      final bytes = await MedicationReportPdf.build(
+        _buildData(
+          medStats: [_buildStat()],
+          tempMeds: [
+            TempMedEntry(
+              timestamp: DateTime(2026, 6, 15, 14, 30),
+              name: '泰诺',
+              description: '头痛',
+            ),
+          ],
+        ),
+      );
       expect(bytes.length, greaterThan(1000));
     });
 
     test('多个 medication → 文件更大 (含多个 stat block)', () async {
-      final small = await MedicationReportPdf.build(_buildData(
-        medStats: [_buildStat()],
-      ),);
-      final big = await MedicationReportPdf.build(_buildData(
-        medStats: List.generate(5, (i) => _buildStat(name: '药$i')),
-      ),);
+      final small = await MedicationReportPdf.build(
+        _buildData(
+          medStats: [_buildStat()],
+        ),
+      );
+      final big = await MedicationReportPdf.build(
+        _buildData(
+          medStats: List.generate(5, (i) => _buildStat(name: '药$i')),
+        ),
+      );
       expect(big.length, greaterThan(small.length));
     });
 
-    test('userName 走 maskName (P1-7 fix) — PDF 二进制不直接可见,但 report 走 maskName 同源', () async {
+    test('userName 走 maskName (P1-7 fix) — PDF 二进制不直接可见,但 report 走 maskName 同源',
+        () async {
       // maskName('张三') = '张**', maskName('') = ''
       // 通过 toReportString 验证 userName 已替换为 mask 后值
       // PDF build 也走同一份 data + Strings,但 binary 不易直接 assert 文本
@@ -269,40 +282,50 @@ void main() {
   // ============== PDF build edge cases ==============
   group('v0.23 round 39 (P1-6) — PDF build 边界 case', () {
     test('依从率 null (expected=0) → PDF 仍生成, 长度合理', () async {
-      final bytes = await MedicationReportPdf.build(_buildData(
-        expectedDoses: 0,
-        onTimeDoses: 0,
-      ),);
+      final bytes = await MedicationReportPdf.build(
+        _buildData(
+          expectedDoses: 0,
+          onTimeDoses: 0,
+        ),
+      );
       expect(bytes, isNotEmpty);
       expect(String.fromCharCodes(bytes.take(5)), '%PDF-');
     });
 
     test('windowDays = 0 → 仍生成 (空 data 兜底)', () async {
-      final bytes = await MedicationReportPdf.build(_buildData(
-        windowDays: 0,
-      ),);
+      final bytes = await MedicationReportPdf.build(
+        _buildData(
+          windowDays: 0,
+        ),
+      );
       expect(bytes, isNotEmpty);
     });
 
     test('medication 无 times → 显示"未设置时间" + "未设置"', () async {
       // 因为 report 是 PDF binary, 文本不易直接验证,只确认 build 不 crash
-      final bytes = await MedicationReportPdf.build(_buildData(
-        medStats: [_buildStat(times: const [])],
-      ),);
+      final bytes = await MedicationReportPdf.build(
+        _buildData(
+          medStats: [_buildStat(times: const [])],
+        ),
+      );
       expect(bytes, isNotEmpty);
     });
 
     test('userName 中文 4 字 → build 不 crash (maskName 长度自适应)', () async {
-      final bytes = await MedicationReportPdf.build(_buildData(
-        userName: '欧阳明月',
-      ),);
+      final bytes = await MedicationReportPdf.build(
+        _buildData(
+          userName: '欧阳明月',
+        ),
+      );
       expect(bytes, isNotEmpty);
     });
 
     test('userName 英文 → build 不 crash', () async {
-      final bytes = await MedicationReportPdf.build(_buildData(
-        userName: 'John Smith',
-      ),);
+      final bytes = await MedicationReportPdf.build(
+        _buildData(
+          userName: 'John Smith',
+        ),
+      );
       expect(bytes, isNotEmpty);
     });
   });

@@ -34,11 +34,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 
 /// v0.27 round 60 (P0-3 修正): test helper
 AppLocalizations _testL10n() => AppLocalizationsZh();
 
 void main() {
+  // 2026-07-31 联系人软隐藏: 失联通信业务默认 disabled,
+  // test 期间临时 enable 走真实业务,tearDown 恢复避免污染其他 test。
+  setUp(FeatureFlags.enableForTest);
+  tearDown(FeatureFlags.resetForTest);
+
   setUp(() {
     SharedPreferences.setMockInitialValues({});
   });

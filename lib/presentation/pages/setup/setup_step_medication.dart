@@ -7,6 +7,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
+import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
@@ -69,32 +70,12 @@ class SetupStepMedication extends StatelessWidget {
             const SizedBox(height: AppTokens.spacingMd),
           ],
           if (meds.isEmpty)
-            Container(
-              padding: const EdgeInsets.all(AppTokens.spacingMd),
-              decoration: BoxDecoration(
-                color: AppTokens.primaryLightColor(context),
-                borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-                border: Border.all(color: AppTokens.borderColor(context)),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: AppTokens.textSecondaryColor(context),
-                    size: 20,
-                  ),
-                  const SizedBox(width: AppTokens.spacingXs),
-                  Expanded(
-                    child: Text(
-                      l10n.setupMedEmptyHint,
-                      style: TextStyle(
-                        color: AppTokens.textSecondaryColor(context),
-                        fontSize: AppTokens.fontSizeLabel,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            // v0.27 round 67 (C-2): 走 InfoBanner 集中器 (muted tone)
+            InfoBanner(
+              icon: Icons.info_outline,
+              text: l10n.setupMedEmptyHint,
+              tone: InfoBannerTone.muted,
+              bordered: true,
             )
           else
             const SizedBox.shrink(),
@@ -107,7 +88,8 @@ class SetupStepMedication extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingSm),
           TextButton.icon(
             onPressed: onShowPresets,
-            icon: const Icon(Icons.auto_awesome_outlined, size: AppTokens.iconSizeInline),
+            icon: const Icon(Icons.auto_awesome_outlined,
+                size: AppTokens.iconSizeInline),
             label: Text(l10n.setupMedLoadPreset),
           ),
           const SizedBox(height: AppTokens.spacingXl),
@@ -226,8 +208,8 @@ class MedCard extends StatelessWidget {
                       // v0.23 (P0-11): 'mg' / '片' 改 DosageUnit enum.id, 去 const
                       //   (Dart const 表达式不支持 enum instance property access)
                       DropdownMenuItem<String>(
-                          value: DosageUnit.mg.id,
-                          child: const Text('mg'),
+                        value: DosageUnit.mg.id,
+                        child: const Text('mg'),
                       ),
                       DropdownMenuItem<String>(
                         value: DosageUnit.tablet.id,
@@ -265,7 +247,8 @@ class MedCard extends StatelessWidget {
                   ),
                 PressFeedback(
                   child: ActionChip(
-                    avatar: const Icon(Icons.add, size: AppTokens.iconSizeInline),
+                    avatar:
+                        const Icon(Icons.add, size: AppTokens.iconSizeInline),
                     label: Text(l10n.setupMedAddTime),
                     onPressed: () async {
                       final picked = await showTimePicker(

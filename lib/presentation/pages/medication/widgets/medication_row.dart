@@ -15,6 +15,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/swipe_delete_background.dart';
 
 /// 单个药物行 (含 Dismissible swipe-to-dismiss + 3 IconButton)
 class MedicationRow extends StatelessWidget {
@@ -60,7 +61,9 @@ class MedicationRow extends StatelessWidget {
     final tile = AppListTile.standard(
       leading: Icon(
         isStopped ? Icons.medication : Icons.medication_outlined,
-        color: isStopped ? AppTokens.textHintColor(context) : AppTokens.primaryColor(context),
+        color: isStopped
+            ? AppTokens.textHintColor(context)
+            : AppTokens.primaryColor(context),
       ),
       title: Row(
         children: [
@@ -164,16 +167,7 @@ class MedicationRow extends StatelessWidget {
     return Dismissible(
       key: ValueKey('medication-${med.id}'),
       direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
-        color: AppTokens.errorColor(context),
-        child: Icon(
-          Icons.delete_outline,
-          // v0.22 round 30 (emil P2-6): 走 fgOnError
-          color: AppTokens.fgOnError(context),
-        ),
-      ),
+      background: const SwipeDeleteBackground(),
       // IconButton 路径已走 onDelete (含 confirm);
       // swipe 路径走 onSwipeDelete (无 dialog, Undo 兜底)
       onDismissed: (_) => onSwipeDelete(med),

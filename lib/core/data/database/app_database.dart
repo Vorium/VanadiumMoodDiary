@@ -167,9 +167,11 @@ class AppDatabase extends _$AppDatabase {
                 final encrypted =
                     await enc.encrypt(Uint8List.fromList(utf8.encode(oldText)));
                 await (update(ventEntries)..where((t) => t.id.equals(row.id)))
-                    .write(VentEntriesCompanion(
-                  contentTextEnc: Value(encrypted),
-                ),);
+                    .write(
+                  VentEntriesCompanion(
+                    contentTextEnc: Value(encrypted),
+                  ),
+                );
               } catch (e, st) {
                 // v0.27 round 63 (P1-7 修复): 走 swallowError 集中器
                 // (R39 P1-10 模式), 替代全 lib 唯一 1 处 `catch (e) {}`
@@ -180,7 +182,8 @@ class AppDatabase extends _$AppDatabase {
                   where: 'app_database.v8v9_vent_encrypt_fail',
                   error: e,
                   stack: st,
-                  note: 'ventId=${row.id} contentText 加密失败, contentTextEnc 保持 null',
+                  note:
+                      'ventId=${row.id} contentText 加密失败, contentTextEnc 保持 null',
                 );
               }
             }
@@ -192,7 +195,9 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(userProfiles, userProfiles.userAgreementVersion);
             await m.addColumn(userProfiles, userProfiles.privacyPolicyVersion);
             await m.addColumn(
-                userProfiles, userProfiles.sensitiveDataConsentAt,);
+              userProfiles,
+              userProfiles.sensitiveDataConsentAt,
+            );
             await m.addColumn(userProfiles, userProfiles.consentRevokedAt);
           }
           // v10 → v11: userName 改 nullable (P1-24 修复)

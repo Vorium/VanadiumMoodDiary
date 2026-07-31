@@ -52,7 +52,8 @@ class ReminderScheduler {
     // 表达, 双重保险。
     final filtered = contacts.where((c) => c.isActive).toList();
     if (filtered.isEmpty) return null;
-    final sorted = [...filtered]..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    final sorted = [...filtered]
+      ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     return sorted.first;
   }
 
@@ -62,7 +63,8 @@ class ReminderScheduler {
   ) {
     // v0.24 round 48 (sp-en P1-12) defensive copy: 同上, spread 让 copy 显式
     final filtered = contacts.where((c) => c.isActive).toList();
-    final sorted = [...filtered]..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    final sorted = [...filtered]
+      ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     return sorted;
   }
 }

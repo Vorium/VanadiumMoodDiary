@@ -1,0 +1,25 @@
+# v0.27 round 67 (Sprint 1 上架前 P0, appstore C-P0-11): Appfile
+#
+# fastlane 用, 4 个值上 store 前**必须**替换为真实值。
+# 真实值从 Apple Developer 后台拿:
+#   - apple_id: App Store Connect 登录邮箱
+#   - team_id: Apple Developer 后台 → Membership → Team ID
+#   - itc_team_id: App Store Connect → Users and Access → Keys → (选 org)
+#
+# **敏感**:
+# - 真实 apple_id 写到这里前先确保 fastlane/Appfile 已被 .gitignore 排除
+#   或用 ENV (R67 暂用 hardcode TODO, 后续挪到 ENV)
+# - 如果用 API Key 模式 (推荐), 加:
+#     app_store_connect_api_key(
+#       key_id: ENV["APPLE_KEY_ID"],
+#       issuer_id: ENV["APPLE_ISSUER_ID"],
+#       key_filepath: ENV["APPLE_KEY_FILEPATH"],
+#     )
+
+app_identifier("com.chroniccare.chroniccare")  # 跟 Info.plist / build.gradle.kts 一致
+# TODO (上 store 前必须替换为真实 Apple ID): 用真实登录邮箱
+apple_id("your-apple-id@example.com")
+# TODO (上 store 前必须替换): Apple Developer Team ID (10 字符, 后台 Membership 页)
+team_id("YOUR_TEAM_ID")
+# TODO (上 store 前必须替换): App Store Connect Team ID (ITC 前缀, 后台 Users and Access 页)
+itc_team_id("YOUR_ITC_TEAM_ID")

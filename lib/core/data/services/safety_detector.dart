@@ -91,7 +91,8 @@ class SafetyDetector {
     }
 
     // 4. 今天已经发过
-    if (lastAlertAt != null && SafetyConfigService.isSameDay(lastAlertAt, now)) {
+    if (lastAlertAt != null &&
+        SafetyConfigService.isSameDay(lastAlertAt, now)) {
       return SafetyDecisionAlertedToday(daysSinceLast: daysSinceLast);
     }
 
@@ -198,7 +199,8 @@ final class SafetyDecisionAlertedToday extends SafetyDecision {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SafetyDecisionAlertedToday && other.daysSinceLast == daysSinceLast;
+      other is SafetyDecisionAlertedToday &&
+          other.daysSinceLast == daysSinceLast;
 
   @override
   int get hashCode => daysSinceLast.hashCode;

@@ -56,6 +56,16 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>用于保存用药报告 PDF 到相册</string>
 	<!--
+		v0.27 round 67 (R67, Sprint 1 上架前 P0, appstore C-P0-7):
+		NSPhotoLibraryUsageDescription
+		share_plus 10.1.4 + printing 5.13.4 触发 UIActivityViewController
+		分享 PDF 时调 PHPhotoLibrary 选保存位置。缺此 key iOS 14+ 直接闪退
+		(运行时弹 "This app has crashed because it attempted to access
+		privacy-sensitive data without a usage description")。
+	-->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>用于分享用药报告 PDF 时选择保存位置</string>
+	<!--
 		v0.27 round 61 (R61): 项目无 IDFA, 但加 NSUserTrackingUsageDescription
 		作为防御性 + App Store 透明性
 	-->
@@ -116,6 +126,15 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!--
+		v0.27 round 66 (R66) 上架修正: LSApplicationCategoryType
+		Apple App Store Connect 提交时需要这个 key 跟 iTunes Connect 后台勾选的
+		Primary Category 呼应。本项目归 Health & Fitness → Medical 类别。
+		缺失: Apple 审核员 review 时找不到分类对应,可能被打回"信息缺失"。
+		参考: Apple HIG + App Store Review Guidelines §1.4.1 Physical Harm / Medical。
+	-->
+	<key>LSApplicationCategoryType</key>
+	<string>healthcare-fitness</string>
 	<!--
 		v0.27 round 62 (R62): P0-7 后台模式 fetch→processing
 		iOS 13+ Apple 弃用 fetch, 推 BGTaskScheduler (短任务) + BGProcessingTask (长任务)

@@ -408,8 +408,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
     final l10n = AppLocalizations.of(context);
     final snap = widget.controller.snapshot.value;
     final hasRecording = snap.audioPath != null;
-    final maxReached =
-        _audioDurationMs != null && _audioDurationMs! >= 180000;
+    final maxReached = _audioDurationMs != null && _audioDurationMs! >= 180000;
 
     return Container(
       padding: const EdgeInsets.all(AppTokens.spacingSm),
@@ -552,9 +551,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
             ),
           ],
           // 录完识别文字
-          if (!_isRecording &&
-              hasRecording &&
-              _finalTranscript.isNotEmpty) ...[
+          if (!_isRecording && hasRecording && _finalTranscript.isNotEmpty) ...[
             const SizedBox(height: AppTokens.spacingXs),
             Text(
               '${l10n.moodAudioTranscriptLabel}: $_finalTranscript',

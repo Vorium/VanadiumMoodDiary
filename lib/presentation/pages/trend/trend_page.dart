@@ -6,6 +6,10 @@
 // - calendar 视图：当月 7×6 日历 + 选中日详情（所有事件列表）
 //
 // v0.19 (P1-15): 拆分为 trend_summary / trend_charts / trend_calendar / trend_utils
+//
+// v0.27 round 67 (Sprint 1 上架前 P0, spzh C-P0-6):
+// PIPL §14 撤回 analytics 同意 → 趋势页显示"已撤回"占位 + 引导去重新同意。
+// 不删数据 (用户可重新同意后恢复), 但页面渲染屏蔽。
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,13 +20,16 @@ import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
-import 'package:chroniccare/presentation/widgets/section_header.dart';
-import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:go_router/go_router.dart';
+import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
+import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_summary.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_calendar.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_heatmap_grid.dart';
@@ -53,24 +60,47 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   Widget build(BuildContext context) {
     final checkInsAsync = ref.watch(allCheckInsProvider);
     final moodAsync = ref.watch(allMoodProvider);
+    // v0.27 round 67 (Sprint 1, spzh C-P0-6): 撤回 analytics 同意 → 趋势页屏蔽
+    final analyticsWithdrawn =
+        ref.watch(legalConsentWithdrawnProvider(ConsentKind.analytics)).value;
 
     return PageScaffold(
       title: AppLocalizations.of(context).trendTitle,
-      child: checkInsAsync.when(
-        data: (List<CheckInEntity> checkIns) {
-          final moodEntries = moodAsync.maybeWhen(
-            data: (m) => m,
-            orElse: () => <MoodEntryEntity>[],
-          );
-          return _buildBody(context, checkIns, moodEntries);
-        },
-        loading: () => const LoadingSkeleton.fullScreen(),
-        error: (Object e, _) => ErrorState(
-          title: AppLocalizations.of(context).commonLoadFailed(''),
-          detail: e.toString(),
-          onRetry: () => ref.invalidate(allCheckInsProvider),
-        ),
-      ),
+      child: analyticsWithdrawn == true
+          ? _buildWithdrawnState(context)
+          : checkInsAsync.when(
+              data: (List<CheckInEntity> checkIns) {
+                final moodEntries = moodAsync.maybeWhen(
+                  data: (m) => m,
+                  orElse: () => <MoodEntryEntity>[],
+                );
+                return _buildBody(context, checkIns, moodEntries);
+              },
+              loading: () => const LoadingSkeleton.fullScreen(),
+              error: (Object e, _) => ErrorState(
+                title: AppLocalizations.of(context).commonLoadFailed(''),
+                detail: e.toString(),
+                onRetry: () => ref.invalidate(allCheckInsProvider),
+              ),
+            ),
+    );
+  }
+
+  /// v0.27 round 67: 撤回 analytics 同意后的占位页
+  ///
+  /// 不删数据 (用户可重新开启), 但趋势页渲染屏蔽, 引导去"设置 → 法律与隐私"
+  /// 重新同意 [ConsentKind.analytics] 即可恢复。
+  Widget _buildWithdrawnState(BuildContext context) {
+    return EmptyState(
+      icon: Icons.analytics_outlined,
+      title: AppLocalizations.of(context).trendWithdrawnTitle,
+      subtitle: AppLocalizations.of(context).trendWithdrawnSubtitle,
+      actionLabel: AppLocalizations.of(context).trendWithdrawnAction,
+      onAction: () {
+        // 用 go_router 推 legal_page (push 不 pop, 用户改完可 pop 回来)
+        // 路径参考 lib/core/routing/app_route_medication.dart
+        context.push('/settings/legal');
+      },
     );
   }
 
@@ -89,32 +119,33 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         ref.invalidate(allCheckInsProvider);
         ref.invalidate(allMoodProvider);
         // 给个最小可见时长,不然一闪而过体验差
-        await Future<void>.delayed(Duration(milliseconds: AppTokens.refreshMinVisibleMs));
+        await Future<void>.delayed(
+            Duration(milliseconds: AppTokens.refreshMinVisibleMs));
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: AppTokens.spacingMd),
-          SummaryCard(summary: summary),
-          const SizedBox(height: AppTokens.spacingMd),
-          _ViewToggle(
-            current: _view,
-            onChanged: (v) => setState(() => _view = v),
-          ),
-          const SizedBox(height: AppTokens.spacingMd),
-          // v0.24 round 43 (emil P1-01 H-04 / D-08):
-          // list ↔ calendar 切换 100ms fade (occasional 频度, emil rare 可加 delight)
-          PageTransitionSwitcher(
-            switchKey: _view,
-            child: _view == _TrendView.list
-                ? _buildListView(context, checkIns)
-                : _buildCalendarView(context, checkIns, moodEntries),
-          ),
-          const SizedBox(height: AppTokens.spacingXl),
-        ],
-      ),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: AppTokens.spacingMd),
+            SummaryCard(summary: summary),
+            const SizedBox(height: AppTokens.spacingMd),
+            _ViewToggle(
+              current: _view,
+              onChanged: (v) => setState(() => _view = v),
+            ),
+            const SizedBox(height: AppTokens.spacingMd),
+            // v0.24 round 43 (emil P1-01 H-04 / D-08):
+            // list ↔ calendar 切换 100ms fade (occasional 频度, emil rare 可加 delight)
+            PageTransitionSwitcher(
+              switchKey: _view,
+              child: _view == _TrendView.list
+                  ? _buildListView(context, checkIns)
+                  : _buildCalendarView(context, checkIns, moodEntries),
+            ),
+            const SizedBox(height: AppTokens.spacingXl),
+          ],
+        ),
       ),
     );
   }
@@ -136,7 +167,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         const SizedBox(height: AppTokens.spacingSm),
         MonthlyChart(monthly: monthly),
         const SizedBox(height: AppTokens.spacingLg),
-        SectionHeader(title: AppLocalizations.of(context).trendAssessmentHistory),
+        SectionHeader(
+            title: AppLocalizations.of(context).trendAssessmentHistory),
         const SizedBox(height: AppTokens.spacingSm),
         Consumer(
           builder: (context, ref, _) {
@@ -195,7 +227,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         ),
       ],
     );
-}
+  }
 
   Widget _buildCalendarView(
     BuildContext context,
@@ -251,7 +283,8 @@ class _ViewToggle extends StatelessWidget {
           ButtonSegment(
             value: _TrendView.calendar,
             label: Text(AppLocalizations.of(context).trendViewCalendar),
-            icon: const Icon(Icons.calendar_month, size: AppTokens.iconSizeInline),
+            icon: const Icon(Icons.calendar_month,
+                size: AppTokens.iconSizeInline),
           ),
         ],
         selected: {current},

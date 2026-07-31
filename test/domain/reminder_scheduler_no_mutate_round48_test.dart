@@ -54,8 +54,11 @@ void main() {
       // caller 的 list identity + 顺序 + 字段 不应被函数改
       expect(original.length, snapshotBefore.length);
       for (int i = 0; i < original.length; i++) {
-        expect(original[i].id, snapshotBefore[i].id,
-            reason: 'caller list[$i] id 不应被改',);
+        expect(
+          original[i].id,
+          snapshotBefore[i].id,
+          reason: 'caller list[$i] id 不应被改',
+        );
         expect(original[i].sortOrder, snapshotBefore[i].sortOrder);
       }
     });
@@ -114,8 +117,11 @@ void main() {
       final result2 = ReminderScheduler.selectAllActiveContacts(contacts);
 
       // identity 不等
-      expect(identical(result1, result2), isFalse,
-          reason: '每次 call 应返回独立 list, 不复用',);
+      expect(
+        identical(result1, result2),
+        isFalse,
+        reason: '每次 call 应返回独立 list, 不复用',
+      );
       // 但内容相等 (都是正序)
       expect(result1.length, result2.length);
       for (int i = 0; i < result1.length; i++) {

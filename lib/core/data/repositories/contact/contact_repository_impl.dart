@@ -36,9 +36,9 @@ class ContactRepositoryImpl implements ContactRepository {
     piiSafeLog(
       'ContactRepository.add',
       '📝 consent granted: kind=${consentArtifact.kind.name} '
-      'grantedAt=${consentArtifact.grantedAt.toIso8601String()} '
-      'grantedBy=${consentArtifact.grantedBy} '
-      'version=${consentArtifact.version}',
+          'grantedAt=${consentArtifact.grantedAt.toIso8601String()} '
+          'grantedBy=${consentArtifact.grantedBy} '
+          'version=${consentArtifact.version}',
     );
     // v0.27 round 63 (P0-2 收尾): 把 4 个 consent 字段写进 DB (R62
     // working tree 只写 log, 落库未做, 这步收尾)。

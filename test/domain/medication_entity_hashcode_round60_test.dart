@@ -1,4 +1,4 @@
-﻿// v0.27 round 60 (审计 M8): MedicationEntity.hashCode 契约回归测试
+// v0.27 round 60 (审计 M8): MedicationEntity.hashCode 契约回归测试
 //
 // 审计 (audit-domain-layer.md 3.7) 怀疑:
 //   `hashCode` 用 `Object.hashAll(times)` — identity-based, 不是
@@ -55,8 +55,7 @@ void main() {
       final b = baseMed(times: [HourMinute(hour: 8, minute: 0)]);
       expect(identical(a.times, b.times), isFalse,
           reason: 'sanity: 2 个 list 必须不同 instance 才能测 hashCode');
-      expect(a, equals(b),
-          reason: '修正前 == 已成立 (== 用 _listEq element 比较)');
+      expect(a, equals(b), reason: '修正前 == 已成立 (== 用 _listEq element 比较)');
       expect(a.hashCode, b.hashCode,
           reason: '修正后 hashCode 必须 element-based, 跟 == 一致');
     });
@@ -70,8 +69,7 @@ void main() {
         HourMinute(hour: 20, minute: 0),
         HourMinute(hour: 8, minute: 0),
       ]);
-      expect(a, isNot(equals(b)),
-          reason: 'times 顺序不同 = 不同 med');
+      expect(a, isNot(equals(b)), reason: 'times 顺序不同 = 不同 med');
     });
 
     test('不同 id → hashCode 不同 (sanity check)', () {

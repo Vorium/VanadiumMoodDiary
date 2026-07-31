@@ -10,6 +10,7 @@ import 'package:chroniccare/core/data/repositories/user_profile/user_profile_rep
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/core/data/services/email_service.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
@@ -93,6 +94,18 @@ final smsServiceProvider = Provider<SmsService>((ref) => SmsService());
 final smsProviderNameProvider = Provider<String>(
   (ref) => ref.watch(smsServiceProvider).provider.name,
 );
+
+/// v0.27 round 67 (B-1 修复): EmailService provider
+///
+/// 跟 [smsServiceProvider] 1:1 平行。当前 EmailService 暂无 caller
+/// (SmsService 是 reminderService 的依赖, EmailService 之前是 dead code),
+/// R67 后 home_page._fireCareEngine 在 use case 返回 fireEmail 时会读这个
+/// provider 调 sendMedicationReminder (R55+ 真接 SendGrid 走真实路径)。
+///
+/// **R67 B-1 修复**: 跟 R63 SmsService 守门员平行, 启动时
+/// [EmailService.validateForRelease] 检查 [isProductionReady], release + 未就绪
+/// → 抛 [EmailProviderNotConfiguredError] 阻断, banner 显眼提示。
+final emailServiceProvider = Provider<EmailService>((ref) => EmailService());
 
 /// v0.17 round 14 提示: vent 相关的 repo / audio storage / stream provider 整组
 /// 挪到 lib/presentation/providers/vent_providers.dart (避免循环 import)。

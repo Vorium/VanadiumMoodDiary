@@ -47,7 +47,9 @@ void main() {
       expect(crossedMidnightSince(lastCheck, now), isTrue);
     });
 
-    test('跨 midnight 但 now 还在 00:00:05 之前 (00:00:01) → true (跨日就报 crossed, buffer 不影响)', () {
+    test(
+        '跨 midnight 但 now 还在 00:00:05 之前 (00:00:01) → true (跨日就报 crossed, buffer 不影响)',
+        () {
       // v0.21 P0-4 立的语义: function 看日期是否已变, 不看 5s buffer
       // (buffer 是 nextMidnightRefresh 算 timer 的事, 不影响"是否跨过")
       // lastCheck 23:00, now 第二天 00:00:01
@@ -80,12 +82,21 @@ void main() {
 
       // 跨日, 无论 now 在 0:00:04 / 0:00:05 / 0:00:06 都应该 true
       // (cutoff 用"当天 00:00:05"作为标记, 日期变了 cutoff 必然晚 1 天)
-      expect(crossedMidnightSince(lastCheck, t1), isTrue,
-          reason: 'lastCheck 17-23:30 vs now 18-00:00:04 (跨日)',);
-      expect(crossedMidnightSince(lastCheck, t2), isTrue,
-          reason: 'lastCheck 17-23:30 vs now 18-00:00:05 (buffer 边界)',);
-      expect(crossedMidnightSince(lastCheck, t3), isTrue,
-          reason: 'lastCheck 17-23:30 vs now 18-00:00:06 (buffer 之后)',);
+      expect(
+        crossedMidnightSince(lastCheck, t1),
+        isTrue,
+        reason: 'lastCheck 17-23:30 vs now 18-00:00:04 (跨日)',
+      );
+      expect(
+        crossedMidnightSince(lastCheck, t2),
+        isTrue,
+        reason: 'lastCheck 17-23:30 vs now 18-00:00:05 (buffer 边界)',
+      );
+      expect(
+        crossedMidnightSince(lastCheck, t3),
+        isTrue,
+        reason: 'lastCheck 17-23:30 vs now 18-00:00:06 (buffer 之后)',
+      );
     });
 
     test('00:00:05 边界反向 (lastCheck 0:00:04 vs now 0:00:04 同日) → false', () {

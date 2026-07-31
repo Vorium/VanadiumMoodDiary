@@ -1,4 +1,4 @@
-﻿import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
@@ -40,9 +40,8 @@ class MedicationDraft {
   String nameL10n(AppLocalizations l10n) => _resolveName(l10n);
 
   /// i18n 备注 (可空) — caller 传 AppLocalizations 拿 zh/en/zh_Hant 文案
-  String? hintL10n(AppLocalizations l10n) => hintKey == null
-      ? null
-      : _resolveHint(l10n, hintKey!);
+  String? hintL10n(AppLocalizations l10n) =>
+      hintKey == null ? null : _resolveHint(l10n, hintKey!);
 
   String _resolveName(AppLocalizations l10n) {
     switch (nameKey) {

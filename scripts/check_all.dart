@@ -83,7 +83,8 @@ void main() {
   print('');
   _printConsistencyReport(consistencyIssues);
 
-  final exitCode = (purityViolations.isEmpty && consistencyIssues.isEmpty) ? 0 : 1;
+  final exitCode =
+      (purityViolations.isEmpty && consistencyIssues.isEmpty) ? 0 : 1;
   exit(exitCode);
 }
 
@@ -98,7 +99,8 @@ List<PurityViolation> _runPurityCheck(String root) {
         '$root${Platform.pathSeparator}lib${Platform.pathSeparator}${_layerDirs[layer]}';
     final dir = Directory(dirPath);
     if (!dir.existsSync()) continue;
-    violations.addAll(_scanPurity(dir, _purityRules[layer] ?? const [], layer, root));
+    violations
+        .addAll(_scanPurity(dir, _purityRules[layer] ?? const [], layer, root));
   }
   return violations;
 }
@@ -126,12 +128,14 @@ List<PurityViolation> _scanPurity(
       final resolvedLayer = _resolveImportLayer(uri, entity.path, root);
       for (final forbidden in forbiddenPrefixes) {
         if (_isForbiddenImport(uri, resolvedLayer, forbidden)) {
-          violations.add(PurityViolation(
-            entity.path,
-            i + 1,
-            uri,
-            '[$layer] 不应引用 $forbidden',
-          ),);
+          violations.add(
+            PurityViolation(
+              entity.path,
+              i + 1,
+              uri,
+              '[$layer] 不应引用 $forbidden',
+            ),
+          );
         }
       }
     }
@@ -156,17 +160,20 @@ String _resolveImportLayer(String importUri, String fromFile, String root) {
     String absPath;
     if (importUri.startsWith('package:chroniccare/')) {
       final rel = importUri.substring('package:chroniccare/'.length);
-      absPath = '$root${Platform.pathSeparator}lib${Platform.pathSeparator}${rel.replaceAll('/', Platform.pathSeparator)}';
+      absPath =
+          '$root${Platform.pathSeparator}lib${Platform.pathSeparator}${rel.replaceAll('/', Platform.pathSeparator)}';
     } else {
       // 相对路径（importUri 用 '/'，先转 Platform 分隔符才能让 _normalizePath 正确处理 ..）
-      final fromDir = fromFile.substring(0, fromFile.lastIndexOf(Platform.pathSeparator));
+      final fromDir =
+          fromFile.substring(0, fromFile.lastIndexOf(Platform.pathSeparator));
       absPath = _normalizePath(
         '$fromDir${Platform.pathSeparator}${importUri.replaceAll('/', Platform.pathSeparator)}',
       );
     }
     // 找层
     for (final layer in _layerDirs.keys) {
-      final marker = '${Platform.pathSeparator}lib${Platform.pathSeparator}${_layerDirs[layer]}${Platform.pathSeparator}';
+      final marker =
+          '${Platform.pathSeparator}lib${Platform.pathSeparator}${_layerDirs[layer]}${Platform.pathSeparator}';
       if (absPath.contains(marker)) return layer;
     }
   }
@@ -207,7 +214,8 @@ String _normalizeImportUri(String uri) {
 /// - forbidden = 'package:drift/'   → importUri 以 'package:drift/' 开头
 /// - forbidden = 'package:chroniccare/data/'  → importUri 以它开头 OR resolvedLayer == 'data'
 /// - forbidden = 'package:chroniccare/presentation/' → 同上
-bool _isForbiddenImport(String importUri, String resolvedLayer, String forbidden) {
+bool _isForbiddenImport(
+    String importUri, String resolvedLayer, String forbidden) {
   if (forbidden == 'package:flutter/' || forbidden == 'package:drift/') {
     return importUri.startsWith(forbidden);
   }
@@ -247,11 +255,13 @@ void _printPurityReport(List<PurityViolation> violations) {
 List<ConsistencyIssue> _runConsistencyCheck(String root) {
   final issues = <ConsistencyIssue>[];
   final entitiesDir = Directory(
-      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}domain${Platform.pathSeparator}entities',);
+    '$root${Platform.pathSeparator}lib${Platform.pathSeparator}domain${Platform.pathSeparator}entities',
+  );
   final tablesDir = Directory(
-      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables',);
-  final sharedDir =
-      Directory('$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}shared');
+    '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables',
+  );
+  final sharedDir = Directory(
+      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}shared');
 
   if (entitiesDir.existsSync() && tablesDir.existsSync()) {
     _checkEntityTablePair(entitiesDir, tablesDir, issues);
@@ -294,20 +304,24 @@ void _checkEntityTablePair(
         ? entityName.substring(0, entityName.length - 'Entity'.length)
         : entityName;
     if (!tableDataNames.containsKey(base)) {
-      issues.add(ConsistencyIssue(
-        'lib/domain/entities/$entityName.dart',
-        "没有对应的 drift table（@DataClassName('$base') 找不到）",
-      ),);
+      issues.add(
+        ConsistencyIssue(
+          'lib/domain/entities/$entityName.dart',
+          "没有对应的 drift table（@DataClassName('$base') 找不到）",
+        ),
+      );
     }
   }
   // table → entity
   for (final entry in tableDataNames.entries) {
     final expected = '${entry.key}Entity';
     if (!entityNames.contains(expected)) {
-      issues.add(ConsistencyIssue(
-        entry.value,
-        "drift table data class '${entry.key}' 找不到对应 domain entity '$expected'",
-      ),);
+      issues.add(
+        ConsistencyIssue(
+          entry.value,
+          "drift table data class '${entry.key}' 找不到对应 domain entity '$expected'",
+        ),
+      );
     }
   }
 }
@@ -330,16 +344,21 @@ void _checkSharedUsage(
         final uri = m.group(1)!;
         // 规范化路径：处理 ../ 和 ./
         final normalized = _normalizeImportUri(uri);
-        final matches = normalized == 'package:chroniccare/core/shared/$fileName' ||
-            normalized == 'package:chroniccare/core/shared/$baseNameNoExt.dart' ||
-            normalized.endsWith('core/shared/$fileName') ||
-            normalized.endsWith('core/shared/$baseNameNoExt.dart');
+        final matches =
+            normalized == 'package:chroniccare/core/shared/$fileName' ||
+                normalized ==
+                    'package:chroniccare/core/shared/$baseNameNoExt.dart' ||
+                normalized.endsWith('core/shared/$fileName') ||
+                normalized.endsWith('core/shared/$baseNameNoExt.dart');
         if (matches) {
-          if (entity.path.contains('${Platform.pathSeparator}domain${Platform.pathSeparator}')) {
+          if (entity.path.contains(
+              '${Platform.pathSeparator}domain${Platform.pathSeparator}')) {
             usedBy.add('domain');
-          } else if (entity.path.contains('${Platform.pathSeparator}data${Platform.pathSeparator}')) {
+          } else if (entity.path.contains(
+              '${Platform.pathSeparator}data${Platform.pathSeparator}')) {
             usedBy.add('data');
-          } else if (entity.path.contains('${Platform.pathSeparator}presentation${Platform.pathSeparator}')) {
+          } else if (entity.path.contains(
+              '${Platform.pathSeparator}presentation${Platform.pathSeparator}')) {
             usedBy.add('presentation');
           }
         }
@@ -347,15 +366,19 @@ void _checkSharedUsage(
     });
 
     if (usedBy.isEmpty) {
-      issues.add(ConsistencyIssue(
-        f.path,
-        'shared 工具没有任何层使用，考虑移走',
-      ),);
+      issues.add(
+        ConsistencyIssue(
+          f.path,
+          'shared 工具没有任何层使用，考虑移走',
+        ),
+      );
     } else if (usedBy.length == 1) {
-      issues.add(ConsistencyIssue(
-        f.path,
-        'shared 工具只被 [$usedBy] 用，考虑移进那个层',
-      ),);
+      issues.add(
+        ConsistencyIssue(
+          f.path,
+          'shared 工具只被 [$usedBy] 用，考虑移进那个层',
+        ),
+      );
     }
   }
 }

@@ -44,6 +44,12 @@ jobs:
           test -f assets/shaders/ink_sparkle.frag || (echo "::error::ink_sparkle.frag missing" && exit 1)
           grep -q "shaders:" pubspec.yaml || (echo "::error::pubspec.yaml missing shaders:" && exit 1)
 
+      # v0.27 round 67 (E10.3 / C1.5 护栏): dart format 阻断
+      # 之前 R66 uncommitted 漏跑 dart format, 133 文件 unformatted
+      # 加这道护栏避免下次重蹈覆辙
+      - name: Verify dart format
+        run: dart format --output=none --set-exit-if-changed lib/ test/ scripts/
+
       - name: Static analysis
         run: flutter analyze
 

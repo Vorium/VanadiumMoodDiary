@@ -118,9 +118,11 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         if (!mounted) return;
         if (!context.mounted) return;
         final l10n = AppLocalizations.of(context);
-        AppSnackBar.showError(context,
-              action: l10n.snackbarActionPlay,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: l10n.snackbarActionPlay,
+          error: e,
+        );
       }
     }
   }
@@ -142,7 +144,8 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx, true),
-            style: TextButton.styleFrom(foregroundColor: AppTokens.errorColor(context)),
+            style: TextButton.styleFrom(
+                foregroundColor: AppTokens.errorColor(context)),
             child: Text(l10n.commonDelete),
           ),
         ],
@@ -271,8 +274,10 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                               size: 32,
                               onPressed: () => _togglePlay(entry),
                               tooltip: _isPlaying
-                                  ? AppLocalizations.of(context).ventAudioPauseTooltip
-                                  : AppLocalizations.of(context).ventAudioPlayTooltip,
+                                  ? AppLocalizations.of(context)
+                                      .ventAudioPauseTooltip
+                                  : AppLocalizations.of(context)
+                                      .ventAudioPlayTooltip,
                             ),
                             const SizedBox(width: AppTokens.spacingXs),
                             // 之前是 Hero('vent-mic-...'),但 source 已统一到
@@ -287,7 +292,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                               // v0.28 round 65 (spzh P2-I): durationLabel 走 i18n
                               entry.durationLabelL10n(
                                   l10n: AppLocalizations.of(context)),
-                              style:TextStyle(
+                              style: TextStyle(
                                 fontSize: AppTokens.fontSizeBody,
                                 color: AppTokens.primaryColor(context),
                                 fontWeight: FontWeight.w600,

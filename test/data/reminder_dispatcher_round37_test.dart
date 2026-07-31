@@ -115,7 +115,8 @@ void main() {
       // Mock FlutterLocalNotificationsPlugin method channel
       // 真实 binding 没初始化, 需要 mock pendingNotificationRequests 返回 []
       TestWidgetsFlutterBinding.ensureInitialized();
-      const channel = MethodChannel('dexterous.com/flutter/local_notifications');
+      const channel =
+          MethodChannel('dexterous.com/flutter/local_notifications');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
         if (call.method == 'pendingNotificationRequests') {
@@ -141,7 +142,8 @@ void main() {
       // cancelByIdRange 内部有 .timeout(5s, onTimeout: () => <void>[])
       // 即便 plugin 实现卡死, 5s 后回 <void>[] 不阻塞
       // 这里不模拟 hang, 只验证 timeout 存在 (compile + import 不报错)
-      const channel = MethodChannel('dexterous.com/flutter/local_notifications');
+      const channel =
+          MethodChannel('dexterous.com/flutter/local_notifications');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async => null);
       final plugin = FlutterLocalNotificationsPlugin();

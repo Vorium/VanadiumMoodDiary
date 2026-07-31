@@ -1,4 +1,4 @@
-﻿// v0.27 round 60 (审计 M1): medication_stat_calculator 修正 — 药物未开始
+// v0.27 round 60 (审计 M1): medication_stat_calculator 修正 — 药物未开始
 // (startDate > periodEnd) 时不应报告 phantom missedDates.
 //
 // Bug 背景 (audit-domain-layer 3.2):
@@ -58,7 +58,8 @@ void main() {
           reason: 'startDate = periodEnd 当天应有 1 天可服药');
     });
 
-    test('startDate 在 periodEnd 之后 1 天 (medication 未开始) → 不应有 phantom missedDates',
+    test(
+        'startDate 在 periodEnd 之后 1 天 (medication 未开始) → 不应有 phantom missedDates',
         () {
       // 修正前: 14 个 phantom 漏服日期
       // 修正后: empty stat (expected=0, missedDates=[])
@@ -69,12 +70,10 @@ void main() {
         inWindow: const [],
         periodStart: periodStart,
       );
-      expect(stat.expectedDoseCount, 0,
-          reason: '药物未开始 → 期望次数 = 0');
+      expect(stat.expectedDoseCount, 0, reason: '药物未开始 → 期望次数 = 0');
       expect(stat.actualDoseCount, 0);
       expect(stat.actualDoseDays, 0);
-      expect(stat.missedDates, isEmpty,
-          reason: '药物未开始 → 不应报告任何漏服日期');
+      expect(stat.missedDates, isEmpty, reason: '药物未开始 → 不应报告任何漏服日期');
     });
 
     test('startDate 远在未来 (3 个月后) → 完全不计入窗口', () {
@@ -91,7 +90,8 @@ void main() {
       expect(stat.missedDates, isEmpty);
     });
 
-    test('startDate = periodStart (boundary, 早于 periodStart 不存在因为已 clamp) → 完整 14 天',
+    test(
+        'startDate = periodStart (boundary, 早于 periodStart 不存在因为已 clamp) → 完整 14 天',
         () {
       // startDate < periodStart → effectiveStart = periodStart
       // effectiveDays = 14, expected = 14

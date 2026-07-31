@@ -287,9 +287,7 @@ class DayDetailCalculator {
       case CheckInType.normal:
         return medName != null ? '打卡 · $medName' : '每日打卡';
       case CheckInType.temp:
-        return medName != null && medName.isNotEmpty
-            ? '临时 · $medName'
-            : '临时吃药';
+        return medName != null && medName.isNotEmpty ? '临时 · $medName' : '临时吃药';
       case CheckInType.phq9:
         return 'PHQ-9 抑郁筛查';
       case CheckInType.gad7:

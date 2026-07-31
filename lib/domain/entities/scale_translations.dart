@@ -72,12 +72,10 @@ class AppLocalizationsScaleTranslations implements ScaleTranslations {
   const AppLocalizationsScaleTranslations(this.l10n);
 
   @override
-  String phq9Name({String? override}) =>
-      override ?? l10n.assessmentScalePhq9;
+  String phq9Name({String? override}) => override ?? l10n.assessmentScalePhq9;
 
   @override
-  String gad7Name({String? override}) =>
-      override ?? l10n.assessmentScaleGad7;
+  String gad7Name({String? override}) => override ?? l10n.assessmentScaleGad7;
 
   @override
   String crisisHotlineLabel(HotlineRegion region, {String? override}) {

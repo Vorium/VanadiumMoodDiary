@@ -29,7 +29,8 @@ class ThemeToggleButton extends ConsumerWidget {
     };
     return PressFeedbackIconButton(
       icon: icon,
-      tooltip: AppLocalizations.of(context).themeTooltip(_modeLabel(context, mode)),
+      tooltip:
+          AppLocalizations.of(context).themeTooltip(_modeLabel(context, mode)),
       onPressed: () => notifier.set(next),
     );
   }

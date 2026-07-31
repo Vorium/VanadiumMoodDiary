@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:chroniccare/domain/entities/contact_entity.dart';
@@ -12,8 +12,8 @@ import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_detector.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
-import 'package:chroniccare/l10n/app_localizations.dart'
-    show AppLocalizations;
+import 'package:chroniccare/core/data/feature_flags.dart';
+import 'package:chroniccare/l10n/app_localizations.dart' show AppLocalizations;
 
 /// "安全开关" 服务 — 死了么/撸了么 思路
 ///
@@ -52,8 +52,7 @@ class SafetyWatchService {
   final NotificationService _notificationService;
 
   /// v0.25 round 57: 2 个 sub
-  late final SafetyConfigService _config =
-      SafetyConfigService();
+  late final SafetyConfigService _config = SafetyConfigService();
   late final SafetyAlertDispatcher _alertDispatcher = SafetyAlertDispatcher(
     smsService: _smsService,
     notificationService: _notificationService,
@@ -98,7 +97,15 @@ class SafetyWatchService {
   /// (NotificationService.showSafetyAlert 需要 l10n 走 i18n key)。
   /// 修正前 hardcode "已自动通知紧急联系人", 即使 SMS mock / 失败也这么说,
   /// 对精神心理患者形成"谎言"。修正后 3 态明确。
+  ///
+  /// v0.27 round 67 (C-7 重构): FeatureFlags.bootReceiverEnabled=false 时
+  /// 跳过 rescheduleAll, 避免 v0.28 WorkManager 完善之前 BootReceiver crash。
   Future<SafetyCheckResult> onAppStart({required AppLocalizations l10n}) async {
+    if (!FeatureFlags.bootReceiverEnabled) {
+      piiSafeLog(
+          'SafetyWatchService', 'BootReceiver disabled, skip rescheduleAll');
+      return const SafetyCheckResult(kind: SafetyCheckKind.disabled);
+    }
     return _checkAndAlert(trigger: 'app_start', l10n: l10n);
   }
 
@@ -136,11 +143,20 @@ class SafetyWatchService {
   /// - 加载 inputs (config / repos / stream) 保留在 facade (有副作用)
   /// - 委派 dispatcher 抽 [_dispatchLostContact]
   /// - stream + timeout 抽 [_loadContacts]
+  ///
+  /// 2026-07-31 联系人软隐藏 (病耻感 + 失联通信业务暂停):
+  /// 入口加 [FeatureFlags.emergencyContactEnabled] 守卫 — false 时整个
+  /// facade 直接返 disabled, 不查 config / 不查 contacts / 不发任何东西。
+  /// 3 个入口 (`onAppStart` / `onCheckIn` / `checkNow`) 都过这道关。
   Future<SafetyCheckResult> _checkAndAlert({
     required String trigger,
     DateTime? now,
     required AppLocalizations l10n,
   }) async {
+    // Feature flag 早返 — 暂停整个失联通知业务
+    if (!FeatureFlags.emergencyContactEnabled) {
+      return const SafetyCheckResult(kind: SafetyCheckKind.disabled);
+    }
     try {
       // 1. 加载 inputs (副作用: I/O, DB, SharedPreferences, stream)
       final enabled = await _config.isEnabled();
@@ -282,10 +298,8 @@ class SafetyWatchService {
   ///      safety_watch_service 自身不动 — 整个降级链路最简
   Future<List<ContactEntity>> _loadContacts() async {
     try {
-      return await _contactRepo
-          .watchAll()
-          .first
-          .timeout(_contactWatchTimeout, onTimeout: () => const <ContactEntity>[]);
+      return await _contactRepo.watchAll().first.timeout(_contactWatchTimeout,
+          onTimeout: () => const <ContactEntity>[]);
     } catch (e, st) {
       piiSafeLog(
         'SafetyWatchService',

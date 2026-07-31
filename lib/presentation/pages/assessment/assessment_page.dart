@@ -1,4 +1,4 @@
-﻿// 心理评估页（v0.8 重构：支持多量表，v0.13 加历史对比 + sparkline）
+// 心理评估页（v0.8 重构：支持多量表，v0.13 加历史对比 + sparkline）
 //
 // 路由：/assessment/:id （id = 'phq9' / 'gad7'）
 // 用户填题 → 提交 → 显示结果 + 写入 DB
@@ -213,8 +213,9 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
 
     if (saveFailed && mounted) {
       AppSnackBar.showInfo(
-          context,
-          AppLocalizations.of(context).assessmentSaveFailed,);
+        context,
+        AppLocalizations.of(context).assessmentSaveFailed,
+      );
     }
   }
 
@@ -258,9 +259,9 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                 // top: 2 + bottom: 8 ≈ 跟 options 列表行高对齐
                 // 26 不在 token sequence, 加注释说明 design decision (1 处用, 不抽 token)
                 padding: const EdgeInsets.only(
-                  left: 26,  // 编号缩进对齐 (deliberate, 不抽 token)
-                  top: AppTokens.spacingXxxs,  // 2
-                  bottom: AppTokens.spacingXs,  // 8
+                  left: 26, // 编号缩进对齐 (deliberate, 不抽 token)
+                  top: AppTokens.spacingXxxs, // 2
+                  bottom: AppTokens.spacingXs, // 8
                 ),
                 child: Text(
                   h.number,
@@ -305,7 +306,9 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeScoreXxl,
                     fontWeight: FontWeight.bold,
-                    color: isUrgent ? AppTokens.errorColor(context) : AppTokens.primaryColor(context),
+                    color: isUrgent
+                        ? AppTokens.errorColor(context)
+                        : AppTokens.primaryColor(context),
                   ),
                 ),
                 Text(

@@ -14,7 +14,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
+import 'package:chroniccare/presentation/widgets/dialog_actions_row.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 
@@ -205,7 +205,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   Icon(
                     _isActive ? Icons.check_circle_outline : Icons.pause_circle,
                     size: 16,
-                    color: _isActive ? AppTokens.primaryColor(context) : AppTokens.warningColor(context),
+                    color: _isActive
+                        ? AppTokens.primaryColor(context)
+                        : AppTokens.warningColor(context),
                   ),
                   const SizedBox(width: AppTokens.spacingChipGap),
                   Text(
@@ -214,7 +216,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                         : AppLocalizations.of(context).editMedStatusStopped,
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeCaption,
-                      color: _isActive ? AppTokens.primaryColor(context) : AppTokens.warningColor(context),
+                      color: _isActive
+                          ? AppTokens.primaryColor(context)
+                          : AppTokens.warningColor(context),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -273,17 +277,19 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   child: DropdownButtonFormField<DosageUnit>(
                     initialValue: _dosageUnit,
                     decoration: InputDecoration(
-                        labelText:
-                            AppLocalizations.of(context).editMedUnitLabel,),
+                      labelText: AppLocalizations.of(context).editMedUnitLabel,
+                    ),
                     items: [
                       DropdownMenuItem<DosageUnit>(
-                          value: DosageUnit.mg,
-                          child: const Text('mg'),
+                        value: DosageUnit.mg,
+                        child: const Text('mg'),
                       ),
                       DropdownMenuItem<DosageUnit>(
-                          value: DosageUnit.tablet,
-                          child: Text(
-                              AppLocalizations.of(context).commonDoseUnit,),),
+                        value: DosageUnit.tablet,
+                        child: Text(
+                          AppLocalizations.of(context).commonDoseUnit,
+                        ),
+                      ),
                     ],
                     onChanged: (v) {
                       if (v != null) {
@@ -321,7 +327,8 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                   ),
                 PressFeedback(
                   child: ActionChip(
-                    avatar: const Icon(Icons.add, size: AppTokens.iconSizeInline),
+                    avatar:
+                        const Icon(Icons.add, size: AppTokens.iconSizeInline),
                     label: Text(AppLocalizations.of(context).editMedAddTime),
                     onPressed: _saving ? null : _pickTime,
                   ),
@@ -350,7 +357,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                     : AppLocalizations.of(context).editMedResumeAction,
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeBody,
-                  color: _isActive ? AppTokens.warningColor(context) : AppTokens.primaryColor(context),
+                  color: _isActive
+                      ? AppTokens.warningColor(context)
+                      : AppTokens.primaryColor(context),
                 ),
               ),
               subtitle: Text(
@@ -373,7 +382,7 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
               const SizedBox(height: AppTokens.spacingXs),
               Text(
                 _errorText!,
-                style:TextStyle(
+                style: TextStyle(
                   color: AppTokens.errorColor(context),
                   fontSize: AppTokens.fontSizeLabel,
                 ),
@@ -383,16 +392,13 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: _saving ? null : () => Navigator.of(context).pop(false),
-          child: Text(AppLocalizations.of(context).commonCancel),
-        ),
-        // v0.24 round 43 (emil P1-01 H-03): 改用 LoadingTextButton
-        // 替代内联 ElevatedButton + CircularProgressIndicator
-        LoadingTextButton(
-          label: AppLocalizations.of(context).commonSave,
+        // v0.27 round 67 (C-3): 走 DialogActionsRow 集中器
+        DialogActionsRow(
+          cancelLabel: AppLocalizations.of(context).commonCancel,
+          onCancel: () => Navigator.of(context).pop(false),
+          confirmLabel: AppLocalizations.of(context).commonSave,
+          onConfirm: _save,
           isLoading: _saving,
-          onPressed: _save,
         ),
       ],
     );

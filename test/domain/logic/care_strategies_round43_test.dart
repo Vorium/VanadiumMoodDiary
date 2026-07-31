@@ -168,7 +168,8 @@ void main() {
       // 7-12 周日也有打卡,所以触发原因只能是 i=0 Saturday
       final checkIns = [
         _ci(saturdayEvening.subtract(const Duration(hours: 30))), // 7-17 周五
-        _ci(saturdayEvening.subtract(const Duration(days: 6, hours: 12))), // 7-12 周日
+        _ci(saturdayEvening
+            .subtract(const Duration(days: 6, hours: 12))), // 7-12 周日
       ];
       expect(isWeekendMissed(checkIns, saturdayEvening), isTrue);
     });
@@ -215,8 +216,7 @@ void main() {
     test('最近 7 天每天 21 点打卡 → true', () {
       // 7-11 (周六) ~ 7-17 (周五) — 7 天都 21 点准时
       final checkIns = <CheckInEntity>[
-        for (int i = 0; i < 7; i++)
-          _ci(DateTime(2026, 7, 11 + i, 21, 0)),
+        for (int i = 0; i < 7; i++) _ci(DateTime(2026, 7, 11 + i, 21, 0)),
       ];
       expect(isWeekPerfect(checkIns, now), isTrue);
     });
@@ -226,8 +226,7 @@ void main() {
       final longAgo = now.subtract(const Duration(days: 8));
       final checkIns = <CheckInEntity>[
         _ci(longAgo.copyWith(hour: 23)),
-        for (int i = 0; i < 7; i++)
-          _ci(DateTime(2026, 7, 11 + i, 21, 0)),
+        for (int i = 0; i < 7; i++) _ci(DateTime(2026, 7, 11 + i, 21, 0)),
       ];
       expect(isWeekPerfect(checkIns, now), isTrue);
     });
@@ -235,8 +234,7 @@ void main() {
     test('最近 7 天 1 次 22 点后 → false', () {
       // 7-13 23:00 晚打卡
       final checkIns = <CheckInEntity>[
-        for (int i = 0; i < 6; i++)
-          _ci(DateTime(2026, 7, 11 + i, 21, 0)),
+        for (int i = 0; i < 6; i++) _ci(DateTime(2026, 7, 11 + i, 21, 0)),
         _ci(DateTime(2026, 7, 17, 23, 0)), // 今天 23:00
       ];
       expect(isWeekPerfect(checkIns, now), isFalse);
@@ -256,8 +254,7 @@ void main() {
       // today-7 之前的不算
       final checkIns = <CheckInEntity>[
         _ci(now.subtract(const Duration(days: 7))), // 7 天前 14:00 — 边界外
-        for (int i = 0; i < 7; i++)
-          _ci(DateTime(2026, 7, 11 + i, 21, 0)),
+        for (int i = 0; i < 7; i++) _ci(DateTime(2026, 7, 11 + i, 21, 0)),
       ];
       // today-7 的 1 次打卡不污染;最近 7 天都准时 → true
       expect(isWeekPerfect(checkIns, now), isTrue);
@@ -275,7 +272,9 @@ void main() {
     test('35.9h 前 → false', () {
       // inMinutes = 35*60 + 54 = 2154 < 36*60=2160 → false
       final now = DateTime(2026, 7, 17, 14, 0);
-      final checkIns = [_ci(now.subtract(const Duration(hours: 35, minutes: 54)))];
+      final checkIns = [
+        _ci(now.subtract(const Duration(hours: 35, minutes: 54)))
+      ];
       expect(isSecondDayMissed(checkIns, now), isFalse);
     });
 

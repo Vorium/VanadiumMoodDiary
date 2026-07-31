@@ -9,7 +9,9 @@ import 'dart:developer' as developer;
 
 import 'package:chroniccare/app.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/database_migration.dart';
+import 'package:chroniccare/core/data/services/email_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
@@ -35,6 +37,19 @@ import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 /// 所以即使 2 个实例也不会立即崩, 但 P0 安全场景下必须 1 个实例保证
 /// `isProductionReady` 检查结果一致。
 SmsService _smsService = SmsService();
+
+/// v0.27 round 67 (B-1 修复): 顶层静态 EmailService 入口
+///
+/// 跟 `_smsService` 1:1 平行: release 模式启动时
+/// [EmailService.validateForRelease] 主动 check, 邮件 provider 未就绪
+/// 抛 [EmailProviderNotConfiguredError] 阻断, banner 显眼提示。
+///
+/// 当前 EmailService 尚未在任何 provider tree 里使用 (SmsService 是
+/// reminderService 的依赖, EmailService 暂无 caller), 所以不需要
+/// `emailServiceProvider.overrideWithValue(_emailService)` 这一步。
+/// 未来 v1.0+ 真接 SendGrid 引入 EmailService 到 SafetyWatchService
+/// 时再加 provider override 即可。
+EmailService _emailService = EmailService();
 
 /// 慢病管家 · App 入口
 ///
@@ -154,11 +169,26 @@ Future<void> _bootstrap() async {
   // "全局静态 _currentSmsService 入口"。
   SmsService.validateForRelease(_smsService.provider);
 
+  // v0.27 round 67 (B-1 修复): release 模式启动邮件守卫
+  //     跟 SmsService.validateForRelease 1:1 平行, 紧跟一行调
+  //     release + 邮件未配置 (mock / 缺 apiKey / send 未接) → 抛
+  //     EmailProviderNotConfiguredError, 跟 SMS 错误都被 runZonedGuarded
+  //     抓住, LastErrorCapture 记录, AppRoot banner 显眼提示"未配置"。
+  //     dev/profile 模式: 静默通过 (mock 是 dev 工具)。
+  //     故意不用 try/catch: 让异常冒泡到外层 runZonedGuarded。
+  EmailService.validateForRelease(_emailService);
+
   // v0.27 round 65 (appstore P0-4 IAP 集成): 预热 StoreKit 缓存
   // dev 模式: 同步返 true (kDebugMode 守卫)
   // release 模式: 异步读 SharedPreferences 内存层, 后续 isPro() 走同步缓存
   // 跟 SMS 守卫类似, 故意不用 try/catch 让异常冒泡到 runZonedGuarded
-  await StoreKitService.warmup();
+  // v0.27 round 67 (C-7 重构): FeatureFlags.iapEnabled=false 时跳过 warmup
+  // (v0.28 之前临时关闭避 Apple 2.1 拒)
+  if (FeatureFlags.iapEnabled) {
+    await StoreKitService.warmup();
+  } else {
+    piiSafeLog('main', 'IAP disabled by FeatureFlags — skip warmup');
+  }
 
   // 4. 执行迁移（migrateIfNeeded 失败必须 throw,见 database_migration.dart）
   try {

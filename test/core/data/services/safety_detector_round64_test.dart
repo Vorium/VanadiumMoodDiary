@@ -1,4 +1,4 @@
-﻿// v0.27 round 64 (spen P1-12 god class 拆分收尾): SafetyDetector 纯函数 test
+// v0.27 round 64 (spen P1-12 god class 拆分收尾): SafetyDetector 纯函数 test
 //
 // SafetyDetector 是纯函数, 0 副作用 (不调 sub-service / DB / SharedPreferences),
 // 全部 inputs 由 caller 注入。test 目标:
@@ -20,7 +20,8 @@ void main() {
   final fixedNow = DateTime(2026, 7, 17, 10, 0);
 
   // 构造器辅助 — 减少每个 test 的 boilerplate
-  ContactEntity mkContact({int id = 1, String name = '妈妈', String phone = '13800138000'}) =>
+  ContactEntity mkContact(
+          {int id = 1, String name = '妈妈', String phone = '13800138000'}) =>
       ContactEntity(id: id, name: name, phone: phone);
 
   UserProfileEntity mkProfile({String? name = '张三'}) => UserProfileEntity(
@@ -89,7 +90,9 @@ void main() {
       expect((result as SafetyDecisionOk).daysSinceLast, 0);
     });
 
-    test('daysSinceLast >= threshold + lastAlertAt same day → AlertedToday (R64 leaf 4/8)', () {
+    test(
+        'daysSinceLast >= threshold + lastAlertAt same day → AlertedToday (R64 leaf 4/8)',
+        () {
       // lastAlertAt = 今天 (跟 fixedNow 同一天)
       final result = SafetyDetector.detect(
         enabled: true,
@@ -105,7 +108,9 @@ void main() {
       expect((result as SafetyDecisionAlertedToday).daysSinceLast, 3);
     });
 
-    test('daysSinceLast >= threshold + inDnd=true → DndSuppressed (R64 leaf 5/8)', () {
+    test(
+        'daysSinceLast >= threshold + inDnd=true → DndSuppressed (R64 leaf 5/8)',
+        () {
       final result = SafetyDetector.detect(
         enabled: true,
         threshold: 2,
@@ -120,7 +125,8 @@ void main() {
       expect((result as SafetyDecisionDndSuppressed).daysSinceLast, 3);
     });
 
-    test('profile=null (lastCheckIn 有但没档案) → NoData (R64 leaf 3/8, 第 2 路径)', () {
+    test('profile=null (lastCheckIn 有但没档案) → NoData (R64 leaf 3/8, 第 2 路径)',
+        () {
       // 注意: lastCheckInAt 有值, enabled=true, 但 profile=null
       // 原 facade 现状也是返 noData (跟"新用户"合并)
       final result = SafetyDetector.detect(
@@ -153,7 +159,8 @@ void main() {
       expect((result as SafetyDecisionNoContacts).daysSinceLast, 3);
     });
 
-    test('all gates pass → Alert (R64 leaf 7/8, 真触发 — facade 委派 dispatcher)', () {
+    test('all gates pass → Alert (R64 leaf 7/8, 真触发 — facade 委派 dispatcher)',
+        () {
       final result = SafetyDetector.detect(
         enabled: true,
         threshold: 2,
@@ -170,7 +177,8 @@ void main() {
   });
 
   group('SafetyDetector.detect — 阈值边界 (R17 P3-3 inclusive)', () {
-    test('threshold=1, daysSinceLast=1 → Alert (>= 触发) — 包含边界 (R17 P3-3 修正)', () {
+    test('threshold=1, daysSinceLast=1 → Alert (>= 触发) — 包含边界 (R17 P3-3 修正)',
+        () {
       // 24h ago 跨 midnight 之后恰好 1 天
       // 同一 inputs 第二次跑必须返 equals (deterministic), 验证纯函数
       SafetyDecision input1() => SafetyDetector.detect(

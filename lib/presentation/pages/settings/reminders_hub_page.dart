@@ -21,6 +21,8 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/choice_chip_wrap.dart';
+import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/reminder_cards.dart';
 
 /// 提醒中心
@@ -47,27 +49,10 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           const SizedBox(height: AppTokens.spacingMd),
 
           // 顶部说明
-          Container(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
-            decoration: BoxDecoration(
-              color: AppTokens.primaryLightColor(context),
-              borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.notifications_active_outlined,
-                  color: AppTokens.primaryColor(context),
-                ),
-                const SizedBox(width: AppTokens.spacingSm),
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(context).reminderHubDescription,
-                    style: AppTokens.textStyleBody(context),
-                  ),
-                ),
-              ],
-            ),
+          // v0.27 round 67 (C-2): 走 InfoBanner 集中器
+          InfoBanner(
+            icon: Icons.notifications_active_outlined,
+            text: AppLocalizations.of(context).reminderHubDescription,
           ),
 
           const SizedBox(height: AppTokens.spacingMd),
@@ -272,8 +257,11 @@ class _AssessmentReminderSheetState
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonSave, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonSave,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -315,21 +303,13 @@ class _AssessmentReminderSheetState
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final d in _options)
-                    ChoiceChip(
-                      label: Text(loc.reminderHubEveryNDays(d)),
-                      selected: _days == d,
-                      onSelected: _busy
-                          ? null
-                          : (sel) {
-                              if (sel) setState(() => _days = d);
-                            },
-                    ),
-                ],
+              // v0.27 round 67 (C-5): 走 ChoiceChipWrap 集中器
+              ChoiceChipWrap<int>(
+                options: _options,
+                selected: _days,
+                labelOf: (d) => loc.reminderHubEveryNDays(d),
+                onSelect: (d) => setState(() => _days = d),
+                disabled: _busy,
               ),
             ],
             const SizedBox(height: AppTokens.spacingLg),
@@ -403,8 +383,11 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonSave, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonSave,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -453,21 +436,13 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final d in _options)
-                    ChoiceChip(
-                      label: Text(loc.reminderHubNDays(d)),
-                      selected: _threshold == d,
-                      onSelected: _busy
-                          ? null
-                          : (sel) {
-                              if (sel) setState(() => _threshold = d);
-                            },
-                    ),
-                ],
+              // v0.27 round 67 (C-5): 走 ChoiceChipWrap 集中器
+              ChoiceChipWrap<int>(
+                options: _options,
+                selected: _threshold,
+                labelOf: (d) => loc.reminderHubNDays(d),
+                onSelect: (d) => setState(() => _threshold = d),
+                disabled: _busy,
               ),
             ],
             const SizedBox(height: AppTokens.spacingLg),

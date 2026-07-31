@@ -122,8 +122,9 @@ class VentEntryEntity {
       timestamp: timestamp ?? this.timestamp,
       contentText: contentText == null ? this.contentText : contentText.value,
       audioPath: audioPath == null ? this.audioPath : audioPath.value,
-      audioDurationSec:
-          audioDurationSec == null ? this.audioDurationSec : audioDurationSec.value,
+      audioDurationSec: audioDurationSec == null
+          ? this.audioDurationSec
+          : audioDurationSec.value,
       audioSizeBytes:
           audioSizeBytes == null ? this.audioSizeBytes : audioSizeBytes.value,
     );

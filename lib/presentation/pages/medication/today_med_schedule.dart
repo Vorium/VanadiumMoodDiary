@@ -153,8 +153,9 @@ class _TimeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final e = entry;
-    final color =
-        e.done ? AppTokens.primaryColor(context) : AppTokens.textSecondaryColor(context);
+    final color = e.done
+        ? AppTokens.primaryColor(context)
+        : AppTokens.textSecondaryColor(context);
     final bg = e.done
         ? AppTokens.tintedPrimarySoft(context)
         : AppTokens.dividerColor(context);
@@ -176,14 +177,18 @@ class _TimeChip extends StatelessWidget {
           if (e.done)
             Padding(
               padding: const EdgeInsets.only(right: 4),
-              child:
-                  Icon(Icons.check_circle, color: AppTokens.primaryColor(context), size: AppTokens.iconSizeSmall),
+              child: Icon(Icons.check_circle,
+                  color: AppTokens.primaryColor(context),
+                  size: AppTokens.iconSizeSmall),
             )
           else
             Padding(
               padding: const EdgeInsets.only(right: 4),
-              child: Icon(Icons.access_time,
-                  color: AppTokens.textHintColor(context), size: AppTokens.iconSizeSmall,),
+              child: Icon(
+                Icons.access_time,
+                color: AppTokens.textHintColor(context),
+                size: AppTokens.iconSizeSmall,
+              ),
             ),
           Text(
             '${_pad(e.time.hour)}:${_pad(e.time.minute)}',

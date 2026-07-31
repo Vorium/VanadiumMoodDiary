@@ -45,8 +45,7 @@ void main() {
 
       expect(build.title, '⚠️ 张三 已 3 天未打卡',
           reason: 'title 用 safeUserName + days, ⚠️ 前缀');
-      expect(build.body, contains('已自动通知'),
-          reason: 'sent 文案: 已自动通知紧急联系人');
+      expect(build.body, contains('已自动通知'), reason: 'sent 文案: 已自动通知紧急联系人');
       expect(build.body, contains('2026-07-20'),
           reason: 'lastCheckIn 走 YYYY-MM-DD 格式');
     });
@@ -64,12 +63,9 @@ void main() {
       );
 
       expect(build.title, '⚠️ 李四 已 5 天未打卡');
-      expect(build.body, contains('开发模式'),
-          reason: 'mocked 文案: 当前为开发模式');
-      expect(build.body, contains('未实际通知'),
-          reason: 'mocked 文案: 未实际通知紧急联系人');
-      expect(build.body, contains('从未打卡'),
-          reason: 'lastCheckIn=null → "从未打卡"');
+      expect(build.body, contains('开发模式'), reason: 'mocked 文案: 当前为开发模式');
+      expect(build.body, contains('未实际通知'), reason: 'mocked 文案: 未实际通知紧急联系人');
+      expect(build.body, contains('从未打卡'), reason: 'lastCheckIn=null → "从未打卡"');
     });
 
     test('3. smsFail=2 + 全 0 → body 走 failed (兜底)', () {
@@ -85,13 +81,10 @@ void main() {
       );
 
       expect(build.title, '⚠️ 王五 已 7 天未打卡');
-      expect(build.body, contains('通知发送失败'),
-          reason: 'failed 文案: 通知发送失败');
+      expect(build.body, contains('通知发送失败'), reason: 'failed 文案: 通知发送失败');
       expect(build.body, contains('2026-07-16'));
-      expect(build.body, isNot(contains('已自动通知')),
-          reason: 'failed 不能误报"已通知"');
-      expect(build.body, isNot(contains('开发模式')),
-          reason: 'failed 不是 mocked');
+      expect(build.body, isNot(contains('已自动通知')), reason: 'failed 不能误报"已通知"');
+      expect(build.body, isNot(contains('开发模式')), reason: 'failed 不是 mocked');
     });
 
     test('4. userName=null → title 退化为 "您" (R23 P1-24 nullable 修复)', () {
@@ -106,8 +99,7 @@ void main() {
         channelDescription: channelDesc,
       );
 
-      expect(build.title, '⚠️ 您 已 2 天未打卡',
-          reason: 'safeUserName(null) → "您"');
+      expect(build.title, '⚠️ 您 已 2 天未打卡', reason: 'safeUserName(null) → "您"');
     });
 
     test('5. lastCheckIn = DateTime(2026, 7, 1) → 格式化 "2026-07-01" (补零)', () {
@@ -122,8 +114,7 @@ void main() {
         channelDescription: channelDesc,
       );
 
-      expect(build.body, contains('2026-07-01'),
-          reason: '月日必须补零: 7-1 → 07-01');
+      expect(build.body, contains('2026-07-01'), reason: '月日必须补零: 7-1 → 07-01');
     });
 
     test('6. en locale → title 走 zh (硬编 "已 X 天未打卡"), body 走 en l10n', () {
@@ -149,7 +140,9 @@ void main() {
           reason: 'lastCheckIn 格式跟 locale 无关');
     });
 
-    test('7. details: Android importance=max + iOS timeSensitive + channel 三元透传', () {
+    test(
+        '7. details: Android importance=max + iOS timeSensitive + channel 三元透传',
+        () {
       // 验证 NotificationDetails 字段正确 (R65 重构不丢任何属性)
       final build = SafetyAlertBuilder.buildFor(
         userName: '张三',
@@ -164,8 +157,7 @@ void main() {
 
       // Android 字段
       final android = build.details.android!;
-      expect(android.channelId, 'custom.safety.id',
-          reason: 'channelId 透传');
+      expect(android.channelId, 'custom.safety.id', reason: 'channelId 透传');
       expect(android.channelName, 'custom.name');
       expect(android.channelDescription, 'custom.desc');
       expect(android.importance, Importance.max,

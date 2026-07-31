@@ -36,9 +36,9 @@ class AppSpacing {
 
   // v0.22 round 30 (emil P2-7): 微小 padding 集中器
   // 之前散落 5+ 处 `EdgeInsets.symmetric(horizontal: 8/6/10, vertical: 2/1/6)` magic
-  static const double spacingXxs = 4.0;  // 微小 (cell padding 上下)
-  static const double spacingXxxs = 2.0;  // 极小 (chip 内部)
-  static const double spacingChipGap = 6.0;  // chip 与 text 间距
+  static const double spacingXxs = 4.0; // 微小 (cell padding 上下)
+  static const double spacingXxxs = 2.0; // 极小 (chip 内部)
+  static const double spacingChipGap = 6.0; // chip 与 text 间距
   // v0.23 round 40 (emil F6 fix): chip 内部 icon-text 间距 (4.0)
   static const double spacingChipGapInline = 4.0;
 

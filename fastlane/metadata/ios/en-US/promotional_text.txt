@@ -1,0 +1,1 @@
+Private, encrypted medication tracker for chronic patients. Mood, vent space, and mental health assessments. 100% on-device, zero cloud.

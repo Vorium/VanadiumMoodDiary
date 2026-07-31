@@ -146,8 +146,7 @@ void main() {
       expect(no, isFalse);
     });
 
-    test('stopStt 返回 null (FakeService 简化) — 真 service 这里会返回 final',
-        () async {
+    test('stopStt 返回 null (FakeService 简化) — 真 service 这里会返回 final', () async {
       final fake = _FakeMoodAudioService();
       final result = await fake.stopStt();
       expect(result, isNull);

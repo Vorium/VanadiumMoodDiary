@@ -15,6 +15,7 @@ import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
+import 'package:chroniccare/presentation/widgets/swipe_delete_background.dart';
 import 'package:go_router/go_router.dart';
 
 /// 紧急联系人列表 + 添加按钮
@@ -51,22 +52,12 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
             Dismissible(
               key: ValueKey('contact-${contacts[i].id}'),
               direction: DismissDirection.endToStart,
-              background: Container(
-                alignment: Alignment.centerRight,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
-                color: AppTokens.errorColor(context),
-                child: Icon(
-                  Icons.delete_outline,
-                  // v0.22 round 30 (emil P2-6): 走 fgOnError
-                  color: AppTokens.fgOnError(context),
-                ),
-              ),
+              background: const SwipeDeleteBackground(),
               onDismissed: (_) => _swipeDeleteContact(contacts[i]),
               // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
               // 替代 inline ListTile (Dismissible 包裹, 不影响 ListTile 本身)
               child: AppListTile.standard(
-                leading:Icon(
+                leading: Icon(
                   Icons.person_outline,
                   color: AppTokens.primaryColor(context),
                 ),
@@ -83,11 +74,11 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                       )
                     : // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器
                     PressFeedbackIconButton(
-                      icon: Icons.delete_outline,
-                      tooltip: AppLocalizations.of(context).commonDelete,
-                      onPressed: () => _deleteContact(contacts[i].id),
-                      color: AppTokens.errorColor(context),
-                    ),
+                        icon: Icons.delete_outline,
+                        tooltip: AppLocalizations.of(context).commonDelete,
+                        onPressed: () => _deleteContact(contacts[i].id),
+                        color: AppTokens.errorColor(context),
+                      ),
               ),
             ),
           ],
@@ -95,7 +86,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
           // v0.24 round 43 (emil D-05 P2): 添加联系人入口包 AppListTile
           // → 隐式获得 PressFeedback scale 反馈 (tens/day 频度)
           AppListTile(
-            leading:Icon(Icons.add, color: AppTokens.primaryColor(context)),
+            leading: Icon(Icons.add, color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).setupAddContact),
             onTap: () => _showAddContactDialog(context, ref),
           ),
@@ -113,9 +104,11 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       await ref.read(contactRepositoryProvider).delete(id);
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonActionDelete,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonActionDelete,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(id));
@@ -141,9 +134,11 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       );
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonActionDelete,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonActionDelete,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(contact.id));
@@ -167,7 +162,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context).contactNameLabel,),
+                    labelText: AppLocalizations.of(context).contactNameLabel,
+                  ),
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 TextField(
@@ -207,8 +203,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                           if (!ctx.mounted) return;
                           // v0.27 round 62 (P0-2 修复): 拿当前用户配置的失联阈值,
                           // 让 consent dialog 文案里的"连续 N 天"是用户自己的值。
-                          final thresholdDays = await SafetyConfigService()
-                              .getThresholdDays();
+                          final thresholdDays =
+                              await SafetyConfigService().getThresholdDays();
                           final consent = await ConsentDialog.show(
                             context,
                             kind: ConsentKind.emergencyContactSharing,
@@ -244,8 +240,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                             // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
                             AppSnackBar.showError(
                               context,
-                              action: AppLocalizations.of(context)
-                                  .commonActionSave,
+                              action:
+                                  AppLocalizations.of(context).commonActionSave,
                               error: e,
                             );
                             setLocal(() => saving = false);

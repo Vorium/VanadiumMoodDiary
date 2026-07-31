@@ -75,7 +75,8 @@ void main() {
       expect(r.strategy, CareTriggerType.none);
     });
 
-    test('secondDayMissed + weekendMissed 同命中 → 选 priority 最高 '
+    test(
+        'secondDayMissed + weekendMissed 同命中 → 选 priority 最高 '
         '(secondDayMissed=4)', () {
       // 距 lastCheckIn 36h+ (secondDayMissed TRUE, priority 4)
       // 周六 7/11 没打卡 (weekendMissed TRUE, priority 2)

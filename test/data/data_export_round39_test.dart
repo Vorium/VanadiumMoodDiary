@@ -49,12 +49,15 @@ void main() {
 
   group('v0.23 round 39 (P1-5) — profile round-trip', () {
     test('导出含 profile 字段 (userName/cycle/firstLaunchAt)', () async {
-      await db.userProfileDao.upsert(UserProfilesCompanion.insert(
-        userName: const Value('张三'),
-        checkInCycleHours: const Value(48),
-        firstLaunchAt: DateTime.utc(2026, 1, 1),
-      ),);
-      final json = parseJson(await svc.exportToJson(now: DateTime.utc(2026, 7, 1)));
+      await db.userProfileDao.upsert(
+        UserProfilesCompanion.insert(
+          userName: const Value('张三'),
+          checkInCycleHours: const Value(48),
+          firstLaunchAt: DateTime.utc(2026, 1, 1),
+        ),
+      );
+      final json =
+          parseJson(await svc.exportToJson(now: DateTime.utc(2026, 7, 1)));
       final profile = json['profile'] as Map<String, dynamic>;
       expect(profile['userName'], '张三');
       expect(profile['checkInCycleHours'], 48);
@@ -67,10 +70,12 @@ void main() {
     });
 
     test('userName 为空 → 导出空字符串 (不抛错)', () async {
-      await db.userProfileDao.upsert(UserProfilesCompanion.insert(
-        checkInCycleHours: const Value(24),
-        firstLaunchAt: DateTime.utc(2026, 1, 1),
-      ),);
+      await db.userProfileDao.upsert(
+        UserProfilesCompanion.insert(
+          checkInCycleHours: const Value(24),
+          firstLaunchAt: DateTime.utc(2026, 1, 1),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       expect(json['profile'], isNotNull);
       // userName 不存在 (nullable, v0.21 P1-24)
@@ -78,12 +83,14 @@ void main() {
     });
 
     test('lastCheckInAt 字段保留', () async {
-      await db.userProfileDao.upsert(UserProfilesCompanion.insert(
-        userName: const Value('李四'),
-        checkInCycleHours: const Value(24),
-        firstLaunchAt: DateTime.utc(2026, 1, 1),
-        lastCheckInAt: const Value.absent(),
-      ),);
+      await db.userProfileDao.upsert(
+        UserProfilesCompanion.insert(
+          userName: const Value('李四'),
+          checkInCycleHours: const Value(24),
+          firstLaunchAt: DateTime.utc(2026, 1, 1),
+          lastCheckInAt: const Value.absent(),
+        ),
+      );
       // 模拟有 lastCheckIn
       final profile = await db.userProfileDao.get();
       expect(profile, isNotNull);
@@ -99,12 +106,20 @@ void main() {
     });
 
     test('导出多 contact 保留 name/phone/sortOrder/isActive', () async {
-      await db.contactDao.insert(ContactsCompanion.insert(
-        name: '妈妈', phone: '13800138001', sortOrder: const Value(0),
-      ),);
-      await db.contactDao.insert(ContactsCompanion.insert(
-        name: '爸爸', phone: '13800138002', sortOrder: const Value(1),
-      ),);
+      await db.contactDao.insert(
+        ContactsCompanion.insert(
+          name: '妈妈',
+          phone: '13800138001',
+          sortOrder: const Value(0),
+        ),
+      );
+      await db.contactDao.insert(
+        ContactsCompanion.insert(
+          name: '爸爸',
+          phone: '13800138002',
+          sortOrder: const Value(1),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       final contacts = json['contacts'] as List;
       // 2 个都是 isActive=true (默认),全导出
@@ -118,10 +133,13 @@ void main() {
     });
 
     test('isActive=false 的 contact 不在 export 结果 (watchContacts 过滤)', () async {
-      await db.contactDao.insert(ContactsCompanion.insert(
-        name: '已删除', phone: '13800138099',
-        isActive: const Value(false),
-      ),);
+      await db.contactDao.insert(
+        ContactsCompanion.insert(
+          name: '已删除',
+          phone: '13800138099',
+          isActive: const Value(false),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       expect(json['contacts'], isEmpty);
     });
@@ -136,14 +154,16 @@ void main() {
     });
 
     test('导出 medication 保留所有字段', () async {
-      await db.medicationDao.insert(MedicationsCompanion.insert(
-        name: '碳酸锂',
-        dosage: 0.3,
-        dosageUnit: 'g',
-        timesJson: const Value('[{"h":8,"m":0},{"h":20,"m":0}]'),
-        startDate: DateTime.utc(2026, 1, 1),
-        isActive: const Value(true),
-      ),);
+      await db.medicationDao.insert(
+        MedicationsCompanion.insert(
+          name: '碳酸锂',
+          dosage: 0.3,
+          dosageUnit: 'g',
+          timesJson: const Value('[{"h":8,"m":0},{"h":20,"m":0}]'),
+          startDate: DateTime.utc(2026, 1, 1),
+          isActive: const Value(true),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       final meds = json['medications'] as List;
       expect(meds.length, 1);
@@ -166,15 +186,19 @@ void main() {
     });
 
     test('导出 check-in 保留 timestamp (Z 后缀) / type / note', () async {
-      await db.checkInDao.insert(CheckInsCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1, 20, 0),
-        type: 'normal',
-      ),);
-      await db.checkInDao.insert(CheckInsCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 2, 20, 0),
-        type: 'phq9',
-        note: const Value('{"total":10,"scores":[1,1,1,1,1,1,1,1,1,1]}'),
-      ),);
+      await db.checkInDao.insert(
+        CheckInsCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1, 20, 0),
+          type: 'normal',
+        ),
+      );
+      await db.checkInDao.insert(
+        CheckInsCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 2, 20, 0),
+          type: 'phq9',
+          note: const Value('{"total":10,"scores":[1,1,1,1,1,1,1,1,1,1]}'),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       final checkIns = json['checkIns'] as List;
       expect(checkIns.length, 2);
@@ -191,15 +215,17 @@ void main() {
 
   group('v0.23 round 39 (P1-5) — moodEntries 4D round-trip', () {
     test('导出 mood 含 energy/sleep/anxiety 4D 字段', () async {
-      await db.moodDao.insert(MoodEntriesCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1, 10, 0),
-        score: 7,
-        energy: const Value(6),
-        sleep: const Value(8),
-        anxiety: const Value(3),
-        tagsJson: const Value('["工作","累"]'),
-        note: const Value('今天还ok'),
-      ),);
+      await db.moodDao.insert(
+        MoodEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1, 10, 0),
+          score: 7,
+          energy: const Value(6),
+          sleep: const Value(8),
+          anxiety: const Value(3),
+          tagsJson: const Value('["工作","累"]'),
+          note: const Value('今天还ok'),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       final moods = json['moodEntries'] as List;
       expect(moods.length, 1);
@@ -213,11 +239,13 @@ void main() {
     });
 
     test('老数据 (4D 全 null) → 导出后字段不存在 (兼容)', () async {
-      await db.moodDao.insert(MoodEntriesCompanion.insert(
-        timestamp: DateTime.utc(2026, 6, 1, 10, 0),
-        score: 5,
-        tagsJson: const Value('[]'),
-      ),);
+      await db.moodDao.insert(
+        MoodEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 6, 1, 10, 0),
+          score: 5,
+          tagsJson: const Value('[]'),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       final m = (json['moodEntries'] as List)[0] as Map<String, dynamic>;
       expect(m.containsKey('energy'), isFalse);
@@ -232,10 +260,12 @@ void main() {
     test('加密 vent 文字 → 导出明文 → import 写回加密', () async {
       // 写入加密 vent
       final encrypted = await encText('今天心情很差');
-      await db.ventDao.insert(VentEntriesCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1),
-        contentTextEnc: Value(encrypted),
-      ),);
+      await db.ventDao.insert(
+        VentEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1),
+          contentTextEnc: Value(encrypted),
+        ),
+      );
       // export → 明文
       final exportedJson = parseJson(await svc.exportToJson());
       final vents = exportedJson['ventEntries'] as List;
@@ -249,10 +279,12 @@ void main() {
 
     test('vent 文字损坏 (decrypt 失败) → 导出 text=null, import 跳过', () async {
       // 写入损坏的加密数据 (随机字节)
-      await db.ventDao.insert(VentEntriesCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1),
-        contentTextEnc: Value(Uint8List.fromList(List.filled(32, 0xff))),
-      ),);
+      await db.ventDao.insert(
+        VentEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1),
+          contentTextEnc: Value(Uint8List.fromList(List.filled(32, 0xff))),
+        ),
+      );
       final json = parseJson(await svc.exportToJson());
       final v = (json['ventEntries'] as List)[0] as Map;
       // decrypt 失败 → text 为 null,不抛错
@@ -264,7 +296,8 @@ void main() {
 
   group('v0.23 round 39 (P1-5) — JSON shape & version', () {
     test('exportedAt 字段是 Z 后缀 ISO 字符串', () async {
-      final json = parseJson(await svc.exportToJson(now: DateTime.utc(2026, 7, 1, 10, 0)));
+      final json = parseJson(
+          await svc.exportToJson(now: DateTime.utc(2026, 7, 1, 10, 0)));
       expect((json['exportedAt'] as String).endsWith('Z'), isTrue);
       expect(json['exportedAt'], '2026-07-01T10:00:00.000Z');
     });

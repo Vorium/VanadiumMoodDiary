@@ -51,8 +51,11 @@ Future<void> _pumpSetup(WidgetTester tester) async {
 
 /// P0-6: setup 流程加 consent 步(法律同意)。这个 helper 帮 test 跳过 consent
 /// 直接测后面 3 步(原行为不变)。
+///
+/// 2026-07-31 联系人软隐藏: 紧急联系人**完全可选**, step 1 末尾不再有
+/// contact consent Checkbox (P1-23 的"已告知联系人"勾选已移除)。
 Future<void> _passConsent(WidgetTester tester) async {
-  // 勾 3 个 checkbox
+  // 勾 3 个 checkbox (consent step)
   final checkboxes = find.byType(Checkbox);
   expect(
     checkboxes,
@@ -74,21 +77,19 @@ Future<void> _passConsent(WidgetTester tester) async {
     findsOneWidget,
   );
 
-  // v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
-  // _passConsent 后已在 step 1,直接勾选 consent
-  final consentCheckbox = find.byType(Checkbox);
+  // 2026-07-31: step 1 末尾的 contact consent Checkbox 已删除
+  // (联系人变可选, 法律同意仅在用户实际填联系人时弹 ConsentDialog 触发)。
+  // 验证 step 1 现在 0 个 Checkbox (consent step 0 已过去, 联系人 consent 不再 checkbox 化)。
+  final step1Checkboxes = find.byType(Checkbox);
   expect(
-    consentCheckbox,
-    findsOneWidget,
-    reason: 'P1-23: setup step 1 (welcome) 应该有 1 个 contact consent Checkbox',
+    step1Checkboxes,
+    findsNothing,
+    reason: 'v0.31 联系人软隐藏: step 1 不再有 contact consent Checkbox',
   );
-  await tester.tap(consentCheckbox);
-  await tester.pumpAndSettle();
 }
 
 // v0.21 Round 23 (P1-23 修复): 紧急联系人知情同意 checkbox
-// 在 setup step 1 末尾,点下一步前必须勾选
-// (实际逻辑已合并到 _passConsent 末尾)
+// 2026-07-31 v0.31 联系人软隐藏: 该 Checkbox 已删除,见上方注释
 
 void main() {
   testWidgets(
@@ -119,23 +120,24 @@ void main() {
       expect(contactNameField, findsOneWidget);
       expect(phoneField, findsOneWidget);
 
-      // 2) 只填用户名字
+      // 2) 只填用户名字 → 2026-07-31 v0.31 联系人软隐藏后按钮 enabled
+      //    (联系人完全可选, 只填名字就够了, 不再要求手机号)
       await tester.enterText(userNameField, '小明');
       await tester.pumpAndSettle();
       expect(
         nextBtn().onPressed,
-        isNull,
-        reason: '只填名字没填手机号，按钮还是 disabled',
+        isNotNull,
+        reason: 'v0.31 联系人可选: 只填名字就足够, 按钮 enabled',
       );
 
-      // 3) 填联系人姓名 + 有效手机号 → enabled
+      // 3) 填联系人姓名 + 有效手机号 → 仍 enabled (联系人可选, 不破坏)
       await tester.enterText(contactNameField, '妈妈');
       await tester.enterText(phoneField, _phone('1380013', '8000'));
       await tester.pumpAndSettle();
       expect(
         nextBtn().onPressed,
         isNotNull,
-        reason: '所有必填项都填了，按钮应该 enabled',
+        reason: '联系人可选 + 填了有效手机号, 按钮 enabled',
       );
 
       // 4) 点击进入 step 2 (P0-6 后是 medication = 第 2 步,共 4 步)

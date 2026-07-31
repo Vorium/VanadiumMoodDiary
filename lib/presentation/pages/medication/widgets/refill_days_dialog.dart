@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/dialog_actions_row.dart';
 
 /// 续方提前天数选择 dialog
 ///
@@ -53,13 +54,13 @@ class _RefillDaysDialogState extends State<RefillDaysDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, null),
-          child: Text(AppLocalizations.of(context).commonCancel),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context, _selected),
-          child: Text(AppLocalizations.of(context).commonConfirmOk),
+        // v0.27 round 67 (C-3): 走 DialogActionsRow 集中器
+        // (顺道把 ElevatedButton 升级到 M3 FilledButton via LoadingTextButton filled variant)
+        DialogActionsRow(
+          cancelLabel: AppLocalizations.of(context).commonCancel,
+          onCancel: () => Navigator.pop(context, null),
+          confirmLabel: AppLocalizations.of(context).commonConfirmOk,
+          onConfirm: () => Navigator.pop(context, _selected),
         ),
       ],
     );

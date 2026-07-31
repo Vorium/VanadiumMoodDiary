@@ -22,6 +22,7 @@ import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/stat_card.dart';
 
 /// 续方状态
 enum RefillStatus {
@@ -132,24 +133,37 @@ class RefillManagePage extends ConsumerWidget {
             padding: const EdgeInsets.all(AppTokens.spacingMd),
             child: Row(
               children: [
-                _Stat(
+                Expanded(
+                  // v0.27 round 67 (C-4): 走 StatCard 集中器
+                  child: StatCard(
                     label: AppLocalizations.of(context).medsTotal,
-                    value: '${meds.length}',),
-                const SizedBox(width: AppTokens.spacingMd),
-                _Stat(
-                    label: AppLocalizations.of(context).medsRefillSetCount,
-                    value: '$configured',),
-                const SizedBox(width: AppTokens.spacingMd),
-                _Stat(
-                  label: AppLocalizations.of(context).medsRefillReminding,
-                  value: '$inWindow',
-                  valueColor: inWindow > 0 ? AppTokens.warningColor(context) : null,
+                    value: '${meds.length}',
+                  ),
                 ),
                 const SizedBox(width: AppTokens.spacingMd),
-                _Stat(
-                  label: AppLocalizations.of(context).refillManageOverdue,
-                  value: '$overdue',
-                  valueColor: overdue > 0 ? AppTokens.errorColor(context) : null,
+                Expanded(
+                  child: StatCard(
+                    label: AppLocalizations.of(context).medsRefillSetCount,
+                    value: '$configured',
+                  ),
+                ),
+                const SizedBox(width: AppTokens.spacingMd),
+                Expanded(
+                  child: StatCard(
+                    label: AppLocalizations.of(context).medsRefillReminding,
+                    value: '$inWindow',
+                    valueColor:
+                        inWindow > 0 ? AppTokens.warningColor(context) : null,
+                  ),
+                ),
+                const SizedBox(width: AppTokens.spacingMd),
+                Expanded(
+                  child: StatCard(
+                    label: AppLocalizations.of(context).refillManageOverdue,
+                    value: '$overdue',
+                    valueColor:
+                        overdue > 0 ? AppTokens.errorColor(context) : null,
+                  ),
                 ),
               ],
             ),
@@ -162,9 +176,11 @@ class RefillManagePage extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(AppTokens.spacingXl),
             child: Center(
-              child: Text(AppLocalizations.of(context).medsNoMedicationsAdded,
-                  style: AppTokens.textStyleBody(context)
-                      .copyWith(color: AppTokens.textHintColor(context)),),
+              child: Text(
+                AppLocalizations.of(context).medsNoMedicationsAdded,
+                style: AppTokens.textStyleBody(context)
+                    .copyWith(color: AppTokens.textHintColor(context)),
+              ),
             ),
           )
         else
@@ -307,7 +323,10 @@ class _RefillRow extends StatelessWidget {
       suffix = l10n.medsRefillRemainingDays(days);
     }
     return l10n.medsRefillSubtitleTemplate(
-        dateStr, suffix, m.refillReminderDays,);
+      dateStr,
+      suffix,
+      m.refillReminderDays,
+    );
   }
 
   String _formatDose(double d, DosageUnit u) {
@@ -338,39 +357,6 @@ class _StatusDot extends StatelessWidget {
         },
         color: status.colorOf(context),
         size: AppTokens.iconSizeInline,
-      ),
-    );
-  }
-}
-
-class _Stat extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color? valueColor; // null = 默认 textPrimary
-  const _Stat({required this.label, required this.value, this.valueColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHintColor(context),
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingXxxs),
-          Text(
-            value,
-            style: AppTokens.textStyleButton(context).copyWith(
-              fontWeight: FontWeight.w700,
-              color: valueColor ?? AppTokens.textPrimaryColor(context),
-            ),
-          ),
-        ],
       ),
     );
   }

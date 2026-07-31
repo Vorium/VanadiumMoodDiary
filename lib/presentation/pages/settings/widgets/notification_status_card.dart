@@ -53,6 +53,11 @@ class _NotificationStatusCardState
 
   Future<void> _refresh() async {
     if (_busy) return;
+    // 2026-07-31 v0.31 (联系人软隐藏): mounted guard
+    // 之前 ListView section 顺序变 → 滚动后本 widget 被 dispose,
+    // 但 addPostFrameCallback 触发的 _refresh 已 in flight, 跑 setState 撞
+    // defunct State.assertion. 加 mounted 守卫后, 测试稳定。
+    if (!mounted) return;
     setState(() => _busy = true);
     try {
       final service = ref.read(notificationServiceProvider);
@@ -84,9 +89,10 @@ class _NotificationStatusCardState
     } catch (e) {
       if (!mounted) return;
       AppSnackBar.showError(
-          context,
-          action: AppLocalizations.of(context).notificationStatusCardActionSend,
-          error: e,);
+        context,
+        action: AppLocalizations.of(context).notificationStatusCardActionSend,
+        error: e,
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -195,7 +201,7 @@ class _NotificationStatusCardState
           // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
           // 替代 inline ListTile (在 Card > Column 内, 不用 carded 避免 Card 嵌套)
           AppListTile.standard(
-            leading:Icon(
+            leading: Icon(
               Icons.notifications_active_outlined,
               color: AppTokens.primaryColor(context),
             ),
@@ -225,14 +231,16 @@ class _NotificationStatusCardState
           ),
           const Divider(height: 1),
           AppListTile(
-            leading:Icon(Icons.send_outlined, color: AppTokens.primaryColor(context)),
+            leading: Icon(Icons.send_outlined,
+                color: AppTokens.primaryColor(context)),
             title: Text(l10n.notificationStatusCardTestButtonTitle),
             subtitle: Text(l10n.notificationStatusCardTestButtonSubtitle),
             onTap: _busy ? null : _fireTest,
           ),
           const Divider(height: 1),
           AppListTile(
-            leading:Icon(Icons.list_alt, color: AppTokens.primaryColor(context)),
+            leading:
+                Icon(Icons.list_alt, color: AppTokens.primaryColor(context)),
             title: Text(l10n.notificationStatusCardViewButtonTitle),
             subtitle: Text(l10n.notificationStatusCardViewButtonSubtitle),
             onTap: _busy ? null : _showDetails,
@@ -257,12 +265,15 @@ class _OemBackgroundHint extends StatelessWidget {
       // 去掉 ExpansionTile 默认的圆形图标背景，跟整体风格一致
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
-        leading:Icon(Icons.phone_android, color: AppTokens.primaryColor(context)),
+        leading:
+            Icon(Icons.phone_android, color: AppTokens.primaryColor(context)),
         title: Text(l10n.notificationStatusCardOemTitle),
         subtitle: Text(
           l10n.notificationStatusCardOemSubtitle,
           style: TextStyle(
-              color: AppTokens.textSecondaryColor(context), fontSize: AppTokens.fontSizeCaptionSm,),
+            color: AppTokens.textSecondaryColor(context),
+            fontSize: AppTokens.fontSizeCaptionSm,
+          ),
         ),
         childrenPadding: const EdgeInsets.fromLTRB(
           AppTokens.spacingMd,

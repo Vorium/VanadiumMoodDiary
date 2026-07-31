@@ -1,4 +1,4 @@
-﻿// v0.25 round 57: SafetyAlertDispatcher 抽离 (safety_watch_service god class 拆分)
+// v0.25 round 57: SafetyAlertDispatcher 抽离 (safety_watch_service god class 拆分)
 //
 // 装 3 个职责: 1) 构造 SMS body  2) 批量发 SMS + 推本地通知  3) 写 audit log
 // (setLastAlertAt)
@@ -6,10 +6,10 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/logic/lost_contact_sms.dart';
-import 'package:chroniccare/l10n/app_localizations.dart'
-    show AppLocalizations;
+import 'package:chroniccare/l10n/app_localizations.dart' show AppLocalizations;
 
 /// v0.25 round 57 (spen P1 #12 god class 拆分): 失联告警发送器
 ///
@@ -71,6 +71,11 @@ class SafetyAlertDispatcher {
   /// 文案走 3 态分流 (sent / mocked / failed) + 走 l10n。修正前通知 hardcode
   /// "已自动通知紧急联系人", 即便 SMS mock / 失败也这么说, 对精神心理
   /// 患者形成"谎言"。
+  ///
+  /// 2026-07-31 联系人软隐藏 (病耻感 + 失联通信业务暂停):
+  /// 入口加 [FeatureFlags.emergencyContactEnabled] 守卫 — false 时返空 outcome,
+  /// 不发任何 SMS / 推任何通知 / 写任何 audit log。第二层防御, 防止有
+  /// caller 绕过 `SafetyWatchService` facade 直接调本 dispatcher。
   Future<SmsDispatchOutcome> dispatchAlert({
     required List<ContactEntity> contacts,
     required String? userName,
@@ -80,6 +85,10 @@ class SafetyAlertDispatcher {
     required String trigger,
     required AppLocalizations l10n,
   }) async {
+    // Feature flag 早返 — 暂停整个失联通信业务
+    if (!FeatureFlags.emergencyContactEnabled) {
+      return (smsOk: 0, smsFail: 0, smsMock: 0);
+    }
     int smsOk = 0;
     int smsFail = 0;
     int smsMock = 0;
@@ -124,7 +133,7 @@ class SafetyAlertDispatcher {
     piiSafeLog(
       'SafetyAlertDispatcher',
       '🚨 SafetyWatch 触发: trigger=$trigger days=$daysSinceLast '
-      'smsOk=$smsOk smsFail=$smsFail smsMock=$smsMock',
+          'smsOk=$smsOk smsFail=$smsFail smsMock=$smsMock',
     );
 
     return outcome;

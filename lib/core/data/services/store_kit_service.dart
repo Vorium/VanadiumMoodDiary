@@ -27,6 +27,8 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/core/data/feature_flags.dart';
+
 /// v0.27 round 65 (appstore P0-4 IAP 集成): StoreKit 封装
 ///
 /// 8 元一次性买断 → Apple IAP 走 NonConsumable (非订阅, 永久买断)。
@@ -99,8 +101,13 @@ class StoreKitService {
   ///
   /// 返回:
   /// - true  = 已 mark as pro (买成功 or dev 模式 mock)
-  /// - false = 用户取消 / StoreKit 失败 (UI 显示错误 toast)
+  /// - false = 用户取消 / StoreKit 失败 (UI 显示错误 toast) / FeatureFlags.iapEnabled=false
   static Future<bool> buyLifetime() async {
+    // v0.27 round 67 (C-7 重构): FeatureFlags.iapEnabled 早返
+    // 关闭 IAP 时, 入口直接返 false, 隐藏"立即买断"按钮
+    if (!FeatureFlags.iapEnabled) {
+      return false;
+    }
     if (kDebugMode) {
       // dev 模式: 直接 mark as pro, 不真发 StoreKit 流
       await _markAsPro();

@@ -4,29 +4,55 @@
 // 树洞 audio 文件存本地 app docs 目录（[VentAudioStorage] 管理），
 // DB 只存文件路径。删除条目时同步删文件。
 // 树洞 text 走 EncryptionService 加密后存 BLOB（v0.21 Round 22 起）。
+//
+// v0.27 round 67 (Sprint 1 上架前 P0, spzh C-P0-6):
+// 撤回 vent 同意 → 真正拒绝 add() / restore()。PIPL §14 撤回场景业务层生效。
+// 通过构造函数注入 [ConsentGate] (默认 [SharedPrefsConsentGate] 兜底, 测
+// 试可 override)。撤回后 throw [VentConsentWithdrawnError], UI 弹
+// snackbar 提示"已撤回同意"。
 
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show Value;
 
-import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
-import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/vent/vent_mapper.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
+import 'package:chroniccare/core/shared/consent_gate.dart';
+import 'package:chroniccare/core/shared/date_time_resolver.dart';
+import 'package:chroniccare/domain/entities/consent_artifact.dart';
+import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
+import 'package:chroniccare/domain/repositories/vent_repository.dart';
+
+/// v0.27 round 67: 撤回 vent 同意时, add() / restore() 抛此异常
+///
+/// 业务层抛错, UI 弹 snackbar "已撤回树洞同意, 无法添加新条目"。
+/// 见 [ConsentKind.vent] + 隐私政策 §4 撤回同意 + §12 单独同意。
+class VentConsentWithdrawnError extends Error {
+  final String message;
+  VentConsentWithdrawnError([this.message = '已撤回树洞(PIPL §14)同意, 无法添加新条目']);
+
+  @override
+  String toString() => 'VentConsentWithdrawnError: $message';
+}
 
 /// Vent 仓库的 Drift 实现
 class VentRepositoryImpl implements VentRepository {
   final AppDatabase _db;
   final VentAudioStorage _audioStorage;
   final EncryptionService _encryption;
+  final ConsentGate _consentGate;
 
-  VentRepositoryImpl(this._db,
-      [VentAudioStorage? audioStorage, EncryptionService? encryption,])
-      : _audioStorage = audioStorage ?? VentAudioStorage(),
-        _encryption = encryption ?? EncryptionService();
+  VentRepositoryImpl(
+    this._db, [
+    VentAudioStorage? audioStorage,
+    EncryptionService? encryption,
+    ConsentGate? consentGate,
+  ])  : _audioStorage = audioStorage ?? VentAudioStorage(),
+        _encryption = encryption ?? EncryptionService(),
+        _consentGate = consentGate ?? const SharedPrefsConsentGate();
 
   @override
   Stream<List<VentEntryEntity>> watchAll() {
@@ -46,6 +72,10 @@ class VentRepositoryImpl implements VentRepository {
     int? audioSizeBytes,
     DateTime? at,
   }) async {
+    // v0.27 round 67: PIPL §14 撤回同意 → add 直接拒绝
+    if (await _consentGate.isWithdrawn(ConsentKind.vent)) {
+      throw VentConsentWithdrawnError();
+    }
     final hasText = text != null && text.trim().isNotEmpty;
     final hasAudio = audioPath != null && audioPath.isNotEmpty;
     if (!hasText && !hasAudio) {
@@ -62,7 +92,7 @@ class VentRepositoryImpl implements VentRepository {
 
     return _db.ventDao.insert(
       VentEntriesCompanion.insert(
-        timestamp: at ?? DateTime.now(),
+        timestamp: DateTimeResolvers.at(at),
         contentTextEnc: Value(encText),
         audioPath: Value(hasAudio ? audioPath : null),
         audioDurationSec: Value(audioDurationSec),

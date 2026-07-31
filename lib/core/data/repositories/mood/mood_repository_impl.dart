@@ -12,6 +12,7 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/mood_repository.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/mood/mood_entry_mapper.dart';
+import 'package:chroniccare/core/shared/date_time_resolver.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
 
 /// Mood 仓库的 Drift 实现
@@ -38,7 +39,7 @@ class MoodRepositoryImpl implements MoodRepository {
   Future<int> add({required MoodEntryDraft draft}) {
     return _db.moodDao.insert(
       MoodEntriesCompanion.insert(
-        timestamp: draft.at ?? DateTime.now(),
+        timestamp: DateTimeResolvers.at(draft.at),
         score: draft.score,
         energy: Value(draft.energy),
         sleep: Value(draft.sleep),

@@ -14,8 +14,11 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 class AssessmentSparkline extends StatelessWidget {
   final AssessmentHistory history;
   final String scaleId;
-  const AssessmentSparkline(
-      {super.key, required this.history, required this.scaleId,});
+  const AssessmentSparkline({
+    super.key,
+    required this.history,
+    required this.scaleId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,8 @@ class AssessmentSparkline extends StatelessWidget {
                 if (history.average != null)
                   Text(
                     AppLocalizations.of(context).assessmentAverageScore(
-                        history.average!.toStringAsFixed(1),),
+                      history.average!.toStringAsFixed(1),
+                    ),
                     style: AppTokens.textStyleCaption(context),
                   ),
               ],
@@ -200,9 +204,8 @@ class QuestionCard extends StatelessWidget {
     // v0.24 round 43 (emil D-07 P2): 评估题 Semantics 标签走 l10n
     // (en 模式 TalkBack 读 "Question 1: ...", 不再硬编码中文)
     final l10n = AppLocalizations.of(context);
-    final selectedLabel = selected != null
-        ? options[selected!]!
-        : l10n.commonOptionNotSelected;
+    final selectedLabel =
+        selected != null ? options[selected!]! : l10n.commonOptionNotSelected;
     return AppSemantics.container(
       label: l10n.assessmentQuestionLabel(index, item.text, selectedLabel),
       child: Card(
@@ -220,22 +223,22 @@ class QuestionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
-            Wrap(
-              spacing: AppTokens.spacingXs,
-              runSpacing: AppTokens.spacingXs,
-              children: [
-                for (final entry in options.entries)
-                  ChoiceChip(
-                    label: Text(entry.value),
-                    selected: selected == entry.key,
-                    onSelected: (_) => onChanged(entry.key),
-                  ),
-              ],
-            ),
-          ],
+              Wrap(
+                spacing: AppTokens.spacingXs,
+                runSpacing: AppTokens.spacingXs,
+                children: [
+                  for (final entry in options.entries)
+                    ChoiceChip(
+                      label: Text(entry.value),
+                      selected: selected == entry.key,
+                      onSelected: (_) => onChanged(entry.key),
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
@@ -381,7 +384,8 @@ class ComparisonCard extends StatelessWidget {
               const SizedBox(height: AppTokens.spacingSm),
               Row(
                 children: [
-                  Icon(trendIcon, color: trendColor, size: AppTokens.iconSizeInline),
+                  Icon(trendIcon,
+                      color: trendColor, size: AppTokens.iconSizeInline),
                   const SizedBox(width: AppTokens.spacingXxs),
                   Text(
                     '${cmp.trendSymbol} ${cmp.trendLabel} · ${cmp.deltaLabel}',

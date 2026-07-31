@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/repositories/vent/vent_repository_impl.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
+import 'package:chroniccare/core/shared/consent_gate.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -22,11 +23,22 @@ final ventAudioStorageProvider = Provider<VentAudioStorage>(
   (ref) => VentAudioStorage(),
 );
 
+/// v0.27 round 67 (Sprint 1 上架前 P0, spzh C-P0-6):
+/// 同意状态网关 (consent gate) provider — vent repository 注入用
+///
+/// 默认用 [SharedPrefsConsentGate] (跟 [legalConsentStoreProvider] 共享同一份
+/// SharedPreferences key)。测试时可 override 为 fake gate (e.g. 永远返 false)
+final consentGateProvider = Provider<ConsentGate>(
+  (ref) => const SharedPrefsConsentGate(),
+);
+
 /// v0.15 (Round 18) 树洞仓库 provider
 final ventRepositoryProvider = Provider<VentRepository>(
   (ref) => VentRepositoryImpl(
     ref.watch(databaseProvider),
     ref.watch(ventAudioStorageProvider),
+    null, // EncryptionService 默认实例
+    ref.watch(consentGateProvider), // v0.27 R67: 注入同意网关
   ),
 );
 

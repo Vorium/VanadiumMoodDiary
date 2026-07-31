@@ -13,7 +13,9 @@ class VentDao {
     return (_db.select(_db.ventEntries)
           ..orderBy([
             (t) => OrderingTerm(
-                expression: t.timestamp, mode: OrderingMode.desc,),
+                  expression: t.timestamp,
+                  mode: OrderingMode.desc,
+                ),
           ]))
         .watch();
   }

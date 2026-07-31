@@ -186,7 +186,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupContacts.
   ///
   /// In zh, this message translates to:
-  /// **'紧急联系人手机号（至少 1 个）'**
+  /// **'紧急联系人（可选）'**
   String get setupContacts;
 
   /// No description provided for @setupAddContact.
@@ -198,7 +198,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupContactConsent.
   ///
   /// In zh, this message translates to:
-  /// **'我已告知上述联系人，App 会在我失联时给他们发通知'**
+  /// **'如添加联系人，请先告知对方可能收到的通知（法律要求）'**
   String get setupContactConsent;
 
   /// No description provided for @setupNext.
@@ -2200,12 +2200,6 @@ abstract class AppLocalizations {
   /// **'请输入您的名字'**
   String get setupValidationNameRequired;
 
-  /// No description provided for @setupValidationContactRequired.
-  ///
-  /// In zh, this message translates to:
-  /// **'至少填 1 个紧急联系人手机号'**
-  String get setupValidationContactRequired;
-
   /// No description provided for @setupValidationPhoneInvalid.
   ///
   /// In zh, this message translates to:
@@ -2359,7 +2353,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupWelcomeContactHint.
   ///
   /// In zh, this message translates to:
-  /// **'（至少填 1 个手机号，用于失联时通知）'**
+  /// **'（可选,后续可在设置中添加）'**
   String get setupWelcomeContactHint;
 
   /// No description provided for @setupLegalUserAgreement.
@@ -2721,6 +2715,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'日历'**
   String get trendViewCalendar;
+
+  /// No description provided for @trendWithdrawnTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'趋势分析已撤回'**
+  String get trendWithdrawnTitle;
+
+  /// No description provided for @trendWithdrawnSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'你撤回了「趋势分析」同意（PIPL §14）。趋势数据未删除, 重新开启后即可恢复。'**
+  String get trendWithdrawnSubtitle;
+
+  /// No description provided for @trendWithdrawnAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'去重新开启'**
+  String get trendWithdrawnAction;
 
   /// No description provided for @trendWeekdayMon.
   ///

@@ -29,7 +29,10 @@ class AppRouteAssessment {
       GoRoute(
         path: '/assessment/history',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
-            state.pageKey, const AssessmentHistoryPage(), context,),
+          state.pageKey,
+          const AssessmentHistoryPage(),
+          context,
+        ),
       ),
       GoRoute(
         path: '/assessment/:id',

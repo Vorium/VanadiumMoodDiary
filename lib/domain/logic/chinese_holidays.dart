@@ -118,7 +118,9 @@ class ChineseHolidays {
     DateTime d = date.add(const Duration(days: 1));
     // 安全护栏: 最多跳 30 天,避免死循环 (例如数据缺失 / 异常日期)
     for (int i = 0; i < 30; i++) {
-      if (!isHoliday(d) && d.weekday != DateTime.saturday && d.weekday != DateTime.sunday) {
+      if (!isHoliday(d) &&
+          d.weekday != DateTime.saturday &&
+          d.weekday != DateTime.sunday) {
         return d;
       }
       d = d.add(const Duration(days: 1));

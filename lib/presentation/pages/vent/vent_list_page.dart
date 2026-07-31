@@ -19,6 +19,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
+import 'package:chroniccare/presentation/widgets/swipe_delete_background.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
@@ -53,7 +54,8 @@ class VentListPage extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(ventEntriesProvider);
-              await Future<void>.delayed(Duration(milliseconds: AppTokens.refreshMinVisibleMs));
+              await Future<void>.delayed(
+                  Duration(milliseconds: AppTokens.refreshMinVisibleMs));
             },
             child: _EntryList(entries: entries),
           );
@@ -112,13 +114,13 @@ class _EntryList extends ConsumerWidget {
         final entry = entries[i];
         return FadeIn(
           delay: Duration(
-            milliseconds: (i * AppTokens.staggerStepMs)
-                .clamp(0, AppTokens.staggerCapMs),
+            milliseconds:
+                (i * AppTokens.staggerStepMs).clamp(0, AppTokens.staggerCapMs),
           ),
           child: Dismissible(
             key: ValueKey('vent-entry-${entry.id}'),
             direction: DismissDirection.endToStart,
-            background: const _SwipeDeleteBackground(),
+            background: const SwipeDeleteBackground(rounded: true),
             confirmDismiss: (_) async {
               // 触感警示 + 二次确认: 情绪低谷误删不可逆
               await Haptics.warning();
@@ -157,9 +159,7 @@ class _EntryList extends ConsumerWidget {
                 message: l10n.ventEntryDeleted,
                 onUndo: () async {
                   // Undo: 重新插入(保留原 id + 时间)
-                  await ref
-                      .read(ventRepositoryProvider)
-                      .restore(deleted);
+                  await ref.read(ventRepositoryProvider).restore(deleted);
                 },
               );
             },
@@ -167,27 +167,6 @@ class _EntryList extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _SwipeDeleteBackground extends StatelessWidget {
-  const _SwipeDeleteBackground();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingLg),
-      decoration: BoxDecoration(
-        color: AppTokens.errorColor(context),
-        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-      ),
-      child: Icon(
-        Icons.delete_outline,
-        // v0.22 round 30 (emil P2-6): 走 fgOnError (delete bg 是 error 底)
-        color: AppTokens.fgOnError(context),
-      ),
     );
   }
 }
@@ -267,8 +246,8 @@ class _EntryCard extends StatelessWidget {
               ],
             ),
           ),
-          trailing:
-              Icon(Icons.chevron_right, color: AppTokens.textHintColor(context)),
+          trailing: Icon(Icons.chevron_right,
+              color: AppTokens.textHintColor(context)),
           onTap: () => context.push('/vent/detail/${entry.id}'),
           onLongPress: () => _confirmDelete(context, entry),
         ),
@@ -292,7 +271,8 @@ class _EntryCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppTokens.errorColor(context)),
+            style: TextButton.styleFrom(
+                foregroundColor: AppTokens.errorColor(context)),
             child: Text(AppLocalizations.of(context).commonDelete),
           ),
         ],

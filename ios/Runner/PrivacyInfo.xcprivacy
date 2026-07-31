@@ -24,8 +24,72 @@
 	<key>NSPrivacyTrackingDomains</key>
 	<array/>
 
+	<!--
+		v0.27 round 67 (Sprint 1 上架前 P0, appstore C-P0-10):
+		NSPrivacyCollectedDataTypes (Apple 2024-05 起强制必填)
+		本项目零云端, 所有数据**仅**存用户设备本地 (SQLCipher + AES-256 字段级加密)。
+		"Linked / Tracking / Purposes" 3 维度按 Apple 模板如实声明:
+		- Linked: false (数据不跟用户身份绑定, 无云端账户)
+		- Tracking: false (零广告 SDK / 零第三方统计)
+		- Purposes: AppFunctionality (仅用于 App 本地功能, 不上传)
+
+		4 类数据对应本项目实际处理的敏感个人信息:
+		1. HealthAndFitness — PHQ-9 / GAD-7 / 情绪日记 / 药名 / 打卡
+		2. AudioData — 树洞录音 / 情绪语音 (本地 AES-256 加密)
+		3. ContactInfo — 紧急联系人 (失联通知用, R66 起业务暂停, 数据仅本地预存)
+		4. UserContent — 树洞文字 / 树洞录音元数据
+	-->
 	<key>NSPrivacyCollectedDataTypes</key>
-	<array/>
+	<array>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeHealthAndFitness</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeAudioData</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeContactInfo</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeUserContent</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+	</array>
 
 	<key>NSPrivacyAccessedAPITypes</key>
 	<array>

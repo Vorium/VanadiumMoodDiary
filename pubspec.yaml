@@ -1,7 +1,7 @@
 name: chroniccare
 description: "我今天吃了药 - 精神心理患者吃药打卡 + 停药通知"
 publish_to: 'none'
-version: 0.27.0+63
+version: 0.27.0+64
 
 environment:
   sdk: '>=3.4.0 <4.0.0'

@@ -10,7 +10,7 @@ import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
-import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
+import 'package:chroniccare/presentation/widgets/dialog_actions_row.dart';
 
 /// 临时吃药 dialog
 ///
@@ -122,14 +122,13 @@ class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: saving ? null : () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context).commonCancel),
-        ),
-        LoadingTextButton(
-          label: AppLocalizations.of(context).commonSave,
+        // v0.27 round 67 (C-3): 走 DialogActionsRow 集中器
+        DialogActionsRow(
+          cancelLabel: AppLocalizations.of(context).commonCancel,
+          onCancel: () => Navigator.pop(context),
+          confirmLabel: AppLocalizations.of(context).commonSave,
+          onConfirm: _onSave,
           isLoading: saving,
-          onPressed: saving ? null : _onSave,
         ),
       ],
     );
@@ -152,9 +151,11 @@ class _TempMedicationDialogState extends ConsumerState<TempMedicationDialog> {
       if (!ctx.mounted) return;
       final l10n = AppLocalizations.of(ctx);
       // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
-      AppSnackBar.showError(ctx,
-          action: l10n.snackbarActionSave,
-          error: e,);
+      AppSnackBar.showError(
+        ctx,
+        action: l10n.snackbarActionSave,
+        error: e,
+      );
       setState(() => saving = false);
     }
   }

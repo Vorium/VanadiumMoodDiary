@@ -219,8 +219,11 @@ void main() {
     test('medId=1000 → id=7000 (修前 OUT of range, 修后 in range)', () {
       final id = NotificationService.refillNotificationId(1000);
       expect(id, 7000);
-      expect(id >= 6000 && id < 6000 + 200000, isTrue,
-          reason: 'medId=1000 的 id 必须被 200000 range 覆盖',);
+      expect(
+        id >= 6000 && id < 6000 + 200000,
+        isTrue,
+        reason: 'medId=1000 的 id 必须被 200000 range 覆盖',
+      );
     });
 
     test('medId=50000 → id=56000 (极端场景)', () {
@@ -244,14 +247,16 @@ void main() {
       expect(called, isFalse); // 没调, 不变 true
     });
 
-    test('NotificationService 默认 onNotificationTap 委托到 NotificationNavigation', () {
+    test('NotificationService 默认 onNotificationTap 委托到 NotificationNavigation',
+        () {
       // 默认 callback 是 _defaultOnTap, 内部调 NotificationNavigation.handleTap
       // 这里不实际触发 (handleTap 需 router bind), 只验证默认 callback 不为 null
       final service = NotificationService();
       expect(service.onNotificationTap, isNotNull);
     });
 
-    test('snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes 公共 API 存在', () {
+    test('snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes 公共 API 存在',
+        () {
       // 不实际调 plugin, 只验证 facade 公共 method 仍存在 (跟 sub-service 委托)
       final service = NotificationService();
       expect(service.snoozeOnce, isNotNull);

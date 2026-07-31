@@ -34,7 +34,7 @@ class DataManagementSection extends ConsumerWidget {
       child: Column(
         children: [
           AppListTile(
-            leading:Icon(
+            leading: Icon(
               Icons.upload_outlined,
               color: AppTokens.primaryColor(context),
             ),
@@ -47,7 +47,7 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading:Icon(
+            leading: Icon(
               Icons.summarize_outlined,
               color: AppTokens.primaryColor(context),
             ),
@@ -60,7 +60,8 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading:Icon(Icons.history, color: AppTokens.primaryColor(context)),
+            leading:
+                Icon(Icons.history, color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).settingsReportHistory),
             subtitle: Text(
               AppLocalizations.of(context).settingsReportHistorySubtitle,
@@ -70,7 +71,7 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading:Icon(
+            leading: Icon(
               Icons.download_outlined,
               color: AppTokens.primaryColor(context),
             ),
@@ -83,7 +84,7 @@ class DataManagementSection extends ConsumerWidget {
           ),
           const Divider(height: 1),
           AppListTile(
-            leading:Icon(
+            leading: Icon(
               Icons.delete_forever_outlined,
               color: AppTokens.errorColor(context),
             ),
@@ -199,9 +200,11 @@ class DataManagementSection extends ConsumerWidget {
       );
     } catch (e) {
       if (context.mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).settingsActionExport,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).settingsActionExport,
+          error: e,
+        );
       }
     }
   }
@@ -272,9 +275,11 @@ class DataManagementSection extends ConsumerWidget {
       );
     } catch (e) {
       if (context.mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).settingsActionGenerateReport,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).settingsActionGenerateReport,
+          error: e,
+        );
       }
     }
   }
@@ -333,9 +338,10 @@ class DataManagementSection extends ConsumerWidget {
     } on Exception catch (e) {
       if (!context.mounted) return;
       AppSnackBar.showError(
-          context,
-          action: l10n.settingsClearAllData,
-          error: e,);
+        context,
+        action: l10n.settingsClearAllData,
+        error: e,
+      );
     }
   }
 
@@ -389,9 +395,10 @@ class DataManagementSection extends ConsumerWidget {
                 if (result.success) {
                   Navigator.pop(ctx);
                   AppSnackBar.showInfo(
-                      context,
-                      AppLocalizations.of(context)
-                          .settingsImportSuccess(result.summary),);
+                    context,
+                    AppLocalizations.of(context)
+                        .settingsImportSuccess(result.summary),
+                  );
                 } else {
                   setLocal(() => importing = false);
                   // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器

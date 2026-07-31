@@ -76,7 +76,8 @@ class AppRoutes {
   }
 
   /// Slide-up + fade (全屏深页 rare)
-  static Page<T> slideUpPage<T>(LocalKey key, Widget child, BuildContext context) {
+  static Page<T> slideUpPage<T>(
+      LocalKey key, Widget child, BuildContext context) {
     return CustomTransitionPage<T>(
       key: key,
       child: child,
@@ -126,8 +127,7 @@ class AppRoutes {
   ///
   /// emil UX 原则: error 出现 = 用户卡住, 必须给明确出口
   static Widget errorBuilder(BuildContext context, GoRouterState state) {
-    final l10n =
-        Localizations.of<AppLocalizations>(context, AppLocalizations);
+    final l10n = Localizations.of<AppLocalizations>(context, AppLocalizations);
     return Scaffold(
       appBar: AppBar(),
       body: Center(

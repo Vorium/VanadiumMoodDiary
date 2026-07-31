@@ -164,7 +164,7 @@
 | **P1-11** | spen | `lib/presentation/pages/medication/refill_manage_page.dart:114, 215-218, 300` | 5 处 `!` 后缀,部分 redundant | `?? 0` 或 local copy | S |
 | **P1-12** | spzh | `lib/domain/logic/phq9.dart:19-24, 70-103, 119-133` + `gad7.dart:15-31, 41-65` | 量表 16 题 + 9 档严重度 + 6 region 危机电话 label 100% 硬编中文 | `AssessmentScale` 改 abstract 注入 `ScaleTranslations` | L |
 | **P1-13** | spzh | `lib/core/l10n/strings.dart:54-267` 6 处 dartdoc 与实际错位 | 注释撒谎 | 同步 6 处注释与实际代码 | S |
-| **P1-14** | spzh | `lib/core/l10n/strings.dart` 50+ 处 fallback + 80% caller 未传 override | 跑 `check_strings_override.py` 守护 + 修真 | M |
+| **P1-14** | spzh | `lib/core/l10n/strings.dart` 50+ 处 fallback + 80% caller 未传 override | 跑 `check_strings_override.py` 守护 + 修正 | M |
 | **P1-15** | spzh | `lib/main.dart:23-35, 151-191` (R62 SmsService 顶层 static) | top-level static 是 hidden global state | 改 `late final` 配 `smsServiceProvider.overrideWith((ref) => _smsService)` | S |
 | **P1-16** | spen + alibaba | `lib/core/data/services/safety_watch_service.dart:131-205` (8 段 early-return) | 单方法 70+ 行,违反阿里"≤ 80 行" | 抽 2 private method | M |
 | **P1-17** | alibaba | `lib/core/routing/app_router.dart:287 行` (17 路由 + 3 transition + AppShell) | god router | 拆 `app_router.dart` + `app_shell.dart` | M |

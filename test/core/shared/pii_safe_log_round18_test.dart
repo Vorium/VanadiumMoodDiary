@@ -69,8 +69,10 @@ void main() {
         expect(() => piiSafeLog('TestTag', 'test message'), returnsNormally);
       } else {
         // release 模式下应该 no-op
-        expect(() => piiSafeLog('TestTag', 'should be swallowed'),
-            returnsNormally,);
+        expect(
+          () => piiSafeLog('TestTag', 'should be swallowed'),
+          returnsNormally,
+        );
       }
     });
   });

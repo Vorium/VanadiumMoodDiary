@@ -66,10 +66,10 @@ class DataExportService {
     ReportHistoryRepository? reportRepo,
     EncryptionService? ventTextEncryption,
   ]) : _orchestrator = ExportOrchestrator.legacy(
-            db: db,
-            reportRepo: reportRepo,
-            ventTextEncryption: ventTextEncryption,
-          );
+          db: db,
+          reportRepo: reportRepo,
+          ventTextEncryption: ventTextEncryption,
+        );
 
   /// 公开构造 — 测试或 sub-class 想直接控制 sub-service 时用
   ///

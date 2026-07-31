@@ -145,7 +145,8 @@ void main() {
           phone: '13800138000',
           consentArtifact: consent,
         );
-        final row = await (db.select(db.contacts)..where((t) => t.id.equals(id)))
+        final row = await (db.select(db.contacts)
+              ..where((t) => t.id.equals(id)))
             .getSingle();
         expect(row.consentKind, kind.name, reason: 'kind=${kind.name}');
       }

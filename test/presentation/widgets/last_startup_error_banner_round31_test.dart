@@ -19,8 +19,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('consume 返 null → banner 不显示, child 正常',
-      (tester) async {
+  testWidgets('consume 返 null → banner 不显示, child 正常', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -38,8 +37,7 @@ void main() {
     // banner 内部 Text 走 l10n, 检查 widget 树而不是具体文案(避免 i18n 漂移)
   });
 
-  testWidgets('consume 返 LastError → banner 显示',
-      (tester) async {
+  testWidgets('consume 返 LastError → banner 显示', (tester) async {
     await LastErrorCapture.record(
       Exception('boom'),
       StackTrace.fromString('frame1\nframe2'),
@@ -64,8 +62,7 @@ void main() {
     expect(find.text('上次启动出错，请截图反馈'), findsOneWidget);
   });
 
-  testWidgets('点关闭 → banner 消失, child 仍可见',
-      (tester) async {
+  testWidgets('点关闭 → banner 消失, child 仍可见', (tester) async {
     await LastErrorCapture.record(
       Exception('boom'),
       StackTrace.fromString('frame1'),

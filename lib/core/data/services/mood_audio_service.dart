@@ -284,7 +284,8 @@ class MoodAudioServiceImpl implements MoodAudioService {
     if (plainPath == null) {
       return null;
     }
-    return MoodAudioResult(plainPath: plainPath, durationMs: elapsed.inMilliseconds);
+    return MoodAudioResult(
+        plainPath: plainPath, durationMs: elapsed.inMilliseconds);
   }
 
   @override

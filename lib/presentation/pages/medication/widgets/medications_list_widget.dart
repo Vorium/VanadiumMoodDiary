@@ -90,8 +90,11 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       await ref.read(medicationRepositoryProvider).delete(id);
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonDelete, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonDelete,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(id));
@@ -138,8 +141,11 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       );
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonDelete, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonDelete,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(med.id));
@@ -198,8 +204,11 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       );
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonSetup, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonSetup,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _editingRefill.remove(med.id));

@@ -26,9 +26,10 @@ class EmailPreviewPage extends ConsumerWidget {
           if (profile == null) {
             return Center(
               child: Text(
-                  AppLocalizations.of(context).emailPreviewSetupRequired,
-                  style: AppTokens.textStyleBody(context)
-                      .copyWith(color: AppTokens.textHintColor(context)),),
+                AppLocalizations.of(context).emailPreviewSetupRequired,
+                style: AppTokens.textStyleBody(context)
+                    .copyWith(color: AppTokens.textHintColor(context)),
+              ),
             );
           }
           return SingleChildScrollView(

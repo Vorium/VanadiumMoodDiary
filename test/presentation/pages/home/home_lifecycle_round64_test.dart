@@ -23,7 +23,8 @@ void main() {
       expect(s.name, 'initial');
     });
 
-    test('case 2: initial → onSafetyCheckCompleted() = safetyCheckCompleted', () {
+    test('case 2: initial → onSafetyCheckCompleted() = safetyCheckCompleted',
+        () {
       // 模拟 _runSafetyCheck 首次跑完
       const initial = HomeLifecycleState.initial;
       final next = initial.onSafetyCheckCompleted();

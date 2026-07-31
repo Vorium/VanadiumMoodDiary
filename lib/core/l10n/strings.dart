@@ -145,8 +145,7 @@ class Strings {
       override ?? '$days 天用药情况';
   static String pdfRecentDays(int days, {String? override}) =>
       override ?? '近 $days 天';
-  static const pdfFooterNotice =
-      '本报告由「慢病管家」App 自动生成 · 本应用不提供医疗建议';
+  static const pdfFooterNotice = '本报告由「慢病管家」App 自动生成 · 本应用不提供医疗建议';
   static String pdfFooterNoticeText({String? override}) =>
       override ?? pdfFooterNotice;
   static String pdfPageN(int page, int total, {String? override}) =>
@@ -229,15 +228,11 @@ class Strings {
   // 总览 — v0.26 R57: 加 override 参数
   static String pdfOnTime(int n, {String? override}) =>
       override ?? '按时服药: $n 次';
-  static String pdfMissed(int n, {String? override}) =>
-      override ?? '漏服: $n 次';
-  static String pdfExtra(int n, {String? override}) =>
-      override ?? '补服: $n 次';
-  static String pdfTempN(int n, {String? override}) =>
-      override ?? '临时用药: $n 次';
+  static String pdfMissed(int n, {String? override}) => override ?? '漏服: $n 次';
+  static String pdfExtra(int n, {String? override}) => override ?? '补服: $n 次';
+  static String pdfTempN(int n, {String? override}) => override ?? '临时用药: $n 次';
   static String pdfAdherencePct(int? pct, {String? override}) =>
-      override ??
-      (pct == null ? '依从率: —（无可比较的常吃药）' : '依从率: $pct%');
+      override ?? (pct == null ? '依从率: —（无可比较的常吃药）' : '依从率: $pct%');
 
   // ============== v0.23 round 39 (P1-9 fix): 数据导入摘要 ==============
   // data_export_service ImportResult.summary 之前 7 处 hardcode 中文,

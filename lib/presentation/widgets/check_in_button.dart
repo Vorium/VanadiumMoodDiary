@@ -32,8 +32,9 @@ class CheckInButton extends StatelessWidget {
         duration: Motion.duration(context, AppTokens.durNormal),
         curve: AppTokens.curveStandard,
         decoration: BoxDecoration(
-          color:
-              isChecked ? AppTokens.disabledColor(context) : AppTokens.primaryColor(context),
+          color: isChecked
+              ? AppTokens.disabledColor(context)
+              : AppTokens.primaryColor(context),
           borderRadius: BorderRadius.circular(AppTokens.radiusButton),
         ),
         child: Material(
@@ -46,8 +47,7 @@ class CheckInButton extends StatelessWidget {
               children: [
                 AnimatedSwitcher(
                   duration: Motion.duration(context, AppTokens.durNormal),
-                  switchInCurve:
-                      Motion.curve(context, AppTokens.curveStandard),
+                  switchInCurve: Motion.curve(context, AppTokens.curveStandard),
                   switchOutCurve:
                       Motion.curve(context, AppTokens.curveAccelerate),
                   transitionBuilder: (child, anim) => FadeTransition(

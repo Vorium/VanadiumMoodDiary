@@ -1,4 +1,4 @@
-﻿// v0.27 round 60 (审计 C1 修正): PHQ-9 detectCrisis + hotlineByRegion 单测
+// v0.27 round 60 (审计 C1 修正): PHQ-9 detectCrisis + hotlineByRegion 单测
 //
 // 背景 (audit-domain-layer.md 3.1):
 //   - PHQ-9 detectCrisis (lib/domain/logic/phq9.dart:118-133) **0 测试**。
@@ -64,8 +64,7 @@ void main() {
       scores[8] = 1;
       // 其他 8 题全 0 → total = 1 < 10 (无 doctor visit)
       final signal = s.detectCrisis(scores, stubResult);
-      expect(signal, isNotNull,
-          reason: 'q9 阳性独立于总分, 必须独立触发');
+      expect(signal, isNotNull, reason: 'q9 阳性独立于总分, 必须独立触发');
     });
 
     test('scores.length = 8 (缺第 9 题) → null (no crash)', () {

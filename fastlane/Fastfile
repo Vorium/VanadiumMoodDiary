@@ -1,0 +1,75 @@
+# v0.27 round 67 (Sprint 1 上架前 P0, appstore C-P0-11): Fastfile
+#
+# iOS 端 fastlane 配置。Android 端不需要 (Play Store 用 flutter build appbundle
+# + Play Console 上传就行, 见 docs/PLAYSTORE_SIGNING_GUIDE.md)。
+#
+# 用法:
+#   bundle exec fastlane ios beta      # → TestFlight
+#   bundle exec fastlane ios release   # → App Store
+#   bundle exec fastlane ios metadata  # 只同步 metadata
+#
+# 前置 (R67 仍需用户完成):
+#   1. fastlane/Appfile 填 apple_id / team_id / itc_team_id 真实值
+#   2. App Store Connect API Key 配到 ~/.fastlane/APPLE_ID_KEY_ID.p8
+#   3. 装 fastlane: gem install fastlane
+#
+# 安全注意: Appfile 不要 commit 真实 apple_id (R67 暂留 TODO, 用户替换)
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    # 0 副作用: 不自动跑 git pull / git push
+    # canger: 高风险 (R67 默认 no)
+  end
+
+  desc "Push to TestFlight (internal testing)"
+  lane :beta do
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build/ios",
+    )
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+    )
+  end
+
+  desc "Release to App Store (Production)"
+  lane :release do
+    # 1. 重新 build
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build/ios",
+    )
+
+    # 2. 上传 + 提交审核
+    # skip_metadata=false: 上传 fastlane/metadata/ios/* 内容
+    # skip_screenshots=false: 上传 fastlane/metadata/ios/*/screenshots/
+    # submit_for_review=true: 上传完直接提交审核 (节省 1 步手动)
+    # automatic_release=false: 审核通过后不自动发布, 手动控制
+    upload_to_app_store(
+      force: true,
+      skip_metadata: false,
+      skip_screenshots: false,
+      submit_for_review: true,
+      automatic_release: false,
+      precheck_include_in_app_purchases: false,
+      # 2026-07-31 现状: 0 个 IAP (v0.23 R55 暂停, 等 v1.0 重启)
+      # 真接 IAP 时改 true + 填 product_id 列表
+    )
+  end
+
+  desc "仅同步 metadata + screenshots (不 build / 不上传)"
+  lane :metadata do
+    deliver(
+      skip_binary_upload: true,
+      skip_app_version_update: true,
+      force: true,
+    )
+  end
+end

@@ -29,7 +29,8 @@ class AssessmentHistoryList extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.history, color: AppTokens.primaryColor(context), size: 20),
+                Icon(Icons.history,
+                    color: AppTokens.primaryColor(context), size: 20),
                 const SizedBox(width: AppTokens.spacingSm),
                 Text(
                   AppLocalizations.of(context).assessmentHistoryFullRecord,
@@ -79,7 +80,11 @@ class _HistoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final diff = previous == null ? null : record.total - previous!.total;
     final sev = assessmentSeverityStyle(
-        context, record.scaleId, record.total, AppLocalizations.of(context),);
+      context,
+      record.scaleId,
+      record.total,
+      AppLocalizations.of(context),
+    );
     final color = sev.color;
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -117,7 +122,9 @@ class _HistoryItem extends StatelessWidget {
                   children: [
                     Text(
                       nameForScale(
-                          record.scaleId, AppLocalizations.of(context),),
+                        record.scaleId,
+                        AppLocalizations.of(context),
+                      ),
                       style: AppTokens.textStyleCaptionStrong(context),
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
@@ -154,14 +161,18 @@ class _HistoryItem extends StatelessWidget {
                   Icon(
                     diff < 0 ? Icons.arrow_downward : Icons.arrow_upward,
                     size: 12,
-                    color: diff < 0 ? AppTokens.primaryColor(context) : AppTokens.errorColor(context),
+                    color: diff < 0
+                        ? AppTokens.primaryColor(context)
+                        : AppTokens.errorColor(context),
                   ),
                   const SizedBox(width: AppTokens.spacingXxxs),
                   Text(
                     '${diff.abs()}',
                     style: AppTokens.textStyleMicro(context).copyWith(
                       fontWeight: FontWeight.w600,
-                      color: diff < 0 ? AppTokens.primaryColor(context) : AppTokens.errorColor(context),
+                      color: diff < 0
+                          ? AppTokens.primaryColor(context)
+                          : AppTokens.errorColor(context),
                     ),
                   ),
                 ],
@@ -185,8 +196,8 @@ class _SeverityChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sev =
-        assessmentSeverityStyle(context, scaleId, score, AppLocalizations.of(context));
+    final sev = assessmentSeverityStyle(
+        context, scaleId, score, AppLocalizations.of(context));
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppTokens.spacingChipGap,

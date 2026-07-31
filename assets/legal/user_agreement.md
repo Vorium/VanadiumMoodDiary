@@ -1,7 +1,10 @@
 # 用户协议
 
-> **本协议是 v0.24 草稿 (升级日期 2026-07-26),未经律师过审。上 store 前必须由专业律师审阅并更新。**
-> 最后更新:2026-07-26
+> **TODO (上 store 前必须由专业律师过审)**: 本协议当前为 v0.24 草稿, 未经律师过审。
+> 上 store 前必须: (1) 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换为本协议里的邮箱; (2) 确认或替换 `https://github.com/example/chroniccare/issues` 为真实项目仓库; (3) 律师过审 + 替换"未经律师过审"标注; (4) 重新走用户同意流程刷 `userAgreementVersion` 字段。
+> **隐私 / PIPL 投诉邮箱已软隐藏** (v0.27 R67 Sprint 1 决策): 不再提供 `privacy@chroniccare.app` 邮件渠道, 用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行)。详见 `docs/LEGACY_API_NOTES.md`。
+> 集中器见 `docs/SPRINT1_LEGAL_TODO.md`。
+> 最后更新:2026-07-31 (v0.27 round 67 Sprint 1 — 隐私邮箱软隐藏)
 
 ## 1. 服务说明
 
@@ -54,9 +57,11 @@
 
 ## 8. 联系方式
 
-- 开发者邮箱:`support@chroniccare.app`(**TODO 占位,上 store 前必须注册并替换为真实邮箱**)
-- GitHub Issues:https://github.com/example/chroniccare/issues(**TODO 占位,需确认或替换为真实项目仓库**)
-- 隐私 / PIPL 投诉邮箱:`privacy@chroniccare.app`(**TODO 占位,上 store 前必须注册并替换**)
+- 开发者邮箱:`support@chroniccare.app`(**TODO 占位 — 上 store 前必须注册并替换为真实邮箱**, 详见 `docs/SPRINT1_LEGAL_TODO.md`)
+- GitHub Issues:`https://github.com/example/chroniccare/issues`(**TODO 占位,需确认或替换为真实项目仓库**, 详见 `docs/SPRINT1_LEGAL_TODO.md`)
+- 隐私 / PIPL 投诉:**本服务不提供邮件渠道** (v0.27 R67 Sprint 1 决策, 软隐藏 `privacy@chroniccare.app`)
+  用户可通过 **App 内 设置 → 法律与隐私** 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行, 撤回后业务立即停止)
+  详见 `docs/LEGACY_API_NOTES.md` 了解软隐藏决策 + 重新启用条件
 
 ---
 

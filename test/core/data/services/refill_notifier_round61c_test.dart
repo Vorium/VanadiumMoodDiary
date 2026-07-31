@@ -125,7 +125,8 @@ void main() {
   });
 
   group('RefillNotifier.scheduleRefillReminder (instance)', () {
-    test('medication.refillAt = null → no-op (不调 dispatcher.zonedAt)', () async {
+    test('medication.refillAt = null → no-op (不调 dispatcher.zonedAt)',
+        () async {
       // Mock 计数: 验证没调 zonedAt
       var zonedAtCalled = 0;
       final mockDispatcher = _MockReminderDispatcher(
@@ -219,7 +220,8 @@ void main() {
       expect(fireTime, DateTime(2026, 9, 8, 9, 0));
     });
 
-    test('跨月: refillAt = 月底 (9/30) - 7 天 → 9/23 9:00 (DateTime 自动处理月/30/31 天)', () {
+    test('跨月: refillAt = 月底 (9/30) - 7 天 → 9/23 9:00 (DateTime 自动处理月/30/31 天)',
+        () {
       // 跨月边界: 9/30 - 7 = 9/23 (本月末-7天不会跨月)
       final fireTime = RefillNotifier.computeRefillFireTime(
         refillAt: DateTime(2026, 9, 30),
@@ -228,7 +230,8 @@ void main() {
       expect(fireTime, DateTime(2026, 9, 23, 9, 0));
     });
 
-    test('跨年: refillAt = 2026/01/05, reminderDays=7 → 2025/12/29 9:00 (上一年)', () {
+    test('跨年: refillAt = 2026/01/05, reminderDays=7 → 2025/12/29 9:00 (上一年)',
+        () {
       // 跨年边界: 1/5 - 7 = 上一年 12/29
       final fireTime = RefillNotifier.computeRefillFireTime(
         refillAt: DateTime(2026, 1, 5),

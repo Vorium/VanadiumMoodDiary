@@ -59,13 +59,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupNameHint => '小明';
 
   @override
-  String get setupContacts => '紧急联系人手机号（至少 1 个）';
+  String get setupContacts => '紧急联系人（可选）';
 
   @override
   String get setupAddContact => '+ 添加另一个联系人';
 
   @override
-  String get setupContactConsent => '我已告知上述联系人，App 会在我失联时给他们发通知';
+  String get setupContactConsent => '如添加联系人，请先告知对方可能收到的通知（法律要求）';
 
   @override
   String get setupNext => '下一步 →';
@@ -1186,9 +1186,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupValidationNameRequired => '请输入您的名字';
 
   @override
-  String get setupValidationContactRequired => '至少填 1 个紧急联系人手机号';
-
-  @override
   String get setupValidationPhoneInvalid => '手机号格式不对';
 
   @override
@@ -1270,7 +1267,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。';
 
   @override
-  String get setupWelcomeContactHint => '（至少填 1 个手机号，用于失联时通知）';
+  String get setupWelcomeContactHint => '（可选,后续可在设置中添加）';
 
   @override
   String get setupLegalUserAgreement => '用户协议';
@@ -1479,6 +1476,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get trendViewCalendar => '日历';
+
+  @override
+  String get trendWithdrawnTitle => '趋势分析已撤回';
+
+  @override
+  String get trendWithdrawnSubtitle =>
+      '你撤回了「趋势分析」同意（PIPL §14）。趋势数据未删除, 重新开启后即可恢复。';
+
+  @override
+  String get trendWithdrawnAction => '去重新开启';
 
   @override
   String get trendWeekdayMon => '一';
@@ -2148,13 +2155,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupNameHint => '小明';
 
   @override
-  String get setupContacts => '緊急聯繫人手機號（至少 1 個）';
+  String get setupContacts => '緊急聯繫人（可選）';
 
   @override
   String get setupAddContact => '+ 添加另一個聯繫人';
 
   @override
-  String get setupContactConsent => '我已告知上述聯繫人，App 會在我失聯時給他們發通知';
+  String get setupContactConsent => '如添加聯繫人，請先告知對方可能收到的通知（法律要求）';
 
   @override
   String get setupNext => '下一步 →';
@@ -3275,9 +3282,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupValidationNameRequired => '請輸入您的名字';
 
   @override
-  String get setupValidationContactRequired => '至少填 1 個緊急聯繫人手機號';
-
-  @override
   String get setupValidationPhoneInvalid => '手機號格式不對';
 
   @override
@@ -3359,7 +3363,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '提示：您可以隨時在「設置 → 法律與隱私」撤回同意。拒絕或撤回後，App 的相關功能將無法使用。';
 
   @override
-  String get setupWelcomeContactHint => '（至少填 1 個手機號，用於失聯時通知）';
+  String get setupWelcomeContactHint => '（可選,後續可在設置中添加）';
 
   @override
   String get setupLegalUserAgreement => '用戶協議';
@@ -3568,6 +3572,16 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get trendViewCalendar => '日曆';
+
+  @override
+  String get trendWithdrawnTitle => '趨勢分析已撤回';
+
+  @override
+  String get trendWithdrawnSubtitle =>
+      '你撤回了「趨勢分析」同意（PIPL §14）。趨勢數據未刪除, 重新開啟後即可恢復。';
+
+  @override
+  String get trendWithdrawnAction => '去重新開啟';
 
   @override
   String get trendWeekdayMon => '一';
@@ -4036,13 +4050,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsIapUpgradeTitle => '升級到 Pro';
 
   @override
-  String get settingsIapUpgradeSubtitle => '¥8 一次性買斷 · 解鎖全部進階功能';
+  String get settingsIapUpgradeSubtitle => '¥8 一次性買斷 · 解鎖全部高級功能';
 
   @override
   String get settingsIapProOwnedTitle => '已是 Pro 版本';
 
   @override
-  String get settingsIapProOwnedSubtitle => '感謝支持 · 全部進階功能已解鎖';
+  String get settingsIapProOwnedSubtitle => '感謝支持 · 全部高級功能已解鎖';
 
   @override
   String get iapPurchaseSuccess => '升級成功！歡迎使用 Pro。';

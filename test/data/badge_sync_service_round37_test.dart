@@ -23,7 +23,8 @@ void main() {
   });
 
   group('BadgeSyncService.badgeVirtualId', () {
-    test('id = 9999 不跟 default / medication / safety / refill / assessment 冲突', () {
+    test('id = 9999 不跟 default / medication / safety / refill / assessment 冲突',
+        () {
       // 1001 (default) < 2000-21999 (med) < 5000 (safety) < 6000-7999 (refill) < 7000 (assessment)
       // 9999 是单独的虚拟 id, 不冲突
       const id = BadgeSyncService.badgeVirtualId;
@@ -60,7 +61,8 @@ void main() {
 
     test('plugin 抛错时 catch + 不向上传播', () async {
       // 重设 mock 让 cancel 抛错
-      const channel = MethodChannel('dexterous.com/flutter/local_notifications');
+      const channel =
+          MethodChannel('dexterous.com/flutter/local_notifications');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
         if (call.method == 'cancel') {

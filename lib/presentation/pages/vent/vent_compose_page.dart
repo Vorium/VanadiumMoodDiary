@@ -101,10 +101,12 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             );
           } catch (e) {
             if (mounted) {
-              AppSnackBar.showError(context,
-                    action: AppLocalizations.of(context)
-                        .snackbarActionEncryptRecording,
-                    error: e,);
+              AppSnackBar.showError(
+                context,
+                action:
+                    AppLocalizations.of(context).snackbarActionEncryptRecording,
+                error: e,
+              );
               // 加密失败 → 不保存音频，但 _isRecording 还是 false
               setState(() {
                 _isRecording = false;
@@ -122,9 +124,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         }
       } catch (e) {
         if (mounted) {
-          AppSnackBar.showError(context,
-                action: AppLocalizations.of(context).snackbarActionRecord,
-                error: e,);
+          AppSnackBar.showError(
+            context,
+            action: AppLocalizations.of(context).snackbarActionRecord,
+            error: e,
+          );
           setState(() => _isRecording = false);
         }
       }
@@ -135,8 +139,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         if (!hasPerm) {
           if (mounted) {
             AppSnackBar.showInfo(
-                context,
-                AppLocalizations.of(context).snackbarNeedMicPermission,);
+              context,
+              AppLocalizations.of(context).snackbarNeedMicPermission,
+            );
           }
           return;
         }
@@ -159,10 +164,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         if (mounted) setState(() => _isRecording = true);
       } catch (e) {
         if (mounted) {
-          AppSnackBar.showError(context,
-                action:
-                    AppLocalizations.of(context).snackbarActionStartRecording,
-                error: e,);
+          AppSnackBar.showError(
+            context,
+            action: AppLocalizations.of(context).snackbarActionStartRecording,
+            error: e,
+          );
         }
       }
     }
@@ -249,9 +255,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
           _tempDecryptedPath = null;
         }
         if (mounted) {
-          AppSnackBar.showError(context,
-                action: AppLocalizations.of(context).snackbarActionPlay,
-                error: e,);
+          AppSnackBar.showError(
+            context,
+            action: AppLocalizations.of(context).snackbarActionPlay,
+            error: e,
+          );
         }
       }
     }
@@ -298,14 +306,16 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     final hasAudio = _audioPath != null;
     if (!hasText && !hasAudio) {
       AppSnackBar.showInfo(
-          context,
-          AppLocalizations.of(context).snackbarEmptyVent,);
+        context,
+        AppLocalizations.of(context).snackbarEmptyVent,
+      );
       return;
     }
     if (_isRecording) {
       AppSnackBar.showInfo(
-          context,
-          AppLocalizations.of(context).snackbarStopRecording,);
+        context,
+        AppLocalizations.of(context).snackbarStopRecording,
+      );
       return;
     }
     setState(() => _saving = true);
@@ -338,9 +348,11 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     } catch (e) {
       if (mounted) {
         setState(() => _saving = false);
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).snackbarActionSave,
-              error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).snackbarActionSave,
+          error: e,
+        );
       }
     }
   }

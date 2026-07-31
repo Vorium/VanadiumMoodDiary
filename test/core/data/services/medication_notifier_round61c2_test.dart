@@ -126,12 +126,20 @@ void main() {
       );
 
       final meds = [
-        _makeMedication(id: 1, isActive: false, times: const [
-          HourMinute(hour: 8, minute: 0),
-        ],),
-        _makeMedication(id: 2, isActive: true, times: const [
-          HourMinute(hour: 9, minute: 0),
-        ],),
+        _makeMedication(
+          id: 1,
+          isActive: false,
+          times: const [
+            HourMinute(hour: 8, minute: 0),
+          ],
+        ),
+        _makeMedication(
+          id: 2,
+          isActive: true,
+          times: const [
+            HourMinute(hour: 9, minute: 0),
+          ],
+        ),
       ];
 
       await notifier.rescheduleMedicationReminders(meds);
@@ -154,11 +162,15 @@ void main() {
       );
 
       final meds = [
-        _makeMedication(id: 5, isActive: true, times: const [
-          HourMinute(hour: 8, minute: 0),
-          HourMinute(hour: 14, minute: 30),
-          HourMinute(hour: 22, minute: 0),
-        ],),
+        _makeMedication(
+          id: 5,
+          isActive: true,
+          times: const [
+            HourMinute(hour: 8, minute: 0),
+            HourMinute(hour: 14, minute: 30),
+            HourMinute(hour: 22, minute: 0),
+          ],
+        ),
       ];
 
       await notifier.rescheduleMedicationReminders(meds);
@@ -183,13 +195,21 @@ void main() {
       );
 
       final meds = [
-        _makeMedication(id: 1, isActive: true, times: const [
-          HourMinute(hour: 8, minute: 0),
-        ],),
-        _makeMedication(id: 2, isActive: true, times: const [
-          HourMinute(hour: 9, minute: 0),
-          HourMinute(hour: 21, minute: 0),
-        ],),
+        _makeMedication(
+          id: 1,
+          isActive: true,
+          times: const [
+            HourMinute(hour: 8, minute: 0),
+          ],
+        ),
+        _makeMedication(
+          id: 2,
+          isActive: true,
+          times: const [
+            HourMinute(hour: 9, minute: 0),
+            HourMinute(hour: 21, minute: 0),
+          ],
+        ),
       ];
 
       await notifier.rescheduleMedicationReminders(meds);
@@ -214,12 +234,20 @@ void main() {
       );
 
       final meds = [
-        _makeMedication(id: 1, isActive: true, times: const [
-          HourMinute(hour: 8, minute: 0),
-        ],),
-        _makeMedication(id: 2, isActive: true, times: const [
-          HourMinute(hour: 9, minute: 0),
-        ],),
+        _makeMedication(
+          id: 1,
+          isActive: true,
+          times: const [
+            HourMinute(hour: 8, minute: 0),
+          ],
+        ),
+        _makeMedication(
+          id: 2,
+          isActive: true,
+          times: const [
+            HourMinute(hour: 9, minute: 0),
+          ],
+        ),
       ];
 
       // 不应抛
@@ -246,7 +274,8 @@ void main() {
   // (5 由 widget test 覆盖, 不在 service 测)。
 
   group('MedicationNotifier systematic-debugging regression guards', () {
-    test('隐式序: 同一 medId 多次 reschedule → id 稳定 (2000+medId*10+i, 不漂移)', () async {
+    test('隐式序: 同一 medId 多次 reschedule → id 稳定 (2000+medId*10+i, 不漂移)',
+        () async {
       // 隐式序 bug 模式: 重新调度时不显式按 id 排序, 依赖 drift 内部序
       // (drift orderBy 缺失时返回插入序), 重排会乱序 → 同一 med 不同次
       // 拿到不同 id → 通知"叠加"或"丢失"
@@ -260,10 +289,14 @@ void main() {
       );
 
       final meds = [
-        _makeMedication(id: 7, isActive: true, times: const [
-          HourMinute(hour: 8, minute: 0),
-          HourMinute(hour: 22, minute: 0),
-        ],),
+        _makeMedication(
+          id: 7,
+          isActive: true,
+          times: const [
+            HourMinute(hour: 8, minute: 0),
+            HourMinute(hour: 22, minute: 0),
+          ],
+        ),
       ];
 
       // 第 1 次重排
@@ -287,7 +320,8 @@ void main() {
       expect(secondIds.length, firstIds.length);
     });
 
-    test('跨 midnight race: scheduleDailyReminder 多次调用 → cancel 旧 + 调度新 (id 不变)', () async {
+    test('跨 midnight race: scheduleDailyReminder 多次调用 → cancel 旧 + 调度新 (id 不变)',
+        () async {
       // 隐式 midnight race: 23:59:59 调 schedule, 00:00:01 又调 →
       // 两次调用的 zonedDaily hour:minute 走系统时钟, 跨 midnight 后 hour
       // 可能不一致 → 通知时间漂移
@@ -308,8 +342,11 @@ void main() {
       expect(mockDispatcher.zonedDailyCalls[0].id, 1001);
       expect(mockDispatcher.zonedDailyCalls[0].hour, 23);
       expect(mockDispatcher.zonedDailyCalls[0].minute, 59);
-      expect(mockDispatcher.zonedDailyCalls[1].id, 1001,
-          reason: 'id 必须稳定 (避免叠加)',);
+      expect(
+        mockDispatcher.zonedDailyCalls[1].id,
+        1001,
+        reason: 'id 必须稳定 (避免叠加)',
+      );
       expect(mockDispatcher.zonedDailyCalls[1].hour, 0);
       expect(mockDispatcher.zonedDailyCalls[1].minute, 0);
     });
@@ -378,22 +415,26 @@ class _MockReminderDispatcher implements ReminderDispatcher {
     }
     if (failOnFirstZonedDaily && zonedDailyCalls.isEmpty) {
       // 标记 + 抛错, 但仍记录 call (mock 已经走到这步)
-      zonedDailyCalls.add(_ZonedDailyCall(
+      zonedDailyCalls.add(
+        _ZonedDailyCall(
+          id: id,
+          title: title,
+          body: body,
+          hour: hour,
+          minute: minute,
+        ),
+      );
+      throw Exception('mock zonedDaily first call throws');
+    }
+    zonedDailyCalls.add(
+      _ZonedDailyCall(
         id: id,
         title: title,
         body: body,
         hour: hour,
         minute: minute,
-      ),);
-      throw Exception('mock zonedDaily first call throws');
-    }
-    zonedDailyCalls.add(_ZonedDailyCall(
-      id: id,
-      title: title,
-      body: body,
-      hour: hour,
-      minute: minute,
-    ),);
+      ),
+    );
   }
 
   @override

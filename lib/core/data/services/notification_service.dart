@@ -1,4 +1,4 @@
-﻿// v0.24 round 45 (Sprint #5b) — notification_service facade 瘦身
+// v0.24 round 45 (Sprint #5b) — notification_service facade 瘦身
 // v0.27 round 65 (Sprint #12) — showSafetyAlert 50 行委派到 SafetyAlertBuilder
 //
 // 拆解前: 629 行 facade god class
@@ -65,6 +65,7 @@ class NotificationService implements NotificationSender {
   static const _safetyChannelId = 'chroniccare.safety';
   static const _safetyChannelName = Strings.notifChannelSafetyName;
   static const _safetyChannelDesc = Strings.notifChannelSafetyDesc;
+
   /// 安全警报 id (5000) — 跟 medication 2000+ / refill 6000+ / assessment 7000 / badge 9999 不冲突
   static const int safetyAlertId = 5000;
 

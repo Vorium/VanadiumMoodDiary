@@ -133,7 +133,8 @@ abstract class AssessmentScale {
     List<int> scores,
     AssessmentResult result, {
     HotlineRegion region = HotlineRegion.cn,
-  }) => null;
+  }) =>
+      null;
 }
 
 /// v0.25 round 51 (spzh P0 #3): 危机电话 region 路由

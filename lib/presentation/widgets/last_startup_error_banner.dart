@@ -21,8 +21,7 @@ class LastStartupErrorBanner extends StatefulWidget {
   final Widget child;
 
   @override
-  State<LastStartupErrorBanner> createState() =>
-      _LastStartupErrorBannerState();
+  State<LastStartupErrorBanner> createState() => _LastStartupErrorBannerState();
 }
 
 class _LastStartupErrorBannerState extends State<LastStartupErrorBanner> {

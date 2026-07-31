@@ -37,19 +37,46 @@ android {
         multiDexEnabled = true
     }
 
+    // v0.27 round 67 (Sprint 1 上架前 P0, googleplay C-P0-9):
+    // Release signingConfigs 块, 读 `android/key.properties` (用户负责生成)。
+    //
+    // **当前默认** fallback 到 debug 签名 (跟 R67 前兼容, 让 `flutter run --release`
+    // 还能跑通)。**上 store 前必须**:
+    // 1. cp android/key.properties.example android/key.properties
+    // 2. 填 4 个真实值 (storeFile / storePassword / keyAlias / keyPassword)
+    // 3. `key.properties` + `*.jks` 已在 .gitignore 排除 (R63 已加)
+    // 4. 把 release.signingConfig 切到 signingConfigs.getByName("release")
+    //    (见下方 `release { ... }` 块 TODO 注释)
+    // 5. Play Console 启用 Play App Signing + 上传 .aab
+    //
+    // 详见 docs/PLAYSTORE_SIGNING_GUIDE.md (R67 新增 5 步指南)。
+    signingConfigs {
+        create("release") {
+            // 读 key.properties (若存在) → 用真实 keystore 签
+            // 缺 key.properties → 抛 FileNotFoundException, 上 store 前会卡这
+            val keystoreProperties = java.util.Properties()
+            val keystorePropertiesFile = rootProject.file("key.properties")
+            if (keystorePropertiesFile.exists()) {
+                keystorePropertiesFile.inputStream().use { stream ->
+                    keystoreProperties.load(stream)
+                }
+                keyAlias = keystoreProperties["keyAlias"] as String?
+                keyPassword = keystoreProperties["keyPassword"] as String?
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String?
+            }
+            // key.properties 不存在时, 字段保持 null → 上 store build 时
+            // gradle 报 "Keystore file not set", 用户按 PLAYSTORE_SIGNING_GUIDE
+            // 走 5 步生成 + cp + 填
+        }
+    }
+
     buildTypes {
         release {
-            // v0.27 round 61 (R61): TODO 上架前必须改 release 签名 (keystore)
-            // 当前用 debug 签名以便 `flutter run --release` 跑通
-            // 上架 Play Store 前必须配 signingConfigs.release block
-            // v0.27 round 63 (R63, GooglePlay P0-1 修复): R55+ 配 release keystore
-            // 步骤:
-            //   1. cp android/key.properties.example android/key.properties + 填实值
-            //   2. 下方 signingConfig 切到 signingConfigs.getByName("release")
-            //   3. 上方加 signingConfigs.create("release") { ... } block 读 key.properties
-            //   4. .gitignore 加 key.properties + *.jks
-            //   5. Play Console 启用 Play App Signing + 上传 .aab
-            // 当前 release 块**仍然**用 debug 签名, 仅加显式安全开关 (P1-7)
+            // v0.27 round 67 (Sprint 1, googleplay C-P0-9):
+            // **TODO 上 store 前切换**: 改成 signingConfigs.getByName("release")
+            // 当前保留 debug 是为了让 R67 commit 阶段 build 不挂 (无 key.properties)
+            // 上 store 时改成 release 即可 (见 docs/PLAYSTORE_SIGNING_GUIDE.md)
             signingConfig = signingConfigs.getByName("debug")
             // v0.27 round 63 (R63, GooglePlay P1-7 修复): 显式禁 debug/jni-debug
             // release 默认 debuggable=false, 但显式更稳 + 防 R8 误判

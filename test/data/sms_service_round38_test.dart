@@ -23,7 +23,8 @@ void main() {
     // v0.27 round 63 (P0-1 收尾): AliyunSmsProvider 现在必须
     // _isFullyImplemented=true 才返 isProductionReady=true。
     // 当前 send() 仍 throw (R55 TODO), 所以 4 字段齐全也返 false。
-    test('AliyunSmsProvider (R63:send 未接) 4 字段齐全 → isProductionReady = false', () {
+    test('AliyunSmsProvider (R63:send 未接) 4 字段齐全 → isProductionReady = false',
+        () {
       final provider = AliyunSmsProvider(
         accessKeyId: 'fake-id',
         accessKeySecret: 'fake-secret',
@@ -94,7 +95,8 @@ void main() {
   });
 
   group('v0.25 round 52 (spen P0 #12) — SmsService.send kind 区分', () {
-    test('default provider = mock → send() 返 SmsResult.mock (v0.25 R52)', () async {
+    test('default provider = mock → send() 返 SmsResult.mock (v0.25 R52)',
+        () async {
       // SmsService() 不传 provider,默认 MockSmsProvider
       // v0.25 R52 改成 mock 独立 kind, 不算 fail 也不算 ok
       final service = SmsService();

@@ -39,6 +39,7 @@ class _StubMedicationRepository implements MedicationRepository {
   Future<int> add(MedicationDraft draft) async {
     return 1;
   }
+
   @override
   Future<bool> update(MedicationEntity medication) async => true;
   @override
@@ -87,7 +88,8 @@ Widget _wrap(Widget child) {
       notificationServiceProvider.overrideWithValue(_NoopNotificationService()),
       medicationRepositoryProvider
           .overrideWithValue(_StubMedicationRepository()),
-      medicationsProvider.overrideWith((ref) => Stream.value(<MedicationEntity>[])),
+      medicationsProvider
+          .overrideWith((ref) => Stream.value(<MedicationEntity>[])),
     ],
     child: MaterialApp(
       theme: ThemeData.light(),
@@ -105,7 +107,8 @@ void main() {
   });
 
   group('god class 拆解 — 子 widget 挂载', () {
-    testWidgets('MedicationEmptyState (noMeds) mount + 显示 l10n', (tester) async {
+    testWidgets('MedicationEmptyState (noMeds) mount + 显示 l10n',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(const MedicationEmptyState(kind: MedicationEmptyKind.noMeds)),
       );
@@ -115,7 +118,8 @@ void main() {
       expect(find.text('添加药物'), findsOneWidget);
     });
 
-    testWidgets('MedicationEmptyState (noActive) mount + 显示 l10n', (tester) async {
+    testWidgets('MedicationEmptyState (noActive) mount + 显示 l10n',
+        (tester) async {
       await tester.pumpWidget(
         _wrap(const MedicationEmptyState(kind: MedicationEmptyKind.noActive)),
       );
@@ -145,8 +149,7 @@ void main() {
       expect(find.textContaining('40'), findsOneWidget);
     });
 
-    testWidgets('MedicationRow (stopped) 显示 stopped 徽章 + 删除线',
-        (tester) async {
+    testWidgets('MedicationRow (stopped) 显示 stopped 徽章 + 删除线', (tester) async {
       await tester.pumpWidget(
         _wrap(
           MedicationRow(
@@ -168,7 +171,8 @@ void main() {
       expect(find.text('已停药'), findsOneWidget);
     });
 
-    testWidgets('MedicationListView mount + empty state (无 active)', (tester) async {
+    testWidgets('MedicationListView mount + empty state (无 active)',
+        (tester) async {
       final stoppedMed = _med(name: '已停药', isActive: false);
       await tester.pumpWidget(
         _wrap(
@@ -192,8 +196,7 @@ void main() {
       expect(find.text('已停药'), findsWidgets);
     });
 
-    testWidgets('MedicationListView (active meds) 显示日历入口 + 列表',
-        (tester) async {
+    testWidgets('MedicationListView (active meds) 显示日历入口 + 列表', (tester) async {
       await tester.pumpWidget(
         _wrap(
           MedicationListView(
@@ -215,7 +218,8 @@ void main() {
       expect(find.text('氟西汀'), findsOneWidget);
     });
 
-    testWidgets('MedicationsListWidget (meds=[]) → 走 MedicationEmptyState.noMeds',
+    testWidgets(
+        'MedicationsListWidget (meds=[]) → 走 MedicationEmptyState.noMeds',
         (tester) async {
       await tester.pumpWidget(
         _wrap(const MedicationsListWidget(meds: [])),

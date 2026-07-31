@@ -2,6 +2,60 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-07-31 (R66 — 联系人软隐藏: 病耻感考量 + 失联通信业务整体暂停)
+
+> R66 目标: 用户反馈"精神心理患者有病耻感, 不想首次启动就被要求填紧急联系人" +
+> "失联通知业务(后台 SMS)在用户量小/没准备好的阶段是负担" ——
+>
+> 3 步软隐藏 (非硬删, 后续 1 行 flag 改回 true 即可全恢复):
+> 1. **Setup 步骤 1 紧急联系人变可选** (移除"必填 1 个"校验 + 移除"已告知联系人"勾选)
+> 2. **Settings 联系人 section 挪到最底部** (用户进入设置第一眼看不到)
+> 3. **失联通知业务整体暂停** (`FeatureFlags.emergencyContactEnabled = false` 门卫双层防御)
+>
+> 决策原因: 病耻感是真实存在的负面摩擦点; 后续启用失联通知零成本(数据/repository 全部保留)。
+
+### Tests
+- **1237/1237 pass** (R65 1232 + R66 5 新)
+- `flutter analyze` 0 error
+- 15 Python 守护 + 1 `check_all.dart` 全绿
+
+### 联系人软隐藏 (病耻感考量, 3 层)
+
+- **Setup 步骤 1: 紧急联系人变可选** (`lib/presentation/pages/setup/setup_step_welcome.dart` + `setup_page.dart`):
+  - `_validateWelcomeForm` 移除"必填 1 个联系人"校验 (R66 决策: 联系人完全可选)
+  - 移除"已告知联系人" checkbox (PIPL §23 在用户实际填了之后才需要, 纯表单阶段不需要)
+  - `setupContactConsent` key 仍保留, 改为"提示性"段落 (用户填了联系人时才出现, 提醒法律要求), 不强制
+  - `_passConsent` test helper 同步: 验证 step 1 现在 0 个 Checkbox
+- **Settings: 联系人 section 挪到最底部** (`lib/presentation/pages/settings/settings_page.dart`):
+  - 原本"进入设置第一个看到的就是联系人 section" → 现在移到 ListView 最底部 (在心理评估/关于之后)
+  - 联系人 section 内的"添加联系人"按钮仍能触发 ConsentDialog (PIPL §13), 业务跑 feature flag gate 后整个失联通信链路不会发出去
+  - `settings_page_round45_test` 3 case 适配新顺序: 改 meds error 测 ErrorState (meds section 在 contacts 之上, viewport 内直接渲染)
+- **Feature flag 集中器** (新 `lib/core/data/feature_flags.dart`):
+  - 改 `emergencyContactEnabled = true` 1 行就能重新启用全部失联通知业务
+  - `enableForTest()` / `resetForTest()` (`@visibleForTesting`) 让现有 28 个 test 临时 enable, tearDown 恢复 (不污染其他 test)
+  - 文件位置: `core/data/` 而非 `core/shared/` (check_all 守门员建议 — 只被 2 个 data service 引用)
+
+### 失联通知业务整体暂停 (双层防御)
+
+- **`SafetyWatchService._checkAndAlert` 入口** (`lib/core/data/services/safety_watch_service.dart`): flag=false 时早返 `SafetyCheckResult(kind: disabled)`, 3 个入口 (`onAppStart` / `onCheckIn` / `checkNow`) 都过这道关
+- **`SafetyAlertDispatcher.dispatchAlert` 入口** (`lib/core/data/services/safety_alert_dispatcher.dart`): flag=false 时早返空 `(smsOk: 0, smsFail: 0, smsMock: 0)`, 双层防御防止 caller 绕过 facade 直接调 dispatcher
+- **数据模型 / repository 全部保留**: `contacts` 表 / `ContactRepository` / `ContactEntity` 不动, 后续启用零成本
+
+### i18n 文案弱化 (zh / en / zh_Hant 同步)
+
+- `setupContacts`: "紧急联系人手机号(至少 1 个)" → "紧急联系人(可选)"
+- `setupWelcomeContactHint`: "(至少填 1 个手机号,用于失联时通知)" → "(可选,后续可在设置中添加)"
+- `setupContactConsent`: "我已告知上述联系人,App 会在我失联时给他们发通知" → "如添加联系人,请先告知对方可能收到的通知(法律要求)"
+- 删 `setupValidationContactRequired` 1 orphan key (3 ARB 同步)
+
+### 顺手修 pre-existing bug
+
+- **`NotificationStatusCard._refresh` mounted check** (`lib/presentation/pages/settings/widgets/notification_status_card.dart`): 加 `if (!mounted) return;` 在 `setState(() => _busy = true)` 之前, 防 ListView lazy build 时 widget 被 dispose 后 addPostFrameCallback 触发的 _refresh 撞 setState-after-defunct。R66 ListView 长度变化后该 bug 在 widget test 暴露, 修了真修了 user-facing 场景
+
+### 5 新 test (R66)
+
+- `test/data/feature_flags_round66_test.dart`: 5 case 覆盖 FeatureFlags 默认值 + 3 个 SafetyWatchService 入口 (onAppStart/onCheckIn/checkNow) 在 flag=false 时早返 disabled + SafetyAlertDispatcher.dispatchAlert 在 flag=false 时早返空 outcome
+
 ## [Unreleased] - 2026-07-31 (R65 — spzh P2 5 文件 i18n 化 + 量表 PHQ-9/GAD-7 抽象起步)
 
 > R65 目标: 处理 `docs/reviews/2026-07-31-seven-lens/spzh/report.md` P2-F/G/H/I + P1-A:
@@ -79,7 +133,7 @@
 - **P1-5 (spen)**: `phq9.dart:129` `hotlineByRegion[region]!` 海外 region 未注册会崩 → `?? hotlineByRegion['cn']!.first` 兜底
 - **P1-6 (spen)**: `check_in_repository_impl.dart` 3 处 `at ?? DateTime.now()` 抽 `_resolveTimestamp` top-level helper
 - **P1-7 (spen)**: `app_database.dart:165` 静默 `catch(e){}` 修 → `swallowError` 集中器（R39 P1-10 模式）
-- **P1-8 (spzh+alibaba)**: `strings.dart` 6 处 dartdoc 注释与代码不同步 修真
+- **P1-8 (spzh+alibaba)**: `strings.dart` 6 处 dartdoc 注释与代码不同步 修正
 - **P1-9 (emil)**: `page_transition_switcher.dart:34` 裸 100ms → `AppTokens.durPageTransition` token
 - **P1-10 (flutter)**: `app_shell.dart:91` 顶部品牌 `Text` inline `TextStyle` → `textStyleLabelStrong` 集中器
 

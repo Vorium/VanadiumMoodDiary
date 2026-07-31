@@ -59,14 +59,16 @@ class _AssessmentReminderSectionState
         // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器 (1 行)
         AppSnackBar.showInfo(
           context,
-          AppLocalizations.of(context)
-              .assessmentReminderEnabled(_days ?? 14),
+          AppLocalizations.of(context).assessmentReminderEnabled(_days ?? 14),
         );
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonSetup, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonSetup,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -97,8 +99,11 @@ class _AssessmentReminderSectionState
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonSetup, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonSetup,
+          error: e,
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -124,7 +129,8 @@ class _AssessmentReminderSectionState
       child: Column(
         children: [
           SwitchListTile(
-            secondary:Icon(Icons.event_repeat, color: AppTokens.primaryColor(context)),
+            secondary: Icon(Icons.event_repeat,
+                color: AppTokens.primaryColor(context)),
             title:
                 Text(AppLocalizations.of(context).reminderHubAssessmentTitle),
             subtitle: Text(
@@ -145,7 +151,8 @@ class _AssessmentReminderSectionState
           if (enabled) ...[
             const Divider(height: 1),
             AppListTile(
-              leading:Icon(Icons.schedule, color: AppTokens.primaryColor(context)),
+              leading:
+                  Icon(Icons.schedule, color: AppTokens.primaryColor(context)),
               title: Text(AppLocalizations.of(context).reminderHubInterval),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,

@@ -1,4 +1,4 @@
-﻿// v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
+// v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
 //
 // 拆解前: 644 行 god constant 8 大类混合 (颜色/字号/间距/圆角/动效/alpha/
 // shadow/业务 + MotionScheme + Motion)。
@@ -7,13 +7,16 @@ import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/core/theme/app_spacing.dart';
 import 'package:chroniccare/core/theme/app_typography.dart';
-import 'package:flutter/material.dart' show Color, Curve, TextStyle, BuildContext, BoxShadow;
+import 'package:flutter/material.dart'
+    show Color, Curve, TextStyle, BuildContext, BoxShadow;
 
 // Re-export top-level symbols (Motion / MotionScheme / WindowSize / windowSizeOf)
 // 让老 import `package:chroniccare/core/theme/app_tokens.dart` 的 caller
 // 仍能直接用 `Motion.xxx` / `MotionScheme.standard` / `windowSizeOf(w)`。
-export 'package:chroniccare/core/theme/app_motion.dart' show Motion, MotionScheme, MotionSchemeTokens;
-export 'package:chroniccare/core/theme/app_spacing.dart' show WindowSize, windowSizeOf;
+export 'package:chroniccare/core/theme/app_motion.dart'
+    show Motion, MotionScheme, MotionSchemeTokens;
+export 'package:chroniccare/core/theme/app_spacing.dart'
+    show WindowSize, windowSizeOf;
 
 /// v0.27 round 65 (alibaba B16 god constant 拆分): 慢病管家 · 设计 Token 规范
 ///
@@ -85,20 +88,34 @@ class AppTokens {
   static const double lineHeightLoose = AppTypography.lineHeightLoose;
   static const double lineHeightSnug = AppTypography.lineHeightSnug;
   static const double lineHeightRelaxed = AppTypography.lineHeightRelaxed;
-  static TextStyle textStyleTitle(BuildContext c) => AppTypography.textStyleTitle(c);
-  static TextStyle textStyleHeadline(BuildContext c) => AppTypography.textStyleHeadline(c);
-  static TextStyle textStyleBody(BuildContext c) => AppTypography.textStyleBody(c);
-  static TextStyle textStyleBodyStrong(BuildContext c) => AppTypography.textStyleBodyStrong(c);
-  static TextStyle textStyleLabel(BuildContext c) => AppTypography.textStyleLabel(c);
-  static TextStyle textStyleLabelStrong(BuildContext c) => AppTypography.textStyleLabelStrong(c);
-  static TextStyle textStyleButton(BuildContext c) => AppTypography.textStyleButton(c);
-  static TextStyle textStyleButtonInverse(BuildContext c) => AppTypography.textStyleButtonInverse(c);
-  static TextStyle textStyleCaption(BuildContext c) => AppTypography.textStyleCaption(c);
-  static TextStyle textStyleCaptionStrong(BuildContext c) => AppTypography.textStyleCaptionStrong(c);
-  static TextStyle textStyleMicro(BuildContext c) => AppTypography.textStyleMicro(c);
-  static TextStyle textStyleLabelMedium(BuildContext c) => AppTypography.textStyleLabelMedium(c);
-  static TextStyle textStyleCaptionHint(BuildContext c) => AppTypography.textStyleCaptionHint(c);
-  static TextStyle textStyleLegal(BuildContext c) => AppTypography.textStyleLegal(c);
+  static TextStyle textStyleTitle(BuildContext c) =>
+      AppTypography.textStyleTitle(c);
+  static TextStyle textStyleHeadline(BuildContext c) =>
+      AppTypography.textStyleHeadline(c);
+  static TextStyle textStyleBody(BuildContext c) =>
+      AppTypography.textStyleBody(c);
+  static TextStyle textStyleBodyStrong(BuildContext c) =>
+      AppTypography.textStyleBodyStrong(c);
+  static TextStyle textStyleLabel(BuildContext c) =>
+      AppTypography.textStyleLabel(c);
+  static TextStyle textStyleLabelStrong(BuildContext c) =>
+      AppTypography.textStyleLabelStrong(c);
+  static TextStyle textStyleButton(BuildContext c) =>
+      AppTypography.textStyleButton(c);
+  static TextStyle textStyleButtonInverse(BuildContext c) =>
+      AppTypography.textStyleButtonInverse(c);
+  static TextStyle textStyleCaption(BuildContext c) =>
+      AppTypography.textStyleCaption(c);
+  static TextStyle textStyleCaptionStrong(BuildContext c) =>
+      AppTypography.textStyleCaptionStrong(c);
+  static TextStyle textStyleMicro(BuildContext c) =>
+      AppTypography.textStyleMicro(c);
+  static TextStyle textStyleLabelMedium(BuildContext c) =>
+      AppTypography.textStyleLabelMedium(c);
+  static TextStyle textStyleCaptionHint(BuildContext c) =>
+      AppTypography.textStyleCaptionHint(c);
+  static TextStyle textStyleLegal(BuildContext c) =>
+      AppTypography.textStyleLegal(c);
   static TextStyle textStyleMono(BuildContext c, {double? size}) =>
       AppTypography.textStyleMono(c, size: size);
 
@@ -116,7 +133,8 @@ class AppTokens {
   static const double spacingChipGapInline = AppSpacing.spacingChipGapInline;
   static const double spacingChipPaddingH = AppSpacing.spacingChipPaddingH;
   static const double spacingChipPaddingV = AppSpacing.spacingChipPaddingV;
-  static const int textLengthWarningThreshold = AppSpacing.textLengthWarningThreshold;
+  static const int textLengthWarningThreshold =
+      AppSpacing.textLengthWarningThreshold;
   static const int celebrationDisplayMs = AppSpacing.celebrationDisplayMs;
   static const Duration kDeepLinkRaceGuard = AppSpacing.kDeepLinkRaceGuard;
   static const double pageMarginH = AppSpacing.pageMarginH;
@@ -139,7 +157,8 @@ class AppTokens {
   static const double iconSizeEmpty = AppSpacing.iconSizeEmpty;
   static const double iconSizeError = AppSpacing.iconSizeError;
   static const int shimmerPauseMs = AppSpacing.shimmerPauseMs;
-  static const double chartPlaceholderHeight = AppSpacing.chartPlaceholderHeight;
+  static const double chartPlaceholderHeight =
+      AppSpacing.chartPlaceholderHeight;
   static const double eventTimeColWidth = AppSpacing.eventTimeColWidth;
   static const double calendarLabelWidth = AppSpacing.calendarLabelWidth;
   static const double breakpointCompact = AppSpacing.breakpointCompact;
@@ -158,7 +177,8 @@ class AppTokens {
   static const Duration durPageTransition = AppMotion.durPageTransition;
   static const int refreshMinVisibleMs = AppMotion.refreshMinVisibleMs;
   static const Duration snackBarDurationShort = AppMotion.snackBarDurationShort;
-  static const Duration snackBarDurationMedium = AppMotion.snackBarDurationMedium;
+  static const Duration snackBarDurationMedium =
+      AppMotion.snackBarDurationMedium;
   static const Duration snackBarDurationLong = AppMotion.snackBarDurationLong;
   static const Curve curveStandard = AppMotion.curveStandard;
   static const Curve curveSubtle = AppMotion.curveSubtle;
@@ -174,35 +194,51 @@ class AppTokens {
   static Color onSurfaceMuted(BuildContext c) => AppColors.onSurfaceMuted(c);
   static Color surfaceColor(BuildContext c) => AppColors.surfaceColor(c);
   static Color backgroundColor(BuildContext c) => AppColors.backgroundColor(c);
-  static Color textPrimaryColor(BuildContext c) => AppColors.textPrimaryColor(c);
-  static Color textSecondaryColor(BuildContext c) => AppColors.textSecondaryColor(c);
+  static Color textPrimaryColor(BuildContext c) =>
+      AppColors.textPrimaryColor(c);
+  static Color textSecondaryColor(BuildContext c) =>
+      AppColors.textSecondaryColor(c);
   static Color textHintColor(BuildContext c) => AppColors.textHintColor(c);
   static Color borderColor(BuildContext c) => AppColors.borderColor(c);
   static Color dividerColor(BuildContext c) => AppColors.dividerColor(c);
-  static Color primaryLightColor(BuildContext c) => AppColors.primaryLightColor(c);
+  static Color primaryLightColor(BuildContext c) =>
+      AppColors.primaryLightColor(c);
   static Color disabledColor(BuildContext c) => AppColors.disabledColor(c);
-  static Color tintedPrimarySoft(BuildContext c) => AppColors.tintedPrimarySoft(c);
-  static Color tintedPrimaryDeep(BuildContext c) => AppColors.tintedPrimaryDeep(c);
-  static Color tintedPrimaryLight(BuildContext c) => AppColors.tintedPrimaryLight(c);
-  static Color tintedWarningSoft(BuildContext c) => AppColors.tintedWarningSoft(c);
-  static Color tintedSuccessSoft(BuildContext c) => AppColors.tintedSuccessSoft(c);
+  static Color tintedPrimarySoft(BuildContext c) =>
+      AppColors.tintedPrimarySoft(c);
+  static Color tintedPrimaryDeep(BuildContext c) =>
+      AppColors.tintedPrimaryDeep(c);
+  static Color tintedPrimaryLight(BuildContext c) =>
+      AppColors.tintedPrimaryLight(c);
+  static Color tintedWarningSoft(BuildContext c) =>
+      AppColors.tintedWarningSoft(c);
+  static Color tintedSuccessSoft(BuildContext c) =>
+      AppColors.tintedSuccessSoft(c);
   static Color tintedErrorSoft(BuildContext c) => AppColors.tintedErrorSoft(c);
   static Color tintedErrorDeep(BuildContext c) => AppColors.tintedErrorDeep(c);
-  static Color tintedPrimaryMid(BuildContext c) => AppColors.tintedPrimaryMid(c);
-  static Color tintedPrimaryHigh(BuildContext c) => AppColors.tintedPrimaryHigh(c);
+  static Color tintedPrimaryMid(BuildContext c) =>
+      AppColors.tintedPrimaryMid(c);
+  static Color tintedPrimaryHigh(BuildContext c) =>
+      AppColors.tintedPrimaryHigh(c);
   static Color fgDisabled(BuildContext c) => AppColors.fgDisabled(c);
   static Color fgHintInput(BuildContext c) => AppColors.fgHintInput(c);
-  static Color tintedWarningBorder(BuildContext c) => AppColors.tintedWarningBorder(c);
+  static Color tintedWarningBorder(BuildContext c) =>
+      AppColors.tintedWarningBorder(c);
   static Color fgOnPrimary(BuildContext c) => AppColors.fgOnPrimary(c);
   static Color fgOnError(BuildContext c) => AppColors.fgOnError(c);
   static Color fgOnSurface(BuildContext c) => AppColors.fgOnSurface(c);
-  static Color fgOnPrimaryMuted(BuildContext c) => AppColors.fgOnPrimaryMuted(c);
+  static Color fgOnPrimaryMuted(BuildContext c) =>
+      AppColors.fgOnPrimaryMuted(c);
 
   // ===== AppMotion dynamic shadow getter — 全部转发 (R65 兼容老 caller) =====
-  static List<BoxShadow> shadowCardOf(BuildContext c) => AppMotion.shadowCardOf(c);
-  static List<BoxShadow> shadowCardDarkOf(BuildContext c) => AppMotion.shadowCardDarkOf(c);
-  static List<BoxShadow> shadowDialogOf(BuildContext c) => AppMotion.shadowDialogOf(c);
-  static List<BoxShadow> shadowOverlayOf(BuildContext c) => AppMotion.shadowOverlayOf(c);
+  static List<BoxShadow> shadowCardOf(BuildContext c) =>
+      AppMotion.shadowCardOf(c);
+  static List<BoxShadow> shadowCardDarkOf(BuildContext c) =>
+      AppMotion.shadowCardDarkOf(c);
+  static List<BoxShadow> shadowDialogOf(BuildContext c) =>
+      AppMotion.shadowDialogOf(c);
+  static List<BoxShadow> shadowOverlayOf(BuildContext c) =>
+      AppMotion.shadowOverlayOf(c);
 
   // v0.27 round 65 (alibaba B9 magic alpha): scrim alpha 转发
   // long-task modal 0.54 (medication_report_dialog)

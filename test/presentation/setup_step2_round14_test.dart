@@ -66,16 +66,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // v0.21 Round 23 (P1-23 修复): 勾选紧急联系人知情同意 checkbox
-      // (第 1 步末尾,点"下一步"前)
-      final consentCheckbox = find.byType(Checkbox);
+      // 2026-07-31 v0.31 联系人软隐藏: step 1 末尾的 contact consent
+      // Checkbox 已删除, 这里只验证 0 个 checkbox, 然后直接点下一步。
+      final step1Checkboxes = find.byType(Checkbox);
       expect(
-        consentCheckbox,
-        findsOneWidget,
-        reason: 'P1-23: setup step 1 应该有 1 个 contact consent Checkbox',
+        step1Checkboxes,
+        findsNothing,
+        reason: 'v0.31 联系人软隐藏: step 1 不再有 contact consent Checkbox',
       );
-      await tester.tap(consentCheckbox);
-      await tester.pumpAndSettle();
 
       final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
       expect(nextFinder, findsOneWidget);
@@ -155,15 +153,14 @@ void main() {
         _phone('1380013', '8000'),
       );
       await tester.pumpAndSettle();
-      // v0.21 Round 23 (P1-23 修复): 勾选紧急联系人知情同意 checkbox
-      final consentCb = find.byType(Checkbox);
+      // 2026-07-31 v0.31 联系人软隐藏: contact consent Checkbox 已删除,
+      // 这里只验证 0 个 checkbox, 然后直接点下一步。
+      final step1Checkboxes = find.byType(Checkbox);
       expect(
-        consentCb,
-        findsOneWidget,
-        reason: 'P1-23: setup step 1 应该有 1 个 contact consent Checkbox',
+        step1Checkboxes,
+        findsNothing,
+        reason: 'v0.31 联系人软隐藏: step 1 不再有 contact consent Checkbox',
       );
-      await tester.tap(consentCb);
-      await tester.pumpAndSettle();
       await tester.tap(
         find.widgetWithText(FilledButton, '下一步 →'),
       );

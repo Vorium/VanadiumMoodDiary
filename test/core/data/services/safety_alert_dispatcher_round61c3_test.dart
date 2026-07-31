@@ -1,4 +1,4 @@
-﻿// v0.25 round 56c''' (spen P0 #15 TDD 续): SafetyAlertDispatcher test
+// v0.25 round 56c''' (spen P0 #15 TDD 续): SafetyAlertDispatcher test
 //
 // 之前 0 test (v0.25 round 57 拆 sub-service 时只加 facade).
 // R56c''' 补 2 个核心 method 测, 共 7 test cases.
@@ -13,6 +13,7 @@
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
@@ -20,6 +21,11 @@ import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  // 2026-07-31 联系人软隐藏: 失联通信业务默认 disabled,
+  // test 期间临时 enable 走真实业务,tearDown 恢复避免污染其他 test。
+  setUp(FeatureFlags.enableForTest);
+  tearDown(FeatureFlags.resetForTest);
+
   group('SafetyAlertDispatcher.buildAlertSms (纯函数)', () {
     test('userName 给定 + daysSinceLast=3 → 包含 "3 天未打卡"', () {
       final dispatcher = SafetyAlertDispatcher(
@@ -38,7 +44,9 @@ void main() {
       expect(body, contains('未打卡'));
     });
 
-    test('userName = null → 退化为 "您" (R23 P1-24 nullable 修复, safeUserName 默认 fallback)', () {
+    test(
+        'userName = null → 退化为 "您" (R23 P1-24 nullable 修复, safeUserName 默认 fallback)',
+        () {
       final dispatcher = SafetyAlertDispatcher(
         smsService: SmsService(),
         notificationService: _CountingNotificationService(),
@@ -73,7 +81,8 @@ void main() {
   });
 
   group('SafetyAlertDispatcher.dispatchAlert (instance)', () {
-    test('3 contact, 2 ok + 1 fail → 返 (smsOk=2, smsFail=1, smsMock=0)', () async {
+    test('3 contact, 2 ok + 1 fail → 返 (smsOk=2, smsFail=1, smsMock=0)',
+        () async {
       final smsService = SmsService(
         provider: _ScriptedSmsProvider({
           '13800000001': SmsResult.ok(),
@@ -110,7 +119,8 @@ void main() {
       expect(result.smsMock, 0);
     });
 
-    test('mock provider → 返 (smsOk=0, smsFail=0, smsMock=N) (R52 spen P0 #12)', () async {
+    test('mock provider → 返 (smsOk=0, smsFail=0, smsMock=N) (R52 spen P0 #12)',
+        () async {
       // MockSmsProvider 走 SmsService.send 内部走 mock 路径 → SmsResult.mock
       final smsService = SmsService(provider: MockSmsProvider());
       final notifService = _CountingNotificationService();
@@ -164,11 +174,16 @@ void main() {
       expect(result.smsOk, 0);
       expect(result.smsFail, 0);
       expect(result.smsMock, 0);
-      expect(notifService.showSafetyAlertCalls, 1,
-          reason: '空 contacts 也应推本地通知 (用户可能只是忘了打卡)',);
+      expect(
+        notifService.showSafetyAlertCalls,
+        1,
+        reason: '空 contacts 也应推本地通知 (用户可能只是忘了打卡)',
+      );
     });
 
-    test('dispatch 后 → showSafetyAlert 调 1 次 + setLastAlertAt 调 1 次 (audit log)', () async {
+    test(
+        'dispatch 后 → showSafetyAlert 调 1 次 + setLastAlertAt 调 1 次 (audit log)',
+        () async {
       final notifService = _CountingNotificationService();
       final config = _CountingConfigService();
       final dispatcher = SafetyAlertDispatcher(
@@ -190,8 +205,11 @@ void main() {
 
       expect(notifService.showSafetyAlertCalls, 1);
       expect(config.setLastAlertAtCalls, 1);
-      expect(config.lastSetLastAlertAt, effectiveNow,
-          reason: 'audit log 写入时间应等于 effectiveNow',);
+      expect(
+        config.lastSetLastAlertAt,
+        effectiveNow,
+        reason: 'audit log 写入时间应等于 effectiveNow',
+      );
     });
   });
 
@@ -206,7 +224,9 @@ void main() {
   // noContacts 路径, 但行为同空 list — showSafetyAlert 仍调 1 次
 
   group('SafetyAlertDispatcher systematic-debugging regression guards', () {
-    test('stream subscription leak: 重复 dispatchAlert 100 次 → setLastAlertAt 也调 100 次 (无 leak)', () async {
+    test(
+        'stream subscription leak: 重复 dispatchAlert 100 次 → setLastAlertAt 也调 100 次 (无 leak)',
+        () async {
       // 锁: 100 次 dispatch, 内部没遗留 subscription, 计数累加正确
       final notifService = _CountingNotificationService();
       final config = _CountingConfigService();
@@ -228,10 +248,16 @@ void main() {
         );
       }
 
-      expect(config.setLastAlertAtCalls, 100,
-          reason: '每次 dispatch 写一次 audit log',);
-      expect(notifService.showSafetyAlertCalls, 100,
-          reason: '每次 dispatch 推一次本地通知',);
+      expect(
+        config.setLastAlertAtCalls,
+        100,
+        reason: '每次 dispatch 写一次 audit log',
+      );
+      expect(
+        notifService.showSafetyAlertCalls,
+        100,
+        reason: '每次 dispatch 推一次本地通知',
+      );
     });
 
     test('空 contacts 边界 (空 list + filter 后空 list 行为一致)', () async {

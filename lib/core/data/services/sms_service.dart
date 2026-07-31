@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
@@ -209,6 +209,7 @@ class AliyunSmsProvider implements SmsProvider {
 enum SmsResultKind {
   ok,
   fail,
+
   /// Mock 模式: 没真发,不算 ok 也不算 fail。
   /// 上层 (SafetyWatch / Settings) 应在 UI 显示 "未配置" 状态。
   mock,
@@ -289,7 +290,7 @@ class SmsService {
       piiSafeLog(
         'SmsService.validateForRelease',
         '🚨 release 模式检测到 SMS provider "${provider.name}" 未配置,'
-        '失联通知功能不可用',
+            '失联通知功能不可用',
         error: SmsProviderNotConfiguredError(provider.name),
       );
       throw SmsProviderNotConfiguredError(provider.name);

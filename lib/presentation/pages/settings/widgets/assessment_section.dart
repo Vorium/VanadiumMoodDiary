@@ -25,13 +25,13 @@ class AssessmentSection extends StatelessWidget {
         // 评估历史入口
         Card(
           child: AppListTile(
-            leading:Icon(Icons.history, color: AppTokens.primaryColor(context)),
+            leading:
+                Icon(Icons.history, color: AppTokens.primaryColor(context)),
             title: Text(
               AppLocalizations.of(context).settingsAssessmentHistory,
             ),
             subtitle: Text(
-              AppLocalizations.of(context)
-                  .settingsAssessmentHistorySubtitle,
+              AppLocalizations.of(context).settingsAssessmentHistorySubtitle,
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/assessment/history'),
@@ -56,8 +56,7 @@ class AssessmentSection extends StatelessWidget {
                   title: Text(_scales[i].displayName),
                   subtitle: Text(_scales[i].shortDescription),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () =>
-                      context.push('/assessment/${_scales[i].id}'),
+                  onTap: () => context.push('/assessment/${_scales[i].id}'),
                 ),
                 if (i < _scales.length - 1)
                   const Divider(height: 1, indent: 56),
@@ -71,10 +70,11 @@ class AssessmentSection extends StatelessWidget {
         // 邮件预览
         Card(
           child: AppListTile(
-            leading:Icon(
-                Icons.email_outlined, color: AppTokens.primaryColor(context),),
-            title:
-                Text(AppLocalizations.of(context).settingsEmailPreview),
+            leading: Icon(
+              Icons.email_outlined,
+              color: AppTokens.primaryColor(context),
+            ),
+            title: Text(AppLocalizations.of(context).settingsEmailPreview),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/email-preview'),
           ),
@@ -85,11 +85,10 @@ class AssessmentSection extends StatelessWidget {
         // 关于
         Card(
           child: AppListTile(
-            leading:
-                Icon(Icons.info_outline, color: AppTokens.primaryColor(context)),
+            leading: Icon(Icons.info_outline,
+                color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).settingsAbout),
-            subtitle:
-                Text(AppLocalizations.of(context).settingsAboutVersion),
+            subtitle: Text(AppLocalizations.of(context).settingsAboutVersion),
           ),
         ),
 
@@ -100,10 +99,10 @@ class AssessmentSection extends StatelessWidget {
               Icons.shield_outlined,
               color: AppTokens.textSecondaryColor(context),
             ),
-            title:
-                Text(AppLocalizations.of(context).settingsDisclaimer),
+            title: Text(AppLocalizations.of(context).settingsDisclaimer),
             subtitle: Text(
-                AppLocalizations.of(context).settingsDisclaimerText,),
+              AppLocalizations.of(context).settingsDisclaimerText,
+            ),
           ),
         ),
       ],

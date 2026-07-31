@@ -14,6 +14,7 @@
 // - RecordTempMedicationUseCase.addTemp()  → 临时吃药
 // - TriggerReminderUseCase.trigger()       → 手动触发失联检测（debug 入口）
 
+import 'package:chroniccare/core/shared/date_time_resolver.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
@@ -38,7 +39,7 @@ class RecordCheckInUseCase {
   /// 副作用: 同时更新 user_profiles.lastCheckInAt,让 UI 快速拿到
   /// 「上次打卡」而不必 JOIN check_ins 表。
   Future<int> call({int? medicationId, DateTime? at}) async {
-    final time = at ?? DateTime.now();
+    final time = DateTimeResolvers.at(at);
     final id = await _checkInRepo.checkIn(medicationId: medicationId, at: time);
     await _userProfileRepo.updateLastCheckIn(time);
     return id;

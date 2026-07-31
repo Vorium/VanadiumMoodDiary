@@ -1,10 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 通用 loading 占位（v0.17 round 13 P0-4）
 
 import 'dart:async';
+
 ///
 /// 情感患者 App：spinner 太"机械"易引发焦虑。用柔和的骨架屏
 /// 让用户知道"在加载"但不刺眼。
@@ -60,7 +61,8 @@ class LoadingSkeleton extends StatelessWidget {
           children: [
             CircularProgressIndicator(
               strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(AppTokens.primaryColor(context)),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  AppTokens.primaryColor(context)),
             ),
             if (message != null) ...[
               const SizedBox(height: AppTokens.spacingMd),

@@ -63,7 +63,8 @@ void main() {
     expect(find.byType(ErrorState), findsOneWidget);
   });
 
-  testWidgets('checkIns data 空 + mood + assessments data 空 → list view 4 section',
+  testWidgets(
+      'checkIns data 空 + mood + assessments data 空 → list view 4 section',
       (tester) async {
     await tester.pumpWidget(buildTrendPage());
     await tester.pumpAndSettle();

@@ -224,8 +224,9 @@ class _CalendarCell extends StatelessWidget {
       bg = null;
     }
 
-    final fg =
-        day.hasNormalCheckIn ? AppTokens.fgOnPrimary(context) : theme.colorScheme.onSurface;
+    final fg = day.hasNormalCheckIn
+        ? AppTokens.fgOnPrimary(context)
+        : theme.colorScheme.onSurface;
     final opacity = inMonth ? 1.0 : 0.35;
 
     return AspectRatio(

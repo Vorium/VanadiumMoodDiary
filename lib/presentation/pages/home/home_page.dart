@@ -1,4 +1,4 @@
-﻿import 'package:chroniccare/presentation/providers/service_providers.dart';
+import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -6,11 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
-import 'package:chroniccare/domain/logic/care_engine.dart';
+import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/theme_toggle_button.dart';
+import 'package:chroniccare/presentation/providers/care_strategy_providers.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
@@ -99,10 +100,10 @@ enum HomeLifecycleState {
         this,
       // race guard: 不变量 `_handleDeepLink` 一次只走 medId 或 reason=safety 一条
       HomeLifecycleState.safetyRerunRequested => throw StateError(
-            'HomeLifecycleState invariant violated: '
-            'onDeepLinkHandled() called from $this. '
-            'Rerun already requested, deep link medId path is mutually exclusive.',
-          ),
+          'HomeLifecycleState invariant violated: '
+          'onDeepLinkHandled() called from $this. '
+          'Rerun already requested, deep link medId path is mutually exclusive.',
+        ),
     };
   }
 
@@ -122,10 +123,10 @@ enum HomeLifecycleState {
         this,
       // race guard
       HomeLifecycleState.deepLinkHandled => throw StateError(
-            'HomeLifecycleState invariant violated: '
-            'onRerunRequested() called from $this. '
-            'Deep link medId already handled, rerun path is mutually exclusive.',
-          ),
+          'HomeLifecycleState invariant violated: '
+          'onRerunRequested() called from $this. '
+          'Deep link medId already handled, rerun path is mutually exclusive.',
+        ),
     };
   }
 }
@@ -258,23 +259,27 @@ class _HomePageState extends ConsumerState<HomePage> {
       // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
       // (打卡成功触感,emil 频度: tens/day)
       Haptics.success();
-      _showCelebrationOverlay(context,
-          AppLocalizations.of(context).homeAutofireCelebration(medName),);
+      _showCelebrationOverlay(
+        context,
+        AppLocalizations.of(context).homeAutofireCelebration(medName),
+      );
       // 清除 query 防止刷新页面重复触发
       GoRouter.of(context).go('/');
     } catch (e) {
       if (!mounted) return;
       AppSnackBar.showError(
-          context,
-          action: AppLocalizations.of(context).snackbarActionAutoCheckin,
-          error: e,);
+        context,
+        action: AppLocalizations.of(context).snackbarActionAutoCheckin,
+        error: e,
+      );
     }
   }
 
   void _showMedicationHint(int medId) {
     AppSnackBar.showInfo(
-        context,
-        AppLocalizations.of(context).homeMedHint(medId),);
+      context,
+      AppLocalizations.of(context).homeMedHint(medId),
+    );
   }
 
   /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
@@ -294,15 +299,17 @@ class _HomePageState extends ConsumerState<HomePage> {
     try {
       // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
       final l10n = AppLocalizations.of(context);
-      final result = await ref.read(safetyWatchServiceProvider).onAppStart(l10n: l10n);
+      final result =
+          await ref.read(safetyWatchServiceProvider).onAppStart(l10n: l10n);
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
         // 失联告警重要,延长到 6s 保留给用户时间读完
         AppSnackBar.showError(
-            context,
-            action: '⚠️ ${result.displayMessage}',
-            error: l10n.homeSafetyAlertSuffix,);
+          context,
+          action: '⚠️ ${result.displayMessage}',
+          error: l10n.homeSafetyAlertSuffix,
+        );
       }
     } catch (e, st) {
       swallowError(
@@ -334,9 +341,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     ref.listen<AsyncValue<void>>(checkInNotifierProvider, (prev, next) {
       if (next.hasError && context.mounted) {
         AppSnackBar.showError(
-            context,
-            action: AppLocalizations.of(context).snackbarActionCheckin,
-            error: next.error,);
+          context,
+          action: AppLocalizations.of(context).snackbarActionCheckin,
+          error: next.error,
+        );
       }
     });
 
@@ -463,15 +471,17 @@ class _HomePageState extends ConsumerState<HomePage> {
     try {
       // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
       final l10n = AppLocalizations.of(context);
-      final result = await ref.read(safetyWatchServiceProvider).onCheckIn(l10n: l10n);
+      final result =
+          await ref.read(safetyWatchServiceProvider).onCheckIn(l10n: l10n);
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         // 罕见：打卡后仍触发告警
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
         AppSnackBar.showError(
-            context,
-            action: '⚠️ ${result.displayMessage}',
-            error: l10n.homeSafetyAlertSuffix,);
+          context,
+          action: '⚠️ ${result.displayMessage}',
+          error: l10n.homeSafetyAlertSuffix,
+        );
       }
     } catch (e, st) {
       // SafetyWatch 失败 → 用户已经看到打卡成功的庆祝，失联检测后台再跑就行
@@ -485,14 +495,82 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   /// CareEngine 触发(rule-based)
+  ///
+  /// v0.27 round 67 (B-2 修复): R65 use case 抽离收尾
+  ///
+  /// 修复前: 直接调 `CareEngine.evaluate(...)` + `CareEngine.fire(trigger, notif)`
+  /// 静态方法。R65 抽了 `FireCareStrategyUseCase` (业务编排下沉到 domain),
+  /// 但 home_page 这边没接入 → use case 是 dead code, 业务编排仍跟 UI
+  /// 混在 home_page 里。
+  ///
+  /// 修复后:
+  /// - 拿 `fireCareStrategyUseCaseProvider` 调 use case
+  /// - 拿 `result` (decision/strategy/title/body), 按 decision 路由分发:
+  ///   - `fireCareCopy` (default): 推本地通知 (跟 R67 前行为一致)
+  ///   - `fireSms` (v1.0+ 真接阿里云后): 调 smsService.send
+  ///   - `fireEmail` (v1.0+ 真接 SendGrid 后): 调 emailService
+  ///   - `disabled` / `noAction`: 早返
+  /// - `CareEngine.evaluate` / `CareEngine.fire` 留作 legacy API
+  ///   (v0.28 删除, 见 docs/LEGACY_API_NOTES.md)
   Future<void> _fireCareEngine() async {
     try {
       // P0 fix: 复用 provider 树已缓存的打卡数据，不再重复查库
       final all = ref.read(allCheckInsProvider).value ?? [];
-      final trigger = CareEngine.evaluate(checkIns: all, now: DateTime.now());
-      if (!trigger.shouldFire) return;
-      final notif = ref.read(notificationServiceProvider);
-      await CareEngine.fire(trigger, notif);
+      // v0.27 round 67 (B-2 修复): R65 抽离的 use case
+      final useCase = ref.read(fireCareStrategyUseCaseProvider);
+      final result = useCase(
+        FireCareStrategyInput(
+          checkIns: all,
+          now: DateTime.now(),
+          userProfile: null, // v1.0+ 用 (文案内嵌用户名)
+          contacts: const [], // v1.0+ 用 (SmsService.send 的 to:)
+          config: CareChannelConfig.defaultConfig, // careCopy
+        ),
+      );
+      if (!result.shouldFire) return;
+
+      // v0.27 round 67 (B-2 修复): dispatch by decision
+      // 当前 defaultConfig = careCopy, 推本地通知 (跟 R67 前行为一致)
+      // v1.0+ 切 SMS/Email 时改 config.channel, 走下面 2 个分支
+      switch (result.decision) {
+        case FireCareDecision.fireCareCopy:
+          final notif = ref.read(notificationServiceProvider);
+          final id = 8000 + result.strategy.index;
+          await notif.showNow(id: id, title: result.title, body: result.body);
+          break;
+        case FireCareDecision.fireSms:
+          // v0.27 round 67 (B-2 修复): 调 smsService.send
+          // 当前 SMS provider 仍 mock (R55 真接 TODO), send() 走
+          // SmsService.send mock 早返路径 → SmsResult.mock (不算 ok
+          // 也不算 fail)。R55 真接后这里就直接真发了。
+          //
+          // 注: `contacts` 当前是 const [] (FireCareStrategyInput 默认),
+          // 真接 R55+ 时要从 input.contacts 拿第一个紧急联系人 phone。
+          // 当前 defaultConfig=careCopy, 此分支不会被触发, 留作路由占位。
+          await ref.read(smsServiceProvider).send(
+                to: '00000000000', // R55+ TODO: 拿 input.contacts.first.phone
+                body: '${result.title}\n${result.body}',
+              );
+          break;
+        case FireCareDecision.fireEmail:
+          // v0.27 round 67 (B-2 修复): 调 emailService.sendMedicationReminder
+          // 当前 EmailService 是 mock, send 返 false (P1-8 fix 行为)。
+          // R55+ 真接 SendGrid 后这里就直接真发了。
+          // 当前 defaultConfig=careCopy, 此分支不会被触发, 留作路由占位。
+          await ref.read(emailServiceProvider).sendMedicationReminder(
+                to: 'placeholder@invalid.local', // R55+ TODO
+                userName: null,
+                daysWithoutCheckIn: 0,
+                lastCheckIn: null,
+                medication: null,
+                cycleHours: 48,
+              );
+          break;
+        case FireCareDecision.disabled:
+        case FireCareDecision.noAction:
+          // 不会到这里 (shouldFire 已 check, 早返了)
+          break;
+      }
     } catch (e, st) {
       swallowError(
         where: 'home_page._fireCareEngine',
@@ -518,14 +596,16 @@ class _HomePageState extends ConsumerState<HomePage> {
           );
       if (!mounted) return;
       AppSnackBar.showInfo(
-          context,
-          AppLocalizations.of(context).homeSnoozeConfirmed,);
+        context,
+        AppLocalizations.of(context).homeSnoozeConfirmed,
+      );
     } catch (e) {
       if (!mounted) return;
       AppSnackBar.showError(
-          context,
-          action: AppLocalizations.of(context).snackbarActionSnooze,
-          error: e,);
+        context,
+        action: AppLocalizations.of(context).snackbarActionSnooze,
+        error: e,
+      );
     }
   }
 

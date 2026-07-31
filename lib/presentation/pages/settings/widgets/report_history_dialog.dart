@@ -70,7 +70,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
                           AppLocalizations.of(context).reportHistoryEmpty,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: AppTokens.textHintColor(context),),
+                            color: AppTokens.textHintColor(context),
+                          ),
                         ),
                       ),
                     );
@@ -82,13 +83,15 @@ class ReportHistoryListDialog extends ConsumerWidget {
                       final h = histories[i];
                       // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
                       return AppListTile.standard(
-                        leading:Icon(
+                        leading: Icon(
                           Icons.description_outlined,
                           color: AppTokens.primaryColor(context),
                         ),
                         title: Text(
                           AppLocalizations.of(context).reportHistoryItemTitle(
-                              Formatters.dateTime(h.generatedAt), h.windowDays,),
+                            Formatters.dateTime(h.generatedAt),
+                            h.windowDays,
+                          ),
                           // v0.26 round 57 (emil B-10): 走 textStyleLabel 集中器
                           // 替代内联 TextStyle(fontSizeLabel) (ListTile title)
                           style: AppTokens.textStyleLabel(context),
@@ -138,9 +141,11 @@ class ReportHistoryListDialog extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(AppLocalizations.of(context).commonDelete,
-                style: AppTokens.textStyleBody(context)
-                    .copyWith(color: AppTokens.errorColor(context)),),
+            child: Text(
+              AppLocalizations.of(context).commonDelete,
+              style: AppTokens.textStyleBody(context)
+                  .copyWith(color: AppTokens.errorColor(context)),
+            ),
           ),
         ],
       ),
@@ -150,8 +155,11 @@ class ReportHistoryListDialog extends ConsumerWidget {
       await ref.read(reportHistoryRepositoryProvider).delete(id);
     } catch (e) {
       if (context.mounted) {
-        AppSnackBar.showError(context,
-              action: AppLocalizations.of(context).commonDelete, error: e,);
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).commonDelete,
+          error: e,
+        );
       }
     }
   }

@@ -36,7 +36,8 @@ void main() {
   });
 
   group('AliyunSmsProvider', () {
-    test('P0-1: send() throw StateError (R63 改:从 UnimplementedError 改, 明确"业务不可用")',
+    test(
+        'P0-1: send() throw StateError (R63 改:从 UnimplementedError 改, 明确"业务不可用")',
         () async {
       final provider = AliyunSmsProvider(
         accessKeyId: 'fake-id',
@@ -76,7 +77,8 @@ void main() {
       expect(result.success, true);
     });
 
-    test('provider 返 false (isProductionReady=true) → SmsResult.fail', () async {
+    test('provider 返 false (isProductionReady=true) → SmsResult.fail',
+        () async {
       final svc = SmsService(
         provider: _AlwaysFailProvider(),
       );
