@@ -5,9 +5,14 @@
 // 2. AliyunSmsProvider.send() silently 返 false — 同样误导
 // 3. UI 没有任何"未连接"提示
 //
-// 修法: MockSmsProvider + AliyunSmsProvider 都 throw UnimplementedError,
+// 修法 (R14): MockSmsProvider + AliyunSmsProvider 都 throw UnimplementedError,
 // SmsService.send catch 后返 SmsResult.fail,SafetyWatchService 算
 // contactsFailed。UI 用 smsProviderNameProvider 检测 + 显 banner。
+//
+// R63 收尾: AliyunSmsProvider.send() 改 throw StateError(明确"业务不可用"),
+// 因为 R62 修复后 isProductionReady=false 走 mock 早返,正常流程不会到
+// provider.send()。但 test 直接调 provider.send() 时仍走 throw 路径,
+// 改 StateError 表达"实际未接通,不是'暂未实现'"。
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -31,7 +36,7 @@ void main() {
   });
 
   group('AliyunSmsProvider', () {
-    test('P0-1: send() throw UnimplementedError (不再 silently 返 false)',
+    test('P0-1: send() throw StateError (R63 改:从 UnimplementedError 改, 明确"业务不可用")',
         () async {
       final provider = AliyunSmsProvider(
         accessKeyId: 'fake-id',
@@ -44,7 +49,7 @@ void main() {
           to: '13800138000',
           body: 'test',
         ),
-        throwsA(isA<UnimplementedError>()),
+        throwsA(isA<StateError>()),
       );
     });
   });

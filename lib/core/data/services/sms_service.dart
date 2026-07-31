@@ -118,19 +118,35 @@ class AliyunSmsProvider implements SmsProvider {
   @override
   String get name => 'aliyun';
 
-  /// v0.27 round 62 (P0-1 修复): isProductionReady 改根据**真实配置**返回,
-  /// 不再硬编码 true。
+  /// v0.27 round 63 (P0-1 收尾): `_isFullyImplemented` 守门。
   ///
-  /// 修复前: 永远 `return true`,即使 accessKey/secret/signName/templateCode
-  /// 全是空字符串。`SmsService.validateForRelease` 看到 true 就放行,
-  /// release 模式启动时不阻断, 后续 `send()` 抛 UnimplementedError → 上层
-  /// 走 `SmsResult.fail` 路径 → UI 提示"未连接"。
+  /// 修复前: `isProductionReady` 只看 4 字段是否齐全。4 字段齐全 →
+  /// true → release 模式启动时 `validateForRelease` 不阻断 → 后续
+  /// `send()` 抛 UnimplementedError → 上层走 `SmsResult.fail` → UI
+  /// 提示"未连接"**但**没 banner 显眼告警。精神心理患者和家属以为
+  /// 失联通知能发,实际 100% 失败。
   ///
-  /// 修复后: 必须 4 个字段全部非空才返 true。任一为空 → false →
-  /// release 模式启动时 `validateForRelease` 抛 `SmsProviderNotConfiguredError`,
-  /// runZonedGuarded 抓住 → LastErrorCapture 记录 → AppRoot 顶部 banner
-  /// 显眼提示,精神心理患者和家属不被"假通知"骗。
+  /// 修复后: `_isFullyImplemented` 默认 false,直到 R55 真接 send() 时
+  /// 改返 true。`isProductionReady` = `_isFullyImplemented && 4 字段齐全`
+  /// → 4 字段齐全 + send 未接 → false → release 模式启动被
+  /// `validateForRelease` 阻断 → banner 显眼告警"未配置 SMS"。
+  ///
+  /// 设计动机: 让"看起来配齐但实际没接通"的状态在 release 启动时
+  /// 就被抓住,而不是运行时静默失败。
+  bool get _isFullyImplemented => false; // R55 真接 send() 时改 true
+
+  /// v0.27 round 62 (P0-1 修复) + 63 (收尾): isProductionReady 必须
+  /// 同时满足"4 字段齐全"+"send() 实际能工作"。
+  ///
+  /// 修复 R62: 不再硬编码 true(修复前 4 字段空也返 true)。
+  /// 修复 R63: 不只看 4 字段(修复 R62 漏洞:4 字段齐全 + send 仍
+  /// throw = 启动通过 + 运行时 100% 失败)。
+  ///
+  /// 4 字段齐全 + send 已接 R55+ → true (release 启动不阻断, send 真发)
+  /// 4 字段齐全 + send 未接    → false (release 启动阻断, banner 提示)
+  /// 4 字段缺失               → false (release 启动阻断, banner 提示)
   bool get isProductionReady =>
+      _isFullyImplemented &&
       accessKeyId.isNotEmpty &&
       accessKeySecret.isNotEmpty &&
       signName.isNotEmpty &&
@@ -143,7 +159,12 @@ class AliyunSmsProvider implements SmsProvider {
     String? templateId,
   }) async {
     // v0.25 round 55 (spzh P0 #6): 真接阿里云 SMS 计划。
-    // 当前 throw UnimplementedError, release 模式失联通知不可用。
+    // 当前 throw StateError (R63 改:从 UnimplementedError 改, 明确
+    // "业务不可用" 而非 "暂未实现")。
+    //
+    // 注: 正常流程不会到这里,因为 isProductionReady=false 走 SmsService.send
+    // line 284 的 mock 早返路径。只有在测试或外部代码直接调 provider.send()
+    // 时才会进这里。
     //
     // 完整接入 plan 见 docs/SMS_PROVIDERS.md §1。
     //
@@ -157,6 +178,8 @@ class AliyunSmsProvider implements SmsProvider {
     // 5. POST https://dysmsapi.aliyuncs.com/  (5s timeout + 3 次重试)
     // 6. 解析响应: Code='OK' 返 true, 其他走 swallowError
     // 7. 错误处理: 限流/余额不足/模板错误 分别对应不同 SmsResult.fail
+    // 8. **关键**: 把第 1 步的 `_isFullyImplemented` getter 改返 true
+    //    (跟 send() 真接同步)
     //
     // 模板审核技巧 (法务):
     // - 避用"药"/"病"等敏感词
@@ -168,10 +191,10 @@ class AliyunSmsProvider implements SmsProvider {
     // - +1/+44/+852 海外号段 → TwilioSmsProvider (需 Twilio 境内代理备案)
     // - SmsService.send 入口加号码归属地路由 (R55+)
 
-    throw UnimplementedError(
+    throw StateError(
       'AliyunSmsProvider.send() R55 真接 TODO — '
-      '需 accessKey/secret/signName + 法务过审模板。\n'
-      '完整 plan 见 docs/SMS_PROVIDERS.md §1。',
+      'isProductionReady=false, 正常流程不会到这里; '
+      '若到此说明直接调了 provider.send(), 请改用 SmsService.send() 走 mock 早返路径。',
     );
   }
 }

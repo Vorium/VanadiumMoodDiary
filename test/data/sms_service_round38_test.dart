@@ -20,14 +20,27 @@ void main() {
       expect(MockSmsProvider().isProductionReady, isFalse);
     });
 
-    test('AliyunSmsProvider.isProductionReady = true', () {
+    // v0.27 round 63 (P0-1 收尾): AliyunSmsProvider 现在必须
+    // _isFullyImplemented=true 才返 isProductionReady=true。
+    // 当前 send() 仍 throw (R55 TODO), 所以 4 字段齐全也返 false。
+    test('AliyunSmsProvider (R63:send 未接) 4 字段齐全 → isProductionReady = false', () {
       final provider = AliyunSmsProvider(
         accessKeyId: 'fake-id',
         accessKeySecret: 'fake-secret',
         signName: 'fake-sign',
         templateCode: 'fake-template',
       );
-      expect(provider.isProductionReady, isTrue);
+      expect(provider.isProductionReady, isFalse);
+    });
+
+    test('AliyunSmsProvider 4 字段缺失 → isProductionReady = false', () {
+      final provider = AliyunSmsProvider(
+        accessKeyId: '',
+        accessKeySecret: '',
+        signName: '',
+        templateCode: '',
+      );
+      expect(provider.isProductionReady, isFalse);
     });
   });
 
@@ -103,7 +116,7 @@ void main() {
     });
 
     test(
-      '注入 aliyun (未实现但 isProductionReady=true) → send() 返 SmsResult.fail',
+      '注入 aliyun (R63:isProductionReady=false) → send() 走 mock 早返, 返 SmsResult.mock',
       () async {
         final service = SmsService(
           provider: AliyunSmsProvider(
@@ -117,9 +130,10 @@ void main() {
           to: '13800138000',
           body: 'test',
         );
-        // aliyun isProductionReady=true,所以走真 send 路径 → throw → catch → fail
-        expect(result.kind, SmsResultKind.fail);
-        expect(result.error, contains('AliyunSmsProvider'));
+        // R63 收尾后: aliyun isProductionReady=false → 走 mock 早返
+        // (SmsService.send line 284) → 返 SmsResult.mock, 不再 throw
+        expect(result.kind, SmsResultKind.mock);
+        expect(result.success, isFalse);
       },
     );
   });
