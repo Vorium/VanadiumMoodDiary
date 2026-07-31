@@ -25,6 +25,7 @@ import 'package:chroniccare/core/data/database/tables/report/report_histories.da
 import 'package:chroniccare/core/data/database/tables/user_profile/user_profiles.dart';
 import 'package:chroniccare/core/data/database/tables/vent/vent_entries.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 
 part 'app_database.g.dart';
 
@@ -78,8 +79,15 @@ class AppDatabase extends _$AppDatabase {
   // v0.23 round 44: schemaVersion 13 → 14
   // - contacts 加 (is_active, sort_order) 复合索引
   // - report_histories 加 generated_at 索引
+  //
+  // v0.27 round 63 (P0-2 修复): schemaVersion 14 → 15
+  // - contacts 加 4 个 consent 字段 (PIPL §13 留痕要求)
+  // - 4 字段全部 nullable,旧数据自动为 null
+  // - 老数据 (schemaVersion <= 14) 的联系人 "consent 历史" 只在 piiSafeLog
+  //   (R62 working tree 状态), DB 落库是这次新加。考虑 v1.0 法务过审
+  //   时是否给老用户"重新同意"流程 (本批不做, 留 R64+ 评估)
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -162,9 +170,18 @@ class AppDatabase extends _$AppDatabase {
                     .write(VentEntriesCompanion(
                   contentTextEnc: Value(encrypted),
                 ),);
-              } catch (e) {
-                // 单条加密失败不阻塞整个升级，该行 contentTextEnc 保持 null
-                // 用户打开该条树洞时 VentMapper.toEntity 会兜底显示空内容
+              } catch (e, st) {
+                // v0.27 round 63 (P1-7 修复): 走 swallowError 集中器
+                // (R39 P1-10 模式), 替代全 lib 唯一 1 处 `catch (e) {}`
+                // 完全静默。dev 模式 devtools / `flutter logs` 看得到。
+                // 单条加密失败不阻塞整个升级, 该行 contentTextEnc 保持 null,
+                // 用户打开该条树洞时 VentMapper.toEntity 会兜底显示空内容。
+                swallowError(
+                  where: 'app_database.v8v9_vent_encrypt_fail',
+                  error: e,
+                  stack: st,
+                  note: 'ventId=${row.id} contentText 加密失败, contentTextEnc 保持 null',
+                );
               }
             }
           }
@@ -209,6 +226,20 @@ class AppDatabase extends _$AppDatabase {
             );
             await customStatement(
               'CREATE INDEX IF NOT EXISTS idx_report_gen_at ON report_histories(generated_at)',
+            );
+          }
+          // v14 → v15: contacts 加 4 个 consent 字段 (P0-2 修复, PIPL §13 留痕)
+          // - 4 字段全部 nullable, 旧数据 (schemaVersion <= 14) 自动为 null
+          // - 新加联系人 (schemaVersion 15+) ContactRepositoryImpl.add() 强制
+          //   caller 传 ConsentArtifact, 4 字段写进 ContactsCompanion.insert(...)
+          // - 索引: consent_at 加索引 (按同意时间倒序查 audit log)
+          if (from <= 14) {
+            await m.addColumn(contacts, contacts.consentAt);
+            await m.addColumn(contacts, contacts.consentKind);
+            await m.addColumn(contacts, contacts.consentBy);
+            await m.addColumn(contacts, contacts.consentVersion);
+            await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_contact_consent_at ON contacts(consent_at)',
             );
           }
         },

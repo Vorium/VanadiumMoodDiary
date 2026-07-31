@@ -1,7 +1,21 @@
 // v0.14 (Round 12A) ContactEntity — 纯 Dart domain entity
 //
 // 4 层架构示范：domain 层不依赖 Drift。
-library;
+//
+// v0.27 round 63 (P0-2 修复): 加 4 个 consent 字段 (PIPL §13 留痕)
+// - consentAt: DateTime? 同意时间
+// - consentKind: ConsentKind? 同意类型 (5 值 enum, nullable)
+// - consentBy: String? 同意主体 (默认 "user")
+// - consentVersion: String? 同意版本号 (法务模板版本)
+// - 4 字段全部 nullable, 旧数据 (schemaVersion <= 14) 升级时为 null
+// - 新加联系人 (schemaVersion 15+) 必有值
+// - consentKind 用 nullable enum 而非 DomainValue 是因为:
+//   1) DomainValue 无 absent() 工厂
+//   2) nullable enum 直接表达"缺席",语义最清晰
+//   3) copyWith 不能用 `?? this.consentKind` 区分"保持"和"清空", 但本 entity
+//      不需要清空语义 (consent 一旦同意就不可清空, 撤回走 LegalConsentStore)
+
+import 'package:chroniccare/domain/entities/consent_artifact.dart';
 
 /// 紧急联系人（领域实体）
 ///
@@ -13,12 +27,22 @@ class ContactEntity {
   final int sortOrder;
   final bool isActive;
 
+  /// v0.27 round 63 (P0-2 修复): PIPL §13 留痕 4 字段
+  final DateTime? consentAt;
+  final ConsentKind? consentKind;
+  final String? consentBy;
+  final String? consentVersion;
+
   const ContactEntity({
     required this.id,
     required this.name,
     required this.phone,
     this.sortOrder = 0,
     this.isActive = true,
+    this.consentAt,
+    this.consentKind,
+    this.consentBy,
+    this.consentVersion,
   });
 
   // ===== 业务方法 =====
@@ -75,6 +99,10 @@ class ContactEntity {
     String? phone,
     int? sortOrder,
     bool? isActive,
+    DateTime? consentAt,
+    ConsentKind? consentKind,
+    String? consentBy,
+    String? consentVersion,
   }) {
     return ContactEntity(
       id: id ?? this.id,
@@ -82,6 +110,10 @@ class ContactEntity {
       phone: phone ?? this.phone,
       sortOrder: sortOrder ?? this.sortOrder,
       isActive: isActive ?? this.isActive,
+      consentAt: consentAt ?? this.consentAt,
+      consentKind: consentKind ?? this.consentKind,
+      consentBy: consentBy ?? this.consentBy,
+      consentVersion: consentVersion ?? this.consentVersion,
     );
   }
 
@@ -93,13 +125,29 @@ class ContactEntity {
         other.name == name &&
         other.phone == phone &&
         other.sortOrder == sortOrder &&
-        other.isActive == isActive;
+        other.isActive == isActive &&
+        other.consentAt == consentAt &&
+        other.consentKind == consentKind &&
+        other.consentBy == consentBy &&
+        other.consentVersion == consentVersion;
   }
 
   @override
-  int get hashCode => Object.hash(id, name, phone, sortOrder, isActive);
+  int get hashCode => Object.hash(
+        id,
+        name,
+        phone,
+        sortOrder,
+        isActive,
+        consentAt,
+        consentKind,
+        consentBy,
+        consentVersion,
+      );
 
   @override
   String toString() =>
-      'ContactEntity(id=$id, name=$name, phone=$phone, order=$sortOrder, active=$isActive)';
+      'ContactEntity(id=$id, name=$name, phone=$phone, order=$sortOrder, '
+      'active=$isActive, consentAt=$consentAt, consentKind=$consentKind, '
+      'consentBy=$consentBy, consentVersion=$consentVersion)';
 }

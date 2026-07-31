@@ -1,5 +1,4 @@
 // v0.14 (Round 12A) ContactRepositoryImpl — data 层 Drift 实现
-library;
 
 import 'package:drift/drift.dart' show Value;
 
@@ -30,7 +29,8 @@ class ContactRepositoryImpl implements ContactRepository {
     required ConsentArtifact consentArtifact,
     int sortOrder = 0,
   }) async {
-    // v0.27 round 62 (P0-2 修复): 写 consent audit log (PIPL §13 留痕要求)
+    // v0.27 round 62 (P0-2 修复) + 63 (DB 落库收尾):
+    // 写 consent audit log (PIPL §13 留痕要求, 兼 OS 可删 log 备份)
     // 留痕字段: kind / grantedAt / grantedBy / version, 不写 contactId
     // (因为 insertContact 还没返 id)。
     piiSafeLog(
@@ -40,11 +40,19 @@ class ContactRepositoryImpl implements ContactRepository {
       'grantedBy=${consentArtifact.grantedBy} '
       'version=${consentArtifact.version}',
     );
+    // v0.27 round 63 (P0-2 收尾): 把 4 个 consent 字段写进 DB (R62
+    // working tree 只写 log, 落库未做, 这步收尾)。
+    // 关键: schemaVersion 15+ (本批 bump) 才有这 4 列, schemaVersion <= 14
+    // 老用户走 migration onUpgrade 自动加列 (本批实现)。
     final id = await _db.insertContact(
       ContactsCompanion.insert(
         name: name,
         phone: phone,
         sortOrder: Value(sortOrder),
+        consentAt: Value(consentArtifact.grantedAt),
+        consentKind: Value(consentArtifact.kind.name),
+        consentBy: Value(consentArtifact.grantedBy),
+        consentVersion: Value(consentArtifact.version),
       ),
     );
     return id;
@@ -52,6 +60,8 @@ class ContactRepositoryImpl implements ContactRepository {
 
   @override
   Future<bool> update(ContactEntity contact) {
+    // v0.27 round 63 (P0-2 收尾): update 走 toDriftRow() mapper,
+    // 自动包含 4 个 consent 字段 (PIPL §13 留痕完整保留)。
     return _db.updateContact(contact.toDriftRow());
   }
 
@@ -63,6 +73,8 @@ class ContactRepositoryImpl implements ContactRepository {
     // v0.21 Round 23 (P1-26): Dismissible Undo → 重新插入原内容
     // v0.27 round 62 (P0-2): restore 走 audit log, 不走新 consent 流程
     // (用户已经 Undo 一次, consent 历史已留痕)。
+    // v0.27 round 63 (P0-2 收尾): 从 contact entity 复用 4 个 consent
+    // 字段 (原 contact 是 schemaVersion 15+ 写入的, consent 信息完整)。
     piiSafeLog(
       'ContactRepository.restore',
       '🔄 restore contact id=${contact.id} (consent 历史已留痕, 复用)',
@@ -72,6 +84,12 @@ class ContactRepositoryImpl implements ContactRepository {
         name: contact.name,
         phone: contact.phone,
         sortOrder: Value(contact.sortOrder),
+        // 4 个 consent 字段从 contact entity 复用, 因为它是上次
+        // schemaVersion 15+ 写入的, 必有值
+        consentAt: Value(contact.consentAt),
+        consentKind: Value(contact.consentKind?.name),
+        consentBy: Value(contact.consentBy),
+        consentVersion: Value(contact.consentVersion),
       ),
     );
   }

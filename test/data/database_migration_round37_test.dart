@@ -19,10 +19,10 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 
 void main() {
   group('AppDatabase schemaVersion', () {
-    test('schemaVersion == 14 (v0.23 round 44: contacts + report_histories 加索引)', () {
+    test('schemaVersion == 15 (v0.27 round 63 P0-2: contacts 加 4 consent 字段 + index)', () {
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      expect(db.schemaVersion, 14);
+      expect(db.schemaVersion, 15);
       db.close();
     });
   });
@@ -39,20 +39,20 @@ void main() {
     });
 
     test('migration strategy exists and is callable', () {
-      // 真实从 schemaVersion 0 (空 db) 升级到 12 走 onUpgrade block
-      // onUpgrade 在 native memory db 上从 0 → 12 走 createAll
+      // 真实从 schemaVersion 0 (空 db) 升级到 15 走 onUpgrade block
+      // onUpgrade 在 native memory db 上从 0 → 15 走 createAll
       expect(db.migration, isNotNull);
       // migration 字段类型是 MigrationStrategy
       expect(db.migration.onUpgrade, isA<Function>());
       expect(db.migration.onCreate, isA<Function>());
     });
 
-    test('schemaVersion 12 = 11 migration steps (v1→2 ... v11→12)', () {
-      // v0 (创建) → v12 (当前) = 12 个 step
+    test('schemaVersion 15 = 14 migration steps (v1→2 ... v14→15)', () {
+      // v0 (创建) → v15 (当前) = 15 个 step
       // 但 v0 → v1 没 step (v1 是初始 schema)
-      // 所以 onUpgrade 处理 v1→v2 ... v11→v12 共 11 个 step
+      // 所以 onUpgrade 处理 v1→v2 ... v14→v15 共 14 个 step
       // 验证 schemaVersion 跟实际 if (from <= N) block 数量匹配
-      const expectedSteps = 13;
+      const expectedSteps = 14;
       // 简单 sanity: schemaVersion >= 1 + 至少 1 个 onUpgrade step
       expect(db.schemaVersion, greaterThanOrEqualTo(2));
       expect(expectedSteps, db.schemaVersion - 1);
