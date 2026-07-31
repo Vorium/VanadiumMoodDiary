@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  v0.27 round 61 (R61): 强制 HTTPS / 禁止 cleartext
+
+  精神心理患者 PII 经 SendGrid / 阿里云 / SMS provider,
+  任何明文 HTTP 都违反 PIPL §38 跨境 + §28 透明性原则。
+
+  default-config: 全部 cleartextTrafficPermitted=false
+  domain-config (可选): 未来内网调试可加 localhost 允许 cleartext
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

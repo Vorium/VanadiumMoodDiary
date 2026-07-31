@@ -1,0 +1,9 @@
+# Release keystore config (R55+ 启用, 当前 .example 占位)
+# 1. 生成 keystore: keytool -genkey -v -keystore android/app/chroniccare-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias chroniccare
+# 2. cp key.properties.example key.properties + 填实际值
+# 3. .gitignore 加 key.properties (避免泄露)
+# 4. Play Console 启用 Play App Signing 上传 .aab + .apk to Play Console
+storeFile=chroniccare-release.jks
+storePassword=YOUR_PASSWORD
+keyAlias=chroniccare
+keyPassword=YOUR_PASSWORD

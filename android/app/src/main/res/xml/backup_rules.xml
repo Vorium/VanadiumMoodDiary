@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  v0.27 round 61 (R61): Android 6.0 - 11 backup 排除规则
+
+  精神心理患者 PII 严禁自动备份到 Google Drive:
+  - chroniccare.sqlite (SQLCipher 加密的 DB, 含打卡/情绪/树洞/联系人)
+  - flutter_secure_storage (DB 加密 key)
+
+  备份这些 = 上 Google = 隐私合规死刑 (PIPL §28)
+-->
+<full-backup-content>
+    <exclude domain="database" path="chroniccare.sqlite" />
+    <exclude domain="sharedpref" path="flutter_secure_storage.xml" />
+    <exclude domain="sharedpref" path="FlutterSecureStorage.xml" />
+    <exclude domain="file" path="vent_audio" />
+    <exclude domain="file" path="mood_audio" />
+</full-backup-content>

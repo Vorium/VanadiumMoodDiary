@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  v0.27 round 61 (R61) + round 63 (R63, GooglePlay 修复): Android 隐私规范
+
+  R61 修改点:
+  1. application 标签加 (3 项 + R63 补 3 项 = 6 项):
+     - android:dataExtractionRules (Android 12+)
+     - android:fullBackupContent (Android 6.0 - 11)
+     - android:networkSecurityConfig (cleartext 禁用)
+  R63 补 (GooglePlay P1-1 / P1-4 修复):
+     - android:enableOnBackInvokedCallback="true" (Android 13 预测式返回手势)
+     - android:debuggable="false" (显式禁 debug, 防误开)
+     - android:allowBackup="false" (PIPL §28 精神心理数据禁止 backup)
+  注: android:requestLegacyExternalStorage 不加 — app 私有目录够用,
+       Android 11+ 该属性已被废弃, 没必要污染 manifest。
+
+  2. permissions 8 个 + queries 1 个 (PROCESS_TEXT)
+     - INTERNET: SMS / 邮件 (SendGrid / AliyunSms)
+     - POST_NOTIFICATIONS: Android 13+ 通知运行时权限
+     - SCHEDULE_EXACT_ALARM / USE_EXACT_ALARM: 精准闹钟
+     - WAKE_LOCK: 通知触发保持 CPU
+     - RECEIVE_BOOT_COMPLETED: 开机后恢复通知 (R63 加 BootReceiver.kt)
+     - VIBRATE: safety alert 通知震动
+     - RECORD_AUDIO: mood audio 录音
+  3. R63 加 receiver: BootReceiver 接 BOOT_COMPLETED 重排通知
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ============ 权限声明 ============ -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- ============ 硬件特性 (可选, 录音) ============ -->
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+
+    <application
+        android:label="慢病管家"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:enableOnBackInvokedCallback="true"
+        android:debuggable="false"
+        android:allowBackup="false">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- v0.27 round 63 (R63, GooglePlay P0-2 修复): BootReceiver
+             接 BOOT_COMPLETED 重排 flutter_local_notifications 全部通知。
+             精神心理患者重启手机后不能丢提醒 → 7 天后才发现"已停药"无提醒。 -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>
