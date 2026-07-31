@@ -1,4 +1,4 @@
-# Superpowers (中文) 架构审视 — chroniccare v0.27 round 58
+﻿# Superpowers (中文) 架构审视 — chroniccare v0.27 round 58
 
 > **方法论视角**：superpowers-zh v1.6.0 (jnMetaCode) —— 6 个中国特色子技能（中文代码审查 / 中文提交规范 / 中文文档 / 中文 Git 工作流）+ 14 个核心汉化技能。
 > **关注轴**：中国开发者视角下的顶层架构适配性、中国特色实战问题（国产 ROM、PIPL、跨境、合规）、中文 i18n、繁简同步、全角标点、commit 规范、文档可读性、中文反模式。
@@ -28,8 +28,8 @@
 
 **Top 3 行动建议**：
 
-1. **R59 修真 check_fullwidth_punctuation.py 的 `……` 误报** —— 47 violations 中 19 个是 `app_localizations*.dart` 的"加载中……"等已经走全角（2×U+2026）但被误判。改法：pattern 改为 `(?!…)，即不后接 `…`。
-2. **R60 修真术语集中器** —— 引入 `lib/core/l10n/terms.dart`（技术词）+ `appTerms` ARB section（业务词），把"App / 应用 / 客户端"、"i18n / 国际化 / 本地化"集中收敛。
+1. **R59 修正 check_fullwidth_punctuation.py 的 `……` 误报** —— 47 violations 中 19 个是 `app_localizations*.dart` 的"加载中……"等已经走全角（2×U+2026）但被误判。改法：pattern 改为 `(?!…)，即不后接 `…`。
+2. **R60 修正术语集中器** —— 引入 `lib/core/l10n/terms.dart`（技术词）+ `appTerms` ARB section（业务词），把"App / 应用 / 客户端"、"i18n / 国际化 / 本地化"集中收敛。
 3. **R61 加 3 个 spzh 守护脚本** —— `check_zh_terms_consistency.py`（术语统一检查）、`check_chinese_anti_pattern.py`（拼音/全角空格/错别字）、`check_pipl_compliance.py`（PIPL §13/§6/§17 真接检查）。
 
 ---
@@ -118,13 +118,13 @@
 | # | 区域 | 文件:行号 | 问题 | 建议 | 严重度 | 难度 |
 |---|---|---|---|---|----|----|
 | 1 | **守护脚本 false positive** | `scripts/check_fullwidth_punctuation.py:67-70` | `……`（2×U+2026）已经被脚本自己当 "半角" 报。47 violations 中 ~20 个是误报（如 `app_localizations.dart:615` `'加载中……'` 已经是全角形式） | 改 pattern 为 `re.compile(rf"'([^']*{CJK}){ELLIPSIS}(?!{ELLIPSIS})([^']*)'")`，**不后接 `…`** 才报 | **P1** | XS |
-| 2 | **真实半角标点** | `lib/core/data/services/preset_medication_templates.dart:119,149,154` | 3 处"苯二氮卓类/助眠药"、"镇静/抗焦虑辅助" 用了半角 `/`（中文文案应走 `／`） | R59 修真：3 处全改全角 `／`（medical abbreviation 风格） | P2 | XS |
-| 3 | **真实半角括号** | `lib/core/data/services/export/export_schema_service.dart:75` | `'表不存在(旧 schema),忽略'` 用了半角 `(` `)` `,` | R59 修真：中文部分改全角 `（`，逗号改 `，` | P2 | XS |
+| 2 | **真实半角标点** | `lib/core/data/services/preset_medication_templates.dart:119,149,154` | 3 处"苯二氮卓类/助眠药"、"镇静/抗焦虑辅助" 用了半角 `/`（中文文案应走 `／`） | R59 修正：3 处全改全角 `／`（medical abbreviation 风格） | P2 | XS |
+| 3 | **真实半角括号** | `lib/core/data/services/export/export_schema_service.dart:75` | `'表不存在(旧 schema),忽略'` 用了半角 `(` `)` `,` | R59 修正：中文部分改全角 `（`，逗号改 `，` | P2 | XS |
 | 4 | **真省略号误用** | `lib/l10n/app_zh.arb:167` | `"... 失败: <error>..."` 用了 3 个半角 `.` 表示省略 | 改全角 `……` 或 `…` 单字符（**注意 1. 修 false positive 之前这条会被误报**） | P3 | XS |
 | 5 | **真混排空格** | `lib/presentation/widgets/mood_quick_button.dart:14` | `'今日情绪：好/差/一般/...'` 注释 `'好/差/一般/...'` 用了 ASCII `/` | 改全角或注释改中文 | P3 | XS |
 | 6 | **守护脚本扫描范围** | `scripts/check_fullwidth_punctuation.py:88-91` | 单行匹配，跨行字符串（multi-line `'''...'''`）漏检 | R60 改跨行匹配（per spen P1-9 fix） | P3 | M |
-| 7 | **app_zh.arb 注释** | `lib/l10n/app_zh.arb:167` | `@_xxx` 注释也用半角 `:` 应改全角 `：` | R59 修真 | P3 | XS |
-| 8 | **加载中…… 误报 19 处** | `lib/l10n/app_localizations.dart:615, 927, 1473, 1485, 1635, 1792, 3022` + `app_zh_Hant.arb` 同样 | `……` 已对，被脚本误报 | **修真脚本（见 #1）** | P1 | XS |
+| 7 | **app_zh.arb 注释** | `lib/l10n/app_zh.arb:167` | `@_xxx` 注释也用半角 `:` 应改全角 `：` | R59 修正 | P3 | XS |
+| 8 | **加载中…… 误报 19 处** | `lib/l10n/app_localizations.dart:615, 927, 1473, 1485, 1635, 1792, 3022` + `app_zh_Hant.arb` 同样 | `……` 已对，被脚本误报 | **修正脚本（见 #1）** | P1 | XS |
 
 ### 2.3 跨年/月日期边界（农历 / 法定节假日 / 24 节气）
 
@@ -198,26 +198,26 @@
 
 | # | 区域 | 文件:行号 | SRP / 耦合 / 抽象问题 | 建议 | 严重度 | 难度 |
 |---|---|---|---|---|---|---|
-| 1 | 中文术语不一致 | 全部 ARB | "App"、"应用"、"客户端"混用（`app_zh.arb` 共出现 3 种叫法） | 修真 `docs/terminology.md` + 集中 `appTerms` ARB section | **P1** | S |
+| 1 | 中文术语不一致 | 全部 ARB | "App"、"应用"、"客户端"混用（`app_zh.arb` 共出现 3 种叫法） | 修正 `docs/terminology.md` + 集中 `appTerms` ARB section | **P1** | S |
 | 2 | 中文术语不一致 | 全部 ARB | "i18n"、"国际化"、"本地化"、"多语言"混用（4 种叫法） | 同 #1 | **P1** | S |
-| 3 | 中文术语不一致 | `app_zh.arb:31, 78, 95` | "PHQ-9" vs "9 项患者健康问卷"（中英混用，部分用户懂英文） | R60 修真：默认走"PHQ-9"（专业），首次出现加英文 `"PHQ-9（9 项患者健康问卷）"` | P2 | S |
+| 3 | 中文术语不一致 | `app_zh.arb:31, 78, 95` | "PHQ-9" vs "9 项患者健康问卷"（中英混用，部分用户懂英文） | R60 修正：默认走"PHQ-9"（专业），首次出现加英文 `"PHQ-9（9 项患者健康问卷）"` | P2 | S |
 | 4 | 拼音 / 缩写 | 全部 | 未发现拼音变量（✅ 项目保持中文注释 + 英文标识符） | — | — | — |
 | 5 | 全角空格误用 | 全部 ARB | grep `\u3000`（全角空格）0 命中（✅ 中文行内不混全角空格） | — | — | — |
 | 6 | 半角空格误用 | 全部 ARB | 中文行末半角空格命中 0（✅ 符合"中英文间空格"规范） | — | — | — |
-| 7 | 文档 commit 中英混排 | `docs/CHANGELOG.md` | 5% 处直接英文：`flutter analyze 0 errors`、`1098/1098 pass` 等 | 加 R60 修真：纯中文语境用全角标点，但中英混排处空格 / 半角规范 | P3 | S |
+| 7 | 文档 commit 中英混排 | `docs/CHANGELOG.md` | 5% 处直接英文：`flutter analyze 0 errors`、`1098/1098 pass` 等 | 加 R60 修正：纯中文语境用全角标点，但中英混排处空格 / 半角规范 | P3 | S |
 | 8 | 中英混排空格 | `lib/core/l10n/strings.dart:21` | `'[停药提醒] $name 已经 $days 天没吃药了'` 中文 + `$name` + 中文 + `$days` 数字 + 中文，**中英数字间缺空格** | 应为 `'[停药提醒] $name 已经 $days 天没吃药了'` 改为 `'[停药提醒] $name 已经 $days 天没吃药了'` —— **实际是中英文混排空格** | P3 | XS |
-| 9 | 中英混排空格 | `lib/core/l10n/strings.dart:32` | `'我是 $name，已经 $days 天没在 App 里打卡了。\n'` 同 #8 | 修真：中英数字间空格 | P3 | XS |
+| 9 | 中英混排空格 | `lib/core/l10n/strings.dart:32` | `'我是 $name，已经 $days 天没在 App 里打卡了。\n'` 同 #8 | 修正：中英数字间空格 | P3 | XS |
 | 10 | 英文标点混入中文 | `lib/core/data/services/preset_medication_templates.dart:100-160` | "PHQ-9 / GAD-7" 等英文缩写 OK；"3 种药"用全角 OK；混排 OK | 已正确（spen 报告 #15 也认） | — | — |
-| 11 | 中文标点 + 英文单词间 | `lib/l10n/app_zh.arb:167` | "Action is the user-facing action（保存/删除/导出/...)" 注释里 "(保存/删除/导出/...)" 用了 `...` | R59 修真：用 `……` 全角省略号 | P3 | XS |
+| 11 | 中文标点 + 英文单词间 | `lib/l10n/app_zh.arb:167` | "Action is the user-facing action（保存/删除/导出/...)" 注释里 "(保存/删除/导出/...)" 用了 `...` | R59 修正：用 `……` 全角省略号 | P3 | XS |
 | 12 | **大量注释不写中文** | `lib/core/l10n/strings.dart` 注释 | strings.dart 90% 注释是中文，但有部分"// v0.26 R57" 等版本标注用英文缩写 | 加 R60 lint：`// ` 后必须中文（除非是 TODO/FIXME/XXX 标记） | P3 | S |
-| 13 | **命名一致性** | `lib/core/l10n/strings.dart:50-90` | "notifDailyCheckInTitle"、"notifMedicationTitle"、"notifRefillTitle" 命名一致 ✅，但 ARB key 是 "homeDailyCheckIn" / "medicationTitle" / "refillTitle" 路径不一致 | R60 修真：把 ARB key 走 `notifXxx` 风格统一 | P3 | S |
-| 14 | **错误消息一致性** | `lib/core/l10n/strings.dart:50-150` | 30 个 `xxxText` 函数命名一致 ✅，但 `emailBody` / `emailSubject` / `notifBody` 风格不一 | 修真：分 2 类：`<channel>Body({override})` + `<feature>Body({override})` | P3 | S |
-| 15 | **缺失抽象** | `lib/core/l10n/strings.dart:200-229` | 5 个 `importSummaryXxx` 函数，参数都是 `int n, {String? override}`，模式完全相同 | 修真：抽 `importSummaryNoun(noun, count, {override})` 工厂 | P2 | XS |
+| 13 | **命名一致性** | `lib/core/l10n/strings.dart:50-90` | "notifDailyCheckInTitle"、"notifMedicationTitle"、"notifRefillTitle" 命名一致 ✅，但 ARB key 是 "homeDailyCheckIn" / "medicationTitle" / "refillTitle" 路径不一致 | R60 修正：把 ARB key 走 `notifXxx` 风格统一 | P3 | S |
+| 14 | **错误消息一致性** | `lib/core/l10n/strings.dart:50-150` | 30 个 `xxxText` 函数命名一致 ✅，但 `emailBody` / `emailSubject` / `notifBody` 风格不一 | 修正：分 2 类：`<channel>Body({override})` + `<feature>Body({override})` | P3 | S |
+| 15 | **缺失抽象** | `lib/core/l10n/strings.dart:200-229` | 5 个 `importSummaryXxx` 函数，参数都是 `int n, {String? override}`，模式完全相同 | 修正：抽 `importSummaryNoun(noun, count, {override})` 工厂 | P2 | XS |
 | 16 | **隐式耦合** | `lib/presentation/providers/notification_init_provider.dart` | 命名"init" 但实际不只是 init，含 permission check + tz recheck + 5 厂商 push 检测 | R60 评估改名 `notification_bootstrap_provider` | P3 | XS |
-| 17 | **缺失抽象** | `lib/presentation/pages/settings/widgets/notification_status_card.dart:_OemBrand` | 7 brand 重复 4 行 boilerplate（brand + steps widget） | 修真：抽 `OemBrandList(brandList: List<{name, steps}>)` 集中 | P2 | S |
-| 18 | **缺失抽象** | `lib/core/data/services/sms_service.dart:50-90` | 3 个 provider（MockSmsProvider / AliyunSmsProvider / TwilioSmsProvider）共享 50% boilerplate | 修真：抽 `_BaseSmsProvider` 抽象（已部分通过 abstract SmsProvider） | P2 | S |
-| 19 | **命名一致性** | 全部 `*_entity.dart` / `*_repository.dart` | `lib/domain/entities/` 11 个 entity 都用 `*Entity` 后缀 ✅；但 `lib/domain/entities/hour_minute.dart`、`dosage_unit.dart` 没 `*Entity` 后缀（value object 不是 entity） | 修真：加 ADR `docs/decisions/v0.27_value_object_naming.md` 写明"Entity vs Draft vs value object" | P3 | S |
-| 20 | **命名一致性** | 全部 `core/shared/*.dart` | `formatters.dart` / `json_codec.dart` / `domain_value.dart` / `user_name_helper.dart` / `swallow_error.dart` / `mood_visual.dart` 命名风格不统一（`formatters` 复数、`swallow_error` 动词+名词） | 修真：统一 `xxx_helper.dart` 风格（仅作命名 ADR，无功能改动） | P3 | XS |
+| 17 | **缺失抽象** | `lib/presentation/pages/settings/widgets/notification_status_card.dart:_OemBrand` | 7 brand 重复 4 行 boilerplate（brand + steps widget） | 修正：抽 `OemBrandList(brandList: List<{name, steps}>)` 集中 | P2 | S |
+| 18 | **缺失抽象** | `lib/core/data/services/sms_service.dart:50-90` | 3 个 provider（MockSmsProvider / AliyunSmsProvider / TwilioSmsProvider）共享 50% boilerplate | 修正：抽 `_BaseSmsProvider` 抽象（已部分通过 abstract SmsProvider） | P2 | S |
+| 19 | **命名一致性** | 全部 `*_entity.dart` / `*_repository.dart` | `lib/domain/entities/` 11 个 entity 都用 `*Entity` 后缀 ✅；但 `lib/domain/entities/hour_minute.dart`、`dosage_unit.dart` 没 `*Entity` 后缀（value object 不是 entity） | 修正：加 ADR `docs/decisions/v0.27_value_object_naming.md` 写明"Entity vs Draft vs value object" | P3 | S |
+| 20 | **命名一致性** | 全部 `core/shared/*.dart` | `formatters.dart` / `json_codec.dart` / `domain_value.dart` / `user_name_helper.dart` / `swallow_error.dart` / `mood_visual.dart` 命名风格不统一（`formatters` 复数、`swallow_error` 动词+名词） | 修正：统一 `xxx_helper.dart` 风格（仅作命名 ADR，无功能改动） | P3 | XS |
 
 ---
 
@@ -240,13 +240,13 @@
 |---|---|---|---|---|---|---|
 | 1 | **PIPL §13 单独同意** | `lib/presentation/pages/setup/setup_legal_dialog.dart` | 树洞录音 / 紧急联系人 / 跨境导出 3 个场景应独立勾选框（v0.25 R58 A-03 TODO 注释） | R60 真接：3 个独立 CheckboxListTile 走 ARB，存到 `user_profiles.sensitiveConsent*` 字段 | **P1** | L |
 | 2 | **跨境 (PIPL §38 / §39)** | `docs/SENDGRID_SETUP.md` | 邮件走 SendGrid 在大陆有合规风险（数据出境） | R60 评估国内 SMTP 替代（阿里云邮件推送） | P2 | L |
-| 3 | **个人信息清单 (PIPL §17)** | `docs/CHANGELOG.md` R54 已做隐私政策 | 清单已列，但树洞录音未单独列"敏感个人信息" | R59 修真：在 `privacy_policy.md` §4 明确标"树洞录音 = 敏感个人信息" | P1 | XS |
+| 3 | **个人信息清单 (PIPL §17)** | `docs/CHANGELOG.md` R54 已做隐私政策 | 清单已列，但树洞录音未单独列"敏感个人信息" | R59 修正：在 `privacy_policy.md` §4 明确标"树洞录音 = 敏感个人信息" | P1 | XS |
 | 4 | **撤回同意 (PIPL §15)** | 无 | 用户撤回同意后应删除对应数据 | R61 加"撤回同意"入口在 settings 隐私 section | P1 | M |
 | 5 | **数据最小化 (PIPL §6)** | 已做（v0.25 R57 userName nullable fallback） | ✅ | — | — | — |
 | 6 | **PII 日志 (PIPL §17 / GDPR Art 5)** | `lib/core/data/services/pii_safe_log.dart` | release 模式 swallow、debug 模式 dev tools 可看，✅ 已落地 | — | — | — |
 | 7 | **mask phone** | `pii_safe_log.dart:maskPhone` | `138****5678` 格式 ✅ | — | — | — |
-| 8 | **mock provider 误上线** | `lib/core/data/services/sms_service.dart:50-90` | v0.23 R38 P0-1 fail-fast 已修真：release 模式启动时 check `isProductionReady` | ✅ | — | — |
-| 9 | **AliyunSmsProvider.send() 未真接** | `lib/core/data/services/sms_service.dart:~200` | R55 加骨架，R58 修真为 `[WARN]` 模式 | R60 真接（依赖法务模板审核 + AccessKey） | P2 | XL |
+| 8 | **mock provider 误上线** | `lib/core/data/services/sms_service.dart:50-90` | v0.23 R38 P0-1 fail-fast 已修正：release 模式启动时 check `isProductionReady` | ✅ | — | — |
+| 9 | **AliyunSmsProvider.send() 未真接** | `lib/core/data/services/sms_service.dart:~200` | R55 加骨架，R58 修正为 `[WARN]` 模式 | R60 真接（依赖法务模板审核 + AccessKey） | P2 | XL |
 | 10 | **5 厂商 push 未真接** | `docs/PUSH_PROVIDERS.md` | R55 plan 已写 | R60+ 真接（依赖各厂商资质审核 1-2 月） | P2 | XL |
 
 ---
@@ -279,7 +279,7 @@
 
 | # | 盲区类型 | 出现位置 / 模式 | 建议新增守护脚本 | 严重度 | 难度 |
 |---|---|---|---|---|---|
-| 1 | **fullwidth script false positive** | `check_fullwidth_punctuation.py:67-70` 47 violations 中 ~20 是 `……`（2×U+2026）误报 | **修真** pattern 为 `(?<!…)^…(?!…)$`，`……` 已对不报 | **P1** | XS |
+| 1 | **fullwidth script false positive** | `check_fullwidth_punctuation.py:67-70` 47 violations 中 ~20 是 `……`（2×U+2026）误报 | **修正** pattern 为 `(?<!…)^…(?!…)$`，`……` 已对不报 | **P1** | XS |
 | 2 | **中英文间缺空格** | `lib/core/l10n/strings.dart:21,32,50,80` 等 50+ 处 ARB 字符串中文 + `$var` + 中文无空格 | `check_zh_en_spacing.py`：扫 ARB / .dart 中文字符 + ASCII 字母/数字相邻处无空格 | P2 | M |
 | 3 | **中文错别字** | ARB / 注释 | `check_zh_typo.py`：基于 100 个常见中文错别字字典（"帐号"→"账号"、"登陆"→"登录"、"其它"→"其他"、"做为"→"作为"、"象"→"像" 等） | P2 | S |
 | 4 | **繁简异体字** | `app_zh_Hant.arb` | 已用 OpenCC s2tw 自动转换，但"账号"vs"帳號"、"鼠标"vs"滑鼠"等港台习惯不同 | `check_zh_hant_variants.py`：港台用 `帳號`/`滑鼠`、大陆用 `账号`/`鼠标`，手动 whitelist | P3 | M |
@@ -289,7 +289,7 @@
 | 8 | **PIPL 真接** | 全部 | 检查 release 模式启动时是否校验 `isProductionReady`、用户同意书是否独立勾选 | `check_pipl_compliance.py` | **P1** | L |
 | 9 | **中文字数 / 截断** | ARB 文件 | 中文 > 12 字的 button label 应有 `maxLines` 包装（`mood_quick_button.dart` "今日情绪：好/差/一般/..." 22 字） | `check_zh_max_lines.py` | P3 | S |
 | 10 | **中文版式检查** | 全部 | 中文段落首行缩进 2 字符 vs 英文不缩进 | `check_zh_paragraph_indent.py` | P3 | S |
-| 11 | **commit message 中英混排** | `git log` | 80% 英文 / 20% 中文符合 `CHINESE_COMMIT_GUIDE.md` 规则，但 body 内有中英标点混用 | 修真 `check_changelog.py` 加 body 标点 check | P3 | S |
+| 11 | **commit message 中英混排** | `git log` | 80% 英文 / 20% 中文符合 `CHINESE_COMMIT_GUIDE.md` 规则，但 body 内有中英标点混用 | 修正 `check_changelog.py` 加 body 标点 check | P3 | S |
 | 12 | **emoji 一致性** | ARB 文件 | 同一概念 emoji 一致（如 loading 一律 `⏳`、success 一律 `✅`） | `check_emoji_consistency.py` | P3 | S |
 | 13 | **中文注释覆盖率** | 全部 dart | 中文字符比例检查（业务代码注释应 > 30% 中文） | `check_zh_doc_coverage.py` | P3 | M |
 | 14 | **拼音 vs 简体** | 全部 | 错把"帐号"当正确（实际应是"账号"） | `check_zh_typo.py` 字典扩展 | P3 | S |
@@ -312,12 +312,12 @@
 
 | # | 区域 | 问题 | 建议 | 严重度 | 难度 |
 |---|---|---|---|---|---|
-| 1 | Subject 长度 | R49-R60 一半 commit subject > 60 字（如 `v0.25 round 57: P1(spen) safety_watch_service god class 拆 3 sub — 425 → 325 行 (-24%)` 53 字 ✅，但 `v0.25 round 56b: P1(emil) spacing SizedBox 走 token — 46 处 magic 修复` 56 字 ✅） | 修真 `commit-msg` hook 强制 ≤ 60 字 | P3 | XS |
-| 2 | Body 中英混排 | R49-R60 90% body 走中文 + 英文术语（"god class 拆 3 sub"），但部分纯英文（"P1(spen) god class 拆 3 sub"） | 修真：中文项目 body 至少 30% 中文 | P3 | S |
+| 1 | Subject 长度 | R49-R60 一半 commit subject > 60 字（如 `v0.25 round 57: P1(spen) safety_watch_service god class 拆 3 sub — 425 → 325 行 (-24%)` 53 字 ✅，但 `v0.25 round 56b: P1(emil) spacing SizedBox 走 token — 46 处 magic 修复` 56 字 ✅） | 修正 `commit-msg` hook 强制 ≤ 60 字 | P3 | XS |
+| 2 | Body 中英混排 | R49-R60 90% body 走中文 + 英文术语（"god class 拆 3 sub"），但部分纯英文（"P1(spen) god class 拆 3 sub"） | 修正：中文项目 body 至少 30% 中文 | P3 | S |
 | 3 | emoji 使用 | `git log` 0 commit 用 emoji（✅ 符合"不用 emoji 除非"） | — | — | — |
 | 4 | **缺少 commitlint** | 仓库无 `.commitlintrc` / `.husky/`，commit 格式靠人工 | R60 加 commitlint + husky 强制 | P2 | M |
 | 5 | **CHANGELOG 时间顺序** | R24 v0.24 review 修过；当前 OK | — | — | — |
-| 6 | **pubspec 版本号 + CHANGELOG 同步** | `check_changelog.py` 已修真（v0.25 R58） | — | — | — |
+| 6 | **pubspec 版本号 + CHANGELOG 同步** | `check_changelog.py` 已修正（v0.25 R58） | — | — | — |
 | 7 | **commit 不写 "WIP" / "fix bug"** | `CHINESE_COMMIT_GUIDE.md` 明确禁止；`git log` 0 命中 ✅ | — | — | — |
 | 8 | **chinese-git-workflow** | 项目未用 Gitee/Coding/极狐，Github flow OK | — | — | — |
 
@@ -327,9 +327,9 @@
 |---|---|---|---|
 | README.md | 项目根 | 待查 | 待审 |
 | AGENTS.md | 项目根 | 350+ | ✅ |
-| CHANGELOG.md | docs/ | 605 | ✅（R24 review 修真时间顺序） |
+| CHANGELOG.md | docs/ | 605 | ✅（R24 review 修正时间顺序） |
 | WHITEPAPER.md | docs/ | 待查 | 待审 |
-| DEPLOYMENT.md | docs/ | 待查 | ✅（R54 修真合规） |
+| DEPLOYMENT.md | docs/ | 待查 | ✅（R54 修正合规） |
 | PUSH_PROVIDERS.md | docs/ | 待查 | ✅（R55 spzh） |
 | SMS_PROVIDERS.md | docs/ | 待查 | ✅（R55 spzh） |
 | GIT_WORKFLOW.md | docs/ | 待查 | 待审 |
@@ -340,7 +340,7 @@
 | P2_SYSTEM_REVIEW.md | docs/ | 待查 | 历史 |
 | PRD-v0.1-draft.md | docs/ | 待查 | 早期 |
 | v0.17_animations_extraction.md | docs/ | 待查 | R14 决策 |
-| v0.22_mojibake_fixes.md | docs/ | 待查 | R48 修真史 |
+| v0.22_mojibake_fixes.md | docs/ | 待查 | R48 修正史 |
 | v0.24_round48_design_decisions.md | docs/ | 待查 | R48 决策 |
 | v0.24_round48_p3_skip_decisions.md | docs/ | 待查 | R48 skip |
 | review-superpowers-en-v027.md | docs/reviews/ | 303 | ✅ R58 |
@@ -352,11 +352,11 @@
 | # | 区域 | 文件:行号 | 问题 | 建议 | 严重度 | 难度 |
 |---|---|---|---|---|---|---|
 | 1 | **缺 `docs/terminology.md`** | 缺失 | 无中文术语表，新人 / 翻译易混"App / 应用 / 客户端" | R60 新建，参考 `chinese-documentation` skill 模板 | P1 | S |
-| 2 | **缺 `docs/decisions/v0.27_*.md`** | `docs/decisions/` 仅 v0.17/v0.22/v0.24 决策 | v0.25 / v0.26 / v0.27 决策未 ADR 化 | R59 修真：每 round ≥ 1 个 ADR | P2 | S |
-| 3 | **CHANGELOG 时间倒序** | 已修真（R24） | ✅ | — | — | — |
+| 2 | **缺 `docs/decisions/v0.27_*.md`** | `docs/decisions/` 仅 v0.17/v0.22/v0.24 决策 | v0.25 / v0.26 / v0.27 决策未 ADR 化 | R59 修正：每 round ≥ 1 个 ADR | P2 | S |
+| 3 | **CHANGELOG 时间倒序** | 已修正（R24） | ✅ | — | — | — |
 | 4 | **README.md 中文 vs 英文版本** | 项目根 README | 待查是否双语（中文 README + 英文 README_EN.md） | R60 评估双语 | P3 | S |
-| 5 | **决策记录缺"拒绝"** | 全部 ADR | 现有 ADR 只写"做了什么决策"，未写"为什么不做 X 备选" | R60 修真：ADR 加 "## Rejected alternatives" 章节（per `chinese-git-workflow` skill） | P2 | S |
-| 6 | **缺 README 部署 / CI 章节** | README.md | 待查 | R60 修真：加 "## 部署" + "## CI 守护" 章节 | P3 | S |
+| 5 | **决策记录缺"拒绝"** | 全部 ADR | 现有 ADR 只写"做了什么决策"，未写"为什么不做 X 备选" | R60 修正：ADR 加 "## Rejected alternatives" 章节（per `chinese-git-workflow` skill） | P2 | S |
+| 6 | **缺 README 部署 / CI 章节** | README.md | 待查 | R60 修正：加 "## 部署" + "## CI 守护" 章节 | P3 | S |
 
 ### 6.3 测试覆盖率（中文 i18n 视角）
 
@@ -390,20 +390,20 @@
 
 | 排名 | 重构 | 中文项目价值 | 改动成本 | 严重度 | Round |
 |---|---|---|---|---|---|
-| 1 | **修真 check_fullwidth_punctuation.py 的 `……` 误报** | 高（19 个误报噪音） | XS | **P1** | R59 |
-| 2 | **修真真实半角标点 3-4 处**（preset_medication_templates × 3、export_schema_service × 1） | 中（视觉专业性） | XS | P2 | R59 |
-| 3 | **新建 `docs/terminology.md` + 修真 ARB 中"App/应用"等 4 处术语不一致** | 高（专业感） | S | **P1** | R59 |
+| 1 | **修正 check_fullwidth_punctuation.py 的 `……` 误报** | 高（19 个误报噪音） | XS | **P1** | R59 |
+| 2 | **修正真实半角标点 3-4 处**（preset_medication_templates × 3、export_schema_service × 1） | 中（视觉专业性） | XS | P2 | R59 |
+| 3 | **新建 `docs/terminology.md` + 修正 ARB 中"App/应用"等 4 处术语不一致** | 高（专业感） | S | **P1** | R59 |
 | 4 | **新增 `check_zh_terms_consistency.py` 守护** | 中 | M | P2 | R60 |
 | 5 | **R60 加 commitlint + husky 强制中文 commit 规范** | 中 | M | P2 | R60 |
-| 6 | R59 修真 OEM 引导文案繁简分离（港台版用"OEM"通用词） | 中 | S | P2 | R59 |
-| 7 | R59 修真 1 鸿蒙 HarmonyOS NEXT 5.0 评估 | 低（v1.0 work） | L | P2 | R60+ |
+| 6 | R59 修正 OEM 引导文案繁简分离（港台版用"OEM"通用词） | 中 | S | P2 | R59 |
+| 7 | R59 修正 1 鸿蒙 HarmonyOS NEXT 5.0 评估 | 低（v1.0 work） | L | P2 | R60+ |
 | 8 | R60 加中文字号 / 字体 token | 中 | S | P2 | R60 |
 | 9 | R60 评估 google_fonts 集成（思源黑体 CN / TW） | 中 | S | P2 | R60 |
 | 10 | R60 加 PIPL §13 单独同意真接 | 高（合规） | L | **P1** | R60 |
 | 11 | R60 加 24 节气识别 + ARB key | 中 | M | P2 | R60 |
 | 12 | R61 加 ChineseAntiPattern 守护（拼音 / 全角空格 / 错别字） | 中 | M | P2 | R61 |
 | 13 | R61 加 PIPL §15 撤回同意 | 高（合规） | M | P1 | R61 |
-| 14 | R61 修真 decision 记录加"拒绝备选" | 低 | S | P3 | R61 |
+| 14 | R61 修正 decision 记录加"拒绝备选" | 低 | S | P3 | R61 |
 | 15 | R61 加 3 个 spzh 守护（错别字 / 中英空格 / 24 节气） | 中 | M | P2 | R61 |
 
 ---
@@ -423,13 +423,13 @@
 | **半角逗号** | `'今天, 你吃饭了吗'` 应是 `'今天，你吃饭了吗'` | ⚠️ 3 处 | `preset_medication_templates.dart:119,149,154`、`export_schema_service.dart:75`、`app_tokens.dart:232` |
 | **半角括号** | `'今天(我吃饭了)'` 应是 `'今天（我吃饭了）'` | ⚠️ 2 处 | `export_schema_service.dart:75` |
 | **半角斜杠** | `'PHQ-9 / GAD-7'` 应是 `'PHQ-9 ／ GAD-7'` | ⚠️ 7 处 | `preset_medication_templates.dart:119,149,154`、`loading_text_button.dart:21`、`mood_quick_button.dart:14`、`core_providers.dart:89`、`choose_window_dialog.dart:15` |
-| **半角省略号** | `'加载中…'` 应是 `'加载中……'` | ✅ 已修真 | ARB 内 19+ 处已 `……`，但脚本误报 |
-| **半角冒号** | `'姓名: 小明'` 应是 `'姓名：小明'` | ⚠️ 待修真 | spen 报告 §3.3 未列；本报告 spzh 视角新增 |
+| **半角省略号** | `'加载中…'` 应是 `'加载中……'` | ✅ 已修正 | ARB 内 19+ 处已 `……`，但脚本误报 |
+| **半角冒号** | `'姓名: 小明'` 应是 `'姓名：小明'` | ⚠️ 待修正 | spen 报告 §3.3 未列；本报告 spzh 视角新增 |
 | **半角问号 / 感叹号** | `'吃了吗?'` 应是 `'吃了吗？'` | ✅ 无 | grep `[?]?` 模式 0 命中 |
 | **机翻味** | `'这个函数被用来计算用户的折扣'` | ✅ 无 | 注释地道自然 |
 | **欧化长句** | `'这是一个可以帮助开发者在不需要手动配置复杂的构建工具链的情况下快速搭建现代化前端项目的脚手架工具'` | ✅ 无 | 注释都 < 30 字 |
 | **过度翻译** | `'API'` 翻译成"应用程序接口" | ✅ 无 | 技术术语全部保留英文 |
-| **句号混入代码** | `'// TODO: 修真 bug.'` | ✅ 无 | TODO 注释无句号 |
+| **句号混入代码** | `'// TODO: 修正 bug.'` | ✅ 无 | TODO 注释无句号 |
 | **中英混排缺空格** | `'我用了Redis做缓存'` 应是 `'我用了 Redis 做缓存'` | ⚠️ 50+ 处 | ARB / 注释 / 字符串 |
 | **emoji 不一致** | loading 一处用 `⏳`、另一处用 `🔄` | ⚠️ 部分 | `app_zh.arb` 内 emoji 不强一致 |
 | **markdown 列表无空格** | `'-项目1'` 应是 `'- 项目1'` | ✅ 无 | markdown 格式正确 |
@@ -456,10 +456,10 @@
 | 子代理机会 | §6 5 个并行机会 | 不重复 |
 | 优先级清单 | §7 5+5+5 排序 | §7 仅 spzh 独有 15 项 |
 | **中文 commit 规范** | ❌ 未涉及 | ✅ §6.1 8 项 |
-| **中文 i18n / 全角标点** | ❌ 未涉及 | ✅ §2.2 + §5 #1 修真 |
+| **中文 i18n / 全角标点** | ❌ 未涉及 | ✅ §2.2 + §5 #1 修正 |
 | **国产 ROM 适配** | 仅 §5 #8 一行 | ✅ §2.1 6 项 |
 | **PIPL 合规** | §5 #22 一行 | ✅ §4 10 项 |
-| **中国特色 anti-pattern** | ❌ 未涉及 | ✅ §8 完整 19 项 + 修真建议 |
+| **中国特色 anti-pattern** | ❌ 未涉及 | ✅ §8 完整 19 项 + 修正建议 |
 | **术语一致性** | ❌ 未涉及 | ✅ §3 #1-3 + §5 #7 |
 | **农历 / 24 节气 / DST** | §5 #11 仅 midnight | ✅ §2.3 6 项 |
 | **Material 3 中文体验** | ❌ 未涉及 | ✅ §2.4 6 项 |
@@ -483,19 +483,19 @@
 
 **弱点**（3.0/5 ⚠️）：
 - check_fullwidth_punctuation.py 有 false positive（19+ 处 `……` 误报）
-- 7 处真实半角标点未修真
+- 7 处真实半角标点未修正
 - 中文术语不一致（"App / 应用 / 客户端" 3 种叫法混用）
 - 缺 `docs/terminology.md` 和 3 个 spzh 守护脚本
 
-**Top 3 修真**：
-1. R59 修真 check_fullwidth_punctuation.py 误报（XS 难度，高价值）
-2. R59 修真真实半角标点 7 处（XS 难度，中价值）
+**Top 3 修正**：
+1. R59 修正 check_fullwidth_punctuation.py 误报（XS 难度，高价值）
+2. R59 修正真实半角标点 7 处（XS 难度，中价值）
 3. R60 新建 `docs/terminology.md` + ARB 术语统一（S 难度，高价值）
 
 **长期（R60-R61）**：
 - 加 3 个 spzh 守护（错别字 / 中英空格 / 24 节气 / PIPL 真接）
-- 新建 `docs/anti_patterns.md` 修真中国开发者 anti-pattern
-- 修真 PIPL §13 / §15 真接（合规必经）
+- 新建 `docs/anti_patterns.md` 修正中国开发者 anti-pattern
+- 修正 PIPL §13 / §15 真接（合规必经）
 
 ---
 
@@ -515,12 +515,12 @@
 
 **spzh 视角独有贡献**：
 - 把"中文工程化" 19 个 anti-pattern 系统化（spen 报告未列）
-- 量化术语不一致 4 处 + 修真建议
-- 量化真实半角标点 7 处 + 修真建议
-- 量化全角标点脚本误报 19+ 处 + 修真 pattern
+- 量化术语不一致 4 处 + 修正建议
+- 量化真实半角标点 7 处 + 修正建议
+- 量化全角标点脚本误报 19+ 处 + 修正 pattern
 - 量化 24 节气 / DST / 春节 / 闰年边界 6 项
 - 量化中文字号 / 字体 / 标点挤压 / 半角空格 4 项
-- 量化 spzh 守护脚本盲区 16 项 + 修真建议
+- 量化 spzh 守护脚本盲区 16 项 + 修正建议
 
 **没有重复的发现**：spen 报告 66 项 + spzh 报告本表 19 项 + 通用架构不重复 = 三个视角覆盖完整。
 

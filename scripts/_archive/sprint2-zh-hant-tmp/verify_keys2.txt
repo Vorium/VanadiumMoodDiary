@@ -1,8 +1,8 @@
 ﻿zh keys: 582
 hant keys: 582
 key 一致: True
-修真后 hant 跟 zh 完全一样 (即简体副本残留): 226
-修真后 hant 跟 zh 不一样 (即真正的繁体): 356
+修正后 hant 跟 zh 完全一样 (即简体副本残留): 226
+修正后 hant 跟 zh 不一样 (即真正的繁体): 356
 python : Traceback (most recent call last):
 所在位置 行:1 字符: 165
 + ... ONIOENCODING="utf-8"; python scripts/verify_hant_keys.py 2>&1 | Out-F ...

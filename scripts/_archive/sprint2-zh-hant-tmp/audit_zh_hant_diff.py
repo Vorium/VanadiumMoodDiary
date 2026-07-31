@@ -1,4 +1,4 @@
-"""Compare zh_Hant before/after conversion."""
+﻿"""Compare zh_Hant before/after conversion."""
 import re
 
 zh = open(r'lib/l10n/app_zh.arb', encoding='utf-8').read()
@@ -35,12 +35,12 @@ for k in v_zh:
     else:
         old_done += 1
 
-print(f'修真前 zh_Hant 跟 zh 完全一样: {old_still_simp}')
-print(f'修真前 zh_Hant 已繁化: {old_done}')
-print(f'修真后 zh_Hant 跟 zh 完全一样: {new_still_simp}')
-print(f'修真后 zh_Hant 已繁化: {new_done}')
+print(f'修正前 zh_Hant 跟 zh 完全一样: {old_still_simp}')
+print(f'修正前 zh_Hant 已繁化: {old_done}')
+print(f'修正后 zh_Hant 跟 zh 完全一样: {new_still_simp}')
+print(f'修正后 zh_Hant 已繁化: {new_done}')
 print()
-print(f'=== 修真后剩余 {new_still_simp} 个 key 还有差异 (前 25 个) ===')
+print(f'=== 修正后剩余 {new_still_simp} 个 key 还有差异 (前 25 个) ===')
 for k, vz, vn in samples:
     print(f'  {k}:')
     print(f'    zh:   {vz!r}')

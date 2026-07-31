@@ -1,4 +1,4 @@
-# 整合总览表（v0.25 round 56h）— 三视角 + 底层排查 + 顶层架构
+﻿# 整合总览表（v0.25 round 56h）— 三视角 + 底层排查 + 顶层架构
 
 > **作者**：Mavis（root orchestrator）
 > **HEAD**：`33b5fd0 v0.25 round 56h`（2026-07-26）
@@ -242,7 +242,7 @@
 
 ### Round 64（spen P1 — 拆 medication_report_pdf 321 行，medium 0.5-1d）
 - 抽 `PdfFontLoader` + `PdfLayout` 2 个 pure helper
-- 11 处 Colors.white/black 修真 → 用 PdfColor 库自身
+- 11 处 Colors.white/black 修正 → 用 PdfColor 库自身
 
 ### Round 65（emil P1 — 触感集中器 17 处 IconButton + 20 处 AppListTile，1 round）
 - 17 处 IconButton 走 `PressFeedbackIconButton` 集中器

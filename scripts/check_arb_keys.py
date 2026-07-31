@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Check missing keys between zh, en, zh-Hant arb files.
 
 v0.23 (P0-14) 修: 双向检查 (zh-en + en-zh) + exit code 1 (CI 友好)
@@ -10,7 +10,7 @@ v0.24 round 47 (B-27) 修: 加 --staged 模式, PR 时只查修改文件
 
 v0.24 round 48 (sp-zh P1-21) 修: --staged 模式加 zh-Hant 同步检查
   - 之前 P0 fix 加 5 个 i18n key 时漏了 zh_Hant.arb,导致 zh_Hant 落后 6 key
-  - 修真方法: 跑 flutter gen-l10n 会自动同步 zh_Hant,但需要人触发
+  - 修正方法: 跑 flutter gen-l10n 会自动同步 zh_Hant,但需要人触发
   - 守护: --staged 模式先验 zh_Hant 是不是同步,如果不同步 fail
   - 修法: python scripts/check_arb_keys.py --staged 报缺漏 → 跑 flutter gen-l10n
 """
@@ -76,9 +76,9 @@ def check_hant(zh_path, hant_path):
     v0.24 round 48 (sp-zh P1-21) 新增:
     - zh_Hant.arb 是 OpenCC s2tw 繁化的产物,理论上跟 zh.arb 100% 同步
     - 但 P0 fix 加 5 个 i18n key 时只改了 zh.arb / en.arb,漏了 zh_Hant.arb
-    - 修真方法: 跑 flutter gen-l10n 会重新生成所有 3 个 ARB 对应的 .dart 文件,
+    - 修正方法: 跑 flutter gen-l10n 会重新生成所有 3 个 ARB 对应的 .dart 文件,
       但 arb 文件本身需要手工加 (gen-l10n 不修改 arb 源文件)
-    - 守护: --staged 模式如果检测到 zh_Hant 落后,exit 1 提示修真
+    - 守护: --staged 模式如果检测到 zh_Hant 落后,exit 1 提示修正
     """
     zh = keys(zh_path)
     hant = keys(hant_path)

@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # v0.26 round 57 (owner P1 #5 / spzh C-09): check_zh_hant_consistency 守门员
 #
 # 作用: 验证 `lib/l10n/app_zh_Hant.arb` 跟 `app_zh.arb` 繁简转换一致
 #
 # 背景: spzh v0.25 round 56h P0 报告: zh_Hant 落后 zh 6 key (R54 加 privacy 时漏)
-#   修真方法: 用 OpenCC s2tw 复算 zh → 繁中, 跟现有 app_zh_Hant.arb 内容对比
+#   修正方法: 用 OpenCC s2tw 复算 zh → 繁中, 跟现有 app_zh_Hant.arb 内容对比
 #   差异 > 0 → 报 [FAIL] (说明 zh_Hant 没跟 zh 同步)
 #
 # 范围: lib/l10n/app_zh.arb + lib/l10n/app_zh_Hant.arb
@@ -109,7 +109,7 @@ def main() -> int:
 
     if diff_count > 0:
         print(f'[FAIL] check_zh_hant_consistency: {diff_count} 处繁简不一致')
-        print('  修真:')
+        print('  修正:')
         print('    1. 改 zh (zh_Hant 跟 zh 同步走 OpenCC s2tw)')
         print('    2. 或改 zh_Hant 跟 OpenCC 输出一致')
         print('  详情 (前 5 条):')

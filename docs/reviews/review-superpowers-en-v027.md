@@ -1,4 +1,4 @@
-# Superpowers (EN) Architecture Review — chroniccare v0.27 round 58
+﻿# Superpowers (EN) Architecture Review — chroniccare v0.27 round 58
 
 > **Methodology lens**: superpowers-en (upstream, 233k+ ⭐) — TDD, systematic-debugging, code review, subagent-driven-development, writing-plans, verification-before-completion.
 > **Project**: D:\Batch\chroniccare (慢性病 / 精神心理患者吃药打卡 App, Flutter 3.41.9 / Dart 3.12.2 / Riverpod 3.3.2 / Drift 2.20.3 / go_router 14.6)
@@ -208,7 +208,7 @@ The AGENTS.md §"已知坑" documents 14 gotchas. I grep'd for each to find any 
 | 13 | go_router 默认无 transition | All 14 routes use `pageBuilder` + `CustomTransitionPage`. R59 + R57 R57 verified. | 🟢 none | Verified. |
 | 14 | Material 3 ink_sparkle shader missing | `pubspec.yaml:75-76` declares shader, `assets/shaders/ink_sparkle.frag` present | 🟢 none | R17 R8 fix locked. |
 | 15 | 跨 feature import 边界 | `check_cross_feature.py` CI script. R57 R57 0 violations. | 🟢 none | R17 R12 + R57 R57 locked. |
-| 16 | **NEW** R57 R57: `check_strings_hardcoded` guard was too narrow | R58 fixed by widening the context window from 4 to 10 lines + recognizing the `xxxText({String? override})` pair pattern. R58 commit `1d546e2` "P0 #3 修真" details. | 🟢 resolved | R58 P0 #3 fixed. |
+| 16 | **NEW** R57 R57: `check_strings_hardcoded` guard was too narrow | R58 fixed by widening the context window from 4 to 10 lines + recognizing the `xxxText({String? override})` pair pattern. R58 commit `1d546e2` "P0 #3 修正" details. | 🟢 resolved | R58 P0 #3 fixed. |
 | 17 | **NEW** R58: `check_sms_release_ready` guard downgraded to `[WARN]` | R58 commit `2ad8246` "A-01 warn-only" downgraded because AliyunSmsProvider real impl is xlarge (法务 1-2 月 + AccessKey). v0.x release doesn't block; v1.0 must restore hard FAIL. | 🟡 medium | Acceptable trade-off; documented. |
 | 18 | **NEW** R58: `setup_page.dart:404` timeout silent fallback (see §4 #10) | The R52 fix (`onTimeout: () => []`) returns empty list. If user has 5 meds, timeout → 0 meds → setup writes 0 meds silently. | 🟠 **P0 regression risk** | New finding from this review. R58 did not address. |
 | 19 | **NEW** R58: dead token `textStyleScoreLg/Xl/Xxl` | R58 commit `c1916c8` B-09 "emil R50 dead token 清理" removed 3 unused tokens (-31 lines). | 🟢 none | R58 fixed. |
@@ -310,7 +310,7 @@ Following the superpowers "red flags" table in `using-superpowers/SKILL.md`:
 | 8 | `medication_report_pdf.dart:321` god class | 🟢 Resolved in R57 | 304 → 59 lines via `PdfLayout` |
 | 9 | `reminder_scheduler.dart:244` god class | 🔴 **Still un-split** | See §3 #? — not in my top list, but it's 244 lines. R60+ should consider. |
 | 10 | `mood_audio_service.dart:350` god class | 🔴 **Still un-split** | 350 lines. R60+ should consider. |
-| 11 | `safety_alert_dispatcher.dart:42-43` SMS body hardcoded Chinese | 🟡 Partial — R58 P0 #3 fixed but R58 left 1 `buildAlertSms` Chinese (`'$name 已 $daysSinceLast 天未打卡吃药...'`) | Should walk through the i18n 修真. |
+| 11 | `safety_alert_dispatcher.dart:42-43` SMS body hardcoded Chinese | 🟡 Partial — R58 P0 #3 fixed but R58 left 1 `buildAlertSms` Chinese (`'$name 已 $daysSinceLast 天未打卡吃药...'`) | Should walk through the i18n 修正. |
 | 12 | `safety_alert_dispatcher.dart:90-94` pii log | 🟢 OK | No PII risk. |
 | 13 | `flutter build apk/web` unverified | 🔴 **Still unverified** | 12 rounds no build commit. CI workflow needed. |
 | 14 | `app_router.dart:33-49` RouterProfileCache | 🟢 Resolved in R57 | Now uses `ref.read` + `_RouterProfileCache` |

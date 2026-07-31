@@ -1,4 +1,4 @@
-"""Refined audit: distinguish real simp residue from same-form chars."""
+﻿"""Refined audit: distinguish real simp residue from same-form chars."""
 import re
 
 zh = open(r'lib/l10n/app_zh.arb', encoding='utf-8').read()
@@ -17,7 +17,7 @@ for k, v in hant_map.items():
     simp = [c for c in v if c in TRUE_SIMP]
     if simp:
         residuals.append((k, v, simp))
-print(f'修真后真简体残留: {len(residuals)}')
+print(f'修正后真简体残留: {len(residuals)}')
 for k, v, simp in residuals[:20]:
     print(f'  {k}: {v!r} ({simp})')
 
@@ -25,16 +25,16 @@ for k, v, simp in residuals[:20]:
 # These are 同形字 (天/分/情/息/作/案/式/路/程/行/器/...)
 # 全部都正确
 print()
-print('=== 修真后跟 zh 完全一样的 key (无真简体字) ===')
+print('=== 修正后跟 zh 完全一样的 key (无真简体字) ===')
 same = [k for k in zh_map if zh_map[k] == hant_map.get(k, '')]
 print(f'共 {len(same)} 个, 占总 {100*len(same)/len(zh_map):.1f}%')
 for k in same[:15]:
     print(f'  {k}: {zh_map[k]!r}')
 
-# 修真后 hant 跟 zh 不一样 (即真繁化)
+# 修正后 hant 跟 zh 不一样 (即真繁化)
 diff = [k for k in zh_map if zh_map[k] != hant_map.get(k, '')]
 print()
-print(f'修真后真繁化: {len(diff)} 个, 占总 {100*len(diff)/len(zh_map):.1f}%')
+print(f'修正后真繁化: {len(diff)} 个, 占总 {100*len(diff)/len(zh_map):.1f}%')
 for k in diff[:5]:
     print(f'  {k}:')
     print(f'    zh:   {zh_map[k]!r}')

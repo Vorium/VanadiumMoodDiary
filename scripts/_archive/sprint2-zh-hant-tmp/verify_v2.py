@@ -1,4 +1,4 @@
-"""Verify v2 conversion."""
+﻿"""Verify v2 conversion."""
 import re
 
 zh = open(r'lib/l10n/app_zh.arb', encoding='utf-8').read()
@@ -20,22 +20,22 @@ for k, v in hant_map.items():
     simp = [c for c in v if c in TRUE_SIMP]
     if simp:
         residuals.append((k, v, simp))
-print(f'修真后真简体残留: {len(residuals)}')
+print(f'修正后真简体残留: {len(residuals)}')
 for k, v, simp in residuals[:30]:
     print(f'  {k}: {v!r} ({simp})')
 
-# 修真后跟 zh 完全一样 (这些是 OpenCC 不动的 value: 纯数字/英文/品牌/标点/同形字)
+# 修正后跟 zh 完全一样 (这些是 OpenCC 不动的 value: 纯数字/英文/品牌/标点/同形字)
 same = [k for k in zh_map if zh_map[k] == hant_map.get(k, '')]
 print()
-print(f'修真后跟 zh 完全一样 (同形字 / 品牌名 / 占位符等): {len(same)}')
+print(f'修正后跟 zh 完全一样 (同形字 / 品牌名 / 占位符等): {len(same)}')
 
 # 标点
 print()
-print(f'修真后 hant "／" 计数: {hant.count("／")}')
-print(f'修真后 hant "/" 计数: {hant.count("/")}')
-print(f'修真后 hant "……" 计数: {hant.count("……")}')
-print(f'修真后 hant "..." 计数: {hant.count("...")}')
-print(f'修真后 hant "—" 计数: {hant.count("—")}')
-print(f'修真后 hant "--" 计数: {hant.count("--")}')
-print(f'修真后 hant "您" 计数: {hant.count("您")}')
-print(f'修真后 hant "你" 计数: {hant.count("你")}')
+print(f'修正后 hant "／" 计数: {hant.count("／")}')
+print(f'修正后 hant "/" 计数: {hant.count("/")}')
+print(f'修正后 hant "……" 计数: {hant.count("……")}')
+print(f'修正后 hant "..." 计数: {hant.count("...")}')
+print(f'修正后 hant "—" 计数: {hant.count("—")}')
+print(f'修正后 hant "--" 计数: {hant.count("--")}')
+print(f'修正后 hant "您" 计数: {hant.count("您")}')
+print(f'修正后 hant "你" 计数: {hant.count("你")}')

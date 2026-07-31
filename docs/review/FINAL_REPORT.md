@@ -1,4 +1,4 @@
-# 综合代码审视报告 — v0.24 Round 47（末）
+﻿# 综合代码审视报告 — v0.24 Round 47（末）
 
 > **项目**：D:\Batch\chroniccare — 精神心理患者吃药打卡 App
 > **栈**：Flutter 3.41.9 / Dart 3.12.2 / Riverpod 3.3.2 / Drift 2.20.3 / go_router 14.6
@@ -87,7 +87,7 @@
 - ✅ `check_no_pua.py` 守门员
 - ✅ `zh_Hant.arb` OpenCC s2tw 真繁化 401 key
 - ✅ CHANGELOG 补 [0.23.0] + AGENTS/README 数据同步
-- ✅ `app_router` mojibake 修真 + DosageUnit 强类型
+- ✅ `app_router` mojibake 修正 + DosageUnit 强类型
 - ✅ `check_arb_keys` 1:1 对齐 582/582/582
 
 **核心降分项**（5 P0 阻塞应用商店上架）：
@@ -462,10 +462,10 @@ lib/presentation/  (UI)                      ← 调用方
 - **问题描述**：春节/中秋等假期续方提醒不智能
 - **建议**：可选 `holiday_calendar.dart`（2026-2030 节假日数据）
 
-#### [P1-20] [sp-zh-工程] `app_router` mojibake 修真历史归档
+#### [P1-20] [sp-zh-工程] `app_router` mojibake 修正历史归档
 - **位置**：`docs/CHANGELOG.md` v0.24 段
 - **修复难度**：S
-- **建议**：归档 v0.23 / v0.24 mojibake 修真决策到 `docs/decisions/`
+- **建议**：归档 v0.23 / v0.24 mojibake 修正决策到 `docs/decisions/`
 
 #### [P1-21] [sp-zh-i18n] `check_arb_keys.py` 加 PR-time gate
 - **位置**：`scripts/check_arb_keys.py`
@@ -567,7 +567,7 @@ lib/presentation/  (UI)                      ← 调用方
 | P1-17 | lib/presentation/pages/setup/setup_page.dart:288 | sp-zh | 底层 | S | 🟠 | emoji 渲染 textStyle 注释 |
 | P1-18 | lib/main.dart | sp-zh | 架构 | S | 🟠 | tz.local 显式初始化 |
 | P1-19 | lib/domain/logic/reminder_scheduler.dart | sp-zh | 架构 | M | 🟠 | 国内节假日未识别 |
-| P1-20 | docs/CHANGELOG.md | sp-zh | 底层 | S | 🟠 | mojibake 修真历史归档 |
+| P1-20 | docs/CHANGELOG.md | sp-zh | 底层 | S | 🟠 | mojibake 修正历史归档 |
 | P1-21 | scripts/check_arb_keys.py | sp-zh | 架构 | S | 🟠 | 加 PR-time CHANGELOG gate |
 | P2-1~13 | （emil 单 prop override 集）| emil | 底层 | S | 🟡 | 13 项 polish |
 | P2-14~18 | （sp-en lint / 老模式）| sp-en | 底层 | S-M | 🟡 | 5 项 lint / 命名 |
@@ -672,7 +672,7 @@ lib/presentation/  (UI)                      ← 调用方
 | 6 个 test inference_failure warning | 0.3h | S |
 | 5 处 `!mounted` 老模式 refactor（home_page）| 0.3h | M |
 | `_streamTimeout` 下划线 lint | 0.1h | S |
-| AGENTS.md 8 守护校正 + mojibake 修真归档 | 0.3h | S |
+| AGENTS.md 8 守护校正 + mojibake 修正归档 | 0.3h | S |
 | **批小计** | **1h** | |
 
 ---
@@ -775,9 +775,9 @@ Skip 10 项：hover gate（Flutter M3 内置）/ 农历 / dashboard / markdown l
 - **CelebrationOverlay 抽到 animations/ 作 thin wrapper**：home_page.dart 改用 CelebrationBounce; celebration_overlay.dart 删
 - **_Shimmer "呼吸" 模式**：addStatusListener + Future.delayed 600ms + 重播 (emil "loading should feel fast, not dance")
 - **AppListTile.carded 命名构造子** 加 `_isCarded` 标志；vent_list 保留 `PressFeedback + Card + ListTile`（缺 onLongPress + Hero 2 个 API 强行用价值低）
-- **check_no_pua 加 SKIP_PATHS**：docs/reviews/ + docs/archive/reviews/ + docs/decisions/ — 修真历史档案故意记录 mojibake
+- **check_no_pua 加 SKIP_PATHS**：docs/reviews/ + docs/archive/reviews/ + docs/decisions/ — 修正历史档案故意记录 mojibake
 - **strings.dart domain layer 保留 fallback**：EmailTemplate.buildBody 加可选 `bodyOverride`/`footerOverride`/`subjectOverride`/`referenceNow` 参数，caller 传 AppLocalizations 字符串，domain Strings 兜底中文（"v1.0+ 计划"）
-- **P1-13 negative result 不修真**：Set<DateTime> 改法实测慢 4 倍（DateTime.hashCode 开销 > .any() short-circuit），保留原 + 8 case perf regression guard
+- **P1-13 negative result 不修正**：Set<DateTime> 改法实测慢 4 倍（DateTime.hashCode 开销 > .any() short-circuit），保留原 + 8 case perf regression guard
 - **buildTheme 是 ThemeData 工厂无 BuildContext**：app_theme.dart hintStyle/disabledForegroundColor 暂不抽 fgHintInput/fgDisabled token (TODO v0.25 评估)
 
 ### 8.7 风险与待办（v0.25+）

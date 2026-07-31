@@ -1,4 +1,4 @@
-"""Apply post-OpenCC polish to zh_Hant.
+﻿"""Apply post-OpenCC polish to zh_Hant.
 
 Fixes:
 1. 您 → 你 (back to 您, 23 keys from prior partial conversion error)
@@ -12,8 +12,8 @@ import re
 OLD = r'lib/l10n/app_zh_Hant.arb.tmp'
 NEW = r'lib/l10n/app_zh_Hant.arb'
 
-# 1. 修真前 49 key 中 把"您"改成了"你"的部分 -- 反向修复
-# (这些 key 修真前 zh 是"您",修真后应该也"您")
+# 1. 修正前 49 key 中 把"您"改成了"你"的部分 -- 反向修复
+# (这些 key 修正前 zh 是"您",修正后应该也"您")
 PAT_NIN_AS_HANT = re.compile(
     r'^(  ")([^"]+)(": )"([^"]*你[^"]*)("(?:,)?)(.*)$',
     re.M
@@ -22,8 +22,8 @@ PAT_NIN_AS_HANT = re.compile(
 
 def fix_nin_to_nin(text):
     """Restore 您 in known-您 keys (where zh is 您)."""
-    # Easier: 修真后保留"您"在 3 个 key 里,把所有"你"为 standalone pronoun 改"您"需要逐个确认
-    # 简化方案: 对修真前 49 个已繁化 key + 修真后新增繁化 key,检查 zh 是"您"而 hant 是"你"的就改回
+    # Easier: 修正后保留"您"在 3 个 key 里,把所有"你"为 standalone pronoun 改"您"需要逐个确认
+    # 简化方案: 对修正前 49 个已繁化 key + 修正后新增繁化 key,检查 zh 是"您"而 hant 是"你"的就改回
     return text
 
 
@@ -53,7 +53,7 @@ def fix_value_against_zh(text, zh_text):
         # 修复 1: 您/你 对齐 zh
         if '您' in zh_value and '你' in new_value and '您' not in new_value:
             # Replace standalone 你 with 您 (but not 你好, 你们, etc — use simple replace first)
-            # In our context, 修真后所有"你"都是错的(都该是"您")
+            # In our context, 修正后所有"你"都是错的(都该是"您")
             new_value = new_value.replace('你', '您')
             changes.append('您')
 

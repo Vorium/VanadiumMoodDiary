@@ -1,4 +1,4 @@
-"""Audit zh_Hant state vs zh - 修真前基线."""
+﻿"""Audit zh_Hant state vs zh - 修正前基线."""
 import re
 
 zh = open(r'lib/l10n/app_zh.arb', encoding='utf-8').read()

@@ -1,9 +1,9 @@
-# 中文术语集中表 (chroniccare v0.27 round 59)
+﻿# 中文术语集中表 (chroniccare v0.27 round 59)
 
 > **作者**: Mavis (root orchestrator)
 > **来源**: superpowers-zh §3.1-3.2 审视发现
 > **目的**: 集中"App/应用/客户端"、"i18n/国际化/本地化"等混用术语,统一团队 + 翻译规范
-> **状态**: R59 修真 spec 文档化; R60+ 修真 ARB 集中器 (新加 `lib/core/l10n/terms.dart` + `appTerms` ARB section)
+> **状态**: R59 修正 spec 文档化; R60+ 修正 ARB 集中器 (新加 `lib/core/l10n/terms.dart` + `appTerms` ARB section)
 
 ---
 
@@ -29,9 +29,9 @@
 | commit message | "App" 或 "app" | "v0.25 round 56: app_tokens 集中器化" | — |
 | README / CHANGELOG | "App" (与代码风格一致) | "App v0.27 released" | — |
 
-**修真 R59 状态**:
+**修正 R59 状态**:
 - ✅ spec 文档化 (本文件)
-- ⏳ R60 修真: 改 14 处中文 ARB 中"App" → "本应用"或"慢病管家"
+- ⏳ R60 修正: 改 14 处中文 ARB 中"App" → "本应用"或"慢病管家"
   - `app_zh.arb:50` "App 会在我失联时给他们发通知" → "慢病管家会在我失联时给他们发通知"
   - `app_zh.arb:96, 120, 256, 286, 290, 300, 808, 813, 818, 1130, 1135, 1138, 1152, 1163` 同款
 
@@ -46,11 +46,11 @@
 | 英文 ARB | "translation" 或 "language" | "Translation support" | ❌ "i18n" (用户不理解) |
 | ARB key 名 | `xxxI18n` 后缀 | `emailBodyI18n` / `emailFooterI18n` | ✅ 现状正确 |
 
-**现状 (R59 修真前)**:
+**现状 (R59 修正前)**:
 - ARB key 名用 "I18n" 后缀 — 正确 (代码风格)
 - 中文 ARB 内容未出现"i18n/国际化/本地化" — 0 命中
 - 英文 ARB 内容未出现 "i18n" — 0 命中
-- 修真优先级: **低** (现状已合理, 仅需 spec 文档化)
+- 修正优先级: **低** (现状已合理, 仅需 spec 文档化)
 
 ---
 
@@ -64,7 +64,7 @@
 | ARB key | `phq9Xxx` / `gad7Xxx` | `phq9Item1Text` | ✅ 现状正确 |
 | 严重度等级 | "无 / 轻度 / 中度 / 重度" | "您的 PHQ-9 评估结果为中度抑郁" | ❌ "normal / mild / moderate / severe" (除非英文) |
 
-**修真优先级**: **P2 (低)** — 量表 i18n 化是 spzh v0.25 R56h P0 必修, 已修 domain/logic/assessment_scale.dart (R48) 加 `detectCrisis` 6 region 路由, 但量表题目/严重度仍硬编中文 (R51b 修真 TODO, v0.27 仍未修真)。**R60+ 修真**: `domain/logic/assessment_scale.dart` 加 `List<AssessmentItem> items` 字段, 数据从 ARB 拿。
+**修正优先级**: **P2 (低)** — 量表 i18n 化是 spzh v0.25 R56h P0 必修, 已修 domain/logic/assessment_scale.dart (R48) 加 `detectCrisis` 6 region 路由, 但量表题目/严重度仍硬编中文 (R51b 修正 TODO, v0.27 仍未修正)。**R60+ 修正**: `domain/logic/assessment_scale.dart` 加 `List<AssessmentItem> items` 字段, 数据从 ARB 拿。
 
 ---
 
@@ -105,10 +105,10 @@
 | 全角括号包英文 | "（App）" | ❌ "(App)" |
 | 全角冒号 + 英文 | "PHQ-9：分数" | ❌ "PHQ-9: 分数" |
 
-**修真 R59 状态**:
-- 修真了 3 处真实半角斜杠 (`preset_medication_templates.dart:74/119/154` 的 `SSRI / SNRI` → `SSRI ／ SNRI`)
-- 修真了 fullwidth 误报 (47→45 violations, 部分有效)
-- 修真 R60+ 修真剩余 35+ 处真实 violations
+**修正 R59 状态**:
+- 修正了 3 处真实半角斜杠 (`preset_medication_templates.dart:74/119/154` 的 `SSRI / SNRI` → `SSRI ／ SNRI`)
+- 修正了 fullwidth 误报 (47→45 violations, 部分有效)
+- 修正 R60+ 修正剩余 35+ 处真实 violations
 
 ---
 
@@ -123,8 +123,8 @@
 - App Store 审核 / 4 store 隐私 URL / PIPL 合规需要统一术语
 
 **后果**:
-- ✅ R59 修真 3 处真实半角斜杠
-- ⏳ R60 修真 14 处"App" → "本应用" / "慢病管家"
+- ✅ R59 修正 3 处真实半角斜杠
+- ⏳ R60 修正 14 处"App" → "本应用" / "慢病管家"
 - ⏳ R60 新增 `lib/core/l10n/terms.dart` 技术词集中器
 - ⏳ R60 新增 ARB `appTerms` section 业务词集中器
 
@@ -141,12 +141,12 @@
 - `docs/CHANGELOG.md` — 版本变更
 - `docs/CHINESE_COMMIT_GUIDE.md` — 中文 commit 规范
 - `docs/anti_patterns.md` (R60+ 新建) — 中国开发者 anti-pattern
-- `scripts/check_fullwidth_punctuation.py` — 全角标点守护 (R59 修真误报)
+- `scripts/check_fullwidth_punctuation.py` — 全角标点守护 (R59 修正误报)
 
 ---
 
-**v0.27 round 59 修真路径**:
+**v0.27 round 59 修正路径**:
 - ✅ spec 文档化 (本文件)
-- ⏳ R60 修真: 14 处 "App" → "本应用" / "慢病管家" + 新增 `lib/core/l10n/terms.dart`
-- ⏳ R60 修真: `check_zh_terms_consistency.py` 守护脚本 (spzh §5#7)
-- ⏳ R60 修真: `check_chinese_anti_pattern.py` 守护脚本 (拼音 / 全角空格 / 错别字)
+- ⏳ R60 修正: 14 处 "App" → "本应用" / "慢病管家" + 新增 `lib/core/l10n/terms.dart`
+- ⏳ R60 修正: `check_zh_terms_consistency.py` 守护脚本 (spzh §5#7)
+- ⏳ R60 修正: `check_chinese_anti_pattern.py` 守护脚本 (拼音 / 全角空格 / 错别字)

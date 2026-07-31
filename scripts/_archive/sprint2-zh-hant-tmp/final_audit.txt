@@ -1,4 +1,4 @@
-﻿修真后跟 zh 完全一样: 226
+﻿修正后跟 zh 完全一样: 226
 样例:
   appName: '慢病管家'
   homeCheckedIn: '今天已打卡 ✓'
@@ -21,7 +21,7 @@
   setupPrivacy1: '• 本地加密'
   settingsDisclaimer: '免责声明'
 
-修真后"跟 zh 一样"但仍含真简体字的: 12
+修正后"跟 zh 一样"但仍含真简体字的: 12
   setupReminder2: '✓ 您点 1 下 = 打卡' (['点'])
   commonEdit: '编辑' (['编'])
   notificationStatusCardTestTitle: '🔔 通知自检' (['通'])

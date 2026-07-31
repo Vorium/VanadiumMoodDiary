@@ -1,4 +1,4 @@
-# superpowers-zh 视角代码审视 · v0.24 round 47
+﻿# superpowers-zh 视角代码审视 · v0.24 round 47
 
 > **审视基线**：v0.24 round 47 (HEAD `8dcaf7c`) / schemaVersion 12 / 218 commit / 90 test files / 876 test cases / 0 analyze error
 > **审视日期**：2026-07-26
@@ -26,7 +26,7 @@
 | 0.11 | notification_service god class | ✅ | round 45 (84b7a1b) 拆 3 子 (629→353, -44%) |
 | 0.12 | mood_dialog god class | ✅ | round 45 (7412138) 拆 5 子 widget (738→199) |
 | 0.13 | data_export_service god class | ✅ | round 45 (da110ce) 拆 3 子 (582→538) + 73 test |
-| 0.14 | app_router mojibake | ✅ | round 46 (9e9e6de) 修真 + strings.dart DosageUnit 强类型 |
+| 0.14 | app_router mojibake | ✅ | round 46 (9e9e6de) 修正 + strings.dart DosageUnit 强类型 |
 | 0.15 | `tz.local` 时区 race | ✅ | round 40 (1b95e67) 已修；`DateTime.now()` 83 处散落但有 sp-zh D-06 fix 守门员 |
 | 0.16 | 中文 commit 规范（`v0.X round N: <title>`） | ✅ | 74/74 commit 100% 符合（v0.18 起） |
 | 0.17 | setupContactConsent 紧急联系人代理同意 | ✅ | `setup_step_welcome.dart:43/130-137` CheckboxListTile + l10n.setupContactConsent |
@@ -76,7 +76,7 @@
   - v0.24 round 45-47 关键 commit 应在 [0.24.0] 但**全部 0 提及**：
     - `ce44acc` fix(spzh) main.dart _MigrationFailedApp 4 处 i18n 化
     - `45b773b` ci(spen) 新增 check_no_pua.py 守门员
-    - `cf61948` fix(spzh) zh_Hant.arb 简体副本修真 - OpenCC s2tw 繁化 401 key
+    - `cf61948` fix(spzh) zh_Hant.arb 简体副本修正 - OpenCC s2tw 繁化 401 key
     - `1646e0e` refactor(emil) 抽 AppSemantics 集中器
     - `7412138` / `84b7a1b` / `da110ce` 3 个 god class 拆解
     - `05dfd9a` 重命名 data_providers → shared_providers
@@ -112,9 +112,9 @@
 
 - **v0.24 round 45 集体修复 4 项**（spzh 视角重大进展）：
   - `ce44acc` fix(spzh) main.dart _MigrationFailedApp 4 处 hardcode 中文 i18n 化 + 3 处 TextStyle 改 token
-  - `cf61948` fix(spzh) zh_Hant.arb 简体副本修真 - OpenCC s2tw 繁化 401 key
+  - `cf61948` fix(spzh) zh_Hant.arb 简体副本修正 - OpenCC s2tw 繁化 401 key
   - `26196de` docs(spzh) CHANGELOG 补 [0.23.0] 章节 + AGENTS/README 数据同步 + 加国产 ROM 段
-  - `9e9e6de` refactor(spzh) app_router mojibake 修真 + strings.dart DosageUnit 强类型 + 新 string
+  - `9e9e6de` refactor(spzh) app_router mojibake 修正 + strings.dart DosageUnit 强类型 + 新 string
 - **check_arb_keys.py 1:1 对齐** zh 582 / en 582 / zh_Hant 582 ✅
 - **check_no_pua.py 0 PUA** ✅
 - **domain 层 fallback** `lib/core/l10n/strings.dart` (147 行)：
@@ -542,7 +542,7 @@
 ### 3.1 视角健康度评分：**7.5 / 10**（B+，上次 v0.23 round 42 = A-）
 
 **加分项**（v0.24 round 45 集体修复）：
-- ✅ i18n 集体升级（main.dart _MigrationFailedApp / zh_Hant 真繁化 / 5 个 commit P0-P3 修真）
+- ✅ i18n 集体升级（main.dart _MigrationFailedApp / zh_Hant 真繁化 / 5 个 commit P0-P3 修正）
 - ✅ check_arb_keys / check_no_pua 7 守护脚本全绿
 - ✅ 中文 commit 74/74 100% 规范
 - ✅ README 国产 ROM 段 / AGENTS 数据同步
@@ -573,16 +573,16 @@
 
 ### 3.3 最大的 3 个问题
 
-1. 🔥🔥🔥 **合规 P0 5 项 12 round 0 修**（v0.22 报告 T-01~T-09）：3 份法律文档 v0.22 草稿 / 5 厂商 push 通道 / DEPLOYMENT.md 敏感措辞 / NMPA 二类医疗器械声明 / privacy_policy §1 设备信息矛盾 — **应用商店上架 100% 阻塞**。12-20 h 修真（不含律师外审 + 厂商 push 接入）。
-2. 🔥🔥 **CHANGELOG.md 缺 [0.24.0] 整章 + 顺序乱**：v0.24 round 45-47 共 30 commit 0 提及 + [0.16.0] 排到 [0.1.0+1] 后时间倒置。Keep a Changelog 1.1.0 严重违反。2-3 h 修真。
-3. 🔥 **pubspec 0.23.0+1 没 bump + strings.dart 35+ 处 hardcode 中文 + setup_legal_dialog P3-31 待 SMS 接入**：版本治理 + i18n 集中器目前是"集中了但仍中文" + 紧急联系人单独同意是合规过渡。0.5h + 6-10h + 4-8h 修真。
+1. 🔥🔥🔥 **合规 P0 5 项 12 round 0 修**（v0.22 报告 T-01~T-09）：3 份法律文档 v0.22 草稿 / 5 厂商 push 通道 / DEPLOYMENT.md 敏感措辞 / NMPA 二类医疗器械声明 / privacy_policy §1 设备信息矛盾 — **应用商店上架 100% 阻塞**。12-20 h 修正（不含律师外审 + 厂商 push 接入）。
+2. 🔥🔥 **CHANGELOG.md 缺 [0.24.0] 整章 + 顺序乱**：v0.24 round 45-47 共 30 commit 0 提及 + [0.16.0] 排到 [0.1.0+1] 后时间倒置。Keep a Changelog 1.1.0 严重违反。2-3 h 修正。
+3. 🔥 **pubspec 0.23.0+1 没 bump + strings.dart 35+ 处 hardcode 中文 + setup_legal_dialog P3-31 待 SMS 接入**：版本治理 + i18n 集中器目前是"集中了但仍中文" + 紧急联系人单独同意是合规过渡。0.5h + 6-10h + 4-8h 修正。
 
 ### 3.4 spzh 视角 P0-of-P0 路径图
 
 ```
 当前: v0.24 round 47 (B+ 7.5/10)
   ↓
-路径 1 (1 sprint, 12-20h): 修真 P0 4 项
+路径 1 (1 sprint, 12-20h): 修正 P0 4 项
   - [1] 3 份法律文档律师外审
   - [2] 5 厂商 push 通道 (Getui 折中方案)
   - [3] DEPLOYMENT.md 敏感措辞
@@ -590,11 +590,11 @@
   ↓
 目标: v0.24 round 48 (A- 8.5/10) — 应用商店可上架
 
-路径 2 (2 sprint, 30-40h): 修真 P0 + P1 7 项
+路径 2 (2 sprint, 30-40h): 修正 P0 + P1 7 项
   ↓
 目标: v0.25 round 50 (A 9/10) — 全 i18n + 合规完整
 
-路径 3 (3-4 sprint, 60-80h): 修真 P0 + P1 + P2 3 项
+路径 3 (3-4 sprint, 60-80h): 修正 P0 + P1 + P2 3 项
   ↓
 目标: v0.26 round 55 (A+ 9.5/10) — 工程实践 A+
 ```
@@ -621,15 +621,15 @@
 
 | commit | 评分 | 备注 |
 |---|---|---|
-| `ce44acc` fix(spzh) main.dart _MigrationFailedApp | ⭐⭐⭐⭐⭐ | P0 修真，干净彻底 |
+| `ce44acc` fix(spzh) main.dart _MigrationFailedApp | ⭐⭐⭐⭐⭐ | P0 修正，干净彻底 |
 | `45b773b` ci(spen) check_no_pua.py 守门员 | ⭐⭐⭐⭐⭐ | 长期收益，1 个 commit 防 100 个回归 |
-| `cf61948` fix(spzh) zh_Hant.arb 简体副本修真 | ⭐⭐⭐⭐⭐ | OpenCC s2tw 繁化 401 key，1 个 commit 修真 v0.23 P3-30 错做 |
+| `cf61948` fix(spzh) zh_Hant.arb 简体副本修正 | ⭐⭐⭐⭐⭐ | OpenCC s2tw 繁化 401 key，1 个 commit 修正 v0.23 P3-30 错做 |
 | `1646e0e` refactor(emil) AppSemantics 集中器 | ⭐⭐⭐⭐ | emil 视角主导但 spzh 受益（a11y 中国用户） |
 | `26196de` docs(spzh) CHANGELOG [0.23.0] + AGENTS/README 同步 | ⭐⭐⭐ | 补 [0.23.0] 但漏 [0.24.0]，**部分不完整** |
 | `9e9e6de` refactor(spzh) app_router mojibake + DosageUnit 强类型 | ⭐⭐⭐⭐⭐ | sp-en P0 + spzh P2 一并修 |
 | 其他 emil 主导 commit | ⭐⭐⭐⭐ | 受益但非 spzh 主导 |
 
-**v0.24 round 45-47 spzh 自评：A-（8.5/10）**——主要 P0 修真（_MigrationFailedApp / zh_Hant / mojibake / README 段），但缺 [0.24.0] CHANGELOG 章节 + pubspec bump 是个**收尾不细**的瑕疵。
+**v0.24 round 45-47 spzh 自评：A-（8.5/10）**——主要 P0 修正（_MigrationFailedApp / zh_Hant / mojibake / README 段），但缺 [0.24.0] CHANGELOG 章节 + pubspec bump 是个**收尾不细**的瑕疵。
 
 ---
 

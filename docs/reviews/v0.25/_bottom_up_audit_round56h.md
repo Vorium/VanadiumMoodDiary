@@ -1,4 +1,4 @@
-# 底层逐行排查（owner 视角 v0.25 round 56h）
+﻿# 底层逐行排查（owner 视角 v0.25 round 56h）
 
 > **作者**：Mavis（root orchestrator）
 > **扫描范围**：`lib/` 227 dart + `test/` 111 dart + `scripts/` 121 + `docs/` 40 = **499 个文件 100% 覆盖**
@@ -32,7 +32,7 @@
 | `StreamSubscription\|\.listen(` | 15 | 4 | audio 相关 4 文件（vent_compose / vent_detail / mood_recorder / mood_audio_service） |
 | 半角 `/` in `app_zh.arb` | 9 | 1 | v0.25 round 56e 清 39 orphan，但半角标点未审 |
 | 半角 `…` in `app_zh.arb` | 14 | 1 | 同上 |
-| mojibake PUA `[\x{E000}-\x{F8FF}]` | 0 | 0 | **v0.25 round 48 修真后保持**（`check_no_pua.py` 全绿） |
+| mojibake PUA `[\x{E000}-\x{F8FF}]` | 0 | 0 | **v0.25 round 48 修正后保持**（`check_no_pua.py` 全绿） |
 | `!\s*;\|as!` (force unwrap) | 15 | 8 | null safety 漏检查 |
 | `catch (_)` | 10 | 7 | v0.25 round 39 修过仍 10 |
 | `jsonDecode` | 6 | 4 | 合规 |
@@ -415,7 +415,7 @@ v0.25 round 57 / 58 用的"横向拆分"（service 变 3 个 parallel service，
 
 ### 4.3 i18n 双层架构结构性 gap 14 round 没人敢下
 
-`core/l10n/strings.dart` 50+ 处硬编中文（domain 0 flutter 边界硬约束），spzh R56h 修真 5 处但 strings.dart 本身 0 改动。3 种解法都是大工程，14 round 没人敢下这步棋。**v1.0 必须决策**。
+`core/l10n/strings.dart` 50+ 处硬编中文（domain 0 flutter 边界硬约束），spzh R56h 修正 5 处但 strings.dart 本身 0 改动。3 种解法都是大工程，14 round 没人敢下这步棋。**v1.0 必须决策**。
 
 ### 4.4 合规"文档 vs 实施"6 月 gap 是最大风险
 
@@ -477,7 +477,7 @@ R56e 加了 `check_orphan_arb_keys.py` 12 守门员全绿，但 **4 个 spzh 视
 
 ### 建议 7：R63 spen P1 — TDD 续（1-2d）
 - presentation 5 大 widget 测（trend / vent / settings / mood / contact）
-- 5 处 DateTime race 修真测
+- 5 处 DateTime race 修正测
 - 5 个 P0 bug fix 加 regression test
 
 ### 建议 8：R64 emil P1 — 继续 token 化（1d）

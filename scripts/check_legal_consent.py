@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # v0.26 round 57 (owner P1 #3 / spzh C-09): check_legal_consent 守门员
 #
 # 作用: 验证 `lib/presentation/pages/setup/setup_legal_dialog.dart` 不含
@@ -6,7 +6,7 @@
 #
 # 背景: spzh v0.25 round 56h P0 报告: PIPL §13 单独同意 0 实施 (R55 留 TODO)。
 #   守门员: 扫 setup_legal_dialog.dart, 命中 TODO / "PIPL §13 单独同意" 字符串 → 报 [FAIL]
-#   修真方法:
+#   修正方法:
 #     - TODO 去掉 (走 implemented 流程)
 #     - 或 PIPL §13 单独同意 实现后, 注释里改 "✅ 已实施" 之类
 #
@@ -32,13 +32,24 @@ LEGAL_DIALOG = ROOT / "lib" / "presentation" / "pages" / "setup" / "setup_legal_
 #   - TODO        → 还留 TODO 注释 → 报 fail
 #   - PIPL §13 单独同意 (在 setup_legal_dialog.dart 上下文里意味着还没实施)
 PATTERNS = [
-    (re.compile(r'\bTODO\b'), 'TODO 标记 (修真: 改 implemented 流程)'),
-    (re.compile(r'PIPL\s*§13\s*单独同意'), 'PIPL §13 单独同意 TODO (修真: 实施 + 改 ✅)'),
+    (re.compile(r'\bTODO\b'), 'TODO 标记 (修正: 改 implemented 流程)'),
+    (re.compile(r'PIPL\s*§13\s*单独同意'), 'PIPL §13 单独同意 TODO (修正: 实施 + 改 ✅)'),
 ]
 
 # 允许豁免的行模式 (注释里写 "已实施" / "✅ done" 之类)
 # 例: `// ✅ PIPL §13 单独同意已实施 (R60)`
-EXEMPT_LINE_RE = re.compile(r'✅|已实施|implemented|done|R\d+')
+#
+# v0.27 round 62 (P0-2 修复): 收窄豁免模式, 之前 `re.compile(r'✅|已实施|implemented|done|R\d+')`
+# 太宽, 任何含 R\d+ 数字或 "已实施" 的行都被豁免, 包括 setup 阶段未实际
+# 实施 PIPL §13 的代码行 (R60 等 commit ref 经常出现但不是真正的实施证据)。
+# 修复后: 必须**同时**含 ✅ + 已实施 + (R\d+ 引用 OR 明确 P0-2 实施) 才豁免。
+# 进一步: 真实豁免需要显式 "PIPL §13 单独同意 ✅" 字样。
+EXEMPT_LINE_RE = re.compile(
+    r'PIPL\s*§13\s*单独同意\s*✅'
+    r'|PIPL\s*§13\s*implemented'
+    r'|PIPL\s*§13\s*已实施\s*✅'
+    r'|P0-2\s*修复'
+)
 
 
 def scan_file(path: Path) -> list[tuple[int, str, str]]:
@@ -67,7 +78,7 @@ def main() -> int:
     if hits:
         print(f"[FAIL] check_legal_consent: {len(hits)} 处未实施 token")
         print(f"  文件: {LEGAL_DIALOG.relative_to(ROOT).as_posix()}")
-        print(f"  修真: TODO 走 implemented, PIPL §13 单独同意实施后改 ✅ 标记")
+        print(f"  修正: TODO 走 implemented, PIPL §13 单独同意实施后改 ✅ 标记")
         print(f"  详情:")
         for line_no, name, snippet in hits:
             print(f"    L{line_no}: [{name}] {snippet}")

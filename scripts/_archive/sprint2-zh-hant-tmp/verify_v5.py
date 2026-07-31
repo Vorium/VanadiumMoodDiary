@@ -1,4 +1,4 @@
-"""Final clean verify v5 - correctly identify true simp residue."""
+﻿"""Final clean verify v5 - correctly identify true simp residue."""
 import re
 
 zh = open(r'lib/l10n/app_zh.arb', encoding='utf-8').read()
@@ -24,15 +24,15 @@ for k, v in hant_map.items():
     simp = [c for c in v if c in true_simp]
     if simp:
         residuals.append((k, v, simp))
-print(f'修真后真简体残留 (excluding 同形字): {len(residuals)}')
+print(f'修正后真简体残留 (excluding 同形字): {len(residuals)}')
 for k, v, simp in residuals:
     print(f'  {k}: {v!r} ({simp})')
 
-# 修真覆盖率
+# 修正覆盖率
 diff = sum(1 for k in zh_map if zh_map[k] != hant_map.get(k, ''))
 same = sum(1 for k in zh_map if zh_map[k] == hant_map.get(k, ''))
 print()
-print(f'修真后跟 zh 不一样 (真繁化): {diff} ({100*diff/len(zh_map):.1f}%)')
-print(f'修真后跟 zh 一样 (同形/品牌/纯ASCII): {same} ({100*same/len(zh_map):.1f}%)')
+print(f'修正后跟 zh 不一样 (真繁化): {diff} ({100*diff/len(zh_map):.1f}%)')
+print(f'修正后跟 zh 一样 (同形/品牌/纯ASCII): {same} ({100*same/len(zh_map):.1f}%)')
 print(f'真简体残留: {len(residuals)}')
-print(f'修真覆盖率: {(1 - len(residuals)/len(zh_map))*100:.2f}%')
+print(f'修正覆盖率: {(1 - len(residuals)/len(zh_map))*100:.2f}%')

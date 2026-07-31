@@ -1,4 +1,4 @@
-"""Final utility: keep this for re-running zh_Hant audit / re-conversion if needed."""
+﻿"""Final utility: keep this for re-running zh_Hant audit / re-conversion if needed."""
 """Convert app_zh_Hant.arb from simplified to traditional using OpenCC s2tw (v2 - robust).
 
 Usage: python scripts/audit_zh_hant.py [convert|stats]
@@ -75,14 +75,14 @@ def stats():
                  for k in hant_map if any(c in TRUE_SIMP for c in hant_map[k])]
 
     print('=' * 60)
-    print('zh_Hant 修真状态')
+    print('zh_Hant 修正状态')
     print('=' * 60)
     print(f'总 keys: {total}')
     print()
-    print(f'HEAD (修真前): 简体副本 {same_head}, 已繁化 {diff_head}')
-    print(f'当前 (修真后): 同 zh {same_now}, 真繁化 {diff_now}')
+    print(f'HEAD (修正前): 简体副本 {same_head}, 已繁化 {diff_head}')
+    print(f'当前 (修正后): 同 zh {same_now}, 真繁化 {diff_now}')
     print()
-    print(f'修真覆盖率: {(diff_now - diff_head) / total * 100:.1f}%')
+    print(f'修正覆盖率: {(diff_now - diff_head) / total * 100:.1f}%')
     print(f'真简体残留: {len(residuals)}')
     if residuals:
         for k, v, simp in residuals[:5]:

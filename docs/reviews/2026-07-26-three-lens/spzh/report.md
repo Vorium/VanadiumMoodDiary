@@ -1,10 +1,10 @@
-# superpowers-zh 视角审视报告 — chroniccare v0.24.0
+﻿# superpowers-zh 视角审视报告 — chroniccare v0.24.0
 
 > 视角：**i18n / 合规 / 中文 / 提交规范 / 法务**
 > 项目路径：`D:\Batch\chroniccare`
 > 审视时间：2026-07-26
 > 审视人：sp-zh sub-agent (本任务执行者)
-> 已知起点：v0.24 round 48 已完成 main.dart 4 处硬编修真 + zh_Hant 繁化 + mojibake 修真 + EmailTemplate 动态时区 + 11 守护脚本
+> 已知起点：v0.24 round 48 已完成 main.dart 4 处硬编修正 + zh_Hant 繁化 + mojibake 修正 + EmailTemplate 动态时区 + 11 守护脚本
 > 扫描范围：lib/ 213 个 dart + test/ 105 + scripts/ 11 个 + docs/ 7 主文档 + l10n/ + pubspec.yaml
 > 工具：grep / Select-String / git log / read + 全量 review
 >

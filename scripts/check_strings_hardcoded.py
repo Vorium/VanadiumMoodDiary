@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # v0.26 round 57 (owner P1 #2 / spzh C-09): check_strings_hardcoded 守门员
-# v0.27 round 58 (P0 #3 修真): 识别 R57 override 配对模式 (const + xxxText({override}))
+# v0.27 round 58 (P0 #3 修正): 识别 R57 override 配对模式 (const + xxxText({override}))
 #
 # 作用: 检测 `lib/core/l10n/strings.dart` 里的硬编码中文 (应该是 const + 走 Strings.xxx)
 #
@@ -8,9 +8,9 @@
 #   这些是 domain 层 fallback, 暂时合法 (domain 不能 import flutter)。
 #   v0.26 R57 引入 override 模式: 每个 const 配对一个 xxxText({String? override})
 #   函数版, 新 caller 可注入 i18n 字符串, 老 caller 继续走 const。
-#   v0.27 R58 修真: 守门员识别 override 模式 (不需每处加 'v1.0+ i18n' 注释)
+#   v0.27 R58 修正: 守门员识别 override 模式 (不需每处加 'v1.0+ i18n' 注释)
 #
-# 规则 (R58 修真后):
+# 规则 (R58 修正后):
 #   1. static const String = '<中文>'
 #      - 配对函数版 `static String xxxText({String? override})` 存在 -> PASS (override 模式)
 #      - 不配对 -> 必须带 'v1.0+ i18n' / 'TODO' / 'i18n' 注释 (前 10 行内) 否则 FAIL
@@ -98,7 +98,7 @@ def main() -> int:
         if not STRING_ASSIGN_RE.search(line):
             continue
 
-        # R58 修真: 如果是 const 声明 + 有配对函数版 -> PASS
+        # R58 修正: 如果是 const 声明 + 有配对函数版 -> PASS
         const_match = CONST_NAME_RE.search(line)
         if const_match and has_override_pair(const_match.group(1), text):
             total_const_cn += 1
@@ -106,7 +106,7 @@ def main() -> int:
             continue
 
         # 否则 (无 override 配对) -> 必须带 i18n 注释
-        # R58 修真: 取前 10 行注释 (R57 取 4 行太短, 漏掉 section header 注释)
+        # R58 修正: 取前 10 行注释 (R57 取 4 行太短, 漏掉 section header 注释)
         ctx_start = max(0, line_no - 11)
         ctx = lines[ctx_start:line_no]
         if has_i18n_todo(line, ctx):
@@ -119,7 +119,7 @@ def main() -> int:
     if violations:
         print(f"[FAIL] check_strings_hardcoded: {len(violations)} 处硬编中文无 i18n 标记")
         print(f"  文件: {STRINGS_FILE.relative_to(ROOT).as_posix()}")
-        print(f"  规则 (R58 修真后):")
+        print(f"  规则 (R58 修正后):")
         print(f"    1. const 配对 xxxText({{String? override}}) 函数版 -> PASS (R57 模式)")
         print(f"    2. 否则: 必须前 10 行内含 'v1.0+ i18n' / 'TODO' / '走 l10n' 等标记")
         print(f"  详情:")

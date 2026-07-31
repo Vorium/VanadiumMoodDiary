@@ -1,4 +1,4 @@
-"""Final audit of zh_Hant after all fixes."""
+﻿"""Final audit of zh_Hant after all fixes."""
 import re
 
 zh = open(r'lib/l10n/app_zh.arb', encoding='utf-8').read()
@@ -10,7 +10,7 @@ hant_map = {m.group(1): m.group(2) for m in PAT.finditer(hant)}
 
 # Why 226 still "same" as zh?
 same_keys = [k for k in zh_map if zh_map[k] == hant_map.get(k, '')]
-print(f'修真后跟 zh 完全一样: {len(same_keys)}')
+print(f'修正后跟 zh 完全一样: {len(same_keys)}')
 print('样例:')
 for k in same_keys[:20]:
     v = zh_map[k]
@@ -29,6 +29,6 @@ for k in same_keys:
         simp_keys.append((k, v, simp))
 
 print()
-print(f'修真后"跟 zh 一样"但仍含真简体字的: {len(simp_keys)}')
+print(f'修正后"跟 zh 一样"但仍含真简体字的: {len(simp_keys)}')
 for k, v, simp in simp_keys[:10]:
     print(f'  {k}: {v!r} ({simp})')

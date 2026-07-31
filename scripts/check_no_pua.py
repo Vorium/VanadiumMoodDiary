@@ -1,4 +1,4 @@
-"""check_no_pua.py — Unicode PUA 字符守门员
+﻿"""check_no_pua.py — Unicode PUA 字符守门员
 
 PUA = Unicode Private Use Area (U+E000 - U+F8FF)
 通常是 GBK 字节错误解读为 UTF-8 生成的乱码 (mojibake) 落在 PUA 范围内。
@@ -6,7 +6,7 @@ PUA = Unicode Private Use Area (U+E000 - U+F8FF)
 v0.22 round 31 修过 app_router.dart mojibake (commit 023d6ef?)。
 v0.23 P0 评审(spen-1)发现无守护,本脚本加 CI 守门员防止重新引入。
 v0.24 round 48 (spzh P1-15): 扩到 docs/ + scripts/ 目录
-(v0.22 round 31 修过 app_router mojibake,但 docs/CHANGELOG.md 修真历史还有残留)
+(v0.22 round 31 修过 app_router mojibake,但 docs/CHANGELOG.md 修正历史还有残留)
 
 用法:
   python scripts/check_no_pua.py            # 全检 (lib/ + docs/ + scripts/)
@@ -27,13 +27,13 @@ SCAN_DIRS = ["lib", "docs", "scripts"]
 # (Flutter 源码基本不用扩展 PUA,过宽会误报 emoji 等)
 PUA_RE = re.compile(r'[\uE000-\uF8FF]')
 
-# 跳过文件 (生成文件 / binary / 历史修真档案)
+# 跳过文件 (生成文件 / binary / 历史修正档案)
 SKIP_PATTERNS = ['.g.dart', '.freezed.dart', '.png', '.jpg', '.ico', '.jar']
 
-# v0.24 round 48 (spzh P1-15): 历史修真档案豁免
-# docs/reviews/ 和 docs/archive/reviews/ 故意记录 mojibake 现象作为"修真前状态"
-# 修真历史档案保留原样（"实际看到的 mojibake" 反引号块 + 对照正确字符）
-# v0.24 round 48 (spzh P1-20): docs/decisions/ 也豁免 — mojibake 修真历史归档
+# v0.24 round 48 (spzh P1-15): 历史修正档案豁免
+# docs/reviews/ 和 docs/archive/reviews/ 故意记录 mojibake 现象作为"修正前状态"
+# 修正历史档案保留原样（"实际看到的 mojibake" 反引号块 + 对照正确字符）
+# v0.24 round 48 (spzh P1-20): docs/decisions/ 也豁免 — mojibake 修正历史归档
 SKIP_PATHS = [
     re.compile(r'docs[\\/]reviews[\\/].*\.md$'),
     re.compile(r'docs[\\/]archive[\\/].*\.md$'),
@@ -68,7 +68,7 @@ def main():
             continue
         for ext in SCAN_EXTS:
             all_files.extend(dir_path.rglob(f"*{ext}"))
-    # 跳过生成文件 + 历史修真档案
+    # 跳过生成文件 + 历史修正档案
     all_files = [f for f in all_files if not any(pat in f.name for pat in SKIP_PATTERNS)]
     all_files = [
         f for f in all_files
