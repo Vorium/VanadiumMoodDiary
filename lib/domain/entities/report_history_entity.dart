@@ -1,6 +1,6 @@
-/// 报告历史（domain 实体）
-///
-/// 对应 Drift 表 `report_histories`，row → entity 翻译在 data 层 mapper 里。
+// 报告历史（domain 实体）
+//
+// 对应 Drift 表 `report_histories`，row → entity 翻译在 data 层 mapper 里。
 import 'package:chroniccare/core/shared/domain_value.dart';
 
 class ReportHistoryEntity {

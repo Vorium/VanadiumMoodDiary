@@ -16,7 +16,6 @@
 //
 // **3min 上限实现**: startRecording 启动 Timer.periodic 每 100ms tick,
 // 累计 elapsed;到 3min 自动 stopRecording,不依赖用户主动停。
-library;
 
 import 'dart:async';
 

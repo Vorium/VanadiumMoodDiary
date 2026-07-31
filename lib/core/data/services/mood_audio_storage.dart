@@ -15,7 +15,6 @@
 //
 // **v0.23 (Round 43 spen-2)**: 99% 同构的 encrypt/decrypt/file 管理抽到
 // [EncryptedAudioStorage] 基类,本文件只剩 mood-specific 配置 (目录名 + 前缀)。
-library;
 
 import 'package:chroniccare/core/data/privacy/encrypted_audio_storage.dart';
 

@@ -1,21 +1,20 @@
-/// 树洞 audio metadata 序列化 + 校验 — v0.24 Sprint #5c (emil god class 拆解)
-///
-/// **职责**: vent audio 字段 (duration / sizeBytes / hadAudio 标志) 序列化 + 边界校验
-///
-/// **关键约束** (P0 隐私边界): vent audio 文件**不导出** (跨设备路径失效, app docs
-/// 目录路径在新设备无效)。只导出 metadata 引用 + `hadAudio` 标志。
-/// 重装 → 导入后, 文字会恢复, 录音会标 `hasAudio=false`。
-///
-/// **来源**: v0.7 起 data_export_service 就只导 metadata, 不导文件本体;
-/// 校验逻辑原本散在 facade import 段 (line 441-451 max 86400s / 1GB hardcode),
-/// Sprint #5c 抽到 `ExportAudioService` + 复用 `ExportSchemaService.validateIntOr`。
-///
-/// **emil 设计决策**:
-/// - "translucent decisions should be nameable" — audio 段 3 字段 + 2 max 边界独立命名
-/// - 复用 `ExportSchemaService.validateIntOr` 静态 helper, 不重复定义
-/// - 0 外部依赖 (pure map 操作 + 校验), 易测
-/// - `const` constructor (跟 `ExportSchemaService` 风格一致, 0 runtime cost)
-library;
+// 树洞 audio metadata 序列化 + 校验 — v0.24 Sprint #5c (emil god class 拆解)
+//
+// **职责**: vent audio 字段 (duration / sizeBytes / hadAudio 标志) 序列化 + 边界校验
+//
+// **关键约束** (P0 隐私边界): vent audio 文件**不导出** (跨设备路径失效, app docs
+// 目录路径在新设备无效)。只导出 metadata 引用 + `hadAudio` 标志。
+// 重装 → 导入后, 文字会恢复, 录音会标 `hasAudio=false`。
+//
+// **来源**: v0.7 起 data_export_service 就只导 metadata, 不导文件本体;
+// 校验逻辑原本散在 facade import 段 (line 441-451 max 86400s / 1GB hardcode),
+// Sprint #5c 抽到 `ExportAudioService` + 复用 `ExportSchemaService.validateIntOr`。
+//
+// **emil 设计决策**:
+// - "translucent decisions should be nameable" — audio 段 3 字段 + 2 max 边界独立命名
+// - 复用 `ExportSchemaService.validateIntOr` 静态 helper, 不重复定义
+// - 0 外部依赖 (pure map 操作 + 校验), 易测
+// - `const` constructor (跟 `ExportSchemaService` 风格一致, 0 runtime cost)
 
 import 'package:chroniccare/core/data/services/export/export_schema_service.dart';
 

@@ -1,12 +1,11 @@
-/// 心理评估量表抽象接口
-///
-/// 让 PHQ-9 / GAD-7 / 未来扩展的量表共用同一套渲染 + 提交逻辑。
-///
-/// 设计目标：
-/// 1. 新增量表只写一份数据 + 一个 AssessmentScale 实现
-/// 2. 评估页（AssessmentRunner）只认 AssessmentScale，不关心具体量表
-/// 3. 评估结果写库时复用 check_ins 表（type=scaleId）
-library;
+// 心理评估量表抽象接口
+//
+// 让 PHQ-9 / GAD-7 / 未来扩展的量表共用同一套渲染 + 提交逻辑。
+//
+// 设计目标：
+// 1. 新增量表只写一份数据 + 一个 AssessmentScale 实现
+// 2. 评估页（AssessmentRunner）只认 AssessmentScale，不关心具体量表
+// 3. 评估结果写库时复用 check_ins 表（type=scaleId）
 
 /// 量表单道题
 class AssessmentItem {

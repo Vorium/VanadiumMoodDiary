@@ -11,7 +11,6 @@
 //    (未来 soft reminder 跟 CareEngine 合并时彻底删)
 //
 // P1 fix: 从 core/shared/ 移入 domain/logic/（仅 domain 层使用，不满足 shared 2+ 层规则）
-library;
 
 import 'package:chroniccare/domain/logic/care_engine.dart';
 

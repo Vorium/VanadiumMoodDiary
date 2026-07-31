@@ -1,25 +1,24 @@
-/// 用药报告 PDF 排版 helper — v0.26 round 57 (spen P1 #3 god class 拆分续)
-///
-/// **职责**: 把 medication_report_pdf.dart 里的排版片段 (header / footer /
-/// section title / 表格 / kv pair) 抽成 pure helper class, 让 facade 只负责
-/// `pw.Document` + `pw.MultiPage` 编排, 排版细节下沉到本 class。
-///
-/// **拆分前**: medication_report_pdf.dart 304 行 facade 含:
-/// - 1 个 `build` 编排方法
-/// - 7 个排版 helper (`_header` / `_footer` / `_patientInfoBlock` / `_kv` /
-///   `_sectionTitle` / `_emptyLine` / `_medicationBlocks` / `_tempMedTable` /
-///   `_summaryBlock`)
-/// - 内嵌 Strings 调用 + Formatters 调用 + AppTokens 引用
-///
-/// **拆分后**:
-/// - `MedicationReportPdf` (facade, ~80 行): `build` 编排 + 1 行委托
-/// - `PdfLayout` (本文件, ~210 行): 8 个 pure widget 构造器
-/// - 0 业务逻辑改动, 公开 API 100% 兼容 (build 签名不变)
-///
-/// **架构延续**: 跟 R57 safety_watch / R58 medication_report 拆 3 纯函数类
-/// / R59 app_router 拆 2 文件 / R60 medication_repository 抽 value object /
-/// R57 抽 ExportOrchestrator 同款"渐进 facade 模式"。
-library;
+// 用药报告 PDF 排版 helper — v0.26 round 57 (spen P1 #3 god class 拆分续)
+//
+// **职责**: 把 medication_report_pdf.dart 里的排版片段 (header / footer /
+// section title / 表格 / kv pair) 抽成 pure helper class, 让 facade 只负责
+// `pw.Document` + `pw.MultiPage` 编排, 排版细节下沉到本 class。
+//
+// **拆分前**: medication_report_pdf.dart 304 行 facade 含:
+// - 1 个 `build` 编排方法
+// - 7 个排版 helper (`_header` / `_footer` / `_patientInfoBlock` / `_kv` /
+//   `_sectionTitle` / `_emptyLine` / `_medicationBlocks` / `_tempMedTable` /
+//   `_summaryBlock`)
+// - 内嵌 Strings 调用 + Formatters 调用 + AppTokens 引用
+//
+// **拆分后**:
+// - `MedicationReportPdf` (facade, ~80 行): `build` 编排 + 1 行委托
+// - `PdfLayout` (本文件, ~210 行): 8 个 pure widget 构造器
+// - 0 业务逻辑改动, 公开 API 100% 兼容 (build 签名不变)
+//
+// **架构延续**: 跟 R57 safety_watch / R58 medication_report 拆 3 纯函数类
+// / R59 app_router 拆 2 文件 / R60 medication_repository 抽 value object /
+// R57 抽 ExportOrchestrator 同款"渐进 facade 模式"。
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;

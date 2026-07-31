@@ -5,7 +5,6 @@
 //
 // 抽 4 个 top-level pure function,care_engine 调它们 + 装配 CareTrigger。
 // 每个 strategy 独立易测,可单独 enable/disable。
-library;
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 

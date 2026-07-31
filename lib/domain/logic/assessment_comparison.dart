@@ -9,7 +9,6 @@
 // - PHQ-9 (0-27): 5 档 → 0-4 / 5-9 / 10-14 / 15-19 / 20+
 // - GAD-7 (0-21): 4 档 → 0-4 / 5-9 / 10-14 / 15+
 // 我们用 rank（0..N-1）来量化，等级下降 = 好转。
-library;
 
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';

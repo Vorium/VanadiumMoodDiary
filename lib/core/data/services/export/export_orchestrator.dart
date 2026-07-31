@@ -1,21 +1,20 @@
-/// 数据导出/导入编排 — v0.26 round 57 (spen P1 #2 god class 拆分续)
-///
-/// **职责**: DataExportService 内部 import / export 编排 + JSON 字段拼装
-///
-/// **拆分前**: data_export_service.dart 539 行, facade 含 exportToJson / importFromJson
-/// 全部实现 (~280 行), 跟 DataExportService 1 facade 类 + 1 ImportResult class 混在一起.
-///
-/// **拆分后**:
-/// - `DataExportService` (facade, ~120 行): 1 facade + 4 sub-service 委托 + 1 helper (_isoUtc)
-/// - `ExportOrchestrator` (本文件, ~340 行): importData / exportData 编排 + JSON map 拼装
-/// - 3 sub-service (export_crypto / export_audio / export_schema) 不动
-///
-/// **架构延续**: 跟 R57 safety_watch / R58 medication_report / R59 app_router / R60 medication_repository
-/// 同款"渐进 facade 模式" — facade 留 5 类编排入口, 复杂业务下沉 orchestrator。
-///
-/// **测试兼容**: facade 公开 API 跟拆分前一致 (exportToJson / importFromJson / 构造签名),
-/// 50+ 现有 test 不用改。
-library;
+// 数据导出/导入编排 — v0.26 round 57 (spen P1 #2 god class 拆分续)
+//
+// **职责**: DataExportService 内部 import / export 编排 + JSON 字段拼装
+//
+// **拆分前**: data_export_service.dart 539 行, facade 含 exportToJson / importFromJson
+// 全部实现 (~280 行), 跟 DataExportService 1 facade 类 + 1 ImportResult class 混在一起.
+//
+// **拆分后**:
+// - `DataExportService` (facade, ~120 行): 1 facade + 4 sub-service 委托 + 1 helper (_isoUtc)
+// - `ExportOrchestrator` (本文件, ~340 行): importData / exportData 编排 + JSON map 拼装
+// - 3 sub-service (export_crypto / export_audio / export_schema) 不动
+//
+// **架构延续**: 跟 R57 safety_watch / R58 medication_report / R59 app_router / R60 medication_repository
+// 同款"渐进 facade 模式" — facade 留 5 类编排入口, 复杂业务下沉 orchestrator。
+//
+// **测试兼容**: facade 公开 API 跟拆分前一致 (exportToJson / importFromJson / 构造签名),
+// 50+ 现有 test 不用改。
 
 import 'dart:convert';
 

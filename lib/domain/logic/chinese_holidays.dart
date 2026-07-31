@@ -1,23 +1,23 @@
-/// 中国法定节假日识别 (2026-2030)
-///
-/// **v0.24 round 48 (sp-zh P1-19)** 新建:
-/// - 简化版,只列春节 / 中秋 / 国庆 / 清明 / 端午 / 劳动节 / 元旦 7 个法定假日
-/// - 续方提醒避开这些日期,避免医院/药店关门
-/// - v0.24 仅建立 data layer + TDD test,**不集成到 reminder_scheduler**
-/// - v0.25+ 集成: 续方到期时,若下一个工作日是 holiday,推到 holiday 后第一个 workday
-///
-/// **数据来源**: 国务院办公厅每年发布的《关于 X 年部分节假日安排的通知》,
-/// 按"法定 7 天 / 3 天"硬编码,不处理 调休 / 补班 — 那由 nextWorkdayAfter 跳过 weekend 处理。
-///
-/// **为什么用 `Set<String>` 而不是 `DateTime`**:
-/// - `DateTime` 含 hour/minute,会污染数据
-/// - 字符串 date key (YYYY-MM-DD) 不可变,适合 `const Set`
-/// - 查找 O(1),插入只一次性 (const 初始化)
-///
-/// **为什么不接网络 API (如 https://holidayapi.com)**:
-/// - 零云端原则 (AGENTS.md)
-/// - 节假日安排每年 12 月发布,提前 1-2 个月可用
-/// - 实际数据每年 ≤ 30 天,完全可以硬编码
+// 中国法定节假日识别 (2026-2030)
+//
+// **v0.24 round 48 (sp-zh P1-19)** 新建:
+// - 简化版,只列春节 / 中秋 / 国庆 / 清明 / 端午 / 劳动节 / 元旦 7 个法定假日
+// - 续方提醒避开这些日期,避免医院/药店关门
+// - v0.24 仅建立 data layer + TDD test,**不集成到 reminder_scheduler**
+// - v0.25+ 集成: 续方到期时,若下一个工作日是 holiday,推到 holiday 后第一个 workday
+//
+// **数据来源**: 国务院办公厅每年发布的《关于 X 年部分节假日安排的通知》,
+// 按"法定 7 天 / 3 天"硬编码,不处理 调休 / 补班 — 那由 nextWorkdayAfter 跳过 weekend 处理。
+//
+// **为什么用 `Set<String>` 而不是 `DateTime`**:
+// - `DateTime` 含 hour/minute,会污染数据
+// - 字符串 date key (YYYY-MM-DD) 不可变,适合 `const Set`
+// - 查找 O(1),插入只一次性 (const 初始化)
+//
+// **为什么不接网络 API (如 https://holidayapi.com)**:
+// - 零云端原则 (AGENTS.md)
+// - 节假日安排每年 12 月发布,提前 1-2 个月可用
+// - 实际数据每年 ≤ 30 天,完全可以硬编码
 class ChineseHolidays {
   ChineseHolidays._();
 

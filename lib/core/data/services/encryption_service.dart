@@ -15,7 +15,6 @@
 // - 实际 lib/ 0 业务引用 (v0.17 round 12 code review 已记录 dead code)
 // - 加 encryptString/decryptString 用 utf8 编码 Uint8List → base64 包装
 // - 老 key 不兼容 (key 名称不同), 但无用户数据依赖
-library;
 
 import 'dart:convert';
 import 'dart:math';

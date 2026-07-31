@@ -7,7 +7,6 @@
 //
 // 数据源：MedicationEntity（domain）+ MedicationRepository（abstract）
 // 业务方法直接用 entity.isInRefillWindow / .isRefillOverdue
-library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

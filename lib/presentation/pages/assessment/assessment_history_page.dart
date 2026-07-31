@@ -13,7 +13,6 @@
 //   - AssessmentChartCard (折线图，每个量表一张)
 //   - AssessmentHistoryList (完整历史 + diff)
 //   - AssessmentSeverityStyle + 4 helpers (严重度配色, 多个 widget 共用)
-library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

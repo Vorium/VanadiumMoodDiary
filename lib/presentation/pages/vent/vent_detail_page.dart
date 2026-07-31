@@ -4,7 +4,6 @@
 // 路径参数：id（int）
 //
 // 删除按钮在右上角
-library;
 
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'dart:async';

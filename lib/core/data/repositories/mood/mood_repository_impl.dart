@@ -4,7 +4,6 @@
 // 不传 = 行为完全不变(audioPath null = 不会写 audio 文件)。
 //
 // v0.24 round 48 (sp-en P1-14) add() 10 参 → MoodEntryDraft 参数对象
-library;
 
 import 'package:drift/drift.dart' show Value;
 

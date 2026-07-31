@@ -9,7 +9,6 @@
 // - `type` 改成枚举 + `fromWire` 容错解析
 // - `isNormal` / `isTemp` / `isAssessment` getter 取代 `c.type == 'xxx'`
 // - equals / hashCode / toString 标准实现
-library;
 
 import 'package:chroniccare/core/shared/domain_value.dart';
 

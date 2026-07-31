@@ -1,6 +1,6 @@
-/// 用户档案（domain 实体）
-///
-/// 对应 Drift 表 `user_profiles`。
+// 用户档案（domain 实体）
+//
+// 对应 Drift 表 `user_profiles`。
 import 'package:chroniccare/core/shared/domain_value.dart';
 
 class UserProfileEntity {

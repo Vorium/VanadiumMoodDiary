@@ -19,7 +19,6 @@
 // **隐私边界 (重要)**: 树洞 vent 跟 情绪 mood 是 2 个独立 privacy 模块,
 // 不复用同一个 EncryptionService 实例的 filesystem key 命名空间 (实际上
 // EncryptionService 共享 32-byte key, 但 path 目录分开 = 加密文件不跨目录混读)。
-library;
 
 import 'dart:io';
 import 'dart:math';

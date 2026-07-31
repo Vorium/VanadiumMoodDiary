@@ -132,11 +132,12 @@ class AppTokens {
   /// batch 1 (v0.18 P1-5) 漏了 disabled, 此前 widget 直接用
   /// `AppTokens.disabled` 在 dark mode 下是浅灰 (BDBDBD), 看不见。
   /// 这里补上 getter 跟其它 8 个 dynamic color 保持一致。
+  ///
+  /// v0.27 round 63 (P1-3 修复): 走 M3 standard `onSurface @ 12% alpha`,
+  /// 替代 hardcode `Color(0xFF4A4A4A)` / `Color(0xFFBDBDBD)` + Brightness
+  /// 判。bypass 整个 M3 scheme = 重新发明 token。
   static Color disabledColor(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    return brightness == Brightness.dark
-        ? const Color(0xFF4A4A4A)
-        : const Color(0xFFBDBDBD);
+    return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
   }
 
   // ============= v0.21 (P2-1 fix): Tinted surface tokens =============

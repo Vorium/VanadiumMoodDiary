@@ -95,11 +95,12 @@ class AppShell extends ConsumerWidget {
                             // v0.25 round 52 (spen P0 #11): i18n 失败 fallback
                             // 改英文 'ChronicCare', 不用 '慢病管家' 硬编
                             'ChronicCare',
-                        style: TextStyle(
-                          fontSize: AppTokens.fontSizeLabel,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                        // v0.27 round 63 (P1-10 修复): 走
+                        // AppTokens.textStyleLabelStrong 集中器, 替代 inline
+                        // TextStyle(fontSize + fontWeight + color)。emil P2-12
+                        // 修 80% 剩 20%, 这处是漏网之鱼; 统一 token 让 dark
+                        // mode / fontScale 集中改。
+                        style: AppTokens.textStyleLabelStrong(context),
                       ),
                       const SizedBox(height: 8),
                       const ThemeToggleButton(),

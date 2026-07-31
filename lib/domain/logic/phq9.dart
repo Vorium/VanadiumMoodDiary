@@ -1,17 +1,16 @@
-/// PHQ-9 患者健康问卷抑郁量表
-///
-/// 数据来源：美国精神医学学会（APA）DSM-IV 推荐筛查工具
-/// 9 道题，每题 0-3 分，总分 0-27
-///
-/// 严重度切分：
-/// 0-4   → 几乎没有
-/// 5-9   → 轻度
-/// 10-14 → 中度（建议就医）
-/// 15-19 → 中重度（建议就医）
-/// 20-27 → 重度（强烈建议就医）
-///
-/// 危机信号：第 9 题（自杀念头）≥ 1 → 弹出危机资源
-library;
+// PHQ-9 患者健康问卷抑郁量表
+//
+// 数据来源：美国精神医学学会（APA）DSM-IV 推荐筛查工具
+// 9 道题，每题 0-3 分，总分 0-27
+//
+// 严重度切分：
+// 0-4   → 几乎没有
+// 5-9   → 轻度
+// 10-14 → 中度（建议就医）
+// 15-19 → 中重度（建议就医）
+// 20-27 → 重度（强烈建议就医）
+//
+// 危机信号：第 9 题（自杀念头）≥ 1 → 弹出危机资源
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
@@ -123,10 +122,14 @@ class Phq9Scale implements AssessmentScale {
   }) {
     // 第 9 题（index 8）≥ 1 → 自杀念头阳性
     if (scores.length > 8 && scores[8] >= 1) {
+      // v0.27 round 63 (P1-5 修复): 海外 region 可能未注册 (e.g. 之后
+      // 扩 HotlineRegion 但忘加 crisis_number), `!` 强解会 NPE 崩。
+      // 兜底走 cn (mainland 必有), 至少给用户一条可用 hotline。
+      final hotlines = hotlineByRegion[region] ?? hotlineByRegion[HotlineRegion.cn]!;
       return CrisisSignal(
         title: '我们关心你',
         message: '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。',
-        hotlines: hotlineByRegion[region]!,
+        hotlines: hotlines,
       );
     }
     return null;

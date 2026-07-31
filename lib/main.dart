@@ -301,10 +301,12 @@ class _MigrationAbortedApp extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.pause_circle_outline,
                   size: AppTokens.iconSizeEmpty,
-                  color: Colors.orange,
+                  // v0.27 round 63 (P1-1 修复): 走 AppTokens.warningColor
+                  // 集中器, 替代硬编 Colors.orange (R40+ 漏掉)
+                  color: AppTokens.warningColor(context),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -365,7 +367,13 @@ class _MigrationFailedApp extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: AppTokens.iconSizeEmpty, color: Colors.red),
+                Icon(
+                  Icons.error_outline,
+                  size: AppTokens.iconSizeEmpty,
+                  // v0.27 round 63 (P1-1 修复): 走 AppTokens.errorColor
+                  // 集中器, 替代硬编 Colors.red (R40+ 漏掉)
+                  color: AppTokens.errorColor(context),
+                ),
                 const SizedBox(height: 16),
                 Text(
                   l10n.migrationFailedTitle,

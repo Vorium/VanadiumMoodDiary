@@ -3,7 +3,6 @@
 // 4 层架构：domain 定义接口，data 层实现。
 // 之前 `data/repositories/check_in_repository.dart` 直接暴露 Drift row，
 // 现在改为返回 CheckInEntity，UI 不再看到 Drift 依赖。
-library;
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 

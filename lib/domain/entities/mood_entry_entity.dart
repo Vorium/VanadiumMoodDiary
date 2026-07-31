@@ -12,7 +12,6 @@
 // - 不可变（所有 final 字段 + copyWith）
 // - `tagsJson` 仍保留（与数据库 schema 对齐），但 UI 用 `tags` getter
 // - `score` 用 int 1-5，含 `scoreEmoji` / `scoreLabel` 便捷方法（通过 MoodVisual）
-library;
 
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';

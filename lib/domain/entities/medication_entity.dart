@@ -8,7 +8,6 @@
 // - 不可变（所有 final 字段 + copyWith）
 // - equals / hashCode / toString 标准实现
 // - 含业务方法（isActive, hasRefill, isRefillOverdue），不只做数据容器
-library;
 
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';

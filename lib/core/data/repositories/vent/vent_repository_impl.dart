@@ -4,7 +4,6 @@
 // 树洞 audio 文件存本地 app docs 目录（[VentAudioStorage] 管理），
 // DB 只存文件路径。删除条目时同步删文件。
 // 树洞 text 走 EncryptionService 加密后存 BLOB（v0.21 Round 22 起）。
-library;
 
 import 'dart:convert';
 import 'dart:typed_data';

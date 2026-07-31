@@ -7,7 +7,6 @@
 // audio storage 跟 vent 的 storage 平行 (独立 mood_audio/ 目录),
 // audio service 包装 record + speech_to_text 编排,page 用 ProviderScope
 // override 注入 fake 实现做 widget test。
-library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

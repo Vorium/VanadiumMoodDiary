@@ -3,7 +3,6 @@
 // Drift row ↔ CheckInEntity 翻译官。
 // `type` string → `CheckInType` 枚举在 toEntity 时完成，反向在 toCompanion 时
 // 拿到枚举的 `wire` 字面量。
-library;
 
 import 'package:drift/drift.dart' show Value;
 

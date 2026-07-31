@@ -8,7 +8,6 @@
 // - 列表显示摘要（前 80 字 / 录音时长）
 // - 详情页才显示完整内容
 // - 长按 / 滑动可单条删除
-library;
 
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:flutter/material.dart';

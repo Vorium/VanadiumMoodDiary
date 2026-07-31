@@ -7,7 +7,6 @@
 //
 // v0.25 round 60 (spen P1 #12 #4): add() 改接受 MedicationDraft value object
 //   (之前 9 个参数, 拆到 MedicationDraft 更易维护, UI 编辑场景用 copyWith)
-library;
 
 import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';

@@ -13,7 +13,6 @@
 //
 // v0.17 round 7 (B1+B2): _days setState 状态提到 calendarWindowProvider
 // (Notifier). 跨 page 共享 + test 友好 + Notifier 内 ref.mounted 守卫
-library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

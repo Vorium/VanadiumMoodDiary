@@ -1,14 +1,13 @@
-/// GAD-7 广泛性焦虑量表
-///
-/// 数据来源：Spitzer et al. (2006) 7-item Generalized Anxiety Disorder Scale
-/// 7 道题，每题 0-3 分，总分 0-21
-///
-/// 严重度切分：
-/// 0-4   → 几乎没有
-/// 5-9   → 轻度
-/// 10-14 → 中度（建议就医）
-/// 15-21 → 重度（强烈建议就医）
-library;
+// GAD-7 广泛性焦虑量表
+//
+// 数据来源：Spitzer et al. (2006) 7-item Generalized Anxiety Disorder Scale
+// 7 道题，每题 0-3 分，总分 0-21
+//
+// 严重度切分：
+// 0-4   → 几乎没有
+// 5-9   → 轻度
+// 10-14 → 中度（建议就医）
+// 15-21 → 重度（强烈建议就医）
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 

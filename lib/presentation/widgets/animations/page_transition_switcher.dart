@@ -26,12 +26,16 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 ///
 /// v0.23 round 40 (emil F7 fix): 自定义 transitionBuilder 让 setup 4-step
 /// 也能用集中器(默认 fade,可换 fade + slide)
+///
+/// v0.27 round 63 (P1-9 修复): 默认 duration 走 AppTokens.durPageTransition
+/// 集中器, 替代裸 `const Duration(milliseconds: 100)`。`durPageTransition`
+/// 是 static const, 可在 const 默认值上下文直接用, 行为不变。
 class PageTransitionSwitcher extends StatelessWidget {
   const PageTransitionSwitcher({
     super.key,
     required this.switchKey,
     required this.child,
-    this.duration = const Duration(milliseconds: 100),
+    this.duration = AppTokens.durPageTransition,
     this.transitionBuilder,
   });
 

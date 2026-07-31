@@ -9,7 +9,6 @@
 // 之前 add() 10 个 named 参数, caller 调一行很挤, 加新字段必须改 signature
 // + 所有 caller。抽 [MoodEntryDraft] 后 signature 简化为
 // `add({required MoodEntryDraft draft})`, 加字段只改 draft + 内部映射。
-library;
 
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';

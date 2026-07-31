@@ -8,7 +8,6 @@
 // - 不可变 + copyWith
 // - hasText / hasAudio / isEmpty 业务方法
 // - durationLabel 业务方法（"1分23秒"）
-library;
 
 import 'package:chroniccare/core/shared/domain_value.dart';
 

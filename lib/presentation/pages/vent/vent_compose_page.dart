@@ -17,7 +17,6 @@
 //   - VentTextInput (文字输入 + 字符计数)
 //   - VentSaveBar (取消 / 保存按钮)
 // audio 状态机保留在 orchestrator state (recorder + player + temp file 生命周期紧密)
-library;
 
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'dart:async';

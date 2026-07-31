@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  v0.27 round 61 (R61): Apple PrivacyInfo.xcprivacy (2024-05 强制)
+  https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
+
+  列出项目用到的所有 "required reason API" + 原因。
+  Apple 要求 2024-05 起新 / 跟新 app 必须填, 否则审核拒。
+
+  用到的 API:
+  1. UserDefaults:
+     - SharedPreferences (assessment_reminder / safety_config / last_error_capture)
+     - flutter_secure_storage 内部 NSUserDefaults 缓存
+  2. File timestamp:
+     - path_provider 读 file mtime
+  3. System boot time:
+     - app_lifecycle / WidgetsBindingObserver 检测跨日
+  4. Disk space:
+     - path_provider / audio 存本机磁盘空间
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>35F9.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>85F4.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

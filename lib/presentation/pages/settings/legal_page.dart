@@ -5,7 +5,6 @@
 // - 底部 3 个 toggle:失联通知 / 树洞 / 评估分析
 // - 每个 toggle 旁边显示"撤回时间"或"从未撤回"
 // - toggle 持久化到 SharedPreferences
-library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +26,18 @@ class LegalPage extends ConsumerStatefulWidget {
 }
 
 class _LegalPageState extends ConsumerState<LegalPage> {
+  // v0.27 round 63 (P0-3 修复续): legal_page UI 只显示 3 个 toggle
+  // (safety / vent / analytics), 不显示 emergencyContactSharing / dataExport
+  // (PIPL §13 强场景, 走 ConsentDialog 单独同意流程)。
+  // 用 _visibleKinds 显式列 UI 可见 kind, 避免跟全 5 值 ConsentKind.values
+  // 混用, snackbar (current/total) 计数走 _visibleKinds.indexOf 跟长度,
+  // 不会因 enum 顺序变化而错位。
+  static const _visibleKinds = [
+    ConsentKind.safety,
+    ConsentKind.vent,
+    ConsentKind.analytics,
+  ];
+
   // 三个 kind 的当前撤回状态 — 启动时读,变更时写
   late Map<ConsentKind, bool> _withdrawn;
   late Map<ConsentKind, DateTime?> _withdrawnAt;
@@ -61,13 +72,16 @@ class _LegalPageState extends ConsumerState<LegalPage> {
     if (mounted) {
       setState(() => _withdrawn[kind] = withdraw);
       // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+      // v0.27 round 63 (P0-3 修复续): snackbar 计数走 _visibleKinds 长度 + index,
+      // 不用 ConsentKind.values (含 §13 强场景 2 值, 用户从未在 UI 看到,
+      // 计数会从 1/3 跳到 3/3 再到 5/3, 语义错乱)。
+      final current = _visibleKinds.indexOf(kind) + 1;
+      final total = _visibleKinds.length;
       AppSnackBar.showInfo(
         context,
         withdraw
-            ? AppLocalizations.of(context).legalConsentWithdrawn(
-                ConsentKind.values.indexOf(kind) + 1, 3,)
-            : AppLocalizations.of(context).legalConsentReAgreed(
-                ConsentKind.values.indexOf(kind) + 1, 3,),
+            ? AppLocalizations.of(context).legalConsentWithdrawn(current, total)
+            : AppLocalizations.of(context).legalConsentReAgreed(current, total),
       );
     }
   }

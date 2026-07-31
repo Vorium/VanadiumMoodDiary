@@ -1,11 +1,10 @@
-/// 趋势数据计算 + 序列化
-///
-/// 各种时间窗口的打卡数据，用于趋势图展示：
-/// - [DailyCheckIn]：30/90 天每天是否打卡（热力图）
-/// - [MonthlyCheckIn]：最近 N 个月每月打卡率（柱状图）
-/// - [StreakSummary]：当前连续 + 最长连续
-/// - [CalendarMonth] / [CalendarDay]：v0.12 (Round 6) 日历视图
-library;
+// 趋势数据计算 + 序列化
+//
+// 各种时间窗口的打卡数据，用于趋势图展示：
+// - [DailyCheckIn]：30/90 天每天是否打卡（热力图）
+// - [MonthlyCheckIn]：最近 N 个月每月打卡率（柱状图）
+// - [StreakSummary]：当前连续 + 最长连续
+// - [CalendarMonth] / [CalendarDay]：v0.12 (Round 6) 日历视图
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';

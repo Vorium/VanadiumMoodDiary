@@ -50,15 +50,21 @@ class Strings {
       override ?? '$name $dosage${unit.id}';
   static String emailCycle(int hours, {String? override}) =>
       override ?? '签到周期：$hours 小时';
-  // v0.26 R57: const 保留 (callers snooze_manager 等仍用 static const Strings.emailFooter)
-  // 加 emailFooterText({String? override}) 函数供新 caller 走 i18n
+  // v0.26 R57: const 保留 (老 caller snooze_manager 等仍用
+  // `static const Strings.emailFooter`); 同时加
+  // `emailFooterText({String? override})` 函数供新 caller 走 i18n override。
+  // v0.27 round 63 (P1-8 修复): 注释与代码同步 — const 字段 + i18n 函数并存
+  // (老 caller 用 const, 新 caller 用函数), 行为不变。
   static const emailFooter = '这是一条自动通知，由慢病管家 App 发送。\n'
       '本通知不包含任何医疗建议。\n'
       '如需停止接收，请在 App 设置中修改。';
   static String emailFooterText({String? override}) => override ?? emailFooter;
 
   // ============== v0.23 round 39 (P1-9 fix): 通知标题/正文/Channel ==============
-  // 通知 service 之前 6 处 hardcode 中文,集中到本类,便于 i18n 化
+  // 通知 service 之前 hardcode 中文, 集中到本类, 便于 i18n 化。
+  // v0.27 round 63 (P1-8 修复): 注释"6 处"已过时 — v0.23 起步 6 项
+  // (4 channel + 2 daily), v0.26 R57 加 med/refill/assessment 4 段, 实际
+  // 10+ 项 i18n 化函数 + 4 项 const 字段。删误导性数字。
 
   // 通知 Channel — const 保留 (badge_sync_service / notification_service
   // 用 static const _channelName = Strings.notifChannelMedicationName)
@@ -68,7 +74,12 @@ class Strings {
   static const notifChannelSafetyName = '安全警报';
   static const notifChannelSafetyDesc = '长时间未打卡时提醒';
 
-  /// v0.26 R57: 新 caller 走 i18n 路径用此函数版 (presentation 层可注入 override)
+  /// v0.26 R57: 新 caller 走 i18n 路径用此 i18n 化函数 (presentation 层可注入 override)
+  /// 与上面的 [notifChannelMedicationName] const 字段并存 — 老 caller
+  /// (badge_sync_service / notification_service) 用 const 编译期常量,
+  /// 新 caller 走 `*Text({override})` 函数拿 i18n 文案。
+  /// v0.27 round 63 (P1-8 修复): dartdoc 跟代码同步, 注明"函数版"指 const
+  /// 字段的 i18n 化函数版, 而非 dart getter 含义。
   static String notifChannelMedicationNameText({String? override}) =>
       override ?? notifChannelMedicationName;
   static String notifChannelMedicationDescText({String? override}) =>
@@ -116,8 +127,14 @@ class Strings {
       override ?? '已经 $days 天没做 $scaleIdUppercase 了，请花 2 分钟做一下评估';
 
   // ============== v0.23 round 39 (P1-9 fix): 医生 PDF 报告 ==============
-  // medication_report_pdf 之前 20+ 处 hardcode 中文,集中到本类
-  // 海外医生看 PDF 不能用,这里给每条文案一个 getter,后续接 i18n 时换实现
+  // medication_report_pdf 之前 20+ 处 hardcode 中文, 集中到本类
+  // 海外医生看 PDF 不能用, 这里给每条文案: (1) const 字段 (caller 用
+  // `const Strings.pdfTitle` 等编译期常量) + (2) i18n 化函数
+  // `*Text({String? override})` (新 caller 传 l10n 拿多语言)。后续接 i18n
+  // 时换函数实现, const 字段保留作中文 fallback。
+  // v0.27 round 63 (P1-8 修复): 删误导性"一个 getter" — 实际是 const
+  // 字段 + i18n 函数 pair, "getter" 在 Dart 是 `get xxx =>` 语法, 跟
+  // 本类的 `static String xxxText` 函数不同义。
 
   // 报告头/页脚 — const 保留 (caller 用 const Strings.pdfTitle 等)
   static const pdfTitle = '慢病管家 · 用药报告';
@@ -223,9 +240,14 @@ class Strings {
       (pct == null ? '依从率: —（无可比较的常吃药）' : '依从率: $pct%');
 
   // ============== v0.23 round 39 (P1-9 fix): 数据导入摘要 ==============
-  // data_export_service ImportResult.summary 之前 7 处 hardcode 中文
-  // 改成 Strings 给后续 i18n 留入口
-  // v0.26 R57: 加 override 参数
+  // data_export_service ImportResult.summary 之前 7 处 hardcode 中文,
+  // 改成本类的 i18n 化函数 (`static String xxx({String? override})`,
+  // 无 const 字段 — 这 6 项都是参数化函数, 不需要 const 缓存), 给后续
+  // i18n 留入口。
+  // v0.26 R57: 加 override 参数 (callers 可传 l10n 拿多语言, fallback
+  // 仍是本类的中文)。
+  // v0.27 round 63 (P1-8 修复): 注释与代码同步 — 这 6 项是函数, 没 const
+  // 字段; 跟上面的 channel / daily / snooze 模式 (const + 函数 pair) 不同。
 
   static String importSummaryContact(int n, {String? override}) =>
       override ?? '$n 联系人';
@@ -263,10 +285,15 @@ class Strings {
 
   // ============== v0.27 round 62 (P1-8 修复): 用户名 fallback 集中 ==============
   // 之前 user_name_helper / email_template / reminder_scheduler /
-  // safety_alert_dispatcher / notification_service 5+ 处 hardcode "您" / "您的家人" /
-  // "用户" 中文字符串, 集中在 Strings 类方便后续 i18n (override 模式)。
+  // safety_alert_dispatcher / notification_service 5+ 处 hardcode "您" /
+  // "您的家人" / "用户" 中文字符串, 集中到本类: 3 个 const 字段 (中文
+  // fallback, 老 caller 直接用) + 3 个 i18n 化函数 `*Text({String?
+  // override})` (新 caller 传 l10n 拿多语言)。
   // 注: SMS / 邮件场景发的是中国紧急联系人, 中文是合理 fallback;
   //   en 模式 UI 显示走 AppLocalizations (override 模式)。
+  // v0.27 round 63 (P1-8 修复): 注释与代码同步 — 删上面"override 模式"
+  // 笼统说法, 明确 override 只适用 `*Text` 函数, const 字段无 override
+  // (本身就是常量, 不可注入)。
   static const userNameDefault = '用户';
   static const userNamePolite = '您';
   static const userNameFamily = '您的家人';

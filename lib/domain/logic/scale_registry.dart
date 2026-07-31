@@ -1,7 +1,6 @@
-/// 量表注册表
-///
-/// 集中管理所有可用量表。新增量表 → 加一个 import + 一行。
-library;
+// 量表注册表
+//
+// 集中管理所有可用量表。新增量表 → 加一个 import + 一行。
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/gad7.dart';

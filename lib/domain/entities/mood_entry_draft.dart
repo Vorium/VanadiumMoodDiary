@@ -13,7 +13,6 @@
 //
 // MoodEntryDraft 是 domain 层概念 (0 flutter 0 drift), UI 层构造,
 // repository 接收 + 翻译成 drift companion。
-library;
 
 /// 准备入库的情绪记录草稿（参数对象）
 ///

@@ -55,6 +55,13 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// 改 Timer 存字段 + dispose 时 `cancel()`。
   Timer? _celebrationTimer;
 
+  /// Deep link race guard Timer (v0.27 round 63 P1-4 修)
+  ///
+  /// 之前 `_handleDeepLink` 用 `await Future<void>.delayed(...)`, dispose 后
+  /// 回调 fire 触发 setState 撞 defunct widget。改 Timer + dispose cancel,
+  /// 跟 `_celebrationTimer` 模式一致 (R62 P1-6 同样修)。
+  Timer? _deepLinkRaceTimer;
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +85,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     // 已经无效, 进而打 "OverlayEntry removed too many times" 警告。
     _celebrationTimer?.cancel();
     _celebrationTimer = null;
+    // v0.27 round 63 (P1-4 修复): 同款 cancel 模式应用到 deep link race guard,
+    // 防止 widget dispose 后 race guard timer 仍 fire 调 _runSafetyCheck
+    _deepLinkRaceTimer?.cancel();
+    _deepLinkRaceTimer = null;
     super.dispose();
   }
 
@@ -100,10 +111,18 @@ class _HomePageState extends ConsumerState<HomePage> {
         // 旧实现 `!_safetyCheckTriggered` 在第一跑已起来后永远 false
         if (_safetyRerunRequested) return; // 已请求过
         _safetyRerunRequested = true;
-        // v0.27 round 62 (P1-9 修复): 用命名 token 替代裸值,
-        // 跨文件复用 + 集中维护。
-        await Future<void>.delayed(AppTokens.kDeepLinkRaceGuard);
-        await _runSafetyCheck(force: true);
+        // v0.27 round 63 (P1-4 修复): 用 Timer 替代 Future.delayed,
+        // 跟 _celebrationTimer 模式一致。Future.delayed 不可 cancel, widget
+        // dispose 后 fire 触发 _runSafetyCheck 撞 defunct widget。
+        // 旧实现 round 62 P1-9 改用 token 命名但仍 Future.delayed, 半修。
+        _deepLinkRaceTimer = Timer(
+          AppTokens.kDeepLinkRaceGuard,
+          () {
+            // Timer 自身 cancel 已在 dispose 跑, 这里加 mounted 双重保险
+            if (!mounted) return;
+            unawaited(_runSafetyCheck(force: true));
+          },
+        );
       }
       return;
     }

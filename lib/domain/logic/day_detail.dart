@@ -10,7 +10,6 @@
 // - 汇总统计：总打卡数 / 情绪数 / 评估数 / 最高最低分
 //
 // v0.14 升级：4 层架构 — 接受 CheckInEntity / MoodEntryEntity
-library;
 
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';

@@ -19,7 +19,6 @@
 // [EncryptedAudioStorage] 基类,本文件只剩 vent-specific 逻辑:
 // - deleteAllWithRetry (重试 3 次, sp-en P0 round 33)
 // - purgeOrphanPlainFiles (启动时清孤儿 .m4a, sp-en P0 round 33)
-library;
 
 import 'dart:io';
 

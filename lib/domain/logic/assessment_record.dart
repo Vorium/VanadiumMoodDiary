@@ -2,7 +2,6 @@
 ///
 /// 把 CheckInEntity 里 type ∈ {phq9, gad7} 的 note JSON 解析为强类型 record，
 /// 方便趋势页折线图使用。
-library;
 
 import 'dart:convert';
 

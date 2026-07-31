@@ -4,7 +4,6 @@
 //
 // v0.23 (Round 31) 语音录入: 加 audioPath / audioTranscript / audioDurationMs
 // 3 个字段的双向映射。
-library;
 
 import 'package:drift/drift.dart' show Value;
 

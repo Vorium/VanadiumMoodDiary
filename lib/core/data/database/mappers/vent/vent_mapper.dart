@@ -3,7 +3,6 @@
 //
 // 边界处的翻译官。Drift schema 变化时只改这里，UI 拿到的 entity 保持稳定。
 // toEntity / toCompanion 都变 async（加解密依赖 async EncryptionService）。
-library;
 
 import 'dart:convert';
 import 'dart:typed_data';

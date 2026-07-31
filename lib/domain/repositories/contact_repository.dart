@@ -1,7 +1,6 @@
 // v0.14 (Round 12A) ContactRepository — domain 层 abstract
 //
 // 4 层架构：domain 定义接口，data 层实现。
-library;
 
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';

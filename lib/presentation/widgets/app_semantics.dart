@@ -1,16 +1,15 @@
-/// AppSemantics — a11y 集中器
-///
-/// v0.24 round 45 (emil P1-18): 替代散落 6 处裸 `Semantics(...)` 调用 + 1 处
-/// `ExcludeSemantics(...)`。emil "decisions should be nameable" — 3 种 a11y
-/// 模式抽 3 个工厂。
-///
-/// 设计:
-/// - `container` 工厂: 描述整个区域 (TalkBack 读出 label, 整个区域为单一焦点)
-/// - `button` 工厂: 单选/复选按钮 (button: true + selected + inMutuallyExclusiveGroup)
-/// - `exclude` 工厂: 从 a11y 树排除 (用于内部 text 跟外面 label 重复时)
-///
-/// 强制传 `label` 防止漏 a11y 描述 (TalkBack / VoiceOver 体验)。
-library;
+// AppSemantics — a11y 集中器
+//
+// v0.24 round 45 (emil P1-18): 替代散落 6 处裸 `Semantics(...)` 调用 + 1 处
+// `ExcludeSemantics(...)`。emil "decisions should be nameable" — 3 种 a11y
+// 模式抽 3 个工厂。
+//
+// 设计:
+// - `container` 工厂: 描述整个区域 (TalkBack 读出 label, 整个区域为单一焦点)
+// - `button` 工厂: 单选/复选按钮 (button: true + selected + inMutuallyExclusiveGroup)
+// - `exclude` 工厂: 从 a11y 树排除 (用于内部 text 跟外面 label 重复时)
+//
+// 强制传 `label` 防止漏 a11y 描述 (TalkBack / VoiceOver 体验)。
 
 import 'package:flutter/widgets.dart';
 

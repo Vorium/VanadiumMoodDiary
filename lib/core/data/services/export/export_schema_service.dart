@@ -1,29 +1,28 @@
-/// JSON schema version 管理 + 字段校验 helper — v0.24 Sprint #5c (emil god class 拆解)
-///
-/// **职责**:
-/// 1. version 1-4 范围校验 (P0 兼容, 不破坏老用户数据 — v0.22 round 30 P0)
-/// 2. 6 个字段类型 + 长度 + pattern 校验 (static helper, 纯函数)
-/// 3. 旧 schema 缺失表的安全删除 (P1-10 fix: 不再 catch(_) 完全静默, 走 swallowError
-///    集中器便于排查异常 schema — v0.23 round 39)
-///
-/// **来源**: 原本所有校验 + 旧表删除都堆在 `data_export_service.dart` 内
-/// (line 215-472 import 编排 + line 476-517 `_validate*` 静态 helper),
-/// Sprint #5c 抽到 `ExportSchemaService`。
-///
-/// **JSON schema version 历史**:
-/// - v1: 基础 (profile / contacts / medications / checkIns)
-/// - v2: + `reportHistories` + `moodEntries` (v0.9 引入)
-/// - v3: + `ventEntries` 文字 (v0.15 引入, 跨设备恢复需要)
-/// - v4 (current): 4D 情绪 (energy / sleep / anxiety) (v0.18 引入)
-///
-/// **emil 设计决策**:
-/// - "decisions should be nameable" — schema version 兼容 + 字段校验 决策独立命名
-/// - 6 个 `_validate*` 全部 public static, 命名去掉下划线 (跟 `EncryptionService`
-///   风格一致) — `ExportAudioService.parseAudioDurationSec` 复用 `validateIntOr`
-/// - `deleteOldDataSafely` 走 `swallowError` 集中器 — P1-10 修过的 "不静默 catch(_)"
-/// - `const` constructor (0 状态, 0 runtime cost)
-/// - `validateDate` 内部用 `DateTime.tryParse` (v0.21 P0-2 fix: 替代 try/catch 反模式)
-library;
+// JSON schema version 管理 + 字段校验 helper — v0.24 Sprint #5c (emil god class 拆解)
+//
+// **职责**:
+// 1. version 1-4 范围校验 (P0 兼容, 不破坏老用户数据 — v0.22 round 30 P0)
+// 2. 6 个字段类型 + 长度 + pattern 校验 (static helper, 纯函数)
+// 3. 旧 schema 缺失表的安全删除 (P1-10 fix: 不再 catch(_) 完全静默, 走 swallowError
+//    集中器便于排查异常 schema — v0.23 round 39)
+//
+// **来源**: 原本所有校验 + 旧表删除都堆在 `data_export_service.dart` 内
+// (line 215-472 import 编排 + line 476-517 `_validate*` 静态 helper),
+// Sprint #5c 抽到 `ExportSchemaService`。
+//
+// **JSON schema version 历史**:
+// - v1: 基础 (profile / contacts / medications / checkIns)
+// - v2: + `reportHistories` + `moodEntries` (v0.9 引入)
+// - v3: + `ventEntries` 文字 (v0.15 引入, 跨设备恢复需要)
+// - v4 (current): 4D 情绪 (energy / sleep / anxiety) (v0.18 引入)
+//
+// **emil 设计决策**:
+// - "decisions should be nameable" — schema version 兼容 + 字段校验 决策独立命名
+// - 6 个 `_validate*` 全部 public static, 命名去掉下划线 (跟 `EncryptionService`
+//   风格一致) — `ExportAudioService.parseAudioDurationSec` 复用 `validateIntOr`
+// - `deleteOldDataSafely` 走 `swallowError` 集中器 — P1-10 修过的 "不静默 catch(_)"
+// - `const` constructor (0 状态, 0 runtime cost)
+// - `validateDate` 内部用 `DateTime.tryParse` (v0.21 P0-2 fix: 替代 try/catch 反模式)
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';

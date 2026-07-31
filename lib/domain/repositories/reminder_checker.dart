@@ -1,7 +1,6 @@
-/// 失联检测抽象接口（domain 层）
-///
-/// ReminderService 实现此接口，domain 层业务逻辑（CareEngine 等）不直接依赖 data 层。
-library;
+// 失联检测抽象接口（domain 层）
+//
+// ReminderService 实现此接口，domain 层业务逻辑（CareEngine 等）不直接依赖 data 层。
 
 /// 检测结果级别
 enum ReminderLevel { none, soft, medium, hard, urgent }

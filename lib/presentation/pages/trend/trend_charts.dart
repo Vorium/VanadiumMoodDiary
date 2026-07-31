@@ -7,7 +7,6 @@
 // - widgets/trend_mood_chart.dart
 //
 // 本文件作为 re-export barrel 保持向后兼容 (新代码请直接 import widgets/ 下的 4 个文件).
-library;
 
 export 'widgets/trend_heatmap_grid.dart';
 export 'widgets/trend_monthly_chart.dart';

@@ -1,23 +1,22 @@
-/// 树洞文字 encrypt/decrypt 包装 — v0.24 Sprint #5c (emil god class 拆解)
-///
-/// **职责**: AES-256 encrypt/decrypt blob ↔ utf8 string, 失败返回 null 不抛异常
-///
-/// **来源**: v0.21 Round 22 (P0-3) 树洞文字字段级加密 (PIPL §28 敏感个人信息),
-/// 原本所有 encrypt/decrypt 调用都堆在 `data_export_service.dart` 内 (line 177-207
-/// `_buildVentEntryExport` decrypt 段 + line 431-435 `importFromJson` encrypt 段)。
-///
-/// **隐私边界**: vent 二次确认 (presentation 层) 不动 — 仅数据层副作用封装下沉
-/// (P0-3 修复保留: decrypt 失败 → null 不抛, v0.23 round 39 P1-5 容错保留)
-///
-/// **依赖**: `EncryptionService` (单例, DI 可注入 mock 测 decrypt 容错)
-///
-/// **emil 设计决策**:
-/// - "decisions should be nameable" — vent text 加密决策独立命名, 不混在 facade
-/// - decrypt 失败 → null (跟 `int? _validateInt` 风格一致, 决策可命名)
-/// - 不持有状态 — 副作用通过 `EncryptionService` 单例 key cache, 自身 0 field
-/// - constructor 兼容 facade 旧签名 `DataExportService(db, [reportRepo, ventTextEncryption])`
-///   把 `ventTextEncryption` 转发到 `ExportCryptoService(ventTextEncryption)`, 50+ 现有 test 不改
-library;
+// 树洞文字 encrypt/decrypt 包装 — v0.24 Sprint #5c (emil god class 拆解)
+//
+// **职责**: AES-256 encrypt/decrypt blob ↔ utf8 string, 失败返回 null 不抛异常
+//
+// **来源**: v0.21 Round 22 (P0-3) 树洞文字字段级加密 (PIPL §28 敏感个人信息),
+// 原本所有 encrypt/decrypt 调用都堆在 `data_export_service.dart` 内 (line 177-207
+// `_buildVentEntryExport` decrypt 段 + line 431-435 `importFromJson` encrypt 段)。
+//
+// **隐私边界**: vent 二次确认 (presentation 层) 不动 — 仅数据层副作用封装下沉
+// (P0-3 修复保留: decrypt 失败 → null 不抛, v0.23 round 39 P1-5 容错保留)
+//
+// **依赖**: `EncryptionService` (单例, DI 可注入 mock 测 decrypt 容错)
+//
+// **emil 设计决策**:
+// - "decisions should be nameable" — vent text 加密决策独立命名, 不混在 facade
+// - decrypt 失败 → null (跟 `int? _validateInt` 风格一致, 决策可命名)
+// - 不持有状态 — 副作用通过 `EncryptionService` 单例 key cache, 自身 0 field
+// - constructor 兼容 facade 旧签名 `DataExportService(db, [reportRepo, ventTextEncryption])`
+//   把 `ventTextEncryption` 转发到 `ExportCryptoService(ventTextEncryption)`, 50+ 现有 test 不改
 
 import 'dart:convert';
 import 'dart:typed_data';

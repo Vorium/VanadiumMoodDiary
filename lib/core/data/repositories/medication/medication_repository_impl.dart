@@ -8,7 +8,6 @@
 //
 // v0.16 (Round 19): `times` 参数从 `List<TimeOfDay>` 改为 `List<HourMinute>`，
 // 消除 data → flutter/material 依赖。
-library;
 
 import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';

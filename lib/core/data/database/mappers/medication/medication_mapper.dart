@@ -9,7 +9,6 @@
 // - JSON 序列化的细节（timesJson）封装在这里，UI 不感知
 // - 复用 `MedicationTimes` extension（`med.times` getter）解析 timesJson，
 //   避免重复实现 JSON 解析
-library;
 
 import 'package:drift/drift.dart' show Value;
 

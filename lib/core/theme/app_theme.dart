@@ -13,11 +13,13 @@ class AppTheme {
     final isDark = brightness == Brightness.dark;
 
     // M3 ColorScheme.fromSeed 自动派生一套语义颜色
+    // v0.27 round 63 (P1-2 修复): 删显式 onPrimary: Colors.white 覆盖。
+    // fromSeed 已根据 seed color + brightness 计算 onPrimary, 显式覆盖是
+    // 反 M3 行为 (dark mode 下 onPrimary 应该派生 dark 系, 不是 white)
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppTokens.primary,
       brightness: brightness,
       primary: AppTokens.primary,
-      onPrimary: Colors.white,
       error: isDark ? AppTokens.errorDark : AppTokens.error,
     );
 
