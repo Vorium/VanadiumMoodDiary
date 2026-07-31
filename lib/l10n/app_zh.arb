@@ -1202,6 +1202,7 @@
       }
     }
   },
+  "setupConsentRejected": "已拒绝该联系人的知情同意，未写入。可重新填写后继续。",
   "emailBodyI18n": "我是 {name}，已经 {days} 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。",
   "@emailBodyI18n": {
     "placeholders": {

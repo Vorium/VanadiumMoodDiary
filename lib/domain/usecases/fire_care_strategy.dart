@@ -136,6 +136,12 @@ class FireCareStrategyResult {
 /// caller 注入 checkIns (从 CheckInRepository 拿) + now (DateTime.now()) +
 /// userProfile / contacts (从 SafetyWatchService 已有 inputs 复用) + config
 /// (渠道配置, 默认 careCopy)。
+///
+/// R68 (CC-6 修复): 加 `isSafetyConsentWithdrawn` 字段 — 用户在 legal_page 关掉
+/// "失联通知" toggle 后, use case 必须返 disabled (跟隐私政策 §4 / §9 / §12
+/// 表格宣称的"撤回后 CareEngine.fire 直接 return"对齐)。use case 是 pure
+/// function, 不直接调 ConsentGate, 由 caller (home_page) 从
+/// legalConsentStoreProvider 注入。
 class FireCareStrategyInput {
   final List<CheckInEntity> checkIns;
   final DateTime now;
@@ -143,12 +149,18 @@ class FireCareStrategyInput {
   final List<ContactEntity> contacts;
   final CareChannelConfig config;
 
+  /// R68: 用户是否撤回失联通知同意 (PIPL §14 + 隐私政策 §4 / §9 / §12)
+  ///
+  /// true → use case 返 disabled (不推任何关怀通知, 跟隐私政策承诺一致)
+  final bool isSafetyConsentWithdrawn;
+
   const FireCareStrategyInput({
     required this.checkIns,
     required this.now,
     this.userProfile,
     this.contacts = const [],
     this.config = CareChannelConfig.defaultConfig,
+    this.isSafetyConsentWithdrawn = false,
   });
 }
 
@@ -186,8 +198,8 @@ class FireCareStrategyUseCase {
   };
 
   FireCareStrategyResult call(FireCareStrategyInput input) {
-    // 1. 关闭
-    if (!input.config.enabled) {
+    // 1. 关闭 — config.disabled OR 用户撤回失联通知同意 (R68 CC-6)
+    if (!input.config.enabled || input.isSafetyConsentWithdrawn) {
       return const FireCareStrategyResult(
         decision: FireCareDecision.disabled,
         strategy: CareTriggerType.none,

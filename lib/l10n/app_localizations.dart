@@ -3478,6 +3478,12 @@ abstract class AppLocalizations {
   /// **'联系人 {index}'**
   String setupContactFallbackName(int index);
 
+  /// No description provided for @setupConsentRejected.
+  ///
+  /// In zh, this message translates to:
+  /// **'已拒绝该联系人的知情同意，未写入。可重新填写后继续。'**
+  String get setupConsentRejected;
+
   /// No description provided for @emailBodyI18n.
   ///
   /// In zh, this message translates to:

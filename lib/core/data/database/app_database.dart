@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
+import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 
 import 'package:chroniccare/core/data/database/connection/connection.dart'
@@ -272,9 +273,15 @@ class AppDatabase extends _$AppDatabase {
 
   /// 完成首次设置：在同一个事务里写入用户档案、联系人、药物，
   /// 任何一个失败整体回滚，避免半成品数据
+  ///
+  /// v0.27 round 68 (CC-1 修复, PIPL §13 单独同意): 加 `contactConsents` 参数
+  /// (跟 `contactList` 等长)。setup 阶段每个填了的联系人必须有 ConsentArtifact,
+  /// 否则联系人不会写入(4 个 consent 字段必有值)。setup_page 必须在调 saveSetup
+  /// 之前对每个联系人弹 ConsentDialog 拿 consent。
   Future<void> saveSetup({
     required String userName,
     required List<({String name, String phone, int sortOrder})> contactList,
+    required List<ConsentArtifact> contactConsents,
     required List<
             ({
               String name,
@@ -303,13 +310,23 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
 
-      // insert contacts
-      for (final c in contactList) {
+      // insert contacts (R68 CC-1: PIPL §13 单独同意, 4 个 consent 字段必有)
+      assert(contactList.length == contactConsents.length,
+          'contactList 跟 contactConsents 必须等长 — setup_page 必须逐个弹 ConsentDialog');
+      for (var i = 0; i < contactList.length; i++) {
+        final c = contactList[i];
+        final consent = contactConsents[i];
         await into(contacts).insert(
           ContactsCompanion.insert(
             name: c.name,
             phone: c.phone,
             sortOrder: Value(c.sortOrder),
+            // R68 CC-1 修复: 4 个 consent 字段从 setup 阶段就写
+            // (之前留空 → PIPL §13 技术层面不成立, §47 查询权无效)
+            consentAt: Value(consent.grantedAt),
+            consentKind: Value(consent.kind.name),
+            consentBy: Value(consent.grantedBy),
+            consentVersion: Value(consent.version),
           ),
         );
       }

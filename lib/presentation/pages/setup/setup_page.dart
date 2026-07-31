@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/domain/entities/consent_artifact.dart' show ConsentArtifact, ConsentKind;
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -16,6 +17,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_consent.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_welcome.dart';
@@ -365,14 +367,36 @@ class _SetupPageState extends ConsumerState<SetupPage> {
 
     final userName = _nameController.text.trim();
     final contactList = <({String name, String phone, int sortOrder})>[];
+    final contactConsents = <ConsentArtifact>[];
+    // v0.27 round 68 (CC-1 修复, PIPL §13 单独同意): setup 阶段对每个填了的
+    // 联系人弹 ConsentDialog,只有同意的才入 contactList (跟 contactConsents 等长)
+    // 跟主路径 contacts_list_widget.dart:208-212 走同一 ConsentDialog 集中器
     for (int i = 0; i < _contactPhoneControllers.length; i++) {
       final phone = _contactPhoneControllers[i].text.trim();
       if (phone.isEmpty) continue;
+      // PIPL §13: 弹同意 dialog, 用户拒绝 → 不写该联系人,终止 setup
+      final consent = await ConsentDialog.show(
+        context,
+        kind: ConsentKind.emergencyContactSharing,
+        thresholdDays: 2, // 跟 care_strategies.secondDayMissed 一致
+      );
+      if (consent == null) {
+        // 用户拒绝: 终止整个 setup (PIPL §13 严同意, 部分填也不行)
+        if (mounted) {
+          AppSnackBar.showInfo(
+            context,
+            AppLocalizations.of(context).setupConsentRejected,
+          );
+        }
+        setState(() => _saving = false);
+        return;
+      }
       final normalized = PhoneValidator.normalize(phone) ?? phone;
       final name = _contactNameControllers[i].text.trim().isEmpty
           ? AppLocalizations.of(context).setupContactFallbackName(i + 1)
           : _contactNameControllers[i].text.trim();
       contactList.add((name: name, phone: normalized, sortOrder: i));
+      contactConsents.add(consent);
     }
 
     final medicationList = <({
@@ -401,6 +425,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       await ref.read(databaseProvider).saveSetup(
             userName: userName,
             contactList: contactList,
+            contactConsents: contactConsents, // R68 CC-1
             medicationList: medicationList,
           );
       // v0.21 Round 22 (P1-22 修复): PIPL §14 同意记录

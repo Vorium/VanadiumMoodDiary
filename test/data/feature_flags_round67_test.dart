@@ -15,10 +15,11 @@ void main() {
     });
 
     test(
-        '1. 默认值: emergencyContactEnabled=false, iapEnabled=true, phqGad7I18nEnabled=false, bootReceiverEnabled=true',
+        '1. 默认值: emergencyContactEnabled=false, iapEnabled=false (R68), phqGad7I18nEnabled=false, bootReceiverEnabled=true',
         () {
+      // R68 CC-3: iapEnabled 默认 false (临时关闭, 避免 "8 元买断" vs release buyLifetime() 返 false 不一致)
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
-      expect(FeatureFlags.iapEnabled, isTrue);
+      expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.phqGad7I18nEnabled, isFalse);
       expect(FeatureFlags.bootReceiverEnabled, isTrue);
     });
@@ -39,7 +40,8 @@ void main() {
       expect(FeatureFlags.phqGad7I18nEnabled, isTrue);
       // 其他 3 个 flag 不变
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
-      expect(FeatureFlags.iapEnabled, isTrue);
+      // R68: prod iapEnabled = false
+      expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.bootReceiverEnabled, isTrue);
     });
 
@@ -49,28 +51,32 @@ void main() {
       expect(FeatureFlags.bootReceiverEnabled, isFalse);
       // 其他 3 个 flag 不变
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
-      expect(FeatureFlags.iapEnabled, isTrue);
+      // R68: prod iapEnabled = false
+      expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.phqGad7I18nEnabled, isFalse);
     });
 
     test('5. setXxxForTest(null): 该 flag 恢复 prod 默认值', () {
-      FeatureFlags.setIapEnabledForTest(false);
-      expect(FeatureFlags.iapEnabled, isFalse);
+      FeatureFlags.setIapEnabledForTest(true);
+      expect(FeatureFlags.iapEnabled, isTrue);
       FeatureFlags.setIapEnabledForTest(null);
-      expect(FeatureFlags.iapEnabled, isTrue); // 恢复 prod = true
+      // R68: 恢复 prod = false (之前 R67 = true)
+      expect(FeatureFlags.iapEnabled, isFalse);
     });
 
     test('6. enableForTest (R66 兼容): 4 个 flag 全部 enable, resetForTest 全清', () {
       // 跟 R66 老 test 调用方式兼容
       FeatureFlags.enableForTest();
       expect(FeatureFlags.emergencyContactEnabled, isTrue);
+      // enableForTest 强制 override, 不受 prod 默认影响
       expect(FeatureFlags.iapEnabled, isTrue);
       expect(FeatureFlags.phqGad7I18nEnabled, isTrue);
       expect(FeatureFlags.bootReceiverEnabled, isTrue);
-      // resetForTest 全部清
+      // resetForTest 全部清, 回到 prod 默认
       FeatureFlags.resetForTest();
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
-      expect(FeatureFlags.iapEnabled, isTrue);
+      // R68: prod = false
+      expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.phqGad7I18nEnabled, isFalse);
       expect(FeatureFlags.bootReceiverEnabled, isTrue);
     });

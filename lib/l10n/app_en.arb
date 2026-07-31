@@ -1160,6 +1160,7 @@
       }
     }
   },
+  "setupConsentRejected": "Consent for this contact was rejected, not saved. Refill and continue.",
   "emailBodyI18n": "I'm {name}. I haven't checked in on the app for {days} days.\nCould you remind me to take my medication on time when convenient, to avoid relapse?",
   "@emailBodyI18n": {
     "placeholders": {

@@ -1899,6 +1899,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get setupConsentRejected => '已拒绝该联系人的知情同意，未写入。可重新填写后继续。';
+
+  @override
   String emailBodyI18n(String name, int days) {
     return '我是 $name，已经 $days 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。';
   }
@@ -3993,6 +3996,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String setupContactFallbackName(int index) {
     return '聯繫人 $index';
   }
+
+  @override
+  String get setupConsentRejected => '已拒絕該聯繫人的知情同意，未寫入。可重新填寫後繼續。';
 
   @override
   String emailBodyI18n(String name, int days) {

@@ -1989,6 +1989,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get setupConsentRejected =>
+      'Consent for this contact was rejected, not saved. Refill and continue.';
+
+  @override
   String emailBodyI18n(String name, int days) {
     return 'I\'m $name. I haven\'t checked in on the app for $days days.\nCould you remind me to take my medication on time when convenient, to avoid relapse?';
   }

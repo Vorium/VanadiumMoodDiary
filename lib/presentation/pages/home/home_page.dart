@@ -14,6 +14,7 @@ import 'package:chroniccare/presentation/widgets/theme_toggle_button.dart';
 import 'package:chroniccare/presentation/providers/care_strategy_providers.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -516,6 +517,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     try {
       // P0 fix: 复用 provider 树已缓存的打卡数据，不再重复查库
       final all = ref.read(allCheckInsProvider).value ?? [];
+      // v0.27 round 68 (CC-6 修复): 读 user 撤回失联通知同意状态
+      // (PIPL §14 + 隐私政策 §4 / §9 / §12 表格承诺"撤回后 CareEngine.fire 直接 return")
+      final isSafetyWithdrawn =
+          await ref.read(legalConsentWithdrawnProvider(ConsentKind.safety).future);
       // v0.27 round 67 (B-2 修复): R65 抽离的 use case
       final useCase = ref.read(fireCareStrategyUseCaseProvider);
       final result = useCase(
@@ -525,6 +530,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           userProfile: null, // v1.0+ 用 (文案内嵌用户名)
           contacts: const [], // v1.0+ 用 (SmsService.send 的 to:)
           config: CareChannelConfig.defaultConfig, // careCopy
+          isSafetyConsentWithdrawn: isSafetyWithdrawn, // R68 CC-6 修复
         ),
       );
       if (!result.shouldFire) return;

@@ -33,7 +33,9 @@ class FeatureFlags {
 
   // ====== Production const values (启动时锁定, prod 永不改变) ======
   static const bool _prodEmergencyContactEnabled = false;
-  static const bool _prodIapEnabled = true;
+  // R68: IAP 8 元买断在 release 模式 `buyLifetime()` 返 false + user_agreement.md 写"8 元买断" = 描述 vs 实际不一致(CC-3)
+  // 临时关闭 IAP 入口,等 v0.28 真接 productId 后再开
+  static const bool _prodIapEnabled = false;
   static const bool _prodPhqGad7I18nEnabled = false;
   static const bool _prodBootReceiverEnabled = true;
 
