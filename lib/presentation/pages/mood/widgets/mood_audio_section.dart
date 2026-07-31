@@ -1,31 +1,27 @@
-// v0.24 Sprint #5 (emil): 抽 MoodRecorder 子 widget
+// v0.28 (round 64 MoodRecorder god-split): audio section 从 mood_recorder.dart 抽出
 //
-// **从 mood_dialog.dart god class 抽出录音 + STT 状态机**
+// 历史:
+// - v0.24 Sprint #5: 从 mood_dialog.dart god class 抽出录音 + STT 状态机
+// - v0.28 round 64: 重命名 mood_recorder.dart → mood_audio_section.dart
+//   (emil P2-2.21 + spen + alibaba 三方共识拆 god page)
 //
-// 原 706 行文件里 1 个 `_MoodDialogContentState` 同时管:
-// - 4 维度评分 / 标签 / 文字 / 录音状态机 / STT 流 / 临时文件清理 /
-//   AudioPlayer / 2 StreamSubscription
+// **职责**: 录音按钮 / 计时 / STT 实时 / 波形(预留) / mic 权限 / 临时文件加密
+// **外部接口**: MoodRecorderController (ValueListenable + 3 method), parent 拉 snapshot
 //
-// 拆解后: 评分/标签/文字在 orchestrator, **录音状态机完整下沉到 MoodRecorder**。
-// parent 通过 [snapshot] 拉最终数据 (audioPath / durationMs / finalTranscript),
-// 通过 [toggleRecord] / [togglePlay] / [reRecord] 触发动作, 99% 副作用不外泄。
+// 99% 副作用不外泄:
+// - 录音状态机内部消化 (idle/recording/recorded/playing)
+// - AudioPlayer / Recorder / StreamSubscription / temp file 全部 dispose 链
+// - 错误走 controller.onError callback, parent 决定 l10n snackbar
 //
-// emil 设计决策 (decisions should be nameable):
-// 1. **不用 Riverpod StateNotifier** — dialog scope, ValueNotifier 已够
-// 2. **MoodRecorderController 暴露 snapshot** (ValueListenable) + 3 method
-// 3. **dispose 链完整** — recorder / player / 2 StreamSubscription / temp file
-//    / service 全在 MoodRecorder 内部清理
-// 4. **保留所有 P0 修复**:
-//    - snackbar 显示走 parent context (parent 显式传入 l10n key), recorder 内
-//      调 onError callback 让 parent 展示
-//    - AudioPlayer dispose 顺序 (stop → dispose)
-//    - EncryptedAudioStorage temp cleanup
-//    - swallowError 模式
-//    - _isRecording 时 cancelRecording on dispose
-//    - STT failed graceful degrade
-// 5. **maxReached 下沉** — 录音中 180s 到时提示由 recorder 内部计算
+// emil 设计决策 (保留自 v0.24):
+// 1. 不用 Riverpod StateNotifier — dialog scope, ValueNotifier 已够
+// 2. MoodRecorderController 暴露 snapshot (ValueListenable) + 3 method
+// 3. dispose 链完整 — recorder / player / 2 StreamSubscription / temp file / service
+// 4. 保留所有 P0 修复: snackbar 走 parent context / AudioPlayer dispose 顺序 /
+//    EncryptedAudioStorage temp cleanup / swallowError / _isRecording cancel on dispose /
+//    STT failed graceful degrade / maxReached 下沉
 //
-// 频度: tens/day (mood 录入是核心动作), 录音中 100ms tick 触发局部 rebuild
+// 频度: tens/day (mood 录入核心动作)
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -162,7 +158,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
     unawaited(
       _disposeResources().catchError((Object e, StackTrace st) {
         swallowError(
-          where: 'mood_recorder.dispose._disposeResources',
+          where: 'mood_audio_section.dispose._disposeResources',
           error: e,
           stack: st,
           note: 'dispose resources chain failed',
@@ -181,7 +177,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
       await _player.dispose();
     } catch (e, st) {
       swallowError(
-        where: 'mood_recorder.dispose.playerStop',
+        where: 'mood_audio_section.dispose.playerStop',
         error: e,
         stack: st,
       );
@@ -194,7 +190,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
             .deleteTempFile(_tempDecryptedPath!);
       } catch (e, st) {
         swallowError(
-          where: 'mood_recorder.dispose.deleteTemp',
+          where: 'mood_audio_section.dispose.deleteTemp',
           error: e,
           stack: st,
         );
@@ -206,7 +202,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
         await _service.cancelRecording();
       } catch (e, st) {
         swallowError(
-          where: 'mood_recorder.dispose.cancelRecording',
+          where: 'mood_audio_section.dispose.cancelRecording',
           error: e,
           stack: st,
           note: 'cancel recording on dispose failed',
@@ -218,7 +214,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
       await _service.dispose();
     } catch (e, st) {
       swallowError(
-        where: 'mood_recorder.dispose.service',
+        where: 'mood_audio_section.dispose.service',
         error: e,
         stack: st,
       );
@@ -276,7 +272,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
         await _service.stopStt();
       } catch (e, st) {
         swallowError(
-          where: 'mood_recorder.stopStt',
+          where: 'mood_audio_section.stopStt',
           error: e,
           stack: st,
           note: 'STT stop failed',
@@ -385,7 +381,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
               .deleteTempFile(_tempDecryptedPath!);
         } catch (e2, st) {
           swallowError(
-            where: 'mood_recorder.failCleanup',
+            where: 'mood_audio_section.failCleanup',
             error: e2,
             stack: st,
           );
@@ -596,6 +592,3 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
     );
   }
 }
-
-// MoodRecorder 内部消化录音状态机 — 副作用不外泄到 parent
-// (saving 状态由 MoodDialogActions / orchestrator 持有, 不在 recorder 内)

@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
@@ -9,6 +10,7 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
+import 'package:chroniccare/core/data/services/safety_detector.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart'
     show AppLocalizations;
@@ -32,6 +34,12 @@ import 'package:chroniccare/l10n/app_localizations.dart'
 ///   - SafetyConfigService: 8 个 SharedPreferences 配置 API
 ///   - SafetyAlertDispatcher:  SMS + 本地通知 + audit log
 /// safety_watch_service 退化为 facade, 协调 _checkAndAlert 核心
+///
+/// v0.27 round 64 (spen P1-12 收尾): 抽 SafetyDetector 纯函数类
+///   - 8 类 early-return decision 全部移到 detector (纯函数, 0 副作用)
+///   - facade 仅负责: 加载 inputs (config + repos + stream) + 调 detector +
+///     委派 dispatcher
+///   - `_checkAndAlert` 122 行 → ~40 行 facade + 2 个 < 20 行 helper
 class SafetyWatchService {
   // v0.25 round 57: 旧 key 常量移到 SafetyConfigService 内部 (private)
   // 保留 defaultThresholdDays 静态常量兼容旧调用方
@@ -118,117 +126,56 @@ class SafetyWatchService {
     return _checkAndAlert(trigger: 'manual', now: now, l10n: l10n);
   }
 
-  // ============== 核心 ==============
+  // ============== 核心 facade (R64 拆分后) ==============
 
+  /// v0.27 round 64: facade 核心 — 加载 inputs + 调 detector + 委派 dispatcher
+  ///
+  /// 拆分前 122 行混合 8 类判定 + 3 类 sub-service 协调, god method。
+  /// 拆分后:
+  /// - 7 段 early-return 判定全部移到 [SafetyDetector.detect] (纯函数)
+  /// - 加载 inputs (config / repos / stream) 保留在 facade (有副作用)
+  /// - 委派 dispatcher 抽 [_dispatchLostContact]
+  /// - stream + timeout 抽 [_loadContacts]
   Future<SafetyCheckResult> _checkAndAlert({
     required String trigger,
     DateTime? now,
     required AppLocalizations l10n,
   }) async {
     try {
-      // v0.27 round 61 (P1-12 拆分收尾): 直接调 _config, 不走 facade
+      // 1. 加载 inputs (副作用: I/O, DB, SharedPreferences, stream)
       final enabled = await _config.isEnabled();
-      if (!enabled) {
-        return const SafetyCheckResult(kind: SafetyCheckKind.disabled);
-      }
-
       final threshold = await _config.getThresholdDays();
-
-      // 1. 拉最近一次正常打卡（P0 fix: DB 级 LIMIT 1，不再全表扫描）
-      final latestNormal = await _checkInRepo.getLatestNormalCheckIn();
-      if (latestNormal == null) {
-        // 用户从没打过卡，**不算异常**（新用户不打扰）
-        return const SafetyCheckResult(kind: SafetyCheckKind.noData);
-      }
-      final lastCheckIn = latestNormal.timestamp;
-      // P0-4 fix: 接受外部 now 注入，避免测试跨 midnight flake。
-      // 同一函数内不重复调 DateTime.now()(v0.16 round 19B 已立的规矩)。
-      // 用 effectiveNow 避免跟参数 now 同名导致 Dart 推断为 nullable。
+      // P0 fix: DB 级 LIMIT 1, 不全表扫描
+      final lastCheckInAt =
+          (await _checkInRepo.getLatestNormalCheckIn())?.timestamp;
+      // P0-4 fix: 接受外部 now 注入,避免测试跨 midnight flake
       final effectiveNow = now ?? DateTime.now();
-      final daysSinceLast = SafetyConfigService.daysBetween(lastCheckIn, effectiveNow);
-
-      if (daysSinceLast < threshold) {
-        return SafetyCheckResult(
-          kind: SafetyCheckKind.ok,
-          daysSinceLast: daysSinceLast,
-        );
-      }
-
-      // 2. 超过阈值：检查今天是不是已经发过了
-      final lastAlert = await _config.getLastAlertAt();
-      if (lastAlert != null && SafetyConfigService.isSameDay(lastAlert, effectiveNow)) {
-        return SafetyCheckResult(
-          kind: SafetyCheckKind.alertedToday,
-          daysSinceLast: daysSinceLast,
-        );
-      }
-
-      // 3. 检查 DND 时段
-      if (await _config.isInDnd(effectiveNow)) {
-        return SafetyCheckResult(
-          kind: SafetyCheckKind.dndSuppressed,
-          daysSinceLast: daysSinceLast,
-        );
-      }
-
-      // 4. 拉用户档案 + 联系人
+      final lastAlertAt = await _config.getLastAlertAt();
+      final inDnd = await _config.isInDnd(effectiveNow);
       final profile = await _userProfileRepo.get();
-      if (profile == null) {
-        return const SafetyCheckResult(kind: SafetyCheckKind.noData);
-      }
-      // v0.23 round 38 (P0-3 fix): 加 5s timeout + 异常降级
-      // 之前 `_contactRepo.watchAll().first` 在以下情况会 hang:
-      //   a) drift stream 内部异常 (罕见,通常是 DB lock)
-      //   b) stream 关闭 (没关闭 listener)
-      // 整个 `_checkAndAlert` 阻塞 → 失联检测核心路径失败 → SMS 通知永远不发出
-      // 修法: [_contactWatchTimeout] 默认 5s 返回空列表,降级到 noContacts kind
-      //      内部异常也 catch,降级到 noContacts
-      //      safety_watch_service 自身不动 — 整个降级链路最简
-      final List<ContactEntity> contacts;
-      try {
-        contacts = await _contactRepo
-            .watchAll()
-            .first
-            .timeout(_contactWatchTimeout, onTimeout: () => const <ContactEntity>[]);
-      } catch (e, st) {
-        piiSafeLog(
-          'SafetyWatchService',
-          '⚠️ _contactRepo.watchAll().first 异常: $e — 降级到 noContacts',
-          error: e,
-          stackTrace: st,
-        );
-        return SafetyCheckResult(
-          kind: SafetyCheckKind.noContacts,
-          daysSinceLast: daysSinceLast,
-        );
-      }
-      if (contacts.isEmpty) {
-        return SafetyCheckResult(
-          kind: SafetyCheckKind.noContacts,
-          daysSinceLast: daysSinceLast,
-        );
-      }
+      final contacts = await _loadContacts();
 
-      // 5+6+7. v0.25 round 57 (god class 拆分): 委托给 SafetyAlertDispatcher
-      // 发 SMS + 推本地通知 + 写 audit log + 计数
-      //
-      // v0.27 round 60 (P0-3 修正): 传 l10n, 通知文案走 3 态分流 i18n
-      final dispatched = await _alertDispatcher.dispatchAlert(
+      // 2. 判定 (纯函数, 0 副作用)
+      final decision = SafetyDetector.detect(
+        enabled: enabled,
+        threshold: threshold,
+        lastCheckInAt: lastCheckInAt,
+        now: effectiveNow,
+        lastAlertAt: lastAlertAt,
+        inDnd: inDnd,
+        profile: profile,
         contacts: contacts,
-        userName: profile.userName,
-        daysSinceLast: daysSinceLast,
-        lastCheckIn: lastCheckIn,
-        effectiveNow: effectiveNow,
-        trigger: trigger,
-        l10n: l10n,
       );
 
-      return SafetyCheckResult(
-        kind: SafetyCheckKind.alerted,
-        daysSinceLast: daysSinceLast,
-        contactsNotified: dispatched.smsOk,
-        contactsFailed: dispatched.smsFail,
-        contactsMocked: dispatched.smsMock,
+      // 3. 委派 (Alert 走 dispatcher, 其余返 SafetyCheckResult)
+      return _actOnDecision(
+        decision: decision,
+        trigger: trigger,
+        lastCheckInAt: lastCheckInAt,
+        effectiveNow: effectiveNow,
+        profile: profile,
+        contacts: contacts,
+        l10n: l10n,
       );
     } catch (e, st) {
       piiSafeLog(
@@ -244,10 +191,111 @@ class SafetyWatchService {
     }
   }
 
-  // v0.25 round 57: _buildAlertSms 跟 _setLastAlertAt 已移到
-  // SafetyAlertDispatcher / SafetyConfigService, safety_watch_service
-  // 作为 facade 不再持有这些 method. caller 可通过 dispatcher / config
-  // 直接调, 或继续用 facade 的 8 个 public method 转发.
+  /// v0.27 round 64: 把 [SafetyDecision] 翻译成 `Future<SafetyCheckResult>`
+  ///
+  /// sealed class 8 leaf 走 switch expression 强制穷举, 新加 kind 时编译
+  /// 失败提醒。仅 [SafetyDecisionAlert] 需要副作用 (调 dispatcher), 其余
+  /// 直接构造 result 后包 Future。
+  Future<SafetyCheckResult> _actOnDecision({
+    required SafetyDecision decision,
+    required String trigger,
+    required DateTime? lastCheckInAt,
+    required DateTime effectiveNow,
+    required UserProfileEntity? profile,
+    required List<ContactEntity> contacts,
+    required AppLocalizations l10n,
+  }) async {
+    return switch (decision) {
+      SafetyDecisionDisabled() =>
+        const SafetyCheckResult(kind: SafetyCheckKind.disabled),
+      SafetyDecisionNoData() =>
+        const SafetyCheckResult(kind: SafetyCheckKind.noData),
+      SafetyDecisionOk(:final daysSinceLast) => SafetyCheckResult(
+          kind: SafetyCheckKind.ok,
+          daysSinceLast: daysSinceLast,
+        ),
+      SafetyDecisionAlertedToday(:final daysSinceLast) => SafetyCheckResult(
+          kind: SafetyCheckKind.alertedToday,
+          daysSinceLast: daysSinceLast,
+        ),
+      SafetyDecisionDndSuppressed(:final daysSinceLast) => SafetyCheckResult(
+          kind: SafetyCheckKind.dndSuppressed,
+          daysSinceLast: daysSinceLast,
+        ),
+      SafetyDecisionNoContacts(:final daysSinceLast) => SafetyCheckResult(
+          kind: SafetyCheckKind.noContacts,
+          daysSinceLast: daysSinceLast,
+        ),
+      // 7. 真触发 — 调 dispatcher (副作用), 拿 SmsDispatchOutcome 构 result
+      SafetyDecisionAlert(:final daysSinceLast) => await _dispatchLostContact(
+          trigger: trigger,
+          lastCheckInAt: lastCheckInAt!,
+          daysSinceLast: daysSinceLast,
+          effectiveNow: effectiveNow,
+          profile: profile!,
+          contacts: contacts,
+          l10n: l10n,
+        ),
+    };
+  }
+
+  /// v0.27 round 64: 失联告警实际发出去 (委派给 SafetyAlertDispatcher)
+  ///
+  /// 注: Dart switch expression 不支持 await, 所以从 [_actOnDecision] 单独
+  /// 调。返回 `Future<SafetyCheckResult>` 跟原 facade 行为一致。
+  Future<SafetyCheckResult> _dispatchLostContact({
+    required String trigger,
+    required DateTime lastCheckInAt,
+    required int daysSinceLast,
+    required DateTime effectiveNow,
+    required UserProfileEntity profile,
+    required List<ContactEntity> contacts,
+    required AppLocalizations l10n,
+  }) async {
+    final dispatched = await _alertDispatcher.dispatchAlert(
+      contacts: contacts,
+      userName: profile.userName,
+      daysSinceLast: daysSinceLast,
+      lastCheckIn: lastCheckInAt,
+      effectiveNow: effectiveNow,
+      trigger: trigger,
+      l10n: l10n,
+    );
+    return SafetyCheckResult(
+      kind: SafetyCheckKind.alerted,
+      daysSinceLast: daysSinceLast,
+      contactsNotified: dispatched.smsOk,
+      contactsFailed: dispatched.smsFail,
+      contactsMocked: dispatched.smsMock,
+    );
+  }
+
+  /// v0.27 round 64: 加载联系人列表 (含 stream + timeout + 异常降级)
+  ///
+  /// v0.23 round 38 (P0-3 fix): 加 5s timeout + 异常降级. 之前
+  /// `_contactRepo.watchAll().first` 在以下情况会 hang:
+  ///   a) drift stream 内部异常 (罕见,通常是 DB lock)
+  ///   b) stream 关闭 (没关闭 listener)
+  /// 整个 `_checkAndAlert` 阻塞 → 失联检测核心路径失败 → SMS 通知永远不发出
+  /// 修法: [_contactWatchTimeout] 默认 5s 返回空列表,降级到 noContacts kind
+  ///      内部异常也 catch,降级到 noContacts
+  ///      safety_watch_service 自身不动 — 整个降级链路最简
+  Future<List<ContactEntity>> _loadContacts() async {
+    try {
+      return await _contactRepo
+          .watchAll()
+          .first
+          .timeout(_contactWatchTimeout, onTimeout: () => const <ContactEntity>[]);
+    } catch (e, st) {
+      piiSafeLog(
+        'SafetyWatchService',
+        '⚠️ _contactRepo.watchAll().first 异常: $e — 降级到 noContacts',
+        error: e,
+        stackTrace: st,
+      );
+      return const <ContactEntity>[];
+    }
+  }
 }
 
 /// 安全检查结果

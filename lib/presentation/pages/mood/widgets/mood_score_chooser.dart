@@ -1,25 +1,29 @@
-// v0.24 Sprint #5 (emil): 抽 MoodScoreForm 子 widget
+// v0.28 (round 64 MoodRecorder god-split): score chooser 从 mood_score_form.dart 重命名
 //
-// 从 mood_dialog.dart 706 行的 _MoodDialogContentState 抽出。
-// 4 个 DimensionRow 顺序排列, 纯 stateless, 全 callback 透传。
+// 历史:
+// - v0.24 Sprint #5: 从 mood_dialog.dart 706 行 _MoodDialogContentState 抽出
+// - v0.28 round 64: mood_score_form → mood_score_chooser (emil P2-2.21 命名一致)
 //
-// emil 设计决策:
+// **职责**: 4 维度评分 (mood / energy / sleep / anxiety) 选择器
+// **接口**: stateless, 全 callback 透传
+//
+// emil 设计决策 (保留自 v0.24):
 // - 4 维度评分是 pure data, 无副作用, 不需要 state class
-// - 复用 v0.23 round 44 抽的 DimensionRow (已有 PressFeedback + AppSemantics)
+// - 复用 v0.23 round 44 抽的 DimensionRow (PressFeedback + AppSemantics)
 // - 8 个 required param (4 值 + 4 回调) 是 emil "decisions should be nameable" 显式化
 //   (vs 传一个 struct, 强制 caller 知道有 4 个维度)
 //
-// 频度: tens/day (mood 录入是核心动作), 沿用 DimensionRow 的 AppSemantics 集中器
+// 频度: tens/day (mood 录入核心动作)
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/dimension_row.dart';
 
-/// 4 维度评分表单 (mood / energy / sleep / anxiety)
+/// 4 维度评分选择器 (mood / energy / sleep / anxiety)
 ///
 /// Stateless, 全 callback 上抛, 父组件持有 4 个 int + 4 个 setter。
-class MoodScoreForm extends StatelessWidget {
+class MoodScoreChooser extends StatelessWidget {
   final int score;
   final int energy;
   final int sleep;
@@ -29,7 +33,7 @@ class MoodScoreForm extends StatelessWidget {
   final ValueChanged<int> onSleepChanged;
   final ValueChanged<int> onAnxietyChanged;
 
-  const MoodScoreForm({
+  const MoodScoreChooser({
     super.key,
     required this.score,
     required this.energy,

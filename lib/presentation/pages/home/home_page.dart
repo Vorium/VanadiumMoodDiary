@@ -37,17 +37,112 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<HomePage> createState() => _HomePageState();
 }
 
+/// v0.27 round 64 (L2 refactor): 3 bool flag → enum 状态机
+///
+/// 之前 3 个独立 bool (`_safetyCheckTriggered` / `_safetyRerunRequested` /
+/// `_deepLinkHandled`) 理论 8 种组合,实际只有 5 种有意义,另 3 种是 race 风险
+/// (e.g. `safetyRerunRequested` 但 safety check 没跑过 / `deepLinkHandled`
+/// 但 rerun 已请求 — 两个独立 flag 没法表达这类不变量)。
+///
+/// 状态机 5 个 named state + 3 个 transition method:
+/// - 有效 transition 走 enum 映射 (`switch` expression 强制穷举)
+/// - 重复 trigger (e.g. `initial.onSafetyCheckCompleted().onSafetyCheckCompleted()`)
+///   idempotent 静默 no-op
+/// - 真 race (`onDeepLinkHandled` 和 `onRerunRequested` 互斥) 抛 `StateError`,
+///   debug 时早发现 invariant 违反
+enum HomeLifecycleState {
+  /// 启动初始态, safety check 未触发
+  initial,
+
+  /// safety check 跑完, 无 deep link
+  safetyCheckCompleted,
+
+  /// deep link 已处理 (from app start, `medId` query param 路径)
+  deepLinkHandled,
+
+  /// 强制重跑 safety check (R62 P1-9 race guard,
+  /// `reason=safety` query param 路径, Timer 后调 `_runSafetyCheck(force: true)`)
+  safetyRerunRequested,
+
+  /// safety check 跑完 + deep link 同时 fire (两路分支都完成)
+  bothHandled;
+
+  /// Transition: safety check ran (无论初次还是 force rerun)。
+  ///
+  /// 允许 from: `initial` (首次) / `deepLinkHandled` / `safetyRerunRequested` (Timer 触发)
+  /// idempotent from: `safetyCheckCompleted` / `bothHandled` (重复调用静默 no-op)
+  HomeLifecycleState onSafetyCheckCompleted() {
+    return switch (this) {
+      HomeLifecycleState.initial => HomeLifecycleState.safetyCheckCompleted,
+      HomeLifecycleState.deepLinkHandled => HomeLifecycleState.bothHandled,
+      HomeLifecycleState.safetyRerunRequested => HomeLifecycleState.bothHandled,
+      // idempotent: 已经包含 safety check completed
+      HomeLifecycleState.safetyCheckCompleted ||
+      HomeLifecycleState.bothHandled =>
+        this,
+    };
+  }
+
+  /// Transition: deep link 带 `medId` 路径已处理。
+  ///
+  /// 允许 from: `initial` / `safetyCheckCompleted`
+  /// idempotent from: `deepLinkHandled` / `bothHandled`
+  /// RACE from: `safetyRerunRequested` (mutually exclusive — 同一 deep link
+  /// 不会同时有 `medId` 和 `reason=safety`, 出现这种情况是 bug)
+  HomeLifecycleState onDeepLinkHandled() {
+    return switch (this) {
+      HomeLifecycleState.initial => HomeLifecycleState.deepLinkHandled,
+      HomeLifecycleState.safetyCheckCompleted => HomeLifecycleState.bothHandled,
+      // idempotent
+      HomeLifecycleState.deepLinkHandled ||
+      HomeLifecycleState.bothHandled =>
+        this,
+      // race guard: 不变量 `_handleDeepLink` 一次只走 medId 或 reason=safety 一条
+      HomeLifecycleState.safetyRerunRequested => throw StateError(
+            'HomeLifecycleState invariant violated: '
+            'onDeepLinkHandled() called from $this. '
+            'Rerun already requested, deep link medId path is mutually exclusive.',
+          ),
+    };
+  }
+
+  /// Transition: deep link 带 `reason=safety` 路径已请求重跑。
+  ///
+  /// 允许 from: `initial` / `safetyCheckCompleted`
+  /// idempotent from: `safetyRerunRequested` / `bothHandled`
+  /// RACE from: `deepLinkHandled`
+  HomeLifecycleState onRerunRequested() {
+    return switch (this) {
+      HomeLifecycleState.initial => HomeLifecycleState.safetyRerunRequested,
+      HomeLifecycleState.safetyCheckCompleted =>
+        HomeLifecycleState.safetyRerunRequested,
+      // idempotent
+      HomeLifecycleState.safetyRerunRequested ||
+      HomeLifecycleState.bothHandled =>
+        this,
+      // race guard
+      HomeLifecycleState.deepLinkHandled => throw StateError(
+            'HomeLifecycleState invariant violated: '
+            'onRerunRequested() called from $this. '
+            'Deep link medId already handled, rerun path is mutually exclusive.',
+          ),
+    };
+  }
+}
+
 class _HomePageState extends ConsumerState<HomePage> {
-  /// SafetyWatch 启动检查是否已跑过(避免重复触发)
-  bool _safetyCheckTriggered = false;
-
-  /// Deep link 强制重跑 safety 检查的请求(独立 flag,
-  /// v0.14 修：旧实现用 `!_safetyCheckTriggered` 守卫，结果第一次
-  /// 跑已起来后 deep link 路径永远走不进去)
-  bool _safetyRerunRequested = false;
-
-  /// Deep link 自动打卡是否已处理(避免重复)
-  bool _deepLinkHandled = false;
+  /// v0.27 round 64 (L2 refactor): 3 bool → 1 enum 状态机
+  ///
+  /// 之前 3 个独立 bool (`_safetyCheckTriggered` / `_safetyRerunRequested` /
+  /// `_deepLinkHandled`) 有 3 种 race-prone 组合:
+  ///   1. `_safetyRerunRequested=true` 但 `_safetyCheckTriggered=false` (Timer 触发后却没基础 guard)
+  ///   2. `_deepLinkHandled=true` 但 `_safetyCheckTriggered=false` (deep link 路径走时首次 safety 还没跑)
+  ///   3. 全部 3 true (逻辑上死路径, 但 flag 组合上可达, 易误读)
+  ///
+  /// 现在 [HomeLifecycleState] 用 named state 表达 5 种合法组合, transition
+  /// 走 enum method 集中, race 组合 (medId + rerun 互斥) 抛 StateError 早发现。
+  /// 见 [HomeLifecycleState] 注释。
+  HomeLifecycleState _lifecycle = HomeLifecycleState.initial;
 
   /// 庆祝 overlay 的 Timer (v0.27 round 62 P1-6 修)
   ///
@@ -98,7 +193,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// → redirect 到 /?medId=N&autofire=1 → home_page 收到参数
   /// → 这里自动打卡 + 显示庆祝
   Future<void> _handleDeepLink() async {
-    if (_deepLinkHandled) return;
+    // v0.27 round 64: guard 改走 _lifecycle 状态机
+    // bothHandled 也算"已处理"(_handleDeepLink 路径 + safety check 都完成)
+    if (_lifecycle == HomeLifecycleState.deepLinkHandled ||
+        _lifecycle == HomeLifecycleState.bothHandled) {
+      return;
+    }
     final medIdParam = GoRouterState.of(context).uri.queryParameters['medId'];
     final autofire =
         GoRouterState.of(context).uri.queryParameters['autofire'] == '1';
@@ -109,8 +209,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         // 强制重跑一次 (从通知跳来的场景)
         // v0.14 fix: 用独立 flag,不受 _safetyCheckTriggered 影响
         // 旧实现 `!_safetyCheckTriggered` 在第一跑已起来后永远 false
-        if (_safetyRerunRequested) return; // 已请求过
-        _safetyRerunRequested = true;
+        // v0.27 round 64: 改用 _lifecycle 状态机,onRerunRequested() 内部
+        // 保证 safetyRerunRequested / bothHandled 重复请求 idempotent
+        if (_lifecycle == HomeLifecycleState.safetyRerunRequested) {
+          return; // 已请求过
+        }
+        _lifecycle = _lifecycle.onRerunRequested();
         // v0.27 round 63 (P1-4 修复): 用 Timer 替代 Future.delayed,
         // 跟 _celebrationTimer 模式一致。Future.delayed 不可 cancel, widget
         // dispose 后 fire 触发 _runSafetyCheck 撞 defunct widget。
@@ -126,7 +230,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       }
       return;
     }
-    _deepLinkHandled = true;
+    _lifecycle = _lifecycle.onDeepLinkHandled();
     final medId = int.tryParse(medIdParam);
     if (medId == null) return;
 
@@ -177,8 +281,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   ///
   /// [force] = true 时忽略 [_safetyCheckTriggered] 守卫(用于 deep link 重跑)
   Future<void> _runSafetyCheck({bool force = false}) async {
-    if (_safetyCheckTriggered && !force) return;
-    _safetyCheckTriggered = true;
+    // v0.27 round 64: guard 改走 _lifecycle 状态机
+    // safetyCheckCompleted / bothHandled 都代表 safety check 已跑过, force=false
+    // 时跳过。force=true (Timer 触发) 总是跑, 走 onSafetyCheckCompleted() 推进状态
+    if (!force) {
+      if (_lifecycle == HomeLifecycleState.safetyCheckCompleted ||
+          _lifecycle == HomeLifecycleState.bothHandled) {
+        return;
+      }
+    }
+    _lifecycle = _lifecycle.onSafetyCheckCompleted();
     try {
       // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
       final l10n = AppLocalizations.of(context);
