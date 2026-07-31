@@ -9,26 +9,31 @@
 // - 撤回 = 该功能**停用**,数据**不删**(用户可手动删,也可"重新同意"恢复)
 // - 业务层接驳放 v1.0+ —— 本次只解决"虚假告知"问题(PIPL §26),
 //   不动 reminder_scheduler / vent_repository / care_engine 实际行为
-library;
+//
+// v0.27 round 63 (P0-3 修复续): 删本地 [ConsentKind] enum, 改 import domain
+// 单 source of truth (lib/domain/entities/consent_artifact.dart)。修复前
+// domain / presentation 同名不同值, legal_page 用 presentation 的 3 个值
+// (safety/vent/analytics), ConsentDialog 用 domain 的 2 个值
+// (emergencyContactSharing/dataExport), 类型推断易踩雷。
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// 撤回同意的 3 个维度(对应 legal_page 3 个 switch)
-///
-/// 未来若新增同意项,加这里 + 加 ARB key + 页面加一行 switch 即可。
-enum ConsentKind {
-  /// 失联通知 — 关掉后 CareEngine 不再触发 SMS/邮件
-  safety,
+import 'package:chroniccare/domain/entities/consent_artifact.dart'
+    show ConsentKind;
 
-  /// 树洞(敏感倾诉) — 关掉后 VentRepository.add 拒绝
-  vent,
-
-  /// 评估/情绪分析 — 关掉后 trend_page 不展示评估/情绪相关图表
-  analytics,
-}
+// v0.27 round 63 (P0-3): re-export ConsentKind 让 legal_page.dart 等老
+// caller 不用改 import。legal_page 通过本 provider 用 ConsentKind.values
+// 等 — re-export 保留单 import 入口, 防止 enum 多 source。
+export 'package:chroniccare/domain/entities/consent_artifact.dart'
+    show ConsentKind;
 
 /// 撤回同意状态存储
+///
+/// v0.27 round 63: 操作 [ConsentKind] 5 个 kind — 包括 PIPL §13 强场景
+/// (emergencyContactSharing / dataExport) 和 §14 撤回场景 (safety / vent /
+/// analytics)。撤回只对 §14 3 个 kind 实际生效 (§13 是单独同意强场景,
+/// 撤回流程在 v1.0 走联系人本人确认 "Y" 通道, 不在本类管理)。
 class LegalConsentStore {
   static const _kPrefix = 'legal_consent_withdrawn_';
 
