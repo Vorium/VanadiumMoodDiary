@@ -8,7 +8,14 @@
 // 5-9   → 轻度
 // 10-14 → 中度（建议就医）
 // 15-21 → 重度（强烈建议就医）
+//
+// v0.28 round 65 (spzh P1-A 起步): `Gad7Scale` 加 `translations` 字段 —
+// 老 const `gad7Scale` 不传走 `const StaticScaleTranslations()` 中文 fallback,
+// 13 case test (`gad7_round16_test.dart`) 不破; 新 caller 传
+// `AppLocalizationsScaleTranslations` 走 ARB 翻译。
+// `displayName` 走 translations.gad7Name()。
 
+import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
 const List<AssessmentItem> gad7Items = [
@@ -30,14 +37,22 @@ const Map<int, String> gad7Options = {
 };
 
 /// GAD-7 量表实现
+///
+/// v0.28 round 65 (spzh P1-A 起步): 加 [translations] 字段 (默认
+/// `const StaticScaleTranslations()` 中文 fallback, const 兼容)。
+/// displayName 走 translations.gad7Name()。
 class Gad7Scale implements AssessmentScale {
-  const Gad7Scale();
+  @override
+  final ScaleTranslations translations;
+  const Gad7Scale({
+    this.translations = const StaticScaleTranslations(),
+  });
 
   @override
   String get id => 'gad7';
 
   @override
-  String get displayName => 'GAD-7 焦虑筛查';
+  String get displayName => translations.gad7Name();
 
   @override
   String get shortDescription => '过去两周的焦虑倾向筛查';

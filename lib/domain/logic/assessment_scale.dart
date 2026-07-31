@@ -6,6 +6,14 @@
 // 1. 新增量表只写一份数据 + 一个 AssessmentScale 实现
 // 2. 评估页（AssessmentRunner）只认 AssessmentScale，不关心具体量表
 // 3. 评估结果写库时复用 check_ins 表（type=scaleId）
+//
+// v0.28 round 65 (spzh P1-A 起步): `AssessmentScale` abstract 加
+// `translations: ScaleTranslations` 字段 — 起步只覆盖 phq9 / gad7
+// 名称 + 6 region 危机电话 label (16 题全文留 v1.0)。老 caller 用
+// `const StaticScaleTranslations()` 走中文 fallback, const 兼容
+// (e.g. `const phq9Scale = Phq9Scale()` 仍可编译)。
+
+import 'package:chroniccare/domain/entities/scale_translations.dart';
 
 /// 量表单道题
 class AssessmentItem {
@@ -70,7 +78,14 @@ abstract class AssessmentScale {
   /// 唯一 id（写入 check_ins.type）
   String get id;
 
-  /// 显示名（"PHQ-9 抑郁筛查"）
+  /// i18n 翻译注入 (v0.28 round 65 spzh P1-A 起步)
+  ///
+  /// 老 caller 不传 (e.g. `const phq9Scale = Phq9Scale()`) 走 const
+  /// `StaticScaleTranslations()` 中文 fallback — 0 测试 break。
+  /// 新 caller 传 `AppLocalizationsScaleTranslations(l10n)` 走 ARB。
+  ScaleTranslations get translations;
+
+  /// 显示名（"PHQ-9 抑郁筛查" / "PHQ-9 Depression Screening"）
   String get displayName;
 
   /// 短描述（设置页副标题用）
@@ -110,6 +125,10 @@ abstract class AssessmentScale {
   /// 打不通 = 医疗法律责任。海外用户应看到 region=us/hk/tw/sg/uk 的
   /// 当地危机电话(Lifeline 988 / 撒玛利亚 2389 2222 / 生命线 1995 等)。
   /// [region] 默认 cn 保持旧行为兼容(已在 v0.24 之前 release 的用户)。
+  ///
+  /// v0.28 round 65 (spzh P1-A 起步): `hotlines` label 走 [translations]
+  /// 翻译 (en/zh_Hant 走 ARB, zh fallback 走 `hotlineByRegion` const Map)。
+  /// 老 const phq9Scale (无显式 translations) → 中文 fallback, 21 case test 不破。
   CrisisSignal? detectCrisis(
     List<int> scores,
     AssessmentResult result, {

@@ -48,7 +48,7 @@ void main() {
         await tester.tap(find.byType(Checkbox).at(i));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.widgetWithText(ElevatedButton, '开始设置'));
+      await tester.tap(find.widgetWithText(FilledButton, '开始设置'));
       await tester.pumpAndSettle();
 
       // 走到第 2 步
@@ -77,7 +77,7 @@ void main() {
       await tester.tap(consentCheckbox);
       await tester.pumpAndSettle();
 
-      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
+      final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
       expect(nextFinder, findsOneWidget);
       await tester.tap(nextFinder);
       await tester.pumpAndSettle();
@@ -142,7 +142,7 @@ void main() {
         await tester.tap(find.byType(Checkbox).at(i));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.widgetWithText(ElevatedButton, '开始设置'));
+      await tester.tap(find.widgetWithText(FilledButton, '开始设置'));
       await tester.pumpAndSettle();
 
       // 走到第 2 步
@@ -165,7 +165,7 @@ void main() {
       await tester.tap(consentCb);
       await tester.pumpAndSettle();
       await tester.tap(
-        find.widgetWithText(ElevatedButton, '下一步 →'),
+        find.widgetWithText(FilledButton, '下一步 →'),
       );
       await tester.pumpAndSettle();
 

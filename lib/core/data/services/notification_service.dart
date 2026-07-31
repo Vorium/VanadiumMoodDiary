@@ -1,13 +1,15 @@
 ﻿// v0.24 round 45 (Sprint #5b) — notification_service facade 瘦身
+// v0.27 round 65 (Sprint #12) — showSafetyAlert 50 行委派到 SafetyAlertBuilder
 //
 // 拆解前: 629 行 facade god class
-// 拆解后: 250 行 facade + 3 个新 sub-service
+// 拆解后: 424 行 facade + 4 个新 sub-service + 1 个纯函数 builder
 //   - MedicationNotifier  (153 行) — daily check-in + medication
 //   - RefillNotifier      (204 行) — refill 编排
 //   - AssessmentNotifier  (90 行)  — 评估周期提醒
 //   - SnoozeManager       (90 行, 保留)
 //   - BadgeSyncService    (40 行, 保留)
 //   - ReminderDispatcher  (146 行, 保留, 共享给 3 new sub-service)
+//   - SafetyAlertBuilder  (~120 行, R65 新增) — showSafetyAlert 文案 + channel 纯函数
 //
 // 6 类 ID 范围常量 (v0.16 round 19 文档化):
 //   1001 (default) < 2000-21999 (med) < 5000 (safety) < 6000-206000 (refill)
@@ -17,13 +19,12 @@
 //   - init (60 行): plugin init + tz + 权限
 //   - showNow (NotificationSender 抽象方法)
 //   - cancelAll / pendingCount (pass-through 到 _plugin)
-//   - showSafetyAlert (50 行, 独立 channel, 跟 dispatcher 无关, 不抽 sub-service)
+//   - showSafetyAlert (5 行委派, R65 起): facade 调 SafetyAlertBuilder.buildFor + _plugin.show
 //   - 5 sub-service 委托 (30 行: snooze / badge / 3 orchestrator)
 //   - safety alert id (5000) + channel 3 const
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
-import 'package:chroniccare/core/shared/user_name_helper.dart';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -37,6 +38,7 @@ import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
@@ -317,6 +319,10 @@ class NotificationService implements NotificationSender {
 
   // ============== SafetyAlert (facade 直实现, 不抽 sub-service) ==============
   //
+  // v0.27 round 65 (spen P1-12 god class 拆分收尾):
+  // 50 行 facade 委派到 SafetyAlertBuilder.buildFor (5 行),
+  // facade 只负责调 _plugin.show, 文案/channel/3 态分流全部走 builder。
+  //
   // 决策 (设计文档 §3.2): showSafetyAlert 1 个 method 50 行不值得 1 个 sub-service
   // 走独立 "chroniccare.safety" channel, 不用 ReminderDispatcher (因为是 _plugin.show)
 
@@ -335,6 +341,9 @@ class NotificationService implements NotificationSender {
   /// - `smsOk == 0 && smsMock > 0` → "失联检测已触发, 但当前为开发模式, 未实际通知" (`safetyAlertBodyMocked`)
   /// - `smsOk == 0 && smsFail > 0` → "失联检测已触发, 但通知发送失败" (`safetyAlertBodyFailed`)
   ///
+  /// v0.27 round 65 (P1-12 god class 拆分收尾): title/body/details 构造委派
+  /// 到 [SafetyAlertBuilder.buildFor] (纯函数), facade 仅负责调 `_plugin.show`。
+  ///
   /// **注意**: 修正后**所有调用方必须传 [outcome] 和 [l10n]**, 用 `SafetyAlertDispatcher`
   /// 提供的 (smsOk, smsFail, smsMock) 计数 + `AppLocalizations.of(context)`。
   /// 直接 `showSafetyAlert(userName:..)` 调会编译失败 (required 参数)。
@@ -346,73 +355,25 @@ class NotificationService implements NotificationSender {
     required AppLocalizations l10n,
   }) async {
     await init();
-
-    final name = safeUserName(userName);
-
-    const details = NotificationDetails(
-      android: AndroidNotificationDetails(
-        _safetyChannelId,
-        _safetyChannelName,
-        channelDescription: _safetyChannelDesc,
-        importance: Importance.max,
-        priority: Priority.max,
-        category: AndroidNotificationCategory.alarm,
-      ),
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        interruptionLevel: InterruptionLevel.timeSensitive,
-      ),
-    );
-
-    final lastStr = lastCheckIn == null
-        ? '从未打卡'
-        : '${lastCheckIn.year}-${lastCheckIn.month.toString().padLeft(2, '0')}-${lastCheckIn.day.toString().padLeft(2, '0')}';
-
-    // v0.27 round 60 (P0-3 修正): 通知文案三态分流, 走 `AppLocalizations`
-    // (修正前 hardcode "已自动通知紧急联系人" 是 dev/release 模式都显示,
-    // 对精神心理患者形成"谎言"。修正后 3 态明确 + 走 l10n)。
-    //
-    // 选择优先级: ok > mock > fail (同一批 contacts 可能 smsOk=0 但同时有 mock 和 fail,
-    // 此时 mock 占优 — 因为 dev 模式是常态, "未实际通知" 警示更紧迫)。
-    final body = _resolveSafetyAlertBody(
+    final build = SafetyAlertBuilder.buildFor(
+      userName: userName,
+      daysWithoutCheckIn: daysWithoutCheckIn,
+      lastCheckIn: lastCheckIn,
       outcome: outcome,
-      lastCheckInStr: lastStr,
       l10n: l10n,
+      channelId: _safetyChannelId,
+      channelName: _safetyChannelName,
+      channelDescription: _safetyChannelDesc,
     );
-
     final payload =
         NotificationDeepLink.safetyAlert(daysWithoutCheckIn).encode();
     await _plugin.show(
       safetyAlertId,
-      '⚠️ $name 已 $daysWithoutCheckIn 天未打卡',
-      body,
-      details,
+      build.title,
+      build.body,
+      build.details,
       payload: payload,
     );
-  }
-
-  /// v0.27 round 60 (P0-3 修正): 3 态文案分流
-  ///
-  /// 选择规则:
-  /// 1. `smsOk > 0` → sent (哪怕部分失败, 主旨"已通知联系人")
-  /// 2. `smsOk == 0 && smsMock > 0` → mocked (dev 模式常态, 必须显式提示"未实际通知")
-  /// 3. `smsOk == 0 && smsFail > 0` → failed (网络/凭据问题)
-  /// 4. 全部 0 → failed (边界 case, 走 failed 文案兜底)
-  String _resolveSafetyAlertBody({
-    required SmsDispatchOutcome outcome,
-    required String lastCheckInStr,
-    required AppLocalizations l10n,
-  }) {
-    if (outcome.smsOk > 0) {
-      return l10n.safetyAlertBodySent(lastCheckInStr);
-    }
-    if (outcome.smsMock > 0) {
-      return l10n.safetyAlertBodyMocked(lastCheckInStr);
-    }
-    // failed 文案兜底所有 fail 场景 (含 0 contacts 边界 case)
-    return l10n.safetyAlertBodyFailed(lastCheckInStr);
   }
 
   // ============== BadgeSyncService 委托 ==============

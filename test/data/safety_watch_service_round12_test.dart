@@ -1,4 +1,4 @@
-﻿import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
+import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
@@ -62,7 +62,7 @@ void main() {
   });
 
   Future<void> setupProfile({required String name}) async {
-    await db.upsertUserProfile(
+    await db.userProfileDao.upsert(
       UserProfilesCompanion.insert(
         // v0.21 Round 23 (P1-24): userName 改 nullable
         userName: Value(name),
@@ -74,11 +74,11 @@ void main() {
 
   Future<void> setupContact({required String phone}) async {
     // v0.27 round 61: 改用 safetyConfig 直接写 SharedPreferences
-    await db.insertContact(ContactsCompanion.insert(name: '妈妈', phone: phone));
+    await db.contactDao.insert(ContactsCompanion.insert(name: '妈妈', phone: phone));
   }
 
   Future<void> checkInAt(DateTime at) async {
-    await db.insertCheckIn(
+    await db.checkInDao.insert(
       CheckInsCompanion.insert(
         timestamp: at,
         type: 'normal',

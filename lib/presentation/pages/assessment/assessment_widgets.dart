@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -346,9 +347,9 @@ class ComparisonCard extends StatelessWidget {
                   Icon(
                     Icons.arrow_forward,
                     // 趋势指示箭头 (中间色, 暗示'从 X 到 Y'过渡)
-                    // trendColor 由 assessment score 动态算出, alpha 0.6 表达"非极端值"
-                    // emil "decisions should be nameable" — 0.6 是'中间值'语义, 不抽 token
-                    color: trendColor.withValues(alpha: 0.6),
+                    // trendColor 由 assessment score 动态算出, AppColors.tintChartLine alpha 0.6 表达"非极端值"
+                    // v0.27 round 65 (alibaba B8 magic alpha): 抽 token 消除 0.6 硬编码
+                    color: AppColors.tintChartLine(context, trendColor),
                   ),
                   const SizedBox(width: AppTokens.spacingSm),
                   Expanded(

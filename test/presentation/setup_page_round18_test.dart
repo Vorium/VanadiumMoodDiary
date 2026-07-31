@@ -64,7 +64,7 @@ Future<void> _passConsent(WidgetTester tester) async {
     await tester.pumpAndSettle();
   }
   // 点"开始设置"
-  final startBtn = find.widgetWithText(ElevatedButton, '开始设置');
+  final startBtn = find.widgetWithText(FilledButton, '开始设置');
   expect(startBtn, findsOneWidget);
   await tester.tap(startBtn);
   await tester.pumpAndSettle();
@@ -99,10 +99,10 @@ void main() {
 
       expect(find.text('您好，我是慢病管家'), findsOneWidget);
 
-      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
+      final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
       expect(nextFinder, findsOneWidget);
 
-      ElevatedButton nextBtn() => tester.widget(nextFinder);
+      FilledButton nextBtn() => tester.widget(nextFinder);
 
       // 1) 初始 disabled
       expect(
@@ -158,8 +158,8 @@ void main() {
 
       final userNameField = find.widgetWithText(TextField, '您的名字（选填）');
       final phoneField = find.widgetWithText(TextField, '紧急联系人手机号 1');
-      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
-      ElevatedButton nextBtn() => tester.widget(nextFinder);
+      final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
+      FilledButton nextBtn() => tester.widget(nextFinder);
 
       await tester.enterText(userNameField, '小明');
       await tester.enterText(phoneField, 'not-a-phone');
@@ -206,8 +206,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
-      ElevatedButton nextBtn() => tester.widget(nextFinder);
+      final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
+      FilledButton nextBtn() => tester.widget(nextFinder);
       expect(
         nextBtn().onPressed,
         isNull,
@@ -237,8 +237,8 @@ void main() {
       await tester.enterText(phoneField, _phone('1380013', '8000'));
       await tester.pumpAndSettle();
 
-      final nextFinder = find.widgetWithText(ElevatedButton, '下一步 →');
-      ElevatedButton nextBtn() => tester.widget(nextFinder);
+      final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
+      FilledButton nextBtn() => tester.widget(nextFinder);
       expect(
         nextBtn().onPressed,
         isNull,

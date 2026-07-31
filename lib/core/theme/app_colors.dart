@@ -1,0 +1,278 @@
+// v0.27 round 65 (alibaba B16 god constant 拆分): 颜色 token 独立
+//
+// 拆解前: app_tokens.dart 644 行混合 8 大类 (颜色/字号/间距/圆角/动效/alpha/
+// shadow/业务 + MotionScheme + Motion) god constant。
+// 拆解后:
+//   - app_colors.dart     (~250 行) 颜色 + dynamic getter + tintedXxx + fgXxx
+//   - app_typography.dart (~150 行) 字号 + 行高 + TextStyle helper
+//   - app_spacing.dart    (~120 行) 间距 + 圆角 + 尺寸 + 断点
+//   - app_motion.dart     (~200 行) duration + curve + shadow + MotionScheme + Motion
+//   - app_tokens.dart     (≤50 行)  facade 入口, static const re-export, 老 caller 不动
+//
+// 设计原则:
+// - 单一职责: 颜色 + tinted + fg 全部在 AppColors 一处
+// - 老 caller 兼容: `AppTokens.primary` 仍能用 (走 facade static const 转发)
+// - 新 caller 鼓励: `AppColors.primary` (单一来源, 改动一处生效)
+// - 跟 Material 3 ColorScheme 桥接: dynamic getter 走 Theme.of(context).colorScheme
+import 'package:flutter/material.dart';
+
+/// v0.27 round 65 (alibaba B16 god constant 拆分): 颜色 token 集中器
+///
+/// 4 大类:
+/// 1. **静态 const Color** (light/dark 二选一, 不依赖 BuildContext)
+/// 2. **Dynamic color getter** (接受 BuildContext, 走 M3 ColorScheme 适配)
+/// 3. **Tinted color getter** (alpha 0.08-0.85 调色, 软背景用)
+/// 4. **Foreground color getter** (text on top, 走 M3 onXxx)
+class AppColors {
+  AppColors._();
+
+  // ============= 品牌色（亮/暗通用）=============
+  /// 主色：嫩绿（萌芽意象，呼应"还在坚持"）
+  static const Color primary = Color(0xFF6BCF7F);
+
+  /// 主色 - 按下态
+  static const Color primaryDark = Color(0xFF4FB05F);
+
+  // ============= 亮色色板（v0.4 已有）=============
+  static const Color primaryLight = Color(0xFFE8F8EC);
+  static const Color background = Color(0xFFFAFAFA);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color textPrimary = Color(0xFF1A1A1A);
+  static const Color textSecondary = Color(0xFF666666);
+  static const Color textHint = Color(0xFF999999);
+  static const Color border = Color(0xFFE0E0E0);
+  static const Color disabled = Color(0xFFBDBDBD);
+  static const Color divider = Color(0xFFF0F0F0);
+
+  // ============= 暗色色板（v0.5 新增）=============
+  // 注意：M3 实际用 ColorScheme.fromSeed 派生；这里是兜底色，
+  // 仅当 widget 硬编码 AppColors.xxx 时（dark mode 下视觉会偏色）
+  static const Color backgroundDark = Color(0xFF121212);
+  static const Color surfaceDark = Color(0xFF1E1E1E);
+  static const Color textPrimaryDark = Color(0xFFE6E6E6);
+  static const Color textSecondaryDark = Color(0xFFB0B0B0);
+  static const Color textHintDark = Color(0xFF7A7A7A);
+  static const Color borderDark = Color(0xFF2A2A2A);
+  static const Color dividerDark = Color(0xFF242424);
+  static const Color disabledDark = Color(0xFF4A4A4A);
+  static const Color primaryLightDark = Color(0xFF1F3A26);
+
+  // 状态色（仅 3 个，亮/暗共用，error 在暗色下提亮）
+  // v0.22 round 30 (emil P1-8): success 之前 = primary（等于没用）,
+  // 改成跟 warning/error 平行的 distinct green（dev 阶段提示用）
+  // 实际绿色调一致（嫩绿系列），但语义独立，调用点更清晰
+  static const Color success = Color(0xFF66BB6A);
+  static const Color warning = Color(0xFFFFB74D);
+  // v0.14 加重度色阶：比 warning 更橙，用于"中度"档（比"轻度"更警示）
+  static const Color warningStrong = Color(0xFFFF8A65);
+  static const Color error = Color(0xFFE57373);
+  static const Color errorDark = Color(0xFFEF9A9A);
+
+  // 依从性热力图色阶（浅色变体，用于部分达标/接近达标）
+  static const Color adherencePartial = Color(0xFFFFCC80); // 浅橙 < 50%
+  static const Color adherenceAlmost = Color(0xFFA5D6A7); // 浅绿 < 100%
+
+  // ============= Dynamic Color getter (v0.18 P1-5) =============
+  //
+  // **dark mode 修复**:上面 9 个静态 const color (surface/background/textPrimary/
+  // textSecondary/textHint/border/divider) 是 light 模式的硬编码值。widget
+  // 直接用 `AppColors.surface` 在 dark mode 下视觉错(背景白、文字白)。
+  //
+  // 修法：新增下面 7 个 dynamic getter,接受 BuildContext,从
+  // Theme.of(context).colorScheme 派生正确颜色(M3 已经按 light/dark 派生好)。
+  //
+  // 后续 widget 改造时：把 `const TextStyle(color: AppColors.textHint)` 改成
+  // `TextStyle(color: AppColors.textHintColor(context))`。
+  //
+  // 注意:dynamic getter 不能在 const constructor 里用(必须 const Color)。
+  // 这是 dark mode 支持的必要 trade-off,跟 const optimization 互斥。
+  //
+  // v0.18 (P1-5) batch 1: 加 7 个 getter + 替换 EmptyState + vent_list 最 critical 处。
+  // batch 2+ 替换剩余 90+ 处。
+
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware 主色 (status bar / icon 64pt /
+  /// 评估大数字 / 续方 chip / 通知 banner)
+  /// 之前 35+ 处裸用 `color: AppColors.primary` (static const 0xFF6BCF7F),
+  /// dark mode 下该色在深色背景上对比度崩 → 用户视觉错。
+  /// 修法:用 M3 colorScheme.primary 自动适配 light/dark
+  static Color primaryColor(BuildContext context) =>
+      Theme.of(context).colorScheme.primary;
+
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware 错误色 (错误 banner / 危机分数 / 评估 "重度" 标签)
+  /// 之前 8+ 处裸用 `color: AppColors.error` (static const 0xFFE57373)
+  /// 修法:用 M3 colorScheme.error 自动适配
+  static Color errorColor(BuildContext context) =>
+      Theme.of(context).colorScheme.error;
+
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware 警告色
+  /// 之前 3+ 处裸用 `color: AppColors.warning` (static const 0xFFFFB74D)
+  /// 修法:warning 状态色亮暗都用,沿用 const (不破坏 M3 contrast)
+  static Color warningColor(BuildContext context) => AppColors.warning;
+
+  /// v0.25 round 49 (emil R49 P0 #1): Theme-aware onSurface 弱一档 (50% alpha)
+  /// 替代散落 4+ 处 `cs.onSurface.withValues(alpha: 0.5)` 硬编码
+  /// 用途:次要文字 / icon disabled / list 副标题
+  static Color onSurfaceMuted(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+
+  /// Theme-aware surface (卡片/容器背景)
+  static Color surfaceColor(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+
+  /// Theme-aware background (页面背景)
+  static Color backgroundColor(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+
+  /// Theme-aware text primary (主文字)
+  static Color textPrimaryColor(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
+  /// Theme-aware text secondary (次要文字,80% 透明度 onSurface)
+  static Color textSecondaryColor(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant;
+
+  /// Theme-aware text hint (提示文字,60% 透明度 onSurfaceVariant)
+  static Color textHintColor(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
+
+  /// Theme-aware border (边框)
+  static Color borderColor(BuildContext context) =>
+      Theme.of(context).colorScheme.outline;
+
+  /// Theme-aware divider (分割线)
+  static Color dividerColor(BuildContext context) =>
+      Theme.of(context).colorScheme.outlineVariant;
+
+  /// Theme-aware primary light (主色浅底 / 选中背景)
+  static Color primaryLightColor(BuildContext context) =>
+      Theme.of(context).colorScheme.primaryContainer;
+
+  /// v0.21 (P1-9 fix): Theme-aware disabled
+  ///
+  /// batch 1 (v0.18 P1-5) 漏了 disabled, 此前 widget 直接用
+  /// `AppColors.disabled` 在 dark mode 下是浅灰 (BDBDBD), 看不见。
+  /// 这里补上 getter 跟其它 8 个 dynamic color 保持一致。
+  ///
+  /// v0.27 round 63 (P1-3 修复): 走 M3 standard `onSurface @ 12% alpha`,
+  /// 替代 hardcode `Color(0xFF4A4A4A)` / `Color(0xFFBDBDBD)` + Brightness
+  /// 判。bypass 整个 M3 scheme = 重新发明 token。
+  static Color disabledColor(BuildContext context) {
+    return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+  }
+
+  // ============= v0.21 (P2-1 fix): Tinted surface tokens =============
+  //
+  // emil 原则 "good defaults matter more than options":
+  // 全代码库出现 21+ 次 `X.withValues(alpha: 0.X)`, 多数是
+  // warning/error/primary 的浅色背景 (提示/警告/选中态)
+  // 抽成 named token 让:
+  // 1. 调用点更可读 (tintedWarningSoft vs warning.withValues(alpha: 0.1))
+  // 2. 未来调 alpha 集中改, 不用 grep
+  // 3. 命名暗示"这是 浅色背景"用途, 防止误用
+  //
+  // 命名: tintedXxxSoft = alpha 0.1 左右 (默认浅背景)
+  //      tintedXxxStrong = alpha 0.15+ (稍深)
+
+  /// 主色浅色背景 (选中态, 强调底) — primary @ alpha 0.1
+  static Color tintedPrimarySoft(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.1);
+
+  /// 主色更深浅色背景 — primary @ alpha 0.15
+  static Color tintedPrimaryDeep(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.15);
+
+  /// v0.22 round 29 (emil-01~12): 主色最浅背景 (alpha 0.08) — 报告提示 / 选中极浅态
+  static Color tintedPrimaryLight(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.08);
+
+  /// 警告浅色背景 (提醒卡片) — warning @ alpha 0.1
+  static Color tintedWarningSoft(BuildContext context) =>
+      AppColors.warning.withValues(alpha: 0.1);
+
+  /// v0.23 round 40 (emil F1 fix): 成功浅色背景 (已完成 chip) — 绿色 @ alpha 0.1
+  /// 替代 ChipBadge.success 之前跟 neutral 配色完全一样的 bug
+  static Color tintedSuccessSoft(BuildContext context) =>
+      AppColors.success.withValues(alpha: 0.1);
+
+  /// 错误浅色背景 (错误卡片) — error @ alpha 0.1
+  static Color tintedErrorSoft(BuildContext context) =>
+      Theme.of(context).colorScheme.error.withValues(alpha: 0.1);
+
+  /// v0.22 round 30 (sp-zh P2-3): 错误更深浅色背景 — error @ alpha 0.15
+  /// 替代散落 3 处 `error.withValues(alpha: 0.15)` 硬编码
+  static Color tintedErrorDeep(BuildContext context) =>
+      Theme.of(context).colorScheme.error.withValues(alpha: 0.15);
+
+  /// v0.24 round 45 (emil P1-13): 主色中度透明 (alpha 0.5)
+  /// 替代散落 5+ 处 `primary.withValues(alpha: 0.5)` 硬编码（chip / 卡片 / 弹层背景）
+  static Color tintedPrimaryMid(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.5);
+
+  /// v0.24 round 45 (emil P1-13): 主色高透明 (alpha 0.85)
+  /// 替代散落 5+ 处 `primary.withValues(alpha: 0.85)` 硬编码（强调态 / 选中态强调）
+  static Color tintedPrimaryHigh(BuildContext context) =>
+      Theme.of(context).colorScheme.primary.withValues(alpha: 0.85);
+
+  /// v0.24 round 45 (emil P1-13 续): onSurface 50% — 按钮 disabled 前景色
+  /// M3 标准是 0.38, 但项目偏弱化 0.5 (跟 textHint 区分)
+  /// 替代 app_theme.dart:121 `cs.onSurface.withValues(alpha: 0.5)`
+  static Color fgDisabled(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+
+  /// v0.24 round 45 (emil P1-13 续): onSurfaceVariant 60% — InputDecoration hint
+  /// M3 standard placeholder / caption text 颜色
+  /// 替代 app_theme.dart:202 + home_footer.dart:51 两处 `cs.onSurfaceVariant.withValues(alpha: 0.6)`
+  static Color fgHintInput(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
+
+  /// v0.24 round 45 (emil P1-13 续): warning 边框 30% (notification_failure_banner)
+  /// 替代 `AppColors.warning.withValues(alpha: 0.3)` 硬编码
+  static Color tintedWarningBorder(BuildContext context) =>
+      AppColors.warning.withValues(alpha: 0.3);
+
+  // ============= v0.27 round 65 (alibaba B7/B8 magic alpha) =============
+
+  /// 状态色浅色背景 (续方 / 评估状态 chip + 圆点) — alpha 0.15
+  /// 替代散落 2 处 `statusColor.withValues(alpha: 0.15)` 硬编码
+  /// (refill_manage_page.dart:265 + :329)
+  ///
+  /// 跟 tintedPrimaryDeep (0.15) 同 alpha, 但语义独立:
+  /// - tintedPrimaryDeep 强调"主色"语义
+  /// - tintedStatusSoft 强调"状态"语义 (任意 status color 通用)
+  ///
+  /// 调用方: `AppColors.tintedStatusSoft(context, statusColor)`
+  static Color tintedStatusSoft(BuildContext context, Color base) =>
+      base.withValues(alpha: 0.15);
+
+  /// 趋势线 / 箭头 alpha 0.6 (中间值, 表达"非极端过渡")
+  /// 替代 assessment_widgets.dart:351 `trendColor.withValues(alpha: 0.6)` 硬编码
+  /// 跟 tintedPrimaryMid (0.5) 区分: 0.6 = "中等可见" 比 0.5 略强
+  ///
+  /// 调用方: `AppColors.tintChartLine(context, trendColor)`
+  static Color tintChartLine(BuildContext context, Color base) =>
+      base.withValues(alpha: 0.6);
+
+  // v0.22 round 30 (emil P2-6): 前景色 helper 替代 Colors.white/black54
+  // 之前 18 处直接 `Colors.white` (含 .withValues(alpha: 0.85)),
+  // dark mode 下反白失效 (check_in_button:205 是已知 case)。
+  // 用 theme-aware 替代, 自动适配 light/dark
+  static Color fgOnPrimary(BuildContext context) =>
+      Theme.of(context).colorScheme.onPrimary;
+  static Color fgOnError(BuildContext context) =>
+      Theme.of(context).colorScheme.onError;
+  static Color fgOnSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
+  /// v0.23 round 40 (emil F1 fix): 成功前景色 — 成功 chip 文字
+  /// success color 在 light/dark 都跟 onSurface 区分度足,直接用 const
+  static const Color fgOnSuccess = success;
+
+  /// v0.23 round 40 (emil F1 fix): 警告前景色 — 警告 chip 文字
+  static const Color fgOnWarning = Color(0xFFE65100); // 深橙,在 light/dark 都可读
+
+  /// v0.23 round 40 (emil F3/F8 fix): 反白弱一档 — onPrimary @ alpha 0.85
+  /// 替代散落 5+ 处 `onPrimary.withValues(alpha: 0.85)` 硬编码
+  /// emil "decisions should be nameable" — 0.85 不应裸用,命名 "muted"
+  static Color fgOnPrimaryMuted(BuildContext context) =>
+      Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85);
+}

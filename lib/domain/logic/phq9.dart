@@ -11,7 +11,13 @@
 // 20-27 → 重度（强烈建议就医）
 //
 // 危机信号：第 9 题（自杀念头）≥ 1 → 弹出危机资源
+//
+// v0.28 round 65 (spzh P1-A 起步): `Phq9Scale` 加 `translations` 字段 —
+// 老 const `phq9Scale` 不传走 `const StaticScaleTranslations()` 中文 fallback,
+// 21 case crisis test 不破; 新 caller 传 `AppLocalizationsScaleTranslations`
+// 走 ARB 翻译。`displayName` 走 translations.phq9Name()。
 
+import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
 /// 频率选项（0-3）
@@ -59,14 +65,22 @@ extension Phq9CriticalConcerns on Phq9Result {
 // ============================================================
 
 /// PHQ-9 量表（实现 AssessmentScale 接口）
+///
+/// v0.28 round 65 (spzh P1-A 起步): 加 [translations] 字段 (默认
+/// `const StaticScaleTranslations()` 中文 fallback, const 兼容)。
+/// displayName 走 translations.phq9Name()。
 class Phq9Scale implements AssessmentScale {
-  const Phq9Scale();
+  @override
+  final ScaleTranslations translations;
+  const Phq9Scale({
+    this.translations = const StaticScaleTranslations(),
+  });
 
   @override
   String get id => 'phq9';
 
   @override
-  String get displayName => 'PHQ-9 抑郁筛查';
+  String get displayName => translations.phq9Name();
 
   @override
   String get shortDescription => '过去两周的抑郁倾向筛查';
@@ -125,11 +139,16 @@ class Phq9Scale implements AssessmentScale {
       // v0.27 round 63 (P1-5 修复): 海外 region 可能未注册 (e.g. 之后
       // 扩 HotlineRegion 但忘加 crisis_number), `!` 强解会 NPE 崩。
       // 兜底走 cn (mainland 必有), 至少给用户一条可用 hotline。
-      final hotlines = hotlineByRegion[region] ?? hotlineByRegion[HotlineRegion.cn]!;
+      //
+      // v0.28 round 65 (spzh P1-A 起步): hotlines label 暂保持 const 中文
+      // (与 `hotlineByRegion[region]` 完全一致, 21 case test 不破)。
+      // translations 字段已就位, R65b 阶段再把 hotlines label 走
+      // translations.crisisHotlineLabel(region, index) 翻译 — 需要新加
+      // 6 region × N hotline i18n key (本起步版本只加 4 region × 1st hotline)。
       return CrisisSignal(
         title: '我们关心你',
         message: '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。',
-        hotlines: hotlines,
+        hotlines: hotlineByRegion[region] ?? hotlineByRegion[HotlineRegion.cn]!,
       );
     }
     return null;
@@ -137,4 +156,7 @@ class Phq9Scale implements AssessmentScale {
 }
 
 /// PHQ-9 单例（注册表用）
+///
+/// v0.28 round 65: const Phq9Scale() 默认走
+/// `const StaticScaleTranslations()` 中文 fallback, 21 case test 不破。
 const phq9Scale = Phq9Scale();

@@ -1,4 +1,4 @@
-﻿// v0.16 (Round 19B) regression test for implicit sort assumption
+// v0.16 (Round 19B) regression test for implicit sort assumption
 //
 // 之前 reminder_scheduler.dart 和 safety_watch_service.dart 都有：
 //   final allCheckIns = await repo.watchAll().first;
@@ -74,7 +74,7 @@ void main() {
   group('v0.16 round 19B: explicit sort, no implicit DESC assumption', () {
     test('SafetyWatch 即使数据插入顺序不是按时间,lastCheckIn 仍是最新', () async {
       // 准备：profile + contact + 启用 + 阈值 2 天
-      await db.upsertUserProfile(
+      await db.userProfileDao.upsert(
         UserProfilesCompanion.insert(
           // v0.21 Round 23 (P1-24): userName 改 nullable
           userName: const Value('张三'),
@@ -82,7 +82,7 @@ void main() {
           firstLaunchAt: DateTime(2026, 1, 1),
         ),
       );
-      await db.insertContact(
+      await db.contactDao.insert(
         ContactsCompanion.insert(name: '妈妈', phone: '13800138000'),
       );
       // v0.27 round 61: 改用 safetyConfig 直接写 SharedPreferences
@@ -94,19 +94,19 @@ void main() {
       // 修前：watchAll 返插入顺序 [old, middle, latest]
       //   first = old → daysSinceLast = 5+ → 触发告警（错!）
       // 修后：显式 sort → first = latest → daysSinceLast = 0 → 不触发（对）
-      await db.insertCheckIn(
+      await db.checkInDao.insert(
         CheckInsCompanion.insert(
           timestamp: now.subtract(const Duration(days: 5)),
           type: 'normal',
         ),
       );
-      await db.insertCheckIn(
+      await db.checkInDao.insert(
         CheckInsCompanion.insert(
           timestamp: now.subtract(const Duration(days: 3)),
           type: 'normal',
         ),
       );
-      await db.insertCheckIn(
+      await db.checkInDao.insert(
         CheckInsCompanion.insert(
           timestamp: now.subtract(const Duration(hours: 1)), // 最新
           type: 'normal',

@@ -155,11 +155,14 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
             ),
             // PDF 生成时的全屏遮罩
             // scrim 0.54 — M3 Modal barrier 0.32 太浅, PDF 生成 5s+ 需更深遮罩
-            // 让用户清楚"正在后台生成", emil 0.54 是'long task modal'标准 alpha
+            // 让用户清楚"正在后台生成", AppTokens.scrimAlpha 是'long task modal'标准 alpha
             if (_pdfLoading)
               Positioned.fill(
                 child: ColoredBox(
-                  color: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.54),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .scrim
+                      .withValues(alpha: AppTokens.scrimAlpha),
                   child: Center(
                     child: Card(
                       child: Padding(

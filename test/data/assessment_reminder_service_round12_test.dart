@@ -254,7 +254,7 @@ void main() {
     test('enabled + 有评估 → 调度 last + 14 天', () async {
       // 用"昨天"作为 lastAssessmentAt，确保 14 天后还在未来，不被 catch-up
       final last = DateTime.now().subtract(const Duration(days: 1));
-      await db.insertCheckIn(
+      await db.checkInDao.insert(
         CheckInsCompanion.insert(
           timestamp: last,
           type: 'phq9',
@@ -283,7 +283,7 @@ void main() {
       await service.setEnabled(true);
       await service.setLastAssessmentAt(DateTime(2026, 7, 1));
       // 实际 db 写 8/1 又做了一次
-      await db.insertCheckIn(
+      await db.checkInDao.insert(
         CheckInsCompanion.insert(
           timestamp: DateTime(2026, 8, 1, 16, 30),
           type: 'gad7',
@@ -305,7 +305,7 @@ void main() {
       // last 是 8/15（更新）, db 写 8/1 是更老的
       await service.setEnabled(true);
       await service.setLastAssessmentAt(DateTime(2026, 8, 15));
-      await db.insertCheckIn(
+      await db.checkInDao.insert(
         CheckInsCompanion.insert(
           timestamp: DateTime(2026, 8, 1, 16, 30),
           type: 'phq9',

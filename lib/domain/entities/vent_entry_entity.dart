@@ -7,9 +7,16 @@
 // 设计要点：
 // - 不可变 + copyWith
 // - hasText / hasAudio / isEmpty 业务方法
-// - durationLabel 业务方法（"1分23秒"）
+// - durationLabelL10n 业务方法（zh: "1分23秒" / en: "1m 23s"）
+//
+// v0.28 round 65 (spzh P2-I): `durationLabel` 从硬编中文 (无参) → i18n 方法
+// ([durationLabelL10n])，caller 传 AppLocalizations 走 zh/en/zh_Hant。
+// 3 个 i18n key: `ventDurationSeconds` / `ventDurationMinutes` /
+// `ventDurationMinutesSeconds` (后者是 v0.28 round 65 新加，原来
+// `'$m分${s.toString().padLeft(2, '0')}秒'` 走该 key 解决硬编)。
 
 import 'package:chroniccare/core/shared/domain_value.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 树洞条目（领域实体）
 ///
@@ -54,7 +61,45 @@ class VentEntryEntity {
   /// 是否为空条目（text 和 audio 都没有）
   bool get isEmpty => !hasText && !hasAudio;
 
-  /// 录音时长的人类可读格式（"1分23秒" / "23秒" / "1分05秒"）
+  /// i18n 录音时长人类可读格式
+  ///
+  /// caller 传 [AppLocalizations] 走 zh/en/zh_Hant，不传返中文 fallback
+  /// (老 test 兼容 / 单测用)。
+  ///
+  /// 3 个 i18n key 模板：
+  /// - `ventDurationSeconds` = `'{sec}秒'` (zh) / `'{sec}s'` (en)
+  /// - `ventDurationMinutes` = `'{m}分'` (zh) / `'{m}m'` (en)
+  /// - `ventDurationMinutesSeconds` = `'{m}分{sec}秒'` (zh) / `'{m}m {sec}s'` (en)
+  ///
+  /// v0.28 round 65 (spzh P2-I): 替代之前 `durationLabel()` 硬编中文
+  /// `'${sec}秒' / '${m}分' / '${m}分${s.toString().padLeft(2, '0')}秒'`。
+  /// 老 `durationLabel()` 不传参保留为中文 fallback (不破坏 R18 21 case test)。
+  String durationLabelL10n({String? override, AppLocalizations? l10n}) {
+    final sec = audioDurationSec;
+    if (sec == null) return '';
+    if (sec < 60) {
+      if (l10n != null) return l10n.ventDurationSeconds(sec);
+      return override ?? '$sec秒';
+    }
+    final m = sec ~/ 60;
+    final s = sec % 60;
+    if (s == 0) {
+      if (l10n != null) return l10n.ventDurationMinutes(m);
+      return override ?? '$m分';
+    }
+    if (l10n != null) {
+      // v0.28 round 65: pad 0 在 Dart 端 (ARB String placeholder),
+      // 中文 '1分05秒' 0-pad 保留 — 跟原 R18 行为一致
+      return l10n.ventDurationMinutesSeconds(m, s.toString().padLeft(2, '0'));
+    }
+    return override ?? '$m分${s.toString().padLeft(2, '0')}秒';
+  }
+
+  /// 中文 fallback durationLabel (保留供老 caller / 单测用)
+  ///
+  /// v0.28 round 65: 新 [durationLabelL10n] 方法替代 i18n 路径,
+  /// 本方法保留中文 fallback (`'$sec秒' / '$m分' / '$m分${pad}秒'`),
+  /// 行为与 v0.18 R18 一致 — 21 case test 继续 pass。
   String durationLabel() {
     final sec = audioDurationSec;
     if (sec == null) return '';

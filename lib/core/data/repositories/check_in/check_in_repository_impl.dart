@@ -29,44 +29,44 @@ class CheckInRepositoryImpl implements CheckInRepository {
 
   @override
   Stream<List<CheckInEntity>> watchAll() {
-    return _db.watchAllCheckIns().map(
+    return _db.checkInDao.watchAll().map(
           (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
         );
   }
 
   @override
   Stream<List<CheckInEntity>> watchAssessments() {
-    return _db.watchAssessments().map(
+    return _db.checkInDao.watchAssessments().map(
           (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
         );
   }
 
   @override
   Stream<CheckInEntity?> watchToday() {
-    return _db.watchTodayCheckIn().map((row) => row?.toEntity());
+    return _db.checkInDao.watchToday().map((row) => row?.toEntity());
   }
 
   @override
   Stream<List<CheckInEntity>> watchNormalCheckIns() {
-    return _db.watchNormalCheckIns().map(
+    return _db.checkInDao.watchNormal().map(
           (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
         );
   }
 
   @override
   Future<CheckInEntity?> getLatestNormalCheckIn() async {
-    final row = await _db.getLatestNormalCheckIn();
+    final row = await _db.checkInDao.getLatestNormal();
     return row?.toEntity();
   }
 
   @override
   Future<DateTime?> getLatestAssessmentTimestamp() {
-    return _db.getLatestAssessmentTimestamp();
+    return _db.checkInDao.getLatestAssessmentTimestamp();
   }
 
   @override
   Future<int> checkIn({DateTime? at, int? medicationId}) {
-    return _db.insertCheckIn(
+    return _db.checkInDao.insert(
       CheckInsCompanion.insert(
         timestamp: _resolveTimestamp(at),
         type: CheckInType.normal.wire,
@@ -81,7 +81,7 @@ class CheckInRepositoryImpl implements CheckInRepository {
     required String note,
     DateTime? at,
   }) {
-    return _db.insertCheckIn(
+    return _db.checkInDao.insert(
       CheckInsCompanion.insert(
         timestamp: _resolveTimestamp(at),
         type: CheckInType.temp.wire,
@@ -104,7 +104,7 @@ class CheckInRepositoryImpl implements CheckInRepository {
       'scores': scores,
       'total': total,
     });
-    return _db.insertCheckIn(
+    return _db.checkInDao.insert(
       CheckInsCompanion.insert(
         timestamp: _resolveTimestamp(at),
         type: scale, // 'phq9' / 'gad7' (wire 与 id 同名)

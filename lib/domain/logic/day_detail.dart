@@ -10,6 +10,13 @@
 // - 汇总统计：总打卡数 / 情绪数 / 评估数 / 最高最低分
 //
 // v0.14 升级：4 层架构 — 接受 CheckInEntity / MoodEntryEntity
+//
+// v0.28 round 65 (spzh P2-H 修复): `fromData` 加 `AppLocalizations l10n` 参数
+// (可选, 不传 = 中文 fallback)，渲染事件 title 走 6 个 i18n key:
+//   `dayDetailCheckInWith` / `dayDetailDailyCheckIn` /
+//   `dayDetailTempWith` / `dayDetailTempMed` /
+//   `dayDetailPhq9` / `dayDetailGad7`
+// 老 caller (10 case test) 改传 mock l10n 走 i18n 路径。
 
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
@@ -17,6 +24,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 当天事件类型
 enum DayEventKind {
@@ -134,12 +142,13 @@ class DayDetailCalculator {
   /// [date] 任意时间点，函数取其"当天 0 点"作为边界
   /// [checkIns] / [moodEntries] 全集
   /// [medications] 全集（仅用来反查 medicationId → name）
-  /// [now] 可注入测试
+  /// [l10n] 可选 i18n — 不传 = 中文 fallback (单测用)
   static DayDetail fromData({
     required DateTime date,
     required List<CheckInEntity> checkIns,
     required List<MoodEntryEntity> moodEntries,
     required List<MedicationEntity> medications,
+    AppLocalizations? l10n,
   }) {
     final day = DateTime(date.year, date.month, date.day);
     final nextDay = day.add(const Duration(days: 1));
@@ -162,7 +171,11 @@ class DayDetailCalculator {
           DayEvent(
             time: c.timestamp,
             kind: DayEventKind.checkInNormal,
-            title: med != null ? '打卡 · ${med.name}' : '每日打卡',
+            title: _renderCheckInLabel(
+              CheckInType.normal,
+              medName: med?.name,
+              l10n: l10n,
+            ),
             subtitle: _timeLabel(c.timestamp),
             medicationId: c.medicationId,
             medicationName: med?.name,
@@ -174,7 +187,13 @@ class DayDetailCalculator {
           DayEvent(
             time: c.timestamp,
             kind: DayEventKind.checkInTemp,
-            title: parsed.name.isNotEmpty ? '临时 · ${parsed.name}' : '临时吃药',
+            title: parsed.name.isNotEmpty
+                ? _renderCheckInLabel(
+                    CheckInType.temp,
+                    medName: parsed.name,
+                    l10n: l10n,
+                  )
+                : _renderCheckInLabel(CheckInType.temp, l10n: l10n),
             subtitle: parsed.description.isNotEmpty
                 ? '${_timeLabel(c.timestamp)} · ${parsed.description}'
                 : _timeLabel(c.timestamp),
@@ -188,7 +207,7 @@ class DayDetailCalculator {
           DayEvent(
             time: c.timestamp,
             kind: DayEventKind.assessment,
-            title: _scaleName(c.type.wire),
+            title: _scaleName(c.type.wire, l10n: l10n),
             subtitle: total != null
                 ? '${_timeLabel(c.timestamp)} · 总分 $total'
                 : _timeLabel(c.timestamp),
@@ -237,7 +256,58 @@ class DayDetailCalculator {
     return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 
-  static String _scaleName(String scaleId) {
+  /// 渲染打卡事件 title (i18n 化, l10n=null 走中文 fallback)
+  ///
+  /// v0.28 round 65 (spzh P2-H 修复): 抽 helper 统一 5+ 处 '打卡 · ${name}' /
+  /// '每日打卡' / '临时 · ${name}' / '临时吃药' / 'PHQ-9 抑郁筛查' /
+  /// 'GAD-7 焦虑筛查' 硬编中文。传 l10n 走 6 个 i18n key。
+  static String _renderCheckInLabel(
+    CheckInType type, {
+    String? medName,
+    AppLocalizations? l10n,
+  }) {
+    if (l10n != null) {
+      switch (type) {
+        case CheckInType.normal:
+          return medName != null
+              ? l10n.dayDetailCheckInWith(medName)
+              : l10n.dayDetailDailyCheckIn;
+        case CheckInType.temp:
+          return medName != null && medName.isNotEmpty
+              ? l10n.dayDetailTempWith(medName)
+              : l10n.dayDetailTempMed;
+        case CheckInType.phq9:
+          return l10n.dayDetailPhq9;
+        case CheckInType.gad7:
+          return l10n.dayDetailGad7;
+      }
+    }
+    // 中文 fallback (单测 / 老 caller 兼容)
+    switch (type) {
+      case CheckInType.normal:
+        return medName != null ? '打卡 · $medName' : '每日打卡';
+      case CheckInType.temp:
+        return medName != null && medName.isNotEmpty
+            ? '临时 · $medName'
+            : '临时吃药';
+      case CheckInType.phq9:
+        return 'PHQ-9 抑郁筛查';
+      case CheckInType.gad7:
+        return 'GAD-7 焦虑筛查';
+    }
+  }
+
+  static String _scaleName(String scaleId, {AppLocalizations? l10n}) {
+    if (l10n != null) {
+      switch (scaleId) {
+        case 'phq9':
+          return l10n.dayDetailPhq9;
+        case 'gad7':
+          return l10n.dayDetailGad7;
+        default:
+          return scaleId;
+      }
+    }
     switch (scaleId) {
       case 'phq9':
         return 'PHQ-9 抑郁筛查';

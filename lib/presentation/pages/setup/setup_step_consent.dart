@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// Step 0: 法律同意
 ///
@@ -97,7 +98,7 @@ class SetupStepConsent extends StatelessWidget {
               final allChecked = consentUserAgreement &&
                   consentPrivacyPolicy &&
                   consentSensitiveData;
-              return ElevatedButton(
+              return PrimaryButton(
                 onPressed: allChecked ? onContinue : null,
                 child: Text(l10n.setupConsentStart),
               );

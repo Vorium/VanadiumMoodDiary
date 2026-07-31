@@ -3543,6 +3543,282 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'错误：{message}'**
   String safetyCheckResultError(String message);
+
+  /// No description provided for @settingsIapUpgradeTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'升级到 Pro'**
+  String get settingsIapUpgradeTitle;
+
+  /// No description provided for @settingsIapUpgradeSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'¥8 一次性买断 · 解锁全部高级功能'**
+  String get settingsIapUpgradeSubtitle;
+
+  /// No description provided for @settingsIapProOwnedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'已是 Pro 版本'**
+  String get settingsIapProOwnedTitle;
+
+  /// No description provided for @settingsIapProOwnedSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'感谢支持 · 全部高级功能已解锁'**
+  String get settingsIapProOwnedSubtitle;
+
+  /// No description provided for @iapPurchaseSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'升级成功！欢迎使用 Pro。'**
+  String get iapPurchaseSuccess;
+
+  /// No description provided for @iapPurchaseFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'购买未完成，请稍后再试。'**
+  String get iapPurchaseFailed;
+
+  /// No description provided for @phoneRegionCn.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国大陆'**
+  String get phoneRegionCn;
+
+  /// No description provided for @phoneRegionHk.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国香港'**
+  String get phoneRegionHk;
+
+  /// No description provided for @phoneRegionMo.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国澳门'**
+  String get phoneRegionMo;
+
+  /// No description provided for @phoneRegionTw.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国台湾'**
+  String get phoneRegionTw;
+
+  /// No description provided for @phoneRegionIntl.
+  ///
+  /// In zh, this message translates to:
+  /// **'国际'**
+  String get phoneRegionIntl;
+
+  /// No description provided for @presetMedSsriMorningTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'单药 · SSRI 早一次'**
+  String get presetMedSsriMorningTitle;
+
+  /// No description provided for @presetMedSsriMorningDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'1 种药，每天早 8 点服用（适用 SSRI ／ SNRI 类）'**
+  String get presetMedSsriMorningDesc;
+
+  /// No description provided for @presetMedMoodStabilizerTwiceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪稳定剂 · 早晚两次'**
+  String get presetMedMoodStabilizerTwiceTitle;
+
+  /// No description provided for @presetMedMoodStabilizerTwiceDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'1 种药，每天早 8 点 + 晚 20 点'**
+  String get presetMedMoodStabilizerTwiceDesc;
+
+  /// No description provided for @presetMedComboSsriBedtimeTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'联合 · 早抗抑郁 + 晚助眠'**
+  String get presetMedComboSsriBedtimeTitle;
+
+  /// No description provided for @presetMedComboSsriBedtimeDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'2 种药：早 8 点 SSRI + 晚 21 点助眠'**
+  String get presetMedComboSsriBedtimeDesc;
+
+  /// No description provided for @presetMedComboAntipsychoticFullTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'重性 · 早中晚三次'**
+  String get presetMedComboAntipsychoticFullTitle;
+
+  /// No description provided for @presetMedComboAntipsychoticFullDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'2 种药：早 8 ／ 午 13 ／ 晚 20，覆盖全天'**
+  String get presetMedComboAntipsychoticFullDesc;
+
+  /// No description provided for @presetMedSsriName.
+  ///
+  /// In zh, this message translates to:
+  /// **'SSRI 类抗抑郁药'**
+  String get presetMedSsriName;
+
+  /// No description provided for @presetMedSsriHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'常见 SSRI ／ SNRI 类抗抑郁药（具体药名以医生处方为准）'**
+  String get presetMedSsriHint;
+
+  /// No description provided for @presetMedMoodStabilizerName.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪稳定剂'**
+  String get presetMedMoodStabilizerName;
+
+  /// No description provided for @presetMedMoodStabilizerHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'常见情绪稳定剂类（具体药名以医生处方为准）'**
+  String get presetMedMoodStabilizerHint;
+
+  /// No description provided for @presetMedSleepAidName.
+  ///
+  /// In zh, this message translates to:
+  /// **'助眠药'**
+  String get presetMedSleepAidName;
+
+  /// No description provided for @presetMedSleepAidHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'常见苯二氮卓类／助眠药（具体药名以医生处方为准）'**
+  String get presetMedSleepAidHint;
+
+  /// No description provided for @presetMedAntipsychoticName.
+  ///
+  /// In zh, this message translates to:
+  /// **'抗精神病药'**
+  String get presetMedAntipsychoticName;
+
+  /// No description provided for @presetMedAntipsychoticHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'常见非典型抗精神病药（具体药名以医生处方为准）'**
+  String get presetMedAntipsychoticHint;
+
+  /// No description provided for @presetMedSedativeAnxiolyticName.
+  ///
+  /// In zh, this message translates to:
+  /// **'镇静／抗焦虑辅助'**
+  String get presetMedSedativeAnxiolyticName;
+
+  /// No description provided for @presetMedSedativeAnxiolyticHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'常见镇静／抗焦虑辅助药（具体药名以医生处方为准）'**
+  String get presetMedSedativeAnxiolyticHint;
+
+  /// No description provided for @checkInTypeDaily.
+  ///
+  /// In zh, this message translates to:
+  /// **'每日打卡'**
+  String get checkInTypeDaily;
+
+  /// No description provided for @checkInTypeTemp.
+  ///
+  /// In zh, this message translates to:
+  /// **'临时吃药'**
+  String get checkInTypeTemp;
+
+  /// No description provided for @checkInTypePhq9.
+  ///
+  /// In zh, this message translates to:
+  /// **'PHQ-9 评估'**
+  String get checkInTypePhq9;
+
+  /// No description provided for @checkInTypeGad7.
+  ///
+  /// In zh, this message translates to:
+  /// **'GAD-7 评估'**
+  String get checkInTypeGad7;
+
+  /// No description provided for @dayDetailCheckInWith.
+  ///
+  /// In zh, this message translates to:
+  /// **'打卡 · {name}'**
+  String dayDetailCheckInWith(String name);
+
+  /// No description provided for @dayDetailDailyCheckIn.
+  ///
+  /// In zh, this message translates to:
+  /// **'每日打卡'**
+  String get dayDetailDailyCheckIn;
+
+  /// No description provided for @dayDetailTempWith.
+  ///
+  /// In zh, this message translates to:
+  /// **'临时 · {name}'**
+  String dayDetailTempWith(String name);
+
+  /// No description provided for @dayDetailTempMed.
+  ///
+  /// In zh, this message translates to:
+  /// **'临时吃药'**
+  String get dayDetailTempMed;
+
+  /// No description provided for @dayDetailPhq9.
+  ///
+  /// In zh, this message translates to:
+  /// **'PHQ-9 抑郁筛查'**
+  String get dayDetailPhq9;
+
+  /// No description provided for @dayDetailGad7.
+  ///
+  /// In zh, this message translates to:
+  /// **'GAD-7 焦虑筛查'**
+  String get dayDetailGad7;
+
+  /// No description provided for @ventDurationSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'{sec}秒'**
+  String ventDurationSeconds(int sec);
+
+  /// No description provided for @ventDurationMinutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'{m}分'**
+  String ventDurationMinutes(int m);
+
+  /// No description provided for @ventDurationMinutesSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'{m}分{sec}秒'**
+  String ventDurationMinutesSeconds(int m, String sec);
+
+  /// No description provided for @scaleHotlineCn.
+  ///
+  /// In zh, this message translates to:
+  /// **'全国 24 小时心理援助热线'**
+  String get scaleHotlineCn;
+
+  /// No description provided for @scaleHotlineUs.
+  ///
+  /// In zh, this message translates to:
+  /// **'988 Suicide & Crisis Lifeline (US)'**
+  String get scaleHotlineUs;
+
+  /// No description provided for @scaleHotlineHk.
+  ///
+  /// In zh, this message translates to:
+  /// **'撒玛利亚防止自杀会（24h 多语言）'**
+  String get scaleHotlineHk;
+
+  /// No description provided for @scaleHotlineIntl.
+  ///
+  /// In zh, this message translates to:
+  /// **'国际通用 · 请联系当地急救或心理援助'**
+  String get scaleHotlineIntl;
 }
 
 class _AppLocalizationsDelegate

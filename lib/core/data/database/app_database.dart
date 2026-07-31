@@ -261,59 +261,9 @@ class AppDatabase extends _$AppDatabase {
   late final moodDao = MoodDao(this);
   late final ventDao = VentDao(this);
 
-  // ============= CheckIns (facade 委托, 旧 caller 兼容) =============
-  Stream<List<CheckIn>> watchAllCheckIns() => checkInDao.watchAll();
-  Stream<List<CheckIn>> watchAssessments() => checkInDao.watchAssessments();
-  Stream<CheckIn?> watchTodayCheckIn() => checkInDao.watchToday();
-  Stream<List<CheckIn>> watchNormalCheckIns() => checkInDao.watchNormal();
-  Future<CheckIn?> getLatestNormalCheckIn() => checkInDao.getLatestNormal();
-  Future<DateTime?> getLatestAssessmentTimestamp() =>
-      checkInDao.getLatestAssessmentTimestamp();
-  Future<int> insertCheckIn(CheckInsCompanion entry) => checkInDao.insert(entry);
-
-  // ============= Medications (facade 委托) =============
-  Stream<List<Medication>> watchMedications() => medicationDao.watchActive();
-  Stream<List<Medication>> watchAllMedicationsIncludingInactive() =>
-      medicationDao.watchAllIncludingInactive();
-  Future<int> insertMedication(MedicationsCompanion entry) =>
-      medicationDao.insert(entry);
-  Future<bool> updateMedication(Medication medication) =>
-      medicationDao.update(medication);
-  Future<int> deleteMedication(int id) => medicationDao.delete(id);
-
-  // ============= Contacts (facade 委托) =============
-  Stream<List<Contact>> watchContacts() => contactDao.watchActive();
-  Future<int> insertContact(ContactsCompanion entry) => contactDao.insert(entry);
-  Future<bool> updateContact(Contact contact) => contactDao.update(contact);
-  Future<int> deleteContact(int id) => contactDao.delete(id);
-
-  // ============= UserProfile (facade 委托) =============
-  Stream<UserProfile?> watchUserProfile() => userProfileDao.watch();
-  Future<UserProfile?> getUserProfile() => userProfileDao.get();
-  Future<void> upsertUserProfile(UserProfilesCompanion entry) =>
-      userProfileDao.upsert(entry);
-
-  // ============= ReportHistories (facade 委托) =============
-  Stream<List<ReportHistory>> watchReportHistories() => reportDao.watchAll();
-  Future<int> insertReportHistory(ReportHistoriesCompanion entry) =>
-      reportDao.insert(entry);
-  Future<int> deleteReportHistory(int id) => reportDao.delete(id);
-  Future<int> clearAllReportHistories() => reportDao.clearAll();
-  Future<List<ReportHistory>> getAllReportHistories() => reportDao.getAll();
-
-  // ============= MoodEntries (facade 委托) =============
-  Stream<List<MoodEntry>> watchMoodEntries() => moodDao.watchAll();
-  Future<List<MoodEntry>> getAllMoodEntries() => moodDao.getAll();
-  Stream<List<MoodEntry>> watchTodayMoodEntries() => moodDao.watchToday();
-  Future<int> insertMoodEntry(MoodEntriesCompanion entry) =>
-      moodDao.insert(entry);
-  Future<int> deleteMoodEntry(int id) => moodDao.delete(id);
-
-  // ============= VentEntries (facade 委托) =============
-  Stream<List<VentEntry>> watchVentEntries() => ventDao.watchAll();
-  Future<int> insertVentEntry(VentEntriesCompanion entry) =>
-      ventDao.insert(entry);
-  Future<int> deleteVentEntry(int id) => ventDao.delete(id);
+  // v0.27 round 65 (spen P1-11): 删 32 行 facade 委派 (line 264-316), caller
+  // 已全迁到 _db.xxxDao.xxx() / db.xxxDao.xxx() (94 处). 保留 saveSetup /
+  // clearAllUserData (业务编排, 非纯委派).
 
   /// 完成首次设置：在同一个事务里写入用户档案、联系人、药物，
   /// 任何一个失败整体回滚，避免半成品数据
@@ -335,7 +285,9 @@ class AppDatabase extends _$AppDatabase {
     final now = DateTime.now();
     await transaction(() async {
       // upsert user profile（保留 firstLaunchAt）
-      final existing = await getUserProfile();
+      // v0.27 round 65 (spen P1-11): 删 facade getUserProfile, saveSetup 内部
+      // 改用 userProfileDao.get() (R53a 已抽 7 DAO)
+      final existing = await userProfileDao.get();
       await into(userProfiles).insertOnConflictUpdate(
         UserProfilesCompanion.insert(
           // v0.21 Round 23 (P1-24): userName 改 nullable

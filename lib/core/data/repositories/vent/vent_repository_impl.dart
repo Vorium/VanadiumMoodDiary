@@ -30,7 +30,7 @@ class VentRepositoryImpl implements VentRepository {
 
   @override
   Stream<List<VentEntryEntity>> watchAll() {
-    return _db.watchVentEntries().asyncMap(
+    return _db.ventDao.watchAll().asyncMap(
       (rows) async {
         final entities = await Future.wait(rows.map((r) => r.toEntity()));
         return entities;
@@ -60,7 +60,7 @@ class VentRepositoryImpl implements VentRepository {
       );
     }
 
-    return _db.insertVentEntry(
+    return _db.ventDao.insert(
       VentEntriesCompanion.insert(
         timestamp: at ?? DateTime.now(),
         contentTextEnc: Value(encText),
@@ -81,7 +81,7 @@ class VentRepositoryImpl implements VentRepository {
 
     // 事务保护 read + delete 原子性，防止 TOCTOU 竞态
     final deleted = await _db.transaction(() async {
-      return await _db.deleteVentEntry(id) > 0;
+      return await _db.ventDao.delete(id) > 0;
     });
     if (!deleted) return false;
 

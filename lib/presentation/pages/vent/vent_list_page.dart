@@ -258,7 +258,8 @@ class _EntryCard extends StatelessWidget {
                   ),
                   const SizedBox(width: AppTokens.spacingXxs),
                   Text(
-                    entry.durationLabel(),
+                    // v0.28 round 65 (spzh P2-I): durationLabel 走 i18n
+                    entry.durationLabelL10n(l10n: AppLocalizations.of(context)),
                     style: AppTokens.textStyleCaption(context)
                         .copyWith(color: AppTokens.textHintColor(context)),
                   ),

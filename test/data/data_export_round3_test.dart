@@ -38,7 +38,7 @@ void main() {
 
   test('P4 fix: 导出包含 reportHistories + moodEntries', () async {
     // 准备数据
-    await db.insertReportHistory(
+    await db.reportDao.insert(
       ReportHistoriesCompanion.insert(
         windowDays: 14,
         generatedAt: DateTime(2026, 7, 13, 12, 0),
@@ -47,7 +47,7 @@ void main() {
         reportText: '测试报告内容',
       ),
     );
-    await db.insertMoodEntry(
+    await db.moodDao.insert(
       MoodEntriesCompanion.insert(
         timestamp: DateTime(2026, 7, 13, 10, 0),
         score: 4,
@@ -95,11 +95,11 @@ void main() {
     expect(result.reportHistoryCount, 1);
     expect(result.moodEntryCount, 1);
 
-    final reports = await db.getAllReportHistories();
+    final reports = await db.reportDao.getAll();
     expect(reports.length, 1);
     expect(reports.first.reportText, '导入的报告内容');
 
-    final moods = await db.getAllMoodEntries();
+    final moods = await db.moodDao.getAll();
     expect(moods.length, 1);
     expect(moods.first.score, 3);
   });
@@ -149,7 +149,7 @@ void main() {
   // ===== P0-3: vent_entries 导出/导入 (round 14 P0 batch) =====
 
   test('P0-3: 导出包含 ventEntries 文字,不导出 audioPath', () async {
-    await db.insertVentEntry(
+    await db.ventDao.insert(
       VentEntriesCompanion.insert(
         timestamp: DateTime(2026, 7, 13, 22, 0),
         contentTextEnc: Value(await encText('今天好累')),
@@ -171,7 +171,7 @@ void main() {
   });
 
   test('P0-3: 纯文字 vent 条目正常导出', () async {
-    await db.insertVentEntry(
+    await db.ventDao.insert(
       VentEntriesCompanion.insert(
         timestamp: DateTime(2026, 7, 13, 22, 0),
         contentTextEnc: Value(await encText('想哭')),
@@ -225,7 +225,7 @@ void main() {
 
     // v0.21 Round 22 (P0-1): vent 文字字段级加密,需经 mapper.toEntity() decrypt
     // 拿到 entity.contentText (明文),不能直接读 Drift row 的 contentText (旧字段)。
-    final rows = await db.watchVentEntries().first;
+    final rows = await db.ventDao.watchAll().first;
     final entries = await Future.wait(rows.map((r) => r.toEntity()));
     expect(entries, hasLength(2));
     // watchVentEntries 按 timestamp DESC 排,2026-07-13 在前
@@ -299,7 +299,7 @@ void main() {
   });
 
   test('P0-3: 导入 v3 → 再导出, 文字保留 (round-trip)', () async {
-    await db.insertVentEntry(
+    await db.ventDao.insert(
       VentEntriesCompanion.insert(
         timestamp: DateTime(2026, 7, 13, 22, 0),
         contentTextEnc: Value(await encText('今天好累')),
@@ -309,7 +309,7 @@ void main() {
     final export1 = await svc.exportToJson();
     // 清空 (新数据库)
     await db.delete(db.ventEntries).go();
-    expect((await db.watchVentEntries().first), isEmpty);
+    expect((await db.ventDao.watchAll().first), isEmpty);
 
     // 重新导入
     final result = await svc.importFromJson(export1);

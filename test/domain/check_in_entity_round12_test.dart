@@ -260,7 +260,7 @@ void main() {
       addTearDown(() async => await db.close());
 
       final ts = DateTime(2026, 7, 15, 8, 0);
-      await db.insertCheckIn(
+      await db.checkInDao.insert(
         CheckInsCompanion.insert(
           timestamp: ts,
           type: 'normal',
@@ -269,7 +269,7 @@ void main() {
         ),
       );
 
-      final rows = await db.watchAllCheckIns().first;
+      final rows = await db.checkInDao.watchAll().first;
       expect(rows.length, 1);
 
       final entity = rows.first.toEntity();

@@ -14,6 +14,7 @@ import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -261,7 +262,7 @@ class _RefillRow extends StatelessWidget {
               vertical: AppTokens.spacingXxxs,
             ),
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.15),
+              color: AppColors.tintedStatusSoft(context, statusColor),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
             ),
             child: Text(
@@ -325,7 +326,7 @@ class _StatusDot extends StatelessWidget {
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: status.colorOf(context).withValues(alpha: 0.15),
+        color: AppColors.tintedStatusSoft(context, status.colorOf(context)),
         shape: BoxShape.circle,
       ),
       child: Icon(

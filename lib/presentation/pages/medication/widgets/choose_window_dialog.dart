@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// 选择时间窗口的 AlertDialog
 ///
@@ -80,7 +81,8 @@ class _ChooseWindowDialogState extends State<ChooseWindowDialog> {
           onPressed: () => Navigator.pop(context),
           child: Text(AppLocalizations.of(context).commonCancel),
         ),
-        ElevatedButton(
+        PrimaryButton(
+          isFullWidth: false,
           onPressed: () => Navigator.pop(context, _selected),
           child:
               Text(AppLocalizations.of(context).settingsActionGenerateReport),

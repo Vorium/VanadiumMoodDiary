@@ -1207,5 +1207,77 @@
     "placeholders": {
       "message": { "type": "String" }
     }
-  }
+  },
+  "settingsIapUpgradeTitle": "Upgrade to Pro",
+  "settingsIapUpgradeSubtitle": "¥8 one-time purchase · unlock all premium features",
+  "settingsIapProOwnedTitle": "You're on Pro",
+  "settingsIapProOwnedSubtitle": "Thanks for the support · all premium features unlocked",
+  "iapPurchaseSuccess": "Upgrade successful! Welcome to Pro.",
+  "iapPurchaseFailed": "Purchase not completed. Please try again later.",
+  "phoneRegionCn": "Mainland China",
+  "phoneRegionHk": "Hong Kong, China",
+  "phoneRegionMo": "Macao, China",
+  "phoneRegionTw": "Taiwan, China",
+  "phoneRegionIntl": "International",
+  "presetMedSsriMorningTitle": "Single med · SSRI morning",
+  "presetMedSsriMorningDesc": "1 medication, taken daily at 8 AM (for SSRI / SNRI class)",
+  "presetMedMoodStabilizerTwiceTitle": "Mood stabilizer · morning & evening",
+  "presetMedMoodStabilizerTwiceDesc": "1 medication, daily at 8 AM and 8 PM",
+  "presetMedComboSsriBedtimeTitle": "Combo · morning antidepressant + bedtime sleep aid",
+  "presetMedComboSsriBedtimeDesc": "2 meds: SSRI at 8 AM + sleep aid at 9 PM",
+  "presetMedComboAntipsychoticFullTitle": "Severe · morning / noon / evening",
+  "presetMedComboAntipsychoticFullDesc": "2 meds: 8 AM / 1 PM / 8 PM, full-day coverage",
+  "presetMedSsriName": "SSRI antidepressant",
+  "presetMedSsriHint": "Common SSRI / SNRI antidepressants (follow your doctor's prescription)",
+  "presetMedMoodStabilizerName": "Mood stabilizer",
+  "presetMedMoodStabilizerHint": "Common mood stabilizers (follow your doctor's prescription)",
+  "presetMedSleepAidName": "Sleep aid",
+  "presetMedSleepAidHint": "Common benzodiazepines / sleep aids (follow your doctor's prescription)",
+  "presetMedAntipsychoticName": "Antipsychotic",
+  "presetMedAntipsychoticHint": "Common atypical antipsychotics (follow your doctor's prescription)",
+  "presetMedSedativeAnxiolyticName": "Sedative / anxiolytic adjunct",
+  "presetMedSedativeAnxiolyticHint": "Common sedative / anxiolytic adjuncts (follow your doctor's prescription)",
+  "checkInTypeDaily": "Daily check-in",
+  "checkInTypeTemp": "Temp dose",
+  "checkInTypePhq9": "PHQ-9 assessment",
+  "checkInTypeGad7": "GAD-7 assessment",
+  "dayDetailCheckInWith": "Check-in · {name}",
+  "@dayDetailCheckInWith": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dayDetailDailyCheckIn": "Daily check-in",
+  "dayDetailTempWith": "Temp · {name}",
+  "@dayDetailTempWith": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dayDetailTempMed": "Temp dose",
+  "dayDetailPhq9": "PHQ-9 Depression Screening",
+  "dayDetailGad7": "GAD-7 Anxiety Screening",
+  "ventDurationSeconds": "{sec}s",
+  "@ventDurationSeconds": {
+    "placeholders": {
+      "sec": { "type": "int" }
+    }
+  },
+  "ventDurationMinutes": "{m}m",
+  "@ventDurationMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "ventDurationMinutesSeconds": "{m}m {sec}s",
+  "@ventDurationMinutesSeconds": {
+    "placeholders": {
+      "m": { "type": "int" },
+      "sec": { "type": "String" }
+    }
+  },
+  "scaleHotlineCn": "National 24h Psychological Aid Hotline",
+  "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
+  "scaleHotlineHk": "Samaritans Befrienders Hong Kong (24h multilingual)",
+  "scaleHotlineIntl": "International · contact local emergency or mental health services"
 }

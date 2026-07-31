@@ -154,8 +154,33 @@ enum PhoneRegion {
   tw,
   intl;
 
-  /// 显示名(中文)
+  /// 显示名(中文 fallback)
+  ///
+  /// v0.28 round 65 (spzh P2-F): 保留 getter (中文 fallback, 老 test
+  /// 兼容 + 0 flutter 边界单测用),新 caller 走
+  /// [displayNameL10n] / [regionDisplayName] 拿 i18n string。
   String get displayName {
+    switch (this) {
+      case PhoneRegion.cn:
+        return '中国大陆';
+      case PhoneRegion.hk:
+        return '中国香港';
+      case PhoneRegion.mo:
+        return '中国澳门';
+      case PhoneRegion.tw:
+        return '中国台湾';
+      case PhoneRegion.intl:
+        return '国际';
+    }
+  }
+
+  /// i18n 显示名 (caller 传 [override] 走 ARB, 不传 fallback 中文)
+  ///
+  /// v0.28 round 65 (spzh P2-F 修复): 抽 helper 同 `Strings.xxxText`
+  /// 模式 — domain 0 flutter 边界, presentation 层传 l10n.phoneRegionCn
+  /// 走 zh/en/zh_Hant 三语。详见 `lib/l10n/region_display_name.dart`。
+  String displayNameL10n({String? override}) {
+    if (override != null) return override;
     switch (this) {
       case PhoneRegion.cn:
         return '中国大陆';

@@ -203,7 +203,7 @@ void main() {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(() async => await db.close());
 
-      await db.insertContact(
+      await db.contactDao.insert(
         ContactsCompanion.insert(
           name: '妈妈',
           phone: '13800138000',
@@ -211,7 +211,7 @@ void main() {
         ),
       );
 
-      final rows = await db.watchContacts().first;
+      final rows = await db.contactDao.watchActive().first;
       expect(rows.length, 1);
 
       final entity = rows.first.toEntity();

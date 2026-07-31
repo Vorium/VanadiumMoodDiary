@@ -9,6 +9,15 @@
 // - `type` 改成枚举 + `fromWire` 容错解析
 // - `isNormal` / `isTemp` / `isAssessment` getter 取代 `c.type == 'xxx'`
 // - equals / hashCode / toString 标准实现
+//
+// v0.28 round 65 (spzh P2-H): `label` 从硬编中文 getter → i18n 方法
+// ([labelL10n])，caller 传 AppLocalizations 走 zh/en/zh_Hant。
+// 4 个 i18n key: `checkInTypeDaily` / `checkInTypeTemp` /
+// `checkInTypePhq9` / `checkInTypeGad7`。
+//
+// 注意：domain 层 0 flutter 边界 — [labelL10n] 接受 caller 注入的
+// `String? override` (i18n 字符串由 caller 解析), 不直接 import
+// flutter_localizations。`String` 注入同 `core/l10n/strings.dart` 模式。
 
 import 'package:chroniccare/core/shared/domain_value.dart';
 
@@ -45,8 +54,13 @@ enum CheckInType {
 }
 
 extension CheckInTypeX on CheckInType {
-  /// 简短中文描述
-  String get label {
+  /// i18n 简短描述 — caller 传 AppLocalizations 拿 zh/en/zh_Hant
+  ///
+  /// v0.28 round 65 (spzh P2-H): 替代之前的硬编中文 `label` getter。
+  /// domain 0 flutter 边界用 override 模式同 `Strings` — 传 l10n 即
+  /// 走 ARB, 不传返中文 fallback (老 test 兼容 / 单测用)。
+  String labelL10n({String? override}) {
+    if (override != null) return override;
     switch (this) {
       case CheckInType.normal:
         return '每日打卡';

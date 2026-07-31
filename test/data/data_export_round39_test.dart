@@ -49,7 +49,7 @@ void main() {
 
   group('v0.23 round 39 (P1-5) — profile round-trip', () {
     test('导出含 profile 字段 (userName/cycle/firstLaunchAt)', () async {
-      await db.upsertUserProfile(UserProfilesCompanion.insert(
+      await db.userProfileDao.upsert(UserProfilesCompanion.insert(
         userName: const Value('张三'),
         checkInCycleHours: const Value(48),
         firstLaunchAt: DateTime.utc(2026, 1, 1),
@@ -67,7 +67,7 @@ void main() {
     });
 
     test('userName 为空 → 导出空字符串 (不抛错)', () async {
-      await db.upsertUserProfile(UserProfilesCompanion.insert(
+      await db.userProfileDao.upsert(UserProfilesCompanion.insert(
         checkInCycleHours: const Value(24),
         firstLaunchAt: DateTime.utc(2026, 1, 1),
       ),);
@@ -78,14 +78,14 @@ void main() {
     });
 
     test('lastCheckInAt 字段保留', () async {
-      await db.upsertUserProfile(UserProfilesCompanion.insert(
+      await db.userProfileDao.upsert(UserProfilesCompanion.insert(
         userName: const Value('李四'),
         checkInCycleHours: const Value(24),
         firstLaunchAt: DateTime.utc(2026, 1, 1),
         lastCheckInAt: const Value.absent(),
       ),);
       // 模拟有 lastCheckIn
-      final profile = await db.getUserProfile();
+      final profile = await db.userProfileDao.get();
       expect(profile, isNotNull);
     });
   });
@@ -99,10 +99,10 @@ void main() {
     });
 
     test('导出多 contact 保留 name/phone/sortOrder/isActive', () async {
-      await db.insertContact(ContactsCompanion.insert(
+      await db.contactDao.insert(ContactsCompanion.insert(
         name: '妈妈', phone: '13800138001', sortOrder: const Value(0),
       ),);
-      await db.insertContact(ContactsCompanion.insert(
+      await db.contactDao.insert(ContactsCompanion.insert(
         name: '爸爸', phone: '13800138002', sortOrder: const Value(1),
       ),);
       final json = parseJson(await svc.exportToJson());
@@ -118,7 +118,7 @@ void main() {
     });
 
     test('isActive=false 的 contact 不在 export 结果 (watchContacts 过滤)', () async {
-      await db.insertContact(ContactsCompanion.insert(
+      await db.contactDao.insert(ContactsCompanion.insert(
         name: '已删除', phone: '13800138099',
         isActive: const Value(false),
       ),);
@@ -136,7 +136,7 @@ void main() {
     });
 
     test('导出 medication 保留所有字段', () async {
-      await db.insertMedication(MedicationsCompanion.insert(
+      await db.medicationDao.insert(MedicationsCompanion.insert(
         name: '碳酸锂',
         dosage: 0.3,
         dosageUnit: 'g',
@@ -166,11 +166,11 @@ void main() {
     });
 
     test('导出 check-in 保留 timestamp (Z 后缀) / type / note', () async {
-      await db.insertCheckIn(CheckInsCompanion.insert(
+      await db.checkInDao.insert(CheckInsCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 1, 20, 0),
         type: 'normal',
       ),);
-      await db.insertCheckIn(CheckInsCompanion.insert(
+      await db.checkInDao.insert(CheckInsCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 2, 20, 0),
         type: 'phq9',
         note: const Value('{"total":10,"scores":[1,1,1,1,1,1,1,1,1,1]}'),
@@ -191,7 +191,7 @@ void main() {
 
   group('v0.23 round 39 (P1-5) — moodEntries 4D round-trip', () {
     test('导出 mood 含 energy/sleep/anxiety 4D 字段', () async {
-      await db.insertMoodEntry(MoodEntriesCompanion.insert(
+      await db.moodDao.insert(MoodEntriesCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 1, 10, 0),
         score: 7,
         energy: const Value(6),
@@ -213,7 +213,7 @@ void main() {
     });
 
     test('老数据 (4D 全 null) → 导出后字段不存在 (兼容)', () async {
-      await db.insertMoodEntry(MoodEntriesCompanion.insert(
+      await db.moodDao.insert(MoodEntriesCompanion.insert(
         timestamp: DateTime.utc(2026, 6, 1, 10, 0),
         score: 5,
         tagsJson: const Value('[]'),
@@ -232,7 +232,7 @@ void main() {
     test('加密 vent 文字 → 导出明文 → import 写回加密', () async {
       // 写入加密 vent
       final encrypted = await encText('今天心情很差');
-      await db.insertVentEntry(VentEntriesCompanion.insert(
+      await db.ventDao.insert(VentEntriesCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 1),
         contentTextEnc: Value(encrypted),
       ),);
@@ -249,7 +249,7 @@ void main() {
 
     test('vent 文字损坏 (decrypt 失败) → 导出 text=null, import 跳过', () async {
       // 写入损坏的加密数据 (随机字节)
-      await db.insertVentEntry(VentEntriesCompanion.insert(
+      await db.ventDao.insert(VentEntriesCompanion.insert(
         timestamp: DateTime.utc(2026, 7, 1),
         contentTextEnc: Value(Uint8List.fromList(List.filled(32, 0xff))),
       ),);

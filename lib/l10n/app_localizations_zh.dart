@@ -1942,6 +1942,155 @@ class AppLocalizationsZh extends AppLocalizations {
   String safetyCheckResultError(String message) {
     return '错误：$message';
   }
+
+  @override
+  String get settingsIapUpgradeTitle => '升级到 Pro';
+
+  @override
+  String get settingsIapUpgradeSubtitle => '¥8 一次性买断 · 解锁全部高级功能';
+
+  @override
+  String get settingsIapProOwnedTitle => '已是 Pro 版本';
+
+  @override
+  String get settingsIapProOwnedSubtitle => '感谢支持 · 全部高级功能已解锁';
+
+  @override
+  String get iapPurchaseSuccess => '升级成功！欢迎使用 Pro。';
+
+  @override
+  String get iapPurchaseFailed => '购买未完成，请稍后再试。';
+
+  @override
+  String get phoneRegionCn => '中国大陆';
+
+  @override
+  String get phoneRegionHk => '中国香港';
+
+  @override
+  String get phoneRegionMo => '中国澳门';
+
+  @override
+  String get phoneRegionTw => '中国台湾';
+
+  @override
+  String get phoneRegionIntl => '国际';
+
+  @override
+  String get presetMedSsriMorningTitle => '单药 · SSRI 早一次';
+
+  @override
+  String get presetMedSsriMorningDesc => '1 种药，每天早 8 点服用（适用 SSRI ／ SNRI 类）';
+
+  @override
+  String get presetMedMoodStabilizerTwiceTitle => '情绪稳定剂 · 早晚两次';
+
+  @override
+  String get presetMedMoodStabilizerTwiceDesc => '1 种药，每天早 8 点 + 晚 20 点';
+
+  @override
+  String get presetMedComboSsriBedtimeTitle => '联合 · 早抗抑郁 + 晚助眠';
+
+  @override
+  String get presetMedComboSsriBedtimeDesc => '2 种药：早 8 点 SSRI + 晚 21 点助眠';
+
+  @override
+  String get presetMedComboAntipsychoticFullTitle => '重性 · 早中晚三次';
+
+  @override
+  String get presetMedComboAntipsychoticFullDesc =>
+      '2 种药：早 8 ／ 午 13 ／ 晚 20，覆盖全天';
+
+  @override
+  String get presetMedSsriName => 'SSRI 类抗抑郁药';
+
+  @override
+  String get presetMedSsriHint => '常见 SSRI ／ SNRI 类抗抑郁药（具体药名以医生处方为准）';
+
+  @override
+  String get presetMedMoodStabilizerName => '情绪稳定剂';
+
+  @override
+  String get presetMedMoodStabilizerHint => '常见情绪稳定剂类（具体药名以医生处方为准）';
+
+  @override
+  String get presetMedSleepAidName => '助眠药';
+
+  @override
+  String get presetMedSleepAidHint => '常见苯二氮卓类／助眠药（具体药名以医生处方为准）';
+
+  @override
+  String get presetMedAntipsychoticName => '抗精神病药';
+
+  @override
+  String get presetMedAntipsychoticHint => '常见非典型抗精神病药（具体药名以医生处方为准）';
+
+  @override
+  String get presetMedSedativeAnxiolyticName => '镇静／抗焦虑辅助';
+
+  @override
+  String get presetMedSedativeAnxiolyticHint => '常见镇静／抗焦虑辅助药（具体药名以医生处方为准）';
+
+  @override
+  String get checkInTypeDaily => '每日打卡';
+
+  @override
+  String get checkInTypeTemp => '临时吃药';
+
+  @override
+  String get checkInTypePhq9 => 'PHQ-9 评估';
+
+  @override
+  String get checkInTypeGad7 => 'GAD-7 评估';
+
+  @override
+  String dayDetailCheckInWith(String name) {
+    return '打卡 · $name';
+  }
+
+  @override
+  String get dayDetailDailyCheckIn => '每日打卡';
+
+  @override
+  String dayDetailTempWith(String name) {
+    return '临时 · $name';
+  }
+
+  @override
+  String get dayDetailTempMed => '临时吃药';
+
+  @override
+  String get dayDetailPhq9 => 'PHQ-9 抑郁筛查';
+
+  @override
+  String get dayDetailGad7 => 'GAD-7 焦虑筛查';
+
+  @override
+  String ventDurationSeconds(int sec) {
+    return '$sec秒';
+  }
+
+  @override
+  String ventDurationMinutes(int m) {
+    return '$m分';
+  }
+
+  @override
+  String ventDurationMinutesSeconds(int m, String sec) {
+    return '$m分$sec秒';
+  }
+
+  @override
+  String get scaleHotlineCn => '全国 24 小时心理援助热线';
+
+  @override
+  String get scaleHotlineUs => '988 Suicide & Crisis Lifeline (US)';
+
+  @override
+  String get scaleHotlineHk => '撒玛利亚防止自杀会（24h 多语言）';
+
+  @override
+  String get scaleHotlineIntl => '国际通用 · 请联系当地急救或心理援助';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3882,4 +4031,153 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String safetyCheckResultError(String message) {
     return '錯誤：$message';
   }
+
+  @override
+  String get settingsIapUpgradeTitle => '升級到 Pro';
+
+  @override
+  String get settingsIapUpgradeSubtitle => '¥8 一次性買斷 · 解鎖全部進階功能';
+
+  @override
+  String get settingsIapProOwnedTitle => '已是 Pro 版本';
+
+  @override
+  String get settingsIapProOwnedSubtitle => '感謝支持 · 全部進階功能已解鎖';
+
+  @override
+  String get iapPurchaseSuccess => '升級成功！歡迎使用 Pro。';
+
+  @override
+  String get iapPurchaseFailed => '購買未完成，請稍後再試。';
+
+  @override
+  String get phoneRegionCn => '中國大陸';
+
+  @override
+  String get phoneRegionHk => '中國香港';
+
+  @override
+  String get phoneRegionMo => '中國澳門';
+
+  @override
+  String get phoneRegionTw => '中國臺灣';
+
+  @override
+  String get phoneRegionIntl => '國際';
+
+  @override
+  String get presetMedSsriMorningTitle => '單藥 · SSRI 早一次';
+
+  @override
+  String get presetMedSsriMorningDesc => '1 種藥，每天早 8 點服用（適用 SSRI ／ SNRI 類）';
+
+  @override
+  String get presetMedMoodStabilizerTwiceTitle => '情緒穩定劑 · 早晚兩次';
+
+  @override
+  String get presetMedMoodStabilizerTwiceDesc => '1 種藥，每天早 8 點 + 晚 20 點';
+
+  @override
+  String get presetMedComboSsriBedtimeTitle => '聯合 · 早抗抑鬱 + 晚助眠';
+
+  @override
+  String get presetMedComboSsriBedtimeDesc => '2 種藥：早 8 點 SSRI + 晚 21 點助眠';
+
+  @override
+  String get presetMedComboAntipsychoticFullTitle => '重性 · 早中晚三次';
+
+  @override
+  String get presetMedComboAntipsychoticFullDesc =>
+      '2 種藥：早 8 ／ 午 13 ／ 晚 20，覆蓋全天';
+
+  @override
+  String get presetMedSsriName => 'SSRI 類抗抑鬱藥';
+
+  @override
+  String get presetMedSsriHint => '常見 SSRI ／ SNRI 類抗抑鬱藥（具體藥名以醫生處方為準）';
+
+  @override
+  String get presetMedMoodStabilizerName => '情緒穩定劑';
+
+  @override
+  String get presetMedMoodStabilizerHint => '常見情緒穩定劑類（具體藥名以醫生處方為準）';
+
+  @override
+  String get presetMedSleepAidName => '助眠藥';
+
+  @override
+  String get presetMedSleepAidHint => '常見苯二氮卓類／助眠藥（具體藥名以醫生處方為準）';
+
+  @override
+  String get presetMedAntipsychoticName => '抗精神病藥';
+
+  @override
+  String get presetMedAntipsychoticHint => '常見非典型抗精神病藥（具體藥名以醫生處方為準）';
+
+  @override
+  String get presetMedSedativeAnxiolyticName => '鎮靜／抗焦慮輔助';
+
+  @override
+  String get presetMedSedativeAnxiolyticHint => '常見鎮靜／抗焦慮輔助藥（具體藥名以醫生處方為準）';
+
+  @override
+  String get checkInTypeDaily => '每日打卡';
+
+  @override
+  String get checkInTypeTemp => '臨時吃藥';
+
+  @override
+  String get checkInTypePhq9 => 'PHQ-9 評估';
+
+  @override
+  String get checkInTypeGad7 => 'GAD-7 評估';
+
+  @override
+  String dayDetailCheckInWith(String name) {
+    return '打卡 · $name';
+  }
+
+  @override
+  String get dayDetailDailyCheckIn => '每日打卡';
+
+  @override
+  String dayDetailTempWith(String name) {
+    return '臨時 · $name';
+  }
+
+  @override
+  String get dayDetailTempMed => '臨時吃藥';
+
+  @override
+  String get dayDetailPhq9 => 'PHQ-9 抑鬱篩查';
+
+  @override
+  String get dayDetailGad7 => 'GAD-7 焦慮篩查';
+
+  @override
+  String ventDurationSeconds(int sec) {
+    return '$sec秒';
+  }
+
+  @override
+  String ventDurationMinutes(int m) {
+    return '$m分';
+  }
+
+  @override
+  String ventDurationMinutesSeconds(int m, String sec) {
+    return '$m分$sec秒';
+  }
+
+  @override
+  String get scaleHotlineCn => '全國 24 小時心理援助熱線';
+
+  @override
+  String get scaleHotlineUs => '988 Suicide & Crisis Lifeline (US)';
+
+  @override
+  String get scaleHotlineHk => '撒瑪利亞防止自殺會（24h 多語言）';
+
+  @override
+  String get scaleHotlineIntl => '國際通用 · 請聯繫當地急救或心理援助';
 }

@@ -8,6 +8,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// Step 2: 药物列表
@@ -123,7 +124,8 @@ class SetupStepMedication extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    ElevatedButton(
+                    PrimaryButton(
+                      isFullWidth: false,
                       onPressed: saving ? null : onFinish,
                       child: Text(l10n.setupNext),
                     ),

@@ -2,6 +2,36 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-07-31 (R65 — spzh P2 5 文件 i18n 化 + 量表 PHQ-9/GAD-7 抽象起步)
+
+> R65 目标: 处理 `docs/reviews/2026-07-31-seven-lens/spzh/report.md` P2-F/G/H/I + P1-A:
+> - **5 文件 i18n 化** (P2-F/G/H/I, M 难度) — 抽 helper / override 模式同 `core/l10n/strings.dart`
+> - **量表 PHQ-9/GAD-7 抽象起步** (P1-A, L 难度) — `ScaleTranslations` abstract + `AssessmentScale.translations` 字段, 16 题全文留 v1.0
+>
+> 共加 **39 个 i18n key** (zh/en/zh_Hant 同步) + **1 个新 helper** (`region_display_name.dart`) + **1 个新抽象** (`scale_translations.dart`) + **26 个新 test**
+
+### Tests
+- **1232/1232 pass** (R63 1206 + R65 26 新)
+- `flutter analyze` 0 error (128 info-level, 27 个来自 R65 新代码的 trailing comma / const constructor)
+- 15 Python 守护 + 1 `check_all.dart` 全绿 (R65 加 `check_orphan_arb_keys` 防 `phoneRegion*` / `checkInType*` 误报 orphan)
+
+### P2 i18n 化 (spzh 5 文件)
+
+- **P2-F phone_validator.dart PhoneRegion.displayName** (`lib/core/data/utils/phone_validator.dart:158-194`): 5 region 硬编中文 → 抽 `displayNameL10n({String? override})` 方法同 `Strings.xxxText` 模式, 5 i18n key (`phoneRegionCn/Hk/Mo/Tw/Intl`)。新增 `lib/l10n/region_display_name.dart` top-level helper `regionDisplayName(PhoneRegion, {String? override})` 委托 enum method 保证 single source of truth。保留 `displayName` getter (中文 fallback) 不破坏 `phone_validator_round18_test` 5 case test。
+- **P2-G preset_medication_templates.dart 4 方案 30+ 处中文** (`lib/core/data/services/preset_medication_templates.dart`): `MedicationTemplate.name/description` + `MedicationDraft.name/hint` 8+10=18 个字段从硬编中文 → i18n key (`nameKey` / `descriptionKey` / `hintKey`), 方法 `nameL10n(l10n)` / `descriptionL10n(l10n)` / `nameL10n(l10n)` / `hintL10n(l10n)` 走 ARB。caller 改: `setup_page.dart:285-305` template AppListTile `t.nameL10n(l10n)` + `t.descriptionL10n(l10n)` + MedDraft 预填 `d.nameL10n(l10n)`。`test/data/preset_medication_templates_round18_test.dart:19, 45` 改 `m.nameKey` 断言。
+- **P2-H check_in_entity.dart CheckInType.label + day_detail.dart 5+ 处** (`lib/domain/entities/check_in_entity.dart:48-78` + `lib/domain/logic/day_detail.dart:138-247`): `CheckInType.label` 从硬编中文 getter → `labelL10n({String? override})` 方法。`DayDetailCalculator.fromData` 加可选 `AppLocalizations? l10n` 参数 (不传 = 中文 fallback 兼容老 test), 抽 `_renderCheckInLabel(CheckInType, {medName, l10n})` helper 统一 5+ 处。10 i18n key: `checkInTypeDaily/Temp/Phq9/Gad7` + `dayDetailCheckInWith`/`dayDetailTempWith` (placeholder) + `dayDetailDailyCheckIn`/`dayDetailTempMed`/`dayDetailPhq9`/`dayDetailGad7`。`day_detail_round10_test` 16 case + `day_detail_sort_round48_test` 5 case 不破 (中文 fallback 路径)。
+- **P2-I vent_entry_entity.dart durationLabel** (`lib/domain/entities/vent_entry_entity.dart:58-92`): `durationLabel()` 硬编中文 → 新 `durationLabelL10n({String? override, AppLocalizations? l10n})` 方法走 3 i18n key (`ventDurationSeconds` / `ventDurationMinutes` / `ventDurationMinutesSeconds`, 后者 String placeholder + Dart `padLeft(2, '0')` 保留 '1分05秒' 0-pad)。老 `durationLabel()` 保留中文 fallback 兼容 `vent_list_round18_test.dart:145` 21 case test。caller 改: `vent_list_page.dart:261` + `vent_detail_page.dart:288` 走 `durationLabelL10n(l10n: AppLocalizations.of(context))`。
+
+### P1-A 量表 PHQ-9/GAD-7 抽象起步 (spzh)
+
+- **`ScaleTranslations` abstract** (新 `lib/domain/entities/scale_translations.dart`): 起步覆盖 `phq9Name` / `gad7Name` (复用现有 `assessmentScalePhq9` / `assessmentScaleGad7` ARB key) + `crisisHotlineLabel(HotlineRegion)` 4 region (cn/us/hk/intl) + tw/sg/uk 走 intl fallback。**16 题全文 i18n 化留 v1.0** (本起步版本只 abstract + 5 严重度 label + 6 hotline region label)。
+- **`StaticScaleTranslations` 中文 fallback** (domain 0 flutter 边界, const 兼容): 老 caller `const phq9Scale = Phq9Scale()` / `const gad7Scale = Gad7Scale()` 默认 `const StaticScaleTranslations()`, 21 case phq9_detect_crisis + 13 case gad7_round16 test 不破。
+- **`AppLocalizationsScaleTranslations` AppLocalizations 包装** (同 `region_display_name.dart` 模式): presentation 层 caller 传 `AppLocalizationsScaleTranslations(l10n)` 走 ARB。
+- **`AssessmentScale` 抽象类加 `translations` 字段** (`lib/domain/logic/assessment_scale.dart:73-77`): 抽象方法, default `const StaticScaleTranslations()`, 注入 caller AppLocalizations。
+- **`Phq9Scale` / `Gad7Scale` 注入 translations** (`lib/domain/logic/phq9.dart:78-83` + `lib/domain/logic/gad7.dart:48-53`): `displayName` 走 `translations.phq9Name()` / `translations.gad7Name()`。`detectCrisis` 起步版本保持 `hotlineByRegion[region]` const Map (label 是中文, 与 21 case test 一致) — 翻译留 R65b 阶段 (6 region × N hotline i18n key 起步版本只 4 region × 1st hotline)。
+- **4 新 i18n key**: `scaleHotlineCn/Us/Hk/Intl` (tw/sg/uk 走 intl fallback)。`assessmentScalePhq9` / `assessmentScaleGad7` 复用现有 key。
+- **26 case TDD test** (新 `test/domain/scale_translations_round65_test.dart`): 6 group × 4-5 case 覆盖 `StaticScaleTranslations` 中文 fallback / `AppLocalizationsScaleTranslations` zh+en 路径 / 6 region 危机电话 routing / `Phq9Scale`/`Gad7Scale` 抽象注入 (老 const 走 `StaticScaleTranslations` 中文, 新 caller 走 `AppLocalizationsScaleTranslations` en 返 `'PHQ-9 Depression Screening'`) / `regionDisplayName` + `CheckInType.labelL10n` 防 orphan key 引用。
+
 ## [Unreleased] - 2026-07-31 (R63 — 7 视角审视后"半成品"集中收尾)
 
 > R63 目标: 处理 `docs/reviews/2026-07-31-seven-lens/` 7 视角整合报告

@@ -16,7 +16,8 @@ void main() {
       for (final t in kMedicationTemplates) {
         expect(t.meds, isNotEmpty, reason: '${t.id} 没有药');
         for (final m in t.meds) {
-          expect(m.name, isNotEmpty, reason: '${t.id} 药名空');
+          // v0.28 round 65 (spzh P2-G): m.name → m.nameKey (i18n key)
+          expect(m.nameKey, isNotEmpty, reason: '${t.id} 药名 i18n key 空');
           expect(m.dosage, greaterThan(0), reason: '${t.id} 剂量 <= 0');
           expect(
             m.dosageUnit,
@@ -38,10 +39,11 @@ void main() {
           final seen = <int>[];
           for (final t in med.times) {
             final key = t.hour * 60 + t.minute;
+            // v0.28 round 65 (spzh P2-G): med.name → med.nameKey
             expect(
               seen.contains(key),
               isFalse,
-              reason: '${template.id} ${med.name} 时间重复: $t',
+              reason: '${template.id} ${med.nameKey} 时间重复: $t',
             );
             seen.add(key);
           }

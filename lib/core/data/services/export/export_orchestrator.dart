@@ -94,26 +94,26 @@ class ExportOrchestrator {
   /// **编排**: 拉所有 DB (5s timeout 防 drift stream hang) → 拼 JSON map
   /// (委托 3 sub-service) → JsonEncoder.withIndent
   Future<String> exportToJson({DateTime? now}) async {
-    final profile = await _db.getUserProfile();
+    final profile = await _db.userProfileDao.get();
     // v0.24 round 48 (sp-en P2-14): 改名为 streamTimeout 去掉下划线
     // (no_leading_underscores_for_local_identifiers lint)
     const streamTimeout = Duration(seconds: 5);
-    final contacts = await _db
-        .watchContacts()
+    final contacts = await _db.contactDao
+        .watchActive()
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
-    final medications = await _db
-        .watchMedications()
+    final medications = await _db.medicationDao
+        .watchActive()
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
-    final checkIns = await _db
-        .watchAllCheckIns()
+    final checkIns = await _db.checkInDao
+        .watchAll()
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
     final reportHistories = await _reportRepo.getAll();
-    final moodEntries = await _db.getAllMoodEntries();
-    final ventEntries = await _db
-        .watchVentEntries()
+    final moodEntries = await _db.moodDao.getAll();
+    final ventEntries = await _db.ventDao
+        .watchAll()
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
 
@@ -254,7 +254,7 @@ class ExportOrchestrator {
             maxLen: 50,
           );
           if (userName != null) {
-            await _db.upsertUserProfile(
+            await _db.userProfileDao.upsert(
               UserProfilesCompanion.insert(
                 // v0.21 Round 23 (P1-24): userName nullable
                 userName: Value(userName),
@@ -290,7 +290,7 @@ class ExportOrchestrator {
             pattern: RegExp(r'^\+?\d{6,20}$'),
           );
           if (name == null || phone == null) continue;
-          await _db.insertContact(
+          await _db.contactDao.insert(
             ContactsCompanion.insert(
               name: name,
               phone: phone,
@@ -322,7 +322,7 @@ class ExportOrchestrator {
           if (name == null || unit == null || dosage == null || start == null) {
             continue;
           }
-          await _db.insertMedication(
+          await _db.medicationDao.insert(
             MedicationsCompanion.insert(
               name: name,
               dosage: dosage,
@@ -354,7 +354,7 @@ class ExportOrchestrator {
             maxLen: 20,
           );
           if (ts == null || type == null) continue;
-          await _db.insertCheckIn(
+          await _db.checkInDao.insert(
             CheckInsCompanion.insert(
               timestamp: ts,
               type: type,
@@ -423,7 +423,7 @@ class ExportOrchestrator {
                   maxLen: 5000,
                 ) ??
                 '[]';
-            await _db.insertMoodEntry(
+            await _db.moodDao.insert(
               MoodEntriesCompanion.insert(
                 timestamp: ts,
                 score: score,
@@ -483,7 +483,7 @@ class ExportOrchestrator {
             );
             // 委托 ExportCryptoService.encryptVentText — encrypt 副作用下沉
             final encText = await _cryptoService.encryptVentText(text);
-            await _db.insertVentEntry(
+            await _db.ventDao.insert(
               VentEntriesCompanion.insert(
                 timestamp: ts,
                 contentTextEnc: Value(encText),

@@ -1,0 +1,76 @@
+// v0.27 round 65 (spen 1.2.2 + alibaba 1.2 use case 层补):
+// 抽 CheckSafetyUseCase (SafetyDetector 的 domain 层包装)
+//
+// 之前 safety_watch_service._checkAndAlert 调 SafetyDetector.detect 拿 decision,
+// 业务编排 (加载 config + repos + stream) 跟 8 类 early-return 判定 (detector)
+// 串在一起。R64 已抽 SafetyDetector 到 lib/core/data/services/ 纯函数类, 但
+// detector 仍依赖 SafetyConfigService (data 层), presentation 调它需要 import
+// data/services/。
+//
+// 本 use case 把 detector 提升到 domain 层 — presentation 调 CheckSafetyUseCase
+// 拿 SafetyDecision (sealed), 不再 import data/services/。SafetyDetector 仍存在
+// 供 safety_watch_service facade 用 (避免循环依赖)。
+//
+// 0 副作用: 纯函数 wrapper, 0 Flutter / 0 Drift / 0 service 调。
+
+import 'package:chroniccare/core/data/services/safety_detector.dart';
+import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/domain/entities/user_profile_entity.dart';
+
+/// Use case 输入
+///
+/// 8 个 input 必传 (含 nullable 的"缺席"语义)。所有 inputs 由 caller 注入
+/// (presentation 不调 SharedPreferences / DB, 只把 facade 拿到的值传进来)。
+class CheckSafetyInput {
+  final bool enabled;
+  final int threshold;
+  final DateTime? lastCheckInAt;
+  final DateTime now;
+  final DateTime? lastAlertAt;
+  final bool inDnd;
+  final UserProfileEntity? profile;
+  final List<ContactEntity> contacts;
+
+  const CheckSafetyInput({
+    required this.enabled,
+    required this.threshold,
+    required this.lastCheckInAt,
+    required this.now,
+    required this.lastAlertAt,
+    required this.inDnd,
+    required this.profile,
+    required this.contacts,
+  });
+}
+
+/// 抽 CheckSafety 业务判定
+///
+/// v0.27 round 65: SafetyDetector 已经是纯函数 (0 副作用, 8 sealed decision),
+/// 本 use case 是它的 domain 层包装, 让 presentation 不再 import
+/// data/services/safety_detector (符合"presentation 只 import domain"原则)。
+///
+/// 业务规则: 跟 SafetyDetector.detect 1:1 — 7 段 early-return:
+/// 1. enabled == false          → SafetyDecisionDisabled
+/// 2. lastCheckInAt == null     → SafetyDecisionNoData
+/// 3. daysSinceLast < threshold → SafetyDecisionOk
+/// 4. lastAlertAt isSameDay(now) → SafetyDecisionAlertedToday
+/// 5. inDnd                     → SafetyDecisionDndSuppressed
+/// 6. profile == null           → SafetyDecisionNoData
+/// 7. contacts.isEmpty          → SafetyDecisionNoContacts
+/// 8. otherwise                 → SafetyDecisionAlert (走 facade dispatch)
+class CheckSafetyUseCase {
+  const CheckSafetyUseCase();
+
+  SafetyDecision call(CheckSafetyInput input) {
+    return SafetyDetector.detect(
+      enabled: input.enabled,
+      threshold: input.threshold,
+      lastCheckInAt: input.lastCheckInAt,
+      now: input.now,
+      lastAlertAt: input.lastAlertAt,
+      inDnd: input.inDnd,
+      profile: input.profile,
+      contacts: input.contacts,
+    );
+  }
+}

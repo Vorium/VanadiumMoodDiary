@@ -2034,4 +2034,169 @@ class AppLocalizationsEn extends AppLocalizations {
   String safetyCheckResultError(String message) {
     return 'Error: $message';
   }
+
+  @override
+  String get settingsIapUpgradeTitle => 'Upgrade to Pro';
+
+  @override
+  String get settingsIapUpgradeSubtitle =>
+      '¥8 one-time purchase · unlock all premium features';
+
+  @override
+  String get settingsIapProOwnedTitle => 'You\'re on Pro';
+
+  @override
+  String get settingsIapProOwnedSubtitle =>
+      'Thanks for the support · all premium features unlocked';
+
+  @override
+  String get iapPurchaseSuccess => 'Upgrade successful! Welcome to Pro.';
+
+  @override
+  String get iapPurchaseFailed =>
+      'Purchase not completed. Please try again later.';
+
+  @override
+  String get phoneRegionCn => 'Mainland China';
+
+  @override
+  String get phoneRegionHk => 'Hong Kong, China';
+
+  @override
+  String get phoneRegionMo => 'Macao, China';
+
+  @override
+  String get phoneRegionTw => 'Taiwan, China';
+
+  @override
+  String get phoneRegionIntl => 'International';
+
+  @override
+  String get presetMedSsriMorningTitle => 'Single med · SSRI morning';
+
+  @override
+  String get presetMedSsriMorningDesc =>
+      '1 medication, taken daily at 8 AM (for SSRI / SNRI class)';
+
+  @override
+  String get presetMedMoodStabilizerTwiceTitle =>
+      'Mood stabilizer · morning & evening';
+
+  @override
+  String get presetMedMoodStabilizerTwiceDesc =>
+      '1 medication, daily at 8 AM and 8 PM';
+
+  @override
+  String get presetMedComboSsriBedtimeTitle =>
+      'Combo · morning antidepressant + bedtime sleep aid';
+
+  @override
+  String get presetMedComboSsriBedtimeDesc =>
+      '2 meds: SSRI at 8 AM + sleep aid at 9 PM';
+
+  @override
+  String get presetMedComboAntipsychoticFullTitle =>
+      'Severe · morning / noon / evening';
+
+  @override
+  String get presetMedComboAntipsychoticFullDesc =>
+      '2 meds: 8 AM / 1 PM / 8 PM, full-day coverage';
+
+  @override
+  String get presetMedSsriName => 'SSRI antidepressant';
+
+  @override
+  String get presetMedSsriHint =>
+      'Common SSRI / SNRI antidepressants (follow your doctor\'s prescription)';
+
+  @override
+  String get presetMedMoodStabilizerName => 'Mood stabilizer';
+
+  @override
+  String get presetMedMoodStabilizerHint =>
+      'Common mood stabilizers (follow your doctor\'s prescription)';
+
+  @override
+  String get presetMedSleepAidName => 'Sleep aid';
+
+  @override
+  String get presetMedSleepAidHint =>
+      'Common benzodiazepines / sleep aids (follow your doctor\'s prescription)';
+
+  @override
+  String get presetMedAntipsychoticName => 'Antipsychotic';
+
+  @override
+  String get presetMedAntipsychoticHint =>
+      'Common atypical antipsychotics (follow your doctor\'s prescription)';
+
+  @override
+  String get presetMedSedativeAnxiolyticName => 'Sedative / anxiolytic adjunct';
+
+  @override
+  String get presetMedSedativeAnxiolyticHint =>
+      'Common sedative / anxiolytic adjuncts (follow your doctor\'s prescription)';
+
+  @override
+  String get checkInTypeDaily => 'Daily check-in';
+
+  @override
+  String get checkInTypeTemp => 'Temp dose';
+
+  @override
+  String get checkInTypePhq9 => 'PHQ-9 assessment';
+
+  @override
+  String get checkInTypeGad7 => 'GAD-7 assessment';
+
+  @override
+  String dayDetailCheckInWith(String name) {
+    return 'Check-in · $name';
+  }
+
+  @override
+  String get dayDetailDailyCheckIn => 'Daily check-in';
+
+  @override
+  String dayDetailTempWith(String name) {
+    return 'Temp · $name';
+  }
+
+  @override
+  String get dayDetailTempMed => 'Temp dose';
+
+  @override
+  String get dayDetailPhq9 => 'PHQ-9 Depression Screening';
+
+  @override
+  String get dayDetailGad7 => 'GAD-7 Anxiety Screening';
+
+  @override
+  String ventDurationSeconds(int sec) {
+    return '${sec}s';
+  }
+
+  @override
+  String ventDurationMinutes(int m) {
+    return '${m}m';
+  }
+
+  @override
+  String ventDurationMinutesSeconds(int m, String sec) {
+    return '${m}m ${sec}s';
+  }
+
+  @override
+  String get scaleHotlineCn => 'National 24h Psychological Aid Hotline';
+
+  @override
+  String get scaleHotlineUs => '988 Suicide & Crisis Lifeline (US)';
+
+  @override
+  String get scaleHotlineHk =>
+      'Samaritans Befrienders Hong Kong (24h multilingual)';
+
+  @override
+  String get scaleHotlineIntl =>
+      'International · contact local emergency or mental health services';
 }

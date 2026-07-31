@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// Step 1: 欢迎 + 紧急联系人
 ///
@@ -152,7 +153,8 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
                 child: Text(l10n.setupBack),
               ),
               const Spacer(),
-              ElevatedButton(
+              PrimaryButton(
+                isFullWidth: false,
                 onPressed: canContinue ? widget.onContinue : null,
                 child: Text(l10n.setupNext),
               ),

@@ -98,11 +98,11 @@ void main() {
     test('watchAll（含 inactive）能监听到 isActive 变化', () async {
       final id = await addMed();
       // 用 allMedicationsProvider 的查询路径（含 inactive）来验证
-      final initial = await db.watchAllMedicationsIncludingInactive().first;
+      final initial = await db.medicationDao.watchAllIncludingInactive().first;
       expect(initial.first.isActive, isTrue);
 
       await repo.setActive(medicationId: id, isActive: false);
-      final updated = await db.watchAllMedicationsIncludingInactive().first;
+      final updated = await db.medicationDao.watchAllIncludingInactive().first;
       expect(updated.first.isActive, isFalse);
       expect(updated.first.endDate, isNotNull);
     });

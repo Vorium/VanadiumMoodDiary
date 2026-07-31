@@ -16,12 +16,12 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
 
   @override
   Stream<UserProfileEntity?> watch() {
-    return _db.watchUserProfile().map(userProfileFromRow);
+    return _db.userProfileDao.watch().map(userProfileFromRow);
   }
 
   @override
   Future<UserProfileEntity?> get() async {
-    final row = await _db.getUserProfile();
+    final row = await _db.userProfileDao.get();
     return userProfileFromRow(row);
   }
 
@@ -33,8 +33,8 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     int checkInCycleHours = 48,
   }) async {
     await _db.transaction(() async {
-      final existing = await _db.getUserProfile();
-      await _db.upsertUserProfile(
+      final existing = await _db.userProfileDao.get();
+      await _db.userProfileDao.upsert(
         UserProfilesCompanion.insert(
           userName: Value(userName),
           checkInCycleHours: Value(checkInCycleHours),
@@ -47,9 +47,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   @override
   Future<void> updateLastCheckIn(DateTime time) async {
     await _db.transaction(() async {
-      final existing = await _db.getUserProfile();
+      final existing = await _db.userProfileDao.get();
       if (existing != null) {
-        await _db.upsertUserProfile(
+        await _db.userProfileDao.upsert(
           UserProfilesCompanion.insert(
             userName: Value(existing.userName),
             checkInCycleHours: Value(existing.checkInCycleHours),
@@ -69,9 +69,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     required String privacyPolicyVersion,
   }) async {
     await _db.transaction(() async {
-      final existing = await _db.getUserProfile();
+      final existing = await _db.userProfileDao.get();
       if (existing == null) return;
-      await _db.upsertUserProfile(
+      await _db.userProfileDao.upsert(
         UserProfilesCompanion.insert(
           userName: Value(existing.userName),
           checkInCycleHours: Value(existing.checkInCycleHours),
@@ -89,9 +89,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   @override
   Future<void> withdrawConsent() async {
     await _db.transaction(() async {
-      final existing = await _db.getUserProfile();
+      final existing = await _db.userProfileDao.get();
       if (existing == null) return;
-      await _db.upsertUserProfile(
+      await _db.userProfileDao.upsert(
         UserProfilesCompanion.insert(
           userName: Value(existing.userName),
           checkInCycleHours: Value(existing.checkInCycleHours),
@@ -109,9 +109,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   @override
   Future<void> resetConsent() async {
     await _db.transaction(() async {
-      final existing = await _db.getUserProfile();
+      final existing = await _db.userProfileDao.get();
       if (existing == null) return;
-      await _db.upsertUserProfile(
+      await _db.userProfileDao.upsert(
         UserProfilesCompanion.insert(
           userName: Value(existing.userName),
           checkInCycleHours: Value(existing.checkInCycleHours),

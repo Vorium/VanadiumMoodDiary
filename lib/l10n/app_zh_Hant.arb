@@ -1246,5 +1246,77 @@
     "placeholders": {
       "message": { "type": "String" }
     }
-  }
+  },
+  "settingsIapUpgradeTitle": "升級到 Pro",
+  "settingsIapUpgradeSubtitle": "¥8 一次性買斷 · 解鎖全部高級功能",
+  "settingsIapProOwnedTitle": "已是 Pro 版本",
+  "settingsIapProOwnedSubtitle": "感謝支持 · 全部高級功能已解鎖",
+  "iapPurchaseSuccess": "升級成功！歡迎使用 Pro。",
+  "iapPurchaseFailed": "購買未完成，請稍後再試。",
+  "phoneRegionCn": "中國大陸",
+  "phoneRegionHk": "中國香港",
+  "phoneRegionMo": "中國澳門",
+  "phoneRegionTw": "中國臺灣",
+  "phoneRegionIntl": "國際",
+  "presetMedSsriMorningTitle": "單藥 · SSRI 早一次",
+  "presetMedSsriMorningDesc": "1 種藥，每天早 8 點服用（適用 SSRI ／ SNRI 類）",
+  "presetMedMoodStabilizerTwiceTitle": "情緒穩定劑 · 早晚兩次",
+  "presetMedMoodStabilizerTwiceDesc": "1 種藥，每天早 8 點 + 晚 20 點",
+  "presetMedComboSsriBedtimeTitle": "聯合 · 早抗抑鬱 + 晚助眠",
+  "presetMedComboSsriBedtimeDesc": "2 種藥：早 8 點 SSRI + 晚 21 點助眠",
+  "presetMedComboAntipsychoticFullTitle": "重性 · 早中晚三次",
+  "presetMedComboAntipsychoticFullDesc": "2 種藥：早 8 ／ 午 13 ／ 晚 20，覆蓋全天",
+  "presetMedSsriName": "SSRI 類抗抑鬱藥",
+  "presetMedSsriHint": "常見 SSRI ／ SNRI 類抗抑鬱藥（具體藥名以醫生處方為準）",
+  "presetMedMoodStabilizerName": "情緒穩定劑",
+  "presetMedMoodStabilizerHint": "常見情緒穩定劑類（具體藥名以醫生處方為準）",
+  "presetMedSleepAidName": "助眠藥",
+  "presetMedSleepAidHint": "常見苯二氮卓類／助眠藥（具體藥名以醫生處方為準）",
+  "presetMedAntipsychoticName": "抗精神病藥",
+  "presetMedAntipsychoticHint": "常見非典型抗精神病藥（具體藥名以醫生處方為準）",
+  "presetMedSedativeAnxiolyticName": "鎮靜／抗焦慮輔助",
+  "presetMedSedativeAnxiolyticHint": "常見鎮靜／抗焦慮輔助藥（具體藥名以醫生處方為準）",
+  "checkInTypeDaily": "每日打卡",
+  "checkInTypeTemp": "臨時吃藥",
+  "checkInTypePhq9": "PHQ-9 評估",
+  "checkInTypeGad7": "GAD-7 評估",
+  "dayDetailCheckInWith": "打卡 · {name}",
+  "@dayDetailCheckInWith": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dayDetailDailyCheckIn": "每日打卡",
+  "dayDetailTempWith": "臨時 · {name}",
+  "@dayDetailTempWith": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dayDetailTempMed": "臨時吃藥",
+  "dayDetailPhq9": "PHQ-9 抑鬱篩查",
+  "dayDetailGad7": "GAD-7 焦慮篩查",
+  "ventDurationSeconds": "{sec}秒",
+  "@ventDurationSeconds": {
+    "placeholders": {
+      "sec": { "type": "int" }
+    }
+  },
+  "ventDurationMinutes": "{m}分",
+  "@ventDurationMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "ventDurationMinutesSeconds": "{m}分{sec}秒",
+  "@ventDurationMinutesSeconds": {
+    "placeholders": {
+      "m": { "type": "int" },
+      "sec": { "type": "String" }
+    }
+  },
+  "scaleHotlineCn": "全國 24 小時心理援助熱線",
+  "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
+  "scaleHotlineHk": "撒瑪利亞防止自殺會（24h 多語言）",
+  "scaleHotlineIntl": "國際通用 · 請聯繫當地急救或心理援助"
 }

@@ -1249,5 +1249,77 @@
     "placeholders": {
       "message": { "type": "String" }
     }
-  }
+  },
+  "settingsIapUpgradeTitle": "升级到 Pro",
+  "settingsIapUpgradeSubtitle": "¥8 一次性买断 · 解锁全部高级功能",
+  "settingsIapProOwnedTitle": "已是 Pro 版本",
+  "settingsIapProOwnedSubtitle": "感谢支持 · 全部高级功能已解锁",
+  "iapPurchaseSuccess": "升级成功！欢迎使用 Pro。",
+  "iapPurchaseFailed": "购买未完成，请稍后再试。",
+  "phoneRegionCn": "中国大陆",
+  "phoneRegionHk": "中国香港",
+  "phoneRegionMo": "中国澳门",
+  "phoneRegionTw": "中国台湾",
+  "phoneRegionIntl": "国际",
+  "presetMedSsriMorningTitle": "单药 · SSRI 早一次",
+  "presetMedSsriMorningDesc": "1 种药，每天早 8 点服用（适用 SSRI ／ SNRI 类）",
+  "presetMedMoodStabilizerTwiceTitle": "情绪稳定剂 · 早晚两次",
+  "presetMedMoodStabilizerTwiceDesc": "1 种药，每天早 8 点 + 晚 20 点",
+  "presetMedComboSsriBedtimeTitle": "联合 · 早抗抑郁 + 晚助眠",
+  "presetMedComboSsriBedtimeDesc": "2 种药：早 8 点 SSRI + 晚 21 点助眠",
+  "presetMedComboAntipsychoticFullTitle": "重性 · 早中晚三次",
+  "presetMedComboAntipsychoticFullDesc": "2 种药：早 8 ／ 午 13 ／ 晚 20，覆盖全天",
+  "presetMedSsriName": "SSRI 类抗抑郁药",
+  "presetMedSsriHint": "常见 SSRI ／ SNRI 类抗抑郁药（具体药名以医生处方为准）",
+  "presetMedMoodStabilizerName": "情绪稳定剂",
+  "presetMedMoodStabilizerHint": "常见情绪稳定剂类（具体药名以医生处方为准）",
+  "presetMedSleepAidName": "助眠药",
+  "presetMedSleepAidHint": "常见苯二氮卓类／助眠药（具体药名以医生处方为准）",
+  "presetMedAntipsychoticName": "抗精神病药",
+  "presetMedAntipsychoticHint": "常见非典型抗精神病药（具体药名以医生处方为准）",
+  "presetMedSedativeAnxiolyticName": "镇静／抗焦虑辅助",
+  "presetMedSedativeAnxiolyticHint": "常见镇静／抗焦虑辅助药（具体药名以医生处方为准）",
+  "checkInTypeDaily": "每日打卡",
+  "checkInTypeTemp": "临时吃药",
+  "checkInTypePhq9": "PHQ-9 评估",
+  "checkInTypeGad7": "GAD-7 评估",
+  "dayDetailCheckInWith": "打卡 · {name}",
+  "@dayDetailCheckInWith": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dayDetailDailyCheckIn": "每日打卡",
+  "dayDetailTempWith": "临时 · {name}",
+  "@dayDetailTempWith": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dayDetailTempMed": "临时吃药",
+  "dayDetailPhq9": "PHQ-9 抑郁筛查",
+  "dayDetailGad7": "GAD-7 焦虑筛查",
+  "ventDurationSeconds": "{sec}秒",
+  "@ventDurationSeconds": {
+    "placeholders": {
+      "sec": { "type": "int" }
+    }
+  },
+  "ventDurationMinutes": "{m}分",
+  "@ventDurationMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "ventDurationMinutesSeconds": "{m}分{sec}秒",
+  "@ventDurationMinutesSeconds": {
+    "placeholders": {
+      "m": { "type": "int" },
+      "sec": { "type": "String" }
+    }
+  },
+  "scaleHotlineCn": "全国 24 小时心理援助热线",
+  "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
+  "scaleHotlineHk": "撒玛利亚防止自杀会（24h 多语言）",
+  "scaleHotlineIntl": "国际通用 · 请联系当地急救或心理援助"
 }

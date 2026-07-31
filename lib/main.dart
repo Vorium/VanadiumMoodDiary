@@ -14,6 +14,7 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/core/data/services/store_kit_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -152,6 +153,12 @@ Future<void> _bootstrap() async {
   // 注入 ProviderScope, 避免 state 错位。修复了 R60 注释承诺但未实施的
   // "全局静态 _currentSmsService 入口"。
   SmsService.validateForRelease(_smsService.provider);
+
+  // v0.27 round 65 (appstore P0-4 IAP 集成): 预热 StoreKit 缓存
+  // dev 模式: 同步返 true (kDebugMode 守卫)
+  // release 模式: 异步读 SharedPreferences 内存层, 后续 isPro() 走同步缓存
+  // 跟 SMS 守卫类似, 故意不用 try/catch 让异常冒泡到 runZonedGuarded
+  await StoreKitService.warmup();
 
   // 4. 执行迁移（migrateIfNeeded 失败必须 throw,见 database_migration.dart）
   try {

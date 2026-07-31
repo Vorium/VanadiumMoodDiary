@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
+import 'package:chroniccare/presentation/providers/iap_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
@@ -51,6 +55,99 @@ class SettingsPage extends ConsumerWidget {
               detail: e.toString(),
               onRetry: () => ref.invalidate(contactsProvider),
             ),
+          ),
+
+          const SizedBox(height: AppTokens.spacingLg),
+
+          // === 升级到 Pro (IAP, v0.27 round 65 appstore P0-4) ===
+          // 仅未购买时显示; 已购后隐藏 (避免反复提示)
+          Consumer(
+            builder: (context, ref, _) {
+              final isPro = ref.watch(iapProProvider);
+              if (isPro) {
+                // 已购: 走简短提示卡 (绿色 "已是 Pro" 状态)
+                return Card(
+                  color: AppColors.tintedSuccessSoft(context),
+                  child: ListTile(
+                    leading: const Icon(Icons.workspace_premium,
+                        color: AppColors.success),
+                    title: Text(
+                      AppLocalizations.of(context).settingsIapProOwnedTitle,
+                      style: TextStyle(
+                        fontSize: AppTokens.fontSizeBody,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.fgOnSuccess,
+                      ),
+                    ),
+                    subtitle: Text(
+                      AppLocalizations.of(context).settingsIapProOwnedSubtitle,
+                      style: TextStyle(
+                        fontSize: AppTokens.fontSizeCaption,
+                        color: AppColors.fgOnSuccess,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              // 未购: 展示升级卡片
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppTokens.spacingMd),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.workspace_premium,
+                              color: AppColors.primary),
+                          const SizedBox(width: AppTokens.spacingSm),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(context)
+                                  .settingsIapUpgradeTitle,
+                              style: TextStyle(
+                                fontSize: AppTokens.fontSizeTitle,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimaryColor(context),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppTokens.spacingSm),
+                      Text(
+                        AppLocalizations.of(context)
+                            .settingsIapUpgradeSubtitle,
+                        style: TextStyle(
+                          fontSize: AppTokens.fontSizeBody,
+                          color: AppColors.textSecondaryColor(context),
+                        ),
+                      ),
+                      const SizedBox(height: AppTokens.spacingMd),
+                      PrimaryButton(
+                        onPressed: () async {
+                          final buy = ref.read(buyLifetimeProvider);
+                          final ok = await buy();
+                          if (!context.mounted) return;
+                          AppSnackBar.showInfo(
+                            context,
+                            ok
+                                ? AppLocalizations.of(context)
+                                    .iapPurchaseSuccess
+                                : AppLocalizations.of(context)
+                                    .iapPurchaseFailed,
+                          );
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)
+                              .settingsIapUpgradeTitle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: AppTokens.spacingLg),

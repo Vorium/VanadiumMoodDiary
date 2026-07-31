@@ -22,21 +22,21 @@ class MoodRepositoryImpl implements MoodRepository {
 
   @override
   Stream<List<MoodEntryEntity>> watchAll() {
-    return _db
-        .watchMoodEntries()
+    return _db.moodDao
+        .watchAll()
         .map((rows) => rows.map((r) => r.toEntity()).toList(growable: false));
   }
 
   @override
   Stream<List<MoodEntryEntity>> watchToday() {
-    return _db
-        .watchTodayMoodEntries()
+    return _db.moodDao
+        .watchToday()
         .map((rows) => rows.map((r) => r.toEntity()).toList(growable: false));
   }
 
   @override
   Future<int> add({required MoodEntryDraft draft}) {
-    return _db.insertMoodEntry(
+    return _db.moodDao.insert(
       MoodEntriesCompanion.insert(
         timestamp: draft.at ?? DateTime.now(),
         score: draft.score,
@@ -53,5 +53,5 @@ class MoodRepositoryImpl implements MoodRepository {
   }
 
   @override
-  Future<int> delete(int id) => _db.deleteMoodEntry(id);
+  Future<int> delete(int id) => _db.moodDao.delete(id);
 }

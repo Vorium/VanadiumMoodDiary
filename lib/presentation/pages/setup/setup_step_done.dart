@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// Step 3: 完成页
 ///
@@ -86,9 +87,10 @@ class SetupStepDone extends StatelessWidget {
                 child: Text(AppLocalizations.of(context).setupBack),
               ),
               const Spacer(),
-              // v0.22 round 28 (emil-31): "开始" ElevatedButton 外包 PressFeedback
+              // v0.22 round 28 (emil-31): "开始" PrimaryButton 外包 PressFeedback
               PressFeedback(
-                child: ElevatedButton(
+                child: PrimaryButton(
+                  isFullWidth: false,
                   onPressed: () => context.go('/'),
                   child: Text(l10n.setupStart),
                 ),

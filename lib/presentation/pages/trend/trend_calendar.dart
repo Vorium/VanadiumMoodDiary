@@ -293,11 +293,14 @@ class _DayDetailCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // v0.28 round 65 (spzh P2-H 修复): DayDetailCalculator.fromData
+    // 加 l10n 参数, 事件 title 走 dayDetail* i18n key (zh/en/zh_Hant)
     final detail = DayDetailCalculator.fromData(
       date: date,
       checkIns: allCheckIns,
       moodEntries: moodEntries,
       medications: medications,
+      l10n: l10n,
     );
     final dateStr =
         '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

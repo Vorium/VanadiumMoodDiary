@@ -68,8 +68,9 @@ void main() {
       expect(cb.value, isFalse);
     }
 
-    final btn = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, '开始设置'),
+    // v0.27 round 65 (flutter L10): ElevatedButton → FilledButton (via PrimaryButton)
+    final btn = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, '开始设置'),
     );
     expect(
       btn.onPressed,
@@ -84,16 +85,16 @@ void main() {
     // 勾第一个
     await tester.tap(find.byType(Checkbox).at(0));
     await tester.pumpAndSettle();
-    final btn1 = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, '开始设置'),
+    final btn1 = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, '开始设置'),
     );
     expect(btn1.onPressed, isNull, reason: '只勾 1 个,仍 disabled');
 
     // 再勾第二个
     await tester.tap(find.byType(Checkbox).at(1));
     await tester.pumpAndSettle();
-    final btn2 = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, '开始设置'),
+    final btn2 = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, '开始设置'),
     );
     expect(btn2.onPressed, isNull, reason: '只勾 2 个,仍 disabled');
   });
@@ -106,8 +107,8 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    final btn = tester.widget<ElevatedButton>(
-      find.widgetWithText(ElevatedButton, '开始设置'),
+    final btn = tester.widget<FilledButton>(
+      find.widgetWithText(FilledButton, '开始设置'),
     );
     expect(btn.onPressed, isNotNull);
   });
@@ -119,7 +120,7 @@ void main() {
       await tester.tap(find.byType(Checkbox).at(i));
       await tester.pumpAndSettle();
     }
-    await tester.tap(find.widgetWithText(ElevatedButton, '开始设置'));
+    await tester.tap(find.widgetWithText(FilledButton, '开始设置'));
     await tester.pumpAndSettle();
 
     expect(

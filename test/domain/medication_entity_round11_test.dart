@@ -320,7 +320,7 @@ void main() {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(() async => await db.close());
 
-      await db.insertMedication(
+      await db.medicationDao.insert(
         MedicationsCompanion.insert(
           name: '氟西汀',
           dosage: 40,
@@ -330,7 +330,7 @@ void main() {
         ),
       );
 
-      final rows = await db.watchAllMedicationsIncludingInactive().first;
+      final rows = await db.medicationDao.watchAllIncludingInactive().first;
       expect(rows.length, 1);
 
       final entity = rows.first.toEntity();

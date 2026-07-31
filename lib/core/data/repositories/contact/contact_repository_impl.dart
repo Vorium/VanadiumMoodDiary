@@ -17,8 +17,8 @@ class ContactRepositoryImpl implements ContactRepository {
 
   @override
   Stream<List<ContactEntity>> watchAll() {
-    return _db
-        .watchContacts()
+    return _db.contactDao
+        .watchActive()
         .map((rows) => rows.map((r) => r.toEntity()).toList(growable: false));
   }
 
@@ -44,7 +44,7 @@ class ContactRepositoryImpl implements ContactRepository {
     // working tree 只写 log, 落库未做, 这步收尾)。
     // 关键: schemaVersion 15+ (本批 bump) 才有这 4 列, schemaVersion <= 14
     // 老用户走 migration onUpgrade 自动加列 (本批实现)。
-    final id = await _db.insertContact(
+    final id = await _db.contactDao.insert(
       ContactsCompanion.insert(
         name: name,
         phone: phone,
@@ -62,11 +62,11 @@ class ContactRepositoryImpl implements ContactRepository {
   Future<bool> update(ContactEntity contact) {
     // v0.27 round 63 (P0-2 收尾): update 走 toDriftRow() mapper,
     // 自动包含 4 个 consent 字段 (PIPL §13 留痕完整保留)。
-    return _db.updateContact(contact.toDriftRow());
+    return _db.contactDao.update(contact.toDriftRow());
   }
 
   @override
-  Future<int> delete(int id) => _db.deleteContact(id);
+  Future<int> delete(int id) => _db.contactDao.delete(id);
 
   @override
   Future<int> restore(ContactEntity contact) {
@@ -79,7 +79,7 @@ class ContactRepositoryImpl implements ContactRepository {
       'ContactRepository.restore',
       '🔄 restore contact id=${contact.id} (consent 历史已留痕, 复用)',
     );
-    return _db.insertContact(
+    return _db.contactDao.insert(
       ContactsCompanion.insert(
         name: contact.name,
         phone: contact.phone,

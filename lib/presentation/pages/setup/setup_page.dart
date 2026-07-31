@@ -290,12 +290,13 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                       // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
                       Text(t.emoji, style: const TextStyle(fontSize: AppTokens.fontSizeTitle)),
                   title: Text(
-                    t.name,
+                    // v0.28 round 65 (spzh P2-G): name 走 i18n
+                    t.nameL10n(l10n),
                     // v0.26 round 57 (emil B-10): 走 textStyleLabelMedium 集中器
                     // 替代内联 TextStyle(w500)  (ListTile.title 默认 fontSizeLabel)
                     style: AppTokens.textStyleLabelMedium(context),
                   ),
-                  subtitle: Text(t.description),
+                  subtitle: Text(t.descriptionL10n(l10n)),
                   trailing: const Icon(Icons.add_circle_outline),
                   onTap: () => Navigator.of(ctx).pop(
                     TemplateApplyResult(
@@ -321,7 +322,9 @@ class _SetupPageState extends ConsumerState<SetupPage> {
 
       for (final d in result.template.meds) {
         final m = MedDraft()
-          ..nameController.text = d.name
+          // v0.28 round 65 (spzh P2-G): 药名走 i18n (zh/en/zh_Hant),
+          // 用户可编辑覆盖 — 初始值按 l10n 给当前 locale 文案
+          ..nameController.text = d.nameL10n(AppLocalizations.of(context))
           ..dosageController.text = d.dosage == d.dosage.toInt()
               ? d.dosage.toInt().toString()
               : d.dosage.toString()
@@ -336,10 +339,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
 
     if (!mounted) return;
     // v0.22 round 29 (emil-39): 走 AppSnackBar.info 集中器
+    // v0.28 round 65 (spzh P2-G): template.name 走 i18n
     AppSnackBar.showInfo(
         context,
         AppLocalizations.of(context).setupPresetLoaded(
-            result.template.name, result.template.meds.length,),);
+            result.template.nameL10n(AppLocalizations.of(context)),
+            result.template.meds.length,),);
   }
 
   Future<void> _finishSetup() async {

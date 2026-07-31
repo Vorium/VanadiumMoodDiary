@@ -24,6 +24,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_widgets.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class AssessmentPage extends ConsumerStatefulWidget {
   final String scaleId; // 'phq9' / 'gad7'
@@ -148,7 +149,7 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
             child: SizedBox(
               width: double.infinity,
               height: AppTokens.buttonHeight,
-              child: ElevatedButton(
+              child: PrimaryButton(
                 onPressed: _canSubmit ? _submit : null,
                 child: Text(AppLocalizations.of(context).assessmentSubmit),
               ),
@@ -270,7 +271,8 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
           ],
         ),
         actions: [
-          ElevatedButton(
+          PrimaryButton(
+            isFullWidth: false,
             onPressed: () => Navigator.pop(ctx),
             child: Text(AppLocalizations.of(context).commonGotIt),
           ),
@@ -377,7 +379,8 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
               ),
               const SizedBox(width: AppTokens.spacingSm),
               Expanded(
-                child: ElevatedButton(
+                child: PrimaryButton(
+                  isFullWidth: false,
                   onPressed: () {
                     final answers = _answers!;
                     setState(() {

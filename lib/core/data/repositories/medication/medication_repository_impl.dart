@@ -24,14 +24,14 @@ class MedicationRepositoryImpl implements MedicationRepository {
 
   @override
   Stream<List<MedicationEntity>> watchAll() {
-    return _db.watchMedications().map(
+    return _db.medicationDao.watchActive().map(
           (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
         );
   }
 
   @override
   Stream<List<MedicationEntity>> watchAllIncludingInactive() {
-    return _db.watchAllMedicationsIncludingInactive().map(
+    return _db.medicationDao.watchAllIncludingInactive().map(
           (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
         );
   }
@@ -52,12 +52,12 @@ class MedicationRepositoryImpl implements MedicationRepository {
       refillAt: draft.refillAt,
       refillReminderDays: draft.refillReminderDays,
     );
-    return _db.insertMedication(entity.toCompanion());
+    return _db.medicationDao.insert(entity.toCompanion());
   }
 
   @override
   Future<bool> update(MedicationEntity medication) {
-    return _db.updateMedication(medication.toDriftRow());
+    return _db.medicationDao.update(medication.toDriftRow());
   }
 
   @override
@@ -74,12 +74,12 @@ class MedicationRepositoryImpl implements MedicationRepository {
             isActive: isActive,
             endDate: DomainValue<DateTime?>(isActive ? null : DateTime.now()),
           );
-      return _db.updateMedication(updated.toDriftRow());
+      return _db.medicationDao.update(updated.toDriftRow());
     });
   }
 
   @override
-  Future<int> delete(int id) => _db.deleteMedication(id);
+  Future<int> delete(int id) => _db.medicationDao.delete(id);
 
   @override
   Future<bool> updateRefill({
@@ -96,7 +96,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
             refillAt: DomainValue<DateTime?>(refillAt),
             refillReminderDays: reminderDays ?? row.refillReminderDays,
           );
-      return _db.updateMedication(updated.toDriftRow());
+      return _db.medicationDao.update(updated.toDriftRow());
     });
   }
 }

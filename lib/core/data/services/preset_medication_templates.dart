@@ -1,5 +1,6 @@
 ﻿import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 一个药物草稿（用于预置方案 + 手动录入之间的桥梁）
 ///
@@ -7,9 +8,13 @@ import 'package:chroniccare/domain/entities/dosage_unit.dart';
 /// 不用从零开始手填。参考 Mood Tracker (3h3.com) 的"预置习惯库"思路。
 ///
 /// v0.16 (Round 19): `times` 从 `List<HourMinute>` 改为 `List<HourMinute>`，消除 flutter 依赖
+///
+/// v0.28 round 65 (spzh P2-G): `name` / `hint` 从硬编中文字符串 → i18n 方法
+/// (`nameL10n` / `hintL10n`)。template 的 name/description 同理
+/// (`nameL10n` / `descriptionL10n` on `MedicationTemplate`)。
 class MedicationDraft {
-  /// 药名（中文常见抗抑郁/抗焦虑/抗精神病药名）
-  final String name;
+  /// i18n key for 药名 (e.g. "SSRI 类抗抑郁药")，caller 走 [nameL10n] 解析
+  final String nameKey;
 
   /// 每次剂量
   final double dosage;
@@ -20,33 +25,111 @@ class MedicationDraft {
   /// 服药时间点（一天可以多次）
   final List<HourMinute> times;
 
-  /// 可选：备注，标常见用途
-  final String? hint;
+  /// i18n key for 备注（标常见用途），caller 走 [hintL10n] 解析
+  final String? hintKey;
 
   const MedicationDraft({
-    required this.name,
+    required this.nameKey,
     required this.dosage,
     required this.dosageUnit,
     required this.times,
-    this.hint,
+    this.hintKey,
   });
+
+  /// i18n 药名 — caller 传 AppLocalizations 拿 zh/en/zh_Hant 文案
+  String nameL10n(AppLocalizations l10n) => _resolveName(l10n);
+
+  /// i18n 备注 (可空) — caller 传 AppLocalizations 拿 zh/en/zh_Hant 文案
+  String? hintL10n(AppLocalizations l10n) => hintKey == null
+      ? null
+      : _resolveHint(l10n, hintKey!);
+
+  String _resolveName(AppLocalizations l10n) {
+    switch (nameKey) {
+      case 'presetMedSsriName':
+        return l10n.presetMedSsriName;
+      case 'presetMedMoodStabilizerName':
+        return l10n.presetMedMoodStabilizerName;
+      case 'presetMedSleepAidName':
+        return l10n.presetMedSleepAidName;
+      case 'presetMedAntipsychoticName':
+        return l10n.presetMedAntipsychoticName;
+      case 'presetMedSedativeAnxiolyticName':
+        return l10n.presetMedSedativeAnxiolyticName;
+      default:
+        return nameKey;
+    }
+  }
+
+  String _resolveHint(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'presetMedSsriHint':
+        return l10n.presetMedSsriHint;
+      case 'presetMedMoodStabilizerHint':
+        return l10n.presetMedMoodStabilizerHint;
+      case 'presetMedSleepAidHint':
+        return l10n.presetMedSleepAidHint;
+      case 'presetMedAntipsychoticHint':
+        return l10n.presetMedAntipsychoticHint;
+      case 'presetMedSedativeAnxiolyticHint':
+        return l10n.presetMedSedativeAnxiolyticHint;
+      default:
+        return key;
+    }
+  }
 }
 
 /// 预置方案
+///
+/// v0.28 round 65 (spzh P2-G): `name` / `description` 从硬编中文字符串
+/// → i18n 方法 ([nameL10n] / [descriptionL10n])。`id` / `emoji` 是数据
+/// 不变 (id 是 wire 协议, emoji 是 visual 标识)。
 class MedicationTemplate {
   final String id;
-  final String name;
   final String emoji;
-  final String description;
+  final String nameKey;
+  final String descriptionKey;
   final List<MedicationDraft> meds;
 
   const MedicationTemplate({
     required this.id,
-    required this.name,
     required this.emoji,
-    required this.description,
+    required this.nameKey,
+    required this.descriptionKey,
     required this.meds,
   });
+
+  /// i18n 方案名
+  String nameL10n(AppLocalizations l10n) {
+    switch (nameKey) {
+      case 'presetMedSsriMorningTitle':
+        return l10n.presetMedSsriMorningTitle;
+      case 'presetMedMoodStabilizerTwiceTitle':
+        return l10n.presetMedMoodStabilizerTwiceTitle;
+      case 'presetMedComboSsriBedtimeTitle':
+        return l10n.presetMedComboSsriBedtimeTitle;
+      case 'presetMedComboAntipsychoticFullTitle':
+        return l10n.presetMedComboAntipsychoticFullTitle;
+      default:
+        return nameKey;
+    }
+  }
+
+  /// i18n 方案描述
+  String descriptionL10n(AppLocalizations l10n) {
+    switch (descriptionKey) {
+      case 'presetMedSsriMorningDesc':
+        return l10n.presetMedSsriMorningDesc;
+      case 'presetMedMoodStabilizerTwiceDesc':
+        return l10n.presetMedMoodStabilizerTwiceDesc;
+      case 'presetMedComboSsriBedtimeDesc':
+        return l10n.presetMedComboSsriBedtimeDesc;
+      case 'presetMedComboAntipsychoticFullDesc':
+        return l10n.presetMedComboAntipsychoticFullDesc;
+      default:
+        return descriptionKey;
+    }
+  }
 }
 
 /// 全部预置方案
@@ -57,32 +140,34 @@ class MedicationTemplate {
 /// - "自定义"是隐式选项：用户点"添加药物"按钮就是自定义路径
 /// v0.23 (P0-11): 去顶层 const, 内部 MedicationDraft 用 DosageUnit.tablet.id
 /// (Dart const 表达式不支持 enum instance property access, 顶层 const 强制内部 const)
+/// v0.28 round 65 (spzh P2-G): 内部 MedicationDraft 的 `name` / `hint` 改成
+/// i18n key (String)，渲染时由 caller 传 AppLocalizations 解析。
 final kMedicationTemplates = <MedicationTemplate>[
   MedicationTemplate(
     id: 'mood_ssri_morning',
-    name: '单药 · SSRI 早一次',
     emoji: '🌅',
-    description: '1 种药，每天早 8 点服用（适用 SSRI / SNRI 类）',
+    nameKey: 'presetMedSsriMorningTitle',
+    descriptionKey: 'presetMedSsriMorningDesc',
     meds: [
       MedicationDraft(
-        name: 'SSRI 类抗抑郁药',
+        nameKey: 'presetMedSsriName',
         dosage: 1,
         dosageUnit: DosageUnit.tablet.id,
         times: [const HourMinute(hour: 8, minute: 0)],
         // P0-5 fix: 改分类描述，避免《广告法》第 16 条 +
         // 《医疗广告管理办法》风险(原列 4 个真实处方药通用名)。
-        hint: '常见 SSRI ／ SNRI 类抗抑郁药（具体药名以医生处方为准）',
+        hintKey: 'presetMedSsriHint',
       ),
     ],
   ),
   MedicationTemplate(
     id: 'mood_mood_stabilizer_twice',
-    name: '情绪稳定剂 · 早晚两次',
     emoji: '🌗',
-    description: '1 种药，每天早 8 点 + 晚 20 点',
+    nameKey: 'presetMedMoodStabilizerTwiceTitle',
+    descriptionKey: 'presetMedMoodStabilizerTwiceDesc',
     meds: [
       MedicationDraft(
-        name: '情绪稳定剂',
+        nameKey: 'presetMedMoodStabilizerName',
         dosage: 1,
         dosageUnit: DosageUnit.tablet.id,
         times: [
@@ -92,24 +177,24 @@ final kMedicationTemplates = <MedicationTemplate>[
         // v0.21 Round 22 (P0-3 修复): 改分类描述。
         // 原 hint 列真实处方药通用名（碳酸锂 / 丙戊酸钠 / 拉莫三嗪），
         // 违反《广告法》§15（处方药不得在大众媒体做广告）。
-        hint: '常见情绪稳定剂类（具体药名以医生处方为准）',
+        hintKey: 'presetMedMoodStabilizerHint',
       ),
     ],
   ),
   MedicationTemplate(
     id: 'combo_ssri_bedtime',
-    name: '联合 · 早抗抑郁 + 晚助眠',
     emoji: '🌓',
-    description: '2 种药：早 8 点 SSRI + 晚 21 点助眠',
+    nameKey: 'presetMedComboSsriBedtimeTitle',
+    descriptionKey: 'presetMedComboSsriBedtimeDesc',
     meds: [
       MedicationDraft(
-        name: 'SSRI 类抗抑郁药',
+        nameKey: 'presetMedSsriName',
         dosage: 1,
         dosageUnit: DosageUnit.tablet.id,
         times: [const HourMinute(hour: 8, minute: 0)],
       ),
       MedicationDraft(
-        name: '助眠药',
+        nameKey: 'presetMedSleepAidName',
         dosage: 1,
         dosageUnit: DosageUnit.tablet.id,
         times: [const HourMinute(hour: 21, minute: 0)],
@@ -117,18 +202,18 @@ final kMedicationTemplates = <MedicationTemplate>[
         // 二类精神药品（《精神药品品种目录》收录），褪黑素是保健品。
         // 改分类描述，避免《广告法》§15 处方药广告违规。
         // v0.27 round 59 (spzh §2.2 修正): 半角 / → 全角 ／ (medical abbreviation 风格)
-        hint: '常见苯二氮卓类／助眠药（具体药名以医生处方为准）',
+        hintKey: 'presetMedSleepAidHint',
       ),
     ],
   ),
   MedicationTemplate(
     id: 'combo_antipsychotic_full',
-    name: '重性 · 早中晚三次',
     emoji: '🔁',
-    description: '2 种药：早 8 / 午 13 / 晚 20，覆盖全天',
+    nameKey: 'presetMedComboAntipsychoticFullTitle',
+    descriptionKey: 'presetMedComboAntipsychoticFullDesc',
     meds: [
       MedicationDraft(
-        name: '抗精神病药',
+        nameKey: 'presetMedAntipsychoticName',
         dosage: 1,
         dosageUnit: DosageUnit.tablet.id,
         times: [
@@ -137,7 +222,7 @@ final kMedicationTemplates = <MedicationTemplate>[
           const HourMinute(hour: 20, minute: 0),
         ],
         // P0-5 fix: 改分类描述，避免广告法风险。
-        hint: '常见非典型抗精神病药（具体药名以医生处方为准）',
+        hintKey: 'presetMedAntipsychoticHint',
       ),
       MedicationTemplateHelper.bedtimeAntipsychotic,
     ],
@@ -147,12 +232,12 @@ final kMedicationTemplates = <MedicationTemplate>[
 /// 模板助手：避免在多个模板里重复定义"晚间辅助药"
 class MedicationTemplateHelper {
   static const bedtimeAntipsychotic = MedicationDraft(
-    name: '镇静/抗焦虑辅助',
+    nameKey: 'presetMedSedativeAnxiolyticName',
     dosage: 1,
     dosageUnit: '片',
     times: [HourMinute(hour: 21, minute: 30)],
     // P0-5 fix: 改分类描述。
     // v0.27 round 59 (spzh §2.2 修正): 半角 / → 全角 ／
-    hint: '常见镇静／抗焦虑辅助药（具体药名以医生处方为准）',
+    hintKey: 'presetMedSedativeAnxiolyticHint',
   );
 }

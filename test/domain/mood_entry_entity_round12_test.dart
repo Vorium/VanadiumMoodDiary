@@ -215,7 +215,7 @@ void main() {
       addTearDown(() async => await db.close());
 
       final ts = DateTime(2026, 7, 15, 21, 30);
-      await db.insertMoodEntry(
+      await db.moodDao.insert(
         MoodEntriesCompanion.insert(
           timestamp: ts,
           score: 4,
@@ -224,7 +224,7 @@ void main() {
         ),
       );
 
-      final rows = await db.watchMoodEntries().first;
+      final rows = await db.moodDao.watchAll().first;
       expect(rows.length, 1);
 
       final entity = rows.first.toEntity();

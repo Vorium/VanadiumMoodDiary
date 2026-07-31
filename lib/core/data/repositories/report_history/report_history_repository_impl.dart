@@ -15,22 +15,22 @@ class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
 
   @override
   Stream<List<ReportHistoryEntity>> watchAll() {
-    return _db.watchReportHistories().map(
+    return _db.reportDao.watchAll().map(
           (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
         );
   }
 
   @override
   Future<List<ReportHistoryEntity>> getAll() async {
-    final rows = await _db.getAllReportHistories();
+    final rows = await _db.reportDao.getAll();
     return rows.map((r) => r.toEntity()).toList(growable: false);
   }
 
   @override
-  Future<int> delete(int id) => _db.deleteReportHistory(id);
+  Future<int> delete(int id) => _db.reportDao.delete(id);
 
   @override
-  Future<int> clearAll() => _db.clearAllReportHistories();
+  Future<int> clearAll() => _db.reportDao.clearAll();
 
   @override
   Future<int> insert({
@@ -40,7 +40,7 @@ class ReportHistoryRepositoryImpl implements ReportHistoryRepository {
     String? userName,
     required String reportText,
   }) {
-    return _db.insertReportHistory(
+    return _db.reportDao.insert(
       ReportHistoriesCompanion.insert(
         windowDays: windowDays,
         generatedAt: generatedAt,
