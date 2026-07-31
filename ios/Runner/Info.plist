@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<!--
+		v0.27 round 62 (R62): P0-9 per-language display name
+		App Store Connect 支持 per-locale display name
+		英文用户看英文, 简繁中文各看各
+	-->
+	<key>CFBundleDisplayName</key>
+	<dict>
+		<key>en</key>
+		<string>ChronicCare</string>
+		<key>zh-Hans</key>
+		<string>慢病管家</string>
+		<key>zh-Hant</key>
+		<string>慢病管家</string>
+	</dict>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>chroniccare</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<!--
+		v0.27 round 61 (R61): iOS 13+ 隐私用途说明
+		任何用到敏感权限的 Info.plist 必须配, 否则 App Store 审核拒
+	-->
+	<key>NSUserNotificationUsageDescription</key>
+	<string>用于在到点提醒你吃药打卡，所有通知本地处理，不上传任何数据</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>用于情绪日记的语音录入，本地处理，文件加密存储</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>用于情绪日记的语音转文字，本地处理，不上传</string>
+	<!--
+		v0.27 round 62 (R62): P0-5 NSPhotoLibraryAddUsageDescription
+		PDF 用药报告通过 share_plus 触发 PHPhotoLibrary 调用
+		缺此 key iOS 审核拒
+	-->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>用于保存用药报告 PDF 到相册</string>
+	<!--
+		v0.27 round 61 (R61): 项目无 IDFA, 但加 NSUserTrackingUsageDescription
+		作为防御性 + App Store 透明性
+	-->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>本应用不收集任何追踪数据，仅用于 App Store 透明性声明</string>
+	<!--
+		v0.27 round 61 (R61): iPadOS 多任务 / Split View
+		UIRequiresFullScreen=false 允许 iPad Split View 多任务
+		精神心理患者在 iPad 上同时记录 + 看视频教程很常见
+	-->
+	<key>UIRequiresFullScreen</key>
+	<false/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<!--
+		v0.27 round 62 (R62): P0-1 ITSAppUsesNonExemptEncryption
+		Apple 2024 强制 export compliance 声明
+		精神心理患者数据走 SQLCipher AES-256 + FlutterSecureStorage Keychain
+		属"标准库加密"(无自定义加密算法), 标 false
+	-->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<!--
+		v0.27 round 62 (R62): P0-7 后台模式 fetch→processing
+		iOS 13+ Apple 弃用 fetch, 推 BGTaskScheduler (短任务) + BGProcessingTask (长任务)
+		audio: 录音时允许后台继续 (录音中切到后台不中断)
+		processing: 失联检测长任务, 走 BGProcessingTask (需 BGTaskSchedulerPermittedIdentifiers 注册)
+	-->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>processing</string>
+	</array>
+	<!--
+		v0.27 round 62 (R62): P0-7 BGTaskScheduler 标识符
+		必须与 AppDelegate.swift 中 BGTaskScheduler.shared.register(forTaskWithIdentifier:) 一致
+	-->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.chroniccare.safety-check</string>
+	</array>
+</dict>
+</plist>
