@@ -793,6 +793,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventRerecord => '重录';
 
   @override
+  String ventDurationSeconds(int sec) {
+    return '$sec秒';
+  }
+
+  @override
+  String ventDurationMinutes(int m) {
+    return '$m分';
+  }
+
+  @override
+  String ventDurationMinutesSeconds(int m, String sec) {
+    return '$m分$sec秒';
+  }
+
+  @override
   String get moodDialogTitle => '今天怎么样？';
 
   @override
@@ -2076,21 +2091,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dayDetailGad7 => 'GAD-7 焦虑筛查';
 
   @override
-  String ventDurationSeconds(int sec) {
-    return '$sec秒';
-  }
-
-  @override
-  String ventDurationMinutes(int m) {
-    return '$m分';
-  }
-
-  @override
-  String ventDurationMinutesSeconds(int m, String sec) {
-    return '$m分$sec秒';
-  }
-
-  @override
   String get scaleHotlineCn => '全国 24 小时心理援助热线';
 
   @override
@@ -2896,6 +2896,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get ventRerecord => '重錄';
+
+  @override
+  String ventDurationSeconds(int sec) {
+    return '$sec秒';
+  }
+
+  @override
+  String ventDurationMinutes(int m) {
+    return '$m分';
+  }
+
+  @override
+  String ventDurationMinutesSeconds(int m, String sec) {
+    return '$m分$sec秒';
+  }
 
   @override
   String get moodDialogTitle => '今天怎麼樣？';
@@ -4179,21 +4194,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get dayDetailGad7 => 'GAD-7 焦慮篩查';
-
-  @override
-  String ventDurationSeconds(int sec) {
-    return '$sec秒';
-  }
-
-  @override
-  String ventDurationMinutes(int m) {
-    return '$m分';
-  }
-
-  @override
-  String ventDurationMinutesSeconds(int m, String sec) {
-    return '$m分$sec秒';
-  }
 
   @override
   String get scaleHotlineCn => '全國 24 小時心理援助熱線';

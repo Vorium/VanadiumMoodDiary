@@ -473,6 +473,25 @@
   "ventAudioPlayTooltip": "播放录音",
   "ventAudioPauseTooltip": "暂停录音",
   "ventRerecord": "重录",
+  "ventDurationSeconds": "{sec}秒",
+  "@ventDurationSeconds": {
+    "placeholders": {
+      "sec": { "type": "int" }
+    }
+  },
+  "ventDurationMinutes": "{m}分",
+  "@ventDurationMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "ventDurationMinutesSeconds": "{m}分{sec}秒",
+  "@ventDurationMinutesSeconds": {
+    "placeholders": {
+      "m": { "type": "int" },
+      "sec": { "type": "String" }
+    }
+  },
   "moodDialogTitle": "今天怎么样？",
   "moodDimensionMood": "情绪",
   "moodDimensionMoodHint": "1=很差 5=很好",

@@ -834,6 +834,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventRerecord => 'Re-record';
 
   @override
+  String ventDurationSeconds(int sec) {
+    return '${sec}s';
+  }
+
+  @override
+  String ventDurationMinutes(int m) {
+    return '${m}m';
+  }
+
+  @override
+  String ventDurationMinutesSeconds(int m, String sec) {
+    return '${m}m ${sec}s';
+  }
+
+  @override
   String get moodDialogTitle => 'How are you today?';
 
   @override
@@ -2180,21 +2195,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dayDetailGad7 => 'GAD-7 Anxiety Screening';
-
-  @override
-  String ventDurationSeconds(int sec) {
-    return '${sec}s';
-  }
-
-  @override
-  String ventDurationMinutes(int m) {
-    return '${m}m';
-  }
-
-  @override
-  String ventDurationMinutesSeconds(int m, String sec) {
-    return '${m}m ${sec}s';
-  }
 
   @override
   String get scaleHotlineCn => 'National 24h Psychological Aid Hotline';

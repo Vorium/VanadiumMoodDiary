@@ -1509,6 +1509,24 @@ abstract class AppLocalizations {
   /// **'重录'**
   String get ventRerecord;
 
+  /// No description provided for @ventDurationSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'{sec}秒'**
+  String ventDurationSeconds(int sec);
+
+  /// No description provided for @ventDurationMinutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'{m}分'**
+  String ventDurationMinutes(int m);
+
+  /// No description provided for @ventDurationMinutesSeconds.
+  ///
+  /// In zh, this message translates to:
+  /// **'{m}分{sec}秒'**
+  String ventDurationMinutesSeconds(int m, String sec);
+
   /// No description provided for @moodDialogTitle.
   ///
   /// In zh, this message translates to:
@@ -3795,24 +3813,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'GAD-7 焦虑筛查'**
   String get dayDetailGad7;
-
-  /// No description provided for @ventDurationSeconds.
-  ///
-  /// In zh, this message translates to:
-  /// **'{sec}秒'**
-  String ventDurationSeconds(int sec);
-
-  /// No description provided for @ventDurationMinutes.
-  ///
-  /// In zh, this message translates to:
-  /// **'{m}分'**
-  String ventDurationMinutes(int m);
-
-  /// No description provided for @ventDurationMinutesSeconds.
-  ///
-  /// In zh, this message translates to:
-  /// **'{m}分{sec}秒'**
-  String ventDurationMinutesSeconds(int m, String sec);
 
   /// No description provided for @scaleHotlineCn.
   ///

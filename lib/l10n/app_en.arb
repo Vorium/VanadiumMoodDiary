@@ -431,6 +431,25 @@
   "ventAudioPlayTooltip": "Play recording",
   "ventAudioPauseTooltip": "Pause recording",
   "ventRerecord": "Re-record",
+  "ventDurationSeconds": "{sec}s",
+  "@ventDurationSeconds": {
+    "placeholders": {
+      "sec": { "type": "int" }
+    }
+  },
+  "ventDurationMinutes": "{m}m",
+  "@ventDurationMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "ventDurationMinutesSeconds": "{m}m {sec}s",
+  "@ventDurationMinutesSeconds": {
+    "placeholders": {
+      "m": { "type": "int" },
+      "sec": { "type": "String" }
+    }
+  },
   "moodDialogTitle": "How are you today?",
   "moodDimensionMood": "Mood",
   "moodDimensionMoodHint": "1=very bad 5=great",
