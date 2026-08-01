@@ -11,7 +11,7 @@ import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/services/email_service.dart';
-import 'package:chroniccare/core/shared/legal_version.dart';
+import 'package:chroniccare/presentation/services/legal_version.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';

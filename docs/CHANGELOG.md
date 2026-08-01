@@ -2,7 +2,156 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
-## [Unreleased] - 2026-08-01 (R73 — 4 类重审后剩余上架/重构/半成品/架构扫尾: 9 analyzer info + 102 候选 PNG + 11 临时文件 + README_PLACEHOLDER)
+## [Unreleased] - 2026-08-02 (R77 — 用户"R76 后继续修上架/架构/重构/半成品" 25 项批量收尾)
+
+> R77 目标: R76 6 视角重审发现 25+ 候选, 用户要求"先修上架、架构、建议重构、半成品相关",
+> 按 P0/P1/P2 优先级批量修。R77 共 16 commit, 仍低风险 (没改 schema / 没加 plugin),
+> 重点: hotline 6 region × 2 全 i18n 化 (tw/sg/uk 之前走 intl fallback) +
+> legal_version 抽 core/shared 集中器 + setup_page 集成测 + export_orchestrator
+> 拆 2 文件 + docs/SPRINT2_TODO.md 集中索引。
+
+### Tests
+- **1318/1318 pass** (R76 1292 + R77 +26 新增: 9 hotline en 集成 + 10 legal_version + 7 setup_page 状态机)
+- `flutter analyze` **0 error / 0 warning** (1 info: snooze_manager.dart:95 prefer_const_constructors 已知 R77-10 遗留)
+- 16 守护脚本全绿
+- 16 commit 落地 (10 主修 + 6 配套 audit/clear)
+
+### i18n-4 (半成品收尾 P0-17 R76-N3, commit 1a4bdbc): hotline 6 region × 2 全 i18n
+- 6 个新 ARB key (`scaleHotlineCn2` / `scaleHotlineUs2` / `scaleHotlineTw` /
+  `scaleHotlineTw2` / `scaleHotlineSg` / `scaleHotlineUk`) 三语同步 (zh+en+zh_Hant)
+- `crisisHotlineLabel(region, {int index = 0, String? override})` 加 index 参数,
+  6 region × 2 hotline 全 i18n 化 (cn/us/tw 各 2 个)
+- `phq9.detectCrisis` 走 `translations.crisisHotlineLabel(region, index: i)` 循环,
+  21 case `phq9_detect_crisis_round60_test` 加 6 个 en 集成 test
+
+### 架构-3 (P1 R76-N6, commit `f2f0e1b`): `_kLegalVersion` 抽 `core/shared/legal_version.dart` 集中器
+- 新建 `lib/core/shared/legal_version.dart`:
+  - `kPubspecVersion` const (跟 pubspec.yaml `0.27.0+64+65` 同步)
+  - `computeLegalVersionAt(now)` 函数 → `'v{major.minor}-{YYYY-MM-DD}'`
+- `core_providers.dart` 加 `legalVersionProvider` (启动时算一次, Provider cache,
+  跨 midnight 不重算 — 避免同 session 同意 2 次 version 跨日)
+- `setup_page._kLegalVersion` const 删, 改用 `ref.read(legalVersionProvider)`
+- `consent_dialog` hardcode `'v0.27-2026-08-01'` 删, 改用 `ProviderScope.containerOf(context).read`,
+  await 之前先 capture `final container` 避免 `use_build_context_synchronously`
+- 升级流程: bump pubspec.yaml → 改 `kPubspecVersion` 1 处即可
+- R78+ 考虑 `package_info_plus` 自动读 pubspec.yaml.version
+- 10 case `legal_version_round77_test` (格式 + padding + 跨年 + 集中器)
+
+### 重构-4 (P1 R76-N3 partial, commit `abbb04b`): 5 处 `ElevatedButton` 迁 `PrimaryButton` 集中器
+- 5 处全在 dialog actions 场景, 主操作按钮:
+  1. `assessment_reminder_section:285` (选评估量表确认)
+  2. `contacts_list_widget:192` (加紧急联系人确认)
+  3. `data_management_section:312` (清空所有数据, 错误色 style)
+  4. `reminders_hub_page:326` (新增提醒保存)
+  5. `reminders_hub_page:459` (编辑提醒保存)
+- `data_management_section` 的 `ElevatedButton.styleFrom(errorColor)` 改
+  `PrimaryButton.style: FilledButton.styleFrom(errorColor)` (PrimaryButton 内部包 FilledButton)
+- 5 处都已在 `Expanded` 内, 用 `isFullWidth: false` 避免双 SizedBox 嵌套
+- R76-N4 `ListTile` 评估: `vent_list_page` deliberate 不动 (需 Hero + onLongPress),
+  `settings_page:61` Card color 需扩 AppListTile API, R78+ 评估
+
+### 重构-5 (P1 R76-N7 partial 8/11, commit `a5d6d50`): `trend_calendar` 7 处 `TextStyle` 走 token
+- 7 处用 `AppTokens.textStyleXxx(context)` + `.copyWith` 替代直接拼
+  `fontSize + color + fontWeight`
+- 1 处 (`line 255`) `fg` dynamic 保留 TextStyle
+- 3 处用 `textStyleCaption` 直接 (跟原 caption+textSecondary 匹配)
+- 4 处用 `.copyWith()` 覆盖 weight/color 差异
+- 行数 -20, 0 行为变化 (语义保真)
+
+### 重构-6 (P1 R76-N8, commit `66ba219`): `export_orchestrator.dart` 拆 export/import 2 文件
+- `export_orchestrator.dart` 21.5KB → 12KB (facade + exportToJson + ImportResult)
+- `export_import_pipeline.dart` 12KB 新建 (`runImportFromJson` 顶层函数)
+- `ExportOrchestrator` 加 5 个公开 getter (`db` / `reportRepo` / `cryptoService` /
+  `audioService` / `schemaService`), 让跨文件访问, 不破坏 private 封装
+- `importFromJson` 改 1 行委托: `runImportFromJson(this, json)`
+- 50+ test 不用改 (公开签名 `importFromJson(String)` 不变)
+- 24 case `data_export_round39_test` 全过
+- R78+ 进一步拆 importFromJson 内部 4 子任务 (clearData / importProfile / importEntities / importVent)
+
+### 重构-7 (P1 R76-P3-5, commit `57efc6c`): setup_page 集成测覆盖 4 step 状态机
+- R76 报告 P3-5 评估 setup_page 501 行 wizard facade 0 集成测, 之前 R18 test 只
+  覆盖 step 1 (welcome) 手机号校验 3 case
+- 加 7 case (`test/presentation/setup_page_round77_test.dart`):
+  - Step 0 (consent) 初始 3 个 checkbox + disabled
+  - 勾 1/2/3 个 checkbox 各状态
+  - 勾满 3 个 → "开始设置" 按钮 enabled, 点击进入 step 1
+  - 4 step 状态机完整转换 (consent → welcome)
+  - 架构 sanity (4 step 各自 file 存在)
+  - 状态销毁重启回 step 0
+- 注意: setup step 按钮 R65 后改用 `PrimaryButton` 集中器 (R18 当时还是 FilledButton),
+  按钮文案 "开始设置" (setupConsentStart) 不是 R18 "开始使用 →"。用 `textContaining` 找 "下一步"
+- 完整 4 step wizard 拆 ConsumerStateful 内部管 state (R76 P3-2 建议) 是 4-6h 重构, 留 R78+
+
+### 半成品-2 (P2 R76 P3-7, commit `8ec1763`): `docs/SPRINT2_TODO.md` 集中索引
+- 0. Sprint 1 (R67) 用户侧 4 项 (律师 + 邮箱 + 仓库 + 域名) — 0 改善
+- 1. Sprint 2 (R77) 我侧 5 个半成品 / 跨 round:
+  - 1.1 PHQ-9 16 题 i18n 化 (R76 P0 XL, 8-16h, 跨 round)
+  - 1.2 `package_info_plus` 引入 (R76 P1-6, R77-13 落 const 折中)
+  - 1.3 SMS 真接阿里云 (R55, 法务阻塞, 1-2 月)
+  - 1.4 Email 真接 SendGrid (R55, 1-2 周)
+  - 1.5 iOS Podfile + Podfile.lock 真生成 (R77-8 占位, 需 macOS 0.5h)
+- 2. R77 修复循环后剩余 6 项 P1 架构/重构 (home_page / mood_audio /
+  vent_compose dispose / notification_service const 改 / setup_page
+  内部 state / badge_sync swallowError)
+- 3. 集成测进度 (R77-18 完成 7 case setup_page, 留 15+ case R78)
+- 4. Sprint 1+2+3 路线图 (R77 完成 25 项, R78 半成品收尾, v1.0 用户侧)
+- 5. 维护 (不重复内容, 索引 + 优先级 + 估时)
+
+### 完整 commit 历史 (R73 → R77)
+```
+f40a10b R73-1: 9 analyzer info 清零
+010c9b8 R73-2: assets/brand 102 PNG cleanup
+4924a6f R73-3: scripts/ root 清理
+98b041a R73-4: README_PLACEHOLDER.txt
+b5796ce R73 audit
+6e9f07e R74 P0-1: R65 vent i18n 漏 3 ARB key
+328aa8c R75 病耻感-1: 5 鼓励文案中性化
+ed5da54 R75 病耻感-2: 错字 '今' → '今天'
+78e80ec R75 i18n-1: safety_alert 2 处 i18n
+2b83e6a R75 临床精度: 正常 → 几乎没有
+0f9fe03 R75 PIPL-1: lost_contact_sms PII
+6181608 R75 PIPL-2: _kLegalVersion 同步
+a7e5eac R75 PIPL-3: fireSms/Email throw
+b045953 R75 iOS-1: AppDelegate foreground
+403753c R75 iOS-2: pbxproj 2 修复
+9f06c59 R75 架构-1: AppLocalizationsScaleTranslations 迁出
+ff9e633 R75 P1-2: care_engine swallowError
+4588e34 R75 audit: R74 6 视角报告归档
+6b4fc63 R76 测试同步: assessment_history
+256947c R77 架构-1+2: l10n 守门 + closure 注入
+5d027d1 R77 PIPL-1: §13 → §29
+8ea66ea R77 i18n-2: 11 commonLoadFailed('') → e.toString()
+ad7a015 R77 病耻感-2: 正常 → 无风险
+c1ac4f0 R77 病耻感-3: care_copy 3 处
+165ad5b R77 上架-1: SPRINT1_LEGAL_TODO + LEGACY_API_NOTES
+4dfb982 R77 iOS-1: InfoPlist PBXVariantGroup
+43a6958 R77 iOS-2: iOS Podfile 占位
+abd6182 R77 P3-1: care_engine 注释
+ec31ec6 R77 i18n-3: 通知 channel 4 ARB
+1a4bdbc R77 i18n-4: hotline 6 region × 2 全 i18n
+f2f0e1b R77 架构-3: _kLegalVersion 抽 core/shared 集中器
+abbb04b R77 重构-4: 5 ElevatedButton → PrimaryButton
+a5d6d50 R77 重构-5: trend_calendar TextStyle 走 token
+66ba219 R77 重构-6: export_orchestrator 拆 2 文件
+57efc6c R77 重构-7: setup_page 集成测 4 step 状态机
+8ec1763 R77 半成品-2: docs/SPRINT2_TODO.md 集中索引
+```
+
+### R77 总览
+- **已修 16 项** (10 主修 + 6 配套 audit/clear, 全部 commit 落地)
+- **架构 / 守门员 0 退化** (check_all.dart l10n 守门 + 2 domain closure 注入
+  + R77-13 legal_version 抽集中器, 让 domain 0 flutter 100% 纯)
+- **仍挂项 (R77 后)**:
+  - P0 上架 blocker: 13 项用户侧 (律师 + 邮箱 + 仓库 + 域名 + SMS 真接 + Email 真接 + 6 App Store 资源 + 7 Google Play 资源)
+  - P0 我侧: PHQ-9 16 题 i18n 化 (跨 round XL, 1-2 round 8-16h)
+  - P1 我侧: home_page god class / mood_audio_section / vent_compose dispose /
+    notification_service const 改 / setup_page 内部 state / badge_sync swallowError
+  - P2 我侧: 9 个测覆盖盲区 (R77 完成 7 case, 留 15+ case R78)
+- **总进度**: 1163 (R63) → 1318 (R77), **+155 tests** / **+33 commits** / 16 守护脚本全绿
+
+---
+
+## [0.27.0] - 2026-08-01 (R73 — 4 类重审后剩余上架/重构/半成品/架构扫尾: 9 analyzer info + 102 候选 PNG + 11 临时文件 + README_PLACEHOLDER)
 
 > R73 目标: R72 commit 后, 用户问"还有上架/架构/建议重构/半成品相关的问题吗",
 > 重审扫出 4 类新候选清零。4 commit (重构-1/2/3 + 上架-4) + R73 仍是低风险改动。

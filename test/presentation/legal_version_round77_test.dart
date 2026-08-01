@@ -9,7 +9,7 @@
 // 守护: 升级 pubspec.yaml 漏改 kPubspecVersion → test 也能 catch 一部分
 // (但需手动加 regex)。R78+ 引入 package_info_plus 自动读可彻底根除。
 
-import 'package:chroniccare/core/shared/legal_version.dart';
+import 'package:chroniccare/presentation/services/legal_version.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
