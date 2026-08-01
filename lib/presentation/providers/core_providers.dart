@@ -11,6 +11,7 @@ import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/services/email_service.dart';
+import 'package:chroniccare/core/shared/legal_version.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';
@@ -106,6 +107,23 @@ final smsProviderNameProvider = Provider<String>(
 /// [EmailService.validateForRelease] 检查 [isProductionReady], release + 未就绪
 /// → 抛 [EmailProviderNotConfiguredError] 阻断, banner 显眼提示。
 final emailServiceProvider = Provider<EmailService>((ref) => EmailService());
+
+/// v0.27 round 77 (R76-N6 修): 法律协议版本号 provider
+///
+/// 启动时算一次 `v{major.minor}-{YYYY-MM-DD}`, 同 session 跨 widget / 跨
+/// 调用返回**相同** string (因为 Provider 默认 cache)。跨 midnight 不重算
+/// (避免同一 session 同一用户同意 2 次, 第二次 version 跨日跟第一次不同
+/// 触发 re-consent, 用户会烦)。
+///
+/// 升级流程: bump pubspec.yaml version → 改 [kPubspecVersion] → 重 build
+/// → 新 session 拿新 version → 旧 consent 跟新 version 不同 → 触发 re-consent。
+///
+/// 当前不监听系统时间变化 (跟 streakSummaryProvider 不同), 因为法律协议
+/// version 跨日不应该变 (user 同意 v0.27 应该一直是 v0.27, 跨 midnight
+/// 不需要重新同意)。
+final legalVersionProvider = Provider<String>(
+  (ref) => computeLegalVersionAt(DateTime.now()),
+);
 
 /// v0.17 round 14 提示: vent 相关的 repo / audio storage / stream provider 整组
 /// 挪到 lib/presentation/providers/vent_providers.dart (避免循环 import)。

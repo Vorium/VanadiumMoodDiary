@@ -36,10 +36,13 @@ import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 /// 不跟着 bump, re-consent 触发逻辑失效 → 用户"用 v0.27 app 但 consent v0.21 协议"
 /// 属 PIPL §17 同意记录失效。
 ///
-/// 修法: 跟 pubspec.yaml version 同步 (v0.27.0+64) + 当前日期 (YYYY-MM-DD)。
-/// 升级时 bump pubspec.yaml 的 version, 这里 const 跟着改。
-/// R76+ 考虑: 改成启动时读 PackageInfo (需加 package_info_plus plugin)。
-const _kLegalVersion = 'v0.27-2026-08-01';
+/// v0.27 round 77 (R76-N6 修): 跟 consent_dialog 同步走
+/// [legalVersionProvider], 启动时从 [computeLegalVersionAt] 算一次。
+/// const 字符串搬到 [lib/core/shared/legal_version.dart], 改一处, 升
+/// pubspec.yaml 时手动同步 [kPubspecVersion] 即可。
+///
+/// 未来 R78+ 考虑: 引入 package_info_plus 自动读 pubspec.yaml.version,
+/// 进一步降低漏改风险。当前 const 同步是 v1.0 上架前的折中方案。
 
 ///
 /// 0=consent, 1=welcome, 2=medication, 3=done
@@ -448,8 +451,10 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       // 后续可证明"用户当时同意了哪一版协议"
       if (!mounted) return;
       await ref.read(userProfileRepositoryProvider).recordConsent(
-            userAgreementVersion: _kLegalVersion,
-            privacyPolicyVersion: _kLegalVersion,
+            // v0.27 round 77 (R76-N6 修): 跟 consent_dialog 同步从 provider 读
+            // 启动时算的 legal version, 不再有 hardcode const
+            userAgreementVersion: ref.read(legalVersionProvider),
+            privacyPolicyVersion: ref.read(legalVersionProvider),
           );
       if (!mounted) return;
 

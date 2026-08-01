@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// v0.27 round 62 (P0-2 修复): 共享 ConsentDialog 组件
 ///
@@ -44,6 +46,10 @@ class ConsentDialog {
     required int thresholdDays,
   }) async {
     final l10n = AppLocalizations.of(context);
+    // v0.27 round 77 (R76-N6 修): await 之前先读 provider, 避免
+    // `use_build_context_synchronously` 警告 (R56 memory: 同一 context
+    // 在 await 前后用 analyzer 不认)。
+    final container = ProviderScope.containerOf(context);
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false, // 必须显式选择, 防止误点背景关闭
@@ -78,14 +84,14 @@ class ConsentDialog {
     );
 
     if (result != true) return null;
+    // v0.27 round 77 (R76-N6 修): 跟 setup_page 同步从 legalVersionProvider 读
+    // (启动时算的 legal version), 替代 hardcode 'v0.27-2026-08-01'。
+    final version = container.read(legalVersionProvider);
     return ConsentArtifact(
       kind: kind,
       grantedAt: DateTime.now(),
       grantedBy: 'user', // 未来支持代理人代同意时扩展
-      // v0.27 round 75 (R74-N12 PIPL §17 修): 跟 setup_page._kLegalVersion
-      // 同步 (v0.27-2026-08-01), 之前写死 'v1' 跟法律协议版本脱节,
-      // 法务模板升级时无法触发 re-consent。
-      version: 'v0.27-2026-08-01',
+      version: version,
     );
   }
 }
