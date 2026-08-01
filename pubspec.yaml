@@ -1,5 +1,6 @@
 name: chroniccare
-description: "我今天吃了药 - 精神心理患者吃药打卡 + 停药通知"
+# v0.27 R69: 双语描述, App Store / Google Play en 模式 UX 一致
+description: "我今天吃了药 - ChronicCare: medication reminder & mood tracker for people managing chronic conditions"
 publish_to: 'none'
 version: 0.27.0+64
 
