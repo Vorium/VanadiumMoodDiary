@@ -2,6 +2,67 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-02 (R78 — P0 收尾: PHQ-9/GAD-7 16 题 i18n 化, R65 起步 4 round TODO 收尾)
+
+> R78 目标: R77 完成后用户要求"修复 p0", R77 16 commit 落地后我侧剩
+> 1 个 P0 (PHQ-9/GAD-7 16 题 i18n 化, 跨 round XL, R65 起步跨 R65/R71/R77
+> 4 round 留 TODO 至今)。R78 1 commit 收尾, en / zh_Hant 用户做 PHQ-9 / GAD-7
+> 不再看到中文题目, 医疗法律责任修复。
+
+### Tests
+- **1352/1352 pass** (R77 1318 + R78 +34 新增: 12 Static + 9 en + 3 zh + 5 Phq9Scale 集成 + 5 Gad7Scale 集成)
+- `flutter analyze` **0 error / 0 warning** (1 info: snooze_manager.dart:95 已知 R77-10 遗留)
+- 16 守护脚本全绿
+
+### P0 收尾 (R65 起步 4 round 跨 round, commit `cac9e92`): PHQ-9 / GAD-7 全文 i18n 化
+- **背景**: R65 抽象 + R71 crisis i18n + R77 hotline 6 region × 2, 但
+  16 题 + 5 档严重度 + 4 档选项 + 2 instruction 仍 hardcode 中文 (R65
+  注释明确写"留 v1.0")。en / zh_Hant 用户做 PHQ-9 / GAD-7 看到中文题目
+  = 医疗法律责任。
+- **修法**:
+  - `scale_translations.dart` 加 12 abstract method (phq9Item / phq9Option /
+    phq9SeverityLabel / phq9SeveritySummary / phq9Instruction /
+    phq9ShortDescription × 2 scale)
+  - `StaticScaleTranslations` 中文 fallback 12 method 实现 (跟原 hardcode 1:1)
+  - `AppLocalizationsScaleTranslations` 12 method ARB 包装 (switch case 路由)
+  - `phq9.dart` items 9 题 + 4 档 options + 5 档 severityCutoffs (label + summary) +
+    shortDescription + instruction 走 translations
+  - `gad7.dart` items 7 题 + 4 档 options + 4 档 severityCutoffs + 2 文案走
+    translations (gad7Option 内部复用 phq9Option 共享 4 档)
+  - `phq9CutoffThresholds` / `gad7CutoffThresholds` 抽 static const, 跟原
+    hardcode threshold 1:1 一致
+- **ARB 42 新 key** (zh + en + zh_Hant 三语同步):
+  - phq9: 25 key (9 item + 4 option + 5 severityLabel + 5 severitySummary + 2 文案)
+  - gad7: 17 key (7 item + 4 severityLabel + 4 severitySummary + 2 文案, 4 option
+    复用 phq9Option 共享)
+  - en 翻译走 PHQ-9 官方英文 (Kroenke 2001) / GAD-7 官方英文 (Spitzer 2006)
+  - zh_Hant 翻译走台湾常用医学用语 (跟简体同义, 繁简差异)
+  - 越界 index 返空字符串 (跟 R77 hotline 越界行为一致)
+- **测试**: 34 case `scale_translations_round78_test` 验证 Static + AppLocalizations
+  两条路径 + Phq9Scale / Gad7Scale items / options / severityCutoffs 集成。
+  21 case `phq9_detect_crisis_round60_test` + 13 case `gad7_round16_test` + 9 case
+  `scale_translations_round65_test` 走 const `StaticScaleTranslations` 返中文, 不破。
+
+### R78 总览
+- **1 commit 落地** (R78 1 P0 收尾, commit `cac9e92`)
+- **仍挂 P0 (我侧)**: 0
+- **仍挂 P0 (用户侧)**: 13 (律师 + 邮箱 + 仓库 + 域名 + 6 AS 资源 + 7 GP 资源, 全用户侧)
+- **仍挂 P0 (我侧 R78+ 半成品)**: 0 → R78 修复 P0 后, 我侧 0 P0 blocker
+- **仍挂 P1 (我侧)**: 6 (R77 列 6 项 P1 架构 / 重构 / 半成品, 跨 round)
+- **总进度**: 1163 (R63) → 1352 (R78), **+189 tests** / **+34 commits** / 16 守护脚本全绿
+
+### R78+ 路线图 (R77 列 P1 6 项我侧, 跟 R77 audit 同步)
+- P1 架构: home_page 678 行 god class 抽 3 helper (R74 → R75 → R76 → R77 → R78 5 轮未修)
+- P1 架构: mood_audio_section 591 行 god class 评估
+- P1 架构: notification_service 4 处 const 改 final (4-6h, R78-10 partial 1/5)
+- P1 架构: setup_page wizard 4 step 内部 state 化 (R78-18 集成测已保)
+- P1 重构: vent_compose dispose 异步未 await (R74 → R75 → R76 → R77 → R78 5 轮未修)
+- P1 重构: badge_sync_service catch (e) 加 swallowError 包装
+- P2 半成品: package_info_plus 引入 (R78-13 落 const 折中)
+- P2 集成测: home_page 集成测 10 case / export_orchestrator 集成测 5 case (R78 拆 2 file 后)
+
+---
+
 ## [Unreleased] - 2026-08-02 (R77 — 用户"R76 后继续修上架/架构/重构/半成品" 25 项批量收尾)
 
 > R77 目标: R76 6 视角重审发现 25+ 候选, 用户要求"先修上架、架构、建议重构、半成品相关",
