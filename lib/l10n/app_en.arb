@@ -600,7 +600,7 @@
       }
     }
   },
-  "homeStreakGreat": "{days}-day streak, great work 🌳",
+  "homeStreakGreat": "{days}-day streak 🌳",
   "@homeStreakGreat": {
     "placeholders": {
       "days": {
@@ -608,7 +608,7 @@
       }
     }
   },
-  "homeStreakAmazing": "{days}-day streak, amazing! 🌲",
+  "homeStreakAmazing": "{days}-day streak 🌲",
   "@homeStreakAmazing": {
     "placeholders": {
       "days": {
@@ -616,7 +616,7 @@
       }
     }
   },
-  "homeStreakMaster": "{days} days — you've mastered this habit! 🏔️",
+  "homeStreakMaster": "{days} days 🏔️",
   "@homeStreakMaster": {
     "placeholders": {
       "days": {
@@ -863,7 +863,7 @@
       }
     }
   },
-  "homeCelebrationStreakMaster": "Recorded! {days} days — you're on fire! 🏔️",
+  "homeCelebrationStreakMaster": "Recorded! {days} days 🏔️",
   "@homeCelebrationStreakMaster": {
     "placeholders": {
       "days": {

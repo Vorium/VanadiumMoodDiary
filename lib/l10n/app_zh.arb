@@ -632,7 +632,7 @@
   },
   "homeTooltipTrend": "查看趋势",
   "homeTooltipAssessmentHistory": "评估历史",
-  "homeStreakRestart": "今天重新开始，加油 🌱",
+  "homeStreakRestart": "今天重新开始 🌱",
   "homeStreakDay1": "第 1 天，迈出第一步 🌱",
   "homeStreakDays": "坚持 {days} 天，继续 🌿",
   "@homeStreakDays": {
@@ -642,7 +642,7 @@
       }
     }
   },
-  "homeStreakGreat": "已坚持 {days} 天，真棒 🌳",
+  "homeStreakGreat": "已坚持 {days} 天 🌳",
   "@homeStreakGreat": {
     "placeholders": {
       "days": {
@@ -650,7 +650,7 @@
       }
     }
   },
-  "homeStreakAmazing": "{days} 天连击，太厉害了 🌲",
+  "homeStreakAmazing": "{days} 天连击 🌲",
   "@homeStreakAmazing": {
     "placeholders": {
       "days": {
@@ -658,7 +658,7 @@
       }
     }
   },
-  "homeStreakMaster": "{days} 天--您已经是这个习惯的主人了 🏔️",
+  "homeStreakMaster": "{days} 天 🏔️",
   "@homeStreakMaster": {
     "placeholders": {
       "days": {
@@ -905,7 +905,7 @@
       }
     }
   },
-  "homeCelebrationStreakMaster": "已记录！{days} 天--您太厉害了 🏔️",
+  "homeCelebrationStreakMaster": "已记录！{days} 天 🏔️",
   "@homeCelebrationStreakMaster": {
     "placeholders": {
       "days": {
