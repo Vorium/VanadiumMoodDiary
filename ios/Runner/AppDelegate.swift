@@ -4,16 +4,23 @@ import BackgroundTasks
 import UserNotifications
 
 @main
-@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate, UNUserNotificationCenterDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     // v0.27 round 67 (Sprint 1 上架前 P0, appstore C-P0-8):
-    // 1. iOS 10+ foreground 通知显示 — 不设 UNUserNotificationCenter.delegate
-    //    → iOS 14+ foreground 通知不弹, 用户体验断档 (不见通知不知道失联)
+    // 1. iOS 10+ foreground 通知显示 — UNUserNotificationCenter.delegate 设 self
+    //    → iOS 14+ foreground 通知正常弹 (.banner + .sound + .badge)
+    //    失联通知 / 打卡提醒关键场景, 用户在 app 内也要看到。
+    //
+    // v0.27 round 75 (R74 报告 AS-P0-3 修): 之前 R67 写 `self as? UNUserNotificationCenterDelegate`
+    //    → AppDelegate 没 conform protocol → delegate = nil → foreground 通知
+    //    静默不弹, 精神心理患者错过失联告警。修法: AppDelegate conform
+    //    UNUserNotificationCenterDelegate + 删 `as?` 强转 + 实现
+    //    `userNotificationCenter(_:willPresent:withCompletionHandler:)`。
     if #available(iOS 10.0, *) {
-      UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+      UNUserNotificationCenter.current().delegate = self
     }
 
     // 2. 注册 BGTaskScheduler — Info.plist 已声明
@@ -35,6 +42,22 @@ import UserNotifications
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+  }
+
+  // v0.27 round 75 (R74 报告 AS-P0-3 修): iOS 10+ foreground 通知展示。
+  //
+  // 之前 R67 只设 delegate 没实现 willPresent, foreground 通知被系统静默。
+  // 失联告警 / 打卡提醒属精神心理患者关键场景, 在 app 内也要弹通知。
+  //
+  // 返回 [.banner, .list, .sound, .badge]: banner 顶部横幅, list 通知中心,
+  // sound 提示音, badge 角标 (跟 Android 4 channel importance=max 对齐)。
+  @available(iOS 10.0, *)
+  func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    willPresent notification: UNNotification,
+    withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+  ) {
+    completionHandler([.banner, .list, .sound, .badge])
   }
 
   // v0.27 round 67: BGTaskScheduler handler 占位实现
