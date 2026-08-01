@@ -31,7 +31,9 @@ class CareCopy {
       case CareTriggerType.weekendMissed:
         return (
           title: '☀️ 周末也要记得',
-          body: '周末容易忘记——现在打卡，让家人放心',
+          // v0.27 R72 (spzh R66 P0-4 续): 中性化, 不提 '家人' (避免病耻感)
+          // 原: '周末容易忘记——现在打卡，让家人放心'
+          body: '周末容易忘记——现在打卡，多一点坚持',
         );
       case CareTriggerType.secondDayMissed:
         return (
@@ -41,7 +43,9 @@ class CareCopy {
       case CareTriggerType.weekPerfect:
         return (
           title: '🌟 一整周都准时！',
-          body: '你真棒——保持下去',
+          // v0.27 R72 (spzh R66 P0-4 续): 中性化, 仅事实描述 (避免 '你真棒' 褒语)
+          // 原: '你真棒——保持下去'
+          body: '今周已全部准时',
         );
       case CareTriggerType.none:
         return (title: '', body: '');

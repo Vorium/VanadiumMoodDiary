@@ -91,7 +91,9 @@ class Strings {
 
   // 每日打卡提醒 (20:00) — const 保留 (medication_notifier 用 const Strings.notifDailyCheckInTitle)
   static const notifDailyCheckInTitle = '🌱 今天吃了药吗？';
-  static const notifDailyCheckInBody = '点一下 = 打卡，让家人放心';
+  // v0.27 R72 (spzh R66 P0-4 续): 中性化, 不提 '家人' (避免病耻感)
+  // 原: '点一下 = 打卡，让家人放心'
+  static const notifDailyCheckInBody = '点一下 = 打卡，留个今的踏实';
   static String notifDailyCheckInTitleText({String? override}) =>
       override ?? notifDailyCheckInTitle;
   static String notifDailyCheckInBodyText({String? override}) =>

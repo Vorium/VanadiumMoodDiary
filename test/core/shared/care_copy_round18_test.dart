@@ -35,7 +35,8 @@ void main() {
     test('weekPerfect: 连续 7 天准时文案', () {
       final copy = CareCopy.forTrigger(CareTriggerType.weekPerfect);
       expect(copy.title, contains('一整周'));
-      expect(copy.body, contains('真棒'));
+      // v0.27 R72 (spzh R66 P0-4 续): 中性化, 不含 '真棒' 褒语
+      expect(copy.body, contains('今周已全部准时'));
     });
 
     test('none: 空字符串', () {
