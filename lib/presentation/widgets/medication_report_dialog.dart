@@ -9,8 +9,8 @@ import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 用药报告全屏预览
@@ -105,53 +105,43 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                     ),
                     child: Row(
                       children: [
+                        // v0.27 R70 (emil B-3 重构): 3 按钮统一走 LoadingTextButton 集中器
+                        // 替代 3 模式不一致: PressFeedback+OutlinedButton.onPressed=null /
+                        // PressFeedback+LoadingTextButton(filled) / PressFeedback+OutlinedButton.onPressed=直接
+                        // emil "DRY for taste" + 集中器复用原则
                         Expanded(
-                          // v0.22 round 30 (emil P1-1): 复制按钮包 PressFeedback 接管 tap
-                          child: PressFeedback(
-                            onTap: _copy,
-                            child: OutlinedButton.icon(
-                              icon: const Icon(Icons.copy,
-                                  size: AppTokens.iconSizeInline,),
-                              label: Text(
+                          child: LoadingTextButton(
+                            label:
                                 AppLocalizations.of(context).settingsCopy,
-                              ),
-                              onPressed: null, // 委托给 PressFeedback
-                            ),
+                            icon: Icons.copy,
+                            isLoading: false,
+                            onPressed: _copy,
+                            variant: LoadingTextButtonVariant.outlined,
                           ),
                         ),
                         const SizedBox(width: AppTokens.spacingSm),
                         Expanded(
-                          child: PressFeedback(
-                            // v0.22 round 30 (emil P1-1): 不接管 onTap,
-                            // 让 button.onPressed 自己处理 disabled 状态
-                            // (reportData == null || _pdfLoading)
-                            // v0.24 round 43 (emil P1-01 H-03): 改用
-                            // LoadingTextButton + icon 参数,
-                            // 替代内联 FilledButton.icon + Spinner
-                            child: LoadingTextButton(
-                              label: AppLocalizations.of(context)
-                                  .medReportPdfLabel,
-                              icon: Icons.picture_as_pdf,
-                              isLoading: _pdfLoading,
-                              onPressed:
-                                  (widget.reportData == null || _pdfLoading)
-                                      ? null
-                                      : _exportPdf,
-                            ),
+                          child: LoadingTextButton(
+                            label: AppLocalizations.of(context)
+                                .medReportPdfLabel,
+                            icon: Icons.picture_as_pdf,
+                            isLoading: _pdfLoading,
+                            onPressed:
+                                (widget.reportData == null || _pdfLoading)
+                                    ? null
+                                    : _exportPdf,
+                            variant: LoadingTextButtonVariant.filled,
                           ),
                         ),
                         const SizedBox(width: AppTokens.spacingSm),
                         Expanded(
-                          child: PressFeedback(
-                            child: OutlinedButton.icon(
-                              icon: const Icon(Icons.share,
-                                  size: AppTokens.iconSizeInline,),
-                              label: Text(
-                                AppLocalizations.of(context)
-                                    .medReportShareLabel,
-                              ),
-                              onPressed: _share,
-                            ),
+                          child: LoadingTextButton(
+                            label: AppLocalizations.of(context)
+                                .medReportShareLabel,
+                            icon: Icons.share,
+                            isLoading: false,
+                            onPressed: _share,
+                            variant: LoadingTextButtonVariant.outlined,
                           ),
                         ),
                       ],
@@ -161,44 +151,13 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
               ],
             ),
             // PDF 生成时的全屏遮罩
-            // scrim 0.54 — M3 Modal barrier 0.32 太浅, PDF 生成 5s+ 需更深遮罩
-            // 让用户清楚"正在后台生成", AppTokens.scrimAlpha 是'long task modal'标准 alpha
-            // R69 (emil P0-2 修复): 加 AbsorbPointer 锁死, 防止用户在 PDF 生成中
-            // 点底下 3 按钮(复制 / 分享 / 重新生成)
-            if (_pdfLoading)
-              Positioned.fill(
-                child: AbsorbPointer(
-                  child: ColoredBox(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .scrim
-                        .withValues(alpha: AppTokens.scrimAlpha),
-                    child: Center(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppTokens.spacingMd),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                              const SizedBox(width: AppTokens.spacingSm),
-                              Text(
-                                AppLocalizations.of(context)
-                                    .medReportPdfLoading,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            // v0.27 R70 (emil B-2): 走 LoadingScrim 集中器
+            // 替代 30 行 inline scrim + Card + spinner + AbsorbPointer
+            // 集中器自动包 AbsorbPointer (R69 P0-2 修复) + scrim 0.54 (long task modal 标准)
+            LoadingScrim(
+              isLoading: _pdfLoading,
+              message: AppLocalizations.of(context).medReportPdfLoading,
+            ),
           ],
         ),
       ),

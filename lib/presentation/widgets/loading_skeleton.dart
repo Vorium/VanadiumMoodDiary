@@ -105,6 +105,70 @@ class LoadingSpinner extends StatelessWidget {
   }
 }
 
+/// 全屏遮罩 + 中央 Card(spinner + 文字) 集中器
+/// 用于 long task modal (PDF 生成 / 数据导出 / 同步等 5s+ 任务)
+///
+/// v0.27 R70 (emil B-2 / R68 spec 报告 P0-10 重构):
+/// - 抽 scrim + 中心 Card(spinner + 文字) 重复模式为集中器
+/// - 自动包 AbsorbPointer 锁死底层 (R69 P0-2 修复的回归防御)
+/// - scrim 0.54 (M3 Modal barrier 0.32 太浅, long task modal 需更深)
+///
+/// **使用模式**: 必须放在 Stack 内, 跟现有 Positioned.fill 模式一致
+/// ```dart
+/// Stack(
+///   children: [
+///     // ... 主内容
+///     LoadingScrim(isLoading: _pdfLoading, message: 'PDF 生成中...'),
+///   ],
+/// )
+/// ```
+class LoadingScrim extends StatelessWidget {
+  final bool isLoading;
+  final String message;
+  final double spinnerSize;
+
+  const LoadingScrim({
+    super.key,
+    required this.isLoading,
+    required this.message,
+    this.spinnerSize = 20,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isLoading) return const SizedBox.shrink();
+    return Positioned.fill(
+      child: AbsorbPointer(
+        child: ColoredBox(
+          color: Theme.of(context)
+              .colorScheme
+              .scrim
+              .withValues(alpha: AppTokens.scrimAlpha),
+          child: Center(
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTokens.spacingMd),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: spinnerSize,
+                      height: spinnerSize,
+                      child: LoadingSpinner(size: spinnerSize),
+                    ),
+                    const SizedBox(width: AppTokens.spacingSm),
+                    Text(message),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// 简单 shimmer 动画的占位（用 AnimatedOpacity 模拟，无外部依赖）
 class _Shimmer extends StatefulWidget {
   final Widget child;

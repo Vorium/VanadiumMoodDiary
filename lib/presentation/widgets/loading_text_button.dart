@@ -60,6 +60,14 @@ class LoadingTextButton extends StatelessWidget {
             icon: icon,
           ),
         ),
+      LoadingTextButtonVariant.outlined => OutlinedButton(
+          onPressed: isLoading ? null : onPressed,
+          child: _ChildStack(
+            label: label,
+            isLoading: isLoading,
+            icon: icon,
+          ),
+        ),
       LoadingTextButtonVariant.text => TextButton(
           onPressed: isLoading ? null : onPressed,
           child: _ChildStack(
@@ -80,7 +88,7 @@ class LoadingTextButton extends StatelessWidget {
   }
 }
 
-enum LoadingTextButtonVariant { filled, text, tonal }
+enum LoadingTextButtonVariant { filled, outlined, text, tonal }
 
 class _ChildStack extends StatelessWidget {
   const _ChildStack({
