@@ -93,7 +93,7 @@ class Strings {
   static const notifDailyCheckInTitle = '🌱 今天吃了药吗？';
   // v0.27 R72 (spzh R66 P0-4 续): 中性化, 不提 '家人' (避免病耻感)
   // 原: '点一下 = 打卡，让家人放心'
-  static const notifDailyCheckInBody = '点一下 = 打卡，留个今的踏实';
+  static const notifDailyCheckInBody = '点一下 = 打卡，留个今天的踏实';
   static String notifDailyCheckInTitleText({String? override}) =>
       override ?? notifDailyCheckInTitle;
   static String notifDailyCheckInBodyText({String? override}) =>
