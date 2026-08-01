@@ -354,8 +354,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         },
         loading: () => const LoadingSkeleton.fullScreen(),
         // v0.22 round 29 (emil-44): 改用 ErrorState 集中器
+        // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
         error: (e, _) => ErrorState(
-          title: AppLocalizations.of(context).commonLoadFailed(''),
+          title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
           detail: e.toString(),
           onRetry: () => ref.invalidate(ventEntryByIdProvider(widget.id)),
         ),

@@ -114,10 +114,11 @@ class EmailPreviewPage extends ConsumerWidget {
                     );
                   },
                   loading: () => const LoadingSkeleton.fullScreen(),
+                  // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
                   error: (e, _) => Padding(
                     padding: const EdgeInsets.all(AppTokens.spacingMd),
                     child: ErrorState(
-                      title: AppLocalizations.of(context).commonLoadFailed(''),
+                      title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
                       detail: e.toString(),
                     ),
                   ),
@@ -139,8 +140,9 @@ class EmailPreviewPage extends ConsumerWidget {
           );
         },
         loading: () => const LoadingSkeleton.fullScreen(),
+        // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
         error: (e, _) => ErrorState(
-          title: AppLocalizations.of(context).commonLoadFailed(''),
+          title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
           detail: e.toString(),
         ),
       ),

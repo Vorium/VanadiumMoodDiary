@@ -156,8 +156,9 @@ class SettingsPage extends ConsumerWidget {
           medsAsync.when(
             data: (meds) => MedicationsListWidget(meds: meds),
             loading: () => const LoadingSkeleton.fullScreen(),
+            // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
             error: (e, _) => ErrorState(
-              title: AppLocalizations.of(context).commonLoadFailed(''),
+              title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
               detail: e.toString(),
               onRetry: () => ref.invalidate(medicationsProvider),
             ),
@@ -214,8 +215,9 @@ class SettingsPage extends ConsumerWidget {
           contactsAsync.when(
             data: (contacts) => ContactsListWidget(contacts: contacts),
             loading: () => const LoadingSkeleton.fullScreen(),
+            // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
             error: (e, _) => ErrorState(
-              title: AppLocalizations.of(context).commonLoadFailed(''),
+              title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
               detail: e.toString(),
               onRetry: () => ref.invalidate(contactsProvider),
             ),

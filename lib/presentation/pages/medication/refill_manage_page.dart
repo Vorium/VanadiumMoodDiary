@@ -74,8 +74,9 @@ class RefillManagePage extends ConsumerWidget {
       child: medsAsync.when(
         data: (meds) => _buildBody(context, ref, meds),
         loading: () => const LoadingSkeleton.fullScreen(),
+        // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
         error: (e, _) => ErrorState(
-          title: AppLocalizations.of(context).commonLoadFailed(''),
+          title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
           detail: e.toString(),
           onRetry: () => ref.invalidate(medicationsProvider),
         ),

@@ -40,10 +40,11 @@ class TempMedicationDialog extends ConsumerStatefulWidget {
         context: context,
         builder: (_) => const LoadingSkeleton.fullScreen(),
       ),
+      // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
       error: (e, _) => showDialog<void>(
         context: context,
         builder: (_) => ErrorState(
-          title: AppLocalizations.of(context).commonLoadFailed(''),
+          title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
           detail: e.toString(),
         ),
       ),

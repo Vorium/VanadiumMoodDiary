@@ -51,8 +51,10 @@ class AssessmentHistoryPage extends ConsumerWidget {
         },
         loading: () => const LoadingSkeleton.fullScreen(),
         // v0.22 round 29 (emil-44): 改用 ErrorState 集中器, 加 retry 入口
+        // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString() 走
+        // l10n 模板, 跟 detail 一致
         error: (e, _) => ErrorState(
-          title: AppLocalizations.of(context).commonLoadFailed(''),
+          title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
           detail: e.toString(),
           onRetry: () => ref.invalidate(assessmentsProvider),
         ),

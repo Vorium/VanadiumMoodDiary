@@ -78,7 +78,10 @@ class _TrendPageState extends ConsumerState<TrendPage> {
               },
               loading: () => const LoadingSkeleton.fullScreen(),
               error: (Object e, _) => ErrorState(
-                title: AppLocalizations.of(context).commonLoadFailed(''),
+                // v0.27 round 77 (R76-N8 修): 之前 commonLoadFailed('') 传空
+                // string, UI 显示 "加载失败: " (空)。改用 e.toString() 走
+                // l10n 模板 "加载失败: {error}", 跟 detail 一致。
+                title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
                 detail: e.toString(),
                 onRetry: () => ref.invalidate(allCheckInsProvider),
               ),
@@ -192,7 +195,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 // 替代 inline height: 200 magic
                 height: AppTokens.chartPlaceholderHeight,
                 child: ErrorState(
-                  title: AppLocalizations.of(context).commonLoadFailed(''),
+                  // v0.27 round 77 (R76-N8 修): 之前传空 string
+                  title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
                   detail: e.toString(),
                 ),
               ),
@@ -218,7 +222,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 // 替代 inline height: 200 magic
                 height: AppTokens.chartPlaceholderHeight,
                 child: ErrorState(
-                  title: AppLocalizations.of(context).commonLoadFailed(''),
+                  // v0.27 round 77 (R76-N8 修): 之前传空 string
+                  title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
                   detail: e.toString(),
                 ),
               ),
