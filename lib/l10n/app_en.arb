@@ -940,6 +940,22 @@
     "description": "SafetyAlert lastStr — v0.27 R75 fix (R74-N8): was hardcoded Chinese, returned when lastCheckIn==null"
   },
   "homeSnoozeTitle": "⏰ Time to check in (in 5 min)",
+  "notifChannelMedicationName": "Medication reminder",
+  "@notifChannelMedicationName": {
+    "description": "Android notification channel name (medication) — v0.27 R77 fix (R76-N1): was const hardcoded Chinese, en/zh_Hant system settings showed Chinese"
+  },
+  "notifChannelMedicationDesc": "Reminds you to check in when it's time",
+  "@notifChannelMedicationDesc": {
+    "description": "Android notification channel description (medication) — v0.27 R77 fix (R76-N1)"
+  },
+  "notifChannelSafetyName": "Safety alert",
+  "@notifChannelSafetyName": {
+    "description": "Android notification channel name (safety) — v0.27 R77 fix (R76-N1)"
+  },
+  "notifChannelSafetyDesc": "Alerts when you haven't checked in for a long time",
+  "@notifChannelSafetyDesc": {
+    "description": "Android notification channel description (safety) — v0.27 R77 fix (R76-N1)"
+  },
   "homeSnoozeBody": "You snoozed earlier — time to tap and check in",
   "homeSnoozeConfirmed": "OK, will remind you again in 5 min 👌",
   "homeSnoozeButton": "⏰ Remind again in 5 min",

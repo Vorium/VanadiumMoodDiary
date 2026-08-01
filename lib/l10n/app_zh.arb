@@ -982,6 +982,22 @@
     "description": "SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬编码中文, lastCheckIn==null 时返"
   },
   "homeSnoozeTitle": "⏰ 该打卡了（5min 后）",
+  "notifChannelMedicationName": "吃药提醒",
+  "@notifChannelMedicationName": {
+    "description": "Android 通知 channel 名 (medication) — v0.27 R77 修 (R76-N1): 之前 const 硬编码中文, en/zh_Hant 系统设置看中文"
+  },
+  "notifChannelMedicationDesc": "到点提醒你吃药打卡",
+  "@notifChannelMedicationDesc": {
+    "description": "Android 通知 channel 描述 (medication) — v0.27 R77 修 (R76-N1)"
+  },
+  "notifChannelSafetyName": "安全警报",
+  "@notifChannelSafetyName": {
+    "description": "Android 通知 channel 名 (safety) — v0.27 R77 修 (R76-N1)"
+  },
+  "notifChannelSafetyDesc": "长时间未打卡时提醒",
+  "@notifChannelSafetyDesc": {
+    "description": "Android 通知 channel 描述 (safety) — v0.27 R77 修 (R76-N1)"
+  },
   "homeSnoozeBody": "刚才您点了「snooze」，是时候点一下 = 打卡了",
   "homeSnoozeConfirmed": "好，5 分钟后会再提醒您 👌",
   "homeSnoozeButton": "⏰ 5 分钟后再提醒",

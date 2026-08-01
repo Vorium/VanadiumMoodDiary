@@ -1522,6 +1522,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeSnoozeTitle => '⏰ Time to check in (in 5 min)';
 
   @override
+  String get notifChannelMedicationName => 'Medication reminder';
+
+  @override
+  String get notifChannelMedicationDesc =>
+      'Reminds you to check in when it\'s time';
+
+  @override
+  String get notifChannelSafetyName => 'Safety alert';
+
+  @override
+  String get notifChannelSafetyDesc =>
+      'Alerts when you haven\'t checked in for a long time';
+
+  @override
   String get homeSnoozeBody => 'You snoozed earlier — time to tap and check in';
 
   @override

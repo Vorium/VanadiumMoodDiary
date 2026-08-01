@@ -2644,6 +2644,30 @@ abstract class AppLocalizations {
   /// **'⏰ 该打卡了（5min 后）'**
   String get homeSnoozeTitle;
 
+  /// Android 通知 channel 名 (medication) — v0.27 R77 修 (R76-N1): 之前 const 硬编码中文, en/zh_Hant 系统设置看中文
+  ///
+  /// In zh, this message translates to:
+  /// **'吃药提醒'**
+  String get notifChannelMedicationName;
+
+  /// Android 通知 channel 描述 (medication) — v0.27 R77 修 (R76-N1)
+  ///
+  /// In zh, this message translates to:
+  /// **'到点提醒你吃药打卡'**
+  String get notifChannelMedicationDesc;
+
+  /// Android 通知 channel 名 (safety) — v0.27 R77 修 (R76-N1)
+  ///
+  /// In zh, this message translates to:
+  /// **'安全警报'**
+  String get notifChannelSafetyName;
+
+  /// Android 通知 channel 描述 (safety) — v0.27 R77 修 (R76-N1)
+  ///
+  /// In zh, this message translates to:
+  /// **'长时间未打卡时提醒'**
+  String get notifChannelSafetyDesc;
+
   /// No description provided for @homeSnoozeBody.
   ///
   /// In zh, this message translates to:
@@ -3547,7 +3571,7 @@ abstract class AppLocalizations {
   /// No description provided for @safetyCheckResultOk.
   ///
   /// In zh, this message translates to:
-  /// **'正常（{days} 天前打卡）'**
+  /// **'无风险（{days} 天前打卡）'**
   String safetyCheckResultOk(int days);
 
   /// No description provided for @safetyCheckResultNoData.

@@ -77,11 +77,18 @@ class SnoozeManager {
     // 取消同 id 的旧 snooze（避免叠加）
     await _plugin.cancel(id);
 
-    const details = NotificationDetails(
+    // v0.27 round 77 (R76-N1 修): channel name/desc 改走 l10n 化函数版
+    // (Strings.notifChannelMedication*Text), en/zh_Hant 系统设置看本地化。
+    // 老 const 字段 (Strings.notifChannelMedicationName) 仍保留作 fallback。
+    // 注: AndroidNotificationDetails 是 const constructor, 但 channelName/desc
+    // 现在是 runtime 函数调用, 所以 details 整块不 const — 实际是 Android
+    // 平台每次 init channel 时拿到的是新值 (老 channel name 已注册不会被改,
+    // 需 uninstall 重装)。
+    final details = NotificationDetails(
       android: AndroidNotificationDetails(
         'chroniccare.medication',
-        '吃药提醒',
-        channelDescription: '到点提醒你吃药打卡',
+        Strings.notifChannelMedicationNameText(),
+        channelDescription: Strings.notifChannelMedicationDescText(),
         importance: Importance.high,
         priority: Priority.high,
       ),

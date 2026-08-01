@@ -1448,6 +1448,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeSnoozeTitle => '⏰ 该打卡了（5min 后）';
 
   @override
+  String get notifChannelMedicationName => '吃药提醒';
+
+  @override
+  String get notifChannelMedicationDesc => '到点提醒你吃药打卡';
+
+  @override
+  String get notifChannelSafetyName => '安全警报';
+
+  @override
+  String get notifChannelSafetyDesc => '长时间未打卡时提醒';
+
+  @override
   String get homeSnoozeBody => '刚才您点了「snooze」，是时候点一下 = 打卡了';
 
   @override
@@ -1944,7 +1956,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String safetyCheckResultOk(int days) {
-    return '正常（$days 天前打卡）';
+    return '无风险（$days 天前打卡）';
   }
 
   @override
@@ -3561,6 +3573,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeSnoozeTitle => '⏰ 該打卡了（5min 後）';
 
   @override
+  String get notifChannelMedicationName => '吃藥提醒';
+
+  @override
+  String get notifChannelMedicationDesc => '到點提醒你吃藥打卡';
+
+  @override
+  String get notifChannelSafetyName => '安全警報';
+
+  @override
+  String get notifChannelSafetyDesc => '長時間未打卡時提醒';
+
+  @override
   String get homeSnoozeBody => '剛才您點了「snooze」，是時候點一下 = 打卡了';
 
   @override
@@ -4057,7 +4081,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String safetyCheckResultOk(int days) {
-    return '正常（$days 天前打卡）';
+    return '無風險（$days 天前打卡）';
   }
 
   @override
