@@ -4,10 +4,11 @@
 // 长期目标：接入本地 MedGemma 1.5 / Llama 3 做更智能的上下文理解
 //
 // 触发规则：
-// - 持续晚归（连续 3 天 22 点后打卡）→ 主动 push "记得早点休息"
-// - 周末漏打卡 → 主动 push "周末也要记得吃药"
-// - 漏 1 天后第二天 10 点还没打卡 → 主动 push "你还好吗？"（不是通知家人）
-// - 连续 7 天准时 → 庆祝 push "你真棒！"
+// - 持续晚归（连续 3 天 22 点后打卡）→ 主动 push (care_copy lateCheckInHabit 文案)
+// - 周末漏打卡 → 主动 push (care_copy weekendMissed 文案)
+// - 漏 1 天后第二天 10 点还没打卡 → 主动 push (care_copy secondDayMissed 文案, 不是通知家人)
+// - 连续 7 天准时 → 庆祝 push (care_copy weekPerfect 文案, R72 spzh P0-4 中性化)
+// 实际文案看 `lib/domain/logic/care_copy.dart` (R18 P1-11 集中, R72 中性化, R77 R76-N7 续改 3 处)
 //
 // v0.18 round 18 (P1-11) fix: 文案集中到 domain/logic/care_copy.dart,
 // 不再 const string inline。trigger 4 个文案 + 软提醒共用一份 source of truth,
