@@ -162,22 +162,22 @@ void main() {
     expect(find.text('重度'), findsWidgets);
   });
 
-  testWidgets('严重度：低分显示"正常"', (tester) async {
+  testWidgets('严重度：低分显示"几乎没有" (R75 临床精度, PHQ-9 临床 minimal)', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
         records: [
-          _phq9(total: 3, at: DateTime(2026, 7, 1)), // 正常（< 25% × 27 = 6.75）
+          _phq9(total: 3, at: DateTime(2026, 7, 1)), // 几乎没有（< 25% × 27 = 6.75）
         ],
       ),
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    expect(find.text('正常'), findsWidgets);
+    expect(find.text('几乎没有'), findsWidgets);
   });
 
   // v0.14 fix (Bug C): 严重度按临床标准，不是百分比
-  testWidgets('严重度：PHQ-9 score=5 → "轻度"（百分比会错判为"正常"）', (tester) async {
+  testWidgets('严重度：PHQ-9 score=5 → "轻度"（百分比会错判为"几乎没有"）', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
@@ -188,7 +188,7 @@ void main() {
     );
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // PHQ-9 临床: 0-4=正常, 5-9=轻度
+    // PHQ-9 临床: 0-4=几乎没有, 5-9=轻度
     expect(find.text('轻度'), findsWidgets);
   });
 
@@ -207,7 +207,7 @@ void main() {
     expect(find.text('重度'), findsWidgets);
   });
 
-  testWidgets('严重度：GAD-7 score=5 → "轻度"（百分比 23.8% 会错判为"正常"）', (tester) async {
+  testWidgets('严重度：GAD-7 score=5 → "轻度"（百分比 23.8% 会错判为"几乎没有"）', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(
       _wrap(
