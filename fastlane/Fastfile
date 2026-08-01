@@ -1,17 +1,20 @@
 # v0.27 round 67 (Sprint 1 上架前 P0, appstore C-P0-11): Fastfile
 #
-# iOS 端 fastlane 配置。Android 端不需要 (Play Store 用 flutter build appbundle
-# + Play Console 上传就行, 见 docs/PLAYSTORE_SIGNING_GUIDE.md)。
+# iOS 端 fastlane 配置 + R70 (googleplay GP-P0-8) Android 端 platform :android do 块
 #
 # 用法:
 #   bundle exec fastlane ios beta      # → TestFlight
 #   bundle exec fastlane ios release   # → App Store
 #   bundle exec fastlane ios metadata  # 只同步 metadata
+#   bundle exec fastlane android internal  # → Google Play Internal Testing
+#   bundle exec fastlane android production # → Google Play Production
+#   bundle exec fastlane android metadata  # 只同步 metadata
 #
-# 前置 (R67 仍需用户完成):
+# 前置 (R67/R70 仍需用户完成):
 #   1. fastlane/Appfile 填 apple_id / team_id / itc_team_id 真实值
 #   2. App Store Connect API Key 配到 ~/.fastlane/APPLE_ID_KEY_ID.p8
-#   3. 装 fastlane: gem install fastlane
+#   3. Android: 配 google_play_json_key_path (Service Account JSON for Play Console)
+#      装 fastlane: gem install fastlane
 #
 # 安全注意: Appfile 不要 commit 真实 apple_id (R67 暂留 TODO, 用户替换)
 default_platform(:ios)
@@ -70,6 +73,79 @@ platform :ios do
       skip_binary_upload: true,
       skip_app_version_update: true,
       force: true,
+    )
+  end
+end
+
+# v0.27 R70 (googleplay GP-P0-8): Android 端 fastlane 块
+# Play Store 上传 metadata 自动化 (跟 iOS deliver 平行)
+# Play App Signing 已启用 (R63 Sprint 1 完成), keystore 由 google_play_key
+# Service Account JSON 签发
+#
+# 用法:
+#   bundle exec fastlane android internal    # → Internal Testing track
+#   bundle exec fastlane android production  # → Production track
+#   bundle exec fastlane android metadata    # → 只同步 fastlane/metadata/android/*
+#
+# 前置:
+#   1. 配 google_play_json_key_path (Service Account JSON, Play Console → Setup → API access)
+#   2. Android keystore 已配 (见 docs/PLAYSTORE_SIGNING_GUIDE.md)
+#   3. 0 0 0 0 0 (R70: Play Console 4 大表单仍 0 维护, 提交前必填)
+platform :android do
+  before_all do
+    # 0 副作用: 不自动跑 git pull / git push
+  end
+
+  desc "Build & upload to Google Play Internal Testing"
+  lane :internal do
+    # v0.27 R70: build_aab (Gradle) 走 release 模式, 产出 .aab
+    # R67 已配 signingConfigs.release (读 key.properties 缺则 fallback debug)
+    # R70 推荐: 上 store 前用真实 keystore
+    gradle(
+      task: "bundleRelease",
+      project_dir: "android/",
+      flags: "--no-daemon",
+    )
+    upload_to_play_store(
+      track: "internal",
+      release_status: "completed",
+      skip_upload_apk: true,           # 只传 .aab
+      skip_upload_aab: false,
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      validate_only: false,             # 改成 true 只验证不真传
+    )
+  end
+
+  desc "Promote to Google Play Production"
+  lane :production do
+    # Promote internal track 到 production (Google Play 自动处理)
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      release_status: "completed",
+      skip_upload_apk: true,
+      skip_upload_aab: true,            # production 推 promote, 不需要新传 aab
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+    )
+  end
+
+  desc "仅同步 metadata + screenshots + feature_graphic (不 build / 不上传 aab)"
+  lane :metadata do
+    upload_to_play_store(
+      track: "internal",
+      skip_upload_apk: true,
+      skip_upload_aab: true,            # 只同步 metadata
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      validate_only: true,              # 验证不真传 (R70 简化)
     )
   end
 end

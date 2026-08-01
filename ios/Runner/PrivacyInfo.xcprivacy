@@ -99,6 +99,12 @@
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
 				<string>CA92.1</string>
+				<!--
+					v0.27 R71 (P2-1 appstore 修复): 补 CA92.2 (cross-app 共享)
+					项目自身不用 cross-app, 但 SharedPreferences (flutter_secure_storage 备份) 内部
+					可能用 App Group 共享, 防御性声明 Apple 抽审不被打回。
+				-->
+				<string>CA92.2</string>
 			</array>
 		</dict>
 		<dict>
@@ -123,6 +129,19 @@
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
 				<string>85F4.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryProcessInfo</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<!--
+					v0.27 R71 (P2-1 appstore 修复): 加 ProcessInfo reason AC67.1
+					flutter_local_notifications 17.x 内部可能调 ProcessInfo.processInfo
+					取 thermalState / uptime, Apple 抽审要求声明 reason, 防御性补 AC67.1。
+				-->
+				<string>AC67.1</string>
 			</array>
 		</dict>
 	</array>

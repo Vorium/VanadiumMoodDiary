@@ -106,8 +106,13 @@
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
+	<!--
+		v0.27 R70 (P2-3 appstore 修复): 删 UIMainStoryboardFile
+		原因: Scene 模式 (UIApplicationSceneManifest / UISceneStoryboardFile) 已接管
+		启动流程, UIMainStoryboardFile 重复声明是冗余。
+		实际启动走 SceneDelegate → UISceneStoryboardFile=Main, UIMainStoryboardFile
+		被 iOS 忽略但声明让审核员困惑'有 2 个 storyboard?'。
+	-->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
