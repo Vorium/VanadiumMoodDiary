@@ -60,7 +60,7 @@ class RefillSchedule {
 /// 抽 ScheduleRefillReminder 业务编排
 ///
 /// v0.27 round 65: 给 medications 列表 + now, 计算每个 med 的续方 fire time
-/// (纯函数), caller 拿 List<RefillSchedule> 自行 cancel + zonedSchedule。
+/// (纯函数), caller 拿 `List<RefillSchedule>` 自行 cancel + zonedSchedule。
 ///
 /// 业务规则:
 /// - inactive 药物跳过 (跟 RefillNotifier.rescheduleRefillReminders 1:1)

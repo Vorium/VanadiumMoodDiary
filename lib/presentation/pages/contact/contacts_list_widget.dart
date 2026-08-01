@@ -88,7 +88,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
           AppListTile(
             leading: Icon(Icons.add, color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).setupAddContact),
-            onTap: () => _showAddContactDialog(context, ref),
+            onTap: () => _showAddContactDialog(ref),
           ),
         ],
       ),
@@ -145,12 +145,12 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
     }
   }
 
-  /// v0.27 R71 (P5.4 修复): 改 Future<void> + try/finally 包 showDialog,
+  /// v0.27 R71 (P5.4 修复): 改 `Future<void>` + try/finally 包 showDialog,
   /// 替代 .then() 残存模式。
   /// 之前用 .then((_) { dispose }) 是为了 dialog 关闭后清理 controllers,
   /// 但 .then() 模式已被 R17+R56b 标为 deprecated (emil 'async + await 优先')。
   /// try/finally 等价 + 异常路径更安全 (dialog 抛异常也会 dispose)。
-  Future<void> _showAddContactDialog(BuildContext context, WidgetRef ref) async {
+  Future<void> _showAddContactDialog(WidgetRef ref) async {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     bool saving = false;
@@ -193,13 +193,21 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                   onPressed: saving
                       ? null
                       : () async {
+                          // v0.27 R73 (重构-1): 提前 capture ctx 为 final local,
+                          // analyzer 看 ctx 不跨 await 改变 (immutable final),
+                          // 消除 5 处 use_build_context_synchronously warning。
+                          // 之前 closure 内的 `context` 是从 outer method scope 捕获的
+                          // lexical variable, analyzer 看作"外部来源", 跟 `if (mounted)`
+                          // 检查不相关 (mounted 是 State field, context 是 captured variable)。
+                          // 改成 final local 后 analyzer 不再要求 mounted check 关联。
+                          final ctx = context;
                           final phone = phoneController.text.trim();
                           if (phone.isEmpty) return;
                           if (!PhoneValidator.isValid(phone)) {
                             // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
                             AppSnackBar.showInfo(
-                              context,
-                              AppLocalizations.of(context).snackbarPhoneInvalid,
+                              ctx,
+                              AppLocalizations.of(ctx).snackbarPhoneInvalid,
                             );
                             return;
                           }
@@ -209,33 +217,41 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                             // (PIPL §13 单独同意) → 用户同意才进 add()。
                             // 拒绝 → 弹 snackbar 提示, 不保存。
                             if (!ctx.mounted) return;
+                            // v0.27 R73 (重构-1): analyzer 期望 await 之后用
+                            // BuildContext 之前有 `if (ctx.mounted)` 守卫。
+                            // (State.mounted 跟 captured ctx 在 analyzer 看来
+                            //  来源不同, `if (mounted)` 算 "unrelated"。)
+                            if (!mounted) return;
                             // v0.27 round 62 (P0-2 修复): 拿当前用户配置的失联阈值,
                             // 让 consent dialog 文案里的"连续 N 天"是用户自己的值。
-                            final thresholdDays =
-                                await SafetyConfigService().getThresholdDays();
-                            final consent = await ConsentDialog.show(
-                              context,
-                              kind: ConsentKind.emergencyContactSharing,
-                              thresholdDays: thresholdDays,
-                            );
-                            if (consent == null) {
-                              // 用户拒绝, 退出 add 流程
-                              if (ctx.mounted) {
-                                setLocal(() => saving = false);
-                                AppSnackBar.showInfo(
-                                  context,
-                                  AppLocalizations.of(context)
-                                      .contactConsentReject,
-                                );
+                            if (ctx.mounted) {
+                              final thresholdDays =
+                                  await SafetyConfigService().getThresholdDays();
+                              if (!ctx.mounted) return;
+                              final consent = await ConsentDialog.show(
+                                ctx,
+                                kind: ConsentKind.emergencyContactSharing,
+                                thresholdDays: thresholdDays,
+                              );
+                              if (consent == null) {
+                                // 用户拒绝, 退出 add 流程
+                                if (ctx.mounted) {
+                                  setLocal(() => saving = false);
+                                  AppSnackBar.showInfo(
+                                    ctx,
+                                    AppLocalizations.of(ctx)
+                                        .contactConsentReject,
+                                  );
+                                }
+                                return;
                               }
-                              return;
-                            }
-                            await ref.read(contactRepositoryProvider).add(
+                              if (!ctx.mounted) return;
+                              await ref.read(contactRepositoryProvider).add(
                                   // v0.27 round 62 (P1-10 修复): 改用 l10n key 而非
                                   // hardcode 英文 'Contact'。 en/zh/zh_Hant 三种语言
                                   // 都用 i18n key, 没填姓名时给合理的本地化默认值。
                                   name: nameController.text.trim().isEmpty
-                                      ? AppLocalizations.of(context)
+                                      ? AppLocalizations.of(ctx)
                                           .contactDefaultName
                                       : nameController.text.trim(),
                                   phone:
@@ -243,13 +259,14 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                                   consentArtifact: consent,
                                   sortOrder: 99,
                                 );
-                            if (ctx.mounted) Navigator.pop(ctx);
+                              if (ctx.mounted) Navigator.pop(ctx);
+                            }
                           } catch (e) {
                             if (ctx.mounted) {
                               // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
                               AppSnackBar.showError(
-                                context,
-                                action: AppLocalizations.of(context)
+                                ctx,
+                                action: AppLocalizations.of(ctx)
                                     .commonActionSave,
                                 error: e,
                               );

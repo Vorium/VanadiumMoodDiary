@@ -9,7 +9,7 @@ import 'package:chroniccare/domain/logic/medication_report.dart'
 /// v0.25 round 58 (spen P1 #12 god class 拆分): 临时用药条目提取器
 ///
 /// 接受 window 内 checkIns, 过滤 isTemp + 解析 note JSON, 按时间倒序
-/// 返回 List<TempMedEntry>. 临时用药空 description 退化为 '—' 占位符.
+/// 返回 `List<TempMedEntry>`. 临时用药空 description 退化为 '—' 占位符.
 class TempEntryExtractor {
   TempEntryExtractor._();
 

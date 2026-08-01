@@ -392,6 +392,14 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         setState(() => _saving = false);
         return;
       }
+      // v0.27 R73 (重构-1): analyzer 期望 await 后用 context 之前有 mounted guard。
+      // 之前直接用 `AppLocalizations.of(context)` 在 await 之后, analyzer 报
+      // use_build_context_synchronously (R17+R56b 已知模式, 之前 5 处都靠 mounted
+      // check 跟 context 同一对象 修, 这里 for-loop 内 context 跨 await 用, 同款)。
+      if (!mounted) {
+        setState(() => _saving = false);
+        return;
+      }
       final normalized = PhoneValidator.normalize(phone) ?? phone;
       final name = _contactNameControllers[i].text.trim().isEmpty
           ? AppLocalizations.of(context).setupContactFallbackName(i + 1)

@@ -1221,14 +1221,18 @@
   "safetyCheckResultOk": "正常（{days} 天前打卡）",
   "@safetyCheckResultOk": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultNoData": "新用户，暂无打卡",
   "safetyCheckResultAlertedToday": "今天已经发过告警（{days} 天前打卡）",
   "@safetyCheckResultAlertedToday": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultDndSuppressed": "DND 时段，跳过告警",
@@ -1236,21 +1240,31 @@
   "safetyCheckResultAlertedMocked": "**开发模式**，未实际通知联系人（mock: {mocked}）",
   "@safetyCheckResultAlertedMocked": {
     "placeholders": {
-      "mocked": { "type": "int" }
+      "mocked": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultAlerted": "已告警：{days} 天前打卡，已通知 {notified} 位联系人（{failed} 失败）",
   "@safetyCheckResultAlerted": {
     "placeholders": {
-      "days": { "type": "int" },
-      "notified": { "type": "int" },
-      "failed": { "type": "int" }
+      "days": {
+        "type": "int"
+      },
+      "notified": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultError": "错误：{message}",
   "@safetyCheckResultError": {
     "placeholders": {
-      "message": { "type": "String" }
+      "message": {
+        "type": "String"
+      }
     }
   },
   "settingsIapUpgradeTitle": "升级到 Pro",
@@ -1289,38 +1303,23 @@
   "dayDetailCheckInWith": "打卡 · {name}",
   "@dayDetailCheckInWith": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "dayDetailDailyCheckIn": "每日打卡",
   "dayDetailTempWith": "临时 · {name}",
   "@dayDetailTempWith": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "dayDetailTempMed": "临时吃药",
   "dayDetailPhq9": "PHQ-9 抑郁筛查",
   "dayDetailGad7": "GAD-7 焦虑筛查",
-  "ventDurationSeconds": "{sec}秒",
-  "@ventDurationSeconds": {
-    "placeholders": {
-      "sec": { "type": "int" }
-    }
-  },
-  "ventDurationMinutes": "{m}分",
-  "@ventDurationMinutes": {
-    "placeholders": {
-      "m": { "type": "int" }
-    }
-  },
-  "ventDurationMinutesSeconds": "{m}分{sec}秒",
-  "@ventDurationMinutesSeconds": {
-    "placeholders": {
-      "m": { "type": "int" },
-      "sec": { "type": "String" }
-    }
-  },
   "scaleHotlineCn": "全国 24 小时心理援助热线",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
   "scaleHotlineHk": "撒玛利亚防止自杀会（24h 多语言）",

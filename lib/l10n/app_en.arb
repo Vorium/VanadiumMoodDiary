@@ -1179,14 +1179,18 @@
   "safetyCheckResultOk": "OK (last check-in {days} days ago)",
   "@safetyCheckResultOk": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultNoData": "New user, no check-ins yet",
   "safetyCheckResultAlertedToday": "Alert already sent today (last check-in {days} days ago)",
   "@safetyCheckResultAlertedToday": {
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultDndSuppressed": "DND window, alert skipped",
@@ -1194,21 +1198,31 @@
   "safetyCheckResultAlertedMocked": "**Dev mode**, contacts not actually notified (mock: {mocked})",
   "@safetyCheckResultAlertedMocked": {
     "placeholders": {
-      "mocked": { "type": "int" }
+      "mocked": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultAlerted": "Alerted: {days} days since last check-in, {notified} contact(s) notified ({failed} failed)",
   "@safetyCheckResultAlerted": {
     "placeholders": {
-      "days": { "type": "int" },
-      "notified": { "type": "int" },
-      "failed": { "type": "int" }
+      "days": {
+        "type": "int"
+      },
+      "notified": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
     }
   },
   "safetyCheckResultError": "Error: {message}",
   "@safetyCheckResultError": {
     "placeholders": {
-      "message": { "type": "String" }
+      "message": {
+        "type": "String"
+      }
     }
   },
   "settingsIapUpgradeTitle": "Upgrade to Pro",
@@ -1247,38 +1261,23 @@
   "dayDetailCheckInWith": "Check-in · {name}",
   "@dayDetailCheckInWith": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "dayDetailDailyCheckIn": "Daily check-in",
   "dayDetailTempWith": "Temp · {name}",
   "@dayDetailTempWith": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "dayDetailTempMed": "Temp dose",
   "dayDetailPhq9": "PHQ-9 Depression Screening",
   "dayDetailGad7": "GAD-7 Anxiety Screening",
-  "ventDurationSeconds": "{sec}s",
-  "@ventDurationSeconds": {
-    "placeholders": {
-      "sec": { "type": "int" }
-    }
-  },
-  "ventDurationMinutes": "{m}m",
-  "@ventDurationMinutes": {
-    "placeholders": {
-      "m": { "type": "int" }
-    }
-  },
-  "ventDurationMinutesSeconds": "{m}m {sec}s",
-  "@ventDurationMinutesSeconds": {
-    "placeholders": {
-      "m": { "type": "int" },
-      "sec": { "type": "String" }
-    }
-  },
   "scaleHotlineCn": "National 24h Psychological Aid Hotline",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
   "scaleHotlineHk": "Samaritans Befrienders Hong Kong (24h multilingual)",

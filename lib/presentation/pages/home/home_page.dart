@@ -440,10 +440,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
     Haptics.success();
     await ref.read(checkInNotifierProvider.notifier).checkIn();
-    if (!context.mounted) return;
-    final newStreak = currentStreak + 1;
-    // 显示庆祝 overlay
-    _showCelebrationOverlay(context, _celebrationFor(context, newStreak));
+    if (mounted) {
+      final newStreak = currentStreak + 1;
+      // 显示庆祝 overlay
+      _showCelebrationOverlay(context, _celebrationFor(context, newStreak));
+    }
     // 打卡成功：取消所有 snooze
     // v0.22 round 29 (spen-bug-04): 删 cancelSoftReminder 死代码 (scheduleSoftReminder
     // 已在 v0.18 P2-P0-5 删除, cancelSoftReminder 跟着成 no-op)
