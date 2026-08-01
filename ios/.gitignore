@@ -15,6 +15,10 @@ Icon?
 profile
 xcuserdata
 **/.generated/
+
+# v0.27 round 77 (AS-P0-5 修): Podfile 跟踪, Podfile.lock 仍 .gitignore
+# (R77 占位 Podfile, 实际 lock 待 macOS `pod install` 重新生成)
+!**/Podfile
 Flutter/App.framework
 Flutter/Flutter.framework
 Flutter/Flutter.podspec
