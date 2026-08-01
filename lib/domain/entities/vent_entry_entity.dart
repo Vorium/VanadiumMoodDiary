@@ -16,7 +16,6 @@
 // `'$m分${s.toString().padLeft(2, '0')}秒'` 走该 key 解决硬编)。
 
 import 'package:chroniccare/core/shared/domain_value.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 树洞条目（领域实体）
 ///
@@ -63,34 +62,39 @@ class VentEntryEntity {
 
   /// i18n 录音时长人类可读格式
   ///
-  /// caller 传 [AppLocalizations] 走 zh/en/zh_Hant，不传返中文 fallback
-  /// (老 test 兼容 / 单测用)。
+  /// caller 传 3 个 i18n closure 走 zh/en/zh_Hant，3 closure 对应 3 个 i18n key:
+  /// - `getSeconds(sec)` = `ventDurationSeconds` (`'{sec}秒'` zh / `'{sec}s'` en)
+  /// - `getMinutes(m)` = `ventDurationMinutes` (`'{m}分'` zh / `'{m}m'` en)
+  /// - `getMinutesSeconds(m, sec)` = `ventDurationMinutesSeconds`
+  ///   (`'{m}分{sec}秒'` zh / `'{m}m {sec}s'` en)
   ///
-  /// 3 个 i18n key 模板：
-  /// - `ventDurationSeconds` = `'{sec}秒'` (zh) / `'{sec}s'` (en)
-  /// - `ventDurationMinutes` = `'{m}分'` (zh) / `'{m}m'` (en)
-  /// - `ventDurationMinutesSeconds` = `'{m}分{sec}秒'` (zh) / `'{m}m {sec}s'` (en)
+  /// 不传 closure → 中文 fallback (老 test 兼容 / 单测用)。
   ///
-  /// v0.28 round 65 (spzh P2-I): 替代之前 `durationLabel()` 硬编中文
-  /// `'${sec}秒' / '${m}分' / '${m}分${s.toString().padLeft(2, '0')}秒'`。
-  /// 老 `durationLabel()` 不传参保留为中文 fallback (不破坏 R18 21 case test)。
-  String durationLabelL10n({String? override, AppLocalizations? l10n}) {
+  /// v0.28 round 65 (spzh P2-I): 替代之前 `durationLabel()` 硬编中文。
+  /// v0.27 round 77 (R76-N11 修): 从 `AppLocalizations? l10n` 改成 3 closure
+  /// 参数, 让 domain 0 flutter import。
+  String durationLabelL10n({
+    String? override,
+    String Function(int sec)? getSeconds,
+    String Function(int m)? getMinutes,
+    String Function(int m, String sec)? getMinutesSeconds,
+  }) {
     final sec = audioDurationSec;
     if (sec == null) return '';
     if (sec < 60) {
-      if (l10n != null) return l10n.ventDurationSeconds(sec);
+      if (getSeconds != null) return getSeconds(sec);
       return override ?? '$sec秒';
     }
     final m = sec ~/ 60;
     final s = sec % 60;
     if (s == 0) {
-      if (l10n != null) return l10n.ventDurationMinutes(m);
+      if (getMinutes != null) return getMinutes(m);
       return override ?? '$m分';
     }
-    if (l10n != null) {
+    if (getMinutesSeconds != null) {
       // v0.28 round 65: pad 0 在 Dart 端 (ARB String placeholder),
       // 中文 '1分05秒' 0-pad 保留 — 跟原 R18 行为一致
-      return l10n.ventDurationMinutesSeconds(m, s.toString().padLeft(2, '0'));
+      return getMinutesSeconds(m, s.toString().padLeft(2, '0'));
     }
     return override ?? '$m分${s.toString().padLeft(2, '0')}秒';
   }

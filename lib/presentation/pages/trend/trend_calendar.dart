@@ -295,13 +295,19 @@ class _DayDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     // v0.28 round 65 (spzh P2-H 修复): DayDetailCalculator.fromData
-    // 加 l10n 参数, 事件 title 走 dayDetail* i18n key (zh/en/zh_Hant)
+    // v0.27 round 77 (R76-N11 修): 改用 6 个 closure 注入 i18n, 跟
+    // l10n 解耦 (l10n 通过 closure 闭包传入, day_detail.dart 不再 import l10n)。
     final detail = DayDetailCalculator.fromData(
       date: date,
       checkIns: allCheckIns,
       moodEntries: moodEntries,
       medications: medications,
-      l10n: l10n,
+      checkInLabel: (medName) => l10n.dayDetailCheckInWith(medName ?? ''),
+      dailyLabel: () => l10n.dayDetailDailyCheckIn,
+      tempLabel: (medName) => l10n.dayDetailTempWith(medName ?? ''),
+      tempDefaultLabel: () => l10n.dayDetailTempMed,
+      phq9Name: () => l10n.dayDetailPhq9,
+      gad7Name: () => l10n.dayDetailGad7,
     );
     final dateStr =
         '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

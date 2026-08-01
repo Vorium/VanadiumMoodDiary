@@ -291,7 +291,10 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                             Text(
                               // v0.28 round 65 (spzh P2-I): durationLabel 走 i18n
                               entry.durationLabelL10n(
-                                  l10n: AppLocalizations.of(context),),
+                                getSeconds: (s) => AppLocalizations.of(context).ventDurationSeconds(s),
+                                getMinutes: (m) => AppLocalizations.of(context).ventDurationMinutes(m),
+                                getMinutesSeconds: (m, s) => AppLocalizations.of(context).ventDurationMinutesSeconds(m, s),
+                              ),
                               style: TextStyle(
                                 fontSize: AppTokens.fontSizeBody,
                                 color: AppTokens.primaryColor(context),

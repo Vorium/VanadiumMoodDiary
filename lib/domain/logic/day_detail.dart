@@ -33,7 +33,6 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 当天事件类型
 enum DayEventKind {
@@ -142,6 +141,18 @@ class DayDetail {
   const DayDetail({required this.date, required this.events});
 }
 
+/// v0.27 round 77 (R76-N11 修): i18n closure 注入 typedef
+///
+/// 4 个 i18n key 走 closure 注入 (`dayDetailCheckInWith` /
+/// `dayDetailDailyCheckIn` / `dayDetailTempWith` / `dayDetailTempMed`),
+/// caller 传 `checkInLabel: (medName) => l10n.dayDetailCheckInWith(medName)` 等
+/// 闭包即可, domain 0 flutter import 完全。
+typedef CheckInLabelFn = String Function(String? medName);
+
+/// v0.27 round 77 (R76-N11 修): 2 个 scale i18n closure 注入
+/// (`dayDetailPhq9` / `dayDetailGad7`)。
+typedef ScaleNameFn = String Function();
+
 /// DayDetail 纯函数计算
 class DayDetailCalculator {
   DayDetailCalculator._();
@@ -151,13 +162,24 @@ class DayDetailCalculator {
   /// [date] 任意时间点，函数取其"当天 0 点"作为边界
   /// [checkIns] / [moodEntries] 全集
   /// [medications] 全集（仅用来反查 medicationId → name）
-  /// [l10n] 可选 i18n — 不传 = 中文 fallback (单测用)
+  /// [checkInLabel] 可选 i18n — 不传 = 中文 fallback (单测用)
+  /// [dailyLabel] 可选 i18n — 不传 = '每日打卡'
+  /// [tempLabel] 可选 i18n — 不传 = '临时吃药'
+  /// [phq9Name] / [gad7Name] 可选 i18n — 不传 = 'PHQ-9 抑郁筛查' / 'GAD-7 焦虑筛查'
+  ///
+  /// v0.27 round 77 (R76-N11 修): 之前 `AppLocalizations? l10n` 让 domain
+  /// 间接 import Flutter。改用 6 个 closure 注入, domain 0 flutter 完全。
   static DayDetail fromData({
     required DateTime date,
     required List<CheckInEntity> checkIns,
     required List<MoodEntryEntity> moodEntries,
     required List<MedicationEntity> medications,
-    AppLocalizations? l10n,
+    CheckInLabelFn? checkInLabel,
+    String Function()? dailyLabel,
+    CheckInLabelFn? tempLabel,
+    String Function()? tempDefaultLabel,
+    ScaleNameFn? phq9Name,
+    ScaleNameFn? gad7Name,
   }) {
     final day = DateTime(date.year, date.month, date.day);
     final nextDay = day.add(const Duration(days: 1));
@@ -183,7 +205,8 @@ class DayDetailCalculator {
             title: _renderCheckInLabel(
               CheckInType.normal,
               medName: med?.name,
-              l10n: l10n,
+              checkInLabel: checkInLabel,
+              dailyLabel: dailyLabel,
             ),
             subtitle: _timeLabel(c.timestamp),
             medicationId: c.medicationId,
@@ -200,9 +223,14 @@ class DayDetailCalculator {
                 ? _renderCheckInLabel(
                     CheckInType.temp,
                     medName: parsed.name,
-                    l10n: l10n,
+                    checkInLabel: tempLabel,
+                    dailyLabel: tempDefaultLabel,
                   )
-                : _renderCheckInLabel(CheckInType.temp, l10n: l10n),
+                : _renderCheckInLabel(
+                    CheckInType.temp,
+                    checkInLabel: tempLabel,
+                    dailyLabel: tempDefaultLabel,
+                  ),
             subtitle: parsed.description.isNotEmpty
                 ? '${_timeLabel(c.timestamp)} · ${parsed.description}'
                 : _timeLabel(c.timestamp),
@@ -216,7 +244,11 @@ class DayDetailCalculator {
           DayEvent(
             time: c.timestamp,
             kind: DayEventKind.assessment,
-            title: _scaleName(c.type.wire, l10n: l10n),
+            title: _scaleName(
+              c.type.wire,
+              phq9Name: phq9Name,
+              gad7Name: gad7Name,
+            ),
             subtitle: total != null
                 ? '${_timeLabel(c.timestamp)} · 总分 $total'
                 : _timeLabel(c.timestamp),
@@ -265,30 +297,31 @@ class DayDetailCalculator {
     return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 
-  /// 渲染打卡事件 title (i18n 化, l10n=null 走中文 fallback)
+  /// 渲染打卡事件 title (i18n 化, closure=null 走中文 fallback)
   ///
   /// v0.28 round 65 (spzh P2-H 修复): 抽 helper 统一 5+ 处 '打卡 · ${name}' /
   /// '每日打卡' / '临时 · ${name}' / '临时吃药' / 'PHQ-9 抑郁筛查' /
-  /// 'GAD-7 焦虑筛查' 硬编中文。传 l10n 走 6 个 i18n key。
+  /// 'GAD-7 焦虑筛查' 硬编中文。传 closure 走 4 个 i18n key。
+  /// v0.27 round 77 (R76-N11 修): 从 `AppLocalizations? l10n` 改 closure 注入
+  /// (`checkInLabel` / `dailyLabel`)。
   static String _renderCheckInLabel(
     CheckInType type, {
     String? medName,
-    AppLocalizations? l10n,
+    CheckInLabelFn? checkInLabel,
+    String Function()? dailyLabel,
   }) {
-    if (l10n != null) {
+    if (checkInLabel != null) {
       switch (type) {
         case CheckInType.normal:
-          return medName != null
-              ? l10n.dayDetailCheckInWith(medName)
-              : l10n.dayDetailDailyCheckIn;
+          if (medName != null) return checkInLabel(medName);
+          return dailyLabel?.call() ?? '每日打卡';
         case CheckInType.temp:
-          return medName != null && medName.isNotEmpty
-              ? l10n.dayDetailTempWith(medName)
-              : l10n.dayDetailTempMed;
+          if (medName != null && medName.isNotEmpty) return checkInLabel(medName);
+          return dailyLabel?.call() ?? '临时吃药';
         case CheckInType.phq9:
-          return l10n.dayDetailPhq9;
         case CheckInType.gad7:
-          return l10n.dayDetailGad7;
+          // 评估走 _scaleName 不用 _renderCheckInLabel
+          break;
       }
     }
     // 中文 fallback (单测 / 老 caller 兼容)
@@ -304,13 +337,19 @@ class DayDetailCalculator {
     }
   }
 
-  static String _scaleName(String scaleId, {AppLocalizations? l10n}) {
-    if (l10n != null) {
+  /// v0.27 round 77 (R76-N11 修): 改 closure 注入 (`phq9Name` / `gad7Name`),
+  /// domain 0 flutter。
+  static String _scaleName(
+    String scaleId, {
+    ScaleNameFn? phq9Name,
+    ScaleNameFn? gad7Name,
+  }) {
+    if (phq9Name != null || gad7Name != null) {
       switch (scaleId) {
         case 'phq9':
-          return l10n.dayDetailPhq9;
+          return phq9Name?.call() ?? 'PHQ-9 抑郁筛查';
         case 'gad7':
-          return l10n.dayDetailGad7;
+          return gad7Name?.call() ?? 'GAD-7 焦虑筛查';
         default:
           return scaleId;
       }

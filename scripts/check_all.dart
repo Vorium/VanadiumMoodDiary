@@ -25,6 +25,11 @@ const _purityRules = <String, List<String>>{
     'package:drift/',
     'package:chroniccare/core/data/',
     'package:chroniccare/presentation/',
+    // v0.27 round 77 (R76-N4 修): 之前不抓 `package:chroniccare/l10n/`,
+    // 导致 day_detail.dart / vent_entry_entity.dart 间接 import Flutter (软
+    // 违规) 持续, R75 修 1/3 file 是 reviewer 手工扫。R77 加守门, 新加
+    // l10n import 立即 CI fail。
+    'package:chroniccare/l10n/',
   ],
   'shared': [
     'package:flutter/',
@@ -214,6 +219,7 @@ String _normalizeImportUri(String uri) {
 /// - forbidden = 'package:drift/'   → importUri 以 'package:drift/' 开头
 /// - forbidden = 'package:chroniccare/data/'  → importUri 以它开头 OR resolvedLayer == 'data'
 /// - forbidden = 'package:chroniccare/presentation/' → 同上
+/// - forbidden = 'package:chroniccare/l10n/' → importUri 以它开头 (R77 软违规守门)
 bool _isForbiddenImport(
     String importUri, String resolvedLayer, String forbidden,) {
   if (forbidden == 'package:flutter/' || forbidden == 'package:drift/') {
@@ -224,6 +230,13 @@ bool _isForbiddenImport(
   }
   if (forbidden == 'package:chroniccare/presentation/') {
     return importUri.startsWith(forbidden) || resolvedLayer == 'presentation';
+  }
+  // v0.27 round 77 (R76-N4 修): l10n 软违规守门 — domain 间接 import Flutter
+  // (通过 l10n → package:flutter/widgets.dart) 不报, R75 修 1/3 file 是
+  // reviewer 手工扫, 守门失效。R77 加 l10n 守门, 任何 domain 文件 import
+  // `package:chroniccare/l10n/` 立即 CI fail。
+  if (forbidden == 'package:chroniccare/l10n/') {
+    return importUri.startsWith(forbidden);
   }
   return false;
 }
