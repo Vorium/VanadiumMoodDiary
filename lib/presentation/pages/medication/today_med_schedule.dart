@@ -80,8 +80,9 @@ class TodayMedSchedule extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppTokens.spacingSm),
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  // v0.27 R72 (emil E-P2-4): 走 AppTokens.spacingXs 集中器替代 inline 8
+                  spacing: AppTokens.spacingXs,
+                  runSpacing: AppTokens.spacingXs,
                   children: [
                     for (final e in entries) _TimeChip(entry: e),
                   ],

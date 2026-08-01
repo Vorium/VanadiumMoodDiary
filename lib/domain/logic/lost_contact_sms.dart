@@ -27,7 +27,8 @@ enum LostContactSmsKind {
   safetyAlert,
 
   /// 通用提醒 (ReminderService 触发, 日常催办)
-  /// 鼓励式 "请你方便的时候提醒 TA 按时吃药"
+  /// 鼓励式 "请你方便的时候提醒对方按时吃药"
+  // v0.27 R72 (spzh R66 P0-5 续): 改 "TA" 网络用语 → "对方" 中性化
   reminder,
 }
 
@@ -66,7 +67,7 @@ String buildLostContactSms({
       } else {
         buffer.writeln('【慢病管家】$name 已 $hoursSince 小时没打卡。');
       }
-      buffer.writeln('请你方便的时候提醒 TA 按时吃药。');
+      buffer.writeln('请你方便的时候提醒对方按时吃药。');
       if (medication != null) {
         buffer.writeln(
           '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit.id}',

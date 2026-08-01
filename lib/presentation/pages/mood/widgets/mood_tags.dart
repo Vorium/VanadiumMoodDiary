@@ -9,6 +9,7 @@
 // - l10n 标签文本在子 widget 内取, 靠近显示位置
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 6 个预设情绪标签的多选
@@ -39,7 +40,9 @@ class MoodTags extends StatelessWidget {
       l10n.moodTagLowEnergy,
     ];
     return Wrap(
-      spacing: 8,
+      // v0.27 R72 (emil E-P2-4): 走 AppTokens.spacingXs 集中器替代 inline 8
+      // (runSpacing: 4 是 FilterChip 内部行间距, 跟 spacingXs 不同语义, 保留)
+      spacing: AppTokens.spacingXs,
       runSpacing: 4,
       children: [
         for (final tag in presetTags)

@@ -19,6 +19,15 @@ class MoodHistoryChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // v0.27 R72 (P5.4): 整 build 包 RepaintBoundary
+    // 跨 midnight 重建 / 切换月份时 LineChart 不重 paint
+    return RepaintBoundary(
+      child: _buildChart(context),
+    );
+  }
+
+  /// 内部 helper: 拆 2 return 路径为 1, 配合 RepaintBoundary wrap
+  Widget _buildChart(BuildContext context) {
     if (entries.isEmpty) {
       return Card(
         child: Padding(

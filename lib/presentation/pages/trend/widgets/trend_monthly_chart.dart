@@ -37,7 +37,10 @@ class MonthlyChart extends StatelessWidget {
     final maxY = (monthly
         .map((m) => m.rate * 100)
         .fold<double>(0, (a, b) => a > b ? a : b)).clamp(10, 100).toDouble();
-    return SizedBox(
+    // v0.27 R72 (P5.4): 整 build 包 RepaintBoundary
+    // 跨 midnight 重建 / 切换月份时 BarChart 不重 paint
+    return RepaintBoundary(
+      child: SizedBox(
       // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
       // 替代 inline height: 200 magic (BarChart 标准高度)
       height: AppTokens.chartPlaceholderHeight,
@@ -81,6 +84,7 @@ class MonthlyChart extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

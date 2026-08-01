@@ -167,8 +167,11 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return AlertDialog(
-      title: Text(l10n.moodDialogTitle),
+    // v0.27 R72 (P5.4): 整 build 包 RepaintBoundary
+    // 录音时 60fps 重建, 防止父 widget (home_page) rebuild 触发整个 dialog 重 paint
+    return RepaintBoundary(
+      child: AlertDialog(
+        title: Text(l10n.moodDialogTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -214,6 +217,7 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
           onCancel: () => Navigator.pop(context),
         ),
       ],
+    ),
     );
   }
 }

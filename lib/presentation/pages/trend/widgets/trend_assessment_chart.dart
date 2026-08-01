@@ -124,7 +124,11 @@ class AssessmentHistoryChart extends StatelessWidget {
       colorIdx++;
     }
 
-    return Card(
+    // v0.27 R72 (P5.4): 主 chart 包 RepaintBoundary
+    // 跨 midnight 重建 / 切换月份时 LineChart 不重 paint
+    // (空 records 走 early return 不包, 一次性 fallback 不影响性能)
+    return RepaintBoundary(
+      child: Card(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           AppTokens.spacingSm,
@@ -239,6 +243,7 @@ class AssessmentHistoryChart extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

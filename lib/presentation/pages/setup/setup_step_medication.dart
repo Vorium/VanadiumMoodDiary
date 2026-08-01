@@ -237,8 +237,9 @@ class MedCard extends StatelessWidget {
             ),
             const SizedBox(height: AppTokens.spacingXs),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              // v0.27 R72 (emil E-P2-4): 走 AppTokens.spacingXs 集中器替代 inline 8
+              spacing: AppTokens.spacingXs,
+              runSpacing: AppTokens.spacingXs,
               children: [
                 for (int tIdx = 0; tIdx < med.times.length; tIdx++)
                   PressFeedback(
