@@ -146,11 +146,10 @@ class CareEngine {
         title: trigger.title,
         body: trigger.body,
       );
-      swallowError(
-        where: 'CareEngine.fire',
-        error: '关怀触发: ${trigger.type.name}',
-        note: 'success',
-      );
+      // v0.27 round 75 (R74 报告 P1-2 修): 之前成功路径调 swallowError 是误用
+      // — swallowError 是给 catch 块用的, 成功路径应该走正常 log 集中器
+      // (piiSafeLog) 或根本不 log。修法: 删 success swallowError, 成功路径不
+      // 调 log (fire 路径 success 频繁, 全 log 会刷屏)。
     } catch (e, st) {
       swallowError(
         where: 'CareEngine.fire',
