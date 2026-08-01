@@ -110,10 +110,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
                     widget.calendar.month.year,
                     widget.calendar.month.month,
                   ),
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeBody,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTokens.textStyleBodyStrong(context),
                 ),
               ),
             ),
@@ -132,11 +129,9 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
                 child: Center(
                   child: Text(
                     l,
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textSecondaryColor(context),
-                      fontWeight: FontWeight.w500,
-                    ),
+                    // v0.27 R77: textStyleCaption token (textSecondary) + w500 加粗
+                    style: AppTokens.textStyleCaption(context)
+                        .copyWith(fontWeight: FontWeight.w500),
                   ),
                 ),
               ),
@@ -322,8 +317,8 @@ class _DayDetailCard extends StatelessWidget {
               children: [
                 Text(
                   dateStr,
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeLabel,
+                  // v0.27 R77: textStyleLabel (textPrimary) → textSecondary + w500
+                  style: AppTokens.textStyleLabel(context).copyWith(
                     color: AppTokens.textSecondaryColor(context),
                     fontWeight: FontWeight.w500,
                   ),
@@ -342,10 +337,10 @@ class _DayDetailCard extends StatelessWidget {
                     ),
                     child: Text(
                       l10n.trendCheckedIn,
-                      style: TextStyle(
-                        // v0.22 round 29 (emil-16): emil 报告原文用 11, 实际是 10 微小字
-                        // 改用 fontSizeMicro token
-                        fontSize: AppTokens.fontSizeMicro,
+                      // v0.27 R77: textStyleMicro (textSecondary) → primary + w500
+                      // v0.22 round 29 (emil-16): emil 报告原文用 11, 实际是 10 微小字
+                      // 改用 fontSizeMicro token
+                      style: AppTokens.textStyleMicro(context).copyWith(
                         color: AppTokens.primaryColor(context),
                         fontWeight: FontWeight.w500,
                       ),
@@ -373,10 +368,9 @@ class _DayDetailCard extends StatelessWidget {
                 if (detail.events.isNotEmpty)
                   Text(
                     l10n.trendEventCount(detail.events.length),
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textHintColor(context),
-                    ),
+                    // v0.27 R77: caption + textHint (比 caption 的 textSecondary 弱)
+                    style: AppTokens.textStyleCaption(context)
+                        .copyWith(color: AppTokens.textHintColor(context)),
                   ),
               ],
             ),
@@ -402,10 +396,8 @@ class _DayDetailCard extends StatelessWidget {
                             MoodVisual.emojiFor(detail.worstMoodScore!),
                             MoodVisual.emojiFor(detail.bestMoodScore!),
                           ),
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textSecondaryColor(context),
-                    ),
+                    // v0.27 R77: 直接用 textStyleCaption (textSecondary)
+                    style: AppTokens.textStyleCaption(context),
                   ),
                 ],
               ),
@@ -427,10 +419,9 @@ class _DayDetailCard extends StatelessWidget {
                     const SizedBox(width: AppTokens.spacingXs),
                     Text(
                       l10n.trendNoRecords,
-                      style: TextStyle(
-                        color: AppTokens.textHintColor(context),
-                        fontSize: AppTokens.fontSizeBody,
-                      ),
+                      // v0.27 R77: textStyleBody (textPrimary) → textHint
+                      style: AppTokens.textStyleBody(context)
+                          .copyWith(color: AppTokens.textHintColor(context)),
                     ),
                   ],
                 ),
