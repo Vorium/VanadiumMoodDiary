@@ -59,11 +59,15 @@ class SettingsPage extends ConsumerWidget {
                 return Card(
                   color: AppColors.tintedSuccessSoft(context),
                   child: ListTile(
-                    leading: const Icon(Icons.workspace_premium,
-                        color: AppColors.success),
+                    // R69 (CC-9 emil P0 修复): 用 fgOnSuccess 替代裸 success,
+                    // 语义化("success 前景色"), 未来 success 改色时 fgOnSuccess 自动跟
+                    leading: const Icon(
+                      Icons.workspace_premium,
+                      color: AppColors.fgOnSuccess,
+                    ),
                     title: Text(
                       AppLocalizations.of(context).settingsIapProOwnedTitle,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: AppTokens.fontSizeBody,
                         fontWeight: FontWeight.w600,
                         color: AppColors.fgOnSuccess,
@@ -71,7 +75,7 @@ class SettingsPage extends ConsumerWidget {
                     ),
                     subtitle: Text(
                       AppLocalizations.of(context).settingsIapProOwnedSubtitle,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: AppTokens.fontSizeCaption,
                         color: AppColors.fgOnSuccess,
                       ),
@@ -88,8 +92,12 @@ class SettingsPage extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.workspace_premium,
-                              color: AppColors.primary),
+                          // R69 (CC-9 emil P0 修复): 改 theme-aware 集中器,
+                          // dark mode 下 primary 自动反白
+                          Icon(
+                            Icons.workspace_premium,
+                            color: AppColors.primaryColor(context),
+                          ),
                           const SizedBox(width: AppTokens.spacingSm),
                           Expanded(
                             child: Text(

@@ -120,7 +120,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         ref.invalidate(allMoodProvider);
         // 给个最小可见时长,不然一闪而过体验差
         await Future<void>.delayed(
-            Duration(milliseconds: AppTokens.refreshMinVisibleMs));
+            const Duration(milliseconds: AppTokens.refreshMinVisibleMs),);
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -168,7 +168,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         MonthlyChart(monthly: monthly),
         const SizedBox(height: AppTokens.spacingLg),
         SectionHeader(
-            title: AppLocalizations.of(context).trendAssessmentHistory),
+            title: AppLocalizations.of(context).trendAssessmentHistory,),
         const SizedBox(height: AppTokens.spacingSm),
         Consumer(
           builder: (context, ref, _) {
@@ -284,7 +284,7 @@ class _ViewToggle extends StatelessWidget {
             value: _TrendView.calendar,
             label: Text(AppLocalizations.of(context).trendViewCalendar),
             icon: const Icon(Icons.calendar_month,
-                size: AppTokens.iconSizeInline),
+                size: AppTokens.iconSizeInline,),
           ),
         ],
         selected: {current},

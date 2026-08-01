@@ -16,7 +16,6 @@
 // = 7 case 总计
 
 import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
-import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
@@ -44,10 +43,10 @@ void main() {
       );
 
       expect(build.title, '⚠️ 张三 已 3 天未打卡',
-          reason: 'title 用 safeUserName + days, ⚠️ 前缀');
+          reason: 'title 用 safeUserName + days, ⚠️ 前缀',);
       expect(build.body, contains('已自动通知'), reason: 'sent 文案: 已自动通知紧急联系人');
       expect(build.body, contains('2026-07-20'),
-          reason: 'lastCheckIn 走 YYYY-MM-DD 格式');
+          reason: 'lastCheckIn 走 YYYY-MM-DD 格式',);
     });
 
     test('2. smsMock=1 > 0 + lastCheckIn=null → body 走 mocked + "从未打卡"', () {
@@ -133,11 +132,11 @@ void main() {
       );
 
       expect(build.title, '⚠️ Alice 已 3 天未打卡',
-          reason: 'title 硬编中文格式, 跟 locale 无关');
+          reason: 'title 硬编中文格式, 跟 locale 无关',);
       expect(build.body, contains('Auto-notified'),
-          reason: 'en l10n: "Auto-notified emergency contacts"');
+          reason: 'en l10n: "Auto-notified emergency contacts"',);
       expect(build.body, contains('2026-07-20'),
-          reason: 'lastCheckIn 格式跟 locale 无关');
+          reason: 'lastCheckIn 格式跟 locale 无关',);
     });
 
     test(
@@ -161,10 +160,10 @@ void main() {
       expect(android.channelName, 'custom.name');
       expect(android.channelDescription, 'custom.desc');
       expect(android.importance, Importance.max,
-          reason: 'safety 通知: 最高 importance (锁屏可见 + 震动)');
+          reason: 'safety 通知: 最高 importance (锁屏可见 + 震动)',);
       expect(android.priority, Priority.max);
       expect(android.category, AndroidNotificationCategory.alarm,
-          reason: 'safety 走 alarm category');
+          reason: 'safety 走 alarm category',);
 
       // iOS 字段
       final ios = build.details.iOS!;
@@ -172,7 +171,7 @@ void main() {
       expect(ios.presentBadge, true);
       expect(ios.presentSound, true);
       expect(ios.interruptionLevel, InterruptionLevel.timeSensitive,
-          reason: 'iOS 走 timeSensitive (Bypass Do Not Disturb)');
+          reason: 'iOS 走 timeSensitive (Bypass Do Not Disturb)',);
     });
   });
 
@@ -202,7 +201,7 @@ void main() {
           );
           expect(build.title, isNotEmpty);
           expect(build.body, isNotEmpty,
-              reason: 'locale=${l10n.localeName} body 必须非空 (3 态都要 l10n key)');
+              reason: 'locale=${l10n.localeName} body 必须非空 (3 态都要 l10n key)',);
         }
       });
     }

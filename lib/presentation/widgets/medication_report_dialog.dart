@@ -111,7 +111,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                             onTap: _copy,
                             child: OutlinedButton.icon(
                               icon: const Icon(Icons.copy,
-                                  size: AppTokens.iconSizeInline),
+                                  size: AppTokens.iconSizeInline,),
                               label: Text(
                                 AppLocalizations.of(context).settingsCopy,
                               ),
@@ -145,7 +145,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                           child: PressFeedback(
                             child: OutlinedButton.icon(
                               icon: const Icon(Icons.share,
-                                  size: AppTokens.iconSizeInline),
+                                  size: AppTokens.iconSizeInline,),
                               label: Text(
                                 AppLocalizations.of(context)
                                     .medReportShareLabel,
@@ -163,30 +163,36 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
             // PDF 生成时的全屏遮罩
             // scrim 0.54 — M3 Modal barrier 0.32 太浅, PDF 生成 5s+ 需更深遮罩
             // 让用户清楚"正在后台生成", AppTokens.scrimAlpha 是'long task modal'标准 alpha
+            // R69 (emil P0-2 修复): 加 AbsorbPointer 锁死, 防止用户在 PDF 生成中
+            // 点底下 3 按钮(复制 / 分享 / 重新生成)
             if (_pdfLoading)
               Positioned.fill(
-                child: ColoredBox(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .scrim
-                      .withValues(alpha: AppTokens.scrimAlpha),
-                  child: Center(
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppTokens.spacingMd),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                            const SizedBox(width: AppTokens.spacingSm),
-                            Text(
-                              AppLocalizations.of(context).medReportPdfLoading,
-                            ),
-                          ],
+                child: AbsorbPointer(
+                  child: ColoredBox(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .scrim
+                        .withValues(alpha: AppTokens.scrimAlpha),
+                    child: Center(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppTokens.spacingMd),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                              const SizedBox(width: AppTokens.spacingSm),
+                              Text(
+                                AppLocalizations.of(context)
+                                    .medReportPdfLoading,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -203,7 +209,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     await Clipboard.setData(ClipboardData(text: widget.report));
     if (mounted) {
       AppSnackBar.showInfo(
-          context, AppLocalizations.of(context).snackbarCopied);
+          context, AppLocalizations.of(context).snackbarCopied,);
     }
   }
 

@@ -519,8 +519,8 @@ class _HomePageState extends ConsumerState<HomePage> {
       final all = ref.read(allCheckInsProvider).value ?? [];
       // v0.27 round 68 (CC-6 修复): 读 user 撤回失联通知同意状态
       // (PIPL §14 + 隐私政策 §4 / §9 / §12 表格承诺"撤回后 CareEngine.fire 直接 return")
-      final isSafetyWithdrawn =
-          await ref.read(legalConsentWithdrawnProvider(ConsentKind.safety).future);
+      final isSafetyWithdrawn = await ref
+          .read(legalConsentWithdrawnProvider(ConsentKind.safety).future);
       // v0.27 round 67 (B-2 修复): R65 抽离的 use case
       final useCase = ref.read(fireCareStrategyUseCaseProvider);
       final result = useCase(
@@ -630,7 +630,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     late OverlayEntry entry;
     entry = OverlayEntry(
       builder: (ctx) => Positioned(
-        top: MediaQuery.of(ctx).size.height * 0.35,
+        // R69 (emil P1-1 修复): 改 MediaQuery.padding.top + spacingLg,
+        // origin-aware 顶部定位, 避免键盘弹起 / 横屏 / 全面屏撞顶
+        top: MediaQuery.of(ctx).padding.top + AppTokens.spacingLg,
         left: 0,
         right: 0,
         child: IgnorePointer(

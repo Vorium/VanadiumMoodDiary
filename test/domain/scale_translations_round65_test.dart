@@ -17,7 +17,6 @@ import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/gad7.dart';
 import 'package:chroniccare/domain/logic/phq9.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:chroniccare/l10n/region_display_name.dart';
@@ -53,7 +52,7 @@ void main() {
 
     test('crisisHotlineLabel override 优先', () {
       expect(
-          t.crisisHotlineLabel(HotlineRegion.cn, override: 'Custom'), 'Custom');
+          t.crisisHotlineLabel(HotlineRegion.cn, override: 'Custom'), 'Custom',);
     });
   });
 
@@ -82,7 +81,7 @@ void main() {
       final t = AppLocalizationsScaleTranslations(l10n);
       // zh locale: scaleHotlineUs 仍是英文 (en 源语言)
       expect(t.crisisHotlineLabel(HotlineRegion.us),
-          '988 Suicide & Crisis Lifeline (US)');
+          '988 Suicide & Crisis Lifeline (US)',);
     });
 
     test('crisisHotlineLabel hk 返中文/繁 hotline (tw 走 intl fallback)', () {
@@ -110,14 +109,14 @@ void main() {
       final t = AppLocalizationsScaleTranslations(l10n);
       // en locale: scaleHotlineCn 翻译 = "National 24h Psychological Aid Hotline"
       expect(t.crisisHotlineLabel(HotlineRegion.cn),
-          'National 24h Psychological Aid Hotline');
+          'National 24h Psychological Aid Hotline',);
     });
 
     test('crisisHotlineLabel us en 返英文', () {
       final l10n = AppLocalizationsEn();
       final t = AppLocalizationsScaleTranslations(l10n);
       expect(t.crisisHotlineLabel(HotlineRegion.us),
-          '988 Suicide & Crisis Lifeline (US)');
+          '988 Suicide & Crisis Lifeline (US)',);
     });
   });
 
@@ -176,55 +175,55 @@ void main() {
     test('5 region phoneRegion* zh 走 l10n.phoneRegionCn 等', () {
       final l10n = AppLocalizationsZh();
       expect(regionDisplayName(PhoneRegion.cn, override: l10n.phoneRegionCn),
-          l10n.phoneRegionCn);
+          l10n.phoneRegionCn,);
       expect(regionDisplayName(PhoneRegion.hk, override: l10n.phoneRegionHk),
-          l10n.phoneRegionHk);
+          l10n.phoneRegionHk,);
       expect(regionDisplayName(PhoneRegion.mo, override: l10n.phoneRegionMo),
-          l10n.phoneRegionMo);
+          l10n.phoneRegionMo,);
       expect(regionDisplayName(PhoneRegion.tw, override: l10n.phoneRegionTw),
-          l10n.phoneRegionTw);
+          l10n.phoneRegionTw,);
       expect(
           regionDisplayName(PhoneRegion.intl, override: l10n.phoneRegionIntl),
-          l10n.phoneRegionIntl);
+          l10n.phoneRegionIntl,);
     });
 
     test('5 region phoneRegion* en 走 l10n.phoneRegionCn 等', () {
       final l10n = AppLocalizationsEn();
       expect(regionDisplayName(PhoneRegion.cn, override: l10n.phoneRegionCn),
-          l10n.phoneRegionCn);
+          l10n.phoneRegionCn,);
       expect(regionDisplayName(PhoneRegion.hk, override: l10n.phoneRegionHk),
-          l10n.phoneRegionHk);
+          l10n.phoneRegionHk,);
       expect(regionDisplayName(PhoneRegion.mo, override: l10n.phoneRegionMo),
-          l10n.phoneRegionMo);
+          l10n.phoneRegionMo,);
       expect(regionDisplayName(PhoneRegion.tw, override: l10n.phoneRegionTw),
-          l10n.phoneRegionTw);
+          l10n.phoneRegionTw,);
       expect(
           regionDisplayName(PhoneRegion.intl, override: l10n.phoneRegionIntl),
-          l10n.phoneRegionIntl);
+          l10n.phoneRegionIntl,);
     });
 
     test('4 checkInType* zh 走 l10n.checkInTypeDaily 等', () {
       final l10n = AppLocalizationsZh();
       expect(CheckInType.normal.labelL10n(override: l10n.checkInTypeDaily),
-          l10n.checkInTypeDaily);
+          l10n.checkInTypeDaily,);
       expect(CheckInType.temp.labelL10n(override: l10n.checkInTypeTemp),
-          l10n.checkInTypeTemp);
+          l10n.checkInTypeTemp,);
       expect(CheckInType.phq9.labelL10n(override: l10n.checkInTypePhq9),
-          l10n.checkInTypePhq9);
+          l10n.checkInTypePhq9,);
       expect(CheckInType.gad7.labelL10n(override: l10n.checkInTypeGad7),
-          l10n.checkInTypeGad7);
+          l10n.checkInTypeGad7,);
     });
 
     test('4 checkInType* en 走 l10n.checkInTypeDaily 等', () {
       final l10n = AppLocalizationsEn();
       expect(CheckInType.normal.labelL10n(override: l10n.checkInTypeDaily),
-          l10n.checkInTypeDaily);
+          l10n.checkInTypeDaily,);
       expect(CheckInType.temp.labelL10n(override: l10n.checkInTypeTemp),
-          l10n.checkInTypeTemp);
+          l10n.checkInTypeTemp,);
       expect(CheckInType.phq9.labelL10n(override: l10n.checkInTypePhq9),
-          l10n.checkInTypePhq9);
+          l10n.checkInTypePhq9,);
       expect(CheckInType.gad7.labelL10n(override: l10n.checkInTypeGad7),
-          l10n.checkInTypeGad7);
+          l10n.checkInTypeGad7,);
     });
   });
 }

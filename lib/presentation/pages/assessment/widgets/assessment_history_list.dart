@@ -30,7 +30,7 @@ class AssessmentHistoryList extends StatelessWidget {
             child: Row(
               children: [
                 Icon(Icons.history,
-                    color: AppTokens.primaryColor(context), size: 20),
+                    color: AppTokens.primaryColor(context), size: 20,),
                 const SizedBox(width: AppTokens.spacingSm),
                 Text(
                   AppLocalizations.of(context).assessmentHistoryFullRecord,
@@ -197,7 +197,7 @@ class _SeverityChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sev = assessmentSeverityStyle(
-        context, scaleId, score, AppLocalizations.of(context));
+        context, scaleId, score, AppLocalizations.of(context),);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppTokens.spacingChipGap,

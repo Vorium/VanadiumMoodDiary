@@ -96,7 +96,7 @@ class VentAudioSection extends StatelessWidget {
           ),
           Icon(Icons.mic,
               color: AppTokens.primaryColor(context),
-              size: AppTokens.iconSizeInline),
+              size: AppTokens.iconSizeInline,),
           const SizedBox(width: AppTokens.spacingChipGap),
           Text(
             audioDurationSec != null

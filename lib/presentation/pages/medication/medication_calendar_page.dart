@@ -77,7 +77,7 @@ class MedicationCalendarPage extends ConsumerWidget {
                     ButtonSegment(
                       value: 7,
                       label: Text(
-                          AppLocalizations.of(context).medsCalendarWindow7),
+                          AppLocalizations.of(context).medsCalendarWindow7,),
                     ),
                     ButtonSegment(
                       value: 30,

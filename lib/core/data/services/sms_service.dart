@@ -145,6 +145,7 @@ class AliyunSmsProvider implements SmsProvider {
   /// 4 字段齐全 + send 已接 R55+ → true (release 启动不阻断, send 真发)
   /// 4 字段齐全 + send 未接    → false (release 启动阻断, banner 提示)
   /// 4 字段缺失               → false (release 启动阻断, banner 提示)
+  @override
   bool get isProductionReady =>
       _isFullyImplemented &&
       accessKeyId.isNotEmpty &&

@@ -62,7 +62,7 @@ class LoadingSkeleton extends StatelessWidget {
             CircularProgressIndicator(
               strokeWidth: 2.5,
               valueColor: AlwaysStoppedAnimation<Color>(
-                  AppTokens.primaryColor(context)),
+                  AppTokens.primaryColor(context),),
             ),
             if (message != null) ...[
               const SizedBox(height: AppTokens.spacingMd),
@@ -127,7 +127,7 @@ class _ShimmerState extends State<_Shimmer>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: AppTokens.shimmerCycleMs),
+      duration: const Duration(milliseconds: AppTokens.shimmerCycleMs),
     );
     // v0.24 round 48 (emil P1-6): 单次动画完成 → 暂停 600ms → 重播
     // 实现"呼吸"模式, 代替之前 repeat(reverse: true) 永久脉动

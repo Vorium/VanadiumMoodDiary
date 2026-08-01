@@ -72,12 +72,12 @@ class Gad7Scale implements AssessmentScale {
   @override
   List<SeverityCutoff> get severityCutoffs => const [
         SeverityCutoff(
-            threshold: 4, rank: 0, label: '几乎没有焦虑', summary: '几乎没有焦虑倾向'),
+            threshold: 4, rank: 0, label: '几乎没有焦虑', summary: '几乎没有焦虑倾向',),
         SeverityCutoff(threshold: 9, rank: 1, label: '轻度焦虑', summary: '轻度焦虑倾向'),
         SeverityCutoff(
-            threshold: 14, rank: 2, label: '中度焦虑', summary: '中度焦虑倾向'),
+            threshold: 14, rank: 2, label: '中度焦虑', summary: '中度焦虑倾向',),
         SeverityCutoff(
-            threshold: 21, rank: 3, label: '重度焦虑', summary: '重度焦虑倾向'),
+            threshold: 21, rank: 3, label: '重度焦虑', summary: '重度焦虑倾向',),
       ];
 
   @override

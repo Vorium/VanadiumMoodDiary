@@ -169,7 +169,7 @@ void main() {
       final checkIns = [
         _ci(saturdayEvening.subtract(const Duration(hours: 30))), // 7-17 周五
         _ci(saturdayEvening
-            .subtract(const Duration(days: 6, hours: 12))), // 7-12 周日
+            .subtract(const Duration(days: 6, hours: 12)),), // 7-12 周日
       ];
       expect(isWeekendMissed(checkIns, saturdayEvening), isTrue);
     });
@@ -273,7 +273,7 @@ void main() {
       // inMinutes = 35*60 + 54 = 2154 < 36*60=2160 → false
       final now = DateTime(2026, 7, 17, 14, 0);
       final checkIns = [
-        _ci(now.subtract(const Duration(hours: 35, minutes: 54)))
+        _ci(now.subtract(const Duration(hours: 35, minutes: 54))),
       ];
       expect(isSecondDayMissed(checkIns, now), isFalse);
     });

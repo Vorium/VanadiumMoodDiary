@@ -145,7 +145,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx, true),
             style: TextButton.styleFrom(
-                foregroundColor: AppTokens.errorColor(context)),
+                foregroundColor: AppTokens.errorColor(context),),
             child: Text(l10n.commonDelete),
           ),
         ],
@@ -291,7 +291,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                             Text(
                               // v0.28 round 65 (spzh P2-I): durationLabel 走 i18n
                               entry.durationLabelL10n(
-                                  l10n: AppLocalizations.of(context)),
+                                  l10n: AppLocalizations.of(context),),
                               style: TextStyle(
                                 fontSize: AppTokens.fontSizeBody,
                                 color: AppTokens.primaryColor(context),

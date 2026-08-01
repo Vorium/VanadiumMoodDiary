@@ -215,7 +215,7 @@ String _normalizeImportUri(String uri) {
 /// - forbidden = 'package:chroniccare/data/'  → importUri 以它开头 OR resolvedLayer == 'data'
 /// - forbidden = 'package:chroniccare/presentation/' → 同上
 bool _isForbiddenImport(
-    String importUri, String resolvedLayer, String forbidden) {
+    String importUri, String resolvedLayer, String forbidden,) {
   if (forbidden == 'package:flutter/' || forbidden == 'package:drift/') {
     return importUri.startsWith(forbidden);
   }
@@ -261,7 +261,7 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
     '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables',
   );
   final sharedDir = Directory(
-      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}shared');
+      '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}shared',);
 
   if (entitiesDir.existsSync() && tablesDir.existsSync()) {
     _checkEntityTablePair(entitiesDir, tablesDir, issues);
@@ -352,13 +352,13 @@ void _checkSharedUsage(
                 normalized.endsWith('core/shared/$baseNameNoExt.dart');
         if (matches) {
           if (entity.path.contains(
-              '${Platform.pathSeparator}domain${Platform.pathSeparator}')) {
+              '${Platform.pathSeparator}domain${Platform.pathSeparator}',)) {
             usedBy.add('domain');
           } else if (entity.path.contains(
-              '${Platform.pathSeparator}data${Platform.pathSeparator}')) {
+              '${Platform.pathSeparator}data${Platform.pathSeparator}',)) {
             usedBy.add('data');
           } else if (entity.path.contains(
-              '${Platform.pathSeparator}presentation${Platform.pathSeparator}')) {
+              '${Platform.pathSeparator}presentation${Platform.pathSeparator}',)) {
             usedBy.add('presentation');
           }
         }

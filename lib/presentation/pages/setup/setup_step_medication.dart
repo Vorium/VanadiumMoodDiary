@@ -89,7 +89,7 @@ class SetupStepMedication extends StatelessWidget {
           TextButton.icon(
             onPressed: onShowPresets,
             icon: const Icon(Icons.auto_awesome_outlined,
-                size: AppTokens.iconSizeInline),
+                size: AppTokens.iconSizeInline,),
             label: Text(l10n.setupMedLoadPreset),
           ),
           const SizedBox(height: AppTokens.spacingXl),

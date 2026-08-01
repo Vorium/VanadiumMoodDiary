@@ -1,4 +1,4 @@
-﻿// v0.27 round 60 (审计 M9 修正): AssessmentRecord == 必须比较 scores
+// v0.27 round 60 (审计 M9 修正): AssessmentRecord == 必须比较 scores
 //
 // Bug (audit-domain-layer.md 3.8):
 //   == 只比较 scaleId / timestamp / total, 不比较 scores。
@@ -42,7 +42,7 @@ void main() {
       final a = baseRecord(scores: [1, 2, 1, 2, 1, 1, 1, 0, 0]);
       final b = baseRecord(scores: [1, 2, 1, 2, 1, 1, 1, 0, 0]);
       expect(identical(a.scores, b.scores), isFalse,
-          reason: 'sanity: 2 个 list 必须不同 instance');
+          reason: 'sanity: 2 个 list 必须不同 instance',);
       expect(a, equals(b));
       expect(a.hashCode, b.hashCode);
     });
@@ -55,7 +55,7 @@ void main() {
       final b = baseRecord(scores: [1, 2, 1, 2, 1, 1, 1, 0, 0]); // total = 9
       expect(a.total, b.total);
       expect(a, isNot(equals(b)),
-          reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false');
+          reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false',);
     });
 
     test('scores 长度不同 → == 不成立', () {
@@ -69,7 +69,7 @@ void main() {
         scores: [1, 2, 1, 2, 1, 1, 0],
       );
       expect(a7, isNot(equals(b)),
-          reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false');
+          reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false',);
     });
 
     test('scaleId 不同 → == 不成立', () {
@@ -81,7 +81,7 @@ void main() {
         scores: a.scores,
       );
       expect(a, isNot(equals(b)),
-          reason: 'scaleId 不同 → == false (sanity baseline)');
+          reason: 'scaleId 不同 → == false (sanity baseline)',);
     });
 
     test('timestamp 不同 → == 不成立', () {
@@ -93,7 +93,7 @@ void main() {
         scores: a.scores,
       );
       expect(a, isNot(equals(b)),
-          reason: 'timestamp 不同 → == false (sanity baseline)');
+          reason: 'timestamp 不同 → == false (sanity baseline)',);
     });
   });
 }

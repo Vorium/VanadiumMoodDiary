@@ -180,7 +180,7 @@ void main() {
       fake.pending.addAll([
         const PendingNotificationRequest(300000 + 1 * 1440 + 5, 'a', 'b', null),
         const PendingNotificationRequest(
-            300000 + 1 * 1440 + 10, 'c', 'd', null),
+            300000 + 1 * 1440 + 10, 'c', 'd', null,),
         const PendingNotificationRequest(300000 + 2 * 1440 + 5, 'e', 'f', null),
       ]);
       final manager = SnoozeManager(plugin: fake);
@@ -189,7 +189,7 @@ void main() {
 
       // med=1 的 2 个 snooze 被 cancel,med=2 不动
       expect(
-          fake.cancelledIds, [300000 + 1 * 1440 + 5, 300000 + 1 * 1440 + 10]);
+          fake.cancelledIds, [300000 + 1 * 1440 + 5, 300000 + 1 * 1440 + 10],);
     });
 
     test('pending 没该 med 的 snooze → 静默 no-op', () async {
@@ -211,7 +211,7 @@ void main() {
       fake.pending.addAll([
         const PendingNotificationRequest(300000 + 1 * 1440 + 5, 'a', 'b', null),
         const PendingNotificationRequest(
-            300000 + 5 * 1440 + 30, 'c', 'd', null),
+            300000 + 5 * 1440 + 30, 'c', 'd', null,),
         // 非 snooze id (1001 是 daily,3000 是 soft)
         const PendingNotificationRequest(1001, 'e', 'f', null),
         const PendingNotificationRequest(3000, 'g', 'h', null),

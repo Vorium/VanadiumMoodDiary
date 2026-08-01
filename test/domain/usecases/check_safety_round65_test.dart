@@ -49,7 +49,7 @@ void main() {
         inDnd: false,
         profile: _profile(),
         contacts: [_contact()],
-      ));
+      ),);
       expect(d, isA<SafetyDecisionDisabled>());
     });
 
@@ -63,7 +63,7 @@ void main() {
         inDnd: false,
         profile: _profile(),
         contacts: [_contact()],
-      ));
+      ),);
       expect(d, isA<SafetyDecisionNoData>());
     });
 
@@ -77,7 +77,7 @@ void main() {
         inDnd: false,
         profile: _profile(),
         contacts: [_contact()],
-      ));
+      ),);
       expect(d, isA<SafetyDecisionOk>());
       expect((d as SafetyDecisionOk).daysSinceLast, 1);
     });
@@ -92,7 +92,7 @@ void main() {
         inDnd: false,
         profile: _profile(),
         contacts: [_contact()],
-      ));
+      ),);
       expect(d, isA<SafetyDecisionAlertedToday>());
     });
 
@@ -106,7 +106,7 @@ void main() {
         inDnd: false,
         profile: _profile(),
         contacts: const [],
-      ));
+      ),);
       expect(d, isA<SafetyDecisionNoContacts>());
     });
   });

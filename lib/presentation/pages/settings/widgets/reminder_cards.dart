@@ -228,7 +228,7 @@ class ReminderCard extends StatelessWidget {
                       child: TextButton.icon(
                         onPressed: onAction,
                         icon: const Icon(Icons.tune,
-                            size: AppTokens.iconSizeInline),
+                            size: AppTokens.iconSizeInline,),
                         label: Text(actionLabel),
                       ),
                     ),

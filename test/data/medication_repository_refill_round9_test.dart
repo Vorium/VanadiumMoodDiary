@@ -142,11 +142,11 @@ void main() {
   group('Medication schema v5', () {
     test('medication 包含 refillAt + refillReminderDays 字段', () async {
       final id = await repo.add(
-        MedicationDraft(
+        const MedicationDraft(
           name: '氟西汀',
           dosage: 40,
           dosageUnit: DosageUnit.mg,
-          times: const [HourMinute(hour: 8, minute: 0)],
+          times: [HourMinute(hour: 8, minute: 0)],
         ),
       );
       final med = await (db.select(db.medications)

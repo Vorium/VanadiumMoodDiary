@@ -112,7 +112,7 @@ class ReminderService implements ReminderChecker {
             .first
             .timeout(_streamTimeout, onTimeout: () => const <ContactEntity>[]),
         _medicationRepo.watchAll().first.timeout(_streamTimeout,
-            onTimeout: () => const <MedicationEntity>[]),
+            onTimeout: () => const <MedicationEntity>[],),
       ]);
       contacts = fetched[0] as List<ContactEntity>;
       medications = fetched[1] as List<MedicationEntity>;

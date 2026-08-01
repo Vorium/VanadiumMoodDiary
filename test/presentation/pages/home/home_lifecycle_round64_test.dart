@@ -49,10 +49,10 @@ void main() {
         const initial = HomeLifecycleState.initial;
         final afterRerun = initial.onRerunRequested();
         expect(afterRerun, HomeLifecycleState.safetyRerunRequested,
-            reason: 'onRerunRequested() 应该推进到 safetyRerunRequested');
+            reason: 'onRerunRequested() 应该推进到 safetyRerunRequested',);
         final afterSafety = afterRerun.onSafetyCheckCompleted();
         expect(afterSafety, HomeLifecycleState.bothHandled,
-            reason: 'Timer 触发 force rerun 后, 推进到 bothHandled');
+            reason: 'Timer 触发 force rerun 后, 推进到 bothHandled',);
       },
     );
 
@@ -70,7 +70,7 @@ void main() {
             (e) => e.message,
             'message',
             contains('invariant violated'),
-          )),
+          ),),
           reason: 'medId 路径走完后, 不能又请求 rerun (互斥)',
         );
 
@@ -82,7 +82,7 @@ void main() {
             (e) => e.message,
             'message',
             contains('invariant violated'),
-          )),
+          ),),
           reason: 'rerun 请求后, 不能又走 medId 路径 (互斥)',
         );
       },

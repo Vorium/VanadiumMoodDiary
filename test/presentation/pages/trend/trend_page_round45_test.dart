@@ -46,11 +46,11 @@ void main() {
         allMoodProvider.overrideWith((ref) => Stream.value(moods)),
         assessmentsProvider.overrideWith((ref) => Stream.value(assessments)),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('zh'),
-        home: const TrendPage(),
+        locale: Locale('zh'),
+        home: TrendPage(),
       ),
     );
   }

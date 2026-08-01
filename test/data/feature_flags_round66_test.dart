@@ -21,7 +21,6 @@ import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -41,7 +40,7 @@ void main() {
     test('emergencyContactEnabled 默认 false (生产安全)', () {
       // resetForTest 后, flag 应该是 production 默认值
       expect(FeatureFlags.emergencyContactEnabled, isFalse,
-          reason: 'R66 设计: 失联通信业务默认 paused, 不会给联系人发任何 SMS');
+          reason: 'R66 设计: 失联通信业务默认 paused, 不会给联系人发任何 SMS',);
     });
   });
 
@@ -70,7 +69,7 @@ void main() {
     test('onAppStart → kind = disabled (不查 config / 不查 contacts)', () async {
       final result = await service.onAppStart(l10n: _testL10n());
       expect(result.kind, SafetyCheckKind.disabled,
-          reason: 'R66: flag=false 时 facade 入口早返, 不走 detector / dispatcher');
+          reason: 'R66: flag=false 时 facade 入口早返, 不走 detector / dispatcher',);
     });
 
     test('onCheckIn → kind = disabled', () async {
@@ -112,9 +111,9 @@ void main() {
       expect(result.smsFail, 0);
       expect(result.smsMock, 0);
       expect(notifService.showSafetyAlertCalls, 0,
-          reason: 'R66: flag=false 时不推本地通知');
+          reason: 'R66: flag=false 时不推本地通知',);
       expect(config.setLastAlertAtCalls, 0,
-          reason: 'R66: flag=false 时不写 audit log (同日重复检测)');
+          reason: 'R66: flag=false 时不写 audit log (同日重复检测)',);
     });
   });
 }

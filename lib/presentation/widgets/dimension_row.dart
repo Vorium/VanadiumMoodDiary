@@ -57,7 +57,7 @@ class DimensionRow extends StatelessWidget {
                     inMutuallyExclusiveGroup: true,
                     selected: s == value,
                     label: l10n.moodRatingButtonSemantics(
-                        s, s == value ? 'true' : 'false'),
+                        s, s == value ? 'true' : 'false',),
                     child: Material(
                       color: Colors.transparent,
                       child: AnimatedContainer(
@@ -87,7 +87,7 @@ class DimensionRow extends StatelessWidget {
                               duration:
                                   Motion.duration(context, AppTokens.durFast),
                               curve: Motion.curve(
-                                  context, AppTokens.curveStandard),
+                                  context, AppTokens.curveStandard,),
                               style: TextStyle(
                                 fontSize: AppTokens.fontSizeScoreLg,
                                 fontWeight: s == value

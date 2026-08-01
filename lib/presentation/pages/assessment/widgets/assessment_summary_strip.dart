@@ -41,12 +41,12 @@ class AssessmentSummaryStrip extends StatelessWidget {
                 sub: latestPhq9 == null
                     ? l10n.assessmentHistoryNotDone
                     : assessmentSeverityStyle(
-                            context, 'phq9', latestPhq9.total, l10n)
+                            context, 'phq9', latestPhq9.total, l10n,)
                         .label,
                 severity: latestPhq9 == null
                     ? null
                     : assessmentSeverityStyle(
-                            context, 'phq9', latestPhq9.total, l10n)
+                            context, 'phq9', latestPhq9.total, l10n,)
                         .color,
               ),
             ),
@@ -57,12 +57,12 @@ class AssessmentSummaryStrip extends StatelessWidget {
                 sub: latestGad7 == null
                     ? l10n.assessmentHistoryNotDone
                     : assessmentSeverityStyle(
-                            context, 'gad7', latestGad7.total, l10n)
+                            context, 'gad7', latestGad7.total, l10n,)
                         .label,
                 severity: latestGad7 == null
                     ? null
                     : assessmentSeverityStyle(
-                            context, 'gad7', latestGad7.total, l10n)
+                            context, 'gad7', latestGad7.total, l10n,)
                         .color,
               ),
             ),

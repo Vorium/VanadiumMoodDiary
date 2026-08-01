@@ -30,7 +30,7 @@ class HomeFooter extends StatelessWidget {
         // 主页内容"逐项落入"的细微高级感,emil "30-80ms stagger = 累积成高级感"
         // HomeFooter 2 项 (LastMedInfo + homeStillOnline), 各 delay staggerStepMs
         FadeIn(
-          delay: Duration(milliseconds: 0 * AppTokens.staggerStepMs),
+          delay: const Duration(milliseconds: 0 * AppTokens.staggerStepMs),
           child: LastMedInfo(
             lastCheckIn: lastCheckIn?.timestamp,
             nextReminder: nextReminder,
@@ -39,7 +39,7 @@ class HomeFooter extends StatelessWidget {
         ),
         const SizedBox(height: AppTokens.spacingXl),
         FadeIn(
-          delay: Duration(milliseconds: 1 * AppTokens.staggerStepMs),
+          delay: const Duration(milliseconds: 1 * AppTokens.staggerStepMs),
           child: Center(
             child: Text(
               AppLocalizations.of(context).homeStillOnline,

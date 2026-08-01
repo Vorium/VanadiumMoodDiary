@@ -275,7 +275,7 @@ void main() {
       // 测行为: 仍发 SMS, 不影响
       // 实际边界"filter 后空"由 safety_watch_service 负责, 本测锁 dispatcher
       // 接收空 list / 全 isActive=false 都不崩
-      final inactiveContact = ContactEntity(
+      final inactiveContact = const ContactEntity(
         id: 99,
         name: '停用',
         phone: '13800000099',

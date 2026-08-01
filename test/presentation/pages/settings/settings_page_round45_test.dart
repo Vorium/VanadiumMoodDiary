@@ -18,7 +18,6 @@ import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
-import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
@@ -27,7 +26,6 @@ import 'package:chroniccare/presentation/pages/settings/widgets/notification_sta
 import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
-import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,11 +46,11 @@ void main() {
               : Stream.value(meds),
         ),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('zh'),
-        home: const SettingsPage(),
+        locale: Locale('zh'),
+        home: SettingsPage(),
       ),
     );
   }

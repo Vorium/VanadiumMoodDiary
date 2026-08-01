@@ -110,14 +110,14 @@ class Phq9Scale implements AssessmentScale {
   @override
   List<SeverityCutoff> get severityCutoffs => const [
         SeverityCutoff(
-            threshold: 4, rank: 0, label: '几乎没有抑郁', summary: '几乎没有抑郁倾向'),
+            threshold: 4, rank: 0, label: '几乎没有抑郁', summary: '几乎没有抑郁倾向',),
         SeverityCutoff(threshold: 9, rank: 1, label: '轻度抑郁', summary: '轻度抑郁倾向'),
         SeverityCutoff(
-            threshold: 14, rank: 2, label: '中度抑郁', summary: '中度抑郁倾向'),
+            threshold: 14, rank: 2, label: '中度抑郁', summary: '中度抑郁倾向',),
         SeverityCutoff(
-            threshold: 19, rank: 3, label: '中重度抑郁', summary: '中重度抑郁倾向'),
+            threshold: 19, rank: 3, label: '中重度抑郁', summary: '中重度抑郁倾向',),
         SeverityCutoff(
-            threshold: 27, rank: 4, label: '重度抑郁', summary: '重度抑郁倾向'),
+            threshold: 27, rank: 4, label: '重度抑郁', summary: '重度抑郁倾向',),
       ];
 
   @override

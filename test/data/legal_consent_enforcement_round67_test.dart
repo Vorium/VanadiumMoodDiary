@@ -85,11 +85,11 @@ Widget _buildTrendPage({required bool analyticsWithdrawn}) {
       legalConsentWithdrawnProvider(ConsentKind.analytics)
           .overrideWith((ref) => Stream.value(analyticsWithdrawn)),
     ],
-    child: MaterialApp(
+    child: const MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('zh'),
-      home: const TrendPage(),
+      locale: Locale('zh'),
+      home: TrendPage(),
     ),
   );
 }
@@ -176,13 +176,13 @@ void main() {
         now: DateTime(2026, 7, 31, 10, 30),
       );
       expect(trigger.type, isNot(CareTriggerType.none),
-          reason: '测试 setup: 应有触发 (secondDayMissed)');
+          reason: '测试 setup: 应有触发 (secondDayMissed)',);
 
       final sender = _FakeNotificationSender();
       await CareEngine.fire(trigger, sender);
       // 不传 gate = 旧行为, 走 fire 全程 (try/catch 兜底)
       expect(sender.showNowCount, greaterThan(0),
-          reason: 'gate=null 时 fire 跟 R67 前一致, 应调 showNow');
+          reason: 'gate=null 时 fire 跟 R67 前一致, 应调 showNow',);
     });
 
     test('gate=() async => true → fire 直接 return, 不调 showNow', () async {
@@ -199,7 +199,7 @@ void main() {
         isSafetyConsentWithdrawn: () async => true,
       );
       expect(sender.showNowCount, 0,
-          reason: '撤回 safety 同意时, fire 应直接 return, 不调 showNow');
+          reason: '撤回 safety 同意时, fire 应直接 return, 不调 showNow',);
     });
 
     test('gate=() async => false → fire 正常调 showNow', () async {
@@ -215,14 +215,14 @@ void main() {
         isSafetyConsentWithdrawn: () async => false,
       );
       expect(sender.showNowCount, greaterThan(0),
-          reason: '未撤回 safety 同意时, fire 应正常调 showNow');
+          reason: '未撤回 safety 同意时, fire 应正常调 showNow',);
     });
 
     test('trigger.shouldFire=false → fire 不调 gate (短路优化)', () async {
       final sender = _FakeNotificationSender();
       var gateCalled = false;
       await CareEngine.fire(
-        CareTrigger(
+        const CareTrigger(
           type: CareTriggerType.none,
           title: '',
           body: '',
@@ -244,14 +244,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(TrendPage), findsOneWidget);
       expect(find.byType(EmptyState), findsNothing,
-          reason: '未撤回时不显示 EmptyState');
+          reason: '未撤回时不显示 EmptyState',);
     });
 
     testWidgets('analytics 撤回 → 渲染 EmptyState 占位', (tester) async {
       await tester.pumpWidget(_buildTrendPage(analyticsWithdrawn: true));
       await tester.pumpAndSettle();
       expect(find.byType(EmptyState), findsOneWidget,
-          reason: '撤回 analytics 同意时, 趋势页应渲染 EmptyState 占位');
+          reason: '撤回 analytics 同意时, 趋势页应渲染 EmptyState 占位',);
     });
   });
 }

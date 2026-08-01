@@ -21,7 +21,7 @@ void main() {
 
   // 构造器辅助 — 减少每个 test 的 boilerplate
   ContactEntity mkContact(
-          {int id = 1, String name = '妈妈', String phone = '13800138000'}) =>
+          {int id = 1, String name = '妈妈', String phone = '13800138000',}) =>
       ContactEntity(id: id, name: name, phone: phone);
 
   UserProfileEntity mkProfile({String? name = '张三'}) => UserProfileEntity(

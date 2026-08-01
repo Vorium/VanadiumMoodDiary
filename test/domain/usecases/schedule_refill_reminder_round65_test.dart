@@ -64,7 +64,7 @@ void main() {
             isActive: true,
             refillAt: DateTime(2026, 7, 20),
             reminderDays: 3,
-          )
+          ),
         ],
         now: now,
       );
@@ -81,7 +81,7 @@ void main() {
               isActive: true,
               refillAt: DateTime(2026, 7, 20),
               reminderDays: 0,
-            )
+            ),
           ],
           now: now,
         ),
@@ -98,7 +98,7 @@ void main() {
             isActive: true,
             refillAt: DateTime(2026, 7, 10),
             reminderDays: 7,
-          )
+          ),
         ],
         now: now,
       );

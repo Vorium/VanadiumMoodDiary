@@ -21,11 +21,11 @@ void main() {
 
   testWidgets('consume 返 null → banner 不显示, child 正常', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('zh'),
-        home: const LastStartupErrorBanner(
+        locale: Locale('zh'),
+        home: LastStartupErrorBanner(
           child: Scaffold(body: Center(child: Text('home'))),
         ),
       ),
@@ -44,11 +44,11 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('zh'),
-        home: const LastStartupErrorBanner(
+        locale: Locale('zh'),
+        home: LastStartupErrorBanner(
           child: Scaffold(body: Center(child: Text('home'))),
         ),
       ),
@@ -69,11 +69,11 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('zh'),
-        home: const LastStartupErrorBanner(
+        locale: Locale('zh'),
+        home: LastStartupErrorBanner(
           child: Scaffold(body: Center(child: Text('home'))),
         ),
       ),
@@ -96,11 +96,11 @@ void main() {
       StackTrace.fromString('frame1'),
     );
 
-    Widget appWithBanner() => MaterialApp(
+    Widget appWithBanner() => const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('zh'),
-          home: const LastStartupErrorBanner(
+          locale: Locale('zh'),
+          home: LastStartupErrorBanner(
             child: Scaffold(body: Text('home')),
           ),
         );

@@ -280,9 +280,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
                       labelText: AppLocalizations.of(context).editMedUnitLabel,
                     ),
                     items: [
-                      DropdownMenuItem<DosageUnit>(
+                      const DropdownMenuItem<DosageUnit>(
                         value: DosageUnit.mg,
-                        child: const Text('mg'),
+                        child: Text('mg'),
                       ),
                       DropdownMenuItem<DosageUnit>(
                         value: DosageUnit.tablet,

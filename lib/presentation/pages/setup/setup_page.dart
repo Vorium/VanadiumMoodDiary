@@ -9,7 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:chroniccare/core/data/utils/phone_validator.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart' show ConsentArtifact, ConsentKind;
+import 'package:chroniccare/domain/entities/consent_artifact.dart'
+    show ConsentArtifact, ConsentKind;
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -294,7 +295,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                       // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
                       Text(t.emoji,
                           style: const TextStyle(
-                              fontSize: AppTokens.fontSizeTitle)),
+                              fontSize: AppTokens.fontSizeTitle,),),
                   title: Text(
                     // v0.28 round 65 (spzh P2-G): name 走 i18n
                     t.nameL10n(l10n),

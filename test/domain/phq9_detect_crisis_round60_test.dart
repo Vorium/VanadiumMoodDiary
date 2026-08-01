@@ -72,7 +72,7 @@ void main() {
       final scores = List<int>.filled(8, 0); // 缺第 9 题
       expect(() => s.detectCrisis(scores, stubResult), returnsNormally);
       expect(s.detectCrisis(scores, stubResult), isNull,
-          reason: 'scores.length <= 8 → 不应触发');
+          reason: 'scores.length <= 8 → 不应触发',);
     });
 
     test('scores.length = 0 (全空) → null (no crash)', () {
@@ -99,11 +99,11 @@ void main() {
       final signal = s.detectCrisis(scores, stubResult, region: region);
       expect(signal, isNotNull, reason: 'region=$region 应触发');
       expect(signal!.hotlines, hotlineByRegion[region],
-          reason: 'region=$region hotlines 必须 = hotlineByRegion[region]');
+          reason: 'region=$region hotlines 必须 = hotlineByRegion[region]',);
       // 校验关键标识
       final allNumbers = signal.hotlines.map((h) => h.number).join('|');
       expect(allNumbers, contains(mustContain),
-          reason: 'region=$region 必须含 "$mustContain"');
+          reason: 'region=$region 必须含 "$mustContain"',);
     }
 
     test('region=cn (default) → 400-161-9995 / 010-82951332', () {
@@ -145,9 +145,9 @@ void main() {
       // 修正: 防止未来加 region 时漏配 hotlines
       for (final region in HotlineRegion.values) {
         expect(hotlineByRegion.containsKey(region), isTrue,
-            reason: 'region=$region 必须在 hotlineByRegion');
+            reason: 'region=$region 必须在 hotlineByRegion',);
         expect(hotlineByRegion[region], isNotEmpty,
-            reason: 'region=$region 必须有 ≥1 条 hotline');
+            reason: 'region=$region 必须有 ≥1 条 hotline',);
       }
     });
 
@@ -155,9 +155,9 @@ void main() {
       for (final region in HotlineRegion.values) {
         for (final h in hotlineByRegion[region]!) {
           expect(h.label, isNotEmpty,
-              reason: 'region=$region 某条 hotline label 为空');
+              reason: 'region=$region 某条 hotline label 为空',);
           expect(h.number, isNotEmpty,
-              reason: 'region=$region 某条 hotline number 为空');
+              reason: 'region=$region 某条 hotline number 为空',);
         }
       }
     });
@@ -170,7 +170,7 @@ void main() {
           // 允许数字 / 横线 / 空格 / 加号, 不允许字母
           final ok = RegExp(r'^[0-9\-\s\+()]+$').hasMatch(h.number);
           expect(ok, isTrue,
-              reason: 'region=$region number "${h.number}" 含非数字/标点字符');
+              reason: 'region=$region number "${h.number}" 含非数字/标点字符',);
         }
       }
     });
@@ -180,7 +180,7 @@ void main() {
       for (final region in HotlineRegion.values) {
         final count = hotlineByRegion[region]!.length;
         expect(count, inInclusiveRange(1, 2),
-            reason: 'region=$region 有 $count 条 hotline, 异常');
+            reason: 'region=$region 有 $count 条 hotline, 异常',);
       }
     });
 

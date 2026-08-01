@@ -297,7 +297,7 @@ void main() {
   group('v0.23 round 39 (P1-5) — JSON shape & version', () {
     test('exportedAt 字段是 Z 后缀 ISO 字符串', () async {
       final json = parseJson(
-          await svc.exportToJson(now: DateTime.utc(2026, 7, 1, 10, 0)));
+          await svc.exportToJson(now: DateTime.utc(2026, 7, 1, 10, 0)),);
       expect((json['exportedAt'] as String).endsWith('Z'), isTrue);
       expect(json['exportedAt'], '2026-07-01T10:00:00.000Z');
     });

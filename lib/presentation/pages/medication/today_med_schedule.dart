@@ -179,7 +179,7 @@ class _TimeChip extends StatelessWidget {
               padding: const EdgeInsets.only(right: 4),
               child: Icon(Icons.check_circle,
                   color: AppTokens.primaryColor(context),
-                  size: AppTokens.iconSizeSmall),
+                  size: AppTokens.iconSizeSmall,),
             )
           else
             Padding(
