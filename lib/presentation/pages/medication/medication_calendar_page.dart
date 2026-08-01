@@ -411,8 +411,8 @@ class _Legend extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 12,
-            height: 12,
+            width: AppTokens.legendDotSizeLg,
+            height: AppTokens.legendDotSizeLg,
             decoration: BoxDecoration(
               color: c,
               // v0.21 (P1-10 fix): 改用 token

@@ -488,10 +488,10 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        width: 12,
-                        height: 12,
+                        width: AppTokens.legendDotSizeLg,
+                        height: AppTokens.legendDotSizeLg,
                         child: LoadingSpinner(
-                          size: 12,
+                          size: AppTokens.legendDotSizeLg,
                           color: AppTokens.textHintColor(context),
                         ),
                       ),

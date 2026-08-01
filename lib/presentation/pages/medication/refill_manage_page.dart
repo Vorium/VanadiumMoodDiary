@@ -342,8 +342,8 @@ class _StatusDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 36,
-      height: 36,
+      width: AppTokens.avatarSizeSm,
+      height: AppTokens.avatarSizeSm,
       decoration: BoxDecoration(
         color: AppColors.tintedStatusSoft(context, status.colorOf(context)),
         shape: BoxShape.circle,

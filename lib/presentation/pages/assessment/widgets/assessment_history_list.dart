@@ -94,8 +94,8 @@ class _HistoryItem extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: AppTokens.avatarSizeMd,
+            height: AppTokens.avatarSizeMd,
             decoration: BoxDecoration(
               // v0.22 round 30 (sp-zh P2-3): 走 tintedXxxDeep 集中器
               color: color == AppTokens.primaryColor(context)

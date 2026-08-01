@@ -13,6 +13,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/swipe_delete_background.dart';
@@ -127,11 +128,9 @@ class MedicationRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isEditing || isEditingRefill || isDeleting)
-            const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
+            // v0.27 R70 (重构 B-1): 走 LoadingSpinner 集中器替代 inline
+            // CircularProgressIndicator (统一 strokeWidth / 默认 size 24)
+            const LoadingSpinner(size: 18)
           else ...[
             // 编辑按钮（v0.13 Round 9）
             // v0.26 round 57 (emil B-11): 走 PressFeedbackIconButton 集中器

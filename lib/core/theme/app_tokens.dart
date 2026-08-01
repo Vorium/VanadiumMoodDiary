@@ -156,6 +156,14 @@ class AppTokens {
   static const double iconSizeSmall = AppSpacing.iconSizeSmall;
   static const double iconSizeEmpty = AppSpacing.iconSizeEmpty;
   static const double iconSizeError = AppSpacing.iconSizeError;
+  // v0.27 R70 (emil B-5 重构): atomic size token 集中化
+  // 替代 8+ 处 SizedBox(width: 10/12/36/40/110, height: ...) magic
+  static const double legendDotSizeLg = 12; // 图例大点 (medication_calendar 7天视图)
+  static const double legendDotSizeSm = 10; // 图例小点 (trend_assessment_chart)
+  static const double avatarSizeSm = 36; // avatar 小 (refill_manage_page)
+  static const double avatarSizeMd = 40; // avatar 中 (reminder_cards + assessment_history_list)
+  static const double buttonWidthNarrow = 110; // 窄按钮 (setup_step_medication '下一步')
+  static const double buttonHeightCompact = 44; // 紧凑按钮高度 (跟 buttonHeight 一致但语义不同)
   static const int shimmerPauseMs = AppSpacing.shimmerPauseMs;
   static const double chartPlaceholderHeight =
       AppSpacing.chartPlaceholderHeight;

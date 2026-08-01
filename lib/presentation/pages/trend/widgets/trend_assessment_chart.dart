@@ -254,8 +254,8 @@ class _LegendDot extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 10,
-          height: 10,
+          width: AppTokens.legendDotSizeSm,
+          height: AppTokens.legendDotSizeSm,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,

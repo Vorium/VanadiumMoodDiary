@@ -8,6 +8,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/widgets/info_banner.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
@@ -101,8 +102,8 @@ class SetupStepMedication extends StatelessWidget {
               ),
               const Spacer(),
               SizedBox(
-                width: 110,
-                height: 44,
+                width: AppTokens.buttonWidthNarrow,
+                height: AppTokens.buttonHeightCompact,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -114,11 +115,12 @@ class SetupStepMedication extends StatelessWidget {
                     if (saving)
                       IgnorePointer(
                         child: SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            // v0.22 round 36: 去掉 const (fgOnPrimary 是函数调用)
+                          width: AppTokens.iconSizeInline,
+                          height: AppTokens.iconSizeInline,
+                          // v0.27 R70 (emil B-5): 走 LoadingSpinner 集中器
+                          // 替代 inline CircularProgressIndicator (统一 strokeWidth + theme-aware color)
+                          child: LoadingSpinner(
+                            size: AppTokens.iconSizeInline,
                             color: AppTokens.fgOnPrimary(context),
                           ),
                         ),

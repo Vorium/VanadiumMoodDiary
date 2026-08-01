@@ -160,8 +160,8 @@ class ReminderCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: AppTokens.avatarSizeMd,
+              height: AppTokens.avatarSizeMd,
               decoration: BoxDecoration(
                 color: statusActive
                     ? AppTokens.primaryLightColor(context)
