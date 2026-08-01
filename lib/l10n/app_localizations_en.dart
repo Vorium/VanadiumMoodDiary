@@ -2222,11 +2222,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scaleHotlineCn => 'National 24h Psychological Aid Hotline';
 
   @override
+  String get scaleHotlineCn2 => 'Beijing Suicide Research & Prevention Center';
+
+  @override
   String get scaleHotlineUs => '988 Suicide & Crisis Lifeline (US)';
+
+  @override
+  String get scaleHotlineUs2 => 'Crisis Text Line (text HOME to 741741)';
 
   @override
   String get scaleHotlineHk =>
       'Samaritans Befrienders Hong Kong (24h multilingual)';
+
+  @override
+  String get scaleHotlineTw => 'Lifeline Taiwan (24h)';
+
+  @override
+  String get scaleHotlineTw2 => '1925 Mental Health Counseling Line';
+
+  @override
+  String get scaleHotlineSg => 'Samaritans of Singapore (24h)';
+
+  @override
+  String get scaleHotlineUk => 'Samaritans UK & ROI (24h free)';
 
   @override
   String get scaleHotlineIntl =>

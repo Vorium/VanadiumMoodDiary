@@ -16,6 +16,8 @@
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/phq9.dart';
+import 'package:chroniccare/l10n/app_localizations_en.dart';
+import 'package:chroniccare/presentation/services/scale_translations_l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -197,6 +199,62 @@ void main() {
     test('所有 values 唯一', () {
       final set = HotlineRegion.values.toSet();
       expect(set.length, HotlineRegion.values.length);
+    });
+  });
+
+  // v0.27 R77 (spzh P1-A 收尾): Phq9Scale.detectCrisis hotlines label 走
+  // translations.crisisHotlineLabel (region, index), 6 region × 2 hotline
+  // 全 i18n 化。注入 AppLocalizationsScaleTranslations(en) 验证 en label
+  // ≠ hotlineByRegion[region][i].label (中文 fallback)。
+  group('Phq9Scale.detectCrisis — hotlines label 走 translations (R77 收尾)', () {
+    final enL10n = AppLocalizationsEn();
+    final enTranslations = AppLocalizationsScaleTranslations(enL10n);
+    final scale = Phq9Scale(translations: enTranslations);
+    final scores = List<int>.filled(9, 0)..[8] = 1; // q9 阳性
+
+    test('cn 返 2 条 en label (≠ const 中文 fallback)', () {
+      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.cn);
+      expect(signal, isNotNull);
+      expect(signal!.hotlines.length, 2);
+      expect(signal.hotlines[0].label, 'National 24h Psychological Aid Hotline');
+      expect(signal.hotlines[1].label, 'Beijing Suicide Research & Prevention Center');
+    });
+
+    test('us 返 2 条 en label (988 + Crisis Text Line)', () {
+      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.us);
+      expect(signal, isNotNull);
+      expect(signal!.hotlines.length, 2);
+      expect(signal.hotlines[0].number, '988');
+      expect(signal.hotlines[1].number, '741741');
+    });
+
+    test('tw 返 2 条 en label (Lifeline + 1925)', () {
+      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.tw);
+      expect(signal, isNotNull);
+      expect(signal!.hotlines.length, 2);
+      expect(signal.hotlines[0].label, 'Lifeline Taiwan (24h)');
+      expect(signal.hotlines[1].label, '1925 Mental Health Counseling Line');
+    });
+
+    test('hk 返 1 条 en label (Samaritans HK)', () {
+      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.hk);
+      expect(signal, isNotNull);
+      expect(signal!.hotlines.length, 1);
+      expect(signal.hotlines[0].label, contains('Samaritans'));
+    });
+
+    test('sg 返 1 条 en label (Samaritans Singapore)', () {
+      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.sg);
+      expect(signal, isNotNull);
+      expect(signal!.hotlines.length, 1);
+      expect(signal.hotlines[0].label, 'Samaritans of Singapore (24h)');
+    });
+
+    test('uk 返 1 条 en label (Samaritans UK)', () {
+      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.uk);
+      expect(signal, isNotNull);
+      expect(signal!.hotlines.length, 1);
+      expect(signal.hotlines[0].label, 'Samaritans UK & ROI (24h free)');
     });
   });
 }

@@ -1373,8 +1373,14 @@
   "dayDetailPhq9": "PHQ-9 抑郁筛查",
   "dayDetailGad7": "GAD-7 焦虑筛查",
   "scaleHotlineCn": "全国 24 小时心理援助热线",
+  "scaleHotlineCn2": "北京心理危机研究与干预中心",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
+  "scaleHotlineUs2": "Crisis Text Line (text HOME to 741741)",
   "scaleHotlineHk": "撒玛利亚防止自杀会（24h 多语言）",
+  "scaleHotlineTw": "生命线（24h）",
+  "scaleHotlineTw2": "安心专线（心理咨商）",
+  "scaleHotlineSg": "Samaritans of Singapore (24h)",
+  "scaleHotlineUk": "Samaritans UK & ROI (24h 免费)",
   "scaleHotlineIntl": "国际通用 · 请联系当地急救或心理援助",
   "@scaleCrisisTitle": {
     "description": "PHQ-9 第 9 题阳性时弹窗的标题（'我们关心你'）"

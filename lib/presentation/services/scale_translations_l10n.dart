@@ -25,21 +25,25 @@ class AppLocalizationsScaleTranslations implements ScaleTranslations {
   String gad7Name({String? override}) => override ?? l10n.assessmentScaleGad7;
 
   @override
-  String crisisHotlineLabel(HotlineRegion region, {String? override}) {
+  String crisisHotlineLabel(HotlineRegion region, {int index = 0, String? override}) {
     if (override != null) return override;
-    // v0.28 round 65 起步: 4 region 有独立 i18n key (cn/us/hk/intl),
-    // tw/sg/uk 暂时走 intl fallback (TODO R65b 补 3 key)
+    // v0.27 R77 (spzh P1-A 收尾): 6 region × 2 hotline 全 i18n 化
+    // (cn/us/tw 各 2 个, hk/sg/uk 各 1 个)。index 越界走 first.label 兜底。
+    // scaleHotlineIntl 保留作 region 缺数据 fallback (e.g. 未来新 region)。
+    if (index < 0) return l10n.scaleHotlineIntl;
     switch (region) {
       case HotlineRegion.cn:
-        return l10n.scaleHotlineCn;
+        return index == 0 ? l10n.scaleHotlineCn : l10n.scaleHotlineCn2;
       case HotlineRegion.us:
-        return l10n.scaleHotlineUs;
+        return index == 0 ? l10n.scaleHotlineUs : l10n.scaleHotlineUs2;
       case HotlineRegion.hk:
         return l10n.scaleHotlineHk;
       case HotlineRegion.tw:
+        return index == 0 ? l10n.scaleHotlineTw : l10n.scaleHotlineTw2;
       case HotlineRegion.sg:
+        return l10n.scaleHotlineSg;
       case HotlineRegion.uk:
-        return l10n.scaleHotlineIntl;
+        return l10n.scaleHotlineUk;
     }
   }
 

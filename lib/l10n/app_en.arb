@@ -1331,8 +1331,14 @@
   "dayDetailPhq9": "PHQ-9 Depression Screening",
   "dayDetailGad7": "GAD-7 Anxiety Screening",
   "scaleHotlineCn": "National 24h Psychological Aid Hotline",
+  "scaleHotlineCn2": "Beijing Suicide Research & Prevention Center",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
+  "scaleHotlineUs2": "Crisis Text Line (text HOME to 741741)",
   "scaleHotlineHk": "Samaritans Befrienders Hong Kong (24h multilingual)",
+  "scaleHotlineTw": "Lifeline Taiwan (24h)",
+  "scaleHotlineTw2": "1925 Mental Health Counseling Line",
+  "scaleHotlineSg": "Samaritans of Singapore (24h)",
+  "scaleHotlineUk": "Samaritans UK & ROI (24h free)",
   "scaleHotlineIntl": "International · contact local emergency or mental health services",
   "@scaleCrisisTitle": {
     "description": "Title of crisis dialog when PHQ-9 Q9 positive (e.g. 'We care about you')"

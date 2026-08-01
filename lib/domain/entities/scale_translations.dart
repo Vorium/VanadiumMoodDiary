@@ -41,8 +41,11 @@ abstract class ScaleTranslations {
   String gad7Name({String? override});
 
   /// 6 region 危机电话 label (cn / us / hk / tw / sg / uk)
-  /// — tw/sg/uk 起步版本走 intl fallback (后续 R65b 补 3 个 region key)
-  String crisisHotlineLabel(HotlineRegion region, {String? override});
+  ///
+  /// v0.27 R77 (spzh P1-A 收尾): 加 [index] 支持 6 region × 2 hotline (cn/us/tw 各 2 个,
+  /// hk/sg/uk 各 1 个, index=1 越界走 fallback first.label)。
+  /// tw/sg/uk 之前走 intl fallback, 现在每 region 都有独立 i18n key。
+  String crisisHotlineLabel(HotlineRegion region, {int index = 0, String? override});
 
   /// v0.27 R71 (spzh P1-A 续): 危机弹窗标题 (PHQ-9 Q9 阳性时)
   /// — 之前 detectCrisis 用 const 中文 '我们关心你' 硬编, en / zh_Hant 用户看中文
@@ -64,11 +67,13 @@ class StaticScaleTranslations implements ScaleTranslations {
   String gad7Name({String? override}) => override ?? 'GAD-7 焦虑筛查';
 
   @override
-  String crisisHotlineLabel(HotlineRegion region, {String? override}) {
+  String crisisHotlineLabel(HotlineRegion region, {int index = 0, String? override}) {
     if (override != null) return override;
-    // 起步版本: 翻译 key 走 `hotlineByRegion[region].first.label` (中文 fallback)
+    // 起步版本: 翻译 key 走 `hotlineByRegion[region][index].label` (中文 fallback)
+    // index 越界走 first.label (老 caller 兼容)
     final list = hotlineByRegion[region];
     if (list == null || list.isEmpty) return region.name;
+    if (index < list.length) return list[index].label;
     return list.first.label;
   }
 

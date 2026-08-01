@@ -1370,8 +1370,14 @@
   "dayDetailPhq9": "PHQ-9 抑鬱篩查",
   "dayDetailGad7": "GAD-7 焦慮篩查",
   "scaleHotlineCn": "全國 24 小時心理援助熱線",
+  "scaleHotlineCn2": "北京心理危機研究與干預中心",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
+  "scaleHotlineUs2": "Crisis Text Line (text HOME to 741741)",
   "scaleHotlineHk": "撒瑪利亞防止自殺會（24h 多語言）",
+  "scaleHotlineTw": "生命線（24h）",
+  "scaleHotlineTw2": "安心專線（心理諮商）",
+  "scaleHotlineSg": "Samaritans of Singapore (24h)",
+  "scaleHotlineUk": "Samaritans UK & ROI (24h 免費)",
   "scaleHotlineIntl": "國際通用 · 請聯繫當地急救或心理援助",
   "@scaleCrisisTitle": {
     "description": "PHQ-9 第 9 題陽性時彈窗的標題（'我們關心你'）"

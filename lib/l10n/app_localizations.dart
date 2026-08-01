@@ -3856,17 +3856,53 @@ abstract class AppLocalizations {
   /// **'全国 24 小时心理援助热线'**
   String get scaleHotlineCn;
 
+  /// No description provided for @scaleHotlineCn2.
+  ///
+  /// In zh, this message translates to:
+  /// **'北京心理危机研究与干预中心'**
+  String get scaleHotlineCn2;
+
   /// No description provided for @scaleHotlineUs.
   ///
   /// In zh, this message translates to:
   /// **'988 Suicide & Crisis Lifeline (US)'**
   String get scaleHotlineUs;
 
+  /// No description provided for @scaleHotlineUs2.
+  ///
+  /// In zh, this message translates to:
+  /// **'Crisis Text Line (text HOME to 741741)'**
+  String get scaleHotlineUs2;
+
   /// No description provided for @scaleHotlineHk.
   ///
   /// In zh, this message translates to:
   /// **'撒玛利亚防止自杀会（24h 多语言）'**
   String get scaleHotlineHk;
+
+  /// No description provided for @scaleHotlineTw.
+  ///
+  /// In zh, this message translates to:
+  /// **'生命线（24h）'**
+  String get scaleHotlineTw;
+
+  /// No description provided for @scaleHotlineTw2.
+  ///
+  /// In zh, this message translates to:
+  /// **'安心专线（心理咨商）'**
+  String get scaleHotlineTw2;
+
+  /// No description provided for @scaleHotlineSg.
+  ///
+  /// In zh, this message translates to:
+  /// **'Samaritans of Singapore (24h)'**
+  String get scaleHotlineSg;
+
+  /// No description provided for @scaleHotlineUk.
+  ///
+  /// In zh, this message translates to:
+  /// **'Samaritans UK & ROI (24h 免费)'**
+  String get scaleHotlineUk;
 
   /// No description provided for @scaleHotlineIntl.
   ///

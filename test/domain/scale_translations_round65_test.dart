@@ -46,6 +46,23 @@ void main() {
       expect(label, hotlineByRegion[HotlineRegion.cn]!.first.label);
     });
 
+    test('crisisHotlineLabel cn index=1 返 hotlineByRegion 第 2 条', () {
+      // v0.27 R77: 加 index 支持多 hotline (cn/us/tw 各 2 个)
+      final label = t.crisisHotlineLabel(HotlineRegion.cn, index: 1);
+      expect(label, hotlineByRegion[HotlineRegion.cn]![1].label);
+    });
+
+    test('crisisHotlineLabel tw index=1 返第 2 条 (1925)', () {
+      final label = t.crisisHotlineLabel(HotlineRegion.tw, index: 1);
+      expect(label, hotlineByRegion[HotlineRegion.tw]![1].label);
+    });
+
+    test('crisisHotlineLabel hk index=5 越界 → first.label fallback', () {
+      // hk 只有 1 个 hotline, index=5 越界
+      final label = t.crisisHotlineLabel(HotlineRegion.hk, index: 5);
+      expect(label, hotlineByRegion[HotlineRegion.hk]!.first.label);
+    });
+
     test('crisisHotlineLabel us 返 hotlineByRegion 第 1 条', () {
       final label = t.crisisHotlineLabel(HotlineRegion.us);
       expect(label, hotlineByRegion[HotlineRegion.us]!.first.label);
@@ -121,23 +138,74 @@ void main() {
     });
   });
 
-  group('AppLocalizationsScaleTranslations (tw/sg/uk 走 intl fallback)', () {
-    test('tw 走 intl fallback', () {
+  group('AppLocalizationsScaleTranslations (v0.27 R77: 6 region × 2 hotline 全 i18n)', () {
+    test('cn 返 zh 第 1 条 (全国 24h)', () {
       final l10n = AppLocalizationsZh();
       final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.tw), l10n.scaleHotlineIntl);
+      expect(t.crisisHotlineLabel(HotlineRegion.cn, index: 0),
+          '全国 24 小时心理援助热线',);
     });
 
-    test('sg 走 intl fallback', () {
+    test('cn index=1 返 zh 第 2 条 (北京心理危机)', () {
       final l10n = AppLocalizationsZh();
       final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.sg), l10n.scaleHotlineIntl);
+      expect(t.crisisHotlineLabel(HotlineRegion.cn, index: 1),
+          '北京心理危机研究与干预中心',);
     });
 
-    test('uk 走 intl fallback', () {
+    test('us 返英文 (988)', () {
       final l10n = AppLocalizationsEn();
       final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.uk), l10n.scaleHotlineIntl);
+      expect(t.crisisHotlineLabel(HotlineRegion.us, index: 0),
+          '988 Suicide & Crisis Lifeline (US)',);
+    });
+
+    test('us index=1 返英文 (Crisis Text Line)', () {
+      final l10n = AppLocalizationsEn();
+      final t = AppLocalizationsScaleTranslations(l10n);
+      expect(t.crisisHotlineLabel(HotlineRegion.us, index: 1),
+          'Crisis Text Line (text HOME to 741741)',);
+    });
+
+    test('tw 返 zh 第 1 条 (生命线 24h)', () {
+      final l10n = AppLocalizationsZh();
+      final t = AppLocalizationsScaleTranslations(l10n);
+      expect(t.crisisHotlineLabel(HotlineRegion.tw, index: 0),
+          '生命线（24h）',);
+    });
+
+    test('tw index=1 返 zh 第 2 条 (1925 心理咨商)', () {
+      final l10n = AppLocalizationsZh();
+      final t = AppLocalizationsScaleTranslations(l10n);
+      expect(t.crisisHotlineLabel(HotlineRegion.tw, index: 1),
+          '安心专线（心理咨商）',);
+    });
+
+    test('sg 返英文 (Samaritans Singapore)', () {
+      final l10n = AppLocalizationsEn();
+      final t = AppLocalizationsScaleTranslations(l10n);
+      expect(t.crisisHotlineLabel(HotlineRegion.sg, index: 0),
+          'Samaritans of Singapore (24h)',);
+    });
+
+    test('uk 返英文 (Samaritans UK)', () {
+      final l10n = AppLocalizationsEn();
+      final t = AppLocalizationsScaleTranslations(l10n);
+      expect(t.crisisHotlineLabel(HotlineRegion.uk, index: 0),
+          'Samaritans UK & ROI (24h free)',);
+    });
+
+    test('hk 返中文/繁 hotline', () {
+      final l10n = AppLocalizationsZh();
+      final t = AppLocalizationsScaleTranslations(l10n);
+      expect(t.crisisHotlineLabel(HotlineRegion.hk), contains('撒玛利亚'));
+    });
+
+    test('index 越界 (cn 1 个, 取 5) 走 first.label fallback', () {
+      final l10n = AppLocalizationsZh();
+      final t = AppLocalizationsScaleTranslations(l10n);
+      // hk 只有 1 个 hotline, index=5 越界 → 走 first.label
+      expect(t.crisisHotlineLabel(HotlineRegion.hk, index: 5), isNotEmpty);
     });
   });
 

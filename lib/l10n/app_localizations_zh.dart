@@ -2114,10 +2114,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scaleHotlineCn => '全国 24 小时心理援助热线';
 
   @override
+  String get scaleHotlineCn2 => '北京心理危机研究与干预中心';
+
+  @override
   String get scaleHotlineUs => '988 Suicide & Crisis Lifeline (US)';
 
   @override
+  String get scaleHotlineUs2 => 'Crisis Text Line (text HOME to 741741)';
+
+  @override
   String get scaleHotlineHk => '撒玛利亚防止自杀会（24h 多语言）';
+
+  @override
+  String get scaleHotlineTw => '生命线（24h）';
+
+  @override
+  String get scaleHotlineTw2 => '安心专线（心理咨商）';
+
+  @override
+  String get scaleHotlineSg => 'Samaritans of Singapore (24h)';
+
+  @override
+  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免费)';
 
   @override
   String get scaleHotlineIntl => '国际通用 · 请联系当地急救或心理援助';
@@ -4239,10 +4257,28 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get scaleHotlineCn => '全國 24 小時心理援助熱線';
 
   @override
+  String get scaleHotlineCn2 => '北京心理危機研究與干預中心';
+
+  @override
   String get scaleHotlineUs => '988 Suicide & Crisis Lifeline (US)';
 
   @override
+  String get scaleHotlineUs2 => 'Crisis Text Line (text HOME to 741741)';
+
+  @override
   String get scaleHotlineHk => '撒瑪利亞防止自殺會（24h 多語言）';
+
+  @override
+  String get scaleHotlineTw => '生命線（24h）';
+
+  @override
+  String get scaleHotlineTw2 => '安心專線（心理諮商）';
+
+  @override
+  String get scaleHotlineSg => 'Samaritans of Singapore (24h)';
+
+  @override
+  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免費)';
 
   @override
   String get scaleHotlineIntl => '國際通用 · 請聯繫當地急救或心理援助';
