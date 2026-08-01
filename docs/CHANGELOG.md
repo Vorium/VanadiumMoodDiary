@@ -2,6 +2,68 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-01 (R69 — 6 视角审计后 P0 集中修复)
+
+> R69 目标: R68 commit `d691551` 修了 3 个共识 P0 (CC-1 setup ConsentDialog / CC-3 IAP 临时关 / CC-6 CareEngine safety consent) 但**仍有 11 个 XS-L 难度的 P0 跨 4 round 挂死**, 这次集中清零。
+> 同时修 **C1.5 dart format 回归** (R68 commit 自引入, 86% → 88% 合规率倒退 2%) + **CC-9/CC-10 dark mode + alpha** (R49 漏 2 跨 4 round) + **CC-7 失联通知 4 文档 wording** + **5 warning + 6 半成品 wording 修**。
+
+### Tests
+- **1285/1285 pass** (持平 R68)
+- `dart fix --apply` 清 5 warning + 175 info (180 fixes / 63 文件)
+- `dart format` 修 2 文件 (`home_page.dart` + `setup_page.dart` C1.5 回归)
+- 16 守护脚本全绿
+
+### 上架 P0 集中清零 (11 项 XS-S, 半天)
+
+- **CC-9 `settings_page.dart:62, 92` 2 处 dark mode 漏反白 (R49 漏 4 round)**:
+  - `Icon(color: AppColors.success)` → `Icon(color: AppColors.fgOnSuccess)` (语义化)
+  - `Icon(color: AppColors.primary)` → `Icon(color: AppColors.primaryColor(context))` (theme-aware)
+- **CC-10 `app_theme.dart:123, 209` 2 处 inline alpha (R50 漏 4 round, 集中器已存在但未应用)**:
+  - `_elevatedButtonTheme` + `_inputDecorationTheme` 是静态工厂没 `BuildContext`, **R69 决策: 保留 inline, 删 1 年 TODO 注释占位** (跟 v0.25 R50 同款设计判断, 但删 TODO 注释避免误读)
+- **`home_page.dart:622-650` celebration 35% 高度定位 (emil P1-1)**:
+  - `top: MediaQuery.of(ctx).size.height * 0.35` → `top: MediaQuery.of(ctx).padding.top + AppTokens.spacingLg`
+  - 修键盘弹起 / 横屏 / 全面屏撞顶
+- **`medication_report_dialog.dart:166-194` scrim 缺 `AbsorbPointer` (emil P0-2)**:
+  - PDF 生成中 scrim 包 `AbsorbPointer` 锁死, 用户无法点底下 3 按钮
+- **`user_agreement.md:25, 28` "本 App 售价人民币 8 元" 段 (CC-3 文本)**:
+  - 跟 R68 `_prodIapEnabled=false` 一致, 删 "8 元买断" 段
+- **失联通知 4 文档 wording (CC-7)**:
+  - `user_agreement.md:17, 40` + `sensitive_data_consent.md:27, 47, 64, 66-67` + `privacy_policy.md:32, 64, 72, 87, 192` + `en-US/full_description.txt:14` + `zh-CN/title.txt:1` + `en-US/short_description.txt:1` 共 10+ 处 wording 改 "**即将上线 — 当前已暂停**" / "**would automatically notify**"
+- **`en-US/short_description.txt:1` 病耻感措辞 (R69-N1)**:
+  - "chronic patients" → "people managing chronic conditions"
+- **`privacy_policy.md:138, 175, 185, 192, 201` 5 处版本号过期 (R69-N3)**:
+  - 5 处 v0.25 → v0.27 / R55 → 未真接 walkthrough
+- **5 warning `unused_import` 等 (`dart fix --apply`)**:
+  - 180 fixes / 63 文件 (含 5 warning + 175 info-level)
+- **2 文件 dart format 回归 (C1.5)**:
+  - `lib/presentation/pages/home/home_page.dart` + `lib/presentation/pages/setup/setup_page.dart` (R68 commit 自引入, 5min 修)
+
+### 架构合规 (4 层 + 5 子 umbrella 100% 纯, 16 守护脚本全绿)
+
+- 4 层架构纯度 100% (`check_all.dart` 通过)
+- 16 守护脚本全绿
+- 5 类历史 bug 模式 100% 合规
+- 0 跨 feature import 违规
+
+### 半成品 / TODO / 营销性宣称 ≠ 实际行为 (3 项修, 5 项仍挂)
+
+- ✅ `user_agreement.md:25, 28` "8 元买断" 段删
+- ✅ 4 文档失联通知 wording 改 "暂停" 段
+- ✅ `en-US/short_description.txt` 病耻感措辞
+- ❌ `assets/legal/*.md` 顶部 "TODO 律师过审" banner 仍保留 (CC-4, 律师 1-2 周)
+- ❌ 3 份 md 0 英文 + 0 繁体版 (CC-8, 1 周翻译)
+- ❌ `pubspec.yaml:2` description 单语种 (CC-5, 半天加 en / zh_Hant)
+- ❌ `AliyunSmsProvider.send()` 真接 (1-2 月, 法务 + 阿里云 AccessKey)
+- ❌ `EmailService.send()` 真接 (1-2 月, 法务 + SendGrid AccessKey)
+- ❌ `BootReceiver.kt:32-37` 占位启动 MainActivity (R64+ 4 round 未动)
+
+### 重构机会 (R69 持平, R70 推荐)
+
+- ❌ 4 widget 集中器未抽: `OutlinedButtonWithPress` / `LoadingScrim` / `TrailingSpinner` / `ConsentCard` (1-2d)
+- ❌ 8 atomic size token 散落 (XS, 半天)
+- ❌ PHQ-9 / GAD-7 32 题 i18n 化 (L, 1 周)
+- ❌ 6 RepaintBoundary + 2 .then() (P5.4, 半天)
+
 ## [Unreleased] - 2026-07-31 (R66 — 联系人软隐藏: 病耻感考量 + 失联通信业务整体暂停)
 
 > R66 目标: 用户反馈"精神心理患者有病耻感, 不想首次启动就被要求填紧急联系人" +
