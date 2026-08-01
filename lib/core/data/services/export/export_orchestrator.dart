@@ -18,15 +18,13 @@
 
 import 'dart:convert';
 
-import 'package:drift/drift.dart' show Value;
-
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/services/export/export_audio_service.dart';
 import 'package:chroniccare/core/data/services/export/export_crypto_service.dart';
+import 'package:chroniccare/core/data/services/export/export_import_pipeline.dart';
 import 'package:chroniccare/core/data/services/export/export_schema_service.dart';
-import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/domain/repositories/report_history_repository.dart';
 
@@ -55,6 +53,15 @@ class ExportOrchestrator {
   final ExportCryptoService _cryptoService;
   final ExportAudioService _audioService;
   final ExportSchemaService _schemaService;
+
+  /// v0.27 round 77 (R76-N8 修): 公开 5 个依赖 getter, 让
+  /// `export_import_pipeline.dart` 的 `runImportFromJson` 顶层函数能
+  /// 访问, 不打破 private 封装。
+  AppDatabase get db => _db;
+  ReportHistoryRepository get reportRepo => _reportRepo;
+  ExportCryptoService get cryptoService => _cryptoService;
+  ExportAudioService get audioService => _audioService;
+  ExportSchemaService get schemaService => _schemaService;
 
   /// 构造注入, 默认值跟 facade 一致。
   ///
@@ -203,318 +210,14 @@ class ExportOrchestrator {
 
   /// 从 JSON 字符串导入数据 (覆盖现有)
   ///
-  /// 返回导入条数摘要
-  Future<ImportResult> importFromJson(String json) async {
-    try {
-      final data = jsonDecode(json) as Map<String, dynamic>;
-      final version = _schemaService.validateVersion(data['version']);
-      if (version == null) {
-        return ImportResult.failure(
-          '数据版本不匹配（期望 1-${ExportSchemaService.currentVersion}, 实际 ${data['version']}）',
-        );
-      }
-
-      int contactCount = 0;
-      int medicationCount = 0;
-      int checkInCount = 0;
-      int reportHistoryCount = 0;
-      int moodEntryCount = 0;
-      int ventEntryCount = 0;
-
-      await _db.transaction(() async {
-        // 清空旧数据
-        await _db.delete(_db.checkIns).go();
-        await _db.delete(_db.medications).go();
-        await _db.delete(_db.contacts).go();
-        // 旧 schema 缺失表安全删除 (v0.23 round 39 P1-10 fix: 走 swallowError
-        // 集中器, 不再 catch(_) 完全静默)
-        await _schemaService.deleteOldDataSafely(
-          _db,
-          _db.reportHistories,
-          label: 'reportHistories',
-        );
-        await _schemaService.deleteOldDataSafely(
-          _db,
-          _db.moodEntries,
-          label: 'moodEntries',
-        );
-        // P0-3: vent_entries 表 (v0.15+ 存在, 不需要 guard, 但仍走安全删除)
-        await _schemaService.deleteOldDataSafely(
-          _db,
-          _db.ventEntries,
-          label: 'ventEntries',
-        );
-
-        // profile
-        if (data['profile'] != null) {
-          final p = data['profile'] as Map<String, dynamic>;
-          final userName = ExportSchemaService.validateString(
-            p['userName'],
-            'userName',
-            maxLen: 50,
-          );
-          if (userName != null) {
-            await _db.userProfileDao.upsert(
-              UserProfilesCompanion.insert(
-                // v0.21 Round 23 (P1-24): userName nullable
-                userName: Value(userName),
-                checkInCycleHours: Value(
-                  ExportSchemaService.validateIntOr(
-                    p['checkInCycleHours'],
-                    48,
-                    min: 1,
-                    max: 168,
-                  ),
-                ),
-                firstLaunchAt:
-                    ExportSchemaService.validateDate(p['firstLaunchAt']) ??
-                        DateTime.now(),
-              ),
-            );
-          }
-        }
-
-        // contacts
-        for (final c in (data['contacts'] as List? ?? [])) {
-          if (c is! Map) continue;
-          final m = c;
-          final name = ExportSchemaService.validateString(
-            m['name'],
-            'contact.name',
-            maxLen: 50,
-          );
-          final phone = ExportSchemaService.validateString(
-            m['phone'],
-            'contact.phone',
-            maxLen: 20,
-            pattern: RegExp(r'^\+?\d{6,20}$'),
-          );
-          if (name == null || phone == null) continue;
-          await _db.contactDao.insert(
-            ContactsCompanion.insert(
-              name: name,
-              phone: phone,
-              sortOrder: Value(
-                ExportSchemaService.validateIntOr(m['sortOrder'], 0),
-              ),
-              isActive: Value(m['isActive'] as bool? ?? true),
-            ),
-          );
-          contactCount++;
-        }
-
-        // medications
-        for (final med in (data['medications'] as List? ?? [])) {
-          if (med is! Map) continue;
-          final m = med;
-          final name = ExportSchemaService.validateString(
-            m['name'],
-            'med.name',
-            maxLen: 50,
-          );
-          final unit = ExportSchemaService.validateString(
-            m['dosageUnit'],
-            'med.unit',
-            maxLen: 10,
-          );
-          final dosage = ExportSchemaService.validateDouble(m['dosage']);
-          final start = ExportSchemaService.validateDate(m['startDate']);
-          if (name == null || unit == null || dosage == null || start == null) {
-            continue;
-          }
-          await _db.medicationDao.insert(
-            MedicationsCompanion.insert(
-              name: name,
-              dosage: dosage,
-              dosageUnit: unit,
-              timesJson: Value(
-                ExportSchemaService.validateString(
-                      m['timesJson'],
-                      'med.timesJson',
-                      maxLen: 1000,
-                    ) ??
-                    '[]',
-              ),
-              startDate: start,
-              endDate: Value(ExportSchemaService.validateDate(m['endDate'])),
-              isActive: Value(m['isActive'] as bool? ?? true),
-            ),
-          );
-          medicationCount++;
-        }
-
-        // checkIns
-        for (final c in (data['checkIns'] as List? ?? [])) {
-          if (c is! Map) continue;
-          final m = c;
-          final ts = ExportSchemaService.validateDate(m['timestamp']);
-          final type = ExportSchemaService.validateString(
-            m['type'],
-            'checkIn.type',
-            maxLen: 20,
-          );
-          if (ts == null || type == null) continue;
-          await _db.checkInDao.insert(
-            CheckInsCompanion.insert(
-              timestamp: ts,
-              type: type,
-              medicationId: Value(
-                ExportSchemaService.validateInt(m['medicationId'], null),
-              ),
-              note: Value(
-                ExportSchemaService.validateString(
-                  m['note'],
-                  'checkIn.note',
-                  maxLen: 10000,
-                ),
-              ),
-            ),
-          );
-          checkInCount++;
-        }
-
-        // reportHistories (v2 才有, v1 没有这段也兼容)
-        if (version >= 2) {
-          for (final h in (data['reportHistories'] as List? ?? [])) {
-            if (h is! Map) continue;
-            final m = h;
-            final days = ExportSchemaService.validateInt(
-              m['windowDays'],
-              null,
-              min: 1,
-              max: 365,
-            );
-            final at = ExportSchemaService.validateDate(m['generatedAt']);
-            final userName = ExportSchemaService.validateString(
-                  m['userName'],
-                  'report.userName',
-                  maxLen: 50,
-                ) ??
-                '';
-            final text = ExportSchemaService.validateString(
-              m['reportText'],
-              'report.text',
-              maxLen: 100000,
-            );
-            if (days == null || at == null || text == null) continue;
-            await _reportRepo.insert(
-              windowDays: days,
-              generatedAt: at,
-              userName: userName,
-              reportText: text,
-            );
-            reportHistoryCount++;
-          }
-
-          for (final me in (data['moodEntries'] as List? ?? [])) {
-            if (me is! Map) continue;
-            final m = me;
-            final ts = ExportSchemaService.validateDate(m['timestamp']);
-            final score = ExportSchemaService.validateIntOr(
-              m['score'],
-              3,
-              min: 1,
-              max: 5,
-            );
-            if (ts == null) continue;
-            final tags = ExportSchemaService.validateString(
-                  m['tagsJson'],
-                  'mood.tags',
-                  maxLen: 5000,
-                ) ??
-                '[]';
-            await _db.moodDao.insert(
-              MoodEntriesCompanion.insert(
-                timestamp: ts,
-                score: score,
-                // v0.18 4D 情绪: 老导出文件 (v1-3) 无这些字段时为 null
-                energy: Value(
-                  ExportSchemaService.validateInt(
-                    m['energy'],
-                    null,
-                    min: 1,
-                    max: 5,
-                  ),
-                ),
-                sleep: Value(
-                  ExportSchemaService.validateInt(
-                    m['sleep'],
-                    null,
-                    min: 1,
-                    max: 5,
-                  ),
-                ),
-                anxiety: Value(
-                  ExportSchemaService.validateInt(
-                    m['anxiety'],
-                    null,
-                    min: 1,
-                    max: 5,
-                  ),
-                ),
-                tagsJson: Value(tags),
-                note: Value(
-                  ExportSchemaService.validateString(
-                    m['note'],
-                    'mood.note',
-                    maxLen: 10000,
-                  ),
-                ),
-              ),
-            );
-            moodEntryCount++;
-          }
-        }
-
-        // P0-3: vent_entries 文字导入 (录音路径永远丢弃, 跨设备不可用)。
-        // version 3+ 才有, 老导出文件没这段也兼容。
-        // v0.21 Round 22: 文字从 JSON 读出是明文, 导入时 encrypt 写回 BLOB。
-        if (version >= 3) {
-          for (final v in (data['ventEntries'] as List? ?? [])) {
-            if (v is! Map) continue;
-            final m = v;
-            final ts = ExportSchemaService.validateDate(m['timestamp']);
-            if (ts == null) continue;
-            // 文字可以很大 (树洞常长篇), 放宽到 100k
-            final text = ExportSchemaService.validateString(
-              m['contentText'],
-              'vent.text',
-              maxLen: 100000,
-            );
-            // 委托 ExportCryptoService.encryptVentText — encrypt 副作用下沉
-            final encText = await _cryptoService.encryptVentText(text);
-            await _db.ventDao.insert(
-              VentEntriesCompanion.insert(
-                timestamp: ts,
-                contentTextEnc: Value(encText),
-                // audioPath 永远 null — 旧路径在重装后失效
-                audioDurationSec: Value(
-                  _audioService.parseAudioDurationSec(m['audioDurationSec']),
-                ),
-                audioSizeBytes: Value(
-                  _audioService.parseAudioSizeBytes(m['audioSizeBytes']),
-                ),
-              ),
-            );
-            ventEntryCount++;
-          }
-        }
-      });
-
-      return ImportResult.success(
-        contactCount: contactCount,
-        medicationCount: medicationCount,
-        checkInCount: checkInCount,
-        reportHistoryCount: reportHistoryCount,
-        moodEntryCount: moodEntryCount,
-        ventEntryCount: ventEntryCount,
-      );
-    } catch (e, st) {
-      piiSafeLog('DataExportService', 'importFromJson error: $e\n$st');
-      // P12 fix: 脱敏, 只告诉用户"解析失败", 不暴露具体异常
-      return ImportResult.failure('解析失败：数据格式不正确，请确认是从本 App 导出的 JSON');
-    }
-  }
+  /// **v0.27 round 77 (R76-N8 修)**: 委托 [runImportFromJson] (定义在
+  /// `export_import_pipeline.dart`), 本文件只保留 facade. 整 method 310 行
+  /// 拆出后 ExportOrchestrator 从 21.5KB → 12KB, 仍跟 facade + 50+ test 兼容
+  /// (公开签名 `importFromJson(String)` 不变)。
+  ///
+  /// 返回导入条数摘要 [ImportResult]
+  Future<ImportResult> importFromJson(String json) =>
+      runImportFromJson(this, json);
 }
 
 /// 导入结果摘要 — v0.26 round 57 (spen P1 #2): 从 facade 移到 orchestrator
