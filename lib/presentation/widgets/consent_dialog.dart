@@ -82,7 +82,10 @@ class ConsentDialog {
       kind: kind,
       grantedAt: DateTime.now(),
       grantedBy: 'user', // 未来支持代理人代同意时扩展
-      version: 'v1',
+      // v0.27 round 75 (R74-N12 PIPL §17 修): 跟 setup_page._kLegalVersion
+      // 同步 (v0.27-2026-08-01), 之前写死 'v1' 跟法律协议版本脱节,
+      // 法务模板升级时无法触发 re-consent。
+      version: 'v0.27-2026-08-01',
     );
   }
 }

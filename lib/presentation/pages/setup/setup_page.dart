@@ -31,9 +31,15 @@ import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 /// v0.21 Round 22 (P1-22 修复): 协议版本号
 ///
-/// 升级时 bump 这个值 (e.g. v0.22-2026-08-01),
-/// 重新 setup 时会写新版本号,留 audit trail。
-const _kLegalVersion = 'v0.21-2026-07-20';
+/// v0.27 round 75 (R74-N11 PIPL §17 修): 之前写死 'v0.21-2026-07-20',
+/// 文档经 R54/R66/R67/R68/R69/R70/R71/R72/R73 9 round 多次修订但 legal version
+/// 不跟着 bump, re-consent 触发逻辑失效 → 用户"用 v0.27 app 但 consent v0.21 协议"
+/// 属 PIPL §17 同意记录失效。
+///
+/// 修法: 跟 pubspec.yaml version 同步 (v0.27.0+64) + 当前日期 (YYYY-MM-DD)。
+/// 升级时 bump pubspec.yaml 的 version, 这里 const 跟着改。
+/// R76+ 考虑: 改成启动时读 PackageInfo (需加 package_info_plus plugin)。
+const _kLegalVersion = 'v0.27-2026-08-01';
 
 ///
 /// 0=consent, 1=welcome, 2=medication, 3=done
