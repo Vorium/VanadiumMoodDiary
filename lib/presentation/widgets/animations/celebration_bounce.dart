@@ -93,35 +93,40 @@ class _CelebrationBounceState extends State<CelebrationBounce>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (ctx, child) {
-        return Opacity(
-          opacity: _opacity.value,
-          child: Transform.scale(
-            scale: _scale.value,
-            child: child,
+    // v0.27 R71 (P5.4 性能): 加 RepaintBoundary
+    // celebration 动画 1.8s 期间每秒 60 帧, 包 RepaintBoundary
+    // 让父 widget 重建不重 paint 庆祝气泡
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (ctx, child) {
+          return Opacity(
+            opacity: _opacity.value,
+            child: Transform.scale(
+              scale: _scale.value,
+              child: child,
+            ),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTokens.spacingLg,
+            vertical: AppTokens.spacingSm,
           ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppTokens.spacingLg,
-          vertical: AppTokens.spacingSm,
-        ),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-          // v0.27 round 59 (emil EMIL-T29): 修正走 theme-aware shadowOverlayOf,
-          // 防 R49 同款 silent bug (黑色阴影在 dark mode = 透明)。
-          boxShadow: AppTokens.shadowOverlayOf(context),
-        ),
-        child: Text(
-          widget.message,
-          style: TextStyle(
-            color: AppTokens.fgOnPrimary(context),
-            fontSize: AppTokens.fontSizeBody,
-            fontWeight: FontWeight.w600,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+            // v0.27 round 59 (emil EMIL-T29): 修正走 theme-aware shadowOverlayOf,
+            // 防 R49 同款 silent bug (黑色阴影在 dark mode = 透明)。
+            boxShadow: AppTokens.shadowOverlayOf(context),
+          ),
+          child: Text(
+            widget.message,
+            style: TextStyle(
+              color: AppTokens.fgOnPrimary(context),
+              fontSize: AppTokens.fontSizeBody,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

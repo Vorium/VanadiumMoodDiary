@@ -15,21 +15,26 @@ class HeatmapGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          children: [
-            for (final d in daily)
-              _HeatCell(
-                date: d.date,
-                checked: d.checked,
-                size: ((constraints.maxWidth - 4 * 4) / 5).clamp(28.0, 48.0),
-              ),
-          ],
-        );
-      },
+    // v0.27 R71 (P5.4 性能): 加 RepaintBoundary
+    // 频繁 rebuild (跨 midnight + day change tick) 时,
+    // heatmap 网格不重新 paint, 节省 GPU
+    return RepaintBoundary(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: [
+              for (final d in daily)
+                _HeatCell(
+                  date: d.date,
+                  checked: d.checked,
+                  size: ((constraints.maxWidth - 4 * 4) / 5).clamp(28.0, 48.0),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

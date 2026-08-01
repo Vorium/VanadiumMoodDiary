@@ -145,130 +145,142 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
     }
   }
 
-  void _showAddContactDialog(BuildContext context, WidgetRef ref) {
+  /// v0.27 R71 (P5.4 修复): 改 Future<void> + try/finally 包 showDialog,
+  /// 替代 .then() 残存模式。
+  /// 之前用 .then((_) { dispose }) 是为了 dialog 关闭后清理 controllers,
+  /// 但 .then() 模式已被 R17+R56b 标为 deprecated (emil 'async + await 优先')。
+  /// try/finally 等价 + 异常路径更安全 (dialog 抛异常也会 dispose)。
+  Future<void> _showAddContactDialog(BuildContext context, WidgetRef ref) async {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     bool saving = false;
 
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) {
-          return AlertDialog(
-            title: Text(AppLocalizations.of(context).contactAddTitle),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context).contactNameLabel,
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, setLocal) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context).contactAddTitle),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      labelText:
+                          AppLocalizations.of(context).contactNameLabel,
+                    ),
                   ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  TextField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText:
+                          AppLocalizations.of(context).contactPhoneLabel,
+                      hintText: '13800138000',
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: saving ? null : () => Navigator.pop(ctx),
+                  child: Text(AppLocalizations.of(context).commonCancel),
                 ),
-                const SizedBox(height: AppTokens.spacingSm),
-                TextField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context).contactPhoneLabel,
-                    hintText: '13800138000',
+                ElevatedButton(
+                  onPressed: saving
+                      ? null
+                      : () async {
+                          final phone = phoneController.text.trim();
+                          if (phone.isEmpty) return;
+                          if (!PhoneValidator.isValid(phone)) {
+                            // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+                            AppSnackBar.showInfo(
+                              context,
+                              AppLocalizations.of(context).snackbarPhoneInvalid,
+                            );
+                            return;
+                          }
+                          setLocal(() => saving = true);
+                          try {
+                            // v0.27 round 62 (P0-2 修复): 先弹 ConsentDialog
+                            // (PIPL §13 单独同意) → 用户同意才进 add()。
+                            // 拒绝 → 弹 snackbar 提示, 不保存。
+                            if (!ctx.mounted) return;
+                            // v0.27 round 62 (P0-2 修复): 拿当前用户配置的失联阈值,
+                            // 让 consent dialog 文案里的"连续 N 天"是用户自己的值。
+                            final thresholdDays =
+                                await SafetyConfigService().getThresholdDays();
+                            final consent = await ConsentDialog.show(
+                              context,
+                              kind: ConsentKind.emergencyContactSharing,
+                              thresholdDays: thresholdDays,
+                            );
+                            if (consent == null) {
+                              // 用户拒绝, 退出 add 流程
+                              if (ctx.mounted) {
+                                setLocal(() => saving = false);
+                                AppSnackBar.showInfo(
+                                  context,
+                                  AppLocalizations.of(context)
+                                      .contactConsentReject,
+                                );
+                              }
+                              return;
+                            }
+                            await ref.read(contactRepositoryProvider).add(
+                                  // v0.27 round 62 (P1-10 修复): 改用 l10n key 而非
+                                  // hardcode 英文 'Contact'。 en/zh/zh_Hant 三种语言
+                                  // 都用 i18n key, 没填姓名时给合理的本地化默认值。
+                                  name: nameController.text.trim().isEmpty
+                                      ? AppLocalizations.of(context)
+                                          .contactDefaultName
+                                      : nameController.text.trim(),
+                                  phone:
+                                      PhoneValidator.normalize(phone) ?? phone,
+                                  consentArtifact: consent,
+                                  sortOrder: 99,
+                                );
+                            if (ctx.mounted) Navigator.pop(ctx);
+                          } catch (e) {
+                            if (ctx.mounted) {
+                              // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
+                              AppSnackBar.showError(
+                                context,
+                                action: AppLocalizations.of(context)
+                                    .commonActionSave,
+                                error: e,
+                              );
+                              setLocal(() => saving = false);
+                            }
+                          }
+                        },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Text(AppLocalizations.of(context).commonSave),
+                      if (saving)
+                        IgnorePointer(
+                          child: LoadingSpinner(
+                            size: AppTokens.iconSizeInline,
+                            color: AppTokens.fgOnPrimary(context),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: saving ? null : () => Navigator.pop(ctx),
-                child: Text(AppLocalizations.of(context).commonCancel),
-              ),
-              ElevatedButton(
-                onPressed: saving
-                    ? null
-                    : () async {
-                        final phone = phoneController.text.trim();
-                        if (phone.isEmpty) return;
-                        if (!PhoneValidator.isValid(phone)) {
-                          // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
-                          AppSnackBar.showInfo(
-                            context,
-                            AppLocalizations.of(context).snackbarPhoneInvalid,
-                          );
-                          return;
-                        }
-                        setLocal(() => saving = true);
-                        try {
-                          // v0.27 round 62 (P0-2 修复): 先弹 ConsentDialog
-                          // (PIPL §13 单独同意) → 用户同意才进 add()。
-                          // 拒绝 → 弹 snackbar 提示, 不保存。
-                          if (!ctx.mounted) return;
-                          // v0.27 round 62 (P0-2 修复): 拿当前用户配置的失联阈值,
-                          // 让 consent dialog 文案里的"连续 N 天"是用户自己的值。
-                          final thresholdDays =
-                              await SafetyConfigService().getThresholdDays();
-                          final consent = await ConsentDialog.show(
-                            context,
-                            kind: ConsentKind.emergencyContactSharing,
-                            thresholdDays: thresholdDays,
-                          );
-                          if (consent == null) {
-                            // 用户拒绝, 退出 add 流程
-                            if (ctx.mounted) {
-                              setLocal(() => saving = false);
-                              AppSnackBar.showInfo(
-                                context,
-                                AppLocalizations.of(context)
-                                    .contactConsentReject,
-                              );
-                            }
-                            return;
-                          }
-                          await ref.read(contactRepositoryProvider).add(
-                                // v0.27 round 62 (P1-10 修复): 改用 l10n key 而非
-                                // hardcode 英文 'Contact'。 en/zh/zh_Hant 三种语言
-                                // 都用 i18n key, 没填姓名时给合理的本地化默认值。
-                                name: nameController.text.trim().isEmpty
-                                    ? AppLocalizations.of(context)
-                                        .contactDefaultName
-                                    : nameController.text.trim(),
-                                phone: PhoneValidator.normalize(phone) ?? phone,
-                                consentArtifact: consent,
-                                sortOrder: 99,
-                              );
-                          if (ctx.mounted) Navigator.pop(ctx);
-                        } catch (e) {
-                          if (ctx.mounted) {
-                            // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
-                            AppSnackBar.showError(
-                              context,
-                              action:
-                                  AppLocalizations.of(context).commonActionSave,
-                              error: e,
-                            );
-                            setLocal(() => saving = false);
-                          }
-                        }
-                      },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Text(AppLocalizations.of(context).commonSave),
-                    if (saving)
-                      IgnorePointer(
-                        child: LoadingSpinner(
-                          size: AppTokens.iconSizeInline,
-                          color: AppTokens.fgOnPrimary(context),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    ).then((_) {
+            );
+          },
+        ),
+      );
+    } finally {
+      // v0.27 R71 (P5.4): try/finally 替代 .then(),
+      // 异常路径也保证 dispose (race condition 防御)
       nameController.dispose();
       phoneController.dispose();
-    });
+    }
   }
 }

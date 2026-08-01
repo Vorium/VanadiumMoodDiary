@@ -349,9 +349,10 @@ class DataManagementSection extends ConsumerWidget {
     final controller = TextEditingController();
     bool importing = false;
     if (!context.mounted) return;
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AlertDialog(
           title: Text(AppLocalizations.of(context).settingsImportDialogTitle),
           content: Column(
@@ -413,6 +414,10 @@ class DataManagementSection extends ConsumerWidget {
           ],
         ),
       ),
-    ).then((_) => controller.dispose());
+      );
+    } finally {
+      // v0.27 R71 (P5.4): try/finally 替代 .then(), 异常路径也保证 dispose
+      controller.dispose();
+    }
   }
 }
