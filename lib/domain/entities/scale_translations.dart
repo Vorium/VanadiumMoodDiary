@@ -44,6 +44,14 @@ abstract class ScaleTranslations {
   /// 6 region 危机电话 label (cn / us / hk / tw / sg / uk)
   /// — tw/sg/uk 起步版本走 intl fallback (后续 R65b 补 3 个 region key)
   String crisisHotlineLabel(HotlineRegion region, {String? override});
+
+  /// v0.27 R71 (spzh P1-A 续): 危机弹窗标题 (PHQ-9 Q9 阳性时)
+  /// — 之前 detectCrisis 用 const 中文 '我们关心你' 硬编, en / zh_Hant 用户看中文
+  String crisisTitle({String? override});
+
+  /// v0.27 R71 (spzh P1-A 续): 危机弹窗正文 (含换行)
+  /// — 之前 detectCrisis 用 const 中文 '你提到了想伤害自己的念头...'
+  String crisisMessage({String? override});
 }
 
 /// 静态中文 fallback (老 caller / 单测 / domain 0 flutter 边界)
@@ -64,6 +72,13 @@ class StaticScaleTranslations implements ScaleTranslations {
     if (list == null || list.isEmpty) return region.name;
     return list.first.label;
   }
+
+  @override
+  String crisisTitle({String? override}) => override ?? '我们关心你';
+
+  @override
+  String crisisMessage({String? override}) => override ??
+      '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。';
 }
 
 /// AppLocalizations 包装 (presentation 层注入, 走 zh / en / zh_Hant)
@@ -95,4 +110,11 @@ class AppLocalizationsScaleTranslations implements ScaleTranslations {
         return l10n.scaleHotlineIntl;
     }
   }
+
+  @override
+  String crisisTitle({String? override}) => override ?? l10n.scaleCrisisTitle;
+
+  @override
+  String crisisMessage({String? override}) =>
+      override ?? l10n.scaleCrisisMessage;
 }

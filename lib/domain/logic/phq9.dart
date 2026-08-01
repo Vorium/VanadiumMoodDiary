@@ -150,8 +150,10 @@ class Phq9Scale implements AssessmentScale {
       // translations.crisisHotlineLabel(region, index) 翻译 — 需要新加
       // 6 region × N hotline i18n key (本起步版本只加 4 region × 1st hotline)。
       return CrisisSignal(
-        title: '我们关心你',
-        message: '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。',
+        // v0.27 R71 (spzh P1-A 续): 走 translations.crisisTitle() + crisisMessage()
+        // 之前 hardcode 中文, en / zh_Hant 用户看中文 (医疗法律责任)
+        title: translations.crisisTitle(),
+        message: translations.crisisMessage(),
         hotlines: hotlineByRegion[region] ?? hotlineByRegion[HotlineRegion.cn]!,
       );
     }

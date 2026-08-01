@@ -2101,6 +2101,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get scaleHotlineIntl => '国际通用 · 请联系当地急救或心理援助';
+
+  @override
+  String get scaleCrisisTitle => '我们关心你';
+
+  @override
+  String get scaleCrisisMessage => '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4200,4 +4206,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get scaleHotlineIntl => '國際通用 · 請聯繫當地急救或心理援助';
+
+  @override
+  String get scaleCrisisTitle => '我們關心你';
+
+  @override
+  String get scaleCrisisMessage => '你提到了想傷害自己的念頭。\n請記住：尋求幫助是勇敢的，不是軟弱。';
 }

@@ -2209,4 +2209,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get scaleHotlineIntl =>
       'International · contact local emergency or mental health services';
+
+  @override
+  String get scaleCrisisTitle => 'We care about you';
+
+  @override
+  String get scaleCrisisMessage =>
+      'You mentioned thoughts of harming yourself.\nRemember: seeking help is brave, not weak.';
 }

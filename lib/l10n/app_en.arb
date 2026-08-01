@@ -1282,5 +1282,13 @@
   "scaleHotlineCn": "National 24h Psychological Aid Hotline",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
   "scaleHotlineHk": "Samaritans Befrienders Hong Kong (24h multilingual)",
-  "scaleHotlineIntl": "International · contact local emergency or mental health services"
+  "scaleHotlineIntl": "International · contact local emergency or mental health services",
+  "@scaleCrisisTitle": {
+    "description": "Title of crisis dialog when PHQ-9 Q9 positive (e.g. 'We care about you')"
+  },
+  "scaleCrisisTitle": "We care about you",
+  "@scaleCrisisMessage": {
+    "description": "Body of crisis dialog when PHQ-9 Q9 positive. Allow newline."
+  },
+  "scaleCrisisMessage": "You mentioned thoughts of harming yourself.\nRemember: seeking help is brave, not weak."
 }

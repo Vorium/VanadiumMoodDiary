@@ -1324,5 +1324,13 @@
   "scaleHotlineCn": "全国 24 小时心理援助热线",
   "scaleHotlineUs": "988 Suicide & Crisis Lifeline (US)",
   "scaleHotlineHk": "撒玛利亚防止自杀会（24h 多语言）",
-  "scaleHotlineIntl": "国际通用 · 请联系当地急救或心理援助"
+  "scaleHotlineIntl": "国际通用 · 请联系当地急救或心理援助",
+  "@scaleCrisisTitle": {
+    "description": "PHQ-9 第 9 题阳性时弹窗的标题（'我们关心你'）"
+  },
+  "scaleCrisisTitle": "我们关心你",
+  "@scaleCrisisMessage": {
+    "description": "PHQ-9 第 9 题阳性时弹窗的正文, 含换行"
+  },
+  "scaleCrisisMessage": "你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。"
 }

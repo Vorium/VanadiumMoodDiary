@@ -3837,6 +3837,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'国际通用 · 请联系当地急救或心理援助'**
   String get scaleHotlineIntl;
+
+  /// PHQ-9 第 9 题阳性时弹窗的标题（'我们关心你'）
+  ///
+  /// In zh, this message translates to:
+  /// **'我们关心你'**
+  String get scaleCrisisTitle;
+
+  /// PHQ-9 第 9 题阳性时弹窗的正文, 含换行
+  ///
+  /// In zh, this message translates to:
+  /// **'你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。'**
+  String get scaleCrisisMessage;
 }
 
 class _AppLocalizationsDelegate
