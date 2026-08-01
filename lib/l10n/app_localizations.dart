@@ -2161,7 +2161,7 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentSeverityNormal.
   ///
   /// In zh, this message translates to:
-  /// **'正常'**
+  /// **'几乎没有'**
   String get assessmentSeverityNormal;
 
   /// No description provided for @assessmentSeverityMild.
@@ -2944,10 +2944,10 @@ abstract class AppLocalizations {
   /// **'知情同意'**
   String get contactConsentTitle;
 
-  /// PIPL §13 单独同意 dialog 正文, 精神心理患者保护专用
+  /// PIPL §29 单独同意 dialog 正文, 精神心理患者敏感信息 (手机号 + 病历关联) 保护专用 (R77 修: 之前错引 §13, 应是 §29 敏感 PII)
   ///
   /// In zh, this message translates to:
-  /// **'您即将把这位联系人的手机号保存在本地数据库中。当您连续 {threshold} 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 13 条**，请确认您已告知该联系人上述用途，并取得其同意。'**
+  /// **'您即将把这位联系人的手机号保存在本地数据库中。当您连续 {threshold} 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 29 条**（处理敏感个人信息需取得单独同意），请确认您已告知该联系人上述用途，并取得其单独同意。'**
   String contactConsentBody(int threshold);
 
   /// No description provided for @contactConsentAgree.

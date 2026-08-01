@@ -1171,7 +1171,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentHistoryFullRecord => '完整记录';
 
   @override
-  String get assessmentSeverityNormal => '正常';
+  String get assessmentSeverityNormal => '几乎没有';
 
   @override
   String get assessmentSeverityMild => '轻度';
@@ -1614,7 +1614,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String contactConsentBody(int threshold) {
-    return '您即将把这位联系人的手机号保存在本地数据库中。当您连续 $threshold 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 13 条**，请确认您已告知该联系人上述用途，并取得其同意。';
+    return '您即将把这位联系人的手机号保存在本地数据库中。当您连续 $threshold 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 29 条**（处理敏感个人信息需取得单独同意），请确认您已告知该联系人上述用途，并取得其单独同意。';
   }
 
   @override
@@ -3284,7 +3284,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentHistoryFullRecord => '完整記錄';
 
   @override
-  String get assessmentSeverityNormal => '正常';
+  String get assessmentSeverityNormal => '幾乎沒有';
 
   @override
   String get assessmentSeverityMild => '輕度';
@@ -3727,7 +3727,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String contactConsentBody(int threshold) {
-    return '您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 $threshold 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 13 條**，請確認您已告知該聯繫人上述用途，並取得其同意。';
+    return '您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 $threshold 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 29 條**（處理敏感個人信息需取得單獨同意），請確認您已告知該聯繫人上述用途，並取得其單獨同意。';
   }
 
   @override

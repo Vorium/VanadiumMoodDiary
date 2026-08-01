@@ -1224,7 +1224,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assessmentHistoryFullRecord => 'Full Record';
 
   @override
-  String get assessmentSeverityNormal => 'Normal';
+  String get assessmentSeverityNormal => 'Minimal';
 
   @override
   String get assessmentSeverityMild => 'Mild';
@@ -1691,7 +1691,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String contactConsentBody(int threshold) {
-    return 'You are about to save this contact\'s phone number in the local database. If you don\'t check in for $threshold consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 13**, please confirm you have informed the contact of the above purpose and obtained their consent.';
+    return 'You are about to save this contact\'s phone number in the local database. If you don\'t check in for $threshold consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 29** (sensitive personal information requires separate consent), please confirm you have informed the contact of the above purpose and obtained their explicit consent.';
   }
 
   @override

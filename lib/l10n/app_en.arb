@@ -1051,9 +1051,9 @@
   "contactAddAction": "Add contact",
   "contactAddTitle": "Add Emergency Contact",
   "contactConsentTitle": "Informed Consent",
-  "contactConsentBody": "You are about to save this contact's phone number in the local database. If you don't check in for {threshold} consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 13**, please confirm you have informed the contact of the above purpose and obtained their consent.",
+  "contactConsentBody": "You are about to save this contact's phone number in the local database. If you don't check in for {threshold} consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 29** (sensitive personal information requires separate consent), please confirm you have informed the contact of the above purpose and obtained their explicit consent.",
   "@contactConsentBody": {
-    "description": "PIPL §13 standalone consent dialog body",
+    "description": "PIPL §29 standalone consent dialog body (R77 fix: was mis-citing §13, should be §29 for sensitive PII)",
     "placeholders": {
       "threshold": {
         "type": "int",

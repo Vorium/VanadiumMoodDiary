@@ -1090,9 +1090,9 @@
   "contactAddAction": "添加聯繫人",
   "contactAddTitle": "添加緊急聯繫人",
   "contactConsentTitle": "知情同意",
-  "contactConsentBody": "您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 {threshold} 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 13 條**，請確認您已告知該聯繫人上述用途，並取得其同意。",
+  "contactConsentBody": "您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 {threshold} 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 29 條**（處理敏感個人信息需取得單獨同意），請確認您已告知該聯繫人上述用途，並取得其單獨同意。",
   "@contactConsentBody": {
-    "description": "PIPL §13 單獨同意 dialog 正文, 精神心理患者保護專用",
+    "description": "PIPL §29 單獨同意 dialog 正文, 精神心理患者敏感信息 (手機號 + 病歷關聯) 保護專用 (R77 修: 之前錯引 §13, 應是 §29 敏感 PII)",
     "placeholders": {
       "threshold": {
         "type": "int",
