@@ -922,6 +922,23 @@
       }
     }
   },
+  "safetyAlertTitle": "⚠️ {name} hasn't checked in for {days} days",
+  "@safetyAlertTitle": {
+    "description": "SafetyAlert title — v0.27 R75 fix (R74-N7): was hardcoded Chinese",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "you"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyAlertNeverCheckIn": "No check-ins yet",
+  "@safetyAlertNeverCheckIn": {
+    "description": "SafetyAlert lastStr — v0.27 R75 fix (R74-N8): was hardcoded Chinese, returned when lastCheckIn==null"
+  },
   "homeSnoozeTitle": "⏰ Time to check in (in 5 min)",
   "homeSnoozeBody": "You snoozed earlier — time to tap and check in",
   "homeSnoozeConfirmed": "OK, will remind you again in 5 min 👌",

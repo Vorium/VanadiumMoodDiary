@@ -93,19 +93,25 @@ class SafetyAlertBuilder {
       ),
     );
 
-    final lastStr = _formatLastCheckIn(lastCheckIn);
+    final lastStr = _formatLastCheckIn(lastCheckIn, l10n: l10n);
     final body = _resolveBody(outcome: outcome, lastStr: lastStr, l10n: l10n);
-    final title = '⚠️ $name 已 $daysWithoutCheckIn 天未打卡';
+    // v0.27 round 75 (R74-N7 修): title 改 l10n, 之前硬编码中文。
+    // 紧急通知走 3 语言 zh / en / zh_Hant, 跟 body 一致。
+    final title = l10n.safetyAlertTitle(name, daysWithoutCheckIn);
 
     return (title: title, body: body, details: details);
   }
 
-  /// 格式化 lastCheckIn → "YYYY-MM-DD" 或 "从未打卡"
+  /// 格式化 lastCheckIn → "YYYY-MM-DD" 或 l10n "从未打卡" / "No check-ins yet" / "從未打卡"
   ///
   /// v0.27 round 65: 抽 top-level 纯函数 + 集中 DateTime 三元组 (避免
   /// `DateTime.now().year` 等多次调用 race, spen 规约)
-  static String _formatLastCheckIn(DateTime? lastCheckIn) {
-    if (lastCheckIn == null) return '从未打卡';
+  /// v0.27 round 75 (R74-N8 修): "从未打卡" 走 l10n, 之前硬编码。
+  static String _formatLastCheckIn(
+    DateTime? lastCheckIn, {
+    required AppLocalizations l10n,
+  }) {
+    if (lastCheckIn == null) return l10n.safetyAlertNeverCheckIn;
     final y = lastCheckIn.year.toString();
     final m = lastCheckIn.month.toString().padLeft(2, '0');
     final d = lastCheckIn.day.toString().padLeft(2, '0');

@@ -1903,7 +1903,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeStreakRestart.
   ///
   /// In zh, this message translates to:
-  /// **'今天重新开始，加油 🌱'**
+  /// **'今天重新开始 🌱'**
   String get homeStreakRestart;
 
   /// No description provided for @homeStreakDay1.
@@ -1921,19 +1921,19 @@ abstract class AppLocalizations {
   /// No description provided for @homeStreakGreat.
   ///
   /// In zh, this message translates to:
-  /// **'已坚持 {days} 天，真棒 🌳'**
+  /// **'已坚持 {days} 天 🌳'**
   String homeStreakGreat(int days);
 
   /// No description provided for @homeStreakAmazing.
   ///
   /// In zh, this message translates to:
-  /// **'{days} 天连击，太厉害了 🌲'**
+  /// **'{days} 天连击 🌲'**
   String homeStreakAmazing(int days);
 
   /// No description provided for @homeStreakMaster.
   ///
   /// In zh, this message translates to:
-  /// **'{days} 天--您已经是这个习惯的主人了 🏔️'**
+  /// **'{days} 天 🏔️'**
   String homeStreakMaster(int days);
 
   /// No description provided for @navCheckIn.
@@ -2581,7 +2581,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeCelebrationStreakMaster.
   ///
   /// In zh, this message translates to:
-  /// **'已记录！{days} 天--您太厉害了 🏔️'**
+  /// **'已记录！{days} 天 🏔️'**
   String homeCelebrationStreakMaster(int days);
 
   /// No description provided for @homeAutofireCelebration.
@@ -2625,6 +2625,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'上次打卡: {date}。失联检测已触发，但通知发送失败。请检查网络。'**
   String safetyAlertBodyFailed(String date);
+
+  /// SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬编码中文
+  ///
+  /// In zh, this message translates to:
+  /// **'⚠️ {name} 已 {days} 天未打卡'**
+  String safetyAlertTitle(String name, int days);
+
+  /// SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬编码中文, lastCheckIn==null 时返
+  ///
+  /// In zh, this message translates to:
+  /// **'从未打卡'**
+  String get safetyAlertNeverCheckIn;
 
   /// No description provided for @homeSnoozeTitle.
   ///

@@ -116,10 +116,9 @@ void main() {
       expect(build.body, contains('2026-07-01'), reason: '月日必须补零: 7-1 → 07-01');
     });
 
-    test('6. en locale → title 走 zh (硬编 "已 X 天未打卡"), body 走 en l10n', () {
-      // 验证 i18n 隔离: 同一 inputs, 换 l10n, body 文案必须不同
-      // (title 暂 hardcode 中文, 因为 userName 跟 days 也是中文显示格式,
-      //  跟 safetyAlertBodySent/Mocked/Failed 走 l10n 不冲突)
+    test('6. en locale → title 走 en l10n, body 走 en l10n (R75 改: title 走 l10n)', () {
+      // v0.27 round 75 (R74-N7 修): title 改 l10n, 之前硬编码中文。
+      // en locale 走 en l10n → "⚠️ Alice hasn't checked in for 3 days"。
       final build = SafetyAlertBuilder.buildFor(
         userName: 'Alice',
         daysWithoutCheckIn: 3,
@@ -131,8 +130,8 @@ void main() {
         channelDescription: channelDesc,
       );
 
-      expect(build.title, '⚠️ Alice 已 3 天未打卡',
-          reason: 'title 硬编中文格式, 跟 locale 无关',);
+      expect(build.title, "⚠️ Alice hasn't checked in for 3 days",
+          reason: 'title 走 l10n, en 文案',);
       expect(build.body, contains('Auto-notified'),
           reason: 'en l10n: "Auto-notified emergency contacts"',);
       expect(build.body, contains('2026-07-20'),

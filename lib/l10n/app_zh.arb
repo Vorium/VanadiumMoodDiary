@@ -964,6 +964,23 @@
       }
     }
   },
+  "safetyAlertTitle": "⚠️ {name} 已 {days} 天未打卡",
+  "@safetyAlertTitle": {
+    "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬编码中文",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "您"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "safetyAlertNeverCheckIn": "从未打卡",
+  "@safetyAlertNeverCheckIn": {
+    "description": "SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬编码中文, lastCheckIn==null 时返"
+  },
   "homeSnoozeTitle": "⏰ 该打卡了（5min 后）",
   "homeSnoozeBody": "刚才您点了「snooze」，是时候点一下 = 打卡了",
   "homeSnoozeConfirmed": "好，5 分钟后会再提醒您 👌",

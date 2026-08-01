@@ -1072,17 +1072,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homeStreakGreat(int days) {
-    return '$days-day streak, great work 🌳';
+    return '$days-day streak 🌳';
   }
 
   @override
   String homeStreakAmazing(int days) {
-    return '$days-day streak, amazing! 🌲';
+    return '$days-day streak 🌲';
   }
 
   @override
   String homeStreakMaster(int days) {
-    return '$days days — you\'ve mastered this habit! 🏔️';
+    return '$days days 🏔️';
   }
 
   @override
@@ -1475,7 +1475,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homeCelebrationStreakMaster(int days) {
-    return 'Recorded! $days days — you\'re on fire! 🏔️';
+    return 'Recorded! $days days 🏔️';
   }
 
   @override
@@ -1509,6 +1509,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String safetyAlertBodyFailed(String date) {
     return 'Last check-in: $date. Lost-contact detection triggered, but notification failed. Please check network.';
   }
+
+  @override
+  String safetyAlertTitle(String name, int days) {
+    return '⚠️ $name hasn\'t checked in for $days days';
+  }
+
+  @override
+  String get safetyAlertNeverCheckIn => 'No check-ins yet';
 
   @override
   String get homeSnoozeTitle => '⏰ Time to check in (in 5 min)';

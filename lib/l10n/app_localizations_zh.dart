@@ -1013,7 +1013,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeTooltipAssessmentHistory => '评估历史';
 
   @override
-  String get homeStreakRestart => '今天重新开始，加油 🌱';
+  String get homeStreakRestart => '今天重新开始 🌱';
 
   @override
   String get homeStreakDay1 => '第 1 天，迈出第一步 🌱';
@@ -1025,17 +1025,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String homeStreakGreat(int days) {
-    return '已坚持 $days 天，真棒 🌳';
+    return '已坚持 $days 天 🌳';
   }
 
   @override
   String homeStreakAmazing(int days) {
-    return '$days 天连击，太厉害了 🌲';
+    return '$days 天连击 🌲';
   }
 
   @override
   String homeStreakMaster(int days) {
-    return '$days 天--您已经是这个习惯的主人了 🏔️';
+    return '$days 天 🏔️';
   }
 
   @override
@@ -1402,7 +1402,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String homeCelebrationStreakMaster(int days) {
-    return '已记录！$days 天--您太厉害了 🏔️';
+    return '已记录！$days 天 🏔️';
   }
 
   @override
@@ -1435,6 +1435,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String safetyAlertBodyFailed(String date) {
     return '上次打卡: $date。失联检测已触发，但通知发送失败。请检查网络。';
   }
+
+  @override
+  String safetyAlertTitle(String name, int days) {
+    return '⚠️ $name 已 $days 天未打卡';
+  }
+
+  @override
+  String get safetyAlertNeverCheckIn => '从未打卡';
 
   @override
   String get homeSnoozeTitle => '⏰ 该打卡了（5min 后）';
@@ -3118,7 +3126,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeTooltipAssessmentHistory => '評估歷史';
 
   @override
-  String get homeStreakRestart => '今天重新開始，加油 🌱';
+  String get homeStreakRestart => '今天重新開始 🌱';
 
   @override
   String get homeStreakDay1 => '第 1 天，邁出第一步 🌱';
@@ -3130,17 +3138,17 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String homeStreakGreat(int days) {
-    return '已堅持 $days 天，真棒 🌳';
+    return '已堅持 $days 天 🌳';
   }
 
   @override
   String homeStreakAmazing(int days) {
-    return '$days 天連擊，太厲害了 🌲';
+    return '$days 天連擊 🌲';
   }
 
   @override
   String homeStreakMaster(int days) {
-    return '$days 天--您已經是這個習慣的主人了 🏔️';
+    return '$days 天 🏔️';
   }
 
   @override
@@ -3507,7 +3515,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String homeCelebrationStreakMaster(int days) {
-    return '已記錄！$days 天--您太厲害了 🏔️';
+    return '已記錄！$days 天 🏔️';
   }
 
   @override
@@ -3540,6 +3548,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String safetyAlertBodyFailed(String date) {
     return '上次打卡: $date。失聯檢測已觸發，但通知發送失敗。請檢查網絡。';
   }
+
+  @override
+  String safetyAlertTitle(String name, int days) {
+    return '⚠️ $name 已 $days 天未打卡';
+  }
+
+  @override
+  String get safetyAlertNeverCheckIn => '從未打卡';
 
   @override
   String get homeSnoozeTitle => '⏰ 該打卡了（5min 後）';
