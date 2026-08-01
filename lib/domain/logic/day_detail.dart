@@ -17,6 +17,15 @@
 //   `dayDetailTempWith` / `dayDetailTempMed` /
 //   `dayDetailPhq9` / `dayDetailGad7`
 // 老 caller (10 case test) 改传 mock l10n 走 i18n 路径。
+//
+// v0.27 round 75 (R74 报告 P1-1 部分修): 之前 `import 'package:chroniccare/l10n/app_localizations.dart'`
+// 让 domain 间接 import Flutter, 违反 4 层架构纯度。R75 partial fix:
+// 1/3 file (scale_translations.dart) 已迁出 AppLocalizationsScaleTranslations 到
+// presentation/services/scale_translations_l10n.dart。
+// 2/3 file (day_detail.dart + vent_entry_entity.dart) 留 R76 全修 — 改用
+// closure 参数化注入 i18n 查找, 涉及 fromData / _renderCheckInLabel / _scaleName
+// 6+ method 重构 + 10 case test 改, R75 时间紧 1 round 装不下, R76 单独 1 round
+// 完成。
 
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
