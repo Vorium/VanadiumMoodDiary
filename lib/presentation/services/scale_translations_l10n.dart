@@ -53,4 +53,173 @@ class AppLocalizationsScaleTranslations implements ScaleTranslations {
   @override
   String crisisMessage({String? override}) =>
       override ?? l10n.scaleCrisisMessage;
+
+  // ============================================================
+  // PHQ-9 全文 i18n (v0.27 R78)
+  // ============================================================
+
+  @override
+  String phq9Item(int index, {String? override}) {
+    if (override != null) return override;
+    switch (index) {
+      case 0:
+        return l10n.phq9Item0;
+      case 1:
+        return l10n.phq9Item1;
+      case 2:
+        return l10n.phq9Item2;
+      case 3:
+        return l10n.phq9Item3;
+      case 4:
+        return l10n.phq9Item4;
+      case 5:
+        return l10n.phq9Item5;
+      case 6:
+        return l10n.phq9Item6;
+      case 7:
+        return l10n.phq9Item7;
+      case 8:
+        return l10n.phq9Item8;
+      default:
+        return '';
+    }
+  }
+
+  @override
+  String phq9Option(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.phq9Option0;
+      case 1:
+        return l10n.phq9Option1;
+      case 2:
+        return l10n.phq9Option2;
+      case 3:
+        return l10n.phq9Option3;
+      default:
+        return '';
+    }
+  }
+
+  @override
+  String phq9SeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.phq9SeverityLabel0;
+      case 1:
+        return l10n.phq9SeverityLabel1;
+      case 2:
+        return l10n.phq9SeverityLabel2;
+      case 3:
+        return l10n.phq9SeverityLabel3;
+      case 4:
+        return l10n.phq9SeverityLabel4;
+      default:
+        return '';
+    }
+  }
+
+  @override
+  String phq9SeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.phq9SeveritySummary0;
+      case 1:
+        return l10n.phq9SeveritySummary1;
+      case 2:
+        return l10n.phq9SeveritySummary2;
+      case 3:
+        return l10n.phq9SeveritySummary3;
+      case 4:
+        return l10n.phq9SeveritySummary4;
+      default:
+        return '';
+    }
+  }
+
+  @override
+  String phq9Instruction({String? override}) =>
+      override ?? l10n.phq9Instruction;
+
+  @override
+  String phq9ShortDescription({String? override}) =>
+      override ?? l10n.phq9ShortDescription;
+
+  // ============================================================
+  // GAD-7 全文 i18n (v0.27 R78)
+  // ============================================================
+
+  @override
+  String gad7Item(int index, {String? override}) {
+    if (override != null) return override;
+    switch (index) {
+      case 0:
+        return l10n.gad7Item0;
+      case 1:
+        return l10n.gad7Item1;
+      case 2:
+        return l10n.gad7Item2;
+      case 3:
+        return l10n.gad7Item3;
+      case 4:
+        return l10n.gad7Item4;
+      case 5:
+        return l10n.gad7Item5;
+      case 6:
+        return l10n.gad7Item6;
+      default:
+        return '';
+    }
+  }
+
+  @override
+  String gad7Option(int score, {String? override}) {
+    // GAD-7 跟 PHQ-9 共用 4 档频率选项 (R19 决策保留, 文本完全一致)
+    return phq9Option(score, override: override);
+  }
+
+  @override
+  String gad7SeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.gad7SeverityLabel0;
+      case 1:
+        return l10n.gad7SeverityLabel1;
+      case 2:
+        return l10n.gad7SeverityLabel2;
+      case 3:
+        return l10n.gad7SeverityLabel3;
+      default:
+        return '';
+    }
+  }
+
+  @override
+  String gad7SeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.gad7SeveritySummary0;
+      case 1:
+        return l10n.gad7SeveritySummary1;
+      case 2:
+        return l10n.gad7SeveritySummary2;
+      case 3:
+        return l10n.gad7SeveritySummary3;
+      default:
+        return '';
+    }
+  }
+
+  @override
+  String gad7Instruction({String? override}) =>
+      override ?? l10n.gad7Instruction;
+
+  @override
+  String gad7ShortDescription({String? override}) =>
+      override ?? l10n.gad7ShortDescription;
 }

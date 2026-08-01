@@ -2256,4 +2256,138 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get scaleCrisisMessage =>
       'You mentioned thoughts of harming yourself.\nRemember: seeking help is brave, not weak.';
+
+  @override
+  String get phq9Item0 => 'Little interest or pleasure in doing things';
+
+  @override
+  String get phq9Item1 => 'Feeling down, depressed, or hopeless';
+
+  @override
+  String get phq9Item2 =>
+      'Trouble falling or staying asleep, or sleeping too much';
+
+  @override
+  String get phq9Item3 => 'Feeling tired or having little energy';
+
+  @override
+  String get phq9Item4 => 'Poor appetite or overeating';
+
+  @override
+  String get phq9Item5 =>
+      'Feeling bad about yourself — or that you are a failure or have let yourself or your family down';
+
+  @override
+  String get phq9Item6 =>
+      'Trouble concentrating on things, such as reading the newspaper or watching television';
+
+  @override
+  String get phq9Item7 =>
+      'Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual';
+
+  @override
+  String get phq9Item8 =>
+      'Thoughts that you would be better off dead, or of hurting yourself in some way';
+
+  @override
+  String get phq9Option0 => 'Not at all';
+
+  @override
+  String get phq9Option1 => 'Several days';
+
+  @override
+  String get phq9Option2 => 'More than half the days';
+
+  @override
+  String get phq9Option3 => 'Nearly every day';
+
+  @override
+  String get phq9SeverityLabel0 => 'None';
+
+  @override
+  String get phq9SeverityLabel1 => 'Mild';
+
+  @override
+  String get phq9SeverityLabel2 => 'Moderate';
+
+  @override
+  String get phq9SeverityLabel3 => 'Moderately severe';
+
+  @override
+  String get phq9SeverityLabel4 => 'Severe';
+
+  @override
+  String get phq9SeveritySummary0 => 'Minimal or no depression';
+
+  @override
+  String get phq9SeveritySummary1 => 'Mild depression';
+
+  @override
+  String get phq9SeveritySummary2 => 'Moderate depression';
+
+  @override
+  String get phq9SeveritySummary3 => 'Moderately severe depression';
+
+  @override
+  String get phq9SeveritySummary4 => 'Severe depression';
+
+  @override
+  String get phq9Instruction =>
+      'Over the last 2 weeks, how often have you been bothered by the following problems?';
+
+  @override
+  String get phq9ShortDescription =>
+      'Depression screening over the last 2 weeks';
+
+  @override
+  String get gad7Item0 => 'Feeling nervous, anxious or on edge';
+
+  @override
+  String get gad7Item1 => 'Not being able to stop or control worrying';
+
+  @override
+  String get gad7Item2 => 'Worrying too much about different things';
+
+  @override
+  String get gad7Item3 => 'Trouble relaxing';
+
+  @override
+  String get gad7Item4 => 'Being so restless that it is hard to sit still';
+
+  @override
+  String get gad7Item5 => 'Becoming easily annoyed or irritable';
+
+  @override
+  String get gad7Item6 => 'Feeling afraid as if something awful might happen';
+
+  @override
+  String get gad7SeverityLabel0 => 'None';
+
+  @override
+  String get gad7SeverityLabel1 => 'Mild';
+
+  @override
+  String get gad7SeverityLabel2 => 'Moderate';
+
+  @override
+  String get gad7SeverityLabel3 => 'Severe';
+
+  @override
+  String get gad7SeveritySummary0 => 'Minimal or no anxiety';
+
+  @override
+  String get gad7SeveritySummary1 => 'Mild anxiety';
+
+  @override
+  String get gad7SeveritySummary2 => 'Moderate anxiety';
+
+  @override
+  String get gad7SeveritySummary3 => 'Severe anxiety';
+
+  @override
+  String get gad7Instruction =>
+      'Over the last 2 weeks, how often have you been bothered by the following problems?';
+
+  @override
+  String get gad7ShortDescription => 'Anxiety screening over the last 2 weeks';
 }

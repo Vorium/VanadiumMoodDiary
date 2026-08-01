@@ -434,20 +434,28 @@
   "ventDurationSeconds": "{sec}s",
   "@ventDurationSeconds": {
     "placeholders": {
-      "sec": { "type": "int" }
+      "sec": {
+        "type": "int"
+      }
     }
   },
   "ventDurationMinutes": "{m}m",
   "@ventDurationMinutes": {
     "placeholders": {
-      "m": { "type": "int" }
+      "m": {
+        "type": "int"
+      }
     }
   },
   "ventDurationMinutesSeconds": "{m}m {sec}s",
   "@ventDurationMinutesSeconds": {
     "placeholders": {
-      "m": { "type": "int" },
-      "sec": { "type": "String" }
+      "m": {
+        "type": "int"
+      },
+      "sec": {
+        "type": "String"
+      }
     }
   },
   "moodDialogTitle": "How are you today?",
@@ -1347,5 +1355,47 @@
   "@scaleCrisisMessage": {
     "description": "Body of crisis dialog when PHQ-9 Q9 positive. Allow newline."
   },
-  "scaleCrisisMessage": "You mentioned thoughts of harming yourself.\nRemember: seeking help is brave, not weak."
+  "scaleCrisisMessage": "You mentioned thoughts of harming yourself.\nRemember: seeking help is brave, not weak.",
+  "phq9Item0": "Little interest or pleasure in doing things",
+  "phq9Item1": "Feeling down, depressed, or hopeless",
+  "phq9Item2": "Trouble falling or staying asleep, or sleeping too much",
+  "phq9Item3": "Feeling tired or having little energy",
+  "phq9Item4": "Poor appetite or overeating",
+  "phq9Item5": "Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+  "phq9Item6": "Trouble concentrating on things, such as reading the newspaper or watching television",
+  "phq9Item7": "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
+  "phq9Item8": "Thoughts that you would be better off dead, or of hurting yourself in some way",
+  "phq9Option0": "Not at all",
+  "phq9Option1": "Several days",
+  "phq9Option2": "More than half the days",
+  "phq9Option3": "Nearly every day",
+  "phq9SeverityLabel0": "None",
+  "phq9SeverityLabel1": "Mild",
+  "phq9SeverityLabel2": "Moderate",
+  "phq9SeverityLabel3": "Moderately severe",
+  "phq9SeverityLabel4": "Severe",
+  "phq9SeveritySummary0": "Minimal or no depression",
+  "phq9SeveritySummary1": "Mild depression",
+  "phq9SeveritySummary2": "Moderate depression",
+  "phq9SeveritySummary3": "Moderately severe depression",
+  "phq9SeveritySummary4": "Severe depression",
+  "phq9Instruction": "Over the last 2 weeks, how often have you been bothered by the following problems?",
+  "phq9ShortDescription": "Depression screening over the last 2 weeks",
+  "gad7Item0": "Feeling nervous, anxious or on edge",
+  "gad7Item1": "Not being able to stop or control worrying",
+  "gad7Item2": "Worrying too much about different things",
+  "gad7Item3": "Trouble relaxing",
+  "gad7Item4": "Being so restless that it is hard to sit still",
+  "gad7Item5": "Becoming easily annoyed or irritable",
+  "gad7Item6": "Feeling afraid as if something awful might happen",
+  "gad7SeverityLabel0": "None",
+  "gad7SeverityLabel1": "Mild",
+  "gad7SeverityLabel2": "Moderate",
+  "gad7SeverityLabel3": "Severe",
+  "gad7SeveritySummary0": "Minimal or no anxiety",
+  "gad7SeveritySummary1": "Mild anxiety",
+  "gad7SeveritySummary2": "Moderate anxiety",
+  "gad7SeveritySummary3": "Severe anxiety",
+  "gad7Instruction": "Over the last 2 weeks, how often have you been bothered by the following problems?",
+  "gad7ShortDescription": "Anxiety screening over the last 2 weeks"
 }

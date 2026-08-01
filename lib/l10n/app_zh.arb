@@ -476,20 +476,28 @@
   "ventDurationSeconds": "{sec}秒",
   "@ventDurationSeconds": {
     "placeholders": {
-      "sec": { "type": "int" }
+      "sec": {
+        "type": "int"
+      }
     }
   },
   "ventDurationMinutes": "{m}分",
   "@ventDurationMinutes": {
     "placeholders": {
-      "m": { "type": "int" }
+      "m": {
+        "type": "int"
+      }
     }
   },
   "ventDurationMinutesSeconds": "{m}分{sec}秒",
   "@ventDurationMinutesSeconds": {
     "placeholders": {
-      "m": { "type": "int" },
-      "sec": { "type": "String" }
+      "m": {
+        "type": "int"
+      },
+      "sec": {
+        "type": "String"
+      }
     }
   },
   "moodDialogTitle": "今天怎么样？",
@@ -1389,5 +1397,47 @@
   "@scaleCrisisMessage": {
     "description": "PHQ-9 第 9 题阳性时弹窗的正文, 含换行"
   },
-  "scaleCrisisMessage": "你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。"
+  "scaleCrisisMessage": "你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。",
+  "phq9Item0": "做事时提不起劲或没有兴趣",
+  "phq9Item1": "感到心情低落、沮丧或绝望",
+  "phq9Item2": "入睡困难、睡不安稳或睡得过多",
+  "phq9Item3": "感觉疲倦或没有活力",
+  "phq9Item4": "食欲不振或吃太多",
+  "phq9Item5": "觉得自己很糟、很失败，或让自己和家人失望",
+  "phq9Item6": "对事物专注有困难，例如看报纸或看电视时",
+  "phq9Item7": "动作或说话速度缓慢到别人能察觉？\n或正好相反——烦躁或坐立不安",
+  "phq9Item8": "有不如死掉或用某种方式伤害自己的念头",
+  "phq9Option0": "完全不会",
+  "phq9Option1": "好几天",
+  "phq9Option2": "一半以上的天数",
+  "phq9Option3": "几乎每天",
+  "phq9SeverityLabel0": "几乎没有抑郁",
+  "phq9SeverityLabel1": "轻度抑郁",
+  "phq9SeverityLabel2": "中度抑郁",
+  "phq9SeverityLabel3": "中重度抑郁",
+  "phq9SeverityLabel4": "重度抑郁",
+  "phq9SeveritySummary0": "几乎没有抑郁倾向",
+  "phq9SeveritySummary1": "轻度抑郁倾向",
+  "phq9SeveritySummary2": "中度抑郁倾向",
+  "phq9SeveritySummary3": "中重度抑郁倾向",
+  "phq9SeveritySummary4": "重度抑郁倾向",
+  "phq9Instruction": "过去两周内，你有多经常被以下问题困扰？",
+  "phq9ShortDescription": "过去两周的抑郁倾向筛查",
+  "gad7Item0": "感到紧张、焦虑或急切",
+  "gad7Item1": "不能停止或控制担忧",
+  "gad7Item2": "对各种事情担忧过多",
+  "gad7Item3": "难以放松",
+  "gad7Item4": "心情烦躁以至坐不住",
+  "gad7Item5": "变得容易烦恼或急躁",
+  "gad7Item6": "感到似乎将有可怕的事情发生而害怕",
+  "gad7SeverityLabel0": "几乎没有焦虑",
+  "gad7SeverityLabel1": "轻度焦虑",
+  "gad7SeverityLabel2": "中度焦虑",
+  "gad7SeverityLabel3": "重度焦虑",
+  "gad7SeveritySummary0": "几乎没有焦虑倾向",
+  "gad7SeveritySummary1": "轻度焦虑倾向",
+  "gad7SeveritySummary2": "中度焦虑倾向",
+  "gad7SeveritySummary3": "重度焦虑倾向",
+  "gad7Instruction": "过去两周内，你有多经常被以下问题困扰？",
+  "gad7ShortDescription": "过去两周的焦虑倾向筛查"
 }

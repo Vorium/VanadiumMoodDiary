@@ -476,20 +476,28 @@
   "ventDurationSeconds": "{sec}秒",
   "@ventDurationSeconds": {
     "placeholders": {
-      "sec": { "type": "int" }
+      "sec": {
+        "type": "int"
+      }
     }
   },
   "ventDurationMinutes": "{m}分",
   "@ventDurationMinutes": {
     "placeholders": {
-      "m": { "type": "int" }
+      "m": {
+        "type": "int"
+      }
     }
   },
   "ventDurationMinutesSeconds": "{m}分{sec}秒",
   "@ventDurationMinutesSeconds": {
     "placeholders": {
-      "m": { "type": "int" },
-      "sec": { "type": "String" }
+      "m": {
+        "type": "int"
+      },
+      "sec": {
+        "type": "String"
+      }
     }
   },
   "moodDialogTitle": "今天怎麼樣？",
@@ -1386,5 +1394,47 @@
   "@scaleCrisisMessage": {
     "description": "PHQ-9 第 9 題陽性時彈窗的正文, 含換行"
   },
-  "scaleCrisisMessage": "你提到了想傷害自己的念頭。\n請記住：尋求幫助是勇敢的，不是軟弱。"
+  "scaleCrisisMessage": "你提到了想傷害自己的念頭。\n請記住：尋求幫助是勇敢的，不是軟弱。",
+  "phq9Item0": "做事時提不起勁或沒有興趣",
+  "phq9Item1": "感到心情低落、沮喪或絕望",
+  "phq9Item2": "入睡困難、睡不安穩或睡得過多",
+  "phq9Item3": "感覺疲倦或沒有活力",
+  "phq9Item4": "食欲不振或吃太多",
+  "phq9Item5": "覺得自己很糟、很失敗，或讓自己和家人失望",
+  "phq9Item6": "對事物專注有困難，例如看報紙或看電視時",
+  "phq9Item7": "動作或說話速度緩慢到別人能察覺？\n或正好相反——煩躁或坐立不安",
+  "phq9Item8": "有不如死掉或用某種方式傷害自己的念頭",
+  "phq9Option0": "完全不會",
+  "phq9Option1": "好幾天",
+  "phq9Option2": "一半以上的天數",
+  "phq9Option3": "幾乎每天",
+  "phq9SeverityLabel0": "幾乎沒有憂鬱",
+  "phq9SeverityLabel1": "輕度憂鬱",
+  "phq9SeverityLabel2": "中度憂鬱",
+  "phq9SeverityLabel3": "中重度憂鬱",
+  "phq9SeverityLabel4": "重度憂鬱",
+  "phq9SeveritySummary0": "幾乎沒有憂鬱傾向",
+  "phq9SeveritySummary1": "輕度憂鬱傾向",
+  "phq9SeveritySummary2": "中度憂鬱傾向",
+  "phq9SeveritySummary3": "中重度憂鬱傾向",
+  "phq9SeveritySummary4": "重度憂鬱傾向",
+  "phq9Instruction": "過去兩週內，你有多常被以下問題困擾？",
+  "phq9ShortDescription": "過去兩週的憂鬱傾向篩查",
+  "gad7Item0": "感到緊張、焦慮或急切",
+  "gad7Item1": "不能停止或控制擔憂",
+  "gad7Item2": "對各種事情擔憂過多",
+  "gad7Item3": "難以放鬆",
+  "gad7Item4": "心情煩躁以至坐不住",
+  "gad7Item5": "變得容易煩惱或急躁",
+  "gad7Item6": "感到似乎將有可怕的事情發生而害怕",
+  "gad7SeverityLabel0": "幾乎沒有焦慮",
+  "gad7SeverityLabel1": "輕度焦慮",
+  "gad7SeverityLabel2": "中度焦慮",
+  "gad7SeverityLabel3": "重度焦慮",
+  "gad7SeveritySummary0": "幾乎沒有焦慮傾向",
+  "gad7SeveritySummary1": "輕度焦慮傾向",
+  "gad7SeveritySummary2": "中度焦慮傾向",
+  "gad7SeveritySummary3": "重度焦慮傾向",
+  "gad7Instruction": "過去兩週內，你有多常被以下問題困擾？",
+  "gad7ShortDescription": "過去兩週的焦慮傾向篩查"
 }

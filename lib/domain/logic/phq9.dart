@@ -16,11 +16,21 @@
 // 老 const `phq9Scale` 不传走 `const StaticScaleTranslations()` 中文 fallback,
 // 21 case crisis test 不破; 新 caller 传 `AppLocalizationsScaleTranslations`
 // 走 ARB 翻译。`displayName` 走 translations.phq9Name()。
+//
+// v0.27 R78 (spzh P1-A 跨 round 收尾): items / options / severityCutoffs /
+// shortDescription / instruction 全走 translations.phq9Item(N) / .phq9Option(score) /
+// .phq9SeverityLabel(rank) / .phq9SeveritySummary(rank) / .phq9ShortDescription() /
+// .phq9Instruction()。21 case phq9_detect_crisis_round60_test 走 const
+// StaticScaleTranslations 返中文, 不破。
 
 import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
 /// 频率选项（0-3）
+///
+/// v0.27 R78: 仍保留 const Map 作为 `StaticScaleTranslations.phq9Option` fallback
+/// (跟 R65 起步版本同款), 但 `Phq9Scale.options` getter 改走
+/// `translations.phq9Option(score)`。
 const Map<int, String> phq9Options = {
   0: '完全不会',
   1: '好几天',
@@ -83,42 +93,49 @@ class Phq9Scale implements AssessmentScale {
   String get displayName => translations.phq9Name();
 
   @override
-  String get shortDescription => '过去两周的抑郁倾向筛查';
+  // v0.27 R78: 走 translations.phq9ShortDescription (中文 fallback 由
+  // StaticScaleTranslations 兜底, 跟原 hardcode '过去两周的抑郁倾向筛查' 等价)
+  String get shortDescription => translations.phq9ShortDescription();
 
   @override
-  String get instruction => '过去两周内，你有多经常被以下问题困扰？';
+  // v0.27 R78: 走 translations.phq9Instruction
+  String get instruction => translations.phq9Instruction();
 
   @override
-  List<AssessmentItem> get items => const [
-        AssessmentItem(0, '做事时提不起劲或没有兴趣'),
-        AssessmentItem(1, '感到心情低落、沮丧或绝望'),
-        AssessmentItem(2, '入睡困难、睡不安稳或睡得过多'),
-        AssessmentItem(3, '感觉疲倦或没有活力'),
-        AssessmentItem(4, '食欲不振或吃太多'),
-        AssessmentItem(5, '觉得自己很糟、很失败，或让自己和家人失望'),
-        AssessmentItem(6, '对事物专注有困难，例如看报纸或看电视时'),
-        AssessmentItem(7, '动作或说话速度缓慢到别人能察觉？\n或正好相反——烦躁或坐立不安'),
-        AssessmentItem(8, '有不如死掉或用某种方式伤害自己的念头'),
-      ];
+  // v0.27 R78: items 走 translations.phq9Item(0..8),
+  // 9 道题全部走 ARB, en/zh_Hant 用户看英文/繁体题 (而非中文)
+  List<AssessmentItem> get items => List<AssessmentItem>.generate(
+        9,
+        (i) => AssessmentItem(i, translations.phq9Item(i)),
+      );
 
   @override
-  Map<int, String> get options => phq9Options;
+  // v0.27 R78: 4 档频率选项走 translations.phq9Option(score)
+  Map<int, String> get options => {
+        0: translations.phq9Option(0),
+        1: translations.phq9Option(1),
+        2: translations.phq9Option(2),
+        3: translations.phq9Option(3),
+      };
 
   @override
   int get totalRange => 27;
 
   @override
-  List<SeverityCutoff> get severityCutoffs => const [
-        SeverityCutoff(
-            threshold: 4, rank: 0, label: '几乎没有抑郁', summary: '几乎没有抑郁倾向',),
-        SeverityCutoff(threshold: 9, rank: 1, label: '轻度抑郁', summary: '轻度抑郁倾向'),
-        SeverityCutoff(
-            threshold: 14, rank: 2, label: '中度抑郁', summary: '中度抑郁倾向',),
-        SeverityCutoff(
-            threshold: 19, rank: 3, label: '中重度抑郁', summary: '中重度抑郁倾向',),
-        SeverityCutoff(
-            threshold: 27, rank: 4, label: '重度抑郁', summary: '重度抑郁倾向',),
-      ];
+  // v0.27 R78: 5 档严重度 (label + summary) 走 translations,
+  // 跟原 hardcode 1:1 一致, 但支持 en/zh_Hant
+  List<SeverityCutoff> get severityCutoffs => List<SeverityCutoff>.generate(
+        5,
+        (rank) => SeverityCutoff(
+          threshold: _phq9CutoffThresholds[rank],
+          rank: rank,
+          label: translations.phq9SeverityLabel(rank),
+          summary: translations.phq9SeveritySummary(rank),
+        ),
+      );
+
+  /// v0.27 R78: 5 档严重度 threshold (跟原 hardcode 一致)
+  static const _phq9CutoffThresholds = [4, 9, 14, 19, 27];
 
   @override
   AssessmentResult computeResult(List<int> scores) {

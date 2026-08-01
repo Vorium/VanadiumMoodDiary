@@ -2145,6 +2145,132 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get scaleCrisisMessage => '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。';
+
+  @override
+  String get phq9Item0 => '做事时提不起劲或没有兴趣';
+
+  @override
+  String get phq9Item1 => '感到心情低落、沮丧或绝望';
+
+  @override
+  String get phq9Item2 => '入睡困难、睡不安稳或睡得过多';
+
+  @override
+  String get phq9Item3 => '感觉疲倦或没有活力';
+
+  @override
+  String get phq9Item4 => '食欲不振或吃太多';
+
+  @override
+  String get phq9Item5 => '觉得自己很糟、很失败，或让自己和家人失望';
+
+  @override
+  String get phq9Item6 => '对事物专注有困难，例如看报纸或看电视时';
+
+  @override
+  String get phq9Item7 => '动作或说话速度缓慢到别人能察觉？\n或正好相反——烦躁或坐立不安';
+
+  @override
+  String get phq9Item8 => '有不如死掉或用某种方式伤害自己的念头';
+
+  @override
+  String get phq9Option0 => '完全不会';
+
+  @override
+  String get phq9Option1 => '好几天';
+
+  @override
+  String get phq9Option2 => '一半以上的天数';
+
+  @override
+  String get phq9Option3 => '几乎每天';
+
+  @override
+  String get phq9SeverityLabel0 => '几乎没有抑郁';
+
+  @override
+  String get phq9SeverityLabel1 => '轻度抑郁';
+
+  @override
+  String get phq9SeverityLabel2 => '中度抑郁';
+
+  @override
+  String get phq9SeverityLabel3 => '中重度抑郁';
+
+  @override
+  String get phq9SeverityLabel4 => '重度抑郁';
+
+  @override
+  String get phq9SeveritySummary0 => '几乎没有抑郁倾向';
+
+  @override
+  String get phq9SeveritySummary1 => '轻度抑郁倾向';
+
+  @override
+  String get phq9SeveritySummary2 => '中度抑郁倾向';
+
+  @override
+  String get phq9SeveritySummary3 => '中重度抑郁倾向';
+
+  @override
+  String get phq9SeveritySummary4 => '重度抑郁倾向';
+
+  @override
+  String get phq9Instruction => '过去两周内，你有多经常被以下问题困扰？';
+
+  @override
+  String get phq9ShortDescription => '过去两周的抑郁倾向筛查';
+
+  @override
+  String get gad7Item0 => '感到紧张、焦虑或急切';
+
+  @override
+  String get gad7Item1 => '不能停止或控制担忧';
+
+  @override
+  String get gad7Item2 => '对各种事情担忧过多';
+
+  @override
+  String get gad7Item3 => '难以放松';
+
+  @override
+  String get gad7Item4 => '心情烦躁以至坐不住';
+
+  @override
+  String get gad7Item5 => '变得容易烦恼或急躁';
+
+  @override
+  String get gad7Item6 => '感到似乎将有可怕的事情发生而害怕';
+
+  @override
+  String get gad7SeverityLabel0 => '几乎没有焦虑';
+
+  @override
+  String get gad7SeverityLabel1 => '轻度焦虑';
+
+  @override
+  String get gad7SeverityLabel2 => '中度焦虑';
+
+  @override
+  String get gad7SeverityLabel3 => '重度焦虑';
+
+  @override
+  String get gad7SeveritySummary0 => '几乎没有焦虑倾向';
+
+  @override
+  String get gad7SeveritySummary1 => '轻度焦虑倾向';
+
+  @override
+  String get gad7SeveritySummary2 => '中度焦虑倾向';
+
+  @override
+  String get gad7SeveritySummary3 => '重度焦虑倾向';
+
+  @override
+  String get gad7Instruction => '过去两周内，你有多经常被以下问题困扰？';
+
+  @override
+  String get gad7ShortDescription => '过去两周的焦虑倾向筛查';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4288,4 +4414,130 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get scaleCrisisMessage => '你提到了想傷害自己的念頭。\n請記住：尋求幫助是勇敢的，不是軟弱。';
+
+  @override
+  String get phq9Item0 => '做事時提不起勁或沒有興趣';
+
+  @override
+  String get phq9Item1 => '感到心情低落、沮喪或絕望';
+
+  @override
+  String get phq9Item2 => '入睡困難、睡不安穩或睡得過多';
+
+  @override
+  String get phq9Item3 => '感覺疲倦或沒有活力';
+
+  @override
+  String get phq9Item4 => '食欲不振或吃太多';
+
+  @override
+  String get phq9Item5 => '覺得自己很糟、很失敗，或讓自己和家人失望';
+
+  @override
+  String get phq9Item6 => '對事物專注有困難，例如看報紙或看電視時';
+
+  @override
+  String get phq9Item7 => '動作或說話速度緩慢到別人能察覺？\n或正好相反——煩躁或坐立不安';
+
+  @override
+  String get phq9Item8 => '有不如死掉或用某種方式傷害自己的念頭';
+
+  @override
+  String get phq9Option0 => '完全不會';
+
+  @override
+  String get phq9Option1 => '好幾天';
+
+  @override
+  String get phq9Option2 => '一半以上的天數';
+
+  @override
+  String get phq9Option3 => '幾乎每天';
+
+  @override
+  String get phq9SeverityLabel0 => '幾乎沒有憂鬱';
+
+  @override
+  String get phq9SeverityLabel1 => '輕度憂鬱';
+
+  @override
+  String get phq9SeverityLabel2 => '中度憂鬱';
+
+  @override
+  String get phq9SeverityLabel3 => '中重度憂鬱';
+
+  @override
+  String get phq9SeverityLabel4 => '重度憂鬱';
+
+  @override
+  String get phq9SeveritySummary0 => '幾乎沒有憂鬱傾向';
+
+  @override
+  String get phq9SeveritySummary1 => '輕度憂鬱傾向';
+
+  @override
+  String get phq9SeveritySummary2 => '中度憂鬱傾向';
+
+  @override
+  String get phq9SeveritySummary3 => '中重度憂鬱傾向';
+
+  @override
+  String get phq9SeveritySummary4 => '重度憂鬱傾向';
+
+  @override
+  String get phq9Instruction => '過去兩週內，你有多常被以下問題困擾？';
+
+  @override
+  String get phq9ShortDescription => '過去兩週的憂鬱傾向篩查';
+
+  @override
+  String get gad7Item0 => '感到緊張、焦慮或急切';
+
+  @override
+  String get gad7Item1 => '不能停止或控制擔憂';
+
+  @override
+  String get gad7Item2 => '對各種事情擔憂過多';
+
+  @override
+  String get gad7Item3 => '難以放鬆';
+
+  @override
+  String get gad7Item4 => '心情煩躁以至坐不住';
+
+  @override
+  String get gad7Item5 => '變得容易煩惱或急躁';
+
+  @override
+  String get gad7Item6 => '感到似乎將有可怕的事情發生而害怕';
+
+  @override
+  String get gad7SeverityLabel0 => '幾乎沒有焦慮';
+
+  @override
+  String get gad7SeverityLabel1 => '輕度焦慮';
+
+  @override
+  String get gad7SeverityLabel2 => '中度焦慮';
+
+  @override
+  String get gad7SeverityLabel3 => '重度焦慮';
+
+  @override
+  String get gad7SeveritySummary0 => '幾乎沒有焦慮傾向';
+
+  @override
+  String get gad7SeveritySummary1 => '輕度焦慮傾向';
+
+  @override
+  String get gad7SeveritySummary2 => '中度焦慮傾向';
+
+  @override
+  String get gad7SeveritySummary3 => '重度焦慮傾向';
+
+  @override
+  String get gad7Instruction => '過去兩週內，你有多常被以下問題困擾？';
+
+  @override
+  String get gad7ShortDescription => '過去兩週的焦慮傾向篩查';
 }

@@ -14,10 +14,18 @@
 // 13 case test (`gad7_round16_test.dart`) 不破; 新 caller 传
 // `AppLocalizationsScaleTranslations` 走 ARB 翻译。
 // `displayName` 走 translations.gad7Name()。
+//
+// v0.27 R78 (spzh P1-A 跨 round 收尾): items / options / severityCutoffs /
+// shortDescription / instruction 全走 translations.gad7Item(N) / .gad7Option(score) /
+// .gad7SeverityLabel(rank) / .gad7SeveritySummary(rank) / .gad7ShortDescription() /
+// .gad7Instruction()。13 case gad7_round16_test 走 const StaticScaleTranslations
+// 返中文, 不破。
 
 import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
+/// 7 道题 (v0.27 R78: 仍保留 const list 作为 `StaticScaleTranslations.gad7Item`
+/// fallback source, 但 `Gad7Scale.items` getter 改走 `translations.gad7Item(i)`)
 const List<AssessmentItem> gad7Items = [
   AssessmentItem(0, '感到紧张、焦虑或急切'),
   AssessmentItem(1, '不能停止或控制担忧'),
@@ -55,30 +63,47 @@ class Gad7Scale implements AssessmentScale {
   String get displayName => translations.gad7Name();
 
   @override
-  String get shortDescription => '过去两周的焦虑倾向筛查';
+  // v0.27 R78: 走 translations.gad7ShortDescription
+  String get shortDescription => translations.gad7ShortDescription();
 
   @override
-  String get instruction => '过去两周内，你有多经常被以下问题困扰？';
+  // v0.27 R78: 走 translations.gad7Instruction
+  String get instruction => translations.gad7Instruction();
 
   @override
-  List<AssessmentItem> get items => gad7Items;
+  // v0.27 R78: items 走 translations.gad7Item(0..6)
+  List<AssessmentItem> get items => List<AssessmentItem>.generate(
+        7,
+        (i) => AssessmentItem(i, translations.gad7Item(i)),
+      );
 
   @override
-  Map<int, String> get options => gad7Options;
+  // v0.27 R78: 4 档频率选项走 translations.gad7Option(score)
+  // (跟 PHQ-9 共用同一套 4 档, 但走 gad7Option 方法)
+  Map<int, String> get options => {
+        0: translations.gad7Option(0),
+        1: translations.gad7Option(1),
+        2: translations.gad7Option(2),
+        3: translations.gad7Option(3),
+      };
 
   @override
   int get totalRange => 21;
 
   @override
-  List<SeverityCutoff> get severityCutoffs => const [
-        SeverityCutoff(
-            threshold: 4, rank: 0, label: '几乎没有焦虑', summary: '几乎没有焦虑倾向',),
-        SeverityCutoff(threshold: 9, rank: 1, label: '轻度焦虑', summary: '轻度焦虑倾向'),
-        SeverityCutoff(
-            threshold: 14, rank: 2, label: '中度焦虑', summary: '中度焦虑倾向',),
-        SeverityCutoff(
-            threshold: 21, rank: 3, label: '重度焦虑', summary: '重度焦虑倾向',),
-      ];
+  // v0.27 R78: 4 档严重度走 translations
+  List<SeverityCutoff> get severityCutoffs => List<SeverityCutoff>.generate(
+        4,
+        (rank) => SeverityCutoff(
+          threshold: _gad7CutoffThresholds[rank],
+          rank: rank,
+          label: translations.gad7SeverityLabel(rank),
+          summary: translations.gad7SeveritySummary(rank),
+        ),
+      );
+
+  /// v0.27 R78: 4 档严重度 threshold
+  static const _gad7CutoffThresholds = [4, 9, 14, 21];
 
   @override
   AssessmentResult computeResult(List<int> scores) {

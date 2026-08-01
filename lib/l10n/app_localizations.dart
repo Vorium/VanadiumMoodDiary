@@ -3921,6 +3921,258 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。'**
   String get scaleCrisisMessage;
+
+  /// No description provided for @phq9Item0.
+  ///
+  /// In zh, this message translates to:
+  /// **'做事时提不起劲或没有兴趣'**
+  String get phq9Item0;
+
+  /// No description provided for @phq9Item1.
+  ///
+  /// In zh, this message translates to:
+  /// **'感到心情低落、沮丧或绝望'**
+  String get phq9Item1;
+
+  /// No description provided for @phq9Item2.
+  ///
+  /// In zh, this message translates to:
+  /// **'入睡困难、睡不安稳或睡得过多'**
+  String get phq9Item2;
+
+  /// No description provided for @phq9Item3.
+  ///
+  /// In zh, this message translates to:
+  /// **'感觉疲倦或没有活力'**
+  String get phq9Item3;
+
+  /// No description provided for @phq9Item4.
+  ///
+  /// In zh, this message translates to:
+  /// **'食欲不振或吃太多'**
+  String get phq9Item4;
+
+  /// No description provided for @phq9Item5.
+  ///
+  /// In zh, this message translates to:
+  /// **'觉得自己很糟、很失败，或让自己和家人失望'**
+  String get phq9Item5;
+
+  /// No description provided for @phq9Item6.
+  ///
+  /// In zh, this message translates to:
+  /// **'对事物专注有困难，例如看报纸或看电视时'**
+  String get phq9Item6;
+
+  /// No description provided for @phq9Item7.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作或说话速度缓慢到别人能察觉？\n或正好相反——烦躁或坐立不安'**
+  String get phq9Item7;
+
+  /// No description provided for @phq9Item8.
+  ///
+  /// In zh, this message translates to:
+  /// **'有不如死掉或用某种方式伤害自己的念头'**
+  String get phq9Item8;
+
+  /// No description provided for @phq9Option0.
+  ///
+  /// In zh, this message translates to:
+  /// **'完全不会'**
+  String get phq9Option0;
+
+  /// No description provided for @phq9Option1.
+  ///
+  /// In zh, this message translates to:
+  /// **'好几天'**
+  String get phq9Option1;
+
+  /// No description provided for @phq9Option2.
+  ///
+  /// In zh, this message translates to:
+  /// **'一半以上的天数'**
+  String get phq9Option2;
+
+  /// No description provided for @phq9Option3.
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎每天'**
+  String get phq9Option3;
+
+  /// No description provided for @phq9SeverityLabel0.
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎没有抑郁'**
+  String get phq9SeverityLabel0;
+
+  /// No description provided for @phq9SeverityLabel1.
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度抑郁'**
+  String get phq9SeverityLabel1;
+
+  /// No description provided for @phq9SeverityLabel2.
+  ///
+  /// In zh, this message translates to:
+  /// **'中度抑郁'**
+  String get phq9SeverityLabel2;
+
+  /// No description provided for @phq9SeverityLabel3.
+  ///
+  /// In zh, this message translates to:
+  /// **'中重度抑郁'**
+  String get phq9SeverityLabel3;
+
+  /// No description provided for @phq9SeverityLabel4.
+  ///
+  /// In zh, this message translates to:
+  /// **'重度抑郁'**
+  String get phq9SeverityLabel4;
+
+  /// No description provided for @phq9SeveritySummary0.
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎没有抑郁倾向'**
+  String get phq9SeveritySummary0;
+
+  /// No description provided for @phq9SeveritySummary1.
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度抑郁倾向'**
+  String get phq9SeveritySummary1;
+
+  /// No description provided for @phq9SeveritySummary2.
+  ///
+  /// In zh, this message translates to:
+  /// **'中度抑郁倾向'**
+  String get phq9SeveritySummary2;
+
+  /// No description provided for @phq9SeveritySummary3.
+  ///
+  /// In zh, this message translates to:
+  /// **'中重度抑郁倾向'**
+  String get phq9SeveritySummary3;
+
+  /// No description provided for @phq9SeveritySummary4.
+  ///
+  /// In zh, this message translates to:
+  /// **'重度抑郁倾向'**
+  String get phq9SeveritySummary4;
+
+  /// No description provided for @phq9Instruction.
+  ///
+  /// In zh, this message translates to:
+  /// **'过去两周内，你有多经常被以下问题困扰？'**
+  String get phq9Instruction;
+
+  /// No description provided for @phq9ShortDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'过去两周的抑郁倾向筛查'**
+  String get phq9ShortDescription;
+
+  /// No description provided for @gad7Item0.
+  ///
+  /// In zh, this message translates to:
+  /// **'感到紧张、焦虑或急切'**
+  String get gad7Item0;
+
+  /// No description provided for @gad7Item1.
+  ///
+  /// In zh, this message translates to:
+  /// **'不能停止或控制担忧'**
+  String get gad7Item1;
+
+  /// No description provided for @gad7Item2.
+  ///
+  /// In zh, this message translates to:
+  /// **'对各种事情担忧过多'**
+  String get gad7Item2;
+
+  /// No description provided for @gad7Item3.
+  ///
+  /// In zh, this message translates to:
+  /// **'难以放松'**
+  String get gad7Item3;
+
+  /// No description provided for @gad7Item4.
+  ///
+  /// In zh, this message translates to:
+  /// **'心情烦躁以至坐不住'**
+  String get gad7Item4;
+
+  /// No description provided for @gad7Item5.
+  ///
+  /// In zh, this message translates to:
+  /// **'变得容易烦恼或急躁'**
+  String get gad7Item5;
+
+  /// No description provided for @gad7Item6.
+  ///
+  /// In zh, this message translates to:
+  /// **'感到似乎将有可怕的事情发生而害怕'**
+  String get gad7Item6;
+
+  /// No description provided for @gad7SeverityLabel0.
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎没有焦虑'**
+  String get gad7SeverityLabel0;
+
+  /// No description provided for @gad7SeverityLabel1.
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度焦虑'**
+  String get gad7SeverityLabel1;
+
+  /// No description provided for @gad7SeverityLabel2.
+  ///
+  /// In zh, this message translates to:
+  /// **'中度焦虑'**
+  String get gad7SeverityLabel2;
+
+  /// No description provided for @gad7SeverityLabel3.
+  ///
+  /// In zh, this message translates to:
+  /// **'重度焦虑'**
+  String get gad7SeverityLabel3;
+
+  /// No description provided for @gad7SeveritySummary0.
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎没有焦虑倾向'**
+  String get gad7SeveritySummary0;
+
+  /// No description provided for @gad7SeveritySummary1.
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度焦虑倾向'**
+  String get gad7SeveritySummary1;
+
+  /// No description provided for @gad7SeveritySummary2.
+  ///
+  /// In zh, this message translates to:
+  /// **'中度焦虑倾向'**
+  String get gad7SeveritySummary2;
+
+  /// No description provided for @gad7SeveritySummary3.
+  ///
+  /// In zh, this message translates to:
+  /// **'重度焦虑倾向'**
+  String get gad7SeveritySummary3;
+
+  /// No description provided for @gad7Instruction.
+  ///
+  /// In zh, this message translates to:
+  /// **'过去两周内，你有多经常被以下问题困扰？'**
+  String get gad7Instruction;
+
+  /// No description provided for @gad7ShortDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'过去两周的焦虑倾向筛查'**
+  String get gad7ShortDescription;
 }
 
 class _AppLocalizationsDelegate
