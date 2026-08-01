@@ -1,0 +1,10 @@
+/* v0.27 R77 (R74 AS-P0-4 半修续): InfoPlist.strings Base 必备
+ *
+ * pbxproj PBXVariantGroup 引用 Base + 各 locale 引用。
+ * 没 Base 的话 zh-Hans / zh-Hant 走 fallback (R70 注释说
+ * "per-locale 覆盖实际从未生效"), Base 是 fallback 兜底,
+ * 跟 Info.plist CFBundleDisplayName=ChronicCare 同步。
+ *
+ * iOS 8+ 强制要求 InfoPlist.strings 有 Base 引用。
+ */
+"CFBundleDisplayName" = "ChronicCare";
