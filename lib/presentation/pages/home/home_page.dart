@@ -551,28 +551,28 @@ class _HomePageState extends ConsumerState<HomePage> {
           // SmsService.send mock 早返路径 → SmsResult.mock (不算 ok
           // 也不算 fail)。R55 真接后这里就直接真发了。
           //
-          // 注: `contacts` 当前是 const [] (FireCareStrategyInput 默认),
-          // 真接 R55+ 时要从 input.contacts 拿第一个紧急联系人 phone。
+          // v0.27 round 75 (R74-N13 修): 之前硬编码 '00000000000' 占位
+          // phone, 真接 R55+ 时拿到 placeholder phone 发到占位号码
+          // (静默成功 + 失联告警失败)。改 throw StateError 让 caller 必填
+          // input.contacts, 防止生产模式发到占位号码。
           // 当前 defaultConfig=careCopy, 此分支不会被触发, 留作路由占位。
-          await ref.read(smsServiceProvider).send(
-                to: '00000000000', // R55+ TODO: 拿 input.contacts.first.phone
-                body: '${result.title}\n${result.body}',
-              );
-          break;
+          throw StateError(
+            'FireCareDecision.fireSms requires non-empty input.contacts. '
+            'R55+ 真接 SMS 时 caller 必填, 当前 defaultConfig=careCopy '
+            '此分支不会触发。',
+          );
         case FireCareDecision.fireEmail:
           // v0.27 round 67 (B-2 修复): 调 emailService.sendMedicationReminder
           // 当前 EmailService 是 mock, send 返 false (P1-8 fix 行为)。
           // R55+ 真接 SendGrid 后这里就直接真发了。
-          // 当前 defaultConfig=careCopy, 此分支不会被触发, 留作路由占位。
-          await ref.read(emailServiceProvider).sendMedicationReminder(
-                to: 'placeholder@invalid.local', // R55+ TODO
-                userName: null,
-                daysWithoutCheckIn: 0,
-                lastCheckIn: null,
-                medication: null,
-                cycleHours: 48,
-              );
-          break;
+          //
+          // v0.27 round 75 (R74-N14 修): 之前硬编码 'placeholder@invalid.local'
+          // 占位 email, 改 throw StateError 防止发到占位地址 (PIPL §6 PII 暴露)。
+          throw StateError(
+            'FireCareDecision.fireEmail requires non-empty input.contacts. '
+            'R55+ 真接 Email 时 caller 必填, 当前 defaultConfig=careCopy '
+            '此分支不会触发。',
+          );
         case FireCareDecision.disabled:
         case FireCareDecision.noAction:
           // 不会到这里 (shouldFire 已 check, 早返了)
