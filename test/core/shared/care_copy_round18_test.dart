@@ -17,12 +17,14 @@ void main() {
       final copy = CareCopy.forTrigger(CareTriggerType.secondDayMissed);
       expect(copy.title, isNotEmpty);
       expect(copy.body, isNotEmpty);
-      expect(copy.title, contains('你还好吗'));
+      // v0.27 R77 (R76-N7 续): '你还好吗' 改 '后续保持就好' (中性, 不催促)
+      expect(copy.title, contains('后续保持就好'));
     });
 
     test('lateCheckInHabit: 晚归文案', () {
       final copy = CareCopy.forTrigger(CareTriggerType.lateCheckInHabit);
-      expect(copy.title, contains('早点休息'));
+      // v0.27 R77 (R76-N7 续): '记得早点休息' 改 '提早一点更稳定' (中性, 不指责)
+      expect(copy.title, contains('提早一点更稳定'));
       expect(copy.body, contains('规律作息'));
     });
 
@@ -30,6 +32,8 @@ void main() {
       final copy = CareCopy.forTrigger(CareTriggerType.weekendMissed);
       expect(copy.title, contains('周末'));
       expect(copy.body, contains('打卡'));
+      // v0.27 R77 (R76-N7 续): '容易忘记' 改 '容易错过' (中性, 不责怪)
+      expect(copy.body, contains('容易错过'));
     });
 
     test('weekPerfect: 连续 7 天准时文案', () {
