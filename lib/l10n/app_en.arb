@@ -737,7 +737,7 @@
     }
   },
   "assessmentHistoryFullRecord": "Full Record",
-  "assessmentSeverityNormal": "Normal",
+  "assessmentSeverityNormal": "Minimal",
   "assessmentSeverityMild": "Mild",
   "assessmentSeverityModerate": "Moderate",
   "assessmentSeverityModeratelySevere": "Moderately Severe",
