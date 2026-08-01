@@ -113,6 +113,15 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_runAssessmentReminderOnStart());
     });
+    // v0.27 R70 (R64+ 4 round 挂死的半成品 BootReceiver 简化实现):
+    // 每次 App 启动调 rescheduleAll (含 BootReceiver 启动 MainActivity 触发的启动)
+    // - 不依赖 Android intent extra
+    // - 不依赖 bootReceiverEnabled flag
+    // - idempotent, 安全
+    // - 跟 SafetyWatchService.onAppStart 互补
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_runRescheduleAllOnStart());
+    });
     // v0.17 round 4: 跨 midnight 自动 refresh streak
     // 不挂 timer → 跨过 23:59:59 streak 还在用"昨天"算的 (B8 fix 只防 build 内多次,
     // 跨 midnight 后新 build 会用 today 算，但 streak 数本身依赖 yesterday data)
@@ -146,6 +155,37 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
         '⚠️ AssessmentReminder.onAppStart 失败: $e',
         error: e,
       );
+    }
+  }
+
+  /// v0.27 R70 (R64+ 4 round 挂死的半成品 BootReceiver 简化实现):
+  /// App 启动时调 rescheduleAll 重排所有通知
+  /// (medication + refill + 每日打卡 fallback)。
+  ///
+  /// 调用链: BootReceiver (BOOT_COMPLETED) → MainActivity → Flutter
+  /// → AppRoot.initState → _runRescheduleAllOnStart → notification_service.rescheduleAll
+  ///
+  /// 不依赖 Android intent extra (避免 MethodChannel 跨进程集成),
+  /// 不依赖 bootReceiverEnabled flag (每次启动 idempotent 重排)。
+  Future<void> _runRescheduleAllOnStart() async {
+    try {
+      final notificationService = ref.read(notificationServiceProvider);
+      // v0.27 R70: 走 medicationRepositoryProvider.watchAll() (跟 setup_page.dart:448 一致)
+      // 而不是 db.medicationDao.watchAll() (后者返回 List<Medication> drift type,
+      // 需要 mapper 才能给 rescheduleAll; repository 已经做了 mapper)
+      final meds = await ref
+          .read(medicationRepositoryProvider)
+          .watchAll()
+          .first
+          .timeout(const Duration(seconds: 5));
+      await notificationService.rescheduleAll(meds);
+    } catch (e, st) {
+      piiSafeLog(
+        'AppRoot._runRescheduleAllOnStart',
+        '⚠️ rescheduleAll 失败: $e',
+        error: e,
+      );
+      piiSafeLog('AppRoot._runRescheduleAllOnStart', st.toString());
     }
   }
 

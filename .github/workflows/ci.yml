@@ -59,14 +59,47 @@ jobs:
       - name: ARB key bidirectional check
         run: python scripts/check_arb_keys.py
 
+      - name: ARB key orphan check
+        run: python scripts/check_orphan_arb_keys.py
+
+      - name: zh-Hant consistency check
+        run: python scripts/check_zh_hant_consistency.py
+
       - name: Drift namespace check
         run: python scripts/check_drift_namespace.py --strict
 
-      - name: DateTime race check
+      - name: DateTime race check (race2: >=2 DateTime.now() in same function)
         run: python scripts/check_datetime_race2.py
+
+      - name: DateTime race check (race: multi-capture in same call site)
+        run: python scripts/check_datetime_race.py
 
       - name: Fullwidth punctuation check
         run: python scripts/check_fullwidth_punctuation.py --ci
+
+      - name: UTC hardcoded check
+        run: python scripts/check_no_hardcoded_utc.py
+
+      - name: PUA character check
+        run: python scripts/check_no_pua.py
+
+      - name: Widget dispose check (resource leak)
+        run: python scripts/check_widget_dispose.py
+
+      - name: Legal consent TODO check
+        run: python scripts/check_legal_consent.py
+
+      - name: SMS release readiness check
+        run: python scripts/check_sms_release_ready.py
+
+      - name: Hardcoded strings (with i18n override) check
+        run: python scripts/check_strings_hardcoded.py
+
+      - name: CHANGELOG / pubspec version order check
+        run: python scripts/check_changelog.py
+
+      - name: 16KB page size alignment check (Google Play 2025-11)
+        run: python scripts/check_16kb_alignment.py
 
       - name: Run tests
         run: flutter test

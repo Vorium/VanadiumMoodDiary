@@ -247,6 +247,28 @@ class NotificationService implements NotificationSender {
   ) =>
       _medicationNotifier.rescheduleMedicationReminders(medications);
 
+  /// v0.27 R70 (R64+ 4 round 挂死的半成品 BootReceiver 简化实现):
+  /// 重排 medication + refill 推送 (assessment 需 fireAt 单独算, R71 补)。
+  ///
+  /// 调用场景: App 每次启动时 (含 BootReceiver 启动 MainActivity 触发的启动)
+  /// - 不依赖 Android side intent extra (避免 MethodChannel 跨进程集成)
+  /// - 不依赖 bootReceiverEnabled flag (每次启动 idempotent 重排)
+  /// - 调用方: main.dart runApp 之后 addPostFrameCallback, 传入从 DB 读的 meds
+  ///
+  /// 实现: 调 3 个 sub-notifier 的对应 reschedule。
+  /// 主流程: SafetyWatchService.onAppStart 已走 bootReceiverEnabled 守门,
+  /// 跟这里 rescheduleAll 互补 (一个管 safety 通知重排, 一个管全通知重排)。
+  Future<void> rescheduleAll(List<MedicationEntity> medications) async {
+    piiSafeLog('NotificationService', 'rescheduleAll start (R70 简化方案)');
+    // 1. 每日通用打卡提醒 (id=1001 fallback)
+    await scheduleDailyReminder();
+    // 2. medication 推送 (id=2000+medId*10+i)
+    await rescheduleMedicationReminders(medications);
+    // 3. refill 续方提醒 (id=6000+medId)
+    await rescheduleRefillReminders(medications);
+    piiSafeLog('NotificationService', 'rescheduleAll done');
+  }
+
   // ============== RefillNotifier 委托 ==============
 
   /// 调度一个 medication 的续方提醒
@@ -382,11 +404,12 @@ class NotificationService implements NotificationSender {
   // v0.22 round 30 (sp-en P2-1): 角标逻辑拆到 BadgeSyncService
   // 主 service 仅保留委托 (向后兼容 NotificationSender 抽象)。
 
-  /// 更新角标数字 (iOS only — Android 留 TODO)
+  /// 更新角标数字 (iOS 走 badgeNumber API, Android 走 launcher notification dot)
   ///
-  /// 限制: flutter_local_notifications 17.x **没有** setBadgeCount 原生 API。
-  /// - iOS: [DarwinNotificationDetails] 的 badgeNumber 字段是公开 API
-  /// - Android: 暂无稳定方案。v0.10+ TODO: 集成 flutter_app_badge_control 插件
+  /// v0.27 R70 决策: 删挂 18+ 月 "v0.10+ TODO 集成 flutter_app_badge_control" 注释。
+  /// 走"iOS 真接 + Android 靠 launcher 自带 unread count" — Android 8+ 主流 launcher
+  /// 都支持 (跟 flutter_local_notifications 已发通知自动同步), 不需要第三方插件。
+  /// 详见 badge_sync_service.dart 决策注释。
   ///
   /// [count] 传 0 即清零
   Future<void> updateBadgeCount(int count) async {

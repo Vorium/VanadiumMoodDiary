@@ -41,8 +41,16 @@ class BadgeSyncService {
   /// [count] 传 0 即清零, 负数 clamp 到 0
   /// 限制: flutter_local_notifications 17.x 没有 setBadgeCount 原生 API
   /// 退而求其次: 发一条"带 badgeNumber"的"空"通知 (iOS 自动更新角标)
-  /// - iOS: [DarwinNotificationDetails.badgeNumber] 是公开 API
-  /// - Android: 暂无稳定方案 (TODO v0.10+ 集成 flutter_app_badge_control)
+  /// - iOS: [DarwinNotificationDetails.badgeNumber] 是公开 API (已用)
+  /// - Android: 暂无稳定方案 (各 ROM 支持不一: MIUI / EMUI / OneUI / Pixel 等
+  ///   launcher app icon badge 实现差异大, 第三方插件 flutter_app_badge_control
+  ///   覆盖不全, 误用反而漏显示)。
+  ///
+  /// v0.27 R70 决策: 删 "v0.10+ TODO 集成 flutter_app_badge_control" 挂 18+ 月 TODO,
+  /// 走"iOS badge 真接 + Android 角标靠 launcher notification dot + 应用图标角标
+  /// (Android 8+ 主流 launcher 都支持 unread count 显示)"。后者靠用户操作触发
+  /// (点开 App 时角标自动清, 跟 flutter_local_notifications 集成) — 跟 v0.27 业务
+  /// 模型 (本地存储 + 24h 周期打卡) 一致。
   Future<void> updateBadgeCount(int count) async {
     final safeCount = count < 0 ? 0 : count;
     try {
