@@ -55,3 +55,10 @@ assets/brand/_archive/
 assets/brand/variations/
 assets/brand/*_v[2-9]*.png
 assets/brand/icon_preview_v[2-9]*.png
+
+# v0.27 round 73 (重构-3): scripts/ root 临时输出 (.txt) 跟迭代日志不进 git
+# 之前 11 个 .txt 临时输出 (diff_stat / final_stats / gitlog* / list* / status*)
+# + test_delivery_rate.dart (R42 报告 M3 候选, R71 后已是 deprecated)
+# 已 git rm / git mv 处理。.gitignore 兜底防再增。
+scripts/*.txt
+scripts/test_delivery_rate.dart
