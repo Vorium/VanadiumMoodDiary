@@ -1251,7 +1251,7 @@
   "medicationUnitMg": "mg",
   "medicationUnitTablet": "片",
   "safetyCheckResultDisabled": "安全開關已關閉",
-  "safetyCheckResultOk": "正常（{days} 天前打卡）",
+  "safetyCheckResultOk": "無風險（{days} 天前打卡）",
   "@safetyCheckResultOk": {
     "placeholders": {
       "days": {
