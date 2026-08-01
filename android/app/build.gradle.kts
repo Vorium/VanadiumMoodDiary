@@ -89,6 +89,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // v0.27 R70 (NEW-3 googleplay P1-8): 显式 64-bit ABI
+            // Google Play 2019-08 起强制 64-bit APK/AAB 支持
+            // 默认含 arm64-v8a + x86_64, 排除 armeabi-v7a (32-bit 旧设备) + x86 (emulator)
+            ndk {
+                abiFilters.addAll(listOf("arm64-v8a", "x86_64"))
+            }
         }
     }
 }

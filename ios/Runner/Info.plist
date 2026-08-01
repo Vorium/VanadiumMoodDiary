@@ -7,19 +7,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<!--
-		v0.27 round 62 (R62): P0-9 per-language display name
-		App Store Connect 支持 per-locale display name
-		英文用户看英文, 简繁中文各看各
+		v0.27 R70 (NEW-2 appstore P1-2): CFBundleDisplayName 走 InfoPlist.strings per-locale
+		原因: iOS Info.plist 是单值, per-locale dict 形式被 iOS 忽略
+		(所有 locale 都 fallback 到 CFBundleName=chroniccare, 中文用户看英文名 = 病耻感反向)
+		修法: Info.plist 留单值 (英文), zh-Hans.lproj/InfoPlist.strings + zh-Hant.lproj/InfoPlist.strings 走多语
 	-->
 	<key>CFBundleDisplayName</key>
-	<dict>
-		<key>en</key>
-		<string>ChronicCare</string>
-		<key>zh-Hans</key>
-		<string>慢病管家</string>
-		<key>zh-Hant</key>
-		<string>慢病管家</string>
-	</dict>
+	<string>ChronicCare</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -39,11 +33,12 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<!--
-		v0.27 round 61 (R61): iOS 13+ 隐私用途说明
-		任何用到敏感权限的 Info.plist 必须配, 否则 App Store 审核拒
+		v0.27 R70: 删 NSUserNotificationUsageDescription 老 key
+		原因: iOS 10+ 弃用, flutter_local_notifications 17.x 走 UNUserNotificationCenter 不读此 key
+		保留误导审核员以为项目走老 API (实际走 iOS 14+ foreground 通知)
+		文档与实际: NSMicrophoneUsageDescription / NSSpeechRecognitionUsageDescription
+		/ NSPhotoLibraryUsageDescription 是真用的, 保留
 	-->
-	<key>NSUserNotificationUsageDescription</key>
-	<string>用于在到点提醒你吃药打卡，所有通知本地处理，不上传任何数据</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>用于情绪日记的语音录入，本地处理，文件加密存储</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

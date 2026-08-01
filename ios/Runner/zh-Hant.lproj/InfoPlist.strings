@@ -1,0 +1,6 @@
+/* v0.27 R70 (NEW-2 appstore P1-2): per-locale CFBundleDisplayName
+ * InfoPlist.strings 是 iOS per-locale strings 覆盖机制
+ * iOS 在 zh-Hant locale 下用此文件覆盖 Info.plist 的 CFBundleDisplayName
+ * 繁体用户看 "慢病管家" 而不是英文 "ChronicCare" (避免病耻感)
+ */
+"CFBundleDisplayName" = "慢病管家";

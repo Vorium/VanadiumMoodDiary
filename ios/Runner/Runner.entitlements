@@ -2,7 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>aps-environment</key>
-	<string>development</string>
+	<!--
+		v0.27 R70: 删 aps-environment
+		原因: 项目无 APNs 远程推送, 只用 flutter_local_notifications 17.x 本地通知
+		保留 aps-environment 会让 App Store Connect 误判"项目声明走 APNs 远程推送",
+		后台 'Push Notifications' 标签必须填 (Yes = 走真接 APNs / No = 跟 entitlement 矛盾)
+		直接删此 key 即声明"项目不使用 APNs 远程推送", App Store Connect 自动推断 No
+	-->
 </dict>
 </plist>
