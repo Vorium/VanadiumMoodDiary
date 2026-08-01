@@ -2,6 +2,82 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-01 (R73 — 4 类重审后剩余上架/重构/半成品/架构扫尾: 9 analyzer info + 102 候选 PNG + 11 临时文件 + README_PLACEHOLDER)
+
+> R73 目标: R72 commit 后, 用户问"还有上架/架构/建议重构/半成品相关的问题吗",
+> 重审扫出 4 类新候选清零。4 commit (重构-1/2/3 + 上架-4) + R73 仍是低风险改动。
+> 重点: 9 个 analyzer info 全部清零 (历史性 0 info) + 102 variations PNG 进 _archive。
+
+### Tests
+- **1285/1285 pass** (持平 R72)
+- `flutter analyze` **0 error / 0 warning / 0 info** (历史性 0 — R72 还有 9 info, R73 全清零)
+- 17 守护脚本全绿
+
+### 重构-1: 9 analyzer info 全清零 (R73 commit f40a10b)
+
+- **4 处 doc 注释 `<T>` HTML 冲突** (info - unintended_html_in_doc_comment):
+  - `care_strategies.dart:73` `Set<DateTime>` → `` `Set<DateTime>` ``
+  - `temp_entry_extractor.dart:12` `List<TempMedEntry>` → `` `List<TempMedEntry>` ``
+  - `schedule_refill_reminder.dart:63` `List<RefillSchedule>` → `` `List<RefillSchedule>` ``
+  - `contacts_list_widget.dart:148` `Future<void>` → `` `Future<void>` ``
+- **5 处 use_build_context_synchronously** (info - R17+R56b 已知模式):
+  - `home_page.dart:446` (2 处) — `if (mounted) { ... context ... }` 包跨 await 块
+  - `contacts_list_widget.dart:217/238` (2 处) — `_showAddContactDialog` method
+    去掉 `BuildContext context` 参数 + closure 内 `final ctx = context;` final local
+    + `if (ctx.mounted) { ... }` 包 await 链 + 跨 await `if (!ctx.mounted) return;` 双重 guard
+  - `setup_page.dart:397` (1 处) — for-loop 内 `await ConsentDialog.show` 之后
+    `if (!mounted) { setState(() => _saving = false); return; }` early return + 续用 context
+  - R17+R56b memory 确认 analyzer 期望: `if (ctx.mounted)` (BuildContext.mounted)
+    跟 `if (mounted)` (State.mounted) 算不同来源, 必须用对应类型才认
+- **0 info 历史性首次**: R72 还有 9 info (BuildContext 跨 async gap 已知 + doc <T>),
+  R73 全部清零。`flutter analyze` 0 error / 0 warning / 0 info。
+
+### 重构-2: assets/brand/ 清理 102 PNG (R73 commit 010c9b8)
+
+- **102 + 12 = 114 个 PNG 移入 _archive/** (R42 报告 M6 落地):
+  - `assets/brand/variations/` 100 候选 + 2 contact_sheet (40.77 MB) → `_archive/variations/`
+  - `assets/brand/{app_icon_master,app_icon_maskable}_v2..v5.png` (8 个) → `_archive/iterations/`
+  - `assets/brand/icon_preview_v2..v5.png` (4 个) → `_archive/iterations/`
+- **保留 4 个 production asset**:
+  - `app_icon_master.png` + `app_icon_maskable.png` (上架最终版)
+  - `icon_preview.png` + `icon_showcase.html` (设计展示参考, 不大)
+- **.gitignore 兜底** (`assets/brand/_archive/` + `variations/` + `*_v[2-9]*.png` +
+  `icon_preview_v[2-9]*.png`): 设计师后续新加 _v6 / variations_k.png 自动不 commit
+- **节省**: ~10 MB git objects, 下次 clone / fastlane push 加速
+- **保留 history**: `git mv` 保留 blame + log, 不是 `git rm`
+
+### 重构-3: scripts/ root 临时输出清理 (R73 commit 4924a6f)
+
+- **10 个 .txt 临时输出删**:
+  - `diff_stat.txt` + `final_stats_for_report.txt` + `final_status.txt`
+  - `gitlog.txt` + `gitlog2.txt` + `list6.txt` + `list7.txt`
+  - `status.txt` + `status2.txt` + `status3.txt`
+  - 都是 commit 前临时看 diff 用的, 不该 commit
+- **1 个 deprecated .dart 进 _archive** (R42 报告 M3 落地):
+  - `test_delivery_rate.dart` → `scripts/_archive/test_delivery_rate.dart`
+  - 是 R55 之前的 SMS 送达率测试 mock, R71 后已 deprecated (AliyunSmsProvider 接 R55+ 后被覆盖)
+- **.gitignore 兜底** (`scripts/*.txt` + `scripts/test_delivery_rate.dart`)
+
+### 上架-4: README_PLACEHOLDER.txt 删除 (R73 commit 98b041a)
+
+- `fastlane/metadata/ios/en-US/README_PLACEHOLDER.txt` 删
+- R67 commit 时是占位说明 (67 字节 PNG 怎么替换), 实际 iOS 截图已就位:
+  - 5 张 iPhone 6.5" (1242×2688) + 3 张 5.5" (1242×2208) + 3 张 iPad 12.9" (2048×2732)
+- 文件名带 PLACEHOLDER 暗示临时, R73 落地删除
+
+### 仍挂 (R74+ / 外部依赖)
+
+- 33 张 iOS 截图 + Android 8 截图 + 2 feature_graphic + 2 icon 512×512 (外部真机 + 设计师)
+- 真实 keystore + Play App Signing (外部 keytool + 用户密码)
+- 域名 + 邮箱 + HTTPS 部署 (外部用户操作)
+- Play Console 4 大表单 + Apple App Store Connect 4 ID (外部用户后台)
+- 律师 review 3 md (1-2 周 + ¥15-30k/文档)
+- IAP / SMS / Email 真接 (1-2 月 + 阿里云/SendGrid AccessKey)
+- 3 份 md 英文 + 繁体翻译 (1 周)
+- PHQ-9 16 题全文 i18n (v1.0 大工程)
+- 16KB page size 完整验 (build aab + objdump)
+- pod install 核第三方 plugin PrivacyInfo (macOS 专属)
+
 ## [Unreleased] - 2026-08-01 (R71 — 4 类剩余清零: 上架 P2-1/3/5 + P5.4 50/100 + PHQ-9 detectCrisis i18n + 病耻感措辞中性化)
 
 > R71 目标: R70 commit 后, R68/R69 报告反复点名的 12 项剩余可代码化项清零。
