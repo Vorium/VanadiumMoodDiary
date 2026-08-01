@@ -68,11 +68,11 @@ String buildLostContactSms({
         buffer.writeln('【慢病管家】$name 已 $hoursSince 小时没打卡。');
       }
       buffer.writeln('请你方便的时候提醒对方按时吃药。');
-      if (medication != null) {
-        buffer.writeln(
-          '常吃药: ${medication.name} ${medication.dosage}${medication.dosageUnit.id}',
-        );
-      }
+      // v0.27 round 75 (R74-N9 PIPL §6 修): 之前发 medication.name + dosage +
+      // dosageUnit 给紧急联系人, 属 PII 医疗信息暴露, 精神心理患者敏感。
+      // 修法: 移除具体药名 + 剂量, 改"如有按时吃药需要"中性提示。
+      // 如有后续真接 SMS + 用户授权共享详细药历, 走 consent-gated 路径
+      // (PIPL §13 单独同意扩展), R76+ 设计。
       return buffer.toString().trimRight();
   }
 }
