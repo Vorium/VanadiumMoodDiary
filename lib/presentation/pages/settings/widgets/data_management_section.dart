@@ -14,6 +14,7 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
@@ -309,8 +310,9 @@ class DataManagementSection extends ConsumerWidget {
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(l10n.commonCancel),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
+          PrimaryButton(
+            isFullWidth: false,
+            style: FilledButton.styleFrom(
               backgroundColor: AppTokens.errorColor(context),
             ),
             onPressed: () => Navigator.pop(ctx, true),

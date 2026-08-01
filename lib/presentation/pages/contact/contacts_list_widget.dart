@@ -14,6 +14,7 @@ import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/swipe_delete_background.dart';
 import 'package:go_router/go_router.dart';
@@ -189,7 +190,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                   onPressed: saving ? null : () => Navigator.pop(ctx),
                   child: Text(AppLocalizations.of(context).commonCancel),
                 ),
-                ElevatedButton(
+                PrimaryButton(
+                  isFullWidth: false,
                   onPressed: saving
                       ? null
                       : () async {

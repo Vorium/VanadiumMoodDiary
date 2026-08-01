@@ -14,6 +14,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class AssessmentReminderSection extends ConsumerStatefulWidget {
   const AssessmentReminderSection({super.key});
@@ -282,7 +283,8 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
                 ),
                 const SizedBox(width: AppTokens.spacingSm),
                 Expanded(
-                  child: ElevatedButton(
+                  child: PrimaryButton(
+                    isFullWidth: false,
                     onPressed: () => Navigator.pop(context, _selected),
                     child: Text(l10n.commonConfirmOk),
                   ),
