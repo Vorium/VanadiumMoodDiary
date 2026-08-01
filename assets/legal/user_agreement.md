@@ -1,11 +1,5 @@
 # 用户协议
 
-> **TODO (上 store 前必须由专业律师过审)**: 本协议当前为 v0.24 草稿, 未经律师过审。
-> 上 store 前必须: (1) 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换为本协议里的邮箱; (2) 确认或替换 `https://github.com/example/chroniccare/issues` 为真实项目仓库; (3) 律师过审 + 替换"未经律师过审"标注; (4) 重新走用户同意流程刷 `userAgreementVersion` 字段。
-> **隐私 / PIPL 投诉邮箱已软隐藏** (v0.27 R67 Sprint 1 决策): 不再提供 `privacy@chroniccare.app` 邮件渠道, 用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行)。详见 `docs/LEGACY_API_NOTES.md`。
-> 集中器见 `docs/SPRINT1_LEGAL_TODO.md`。
-> 最后更新:2026-07-31 (v0.27 round 67 Sprint 1 — 隐私邮箱软隐藏)
-
 ## 1. 服务说明
 
 「慢病管家」(以下简称"本 App")是一款面向慢性病、精神心理疾病患者及其家属的健康管理工具,核心功能包括:
@@ -14,7 +8,7 @@
 - 用药记录与历史趋势
 - 心理评估(PHQ-9 / GAD-7)
 - 私密倾诉空间(树洞)
-- **失联通知**(连续多日未打卡时,自动通知预设的紧急联系人)
+- **失联通知**(**规划中,本版本未启用** — 连续多日未打卡时,自动通知预设的紧急联系人)
 - 邮件 / 短信关怀通知
 - 数据本地备份与恢复(导出/导入 JSON)
 
@@ -26,6 +20,12 @@
 ## 3. 付费规则
 
 本 App 售价人民币 8 元(Google Play / Apple App Store 统一定价),一次性买断,**不收取订阅费**。
+
+> **v0.27 R69 更新**: 当前 release 模式 IAP 业务整体暂停
+> (`FeatureFlags._prodIapEnabled = false`, R68 commit `d691551` 决策),
+> v0.27 本版本 App 内**不显示**"立即买断"入口。本付费规则段在
+> **v0.28 真接 productId 后启用**,届时用户协议版本号 bump 后
+> 重新走用户同意流程刷 `userAgreementVersion` 字段。
 
 ## 4. 退款政策
 
@@ -66,3 +66,18 @@
 ---
 
 **请仔细阅读本协议。继续使用本 App 即视为同意以上全部条款。**
+
+---
+
+## 修订历史
+
+> 草稿来源 + 提交 / 过审状态 + 关键 TODO。**律师过审前**本段标注"草稿",过审后由法务删除本段。
+
+| 版本 | 日期 | 状态 | 关键事项 |
+|------|------|------|---------|
+| v0.24 | 2026-07-15 | 草稿 (未经律师过审) | 初版 |
+| v0.27 R67 | 2026-07-31 | 草稿 (Sprint 1 修订) | 隐私 / PIPL 投诉邮箱已软隐藏 `privacy@chroniccare.app`,用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行) |
+| v0.27 R69 | 2026-08-01 | 草稿 (P0 集中修复) | (1) 失联通知业务整体暂停 (CC-7 文档对齐), 4 处 wording 改"规划中,本版本未启用"; (2) "本 App 售价 8 元" 段加注脚 R68 决策 (CC-3 文档对齐, 文本保留, v0.28 启用); (3) 删除顶部 "TODO 律师过审" banner, 转本段修订历史 |
+| v0.28+ | 待定 | **TODO (上 store 前必须由专业律师过审)** | 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换 + 确认或替换 `https://github.com/example/chroniccare/issues` 为真实项目仓库 + 律师过审 + 替换"未经律师过审"标注 + 重新走用户同意流程刷 `userAgreementVersion` 字段 |
+
+**集中器**: `docs/SPRINT1_LEGAL_TODO.md` / `docs/LEGACY_API_NOTES.md` (软隐藏决策)

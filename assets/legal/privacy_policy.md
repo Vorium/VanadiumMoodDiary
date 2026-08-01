@@ -1,12 +1,6 @@
 # 隐私政策
 
-> **TODO (上 store 前必须由专业律师过审)**: 本政策当前为 v0.22 草稿, 未经律师过审。
-> 上 store 前必须: (1) 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换为本政策里的邮箱;
-> (2) 律师过审 + 替换"未经律师过审"标注; (3) 同步到官网隐私 URL; (4) 重新走用户同意流程刷 `privacyPolicyVersion` 字段。
-> **隐私 / PIPL 投诉邮箱已软隐藏** (v0.27 R67 Sprint 1 决策): 不再提供 `privacy@chroniccare.app` 邮件渠道, 用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行)。详见 `docs/LEGACY_API_NOTES.md`。
-> 集中器见 `docs/SPRINT1_LEGAL_TODO.md`。
 > 依据:《中华人民共和国个人信息保护法》(PIPL)、《App 违法违规收集使用个人信息行为认定方法》
-> 最后更新:2026-07-31 (v0.27 round 67 Sprint 1 — 隐私邮箱软隐藏)
 
 ## 0. 同意记录
 
@@ -135,7 +129,7 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 - 如发现 14 周岁以下用户误用,监护人可通过 **App 内 设置 → 法律与隐私** 页面发起数据删除请求,我们将在 7 个工作日内响应 (v0.27 R67 Sprint 1 决策, 软隐藏 `privacy@chroniccare.app` 邮件渠道)
 - 本 App 不会向未成年人推送任何营销内容、广告或诱导付费信息
 
-## 11. 跨境数据传输 (v0.25 R54 增补)
+## 11. 跨境数据传输 (v0.27 R54 增补, R69 版本号 walkthrough)
 
 依据《个人信息保护法》§38、§39、§40 与《数据出境安全评估办法》,
 个人信息处理者向境外提供个人信息需满足以下任一条件:
@@ -172,24 +166,27 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 
 **法务声明:**
 
-> v0.25 (本版本) 尚未接入真实跨境 SMS provider —— release 模式下
-> `AliyunSmsProvider.send()` 仍 throw UnimplementedError(占位)。
-> **正式上 store 前必须:**(1) 接境内备案的 SMS provider;(2) 完成 PIPL §38
-> 跨境评估或标准合同备案;(3) 法务 review 本政策。
+> v0.27 R69 walkthrough: 失联通知业务整体暂停 (`FeatureFlags.emergencyContactEnabled=false`),
+> release 模式下 `AliyunSmsProvider.send()` 仍 throw UnimplementedError (R55+ 占位)。
+> R68 commit `d691551` 修了 CareEngine safety consent 撤回业务层真接,
+> use case `FireCareStrategyUseCase` 入口 `if (isSafetyConsentWithdrawn) → disabled` 早返。
+>
+> **正式上 store 前必须:**(1) 接境内备案的 SMS provider; (2) 完成 PIPL §38
+> 跨境评估或标准合同备案; (3) 法务 review 本政策。
 
 ## 12. 紧急联系人"单独同意"实现进度 (PIPL §13)
 
 依据《个人信息保护法》§13、§14、§23、§29,处理敏感个人信息前应
 取得**单独同意**,向第三方提供 PII 前应**单独告知第三方**。
 
-**当前实现状态 (v0.25):**
+**当前实现状态 (v0.27 R69):**
 
 | 阶段 | 实现细节 | 完成度 |
 |------|----------|--------|
 | 用户本人同意 | 设置流程要求勾选 3 项法律协议 (用户协议 / 隐私政策 / 敏感数据同意书) | ✅ v0.22 |
 | 紧急联系人"已告知"勾选 | 设置流程要求勾选"我已告知上述联系人" | ✅ v0.22 |
 | 紧急联系人**软告知弹窗** | R66 起对每个联系人单独弹"我已告知 TA 我会发送失联通知"软提示 | ✅ v0.27 R66 |
-| 紧急联系人回复 Y 确认 | 短信回复确认机制 | ❌ v0.25 TODO (依赖 SMS provider 真接,见 R55) |
+| 紧急联系人回复 Y 确认 | 短信回复确认机制 | ⏸ v0.27 业务整体暂停 (FeatureFlags.emergencyContactEnabled=false, 依赖 SMS provider 真接 — R55+ 占位, R28+ 启用) |
 | 同意记录可审计 | 写入 `user_profiles.consent_*` 字段 | ✅ v0.21 |
 | 撤回同意 | 设置页"法律与隐私"页可撤回 3 项功能 | ✅ v0.22 |
 | 撤回同意**业务层生效** | vent_repository / CareEngine / trend_page 真的拦截 | ✅ v0.27 R67 (Sprint 1) |
@@ -198,7 +195,7 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 未真正完成,失联通知 SMS 触发的合法性依赖用户勾选作为"间接证据"。
 **风险等级:** 中(国内 4 store 上架审核可能打回,法务风险存在但量刑轻)。
 
-**修复路径:** v0.26 R55 接 SMS provider 后,在 setup 流程对每个联系人
+**修复路径:** v0.28 (规划中) 接 SMS provider 后,在 setup 流程对每个联系人
 发短信"我是 XXX,我已设置你为我的紧急联系人,如我失联会发通知,回复 Y 确认"。
 联系人回复 Y 后写 `user_profiles.contact_consent_confirmed_at` 字段。
 联系人 30 天未回复 Y 视为未同意,失联通知不发(graceful degrade)。
@@ -206,3 +203,22 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 ---
 
 **请仔细阅读本政策。继续使用本 App 即视为同意以上全部条款。**
+
+---
+
+## 修订历史
+
+> 草稿来源 + 提交 / 过审状态 + 关键 TODO。**律师过审前**本段标注"草稿",过审后由法务删除本段。
+
+| 版本 | 日期 | 状态 | 关键事项 |
+|------|------|------|---------|
+| v0.22 | 2026-07-12 | 草稿 (未经律师过审) | 初版 |
+| v0.27 R54 | 2026-07-15 | 草稿 (跨境 §38 增补) | 跨境数据传输场景: 紧急联系人境外号段时失联通知 SMS / Email 触发链路涉及跨境 PII 传输, 列出 4 字段 + 5 保护措施 + 未涉及场景 |
+| v0.27 R67 | 2026-07-31 | 草稿 (Sprint 1 修订) | 隐私 / PIPL 投诉邮箱已软隐藏 `privacy@chroniccare.app`,用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行) |
+| v0.27 R68 | 2026-08-01 | 草稿 (CC-6 修复) | CareEngine safety consent 撤回业务层真接 (`FireCareStrategyInput.isSafetyConsentWithdrawn` 字段 + use case 早返), §3 共享段 / §11 跨境 / §12 单独同意实现进度 5 处版本号 walkthrough (v0.25 → v0.27, R55 → 未真接) |
+| v0.27 R69 | 2026-08-01 | 草稿 (P0 集中修复) | (1) 删除顶部 "TODO 律师过审" banner, 转本段修订历史; (2) 失联通知 4 文档 wording 改"规划中,本版本未启用"; (3) §192 紧急联系人回复 Y 确认 ❌ TODO 改 ⏸ 暂停 |
+| v0.28+ | 待定 | **TODO (上 store 前必须由专业律师过审)** | 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换 + 律师过审 + 同步到官网隐私 URL (https://chroniccare.app/privacy) + 重新走用户同意流程刷 `privacyPolicyVersion` 字段 |
+
+**集中器**: `docs/SPRINT1_LEGAL_TODO.md` / `docs/LEGACY_API_NOTES.md` (软隐藏决策)
+
+**最后更新**: 2026-08-01 (v0.27 round 69 — 修订历史段化 + §11 §12 5 处版本号 walkthrough)
