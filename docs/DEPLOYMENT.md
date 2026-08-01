@@ -73,119 +73,67 @@ flutter build web --release --base-href /chroniccare/
 
 ---
 
-## 阶段 3：APK 打包（1 天）
+## 阶段 3：APK 打包（R72 重写 — 自动 keystore 脚本）
 
 ```bash
-# 1. 配签名
-keytool -genkey -v -keystore ~/chroniccare-key.jks \
-  -keyalg RSA -keysize 2048 -validity 10000 -alias chroniccare
+# 1. 装 Java JDK 17+ (keytool 命令行工具)
+# 2. 跑 R72 自动脚本 (交互式输入密码, 自动写 key.properties + 备份)
+pwsh ./scripts/generate_release_keystore.ps1
+# 备份到 1Password / Bitwarden (丢 keystore = App 永久无法升级)
 
-# 2. 创建 android/key.properties
-cat > android/key.properties <<EOF
-storePassword=你的密码
-keyPassword=你的密码
-keyAlias=chroniccare
-storeFile=/Users/你的名字/chroniccare-key.jks
-EOF
+# 3. 验证签名
+flutter build appbundle --release
+aapt dump badging build/app/outputs/bundle/release/app-release.aab | grep package
 
-# 3. 配置 build.gradle（签名）—— 略
-
-# 4. 打包
-flutter build apk --release
-# 输出：build/app/outputs/flutter-apk/app-release.apk
-
-# 5. 测试
-adb install build/app/outputs/flutter-apk/app-release.apk
+# 4. 测试
+adb install build/app/outputs/bundle/release/app-release.apk
 ```
+
+> **R72 优势:** 跟原始 keytool 命令比, 脚本化:
+> - 自动 keysize / validity 默认 (2048 / 10000 days)
+> - 自动写 key.properties (不再手填 4 个字段)
+> - 自动备份到 ~/.chroniccare-keystore-backup/
+> - .gitignore 已排除 *.jks + key.properties (R67 已加)
+
+### 故障排查
+
+| 错误 | 原因 | 修复 |
+|------|------|------|
+| `keytool 找不到` | Java JDK 未装或 PATH 没配 | 装 JDK 17+ + 加 `JAVA_HOME` 到 PATH |
+| `Keystore was tampered with, or password was incorrect` | 密码错 | 跑脚本时正确输入 storePassword |
+| `Build failed: Execution failed for task ':app:signingConfig'` | build.gradle.kts 没切 release | R70 commit 1decee1 已加 `signingConfigs.release`, 验证 `android/app/build.gradle.kts:80` |
 
 ---
 
-## 阶段 4：iOS 打包（1 天，仅 macOS）
+## 阶段 4：iOS 打包（R71 重写 — fastlane 自动化）
 
 ```bash
-# 1. Xcode 登录 Apple ID
-# 2. 配 Bundle ID：app.chroniccare.you
-# 3. 配签名（Apple Development Team）
+# 1. 装 fastlane
+sudo gem install fastlane
 
-# 4. 打包
-flutter build ios --release
+# 2. 配 fastlane/Appfile 4 ID (apple_id / team_id / itc_team_id / app_identifier)
+# 之前是 TODO 占位, R71 后需用户填真实值
 
-# 5. 用 Xcode 上传
-open ios/Runner.xcworkspace
-# Product → Archive → Distribute App
+# 3. 跑 fastlane (R71 新加 platform :android 块也支持)
+bundle exec fastlane ios beta       # → TestFlight
+bundle exec fastlane ios release    # → App Store (自动上传 + 提交审核)
+bundle exec fastlane ios metadata   # → 只同步 metadata, 不 build
+
+# 4. Android 端 (R71 新加)
+bundle exec fastlane android internal      # → Google Play Internal Testing
+bundle exec fastlane android production    # → Promote internal → production
+bundle exec fastlane android metadata      # → 只同步 metadata
 ```
 
----
+> **R71 优势:** 跟原始 Xcode Archive / Play Console 手传比, fastlane:
+> - 1 条命令替代 7 步手传 (Build → 签名 → 上传 → 元数据 → 截图 → 提交审核)
+> - 跟 CI/CD 集成 (`.github/workflows/ci.yml` 集成 16 守护脚本)
+> - R71 加 Android 端 platform :android do 块 (跟 iOS 平行, 3 lane)
 
-## 阶段 5：Google Play 上架（1 天）
+### App Store 描述 + 完整描述模板
 
-1. 注册 Google Play Console（一次性 $25）
-2. 创建 App：app.chroniccare
-3. 填资料：
-   - App 名称：慢病管家
-   - 简短描述：「我今天吃了药」- 精神心理患者吃药打卡 + 停药通知
-   - 完整描述：（见下）
-   - 类别：医疗
-   - 内容分级：问卷（PEGI 12+ / ESRB T）
-   - 隐私政策 URL
-4. 上传 AAB（不是 APK）：
-   ```bash
-   flutter build appbundle --release
-   # 上传 build/app/outputs/bundle/release/app-release.aab
-   ```
-5. 定价：付费下载 ¥8.00
-6. 提交审核（1-3 天）
-
-### 完整描述模板
-
-```
-🌱 慢病管家 - 我今天吃了药
-
-为精神心理疾病患者（焦虑/抑郁/双相/睡眠障碍）打造的"温和激励型"自我管理 App。
-
-【核心功能】
-✓ 每天点 1 下"我今天吃了药"
-✓ 漏 2 天没打卡，自动发邮件给紧急联系人
-✓ 紧急联系人用你的真朋友/家人，他们收到邮件说"请提醒我按时吃药"
-✓ 数据本地加密，绝不上传云端（除邮件通知外）
-✓ 0 注册 0 账号 0 手机号，30 秒开始用
-
-【为什么需要这个 App】
-精神心理疾病患者最大的健康风险不是"突发意外"，而是"突然停药"。
-- 突然停 SSRI 类抗抑郁药 → 撤药反应（头晕、恶心、电击感）
-- 停药 2 周是复发高峰
-- 复发一次，再规律更难
-
-慢病管家用"关怀提醒"模式 + 精神心理专版，把"善后"变成"主动干预"。
-紧急联系人的角色从"发现异常"变成"提醒吃药"。
-
-【隐私第一】
-• 0 注册，开箱即用
-• 你的数据本地 AES-256 加密
-• 不会上传位置、通讯录、IP
-• 邮件内容不包含医疗建议
-• 8 元付费下载，无内购，无广告
-
-【适合谁】
-• 正在服用 SSRI / SNRI / 情绪稳定剂 / 助眠药的朋友
-• 担心自己漏吃药想有"被提醒"机制的朋友
-• 独居需要"安全网"的朋友
-• 不想被传统精神科 App 标签刺眼的朋友
-```
-
----
-
-## 阶段 6：App Store 上架（1-2 天，仅 macOS）
-
-1. 注册 Apple Developer（$99/年）
-2. App Store Connect 创建 App
-3. 填资料 + 截图（5+ 张）
-4. 选类目：医疗
-5. 内容审核：声明"非医疗器械"
-6. 定价：8 元
-7. 提交审核（1-7 天）
-
-### App Store 描述
+> **R69 update:** 失联通知业务整体暂停, 描述里加 "Lost-contact safety net
+> (coming soon — currently disabled)" 段, 跟 user_agreement.md CC-7 wording 修一致.
 
 类似 Google Play，但加上：
 - 适用年龄：12+
@@ -215,7 +163,65 @@ open ios/Runner.xcworkspace
 
 ---
 
-## 阶段 8: 国内 store + 5 厂商 push 通道 (v0.25 R54 增补)
+## 阶段 7.5: v0.27 R72 上架前 must-check 清单
+
+> 上架前必跑, 17 守护脚本 + dart format + flutter analyze + flutter test 4 道护栏全过
+
+```bash
+# 1. 跑 17 守护脚本 (R70/R71 CI 集成 16 + R72 新增 16KB alignment)
+for s in scripts/check_*.py; do python "$s" || break; done
+# 期望: 16 OK + 1 WARN (fullwidth_punctuation warn-only)
+
+# 2. 4 层架构纯度 + 一致性 (R70 加)
+dart scripts/check_all.dart
+# 期望: ✅ 通过 (4 层 + 5 子 umbrella + 共享层 + 架构语义一致性)
+
+# 3. dart format (R66 + R67 护栏, C1.5 回归防御)
+dart format --output=none --set-exit-if-changed lib/ test/ scripts/
+
+# 4. flutter analyze
+flutter analyze
+# 期望: 0 error / 0 warning (info 已知 R17+R56b BuildContext 跨 async gap 可忽略)
+
+# 5. flutter test
+flutter test
+# 期望: All tests passed! 1285 cases, 0 fail
+
+# 6. CHANGELOG / pubspec 版本号同步
+python scripts/check_changelog.py
+# 期望: pubspec=0.27.0+64 CHANGELOG 顺序正确 (22 头)
+```
+
+### 提交前 5 项 P0 阻塞 (外部依赖, 用户手动)
+
+- [ ] **真实 keystore + Play App Signing** (R72 commit `generate_release_keystore.ps1` 已脚本化, 跑后上传 .aab 到 Play Console)
+- [ ] **`support@chroniccare.app` 邮箱 + `chroniccare.app` 域名 + HTTPS 站点** (隐私 URL `https://chroniccare.app/privacy` 部署, R72 待办)
+- [ ] **Play Console 4 大表单** (Data Safety + Health Apps + Permissions Declaration + Data Deletion, R72 脚本 `generate_data_safety_form.py` 自动生成, 用户登录填)
+- [ ] **Apple App Store Connect 4 ID** (`fastlane/Appfile` 4 个 TODO 替换真实值, R71 commit 42ac12b 后)
+- [ ] **律师 review 3 法律 md** (1-2 周 + ¥15-30k/文档, 不可压缩)
+
+### 提交前 4 项上架 P0 (技术性, R70/R71 已修)
+
+- [x] iOS Info.plist: 删 aps-environment + NSUserNotificationUsageDescription (R70)
+- [x] iOS Info.plist: CFBundleDisplayName 走 InfoPlist.strings (R70)
+- [x] iOS pbxproj: 删 EXCLUDED_ARCHS arm64 (R70)
+- [x] Android build.gradle.kts: 显式 abiFilters 64-bit (R70)
+- [x] Android build.gradle.kts: targetSdk=36 + 16KB page size 验 (R70 + R72 验脚本)
+- [x] iOS PrivacyInfo: 加 ProcessInfo + CA92.2 reason (R71)
+- [x] iOS Info.plist: 删 UIMainStoryboardFile 重复 (R71)
+- [x] fastlane Fastfile: Android 端 platform :android do 块 (R71)
+
+### 提交前 3 项 R72 代码质量 (R72 已修)
+
+- [x] **4 widget 集中器抽取** (LoadingSpinner/LoadingScrim/LoadingTextButton.outlined/ConsentCheckRow 评估, R70 完成)
+- [x] **8 atomic size token 集中化** (legendDotSizeLg/Sm/avatarSizeSm/Md/buttonWidthNarrow/buttonHeightCompact, R70 完成)
+- [x] **2 .then() 改 try/finally** (P5.4 100% 落地, R71 完成)
+- [x] **5 处 Wrap(spacing: 8) 集中化** (R72 完成, emil E-P2-4)
+- [x] **2 RepaintBoundary** (P5.4 50%, R71 完成; 剩 4 个 R72 后续)
+- [x] **3 处病耻感措辞中性化** ("让家人放心" → "踏实"/"多一点坚持", "你真棒" → "今周已全部准时", R72 完成)
+- [x] **"TA" 改 "对方"** (R72 完成, spzh R66 P0-5 续)
+
+---
 
 > **背景:** spzh 视角 P0 #5: 之前 DEPLOYMENT.md 只简略提 Google Play + App
 > Store,**国内 5 大应用市场** + **5 厂商 push 通道** 0 提及 = 国产 ROM
