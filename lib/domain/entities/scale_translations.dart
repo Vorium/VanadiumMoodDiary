@@ -23,7 +23,6 @@
 // 翻译 label, region 不在 i18n key 范围 (tw/sg/uk) 走 intl fallback。
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 量表翻译抽象
 ///
@@ -81,40 +80,9 @@ class StaticScaleTranslations implements ScaleTranslations {
       '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。';
 }
 
-/// AppLocalizations 包装 (presentation 层注入, 走 zh / en / zh_Hant)
-class AppLocalizationsScaleTranslations implements ScaleTranslations {
-  final AppLocalizations l10n;
-  const AppLocalizationsScaleTranslations(this.l10n);
-
-  @override
-  String phq9Name({String? override}) => override ?? l10n.assessmentScalePhq9;
-
-  @override
-  String gad7Name({String? override}) => override ?? l10n.assessmentScaleGad7;
-
-  @override
-  String crisisHotlineLabel(HotlineRegion region, {String? override}) {
-    if (override != null) return override;
-    // v0.28 round 65 起步: 4 region 有独立 i18n key (cn/us/hk/intl),
-    // tw/sg/uk 暂时走 intl fallback (TODO R65b 补 3 key)
-    switch (region) {
-      case HotlineRegion.cn:
-        return l10n.scaleHotlineCn;
-      case HotlineRegion.us:
-        return l10n.scaleHotlineUs;
-      case HotlineRegion.hk:
-        return l10n.scaleHotlineHk;
-      case HotlineRegion.tw:
-      case HotlineRegion.sg:
-      case HotlineRegion.uk:
-        return l10n.scaleHotlineIntl;
-    }
-  }
-
-  @override
-  String crisisTitle({String? override}) => override ?? l10n.scaleCrisisTitle;
-
-  @override
-  String crisisMessage({String? override}) =>
-      override ?? l10n.scaleCrisisMessage;
-}
+// v0.27 round 75 (R74 报告 P1-1 修): `AppLocalizationsScaleTranslations` 类
+// 之前在本文件 (domain/)，import Flutter (软违规 4 层架构纯度)。
+// 修法: 本类移到 presentation 层 `lib/presentation/services/scale_translations_l10n.dart`。
+// domain 现在 0 Flutter import, 4 层架构纯度恢复。
+// 当前 0 caller 引用 (R65 抽象 + R71 crisis i18n 抽 走 StaticScaleTranslations 中文 fallback),
+// 移走 0 回归风险。

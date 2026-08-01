@@ -20,6 +20,7 @@ import 'package:chroniccare/domain/logic/phq9.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:chroniccare/l10n/region_display_name.dart';
+import 'package:chroniccare/presentation/services/scale_translations_l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
