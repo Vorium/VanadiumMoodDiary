@@ -45,3 +45,13 @@ __pycache__/
 *.jks
 *.keystore
 key.properties
+
+# v0.27 round 73 (重构-2): 设计师迭代产物 / 100 个 variations 候选不进 git
+# 实际只上架用: assets/brand/app_icon_master.png + app_icon_maskable.png
+# + icon_showcase.html。其他 100 variations + _v2..v5 迭代 + icon_preview_v2..v5
+# 已 git mv 到 assets/brand/_archive/ (R42 报告 M6 落地, 节省 ~10 MB git objects)
+# .gitignore 兜底: 设计师后续新加的 _v6 / variations_k.png 自动不 commit
+assets/brand/_archive/
+assets/brand/variations/
+assets/brand/*_v[2-9]*.png
+assets/brand/icon_preview_v[2-9]*.png
