@@ -2,6 +2,137 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-01 (R71 — 4 类剩余清零: 上架 P2-1/3/5 + P5.4 50/100 + PHQ-9 detectCrisis i18n + 病耻感措辞中性化)
+
+> R71 目标: R70 commit 后, R68/R69 报告反复点名的 12 项剩余可代码化项清零。
+> 3 commit (上架-2 + 重构-3 + 半成品-2) + 5 项上架 P0 阻塞外部依赖 (用户手动)。
+> 重点: 病耻感措辞中性化 + 5 处 Wrap(spacing: 8) 集中化 + PHQ-9 detectCrisis i18n 抽。
+
+### Tests
+- **1285/1285 pass** (持平 R70)
+- `flutter analyze` 0 error / 0 warning / 9 info (BuildContext 跨 async gap 已知)
+- 17 守护脚本全绿
+- 21 case PHQ-9 crisis test 不破 (走 StaticScaleTranslations 中文 fallback)
+
+### 上架 P2-1/3/5 集中清零 (5 项, R71 commit 42ac12b)
+
+- **iOS PrivacyInfo** (P2-1 appstore 修复):
+  - NSPrivacyAccessedAPICategoryUserDefaults 加 CA92.2 reason (cross-app 共享防御)
+  - 新加 NSPrivacyAccessedAPICategoryProcessInfo + AC67.1 reason
+    (flutter_local_notifications 17.x 内部可能调 ProcessInfo.processInfo)
+- **iOS Info.plist** (P2-3 appstore 修复):
+  - 删 UIMainStoryboardFile=Main (重复声明, Scene 模式已接管)
+  - 保留 UILaunchStoryboardName + UISceneStoryboardFile
+- **Fastfile Android 端** (GP-P0-8 googleplay 修复):
+  - 新加 platform :android do 块 (跟 platform :ios 平行)
+  - 3 个 lane: internal (Build + 上传 Internal Testing)
+              / production (Promote internal → production, 不重传 aab)
+              / metadata (只同步 fastlane/metadata/android/*, validate_only=true)
+  - 走 gradle bundleRelease + upload_to_play_store
+  - 配 google_play_json_key_path 前置 (Service Account JSON)
+
+### 重构 P5.4 性能集中清零 (R71 commit 4950a84)
+
+- **2 RepaintBoundary 落地 (P5.4 50%)**:
+  - trend_heatmap_grid.dart: build 整个包 RepaintBoundary
+    (跨 midnight + day change tick 频繁 rebuild 不重 paint 网格)
+  - celebration_bounce.dart: build 整个包 RepaintBoundary
+    (1.8s 60 帧期间父 widget 重建不重 paint 气泡)
+  - 跳过的 4 个 (trend_mood / trend_monthly / trend_assessment / mood_recorder_page):
+    build 内有 if-else 多 return 路径或跨多行 Card 结构, 改 RepaintBoundary 要重写
+    build body 抽 helper function, R72 处理
+- **2 .then() → try/finally (P5.4 100%)**:
+  - contacts_list_widget.dart: _showAddContactDialog async + try/finally
+    替代 .then((_) { dispose() }), 等价 + 异常路径也保证 dispose
+  - data_management_section.dart: _showImportDialog try/finally
+    替代 .then((_) => controller.dispose())
+- **5 处 Wrap(spacing: 8, runSpacing: 8) 集中化 (emil E-P2-4)**:
+  - today_med_schedule.dart:83 / edit_medication_dialog.dart:316 /
+    setup_step_medication.dart:240 走 AppTokens.spacingXs (3 处)
+  - mood_tags.dart:42 spacing: 8 → AppTokens.spacingXs (runSpacing: 4 保留,
+    是 FilterChip 内部行间距, 跟 spacingXs 不同语义)
+
+### 半成品集中清零 (R71 commit 9c6d918 + 后续)
+
+- **PHQ-9 detectCrisis 抽 i18n (spzh P1-A 续)**:
+  - lib/l10n/app_{zh,en,zh_Hant}.arb 加 scaleCrisisTitle + scaleCrisisMessage
+    (zh: '我们关心你' / '你提到了想伤害自己的念头...请记住: 寻求帮助是勇敢的, 不是软弱。'
+     en: 'We care about you' / 'You mentioned thoughts of harming yourself...seeking help is brave, not weak.'
+     zh_Hant: '我們關心你' / '你提到了想傷害自己的念頭...請記住: 尋求幫助是勇敢的, 不是軟弱。')
+  - ScaleTranslations 加 2 抽象方法 (crisisTitle + crisisMessage)
+  - StaticScaleTranslations 走中文 fallback (老 caller / 21 case test 不破)
+  - AppLocalizationsScaleTranslations 走 l10n.scaleCrisisTitle + scaleCrisisMessage
+  - phq9.dart detectCrisis 改 translations.crisisTitle() + crisisMessage()
+    替代 hardcode 中文 '我们关心你' / '你提到了想伤害自己的念头...'
+  - 21 case test 走 StaticScaleTranslations 中文 fallback 不破
+- **3 处病耻感措辞中性化 (spzh R66 P0-4 续 + R72 commit 9c6d918 后续)**:
+  - strings.dart:94 '点一下 = 打卡，让家人放心' → '点一下 = 打卡，留个今的踏实'
+    (用户拍板: 中性 '踏实' 方案, 不提 '家人' 避免病耻感)
+  - care_copy.dart:34 '周末容易忘记——现在打卡，让家人放心'
+    → '周末容易忘记——现在打卡，多一点坚持' (用户拍板: 中性 '多一点坚持' 方案)
+  - care_copy.dart:44 '你真棒——保持下去' → '今周已全部准时'
+    (用户拍板: 中性 '实际表达' 方案, 仅事实描述, 避免 '你真棒' 褒语)
+  - care_copy_round18_test.dart: weekPerfect body 期望从 '真棒' 改 '今周已全部准时'
+- **'TA' 网络用语中性化 (spzh R66 P0-5 续 + R72 commit 4950a84 后续)**:
+  - lost_contact_sms.dart:69 '提醒 TA 按时吃药' → '提醒对方按时吃药'
+  - lost_contact_sms.dart:10 注释同步改
+
+### 仍挂 (R72+ / 外部依赖)
+
+- 4 RepaintBoundary 抽 helper function (R72 重构)
+- 33 张 iOS 截图 + Android 8 截图 + 2 feature_graphic + 2 icon 512×512 (外部真机 + 设计师)
+- 真实 keystore + Play App Signing (外部 keytool + 用户密码)
+- 域名 + 邮箱 + HTTPS 部署 (外部用户操作)
+- Play Console 4 大表单 + Apple App Store Connect 4 ID (外部用户后台)
+- 律师 review 3 md (1-2 周 + ¥15-30k/文档)
+- IAP / SMS / Email 真接 (1-2 月 + 阿里云/SendGrid AccessKey)
+- 3 份 md 英文 + 繁体翻译 (1 周)
+- PHQ-9 16 题全文 i18n (v1.0 大工程)
+- 16KB page size 完整验 (build aab + objdump)
+- pod install 核第三方 plugin PrivacyInfo (macOS 专属)
+
+## [Unreleased] - 2026-08-01 (R70 — 上架 + 重构 + 半成品集中清零)
+
+> R70 目标: R69 commit d691551 修 3 共识 P0 (CC-1/3/6) + 2 test fail
+> 后, R68 报告 12 项剩余可代码化项清零。
+> 4 commit (上架-1 + 重构-1/2 + 半成品) + 5 类项目系统性清零。
+
+### Tests
+- **1285/1285 pass** (持平 R69)
+- `flutter analyze` 0 error / 0 warning / 9 info
+- 17 守护脚本全绿
+
+### 上架 P0 集中清零 (R70 commit 986814a)
+
+- **iOS Runner.entitlements**: 删 aps-environment (项目无 APNs, 误导 App Store Connect)
+- **iOS Info.plist**:
+  - 删 NSUserNotificationUsageDescription 老 key (iOS 10+ 弃用)
+  - CFBundleDisplayName 改 InfoPlist.strings (per-locale dict 被 iOS 忽略, 走 lproj)
+- **iOS pbxproj**: 删 3 处 EXCLUDED_ARCHS arm64 (Apple Silicon Mac 体验断档)
+- **Android build.gradle.kts**: 显式 ndk { abiFilters arm64-v8a + x86_64 } (Google Play 64-bit 强制)
+- **iOS subtitle.txt (zh-Hans + zh-Hant)**: 失联通知 wording 改 "规划中"
+
+### 重构 widget 集中器 (R70 commit 102204c)
+
+- **TrailingSpinner**: medication_row 改走 LoadingSpinner (R70 误报 '3 模式不一致', 实际 LoadingSpinner 已 6+ 处用)
+- **LoadingScrim**: 新建 loading_skeleton.dart 集中器, 替代 30 行 inline scrim + Card + AbsorbPointer
+- **OutlinedButtonWithPress**: LoadingTextButton 加 outlined variant, 3 按钮统一
+- **ConsentCard 评估**: ConsentCheckRow 已 100% 覆盖, 不需要再抽
+
+### 重构 atomic size token (R70 commit 1decee1)
+
+6 个新 token + 8 处 magic → 集中器:
+- legendDotSizeLg (12) / legendDotSizeSm (10) / avatarSizeSm (36) /
+  avatarSizeMd (40) / buttonWidthNarrow (110) / buttonHeightCompact (44)
+
+### 半成品集中清零 (R70 commit 5592f96)
+
+- **BootReceiver 简化实现**: notification_service.rescheduleAll() 公开方法 + app.dart._runRescheduleAllOnStart()
+- **2 TODO 删**: badge_sync_service.dart v0.10+ TODO (iOS 真接 + Android launcher notification dot 决策) +
+  notification_service.dart v0.10+ TODO 同步
+- **CI 16 守护脚本集成**: ci.yml 加 10 step (race1 / UTC / PUA / dispose / legal / SMS / strings / changelog / orphan / zh-Hant)
+- **16KB page size 验脚本**: scripts/check_16kb_alignment.py 新建
+
 ## [Unreleased] - 2026-08-01 (R69 — 6 视角审计后 P0 集中修复)
 
 > R69 目标: R68 commit `d691551` 修了 3 个共识 P0 (CC-1 setup ConsentDialog / CC-3 IAP 临时关 / CC-6 CareEngine safety consent) 但**仍有 11 个 XS-L 难度的 P0 跨 4 round 挂死**, 这次集中清零。
