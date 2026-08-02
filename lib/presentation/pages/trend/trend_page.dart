@@ -81,7 +81,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 // v0.27 round 77 (R76-N8 修): 之前 commonLoadFailed('') 传空
                 // string, UI 显示 "加载失败: " (空)。改用 e.toString() 走
                 // l10n 模板 "加载失败: {error}", 跟 detail 一致。
-                title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+                title:
+                    AppLocalizations.of(context).commonLoadFailed(e.toString()),
                 detail: e.toString(),
                 onRetry: () => ref.invalidate(allCheckInsProvider),
               ),
@@ -123,7 +124,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         ref.invalidate(allMoodProvider);
         // 给个最小可见时长,不然一闪而过体验差
         await Future<void>.delayed(
-            const Duration(milliseconds: AppTokens.refreshMinVisibleMs),);
+          const Duration(milliseconds: AppTokens.refreshMinVisibleMs),
+        );
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -175,7 +177,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         MonthlyChart(monthly: monthly),
         const SizedBox(height: AppTokens.spacingLg),
         SectionHeader(
-            title: AppLocalizations.of(context).trendAssessmentHistory,),
+          title: AppLocalizations.of(context).trendAssessmentHistory,
+        ),
         const SizedBox(height: AppTokens.spacingSm),
         Consumer(
           builder: (context, ref, _) {
@@ -200,7 +203,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: AppTokens.chartPlaceholderHeight,
                 child: ErrorState(
                   // v0.27 round 77 (R76-N8 修): 之前传空 string
-                  title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+                  title: AppLocalizations.of(context)
+                      .commonLoadFailed(e.toString()),
                   detail: e.toString(),
                 ),
               ),
@@ -227,7 +231,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 height: AppTokens.chartPlaceholderHeight,
                 child: ErrorState(
                   // v0.27 round 77 (R76-N8 修): 之前传空 string
-                  title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+                  title: AppLocalizations.of(context)
+                      .commonLoadFailed(e.toString()),
                   detail: e.toString(),
                 ),
               ),
@@ -292,8 +297,10 @@ class _ViewToggle extends StatelessWidget {
           ButtonSegment(
             value: _TrendView.calendar,
             label: Text(AppLocalizations.of(context).trendViewCalendar),
-            icon: const Icon(Icons.calendar_month,
-                size: AppTokens.iconSizeInline,),
+            icon: const Icon(
+              Icons.calendar_month,
+              size: AppTokens.iconSizeInline,
+            ),
           ),
         ],
         selected: {current},

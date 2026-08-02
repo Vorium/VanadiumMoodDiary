@@ -164,7 +164,8 @@ class Phq9Scale implements AssessmentScale {
       // v0.27 R77 (spzh P1-A 收尾): hotlines label 走 translations.crisisHotlineLabel
       // (region, index), 6 region × 2 hotline 全 i18n 化 (cn/us/tw 各 2 个)。
       // 老 const phq9Scale 走 StaticScaleTranslations 中文 fallback, 21 case test 不破。
-      final baseList = hotlineByRegion[region] ?? hotlineByRegion[HotlineRegion.cn]!;
+      final baseList =
+          hotlineByRegion[region] ?? hotlineByRegion[HotlineRegion.cn]!;
       // v0.27 R77: hotlines label 走 translations (en/zh_Hant 不再是中文)
       return CrisisSignal(
         // v0.27 R71 (spzh P1-A 续): 走 translations.crisisTitle() + crisisMessage()

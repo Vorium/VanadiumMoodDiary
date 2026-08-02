@@ -208,16 +208,6 @@ class AppLocalizationsZh extends AppLocalizations {
       '说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。';
 
   @override
-  String get settingsExportVentConfirmTitle => '导出含敏感内容';
-
-  @override
-  String get settingsExportVentConfirmBody =>
-      '即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 您将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中';
-
-  @override
-  String get settingsExportVentConfirmConfirm => '我了解，继续导出';
-
-  @override
   String get settingsCopy => '复制';
 
   @override
@@ -1639,6 +1629,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get contactConsentVersion => 'v1 · 2026-07-31';
 
   @override
+  String get dataExportConsentTitle => '数据导出同意';
+
+  @override
+  String dataExportConsentBody(
+      String purpose, String dataCategories, String retention) {
+    return '您即将导出本地数据库中的所有数据。\n\n**目的**：$purpose\n**数据范围**：$dataCategories\n**保留方式**：$retention\n\n**根据《个人信息保护法》第 13 条**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。';
+  }
+
+  @override
+  String get dataExportConsentConfirm => '我了解并同意导出';
+
+  @override
+  String get dataExportConsentVersion => 'v1 · 2026-08-15';
+
+  @override
   String get contactDefaultName => '联系人';
 
   @override
@@ -2288,6 +2293,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeFabTop => '回到顶端';
 
   @override
+  String get homeFabHotlineTodo => '紧急热线入口建设中';
+
+  @override
+  String get homeFabTopTodo => '回到顶端(开发中)';
+
+  @override
   String get trendChip30Day => '近 30 天';
 
   @override
@@ -2496,16 +2507,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get settingsExportVentWarning =>
       '說明：樹洞（私密傾訴）的文字會導出，但錄音文件不導出——錄音存在 App 本地，重裝後路徑失效，無法跨設備複用。';
-
-  @override
-  String get settingsExportVentConfirmTitle => '導出含敏感內容';
-
-  @override
-  String get settingsExportVentConfirmBody =>
-      '即將導出樹洞的文字內容。精神心理患者的傾訴可能涉及個人隱私或敏感話題，導出的 JSON 是明文，存放在剪貼板或文件裡都可能被他人看到。\n\n請確認:\n• 您將把它存到安全的地方（如加密磁盤）\n• 不會分享給未授權的人\n• 樹洞錄音文件不包含在導出中';
-
-  @override
-  String get settingsExportVentConfirmConfirm => '我瞭解，繼續導出';
 
   @override
   String get settingsCopy => '複製';
@@ -3929,6 +3930,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get contactConsentVersion => 'v1 · 2026-07-31';
 
   @override
+  String get dataExportConsentTitle => '數據導出同意';
+
+  @override
+  String dataExportConsentBody(
+      String purpose, String dataCategories, String retention) {
+    return '您即將導出本地數據庫中的所有數據。\n\n**目的**：$purpose\n**數據範圍**：$dataCategories\n**保留方式**：$retention\n\n**根據《個人信息保護法》第 13 條**（數據可攜權 + 單獨同意），請確認您已了解上述用途，並同意本次導出。';
+  }
+
+  @override
+  String get dataExportConsentConfirm => '我瞭解並同意導出';
+
+  @override
+  String get dataExportConsentVersion => 'v1 · 2026-08-15';
+
+  @override
   String get contactDefaultName => '聯繫人';
 
   @override
@@ -4576,6 +4592,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeFabTop => '回到頂端';
+
+  @override
+  String get homeFabHotlineTodo => '緊急熱線入口建設中';
+
+  @override
+  String get homeFabTopTodo => '回到頂端(開發中)';
 
   @override
   String get trendChip30Day => '近 30 天';

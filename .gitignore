@@ -23,6 +23,14 @@ Thumbs.db
 .env
 *.env.local
 
+# Logs (R82+ 临时执行日志, 不要入库)
+*.log
+flutter_*.log
+
+# R82+ scripts/_archive 临时脚本 (R56/R79 系列 sub-agent 调试产物, 已固化到主代码)
+scripts/_archive/_tmp_*.py
+scripts/_archive/_tmp_*.txt
+
 # Generated
 **/*.g.dart
 **/*.freezed.dart

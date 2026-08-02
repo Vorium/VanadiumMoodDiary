@@ -127,7 +127,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     // 4) delete temp decrypted file (R22 P1-3 + R79 续)
     if (_tempDecryptedPath != null) {
       try {
-        await ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+        await ref
+            .read(ventAudioStorageProvider)
+            .deleteTempFile(_tempDecryptedPath!);
       } catch (e, st) {
         swallowError(
           where: 'vent_compose_page._asyncDispose.temp',

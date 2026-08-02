@@ -85,8 +85,10 @@ class AssessmentSection extends StatelessWidget {
         // 关于
         Card(
           child: AppListTile(
-            leading: Icon(Icons.info_outline,
-                color: AppTokens.primaryColor(context),),
+            leading: Icon(
+              Icons.info_outline,
+              color: AppTokens.primaryColor(context),
+            ),
             title: Text(AppLocalizations.of(context).settingsAbout),
             subtitle: Text(AppLocalizations.of(context).settingsAboutVersion),
           ),

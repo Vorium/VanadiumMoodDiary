@@ -217,17 +217,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Note: Text from vent (private diary) will be exported, but audio recordings will not — audio is stored locally and becomes inaccessible after reinstall.';
 
   @override
-  String get settingsExportVentConfirmTitle =>
-      'Export contains sensitive content';
-
-  @override
-  String get settingsExportVentConfirmBody =>
-      'About to export your vent (private diary) text. Mental-health patients may share personal or sensitive content; the exported JSON is plaintext, and anything in your clipboard or saved file can potentially be seen by others.\n\nPlease confirm:\n• You\'ll store it in a safe place (e.g. encrypted disk)\n• You won\'t share it with anyone unauthorized\n• Vent audio recordings are NOT included';
-
-  @override
-  String get settingsExportVentConfirmConfirm => 'I understand, continue';
-
-  @override
   String get settingsCopy => 'Copy';
 
   @override
@@ -1718,6 +1707,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactConsentVersion => 'v1 · 2026-07-31';
 
   @override
+  String get dataExportConsentTitle => 'Data Export Consent';
+
+  @override
+  String dataExportConsentBody(
+      String purpose, String dataCategories, String retention) {
+    return 'You are about to export all data from the local database.\n\n**Purpose**: $purpose\n**Data scope**: $dataCategories\n**Retention**: $retention\n\n**Per PIPL Article 13** (data portability + standalone consent), please confirm you understand the above purpose and consent to this export.';
+  }
+
+  @override
+  String get dataExportConsentConfirm => 'I understand and consent to export';
+
+  @override
+  String get dataExportConsentVersion => 'v1 · 2026-08-15';
+
+  @override
   String get contactDefaultName => 'Contact';
 
   @override
@@ -2405,6 +2409,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeFabTop => 'Back to top';
+
+  @override
+  String get homeFabHotlineTodo => 'Hotline entry coming soon';
+
+  @override
+  String get homeFabTopTodo => 'Scroll-to-top coming soon';
 
   @override
   String get trendChip30Day => 'Last 30 days';

@@ -73,8 +73,11 @@ void main() {
       final s = phq9Scale;
       final scores = List<int>.filled(8, 0); // 缺第 9 题
       expect(() => s.detectCrisis(scores, stubResult), returnsNormally);
-      expect(s.detectCrisis(scores, stubResult), isNull,
-          reason: 'scores.length <= 8 → 不应触发',);
+      expect(
+        s.detectCrisis(scores, stubResult),
+        isNull,
+        reason: 'scores.length <= 8 → 不应触发',
+      );
     });
 
     test('scores.length = 0 (全空) → null (no crash)', () {
@@ -100,12 +103,18 @@ void main() {
       scores[8] = 1;
       final signal = s.detectCrisis(scores, stubResult, region: region);
       expect(signal, isNotNull, reason: 'region=$region 应触发');
-      expect(signal!.hotlines, hotlineByRegion[region],
-          reason: 'region=$region hotlines 必须 = hotlineByRegion[region]',);
+      expect(
+        signal!.hotlines,
+        hotlineByRegion[region],
+        reason: 'region=$region hotlines 必须 = hotlineByRegion[region]',
+      );
       // 校验关键标识
       final allNumbers = signal.hotlines.map((h) => h.number).join('|');
-      expect(allNumbers, contains(mustContain),
-          reason: 'region=$region 必须含 "$mustContain"',);
+      expect(
+        allNumbers,
+        contains(mustContain),
+        reason: 'region=$region 必须含 "$mustContain"',
+      );
     }
 
     test('region=cn (default) → 400-161-9995 / 010-82951332', () {
@@ -146,20 +155,32 @@ void main() {
     test('6 region 全覆盖, 无 missing', () {
       // 修正: 防止未来加 region 时漏配 hotlines
       for (final region in HotlineRegion.values) {
-        expect(hotlineByRegion.containsKey(region), isTrue,
-            reason: 'region=$region 必须在 hotlineByRegion',);
-        expect(hotlineByRegion[region], isNotEmpty,
-            reason: 'region=$region 必须有 ≥1 条 hotline',);
+        expect(
+          hotlineByRegion.containsKey(region),
+          isTrue,
+          reason: 'region=$region 必须在 hotlineByRegion',
+        );
+        expect(
+          hotlineByRegion[region],
+          isNotEmpty,
+          reason: 'region=$region 必须有 ≥1 条 hotline',
+        );
       }
     });
 
     test('每条 hotline label 和 number 非空', () {
       for (final region in HotlineRegion.values) {
         for (final h in hotlineByRegion[region]!) {
-          expect(h.label, isNotEmpty,
-              reason: 'region=$region 某条 hotline label 为空',);
-          expect(h.number, isNotEmpty,
-              reason: 'region=$region 某条 hotline number 为空',);
+          expect(
+            h.label,
+            isNotEmpty,
+            reason: 'region=$region 某条 hotline label 为空',
+          );
+          expect(
+            h.number,
+            isNotEmpty,
+            reason: 'region=$region 某条 hotline number 为空',
+          );
         }
       }
     });
@@ -171,8 +192,11 @@ void main() {
         for (final h in hotlineByRegion[region]!) {
           // 允许数字 / 横线 / 空格 / 加号, 不允许字母
           final ok = RegExp(r'^[0-9\-\s\+()]+$').hasMatch(h.number);
-          expect(ok, isTrue,
-              reason: 'region=$region number "${h.number}" 含非数字/标点字符',);
+          expect(
+            ok,
+            isTrue,
+            reason: 'region=$region number "${h.number}" 含非数字/标点字符',
+          );
         }
       }
     });
@@ -181,8 +205,11 @@ void main() {
       // 修正动机: 防止某 region 突然被填 0 条 或 5 条 (data quality)
       for (final region in HotlineRegion.values) {
         final count = hotlineByRegion[region]!.length;
-        expect(count, inInclusiveRange(1, 2),
-            reason: 'region=$region 有 $count 条 hotline, 异常',);
+        expect(
+          count,
+          inInclusiveRange(1, 2),
+          reason: 'region=$region 有 $count 条 hotline, 异常',
+        );
       }
     });
 
@@ -213,15 +240,19 @@ void main() {
     final scores = List<int>.filled(9, 0)..[8] = 1; // q9 阳性
 
     test('cn 返 2 条 en label (≠ const 中文 fallback)', () {
-      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.cn);
+      final signal =
+          scale.detectCrisis(scores, stubResult, region: HotlineRegion.cn);
       expect(signal, isNotNull);
       expect(signal!.hotlines.length, 2);
-      expect(signal.hotlines[0].label, 'National 24h Psychological Aid Hotline');
-      expect(signal.hotlines[1].label, 'Beijing Suicide Research & Prevention Center');
+      expect(
+          signal.hotlines[0].label, 'National 24h Psychological Aid Hotline',);
+      expect(signal.hotlines[1].label,
+          'Beijing Suicide Research & Prevention Center',);
     });
 
     test('us 返 2 条 en label (988 + Crisis Text Line)', () {
-      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.us);
+      final signal =
+          scale.detectCrisis(scores, stubResult, region: HotlineRegion.us);
       expect(signal, isNotNull);
       expect(signal!.hotlines.length, 2);
       expect(signal.hotlines[0].number, '988');
@@ -229,7 +260,8 @@ void main() {
     });
 
     test('tw 返 2 条 en label (Lifeline + 1925)', () {
-      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.tw);
+      final signal =
+          scale.detectCrisis(scores, stubResult, region: HotlineRegion.tw);
       expect(signal, isNotNull);
       expect(signal!.hotlines.length, 2);
       expect(signal.hotlines[0].label, 'Lifeline Taiwan (24h)');
@@ -237,21 +269,24 @@ void main() {
     });
 
     test('hk 返 1 条 en label (Samaritans HK)', () {
-      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.hk);
+      final signal =
+          scale.detectCrisis(scores, stubResult, region: HotlineRegion.hk);
       expect(signal, isNotNull);
       expect(signal!.hotlines.length, 1);
       expect(signal.hotlines[0].label, contains('Samaritans'));
     });
 
     test('sg 返 1 条 en label (Samaritans Singapore)', () {
-      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.sg);
+      final signal =
+          scale.detectCrisis(scores, stubResult, region: HotlineRegion.sg);
       expect(signal, isNotNull);
       expect(signal!.hotlines.length, 1);
       expect(signal.hotlines[0].label, 'Samaritans of Singapore (24h)');
     });
 
     test('uk 返 1 条 en label (Samaritans UK)', () {
-      final signal = scale.detectCrisis(scores, stubResult, region: HotlineRegion.uk);
+      final signal =
+          scale.detectCrisis(scores, stubResult, region: HotlineRegion.uk);
       expect(signal, isNotNull);
       expect(signal!.hotlines.length, 1);
       expect(signal.hotlines[0].label, 'Samaritans UK & ROI (24h free)');

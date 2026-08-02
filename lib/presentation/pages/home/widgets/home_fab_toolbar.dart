@@ -21,6 +21,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 主页浮动工具栏 — 收起 1 FAB, 展开 4 工具按钮
@@ -80,12 +81,7 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                         // R75 已经准备 hotlineByRegion + 6 region × 2 i18n (R77 收尾)
                         // 调 safety_alert_dialog 或 push 独立 route (R82+)
                         // 当前简单弹一个 SnackBar 提示 + 跳 safety
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('紧急热线入口建设中 (R82+)'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                        AppSnackBar.showInfo(context, l10n.homeFabHotlineTodo);
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
@@ -96,12 +92,7 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                         setState(() => _expanded = false);
                         // 回到顶端 — 实际滚动逻辑由 home_page 接管
                         // R82+ 改 Scrollable.ensureVisible 滚到顶
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('回到顶端 (R82+ 接管滚动)'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
+                        AppSnackBar.showInfo(context, l10n.homeFabTopTodo);
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
@@ -119,13 +110,9 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
               // v0.28 R81: 跟 B 站橙色按钮一致 (主页 brand 色)
               color: AppTokens.tintedPrimaryDeep(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.12),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              // v0.28 R82 (emil EMIL-T29 续): 走 theme-aware shadowOverlayOf
+              // (R81 漏接, dark mode 黑底阴影不可见)
+              boxShadow: AppTokens.shadowOverlayOf(context),
             ),
             alignment: Alignment.center,
             child: AnimatedRotation(
@@ -169,13 +156,8 @@ class _FabButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppTokens.tintedPrimaryDeep(context),
           borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          // v0.28 R82 (emil EMIL-T29 续): 走 theme-aware shadowOverlayOf
+          boxShadow: AppTokens.shadowOverlayOf(context),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

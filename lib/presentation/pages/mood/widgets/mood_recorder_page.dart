@@ -172,52 +172,52 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     return RepaintBoundary(
       child: AlertDialog(
         title: Text(l10n.moodDialogTitle),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            MoodScoreChooser(
-              score: _score,
-              energy: _energy,
-              sleep: _sleep,
-              anxiety: _anxiety,
-              onScoreChanged: (v) => setState(() => _score = v),
-              onEnergyChanged: (v) => setState(() => _energy = v),
-              onSleepChanged: (v) => setState(() => _sleep = v),
-              onAnxietyChanged: (v) => setState(() => _anxiety = v),
-            ),
-            const SizedBox(height: AppTokens.spacingMd),
-            const Divider(height: 1),
-            const SizedBox(height: AppTokens.spacingSm),
-            MoodTags(
-              selected: _tags,
-              onToggle: (tag) {
-                setState(() {
-                  if (_tags.contains(tag)) {
-                    _tags.remove(tag);
-                  } else {
-                    _tags.add(tag);
-                  }
-                });
-              },
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            MoodTextInput(controller: _noteController),
-            const SizedBox(height: AppTokens.spacingSm),
-            // v0.23 (Round 31) 语音录入区 — v0.28 (round 64) 重命名为 MoodAudioSection
-            MoodRecorder(controller: _recorderController),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              MoodScoreChooser(
+                score: _score,
+                energy: _energy,
+                sleep: _sleep,
+                anxiety: _anxiety,
+                onScoreChanged: (v) => setState(() => _score = v),
+                onEnergyChanged: (v) => setState(() => _energy = v),
+                onSleepChanged: (v) => setState(() => _sleep = v),
+                onAnxietyChanged: (v) => setState(() => _anxiety = v),
+              ),
+              const SizedBox(height: AppTokens.spacingMd),
+              const Divider(height: 1),
+              const SizedBox(height: AppTokens.spacingSm),
+              MoodTags(
+                selected: _tags,
+                onToggle: (tag) {
+                  setState(() {
+                    if (_tags.contains(tag)) {
+                      _tags.remove(tag);
+                    } else {
+                      _tags.add(tag);
+                    }
+                  });
+                },
+              ),
+              const SizedBox(height: AppTokens.spacingSm),
+              MoodTextInput(controller: _noteController),
+              const SizedBox(height: AppTokens.spacingSm),
+              // v0.23 (Round 31) 语音录入区 — v0.28 (round 64) 重命名为 MoodAudioSection
+              MoodRecorder(controller: _recorderController),
+            ],
+          ),
         ),
+        actions: [
+          MoodSubmitPanel(
+            saving: _saving,
+            onSave: _save,
+            onCancel: () => Navigator.pop(context),
+          ),
+        ],
       ),
-      actions: [
-        MoodSubmitPanel(
-          saving: _saving,
-          onSave: _save,
-          onCancel: () => Navigator.pop(context),
-        ),
-      ],
-    ),
     );
   }
 }

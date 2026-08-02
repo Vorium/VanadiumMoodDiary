@@ -12,12 +12,14 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/medication_report_dialog.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/choose_window_dialog.dart';
@@ -107,25 +109,40 @@ class DataManagementSection extends ConsumerWidget {
 
   Future<void> _exportData(BuildContext context, WidgetRef ref) async {
     if (!context.mounted) return;
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.settingsExportVentConfirmTitle),
-        content: Text(l10n.settingsExportVentConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.settingsExportVentConfirmConfirm),
-          ),
-        ],
-      ),
+    // v0.27 R82: PIPL §13 单独同意 — 数据导出走 ConsentDialog (kind: dataExport)
+    // 替代之前的"敏感文字警告" 通用 dialog。修复前只警告, 没生成 ConsentArtifact,
+    // 法务复查时缺 §13 同意证据。修复后: 弹 ConsentDialog 走 dataExportConsent
+    // 模板 (purpose / dataCategories / retention 3 placeholder) → 用户同意 →
+    // 写 audit log (LegalConsentStore.recordDataExportConsent) → 继续 export。
+    final consent = await ConsentDialog.show(
+      context,
+      kind: ConsentKind.dataExport,
+      placeholders: const {
+        'purpose': '本地备份 / 跨设备迁移',
+        'dataCategories':
+            '用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)',
+        'retention': '剪贴板 + 用户自行保存到加密存储',
+      },
     );
-    if (confirmed != true) return;
+    if (consent == null) {
+      // 用户点了"暂不同意" — 静默退出, 不弹额外提示
+      return;
+    }
+    // R82: 写 audit log (PIPL §17 同意记录可追溯)
+    try {
+      await ref
+          .read(legalConsentStoreProvider)
+          .recordDataExportConsent(consent);
+    } catch (e, st) {
+      // 写 audit log 失败不应该阻塞主流程 (consent 已拿到, 用户已明确同意)
+      // 走 swallowError 跟 _showMedicationReport 写 history 失败的模式一致
+      swallowError(
+        where: 'DataManagementSection._exportData.recordAudit',
+        error: e,
+        stack: st,
+        note: '写 audit log 失败, 主流程继续 (consent 已拿到)',
+      );
+    }
     if (!context.mounted) return;
 
     final service = ref.read(dataExportServiceProvider);
@@ -355,67 +372,67 @@ class DataManagementSection extends ConsumerWidget {
       await showDialog<void>(
         context: context,
         builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
-          title: Text(AppLocalizations.of(context).settingsImportDialogTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(AppLocalizations.of(context).settingsImportWarning),
-              const SizedBox(height: AppTokens.spacingSm),
-              TextField(
-                controller: controller,
-                maxLines: 8,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context).settingsImportHint,
-                  border: const OutlineInputBorder(),
+          builder: (ctx, setLocal) => AlertDialog(
+            title: Text(AppLocalizations.of(context).settingsImportDialogTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(AppLocalizations.of(context).settingsImportWarning),
+                const SizedBox(height: AppTokens.spacingSm),
+                TextField(
+                  controller: controller,
+                  maxLines: 8,
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).settingsImportHint,
+                    border: const OutlineInputBorder(),
+                  ),
+                  // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
+                  // 替代内联 TextStyle('monospace', fontSize: 12)
+                  // 注: 12.0 = fontSizeCaptionSm, 等价
+                  style: AppTokens.textStyleMono(
+                    context,
+                    size: AppTokens.fontSizeCaptionSm,
+                  ),
                 ),
-                // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
-                // 替代内联 TextStyle('monospace', fontSize: 12)
-                // 注: 12.0 = fontSizeCaptionSm, 等价
-                style: AppTokens.textStyleMono(
-                  context,
-                  size: AppTokens.fontSizeCaptionSm,
-                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: importing ? null : () => Navigator.pop(ctx),
+                child: Text(AppLocalizations.of(context).commonCancel),
+              ),
+              LoadingTextButton(
+                label: AppLocalizations.of(context).settingsImportAndOverwrite,
+                isLoading: importing,
+                onPressed: () async {
+                  final input = controller.text.trim();
+                  if (input.isEmpty) return;
+                  setLocal(() => importing = true);
+                  final service = ref.read(dataExportServiceProvider);
+                  final result = await service.importFromJson(input);
+                  if (!ctx.mounted) return;
+                  if (result.success) {
+                    Navigator.pop(ctx);
+                    AppSnackBar.showInfo(
+                      context,
+                      AppLocalizations.of(context)
+                          .settingsImportSuccess(result.summary),
+                    );
+                  } else {
+                    setLocal(() => importing = false);
+                    // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
+                    AppSnackBar.showError(
+                      context,
+                      action: AppLocalizations.of(context).settingsActionImport,
+                      error: result.error,
+                    );
+                  }
+                },
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: importing ? null : () => Navigator.pop(ctx),
-              child: Text(AppLocalizations.of(context).commonCancel),
-            ),
-            LoadingTextButton(
-              label: AppLocalizations.of(context).settingsImportAndOverwrite,
-              isLoading: importing,
-              onPressed: () async {
-                final input = controller.text.trim();
-                if (input.isEmpty) return;
-                setLocal(() => importing = true);
-                final service = ref.read(dataExportServiceProvider);
-                final result = await service.importFromJson(input);
-                if (!ctx.mounted) return;
-                if (result.success) {
-                  Navigator.pop(ctx);
-                  AppSnackBar.showInfo(
-                    context,
-                    AppLocalizations.of(context)
-                        .settingsImportSuccess(result.summary),
-                  );
-                } else {
-                  setLocal(() => importing = false);
-                  // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
-                  AppSnackBar.showError(
-                    context,
-                    action: AppLocalizations.of(context).settingsActionImport,
-                    error: result.error,
-                  );
-                }
-              },
-            ),
-          ],
         ),
-      ),
       );
     } finally {
       // v0.27 R71 (P5.4): try/finally 替代 .then(), 异常路径也保证 dispose

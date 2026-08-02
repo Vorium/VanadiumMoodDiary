@@ -59,7 +59,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
                 loading: () => const LoadingSkeleton.fullScreen(),
                 // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
                 error: (e, _) => ErrorState(
-                  title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+                  title: AppLocalizations.of(context)
+                      .commonLoadFailed(e.toString()),
                   detail: e.toString(),
                 ),
                 data: (histories) {

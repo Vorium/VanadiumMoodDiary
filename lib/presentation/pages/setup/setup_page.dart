@@ -302,9 +302,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
                   leading:
                       // v0.24 round 48 (sp-zh P1-17): emoji 视觉 < 文字,保持 fontSizeTitle 不变
                       // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
-                      Text(t.emoji,
-                          style: const TextStyle(
-                              fontSize: AppTokens.fontSizeTitle,),),
+                      Text(
+                    t.emoji,
+                    style: const TextStyle(
+                      fontSize: AppTokens.fontSizeTitle,
+                    ),
+                  ),
                   title: Text(
                     // v0.28 round 65 (spzh P2-G): name 走 i18n
                     t.nameL10n(l10n),
@@ -385,10 +388,13 @@ class _SetupPageState extends ConsumerState<SetupPage> {
       final phone = _contactPhoneControllers[i].text.trim();
       if (phone.isEmpty) continue;
       // PIPL §13: 弹同意 dialog, 用户拒绝 → 不写该联系人,终止 setup
+      // v0.27 round 82: 改用 placeholders map (R82 抽象化 ConsentDialog)
       final consent = await ConsentDialog.show(
         context,
         kind: ConsentKind.emergencyContactSharing,
-        thresholdDays: 2, // 跟 care_strategies.secondDayMissed 一致
+        placeholders: const {
+          'thresholdDays': 2, // 跟 care_strategies.secondDayMissed 一致
+        },
       );
       if (consent == null) {
         // 用户拒绝: 终止整个 setup (PIPL §13 严同意, 部分填也不行)

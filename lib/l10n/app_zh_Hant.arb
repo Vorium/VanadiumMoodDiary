@@ -94,9 +94,6 @@
   "settingsExportDialogTitle": "導出數據",
   "settingsExportInstruction": "把下面這串 JSON 保存到安全的地方：",
   "settingsExportVentWarning": "說明：樹洞（私密傾訴）的文字會導出，但錄音文件不導出——錄音存在 App 本地，重裝後路徑失效，無法跨設備複用。",
-  "settingsExportVentConfirmTitle": "導出含敏感內容",
-  "settingsExportVentConfirmBody": "即將導出樹洞的文字內容。精神心理患者的傾訴可能涉及個人隱私或敏感話題，導出的 JSON 是明文，存放在剪貼板或文件裡都可能被他人看到。\n\n請確認:\n• 您將把它存到安全的地方（如加密磁盤）\n• 不會分享給未授權的人\n• 樹洞錄音文件不包含在導出中",
-  "settingsExportVentConfirmConfirm": "我瞭解，繼續導出",
   "settingsCopy": "複製",
   "settingsActionExport": "導出",
   "settingsActionGenerateReport": "生成報告",
@@ -1127,6 +1124,27 @@
   "contactConsentAgree": "已告知並取得同意",
   "contactConsentReject": "暫不同意",
   "contactConsentVersion": "v1 · 2026-07-31",
+  "dataExportConsentTitle": "數據導出同意",
+  "dataExportConsentBody": "您即將導出本地數據庫中的所有數據。\n\n**目的**：{purpose}\n**數據範圍**：{dataCategories}\n**保留方式**：{retention}\n\n**根據《個人信息保護法》第 13 條**（數據可攜權 + 單獨同意），請確認您已瞭解上述用途，並同意本次導出。",
+  "@dataExportConsentBody": {
+    "description": "PIPL §13 數據可攜權 dialog 正文, 用戶導出 JSON 前取得單獨同意 (R82 加)",
+    "placeholders": {
+      "purpose": {
+        "type": "String",
+        "example": "本地備份 / 跨設備遷移"
+      },
+      "dataCategories": {
+        "type": "String",
+        "example": "用藥記錄、打卡記錄、緊急聯繫人、情緒日記"
+      },
+      "retention": {
+        "type": "String",
+        "example": "剪貼簿 + 用戶自行保存到加密存儲"
+      }
+    }
+  },
+  "dataExportConsentConfirm": "我瞭解並同意導出",
+  "dataExportConsentVersion": "v1 · 2026-08-15",
   "contactDefaultName": "聯繫人",
   "contactNameLabel": "姓名",
   "contactPhoneLabel": "手機號",
@@ -1399,7 +1417,7 @@
   "phq9Item1": "感到心情低落、沮喪或絕望",
   "phq9Item2": "入睡困難、睡不安穩或睡得過多",
   "phq9Item3": "感覺疲倦或沒有活力",
-  "phq9Item4": "食欲不振或吃太多",
+  "phq9Item4": "食慾不振或吃太多",
   "phq9Item5": "覺得自己很糟、很失敗，或讓自己和家人失望",
   "phq9Item6": "對事物專注有困難，例如看報紙或看電視時",
   "phq9Item7": "動作或說話速度緩慢到別人能察覺？\n或正好相反——煩躁或坐立不安",
@@ -1408,18 +1426,18 @@
   "phq9Option1": "好幾天",
   "phq9Option2": "一半以上的天數",
   "phq9Option3": "幾乎每天",
-  "phq9SeverityLabel0": "幾乎沒有憂鬱",
-  "phq9SeverityLabel1": "輕度憂鬱",
-  "phq9SeverityLabel2": "中度憂鬱",
-  "phq9SeverityLabel3": "中重度憂鬱",
-  "phq9SeverityLabel4": "重度憂鬱",
-  "phq9SeveritySummary0": "幾乎沒有憂鬱傾向",
-  "phq9SeveritySummary1": "輕度憂鬱傾向",
-  "phq9SeveritySummary2": "中度憂鬱傾向",
-  "phq9SeveritySummary3": "中重度憂鬱傾向",
-  "phq9SeveritySummary4": "重度憂鬱傾向",
-  "phq9Instruction": "過去兩週內，你有多常被以下問題困擾？",
-  "phq9ShortDescription": "過去兩週的憂鬱傾向篩查",
+  "phq9SeverityLabel0": "幾乎沒有抑鬱",
+  "phq9SeverityLabel1": "輕度抑鬱",
+  "phq9SeverityLabel2": "中度抑鬱",
+  "phq9SeverityLabel3": "中重度抑鬱",
+  "phq9SeverityLabel4": "重度抑鬱",
+  "phq9SeveritySummary0": "幾乎沒有抑鬱傾向",
+  "phq9SeveritySummary1": "輕度抑鬱傾向",
+  "phq9SeveritySummary2": "中度抑鬱傾向",
+  "phq9SeveritySummary3": "中重度抑鬱傾向",
+  "phq9SeveritySummary4": "重度抑鬱傾向",
+  "phq9Instruction": "過去兩週內，你有多經常被以下問題困擾？",
+  "phq9ShortDescription": "過去兩週的抑鬱傾向篩查",
   "gad7Item0": "感到緊張、焦慮或急切",
   "gad7Item1": "不能停止或控制擔憂",
   "gad7Item2": "對各種事情擔憂過多",
@@ -1435,7 +1453,7 @@
   "gad7SeveritySummary1": "輕度焦慮傾向",
   "gad7SeveritySummary2": "中度焦慮傾向",
   "gad7SeveritySummary3": "重度焦慮傾向",
-  "gad7Instruction": "過去兩週內，你有多常被以下問題困擾？",
+  "gad7Instruction": "過去兩週內，你有多經常被以下問題困擾？",
   "gad7ShortDescription": "過去兩週的焦慮傾向篩查",
   "homeQuickMoodTitle": "今天感覺如何？",
   "@homeQuickMoodTitle": {
@@ -1445,6 +1463,9 @@
   "homeFabVent": "心情樹洞",
   "homeFabHotline": "緊急熱線",
   "homeFabTop": "回到頂端",
+  "homeFabHotlineTodo": "緊急熱線入口建設中",
+  "homeFabTopTodo": "回到頂端(開發中)",
   "trendChip30Day": "近 30 天",
   "assessmentChipCurrent": "本週"
 }
+

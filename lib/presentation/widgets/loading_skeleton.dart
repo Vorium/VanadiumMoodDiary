@@ -62,7 +62,8 @@ class LoadingSkeleton extends StatelessWidget {
             CircularProgressIndicator(
               strokeWidth: 2.5,
               valueColor: AlwaysStoppedAnimation<Color>(
-                  AppTokens.primaryColor(context),),
+                AppTokens.primaryColor(context),
+              ),
             ),
             if (message != null) ...[
               const SizedBox(height: AppTokens.spacingMd),

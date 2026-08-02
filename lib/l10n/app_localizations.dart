@@ -477,24 +477,6 @@ abstract class AppLocalizations {
   /// **'说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。'**
   String get settingsExportVentWarning;
 
-  /// No description provided for @settingsExportVentConfirmTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'导出含敏感内容'**
-  String get settingsExportVentConfirmTitle;
-
-  /// No description provided for @settingsExportVentConfirmBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 您将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中'**
-  String get settingsExportVentConfirmBody;
-
-  /// No description provided for @settingsExportVentConfirmConfirm.
-  ///
-  /// In zh, this message translates to:
-  /// **'我了解，继续导出'**
-  String get settingsExportVentConfirmConfirm;
-
   /// No description provided for @settingsCopy.
   ///
   /// In zh, this message translates to:
@@ -2992,6 +2974,31 @@ abstract class AppLocalizations {
   /// **'v1 · 2026-07-31'**
   String get contactConsentVersion;
 
+  /// No description provided for @dataExportConsentTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'数据导出同意'**
+  String get dataExportConsentTitle;
+
+  /// PIPL §13 数据可携权 dialog 正文, 用户导出 JSON 前取得单独同意 (R82 加)
+  ///
+  /// In zh, this message translates to:
+  /// **'您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 条**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。'**
+  String dataExportConsentBody(
+      String purpose, String dataCategories, String retention);
+
+  /// No description provided for @dataExportConsentConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'我了解并同意导出'**
+  String get dataExportConsentConfirm;
+
+  /// No description provided for @dataExportConsentVersion.
+  ///
+  /// In zh, this message translates to:
+  /// **'v1 · 2026-08-15'**
+  String get dataExportConsentVersion;
+
   /// No description provided for @contactDefaultName.
   ///
   /// In zh, this message translates to:
@@ -4203,6 +4210,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'回到顶端'**
   String get homeFabTop;
+
+  /// No description provided for @homeFabHotlineTodo.
+  ///
+  /// In zh, this message translates to:
+  /// **'紧急热线入口建设中'**
+  String get homeFabHotlineTodo;
+
+  /// No description provided for @homeFabTopTodo.
+  ///
+  /// In zh, this message translates to:
+  /// **'回到顶端(开发中)'**
+  String get homeFabTopTodo;
 
   /// No description provided for @trendChip30Day.
   ///

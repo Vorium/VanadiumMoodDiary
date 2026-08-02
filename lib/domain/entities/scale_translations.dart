@@ -54,7 +54,8 @@ abstract class ScaleTranslations {
   /// v0.27 R77 (spzh P1-A 收尾): 加 [index] 支持 6 region × 2 hotline (cn/us/tw 各 2 个,
   /// hk/sg/uk 各 1 个, index=1 越界走 fallback first.label)。
   /// tw/sg/uk 之前走 intl fallback, 现在每 region 都有独立 i18n key。
-  String crisisHotlineLabel(HotlineRegion region, {int index = 0, String? override});
+  String crisisHotlineLabel(HotlineRegion region,
+      {int index = 0, String? override,});
 
   /// v0.27 R71 (spzh P1-A 续): 危机弹窗标题 (PHQ-9 Q9 阳性时)
   /// — 之前 detectCrisis 用 const 中文 '我们关心你' 硬编, en / zh_Hant 用户看中文
@@ -120,7 +121,8 @@ class StaticScaleTranslations implements ScaleTranslations {
   String gad7Name({String? override}) => override ?? 'GAD-7 焦虑筛查';
 
   @override
-  String crisisHotlineLabel(HotlineRegion region, {int index = 0, String? override}) {
+  String crisisHotlineLabel(HotlineRegion region,
+      {int index = 0, String? override,}) {
     if (override != null) return override;
     final list = hotlineByRegion[region];
     if (list == null || list.isEmpty) return region.name;
@@ -132,8 +134,8 @@ class StaticScaleTranslations implements ScaleTranslations {
   String crisisTitle({String? override}) => override ?? '我们关心你';
 
   @override
-  String crisisMessage({String? override}) => override ??
-      '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。';
+  String crisisMessage({String? override}) =>
+      override ?? '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。';
 
   // ============================================================
   // PHQ-9 中文 fallback (跟原 hardcode 1:1 一致)
@@ -206,8 +208,7 @@ class StaticScaleTranslations implements ScaleTranslations {
       override ?? '过去两周内，你有多经常被以下问题困扰？';
 
   @override
-  String phq9ShortDescription({String? override}) =>
-      override ?? '过去两周的抑郁倾向筛查';
+  String phq9ShortDescription({String? override}) => override ?? '过去两周的抑郁倾向筛查';
 
   // ============================================================
   // GAD-7 中文 fallback
@@ -269,8 +270,7 @@ class StaticScaleTranslations implements ScaleTranslations {
       override ?? '过去两周内，你有多经常被以下问题困扰？';
 
   @override
-  String gad7ShortDescription({String? override}) =>
-      override ?? '过去两周的焦虑倾向筛查';
+  String gad7ShortDescription({String? override}) => override ?? '过去两周的焦虑倾向筛查';
 }
 
 // v0.27 round 75 (R74 报告 P1-1 修): `AppLocalizationsScaleTranslations` 类

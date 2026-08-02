@@ -94,9 +94,11 @@ class VentAudioSection extends StatelessWidget {
                 ? AppLocalizations.of(context).ventAudioPauseTooltip
                 : AppLocalizations.of(context).ventAudioPlayTooltip,
           ),
-          Icon(Icons.mic,
-              color: AppTokens.primaryColor(context),
-              size: AppTokens.iconSizeInline,),
+          Icon(
+            Icons.mic,
+            color: AppTokens.primaryColor(context),
+            size: AppTokens.iconSizeInline,
+          ),
           const SizedBox(width: AppTokens.spacingChipGap),
           Text(
             audioDurationSec != null

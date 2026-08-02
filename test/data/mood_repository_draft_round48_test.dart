@@ -81,10 +81,13 @@ void main() {
           .getSingle();
       // entry.timestamp 应该在 before..after 之间
       expect(
-          entry.timestamp.isAfter(before.subtract(const Duration(seconds: 1))),
-          isTrue,);
-      expect(entry.timestamp.isBefore(after.add(const Duration(seconds: 1))),
-          isTrue,);
+        entry.timestamp.isAfter(before.subtract(const Duration(seconds: 1))),
+        isTrue,
+      );
+      expect(
+        entry.timestamp.isBefore(after.add(const Duration(seconds: 1))),
+        isTrue,
+      );
     });
 
     test('4 维字段 (energy / sleep / anxiety) 全部映射 (P1-14 GREEN-2)', () async {

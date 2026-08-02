@@ -94,9 +94,6 @@
   "settingsExportDialogTitle": "导出数据",
   "settingsExportInstruction": "把下面这串 JSON 保存到安全的地方：",
   "settingsExportVentWarning": "说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。",
-  "settingsExportVentConfirmTitle": "导出含敏感内容",
-  "settingsExportVentConfirmBody": "即将导出树洞的文字内容。精神心理患者的倾诉可能涉及个人隐私或敏感话题，导出的 JSON 是明文，存放在剪贴板或文件里都可能被他人看到。\n\n请确认:\n• 您将把它存到安全的地方（如加密磁盘）\n• 不会分享给未授权的人\n• 树洞录音文件不包含在导出中",
-  "settingsExportVentConfirmConfirm": "我了解，继续导出",
   "settingsCopy": "复制",
   "settingsActionExport": "导出",
   "settingsActionGenerateReport": "生成报告",
@@ -1130,6 +1127,27 @@
   "contactConsentAgree": "已告知并取得同意",
   "contactConsentReject": "暂不同意",
   "contactConsentVersion": "v1 · 2026-07-31",
+  "dataExportConsentTitle": "数据导出同意",
+  "dataExportConsentBody": "您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 條**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。",
+  "@dataExportConsentBody": {
+    "description": "PIPL §13 数据可携权 dialog 正文, 用户导出 JSON 前取得单独同意 (R82 加)",
+    "placeholders": {
+      "purpose": {
+        "type": "String",
+        "example": "本地备份 / 跨设备迁移"
+      },
+      "dataCategories": {
+        "type": "String",
+        "example": "用药记录、打卡记录、紧急联系人、情绪日记"
+      },
+      "retention": {
+        "type": "String",
+        "example": "剪贴板 + 用户自行保存到加密存储"
+      }
+    }
+  },
+  "dataExportConsentConfirm": "我了解并同意导出",
+  "dataExportConsentVersion": "v1 · 2026-08-15",
   "contactDefaultName": "联系人",
   "contactNameLabel": "姓名",
   "contactPhoneLabel": "手机号",
@@ -1448,6 +1466,8 @@
   "homeFabVent": "心情树洞",
   "homeFabHotline": "紧急热线",
   "homeFabTop": "回到顶端",
+  "homeFabHotlineTodo": "紧急热线入口建设中",
+  "homeFabTopTodo": "回到顶端(开发中)",
   "trendChip30Day": "近 30 天",
   "assessmentChipCurrent": "本周"
 }

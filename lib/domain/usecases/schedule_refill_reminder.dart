@@ -12,14 +12,19 @@
 // 让 presentation / test 单独验证时间计算。
 //
 // 0 副作用: 不调 Plugin / Dispatcher / Notifier, 只算 fireAt + isExpired。
-// 0 Flutter 依赖: 只用 MedicationEntity (domain) + RefillNotifier.computeRefillFireTime。
+// 0 Flutter 依赖: 只用 MedicationEntity (domain) + RefillScheduler (domain/logic)。
+//
+// v0.27 round 82 (P0 架构修复): import 从 `refill_notifier.dart` (data 层,
+// 间接依赖 flutter plugin) 切到 `refill_scheduler.dart` (domain/logic 纯函数,
+// 0 flutter 依赖)。domain use case 现在 0 flutter 间接 import, 4 层架构
+// check_all.dart 守门通过。
 
-import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/logic/refill_scheduler.dart';
 
 /// 单个 medication 的续方排程
 ///
-/// v0.27 round 65: 跟 RefillNotifier.computeRefillFireTime 配套, 多带
+/// v0.27 round 65: 跟 RefillScheduler.computeRefillFireTime 配套, 多带
 /// isExpired 标志让 caller 跳过过期。
 class RefillSchedule {
   /// 关联 medication id
@@ -65,12 +70,12 @@ class RefillSchedule {
 /// 业务规则:
 /// - inactive 药物跳过 (跟 RefillNotifier.rescheduleRefillReminders 1:1)
 /// - 无 refillAt 跳过 (fireAt = null)
-/// - reminderDays < 1 抛 ArgumentError (跟 RefillNotifier.computeRefillFireTime 1:1)
+/// - reminderDays < 1 抛 ArgumentError (跟 RefillScheduler.computeRefillFireTime 1:1)
 /// - fireAt < now 标 isExpired = true
 ///
 /// 0 副作用: 不调 Plugin / Dispatcher / Notifier, 不写 DB, 不发通知。
-/// 复用 [RefillNotifier.computeRefillFireTime] (R56c TDD 测过) — 8 case 覆盖
-/// reminderDays < 1 / refillAt == null / 跨月 / 跨年 等边界。
+/// 复用 [RefillScheduler.computeRefillFireTime] (R82 抽离, R56c 8 case 行为不变) —
+/// 覆盖 reminderDays < 1 / refillAt == null / 跨月 / 跨年 等边界。
 class ScheduleRefillReminderUseCase {
   const ScheduleRefillReminderUseCase();
 
@@ -81,7 +86,7 @@ class ScheduleRefillReminderUseCase {
     final schedules = <RefillSchedule>[];
     for (final m in medications) {
       if (!m.isActive) continue;
-      final fireAt = RefillNotifier.computeRefillFireTime(
+      final fireAt = RefillScheduler.computeRefillFireTime(
         refillAt: m.refillAt,
         reminderDays: m.refillReminderDays,
       );

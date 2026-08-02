@@ -52,8 +52,10 @@ class AssessmentChartCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(iconForScale(scaleId),
-                    color: AppTokens.primaryColor(context),),
+                Icon(
+                  iconForScale(scaleId),
+                  color: AppTokens.primaryColor(context),
+                ),
                 const SizedBox(width: AppTokens.spacingSm),
                 Text(
                   nameForScale(scaleId, l10n),

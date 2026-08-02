@@ -92,7 +92,7 @@ class SnoozeManager {
         importance: Importance.high,
         priority: Priority.high,
       ),
-      iOS: DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(),
     );
 
     final fireAt = tz.TZDateTime.now(tz.local).add(Duration(minutes: minutes));

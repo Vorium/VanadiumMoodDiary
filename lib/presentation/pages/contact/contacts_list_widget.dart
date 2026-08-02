@@ -169,8 +169,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
-                      labelText:
-                          AppLocalizations.of(context).contactNameLabel,
+                      labelText: AppLocalizations.of(context).contactNameLabel,
                     ),
                   ),
                   const SizedBox(height: AppTokens.spacingSm),
@@ -178,8 +177,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
-                      labelText:
-                          AppLocalizations.of(context).contactPhoneLabel,
+                      labelText: AppLocalizations.of(context).contactPhoneLabel,
                       hintText: '13800138000',
                     ),
                   ),
@@ -227,13 +225,17 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                             // v0.27 round 62 (P0-2 修复): 拿当前用户配置的失联阈值,
                             // 让 consent dialog 文案里的"连续 N 天"是用户自己的值。
                             if (ctx.mounted) {
-                              final thresholdDays =
-                                  await SafetyConfigService().getThresholdDays();
+                              final thresholdDays = await SafetyConfigService()
+                                  .getThresholdDays();
                               if (!ctx.mounted) return;
+                              // v0.27 R82: ConsentDialog 抽象化, thresholdDays
+                              // → placeholders map
                               final consent = await ConsentDialog.show(
                                 ctx,
                                 kind: ConsentKind.emergencyContactSharing,
-                                thresholdDays: thresholdDays,
+                                placeholders: {
+                                  'thresholdDays': thresholdDays,
+                                },
                               );
                               if (consent == null) {
                                 // 用户拒绝, 退出 add 流程
@@ -249,18 +251,18 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                               }
                               if (!ctx.mounted) return;
                               await ref.read(contactRepositoryProvider).add(
-                                  // v0.27 round 62 (P1-10 修复): 改用 l10n key 而非
-                                  // hardcode 英文 'Contact'。 en/zh/zh_Hant 三种语言
-                                  // 都用 i18n key, 没填姓名时给合理的本地化默认值。
-                                  name: nameController.text.trim().isEmpty
-                                      ? AppLocalizations.of(ctx)
-                                          .contactDefaultName
-                                      : nameController.text.trim(),
-                                  phone:
-                                      PhoneValidator.normalize(phone) ?? phone,
-                                  consentArtifact: consent,
-                                  sortOrder: 99,
-                                );
+                                    // v0.27 round 62 (P1-10 修复): 改用 l10n key 而非
+                                    // hardcode 英文 'Contact'。 en/zh/zh_Hant 三种语言
+                                    // 都用 i18n key, 没填姓名时给合理的本地化默认值。
+                                    name: nameController.text.trim().isEmpty
+                                        ? AppLocalizations.of(ctx)
+                                            .contactDefaultName
+                                        : nameController.text.trim(),
+                                    phone: PhoneValidator.normalize(phone) ??
+                                        phone,
+                                    consentArtifact: consent,
+                                    sortOrder: 99,
+                                  );
                               if (ctx.mounted) Navigator.pop(ctx);
                             }
                           } catch (e) {
@@ -268,8 +270,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                               // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器
                               AppSnackBar.showError(
                                 ctx,
-                                action: AppLocalizations.of(ctx)
-                                    .commonActionSave,
+                                action:
+                                    AppLocalizations.of(ctx).commonActionSave,
                                 error: e,
                               );
                               setLocal(() => saving = false);

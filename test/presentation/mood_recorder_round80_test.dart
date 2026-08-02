@@ -26,7 +26,6 @@
 import 'dart:async';
 
 import 'package:chroniccare/core/data/services/mood_audio_service.dart';
-import 'package:chroniccare/core/data/services/mood_audio_storage.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_audio_section.dart';
 import 'package:flutter/material.dart';
@@ -46,8 +45,9 @@ class _FakeMoodAudioService implements MoodAudioService {
   final int maxRecordingMs;
 
   _FakeMoodAudioService({
-    this.sttAvailable = true,
-    this.maxRecordingMs = 180000, // 3 min default
+    this.sttAvailable = true, // 3 min default
+    // ignore: unused_element_parameter
+    this.maxRecordingMs = 3 * 60 * 1000,
   });
 
   /// test 调: 模拟 STT 实时输出
@@ -78,7 +78,7 @@ class _FakeMoodAudioService implements MoodAudioService {
   @override
   Duration get recordingElapsed => _elapsed;
 
-  @override
+  // ignore: override_on_non_overriding_member
   int get maxRecordingDurationMs => maxRecordingMs;
 
   @override
@@ -150,8 +150,7 @@ Future<void> _pumpRecorder(
 
 void main() {
   group('MoodRecorder widget 状态机 (R80)', () {
-    testWidgets('初始 idle 状态: snapshot.empty, 录音按钮可见',
-        (tester) async {
+    testWidgets('初始 idle 状态: snapshot.empty, 录音按钮可见', (tester) async {
       final fakeService = _FakeMoodAudioService();
       final controller = MoodRecorderController(
         serviceFactory: () => fakeService,
@@ -167,8 +166,7 @@ void main() {
       expect(fakeService.isRecording, isFalse);
     });
 
-    testWidgets('点击录音 → service.isRecording=true 期间',
-        (tester) async {
+    testWidgets('点击录音 → service.isRecording=true 期间', (tester) async {
       final fakeService = _FakeMoodAudioService();
       final controller = MoodRecorderController(
         serviceFactory: () => fakeService,
@@ -188,9 +186,9 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
       expect(fakeService.isRecording, isTrue,
-          reason: '点击录音后 service 内部 isRecording=true');
+          reason: '点击录音后 service 内部 isRecording=true',);
       expect(controller.snapshot.value.hasRecording, isFalse,
-          reason: '录音中 snapshot 仍空 (未 stop)');
+          reason: '录音中 snapshot 仍空 (未 stop)',);
     });
 
     testWidgets('reRecord 按钮存在 (录音后), 不验证 snapshot (需 storage mock)',
@@ -210,14 +208,12 @@ void main() {
       // 因为 _stopRecording 内部调 real moodAudioStorage.encryptAndWrite
       // 需 mock, R80 留 R81)
       final recordBtn = find.byIcon(Icons.mic);
-      expect(recordBtn, findsOneWidget,
-          reason: '初始录音按钮可见');
+      expect(recordBtn, findsOneWidget, reason: '初始录音按钮可见');
       // 不实际点击 (避免触发 stopRecording + storage 调用)
       // 此 case 验证 widget 初始结构
     });
 
-    testWidgets('STT 不可用场景: initialize 返回 false',
-        (tester) async {
+    testWidgets('STT 不可用场景: initialize 返回 false', (tester) async {
       // v0.28 R80: STT 不可用是 MoodAudioService.initialize() 行为,
       // 不需要测 widget 录音完整流程 (跟 R80 reRecord 限制同款)
       final fakeService = _FakeMoodAudioService(sttAvailable: false);
@@ -225,7 +221,7 @@ void main() {
 
       // 直接测 service 行为
       expect(await fakeService.initialize(), isFalse,
-          reason: 'STT 不可用时 service.initialize() 返 false');
+          reason: 'STT 不可用时 service.initialize() 返 false',);
     });
   });
 
@@ -243,8 +239,7 @@ void main() {
       await _pumpRecorder(tester, controller);
       // 模拟 page pop / route 切换
       await tester.pumpWidget(const SizedBox.shrink());
-      expect(tester.takeException(), isNull,
-          reason: '正常 unmount 应静默清理, 不抛');
+      expect(tester.takeException(), isNull, reason: '正常 unmount 应静默清理, 不抛');
     });
 
     testWidgets('录音中 unmount 不抛 (验证 widget 自身 dispose 链 cancel recording)',
@@ -269,7 +264,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       // 不应抛 (widget 自身 dispose 链 cancel recording + cleanup)
       expect(tester.takeException(), isNull,
-          reason: '录音中 unmount 仍能 dispose 资源链, 不抛 (跟 R79 vent_compose 同款)');
+          reason: '录音中 unmount 仍能 dispose 资源链, 不抛 (跟 R79 vent_compose 同款)',);
     });
   });
 }

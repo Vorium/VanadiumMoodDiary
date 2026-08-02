@@ -41,50 +41,50 @@ class MonthlyChart extends StatelessWidget {
     // 跨 midnight 重建 / 切换月份时 BarChart 不重 paint
     return RepaintBoundary(
       child: SizedBox(
-      // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
-      // 替代 inline height: 200 magic (BarChart 标准高度)
-      height: AppTokens.chartPlaceholderHeight,
-      child: BarChart(
-        BarChartData(
-          maxY: maxY,
-          barGroups: groups,
-          gridData: const FlGridData(show: true, drawVerticalLine: false),
-          borderData: FlBorderData(show: false),
-          titlesData: FlTitlesData(
-            rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 32,
-                getTitlesWidget: (value, _) => Text(
-                  '${value.toInt()}%',
-                  style: AppTokens.textStyleMicro(context),
+        // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+        // 替代 inline height: 200 magic (BarChart 标准高度)
+        height: AppTokens.chartPlaceholderHeight,
+        child: BarChart(
+          BarChartData(
+            maxY: maxY,
+            barGroups: groups,
+            gridData: const FlGridData(show: true, drawVerticalLine: false),
+            borderData: FlBorderData(show: false),
+            titlesData: FlTitlesData(
+              rightTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 32,
+                  getTitlesWidget: (value, _) => Text(
+                    '${value.toInt()}%',
+                    style: AppTokens.textStyleMicro(context),
+                  ),
                 ),
               ),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, _) {
-                  final idx = value.toInt();
-                  if (idx < 0 || idx >= monthly.length) {
-                    return const SizedBox.shrink();
-                  }
-                  final m = monthly[idx].month;
-                  return Text(
-                    AppLocalizations.of(context).trendMonthLabel(m.month),
-                    style: AppTokens.textStyleMicro(context),
-                  );
-                },
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (value, _) {
+                    final idx = value.toInt();
+                    if (idx < 0 || idx >= monthly.length) {
+                      return const SizedBox.shrink();
+                    }
+                    final m = monthly[idx].month;
+                    return Text(
+                      AppLocalizations.of(context).trendMonthLabel(m.month),
+                      style: AppTokens.textStyleMicro(context),
+                    );
+                  },
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 }

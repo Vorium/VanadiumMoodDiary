@@ -129,121 +129,123 @@ class AssessmentHistoryChart extends StatelessWidget {
     // (空 records 走 early return 不包, 一次性 fallback 不影响性能)
     return RepaintBoundary(
       child: Card(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppTokens.spacingSm,
-          AppTokens.spacingMd,
-          AppTokens.spacingMd,
-          AppTokens.spacingMd,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: AppTokens.spacingMd,
-              runSpacing: AppTokens.spacingXs,
-              children: legendItems,
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
-            // 替代 inline height: 200 magic (LineChart 标准高度)
-            SizedBox(
-              height: AppTokens.chartPlaceholderHeight,
-              child: LineChart(
-                LineChartData(
-                  minX: 0,
-                  maxX: xMaxDisplay,
-                  minY: 0,
-                  maxY: 100,
-                  lineBarsData: lines,
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: 25,
-                    getDrawingHorizontalLine: (_) => FlLine(
-                      color: Theme.of(context).dividerColor,
-                      strokeWidth: 0.5,
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  titlesData: FlTitlesData(
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 32,
-                        interval: 25,
-                        getTitlesWidget: (value, _) => Text(
-                          '${value.toInt()}%',
-                          style: AppTokens.textStyleMicro(context),
-                        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppTokens.spacingSm,
+            AppTokens.spacingMd,
+            AppTokens.spacingMd,
+            AppTokens.spacingMd,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: AppTokens.spacingMd,
+                runSpacing: AppTokens.spacingXs,
+                children: legendItems,
+              ),
+              const SizedBox(height: AppTokens.spacingSm),
+              // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
+              // 替代 inline height: 200 magic (LineChart 标准高度)
+              SizedBox(
+                height: AppTokens.chartPlaceholderHeight,
+                child: LineChart(
+                  LineChartData(
+                    minX: 0,
+                    maxX: xMaxDisplay,
+                    minY: 0,
+                    maxY: 100,
+                    lineBarsData: lines,
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      horizontalInterval: 25,
+                      getDrawingHorizontalLine: (_) => FlLine(
+                        color: Theme.of(context).dividerColor,
+                        strokeWidth: 0.5,
                       ),
                     ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 22,
-                        interval: xMaxDisplay <= 1
-                            ? 0.5
-                            : (xMaxDisplay / 4).ceilToDouble(),
-                        getTitlesWidget: (value, _) {
-                          if (xMaxDisplay <= 1) {
+                    borderData: FlBorderData(show: false),
+                    titlesData: FlTitlesData(
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 32,
+                          interval: 25,
+                          getTitlesWidget: (value, _) => Text(
+                            '${value.toInt()}%',
+                            style: AppTokens.textStyleMicro(context),
+                          ),
+                        ),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 22,
+                          interval: xMaxDisplay <= 1
+                              ? 0.5
+                              : (xMaxDisplay / 4).ceilToDouble(),
+                          getTitlesWidget: (value, _) {
+                            if (xMaxDisplay <= 1) {
+                              final dt = DateTime.fromMillisecondsSinceEpoch(
+                                (firstMs + (value * 86400 * 1000).round()),
+                              );
+                              return Text(
+                                '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
+                                style: AppTokens.textStyleMicro(context),
+                              );
+                            }
                             final dt = DateTime.fromMillisecondsSinceEpoch(
                               (firstMs + (value * 86400 * 1000).round()),
                             );
                             return Text(
-                              '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
+                              '${dt.month}/${dt.day}',
                               style: AppTokens.textStyleMicro(context),
                             );
-                          }
-                          final dt = DateTime.fromMillisecondsSinceEpoch(
-                            (firstMs + (value * 86400 * 1000).round()),
-                          );
-                          return Text(
-                            '${dt.month}/${dt.day}',
-                            style: AppTokens.textStyleMicro(context),
-                          );
+                          },
+                        ),
+                      ),
+                    ),
+                    lineTouchData: LineTouchData(
+                      touchTooltipData: LineTouchTooltipData(
+                        getTooltipItems: (touched) {
+                          return touched.map((t) {
+                            final dtMs =
+                                (firstMs + (t.x * 86400 * 1000).round());
+                            final dt =
+                                DateTime.fromMillisecondsSinceEpoch(dtMs);
+                            final meta = spotMeta[SpotKey(t.x, t.y)];
+                            final rawTotal = meta?.rec.total ?? 0;
+                            final rawMax = meta?.rawMax ?? 1;
+                            final name = meta?.name ?? '';
+                            final pct =
+                                (rawMax == 0) ? 0.0 : (rawTotal / rawMax * 100);
+                            return LineTooltipItem(
+                              '${dt.month}/${dt.day} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}\n'
+                              '$name $rawTotal/$rawMax (${pct.toStringAsFixed(0)}%)',
+                              TextStyle(
+                                color: t.bar.color,
+                                fontWeight: FontWeight.w600,
+                                fontSize: AppTokens.fontSizeCaptionSm,
+                              ),
+                            );
+                          }).toList();
                         },
                       ),
                     ),
                   ),
-                  lineTouchData: LineTouchData(
-                    touchTooltipData: LineTouchTooltipData(
-                      getTooltipItems: (touched) {
-                        return touched.map((t) {
-                          final dtMs = (firstMs + (t.x * 86400 * 1000).round());
-                          final dt = DateTime.fromMillisecondsSinceEpoch(dtMs);
-                          final meta = spotMeta[SpotKey(t.x, t.y)];
-                          final rawTotal = meta?.rec.total ?? 0;
-                          final rawMax = meta?.rawMax ?? 1;
-                          final name = meta?.name ?? '';
-                          final pct =
-                              (rawMax == 0) ? 0.0 : (rawTotal / rawMax * 100);
-                          return LineTooltipItem(
-                            '${dt.month}/${dt.day} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}\n'
-                            '$name $rawTotal/$rawMax (${pct.toStringAsFixed(0)}%)',
-                            TextStyle(
-                              color: t.bar.color,
-                              fontWeight: FontWeight.w600,
-                              fontSize: AppTokens.fontSizeCaptionSm,
-                            ),
-                          );
-                        }).toList();
-                      },
-                    ),
-                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }

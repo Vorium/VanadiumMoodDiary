@@ -2,9 +2,15 @@
 //
 // 续方提醒编排 (id=6000+medId)。从 NotificationService 拆出, 单一职责:
 //   - 单个 medication 续方 schedule / cancel / 重排
-//   - 3 个 helper (id 公式 + 触发时间 + days until refill)
+//   - 2 个 helper (id 公式 + 触发时间委派 + days until refill 委派)
 // 委托 ReminderDispatcher 处理 cancel/zonedSchedule, 保留 200000 cancel range
 // (v0.16 round 19B) + `DateTime.now()` 一次取防 midnight race (v0.16 round 19B fix)。
+//
+// v0.27 round 82 (P0 架构修复): computeRefillFireTime / daysUntilRefill 抽到
+// `lib/domain/logic/refill_scheduler.dart` 纯函数, 切断 domain layer 间接
+// flutter plugin 依赖。本类保留 facade 委托 (backward compatible, 老 caller
+// import `package:chroniccare/core/data/services/refill_notifier.dart` 不动),
+// 内部 delegate 到 `RefillScheduler.computeRefillFireTime` / `daysUntilRefill`。
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
@@ -14,6 +20,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/logic/refill_scheduler.dart';
 
 /// 续方提醒编排 (per-medication refill 提醒)
 ///
@@ -61,7 +68,8 @@ class RefillNotifier {
 
   /// 计算续方提醒的触发时间 (refillAt - reminderDays 当天 9 点本地时间)
   ///
-  /// 纯函数，方便测试。
+  /// facade 委托到 [RefillScheduler.computeRefillFireTime] (v0.27 round 82 抽离)。
+  /// 纯函数, 0 副作用, 0 Flutter 依赖。
   /// 返回 null 当且仅当 [refillAt] 本身为 null。
   /// [reminderDays] < 1 时抛 ArgumentError。
   ///
@@ -71,30 +79,23 @@ class RefillNotifier {
     required DateTime? refillAt,
     required int reminderDays,
   }) {
-    if (refillAt == null) return null;
-    if (reminderDays < 1) {
-      throw ArgumentError('reminderDays must be >= 1; got: $reminderDays');
-    }
-    // 续方日期当天的 0 点，再 - reminderDays 天，再 + 9 小时
-    final day = DateTime(refillAt.year, refillAt.month, refillAt.day);
-    final triggerDay = day.subtract(Duration(days: reminderDays));
-    return DateTime(
-      triggerDay.year,
-      triggerDay.month,
-      triggerDay.day,
-      9, // 上午 9 点
+    return RefillScheduler.computeRefillFireTime(
+      refillAt: refillAt,
+      reminderDays: reminderDays,
     );
   }
 
   /// 按"天"计算 refill 距今多少天 (不直接用 Duration.inDays)
   ///
+  /// facade 委托到 [RefillScheduler.daysUntilRefill] (v0.27 round 82 抽离)。
   /// 不直接用 Duration.inDays, 因为:
   /// - 23.98h 会被报成 0 天
   /// - refill day 整天应该算"今天还有 X 天", 不能因时分秒而错
-  static int _daysUntilRefill(DateTime refillAt, DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
-    final refillDay = DateTime(refillAt.year, refillAt.month, refillAt.day);
-    return refillDay.difference(today).inDays;
+  ///
+  /// v0.27 round 82: 改 `static` (去掉 `_` 前缀), 允许外部 use case
+  /// 复用同一实现, 避免本类跟 domain 重复造轮子。
+  static int daysUntilRefill(DateTime refillAt, DateTime now) {
+    return RefillScheduler.daysUntilRefill(refillAt, now);
   }
 
   /// 调度一个 medication 的续方提醒
@@ -148,7 +149,7 @@ class RefillNotifier {
     final id = refillNotificationId(medication.id);
     await _plugin.cancel(id); // 覆盖前一次
 
-    final daysLeft = _daysUntilRefill(medication.refillAt!, now);
+    final daysLeft = daysUntilRefill(medication.refillAt!, now);
     final details = _dispatcher.buildChannelDetails();
     final payload =
         NotificationDeepLink.medicationCheckIn(medication.id).encode();

@@ -311,8 +311,10 @@ class AppDatabase extends _$AppDatabase {
       );
 
       // insert contacts (R68 CC-1: PIPL §13 单独同意, 4 个 consent 字段必有)
-      assert(contactList.length == contactConsents.length,
-          'contactList 跟 contactConsents 必须等长 — setup_page 必须逐个弹 ConsentDialog',);
+      assert(
+        contactList.length == contactConsents.length,
+        'contactList 跟 contactConsents 必须等长 — setup_page 必须逐个弹 ConsentDialog',
+      );
       for (var i = 0; i < contactList.length; i++) {
         final c = contactList[i];
         final consent = contactConsents[i];

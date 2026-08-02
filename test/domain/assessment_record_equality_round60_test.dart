@@ -41,8 +41,11 @@ void main() {
       // 修正后: == 比较 scores element-based, hashCode 一致
       final a = baseRecord(scores: [1, 2, 1, 2, 1, 1, 1, 0, 0]);
       final b = baseRecord(scores: [1, 2, 1, 2, 1, 1, 1, 0, 0]);
-      expect(identical(a.scores, b.scores), isFalse,
-          reason: 'sanity: 2 个 list 必须不同 instance',);
+      expect(
+        identical(a.scores, b.scores),
+        isFalse,
+        reason: 'sanity: 2 个 list 必须不同 instance',
+      );
       expect(a, equals(b));
       expect(a.hashCode, b.hashCode);
     });
@@ -54,8 +57,11 @@ void main() {
       final a = baseRecord(scores: [3, 3, 3, 0, 0, 0, 0, 0, 0]); // total = 9
       final b = baseRecord(scores: [1, 2, 1, 2, 1, 1, 1, 0, 0]); // total = 9
       expect(a.total, b.total);
-      expect(a, isNot(equals(b)),
-          reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false',);
+      expect(
+        a,
+        isNot(equals(b)),
+        reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false',
+      );
     });
 
     test('scores 长度不同 → == 不成立', () {
@@ -68,8 +74,11 @@ void main() {
         total: 8, // 修正前 == 修正 total 后可能误判
         scores: [1, 2, 1, 2, 1, 1, 0],
       );
-      expect(a7, isNot(equals(b)),
-          reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false',);
+      expect(
+        a7,
+        isNot(equals(b)),
+        reason: '修正前 == 不看 scores, total 相同就 true — 修正后必须 false',
+      );
     });
 
     test('scaleId 不同 → == 不成立', () {
@@ -80,8 +89,11 @@ void main() {
         total: a.total,
         scores: a.scores,
       );
-      expect(a, isNot(equals(b)),
-          reason: 'scaleId 不同 → == false (sanity baseline)',);
+      expect(
+        a,
+        isNot(equals(b)),
+        reason: 'scaleId 不同 → == false (sanity baseline)',
+      );
     });
 
     test('timestamp 不同 → == 不成立', () {
@@ -92,8 +104,11 @@ void main() {
         total: a.total,
         scores: a.scores,
       );
-      expect(a, isNot(equals(b)),
-          reason: 'timestamp 不同 → == false (sanity baseline)',);
+      expect(
+        a,
+        isNot(equals(b)),
+        reason: 'timestamp 不同 → == false (sanity baseline)',
+      );
     });
   });
 }

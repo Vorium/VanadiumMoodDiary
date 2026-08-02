@@ -48,11 +48,17 @@ void main() {
         //       → 走 onSafetyCheckCompleted() = bothHandled
         const initial = HomeLifecycleState.initial;
         final afterRerun = initial.onRerunRequested();
-        expect(afterRerun, HomeLifecycleState.safetyRerunRequested,
-            reason: 'onRerunRequested() 应该推进到 safetyRerunRequested',);
+        expect(
+          afterRerun,
+          HomeLifecycleState.safetyRerunRequested,
+          reason: 'onRerunRequested() 应该推进到 safetyRerunRequested',
+        );
         final afterSafety = afterRerun.onSafetyCheckCompleted();
-        expect(afterSafety, HomeLifecycleState.bothHandled,
-            reason: 'Timer 触发 force rerun 后, 推进到 bothHandled',);
+        expect(
+          afterSafety,
+          HomeLifecycleState.bothHandled,
+          reason: 'Timer 触发 force rerun 后, 推进到 bothHandled',
+        );
       },
     );
 
@@ -66,11 +72,13 @@ void main() {
         const s = HomeLifecycleState.deepLinkHandled;
         expect(
           () => s.onRerunRequested(),
-          throwsA(isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('invariant violated'),
-          ),),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              contains('invariant violated'),
+            ),
+          ),
           reason: 'medId 路径走完后, 不能又请求 rerun (互斥)',
         );
 
@@ -78,11 +86,13 @@ void main() {
         const r = HomeLifecycleState.safetyRerunRequested;
         expect(
           () => r.onDeepLinkHandled(),
-          throwsA(isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            contains('invariant violated'),
-          ),),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'message',
+              contains('invariant violated'),
+            ),
+          ),
           reason: 'rerun 请求后, 不能又走 medId 路径 (互斥)',
         );
       },

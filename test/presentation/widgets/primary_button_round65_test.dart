@@ -108,7 +108,10 @@ void main() {
     );
 
     final filled = tester.widget<FilledButton>(find.byType(FilledButton));
-    expect(filled.onPressed, isNull,
-        reason: 'onPressed=null 应透传给 FilledButton (disabled)',);
+    expect(
+      filled.onPressed,
+      isNull,
+      reason: 'onPressed=null 应透传给 FilledButton (disabled)',
+    );
   });
 }

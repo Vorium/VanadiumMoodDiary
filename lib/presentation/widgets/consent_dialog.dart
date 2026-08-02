@@ -12,22 +12,31 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 /// 精神心理患者 App 加紧急联系人场景下, 必须确认用户已告知联系人 "App
 /// 会在我失联时给你发短信" 后才能保存。
 ///
-/// 用法:
+/// v0.27 round 82: 抽象化支持 5 个 [ConsentKind]
+/// 修复前 `show()` 写死 `kind: ConsentKind.emergencyContactSharing` +
+/// `thresholdDays: int` 必传参数, 只能支持加联系人场景。修复后用
+/// `placeholders: Map<String, Object>?` 替代 `thresholdDays`, 内部按 `kind`
+/// 选不同渲染模板:
+/// - [ConsentKind.emergencyContactSharing] → 用 `contactConsent*` 模板
+///   (placeholders 需要 `thresholdDays: int`)
+/// - [ConsentKind.dataExport] → 用新 `dataExportConsent*` 模板
+///   (placeholders 需要 `purpose` / `dataCategories` / `retention`)
+/// - [ConsentKind.safety] / [ConsentKind.vent] / [ConsentKind.analytics] →
+///   fallback 模板 (PIPL §14 撤回 toggle 目前不弹 dialog, 留接口给 v1.0)
+///
+/// 用法 (dataExport 场景, R82 加):
 /// ```dart
 /// final consent = await ConsentDialog.show(
 ///   context,
-///   kind: ConsentKind.emergencyContactSharing,
-///   thresholdDays: 2,
+///   kind: ConsentKind.dataExport,
+///   placeholders: const {
+///     'purpose': '本地备份',
+///     'dataCategories': '用药 / 打卡 / 联系人',
+///     'retention': '剪贴板 + 用户自行保存',
+///   },
 /// );
-/// if (consent == null) {
-///   // 用户点了"暂不同意"
-///   return;
-/// }
-/// await ref.read(contactRepositoryProvider).add(
-///   name: ...,
-///   phone: ...,
-///   consentArtifact: consent,
-/// );
+/// if (consent == null) return; // 用户拒绝
+/// await ref.read(legalConsentStoreProvider).recordDataExportConsent(consent);
 /// ```
 ///
 /// 设计: 复用 showDialog + StatefulBuilder 模式 (跟 contacts_list_widget 的
@@ -43,28 +52,32 @@ class ConsentDialog {
   static Future<ConsentArtifact?> show(
     BuildContext context, {
     required ConsentKind kind,
-    required int thresholdDays,
+    Map<String, Object>? placeholders,
   }) async {
     final l10n = AppLocalizations.of(context);
     // v0.27 round 77 (R76-N6 修): await 之前先读 provider, 避免
     // `use_build_context_synchronously` 警告 (R56 memory: 同一 context
     // 在 await 前后用 analyzer 不认)。
     final container = ProviderScope.containerOf(context);
+
+    // R82: 按 kind 选模板
+    final template = _resolveTemplate(l10n, kind, placeholders);
+
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false, // 必须显式选择, 防止误点背景关闭
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.contactConsentTitle),
+        title: Text(template.title),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(l10n.contactConsentBody(thresholdDays)),
+              template.body,
               const SizedBox(height: AppTokens.spacingMd),
               // 版本号留痕 (PIPL §13 + §17)
               Text(
-                l10n.contactConsentVersion,
+                template.version,
                 style: AppTokens.textStyleCaptionHint(context),
               ),
             ],
@@ -73,11 +86,11 @@ class ConsentDialog {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.contactConsentReject),
+            child: Text(template.rejectLabel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.contactConsentAgree),
+            child: Text(template.agreeLabel),
           ),
         ],
       ),
@@ -94,4 +107,89 @@ class ConsentDialog {
       version: version,
     );
   }
+
+  /// R82: 按 kind + placeholders 选模板
+  static _ConsentTemplate _resolveTemplate(
+    AppLocalizations l10n,
+    ConsentKind kind,
+    Map<String, Object>? p,
+  ) {
+    switch (kind) {
+      case ConsentKind.emergencyContactSharing:
+        final thresholdDays = (p?['thresholdDays'] as int?) ?? 2;
+        return _ConsentTemplate(
+          title: l10n.contactConsentTitle,
+          body: Text(l10n.contactConsentBody(thresholdDays)),
+          agreeLabel: l10n.contactConsentAgree,
+          rejectLabel: l10n.contactConsentReject,
+          version: l10n.contactConsentVersion,
+        );
+      case ConsentKind.dataExport:
+        // R82: 3 个 placeholder (purpose / dataCategories / retention)
+        final purpose = (p?['purpose'] as String?) ?? '';
+        final dataCategories = (p?['dataCategories'] as String?) ?? '';
+        final retention = (p?['retention'] as String?) ?? '';
+        return _ConsentTemplate(
+          title: l10n.dataExportConsentTitle,
+          body: Text(
+            l10n.dataExportConsentBody(
+              purpose,
+              dataCategories,
+              retention,
+            ),
+          ),
+          agreeLabel: l10n.dataExportConsentConfirm,
+          // 复用 contactConsentReject (中英繁 "暂不同意" / "Decline for now"
+          // / "暫不同意" 跨场景通用)
+          rejectLabel: l10n.contactConsentReject,
+          version: l10n.dataExportConsentVersion,
+        );
+      case ConsentKind.safety:
+      case ConsentKind.vent:
+      case ConsentKind.analytics:
+        // Fallback: §14 撤回 toggle 在 legal_page 走 LegalConsentStore.withdraw,
+        // 目前不弹 ConsentDialog。这里保留 5 kind 全 switch 是为 v1.0
+        // 撤回确认弹窗留接口 (e.g. "关掉失联通知后, CareEngine 不再触发 SMS,
+        // 确认吗?"), 现阶段 fallback 用 contactConsent* 通用文案 + in-code
+        // kind 名描述, 不再额外加 ARB key。
+        return _ConsentTemplate(
+          title: l10n.contactConsentTitle,
+          body: Text(_fallbackBodyFor(kind)),
+          agreeLabel: l10n.contactConsentAgree,
+          rejectLabel: l10n.contactConsentReject,
+          version: l10n.contactConsentVersion,
+        );
+    }
+  }
+
+  /// §14 撤回场景 fallback body (R82: 现阶段不弹, 留接口)
+  static String _fallbackBodyFor(ConsentKind kind) {
+    switch (kind) {
+      case ConsentKind.safety:
+        return '失联通知功能将停用。CareEngine 不再通过 SMS / 邮件自动通知紧急联系人。';
+      case ConsentKind.vent:
+        return '树洞 (私密倾诉) 功能将停用。新增树洞记录会被拒绝, 已有记录保留。';
+      case ConsentKind.analytics:
+        return '评估 / 情绪相关分析图表将不再展示。已有数据保留, 重新开启后恢复。';
+      default:
+        return '';
+    }
+  }
+}
+
+/// R82: 内部模板小类, 让 _resolveTemplate 5 kind 全 switch 时不重复
+/// build AlertDialog 代码。
+class _ConsentTemplate {
+  final String title;
+  final Widget body;
+  final String agreeLabel;
+  final String rejectLabel;
+  final String version;
+  const _ConsentTemplate({
+    required this.title,
+    required this.body,
+    required this.agreeLabel,
+    required this.rejectLabel,
+    required this.version,
+  });
 }

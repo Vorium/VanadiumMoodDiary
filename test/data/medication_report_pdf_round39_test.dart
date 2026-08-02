@@ -128,7 +128,8 @@ void main() {
       final s = _buildData(
         medStats: [
           _buildStat(
-              missedDates: [DateTime(2026, 6, 5), DateTime(2026, 6, 10)],),
+            missedDates: [DateTime(2026, 6, 5), DateTime(2026, 6, 10)],
+          ),
         ],
       ).toReportString();
       expect(s, contains('⚠️ 漏服'));

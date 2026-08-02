@@ -103,7 +103,9 @@ class SafetyWatchService {
   Future<SafetyCheckResult> onAppStart({required AppLocalizations l10n}) async {
     if (!FeatureFlags.bootReceiverEnabled) {
       piiSafeLog(
-          'SafetyWatchService', 'BootReceiver disabled, skip rescheduleAll',);
+        'SafetyWatchService',
+        'BootReceiver disabled, skip rescheduleAll',
+      );
       return const SafetyCheckResult(kind: SafetyCheckKind.disabled);
     }
     return _checkAndAlert(trigger: 'app_start', l10n: l10n);
@@ -298,8 +300,10 @@ class SafetyWatchService {
   ///      safety_watch_service 自身不动 — 整个降级链路最简
   Future<List<ContactEntity>> _loadContacts() async {
     try {
-      return await _contactRepo.watchAll().first.timeout(_contactWatchTimeout,
-          onTimeout: () => const <ContactEntity>[],);
+      return await _contactRepo.watchAll().first.timeout(
+            _contactWatchTimeout,
+            onTimeout: () => const <ContactEntity>[],
+          );
     } catch (e, st) {
       piiSafeLog(
         'SafetyWatchService',

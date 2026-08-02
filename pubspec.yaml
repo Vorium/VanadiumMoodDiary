@@ -19,7 +19,9 @@ dependencies:
 
   # 本地数据库
   drift: ^2.20.3
-  sqlcipher_flutter_libs: ^0.6.4
+  # v0.27 round 82: 0.6.5+ 是 16KB page size 对齐最低版本 (Google Play 2025-11 强制)
+  # 当前 locked 0.6.8 (>= 0.6.5) 已满足; 0.7.0 是 eol 不升级
+  sqlcipher_flutter_libs: ^0.6.5
   path_provider: ^2.1.4
   path: ^1.9.0
 

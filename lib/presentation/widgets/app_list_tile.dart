@@ -137,8 +137,10 @@ class AppListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(!(_isCarded && _isDestructive),
-        'AppListTile: carded + destructive 不能同时设置',);
+    assert(
+      !(_isCarded && _isDestructive),
+      'AppListTile: carded + destructive 不能同时设置',
+    );
 
     final listTile = ListTile(
       leading: leading,

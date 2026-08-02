@@ -1,0 +1,26 @@
+# CODEOWNERS — v0.27 round 82
+# 每个目录指定默认 owner,改文件时自动请求 review
+# 格式: path  @github-username
+# 不指定时,fallback 到 @maintainer
+
+# 顶层
+*  @maintainer
+
+# 架构核心(变更需 senior review)
+# /lib/core/data/database/         @maintainer
+# /lib/core/data/repositories/     @maintainer
+# /lib/core/theme/                 @maintainer
+# /lib/core/routing/               @maintainer
+# /lib/domain/                     @maintainer
+
+# 上架相关(iOS / Android / 法务)
+# /ios/                            @maintainer
+# /android/                        @maintainer
+# /fastlane/                       @maintainer
+# /assets/legal/                   @maintainer
+
+# 测试(1 file 1 round 命名规则)
+# /test/                           @maintainer
+
+# 守门员脚本
+# /scripts/                        @maintainer

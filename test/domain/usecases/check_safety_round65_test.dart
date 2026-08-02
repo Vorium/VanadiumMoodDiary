@@ -40,73 +40,83 @@ void main() {
     final lastCheckIn = now.subtract(const Duration(days: 1));
 
     test('enabled=false → SafetyDecisionDisabled', () {
-      final d = usecase(CheckSafetyInput(
-        enabled: false,
-        threshold: 2,
-        lastCheckInAt: lastCheckIn,
-        now: now,
-        lastAlertAt: null,
-        inDnd: false,
-        profile: _profile(),
-        contacts: [_contact()],
-      ),);
+      final d = usecase(
+        CheckSafetyInput(
+          enabled: false,
+          threshold: 2,
+          lastCheckInAt: lastCheckIn,
+          now: now,
+          lastAlertAt: null,
+          inDnd: false,
+          profile: _profile(),
+          contacts: [_contact()],
+        ),
+      );
       expect(d, isA<SafetyDecisionDisabled>());
     });
 
     test('lastCheckInAt=null → SafetyDecisionNoData (新用户)', () {
-      final d = usecase(CheckSafetyInput(
-        enabled: true,
-        threshold: 2,
-        lastCheckInAt: null,
-        now: now,
-        lastAlertAt: null,
-        inDnd: false,
-        profile: _profile(),
-        contacts: [_contact()],
-      ),);
+      final d = usecase(
+        CheckSafetyInput(
+          enabled: true,
+          threshold: 2,
+          lastCheckInAt: null,
+          now: now,
+          lastAlertAt: null,
+          inDnd: false,
+          profile: _profile(),
+          contacts: [_contact()],
+        ),
+      );
       expect(d, isA<SafetyDecisionNoData>());
     });
 
     test('daysSinceLast<threshold → SafetyDecisionOk (24h<2day)', () {
-      final d = usecase(CheckSafetyInput(
-        enabled: true,
-        threshold: 2,
-        lastCheckInAt: now.subtract(const Duration(hours: 24)),
-        now: now,
-        lastAlertAt: null,
-        inDnd: false,
-        profile: _profile(),
-        contacts: [_contact()],
-      ),);
+      final d = usecase(
+        CheckSafetyInput(
+          enabled: true,
+          threshold: 2,
+          lastCheckInAt: now.subtract(const Duration(hours: 24)),
+          now: now,
+          lastAlertAt: null,
+          inDnd: false,
+          profile: _profile(),
+          contacts: [_contact()],
+        ),
+      );
       expect(d, isA<SafetyDecisionOk>());
       expect((d as SafetyDecisionOk).daysSinceLast, 1);
     });
 
     test('lastAlertAt same day + 漏 3 天 → SafetyDecisionAlertedToday', () {
-      final d = usecase(CheckSafetyInput(
-        enabled: true,
-        threshold: 2,
-        lastCheckInAt: now.subtract(const Duration(days: 3)),
-        now: now,
-        lastAlertAt: now.subtract(const Duration(hours: 2)),
-        inDnd: false,
-        profile: _profile(),
-        contacts: [_contact()],
-      ),);
+      final d = usecase(
+        CheckSafetyInput(
+          enabled: true,
+          threshold: 2,
+          lastCheckInAt: now.subtract(const Duration(days: 3)),
+          now: now,
+          lastAlertAt: now.subtract(const Duration(hours: 2)),
+          inDnd: false,
+          profile: _profile(),
+          contacts: [_contact()],
+        ),
+      );
       expect(d, isA<SafetyDecisionAlertedToday>());
     });
 
     test('contacts 空 (stream timeout 降级) → SafetyDecisionNoContacts', () {
-      final d = usecase(CheckSafetyInput(
-        enabled: true,
-        threshold: 2,
-        lastCheckInAt: now.subtract(const Duration(days: 3)),
-        now: now,
-        lastAlertAt: null,
-        inDnd: false,
-        profile: _profile(),
-        contacts: const [],
-      ),);
+      final d = usecase(
+        CheckSafetyInput(
+          enabled: true,
+          threshold: 2,
+          lastCheckInAt: now.subtract(const Duration(days: 3)),
+          now: now,
+          lastAlertAt: null,
+          inDnd: false,
+          profile: _profile(),
+          contacts: const [],
+        ),
+      );
       expect(d, isA<SafetyDecisionNoContacts>());
     });
   });

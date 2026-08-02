@@ -47,7 +47,10 @@ class AppRouteMain {
           GoRoute(
             path: '/settings',
             pageBuilder: (context, state) => AppRoutes.fadePage(
-                state.pageKey, const SettingsPage(), context,),
+              state.pageKey,
+              const SettingsPage(),
+              context,
+            ),
           ),
           // 子页 (occasional → slide-from-right)
           GoRoute(

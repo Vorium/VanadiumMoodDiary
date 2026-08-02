@@ -17,9 +17,12 @@ import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 void main() {
   group('ConsentKind 统一 (P0-3)', () {
     test('enum 5 值 name 正确', () {
-      expect(ConsentKind.values.length, 5,
-          reason:
-              '应包含 emergencyContactSharing + dataExport + safety + vent + analytics',);
+      expect(
+        ConsentKind.values.length,
+        5,
+        reason:
+            '应包含 emergencyContactSharing + dataExport + safety + vent + analytics',
+      );
       expect(ConsentKind.values.map((k) => k.name).toList(), [
         'emergencyContactSharing',
         'dataExport',
@@ -37,7 +40,9 @@ void main() {
       expect(ConsentKind.vent.name, 'vent');
       expect(ConsentKind.analytics.name, 'analytics');
       expect(
-          ConsentKind.emergencyContactSharing.name, 'emergencyContactSharing',);
+        ConsentKind.emergencyContactSharing.name,
+        'emergencyContactSharing',
+      );
       expect(ConsentKind.dataExport.name, 'dataExport');
     });
 

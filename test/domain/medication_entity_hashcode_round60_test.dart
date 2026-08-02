@@ -53,22 +53,32 @@ void main() {
       // compiler 把 const 列表 canonicalize 成同一实例, 触发不到 bug.
       final a = baseMed(times: [const HourMinute(hour: 8, minute: 0)]);
       final b = baseMed(times: [const HourMinute(hour: 8, minute: 0)]);
-      expect(identical(a.times, b.times), isFalse,
-          reason: 'sanity: 2 个 list 必须不同 instance 才能测 hashCode',);
+      expect(
+        identical(a.times, b.times),
+        isFalse,
+        reason: 'sanity: 2 个 list 必须不同 instance 才能测 hashCode',
+      );
       expect(a, equals(b), reason: '修正前 == 已成立 (== 用 _listEq element 比较)');
-      expect(a.hashCode, b.hashCode,
-          reason: '修正后 hashCode 必须 element-based, 跟 == 一致',);
+      expect(
+        a.hashCode,
+        b.hashCode,
+        reason: '修正后 hashCode 必须 element-based, 跟 == 一致',
+      );
     });
 
     test('times 元素顺序不同 → == 不成立 (sanity check)', () {
-      final a = baseMed(times: const [
-        HourMinute(hour: 8, minute: 0),
-        HourMinute(hour: 20, minute: 0),
-      ],);
-      final b = baseMed(times: const [
-        HourMinute(hour: 20, minute: 0),
-        HourMinute(hour: 8, minute: 0),
-      ],);
+      final a = baseMed(
+        times: const [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
+        ],
+      );
+      final b = baseMed(
+        times: const [
+          HourMinute(hour: 20, minute: 0),
+          HourMinute(hour: 8, minute: 0),
+        ],
+      );
       expect(a, isNot(equals(b)), reason: 'times 顺序不同 = 不同 med');
     });
 
@@ -99,8 +109,11 @@ void main() {
       expect(med1, equals(med2));
       // 修正后 Set 查找 round-trip
       final set = <MedicationEntity>{med1};
-      expect(set.contains(med2), isTrue,
-          reason: '修正后 hashCode 一致 → Set 能找到 == 元素',);
+      expect(
+        set.contains(med2),
+        isTrue,
+        reason: '修正后 hashCode 一致 → Set 能找到 == 元素',
+      );
     });
 
     test('修正核心: Map key 查找 — 修正后能 round-trip', () {
@@ -108,8 +121,11 @@ void main() {
       final med1 = baseMed(times: [const HourMinute(hour: 8, minute: 0)]);
       final med2 = baseMed(times: [const HourMinute(hour: 8, minute: 0)]);
       final map = <MedicationEntity, String>{med1: 'value'};
-      expect(map[med2], 'value',
-          reason: '修正后 hashCode 一致 → Map 能用 == 元素查 value',);
+      expect(
+        map[med2],
+        'value',
+        reason: '修正后 hashCode 一致 → Map 能用 == 元素查 value',
+      );
     });
   });
 }

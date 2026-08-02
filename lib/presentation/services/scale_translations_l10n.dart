@@ -25,7 +25,8 @@ class AppLocalizationsScaleTranslations implements ScaleTranslations {
   String gad7Name({String? override}) => override ?? l10n.assessmentScaleGad7;
 
   @override
-  String crisisHotlineLabel(HotlineRegion region, {int index = 0, String? override}) {
+  String crisisHotlineLabel(HotlineRegion region,
+      {int index = 0, String? override,}) {
     if (override != null) return override;
     // v0.27 R77 (spzh P1-A 收尾): 6 region × 2 hotline 全 i18n 化
     // (cn/us/tw 各 2 个, hk/sg/uk 各 1 个)。index 越界走 first.label 兜底。

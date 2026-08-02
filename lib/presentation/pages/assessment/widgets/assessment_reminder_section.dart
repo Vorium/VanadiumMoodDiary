@@ -130,8 +130,10 @@ class _AssessmentReminderSectionState
       child: Column(
         children: [
           SwitchListTile(
-            secondary: Icon(Icons.event_repeat,
-                color: AppTokens.primaryColor(context),),
+            secondary: Icon(
+              Icons.event_repeat,
+              color: AppTokens.primaryColor(context),
+            ),
             title:
                 Text(AppLocalizations.of(context).reminderHubAssessmentTitle),
             subtitle: Text(

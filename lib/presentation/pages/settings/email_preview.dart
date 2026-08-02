@@ -118,7 +118,8 @@ class EmailPreviewPage extends ConsumerWidget {
                   error: (e, _) => Padding(
                     padding: const EdgeInsets.all(AppTokens.spacingMd),
                     child: ErrorState(
-                      title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+                      title: AppLocalizations.of(context)
+                          .commonLoadFailed(e.toString()),
                       detail: e.toString(),
                     ),
                   ),

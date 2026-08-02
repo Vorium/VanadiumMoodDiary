@@ -63,8 +63,7 @@ void main() {
   // Step 0: consent 状态机
   // ============================================================
   group('Step 0 (consent)', () {
-    testWidgets('初始显示 3 个 checkbox + "开始使用" 按钮 disabled',
-        (tester) async {
+    testWidgets('初始显示 3 个 checkbox + "开始使用" 按钮 disabled', (tester) async {
       await _pumpSetup(tester);
       // v0.27 R77: consent step 初始 3 个 checkbox 全部未勾, "开始使用" 按钮禁用
       // 之前 R18 test 直接勾 3 个, 缺 0 状态验证
@@ -79,8 +78,11 @@ void main() {
       await tester.tap(checkboxes.first);
       await tester.pumpAndSettle();
       // 仍在 step 0, 3 个 checkbox 还在
-      expect(find.byType(Checkbox), findsNWidgets(3),
-          reason: '勾 1 个 checkbox, 仍在 step 0',);
+      expect(
+        find.byType(Checkbox),
+        findsNWidgets(3),
+        reason: '勾 1 个 checkbox, 仍在 step 0',
+      );
     });
 
     testWidgets('勾 2 个 checkbox → 仍在 step 0', (tester) async {
@@ -89,8 +91,11 @@ void main() {
       await tester.tap(checkboxes.at(0));
       await tester.tap(checkboxes.at(1));
       await tester.pumpAndSettle();
-      expect(find.byType(Checkbox), findsNWidgets(3),
-          reason: '勾 2 个 checkbox, 仍在 step 0',);
+      expect(
+        find.byType(Checkbox),
+        findsNWidgets(3),
+        reason: '勾 2 个 checkbox, 仍在 step 0',
+      );
     });
 
     testWidgets('勾满 3 个 checkbox → "开始设置" 按钮 enabled, 点击进入 step 1',
@@ -107,8 +112,11 @@ void main() {
       await tester.tap(startBtn);
       await tester.pumpAndSettle();
       // step 1 显示 "下一步 →" 按钮
-      expect(find.textContaining('下一步'), findsAtLeastNWidgets(1),
-          reason: '进入 step 1 后有"下一步"按钮',);
+      expect(
+        find.textContaining('下一步'),
+        findsAtLeastNWidgets(1),
+        reason: '进入 step 1 后有"下一步"按钮',
+      );
     });
   });
 
@@ -127,8 +135,11 @@ void main() {
       await tester.tap(find.text('开始设置'));
       await tester.pumpAndSettle();
       // step 1 (welcome) 应该有"下一步 →"按钮
-      expect(find.textContaining('下一步'), findsAtLeastNWidgets(1),
-          reason: 'step 1 welcome 有"下一步"按钮',);
+      expect(
+        find.textContaining('下一步'),
+        findsAtLeastNWidgets(1),
+        reason: 'step 1 welcome 有"下一步"按钮',
+      );
     });
 
     testWidgets('setup_page 4 step 共 4 个 setup_step_xxx widget 文件 (架构确认)',
@@ -151,8 +162,7 @@ void main() {
   // 返回 / 重置
   // ============================================================
   group('返回 / 重置', () {
-    testWidgets('step 0 状态被销毁 → 重启 pump 应回到 step 0',
-        (tester) async {
+    testWidgets('step 0 状态被销毁 → 重启 pump 应回到 step 0', (tester) async {
       await _pumpSetup(tester);
       // step 0 部分勾
       final checkboxes = find.byType(Checkbox);
@@ -163,8 +173,11 @@ void main() {
       // 重启 pump
       await _pumpSetup(tester);
       // 状态机应重置回 step 0 (新 widget tree)
-      expect(find.byType(Checkbox), findsNWidgets(3),
-          reason: '重启后 widget 状态丢失, 应回到 step 0 consent + 3 个 checkbox',);
+      expect(
+        find.byType(Checkbox),
+        findsNWidgets(3),
+        reason: '重启后 widget 状态丢失, 应回到 step 0 consent + 3 个 checkbox',
+      );
     });
   });
 }

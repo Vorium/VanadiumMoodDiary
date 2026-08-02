@@ -63,9 +63,6 @@
   "settingsExportDialogTitle": "Export Data",
   "settingsExportInstruction": "Save the JSON below to a safe place:",
   "settingsExportVentWarning": "Note: Text from vent (private diary) will be exported, but audio recordings will not — audio is stored locally and becomes inaccessible after reinstall.",
-  "settingsExportVentConfirmTitle": "Export contains sensitive content",
-  "settingsExportVentConfirmBody": "About to export your vent (private diary) text. Mental-health patients may share personal or sensitive content; the exported JSON is plaintext, and anything in your clipboard or saved file can potentially be seen by others.\n\nPlease confirm:\n• You'll store it in a safe place (e.g. encrypted disk)\n• You won't share it with anyone unauthorized\n• Vent audio recordings are NOT included",
-  "settingsExportVentConfirmConfirm": "I understand, continue",
   "settingsCopy": "Copy",
   "settingsActionExport": "Export",
   "settingsActionGenerateReport": "Generate report",
@@ -1088,6 +1085,27 @@
   "contactConsentAgree": "I have informed and obtained consent",
   "contactConsentReject": "Decline for now",
   "contactConsentVersion": "v1 · 2026-07-31",
+  "dataExportConsentTitle": "Data Export Consent",
+  "dataExportConsentBody": "You are about to export all data from the local database.\n\n**Purpose**: {purpose}\n**Data scope**: {dataCategories}\n**Retention**: {retention}\n\n**Per PIPL Article 13** (data portability + standalone consent), please confirm you understand the above purpose and consent to this export.",
+  "@dataExportConsentBody": {
+    "description": "PIPL §13 data portability dialog body, standalone consent before user exports JSON (R82)",
+    "placeholders": {
+      "purpose": {
+        "type": "String",
+        "example": "Local backup / cross-device migration"
+      },
+      "dataCategories": {
+        "type": "String",
+        "example": "Medication log, check-in log, emergency contacts, mood diary"
+      },
+      "retention": {
+        "type": "String",
+        "example": "Clipboard + user-managed encrypted file"
+      }
+    }
+  },
+  "dataExportConsentConfirm": "I understand and consent to export",
+  "dataExportConsentVersion": "v1 · 2026-08-15",
   "contactDefaultName": "Contact",
   "contactNameLabel": "Name",
   "contactPhoneLabel": "Phone",
@@ -1406,6 +1424,8 @@
   "homeFabVent": "Mood vent",
   "homeFabHotline": "Hotline",
   "homeFabTop": "Back to top",
+  "homeFabHotlineTodo": "Hotline entry coming soon",
+  "homeFabTopTodo": "Scroll-to-top coming soon",
   "trendChip30Day": "Last 30 days",
   "assessmentChipCurrent": "This week"
 }

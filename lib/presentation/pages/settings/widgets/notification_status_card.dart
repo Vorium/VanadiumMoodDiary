@@ -231,8 +231,10 @@ class _NotificationStatusCardState
           ),
           const Divider(height: 1),
           AppListTile(
-            leading: Icon(Icons.send_outlined,
-                color: AppTokens.primaryColor(context),),
+            leading: Icon(
+              Icons.send_outlined,
+              color: AppTokens.primaryColor(context),
+            ),
             title: Text(l10n.notificationStatusCardTestButtonTitle),
             subtitle: Text(l10n.notificationStatusCardTestButtonSubtitle),
             onTap: _busy ? null : _fireTest,

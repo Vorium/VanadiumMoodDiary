@@ -54,8 +54,11 @@ void main() {
       expect(stat.expectedDoseCount, 1);
       expect(stat.actualDoseCount, 0);
       expect(stat.actualDoseDays, 0);
-      expect(stat.missedDates.length, 1,
-          reason: 'startDate = periodEnd 当天应有 1 天可服药',);
+      expect(
+        stat.missedDates.length,
+        1,
+        reason: 'startDate = periodEnd 当天应有 1 天可服药',
+      );
     });
 
     test(
@@ -117,9 +120,12 @@ void main() {
       );
       expect(stat.expectedDoseCount, 7);
       expect(stat.actualDoseCount, 0);
-      expect(stat.missedDates.length, 7,
-          reason: '7 天窗口中只有 1 天已服 (第 7 天), 还剩 6 天漏服 '
-              '+ 1 天窗口外? 实际 effectiveDays=7, 0 打卡 → 7 天漏服',);
+      expect(
+        stat.missedDates.length,
+        7,
+        reason: '7 天窗口中只有 1 天已服 (第 7 天), 还剩 6 天漏服 '
+            '+ 1 天窗口外? 实际 effectiveDays=7, 0 打卡 → 7 天漏服',
+      );
     });
 
     test('startDate 在未来 + 已有打卡 (edge case): 未来打卡不算 → 仍 empty', () {
@@ -142,8 +148,11 @@ void main() {
         periodStart: periodStart,
       );
       expect(stat.expectedDoseCount, 0);
-      expect(stat.actualDoseCount, 0,
-          reason: 'effectiveDays ≤ 0 → actual 也清零, 不计未来打卡',);
+      expect(
+        stat.actualDoseCount,
+        0,
+        reason: 'effectiveDays ≤ 0 → actual 也清零, 不计未来打卡',
+      );
       expect(stat.missedDates, isEmpty);
     });
   });

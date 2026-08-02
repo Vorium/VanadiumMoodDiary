@@ -168,8 +168,9 @@ void main() {
       // 7-12 周日也有打卡,所以触发原因只能是 i=0 Saturday
       final checkIns = [
         _ci(saturdayEvening.subtract(const Duration(hours: 30))), // 7-17 周五
-        _ci(saturdayEvening
-            .subtract(const Duration(days: 6, hours: 12)),), // 7-12 周日
+        _ci(
+          saturdayEvening.subtract(const Duration(days: 6, hours: 12)),
+        ), // 7-12 周日
       ];
       expect(isWeekendMissed(checkIns, saturdayEvening), isTrue);
     });

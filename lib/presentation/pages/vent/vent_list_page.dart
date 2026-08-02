@@ -55,7 +55,8 @@ class VentListPage extends ConsumerWidget {
             onRefresh: () async {
               ref.invalidate(ventEntriesProvider);
               await Future<void>.delayed(
-                  const Duration(milliseconds: AppTokens.refreshMinVisibleMs),);
+                const Duration(milliseconds: AppTokens.refreshMinVisibleMs),
+              );
             },
             child: _EntryList(entries: entries),
           );
@@ -240,9 +241,12 @@ class _EntryCard extends StatelessWidget {
                   Text(
                     // v0.28 round 65 (spzh P2-I): durationLabel 走 i18n
                     entry.durationLabelL10n(
-                      getSeconds: (s) => AppLocalizations.of(context).ventDurationSeconds(s),
-                      getMinutes: (m) => AppLocalizations.of(context).ventDurationMinutes(m),
-                      getMinutesSeconds: (m, s) => AppLocalizations.of(context).ventDurationMinutesSeconds(m, s),
+                      getSeconds: (s) =>
+                          AppLocalizations.of(context).ventDurationSeconds(s),
+                      getMinutes: (m) =>
+                          AppLocalizations.of(context).ventDurationMinutes(m),
+                      getMinutesSeconds: (m, s) => AppLocalizations.of(context)
+                          .ventDurationMinutesSeconds(m, s),
                     ),
                     style: AppTokens.textStyleCaption(context)
                         .copyWith(color: AppTokens.textHintColor(context)),
@@ -251,8 +255,10 @@ class _EntryCard extends StatelessWidget {
               ],
             ),
           ),
-          trailing: Icon(Icons.chevron_right,
-              color: AppTokens.textHintColor(context),),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: AppTokens.textHintColor(context),
+          ),
           onTap: () => context.push('/vent/detail/${entry.id}'),
           onLongPress: () => _confirmDelete(context, entry),
         ),
@@ -277,7 +283,8 @@ class _EntryCard extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(
-                foregroundColor: AppTokens.errorColor(context),),
+              foregroundColor: AppTokens.errorColor(context),
+            ),
             child: Text(AppLocalizations.of(context).commonDelete),
           ),
         ],

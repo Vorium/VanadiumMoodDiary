@@ -77,7 +77,10 @@ class AppRoutes {
 
   /// Slide-up + fade (全屏深页 rare)
   static Page<T> slideUpPage<T>(
-      LocalKey key, Widget child, BuildContext context,) {
+    LocalKey key,
+    Widget child,
+    BuildContext context,
+  ) {
     return CustomTransitionPage<T>(
       key: key,
       child: child,

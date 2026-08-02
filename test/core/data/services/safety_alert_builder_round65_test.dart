@@ -42,11 +42,17 @@ void main() {
         channelDescription: channelDesc,
       );
 
-      expect(build.title, '⚠️ 张三 已 3 天未打卡',
-          reason: 'title 用 safeUserName + days, ⚠️ 前缀',);
+      expect(
+        build.title,
+        '⚠️ 张三 已 3 天未打卡',
+        reason: 'title 用 safeUserName + days, ⚠️ 前缀',
+      );
       expect(build.body, contains('已自动通知'), reason: 'sent 文案: 已自动通知紧急联系人');
-      expect(build.body, contains('2026-07-20'),
-          reason: 'lastCheckIn 走 YYYY-MM-DD 格式',);
+      expect(
+        build.body,
+        contains('2026-07-20'),
+        reason: 'lastCheckIn 走 YYYY-MM-DD 格式',
+      );
     });
 
     test('2. smsMock=1 > 0 + lastCheckIn=null → body 走 mocked + "从未打卡"', () {
@@ -116,7 +122,8 @@ void main() {
       expect(build.body, contains('2026-07-01'), reason: '月日必须补零: 7-1 → 07-01');
     });
 
-    test('6. en locale → title 走 en l10n, body 走 en l10n (R75 改: title 走 l10n)', () {
+    test('6. en locale → title 走 en l10n, body 走 en l10n (R75 改: title 走 l10n)',
+        () {
       // v0.27 round 75 (R74-N7 修): title 改 l10n, 之前硬编码中文。
       // en locale 走 en l10n → "⚠️ Alice hasn't checked in for 3 days"。
       final build = SafetyAlertBuilder.buildFor(
@@ -130,12 +137,21 @@ void main() {
         channelDescription: channelDesc,
       );
 
-      expect(build.title, "⚠️ Alice hasn't checked in for 3 days",
-          reason: 'title 走 l10n, en 文案',);
-      expect(build.body, contains('Auto-notified'),
-          reason: 'en l10n: "Auto-notified emergency contacts"',);
-      expect(build.body, contains('2026-07-20'),
-          reason: 'lastCheckIn 格式跟 locale 无关',);
+      expect(
+        build.title,
+        "⚠️ Alice hasn't checked in for 3 days",
+        reason: 'title 走 l10n, en 文案',
+      );
+      expect(
+        build.body,
+        contains('Auto-notified'),
+        reason: 'en l10n: "Auto-notified emergency contacts"',
+      );
+      expect(
+        build.body,
+        contains('2026-07-20'),
+        reason: 'lastCheckIn 格式跟 locale 无关',
+      );
     });
 
     test(
@@ -158,19 +174,28 @@ void main() {
       expect(android.channelId, 'custom.safety.id', reason: 'channelId 透传');
       expect(android.channelName, 'custom.name');
       expect(android.channelDescription, 'custom.desc');
-      expect(android.importance, Importance.max,
-          reason: 'safety 通知: 最高 importance (锁屏可见 + 震动)',);
+      expect(
+        android.importance,
+        Importance.max,
+        reason: 'safety 通知: 最高 importance (锁屏可见 + 震动)',
+      );
       expect(android.priority, Priority.max);
-      expect(android.category, AndroidNotificationCategory.alarm,
-          reason: 'safety 走 alarm category',);
+      expect(
+        android.category,
+        AndroidNotificationCategory.alarm,
+        reason: 'safety 走 alarm category',
+      );
 
       // iOS 字段
       final ios = build.details.iOS!;
       expect(ios.presentAlert, true);
       expect(ios.presentBadge, true);
       expect(ios.presentSound, true);
-      expect(ios.interruptionLevel, InterruptionLevel.timeSensitive,
-          reason: 'iOS 走 timeSensitive (Bypass Do Not Disturb)',);
+      expect(
+        ios.interruptionLevel,
+        InterruptionLevel.timeSensitive,
+        reason: 'iOS 走 timeSensitive (Bypass Do Not Disturb)',
+      );
     });
   });
 
@@ -199,8 +224,11 @@ void main() {
             channelDescription: channelDesc,
           );
           expect(build.title, isNotEmpty);
-          expect(build.body, isNotEmpty,
-              reason: 'locale=${l10n.localeName} body 必须非空 (3 态都要 l10n key)',);
+          expect(
+            build.body,
+            isNotEmpty,
+            reason: 'locale=${l10n.localeName} body 必须非空 (3 态都要 l10n key)',
+          );
         }
       });
     }

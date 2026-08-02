@@ -316,7 +316,9 @@ class DayDetailCalculator {
           if (medName != null) return checkInLabel(medName);
           return dailyLabel?.call() ?? '每日打卡';
         case CheckInType.temp:
-          if (medName != null && medName.isNotEmpty) return checkInLabel(medName);
+          if (medName != null && medName.isNotEmpty) {
+            return checkInLabel(medName);
+          }
           return dailyLabel?.call() ?? '临时吃药';
         case CheckInType.phq9:
         case CheckInType.gad7:

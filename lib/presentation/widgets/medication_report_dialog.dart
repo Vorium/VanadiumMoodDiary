@@ -111,8 +111,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                         // emil "DRY for taste" + 集中器复用原则
                         Expanded(
                           child: LoadingTextButton(
-                            label:
-                                AppLocalizations.of(context).settingsCopy,
+                            label: AppLocalizations.of(context).settingsCopy,
                             icon: Icons.copy,
                             isLoading: false,
                             onPressed: _copy,
@@ -122,8 +121,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                         const SizedBox(width: AppTokens.spacingSm),
                         Expanded(
                           child: LoadingTextButton(
-                            label: AppLocalizations.of(context)
-                                .medReportPdfLabel,
+                            label:
+                                AppLocalizations.of(context).medReportPdfLabel,
                             icon: Icons.picture_as_pdf,
                             isLoading: _pdfLoading,
                             onPressed:
@@ -168,7 +167,9 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
     await Clipboard.setData(ClipboardData(text: widget.report));
     if (mounted) {
       AppSnackBar.showInfo(
-          context, AppLocalizations.of(context).snackbarCopied,);
+        context,
+        AppLocalizations.of(context).snackbarCopied,
+      );
     }
   }
 
