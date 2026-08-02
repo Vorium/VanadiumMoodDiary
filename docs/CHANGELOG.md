@@ -2,6 +2,78 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-02 (R81 — emil design eng 借鉴 B 站"哗哩哗哩能量加油站" 6 commit, 病耻感 UI 升级)
+
+> R81 目标: 用户分享 B 站"哗哩哗哩能量加油站" 2 张截图, 加载 emilkowalski
+> skill 走设计工程师 lens, 借鉴治愈系 IP 风格 (太阳+云+叶 插画) +
+> 横滑 carousel (1 tap 速记) + 浮动 FAB 工具栏 + chip 标签 4 类。
+> R81 6 commit 落地, 病耻感 UI 大升级, 跟精神心理 App 调性对齐。
+
+### Tests
+- **1368/1368 pass** (R80 1362 + R81 +6: 4 mood_visual + 6 home_emil)
+- `flutter analyze` **0 error / 0 warning** (1 info: snooze_manager.dart:95 R77-10 已知遗留)
+- 16 守护脚本全绿
+
+### R81 commit 落地 (6 commit, B 站借鉴)
+- `316f95a` R81-1 (emil design-1): mood_visual 加 IP 化太阳 emoji 5 档 (☀️🌤⛅🌧⛈ + 嘴型), dimension_row 评分 1-5 改太阳
+- `fd23d84` R81-2 (emil design-2): home_page 加 QuickMoodCarousel 横滑 4 档 IP 太阳, 1 tap 速记 mood score (B 站 4 情绪横滑同款)
+- `bb8b948` R81-3 (emil design-3): home_page 加 HomeFabToolbar 浮动工具栏 (收起 1 FAB / 展开 4 工具按钮: 心情测试 / 心情树洞 / 紧急热线 / 回到顶端)
+- `7718248` R81-4 (emil design-4): home_page 加 HomeHeroIllustration 自绘插画 (蓝天 + 太阳 + 云 + 叶, 无 asset 依赖, 跨平台稳)
+- `c4d09cf` R81-5 (emil design-5): SectionHeader 加 chip 标签, trend_page + settings_page 应用 (B 站 chip 风格)
+- `915e8d1` R81-6 (emil design-6): 6 case 集成测 (3 SectionHeader chip + 3 HomeFabToolbar toggle)
+
+### 借鉴的 10 条 B 站经验
+| # | 经验 | R81 应用 |
+|---|---|---|
+| 1 | 4 情绪用 IP 化太阳 emoji (☀️⛅🌧⛈ + 嘴型) | R81-1 dimension_row 评分改太阳 |
+| 2 | 横滑 carousel 而非 2x2 grid (4 选时聚焦) | R81-2 QuickMoodCarousel 4 档 PageView |
+| 3 | 全屏治愈系插画 hero 跟功能区视觉分层 | R81-4 HomeHeroIllustration 140dp 自绘 |
+| 4 | 中性化措辞 "能量加油站 / 心情日记 / 树洞" | R72+R75+R77 已做 5+1 鼓励文案 |
+| 5 | chip 标签做副标题 | R81-5 SectionHeader chip 字段 |
+| 6 | 2x2 grid 工具入口 | R81 plan 留 R82+ (主页 4 入口 carousel 已经有) |
+| 7 | CTA 按钮圆角 + 品牌色 | ✅ PrimaryButton 已统一 |
+| 8 | 浮动 FAB 工具栏 (收起 1 / 展开 4) | R81-3 HomeFabToolbar |
+| 9 | 每卡片独立圆形插画 (IP 化视觉锚点) | R81-4 hero 4 元素 Stack |
+| 10 | 病耻感文案口语化 | ✅ R77 care_copy 3 处中性化 |
+
+### R81 emil 设计决策框架 (4 步过一遍)
+- **1. 该动画吗?** 主路径 (carousel / FAB toggle) 用 PageView + AnimatedSize (200ms ease-out), hero 插画静态无动画 (rare 频度, emil 决策: rare 可加 delight, 装饰不动画)
+- **2. 缓动曲线** PageView 横滑 200ms ease-out, AnimatedRotation 0.125 turn 100ms durFast (B 站风格)
+- **3. duration** < 300ms sub-300ms 标准, FAB toggle 200ms
+- **4. accessibility** prefers-reduced-motion 走 Motion.duration / Motion.curve 自动归零 (病耻感 / 紧急 / 测试场景, 不能飘)
+
+### R81 新增 widget
+- `lib/core/shared/mood_visual.dart`: `ipEmojiFor(int score)` 5 档 IP 太阳
+- `lib/presentation/pages/home/widgets/quick_mood_carousel.dart`: 主页 4 档横滑 carousel
+- `lib/presentation/pages/home/widgets/home_fab_toolbar.dart`: 浮动 FAB 工具栏 (R81-3)
+- `lib/presentation/pages/home/widgets/hero_illustration.dart`: 主页 hero 插画
+- `lib/presentation/widgets/section_header.dart`: 加 `chip` 字段 + 私有 `_ChipBadge`
+
+### ARB 新增 (zh + en + zh_Hant 三语同步)
+- `homeQuickMoodTitle`: 今天感觉如何？/ How are you today? / 今天感覺如何？
+- `homeFabAssessment`: 心情测试 / Mood test / 心情測試
+- `homeFabVent`: 心情树洞 / Mood vent / 心情樹洞
+- `homeFabHotline`: 紧急热线 / Hotline / 緊急熱線
+- `homeFabTop`: 回到顶端 / Back to top / 回到頂端
+- `trendChip30Day`: 近 30 天 / Last 30 days / 近 30 天
+- `assessmentChipCurrent`: 本周 / This week / 本週
+
+### R81 总览
+- **6 commit 落地** (5 widget + 1 集成测)
+- **病耻感 UI 大升级**: 评分数字 → 太阳 emoji / 主页加 4 档速记 carousel / 浮动 FAB 工具栏 / 自绘 hero 插画 / 标题旁 chip 标签
+- **总进度**: 1163 (R63) → 1368 (R81), **+205 tests** / **+44 commits** / 16 守护脚本全绿
+
+### R82+ 路线 (emil design eng 续)
+- R82 QuickMoodCarousel PageView 滑动手势测 (flutter_test dragBy)
+- R82 紧急热线入口 跳 safety_alert_dialog (替代 SnackBar 占位)
+- R82 回到顶端 接管滚动 (Scrollable.ensureVisible)
+- R82 user 反馈 A/B: emojiFor (人脸) vs ipEmojiFor (太阳) 哪个保留
+- R82 mood_audio_section 抽 AudioRecorderPlayer sub-widget (R80 评估)
+- R82 home_page 集成测 5 case deep link 4 路径
+- R82 抽 HomeDeepLinkHandler + HomeCelebrationController (R79 评估)
+
+---
+
 ## [Unreleased] - 2026-08-02 (R80 — MoodRecorder widget 测 6 case, R76 P3-5 partial 续)
 
 > R80 目标: R79 评估 doc 写好, 优先写测保护现有 widget 行为 (跟
