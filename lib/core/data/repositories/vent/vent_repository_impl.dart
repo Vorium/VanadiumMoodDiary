@@ -145,4 +145,29 @@ class VentRepositoryImpl implements VentRepository {
       at: entry.timestamp,
     );
   }
+
+  @override
+  Future<int> deleteAll() async {
+    // v0.28 R82.5 (法务 Q7b 必改): PIPL §47 删除权
+    // 撤回 vent 同意时, 用户选"立即删除"走此路径。
+    // 流程: 事务里查所有 audioPath → 删 DB 行 → 提交 → 删 audio 文件
+    //
+    // 顺序: 先删 DB, 再删文件。如果反过来, 删完文件后删 DB 失败 = audio
+    // 没了但 DB 还有指针(下次 watchAll 解密 null 报错)。先删 DB 的话,
+    // 即使后续文件删失败, DB 已经是干净状态, audio 残留 = 孤儿 (下
+    // 次启动 purgeOrphanPlainFiles 清)。
+    final paths = await (_db.select(_db.ventEntries))
+        .map((r) => r.audioPath)
+        .get();
+
+    final deleted = await _db.transaction(() async {
+      return await _db.ventDao.deleteAll();
+    });
+
+    // 删 audio 文件 (best-effort, 重试 3 次)
+    if (paths.isNotEmpty) {
+      await _audioStorage.deleteAllWithRetry();
+    }
+    return deleted;
+  }
 }

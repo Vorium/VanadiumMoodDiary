@@ -50,4 +50,14 @@ abstract class VentRepository {
   /// [originalTimestamp] 保留原 timestamp（用 add 的 at 参数注入）。
   /// 返回新 id。
   Future<int> restore(VentEntryEntity entry);
+
+  /// v0.28 R82.5 (法务 Q7b 必改): 物理删除所有 vent 条目 + 全部 audio 文件
+  ///
+  /// PIPL §47 删除权: 撤回 vent 同意时, 用户选"立即删除"走此路径。
+  /// 跟 [delete] 区别: 删单条 vs 删所有。返回删了几条 (供 UI 提示)。
+  ///
+  /// 事务保护: 删 DB 行 + 删 audio 文件包一个事务 (read audioPath 列表 →
+  /// 事务删 DB → 循环删文件)。事务失败回滚, 但已删的文件不还原
+  /// (FS 不可逆, 走 [VentAudioStorage.deleteAllWithRetry] 兜底重试 3 次)。
+  Future<int> deleteAll();
 }

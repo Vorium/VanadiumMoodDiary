@@ -9,11 +9,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer' as developer;
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
+import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
@@ -62,6 +64,57 @@ class _LegalPageState extends ConsumerState<LegalPage> {
 
   Future<void> _toggle(ConsentKind kind, bool withdraw) async {
     final store = ref.read(legalConsentStoreProvider);
+    // v0.28 R82.5 (法务 Q7b 必改, PIPL §47): vent 撤回弹 3 选 1 dialog
+    // 立即删除 / 加密封存 / 取消。safety / analytics 走原直接 toggle 路径
+    if (withdraw && kind == ConsentKind.vent) {
+      final choice = await _showVentWithdrawDialog();
+      if (choice == null) return; // 用户取消, 状态不变
+      if (choice == _VentWithdrawChoice.delete) {
+        // 立即删除: 物理删所有 vent 行 + audio 文件
+        try {
+          final repo = ref.read(ventRepositoryProvider);
+          final deletedCount = await repo.deleteAll();
+          if (mounted) {
+            AppSnackBar.showInfo(
+              context,
+              AppLocalizations.of(context).legalVentWithdrawnDeleted(deletedCount),
+            );
+          }
+        } catch (e, st) {
+          if (mounted) {
+            AppSnackBar.showError(
+              context,
+              action: AppLocalizations.of(context).legalVentDeleteRetry,
+              error: e,
+            );
+          }
+          // 不抛 — 错误已显示, 让用户重试 toggle
+          developer.log('vent deleteAll failed', error: e, stackTrace: st);
+          return;
+        }
+      } else {
+        // 加密封存: 数据物理上还在, UI 隐藏
+        await store.seal(kind);
+        if (mounted) {
+          AppSnackBar.showInfo(
+            context,
+            AppLocalizations.of(context).legalVentWithdrawnSealed,
+          );
+        }
+      }
+      // 2 个选择都标 withdrawn=true (功能停用)
+      await store.withdraw(kind);
+      _withdrawnAt[kind] = DateTime.now();
+      if (mounted) {
+        setState(() => _withdrawn[kind] = true);
+        // 重新触发 ventSealedProvider 让 vent_list_page 重建
+        ref.invalidate(ventSealedProvider);
+        ref.invalidate(ventSealedAtProvider);
+      }
+      return;
+    }
+
+    // safety / analytics 走原路径 (无数据清理)
     if (withdraw) {
       await store.withdraw(kind);
       _withdrawnAt[kind] = DateTime.now();
@@ -84,6 +137,50 @@ class _LegalPageState extends ConsumerState<LegalPage> {
             : AppLocalizations.of(context).legalConsentReAgreed(current, total),
       );
     }
+  }
+
+  /// v0.28 R82.5 (法务 Q7b 必改): vent 撤回 3 选 1 dialog
+  ///
+  /// 返回用户选择, null = 取消。dialog 不可 barrierDismissible (防误关)。
+  Future<_VentWithdrawChoice?> _showVentWithdrawDialog() async {
+    final l10n = AppLocalizations.of(context);
+    return showDialog<_VentWithdrawChoice>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.forest_outlined, size: 32),
+        title: Text(l10n.legalVentWithdrawTitle),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.legalVentWithdrawBody),
+            const SizedBox(height: AppTokens.spacingMd),
+            // 立即删除 (红色, 强调不可恢复)
+            _WithdrawOption(
+              icon: Icons.delete_forever_outlined,
+              iconColor: AppTokens.errorColor(context),
+              title: l10n.legalVentWithdrawDelete,
+              description: l10n.legalVentWithdrawDeleteDesc,
+            ),
+            const SizedBox(height: AppTokens.spacingSm),
+            // 加密封存 (info 蓝, 中性)
+            _WithdrawOption(
+              icon: Icons.lock_outline,
+              iconColor: AppTokens.primaryColor(context),
+              title: l10n.legalVentWithdrawSeal,
+              description: l10n.legalVentWithdrawSealDesc,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(null),
+            child: Text(l10n.commonCancel),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -321,5 +418,62 @@ Future<void> clearLegalConsentCache() async {
   for (final k in ConsentKind.values) {
     await prefs.remove('legal_consent_withdrawn_${k.name}');
     await prefs.remove('legal_consent_withdrawn_${k.name}_at');
+  }
+  // v0.28 R82.5: 同步清封存标志
+  await prefs.remove('legal_consent_vent_sealed_at');
+}
+
+// ===== v0.28 R82.5: vent 撤回 3 选 1 dialog 内部类型 + widget =====
+
+// ignore: unused_element
+// ignore: unused_field
+enum _VentWithdrawChoice { delete, sealed }
+
+class _WithdrawOption extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String description;
+
+  const _WithdrawOption({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: iconColor, size: 20),
+        const SizedBox(width: AppTokens.spacingSm),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: AppTokens.fontSizeBody,
+                  color: AppTokens.textPrimaryColor(context),
+                ),
+              ),
+              const SizedBox(height: AppTokens.spacingXxs),
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeCaption,
+                  color: AppTokens.textHintColor(context),
+                  height: AppTokens.lineHeightSnug,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

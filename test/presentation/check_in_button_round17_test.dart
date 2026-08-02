@@ -38,6 +38,10 @@ class _EmptyVentRepo implements VentRepository {
 
   @override
   Future<int> restore(VentEntryEntity entry) async => 0;
+
+  // v0.28 R82.5 (法务 Q7b 必改, PIPL §47)
+  @override
+  Future<int> deleteAll() async => 0;
 }
 
 Widget _wrapButton({

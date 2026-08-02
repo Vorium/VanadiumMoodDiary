@@ -729,6 +729,51 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventListTitle => '我的树洞';
 
   @override
+  String get legalVentWithdrawTitle => '撤回树洞同意';
+
+  @override
+  String get legalVentWithdrawBody => '树洞内容是您最私密的数据。撤回同意后,您可选择以下方式处理已有数据:';
+
+  @override
+  String get legalVentWithdrawDelete => '立即删除';
+
+  @override
+  String get legalVentWithdrawDeleteDesc => '所有树洞文字 + 录音文件立即物理删除,不可恢复';
+
+  @override
+  String get legalVentWithdrawSeal => '加密封存';
+
+  @override
+  String get legalVentWithdrawSealDesc => '数据保留在本地但加密,UI 不可见,重新同意后可恢复';
+
+  @override
+  String legalVentWithdrawnDeleted(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 条',
+      one: '1 条',
+      zero: '0 条',
+    );
+    return '已删除 $_temp0树洞';
+  }
+
+  @override
+  String get legalVentWithdrawnSealed => '已加密封存,数据保留在本地';
+
+  @override
+  String get legalVentDeleteRetry => '重试删除';
+
+  @override
+  String get ventSealedTitle => '已加密封存';
+
+  @override
+  String get ventSealedSubtitle => '您已撤回树洞同意。所有数据已加密封存,UI 不可见。重新同意后可恢复。';
+
+  @override
+  String get ventSealedAction => '前往法律与隐私';
+
+  @override
   String get ventListWriteTooltip => '写一条';
 
   @override
@@ -1634,7 +1679,7 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String dataExportConsentBody(
       String purpose, String dataCategories, String retention) {
-    return '您即将导出本地数据库中的所有数据。\n\n**目的**：$purpose\n**数据范围**：$dataCategories\n**保留方式**：$retention\n\n**根据《个人信息保护法》第 13 条**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。';
+    return '您即将导出本地数据库中的所有数据。\n\n**目的**：$purpose\n**数据范围**：$dataCategories\n**保留方式**：$retention\n\n**根据《个人信息保护法》第 13 條**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。';
   }
 
   @override
@@ -3030,6 +3075,51 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventListTitle => '我的樹洞';
 
   @override
+  String get legalVentWithdrawTitle => '撤回樹洞同意';
+
+  @override
+  String get legalVentWithdrawBody => '樹洞內容是您最私密的數據。撤回同意後,您可選擇以下方式處理已有數據:';
+
+  @override
+  String get legalVentWithdrawDelete => '立即刪除';
+
+  @override
+  String get legalVentWithdrawDeleteDesc => '所有樹洞文字 + 錄音文件立即物理刪除,不可恢復';
+
+  @override
+  String get legalVentWithdrawSeal => '加密封存';
+
+  @override
+  String get legalVentWithdrawSealDesc => '數據保留在本地但加密,UI 不可見,重新同意後可恢復';
+
+  @override
+  String legalVentWithdrawnDeleted(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 條',
+      one: '1 條',
+      zero: '0 條',
+    );
+    return '已刪除 $_temp0樹洞';
+  }
+
+  @override
+  String get legalVentWithdrawnSealed => '已加密封存,數據保留在本地';
+
+  @override
+  String get legalVentDeleteRetry => '重試刪除';
+
+  @override
+  String get ventSealedTitle => '已加密封存';
+
+  @override
+  String get ventSealedSubtitle => '您已撤回樹洞同意。所有數據已加密封存,UI 不可見。重新同意後可恢復。';
+
+  @override
+  String get ventSealedAction => '前往法律與隱私';
+
+  @override
   String get ventListWriteTooltip => '寫一條';
 
   @override
@@ -3935,7 +4025,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String dataExportConsentBody(
       String purpose, String dataCategories, String retention) {
-    return '您即將導出本地數據庫中的所有數據。\n\n**目的**：$purpose\n**數據範圍**：$dataCategories\n**保留方式**：$retention\n\n**根據《個人信息保護法》第 13 條**（數據可攜權 + 單獨同意），請確認您已了解上述用途，並同意本次導出。';
+    return '您即將導出本地數據庫中的所有數據。\n\n**目的**：$purpose\n**數據範圍**：$dataCategories\n**保留方式**：$retention\n\n**根據《個人信息保護法》第 13 條**（數據可攜權 + 單獨同意），請確認您已瞭解上述用途，並同意本次導出。';
   }
 
   @override
@@ -4465,7 +4555,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get phq9Item3 => '感覺疲倦或沒有活力';
 
   @override
-  String get phq9Item4 => '食欲不振或吃太多';
+  String get phq9Item4 => '食慾不振或吃太多';
 
   @override
   String get phq9Item5 => '覺得自己很糟、很失敗，或讓自己和家人失望';
@@ -4492,40 +4582,40 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get phq9Option3 => '幾乎每天';
 
   @override
-  String get phq9SeverityLabel0 => '幾乎沒有憂鬱';
+  String get phq9SeverityLabel0 => '幾乎沒有抑鬱';
 
   @override
-  String get phq9SeverityLabel1 => '輕度憂鬱';
+  String get phq9SeverityLabel1 => '輕度抑鬱';
 
   @override
-  String get phq9SeverityLabel2 => '中度憂鬱';
+  String get phq9SeverityLabel2 => '中度抑鬱';
 
   @override
-  String get phq9SeverityLabel3 => '中重度憂鬱';
+  String get phq9SeverityLabel3 => '中重度抑鬱';
 
   @override
-  String get phq9SeverityLabel4 => '重度憂鬱';
+  String get phq9SeverityLabel4 => '重度抑鬱';
 
   @override
-  String get phq9SeveritySummary0 => '幾乎沒有憂鬱傾向';
+  String get phq9SeveritySummary0 => '幾乎沒有抑鬱傾向';
 
   @override
-  String get phq9SeveritySummary1 => '輕度憂鬱傾向';
+  String get phq9SeveritySummary1 => '輕度抑鬱傾向';
 
   @override
-  String get phq9SeveritySummary2 => '中度憂鬱傾向';
+  String get phq9SeveritySummary2 => '中度抑鬱傾向';
 
   @override
-  String get phq9SeveritySummary3 => '中重度憂鬱傾向';
+  String get phq9SeveritySummary3 => '中重度抑鬱傾向';
 
   @override
-  String get phq9SeveritySummary4 => '重度憂鬱傾向';
+  String get phq9SeveritySummary4 => '重度抑鬱傾向';
 
   @override
-  String get phq9Instruction => '過去兩週內，你有多常被以下問題困擾？';
+  String get phq9Instruction => '過去兩週內，你有多經常被以下問題困擾？';
 
   @override
-  String get phq9ShortDescription => '過去兩週的憂鬱傾向篩查';
+  String get phq9ShortDescription => '過去兩週的抑鬱傾向篩查';
 
   @override
   String get gad7Item0 => '感到緊張、焦慮或急切';
@@ -4573,7 +4663,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get gad7SeveritySummary3 => '重度焦慮傾向';
 
   @override
-  String get gad7Instruction => '過去兩週內，你有多常被以下問題困擾？';
+  String get gad7Instruction => '過去兩週內，你有多經常被以下問題困擾？';
 
   @override
   String get gad7ShortDescription => '過去兩週的焦慮傾向篩查';

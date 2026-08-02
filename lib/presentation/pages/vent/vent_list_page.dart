@@ -9,6 +9,7 @@
 // - 详情页才显示完整内容
 // - 长按 / 滑动可单条删除
 
+import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,6 +35,11 @@ class VentListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entriesAsync = ref.watch(ventEntriesProvider);
+    // v0.28 R82.5: 检测 vent 加密封存状态 (法务 Q7b 必改, PIPL §47)
+    // sealed=true → 不读 DB, 显示"已加密封存"占位 (数据物理上还在,
+    // 用户撤回 vent 同意时选了"加密封存"而非"立即删除", 重新同意后
+    // 数据会重新可见)
+    final sealedAsync = ref.watch(ventSealedProvider);
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.ventListTitle,
@@ -47,28 +53,45 @@ class VentListPage extends ConsumerWidget {
           onPressed: () => context.push('/vent/compose'),
         ),
       ],
-      child: entriesAsync.when(
-        data: (entries) {
-          if (entries.isEmpty) return const _VentEmptyState();
-          // v0.21 Round 23 (P1-27): 下拉刷新
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(ventEntriesProvider);
-              await Future<void>.delayed(
-                const Duration(milliseconds: AppTokens.refreshMinVisibleMs),
-              );
-            },
-            child: _EntryList(entries: entries),
-          );
-        },
-        loading: () => const LoadingSkeleton.fullScreen(),
-        // v0.22 round 29 (emil-44): 改用 ErrorState 集中器
-        // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
-        error: (e, _) => ErrorState(
-          title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
-          detail: e.toString(),
-          onRetry: () => ref.invalidate(ventEntriesProvider),
-        ),
+      child: sealedAsync.maybeWhen(
+        // v0.28 R82.5: 封存占位 — 优先级最高, 覆盖 loading / data / error
+        // 不在 loading/error 走 LoadingSkeleton (持续动画会让 widget test
+        // pumpAndSettle timeout), 直接 fallback 走 _buildContent
+        // (entriesAsync 自己的 loading 已经有占位)
+        data: (sealed) => sealed ? const _VentSealedState() : _buildContent(context, ref, entriesAsync),
+        loading: () => _buildContent(context, ref, entriesAsync),
+        error: (_, __) => _buildContent(context, ref, entriesAsync),
+        orElse: () => _buildContent(context, ref, entriesAsync),
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<List<VentEntryEntity>> entriesAsync,
+  ) {
+    return entriesAsync.when(
+      data: (entries) {
+        if (entries.isEmpty) return const _VentEmptyState();
+        // v0.21 Round 23 (P1-27): 下拉刷新
+        return RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(ventEntriesProvider);
+            await Future<void>.delayed(
+              const Duration(milliseconds: AppTokens.refreshMinVisibleMs),
+            );
+          },
+          child: _EntryList(entries: entries),
+        );
+      },
+      loading: () => const LoadingSkeleton.fullScreen(),
+      // v0.22 round 29 (emil-44): 改用 ErrorState 集中器
+      // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
+      error: (e, _) => ErrorState(
+        title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
+        detail: e.toString(),
+        onRetry: () => ref.invalidate(ventEntriesProvider),
       ),
     );
   }
@@ -89,6 +112,30 @@ class _VentEmptyState extends StatelessWidget {
         actionLabel: AppLocalizations.of(context).ventEmptyAction,
         onAction: () => context.push('/vent/compose'),
       ),
+    );
+  }
+}
+
+/// v0.28 R82.5 (法务 Q7b 必改): vent 加密封存占位
+///
+/// 用户在 legal_page 撤回 vent 同意时, 选了"加密封存" (而非"立即删除") →
+/// 数据物理上还在 DB, 但 UI 隐藏。重新同意后 (legal_page toggle 重新开启)
+/// 数据会重新可见。
+///
+/// 设计: rare 频度(撤回 vent 同意是低频操作) + 严肃场景(emil "delight 不滥用")
+/// → 用 EmptyState 集中器, 不加额外动画。锁图标 + "重新同意恢复数据"提示。
+class _VentSealedState extends ConsumerWidget {
+  const _VentSealedState();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    return EmptyState(
+      icon: Icons.lock_outline,
+      title: l10n.ventSealedTitle,
+      subtitle: l10n.ventSealedSubtitle,
+      actionLabel: l10n.ventSealedAction,
+      onAction: () => context.push('/settings/legal'),
     );
   }
 }

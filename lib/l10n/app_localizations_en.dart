@@ -768,6 +768,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventListTitle => 'My Vent';
 
   @override
+  String get legalVentWithdrawTitle => 'Withdraw Vent consent';
+
+  @override
+  String get legalVentWithdrawBody =>
+      'Vent contains your most private content. After withdrawing consent, you can choose how to handle existing data:';
+
+  @override
+  String get legalVentWithdrawDelete => 'Delete now';
+
+  @override
+  String get legalVentWithdrawDeleteDesc =>
+      'All Vent text + audio files permanently deleted, cannot be recovered';
+
+  @override
+  String get legalVentWithdrawSeal => 'Encrypt and seal';
+
+  @override
+  String get legalVentWithdrawSealDesc =>
+      'Data stays locally but encrypted, hidden in UI, recoverable after re-consent';
+
+  @override
+  String legalVentWithdrawnDeleted(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Deleted $count entries',
+      one: 'Deleted 1 entry',
+      zero: 'Deleted 0 entries',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get legalVentWithdrawnSealed =>
+      'Encrypted and sealed, data preserved locally';
+
+  @override
+  String get legalVentDeleteRetry => 'Retry delete';
+
+  @override
+  String get ventSealedTitle => 'Encrypted & Sealed';
+
+  @override
+  String get ventSealedSubtitle =>
+      'You withdrew Vent consent. All data is encrypted and hidden. Re-consent to restore.';
+
+  @override
+  String get ventSealedAction => 'Go to Legal & Privacy';
+
+  @override
   String get ventListWriteTooltip => 'Write one';
 
   @override

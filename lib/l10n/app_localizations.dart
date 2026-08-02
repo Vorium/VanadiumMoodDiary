@@ -1383,6 +1383,78 @@ abstract class AppLocalizations {
   /// **'我的树洞'**
   String get ventListTitle;
 
+  /// No description provided for @legalVentWithdrawTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'撤回树洞同意'**
+  String get legalVentWithdrawTitle;
+
+  /// No description provided for @legalVentWithdrawBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'树洞内容是您最私密的数据。撤回同意后,您可选择以下方式处理已有数据:'**
+  String get legalVentWithdrawBody;
+
+  /// No description provided for @legalVentWithdrawDelete.
+  ///
+  /// In zh, this message translates to:
+  /// **'立即删除'**
+  String get legalVentWithdrawDelete;
+
+  /// No description provided for @legalVentWithdrawDeleteDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'所有树洞文字 + 录音文件立即物理删除,不可恢复'**
+  String get legalVentWithdrawDeleteDesc;
+
+  /// No description provided for @legalVentWithdrawSeal.
+  ///
+  /// In zh, this message translates to:
+  /// **'加密封存'**
+  String get legalVentWithdrawSeal;
+
+  /// No description provided for @legalVentWithdrawSealDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'数据保留在本地但加密,UI 不可见,重新同意后可恢复'**
+  String get legalVentWithdrawSealDesc;
+
+  /// No description provided for @legalVentWithdrawnDeleted.
+  ///
+  /// In zh, this message translates to:
+  /// **'已删除 {count, plural, =0{0 条} =1{1 条} other{{count} 条}}树洞'**
+  String legalVentWithdrawnDeleted(num count);
+
+  /// No description provided for @legalVentWithdrawnSealed.
+  ///
+  /// In zh, this message translates to:
+  /// **'已加密封存,数据保留在本地'**
+  String get legalVentWithdrawnSealed;
+
+  /// No description provided for @legalVentDeleteRetry.
+  ///
+  /// In zh, this message translates to:
+  /// **'重试删除'**
+  String get legalVentDeleteRetry;
+
+  /// No description provided for @ventSealedTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'已加密封存'**
+  String get ventSealedTitle;
+
+  /// No description provided for @ventSealedSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'您已撤回树洞同意。所有数据已加密封存,UI 不可见。重新同意后可恢复。'**
+  String get ventSealedSubtitle;
+
+  /// No description provided for @ventSealedAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'前往法律与隐私'**
+  String get ventSealedAction;
+
   /// No description provided for @ventListWriteTooltip.
   ///
   /// In zh, this message translates to:
@@ -2983,7 +3055,7 @@ abstract class AppLocalizations {
   /// PIPL §13 数据可携权 dialog 正文, 用户导出 JSON 前取得单独同意 (R82 加)
   ///
   /// In zh, this message translates to:
-  /// **'您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 条**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。'**
+  /// **'您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 條**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。'**
   String dataExportConsentBody(
       String purpose, String dataCategories, String retention);
 

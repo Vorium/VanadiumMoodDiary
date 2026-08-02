@@ -50,6 +50,15 @@ class _FakeVentRepository implements VentRepository {
     _entries.add(entry.copyWith(id: newId));
     return newId;
   }
+
+  // v0.28 R82.5 (法务 Q7b 必改, PIPL §47): 撤回 vent 同意时
+  // 物理删所有 vent 条目 (UI 走 sealed 占位)
+  @override
+  Future<int> deleteAll() async {
+    final count = _entries.length;
+    _entries.clear();
+    return count;
+  }
 }
 
 void _setBigView(WidgetTester tester) {

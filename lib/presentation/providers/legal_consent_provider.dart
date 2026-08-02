@@ -45,12 +45,22 @@ export 'package:chroniccare/domain/entities/consent_artifact.dart'
 ///
 /// v0.27 round 82: 加 [recordDataExportConsent] / [readDataExportConsentLog],
 /// 给 dataExport kind 留 audit log (PIPL §13 单独同意强场景需可追溯)。
+///
+/// v0.28 round 82 (R82.5 法务审核续): 加 [seal]/[unseal]/[isSealed]/[sealedAt],
+/// 给 vent kind 走"PIPL §47 删除权"合规路径: 撤回 vent 同意时, 用户
+/// 必选 "立即删除" 或 "加密封存" 二选一 (法务 Q7b 必改)。"封存"= 数据
+/// 保留在 DB 但 UI 不可见, 重新同意后可恢复; "删除"= 物理删 DB 行 +
+/// 删 audio 文件 (PIPL §47 删除权)。
 class LegalConsentStore {
   static const _kPrefix = 'legal_consent_withdrawn_';
 
   /// v0.27 R82: dataExport audit log key
   /// 跟 [_kPrefix] 区分, 不混。`getStringList` 存累积 JSON 字符串。
   static const _kDataExportLog = 'legal_consent_data_export_log';
+
+  /// v0.28 R82.5: vent "加密封存" 标志 key
+  /// 跟 withdrawn 标志区分 (封存 ≠ 撤回)。
+  static const _kVentSealedAt = 'legal_consent_vent_sealed_at';
 
   Future<bool> isWithdrawn(ConsentKind kind) async {
     final prefs = await SharedPreferences.getInstance();
@@ -76,6 +86,50 @@ class LegalConsentStore {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('$_kPrefix${kind.name}');
     await prefs.remove('$_kPrefix${kind.name}_at');
+    // v0.28 R82.5: reset 也清封存标志 (用户重新同意 = 解封, 数据应该重新可见)
+    if (kind == ConsentKind.vent) {
+      await prefs.remove(_kVentSealedAt);
+    }
+  }
+
+  // ===== v0.28 R82.5: vent "加密封存" 状态 (PIPL §47 撤回 vent 同意时 2 选 1) =====
+
+  /// vent 是否处于"加密封存"状态
+  ///
+  /// 封存 ≠ 撤回。撤回 = 用户关掉功能, 数据仍可看; 封存 = 数据物理上还在
+  /// 但 UI 隐藏, vent_list_page 不展示 (PIPL §47 法务要求"撤回后应提供
+  /// 删除选项", 封存 = 用户选了"暂不删但锁住", 跟"立即删除"并列的二选一)。
+  Future<bool> isSealed(ConsentKind kind) async {
+    if (kind != ConsentKind.vent) return false;
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_kVentSealedAt) != null;
+  }
+
+  /// 封存时间 (撤回 vent 同意时, 选了"加密封存"的时刻)
+  Future<DateTime?> sealedAt(ConsentKind kind) async {
+    if (kind != ConsentKind.vent) return null;
+    final prefs = await SharedPreferences.getInstance();
+    final millis = prefs.getInt(_kVentSealedAt);
+    return millis == null ? null : DateTime.fromMillisecondsSinceEpoch(millis);
+  }
+
+  /// 标记 vent 为"加密封存"状态 (撤回同意时选"加密封存"走此路径)
+  ///
+  /// 不删数据, 只设标志 + 时间。vent_list_page 启动时检测 sealed → 隐藏列表。
+  /// 重新同意 = [reset] → 清标志, 数据重新可见。
+  Future<void> seal(ConsentKind kind) async {
+    if (kind != ConsentKind.vent) {
+      throw ArgumentError('seal 当前只支持 ConsentKind.vent');
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kVentSealedAt, DateTime.now().millisecondsSinceEpoch);
+  }
+
+  /// 解封 (撤回封存状态) — 同 reset 路径
+  Future<void> unseal(ConsentKind kind) async {
+    if (kind != ConsentKind.vent) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kVentSealedAt);
   }
 
   /// v0.27 R82: 记录一次数据导出同意, 写 audit log
@@ -148,4 +202,19 @@ final legalConsentWithdrawnAtProvider =
     StreamProvider.family<DateTime?, ConsentKind>((ref, kind) async* {
   final store = ref.watch(legalConsentStoreProvider);
   yield await store.withdrawnAt(kind);
+});
+
+/// v0.28 R82.5: vent "加密封存" 状态 stream
+///
+/// vent_list_page 监听此 provider, sealed=true → 显示"已加密封存"占位
+/// 不读 DB, 重新同意后 (reset) → 变 false → 正常显示。
+final ventSealedProvider = StreamProvider<bool>((ref) async* {
+  final store = ref.watch(legalConsentStoreProvider);
+  yield await store.isSealed(ConsentKind.vent);
+});
+
+/// v0.28 R82.5: vent 封存时间 stream
+final ventSealedAtProvider = StreamProvider<DateTime?>((ref) async* {
+  final store = ref.watch(legalConsentStoreProvider);
+  yield await store.sealedAt(ConsentKind.vent);
 });

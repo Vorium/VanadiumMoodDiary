@@ -25,4 +25,13 @@ class VentDao {
 
   Future<int> delete(int id) =>
       (_db.delete(_db.ventEntries)..where((t) => t.id.equals(id))).go();
+
+  /// v0.28 R82.5 (法务 Q7b 必改): 物理删所有 vent 条目
+  ///
+  /// PIPL §47 删除权: 撤回 vent 同意时, 用户选"立即删除"走此路径。
+  /// 删 vent_entries 表所有行 (drift `delete` 默认返受影响行数, 我们不
+  /// 在 dao 层事务包, repository 层会包事务 + 删 audio 文件)。
+  ///
+  /// 返回删除行数 (供 UI 提示"已删 N 条")。
+  Future<int> deleteAll() => _db.delete(_db.ventEntries).go();
 }
