@@ -2,6 +2,79 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-02 (R79 — 4 项修复: vent_compose dispose 异步 5 轮未修 + badge_sync catch 漏改 + 2 god class 评估)
+
+> R79 目标: 用户"全修"7 项 P1/P2 路线图。R79 实际落地 4 项 (R79-1/2 真改
+> code, R79-3/4 评估 doc + 撤回 helper attempt)。R79-5/6/7 评估后跳过
+> (集成测高难度 / R39 已 50+ export 测 / 留 R80+)。3 commit 落地。
+
+### Tests
+- **1352/1352 pass** (R78 持平, R79 改 2 file + 撤回 1 helper 0 test 改动)
+- `flutter analyze` **0 error / 0 warning** (1 info: snooze_manager.dart:95 R77-10 已知遗留)
+- 16 守护脚本全绿
+
+### P1 修复 (R79-1, commit `cf3db24`): vent_compose dispose 异步未 await 修
+- **R74 P2-1 5 轮未修收尾** (R74 → R75 → R76 → R77 → R78 5 轮报告)
+- 之前 `_recorder.dispose()` / `_player.dispose()` 是 Future, 调但不 await,
+  离开 page 时这些 future 可能还没完成, audioplayers native 资源 (iOS
+  AudioPlayerImpl / Android AudioRecord) 释放不及时
+- **修法**: 抽 `_asyncDispose()` helper 内部顺序释放 (cancel stream sub →
+  stop recorder if recording → dispose recorder → dispose player → delete
+  temp file), 用 `unawaited()` 包装避免 State.dispose() 强制 sync 签名要求
+- 每步 catch 走 swallowError 集中器, 防止 stop/dispose 异常时整条链中断
+- 3 case `vent_compose_stop_and_cleanup_round48_test` 仍过
+
+### P2 修复 (R79-2, commit `fec978f`): badge_sync_service catch (e) 加 swallowError 包装
+- **R76 P3-3 唯一漏改的 catch 块**
+- 之前 `catch (e)` 没 `swallowError(where, error, stack)` 包装, 错误未
+  记录到 LastErrorCapture + piiSafeLog
+- 改 `catch (e, st)` + `swallowError(where: 'BadgeSyncService.updateBadgeCount', ...)`
+- 5 case `badge_sync_service_round37_test` 仍过
+
+### P1 评估 (R79-3, commit `2dba5d1`): home_page god class 评估 doc
+- **R74 P3-1 5 轮未抽**, R79 评估:
+  - 写了 `HomeDeepLinkHandler` helper (1.2KB), 6.8KB, 接 5 个参数
+    (ref + context + lifecycle + setLifecycle callback + setTimer callback)
+  - 评估后撤回 (`scripts/_archive/home_deep_link_handler_r79_attempt.dart`),
+    原因: lifecycle 跨类 + Timer 跨类 + 庆祝 overlay 强耦合 + 0 widget test
+    保护, 1-2h 改完风险高于价值
+- 写 `docs/evaluations/home_page_god_class_evaluation_r79.md` (5.1KB):
+  现状 13 method + 3 helper 拆法 + R79 撤回原因 + R80 路线
+  (写集成测 10 case + 抽 DeepLink + Celebration, R81+ 抽 CareEngine)
+- 决策: 评估 + 写 doc 优先于改 god class, 1-2h 改完无测保的拆分风险高
+- R80 优先写集成测保现有 678 行行为
+
+### P1 评估 (R79-4, 同 commit): mood_audio_section god class 评估 doc
+- **R76 报告新发现, 591 行 god class 候选**, R79 评估:
+- 写 `docs/evaluations/mood_audio_section_god_class_evaluation_r79.md` (4.1KB):
+  现状 10 method + 3 sub-widget 拆法 (AudioRecorderControls + Player + STT)
+- R80 优先 Player (low risk 80 行), R81 Controls (medium risk 180 行),
+  R82 STT (low risk 50 行)
+
+### R79 跳过项 + 留 R80+
+- **R79-5 (P2 home_page 集成测 10 case)**: 留 R80+ (跟 helper 抽同步做)
+- **R79-6 (P2 export_orchestrator 集成测 5 case)**: 跳过, R39 已加 50+ 单元
+  测覆盖 export + import 关键路径, R77 拆 2 file 后仍全过
+- **R79-7 (P3 8 测覆盖盲区)**: 留 R80+ (跟 helper / sub-widget 拆同步做)
+
+### R79 总览
+- **3 commit 落地** (R79-1 + R79-2 + R79-3/4 评估)
+- **R74 → R78 5 轮 P0/P1 backlog**:
+  - ✅ R79-1 vent_compose dispose 异步 (R74 P2-1 收尾)
+  - ✅ R79-2 badge_sync catch swallowError (R76 P3-3 收尾)
+  - ⏳ R80+ home_page god class (R74 P3-1 评估完成, 真抽留 R80)
+  - ⏳ R80+ mood_audio_section god class (R76 评估完成, 真拆留 R80)
+- **总进度**: 1163 (R63) → 1352 (R79), **+189 tests** / **+37 commits** / 16 守护脚本全绿
+
+### R80+ 路线图 (Sprint 2 续)
+- R80 (估 4-6h): home_page 集成测 10 case + 抽 HomeDeepLinkHandler + HomeCelebrationController
+- R80 (估 3-4h): mood_audio_section widget 测 8 case + 抽 AudioRecorderPlayer
+- R81+ (估 4-6h): 抽 HomeCareEngineDispatcher + mood_audio AudioRecorderControls
+- R82+ (估 1-2h): 抽 mood_audio AudioRecorderSTT
+- 集成测 backlog: notification_service facade 5 case / vent_compose dispose 回归测 / care_engine integration 5 case
+
+---
+
 ## [Unreleased] - 2026-08-02 (R78 — P0 收尾: PHQ-9/GAD-7 16 题 i18n 化, R65 起步 4 round TODO 收尾)
 
 > R78 目标: R77 完成后用户要求"修复 p0", R77 16 commit 落地后我侧剩
