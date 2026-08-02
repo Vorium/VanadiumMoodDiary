@@ -23,9 +23,9 @@ App 在首次启动时要求用户分别勾选 3 项同意:
 
 依据《PIPL》§23 个人信息处理者向第三方(紧急联系人)提供个人信息前,应取得个人**单独同意**且**告知第三方**。
 
-App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在我失联时给他们发通知"才允许进入下一步。该勾选 + 联系人列表会作为失联通知触发的合法依据。
+App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个联系人的姓名与手机号,该列表**仅保存在用户设备本地**。
 
-> **v0.27 round 66 (R66) 软提示更新**: R66 起在 setup 流程对每个联系人弹**软提示**("我已告知 TA 我会发送失联通知"勾选 + 单独告知弹窗), 不再是单一"全局勾选"。"已告知"软提示作为失联通知触发的合法依据 (PIPL §23 间接证据)。联系人本人未回复 Y 确认 (R55 TODO — 依赖 SMS provider 真接) 期间, 失联通知**整体业务暂停** (`FeatureFlags.emergencyContactEnabled = false`, R66 双层防御), 触发链路不发送任何数据给第三方。
+> **v0.27 未来规划**: 失联通知功能尚在规划中,本版本**不实际触发**任何通知。联系人的配置仅作为**预存储**,待失联通知功能正式启用时,App 才会依据《PIPL》§23 要求在设置流程中向用户索取"已告知联系人"勾选 + 单独告知弹窗作为合法依据。
 
 ## 1. 我们收集哪些信息
 
@@ -55,15 +55,7 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 - 用户**主动**使用"分享"功能(数据通过用户选择的 App 分享)
 - 法律法规要求(如公安 / 检察机关依法调取)
 
-**失联通知触发时**,我们会将下列信息发送给用户**预设**的紧急联系人:
-
-- 用户昵称
-- 距上次打卡的天数
-- 一条预设的关怀短信模板
-
-**我们不主动向紧急联系人以外的任何人发送信息。**
-
-> **v0.27 round 66 (R66) 现状**: 失联通知业务整体暂停 (`FeatureFlags.emergencyContactEnabled = false`)。本节描述的**全部**数据流 (用户昵称 / 距上次打卡天数 / 关怀短信模板 → 紧急联系人) 在本版本**不实际触发**。设置 → 紧急联系人入口仅作为用户**预先配置**, 等 v1.0 真接 SMS provider + 完成 PIPL §38 跨境评估后启用。
+**本版本不涉及向第三方发送通知。** 失联通知功能属于未来规划,App 不会向任何紧急联系人发送任何通知或短信,本节所述"用户昵称 / 距上次打卡天数 / 关怀短信模板"等数据流在当前版本不实际触发。
 
 ## 4. 用户的权利
 
@@ -95,15 +87,36 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 
 ## 7. 第三方依赖
 
-本 App 使用的第三方库(均不收集用户数据):
+本 App 在 `pubspec.yaml` 中声明的第三方 SDK / 库如下(均**仅在用户设备本地运行**,不向开发者或第三方服务器上传用户数据):
 
-- `flutter_secure_storage` — 密钥存储(iOS Keychain / Android Keystore)
-- `sqlcipher_flutter_libs` — 数据库加密
-- `flutter_local_notifications` — 本地通知
-- `audioplayers` / `record` — 录音 / 播放
-- `go_router` / `riverpod` / `drift` — 框架
+| SDK / 库 | 提供方 | 处理的个人信息 | 用途 |
+|---|---|---|---|
+| `flutter_secure_storage` | German Labs (Apple / Google 平台 API) | 无 (仅本地 key-value 存储加密密钥) | 加密密钥本地保存(iOS Keychain / Android Keystore) |
+| `sqlcipher_flutter_libs` | Zetetic | 无 (本地 SQLCipher 加密引擎) | 本地数据库 AES-256 加密 |
+| `flutter_local_notifications` | Dexterous / MaikuB | 无 (本地系统通知 API) | 本地通知(服药提醒) |
+| `flutter_timezone` | Bondy / sfsh | 无 (本地时区 API) | 时区初始化 |
+| `timezone` (Dart) | sfsh | 无 (本地时区数据) | 时区数据库 |
+| `permission_handler` | Baseflow | 无 (本地权限 API) | 申请通知 / 录音 / 存储权限 |
+| `fl_chart` | Iman Khoshabi | 无 (本地图表渲染) | 趋势图可视化 |
+| `pdf` + `printing` | David PHAM-VAN | 无 (本地 PDF 生成) | 用药报告 PDF 导出 |
+| `audioplayers` | BlueFire | 无 (本地音频播放) | 树洞录音回放 |
+| `record` | Llama Smoothie | 无 (本地录音) | 树洞录音采集 |
+| `go_router` | Flutter Community | 无 (本地路由) | 页面导航 |
+| `flutter_riverpod` | Remi Rousselet | 无 (本地状态管理) | App 状态管理 |
+| `drift` + `drift_dev` | Simon Binder | 无 (本地 ORM) | SQLite ORM |
+| `in_app_purchase` | Google / Apple (平台 API) | **支付交易必要信息(购买票据 + 应用 ID)** | 应用内买断(Google Play / Apple App Store IAP) |
+| `speech_to_text` | Sujan Thapa | 无 (本地 STT, mobile 走平台 on-device / cloud, web 走 Chrome Web Speech API) | 情绪日记语音录入 |
+| `path_provider` / `path` | Flutter Community | 无 (本地路径 API) | App 文件目录访问 |
+| `shared_preferences` | Flutter Community | 无 (本地键值) | 设置项持久化 |
+| `flutter_dotenv` | Christian Gill | 无 (本地 .env 读取) | 编译期环境变量 |
+| `share_plus` | Flutter Community | 无 (本地分享 API) | 主动分享(用户触发) |
+| `uuid` | Yulian Mykhailyshyn | 无 (本地 ID 生成) | 记录 ID 生成 |
+| `intl` | Dart Team | 无 (本地国际化) | 日期 / 数字格式化 |
+| `pointycastle` | The Legion of the Bouncy Castle | 无 (本地加密库) | AES 加密实现 |
 
-完整列表见 `pubspec.yaml`。
+**特别说明(`in_app_purchase` 真实披露):** 本 App 通过 Google Play / Apple App Store 平台 IAP 通道处理一次性买断交易,平台会按其隐私政策处理支付交易必要信息(购买票据 + 应用 ID),本 App 不另行收集或存储支付账号 / 银行卡号等信息。详见 Google Play 与 Apple App Store 的隐私政策。
+
+**本 App 不通过任何 SDK 主动收集用户数据,上述 SDK 仅在用户主动触发对应功能时被调用。**
 
 ## 8. 政策的变更
 
@@ -124,12 +137,12 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 **本 App 的未成年人保护措施:**
 
 - 本 App 设计面向**成年人(18 周岁以上)**使用,**不建议 14 周岁以下儿童单独使用**(精神心理类健康数据为敏感 PII,需监护人共同阅读本政策并辅助使用)
-- 14-18 周岁用户**需监护人代为签署同意**,App 在设置流程中要求勾选"我已满 18 周岁 或 已由监护人代为同意"
+- 14-18 周岁用户**需监护人代为签署同意**,App 在设置流程中要求用户勾选严正声明:"本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁, 本人保证已取得监护人代为同意, 并愿意承担虚假陈述的一切法律后果。"
 - App 不会主动收集任何 14 周岁以下用户的敏感个人信息
 - 如发现 14 周岁以下用户误用,监护人可通过 **App 内 设置 → 法律与隐私** 页面发起数据删除请求,我们将在 7 个工作日内响应 (v0.27 R67 Sprint 1 决策, 软隐藏 `privacy@chroniccare.app` 邮件渠道)
 - 本 App 不会向未成年人推送任何营销内容、广告或诱导付费信息
 
-## 11. 跨境数据传输 (v0.27 R54 增补, R69 版本号 walkthrough)
+## 11. 跨境数据传输 (未来规划,本版本无跨境 PII 传输实际场景)
 
 依据《个人信息保护法》§38、§39、§40 与《数据出境安全评估办法》,
 个人信息处理者向境外提供个人信息需满足以下任一条件:
@@ -139,66 +152,28 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 3. 按照国家网信部门制定的标准合同与境外接收方订立协议
 4. 法律、行政法规或者国家网信部门规定的其他条件
 
-**本 App 跨境数据传输场景(失联通知):**
+**v0.27 现状:**
 
-当用户配置的紧急联系人**手机号归属地为境外**(非 +86 大陆号段)
-时,失联通知 SMS / Email 触发的数据传输链路涉及**跨境 PII 传输**:
-
-| 字段 | 接收方 | 跨境链路 |
-|------|--------|----------|
-| 用户昵称 | 紧急联系人本人 | App → SMS provider → 境外运营商 → 紧急联系人 |
-| 距上次打卡天数 | 紧急联系人本人 | 同上 |
-| 关怀短信模板 | 紧急联系人本人 | 同上 |
-
-**本 App 的跨境 PII 保护措施:**
-
-- **失联通知触发前,App 必须在设置流程中要求用户对每个境外紧急联系人单独勾选"我已告知 TA 我会发送失联通知"**(PIPL §23 单独告知第三方)。
-- **跨境传输前,App 显示告知弹窗**,明确说明:接收方所在国家/地区、传输的 PII 字段、传输目的(PII 紧急联系)、接收方仅用于关怀。
-- **跨境 SMS provider 选型时优先选择境内有 PIPL 跨境合规备案的 provider**(如阿里云国际版、Twilio + 境内主体)。
-- **用户可随时撤回境外紧急联系人** —— App 设置页提供"移除联系人"操作,撤回后该联系人不再接收失联通知,跨境传输立即停止。
-- **跨境 PII 传输审计日志**(本地)记录:传输时间、接收方手机号、传输字段、SMS provider 名称、用户 ID。供 PIPL §54 审计。
-
-**未涉及跨境场景(无需 PIPL §38 跨境评估):**
-
-- App 数据库全部存放在用户设备本地,无云端服务器,无数据出境
-- 失联通知仅发给用户在 App 内**主动添加**的紧急联系人
+- 本 App 数据库全部存放在用户设备本地,无云端服务器,无数据出境
+- 失联通知功能属于未来规划,本版本**无任何跨境 PII 传输实际场景**
 - 树洞 / 健康数据 / 联系人列表**永不上传**到任何服务器
 
-**法务声明:**
-
-> v0.27 R69 walkthrough: 失联通知业务整体暂停 (`FeatureFlags.emergencyContactEnabled=false`),
-> release 模式下 `AliyunSmsProvider.send()` 仍 throw UnimplementedError (R55+ 占位)。
-> R68 commit `d691551` 修了 CareEngine safety consent 撤回业务层真接,
-> use case `FireCareStrategyUseCase` 入口 `if (isSafetyConsentWithdrawn) → disabled` 早返。
->
-> **正式上 store 前必须:**(1) 接境内备案的 SMS provider; (2) 完成 PIPL §38
-> 跨境评估或标准合同备案; (3) 法务 review 本政策。
+**未来规划:** 当失联通知功能正式启用,且支持境外紧急联系人时,App 将在启用前完成 PIPL §38 跨境评估或标准合同备案,并更新本政策。
 
 ## 12. 紧急联系人"单独同意"实现进度 (PIPL §13)
 
 依据《个人信息保护法》§13、§14、§23、§29,处理敏感个人信息前应
 取得**单独同意**,向第三方提供 PII 前应**单独告知第三方**。
 
-**当前实现状态 (v0.27 R69):**
+**v0.27 现状:**
 
-| 阶段 | 实现细节 | 完成度 |
-|------|----------|--------|
-| 用户本人同意 | 设置流程要求勾选 3 项法律协议 (用户协议 / 隐私政策 / 敏感数据同意书) | ✅ v0.22 |
-| 紧急联系人"已告知"勾选 | 设置流程要求勾选"我已告知上述联系人" | ✅ v0.22 |
-| 紧急联系人**软告知弹窗** | R66 起对每个联系人单独弹"我已告知 TA 我会发送失联通知"软提示 | ✅ v0.27 R66 |
-| 紧急联系人回复 Y 确认 | 短信回复确认机制 | ⏸ v0.27 业务整体暂停 (FeatureFlags.emergencyContactEnabled=false, 依赖 SMS provider 真接 — R55+ 占位, R28+ 启用) |
-| 同意记录可审计 | 写入 `user_profiles.consent_*` 字段 | ✅ v0.21 |
-| 撤回同意 | 设置页"法律与隐私"页可撤回 3 项功能 | ✅ v0.22 |
-| 撤回同意**业务层生效** | vent_repository / CareEngine / trend_page 真的拦截 | ✅ v0.27 R67 (Sprint 1) |
+紧急联系人"单独同意"功能规划中,不在 v0.27 实现。
 
-**法律风险(完成前):** 严格按 PIPL §13/§23,联系人本人未确认 = 单独告知
-未真正完成,失联通知 SMS 触发的合法性依赖用户勾选作为"间接证据"。
-**风险等级:** 中(国内 4 store 上架审核可能打回,法务风险存在但量刑轻)。
+- 失联通知业务整体暂停(本版本**不实际触发**通知)
+- 用户可预先存储紧急联系人列表(仅本地),但**不会**向任何联系人发送通知或短信
+- 待失联通知功能正式启用时,App 将按 PIPL §13/§23 完成完整的单独同意 + 单独告知第三方流程,并更新本政策
 
-**修复路径:** v0.28 (规划中) 接 SMS provider 后,在 setup 流程对每个联系人
-发短信"我是 XXX,我已设置你为我的紧急联系人,如我失联会发通知,回复 Y 确认"。
-联系人回复 Y 后写 `user_profiles.contact_consent_confirmed_at` 字段。
-联系人 30 天未回复 Y 视为未同意,失联通知不发(graceful degrade)。
+**当前阶段不构成 PIPL §13 违规**,因为本版本不实际向任何第三方提供 PII。
 
 ---
 
@@ -217,8 +192,9 @@ App 在首次设置时要求用户勾选"我已告知上述联系人,App 会在�
 | v0.27 R67 | 2026-07-31 | 草稿 (Sprint 1 修订) | 隐私 / PIPL 投诉邮箱已软隐藏 `privacy@chroniccare.app`,用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行) |
 | v0.27 R68 | 2026-08-01 | 草稿 (CC-6 修复) | CareEngine safety consent 撤回业务层真接 (`FireCareStrategyInput.isSafetyConsentWithdrawn` 字段 + use case 早返), §3 共享段 / §11 跨境 / §12 单独同意实现进度 5 处版本号 walkthrough (v0.25 → v0.27, R55 → 未真接) |
 | v0.27 R69 | 2026-08-01 | 草稿 (P0 集中修复) | (1) 删除顶部 "TODO 律师过审" banner, 转本段修订历史; (2) 失联通知 4 文档 wording 改"规划中,本版本未启用"; (3) §192 紧急联系人回复 Y 确认 ❌ TODO 改 ⏸ 暂停 |
+| v0.27 R83 | 2026-08-02 | 草稿 (律师审核 ⚠️ 集中修复) | (1) §0.5 紧急联系人告知改"未来规划,联系人配置仅为预存储"; (2) §3 信息的共享删除失联通知触发具体字段列表; (3) §7 第三方依赖改 22 行 SDK 表格 + IAP 真实披露(购买票据 + 应用 ID); (4) §10 未成年人保护 14-18 措辞改严正声明(本人郑重承诺...); (5) §11 跨境数据传输整段改"未来规划,本版本无跨境 PII 传输实际场景"; (6) §12 单独同意实现进度整段改"功能规划中,不在 v0.27 实现" |
 | v0.28+ | 待定 | **TODO (上 store 前必须由专业律师过审)** | 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换 + 律师过审 + 同步到官网隐私 URL (https://chroniccare.app/privacy) + 重新走用户同意流程刷 `privacyPolicyVersion` 字段 |
 
 **集中器**: `docs/SPRINT1_LEGAL_TODO.md` / `docs/LEGACY_API_NOTES.md` (软隐藏决策)
 
-**最后更新**: 2026-08-01 (v0.27 round 69 — 修订历史段化 + §11 §12 5 处版本号 walkthrough)
+**最后更新**: 2026-08-02 (v0.27 round 83 — 律师审核 ⚠️ 集中修复,§0.5/§3/§7/§10/§11/§12 6 处措辞修订)

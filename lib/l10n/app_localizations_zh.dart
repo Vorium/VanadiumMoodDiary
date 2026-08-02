@@ -198,6 +198,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsDisclaimerText => '本应用不提供医疗建议，所有功能仅供参考。';
 
   @override
+  String get settingsExportRiskTitle => '明文风险提示';
+
+  @override
+  String get settingsExportRiskBody =>
+      '您即将导出的数据为明文文件,含您的个人健康等敏感信息(用药、打卡、紧急联系人、树洞文字)。请务必保存到安全、可信的位置(加密 U 盘 / 私人云盘),避免上传至公共云盘或发送给不可信的第三方。';
+
+  @override
+  String get settingsExportRiskLiability =>
+      '一旦导出,文件的安全与保密由您自行负责,本 App 不再承担保护责任(PIPL §17 明确告知 + 用户确认)。';
+
+  @override
+  String get settingsExportRiskAcknowledge => '我已了解风险,继续导出';
+
+  @override
   String get settingsExportDialogTitle => '导出数据';
 
   @override
@@ -2348,6 +2362,46 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get assessmentChipCurrent => '本周';
+
+  @override
+  String get crisisHotlineCnLabel => '全国 24 小时心理援助热线';
+
+  @override
+  String get crisisHotlineCnNumber => '400-161-9995';
+
+  @override
+  String get crisisHotlineCnDesc => '中国大陆 24 小时免费';
+
+  @override
+  String get crisisHotlineTwLabel => '安心专线 (24 小时)';
+
+  @override
+  String get crisisHotlineTwNumber => '1925';
+
+  @override
+  String get crisisHotlineTwDesc => '中国台湾 24 小时心理咨商';
+
+  @override
+  String get crisisHotlineHkLabel => '撒玛利亚防止自杀会 (24 小时)';
+
+  @override
+  String get crisisHotlineHkNumber => '2389 2222';
+
+  @override
+  String get crisisHotlineHkDesc => '中国香港 24 小时多语言';
+
+  @override
+  String get crisisHotlineMoLabel => '明爱生命热线 (24 小时)';
+
+  @override
+  String get crisisHotlineMoNumber => '2826 1122';
+
+  @override
+  String get crisisHotlineMoDesc => '中国澳门 24 小时';
+
+  @override
+  String get setupLegalAgeAttestation =>
+      '本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2542,6 +2596,20 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsDisclaimerText => '本應用不提供醫療建議，所有功能僅供參考。';
+
+  @override
+  String get settingsExportRiskTitle => '明文風險提示';
+
+  @override
+  String get settingsExportRiskBody =>
+      '您即將導出的數據為明文文件,含您的個人健康等敏感資訊(用藥、打卡、緊急聯繫人、樹洞文字)。請務必保存到安全、可信的位置(加密 U 盤 / 私人雲盤),避免上傳至公共雲盤或發送給不可信的第三方。';
+
+  @override
+  String get settingsExportRiskLiability =>
+      '一旦導出,文件的安全與保密由您自行負責,本 App 不再承擔保護責任(PIPL §17 明確告知 + 用戶確認)。';
+
+  @override
+  String get settingsExportRiskAcknowledge => '我已了解風險,繼續導出';
 
   @override
   String get settingsExportDialogTitle => '導出數據';
@@ -4694,4 +4762,44 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get assessmentChipCurrent => '本週';
+
+  @override
+  String get crisisHotlineCnLabel => '全國 24 小時心理援助熱線';
+
+  @override
+  String get crisisHotlineCnNumber => '400-161-9995';
+
+  @override
+  String get crisisHotlineCnDesc => '中國大陸 24 小時免費';
+
+  @override
+  String get crisisHotlineTwLabel => '安心專線 (24 小時)';
+
+  @override
+  String get crisisHotlineTwNumber => '1925';
+
+  @override
+  String get crisisHotlineTwDesc => '中國臺灣 24 小時心理諮商';
+
+  @override
+  String get crisisHotlineHkLabel => '撒瑪利亞防止自殺會 (24 小時)';
+
+  @override
+  String get crisisHotlineHkNumber => '2389 2222';
+
+  @override
+  String get crisisHotlineHkDesc => '中國香港 24 小時多語言';
+
+  @override
+  String get crisisHotlineMoLabel => '明愛生命熱線 (24 小時)';
+
+  @override
+  String get crisisHotlineMoNumber => '2826 1122';
+
+  @override
+  String get crisisHotlineMoDesc => '中國澳門 24 小時';
+
+  @override
+  String get setupLegalAgeAttestation =>
+      '本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。';
 }

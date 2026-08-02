@@ -459,6 +459,30 @@ abstract class AppLocalizations {
   /// **'本应用不提供医疗建议，所有功能仅供参考。'**
   String get settingsDisclaimerText;
 
+  /// No description provided for @settingsExportRiskTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'明文风险提示'**
+  String get settingsExportRiskTitle;
+
+  /// No description provided for @settingsExportRiskBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'您即将导出的数据为明文文件,含您的个人健康等敏感信息(用药、打卡、紧急联系人、树洞文字)。请务必保存到安全、可信的位置(加密 U 盘 / 私人云盘),避免上传至公共云盘或发送给不可信的第三方。'**
+  String get settingsExportRiskBody;
+
+  /// No description provided for @settingsExportRiskLiability.
+  ///
+  /// In zh, this message translates to:
+  /// **'一旦导出,文件的安全与保密由您自行负责,本 App 不再承担保护责任(PIPL §17 明确告知 + 用户确认)。'**
+  String get settingsExportRiskLiability;
+
+  /// No description provided for @settingsExportRiskAcknowledge.
+  ///
+  /// In zh, this message translates to:
+  /// **'我已了解风险,继续导出'**
+  String get settingsExportRiskAcknowledge;
+
   /// No description provided for @settingsExportDialogTitle.
   ///
   /// In zh, this message translates to:
@@ -4306,6 +4330,84 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'本周'**
   String get assessmentChipCurrent;
+
+  /// No description provided for @crisisHotlineCnLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'全国 24 小时心理援助热线'**
+  String get crisisHotlineCnLabel;
+
+  /// No description provided for @crisisHotlineCnNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'400-161-9995'**
+  String get crisisHotlineCnNumber;
+
+  /// No description provided for @crisisHotlineCnDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国大陆 24 小时免费'**
+  String get crisisHotlineCnDesc;
+
+  /// No description provided for @crisisHotlineTwLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'安心专线 (24 小时)'**
+  String get crisisHotlineTwLabel;
+
+  /// No description provided for @crisisHotlineTwNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'1925'**
+  String get crisisHotlineTwNumber;
+
+  /// No description provided for @crisisHotlineTwDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国台湾 24 小时心理咨商'**
+  String get crisisHotlineTwDesc;
+
+  /// No description provided for @crisisHotlineHkLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'撒玛利亚防止自杀会 (24 小时)'**
+  String get crisisHotlineHkLabel;
+
+  /// No description provided for @crisisHotlineHkNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'2389 2222'**
+  String get crisisHotlineHkNumber;
+
+  /// No description provided for @crisisHotlineHkDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国香港 24 小时多语言'**
+  String get crisisHotlineHkDesc;
+
+  /// No description provided for @crisisHotlineMoLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'明爱生命热线 (24 小时)'**
+  String get crisisHotlineMoLabel;
+
+  /// No description provided for @crisisHotlineMoNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'2826 1122'**
+  String get crisisHotlineMoNumber;
+
+  /// No description provided for @crisisHotlineMoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国澳门 24 小时'**
+  String get crisisHotlineMoDesc;
+
+  /// No description provided for @setupLegalAgeAttestation.
+  ///
+  /// In zh, this message translates to:
+  /// **'本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。'**
+  String get setupLegalAgeAttestation;
 }
 
 class _AppLocalizationsDelegate

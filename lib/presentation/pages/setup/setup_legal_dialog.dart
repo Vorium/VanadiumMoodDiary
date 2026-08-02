@@ -12,6 +12,15 @@
 //      留痕 (grantedAt / version)。
 //    - 简化版: 用户**担保**已告知联系人 (本人确认), 不强制联系人独立确认。
 //
+// ✅ v0.27 round 83 (R83) 律师审核 ⚠️ Q10b 修复:
+//    在 md 文档展示区域底部加"本地区心理危机干预热线"section (5 条:
+//    大陆 2 + 港澳台 3), 引用 12 个 crisisHotlineCn/Tw/Hk/Mo
+//    {Label,Number,Desc} 3-tuple key。走 i18n 渲染让 zh / en / zh_Hant
+//    都显示对应地区文案,与 user_agreement.md §5 + sensitive_data_consent.md §8
+//    表格完全同步。R83 之前 12 个 crisisHotline* key 是 orphan (R56e 后
+//    守护严格),所以加这个 section 一举两得:补全律师要求的危机热线 +
+//    消除 orphan ARB key。
+//
 // v1.0 严格 PIPL §13 + §23 升级 (待 A-01 AliyunSmsProvider 真接 + 模板过审):
 //   1. setup 添加联系人时, 给每个联系人发"同意接收失联通知"短信 (模板话术)
 //   2. 联系人回复 "Y" → 标记为 confirmed=true
@@ -59,9 +68,65 @@ class LegalDocumentDialog extends StatelessWidget {
     }
   }
 
+  /// v0.27 R83 (Q10b): 在 md 文档展示区域底部追加 5 条本地区心理危机干预热线
+  /// (大陆 2 + 港澳台 3),与 user_agreement.md §5 / sensitive_data_consent.md §8
+  /// 表格完全同步。走 i18n 让 zh / en / zh_Hant 各自显示。
+  Widget _crisisHotlineSection(
+    BuildContext context,
+    AppLocalizations l10n,
+    Color textColor,
+  ) {
+    final lines = <String>[
+      l10n.crisisHotlineCnLabel,
+      '${l10n.crisisHotlineCnNumber} (${l10n.crisisHotlineCnDesc})',
+      l10n.crisisHotlineTwLabel,
+      '${l10n.crisisHotlineTwNumber} (${l10n.crisisHotlineTwDesc})',
+      l10n.crisisHotlineHkLabel,
+      '${l10n.crisisHotlineHkNumber} (${l10n.crisisHotlineHkDesc})',
+      l10n.crisisHotlineMoLabel,
+      '${l10n.crisisHotlineMoNumber} (${l10n.crisisHotlineMoDesc})',
+    ];
+    return Container(
+      margin: const EdgeInsets.only(top: AppTokens.spacingLg),
+      padding: const EdgeInsets.all(AppTokens.spacingMd),
+      decoration: BoxDecoration(
+        color: AppTokens.surfaceColor(context).withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+        border: Border.all(color: AppTokens.dividerColor(context)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '🆘 心理危机干预热线 (24h)',
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeBody,
+              fontWeight: FontWeight.w600,
+              color: AppTokens.primaryColor(context),
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          for (final line in lines)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                '• $line',
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeCaption,
+                  color: textColor,
+                  height: AppTokens.lineHeightNormal,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final textColor = AppTokens.textPrimaryColor(context);
     return AlertDialog(
       title: Text(_title(l10n)),
       content: SizedBox(
@@ -79,12 +144,19 @@ class LegalDocumentDialog extends StatelessWidget {
               );
             }
             return SingleChildScrollView(
-              child: Text(
-                snap.data!,
-                style: const TextStyle(
-                  fontSize: AppTokens.fontSizeCaption,
-                  height: AppTokens.lineHeightNormal,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    snap.data!,
+                    style: TextStyle(
+                      fontSize: AppTokens.fontSizeCaption,
+                      height: AppTokens.lineHeightNormal,
+                      color: textColor,
+                    ),
+                  ),
+                  _crisisHotlineSection(context, l10n, textColor),
+                ],
               ),
             );
           },

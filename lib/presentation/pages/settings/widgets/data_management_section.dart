@@ -149,71 +149,165 @@ class DataManagementSection extends ConsumerWidget {
     try {
       final json = await service.exportToJson();
       if (!context.mounted) return;
+      // v0.28 R83 (Q4b 律师): 导出 JSON dialog 加明文风险 + 责任划界
+      // + 强制勾选"我已了解风险"才允许复制 (PIPL §17 告知后用户确认,
+      // 责任划界由用户承担 — 跟"明文 = 用户自负"是法律标配)
+      bool isAcknowledged = false;
       await showDialog<void>(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(AppLocalizations.of(context).settingsExportDialogTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(AppLocalizations.of(context).settingsExportInstruction),
-              const SizedBox(height: AppTokens.spacingXs),
-              Container(
-                padding: const EdgeInsets.all(AppTokens.spacingSm),
-                decoration: BoxDecoration(
-                  color: AppTokens.tintedWarningSoft(context),
-                  borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-                ),
-                child: Text(
-                  AppLocalizations.of(context).settingsExportVentWarning,
-                  style: AppTokens.textStyleLegal(context),
-                ),
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              Container(
-                padding: const EdgeInsets.all(AppTokens.spacingSm),
-                decoration: BoxDecoration(
-                  color: AppTokens.dividerColor(context),
-                  borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-                ),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxHeight: 300),
-                  child: SingleChildScrollView(
-                    child: SelectableText(
-                      json,
-                      // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
-                      // 替代内联 TextStyle('monospace', fontSizeCaptionSm)
-                      style: AppTokens.textStyleMono(
-                        context,
-                        size: AppTokens.fontSizeCaptionSm,
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, setLocal) => AlertDialog(
+            title: Text(
+              AppLocalizations.of(context).settingsExportDialogTitle,
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    AppLocalizations.of(context).settingsExportInstruction,
+                  ),
+                  const SizedBox(height: AppTokens.spacingXs),
+                  // 已有: vent 录音不导出 提示 (v0.26 round 57 加)
+                  Container(
+                    padding: const EdgeInsets.all(AppTokens.spacingSm),
+                    decoration: BoxDecoration(
+                      color: AppTokens.tintedWarningSoft(context),
+                      borderRadius:
+                          BorderRadius.circular(AppTokens.radiusChip),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context).settingsExportVentWarning,
+                      style: AppTokens.textStyleLegal(context),
+                    ),
+                  ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  // Q4b: 明文风险 + 责任划界 (律师反馈 必改)
+                  Container(
+                    padding: const EdgeInsets.all(AppTokens.spacingSm),
+                    decoration: BoxDecoration(
+                      color: AppTokens.tintedErrorSoft(context),
+                      borderRadius:
+                          BorderRadius.circular(AppTokens.radiusChip),
+                      border: Border.all(
+                        color: AppTokens.errorColor(context),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              color: AppTokens.errorColor(context),
+                              size: AppTokens.iconSizeInline,
+                            ),
+                            const SizedBox(
+                              width: AppTokens.spacingXxs,
+                            ),
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context)
+                                    .settingsExportRiskTitle,
+                                style: AppTokens.textStyleLabel(context)
+                                    .copyWith(
+                                  color: AppTokens.errorColor(context),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTokens.spacingXxs),
+                        Text(
+                          AppLocalizations.of(context)
+                              .settingsExportRiskBody,
+                          style: AppTokens.textStyleBody(context),
+                        ),
+                        const SizedBox(height: AppTokens.spacingXxs),
+                        Text(
+                          AppLocalizations.of(context)
+                              .settingsExportRiskLiability,
+                          style: AppTokens.textStyleLegal(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  // 强制勾选 checkbox 才允许复制
+                  CheckboxListTile(
+                    value: isAcknowledged,
+                    onChanged: (v) =>
+                        setLocal(() => isAcknowledged = v ?? false),
+                    title: Text(
+                      AppLocalizations.of(context)
+                          .settingsExportRiskAcknowledge,
+                      style: AppTokens.textStyleBody(context),
+                    ),
+                    controlAffinity:
+                        ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  // JSON 容器
+                  Container(
+                    padding: const EdgeInsets.all(AppTokens.spacingSm),
+                    decoration: BoxDecoration(
+                      color: AppTokens.dividerColor(context),
+                      borderRadius:
+                          BorderRadius.circular(AppTokens.radiusChip),
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 300),
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          json,
+                          // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
+                          // 替代内联 TextStyle('monospace', fontSizeCaptionSm)
+                          style: AppTokens.textStyleMono(
+                            context,
+                            size: AppTokens.fontSizeCaptionSm,
+                          ),
+                        ),
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(AppLocalizations.of(context).commonClose),
+              ),
+              ElevatedButton.icon(
+                icon: const Icon(
+                  Icons.copy,
+                  size: AppTokens.iconSizeInline,
                 ),
+                label: Text(AppLocalizations.of(context).settingsCopy),
+                onPressed: isAcknowledged
+                    ? () async {
+                        await Clipboard.setData(
+                          ClipboardData(text: json),
+                        );
+                        if (ctx.mounted) {
+                          // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+                          AppSnackBar.showInfo(
+                            ctx,
+                            AppLocalizations.of(ctx).snackbarCopied,
+                          );
+                        }
+                      }
+                    : null,
               ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(AppLocalizations.of(context).commonClose),
-            ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.copy, size: AppTokens.iconSizeInline),
-              label: Text(AppLocalizations.of(context).settingsCopy),
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: json));
-                if (ctx.mounted) {
-                  // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
-                  AppSnackBar.showInfo(
-                    ctx,
-                    AppLocalizations.of(ctx).snackbarCopied,
-                  );
-                }
-              },
-            ),
-          ],
         ),
       );
     } catch (e) {

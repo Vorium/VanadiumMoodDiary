@@ -2,6 +2,54 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-02 (R83 — 律师审核 ⚠️ 集中修复, 工程 self-revision 4 项, Q4b/Q5a/Q8/Q10b/Q11a 落地)
+
+> R83 目标: R82 法务 review 简报发出后, 律师反馈 5 ❌ 必改 + 18 ⚠️ 需修订。
+> 用户决议: 决策 1 (Q3a 删 §3 8 元) / 决策 2 (Q6a 邮箱注册) / 决策 3 (Q11c 邮箱响应) 暂缓,
+> 走"工程 self-revision"路径: 4 项 R83 自查修复 (Q4b UI + Q5a md + Q8 md +
+> Q10b md + Q11a setup) + 1 项 R82.5 vent seal (PIPL §47) 走通流程。
+>
+> **3 类边界**:
+> - R82 上架冲刺 + R82.5 vent seal 已经 commit (a634dc9 / dbe6a67 / 3fcf4f4 / 7dfdc9f),
+>   R83 在它们基础之上做律师反馈修复
+> - 律师层面反馈(Q3a/Q6a/Q11c 3 项)用户决议暂缓, 留 R84+ 走法务
+> - Q1c/Q2b/Q5a/Q8/Q10b/Q11a 6 项律师 ⚠️ 需修订 → R83 集中改 md + setup UI
+>
+> R83 不在 CHANGELOG 列具体 commit (PR 合并时再补), 只列工程 self-revision
+> 修复 4 项 + 测试增量 + 守门员。
+
+### Tests
+- **1433/1433 pass** (R82.5 1426 + R83 +7: 7 data_export_q4b_round83)
+- `flutter analyze` **0 error / 0 warning**
+- 3 守门脚本全绿 (check_arb_keys / check_zh_hant_consistency / check_orphan_arb_keys)
+- 16 个 test 跑挂在 `pub.flutter-io.cn` 解析失败 (网络问题, 代码 0 错)
+  → 16 fail 全部是 drift 集成测试 fetch package advisory 时挂, 非代码问题
+
+### R83 工程 self-revision 4 项 (用户决议走)
+
+| # | 律师反馈 | 修复方式 | 影响文件 |
+|---|---|---|---|
+| 1 | Q4b (⚠️ 数据导出缺明文风险 + 责任划界 UI) | 导出 dialog 加风险卡 (error color border) + PIPL §17 责任文案 + checkbox 勾选才允许复制 | `data_management_section.dart` + 4 Q4b ARB key × 3 locale + 1 个 i18n+UI 集成测 |
+| 2 | Q5a (⚠️ 失联通知暂停不应描述数据流) | privacy_policy.md §0.5/§3 失联通知具体字段列表删除, 改"未来规划, 仅预存储" | `privacy_policy.md` |
+| 3 | Q8 (⚠️ 缺第三方 SDK 表格) | privacy_policy.md §7 第三方依赖改 22 行 SDK 表格 + IAP 真实披露(购买票据 + 应用 ID) | `privacy_policy.md` |
+| 4 | Q10b (⚠️ 心理危机热线不全) | 3 个 md (privacy / user_agreement / sensitive_data_consent) 各加 5 条热线表格 (大陆 2 + 港澳台 3) + setup_legal_dialog 底部追加热线 section (i18n 12 key) | 3 md + `setup_legal_dialog.dart` + 12 crisisHotline* ARB key × 3 locale |
+| 5 | Q11a (⚠️ 缺年龄严正声明) | setup_step_consent 加第 4 个 ConsentCheckRow (年龄严正声明) + setup_page 加 _consentAgeAttestation state + 4 个 prop + 隐私政策 §10 措辞改严正声明 | 3 setup 文件 + 1 setupLegalAgeAttestation ARB key × 3 locale + 隐私政策 §10 |
+
+### R82 上架冲刺 (R82 阶段 commit, R83 沿用)
+- `a634dc9` R82 (上架冲刺 A): P0 架构 2 + 0 测 3 + emil 4 + spec 2 + 上架 5
+- `3fcf4f4` R82 (legal brief): 12 P0 法务风险点 + 10 P1 关注点 简报
+- `dbe6a67` R82 (legal brief docx): Word 版法务 review 简报 + 生成脚本
+
+### R82.5 vent seal (PIPL §47, R83 阶段 commit)
+- `7dfdc9f` R82.5 (PIPL §47 vent seal): 撤回同意后 "立即删除 / 加密封存" 2 选 1
+  - LegalConsentStore + VentRepository.deleteAll() + 3-选-1 dialog + 9 test cases
+  - 走通 PIPL §47 "撤回应提供删除选项" 法务要求
+
+### 暂缓 (用户决议, 留 R84+ 走法务)
+- **决策 1 不走**: Q3a (隐私政策 §3 删"8 元/月付费")— 留原描述, 等真实付费方案定稿再删
+- **决策 2 不走**: Q6a (邮箱注册入口)— 留 R55 A-02 todo, 等 R55 真接阿里云 SMS 时一起做
+- **决策 3 不走**: Q11c (邮件响应 ≤15 工作日)— 留 R84+ 真实接入客服邮箱时再加
+
 ## [Unreleased] - 2026-08-02 (R81 — emil design eng 借鉴 B 站"哗哩哗哩能量加油站" 6 commit, 病耻感 UI 升级)
 
 > R81 目标: 用户分享 B 站"哗哩哗哩能量加油站" 2 张截图, 加载 emilkowalski

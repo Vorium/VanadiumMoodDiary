@@ -91,6 +91,10 @@
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 評估的折線圖與對比",
   "settingsAboutVersion": "v0.23.0 · 我今天吃了藥",
   "settingsDisclaimerText": "本應用不提供醫療建議，所有功能僅供參考。",
+"settingsExportRiskTitle": "明文風險提示",
+  "settingsExportRiskBody": "您即將導出的數據為明文文件,含您的個人健康等敏感信息(用藥、打卡、緊急聯繫人、樹洞文字)。請務必保存到安全、可信的位置(加密 U 盤 / 私人云盤),避免上傳至公共雲盤或發送給不可信的第三方。",
+  "settingsExportRiskLiability": "一旦導出,文件的安全與保密由您自行負責,本 App 不再承擔保護責任(PIPL §17 明確告知 + 用戶確認)。",
+  "settingsExportRiskAcknowledge": "我已瞭解風險,繼續導出",
   "settingsExportDialogTitle": "導出數據",
   "settingsExportInstruction": "把下面這串 JSON 保存到安全的地方：",
   "settingsExportVentWarning": "說明：樹洞（私密傾訴）的文字會導出，但錄音文件不導出——錄音存在 App 本地，重裝後路徑失效，無法跨設備複用。",
@@ -1478,6 +1482,19 @@
   "homeFabHotlineTodo": "緊急熱線入口建設中",
   "homeFabTopTodo": "回到頂端(開發中)",
   "trendChip30Day": "近 30 天",
-  "assessmentChipCurrent": "本週"
+  "assessmentChipCurrent": "本週",
+  "crisisHotlineCnLabel": "全國 24 小時心理援助熱線",
+  "crisisHotlineCnNumber": "400-161-9995",
+  "crisisHotlineCnDesc": "中國大陸 24 小時免費",
+  "crisisHotlineTwLabel": "安心專線 (24 小時)",
+  "crisisHotlineTwNumber": "1925",
+  "crisisHotlineTwDesc": "中國臺灣 24 小時心理諮商",
+  "crisisHotlineHkLabel": "撒瑪利亞防止自殺會 (24 小時)",
+  "crisisHotlineHkNumber": "2389 2222",
+  "crisisHotlineHkDesc": "中國香港 24 小時多語言",
+  "crisisHotlineMoLabel": "明愛生命熱線 (24 小時)",
+  "crisisHotlineMoNumber": "2826 1122",
+  "crisisHotlineMoDesc": "中國澳門 24 小時",
+  "setupLegalAgeAttestation": "本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。"
 }
 

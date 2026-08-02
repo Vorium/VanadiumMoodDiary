@@ -206,6 +206,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'This app does not provide medical advice. All features are for reference only.';
 
   @override
+  String get settingsExportRiskTitle => 'Plaintext risk warning';
+
+  @override
+  String get settingsExportRiskBody =>
+      'You are about to export data as a PLAINTEXT file containing your sensitive personal information (medication, check-ins, emergency contacts, vent text). Save it securely (encrypted USB / private cloud), never upload to public cloud or share with untrusted parties.';
+
+  @override
+  String get settingsExportRiskLiability =>
+      'Once exported, the security and confidentiality of the file is your responsibility. ChronicCare no longer bears protection duty (PIPL §17 informed + user-confirmed).';
+
+  @override
+  String get settingsExportRiskAcknowledge =>
+      'I understand the risks, continue';
+
+  @override
   String get settingsExportDialogTitle => 'Export Data';
 
   @override
@@ -2471,4 +2486,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assessmentChipCurrent => 'This week';
+
+  @override
+  String get crisisHotlineCnLabel =>
+      'National 24-hour psychological assistance hotline';
+
+  @override
+  String get crisisHotlineCnNumber => '400-161-9995';
+
+  @override
+  String get crisisHotlineCnDesc => 'Mainland China 24h toll-free';
+
+  @override
+  String get crisisHotlineTwLabel => '1925 Mental Health Hotline (24h)';
+
+  @override
+  String get crisisHotlineTwNumber => '1925';
+
+  @override
+  String get crisisHotlineTwDesc => 'Taiwan 24h psychological counseling';
+
+  @override
+  String get crisisHotlineHkLabel => 'Samaritan Befrienders Hong Kong (24h)';
+
+  @override
+  String get crisisHotlineHkNumber => '2389 2222';
+
+  @override
+  String get crisisHotlineHkDesc => 'Hong Kong 24h multilingual';
+
+  @override
+  String get crisisHotlineMoLabel => 'Caritas Life Hotline (24h)';
+
+  @override
+  String get crisisHotlineMoNumber => '2826 1122';
+
+  @override
+  String get crisisHotlineMoDesc => 'Macau 24h';
+
+  @override
+  String get setupLegalAgeAttestation =>
+      'I solemnly declare that I am at least 18 years of age. If I am between 14 and 18 years of age, I confirm that I have obtained consent from my legal guardian and accept all legal consequences of any false statement.';
 }

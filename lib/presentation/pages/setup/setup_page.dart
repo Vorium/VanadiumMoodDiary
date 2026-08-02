@@ -61,6 +61,8 @@ class _SetupPageState extends ConsumerState<SetupPage> {
   bool _consentUserAgreement = false;
   bool _consentPrivacyPolicy = false;
   bool _consentSensitiveData = false;
+  // v0.27 R83: 第 4 个勾选 — 年龄严正声明
+  bool _consentAgeAttestation = false;
 
   // Step 1: welcome
   final _nameController = TextEditingController();
@@ -161,12 +163,15 @@ class _SetupPageState extends ConsumerState<SetupPage> {
           consentUserAgreement: _consentUserAgreement,
           consentPrivacyPolicy: _consentPrivacyPolicy,
           consentSensitiveData: _consentSensitiveData,
+          consentAgeAttestation: _consentAgeAttestation,
           onConsentUserAgreementChanged: (v) =>
               setState(() => _consentUserAgreement = v),
           onConsentPrivacyPolicyChanged: (v) =>
               setState(() => _consentPrivacyPolicy = v),
           onConsentSensitiveDataChanged: (v) =>
               setState(() => _consentSensitiveData = v),
+          onConsentAgeAttestationChanged: (v) =>
+              setState(() => _consentAgeAttestation = v),
           onViewUserAgreement: () =>
               showLegalDocument(context, 'user_agreement'),
           onViewPrivacyPolicy: () =>
