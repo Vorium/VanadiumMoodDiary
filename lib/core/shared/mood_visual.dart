@@ -18,7 +18,7 @@ class MoodVisual {
 
   // ===== emoji =====
 
-  /// 分数 → emoji（1-5 映射）
+  /// 分数 → emoji（1-5 映射，标准人脸）
   static String emojiFor(int score) {
     switch (score) {
       case 1:
@@ -33,6 +33,38 @@ class MoodVisual {
         return '😄';
       default:
         return '😐';
+    }
+  }
+
+  /// 分数 → IP 化太阳 emoji (v0.28 R81)
+  ///
+  /// 跟 B 站"哗哩哗哩能量加油站" 4 情绪太阳 + 嘴型组合风格对齐, 病耻感
+  /// 中性化: 太阳是普遍治愈系符号, 不带疾病标签。
+  ///
+  /// 5 档映射 (跟 emojiFor 1:1 对齐):
+  /// - 1 很差: ⛈ 乌云 + 闪电 (雷暴)
+  /// - 2 差:   🌧 乌云 (下雨)
+  /// - 3 一般: ⛅ 云 (多云)
+  /// - 4 好:   🌤 晴间多云 (sun behind cloud)
+  /// - 5 很好: ☀️ 晴 (太阳)
+  ///
+  /// 频度: tens/day (mood 录入核心动作), 跟 emojiFor 平行存在让 UI
+  /// 层按"治愈系/IP 风" vs "标准人脸"切换。R82+ 评估哪种更受欢迎,
+  /// 留 A/B 数据决定保留哪个。
+  static String ipEmojiFor(int score) {
+    switch (score) {
+      case 1:
+        return '⛈';
+      case 2:
+        return '🌧';
+      case 3:
+        return '⛅';
+      case 4:
+        return '🌤';
+      case 5:
+        return '☀️';
+      default:
+        return '⛅';
     }
   }
 

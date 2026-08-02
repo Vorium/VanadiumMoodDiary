@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
@@ -97,7 +98,15 @@ class DimensionRow extends StatelessWidget {
                                     ? Theme.of(context).colorScheme.primary
                                     : AppTokens.textHintColor(context),
                               ),
-                              child: Text('$s'),
+                              child: Text(
+                                // v0.28 R81: 数字 1-5 改 IP 化太阳 emoji 5 档
+                                // (☀️🌤⛅🌧⛈), 跟 B 站"哗哩哗哩能量加油站" 4 情绪
+                                // 太阳 + 嘴型风格对齐, 病耻感中性化
+                                // (太阳是普遍治愈系符号, 不带疾病标签)
+                                // emil 频度: tens/day (mood 录入核心动作)
+                                // — standard animation OK
+                                MoodVisual.ipEmojiFor(s),
+                              ),
                             ),
                           ),
                         ),
