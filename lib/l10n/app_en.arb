@@ -1397,5 +1397,9 @@
   "gad7SeveritySummary2": "Moderate anxiety",
   "gad7SeveritySummary3": "Severe anxiety",
   "gad7Instruction": "Over the last 2 weeks, how often have you been bothered by the following problems?",
-  "gad7ShortDescription": "Anxiety screening over the last 2 weeks"
+  "gad7ShortDescription": "Anxiety screening over the last 2 weeks",
+  "homeQuickMoodTitle": "How are you today?",
+  "@homeQuickMoodTitle": {
+    "description": "R81: Home page quick mood carousel title (B 站 inspired)"
+  }
 }

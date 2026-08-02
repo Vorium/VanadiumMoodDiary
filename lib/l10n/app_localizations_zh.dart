@@ -2271,6 +2271,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get gad7ShortDescription => '过去两周的焦虑倾向筛查';
+
+  @override
+  String get homeQuickMoodTitle => '今天感觉如何？';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4540,4 +4543,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get gad7ShortDescription => '過去兩週的焦慮傾向篩查';
+
+  @override
+  String get homeQuickMoodTitle => '今天感覺如何？';
 }

@@ -4173,6 +4173,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'过去两周的焦虑倾向筛查'**
   String get gad7ShortDescription;
+
+  /// R81: 主页快速记心情 carousel 标题 (B 站'记录每日心情'风格)
+  ///
+  /// In zh, this message translates to:
+  /// **'今天感觉如何？'**
+  String get homeQuickMoodTitle;
 }
 
 class _AppLocalizationsDelegate

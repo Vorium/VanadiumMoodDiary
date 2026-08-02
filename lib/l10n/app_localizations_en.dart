@@ -2390,4 +2390,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gad7ShortDescription => 'Anxiety screening over the last 2 weeks';
+
+  @override
+  String get homeQuickMoodTitle => 'How are you today?';
 }

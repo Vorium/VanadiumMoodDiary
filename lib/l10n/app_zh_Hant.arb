@@ -1436,5 +1436,9 @@
   "gad7SeveritySummary2": "中度焦慮傾向",
   "gad7SeveritySummary3": "重度焦慮傾向",
   "gad7Instruction": "過去兩週內，你有多常被以下問題困擾？",
-  "gad7ShortDescription": "過去兩週的焦慮傾向篩查"
+  "gad7ShortDescription": "過去兩週的焦慮傾向篩查",
+  "homeQuickMoodTitle": "今天感覺如何？",
+  "@homeQuickMoodTitle": {
+    "description": "R81: 主頁快速記心情 carousel 標題 (B 站'記錄每日心情'風格)"
+  }
 }

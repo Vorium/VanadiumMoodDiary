@@ -23,6 +23,7 @@ import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/animations/celebration_bounce.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/quick_mood_carousel.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_header.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/notification_failure_banner.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.dart';
@@ -373,6 +374,18 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           // 鼓励文案(按 streak 动态切换)
           EncouragementText(streak: streakSnapshot.streak),
+
+          const SizedBox(height: AppTokens.spacingMd),
+
+          // v0.28 R81 (emil design-2): 主页快速记心情 carousel
+          // B 站"哗哩哗哩能量加油站" 4 情绪横滑 风格, 1 tap 速记 score
+          // (其他维度 energy/sleep/anxiety 留 null, 完整 4 维度走 MoodDialog)
+          // carousel 默认居中"一般" (score 3), 4 档可见 + 1 档隐藏
+          // emil 频度: occasional (跟 checkIn 同 primary action),
+          // standard animation OK, PageView 横滑 200ms ease-out
+          QuickMoodCarousel(
+            onOpenFullDialog: () => MoodDialog.show(context, ref),
+          ),
 
           const SizedBox(height: AppTokens.spacingSm),
 
