@@ -2393,4 +2393,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeQuickMoodTitle => 'How are you today?';
+
+  @override
+  String get homeFabAssessment => 'Mood test';
+
+  @override
+  String get homeFabVent => 'Mood vent';
+
+  @override
+  String get homeFabHotline => 'Hotline';
+
+  @override
+  String get homeFabTop => 'Back to top';
 }

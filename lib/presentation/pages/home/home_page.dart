@@ -22,6 +22,7 @@ import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/animations/celebration_bounce.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/quick_mood_carousel.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_header.dart';
@@ -359,6 +360,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     return PageScaffold(
       title: AppLocalizations.of(context).appName,
       actions: const [ThemeToggleButton()],
+      // v0.28 R81 (emil design-3): 浮动 FAB 工具栏
+      // B 站"哗哩哗哩能量加油站" 4 工具入口, 收起 1 FAB / 展开 4 圆角按钮
+      // (心情测试 / 心情树洞 / 紧急热线 / 回到顶端)
+      // emil 频度: tens/day (toggle), standard animation OK
+      floatingActionButton: const HomeFabToolbar(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

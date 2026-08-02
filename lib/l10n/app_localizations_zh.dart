@@ -2274,6 +2274,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeQuickMoodTitle => '今天感觉如何？';
+
+  @override
+  String get homeFabAssessment => '心情测试';
+
+  @override
+  String get homeFabVent => '心情树洞';
+
+  @override
+  String get homeFabHotline => '紧急热线';
+
+  @override
+  String get homeFabTop => '回到顶端';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4546,4 +4558,16 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeQuickMoodTitle => '今天感覺如何？';
+
+  @override
+  String get homeFabAssessment => '心情測試';
+
+  @override
+  String get homeFabVent => '心情樹洞';
+
+  @override
+  String get homeFabHotline => '緊急熱線';
+
+  @override
+  String get homeFabTop => '回到頂端';
 }

@@ -4179,6 +4179,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'今天感觉如何？'**
   String get homeQuickMoodTitle;
+
+  /// No description provided for @homeFabAssessment.
+  ///
+  /// In zh, this message translates to:
+  /// **'心情测试'**
+  String get homeFabAssessment;
+
+  /// No description provided for @homeFabVent.
+  ///
+  /// In zh, this message translates to:
+  /// **'心情树洞'**
+  String get homeFabVent;
+
+  /// No description provided for @homeFabHotline.
+  ///
+  /// In zh, this message translates to:
+  /// **'紧急热线'**
+  String get homeFabHotline;
+
+  /// No description provided for @homeFabTop.
+  ///
+  /// In zh, this message translates to:
+  /// **'回到顶端'**
+  String get homeFabTop;
 }
 
 class _AppLocalizationsDelegate

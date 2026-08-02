@@ -1401,5 +1401,9 @@
   "homeQuickMoodTitle": "How are you today?",
   "@homeQuickMoodTitle": {
     "description": "R81: Home page quick mood carousel title (B 站 inspired)"
-  }
+  },
+  "homeFabAssessment": "Mood test",
+  "homeFabVent": "Mood vent",
+  "homeFabHotline": "Hotline",
+  "homeFabTop": "Back to top"
 }

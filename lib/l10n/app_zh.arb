@@ -1443,5 +1443,9 @@
   "homeQuickMoodTitle": "今天感觉如何？",
   "@homeQuickMoodTitle": {
     "description": "R81: 主页快速记心情 carousel 标题 (B 站'记录每日心情'风格)"
-  }
+  },
+  "homeFabAssessment": "心情测试",
+  "homeFabVent": "心情树洞",
+  "homeFabHotline": "紧急热线",
+  "homeFabTop": "回到顶端"
 }
