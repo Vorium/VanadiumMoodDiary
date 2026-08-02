@@ -22,6 +22,7 @@ import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/animations/celebration_bounce.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/hero_illustration.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/quick_mood_carousel.dart';
@@ -371,6 +372,13 @@ class _HomePageState extends ConsumerState<HomePage> {
           // v0.18 (P1-27) fix: home_page god-page 拆 5 widget,build 主体减肥
           // 顶部 header
           HomeHeader(userName: userName),
+
+          // v0.28 R81 (emil design-4): 主页 hero 插画 (B 站治愈系风格)
+          // 蓝天 + 太阳 + 云 + 叶子, 4 元素 Stack, 静态 (rare 频度
+          // 不动画, 避免频度问题)。140dp 高, 跟功能区视觉分层。
+          const HomeHeroIllustration(),
+
+          const SizedBox(height: AppTokens.spacingMd),
 
           // P17 fix: 通知失败 banner(一次性提示，可关闭)
           if (!notifResult.ok)
