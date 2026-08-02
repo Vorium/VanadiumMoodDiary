@@ -4203,6 +4203,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'回到顶端'**
   String get homeFabTop;
+
+  /// No description provided for @trendChip30Day.
+  ///
+  /// In zh, this message translates to:
+  /// **'近 30 天'**
+  String get trendChip30Day;
+
+  /// No description provided for @assessmentChipCurrent.
+  ///
+  /// In zh, this message translates to:
+  /// **'本周'**
+  String get assessmentChipCurrent;
 }
 
 class _AppLocalizationsDelegate

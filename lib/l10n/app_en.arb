@@ -1405,5 +1405,7 @@
   "homeFabAssessment": "Mood test",
   "homeFabVent": "Mood vent",
   "homeFabHotline": "Hotline",
-  "homeFabTop": "Back to top"
+  "homeFabTop": "Back to top",
+  "trendChip30Day": "Last 30 days",
+  "assessmentChipCurrent": "This week"
 }

@@ -2286,6 +2286,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeFabTop => '回到顶端';
+
+  @override
+  String get trendChip30Day => '近 30 天';
+
+  @override
+  String get assessmentChipCurrent => '本周';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4570,4 +4576,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeFabTop => '回到頂端';
+
+  @override
+  String get trendChip30Day => '近 30 天';
+
+  @override
+  String get assessmentChipCurrent => '本週';
 }

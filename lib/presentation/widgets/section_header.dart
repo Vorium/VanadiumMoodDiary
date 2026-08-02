@@ -29,6 +29,7 @@ class SectionHeader extends StatelessWidget {
     required this.title,
     this.leading,
     this.action,
+    this.chip,
   });
 
   /// v0.24 round 48 (emil P2-9): 可选 leading icon (左侧)
@@ -38,30 +39,30 @@ class SectionHeader extends StatelessWidget {
   /// 典型用法: TextButton('查看全部')
   final Widget? action;
 
+  /// v0.28 R81 (emil design-5): 可选 chip 标签 (title 右侧)
+  /// B 站"哗哩哗哩能量加油站" 风格 chip (心情测试 / 关于B站 / 等等),
+  /// 跟 AppLocalizations 标准化 ARB key 集成
+  final String? chip;
+
   final String title;
 
   @override
   Widget build(BuildContext context) {
     // 纯文字模式: 无 leading + action
     if (leading == null && action == null) {
-      return Text(
-        title,
-        style: TextStyle(
-          fontSize: AppTokens.fontSizeLabel,
-          color: AppTokens.textSecondaryColor(context),
-          fontWeight: FontWeight.w500,
-        ),
-      );
-    }
-    // 复合模式: Row(leading + title + action)
-    return Row(
-      children: [
-        if (leading != null) ...[
-          leading!,
-          const SizedBox(width: AppTokens.spacingXs),
-        ],
-        Expanded(
-          child: Text(
+      if (chip == null) {
+        return Text(
+          title,
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeLabel,
+            color: AppTokens.textSecondaryColor(context),
+            fontWeight: FontWeight.w500,
+          ),
+        );
+      }
+      return Row(
+        children: [
+          Text(
             title,
             style: TextStyle(
               fontSize: AppTokens.fontSizeLabel,
@@ -69,12 +70,67 @@ class SectionHeader extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
+          const SizedBox(width: AppTokens.spacingXs),
+          _ChipBadge(label: chip!),
+        ],
+      );
+    }
+    // 复合模式: Row(leading + title + chip + action)
+    return Row(
+      children: [
+        if (leading != null) ...[
+          leading!,
+          const SizedBox(width: AppTokens.spacingXs),
+        ],
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeLabel,
+            color: AppTokens.textSecondaryColor(context),
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        if (chip != null) ...[
+          const SizedBox(width: AppTokens.spacingXs),
+          _ChipBadge(label: chip!),
+        ],
+        const Spacer(),
         if (action != null) ...[
           const SizedBox(width: AppTokens.spacingXs),
           action!,
         ],
       ],
+    );
+  }
+}
+
+/// v0.28 R81 (emil design-5): chip 标签 widget
+///
+/// B 站"哗哩哗哩能量加油站" 风格 chip (心情测试 / 关于B站 等),
+/// 标题旁小圆角标签, 跟 SectionHeader.chip 集成。
+class _ChipBadge extends StatelessWidget {
+  final String label;
+  const _ChipBadge({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTokens.spacingSm,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppTokens.tintedPrimarySoft(context),
+        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: AppTokens.fontSizeCaption,
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
   }
 }

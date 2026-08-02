@@ -2405,4 +2405,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeFabTop => 'Back to top';
+
+  @override
+  String get trendChip30Day => 'Last 30 days';
+
+  @override
+  String get assessmentChipCurrent => 'This week';
 }

@@ -162,7 +162,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // v0.23 round 40 (emil F4 fix): 4 处 inline section header 改用 SectionHeader
-        SectionHeader(title: AppLocalizations.of(context).trendLast30Days),
+        // v0.28 R81 (emil design-5): chip 标签 (B 站风格), 让用户一眼看出时间范围
+        SectionHeader(
+          title: AppLocalizations.of(context).trendLast30Days,
+          chip: AppLocalizations.of(context).trendChip30Day,
+        ),
         const SizedBox(height: AppTokens.spacingSm),
         HeatmapGrid(daily: daily),
         const SizedBox(height: AppTokens.spacingLg),

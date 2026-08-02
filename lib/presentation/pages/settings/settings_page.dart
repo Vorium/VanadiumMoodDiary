@@ -197,8 +197,10 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppTokens.spacingLg),
 
           // === 心理评估 + 邮件预览 + 关于 ===
+          // v0.28 R81 (emil design-5): chip 标签 (B 站风格)
           SectionHeader(
             title: AppLocalizations.of(context).settingsAssessment,
+            chip: AppLocalizations.of(context).assessmentChipCurrent,
           ),
           const SizedBox(height: AppTokens.spacingSm),
           const AssessmentSection(),

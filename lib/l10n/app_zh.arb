@@ -1447,5 +1447,7 @@
   "homeFabAssessment": "心情测试",
   "homeFabVent": "心情树洞",
   "homeFabHotline": "紧急热线",
-  "homeFabTop": "回到顶端"
+  "homeFabTop": "回到顶端",
+  "trendChip30Day": "近 30 天",
+  "assessmentChipCurrent": "本周"
 }
