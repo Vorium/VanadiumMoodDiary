@@ -16,6 +16,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// 角标同步 (iOS badge 数字)
 class BadgeSyncService {
@@ -80,10 +81,16 @@ class BadgeSyncService {
         details,
       );
       piiSafeLog('BadgeSyncService', '✅ 角标已更新 = $safeCount');
-    } catch (e) {
-      piiSafeLog(
-        'BadgeSyncService',
-        '⚠️ updateBadgeCount 失败（不影响功能）: $e',
+    } catch (e, st) {
+      // v0.28 R79 (R76 P3-3 修): 唯一漏改的 catch 块走 swallowError
+      // 集中器, 错误记录到 LastErrorCapture + piiSafeLog。PIPL §6 错误
+      // 透明度 + dev tooling: piiSafeLog 输出脱敏 + developer.log 记
+      // 完整 stack, release 包只走 piiSafeLog。
+      swallowError(
+        where: 'BadgeSyncService.updateBadgeCount',
+        error: e,
+        stack: st,
+        note: '角标更新失败（不影响功能）',
       );
     }
   }
