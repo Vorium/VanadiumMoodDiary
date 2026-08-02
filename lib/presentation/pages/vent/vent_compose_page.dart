@@ -68,20 +68,75 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
 
   @override
   void dispose() {
-    _playerCompleteSub?.cancel();
+    // v0.28 R79 (R74 P2-1 修): 异步 dispose 用 unawaited 包装
+    // 之前 _recorder.dispose() / _player.dispose() 是 Future, 调但不 await,
+    // 离开 page 时这些 future 可能还没完成, audioplayers native 资源 (iOS
+    // AudioPlayerImpl / Android AudioRecord) 释放不及时, 反复进/出 vent
+    // compose page 会累积 native 资源句柄, 最终 OOM 或 audio session 异常。
+    //
+    // 修法: 抽 _asyncDispose() helper 内部顺序释放 (cancel stream subscription
+    // → stop recorder if recording → dispose recorder → dispose player
+    // → delete temp file), 用 unawaited() 包装避免 State.dispose() 强制
+    // sync 签名要求。R17+R56b memory: 同一个 widget 内 await 链 + mounted
+    // check 模式, dispose 内只需 unawaited + 不抛异常, 不需 mounted guard。
+    unawaited(_asyncDispose());
+    // _textController.dispose() 同步, 立即调
     _textController.dispose();
-    _recorder.dispose();
-    _player.dispose();
+    super.dispose();
+  }
+
+  /// v0.28 R79: 异步释放资源的统一入口 (顺序: cancel → stop → dispose → clean temp)
+  ///
+  /// 之前在 [dispose] 同步调 _recorder.dispose() / _player.dispose() 但没 await,
+  /// native 资源释放不及时, 反复进/出 page 会泄漏 (R74 → R78 5 轮报告)。
+  Future<void> _asyncDispose() async {
+    // 1) cancel player complete stream subscription (sync, 立即)
+    await _playerCompleteSub?.cancel();
+    // 2) 如果还在录音, 先 stop (不 await 失败, 防止 hang)
+    if (_isRecording) {
+      try {
+        await _recorder.stop();
+      } catch (e, st) {
+        // v0.28 R79: stop 失败也继续 dispose, 防止 native 资源永远挂着
+        swallowError(
+          where: 'vent_compose_page._asyncDispose.stop',
+          error: e,
+          stack: st,
+        );
+      }
+    }
+    // 3) dispose recorder + player (audioplayers 5.0+ dispose 释放 native handle)
+    try {
+      await _recorder.dispose();
+    } catch (e, st) {
+      swallowError(
+        where: 'vent_compose_page._asyncDispose.recorder',
+        error: e,
+        stack: st,
+      );
+    }
+    try {
+      await _player.dispose();
+    } catch (e, st) {
+      swallowError(
+        where: 'vent_compose_page._asyncDispose.player',
+        error: e,
+        stack: st,
+      );
+    }
+    // 4) delete temp decrypted file (R22 P1-3 + R79 续)
     if (_tempDecryptedPath != null) {
       try {
-        ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
+        await ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
       } catch (e, st) {
-        // v0.22 round 30 (sp-en P1-3): 走 swallowError (app teardown 期间)
-        swallowError(where: 'vent_compose_page.dispose', error: e, stack: st);
+        swallowError(
+          where: 'vent_compose_page._asyncDispose.temp',
+          error: e,
+          stack: st,
+        );
       }
       _tempDecryptedPath = null;
     }
-    super.dispose();
   }
 
   Future<void> _toggleRecord() async {
