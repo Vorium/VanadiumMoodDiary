@@ -2,6 +2,68 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [Unreleased] - 2026-08-02 (R80 — MoodRecorder widget 测 6 case, R76 P3-5 partial 续)
+
+> R80 目标: R79 评估 doc 写好, 优先写测保护现有 widget 行为 (跟
+> R78 setup_page 集成测同模式), 再分 round 抽 helper / sub-widget。
+> R80 实际 1 commit 完成 R80-1, R80-2/3 评估后跳过 (中风险 + 估时
+> 紧, 留 R81+ 继续)。
+
+### Tests
+- **1358/1358 pass** (R79 1352 + R80 +6 新增: MoodRecorder widget 状态机 + dispose 资源链)
+- `flutter analyze` **0 error / 0 warning** (1 info: snooze_manager.dart:95 R77-10 已知遗留)
+- 16 守护脚本全绿
+
+### P3 修复 (R80-1, commit `dc73762`): MoodRecorder widget 测 6 case
+- **R76 P3-5 partial 续** (mood_audio_section 测覆盖盲区 4-6 轮未测)
+- 写 `test/presentation/mood_recorder_round80_test.dart` (10.1KB, 6 case):
+  - 初始 idle 状态 (snapshot.empty + service.isRecording=false)
+  - 点击录音 → service.isRecording=true 期间 (录音中 snapshot 仍空)
+  - reRecord 按钮可见 (widget 结构验证, 不验 snapshot)
+  - STT 不可用场景: service.initialize() 返 false
+  - 正常 unmount (pump SizedBox) 不抛异常
+  - 录音中 unmount 仍能 dispose 资源链 (跟 R79 vent_compose 异步 dispose 同款)
+- **关键技术点**:
+  - MoodRecorder widget 内部有 100ms tick Timer.periodic (录音 elapsed 显示),
+    `pumpAndSettle()` 永远不结束, 改用 `tester.pump(Duration)` 推进时间
+  - `_stopRecording` 内部调 `ref.read(moodAudioStorageProvider)` + `storage
+    .encryptAndWrite()` (drift + 文件系统), 真实环境工作但 widget test
+    需 mock storage。R80 简化不做此 mock, R81 配 FakeStorage 补
+  - 复用 R31 `_FakeMoodAudioService` 模式 (MoodAudioService interface +
+    serviceFactory 注入)
+- R76 spec 8 case 减 2 个依赖真 storage mock 的 case, R80 落地 6/8
+
+### R80 跳过项 + 留 R81+
+- **R80-2 (P1 AudioRecorderPlayer sub-widget 抽)**: 中风险 (lift _player
+  + _tempDecryptedPath + _isPlaying state, 跨 widget boundary), 1-2h,
+  改完无 widget test 保护。R81 配 8 case widget test + 抽 sub-widget
+  一起做
+- **R80-3 (P2 home_page 集成测 5 case deep link 4 路径)**: 高难度 (依赖
+  8+ provider mock, 跟 R76 P3-5 spec 10 case 全做估 2-3h)。R64 +
+  R67 已有 9 case 测 lifecycle 状态机 + use case dispatch, R80-3
+  增量价值边际。R81 估时专门做
+- **R80-4 (P2 export_orchestrator 集成测)**: 跳过, R39 已 50+ 测覆盖
+
+### R80 总览
+- **1 commit 落地** (R80-1 mood_audio widget 测 6 case)
+- **R76 P3-5 partial 续**: mood_audio_section 测覆盖盲区 R80 完成 6/8
+- **总进度**: 1163 (R63) → 1358 (R80), **+195 tests** / **+38 commits** / 16 守护脚本全绿
+
+### R81+ 路线 (按 R79 评估 doc 同步)
+- R81 (估 4-6h): mood_audio_section widget 测补 2 case (FakeStorage mock
+  + temp file 加密 round-trip + maxReached 3min) + 抽 AudioRecorderPlayer
+  sub-widget (low risk 80 行)
+- R81 (估 2-3h): home_page 集成测 5 case deep link 4 路径 + 庆祝 overlay
+  基础 1 case
+- R82 (估 4-6h): 抽 HomeDeepLinkHandler + HomeCelebrationController
+  (R79 评估 doc 路线, helper 写好 1.2KB 等 R80 集成测保)
+- R82 (估 2-3h): 抽 AudioRecorderControls (medium risk 180 行)
+- R83 (估 1-2h): 抽 AudioRecorderSTT (low risk 50 行)
+- 集成测 backlog: notification_service facade 5 case / vent_compose dispose
+  回归测 / care_engine integration 5 case
+
+---
+
 ## [Unreleased] - 2026-08-02 (R79 — 4 项修复: vent_compose dispose 异步 5 轮未修 + badge_sync catch 漏改 + 2 god class 评估)
 
 > R79 目标: 用户"全修"7 项 P1/P2 路线图。R79 实际落地 4 项 (R79-1/2 真改
