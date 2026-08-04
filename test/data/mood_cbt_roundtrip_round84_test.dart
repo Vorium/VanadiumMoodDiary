@@ -11,7 +11,6 @@
 // companion→insert。
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
@@ -56,8 +55,8 @@ void main() {
   tearDown(() async => db.close());
 
   test('CBT 5 栏字段 round-trip 全部保留', () async {
-    final draft = MoodEntryDraft(
-      score: 4, tags: const ['焦虑'],
+    const draft = MoodEntryDraft(
+      score: 4, tags: ['焦虑'],
       situation: '开会迟到', automaticThought: '大家觉得我不靠谱',
       evidenceFor: '上次也迟到', evidenceAgainst: '过去一年只迟到一次',
       alternativeThought: '偶尔一次正常', reratedScore: 3,
@@ -77,8 +76,8 @@ void main() {
   });
 
   test('7 栏字段 round-trip', () async {
-    final draft = MoodEntryDraft(
-      score: 2, tags: const [],
+    const draft = MoodEntryDraft(
+      score: 2, tags: [],
       situation: 'x', automaticThought: 'y', evidenceFor: 'a',
       evidenceAgainst: 'b', alternativeThought: 'c', reratedScore: 4,
       coreBelief: '我不够好', behaviorResponse: '深呼吸',
@@ -91,7 +90,7 @@ void main() {
   });
 
   test('老 3 栏数据 (CBT 字段全 null) round-trip', () async {
-    final draft = MoodEntryDraft(score: 3, tags: const ['普通'], note: '今天还行');
+    const draft = MoodEntryDraft(score: 3, tags: ['普通'], note: '今天还行');
     final id = await db.moodDao.insert(_draftToCompanion(draft));
     final saved = (await db.moodDao.getAll()).firstWhere((e) => e.id == id);
     expect(saved.situation, equals(null));
