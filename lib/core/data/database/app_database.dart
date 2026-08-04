@@ -92,7 +92,7 @@ class AppDatabase extends _$AppDatabase {
   //   (situation / automaticThought / evidenceFor / evidenceAgainst /
   //    alternativeThought / reratedScore / coreBelief / behaviorResponse)
   // - 8 列全 nullable,老数据自动 null (3 栏 mode 渲染)
-  // - 用户升级后 mood entry 在 _DayDetailCard 里走"3 栏 + 自由 note"分支
+  // - 用户升级后 mood entry 在 DayDetailCard 里走"3 栏 + 自由 note"分支
   @override
   int get schemaVersion => 17;
 
@@ -256,7 +256,7 @@ class AppDatabase extends _$AppDatabase {
           }
           // v16 → v17: mood_entries +8 个 CBT 字段 (v0.29 round 84)
           // - 8 列全 nullable, 老数据自动 null (3 栏 mode 渲染,行为不变)
-          // - 升级后 _DayDetailCard 走"3 栏 + 自由 note"分支,5/7 栏用户主动升级才用
+          // - 升级后 DayDetailCard 走"3 栏 + 自由 note"分支,5/7 栏用户主动升级才用
           if (from <= 16) {
             await m.addColumn(moodEntries, moodEntries.situation);
             await m.addColumn(moodEntries, moodEntries.automaticThought);
