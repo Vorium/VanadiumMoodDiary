@@ -63,4 +63,30 @@ class MoodEntries extends Table {
   ///
   /// 存储精度 = ms,UI 按秒/分秒显示。
   IntColumn get audioDurationMs => integer().nullable()();
+
+  // ===== v0.29 round 84 (CBT 思维记录) 字段 =====
+
+  /// 5/7 栏第 1 栏"情境"
+  TextColumn get situation => text().nullable()();
+
+  /// 5/7 栏第 2 栏"自动思维"
+  TextColumn get automaticThought => text().nullable()();
+
+  /// 5/7 栏第 3 栏"支持自动思维的证据"
+  TextColumn get evidenceFor => text().nullable()();
+
+  /// 5/7 栏第 3 栏"反对自动思维的证据"
+  TextColumn get evidenceAgainst => text().nullable()();
+
+  /// 5/7 栏第 4 栏"替代思维"
+  TextColumn get alternativeThought => text().nullable()();
+
+  /// 5/7 栏第 4 栏"重新评分" (1-5)
+  IntColumn get reratedScore => integer().nullable()();
+
+  /// 7 栏"核心信念"
+  TextColumn get coreBelief => text().nullable()();
+
+  /// 7 栏"行为应对"
+  TextColumn get behaviorResponse => text().nullable()();
 }
