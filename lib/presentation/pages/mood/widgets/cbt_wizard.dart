@@ -87,15 +87,17 @@ class CbtWizard extends ConsumerWidget {
               FilledButton(
                 onPressed: () {
                   if (isLastStep) {
-                    // 提交 — 由父组件 (mood_recorder_page) 监听
-                    // 当前 round 只 pop,dialog 关闭时 dispose 会 reset
-                    // cbtDraftProvider,保证下次打开干净状态。
+                    // v0.29 round 84 (Task 6 fix): 真正的 save 走
+                    // mood_recorder_page._save() (M
+                    // oodSubmitPanel 调的)。wizard 只负责
+                    // 关闭 dialog, 父组件 dispose 会 reset cbtDraftProvider。
+                    // label 改 "完成" (不是 "保存") 避免误导用户以为已落库。
                     Navigator.of(context).pop();
                   } else {
                     notifier.setStep(state.stepIndex + 1);
                   }
                 },
-                child: Text(isLastStep ? '保存' : '下一步'),
+                child: Text(isLastStep ? '完成' : '下一步'),
               ),
             ],
           ),
@@ -142,10 +144,8 @@ class CbtWizard extends ConsumerWidget {
           Text('情绪 + 证据', style: AppTokens.textStyleLabel(context)),
           const SizedBox(height: AppTokens.spacingSm),
           // score 选择 (5 档:1-5)
-          // v0.29 round 84 (Task 6): score chip 占位 — 真实点击写 score 走
-          // medication_notifier / mood_score_chooser 现有路径,Task 8 集成
-          // 时改 notifier.updateScore(score)。当前 onSelected 留空保证
-          // 编译通过,行为表现为"展示但不立即生效"。
+          // v0.29 round 84 (Task 6 fix): chip 现在写 notifier.updateScore
+          // (overwrite, 走 CBT 路径保留 8 个 CBT 字段)。
           Wrap(
             spacing: AppTokens.spacingSm,
             children: List.generate(5, (i) {
@@ -154,7 +154,7 @@ class CbtWizard extends ConsumerWidget {
                 label: Text('$score'),
                 selected: state.draft.score == score,
                 onSelected: (_) {
-                  // notifier.updateScore(score) - 走 score 现有路径
+                  notifier.updateScore(score);
                 },
               );
             }),

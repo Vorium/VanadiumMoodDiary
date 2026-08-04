@@ -8,7 +8,7 @@
 // 设计要点:
 // 1. 复用 Task 4 公共 widget CbtSectionField (5/7 栏 wizard 也用)
 // 2. score chip 用 ChoiceChip + 数字 (Task 8 集成时换为 DimensionRow IP emoji 风格)
-// 3. onChanged 走 cbtDraftProvider.updateField (Task 8 接入 updateScore)
+// 3. onChanged 走 cbtDraftProvider.updateField / updateScore
 // 4. ConsumerWidget — 跟随 cbtDraftProvider 状态
 // 5. Column 而非 ListView — 嵌入 mood_recorder_page dialog 的 SingleChildScrollView
 //    (ListView 嵌套 SingleChildScrollView 会触发 unbounded height 错误)
@@ -30,7 +30,7 @@ class CbtThreeColumnMode extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ① 情绪分数 1-5 (Task 8 集成: 替换为 DimensionRow IP emoji 风格)
+        // ① 情绪分数 1-5 (v0.29 round 84 Task 6 fix: 走 notifier.updateScore)
         Text('你现在的感受？', style: AppTokens.textStyleLabel(context)),
         const SizedBox(height: AppTokens.spacingXs),
         Wrap(
@@ -41,10 +41,7 @@ class CbtThreeColumnMode extends ConsumerWidget {
               label: Text('$score'),
               selected: state.draft.score == score,
               onSelected: (_) {
-                // TODO Task 8: 改为 notifier.updateScore(score), 让 score
-                // 走 CBT 路径 (跟 medication_notifier / mood_score_chooser
-                // 已有状态保持一致)
-                notifier.updateField();
+                notifier.updateScore(score);
               },
             );
           }),

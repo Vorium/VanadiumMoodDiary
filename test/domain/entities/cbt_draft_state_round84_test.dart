@@ -7,9 +7,11 @@
 // 4. 7 栏 → 5 栏切换保留 core/behavior 字段 (UI 隐藏但 state 保留)
 // 5. firstEmptyStep 5 栏: 全空 → 0, situation 空 → 0, 都填 → 4
 // 6. 3 栏 firstEmptyStep 永远返回 0 (单屏模式无 step 概念)
+// 7. (Task 6 fix) updateScore overwrite score, 其它 draft 字段保留
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -117,6 +119,41 @@ void main() {
         ),
         0,
       );
+    });
+  });
+
+  group('CbtDraftNotifier.updateScore (v0.29 round 84 Task 6 fix)', () {
+    test('updateScore 改 score, 其它 draft 字段保留', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      // 先用 updateField 填一些 CBT 字段
+      container.read(cbtDraftProvider.notifier).updateField(situation: 's');
+      // 再调 updateScore overwrite score
+      container.read(cbtDraftProvider.notifier).updateScore(5);
+      final s = container.read(cbtDraftProvider);
+      expect(s.draft.score, 5);
+      expect(s.draft.situation, 's'); // preserved
+    });
+
+    test('updateScore 多次调用以最后一次为准', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      final notifier = container.read(cbtDraftProvider.notifier);
+      notifier.updateScore(1);
+      notifier.updateScore(3);
+      notifier.updateScore(5);
+      expect(container.read(cbtDraftProvider).draft.score, 5);
+    });
+
+    test('updateScore 越界 (0/6/-1) no-op, state 不变', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      final notifier = container.read(cbtDraftProvider.notifier);
+      notifier.updateScore(2);
+      notifier.updateScore(0); // 越界
+      notifier.updateScore(6); // 越界
+      notifier.updateScore(-1); // 越界
+      expect(container.read(cbtDraftProvider).draft.score, 2);
     });
   });
 }

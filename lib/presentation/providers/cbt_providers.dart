@@ -182,6 +182,40 @@ class CbtDraftNotifier extends Notifier<CbtDraftState> {
     );
   }
 
+  /// 改情绪分数 (1-5) — 5/7 栏 wizard step 2 + 3 栏 mode 顶部 chip
+  ///
+  /// v0.29 round 84 (Task 6 fix): 之前 step 2 的 score chip 是占位
+  /// (onSelected 空实现),用户点 1-5 不写 state.draft.score, 所有 5/7 栏
+  /// mood 记录都保存 score=3。修法: 显式 overwrite, 不 ??-coalesce
+  /// (跟 updateField 的 nullable-field 模式相反 — score 必有值)。
+  ///
+  /// 范围 1-5: 不在范围直接 no-op (UI 已限制, 防御性)。
+  void updateScore(int score) {
+    if (score < 1 || score > 5) return;
+    state = state.copyWith(
+      draft: MoodEntryDraft(
+        score: score,
+        tags: state.draft.tags,
+        at: state.draft.at,
+        note: state.draft.note,
+        energy: state.draft.energy,
+        sleep: state.draft.sleep,
+        anxiety: state.draft.anxiety,
+        audioPath: state.draft.audioPath,
+        audioTranscript: state.draft.audioTranscript,
+        audioDurationMs: state.draft.audioDurationMs,
+        situation: state.draft.situation,
+        automaticThought: state.draft.automaticThought,
+        evidenceFor: state.draft.evidenceFor,
+        evidenceAgainst: state.draft.evidenceAgainst,
+        alternativeThought: state.draft.alternativeThought,
+        reratedScore: state.draft.reratedScore,
+        coreBelief: state.draft.coreBelief,
+        behaviorResponse: state.draft.behaviorResponse,
+      ),
+    );
+  }
+
   /// 折叠卡展开/收起
   void toggleExplainer() {
     state = state.copyWith(showExplainer: !state.showExplainer);
