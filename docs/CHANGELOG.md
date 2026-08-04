@@ -2,6 +2,55 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-05 (R85 — CBT 思维记录 sub-spec 2, 重评效果折线图 trend page 集成)
+
+> R85 目标: sub-spec 1 落地 5/7 栏 CBT 思维记录后, 用户填的"重评分数"
+> (reratedScore 0-100) 没法可视化对比"情绪分数" (score 0-100)。本轮把
+> 用户的"重评效果"用双线折线图呈现, 让 CBT 工作流的产出"可见"。
+>
+> **4 个 task** (每个 1 commit, 共 5 commit, +5 test):
+> - Task 1: `cbtReratedEntriesProvider` (filter mood_entries 5/7 栏 entries)
+> - Task 2: `ReratedScoreChart` widget (fl_chart 双线: score 实线 + reratedScore 虚线)
+> - Task 3: trend_page 集成 (`MoodHistoryChart` 下方挂图表)
+> - Task 4: 3 ARB keys + CHANGELOG (本 commit)
+>
+> **架构边界**:
+> - 重评图只读 mood_entries 表的 score + reratedScore 字段
+> - 5/7 栏判定: `columnCount(entry) >= 5` (跟 R84 `ThoughtRecordLevel` 一致)
+> - 隐私: 5/7 栏文本内容 (situation / automaticThought 等) 不进图表数据
+> - 空态: 5/7 栏数据 < 3 条时显示 `EmptyState` (无头无尾 0 数据点)
+
+### Added
+- **CBT 重评效果折线图 (ReratedScoreChart)**:
+  - 新增 `cbtReratedEntriesProvider` (Provider<List<MoodEntry>>) —
+    过滤 mood_entries 表中 `columnCount >= 5` 的 entries (5/7 栏 CBT 记录)
+  - 新增 `ReratedScoreChart` widget — fl_chart 双线 LineChart:
+    - 实线 (solid, primary color): 情绪分数 score 0-100
+    - 虚线 (dashed, secondary): 重评分数 reratedScore 0-100
+  - 集成到 trend page `MoodHistoryChart` 下方, 标题走 i18n
+  - 空态: 5/7 栏数据 < 3 条时显示 `EmptyState` (icon + title + hint)
+  - 3 个新 ARB key (zh / en / zh_Hant):
+    - `trendCbtReratedChartTitle` — 标题
+    - `trendCbtReratedEmptyTitle` — 空态标题
+    - `trendCbtReratedEmptyHint` — 空态引导
+
+### Tests
+- **1456/1456 pass** (R84 baseline 1456 + R85 +5: 4 widget + 1 provider 单元;
+  -5 是 setup_*) — 实际 ~1456 pass + 16 预存 setup_* fail (R77 起就存在)
+- `flutter analyze` 0 error / 0 warning (9 info-level RadioListTile
+  deprecated_member_use 已知, 不修 — 跟 M3 RadioGroup 升级一起做)
+- 16 守门员脚本全绿 (check_arb_keys / check_changelog /
+  check_cross_feature / check_datetime_race / check_datetime_race2 /
+  check_drift_namespace / check_fullwidth_punctuation /
+  check_no_hardcoded_utc / check_no_pua / check_widget_dispose /
+  check_orphan_arb_keys / check_legal_consent / check_sms_release_ready /
+  check_strings_hardcoded / check_zh_hant_consistency / check_all.dart)
+
+### Notes
+- 重评效果柱图 / mood 列表项 / PDF 导出 / AI 辅助 留待 sub-spec 3-5
+- R85 5/7 栏判定用 `columnCount(entry) >= 5`, 跟 R84
+  `ThoughtRecordLevel.columnCount` 行为完全一致 (R84 enum: 3/5/7)
+
 ## [0.29.0] - 2026-08-04 (R84 — CBT 思维记录 sub-spec 1, 3/5/7 栏档位 UI + schema 16→17 + 8 CBT 字段 + 35 ARB keys)
 
 > R84 目标: 用户提"想看 CBT 思维记录 (Cognitive Behavioral Therapy thought record)"作为

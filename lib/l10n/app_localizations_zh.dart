@@ -4223,7 +4223,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get trendCbtReratedChartTitle => '重評效果';
 
   @override
-  String get trendCbtReratedEmptyTitle => '還沒有 5/7 欄 CBT 資料';
+  String get trendCbtReratedEmptyTitle => '還沒有 5/7 欄 CBT 數據';
 
   @override
   String get trendCbtReratedEmptyHint => '先用 5/7 欄 CBT 填表, 才能看到重評效果';
