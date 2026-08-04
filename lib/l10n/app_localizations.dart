@@ -3022,6 +3022,24 @@ abstract class AppLocalizations {
   /// **'在主页点击「记一下情绪」开始记录'**
   String get trendNoMoodEntriesHint;
 
+  /// No description provided for @trendCbtReratedChartTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'重评效果'**
+  String get trendCbtReratedChartTitle;
+
+  /// No description provided for @trendCbtReratedEmptyTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有 5/7 栏 CBT 数据'**
+  String get trendCbtReratedEmptyTitle;
+
+  /// No description provided for @trendCbtReratedEmptyHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'先用 5/7 栏 CBT 填表, 才能看到重评效果'**
+  String get trendCbtReratedEmptyHint;
+
   /// No description provided for @contactEmptyList.
   ///
   /// In zh, this message translates to:

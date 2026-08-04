@@ -1746,6 +1746,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap \"Log Mood\" on the home page to start tracking';
 
   @override
+  String get trendCbtReratedChartTitle => 'Rerating effect';
+
+  @override
+  String get trendCbtReratedEmptyTitle => 'No 5/7-column CBT data yet';
+
+  @override
+  String get trendCbtReratedEmptyHint =>
+      'Fill in a 5/7-column CBT thought record first to see your rerating effect';
+
+  @override
   String get contactEmptyList => 'No contacts yet — add one';
 
   @override

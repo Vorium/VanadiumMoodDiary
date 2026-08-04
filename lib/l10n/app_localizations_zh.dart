@@ -1662,6 +1662,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get trendNoMoodEntriesHint => '在主页点击「记一下情绪」开始记录';
 
   @override
+  String get trendCbtReratedChartTitle => '重评效果';
+
+  @override
+  String get trendCbtReratedEmptyTitle => '还没有 5/7 栏 CBT 数据';
+
+  @override
+  String get trendCbtReratedEmptyHint => '先用 5/7 栏 CBT 填表, 才能看到重评效果';
+
+  @override
   String get contactEmptyList => '还没有联系人，请先添加';
 
   @override
@@ -4209,6 +4218,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get trendNoMoodEntriesHint => '在主頁點擊「記一下情緒」開始記錄';
+
+  @override
+  String get trendCbtReratedChartTitle => '重評效果';
+
+  @override
+  String get trendCbtReratedEmptyTitle => '還沒有 5/7 欄 CBT 資料';
+
+  @override
+  String get trendCbtReratedEmptyHint => '先用 5/7 欄 CBT 填表, 才能看到重評效果';
 
   @override
   String get contactEmptyList => '還沒有聯繫人，請先添加';
