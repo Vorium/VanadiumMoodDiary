@@ -171,7 +171,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             ),
           ),
         const SizedBox(height: AppTokens.spacingMd),
-        _DayDetailCard(
+        DayDetailCard(
           date: _selected,
           allCheckIns: widget.allCheckIns,
           moodEntries: widget.moodEntries,
@@ -274,12 +274,18 @@ class _CalendarCell extends StatelessWidget {
 }
 
 /// 选中日详情卡片
-class _DayDetailCard extends StatelessWidget {
+///
+/// v0.29 round 84: 改成 public `DayDetailCard` (去掉 underscore),
+/// 让 test/presentation/pages/trend/cbt_calendar_badge_round84_test.dart
+/// 能直接 import 测 CBT 摘要显示。命名风格跟 MoodHistoryChart / HeatmapGrid
+/// 等其它 public widget 对齐。
+class DayDetailCard extends StatelessWidget {
   final DateTime date;
   final List<CheckInEntity> allCheckIns;
   final List<MoodEntryEntity> moodEntries;
   final List<MedicationEntity> medications;
-  const _DayDetailCard({
+  const DayDetailCard({
+    super.key,
     required this.date,
     required this.allCheckIns,
     required this.moodEntries,
@@ -432,10 +438,138 @@ class _DayDetailCard extends StatelessWidget {
                   for (int i = 0; i < detail.events.length; i++) ...[
                     if (i > 0) const Divider(height: 1, indent: 32),
                     _EventRow(event: detail.events[i]),
+                    // v0.29 round 84 (CBT 思维记录): 在 mood event 行下展开 CBT 摘要
+                    if (detail.events[i].kind == DayEventKind.mood)
+                      ..._cbtWidgetsFor(detail.events[i], context),
                   ],
                 ],
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // v0.29 round 84 (CBT 思维记录): 给定 mood event, 返回 CBT 摘要 widget 列表
+  // (空 list = 不是 mood event 或无 CBT 字段)。
+  //
+  // TODO(task 9): 用 ARB `moodCbtChipBadge5` / `moodCbtChipBadge7` /
+  //   `moodCbtSectionSituation` / `moodCbtSectionAutomaticThought` / ...
+  //   替换下列硬编码中文字符串。
+  List<Widget> _cbtWidgetsFor(DayEvent event, BuildContext context) {
+    if (event.kind != DayEventKind.mood) return const [];
+    // 通过 timestamp 匹配对应的 MoodEntryEntity
+    MoodEntryEntity? entry;
+    for (final e in moodEntries) {
+      if (e.timestamp == event.time) {
+        entry = e;
+        break;
+      }
+    }
+    if (entry == null || !entry.isCbtRecord) return const [];
+
+    // badge 缩进 = 跟 _EventRow 的文本列对齐 (time col + icon + spacing)
+    const badgeIndent = AppTokens.eventTimeColWidth +
+        AppTokens.iconSizeInline +
+        AppTokens.spacingXs;
+    // 各字段行缩进 = badge indent + badge 宽度之后,跟 _EventRow 文本列对齐即可
+    const fieldIndent = badgeIndent;
+
+    final badgeLabel = entry.cbtLevel == 7 ? 'CBT 7 栏' : 'CBT 5 栏';
+
+    return [
+      Padding(
+        padding: const EdgeInsets.only(
+          left: badgeIndent,
+          top: AppTokens.spacingXxxs,
+          bottom: AppTokens.spacingXxxs,
+        ),
+        child: Wrap(
+          spacing: AppTokens.spacingXxs,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppTokens.tintedPrimaryDeep(context),
+                borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+              ),
+              child: Text(
+                badgeLabel,
+                style: AppTokens.textStyleMicro(context).copyWith(
+                  color: AppTokens.primaryColor(context),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      if (entry.situation != null)
+        _cbtFieldRow(context, '情境', entry.situation!, indent: fieldIndent),
+      if (entry.automaticThought != null)
+        _cbtFieldRow(
+          context,
+          '自动思维',
+          entry.automaticThought!,
+          indent: fieldIndent,
+        ),
+      if (entry.evidenceFor != null)
+        _cbtFieldRow(
+          context,
+          '支持证据',
+          entry.evidenceFor!,
+          indent: fieldIndent,
+        ),
+      if (entry.evidenceAgainst != null)
+        _cbtFieldRow(
+          context,
+          '反对证据',
+          entry.evidenceAgainst!,
+          indent: fieldIndent,
+        ),
+      if (entry.alternativeThought != null)
+        _cbtFieldRow(
+          context,
+          '替代思维',
+          entry.alternativeThought!,
+          indent: fieldIndent,
+        ),
+      if (entry.reratedScore != null)
+        _cbtFieldRow(
+          context,
+          '重新评分',
+          '${entry.reratedScore} (原 ${entry.score})',
+          indent: fieldIndent,
+        ),
+      if (entry.coreBelief != null)
+        _cbtFieldRow(context, '核心信念', entry.coreBelief!, indent: fieldIndent),
+      if (entry.behaviorResponse != null)
+        _cbtFieldRow(
+          context,
+          '行为应对',
+          entry.behaviorResponse!,
+          indent: fieldIndent,
+        ),
+    ];
+  }
+
+  /// v0.29 round 84: CBT 单字段行 (label: value), caption 字号 + secondary 色
+  Widget _cbtFieldRow(
+    BuildContext context,
+    String label,
+    String value, {
+    required double indent,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: indent,
+        bottom: AppTokens.spacingXxxs,
+      ),
+      child: Text(
+        '$label: $value',
+        style: TextStyle(
+          fontSize: AppTokens.fontSizeCaption,
+          color: AppTokens.textSecondaryColor(context),
         ),
       ),
     );
