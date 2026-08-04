@@ -2527,4 +2527,119 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get setupLegalAgeAttestation =>
       'I solemnly declare that I am at least 18 years of age. If I am between 14 and 18 years of age, I confirm that I have obtained consent from my legal guardian and accept all legal consequences of any false statement.';
+
+  @override
+  String get moodCbtLevelLabel3 => '3-column';
+
+  @override
+  String get moodCbtLevelLabel5 => '5-column';
+
+  @override
+  String get moodCbtLevelLabel7 => '7-column';
+
+  @override
+  String get moodCbtExpandExplain => 'What is a CBT thought record?';
+
+  @override
+  String get moodCbtSectionSituation => 'Situation';
+
+  @override
+  String get moodCbtSectionAutomaticThought => 'Automatic Thought';
+
+  @override
+  String get moodCbtSectionEvidenceFor => 'Evidence For';
+
+  @override
+  String get moodCbtSectionEvidenceAgainst => 'Evidence Against';
+
+  @override
+  String get moodCbtSectionAlternative => 'Alternative Thought';
+
+  @override
+  String get moodCbtSectionRerated => 'Re-rated';
+
+  @override
+  String get moodCbtSectionCoreBelief => 'Core Belief';
+
+  @override
+  String get moodCbtSectionBehavior => 'Behavioral Response';
+
+  @override
+  String get moodCbtExplainerBody =>
+      'CBT (Cognitive Behavioral Therapy) thought records help you identify and reframe negative automatic thoughts.\nThe standard 5-column format: first record the situation and thoughts, then weigh evidence for/against, and write a more balanced alternative.';
+
+  @override
+  String get moodCbtFieldHintSituation =>
+      'What event triggered this thought? Where, when, with whom?';
+
+  @override
+  String get moodCbtFieldHintAutomaticThought =>
+      'What thought, image, or belief flashed through your mind?';
+
+  @override
+  String get moodCbtFieldHintEvidenceFor => 'What supports this thought?';
+
+  @override
+  String get moodCbtFieldHintEvidenceAgainst =>
+      'What doesn\'t support this thought?';
+
+  @override
+  String get moodCbtFieldHintAlternative =>
+      'If your best friend were in this situation, what would you tell them?';
+
+  @override
+  String get moodCbtFieldHintCoreBelief =>
+      'What deeper belief lies behind this thought? (e.g. \"I\'m not good enough\")';
+
+  @override
+  String get moodCbtFieldHintBehavior => 'What will you do next?';
+
+  @override
+  String get moodCbtPromptTitle => 'Guiding questions';
+
+  @override
+  String moodCbtStepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String moodCbtReratedComparison(int newScore, int oldScore) {
+    return 'Re-rated: $newScore (was $oldScore)';
+  }
+
+  @override
+  String get settingsCbtLevel => 'Thought record level';
+
+  @override
+  String get settingsCbtLevelDescription =>
+      'Choose the thought record template for each mood log';
+
+  @override
+  String get settingsCbtLevel3Desc => 'Beginner, 1-2 minutes to complete';
+
+  @override
+  String get settingsCbtLevel5Desc =>
+      'Standard Beck thought record with cognitive reframing';
+
+  @override
+  String get settingsCbtLevel7Desc =>
+      'Deep version with core belief and behavioral response';
+
+  @override
+  String get moodCbtScoreReratedLabel => 'Re-rated score';
+
+  @override
+  String get moodCbtChipBadge5 => 'CBT 5-column';
+
+  @override
+  String get moodCbtChipBadge7 => 'CBT 7-column';
+
+  @override
+  String get moodCbtThreeScoreTitle => 'How do you feel right now?';
+
+  @override
+  String get moodCbtThreeSituationTitle => 'What happened?';
+
+  @override
+  String get moodCbtThreeAutoTitle => 'What thought flashed through your mind?';
 }

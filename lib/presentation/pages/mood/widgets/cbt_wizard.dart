@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_explainer_card.dart';
@@ -32,6 +33,7 @@ class CbtWizard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(cbtDraftProvider);
     final notifier = ref.read(cbtDraftProvider.notifier);
 
@@ -51,7 +53,7 @@ class CbtWizard extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
           child: Text(
-            '第 ${state.stepIndex + 1} 步 / 共 $totalSteps 步',
+            l10n.moodCbtStepOf(state.stepIndex + 1, totalSteps),
             style: AppTokens.textStyleMicro(context),
           ),
         ),
@@ -59,8 +61,8 @@ class CbtWizard extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(AppTokens.spacingMd),
           child: CbtExplainerCard(
-            title: '什么是 CBT 思维记录？',
-            body: 'CBT（认知行为疗法）思维记录帮你识别并重构负面自动思维。\n按 5 栏标准:先记录情境与想法,再找证据支持/反对,最后写下更平衡的替代想法。',
+            title: l10n.moodCbtExpandExplain,
+            body: l10n.moodCbtExplainerBody,
             expanded: state.showExplainer,
             onToggle: notifier.toggleExplainer,
           ),
@@ -69,7 +71,7 @@ class CbtWizard extends ConsumerWidget {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
-            child: _buildStep(context, state, notifier),
+            child: _buildStep(context, state, notifier, l10n),
           ),
         ),
         // 上一/下一步
@@ -110,6 +112,7 @@ class CbtWizard extends ConsumerWidget {
     BuildContext context,
     CbtDraftState state,
     CbtDraftNotifier notifier,
+    AppLocalizations l10n,
   ) {
     final step = state.stepIndex;
     final level = state.level;
@@ -117,8 +120,8 @@ class CbtWizard extends ConsumerWidget {
     // 5 栏 5 步 / 7 栏 7 步 映射
     if (step == 0) {
       return CbtSectionField(
-        title: '情境',
-        hint: '触发这个想法的事件是什么？发生在哪、什么时候、有谁？',
+        title: l10n.moodCbtSectionSituation,
+        hint: l10n.moodCbtFieldHintSituation,
         prompts: const [],
         initialValue: state.draft.situation,
         onChanged: (v) => notifier.updateField(situation: v),
@@ -126,8 +129,8 @@ class CbtWizard extends ConsumerWidget {
     }
     if (step == 1) {
       return CbtSectionField(
-        title: '那一刻脑海中闪过的想法',
-        hint: '那一刻脑海中闪过的想法、印象或信念是什么？',
+        title: l10n.moodCbtSectionAutomaticThought,
+        hint: l10n.moodCbtFieldHintAutomaticThought,
         prompts: const [
           '如果你的好朋友遇到这事,你会怎么劝TA？',
           '最坏/最好/最现实的结果是什么？',
@@ -161,16 +164,16 @@ class CbtWizard extends ConsumerWidget {
           ),
           const SizedBox(height: AppTokens.spacingMd),
           CbtSectionField(
-            title: '支持这个想法的证据',
-            hint: '什么事支持这个想法？',
+            title: l10n.moodCbtSectionEvidenceFor,
+            hint: l10n.moodCbtFieldHintEvidenceFor,
             prompts: const [],
             initialValue: state.draft.evidenceFor,
             onChanged: (v) => notifier.updateField(evidenceFor: v),
           ),
           const SizedBox(height: AppTokens.spacingMd),
           CbtSectionField(
-            title: '反对这个想法的证据',
-            hint: '什么事不支持这个想法？',
+            title: l10n.moodCbtSectionEvidenceAgainst,
+            hint: l10n.moodCbtFieldHintEvidenceAgainst,
             prompts: const [],
             initialValue: state.draft.evidenceAgainst,
             onChanged: (v) => notifier.updateField(evidenceAgainst: v),
@@ -183,14 +186,15 @@ class CbtWizard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CbtSectionField(
-            title: '替代思维',
-            hint: '如果你的好朋友遇到这事,你会怎么劝TA？',
+            title: l10n.moodCbtSectionAlternative,
+            hint: l10n.moodCbtFieldHintAlternative,
             prompts: const ['一年后你还会这么想吗？', '最现实的结果是什么？'],
             initialValue: state.draft.alternativeThought,
             onChanged: (v) => notifier.updateField(alternativeThought: v),
           ),
           const SizedBox(height: AppTokens.spacingMd),
-          Text('重新评分 (1-5)', style: AppTokens.textStyleLabel(context)),
+          Text(l10n.moodCbtScoreReratedLabel,
+              style: AppTokens.textStyleLabel(context),),
           Wrap(
             spacing: AppTokens.spacingSm,
             children: List.generate(5, (i) {
@@ -215,8 +219,8 @@ class CbtWizard extends ConsumerWidget {
     }
     if (step == 4 && level == ThoughtRecordLevel.seven) {
       return CbtSectionField(
-        title: '核心信念',
-        hint: '这个想法背后更深层的信念是什么？（如 "我不够好"）',
+        title: l10n.moodCbtSectionCoreBelief,
+        hint: l10n.moodCbtFieldHintCoreBelief,
         prompts: const [],
         initialValue: state.draft.coreBelief,
         onChanged: (v) => notifier.updateField(coreBelief: v),
@@ -224,8 +228,8 @@ class CbtWizard extends ConsumerWidget {
     }
     if (step == 5) {
       return CbtSectionField(
-        title: '行为应对',
-        hint: '接下来你打算怎么做？',
+        title: l10n.moodCbtSectionBehavior,
+        hint: l10n.moodCbtFieldHintBehavior,
         prompts: const ['深呼吸 5 次', '与信任的人聊聊', '做 10 分钟正念'],
         initialValue: state.draft.behaviorResponse,
         onChanged: (v) => notifier.updateField(behaviorResponse: v),

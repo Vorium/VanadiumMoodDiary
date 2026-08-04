@@ -9,6 +9,7 @@
 // 避免父 setState 重建时丢用户输入 + 泄漏 controller.
 import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_prompt_sheet.dart';
 
 class CbtSectionField extends StatefulWidget {
@@ -95,6 +96,7 @@ class _CbtSectionFieldState extends State<CbtSectionField> {
   }
 
   void _showInfoDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -103,7 +105,7 @@ class _CbtSectionFieldState extends State<CbtSectionField> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('好的'),
+            child: Text(l10n.commonConfirmOk),
           ),
         ],
       ),

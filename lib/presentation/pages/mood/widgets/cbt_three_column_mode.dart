@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.dart';
 
@@ -24,6 +25,7 @@ class CbtThreeColumnMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(cbtDraftProvider);
     final notifier = ref.read(cbtDraftProvider.notifier);
 
@@ -31,7 +33,8 @@ class CbtThreeColumnMode extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // ① 情绪分数 1-5 (v0.29 round 84 Task 6 fix: 走 notifier.updateScore)
-        Text('你现在的感受？', style: AppTokens.textStyleLabel(context)),
+        Text(l10n.moodCbtThreeScoreTitle,
+            style: AppTokens.textStyleLabel(context),),
         const SizedBox(height: AppTokens.spacingXs),
         Wrap(
           spacing: AppTokens.spacingSm,
@@ -50,8 +53,8 @@ class CbtThreeColumnMode extends ConsumerWidget {
 
         // ② 情境
         CbtSectionField(
-          title: '发生了什么？',
-          hint: '触发这个想法的事件是什么？发生在哪里、什么时候、有谁？',
+          title: l10n.moodCbtThreeSituationTitle,
+          hint: l10n.moodCbtFieldHintSituation,
           prompts: const [],
           initialValue: state.draft.situation,
           onChanged: (v) => notifier.updateField(situation: v),
@@ -60,8 +63,8 @@ class CbtThreeColumnMode extends ConsumerWidget {
 
         // ③ 自动思维
         CbtSectionField(
-          title: '那一刻脑海里闪过什么想法？',
-          hint: '那一瞬间脑中闪过的想法、印象或意象是什么？',
+          title: l10n.moodCbtThreeAutoTitle,
+          hint: l10n.moodCbtFieldHintAutomaticThought,
           prompts: const [
             '如果你的好朋友遇到这事, 你会怎么想？',
             '最坏 / 最好 / 最现实的结果是什么？',

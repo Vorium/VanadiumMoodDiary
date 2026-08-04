@@ -4408,6 +4408,210 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。'**
   String get setupLegalAgeAttestation;
+
+  /// No description provided for @moodCbtLevelLabel3.
+  ///
+  /// In zh, this message translates to:
+  /// **'3 栏'**
+  String get moodCbtLevelLabel3;
+
+  /// No description provided for @moodCbtLevelLabel5.
+  ///
+  /// In zh, this message translates to:
+  /// **'5 栏'**
+  String get moodCbtLevelLabel5;
+
+  /// No description provided for @moodCbtLevelLabel7.
+  ///
+  /// In zh, this message translates to:
+  /// **'7 栏'**
+  String get moodCbtLevelLabel7;
+
+  /// No description provided for @moodCbtExpandExplain.
+  ///
+  /// In zh, this message translates to:
+  /// **'什么是 CBT 思维记录？'**
+  String get moodCbtExpandExplain;
+
+  /// No description provided for @moodCbtSectionSituation.
+  ///
+  /// In zh, this message translates to:
+  /// **'情境'**
+  String get moodCbtSectionSituation;
+
+  /// No description provided for @moodCbtSectionAutomaticThought.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动思维'**
+  String get moodCbtSectionAutomaticThought;
+
+  /// No description provided for @moodCbtSectionEvidenceFor.
+  ///
+  /// In zh, this message translates to:
+  /// **'支持证据'**
+  String get moodCbtSectionEvidenceFor;
+
+  /// No description provided for @moodCbtSectionEvidenceAgainst.
+  ///
+  /// In zh, this message translates to:
+  /// **'反对证据'**
+  String get moodCbtSectionEvidenceAgainst;
+
+  /// No description provided for @moodCbtSectionAlternative.
+  ///
+  /// In zh, this message translates to:
+  /// **'替代思维'**
+  String get moodCbtSectionAlternative;
+
+  /// No description provided for @moodCbtSectionRerated.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新评分'**
+  String get moodCbtSectionRerated;
+
+  /// No description provided for @moodCbtSectionCoreBelief.
+  ///
+  /// In zh, this message translates to:
+  /// **'核心信念'**
+  String get moodCbtSectionCoreBelief;
+
+  /// No description provided for @moodCbtSectionBehavior.
+  ///
+  /// In zh, this message translates to:
+  /// **'行为应对'**
+  String get moodCbtSectionBehavior;
+
+  /// No description provided for @moodCbtExplainerBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'CBT（认知行为疗法）思维记录帮你识别并重构负面自动思维。\n按 5 栏标准：先记录情境与想法，再找证据支持/反对，最后写下更平衡的替代想法。'**
+  String get moodCbtExplainerBody;
+
+  /// No description provided for @moodCbtFieldHintSituation.
+  ///
+  /// In zh, this message translates to:
+  /// **'触发这个想法的事件是什么？发生在哪里、什么时候、有谁？'**
+  String get moodCbtFieldHintSituation;
+
+  /// No description provided for @moodCbtFieldHintAutomaticThought.
+  ///
+  /// In zh, this message translates to:
+  /// **'那一瞬间脑中闪过的想法、印象或意象是什么？'**
+  String get moodCbtFieldHintAutomaticThought;
+
+  /// No description provided for @moodCbtFieldHintEvidenceFor.
+  ///
+  /// In zh, this message translates to:
+  /// **'什么事支持这个想法？'**
+  String get moodCbtFieldHintEvidenceFor;
+
+  /// No description provided for @moodCbtFieldHintEvidenceAgainst.
+  ///
+  /// In zh, this message translates to:
+  /// **'什么事不支持这个想法？'**
+  String get moodCbtFieldHintEvidenceAgainst;
+
+  /// No description provided for @moodCbtFieldHintAlternative.
+  ///
+  /// In zh, this message translates to:
+  /// **'如果你的好朋友遇到这事，你会怎么想？'**
+  String get moodCbtFieldHintAlternative;
+
+  /// No description provided for @moodCbtFieldHintCoreBelief.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个想法背后更深层的信念是什么？（如 \"我不够好\"）'**
+  String get moodCbtFieldHintCoreBelief;
+
+  /// No description provided for @moodCbtFieldHintBehavior.
+  ///
+  /// In zh, this message translates to:
+  /// **'接下来你打算怎么做？'**
+  String get moodCbtFieldHintBehavior;
+
+  /// No description provided for @moodCbtPromptTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'引导问题'**
+  String get moodCbtPromptTitle;
+
+  /// No description provided for @moodCbtStepOf.
+  ///
+  /// In zh, this message translates to:
+  /// **'第 {current} 步 / 共 {total} 步'**
+  String moodCbtStepOf(int current, int total);
+
+  /// No description provided for @moodCbtReratedComparison.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新评分：{newScore}（原 {oldScore}）'**
+  String moodCbtReratedComparison(int newScore, int oldScore);
+
+  /// No description provided for @settingsCbtLevel.
+  ///
+  /// In zh, this message translates to:
+  /// **'思维记录档位'**
+  String get settingsCbtLevel;
+
+  /// No description provided for @settingsCbtLevelDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择每次记录情绪时使用的思维记录模板'**
+  String get settingsCbtLevelDescription;
+
+  /// No description provided for @settingsCbtLevel3Desc.
+  ///
+  /// In zh, this message translates to:
+  /// **'入门版，1-2 分钟可填完'**
+  String get settingsCbtLevel3Desc;
+
+  /// No description provided for @settingsCbtLevel5Desc.
+  ///
+  /// In zh, this message translates to:
+  /// **'标准 Beck 思维记录，含认知重构关键步骤'**
+  String get settingsCbtLevel5Desc;
+
+  /// No description provided for @settingsCbtLevel7Desc.
+  ///
+  /// In zh, this message translates to:
+  /// **'深度版，含核心信念识别和行为应对'**
+  String get settingsCbtLevel7Desc;
+
+  /// No description provided for @moodCbtScoreReratedLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新评分'**
+  String get moodCbtScoreReratedLabel;
+
+  /// No description provided for @moodCbtChipBadge5.
+  ///
+  /// In zh, this message translates to:
+  /// **'CBT 5 栏'**
+  String get moodCbtChipBadge5;
+
+  /// No description provided for @moodCbtChipBadge7.
+  ///
+  /// In zh, this message translates to:
+  /// **'CBT 7 栏'**
+  String get moodCbtChipBadge7;
+
+  /// No description provided for @moodCbtThreeScoreTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'你现在的感受？'**
+  String get moodCbtThreeScoreTitle;
+
+  /// No description provided for @moodCbtThreeSituationTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'发生了什么？'**
+  String get moodCbtThreeSituationTitle;
+
+  /// No description provided for @moodCbtThreeAutoTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'那一刻脑海里闪过什么想法？'**
+  String get moodCbtThreeAutoTitle;
 }
 
 class _AppLocalizationsDelegate

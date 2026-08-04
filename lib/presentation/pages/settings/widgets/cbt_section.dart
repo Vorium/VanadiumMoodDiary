@@ -7,9 +7,6 @@
 //
 // 跟 settings/widgets/ 6 个 section widget 同模式 (Card + Consumer 状态绑定),
 // 独立 widget 独立测 (见 test/presentation/pages/settings/widgets/cbt_section_round84_test.dart)。
-//
-// v0.29 round 84 (Task 9 留 TODO): 当前标题 / 副标题 / 3 栏描述用硬编码中文字符串,
-// 后续 Task 9 加 ARB key `settingsCbtLevel*` 后改 AppLocalizations。
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -17,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 
 /// v0.29 round 84 (settings): 思维记录档位 radio 入口
@@ -27,18 +25,9 @@ import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 class CbtSection extends ConsumerWidget {
   const CbtSection({super.key});
 
-  // ===== v0.29 round 84 (Task 9 TODO) 硬编码中文字符串 =====
-  // 当前 key 还没加 ARB, 暂用 inline 字符串避免编译失败。Task 9 统一加:
-  //   - settingsCbtLevelTitle      → "思维记录档位"
-  //   - settingsCbtLevelSubtitle   → "选择每次记录情绪时使用的思维记录模板"
-  //   - settingsCbtLevelThreeDesc  → "入门版, 1-2 分钟可填完"
-  //   - settingsCbtLevelFiveDesc   → "标准 Beck 思维记录, 含认知重构关键步骤"
-  //   - settingsCbtLevelSevenDesc  → "深度版, 含核心信念识别和行为应对"
-  static const _title = '思维记录档位';
-  static const _subtitle = '选择每次记录情绪时使用的思维记录模板';
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final level = ref.watch(thoughtRecordLevelProvider);
     final notifier = ref.read(thoughtRecordLevelProvider.notifier);
 
@@ -57,19 +46,19 @@ class CbtSection extends ConsumerWidget {
                 bottom: AppTokens.spacingXxs,
               ),
               child: Text(
-                _title,
+                l10n.settingsCbtLevel,
                 style: AppTokens.textStyleTitle(context),
               ),
             ),
             Text(
-              _subtitle,
+              l10n.settingsCbtLevelDescription,
               style: AppTokens.textStyleCaption(context),
             ),
             const SizedBox(height: AppTokens.spacingXxs),
             for (final lv in ThoughtRecordLevel.values)
               RadioListTile<ThoughtRecordLevel>(
                 title: Text('${lv.columnCount} 栏'),
-                subtitle: Text(_descriptionFor(lv)),
+                subtitle: Text(_descriptionFor(lv, l10n)),
                 value: lv,
                 // 关键: groupValue 决定哪个 radio 显示 selected
                 groupValue: level,
@@ -86,14 +75,14 @@ class CbtSection extends ConsumerWidget {
     );
   }
 
-  static String _descriptionFor(ThoughtRecordLevel lv) {
+  static String _descriptionFor(ThoughtRecordLevel lv, AppLocalizations l10n) {
     switch (lv) {
       case ThoughtRecordLevel.three:
-        return '入门版, 1-2 分钟可填完';
+        return l10n.settingsCbtLevel3Desc;
       case ThoughtRecordLevel.five:
-        return '标准 Beck 思维记录, 含认知重构关键步骤';
+        return l10n.settingsCbtLevel5Desc;
       case ThoughtRecordLevel.seven:
-        return '深度版, 含核心信念识别和行为应对';
+        return l10n.settingsCbtLevel7Desc;
     }
   }
 }

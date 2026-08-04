@@ -7,6 +7,9 @@
 // 模式: 跟 R84 cbt_three_column_round84_test 同款 —
 // ProviderScope + MaterialApp + tester.pumpAndSettle
 //
+// v0.29 round 84 (Task 9): wizard 内部走 l10n (moodCbtSectionSituation 等),
+// 加 localizationsDelegates 让 AppLocalizations.of(context) 工作。
+//
 // 注: wizard 真正读的是 cbtDraftProvider (而非 thoughtRecordLevelProvider),
 // 切档由父 mood_recorder_page 在 SegmentedButton 回调里做。
 // 这里我们不直接调 setLevel,只验 wizard 在 default state 下的 step 0/1
@@ -17,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_wizard.dart';
 
 void main() {
@@ -24,6 +28,9 @@ void main() {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale('zh'),
           home: Scaffold(body: CbtWizard()),
         ),
       ),
@@ -38,6 +45,9 @@ void main() {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: Locale('zh'),
           home: Scaffold(body: CbtWizard()),
         ),
       ),
@@ -47,6 +57,6 @@ void main() {
     await tester.enterText(find.byType(TextField).first, '开会迟到');
     await tester.tap(find.text('下一步'));
     await tester.pumpAndSettle();
-    expect(find.text('那一刻脑海中闪过的想法'), findsOneWidget);
+    expect(find.text('自动思维'), findsOneWidget);
   });
 }

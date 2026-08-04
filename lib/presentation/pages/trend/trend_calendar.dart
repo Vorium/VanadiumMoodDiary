@@ -452,10 +452,6 @@ class DayDetailCard extends StatelessWidget {
 
   // v0.29 round 84 (CBT 思维记录): 给定 mood event, 返回 CBT 摘要 widget 列表
   // (空 list = 不是 mood event 或无 CBT 字段)。
-  //
-  // TODO(task 9): 用 ARB `moodCbtChipBadge5` / `moodCbtChipBadge7` /
-  //   `moodCbtSectionSituation` / `moodCbtSectionAutomaticThought` / ...
-  //   替换下列硬编码中文字符串。
   List<Widget> _cbtWidgetsFor(DayEvent event, BuildContext context) {
     if (event.kind != DayEventKind.mood) return const [];
     // 通过 timestamp 匹配对应的 MoodEntryEntity
@@ -468,6 +464,8 @@ class DayDetailCard extends StatelessWidget {
     }
     if (entry == null || !entry.isCbtRecord) return const [];
 
+    final l10n = AppLocalizations.of(context);
+
     // badge 缩进 = 跟 _EventRow 的文本列对齐 (time col + icon + spacing)
     const badgeIndent = AppTokens.eventTimeColWidth +
         AppTokens.iconSizeInline +
@@ -475,7 +473,8 @@ class DayDetailCard extends StatelessWidget {
     // 各字段行缩进 = badge indent + badge 宽度之后,跟 _EventRow 文本列对齐即可
     const fieldIndent = badgeIndent;
 
-    final badgeLabel = entry.cbtLevel == 7 ? 'CBT 7 栏' : 'CBT 5 栏';
+    final badgeLabel =
+        entry.cbtLevel == 7 ? l10n.moodCbtChipBadge7 : l10n.moodCbtChipBadge5;
 
     return [
       Padding(
@@ -505,48 +504,58 @@ class DayDetailCard extends StatelessWidget {
         ),
       ),
       if (entry.situation != null)
-        _cbtFieldRow(context, '情境', entry.situation!, indent: fieldIndent),
+        _cbtFieldRow(
+          context,
+          l10n.moodCbtSectionSituation,
+          entry.situation!,
+          indent: fieldIndent,
+        ),
       if (entry.automaticThought != null)
         _cbtFieldRow(
           context,
-          '自动思维',
+          l10n.moodCbtSectionAutomaticThought,
           entry.automaticThought!,
           indent: fieldIndent,
         ),
       if (entry.evidenceFor != null)
         _cbtFieldRow(
           context,
-          '支持证据',
+          l10n.moodCbtSectionEvidenceFor,
           entry.evidenceFor!,
           indent: fieldIndent,
         ),
       if (entry.evidenceAgainst != null)
         _cbtFieldRow(
           context,
-          '反对证据',
+          l10n.moodCbtSectionEvidenceAgainst,
           entry.evidenceAgainst!,
           indent: fieldIndent,
         ),
       if (entry.alternativeThought != null)
         _cbtFieldRow(
           context,
-          '替代思维',
+          l10n.moodCbtSectionAlternative,
           entry.alternativeThought!,
           indent: fieldIndent,
         ),
       if (entry.reratedScore != null)
         _cbtFieldRow(
           context,
-          '重新评分',
-          '${entry.reratedScore} (原 ${entry.score})',
+          l10n.moodCbtSectionRerated,
+          l10n.moodCbtReratedComparison(entry.reratedScore!, entry.score),
           indent: fieldIndent,
         ),
       if (entry.coreBelief != null)
-        _cbtFieldRow(context, '核心信念', entry.coreBelief!, indent: fieldIndent),
+        _cbtFieldRow(
+          context,
+          l10n.moodCbtSectionCoreBelief,
+          entry.coreBelief!,
+          indent: fieldIndent,
+        ),
       if (entry.behaviorResponse != null)
         _cbtFieldRow(
           context,
-          '行为应对',
+          l10n.moodCbtSectionBehavior,
           entry.behaviorResponse!,
           indent: fieldIndent,
         ),

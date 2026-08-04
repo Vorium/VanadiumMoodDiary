@@ -2402,6 +2402,113 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get setupLegalAgeAttestation =>
       '本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。';
+
+  @override
+  String get moodCbtLevelLabel3 => '3 栏';
+
+  @override
+  String get moodCbtLevelLabel5 => '5 栏';
+
+  @override
+  String get moodCbtLevelLabel7 => '7 栏';
+
+  @override
+  String get moodCbtExpandExplain => '什么是 CBT 思维记录？';
+
+  @override
+  String get moodCbtSectionSituation => '情境';
+
+  @override
+  String get moodCbtSectionAutomaticThought => '自动思维';
+
+  @override
+  String get moodCbtSectionEvidenceFor => '支持证据';
+
+  @override
+  String get moodCbtSectionEvidenceAgainst => '反对证据';
+
+  @override
+  String get moodCbtSectionAlternative => '替代思维';
+
+  @override
+  String get moodCbtSectionRerated => '重新评分';
+
+  @override
+  String get moodCbtSectionCoreBelief => '核心信念';
+
+  @override
+  String get moodCbtSectionBehavior => '行为应对';
+
+  @override
+  String get moodCbtExplainerBody =>
+      'CBT（认知行为疗法）思维记录帮你识别并重构负面自动思维。\n按 5 栏标准：先记录情境与想法，再找证据支持/反对，最后写下更平衡的替代想法。';
+
+  @override
+  String get moodCbtFieldHintSituation => '触发这个想法的事件是什么？发生在哪里、什么时候、有谁？';
+
+  @override
+  String get moodCbtFieldHintAutomaticThought => '那一瞬间脑中闪过的想法、印象或意象是什么？';
+
+  @override
+  String get moodCbtFieldHintEvidenceFor => '什么事支持这个想法？';
+
+  @override
+  String get moodCbtFieldHintEvidenceAgainst => '什么事不支持这个想法？';
+
+  @override
+  String get moodCbtFieldHintAlternative => '如果你的好朋友遇到这事，你会怎么想？';
+
+  @override
+  String get moodCbtFieldHintCoreBelief => '这个想法背后更深层的信念是什么？（如 \"我不够好\"）';
+
+  @override
+  String get moodCbtFieldHintBehavior => '接下来你打算怎么做？';
+
+  @override
+  String get moodCbtPromptTitle => '引导问题';
+
+  @override
+  String moodCbtStepOf(int current, int total) {
+    return '第 $current 步 / 共 $total 步';
+  }
+
+  @override
+  String moodCbtReratedComparison(int newScore, int oldScore) {
+    return '重新评分：$newScore（原 $oldScore）';
+  }
+
+  @override
+  String get settingsCbtLevel => '思维记录档位';
+
+  @override
+  String get settingsCbtLevelDescription => '选择每次记录情绪时使用的思维记录模板';
+
+  @override
+  String get settingsCbtLevel3Desc => '入门版，1-2 分钟可填完';
+
+  @override
+  String get settingsCbtLevel5Desc => '标准 Beck 思维记录，含认知重构关键步骤';
+
+  @override
+  String get settingsCbtLevel7Desc => '深度版，含核心信念识别和行为应对';
+
+  @override
+  String get moodCbtScoreReratedLabel => '重新评分';
+
+  @override
+  String get moodCbtChipBadge5 => 'CBT 5 栏';
+
+  @override
+  String get moodCbtChipBadge7 => 'CBT 7 栏';
+
+  @override
+  String get moodCbtThreeScoreTitle => '你现在的感受？';
+
+  @override
+  String get moodCbtThreeSituationTitle => '发生了什么？';
+
+  @override
+  String get moodCbtThreeAutoTitle => '那一刻脑海里闪过什么想法？';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -2602,14 +2709,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsExportRiskBody =>
-      '您即將導出的數據為明文文件,含您的個人健康等敏感資訊(用藥、打卡、緊急聯繫人、樹洞文字)。請務必保存到安全、可信的位置(加密 U 盤 / 私人雲盤),避免上傳至公共雲盤或發送給不可信的第三方。';
+      '您即將導出的數據為明文文件,含您的個人健康等敏感信息(用藥、打卡、緊急聯繫人、樹洞文字)。請務必保存到安全、可信的位置(加密 U 盤 / 私人云盤),避免上傳至公共雲盤或發送給不可信的第三方。';
 
   @override
   String get settingsExportRiskLiability =>
       '一旦導出,文件的安全與保密由您自行負責,本 App 不再承擔保護責任(PIPL §17 明確告知 + 用戶確認)。';
 
   @override
-  String get settingsExportRiskAcknowledge => '我已了解風險,繼續導出';
+  String get settingsExportRiskAcknowledge => '我已瞭解風險,繼續導出';
 
   @override
   String get settingsExportDialogTitle => '導出數據';
@@ -4802,4 +4909,111 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get setupLegalAgeAttestation =>
       '本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。';
+
+  @override
+  String get moodCbtLevelLabel3 => '3 欄';
+
+  @override
+  String get moodCbtLevelLabel5 => '5 欄';
+
+  @override
+  String get moodCbtLevelLabel7 => '7 欄';
+
+  @override
+  String get moodCbtExpandExplain => '什麼是 CBT 思維記錄？';
+
+  @override
+  String get moodCbtSectionSituation => '情境';
+
+  @override
+  String get moodCbtSectionAutomaticThought => '自動思維';
+
+  @override
+  String get moodCbtSectionEvidenceFor => '支持證據';
+
+  @override
+  String get moodCbtSectionEvidenceAgainst => '反對證據';
+
+  @override
+  String get moodCbtSectionAlternative => '替代思維';
+
+  @override
+  String get moodCbtSectionRerated => '重新評分';
+
+  @override
+  String get moodCbtSectionCoreBelief => '核心信念';
+
+  @override
+  String get moodCbtSectionBehavior => '行為應對';
+
+  @override
+  String get moodCbtExplainerBody =>
+      'CBT（認知行為療法）思維記錄幫你識別並重構負面自動思維。\n按 5 欄標準：先記錄情境與想法，再找證據支持/反對，最後寫下更平衡的替代想法。';
+
+  @override
+  String get moodCbtFieldHintSituation => '觸發這個想法的事件是什麼？發生在哪裡、什麼時候、有誰？';
+
+  @override
+  String get moodCbtFieldHintAutomaticThought => '那一瞬間腦中閃過的想法、印象或意象是什麼？';
+
+  @override
+  String get moodCbtFieldHintEvidenceFor => '什麼事支持這個想法？';
+
+  @override
+  String get moodCbtFieldHintEvidenceAgainst => '什麼事不支持這個想法？';
+
+  @override
+  String get moodCbtFieldHintAlternative => '如果你的好朋友遇到這事，你會怎麼想？';
+
+  @override
+  String get moodCbtFieldHintCoreBelief => '這個想法背後更深層的信念是什麼？（如 \"我不夠好\"）';
+
+  @override
+  String get moodCbtFieldHintBehavior => '接下來你打算怎麼做？';
+
+  @override
+  String get moodCbtPromptTitle => '引導問題';
+
+  @override
+  String moodCbtStepOf(int current, int total) {
+    return '第 $current 步 / 共 $total 步';
+  }
+
+  @override
+  String moodCbtReratedComparison(int newScore, int oldScore) {
+    return '重新評分：$newScore（原 $oldScore）';
+  }
+
+  @override
+  String get settingsCbtLevel => '思維記錄檔位';
+
+  @override
+  String get settingsCbtLevelDescription => '選擇每次記錄情緒時使用的思維記錄模板';
+
+  @override
+  String get settingsCbtLevel3Desc => '入門版，1-2 分鐘可填完';
+
+  @override
+  String get settingsCbtLevel5Desc => '標準 Beck 思維記錄，含認知重構關鍵步驟';
+
+  @override
+  String get settingsCbtLevel7Desc => '深度版，含核心信念識別和行為應對';
+
+  @override
+  String get moodCbtScoreReratedLabel => '重新評分';
+
+  @override
+  String get moodCbtChipBadge5 => 'CBT 5 欄';
+
+  @override
+  String get moodCbtChipBadge7 => 'CBT 7 欄';
+
+  @override
+  String get moodCbtThreeScoreTitle => '你現在的感受？';
+
+  @override
+  String get moodCbtThreeSituationTitle => '發生了什麼？';
+
+  @override
+  String get moodCbtThreeAutoTitle => '那一刻腦海裡閃過什麼想法？';
 }

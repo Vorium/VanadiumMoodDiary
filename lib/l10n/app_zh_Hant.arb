@@ -1495,6 +1495,60 @@
   "crisisHotlineMoLabel": "明愛生命熱線 (24 小時)",
   "crisisHotlineMoNumber": "2826 1122",
   "crisisHotlineMoDesc": "中國澳門 24 小時",
-  "setupLegalAgeAttestation": "本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。"
+  "setupLegalAgeAttestation": "本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。",
+  "moodCbtLevelLabel3": "3 欄",
+  "moodCbtLevelLabel5": "5 欄",
+  "moodCbtLevelLabel7": "7 欄",
+  "moodCbtExpandExplain": "什麼是 CBT 思維記錄？",
+  "moodCbtSectionSituation": "情境",
+  "moodCbtSectionAutomaticThought": "自動思維",
+  "moodCbtSectionEvidenceFor": "支持證據",
+  "moodCbtSectionEvidenceAgainst": "反對證據",
+  "moodCbtSectionAlternative": "替代思維",
+  "moodCbtSectionRerated": "重新評分",
+  "moodCbtSectionCoreBelief": "核心信念",
+  "moodCbtSectionBehavior": "行為應對",
+  "moodCbtExplainerBody": "CBT（認知行為療法）思維記錄幫你識別並重構負面自動思維。\n按 5 欄標準：先記錄情境與想法，再找證據支持/反對，最後寫下更平衡的替代想法。",
+  "moodCbtFieldHintSituation": "觸發這個想法的事件是什麼？發生在哪裡、什麼時候、有誰？",
+  "moodCbtFieldHintAutomaticThought": "那一瞬間腦中閃過的想法、印象或意象是什麼？",
+  "moodCbtFieldHintEvidenceFor": "什麼事支持這個想法？",
+  "moodCbtFieldHintEvidenceAgainst": "什麼事不支持這個想法？",
+  "moodCbtFieldHintAlternative": "如果你的好朋友遇到這事，你會怎麼想？",
+  "moodCbtFieldHintCoreBelief": "這個想法背後更深層的信念是什麼？（如 \"我不夠好\"）",
+  "moodCbtFieldHintBehavior": "接下來你打算怎麼做？",
+  "moodCbtPromptTitle": "引導問題",
+  "moodCbtStepOf": "第 {current} 步 / 共 {total} 步",
+  "@moodCbtStepOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "moodCbtReratedComparison": "重新評分：{newScore}（原 {oldScore}）",
+  "@moodCbtReratedComparison": {
+    "placeholders": {
+      "newScore": {
+        "type": "int"
+      },
+      "oldScore": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsCbtLevel": "思維記錄檔位",
+  "settingsCbtLevelDescription": "選擇每次記錄情緒時使用的思維記錄模板",
+  "settingsCbtLevel3Desc": "入門版，1-2 分鐘可填完",
+  "settingsCbtLevel5Desc": "標準 Beck 思維記錄，含認知重構關鍵步驟",
+  "settingsCbtLevel7Desc": "深度版，含核心信念識別和行為應對",
+  "moodCbtScoreReratedLabel": "重新評分",
+  "moodCbtChipBadge5": "CBT 5 欄",
+  "moodCbtChipBadge7": "CBT 7 欄",
+  "moodCbtThreeScoreTitle": "你現在的感受？",
+  "moodCbtThreeSituationTitle": "發生了什麼？",
+  "moodCbtThreeAutoTitle": "那一刻腦海裡閃過什麼想法？"
 }
 

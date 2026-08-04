@@ -222,18 +222,18 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                     SegmentedButton<ThoughtRecordLevel>(
-                      segments: const [
+                      segments: [
                         ButtonSegment(
                           value: ThoughtRecordLevel.three,
-                          label: Text('3 栏'),
+                          label: Text(l10n.moodCbtLevelLabel3),
                         ),
                         ButtonSegment(
                           value: ThoughtRecordLevel.five,
-                          label: Text('5 栏'),
+                          label: Text(l10n.moodCbtLevelLabel5),
                         ),
                         ButtonSegment(
                           value: ThoughtRecordLevel.seven,
-                          label: Text('7 栏'),
+                          label: Text(l10n.moodCbtLevelLabel7),
                         ),
                       ],
                       selected: {cbtState.level},
