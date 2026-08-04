@@ -87,8 +87,14 @@ class AppDatabase extends _$AppDatabase {
   // - 老数据 (schemaVersion <= 14) 的联系人 "consent 历史" 只在 piiSafeLog
   //   (R62 working tree 状态), DB 落库是这次新加。考虑 v1.0 法务过审
   //   时是否给老用户"重新同意"流程 (本批不做, 留 R64+ 评估)
+  //
+  // v0.29 round 84: schemaVersion 16 → 17 - mood_entries +8 个 CBT 字段
+  //   (situation / automaticThought / evidenceFor / evidenceAgainst /
+  //    alternativeThought / reratedScore / coreBelief / behaviorResponse)
+  // - 8 列全 nullable,老数据自动 null (3 栏 mode 渲染)
+  // - 用户升级后 mood entry 在 _DayDetailCard 里走"3 栏 + 自由 note"分支
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 17;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -247,6 +253,19 @@ class AppDatabase extends _$AppDatabase {
             await customStatement(
               'CREATE INDEX IF NOT EXISTS idx_contact_consent_at ON contacts(consent_at)',
             );
+          }
+          // v16 → v17: mood_entries +8 个 CBT 字段 (v0.29 round 84)
+          // - 8 列全 nullable, 老数据自动 null (3 栏 mode 渲染,行为不变)
+          // - 升级后 _DayDetailCard 走"3 栏 + 自由 note"分支,5/7 栏用户主动升级才用
+          if (from <= 16) {
+            await m.addColumn(moodEntries, moodEntries.situation);
+            await m.addColumn(moodEntries, moodEntries.automaticThought);
+            await m.addColumn(moodEntries, moodEntries.evidenceFor);
+            await m.addColumn(moodEntries, moodEntries.evidenceAgainst);
+            await m.addColumn(moodEntries, moodEntries.alternativeThought);
+            await m.addColumn(moodEntries, moodEntries.reratedScore);
+            await m.addColumn(moodEntries, moodEntries.coreBelief);
+            await m.addColumn(moodEntries, moodEntries.behaviorResponse);
           }
         },
         beforeOpen: (details) async {
