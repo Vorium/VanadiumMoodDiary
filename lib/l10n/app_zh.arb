@@ -1552,5 +1552,19 @@
   "moodCbtChipBadge7": "CBT 7 栏",
   "moodCbtThreeScoreTitle": "你现在的感受？",
   "moodCbtThreeSituationTitle": "发生了什么？",
-  "moodCbtThreeAutoTitle": "那一刻脑海里闪过什么想法？"
+  "moodCbtThreeAutoTitle": "那一刻脑海里闪过什么想法？",
+  "moodCbtPrevStep": "上一步",
+  "moodCbtNextStep": "下一步",
+  "moodCbtComplete": "完成",
+  "moodCbtStep2Header": "情绪 + 证据",
+  "moodCbtConfirm": "确认",
+  "moodCbtConfirmEmpty": "(未填)",
+  "moodCbtAutoThoughtPrompt0": "如果你的好朋友遇到这事,你会怎么劝TA？",
+  "moodCbtAutoThoughtPrompt1": "最坏/最好/最现实的结果是什么？",
+  "moodCbtAutoThoughtPrompt2": "一年后你还会这么想吗？",
+  "moodCbtAlternativePrompt0": "一年后你还会这么想吗？",
+  "moodCbtAlternativePrompt1": "最现实的结果是什么？",
+  "moodCbtBehaviorPrompt0": "深呼吸 5 次",
+  "moodCbtBehaviorPrompt1": "与信任的人聊聊",
+  "moodCbtBehaviorPrompt2": "做 10 分钟正念"
 }

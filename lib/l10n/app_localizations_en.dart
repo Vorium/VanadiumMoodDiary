@@ -2642,4 +2642,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodCbtThreeAutoTitle => 'What thought flashed through your mind?';
+
+  @override
+  String get moodCbtPrevStep => 'Back';
+
+  @override
+  String get moodCbtNextStep => 'Next';
+
+  @override
+  String get moodCbtComplete => 'Done';
+
+  @override
+  String get moodCbtStep2Header => 'Emotion + Evidence';
+
+  @override
+  String get moodCbtConfirm => 'Confirm';
+
+  @override
+  String get moodCbtConfirmEmpty => '(empty)';
+
+  @override
+  String get moodCbtAutoThoughtPrompt0 =>
+      'If your best friend were in this situation, what would you tell them?';
+
+  @override
+  String get moodCbtAutoThoughtPrompt1 =>
+      'What\'s the worst/best/most realistic outcome?';
+
+  @override
+  String get moodCbtAutoThoughtPrompt2 =>
+      'Will you still think this way a year from now?';
+
+  @override
+  String get moodCbtAlternativePrompt0 =>
+      'Will you still think this way a year from now?';
+
+  @override
+  String get moodCbtAlternativePrompt1 => 'What\'s the most realistic outcome?';
+
+  @override
+  String get moodCbtBehaviorPrompt0 => 'Take 5 deep breaths';
+
+  @override
+  String get moodCbtBehaviorPrompt1 => 'Talk to someone you trust';
+
+  @override
+  String get moodCbtBehaviorPrompt2 => 'Try 10 minutes of mindfulness';
 }

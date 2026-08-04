@@ -65,10 +65,10 @@ class CbtThreeColumnMode extends ConsumerWidget {
         CbtSectionField(
           title: l10n.moodCbtThreeAutoTitle,
           hint: l10n.moodCbtFieldHintAutomaticThought,
-          prompts: const [
-            '如果你的好朋友遇到这事, 你会怎么想？',
-            '最坏 / 最好 / 最现实的结果是什么？',
-            '一年后你还会这么想吗？',
+          prompts: [
+            l10n.moodCbtAutoThoughtPrompt0,
+            l10n.moodCbtAutoThoughtPrompt1,
+            l10n.moodCbtAutoThoughtPrompt2,
           ],
           initialValue: state.draft.automaticThought,
           onChanged: (v) => notifier.updateField(automaticThought: v),

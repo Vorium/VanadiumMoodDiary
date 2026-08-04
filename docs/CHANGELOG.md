@@ -56,17 +56,12 @@
 
 ### Notes
 - 重评效果柱图 / mood 列表项 / PDF 导出 / AI 辅助 留待 sub-spec 2-5
-- ⚠️ TODO(found-via-integration): moodRepository.add() 当前不传 8 个 CBT
-  字段给 MoodEntriesCompanion (R84 schema 加 8 列时 add() 忘同步), 修复前
-  用户填完 5/7 栏点保存, 8 个 CBT 字段会被静默 drop。修法:
-  `lib/core/data/repositories/mood/mood_repository_impl.dart:39-53` 加 8 个
-  `Value(draft.xxx)` 参数, 1 行 + 8 行 pattern 跟现有 audio 字段一致。
-  Task 10 集成测走 `db.moodDao.insert` 直接验证 DB round-trip 走通,
-  生产 add() 路径 bug 不在本 sub-spec 1 修复范围 (brief 写"不改实现代码")。
-- ⚠️ layout: CbtWizard 含 `Expanded`, 在 `SingleChildScrollView` 内拿不到
-  bounded height, widget test 触发 layout error。生产 Material 3 Dialog
-  在屏内自己处理, 集成测绕开 dialog 走 `Scaffold(body: CbtWizard())` 同 R84
-  standalone test 模式。
+- ✅ P0 fix shipped in `bcce87b` — `moodRepository.add()` 现在透传 8 个 CBT
+  字段 (`situation` / `automaticThought` / `evidenceFor` / `evidenceAgainst` /
+  `alternativeThought` / `reratedScore` / `coreBelief` / `behaviorResponse`)
+  给 `MoodEntriesCompanion`, 用户填完 5/7 栏点保存不再静默 drop。修复方式
+  跟现有 audio 字段 `Value(draft.xxx)` pattern 一致。原 Task 10 集成测发现
+  的 TODO 备注 (R84 集成测留 audit trail) 保留。
 
 ## [Unreleased] - 2026-08-02 (R83 — 律师审核 ⚠️ 集中修复, 工程 self-revision 4 项, Q4b/Q5a/Q8/Q10b/Q11a 落地)
 

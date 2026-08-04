@@ -4612,6 +4612,90 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'那一刻脑海里闪过什么想法？'**
   String get moodCbtThreeAutoTitle;
+
+  /// No description provided for @moodCbtPrevStep.
+  ///
+  /// In zh, this message translates to:
+  /// **'上一步'**
+  String get moodCbtPrevStep;
+
+  /// No description provided for @moodCbtNextStep.
+  ///
+  /// In zh, this message translates to:
+  /// **'下一步'**
+  String get moodCbtNextStep;
+
+  /// No description provided for @moodCbtComplete.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成'**
+  String get moodCbtComplete;
+
+  /// No description provided for @moodCbtStep2Header.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪 + 证据'**
+  String get moodCbtStep2Header;
+
+  /// No description provided for @moodCbtConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认'**
+  String get moodCbtConfirm;
+
+  /// No description provided for @moodCbtConfirmEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'(未填)'**
+  String get moodCbtConfirmEmpty;
+
+  /// No description provided for @moodCbtAutoThoughtPrompt0.
+  ///
+  /// In zh, this message translates to:
+  /// **'如果你的好朋友遇到这事,你会怎么劝TA？'**
+  String get moodCbtAutoThoughtPrompt0;
+
+  /// No description provided for @moodCbtAutoThoughtPrompt1.
+  ///
+  /// In zh, this message translates to:
+  /// **'最坏/最好/最现实的结果是什么？'**
+  String get moodCbtAutoThoughtPrompt1;
+
+  /// No description provided for @moodCbtAutoThoughtPrompt2.
+  ///
+  /// In zh, this message translates to:
+  /// **'一年后你还会这么想吗？'**
+  String get moodCbtAutoThoughtPrompt2;
+
+  /// No description provided for @moodCbtAlternativePrompt0.
+  ///
+  /// In zh, this message translates to:
+  /// **'一年后你还会这么想吗？'**
+  String get moodCbtAlternativePrompt0;
+
+  /// No description provided for @moodCbtAlternativePrompt1.
+  ///
+  /// In zh, this message translates to:
+  /// **'最现实的结果是什么？'**
+  String get moodCbtAlternativePrompt1;
+
+  /// No description provided for @moodCbtBehaviorPrompt0.
+  ///
+  /// In zh, this message translates to:
+  /// **'深呼吸 5 次'**
+  String get moodCbtBehaviorPrompt0;
+
+  /// No description provided for @moodCbtBehaviorPrompt1.
+  ///
+  /// In zh, this message translates to:
+  /// **'与信任的人聊聊'**
+  String get moodCbtBehaviorPrompt1;
+
+  /// No description provided for @moodCbtBehaviorPrompt2.
+  ///
+  /// In zh, this message translates to:
+  /// **'做 10 分钟正念'**
+  String get moodCbtBehaviorPrompt2;
 }
 
 class _AppLocalizationsDelegate

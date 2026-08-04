@@ -2509,6 +2509,48 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodCbtThreeAutoTitle => '那一刻脑海里闪过什么想法？';
+
+  @override
+  String get moodCbtPrevStep => '上一步';
+
+  @override
+  String get moodCbtNextStep => '下一步';
+
+  @override
+  String get moodCbtComplete => '完成';
+
+  @override
+  String get moodCbtStep2Header => '情绪 + 证据';
+
+  @override
+  String get moodCbtConfirm => '确认';
+
+  @override
+  String get moodCbtConfirmEmpty => '(未填)';
+
+  @override
+  String get moodCbtAutoThoughtPrompt0 => '如果你的好朋友遇到这事,你会怎么劝TA？';
+
+  @override
+  String get moodCbtAutoThoughtPrompt1 => '最坏/最好/最现实的结果是什么？';
+
+  @override
+  String get moodCbtAutoThoughtPrompt2 => '一年后你还会这么想吗？';
+
+  @override
+  String get moodCbtAlternativePrompt0 => '一年后你还会这么想吗？';
+
+  @override
+  String get moodCbtAlternativePrompt1 => '最现实的结果是什么？';
+
+  @override
+  String get moodCbtBehaviorPrompt0 => '深呼吸 5 次';
+
+  @override
+  String get moodCbtBehaviorPrompt1 => '与信任的人聊聊';
+
+  @override
+  String get moodCbtBehaviorPrompt2 => '做 10 分钟正念';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5016,4 +5058,46 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodCbtThreeAutoTitle => '那一刻腦海裡閃過什麼想法？';
+
+  @override
+  String get moodCbtPrevStep => '上一步';
+
+  @override
+  String get moodCbtNextStep => '下一步';
+
+  @override
+  String get moodCbtComplete => '完成';
+
+  @override
+  String get moodCbtStep2Header => '情緒 + 證據';
+
+  @override
+  String get moodCbtConfirm => '確認';
+
+  @override
+  String get moodCbtConfirmEmpty => '(未填)';
+
+  @override
+  String get moodCbtAutoThoughtPrompt0 => '如果你的好朋友遇到這事,你會怎麼勸TA？';
+
+  @override
+  String get moodCbtAutoThoughtPrompt1 => '最壞/最好/最現實的結果是什麼？';
+
+  @override
+  String get moodCbtAutoThoughtPrompt2 => '一年後你還會這麼想嗎？';
+
+  @override
+  String get moodCbtAlternativePrompt0 => '一年後你還會這麼想嗎？';
+
+  @override
+  String get moodCbtAlternativePrompt1 => '最現實的結果是什麼？';
+
+  @override
+  String get moodCbtBehaviorPrompt0 => '深呼吸 5 次';
+
+  @override
+  String get moodCbtBehaviorPrompt1 => '與信任的人聊聊';
+
+  @override
+  String get moodCbtBehaviorPrompt2 => '做 10 分鐘正念';
 }

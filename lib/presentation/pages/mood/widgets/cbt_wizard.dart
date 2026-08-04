@@ -4,18 +4,18 @@
 // 5 栏 5 步, 7 栏 7 步。切档由父组件 (mood_recorder_page) 通过
 // SegmentedButton 触发, wizard 自身只读 cbtDraftProvider.
 //
-// 5 栏 5 步:
+// 5 栏 5 步 (default level=three 时 wizard 不显示, 单屏长表式走
+// CbtThreeColumnMode):
 //   0 = 情境 (situation)
 //   1 = 那一刻脑海中闪过的想法 (automatic thought)
 //   2 = 情绪 + 证据 (score + evidenceFor + evidenceAgainst)
 //   3 = 替代思维 + 重新评分 (alternativeThought + reratedScore)
 //   4 = 确认
 //
-// 7 栏 7 步 (在 5 栏基础上):
-//   5 = 核心信念 (coreBelief)
-//   6 = 行为应对 (behaviorResponse)
-//   4 = 核心信念 (覆盖 5 栏 step 4)
-//   6 改为确认
+// 7 栏 7 步 (在 5 栏基础上, step 4 由"确认"变为"核心信念"):
+//   4 = 核心信念 (coreBelief) — 覆盖 5 栏 step 4 确认
+//   5 = 行为应对 (behaviorResponse)
+//   6 = 确认
 //
 // 频度: 切到 5/7 栏时显示,tens/day
 import 'package:flutter/material.dart';
@@ -68,11 +68,14 @@ class CbtWizard extends ConsumerWidget {
           ),
         ),
         // 当前 step section
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
-            child: _buildStep(context, state, notifier, l10n),
-          ),
+        // v0.29 round 84 (final review fix): 去掉 Expanded — 父组件
+        // (mood_recorder_page Dialog) 已包 SingleChildScrollView, 给的是
+        // unbounded height, 内层 Expanded 拿不到 bounded 高度会触发
+        // RenderFlex layout exception。父 SCV 自然滚动, 这里 SCV 仅留
+        // 水平 padding 即可。
+        SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+          child: _buildStep(context, state, notifier, l10n),
         ),
         // 上一/下一步
         Padding(
@@ -84,7 +87,7 @@ class CbtWizard extends ConsumerWidget {
                 onPressed: state.stepIndex == 0
                     ? null
                     : () => notifier.setStep(state.stepIndex - 1),
-                child: const Text('上一步'),
+                child: Text(l10n.moodCbtPrevStep),
               ),
               FilledButton(
                 onPressed: () {
@@ -99,7 +102,7 @@ class CbtWizard extends ConsumerWidget {
                     notifier.setStep(state.stepIndex + 1);
                   }
                 },
-                child: Text(isLastStep ? '完成' : '下一步'),
+                child: Text(isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep),
               ),
             ],
           ),
@@ -131,10 +134,10 @@ class CbtWizard extends ConsumerWidget {
       return CbtSectionField(
         title: l10n.moodCbtSectionAutomaticThought,
         hint: l10n.moodCbtFieldHintAutomaticThought,
-        prompts: const [
-          '如果你的好朋友遇到这事,你会怎么劝TA？',
-          '最坏/最好/最现实的结果是什么？',
-          '一年后你还会这么想吗？',
+        prompts: [
+          l10n.moodCbtAutoThoughtPrompt0,
+          l10n.moodCbtAutoThoughtPrompt1,
+          l10n.moodCbtAutoThoughtPrompt2,
         ],
         initialValue: state.draft.automaticThought,
         onChanged: (v) => notifier.updateField(automaticThought: v),
@@ -144,7 +147,8 @@ class CbtWizard extends ConsumerWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('情绪 + 证据', style: AppTokens.textStyleLabel(context)),
+          Text(l10n.moodCbtStep2Header,
+              style: AppTokens.textStyleLabel(context),),
           const SizedBox(height: AppTokens.spacingSm),
           // score 选择 (5 档:1-5)
           // v0.29 round 84 (Task 6 fix): chip 现在写 notifier.updateScore
@@ -188,7 +192,10 @@ class CbtWizard extends ConsumerWidget {
           CbtSectionField(
             title: l10n.moodCbtSectionAlternative,
             hint: l10n.moodCbtFieldHintAlternative,
-            prompts: const ['一年后你还会这么想吗？', '最现实的结果是什么？'],
+            prompts: [
+              l10n.moodCbtAlternativePrompt0,
+              l10n.moodCbtAlternativePrompt1,
+            ],
             initialValue: state.draft.alternativeThought,
             onChanged: (v) => notifier.updateField(alternativeThought: v),
           ),
@@ -213,7 +220,7 @@ class CbtWizard extends ConsumerWidget {
     }
     if (step == 4 && level == ThoughtRecordLevel.five) {
       return Text(
-        '确认: ${state.draft.situation ?? "(未填)"}',
+        '${l10n.moodCbtConfirm}: ${state.draft.situation ?? l10n.moodCbtConfirmEmpty}',
         style: AppTokens.textStyleBody(context),
       );
     }
@@ -230,14 +237,18 @@ class CbtWizard extends ConsumerWidget {
       return CbtSectionField(
         title: l10n.moodCbtSectionBehavior,
         hint: l10n.moodCbtFieldHintBehavior,
-        prompts: const ['深呼吸 5 次', '与信任的人聊聊', '做 10 分钟正念'],
+        prompts: [
+          l10n.moodCbtBehaviorPrompt0,
+          l10n.moodCbtBehaviorPrompt1,
+          l10n.moodCbtBehaviorPrompt2,
+        ],
         initialValue: state.draft.behaviorResponse,
         onChanged: (v) => notifier.updateField(behaviorResponse: v),
       );
     }
     if (step == 6) {
       return Text(
-        '确认: ${state.draft.situation ?? "(未填)"}',
+        '${l10n.moodCbtConfirm}: ${state.draft.situation ?? l10n.moodCbtConfirmEmpty}',
         style: AppTokens.textStyleBody(context),
       );
     }

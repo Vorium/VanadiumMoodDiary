@@ -1549,6 +1549,20 @@
   "moodCbtChipBadge7": "CBT 7 欄",
   "moodCbtThreeScoreTitle": "你現在的感受？",
   "moodCbtThreeSituationTitle": "發生了什麼？",
-  "moodCbtThreeAutoTitle": "那一刻腦海裡閃過什麼想法？"
+  "moodCbtThreeAutoTitle": "那一刻腦海裡閃過什麼想法？",
+  "moodCbtPrevStep": "上一步",
+  "moodCbtNextStep": "下一步",
+  "moodCbtComplete": "完成",
+  "moodCbtStep2Header": "情緒 + 證據",
+  "moodCbtConfirm": "確認",
+  "moodCbtConfirmEmpty": "(未填)",
+  "moodCbtAutoThoughtPrompt0": "如果你的好朋友遇到這事,你會怎麼勸TA？",
+  "moodCbtAutoThoughtPrompt1": "最壞/最好/最現實的結果是什麼？",
+  "moodCbtAutoThoughtPrompt2": "一年後你還會這麼想嗎？",
+  "moodCbtAlternativePrompt0": "一年後你還會這麼想嗎？",
+  "moodCbtAlternativePrompt1": "最現實的結果是什麼？",
+  "moodCbtBehaviorPrompt0": "深呼吸 5 次",
+  "moodCbtBehaviorPrompt1": "與信任的人聊聊",
+  "moodCbtBehaviorPrompt2": "做 10 分鐘正念"
 }
 

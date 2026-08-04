@@ -1510,5 +1510,19 @@
   "moodCbtChipBadge7": "CBT 7-column",
   "moodCbtThreeScoreTitle": "How do you feel right now?",
   "moodCbtThreeSituationTitle": "What happened?",
-  "moodCbtThreeAutoTitle": "What thought flashed through your mind?"
+  "moodCbtThreeAutoTitle": "What thought flashed through your mind?",
+  "moodCbtPrevStep": "Back",
+  "moodCbtNextStep": "Next",
+  "moodCbtComplete": "Done",
+  "moodCbtStep2Header": "Emotion + Evidence",
+  "moodCbtConfirm": "Confirm",
+  "moodCbtConfirmEmpty": "(empty)",
+  "moodCbtAutoThoughtPrompt0": "If your best friend were in this situation, what would you tell them?",
+  "moodCbtAutoThoughtPrompt1": "What's the worst/best/most realistic outcome?",
+  "moodCbtAutoThoughtPrompt2": "Will you still think this way a year from now?",
+  "moodCbtAlternativePrompt0": "Will you still think this way a year from now?",
+  "moodCbtAlternativePrompt1": "What's the most realistic outcome?",
+  "moodCbtBehaviorPrompt0": "Take 5 deep breaths",
+  "moodCbtBehaviorPrompt1": "Talk to someone you trust",
+  "moodCbtBehaviorPrompt2": "Try 10 minutes of mindfulness"
 }
