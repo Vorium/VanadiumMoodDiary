@@ -4,6 +4,7 @@
 // 不传 = 行为完全不变(audioPath null = 不会写 audio 文件)。
 //
 // v0.24 round 48 (sp-en P1-14) add() 10 参 → MoodEntryDraft 参数对象
+// v0.29 round 84 (fix) add() 透传 8 个 CBT 字段 (P0 production bug)
 
 import 'package:drift/drift.dart' show Value;
 
@@ -49,6 +50,14 @@ class MoodRepositoryImpl implements MoodRepository {
         audioPath: Value(draft.audioPath),
         audioTranscript: Value(draft.audioTranscript),
         audioDurationMs: Value(draft.audioDurationMs),
+        situation: Value(draft.situation),
+        automaticThought: Value(draft.automaticThought),
+        evidenceFor: Value(draft.evidenceFor),
+        evidenceAgainst: Value(draft.evidenceAgainst),
+        alternativeThought: Value(draft.alternativeThought),
+        reratedScore: Value(draft.reratedScore),
+        coreBelief: Value(draft.coreBelief),
+        behaviorResponse: Value(draft.behaviorResponse),
       ),
     );
   }
