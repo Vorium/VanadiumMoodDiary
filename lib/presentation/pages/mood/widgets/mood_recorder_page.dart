@@ -1,47 +1,48 @@
-// v0.28 (round 64 MoodRecorder god-split): 顶层 page 从 mood_dialog.dart 抽出
+// v0.29 round 84 (CBT 思维记录): 3 栏 mode UI 改造
+//
+// 改自 v0.28 (round 64) — 把 4 维度 MoodScoreChooser 替换为 3/5/7 栏档位切换
+// + CbtThreeColumnMode (3 栏) / CbtWizard stub (5/7 栏, Task 6 落地)
 //
 // 历史:
 // - v0.18 round 18: 4 维度评分升级 (mood/energy/sleep/anxiety)
 // - v0.23 round 31: 语音录入 + STT graceful degrade
-// - v0.24 Sprint #5: 5 子 widget 抽离 (mood_recorder / mood_score_form /
-//   mood_tags / mood_text_note / mood_dialog_actions)
-// - v0.28 round 64: god-split 收尾 — _MoodDialogContent 抽出到独立 file,
-//   子 widget 重命名 (audio_section / score_chooser / text_input / submit_panel)
+// - v0.24 Sprint #5: 5 子 widget 抽离
+// - v0.28 round 64: god-split 收尾 + 子 widget 重命名
+// - v0.29 round 84: 4 维度评分移除, 改用 1 维 (mood) + CBT 字段 (3/5/7 栏)
 //
-// **职责**: 跨 widget 状态 (4 维度 + tag Set + 文字 controller + saving) +
-//            协调 5 子 widget 组装 + save 流程 + 错误处理
-// **入口**: MoodRecorderPage.show() (静态方法, 走 AlertDialog 薄壳保持外部行为不变)
+// **职责**: 跨 widget 状态 (tags + note + audio + saving) + 协调子 widget +
+//            save 流程 + 错误处理 + SegmentedButton 档位切换
+// **入口**: MoodRecorderPage.show() (静态方法, 走 Dialog 模态)
 //
-// emil 设计决策:
-// 1. orchestrator 只持**跨 widget 状态**, 录音机状态机**完整下沉**到 MoodAudioSection
-// 2. parent 通过 MoodRecorderController.snapshot 拉最终数据
-// 3. 错误处理走 onError callback — MoodAudioSection 不知道 l10n
-// 4. 保留所有 P0 修复: snackbar 移到 pop 前 / dispose 链 / service 清理
-// 5. 频度: tens/day, 跨 widget 状态不上抛 Riverpod, 单 dialog scope
-//
-// 已知限制 (跟 emil P2-2.21 任务描述差距):
-// - 任务说"组装 5 个子 widget", 实际组装 4 个: audio_section / score_chooser /
-//   text_input + tags (MoodTags 独立) + submit_panel。
-//   mood_avatar_picker 在本项目**根本不存在**, 不发明 (违反"不"改外部行为)。
-// - 错误处理在 _save() 内部 (l10n snackbar), 不在 submit_panel 子 widget,
-//   跟 R24 抽离原则一致 (decisions should be nameable)。
+// emil 设计决策 (v0.29 改造):
+// 1. Dialog + Column 替代 AlertDialog — 3 段 (header/body/footer) 适配 SegmentedButton
+// 2. SegmentedButton 切档时联动 thoughtRecordLevelProvider (持久化) + cbtDraftProvider
+// 3. 4 维度评分 (energy/sleep/anxiety) 移除 — 新设计单 mood 维度 + CBT 字段
+// 4. 录音 / 标签 / 文字备注 / 保存按钮保持现有行为
+// 5. cbtDraftProvider 状态 dialog 关闭时 reset (下回打开恢复初始 3 栏)
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
+import 'package:chroniccare/domain/entities/thought_record_level.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_audio_section.dart';
-import 'package:chroniccare/presentation/pages/mood/widgets/mood_score_chooser.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_submit_panel.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_tags.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_text_input.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/cbt_three_column_mode.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/cbt_wizard.dart';
 
 /// 情绪日记 orchestrator page
 ///
-/// 4 维度评分 (mood/energy/sleep/anxiety) + 预设标签 + 文字备注 + 录音 + 保存/取消。
+/// v0.29 round 84: 集成 3/5/7 栏 CBT 思维记录
+/// - 顶部: SegmentedButton (3 栏 / 5 栏 / 7 栏) 切档
+/// - 中间: 3 栏 mode (CbtThreeColumnMode) 或 5/7 栏 (CbtWizard stub, Task 6 落地)
+/// - 底部: 标签 + 文字备注 + 录音 + 保存/取消
 ///
 /// v0.18 round 18 (P1-15) 升级 4 维度:
 /// - 情绪 (mood): 1-5 分 (主轴, 必填)
@@ -55,10 +56,11 @@ import 'package:chroniccare/presentation/pages/mood/widgets/mood_text_input.dart
 /// - 保存后 snackbar 带 "回放" action
 ///
 /// v0.28 (round 64): god-split 收尾, 5 子 widget 重命名
+/// v0.29 (round 84): 4 维度评分移除, 改 CBT 思维记录
 class MoodRecorderPage extends ConsumerStatefulWidget {
   const MoodRecorderPage({super.key});
 
-  /// 静态入口 — 保持外部行为 (AlertDialog 模态) 不变
+  /// 静态入口 — Dialog 模态
   static Future<void> show(BuildContext context, WidgetRef ref) {
     return showDialog<void>(
       context: context,
@@ -72,10 +74,6 @@ class MoodRecorderPage extends ConsumerStatefulWidget {
 
 class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   // ===== 跨 widget 状态 =====
-  int _score = 3;
-  int _energy = 3;
-  int _sleep = 3;
-  int _anxiety = 3;
   final Set<String> _tags = {};
 
   // ===== 文字备注 =====
@@ -100,6 +98,8 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   void dispose() {
     _recorderController.dispose();
     _noteController.dispose();
+    // 关闭 dialog 时重置 cbtDraftProvider, 下次打开回到初始 (3 栏)
+    ref.read(cbtDraftProvider.notifier).reset();
     super.dispose();
   }
 
@@ -119,10 +119,13 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   // ===== 保存 =====
   Future<void> _save() async {
     if (_saving) return;
-    final hasText = _noteController.text.trim().isNotEmpty;
+    final cbtState = ref.read(cbtDraftProvider);
     final snap = _recorderController.snapshot.value;
+    final hasText = _noteController.text.trim().isNotEmpty;
     final hasAudio = snap.audioPath != null;
-    if (!hasText && !hasAudio) {
+    final hasCbtContent = (cbtState.draft.situation?.isNotEmpty ?? false) ||
+        (cbtState.draft.automaticThought?.isNotEmpty ?? false);
+    if (!hasText && !hasAudio && !hasCbtContent) {
       AppSnackBar.showInfo(
         context,
         AppLocalizations.of(context).moodNoteHint,
@@ -131,19 +134,27 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     }
     setState(() => _saving = true);
     try {
-      // v0.24 round 48 (sp-en P1-14): add() 10 参 → MoodEntryDraft 参数对象
+      // cbtState.draft 已有 score + cbt 字段; 合并 tags/note/audio
+      // (MoodEntryDraft 无 copyWith, 手动展开 8 个 CBT 字段)
+      final d = cbtState.draft;
       await ref.read(moodRepositoryProvider).add(
             draft: MoodEntryDraft(
-              score: _score,
+              score: d.score,
               tags: _tags.toList(),
               note: hasText ? _noteController.text.trim() : null,
-              energy: _energy,
-              sleep: _sleep,
-              anxiety: _anxiety,
               audioPath: snap.audioPath,
-              audioTranscript:
-                  snap.finalTranscript.isEmpty ? null : snap.finalTranscript,
+              audioTranscript: snap.finalTranscript.isEmpty
+                  ? null
+                  : snap.finalTranscript,
               audioDurationMs: snap.audioDurationMs,
+              situation: d.situation,
+              automaticThought: d.automaticThought,
+              evidenceFor: d.evidenceFor,
+              evidenceAgainst: d.evidenceAgainst,
+              alternativeThought: d.alternativeThought,
+              reratedScore: d.reratedScore,
+              coreBelief: d.coreBelief,
+              behaviorResponse: d.behaviorResponse,
             ),
           );
       if (!mounted) return;
@@ -167,56 +178,98 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final cbtState = ref.watch(cbtDraftProvider);
+    final cbtNotifier = ref.read(cbtDraftProvider.notifier);
+    final levelNotifier = ref.read(thoughtRecordLevelProvider.notifier);
+
     // v0.27 R72 (P5.4): 整 build 包 RepaintBoundary
-    // 录音时 60fps 重建, 防止父 widget (home_page) rebuild 触发整个 dialog 重 paint
     return RepaintBoundary(
-      child: AlertDialog(
-        title: Text(l10n.moodDialogTitle),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              MoodScoreChooser(
-                score: _score,
-                energy: _energy,
-                sleep: _sleep,
-                anxiety: _anxiety,
-                onScoreChanged: (v) => setState(() => _score = v),
-                onEnergyChanged: (v) => setState(() => _energy = v),
-                onSleepChanged: (v) => setState(() => _sleep = v),
-                onAnxietyChanged: (v) => setState(() => _anxiety = v),
+      child: Dialog(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Material(
+            color: Theme.of(context).colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(AppTokens.spacingMd),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // 顶部: 标题 + 档位切换
+                    Text(
+                      l10n.moodDialogTitle,
+                      style: AppTokens.textStyleLabelStrong(context),
+                    ),
+                    const SizedBox(height: AppTokens.spacingSm),
+                    SegmentedButton<ThoughtRecordLevel>(
+                      segments: const [
+                        ButtonSegment(
+                          value: ThoughtRecordLevel.three,
+                          label: Text('3 栏'),
+                        ),
+                        ButtonSegment(
+                          value: ThoughtRecordLevel.five,
+                          label: Text('5 栏'),
+                        ),
+                        ButtonSegment(
+                          value: ThoughtRecordLevel.seven,
+                          label: Text('7 栏'),
+                        ),
+                      ],
+                      selected: {cbtState.level},
+                      onSelectionChanged: (selection) {
+                        final newLevel = selection.first;
+                        // 1. dialog 内部: 切档 + 跳到第一个未填 step
+                        cbtNotifier.setLevel(newLevel);
+                        // 2. 持久化: 用户下次打开仍用此档
+                        levelNotifier.setLevel(newLevel);
+                      },
+                    ),
+                    const SizedBox(height: AppTokens.spacingMd),
+
+                    // 中间: 模式内容 (3 栏 vs wizard)
+                    switch (cbtState.level) {
+                      ThoughtRecordLevel.three =>
+                        const CbtThreeColumnMode(),
+                      ThoughtRecordLevel.five ||
+                      ThoughtRecordLevel.seven =>
+                        const CbtWizard(),
+                    },
+                    const SizedBox(height: AppTokens.spacingSm),
+
+                    // 底部: 标签 + 文字备注 + 录音 + 保存/取消
+                    MoodTags(
+                      selected: _tags,
+                      onToggle: (tag) {
+                        setState(() {
+                          if (_tags.contains(tag)) {
+                            _tags.remove(tag);
+                          } else {
+                            _tags.add(tag);
+                          }
+                        });
+                      },
+                    ),
+                    const SizedBox(height: AppTokens.spacingSm),
+                    MoodTextInput(controller: _noteController),
+                    const SizedBox(height: AppTokens.spacingSm),
+                    MoodRecorder(controller: _recorderController),
+                    const SizedBox(height: AppTokens.spacingSm),
+                    MoodSubmitPanel(
+                      saving: _saving,
+                      onSave: _save,
+                      onCancel: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: AppTokens.spacingMd),
-              const Divider(height: 1),
-              const SizedBox(height: AppTokens.spacingSm),
-              MoodTags(
-                selected: _tags,
-                onToggle: (tag) {
-                  setState(() {
-                    if (_tags.contains(tag)) {
-                      _tags.remove(tag);
-                    } else {
-                      _tags.add(tag);
-                    }
-                  });
-                },
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              MoodTextInput(controller: _noteController),
-              const SizedBox(height: AppTokens.spacingSm),
-              // v0.23 (Round 31) 语音录入区 — v0.28 (round 64) 重命名为 MoodAudioSection
-              MoodRecorder(controller: _recorderController),
-            ],
+            ),
           ),
         ),
-        actions: [
-          MoodSubmitPanel(
-            saving: _saving,
-            onSave: _save,
-            onCancel: () => Navigator.pop(context),
-          ),
-        ],
       ),
     );
   }

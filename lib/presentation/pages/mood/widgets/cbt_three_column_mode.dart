@@ -10,6 +10,8 @@
 // 2. score chip 用 ChoiceChip + 数字 (Task 8 集成时换为 DimensionRow IP emoji 风格)
 // 3. onChanged 走 cbtDraftProvider.updateField (Task 8 接入 updateScore)
 // 4. ConsumerWidget — 跟随 cbtDraftProvider 状态
+// 5. Column 而非 ListView — 嵌入 mood_recorder_page dialog 的 SingleChildScrollView
+//    (ListView 嵌套 SingleChildScrollView 会触发 unbounded height 错误)
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,8 +27,8 @@ class CbtThreeColumnMode extends ConsumerWidget {
     final state = ref.watch(cbtDraftProvider);
     final notifier = ref.read(cbtDraftProvider.notifier);
 
-    return ListView(
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // ① 情绪分数 1-5 (Task 8 集成: 替换为 DimensionRow IP emoji 风格)
         Text('你现在的感受？', style: AppTokens.textStyleLabel(context)),
