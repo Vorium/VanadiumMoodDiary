@@ -92,6 +92,21 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     _recorderController = MoodRecorderController(
       onError: _handleRecorderError,
     );
+    // v0.29 round 84 (fix): dialog 打开时从 SP 同步 level
+    //
+    // 背景: dispose() 会 reset cbtDraftProvider 回 3 栏, 但用户的 5/7 栏偏好持久化在
+    // thoughtRecordLevelProvider (SP)。若不同步, 下次打开 SegmentedButton 会显示 3 栏
+    // selected, 但 SP 里仍是 5/7 栏 — 偏好被静默丢弃。
+    //
+    // 用 addPostFrameCallback 而非同步调用: 避免在 initState 期间直接触发 provider
+    // 写入 + 避免 build() 期间修改 provider 触发 Riverpod 警告。
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final persisted = ref.read(thoughtRecordLevelProvider);
+      if (ref.read(cbtDraftProvider).level != persisted) {
+        ref.read(cbtDraftProvider.notifier).setLevel(persisted);
+      }
+    });
   }
 
   @override
@@ -99,6 +114,7 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     _recorderController.dispose();
     _noteController.dispose();
     // 关闭 dialog 时重置 cbtDraftProvider, 下次打开回到初始 (3 栏)
+    // — 但 initState 的 addPostFrameCallback 会从 SP 重新同步 5/7 栏偏好。
     ref.read(cbtDraftProvider.notifier).reset();
     super.dispose();
   }

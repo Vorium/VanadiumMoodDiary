@@ -31,5 +31,12 @@ void main() {
     expect(find.text('你现在的感受？'), findsOneWidget);
     expect(find.text('发生了什么？'), findsOneWidget);
     expect(find.text('那一刻脑海里闪过什么想法？'), findsOneWidget);
+    // v0.29 round 84 (fix): 显式断言 5 个 score chip (1-5),
+    // 防止 score chooser Wrap 被静默移除 (cbt_three_column_mode.dart:36-50)。
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('2'), findsOneWidget);
+    expect(find.text('3'), findsOneWidget);
+    expect(find.text('4'), findsOneWidget);
+    expect(find.text('5'), findsOneWidget);
   });
 }
