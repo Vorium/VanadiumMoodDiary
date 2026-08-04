@@ -4,11 +4,14 @@
 // 5/7 栏 wizard 每步都用这个组件
 //
 // 频度: 5/7 栏 wizard 每步都用, tens/day
+//
+// v0.29 round 84 (fix): 改 StatefulWidget + initState/dispose,
+// 避免父 setState 重建时丢用户输入 + 泄漏 controller.
 import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_prompt_sheet.dart';
 
-class CbtSectionField extends StatelessWidget {
+class CbtSectionField extends StatefulWidget {
   final String title;
   final String hint;
   final List<String> prompts;
@@ -27,13 +30,32 @@ class CbtSectionField extends StatelessWidget {
   });
 
   @override
+  State<CbtSectionField> createState() => _CbtSectionFieldState();
+}
+
+class _CbtSectionFieldState extends State<CbtSectionField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue ?? '');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text(title, style: AppTokens.textStyleLabel(context)),
+            Text(widget.title, style: AppTokens.textStyleLabel(context)),
             const SizedBox(width: AppTokens.spacingXxs),
             InkWell(
               onTap: () => _showInfoDialog(context),
@@ -47,22 +69,21 @@ class CbtSectionField extends StatelessWidget {
         ),
         const SizedBox(height: AppTokens.spacingXxs),
         TextField(
-          maxLines: maxLines,
+          maxLines: widget.maxLines,
           decoration: InputDecoration(
-            hintText: hint,
+            hintText: widget.hint,
             border: const OutlineInputBorder(),
           ),
-          controller: TextEditingController(text: initialValue ?? '')
-            ..selection = TextSelection.collapsed(offset: (initialValue ?? '').length),
-          onChanged: onChanged,
+          controller: _controller,
+          onChanged: widget.onChanged,
         ),
-        if (prompts.isNotEmpty) ...[
+        if (widget.prompts.isNotEmpty) ...[
           const SizedBox(height: AppTokens.spacingXxs),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: () => CbtPromptSheet.show(
-                context, prompts: prompts, onSelected: onChanged,
+                context, prompts: widget.prompts, onSelected: widget.onChanged,
               ),
               icon: const Icon(Icons.help_outline, size: 16),
               label: const Text('?'),
@@ -77,8 +98,8 @@ class CbtSectionField extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: Text(hint),
+        title: Text(widget.title),
+        content: Text(widget.hint),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),

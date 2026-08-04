@@ -12,6 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_explainer_card.dart';
 
+void _noopOnChanged(String _) {}
+
 void main() {
   testWidgets('CbtSectionField 显示标题 + ℹ️ + placeholder + prompt 按钮', (tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -29,6 +31,41 @@ void main() {
     expect(find.text('触发这个想法的事件'), findsOneWidget);
     expect(find.text('?'), findsOneWidget); // prompt 库按钮
   });
+
+  testWidgets(
+    'CbtSectionField 父 setState 重建时保留用户输入 (controller leak regression)',
+    (tester) async {
+      // 父 State 持 trigger, setState 重建整个子树模拟 wizard step 切换 / 主题切换 / 键盘弹出.
+      late StateSetter outerSetState;
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) {
+              outerSetState = setState;
+              return const CbtSectionField(
+                title: '情境',
+                hint: '触发这个想法的事件',
+                prompts: ['问题1'],
+                onChanged: _noopOnChanged,
+              );
+            },
+          ),
+        ),
+      ),);
+
+      // 1. 输入文字
+      await tester.enterText(find.byType(TextField), 'foo bar');
+      await tester.pump();
+      expect(find.text('foo bar'), findsOneWidget);
+
+      // 2. 父 setState 触发整棵子树重建
+      outerSetState(() {});
+      await tester.pump();
+
+      // 3. 文字必须还在 (修复前: build 内 new TextEditingController 会重置为 '')
+      expect(find.text('foo bar'), findsOneWidget);
+    },
+  );
 
   testWidgets('CbtExplainerCard 默认展开, 点击收起', (tester) async {
     await tester.pumpWidget(const MaterialApp(
