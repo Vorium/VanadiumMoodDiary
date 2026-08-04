@@ -19,9 +19,11 @@ import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/services/store_kit_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// v0.27 round 62 (P0-3 修复): 全局静态 SmsService 入口
 ///
@@ -207,6 +209,10 @@ Future<void> _bootstrap() async {
   // 5. 启动完整 App
   // P0 fix: 创建单一 AppDatabase 实例，provider tree 和 assessment reminder 共用
   final sharedDb = AppDatabase();
+  // v0.29 round 84 (CBT 思维记录): 启动时一次性读 SP, 注入 thoughtRecordLevelProvider
+  // sharedPreferencesProvider 默认 throw UnimplementedError, 必须在 runApp 前 override
+  // 跟 databaseProvider / notificationServiceProvider / smsServiceProvider 同一模式
+  final sharedPrefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
       overrides: [
@@ -226,6 +232,8 @@ Future<void> _bootstrap() async {
         // v0.27 round 62 (P0-3 修复): 注入顶层 static SmsService 实例,
         // 跟 _bootstrap 用的 _smsService 是同一份, 避免 state 错位。
         smsServiceProvider.overrideWithValue(_smsService),
+        // v0.29 round 84: 注入 SharedPreferences, 给 thoughtRecordLevelProvider 用
+        sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       ],
       child: const AppRoot(),
     ),
