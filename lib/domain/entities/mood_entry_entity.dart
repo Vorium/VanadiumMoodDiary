@@ -62,6 +62,32 @@ class MoodEntryEntity {
   /// 存储精度 = ms,UI 显示按秒 / 分秒。
   final int? audioDurationMs;
 
+  // ===== v0.29 round 84 (CBT 思维记录) 字段 =====
+
+  /// 5/7 栏第 1 栏"情境"
+  final String? situation;
+
+  /// 5/7 栏第 2 栏"自动思维"
+  final String? automaticThought;
+
+  /// 5/7 栏第 3 栏"支持自动思维的证据"
+  final String? evidenceFor;
+
+  /// 5/7 栏第 3 栏"反对自动思维的证据"
+  final String? evidenceAgainst;
+
+  /// 5/7 栏第 4 栏"替代思维"
+  final String? alternativeThought;
+
+  /// 5/7 栏第 4 栏"重新评分" (1-5)
+  final int? reratedScore;
+
+  /// 7 栏"核心信念"
+  final String? coreBelief;
+
+  /// 7 栏"行为应对"
+  final String? behaviorResponse;
+
   const MoodEntryEntity({
     required this.id,
     required this.timestamp,
@@ -74,6 +100,14 @@ class MoodEntryEntity {
     this.audioPath,
     this.audioTranscript,
     this.audioDurationMs,
+    this.situation,
+    this.automaticThought,
+    this.evidenceFor,
+    this.evidenceAgainst,
+    this.alternativeThought,
+    this.reratedScore,
+    this.coreBelief,
+    this.behaviorResponse,
   });
 
   // ===== 业务方法 =====
@@ -99,6 +133,14 @@ class MoodEntryEntity {
     DomainValue<String?>? audioPath,
     DomainValue<String?>? audioTranscript,
     DomainValue<int?>? audioDurationMs,
+    DomainValue<String?>? situation,
+    DomainValue<String?>? automaticThought,
+    DomainValue<String?>? evidenceFor,
+    DomainValue<String?>? evidenceAgainst,
+    DomainValue<String?>? alternativeThought,
+    DomainValue<int?>? reratedScore,
+    DomainValue<String?>? coreBelief,
+    DomainValue<String?>? behaviorResponse,
   }) {
     return MoodEntryEntity(
       id: id ?? this.id,
@@ -116,11 +158,58 @@ class MoodEntryEntity {
       audioDurationMs: audioDurationMs == null
           ? this.audioDurationMs
           : audioDurationMs.value,
+      situation: situation == null ? this.situation : situation.value,
+      automaticThought: automaticThought == null
+          ? this.automaticThought
+          : automaticThought.value,
+      evidenceFor: evidenceFor == null ? this.evidenceFor : evidenceFor.value,
+      evidenceAgainst: evidenceAgainst == null
+          ? this.evidenceAgainst
+          : evidenceAgainst.value,
+      alternativeThought: alternativeThought == null
+          ? this.alternativeThought
+          : alternativeThought.value,
+      reratedScore: reratedScore == null ? this.reratedScore : reratedScore.value,
+      coreBelief: coreBelief == null ? this.coreBelief : coreBelief.value,
+      behaviorResponse: behaviorResponse == null
+          ? this.behaviorResponse
+          : behaviorResponse.value,
     );
   }
 
   /// v0.23 (Round 31): 是否有录音附件
   bool get hasAudio => audioPath != null && audioPath!.isNotEmpty;
+
+  // ===== v0.29 round 84 CBT 业务方法 =====
+
+  /// 是否 5/7 栏思维记录（任一 CBT 字段非空）
+  bool get isCbtRecord =>
+      situation != null ||
+      automaticThought != null ||
+      evidenceFor != null ||
+      evidenceAgainst != null ||
+      alternativeThought != null ||
+      reratedScore != null ||
+      coreBelief != null ||
+      behaviorResponse != null;
+
+  /// 推断档位: 7=coreBelief/behaviorResponse 非空, 5=alternativeThought/reratedScore/situation/automaticThought 非空, 3=其它
+  int? get cbtLevel {
+    if (coreBelief != null || behaviorResponse != null) return 7;
+    if (alternativeThought != null ||
+        reratedScore != null ||
+        situation != null ||
+        automaticThought != null) {
+      return 5;
+    }
+    return null;
+  }
+
+  /// 重新评分差值 (rerated - score),仅 5/7 栏有 reratedScore 时返回
+  double? get scoreShift {
+    if (reratedScore == null) return null;
+    return (reratedScore! - score).toDouble();
+  }
 
   @override
   bool operator ==(Object other) {
@@ -136,7 +225,15 @@ class MoodEntryEntity {
         other.note == note &&
         other.audioPath == audioPath &&
         other.audioTranscript == audioTranscript &&
-        other.audioDurationMs == audioDurationMs;
+        other.audioDurationMs == audioDurationMs &&
+        other.situation == situation &&
+        other.automaticThought == automaticThought &&
+        other.evidenceFor == evidenceFor &&
+        other.evidenceAgainst == evidenceAgainst &&
+        other.alternativeThought == alternativeThought &&
+        other.reratedScore == reratedScore &&
+        other.coreBelief == coreBelief &&
+        other.behaviorResponse == behaviorResponse;
   }
 
   @override
@@ -152,11 +249,20 @@ class MoodEntryEntity {
         audioPath,
         audioTranscript,
         audioDurationMs,
+        situation,
+        automaticThought,
+        evidenceFor,
+        evidenceAgainst,
+        alternativeThought,
+        reratedScore,
+        coreBelief,
+        behaviorResponse,
       );
 
   @override
   String toString() => 'MoodEntryEntity('
       'id=$id, score=$score, energy=$energy, sleep=$sleep, anxiety=$anxiety, '
       'tagsJson=$tagsJson, hasAudio=$hasAudio, '
-      'audioDurationMs=$audioDurationMs, at=$timestamp)';
+      'audioDurationMs=$audioDurationMs, '
+      'cbtLevel=$cbtLevel, at=$timestamp)';
 }
