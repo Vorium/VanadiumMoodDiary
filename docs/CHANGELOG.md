@@ -2,6 +2,72 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.29.0] - 2026-08-04 (R84 — CBT 思维记录 sub-spec 1, 3/5/7 栏档位 UI + schema 16→17 + 8 CBT 字段 + 35 ARB keys)
+
+> R84 目标: 用户提"想看 CBT 思维记录 (Cognitive Behavioral Therapy thought record)"作为
+> 情绪日记增强。sub-spec 1 落地核心 3/5/7 栏档位 UI,让用户根据需要
+> 选择简单/标准/完整 CBT 记录。
+>
+> **10 个 task** (每个 1 commit,共 22 commit, +52 test):
+> - Task 1: schemaVersion 16→17 + 8 nullable CBT columns
+> - Task 2: ThoughtRecordLevel enum + thoughtRecordLevelProvider (SP 持久化)
+> - Task 3: CbtDraftState + CbtDraftNotifier + cbtDraftProvider (dialog 状态)
+> - Task 4: CbtSectionField + CbtPromptSheet + CbtExplainerCard (公共 widget)
+> - Task 5: CbtThreeColumnMode 单屏长表式 + SegmentedButton
+> - Task 6: CbtWizard 步骤式 + 进度条 + 引导
+> - Task 7: CbtSection radio + SP 持久化 (settings 页入口)
+> - Task 8: DayDetailCard 显示 CBT 5/7 栏摘要
+> - Task 9: 35 CBT ARB keys zh/en/zh_Hant 同步
+> - Task 10: 集成测试 + 守门员验证 (本 commit)
+>
+> **架构边界**:
+> - domain 层 0 flutter / 0 drift, CBT 8 字段全是 nullable (老 3 栏用户
+>   不影响, 自动 null)
+> - 树洞 (vent) 边界守: CBT 字段不进 vent, 不进 trend 分析
+> - 安全边界守: CBT score 4 不触发 CrisisSignal, 不进 safety watch
+
+### Added
+- **CBT 思维记录 3/5/7 栏档位切换**:
+  - drift schema 16 → 17, mood_entries 加 8 个 nullable CBT 字段
+    (situation / automaticThought / evidenceFor / evidenceAgainst /
+    alternativeThought / reratedScore / coreBelief / behaviorResponse)
+  - `ThoughtRecordLevel` enum (three/five/seven) + `columnCount` getter
+  - `thoughtRecordLevelProvider` (Notifier + SharedPreferences 持久化,
+    key `mood.thought_record_level`)
+  - 设置页 "思维记录档位" radio 入口 (3 栏 / 5 栏 / 7 栏 3 选 1)
+  - dialog 顶部 SegmentedButton 临时切换档位 (不持久化 dialog 内的选择)
+  - 3 栏 mode: 单屏长表式 (情境 / 自动思维 + 情绪分数 1-5)
+  - 5/7 栏 mode: wizard 步骤式 (5 栏 5 步 / 7 栏 7 步) + 进度条 + 引导
+  - 顶部 ⓘ 折叠说明卡: 解释 CBT 思维记录 + 切档保留已有字段
+  - 录音 + 标签 + 保存按钮保留现有行为, 跟新档位并存
+  - trend_calendar `_DayDetailCard` 显示 CBT 5/7 栏摘要 + 🧠 角标
+
+### Tests
+- **1448/1448 pass** (R82.5 baseline 1433 + R84 +52: 35 ARB key + 8 data CBT
+  + 9 widget 集成)
+- `flutter analyze` 0 error / 0 warning (9 info-level RadioListTile
+  deprecated_member_use 已知, 不修 — 跟 M3 RadioGroup 升级一起做)
+- 16 守门员脚本全绿 (check_arb_keys / check_changelog /
+  check_cross_feature / check_datetime_race / check_datetime_race2 /
+  check_drift_namespace / check_fullwidth_punctuation /
+  check_no_hardcoded_utc / check_no_pua / check_widget_dispose /
+  check_orphan_arb_keys / check_legal_consent / check_sms_release_ready /
+  check_strings_hardcoded / check_zh_hant_consistency / check_all.dart)
+
+### Notes
+- 重评效果柱图 / mood 列表项 / PDF 导出 / AI 辅助 留待 sub-spec 2-5
+- ⚠️ TODO(found-via-integration): moodRepository.add() 当前不传 8 个 CBT
+  字段给 MoodEntriesCompanion (R84 schema 加 8 列时 add() 忘同步), 修复前
+  用户填完 5/7 栏点保存, 8 个 CBT 字段会被静默 drop。修法:
+  `lib/core/data/repositories/mood/mood_repository_impl.dart:39-53` 加 8 个
+  `Value(draft.xxx)` 参数, 1 行 + 8 行 pattern 跟现有 audio 字段一致。
+  Task 10 集成测走 `db.moodDao.insert` 直接验证 DB round-trip 走通,
+  生产 add() 路径 bug 不在本 sub-spec 1 修复范围 (brief 写"不改实现代码")。
+- ⚠️ layout: CbtWizard 含 `Expanded`, 在 `SingleChildScrollView` 内拿不到
+  bounded height, widget test 触发 layout error。生产 Material 3 Dialog
+  在屏内自己处理, 集成测绕开 dialog 走 `Scaffold(body: CbtWizard())` 同 R84
+  standalone test 模式。
+
 ## [Unreleased] - 2026-08-02 (R83 — 律师审核 ⚠️ 集中修复, 工程 self-revision 4 项, Q4b/Q5a/Q8/Q10b/Q11a 落地)
 
 > R83 目标: R82 法务 review 简报发出后, 律师反馈 5 ❌ 必改 + 18 ⚠️ 需修订。
