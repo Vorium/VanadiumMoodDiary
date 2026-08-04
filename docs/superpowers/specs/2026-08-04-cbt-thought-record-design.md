@@ -57,7 +57,7 @@ ALTER TABLE mood_entries ADD COLUMN core_belief TEXT;
 ALTER TABLE mood_entries ADD COLUMN behavior_response TEXT;
 ```
 
-**schemaVersion 升级**：12 → 13
+**schemaVersion 升级**：16 → 17（当前生产 v0.28 round 83 已到 16）
 
 **迁移策略**：`onUpgrade` 块内对所有现有用户执行上述 ALTER TABLE；新用户走 `createAll`。
 
