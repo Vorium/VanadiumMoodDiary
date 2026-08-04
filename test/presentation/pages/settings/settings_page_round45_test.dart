@@ -4,8 +4,12 @@
 // v0.24 round 45 (Sprint #6 中段 3 page 0 widget 测补齐之二) 补 3 个 case:
 //
 // 1. contacts error → 渲染 ErrorState (loading + error 状态切换)
-// 2. contacts data 空 + meds data 空 → 6 section widget 全部渲染
+// 2. contacts data 空 + meds data 空 → 7 section widget 全部渲染
 // 3. contacts data 1 → ContactsListWidget 渲染 + name 显示
+//
+// v0.29 round 84 (CBT 思维记录): 补 CbtSection (在 RemindersSection 之后),
+// 测试数 6 → 7。sharedPreferencesProvider override 必加 (CbtSection 依赖
+// thoughtRecordLevelProvider, 后者读 SP)。
 //
 // 测试 setup:
 // - MaterialApp + AppLocalizations.localizationsDelegates
@@ -20,17 +24,30 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  // v0.29 round 84 (CBT 思维记录): 共享给所有 test 的 SP mock 实例
+  // CbtSection 通过 thoughtRecordLevelProvider 读 SP, 必须 override。
+  // setUp 返回 Future, 测试前 await。top-level 变量供 buildSettingsPage 闭包用。
+  late SharedPreferences mockSp;
+
+  setUp(() async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    mockSp = await SharedPreferences.getInstance();
+  });
+
   // helper: 构造测试 widget
   Widget buildSettingsPage({
     List<ContactEntity> contacts = const [],
@@ -45,6 +62,10 @@ void main() {
               ? Stream<List<MedicationEntity>>.error(Exception('test error'))
               : Stream.value(meds),
         ),
+        // v0.29 round 84: CbtSection 引用 thoughtRecordLevelProvider, 后者
+        // 走 sharedPreferencesProvider 读 SP。test 必须 override 否则抛
+        // UnimplementedError: Override at app boot (cbt_providers.dart:27)。
+        sharedPreferencesProvider.overrideWithValue(mockSp),
       ],
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -67,7 +88,7 @@ void main() {
     expect(find.byType(ErrorState), findsOneWidget);
   });
 
-  testWidgets('contacts + meds 都空 → 6 个 section widget 全部渲染', (tester) async {
+  testWidgets('contacts + meds 都空 → 7 个 section widget 全部渲染', (tester) async {
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle();
 
@@ -84,6 +105,10 @@ void main() {
 
     await tester.scrollUntilVisible(find.byType(RemindersSection), 100);
     expect(find.byType(RemindersSection), findsOneWidget);
+
+    // v0.29 round 84: CbtSection (思维记录档位) 紧跟 RemindersSection
+    await tester.scrollUntilVisible(find.byType(CbtSection), 100);
+    expect(find.byType(CbtSection), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.byType(NotificationStatusCard),

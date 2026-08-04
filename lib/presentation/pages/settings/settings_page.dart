@@ -19,6 +19,7 @@ import 'package:chroniccare/presentation/pages/settings/widgets/reminders_sectio
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
 
 /// 设置页
 ///
@@ -189,6 +190,12 @@ class SettingsPage extends ConsumerWidget {
           SectionHeader(title: AppLocalizations.of(context).settingsReminders),
           const SizedBox(height: AppTokens.spacingSm),
           const RemindersSection(),
+
+          const SizedBox(height: AppTokens.spacingLg),
+
+          // v0.29 round 84 (CBT 思维记录): 思维记录档位设置
+          // 紧跟"提醒"主题 — 切档体验一致, 用户从"定时提醒"自然过渡到"模板选择"
+          const CbtSection(),
 
           const SizedBox(height: AppTokens.spacingLg),
 
