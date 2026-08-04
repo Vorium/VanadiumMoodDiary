@@ -20,11 +20,11 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 void main() {
   group('AppDatabase schemaVersion', () {
     test(
-        'schemaVersion == 15 (v0.27 round 63 P0-2: contacts 加 4 consent 字段 + index)',
+        'schemaVersion == 17 (v0.29 round 84: mood_entries +8 CBT fields)',
         () {
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      expect(db.schemaVersion, 15);
+      expect(db.schemaVersion, 17);
       db.close();
     });
   });
@@ -49,12 +49,12 @@ void main() {
       expect(db.migration.onCreate, isA<Function>());
     });
 
-    test('schemaVersion 15 = 14 migration steps (v1→2 ... v14→15)', () {
-      // v0 (创建) → v15 (当前) = 15 个 step
+    test('schemaVersion 17 = 16 migration steps (v1→2 ... v16→17)', () {
+      // v0 (创建) → v17 (当前) = 17 个 step
       // 但 v0 → v1 没 step (v1 是初始 schema)
-      // 所以 onUpgrade 处理 v1→v2 ... v14→v15 共 14 个 step
+      // 所以 onUpgrade 处理 v1→v2 ... v16→v17 共 16 个 step
       // 验证 schemaVersion 跟实际 if (from <= N) block 数量匹配
-      const expectedSteps = 14;
+      const expectedSteps = 16;
       // 简单 sanity: schemaVersion >= 1 + 至少 1 个 onUpgrade step
       expect(db.schemaVersion, greaterThanOrEqualTo(2));
       expect(expectedSteps, db.schemaVersion - 1);
@@ -120,6 +120,26 @@ void main() {
       expect(columns, contains('energy'));
       expect(columns, contains('sleep'));
       expect(columns, contains('anxiety'));
+    });
+
+    test('mood_entries 加 8 字段 CBT (v16 → v17)', () async {
+      // v0.29 round 84: situation / automaticThought / evidenceFor /
+      // evidenceAgainst / alternativeThought / reratedScore / coreBelief /
+      // behaviorResponse
+      final result = await db
+          .customSelect(
+            "PRAGMA table_info(mood_entries)",
+          )
+          .get();
+      final columns = result.map((r) => r.read<String>('name')).toSet();
+      expect(columns, contains('situation'));
+      expect(columns, contains('automatic_thought'));
+      expect(columns, contains('evidence_for'));
+      expect(columns, contains('evidence_against'));
+      expect(columns, contains('alternative_thought'));
+      expect(columns, contains('rerated_score'));
+      expect(columns, contains('core_belief'));
+      expect(columns, contains('behavior_response'));
     });
   });
 
