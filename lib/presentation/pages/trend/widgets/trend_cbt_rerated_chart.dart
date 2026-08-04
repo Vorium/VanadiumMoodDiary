@@ -13,6 +13,9 @@
 // - Y 轴固定 1-5 (5 档情绪), X 轴 = 时间戳 (跟 MoodHistoryChart 一致)
 // - 原评分: AppTokens.primaryColor 实线
 // - 重评后: AppTokens.success 虚线 (视觉对比, 暗示"好转")
+// - **Delta 阴影区**: fl_chart 0.69 `BetweenBarsData(fromIndex:0, toIndex:1)`
+//   在 score 线跟 reratedScore 线之间填充半透明 success 色, 把
+//   "重评效果"做成可视面积 (圆角/特殊色相留给 sub-spec 3 微调)
 // - 极简图例: 颜色块 + 短线, 区分实线/虚线, 不加 label 词条 (避免 2 个
 //   新 i18n key, 用户从 Y 轴范围 1-5 + 5 档情绪 emoji 已能识别)
 import 'package:fl_chart/fl_chart.dart';
@@ -138,6 +141,16 @@ class ReratedScoreChart extends StatelessWidget {
                       spots: reratedSpots,
                       color: AppTokens.success,
                       isDashed: true,
+                    ),
+                  ],
+                  // Delta 阴影: lineBarsData[0] (score) 和 [1] (reratedScore)
+                  // 之间的"重评效果"区域, 半透明 success 暗示"好转"方向。
+                  // alpha 0.15: 不抢线条, 仍能一眼分辨 delta 厚度。
+                  betweenBarsData: [
+                    BetweenBarsData(
+                      fromIndex: 0,
+                      toIndex: 1,
+                      color: AppTokens.success.withValues(alpha: 0.15),
                     ),
                   ],
                 ),

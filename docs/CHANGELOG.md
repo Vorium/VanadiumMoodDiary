@@ -5,7 +5,7 @@
 ## [0.30.0] - 2026-08-05 (R85 — CBT 思维记录 sub-spec 2, 重评效果折线图 trend page 集成)
 
 > R85 目标: sub-spec 1 落地 5/7 栏 CBT 思维记录后, 用户填的"重评分数"
-> (reratedScore 0-100) 没法可视化对比"情绪分数" (score 0-100)。本轮把
+> (reratedScore 1-5) 没法可视化对比"情绪分数" (score 1-5)。本轮把
 > 用户的"重评效果"用双线折线图呈现, 让 CBT 工作流的产出"可见"。
 >
 > **4 个 task** (每个 1 commit, 共 5 commit, +5 test):
@@ -25,8 +25,9 @@
   - 新增 `cbtReratedEntriesProvider` (Provider<List<MoodEntry>>) —
     过滤 mood_entries 表中 `columnCount >= 5` 的 entries (5/7 栏 CBT 记录)
   - 新增 `ReratedScoreChart` widget — fl_chart 双线 LineChart:
-    - 实线 (solid, primary color): 情绪分数 score 0-100
-    - 虚线 (dashed, secondary): 重评分数 reratedScore 0-100
+    - 实线 (solid, primary color): 情绪分数 score 1-5
+    - 虚线 (dashed, secondary): 重评分数 reratedScore 1-5
+    - **Delta 阴影**: `betweenBarsData` 在 2 线之间填充半透明色, 可视化重评效果
   - 集成到 trend page `MoodHistoryChart` 下方, 标题走 i18n
   - 空态: 5/7 栏数据 < 3 条时显示 `EmptyState` (icon + title + hint)
   - 3 个新 ARB key (zh / en / zh_Hant):

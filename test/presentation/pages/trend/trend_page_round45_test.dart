@@ -23,6 +23,7 @@ import 'package:chroniccare/presentation/pages/trend/widgets/trend_heatmap_grid.
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_monthly_chart.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_assessment_chart.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_mood_chart.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_cbt_rerated_chart.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:flutter/material.dart';
@@ -64,15 +65,17 @@ void main() {
   });
 
   testWidgets(
-      'checkIns data 空 + mood + assessments data 空 → list view 4 section',
+      'checkIns data 空 + mood + assessments data 空 → list view 5 section',
       (tester) async {
     await tester.pumpWidget(buildTrendPage());
     await tester.pumpAndSettle();
 
-    // 4 个 chart widget 渲染 (l10n 简体, 不依赖 viewport scroll)
+    // 5 个 chart widget 渲染 (l10n 简体, 不依赖 viewport scroll)
     expect(find.byType(HeatmapGrid), findsOneWidget);
     expect(find.byType(MonthlyChart), findsOneWidget);
     expect(find.byType(AssessmentHistoryChart), findsOneWidget);
     expect(find.byType(MoodHistoryChart), findsOneWidget);
+    // R85: CBT 重评效果图 section (MouthHistoryChart 下方)
+    expect(find.byType(ReratedScoreChart), findsOneWidget);
   });
 }
