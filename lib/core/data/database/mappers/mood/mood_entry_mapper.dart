@@ -4,6 +4,10 @@
 //
 // v0.23 (Round 31) 语音录入: 加 audioPath / audioTranscript / audioDurationMs
 // 3 个字段的双向映射。
+//
+// v0.29 round 84 (CBT 思维记录): 加 situation / automaticThought /
+// evidenceFor / evidenceAgainst / alternativeThought / reratedScore /
+// coreBelief / behaviorResponse 8 个 CBT 字段的双向映射。
 
 import 'package:drift/drift.dart' show Value;
 
@@ -26,6 +30,14 @@ extension MoodEntryToEntity on MoodEntry {
       audioPath: audioPath,
       audioTranscript: audioTranscript,
       audioDurationMs: audioDurationMs,
+      situation: situation,
+      automaticThought: automaticThought,
+      evidenceFor: evidenceFor,
+      evidenceAgainst: evidenceAgainst,
+      alternativeThought: alternativeThought,
+      reratedScore: reratedScore,
+      coreBelief: coreBelief,
+      behaviorResponse: behaviorResponse,
     );
   }
 }
@@ -44,6 +56,14 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
       audioPath: Value(audioPath),
       audioTranscript: Value(audioTranscript),
       audioDurationMs: Value(audioDurationMs),
+      situation: Value(situation),
+      automaticThought: Value(automaticThought),
+      evidenceFor: Value(evidenceFor),
+      evidenceAgainst: Value(evidenceAgainst),
+      alternativeThought: Value(alternativeThought),
+      reratedScore: Value(reratedScore),
+      coreBelief: Value(coreBelief),
+      behaviorResponse: Value(behaviorResponse),
     );
   }
 }
@@ -55,6 +75,9 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
 ///
 /// v0.23 (Round 31) 语音录入: audioPath / audioTranscript / audioDurationMs
 /// 3 个 optional 参数,老调用方不传 = null(纯文字模式)。
+///
+/// v0.29 round 84 (CBT 思维记录): 8 个 CBT 字段 optional 参数,老调用方
+/// 不传 = null(普通 3 栏模式)。
 MoodEntryEntity buildMoodEntryEntity({
   required int id,
   required DateTime timestamp,
@@ -67,6 +90,14 @@ MoodEntryEntity buildMoodEntryEntity({
   String? audioPath,
   String? audioTranscript,
   int? audioDurationMs,
+  String? situation,
+  String? automaticThought,
+  String? evidenceFor,
+  String? evidenceAgainst,
+  String? alternativeThought,
+  int? reratedScore,
+  String? coreBelief,
+  String? behaviorResponse,
 }) {
   return MoodEntryEntity(
     id: id,
@@ -80,5 +111,13 @@ MoodEntryEntity buildMoodEntryEntity({
     audioPath: audioPath,
     audioTranscript: audioTranscript,
     audioDurationMs: audioDurationMs,
+    situation: situation,
+    automaticThought: automaticThought,
+    evidenceFor: evidenceFor,
+    evidenceAgainst: evidenceAgainst,
+    alternativeThought: alternativeThought,
+    reratedScore: reratedScore,
+    coreBelief: coreBelief,
+    behaviorResponse: behaviorResponse,
   );
 }
