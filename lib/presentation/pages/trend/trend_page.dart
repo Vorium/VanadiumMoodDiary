@@ -21,6 +21,7 @@ import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
@@ -32,9 +33,10 @@ import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_summary.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_calendar.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_assessment_chart.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_cbt_rerated_chart.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_heatmap_grid.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_monthly_chart.dart';
-import 'package:chroniccare/presentation/pages/trend/widgets/trend_assessment_chart.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_mood_chart.dart';
 
 /// v0.12 (Round 6) 视图模式
@@ -239,6 +241,12 @@ class _TrendPageState extends ConsumerState<TrendPage> {
             );
           },
         ),
+        const SizedBox(height: AppTokens.spacingLg),
+        // v0.30 round 85 (CBT 重评效果图): 5/7 栏 CBT 重评前后对比 (score 实线 +
+        // reratedScore 虚线)。cbtReratedEntriesProvider 已过滤 cbtLevel >= 5,
+        // ReratedScoreChart 内部再 filter reratedScore != null (self-contained)。
+        ReratedScoreChart(entries: ref.watch(cbtReratedEntriesProvider)),
+        const SizedBox(height: AppTokens.spacingMd),
       ],
     );
   }
