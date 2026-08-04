@@ -58,6 +58,32 @@ class MoodEntryDraft {
   /// 录音时长（毫秒）
   final int? audioDurationMs;
 
+  // ===== v0.29 round 84 (CBT 思维记录) 字段 =====
+
+  /// 5/7 栏第 1 栏"情境"
+  final String? situation;
+
+  /// 5/7 栏第 2 栏"自动思维"
+  final String? automaticThought;
+
+  /// 5/7 栏第 3 栏"支持自动思维的证据"
+  final String? evidenceFor;
+
+  /// 5/7 栏第 3 栏"反对自动思维的证据"
+  final String? evidenceAgainst;
+
+  /// 5/7 栏第 4 栏"替代思维"
+  final String? alternativeThought;
+
+  /// 5/7 栏第 4 栏"重新评分" (1-5)
+  final int? reratedScore;
+
+  /// 7 栏"核心信念"
+  final String? coreBelief;
+
+  /// 7 栏"行为应对"
+  final String? behaviorResponse;
+
   const MoodEntryDraft({
     required this.score,
     required this.tags,
@@ -69,5 +95,13 @@ class MoodEntryDraft {
     this.audioPath,
     this.audioTranscript,
     this.audioDurationMs,
+    this.situation,
+    this.automaticThought,
+    this.evidenceFor,
+    this.evidenceAgainst,
+    this.alternativeThought,
+    this.reratedScore,
+    this.coreBelief,
+    this.behaviorResponse,
   });
 }
