@@ -299,6 +299,66 @@ Future<ImportResult> runImportFromJson(
                   maxLen: 10000,
                 ),
               ),
+              // v0.30 round 88 (P0 fix): R84 加 8 CBT 字段时漏了 import 反序列化,
+              // 用户导出 → 删 DB → 导入 = silent data loss。R88 修。8 字段全
+              // nullable, 老数据 (R84 前) 全部 null = 单 score 模式。
+              situation: Value(
+                ExportSchemaService.validateString(
+                  m['situation'],
+                  'mood.situation',
+                  maxLen: 10000,
+                ),
+              ),
+              automaticThought: Value(
+                ExportSchemaService.validateString(
+                  m['automaticThought'],
+                  'mood.automaticThought',
+                  maxLen: 10000,
+                ),
+              ),
+              evidenceFor: Value(
+                ExportSchemaService.validateString(
+                  m['evidenceFor'],
+                  'mood.evidenceFor',
+                  maxLen: 10000,
+                ),
+              ),
+              evidenceAgainst: Value(
+                ExportSchemaService.validateString(
+                  m['evidenceAgainst'],
+                  'mood.evidenceAgainst',
+                  maxLen: 10000,
+                ),
+              ),
+              alternativeThought: Value(
+                ExportSchemaService.validateString(
+                  m['alternativeThought'],
+                  'mood.alternativeThought',
+                  maxLen: 10000,
+                ),
+              ),
+              reratedScore: Value(
+                ExportSchemaService.validateInt(
+                  m['reratedScore'],
+                  null,
+                  min: 1,
+                  max: 5,
+                ),
+              ),
+              coreBelief: Value(
+                ExportSchemaService.validateString(
+                  m['coreBelief'],
+                  'mood.coreBelief',
+                  maxLen: 10000,
+                ),
+              ),
+              behaviorResponse: Value(
+                ExportSchemaService.validateString(
+                  m['behaviorResponse'],
+                  'mood.behaviorResponse',
+                  maxLen: 10000,
+                ),
+              ),
             ),
           );
           moodEntryCount++;

@@ -186,6 +186,20 @@ class ExportOrchestrator {
             if (m.anxiety != null) 'anxiety': m.anxiety,
             'tagsJson': m.tagsJson,
             'note': m.note,
+            // v0.30 round 88 (P0 fix): R84 加 8 CBT 字段时漏了 toMap, 用户导出
+            // → 删 DB → 导入 = silent data loss。R88 修。8 字段全 nullable, 老数据
+            // (R84 前) 全部 null, 5 栏 / 7 栏 / 单纯 score 都兼容。
+            if (m.situation != null) 'situation': m.situation,
+            if (m.automaticThought != null)
+              'automaticThought': m.automaticThought,
+            if (m.evidenceFor != null) 'evidenceFor': m.evidenceFor,
+            if (m.evidenceAgainst != null) 'evidenceAgainst': m.evidenceAgainst,
+            if (m.alternativeThought != null)
+              'alternativeThought': m.alternativeThought,
+            if (m.reratedScore != null) 'reratedScore': m.reratedScore,
+            if (m.coreBelief != null) 'coreBelief': m.coreBelief,
+            if (m.behaviorResponse != null)
+              'behaviorResponse': m.behaviorResponse,
           },
       ],
       'ventEntries': [
