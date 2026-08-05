@@ -19,12 +19,11 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 
 void main() {
   group('AppDatabase schemaVersion', () {
-    test(
-        'schemaVersion == 17 (v0.29 round 84: mood_entries +8 CBT fields)',
+    test('schemaVersion == 18 (v0.30 round 91: 6 新表 + mood_entries period)',
         () {
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      expect(db.schemaVersion, 17);
+      expect(db.schemaVersion, 18);
       db.close();
     });
   });
@@ -41,20 +40,20 @@ void main() {
     });
 
     test('migration strategy exists and is callable', () {
-      // 真实从 schemaVersion 0 (空 db) 升级到 15 走 onUpgrade block
-      // onUpgrade 在 native memory db 上从 0 → 15 走 createAll
+      // 真实从 schemaVersion 0 (空 db) 升级到 18 走 onUpgrade block
+      // onUpgrade 在 native memory db 上从 0 → 18 走 createAll
       expect(db.migration, isNotNull);
       // migration 字段类型是 MigrationStrategy
       expect(db.migration.onUpgrade, isA<Function>());
       expect(db.migration.onCreate, isA<Function>());
     });
 
-    test('schemaVersion 17 = 16 migration steps (v1→2 ... v16→17)', () {
-      // v0 (创建) → v17 (当前) = 17 个 step
+    test('schemaVersion 18 = 17 migration steps (v1→2 ... v17→v18)', () {
+      // v0 (创建) → v18 (当前) = 18 个 step
       // 但 v0 → v1 没 step (v1 是初始 schema)
-      // 所以 onUpgrade 处理 v1→v2 ... v16→v17 共 16 个 step
+      // 所以 onUpgrade 处理 v1→v2 ... v17→v18 共 17 个 step
       // 验证 schemaVersion 跟实际 if (from <= N) block 数量匹配
-      const expectedSteps = 16;
+      const expectedSteps = 17;
       // 简单 sanity: schemaVersion >= 1 + 至少 1 个 onUpgrade step
       expect(db.schemaVersion, greaterThanOrEqualTo(2));
       expect(expectedSteps, db.schemaVersion - 1);
@@ -140,6 +139,36 @@ void main() {
       expect(columns, contains('rerated_score'));
       expect(columns, contains('core_belief'));
       expect(columns, contains('behavior_response'));
+    });
+
+    test('mood_entries 加 period 字段 (v17 → v18)', () async {
+      // v0.30 round 91: period (TextColumn, nullable)
+      final result = await db
+          .customSelect(
+            "PRAGMA table_info(mood_entries)",
+          )
+          .get();
+      final columns = result.map((r) => r.read<String>('name')).toSet();
+      expect(columns, contains('period'),
+          reason: 'v17→v18 migration must add period column',);
+    });
+
+    test('6 新表创建 (v17 → v18)', () async {
+      // v0.30 round 91: sleep_entries / social_rhythm_entries /
+      // stress_events / treatment_entries / weight_entries /
+      // anxiety_agitation_entries
+      final tables = await db
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+          )
+          .get();
+      final names = tables.map((r) => r.read<String>('name')).toSet();
+      expect(names, contains('sleep_entries'));
+      expect(names, contains('social_rhythm_entries'));
+      expect(names, contains('stress_events'));
+      expect(names, contains('treatment_entries'));
+      expect(names, contains('weight_entries'));
+      expect(names, contains('anxiety_agitation_entries'));
     });
   });
 
