@@ -94,9 +94,17 @@ void main() {
     const draft = MoodEntryDraft(score: 3, tags: ['普通'], note: '今天还行');
     final id = await db.moodDao.insert(_draftToCompanion(draft));
     final saved = (await db.moodDao.getAll()).firstWhere((e) => e.id == id);
-    expect(saved.situation, equals(null));
-    expect(saved.automaticThought, equals(null));
+    // 8 个 CBT 字段全 null (v0.29 R84 老数据升级后默认状态)
+    expect(saved.situation, isNull);
+    expect(saved.automaticThought, isNull);
+    expect(saved.evidenceFor, isNull);
+    expect(saved.evidenceAgainst, isNull);
+    expect(saved.alternativeThought, isNull);
+    expect(saved.reratedScore, isNull);
+    expect(saved.coreBelief, isNull);
+    expect(saved.behaviorResponse, isNull);
     expect(saved.toEntity().isCbtRecord, isFalse);
+    expect(saved.toEntity().cbtLevel, isNull);
   });
 
   // v0.29 round 84 (fix) — 防止 moodRepository.add() 漏传 CBT 字段的回归测试

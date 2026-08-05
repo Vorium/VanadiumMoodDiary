@@ -5,7 +5,7 @@
 // 设计:
 // - StatefulWidget: 内部 _expanded 兜底, 让裸用 (test / 简单 caller) 可工作
 // - 父组件提供 expanded+onToggle 时切外部控制 (CbtDraftState.showExplainer)
-// - expanded==null || onToggle==null → 走内部 _expanded
+// - 任一为 null (expanded==null || onToggle==null) → 走内部 _expanded
 // - 两者都给 → 走外部 (parent 控制 state, widget 只是 view)
 import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -62,8 +62,11 @@ class _CbtExplainerCardState extends State<CbtExplainerCard> {
                   const Icon(Icons.info_outline, size: 18),
                   const SizedBox(width: AppTokens.spacingXxs),
                   Expanded(
-                      child: Text(widget.title,
-                          style: AppTokens.textStyleLabel(context),),),
+                    child: Text(
+                      widget.title,
+                      style: AppTokens.textStyleLabel(context),
+                    ),
+                  ),
                   Icon(expanded ? Icons.expand_less : Icons.expand_more),
                 ],
               ),

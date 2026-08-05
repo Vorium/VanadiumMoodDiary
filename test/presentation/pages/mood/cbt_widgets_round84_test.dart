@@ -5,8 +5,8 @@
 // 2. CbtExplainerCard 折叠交互: 展开 ↔ 收起
 //
 // 频度: 5/7 栏 wizard 每步都用 CbtSectionField, 顶部说明卡每次进 dialog 都渲染
-// 模式: 跟 R80 mood_recorder widget test 同款 — ProviderScope + MaterialApp +
-// tester.pumpAndSettle
+// 模式: 纯 stateless widget 测试 (无 Riverpod), 只用 MaterialApp + tester.pumpAndSettle
+//   — 不需要 ProviderScope (CbtSectionField / CbtExplainerCard 都不读 providers)
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.dart';

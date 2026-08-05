@@ -52,6 +52,67 @@
 - R85 5/7 栏判定用 `columnCount(entry) >= 5`, 跟 R84
   `ThoughtRecordLevel.columnCount` 行为完全一致 (R84 enum: 3/5/7)
 
+## [0.30.0] - 2026-08-05 (R86 — cleanup, 修 R77 16 pre-existing setup_* fail + 25+ Minor findings)
+
+> R86 目标: R77 起就 fail 的 16 个 setup_* test (因为 R83 加了第 4 个
+> `ConsentCheckRow` 年龄严正声明, 老测试期望 3 个 Checkbox), 跟 R84/R85 SDD
+> review 时挂的 25+ Minor findings (comment 编号错 / docstring 措辞 / 测试
+> 漏洞 / 格式) 集中清理。无新功能, 无行为变更 (除 cbtLevel 5-check 加
+> evidenceFor/evidenceAgainst 1 个真 bug 修 + 8 字段 toString 输出)。
+
+### Fixed
+- **R77 setup_* 16 pre-existing fail** (R83 Q11a 律师审核 ⚠️ 加年龄严正声明后
+  没同步老 test):
+  - `setup_consent_round14_test.dart` — 5 case (3→4 Checkbox, 加年龄
+    严正声明 label 断言, 加 4-checkbox 完整 enabled 流程)
+  - `setup_page_round18_test.dart` — `_passConsent` helper 3→4
+  - `setup_page_round77_test.dart` — 7 case (3→4 Checkbox, 勾满 3 → 4)
+  - `setup_step2_round14_test.dart` — 2 case 3→4
+- **CBT domain 字段一致性 (R84 Task 1 Minor)**:
+  - `mood_entry_entity.dart:196-206` `cbtLevel` 5-check 漏 `evidenceFor` /
+    `evidenceAgainst` → 5-栏判定覆盖完整 6 个 5/7 栏共享字段
+  - `mood_entry_entity.dart:262-273` `toString` 漏 8 个 CBT 字段 → 加
+    situation / automaticThought / evidenceFor / evidenceAgainst /
+    alternativeThought / reratedScore / coreBelief / behaviorResponse
+- **app_database.dart schemaVersion 注释** (R84 Task 1 Minor 1+2):
+  - line 91 comment "16 → 17" → "15 → 17" (实际 code diff 无中间 v16)
+  - line 257-269 migration 注释加 "未来 v16 placeholder" 提示
+- **`cbt_explainer_card.dart:8` 注释错** (R84 Task 4 Minor): "||" → 解释
+  "任一为 null (expanded==null || onToggle==null)"
+
+### Changed
+- **`cbt_providers.dart:93-107` `firstEmptyStep` docstring 编号** (R84 Task 3
+  Minor): 7 栏 5/6 → 4/5 (跟代码 `if (level == 7) { coreBelief:4, behaviorResponse:5, 确认:6 }`
+  对齐), 加 "setStep maxStep=6" 提示
+- **`cbt_wizard.dart:13-19` 7 栏 step mapping** (R84 Task 6 Minor, 早已被
+  eebb8fd final review 修过, 现跟 cbt_providers 对齐)
+- **`cbt_rerated_entries_provider_round85_test.dart`** 格式清理 (R85 Task 1
+  Minor): 修 `],),` dart fix artifacts + test 2 加 id 断言 (跟 test 1 一致)
+- **`cbt_widgets_round84_test.dart:8-9` 注释** (R84 Task 4 Minor): "ProviderScope
+  + MaterialApp" 误导 (实际无 ProviderScope) → "纯 stateless, 只用 MaterialApp"
+
+### Tests
+- **1472/1472 pass** (R85 1456 + R77 16 老 setup_* 修通) / 0 fail
+- `flutter analyze` 9 info-level (9 pre-existing `RadioListTile`
+  `deprecated_member_use`, 跟 R85 一致)
+- 16 守门员脚本全绿 (跟 R85 一致, 无新增 script)
+
+### Defered to v0.30+ / out of scope
+- `sharedPreferencesProvider` 放 `cbt_providers.dart` 跟 `core_providers.dart`
+  风格不一致 → 改位置需 4-5 个文件 (1 source + 3 test + main.dart) import
+  改动, 留 R87+ 单独 PR
+- `cbt_providers.dart setStep` 不 enforce 3-col / `updateField` 不能 clear
+  to null → 行为变更, 留 R87+ 跟 `MoodEntryDraft.copyWith` (去 11 行
+  boilerplate) 一起做
+- `test/data/mood_cbt_roundtrip_round84_test.dart:90-98` 3-栏 test 漏 6 字段
+  null 断言 → 已加 (本批)
+- R85 Task 1 Minor "缺 boundary at 5 test (cbtLevel 不可设 4/6)" → 跟
+  ThoughtRecordLevel enum 一起验, 留 R87+ 单测
+- R85 Task 2 / 3 / 4 + R86 minor (12+ 硬编码中文 / RenderFlex 嵌套 /
+  wizard 完成 UX) → 留 v0.30+ 集中 i18n / 布局 PR
+- 9 pre-existing `RadioListTile` deprecation info → 跟 M3 RadioGroup 升级
+  一起做, 不在本批
+
 ## [0.29.0] - 2026-08-04 (R84 — CBT 思维记录 sub-spec 1, 3/5/7 栏档位 UI + schema 16→17 + 8 CBT 字段 + 35 ARB keys)
 
 > R84 目标: 用户提"想看 CBT 思维记录 (Cognitive Behavioral Therapy thought record)"作为

@@ -92,17 +92,18 @@ class CbtDraftState {
 
   /// 计算"第一个未填的 step" (5/7 栏 wizard 用, 3 栏返回 0)
   ///
-  /// 5 栏 5 步:
+  /// 5 栏 5 步 (0-4):
   ///   0 = situation
   ///   1 = automaticThought
   ///   2 = score + evidenceFor + evidenceAgainst (任一空算空)
   ///   3 = alternativeThought + reratedScore (任一空算空)
   ///   4 = 确认 (5 步全填了 → 跳到确认页)
   ///
-  /// 7 栏 7 步:
-  ///   0-4 同 5 栏
-  ///   5 = coreBelief
-  ///   6 = behaviorResponse
+  /// 7 栏 7 步 (0-6, setStep maxStep=6):
+  ///   0-3 同 5 栏
+  ///   4 = coreBelief
+  ///   5 = behaviorResponse
+  ///   6 = 确认 (7 步全填了 → 跳到确认页)
   static int firstEmptyStep(MoodEntryDraft d, ThoughtRecordLevel level) {
     if (level == ThoughtRecordLevel.three) return 0;
     if (_isEmpty(d.situation)) return 0;

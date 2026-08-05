@@ -17,22 +17,29 @@ import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.
 void main() {
   group('cbtReratedEntriesProvider (v0.30 round 85)', () {
     test('过滤 3 栏 entries (cbtLevel null), 只返回 5/7 栏', () {
-      final container = ProviderContainer(overrides: [
-        moodEntriesProvider.overrideWith((ref) => [
-          MoodEntryEntity(id: 1, timestamp: DateTime(2026, 8, 1), score: 3, note: '3-栏'),
-          MoodEntryEntity(
-            id: 2,
-            timestamp: DateTime(2026, 8, 2),
-            score: 4,
-            situation: 's',
-            automaticThought: 'at',
-            evidenceFor: 'ef',
-            evidenceAgainst: 'ea',
-            alternativeThought: 'alt',
-            reratedScore: 3,
-          ),
-        ],),
-      ],);
+      final container = ProviderContainer(
+        overrides: [
+          moodEntriesProvider.overrideWith((ref) => [
+            MoodEntryEntity(
+              id: 1,
+              timestamp: DateTime(2026, 8, 1),
+              score: 3,
+              note: '3-栏',
+            ),
+            MoodEntryEntity(
+              id: 2,
+              timestamp: DateTime(2026, 8, 2),
+              score: 4,
+              situation: 's',
+              automaticThought: 'at',
+              evidenceFor: 'ef',
+              evidenceAgainst: 'ea',
+              alternativeThought: 'alt',
+              reratedScore: 3,
+            ),
+          ],),
+        ],
+      );
       addTearDown(container.dispose);
       final result = container.read(cbtReratedEntriesProvider);
       expect(result.length, 1);
@@ -40,31 +47,37 @@ void main() {
     });
 
     test('7 栏 entries 也返回', () {
-      final container = ProviderContainer(overrides: [
-        moodEntriesProvider.overrideWith((ref) => [
-          MoodEntryEntity(
-            id: 1,
-            timestamp: DateTime(2026, 8, 1),
-            score: 2,
-            situation: 's',
-            automaticThought: 'at',
-            evidenceFor: 'ef',
-            evidenceAgainst: 'ea',
-            alternativeThought: 'alt',
-            reratedScore: 4,
-            coreBelief: 'cb',
-            behaviorResponse: 'br',
-          ),
-        ],),
-      ],);
+      final container = ProviderContainer(
+        overrides: [
+          moodEntriesProvider.overrideWith((ref) => [
+            MoodEntryEntity(
+              id: 1,
+              timestamp: DateTime(2026, 8, 1),
+              score: 2,
+              situation: 's',
+              automaticThought: 'at',
+              evidenceFor: 'ef',
+              evidenceAgainst: 'ea',
+              alternativeThought: 'alt',
+              reratedScore: 4,
+              coreBelief: 'cb',
+              behaviorResponse: 'br',
+            ),
+          ],),
+        ],
+      );
       addTearDown(container.dispose);
-      expect(container.read(cbtReratedEntriesProvider).length, 1);
+      final result = container.read(cbtReratedEntriesProvider);
+      expect(result.length, 1);
+      expect(result.first.id, 1);
     });
 
     test('空 list 返回空', () {
-      final container = ProviderContainer(overrides: [
-        moodEntriesProvider.overrideWith((ref) => <MoodEntryEntity>[]),
-      ],);
+      final container = ProviderContainer(
+        overrides: [
+          moodEntriesProvider.overrideWith((ref) => <MoodEntryEntity>[]),
+        ],
+      );
       addTearDown(container.dispose);
       expect(container.read(cbtReratedEntriesProvider), isEmpty);
     });

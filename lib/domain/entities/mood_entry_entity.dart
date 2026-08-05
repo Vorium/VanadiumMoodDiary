@@ -193,13 +193,17 @@ class MoodEntryEntity {
       coreBelief != null ||
       behaviorResponse != null;
 
-  /// 推断档位: 7=coreBelief/behaviorResponse 非空, 5=alternativeThought/reratedScore/situation/automaticThought 非空, 3=其它
+  /// 推断档位: 7=coreBelief/behaviorResponse 非空, 5=任一 5/7 栏共享字段 (situation /
+  ///   automaticThought / evidenceFor / evidenceAgainst / alternativeThought /
+  ///   reratedScore) 非空, 3=其它
   int? get cbtLevel {
     if (coreBelief != null || behaviorResponse != null) return 7;
     if (alternativeThought != null ||
         reratedScore != null ||
         situation != null ||
-        automaticThought != null) {
+        automaticThought != null ||
+        evidenceFor != null ||
+        evidenceAgainst != null) {
       return 5;
     }
     return null;
@@ -264,5 +268,10 @@ class MoodEntryEntity {
       'id=$id, score=$score, energy=$energy, sleep=$sleep, anxiety=$anxiety, '
       'tagsJson=$tagsJson, hasAudio=$hasAudio, '
       'audioDurationMs=$audioDurationMs, '
-      'cbtLevel=$cbtLevel, at=$timestamp)';
+      'cbtLevel=$cbtLevel, '
+      'situation=$situation, automaticThought=$automaticThought, '
+      'evidenceFor=$evidenceFor, evidenceAgainst=$evidenceAgainst, '
+      'alternativeThought=$alternativeThought, reratedScore=$reratedScore, '
+      'coreBelief=$coreBelief, behaviorResponse=$behaviorResponse, '
+      'at=$timestamp)';
 }

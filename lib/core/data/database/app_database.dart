@@ -88,9 +88,11 @@ class AppDatabase extends _$AppDatabase {
   //   (R62 working tree 状态), DB 落库是这次新加。考虑 v1.0 法务过审
   //   时是否给老用户"重新同意"流程 (本批不做, 留 R64+ 评估)
   //
-  // v0.29 round 84: schemaVersion 16 → 17 - mood_entries +8 个 CBT 字段
+  // v0.29 round 84: schemaVersion 15 → 17 - mood_entries +8 个 CBT 字段
   //   (situation / automaticThought / evidenceFor / evidenceAgainst /
   //    alternativeThought / reratedScore / coreBelief / behaviorResponse)
+  //   注: code diff 实际是 15→17 (无 16 中间版本); spec 误写"current prod is 16"
+  //   后续如真发布 v16 schema, `if (from <= 15)` 守卫需在中间加 16→17 步
   // - 8 列全 nullable,老数据自动 null (3 栏 mode 渲染)
   // - 用户升级后 mood entry 在 DayDetailCard 里走"3 栏 + 自由 note"分支
   @override
@@ -254,7 +256,12 @@ class AppDatabase extends _$AppDatabase {
               'CREATE INDEX IF NOT EXISTS idx_contact_consent_at ON contacts(consent_at)',
             );
           }
-          // v16 → v17: mood_entries +8 个 CBT 字段 (v0.29 round 84)
+          // v15 → v17: mood_entries +8 个 CBT 字段 (v0.29 round 84)
+          // 注: code diff 实际 15→17 (无中间 v16), spec 误写"16→17"
+          // (e14c6b3 fix spec 12→16 未对应任何代码 schema bump).
+          // 守卫 `if (from <= 16)` 同时覆盖当前 v15 用户 + 未来真出 v16 schema
+          // 时的安全网 (避免漏迁). 未来如真引入 v16 中间 schema, 这里需插一个
+          // `if (from == 16) { /* v16→v17 步 */ }` placeholder, 见上面 doc 注释.
           // - 8 列全 nullable, 老数据自动 null (3 栏 mode 渲染,行为不变)
           // - 升级后 DayDetailCard 走"3 栏 + 自由 note"分支,5/7 栏用户主动升级才用
           if (from <= 16) {
