@@ -254,4 +254,17 @@ class AppTokens {
   // v0.27 round 65 (alibaba B9 magic alpha): scrim alpha 转发
   // long-task modal 0.54 (medication_report_dialog)
   static const double scrimAlpha = AppMotion.scrimAlpha;
+
+  // ===== v0.30 round 90 (sub-spec 6 量表中心): 量表色板 — 转发 AppColors =====
+  //
+  // 12 色 + 3 线型, 多线趋势图 / 量表色 token / chip avatar 用
+  // 调用方: AppTokens.assessmentColorFor(scaleId, scaleIds)
+  //         AppTokens.assessmentDashFor(scaleId, scaleIds)
+  static const List<Color> assessmentColors = AppColors.assessmentColors;
+  static const List<List<int>> assessmentDashArrays =
+      AppColors.assessmentDashArrays;
+  static Color assessmentColorFor(String scaleId, List<String> scaleIds) =>
+      AppColors.assessmentColorFor(scaleId, scaleIds);
+  static List<int> assessmentDashFor(String scaleId, List<String> scaleIds) =>
+      AppColors.assessmentDashFor(scaleId, scaleIds);
 }

@@ -275,4 +275,58 @@ class AppColors {
   /// emil "decisions should be nameable" — 0.85 不应裸用,命名 "muted"
   static Color fgOnPrimaryMuted(BuildContext context) =>
       Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85);
+
+  // ============= v0.30 round 90 (sub-spec 6 量表中心): 量表色板 =============
+  //
+  // 12 量表多色 (10 开放 + 2 unavailable 灰) — 色相分散, 色盲友好, 跟 R85
+  // rerated chart 风格一致。3 线型 (实线/虚线/点线) 按 scale index % 3 循环。
+  //
+  // 跟 R85 风格一致: 不用 theme-aware, 固定 const Color —
+  // 趋势图需要稳定的视觉标识 (跨 dark mode 同一个量表 = 同一个色),
+  // dark mode 下 alpha 自动按需调。
+  // 顺序固定: 跟 AssessmentColorPalette._scaleIds 一一对应, 通过
+  // assessmentColorFor(scaleId, scaleIds) 拿色 / assessmentDashFor 拿线型。
+
+  /// 量表 12 色: 10 开放 + 2 unavailable 灰
+  /// 顺序跟 AssessmentColorPalette._scaleIds 一一对应
+  static const List<Color> assessmentColors = [
+    Color(0xFF1E88E5), // 1. PHQ-9 蓝
+    Color(0xFFE53935), // 2. GAD-7 红
+    Color(0xFF43A047), // 3. ISI 绿
+    Color(0xFFFB8C00), // 4. PSS 橙
+    Color(0xFF8E24AA), // 5. WHODAS 紫
+    Color(0xFF00ACC1), // 6. Level 2 Dep 青
+    Color(0xFFD81B60), // 7. Level 2 Anx 粉
+    Color(0xFF6D4C41), // 8. Level 2 Mania 棕
+    Color(0xFF3949AB), // 9. ASRM 蓝紫
+    Color(0xFF7CB342), // 10. Level 2 Psy 浅绿
+    Color(0xFFBDBDBD), // 11. NSESSS (unavailable) 灰
+    Color(0xFF9E9E9E), // 12. CRDPSS (unavailable) 深灰
+  ];
+
+  /// 3 线型 — 按 scale index % 3 循环
+  /// (实线 / 虚线 / 点线, 让色盲用户也能区分)
+  static const List<List<int>> assessmentDashArrays = [
+    <int>[], // 实线 (index 0, 3, 6, 9)
+    <int>[5, 5], // 虚线 (index 1, 4, 7, 10)
+    <int>[2, 3], // 点线 (index 2, 5, 8, 11)
+  ];
+
+  /// 按 scaleId 拿色 (scaleById 在 scaleIds 里的 index % 12)
+  ///
+  /// 找不到 → Colors.grey 兜底
+  static Color assessmentColorFor(String scaleId, List<String> scaleIds) {
+    final idx = scaleIds.indexOf(scaleId);
+    if (idx < 0) return Colors.grey;
+    return assessmentColors[idx % assessmentColors.length];
+  }
+
+  /// 按 scaleId 拿线型 (scaleIds index % 3)
+  ///
+  /// 找不到 → const [] 实线 兜底
+  static List<int> assessmentDashFor(String scaleId, List<String> scaleIds) {
+    final idx = scaleIds.indexOf(scaleId);
+    if (idx < 0) return const <int>[];
+    return assessmentDashArrays[idx % assessmentDashArrays.length];
+  }
 }
