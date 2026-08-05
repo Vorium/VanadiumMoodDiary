@@ -5,11 +5,13 @@
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
+import 'package:chroniccare/presentation/pages/assessment/assessment_center_page.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_history_page.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_page.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
 
 /// v0.26 round 57: 评估 + 趋势路由 (3 个 + 1 个 redirect)
+/// v0.30 round 90 (sub-spec 6 量表中心): 加 /assessment-center 中心化入口
 class AppRouteAssessment {
   AppRouteAssessment._();
 
@@ -19,6 +21,16 @@ class AppRouteAssessment {
         path: '/trend',
         pageBuilder: (context, state) =>
             AppRoutes.slideRightPage(state.pageKey, const TrendPage(), context),
+      ),
+      // v0.30 round 90: 12 量表中心化入口 (10 开放 + 2 TODO unavailable)
+      // 跟 R60 /assessment/:id 单 scale 模式并存, 用户从 home/settings 进来选量表
+      GoRoute(
+        path: '/assessment-center',
+        pageBuilder: (context, state) => AppRoutes.slideRightPage(
+          state.pageKey,
+          const AssessmentCenterPage(),
+          context,
+        ),
       ),
       GoRoute(
         path: '/assessment',

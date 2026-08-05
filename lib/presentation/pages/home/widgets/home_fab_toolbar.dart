@@ -59,7 +59,10 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                       label: l10n.homeFabAssessment,
                       onTap: () {
                         setState(() => _expanded = false);
-                        context.push('/assessment');
+                        // v0.30 round 90 (sub-spec 6 量表中心): 改跳
+                        // /assessment-center (12 量表中心化入口), 用户
+                        // 从 grid 选量表, 不直接跳 PHQ-9.
+                        context.push('/assessment-center');
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
