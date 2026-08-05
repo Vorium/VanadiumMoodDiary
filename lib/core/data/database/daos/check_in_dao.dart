@@ -101,9 +101,26 @@ class CheckInDao {
   }
 
   /// 获取最近一次评估时间戳 (单次)
+  ///
+  /// v0.30 round 91 (fix): 跨 10 量表 (跟 `watchAssessments` 对齐) —
+  /// 之前 hardcode phq9|gad7, 只用新量表的用户的评估提醒周期永远不启动。
+  /// NSESSS / CRDPSS 是 unavailable, 不在 IN 列表, 跟 `watchAssessments` 行为一致。
   Future<DateTime?> getLatestAssessmentTimestamp() async {
     final r = await (_db.select(_db.checkIns)
-          ..where((t) => t.type.equals('phq9') | t.type.equals('gad7'))
+          ..where(
+            (t) => t.type.isIn(const [
+              'phq9',
+              'gad7',
+              'isi',
+              'pss',
+              'whodas',
+              'level2_depression',
+              'level2_anxiety',
+              'level2_mania',
+              'asrm',
+              'level2_psychosis',
+            ]),
+          )
           ..orderBy([
             (t) =>
                 OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),

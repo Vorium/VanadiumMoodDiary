@@ -5,6 +5,7 @@
 // 总分 ≥ 推荐线 提示就医；自杀念头（PHQ-9 第 9 题）阳性立即弹危机资源
 // v0.13 (Round 8) 加：结果页显示"对比上次"面板 + sparkline 趋势
 
+import 'package:chroniccare/presentation/providers/assessment_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/page_transition_switcher.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -20,7 +21,6 @@ import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
-import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_widgets.dart';
@@ -165,18 +165,29 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     final scale = _scale!;
     final scores = _answers!.cast<int>();
     final result = scale.computeResult(scores);
+    // v0.30 round 91 (fix): 用 scaleById → severityRankFor 算严重度 rank,
+    // 跟 R90 reader (assessment_dao._rowToEntry severity 字段) 对齐,
+    // 写入 R90 JSON 格式。
+    final severityRank = AssessmentComparisonCalculator.severityRankFor(
+      scaleId: scale.id,
+      total: result.total,
+    );
 
     bool saveFailed = false;
     try {
-      await ref.read(checkInRepositoryProvider).saveAssessment(
-            scale: scale.id,
-            scores: scores,
-            total: result.total,
+      // v0.30 round 91 (fix): 走 R90 AssessmentRepository.submitEntry
+      // (老 checkInRepositoryProvider.saveAssessment 是 R60 路径, 写
+      // `{"scale","scores","total"}` 格式, R90 reader 解不出 score/answers)
+      await ref.read(assessmentRepositoryProvider).submitEntry(
+            scaleId: scale.id,
+            score: result.total,
+            severityRank: severityRank,
+            answers: scores,
           );
     } catch (e, st) {
       saveFailed = true;
       swallowError(
-        where: 'assessment_page._onSubmit.saveAssessment',
+        where: 'assessment_page._onSubmit.submitEntry',
         error: e,
         stack: st,
         note: 'assessment save failed — result still shown to user',

@@ -255,16 +255,16 @@ class AppTokens {
   // long-task modal 0.54 (medication_report_dialog)
   static const double scrimAlpha = AppMotion.scrimAlpha;
 
-  // ===== v0.30 round 90 (sub-spec 6 量表中心): 量表色板 — 转发 AppColors =====
+  // ===== v0.30 round 91 (fix): 删除 `assessmentColors` / `assessmentColorFor` / `assessmentDashFor` 转发 =====
   //
-  // 12 色 + 3 线型, 多线趋势图 / 量表色 token / chip avatar 用
-  // 调用方: AppTokens.assessmentColorFor(scaleId, scaleIds)
-  //         AppTokens.assessmentDashFor(scaleId, scaleIds)
-  static const List<Color> assessmentColors = AppColors.assessmentColors;
+  // 之前 round 90 在 `AppTokens` + `AppColors` 重复暴露色板 forwarder,
+  // 跟 `AssessmentColorPalette.colorArgbFor(scaleId)` single-arg API 冲突
+  // (2 个 source-of-truth)。round 91 删 4 个 forwarder, caller 统一走
+  // `AssessmentColorPalette.colorArgbFor(scaleId)` / `.dashFor(scaleId)`。
+  //
+  // `assessmentDashArrays` (3 线型 list) 保留: 它是 R85 rerated chart 等
+  // 老 caller 引用的 const list, R90 没用上 (chart 走 palette.dashFor),
+  // 但删除需要 grep 排查, 留 R92 batch 处理。
   static const List<List<int>> assessmentDashArrays =
       AppColors.assessmentDashArrays;
-  static Color assessmentColorFor(String scaleId, List<String> scaleIds) =>
-      AppColors.assessmentColorFor(scaleId, scaleIds);
-  static List<int> assessmentDashFor(String scaleId, List<String> scaleIds) =>
-      AppColors.assessmentDashFor(scaleId, scaleIds);
 }

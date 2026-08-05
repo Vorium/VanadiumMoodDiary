@@ -20,6 +20,7 @@ class AssessmentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         // 评估历史入口
@@ -67,11 +68,11 @@ class AssessmentSection extends StatelessWidget {
 
         // v0.30 round 90 (sub-spec 6 量表中心): 末尾加"打开量表中心"按钮
         // 走 FilledButton.tonalIcon + grid_view icon, 跟 settings 风格一致
-        // Task 6 换 l10n.assessmentCenterTitle
+        // v0.30 round 91 (fix): Task 6 漏改 widget, 补 l10n.assessmentCenterTitle
         const SizedBox(height: AppTokens.spacingSm),
         FilledButton.tonalIcon(
           icon: const Icon(Icons.grid_view),
-          label: const Text('打开量表中心'),
+          label: Text(l10n.assessmentCenterTitle),
           onPressed: () => context.push('/assessment-center'),
         ),
 

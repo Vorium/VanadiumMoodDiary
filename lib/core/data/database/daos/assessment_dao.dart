@@ -82,6 +82,12 @@ class AssessmentDao {
   /// 1. note == null/empty → 老空数据, score=0, answers=[]
   /// 2. note 是合法 JSON → 解析 score / severity / answers, 提取可选 note 字段
   /// 3. note 不是 JSON (R60 老格式 free text) → 兜底, note 保留原文, score=0
+  ///
+  /// v0.30 round 91 (fix): 分支 2 接受 BOTH R90 + R60 keys, R90 优先, R60 兜底。
+  /// - R90 格式: `{"score":N, "severity":N, "answers":[...], "note":...}`
+  /// - R60 格式: `{"scale":"phq9", "scores":[...], "total":N}` (老 saveAssessment)
+  /// 老用户升级到 R90 + 用 R90 reader 解老 note 时, score=0 / answers=空
+  /// → 中心化入口页 + 折线图看不见数据。修法: 字段级 R60 兜底。
   AssessmentEntry _rowToEntry(CheckIn row) {
     final rawNote = row.note;
     if (rawNote == null || rawNote.isEmpty) {
@@ -98,15 +104,23 @@ class AssessmentDao {
     try {
       final decoded = jsonDecode(rawNote);
       if (decoded is Map<String, dynamic>) {
+        // R90 优先: score / severity / answers
+        // R60 兜底: total / (severity 没存, R60 老 entry 无 rank 概念) / scores
+        final score =
+            (decoded['score'] as int?) ?? (decoded['total'] as int?) ?? 0;
+        final severityRank = (decoded['severity'] as int?) ?? 0;
+        final answers = ((decoded['answers'] as List?) ??
+                (decoded['scores'] as List?) ??
+                const [])
+            .whereType<int>()
+            .toList(growable: false);
         return AssessmentEntry(
           id: row.id,
           timestamp: row.timestamp,
           scaleId: row.type,
-          score: (decoded['score'] as int?) ?? 0,
-          severityRank: (decoded['severity'] as int?) ?? 0,
-          answers: ((decoded['answers'] as List?) ?? const [])
-              .whereType<int>()
-              .toList(growable: false),
+          score: score,
+          severityRank: severityRank,
+          answers: answers,
           note: decoded['note'] as String?,
         );
       }
@@ -121,7 +135,7 @@ class AssessmentDao {
         note: rawNote,
       );
     } catch (_) {
-      // 老格式 free text 兜底 (R60 phq9/gad7 老 entry note 是 "用户备注: ...")
+      // 老格式 free text 兜底 (R60 之前 phq9/gad7 老 entry note 是 "用户备注: ...")
       return AssessmentEntry(
         id: row.id,
         timestamp: row.timestamp,

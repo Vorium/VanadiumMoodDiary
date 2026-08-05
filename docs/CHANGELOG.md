@@ -2,6 +2,74 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-05 (R91 — sub-spec 6 fix: 4 Critical + 3 Important review issues)
+
+> R91 目标: 修 sub-spec 6 R90 task 1-6 final whole-branch review 标出的
+> 7 issue (4 Critical data flow integration bug + 3 Important i18n + dead code),
+> 详见 `.superpowers/sdd/task-6-review-report.md`。
+>
+> **1 task** (1 commit, +22 test):
+> - Critical #1: `assessment_dao._rowToEntry` R60 JSON `{"scale","scores","total"}` 兜底
+>   (老 PHQ-9 / GAD-7 entry 在中心化页 + 多线趋势图 score=0 修复)
+> - Critical #2: `CheckInType` 加 8 R90 新量表 enum + `isAssessment` 走 `_assessmentScaleIds` const set
+>   (新量表 entry 在 day_detail / assessment_history 可见)
+> - Critical #3: `assessment_page._submit` 调 R90 `AssessmentRepository.submitEntry`
+>   (R60 老 `saveAssessment` 写错格式被 R90 reader 解不出 score/answers)
+> - Critical #4: `CheckInDao.getLatestAssessmentTimestamp` 跨 10 type IN 列表
+>   (只用新量表用户的评估提醒周期不启动)
+> - Important #1: settings "打开量表中心" 按钮 改 `l10n.assessmentCenterTitle` (Task 6 漏改)
+> - Important #2: `_rowToEntry` R60 兜底 跟 C1 合并
+> - Important #3: 删 `AppColors.assessmentColors` (12 色) + `AppTokens.assessmentColors` 转发
+>   + 4 dead method forwarder (跟 `AssessmentColorPalette` 重复, single source of truth)
+>
+> **架构边界**:
+> - 4 层架构纯度保留 (domain/ 0 flutter / 0 drift; data/ 不依赖 presentation)
+> - `CheckInType._assessmentScaleIds` private const, 仅 `isAssessment` 用; 后续如 dao / registry
+>   复用再升级为 public
+> - 8 新 enum value `labelL10n` 走 generic `'心理量表评估'` (R65 没给 8 新量表加 `checkInType*` key,
+>   caller 走 `scaleById(type.wire).displayName` 拿量表名)
+> - `AppColors.assessmentDashArrays` (3 线型 const) 保留 — R85 rerated chart 引用, R90 palette
+>   没替代它
+>
+> **测试 evidence**:
+> - 22 new regression test pass (C1: 3, C2: 11, C3: 1 widget, C4: 6)
+> - 1534 baseline 不破, 0 fail
+> - 16 guards 全绿
+> - 0 analyze error / 0 warning (9 pre-existing info-level: deprecated RadioListTile +
+>   trailing comma in 4 new test files)
+
+### Fixed
+- **C1 R60 JSON 兜底** (`lib/core/data/database/daos/assessment_dao.dart:_rowToEntry`):
+  R60 老格式 `{"scale":<id>, "scores":<List>, "total":<int>}` 走 R60 reader 解不出
+  score/answers → 老用户 PHQ-9 / GAD-7 entry 在中心化入口页 + 多线趋势图 score=0。
+  修: `(decoded['score'] ?? decoded['total']) ?? 0` + `(decoded['answers'] ?? decoded['scores']) ?? []`
+  (R90 优先, R60 兜底, R60 老 free text 仍走 catch 分支)
+- **C2 CheckInEntity.isAssessment 跨 10 量表** (`lib/domain/entities/check_in_entity.dart`):
+  加 8 enum value (isi / pss / whodas / level2Depression / level2Anxiety / level2Mania /
+  asrm / level2Psychosis), 加 `_assessmentScaleIds` const set, `isAssessment` 改集合检查。
+  影响: day_detail / assessment_history / assessment_record.tryFromEntity 3 处
+  `c.isAssessment` 门控现在能识别新量表
+- **C3 assessment_page._submit 走 R90** (`lib/presentation/pages/assessment/assessment_page.dart`):
+  改调 `assessmentRepositoryProvider.submitEntry(...)`, 用
+  `AssessmentComparisonCalculator.severityRankFor(scaleId, total)` 算 severityRank
+- **C4 getLatestAssessmentTimestamp 跨 10 type** (`lib/core/data/database/daos/check_in_dao.dart`):
+  改 `t.type.isIn([...10 个量表 id...])`, 跟 `watchAssessments` 对齐
+  (NSESSS / CRDPSS unavailable 仍排除)
+- **I1 settings "打开量表中心" 走 l10n** (`lib/presentation/pages/settings/widgets/assessment_section.dart`):
+  `const Text('打开量表中心')` → `Text(l10n.assessmentCenterTitle)`
+- **I3 删 dead code** (`lib/core/theme/app_colors.dart` + `app_tokens.dart`):
+  删 `AppColors.assessmentColors` (12 色) + 4 dead method forwarder
+  (`AppColors.assessmentColorFor(scaleId, scaleIds)` /
+  `assessmentDashFor(scaleId, scaleIds)` + `AppTokens` 对应 4 个转发) —
+  跟 `AssessmentColorPalette.colorArgbFor(scaleId)` / `.dashFor(scaleId)` 重复
+
+### Added
+- **22 new regression test** (4 文件):
+  - `test/core/data/database/assessment_dao_round91_test.dart` (C1, 3 case)
+  - `test/core/data/database/check_in_dao_round91_test.dart` (C4, 6 case)
+  - `test/domain/check_in_entity_round91_test.dart` (C2, 11 case)
+  - `test/presentation/pages/assessment/assessment_page_submit_round91_test.dart` (C3, 1 widget)
+
 ## [0.30.0] - 2026-08-05 (R90 — sub-spec 6 量表中心 i18n: 134 ARB keys + 3 lang + AppLocalizationsScaleTranslations 委托)
 
 > R90 Task 6 目标: 把 R90 中心化入口页 (Task 4) + 多线趋势图 (Task 5) +
