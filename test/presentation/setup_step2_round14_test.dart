@@ -44,7 +44,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // P0-6: 跳过 consent 步(法律同意)
-      for (var i = 0; i < 3; i++) {
+      // v0.27 R83: consent step 加了第 4 个 checkbox (年龄严正声明)
+      for (var i = 0; i < 4; i++) {
         await tester.tap(find.byType(Checkbox).at(i));
         await tester.pumpAndSettle();
       }
@@ -136,7 +137,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // P0-6: 跳过 consent 步(法律同意)
-      for (var i = 0; i < 3; i++) {
+      // v0.27 R83: consent step 加了第 4 个 checkbox (年龄严正声明)
+      for (var i = 0; i < 4; i++) {
         await tester.tap(find.byType(Checkbox).at(i));
         await tester.pumpAndSettle();
       }

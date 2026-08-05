@@ -4,7 +4,7 @@
 //   setup_page.dart 4 step wizard 0 集成测, 之前 round18 test 只覆盖
 //   step 1 (welcome) 手机号校验 3 case, 缺:
 //   - 4 step 状态机: consent → welcome → medication → done
-//   - 跳过 (consent 3 个 checkbox 没全勾 → 不能进入下一步)
+//   - 跳过 (consent 4 个 checkbox 没全勾 → 不能进入下一步; v0.27 R83 后变 4 个)
 //   - 返回 (上一步按钮)
 //   - 重置 (kill app 重启 → 状态保持 / 丢失)
 //
@@ -19,6 +19,10 @@
 // `FilledButton`, find.widgetWithText 找不到 "开始使用 →" 的 FilledButton.
 // R18 test 当时还是 FilledButton, R65 后改. 找 `PrimaryButton` (类型不对, 它
 // 内部包 FilledButton), 或找 `find.text("开始使用 →")` + ancestor FilledButton.
+//
+// **v0.27 R83 更新**: consent step 加了第 4 个 `ConsentCheckRow`
+// (`setupLegalAgeAttestation` 年龄严正声明), 全 setup_* test 同步从 3 → 4
+// 个 Checkbox (Q11a 律师审核 ⚠️ 修复).
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
@@ -63,24 +67,25 @@ void main() {
   // Step 0: consent 状态机
   // ============================================================
   group('Step 0 (consent)', () {
-    testWidgets('初始显示 3 个 checkbox + "开始使用" 按钮 disabled', (tester) async {
+    testWidgets('初始显示 4 个 checkbox + "开始使用" 按钮 disabled', (tester) async {
       await _pumpSetup(tester);
-      // v0.27 R77: consent step 初始 3 个 checkbox 全部未勾, "开始使用" 按钮禁用
+      // v0.27 R77: consent step 初始 4 个 checkbox 全部未勾, "开始使用" 按钮禁用
       // 之前 R18 test 直接勾 3 个, 缺 0 状态验证
-      expect(find.byType(Checkbox), findsNWidgets(3));
+      // v0.27 R83: 加了第 4 个 (年龄严正声明) 后变 4 个
+      expect(find.byType(Checkbox), findsNWidgets(4));
     });
 
     testWidgets('勾 1 个 checkbox → consent 步骤仍在 step 0', (tester) async {
       await _pumpSetup(tester);
       // 找第一个 checkbox 勾
       final checkboxes = find.byType(Checkbox);
-      expect(checkboxes, findsNWidgets(3));
+      expect(checkboxes, findsNWidgets(4));
       await tester.tap(checkboxes.first);
       await tester.pumpAndSettle();
-      // 仍在 step 0, 3 个 checkbox 还在
+      // 仍在 step 0, 4 个 checkbox 还在
       expect(
         find.byType(Checkbox),
-        findsNWidgets(3),
+        findsNWidgets(4),
         reason: '勾 1 个 checkbox, 仍在 step 0',
       );
     });
@@ -93,16 +98,16 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.byType(Checkbox),
-        findsNWidgets(3),
+        findsNWidgets(4),
         reason: '勾 2 个 checkbox, 仍在 step 0',
       );
     });
 
-    testWidgets('勾满 3 个 checkbox → "开始设置" 按钮 enabled, 点击进入 step 1',
+    testWidgets('勾满 4 个 checkbox → "开始设置" 按钮 enabled, 点击进入 step 1',
         (tester) async {
       await _pumpSetup(tester);
       final checkboxes = find.byType(Checkbox);
-      for (var i = 0; i < 3; i++) {
+      for (var i = 0; i < 4; i++) {
         await tester.tap(checkboxes.at(i));
         await tester.pumpAndSettle();
       }
@@ -128,7 +133,7 @@ void main() {
       await _pumpSetup(tester);
       // step 0
       final checkboxes = find.byType(Checkbox);
-      for (var i = 0; i < 3; i++) {
+      for (var i = 0; i < 4; i++) {
         await tester.tap(checkboxes.at(i));
         await tester.pumpAndSettle();
       }
@@ -153,8 +158,8 @@ void main() {
       // - setup_step_welcome.dart
       // - setup_step_medication.dart
       // - setup_step_done.dart
-      // 简单 sanity: step 0 渲染时 checkboxes 出现
-      expect(find.byType(Checkbox), findsNWidgets(3));
+      // 简单 sanity: step 0 渲染时 checkboxes 出现 (v0.27 R83 4 个)
+      expect(find.byType(Checkbox), findsNWidgets(4));
     });
   });
 
@@ -175,8 +180,8 @@ void main() {
       // 状态机应重置回 step 0 (新 widget tree)
       expect(
         find.byType(Checkbox),
-        findsNWidgets(3),
-        reason: '重启后 widget 状态丢失, 应回到 step 0 consent + 3 个 checkbox',
+        findsNWidgets(4),
+        reason: '重启后 widget 状态丢失, 应回到 step 0 consent + 4 个 checkbox',
       );
     });
   });

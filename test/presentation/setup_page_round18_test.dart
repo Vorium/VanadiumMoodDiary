@@ -54,15 +54,18 @@ Future<void> _pumpSetup(WidgetTester tester) async {
 ///
 /// 2026-07-31 联系人软隐藏: 紧急联系人**完全可选**, step 1 末尾不再有
 /// contact consent Checkbox (P1-23 的"已告知联系人"勾选已移除)。
+///
+/// v0.27 R83 (Q11a 律师审核 ⚠️ 修复): consent step 第 4 个 checkbox 是
+/// `setupLegalAgeAttestation` (年龄严正声明), 因此这里勾 4 个.
 Future<void> _passConsent(WidgetTester tester) async {
-  // 勾 3 个 checkbox (consent step)
+  // 勾 4 个 checkbox (consent step) — v0.27 R83 加了第 4 个 (年龄严正声明)
   final checkboxes = find.byType(Checkbox);
   expect(
     checkboxes,
-    findsNWidgets(3),
-    reason: 'P0-6: setup step 0 (consent) 应该有 3 个 Checkbox',
+    findsNWidgets(4),
+    reason: 'P0-6 + v0.27 R83: setup step 0 (consent) 应该有 4 个 Checkbox',
   );
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 4; i++) {
     await tester.tap(checkboxes.at(i));
     await tester.pumpAndSettle();
   }
