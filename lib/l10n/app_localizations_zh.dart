@@ -860,6 +860,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodDialogTitle => '今天怎么样？';
 
   @override
+  String get moodDialogPeriodLabel => '时段';
+
+  @override
+  String get moodPeriodMorning => '早';
+
+  @override
+  String get moodPeriodNoon => '中';
+
+  @override
+  String get moodPeriodEvening => '晚';
+
+  @override
+  String get moodPeriodNight => '夜';
+
+  @override
+  String get moodPeriodUnspecified => '未指定';
+
+  @override
+  String get moodListFilterPeriod => '时段';
+
+  @override
+  String get moodPeriodChartTitle => '心境 4 段趋势（近 30 天）';
+
+  @override
   String get moodDimensionMood => '情绪';
 
   @override
@@ -3878,6 +3902,30 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodDialogTitle => '今天怎麼樣？';
+
+  @override
+  String get moodDialogPeriodLabel => '時段';
+
+  @override
+  String get moodPeriodMorning => '早';
+
+  @override
+  String get moodPeriodNoon => '中';
+
+  @override
+  String get moodPeriodEvening => '晚';
+
+  @override
+  String get moodPeriodNight => '夜';
+
+  @override
+  String get moodPeriodUnspecified => '未指定';
+
+  @override
+  String get moodListFilterPeriod => '時段';
+
+  @override
+  String get moodPeriodChartTitle => '心境 4 段趨勢（近 30 天）';
 
   @override
   String get moodDimensionMood => '情緒';

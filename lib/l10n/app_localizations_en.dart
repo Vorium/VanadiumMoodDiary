@@ -906,6 +906,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodDialogTitle => 'How are you today?';
 
   @override
+  String get moodDialogPeriodLabel => 'Period';
+
+  @override
+  String get moodPeriodMorning => 'Morning';
+
+  @override
+  String get moodPeriodNoon => 'Noon';
+
+  @override
+  String get moodPeriodEvening => 'Evening';
+
+  @override
+  String get moodPeriodNight => 'Night';
+
+  @override
+  String get moodPeriodUnspecified => 'Unspecified';
+
+  @override
+  String get moodListFilterPeriod => 'Period';
+
+  @override
+  String get moodPeriodChartTitle => 'Mood 4-period trend (last 30 days)';
+
+  @override
   String get moodDimensionMood => 'Mood';
 
   @override

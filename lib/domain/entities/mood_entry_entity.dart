@@ -88,6 +88,15 @@ class MoodEntryEntity {
   /// 7 栏"行为应对"
   final String? behaviorResponse;
 
+  // ===== v0.30 round 91 (sub-spec 7 日常追踪) 字段 =====
+
+  /// 心境时段标记 (morning / noon / evening / night / unspecified)
+  ///
+  /// 老 entry 兼容: 老数据列值为 null — 业务层 (MoodPeriodAggregator /
+  /// filteredMoodEntriesProvider) 把 null 当 'unspecified' 桶。
+  /// 4 段聚合 (心境图表按 morning/noon/evening/night 叠柱状/折线)。
+  final String? period;
+
   const MoodEntryEntity({
     required this.id,
     required this.timestamp,
@@ -108,6 +117,7 @@ class MoodEntryEntity {
     this.reratedScore,
     this.coreBelief,
     this.behaviorResponse,
+    this.period,
   });
 
   // ===== 业务方法 =====
@@ -141,6 +151,7 @@ class MoodEntryEntity {
     DomainValue<int?>? reratedScore,
     DomainValue<String?>? coreBelief,
     DomainValue<String?>? behaviorResponse,
+    DomainValue<String?>? period,
   }) {
     return MoodEntryEntity(
       id: id ?? this.id,
@@ -174,6 +185,7 @@ class MoodEntryEntity {
       behaviorResponse: behaviorResponse == null
           ? this.behaviorResponse
           : behaviorResponse.value,
+      period: period == null ? this.period : period.value,
     );
   }
 
@@ -237,7 +249,8 @@ class MoodEntryEntity {
         other.alternativeThought == alternativeThought &&
         other.reratedScore == reratedScore &&
         other.coreBelief == coreBelief &&
-        other.behaviorResponse == behaviorResponse;
+        other.behaviorResponse == behaviorResponse &&
+        other.period == period;
   }
 
   @override
@@ -261,6 +274,7 @@ class MoodEntryEntity {
         reratedScore,
         coreBelief,
         behaviorResponse,
+        period,
       );
 
   @override
@@ -273,5 +287,6 @@ class MoodEntryEntity {
       'evidenceFor=$evidenceFor, evidenceAgainst=$evidenceAgainst, '
       'alternativeThought=$alternativeThought, reratedScore=$reratedScore, '
       'coreBelief=$coreBelief, behaviorResponse=$behaviorResponse, '
+      'period=$period, '
       'at=$timestamp)';
 }

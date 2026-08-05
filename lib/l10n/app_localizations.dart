@@ -1611,6 +1611,54 @@ abstract class AppLocalizations {
   /// **'今天怎么样？'**
   String get moodDialogTitle;
 
+  /// No description provided for @moodDialogPeriodLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'时段'**
+  String get moodDialogPeriodLabel;
+
+  /// No description provided for @moodPeriodMorning.
+  ///
+  /// In zh, this message translates to:
+  /// **'早'**
+  String get moodPeriodMorning;
+
+  /// No description provided for @moodPeriodNoon.
+  ///
+  /// In zh, this message translates to:
+  /// **'中'**
+  String get moodPeriodNoon;
+
+  /// No description provided for @moodPeriodEvening.
+  ///
+  /// In zh, this message translates to:
+  /// **'晚'**
+  String get moodPeriodEvening;
+
+  /// No description provided for @moodPeriodNight.
+  ///
+  /// In zh, this message translates to:
+  /// **'夜'**
+  String get moodPeriodNight;
+
+  /// No description provided for @moodPeriodUnspecified.
+  ///
+  /// In zh, this message translates to:
+  /// **'未指定'**
+  String get moodPeriodUnspecified;
+
+  /// No description provided for @moodListFilterPeriod.
+  ///
+  /// In zh, this message translates to:
+  /// **'时段'**
+  String get moodListFilterPeriod;
+
+  /// No description provided for @moodPeriodChartTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'心境 4 段趋势（近 30 天）'**
+  String get moodPeriodChartTitle;
+
   /// No description provided for @moodDimensionMood.
   ///
   /// In zh, this message translates to:

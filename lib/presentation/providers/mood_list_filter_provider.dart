@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 
 /// 排序方式
@@ -48,6 +49,13 @@ class MoodListFilter {
   /// 排序方式
   final MoodListSort sort;
 
+  /// v0.30 round 91: 心境时段过滤 (morning/noon/evening/night/unspecified)
+  ///
+  /// null = 不按时段过滤 (全部), 否则只显示归一桶 = period 的 entry。
+  /// 走 MoodPeriod.normalize: 老 entry (period 列 null) 跟 'unspecified' 串
+  /// 等价, 选 'unspecified' 时一并归入。
+  final String? period;
+
   const MoodListFilter({
     this.dateRange,
     this.minScore,
@@ -55,6 +63,7 @@ class MoodListFilter {
     this.cbtLevel,
     this.searchQuery = '',
     this.sort = MoodListSort.timestampDesc,
+    this.period,
   });
 }
 
@@ -71,6 +80,7 @@ class MoodListFilterNotifier extends Notifier<MoodListFilter> {
       cbtLevel: state.cbtLevel,
       searchQuery: q,
       sort: state.sort,
+      period: state.period,
     );
   }
 
@@ -82,6 +92,7 @@ class MoodListFilterNotifier extends Notifier<MoodListFilter> {
       cbtLevel: state.cbtLevel,
       searchQuery: state.searchQuery,
       sort: state.sort,
+      period: state.period,
     );
   }
 
@@ -93,6 +104,7 @@ class MoodListFilterNotifier extends Notifier<MoodListFilter> {
       cbtLevel: state.cbtLevel,
       searchQuery: state.searchQuery,
       sort: state.sort,
+      period: state.period,
     );
   }
 
@@ -104,6 +116,7 @@ class MoodListFilterNotifier extends Notifier<MoodListFilter> {
       cbtLevel: state.cbtLevel,
       searchQuery: state.searchQuery,
       sort: state.sort,
+      period: state.period,
     );
   }
 
@@ -115,6 +128,7 @@ class MoodListFilterNotifier extends Notifier<MoodListFilter> {
       cbtLevel: l,
       searchQuery: state.searchQuery,
       sort: state.sort,
+      period: state.period,
     );
   }
 
@@ -127,6 +141,25 @@ class MoodListFilterNotifier extends Notifier<MoodListFilter> {
       cbtLevel: state.cbtLevel,
       searchQuery: state.searchQuery,
       sort: s,
+      period: state.period,
+    );
+  }
+
+  /// v0.30 round 91: 设置心境时段过滤
+  ///
+  /// null = 不过滤 (全部 5 段), 'morning'/'noon'/'evening'/'night'/'unspecified'
+  /// = 只显示归一桶 = period 的 entry (走 MoodPeriod.normalize 兼容老 entry
+  /// period 列 null 的情况)。
+  void setPeriod(String? p) {
+    if (p == state.period) return; // dedup
+    state = MoodListFilter(
+      dateRange: state.dateRange,
+      minScore: state.minScore,
+      maxScore: state.maxScore,
+      cbtLevel: state.cbtLevel,
+      searchQuery: state.searchQuery,
+      sort: state.sort,
+      period: p,
     );
   }
 
@@ -182,6 +215,15 @@ final filteredMoodEntriesProvider =
   if (filter.cbtLevel != null) {
     final level = filter.cbtLevel!;
     result = result.where((e) => e.cbtLevel == level);
+  }
+  if (filter.period != null) {
+    // v0.30 round 91: 走 MoodPeriod.normalize 归一桶 (老 entry period=null
+    // 跟 'unspecified' 串等价)。'unspecified' chip 包含所有 period 列
+    // null 的老 entry + 显式标 unspecified 的新 entry。
+    final bucket = filter.period!;
+    result = result.where(
+      (e) => MoodPeriod.normalize(e.period) == bucket,
+    );
   }
   if (filter.searchQuery.isNotEmpty) {
     final q = filter.searchQuery.toLowerCase();

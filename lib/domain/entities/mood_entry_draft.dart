@@ -84,6 +84,15 @@ class MoodEntryDraft {
   /// 7 栏"行为应对"
   final String? behaviorResponse;
 
+  // ===== v0.30 round 91 (sub-spec 7 日常追踪) 字段 =====
+
+  /// 心境时段标记 (morning / noon / evening / night / unspecified)
+  ///
+  /// 老 entry 兼容: null = repository 层当 'unspecified' 写 (跟老数据
+  /// 不显式标 period 一致, 不破坏既有查询)。
+  /// 4 段聚合 (mood_period_aggregator 跟 chart 读这一列分桶)。
+  final String? period;
+
   const MoodEntryDraft({
     required this.score,
     required this.tags,
@@ -103,5 +112,6 @@ class MoodEntryDraft {
     this.reratedScore,
     this.coreBelief,
     this.behaviorResponse,
+    this.period,
   });
 }
