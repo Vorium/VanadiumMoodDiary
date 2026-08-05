@@ -10,6 +10,7 @@ import 'package:chroniccare/core/data/database/connection/connection.dart'
 
 import 'dart:convert';
 
+import 'package:chroniccare/core/data/database/daos/assessment_dao.dart';
 import 'package:chroniccare/core/data/database/daos/check_in_dao.dart';
 import 'package:chroniccare/core/data/database/daos/contact_dao.dart';
 import 'package:chroniccare/core/data/database/daos/medication_dao.dart';
@@ -286,6 +287,9 @@ class AppDatabase extends _$AppDatabase {
   // v0.25 round 53a (spen P1 #12 god class 拆分): 抽 7 DAO + app_database
   // 改成 1 行委托。caller 暂时不动 (保留 facade 兼容), 后续 R53b 渐进迁移。
   late final checkInDao = CheckInDao(this);
+  // v0.30 round 90 (sub-spec 6 量表中心): AssessmentDao 跨 10 量表聚合,
+  // 依赖 CheckInDao.watchAssessments (扩 10 type IN) + CheckIns 表。
+  late final assessmentDao = AssessmentDao(this, checkInDao);
   late final medicationDao = MedicationDao(this);
   late final contactDao = ContactDao(this);
   late final userProfileDao = UserProfileDao(this);

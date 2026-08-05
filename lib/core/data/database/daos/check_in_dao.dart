@@ -27,10 +27,30 @@ class CheckInDao {
         .watch();
   }
 
-  /// 监听所有评估记录 (type='phq9' / 'gad7'), 按时间正序 (折线图用)
+  /// 监听所有评估记录 (跨 10 量表 type IN), 按时间正序 (折线图用)
+  ///
+  /// v0.30 round 90 (sub-spec 6 量表中心): 扩 10 scale_id —
+  /// PHQ-9 / GAD-7 / ISI / PSS (R60 已有 + 补全) +
+  /// WHODAS / Level 2 Dep/Anx/Mania/Psychosis / ASRM (R90 新)。
+  /// NSESSS / CRDPSS 是 unavailable (走 `unavailableScaleIds` 黑名单), 不在 IN 列表。
   Stream<List<CheckIn>> watchAssessments() {
     return (_db.select(_db.checkIns)
-          ..where((t) => t.type.equals('phq9') | t.type.equals('gad7'))
+          ..where(
+            (t) => t.type.isIn(
+              const [
+                'phq9',
+                'gad7',
+                'isi',
+                'pss',
+                'whodas',
+                'level2_depression',
+                'level2_anxiety',
+                'level2_mania',
+                'asrm',
+                'level2_psychosis',
+              ],
+            ),
+          )
           ..orderBy([
             (t) =>
                 OrderingTerm(expression: t.timestamp, mode: OrderingMode.asc),
