@@ -137,8 +137,13 @@ class MoodListFilterNotifier extends Notifier<MoodListFilter> {
 }
 
 /// Provider 入口
+///
+/// autoDispose: 用户离开 /mood-list 后 filter state 释放, 下次进入时
+/// TextEditingController 也是空, 避免"上次搜的 '难' 字残留在 state 里" 导致
+/// 列表页静默被过滤 (Fix #9 final review)。`MoodListPage` 自己不再持有
+/// search state, 完全依赖 notifier, 所以 dispose 后 state 也会 reset。
 final moodListFilterProvider =
-    NotifierProvider<MoodListFilterNotifier, MoodListFilter>(
+    NotifierProvider.autoDispose<MoodListFilterNotifier, MoodListFilter>(
   MoodListFilterNotifier.new,
 );
 
@@ -147,9 +152,13 @@ final moodListFilterProvider =
 /// 派生 pipeline, 跟 R85 cbtReratedEntriesProvider 同模式: watch sync wrapper +
 /// watch filter state, 套过滤 + 排序后返回。
 ///
+/// autoDispose: 跟 moodListFilterProvider 一同 release, 避免 stale filter
+/// state 在下次进入 /mood-list 时意外应用 (Fix #9 final review)。
+///
 /// 过滤优先级: date range → min/max score → cbtLevel → search → sort
 /// (任意一步不命中就短路, 不进入下一步, 跟 R85 where chain 一致)
-final filteredMoodEntriesProvider = Provider<List<MoodEntryEntity>>((ref) {
+final filteredMoodEntriesProvider =
+    Provider.autoDispose<List<MoodEntryEntity>>((ref) {
   final all = ref.watch(moodEntriesProvider);
   final filter = ref.watch(moodListFilterProvider);
 

@@ -32,7 +32,7 @@
   - 新增 `MoodListItem` widget — timestamp + score emoji + note preview + CBT 5/7 栏 badge
   - 新增 `MoodListFilterBar` widget — 3 ActionChip (日期/分数/CBT) + PopupMenuButton sort
   - 新增 `MoodListPage` orchestrator — TextField search + FilterBar + ListView + 2 EmptyState
-  - 新增 `/mood-list` 路由 (CustomTransitionPage fade)
+  - 新增 `/mood-list` 路由 (CustomTransitionPage slide-right + fade)
   - home 主页加 "📋 Mood 历史" 入口 → `context.push('/mood-list')`
   - 12 个新 ARB key (zh / en / zh_Hant):
     - `moodListPageTitle` — 页面标题
