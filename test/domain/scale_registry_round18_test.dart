@@ -42,17 +42,20 @@ void main() {
   group('量表数据完整性', () {
     test('所有量表的 items / options / totalRange 一致', () {
       for (final s in allScales()) {
-        // totalRange = items.length * 3（每题 0-3 分）
+        // v0.30 round 90 (Task 2): options 0..N 连续 (PHQ-9/GAD-7/Level2×3 = 0..3,
+        // ISI/PSS/WHODAS/ASRM = 0..4)。按 max 选项动态算 totalRange = items.length * maxOption
+        final maxOption = s.options.keys.reduce((a, b) => a > b ? a : b);
         expect(
           s.totalRange,
-          s.items.length * 3,
-          reason: '量表 ${s.id} 的 totalRange 与 items 不一致',
+          s.items.length * maxOption,
+          reason: '量表 ${s.id} 的 totalRange 与 items / maxOption 不一致',
         );
-        // options 必须是 0..3 四个值
+        // options 必须是 0..maxOption 连续
+        final expectedKeys = List.generate(maxOption + 1, (i) => i);
         expect(
           s.options.keys.toList()..sort(),
-          [0, 1, 2, 3],
-          reason: '量表 ${s.id} 的 options 不是 0-3',
+          expectedKeys,
+          reason: '量表 ${s.id} 的 options 不连续 (期望 0..$maxOption)',
         );
       }
     });
