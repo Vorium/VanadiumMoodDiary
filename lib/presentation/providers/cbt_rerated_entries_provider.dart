@@ -40,3 +40,16 @@ final cbtReratedEntriesProvider = Provider.autoDispose<List<MoodEntryEntity>>(
       .where((e) => (e.cbtLevel ?? 0) >= 5)
       .toList(),
 );
+
+/// v0.30 R91 Task 5 整合入口: 最新 mood entry (整合页"情绪日记" 卡片显示)
+///
+/// 同步 Provider (基于 [moodEntriesProvider] sync 包装), 跟其他 6 daily
+/// tracking 的 latestXxxEntryProvider (Stream-based) 风格不同 — mood 数据
+/// 走 [allMoodProvider] → [moodEntriesProvider] sync 链, 没必要再开一层
+/// Stream 包装。整合页 card "上次记录" 用, 包含 score + period。
+final latestMoodEntryProvider = Provider.autoDispose<MoodEntryEntity?>(
+  (ref) {
+    final entries = ref.watch(moodEntriesProvider);
+    return entries.isEmpty ? null : entries.first;
+  },
+);
