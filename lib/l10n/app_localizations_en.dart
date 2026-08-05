@@ -2736,4 +2736,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String moodListEntryCount(int count) {
     return '$count entries';
   }
+
+  @override
+  String get cbtExportPdfEmpty => 'No 5/7-column CBT data available to export';
 }

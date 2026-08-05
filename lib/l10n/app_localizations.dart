@@ -4786,6 +4786,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{count} 条记录'**
   String moodListEntryCount(int count);
+
+  /// No description provided for @cbtExportPdfEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有 5/7 栏 CBT 数据可导出'**
+  String get cbtExportPdfEmpty;
 }
 
 class _AppLocalizationsDelegate

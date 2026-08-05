@@ -2598,6 +2598,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String moodListEntryCount(int count) {
     return '$count 条记录';
   }
+
+  @override
+  String get cbtExportPdfEmpty => '还没有 5/7 栏 CBT 数据可导出';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5194,4 +5197,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String moodListEntryCount(int count) {
     return '$count 條記錄';
   }
+
+  @override
+  String get cbtExportPdfEmpty => '還沒有 5/7 欄 CBT 資料可匯出';
 }

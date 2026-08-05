@@ -1586,6 +1586,7 @@
         "type": "int"
       }
     }
-  }
+  },
+  "cbtExportPdfEmpty": "還沒有 5/7 欄 CBT 資料可匯出"
 }
 

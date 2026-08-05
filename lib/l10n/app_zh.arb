@@ -1589,5 +1589,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "cbtExportPdfEmpty": "还没有 5/7 栏 CBT 数据可导出"
 }
