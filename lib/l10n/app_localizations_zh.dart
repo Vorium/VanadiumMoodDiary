@@ -5213,19 +5213,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get cbtExportPdfEmpty => '還沒有 5/7 欄 CBT 資料可匯出';
+  String get cbtExportPdfEmpty => '還沒有 5/7 欄 CBT 數據可導出';
 
   @override
-  String get cbtExportPdfButton => '匯出 CBT 思維記錄 PDF';
+  String get cbtExportPdfButton => '導出 CBT 思維記錄 PDF';
 
   @override
-  String get cbtExportPdfDialogTitle => '選擇日期範圍產生 PDF';
+  String get cbtExportPdfDialogTitle => '選擇日期範圍生成 PDF';
 
   @override
   String cbtExportPdfSuccess(int count) {
-    return '已匯出 $count 條 CBT 思維記錄';
+    return '已導出 $count 條 CBT 思維記錄';
   }
 
   @override
-  String get cbtExportPdfFailed => 'PDF 匯出失敗,請重試';
+  String get cbtExportPdfFailed => 'PDF 導出失敗,請重試';
 }

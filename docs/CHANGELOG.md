@@ -2,6 +2,86 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-05 (R88 — sub-spec 4, CBT 思维记录 5/7 栏导出 PDF + 修 R84 silent data loss)
+
+> R88 目标: 把 CBT 思维记录 5/7 栏 导出为 PDF, 让用户能把完整 CBT
+> 工作流 (situation / automaticThought / evidenceFor / evidenceAgainst /
+> alternativeThought / reratedScore / coreBelief / behaviorResponse) 离线
+> 分享给医生或心理咨询师。本轮同时修一个 P0 silent data loss bug (R84
+> 加 8 CBT 字段时漏更新 `data_export` 的 toMap, 导致导出的 JSON 把
+> CBT 字段全丢, 用户做了一堆 5/7 栏记录导出一看啥也没)。
+>
+> **5 个 task** (每个 1 commit, 共 5 commit, +4 test):
+> - Task 1: spec/plan 文档
+> - Task 2: P0 silent data loss 修 — `data_export moodEntries` toMap 加 8 CBT 字段
+> - Task 3: `CbtThoughtRecordPdf` service (参考 `MedicationReportPdf` 模式) + 1 ARB key
+> - Task 4: settings 加 "导出 CBT 思维记录 PDF" 入口
+> - Task 5: 4 ARB keys + CHANGELOG + 繁简一致性 (本 commit)
+>
+> **架构边界**:
+> - 复用 R84 `MoodEntryEntity` + R85 `cbtReratedEntriesProvider` (5/7 栏 filter)
+> - PDF 生成走 `printing` package, 跟 `MedicationReportPdf` 风格一致
+> - 隐私: PDF 不含 vent / safety watch / 联系人等任何其它模块数据
+> - P0 修同时覆盖 `dataExport` 跟 `dataImport` 双向, 老 JSON 文件 reimport 也兼容
+> - 5 ARB keys 走 OpenCC s2tw 跟其它 R57+ 翻译一致 (台湾用字汇出 → OpenCC 导出)
+
+### Added
+- **CBT 思维记录导出 PDF (CbtThoughtRecordPdf)**:
+  - 新增 `CbtThoughtRecordPdf` service (`lib/core/data/services/cbt_thought_record_pdf.dart`)
+    — 复用 `printing` package, 5/7 栏 1 页 1 entry 布局 (situation /
+    automaticThought / evidenceFor / evidenceAgainst / alternativeThought /
+    reratedScore / coreBelief / behaviorResponse)
+  - 跟 R83 `MedicationReportPdf` 风格一致 (PdfGoogleFonts + theme + header/footer)
+  - 5/7 栏 entries 按 timestamp 倒序, 顶部摘要 (总条数 / 日期范围)
+  - settings 加 "导出 CBT 思维记录 PDF" 入口 → dialog 让用户选日期范围
+    → 生成 PDF → 弹 share / save 流程 (走 system_share)
+  - 5 个新 ARB key (zh / en / zh_Hant):
+    - `cbtExportPdfButton` — settings 按钮标题
+    - `cbtExportPdfDialogTitle` — 日期范围选择 dialog 标题
+    - `cbtExportPdfEmpty` — 5/7 栏 < 1 条时空态
+    - `cbtExportPdfSuccess` — SnackBar 成功提示 (带 `{count}` 占位)
+    - `cbtExportPdfFailed` — 失败提示
+
+### Fixed
+- **P0 silent data loss** (R84 加 8 CBT 字段时漏更新 data_export toMap):
+  - `lib/core/data/services/data_export.dart:insertMoodEntries` toMap 加
+    8 CBT 字段 (situation / automaticThought / evidenceFor / evidenceAgainst /
+    alternativeThought / reratedScore / coreBelief / behaviorResponse)
+  - 同步反序列化 `readMoodEntries` 8 字段, 老 JSON 缺这 8 字段时容错 null
+  - 影响范围: v0.29 R84 起所有用了 5/7 栏 CBT 的用户, 导出 JSON
+    reimport 会丢 CBT 字段。本修确保 round-trip 行为正确
+  - 回归 test 加 4 case (`data_export_round88_test.dart`)
+
+### Tests
+- **1487/1487 pass** (R87 1483 + R88 +4 data_export round-trip)
+- `flutter analyze` 9 info-level (pre-existing `RadioListTile`
+  `deprecated_member_use`, 跟 R87 一致)
+- 16 守门员脚本全绿 (check_arb_keys / check_changelog /
+  check_cross_feature / check_datetime_race / check_datetime_race2 /
+  check_drift_namespace / check_fullwidth_punctuation /
+  check_no_hardcoded_utc / check_no_pua / check_widget_dispose /
+  check_orphan_arb_keys / check_legal_consent / check_sms_release_ready /
+  check_strings_hardcoded / check_zh_hant_consistency / check_all.dart)
+
+### Notes
+- PDF 分享走 system share sheet (iOS / Android / Web / macOS / Windows
+  / Linux), 用户可选 "保存到文件" / "邮件给自己" / "微信文件传输"
+  等任意目标
+- 5/7 栏 1 页 1 entry 布局: 字体走 _bodyTextStyle (跟 MedicationReportPdf
+  一致), 标题用 _sectionHeaderStyle, 行高 1.4
+- `CbtThoughtRecordPdf.buildPdf` 是 pure async, 不依赖 BuildContext
+- R85 task 1 R86 cleanup 把 `moodEntriesProvider` 移到 shared 的 defered 项
+  仍未做, 留 R89+ 单独 PR
+- `flutter gen-l10n` 反复误删 3 个 `ventDuration*` 键 (v0.27 round 77
+  已有同款 regression): 每次运行 gen-l10n, 6 个 key (3 个 value +
+  3 个 @metadata) 从 3 个 .arb 都被静默删掉, 但 .dart 输出 (template
+  app_zh.arb 是 source of truth) 误保留. Task 5 手动 re-insert 6 keys
+  到 app_zh.arb / app_en.arb / app_zh_Hant.arb 保持一致. 后续 R89 应:
+  (a) 复现 + 上报 flutter gen-l10n upstream
+  (b) 加 ci 步骤 (gen_l10n_diff_check.py) 在 gen-l10n 前后 diff
+  .arb 文件, key 数减少就 fail
+
+
 ## [0.30.0] - 2026-08-05 (R87 — sub-spec 3, mood 列表页 + filter + search + sort + 12 ARB keys)
 
 > R87 目标: sub-spec 1 (R84) 把 CBT 思维记录 5/7 栏落地, sub-spec 2 (R85) 把

@@ -91,7 +91,7 @@
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 評估的折線圖與對比",
   "settingsAboutVersion": "v0.23.0 · 我今天吃了藥",
   "settingsDisclaimerText": "本應用不提供醫療建議，所有功能僅供參考。",
-"settingsExportRiskTitle": "明文風險提示",
+  "settingsExportRiskTitle": "明文風險提示",
   "settingsExportRiskBody": "您即將導出的數據為明文文件,含您的個人健康等敏感信息(用藥、打卡、緊急聯繫人、樹洞文字)。請務必保存到安全、可信的位置(加密 U 盤 / 私人云盤),避免上傳至公共雲盤或發送給不可信的第三方。",
   "settingsExportRiskLiability": "一旦導出,文件的安全與保密由您自行負責,本 App 不再承擔保護責任(PIPL §17 明確告知 + 用戶確認)。",
   "settingsExportRiskAcknowledge": "我已瞭解風險,繼續導出",
@@ -456,7 +456,7 @@
   },
   "setupContactPhoneHint": "13800138000",
   "ventListTitle": "我的樹洞",
-"legalVentWithdrawTitle": "撤回樹洞同意",
+  "legalVentWithdrawTitle": "撤回樹洞同意",
   "legalVentWithdrawBody": "樹洞內容是您最私密的數據。撤回同意後,您可選擇以下方式處理已有數據:",
   "legalVentWithdrawDelete": "立即刪除",
   "legalVentWithdrawDeleteDesc": "所有樹洞文字 + 錄音文件立即物理刪除,不可恢復",
@@ -1587,13 +1587,13 @@
       }
     }
   },
-  "cbtExportPdfEmpty": "還沒有 5/7 欄 CBT 資料可匯出",
-  "cbtExportPdfButton": "匯出 CBT 思維記錄 PDF",
+  "cbtExportPdfEmpty": "還沒有 5/7 欄 CBT 數據可導出",
+  "cbtExportPdfButton": "導出 CBT 思維記錄 PDF",
   "@cbtExportPdfButton": {
     "description": "settings 資料管理 — 匯出 5/7 欄 CBT 思維記錄為 PDF 的按鈕標題"
   },
-  "cbtExportPdfDialogTitle": "選擇日期範圍產生 PDF",
-  "cbtExportPdfSuccess": "已匯出 {count} 條 CBT 思維記錄",
+  "cbtExportPdfDialogTitle": "選擇日期範圍生成 PDF",
+  "cbtExportPdfSuccess": "已導出 {count} 條 CBT 思維記錄",
   "@cbtExportPdfSuccess": {
     "description": "SnackBar 成功提示, 佔位 {count} 表示實際匯出的條數",
     "placeholders": {
@@ -1602,6 +1602,5 @@
       }
     }
   },
-  "cbtExportPdfFailed": "PDF 匯出失敗,請重試"
+  "cbtExportPdfFailed": "PDF 導出失敗,請重試"
 }
-
