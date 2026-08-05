@@ -307,4 +307,65 @@ class AppColors {
   /// `(scaleId)` single-arg API 重复, 2 个 source-of-truth 容易选错。
   /// `AssessmentColorPalette.colorArgbFor(scaleId)` / `.dashFor(scaleId)`
   /// 是 single source of truth。
+
+  // ============= v0.30 round 91 (sub-spec 7 日常追踪 / Task 6): 4 指标色板 =============
+  //
+  // 4 日常追踪指标 (体重 / 睡眠 / 心境 / 应激源) 多色多线型 —
+  // 4 指标单位不同 (kg / min / 1-5 / 1-5) → Y 轴归一化 0-1
+  // 4 指标分散色 (蓝/紫/绿/红) — 跟 R85 rerated chart + R90 assessment chart
+  // 风格一致, 色盲友好。
+  // 4 线型 (实线 / 虚线 / 点线 / 双点) 区分 4 指标, 不只靠色。
+  //
+  // 设计:
+  // - 跟 R90 不同: 4 指标是固定枚举 (不会扩张到 N 个), 不用 palette 单独文件,
+  //   直接放 AppColors 集中管理 (跟 R85 rerated 一致)
+  // - 顺序固定: weight / sleep / mood / stress (跟 daily_tracking_multi_chart
+  //   `_metricIds` 1:1 对应, 修改需同步)
+  // - 未知 metric 兜底: 灰 0xFF9E9E9E (跟 R90 AssessmentColorPalette 同款)
+  // - 不用 theme-aware, 固定 const Color — 趋势图需要稳定的视觉标识
+  //   (跨 dark mode 同一个指标 = 同一个色)
+
+  /// 4 日常追踪指标 Color (const) — 跟 dailyTrackingMetricIds index 1:1
+  /// 色相分散, 色盲友好: 蓝 / 紫 / 绿 / 红
+  static const List<Color> dailyTrackingColors = [
+    Color(0xFF1E88E5), // 体重 蓝
+    Color(0xFF8E24AA), // 睡眠时长 紫
+    Color(0xFF43A047), // 心境均值 绿
+    Color(0xFFE53935), // 应激源均值 红
+  ];
+
+  /// 4 日常追踪指标 id (顺序固定, 跟色 + 线型 1:1 对应)
+  static const List<String> dailyTrackingMetricIds = [
+    'weight',
+    'sleep',
+    'mood',
+    'stress',
+  ];
+
+  /// 4 日常追踪指标线型 (实线/虚线/点线/双点) — 按 metric index 一一对应
+  /// (fl_chart LineChartBarData.dashArray 接受 `List<int>` 表示 dash on/off 像素)
+  static const List<List<int>> dailyTrackingDashArrays = [
+    <int>[], // 实线 (index 0: 体重)
+    <int>[5, 5], // 虚线 (index 1: 睡眠)
+    <int>[2, 3], // 点线 (index 2: 心境)
+    <int>[8, 3, 2, 3], // 双点 (index 3: 应激源)
+  ];
+
+  /// 按 metricId 拿色 (Color, 找不到返 0xFF9E9E9E 深灰 兜底)
+  ///
+  /// UI 层直接用: `AppColors.dailyTrackingColorFor(metricId)`
+  static Color dailyTrackingColorFor(String metricId) {
+    final idx = dailyTrackingMetricIds.indexOf(metricId);
+    if (idx < 0) return const Color(0xFF9E9E9E);
+    return dailyTrackingColors[idx];
+  }
+
+  /// 按 metricId 拿线型 (`List<int>`, 找不到返 const `[]` 实线 兜底)
+  ///
+  /// UI 层直接传给 LineChartBarData.dashArray
+  static List<int> dailyTrackingDashFor(String metricId) {
+    final idx = dailyTrackingMetricIds.indexOf(metricId);
+    if (idx < 0) return const <int>[];
+    return dailyTrackingDashArrays[idx];
+  }
 }

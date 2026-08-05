@@ -28,6 +28,7 @@ import 'package:chroniccare/presentation/pages/daily_tracking/widgets/daily_trac
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/mood_period_aggregator_chart.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
+import 'package:chroniccare/presentation/widgets/charts/daily_tracking_multi_chart.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// v0.30 R91 Task 5: 日常追踪整合入口页
@@ -52,6 +53,12 @@ class DailyTrackingPage extends ConsumerWidget {
     final weight = ref.watch(latestWeightEntryProvider);
     // 心境 4 段图 (Task 2): 走 moodEntriesProvider sync list
     final moodEntries = ref.watch(moodEntriesProvider);
+    // v0.30 R91 Task 6: 多指标趋势图 4 指标 (体重/睡眠/心境/应激源)
+    // 4 指标 entries 来自各自 StreamProvider (autoDispose), 30 天时间窗
+    final weightEntries = ref.watch(weightEntriesProvider).value ?? const [];
+    final sleepEntries = ref.watch(sleepEntriesProvider).value ?? const [];
+    final stressEvents =
+        ref.watch(stressEventEntriesProvider).value ?? const [];
 
     return PageScaffold(
       // TODO (Task 7 i18n): title 走 l10n.dailyTrackingTitle
@@ -59,8 +66,16 @@ class DailyTrackingPage extends ConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.all(AppTokens.spacingMd),
         children: [
-          // TODO (Task 6): 顶部多指标 mini 趋势图 (4 指标 30 天)
-          // _buildMiniChart(context, ...),
+          // v0.30 R91 Task 6: 顶部多指标 mini 趋势图 (4 指标 30 天)
+          // 复用 R90 assessment_multi_line_chart 模式, 4 chip toggle + 4 line
+          // 4 指标单位不同 → Y 归一化 0-1 (chart widget 内部做)
+          DailyTrackingMultiChart(
+            weights: weightEntries,
+            sleepEntries: sleepEntries,
+            moodEntries: moodEntries,
+            stressEvents: stressEvents,
+          ),
+          const SizedBox(height: AppTokens.spacingMd),
           // 心境 4 段图 (Task 2 已做, 集成)
           if (moodEntries.isNotEmpty)
             MoodPeriodAggregatorChart(entries: moodEntries),

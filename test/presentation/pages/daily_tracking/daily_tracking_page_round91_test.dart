@@ -94,6 +94,13 @@ void main() {
   }
 
   testWidgets('DailyTrackingPage 渲染 7 卡片 + 心境 4 段图', (tester) async {
+    // v0.30 round 91 (Task 6): 顶部多指标图 + 心境 4 段图 + 7 卡片 grid
+    // 总 content > 1800px, 默认 800x600 viewport 不够, GridView 底部 cards
+    // 不在 tree → 设大 viewport 跟 R91 assessment_page_submit 同款
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await tester.pumpWidget(wrap());
     await tester.pumpAndSettle();
 
@@ -108,6 +115,12 @@ void main() {
   });
 
   testWidgets('点 "情绪日记" 卡片 → 跳 /mood-diary', (tester) async {
+    // v0.30 round 91 (Task 6): 顶部多指标图 + 7 卡片 grid, 总 content > 1800px
+    // 设大 viewport 跟 R91 assessment_page_submit 同款
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     final router = GoRouter(
       initialLocation: '/daily-tracking',
       routes: [
@@ -188,6 +201,13 @@ void main() {
   });
 
   testWidgets('"情绪日记" 卡片显示 period (早/中/晚/夜)', (tester) async {
+    // v0.30 round 91 (Task 6): 顶部多指标图 + 心境 4 段图 + 7 卡片 grid
+    // 总 content > 1900px (新 chart 200 + spacer 16 + mood chart 270 + spacer
+    // 16 + cards 1420), 设大 viewport 跟 R91 assessment_page_submit 同款
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     // 准备 mood_entries 含 period = 'morning'
     final moodWithPeriod = MoodEntryEntity(
       id: 1,
