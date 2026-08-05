@@ -2,6 +2,86 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-05 (R90 — sub-spec 6 量表中心 i18n: 134 ARB keys + 3 lang + AppLocalizationsScaleTranslations 委托)
+
+> R90 Task 6 目标: 把 R90 中心化入口页 (Task 4) + 多线趋势图 (Task 5) +
+> 8 新量表 (Task 1-2 const class + scale_registry) 走完整 i18n 化。Task 1-5
+> 已经把 const class + 中心化页 + 多线图都接好了, 但 `AppLocalizationsScaleTranslations`
+> 8 量表 stub 返 `''` + 卡片硬编中文占位 (Task 6 一次性 wire 到 l10n)。
+>
+> **1 task** (1 commit, +0 test):
+> - Task 6: 134 ARB keys (8 新量表 × 6 类别 + 8 中心化入口) × 3 lang
+>   (zh/en/zh_Hant) + `AppLocalizationsScaleTranslations` 委托 + 4 widget
+>   (assessment_center_page / assessment_center_card / assessment_unavailable_card
+>   / trend_assessment_chart) 换 l10n.assessmentCenterXxx
+>
+> **架构边界**:
+> - 题目全文 (8 量表 × 5-12 题 = ~70 题) 留 v1.0 (跟 R78 PHQ-9 一致), 走
+>   const class 兜底中文; 题目 keys 不加 ARB
+> - 复用 R78 PHQ-9 / GAD-7 ARB keys (R78 已加 48 keys, 本 task 不动)
+> - 复用 R57 check_zh_hant_consistency 守门员 (OpenCC s2tw 校验繁简一致)
+> - 复用 R56e check_orphan_arb_keys 守门员 (l10n.assessmentCenterXxx 必须
+>   在 lib/ 引用, 否则 ARB 视为 orphan)
+> - R78 PHQ-9 / GAD-7 caller 继续用 `const StaticScaleTranslations()` 兜底,
+>   不破老路径
+>
+> **6 类别** (8 新量表 × ~16 keys = 126 keys):
+> 1. name (量表中文显示名)
+> 2. shortDescription (卡片副标题)
+> 3. instruction (答题页顶部引导)
+> 4. option (频率/严重度选项, 0..N 共 4-5 档)
+> 5. severityLabel (严重度短标签, 0..M 共 3-5 档)
+> 6. severitySummary (严重度完整描述, 0..M 共 3-5 档)
+
+### Added
+- **8 新量表 i18n** (zh / en / zh_Hant 各 126 keys, 跟 R78 PHQ-9 / GAD-7 同模式):
+  - **ISI 失眠严重指数** (Morin 1993, 7 题, 5 档选项, 4 严重度, 16 keys)
+  - **PSS 压力量表** (Cohen 1983, 10 题含 4 题反向, 5 档选项, 3 严重度, 14 keys)
+  - **WHODAS 2.0 残疾评定** (WHO, 12 题, 5 档选项, 5 严重度, 18 keys)
+  - **DSM-5 Level 2 抑郁严重度** (PROMIS 简化, 8 题, 4 档选项, 4 严重度, 15 keys)
+  - **DSM-5 Level 2 焦虑严重度** (PROMIS 简化, 7 题, 4 档选项, 4 严重度, 15 keys)
+  - **DSM-5 Level 2 躁狂严重度** (PROMIS 简化, 5 题, 4 档选项, 4 严重度, 15 keys)
+  - **ASRM 自评躁狂量表** (Altman 1997, 5 题, 5 档选项, 5 严重度, 18 keys)
+  - **DSM-5 Level 2 精神病性症状** (8 题, 4 档选项, 4 严重度, 15 keys)
+- **8 中心化入口 keys** (量表中心页 + 卡片 + 趋势图):
+  - `assessmentCenterTitle` — 量表中心页 title
+  - `assessmentCenterLastScore` — "上次 {score} 分" 卡片得分
+  - `assessmentCenterLastTime` — "{time} 填写" 卡片时间
+  - `assessmentCenterNoData` — "尚未填写过" 空态
+  - `assessmentCenterStartButton` — "开始评估" 按钮
+  - `assessmentCenterMultiLineTitle` — "全部量表趋势" 多线图 title
+  - `assessmentCenterNotAvailable` — "需法务/临床审核" 灰卡原因
+  - `assessmentCenterComingSoon` — "敬请期待" 灰卡状态
+
+### Changed
+- **AppLocalizationsScaleTranslations** (lib/presentation/services/scale_translations_l10n.dart):
+  8 新量表 stub 返 `''` → 委托 l10n.isiName / l10n.pssName / l10n.whodasName /
+  l10n.level2XxxName / l10n.asrmName 等 (跟 R78 PHQ-9 / GAD-7 模式同款)。
+  题目全文 (l10n.isiItem 等) 留 v1.0 返 `''` (const class 兜底中文), 跟
+  R78 PHQ-9 决策一致。
+- **4 widget 换 l10n** (0 硬编中文占位):
+  - `lib/presentation/pages/assessment/assessment_center_page.dart` — title
+  - `lib/presentation/pages/assessment/widgets/assessment_center_card.dart` —
+    switch (scale.id) 派发到 l10n.xxxName / l10n.xxxShortDescription, 卡片
+    文案走 l10n.assessmentCenterXxx
+  - `lib/presentation/pages/assessment/widgets/assessment_unavailable_card.dart` —
+    l10n.assessmentCenterNotAvailable / ComingSoon
+  - `lib/presentation/pages/trend/widgets/trend_assessment_chart.dart` —
+    l10n.assessmentCenterMultiLineTitle
+
+### Notes
+- **R90 量表 ARB key 数量**: 实际 134 keys (8 新量表 126 + 8 中心 8), 跟
+  plan 估计 178 有差异 (plan 包含题目 keys, R78 决策留 v1.0 跳过)
+- **题目全文留 v1.0**: 8 量表 × 5-12 题 = 70+ 题目 keys 暂不加, 跟 R78
+  PHQ-9 / GAD-7 一致。const class 题目作为 fallback 在 zh locale 显示中文,
+  en/zh_Hant 用户看 const 题目 (也是中文), v1.0 翻译
+- **题目 keys 翻译留 v1.0** — plan 写了 ~250 keys, 实际 ~134 keys。题目
+  全文 + 严重度完整描述走 v0.31+ / v1.0 翻译 (需要法务审核 + 临床翻译)
+- **`AppLocalizationsScaleTranslations` 委托**: 8 新量表 56 个 switch-case
+  跟 R78 PHQ-9 同模式, 8 量表 × 7 method = 56 method。题目 stub 返 `''` 兜底
+  (R78 一致)
+
+
 ## [0.30.0] - 2026-08-05 (R88 — sub-spec 4, CBT 思维记录 5/7 栏导出 PDF + 修 R84 silent data loss)
 
 > R88 目标: 把 CBT 思维记录 5/7 栏 导出为 PDF, 让用户能把完整 CBT

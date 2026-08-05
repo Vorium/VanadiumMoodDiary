@@ -1563,5 +1563,551 @@
       }
     }
   },
-  "cbtExportPdfFailed": "PDF export failed, please try again"
+  "cbtExportPdfFailed": "PDF export failed, please try again",
+  "assessmentCenterTitle": "Assessment Center",
+  "@assessmentCenterTitle": {
+    "description": "Assessment center page title"
+  },
+  "assessmentCenterLastScore": "Last score: {score}",
+  "@assessmentCenterLastScore": {
+    "description": "Last assessment score (placeholder {score} is the numeric total)",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentCenterLastTime": "Taken on {time}",
+  "@assessmentCenterLastTime": {
+    "description": "When the last assessment was taken (placeholder {time} is the formatted date)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "assessmentCenterNoData": "No entries yet",
+  "@assessmentCenterNoData": {
+    "description": "Empty state for assessment card when user has not yet taken the scale"
+  },
+  "assessmentCenterStartButton": "Start assessment",
+  "@assessmentCenterStartButton": {
+    "description": "Button on assessment card to start filling the scale"
+  },
+  "assessmentCenterMultiLineTitle": "All scales trend",
+  "@assessmentCenterMultiLineTitle": {
+    "description": "Multi-line trend chart title showing all scales at once"
+  },
+  "assessmentCenterNotAvailable": "Pending legal/clinical review",
+  "@assessmentCenterNotAvailable": {
+    "description": "Unavailable scale card reason (NSESSS / CRDPSS)"
+  },
+  "assessmentCenterComingSoon": "Coming soon",
+  "@assessmentCenterComingSoon": {
+    "description": "Coming soon status label for unavailable scale cards"
+  },
+  "isiName": "ISI Insomnia Severity Index",
+  "@isiName": {
+    "description": "ISI Insomnia Severity Index scale name"
+  },
+  "isiShortDescription": "Morin 1993 Insomnia Severity Index (7 items)",
+  "@isiShortDescription": {
+    "description": "ISI Insomnia Severity Index short description for cards/list"
+  },
+  "isiInstruction": "Over the past 2 weeks, how severe has your sleep problem been?",
+  "@isiInstruction": {
+    "description": "ISI Insomnia Severity Index top instruction before items"
+  },
+  "isiOption0": "None",
+  "@isiOption0": {
+    "description": "ISI Insomnia Severity Index option 0 (0-based)"
+  },
+  "isiOption1": "Mild",
+  "@isiOption1": {
+    "description": "ISI Insomnia Severity Index option 1 (0-based)"
+  },
+  "isiOption2": "Moderate",
+  "@isiOption2": {
+    "description": "ISI Insomnia Severity Index option 2 (0-based)"
+  },
+  "isiOption3": "Severe",
+  "@isiOption3": {
+    "description": "ISI Insomnia Severity Index option 3 (0-based)"
+  },
+  "isiOption4": "Very severe",
+  "@isiOption4": {
+    "description": "ISI Insomnia Severity Index option 4 (0-based)"
+  },
+  "isiSeverityLabel0": "No insomnia",
+  "@isiSeverityLabel0": {
+    "description": "ISI Insomnia Severity Index severity label rank 0 (short, for charts)"
+  },
+  "isiSeverityLabel1": "Subthreshold insomnia",
+  "@isiSeverityLabel1": {
+    "description": "ISI Insomnia Severity Index severity label rank 1 (short, for charts)"
+  },
+  "isiSeverityLabel2": "Moderate insomnia",
+  "@isiSeverityLabel2": {
+    "description": "ISI Insomnia Severity Index severity label rank 2 (short, for charts)"
+  },
+  "isiSeverityLabel3": "Severe insomnia",
+  "@isiSeverityLabel3": {
+    "description": "ISI Insomnia Severity Index severity label rank 3 (short, for charts)"
+  },
+  "isiSeveritySummary0": "No clinical insomnia",
+  "@isiSeveritySummary0": {
+    "description": "ISI Insomnia Severity Index severity summary rank 0 (full, for result page)"
+  },
+  "isiSeveritySummary1": "Subclinical insomnia, consider monitoring",
+  "@isiSeveritySummary1": {
+    "description": "ISI Insomnia Severity Index severity summary rank 1 (full, for result page)"
+  },
+  "isiSeveritySummary2": "Moderate insomnia, consider seeing a doctor",
+  "@isiSeveritySummary2": {
+    "description": "ISI Insomnia Severity Index severity summary rank 2 (full, for result page)"
+  },
+  "isiSeveritySummary3": "Severe insomnia, strongly consider seeing a doctor",
+  "@isiSeveritySummary3": {
+    "description": "ISI Insomnia Severity Index severity summary rank 3 (full, for result page)"
+  },
+  "pssName": "PSS Perceived Stress Scale",
+  "@pssName": {
+    "description": "PSS Perceived Stress Scale scale name"
+  },
+  "pssShortDescription": "Cohen 1983 Perceived Stress Scale (10 items, 4 reverse-scored)",
+  "@pssShortDescription": {
+    "description": "PSS Perceived Stress Scale short description for cards/list"
+  },
+  "pssInstruction": "In the last month, how often have you felt the following?",
+  "@pssInstruction": {
+    "description": "PSS Perceived Stress Scale top instruction before items"
+  },
+  "pssOption0": "Never",
+  "@pssOption0": {
+    "description": "PSS Perceived Stress Scale option 0 (0-based)"
+  },
+  "pssOption1": "Almost never",
+  "@pssOption1": {
+    "description": "PSS Perceived Stress Scale option 1 (0-based)"
+  },
+  "pssOption2": "Sometimes",
+  "@pssOption2": {
+    "description": "PSS Perceived Stress Scale option 2 (0-based)"
+  },
+  "pssOption3": "Fairly often",
+  "@pssOption3": {
+    "description": "PSS Perceived Stress Scale option 3 (0-based)"
+  },
+  "pssOption4": "Very often",
+  "@pssOption4": {
+    "description": "PSS Perceived Stress Scale option 4 (0-based)"
+  },
+  "pssSeverityLabel0": "Low stress",
+  "@pssSeverityLabel0": {
+    "description": "PSS Perceived Stress Scale severity label rank 0 (short, for charts)"
+  },
+  "pssSeverityLabel1": "Moderate stress",
+  "@pssSeverityLabel1": {
+    "description": "PSS Perceived Stress Scale severity label rank 1 (short, for charts)"
+  },
+  "pssSeverityLabel2": "High stress",
+  "@pssSeverityLabel2": {
+    "description": "PSS Perceived Stress Scale severity label rank 2 (short, for charts)"
+  },
+  "pssSeveritySummary0": "Low stress",
+  "@pssSeveritySummary0": {
+    "description": "PSS Perceived Stress Scale severity summary rank 0 (full, for result page)"
+  },
+  "pssSeveritySummary1": "Moderate stress",
+  "@pssSeveritySummary1": {
+    "description": "PSS Perceived Stress Scale severity summary rank 1 (full, for result page)"
+  },
+  "pssSeveritySummary2": "High stress, consider monitoring and seeking support",
+  "@pssSeveritySummary2": {
+    "description": "PSS Perceived Stress Scale severity summary rank 2 (full, for result page)"
+  },
+  "whodasName": "WHODAS 2.0 Disability Assessment",
+  "@whodasName": {
+    "description": "WHODAS 2.0 Disability Assessment scale name"
+  },
+  "whodasShortDescription": "WHO generic disability assessment, 12-item short version",
+  "@whodasShortDescription": {
+    "description": "WHODAS 2.0 Disability Assessment short description for cards/list"
+  },
+  "whodasInstruction": "Over the past 30 days, how much difficulty did you have in the following activities?",
+  "@whodasInstruction": {
+    "description": "WHODAS 2.0 Disability Assessment top instruction before items"
+  },
+  "whodasOption0": "None",
+  "@whodasOption0": {
+    "description": "WHODAS 2.0 Disability Assessment option 0 (0-based)"
+  },
+  "whodasOption1": "Mild",
+  "@whodasOption1": {
+    "description": "WHODAS 2.0 Disability Assessment option 1 (0-based)"
+  },
+  "whodasOption2": "Moderate",
+  "@whodasOption2": {
+    "description": "WHODAS 2.0 Disability Assessment option 2 (0-based)"
+  },
+  "whodasOption3": "Severe",
+  "@whodasOption3": {
+    "description": "WHODAS 2.0 Disability Assessment option 3 (0-based)"
+  },
+  "whodasOption4": "Extreme",
+  "@whodasOption4": {
+    "description": "WHODAS 2.0 Disability Assessment option 4 (0-based)"
+  },
+  "whodasSeverityLabel0": "No disability",
+  "@whodasSeverityLabel0": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 0 (short, for charts)"
+  },
+  "whodasSeverityLabel1": "Mild disability",
+  "@whodasSeverityLabel1": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 1 (short, for charts)"
+  },
+  "whodasSeverityLabel2": "Moderate disability",
+  "@whodasSeverityLabel2": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 2 (short, for charts)"
+  },
+  "whodasSeverityLabel3": "Severe disability",
+  "@whodasSeverityLabel3": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 3 (short, for charts)"
+  },
+  "whodasSeverityLabel4": "Extreme disability",
+  "@whodasSeverityLabel4": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 4 (short, for charts)"
+  },
+  "whodasSeveritySummary0": "No disability",
+  "@whodasSeveritySummary0": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 0 (full, for result page)"
+  },
+  "whodasSeveritySummary1": "Mild disability",
+  "@whodasSeveritySummary1": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 1 (full, for result page)"
+  },
+  "whodasSeveritySummary2": "Moderate disability, consider medical evaluation",
+  "@whodasSeveritySummary2": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 2 (full, for result page)"
+  },
+  "whodasSeveritySummary3": "Severe disability, consider seeing a doctor",
+  "@whodasSeveritySummary3": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 3 (full, for result page)"
+  },
+  "whodasSeveritySummary4": "Extreme disability, strongly consider seeing a doctor",
+  "@whodasSeveritySummary4": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 4 (full, for result page)"
+  },
+  "level2DepressionName": "DSM-5 Level 2 Depression Severity",
+  "@level2DepressionName": {
+    "description": "DSM-5 Level 2 Depression Severity scale name"
+  },
+  "level2DepressionShortDescription": "Adult depression severity, 8 items (DSM-5 PROMIS short)",
+  "@level2DepressionShortDescription": {
+    "description": "DSM-5 Level 2 Depression Severity short description for cards/list"
+  },
+  "level2DepressionInstruction": "Over the past 7 days, how often were you bothered by the following feelings?",
+  "@level2DepressionInstruction": {
+    "description": "DSM-5 Level 2 Depression Severity top instruction before items"
+  },
+  "level2DepressionOption0": "Never",
+  "@level2DepressionOption0": {
+    "description": "DSM-5 Level 2 Depression Severity option 0 (0-based)"
+  },
+  "level2DepressionOption1": "Several days",
+  "@level2DepressionOption1": {
+    "description": "DSM-5 Level 2 Depression Severity option 1 (0-based)"
+  },
+  "level2DepressionOption2": "More than half the days",
+  "@level2DepressionOption2": {
+    "description": "DSM-5 Level 2 Depression Severity option 2 (0-based)"
+  },
+  "level2DepressionOption3": "Nearly every day",
+  "@level2DepressionOption3": {
+    "description": "DSM-5 Level 2 Depression Severity option 3 (0-based)"
+  },
+  "level2DepressionSeverityLabel0": "No depression",
+  "@level2DepressionSeverityLabel0": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 0 (short, for charts)"
+  },
+  "level2DepressionSeverityLabel1": "Mild depression",
+  "@level2DepressionSeverityLabel1": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 1 (short, for charts)"
+  },
+  "level2DepressionSeverityLabel2": "Moderate depression",
+  "@level2DepressionSeverityLabel2": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 2 (short, for charts)"
+  },
+  "level2DepressionSeverityLabel3": "Severe depression",
+  "@level2DepressionSeverityLabel3": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 3 (short, for charts)"
+  },
+  "level2DepressionSeveritySummary0": "No depression tendency",
+  "@level2DepressionSeveritySummary0": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 0 (full, for result page)"
+  },
+  "level2DepressionSeveritySummary1": "Mild depression tendency",
+  "@level2DepressionSeveritySummary1": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 1 (full, for result page)"
+  },
+  "level2DepressionSeveritySummary2": "Moderate depression, consider seeing a doctor",
+  "@level2DepressionSeveritySummary2": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 2 (full, for result page)"
+  },
+  "level2DepressionSeveritySummary3": "Severe depression, strongly consider seeing a doctor",
+  "@level2DepressionSeveritySummary3": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 3 (full, for result page)"
+  },
+  "level2AnxietyName": "DSM-5 Level 2 Anxiety Severity",
+  "@level2AnxietyName": {
+    "description": "DSM-5 Level 2 Anxiety Severity scale name"
+  },
+  "level2AnxietyShortDescription": "Adult anxiety severity, 7 items (DSM-5 PROMIS short)",
+  "@level2AnxietyShortDescription": {
+    "description": "DSM-5 Level 2 Anxiety Severity short description for cards/list"
+  },
+  "level2AnxietyInstruction": "Over the past 7 days, how often were you bothered by the following feelings?",
+  "@level2AnxietyInstruction": {
+    "description": "DSM-5 Level 2 Anxiety Severity top instruction before items"
+  },
+  "level2AnxietyOption0": "Never",
+  "@level2AnxietyOption0": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 0 (0-based)"
+  },
+  "level2AnxietyOption1": "Several days",
+  "@level2AnxietyOption1": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 1 (0-based)"
+  },
+  "level2AnxietyOption2": "More than half the days",
+  "@level2AnxietyOption2": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 2 (0-based)"
+  },
+  "level2AnxietyOption3": "Nearly every day",
+  "@level2AnxietyOption3": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 3 (0-based)"
+  },
+  "level2AnxietySeverityLabel0": "No anxiety",
+  "@level2AnxietySeverityLabel0": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 0 (short, for charts)"
+  },
+  "level2AnxietySeverityLabel1": "Mild anxiety",
+  "@level2AnxietySeverityLabel1": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 1 (short, for charts)"
+  },
+  "level2AnxietySeverityLabel2": "Moderate anxiety",
+  "@level2AnxietySeverityLabel2": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 2 (short, for charts)"
+  },
+  "level2AnxietySeverityLabel3": "Severe anxiety",
+  "@level2AnxietySeverityLabel3": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 3 (short, for charts)"
+  },
+  "level2AnxietySeveritySummary0": "No anxiety tendency",
+  "@level2AnxietySeveritySummary0": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 0 (full, for result page)"
+  },
+  "level2AnxietySeveritySummary1": "Mild anxiety tendency",
+  "@level2AnxietySeveritySummary1": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 1 (full, for result page)"
+  },
+  "level2AnxietySeveritySummary2": "Moderate anxiety, consider seeing a doctor",
+  "@level2AnxietySeveritySummary2": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 2 (full, for result page)"
+  },
+  "level2AnxietySeveritySummary3": "Severe anxiety, strongly consider seeing a doctor",
+  "@level2AnxietySeveritySummary3": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 3 (full, for result page)"
+  },
+  "level2ManiaName": "DSM-5 Level 2 Mania Severity",
+  "@level2ManiaName": {
+    "description": "DSM-5 Level 2 Mania Severity scale name"
+  },
+  "level2ManiaShortDescription": "Adult mania severity, 5 items (DSM-5 PROMIS short)",
+  "@level2ManiaShortDescription": {
+    "description": "DSM-5 Level 2 Mania Severity short description for cards/list"
+  },
+  "level2ManiaInstruction": "Over the past 7 days, how often did you experience the following?",
+  "@level2ManiaInstruction": {
+    "description": "DSM-5 Level 2 Mania Severity top instruction before items"
+  },
+  "level2ManiaOption0": "Never",
+  "@level2ManiaOption0": {
+    "description": "DSM-5 Level 2 Mania Severity option 0 (0-based)"
+  },
+  "level2ManiaOption1": "Several days",
+  "@level2ManiaOption1": {
+    "description": "DSM-5 Level 2 Mania Severity option 1 (0-based)"
+  },
+  "level2ManiaOption2": "More than half the days",
+  "@level2ManiaOption2": {
+    "description": "DSM-5 Level 2 Mania Severity option 2 (0-based)"
+  },
+  "level2ManiaOption3": "Nearly every day",
+  "@level2ManiaOption3": {
+    "description": "DSM-5 Level 2 Mania Severity option 3 (0-based)"
+  },
+  "level2ManiaSeverityLabel0": "No mania",
+  "@level2ManiaSeverityLabel0": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 0 (short, for charts)"
+  },
+  "level2ManiaSeverityLabel1": "Mild mania",
+  "@level2ManiaSeverityLabel1": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 1 (short, for charts)"
+  },
+  "level2ManiaSeverityLabel2": "Moderate mania",
+  "@level2ManiaSeverityLabel2": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 2 (short, for charts)"
+  },
+  "level2ManiaSeverityLabel3": "Severe mania",
+  "@level2ManiaSeverityLabel3": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 3 (short, for charts)"
+  },
+  "level2ManiaSeveritySummary0": "No mania tendency",
+  "@level2ManiaSeveritySummary0": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 0 (full, for result page)"
+  },
+  "level2ManiaSeveritySummary1": "Mild mania tendency",
+  "@level2ManiaSeveritySummary1": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 1 (full, for result page)"
+  },
+  "level2ManiaSeveritySummary2": "Moderate mania, consider seeing a doctor",
+  "@level2ManiaSeveritySummary2": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 2 (full, for result page)"
+  },
+  "level2ManiaSeveritySummary3": "Severe mania, strongly consider seeing a doctor",
+  "@level2ManiaSeveritySummary3": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 3 (full, for result page)"
+  },
+  "asrmName": "ASRM Altman Self-Rating Mania Scale",
+  "@asrmName": {
+    "description": "ASRM Altman Self-Rating Mania Scale scale name"
+  },
+  "asrmShortDescription": "Altman 1997 Self-Rating Mania Scale (5 items)",
+  "@asrmShortDescription": {
+    "description": "ASRM Altman Self-Rating Mania Scale short description for cards/list"
+  },
+  "asrmInstruction": "Over the past week, to what extent have you experienced (or felt) the following?",
+  "@asrmInstruction": {
+    "description": "ASRM Altman Self-Rating Mania Scale top instruction before items"
+  },
+  "asrmOption0": "Not at all",
+  "@asrmOption0": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 0 (0-based)"
+  },
+  "asrmOption1": "Mild",
+  "@asrmOption1": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 1 (0-based)"
+  },
+  "asrmOption2": "Moderate",
+  "@asrmOption2": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 2 (0-based)"
+  },
+  "asrmOption3": "Marked",
+  "@asrmOption3": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 3 (0-based)"
+  },
+  "asrmOption4": "Severe",
+  "@asrmOption4": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 4 (0-based)"
+  },
+  "asrmSeverityLabel0": "No symptoms",
+  "@asrmSeverityLabel0": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 0 (short, for charts)"
+  },
+  "asrmSeverityLabel1": "Mild",
+  "@asrmSeverityLabel1": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 1 (short, for charts)"
+  },
+  "asrmSeverityLabel2": "Moderate",
+  "@asrmSeverityLabel2": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 2 (short, for charts)"
+  },
+  "asrmSeverityLabel3": "Severe",
+  "@asrmSeverityLabel3": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 3 (short, for charts)"
+  },
+  "asrmSeverityLabel4": "Extreme",
+  "@asrmSeverityLabel4": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 4 (short, for charts)"
+  },
+  "asrmSeveritySummary0": "No symptoms",
+  "@asrmSeveritySummary0": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 0 (full, for result page)"
+  },
+  "asrmSeveritySummary1": "Mild mania tendency",
+  "@asrmSeveritySummary1": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 1 (full, for result page)"
+  },
+  "asrmSeveritySummary2": "Moderate mania, consider seeing a doctor",
+  "@asrmSeveritySummary2": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 2 (full, for result page)"
+  },
+  "asrmSeveritySummary3": "Severe mania, consider seeing a doctor",
+  "@asrmSeveritySummary3": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 3 (full, for result page)"
+  },
+  "asrmSeveritySummary4": "Extreme mania, strongly consider seeing a doctor",
+  "@asrmSeveritySummary4": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 4 (full, for result page)"
+  },
+  "level2PsychosisName": "DSM-5 Level 2 Psychotic Symptoms",
+  "@level2PsychosisName": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms scale name"
+  },
+  "level2PsychosisShortDescription": "Adult psychotic symptoms, 8 items (DSM-5 short)",
+  "@level2PsychosisShortDescription": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms short description for cards/list"
+  },
+  "level2PsychosisInstruction": "Over the past 7 days, how often did you experience the following?",
+  "@level2PsychosisInstruction": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms top instruction before items"
+  },
+  "level2PsychosisOption0": "Never",
+  "@level2PsychosisOption0": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 0 (0-based)"
+  },
+  "level2PsychosisOption1": "Rarely",
+  "@level2PsychosisOption1": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 1 (0-based)"
+  },
+  "level2PsychosisOption2": "Sometimes",
+  "@level2PsychosisOption2": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 2 (0-based)"
+  },
+  "level2PsychosisOption3": "Often",
+  "@level2PsychosisOption3": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 3 (0-based)"
+  },
+  "level2PsychosisSeverityLabel0": "No symptoms",
+  "@level2PsychosisSeverityLabel0": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 0 (short, for charts)"
+  },
+  "level2PsychosisSeverityLabel1": "Mild",
+  "@level2PsychosisSeverityLabel1": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 1 (short, for charts)"
+  },
+  "level2PsychosisSeverityLabel2": "Moderate",
+  "@level2PsychosisSeverityLabel2": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 2 (short, for charts)"
+  },
+  "level2PsychosisSeverityLabel3": "Severe",
+  "@level2PsychosisSeverityLabel3": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 3 (short, for charts)"
+  },
+  "level2PsychosisSeveritySummary0": "No psychotic symptoms",
+  "@level2PsychosisSeveritySummary0": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 0 (full, for result page)"
+  },
+  "level2PsychosisSeveritySummary1": "Mild psychotic symptoms",
+  "@level2PsychosisSeveritySummary1": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 1 (full, for result page)"
+  },
+  "level2PsychosisSeveritySummary2": "Moderate psychotic symptoms, consider seeing a doctor",
+  "@level2PsychosisSeveritySummary2": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 2 (full, for result page)"
+  },
+  "level2PsychosisSeveritySummary3": "Severe psychotic symptoms, strongly consider seeing a doctor",
+  "@level2PsychosisSeveritySummary3": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 3 (full, for result page)"
+  }
 }

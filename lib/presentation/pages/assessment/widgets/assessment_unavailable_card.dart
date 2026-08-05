@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 不可用量表卡片 (NSESSS / CRDPSS — 收费 / 内部, 法务审核中)
 class AssessmentUnavailableCard extends StatelessWidget {
@@ -17,6 +18,7 @@ class AssessmentUnavailableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       // M3 surfaceVariant 50% opacity 兼容 dark/light
       color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
@@ -40,12 +42,12 @@ class AssessmentUnavailableCard extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            const Text(
-              '需法务/临床审核', // Task 6 换 l10n.assessmentCenterNotAvailable
-              style: TextStyle(fontSize: 11),
+            Text(
+              l10n.assessmentCenterNotAvailable,
+              style: const TextStyle(fontSize: 11),
             ),
             Text(
-              '暂未开放', // Task 6 换 l10n.assessmentCenterComingSoon
+              l10n.assessmentCenterComingSoon,
               style: TextStyle(
                 fontSize: 11,
                 color: AppTokens.textHintColor(context),

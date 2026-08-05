@@ -75,9 +75,9 @@ class AssessmentHistoryChart extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '全部量表趋势',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              l10n.assessmentCenterMultiLineTitle,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             // 委托 R90 新 widget 渲染 (10 量表多色多线型 + chip toggle)

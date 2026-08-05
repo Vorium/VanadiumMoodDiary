@@ -14,6 +14,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/assessment_entry.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_center_card.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_unavailable_card.dart';
 import 'package:chroniccare/presentation/providers/assessment_providers.dart';
@@ -24,21 +25,19 @@ import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 /// 复用 R60 AssessmentScale 抽象 + Task 1-3 const scale class + scale_registry.
 /// 不开新表, 走 check_ins 表 type=`[scale_id]` 跨量表聚合.
 ///
-/// v0.30 R90: 8 ARB keys 占位 (assessmentCenterTitle/LastScore/LastTime/
-/// NoData/StartButton/MultiLineTitle/NotAvailable/ComingSoon), Task 6 一次性
-/// 换 200+ l10n key. 本 task 中文 placeholder 即可.
+/// v0.30 R90 Task 6: title 走 l10n.assessmentCenterTitle.
 class AssessmentCenterPage extends ConsumerWidget {
   const AssessmentCenterPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final scales = ref.watch(allScalesProvider);
     final entriesAsync = ref.watch(allAssessmentEntriesProvider);
     final unavailableIds = unavailableScaleIds;
 
     return PageScaffold(
-      // Task 6 换 l10n.assessmentCenterTitle
-      title: '量表中心',
+      title: l10n.assessmentCenterTitle,
       child: entriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('加载失败: $e')),

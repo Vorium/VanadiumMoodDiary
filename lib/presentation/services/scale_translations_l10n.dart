@@ -231,180 +231,568 @@ class AppLocalizationsScaleTranslations implements ScaleTranslations {
       override ?? l10n.gad7ShortDescription;
 
   // ============================================================
-  // v0.30 round 90 (Task 2): 8 新量表 stub, 全部返 '' (Task 6 补 ARB)
-  // 老 const class displayName / items / options / severityCutoffs 兜底显示。
+  // v0.30 round 90 (Task 6): 8 新量表 i18n 委托 l10n.
+  // 老 const class displayName / items / options / severityCutoffs 是 const
+  // 中文 fallback, 走 AppLocalizationsScaleTranslations 后 l10n 接管 (走
+  // zh / en / zh_Hant)。题目全文 留 v1.0 (跟 R78 PHQ-9 一致), 用
+  // StaticScaleTranslations.const 内容兜底 — const class items 直接返 const
+  // 题目, 不走 ARB 题目全文 (题目 keys 留 v1.0)。
   // ============================================================
 
   @override
-  String isiName({String? override}) => override ?? '';
+  String isiName({String? override}) => override ?? l10n.isiName;
 
   @override
-  String isiShortDescription({String? override}) => override ?? '';
+  String isiShortDescription({String? override}) =>
+      override ?? l10n.isiShortDescription;
 
   @override
-  String isiInstruction({String? override}) => override ?? '';
+  String isiInstruction({String? override}) => override ?? l10n.isiInstruction;
 
   @override
-  String isiItem(int index, {String? override}) => override ?? '';
+  String isiItem(int index, {String? override}) {
+    // 题目全文 留 v1.0 (跟 R78 PHQ-9 一致), 返 const 兜底空 — const class
+    // items[] 直接显示中文, 不走 ARB
+    return override ?? '';
+  }
 
   @override
-  String isiOption(int score, {String? override}) => override ?? '';
+  String isiOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.isiOption0;
+      case 1:
+        return l10n.isiOption1;
+      case 2:
+        return l10n.isiOption2;
+      case 3:
+        return l10n.isiOption3;
+      case 4:
+        return l10n.isiOption4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String isiSeverityLabel(int rank, {String? override}) => override ?? '';
+  String isiSeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.isiSeverityLabel0;
+      case 1:
+        return l10n.isiSeverityLabel1;
+      case 2:
+        return l10n.isiSeverityLabel2;
+      case 3:
+        return l10n.isiSeverityLabel3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String isiSeveritySummary(int rank, {String? override}) => override ?? '';
+  String isiSeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.isiSeveritySummary0;
+      case 1:
+        return l10n.isiSeveritySummary1;
+      case 2:
+        return l10n.isiSeveritySummary2;
+      case 3:
+        return l10n.isiSeveritySummary3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String pssName({String? override}) => override ?? '';
+  String pssName({String? override}) => override ?? l10n.pssName;
 
   @override
-  String pssShortDescription({String? override}) => override ?? '';
+  String pssShortDescription({String? override}) =>
+      override ?? l10n.pssShortDescription;
 
   @override
-  String pssInstruction({String? override}) => override ?? '';
+  String pssInstruction({String? override}) => override ?? l10n.pssInstruction;
 
   @override
-  String pssItem(int index, {String? override}) => override ?? '';
+  String pssItem(int index, {String? override}) {
+    // 题目全文 留 v1.0
+    return override ?? '';
+  }
 
   @override
-  String pssOption(int score, {String? override}) => override ?? '';
+  String pssOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.pssOption0;
+      case 1:
+        return l10n.pssOption1;
+      case 2:
+        return l10n.pssOption2;
+      case 3:
+        return l10n.pssOption3;
+      case 4:
+        return l10n.pssOption4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String pssSeverityLabel(int rank, {String? override}) => override ?? '';
+  String pssSeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.pssSeverityLabel0;
+      case 1:
+        return l10n.pssSeverityLabel1;
+      case 2:
+        return l10n.pssSeverityLabel2;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String pssSeveritySummary(int rank, {String? override}) => override ?? '';
+  String pssSeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.pssSeveritySummary0;
+      case 1:
+        return l10n.pssSeveritySummary1;
+      case 2:
+        return l10n.pssSeveritySummary2;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String whodasName({String? override}) => override ?? '';
+  String whodasName({String? override}) => override ?? l10n.whodasName;
 
   @override
-  String whodasShortDescription({String? override}) => override ?? '';
+  String whodasShortDescription({String? override}) =>
+      override ?? l10n.whodasShortDescription;
 
   @override
-  String whodasInstruction({String? override}) => override ?? '';
+  String whodasInstruction({String? override}) =>
+      override ?? l10n.whodasInstruction;
 
   @override
-  String whodasItem(int index, {String? override}) => override ?? '';
+  String whodasItem(int index, {String? override}) {
+    // 题目全文 留 v1.0
+    return override ?? '';
+  }
 
   @override
-  String whodasOption(int score, {String? override}) => override ?? '';
+  String whodasOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.whodasOption0;
+      case 1:
+        return l10n.whodasOption1;
+      case 2:
+        return l10n.whodasOption2;
+      case 3:
+        return l10n.whodasOption3;
+      case 4:
+        return l10n.whodasOption4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String whodasSeverityLabel(int rank, {String? override}) => override ?? '';
+  String whodasSeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.whodasSeverityLabel0;
+      case 1:
+        return l10n.whodasSeverityLabel1;
+      case 2:
+        return l10n.whodasSeverityLabel2;
+      case 3:
+        return l10n.whodasSeverityLabel3;
+      case 4:
+        return l10n.whodasSeverityLabel4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String whodasSeveritySummary(int rank, {String? override}) => override ?? '';
+  String whodasSeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.whodasSeveritySummary0;
+      case 1:
+        return l10n.whodasSeveritySummary1;
+      case 2:
+        return l10n.whodasSeveritySummary2;
+      case 3:
+        return l10n.whodasSeveritySummary3;
+      case 4:
+        return l10n.whodasSeveritySummary4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2DepressionName({String? override}) => override ?? '';
+  String level2DepressionName({String? override}) =>
+      override ?? l10n.level2DepressionName;
 
   @override
-  String level2DepressionShortDescription({String? override}) => override ?? '';
+  String level2DepressionShortDescription({String? override}) =>
+      override ?? l10n.level2DepressionShortDescription;
 
   @override
-  String level2DepressionInstruction({String? override}) => override ?? '';
+  String level2DepressionInstruction({String? override}) =>
+      override ?? l10n.level2DepressionInstruction;
 
   @override
-  String level2DepressionItem(int index, {String? override}) => override ?? '';
+  String level2DepressionItem(int index, {String? override}) {
+    // 题目全文 留 v1.0
+    return override ?? '';
+  }
 
   @override
-  String level2DepressionOption(int score, {String? override}) => override ?? '';
+  String level2DepressionOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.level2DepressionOption0;
+      case 1:
+        return l10n.level2DepressionOption1;
+      case 2:
+        return l10n.level2DepressionOption2;
+      case 3:
+        return l10n.level2DepressionOption3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2DepressionSeverityLabel(int rank, {String? override}) =>
-      override ?? '';
+  String level2DepressionSeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2DepressionSeverityLabel0;
+      case 1:
+        return l10n.level2DepressionSeverityLabel1;
+      case 2:
+        return l10n.level2DepressionSeverityLabel2;
+      case 3:
+        return l10n.level2DepressionSeverityLabel3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2DepressionSeveritySummary(int rank, {String? override}) =>
-      override ?? '';
+  String level2DepressionSeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2DepressionSeveritySummary0;
+      case 1:
+        return l10n.level2DepressionSeveritySummary1;
+      case 2:
+        return l10n.level2DepressionSeveritySummary2;
+      case 3:
+        return l10n.level2DepressionSeveritySummary3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2AnxietyName({String? override}) => override ?? '';
+  String level2AnxietyName({String? override}) =>
+      override ?? l10n.level2AnxietyName;
 
   @override
-  String level2AnxietyShortDescription({String? override}) => override ?? '';
+  String level2AnxietyShortDescription({String? override}) =>
+      override ?? l10n.level2AnxietyShortDescription;
 
   @override
-  String level2AnxietyInstruction({String? override}) => override ?? '';
+  String level2AnxietyInstruction({String? override}) =>
+      override ?? l10n.level2AnxietyInstruction;
 
   @override
-  String level2AnxietyItem(int index, {String? override}) => override ?? '';
+  String level2AnxietyItem(int index, {String? override}) {
+    // 题目全文 留 v1.0
+    return override ?? '';
+  }
 
   @override
-  String level2AnxietyOption(int score, {String? override}) => override ?? '';
+  String level2AnxietyOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.level2AnxietyOption0;
+      case 1:
+        return l10n.level2AnxietyOption1;
+      case 2:
+        return l10n.level2AnxietyOption2;
+      case 3:
+        return l10n.level2AnxietyOption3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2AnxietySeverityLabel(int rank, {String? override}) => override ?? '';
+  String level2AnxietySeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2AnxietySeverityLabel0;
+      case 1:
+        return l10n.level2AnxietySeverityLabel1;
+      case 2:
+        return l10n.level2AnxietySeverityLabel2;
+      case 3:
+        return l10n.level2AnxietySeverityLabel3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2AnxietySeveritySummary(int rank, {String? override}) =>
-      override ?? '';
+  String level2AnxietySeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2AnxietySeveritySummary0;
+      case 1:
+        return l10n.level2AnxietySeveritySummary1;
+      case 2:
+        return l10n.level2AnxietySeveritySummary2;
+      case 3:
+        return l10n.level2AnxietySeveritySummary3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2ManiaName({String? override}) => override ?? '';
+  String level2ManiaName({String? override}) => override ?? l10n.level2ManiaName;
 
   @override
-  String level2ManiaShortDescription({String? override}) => override ?? '';
+  String level2ManiaShortDescription({String? override}) =>
+      override ?? l10n.level2ManiaShortDescription;
 
   @override
-  String level2ManiaInstruction({String? override}) => override ?? '';
+  String level2ManiaInstruction({String? override}) =>
+      override ?? l10n.level2ManiaInstruction;
 
   @override
-  String level2ManiaItem(int index, {String? override}) => override ?? '';
+  String level2ManiaItem(int index, {String? override}) {
+    // 题目全文 留 v1.0
+    return override ?? '';
+  }
 
   @override
-  String level2ManiaOption(int score, {String? override}) => override ?? '';
+  String level2ManiaOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.level2ManiaOption0;
+      case 1:
+        return l10n.level2ManiaOption1;
+      case 2:
+        return l10n.level2ManiaOption2;
+      case 3:
+        return l10n.level2ManiaOption3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2ManiaSeverityLabel(int rank, {String? override}) => override ?? '';
+  String level2ManiaSeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2ManiaSeverityLabel0;
+      case 1:
+        return l10n.level2ManiaSeverityLabel1;
+      case 2:
+        return l10n.level2ManiaSeverityLabel2;
+      case 3:
+        return l10n.level2ManiaSeverityLabel3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2ManiaSeveritySummary(int rank, {String? override}) => override ?? '';
+  String level2ManiaSeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2ManiaSeveritySummary0;
+      case 1:
+        return l10n.level2ManiaSeveritySummary1;
+      case 2:
+        return l10n.level2ManiaSeveritySummary2;
+      case 3:
+        return l10n.level2ManiaSeveritySummary3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String asrmName({String? override}) => override ?? '';
+  String asrmName({String? override}) => override ?? l10n.asrmName;
 
   @override
-  String asrmShortDescription({String? override}) => override ?? '';
+  String asrmShortDescription({String? override}) =>
+      override ?? l10n.asrmShortDescription;
 
   @override
-  String asrmInstruction({String? override}) => override ?? '';
+  String asrmInstruction({String? override}) => override ?? l10n.asrmInstruction;
 
   @override
-  String asrmItem(int index, {String? override}) => override ?? '';
+  String asrmItem(int index, {String? override}) {
+    // 题目全文 留 v1.0
+    return override ?? '';
+  }
 
   @override
-  String asrmOption(int score, {String? override}) => override ?? '';
+  String asrmOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.asrmOption0;
+      case 1:
+        return l10n.asrmOption1;
+      case 2:
+        return l10n.asrmOption2;
+      case 3:
+        return l10n.asrmOption3;
+      case 4:
+        return l10n.asrmOption4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String asrmSeverityLabel(int rank, {String? override}) => override ?? '';
+  String asrmSeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.asrmSeverityLabel0;
+      case 1:
+        return l10n.asrmSeverityLabel1;
+      case 2:
+        return l10n.asrmSeverityLabel2;
+      case 3:
+        return l10n.asrmSeverityLabel3;
+      case 4:
+        return l10n.asrmSeverityLabel4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String asrmSeveritySummary(int rank, {String? override}) => override ?? '';
+  String asrmSeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.asrmSeveritySummary0;
+      case 1:
+        return l10n.asrmSeveritySummary1;
+      case 2:
+        return l10n.asrmSeveritySummary2;
+      case 3:
+        return l10n.asrmSeveritySummary3;
+      case 4:
+        return l10n.asrmSeveritySummary4;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2PsychosisName({String? override}) => override ?? '';
+  String level2PsychosisName({String? override}) =>
+      override ?? l10n.level2PsychosisName;
 
   @override
-  String level2PsychosisShortDescription({String? override}) => override ?? '';
+  String level2PsychosisShortDescription({String? override}) =>
+      override ?? l10n.level2PsychosisShortDescription;
 
   @override
-  String level2PsychosisInstruction({String? override}) => override ?? '';
+  String level2PsychosisInstruction({String? override}) =>
+      override ?? l10n.level2PsychosisInstruction;
 
   @override
-  String level2PsychosisItem(int index, {String? override}) => override ?? '';
+  String level2PsychosisItem(int index, {String? override}) {
+    // 题目全文 留 v1.0
+    return override ?? '';
+  }
 
   @override
-  String level2PsychosisOption(int score, {String? override}) => override ?? '';
+  String level2PsychosisOption(int score, {String? override}) {
+    if (override != null) return override;
+    switch (score) {
+      case 0:
+        return l10n.level2PsychosisOption0;
+      case 1:
+        return l10n.level2PsychosisOption1;
+      case 2:
+        return l10n.level2PsychosisOption2;
+      case 3:
+        return l10n.level2PsychosisOption3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2PsychosisSeverityLabel(int rank, {String? override}) =>
-      override ?? '';
+  String level2PsychosisSeverityLabel(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2PsychosisSeverityLabel0;
+      case 1:
+        return l10n.level2PsychosisSeverityLabel1;
+      case 2:
+        return l10n.level2PsychosisSeverityLabel2;
+      case 3:
+        return l10n.level2PsychosisSeverityLabel3;
+      default:
+        return '';
+    }
+  }
 
   @override
-  String level2PsychosisSeveritySummary(int rank, {String? override}) =>
-      override ?? '';
+  String level2PsychosisSeveritySummary(int rank, {String? override}) {
+    if (override != null) return override;
+    switch (rank) {
+      case 0:
+        return l10n.level2PsychosisSeveritySummary0;
+      case 1:
+        return l10n.level2PsychosisSeveritySummary1;
+      case 2:
+        return l10n.level2PsychosisSeveritySummary2;
+      case 3:
+        return l10n.level2PsychosisSeveritySummary3;
+      default:
+        return '';
+    }
+  }
 }

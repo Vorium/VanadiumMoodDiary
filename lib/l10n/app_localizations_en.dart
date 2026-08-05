@@ -2753,4 +2753,441 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cbtExportPdfFailed => 'PDF export failed, please try again';
+
+  @override
+  String get assessmentCenterTitle => 'Assessment Center';
+
+  @override
+  String assessmentCenterLastScore(int score) {
+    return 'Last score: $score';
+  }
+
+  @override
+  String assessmentCenterLastTime(String time) {
+    return 'Taken on $time';
+  }
+
+  @override
+  String get assessmentCenterNoData => 'No entries yet';
+
+  @override
+  String get assessmentCenterStartButton => 'Start assessment';
+
+  @override
+  String get assessmentCenterMultiLineTitle => 'All scales trend';
+
+  @override
+  String get assessmentCenterNotAvailable => 'Pending legal/clinical review';
+
+  @override
+  String get assessmentCenterComingSoon => 'Coming soon';
+
+  @override
+  String get isiName => 'ISI Insomnia Severity Index';
+
+  @override
+  String get isiShortDescription =>
+      'Morin 1993 Insomnia Severity Index (7 items)';
+
+  @override
+  String get isiInstruction =>
+      'Over the past 2 weeks, how severe has your sleep problem been?';
+
+  @override
+  String get isiOption0 => 'None';
+
+  @override
+  String get isiOption1 => 'Mild';
+
+  @override
+  String get isiOption2 => 'Moderate';
+
+  @override
+  String get isiOption3 => 'Severe';
+
+  @override
+  String get isiOption4 => 'Very severe';
+
+  @override
+  String get isiSeverityLabel0 => 'No insomnia';
+
+  @override
+  String get isiSeverityLabel1 => 'Subthreshold insomnia';
+
+  @override
+  String get isiSeverityLabel2 => 'Moderate insomnia';
+
+  @override
+  String get isiSeverityLabel3 => 'Severe insomnia';
+
+  @override
+  String get isiSeveritySummary0 => 'No clinical insomnia';
+
+  @override
+  String get isiSeveritySummary1 => 'Subclinical insomnia, consider monitoring';
+
+  @override
+  String get isiSeveritySummary2 =>
+      'Moderate insomnia, consider seeing a doctor';
+
+  @override
+  String get isiSeveritySummary3 =>
+      'Severe insomnia, strongly consider seeing a doctor';
+
+  @override
+  String get pssName => 'PSS Perceived Stress Scale';
+
+  @override
+  String get pssShortDescription =>
+      'Cohen 1983 Perceived Stress Scale (10 items, 4 reverse-scored)';
+
+  @override
+  String get pssInstruction =>
+      'In the last month, how often have you felt the following?';
+
+  @override
+  String get pssOption0 => 'Never';
+
+  @override
+  String get pssOption1 => 'Almost never';
+
+  @override
+  String get pssOption2 => 'Sometimes';
+
+  @override
+  String get pssOption3 => 'Fairly often';
+
+  @override
+  String get pssOption4 => 'Very often';
+
+  @override
+  String get pssSeverityLabel0 => 'Low stress';
+
+  @override
+  String get pssSeverityLabel1 => 'Moderate stress';
+
+  @override
+  String get pssSeverityLabel2 => 'High stress';
+
+  @override
+  String get pssSeveritySummary0 => 'Low stress';
+
+  @override
+  String get pssSeveritySummary1 => 'Moderate stress';
+
+  @override
+  String get pssSeveritySummary2 =>
+      'High stress, consider monitoring and seeking support';
+
+  @override
+  String get whodasName => 'WHODAS 2.0 Disability Assessment';
+
+  @override
+  String get whodasShortDescription =>
+      'WHO generic disability assessment, 12-item short version';
+
+  @override
+  String get whodasInstruction =>
+      'Over the past 30 days, how much difficulty did you have in the following activities?';
+
+  @override
+  String get whodasOption0 => 'None';
+
+  @override
+  String get whodasOption1 => 'Mild';
+
+  @override
+  String get whodasOption2 => 'Moderate';
+
+  @override
+  String get whodasOption3 => 'Severe';
+
+  @override
+  String get whodasOption4 => 'Extreme';
+
+  @override
+  String get whodasSeverityLabel0 => 'No disability';
+
+  @override
+  String get whodasSeverityLabel1 => 'Mild disability';
+
+  @override
+  String get whodasSeverityLabel2 => 'Moderate disability';
+
+  @override
+  String get whodasSeverityLabel3 => 'Severe disability';
+
+  @override
+  String get whodasSeverityLabel4 => 'Extreme disability';
+
+  @override
+  String get whodasSeveritySummary0 => 'No disability';
+
+  @override
+  String get whodasSeveritySummary1 => 'Mild disability';
+
+  @override
+  String get whodasSeveritySummary2 =>
+      'Moderate disability, consider medical evaluation';
+
+  @override
+  String get whodasSeveritySummary3 =>
+      'Severe disability, consider seeing a doctor';
+
+  @override
+  String get whodasSeveritySummary4 =>
+      'Extreme disability, strongly consider seeing a doctor';
+
+  @override
+  String get level2DepressionName => 'DSM-5 Level 2 Depression Severity';
+
+  @override
+  String get level2DepressionShortDescription =>
+      'Adult depression severity, 8 items (DSM-5 PROMIS short)';
+
+  @override
+  String get level2DepressionInstruction =>
+      'Over the past 7 days, how often were you bothered by the following feelings?';
+
+  @override
+  String get level2DepressionOption0 => 'Never';
+
+  @override
+  String get level2DepressionOption1 => 'Several days';
+
+  @override
+  String get level2DepressionOption2 => 'More than half the days';
+
+  @override
+  String get level2DepressionOption3 => 'Nearly every day';
+
+  @override
+  String get level2DepressionSeverityLabel0 => 'No depression';
+
+  @override
+  String get level2DepressionSeverityLabel1 => 'Mild depression';
+
+  @override
+  String get level2DepressionSeverityLabel2 => 'Moderate depression';
+
+  @override
+  String get level2DepressionSeverityLabel3 => 'Severe depression';
+
+  @override
+  String get level2DepressionSeveritySummary0 => 'No depression tendency';
+
+  @override
+  String get level2DepressionSeveritySummary1 => 'Mild depression tendency';
+
+  @override
+  String get level2DepressionSeveritySummary2 =>
+      'Moderate depression, consider seeing a doctor';
+
+  @override
+  String get level2DepressionSeveritySummary3 =>
+      'Severe depression, strongly consider seeing a doctor';
+
+  @override
+  String get level2AnxietyName => 'DSM-5 Level 2 Anxiety Severity';
+
+  @override
+  String get level2AnxietyShortDescription =>
+      'Adult anxiety severity, 7 items (DSM-5 PROMIS short)';
+
+  @override
+  String get level2AnxietyInstruction =>
+      'Over the past 7 days, how often were you bothered by the following feelings?';
+
+  @override
+  String get level2AnxietyOption0 => 'Never';
+
+  @override
+  String get level2AnxietyOption1 => 'Several days';
+
+  @override
+  String get level2AnxietyOption2 => 'More than half the days';
+
+  @override
+  String get level2AnxietyOption3 => 'Nearly every day';
+
+  @override
+  String get level2AnxietySeverityLabel0 => 'No anxiety';
+
+  @override
+  String get level2AnxietySeverityLabel1 => 'Mild anxiety';
+
+  @override
+  String get level2AnxietySeverityLabel2 => 'Moderate anxiety';
+
+  @override
+  String get level2AnxietySeverityLabel3 => 'Severe anxiety';
+
+  @override
+  String get level2AnxietySeveritySummary0 => 'No anxiety tendency';
+
+  @override
+  String get level2AnxietySeveritySummary1 => 'Mild anxiety tendency';
+
+  @override
+  String get level2AnxietySeveritySummary2 =>
+      'Moderate anxiety, consider seeing a doctor';
+
+  @override
+  String get level2AnxietySeveritySummary3 =>
+      'Severe anxiety, strongly consider seeing a doctor';
+
+  @override
+  String get level2ManiaName => 'DSM-5 Level 2 Mania Severity';
+
+  @override
+  String get level2ManiaShortDescription =>
+      'Adult mania severity, 5 items (DSM-5 PROMIS short)';
+
+  @override
+  String get level2ManiaInstruction =>
+      'Over the past 7 days, how often did you experience the following?';
+
+  @override
+  String get level2ManiaOption0 => 'Never';
+
+  @override
+  String get level2ManiaOption1 => 'Several days';
+
+  @override
+  String get level2ManiaOption2 => 'More than half the days';
+
+  @override
+  String get level2ManiaOption3 => 'Nearly every day';
+
+  @override
+  String get level2ManiaSeverityLabel0 => 'No mania';
+
+  @override
+  String get level2ManiaSeverityLabel1 => 'Mild mania';
+
+  @override
+  String get level2ManiaSeverityLabel2 => 'Moderate mania';
+
+  @override
+  String get level2ManiaSeverityLabel3 => 'Severe mania';
+
+  @override
+  String get level2ManiaSeveritySummary0 => 'No mania tendency';
+
+  @override
+  String get level2ManiaSeveritySummary1 => 'Mild mania tendency';
+
+  @override
+  String get level2ManiaSeveritySummary2 =>
+      'Moderate mania, consider seeing a doctor';
+
+  @override
+  String get level2ManiaSeveritySummary3 =>
+      'Severe mania, strongly consider seeing a doctor';
+
+  @override
+  String get asrmName => 'ASRM Altman Self-Rating Mania Scale';
+
+  @override
+  String get asrmShortDescription =>
+      'Altman 1997 Self-Rating Mania Scale (5 items)';
+
+  @override
+  String get asrmInstruction =>
+      'Over the past week, to what extent have you experienced (or felt) the following?';
+
+  @override
+  String get asrmOption0 => 'Not at all';
+
+  @override
+  String get asrmOption1 => 'Mild';
+
+  @override
+  String get asrmOption2 => 'Moderate';
+
+  @override
+  String get asrmOption3 => 'Marked';
+
+  @override
+  String get asrmOption4 => 'Severe';
+
+  @override
+  String get asrmSeverityLabel0 => 'No symptoms';
+
+  @override
+  String get asrmSeverityLabel1 => 'Mild';
+
+  @override
+  String get asrmSeverityLabel2 => 'Moderate';
+
+  @override
+  String get asrmSeverityLabel3 => 'Severe';
+
+  @override
+  String get asrmSeverityLabel4 => 'Extreme';
+
+  @override
+  String get asrmSeveritySummary0 => 'No symptoms';
+
+  @override
+  String get asrmSeveritySummary1 => 'Mild mania tendency';
+
+  @override
+  String get asrmSeveritySummary2 => 'Moderate mania, consider seeing a doctor';
+
+  @override
+  String get asrmSeveritySummary3 => 'Severe mania, consider seeing a doctor';
+
+  @override
+  String get asrmSeveritySummary4 =>
+      'Extreme mania, strongly consider seeing a doctor';
+
+  @override
+  String get level2PsychosisName => 'DSM-5 Level 2 Psychotic Symptoms';
+
+  @override
+  String get level2PsychosisShortDescription =>
+      'Adult psychotic symptoms, 8 items (DSM-5 short)';
+
+  @override
+  String get level2PsychosisInstruction =>
+      'Over the past 7 days, how often did you experience the following?';
+
+  @override
+  String get level2PsychosisOption0 => 'Never';
+
+  @override
+  String get level2PsychosisOption1 => 'Rarely';
+
+  @override
+  String get level2PsychosisOption2 => 'Sometimes';
+
+  @override
+  String get level2PsychosisOption3 => 'Often';
+
+  @override
+  String get level2PsychosisSeverityLabel0 => 'No symptoms';
+
+  @override
+  String get level2PsychosisSeverityLabel1 => 'Mild';
+
+  @override
+  String get level2PsychosisSeverityLabel2 => 'Moderate';
+
+  @override
+  String get level2PsychosisSeverityLabel3 => 'Severe';
+
+  @override
+  String get level2PsychosisSeveritySummary0 => 'No psychotic symptoms';
+
+  @override
+  String get level2PsychosisSeveritySummary1 => 'Mild psychotic symptoms';
+
+  @override
+  String get level2PsychosisSeveritySummary2 =>
+      'Moderate psychotic symptoms, consider seeing a doctor';
+
+  @override
+  String get level2PsychosisSeveritySummary3 =>
+      'Severe psychotic symptoms, strongly consider seeing a doctor';
 }

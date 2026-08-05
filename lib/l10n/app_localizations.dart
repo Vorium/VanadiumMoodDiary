@@ -4816,6 +4816,810 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'PDF 导出失败,请重试'**
   String get cbtExportPdfFailed;
+
+  /// Assessment center page title
+  ///
+  /// In zh, this message translates to:
+  /// **'量表中心'**
+  String get assessmentCenterTitle;
+
+  /// Last assessment score (placeholder {score} is the numeric total)
+  ///
+  /// In zh, this message translates to:
+  /// **'上次 {score} 分'**
+  String assessmentCenterLastScore(int score);
+
+  /// When the last assessment was taken (placeholder {time} is the formatted date)
+  ///
+  /// In zh, this message translates to:
+  /// **'{time} 填写'**
+  String assessmentCenterLastTime(String time);
+
+  /// Empty state for assessment card when user has not yet taken the scale
+  ///
+  /// In zh, this message translates to:
+  /// **'尚未填写过'**
+  String get assessmentCenterNoData;
+
+  /// Button on assessment card to start filling the scale
+  ///
+  /// In zh, this message translates to:
+  /// **'开始评估'**
+  String get assessmentCenterStartButton;
+
+  /// Multi-line trend chart title showing all scales at once
+  ///
+  /// In zh, this message translates to:
+  /// **'全部量表趋势'**
+  String get assessmentCenterMultiLineTitle;
+
+  /// Unavailable scale card reason (NSESSS / CRDPSS)
+  ///
+  /// In zh, this message translates to:
+  /// **'需法务/临床审核'**
+  String get assessmentCenterNotAvailable;
+
+  /// Coming soon status label for unavailable scale cards
+  ///
+  /// In zh, this message translates to:
+  /// **'敬请期待'**
+  String get assessmentCenterComingSoon;
+
+  /// ISI Insomnia Severity Index scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'ISI 失眠严重指数'**
+  String get isiName;
+
+  /// ISI Insomnia Severity Index short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'Morin 1993 失眠严重指数 7 题'**
+  String get isiShortDescription;
+
+  /// ISI Insomnia Severity Index top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 2 周内, 您的睡眠问题有多严重?'**
+  String get isiInstruction;
+
+  /// ISI Insomnia Severity Index option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'无'**
+  String get isiOption0;
+
+  /// ISI Insomnia Severity Index option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度'**
+  String get isiOption1;
+
+  /// ISI Insomnia Severity Index option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度'**
+  String get isiOption2;
+
+  /// ISI Insomnia Severity Index option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度'**
+  String get isiOption3;
+
+  /// ISI Insomnia Severity Index option 4 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'极重度'**
+  String get isiOption4;
+
+  /// ISI Insomnia Severity Index severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'无失眠'**
+  String get isiSeverityLabel0;
+
+  /// ISI Insomnia Severity Index severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'阈下失眠'**
+  String get isiSeverityLabel1;
+
+  /// ISI Insomnia Severity Index severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度失眠'**
+  String get isiSeverityLabel2;
+
+  /// ISI Insomnia Severity Index severity label rank 3 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度失眠'**
+  String get isiSeverityLabel3;
+
+  /// ISI Insomnia Severity Index severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'无临床失眠'**
+  String get isiSeveritySummary0;
+
+  /// ISI Insomnia Severity Index severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'亚临床失眠, 建议关注'**
+  String get isiSeveritySummary1;
+
+  /// ISI Insomnia Severity Index severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度失眠, 建议就医'**
+  String get isiSeveritySummary2;
+
+  /// ISI Insomnia Severity Index severity summary rank 3 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度失眠, 强烈建议就医'**
+  String get isiSeveritySummary3;
+
+  /// PSS Perceived Stress Scale scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'PSS 压力量表'**
+  String get pssName;
+
+  /// PSS Perceived Stress Scale short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'Cohen 1983 压力量表 (10 题, 含 4 题反向)'**
+  String get pssShortDescription;
+
+  /// PSS Perceived Stress Scale top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 1 个月里, 您有多经常有下列感受?'**
+  String get pssInstruction;
+
+  /// PSS Perceived Stress Scale option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'从未'**
+  String get pssOption0;
+
+  /// PSS Perceived Stress Scale option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎不'**
+  String get pssOption1;
+
+  /// PSS Perceived Stress Scale option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'有时'**
+  String get pssOption2;
+
+  /// PSS Perceived Stress Scale option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'经常'**
+  String get pssOption3;
+
+  /// PSS Perceived Stress Scale option 4 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'总是'**
+  String get pssOption4;
+
+  /// PSS Perceived Stress Scale severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'低压力'**
+  String get pssSeverityLabel0;
+
+  /// PSS Perceived Stress Scale severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度压力'**
+  String get pssSeverityLabel1;
+
+  /// PSS Perceived Stress Scale severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'高压力'**
+  String get pssSeverityLabel2;
+
+  /// PSS Perceived Stress Scale severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'低压力'**
+  String get pssSeveritySummary0;
+
+  /// PSS Perceived Stress Scale severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度压力'**
+  String get pssSeveritySummary1;
+
+  /// PSS Perceived Stress Scale severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'高压力, 建议关注和寻求支持'**
+  String get pssSeveritySummary2;
+
+  /// WHODAS 2.0 Disability Assessment scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'WHODAS 2.0 残疾评定'**
+  String get whodasName;
+
+  /// WHODAS 2.0 Disability Assessment short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'WHO 通用残疾评估 12 题简化版'**
+  String get whodasShortDescription;
+
+  /// WHODAS 2.0 Disability Assessment top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 30 天内, 您在以下活动中遇到多大困难?'**
+  String get whodasInstruction;
+
+  /// WHODAS 2.0 Disability Assessment option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'没有'**
+  String get whodasOption0;
+
+  /// WHODAS 2.0 Disability Assessment option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻微'**
+  String get whodasOption1;
+
+  /// WHODAS 2.0 Disability Assessment option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度'**
+  String get whodasOption2;
+
+  /// WHODAS 2.0 Disability Assessment option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度'**
+  String get whodasOption3;
+
+  /// WHODAS 2.0 Disability Assessment option 4 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'极重度'**
+  String get whodasOption4;
+
+  /// WHODAS 2.0 Disability Assessment severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'无残疾'**
+  String get whodasSeverityLabel0;
+
+  /// WHODAS 2.0 Disability Assessment severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度残疾'**
+  String get whodasSeverityLabel1;
+
+  /// WHODAS 2.0 Disability Assessment severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度残疾'**
+  String get whodasSeverityLabel2;
+
+  /// WHODAS 2.0 Disability Assessment severity label rank 3 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度残疾'**
+  String get whodasSeverityLabel3;
+
+  /// WHODAS 2.0 Disability Assessment severity label rank 4 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'极重度残疾'**
+  String get whodasSeverityLabel4;
+
+  /// WHODAS 2.0 Disability Assessment severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'无残疾'**
+  String get whodasSeveritySummary0;
+
+  /// WHODAS 2.0 Disability Assessment severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度残疾'**
+  String get whodasSeveritySummary1;
+
+  /// WHODAS 2.0 Disability Assessment severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度残疾, 建议就医评估'**
+  String get whodasSeveritySummary2;
+
+  /// WHODAS 2.0 Disability Assessment severity summary rank 3 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度残疾, 建议就医'**
+  String get whodasSeveritySummary3;
+
+  /// WHODAS 2.0 Disability Assessment severity summary rank 4 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'极重度残疾, 强烈建议就医'**
+  String get whodasSeveritySummary4;
+
+  /// DSM-5 Level 2 Depression Severity scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'DSM-5 Level 2 抑郁严重度'**
+  String get level2DepressionName;
+
+  /// DSM-5 Level 2 Depression Severity short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)'**
+  String get level2DepressionShortDescription;
+
+  /// DSM-5 Level 2 Depression Severity top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 7 天内, 您有多经常被以下情绪困扰?'**
+  String get level2DepressionInstruction;
+
+  /// DSM-5 Level 2 Depression Severity option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'完全没有'**
+  String get level2DepressionOption0;
+
+  /// DSM-5 Level 2 Depression Severity option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'几天'**
+  String get level2DepressionOption1;
+
+  /// DSM-5 Level 2 Depression Severity option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'一半以上的天数'**
+  String get level2DepressionOption2;
+
+  /// DSM-5 Level 2 Depression Severity option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎每天'**
+  String get level2DepressionOption3;
+
+  /// DSM-5 Level 2 Depression Severity severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'无抑郁'**
+  String get level2DepressionSeverityLabel0;
+
+  /// DSM-5 Level 2 Depression Severity severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度抑郁'**
+  String get level2DepressionSeverityLabel1;
+
+  /// DSM-5 Level 2 Depression Severity severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度抑郁'**
+  String get level2DepressionSeverityLabel2;
+
+  /// DSM-5 Level 2 Depression Severity severity label rank 3 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度抑郁'**
+  String get level2DepressionSeverityLabel3;
+
+  /// DSM-5 Level 2 Depression Severity severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'无抑郁倾向'**
+  String get level2DepressionSeveritySummary0;
+
+  /// DSM-5 Level 2 Depression Severity severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度抑郁倾向'**
+  String get level2DepressionSeveritySummary1;
+
+  /// DSM-5 Level 2 Depression Severity severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度抑郁, 建议就医'**
+  String get level2DepressionSeveritySummary2;
+
+  /// DSM-5 Level 2 Depression Severity severity summary rank 3 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度抑郁, 强烈建议就医'**
+  String get level2DepressionSeveritySummary3;
+
+  /// DSM-5 Level 2 Anxiety Severity scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'DSM-5 Level 2 焦虑严重度'**
+  String get level2AnxietyName;
+
+  /// DSM-5 Level 2 Anxiety Severity short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)'**
+  String get level2AnxietyShortDescription;
+
+  /// DSM-5 Level 2 Anxiety Severity top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 7 天内, 您有多经常被以下感受困扰?'**
+  String get level2AnxietyInstruction;
+
+  /// DSM-5 Level 2 Anxiety Severity option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'完全没有'**
+  String get level2AnxietyOption0;
+
+  /// DSM-5 Level 2 Anxiety Severity option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'几天'**
+  String get level2AnxietyOption1;
+
+  /// DSM-5 Level 2 Anxiety Severity option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'一半以上的天数'**
+  String get level2AnxietyOption2;
+
+  /// DSM-5 Level 2 Anxiety Severity option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎每天'**
+  String get level2AnxietyOption3;
+
+  /// DSM-5 Level 2 Anxiety Severity severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'无焦虑'**
+  String get level2AnxietySeverityLabel0;
+
+  /// DSM-5 Level 2 Anxiety Severity severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度焦虑'**
+  String get level2AnxietySeverityLabel1;
+
+  /// DSM-5 Level 2 Anxiety Severity severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度焦虑'**
+  String get level2AnxietySeverityLabel2;
+
+  /// DSM-5 Level 2 Anxiety Severity severity label rank 3 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度焦虑'**
+  String get level2AnxietySeverityLabel3;
+
+  /// DSM-5 Level 2 Anxiety Severity severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'无焦虑倾向'**
+  String get level2AnxietySeveritySummary0;
+
+  /// DSM-5 Level 2 Anxiety Severity severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度焦虑倾向'**
+  String get level2AnxietySeveritySummary1;
+
+  /// DSM-5 Level 2 Anxiety Severity severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度焦虑, 建议就医'**
+  String get level2AnxietySeveritySummary2;
+
+  /// DSM-5 Level 2 Anxiety Severity severity summary rank 3 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度焦虑, 强烈建议就医'**
+  String get level2AnxietySeveritySummary3;
+
+  /// DSM-5 Level 2 Mania Severity scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'DSM-5 Level 2 躁狂严重度'**
+  String get level2ManiaName;
+
+  /// DSM-5 Level 2 Mania Severity short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)'**
+  String get level2ManiaShortDescription;
+
+  /// DSM-5 Level 2 Mania Severity top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 7 天内, 您有多经常体验以下情况?'**
+  String get level2ManiaInstruction;
+
+  /// DSM-5 Level 2 Mania Severity option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'完全没有'**
+  String get level2ManiaOption0;
+
+  /// DSM-5 Level 2 Mania Severity option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'几天'**
+  String get level2ManiaOption1;
+
+  /// DSM-5 Level 2 Mania Severity option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'一半以上的天数'**
+  String get level2ManiaOption2;
+
+  /// DSM-5 Level 2 Mania Severity option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'几乎每天'**
+  String get level2ManiaOption3;
+
+  /// DSM-5 Level 2 Mania Severity severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'无躁狂'**
+  String get level2ManiaSeverityLabel0;
+
+  /// DSM-5 Level 2 Mania Severity severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度躁狂'**
+  String get level2ManiaSeverityLabel1;
+
+  /// DSM-5 Level 2 Mania Severity severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度躁狂'**
+  String get level2ManiaSeverityLabel2;
+
+  /// DSM-5 Level 2 Mania Severity severity label rank 3 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度躁狂'**
+  String get level2ManiaSeverityLabel3;
+
+  /// DSM-5 Level 2 Mania Severity severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'无躁狂倾向'**
+  String get level2ManiaSeveritySummary0;
+
+  /// DSM-5 Level 2 Mania Severity severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度躁狂倾向'**
+  String get level2ManiaSeveritySummary1;
+
+  /// DSM-5 Level 2 Mania Severity severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度躁狂, 建议就医'**
+  String get level2ManiaSeveritySummary2;
+
+  /// DSM-5 Level 2 Mania Severity severity summary rank 3 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度躁狂, 强烈建议就医'**
+  String get level2ManiaSeveritySummary3;
+
+  /// ASRM Altman Self-Rating Mania Scale scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'ASRM 自评躁狂量表'**
+  String get asrmName;
+
+  /// ASRM Altman Self-Rating Mania Scale short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'Altman 1997 自评躁狂量表 (5 题)'**
+  String get asrmShortDescription;
+
+  /// ASRM Altman Self-Rating Mania Scale top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 1 周内, 您有 (或感觉到) 以下情况的程度?'**
+  String get asrmInstruction;
+
+  /// ASRM Altman Self-Rating Mania Scale option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'完全没有'**
+  String get asrmOption0;
+
+  /// ASRM Altman Self-Rating Mania Scale option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻微'**
+  String get asrmOption1;
+
+  /// ASRM Altman Self-Rating Mania Scale option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度'**
+  String get asrmOption2;
+
+  /// ASRM Altman Self-Rating Mania Scale option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'明显'**
+  String get asrmOption3;
+
+  /// ASRM Altman Self-Rating Mania Scale option 4 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'严重'**
+  String get asrmOption4;
+
+  /// ASRM Altman Self-Rating Mania Scale severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'无症状'**
+  String get asrmSeverityLabel0;
+
+  /// ASRM Altman Self-Rating Mania Scale severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度'**
+  String get asrmSeverityLabel1;
+
+  /// ASRM Altman Self-Rating Mania Scale severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度'**
+  String get asrmSeverityLabel2;
+
+  /// ASRM Altman Self-Rating Mania Scale severity label rank 3 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度'**
+  String get asrmSeverityLabel3;
+
+  /// ASRM Altman Self-Rating Mania Scale severity label rank 4 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'极重度'**
+  String get asrmSeverityLabel4;
+
+  /// ASRM Altman Self-Rating Mania Scale severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'无症状'**
+  String get asrmSeveritySummary0;
+
+  /// ASRM Altman Self-Rating Mania Scale severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度躁狂倾向'**
+  String get asrmSeveritySummary1;
+
+  /// ASRM Altman Self-Rating Mania Scale severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度躁狂, 建议就医'**
+  String get asrmSeveritySummary2;
+
+  /// ASRM Altman Self-Rating Mania Scale severity summary rank 3 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度躁狂, 建议就医'**
+  String get asrmSeveritySummary3;
+
+  /// ASRM Altman Self-Rating Mania Scale severity summary rank 4 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'极重度躁狂, 强烈建议就医'**
+  String get asrmSeveritySummary4;
+
+  /// DSM-5 Level 2 Psychotic Symptoms scale name
+  ///
+  /// In zh, this message translates to:
+  /// **'DSM-5 Level 2 精神病性症状'**
+  String get level2PsychosisName;
+
+  /// DSM-5 Level 2 Psychotic Symptoms short description for cards/list
+  ///
+  /// In zh, this message translates to:
+  /// **'成人精神病性症状 8 题 (DSM-5 简化版)'**
+  String get level2PsychosisShortDescription;
+
+  /// DSM-5 Level 2 Psychotic Symptoms top instruction before items
+  ///
+  /// In zh, this message translates to:
+  /// **'过去 7 天内, 您有多经常体验以下情况?'**
+  String get level2PsychosisInstruction;
+
+  /// DSM-5 Level 2 Psychotic Symptoms option 0 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'从来没有'**
+  String get level2PsychosisOption0;
+
+  /// DSM-5 Level 2 Psychotic Symptoms option 1 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'很少'**
+  String get level2PsychosisOption1;
+
+  /// DSM-5 Level 2 Psychotic Symptoms option 2 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'有时'**
+  String get level2PsychosisOption2;
+
+  /// DSM-5 Level 2 Psychotic Symptoms option 3 (0-based)
+  ///
+  /// In zh, this message translates to:
+  /// **'经常'**
+  String get level2PsychosisOption3;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity label rank 0 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'无症状'**
+  String get level2PsychosisSeverityLabel0;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity label rank 1 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度'**
+  String get level2PsychosisSeverityLabel1;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity label rank 2 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度'**
+  String get level2PsychosisSeverityLabel2;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity label rank 3 (short, for charts)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度'**
+  String get level2PsychosisSeverityLabel3;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity summary rank 0 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'无精神病性症状'**
+  String get level2PsychosisSeveritySummary0;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity summary rank 1 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'轻度精神病性症状'**
+  String get level2PsychosisSeveritySummary1;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity summary rank 2 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'中度精神病性症状, 建议就医'**
+  String get level2PsychosisSeveritySummary2;
+
+  /// DSM-5 Level 2 Psychotic Symptoms severity summary rank 3 (full, for result page)
+  ///
+  /// In zh, this message translates to:
+  /// **'重度精神病性症状, 强烈建议就医'**
+  String get level2PsychosisSeveritySummary3;
 }
 
 class _AppLocalizationsDelegate
