@@ -1527,5 +1527,12 @@
   "moodCbtAlternativePrompt1": "What's the most realistic outcome?",
   "moodCbtBehaviorPrompt0": "Take 5 deep breaths",
   "moodCbtBehaviorPrompt1": "Talk to someone you trust",
-  "moodCbtBehaviorPrompt2": "Try 10 minutes of mindfulness"
+  "moodCbtBehaviorPrompt2": "Try 10 minutes of mindfulness",
+  "moodListFilterDate": "Date",
+  "moodListFilterScore": "Score",
+  "moodListFilterCbt": "CBT level",
+  "moodListSortBy": "Sort by",
+  "moodListSortTimestamp": "Newest first",
+  "moodListSortScoreAsc": "Score ascending",
+  "moodListSortScoreDesc": "Score descending"
 }

@@ -1569,5 +1569,12 @@
   "moodCbtAlternativePrompt1": "最现实的结果是什么？",
   "moodCbtBehaviorPrompt0": "深呼吸 5 次",
   "moodCbtBehaviorPrompt1": "与信任的人聊聊",
-  "moodCbtBehaviorPrompt2": "做 10 分钟正念"
+  "moodCbtBehaviorPrompt2": "做 10 分钟正念",
+  "moodListFilterDate": "日期",
+  "moodListFilterScore": "分数",
+  "moodListFilterCbt": "CBT 档位",
+  "moodListSortBy": "排序",
+  "moodListSortTimestamp": "时间倒序",
+  "moodListSortScoreAsc": "分数升序",
+  "moodListSortScoreDesc": "分数降序"
 }

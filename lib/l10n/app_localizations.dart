@@ -4714,6 +4714,48 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'做 10 分钟正念'**
   String get moodCbtBehaviorPrompt2;
+
+  /// No description provided for @moodListFilterDate.
+  ///
+  /// In zh, this message translates to:
+  /// **'日期'**
+  String get moodListFilterDate;
+
+  /// No description provided for @moodListFilterScore.
+  ///
+  /// In zh, this message translates to:
+  /// **'分数'**
+  String get moodListFilterScore;
+
+  /// No description provided for @moodListFilterCbt.
+  ///
+  /// In zh, this message translates to:
+  /// **'CBT 档位'**
+  String get moodListFilterCbt;
+
+  /// No description provided for @moodListSortBy.
+  ///
+  /// In zh, this message translates to:
+  /// **'排序'**
+  String get moodListSortBy;
+
+  /// No description provided for @moodListSortTimestamp.
+  ///
+  /// In zh, this message translates to:
+  /// **'时间倒序'**
+  String get moodListSortTimestamp;
+
+  /// No description provided for @moodListSortScoreAsc.
+  ///
+  /// In zh, this message translates to:
+  /// **'分数升序'**
+  String get moodListSortScoreAsc;
+
+  /// No description provided for @moodListSortScoreDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'分数降序'**
+  String get moodListSortScoreDesc;
 }
 
 class _AppLocalizationsDelegate

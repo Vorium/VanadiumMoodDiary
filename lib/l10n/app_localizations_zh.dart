@@ -2560,6 +2560,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodCbtBehaviorPrompt2 => '做 10 分钟正念';
+
+  @override
+  String get moodListFilterDate => '日期';
+
+  @override
+  String get moodListFilterScore => '分数';
+
+  @override
+  String get moodListFilterCbt => 'CBT 档位';
+
+  @override
+  String get moodListSortBy => '排序';
+
+  @override
+  String get moodListSortTimestamp => '时间倒序';
+
+  @override
+  String get moodListSortScoreAsc => '分数升序';
+
+  @override
+  String get moodListSortScoreDesc => '分数降序';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5118,4 +5139,25 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodCbtBehaviorPrompt2 => '做 10 分鐘正念';
+
+  @override
+  String get moodListFilterDate => '日期';
+
+  @override
+  String get moodListFilterScore => '分數';
+
+  @override
+  String get moodListFilterCbt => 'CBT 檔位';
+
+  @override
+  String get moodListSortBy => '排序';
+
+  @override
+  String get moodListSortTimestamp => '時間倒序';
+
+  @override
+  String get moodListSortScoreAsc => '分數升序';
+
+  @override
+  String get moodListSortScoreDesc => '分數降序';
 }

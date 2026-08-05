@@ -2698,4 +2698,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodCbtBehaviorPrompt2 => 'Try 10 minutes of mindfulness';
+
+  @override
+  String get moodListFilterDate => 'Date';
+
+  @override
+  String get moodListFilterScore => 'Score';
+
+  @override
+  String get moodListFilterCbt => 'CBT level';
+
+  @override
+  String get moodListSortBy => 'Sort by';
+
+  @override
+  String get moodListSortTimestamp => 'Newest first';
+
+  @override
+  String get moodListSortScoreAsc => 'Score ascending';
+
+  @override
+  String get moodListSortScoreDesc => 'Score descending';
 }
