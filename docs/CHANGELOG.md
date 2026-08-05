@@ -2,6 +2,67 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-05 (R87 — sub-spec 3, mood 列表页 + filter + search + sort + 12 ARB keys)
+
+> R87 目标: sub-spec 1 (R84) 把 CBT 思维记录 5/7 栏落地, sub-spec 2 (R85) 把
+> 重评效果折线图接进 trend page, sub-spec 3 本轮把"mood 历史列表"补齐
+> — 用户能进 mood 列表页, 看到所有 mood entries (3/5/7 栏混合),
+> 配合 date / score / cbt level filter + note 搜索 + 3 种 sort, 找到目标 entry。
+>
+> **5 个 task** (每个 1 commit, 共 5 commit, +11 test):
+> - Task 1: `moodListFilterProvider` (Notifier) + `filteredMoodEntriesProvider` (Provider) — filter + search + sort pipeline
+> - Task 2: `MoodListItem` widget — 单行 entry 渲染 (timestamp + score + note + CBT badge)
+> - Task 3: `MoodListFilterBar` widget — 3 filter chips (日期/分数/CBT) + sort dropdown
+> - Task 4: `MoodListPage` orchestrator + home 入口 + `/mood-list` 路由 + 5 ARB keys
+> - Task 5: 12 ARB keys + CHANGELOG + spec/plan (本 commit)
+>
+> **架构边界**:
+> - 复用 R85 task 1 的 `cbtReratedEntriesProvider` 里的 `moodEntriesProvider` sync wrapper (跳过 `allMoodProvider` StreamProvider), 测试直接 override
+> - `MoodListFilter` immutable + `copyWith` (跟 R84 `CbtDraftState` 风格一致)
+> - 复用 `MoodVisual` + `AppTokens` (跟 trend_calendar `DayDetailCard` 同款视觉 token)
+> - 复用 `domain/entities/mood_entry_entity.dart` 的 `cbtLevel` getter (R86 修过 5-check 覆盖完整 6 个 5/7 栏共享字段)
+> - 隐私: 树洞 (vent) / 安全 (SafetyWatch) 不受影响 — mood 列表只读 mood_entries
+
+### Added
+- **Mood 列表页 (MoodListPage)**:
+  - 新增 `MoodListFilter` immutable class (dateRange / minScore / maxScore / cbtLevel / searchQuery / sort)
+  - 新增 `MoodListSort` enum (timestampDesc / scoreAsc / scoreDesc)
+  - 新增 `moodListFilterProvider` (NotifierProvider) — `setSearchQuery` / `setDateRange` / `setMinScore` / `setMaxScore` / `setCbtLevel` / `setSort` / `reset`
+  - 新增 `filteredMoodEntriesProvider` (Provider<List<MoodEntryEntity>>) — pure filter pipeline
+  - 新增 `MoodListItem` widget — timestamp + score emoji + note preview + CBT 5/7 栏 badge
+  - 新增 `MoodListFilterBar` widget — 3 ActionChip (日期/分数/CBT) + PopupMenuButton sort
+  - 新增 `MoodListPage` orchestrator — TextField search + FilterBar + ListView + 2 EmptyState
+  - 新增 `/mood-list` 路由 (CustomTransitionPage fade)
+  - home 主页加 "📋 Mood 历史" 入口 → `context.push('/mood-list')`
+  - 12 个新 ARB key (zh / en / zh_Hant):
+    - `moodListPageTitle` — 页面标题
+    - `moodListSearchHint` — 搜索框 placeholder
+    - `moodListFilterDate` / `moodListFilterScore` / `moodListFilterCbt` — 3 filter chip label
+    - `moodListSortBy` / `moodListSortTimestamp` / `moodListSortScoreAsc` / `moodListSortScoreDesc` — sort dropdown
+    - `moodListEmpty` / `moodListNoMatch` / `moodListEntryCount` — 空态 + 计数
+
+### Tests
+- **1483/1483 pass** (R86 1472 + R87 +11: 4 provider 单元 + 2 widget MoodListItem + 2 widget FilterBar + 3 widget Page 集成; -2 跟 R86 持平)
+- `flutter analyze` 0 error / 0 warning (9 info-level RadioListTile
+  deprecated_member_use 已知, 不修 — 跟 M3 RadioGroup 升级一起做)
+- 16 守门员脚本全绿 (check_arb_keys / check_changelog /
+  check_cross_feature / check_datetime_race / check_datetime_race2 /
+  check_drift_namespace / check_fullwidth_punctuation /
+  check_no_hardcoded_utc / check_no_pua / check_widget_dispose /
+  check_orphan_arb_keys / check_legal_consent / check_sms_release_ready /
+  check_strings_hardcoded / check_zh_hant_consistency / check_all.dart)
+
+### Notes
+- mood 列表 edit / delete / bulk action / export 留待 sub-spec 4-5
+- `filteredMoodEntriesProvider` 走 pure Provider (无 StreamProvider),
+  性能 OK 是因为 mood_entries 表行数预期 < 1000 (单用户年 365 条)
+- 搜索同时匹配 `note` 跟 `tagsJson` 字符串, 不搜 5/7 栏 CBT 文本
+  (用户视角: 列表是"回顾", 重型文本搜索交给 sub-spec 5+ AI 辅助)
+- 12 ARB key 由 Task 3 (7 keys: filterDate/filterScore/filterCbt/sortBy/sortTimestamp/sortScoreAsc/sortScoreDesc) + Task 4 (5 keys: pageTitle/searchHint/empty/noMatch/entryCount) 合并; Task 5 commit 主要是 final review + 守门员 + CHANGELOG
+- 复用 R85 `cbtReratedEntriesProvider` 里加的 `moodEntriesProvider` sync wrapper
+  (R86 没移到 shared_providers, 留 R88+ 集中 PR; 见 R86 Defered)
+- R86 setup_* 16 pre-existing fail 修通, 后续 R87 测试 0 挂
+
 ## [0.30.0] - 2026-08-05 (R85 — CBT 思维记录 sub-spec 2, 重评效果折线图 trend page 集成)
 
 > R85 目标: sub-spec 1 落地 5/7 栏 CBT 思维记录后, 用户填的"重评分数"
