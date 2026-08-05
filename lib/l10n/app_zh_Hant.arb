@@ -1587,6 +1587,21 @@
       }
     }
   },
-  "cbtExportPdfEmpty": "還沒有 5/7 欄 CBT 資料可匯出"
+  "cbtExportPdfEmpty": "還沒有 5/7 欄 CBT 資料可匯出",
+  "cbtExportPdfButton": "匯出 CBT 思維記錄 PDF",
+  "@cbtExportPdfButton": {
+    "description": "settings 資料管理 — 匯出 5/7 欄 CBT 思維記錄為 PDF 的按鈕標題"
+  },
+  "cbtExportPdfDialogTitle": "選擇日期範圍產生 PDF",
+  "cbtExportPdfSuccess": "已匯出 {count} 條 CBT 思維記錄",
+  "@cbtExportPdfSuccess": {
+    "description": "SnackBar 成功提示, 佔位 {count} 表示實際匯出的條數",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cbtExportPdfFailed": "PDF 匯出失敗,請重試"
 }
 

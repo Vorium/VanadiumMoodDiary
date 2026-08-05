@@ -4792,6 +4792,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'还没有 5/7 栏 CBT 数据可导出'**
   String get cbtExportPdfEmpty;
+
+  /// settings 数据管理 — 导出 5/7 栏 CBT 思维记录为 PDF 的按钮标题
+  ///
+  /// In zh, this message translates to:
+  /// **'导出 CBT 思维记录 PDF'**
+  String get cbtExportPdfButton;
+
+  /// No description provided for @cbtExportPdfDialogTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择日期范围生成 PDF'**
+  String get cbtExportPdfDialogTitle;
+
+  /// SnackBar 成功提示, 占位 {count} 表示实际导出的条数
+  ///
+  /// In zh, this message translates to:
+  /// **'已导出 {count} 条 CBT 思维记录'**
+  String cbtExportPdfSuccess(int count);
+
+  /// No description provided for @cbtExportPdfFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'PDF 导出失败,请重试'**
+  String get cbtExportPdfFailed;
 }
 
 class _AppLocalizationsDelegate

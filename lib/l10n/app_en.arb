@@ -1548,5 +1548,20 @@
       }
     }
   },
-  "cbtExportPdfEmpty": "No 5/7-column CBT data available to export"
+  "cbtExportPdfEmpty": "No 5/7-column CBT data available to export",
+  "cbtExportPdfButton": "Export CBT thought record PDF",
+  "@cbtExportPdfButton": {
+    "description": "Settings data management — button to export 5/7-column CBT thought records as PDF"
+  },
+  "cbtExportPdfDialogTitle": "Pick a date range to generate the PDF",
+  "cbtExportPdfSuccess": "Exported {count} CBT thought record(s)",
+  "@cbtExportPdfSuccess": {
+    "description": "SnackBar success message, placeholder {count} = number of records exported",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cbtExportPdfFailed": "PDF export failed, please try again"
 }

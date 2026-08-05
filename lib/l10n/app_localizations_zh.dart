@@ -2601,6 +2601,20 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cbtExportPdfEmpty => '还没有 5/7 栏 CBT 数据可导出';
+
+  @override
+  String get cbtExportPdfButton => '导出 CBT 思维记录 PDF';
+
+  @override
+  String get cbtExportPdfDialogTitle => '选择日期范围生成 PDF';
+
+  @override
+  String cbtExportPdfSuccess(int count) {
+    return '已导出 $count 条 CBT 思维记录';
+  }
+
+  @override
+  String get cbtExportPdfFailed => 'PDF 导出失败,请重试';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5200,4 +5214,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get cbtExportPdfEmpty => '還沒有 5/7 欄 CBT 資料可匯出';
+
+  @override
+  String get cbtExportPdfButton => '匯出 CBT 思維記錄 PDF';
+
+  @override
+  String get cbtExportPdfDialogTitle => '選擇日期範圍產生 PDF';
+
+  @override
+  String cbtExportPdfSuccess(int count) {
+    return '已匯出 $count 條 CBT 思維記錄';
+  }
+
+  @override
+  String get cbtExportPdfFailed => 'PDF 匯出失敗,請重試';
 }

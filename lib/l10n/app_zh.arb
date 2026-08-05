@@ -1590,5 +1590,20 @@
       }
     }
   },
-  "cbtExportPdfEmpty": "还没有 5/7 栏 CBT 数据可导出"
+  "cbtExportPdfEmpty": "还没有 5/7 栏 CBT 数据可导出",
+  "cbtExportPdfButton": "导出 CBT 思维记录 PDF",
+  "@cbtExportPdfButton": {
+    "description": "settings 数据管理 — 导出 5/7 栏 CBT 思维记录为 PDF 的按钮标题"
+  },
+  "cbtExportPdfDialogTitle": "选择日期范围生成 PDF",
+  "cbtExportPdfSuccess": "已导出 {count} 条 CBT 思维记录",
+  "@cbtExportPdfSuccess": {
+    "description": "SnackBar 成功提示, 占位 {count} 表示实际导出的条数",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cbtExportPdfFailed": "PDF 导出失败,请重试"
 }

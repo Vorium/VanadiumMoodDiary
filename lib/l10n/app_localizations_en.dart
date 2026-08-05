@@ -2739,4 +2739,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cbtExportPdfEmpty => 'No 5/7-column CBT data available to export';
+
+  @override
+  String get cbtExportPdfButton => 'Export CBT thought record PDF';
+
+  @override
+  String get cbtExportPdfDialogTitle => 'Pick a date range to generate the PDF';
+
+  @override
+  String cbtExportPdfSuccess(int count) {
+    return 'Exported $count CBT thought record(s)';
+  }
+
+  @override
+  String get cbtExportPdfFailed => 'PDF export failed, please try again';
 }
