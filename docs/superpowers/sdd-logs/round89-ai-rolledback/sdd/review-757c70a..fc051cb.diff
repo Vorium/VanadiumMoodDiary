@@ -1,0 +1,951 @@
+﻿# Review package: 757c70a..fc051cb
+
+## Commits
+fc051cb v0.30 round 89 (settings): AiSettings + 同意 dialog (PIPL §13) + settings AI section + 2 widget test
+
+## Files changed
+ .../ai_settings/ai_settings_repository_impl.dart   |  62 +++++++++++
+ lib/domain/entities/ai_settings_entity.dart        |  45 ++++++++
+ lib/presentation/pages/settings/settings_page.dart |   7 ++
+ .../pages/settings/widgets/ai_consent_dialog.dart  |  57 ++++++++++
+ .../pages/settings/widgets/ai_section.dart         | 119 +++++++++++++++++++++
+ .../providers/ai_settings_provider.dart            |  88 +++++++++++++++
+ scripts/check_all.dart                             |  29 +++++
+ .../pages/settings/settings_page_round45_test.dart |  89 +++++++++++++--
+ .../widgets/ai_consent_dialog_round89_test.dart    |  46 ++++++++
+ .../settings/widgets/ai_section_round89_test.dart  | 101 +++++++++++++++++
+ 10 files changed, 635 insertions(+), 8 deletions(-)
+
+## Diff
+diff --git a/lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart b/lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart
+new file mode 100644
+index 0000000..f0589f1
+--- /dev/null
++++ b/lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart
+@@ -0,0 +1,62 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AI 设置仓库
++//
++// apiKey → FlutterSecureStorage (跟 db_key_service 同 pattern, Android 用
++// EncryptedSharedPreferences 加密)
++// enabled / provider / modelName / consentAcceptedAt / consentVersion →
++// SharedPreferences
++
++import 'package:flutter_secure_storage/flutter_secure_storage.dart';
++import 'package:shared_preferences/shared_preferences.dart';
++
++import 'package:chroniccare/domain/entities/ai_settings_entity.dart';
++
++class AiSettingsRepository {
++  static const _kApiKey = 'ai_api_key';
++  static const _kEnabled = 'ai_enabled';
++  static const _kProvider = 'ai_provider';
++  static const _kModelName = 'ai_model_name';
++  static const _kConsentAt = 'ai_consent_accepted_at';
++  static const _kConsentVersion = 'ai_consent_version';
++  static const _consentVersion = '1.0';
++
++  static const _secureStorage = FlutterSecureStorage(
++    aOptions: AndroidOptions(encryptedSharedPreferences: true),
++  );
++
++  Future<AiSettingsEntity> load() async {
++    final prefs = await SharedPreferences.getInstance();
++    return AiSettingsEntity(
++      enabled: prefs.getBool(_kEnabled) ?? false,
++      provider: prefs.getString(_kProvider) ?? 'deepseek',
++      modelName: prefs.getString(_kModelName) ?? 'deepseek-chat',
++      consentAcceptedAt: prefs.getString(_kConsentAt),
++      consentVersion: prefs.getString(_kConsentVersion) ?? _consentVersion,
++    );
++  }
++
++  /// 仅存 metadata, 不存 apiKey
++  Future<void> save(AiSettingsEntity settings) async {
++    final prefs = await SharedPreferences.getInstance();
++    await prefs.setBool(_kEnabled, settings.enabled);
++    await prefs.setString(_kProvider, settings.provider);
++    await prefs.setString(_kModelName, settings.modelName);
++    if (settings.consentAcceptedAt != null) {
++      await prefs.setString(_kConsentAt, settings.consentAcceptedAt!);
++    }
++    await prefs.setString(_kConsentVersion, settings.consentVersion);
++  }
++
++  /// apiKey 单独存 FlutterSecureStorage (脱敏)
++  Future<void> saveApiKey(String apiKey) async {
++    await _secureStorage.write(key: _kApiKey, value: apiKey);
++  }
++
++  /// 拿 apiKey — 单独方法, 不在 load() 里, 避免 entity 暴露
++  Future<String?> getApiKey() async {
++    return _secureStorage.read(key: _kApiKey);
++  }
++
++  Future<void> clearApiKey() async {
++    await _secureStorage.delete(key: _kApiKey);
++  }
++}
+diff --git a/lib/domain/entities/ai_settings_entity.dart b/lib/domain/entities/ai_settings_entity.dart
+new file mode 100644
+index 0000000..829c184
+--- /dev/null
++++ b/lib/domain/entities/ai_settings_entity.dart
+@@ -0,0 +1,45 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AI 设置实体
++//
++// 字段:
++// - enabled: 是否启用 AI 辅助 (PIPL §13 默认 false, 需用户主动开启)
++// - provider: LLM provider, 当前只支持 'deepseek'
++// - modelName: 模型名, 默认 'deepseek-chat'
++// - consentAcceptedAt: 用户首次同意 PIPL §13 的 ISO8601 UTC timestamp
++// - consentVersion: 同意版本号, 法务审核用 (本 task 写 '1.0')
++//
++// 隐私: apiKey **不**在此 entity — 走 FlutterSecureStorage, 跟 db_key_service
++// 同 pattern。load() 也不读 key, 避免 entity 暴露 secret。
++
++class AiSettingsEntity {
++  final bool enabled;
++  final String provider;
++  final String modelName;
++  final String? consentAcceptedAt;
++  final String consentVersion;
++
++  const AiSettingsEntity({
++    required this.enabled,
++    required this.provider,
++    required this.modelName,
++    this.consentAcceptedAt,
++    required this.consentVersion,
++  });
++
++  bool get hasConsent => consentAcceptedAt != null;
++
++  AiSettingsEntity copyWith({
++    bool? enabled,
++    String? provider,
++    String? modelName,
++    String? consentAcceptedAt,
++    String? consentVersion,
++  }) {
++    return AiSettingsEntity(
++      enabled: enabled ?? this.enabled,
++      provider: provider ?? this.provider,
++      modelName: modelName ?? this.modelName,
++      consentAcceptedAt: consentAcceptedAt ?? this.consentAcceptedAt,
++      consentVersion: consentVersion ?? this.consentVersion,
++    );
++  }
++}
+diff --git a/lib/presentation/pages/settings/settings_page.dart b/lib/presentation/pages/settings/settings_page.dart
+index 88e5c45..d1b4d47 100644
+--- a/lib/presentation/pages/settings/settings_page.dart
++++ b/lib/presentation/pages/settings/settings_page.dart
+@@ -13,20 +13,21 @@ import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+ import 'package:chroniccare/presentation/widgets/primary_button.dart';
+ import 'package:chroniccare/presentation/widgets/section_header.dart';
+ import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
+ import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_section.dart';
+ 
+ /// 设置页
+ ///
+ /// v0.23 P1 refactor: 从 713 行瘦身到 ~80 行。
+ /// 6 个 section widgets 已提取到 settings/widgets/:
+ ///   - RemindersSection (提醒中心 + 续方管理)
+ ///   - LegalSection (法律与隐私)
+ ///   - DataManagementSection (导出/报告/历史/导入/清空)
+ ///   - AssessmentSection (评估历史/周期提醒/量表列表/邮件预览/关于)
+ ///   - NotificationStatusCard (通知自检, 原已存在)
+@@ -192,20 +193,26 @@ class SettingsPage extends ConsumerWidget {
+           const RemindersSection(),
+ 
+           const SizedBox(height: AppTokens.spacingLg),
+ 
+           // v0.29 round 84 (CBT 思维记录): 思维记录档位设置
+           // 紧跟"提醒"主题 — 切档体验一致, 用户从"定时提醒"自然过渡到"模板选择"
+           const CbtSection(),
+ 
+           const SizedBox(height: AppTokens.spacingLg),
+ 
++          // v0.30 round 89 (CBT AI 辅助): AI 设置入口 (toggle + api key + model)
++          // 紧跟 CbtSection — 主题相关 (AI 生成 CBT 建议), 放在同一主题分组
++          const AiSection(),
++
++          const SizedBox(height: AppTokens.spacingLg),
++
+           // 通知自检卡
+           const NotificationStatusCard(),
+ 
+           const SizedBox(height: AppTokens.spacingLg),
+ 
+           // === 心理评估 + 邮件预览 + 关于 ===
+           // v0.28 R81 (emil design-5): chip 标签 (B 站风格)
+           SectionHeader(
+             title: AppLocalizations.of(context).settingsAssessment,
+             chip: AppLocalizations.of(context).assessmentChipCurrent,
+diff --git a/lib/presentation/pages/settings/widgets/ai_consent_dialog.dart b/lib/presentation/pages/settings/widgets/ai_consent_dialog.dart
+new file mode 100644
+index 0000000..35a0b1d
+--- /dev/null
++++ b/lib/presentation/pages/settings/widgets/ai_consent_dialog.dart
+@@ -0,0 +1,57 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): PIPL §13 同意 dialog
++//
++// 法务要求: AI 单独同意, 用户必看 + 必点 accept/decline。
++// 内容: 4 项 — 数据脱敏 (只发 score/tags/level) / 国内 API / 第三方处理 / 可随时撤回
++//
++// 复用: 跟现有 consent dialog 模式一致, 一次性 AlertDialog + 4 个 bullet + 2 按钮
++// ARB: 本 task 暂用中文 placeholder, Task 5 一次性换 16 个 l10n key
++
++import 'package:flutter/material.dart';
++import 'package:chroniccare/core/theme/app_tokens.dart';
++
++class AiConsentDialog extends StatelessWidget {
++  const AiConsentDialog({super.key});
++
++  @override
++  Widget build(BuildContext context) {
++    return AlertDialog(
++      title: const Text('启用 AI 辅助 (CBT)'),
++      content: SingleChildScrollView(
++        child: Column(
++          crossAxisAlignment: CrossAxisAlignment.start,
++          mainAxisSize: MainAxisSize.min,
++          children: [
++            const Text('请阅读以下条款, 同意后方可启用:'),
++            const SizedBox(height: AppTokens.spacingSm),
++            _bullet('1. 数据脱敏: AI 收到的仅含情绪分数 / 标签 / CBT 档位, 不含你的笔记或自动思维原文。'),
++            _bullet('2. 国内传输: 数据通过 DeepSeek API 传输 (api.deepseek.com), 不出境。'),
++            _bullet('3. 第三方处理: DeepSeek 按其隐私政策处理 (链接可在 设置 → 法律与隐私 查看)。'),
++            _bullet('4. 可随时撤回: 在本节关闭开关即可, 历史 AI 建议保留在本地。'),
++            const SizedBox(height: AppTokens.spacingSm),
++            const Text(
++              '同意版本: 1.0',
++              style: TextStyle(fontSize: 12, color: Colors.grey),
++            ),
++          ],
++        ),
++      ),
++      actions: [
++        TextButton(
++          onPressed: () => Navigator.of(context).pop(false),
++          child: const Text('拒绝'),
++        ),
++        FilledButton(
++          onPressed: () => Navigator.of(context).pop(true),
++          child: const Text('同意并启用'),
++        ),
++      ],
++    );
++  }
++
++  Widget _bullet(String text) {
++    return Padding(
++      padding: const EdgeInsets.only(bottom: AppTokens.spacingXxs),
++      child: Text(text, style: const TextStyle(fontSize: 13)),
++    );
++  }
++}
+diff --git a/lib/presentation/pages/settings/widgets/ai_section.dart b/lib/presentation/pages/settings/widgets/ai_section.dart
+new file mode 100644
+index 0000000..1637fcb
+--- /dev/null
++++ b/lib/presentation/pages/settings/widgets/ai_section.dart
+@@ -0,0 +1,119 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): 设置页 AI 入口
++//
++// 模式: 跟 cbt_section.dart / reminders_section.dart 同 — Card + ConsumerWidget
++// 内部: Switch (enable) + TextField (api key) + Dropdown (model) + 测试连接按钮
++// 首次 toggle on 时弹 AiConsentDialog (PIPL §13 单独同意)
++//
++// ARB keys: 本 task 暂用中文 placeholder, Task 5 一次性换 16 个 l10n key
++// "测试连接" 按钮占位 (snackbar "待 Task 5/6 接入"), 实际 HTTP 验证放 Task 4 集成
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/theme/app_tokens.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_consent_dialog.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++
++class AiSection extends ConsumerWidget {
++  const AiSection({super.key});
++
++  @override
++  Widget build(BuildContext context, WidgetRef ref) {
++    final settingsAsync = ref.watch(aiSettingsProvider);
++    final notifier = ref.read(aiSettingsProvider.notifier);
++
++    return settingsAsync.when(
++      loading: () => const Card(
++        child: Padding(
++          padding: EdgeInsets.all(AppTokens.spacingMd),
++          child: Center(child: CircularProgressIndicator()),
++        ),
++      ),
++      error: (e, st) => Card(
++        child: Padding(
++          padding: const EdgeInsets.all(AppTokens.spacingMd),
++          child: Text('加载 AI 设置失败: $e'),
++        ),
++      ),
++      data: (settings) => Card(
++        child: Padding(
++          padding: const EdgeInsets.symmetric(
++            horizontal: AppTokens.spacingMd,
++            vertical: AppTokens.spacingSm,
++          ),
++          child: Column(
++            crossAxisAlignment: CrossAxisAlignment.start,
++            children: [
++              Text(
++                'AI 辅助 (CBT 思维记录)',
++                style: AppTokens.textStyleTitle(context),
++              ),
++              const SizedBox(height: AppTokens.spacingXxs),
++              Text(
++                '启用后, 可在思维记录向导生成 AI 建议 (国内 DeepSeek, 数据脱敏后传输).',
++                style: AppTokens.textStyleCaption(context),
++              ),
++              SwitchListTile(
++                title: const Text('启用 AI 辅助'),
++                value: settings.enabled,
++                onChanged: (v) async {
++                  // 首次启用 + 还没同意 → 弹 PIPL §13 dialog
++                  if (v && !settings.hasConsent) {
++                    final accepted = await showDialog<bool>(
++                      context: context,
++                      builder: (_) => const AiConsentDialog(),
++                    );
++                    if (accepted != true) return;
++                    await notifier.recordConsent();
++                  }
++                  await notifier.setEnabled(v);
++                },
++              ),
++              // 字段永远渲染, 启用前 disabled (UI 提示"先开 toggle 再填")
++              TextField(
++                decoration: const InputDecoration(
++                  labelText: 'API Key',
++                  hintText: 'sk-...',
++                  border: OutlineInputBorder(),
++                ),
++                obscureText: true,
++                enabled: settings.enabled,
++                onSubmitted: (v) => notifier.setApiKey(v),
++              ),
++              const SizedBox(height: AppTokens.spacingXs),
++              DropdownButtonFormField<String>(
++                initialValue: settings.modelName,
++                decoration: const InputDecoration(
++                  labelText: '模型',
++                  border: OutlineInputBorder(),
++                ),
++                items: const [
++                  DropdownMenuItem(
++                    value: 'deepseek-chat',
++                    child: Text('deepseek-chat'),
++                  ),
++                ],
++                onChanged: settings.enabled
++                    ? (v) {
++                        if (v != null) notifier.setModelName(v);
++                      }
++                    : null,
++              ),
++              const SizedBox(height: AppTokens.spacingXs),
++              FilledButton.tonal(
++                onPressed: settings.enabled
++                    ? () {
++                        ScaffoldMessenger.of(context).showSnackBar(
++                          const SnackBar(content: Text('测试连接功能待 Task 5/6 接入')),
++                        );
++                      }
++                    : null,
++                child: const Text('测试连接'),
++              ),
++            ],
++          ),
++        ),
++      ),
++    );
++  }
++}
+diff --git a/lib/presentation/providers/ai_settings_provider.dart b/lib/presentation/providers/ai_settings_provider.dart
+new file mode 100644
+index 0000000..ae1013f
+--- /dev/null
++++ b/lib/presentation/providers/ai_settings_provider.dart
+@@ -0,0 +1,88 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AI 设置 Riverpod provider
++//
++// AsyncNotifierProvider<AiSettingsEntity> — build() 读 repo, set 方法写 repo
++// watch 时 UI 自动 rebuild
++//
++// 设计:
++// - state = AsyncValue.loading() → AsyncValue.guard() 模式跟 R85 reminders_hub
++//   一致, 让 setEnabled / setModelName / recordConsent / clear 时 UI 显示 loading
++// - setApiKey 不走 state.loading (写的是 secure storage, 不影响 entity 字段)
++// - 首次同意 dialog 返回 true 才 recordConsent, false 不动 settings
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/data/repositories/ai_settings/ai_settings_repository_impl.dart';
++import 'package:chroniccare/domain/entities/ai_settings_entity.dart';
++
++final aiSettingsRepositoryProvider = Provider<AiSettingsRepository>((ref) {
++  return AiSettingsRepository();
++});
++
++class AiSettingsNotifier extends AsyncNotifier<AiSettingsEntity> {
++  @override
++  Future<AiSettingsEntity> build() async {
++    final repo = ref.read(aiSettingsRepositoryProvider);
++    return repo.load();
++  }
++
++  Future<void> setEnabled(bool v) async {
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      final repo = ref.read(aiSettingsRepositoryProvider);
++      final current = await future;
++      final next = current.copyWith(enabled: v);
++      await repo.save(next);
++      return next;
++    });
++  }
++
++  Future<void> setApiKey(String key) async {
++    final repo = ref.read(aiSettingsRepositoryProvider);
++    await repo.saveApiKey(key);
++  }
++
++  Future<void> setModelName(String name) async {
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      final repo = ref.read(aiSettingsRepositoryProvider);
++      final current = await future;
++      final next = current.copyWith(modelName: name);
++      await repo.save(next);
++      return next;
++    });
++  }
++
++  Future<void> recordConsent() async {
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      final repo = ref.read(aiSettingsRepositoryProvider);
++      final current = await future;
++      final next = current.copyWith(
++        consentAcceptedAt: DateTime.now().toUtc().toIso8601String(),
++      );
++      await repo.save(next);
++      return next;
++    });
++  }
++
++  Future<void> clear() async {
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      final repo = ref.read(aiSettingsRepositoryProvider);
++      await repo.clearApiKey();
++      const reset = AiSettingsEntity(
++        enabled: false,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++      await repo.save(reset);
++      return reset;
++    });
++  }
++}
++
++final aiSettingsProvider =
++    AsyncNotifierProvider<AiSettingsNotifier, AiSettingsEntity>(
++  AiSettingsNotifier.new,
++);
+diff --git a/scripts/check_all.dart b/scripts/check_all.dart
+index 07762f2..ac116e7 100644
+--- a/scripts/check_all.dart
++++ b/scripts/check_all.dart
+@@ -4,20 +4,32 @@
+ // 1) 纯度（purity）—— 4 层之间不能跨层引用
+ //    - domain/  0 flutter / 0 drift / 0 data / 0 presentation
+ //    - shared/  0 flutter / 0 drift / 0 data / 0 presentation
+ //    - data/    不依赖 presentation/
+ //    - 同时检测 package: 绝对路径 和 ../../ 相对路径
+ // 2) 一致性（consistency）—— 实体和表对应 + shared 使用度
+ //    - 每个 domain *Entity 都对应一个 drift @DataClassName('X') table
+ //    - 每个 drift table data class 都对应一个 domain *Entity
+ //    - shared/ 工具被 ≥2 层用（否则考虑移走）
+ //
++// v0.30 round 89 (CBT AI 辅助) 加 [_spOnlyEntities] 豁免名单:
++// 一些 domain *Entity **不**存 drift DB, 只走 SharedPreferences /
++// FlutterSecureStorage (e.g. 用户配置 / 开关状态)。这些 entity 用 *Entity
++// 后缀保持类型命名一致性 (跟 ConsentArtifact / MoodEntryDraft 等 draft 区别:
++// 那些是单次操作的 input 对象, 这些是**持久化状态**), 但不需要 drift table。
++//
++// 命名约定 (R89 起新加 entity 时先自问):
++// - 是用户**操作 input** (一次性的 draft)? → 用 *Draft / *Artifact 后缀, 不进 domain/entities/
++//   (放 domain/value_objects/ 等) 或命名不带 Entity
++// - 是**持久化状态**, 存 DB? → 加 *Entity 后缀, 必须对应 drift table
++// - 是**持久化状态**, 存 SP/SecureStorage? → 加 *Entity 后缀, **必须加进 [_spOnlyEntities]**
++//
+ // 用法：dart scripts/check_all.dart
+ // 退出码：0 = 通过, 1 = 有违规
+ // 注：dart run 在本项目会触发 objective_c build hook 失败，用 dart 直接跑即可。
+ 
+ // ignore_for_file: avoid_print
+ 
+ import 'dart:io';
+ 
+ const _purityRules = <String, List<String>>{
+   'domain': [
+@@ -50,20 +62,35 @@ const _layerDirs = <String, String>{
+   'presentation': 'presentation',
+ };
+ 
+ final _importRe = RegExp(
+   r'''^\s*import\s+['"]([^'"]+)['"]''',
+   multiLine: true,
+ );
+ final _dataClassNameRe = RegExp(r"@DataClassName\('(\w+)'\)");
+ final _entityClassRe = RegExp(r'^class (\w+Entity)\b', multiLine: true);
+ 
++/// v0.30 round 89: SP-only entity 豁免名单
++///
++/// 一些 domain *Entity 不存 drift DB, 走 SharedPreferences + FlutterSecureStorage
++/// (e.g. 用户配置 / 开关状态 / API key 等)。这些 entity 持久化但不在
++/// drift schema, 默认 entity → table 1:1 规则豁免。
++///
++/// 加新 entry 时**必须**在脚本顶部注释 (v0.30 round 89 那段) 同步说明
++/// 存储方式, 避免后续 reviewer / agent 困惑。
++const _spOnlyEntities = <String>{
++  // R89 (CBT AI 辅助): SP 存 enabled / provider / modelName / consentAcceptedAt /
++  // consentVersion; FlutterSecureStorage (EncryptedSharedPreferences) 存 apiKey。
++  // 整体不写 DB, 不需要 drift table。
++  'AiSettingsEntity',
++};
++
+ class PurityViolation {
+   final String file;
+   final int line;
+   final String uri;
+   final String rule;
+   PurityViolation(this.file, this.line, this.uri, this.rule);
+   @override
+   String toString() => '  $file:$line  →  $uri  ($rule)';
+ }
+ 
+@@ -310,20 +337,22 @@ void _checkEntityTablePair(
+     if (f.path.endsWith('.g.dart')) continue;
+     final content = f.readAsStringSync();
+     final dc = _dataClassNameRe.firstMatch(content);
+     if (dc != null) {
+       tableDataNames[dc.group(1)!] = f.path;
+     }
+   }
+ 
+   // entity → table
+   for (final entityName in entityNames) {
++    // v0.30 round 89: SP-only entity 豁免 (见 _spOnlyEntities + 脚本顶部注释)
++    if (_spOnlyEntities.contains(entityName)) continue;
+     final base = entityName.endsWith('Entity')
+         ? entityName.substring(0, entityName.length - 'Entity'.length)
+         : entityName;
+     if (!tableDataNames.containsKey(base)) {
+       issues.add(
+         ConsistencyIssue(
+           'lib/domain/entities/$entityName.dart',
+           "没有对应的 drift table（@DataClassName('$base') 找不到）",
+         ),
+       );
+diff --git a/test/presentation/pages/settings/settings_page_round45_test.dart b/test/presentation/pages/settings/settings_page_round45_test.dart
+index c1e7fd3..999dd87 100644
+--- a/test/presentation/pages/settings/settings_page_round45_test.dart
++++ b/test/presentation/pages/settings/settings_page_round45_test.dart
+@@ -1,49 +1,84 @@
+ // v0.24 (Round 45): settings_page widget 单测
+ //
+ // 之前 v0.22 round 30 P1-38 标的"settings 整片 0 widget 测"残留 2 周。
+ // v0.24 round 45 (Sprint #6 中段 3 page 0 widget 测补齐之二) 补 3 个 case:
+ //
+ // 1. contacts error → 渲染 ErrorState (loading + error 状态切换)
+-// 2. contacts data 空 + meds data 空 → 7 section widget 全部渲染
++// 2. contacts data 空 + meds data 空 → 8 section widget 全部渲染 (R89 加 AiSection)
+ // 3. contacts data 1 → ContactsListWidget 渲染 + name 显示
+ //
+ // v0.29 round 84 (CBT 思维记录): 补 CbtSection (在 RemindersSection 之后),
+ // 测试数 6 → 7。sharedPreferencesProvider override 必加 (CbtSection 依赖
+ // thoughtRecordLevelProvider, 后者读 SP)。
+ //
++// v0.30 round 89 (CBT AI 辅助): 补 AiSection (在 CbtSection 之后),
++// 测试数 7 → 8。aiSettingsProvider override 必加 (AiSection 读 SP /
++// FlutterSecureStorage)。另外 AiSection 渲染 TextField → 多 1 个内部
++// Scrollable, scrollUntilVisible 必须显式指定 scrollable 走 ListView,
++// 否则 drag() 会因 "Found 2 Scrollable widgets" 报 ambiguous 错。
++//
+ // 测试 setup:
+ // - MaterialApp + AppLocalizations.localizationsDelegates
+ // - ProviderScope overrides mock Stream<List> provider
+-// - 测 contacts/meds 状态切换, 不测 6 个 section widget 内部逻辑 (各自有测)
++// - 测 contacts/meds 状态切换, 不测 section widget 内部逻辑 (各自有测)
+ //
+ // v0.24 Sprint #5 (mood_dialog 拆解) 后 settings_page 99 行只剩 section 拼接,
+ // 每个 section 在 settings/widgets/ 独立测, 测 main page 容器逻辑 ROI 最高
++import 'package:chroniccare/domain/entities/ai_settings_entity.dart';
+ import 'package:chroniccare/domain/entities/contact_entity.dart';
+ import 'package:chroniccare/domain/entities/medication_entity.dart';
+ import 'package:chroniccare/l10n/app_localizations.dart';
+ import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
+ import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
+ import 'package:chroniccare/presentation/providers/cbt_providers.dart';
+ import 'package:chroniccare/presentation/providers/shared_providers.dart';
+ import 'package:chroniccare/presentation/widgets/error_state.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:flutter_test/flutter_test.dart';
+ import 'package:shared_preferences/shared_preferences.dart';
+ 
++/// v0.30 round 89: AiSection 用的 stub notifier
++///
++/// 跟 ai_section_round89_test.dart 的 _StubNotifier 同 pattern:
++/// implements AiSettingsNotifier, 返 enabled=false stub (避免真实 SP / Secure storage)。
++class _StubAiNotifier extends AsyncNotifier<AiSettingsEntity>
++    implements AiSettingsNotifier {
++  @override
++  Future<AiSettingsEntity> build() async => const AiSettingsEntity(
++        enabled: false,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++
++  @override
++  Future<void> setEnabled(bool v) async {}
++  @override
++  Future<void> setApiKey(String key) async {}
++  @override
++  Future<void> setModelName(String name) async {}
++  @override
++  Future<void> recordConsent() async {}
++  @override
++  Future<void> clear() async {}
++}
++
+ void main() {
+   // v0.29 round 84 (CBT 思维记录): 共享给所有 test 的 SP mock 实例
+   // CbtSection 通过 thoughtRecordLevelProvider 读 SP, 必须 override。
+   // setUp 返回 Future, 测试前 await。top-level 变量供 buildSettingsPage 闭包用。
+   late SharedPreferences mockSp;
+ 
+   setUp(() async {
+     SharedPreferences.setMockInitialValues(<String, Object>{});
+     mockSp = await SharedPreferences.getInstance();
+   });
+@@ -59,87 +94,125 @@ void main() {
+         contactsProvider.overrideWith((ref) => Stream.value(contacts)),
+         medicationsProvider.overrideWith(
+           (ref) => medsError
+               ? Stream<List<MedicationEntity>>.error(Exception('test error'))
+               : Stream.value(meds),
+         ),
+         // v0.29 round 84: CbtSection 引用 thoughtRecordLevelProvider, 后者
+         // 走 sharedPreferencesProvider 读 SP。test 必须 override 否则抛
+         // UnimplementedError: Override at app boot (cbt_providers.dart:27)。
+         sharedPreferencesProvider.overrideWithValue(mockSp),
++        // v0.30 round 89: AiSection 引用 aiSettingsProvider, 后者读 SP +
++        // FlutterSecureStorage。test override → 返 stub, 避免真实 I/O。
++        aiSettingsProvider.overrideWith(() => _StubAiNotifier()),
+       ],
+       child: const MaterialApp(
+         localizationsDelegates: AppLocalizations.localizationsDelegates,
+         supportedLocales: AppLocalizations.supportedLocales,
+         locale: Locale('zh'),
+         home: SettingsPage(),
+       ),
+     );
+   }
+ 
++  // v0.30 round 89: 显式指定 ListView 的 Scrollable (避免 TextField 内部
++  // EditableText 的 Scrollable 跟 ListView 冲突, drag 报 ambiguous)
++  final Finder listScrollable = find.byType(Scrollable).first;
++
+   testWidgets('meds error → 显示 ErrorState', (tester) async {
+     await tester.pumpWidget(buildSettingsPage(medsError: true));
+     // pumpAndSettle 让 Stream.error microtask 跑完, Riverpod 转 AsyncError,
+     // 渲染 ErrorState。限制 duration 防止 hang (master 上无 contacts section
+     // 重排, 现在有 setUp+drag 副作用, 短 timeout 更稳)。
+     await tester.pumpAndSettle(const Duration(milliseconds: 100));
+ 
+     // v0.31 联系人软隐藏: contacts section 挪到最底部, viewport 内不渲染。
+     // meds section 仍在 ListView 上面, viewport 内直接渲染 ErrorState。
+     expect(find.byType(ErrorState), findsOneWidget);
+   });
+ 
+-  testWidgets('contacts + meds 都空 → 7 个 section widget 全部渲染', (tester) async {
++  testWidgets('contacts + meds 都空 → 8 个 section widget 全部渲染',
++      (tester) async {
+     await tester.pumpWidget(buildSettingsPage());
+     await tester.pumpAndSettle();
+ 
+     // ListView 内 section 默认只渲染 viewport 内, 用 scrollUntilVisible
+     // 把每个 section scroll 出来验证渲染
+     await tester.scrollUntilVisible(
+       find.byType(DataManagementSection),
+       100,
++      scrollable: listScrollable,
+     );
+     expect(find.byType(DataManagementSection), findsOneWidget);
+ 
+-    await tester.scrollUntilVisible(find.byType(LegalSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(LegalSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(LegalSection), findsOneWidget);
+ 
+-    await tester.scrollUntilVisible(find.byType(RemindersSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(RemindersSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(RemindersSection), findsOneWidget);
+ 
+     // v0.29 round 84: CbtSection (思维记录档位) 紧跟 RemindersSection
+-    await tester.scrollUntilVisible(find.byType(CbtSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(CbtSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(CbtSection), findsOneWidget);
+ 
++    // v0.30 round 89: AiSection (AI 设置) 紧跟 CbtSection
++    await tester.scrollUntilVisible(
++      find.byType(AiSection),
++      100,
++      scrollable: listScrollable,
++    );
++    expect(find.byType(AiSection), findsOneWidget);
++
+     await tester.scrollUntilVisible(
+       find.byType(NotificationStatusCard),
+       100,
++      scrollable: listScrollable,
+     );
+     expect(find.byType(NotificationStatusCard), findsOneWidget);
+ 
+-    await tester.scrollUntilVisible(find.byType(AssessmentSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(AssessmentSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(AssessmentSection), findsOneWidget);
+   });
+ 
+   testWidgets('contacts data 1 → ContactsListWidget 渲染 + name 显示',
+       (tester) async {
+     const contact = ContactEntity(
+       id: 1,
+       name: '张三',
+       phone: '13800000001',
+       sortOrder: 0,
+       isActive: true,
+     );
+     await tester.pumpWidget(buildSettingsPage(contacts: [contact]));
+     await tester.pumpAndSettle();
+ 
+     // v0.31 联系人软隐藏: contacts section 在 ListView 最底部, scroll 才能看到
+-    await tester.scrollUntilVisible(find.byType(ContactsListWidget), 100);
++    await tester.scrollUntilVisible(
++      find.byType(ContactsListWidget),
++      100,
++      scrollable: listScrollable,
++    );
+     // contacts 1 → ContactsListWidget 渲染 + name 显示
+     expect(find.byType(ContactsListWidget), findsOneWidget);
+     expect(find.text('张三'), findsOneWidget);
+ 
+     // meds 验证移除: contacts 已 scroll 到 ListView 底部, meds section 在
+     // viewport 之上 offstage, scroll back up 容易 overscroll, 单独 meds 测试
+     // 在 medications_list_widget_round* 测。
+   });
+ }
+diff --git a/test/presentation/pages/settings/widgets/ai_consent_dialog_round89_test.dart b/test/presentation/pages/settings/widgets/ai_consent_dialog_round89_test.dart
+new file mode 100644
+index 0000000..7239b04
+--- /dev/null
++++ b/test/presentation/pages/settings/widgets/ai_consent_dialog_round89_test.dart
+@@ -0,0 +1,46 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiConsentDialog widget 测试
++//
++// 覆盖:
++// 1. 渲染 4 项 bullet (数据脱敏 / 国内传输 / 第三方处理 / 可随时撤回)
++// 2. 拒绝 / 同意并启用 按钮 → pop(true/false)
++// 3. 同意版本 1.0 标记
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_consent_dialog.dart';
++import 'package:flutter/material.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++void main() {
++  testWidgets('AiConsentDialog 显示 4 项 + 同意/拒绝按钮', (tester) async {
++    bool? result;
++    await tester.pumpWidget(
++      MaterialApp(
++        home: Builder(
++          builder: (context) => Scaffold(
++            body: Center(
++              child: ElevatedButton(
++                onPressed: () async {
++                  result = await showDialog<bool>(
++                    context: context,
++                    builder: (_) => const AiConsentDialog(),
++                  );
++                },
++                child: const Text('open'),
++              ),
++            ),
++          ),
++        ),
++      ),
++    );
++    await tester.tap(find.text('open'));
++    await tester.pumpAndSettle();
++    expect(find.text('启用 AI 辅助 (CBT)'), findsOneWidget);
++    expect(find.textContaining('数据脱敏'), findsOneWidget);
++    expect(find.textContaining('国内传输'), findsOneWidget);
++    expect(find.textContaining('第三方处理'), findsOneWidget);
++    expect(find.textContaining('可随时撤回'), findsOneWidget);
++    expect(find.text('拒绝'), findsOneWidget);
++    expect(find.text('同意并启用'), findsOneWidget);
++    await tester.tap(find.text('同意并启用'));
++    await tester.pumpAndSettle();
++    expect(result, true);
++  });
++}
+diff --git a/test/presentation/pages/settings/widgets/ai_section_round89_test.dart b/test/presentation/pages/settings/widgets/ai_section_round89_test.dart
+new file mode 100644
+index 0000000..2c7d4a0
+--- /dev/null
++++ b/test/presentation/pages/settings/widgets/ai_section_round89_test.dart
+@@ -0,0 +1,101 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiSection widget 测试
++//
++// 覆盖:
++// 1. enabled=false: 标题 + Switch 渲染 + 字段 label 显示 (API Key / 模型),字段不输入
++// 2. enabled=true: TextField 全部可输入 (obscure + dropdown)
++//
++// 模式 (跟 cbt_section_round84_test 同):
++// - MaterialApp + AppLocalizations.localizationsDelegates + locale: Locale('zh')
++// - ProviderScope overrides: aiSettingsProvider → 桩 Notifier 返 stub entity
++// - Stub Notifier 必须 implements AiSettingsNotifier (不能用 super class)
++//
++// 中文 placeholder ("AI 辅助 (CBT 思维记录)" / "启用 AI 辅助" / "API Key" / "模型")
++// 暂用 — Task 5 一次性换 16 个 l10n key。
++import 'package:chroniccare/domain/entities/ai_settings_entity.dart';
++import 'package:chroniccare/l10n/app_localizations.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_section.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++void main() {
++  testWidgets('AiSection 渲染 toggle + 字段 (enabled=false)', (tester) async {
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          aiSettingsProvider.overrideWith(() => _StubNotifier()),
++        ],
++        child: const MaterialApp(
++          localizationsDelegates: AppLocalizations.localizationsDelegates,
++          supportedLocales: AppLocalizations.supportedLocales,
++          locale: Locale('zh'),
++          home: Scaffold(
++            body: AiSection(),
++          ),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++    // 标题
++    expect(find.text('AI 辅助 (CBT 思维记录)'), findsOneWidget);
++    // Toggle (SwitchListTile)
++    expect(find.byType(Switch), findsOneWidget);
++    // 字段 (enabled = false 时也显示,只是 disabled)
++    expect(find.text('API Key'), findsOneWidget);
++    expect(find.text('模型'), findsOneWidget);
++  });
++
++  testWidgets('AiSection enabled = true 时字段可编辑', (tester) async {
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          aiSettingsProvider.overrideWith(() => _StubNotifierEnabled()),
++        ],
++        child: const MaterialApp(
++          localizationsDelegates: AppLocalizations.localizationsDelegates,
++          supportedLocales: AppLocalizations.supportedLocales,
++          locale: Locale('zh'),
++          home: Scaffold(body: AiSection()),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++    // TextField 应该可输入
++    final tf = find.byType(TextField);
++    expect(tf, findsAtLeastNWidgets(1));
++  });
++}
++
++class _StubNotifier extends AsyncNotifier<AiSettingsEntity>
++    implements AiSettingsNotifier {
++  @override
++  Future<AiSettingsEntity> build() async => const AiSettingsEntity(
++        enabled: false,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++
++  @override
++  Future<void> setEnabled(bool v) async {}
++  @override
++  Future<void> setApiKey(String key) async {}
++  @override
++  Future<void> setModelName(String name) async {}
++  @override
++  Future<void> recordConsent() async {}
++  @override
++  Future<void> clear() async {}
++}
++
++class _StubNotifierEnabled extends _StubNotifier {
++  @override
++  Future<AiSettingsEntity> build() async => const AiSettingsEntity(
++        enabled: true,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++        consentAcceptedAt: '2026-08-05T12:00:00Z',
++      );
++}

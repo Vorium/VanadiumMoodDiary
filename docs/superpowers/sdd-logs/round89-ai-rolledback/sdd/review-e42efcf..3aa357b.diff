@@ -1,0 +1,443 @@
+﻿# Review package: e42efcf..3aa357b
+
+## Commits
+3aa357b v0.30 round 89 (data): AiService + abstract AiProvider + 5 prompt + Future.wait partial fail-safe
+
+## Files changed
+ docs/CHANGELOG.md                                  | 42 +++++++++++
+ lib/core/data/services/ai/ai_provider.dart         |  7 ++
+ lib/core/data/services/ai/ai_response.dart         | 26 +++++++
+ lib/core/data/services/ai/ai_service.dart          | 62 ++++++++++++++++
+ lib/core/data/services/ai/prompts/_loader.dart     | 49 +++++++++++++
+ .../data/services/ai/prompts/action_suggestion.md  | 12 +++
+ .../services/ai/prompts/alternative_thought.md     | 12 +++
+ .../services/ai/prompts/cognitive_distortion.md    | 25 +++++++
+ lib/core/data/services/ai/prompts/core_belief.md   | 12 +++
+ .../services/ai/prompts/emotion_recognition.md     | 12 +++
+ .../data/services/ai/ai_service_round89_test.dart  | 85 ++++++++++++++++++++++
+ 11 files changed, 344 insertions(+)
+
+## Diff
+diff --git a/docs/CHANGELOG.md b/docs/CHANGELOG.md
+index 3124ffa..b12c7ff 100644
+--- a/docs/CHANGELOG.md
++++ b/docs/CHANGELOG.md
+@@ -1,14 +1,56 @@
+ ﻿# 变更日志
+ 
+ > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
+ 
++## [0.30.0] - 2026-08-05 (R89 — sub-spec 5, CBT AI 辅助 core: AiService + abstract AiProvider + 5 prompt + Future.wait partial fail-safe)
++
++> R89 目标: CBT 思维记录 AI 辅助 5 个能力 (替代思维 / 情绪识别 / 认知扭曲 /
++> 核心信念 / 行动建议) 的核心 — `AiService` + abstract `AiProvider` + 5
++> prompt 文件 + mock test。本轮 1 commit (Task 1), 后续 5 task 接着做
++> DeepSeekProvider / AiSettings / CbtWizard 集成 / i18n。
++>
++> **1 个 task** (1 commit, +3 test):
++> - Task 1 (本 commit): `AiService.generateAll` 并行 5 prompt + 脱敏
++>   ({score, tags, cbtLevel}, 不发 note/automaticThought) + 1 失败不阻塞
++>   其他 (Future.wait eagerError:false + _safeCall 双层保护) + 3 mock test
++>   (5 字段全有 / 1 失败 4 继续 / 脱敏). 后 5 task 复用本 task 的
++>   `AiProvider` 接口注入 DeepSeekProvider.
++>
++> **架构边界**:
++> - 0 presentation 依赖, 全在 `lib/core/data/services/ai/`
++> - 5 prompt source of truth 在 `_loader.dart`, 5 个 .md 是人读备份
++> - service 层不做 JSON 解析 (Task 2 DeepSeekProvider 负责 `choices[0].message.content`)
++> - 隐私: user prompt 只发 {score, tags, cbtLevel}, 用户原文 (note /
++>   automaticThought / situation) 零外传 — 3 test 中第 3 个覆盖此约束
++> - 后续 5 task 通过 Riverpod 注入 `AiProvider` (Task 2), AiSettings
++>   同意 (Task 3), CbtWizard 调 `generateAll` (Task 4), i18n (Task 5)
++
++### Added
++- **CBT AI 辅助 core (sub-spec 5 Task 1)**:
++  - 新增 `lib/core/data/services/ai/ai_service.dart` — `AiService.generateAll`
++    并行 5 prompt + Future.wait eagerError:false + `_safeCall` 双层保护
++  - 新增 `lib/core/data/services/ai/ai_provider.dart` — abstract `AiProvider`
++    (单方法 `Future<String> call(system, user)`)
++  - 新增 `lib/core/data/services/ai/ai_response.dart` — `AiResponse` 5 字段
++    nullable DTO + `hasAny` getter
++  - 新增 `lib/core/data/services/ai/prompts/_loader.dart` — 5 prompt 硬编码常量
++    (source of truth)
++  - 新增 5 个 .md 备份 (`alternative_thought.md` / `emotion_recognition.md` /
++    `cognitive_distortion.md` / `core_belief.md` / `action_suggestion.md`)
++  - 新增 `test/core/data/services/ai/ai_service_round89_test.dart` — 3 mock test
++    (5 字段全有 / 1 失败 4 继续 / 脱敏)
++
++### Test
++- **1490/1490 pass** (R88 1487 + R89 +3 ai_service)
++
++
+ ## [0.30.0] - 2026-08-05 (R88 — sub-spec 4, CBT 思维记录 5/7 栏导出 PDF + 修 R84 silent data loss)
+ 
+ > R88 目标: 把 CBT 思维记录 5/7 栏 导出为 PDF, 让用户能把完整 CBT
+ > 工作流 (situation / automaticThought / evidenceFor / evidenceAgainst /
+ > alternativeThought / reratedScore / coreBelief / behaviorResponse) 离线
+ > 分享给医生或心理咨询师。本轮同时修一个 P0 silent data loss bug (R84
+ > 加 8 CBT 字段时漏更新 `data_export` 的 toMap, 导致导出的 JSON 把
+ > CBT 字段全丢, 用户做了一堆 5/7 栏记录导出一看啥也没)。
+ >
+ > **5 个 task** (每个 1 commit, 共 5 commit, +4 test):
+diff --git a/lib/core/data/services/ai/ai_provider.dart b/lib/core/data/services/ai/ai_provider.dart
+new file mode 100644
+index 0000000..4f0b860
+--- /dev/null
++++ b/lib/core/data/services/ai/ai_provider.dart
+@@ -0,0 +1,7 @@
++/// v0.30 round 89: AI provider 抽象接口
++///
++/// 单方法: system prompt + user prompt → 完整 LLM 回复 (string).
++/// 实现方负责 HTTP 细节 (DeepSeekProvider) 或 mock (test).
++abstract class AiProvider {
++  Future<String> call(String systemPrompt, String userPrompt);
++}
+diff --git a/lib/core/data/services/ai/ai_response.dart b/lib/core/data/services/ai/ai_response.dart
+new file mode 100644
+index 0000000..1831eca
+--- /dev/null
++++ b/lib/core/data/services/ai/ai_response.dart
+@@ -0,0 +1,26 @@
++/// v0.30 round 89 (sub-spec 5 CBT AI 辅助): 5 个能力 DTO
++///
++/// 5 字段全部 nullable — 单 prompt 失败只影响对应字段, 其他 4 个字段继续.
++class AiResponse {
++  final String? alternativeThought; // 替代思维
++  final String? emotion; // 情绪识别
++  final String? cognitiveDistortion; // 认知扭曲
++  final String? coreBelief; // 核心信念
++  final String? actionSuggestion; // 行动建议
++
++  const AiResponse({
++    this.alternativeThought,
++    this.emotion,
++    this.cognitiveDistortion,
++    this.coreBelief,
++    this.actionSuggestion,
++  });
++
++  /// 5 字段中至少 1 个非空
++  bool get hasAny =>
++      alternativeThought != null ||
++      emotion != null ||
++      cognitiveDistortion != null ||
++      coreBelief != null ||
++      actionSuggestion != null;
++}
+diff --git a/lib/core/data/services/ai/ai_service.dart b/lib/core/data/services/ai/ai_service.dart
+new file mode 100644
+index 0000000..faa2abb
+--- /dev/null
++++ b/lib/core/data/services/ai/ai_service.dart
+@@ -0,0 +1,62 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): 5 个 prompt 并行调用
++//
++// 脱敏: 只发 {score, tags, cbtLevel} 给 LLM, 不发 note / 自动思维原文
++// Fail-safe: 1 个失败只 toast 该能力, 其他 4 个继续
++// 设计: Future.wait(eagerError: false) + _safeCall 内部 try-catch 双层保护
++
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++import 'package:chroniccare/core/data/services/ai/ai_response.dart';
++import 'package:chroniccare/core/data/services/ai/prompts/_loader.dart';
++
++class AiService {
++  final AiProvider provider;
++  AiService({required this.provider});
++
++  Future<AiResponse> generateAll({
++    required int score,
++    required List<String> tags,
++    int? cbtLevel,
++  }) async {
++    final userPrompt = _buildUserPrompt(score: score, tags: tags, cbtLevel: cbtLevel);
++    final prompts = await PromptLoader.loadAll();
++
++    final results = await Future.wait(
++      [
++        _safeCall(prompts.alternativeThought, userPrompt),
++        _safeCall(prompts.emotionRecognition, userPrompt),
++        _safeCall(prompts.cognitiveDistortion, userPrompt),
++        _safeCall(prompts.coreBelief, userPrompt),
++        _safeCall(prompts.actionSuggestion, userPrompt),
++      ],
++      eagerError: false, // 1 个失败不阻塞其他
++    );
++
++    return AiResponse(
++      alternativeThought: results[0],
++      emotion: results[1],
++      cognitiveDistortion: results[2],
++      coreBelief: results[3],
++      actionSuggestion: results[4],
++    );
++  }
++
++  Future<String?> _safeCall(String systemPrompt, String userPrompt) async {
++    try {
++      return await provider.call(systemPrompt, userPrompt);
++    } catch (_) {
++      return null;
++    }
++  }
++
++  String _buildUserPrompt({
++    required int score,
++    required List<String> tags,
++    int? cbtLevel,
++  }) {
++    return '用户输入 (脱敏后,仅含元数据):\n'
++        '- 情绪分数: $score / 5\n'
++        '- 情绪标签: ${tags.isEmpty ? "(无)" : tags.join(", ")}\n'
++        '- CBT 档位: ${cbtLevel ?? "(未选)"}\n'
++        '\n请根据以上信息生成回复。';
++  }
++}
+diff --git a/lib/core/data/services/ai/prompts/_loader.dart b/lib/core/data/services/ai/prompts/_loader.dart
+new file mode 100644
+index 0000000..963436b
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/_loader.dart
+@@ -0,0 +1,49 @@
++/// v0.30 round 89: 5 个 CBT AI 能力 prompt 集中管理
++///
++/// 每个 prompt 是一段 CBT 治疗师角色指令,要求 LLM 输出 JSON {"text": "..."}.
++/// 5 个 prompt 共享同一 user prompt (脱敏后的 {score, tags, cbtLevel}).
++///
++/// 注: loader 是 source of truth, 5 个 .md 是人读备份, 改 prompt 改 loader.
++class Prompts {
++  final String alternativeThought;
++  final String emotionRecognition;
++  final String cognitiveDistortion;
++  final String coreBelief;
++  final String actionSuggestion;
++
++  const Prompts({
++    required this.alternativeThought,
++    required this.emotionRecognition,
++    required this.cognitiveDistortion,
++    required this.coreBelief,
++    required this.actionSuggestion,
++  });
++}
++
++class PromptLoader {
++  static Future<Prompts> loadAll() async {
++    return const Prompts(
++      alternativeThought:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+CBT 档位, '
++          '生成 1 个更平衡的替代思维 (50 字以内). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      emotionRecognition:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签, '
++          '识别具体情绪词 (如 焦虑/沮丧/愤怒/悲伤). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      cognitiveDistortion:
++          '你是 CBT 治疗助手. 从 11 种 Beck 认知扭曲 '
++          '(全或无/灾难化/过度概括/心理过滤/贬低正面/跳跃式结论/'
++          '放大或缩小/情绪化推理/应该论/标签化/个人化) 中识别 1 个最可能的. '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      coreBelief:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, '
++          '提取可能的核心信念 (15 字以内). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      actionSuggestion:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, '
++          '给出 3 个具体行动建议 (CBT 行为激活). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++    );
++  }
++}
+diff --git a/lib/core/data/services/ai/prompts/action_suggestion.md b/lib/core/data/services/ai/prompts/action_suggestion.md
+new file mode 100644
+index 0000000..0473a8a
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/action_suggestion.md
+@@ -0,0 +1,12 @@
++# 行动建议 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.actionSuggestion`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, 给出 3 个具体行动建议 (CBT 行为激活). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: CBT 行为激活 — 给 3 个具体可执行的小行动.
++**输入**: 脱敏后的 `{score, tags, cbtLevel}`.
++**输出**: 3 条建议 (短列表).
++**失败行为**: 抛 → `AiResponse.actionSuggestion = null`, 其他 4 字段不受影响.
+diff --git a/lib/core/data/services/ai/prompts/alternative_thought.md b/lib/core/data/services/ai/prompts/alternative_thought.md
+new file mode 100644
+index 0000000..1e653f6
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/alternative_thought.md
+@@ -0,0 +1,12 @@
++# 替代思维 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.alternativeThought`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+CBT 档位, 生成 1 个更平衡的替代思维 (50 字以内). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 把用户的自动思维转成更平衡的替代思维 (CBT 核心技能).
++**输入**: 脱敏后的 `{score, tags, cbtLevel}` — 不含 note / situation / automaticThought 原文.
++**输出**: 1 句话 ≤ 50 字.
++**失败行为**: 抛 → `AiResponse.alternativeThought = null`, 其他 4 字段不受影响.
+diff --git a/lib/core/data/services/ai/prompts/cognitive_distortion.md b/lib/core/data/services/ai/prompts/cognitive_distortion.md
+new file mode 100644
+index 0000000..972ffe1
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/cognitive_distortion.md
+@@ -0,0 +1,25 @@
++# 认知扭曲 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.cognitiveDistortion`.
++
++```
++你是 CBT 治疗助手. 从 11 种 Beck 认知扭曲 (全或无/灾难化/过度概括/心理过滤/贬低正面/跳跃式结论/放大或缩小/情绪化推理/应该论/标签化/个人化) 中识别 1 个最可能的. 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 识别用户的认知扭曲类型 (Beck 11 种之一).
++**输入**: 脱敏后的 `{score, tags, cbtLevel}`.
++**输出**: 1 个 Beck 认知扭曲中文名.
++**失败行为**: 抛 → `AiResponse.cognitiveDistortion = null`, 其他 4 字段不受影响.
++
++**Beck 11 种认知扭曲** (完整列表, prompt 引用):
++1. 全或无 (All-or-nothing thinking)
++2. 灾难化 (Catastrophizing)
++3. 过度概括 (Overgeneralization)
++4. 心理过滤 (Mental filter)
++5. 贬低正面 (Disqualifying the positive)
++6. 跳跃式结论 (Jumping to conclusions)
++7. 放大或缩小 (Magnification/minimization)
++8. 情绪化推理 (Emotional reasoning)
++9. 应该论 (Should statements)
++10. 标签化 (Labeling)
++11. 个人化 (Personalization)
+diff --git a/lib/core/data/services/ai/prompts/core_belief.md b/lib/core/data/services/ai/prompts/core_belief.md
+new file mode 100644
+index 0000000..462a910
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/core_belief.md
+@@ -0,0 +1,12 @@
++# 核心信念 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.coreBelief`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, 提取可能的核心信念 (15 字以内). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 提取潜在核心信念 (CBT 第三层 — 信念层).
++**输入**: 脱敏后的 `{score, tags, cbtLevel}`.
++**输出**: 1 个核心信念 ≤ 15 字.
++**失败行为**: 抛 → `AiResponse.coreBelief = null`, 其他 4 字段不受影响.
+diff --git a/lib/core/data/services/ai/prompts/emotion_recognition.md b/lib/core/data/services/ai/prompts/emotion_recognition.md
+new file mode 100644
+index 0000000..bac775c
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/emotion_recognition.md
+@@ -0,0 +1,12 @@
++# 情绪识别 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.emotionRecognition`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签, 识别具体情绪词 (如 焦虑/沮丧/愤怒/悲伤). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 从元数据识别 1 个具体情绪词 (比 "情绪不好" 更精确).
++**输入**: 脱敏后的 `{score, tags}`.
++**输出**: 1 个情绪词.
++**失败行为**: 抛 → `AiResponse.emotion = null`, 其他 4 字段不受影响.
+diff --git a/test/core/data/services/ai/ai_service_round89_test.dart b/test/core/data/services/ai/ai_service_round89_test.dart
+new file mode 100644
+index 0000000..d7f8896
+--- /dev/null
++++ b/test/core/data/services/ai/ai_service_round89_test.dart
+@@ -0,0 +1,85 @@
++/// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiService 测试
++///
++/// 覆盖:
++/// - 5 prompt 并行调用 → 5 字段全有
++/// - 1 prompt 失败 → 其他 4 个继续 (Future.wait eagerError: false + _safeCall)
++/// - 脱敏: user prompt 只含 {score, tags, cbtLevel}, 不含 note/automaticThought/situation
++library;
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:chroniccare/core/data/services/ai/ai_service.dart';
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++
++class _MockProvider implements AiProvider {
++  String? lastSystemPrompt;
++  String? lastUserPrompt;
++  String? mockResponse;
++  Exception? mockException;
++  int callCount = 0;
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    callCount++;
++    lastSystemPrompt = systemPrompt;
++    lastUserPrompt = userPrompt;
++    if (mockException != null) throw mockException!;
++    return mockResponse ?? '';
++  }
++}
++
++class _CountingProvider implements AiProvider {
++  // 第 1 个 call 抛, 其他 4 个正常 — 验证 1 失败不阻塞其他
++  final bool alternatingException;
++  int callCount = 0;
++  _CountingProvider({this.alternatingException = false});
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    callCount++;
++    if (alternatingException && callCount == 1) {
++      throw Exception('mock fail on first call');
++    }
++    return '{"text": "示例回复"}';
++  }
++}
++
++void main() {
++  test('5 prompt 并行调用, 5 字段全有', () async {
++    final mock = _MockProvider();
++    mock.mockResponse = '{"text": "示例回复"}';
++    final svc = AiService(provider: mock);
++    final result = await svc.generateAll(score: 2, tags: ['焦虑'], cbtLevel: 5);
++    expect(mock.callCount, 5);
++    expect(result.alternativeThought, isNotNull);
++    expect(result.emotion, isNotNull);
++    expect(result.cognitiveDistortion, isNotNull);
++    expect(result.coreBelief, isNotNull);
++    expect(result.actionSuggestion, isNotNull);
++  });
++
++  test('1 prompt 失败, 其他 4 个继续', () async {
++    final mock = _CountingProvider(alternatingException: true);
++    final svc = AiService(provider: mock);
++    final result = await svc.generateAll(score: 3, tags: [], cbtLevel: 7);
++    expect(mock.callCount, 5);
++    expect(result.alternativeThought, isNull); // 第 1 个失败
++    expect(result.emotion, isNotNull);
++    expect(result.cognitiveDistortion, isNotNull);
++    expect(result.coreBelief, isNotNull);
++    expect(result.actionSuggestion, isNotNull);
++  });
++
++  test('user prompt 脱敏 — 不含 note / automaticThought', () async {
++    final mock = _MockProvider();
++    mock.mockResponse = 'ok';
++    final svc = AiService(provider: mock);
++    await svc.generateAll(score: 1, tags: ['失眠'], cbtLevel: 5);
++    // user prompt 只应含 {score, tags, cbtLevel}, 不含任何 user note 字段
++    expect(mock.lastUserPrompt, contains('情绪分数'));
++    expect(mock.lastUserPrompt, contains('失眠'));
++    expect(mock.lastUserPrompt, contains('CBT 档位'));
++    expect(mock.lastUserPrompt, isNot(contains('note')));
++    expect(mock.lastUserPrompt, isNot(contains('automaticThought')));
++    expect(mock.lastUserPrompt, isNot(contains('situation')));
++  });
++}

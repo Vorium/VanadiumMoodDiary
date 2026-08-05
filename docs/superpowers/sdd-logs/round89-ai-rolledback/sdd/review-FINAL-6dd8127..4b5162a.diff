@@ -1,0 +1,4122 @@
+﻿# Final review package: 6dd8127..4b5162a (sub-spec 5 完整 6 task)
+
+## Commits
+4b5162a v0.30 round 89 (i18n): 32 ARB keys (settings/dialog/wizard) + 3 lang sync + 4 widget l10n
+1a27c9e v0.30 round 89 (fix1): hasError helper text + 修正 generateAll 注释
+e032d1b v0.30 round 89 (wizard): 3 个 AI 按钮 (替代思维 / 核心信念 / 行动建议) + aiServiceProvider + 3 test
+a6cdd33 v0.30 round 89 (fix): AiSettings deadlock + rename + TextField controller
+fc051cb v0.30 round 89 (settings): AiSettings + 同意 dialog (PIPL §13) + settings AI section + 2 widget test
+757c70a v0.30 round 89 (data): DeepSeekProvider HTTP impl (https://api.deepseek.com/v1/chat/completions) + 4 mock test
+3aa357b v0.30 round 89 (data): AiService + abstract AiProvider + 5 prompt + Future.wait partial fail-safe
+e42efcf v0.30 round 89 (spec/plan): CBT AI 辅助 sub-spec 5 (6 task)
+
+## Files changed
+ docs/CHANGELOG.md                                  | 159 ++++++++
+ docs/superpowers/plans/2026-08-05-cbt-ai.md        | 398 +++++++++++++++++++++
+ docs/superpowers/specs/2026-08-05-cbt-ai-design.md | 149 ++++++++
+ .../ai_settings/ai_settings_repository_impl.dart   |  62 ++++
+ lib/core/data/services/ai/ai_provider.dart         |   7 +
+ lib/core/data/services/ai/ai_response.dart         |  26 ++
+ lib/core/data/services/ai/ai_service.dart          |  62 ++++
+ lib/core/data/services/ai/deepseek_provider.dart   |  66 ++++
+ lib/core/data/services/ai/prompts/_loader.dart     |  49 +++
+ .../data/services/ai/prompts/action_suggestion.md  |  12 +
+ .../services/ai/prompts/alternative_thought.md     |  12 +
+ .../services/ai/prompts/cognitive_distortion.md    |  25 ++
+ lib/core/data/services/ai/prompts/core_belief.md   |  12 +
+ .../services/ai/prompts/emotion_recognition.md     |  12 +
+ lib/domain/entities/ai_settings.dart               |  53 +++
+ lib/l10n/app_en.arb                                |  75 +++-
+ lib/l10n/app_localizations.dart                    | 192 ++++++++++
+ lib/l10n/app_localizations_en.dart                 | 113 ++++++
+ lib/l10n/app_localizations_zh.dart                 | 218 +++++++++++
+ lib/l10n/app_zh.arb                                |  75 +++-
+ lib/l10n/app_zh_Hant.arb                           |  75 +++-
+ .../pages/mood/widgets/cbt_ai_generate_button.dart | 170 +++++++++
+ .../pages/mood/widgets/cbt_wizard.dart             |  83 +++--
+ lib/presentation/pages/settings/settings_page.dart |   7 +
+ .../pages/settings/widgets/ai_consent_dialog.dart  |  61 ++++
+ .../pages/settings/widgets/ai_section.dart         | 196 ++++++++++
+ .../providers/ai_service_provider.dart             |  44 +++
+ .../providers/ai_settings_provider.dart            | 110 ++++++
+ pubspec.yaml                                       |   1 +
+ .../data/services/ai/ai_service_round89_test.dart  |  85 +++++
+ .../ai/deepseek_provider_round89_test.dart         |  94 +++++
+ .../mood/cbt_ai_generate_button_round89_test.dart  | 292 +++++++++++++++
+ .../pages/settings/settings_page_round45_test.dart |  89 ++++-
+ .../widgets/ai_consent_dialog_round89_test.dart    |  53 +++
+ .../settings/widgets/ai_section_round89_test.dart  | 164 +++++++++
+ .../ai_settings_provider_round89_test.dart         | 148 ++++++++
+ 36 files changed, 3418 insertions(+), 31 deletions(-)
+
+## Diff
+diff --git a/docs/CHANGELOG.md b/docs/CHANGELOG.md
+index 3124ffa..b7fcb09 100644
+--- a/docs/CHANGELOG.md
++++ b/docs/CHANGELOG.md
+@@ -1,14 +1,173 @@
+ ﻿# 变更日志
+ 
+ > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
+ 
++## [0.30.0] - 2026-08-05 (R89 — sub-spec 5, CBT AI 辅助 5 能力 + i18n + PIPL §13 同意)
++
++> R89 目标: CBT 思维记录 AI 辅助 5 个能力 (替代思维 / 情绪识别 / 认知扭曲 /
++> 核心信念 / 行动建议) 完整落地 — 从 `AiService` 抽象到 DeepSeekProvider
++> HTTP 接入, 从 AiSettings 同意 dialog 到 CbtWizard 3 个 AI 按钮, 再到
++> 32 个 ARB key 3 语言同步。本轮 6 commit (Task 1-5 + 1 fix), i18n 收尾。
++>
++> **6 个 task** (每个 1 commit, 共 6 commit, +20 test):
++> - Task 1: `AiService.generateAll` 并行 5 prompt + 脱敏
++>   ({score, tags, cbtLevel}, 不发 note/automaticThought) + 1 失败不阻塞
++>   其他 (Future.wait eagerError:false + _safeCall 双层保护) + 3 mock test
++> - Task 2: `DeepSeekProvider` HTTP impl
++>   (https://api.deepseek.com/v1/chat/completions) + 4 mock test
++> - Task 3: `AiSettings` + 同意 dialog (PIPL §13 单独同意) + settings AI
++>   section + 2 widget test
++> - Task 3 fix: TextField controller + 死锁修
++> - Task 4: 3 个 CbtWizard AI 按钮 (替代思维 / 核心信念 / 行动建议) +
++>   aiServiceProvider + 3 test
++> - Task 4 fix1: hasError helper text + generateAll 注释
++> - Task 5 (本 commit): 32 ARB keys (settings/dialog/wizard) + 3 语言
++>   同步 + CHANGELOG
++>
++> **架构边界**:
++> - 0 presentation 依赖 for service (`AiService` / `DeepSeekProvider` /
++>   `AiSettings` 在 `lib/core/data/services/`)
++> - 5 prompt source of truth 在 `_loader.dart`, 5 个 .md 是人读备份
++> - service 层不做 JSON 解析 (`DeepSeekProvider` 负责 `choices[0].message.content`)
++> - 隐私: user prompt 只发 {score, tags, cbtLevel}, 用户原文 (note /
++>   automaticThought / situation) 零外传 — 3 test 中第 3 个覆盖此约束
++> - i18n: 32 ARB keys 走 zh (source of truth) / en / zh_Hant 三语同步,
++>   复用 R57 `check_zh_hant_consistency.py` (OpenCC s2tw) 自动校对
++> - 同意 dialog: PIPL §13 单独同意, 4 项条款 (数据脱敏 / 国内传输 /
++>   第三方处理 / 可随时撤回) + 版本号 1.0
++> - Fail-safe: Future.wait(eagerError: false) + _safeCall 内部 try-catch
++>   + 5 字段独立 nullable — 1 字段失败不影响其他 4 个
++
++### Added
++- **AI 辅助 (CBT 思维记录) 5 个能力**:
++  - `AiService.generateAll(score, tags, cbtLevel)` — 并行 5 prompt 调 LLM,
++    返回 `AiResponse` 5 字段 nullable DTO (alternativeThought /
++    emotionRecognition / cognitiveDistortion / coreBelief / actionSuggestion)
++  - `AiProvider` 抽象 (单方法 `Future<String> call(system, user)`) —
++    mock test 注入 mock impl, release 注入 DeepSeekProvider
++  - `DeepSeekProvider` HTTP impl — POST https://api.deepseek.com/v1/chat/completions,
++    解析 `choices[0].message.content` 透传给 `AiService`
++  - 5 prompt (替代思维 / 情绪识别 / 认知扭曲 / 核心信念 / 行动建议) —
++    source of truth 在 `_loader.dart`, 5 个 .md 是人读备份
++- **国内 LLM provider (DeepSeek)**: 国内 API (api.deepseek.com), 数据不出境
++- **AiSettings + 加密存储**:
++  - `AiSettingsRepository` 走 SQLCipher (跟其它敏感数据同库)
++  - apiKey 走 FlutterSecureStorage (Android EncryptedSharedPreferences /
++    iOS Keychain / Windows DPAPI)
++  - 4 字段: enabled / provider / modelName / consentAcceptedAt
++- **PIPL §13 单独同意 dialog**:
++  - 首次启用弹 4 项条款 (数据脱敏 / 国内传输 / 第三方处理 / 可随时撤回)
++  - 同意版本: 1.0 — 法务审核时如需 bump, AI 重新弹 dialog
++  - 用户可随时 toggle off, 历史 AI 建议保留在本地
++- **Fail-safe**:
++  - Future.wait(eagerError: false) — 1 字段异常不阻塞其他 4 个
++  - `_safeCall` 内部 try-catch — 5 prompt 各自独立异常捕获
++  - AiService.generateAll 永远不抛 (5 字段 nullable 替代 throw)
++- **Wizard 集成 (CbtWizard 3 个 AI 按钮)**:
++  - step 3 (5/7 栏) → "AI 建议替代思维" → 写 alternativeThought
++  - step 4 (7 栏 only) → "AI 提取核心信念" → 写 coreBelief
++  - step 5 (7 栏 only) → "AI 建议行动" → 写 behaviorResponse
++  - settings 启用 + 填 API key 后 wizard 才显示按钮 (否则 disabled +
++    helper text 告诉用户怎么修)
++- **32 ARB keys (zh / en / zh_Hant)**:
++  - settings section: aiSectionTitle / aiSectionHint / aiEnableToggle /
++    aiApiKeyLabel / aiApiKeyHint / aiModelLabel / aiModelDeepseekChat /
++    aiTestConnection / aiTestConnectionPending / aiApiKeySaved /
++    aiSaveFailed / aiEmptyApiKeyHint / aiLoadSettingsFailed
++  - consent dialog: aiConsentTitle / aiConsentBody / aiConsentAccept /
++    aiConsentDecline / aiConsentPoint1-4 / aiConsentVersion
++  - wizard button: moodCbtAiAltThoughtButton / moodCbtAiCoreBeliefButton /
++    moodCbtAiBehaviorResponseButton / moodCbtAiGenerating /
++    moodCbtAiGenerated / moodCbtAiUnavailable / moodCbtAiFailed /
++    moodCbtAiHelperEnable / moodCbtAiHelperApiKey / moodCbtAiHelperUnavailable
++  - 跟 R85 wizard + R88 cbt_section 命名风格一致 (`moodCbt*` / `cbtExportPdf*`)
++  - 复用 R56e `check_orphan_arb_keys.py` 验证 0 orphan
++  - 复用 R57 `check_zh_hant_consistency.py` (OpenCC s2tw) 自动校对繁简
++
++### Privacy
++- 客户端**完全脱敏** — 用户的 note / automaticThought / situation / 任何
++  自由文本**永不发送**到 LLM
++- 仅 metadata (score 1-5 + tags 数组 + CBT 档位 3/5/7) 发给 DeepSeek
++- API key 走 Android EncryptedSharedPreferences / iOS Keychain / Windows DPAPI
++- 用户可随时 toggle off, 历史 AI 建议保留在本地
++- PIPL §13 单独同意 — 首次启用弹 4 项条款, 拒绝 / 撤回不丢失现有数据
++- LLM 传输走国内 api.deepseek.com — 数据不出境
++
++### Test
++- **1507/1507 pass** (R88 1487 + R89 +20 ai_service / DeepSeekProvider /
++  AiSettings / CbtWizard / i18n)
++- `flutter analyze` 0 error (9 info-level pre-existing `RadioListTile`
++  `deprecated_member_use` 同 R88)
++- 16 守门员脚本全绿 (check_arb_keys / check_changelog /
++  check_cross_feature / check_datetime_race / check_datetime_race2 /
++  check_drift_namespace / check_fullwidth_punctuation /
++  check_no_hardcoded_utc / check_no_pua / check_widget_dispose /
++  check_orphan_arb_keys / check_legal_consent / check_sms_release_ready /
++  check_strings_hardcoded / check_zh_hant_consistency / check_all.dart)
++
++### Notes
++- 单 provider MVP (DeepSeek), OpenAI / Claude 留 v0.31+
++- 真实"测试连接"按钮功能 v0.31 接入 (本版仅占位 snackbar)
++- 同意版本: 1.0 (法务审核时如需 bump, AI 重新弹 dialog)
++- i18n fix1 (v0.30 R89): 4 个 AI widget (`ai_section.dart` /
++  `ai_consent_dialog.dart` / `cbt_ai_generate_button.dart` /
++  `cbt_wizard.dart`) 的 ~30 个 hardcoded 中文 placeholder 全换 ARB key
++- 已知 bug / 杂项 (留 R89 final review + R90+):
++  - `moodCbtAiHelperUnavailable` 兜底 key: 错误信息未匹配 'AI 未启用' /
++    'API Key' 模式时显示 (rare case, 但要 fallback 友好)
++  - 3 个 wizard 按钮全点 = 3× 5 = 15 次 HTTP 往返 — v0.31+ 加
++    aiResponseCacheProvider 复用 1 次响应 (用户改 score / tags 触发 invalidate)
++
++
++## [0.30.0] - 2026-08-05 (R89 — sub-spec 5, CBT AI 辅助 core: AiService + abstract AiProvider + 5 prompt + Future.wait partial fail-safe)
++
++> R89 目标: CBT 思维记录 AI 辅助 5 个能力 (替代思维 / 情绪识别 / 认知扭曲 /
++> 核心信念 / 行动建议) 的核心 — `AiService` + abstract `AiProvider` + 5
++> prompt 文件 + mock test。本轮 1 commit (Task 1), 后续 5 task 接着做
++> DeepSeekProvider / AiSettings / CbtWizard 集成 / i18n。
++>
++> **1 个 task** (1 commit, +3 test):
++> - Task 1 (本 commit): `AiService.generateAll` 并行 5 prompt + 脱敏
++>   ({score, tags, cbtLevel}, 不发 note/automaticThought) + 1 失败不阻塞
++>   其他 (Future.wait eagerError:false + _safeCall 双层保护) + 3 mock test
++>   (5 字段全有 / 1 失败 4 继续 / 脱敏). 后 5 task 复用本 task 的
++>   `AiProvider` 接口注入 DeepSeekProvider.
++>
++> **架构边界**:
++> - 0 presentation 依赖, 全在 `lib/core/data/services/ai/`
++> - 5 prompt source of truth 在 `_loader.dart`, 5 个 .md 是人读备份
++> - service 层不做 JSON 解析 (Task 2 DeepSeekProvider 负责 `choices[0].message.content`)
++> - 隐私: user prompt 只发 {score, tags, cbtLevel}, 用户原文 (note /
++>   automaticThought / situation) 零外传 — 3 test 中第 3 个覆盖此约束
++> - 后续 5 task 通过 Riverpod 注入 `AiProvider` (Task 2), AiSettings
++>   同意 (Task 3), CbtWizard 调 `generateAll` (Task 4), i18n (Task 5)
++
++### Added
++- **CBT AI 辅助 core (sub-spec 5 Task 1)**:
++  - 新增 `lib/core/data/services/ai/ai_service.dart` — `AiService.generateAll`
++    并行 5 prompt + Future.wait eagerError:false + `_safeCall` 双层保护
++  - 新增 `lib/core/data/services/ai/ai_provider.dart` — abstract `AiProvider`
++    (单方法 `Future<String> call(system, user)`)
++  - 新增 `lib/core/data/services/ai/ai_response.dart` — `AiResponse` 5 字段
++    nullable DTO + `hasAny` getter
++  - 新增 `lib/core/data/services/ai/prompts/_loader.dart` — 5 prompt 硬编码常量
++    (source of truth)
++  - 新增 5 个 .md 备份 (`alternative_thought.md` / `emotion_recognition.md` /
++    `cognitive_distortion.md` / `core_belief.md` / `action_suggestion.md`)
++  - 新增 `test/core/data/services/ai/ai_service_round89_test.dart` — 3 mock test
++    (5 字段全有 / 1 失败 4 继续 / 脱敏)
++
++### Test
++- **1490/1490 pass** (R88 1487 + R89 +3 ai_service)
++
++
+ ## [0.30.0] - 2026-08-05 (R88 — sub-spec 4, CBT 思维记录 5/7 栏导出 PDF + 修 R84 silent data loss)
+ 
+ > R88 目标: 把 CBT 思维记录 5/7 栏 导出为 PDF, 让用户能把完整 CBT
+ > 工作流 (situation / automaticThought / evidenceFor / evidenceAgainst /
+ > alternativeThought / reratedScore / coreBelief / behaviorResponse) 离线
+ > 分享给医生或心理咨询师。本轮同时修一个 P0 silent data loss bug (R84
+ > 加 8 CBT 字段时漏更新 `data_export` 的 toMap, 导致导出的 JSON 把
+ > CBT 字段全丢, 用户做了一堆 5/7 栏记录导出一看啥也没)。
+ >
+ > **5 个 task** (每个 1 commit, 共 5 commit, +4 test):
+diff --git a/docs/superpowers/plans/2026-08-05-cbt-ai.md b/docs/superpowers/plans/2026-08-05-cbt-ai.md
+new file mode 100644
+index 0000000..cf3b4b8
+--- /dev/null
++++ b/docs/superpowers/plans/2026-08-05-cbt-ai.md
+@@ -0,0 +1,398 @@
++# CBT AI 辅助 Implementation Plan
++
++> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
++
++**Goal:** 5 个 AI 能力 (替代思维 / 情绪识别 / 认知扭曲 / 核心信念 / 行动建议), 5 个独立 prompt, 国内 LLM (DeepSeek), 全本地脱敏
++
++**Architecture:** AiService (5 methods) + abstract AiProvider + DeepSeekProvider (唯一实现) + AiSettingsNotifier (SP 持久化) + 同意 dialog (PIPL §13) + 3 个 wizard AI 按钮
++
++**Tech Stack:** Flutter 3.41.9 / `http` (Dart 标准 HTTP) / flutter_secure_storage (apiKey) / Riverpod 3.x
++
++## Global Constraints
++
++- Flutter 3.41.9 / Dart 3.12.2
++- 4-layer architecture
++- 守门员: `flutter analyze` 0, `flutter test` 全过, 16 脚本全绿
++- TDD: red → green → commit
++- baseline 1487 pass / 0 fail (R88)
++- master commit 6dd8127
++- **不测真实 LLM** — mock HTTP response
++- 国内 API (DeepSeek) — 数据不出境
++
++## File Structure
++
++### 新增
++- `lib/core/data/services/ai/ai_service.dart` (5 methods, Future.wait)
++- `lib/core/data/services/ai/ai_provider.dart` (abstract)
++- `lib/core/data/services/ai/deepseek_provider.dart` (HTTP impl)
++- `lib/core/data/services/ai/ai_response.dart` (5 字段 DTO)
++- `lib/core/data/services/ai/prompts/alternative_thought.md`
++- `lib/core/data/services/ai/prompts/emotion_recognition.md`
++- `lib/core/data/services/ai/prompts/cognitive_distortion.md`
++- `lib/core/data/services/ai/prompts/core_belief.md`
++- `lib/core/data/services/ai/prompts/action_suggestion.md`
++- `lib/domain/entities/ai_settings_entity.dart`
++- `lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart`
++- `lib/presentation/providers/ai_settings_provider.dart`
++- `lib/presentation/pages/settings/widgets/ai_section.dart`
++- `lib/presentation/pages/settings/widgets/ai_consent_dialog.dart`
++- `lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart`
++- `test/core/data/services/ai/ai_service_round89_test.dart`
++- `test/presentation/pages/settings/ai_section_round89_test.dart`
++- `test/presentation/pages/settings/ai_consent_dialog_round89_test.dart`
++
++### 修改
++- `lib/presentation/pages/mood/widgets/cbt_wizard.dart` (加 3 个 AI 按钮)
++- `lib/l10n/app_zh.arb` / `app_en.arb` / `app_zh_Hant.arb` (~16 keys)
++- `docs/CHANGELOG.md` (R89 entry)
++- `pubspec.yaml` (加 `http: ^1.x` if not present)
++
++---
++
++### Task 1: AiService + abstract + 5 prompt files + mock test
++
++**Files:**
++- Create: `lib/core/data/services/ai/ai_service.dart`
++- Create: `lib/core/data/services/ai/ai_provider.dart`
++- Create: `lib/core/data/services/ai/ai_response.dart`
++- Create: 5 prompt files in `lib/core/data/services/ai/prompts/`
++- Test: `test/core/data/services/ai/ai_service_round89_test.dart`
++
++**Interfaces:**
++- `class AiResponse { final String? alternativeThought; final String? emotion; final String? cognitiveDistortion; final String? coreBelief; final String? actionSuggestion; }`
++- `abstract class AiProvider { Future<String> call(String systemPrompt, String userPrompt); }`
++- `class AiService { final AiProvider provider; Future<AiResponse> generateAll({required int score, required List<String> tags, int? cbtLevel}); }`
++
++- [ ] **Step 1: 写失败测试**
++
++`test/core/data/services/ai/ai_service_round89_test.dart`:
++
++```dart
++import 'package:flutter_test/flutter_test.dart';
++import 'package:chroniccare/core/data/services/ai/ai_service.dart';
++import 'package:chroniccare/core/data/services/ai/ai_response.dart';
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++
++class _MockProvider implements AiProvider {
++  String? lastSystemPrompt;
++  String? lastUserPrompt;
++  String? mockResponse;
++  Exception? mockException;
++  int callCount = 0;
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    callCount++;
++    lastSystemPrompt = systemPrompt;
++    lastUserPrompt = userPrompt;
++    if (mockException != null) throw mockException!;
++    return mockResponse ?? '';
++  }
++}
++
++void main() {
++  test('5 prompt 并行调用, 5 字段全有', () async {
++    final mock = _MockProvider();
++    mock.mockResponse = '{"text": "示例回复"}';
++    final svc = AiService(provider: mock);
++    final result = await svc.generateAll(score: 2, tags: ['焦虑'], cbtLevel: 5);
++    expect(mock.callCount, 5);
++    expect(result.alternativeThought, isNotNull);
++    expect(result.emotion, isNotNull);
++    expect(result.cognitiveDistortion, isNotNull);
++    expect(result.coreBelief, isNotNull);
++    expect(result.actionSuggestion, isNotNull);
++  });
++
++  test('1 prompt 失败, 其他 4 个继续', () async {
++    final mock = _CountingProvider(alternatingException: true);
++    final svc = AiService(provider: mock);
++    final result = await svc.generateAll(score: 3, tags: [], cbtLevel: 7);
++    // 第 1 个 prompt 抛, 其他 4 个继续
++    expect(result.alternativeThought, isNull);
++    expect(result.emotion, isNotNull);
++    expect(result.cognitiveDistortion, isNotNull);
++    expect(result.coreBelief, isNotNull);
++    expect(result.actionSuggestion, isNotNull);
++  });
++}
++```
++
++- [ ] **Step 2: 跑测试验证失败**
++
++- [ ] **Step 3: 实现 AiResponse + abstract AiProvider**
++
++`lib/core/data/services/ai/ai_response.dart`:
++
++```dart
++class AiResponse {
++  final String? alternativeThought;
++  final String? emotion;
++  final String? cognitiveDistortion;
++  final String? coreBelief;
++  final String? actionSuggestion;
++
++  const AiResponse({
++    this.alternativeThought,
++    this.emotion,
++    this.cognitiveDistortion,
++    this.coreBelief,
++    this.actionSuggestion,
++  });
++}
++```
++
++`lib/core/data/services/ai/ai_provider.dart`:
++
++```dart
++abstract class AiProvider {
++  Future<String> call(String systemPrompt, String userPrompt);
++}
++```
++
++- [ ] **Step 4: 实现 AiService**
++
++`lib/core/data/services/ai/ai_service.dart`:
++
++```dart
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): 5 个 prompt 并行调用
++//
++// 脱敏: 只发 {score, tags, cbtLevel} 给 LLM, 不发 note / 自动思维原文
++// Fail-safe: 1 个失败只 toast 该能力, 其他 4 个继续
++
++import 'dart:async';
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++import 'package:chroniccare/core/data/services/ai/ai_response.dart';
++import 'package:chroniccare/core/data/services/ai/prompts/_loader.dart';
++
++class AiService {
++  final AiProvider provider;
++  AiService({required this.provider});
++
++  Future<AiResponse> generateAll({
++    required int score,
++    required List<String> tags,
++    int? cbtLevel,
++  }) async {
++    final userPrompt = _buildUserPrompt(score: score, tags: tags, cbtLevel: cbtLevel);
++    final prompts = await PromptLoader.loadAll();
++
++    final results = await Future.wait(
++      [
++        _safeCall(prompts.alternativeThought, userPrompt),
++        _safeCall(prompts.emotionRecognition, userPrompt),
++        _safeCall(prompts.cognitiveDistortion, userPrompt),
++        _safeCall(prompts.coreBelief, userPrompt),
++        _safeCall(prompts.actionSuggestion, userPrompt),
++      ],
++      eagerError: false,  // 1 个失败不阻塞其他
++    );
++
++    return AiResponse(
++      alternativeThought: results[0],
++      emotion: results[1],
++      cognitiveDistortion: results[2],
++      coreBelief: results[3],
++      actionSuggestion: results[4],
++    );
++  }
++
++  Future<String?> _safeCall(String systemPrompt, String userPrompt) async {
++    try {
++      return await provider.call(systemPrompt, userPrompt);
++    } catch (e) {
++      return null;
++    }
++  }
++
++  String _buildUserPrompt({required int score, required List<String> tags, int? cbtLevel}) {
++    return '用户输入 (脱敏后):\n'
++        '- 情绪分数: $score / 5\n'
++        '- 情绪标签: ${tags.isEmpty ? "(无)" : tags.join(", ")}\n'
++        '- CBT 档位: ${cbtLevel ?? "(无)"}\n'
++        '\n请根据以上信息生成回复。';
++  }
++}
++```
++
++- [ ] **Step 5: 5 prompt 文件**
++
++`lib/core/data/services/ai/prompts/_loader.dart` (helper 读 5 个 markdown):
++
++```dart
++class Prompts {
++  final String alternativeThought;
++  final String emotionRecognition;
++  final String cognitiveDistortion;
++  final String coreBelief;
++  final String actionSuggestion;
++  const Prompts({required this.alternativeThought, required this.emotionRecognition, required this.cognitiveDistortion, required this.coreBelief, required this.actionSuggestion});
++}
++
++class PromptLoader {
++  static Future<Prompts> loadAll() async {
++    // v0.30 MVP: 5 个 prompt 硬编码常量 (跟 markdown 文件同步)
++    return const Prompts(
++      alternativeThought: '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+CBT 档位, 生成 1 个更平衡的替代思维 (50 字以内). 输出 JSON {"text": "..."}',
++      emotionRecognition: '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签, 识别具体情绪词 (如 焦虑/沮丧/愤怒/悲伤). 输出 JSON {"text": "..."}',
++      cognitiveDistortion: '你是 CBT 治疗助手. 从 11 种 Beck 认知扭曲 (全或无/灾难化/过度概括/心理过滤/贬低正面/跳跃式结论/放大或缩小/情绪化推理/应该论/标签化/个人化) 中识别 1 个最可能的. 输出 JSON {"text": "..."}',
++      coreBelief: '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, 提取可能的核心信念 (15 字以内). 输出 JSON {"text": "..."}',
++      actionSuggestion: '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, 给出 3 个具体行动建议 (CBT 行为激活). 输出 JSON {"text": "..."}',
++    );
++  }
++}
++```
++
++- [ ] **Step 6: 跑测试验证通过**
++
++- [ ] **Step 7: Commit**
++
++```bash
++git add lib/core/data/services/ai/ test/core/data/services/ai/ai_service_round89_test.dart
++git commit -m 'v0.30 round 89 (data): AiService + abstract + 5 prompt + Future.wait partial fail-safe'
++```
++
++---
++
++### Task 2: DeepSeekProvider (HTTP impl)
++
++**Files:**
++- Create: `lib/core/data/services/ai/deepseek_provider.dart`
++- Test: 同 Task 1 (mock)
++
++- [ ] **Step 1: 实现 DeepSeekProvider**
++
++```dart
++import 'dart:convert';
++import 'package:http/http.dart' as http;
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++
++class DeepSeekProvider implements AiProvider {
++  final String apiKey;
++  final String modelName;
++  final http.Client _client;
++  static const _endpoint = 'https://api.deepseek.com/v1/chat/completions';
++
++  DeepSeekProvider({
++    required this.apiKey,
++    required this.modelName,
++    http.Client? client,
++  }) : _client = client ?? http.Client();
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    final response = await _client.post(
++      Uri.parse(_endpoint),
++      headers: {
++        'Content-Type': 'application/json',
++        'Authorization': 'Bearer $apiKey',
++      },
++      body: jsonEncode({
++        'model': modelName,
++        'messages': [
++          {'role': 'system', 'content': systemPrompt},
++          {'role': 'user', 'content': userPrompt},
++        ],
++        'temperature': 0.7,
++        'max_tokens': 500,
++      }),
++    );
++
++    if (response.statusCode != 200) {
++      throw Exception('DeepSeek API ${response.statusCode}: ${response.body}');
++    }
++
++    final body = jsonDecode(response.body) as Map<String, dynamic>;
++    final content = (body['choices'] as List).first['message']['content'] as String;
++    return content;
++  }
++}
++```
++
++- [ ] **Step 2: 跑 Task 1 测试 + analyze (mock provider 不动)**
++
++- [ ] **Step 3: Commit**
++
++```bash
++git commit -m 'v0.30 round 89 (data): DeepSeekProvider HTTP impl (https://api.deepseek.com/v1/chat/completions)'
++```
++
++---
++
++### Task 3: AiSettings + 同意 dialog (PIPL §13)
++
++**Files:**
++- Create: `lib/domain/entities/ai_settings_entity.dart`
++- Create: `lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart`
++- Create: `lib/presentation/providers/ai_settings_provider.dart`
++- Create: `lib/presentation/pages/settings/widgets/ai_section.dart`
++- Create: `lib/presentation/pages/settings/widgets/ai_consent_dialog.dart`
++- Test: `test/presentation/pages/settings/ai_section_round89_test.dart`
++- Test: `test/presentation/pages/settings/ai_consent_dialog_round89_test.dart`
++
++**Interfaces:**
++- `AiSettingsEntity` (domain)
++- `AiSettingsRepository` (data) — 走 flutter_secure_storage 存 apiKey, SP 存 enabled/provider/model
++- `aiSettingsProvider` (Riverpod) — NotifierProvider
++
++- [ ] **Step 1: 写失败测试 — section 渲染**
++
++- [ ] **Step 2-7: TDD, 跑测试, commit**
++
++```bash
++git commit -m 'v0.30 round 89 (settings): AI section + consent dialog (PIPL §13)'
++```
++
++---
++
++### Task 4: CbtWizard 集成 3 个 AI 按钮
++
++**Files:**
++- Modify: `lib/presentation/pages/mood/widgets/cbt_wizard.dart`
++- Create: `lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart`
++
++**Interfaces:**
++- CbtAiGenerateButton({required VoidCallback onTap, required String label}) — 显示 loading / 触发 AiService
++
++- [ ] **Step 1-7: TDD, 跑测试, commit**
++
++```bash
++git commit -m 'v0.30 round 89 (wizard): 3 个 AI 按钮 (替代思维 / 核心信念 / 行动建议)'
++```
++
++---
++
++### Task 5: i18n 16 keys + CHANGELOG
++
++**Files:**
++- Modify: 3 ARB files
++- Modify: CHANGELOG
++
++- [ ] **Step 1-6: 跑守门员 + analyze + test + commit**
++
++```bash
++git commit -m 'v0.30 round 89 (i18n): 16 ARB keys + CHANGELOG R89'
++```
++
++---
++
++### Task 6: Final whole-branch review + fix
++
++- [ ] **Step 1: dispatch final review subagent**
++
++- [ ] **Step 2: dispatch fix subagent for Important findings**
++
++- [ ] **Step 3: commit final + merge master + cleanup worktree**
++
++---
++
++## Self-Review
++
++- [x] Spec coverage: 5 个 AI 能力 (Task 1+2+4) / 设置+同意 (Task 3) / i18n (Task 5)
++- [x] No placeholders
++- [x] Type consistency: AiResponse 5 nullable 字段, AiService.generateAll 返回 AiResponse
++- [x] TDD: red → green → commit per task
++- [x] DRY: 1 个 AiService + 1 个 AiProvider (mock + deepseek impl) + 5 prompt 共享 user prompt 构建
++- [x] YAGNI: 单 provider (DeepSeek) / 不做 cost tracker / 不做 fine-tune / 不做流式 (普通 POST 够用)
++- [x] Fail-safe: Future.wait(eagerError: false) + _safeCall 内部 try-catch + 5 字段独立 null
++- [x] 隐私: 全本地脱敏 (只发 score/tags/level), apiKey 走 EncryptedSharedPreferences
+diff --git a/docs/superpowers/specs/2026-08-05-cbt-ai-design.md b/docs/superpowers/specs/2026-08-05-cbt-ai-design.md
+new file mode 100644
+index 0000000..b18bf3a
+--- /dev/null
++++ b/docs/superpowers/specs/2026-08-05-cbt-ai-design.md
+@@ -0,0 +1,149 @@
++# CBT AI 辅助生成思维记录 Sub-spec 5
++
++| 项目 | 内容 |
++|---|---|
++| 状态 | design |
++| 日期 | 2026-08-05 |
++| 范围 | sub-spec 5 / 5 (AI 辅助) |
++| 依赖 | sub-spec 1+2+3+4 merged (v0.30 R84+85+86+87+88) |
++
++## 背景
++
++sub-spec 1 加 5/7 栏 CBT 思维记录后, 用户在 step 4 "替代思维" 经常卡住: "我知道这个想法不合理, 但我想不出更平衡的想法是什么?" 这是 CBT 治疗最常见的难点, 多数治疗师在这步会介入帮用户 reframe。
++
++项目 0 云端 + 全本地, 但 LLM 调用是国内 API (DeepSeek), 不出境, PIPL 风险可控。
++
++## Goals
++
++- 5 个 AI 能力, 5 个独立 prompt, 并行调用:
++  1. **替代思维生成** (CBT 5 栏 step 4)
++  2. **情绪识别** (从 score + tags 推断具体情绪词)
++  3. **认知扭曲类型识别** (Beck 11 种)
++  4. **核心信念提取** (7 栏 step 4)
++  5. **行动建议** (7 栏 step 5)
++- 脱敏: 全本地预处理, 只发 `{score, tags, cbtLevel}` 给 LLM, **不发 note / 自动思维原文**
++- 用户同意: 设置页 toggle + 首次启用强制弹详情 dialog
++- Fail-safe: 5 个 prompt 并行 (Future.wait), 任一失败只 toast 该能力名, 其他继续
++- i18n: ~12 keys
++- 测试: 1 unit + 1 widget + i18n 守门
++
++## Non-Goals
++
++- ❌ 多 provider (v0.30 只 DeepSeek, v0.31+ 可加 通义 / 智谱 / OpenAI 等)
++- ❌ 行动建议之外的 CBT 干预 (行为激活 / 正念脚本等) 留 v0.31+
++- ❌ LLM 训练 / fine-tune
++- ❌ 自动保存 LLM 回复到 DB (用户先看, 自己决定采纳)
++- ❌ PDF 导出 LLM 回复 (sub-spec 4 范围, 后续可加)
++- ❌ LLM token 成本统计 (P2 加)
++
++## 范围 (8 task)
++
++1. **Task 1**: Data layer (AiService + abstract AiProvider + 5 prompt 文件 + mock provider test)
++2. **Task 2**: DeepSeekProvider (HTTP POST + JSON 解析 + 流式)
++3. **Task 3**: Settings + 同意 dialog (PIPL §13)
++4. **Task 4**: CbtWizard 集成 (3 个 "AI 帮我填" 按钮)
++5. **Task 5**: i18n + CHANGELOG final
++6. **Task 6**: Final whole-branch review + fix
++
++## Data Model
++
++无 schema 改动 (LLM 调用不进 DB)。
++
++**新加 domain entity**:
++```dart
++class AiSettingsEntity {
++  final bool enabled;
++  final String provider;  // 'deepseek' (固定 MVP)
++  final String apiKey;
++  final String modelName;  // 'deepseek-chat'
++  final DateTime? consentAcceptedAt;
++  final String? consentVersion;
++}
++```
++
++**新加 service**:
++- `AiService` (lib/core/data/services/ai/ai_service.dart)
++  - 5 个方法, 每个方法 1 个 prompt
++  - `Future<AiResponse> generateAll({required int score, required List<String> tags, int cbtLevel})` — Future.wait 5 个 prompt
++  - 任一失败 → 该字段 = null, 单独 toast
++- `abstract AiProvider` — 注入 5 个 prompt
++- `DeepSeekProvider` — 唯一实现 (v0.30)
++
++**新加 provider (Riverpod)**:
++- `aiSettingsProvider` (NotifierProvider<AiSettingsEntity>) — SP 持久化
++- `aiServiceProvider` (Provider.autoDispose<AiService>) — 依赖 settings
++
++## UI 设计
++
++**CbtWizard 集成** (R85 wizard 已有):
++- Step 4 (替代思维) CbtSectionField 旁加 "AI 建议" 按钮 → 触发 1 prompt
++- Step 4 (7 栏加) coreBelief CbtSectionField 旁加 "AI 提取" 按钮 → 1 prompt
++- Step 5 (行为应对) 加 "AI 建议" 按钮 → 1 prompt
++- **情绪识别 + 认知扭曲识别**: 自动后台跑, 结果插入到 CbtSectionField 提示气泡 (不阻塞)
++
++**设置页** (`lib/presentation/pages/settings/widgets/ai_section.dart`):
++- "启用 AI 辅助" toggle
++- 启用后展开: Provider (固定显示 "DeepSeek") / API Key 输入 / 模型名输入 / "测试连接" 按钮 / "Token 用量" 显示 (P2)
++- 关闭时收起 (折叠 Card)
++
++**同意 dialog** (`lib/presentation/pages/settings/widgets/ai_consent_dialog.dart`):
++- 标题 "AI 辅助说明"
++- 内容: 5 个能力列表 + 脱敏说明 + 数据流向 (国内 API, 不出境, 仅传 {score, tags, level})
++- 2 按钮: "同意" / "暂不开启"
++- 同意后: 写 `aiSettingsProvider.setEnabled(true)` + 写 SP (`ai.consentAcceptedAt` + `ai.consentVersion`)
++
++## 错误处理
++
++- HTTP 4xx/5xx → 该能力返回 null + 1 个独立 SnackBar "X 功能暂不可用"
++- API key 无效 → "测试连接" 失败 + 设置页 inline 错误
++- 网络断开 → 5 个能力全 null + 1 个 "网络不可用" SnackBar
++- JSON 解析失败 → 该能力 null + toast
++- 不抛异常给 UI (AiService 内部 try-catch 全包)
++
++## 测试
++
++- **unit**: 1 case (AiService 5 prompt 调用, mock HTTP response, 验证 5 字段 + partial fail)
++- **widget**: 1 case (设置页 toggle → 同意 dialog 弹 → 同意 → toggle on)
++- **i18n 守门**: 4 脚本 (check_arb_keys / check_orphan_arb_keys / check_zh_hant_consistency / check_strings_hardcoded)
++
++**不测真实 LLM** (cost + flakiness), mock HTTP response。
++
++## 风险与回滚
++
++- **P0 apiKey 泄漏**: 走 EncryptedSharedPreferences (`flutter_secure_storage` 已有, 跟 userAgreement 同意存储同 pattern)
++- **P0 同意缺失**: 首次启用强制 dialog, 不允许 "沉默同意"
++- **P1 JSON 解析失败**: 每个 prompt 加 try-catch + JSON 解析 fallback
++- **P2 成本失控**: 暂不加, 留 v0.31+ 加 monthly token counter
++
++## ARB key 列表 (~12 keys)
++
++```
++aiSectionTitle              "AI 辅助"
++aiEnableToggle              "启用 AI 辅助生成思维记录"
++aiEnableHint                "5 个能力: 替代思维 / 情绪识别 / 认知扭曲 / 核心信念 / 行动建议"
++aiProviderLabel             "Provider"
++aiApiKeyLabel               "API Key"
++aiApiKeyHint                "DeepSeek API Key (sk-...)"
++aiModelLabel                "模型名"
++aiModelHint                 "deepseek-chat"
++aiTestConnection            "测试连接"
++aiTestConnectionSuccess     "连接成功"
++aiTestConnectionFailed      "连接失败"
++aiConsentTitle              "AI 辅助说明"
++aiConsentBody               "..." (PIPL §13 详细条款, 跟法务模板)
++aiConsentAccept             "同意"
++aiConsentDecline            "暂不开启"
++aiAltThoughtAIGenerate      "AI 建议"
++aiCoreBeliefAIExtract       "AI 提取"
++aiBehaviorResponseAISuggest "AI 建议"
++aiAIGenerating              "AI 正在生成..."
++```
++
++## 实施步骤 (high level)
++
++1. **Task 1**: AiService + abstract AiProvider + 5 prompt files + mock test
++2. **Task 2**: DeepSeekProvider (HTTP + JSON 解析)
++3. **Task 3**: Settings page + consent dialog (PIPL)
++4. **Task 4**: CbtWizard 3 个 AI 按钮集成
++5. **Task 5**: i18n 12 keys + CHANGELOG
++6. **Task 6**: Final whole-branch review + fix
+diff --git a/lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart b/lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart
+new file mode 100644
+index 0000000..f31ee96
+--- /dev/null
++++ b/lib/core/data/repositories/ai_settings/ai_settings_repository_impl.dart
+@@ -0,0 +1,62 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AI 设置仓库
++//
++// apiKey → FlutterSecureStorage (跟 db_key_service 同 pattern, Android 用
++// EncryptedSharedPreferences 加密)
++// enabled / provider / modelName / consentAcceptedAt / consentVersion →
++// SharedPreferences
++
++import 'package:flutter_secure_storage/flutter_secure_storage.dart';
++import 'package:shared_preferences/shared_preferences.dart';
++
++import 'package:chroniccare/domain/entities/ai_settings.dart';
++
++class AiSettingsRepository {
++  static const _kApiKey = 'ai_api_key';
++  static const _kEnabled = 'ai_enabled';
++  static const _kProvider = 'ai_provider';
++  static const _kModelName = 'ai_model_name';
++  static const _kConsentAt = 'ai_consent_accepted_at';
++  static const _kConsentVersion = 'ai_consent_version';
++  static const _consentVersion = '1.0';
++
++  static const _secureStorage = FlutterSecureStorage(
++    aOptions: AndroidOptions(encryptedSharedPreferences: true),
++  );
++
++  Future<AiSettings> load() async {
++    final prefs = await SharedPreferences.getInstance();
++    return AiSettings(
++      enabled: prefs.getBool(_kEnabled) ?? false,
++      provider: prefs.getString(_kProvider) ?? 'deepseek',
++      modelName: prefs.getString(_kModelName) ?? 'deepseek-chat',
++      consentAcceptedAt: prefs.getString(_kConsentAt),
++      consentVersion: prefs.getString(_kConsentVersion) ?? _consentVersion,
++    );
++  }
++
++  /// 仅存 metadata, 不存 apiKey
++  Future<void> save(AiSettings settings) async {
++    final prefs = await SharedPreferences.getInstance();
++    await prefs.setBool(_kEnabled, settings.enabled);
++    await prefs.setString(_kProvider, settings.provider);
++    await prefs.setString(_kModelName, settings.modelName);
++    if (settings.consentAcceptedAt != null) {
++      await prefs.setString(_kConsentAt, settings.consentAcceptedAt!);
++    }
++    await prefs.setString(_kConsentVersion, settings.consentVersion);
++  }
++
++  /// apiKey 单独存 FlutterSecureStorage (脱敏)
++  Future<void> saveApiKey(String apiKey) async {
++    await _secureStorage.write(key: _kApiKey, value: apiKey);
++  }
++
++  /// 拿 apiKey — 单独方法, 不在 load() 里, 避免 entity 暴露
++  Future<String?> getApiKey() async {
++    return _secureStorage.read(key: _kApiKey);
++  }
++
++  Future<void> clearApiKey() async {
++    await _secureStorage.delete(key: _kApiKey);
++  }
++}
+diff --git a/lib/core/data/services/ai/ai_provider.dart b/lib/core/data/services/ai/ai_provider.dart
+new file mode 100644
+index 0000000..4f0b860
+--- /dev/null
++++ b/lib/core/data/services/ai/ai_provider.dart
+@@ -0,0 +1,7 @@
++/// v0.30 round 89: AI provider 抽象接口
++///
++/// 单方法: system prompt + user prompt → 完整 LLM 回复 (string).
++/// 实现方负责 HTTP 细节 (DeepSeekProvider) 或 mock (test).
++abstract class AiProvider {
++  Future<String> call(String systemPrompt, String userPrompt);
++}
+diff --git a/lib/core/data/services/ai/ai_response.dart b/lib/core/data/services/ai/ai_response.dart
+new file mode 100644
+index 0000000..1831eca
+--- /dev/null
++++ b/lib/core/data/services/ai/ai_response.dart
+@@ -0,0 +1,26 @@
++/// v0.30 round 89 (sub-spec 5 CBT AI 辅助): 5 个能力 DTO
++///
++/// 5 字段全部 nullable — 单 prompt 失败只影响对应字段, 其他 4 个字段继续.
++class AiResponse {
++  final String? alternativeThought; // 替代思维
++  final String? emotion; // 情绪识别
++  final String? cognitiveDistortion; // 认知扭曲
++  final String? coreBelief; // 核心信念
++  final String? actionSuggestion; // 行动建议
++
++  const AiResponse({
++    this.alternativeThought,
++    this.emotion,
++    this.cognitiveDistortion,
++    this.coreBelief,
++    this.actionSuggestion,
++  });
++
++  /// 5 字段中至少 1 个非空
++  bool get hasAny =>
++      alternativeThought != null ||
++      emotion != null ||
++      cognitiveDistortion != null ||
++      coreBelief != null ||
++      actionSuggestion != null;
++}
+diff --git a/lib/core/data/services/ai/ai_service.dart b/lib/core/data/services/ai/ai_service.dart
+new file mode 100644
+index 0000000..faa2abb
+--- /dev/null
++++ b/lib/core/data/services/ai/ai_service.dart
+@@ -0,0 +1,62 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): 5 个 prompt 并行调用
++//
++// 脱敏: 只发 {score, tags, cbtLevel} 给 LLM, 不发 note / 自动思维原文
++// Fail-safe: 1 个失败只 toast 该能力, 其他 4 个继续
++// 设计: Future.wait(eagerError: false) + _safeCall 内部 try-catch 双层保护
++
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++import 'package:chroniccare/core/data/services/ai/ai_response.dart';
++import 'package:chroniccare/core/data/services/ai/prompts/_loader.dart';
++
++class AiService {
++  final AiProvider provider;
++  AiService({required this.provider});
++
++  Future<AiResponse> generateAll({
++    required int score,
++    required List<String> tags,
++    int? cbtLevel,
++  }) async {
++    final userPrompt = _buildUserPrompt(score: score, tags: tags, cbtLevel: cbtLevel);
++    final prompts = await PromptLoader.loadAll();
++
++    final results = await Future.wait(
++      [
++        _safeCall(prompts.alternativeThought, userPrompt),
++        _safeCall(prompts.emotionRecognition, userPrompt),
++        _safeCall(prompts.cognitiveDistortion, userPrompt),
++        _safeCall(prompts.coreBelief, userPrompt),
++        _safeCall(prompts.actionSuggestion, userPrompt),
++      ],
++      eagerError: false, // 1 个失败不阻塞其他
++    );
++
++    return AiResponse(
++      alternativeThought: results[0],
++      emotion: results[1],
++      cognitiveDistortion: results[2],
++      coreBelief: results[3],
++      actionSuggestion: results[4],
++    );
++  }
++
++  Future<String?> _safeCall(String systemPrompt, String userPrompt) async {
++    try {
++      return await provider.call(systemPrompt, userPrompt);
++    } catch (_) {
++      return null;
++    }
++  }
++
++  String _buildUserPrompt({
++    required int score,
++    required List<String> tags,
++    int? cbtLevel,
++  }) {
++    return '用户输入 (脱敏后,仅含元数据):\n'
++        '- 情绪分数: $score / 5\n'
++        '- 情绪标签: ${tags.isEmpty ? "(无)" : tags.join(", ")}\n'
++        '- CBT 档位: ${cbtLevel ?? "(未选)"}\n'
++        '\n请根据以上信息生成回复。';
++  }
++}
+diff --git a/lib/core/data/services/ai/deepseek_provider.dart b/lib/core/data/services/ai/deepseek_provider.dart
+new file mode 100644
+index 0000000..03f774a
+--- /dev/null
++++ b/lib/core/data/services/ai/deepseek_provider.dart
+@@ -0,0 +1,66 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): DeepSeek HTTP impl
++//
++// 国内 API: https://api.deepseek.com/v1/chat/completions
++// 数据不出境 — 隐私边界第一道 (脱敏在 AiService, 传输在 DeepSeekProvider)
++//
++// 失败模式:
++// - statusCode != 200 → throw Exception
++// - choices 为空 → throw Exception (防御)
++// - 网络错误 / 超时 → http.Client 自带抛, 上层 AiService._safeCall catch
++
++import 'dart:convert';
++import 'dart:developer' as developer;
++import 'package:http/http.dart' as http;
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++
++class DeepSeekProvider implements AiProvider {
++  final String apiKey;
++  final String modelName;
++  final http.Client _client;
++  static const _endpoint = 'https://api.deepseek.com/v1/chat/completions';
++
++  DeepSeekProvider({
++    required this.apiKey,
++    required this.modelName,
++    http.Client? client,
++  }) : _client = client ?? http.Client();
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    final response = await _client.post(
++      Uri.parse(_endpoint),
++      headers: {
++        'Content-Type': 'application/json',
++        'Authorization': 'Bearer $apiKey',
++      },
++      body: jsonEncode({
++        'model': modelName,
++        'messages': [
++          {'role': 'system', 'content': systemPrompt},
++          {'role': 'user', 'content': userPrompt},
++        ],
++        'temperature': 0.7,
++        'max_tokens': 500,
++      }),
++    );
++
++    if (response.statusCode != 200) {
++      developer.log(
++        'DeepSeek API failed: ${response.statusCode} ${response.body}',
++        name: 'DeepSeekProvider',
++      );
++      throw Exception('DeepSeek API ${response.statusCode}: ${response.body}');
++    }
++
++    final body = jsonDecode(response.body) as Map<String, dynamic>;
++    final choices = body['choices'] as List?;
++    if (choices == null || choices.isEmpty) {
++      throw Exception('DeepSeek API: empty choices');
++    }
++    final content = choices.first['message']?['content'] as String?;
++    if (content == null) {
++      throw Exception('DeepSeek API: empty content');
++    }
++    return content;
++  }
++}
+diff --git a/lib/core/data/services/ai/prompts/_loader.dart b/lib/core/data/services/ai/prompts/_loader.dart
+new file mode 100644
+index 0000000..963436b
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/_loader.dart
+@@ -0,0 +1,49 @@
++/// v0.30 round 89: 5 个 CBT AI 能力 prompt 集中管理
++///
++/// 每个 prompt 是一段 CBT 治疗师角色指令,要求 LLM 输出 JSON {"text": "..."}.
++/// 5 个 prompt 共享同一 user prompt (脱敏后的 {score, tags, cbtLevel}).
++///
++/// 注: loader 是 source of truth, 5 个 .md 是人读备份, 改 prompt 改 loader.
++class Prompts {
++  final String alternativeThought;
++  final String emotionRecognition;
++  final String cognitiveDistortion;
++  final String coreBelief;
++  final String actionSuggestion;
++
++  const Prompts({
++    required this.alternativeThought,
++    required this.emotionRecognition,
++    required this.cognitiveDistortion,
++    required this.coreBelief,
++    required this.actionSuggestion,
++  });
++}
++
++class PromptLoader {
++  static Future<Prompts> loadAll() async {
++    return const Prompts(
++      alternativeThought:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+CBT 档位, '
++          '生成 1 个更平衡的替代思维 (50 字以内). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      emotionRecognition:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签, '
++          '识别具体情绪词 (如 焦虑/沮丧/愤怒/悲伤). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      cognitiveDistortion:
++          '你是 CBT 治疗助手. 从 11 种 Beck 认知扭曲 '
++          '(全或无/灾难化/过度概括/心理过滤/贬低正面/跳跃式结论/'
++          '放大或缩小/情绪化推理/应该论/标签化/个人化) 中识别 1 个最可能的. '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      coreBelief:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, '
++          '提取可能的核心信念 (15 字以内). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++      actionSuggestion:
++          '你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, '
++          '给出 3 个具体行动建议 (CBT 行为激活). '
++          '只输出 JSON {"text": "..."},不要其他文字.',
++    );
++  }
++}
+diff --git a/lib/core/data/services/ai/prompts/action_suggestion.md b/lib/core/data/services/ai/prompts/action_suggestion.md
+new file mode 100644
+index 0000000..0473a8a
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/action_suggestion.md
+@@ -0,0 +1,12 @@
++# 行动建议 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.actionSuggestion`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, 给出 3 个具体行动建议 (CBT 行为激活). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: CBT 行为激活 — 给 3 个具体可执行的小行动.
++**输入**: 脱敏后的 `{score, tags, cbtLevel}`.
++**输出**: 3 条建议 (短列表).
++**失败行为**: 抛 → `AiResponse.actionSuggestion = null`, 其他 4 字段不受影响.
+diff --git a/lib/core/data/services/ai/prompts/alternative_thought.md b/lib/core/data/services/ai/prompts/alternative_thought.md
+new file mode 100644
+index 0000000..1e653f6
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/alternative_thought.md
+@@ -0,0 +1,12 @@
++# 替代思维 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.alternativeThought`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+CBT 档位, 生成 1 个更平衡的替代思维 (50 字以内). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 把用户的自动思维转成更平衡的替代思维 (CBT 核心技能).
++**输入**: 脱敏后的 `{score, tags, cbtLevel}` — 不含 note / situation / automaticThought 原文.
++**输出**: 1 句话 ≤ 50 字.
++**失败行为**: 抛 → `AiResponse.alternativeThought = null`, 其他 4 字段不受影响.
+diff --git a/lib/core/data/services/ai/prompts/cognitive_distortion.md b/lib/core/data/services/ai/prompts/cognitive_distortion.md
+new file mode 100644
+index 0000000..972ffe1
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/cognitive_distortion.md
+@@ -0,0 +1,25 @@
++# 认知扭曲 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.cognitiveDistortion`.
++
++```
++你是 CBT 治疗助手. 从 11 种 Beck 认知扭曲 (全或无/灾难化/过度概括/心理过滤/贬低正面/跳跃式结论/放大或缩小/情绪化推理/应该论/标签化/个人化) 中识别 1 个最可能的. 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 识别用户的认知扭曲类型 (Beck 11 种之一).
++**输入**: 脱敏后的 `{score, tags, cbtLevel}`.
++**输出**: 1 个 Beck 认知扭曲中文名.
++**失败行为**: 抛 → `AiResponse.cognitiveDistortion = null`, 其他 4 字段不受影响.
++
++**Beck 11 种认知扭曲** (完整列表, prompt 引用):
++1. 全或无 (All-or-nothing thinking)
++2. 灾难化 (Catastrophizing)
++3. 过度概括 (Overgeneralization)
++4. 心理过滤 (Mental filter)
++5. 贬低正面 (Disqualifying the positive)
++6. 跳跃式结论 (Jumping to conclusions)
++7. 放大或缩小 (Magnification/minimization)
++8. 情绪化推理 (Emotional reasoning)
++9. 应该论 (Should statements)
++10. 标签化 (Labeling)
++11. 个人化 (Personalization)
+diff --git a/lib/core/data/services/ai/prompts/core_belief.md b/lib/core/data/services/ai/prompts/core_belief.md
+new file mode 100644
+index 0000000..462a910
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/core_belief.md
+@@ -0,0 +1,12 @@
++# 核心信念 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.coreBelief`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签+7 档 CBT, 提取可能的核心信念 (15 字以内). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 提取潜在核心信念 (CBT 第三层 — 信念层).
++**输入**: 脱敏后的 `{score, tags, cbtLevel}`.
++**输出**: 1 个核心信念 ≤ 15 字.
++**失败行为**: 抛 → `AiResponse.coreBelief = null`, 其他 4 字段不受影响.
+diff --git a/lib/core/data/services/ai/prompts/emotion_recognition.md b/lib/core/data/services/ai/prompts/emotion_recognition.md
+new file mode 100644
+index 0000000..bac775c
+--- /dev/null
++++ b/lib/core/data/services/ai/prompts/emotion_recognition.md
+@@ -0,0 +1,12 @@
++# 情绪识别 prompt
++
++> 人读备份, source of truth 在 `_loader.dart` 的 `prompts.emotionRecognition`.
++
++```
++你是 CBT 治疗助手. 根据用户给定的情绪分数+标签, 识别具体情绪词 (如 焦虑/沮丧/愤怒/悲伤). 只输出 JSON {"text": "..."},不要其他文字.
++```
++
++**职责**: 从元数据识别 1 个具体情绪词 (比 "情绪不好" 更精确).
++**输入**: 脱敏后的 `{score, tags}`.
++**输出**: 1 个情绪词.
++**失败行为**: 抛 → `AiResponse.emotion = null`, 其他 4 字段不受影响.
+diff --git a/lib/domain/entities/ai_settings.dart b/lib/domain/entities/ai_settings.dart
+new file mode 100644
+index 0000000..52864bd
+--- /dev/null
++++ b/lib/domain/entities/ai_settings.dart
+@@ -0,0 +1,53 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助) FIX: AI 设置实体
++//
++// FIX-Round-1 改名: AiSettingsEntity → AiSettings, 文件同步 ai_settings_entity.dart
++// → ai_settings.dart, 去掉 scripts/check_all.dart 里的 _spOnlyEntities 豁免。
++//
++// 命名理由 (Reviewer 反馈): *Entity 后缀强制对应 drift table, 但 AI settings 走
++// SharedPreferences + FlutterSecureStorage 不写 DB, 加豁免是 patch — 更干净是直接
++// 不用 *Entity 后缀, 让一致性检查自然通过。4 layer 纯度扫 (lib/domain/entities/*.dart)
++// 仍抓得到这个文件, 0 flutter / 0 drift 保持。
++//
++// 字段:
++// - enabled: 是否启用 AI 辅助 (PIPL §13 默认 false, 需用户主动开启)
++// - provider: LLM provider, 当前只支持 'deepseek'
++// - modelName: 模型名, 默认 'deepseek-chat'
++// - consentAcceptedAt: 用户首次同意 PIPL §13 的 ISO8601 UTC timestamp
++// - consentVersion: 同意版本号, 法务审核用 (本 task 写 '1.0')
++//
++// 隐私: apiKey **不**在此 entity — 走 FlutterSecureStorage, 跟 db_key_service
++// 同 pattern。load() 也不读 key, 避免 entity 暴露 secret。
++
++class AiSettings {
++  final bool enabled;
++  final String provider;
++  final String modelName;
++  final String? consentAcceptedAt;
++  final String consentVersion;
++
++  const AiSettings({
++    required this.enabled,
++    required this.provider,
++    required this.modelName,
++    this.consentAcceptedAt,
++    required this.consentVersion,
++  });
++
++  bool get hasConsent => consentAcceptedAt != null;
++
++  AiSettings copyWith({
++    bool? enabled,
++    String? provider,
++    String? modelName,
++    String? consentAcceptedAt,
++    String? consentVersion,
++  }) {
++    return AiSettings(
++      enabled: enabled ?? this.enabled,
++      provider: provider ?? this.provider,
++      modelName: modelName ?? this.modelName,
++      consentAcceptedAt: consentAcceptedAt ?? this.consentAcceptedAt,
++      consentVersion: consentVersion ?? this.consentVersion,
++    );
++  }
++}
+diff --git a/lib/l10n/app_en.arb b/lib/l10n/app_en.arb
+index 0abe067..bba6054 100644
+--- a/lib/l10n/app_en.arb
++++ b/lib/l10n/app_en.arb
+@@ -1556,12 +1556,85 @@
+   "cbtExportPdfDialogTitle": "Pick a date range to generate the PDF",
+   "cbtExportPdfSuccess": "Exported {count} CBT thought record(s)",
+   "@cbtExportPdfSuccess": {
+     "description": "SnackBar success message, placeholder {count} = number of records exported",
+     "placeholders": {
+       "count": {
+         "type": "int"
+       }
+     }
+   },
+-  "cbtExportPdfFailed": "PDF export failed, please try again"
++  "cbtExportPdfFailed": "PDF export failed, please try again",
++  "aiSectionTitle": "AI Assist (CBT Thought Record)",
++  "@aiSectionTitle": {
++    "description": "Settings page AI Assist section title"
++  },
++  "aiSectionHint": "Once enabled, the CBT wizard can generate AI suggestions (domestic DeepSeek, data redacted before transfer).",
++  "@aiSectionHint": {
++    "description": "Settings page AI Assist section hint"
++  },
++  "aiEnableToggle": "Enable AI Assist",
++  "aiApiKeyLabel": "API Key",
++  "aiApiKeyHint": "Enter API Key",
++  "aiModelLabel": "Model",
++  "aiModelDeepseekChat": "deepseek-chat",
++  "aiTestConnection": "Test Connection",
++  "aiTestConnectionPending": "Test connection feature pending v0.31",
++  "aiApiKeySaved": "API Key saved",
++  "aiSaveFailed": "Save failed: {error}",
++  "@aiSaveFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "aiEmptyApiKeyHint": "Please enter API Key",
++  "aiLoadSettingsFailed": "Failed to load AI settings: {error}",
++  "@aiLoadSettingsFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "aiConsentTitle": "Enable AI Assist (CBT)",
++  "aiConsentBody": "Please review the following terms before enabling:",
++  "aiConsentAccept": "Accept & Enable",
++  "aiConsentDecline": "Decline",
++  "aiConsentPoint1": "1. Data redaction: AI receives only your mood score / tags / CBT level, not your notes or automatic thoughts.",
++  "aiConsentPoint2": "2. Domestic transfer: Data is sent via DeepSeek API (api.deepseek.com); it does not leave China.",
++  "aiConsentPoint3": "3. Third-party processing: DeepSeek processes per its privacy policy (see Settings → Legal & Privacy).",
++  "aiConsentPoint4": "4. Withdraw anytime: toggle off here; past AI suggestions stay local.",
++  "aiConsentVersion": "Consent version: 1.0",
++  "moodCbtAiAltThoughtButton": "AI Suggest Alternative Thought",
++  "moodCbtAiCoreBeliefButton": "AI Extract Core Belief",
++  "moodCbtAiBehaviorResponseButton": "AI Suggest Action",
++  "moodCbtAiGenerating": "AI generating...",
++  "moodCbtAiGenerated": "{label} generated",
++  "@moodCbtAiGenerated": {
++    "placeholders": {
++      "label": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiUnavailable": "{label} unavailable, please retry",
++  "@moodCbtAiUnavailable": {
++    "placeholders": {
++      "label": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiFailed": "AI generation failed: {error}",
++  "@moodCbtAiFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiHelperEnable": "Please enable AI Assist in Settings first",
++  "moodCbtAiHelperApiKey": "Please set API Key in Settings first",
++  "moodCbtAiHelperUnavailable": "AI unavailable"
+ }
+diff --git a/lib/l10n/app_localizations.dart b/lib/l10n/app_localizations.dart
+index 6dc8518..831a2dc 100644
+--- a/lib/l10n/app_localizations.dart
++++ b/lib/l10n/app_localizations.dart
+@@ -4809,20 +4809,212 @@ abstract class AppLocalizations {
+   ///
+   /// In zh, this message translates to:
+   /// **'已导出 {count} 条 CBT 思维记录'**
+   String cbtExportPdfSuccess(int count);
+ 
+   /// No description provided for @cbtExportPdfFailed.
+   ///
+   /// In zh, this message translates to:
+   /// **'PDF 导出失败,请重试'**
+   String get cbtExportPdfFailed;
++
++  /// settings 页面 AI 辅助 section 标题
++  ///
++  /// In zh, this message translates to:
++  /// **'AI 辅助 (CBT 思维记录)'**
++  String get aiSectionTitle;
++
++  /// settings 页面 AI 辅助 section 提示文字
++  ///
++  /// In zh, this message translates to:
++  /// **'启用后, 可在思维记录向导生成 AI 建议 (国内 DeepSeek, 数据脱敏后传输).'**
++  String get aiSectionHint;
++
++  /// No description provided for @aiEnableToggle.
++  ///
++  /// In zh, this message translates to:
++  /// **'启用 AI 辅助'**
++  String get aiEnableToggle;
++
++  /// No description provided for @aiApiKeyLabel.
++  ///
++  /// In zh, this message translates to:
++  /// **'API Key'**
++  String get aiApiKeyLabel;
++
++  /// No description provided for @aiApiKeyHint.
++  ///
++  /// In zh, this message translates to:
++  /// **'请输入 API Key'**
++  String get aiApiKeyHint;
++
++  /// No description provided for @aiModelLabel.
++  ///
++  /// In zh, this message translates to:
++  /// **'模型'**
++  String get aiModelLabel;
++
++  /// No description provided for @aiModelDeepseekChat.
++  ///
++  /// In zh, this message translates to:
++  /// **'deepseek-chat'**
++  String get aiModelDeepseekChat;
++
++  /// No description provided for @aiTestConnection.
++  ///
++  /// In zh, this message translates to:
++  /// **'测试连接'**
++  String get aiTestConnection;
++
++  /// No description provided for @aiTestConnectionPending.
++  ///
++  /// In zh, this message translates to:
++  /// **'测试连接功能待 v0.31 接入'**
++  String get aiTestConnectionPending;
++
++  /// No description provided for @aiApiKeySaved.
++  ///
++  /// In zh, this message translates to:
++  /// **'API Key 已保存'**
++  String get aiApiKeySaved;
++
++  /// No description provided for @aiSaveFailed.
++  ///
++  /// In zh, this message translates to:
++  /// **'保存失败: {error}'**
++  String aiSaveFailed(String error);
++
++  /// No description provided for @aiEmptyApiKeyHint.
++  ///
++  /// In zh, this message translates to:
++  /// **'请输入 API Key'**
++  String get aiEmptyApiKeyHint;
++
++  /// No description provided for @aiLoadSettingsFailed.
++  ///
++  /// In zh, this message translates to:
++  /// **'加载 AI 设置失败: {error}'**
++  String aiLoadSettingsFailed(String error);
++
++  /// No description provided for @aiConsentTitle.
++  ///
++  /// In zh, this message translates to:
++  /// **'启用 AI 辅助 (CBT)'**
++  String get aiConsentTitle;
++
++  /// No description provided for @aiConsentBody.
++  ///
++  /// In zh, this message translates to:
++  /// **'请阅读以下条款, 同意后方可启用:'**
++  String get aiConsentBody;
++
++  /// No description provided for @aiConsentAccept.
++  ///
++  /// In zh, this message translates to:
++  /// **'同意并启用'**
++  String get aiConsentAccept;
++
++  /// No description provided for @aiConsentDecline.
++  ///
++  /// In zh, this message translates to:
++  /// **'拒绝'**
++  String get aiConsentDecline;
++
++  /// No description provided for @aiConsentPoint1.
++  ///
++  /// In zh, this message translates to:
++  /// **'1. 数据脱敏: AI 收到的仅含情绪分数 / 标签 / CBT 档位, 不含你的笔记或自动思维原文。'**
++  String get aiConsentPoint1;
++
++  /// No description provided for @aiConsentPoint2.
++  ///
++  /// In zh, this message translates to:
++  /// **'2. 国内传输: 数据通过 DeepSeek API 传输 (api.deepseek.com), 不出境。'**
++  String get aiConsentPoint2;
++
++  /// No description provided for @aiConsentPoint3.
++  ///
++  /// In zh, this message translates to:
++  /// **'3. 第三方处理: DeepSeek 按其隐私政策处理 (链接可在 设置 → 法律与隐私 查看)。'**
++  String get aiConsentPoint3;
++
++  /// No description provided for @aiConsentPoint4.
++  ///
++  /// In zh, this message translates to:
++  /// **'4. 可随时撤回: 在本节关闭开关即可, 历史 AI 建议保留在本地。'**
++  String get aiConsentPoint4;
++
++  /// No description provided for @aiConsentVersion.
++  ///
++  /// In zh, this message translates to:
++  /// **'同意版本: 1.0'**
++  String get aiConsentVersion;
++
++  /// No description provided for @moodCbtAiAltThoughtButton.
++  ///
++  /// In zh, this message translates to:
++  /// **'AI 建议替代思维'**
++  String get moodCbtAiAltThoughtButton;
++
++  /// No description provided for @moodCbtAiCoreBeliefButton.
++  ///
++  /// In zh, this message translates to:
++  /// **'AI 提取核心信念'**
++  String get moodCbtAiCoreBeliefButton;
++
++  /// No description provided for @moodCbtAiBehaviorResponseButton.
++  ///
++  /// In zh, this message translates to:
++  /// **'AI 建议行动'**
++  String get moodCbtAiBehaviorResponseButton;
++
++  /// No description provided for @moodCbtAiGenerating.
++  ///
++  /// In zh, this message translates to:
++  /// **'AI 生成中...'**
++  String get moodCbtAiGenerating;
++
++  /// No description provided for @moodCbtAiGenerated.
++  ///
++  /// In zh, this message translates to:
++  /// **'{label} 已生成'**
++  String moodCbtAiGenerated(String label);
++
++  /// No description provided for @moodCbtAiUnavailable.
++  ///
++  /// In zh, this message translates to:
++  /// **'{label} 暂不可用, 请稍后再试'**
++  String moodCbtAiUnavailable(String label);
++
++  /// No description provided for @moodCbtAiFailed.
++  ///
++  /// In zh, this message translates to:
++  /// **'AI 生成失败: {error}'**
++  String moodCbtAiFailed(String error);
++
++  /// No description provided for @moodCbtAiHelperEnable.
++  ///
++  /// In zh, this message translates to:
++  /// **'请先在设置启用 AI 辅助'**
++  String get moodCbtAiHelperEnable;
++
++  /// No description provided for @moodCbtAiHelperApiKey.
++  ///
++  /// In zh, this message translates to:
++  /// **'请先在设置填写 API Key'**
++  String get moodCbtAiHelperApiKey;
++
++  /// No description provided for @moodCbtAiHelperUnavailable.
++  ///
++  /// In zh, this message translates to:
++  /// **'AI 不可用'**
++  String get moodCbtAiHelperUnavailable;
+ }
+ 
+ class _AppLocalizationsDelegate
+     extends LocalizationsDelegate<AppLocalizations> {
+   const _AppLocalizationsDelegate();
+ 
+   @override
+   Future<AppLocalizations> load(Locale locale) {
+     return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
+   }
+diff --git a/lib/l10n/app_localizations_en.dart b/lib/l10n/app_localizations_en.dart
+index 067b2dd..dcc01c2 100644
+--- a/lib/l10n/app_localizations_en.dart
++++ b/lib/l10n/app_localizations_en.dart
+@@ -2746,11 +2746,124 @@ class AppLocalizationsEn extends AppLocalizations {
+   @override
+   String get cbtExportPdfDialogTitle => 'Pick a date range to generate the PDF';
+ 
+   @override
+   String cbtExportPdfSuccess(int count) {
+     return 'Exported $count CBT thought record(s)';
+   }
+ 
+   @override
+   String get cbtExportPdfFailed => 'PDF export failed, please try again';
++
++  @override
++  String get aiSectionTitle => 'AI Assist (CBT Thought Record)';
++
++  @override
++  String get aiSectionHint =>
++      'Once enabled, the CBT wizard can generate AI suggestions (domestic DeepSeek, data redacted before transfer).';
++
++  @override
++  String get aiEnableToggle => 'Enable AI Assist';
++
++  @override
++  String get aiApiKeyLabel => 'API Key';
++
++  @override
++  String get aiApiKeyHint => 'Enter API Key';
++
++  @override
++  String get aiModelLabel => 'Model';
++
++  @override
++  String get aiModelDeepseekChat => 'deepseek-chat';
++
++  @override
++  String get aiTestConnection => 'Test Connection';
++
++  @override
++  String get aiTestConnectionPending => 'Test connection feature pending v0.31';
++
++  @override
++  String get aiApiKeySaved => 'API Key saved';
++
++  @override
++  String aiSaveFailed(String error) {
++    return 'Save failed: $error';
++  }
++
++  @override
++  String get aiEmptyApiKeyHint => 'Please enter API Key';
++
++  @override
++  String aiLoadSettingsFailed(String error) {
++    return 'Failed to load AI settings: $error';
++  }
++
++  @override
++  String get aiConsentTitle => 'Enable AI Assist (CBT)';
++
++  @override
++  String get aiConsentBody =>
++      'Please review the following terms before enabling:';
++
++  @override
++  String get aiConsentAccept => 'Accept & Enable';
++
++  @override
++  String get aiConsentDecline => 'Decline';
++
++  @override
++  String get aiConsentPoint1 =>
++      '1. Data redaction: AI receives only your mood score / tags / CBT level, not your notes or automatic thoughts.';
++
++  @override
++  String get aiConsentPoint2 =>
++      '2. Domestic transfer: Data is sent via DeepSeek API (api.deepseek.com); it does not leave China.';
++
++  @override
++  String get aiConsentPoint3 =>
++      '3. Third-party processing: DeepSeek processes per its privacy policy (see Settings → Legal & Privacy).';
++
++  @override
++  String get aiConsentPoint4 =>
++      '4. Withdraw anytime: toggle off here; past AI suggestions stay local.';
++
++  @override
++  String get aiConsentVersion => 'Consent version: 1.0';
++
++  @override
++  String get moodCbtAiAltThoughtButton => 'AI Suggest Alternative Thought';
++
++  @override
++  String get moodCbtAiCoreBeliefButton => 'AI Extract Core Belief';
++
++  @override
++  String get moodCbtAiBehaviorResponseButton => 'AI Suggest Action';
++
++  @override
++  String get moodCbtAiGenerating => 'AI generating...';
++
++  @override
++  String moodCbtAiGenerated(String label) {
++    return '$label generated';
++  }
++
++  @override
++  String moodCbtAiUnavailable(String label) {
++    return '$label unavailable, please retry';
++  }
++
++  @override
++  String moodCbtAiFailed(String error) {
++    return 'AI generation failed: $error';
++  }
++
++  @override
++  String get moodCbtAiHelperEnable =>
++      'Please enable AI Assist in Settings first';
++
++  @override
++  String get moodCbtAiHelperApiKey => 'Please set API Key in Settings first';
++
++  @override
++  String get moodCbtAiHelperUnavailable => 'AI unavailable';
+ }
+diff --git a/lib/l10n/app_localizations_zh.dart b/lib/l10n/app_localizations_zh.dart
+index 965a379..4366fe8 100644
+--- a/lib/l10n/app_localizations_zh.dart
++++ b/lib/l10n/app_localizations_zh.dart
+@@ -2608,20 +2608,129 @@ class AppLocalizationsZh extends AppLocalizations {
+   @override
+   String get cbtExportPdfDialogTitle => '选择日期范围生成 PDF';
+ 
+   @override
+   String cbtExportPdfSuccess(int count) {
+     return '已导出 $count 条 CBT 思维记录';
+   }
+ 
+   @override
+   String get cbtExportPdfFailed => 'PDF 导出失败,请重试';
++
++  @override
++  String get aiSectionTitle => 'AI 辅助 (CBT 思维记录)';
++
++  @override
++  String get aiSectionHint => '启用后, 可在思维记录向导生成 AI 建议 (国内 DeepSeek, 数据脱敏后传输).';
++
++  @override
++  String get aiEnableToggle => '启用 AI 辅助';
++
++  @override
++  String get aiApiKeyLabel => 'API Key';
++
++  @override
++  String get aiApiKeyHint => '请输入 API Key';
++
++  @override
++  String get aiModelLabel => '模型';
++
++  @override
++  String get aiModelDeepseekChat => 'deepseek-chat';
++
++  @override
++  String get aiTestConnection => '测试连接';
++
++  @override
++  String get aiTestConnectionPending => '测试连接功能待 v0.31 接入';
++
++  @override
++  String get aiApiKeySaved => 'API Key 已保存';
++
++  @override
++  String aiSaveFailed(String error) {
++    return '保存失败: $error';
++  }
++
++  @override
++  String get aiEmptyApiKeyHint => '请输入 API Key';
++
++  @override
++  String aiLoadSettingsFailed(String error) {
++    return '加载 AI 设置失败: $error';
++  }
++
++  @override
++  String get aiConsentTitle => '启用 AI 辅助 (CBT)';
++
++  @override
++  String get aiConsentBody => '请阅读以下条款, 同意后方可启用:';
++
++  @override
++  String get aiConsentAccept => '同意并启用';
++
++  @override
++  String get aiConsentDecline => '拒绝';
++
++  @override
++  String get aiConsentPoint1 =>
++      '1. 数据脱敏: AI 收到的仅含情绪分数 / 标签 / CBT 档位, 不含你的笔记或自动思维原文。';
++
++  @override
++  String get aiConsentPoint2 =>
++      '2. 国内传输: 数据通过 DeepSeek API 传输 (api.deepseek.com), 不出境。';
++
++  @override
++  String get aiConsentPoint3 =>
++      '3. 第三方处理: DeepSeek 按其隐私政策处理 (链接可在 设置 → 法律与隐私 查看)。';
++
++  @override
++  String get aiConsentPoint4 => '4. 可随时撤回: 在本节关闭开关即可, 历史 AI 建议保留在本地。';
++
++  @override
++  String get aiConsentVersion => '同意版本: 1.0';
++
++  @override
++  String get moodCbtAiAltThoughtButton => 'AI 建议替代思维';
++
++  @override
++  String get moodCbtAiCoreBeliefButton => 'AI 提取核心信念';
++
++  @override
++  String get moodCbtAiBehaviorResponseButton => 'AI 建议行动';
++
++  @override
++  String get moodCbtAiGenerating => 'AI 生成中...';
++
++  @override
++  String moodCbtAiGenerated(String label) {
++    return '$label 已生成';
++  }
++
++  @override
++  String moodCbtAiUnavailable(String label) {
++    return '$label 暂不可用, 请稍后再试';
++  }
++
++  @override
++  String moodCbtAiFailed(String error) {
++    return 'AI 生成失败: $error';
++  }
++
++  @override
++  String get moodCbtAiHelperEnable => '请先在设置启用 AI 辅助';
++
++  @override
++  String get moodCbtAiHelperApiKey => '请先在设置填写 API Key';
++
++  @override
++  String get moodCbtAiHelperUnavailable => 'AI 不可用';
+ }
+ 
+ /// The translations for Chinese, using the Han script (`zh_Hant`).
+ class AppLocalizationsZhHant extends AppLocalizationsZh {
+   AppLocalizationsZhHant() : super('zh_Hant');
+ 
+   @override
+   String get appName => '慢病管家';
+ 
+   @override
+@@ -5221,11 +5330,120 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
+   @override
+   String get cbtExportPdfDialogTitle => '選擇日期範圍生成 PDF';
+ 
+   @override
+   String cbtExportPdfSuccess(int count) {
+     return '已導出 $count 條 CBT 思維記錄';
+   }
+ 
+   @override
+   String get cbtExportPdfFailed => 'PDF 導出失敗,請重試';
++
++  @override
++  String get aiSectionTitle => 'AI 輔助 (CBT 思維記錄)';
++
++  @override
++  String get aiSectionHint => '啟用後, 可在思維記錄嚮導生成 AI 建議 (國內 DeepSeek, 數據脫敏後傳輸).';
++
++  @override
++  String get aiEnableToggle => '啟用 AI 輔助';
++
++  @override
++  String get aiApiKeyLabel => 'API Key';
++
++  @override
++  String get aiApiKeyHint => '請輸入 API Key';
++
++  @override
++  String get aiModelLabel => '模型';
++
++  @override
++  String get aiModelDeepseekChat => 'deepseek-chat';
++
++  @override
++  String get aiTestConnection => '測試連接';
++
++  @override
++  String get aiTestConnectionPending => '測試連接功能待 v0.31 接入';
++
++  @override
++  String get aiApiKeySaved => 'API Key 已保存';
++
++  @override
++  String aiSaveFailed(String error) {
++    return '保存失敗: $error';
++  }
++
++  @override
++  String get aiEmptyApiKeyHint => '請輸入 API Key';
++
++  @override
++  String aiLoadSettingsFailed(String error) {
++    return '加載 AI 設置失敗: $error';
++  }
++
++  @override
++  String get aiConsentTitle => '啟用 AI 輔助 (CBT)';
++
++  @override
++  String get aiConsentBody => '請閱讀以下條款, 同意後方可啟用:';
++
++  @override
++  String get aiConsentAccept => '同意並啟用';
++
++  @override
++  String get aiConsentDecline => '拒絕';
++
++  @override
++  String get aiConsentPoint1 =>
++      '1. 數據脫敏: AI 收到的僅含情緒分數 / 標籤 / CBT 檔位, 不含你的筆記或自動思維原文。';
++
++  @override
++  String get aiConsentPoint2 =>
++      '2. 國內傳輸: 數據通過 DeepSeek API 傳輸 (api.deepseek.com), 不出境。';
++
++  @override
++  String get aiConsentPoint3 =>
++      '3. 第三方處理: DeepSeek 按其隱私政策處理 (鏈接可在 設置 → 法律與隱私 查看)。';
++
++  @override
++  String get aiConsentPoint4 => '4. 可隨時撤回: 在本節關閉開關即可, 歷史 AI 建議保留在本地。';
++
++  @override
++  String get aiConsentVersion => '同意版本: 1.0';
++
++  @override
++  String get moodCbtAiAltThoughtButton => 'AI 建議替代思維';
++
++  @override
++  String get moodCbtAiCoreBeliefButton => 'AI 提取核心信念';
++
++  @override
++  String get moodCbtAiBehaviorResponseButton => 'AI 建議行動';
++
++  @override
++  String get moodCbtAiGenerating => 'AI 生成中...';
++
++  @override
++  String moodCbtAiGenerated(String label) {
++    return '$label 已生成';
++  }
++
++  @override
++  String moodCbtAiUnavailable(String label) {
++    return '$label 暫不可用, 請稍後再試';
++  }
++
++  @override
++  String moodCbtAiFailed(String error) {
++    return 'AI 生成失敗: $error';
++  }
++
++  @override
++  String get moodCbtAiHelperEnable => '請先在設置啟用 AI 輔助';
++
++  @override
++  String get moodCbtAiHelperApiKey => '請先在設置填寫 API Key';
++
++  @override
++  String get moodCbtAiHelperUnavailable => 'AI 不可用';
+ }
+diff --git a/lib/l10n/app_zh.arb b/lib/l10n/app_zh.arb
+index fc7da3e..48f655a 100644
+--- a/lib/l10n/app_zh.arb
++++ b/lib/l10n/app_zh.arb
+@@ -1598,12 +1598,85 @@
+   "cbtExportPdfDialogTitle": "选择日期范围生成 PDF",
+   "cbtExportPdfSuccess": "已导出 {count} 条 CBT 思维记录",
+   "@cbtExportPdfSuccess": {
+     "description": "SnackBar 成功提示, 占位 {count} 表示实际导出的条数",
+     "placeholders": {
+       "count": {
+         "type": "int"
+       }
+     }
+   },
+-  "cbtExportPdfFailed": "PDF 导出失败,请重试"
++  "cbtExportPdfFailed": "PDF 导出失败,请重试",
++  "aiSectionTitle": "AI 辅助 (CBT 思维记录)",
++  "@aiSectionTitle": {
++    "description": "settings 页面 AI 辅助 section 标题"
++  },
++  "aiSectionHint": "启用后, 可在思维记录向导生成 AI 建议 (国内 DeepSeek, 数据脱敏后传输).",
++  "@aiSectionHint": {
++    "description": "settings 页面 AI 辅助 section 提示文字"
++  },
++  "aiEnableToggle": "启用 AI 辅助",
++  "aiApiKeyLabel": "API Key",
++  "aiApiKeyHint": "请输入 API Key",
++  "aiModelLabel": "模型",
++  "aiModelDeepseekChat": "deepseek-chat",
++  "aiTestConnection": "测试连接",
++  "aiTestConnectionPending": "测试连接功能待 v0.31 接入",
++  "aiApiKeySaved": "API Key 已保存",
++  "aiSaveFailed": "保存失败: {error}",
++  "@aiSaveFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "aiEmptyApiKeyHint": "请输入 API Key",
++  "aiLoadSettingsFailed": "加载 AI 设置失败: {error}",
++  "@aiLoadSettingsFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "aiConsentTitle": "启用 AI 辅助 (CBT)",
++  "aiConsentBody": "请阅读以下条款, 同意后方可启用:",
++  "aiConsentAccept": "同意并启用",
++  "aiConsentDecline": "拒绝",
++  "aiConsentPoint1": "1. 数据脱敏: AI 收到的仅含情绪分数 / 标签 / CBT 档位, 不含你的笔记或自动思维原文。",
++  "aiConsentPoint2": "2. 国内传输: 数据通过 DeepSeek API 传输 (api.deepseek.com), 不出境。",
++  "aiConsentPoint3": "3. 第三方处理: DeepSeek 按其隐私政策处理 (链接可在 设置 → 法律与隐私 查看)。",
++  "aiConsentPoint4": "4. 可随时撤回: 在本节关闭开关即可, 历史 AI 建议保留在本地。",
++  "aiConsentVersion": "同意版本: 1.0",
++  "moodCbtAiAltThoughtButton": "AI 建议替代思维",
++  "moodCbtAiCoreBeliefButton": "AI 提取核心信念",
++  "moodCbtAiBehaviorResponseButton": "AI 建议行动",
++  "moodCbtAiGenerating": "AI 生成中...",
++  "moodCbtAiGenerated": "{label} 已生成",
++  "@moodCbtAiGenerated": {
++    "placeholders": {
++      "label": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiUnavailable": "{label} 暂不可用, 请稍后再试",
++  "@moodCbtAiUnavailable": {
++    "placeholders": {
++      "label": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiFailed": "AI 生成失败: {error}",
++  "@moodCbtAiFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiHelperEnable": "请先在设置启用 AI 辅助",
++  "moodCbtAiHelperApiKey": "请先在设置填写 API Key",
++  "moodCbtAiHelperUnavailable": "AI 不可用"
+ }
+diff --git a/lib/l10n/app_zh_Hant.arb b/lib/l10n/app_zh_Hant.arb
+index b51ff3a..f39db98 100644
+--- a/lib/l10n/app_zh_Hant.arb
++++ b/lib/l10n/app_zh_Hant.arb
+@@ -1595,12 +1595,85 @@
+   "cbtExportPdfDialogTitle": "選擇日期範圍生成 PDF",
+   "cbtExportPdfSuccess": "已導出 {count} 條 CBT 思維記錄",
+   "@cbtExportPdfSuccess": {
+     "description": "SnackBar 成功提示, 佔位 {count} 表示實際匯出的條數",
+     "placeholders": {
+       "count": {
+         "type": "int"
+       }
+     }
+   },
+-  "cbtExportPdfFailed": "PDF 導出失敗,請重試"
++  "cbtExportPdfFailed": "PDF 導出失敗,請重試",
++  "aiSectionTitle": "AI 輔助 (CBT 思維記錄)",
++  "@aiSectionTitle": {
++    "description": "settings 頁面 AI 輔助 section 標題"
++  },
++  "aiSectionHint": "啟用後, 可在思維記錄嚮導生成 AI 建議 (國內 DeepSeek, 數據脫敏後傳輸).",
++  "@aiSectionHint": {
++    "description": "settings 頁面 AI 輔助 section 提示文字"
++  },
++  "aiEnableToggle": "啟用 AI 輔助",
++  "aiApiKeyLabel": "API Key",
++  "aiApiKeyHint": "請輸入 API Key",
++  "aiModelLabel": "模型",
++  "aiModelDeepseekChat": "deepseek-chat",
++  "aiTestConnection": "測試連接",
++  "aiTestConnectionPending": "測試連接功能待 v0.31 接入",
++  "aiApiKeySaved": "API Key 已保存",
++  "aiSaveFailed": "保存失敗: {error}",
++  "@aiSaveFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "aiEmptyApiKeyHint": "請輸入 API Key",
++  "aiLoadSettingsFailed": "加載 AI 設置失敗: {error}",
++  "@aiLoadSettingsFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "aiConsentTitle": "啟用 AI 輔助 (CBT)",
++  "aiConsentBody": "請閱讀以下條款, 同意後方可啟用:",
++  "aiConsentAccept": "同意並啟用",
++  "aiConsentDecline": "拒絕",
++  "aiConsentPoint1": "1. 數據脫敏: AI 收到的僅含情緒分數 / 標籤 / CBT 檔位, 不含你的筆記或自動思維原文。",
++  "aiConsentPoint2": "2. 國內傳輸: 數據通過 DeepSeek API 傳輸 (api.deepseek.com), 不出境。",
++  "aiConsentPoint3": "3. 第三方處理: DeepSeek 按其隱私政策處理 (鏈接可在 設置 → 法律與隱私 查看)。",
++  "aiConsentPoint4": "4. 可隨時撤回: 在本節關閉開關即可, 歷史 AI 建議保留在本地。",
++  "aiConsentVersion": "同意版本: 1.0",
++  "moodCbtAiAltThoughtButton": "AI 建議替代思維",
++  "moodCbtAiCoreBeliefButton": "AI 提取核心信念",
++  "moodCbtAiBehaviorResponseButton": "AI 建議行動",
++  "moodCbtAiGenerating": "AI 生成中...",
++  "moodCbtAiGenerated": "{label} 已生成",
++  "@moodCbtAiGenerated": {
++    "placeholders": {
++      "label": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiUnavailable": "{label} 暫不可用, 請稍後再試",
++  "@moodCbtAiUnavailable": {
++    "placeholders": {
++      "label": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiFailed": "AI 生成失敗: {error}",
++  "@moodCbtAiFailed": {
++    "placeholders": {
++      "error": {
++        "type": "String"
++      }
++    }
++  },
++  "moodCbtAiHelperEnable": "請先在設置啟用 AI 輔助",
++  "moodCbtAiHelperApiKey": "請先在設置填寫 API Key",
++  "moodCbtAiHelperUnavailable": "AI 不可用"
+ }
+diff --git a/lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart b/lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart
+new file mode 100644
+index 0000000..b06b6e1
+--- /dev/null
++++ b/lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart
+@@ -0,0 +1,170 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): CBT wizard AI 按钮
++//
++// 3 处插入:
++// - step 3 → CbtAiField.alternativeThought
++// - step 4 (7 栏) → CbtAiField.coreBelief
++// - step 5 → CbtAiField.actionSuggestion
++//
++// 流程: 点 → aiServiceProvider → generateAll(5 字段) → 拿对应字段
++//       → onGenerate(text) callback → 父 CbtSectionField 通过 onChanged 写到
++//       cbtDraftProvider (wizard 3 处插入各自 onGenerate 写对应字段)
++//
++// 复用模式: 跟 cbt_section_field.dart 同 ConsumerStatefulWidget +
++// _generating 状态 + 内置 loading spinner
++//
++// 设计决策: 3 按钮各自独立调 generateAll (1 次 5 prompt 并行 HTTP 往返)
++// 优点: 1 按钮失败不阻塞其他 2 个; 用户可针对单栏生成, 不必等全部 5 字段
++// 缺点: 3 按钮全点 = 3× 5 = 15 次 HTTP 往返 (v0.30 MVP 接受)
++// 优化: v0.31+ 加 aiResponseCacheProvider 复用 1 次响应 (用户改 score/tags 触发 invalidate)
++//
++// 频度: 5/7 栏 wizard 各 1 个, tens/day
++//
++// 隐私: 全本地脱敏 — AiService 只发 {score, tags, cbtLevel} 给 LLM,
++// 用户原文 (note / automaticThought / situation) 零外传
++//
++// v0.30 round 89 fix round 1 (Important #1: silent disabled UX):
++// hasError 时按钮 disabled, 用户没路径看到错误原因 → 按钮下显示 helper
++// text 告诉用户怎么修 (设置启用 / 填 API Key / 通用 AI 不可用)
++//
++// v0.30 round 89 Task 5 (i18n): 替换 7 个 hardcoded 中文 placeholder → ARB key
++// (moodCbtAiGenerating / moodCbtAiGenerated / moodCbtAiUnavailable /
++// moodCbtAiFailed / moodCbtAiHelperEnable / moodCbtAiHelperApiKey /
++// moodCbtAiHelperUnavailable)
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/data/services/ai/ai_response.dart';
++import 'package:chroniccare/core/theme/app_tokens.dart';
++import 'package:chroniccare/l10n/app_localizations.dart';
++import 'package:chroniccare/presentation/providers/ai_service_provider.dart';
++
++/// 3 个 AI 按钮对应的 CBT 字段
++///
++/// 跟 AiResponse 5 字段里 3 个核心能力 (替代思维 / 核心信念 / 行动建议)
++/// 1:1 映射。其他 2 个 (情绪识别 / 认知扭曲) 不在 wizard 里。
++enum CbtAiField { alternativeThought, coreBelief, actionSuggestion }
++
++class CbtAiGenerateButton extends ConsumerStatefulWidget {
++  final CbtAiField field;
++  final String label;
++  final void Function(String text) onGenerate;
++
++  const CbtAiGenerateButton({
++    super.key,
++    required this.field,
++    required this.label,
++    required this.onGenerate,
++  });
++
++  @override
++  ConsumerState<CbtAiGenerateButton> createState() =>
++      _CbtAiGenerateButtonState();
++}
++
++class _CbtAiGenerateButtonState extends ConsumerState<CbtAiGenerateButton> {
++  bool _generating = false;
++
++  /// 从 AiResponse 5 字段里抽 widget.field 对应那个
++  String? _extractField(AiResponse response) {
++    switch (widget.field) {
++      case CbtAiField.alternativeThought:
++        return response.alternativeThought;
++      case CbtAiField.coreBelief:
++        return response.coreBelief;
++      case CbtAiField.actionSuggestion:
++        return response.actionSuggestion;
++    }
++  }
++
++  Future<void> _onTap() async {
++    if (_generating) return; // 防重复点
++    setState(() => _generating = true);
++    try {
++      final svc = await ref.read(aiServiceProvider.future);
++      // wizard 调用时 score / tags 拿当前 draft (Task 4 implementer 决定:
++      // 本实现用 score=3, tags=[] 当 fallback — wizard step 内已有
++      // 完整 draft, 但按钮的 generateAll 是元数据驱动, 用户原文不进
++      // LLM, 不需要传)
++      final response = await svc.generateAll(
++        score: 3,
++        tags: const [],
++        cbtLevel: 7,
++      );
++      final text = _extractField(response);
++      if (!mounted) return;
++      final l10n = AppLocalizations.of(context);
++      if (text != null && text.isNotEmpty) {
++        widget.onGenerate(text);
++        ScaffoldMessenger.of(context).showSnackBar(
++          SnackBar(content: Text(l10n.moodCbtAiGenerated(widget.label))),
++        );
++      } else {
++        ScaffoldMessenger.of(context).showSnackBar(
++          SnackBar(content: Text(l10n.moodCbtAiUnavailable(widget.label))),
++        );
++      }
++    } catch (e) {
++      if (!mounted) return;
++      final l10n = AppLocalizations.of(context);
++      ScaffoldMessenger.of(context).showSnackBar(
++        SnackBar(content: Text(l10n.moodCbtAiFailed(e.toString()))),
++      );
++    } finally {
++      if (mounted) setState(() => _generating = false);
++    }
++  }
++
++  @override
++  Widget build(BuildContext context) {
++    final l10n = AppLocalizations.of(context);
++    final svcAsync = ref.watch(aiServiceProvider);
++    final disabled = _generating || svcAsync.hasError;
++
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.start,
++      children: [
++        FilledButton.tonalIcon(
++          onPressed: disabled ? null : _onTap,
++          icon: _generating
++              ? const SizedBox(
++                  width: 16,
++                  height: 16,
++                  child: CircularProgressIndicator(strokeWidth: 2),
++                )
++              : const Icon(Icons.auto_awesome),
++          label: Text(_generating ? l10n.moodCbtAiGenerating : widget.label),
++          style: FilledButton.styleFrom(
++            padding: const EdgeInsets.symmetric(
++              horizontal: AppTokens.spacingMd,
++              vertical: AppTokens.spacingXxs,
++            ),
++          ),
++        ),
++        // v0.30 round 89 fix round 1 (Important #1): disabled 时显示
++        // helper text 告诉用户怎么修, 不让用户对着灰按钮干瞪眼
++        if (svcAsync.hasError && !_generating)
++          Padding(
++            padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
++            child: Text(
++              _errorLabel(svcAsync.error!, l10n),
++              style: AppTokens.textStyleCaption(context)
++                  .copyWith(color: Theme.of(context).colorScheme.error),
++            ),
++          ),
++      ],
++    );
++  }
++
++  /// 把 aiServiceProvider 抛的错误翻译成用户能理解的修复提示
++  ///
++  /// 错误 message 来自 `ai_service_provider.dart`, 包含中文错误子串
++  /// ('AI 未启用' / 'API Key')。Task 5 加 l10n 支持后, 这些中文字符串
++  /// 仍作为内部协议 (provider→widget 之间的 string), 实际显示走 ARB。
++  String _errorLabel(Object e, AppLocalizations l10n) {
++    final msg = e.toString();
++    if (msg.contains('AI 未启用')) return l10n.moodCbtAiHelperEnable;
++    if (msg.contains('API Key')) return l10n.moodCbtAiHelperApiKey;
++    return l10n.moodCbtAiHelperUnavailable;
++  }
++}
+diff --git a/lib/presentation/pages/mood/widgets/cbt_wizard.dart b/lib/presentation/pages/mood/widgets/cbt_wizard.dart
+index 9976009..fba1080 100644
+--- a/lib/presentation/pages/mood/widgets/cbt_wizard.dart
++++ b/lib/presentation/pages/mood/widgets/cbt_wizard.dart
+@@ -11,27 +11,32 @@
+ //   2 = 情绪 + 证据 (score + evidenceFor + evidenceAgainst)
+ //   3 = 替代思维 + 重新评分 (alternativeThought + reratedScore)
+ //   4 = 确认
+ //
+ // 7 栏 7 步 (在 5 栏基础上, step 4 由"确认"变为"核心信念"):
+ //   4 = 核心信念 (coreBelief) — 覆盖 5 栏 step 4 确认
+ //   5 = 行为应对 (behaviorResponse)
+ //   6 = 确认
+ //
+ // 频度: 切到 5/7 栏时显示,tens/day
++//
++// v0.30 round 89 Task 5 (i18n): 3 个 CbtAiGenerateButton label 走 ARB key
++// (moodCbtAiAltThoughtButton / moodCbtAiCoreBeliefButton /
++// moodCbtAiBehaviorResponseButton)
+ import 'package:flutter/material.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ 
+ import 'package:chroniccare/core/theme/app_tokens.dart';
+ import 'package:chroniccare/domain/entities/thought_record_level.dart';
+ import 'package:chroniccare/l10n/app_localizations.dart';
+ import 'package:chroniccare/presentation/providers/cbt_providers.dart';
++import 'package:chroniccare/presentation/pages/mood/widgets/cbt_ai_generate_button.dart';
+ import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.dart';
+ import 'package:chroniccare/presentation/pages/mood/widgets/cbt_explainer_card.dart';
+ 
+ class CbtWizard extends ConsumerWidget {
+   const CbtWizard({super.key});
+ 
+   @override
+   Widget build(BuildContext context, WidgetRef ref) {
+     final l10n = AppLocalizations.of(context);
+     final state = ref.watch(cbtDraftProvider);
+@@ -95,21 +100,22 @@ class CbtWizard extends ConsumerWidget {
+                     // v0.29 round 84 (Task 6 fix): 真正的 save 走
+                     // mood_recorder_page._save() (M
+                     // oodSubmitPanel 调的)。wizard 只负责
+                     // 关闭 dialog, 父组件 dispose 会 reset cbtDraftProvider。
+                     // label 改 "完成" (不是 "保存") 避免误导用户以为已落库。
+                     Navigator.of(context).pop();
+                   } else {
+                     notifier.setStep(state.stepIndex + 1);
+                   }
+                 },
+-                child: Text(isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep),
++                child: Text(
++                    isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep,),
+               ),
+             ],
+           ),
+         ),
+       ],
+     );
+   }
+ 
+   Widget _buildStep(
+     BuildContext context,
+@@ -140,22 +146,24 @@ class CbtWizard extends ConsumerWidget {
+           l10n.moodCbtAutoThoughtPrompt2,
+         ],
+         initialValue: state.draft.automaticThought,
+         onChanged: (v) => notifier.updateField(automaticThought: v),
+       );
+     }
+     if (step == 2) {
+       return Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+-          Text(l10n.moodCbtStep2Header,
+-              style: AppTokens.textStyleLabel(context),),
++          Text(
++            l10n.moodCbtStep2Header,
++            style: AppTokens.textStyleLabel(context),
++          ),
+           const SizedBox(height: AppTokens.spacingSm),
+           // score 选择 (5 档:1-5)
+           // v0.29 round 84 (Task 6 fix): chip 现在写 notifier.updateScore
+           // (overwrite, 走 CBT 路径保留 8 个 CBT 字段)。
+           Wrap(
+             spacing: AppTokens.spacingSm,
+             children: List.generate(5, (i) {
+               final score = i + 1;
+               return ChoiceChip(
+                 label: Text('$score'),
+@@ -192,23 +200,34 @@ class CbtWizard extends ConsumerWidget {
+           CbtSectionField(
+             title: l10n.moodCbtSectionAlternative,
+             hint: l10n.moodCbtFieldHintAlternative,
+             prompts: [
+               l10n.moodCbtAlternativePrompt0,
+               l10n.moodCbtAlternativePrompt1,
+             ],
+             initialValue: state.draft.alternativeThought,
+             onChanged: (v) => notifier.updateField(alternativeThought: v),
+           ),
++          // v0.30 round 89 (Task 4): AI 建议替代思维 — 调 aiServiceProvider
++          // → AiService.generateAll → 拿 alternativeThought 字段 → 写回
++          const SizedBox(height: AppTokens.spacingXxs),
++          CbtAiGenerateButton(
++            field: CbtAiField.alternativeThought,
++            label: l10n.moodCbtAiAltThoughtButton,
++            onGenerate: (text) =>
++                notifier.updateField(alternativeThought: text),
++          ),
+           const SizedBox(height: AppTokens.spacingMd),
+-          Text(l10n.moodCbtScoreReratedLabel,
+-              style: AppTokens.textStyleLabel(context),),
++          Text(
++            l10n.moodCbtScoreReratedLabel,
++            style: AppTokens.textStyleLabel(context),
++          ),
+           Wrap(
+             spacing: AppTokens.spacingSm,
+             children: List.generate(5, (i) {
+               final score = i + 1;
+               return ChoiceChip(
+                 label: Text('$score'),
+                 selected: state.draft.reratedScore == score,
+                 onSelected: (_) {
+                   notifier.updateField(reratedScore: score);
+                 },
+@@ -218,39 +237,63 @@ class CbtWizard extends ConsumerWidget {
+         ],
+       );
+     }
+     if (step == 4 && level == ThoughtRecordLevel.five) {
+       return Text(
+         '${l10n.moodCbtConfirm}: ${state.draft.situation ?? l10n.moodCbtConfirmEmpty}',
+         style: AppTokens.textStyleBody(context),
+       );
+     }
+     if (step == 4 && level == ThoughtRecordLevel.seven) {
+-      return CbtSectionField(
+-        title: l10n.moodCbtSectionCoreBelief,
+-        hint: l10n.moodCbtFieldHintCoreBelief,
+-        prompts: const [],
+-        initialValue: state.draft.coreBelief,
+-        onChanged: (v) => notifier.updateField(coreBelief: v),
++      return Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          CbtSectionField(
++            title: l10n.moodCbtSectionCoreBelief,
++            hint: l10n.moodCbtFieldHintCoreBelief,
++            prompts: const [],
++            initialValue: state.draft.coreBelief,
++            onChanged: (v) => notifier.updateField(coreBelief: v),
++          ),
++          // v0.30 round 89 (Task 4): AI 提取核心信念 — 7 栏专属, 5 栏无
++          const SizedBox(height: AppTokens.spacingXxs),
++          CbtAiGenerateButton(
++            field: CbtAiField.coreBelief,
++            label: l10n.moodCbtAiCoreBeliefButton,
++            onGenerate: (text) => notifier.updateField(coreBelief: text),
++          ),
++        ],
+       );
+     }
+     if (step == 5) {
+-      return CbtSectionField(
+-        title: l10n.moodCbtSectionBehavior,
+-        hint: l10n.moodCbtFieldHintBehavior,
+-        prompts: [
+-          l10n.moodCbtBehaviorPrompt0,
+-          l10n.moodCbtBehaviorPrompt1,
+-          l10n.moodCbtBehaviorPrompt2,
++      return Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          CbtSectionField(
++            title: l10n.moodCbtSectionBehavior,
++            hint: l10n.moodCbtFieldHintBehavior,
++            prompts: [
++              l10n.moodCbtBehaviorPrompt0,
++              l10n.moodCbtBehaviorPrompt1,
++              l10n.moodCbtBehaviorPrompt2,
++            ],
++            initialValue: state.draft.behaviorResponse,
++            onChanged: (v) => notifier.updateField(behaviorResponse: v),
++          ),
++          // v0.30 round 89 (Task 4): AI 建议行动 — 7 栏专属 step 5
++          const SizedBox(height: AppTokens.spacingXxs),
++          CbtAiGenerateButton(
++            field: CbtAiField.actionSuggestion,
++            label: l10n.moodCbtAiBehaviorResponseButton,
++            onGenerate: (text) => notifier.updateField(behaviorResponse: text),
++          ),
+         ],
+-        initialValue: state.draft.behaviorResponse,
+-        onChanged: (v) => notifier.updateField(behaviorResponse: v),
+       );
+     }
+     if (step == 6) {
+       return Text(
+         '${l10n.moodCbtConfirm}: ${state.draft.situation ?? l10n.moodCbtConfirmEmpty}',
+         style: AppTokens.textStyleBody(context),
+       );
+     }
+     return const SizedBox.shrink();
+   }
+diff --git a/lib/presentation/pages/settings/settings_page.dart b/lib/presentation/pages/settings/settings_page.dart
+index 88e5c45..d1b4d47 100644
+--- a/lib/presentation/pages/settings/settings_page.dart
++++ b/lib/presentation/pages/settings/settings_page.dart
+@@ -13,20 +13,21 @@ import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+ import 'package:chroniccare/presentation/widgets/primary_button.dart';
+ import 'package:chroniccare/presentation/widgets/section_header.dart';
+ import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
+ import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_section.dart';
+ 
+ /// 设置页
+ ///
+ /// v0.23 P1 refactor: 从 713 行瘦身到 ~80 行。
+ /// 6 个 section widgets 已提取到 settings/widgets/:
+ ///   - RemindersSection (提醒中心 + 续方管理)
+ ///   - LegalSection (法律与隐私)
+ ///   - DataManagementSection (导出/报告/历史/导入/清空)
+ ///   - AssessmentSection (评估历史/周期提醒/量表列表/邮件预览/关于)
+ ///   - NotificationStatusCard (通知自检, 原已存在)
+@@ -192,20 +193,26 @@ class SettingsPage extends ConsumerWidget {
+           const RemindersSection(),
+ 
+           const SizedBox(height: AppTokens.spacingLg),
+ 
+           // v0.29 round 84 (CBT 思维记录): 思维记录档位设置
+           // 紧跟"提醒"主题 — 切档体验一致, 用户从"定时提醒"自然过渡到"模板选择"
+           const CbtSection(),
+ 
+           const SizedBox(height: AppTokens.spacingLg),
+ 
++          // v0.30 round 89 (CBT AI 辅助): AI 设置入口 (toggle + api key + model)
++          // 紧跟 CbtSection — 主题相关 (AI 生成 CBT 建议), 放在同一主题分组
++          const AiSection(),
++
++          const SizedBox(height: AppTokens.spacingLg),
++
+           // 通知自检卡
+           const NotificationStatusCard(),
+ 
+           const SizedBox(height: AppTokens.spacingLg),
+ 
+           // === 心理评估 + 邮件预览 + 关于 ===
+           // v0.28 R81 (emil design-5): chip 标签 (B 站风格)
+           SectionHeader(
+             title: AppLocalizations.of(context).settingsAssessment,
+             chip: AppLocalizations.of(context).assessmentChipCurrent,
+diff --git a/lib/presentation/pages/settings/widgets/ai_consent_dialog.dart b/lib/presentation/pages/settings/widgets/ai_consent_dialog.dart
+new file mode 100644
+index 0000000..63879b6
+--- /dev/null
++++ b/lib/presentation/pages/settings/widgets/ai_consent_dialog.dart
+@@ -0,0 +1,61 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): PIPL §13 同意 dialog
++//
++// 法务要求: AI 单独同意, 用户必看 + 必点 accept/decline。
++// 内容: 4 项 — 数据脱敏 (只发 score/tags/level) / 国内 API / 第三方处理 / 可随时撤回
++//
++// 复用: 跟现有 consent dialog 模式一致, 一次性 AlertDialog + 4 个 bullet + 2 按钮
++//
++// v0.30 round 89 Task 5 (i18n): 替换 9 个 hardcoded 中文 placeholder → ARB key
++// (aiConsentTitle / aiConsentBody / 4 bullet / 2 按钮 / aiConsentVersion)
++
++import 'package:flutter/material.dart';
++import 'package:chroniccare/core/theme/app_tokens.dart';
++import 'package:chroniccare/l10n/app_localizations.dart';
++
++class AiConsentDialog extends StatelessWidget {
++  const AiConsentDialog({super.key});
++
++  @override
++  Widget build(BuildContext context) {
++    final l10n = AppLocalizations.of(context);
++    return AlertDialog(
++      title: Text(l10n.aiConsentTitle),
++      content: SingleChildScrollView(
++        child: Column(
++          crossAxisAlignment: CrossAxisAlignment.start,
++          mainAxisSize: MainAxisSize.min,
++          children: [
++            Text(l10n.aiConsentBody),
++            const SizedBox(height: AppTokens.spacingSm),
++            _bullet(l10n.aiConsentPoint1),
++            _bullet(l10n.aiConsentPoint2),
++            _bullet(l10n.aiConsentPoint3),
++            _bullet(l10n.aiConsentPoint4),
++            const SizedBox(height: AppTokens.spacingSm),
++            Text(
++              l10n.aiConsentVersion,
++              style: const TextStyle(fontSize: 12, color: Colors.grey),
++            ),
++          ],
++        ),
++      ),
++      actions: [
++        TextButton(
++          onPressed: () => Navigator.of(context).pop(false),
++          child: Text(l10n.aiConsentDecline),
++        ),
++        FilledButton(
++          onPressed: () => Navigator.of(context).pop(true),
++          child: Text(l10n.aiConsentAccept),
++        ),
++      ],
++    );
++  }
++
++  Widget _bullet(String text) {
++    return Padding(
++      padding: const EdgeInsets.only(bottom: AppTokens.spacingXxs),
++      child: Text(text, style: const TextStyle(fontSize: 13)),
++    );
++  }
++}
+diff --git a/lib/presentation/pages/settings/widgets/ai_section.dart b/lib/presentation/pages/settings/widgets/ai_section.dart
+new file mode 100644
+index 0000000..e90543f
+--- /dev/null
++++ b/lib/presentation/pages/settings/widgets/ai_section.dart
+@@ -0,0 +1,196 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助) FIX: 设置页 AI 入口
++//
++// FIX-Round-1 修 1 个问题:
++// 3) **TextField 无 controller + setApiKey 无错误反馈**: 原实现用
++//    `onSubmitted: (v) => notifier.setApiKey(v)` — 字段 uncontrolled,
++//    widget 重建时输入丢失; setApiKey 失败也没人知道。修: 改
++//    ConsumerStatefulWidget, 持 TextEditingController, 旁边加"保存"按钮,
++//    setApiKey 包 AsyncValue.guard, 成功/失败都用 SnackBar 反馈。
++//
++// 模式: 跟 cbt_section.dart / reminders_section.dart 同 — Card + consumer
++// 内部: Switch (enable) + TextField (api key, controller) + 保存按钮 +
++// Dropdown (model) + 测试连接
++// 首次 toggle on 时弹 AiConsentDialog (PIPL §13 单独同意)
++//
++// v0.30 round 89 Task 5 (i18n): 替换 13 个 hardcoded 中文 placeholder → ARB key
++// (aiSectionTitle / aiSectionHint / aiEnableToggle / aiApiKeyLabel /
++// aiApiKeyHint / aiModelLabel / aiModelDeepseekChat / aiTestConnection /
++// aiTestConnectionPending / aiApiKeySaved / aiSaveFailed /
++// aiEmptyApiKeyHint / aiLoadSettingsFailed)
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/theme/app_tokens.dart';
++import 'package:chroniccare/l10n/app_localizations.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_consent_dialog.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++
++class AiSection extends ConsumerStatefulWidget {
++  const AiSection({super.key});
++
++  @override
++  ConsumerState<AiSection> createState() => _AiSectionState();
++}
++
++class _AiSectionState extends ConsumerState<AiSection> {
++  // FIX-Round-1: TextField controller — 持有输入文本, 重建不丢; dispose 时释放。
++  late final TextEditingController _apiKeyController;
++
++  @override
++  void initState() {
++    super.initState();
++    _apiKeyController = TextEditingController();
++  }
++
++  @override
++  void dispose() {
++    _apiKeyController.dispose();
++    super.dispose();
++  }
++
++  /// 调 notifier.setApiKey 包 try/catch (setApiKey 不改 entity state, 只写
++  /// secure storage, 不走 AsyncValue.loading 流); 成功/失败都用 SnackBar 反馈。
++  Future<void> _saveApiKey() async {
++    final key = _apiKeyController.text.trim();
++    if (key.isEmpty) {
++      final l10n = AppLocalizations.of(context);
++      ScaffoldMessenger.of(context).showSnackBar(
++        SnackBar(content: Text(l10n.aiEmptyApiKeyHint)),
++      );
++      return;
++    }
++    final notifier = ref.read(aiSettingsProvider.notifier);
++    try {
++      await notifier.setApiKey(key);
++      if (!mounted) return;
++      final l10n = AppLocalizations.of(context);
++      ScaffoldMessenger.of(context).showSnackBar(
++        SnackBar(content: Text(l10n.aiApiKeySaved)),
++      );
++    } catch (e) {
++      if (!mounted) return;
++      final l10n = AppLocalizations.of(context);
++      ScaffoldMessenger.of(context).showSnackBar(
++        SnackBar(content: Text(l10n.aiSaveFailed(e.toString()))),
++      );
++    }
++  }
++
++  @override
++  Widget build(BuildContext context) {
++    final l10n = AppLocalizations.of(context);
++    final settingsAsync = ref.watch(aiSettingsProvider);
++    final notifier = ref.read(aiSettingsProvider.notifier);
++
++    return settingsAsync.when(
++      loading: () => const Card(
++        child: Padding(
++          padding: EdgeInsets.all(AppTokens.spacingMd),
++          child: Center(child: CircularProgressIndicator()),
++        ),
++      ),
++      error: (e, st) => Card(
++        child: Padding(
++          padding: const EdgeInsets.all(AppTokens.spacingMd),
++          child: Text(l10n.aiLoadSettingsFailed(e.toString())),
++        ),
++      ),
++      data: (settings) => Card(
++        child: Padding(
++          padding: const EdgeInsets.symmetric(
++            horizontal: AppTokens.spacingMd,
++            vertical: AppTokens.spacingSm,
++          ),
++          child: Column(
++            crossAxisAlignment: CrossAxisAlignment.start,
++            children: [
++              Text(
++                l10n.aiSectionTitle,
++                style: AppTokens.textStyleTitle(context),
++              ),
++              const SizedBox(height: AppTokens.spacingXxs),
++              Text(
++                l10n.aiSectionHint,
++                style: AppTokens.textStyleCaption(context),
++              ),
++              SwitchListTile(
++                title: Text(l10n.aiEnableToggle),
++                value: settings.enabled,
++                onChanged: (v) async {
++                  // 首次启用 + 还没同意 → 弹 PIPL §13 dialog
++                  if (v && !settings.hasConsent) {
++                    final accepted = await showDialog<bool>(
++                      context: context,
++                      builder: (_) => const AiConsentDialog(),
++                    );
++                    if (accepted != true) return;
++                    if (!mounted) return;
++                    await notifier.recordConsent();
++                  }
++                  if (!mounted) return;
++                  await notifier.setEnabled(v);
++                },
++              ),
++              // FIX-Round-1: TextField 用 controller 持有文本 (重建不丢), 不再
++              // 依赖 onSubmitted 隐式保存; 旁边加"保存"按钮让保存动作显式,
++              // 也让 widget test 可以点保存而不是依赖 onSubmitted 不稳的 IME 流程。
++              Row(
++                crossAxisAlignment: CrossAxisAlignment.end,
++                children: [
++                  Expanded(
++                    child: TextField(
++                      controller: _apiKeyController,
++                      decoration: InputDecoration(
++                        labelText: l10n.aiApiKeyLabel,
++                        hintText: l10n.aiApiKeyHint,
++                        border: const OutlineInputBorder(),
++                      ),
++                      obscureText: true,
++                      enabled: settings.enabled,
++                    ),
++                  ),
++                  const SizedBox(width: AppTokens.spacingXs),
++                  FilledButton.tonal(
++                    onPressed: settings.enabled ? _saveApiKey : null,
++                    child: Text(l10n.commonSave),
++                  ),
++                ],
++              ),
++              const SizedBox(height: AppTokens.spacingXs),
++              DropdownButtonFormField<String>(
++                initialValue: settings.modelName,
++                decoration: InputDecoration(
++                  labelText: l10n.aiModelLabel,
++                  border: const OutlineInputBorder(),
++                ),
++                items: [
++                  DropdownMenuItem(
++                    value: 'deepseek-chat',
++                    child: Text(l10n.aiModelDeepseekChat),
++                  ),
++                ],
++                onChanged: settings.enabled
++                    ? (v) {
++                        if (v != null) notifier.setModelName(v);
++                      }
++                    : null,
++              ),
++              const SizedBox(height: AppTokens.spacingXs),
++              FilledButton.tonal(
++                onPressed: settings.enabled
++                    ? () {
++                        ScaffoldMessenger.of(context).showSnackBar(
++                          SnackBar(content: Text(l10n.aiTestConnectionPending)),
++                        );
++                      }
++                    : null,
++                child: Text(l10n.aiTestConnection),
++              ),
++            ],
++          ),
++        ),
++      ),
++    );
++  }
++}
+diff --git a/lib/presentation/providers/ai_service_provider.dart b/lib/presentation/providers/ai_service_provider.dart
+new file mode 100644
+index 0000000..3db2c60
+--- /dev/null
++++ b/lib/presentation/providers/ai_service_provider.dart
+@@ -0,0 +1,44 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiService Riverpod provider
++//
++// 注入链: aiSettingsProvider (AsyncNotifier<AiSettings>) +
++//         aiSettingsRepositoryProvider (Provider<AiSettingsRepository>)
++//         → DeepSeekProvider(apiKey, modelName) → AiService
++//
++// 失败处理:
++// - settings.enabled = false → StateError('AI 未启用')
++//   UI 看 svcAsync.hasError → 按钮 disabled
++// - repo.getApiKey() == null/empty → StateError('请先设置 API Key')
++//   UI 看 svcAsync.hasError → 按钮 disabled
++//
++// 隐私: apiKey 走 FlutterSecureStorage, 不进 AiSettings entity
++// 脱敏: AiService.generateAll 只发 {score, tags, cbtLevel} 给 LLM
++//
++// 频度: 5/7 栏 wizard 3 个 AI 按钮调, tens/day (用户主动点)
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/data/services/ai/ai_service.dart';
++import 'package:chroniccare/core/data/services/ai/deepseek_provider.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++
++/// 异步注入 AiService — 看 settings + 读 apiKey, 2 步都 await
++///
++/// 异常时抛 StateError, UI 通过 `svcAsync.hasError` 知道按钮是否要 disabled
++/// (具体错误信息在 svcAsync.error, 但 UI 暂不分类型, 统一禁用 + toast)
++final aiServiceProvider = FutureProvider<AiService>((ref) async {
++  final settings = await ref.watch(aiSettingsProvider.future);
++  if (!settings.enabled) {
++    throw StateError('AI 未启用');
++  }
++  final repo = ref.read(aiSettingsRepositoryProvider);
++  final apiKey = await repo.getApiKey();
++  if (apiKey == null || apiKey.isEmpty) {
++    throw StateError('请先设置 API Key');
++  }
++  return AiService(
++    provider: DeepSeekProvider(
++      apiKey: apiKey,
++      modelName: settings.modelName,
++    ),
++  );
++});
+diff --git a/lib/presentation/providers/ai_settings_provider.dart b/lib/presentation/providers/ai_settings_provider.dart
+new file mode 100644
+index 0000000..1455089
+--- /dev/null
++++ b/lib/presentation/providers/ai_settings_provider.dart
+@@ -0,0 +1,110 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助) FIX: AI 设置 Riverpod provider
++//
++// FIX-Round-1 修 2 个问题:
++// 1) **Deadlock 修**: setEnabled / setModelName / recordConsent 原来在
++//    `state = AsyncValue.loading()` 后 `await future` 拿 current — 但 future
++//    的 completer 只由外层 `state = await AsyncValue.guard(...)` 完成, 形成
++//    self-deadlock, 写方法永远 hang。修: 进入写方法时直接用
++//    `state.value ?? const AiSettings(defaults)` 拿 current, 不依赖 future。
++// 2) **重命名**: AiSettingsEntity → AiSettings, 文件 ai_settings_entity.dart →
++//    ai_settings.dart。PIPL §13 / SP-only entity 走豁免太脏, 改名让 check_all.dart
++//    自然通过, 不需要 _spOnlyEntities 白名单。
++//
++// 模式: AsyncNotifierProvider<AiSettings> — build() 读 repo, set 方法写 repo
++// watch 时 UI 自动 rebuild
++//
++// 设计:
++// - state.value ?? defaults (写方法入口直接拿 current, 不 await future)
++//   跟 R85 reminders_hub Notifier 一致, 让 setEnabled / setModelName /
++//   recordConsent / clear 时 UI 显示 loading
++// - setApiKey 不走 state.loading (写的是 secure storage, 不影响 entity 字段)
++// - 首次同意 dialog 返回 true 才 recordConsent, false 不动 settings
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/data/repositories/ai_settings/ai_settings_repository_impl.dart';
++import 'package:chroniccare/domain/entities/ai_settings.dart';
++
++final aiSettingsRepositoryProvider = Provider<AiSettingsRepository>((ref) {
++  return AiSettingsRepository();
++});
++
++/// 默认 AiSettings — 写方法在 state 还没 data 时兜底用, 避免取不到 current。
++/// `enabled=false, provider='deepseek', modelName='deepseek-chat'` 跟 repo.load()
++/// 在空 SP 时返的 default 一致, 任何后续 copyWith 都从同一个 baseline 出发。
++const _kDefaultAiSettings = AiSettings(
++  enabled: false,
++  provider: 'deepseek',
++  modelName: 'deepseek-chat',
++  consentVersion: '1.0',
++);
++
++class AiSettingsNotifier extends AsyncNotifier<AiSettings> {
++  @override
++  Future<AiSettings> build() async {
++    final repo = ref.read(aiSettingsRepositoryProvider);
++    return repo.load();
++  }
++
++  Future<void> setEnabled(bool v) async {
++    final repo = ref.read(aiSettingsRepositoryProvider);
++    // FIX-Round-1 deadlock: 不 await future, 直接拿 state.value 兜底
++    final current = state.value ?? _kDefaultAiSettings;
++    final next = current.copyWith(enabled: v);
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      await repo.save(next);
++      return next;
++    });
++  }
++
++  Future<void> setApiKey(String key) async {
++    final repo = ref.read(aiSettingsRepositoryProvider);
++    await repo.saveApiKey(key);
++  }
++
++  Future<void> setModelName(String name) async {
++    final repo = ref.read(aiSettingsRepositoryProvider);
++    final current = state.value ?? _kDefaultAiSettings;
++    final next = current.copyWith(modelName: name);
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      await repo.save(next);
++      return next;
++    });
++  }
++
++  Future<void> recordConsent() async {
++    final repo = ref.read(aiSettingsRepositoryProvider);
++    final current = state.value ?? _kDefaultAiSettings;
++    final next = current.copyWith(
++      consentAcceptedAt: DateTime.now().toUtc().toIso8601String(),
++    );
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      await repo.save(next);
++      return next;
++    });
++  }
++
++  Future<void> clear() async {
++    state = const AsyncValue.loading();
++    state = await AsyncValue.guard(() async {
++      final repo = ref.read(aiSettingsRepositoryProvider);
++      await repo.clearApiKey();
++      const reset = AiSettings(
++        enabled: false,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++      await repo.save(reset);
++      return reset;
++    });
++  }
++}
++
++final aiSettingsProvider =
++    AsyncNotifierProvider<AiSettingsNotifier, AiSettings>(
++  AiSettingsNotifier.new,
++);
+diff --git a/pubspec.yaml b/pubspec.yaml
+index d26d80d..63495a2 100644
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -61,20 +61,21 @@ dependencies:
+   # v0.27 round 65 (appstore P0-4 IAP 集成)
+   # Apple App Store 3.1.5 (a) 强制数字商品/服务走 IAP
+   # 8 元一次性买断 → NonConsumablePurchase (非订阅)
+   # 当前 dev 模式走 kDebugMode 直接返 true,productId 留 v0.28 真接
+   in_app_purchase: ^3.3.0
+ 
+   # v0.23 (Round 31 in development) 情绪日记语音录入 — 本地 STT
+   # 7.x: mobile 走平台 on-device / cloud STT, web 走 Chrome Web Speech API
+   # 注意: version 已 0.23.0+1 (v0.24 release 时一起升)
+   speech_to_text: ^7.0.0
++  http: ^1.6.0
+ 
+ dev_dependencies:
+   flutter_test:
+     sdk: flutter
+   flutter_lints: ^5.0.0
+ 
+   # 代码生成
+   build_runner: ^2.4.13
+   drift_dev: ^2.20.3
+ 
+diff --git a/test/core/data/services/ai/ai_service_round89_test.dart b/test/core/data/services/ai/ai_service_round89_test.dart
+new file mode 100644
+index 0000000..d7f8896
+--- /dev/null
++++ b/test/core/data/services/ai/ai_service_round89_test.dart
+@@ -0,0 +1,85 @@
++/// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiService 测试
++///
++/// 覆盖:
++/// - 5 prompt 并行调用 → 5 字段全有
++/// - 1 prompt 失败 → 其他 4 个继续 (Future.wait eagerError: false + _safeCall)
++/// - 脱敏: user prompt 只含 {score, tags, cbtLevel}, 不含 note/automaticThought/situation
++library;
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:chroniccare/core/data/services/ai/ai_service.dart';
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++
++class _MockProvider implements AiProvider {
++  String? lastSystemPrompt;
++  String? lastUserPrompt;
++  String? mockResponse;
++  Exception? mockException;
++  int callCount = 0;
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    callCount++;
++    lastSystemPrompt = systemPrompt;
++    lastUserPrompt = userPrompt;
++    if (mockException != null) throw mockException!;
++    return mockResponse ?? '';
++  }
++}
++
++class _CountingProvider implements AiProvider {
++  // 第 1 个 call 抛, 其他 4 个正常 — 验证 1 失败不阻塞其他
++  final bool alternatingException;
++  int callCount = 0;
++  _CountingProvider({this.alternatingException = false});
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    callCount++;
++    if (alternatingException && callCount == 1) {
++      throw Exception('mock fail on first call');
++    }
++    return '{"text": "示例回复"}';
++  }
++}
++
++void main() {
++  test('5 prompt 并行调用, 5 字段全有', () async {
++    final mock = _MockProvider();
++    mock.mockResponse = '{"text": "示例回复"}';
++    final svc = AiService(provider: mock);
++    final result = await svc.generateAll(score: 2, tags: ['焦虑'], cbtLevel: 5);
++    expect(mock.callCount, 5);
++    expect(result.alternativeThought, isNotNull);
++    expect(result.emotion, isNotNull);
++    expect(result.cognitiveDistortion, isNotNull);
++    expect(result.coreBelief, isNotNull);
++    expect(result.actionSuggestion, isNotNull);
++  });
++
++  test('1 prompt 失败, 其他 4 个继续', () async {
++    final mock = _CountingProvider(alternatingException: true);
++    final svc = AiService(provider: mock);
++    final result = await svc.generateAll(score: 3, tags: [], cbtLevel: 7);
++    expect(mock.callCount, 5);
++    expect(result.alternativeThought, isNull); // 第 1 个失败
++    expect(result.emotion, isNotNull);
++    expect(result.cognitiveDistortion, isNotNull);
++    expect(result.coreBelief, isNotNull);
++    expect(result.actionSuggestion, isNotNull);
++  });
++
++  test('user prompt 脱敏 — 不含 note / automaticThought', () async {
++    final mock = _MockProvider();
++    mock.mockResponse = 'ok';
++    final svc = AiService(provider: mock);
++    await svc.generateAll(score: 1, tags: ['失眠'], cbtLevel: 5);
++    // user prompt 只应含 {score, tags, cbtLevel}, 不含任何 user note 字段
++    expect(mock.lastUserPrompt, contains('情绪分数'));
++    expect(mock.lastUserPrompt, contains('失眠'));
++    expect(mock.lastUserPrompt, contains('CBT 档位'));
++    expect(mock.lastUserPrompt, isNot(contains('note')));
++    expect(mock.lastUserPrompt, isNot(contains('automaticThought')));
++    expect(mock.lastUserPrompt, isNot(contains('situation')));
++  });
++}
+diff --git a/test/core/data/services/ai/deepseek_provider_round89_test.dart b/test/core/data/services/ai/deepseek_provider_round89_test.dart
+new file mode 100644
+index 0000000..d3e83b6
+--- /dev/null
++++ b/test/core/data/services/ai/deepseek_provider_round89_test.dart
+@@ -0,0 +1,94 @@
++/// v0.30 round 89 (sub-spec 5 CBT AI 辅助): DeepSeekProvider HTTP impl 测试
++///
++/// 不测真实 LLM — 注入 http.testing.MockClient, 4 个 case 覆盖:
++/// - 200 + 正常 choices → 解析 content
++/// - 401 → 抛 Exception
++/// - 500 → 抛 Exception
++/// - 200 + 空 choices → 抛 Exception (防御)
++library;
++
++import 'dart:convert';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:http/http.dart' as http;
++import 'package:http/testing.dart';
++import 'package:chroniccare/core/data/services/ai/deepseek_provider.dart';
++
++void main() {
++  test('DeepSeek 200: 解析 choices[0].message.content', () async {
++    final mockClient = MockClient((request) async {
++      expect(request.url.toString(), 'https://api.deepseek.com/v1/chat/completions');
++      expect(request.headers['Authorization'], 'Bearer test-key');
++      expect(request.headers['Content-Type'], contains('application/json'));
++      final body = jsonDecode(request.body) as Map<String, dynamic>;
++      expect(body['model'], 'deepseek-chat');
++      expect((body['messages'] as List).length, 2);
++      expect(body['messages'][0]['role'], 'system');
++      expect(body['messages'][1]['role'], 'user');
++      return http.Response(
++        jsonEncode({
++          'choices': [
++            {'message': {'content': '示例 AI 回复'}},
++          ],
++        }),
++        200,
++        headers: {'content-type': 'application/json; charset=utf-8'},
++      );
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'test-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    final result = await provider.call('system', 'user');
++    expect(result, '示例 AI 回复');
++  });
++
++  test('DeepSeek 401: 抛 Exception, 包含 statusCode + body', () async {
++    final mockClient = MockClient((request) async {
++      return http.Response('Unauthorized', 401);
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'bad-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    expect(
++      () => provider.call('system', 'user'),
++      throwsA(isA<Exception>()),
++    );
++  });
++
++  test('DeepSeek 500: 抛 Exception', () async {
++    final mockClient = MockClient((request) async {
++      return http.Response('Internal Server Error', 500);
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'test-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    expect(
++      () => provider.call('system', 'user'),
++      throwsA(isA<Exception>()),
++    );
++  });
++
++  test('DeepSeek 200 但 choices 空: 抛 Exception (防御)', () async {
++    final mockClient = MockClient((request) async {
++      return http.Response(
++        jsonEncode(<String, dynamic>{'choices': <dynamic>[]}),
++        200,
++        headers: {'content-type': 'application/json; charset=utf-8'},
++      );
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'test-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    expect(
++      () => provider.call('system', 'user'),
++      throwsA(isA<Exception>()),
++    );
++  });
++}
+diff --git a/test/presentation/pages/mood/cbt_ai_generate_button_round89_test.dart b/test/presentation/pages/mood/cbt_ai_generate_button_round89_test.dart
+new file mode 100644
+index 0000000..085f0fe
+--- /dev/null
++++ b/test/presentation/pages/mood/cbt_ai_generate_button_round89_test.dart
+@@ -0,0 +1,292 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): CbtAiGenerateButton widget 测试
++//
++// 覆盖 (3 case, 对应 task brief):
++// 1. alternativeThought 字段: 点按钮 → AiService.generateAll() → 拿对应字段 →
++//    调 onGenerate callback
++// 2. AI 未启用 (enabled=false) → 按钮 disabled
++// 3. API key 未设置 → 按钮 disabled
++//
++// 模式 (跟 ai_section_round89_test 同款):
++// - MaterialApp + ProviderScope overrides
++// - aiSettingsProvider / aiServiceProvider 走 override
++// - 中文 placeholder ("AI 建议替代思维" / "AI 提取核心信念" / "AI 建议行动")
++//   暂用, Task 5 一次性换 16 个 l10n key
++//
++// v0.30 round 89 Task 5 (i18n): 加 AppLocalizations.delegate (zh) 让
++// AppLocalizations.of(context) 工作 — CbtAiGenerateButton 现在走 l10n。
++// Test 仍用 `find.text('AI 建议替代思维')` 这种硬编码 — 在 zh locale 下
++// zh ARB 翻译正好等于旧 placeholder, test 无需改 expectation。
++//
++// 不依赖 flutter_secure_storage / shared_preferences (overridden 掉)
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++import 'package:chroniccare/core/data/repositories/ai_settings/ai_settings_repository_impl.dart';
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++import 'package:chroniccare/core/data/services/ai/ai_service.dart';
++import 'package:chroniccare/domain/entities/ai_settings.dart';
++import 'package:chroniccare/l10n/app_localizations.dart';
++import 'package:chroniccare/presentation/pages/mood/widgets/cbt_ai_generate_button.dart';
++import 'package:chroniccare/presentation/providers/ai_service_provider.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++
++/// Test helper: 包一层 localizations 让 widget 内部 AppLocalizations.of(context) 工作
++Widget _localizedApp(Widget body) {
++  return MaterialApp(
++    localizationsDelegates: AppLocalizations.localizationsDelegates,
++    supportedLocales: AppLocalizations.supportedLocales,
++    locale: const Locale('zh'),
++    home: Scaffold(body: body),
++  );
++}
++
++/// Mock LLM provider — 返回固定 string (模拟 LLM raw response)
++class _MockProvider implements AiProvider {
++  String response;
++  _MockProvider(this.response);
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async => response;
++}
++
++/// _FakeSettingsNotifier: enabled=true, 跟 brief 一致
++class _FakeSettingsNotifier extends AsyncNotifier<AiSettings>
++    implements AiSettingsNotifier {
++  bool enabledValue;
++  _FakeSettingsNotifier({this.enabledValue = true});
++  @override
++  Future<AiSettings> build() async => AiSettings(
++        enabled: enabledValue,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++        consentAcceptedAt: '2026-08-05T00:00:00Z',
++      );
++  @override
++  Future<void> setEnabled(bool v) async {}
++  @override
++  Future<void> setApiKey(String key) async {}
++  @override
++  Future<void> setModelName(String name) async {}
++  @override
++  Future<void> recordConsent() async {}
++  @override
++  Future<void> clear() async {}
++}
++
++/// _FakeRepo: 控制 getApiKey() 返回值 — null 模拟 API key 未设置
++class _FakeRepo implements AiSettingsRepository {
++  String? apiKeyValue;
++  _FakeRepo({this.apiKeyValue = 'sk-fake-key-for-test'});
++  @override
++  Future<AiSettings> load() async => const AiSettings(
++        enabled: true,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++  @override
++  Future<void> save(AiSettings settings) async {}
++  @override
++  Future<void> saveApiKey(String apiKey) async {}
++  @override
++  Future<String?> getApiKey() async => apiKeyValue;
++  @override
++  Future<void> clearApiKey() async {}
++}
++
++/// 测试用 _TestField: 简单 StatefulWidget 验证 onGenerate callback 被调
++class _TestField extends StatefulWidget {
++  const _TestField({super.key, required this.initialValue});
++  final String initialValue;
++  @override
++  State<_TestField> createState() => _TestFieldState();
++}
++
++class _TestFieldState extends State<_TestField> {
++  late String _value = widget.initialValue;
++  String get value => _value;
++  void setValue(String v) => setState(() => _value = v);
++  @override
++  Widget build(BuildContext context) => Text(_value);
++}
++
++void main() {
++  testWidgets(
++    'CbtAiGenerateButton(alternativeThought) 点 → 拿对应字段 → 调 onGenerate callback',
++    (tester) async {
++      // mock LLM 返回 raw string (AiService 不解析 JSON, 直接透传)
++      final mock = _MockProvider('{"text": "平衡一点的想法"}');
++      final svc = AiService(provider: mock);
++      final fieldKey = GlobalKey<_TestFieldState>();
++
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiSettingsProvider.overrideWith(() => _FakeSettingsNotifier()),
++            aiServiceProvider.overrideWith((ref) => svc),
++          ],
++          child: _localizedApp(
++            Column(
++              children: [
++                _TestField(key: fieldKey, initialValue: ''),
++                CbtAiGenerateButton(
++                  field: CbtAiField.alternativeThought,
++                  label: 'AI 建议替代思维',
++                  onGenerate: (text) => fieldKey.currentState!.setValue(text),
++                ),
++              ],
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      // 点按钮 → trigger generateAll → 拿 alternativeThought → 调 onGenerate
++      await tester.tap(find.text('AI 建议替代思维'));
++      await tester.pumpAndSettle();
++
++      // 验证 callback 被调, 值含 "平衡一点的想法" (mock LLM 返的 string)
++      expect(fieldKey.currentState!.value, contains('平衡一点的想法'));
++    },
++  );
++
++  testWidgets(
++    'AI 未启用 (enabled=false) → 按钮 disabled',
++    (tester) async {
++      // override settings notifier 返 enabled=false → aiServiceProvider
++      // 内部 throw StateError('AI 未启用') → hasError=true → 按钮 disabled
++      // (apiKey check 不会跑, 但 override 仍放, 防止 provider 树报错)
++      final fakeRepo = _FakeRepo();
++
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiSettingsProvider.overrideWith(
++              () => _FakeSettingsNotifier(enabledValue: false),
++            ),
++            aiSettingsRepositoryProvider.overrideWithValue(fakeRepo),
++          ],
++          child: _localizedApp(
++            CbtAiGenerateButton(
++              field: CbtAiField.alternativeThought,
++              label: 'AI 建议替代思维',
++              onGenerate: (_) {},
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      // FilledButton.tonalIcon onPressed 应为 null (disabled)
++      final btn = tester.widget<FilledButton>(find.byType(FilledButton));
++      expect(btn.onPressed, isNull,
++          reason: 'AI 未启用时按钮应 disabled (onPressed == null)',);
++    },
++  );
++
++  testWidgets(
++    'API key 未设置 (getApiKey() == null) → 按钮 disabled',
++    (tester) async {
++      // settings enabled=true, 但 repo.getApiKey() 返 null → aiServiceProvider
++      // 内部 throw StateError('请先设置 API Key') → hasError=true → 按钮 disabled
++      final fakeRepo = _FakeRepo(apiKeyValue: null);
++
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiSettingsProvider.overrideWith(() => _FakeSettingsNotifier()),
++            aiSettingsRepositoryProvider.overrideWithValue(fakeRepo),
++          ],
++          child: _localizedApp(
++            CbtAiGenerateButton(
++              field: CbtAiField.coreBelief,
++              label: 'AI 提取核心信念',
++              onGenerate: (_) {},
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      final btn = tester.widget<FilledButton>(find.byType(FilledButton));
++      expect(btn.onPressed, isNull,
++          reason: 'API key 未设置时按钮应 disabled (onPressed == null)',);
++    },
++  );
++
++  // v0.30 round 89 fix round 1 (Important #1: silent disabled UX):
++  // 按钮 disabled 时, 用户没有 onPressed 路径看到错误原因 — 必须显示
++  // helper text 直接告诉用户怎么修 (设置启用 / 填 API Key)
++  testWidgets(
++    'aiServiceProvider 抛 StateError(\'AI 未启用\') → 按钮 disabled + helper text 可见',
++    (tester) async {
++      // 直接 override aiServiceProvider 抛 StateError, 跳过 settings /
++      // repo 整链 (跟 Test 2/3 不一样 — Test 2/3 走真 provider 链路看
++      // 真实 throw 路径, Test 4/5 走 override 精确控制错误 message)
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiServiceProvider.overrideWith(
++              (ref) async => throw StateError('AI 未启用'),
++            ),
++          ],
++          child: _localizedApp(
++            CbtAiGenerateButton(
++              field: CbtAiField.alternativeThought,
++              label: 'AI 建议替代思维',
++              onGenerate: (_) {},
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      // 1) 按钮 disabled
++      final btn = tester.widget<FilledButton>(find.byType(FilledButton));
++      expect(btn.onPressed, isNull,
++          reason: 'hasError 时按钮应 disabled',);
++
++      // 2) helper text 出现, 告诉用户怎么修
++      expect(
++        find.text('请先在设置启用 AI 辅助'),
++        findsOneWidget,
++        reason: 'AI 未启用时, 按钮下应显示 "请先在设置启用 AI 辅助" helper',
++      );
++    },
++  );
++
++  testWidgets(
++    'aiServiceProvider 抛 StateError(\'请先设置 API Key\') → 按钮 disabled + helper text 可见',
++    (tester) async {
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiServiceProvider.overrideWith(
++              (ref) async => throw StateError('请先设置 API Key'),
++            ),
++          ],
++          child: _localizedApp(
++            CbtAiGenerateButton(
++              field: CbtAiField.coreBelief,
++              label: 'AI 提取核心信念',
++              onGenerate: (_) {},
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      final btn = tester.widget<FilledButton>(find.byType(FilledButton));
++      expect(btn.onPressed, isNull,
++          reason: 'hasError 时按钮应 disabled',);
++
++      expect(
++        find.text('请先在设置填写 API Key'),
++        findsOneWidget,
++        reason: 'API Key 未设置时, 按钮下应显示 "请先在设置填写 API Key" helper',
++      );
++    },
++  );
++}
+diff --git a/test/presentation/pages/settings/settings_page_round45_test.dart b/test/presentation/pages/settings/settings_page_round45_test.dart
+index c1e7fd3..3022cca 100644
+--- a/test/presentation/pages/settings/settings_page_round45_test.dart
++++ b/test/presentation/pages/settings/settings_page_round45_test.dart
+@@ -1,49 +1,84 @@
+ // v0.24 (Round 45): settings_page widget 单测
+ //
+ // 之前 v0.22 round 30 P1-38 标的"settings 整片 0 widget 测"残留 2 周。
+ // v0.24 round 45 (Sprint #6 中段 3 page 0 widget 测补齐之二) 补 3 个 case:
+ //
+ // 1. contacts error → 渲染 ErrorState (loading + error 状态切换)
+-// 2. contacts data 空 + meds data 空 → 7 section widget 全部渲染
++// 2. contacts data 空 + meds data 空 → 8 section widget 全部渲染 (R89 加 AiSection)
+ // 3. contacts data 1 → ContactsListWidget 渲染 + name 显示
+ //
+ // v0.29 round 84 (CBT 思维记录): 补 CbtSection (在 RemindersSection 之后),
+ // 测试数 6 → 7。sharedPreferencesProvider override 必加 (CbtSection 依赖
+ // thoughtRecordLevelProvider, 后者读 SP)。
+ //
++// v0.30 round 89 (CBT AI 辅助): 补 AiSection (在 CbtSection 之后),
++// 测试数 7 → 8。aiSettingsProvider override 必加 (AiSection 读 SP /
++// FlutterSecureStorage)。另外 AiSection 渲染 TextField → 多 1 个内部
++// Scrollable, scrollUntilVisible 必须显式指定 scrollable 走 ListView,
++// 否则 drag() 会因 "Found 2 Scrollable widgets" 报 ambiguous 错。
++//
+ // 测试 setup:
+ // - MaterialApp + AppLocalizations.localizationsDelegates
+ // - ProviderScope overrides mock Stream<List> provider
+-// - 测 contacts/meds 状态切换, 不测 6 个 section widget 内部逻辑 (各自有测)
++// - 测 contacts/meds 状态切换, 不测 section widget 内部逻辑 (各自有测)
+ //
+ // v0.24 Sprint #5 (mood_dialog 拆解) 后 settings_page 99 行只剩 section 拼接,
+ // 每个 section 在 settings/widgets/ 独立测, 测 main page 容器逻辑 ROI 最高
++import 'package:chroniccare/domain/entities/ai_settings.dart';
+ import 'package:chroniccare/domain/entities/contact_entity.dart';
+ import 'package:chroniccare/domain/entities/medication_entity.dart';
+ import 'package:chroniccare/l10n/app_localizations.dart';
+ import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
+ import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
+ import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
+ import 'package:chroniccare/presentation/providers/cbt_providers.dart';
+ import 'package:chroniccare/presentation/providers/shared_providers.dart';
+ import 'package:chroniccare/presentation/widgets/error_state.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import 'package:flutter_test/flutter_test.dart';
+ import 'package:shared_preferences/shared_preferences.dart';
+ 
++/// v0.30 round 89: AiSection 用的 stub notifier
++///
++/// 跟 ai_section_round89_test.dart 的 _StubNotifier 同 pattern:
++/// implements AiSettingsNotifier, 返 enabled=false stub (避免真实 SP / Secure storage)。
++class _StubAiNotifier extends AsyncNotifier<AiSettings>
++    implements AiSettingsNotifier {
++  @override
++  Future<AiSettings> build() async => const AiSettings(
++        enabled: false,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++
++  @override
++  Future<void> setEnabled(bool v) async {}
++  @override
++  Future<void> setApiKey(String key) async {}
++  @override
++  Future<void> setModelName(String name) async {}
++  @override
++  Future<void> recordConsent() async {}
++  @override
++  Future<void> clear() async {}
++}
++
+ void main() {
+   // v0.29 round 84 (CBT 思维记录): 共享给所有 test 的 SP mock 实例
+   // CbtSection 通过 thoughtRecordLevelProvider 读 SP, 必须 override。
+   // setUp 返回 Future, 测试前 await。top-level 变量供 buildSettingsPage 闭包用。
+   late SharedPreferences mockSp;
+ 
+   setUp(() async {
+     SharedPreferences.setMockInitialValues(<String, Object>{});
+     mockSp = await SharedPreferences.getInstance();
+   });
+@@ -59,87 +94,125 @@ void main() {
+         contactsProvider.overrideWith((ref) => Stream.value(contacts)),
+         medicationsProvider.overrideWith(
+           (ref) => medsError
+               ? Stream<List<MedicationEntity>>.error(Exception('test error'))
+               : Stream.value(meds),
+         ),
+         // v0.29 round 84: CbtSection 引用 thoughtRecordLevelProvider, 后者
+         // 走 sharedPreferencesProvider 读 SP。test 必须 override 否则抛
+         // UnimplementedError: Override at app boot (cbt_providers.dart:27)。
+         sharedPreferencesProvider.overrideWithValue(mockSp),
++        // v0.30 round 89: AiSection 引用 aiSettingsProvider, 后者读 SP +
++        // FlutterSecureStorage。test override → 返 stub, 避免真实 I/O。
++        aiSettingsProvider.overrideWith(() => _StubAiNotifier()),
+       ],
+       child: const MaterialApp(
+         localizationsDelegates: AppLocalizations.localizationsDelegates,
+         supportedLocales: AppLocalizations.supportedLocales,
+         locale: Locale('zh'),
+         home: SettingsPage(),
+       ),
+     );
+   }
+ 
++  // v0.30 round 89: 显式指定 ListView 的 Scrollable (避免 TextField 内部
++  // EditableText 的 Scrollable 跟 ListView 冲突, drag 报 ambiguous)
++  final Finder listScrollable = find.byType(Scrollable).first;
++
+   testWidgets('meds error → 显示 ErrorState', (tester) async {
+     await tester.pumpWidget(buildSettingsPage(medsError: true));
+     // pumpAndSettle 让 Stream.error microtask 跑完, Riverpod 转 AsyncError,
+     // 渲染 ErrorState。限制 duration 防止 hang (master 上无 contacts section
+     // 重排, 现在有 setUp+drag 副作用, 短 timeout 更稳)。
+     await tester.pumpAndSettle(const Duration(milliseconds: 100));
+ 
+     // v0.31 联系人软隐藏: contacts section 挪到最底部, viewport 内不渲染。
+     // meds section 仍在 ListView 上面, viewport 内直接渲染 ErrorState。
+     expect(find.byType(ErrorState), findsOneWidget);
+   });
+ 
+-  testWidgets('contacts + meds 都空 → 7 个 section widget 全部渲染', (tester) async {
++  testWidgets('contacts + meds 都空 → 8 个 section widget 全部渲染',
++      (tester) async {
+     await tester.pumpWidget(buildSettingsPage());
+     await tester.pumpAndSettle();
+ 
+     // ListView 内 section 默认只渲染 viewport 内, 用 scrollUntilVisible
+     // 把每个 section scroll 出来验证渲染
+     await tester.scrollUntilVisible(
+       find.byType(DataManagementSection),
+       100,
++      scrollable: listScrollable,
+     );
+     expect(find.byType(DataManagementSection), findsOneWidget);
+ 
+-    await tester.scrollUntilVisible(find.byType(LegalSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(LegalSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(LegalSection), findsOneWidget);
+ 
+-    await tester.scrollUntilVisible(find.byType(RemindersSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(RemindersSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(RemindersSection), findsOneWidget);
+ 
+     // v0.29 round 84: CbtSection (思维记录档位) 紧跟 RemindersSection
+-    await tester.scrollUntilVisible(find.byType(CbtSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(CbtSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(CbtSection), findsOneWidget);
+ 
++    // v0.30 round 89: AiSection (AI 设置) 紧跟 CbtSection
++    await tester.scrollUntilVisible(
++      find.byType(AiSection),
++      100,
++      scrollable: listScrollable,
++    );
++    expect(find.byType(AiSection), findsOneWidget);
++
+     await tester.scrollUntilVisible(
+       find.byType(NotificationStatusCard),
+       100,
++      scrollable: listScrollable,
+     );
+     expect(find.byType(NotificationStatusCard), findsOneWidget);
+ 
+-    await tester.scrollUntilVisible(find.byType(AssessmentSection), 100);
++    await tester.scrollUntilVisible(
++      find.byType(AssessmentSection),
++      100,
++      scrollable: listScrollable,
++    );
+     expect(find.byType(AssessmentSection), findsOneWidget);
+   });
+ 
+   testWidgets('contacts data 1 → ContactsListWidget 渲染 + name 显示',
+       (tester) async {
+     const contact = ContactEntity(
+       id: 1,
+       name: '张三',
+       phone: '13800000001',
+       sortOrder: 0,
+       isActive: true,
+     );
+     await tester.pumpWidget(buildSettingsPage(contacts: [contact]));
+     await tester.pumpAndSettle();
+ 
+     // v0.31 联系人软隐藏: contacts section 在 ListView 最底部, scroll 才能看到
+-    await tester.scrollUntilVisible(find.byType(ContactsListWidget), 100);
++    await tester.scrollUntilVisible(
++      find.byType(ContactsListWidget),
++      100,
++      scrollable: listScrollable,
++    );
+     // contacts 1 → ContactsListWidget 渲染 + name 显示
+     expect(find.byType(ContactsListWidget), findsOneWidget);
+     expect(find.text('张三'), findsOneWidget);
+ 
+     // meds 验证移除: contacts 已 scroll 到 ListView 底部, meds section 在
+     // viewport 之上 offstage, scroll back up 容易 overscroll, 单独 meds 测试
+     // 在 medications_list_widget_round* 测。
+   });
+ }
+diff --git a/test/presentation/pages/settings/widgets/ai_consent_dialog_round89_test.dart b/test/presentation/pages/settings/widgets/ai_consent_dialog_round89_test.dart
+new file mode 100644
+index 0000000..5987ec7
+--- /dev/null
++++ b/test/presentation/pages/settings/widgets/ai_consent_dialog_round89_test.dart
+@@ -0,0 +1,53 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiConsentDialog widget 测试
++//
++// 覆盖:
++// 1. 渲染 4 项 bullet (数据脱敏 / 国内传输 / 第三方处理 / 可随时撤回)
++// 2. 拒绝 / 同意并启用 按钮 → pop(true/false)
++// 3. 同意版本 1.0 标记
++//
++// v0.30 round 89 Task 5 (i18n): 加 AppLocalizations.delegate (zh) 让
++// AiConsentDialog 内部 AppLocalizations.of(context) 工作。
++import 'package:chroniccare/l10n/app_localizations.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_consent_dialog.dart';
++import 'package:flutter/material.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++void main() {
++  testWidgets('AiConsentDialog 显示 4 项 + 同意/拒绝按钮', (tester) async {
++    bool? result;
++    await tester.pumpWidget(
++      MaterialApp(
++        localizationsDelegates: AppLocalizations.localizationsDelegates,
++        supportedLocales: AppLocalizations.supportedLocales,
++        locale: const Locale('zh'),
++        home: Builder(
++          builder: (context) => Scaffold(
++            body: Center(
++              child: ElevatedButton(
++                onPressed: () async {
++                  result = await showDialog<bool>(
++                    context: context,
++                    builder: (_) => const AiConsentDialog(),
++                  );
++                },
++                child: const Text('open'),
++              ),
++            ),
++          ),
++        ),
++      ),
++    );
++    await tester.tap(find.text('open'));
++    await tester.pumpAndSettle();
++    expect(find.text('启用 AI 辅助 (CBT)'), findsOneWidget);
++    expect(find.textContaining('数据脱敏'), findsOneWidget);
++    expect(find.textContaining('国内传输'), findsOneWidget);
++    expect(find.textContaining('第三方处理'), findsOneWidget);
++    expect(find.textContaining('可随时撤回'), findsOneWidget);
++    expect(find.text('拒绝'), findsOneWidget);
++    expect(find.text('同意并启用'), findsOneWidget);
++    await tester.tap(find.text('同意并启用'));
++    await tester.pumpAndSettle();
++    expect(result, true);
++  });
++}
+diff --git a/test/presentation/pages/settings/widgets/ai_section_round89_test.dart b/test/presentation/pages/settings/widgets/ai_section_round89_test.dart
+new file mode 100644
+index 0000000..0cb58ed
+--- /dev/null
++++ b/test/presentation/pages/settings/widgets/ai_section_round89_test.dart
+@@ -0,0 +1,164 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiSection widget 测试
++//
++// 覆盖:
++// 1. enabled=false: 标题 + Switch 渲染 + 字段 label 显示 (API Key / 模型),字段不输入
++// 2. enabled=true: TextField 全部可输入 (obscure + dropdown)
++// 3. FIX-Round-1: enabled=true 时输入文本后 rebuild 文本还在 (TextField 持
++//    controller), 点"保存"按钮 → notifier.setApiKey 被调 + snackbar 反馈
++//
++// 模式 (跟 cbt_section_round84_test 同):
++// - MaterialApp + AppLocalizations.localizationsDelegates + locale: Locale('zh')
++// - ProviderScope overrides: aiSettingsProvider → 桩 Notifier 返 stub entity
++// - Stub Notifier 必须 implements AiSettingsNotifier (不能用 super class)
++//
++// 中文 placeholder ("AI 辅助 (CBT 思维记录)" / "启用 AI 辅助" / "API Key" / "模型")
++// 暂用 — Task 5 一次性换 16 个 l10n key。
++import 'package:chroniccare/domain/entities/ai_settings.dart';
++import 'package:chroniccare/l10n/app_localizations.dart';
++import 'package:chroniccare/presentation/pages/settings/widgets/ai_section.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++void main() {
++  testWidgets('AiSection 渲染 toggle + 字段 (enabled=false)', (tester) async {
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          aiSettingsProvider.overrideWith(() => _StubNotifier()),
++        ],
++        child: const MaterialApp(
++          localizationsDelegates: AppLocalizations.localizationsDelegates,
++          supportedLocales: AppLocalizations.supportedLocales,
++          locale: Locale('zh'),
++          home: Scaffold(
++            body: AiSection(),
++          ),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++    // 标题
++    expect(find.text('AI 辅助 (CBT 思维记录)'), findsOneWidget);
++    // Toggle (SwitchListTile)
++    expect(find.byType(Switch), findsOneWidget);
++    // 字段 (enabled = false 时也显示,只是 disabled)
++    expect(find.text('API Key'), findsOneWidget);
++    expect(find.text('模型'), findsOneWidget);
++  });
++
++  testWidgets('AiSection enabled = true 时字段可编辑', (tester) async {
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          aiSettingsProvider.overrideWith(() => _StubNotifierEnabled()),
++        ],
++        child: const MaterialApp(
++          localizationsDelegates: AppLocalizations.localizationsDelegates,
++          supportedLocales: AppLocalizations.supportedLocales,
++          locale: Locale('zh'),
++          home: Scaffold(body: AiSection()),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++    // TextField 应该可输入
++    final tf = find.byType(TextField);
++    expect(tf, findsAtLeastNWidgets(1));
++  });
++
++  testWidgets(
++      'AiSection FIX-Round-1: TextField 持 controller (输入后 rebuild 文本不丢) + 保存按钮调 setApiKey + snackbar',
++      (tester) async {
++    final notifier = _StubNotifierEnabled();
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          aiSettingsProvider.overrideWith(() => notifier),
++        ],
++        child: const MaterialApp(
++          localizationsDelegates: AppLocalizations.localizationsDelegates,
++          supportedLocales: AppLocalizations.supportedLocales,
++          locale: Locale('zh'),
++          home: Scaffold(body: AiSection()),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++
++    // 输入 API key
++    const testKey = 'sk-test-12345';
++    await tester.enterText(find.byType(TextField), testKey);
++    await tester.pumpAndSettle();
++
++    // 字段显示刚输入的文本 (controller 持有)
++    expect(find.text(testKey), findsOneWidget);
++
++    // 触发 rebuild 模拟 widget tree 状态切换 (外部 provider 改值会触发
++    // ref.watch listener, AiSection rebuild), 文本应保留 — 老实现用
++    // onSubmitted-only 的话 TextField 重建后会清空
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: [
++          aiSettingsProvider.overrideWith(() => notifier),
++        ],
++        child: const MaterialApp(
++          localizationsDelegates: AppLocalizations.localizationsDelegates,
++          supportedLocales: AppLocalizations.supportedLocales,
++          locale: Locale('zh'),
++          home: Scaffold(body: AiSection()),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++    // rebuild 后文本应保留 (controller 在 State 里, initState 不会重跑)
++    expect(find.text(testKey), findsOneWidget);
++
++    // 点"保存"按钮
++    await tester.tap(find.text('保存'));
++    await tester.pumpAndSettle();
++    // notifier 收到 setApiKey(testKey) 调用
++    expect(notifier.lastSetApiKey, testKey);
++    // 成功 snackbar
++    expect(find.text('API Key 已保存'), findsOneWidget);
++  });
++}
++
++class _StubNotifier extends AsyncNotifier<AiSettings>
++    implements AiSettingsNotifier {
++  String? lastSetApiKey;
++
++  @override
++  Future<AiSettings> build() async => const AiSettings(
++        enabled: false,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++
++  @override
++  Future<void> setEnabled(bool v) async {}
++  @override
++  Future<void> setApiKey(String key) async {
++    lastSetApiKey = key;
++  }
++
++  @override
++  Future<void> setModelName(String name) async {}
++  @override
++  Future<void> recordConsent() async {}
++  @override
++  Future<void> clear() async {}
++}
++
++class _StubNotifierEnabled extends _StubNotifier {
++  @override
++  Future<AiSettings> build() async => const AiSettings(
++        enabled: true,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++        consentAcceptedAt: '2026-08-05T12:00:00Z',
++      );
++}
+diff --git a/test/presentation/providers/ai_settings_provider_round89_test.dart b/test/presentation/providers/ai_settings_provider_round89_test.dart
+new file mode 100644
+index 0000000..681590e
+--- /dev/null
++++ b/test/presentation/providers/ai_settings_provider_round89_test.dart
+@@ -0,0 +1,148 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助) FIX-1: AsyncNotifier 写方法 deadlock 回归测试
++//
++// Bug: setEnabled / setModelName / recordConsent 在写前 `state = AsyncValue.loading()`
++// 后 `await future` (内部 completer 等) — 但 completer 只由外层
++// `state = await AsyncValue.guard(...)` 完成, 形成 self-deadlock。
++//
++// 复现: override aiSettingsRepositoryProvider 返一个 fake, fake.save() 永返回;
++// 调用 setEnabled(true) 后 provider state 永远卡在 AsyncValue.loading(), save()
++// 也从未被调用 (因为 await future 永 hang)。
++//
++// 修复: 在 setEnabled 入口拿 `state.valueOrNull ?? default` 当 current, 不再
++// 依赖 future。等 fix 后 save() 会被调用, state 会落到 AsyncData, test pass。
++//
++// 模式: ProviderContainer + container.read(aiSettingsProvider.notifier) —
++// 不在 widget tree 内, 干净测 AsyncNotifier 行为。
++
++import 'package:chroniccare/core/data/repositories/ai_settings/ai_settings_repository_impl.dart';
++import 'package:chroniccare/domain/entities/ai_settings.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++/// Fake repo 记录所有 save() 调用, 返固定 future 让 build() 完成。
++class _FakeRepo implements AiSettingsRepository {
++  int saveCount = 0;
++  AiSettings? lastSaved;
++  bool saveShouldFail = false;
++
++  @override
++  Future<AiSettings> load() async {
++    return const AiSettings(
++      enabled: false,
++      provider: 'deepseek',
++      modelName: 'deepseek-chat',
++      consentVersion: '1.0',
++    );
++  }
++
++  @override
++  Future<void> save(AiSettings settings) async {
++    saveCount++;
++    lastSaved = settings;
++    if (saveShouldFail) throw Exception('save failed');
++  }
++
++  @override
++  Future<void> saveApiKey(String apiKey) async {}
++
++  @override
++  Future<String?> getApiKey() async => null;
++
++  @override
++  Future<void> clearApiKey() async {}
++}
++
++void main() {
++  test('setEnabled(true) 真正调 save() 且 state 终态为 AsyncData (无 deadlock)',
++      () async {
++    final fake = _FakeRepo();
++    final container = ProviderContainer(
++      overrides: [
++        aiSettingsRepositoryProvider.overrideWithValue(fake),
++      ],
++    );
++    addTearDown(container.dispose);
++
++    // 等 build() 完 (loading → data)
++    await container.read(aiSettingsProvider.future);
++
++    final notifier = container.read(aiSettingsProvider.notifier);
++    await notifier.setEnabled(true);
++
++    // save 至少被调 1 次 (entity.enabled=true)
++    expect(fake.saveCount, 1, reason: 'setEnabled 必须调 save()');
++    expect(fake.lastSaved?.enabled, true, reason: '保存的 entity.enabled 应为 true');
++
++    // 终态是 AsyncData, 不是 loading
++    final state = container.read(aiSettingsProvider);
++    expect(state, isA<AsyncData<AiSettings>>());
++    expect(state.value?.enabled, true);
++  });
++
++  test('setModelName 真正调 save() 且 state 终态为 AsyncData (无 deadlock)',
++      () async {
++    final fake = _FakeRepo();
++    final container = ProviderContainer(
++      overrides: [
++        aiSettingsRepositoryProvider.overrideWithValue(fake),
++      ],
++    );
++    addTearDown(container.dispose);
++
++    await container.read(aiSettingsProvider.future);
++
++    final notifier = container.read(aiSettingsProvider.notifier);
++    await notifier.setModelName('deepseek-coder');
++
++    expect(fake.saveCount, 1);
++    expect(fake.lastSaved?.modelName, 'deepseek-coder');
++    expect(container.read(aiSettingsProvider), isA<AsyncData<AiSettings>>());
++    expect(container.read(aiSettingsProvider).value?.modelName, 'deepseek-coder');
++  });
++
++  test('recordConsent 真正调 save() 且 state.consentAcceptedAt 有值 (无 deadlock)',
++      () async {
++    final fake = _FakeRepo();
++    final container = ProviderContainer(
++      overrides: [
++        aiSettingsRepositoryProvider.overrideWithValue(fake),
++      ],
++    );
++    addTearDown(container.dispose);
++
++    await container.read(aiSettingsProvider.future);
++
++    final notifier = container.read(aiSettingsProvider.notifier);
++    await notifier.recordConsent();
++
++    expect(fake.saveCount, 1);
++    expect(fake.lastSaved?.consentAcceptedAt, isNotNull);
++    expect(container.read(aiSettingsProvider), isA<AsyncData<AiSettings>>());
++  });
++
++  test('setEnabled(false) 默认值兜底: state.valueOrNull 为 null 时仍能写', () async {
++    // 边界: build() 还在 loading 时调 setEnabled (state.valueOrNull == null),
++    // 老实现里 `final current = state.valueOrNull ?? default` 拿默认值,
++    // 新实现必须保留这个兜底 — 不能崩也不能 deadlock。
++    final fake = _FakeRepo();
++    final container = ProviderContainer(
++      overrides: [
++        aiSettingsRepositoryProvider.overrideWithValue(fake),
++      ],
++    );
++    addTearDown(container.dispose);
++
++    // 不 await future, 直接拿 notifier, 此时 state 还是 loading
++    final notifier = container.read(aiSettingsProvider.notifier);
++    // 给个很短的窗口让 build() 进 loading (不一定完成, 但 state.valueOrNull
++    // 已经是 null 因为还没出 data)
++    await Future<void>.delayed(const Duration(milliseconds: 10));
++
++    await notifier.setEnabled(true);
++
++    // 不管 build() 完没完, save() 必须被调 1 次, 且 saved.enabled=true
++    expect(fake.saveCount, 1, reason: '默认 entity 兜底必须能让 save() 拿到 enabled=true');
++    expect(fake.lastSaved?.enabled, true);
++  });
++}

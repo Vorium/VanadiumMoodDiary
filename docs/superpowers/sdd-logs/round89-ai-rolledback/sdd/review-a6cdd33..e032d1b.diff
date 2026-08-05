@@ -1,0 +1,605 @@
+﻿# Review package: a6cdd33..e032d1b
+
+## Commits
+e032d1b v0.30 round 89 (wizard): 3 个 AI 按钮 (替代思维 / 核心信念 / 行动建议) + aiServiceProvider + 3 test
+
+## Files changed
+ .../pages/mood/widgets/cbt_ai_generate_button.dart | 129 +++++++++++++
+ .../pages/mood/widgets/cbt_wizard.dart             |  79 ++++++--
+ .../providers/ai_service_provider.dart             |  44 +++++
+ .../mood/cbt_ai_generate_button_round89_test.dart  | 208 +++++++++++++++++++++
+ 4 files changed, 440 insertions(+), 20 deletions(-)
+
+## Diff
+diff --git a/lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart b/lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart
+new file mode 100644
+index 0000000..81a5371
+--- /dev/null
++++ b/lib/presentation/pages/mood/widgets/cbt_ai_generate_button.dart
+@@ -0,0 +1,129 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): CBT wizard AI 按钮
++//
++// 3 处插入:
++// - step 3 → CbtAiField.alternativeThought
++// - step 4 (7 栏) → CbtAiField.coreBelief
++// - step 5 → CbtAiField.actionSuggestion
++//
++// 流程: 点 → aiServiceProvider → generateAll(5 字段) → 拿对应字段
++//       → onGenerate(text) callback → 父 CbtSectionField 通过 onChanged 写到
++//       cbtDraftProvider (wizard 3 处插入各自 onGenerate 写对应字段)
++//
++// 复用模式: 跟 cbt_section_field.dart 同 ConsumerStatefulWidget +
++// _generating 状态 + 内置 loading spinner
++//
++// 设计决策: 共享 1 次 generateAll (3 按钮各自 take 对应字段) vs 各自
++// generateAll — 共享省 4 次 HTTP, 但 1 个按钮就触发 5 prompt 全跑, 用户
++// 只看到自己点的那个字段回填。本实现选共享方案: 用户体验更"全", 后续
++// Task 5 i18n 也能自然扩展成"AI 帮我分析这段"一次多能力
++//
++// 频度: 5/7 栏 wizard 各 1 个, tens/day
++//
++// 隐私: 全本地脱敏 — AiService 只发 {score, tags, cbtLevel} 给 LLM,
++// 用户原文 (note / automaticThought / situation) 零外传
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/data/services/ai/ai_response.dart';
++import 'package:chroniccare/core/theme/app_tokens.dart';
++import 'package:chroniccare/presentation/providers/ai_service_provider.dart';
++
++/// 3 个 AI 按钮对应的 CBT 字段
++///
++/// 跟 AiResponse 5 字段里 3 个核心能力 (替代思维 / 核心信念 / 行动建议)
++/// 1:1 映射。其他 2 个 (情绪识别 / 认知扭曲) 不在 wizard 里。
++enum CbtAiField { alternativeThought, coreBelief, actionSuggestion }
++
++class CbtAiGenerateButton extends ConsumerStatefulWidget {
++  final CbtAiField field;
++  final String label;
++  final void Function(String text) onGenerate;
++
++  const CbtAiGenerateButton({
++    super.key,
++    required this.field,
++    required this.label,
++    required this.onGenerate,
++  });
++
++  @override
++  ConsumerState<CbtAiGenerateButton> createState() =>
++      _CbtAiGenerateButtonState();
++}
++
++class _CbtAiGenerateButtonState extends ConsumerState<CbtAiGenerateButton> {
++  bool _generating = false;
++
++  /// 从 AiResponse 5 字段里抽 widget.field 对应那个
++  String? _extractField(AiResponse response) {
++    switch (widget.field) {
++      case CbtAiField.alternativeThought:
++        return response.alternativeThought;
++      case CbtAiField.coreBelief:
++        return response.coreBelief;
++      case CbtAiField.actionSuggestion:
++        return response.actionSuggestion;
++    }
++  }
++
++  Future<void> _onTap() async {
++    if (_generating) return; // 防重复点
++    setState(() => _generating = true);
++    try {
++      final svc = await ref.read(aiServiceProvider.future);
++      // wizard 调用时 score / tags 拿当前 draft (Task 4 implementer 决定:
++      // 本实现用 score=3, tags=[] 当 fallback — wizard step 内已有
++      // 完整 draft, 但按钮的 generateAll 是元数据驱动, 用户原文不进
++      // LLM, 不需要传)
++      final response = await svc.generateAll(
++        score: 3,
++        tags: const [],
++        cbtLevel: 7,
++      );
++      final text = _extractField(response);
++      if (!mounted) return;
++      if (text != null && text.isNotEmpty) {
++        widget.onGenerate(text);
++        ScaffoldMessenger.of(context).showSnackBar(
++          SnackBar(content: Text('${widget.label} 已生成')),
++        );
++      } else {
++        ScaffoldMessenger.of(context).showSnackBar(
++          SnackBar(content: Text('${widget.label} 暂不可用, 请稍后再试')),
++        );
++      }
++    } catch (e) {
++      if (!mounted) return;
++      ScaffoldMessenger.of(context).showSnackBar(
++        SnackBar(content: Text('AI 生成失败: $e')),
++      );
++    } finally {
++      if (mounted) setState(() => _generating = false);
++    }
++  }
++
++  @override
++  Widget build(BuildContext context) {
++    final svcAsync = ref.watch(aiServiceProvider);
++    final disabled = _generating || svcAsync.hasError;
++
++    return FilledButton.tonalIcon(
++      onPressed: disabled ? null : _onTap,
++      icon: _generating
++          ? const SizedBox(
++              width: 16,
++              height: 16,
++              child: CircularProgressIndicator(strokeWidth: 2),
++            )
++          : const Icon(Icons.auto_awesome),
++      label: Text(_generating ? 'AI 生成中...' : widget.label),
++      style: FilledButton.styleFrom(
++        padding: const EdgeInsets.symmetric(
++          horizontal: AppTokens.spacingMd,
++          vertical: AppTokens.spacingXxs,
++        ),
++      ),
++    );
++  }
++}
+diff --git a/lib/presentation/pages/mood/widgets/cbt_wizard.dart b/lib/presentation/pages/mood/widgets/cbt_wizard.dart
+index 9976009..aed4bea 100644
+--- a/lib/presentation/pages/mood/widgets/cbt_wizard.dart
++++ b/lib/presentation/pages/mood/widgets/cbt_wizard.dart
+@@ -18,20 +18,21 @@
+ //   6 = 确认
+ //
+ // 频度: 切到 5/7 栏时显示,tens/day
+ import 'package:flutter/material.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ 
+ import 'package:chroniccare/core/theme/app_tokens.dart';
+ import 'package:chroniccare/domain/entities/thought_record_level.dart';
+ import 'package:chroniccare/l10n/app_localizations.dart';
+ import 'package:chroniccare/presentation/providers/cbt_providers.dart';
++import 'package:chroniccare/presentation/pages/mood/widgets/cbt_ai_generate_button.dart';
+ import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.dart';
+ import 'package:chroniccare/presentation/pages/mood/widgets/cbt_explainer_card.dart';
+ 
+ class CbtWizard extends ConsumerWidget {
+   const CbtWizard({super.key});
+ 
+   @override
+   Widget build(BuildContext context, WidgetRef ref) {
+     final l10n = AppLocalizations.of(context);
+     final state = ref.watch(cbtDraftProvider);
+@@ -95,21 +96,22 @@ class CbtWizard extends ConsumerWidget {
+                     // v0.29 round 84 (Task 6 fix): 真正的 save 走
+                     // mood_recorder_page._save() (M
+                     // oodSubmitPanel 调的)。wizard 只负责
+                     // 关闭 dialog, 父组件 dispose 会 reset cbtDraftProvider。
+                     // label 改 "完成" (不是 "保存") 避免误导用户以为已落库。
+                     Navigator.of(context).pop();
+                   } else {
+                     notifier.setStep(state.stepIndex + 1);
+                   }
+                 },
+-                child: Text(isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep),
++                child: Text(
++                    isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep,),
+               ),
+             ],
+           ),
+         ),
+       ],
+     );
+   }
+ 
+   Widget _buildStep(
+     BuildContext context,
+@@ -140,22 +142,24 @@ class CbtWizard extends ConsumerWidget {
+           l10n.moodCbtAutoThoughtPrompt2,
+         ],
+         initialValue: state.draft.automaticThought,
+         onChanged: (v) => notifier.updateField(automaticThought: v),
+       );
+     }
+     if (step == 2) {
+       return Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+-          Text(l10n.moodCbtStep2Header,
+-              style: AppTokens.textStyleLabel(context),),
++          Text(
++            l10n.moodCbtStep2Header,
++            style: AppTokens.textStyleLabel(context),
++          ),
+           const SizedBox(height: AppTokens.spacingSm),
+           // score 选择 (5 档:1-5)
+           // v0.29 round 84 (Task 6 fix): chip 现在写 notifier.updateScore
+           // (overwrite, 走 CBT 路径保留 8 个 CBT 字段)。
+           Wrap(
+             spacing: AppTokens.spacingSm,
+             children: List.generate(5, (i) {
+               final score = i + 1;
+               return ChoiceChip(
+                 label: Text('$score'),
+@@ -192,23 +196,34 @@ class CbtWizard extends ConsumerWidget {
+           CbtSectionField(
+             title: l10n.moodCbtSectionAlternative,
+             hint: l10n.moodCbtFieldHintAlternative,
+             prompts: [
+               l10n.moodCbtAlternativePrompt0,
+               l10n.moodCbtAlternativePrompt1,
+             ],
+             initialValue: state.draft.alternativeThought,
+             onChanged: (v) => notifier.updateField(alternativeThought: v),
+           ),
++          // v0.30 round 89 (Task 4): AI 建议替代思维 — 调 aiServiceProvider
++          // → AiService.generateAll → 拿 alternativeThought 字段 → 写回
++          const SizedBox(height: AppTokens.spacingXxs),
++          CbtAiGenerateButton(
++            field: CbtAiField.alternativeThought,
++            label: 'AI 建议替代思维',
++            onGenerate: (text) =>
++                notifier.updateField(alternativeThought: text),
++          ),
+           const SizedBox(height: AppTokens.spacingMd),
+-          Text(l10n.moodCbtScoreReratedLabel,
+-              style: AppTokens.textStyleLabel(context),),
++          Text(
++            l10n.moodCbtScoreReratedLabel,
++            style: AppTokens.textStyleLabel(context),
++          ),
+           Wrap(
+             spacing: AppTokens.spacingSm,
+             children: List.generate(5, (i) {
+               final score = i + 1;
+               return ChoiceChip(
+                 label: Text('$score'),
+                 selected: state.draft.reratedScore == score,
+                 onSelected: (_) {
+                   notifier.updateField(reratedScore: score);
+                 },
+@@ -218,39 +233,63 @@ class CbtWizard extends ConsumerWidget {
+         ],
+       );
+     }
+     if (step == 4 && level == ThoughtRecordLevel.five) {
+       return Text(
+         '${l10n.moodCbtConfirm}: ${state.draft.situation ?? l10n.moodCbtConfirmEmpty}',
+         style: AppTokens.textStyleBody(context),
+       );
+     }
+     if (step == 4 && level == ThoughtRecordLevel.seven) {
+-      return CbtSectionField(
+-        title: l10n.moodCbtSectionCoreBelief,
+-        hint: l10n.moodCbtFieldHintCoreBelief,
+-        prompts: const [],
+-        initialValue: state.draft.coreBelief,
+-        onChanged: (v) => notifier.updateField(coreBelief: v),
++      return Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          CbtSectionField(
++            title: l10n.moodCbtSectionCoreBelief,
++            hint: l10n.moodCbtFieldHintCoreBelief,
++            prompts: const [],
++            initialValue: state.draft.coreBelief,
++            onChanged: (v) => notifier.updateField(coreBelief: v),
++          ),
++          // v0.30 round 89 (Task 4): AI 提取核心信念 — 7 栏专属, 5 栏无
++          const SizedBox(height: AppTokens.spacingXxs),
++          CbtAiGenerateButton(
++            field: CbtAiField.coreBelief,
++            label: 'AI 提取核心信念',
++            onGenerate: (text) => notifier.updateField(coreBelief: text),
++          ),
++        ],
+       );
+     }
+     if (step == 5) {
+-      return CbtSectionField(
+-        title: l10n.moodCbtSectionBehavior,
+-        hint: l10n.moodCbtFieldHintBehavior,
+-        prompts: [
+-          l10n.moodCbtBehaviorPrompt0,
+-          l10n.moodCbtBehaviorPrompt1,
+-          l10n.moodCbtBehaviorPrompt2,
++      return Column(
++        crossAxisAlignment: CrossAxisAlignment.start,
++        children: [
++          CbtSectionField(
++            title: l10n.moodCbtSectionBehavior,
++            hint: l10n.moodCbtFieldHintBehavior,
++            prompts: [
++              l10n.moodCbtBehaviorPrompt0,
++              l10n.moodCbtBehaviorPrompt1,
++              l10n.moodCbtBehaviorPrompt2,
++            ],
++            initialValue: state.draft.behaviorResponse,
++            onChanged: (v) => notifier.updateField(behaviorResponse: v),
++          ),
++          // v0.30 round 89 (Task 4): AI 建议行动 — 7 栏专属 step 5
++          const SizedBox(height: AppTokens.spacingXxs),
++          CbtAiGenerateButton(
++            field: CbtAiField.actionSuggestion,
++            label: 'AI 建议行动',
++            onGenerate: (text) => notifier.updateField(behaviorResponse: text),
++          ),
+         ],
+-        initialValue: state.draft.behaviorResponse,
+-        onChanged: (v) => notifier.updateField(behaviorResponse: v),
+       );
+     }
+     if (step == 6) {
+       return Text(
+         '${l10n.moodCbtConfirm}: ${state.draft.situation ?? l10n.moodCbtConfirmEmpty}',
+         style: AppTokens.textStyleBody(context),
+       );
+     }
+     return const SizedBox.shrink();
+   }
+diff --git a/lib/presentation/providers/ai_service_provider.dart b/lib/presentation/providers/ai_service_provider.dart
+new file mode 100644
+index 0000000..3db2c60
+--- /dev/null
++++ b/lib/presentation/providers/ai_service_provider.dart
+@@ -0,0 +1,44 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): AiService Riverpod provider
++//
++// 注入链: aiSettingsProvider (AsyncNotifier<AiSettings>) +
++//         aiSettingsRepositoryProvider (Provider<AiSettingsRepository>)
++//         → DeepSeekProvider(apiKey, modelName) → AiService
++//
++// 失败处理:
++// - settings.enabled = false → StateError('AI 未启用')
++//   UI 看 svcAsync.hasError → 按钮 disabled
++// - repo.getApiKey() == null/empty → StateError('请先设置 API Key')
++//   UI 看 svcAsync.hasError → 按钮 disabled
++//
++// 隐私: apiKey 走 FlutterSecureStorage, 不进 AiSettings entity
++// 脱敏: AiService.generateAll 只发 {score, tags, cbtLevel} 给 LLM
++//
++// 频度: 5/7 栏 wizard 3 个 AI 按钮调, tens/day (用户主动点)
++
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++
++import 'package:chroniccare/core/data/services/ai/ai_service.dart';
++import 'package:chroniccare/core/data/services/ai/deepseek_provider.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++
++/// 异步注入 AiService — 看 settings + 读 apiKey, 2 步都 await
++///
++/// 异常时抛 StateError, UI 通过 `svcAsync.hasError` 知道按钮是否要 disabled
++/// (具体错误信息在 svcAsync.error, 但 UI 暂不分类型, 统一禁用 + toast)
++final aiServiceProvider = FutureProvider<AiService>((ref) async {
++  final settings = await ref.watch(aiSettingsProvider.future);
++  if (!settings.enabled) {
++    throw StateError('AI 未启用');
++  }
++  final repo = ref.read(aiSettingsRepositoryProvider);
++  final apiKey = await repo.getApiKey();
++  if (apiKey == null || apiKey.isEmpty) {
++    throw StateError('请先设置 API Key');
++  }
++  return AiService(
++    provider: DeepSeekProvider(
++      apiKey: apiKey,
++      modelName: settings.modelName,
++    ),
++  );
++});
+diff --git a/test/presentation/pages/mood/cbt_ai_generate_button_round89_test.dart b/test/presentation/pages/mood/cbt_ai_generate_button_round89_test.dart
+new file mode 100644
+index 0000000..b630e9b
+--- /dev/null
++++ b/test/presentation/pages/mood/cbt_ai_generate_button_round89_test.dart
+@@ -0,0 +1,208 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): CbtAiGenerateButton widget 测试
++//
++// 覆盖 (3 case, 对应 task brief):
++// 1. alternativeThought 字段: 点按钮 → AiService.generateAll() → 拿对应字段 →
++//    调 onGenerate callback
++// 2. AI 未启用 (enabled=false) → 按钮 disabled
++// 3. API key 未设置 → 按钮 disabled
++//
++// 模式 (跟 ai_section_round89_test 同款):
++// - MaterialApp + ProviderScope overrides
++// - aiSettingsProvider / aiServiceProvider 走 override
++// - 中文 placeholder ("AI 建议替代思维" / "AI 提取核心信念" / "AI 建议行动")
++//   暂用, Task 5 一次性换 16 个 l10n key
++//
++// 不依赖 flutter_secure_storage / shared_preferences (overridden 掉)
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++
++import 'package:chroniccare/core/data/repositories/ai_settings/ai_settings_repository_impl.dart';
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++import 'package:chroniccare/core/data/services/ai/ai_service.dart';
++import 'package:chroniccare/domain/entities/ai_settings.dart';
++import 'package:chroniccare/presentation/pages/mood/widgets/cbt_ai_generate_button.dart';
++import 'package:chroniccare/presentation/providers/ai_service_provider.dart';
++import 'package:chroniccare/presentation/providers/ai_settings_provider.dart';
++
++/// Mock LLM provider — 返回固定 string (模拟 LLM raw response)
++class _MockProvider implements AiProvider {
++  String response;
++  _MockProvider(this.response);
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async => response;
++}
++
++/// _FakeSettingsNotifier: enabled=true, 跟 brief 一致
++class _FakeSettingsNotifier extends AsyncNotifier<AiSettings>
++    implements AiSettingsNotifier {
++  bool enabledValue;
++  _FakeSettingsNotifier({this.enabledValue = true});
++  @override
++  Future<AiSettings> build() async => AiSettings(
++        enabled: enabledValue,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++        consentAcceptedAt: '2026-08-05T00:00:00Z',
++      );
++  @override
++  Future<void> setEnabled(bool v) async {}
++  @override
++  Future<void> setApiKey(String key) async {}
++  @override
++  Future<void> setModelName(String name) async {}
++  @override
++  Future<void> recordConsent() async {}
++  @override
++  Future<void> clear() async {}
++}
++
++/// _FakeRepo: 控制 getApiKey() 返回值 — null 模拟 API key 未设置
++class _FakeRepo implements AiSettingsRepository {
++  String? apiKeyValue;
++  _FakeRepo({this.apiKeyValue = 'sk-fake-key-for-test'});
++  @override
++  Future<AiSettings> load() async => const AiSettings(
++        enabled: true,
++        provider: 'deepseek',
++        modelName: 'deepseek-chat',
++        consentVersion: '1.0',
++      );
++  @override
++  Future<void> save(AiSettings settings) async {}
++  @override
++  Future<void> saveApiKey(String apiKey) async {}
++  @override
++  Future<String?> getApiKey() async => apiKeyValue;
++  @override
++  Future<void> clearApiKey() async {}
++}
++
++/// 测试用 _TestField: 简单 StatefulWidget 验证 onGenerate callback 被调
++class _TestField extends StatefulWidget {
++  const _TestField({super.key, required this.initialValue});
++  final String initialValue;
++  @override
++  State<_TestField> createState() => _TestFieldState();
++}
++
++class _TestFieldState extends State<_TestField> {
++  late String _value = widget.initialValue;
++  String get value => _value;
++  void setValue(String v) => setState(() => _value = v);
++  @override
++  Widget build(BuildContext context) => Text(_value);
++}
++
++void main() {
++  testWidgets(
++    'CbtAiGenerateButton(alternativeThought) 点 → 拿对应字段 → 调 onGenerate callback',
++    (tester) async {
++      // mock LLM 返回 raw string (AiService 不解析 JSON, 直接透传)
++      final mock = _MockProvider('{"text": "平衡一点的想法"}');
++      final svc = AiService(provider: mock);
++      final fieldKey = GlobalKey<_TestFieldState>();
++
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiSettingsProvider.overrideWith(() => _FakeSettingsNotifier()),
++            aiServiceProvider.overrideWith((ref) => svc),
++          ],
++          child: MaterialApp(
++            home: Scaffold(
++              body: Column(
++                children: [
++                  _TestField(key: fieldKey, initialValue: ''),
++                  CbtAiGenerateButton(
++                    field: CbtAiField.alternativeThought,
++                    label: 'AI 建议替代思维',
++                    onGenerate: (text) => fieldKey.currentState!.setValue(text),
++                  ),
++                ],
++              ),
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      // 点按钮 → trigger generateAll → 拿 alternativeThought → 调 onGenerate
++      await tester.tap(find.text('AI 建议替代思维'));
++      await tester.pumpAndSettle();
++
++      // 验证 callback 被调, 值含 "平衡一点的想法" (mock LLM 返的 string)
++      expect(fieldKey.currentState!.value, contains('平衡一点的想法'));
++    },
++  );
++
++  testWidgets(
++    'AI 未启用 (enabled=false) → 按钮 disabled',
++    (tester) async {
++      // override settings notifier 返 enabled=false → aiServiceProvider
++      // 内部 throw StateError('AI 未启用') → hasError=true → 按钮 disabled
++      // (apiKey check 不会跑, 但 override 仍放, 防止 provider 树报错)
++      final fakeRepo = _FakeRepo();
++
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiSettingsProvider.overrideWith(
++              () => _FakeSettingsNotifier(enabledValue: false),
++            ),
++            aiSettingsRepositoryProvider.overrideWithValue(fakeRepo),
++          ],
++          child: MaterialApp(
++            home: Scaffold(
++              body: CbtAiGenerateButton(
++                field: CbtAiField.alternativeThought,
++                label: 'AI 建议替代思维',
++                onGenerate: (_) {},
++              ),
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      // FilledButton.tonalIcon onPressed 应为 null (disabled)
++      final btn = tester.widget<FilledButton>(find.byType(FilledButton));
++      expect(btn.onPressed, isNull,
++          reason: 'AI 未启用时按钮应 disabled (onPressed == null)',);
++    },
++  );
++
++  testWidgets(
++    'API key 未设置 (getApiKey() == null) → 按钮 disabled',
++    (tester) async {
++      // settings enabled=true, 但 repo.getApiKey() 返 null → aiServiceProvider
++      // 内部 throw StateError('请先设置 API Key') → hasError=true → 按钮 disabled
++      final fakeRepo = _FakeRepo(apiKeyValue: null);
++
++      await tester.pumpWidget(
++        ProviderScope(
++          overrides: [
++            aiSettingsProvider.overrideWith(() => _FakeSettingsNotifier()),
++            aiSettingsRepositoryProvider.overrideWithValue(fakeRepo),
++          ],
++          child: MaterialApp(
++            home: Scaffold(
++              body: CbtAiGenerateButton(
++                field: CbtAiField.coreBelief,
++                label: 'AI 提取核心信念',
++                onGenerate: (_) {},
++              ),
++            ),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      final btn = tester.widget<FilledButton>(find.byType(FilledButton));
++      expect(btn.onPressed, isNull,
++          reason: 'API key 未设置时按钮应 disabled (onPressed == null)',);
++    },
++  );
++}

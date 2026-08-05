@@ -1,0 +1,210 @@
+﻿# Review package: 3aa357b..757c70a
+
+## Commits
+757c70a v0.30 round 89 (data): DeepSeekProvider HTTP impl (https://api.deepseek.com/v1/chat/completions) + 4 mock test
+
+## Files changed
+ lib/core/data/services/ai/deepseek_provider.dart   | 66 +++++++++++++++
+ pubspec.yaml                                       |  1 +
+ .../ai/deepseek_provider_round89_test.dart         | 94 ++++++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+
+## Diff
+diff --git a/lib/core/data/services/ai/deepseek_provider.dart b/lib/core/data/services/ai/deepseek_provider.dart
+new file mode 100644
+index 0000000..03f774a
+--- /dev/null
++++ b/lib/core/data/services/ai/deepseek_provider.dart
+@@ -0,0 +1,66 @@
++// v0.30 round 89 (sub-spec 5 CBT AI 辅助): DeepSeek HTTP impl
++//
++// 国内 API: https://api.deepseek.com/v1/chat/completions
++// 数据不出境 — 隐私边界第一道 (脱敏在 AiService, 传输在 DeepSeekProvider)
++//
++// 失败模式:
++// - statusCode != 200 → throw Exception
++// - choices 为空 → throw Exception (防御)
++// - 网络错误 / 超时 → http.Client 自带抛, 上层 AiService._safeCall catch
++
++import 'dart:convert';
++import 'dart:developer' as developer;
++import 'package:http/http.dart' as http;
++import 'package:chroniccare/core/data/services/ai/ai_provider.dart';
++
++class DeepSeekProvider implements AiProvider {
++  final String apiKey;
++  final String modelName;
++  final http.Client _client;
++  static const _endpoint = 'https://api.deepseek.com/v1/chat/completions';
++
++  DeepSeekProvider({
++    required this.apiKey,
++    required this.modelName,
++    http.Client? client,
++  }) : _client = client ?? http.Client();
++
++  @override
++  Future<String> call(String systemPrompt, String userPrompt) async {
++    final response = await _client.post(
++      Uri.parse(_endpoint),
++      headers: {
++        'Content-Type': 'application/json',
++        'Authorization': 'Bearer $apiKey',
++      },
++      body: jsonEncode({
++        'model': modelName,
++        'messages': [
++          {'role': 'system', 'content': systemPrompt},
++          {'role': 'user', 'content': userPrompt},
++        ],
++        'temperature': 0.7,
++        'max_tokens': 500,
++      }),
++    );
++
++    if (response.statusCode != 200) {
++      developer.log(
++        'DeepSeek API failed: ${response.statusCode} ${response.body}',
++        name: 'DeepSeekProvider',
++      );
++      throw Exception('DeepSeek API ${response.statusCode}: ${response.body}');
++    }
++
++    final body = jsonDecode(response.body) as Map<String, dynamic>;
++    final choices = body['choices'] as List?;
++    if (choices == null || choices.isEmpty) {
++      throw Exception('DeepSeek API: empty choices');
++    }
++    final content = choices.first['message']?['content'] as String?;
++    if (content == null) {
++      throw Exception('DeepSeek API: empty content');
++    }
++    return content;
++  }
++}
+diff --git a/pubspec.yaml b/pubspec.yaml
+index d26d80d..63495a2 100644
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -61,20 +61,21 @@ dependencies:
+   # v0.27 round 65 (appstore P0-4 IAP 集成)
+   # Apple App Store 3.1.5 (a) 强制数字商品/服务走 IAP
+   # 8 元一次性买断 → NonConsumablePurchase (非订阅)
+   # 当前 dev 模式走 kDebugMode 直接返 true,productId 留 v0.28 真接
+   in_app_purchase: ^3.3.0
+ 
+   # v0.23 (Round 31 in development) 情绪日记语音录入 — 本地 STT
+   # 7.x: mobile 走平台 on-device / cloud STT, web 走 Chrome Web Speech API
+   # 注意: version 已 0.23.0+1 (v0.24 release 时一起升)
+   speech_to_text: ^7.0.0
++  http: ^1.6.0
+ 
+ dev_dependencies:
+   flutter_test:
+     sdk: flutter
+   flutter_lints: ^5.0.0
+ 
+   # 代码生成
+   build_runner: ^2.4.13
+   drift_dev: ^2.20.3
+ 
+diff --git a/test/core/data/services/ai/deepseek_provider_round89_test.dart b/test/core/data/services/ai/deepseek_provider_round89_test.dart
+new file mode 100644
+index 0000000..d3e83b6
+--- /dev/null
++++ b/test/core/data/services/ai/deepseek_provider_round89_test.dart
+@@ -0,0 +1,94 @@
++/// v0.30 round 89 (sub-spec 5 CBT AI 辅助): DeepSeekProvider HTTP impl 测试
++///
++/// 不测真实 LLM — 注入 http.testing.MockClient, 4 个 case 覆盖:
++/// - 200 + 正常 choices → 解析 content
++/// - 401 → 抛 Exception
++/// - 500 → 抛 Exception
++/// - 200 + 空 choices → 抛 Exception (防御)
++library;
++
++import 'dart:convert';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:http/http.dart' as http;
++import 'package:http/testing.dart';
++import 'package:chroniccare/core/data/services/ai/deepseek_provider.dart';
++
++void main() {
++  test('DeepSeek 200: 解析 choices[0].message.content', () async {
++    final mockClient = MockClient((request) async {
++      expect(request.url.toString(), 'https://api.deepseek.com/v1/chat/completions');
++      expect(request.headers['Authorization'], 'Bearer test-key');
++      expect(request.headers['Content-Type'], contains('application/json'));
++      final body = jsonDecode(request.body) as Map<String, dynamic>;
++      expect(body['model'], 'deepseek-chat');
++      expect((body['messages'] as List).length, 2);
++      expect(body['messages'][0]['role'], 'system');
++      expect(body['messages'][1]['role'], 'user');
++      return http.Response(
++        jsonEncode({
++          'choices': [
++            {'message': {'content': '示例 AI 回复'}},
++          ],
++        }),
++        200,
++        headers: {'content-type': 'application/json; charset=utf-8'},
++      );
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'test-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    final result = await provider.call('system', 'user');
++    expect(result, '示例 AI 回复');
++  });
++
++  test('DeepSeek 401: 抛 Exception, 包含 statusCode + body', () async {
++    final mockClient = MockClient((request) async {
++      return http.Response('Unauthorized', 401);
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'bad-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    expect(
++      () => provider.call('system', 'user'),
++      throwsA(isA<Exception>()),
++    );
++  });
++
++  test('DeepSeek 500: 抛 Exception', () async {
++    final mockClient = MockClient((request) async {
++      return http.Response('Internal Server Error', 500);
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'test-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    expect(
++      () => provider.call('system', 'user'),
++      throwsA(isA<Exception>()),
++    );
++  });
++
++  test('DeepSeek 200 但 choices 空: 抛 Exception (防御)', () async {
++    final mockClient = MockClient((request) async {
++      return http.Response(
++        jsonEncode(<String, dynamic>{'choices': <dynamic>[]}),
++        200,
++        headers: {'content-type': 'application/json; charset=utf-8'},
++      );
++    });
++    final provider = DeepSeekProvider(
++      apiKey: 'test-key',
++      modelName: 'deepseek-chat',
++      client: mockClient,
++    );
++    expect(
++      () => provider.call('system', 'user'),
++      throwsA(isA<Exception>()),
++    );
++  });
++}
