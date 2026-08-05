@@ -322,6 +322,14 @@ class DayDetailCalculator {
           return dailyLabel?.call() ?? '临时吃药';
         case CheckInType.phq9:
         case CheckInType.gad7:
+        case CheckInType.isi:
+        case CheckInType.pss:
+        case CheckInType.whodas:
+        case CheckInType.level2Depression:
+        case CheckInType.level2Anxiety:
+        case CheckInType.level2Mania:
+        case CheckInType.asrm:
+        case CheckInType.level2Psychosis:
           // 评估走 _scaleName 不用 _renderCheckInLabel
           break;
       }
@@ -336,6 +344,18 @@ class DayDetailCalculator {
         return 'PHQ-9 抑郁筛查';
       case CheckInType.gad7:
         return 'GAD-7 焦虑筛查';
+      case CheckInType.isi:
+      case CheckInType.pss:
+      case CheckInType.whodas:
+      case CheckInType.level2Depression:
+      case CheckInType.level2Anxiety:
+      case CheckInType.level2Mania:
+      case CheckInType.asrm:
+      case CheckInType.level2Psychosis:
+        // v0.30 round 91 (fix): R90 8 个新量表兜底, caller 走
+        // _scaleName 拿量表 displayName (scale_registry) — 这里
+        // 留中文兜底给单测, 实际 UI 渲染走 _scaleName 路径。
+        return '心理量表评估';
     }
   }
 

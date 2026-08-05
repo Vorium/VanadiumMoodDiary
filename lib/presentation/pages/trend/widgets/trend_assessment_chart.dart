@@ -4,14 +4,22 @@
 //
 // 高内聚：只关心 AssessmentRecord 列表 → 折线图（按 scale 分组）
 // 低耦合：被 trend_page 调
-import 'package:fl_chart/fl_chart.dart';
+//
+// v0.30 round 90 (sub-spec 6 量表中心): 升级 R13 内部逻辑
+// 单线 → 多线 (AssessmentMultiLineChart 接管), 保留 R13 公开接口
+// `AssessmentHistoryChart(records: List<AssessmentRecord>)` 不变, 内部
+// 把 AssessmentRecord 映射为 AssessmentEntry (1:1, 兜底) 走 R90 新 widget。
+//
+// 公开接口 backward-compat:
+// - constructor: `AssessmentHistoryChart({required List<AssessmentRecord> records})`
+// - caller: `trend_page.dart:194 AssessmentHistoryChart(records: records)`
+//   (R60 AssessmentRecord.tryFromEntity 转换结果)
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/entities/assessment_entry.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
-import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/trend/trend_utils.dart';
+import 'package:chroniccare/presentation/widgets/charts/assessment_multi_line_chart.dart';
 
 class AssessmentHistoryChart extends StatelessWidget {
   final List<AssessmentRecord> records;
@@ -19,29 +27,24 @@ class AssessmentHistoryChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (records.isEmpty) {
+      // 空记录 → 友好空态 (跟 R46 老 chart 同款, 保持视觉一致)
       return Card(
         child: Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingLg),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              Icon(
-                Icons.show_chart,
-                size: 40,
-                color: AppTokens.textSecondaryColor(context),
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
+              const Icon(Icons.show_chart, size: 40),
+              const SizedBox(height: 8),
               Text(
-                AppLocalizations.of(context).trendNoAssessments,
-                style: AppTokens.textStyleCaptionStrong(context),
+                l10n.trendNoAssessments,
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: AppTokens.spacingXxs),
+              const SizedBox(height: 4),
               Text(
-                AppLocalizations.of(context).trendNoAssessmentsHint,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeCaption,
-                  color: AppTokens.textSecondaryColor(context),
-                ),
+                l10n.trendNoAssessmentsHint,
                 textAlign: TextAlign.center,
               ),
             ],
@@ -50,227 +53,38 @@ class AssessmentHistoryChart extends StatelessWidget {
       );
     }
 
-    // 按 scale 分组
-    final byScale = <String, List<AssessmentRecord>>{};
-    for (final r in records) {
-      byScale.putIfAbsent(r.scaleId, () => []).add(r);
-    }
-
-    final sortedAll = [...records]
-      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
-    final firstMs = sortedAll.first.timestamp.millisecondsSinceEpoch;
-    final lastMs = sortedAll.last.timestamp.millisecondsSinceEpoch;
-    double xOf(DateTime t) =>
-        t.millisecondsSinceEpoch / 1000.0 / 86400.0 -
-        firstMs / 1000.0 / 86400.0;
-
-    final xMax = (lastMs - firstMs) / 1000.0 / 86400.0;
-    final xMaxDisplay = xMax == 0 ? 1.0 : xMax + 0.5;
-
-    final palette = [
-      Theme.of(context).colorScheme.primary,
-      AppTokens.warningColor(context),
-      AppTokens.errorColor(context),
+    // AssessmentRecord → AssessmentEntry 1:1 映射 (兜底)
+    // R60 老格式 (scaleId 限 phq9/gad7) 走 record.total → entry.score
+    // R90 新格式 (10 量表) 走 entry.score 直接
+    final entries = <AssessmentEntry>[
+      for (var i = 0; i < records.length; i++)
+        AssessmentEntry(
+          id: i + 1, // synthetic id, widget 不依赖
+          timestamp: records[i].timestamp,
+          scaleId: records[i].scaleId,
+          score: records[i].total,
+          // R60 AssessmentRecord 没 severityRank / answers, 走 0 / const []
+          severityRank: 0,
+          answers: const [],
+        ),
     ];
 
-    final lines = <LineChartBarData>[];
-    final legendItems = <Widget>[];
-    int colorIdx = 0;
-    final spotMeta =
-        <SpotKey, ({AssessmentRecord rec, int rawMax, String name})>{};
-    for (final scale in allScales()) {
-      final recs = byScale[scale.id];
-      if (recs == null || recs.isEmpty) continue;
-      final color = palette[colorIdx % palette.length];
-      final spots = recs
-          .map(
-            (r) => FlSpot(
-              xOf(r.timestamp),
-              r.total / scale.totalRange * 100,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.assessmentCenterMultiLineTitle,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-          )
-          .toList();
-      for (int i = 0; i < recs.length; i++) {
-        final key = SpotKey(spots[i].x, spots[i].y);
-        spotMeta[key] = (
-          rec: recs[i],
-          rawMax: scale.totalRange,
-          name: scale.displayName,
-        );
-      }
-      lines.add(
-        LineChartBarData(
-          spots: spots,
-          color: color,
-          barWidth: 2.5,
-          isCurved: spots.length > 1,
-          dotData: FlDotData(
-            show: true,
-            getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
-              radius: 3.5,
-              color: color,
-              strokeWidth: 1.5,
-              strokeColor: AppTokens.fgOnPrimary(context),
-            ),
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            // v0.22 round 29 (emil-01~12): 改用 tintedPrimarySoft 集中器 (0.1 接近原 0.12)
-            color: AppTokens.tintedPrimarySoft(context),
-          ),
-        ),
-      );
-      legendItems.add(_LegendDot(color: color, label: scale.displayName));
-      colorIdx++;
-    }
-
-    // v0.27 R72 (P5.4): 主 chart 包 RepaintBoundary
-    // 跨 midnight 重建 / 切换月份时 LineChart 不重 paint
-    // (空 records 走 early return 不包, 一次性 fallback 不影响性能)
-    return RepaintBoundary(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppTokens.spacingSm,
-            AppTokens.spacingMd,
-            AppTokens.spacingMd,
-            AppTokens.spacingMd,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: AppTokens.spacingMd,
-                runSpacing: AppTokens.spacingXs,
-                children: legendItems,
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              // v0.26 round 57 (emil C-10): 走 chartPlaceholderHeight 集中器
-              // 替代 inline height: 200 magic (LineChart 标准高度)
-              SizedBox(
-                height: AppTokens.chartPlaceholderHeight,
-                child: LineChart(
-                  LineChartData(
-                    minX: 0,
-                    maxX: xMaxDisplay,
-                    minY: 0,
-                    maxY: 100,
-                    lineBarsData: lines,
-                    gridData: FlGridData(
-                      show: true,
-                      drawVerticalLine: false,
-                      horizontalInterval: 25,
-                      getDrawingHorizontalLine: (_) => FlLine(
-                        color: Theme.of(context).dividerColor,
-                        strokeWidth: 0.5,
-                      ),
-                    ),
-                    borderData: FlBorderData(show: false),
-                    titlesData: FlTitlesData(
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 32,
-                          interval: 25,
-                          getTitlesWidget: (value, _) => Text(
-                            '${value.toInt()}%',
-                            style: AppTokens.textStyleMicro(context),
-                          ),
-                        ),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 22,
-                          interval: xMaxDisplay <= 1
-                              ? 0.5
-                              : (xMaxDisplay / 4).ceilToDouble(),
-                          getTitlesWidget: (value, _) {
-                            if (xMaxDisplay <= 1) {
-                              final dt = DateTime.fromMillisecondsSinceEpoch(
-                                (firstMs + (value * 86400 * 1000).round()),
-                              );
-                              return Text(
-                                '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
-                                style: AppTokens.textStyleMicro(context),
-                              );
-                            }
-                            final dt = DateTime.fromMillisecondsSinceEpoch(
-                              (firstMs + (value * 86400 * 1000).round()),
-                            );
-                            return Text(
-                              '${dt.month}/${dt.day}',
-                              style: AppTokens.textStyleMicro(context),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    lineTouchData: LineTouchData(
-                      touchTooltipData: LineTouchTooltipData(
-                        getTooltipItems: (touched) {
-                          return touched.map((t) {
-                            final dtMs =
-                                (firstMs + (t.x * 86400 * 1000).round());
-                            final dt =
-                                DateTime.fromMillisecondsSinceEpoch(dtMs);
-                            final meta = spotMeta[SpotKey(t.x, t.y)];
-                            final rawTotal = meta?.rec.total ?? 0;
-                            final rawMax = meta?.rawMax ?? 1;
-                            final name = meta?.name ?? '';
-                            final pct =
-                                (rawMax == 0) ? 0.0 : (rawTotal / rawMax * 100);
-                            return LineTooltipItem(
-                              '${dt.month}/${dt.day} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}\n'
-                              '$name $rawTotal/$rawMax (${pct.toStringAsFixed(0)}%)',
-                              TextStyle(
-                                color: t.bar.color,
-                                fontWeight: FontWeight.w600,
-                                fontSize: AppTokens.fontSizeCaptionSm,
-                              ),
-                            );
-                          }).toList();
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            const SizedBox(height: 8),
+            // 委托 R90 新 widget 渲染 (10 量表多色多线型 + chip toggle)
+            AssessmentMultiLineChart(entries: entries),
+          ],
         ),
       ),
-    );
-  }
-}
-
-class _LegendDot extends StatelessWidget {
-  final Color color;
-  final String label;
-  const _LegendDot({required this.color, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: AppTokens.legendDotSizeSm,
-          height: AppTokens.legendDotSizeSm,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: AppTokens.spacingChipGap),
-        Text(label, style: AppTokens.textStyleLegal(context)),
-      ],
     );
   }
 }

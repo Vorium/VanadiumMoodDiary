@@ -254,4 +254,17 @@ class AppTokens {
   // v0.27 round 65 (alibaba B9 magic alpha): scrim alpha 转发
   // long-task modal 0.54 (medication_report_dialog)
   static const double scrimAlpha = AppMotion.scrimAlpha;
+
+  // ===== v0.30 round 91 (fix): 删除 `assessmentColors` / `assessmentColorFor` / `assessmentDashFor` 转发 =====
+  //
+  // 之前 round 90 在 `AppTokens` + `AppColors` 重复暴露色板 forwarder,
+  // 跟 `AssessmentColorPalette.colorArgbFor(scaleId)` single-arg API 冲突
+  // (2 个 source-of-truth)。round 91 删 4 个 forwarder, caller 统一走
+  // `AssessmentColorPalette.colorArgbFor(scaleId)` / `.dashFor(scaleId)`。
+  //
+  // `assessmentDashArrays` (3 线型 list) 保留: 它是 R85 rerated chart 等
+  // 老 caller 引用的 const list, R90 没用上 (chart 走 palette.dashFor),
+  // 但删除需要 grep 排查, 留 R92 batch 处理。
+  static const List<List<int>> assessmentDashArrays =
+      AppColors.assessmentDashArrays;
 }

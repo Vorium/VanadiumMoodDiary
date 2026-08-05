@@ -1605,5 +1605,551 @@
       }
     }
   },
-  "cbtExportPdfFailed": "PDF 导出失败,请重试"
+  "cbtExportPdfFailed": "PDF 导出失败,请重试",
+  "assessmentCenterTitle": "量表中心",
+  "@assessmentCenterTitle": {
+    "description": "Assessment center page title"
+  },
+  "assessmentCenterLastScore": "上次 {score} 分",
+  "@assessmentCenterLastScore": {
+    "description": "Last assessment score (placeholder {score} is the numeric total)",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentCenterLastTime": "{time} 填写",
+  "@assessmentCenterLastTime": {
+    "description": "When the last assessment was taken (placeholder {time} is the formatted date)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "assessmentCenterNoData": "尚未填写过",
+  "@assessmentCenterNoData": {
+    "description": "Empty state for assessment card when user has not yet taken the scale"
+  },
+  "assessmentCenterStartButton": "开始评估",
+  "@assessmentCenterStartButton": {
+    "description": "Button on assessment card to start filling the scale"
+  },
+  "assessmentCenterMultiLineTitle": "全部量表趋势",
+  "@assessmentCenterMultiLineTitle": {
+    "description": "Multi-line trend chart title showing all scales at once"
+  },
+  "assessmentCenterNotAvailable": "需法务/临床审核",
+  "@assessmentCenterNotAvailable": {
+    "description": "Unavailable scale card reason (NSESSS / CRDPSS)"
+  },
+  "assessmentCenterComingSoon": "敬请期待",
+  "@assessmentCenterComingSoon": {
+    "description": "Coming soon status label for unavailable scale cards"
+  },
+  "isiName": "ISI 失眠严重指数",
+  "@isiName": {
+    "description": "ISI Insomnia Severity Index scale name"
+  },
+  "isiShortDescription": "Morin 1993 失眠严重指数 7 题",
+  "@isiShortDescription": {
+    "description": "ISI Insomnia Severity Index short description for cards/list"
+  },
+  "isiInstruction": "过去 2 周内, 您的睡眠问题有多严重?",
+  "@isiInstruction": {
+    "description": "ISI Insomnia Severity Index top instruction before items"
+  },
+  "isiOption0": "无",
+  "@isiOption0": {
+    "description": "ISI Insomnia Severity Index option 0 (0-based)"
+  },
+  "isiOption1": "轻度",
+  "@isiOption1": {
+    "description": "ISI Insomnia Severity Index option 1 (0-based)"
+  },
+  "isiOption2": "中度",
+  "@isiOption2": {
+    "description": "ISI Insomnia Severity Index option 2 (0-based)"
+  },
+  "isiOption3": "重度",
+  "@isiOption3": {
+    "description": "ISI Insomnia Severity Index option 3 (0-based)"
+  },
+  "isiOption4": "极重度",
+  "@isiOption4": {
+    "description": "ISI Insomnia Severity Index option 4 (0-based)"
+  },
+  "isiSeverityLabel0": "无失眠",
+  "@isiSeverityLabel0": {
+    "description": "ISI Insomnia Severity Index severity label rank 0 (short, for charts)"
+  },
+  "isiSeverityLabel1": "阈下失眠",
+  "@isiSeverityLabel1": {
+    "description": "ISI Insomnia Severity Index severity label rank 1 (short, for charts)"
+  },
+  "isiSeverityLabel2": "中度失眠",
+  "@isiSeverityLabel2": {
+    "description": "ISI Insomnia Severity Index severity label rank 2 (short, for charts)"
+  },
+  "isiSeverityLabel3": "重度失眠",
+  "@isiSeverityLabel3": {
+    "description": "ISI Insomnia Severity Index severity label rank 3 (short, for charts)"
+  },
+  "isiSeveritySummary0": "无临床失眠",
+  "@isiSeveritySummary0": {
+    "description": "ISI Insomnia Severity Index severity summary rank 0 (full, for result page)"
+  },
+  "isiSeveritySummary1": "亚临床失眠, 建议关注",
+  "@isiSeveritySummary1": {
+    "description": "ISI Insomnia Severity Index severity summary rank 1 (full, for result page)"
+  },
+  "isiSeveritySummary2": "中度失眠, 建议就医",
+  "@isiSeveritySummary2": {
+    "description": "ISI Insomnia Severity Index severity summary rank 2 (full, for result page)"
+  },
+  "isiSeveritySummary3": "重度失眠, 强烈建议就医",
+  "@isiSeveritySummary3": {
+    "description": "ISI Insomnia Severity Index severity summary rank 3 (full, for result page)"
+  },
+  "pssName": "PSS 压力量表",
+  "@pssName": {
+    "description": "PSS Perceived Stress Scale scale name"
+  },
+  "pssShortDescription": "Cohen 1983 压力量表 (10 题, 含 4 题反向)",
+  "@pssShortDescription": {
+    "description": "PSS Perceived Stress Scale short description for cards/list"
+  },
+  "pssInstruction": "过去 1 个月里, 您有多经常有下列感受?",
+  "@pssInstruction": {
+    "description": "PSS Perceived Stress Scale top instruction before items"
+  },
+  "pssOption0": "从未",
+  "@pssOption0": {
+    "description": "PSS Perceived Stress Scale option 0 (0-based)"
+  },
+  "pssOption1": "几乎不",
+  "@pssOption1": {
+    "description": "PSS Perceived Stress Scale option 1 (0-based)"
+  },
+  "pssOption2": "有时",
+  "@pssOption2": {
+    "description": "PSS Perceived Stress Scale option 2 (0-based)"
+  },
+  "pssOption3": "经常",
+  "@pssOption3": {
+    "description": "PSS Perceived Stress Scale option 3 (0-based)"
+  },
+  "pssOption4": "总是",
+  "@pssOption4": {
+    "description": "PSS Perceived Stress Scale option 4 (0-based)"
+  },
+  "pssSeverityLabel0": "低压力",
+  "@pssSeverityLabel0": {
+    "description": "PSS Perceived Stress Scale severity label rank 0 (short, for charts)"
+  },
+  "pssSeverityLabel1": "中度压力",
+  "@pssSeverityLabel1": {
+    "description": "PSS Perceived Stress Scale severity label rank 1 (short, for charts)"
+  },
+  "pssSeverityLabel2": "高压力",
+  "@pssSeverityLabel2": {
+    "description": "PSS Perceived Stress Scale severity label rank 2 (short, for charts)"
+  },
+  "pssSeveritySummary0": "低压力",
+  "@pssSeveritySummary0": {
+    "description": "PSS Perceived Stress Scale severity summary rank 0 (full, for result page)"
+  },
+  "pssSeveritySummary1": "中度压力",
+  "@pssSeveritySummary1": {
+    "description": "PSS Perceived Stress Scale severity summary rank 1 (full, for result page)"
+  },
+  "pssSeveritySummary2": "高压力, 建议关注和寻求支持",
+  "@pssSeveritySummary2": {
+    "description": "PSS Perceived Stress Scale severity summary rank 2 (full, for result page)"
+  },
+  "whodasName": "WHODAS 2.0 残疾评定",
+  "@whodasName": {
+    "description": "WHODAS 2.0 Disability Assessment scale name"
+  },
+  "whodasShortDescription": "WHO 通用残疾评估 12 题简化版",
+  "@whodasShortDescription": {
+    "description": "WHODAS 2.0 Disability Assessment short description for cards/list"
+  },
+  "whodasInstruction": "过去 30 天内, 您在以下活动中遇到多大困难?",
+  "@whodasInstruction": {
+    "description": "WHODAS 2.0 Disability Assessment top instruction before items"
+  },
+  "whodasOption0": "没有",
+  "@whodasOption0": {
+    "description": "WHODAS 2.0 Disability Assessment option 0 (0-based)"
+  },
+  "whodasOption1": "轻微",
+  "@whodasOption1": {
+    "description": "WHODAS 2.0 Disability Assessment option 1 (0-based)"
+  },
+  "whodasOption2": "中度",
+  "@whodasOption2": {
+    "description": "WHODAS 2.0 Disability Assessment option 2 (0-based)"
+  },
+  "whodasOption3": "重度",
+  "@whodasOption3": {
+    "description": "WHODAS 2.0 Disability Assessment option 3 (0-based)"
+  },
+  "whodasOption4": "极重度",
+  "@whodasOption4": {
+    "description": "WHODAS 2.0 Disability Assessment option 4 (0-based)"
+  },
+  "whodasSeverityLabel0": "无残疾",
+  "@whodasSeverityLabel0": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 0 (short, for charts)"
+  },
+  "whodasSeverityLabel1": "轻度残疾",
+  "@whodasSeverityLabel1": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 1 (short, for charts)"
+  },
+  "whodasSeverityLabel2": "中度残疾",
+  "@whodasSeverityLabel2": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 2 (short, for charts)"
+  },
+  "whodasSeverityLabel3": "重度残疾",
+  "@whodasSeverityLabel3": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 3 (short, for charts)"
+  },
+  "whodasSeverityLabel4": "极重度残疾",
+  "@whodasSeverityLabel4": {
+    "description": "WHODAS 2.0 Disability Assessment severity label rank 4 (short, for charts)"
+  },
+  "whodasSeveritySummary0": "无残疾",
+  "@whodasSeveritySummary0": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 0 (full, for result page)"
+  },
+  "whodasSeveritySummary1": "轻度残疾",
+  "@whodasSeveritySummary1": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 1 (full, for result page)"
+  },
+  "whodasSeveritySummary2": "中度残疾, 建议就医评估",
+  "@whodasSeveritySummary2": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 2 (full, for result page)"
+  },
+  "whodasSeveritySummary3": "重度残疾, 建议就医",
+  "@whodasSeveritySummary3": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 3 (full, for result page)"
+  },
+  "whodasSeveritySummary4": "极重度残疾, 强烈建议就医",
+  "@whodasSeveritySummary4": {
+    "description": "WHODAS 2.0 Disability Assessment severity summary rank 4 (full, for result page)"
+  },
+  "level2DepressionName": "DSM-5 Level 2 抑郁严重度",
+  "@level2DepressionName": {
+    "description": "DSM-5 Level 2 Depression Severity scale name"
+  },
+  "level2DepressionShortDescription": "成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)",
+  "@level2DepressionShortDescription": {
+    "description": "DSM-5 Level 2 Depression Severity short description for cards/list"
+  },
+  "level2DepressionInstruction": "过去 7 天内, 您有多经常被以下情绪困扰?",
+  "@level2DepressionInstruction": {
+    "description": "DSM-5 Level 2 Depression Severity top instruction before items"
+  },
+  "level2DepressionOption0": "完全没有",
+  "@level2DepressionOption0": {
+    "description": "DSM-5 Level 2 Depression Severity option 0 (0-based)"
+  },
+  "level2DepressionOption1": "几天",
+  "@level2DepressionOption1": {
+    "description": "DSM-5 Level 2 Depression Severity option 1 (0-based)"
+  },
+  "level2DepressionOption2": "一半以上的天数",
+  "@level2DepressionOption2": {
+    "description": "DSM-5 Level 2 Depression Severity option 2 (0-based)"
+  },
+  "level2DepressionOption3": "几乎每天",
+  "@level2DepressionOption3": {
+    "description": "DSM-5 Level 2 Depression Severity option 3 (0-based)"
+  },
+  "level2DepressionSeverityLabel0": "无抑郁",
+  "@level2DepressionSeverityLabel0": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 0 (short, for charts)"
+  },
+  "level2DepressionSeverityLabel1": "轻度抑郁",
+  "@level2DepressionSeverityLabel1": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 1 (short, for charts)"
+  },
+  "level2DepressionSeverityLabel2": "中度抑郁",
+  "@level2DepressionSeverityLabel2": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 2 (short, for charts)"
+  },
+  "level2DepressionSeverityLabel3": "重度抑郁",
+  "@level2DepressionSeverityLabel3": {
+    "description": "DSM-5 Level 2 Depression Severity severity label rank 3 (short, for charts)"
+  },
+  "level2DepressionSeveritySummary0": "无抑郁倾向",
+  "@level2DepressionSeveritySummary0": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 0 (full, for result page)"
+  },
+  "level2DepressionSeveritySummary1": "轻度抑郁倾向",
+  "@level2DepressionSeveritySummary1": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 1 (full, for result page)"
+  },
+  "level2DepressionSeveritySummary2": "中度抑郁, 建议就医",
+  "@level2DepressionSeveritySummary2": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 2 (full, for result page)"
+  },
+  "level2DepressionSeveritySummary3": "重度抑郁, 强烈建议就医",
+  "@level2DepressionSeveritySummary3": {
+    "description": "DSM-5 Level 2 Depression Severity severity summary rank 3 (full, for result page)"
+  },
+  "level2AnxietyName": "DSM-5 Level 2 焦虑严重度",
+  "@level2AnxietyName": {
+    "description": "DSM-5 Level 2 Anxiety Severity scale name"
+  },
+  "level2AnxietyShortDescription": "成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)",
+  "@level2AnxietyShortDescription": {
+    "description": "DSM-5 Level 2 Anxiety Severity short description for cards/list"
+  },
+  "level2AnxietyInstruction": "过去 7 天内, 您有多经常被以下感受困扰?",
+  "@level2AnxietyInstruction": {
+    "description": "DSM-5 Level 2 Anxiety Severity top instruction before items"
+  },
+  "level2AnxietyOption0": "完全没有",
+  "@level2AnxietyOption0": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 0 (0-based)"
+  },
+  "level2AnxietyOption1": "几天",
+  "@level2AnxietyOption1": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 1 (0-based)"
+  },
+  "level2AnxietyOption2": "一半以上的天数",
+  "@level2AnxietyOption2": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 2 (0-based)"
+  },
+  "level2AnxietyOption3": "几乎每天",
+  "@level2AnxietyOption3": {
+    "description": "DSM-5 Level 2 Anxiety Severity option 3 (0-based)"
+  },
+  "level2AnxietySeverityLabel0": "无焦虑",
+  "@level2AnxietySeverityLabel0": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 0 (short, for charts)"
+  },
+  "level2AnxietySeverityLabel1": "轻度焦虑",
+  "@level2AnxietySeverityLabel1": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 1 (short, for charts)"
+  },
+  "level2AnxietySeverityLabel2": "中度焦虑",
+  "@level2AnxietySeverityLabel2": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 2 (short, for charts)"
+  },
+  "level2AnxietySeverityLabel3": "重度焦虑",
+  "@level2AnxietySeverityLabel3": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity label rank 3 (short, for charts)"
+  },
+  "level2AnxietySeveritySummary0": "无焦虑倾向",
+  "@level2AnxietySeveritySummary0": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 0 (full, for result page)"
+  },
+  "level2AnxietySeveritySummary1": "轻度焦虑倾向",
+  "@level2AnxietySeveritySummary1": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 1 (full, for result page)"
+  },
+  "level2AnxietySeveritySummary2": "中度焦虑, 建议就医",
+  "@level2AnxietySeveritySummary2": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 2 (full, for result page)"
+  },
+  "level2AnxietySeveritySummary3": "重度焦虑, 强烈建议就医",
+  "@level2AnxietySeveritySummary3": {
+    "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 3 (full, for result page)"
+  },
+  "level2ManiaName": "DSM-5 Level 2 躁狂严重度",
+  "@level2ManiaName": {
+    "description": "DSM-5 Level 2 Mania Severity scale name"
+  },
+  "level2ManiaShortDescription": "成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)",
+  "@level2ManiaShortDescription": {
+    "description": "DSM-5 Level 2 Mania Severity short description for cards/list"
+  },
+  "level2ManiaInstruction": "过去 7 天内, 您有多经常体验以下情况?",
+  "@level2ManiaInstruction": {
+    "description": "DSM-5 Level 2 Mania Severity top instruction before items"
+  },
+  "level2ManiaOption0": "完全没有",
+  "@level2ManiaOption0": {
+    "description": "DSM-5 Level 2 Mania Severity option 0 (0-based)"
+  },
+  "level2ManiaOption1": "几天",
+  "@level2ManiaOption1": {
+    "description": "DSM-5 Level 2 Mania Severity option 1 (0-based)"
+  },
+  "level2ManiaOption2": "一半以上的天数",
+  "@level2ManiaOption2": {
+    "description": "DSM-5 Level 2 Mania Severity option 2 (0-based)"
+  },
+  "level2ManiaOption3": "几乎每天",
+  "@level2ManiaOption3": {
+    "description": "DSM-5 Level 2 Mania Severity option 3 (0-based)"
+  },
+  "level2ManiaSeverityLabel0": "无躁狂",
+  "@level2ManiaSeverityLabel0": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 0 (short, for charts)"
+  },
+  "level2ManiaSeverityLabel1": "轻度躁狂",
+  "@level2ManiaSeverityLabel1": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 1 (short, for charts)"
+  },
+  "level2ManiaSeverityLabel2": "中度躁狂",
+  "@level2ManiaSeverityLabel2": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 2 (short, for charts)"
+  },
+  "level2ManiaSeverityLabel3": "重度躁狂",
+  "@level2ManiaSeverityLabel3": {
+    "description": "DSM-5 Level 2 Mania Severity severity label rank 3 (short, for charts)"
+  },
+  "level2ManiaSeveritySummary0": "无躁狂倾向",
+  "@level2ManiaSeveritySummary0": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 0 (full, for result page)"
+  },
+  "level2ManiaSeveritySummary1": "轻度躁狂倾向",
+  "@level2ManiaSeveritySummary1": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 1 (full, for result page)"
+  },
+  "level2ManiaSeveritySummary2": "中度躁狂, 建议就医",
+  "@level2ManiaSeveritySummary2": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 2 (full, for result page)"
+  },
+  "level2ManiaSeveritySummary3": "重度躁狂, 强烈建议就医",
+  "@level2ManiaSeveritySummary3": {
+    "description": "DSM-5 Level 2 Mania Severity severity summary rank 3 (full, for result page)"
+  },
+  "asrmName": "ASRM 自评躁狂量表",
+  "@asrmName": {
+    "description": "ASRM Altman Self-Rating Mania Scale scale name"
+  },
+  "asrmShortDescription": "Altman 1997 自评躁狂量表 (5 题)",
+  "@asrmShortDescription": {
+    "description": "ASRM Altman Self-Rating Mania Scale short description for cards/list"
+  },
+  "asrmInstruction": "过去 1 周内, 您有 (或感觉到) 以下情况的程度?",
+  "@asrmInstruction": {
+    "description": "ASRM Altman Self-Rating Mania Scale top instruction before items"
+  },
+  "asrmOption0": "完全没有",
+  "@asrmOption0": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 0 (0-based)"
+  },
+  "asrmOption1": "轻微",
+  "@asrmOption1": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 1 (0-based)"
+  },
+  "asrmOption2": "中度",
+  "@asrmOption2": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 2 (0-based)"
+  },
+  "asrmOption3": "明显",
+  "@asrmOption3": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 3 (0-based)"
+  },
+  "asrmOption4": "严重",
+  "@asrmOption4": {
+    "description": "ASRM Altman Self-Rating Mania Scale option 4 (0-based)"
+  },
+  "asrmSeverityLabel0": "无症状",
+  "@asrmSeverityLabel0": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 0 (short, for charts)"
+  },
+  "asrmSeverityLabel1": "轻度",
+  "@asrmSeverityLabel1": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 1 (short, for charts)"
+  },
+  "asrmSeverityLabel2": "中度",
+  "@asrmSeverityLabel2": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 2 (short, for charts)"
+  },
+  "asrmSeverityLabel3": "重度",
+  "@asrmSeverityLabel3": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 3 (short, for charts)"
+  },
+  "asrmSeverityLabel4": "极重度",
+  "@asrmSeverityLabel4": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity label rank 4 (short, for charts)"
+  },
+  "asrmSeveritySummary0": "无症状",
+  "@asrmSeveritySummary0": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 0 (full, for result page)"
+  },
+  "asrmSeveritySummary1": "轻度躁狂倾向",
+  "@asrmSeveritySummary1": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 1 (full, for result page)"
+  },
+  "asrmSeveritySummary2": "中度躁狂, 建议就医",
+  "@asrmSeveritySummary2": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 2 (full, for result page)"
+  },
+  "asrmSeveritySummary3": "重度躁狂, 建议就医",
+  "@asrmSeveritySummary3": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 3 (full, for result page)"
+  },
+  "asrmSeveritySummary4": "极重度躁狂, 强烈建议就医",
+  "@asrmSeveritySummary4": {
+    "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 4 (full, for result page)"
+  },
+  "level2PsychosisName": "DSM-5 Level 2 精神病性症状",
+  "@level2PsychosisName": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms scale name"
+  },
+  "level2PsychosisShortDescription": "成人精神病性症状 8 题 (DSM-5 简化版)",
+  "@level2PsychosisShortDescription": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms short description for cards/list"
+  },
+  "level2PsychosisInstruction": "过去 7 天内, 您有多经常体验以下情况?",
+  "@level2PsychosisInstruction": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms top instruction before items"
+  },
+  "level2PsychosisOption0": "从来没有",
+  "@level2PsychosisOption0": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 0 (0-based)"
+  },
+  "level2PsychosisOption1": "很少",
+  "@level2PsychosisOption1": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 1 (0-based)"
+  },
+  "level2PsychosisOption2": "有时",
+  "@level2PsychosisOption2": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 2 (0-based)"
+  },
+  "level2PsychosisOption3": "经常",
+  "@level2PsychosisOption3": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms option 3 (0-based)"
+  },
+  "level2PsychosisSeverityLabel0": "无症状",
+  "@level2PsychosisSeverityLabel0": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 0 (short, for charts)"
+  },
+  "level2PsychosisSeverityLabel1": "轻度",
+  "@level2PsychosisSeverityLabel1": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 1 (short, for charts)"
+  },
+  "level2PsychosisSeverityLabel2": "中度",
+  "@level2PsychosisSeverityLabel2": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 2 (short, for charts)"
+  },
+  "level2PsychosisSeverityLabel3": "重度",
+  "@level2PsychosisSeverityLabel3": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity label rank 3 (short, for charts)"
+  },
+  "level2PsychosisSeveritySummary0": "无精神病性症状",
+  "@level2PsychosisSeveritySummary0": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 0 (full, for result page)"
+  },
+  "level2PsychosisSeveritySummary1": "轻度精神病性症状",
+  "@level2PsychosisSeveritySummary1": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 1 (full, for result page)"
+  },
+  "level2PsychosisSeveritySummary2": "中度精神病性症状, 建议就医",
+  "@level2PsychosisSeveritySummary2": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 2 (full, for result page)"
+  },
+  "level2PsychosisSeveritySummary3": "重度精神病性症状, 强烈建议就医",
+  "@level2PsychosisSeveritySummary3": {
+    "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 3 (full, for result page)"
+  }
 }

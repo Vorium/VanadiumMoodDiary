@@ -275,4 +275,36 @@ class AppColors {
   /// emil "decisions should be nameable" — 0.85 不应裸用,命名 "muted"
   static Color fgOnPrimaryMuted(BuildContext context) =>
       Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85);
+
+  // ============= v0.30 round 90 (sub-spec 6 量表中心): 量表色板 =============
+  //
+  // 12 量表多色 (10 开放 + 2 unavailable 灰) — 色相分散, 色盲友好, 跟 R85
+  // rerated chart 风格一致。3 线型 (实线/虚线/点线) 按 scale index % 3 循环。
+  //
+  // 跟 R85 风格一致: 不用 theme-aware, 固定 const Color —
+  // 趋势图需要稳定的视觉标识 (跨 dark mode 同一个量表 = 同一个色),
+  // dark mode 下 alpha 自动按需调。
+  // 顺序固定: 跟 AssessmentColorPalette._scaleIds 一一对应, 通过
+  // assessmentColorFor(scaleId, scaleIds) 拿色 / assessmentDashFor 拿线型。
+
+  /// 3 线型 — 按 scale index % 3 循环
+  /// (实线 / 虚线 / 点线, 让色盲用户也能区分)
+  ///
+  /// v0.30 round 91 (fix): `assessmentColors` 12 色 list 删除 — 它跟
+  /// `AssessmentColorPalette.colorArgbFor(...)` (single source of truth)
+  /// 重复, 2 个 source-of-truth 容易选错。`assessmentColorFor(scaleId, scaleIds)`
+  /// 改走 palette (见下)。
+  static const List<List<int>> assessmentDashArrays = [
+    <int>[], // 实线 (index 0, 3, 6, 9)
+    <int>[5, 5], // 虚线 (index 1, 4, 7, 10)
+    <int>[2, 3], // 点线 (index 2, 5, 8, 11)
+  ];
+
+  /// 按 scaleId 拿色 / 拿线型 → 走 `AssessmentColorPalette` (single source)
+  ///
+  /// v0.30 round 91 (fix): 删除 `assessmentColorFor(scaleId, scaleIds)` /
+  /// `assessmentDashFor(scaleId, scaleIds)` 旧 API — 它们跟 palette
+  /// `(scaleId)` single-arg API 重复, 2 个 source-of-truth 容易选错。
+  /// `AssessmentColorPalette.colorArgbFor(scaleId)` / `.dashFor(scaleId)`
+  /// 是 single source of truth。
 }

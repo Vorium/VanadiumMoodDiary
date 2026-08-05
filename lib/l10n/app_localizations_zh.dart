@@ -2615,6 +2615,413 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cbtExportPdfFailed => 'PDF 导出失败,请重试';
+
+  @override
+  String get assessmentCenterTitle => '量表中心';
+
+  @override
+  String assessmentCenterLastScore(int score) {
+    return '上次 $score 分';
+  }
+
+  @override
+  String assessmentCenterLastTime(String time) {
+    return '$time 填写';
+  }
+
+  @override
+  String get assessmentCenterNoData => '尚未填写过';
+
+  @override
+  String get assessmentCenterStartButton => '开始评估';
+
+  @override
+  String get assessmentCenterMultiLineTitle => '全部量表趋势';
+
+  @override
+  String get assessmentCenterNotAvailable => '需法务/临床审核';
+
+  @override
+  String get assessmentCenterComingSoon => '敬请期待';
+
+  @override
+  String get isiName => 'ISI 失眠严重指数';
+
+  @override
+  String get isiShortDescription => 'Morin 1993 失眠严重指数 7 题';
+
+  @override
+  String get isiInstruction => '过去 2 周内, 您的睡眠问题有多严重?';
+
+  @override
+  String get isiOption0 => '无';
+
+  @override
+  String get isiOption1 => '轻度';
+
+  @override
+  String get isiOption2 => '中度';
+
+  @override
+  String get isiOption3 => '重度';
+
+  @override
+  String get isiOption4 => '极重度';
+
+  @override
+  String get isiSeverityLabel0 => '无失眠';
+
+  @override
+  String get isiSeverityLabel1 => '阈下失眠';
+
+  @override
+  String get isiSeverityLabel2 => '中度失眠';
+
+  @override
+  String get isiSeverityLabel3 => '重度失眠';
+
+  @override
+  String get isiSeveritySummary0 => '无临床失眠';
+
+  @override
+  String get isiSeveritySummary1 => '亚临床失眠, 建议关注';
+
+  @override
+  String get isiSeveritySummary2 => '中度失眠, 建议就医';
+
+  @override
+  String get isiSeveritySummary3 => '重度失眠, 强烈建议就医';
+
+  @override
+  String get pssName => 'PSS 压力量表';
+
+  @override
+  String get pssShortDescription => 'Cohen 1983 压力量表 (10 题, 含 4 题反向)';
+
+  @override
+  String get pssInstruction => '过去 1 个月里, 您有多经常有下列感受?';
+
+  @override
+  String get pssOption0 => '从未';
+
+  @override
+  String get pssOption1 => '几乎不';
+
+  @override
+  String get pssOption2 => '有时';
+
+  @override
+  String get pssOption3 => '经常';
+
+  @override
+  String get pssOption4 => '总是';
+
+  @override
+  String get pssSeverityLabel0 => '低压力';
+
+  @override
+  String get pssSeverityLabel1 => '中度压力';
+
+  @override
+  String get pssSeverityLabel2 => '高压力';
+
+  @override
+  String get pssSeveritySummary0 => '低压力';
+
+  @override
+  String get pssSeveritySummary1 => '中度压力';
+
+  @override
+  String get pssSeveritySummary2 => '高压力, 建议关注和寻求支持';
+
+  @override
+  String get whodasName => 'WHODAS 2.0 残疾评定';
+
+  @override
+  String get whodasShortDescription => 'WHO 通用残疾评估 12 题简化版';
+
+  @override
+  String get whodasInstruction => '过去 30 天内, 您在以下活动中遇到多大困难?';
+
+  @override
+  String get whodasOption0 => '没有';
+
+  @override
+  String get whodasOption1 => '轻微';
+
+  @override
+  String get whodasOption2 => '中度';
+
+  @override
+  String get whodasOption3 => '重度';
+
+  @override
+  String get whodasOption4 => '极重度';
+
+  @override
+  String get whodasSeverityLabel0 => '无残疾';
+
+  @override
+  String get whodasSeverityLabel1 => '轻度残疾';
+
+  @override
+  String get whodasSeverityLabel2 => '中度残疾';
+
+  @override
+  String get whodasSeverityLabel3 => '重度残疾';
+
+  @override
+  String get whodasSeverityLabel4 => '极重度残疾';
+
+  @override
+  String get whodasSeveritySummary0 => '无残疾';
+
+  @override
+  String get whodasSeveritySummary1 => '轻度残疾';
+
+  @override
+  String get whodasSeveritySummary2 => '中度残疾, 建议就医评估';
+
+  @override
+  String get whodasSeveritySummary3 => '重度残疾, 建议就医';
+
+  @override
+  String get whodasSeveritySummary4 => '极重度残疾, 强烈建议就医';
+
+  @override
+  String get level2DepressionName => 'DSM-5 Level 2 抑郁严重度';
+
+  @override
+  String get level2DepressionShortDescription =>
+      '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)';
+
+  @override
+  String get level2DepressionInstruction => '过去 7 天内, 您有多经常被以下情绪困扰?';
+
+  @override
+  String get level2DepressionOption0 => '完全没有';
+
+  @override
+  String get level2DepressionOption1 => '几天';
+
+  @override
+  String get level2DepressionOption2 => '一半以上的天数';
+
+  @override
+  String get level2DepressionOption3 => '几乎每天';
+
+  @override
+  String get level2DepressionSeverityLabel0 => '无抑郁';
+
+  @override
+  String get level2DepressionSeverityLabel1 => '轻度抑郁';
+
+  @override
+  String get level2DepressionSeverityLabel2 => '中度抑郁';
+
+  @override
+  String get level2DepressionSeverityLabel3 => '重度抑郁';
+
+  @override
+  String get level2DepressionSeveritySummary0 => '无抑郁倾向';
+
+  @override
+  String get level2DepressionSeveritySummary1 => '轻度抑郁倾向';
+
+  @override
+  String get level2DepressionSeveritySummary2 => '中度抑郁, 建议就医';
+
+  @override
+  String get level2DepressionSeveritySummary3 => '重度抑郁, 强烈建议就医';
+
+  @override
+  String get level2AnxietyName => 'DSM-5 Level 2 焦虑严重度';
+
+  @override
+  String get level2AnxietyShortDescription => '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)';
+
+  @override
+  String get level2AnxietyInstruction => '过去 7 天内, 您有多经常被以下感受困扰?';
+
+  @override
+  String get level2AnxietyOption0 => '完全没有';
+
+  @override
+  String get level2AnxietyOption1 => '几天';
+
+  @override
+  String get level2AnxietyOption2 => '一半以上的天数';
+
+  @override
+  String get level2AnxietyOption3 => '几乎每天';
+
+  @override
+  String get level2AnxietySeverityLabel0 => '无焦虑';
+
+  @override
+  String get level2AnxietySeverityLabel1 => '轻度焦虑';
+
+  @override
+  String get level2AnxietySeverityLabel2 => '中度焦虑';
+
+  @override
+  String get level2AnxietySeverityLabel3 => '重度焦虑';
+
+  @override
+  String get level2AnxietySeveritySummary0 => '无焦虑倾向';
+
+  @override
+  String get level2AnxietySeveritySummary1 => '轻度焦虑倾向';
+
+  @override
+  String get level2AnxietySeveritySummary2 => '中度焦虑, 建议就医';
+
+  @override
+  String get level2AnxietySeveritySummary3 => '重度焦虑, 强烈建议就医';
+
+  @override
+  String get level2ManiaName => 'DSM-5 Level 2 躁狂严重度';
+
+  @override
+  String get level2ManiaShortDescription => '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)';
+
+  @override
+  String get level2ManiaInstruction => '过去 7 天内, 您有多经常体验以下情况?';
+
+  @override
+  String get level2ManiaOption0 => '完全没有';
+
+  @override
+  String get level2ManiaOption1 => '几天';
+
+  @override
+  String get level2ManiaOption2 => '一半以上的天数';
+
+  @override
+  String get level2ManiaOption3 => '几乎每天';
+
+  @override
+  String get level2ManiaSeverityLabel0 => '无躁狂';
+
+  @override
+  String get level2ManiaSeverityLabel1 => '轻度躁狂';
+
+  @override
+  String get level2ManiaSeverityLabel2 => '中度躁狂';
+
+  @override
+  String get level2ManiaSeverityLabel3 => '重度躁狂';
+
+  @override
+  String get level2ManiaSeveritySummary0 => '无躁狂倾向';
+
+  @override
+  String get level2ManiaSeveritySummary1 => '轻度躁狂倾向';
+
+  @override
+  String get level2ManiaSeveritySummary2 => '中度躁狂, 建议就医';
+
+  @override
+  String get level2ManiaSeveritySummary3 => '重度躁狂, 强烈建议就医';
+
+  @override
+  String get asrmName => 'ASRM 自评躁狂量表';
+
+  @override
+  String get asrmShortDescription => 'Altman 1997 自评躁狂量表 (5 题)';
+
+  @override
+  String get asrmInstruction => '过去 1 周内, 您有 (或感觉到) 以下情况的程度?';
+
+  @override
+  String get asrmOption0 => '完全没有';
+
+  @override
+  String get asrmOption1 => '轻微';
+
+  @override
+  String get asrmOption2 => '中度';
+
+  @override
+  String get asrmOption3 => '明显';
+
+  @override
+  String get asrmOption4 => '严重';
+
+  @override
+  String get asrmSeverityLabel0 => '无症状';
+
+  @override
+  String get asrmSeverityLabel1 => '轻度';
+
+  @override
+  String get asrmSeverityLabel2 => '中度';
+
+  @override
+  String get asrmSeverityLabel3 => '重度';
+
+  @override
+  String get asrmSeverityLabel4 => '极重度';
+
+  @override
+  String get asrmSeveritySummary0 => '无症状';
+
+  @override
+  String get asrmSeveritySummary1 => '轻度躁狂倾向';
+
+  @override
+  String get asrmSeveritySummary2 => '中度躁狂, 建议就医';
+
+  @override
+  String get asrmSeveritySummary3 => '重度躁狂, 建议就医';
+
+  @override
+  String get asrmSeveritySummary4 => '极重度躁狂, 强烈建议就医';
+
+  @override
+  String get level2PsychosisName => 'DSM-5 Level 2 精神病性症状';
+
+  @override
+  String get level2PsychosisShortDescription => '成人精神病性症状 8 题 (DSM-5 简化版)';
+
+  @override
+  String get level2PsychosisInstruction => '过去 7 天内, 您有多经常体验以下情况?';
+
+  @override
+  String get level2PsychosisOption0 => '从来没有';
+
+  @override
+  String get level2PsychosisOption1 => '很少';
+
+  @override
+  String get level2PsychosisOption2 => '有时';
+
+  @override
+  String get level2PsychosisOption3 => '经常';
+
+  @override
+  String get level2PsychosisSeverityLabel0 => '无症状';
+
+  @override
+  String get level2PsychosisSeverityLabel1 => '轻度';
+
+  @override
+  String get level2PsychosisSeverityLabel2 => '中度';
+
+  @override
+  String get level2PsychosisSeverityLabel3 => '重度';
+
+  @override
+  String get level2PsychosisSeveritySummary0 => '无精神病性症状';
+
+  @override
+  String get level2PsychosisSeveritySummary1 => '轻度精神病性症状';
+
+  @override
+  String get level2PsychosisSeveritySummary2 => '中度精神病性症状, 建议就医';
+
+  @override
+  String get level2PsychosisSeveritySummary3 => '重度精神病性症状, 强烈建议就医';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5228,4 +5635,411 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get cbtExportPdfFailed => 'PDF 導出失敗,請重試';
+
+  @override
+  String get assessmentCenterTitle => '量表中心';
+
+  @override
+  String assessmentCenterLastScore(int score) {
+    return '上次 $score 分';
+  }
+
+  @override
+  String assessmentCenterLastTime(String time) {
+    return '$time 填寫';
+  }
+
+  @override
+  String get assessmentCenterNoData => '尚未填寫過';
+
+  @override
+  String get assessmentCenterStartButton => '開始評估';
+
+  @override
+  String get assessmentCenterMultiLineTitle => '全部量表趨勢';
+
+  @override
+  String get assessmentCenterNotAvailable => '需法務/臨床審核';
+
+  @override
+  String get assessmentCenterComingSoon => '敬請期待';
+
+  @override
+  String get isiName => 'ISI 失眠嚴重指數';
+
+  @override
+  String get isiShortDescription => 'Morin 1993 失眠嚴重指數 7 題';
+
+  @override
+  String get isiInstruction => '過去 2 周內, 您的睡眠問題有多嚴重?';
+
+  @override
+  String get isiOption0 => '無';
+
+  @override
+  String get isiOption1 => '輕度';
+
+  @override
+  String get isiOption2 => '中度';
+
+  @override
+  String get isiOption3 => '重度';
+
+  @override
+  String get isiOption4 => '極重度';
+
+  @override
+  String get isiSeverityLabel0 => '無失眠';
+
+  @override
+  String get isiSeverityLabel1 => '閾下失眠';
+
+  @override
+  String get isiSeverityLabel2 => '中度失眠';
+
+  @override
+  String get isiSeverityLabel3 => '重度失眠';
+
+  @override
+  String get isiSeveritySummary0 => '無臨床失眠';
+
+  @override
+  String get isiSeveritySummary1 => '亞臨床失眠, 建議關注';
+
+  @override
+  String get isiSeveritySummary2 => '中度失眠, 建議就醫';
+
+  @override
+  String get isiSeveritySummary3 => '重度失眠, 強烈建議就醫';
+
+  @override
+  String get pssName => 'PSS 壓力量表';
+
+  @override
+  String get pssShortDescription => 'Cohen 1983 壓力量表 (10 題, 含 4 題反向)';
+
+  @override
+  String get pssInstruction => '過去 1 個月裡, 您有多經常有下列感受?';
+
+  @override
+  String get pssOption0 => '從未';
+
+  @override
+  String get pssOption1 => '幾乎不';
+
+  @override
+  String get pssOption2 => '有時';
+
+  @override
+  String get pssOption3 => '經常';
+
+  @override
+  String get pssOption4 => '總是';
+
+  @override
+  String get pssSeverityLabel0 => '低壓力';
+
+  @override
+  String get pssSeverityLabel1 => '中度壓力';
+
+  @override
+  String get pssSeverityLabel2 => '高壓力';
+
+  @override
+  String get pssSeveritySummary0 => '低壓力';
+
+  @override
+  String get pssSeveritySummary1 => '中度壓力';
+
+  @override
+  String get pssSeveritySummary2 => '高壓力, 建議關注和尋求支持';
+
+  @override
+  String get whodasName => 'WHODAS 2.0 殘疾評定';
+
+  @override
+  String get whodasShortDescription => 'WHO 通用殘疾評估 12 題簡化版';
+
+  @override
+  String get whodasInstruction => '過去 30 天內, 您在以下活動中遇到多大困難?';
+
+  @override
+  String get whodasOption0 => '沒有';
+
+  @override
+  String get whodasOption1 => '輕微';
+
+  @override
+  String get whodasOption2 => '中度';
+
+  @override
+  String get whodasOption3 => '重度';
+
+  @override
+  String get whodasOption4 => '極重度';
+
+  @override
+  String get whodasSeverityLabel0 => '無殘疾';
+
+  @override
+  String get whodasSeverityLabel1 => '輕度殘疾';
+
+  @override
+  String get whodasSeverityLabel2 => '中度殘疾';
+
+  @override
+  String get whodasSeverityLabel3 => '重度殘疾';
+
+  @override
+  String get whodasSeverityLabel4 => '極重度殘疾';
+
+  @override
+  String get whodasSeveritySummary0 => '無殘疾';
+
+  @override
+  String get whodasSeveritySummary1 => '輕度殘疾';
+
+  @override
+  String get whodasSeveritySummary2 => '中度殘疾, 建議就醫評估';
+
+  @override
+  String get whodasSeveritySummary3 => '重度殘疾, 建議就醫';
+
+  @override
+  String get whodasSeveritySummary4 => '極重度殘疾, 強烈建議就醫';
+
+  @override
+  String get level2DepressionName => 'DSM-5 Level 2 抑鬱嚴重度';
+
+  @override
+  String get level2DepressionShortDescription =>
+      '成人抑鬱嚴重度 8 題 (DSM-5 PROMIS 簡化版)';
+
+  @override
+  String get level2DepressionInstruction => '過去 7 天內, 您有多經常被以下情緒困擾?';
+
+  @override
+  String get level2DepressionOption0 => '完全沒有';
+
+  @override
+  String get level2DepressionOption1 => '幾天';
+
+  @override
+  String get level2DepressionOption2 => '一半以上的天數';
+
+  @override
+  String get level2DepressionOption3 => '幾乎每天';
+
+  @override
+  String get level2DepressionSeverityLabel0 => '無抑鬱';
+
+  @override
+  String get level2DepressionSeverityLabel1 => '輕度抑鬱';
+
+  @override
+  String get level2DepressionSeverityLabel2 => '中度抑鬱';
+
+  @override
+  String get level2DepressionSeverityLabel3 => '重度抑鬱';
+
+  @override
+  String get level2DepressionSeveritySummary0 => '無抑鬱傾向';
+
+  @override
+  String get level2DepressionSeveritySummary1 => '輕度抑鬱傾向';
+
+  @override
+  String get level2DepressionSeveritySummary2 => '中度抑鬱, 建議就醫';
+
+  @override
+  String get level2DepressionSeveritySummary3 => '重度抑鬱, 強烈建議就醫';
+
+  @override
+  String get level2AnxietyName => 'DSM-5 Level 2 焦慮嚴重度';
+
+  @override
+  String get level2AnxietyShortDescription => '成人焦慮嚴重度 7 題 (DSM-5 PROMIS 簡化版)';
+
+  @override
+  String get level2AnxietyInstruction => '過去 7 天內, 您有多經常被以下感受困擾?';
+
+  @override
+  String get level2AnxietyOption0 => '完全沒有';
+
+  @override
+  String get level2AnxietyOption1 => '幾天';
+
+  @override
+  String get level2AnxietyOption2 => '一半以上的天數';
+
+  @override
+  String get level2AnxietyOption3 => '幾乎每天';
+
+  @override
+  String get level2AnxietySeverityLabel0 => '無焦慮';
+
+  @override
+  String get level2AnxietySeverityLabel1 => '輕度焦慮';
+
+  @override
+  String get level2AnxietySeverityLabel2 => '中度焦慮';
+
+  @override
+  String get level2AnxietySeverityLabel3 => '重度焦慮';
+
+  @override
+  String get level2AnxietySeveritySummary0 => '無焦慮傾向';
+
+  @override
+  String get level2AnxietySeveritySummary1 => '輕度焦慮傾向';
+
+  @override
+  String get level2AnxietySeveritySummary2 => '中度焦慮, 建議就醫';
+
+  @override
+  String get level2AnxietySeveritySummary3 => '重度焦慮, 強烈建議就醫';
+
+  @override
+  String get level2ManiaName => 'DSM-5 Level 2 躁狂嚴重度';
+
+  @override
+  String get level2ManiaShortDescription => '成人躁狂嚴重度 5 題 (DSM-5 PROMIS 簡化版)';
+
+  @override
+  String get level2ManiaInstruction => '過去 7 天內, 您有多經常體驗以下情況?';
+
+  @override
+  String get level2ManiaOption0 => '完全沒有';
+
+  @override
+  String get level2ManiaOption1 => '幾天';
+
+  @override
+  String get level2ManiaOption2 => '一半以上的天數';
+
+  @override
+  String get level2ManiaOption3 => '幾乎每天';
+
+  @override
+  String get level2ManiaSeverityLabel0 => '無躁狂';
+
+  @override
+  String get level2ManiaSeverityLabel1 => '輕度躁狂';
+
+  @override
+  String get level2ManiaSeverityLabel2 => '中度躁狂';
+
+  @override
+  String get level2ManiaSeverityLabel3 => '重度躁狂';
+
+  @override
+  String get level2ManiaSeveritySummary0 => '無躁狂傾向';
+
+  @override
+  String get level2ManiaSeveritySummary1 => '輕度躁狂傾向';
+
+  @override
+  String get level2ManiaSeveritySummary2 => '中度躁狂, 建議就醫';
+
+  @override
+  String get level2ManiaSeveritySummary3 => '重度躁狂, 強烈建議就醫';
+
+  @override
+  String get asrmName => 'ASRM 自評躁狂量表';
+
+  @override
+  String get asrmShortDescription => 'Altman 1997 自評躁狂量表 (5 題)';
+
+  @override
+  String get asrmInstruction => '過去 1 周內, 您有 (或感覺到) 以下情況的程度?';
+
+  @override
+  String get asrmOption0 => '完全沒有';
+
+  @override
+  String get asrmOption1 => '輕微';
+
+  @override
+  String get asrmOption2 => '中度';
+
+  @override
+  String get asrmOption3 => '明顯';
+
+  @override
+  String get asrmOption4 => '嚴重';
+
+  @override
+  String get asrmSeverityLabel0 => '無症狀';
+
+  @override
+  String get asrmSeverityLabel1 => '輕度';
+
+  @override
+  String get asrmSeverityLabel2 => '中度';
+
+  @override
+  String get asrmSeverityLabel3 => '重度';
+
+  @override
+  String get asrmSeverityLabel4 => '極重度';
+
+  @override
+  String get asrmSeveritySummary0 => '無症狀';
+
+  @override
+  String get asrmSeveritySummary1 => '輕度躁狂傾向';
+
+  @override
+  String get asrmSeveritySummary2 => '中度躁狂, 建議就醫';
+
+  @override
+  String get asrmSeveritySummary3 => '重度躁狂, 建議就醫';
+
+  @override
+  String get asrmSeveritySummary4 => '極重度躁狂, 強烈建議就醫';
+
+  @override
+  String get level2PsychosisName => 'DSM-5 Level 2 精神病性症狀';
+
+  @override
+  String get level2PsychosisShortDescription => '成人精神病性症狀 8 題 (DSM-5 簡化版)';
+
+  @override
+  String get level2PsychosisInstruction => '過去 7 天內, 您有多經常體驗以下情況?';
+
+  @override
+  String get level2PsychosisOption0 => '從來沒有';
+
+  @override
+  String get level2PsychosisOption1 => '很少';
+
+  @override
+  String get level2PsychosisOption2 => '有時';
+
+  @override
+  String get level2PsychosisOption3 => '經常';
+
+  @override
+  String get level2PsychosisSeverityLabel0 => '無症狀';
+
+  @override
+  String get level2PsychosisSeverityLabel1 => '輕度';
+
+  @override
+  String get level2PsychosisSeverityLabel2 => '中度';
+
+  @override
+  String get level2PsychosisSeverityLabel3 => '重度';
+
+  @override
+  String get level2PsychosisSeveritySummary0 => '無精神病性症狀';
+
+  @override
+  String get level2PsychosisSeveritySummary1 => '輕度精神病性症狀';
+
+  @override
+  String get level2PsychosisSeveritySummary2 => '中度精神病性症狀, 建議就醫';
+
+  @override
+  String get level2PsychosisSeveritySummary3 => '重度精神病性症狀, 強烈建議就醫';
 }
