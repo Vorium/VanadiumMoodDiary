@@ -4,6 +4,8 @@
 // 1. watchAll 按 timestamp DESC
 // 2. insert + linked medication 缓存 name round-trip (R60 模式, FK 不强制)
 // 3. 不传 linkedMedicationId/Name → null (普通治疗记录)
+// 4. v0.30 round 91 Task 3: watchAllTreatmentEntries join medications
+//    (linkedMedicationName 从 medications.name 读, 跟 snapshot 字段合并)
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/daos/treatment_dao.dart';
@@ -54,6 +56,39 @@ void main() {
       expect(all.first.linkedMedicationId, isNull);
       expect(all.first.linkedMedicationName, isNull);
       expect(all.first.note, isNull);
+    });
+
+    // v0.30 round 91 Task 3: treatmentDao.watchAllTreatmentEntries join medications
+    // (leftOuterJoin, cache 优先 + join 兜底)
+    test(
+        'watchAllTreatmentEntries join medications → name 从 medications.name 读 (cache null 时)',
+        () async {
+      // 1. insert medication 'Aspirin' (id=1)
+      await db.into(db.medications).insert(
+            MedicationsCompanion.insert(
+              name: 'Aspirin',
+              dosage: 100,
+              dosageUnit: 'mg',
+              startDate: DateTime(2026, 7, 1),
+            ),
+          );
+
+      // 2. insert treatment linkedMedicationId=1, 但 linkedMedicationName=null
+      //    (cache 故意空, 强制 DAO 从 join 读 name — 模拟老 entry migration 场景)
+      await dao.insert(TreatmentEntriesCompanion.insert(
+        timestamp: DateTime(2026, 8, 1, 10, 0),
+        treatmentType: 'medication',
+        description: '服用 Aspirin',
+        linkedMedicationId: const Value(1),
+        // linkedMedicationName 故意不传 (cache null)
+      ),);
+
+      // 3. watchAllTreatmentEntries() → entry.linkedMedicationName = 'Aspirin' (从 join)
+      final all = await dao.watchAllTreatmentEntries().first;
+      expect(all.length, 1);
+      expect(all.first.linkedMedicationId, 1);
+      expect(all.first.linkedMedicationName, 'Aspirin',
+          reason: 'cache null 时必须从 medications join 读 name',);
     });
   });
 }
