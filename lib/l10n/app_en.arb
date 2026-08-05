@@ -1534,5 +1534,18 @@
   "moodListSortBy": "Sort by",
   "moodListSortTimestamp": "Newest first",
   "moodListSortScoreAsc": "Score ascending",
-  "moodListSortScoreDesc": "Score descending"
+  "moodListSortScoreDesc": "Score descending",
+  "moodListPageTitle": "Mood history",
+  "moodListSearchHint": "Search note…",
+  "moodListEmpty": "No mood entries yet",
+  "moodListNoMatch": "No matching entries",
+  "moodListEntryCount": "{count} entries",
+  "@moodListEntryCount": {
+    "description": "mood list entry count, placeholder {count}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

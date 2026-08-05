@@ -19,6 +19,7 @@ import 'package:chroniccare/core/routing/app_route_assessment.dart';
 import 'package:chroniccare/core/routing/app_route_check_in.dart';
 import 'package:chroniccare/core/routing/app_route_main.dart';
 import 'package:chroniccare/core/routing/app_route_medication.dart';
+import 'package:chroniccare/core/routing/app_route_mood_list.dart';
 import 'package:chroniccare/core/routing/app_route_vent.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -123,6 +124,7 @@ class AppRoutes {
       ...AppRouteMedication.all(),
       ...AppRouteVent.all(),
       ...AppRouteCheckIn.all(),
+      ...AppRouteMoodList.all(),
     ];
   }
 

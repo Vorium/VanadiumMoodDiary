@@ -2719,4 +2719,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodListSortScoreDesc => 'Score descending';
+
+  @override
+  String get moodListPageTitle => 'Mood history';
+
+  @override
+  String get moodListSearchHint => 'Search note…';
+
+  @override
+  String get moodListEmpty => 'No mood entries yet';
+
+  @override
+  String get moodListNoMatch => 'No matching entries';
+
+  @override
+  String moodListEntryCount(int count) {
+    return '$count entries';
+  }
 }

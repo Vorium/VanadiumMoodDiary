@@ -1573,6 +1573,19 @@
   "moodListSortBy": "排序",
   "moodListSortTimestamp": "時間倒序",
   "moodListSortScoreAsc": "分數升序",
-  "moodListSortScoreDesc": "分數降序"
+  "moodListSortScoreDesc": "分數降序",
+  "moodListPageTitle": "Mood 歷史",
+  "moodListSearchHint": "搜索 note…",
+  "moodListEmpty": "還沒有 mood 記錄",
+  "moodListNoMatch": "沒有匹配的記錄",
+  "moodListEntryCount": "{count} 條記錄",
+  "@moodListEntryCount": {
+    "description": "mood 列表條目數,佔位 {count}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }
 

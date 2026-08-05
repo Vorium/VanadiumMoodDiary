@@ -18,6 +18,10 @@ import 'package:chroniccare/presentation/widgets/mood_quick_button.dart';
 /// v0.22 round 28 (emil-28): MoodQuickButton 也外包 PressFeedback (之前注释
 /// 撒谎说"内部已处理"实际 SecondaryButton 无 scale)。现在 2 个按钮都外包,
 /// 主页次要操作行 :active 反馈一致。
+///
+/// v0.30 round 87 (sub-spec 3 mood 列表页): 在 MoodQuickButton 下方加
+/// "📋 Mood 历史" 按钮 → 跳 `/mood-list` (MoodListPage 完整列表 + filter
+/// + search + sort)。频度: occasional (用户偶尔回看历史)。
 class SecondaryActionRow extends StatelessWidget {
   final VoidCallback onMoodTap;
 
@@ -28,6 +32,28 @@ class SecondaryActionRow extends StatelessWidget {
     return Column(
       children: [
         MoodQuickButton(onTap: onMoodTap),
+        const SizedBox(height: AppTokens.spacingSm),
+        // v0.30 R87: Mood 历史入口 — 跳 /mood-list 完整列表 (search + filter + sort)
+        PressFeedback(
+          onTap: () => context.push('/mood-list'),
+          child: SecondaryButton(
+            onPressed: () {}, // PressFeedback 处理 tap
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.list_alt, size: 20),
+                const SizedBox(width: AppTokens.spacingXs),
+                Text(
+                  AppLocalizations.of(context).moodListPageTitle,
+                  style: const TextStyle(
+                    fontSize: AppTokens.fontSizeButton,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: AppTokens.spacingSm),
         // v0.15 (Round 18) 树洞入口
         // 与情绪日记完全独立：树洞不进任何分析、纯私密空间

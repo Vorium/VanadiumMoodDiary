@@ -2581,6 +2581,23 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodListSortScoreDesc => '分数降序';
+
+  @override
+  String get moodListPageTitle => 'Mood 历史';
+
+  @override
+  String get moodListSearchHint => '搜索 note…';
+
+  @override
+  String get moodListEmpty => '还没有 mood 记录';
+
+  @override
+  String get moodListNoMatch => '没有匹配的记录';
+
+  @override
+  String moodListEntryCount(int count) {
+    return '$count 条记录';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5160,4 +5177,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodListSortScoreDesc => '分數降序';
+
+  @override
+  String get moodListPageTitle => 'Mood 歷史';
+
+  @override
+  String get moodListSearchHint => '搜索 note…';
+
+  @override
+  String get moodListEmpty => '還沒有 mood 記錄';
+
+  @override
+  String get moodListNoMatch => '沒有匹配的記錄';
+
+  @override
+  String moodListEntryCount(int count) {
+    return '$count 條記錄';
+  }
 }

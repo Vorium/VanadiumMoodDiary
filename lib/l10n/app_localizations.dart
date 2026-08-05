@@ -4756,6 +4756,36 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'分数降序'**
   String get moodListSortScoreDesc;
+
+  /// No description provided for @moodListPageTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'Mood 历史'**
+  String get moodListPageTitle;
+
+  /// No description provided for @moodListSearchHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索 note…'**
+  String get moodListSearchHint;
+
+  /// No description provided for @moodListEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有 mood 记录'**
+  String get moodListEmpty;
+
+  /// No description provided for @moodListNoMatch.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有匹配的记录'**
+  String get moodListNoMatch;
+
+  /// mood 列表条目数,占位 {count}
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 条记录'**
+  String moodListEntryCount(int count);
 }
 
 class _AppLocalizationsDelegate
