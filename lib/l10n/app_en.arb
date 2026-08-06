@@ -1450,8 +1450,6 @@
   "homeFabVent": "Mood vent",
   "homeFabHotline": "Hotline",
   "homeFabTop": "Back to top",
-  "homeFabHotlineTodo": "Hotline entry coming soon",
-  "homeFabTopTodo": "Scroll-to-top coming soon",
   "trendChip30Day": "Last 30 days",
   "assessmentChipCurrent": "This week",
   "crisisHotlineCnLabel": "National 24-hour psychological assistance hotline",
@@ -1466,6 +1464,66 @@
   "crisisHotlineMoLabel": "Caritas Life Hotline (24h)",
   "crisisHotlineMoNumber": "2826 1122",
   "crisisHotlineMoDesc": "Macau 24h",
+  "@crisisHotlineTitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 标题"
+  },
+  "crisisHotlineTitle": "Crisis & Mental Health Hotlines",
+  "@crisisHotlineSubtitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副标题"
+  },
+  "crisisHotlineSubtitle": "If you or someone you know is in crisis, please call one of the hotlines below",
+  "@crisisHotlineCn2Label": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h toll-free"
+  },
+  "crisisHotlineCn2Label": "China National 24h Toll-free Mental Health Hotline",
+  "crisisHotlineCn2Number": "800-810-1117",
+  "crisisHotlineCn2Desc": "Mainland China 24h toll-free",
+  "@crisisHotlineUsLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): US 988 Lifeline"
+  },
+  "crisisHotlineUsLabel": "988 Suicide & Crisis Lifeline",
+  "crisisHotlineUsNumber": "988",
+  "crisisHotlineUsDesc": "US/Canada 24h English/Spanish",
+  "@crisisHotlineIntlLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 国际通用 fallback"
+  },
+  "crisisHotlineIntlLabel": "International",
+  "crisisHotlineIntlDesc": "Please contact local emergency services or mental health organization",
+  "@crisisHotlineIntlNumber": {
+    "description": "v0.30 round 92: International emergency number"
+  },
+  "crisisHotlineIntlNumber": "112 / 911",
+  "@crisisHotlineRegionCn": {
+    "description": "v0.30 round 92: crisis_hotline_page 5 region section title"
+  },
+  "crisisHotlineRegionCn": "Mainland China",
+  "crisisHotlineRegionTw": "Taiwan",
+  "crisisHotlineRegionHk": "Hong Kong",
+  "crisisHotlineRegionUs": "USA / Canada",
+  "crisisHotlineRegionIntl": "International",
+  "@crisisHotlineCnBeijingLabel": {
+    "description": "v0.30 round 92: Beijing Suicide Research & Prevention Center"
+  },
+  "crisisHotlineCnBeijingLabel": "Beijing Suicide Research & Prevention Center",
+  "crisisHotlineCnBeijingNumber": "010-82951332",
+  "crisisHotlineCnBeijingDesc": "Beijing 24h",
+  "@crisisHotlineTw1995Label": {
+    "description": "v0.30 round 92: Taiwan Lifeline (1995)"
+  },
+  "crisisHotlineTw1995Label": "Taiwan Lifeline (24h)",
+  "crisisHotlineTw1995Number": "1995",
+  "crisisHotlineTw1995Desc": "Taiwan 24h",
+  "@crisisHotlineUsTextLineLabel": {
+    "description": "v0.30 round 92: US Crisis Text Line (741741)"
+  },
+  "crisisHotlineUsTextLineLabel": "Crisis Text Line (text HOME)",
+  "crisisHotlineUsTextLineNumber": "741741",
+  "crisisHotlineUsTextLineDesc": "US 24h text",
+  "@crisisHotlineSnackbarCopied": {
+    "description": "v0.30 round 92: snackbar after copying hotline number",
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "crisisHotlineSnackbarCopied": "Copied: {number}",
   "setupLegalAgeAttestation": "I solemnly declare that I am at least 18 years of age. If I am between 14 and 18 years of age, I confirm that I have obtained consent from my legal guardian and accept all legal consequences of any false statement.",
   "moodCbtLevelLabel3": "3-column",
   "moodCbtLevelLabel5": "5-column",

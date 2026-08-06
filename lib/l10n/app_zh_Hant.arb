@@ -1489,8 +1489,6 @@
   "homeFabVent": "心情樹洞",
   "homeFabHotline": "緊急熱線",
   "homeFabTop": "回到頂端",
-  "homeFabHotlineTodo": "緊急熱線入口建設中",
-  "homeFabTopTodo": "回到頂端(開發中)",
   "trendChip30Day": "近 30 天",
   "assessmentChipCurrent": "本週",
   "crisisHotlineCnLabel": "全國 24 小時心理援助熱線",
@@ -1505,6 +1503,66 @@
   "crisisHotlineMoLabel": "明愛生命熱線 (24 小時)",
   "crisisHotlineMoNumber": "2826 1122",
   "crisisHotlineMoDesc": "中國澳門 24 小時",
+  "@crisisHotlineTitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 標題"
+  },
+  "crisisHotlineTitle": "緊急心理援助熱線",
+  "@crisisHotlineSubtitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副標題"
+  },
+  "crisisHotlineSubtitle": "如果你或身邊的人正在經歷心理危機, 請撥打以下熱線",
+  "@crisisHotlineCn2Label": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h 免費"
+  },
+  "crisisHotlineCn2Label": "全國 24 小時免費心理援助熱線",
+  "crisisHotlineCn2Number": "800-810-1117",
+  "crisisHotlineCn2Desc": "中國大陸 24 小時免費撥打",
+  "@crisisHotlineUsLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): US 988 Lifeline"
+  },
+  "crisisHotlineUsLabel": "988 Suicide & Crisis Lifeline",
+  "crisisHotlineUsNumber": "988",
+  "crisisHotlineUsDesc": "美國 / 加拿大 24 小時英文 / 西班牙文",
+  "@crisisHotlineIntlLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 國際通用 fallback"
+  },
+  "crisisHotlineIntlLabel": "國際通用",
+  "crisisHotlineIntlDesc": "請聯繫當地急救或心理援助機構",
+  "@crisisHotlineIntlNumber": {
+    "description": "v0.30 round 92: 國際通用緊急號碼"
+  },
+  "crisisHotlineIntlNumber": "112 / 911",
+  "@crisisHotlineRegionCn": {
+    "description": "v0.30 round 92: crisis_hotline_page 5 地區 section title"
+  },
+  "crisisHotlineRegionCn": "中國大陸",
+  "crisisHotlineRegionTw": "中國臺灣",
+  "crisisHotlineRegionHk": "中國香港",
+  "crisisHotlineRegionUs": "美國 / 加拿大",
+  "crisisHotlineRegionIntl": "國際通用",
+  "@crisisHotlineCnBeijingLabel": {
+    "description": "v0.30 round 92: 北京心理危機研究與干預中心"
+  },
+  "crisisHotlineCnBeijingLabel": "北京心理危機研究與干預中心",
+  "crisisHotlineCnBeijingNumber": "010-82951332",
+  "crisisHotlineCnBeijingDesc": "北京 24 小時",
+  "@crisisHotlineTw1995Label": {
+    "description": "v0.30 round 92: 臺灣生命線 (1995)"
+  },
+  "crisisHotlineTw1995Label": "生命線 (24 小時)",
+  "crisisHotlineTw1995Number": "1995",
+  "crisisHotlineTw1995Desc": "中國臺灣 24 小時",
+  "@crisisHotlineUsTextLineLabel": {
+    "description": "v0.30 round 92: US Crisis Text Line (741741)"
+  },
+  "crisisHotlineUsTextLineLabel": "Crisis Text Line (text HOME)",
+  "crisisHotlineUsTextLineNumber": "741741",
+  "crisisHotlineUsTextLineDesc": "美國 24 小時短信",
+  "@crisisHotlineSnackbarCopied": {
+    "description": "v0.30 round 92: 複製號碼後 snackbar 提示",
+    "placeholders": { "number": { "type": "String" } }
+  },
+  "crisisHotlineSnackbarCopied": "已複製: {number}",
   "setupLegalAgeAttestation": "本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。",
   "moodCbtLevelLabel3": "3 欄",
   "moodCbtLevelLabel5": "5 欄",

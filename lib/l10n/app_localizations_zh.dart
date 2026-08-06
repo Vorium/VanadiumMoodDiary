@@ -2382,12 +2382,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeFabTop => '回到顶端';
 
   @override
-  String get homeFabHotlineTodo => '紧急热线入口建设中';
-
-  @override
-  String get homeFabTopTodo => '回到顶端(开发中)';
-
-  @override
   String get trendChip30Day => '近 30 天';
 
   @override
@@ -2428,6 +2422,86 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get crisisHotlineMoDesc => '中国澳门 24 小时';
+
+  @override
+  String get crisisHotlineTitle => '紧急心理援助热线';
+
+  @override
+  String get crisisHotlineSubtitle => '如果你或身边的人正在经历心理危机, 请拨打以下热线';
+
+  @override
+  String get crisisHotlineCn2Label => '全国 24 小时免费心理援助热线';
+
+  @override
+  String get crisisHotlineCn2Number => '800-810-1117';
+
+  @override
+  String get crisisHotlineCn2Desc => '中国大陆 24 小时免费拨打';
+
+  @override
+  String get crisisHotlineUsLabel => '988 Suicide & Crisis Lifeline';
+
+  @override
+  String get crisisHotlineUsNumber => '988';
+
+  @override
+  String get crisisHotlineUsDesc => '美国 / 加拿大 24 小时英文 / 西班牙文';
+
+  @override
+  String get crisisHotlineIntlLabel => '国际通用';
+
+  @override
+  String get crisisHotlineIntlDesc => '请联系当地急救或心理援助机构';
+
+  @override
+  String get crisisHotlineIntlNumber => '112 / 911';
+
+  @override
+  String get crisisHotlineRegionCn => '中国大陆';
+
+  @override
+  String get crisisHotlineRegionTw => '中国台湾';
+
+  @override
+  String get crisisHotlineRegionHk => '中国香港';
+
+  @override
+  String get crisisHotlineRegionUs => '美国 / 加拿大';
+
+  @override
+  String get crisisHotlineRegionIntl => '国际通用';
+
+  @override
+  String get crisisHotlineCnBeijingLabel => '北京心理危机研究与干预中心';
+
+  @override
+  String get crisisHotlineCnBeijingNumber => '010-82951332';
+
+  @override
+  String get crisisHotlineCnBeijingDesc => '北京 24 小时';
+
+  @override
+  String get crisisHotlineTw1995Label => '生命线 (24 小时)';
+
+  @override
+  String get crisisHotlineTw1995Number => '1995';
+
+  @override
+  String get crisisHotlineTw1995Desc => '中国台湾 24 小时';
+
+  @override
+  String get crisisHotlineUsTextLineLabel => 'Crisis Text Line (text HOME)';
+
+  @override
+  String get crisisHotlineUsTextLineNumber => '741741';
+
+  @override
+  String get crisisHotlineUsTextLineDesc => '美国 24 小时短信';
+
+  @override
+  String crisisHotlineSnackbarCopied(String number) {
+    return '已复制: $number';
+  }
 
   @override
   String get setupLegalAgeAttestation =>
@@ -5678,12 +5752,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeFabTop => '回到頂端';
 
   @override
-  String get homeFabHotlineTodo => '緊急熱線入口建設中';
-
-  @override
-  String get homeFabTopTodo => '回到頂端(開發中)';
-
-  @override
   String get trendChip30Day => '近 30 天';
 
   @override
@@ -5724,6 +5792,86 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get crisisHotlineMoDesc => '中國澳門 24 小時';
+
+  @override
+  String get crisisHotlineTitle => '緊急心理援助熱線';
+
+  @override
+  String get crisisHotlineSubtitle => '如果你或身邊的人正在經歷心理危機, 請撥打以下熱線';
+
+  @override
+  String get crisisHotlineCn2Label => '全國 24 小時免費心理援助熱線';
+
+  @override
+  String get crisisHotlineCn2Number => '800-810-1117';
+
+  @override
+  String get crisisHotlineCn2Desc => '中國大陸 24 小時免費撥打';
+
+  @override
+  String get crisisHotlineUsLabel => '988 Suicide & Crisis Lifeline';
+
+  @override
+  String get crisisHotlineUsNumber => '988';
+
+  @override
+  String get crisisHotlineUsDesc => '美國 / 加拿大 24 小時英文 / 西班牙文';
+
+  @override
+  String get crisisHotlineIntlLabel => '國際通用';
+
+  @override
+  String get crisisHotlineIntlDesc => '請聯絡當地急救或心理援助機構';
+
+  @override
+  String get crisisHotlineIntlNumber => '112 / 911';
+
+  @override
+  String get crisisHotlineRegionCn => '中國大陸';
+
+  @override
+  String get crisisHotlineRegionTw => '中國臺灣';
+
+  @override
+  String get crisisHotlineRegionHk => '中國香港';
+
+  @override
+  String get crisisHotlineRegionUs => '美國 / 加拿大';
+
+  @override
+  String get crisisHotlineRegionIntl => '國際通用';
+
+  @override
+  String get crisisHotlineCnBeijingLabel => '北京心理危機研究與干預中心';
+
+  @override
+  String get crisisHotlineCnBeijingNumber => '010-82951332';
+
+  @override
+  String get crisisHotlineCnBeijingDesc => '北京 24 小時';
+
+  @override
+  String get crisisHotlineTw1995Label => '生命線 (24 小時)';
+
+  @override
+  String get crisisHotlineTw1995Number => '1995';
+
+  @override
+  String get crisisHotlineTw1995Desc => '中國臺灣 24 小時';
+
+  @override
+  String get crisisHotlineUsTextLineLabel => 'Crisis Text Line (text HOME)';
+
+  @override
+  String get crisisHotlineUsTextLineNumber => '741741';
+
+  @override
+  String get crisisHotlineUsTextLineDesc => '美國 24 小時短信';
+
+  @override
+  String crisisHotlineSnackbarCopied(String number) {
+    return '已複製: $number';
+  }
 
   @override
   String get setupLegalAgeAttestation =>

@@ -2507,12 +2507,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeFabTop => 'Back to top';
 
   @override
-  String get homeFabHotlineTodo => 'Hotline entry coming soon';
-
-  @override
-  String get homeFabTopTodo => 'Scroll-to-top coming soon';
-
-  @override
   String get trendChip30Day => 'Last 30 days';
 
   @override
@@ -2554,6 +2548,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get crisisHotlineMoDesc => 'Macau 24h';
+
+  @override
+  String get crisisHotlineTitle => 'Crisis & Mental Health Hotlines';
+
+  @override
+  String get crisisHotlineSubtitle =>
+      'If you or someone you know is in crisis, please call one of the hotlines below';
+
+  @override
+  String get crisisHotlineCn2Label =>
+      'China National 24h Toll-free Mental Health Hotline';
+
+  @override
+  String get crisisHotlineCn2Number => '800-810-1117';
+
+  @override
+  String get crisisHotlineCn2Desc => 'Mainland China 24h toll-free';
+
+  @override
+  String get crisisHotlineUsLabel => '988 Suicide & Crisis Lifeline';
+
+  @override
+  String get crisisHotlineUsNumber => '988';
+
+  @override
+  String get crisisHotlineUsDesc => 'US/Canada 24h English/Spanish';
+
+  @override
+  String get crisisHotlineIntlLabel => 'International';
+
+  @override
+  String get crisisHotlineIntlDesc =>
+      'Please contact local emergency services or mental health organization';
+
+  @override
+  String get crisisHotlineIntlNumber => '112 / 911';
+
+  @override
+  String get crisisHotlineRegionCn => 'Mainland China';
+
+  @override
+  String get crisisHotlineRegionTw => 'Taiwan';
+
+  @override
+  String get crisisHotlineRegionHk => 'Hong Kong';
+
+  @override
+  String get crisisHotlineRegionUs => 'USA / Canada';
+
+  @override
+  String get crisisHotlineRegionIntl => 'International';
+
+  @override
+  String get crisisHotlineCnBeijingLabel =>
+      'Beijing Suicide Research & Prevention Center';
+
+  @override
+  String get crisisHotlineCnBeijingNumber => '010-82951332';
+
+  @override
+  String get crisisHotlineCnBeijingDesc => 'Beijing 24h';
+
+  @override
+  String get crisisHotlineTw1995Label => 'Taiwan Lifeline (24h)';
+
+  @override
+  String get crisisHotlineTw1995Number => '1995';
+
+  @override
+  String get crisisHotlineTw1995Desc => 'Taiwan 24h';
+
+  @override
+  String get crisisHotlineUsTextLineLabel => 'Crisis Text Line (text HOME)';
+
+  @override
+  String get crisisHotlineUsTextLineNumber => '741741';
+
+  @override
+  String get crisisHotlineUsTextLineDesc => 'US 24h text';
+
+  @override
+  String crisisHotlineSnackbarCopied(String number) {
+    return 'Copied: $number';
+  }
 
   @override
   String get setupLegalAgeAttestation =>

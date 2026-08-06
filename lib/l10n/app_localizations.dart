@@ -4367,18 +4367,6 @@ abstract class AppLocalizations {
   /// **'回到顶端'**
   String get homeFabTop;
 
-  /// No description provided for @homeFabHotlineTodo.
-  ///
-  /// In zh, this message translates to:
-  /// **'紧急热线入口建设中'**
-  String get homeFabHotlineTodo;
-
-  /// No description provided for @homeFabTopTodo.
-  ///
-  /// In zh, this message translates to:
-  /// **'回到顶端(开发中)'**
-  String get homeFabTopTodo;
-
   /// No description provided for @trendChip30Day.
   ///
   /// In zh, this message translates to:
@@ -4462,6 +4450,162 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'中国澳门 24 小时'**
   String get crisisHotlineMoDesc;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 标题
+  ///
+  /// In zh, this message translates to:
+  /// **'紧急心理援助热线'**
+  String get crisisHotlineTitle;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'如果你或身边的人正在经历心理危机, 请拨打以下热线'**
+  String get crisisHotlineSubtitle;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h 免费
+  ///
+  /// In zh, this message translates to:
+  /// **'全国 24 小时免费心理援助热线'**
+  String get crisisHotlineCn2Label;
+
+  /// No description provided for @crisisHotlineCn2Number.
+  ///
+  /// In zh, this message translates to:
+  /// **'800-810-1117'**
+  String get crisisHotlineCn2Number;
+
+  /// No description provided for @crisisHotlineCn2Desc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国大陆 24 小时免费拨打'**
+  String get crisisHotlineCn2Desc;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): US 988 Lifeline
+  ///
+  /// In zh, this message translates to:
+  /// **'988 Suicide & Crisis Lifeline'**
+  String get crisisHotlineUsLabel;
+
+  /// No description provided for @crisisHotlineUsNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'988'**
+  String get crisisHotlineUsNumber;
+
+  /// No description provided for @crisisHotlineUsDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'美国 / 加拿大 24 小时英文 / 西班牙文'**
+  String get crisisHotlineUsDesc;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): 国际通用 fallback
+  ///
+  /// In zh, this message translates to:
+  /// **'国际通用'**
+  String get crisisHotlineIntlLabel;
+
+  /// No description provided for @crisisHotlineIntlDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'请联系当地急救或心理援助机构'**
+  String get crisisHotlineIntlDesc;
+
+  /// v0.30 round 92: 国际通用紧急号码
+  ///
+  /// In zh, this message translates to:
+  /// **'112 / 911'**
+  String get crisisHotlineIntlNumber;
+
+  /// v0.30 round 92: crisis_hotline_page 5 地区 section title
+  ///
+  /// In zh, this message translates to:
+  /// **'中国大陆'**
+  String get crisisHotlineRegionCn;
+
+  /// No description provided for @crisisHotlineRegionTw.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国台湾'**
+  String get crisisHotlineRegionTw;
+
+  /// No description provided for @crisisHotlineRegionHk.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国香港'**
+  String get crisisHotlineRegionHk;
+
+  /// No description provided for @crisisHotlineRegionUs.
+  ///
+  /// In zh, this message translates to:
+  /// **'美国 / 加拿大'**
+  String get crisisHotlineRegionUs;
+
+  /// No description provided for @crisisHotlineRegionIntl.
+  ///
+  /// In zh, this message translates to:
+  /// **'国际通用'**
+  String get crisisHotlineRegionIntl;
+
+  /// v0.30 round 92: 北京心理危机研究与干预中心
+  ///
+  /// In zh, this message translates to:
+  /// **'北京心理危机研究与干预中心'**
+  String get crisisHotlineCnBeijingLabel;
+
+  /// No description provided for @crisisHotlineCnBeijingNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'010-82951332'**
+  String get crisisHotlineCnBeijingNumber;
+
+  /// No description provided for @crisisHotlineCnBeijingDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'北京 24 小时'**
+  String get crisisHotlineCnBeijingDesc;
+
+  /// v0.30 round 92: 台湾生命线 (1995)
+  ///
+  /// In zh, this message translates to:
+  /// **'生命线 (24 小时)'**
+  String get crisisHotlineTw1995Label;
+
+  /// No description provided for @crisisHotlineTw1995Number.
+  ///
+  /// In zh, this message translates to:
+  /// **'1995'**
+  String get crisisHotlineTw1995Number;
+
+  /// No description provided for @crisisHotlineTw1995Desc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国台湾 24 小时'**
+  String get crisisHotlineTw1995Desc;
+
+  /// v0.30 round 92: US Crisis Text Line (741741)
+  ///
+  /// In zh, this message translates to:
+  /// **'Crisis Text Line (text HOME)'**
+  String get crisisHotlineUsTextLineLabel;
+
+  /// No description provided for @crisisHotlineUsTextLineNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'741741'**
+  String get crisisHotlineUsTextLineNumber;
+
+  /// No description provided for @crisisHotlineUsTextLineDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'美国 24 小时短信'**
+  String get crisisHotlineUsTextLineDesc;
+
+  /// v0.30 round 92: 复制号码后 snackbar 提示
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制: {number}'**
+  String crisisHotlineSnackbarCopied(String number);
 
   /// No description provided for @setupLegalAgeAttestation.
   ///
