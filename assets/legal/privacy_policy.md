@@ -27,6 +27,28 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 
 > **v0.27 未来规划**: 失联通知功能尚在规划中,本版本**不实际触发**任何通知。联系人的配置仅作为**预存储**,待失联通知功能正式启用时,App 才会依据《PIPL》§23 要求在设置流程中向用户索取"已告知联系人"勾选 + 单独告知弹窗作为合法依据。
 
+## 0.6 v0.30 业务暂停 (R93 阶段 2 audit-fixes)
+
+依据 R93 阶段 2 集中修复 (2026-08-06 完成),**7 项未真接业务**已用 [FeatureFlag] 守护 + UI 完全 hidden (SizeBox.shrink, 非 disabled):
+
+| # | 业务 | 业务暂停原因 | FeatureFlag |
+|---|------|--------------|-------------|
+| 1 | IAP 8 元买断 (升级到 Pro 商业卡) | App Store Connect productId 未真接, Apple 2.1 拒 (未提供其他购买方式) | `FeatureFlags.iapEnabled` |
+| 2 | 失联通知 / 紧急联系人 SMS | AliyunSmsProvider 阿里云 SMS 未真接 (法务模板审核 + AccessKey 1-2 月), PIPL §17 上架 blocker | `FeatureFlags.emergencyContactEnabled` |
+| 3 | 5 厂商 push (米/华/OPPO/vivo/魅族) | 5 厂商 SDK 接入未真接 (1-2 月审核), iOS/Android 上架 blocker | `FeatureFlags.fiveVendorPushEnabled` |
+| 4 | EmailService 邮件导出 (SendGrid) | SendGrid API key + 法务模板审核未真接 (1-2 月), PIPL §13 单独同意链 | `FeatureFlags.emailServiceEnabled` |
+| 5 | vent + mood audio 录音 | 录音业务闭环不全 (storage / export 业务暂停), 业务真接时翻 true | `FeatureFlags.ventAudioEnabled` |
+| 6 | PHQ-9 / GAD-7 量表 (en / zh_Hant) | 16 题 + 严重度 + 危机电话翻译不完整 (法律责任), i18n 走 fallback key | `FeatureFlags.phqGad7I18nEnabled` |
+| 7 | Android BootReceiver | v0.28 WorkManager 完善前 (设备重启后触发可能 crash) | `FeatureFlags.bootReceiverEnabled` |
+
+**用户影响**: 上述 7 项功能在设置页 / 主页 / 量表中心 / vent / mood 入口全部 hidden。数据模型 / Repository / 业务代码全部保留, 业务真接后翻 flag = 立即恢复。
+
+**数据保护**: 业务暂停期间, 用户的紧急联系人 / 录音 / 邮件等数据**仍按 §1 / §3 描述本地加密存储**, 不上传不跨境, 业务恢复时无需迁移。
+
+> 详见 `docs/CHANGELOG.md` `[0.30.0]` R93 entry + `lib/core/data/feature_flags.dart` 8 项 flag 集中定义。
+
+
+
 ## 1. 我们收集哪些信息
 
 | 信息类别 | 具体字段 | 收集目的 | 存储位置 | 敏感 |
@@ -194,7 +216,8 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 | v0.27 R69 | 2026-08-01 | 草稿 (P0 集中修复) | (1) 删除顶部 "TODO 律师过审" banner, 转本段修订历史; (2) 失联通知 4 文档 wording 改"规划中,本版本未启用"; (3) §192 紧急联系人回复 Y 确认 ❌ TODO 改 ⏸ 暂停 |
 | v0.27 R83 | 2026-08-02 | 草稿 (律师审核 ⚠️ 集中修复) | (1) §0.5 紧急联系人告知改"未来规划,联系人配置仅为预存储"; (2) §3 信息的共享删除失联通知触发具体字段列表; (3) §7 第三方依赖改 22 行 SDK 表格 + IAP 真实披露(购买票据 + 应用 ID); (4) §10 未成年人保护 14-18 措辞改严正声明(本人郑重承诺...); (5) §11 跨境数据传输整段改"未来规划,本版本无跨境 PII 传输实际场景"; (6) §12 单独同意实现进度整段改"功能规划中,不在 v0.27 实现" |
 | v0.28+ | 待定 | **TODO (上 store 前必须由专业律师过审)** | 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换 + 律师过审 + 同步到官网隐私 URL (https://chroniccare.app/privacy) + 重新走用户同意流程刷 `privacyPolicyVersion` 字段 |
+| v0.30 R93 | 2026-08-06 | 草稿 (R93 阶段 2 集中隐藏) | 加 §0.6 "v0.30 业务暂停" section: 7 项未真接业务 (IAP 商业卡 / 失联通知 / 5 厂商 push / EmailService / vent + mood 录音 / PHQ-9 / GAD-7 / BootReceiver) 已用 FeatureFlag 隐藏, 业务暂停期间完全 hidden (Apple 2.1 + PIPL §17 + 法律责任) |
 
 **集中器**: `docs/SPRINT1_LEGAL_TODO.md` / `docs/LEGACY_API_NOTES.md` (软隐藏决策)
 
-**最后更新**: 2026-08-02 (v0.27 round 83 — 律师审核 ⚠️ 集中修复,§0.5/§3/§7/§10/§11/§12 6 处措辞修订)
+**最后更新**: 2026-08-06 (v0.30 round 93 — §0.6 业务暂停 7 项 FeatureFlag 隐藏策略)
