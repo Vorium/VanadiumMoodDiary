@@ -155,6 +155,15 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     bool saving = false;
+    String? phoneError;
+    // v0.30 round 95 (sub-spec 8 task 18): inline phone validation
+    // 修前流程 5 步: 点 add → 输姓名 → 输电话 → 点保存 → 同意 consent
+    // 修后流程 3 步 (emil "3 tap 抵达"):
+    //   1. 点 add → 弹窗, autofocused 姓名输入框
+    //   2. 输姓名 + 输电话 (内联校验, 无 snackbar 中断), 点保存 → consent
+    //   3. 点同意 consent → 保存
+    // 关键: phone 校验从 "snackbar 提示 + 退出保存" 改成 "TextField.errorText 即时"
+    // (emil design — 输完即知, 不打断流)
 
     try {
       await showDialog<void>(
@@ -168,6 +177,8 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                 children: [
                   TextField(
                     controller: nameController,
+                    autofocus: true,
+                    // v0.30 R95 sub-spec 8 task 18: autofocus 姓名 (emil "3 tap 抵达")
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context).contactNameLabel,
                     ),
@@ -176,9 +187,18 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                   TextField(
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
+                    onChanged: (_) {
+                      // v0.30 R95 sub-spec 8 task 18: inline validation 模式 —
+                      // 输完即清 errorText (不打断流, snackbar-free)
+                      if (phoneError != null) {
+                        setLocal(() => phoneError = null);
+                      }
+                    },
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context).contactPhoneLabel,
                       hintText: '13800138000',
+                      // v0.30 R95 sub-spec 8 task 18: 内联 errorText 替代 snackbar
+                      errorText: phoneError,
                     ),
                   ),
                 ],
@@ -204,11 +224,11 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                           final phone = phoneController.text.trim();
                           if (phone.isEmpty) return;
                           if (!PhoneValidator.isValid(phone)) {
-                            // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
-                            AppSnackBar.showInfo(
-                              ctx,
-                              AppLocalizations.of(ctx).snackbarPhoneInvalid,
-                            );
+                            // v0.30 R95 sub-spec 8 task 18: inline errorText 替代
+                            // snackbar (emil "3 tap 抵达" — snackbar 打断流, 改内
+                            // 联校验后输完即知, 不打断主流程)
+                            setLocal(() => phoneError =
+                                AppLocalizations.of(ctx).snackbarPhoneInvalid);
                             return;
                           }
                           setLocal(() => saving = true);
