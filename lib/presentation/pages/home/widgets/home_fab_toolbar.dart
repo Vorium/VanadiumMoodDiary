@@ -19,6 +19,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
@@ -88,26 +89,34 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
-                    _FabButton(
-                      icon: Icons.phone_in_talk_outlined,
-                      label: l10n.homeFabHotline,
-                      onTap: () {
-                        setState(() => _expanded = false);
-                        // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线入口
-                        // (1 tap 达, B 站'公益热线' 同款)。R75 已备
-                        // hotlineByRegion 6 region + R83.5 partial 5 region
-                        // ARB keys (crisisHotline{Cn,Tw,Hk,Mo,*}Label/Number/Desc)
-                        // + R91 setup_legal_dialog _crisisHotlineSection 4 条
-                        // 已用。R92 改 push `/crisis-hotline` 独立页面
-                        // (5 地区列表 + 800-810-1117 全国)。
-                        //
-                        // 用 context.push (而非 GoRouter.of(context).go):
-                        // push 保留 back stack, 用户返回仍回主页 (go 会
-                        // 替换栈, 失去 home)。
-                        context.push('/crisis-hotline');
-                      },
-                    ),
-                    const SizedBox(height: AppTokens.spacingSm),
+                    // v0.30 round 93 (阶段 2 audit-fixes): 失联通知 / 紧急联系人 SMS
+                    // 业务暂停, 主页 homeFabHotline 走
+                    // [FeatureFlags.emergencyContactEnabled] gate, 完全 hidden
+                    // (R66 阶段一致: 病耻感 + 失联通信业务暂停)。
+                    // homeFabTop (回到顶端) 保留。
+                    if (FeatureFlags.emergencyContactEnabled) ...[
+                      _FabButton(
+                        icon: Icons.phone_in_talk_outlined,
+                        label: l10n.homeFabHotline,
+                        onTap: () {
+                          setState(() => _expanded = false);
+                          // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线入口
+                          // (1 tap 达, B 站'公益热线' 同款)。R75 已备
+                          // hotlineByRegion 6 region + R83.5 partial 5 region
+                          // ARB keys (crisisHotline{Cn,Tw,Hk,Mo,*}Label/Number/Desc)
+                          // + R91 setup_legal_dialog _crisisHotlineSection 4 条
+                          // 已用。R92 改 push `/crisis-hotline` 独立页面
+                          // (5 地区列表 + 800-810-1117 全国)。
+                          //
+                          // 用 context.push (而非 GoRouter.of(context).go):
+                          // push 保留 back stack, 用户返回仍回主页 (go 会
+                          // 替换栈, 失去 home)。
+                          context.push('/crisis-hotline');
+                        },
+                      ),
+                      const SizedBox(height: AppTokens.spacingSm),
+                    ] else
+                      const SizedBox.shrink(),
                     _FabButton(
                       icon: Icons.vertical_align_top,
                       label: l10n.homeFabTop,
