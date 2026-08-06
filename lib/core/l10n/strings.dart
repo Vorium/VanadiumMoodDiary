@@ -35,7 +35,7 @@ class Strings {
   static String emailBody(String userName, int days, {String? override}) {
     if (override != null) return override;
     final name = userName.trim().isEmpty ? '用户' : userName.trim();
-    return '我是 $name，已经 $days 天没在 App 里打卡了。\n'
+    return '我是 $name，已经 $days 天没在本应用里打卡了。\n'
         '请你方便的时候提醒我按时吃药，避免复发。';
   }
 
@@ -55,9 +55,9 @@ class Strings {
   // `emailFooterText({String? override})` 函数供新 caller 走 i18n override。
   // v0.27 round 63 (P1-8 修复): 注释与代码同步 — const 字段 + i18n 函数并存
   // (老 caller 用 const, 新 caller 用函数), 行为不变。
-  static const emailFooter = '这是一条自动通知，由慢病管家 App 发送。\n'
+  static const emailFooter = '这是一条自动通知，由慢病管家发送。\n'
       '本通知不包含任何医疗建议。\n'
-      '如需停止接收，请在 App 设置中修改。';
+      '如需停止接收，请在本应用设置中修改。';
   static String emailFooterText({String? override}) => override ?? emailFooter;
 
   // ============== v0.23 round 39 (P1-9 fix): 通知标题/正文/Channel ==============
@@ -147,7 +147,7 @@ class Strings {
       override ?? '$days 天用药情况';
   static String pdfRecentDays(int days, {String? override}) =>
       override ?? '近 $days 天';
-  static const pdfFooterNotice = '本报告由「慢病管家」App 自动生成 · 本应用不提供医疗建议';
+  static const pdfFooterNotice = '本报告由「慢病管家」自动生成 · 本应用不提供医疗建议';
   static String pdfFooterNoticeText({String? override}) =>
       override ?? pdfFooterNotice;
   static String pdfPageN(int page, int total, {String? override}) =>
