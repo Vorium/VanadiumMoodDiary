@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/assessment_entry.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
@@ -27,13 +28,25 @@ import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 /// 不开新表, 走 check_ins 表 type=`[scale_id]` 跨量表聚合.
 ///
 /// v0.30 R90 Task 6: title 走 l10n.assessmentCenterTitle.
+///
+/// v0.30 round 93 (阶段 2 audit-fixes): PHQ-9 / GAD-7 16 题 i18n 不完整
+/// (en / zh_Hant 法律责任 + 翻译), 走 [FeatureFlags.phqGad7I18nEnabled]
+/// gate, 默认 false 隐藏。保留 8 量表 (ISI / PSS / WHODAS / Level2-* 4 /
+/// ASRM)。
 class AssessmentCenterPage extends ConsumerWidget {
   const AssessmentCenterPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final scales = ref.watch(allScalesProvider);
+    // v0.30 round 93: PHQ-9 / GAD-7 走 [FeatureFlags.phqGad7I18nEnabled] gate,
+    // false 时从 scales 列表过滤掉 (8 量表 → 6 显, 实际 10 → 8)。
+    final allScalesList = ref.watch(allScalesProvider);
+    final scales = FeatureFlags.phqGad7I18nEnabled
+        ? allScalesList
+        : allScalesList
+            .where((s) => s.id != 'phq9' && s.id != 'gad7')
+            .toList();
     final entriesAsync = ref.watch(allAssessmentEntriesProvider);
     final unavailableIds = unavailableScaleIds;
 
@@ -47,7 +60,7 @@ class AssessmentCenterPage extends ConsumerWidget {
     );
   }
 
-  /// 12 张卡片 grid (10 开放 + 2 unavailable)
+  /// 12 张卡片 grid (10 开放 + 2 unavailable, R93 阶段 2 后变 8 + 2 = 10)
   Widget _buildGrid(
     BuildContext context,
     List<AssessmentEntry> entries,
@@ -72,11 +85,16 @@ class AssessmentCenterPage extends ConsumerWidget {
         // entries (page build 已 watch), 12 量表叠加 30 天。
         AssessmentMultiLineChart(
           entries: entries,
+          // v0.30 round 93 (阶段 2 audit-fixes): chart 顶部 chip 列表走
+          // 跟 grid 同一份 filtered scales (PHQ-9 / GAD-7 hidden 时 chip 也隐藏)。
+          scaleIds: scales.map((s) => s.id).toList(),
           chartHeight: 80,
         ),
         const SizedBox(height: AppTokens.spacingMd),
 
-        // 10 开放量表 + 2 unavailable
+        // v0.30 round 93 (阶段 2 audit-fixes): 开放量表数从 10 → 8
+        // (PHQ-9 / GAD-7 隐藏, 走 [FeatureFlags.phqGad7I18nEnabled] gate)
+        // + 2 unavailable = 总 10 卡片 (原 12)。
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
