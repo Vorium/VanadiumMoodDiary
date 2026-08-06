@@ -28,6 +28,7 @@ import 'package:go_router/go_router.dart';
 import 'package:record/record.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -442,15 +443,22 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             const SizedBox(height: AppTokens.spacingMd),
 
             // 录音 / 播放区域
-            VentAudioSection(
-              isRecording: _isRecording,
-              audioPath: _audioPath,
-              audioDurationSec: _audioDurationSec,
-              isPlaying: _isPlaying,
-              onToggleRecord: _toggleRecord,
-              onTogglePlay: _togglePlay,
-              onReRecord: _reRecord,
-            ),
+            // v0.30 round 93 (阶段 2 audit-fixes): vent audio 录音业务闭环不全
+            // (storage / export 业务暂停), 走 [FeatureFlags.ventAudioEnabled]
+            // gate, 默认 false 隐藏。VentTextInput 文字输入保留 (用户主路径
+            // 不依赖 audio)。
+            if (FeatureFlags.ventAudioEnabled)
+              VentAudioSection(
+                isRecording: _isRecording,
+                audioPath: _audioPath,
+                audioDurationSec: _audioDurationSec,
+                isPlaying: _isPlaying,
+                onToggleRecord: _toggleRecord,
+                onTogglePlay: _togglePlay,
+                onReRecord: _reRecord,
+              )
+            else
+              const SizedBox.shrink(),
 
             const SizedBox(height: AppTokens.spacingMd),
 

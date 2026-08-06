@@ -26,6 +26,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 通知自检卡
@@ -249,7 +250,14 @@ class _NotificationStatusCardState
           ),
           const Divider(height: 1),
           // OEM 引导 — 用 ExpansionTile 折叠，不抢主屏空间
-          const _OemBackgroundHint(),
+          // v0.30 round 93 (阶段 2 audit-fixes): 走
+          // [FeatureFlags.fiveVendorPushEnabled] gate, 5 厂商 push SDK 接入前
+          // 完全 hidden (业务暂停, 5 厂商引导文字不适配, 用户在国产 ROM 上收不到
+          // 通知时可参考主屏"测试通知"自检卡)。
+          if (FeatureFlags.fiveVendorPushEnabled)
+            const _OemBackgroundHint()
+          else
+            const SizedBox.shrink(),
         ],
       ),
     );

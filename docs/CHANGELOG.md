@@ -2,6 +2,54 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-06 (R93 — 6 视角审计修复 sub-spec 9: 7 项未真接业务 FeatureFlag 守护 + UI hidden + 文档一致性 + 36 张 fastlane 占位清理)
+
+R93 目标: 按 6 视角审计 (R92 阶段 1 后) 暴露的 P0 上架 blocker (Apple 2.1 / PIPL §17 / emil 商业卡 / OEM push 业务暂停) + 业务闭环不全 (audio / 翻译), 把所有"需要真接的内容"先用 `FeatureFlag` 守护 + UI 完全 hidden (`SizeBox.shrink`, 非 disabled)。跳过所有外部资源 (签名 / 域名 / 法务 / 阿里云 / Mac / 5 厂商 push), 只跑纯代码 / 文档 / 测试改动。
+
+**7 task** (28 commit + 6 report, baseline 1636 → 1672 pass, +36 R93 tests, 0 regression, 1 pre-existing fail mood_period_aggregator R91 集成时遗留, 跟 R93 无关):
+
+- **Task 1 (R93 v1 保留)**: 拆 medication_calendar god page (642→209 行, 6 commit +10 tests) — CalendarGrid + DayDetail + Legend sub-widget, cell tap → day detail
+- **Task 2 (R93 v2 调整)**: `feature_flags.dart` 从 4 flag 扩到 8 flag, 8 项 `_prodXxxEnabled = const false` 编译期锁定 (bootReceiver true→false, 加 4 新: AliyunSms/EmailService/FiveVendorPush/VentAudio), 11 case test + 修 R67 老 test 适配
+- **Task 3 (R93 v2 调整)**: 设置页 4 section hidden — IAP 商业卡 (iapEnabled) + 联系人 section (emergencyContactEnabled) + 5 厂商 OEM 引导 (fiveVendorPushEnabled) + 邮件预览 (emailServiceEnabled), 5 widget test + 修 2 老 test (notification_status_card_round20 + settings_page_round45)
+- **Task 4 (R93 v2 调整)**: 主页 homeFabHotline hidden (emergencyContactEnabled), 联系人入口 = task 3 已 hidden + setup wizard step 1 保留, 2 widget test + 修 2 老 test (home_emil_round81 + home_fab_toolbar_round92)
+- **Task 5 (R93 v2 调整)**: AssessmentCenterPage 8 开放量表 (PHQ-9 / GAD-7 hidden, 保留 ISI/PSS/WHODAS/Level2-*/ASRM, phqGad7I18nEnabled gate), chart 顶部 chip 跟 grid 走同一份 filtered scales, 2 widget test + 修 1 老 test (assessment_center_page_round90)
+- **Task 6 (R93 v2 调整)**: vent_compose_page VentAudioSection + mood_recorder_page MoodRecorder mic 录音 hidden (ventAudioEnabled gate, vent_audio / mood_audio 共用同一 flag), 3 test (mood widget test 2 case + vent sanity 1 case)
+- **Task 7 (R93 v2 调整)**: 3 法律 md 加 R93 阶段 2 业务暂停说明 (privacy_policy §0.6 / sensitive_data_consent 修订历史 / user_agreement 修订历史) + README 红 banner (7 项 FeatureFlag 列表) + DEPLOYMENT 阶段 5/6/7 补全 (Apple metadata 模板 + 上架前 checklist + 部署监控) + 删 36 张 iOS 67 字节占位 png (Apple 拒审点) + doc consistency test 3 case 守门
+
+**总 R93 影响**:
+- 7 task × 5 task (task 1 + task 2-7) = 6 task 实际 + 1 task 1 (R93 v1 保留拆 god page)
+- 28 commit: 1 doc (R93 v2 plan/progress) + 1 brief + 5 code (R93 v2) + 1 老 test 修 + 1 R93 test + 6 report
+- 36 R93 新 tests: 11 FeatureFlags + 5 settings 4 section + 2 homeFabHotline + 2 PHQ-9/GAD-7 + 3 vent/mood audio + 3 doc consistency
+- 8 业务隐藏 (bootReceiver + IAP + 失联 + 5 厂商 + Email + vent+mood audio + PHQ-9/GAD-7)
+- 1 老 test 适配 (settings_page_round45 走 enableForTest, 跟 R67 兼容)
+- 7 个老 test 修 (feature_flags_round67 bootReceiver + notification_status_card_round20 OEM + settings_page_round45 contacts + home_emil_round81 hotline + home_fab_toolbar_round92 hotline + assessment_center_page_round90 PHQ-9/GAD-7) — 全部走 setUp 翻 enableForTest / setXxxEnabledForTest
+- 36 张 fastlane iOS 67 字节占位 png 删 (Apple 拒审点)
+- 17 守门员 (16 .py + 1 .dart) 全绿
+
+**R93 v1 → v2 策略调整** (2026-08-06):
+- v1 范围: 20 项 M 难度, 5-7 task, 25-35 commit, 1-2 周 (拆 god page + 主页重排 + 业务加固)
+- v2 范围: 7 task 集中隐藏未真接业务, 12-18 commit, 3-5 天 (跳过拆 god page, task 1 保留)
+- v2 理由: 拆 god page 风险大 (1000+ 行 sub-widget 移动), 隐藏业务 1 个 FeatureFlag + UI hidden 即可, 风险低
+
+**业务真接路径** (1.0+ 阶段):
+- IAP 真接 (App Store Connect productId)
+- 阿里云 SMS 真接 (法务模板审核 + AccessKey)
+- EmailService 真接 SendGrid (法务模板审核 + API key)
+- 5 厂商 push SDK 接入 (米/华/OPPO/vivo/魅族 1-2 月审核)
+- PHQ-9 / GAD-7 en / zh_Hant 翻译完整 (法务 + 临床审核)
+- Android WorkManager 完善 (BootReceiver)
+- 3 法律 md 律师过审
+- 4 store 4 套独立 metadata + 截图
+
+**留待 R95+ 排期**:
+- 拆 data_management_section 606 行 god section (R93 v1 留 R95+)
+- 158 处 TextStyle + 162 处 EdgeInsets 残留 → 集中器化
+- 50+ Duration + 50+ Curves 残留 → AppMotion token 化
+- 主页信息架构重排 / 紧急联系人 5→3 步 / 数据导出 5→3 步
+- 主页 emotion hero + 设置 4 group 重构
+- 30+ 处硬编码中文 → l10n (R92 已修 31, 剩 30)
+- 8 量表 PHQ-9 / GAD-7 16 题 i18n 真接
+
 ## [0.30.0] - 2026-08-06 (R92 — 6 视角审计修复 sub-spec 8: 410KB 审计报告 → 20 项 P0 上架 blocker + 3 半成品 widget + 文档同步 + vent contentText DROP + catch 集中器化 + god page 拆)
 
 > R92 目标: 按 6 视角审计 (emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-spec 总 410KB / 6.5 万字) 合并的阶段 1 修复,跳过所有外部资源 (签名 / 域名 / 法务 / 阿里云 / Mac / 5 厂商 push),只跑纯代码 / 文档 / 测试 / 架构改动。

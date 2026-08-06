@@ -1209,6 +1209,31 @@
   "medsCalendarNoScheduleAction": "Add schedule",
   "medsCalendarLegendLabel": "Adherence:",
   "medsCalendarLegendMissed": "Missed",
+  "medsCalendarDayDetailTitle": "Check-ins on {date}",
+  "@medsCalendarDayDetailTitle": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "medsCalendarDayDetailEmpty": "No check-ins yet on this day",
+  "medsCalendarDayDetailAddLog": "Add check-in",
+  "medsCalendarDayDetailAddLogHint": "Add a missing dose for today",
+  "medsCalendarDayDetailLogItem": "{time} · {name}",
+  "@medsCalendarDayDetailLogItem": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "medsCalendarLegendPartial": "< 50%",
+  "medsCalendarLegendAlmost": "< 100%",
+  "medsCalendarLegendFull": "100%",
   "window7Subtitle": "Within a week (good for weekly visits)",
   "window14Subtitle": "Within two weeks (recommended)",
   "window30Subtitle": "Within a month (good for monthly reviews)",

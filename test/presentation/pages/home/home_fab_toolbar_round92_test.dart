@@ -16,6 +16,7 @@
 //   (用 ProviderScope 包裹让 ConsumerWidget build 起来), 走 GoRouter 看
 //   /crisis-hotline 路由 push; jumpTo 滚到底, 然后点 "回到顶端" 验回 0。
 
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
+  // v0.30 round 93: 老 test 假设 homeFabHotline 总渲染, R93 改
+  // emergencyContactEnabled=false 后 hidden, setUp 翻 enableForTest 让老 test
+  // 不破 (跟 settings_page_round45 / home_emil_round81 修法一致)。
+  setUp(() {
+    FeatureFlags.enableForTest();
+  });
+  tearDown(() {
+    FeatureFlags.resetForTest();
+  });
+
   /// 800x600 模拟小屏 (主屏内容超出视口, 必然要滚, maxScrollExtent > 0)
   void setBigView(WidgetTester tester) {
     tester.view.physicalSize = const Size(800, 600);

@@ -25,6 +25,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
@@ -318,7 +319,15 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                     const SizedBox(height: AppTokens.spacingSm),
                     MoodTextInput(controller: _noteController),
                     const SizedBox(height: AppTokens.spacingSm),
-                    MoodRecorder(controller: _recorderController),
+                    // v0.30 round 93 (阶段 2 audit-fixes): mood audio 录音
+                    // 业务闭环不全, 走 [FeatureFlags.ventAudioEnabled] gate,
+                    // 默认 false 隐藏。MoodTextInput 文字输入保留 (用户主路径
+                    // 不依赖 audio)。MoodTags + PeriodField + CbtThreeColumnMode
+                    // 也保留 (核心情绪日记业务)。
+                    if (FeatureFlags.ventAudioEnabled)
+                      MoodRecorder(controller: _recorderController)
+                    else
+                      const SizedBox.shrink(),
                     const SizedBox(height: AppTokens.spacingSm),
                     MoodSubmitPanel(
                       saving: _saving,

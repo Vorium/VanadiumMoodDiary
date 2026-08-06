@@ -1982,6 +1982,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medsCalendarLegendMissed => 'Missed';
 
   @override
+  String medsCalendarDayDetailTitle(String date) {
+    return 'Check-ins on $date';
+  }
+
+  @override
+  String get medsCalendarDayDetailEmpty => 'No check-ins yet on this day';
+
+  @override
+  String get medsCalendarDayDetailAddLog => 'Add check-in';
+
+  @override
+  String get medsCalendarDayDetailAddLogHint => 'Add a missing dose for today';
+
+  @override
+  String medsCalendarDayDetailLogItem(String time, String name) {
+    return '$time · $name';
+  }
+
+  @override
+  String get medsCalendarLegendPartial => '< 50%';
+
+  @override
+  String get medsCalendarLegendAlmost => '< 100%';
+
+  @override
+  String get medsCalendarLegendFull => '100%';
+
+  @override
   String get window7Subtitle => 'Within a week (good for weekly visits)';
 
   @override

@@ -5,6 +5,7 @@
 // 2. 三个主按钮存在（测试通知 / 查看已排队 / 国产手机引导）
 // 3. pendingCount 三种状态（正常 / 0 / -1）的 UI 显示
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,6 +73,15 @@ Widget _wrap(_StubNotificationService service) {
 }
 
 void main() {
+  // v0.30 round 93 (阶段 2 audit-fixes): 老 test 假设 OEM 引导总是渲染,
+  // R93 改 fiveVendorPushEnabled=false 后 hidden, setUp 翻起来让老 test 不破
+  setUp(() {
+    FeatureFlags.setFiveVendorPushEnabledForTest(true);
+  });
+  tearDown(() {
+    FeatureFlags.resetForTest();
+  });
+
   testWidgets('mobile 模式显示完整 card（3 个入口）', (tester) async {
     _setBigView(tester);
     final service = _StubNotificationService(pendingToReturn: 5);
@@ -85,7 +95,7 @@ void main() {
     // 三个主按钮
     expect(find.text('测试通知'), findsOneWidget);
     expect(find.text('查看已排队通知'), findsOneWidget);
-    // OEM 引导折叠
+    // OEM 引导折叠 (R93 阶段 2: fiveVendorPushEnabled gate 翻 true 才能渲染)
     expect(find.text('国产手机没收到通知？'), findsOneWidget);
   });
 

@@ -13,7 +13,14 @@
 // - AssessmentCenterCard 内部用 context.push 跳路由, 走 go_router 实际跳
 //
 // TDD: 本文件先写 → 跑失败 (page / provider not found) → 实施 → 跑 4/4 pass
+//
+// v0.30 round 93 (阶段 2 audit-fixes): PHQ-9 / GAD-7 走
+// [FeatureFlags.phqGad7I18nEnabled] gate, 默认 false 隐藏 2 量表。
+// 老 test 假设 10 开放 + 2 unavailable = 12 Card, setUp 翻
+// setPhqGad7I18nEnabledForTest(true) 让老 test 不破 (跟其他老 test
+// 修法一致)。
 
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,6 +32,14 @@ import 'package:chroniccare/presentation/pages/assessment/assessment_center_page
 import 'package:chroniccare/presentation/providers/assessment_providers.dart';
 
 void main() {
+  setUp(() {
+    // v0.30 round 93: 翻 phqGad7I18nEnabled=true 让老 test 12 Card 不破
+    FeatureFlags.setPhqGad7I18nEnabledForTest(true);
+  });
+  tearDown(() {
+    FeatureFlags.resetForTest();
+  });
+
   // helper: 构造测试 widget
   //
   // 用 go_router 实跳路由, 走 onTap 实际跳 /assessment/<scaleId>

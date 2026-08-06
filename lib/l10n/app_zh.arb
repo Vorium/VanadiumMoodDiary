@@ -1255,6 +1255,31 @@
   "medsCalendarNoScheduleAction": "去设置时间",
   "medsCalendarLegendLabel": "依从：",
   "medsCalendarLegendMissed": "漏服",
+  "medsCalendarDayDetailTitle": "{date} 的打卡",
+  "@medsCalendarDayDetailTitle": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "medsCalendarDayDetailEmpty": "当天还没有打卡",
+  "medsCalendarDayDetailAddLog": "补打卡",
+  "medsCalendarDayDetailAddLogHint": "为今天补一次服药记录",
+  "medsCalendarDayDetailLogItem": "{time} · {name}",
+  "@medsCalendarDayDetailLogItem": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "medsCalendarLegendPartial": "< 50%",
+  "medsCalendarLegendAlmost": "< 100%",
+  "medsCalendarLegendFull": "100%",
   "window7Subtitle": "一周内（适合周复诊）",
   "window14Subtitle": "两周内（推荐）",
   "window30Subtitle": "一个月内（适合月度评估）",

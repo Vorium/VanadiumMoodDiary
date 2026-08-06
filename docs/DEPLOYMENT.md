@@ -367,3 +367,147 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 
 > 上 store 路径: 4 store 缺一不可 + 5 厂商 push 缺一不可 + 法务 review 缺一不可。
 > 估总: 3-6 月 (法务 + 厂商审核是瓶颈)。- 多语言
+
+---
+
+## 阶段 5：Apple 完整 metadata 模板 (R93 阶段 2 集中补全)
+
+### 5.1 iOS App Store Connect metadata
+
+**App Information**
+- App 名: `慢病管家` (zh-Hans) / `ChronicCare` (en-US) / `慢病管家` (zh-Hant)
+- Subtitle (30 字符): `精神健康吃药打卡 + 危机热线` (zh-Hans)
+- Category: Primary = Medical, Secondary = Health & Fitness
+- Content Rights: 选 "No, it does not contain, show, or access any third-party content"
+- Age Rating: 17+ (Medical/Treatment Information)
+
+**Pricing**
+- 8 元一次性买断 (R68 决策保留, 业务真接 productId 时启用)
+- **v0.30 R93 状态**: `FeatureFlags.iapEnabled=false`, 商业卡在设置页已 hidden (Apple 2.1 拒 — 未提供其他购买方式), 上架前需保证商业卡 hidden + 不在 description 提"8 元"价格
+
+**App Privacy** (PIPL §13/§14/§17/§28)
+- Data Used to Track You: No
+- Data Linked to You: Yes (Health & Fitness, Usage Data)
+- Data Not Linked to You: Yes (Diagnostics)
+- 详细字段: 见 `assets/legal/privacy_policy.md` §1
+
+**Privacy Policy URL**: `https://chroniccare.app/privacy` (TODO: 域名注册后替换, R55+)
+
+### 5.2 iOS 截图规范
+
+| 设备 | 尺寸 | 数量 | 状态 |
+|------|------|------|------|
+| iPhone 6.5" | 1242 × 2688 | 3-10 张 | 需设计师出图 |
+| iPhone 5.5" | 1242 × 2208 | 3-10 张 | 需设计师出图 |
+| iPad 12.9" | 2048 × 2732 | 3-10 张 | 需设计师出图 |
+
+> **R93 阶段 2 清理**: 36 张 67 字节占位 png 已删 (`fastlane/metadata/ios/{en-US,zh-Hans,zh-Hant}/*screenshots/*.png` + `app_icon.png`)。Apple 拒审点: 67 字节占位 = 明显未设计完成。
+
+### 5.3 Android Google Play metadata
+
+- App 名: `慢病管家`
+- Short Description (80 字符): `精神心理患者吃药打卡 + 情绪追踪 + 危机热线`
+- Full Description: 参考 `docs/CHANGELOG.md` + 用户故事
+- Category: Medical
+- Content Rating: PEGI 12 / USK 12
+- Data Safety: 跟 iOS App Privacy 一致
+
+---
+
+## 阶段 6：5 项上架前手动 checklist (R93 阶段 2 红色 banner)
+
+> 上 store 前必过 5 项检查, **R93 阶段 2 新增**集中守门, 避免上架后被拒:
+
+### 6.1 ✅ 7 项 FeatureFlag 全部 hidden (R93 阶段 2 已完成)
+
+- [x] IAP 8 元买断 (`iapEnabled=false`) — 设置页"升级到 Pro"商业卡 hidden
+- [x] 失联通知 (`emergencyContactEnabled=false`) — 设置页联系人 section + 主页 homeFabHotline hidden
+- [x] 5 厂商 push (`fiveVendorPushEnabled=false`) — NotificationStatusCard OEM 引导 hidden
+- [x] EmailService 邮件 (`emailServiceEnabled=false`) — AssessmentSection 邮件预览 hidden
+- [x] vent + mood 录音 (`ventAudioEnabled=false`) — VentAudioSection + MoodRecorder hidden
+- [x] PHQ-9 / GAD-7 量表 (`phqGad7I18nEnabled=false`) — AssessmentCenter 8 量表保留 6 显
+- [x] BootReceiver (`bootReceiverEnabled=false`) — SafetyWatchService.onAppStart 跳过 rescheduleAll
+
+### 6.2 ✅ 文档一致性 (R93 阶段 2 已完成)
+
+- [x] README.md 顶部加 R93 红 banner
+- [x] `assets/legal/privacy_policy.md` §0.6 "v0.30 业务暂停" section
+- [x] `assets/legal/sensitive_data_consent.md` 修订历史加 R93 entry
+- [x] `assets/legal/user_agreement.md` 修订历史加 R93 entry
+- [x] `docs/CHANGELOG.md` [0.30.0] 累加 R93 entry (待 final review 提交)
+- [x] `docs/DEPLOYMENT.md` 阶段 5/6/7 补全 (本节)
+
+### 6.3 ✅ fastlane 清理 (R93 阶段 2 已完成)
+
+- [x] 36 张 iOS 67 字节占位 png 删 (Apple 拒审点)
+- [x] Android 真实截图保留 (designer 出的)
+- [x] 文本 metadata (description.txt / keywords.txt / name.txt 等) 保留
+
+### 6.4 ⚠️ 仍需手动完成 (R93+ 业务真接时)
+
+- [ ] IAP 8 元买断真接 (App Store Connect productId 创建)
+- [ ] 阿里云 SMS 真接 (法务模板审核 + AccessKey 申请)
+- [ ] EmailService 真接 (SendGrid API key + 法务模板审核)
+- [ ] 5 厂商 push SDK 接入 (米/华/OPPO/vivo/魅族审核)
+- [ ] PHQ-9 / GAD-7 en / zh_Hant 翻译完整 (法务 + 临床审核)
+- [ ] Android WorkManager 完善 (BootReceiver 真接)
+- [ ] 3 法律 md 律师过审 (¥45-90k)
+- [ ] 域名 `chroniccare.app` 注册 + 隐私/删除 URL 部署
+- [ ] 邮箱 `support@chroniccare.app` / `privacy@chroniccare.app` 注册
+- [ ] Android keystore + Play App Signing
+- [ ] TestFlight 跑 1 周期 (Mac + 2 tester)
+
+### 6.5 ⚠️ 4 store 4 套独立 metadata (R93+ 业务真接时)
+
+- App Store (iOS): Apple 描述 + 截图 + AppIcon 1024
+- Google Play (Android): Google 描述 + 截图 + Feature Graphic
+- 华为应用市场 (国内 Android): 独立审核 + ICP 备案
+- 小米/OPPO/vivo/魅族 应用商店 (国内 Android): 各厂商独立审核
+
+---
+
+## 阶段 7：部署 + 上线监控 (R93 阶段 2 集中补全)
+
+### 7.1 CI/CD 流水线 (已有, R62/R72 阶段搭建)
+
+- **GitHub Actions** (4 job): test / build web / build appbundle / release publish
+- **CodeMagic** (iOS Mac runner): R60+ 阶段启用, iOS 编译 + 签名
+- **Fastlane** (Android): R67 阶段启用, 自动生成 metadata + 上传
+
+### 7.2 上线监控 (R93+ 业务真接时)
+
+- **崩溃监控**: 接 Firebase Crashlytics / Sentry (本项目不接, 走本地 SQLite 错误日志)
+- **性能监控**: 接 Firebase Performance (R94+ 待定)
+- **用户行为**: 走本地 AnalyticsEvent (R72 阶段实施, 不接 Firebase Analytics)
+- **服务器监控**: 无 (本项目零云端)
+
+### 7.3 版本回滚流程 (R93+ 业务真接时)
+
+```bash
+# 1. 发现问题 → git revert <commit>
+git revert HEAD
+
+# 2. 重新打 tag
+git tag v0.30.1
+
+# 3. 推 master → CI 自动重新构建
+git push origin master
+
+# 4. App Store Connect / Google Play Console 紧急发布
+# 4 store 都需要审核, 紧急情况走 expedited review
+```
+
+### 7.4 数据迁移 (R93+ 业务真接时)
+
+- 业务真接时 (IAP / SMS / Email / 5 厂商 push) 涉及 schema 改动
+- drift schemaVersion +1 + migration (R92 阶段 1 模式)
+- 备份用户数据 → DB 升级 → 数据恢复
+- 不动数据模型字段 (零迁移成本, FeatureFlag 守护)
+
+### 7.5 用户通知 (R93+ 业务真接时)
+
+- 业务真接时通过 in-app 通知用户"X 功能已上线"
+- 走本地 NotificationService (已有, 跟日常打卡提醒同一通道)
+- 不接 push (5 厂商 SDK 仍未真接)
+- 邮件通知走 EmailService 真接后启用
+

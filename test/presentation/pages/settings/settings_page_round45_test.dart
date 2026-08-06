@@ -21,6 +21,7 @@
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
@@ -122,6 +123,11 @@ void main() {
 
   testWidgets('contacts data 1 → ContactsListWidget 渲染 + name 显示',
       (tester) async {
+    // v0.30 round 93 (阶段 2 audit-fixes): 联系人 section 走
+    // [FeatureFlags.emergencyContactEnabled] gate, 默认 false hidden。
+    // emergencyContactEnabled 没有 per-flag setter (R66 兼容模式), 用 enableForTest
+    // 翻 8 个全 true 让老 test 不破 (跟 notification_status_card_round20 修法一致)。
+    FeatureFlags.enableForTest();
     const contact = ContactEntity(
       id: 1,
       name: '张三',
@@ -141,5 +147,6 @@ void main() {
     // meds 验证移除: contacts 已 scroll 到 ListView 底部, meds section 在
     // viewport 之上 offstage, scroll back up 容易 overscroll, 单独 meds 测试
     // 在 medications_list_widget_round* 测。
+    FeatureFlags.resetForTest();
   });
 }
