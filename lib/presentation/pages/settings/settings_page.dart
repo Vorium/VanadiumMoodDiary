@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -93,7 +93,7 @@ class SettingsPage extends ConsumerWidget {
                 // 未购: 展示升级卡片
                 return Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    padding: AppTokens.edgeInsetsMd,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [

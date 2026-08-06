@@ -1,4 +1,4 @@
-// v0.26 round 57 (spen P1 #4 god class 拆分): AppRoutes 退化为 3 transition + errorBuilder
+﻿// v0.26 round 57 (spen P1 #4 god class 拆分): AppRoutes 退化为 3 transition + errorBuilder
 //
 // 拆分前: app_routes.dart 280 行含 3 transition + 14 GoRoute + errorBuilder
 // 拆分后:
@@ -139,7 +139,7 @@ class AppRoutes {
       appBar: AppBar(),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

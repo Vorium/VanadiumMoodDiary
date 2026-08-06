@@ -1,4 +1,4 @@
-// v0.14 (Round 13A) 续方管理页面
+﻿// v0.14 (Round 13A) 续方管理页面
 //
 // 集中查看所有药物的续方状态：
 // - 每种药一行：药名 / 剂量 / 续方日期 / 距今天 X 天 / 状态徽章
@@ -134,7 +134,7 @@ class RefillManagePage extends ConsumerWidget {
         // 数字更大 / 间距更合理, 改 2x2 改善可读性。
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            padding: AppTokens.edgeInsetsMd,
             child: Column(
               children: [
                 Row(
@@ -191,7 +191,7 @@ class RefillManagePage extends ConsumerWidget {
 
         if (rows.isEmpty)
           Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingXl),
+            padding: AppTokens.edgeInsetsXl,
             child: Center(
               child: Text(
                 AppLocalizations.of(context).medsNoMedicationsAdded,

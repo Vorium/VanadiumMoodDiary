@@ -1,4 +1,4 @@
-// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): SleepListWidget + SleepEntryDialog
+﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): SleepListWidget + SleepEntryDialog
 //
 // 4 层架构: presentation/pages/daily_tracking/widgets/, 0 跨 feature import。
 // 复用 R88 mood_dialog 风格 (AlertDialog + ListTile + ChoiceChip + TextField + 保存/取消)。
@@ -50,7 +50,7 @@ class SleepListWidget extends ConsumerWidget {
       children: [
         // 顶部添加按钮 (R88 mood_dialog 风格, 不走 FAB — list 页面通常 FAB 被 Card 占用)
         Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingSm),
+          padding: AppTokens.edgeInsetsSm,
           child: Align(
             alignment: Alignment.centerRight,
             child: FilledButton.icon(

@@ -1,4 +1,4 @@
-// v0.30 R92 (audit-fixes task 6): AssessmentQuizPanel
+﻿// v0.30 R92 (audit-fixes task 6): AssessmentQuizPanel
 // 拆 assessment_page.dart god page (436 行) 第 2 步
 // - 答题 widget: 顶部 ProgressHeader + 题列表 + 提交按钮
 // - 接受 props: scale, answers, answered, onAnswerChanged, onSubmit, canSubmit
@@ -60,7 +60,7 @@ class AssessmentQuizPanel extends StatelessWidget {
         ),
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            padding: AppTokens.edgeInsetsMd,
             itemCount: scale.items.length,
             itemBuilder: (ctx, i) => QuestionCard(
               index: i + 1,
@@ -74,7 +74,7 @@ class AssessmentQuizPanel extends StatelessWidget {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            padding: AppTokens.edgeInsetsMd,
             child: SizedBox(
               width: double.infinity,
               height: AppTokens.buttonHeight,

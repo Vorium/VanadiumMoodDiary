@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
@@ -60,7 +60,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                 // 顶部说明条
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(AppTokens.spacingMd),
+                  padding: AppTokens.edgeInsetsMd,
                   // v0.22 round 29 (emil-01~12): 改用 tintedPrimaryLight 集中器
                   color: AppTokens.tintedPrimaryLight(context),
                   child: Text(
@@ -75,7 +75,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    padding: AppTokens.edgeInsetsMd,
                     color: AppTokens.surfaceColor(context),
                     child: SingleChildScrollView(
                       child: SelectableText(
@@ -95,7 +95,7 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
                 SafeArea(
                   top: false,
                   child: Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    padding: AppTokens.edgeInsetsMd,
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(

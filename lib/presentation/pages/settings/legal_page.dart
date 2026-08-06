@@ -1,4 +1,4 @@
-// v0.21 Round 22 (P0-2 修复): 法律与隐私页
+﻿// v0.21 Round 22 (P0-2 修复): 法律与隐私页
 //
 // PIPL §26 撤回同意 UI 实现。
 // - 顶部 3 份法律文档入口(复用 showLegalDocument)
@@ -191,7 +191,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
       child: !_loaded
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: const EdgeInsets.all(AppTokens.spacingMd),
+              padding: AppTokens.edgeInsetsMd,
               children: [
                 // ===== 法律文档 =====
                 _SectionTitle(text: l10n.legalPageDocuments),
@@ -232,7 +232,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                 // ===== 撤回同意 =====
                 _SectionTitle(text: l10n.legalPageWithdrawTitle),
                 Container(
-                  padding: const EdgeInsets.all(AppTokens.spacingSm),
+                  padding: AppTokens.edgeInsetsSm,
                   decoration: BoxDecoration(
                     color: AppTokens.tintedWarningSoft(context),
                     borderRadius: BorderRadius.circular(AppTokens.radiusChip),

@@ -1,4 +1,4 @@
-// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): AnxietyAgitationListWidget + AnxietyAgitationEntryDialog
+﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): AnxietyAgitationListWidget + AnxietyAgitationEntryDialog
 //
 // 4 层架构: presentation/pages/daily_tracking/widgets/, 0 跨 feature import。
 // 复用 R88 mood_dialog 风格。
@@ -39,7 +39,7 @@ class AnxietyAgitationListWidget extends ConsumerWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingSm),
+            padding: AppTokens.edgeInsetsSm,
             child: Align(
               alignment: Alignment.centerRight,
               child: FilledButton.icon(

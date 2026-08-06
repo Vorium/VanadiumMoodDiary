@@ -1,4 +1,4 @@
-// v0.30 round 93 (audit-fixes task 1.2): MedicationCalendarGrid
+﻿// v0.30 round 93 (audit-fixes task 1.2): MedicationCalendarGrid
 // 拆 medication_calendar_page.dart god page 第 1 步
 // - 30 天热力图: 头部日期标签 + N 药 × N 天 cell
 // - 颜色编码: 0=漏服灰 / <50%=浅橙 / <100%=almost / 100%=深绿
@@ -120,7 +120,7 @@ class MedicationCalendarGrid extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingSm),
+        padding: AppTokens.edgeInsetsSm,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

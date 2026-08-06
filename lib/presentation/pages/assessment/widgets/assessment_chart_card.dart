@@ -1,4 +1,4 @@
-// v0.24 round 46 (emil B-11 god class 续拆): ChartCard 抽到独立文件
+﻿// v0.24 round 46 (emil B-11 god class 续拆): ChartCard 抽到独立文件
 //
 // 每个量表一张折线图（PHQ-9 / GAD-7 各自一张）
 //
@@ -46,7 +46,7 @@ class AssessmentChartCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -1,4 +1,4 @@
-// v0.14 (Round 12C) 提醒中心 �?集中查看/管理所有类型的提醒
+﻿// v0.14 (Round 12C) 提醒中心 �?集中查看/管理所有类型的提醒
 //
 // 之前散落在各处的设置（notification / assessment / safety watch）整合到一个页�?
 //
@@ -277,7 +277,7 @@ class _AssessmentReminderSheetState
     final loc = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -404,7 +404,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
     final loc = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

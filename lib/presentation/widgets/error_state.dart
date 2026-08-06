@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -47,7 +47,7 @@ class ErrorState extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingXl),
+        padding: AppTokens.edgeInsetsXl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -1,4 +1,4 @@
-// v0.14 (Round 17) 今日服药计划
+﻿// v0.14 (Round 17) 今日服药计划
 //
 // 主页小卡：列出今天每种在用药物的服用时间点，
 // 并标出已打卡 / 未打卡的进度。
@@ -46,7 +46,7 @@ class TodayMedSchedule extends ConsumerWidget {
         final done = entries.where((e) => e.done).length;
         return Card(
           child: Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            padding: AppTokens.edgeInsetsMd,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -1,4 +1,4 @@
-// v0.29 round 84 (CBT 思维记录): 5/7 栏 wizard
+﻿// v0.29 round 84 (CBT 思维记录): 5/7 栏 wizard
 //
 // 步骤式布局: 进度条 + 步数指示 + 当前 step section + 上一/下一步按钮
 // 5 栏 5 步, 7 栏 7 步。切档由父组件 (mood_recorder_page) 通过
@@ -68,7 +68,7 @@ class CbtWizard extends ConsumerWidget {
         ),
         // 顶部 ℹ️ 折叠卡
         Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: CbtExplainerCard(
             title: l10n.moodCbtExpandExplain,
             body: l10n.moodCbtExplainerBody,
@@ -88,7 +88,7 @@ class CbtWizard extends ConsumerWidget {
         ),
         // 上一/下一步
         Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -1,4 +1,4 @@
-// v0.15 (Round 18) 树洞列表页
+﻿// v0.15 (Round 18) 树洞列表页
 //
 // 全屏页面：用户的所有树洞条目，按时间倒序
 // 顶部右上角有"+"按钮跳到撰写页
@@ -150,7 +150,7 @@ class _EntryList extends ConsumerWidget {
     // emil 决策: tens/day(情绪低谷时多条查看历史) → 微弱 + 实操价值高
     // (不必进详情 → 点删除 → 确认 → 退出)。P1-14 已接 Haptics.warning。
     return ListView.separated(
-      padding: const EdgeInsets.all(AppTokens.spacingSm),
+      padding: AppTokens.edgeInsetsSm,
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: entries.length,
       separatorBuilder: (_, __) => const SizedBox(height: AppTokens.spacingXs),

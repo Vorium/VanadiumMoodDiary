@@ -1,4 +1,4 @@
-// v0.15 (Round 18) 树洞详情页
+﻿// v0.15 (Round 18) 树洞详情页
 //
 // 单条 tree hole 完整内容：文字 + 音频播放器
 // 路径参数：id（int）
@@ -203,7 +203,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
             );
           }
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            padding: AppTokens.edgeInsetsMd,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -239,7 +239,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                 if (entry.hasText)
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    padding: AppTokens.edgeInsetsMd,
                     decoration: BoxDecoration(
                       color: AppTokens.surfaceColor(context),
                       borderRadius: BorderRadius.circular(AppTokens.radiusCard),
@@ -255,7 +255,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                 if (entry.hasAudio) ...[
                   const SizedBox(height: AppTokens.spacingMd),
                   Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    padding: AppTokens.edgeInsetsMd,
                     decoration: BoxDecoration(
                       color: AppTokens.primaryLightColor(context),
                       borderRadius: BorderRadius.circular(AppTokens.radiusCard),

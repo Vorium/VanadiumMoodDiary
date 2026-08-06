@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
@@ -148,7 +148,7 @@ class LoadingScrim extends StatelessWidget {
           child: Center(
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(AppTokens.spacingMd),
+                padding: AppTokens.edgeInsetsMd,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

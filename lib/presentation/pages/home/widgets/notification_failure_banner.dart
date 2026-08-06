@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -29,7 +29,7 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
     if (_dismissed) return const SizedBox.shrink();
     return Container(
       margin: const EdgeInsets.only(top: AppTokens.spacingSm),
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
+      padding: AppTokens.edgeInsetsMd,
       decoration: BoxDecoration(
         color: AppTokens.tintedWarningSoft(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),

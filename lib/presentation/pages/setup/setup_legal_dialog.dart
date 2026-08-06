@@ -1,4 +1,4 @@
-// setup_legal_dialog.dart — 法律文档查看对话框
+﻿// setup_legal_dialog.dart — 法律文档查看对话框
 //
 // 从 setup_page.dart 拆分，v0.19 (Q2)
 //
@@ -88,7 +88,7 @@ class LegalDocumentDialog extends StatelessWidget {
     ];
     return Container(
       margin: const EdgeInsets.only(top: AppTokens.spacingLg),
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
+      padding: AppTokens.edgeInsetsMd,
       decoration: BoxDecoration(
         color: AppTokens.surfaceColor(context).withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),

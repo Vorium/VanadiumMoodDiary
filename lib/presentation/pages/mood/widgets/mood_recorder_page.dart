@@ -1,4 +1,4 @@
-// v0.29 round 84 (CBT 思维记录): 3 栏 mode UI 改造
+﻿// v0.29 round 84 (CBT 思维记录): 3 栏 mode UI 改造
 //
 // 改自 v0.28 (round 64) — 把 4 维度 MoodScoreChooser 替换为 3/5/7 栏档位切换
 // + CbtThreeColumnMode (3 栏) / CbtWizard stub (5/7 栏, Task 6 落地)
@@ -246,7 +246,7 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
             ),
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(AppTokens.spacingMd),
+                padding: AppTokens.edgeInsetsMd,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,4 +1,4 @@
-// mood_audio_recorder_widget.dart — MoodRecorder widget 主壳
+﻿// mood_audio_recorder_widget.dart — MoodRecorder widget 主壳
 //
 // v0.30 round 95 (sub-spec 4 task 7): 从 mood_audio_section.dart 抽出
 //
@@ -355,7 +355,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
     final maxReached = _audioDurationMs != null && _audioDurationMs! >= 180000;
 
     return Container(
-      padding: const EdgeInsets.all(AppTokens.spacingSm),
+      padding: AppTokens.edgeInsetsSm,
       decoration: BoxDecoration(
         color: AppTokens.surfaceColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),

@@ -1,4 +1,4 @@
-// v0.30 round 93 (audit-fixes task 1.4): MedicationCalendarLegend
+﻿// v0.30 round 93 (audit-fixes task 1.4): MedicationCalendarLegend
 // 拆 medication_calendar_page.dart god page 第 3 步
 // - 颜色图例 widget: 4 个色块 (漏服 / < 50% / < 100% / 100%) + 文字
 // - 走 l10n 集中器 (medsCalendarLegend* 4 个 key × 3 lang)
@@ -31,7 +31,7 @@ class MedicationCalendarLegend extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingSm),
+        padding: AppTokens.edgeInsetsSm,
         child: Row(
           children: [
             Text(

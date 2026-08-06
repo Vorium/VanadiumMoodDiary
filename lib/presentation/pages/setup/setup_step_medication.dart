@@ -1,4 +1,4 @@
-// setup_step_medication.dart — 首次设置 Step 2: 药物列表
+﻿// setup_step_medication.dart — 首次设置 Step 2: 药物列表
 //
 // 从 setup_page.dart 拆分，v0.19 (Q2)
 import 'package:flutter/material.dart';
@@ -148,7 +148,7 @@ class MedCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

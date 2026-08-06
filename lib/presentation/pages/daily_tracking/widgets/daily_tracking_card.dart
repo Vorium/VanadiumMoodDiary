@@ -1,4 +1,4 @@
-// v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口): 7 卡片通用 widget
+﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口): 7 卡片通用 widget
 //
 // - title (子功能名) + lastValue ("上次 X" 摘要, 可空)
 // - tap card → push 子功能 route
@@ -48,7 +48,7 @@ class DailyTrackingCard extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push(route),
         child: Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

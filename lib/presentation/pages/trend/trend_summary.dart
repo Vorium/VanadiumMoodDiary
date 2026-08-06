@@ -1,4 +1,4 @@
-// trend_summary.dart — 趋势页顶部汇总卡片
+﻿// trend_summary.dart — 趋势页顶部汇总卡片
 //
 // 从 trend_page.dart 拆分，v0.19 (P1-15)
 //
@@ -19,7 +19,7 @@ class SummaryCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Row(
           children: [
             Expanded(

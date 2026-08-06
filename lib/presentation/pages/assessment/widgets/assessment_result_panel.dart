@@ -1,4 +1,4 @@
-// v0.30 R92 (audit-fixes task 6): AssessmentResultPanel
+﻿// v0.30 R92 (audit-fixes task 6): AssessmentResultPanel
 // 拆 assessment_page.dart god page (436 行) 第 3 步
 // - 结果 widget: 大数字 + ComparisonCard + Sparkline + 推荐就医 + 免责声明 + 2 button
 // - 接受 props: result, scale, recommendCard / sparkline, onBack, onRetake
@@ -48,13 +48,13 @@ class AssessmentResultPanel extends StatelessWidget {
     final recommend = result.recommendDoctorVisit;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
+      padding: AppTokens.edgeInsetsMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // 大数字 + 严重度 + 总分范围
           Container(
-            padding: const EdgeInsets.all(AppTokens.spacingLg),
+            padding: AppTokens.edgeInsetsLg,
             decoration: BoxDecoration(
               color: isUrgent
                   ? AppTokens.tintedErrorSoft(context)
@@ -97,7 +97,7 @@ class AssessmentResultPanel extends StatelessWidget {
             Card(
               color: AppTokens.tintedWarningSoft(context),
               child: Padding(
-                padding: const EdgeInsets.all(AppTokens.spacingMd),
+                padding: AppTokens.edgeInsetsMd,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -125,7 +125,7 @@ class AssessmentResultPanel extends StatelessWidget {
           // 免责声明
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(AppTokens.spacingMd),
+              padding: AppTokens.edgeInsetsMd,
               child: Text(
                 l10n.assessmentDisclaimer,
                 style: AppTokens.textStyleBody(context)

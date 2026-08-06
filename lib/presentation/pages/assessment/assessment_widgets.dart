@@ -1,4 +1,4 @@
-// assessment_widgets.dart — 心理评估页拆分出的独立组件
+﻿// assessment_widgets.dart — 心理评估页拆分出的独立组件
 //
 // 从 assessment_page.dart 拆分，v0.19 (P1-15 + Q3)
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class AssessmentSparkline extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -211,7 +211,7 @@ class QuestionCard extends StatelessWidget {
       child: Card(
         margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
         child: Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -283,7 +283,7 @@ class ComparisonCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

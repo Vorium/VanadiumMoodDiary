@@ -1,4 +1,4 @@
-// v0.30 round 85 (CBT 重评效果图): score vs reratedScore 双线对比
+﻿// v0.30 round 85 (CBT 重评效果图): score vs reratedScore 双线对比
 //
 // 跟 MoodHistoryChart 同模式 (fl_chart + RepaintBoundary + EmptyState):
 // - 数据 < 3 条 → 显示空态 (Card + icon + 2 text)
@@ -53,7 +53,7 @@ class ReratedScoreChart extends StatelessWidget {
   Widget _emptyState(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingLg),
+        padding: AppTokens.edgeInsetsLg,
         child: Column(
           children: [
             Icon(
@@ -103,7 +103,7 @@ class ReratedScoreChart extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingLg),
+        padding: AppTokens.edgeInsetsLg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

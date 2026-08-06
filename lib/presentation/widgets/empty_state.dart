@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
@@ -44,7 +44,7 @@ class EmptyState extends StatelessWidget {
     // dark mode 下视觉正确。代价:TextStyle 不能 const(theme-aware 必须 dynamic)。
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingXl),
+        padding: AppTokens.edgeInsetsXl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

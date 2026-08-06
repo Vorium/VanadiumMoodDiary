@@ -1,4 +1,4 @@
-// v0.30 round 93 (audit-fixes task 1.3): MedicationCalendarDayDetail
+﻿// v0.30 round 93 (audit-fixes task 1.3): MedicationCalendarDayDetail
 // 拆 medication_calendar_page.dart god page 第 2 步
 // - 单日详情 widget: 日期头部 + 打卡 list + 补打 button
 // - 接受 props: date, checkIns, meds (用于查 med 名字), onAddLog
@@ -72,7 +72,7 @@ class MedicationCalendarDayDetail extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

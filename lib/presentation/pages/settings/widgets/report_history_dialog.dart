@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/report_history_entity.dart';
@@ -23,7 +23,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
     final asyncHistories = ref.watch(reportHistoriesProvider);
 
     return Dialog(
-      insetPadding: const EdgeInsets.all(AppTokens.spacingSm),
+      insetPadding: AppTokens.edgeInsetsSm,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 480, maxHeight: 600),
         child: Column(
@@ -31,7 +31,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
           children: [
             // 标题栏
             Padding(
-              padding: const EdgeInsets.all(AppTokens.spacingMd),
+              padding: AppTokens.edgeInsetsMd,
               child: Row(
                 children: [
                   Text(
@@ -66,7 +66,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
                 data: (histories) {
                   if (histories.isEmpty) {
                     return Padding(
-                      padding: const EdgeInsets.all(AppTokens.spacingLg),
+                      padding: AppTokens.edgeInsetsLg,
                       child: Center(
                         child: Text(
                           AppLocalizations.of(context).reportHistoryEmpty,

@@ -1,4 +1,4 @@
-// trend_day_detail_card.dart — 趋势页日历选中日详情卡片
+﻿// trend_day_detail_card.dart — 趋势页日历选中日详情卡片
 //
 // v0.30 round 95 (sub-spec 4 task 6): 从 trend_calendar.dart 抽出
 //
@@ -60,7 +60,7 @@ class DayDetailCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

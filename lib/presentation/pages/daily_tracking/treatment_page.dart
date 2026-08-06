@@ -1,4 +1,4 @@
-// v0.30 round 92 (audit-fixes / P0 #15): treatment_page 真页面
+﻿// v0.30 round 92 (audit-fixes / P0 #15): treatment_page 真页面
 //
 // 背景:
 // - R91 Task 3 加了 treatment_entries 表 + TreatmentRepositoryImpl +
@@ -47,7 +47,7 @@ class TreatmentPage extends ConsumerWidget {
           // 顶部添加按钮 (R91 sleep_widgets 风格 — 不用 FAB, list 页面通常
           // FAB 被 Card 占用, 走 FilledButton.icon 在右上角)
           Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingXs),
+            padding: AppTokens.edgeInsetsXs,
             child: Align(
               alignment: Alignment.centerRight,
               child: FilledButton.icon(

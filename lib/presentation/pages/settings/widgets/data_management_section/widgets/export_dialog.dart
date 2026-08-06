@@ -1,4 +1,4 @@
-// v0.30 round 95 (sub-spec 1 task 6.5): 拆 export_tile JSON 弹窗 → export_dialog
+﻿// v0.30 round 95 (sub-spec 1 task 6.5): 拆 export_tile JSON 弹窗 → export_dialog
 //
 // 数据导出 JSON 弹窗 (Q4b 律师) — 从 export_tile (267 行) 抽出 JSON 弹窗 100+ 行
 //
@@ -84,7 +84,7 @@ class _ExportDialogContent extends StatelessWidget {
               const SizedBox(height: AppTokens.spacingXs),
               // 已有: vent 录音不导出 提示 (v0.26 round 57 加)
               Container(
-                padding: const EdgeInsets.all(AppTokens.spacingSm),
+                padding: AppTokens.edgeInsetsSm,
                 decoration: BoxDecoration(
                   color: AppTokens.tintedWarningSoft(context),
                   borderRadius:
@@ -98,7 +98,7 @@ class _ExportDialogContent extends StatelessWidget {
               const SizedBox(height: AppTokens.spacingSm),
               // Q4b: 明文风险 + 责任划界 (律师反馈 必改)
               Container(
-                padding: const EdgeInsets.all(AppTokens.spacingSm),
+                padding: AppTokens.edgeInsetsSm,
                 decoration: BoxDecoration(
                   color: AppTokens.tintedErrorSoft(context),
                   borderRadius:
@@ -169,7 +169,7 @@ class _ExportDialogContent extends StatelessWidget {
               const SizedBox(height: AppTokens.spacingSm),
               // JSON 容器
               Container(
-                padding: const EdgeInsets.all(AppTokens.spacingSm),
+                padding: AppTokens.edgeInsetsSm,
                 decoration: BoxDecoration(
                   color: AppTokens.dividerColor(context),
                   borderRadius:

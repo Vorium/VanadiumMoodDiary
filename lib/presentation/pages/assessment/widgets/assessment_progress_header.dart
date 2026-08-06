@@ -1,4 +1,4 @@
-// v0.30 R92 (audit-fixes task 6): AssessmentProgressHeader
+﻿// v0.30 R92 (audit-fixes task 6): AssessmentProgressHeader
 // 拆 assessment_page.dart god page (436 行) 第 1 步
 // - 顶部进度 widget: instruction + 已答 N 题 + LinearProgressIndicator
 // - 接受 props: instruction, answered, total
@@ -28,7 +28,7 @@ class AssessmentProgressHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
+      padding: AppTokens.edgeInsetsMd,
       color: AppTokens.primaryLightColor(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

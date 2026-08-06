@@ -1,4 +1,4 @@
-// v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口): 整合入口页
+﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口): 整合入口页
 //
 // 路径: `/daily-tracking`
 // 7 卡片 grid (2 列): 情绪日记 + 5 子功能 + 1 治疗
@@ -66,7 +66,7 @@ class DailyTrackingPage extends ConsumerWidget {
     return PageScaffold(
       title: l10n.dailyTrackingTitle,
       child: ListView(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         children: [
           // v0.30 R91 Task 6: 顶部多指标 mini 趋势图 (4 指标 30 天)
           // 复用 R90 assessment_multi_line_chart 模式, 4 chip toggle + 4 line

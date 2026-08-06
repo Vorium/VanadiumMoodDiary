@@ -1,4 +1,4 @@
-// v0.22 round 35 (sp-en 重构): 抽 [reminder_cards.dart]
+﻿// v0.22 round 35 (sp-en 重构): 抽 [reminder_cards.dart]
 //
 // 从 reminders_hub_page.dart (27KB) 拆出 5 个 _XxxReminderCard widget:
 // - _ReminderCard (基础 widget)
@@ -84,7 +84,7 @@ class SafetyReminderCard extends StatelessWidget {
         if (isMockSms)
           Container(
             margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-            padding: const EdgeInsets.all(AppTokens.spacingSm),
+            padding: AppTokens.edgeInsetsSm,
             decoration: BoxDecoration(
               color: AppTokens.tintedErrorSoft(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusChip),
@@ -155,7 +155,7 @@ class ReminderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

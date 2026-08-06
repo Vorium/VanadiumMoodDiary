@@ -1,4 +1,4 @@
-// v0.30 round 90 (sub-spec 6 量表中心): 10 开放量表卡片 widget
+﻿// v0.30 round 90 (sub-spec 6 量表中心): 10 开放量表卡片 widget
 //
 // - 量表名 (大) + 短描述 (caption)
 // - 上次得分 (大数字 + 严重度 badge)
@@ -92,7 +92,7 @@ class AssessmentCenterCard extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push('/assessment/${scale.id}'),
         child: Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

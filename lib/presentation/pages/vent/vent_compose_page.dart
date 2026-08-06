@@ -1,4 +1,4 @@
-// v0.15 (Round 18) 树洞撰写页
+﻿// v0.15 (Round 18) 树洞撰写页
 //
 // 用户在这里：
 // - 写文字（TextField，长文本，最大 2000 字）
@@ -420,7 +420,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     return PageScaffold(
       title: AppLocalizations.of(context).ventComposeTitle,
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

@@ -1,4 +1,4 @@
-// v0.30 round 90 (sub-spec 6 量表中心): 中心化入口页
+﻿// v0.30 round 90 (sub-spec 6 量表中心): 中心化入口页
 //
 // 路径: `/assessment-center`
 // 12 卡片 grid (10 开放 + 2 TODO 标 unavailable)
@@ -74,7 +74,7 @@ class AssessmentCenterPage extends ConsumerWidget {
     }
 
     return ListView(
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
+      padding: AppTokens.edgeInsetsMd,
       children: [
         // v0.30 round 92 (audit-fixes / P0 #14): 顶部 mini 趋势图
         // 复用 R90 AssessmentMultiLineChart widget (sub-spec 6 Task 4 实施),

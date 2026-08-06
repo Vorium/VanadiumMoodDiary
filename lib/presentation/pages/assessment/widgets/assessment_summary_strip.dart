@@ -1,4 +1,4 @@
-// v0.24 round 46 (emil B-11 god class 续拆): SummaryStrip 抽到独立文件
+﻿// v0.24 round 46 (emil B-11 god class 续拆): SummaryStrip 抽到独立文件
 //
 // 顶部汇总条：总次数 / 最新 PHQ-9 / 最新 GAD-7
 //
@@ -24,7 +24,7 @@ class AssessmentSummaryStrip extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Row(
           children: [
             Expanded(

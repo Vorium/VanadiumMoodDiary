@@ -1,4 +1,4 @@
-// v0.24 round 46 (emil B-13 god class 续拆): vent_compose 抽 3 子 widget
+﻿// v0.24 round 46 (emil B-13 god class 续拆): vent_compose 抽 3 子 widget
 //
 // 文字输入区：TextField (长文本 max 2000) + 字符计数警告 (v0.21 Round 23)
 //
@@ -38,7 +38,7 @@ class VentTextInput extends StatelessWidget {
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context).ventComposeHint,
               border: const OutlineInputBorder(),
-              contentPadding: const EdgeInsets.all(AppTokens.spacingSm),
+              contentPadding: AppTokens.edgeInsetsSm,
             ),
             onChanged: onChanged,
           ),

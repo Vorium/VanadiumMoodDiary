@@ -1,4 +1,4 @@
-// v0.16 round 20 (OEM 后台引导)
+﻿// v0.16 round 20 (OEM 后台引导)
 //
 // 设置页「通知与提醒」自检卡。
 //
@@ -127,7 +127,7 @@ class _NotificationStatusCardState
             width: double.maxFinite,
             child: pending.isEmpty
                 ? Padding(
-                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    padding: AppTokens.edgeInsetsMd,
                     child: Text(l10n.notificationStatusCardEmpty),
                   )
                 : ListView.builder(
@@ -376,7 +376,7 @@ class _OemBrand extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTokens.spacingSm),
+      padding: AppTokens.edgeInsetsSm,
       decoration: BoxDecoration(
         color: AppTokens.dividerColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),

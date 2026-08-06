@@ -1,4 +1,4 @@
-// v0.29 round 84 (CBT 思维记录): 顶部 ℹ️ 折叠说明卡
+﻿// v0.29 round 84 (CBT 思维记录): 顶部 ℹ️ 折叠说明卡
 //
 // 首次使用默认展开, 用户可手动折叠
 //
@@ -53,7 +53,7 @@ class _CbtExplainerCardState extends State<CbtExplainerCard> {
       child: InkWell(
         onTap: _handleToggle,
         child: Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

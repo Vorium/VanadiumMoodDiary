@@ -1,4 +1,4 @@
-// setup_step_welcome.dart — 首次设置 Step 1: 欢迎 + 联系人
+﻿// setup_step_welcome.dart — 首次设置 Step 1: 欢迎 + 联系人
 //
 // 从 setup_page.dart 拆分,v0.19 (Q2)
 //
@@ -176,7 +176,7 @@ class _ContactRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingMd),
+        padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

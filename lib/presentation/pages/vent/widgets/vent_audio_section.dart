@@ -1,4 +1,4 @@
-// v0.24 round 46 (emil B-13 god class 续拆): vent_compose 抽 3 子 widget
+﻿// v0.24 round 46 (emil B-13 god class 续拆): vent_compose 抽 3 子 widget
 //
 // 3 态 (idle / recording / recorded) PageTransitionSwitcher 平滑切换
 // mic 位置 crossfade 给用户"我刚按下"的位置感 (emil spatial consistency)
@@ -78,7 +78,7 @@ class VentAudioSection extends StatelessWidget {
   Widget _buildRecordedRow(BuildContext context) {
     // 有录音：显示播放 / 重录
     return Container(
-      padding: const EdgeInsets.all(AppTokens.spacingSm),
+      padding: AppTokens.edgeInsetsSm,
       decoration: BoxDecoration(
         color: AppTokens.primaryLightColor(context),
         borderRadius: BorderRadius.circular(AppTokens.radiusChip),

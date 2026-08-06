@@ -1,4 +1,4 @@
-// v0.27 round 67 (C-2 重构): "icon + 文字" 信息条集中器
+﻿// v0.27 round 67 (C-2 重构): "icon + 文字" 信息条集中器
 //
 // 背景: 3+ 处同款 `Container(padding, color: primaryLight, radius, Row(icon, text))`
 //       信息条散落在 medication_calendar_page / setup_step_medication /
@@ -71,7 +71,7 @@ class InfoBanner extends StatelessWidget {
     final (bg, fg) = _resolveTone(context, tone);
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
+      padding: AppTokens.edgeInsetsMd,
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(

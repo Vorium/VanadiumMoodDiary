@@ -1,4 +1,4 @@
-// v0.13 (Round 7) 评估周期提醒设置 UI
+﻿// v0.13 (Round 7) 评估周期提醒设置 UI
 //
 // - 顶部一个开关：开启/关闭整个评估提醒
 // - 下方一个下拉/选择行：提醒间隔（7/14/30/60/90 天）
@@ -116,7 +116,7 @@ class _AssessmentReminderSectionState
     if (_enabled == null || _days == null) {
       return const Card(
         child: Padding(
-          padding: EdgeInsets.all(AppTokens.spacingMd),
+          padding: AppTokens.edgeInsetsMd,
           child: SizedBox(
             height: AppTokens.spacingXl,
             child: LoadingSkeleton.fullScreen(),
@@ -177,7 +177,7 @@ class _AssessmentReminderSectionState
           if (enabled) ...[
             const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.all(AppTokens.spacingMd),
+              padding: AppTokens.edgeInsetsMd,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -245,7 +245,7 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            padding: AppTokens.edgeInsetsMd,
             child: Text(
               l10n.reminderHubInterval,
               style: const TextStyle(
@@ -274,7 +274,7 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
           ),
           const SizedBox(height: AppTokens.spacingSm),
           Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
+            padding: AppTokens.edgeInsetsMd,
             child: Row(
               children: [
                 Expanded(
