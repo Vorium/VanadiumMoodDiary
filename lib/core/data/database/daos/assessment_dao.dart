@@ -138,11 +138,15 @@ class AssessmentDao {
     } catch (e, st) {
       // 老格式 free text 兜底 (R60 之前 phq9/gad7 老 entry note 是 "用户备注: ...")
       // v0.30 R92: 走 swallowError 集中器, 替代完全静默 (R39 P1-10 模式)
+      // v0.30 R95 (sub-spec 7 task 30 PII 泄露修): 删 rawNote (含 PII), 只留
+      // 非 PII 字段 (id / type)。row.id 是自增主键非敏感, row.type 是 scale_id
+      // (e.g. "phq9") 非 PII。rawNote 可能是用户填的 free text / 旧 JSON 内容,
+      // 走 logcat 即泄露精神心理患者敏感数据。
       swallowError(
         where: 'assessment_dao._rowToEntry_parse',
         error: e,
         stack: st,
-        note: 'assessmentId=${row.id} type=${row.type} rawNote=$rawNote 解析失败, 走老格式 free text 兜底',
+        note: 'assessmentId=${row.id} type=${row.type} 解析失败, 走老格式 free text 兜底',
       );
       return AssessmentEntry(
         id: row.id,
