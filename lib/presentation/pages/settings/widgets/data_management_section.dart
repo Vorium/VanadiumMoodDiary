@@ -1,5 +1,6 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:printing/printing.dart';
@@ -15,13 +16,11 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
-import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/medication_report_dialog.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/choose_window_dialog.dart';
@@ -37,6 +36,7 @@ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_
 ///
 /// 从 settings_page.dart 提取 (v0.23 P1 refactor)
 /// v0.30 round 95 (sub-spec 1 task 1): 拆 6 sub-tile 入口, 主壳改 props callback 模式
+/// v0.30 round 95 (sub-spec 1 task 2a): 抽 ExportTile (200+ 行 → sub-tile, 走 ConsumerWidget)
 class DataManagementSection extends ConsumerWidget {
   const DataManagementSection({super.key});
 
@@ -45,7 +45,7 @@ class DataManagementSection extends ConsumerWidget {
     return Card(
       child: Column(
         children: [
-          ExportTile(onExport: () => _exportData(context, ref)),
+          const ExportTile(),
           const Divider(height: 1),
           // v0.30 round 88 (sub-spec 4): 导出 5/7 栏 CBT 思维记录 PDF 入口
           CbtPdfTile(onExport: () => _exportCbtPdf(context, ref)),
@@ -60,220 +60,6 @@ class DataManagementSection extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  Future<void> _exportData(BuildContext context, WidgetRef ref) async {
-    if (!context.mounted) return;
-    // v0.27 R82: PIPL §13 单独同意 — 数据导出走 ConsentDialog (kind: dataExport)
-    // 替代之前的"敏感文字警告" 通用 dialog。修复前只警告, 没生成 ConsentArtifact,
-    // 法务复查时缺 §13 同意证据。修复后: 弹 ConsentDialog 走 dataExportConsent
-    // 模板 (purpose / dataCategories / retention 3 placeholder) → 用户同意 →
-    // 写 audit log (LegalConsentStore.recordDataExportConsent) → 继续 export。
-    final consent = await ConsentDialog.show(
-      context,
-      kind: ConsentKind.dataExport,
-      placeholders: const {
-        'purpose': '本地备份 / 跨设备迁移',
-        'dataCategories':
-            '用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)',
-        'retention': '剪贴板 + 用户自行保存到加密存储',
-      },
-    );
-    if (consent == null) {
-      // 用户点了"暂不同意" — 静默退出, 不弹额外提示
-      return;
-    }
-    // R82: 写 audit log (PIPL §17 同意记录可追溯)
-    try {
-      await ref
-          .read(legalConsentStoreProvider)
-          .recordDataExportConsent(consent);
-    } catch (e, st) {
-      // 写 audit log 失败不应该阻塞主流程 (consent 已拿到, 用户已明确同意)
-      // 走 swallowError 跟 _showMedicationReport 写 history 失败的模式一致
-      swallowError(
-        where: 'DataManagementSection._exportData.recordAudit',
-        error: e,
-        stack: st,
-        note: '写 audit log 失败, 主流程继续 (consent 已拿到)',
-      );
-    }
-    if (!context.mounted) return;
-
-    final service = ref.read(dataExportServiceProvider);
-    try {
-      final json = await service.exportToJson();
-      if (!context.mounted) return;
-      // v0.28 R83 (Q4b 律师): 导出 JSON dialog 加明文风险 + 责任划界
-      // + 强制勾选"我已了解风险"才允许复制 (PIPL §17 告知后用户确认,
-      // 责任划界由用户承担 — 跟"明文 = 用户自负"是法律标配)
-      bool isAcknowledged = false;
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => StatefulBuilder(
-          builder: (ctx, setLocal) => AlertDialog(
-            title: Text(
-              AppLocalizations.of(context).settingsExportDialogTitle,
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    AppLocalizations.of(context).settingsExportInstruction,
-                  ),
-                  const SizedBox(height: AppTokens.spacingXs),
-                  // 已有: vent 录音不导出 提示 (v0.26 round 57 加)
-                  Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingSm),
-                    decoration: BoxDecoration(
-                      color: AppTokens.tintedWarningSoft(context),
-                      borderRadius:
-                          BorderRadius.circular(AppTokens.radiusChip),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context).settingsExportVentWarning,
-                      style: AppTokens.textStyleLegal(context),
-                    ),
-                  ),
-                  const SizedBox(height: AppTokens.spacingSm),
-                  // Q4b: 明文风险 + 责任划界 (律师反馈 必改)
-                  Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingSm),
-                    decoration: BoxDecoration(
-                      color: AppTokens.tintedErrorSoft(context),
-                      borderRadius:
-                          BorderRadius.circular(AppTokens.radiusChip),
-                      border: Border.all(
-                        color: AppTokens.errorColor(context),
-                        width: 1,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.warning_amber_rounded,
-                              color: AppTokens.errorColor(context),
-                              size: AppTokens.iconSizeInline,
-                            ),
-                            const SizedBox(
-                              width: AppTokens.spacingXxs,
-                            ),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(context)
-                                    .settingsExportRiskTitle,
-                                style: AppTokens.textStyleLabel(context)
-                                    .copyWith(
-                                  color: AppTokens.errorColor(context),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTokens.spacingXxs),
-                        Text(
-                          AppLocalizations.of(context)
-                              .settingsExportRiskBody,
-                          style: AppTokens.textStyleBody(context),
-                        ),
-                        const SizedBox(height: AppTokens.spacingXxs),
-                        Text(
-                          AppLocalizations.of(context)
-                              .settingsExportRiskLiability,
-                          style: AppTokens.textStyleLegal(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppTokens.spacingSm),
-                  // 强制勾选 checkbox 才允许复制
-                  CheckboxListTile(
-                    value: isAcknowledged,
-                    onChanged: (v) =>
-                        setLocal(() => isAcknowledged = v ?? false),
-                    title: Text(
-                      AppLocalizations.of(context)
-                          .settingsExportRiskAcknowledge,
-                      style: AppTokens.textStyleBody(context),
-                    ),
-                    controlAffinity:
-                        ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                  ),
-                  const SizedBox(height: AppTokens.spacingSm),
-                  // JSON 容器
-                  Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingSm),
-                    decoration: BoxDecoration(
-                      color: AppTokens.dividerColor(context),
-                      borderRadius:
-                          BorderRadius.circular(AppTokens.radiusChip),
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 300),
-                      child: SingleChildScrollView(
-                        child: SelectableText(
-                          json,
-                          // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
-                          // 替代内联 TextStyle('monospace', fontSizeCaptionSm)
-                          style: AppTokens.textStyleMono(
-                            context,
-                            size: AppTokens.fontSizeCaptionSm,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text(AppLocalizations.of(context).commonClose),
-              ),
-              ElevatedButton.icon(
-                icon: const Icon(
-                  Icons.copy,
-                  size: AppTokens.iconSizeInline,
-                ),
-                label: Text(AppLocalizations.of(context).settingsCopy),
-                onPressed: isAcknowledged
-                    ? () async {
-                        await Clipboard.setData(
-                          ClipboardData(text: json),
-                        );
-                        if (ctx.mounted) {
-                          // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
-                          AppSnackBar.showInfo(
-                            ctx,
-                            AppLocalizations.of(ctx).snackbarCopied,
-                          );
-                        }
-                      }
-                    : null,
-              ),
-            ],
-          ),
-        ),
-      );
-    } catch (e) {
-      if (context.mounted) {
-        AppSnackBar.showError(
-          context,
-          action: AppLocalizations.of(context).settingsActionExport,
-          error: e,
-        );
-      }
-    }
   }
 
   Future<void> _chooseAndShowReport(
