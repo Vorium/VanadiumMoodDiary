@@ -70,3 +70,7 @@ assets/brand/icon_preview_v[2-9]*.png
 # 已 git rm / git mv 处理。.gitignore 兜底防再增。
 scripts/*.txt
 scripts/test_delivery_rate.dart
+
+# v0.30 round 92 (cleanup): 兜底排除 IntelliJ 项目文件
+# (R60+ 已有 *.iml 通配符, 这里加具体文件名更显眼, 万一 .gitignore 通配规则被 IDE 改动也能拦住)
+chroniccare.iml
