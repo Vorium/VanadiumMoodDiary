@@ -27,6 +27,8 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/core/data/services/encryption_service.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart'
     show ConsentKind, ConsentArtifact;
 
@@ -145,6 +147,16 @@ class LegalConsentStore {
   ///   单独的语义路径, 不污染本方法)
   /// - 反序列化 [readDataExportConsentLog] 用 ConsentKind.name 找 enum,
   ///   跟写入时 `kind.name` 对称 (R63 验证 identity 一致)
+  ///
+  /// v0.30 R95 (sub-spec 7 task 31a): audit log 走 AES-256 加密存储
+  /// - 复用 [EncryptionService.encryptString] (跟 R21 vent contentTextEnc
+  ///   BLOB 模式同源密钥, device-bound)
+  /// - 加密前 JSON 含 PII 标记 (grantedBy / contactId), 设备 root / 备份偷走
+  ///   → 明文泄露违反 PIPL §28
+  /// - SharedPreferences 仍存 string list, 但每条 entry 是 base64(iv+ciphertext),
+  ///   加密失败 → 走 [swallowError] 集中器 (跟 R21 vent 加密失败模式一致)
+  /// - 读取时 [readDataExportConsentLog] 解密失败 → 该条 skip + 走 swallowError
+  ///   (避免一条坏数据阻塞整个 audit log 列表)
   Future<void> recordDataExportConsent(ConsentArtifact artifact) async {
     assert(
       artifact.kind == ConsentKind.dataExport,
@@ -152,34 +164,63 @@ class LegalConsentStore {
     );
     final prefs = await SharedPreferences.getInstance();
     final existing = prefs.getStringList(_kDataExportLog) ?? <String>[];
-    final entry = jsonEncode({
+    final plain = jsonEncode({
       'kind': artifact.kind.name,
       'grantedAt': artifact.grantedAt.toIso8601String(),
       'grantedBy': artifact.grantedBy,
       'contactId': artifact.contactId,
       'version': artifact.version,
     });
-    await prefs.setStringList(_kDataExportLog, [...existing, entry]);
+    try {
+      // v0.30 R95 task 31a: encrypt + base64 后存 (PIPL §28 设备 root 防护)
+      final encrypted = await EncryptionService().encryptString(plain);
+      await prefs.setStringList(_kDataExportLog, [...existing, encrypted]);
+    } catch (e, st) {
+      // 加密失败 (R21 vent 模式一致): 走 swallowError, 不抛, 不写
+      swallowError(
+        where: 'legal_consent.recordDataExportConsent.encrypt',
+        error: e,
+        stack: st,
+        note: 'audit log 加密失败, 跳过本次记录 (不影响主流程)',
+      );
+    }
   }
 
   /// v0.27 R82: 读回 dataExport 同意 audit log
   ///
   /// 返回按写入顺序 (FIFO, 时间从早到晚) 的 [ConsentArtifact] 列表。
   /// 法务复查 / 监管审计时给这份 list 即可。
+  ///
+  /// v0.30 R95 (sub-spec 7 task 31a): 逐条 AES-256 解密, 失败条目 skip
+  /// (走 swallowError 集中器, 不阻塞列表其他条目)
   Future<List<ConsentArtifact>> readDataExportConsentLog() async {
     final prefs = await SharedPreferences.getInstance();
     final entries = prefs.getStringList(_kDataExportLog) ?? <String>[];
-    return entries.map((e) {
-      final map = jsonDecode(e) as Map<String, dynamic>;
-      return ConsentArtifact(
-        kind: ConsentKind.values
-            .firstWhere((k) => k.name == map['kind'] as String),
-        grantedAt: DateTime.parse(map['grantedAt'] as String),
-        grantedBy: map['grantedBy'] as String,
-        contactId: map['contactId'] as int?,
-        version: map['version'] as String,
+    final out = <ConsentArtifact>[];
+    for (final e in entries) {
+      try {
+        final plain = await EncryptionService().decryptString(e);
+        final map = jsonDecode(plain) as Map<String, dynamic>;
+        out.add(ConsentArtifact(
+          kind: ConsentKind.values
+              .firstWhere((k) => k.name == map['kind'] as String),
+          grantedAt: DateTime.parse(map['grantedAt'] as String),
+          grantedBy: map['grantedBy'] as String,
+          contactId: map['contactId'] as int?,
+          version: map['version'] as String,
+        ),
       );
-    }).toList();
+      } catch (err, st) {
+        // 单条坏数据: skip + swallow, 不阻塞其他条目
+        swallowError(
+          where: 'legal_consent.readDataExportConsentLog.decrypt',
+          error: err,
+          stack: st,
+          note: '单条 audit log 解密失败, skip (其他条目继续)',
+        );
+      }
+    }
+    return out;
   }
 }
 

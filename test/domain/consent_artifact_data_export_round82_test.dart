@@ -5,7 +5,13 @@
 // (修复前 dataExport 只有"敏感文字警告" 通用 dialog, 没生成 ConsentArtifact,
 // 法务复查时缺 §13 同意证据)
 //
-// 本测试覆盖 (8 cases):
+// v0.30 R95 (sub-spec 7 task 31a): audit log 走 AES-256 加密存储
+// - 复用 EncryptionService.encryptString (跟 R21 vent contentTextEnc BLOB 同源密钥)
+// - 加密失败 → swallowError 集中器, 不抛
+// - 解密失败单条 skip, 不阻塞列表其他条目
+// - 加 lock-in: 验证 SharedPreferences 实际存的是 base64(ciphertext), 非明文
+//
+// 本测试覆盖 (10 cases):
 // 1. ConsentKind.dataExport 枚举值存在
 // 2. ConsentKind 5 kind 完整 (R63 同步验证 + R82 确认无回归)
 // 3. ConsentArtifact 5 字段 (kind/grantedAt/grantedBy/contactId/version) 构造 + 读取
@@ -14,12 +20,16 @@
 // 6. dataExportConsentBody 3 placeholder (purpose / dataCategories / retention) 声明
 // 7. LegalConsentStore.recordDataExportConsent 写 SharedPreferences 后能读回
 // 8. recordDataExportConsent 多次调用累积到 log (不覆盖, 满足 PIPL §17 同意记录)
+// 9. v0.30 R95 task 31a: 验证 SharedPreferences 存的是 base64 密文, 非明文
+// 10. v0.30 R95 task 31a: 1 条坏密文 skip, 其他条目继续
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 
@@ -27,6 +37,9 @@ void main() {
   setUp(() {
     // 每个 case 前清空 SharedPreferences mock — 防 case 间污染
     SharedPreferences.setMockInitialValues({});
+    // v0.30 R95 task 31a: 注入固定 32-byte AES key 走 test 路径,
+    // 避开 FlutterSecureStorage platform channel (test 模式抛 MissingPluginException)
+    EncryptionService().setKeyForTest(Uint8List.fromList(List.filled(32, 0x42)));
   });
 
   group('ConsentKind.dataExport (PIPL §13 单独同意 — round 82)', () {
@@ -191,6 +204,64 @@ void main() {
       // FIFO 顺序 (写入顺序)
       expect(log[0].grantedAt, DateTime.utc(2026, 8, 15, 10));
       expect(log[1].grantedAt, DateTime.utc(2026, 8, 15, 11));
+    });
+
+    test('v0.30 R95 task 31a: SharedPreferences 存的是 base64 密文, 非明文 (PIPL §28 防设备 root)', () async {
+      // 验证 1) 写入后 SharedPreferences 实际内容是 base64 密文
+      //      2) 读回的明文不含 PII 字符串 (grantedBy 等)
+      final store = LegalConsentStore();
+      final artifact = ConsentArtifact(
+        kind: ConsentKind.dataExport,
+        grantedAt: DateTime.utc(2026, 8, 15, 10, 30),
+        grantedBy: 'user_sensitive_pii_张三',
+        contactId: null,
+        version: 'v0.30-2026-08-15',
+      );
+      await store.recordDataExportConsent(artifact);
+
+      // 直接读 SharedPreferences 看实际存储
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getStringList('legal_consent_data_export_log');
+      expect(raw, isNotNull);
+      expect(raw!.length, 1);
+
+      // 锁: 存储内容是 base64 密文, 不含明文 PII
+      final stored = raw.first;
+      expect(stored, isNot(contains('user_sensitive_pii')),
+          reason: '存储不能含明文 grantedBy PII: $stored');
+      expect(stored, isNot(contains('张三')),
+          reason: '存储不能含明文 grantedBy PII: $stored');
+      // base64 特征: 只含 [A-Za-z0-9+/=] 字符
+      expect(RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(stored), isTrue,
+          reason: '存储应是 base64 编码: $stored');
+      // 解出来是明文 (验证加密/解密对称)
+      final plain = await EncryptionService().decryptString(stored);
+      expect(plain, contains('user_sensitive_pii'));
+    });
+
+    test('v0.30 R95 task 31a: 1 条坏密文 skip, 其他条目继续读', () async {
+      // 模拟 SharedPreferences 有 1 条合法加密 + 1 条坏数据 (非 base64 / 错误 key)
+      // 验证 readDataExportConsentLog 只 skip 坏条目, 返合法条目
+      final store = LegalConsentStore();
+      final a1 = ConsentArtifact(
+        kind: ConsentKind.dataExport,
+        grantedAt: DateTime.utc(2026, 8, 15, 12),
+        grantedBy: 'good_entry',
+        version: 'v0.30',
+      );
+      await store.recordDataExportConsent(a1);
+      // 注入 1 条坏数据
+      final prefs = await SharedPreferences.getInstance();
+      final existing = prefs.getStringList('legal_consent_data_export_log')!;
+      await prefs.setStringList(
+        'legal_consent_data_export_log',
+        [...existing, '坏数据不是 base64 也不是加密内容'],
+      );
+
+      // 读: 1 条好 + 1 条坏 → 返 1 条 (坏 skip)
+      final log = await store.readDataExportConsentLog();
+      expect(log.length, 1, reason: '坏数据 skip, 不阻塞其他');
+      expect(log.first.grantedBy, 'good_entry');
     });
   });
 }
