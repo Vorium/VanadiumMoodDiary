@@ -6,6 +6,7 @@
 // 设计原则:
 // - 0 依赖 BuildContext, 全部 static const (可进 const constructor)
 // - 老 caller 兼容: `AppTokens.spacingMd` 仍能用 (走 facade)
+import 'package:flutter/widgets.dart' show EdgeInsets;
 
 /// v0.27 round 65 (alibaba B16 god constant 拆分): 间距 / 尺寸 / 圆角 / 断点 token 集中器
 ///
@@ -56,6 +57,18 @@ class AppSpacing {
   // v0.22 round 30 (emil P2-8): 庆祝 overlay delay 1800ms 抽 token
   // 之前 home_page.dart:422 硬编码 `Future.delayed(Duration(milliseconds: 1800))`
   static const int celebrationDisplayMs = 1800;
+
+  // v0.30 round 95 (sub-spec 5 task 3-4): EdgeInsets 静态 const helper
+  // 替代散落 120+ 处 `EdgeInsets.all(8/16/24/40/80)` literal
+  // 跟 spacingXs/Sm/Md/Lg/Xl 1:1 配对, 走 facade `AppTokens.edgeInsetsXs/Sm/...`
+  // **不加** symmetric/only/fromLTRB wrapper — 组合数爆炸, 不如保留
+  // `EdgeInsets.symmetric(horizontal: AppTokens.spacingXs, vertical: ...)`
+  // 这种 inline 写法 (token 复用清晰, 不污染集中器 API)
+  static const EdgeInsets edgeInsetsXs = EdgeInsets.all(spacingXs);
+  static const EdgeInsets edgeInsetsSm = EdgeInsets.all(spacingSm);
+  static const EdgeInsets edgeInsetsMd = EdgeInsets.all(spacingMd);
+  static const EdgeInsets edgeInsetsLg = EdgeInsets.all(spacingLg);
+  static const EdgeInsets edgeInsetsXl = EdgeInsets.all(spacingXl);
 
   /// v0.27 round 62 (P1-9 修复): Deep link race guard 100ms
   ///

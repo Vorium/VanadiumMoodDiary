@@ -8,7 +8,7 @@ import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/core/theme/app_spacing.dart';
 import 'package:chroniccare/core/theme/app_typography.dart';
 import 'package:flutter/material.dart'
-    show Color, Curve, TextStyle, BuildContext, BoxShadow;
+    show Color, Curve, TextStyle, BuildContext, BoxShadow, EdgeInsets;
 
 // Re-export top-level symbols (Motion / MotionScheme / WindowSize / windowSizeOf)
 // 让老 import `package:chroniccare/core/theme/app_tokens.dart` 的 caller
@@ -145,6 +145,15 @@ class AppTokens {
   static const double radiusChip = AppSpacing.radiusChip;
   static const double radiusCell = AppSpacing.radiusCell;
   static const double radiusCellLg = AppSpacing.radiusCellLg;
+
+  // ===== v0.30 round 95 (sub-spec 5 task 3-4): EdgeInsets 静态 const helper =====
+  // 替代散落 120+ 处 `EdgeInsets.all(8/16/24/40/80)` literal
+  // 跟 spacingXs/Sm/Md/Lg/Xl 1:1 配对
+  static const EdgeInsets edgeInsetsXs = AppSpacing.edgeInsetsXs;
+  static const EdgeInsets edgeInsetsSm = AppSpacing.edgeInsetsSm;
+  static const EdgeInsets edgeInsetsMd = AppSpacing.edgeInsetsMd;
+  static const EdgeInsets edgeInsetsLg = AppSpacing.edgeInsetsLg;
+  static const EdgeInsets edgeInsetsXl = AppSpacing.edgeInsetsXl;
   static const double buttonHeight = AppSpacing.buttonHeight;
   static const double buttonHeightSmall = AppSpacing.buttonHeightSmall;
   static const double minTapArea = AppSpacing.minTapArea;
