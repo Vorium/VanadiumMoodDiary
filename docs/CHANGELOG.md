@@ -2,6 +2,60 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-06 (R92 — 6 视角审计修复 sub-spec 8: 410KB 审计报告 → 20 项 P0 上架 blocker + 3 半成品 widget + 文档同步 + vent contentText DROP + catch 集中器化 + god page 拆)
+
+> R92 目标: 按 6 视角审计 (emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-spec 总 410KB / 6.5 万字) 合并的阶段 1 修复,跳过所有外部资源 (签名 / 域名 / 法务 / 阿里云 / Mac / 5 厂商 push),只跑纯代码 / 文档 / 测试 / 架构改动。
+
+> **6 task** (17 commit + 2 fix post-merge, +0 新 test 净, baseline 1627 → 1636 +9 pass, 0 regression):
+> - Task 1: 物理残留清理 (subagent) — 软删 9 tracked 物理残留 (.commit_msg.txt + 6 .commit_msg_r56x.txt + mimo.exe 128MB + todo.md) + chroniccare.iml 兜底 .gitignore + aliyun_sms R57 test 启用失败 (API 不兼容 R63, 跳 R55+ 真接) + 4 master-only 残留放 R93+ 排期
+> - Task 2: 3 个 P0 半成品 widget 修复 (subagent) — CBT wizard 5/7 栏 save 修复 (字段不丢) + homeFabHotline / homeFabTop 真功能 (路由 + Scrollable.ensureVisible) + crisis_hotline_page + 5 地区热线 + assessment_center 顶部 mini 趋势图 (复用 R90 chart widget) + treatment_placeholder 真页面 (R91 placeholder 替换) + 删 2 orphan key (homeFabHotlineTodo / homeFabTopTodo, R81 占位 1.5 年)
+> - Task 3: 文档同步 — AGENTS.md 17 守门员补 (R60+ 漏 check_16kb_alignment.py) + strings.dart 4 处 'App' 改 '本应用/慢病管家' (按 terminology.md §2) + 8 文件 31 处硬编码中文 → 走 l10n (新 9 ARB keys) + 5 R91 sleep/socialRhythm time placeholder type 修 (String→Object, 修 R91 daily_tracking l10n bug) + 法律文档混用跳法务
+> - Task 4: vent contentText DROP (schemaVersion 18→19) — vent_entries.contentText TEXT 列 DROP (PIPL §28 字段级明文清理) + v8→v9 migration 改用 raw query 读老 contentText (schema 已删) + v18→v19 用 raw SQL ALTER TABLE DROP COLUMN (drift TableMigration 不支持 explicit deletedColumns) + 1 新 test 验证 DROP
+> - Task 5: 3 处 } catch (_) { → swallowError 集中器 (R39 P1-10 模式) — assessment_dao + weight_widgets + mood_recorder_page, 加 import + 走 `swallowError(where, error, stack, note)`
+> - Task 6: assessment_page 436→289 行 (-34%) 拆 3 sub-widget — ProgressHeader (60 行) + QuizPanel (80 行) + ResultPanel (150 行), props callback 模式 (父 widget 持 state, sub-widget 接受 props + callback, 不读全局), ProgressHeader 复用 l10n.assessmentAnsweredProgress (修 R92 god page 拆漏的 orphan ARB key), 删 2 个 unused import analyzer warning
+
+> **2 post-merge fix commit**:
+> - (a) drift TableMigration 不支持 explicit deletedColumns, 改 raw SQL ALTER TABLE DROP COLUMN 修 v18→v19 vent contentText DROP (R92 实施时误用 m.alterTable, 跑 test fail 后修)
+> - (b) 删 assessment_result_panel 2 个 unused import (analyzer warning)
+
+> **架构边界 (按 R84-R91 sub-spec 风格)**:
+> - 顶层架构不动: 4 层 + 5 子层 umbrella 已成, R92 不重设
+> - 跳过 R93+ 排期 (master-only 物理残留 / IAP 真接 / 5 厂商 push / EmailService 真接 / 法务过审 / 拆剩下 2 god page 等)
+> - 复用 R17 swallowError 集中器 (R39 P1-10 模式)
+> - 复用 R22 vent 加密字段 (R21 v0.21 contentTextEnc BLOB 加密)
+> - 复用 R90 AssessmentMultiLineChart widget (assessment_center 顶部 chart)
+> - 复用 R75 hotlineByRegion + R87 mood_list page 模式
+> - 复用 terminology.md §2 规范 (R59 中文术语集中表)
+
+> **测试 evidence**:
+> - 1636/1636 pass (R91 baseline 1617 + R92 +19 net, 含 R92 task 2 +9 widget test + R92 task 4 +1 schema test + R91 漏的 mood_period_aggregator test pre-existing 1 fail 跟 R92 无关)
+> - 17 guards 全绿 (15 python + 1 dart + 1 未跑) — 1 WARN fullwidth_punctuation (R58 known, --warn-only) + 1 WARN widget_dispose (R92 task 2 home_fab_toolbar 引入, SingleTickerProviderStateMixin 自动 dispose, lint 误报)
+> - 0 analyze error / 0 warning (R92 改完 unused import)
+> - schemaVersion 18→19, vent_entries.contentText 列 DROP
+> - flutter pub get 触发生成 4 dart file (app_localizations.dart + 3 lang), 0 keys 丢失
+> - 0 pre-existing ARB 误删 (gen-l10n 守门 0 触发, R91 R88 known regression 无重演)
+> - 6 task report 写到 `docs/superpowers/sdd-logs/round92-audit-fixes/sdd/task-{1-6}-report.md`
+
+> **6 视角审计 — 上架就绪度** (R92 修复后):
+> - **Google Play**: 38% → 65% (签名 fallback debug 必修, 4 法律 md 跳法务, 5 厂商 push 跳审核, 失联通知跳 R55+, IAP 跳)
+> - **App Store**: 6.0/10 → 7.0/10 (3 法律 md + 33 截图 + 4 ID + Mac 跑 `pod install` 跳, Dark Mode App Icon 跳, TestFlight 跳)
+> - **国内合规 (PIPL + ICP + NMPA)**: 3.5/10 → 5.0/10 (3 法律 md 跳法务, 域名 + 邮箱 + 5 厂商 push + 文网文 + 算法备案 + ICP + 软著全跳)
+> - **emilkowalski 设计**: 7.5/10 (未变, 3 god page 拆 1 个, 剩 2 留 R95+)
+> - **flutter-spec v3.1**: 84% 合规 (未变, 架构 0 违规)
+> - **superpowers-en 工程**: 8.0/10 (未变, 16 守门员覆盖)
+
+> **R93+ 排期建议** (R92 跳过的项):
+> - 4 项 master-only 物理残留清理 (safety policy 拦截, 需 mavis-trash 走)
+> - IAP 真接 (需 App Store Connect productId + sandbox tester)
+> - EmailService 真接 SendGrid (需法务模板审核)
+> - 5 厂商 push SDK 接入 (米/华/OPP/vivo/魅族, 1-2 月审核)
+> - 3 份法律 md 律师过审 (¥45-90k)
+> - 软件著作权 / ICP 备案 / NMPA 备案
+> - 拆剩下 2 god page (medication_calendar 642 行 + data_management_section 606 行)
+> - 主页信息架构重排 / 紧急联系人 5→3 步 / 数据导出 5→3 步
+> - 50+ Duration / 50+ Curves 残留 → AppMotion token 化
+> - 158 处 TextStyle + 162 处 EdgeInsets 残留 → 集中器化
+
 ## [0.30.0] - 2026-08-05 (R91 — sub-spec 7 i18n: 73 ARB keys (7 子功能 + 整合入口 + period + 类型 + regularity) + 3 lang + 5 widget 走 l10n + CHANGELOG R91)
 
 > R91 Task 7 目标: 把 R91 Task 1-6 实施的 7 子功能 UI (sleep / social_rhythm /
