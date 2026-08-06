@@ -3461,6 +3461,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get migrationFailedErrorPrefix => '错误';
+
+  @override
+  String get dailyTrackingNoteLabel => '备注';
+
+  @override
+  String get dailyTrackingNoteHint => '可选';
+
+  @override
+  String get timeAgoJustNow => '刚刚';
+
+  @override
+  String timeAgoDaysAgo(int days) {
+    return '$days 天前';
+  }
+
+  @override
+  String timeAgoHoursAgo(int hours) {
+    return '$hours 小时前';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -6920,4 +6939,23 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get migrationFailedErrorPrefix => '錯誤';
+
+  @override
+  String get dailyTrackingNoteLabel => '備註';
+
+  @override
+  String get dailyTrackingNoteHint => '可選';
+
+  @override
+  String get timeAgoJustNow => '剛剛';
+
+  @override
+  String timeAgoDaysAgo(int days) {
+    return '$days 天前';
+  }
+
+  @override
+  String timeAgoHoursAgo(int hours) {
+    return '$hours 小時前';
+  }
 }

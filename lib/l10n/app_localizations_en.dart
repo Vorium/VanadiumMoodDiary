@@ -3642,4 +3642,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get migrationFailedErrorPrefix => 'Error';
+
+  @override
+  String get dailyTrackingNoteLabel => 'Note';
+
+  @override
+  String get dailyTrackingNoteHint => 'Optional';
+
+  @override
+  String get timeAgoJustNow => 'Just now';
+
+  @override
+  String timeAgoDaysAgo(int days) {
+    return '$days days ago';
+  }
+
+  @override
+  String timeAgoHoursAgo(int hours) {
+    return '$hours hours ago';
+  }
 }

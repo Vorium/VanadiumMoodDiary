@@ -6418,6 +6418,36 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'错误'**
   String get migrationFailedErrorPrefix;
+
+  /// v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note label (anxiety_agitation / sleep / stress_event / treatment / weight 5 处共享)
+  ///
+  /// In zh, this message translates to:
+  /// **'备注'**
+  String get dailyTrackingNoteLabel;
+
+  /// v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note hint, 提示用户非必填
+  ///
+  /// In zh, this message translates to:
+  /// **'可选'**
+  String get dailyTrackingNoteHint;
+
+  /// v0.30 R95 sub-spec 7 task 55: assessment_center_card 等相对时间显示 '刚刚' (just now)
+  ///
+  /// In zh, this message translates to:
+  /// **'刚刚'**
+  String get timeAgoJustNow;
+
+  /// v0.30 R95 sub-spec 7 task 55: 相对时间 '{N} 天前' (N days ago)
+  ///
+  /// In zh, this message translates to:
+  /// **'{days} 天前'**
+  String timeAgoDaysAgo(int days);
+
+  /// v0.30 R95 sub-spec 7 task 55: 相对时间 '{N} 小时前' (N hours ago)
+  ///
+  /// In zh, this message translates to:
+  /// **'{hours} 小时前'**
+  String timeAgoHoursAgo(int hours);
 }
 
 class _AppLocalizationsDelegate

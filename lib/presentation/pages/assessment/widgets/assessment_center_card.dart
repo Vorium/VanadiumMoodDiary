@@ -119,7 +119,9 @@ class AssessmentCenterCard extends StatelessWidget {
                   style: AppTokens.textStyleHeadline(context),
                 ),
                 Text(
-                  l10n.assessmentCenterLastTime(_formatTime(latestEntry!.timestamp)),
+                  l10n.assessmentCenterLastTime(
+                    _formatTime(latestEntry!.timestamp, l10n),
+                  ),
                   style: AppTokens.textStyleCaption(context),
                 ),
               ] else
@@ -142,13 +144,16 @@ class AssessmentCenterCard extends StatelessWidget {
 
   /// 相对时间显示 ("3 天前" / "5 小时前" / "刚刚")
   ///
+  /// v0.30 R95 sub-spec 7 task 55: 走 l10n.timeAgoXxx 集中器, 替代 hardcoded
+  /// 中文 "刚刚" / "N 天前" / "N 小时前" (R60 之前的 fallback)。
+  ///
   /// 跟 R60 mood_list "3 天前" 风格一致; 跨 midnight 自动 stale 但 Material
   /// build 内取 DateTime.now() 是常见模式, 不再单独监听时间 (跟 streak summary
   /// 一样, 跨日由 AppRoot midnight timer refresh 触发).
-  String _formatTime(DateTime ts) {
+  String _formatTime(DateTime ts, AppLocalizations l10n) {
     final diff = DateTime.now().difference(ts);
-    if (diff.inDays > 0) return '${diff.inDays} 天前';
-    if (diff.inHours > 0) return '${diff.inHours} 小时前';
-    return '刚刚';
+    if (diff.inDays > 0) return l10n.timeAgoDaysAgo(diff.inDays);
+    if (diff.inHours > 0) return l10n.timeAgoHoursAgo(diff.inHours);
+    return l10n.timeAgoJustNow;
   }
 }

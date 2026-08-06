@@ -2749,5 +2749,31 @@
   "migrationFailedErrorPrefix": "錯誤",
   "@migrationFailedErrorPrefix": {
     "description": "v0.30 R95 sub-spec 7 task 53: 錯誤前綴標籤 (e.g. '錯誤: xxx')"
+  },
+  "dailyTrackingNoteLabel": "備註",
+  "@dailyTrackingNoteLabel": {
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note label"
+  },
+  "dailyTrackingNoteHint": "可選",
+  "@dailyTrackingNoteHint": {
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note hint, 提示使用者非必填"
+  },
+  "timeAgoJustNow": "剛剛",
+  "@timeAgoJustNow": {
+    "description": "v0.30 R95 sub-spec 7 task 55: 相對時間 '剛剛'"
+  },
+  "timeAgoDaysAgo": "{days} 天前",
+  "@timeAgoDaysAgo": {
+    "description": "v0.30 R95 sub-spec 7 task 55: 相對時間 '{N} 天前'",
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "timeAgoHoursAgo": "{hours} 小時前",
+  "@timeAgoHoursAgo": {
+    "description": "v0.30 R95 sub-spec 7 task 55: 相對時間 '{N} 小時前'",
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
   }
 }

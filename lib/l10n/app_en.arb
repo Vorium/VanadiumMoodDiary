@@ -2710,5 +2710,31 @@
   "migrationFailedErrorPrefix": "Error",
   "@migrationFailedErrorPrefix": {
     "description": "v0.30 R95 sub-spec 7 task 53: error prefix label (e.g. 'Error: xxx')"
+  },
+  "dailyTrackingNoteLabel": "Note",
+  "@dailyTrackingNoteLabel": {
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget shared note label"
+  },
+  "dailyTrackingNoteHint": "Optional",
+  "@dailyTrackingNoteHint": {
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget shared note hint, mark field as optional"
+  },
+  "timeAgoJustNow": "Just now",
+  "@timeAgoJustNow": {
+    "description": "v0.30 R95 sub-spec 7 task 55: relative time 'just now' (assessment_center_card etc.)"
+  },
+  "timeAgoDaysAgo": "{days} days ago",
+  "@timeAgoDaysAgo": {
+    "description": "v0.30 R95 sub-spec 7 task 55: relative time 'N days ago'",
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "timeAgoHoursAgo": "{hours} hours ago",
+  "@timeAgoHoursAgo": {
+    "description": "v0.30 R95 sub-spec 7 task 55: relative time 'N hours ago'",
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
   }
 }

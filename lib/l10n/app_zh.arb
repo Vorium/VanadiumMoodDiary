@@ -2747,5 +2747,31 @@
   "migrationFailedErrorPrefix": "错误",
   "@migrationFailedErrorPrefix": {
     "description": "v0.30 R95 sub-spec 7 task 53: 错误前缀标签 (e.g. '错误: xxx')"
+  },
+  "dailyTrackingNoteLabel": "备注",
+  "@dailyTrackingNoteLabel": {
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note label (anxiety_agitation / sleep / stress_event / treatment / weight 5 处共享)"
+  },
+  "dailyTrackingNoteHint": "可选",
+  "@dailyTrackingNoteHint": {
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note hint, 提示用户非必填"
+  },
+  "timeAgoJustNow": "刚刚",
+  "@timeAgoJustNow": {
+    "description": "v0.30 R95 sub-spec 7 task 55: assessment_center_card 等相对时间显示 '刚刚' (just now)"
+  },
+  "timeAgoDaysAgo": "{days} 天前",
+  "@timeAgoDaysAgo": {
+    "description": "v0.30 R95 sub-spec 7 task 55: 相对时间 '{N} 天前' (N days ago)",
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "timeAgoHoursAgo": "{hours} 小时前",
+  "@timeAgoHoursAgo": {
+    "description": "v0.30 R95 sub-spec 7 task 55: 相对时间 '{N} 小时前' (N hours ago)",
+    "placeholders": {
+      "hours": { "type": "int" }
+    }
   }
 }
