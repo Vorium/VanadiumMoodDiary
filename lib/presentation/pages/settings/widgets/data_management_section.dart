@@ -3,22 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/domain/entities/check_in_entity.dart';
-import 'package:chroniccare/domain/entities/medication_entity.dart';
-import 'package:chroniccare/domain/entities/user_profile_entity.dart';
-import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
-import 'package:chroniccare/presentation/widgets/medication_report_dialog.dart';
-import 'package:chroniccare/presentation/pages/medication/widgets/choose_window_dialog.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/cbt_pdf_tile.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/clear_tile.dart';
@@ -32,6 +24,8 @@ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_
 /// 从 settings_page.dart 提取 (v0.23 P1 refactor)
 /// v0.30 round 95 (sub-spec 1 task 1): 拆 6 sub-tile 入口, 主壳改 props callback 模式
 /// v0.30 round 95 (sub-spec 1 task 2a): 抽 ExportTile (200+ 行 → sub-tile, 走 ConsumerWidget)
+/// v0.30 round 95 (sub-spec 1 task 3): 抽 CbtPdfTile
+/// v0.30 round 95 (sub-spec 1 task 4a): 抽 ReportTile (ChooseWindowDialog + medication report + swallowError)
 class DataManagementSection extends ConsumerWidget {
   const DataManagementSection({super.key});
 
@@ -46,7 +40,7 @@ class DataManagementSection extends ConsumerWidget {
           // v0.30 round 95 (sub-spec 1 task 3): 抽到 cbt_pdf_tile.dart
           const CbtPdfTile(),
           const Divider(height: 1),
-          ReportTile(onShow: () => _chooseAndShowReport(context, ref)),
+          const ReportTile(),
           const Divider(height: 1),
           HistoryTile(onShow: () => _showReportHistory(context)),
           const Divider(height: 1),
@@ -56,81 +50,6 @@ class DataManagementSection extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  Future<void> _chooseAndShowReport(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    if (!context.mounted) return;
-    final days = await showDialog<int>(
-      context: context,
-      builder: (ctx) => const ChooseWindowDialog(),
-    );
-    if (days == null) return;
-    if (!context.mounted) return;
-    await _showMedicationReport(context, ref, days: days);
-  }
-
-  Future<void> _showMedicationReport(
-    BuildContext context,
-    WidgetRef ref, {
-    required int days,
-  }) async {
-    try {
-      final results = await Future.wait([
-        ref.read(userProfileProvider.future),
-        ref.read(allMedicationsProvider.future),
-        ref.read(allCheckInsProvider.future),
-      ]);
-      final userProfile = results[0] as UserProfileEntity?;
-      final meds = results[1] as List<MedicationEntity>;
-      final checkIns = results[2] as List<CheckInEntity>;
-
-      if (!context.mounted) return;
-      final userName = userProfile?.userName ?? '';
-      final report = MedicationReport.compute(
-        userName: userName,
-        meds: meds,
-        checkIns: checkIns,
-        days: days,
-      );
-      final reportText = report.toReportString();
-
-      try {
-        await ref.read(reportHistoryRepositoryProvider).insert(
-              windowDays: days,
-              generatedAt: report.generatedAt,
-              userName: userName,
-              reportText: reportText,
-            );
-      } catch (e, st) {
-        swallowError(
-          where: 'DataManagementSection._showMedicationReport.writeHistory',
-          error: e,
-          stack: st,
-          note: '写历史失败不影响主流程',
-        );
-      }
-
-      if (!context.mounted) return;
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => MedicationReportDialog(
-          report: reportText,
-          reportData: report,
-          windowDays: days,
-        ),
-      );
-    } catch (e) {
-      if (context.mounted) {
-        AppSnackBar.showError(
-          context,
-          action: AppLocalizations.of(context).settingsActionGenerateReport,
-          error: e,
-        );
-      }
-    }
   }
 
   Future<void> _showReportHistory(BuildContext context) async {
