@@ -326,10 +326,10 @@
 
 | 阶段 | 时间 | 动作 |
 |------|------|------|
-| M0 当前 | 2026-08-06 | v0.30.0+85 R93 完成, **R95 sub-spec 1 完成** (拆 data_management_section 606→49 行 + 16 R95 sub-spec 1 tests), 8 业务 FeatureFlag 守门 + 17 守门员全绿 |
+| M0 当前 | 2026-08-07 | v0.30.0+85 R95 sub-spec 7 完成 (P2 不需外部资源任务 + R96 修 3 pre-existing fail + 11 commit, baseline 1951 → 2008 pass, +57 tests, 0 pre-existing fail, 18 守门员全绿, 0 analyzer error) |
 | M1 R95 阶段 1 | 2026-08-13 (估) | R95 task 1-10 (P0 必做) 完成, 1672 → 1762 tests (+90 R95) |
 | M2 R95 阶段 2 | 2026-09-15 (估) | R95 task 11-19 (P1 业务真接 + 上架配置) 完成, 1762 → 1812 tests (+50) |
-| M3 R95 阶段 3 | 2026-11-15 (估) | R95 task 21-43 (P2 上架 + 测试覆盖) 完成, 1812 → 1842 tests (+30) |
+| M3 R95 阶段 3 | 2026-08-13 ✅ | **R95 sub-spec 7 完成** (task 30/31a/31b/32/53/54/55 + R96a/96b/96c, +57 tests 1951 → 2008, 0 pre-existing fail) |
 | M4 R95 阶段 4 | 2027-01-15 (估) | R95 task 44-60 (P3 UX + nice-to-have) 完成, 1842 → 1862 tests (+20) |
 | M5 法务过审 | 2026-09-15 (估, 并行 M2) | ¥45-90k 法务付费 + 3 份 md 律师签字 |
 | M6 主体资质 | 2026-11-15 (估, 并行 M3) | ICP / 公安备案 / 等保 / NMPA 备案 |

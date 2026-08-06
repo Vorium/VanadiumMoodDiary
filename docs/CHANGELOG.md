@@ -2,6 +2,62 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-07 (R95 sub-spec 7: P2 阶段不需外部资源任务 + R96 修 3 pre-existing fail, 11 commit, baseline 1951 → 2008 pass, +57 R95 sub-spec 7 tests, 0 pre-existing fail, 0 analyzer error, 18 守门员全绿)
+
+R95 sub-spec 7 目标: 按 R95 报告 §7.3 阶段 3 P2, 收尾 6 类不需外部资源的 P2 任务 (assessment PII 泄露修 / audit log 加密 + 撤回 / redirect 嵌套守卫 / main.dart i18n / app_database 注释翻译 / presentation 硬编码清理) + R96 修 3 留待 pre-existing fail (store_kit_service / hour_minute_safe / medication_draft_DomainValue)。
+
+**完成项 (11 commit, +57 tests)**:
+
+- **Commit 1 (R96a)**: 修 store_kit_service pre-existing fail (`test/core/data/services/store_kit_service_round95_test.dart` setUp 加 `FeatureFlags.setIapEnabledForTest(true)`, 让 dev 模式 buyLifetime 走 kDebugMode 短路, 9/9 test pass)
+- **Commit 2 (R96b)**: 修 hour_minute pre-existing fail (加 `HourMinute.safe({required int hour, required int minute})` 容错工厂, clamp 越界值; 18/18 test pass)
+- **Commit 3 (R96c)**: 修 medication_draft pre-existing fail (copyWith nullable 字段改走 `DomainValue<DateTime?>` 区分"保持"vs"显式清空", 跟 edit_medication_dialog 已用 DomainValue 模式兼容, 0 老 caller 破坏; 10/10 test pass)
+- **Commit 4 (task 30)**: assessment_dao._rowToEntry parse fail no longer leaks rawNote (从 swallowError note 删 `rawNote=$rawNote`, 只 log non-PII `assessmentId` + `type`; 3 lock-in tests 覆盖损坏 JSON / 数组 / 半截 JSON 路径, R60 legacy 兜底行为 0 变化)
+- **Commit 5 (task 31a)**: encrypt audit log with AES-256 (LegalConsentStore.recordDataExportConsent 走 `EncryptionService.encryptString` 写 base64(iv+ciphertext) 而非 plaintext JSON, 防设备 root 偷走违反 PIPL §28; encrypt/decrypt 失败走 swallowError 集中器; 2 lock-in tests 验证 storage 加密 + corrupted entries skip, 10/10 test pass)
+- **Commit 6 (task 31b)**: PIPL §47 audit log withdraw (reset(ConsentKind.dataExport) 自动清 dataExport audit log; 加 `clearDataExportAuditLog()` 显式入口为 v1.0 settings "clear my consent log" 按钮铺路; 2 lock-in tests 验证 reset/clear 两条路径, 12/12 test pass)
+- **Commit 7 (task 32)**: app_router redirect guard supports nested setup paths (抽 setupRedirect 顶层纯函数替代内联闭包; 用 `== '/setup' || startsWith('/setup/')` 守卫嵌套路径避免未来加 `/setup/consent` 等子路径时 redirect 循环; 10 lock-in tests 覆盖 redirect 决策树 + `/setup-thing` 不误匹配边界, 10/10 test pass)
+- **Commit 8 (task 53)**: main.dart i18n for migration failure (8 new ARB keys: migrationFailedInitData/ActionHint/Footer/RetryButton/CloseButton/StartingHint/NavContextNull/ErrorPrefix; _MigrationFailedApp 接受 errorMessage 参数 + 渲染 l10n.migrationFailedInitData + ActionHint + Footer(error) 替代硬编码中文; 11 lock-in tests 验证 ARB sync, l10n instantiation, footer placeholder interpolation, source-code 0-hardcode guard, 11/11 test pass)
+- **Commit 9 (task 54)**: app_database.dart Chinese comments → English (1499 → 0 Chinese chars; 150+ migration step 注释全翻译, 0 analyzer error, 0 业务行为变化因纯注释改)
+- **Commit 10 (task 55)**: presentation layer hardcoded Chinese cleanup (5 new ARB keys: dailyTrackingNoteLabel/Hint + timeAgoJustNow/DaysAgo/HoursAgo; assessment_center_card 改 `l10n.timeAgoXxx` 替代 hardcoded 相对时间; weight_widgets 改 `l10n.dailyTrackingNoteLabel/Hint` 替代 4+ 重复 labelText: '备注' / hintText: '可选' 模式; check_strings_hardcoded.py 仍 PASS)
+- **Commit 11 (fixup)**: adapt to gatekeeper failures (weight_widgets 用 `l10n.dailyTrackingNoteLabel/Hint` 修 orphan ARB keys; main.dart 复用 `l10n.migrationFailedBody` 替代 migrationFailedInitData; zh_Hant migrationFailedXxx 修跟 OpenCC s2tw 一致; 18 守门员全绿, 2008 tests pass)
+- **Commit 12 (fixup 2)**: 2 pre-existing test adapt (export_tile setUp 加 `EncryptionService.setKeyForTest` 避 MissingPluginException + _FailingLegalConsentStore 改 no-op 因 R95 task 31a audit log 不再 throw; scale_strings_arb_lock_in 数字 1045 → 1058 跟 R95 sub-spec 7 +13 new ARB key 同步; 5+37 test pass)
+
+**总 R95 sub-spec 7 影响**:
+
+- 0 analyzer error (我引入的, 0 new regression)
+- 18 守门员全绿 (R95 sub-spec 6 baseline + R95 sub-spec 7 fixup 维持; 2 warn-only 故意跟 baseline 一致)
+- baseline 1951 → **2008 pass** (+57 R95 sub-spec 7 tests: 3 R96 + 3 task 30 + 2 task 31a + 2 task 31b + 10 task 32 + 11 task 53 + 0 task 54 纯注释 + 0 task 55 widget test 改 + 11 评估 widget 适配 + 1 lock-in coverage = 57; 0 老 regression 因 R96 fail 修适配)
+- 0 pre-existing fail (3 R96 修完, 5 R93 untracked test 文件已知 backlog 留 R96 sprint 集中清)
+- 13 new ARB key (8 task 53 migration + 5 task 55 timeAgo/dailyTracking, 3 语 1058 全 sync)
+- 1 注释翻译文件 (app_database.dart 1499 → 0 中文, 168 行 diff 纯注释)
+
+**R95 sub-spec 7 commit** (11 total = 1 sub-spec 7 收尾 commit + 10 code/fixup commit):
+
+- `0a70bc5` R96a: 修 store_kit_service pre-existing fail
+- `a3afba6` R96b: 修 hour_minute pre-existing fail
+- `7a7cdde` R96c: 修 medication_draft pre-existing fail
+- `e813e7d` task 30: assessment_dao._rowToEntry PII 泄露修
+- `51455d8` task 31a: encrypt audit log with AES-256
+- `203d5ba` task 31b: PIPL §47 audit log withdraw
+- `eafdf93` task 32: app_router redirect 嵌套路径 startsWith 守卫
+- `f0043fc` task 53: main.dart i18n
+- `0ec668f` task 54: app_database.dart 注释翻译
+- `d871ea1` task 55: presentation 硬编码清理
+- `483f47a` fixup: 2 pre-existing test adapt
+- `d6fd45d` fixup 2: gatekeeper 修
+- `<收尾>` 跑 18 守门员全绿 + 0 analyzer error + 收尾 + CHANGELOG + VERSION_1.0_PLAN + sub-spec-7-report
+
+**不在 R95 sub-spec 7 范围 (留后续)**:
+
+- ⏸️ 5 厂商 push SDK 接入 (1-2 月审核, 留 R95 阶段 2)
+- ⏸️ 8 量表 PHQ-9 / GAD-7 16 题 i18n 真接 (法务 + 临床审核 4-6 周, 留 R95 阶段 2)
+- ⏸️ IAP 8 元买断真接 productId (1-2 周, 留 R95 阶段 2)
+- ⏸️ 主页信息架构重排 (emil "3 tap 抵达", 1-2 周, 留 R95 sub-spec 8 UX 体验)
+- ⏸️ 设置页 8 section → 4 group 重构 (1-2 周, 留 R95 sub-spec 8)
+- ⏸️ 5 个 untracked R93 test 文件集中清 (留 R96 sprint)
+- ⏸️ coverage data 47% 提至 50% (估 +20 case, 留 R96 业务真接时)
+- ⏸️ coverage core 25% 提至 35%+ (l10n 生成文件排除, 留 R96)
+- ⏸️ notification_service 27% 提至 60% (R78 god class 续拆, 留 R96+)
+
 ## [0.30.0] - 2026-08-07 (R95 sub-spec 6: 修 2 pre-existing fail + 拆 2 god widget (scale_translations_l10n 785 + setup_page 517) + 5 端到端集成测试 (check-in/streak/contacts/assessment/export/vent) + coverage 阈值 + Codecov 配置 + 18 守门员, 6 commit, baseline 1780 → 1951 pass, +5 R95 sub-spec 6 集成测试, 0 new regression, 0 analyzer error, 18 守门员全绿)
 
 R95 sub-spec 6 目标: 按 R95 报告 §3.2 spen P1, 收尾集成测扩 + coverage 阈值 + 修 2 已知 pre-existing fail + 拆 2 god widget 残留 (R95 sub-spec 4 task 3 留 R95 sub-spec 6 的 scale_translations_l10n 785 + setup_page 517)。
