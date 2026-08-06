@@ -15,13 +15,14 @@ void main() {
     });
 
     test(
-        '1. 默认值: emergencyContactEnabled=false, iapEnabled=false (R68), phqGad7I18nEnabled=false, bootReceiverEnabled=true',
+        '1. 默认值: emergencyContactEnabled=false, iapEnabled=false (R68), phqGad7I18nEnabled=false, bootReceiverEnabled=false (R93)',
         () {
       // R68 CC-3: iapEnabled 默认 false (临时关闭, 避免 "8 元买断" vs release buyLifetime() 返 false 不一致)
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
       expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.phqGad7I18nEnabled, isFalse);
-      expect(FeatureFlags.bootReceiverEnabled, isTrue);
+      // R93 阶段 2: bootReceiverEnabled 默认改为 false (v0.28 WorkManager 完善前)
+      expect(FeatureFlags.bootReceiverEnabled, isFalse);
     });
 
     test('2. setIapEnabledForTest(false): iapEnabled 返 false, 其他 3 个 flag 不变',
@@ -31,7 +32,8 @@ void main() {
       // 其他 3 个 flag 不变
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
       expect(FeatureFlags.phqGad7I18nEnabled, isFalse);
-      expect(FeatureFlags.bootReceiverEnabled, isTrue);
+      // R93: bootReceiverEnabled 默认 false
+      expect(FeatureFlags.bootReceiverEnabled, isFalse);
     });
 
     test('3. setPhqGad7I18nEnabledForTest(true): phqGad7I18nEnabled 返 true',
@@ -42,7 +44,8 @@ void main() {
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
       // R68: prod iapEnabled = false
       expect(FeatureFlags.iapEnabled, isFalse);
-      expect(FeatureFlags.bootReceiverEnabled, isTrue);
+      // R93: bootReceiverEnabled 默认 false
+      expect(FeatureFlags.bootReceiverEnabled, isFalse);
     });
 
     test('4. setBootReceiverEnabledForTest(false): bootReceiverEnabled 返 false',
@@ -78,7 +81,8 @@ void main() {
       // R68: prod = false
       expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.phqGad7I18nEnabled, isFalse);
-      expect(FeatureFlags.bootReceiverEnabled, isTrue);
+      // R93: prod bootReceiverEnabled = false
+      expect(FeatureFlags.bootReceiverEnabled, isFalse);
     });
   });
 }
