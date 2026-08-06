@@ -2,6 +2,17 @@
 
 > 我今天吃了药 · 精神心理患者吃药打卡 + 停药通知
 
+> **🚧 v0.30 阶段 2 集中修复 (R93, 2026-08-06)**: 7 项未真接业务已用 `FeatureFlag` 守护 + UI 完全 hidden (`SizeBox.shrink`):
+> 1. IAP 8 元买断 (Apple 2.1 拒 — `iapEnabled=false`)
+> 2. 失联通知 / 紧急联系人 SMS (阿里云未真接 — `emergencyContactEnabled=false`)
+> 3. 5 厂商 push (米/华/OPPO/vivo/魅族 — `fiveVendorPushEnabled=false`)
+> 4. EmailService 邮件导出 (SendGrid 未真接 — `emailServiceEnabled=false`)
+> 5. vent + mood audio 录音 (业务闭环不全 — `ventAudioEnabled=false`)
+> 6. PHQ-9 / GAD-7 量表 (en/zh_Hant 翻译不全 — `phqGad7I18nEnabled=false`)
+> 7. Android BootReceiver (WorkManager 完善前 — `bootReceiverEnabled=false`)
+>
+> 业务真接后翻 flag = 立即恢复, 数据模型 / Repository / 业务代码全部保留。详见 `lib/core/data/feature_flags.dart` + `assets/legal/privacy_policy.md` §0.6。
+
 ## 🎯 产品
 
 参考"死了么"模式做的精神心理患者专版吃药打卡 App。
