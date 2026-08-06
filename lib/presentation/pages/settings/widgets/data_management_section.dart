@@ -1,11 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:printing/printing.dart';
 
-import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -14,7 +10,6 @@ import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
-import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
@@ -48,7 +43,8 @@ class DataManagementSection extends ConsumerWidget {
           const ExportTile(),
           const Divider(height: 1),
           // v0.30 round 88 (sub-spec 4): 导出 5/7 栏 CBT 思维记录 PDF 入口
-          CbtPdfTile(onExport: () => _exportCbtPdf(context, ref)),
+          // v0.30 round 95 (sub-spec 1 task 3): 抽到 cbt_pdf_tile.dart
+          const CbtPdfTile(),
           const Divider(height: 1),
           ReportTile(onShow: () => _chooseAndShowReport(context, ref)),
           const Divider(height: 1),
@@ -74,76 +70,6 @@ class DataManagementSection extends ConsumerWidget {
     if (days == null) return;
     if (!context.mounted) return;
     await _showMedicationReport(context, ref, days: days);
-  }
-
-  /// v0.30 round 88 (sub-spec 4): 导出 5/7 栏 CBT 思维记录 PDF
-  ///
-  /// 流程:
-  /// 1. showDateRangePicker 选区间 (默认本月, 跟 mood_list_filter_bar 同 mode)
-  /// 2. ref.read(cbtReratedEntriesProvider) 拿已过滤 cbtLevel >= 5 的 entries
-  /// 3. 按 dateRange 在 handler 内过滤 (闭区间), 跟 facade 内部 filter 同语义
-  /// 4. CbtThoughtRecordPdf().build(entries: filtered, dateRange, l10n) 生成 PDF
-  /// 5. Printing.layoutPdf 弹系统打印/分享面板 (跟 MedicationReportPdf 同模式)
-  /// 6. SnackBar 成功/失败
-  ///
-  /// 注: cbtReratedEntriesProvider 是 autoDispose — 在 handler 内 ref.read
-  /// 同步取值即可, 不在 build 监听 (避免每次 build 重建 PDF)。
-  ///
-  /// v0.30 round 95 (sub-spec 1 task 3): 待修 R19B DateTime.now() race — 入口
-  /// `final now = DateTime.now();` 一次, 复用 4 处 (now.year - 5 / +1 / now.month / +1)。
-  Future<void> _exportCbtPdf(BuildContext context, WidgetRef ref) async {
-    if (!context.mounted) return;
-    final l10n = AppLocalizations.of(context);
-    final now = DateTime.now();
-    final picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(now.year - 5),
-      lastDate: DateTime(now.year + 1),
-      initialDateRange: DateTimeRange(
-        start: DateTime(now.year, now.month, 1),
-        end: DateTime(now.year, now.month + 1, 0),
-      ),
-    );
-    if (picked == null) return;
-    if (!context.mounted) return;
-
-    // cbtReratedEntriesProvider 已过滤 cbtLevel >= 5 (5/7 栏) — 见
-    // cbt_rerated_entries_provider.dart。在 handler 内再按 dateRange 过滤一次,
-    // 跟 facade 内部 filter 同语义, 但 SnackBar 数字 = 实际 PDF 页数。
-    final all = ref.read(cbtReratedEntriesProvider);
-    final filtered = all
-        .where(
-          (e) =>
-              !e.timestamp.isBefore(picked.start) &&
-              !e.timestamp.isAfter(picked.end),
-        )
-        .toList();
-    try {
-      final pdfBytes = await CbtThoughtRecordPdf().build(
-        entries: filtered,
-        dateRange: picked,
-        l10n: l10n,
-      );
-      if (!context.mounted) return;
-      // Printing.layoutPdf 要求 LayoutCallback 返回 FutureOr<Uint8List> (见
-      // printing/callback.dart typedef), 而 CbtThoughtRecordPdf.build 返回
-      // List<int>。包一层 Uint8List.fromList 转换, 跟 MedicationReportPdf
-      // 现有 onLayout 模式一致 (bytes 已经是 Uint8List, 这里从 List<int> 显式转)。
-      final pdfUint8 = Uint8List.fromList(pdfBytes);
-      await Printing.layoutPdf(
-        onLayout: (_) async => pdfUint8,
-        name: 'cbt_thought_record.pdf',
-      );
-      if (!context.mounted) return;
-      AppSnackBar.showInfo(
-        context,
-        l10n.cbtExportPdfSuccess(filtered.length),
-      );
-    } catch (e) {
-      if (context.mounted) {
-        AppSnackBar.showInfo(context, l10n.cbtExportPdfFailed);
-      }
-    }
   }
 
   Future<void> _showMedicationReport(
