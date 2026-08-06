@@ -29,7 +29,16 @@ import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.da
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_explainer_card.dart';
 
 class CbtWizard extends ConsumerWidget {
-  const CbtWizard({super.key});
+  /// v0.30 round 92 (audit-fixes / P0 #11): 5/7 栏 "完成" 按钮回调
+  ///
+  /// 修前 bug: `FilledButton` onPressed 写死 `Navigator.pop(context)`,父组件
+  /// (MoodRecorderPage) 的 `_save()` 没被调 → 5/7 栏 CBT 字段全部丢库。
+  /// 修法: 父组件 build `CbtWizard` 时传 `onSaveRequested: _save`,
+  /// wizard 末步 "完成" 按钮调 `onSaveRequested?.call()` 替代直接 pop。
+  /// 父 `_save()` 内部走 `moodRepository.add()` + 成功后 pop + 错误 snackbar。
+  final VoidCallback? onSaveRequested;
+
+  const CbtWizard({super.key, this.onSaveRequested});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -92,12 +101,17 @@ class CbtWizard extends ConsumerWidget {
               FilledButton(
                 onPressed: () {
                   if (isLastStep) {
-                    // v0.29 round 84 (Task 6 fix): 真正的 save 走
-                    // mood_recorder_page._save() (M
-                    // oodSubmitPanel 调的)。wizard 只负责
-                    // 关闭 dialog, 父组件 dispose 会 reset cbtDraftProvider。
-                    // label 改 "完成" (不是 "保存") 避免误导用户以为已落库。
-                    Navigator.of(context).pop();
+                    // v0.30 round 92 (audit-fixes / P0 #11): 末步 "完成" 按钮
+                    // 调父组件 onSaveRequested (MoodRecorderPage._save) →
+                    // moodRepository.add 把 5/7 栏 CBT 字段落库, 然后父
+                    // _save 内部 snackbar + Navigator.pop。
+                    //
+                    // 修前 bug: onPressed 写死 Navigator.pop(context), 父
+                    // _save 没被调, 5/7 栏所有 CBT 字段 (situation /
+                    // automaticThought / evidenceFor / evidenceAgainst /
+                    // alternativeThought / reratedScore / coreBelief /
+                    // behaviorResponse) 都丢库。
+                    onSaveRequested?.call();
                   } else {
                     notifier.setStep(state.stepIndex + 1);
                   }

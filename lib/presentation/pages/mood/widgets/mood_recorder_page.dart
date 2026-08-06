@@ -275,12 +275,16 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                     const SizedBox(height: AppTokens.spacingMd),
 
                     // 中间: 模式内容 (3 栏 vs wizard)
+                    // v0.30 round 92 (audit-fixes / P0 #11): wizard
+                    // 末步 "完成" 按钮调 onSaveRequested → 父 _save 触发
+                    // moodRepository.add 把 5/7 栏 CBT 字段落库 (修前 bug:
+                    // 直接 pop, 父 _save 没调, 字段丢库)。
                     switch (cbtState.level) {
                       ThoughtRecordLevel.three =>
                         const CbtThreeColumnMode(),
                       ThoughtRecordLevel.five ||
                       ThoughtRecordLevel.seven =>
-                        const CbtWizard(),
+                        CbtWizard(onSaveRequested: _save),
                     },
                     const SizedBox(height: AppTokens.spacingSm),
 
