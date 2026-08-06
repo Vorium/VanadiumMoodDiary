@@ -267,4 +267,31 @@ class AppTokens {
   // 但删除需要 grep 排查, 留 R92 batch 处理。
   static const List<List<int>> assessmentDashArrays =
       AppColors.assessmentDashArrays;
+
+  // ===== v0.30 round 91 (sub-spec 7 日常追踪 / Task 6): 4 指标色 + 4 线型 =====
+  //
+  // 4 日常追踪指标 (体重 / 睡眠 / 心境 / 应激源) 分散色 + 4 线型。
+  // 跟 R90 assessment color 模式一致, 但 4 指标是固定枚举不放 palette 单独文件,
+  // 直接走 AppColors 集中管理 (跟 R85 rerated chart 同款)。
+  //
+  // 4 指标单位不同 (kg / min / 1-5 / 1-5) → Y 轴归一化 0-1 在 chart widget 内做。
+  // 4 指标分散色: 蓝/紫/绿/红, 色盲友好。
+  // 4 线型: 实线/虚线/点线/双点。
+  static const List<Color> dailyTrackingColors = AppColors.dailyTrackingColors;
+  static const List<String> dailyTrackingMetricIds =
+      AppColors.dailyTrackingMetricIds;
+  static const List<List<int>> dailyTrackingDashArrays =
+      AppColors.dailyTrackingDashArrays;
+
+  /// 按 metricId 拿色 (Color, 找不到返 0xFF9E9E9E 深灰 兜底)
+  ///
+  /// UI 层直接用: `AppTokens.dailyTrackingColorFor(metricId)`
+  static Color dailyTrackingColorFor(String metricId) =>
+      AppColors.dailyTrackingColorFor(metricId);
+
+  /// 按 metricId 拿线型 (`List<int>`, 找不到返 const `[]` 实线 兜底)
+  ///
+  /// UI 层直接传给 LineChartBarData.dashArray
+  static List<int> dailyTrackingDashFor(String metricId) =>
+      AppColors.dailyTrackingDashFor(metricId);
 }

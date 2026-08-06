@@ -906,6 +906,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodDialogTitle => 'How are you today?';
 
   @override
+  String get moodDialogPeriodLabel => 'Period';
+
+  @override
+  String get moodPeriodMorning => 'Morning';
+
+  @override
+  String get moodPeriodNoon => 'Noon';
+
+  @override
+  String get moodPeriodEvening => 'Evening';
+
+  @override
+  String get moodPeriodNight => 'Night';
+
+  @override
+  String get moodPeriodUnspecified => 'Unspecified';
+
+  @override
+  String get moodListFilterPeriod => 'Period';
+
+  @override
+  String get moodPeriodChartTitle => 'Mood 4-period trend (last 30 days)';
+
+  @override
   String get moodDimensionMood => 'Mood';
 
   @override
@@ -2474,9 +2498,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeQuickMoodTitle => 'How are you today?';
 
   @override
-  String get homeFabAssessment => 'Mood test';
-
-  @override
   String get homeFabVent => 'Mood vent';
 
   @override
@@ -3190,4 +3211,268 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get level2PsychosisSeveritySummary3 =>
       'Severe psychotic symptoms, strongly consider seeing a doctor';
+
+  @override
+  String get dailyTrackingTitle => 'Daily Tracking';
+
+  @override
+  String get dailyTrackingFab => 'Daily Tracking';
+
+  @override
+  String get dailyTrackingMultiChartTitle => 'Last 30 days, 4 metrics';
+
+  @override
+  String dailyTrackingLastTime(String time) {
+    return '$time record';
+  }
+
+  @override
+  String get dailyTrackingRecord => 'Record';
+
+  @override
+  String get moodDiaryName => 'Mood Diary';
+
+  @override
+  String get moodDiaryShortDesc => 'Mood by 4 periods + score, trend analysis';
+
+  @override
+  String moodDiaryScore(int score) {
+    return 'Mood $score/5';
+  }
+
+  @override
+  String moodDiaryLast(String time, String score, String period) {
+    return '$time · $score ($period)';
+  }
+
+  @override
+  String get anxietyAgitationName => 'Anxiety & Agitation';
+
+  @override
+  String get anxietyAgitationShortDesc =>
+      'Anxiety + agitation 2-dim, 5-point scale';
+
+  @override
+  String get anxietyAgitationHint =>
+      'Anxiety reverse 1=severe 5=calm; agitation forward 1=calm 5=extreme';
+
+  @override
+  String get anxietyAgitationAddButton => 'Add assessment';
+
+  @override
+  String get anxietyAgitationNoData => 'No anxiety/agitation entries yet';
+
+  @override
+  String anxietyAgitationAnxietyScore(int score) {
+    return 'Anxiety $score';
+  }
+
+  @override
+  String anxietyAgitationAgitationScore(int score) {
+    return 'Agitation $score';
+  }
+
+  @override
+  String anxietyAgitationLast(int anxiety, int agitation) {
+    return 'Anxiety $anxiety / Agitation $agitation';
+  }
+
+  @override
+  String get sleepName => 'Sleep';
+
+  @override
+  String get sleepShortDesc => 'Bedtime + duration + regularity';
+
+  @override
+  String get sleepHint =>
+      'Record nightly bedtime + wake, auto cross-midnight duration';
+
+  @override
+  String get sleepAddButton => 'Add sleep entry';
+
+  @override
+  String get sleepNoData => 'No sleep entries yet';
+
+  @override
+  String sleepBedtime(String time) {
+    return 'Bedtime $time';
+  }
+
+  @override
+  String sleepWakeTime(String time) {
+    return 'Wake $time';
+  }
+
+  @override
+  String sleepLast(String duration, int regularity) {
+    return '$duration · regularity $regularity/5';
+  }
+
+  @override
+  String get socialRhythmName => 'Social Rhythm';
+
+  @override
+  String get socialRhythmShortDesc =>
+      'Wake + first meal + last meal + durations';
+
+  @override
+  String get socialRhythmHint =>
+      'Record daily routines, helps doctors judge rhythm stability';
+
+  @override
+  String get socialRhythmAddButton => 'Add social rhythm';
+
+  @override
+  String get socialRhythmNoData => 'No social rhythm entries yet';
+
+  @override
+  String socialRhythmWakeTime(String time) {
+    return 'Wake $time';
+  }
+
+  @override
+  String socialRhythmFirstMeal(String time) {
+    return 'First meal $time';
+  }
+
+  @override
+  String socialRhythmLastMeal(String time) {
+    return 'Last meal $time';
+  }
+
+  @override
+  String socialRhythmLast(String wake, int social, int work) {
+    return 'Wake $wake · social ${social}h · work ${work}h';
+  }
+
+  @override
+  String get stressEventName => 'Stress Events';
+
+  @override
+  String get stressEventShortDesc => 'Event type + intensity score';
+
+  @override
+  String get stressEventHint =>
+      'Record stressful life events, helps doctors identify triggers';
+
+  @override
+  String get stressEventAddButton => 'Add stress event';
+
+  @override
+  String get stressEventNoData => 'No stress events yet';
+
+  @override
+  String get stressEventEventType => 'Event type';
+
+  @override
+  String get stressEventIntensity => 'Intensity';
+
+  @override
+  String stressEventLast(int intensity) {
+    return 'Intensity $intensity/5';
+  }
+
+  @override
+  String get treatmentName => 'Treatment';
+
+  @override
+  String get treatmentShortDesc =>
+      'Medication / consultation / physiotherapy, link to meds';
+
+  @override
+  String get treatmentHint =>
+      'Treatment entries can link to medication, write UI v0.31+';
+
+  @override
+  String get treatmentNoData => 'No treatment entries yet';
+
+  @override
+  String get treatmentType => 'Treatment type';
+
+  @override
+  String treatmentLast(String type, String description) {
+    return '$type · $description';
+  }
+
+  @override
+  String get weightName => 'Weight';
+
+  @override
+  String get weightShortDesc => 'Weight + BMI (requires profile.height)';
+
+  @override
+  String get weightHint =>
+      'Record daily weight, helps doctors judge physical state';
+
+  @override
+  String get weightAddButton => 'Add weight entry';
+
+  @override
+  String get weightNoData => 'No weight entries yet';
+
+  @override
+  String weightWeight(String kg) {
+    return 'Weight $kg kg';
+  }
+
+  @override
+  String weightBmi(String bmi) {
+    return 'BMI $bmi';
+  }
+
+  @override
+  String weightLast(String kg, String bmi) {
+    return '$kg kg · BMI $bmi';
+  }
+
+  @override
+  String get periodMorning => 'AM';
+
+  @override
+  String get periodNoon => 'Noon';
+
+  @override
+  String get periodEvening => 'PM';
+
+  @override
+  String get periodNight => 'Night';
+
+  @override
+  String get periodUnspecified => 'Unspecified';
+
+  @override
+  String get stressEventTypeWork => 'Work';
+
+  @override
+  String get stressEventTypeRelationship => 'Relationship';
+
+  @override
+  String get stressEventTypeHealth => 'Health';
+
+  @override
+  String get stressEventTypeFinancial => 'Financial';
+
+  @override
+  String get stressEventTypeOther => 'Other';
+
+  @override
+  String get regularityVeryIrregular => 'Very irregular';
+
+  @override
+  String get regularityIrregular => 'Irregular';
+
+  @override
+  String get regularityNormal => 'Average';
+
+  @override
+  String get regularityRegular => 'Regular';
+
+  @override
+  String get regularityVeryRegular => 'Very regular';
+
+  @override
+  String get cardStatusNoData => 'No entries yet';
+
+  @override
+  String get cardStatusToday => 'Today';
 }

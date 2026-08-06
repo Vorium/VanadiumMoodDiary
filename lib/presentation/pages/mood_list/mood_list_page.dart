@@ -28,6 +28,7 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_filter_bar.dart';
 import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_item.dart';
+import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_period_filter_bar.dart';
 import 'package:chroniccare/presentation/providers/mood_list_filter_provider.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -72,7 +73,8 @@ class _MoodListPageState extends ConsumerState<MoodListPage> {
             f.dateRange != null ||
             f.minScore != null ||
             f.maxScore != null ||
-            f.cbtLevel != null,
+            f.cbtLevel != null ||
+            f.period != null,
       ),
     );
 
@@ -102,6 +104,9 @@ class _MoodListPageState extends ConsumerState<MoodListPage> {
 
           // filter bar (3 chip + sort dropdown)
           const MoodListFilterBar(),
+
+          // v0.30 round 91: 心境时段 chip filter (6 chip: 全部/早/中/晚/夜/未指定)
+          const MoodListPeriodFilterBar(),
 
           // 主体 list
           Expanded(

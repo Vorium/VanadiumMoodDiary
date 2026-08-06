@@ -58,6 +58,7 @@ class MoodRepositoryImpl implements MoodRepository {
         reratedScore: Value(draft.reratedScore),
         coreBelief: Value(draft.coreBelief),
         behaviorResponse: Value(draft.behaviorResponse),
+        period: Value(draft.period),
       ),
     );
   }

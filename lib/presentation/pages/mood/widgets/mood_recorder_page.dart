@@ -34,6 +34,7 @@ import 'package:chroniccare/presentation/pages/mood/widgets/mood_audio_section.d
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_submit_panel.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_tags.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_text_input.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/period_field.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_three_column_mode.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_wizard.dart';
 
@@ -85,6 +86,12 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   // ===== 录音机 controller =====
   late final MoodRecorderController _recorderController;
 
+  // ===== 提前捕获 notifier (避免 dispose() 里 ref.read 触发 unmounted assert)
+  // v0.30 round 91 (P1): Riverpod 3.x 严格要求 dispose 期间不用 ref,
+  // 否则 widget test 跟 widget unmount 时崩。InitState 时一次性
+  // capture, dispose 时直接调。
+  late final CbtDraftNotifier _cbtDraftNotifier;
+
   @override
   void initState() {
     super.initState();
@@ -92,6 +99,7 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     _recorderController = MoodRecorderController(
       onError: _handleRecorderError,
     );
+    _cbtDraftNotifier = ref.read(cbtDraftProvider.notifier);
     // v0.29 round 84 (fix): dialog 打开时从 SP 同步 level
     //
     // 背景: dispose() 会 reset cbtDraftProvider 回 3 栏, 但用户的 5/7 栏偏好持久化在
@@ -115,7 +123,23 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     _noteController.dispose();
     // 关闭 dialog 时重置 cbtDraftProvider, 下次打开回到初始 (3 栏)
     // — 但 initState 的 addPostFrameCallback 会从 SP 重新同步 5/7 栏偏好。
-    ref.read(cbtDraftProvider.notifier).reset();
+    //
+    // v0.30 R91 P1 fix: 用 initState 捕获的 notifier 引用 (避免 dispose 期
+    // ref.read 触发 unmounted assert), 再用 microtask 延迟到 widget tree
+    // finalize 之后 (避免 Riverpod 3.x "modifying provider during build"
+    // 警告)。try-catch swallow: 测试 teardown 时 fake_async 会在
+    // ProviderScope 拆掉后 flush microtask, 此时 notifier 已 dispose, 静默
+    // 吞掉 (reset 是 best-effort, 不是 critical path)。生产路径: 用户点
+    // 保存 → Navigator.pop → dispose → 下个微任务 reset (此时 notifier 仍
+    // 在, 因为 cbtDraftProvider 非 autoDispose)。下次打开 dialog →
+    // initState → addPostFrameCallback 从 SP 同步 5/7 栏偏好。
+    Future.microtask(() {
+      try {
+        _cbtDraftNotifier.reset();
+      } catch (_) {
+        // notifier 已 dispose (test teardown); 静默吞掉
+      }
+    });
     super.dispose();
   }
 
@@ -171,6 +195,9 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
               reratedScore: d.reratedScore,
               coreBelief: d.coreBelief,
               behaviorResponse: d.behaviorResponse,
+              // v0.30 round 91: 心境时段 (morning/noon/evening/night/
+              // unspecified), 透传 save → DB → mood_period_aggregator
+              period: d.period,
             ),
           );
       if (!mounted) return;
@@ -255,6 +282,12 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                       ThoughtRecordLevel.seven =>
                         const CbtWizard(),
                     },
+                    const SizedBox(height: AppTokens.spacingSm),
+
+                    // v0.30 round 91 (sub-spec 7 日常追踪): 心境时段 dropdown
+                    // 5 段 (morning/noon/evening/night/unspecified), 默认 unspecified
+                    // 走 cbtDraftProvider 状态, 透传到 save → DB。
+                    const PeriodField(),
                     const SizedBox(height: AppTokens.spacingSm),
 
                     // 底部: 标签 + 文字备注 + 录音 + 保存/取消

@@ -56,13 +56,18 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                   children: [
                     _FabButton(
                       icon: Icons.psychology_outlined,
-                      label: l10n.homeFabAssessment,
+                      // v0.30 R91 Task 7: FAB label 改 dailyTrackingFab
+                      // ("全部趋势") — 跟 FAB 跳 /daily-tracking 整合入口
+                      // 保持一致 (原 homeFabAssessment "心情测试" 已过时).
+                      label: l10n.dailyTrackingFab,
                       onTap: () {
                         setState(() => _expanded = false);
-                        // v0.30 round 90 (sub-spec 6 量表中心): 改跳
-                        // /assessment-center (12 量表中心化入口), 用户
-                        // 从 grid 选量表, 不直接跳 PHQ-9.
-                        context.push('/assessment-center');
+                        // v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口):
+                        // 改跳 /daily-tracking (7 子功能整合入口: 情绪日记 +
+                        // 焦虑急躁 + 睡眠 + 社会节律 + 应激源 + 治疗 + 体重).
+                        // 之前 R90 跳 /assessment-center, R91 Task 5 整合
+                        // 入口取代单一评估入口, 用户从 7 卡片 grid 选子功能.
+                        context.push('/daily-tracking');
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),

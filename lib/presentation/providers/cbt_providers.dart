@@ -149,6 +149,10 @@ class CbtDraftNotifier extends Notifier<CbtDraftState> {
   }
 
   /// 改单个 CBT 字段
+  ///
+  /// v0.30 round 91 增 `period` (morning / noon / evening / night /
+  /// unspecified): mood_dialog PeriodField dropdown onChanged 调, 跟
+  /// score 一样是 overwrite (用户显式选, null=保持)。透传到 save → DB。
   void updateField({
     String? situation,
     String? automaticThought,
@@ -158,6 +162,7 @@ class CbtDraftNotifier extends Notifier<CbtDraftState> {
     int? reratedScore,
     String? coreBelief,
     String? behaviorResponse,
+    String? period,
   }) {
     state = state.copyWith(
       draft: MoodEntryDraft(
@@ -179,6 +184,7 @@ class CbtDraftNotifier extends Notifier<CbtDraftState> {
         reratedScore: reratedScore ?? state.draft.reratedScore,
         coreBelief: coreBelief ?? state.draft.coreBelief,
         behaviorResponse: behaviorResponse ?? state.draft.behaviorResponse,
+        period: period ?? state.draft.period,
       ),
     );
   }
@@ -213,6 +219,7 @@ class CbtDraftNotifier extends Notifier<CbtDraftState> {
         reratedScore: state.draft.reratedScore,
         coreBelief: state.draft.coreBelief,
         behaviorResponse: state.draft.behaviorResponse,
+        period: state.draft.period,
       ),
     );
   }

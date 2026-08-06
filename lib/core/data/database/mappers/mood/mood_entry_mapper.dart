@@ -38,6 +38,7 @@ extension MoodEntryToEntity on MoodEntry {
       reratedScore: reratedScore,
       coreBelief: coreBelief,
       behaviorResponse: behaviorResponse,
+      period: period,
     );
   }
 }
@@ -64,6 +65,7 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
       reratedScore: Value(reratedScore),
       coreBelief: Value(coreBelief),
       behaviorResponse: Value(behaviorResponse),
+      period: Value(period),
     );
   }
 }

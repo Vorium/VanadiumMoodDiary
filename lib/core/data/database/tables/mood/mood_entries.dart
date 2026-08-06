@@ -89,4 +89,13 @@ class MoodEntries extends Table {
 
   /// 7 栏"行为应对"
   TextColumn get behaviorResponse => text().nullable()();
+
+  // ===== v0.30 round 91 (sub-spec 7 日常追踪) period 列 =====
+
+  /// 心境时段标记 (morning / noon / evening / night / unspecified)
+  ///
+  /// 老 entry 兼容: nullable, 默认 'unspecified' (在 repository / UI 层
+  /// 处理 'unspecified' 当 null)。4 段聚合 (心境图表按 4 段叠柱状/折线)。
+  /// 简化 vs 4 张 mood_period 表 — 0 新表, 0 跨表 join。
+  TextColumn get period => text().nullable()();
 }

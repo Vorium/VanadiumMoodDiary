@@ -514,6 +514,14 @@
     }
   },
   "moodDialogTitle": "今天怎么样？",
+  "moodDialogPeriodLabel": "时段",
+  "moodPeriodMorning": "早",
+  "moodPeriodNoon": "中",
+  "moodPeriodEvening": "晚",
+  "moodPeriodNight": "夜",
+  "moodPeriodUnspecified": "未指定",
+  "moodListFilterPeriod": "时段",
+  "moodPeriodChartTitle": "心境 4 段趋势（近 30 天）",
   "moodDimensionMood": "情绪",
   "moodDimensionMoodHint": "1=很差 5=很好",
   "moodDimensionEnergy": "精力",
@@ -1481,7 +1489,6 @@
   "@homeQuickMoodTitle": {
     "description": "R81: 主页快速记心情 carousel 标题 (B 站'记录每日心情'风格)"
   },
-  "homeFabAssessment": "心情测试",
   "homeFabVent": "心情树洞",
   "homeFabHotline": "紧急热线",
   "homeFabTop": "回到顶端",
@@ -2151,5 +2158,411 @@
   "level2PsychosisSeveritySummary3": "重度精神病性症状, 强烈建议就医",
   "@level2PsychosisSeveritySummary3": {
     "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 3 (full, for result page)"
+  },
+  "dailyTrackingTitle": "日常追踪",
+  "@dailyTrackingTitle": {
+    "description": "v0.30 R91: 日常追踪整合入口页 title"
+  },
+  "dailyTrackingFab": "日常追踪",
+  "@dailyTrackingFab": {
+    "description": "v0.30 R91: 主页 FAB 跳日常追踪入口页时的提示"
+  },
+  "dailyTrackingMultiChartTitle": "近 30 天 4 指标",
+  "@dailyTrackingMultiChartTitle": {
+    "description": "v0.30 R91: 多指标趋势图标题"
+  },
+  "dailyTrackingLastTime": "{time} 记录",
+  "@dailyTrackingLastTime": {
+    "description": "v0.30 R91: 卡片 lastValue 时间占位 (placeholder {time} 是 formatted date)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "dailyTrackingRecord": "记录",
+  "@dailyTrackingRecord": {
+    "description": "v0.30 R91: 整合入口页卡片 CTA 按钮"
+  },
+  "moodDiaryName": "情绪日记",
+  "@moodDiaryName": {
+    "description": "v0.30 R91: 情绪日记 子功能名 (整合页 + 列表页)"
+  },
+  "moodDiaryShortDesc": "心境 4 段 + score, 趋势分析",
+  "@moodDiaryShortDesc": {
+    "description": "v0.30 R91: 情绪日记 子功能简短描述 (卡片用)"
+  },
+  "moodDiaryScore": "心境 {score}/5",
+  "@moodDiaryScore": {
+    "description": "v0.30 R91: 情绪日记 lastValue 摘要 (placeholder {score} 是 1-5)",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "moodDiaryLast": "{time} · {score} ({period})",
+  "@moodDiaryLast": {
+    "description": "v0.30 R91: 情绪日记 整合卡片 lastValue 完整摘要",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "score": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "anxietyAgitationName": "焦虑急躁",
+  "@anxietyAgitationName": {
+    "description": "v0.30 R91: 焦虑急躁 子功能名 (整合页 + 列表页)"
+  },
+  "anxietyAgitationShortDesc": "焦虑 + 急躁 双维度 5 档",
+  "@anxietyAgitationShortDesc": {
+    "description": "v0.30 R91: 焦虑急躁 子功能简短描述 (卡片用)"
+  },
+  "anxietyAgitationHint": "焦虑反向 1=严重 5=平静; 急躁正向 1=平静 5=极急",
+  "@anxietyAgitationHint": {
+    "description": "v0.30 R91: 焦虑急躁 提示 (对话框说明)"
+  },
+  "anxietyAgitationAddButton": "添加评估",
+  "@anxietyAgitationAddButton": {
+    "description": "v0.30 R91: 焦虑急躁 列表页 添加按钮"
+  },
+  "anxietyAgitationNoData": "暂无焦虑急躁记录",
+  "@anxietyAgitationNoData": {
+    "description": "v0.30 R91: 焦虑急躁 列表页 空状态"
+  },
+  "anxietyAgitationAnxietyScore": "焦虑 {score}",
+  "@anxietyAgitationAnxietyScore": {
+    "description": "v0.30 R91: 焦虑急躁 焦虑维度 lastValue 摘要 (placeholder {score} 是 1-5)",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "anxietyAgitationAgitationScore": "急躁 {score}",
+  "@anxietyAgitationAgitationScore": {
+    "description": "v0.30 R91: 焦虑急躁 急躁维度 lastValue 摘要 (placeholder {score} 是 1-5)",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "anxietyAgitationLast": "焦虑 {anxiety} / 急躁 {agitation}",
+  "@anxietyAgitationLast": {
+    "description": "v0.30 R91: 焦虑急躁 整合卡片 lastValue 完整摘要",
+    "placeholders": {
+      "anxiety": {
+        "type": "int"
+      },
+      "agitation": {
+        "type": "int"
+      }
+    }
+  },
+  "sleepName": "睡眠",
+  "@sleepName": {
+    "description": "v0.30 R91: 睡眠 子功能名 (整合页 + 列表页)"
+  },
+  "sleepShortDesc": "入睡 + 时长 + 规律性",
+  "@sleepShortDesc": {
+    "description": "v0.30 R91: 睡眠 子功能简短描述 (卡片用)"
+  },
+  "sleepHint": "记录每晚入睡 + 起床, 跨午夜自动算时长",
+  "@sleepHint": {
+    "description": "v0.30 R91: 睡眠 提示 (对话框 / 列表页说明)"
+  },
+  "sleepAddButton": "添加睡眠记录",
+  "@sleepAddButton": {
+    "description": "v0.30 R91: 睡眠 列表页 添加按钮"
+  },
+  "sleepNoData": "暂无睡眠记录",
+  "@sleepNoData": {
+    "description": "v0.30 R91: 睡眠 列表页 空状态"
+  },
+  "sleepBedtime": "入睡 {time}",
+  "@sleepBedtime": {
+    "description": "v0.30 R91: 睡眠 入睡时间 lastValue 摘要 (placeholder {time} 是 HH:mm)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sleepWakeTime": "起床 {time}",
+  "@sleepWakeTime": {
+    "description": "v0.30 R91: 睡眠 起床时间 lastValue 摘要 (placeholder {time} 是 HH:mm)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sleepLast": "{duration} · 规律 {regularity}/5",
+  "@sleepLast": {
+    "description": "v0.30 R91: 睡眠 整合卡片 lastValue 完整摘要 (duration 是 8h00min, regularity 是 1-5)",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      },
+      "regularity": {
+        "type": "int"
+      }
+    }
+  },
+  "socialRhythmName": "社会节律",
+  "@socialRhythmName": {
+    "description": "v0.30 R91: 社会节律 子功能名 (整合页 + 列表页)"
+  },
+  "socialRhythmShortDesc": "起床 + 第一餐 + 最后一餐 + 时长",
+  "@socialRhythmShortDesc": {
+    "description": "v0.30 R91: 社会节律 子功能简短描述 (卡片用)"
+  },
+  "socialRhythmHint": "记录每天的作息, 帮医生判断节律稳定性",
+  "@socialRhythmHint": {
+    "description": "v0.30 R91: 社会节律 提示 (对话框 / 列表页说明)"
+  },
+  "socialRhythmAddButton": "添加社会节律",
+  "@socialRhythmAddButton": {
+    "description": "v0.30 R91: 社会节律 列表页 添加按钮"
+  },
+  "socialRhythmNoData": "暂无社会节律记录",
+  "@socialRhythmNoData": {
+    "description": "v0.30 R91: 社会节律 列表页 空状态"
+  },
+  "socialRhythmWakeTime": "起床 {time}",
+  "@socialRhythmWakeTime": {
+    "description": "v0.30 R91: 社会节律 起床时间 lastValue 摘要",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "socialRhythmFirstMeal": "第一餐 {time}",
+  "@socialRhythmFirstMeal": {
+    "description": "v0.30 R91: 社会节律 第一餐 lastValue 摘要",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "socialRhythmLastMeal": "最后一餐 {time}",
+  "@socialRhythmLastMeal": {
+    "description": "v0.30 R91: 社会节律 最后一餐 lastValue 摘要",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "socialRhythmLast": "起床 {wake} · 社交 {social}h · 工作 {work}h",
+  "@socialRhythmLast": {
+    "description": "v0.30 R91: 社会节律 整合卡片 lastValue 完整摘要",
+    "placeholders": {
+      "wake": {
+        "type": "String"
+      },
+      "social": {
+        "type": "int"
+      },
+      "work": {
+        "type": "int"
+      }
+    }
+  },
+  "stressEventName": "应激源",
+  "@stressEventName": {
+    "description": "v0.30 R91: 应激源 子功能名 (整合页 + 列表页)"
+  },
+  "stressEventShortDesc": "事件类型 + 强度评分",
+  "@stressEventShortDesc": {
+    "description": "v0.30 R91: 应激源 子功能简短描述 (卡片用)"
+  },
+  "stressEventHint": "记录生活中的压力事件, 帮医生判断触发因素",
+  "@stressEventHint": {
+    "description": "v0.30 R91: 应激源 提示 (对话框 / 列表页说明)"
+  },
+  "stressEventAddButton": "添加应激源",
+  "@stressEventAddButton": {
+    "description": "v0.30 R91: 应激源 列表页 添加按钮"
+  },
+  "stressEventNoData": "暂无应激源记录",
+  "@stressEventNoData": {
+    "description": "v0.30 R91: 应激源 列表页 空状态"
+  },
+  "stressEventEventType": "事件类型",
+  "@stressEventEventType": {
+    "description": "v0.30 R91: 应激源 事件类型 标签 (对话框 dropdown)"
+  },
+  "stressEventIntensity": "强度",
+  "@stressEventIntensity": {
+    "description": "v0.30 R91: 应激源 强度评分 标签"
+  },
+  "stressEventLast": "强度 {intensity}/5",
+  "@stressEventLast": {
+    "description": "v0.30 R91: 应激源 整合卡片 lastValue 摘要",
+    "placeholders": {
+      "intensity": {
+        "type": "int"
+      }
+    }
+  },
+  "treatmentName": "治疗",
+  "@treatmentName": {
+    "description": "v0.30 R91: 治疗 子功能名 (整合页 + 列表页 placeholder)"
+  },
+  "treatmentShortDesc": "用药 / 咨询 / 物理治疗, 关联 medication",
+  "@treatmentShortDesc": {
+    "description": "v0.30 R91: 治疗 子功能简短描述 (卡片用)"
+  },
+  "treatmentHint": "治疗条目可关联 medication, 写入功能 v0.31+",
+  "@treatmentHint": {
+    "description": "v0.30 R91: 治疗 提示 (列表页说明)"
+  },
+  "treatmentNoData": "暂无治疗记录",
+  "@treatmentNoData": {
+    "description": "v0.30 R91: 治疗 列表页 空状态"
+  },
+  "treatmentType": "治疗类型",
+  "@treatmentType": {
+    "description": "v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)"
+  },
+  "treatmentLast": "{type} · {description}",
+  "@treatmentLast": {
+    "description": "v0.30 R91: 治疗 整合卡片 lastValue 摘要",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "weightName": "体重",
+  "@weightName": {
+    "description": "v0.30 R91: 体重 子功能名 (整合页 + 列表页)"
+  },
+  "weightShortDesc": "体重 + BMI (需 profile.height)",
+  "@weightShortDesc": {
+    "description": "v0.30 R91: 体重 子功能简短描述 (卡片用)"
+  },
+  "weightHint": "记录每天的体重, 帮医生判断生理状态",
+  "@weightHint": {
+    "description": "v0.30 R91: 体重 提示 (对话框 / 列表页说明)"
+  },
+  "weightAddButton": "添加体重记录",
+  "@weightAddButton": {
+    "description": "v0.30 R91: 体重 列表页 添加按钮"
+  },
+  "weightNoData": "暂无体重记录",
+  "@weightNoData": {
+    "description": "v0.30 R91: 体重 列表页 空状态"
+  },
+  "weightWeight": "体重 {kg} kg",
+  "@weightWeight": {
+    "description": "v0.30 R91: 体重 lastValue 摘要 (placeholder {kg} 是 1 decimal)",
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "weightBmi": "BMI {bmi}",
+  "@weightBmi": {
+    "description": "v0.30 R91: 体重 BMI lastValue 摘要 (placeholder {bmi} 是 1 decimal)",
+    "placeholders": {
+      "bmi": {
+        "type": "String"
+      }
+    }
+  },
+  "weightLast": "{kg} kg · BMI {bmi}",
+  "@weightLast": {
+    "description": "v0.30 R91: 体重 整合卡片 lastValue 摘要 (bmi 可选)",
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      },
+      "bmi": {
+        "type": "String"
+      }
+    }
+  },
+  "periodMorning": "早",
+  "@periodMorning": {
+    "description": "v0.30 R91: 心境 period 早 (morning)"
+  },
+  "periodNoon": "中",
+  "@periodNoon": {
+    "description": "v0.30 R91: 心境 period 中 (noon)"
+  },
+  "periodEvening": "晚",
+  "@periodEvening": {
+    "description": "v0.30 R91: 心境 period 晚 (evening)"
+  },
+  "periodNight": "夜",
+  "@periodNight": {
+    "description": "v0.30 R91: 心境 period 夜 (night)"
+  },
+  "periodUnspecified": "未指定",
+  "@periodUnspecified": {
+    "description": "v0.30 R91: 心境 period fallback (R91 老 entry 兼容)"
+  },
+  "stressEventTypeWork": "工作",
+  "@stressEventTypeWork": {
+    "description": "v0.30 R91: 应激源事件类型 1/5 工作"
+  },
+  "stressEventTypeRelationship": "关系",
+  "@stressEventTypeRelationship": {
+    "description": "v0.30 R91: 应激源事件类型 2/5 关系"
+  },
+  "stressEventTypeHealth": "健康",
+  "@stressEventTypeHealth": {
+    "description": "v0.30 R91: 应激源事件类型 3/5 健康"
+  },
+  "stressEventTypeFinancial": "财务",
+  "@stressEventTypeFinancial": {
+    "description": "v0.30 R91: 应激源事件类型 4/5 财务"
+  },
+  "stressEventTypeOther": "其他",
+  "@stressEventTypeOther": {
+    "description": "v0.30 R91: 应激源事件类型 5/5 其他"
+  },
+  "regularityVeryIrregular": "很不规律",
+  "@regularityVeryIrregular": {
+    "description": "v0.30 R91: regularity 1/5 很不规律"
+  },
+  "regularityIrregular": "不规律",
+  "@regularityIrregular": {
+    "description": "v0.30 R91: regularity 2/5 不规律"
+  },
+  "regularityNormal": "一般",
+  "@regularityNormal": {
+    "description": "v0.30 R91: regularity 3/5 一般"
+  },
+  "regularityRegular": "规律",
+  "@regularityRegular": {
+    "description": "v0.30 R91: regularity 4/5 规律"
+  },
+  "regularityVeryRegular": "很规律",
+  "@regularityVeryRegular": {
+    "description": "v0.30 R91: regularity 5/5 很规律"
+  },
+  "cardStatusNoData": "尚未记录",
+  "@cardStatusNoData": {
+    "description": "v0.30 R91: 卡片 lastValue null 时 fallback"
+  },
+  "cardStatusToday": "今天",
+  "@cardStatusToday": {
+    "description": "v0.30 R91: 卡片时间状态 今天"
   }
 }

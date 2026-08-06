@@ -18,9 +18,21 @@ import 'package:chroniccare/core/data/database/daos/mood_dao.dart';
 import 'package:chroniccare/core/data/database/daos/report_dao.dart';
 import 'package:chroniccare/core/data/database/daos/user_profile_dao.dart';
 import 'package:chroniccare/core/data/database/daos/vent_dao.dart';
+import 'package:chroniccare/core/data/database/daos/anxiety_agitation_dao.dart';
+import 'package:chroniccare/core/data/database/daos/sleep_dao.dart';
+import 'package:chroniccare/core/data/database/daos/social_rhythm_dao.dart';
+import 'package:chroniccare/core/data/database/daos/stress_event_dao.dart';
+import 'package:chroniccare/core/data/database/daos/treatment_dao.dart';
+import 'package:chroniccare/core/data/database/daos/weight_dao.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/database/tables/check_in/check_ins.dart';
 import 'package:chroniccare/core/data/database/tables/contact/contacts.dart';
+import 'package:chroniccare/core/data/database/tables/daily_tracking/anxiety_agitation_entries.dart';
+import 'package:chroniccare/core/data/database/tables/daily_tracking/sleep_entries.dart';
+import 'package:chroniccare/core/data/database/tables/daily_tracking/social_rhythm_entries.dart';
+import 'package:chroniccare/core/data/database/tables/daily_tracking/stress_events.dart';
+import 'package:chroniccare/core/data/database/tables/daily_tracking/treatment_entries.dart';
+import 'package:chroniccare/core/data/database/tables/daily_tracking/weight_entries.dart';
 import 'package:chroniccare/core/data/database/tables/medication/medications.dart';
 import 'package:chroniccare/core/data/database/tables/mood/mood_entries.dart';
 import 'package:chroniccare/core/data/database/tables/report/report_histories.dart';
@@ -41,6 +53,13 @@ part 'app_database.g.dart';
     ReportHistories,
     MoodEntries,
     VentEntries,
+    // v0.30 round 91 (sub-spec 7 日常追踪): 6 新表
+    SleepEntries,
+    SocialRhythmEntries,
+    StressEvents,
+    TreatmentEntries,
+    WeightEntries,
+    AnxietyAgitationEntries,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -97,7 +116,7 @@ class AppDatabase extends _$AppDatabase {
   // - 8 列全 nullable,老数据自动 null (3 栏 mode 渲染)
   // - 用户升级后 mood entry 在 DayDetailCard 里走"3 栏 + 自由 note"分支
   @override
-  int get schemaVersion => 17;
+  int get schemaVersion => 18;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -275,6 +294,24 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(moodEntries, moodEntries.coreBelief);
             await m.addColumn(moodEntries, moodEntries.behaviorResponse);
           }
+          // v17 → v18: 日常追踪 6 新表 + mood_entries 加 period 列 (v0.30 round 91)
+          // - 1. mood_entries 加 period 列 (TextColumn, nullable, 'unspecified' 默认)
+          // - 2. 创建 6 张新表: sleep_entries / social_rhythm_entries /
+          //      stress_events / treatment_entries / weight_entries /
+          //      anxiety_agitation_entries
+          // - 老用户升级 0 数据迁移 (新表空, 新列 nullable)
+          // - 守卫 `if (from < 18)` 跟 v15→v17 一致模式: 跟 v18 未来升级兼容
+          if (from < 18) {
+            // 1. period 列加到 mood_entries
+            await m.addColumn(moodEntries, moodEntries.period);
+            // 2. 创建 6 张新表
+            await m.createTable(sleepEntries);
+            await m.createTable(socialRhythmEntries);
+            await m.createTable(stressEvents);
+            await m.createTable(treatmentEntries);
+            await m.createTable(weightEntries);
+            await m.createTable(anxietyAgitationEntries);
+          }
         },
         beforeOpen: (details) async {
           // 启用外键
@@ -296,6 +333,14 @@ class AppDatabase extends _$AppDatabase {
   late final reportDao = ReportDao(this);
   late final moodDao = MoodDao(this);
   late final ventDao = VentDao(this);
+
+  // v0.30 round 91 (sub-spec 7 日常追踪): 6 新 DAO (manual wrapper 模式)
+  late final sleepDao = SleepDao(this);
+  late final socialRhythmDao = SocialRhythmDao(this);
+  late final stressEventDao = StressEventDao(this);
+  late final treatmentDao = TreatmentDao(this);
+  late final weightDao = WeightDao(this);
+  late final anxietyAgitationDao = AnxietyAgitationDao(this);
 
   // v0.27 round 65 (spen P1-11): 删 32 行 facade 委派 (line 264-316), caller
   // 已全迁到 _db.xxxDao.xxx() / db.xxxDao.xxx() (94 处). 保留 saveSetup /
@@ -403,6 +448,13 @@ class AppDatabase extends _$AppDatabase {
       await delete(reportHistories).go();
       await delete(moodEntries).go();
       await delete(ventEntries).go();
+      // v0.30 round 91: 6 新表也清
+      await delete(sleepEntries).go();
+      await delete(socialRhythmEntries).go();
+      await delete(stressEvents).go();
+      await delete(treatmentEntries).go();
+      await delete(weightEntries).go();
+      await delete(anxietyAgitationEntries).go();
     });
   }
 

@@ -472,6 +472,14 @@
     }
   },
   "moodDialogTitle": "How are you today?",
+  "moodDialogPeriodLabel": "Period",
+  "moodPeriodMorning": "Morning",
+  "moodPeriodNoon": "Noon",
+  "moodPeriodEvening": "Evening",
+  "moodPeriodNight": "Night",
+  "moodPeriodUnspecified": "Unspecified",
+  "moodListFilterPeriod": "Period",
+  "moodPeriodChartTitle": "Mood 4-period trend (last 30 days)",
   "moodDimensionMood": "Mood",
   "moodDimensionMoodHint": "1=very bad 5=great",
   "moodDimensionEnergy": "Energy",
@@ -1439,7 +1447,6 @@
   "@homeQuickMoodTitle": {
     "description": "R81: Home page quick mood carousel title (B 站 inspired)"
   },
-  "homeFabAssessment": "Mood test",
   "homeFabVent": "Mood vent",
   "homeFabHotline": "Hotline",
   "homeFabTop": "Back to top",
@@ -2109,5 +2116,411 @@
   "level2PsychosisSeveritySummary3": "Severe psychotic symptoms, strongly consider seeing a doctor",
   "@level2PsychosisSeveritySummary3": {
     "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 3 (full, for result page)"
+  },
+  "dailyTrackingTitle": "Daily Tracking",
+  "@dailyTrackingTitle": {
+    "description": "v0.30 R91: Daily tracking integrated entry page title"
+  },
+  "dailyTrackingFab": "Daily Tracking",
+  "@dailyTrackingFab": {
+    "description": "v0.30 R91: Home FAB tip when navigating to daily tracking"
+  },
+  "dailyTrackingMultiChartTitle": "Last 30 days, 4 metrics",
+  "@dailyTrackingMultiChartTitle": {
+    "description": "v0.30 R91: Multi-metric trend chart title"
+  },
+  "dailyTrackingLastTime": "{time} record",
+  "@dailyTrackingLastTime": {
+    "description": "v0.30 R91: Card lastValue time placeholder",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "dailyTrackingRecord": "Record",
+  "@dailyTrackingRecord": {
+    "description": "v0.30 R91: Integrated entry page card CTA button"
+  },
+  "moodDiaryName": "Mood Diary",
+  "@moodDiaryName": {
+    "description": "v0.30 R91: Mood diary sub-feature name"
+  },
+  "moodDiaryShortDesc": "Mood by 4 periods + score, trend analysis",
+  "@moodDiaryShortDesc": {
+    "description": "v0.30 R91: Mood diary sub-feature short description"
+  },
+  "moodDiaryScore": "Mood {score}/5",
+  "@moodDiaryScore": {
+    "description": "v0.30 R91: Mood diary lastValue score summary",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "moodDiaryLast": "{time} · {score} ({period})",
+  "@moodDiaryLast": {
+    "description": "v0.30 R91: Mood diary integrated card lastValue full summary",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "score": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "anxietyAgitationName": "Anxiety & Agitation",
+  "@anxietyAgitationName": {
+    "description": "v0.30 R91: Anxiety/agitation sub-feature name"
+  },
+  "anxietyAgitationShortDesc": "Anxiety + agitation 2-dim, 5-point scale",
+  "@anxietyAgitationShortDesc": {
+    "description": "v0.30 R91: Anxiety/agitation sub-feature short description"
+  },
+  "anxietyAgitationHint": "Anxiety reverse 1=severe 5=calm; agitation forward 1=calm 5=extreme",
+  "@anxietyAgitationHint": {
+    "description": "v0.30 R91: Anxiety/agitation hint (dialog)"
+  },
+  "anxietyAgitationAddButton": "Add assessment",
+  "@anxietyAgitationAddButton": {
+    "description": "v0.30 R91: Anxiety/agitation list page add button"
+  },
+  "anxietyAgitationNoData": "No anxiety/agitation entries yet",
+  "@anxietyAgitationNoData": {
+    "description": "v0.30 R91: Anxiety/agitation list page empty state"
+  },
+  "anxietyAgitationAnxietyScore": "Anxiety {score}",
+  "@anxietyAgitationAnxietyScore": {
+    "description": "v0.30 R91: Anxiety/agitation anxiety dimension summary (placeholder {score} is 1-5)",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "anxietyAgitationAgitationScore": "Agitation {score}",
+  "@anxietyAgitationAgitationScore": {
+    "description": "v0.30 R91: Anxiety/agitation agitation dimension summary (placeholder {score} is 1-5)",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "anxietyAgitationLast": "Anxiety {anxiety} / Agitation {agitation}",
+  "@anxietyAgitationLast": {
+    "description": "v0.30 R91: Anxiety/agitation integrated card lastValue summary",
+    "placeholders": {
+      "anxiety": {
+        "type": "int"
+      },
+      "agitation": {
+        "type": "int"
+      }
+    }
+  },
+  "sleepName": "Sleep",
+  "@sleepName": {
+    "description": "v0.30 R91: Sleep sub-feature name"
+  },
+  "sleepShortDesc": "Bedtime + duration + regularity",
+  "@sleepShortDesc": {
+    "description": "v0.30 R91: Sleep sub-feature short description"
+  },
+  "sleepHint": "Record nightly bedtime + wake, auto cross-midnight duration",
+  "@sleepHint": {
+    "description": "v0.30 R91: Sleep hint (dialog/list page)"
+  },
+  "sleepAddButton": "Add sleep entry",
+  "@sleepAddButton": {
+    "description": "v0.30 R91: Sleep list page add button"
+  },
+  "sleepNoData": "No sleep entries yet",
+  "@sleepNoData": {
+    "description": "v0.30 R91: Sleep list page empty state"
+  },
+  "sleepBedtime": "Bedtime {time}",
+  "@sleepBedtime": {
+    "description": "v0.30 R91: Sleep bedtime summary (HH:mm)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sleepWakeTime": "Wake {time}",
+  "@sleepWakeTime": {
+    "description": "v0.30 R91: Sleep wake time summary (HH:mm)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sleepLast": "{duration} · regularity {regularity}/5",
+  "@sleepLast": {
+    "description": "v0.30 R91: Sleep integrated card lastValue summary",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      },
+      "regularity": {
+        "type": "int"
+      }
+    }
+  },
+  "socialRhythmName": "Social Rhythm",
+  "@socialRhythmName": {
+    "description": "v0.30 R91: Social rhythm sub-feature name"
+  },
+  "socialRhythmShortDesc": "Wake + first meal + last meal + durations",
+  "@socialRhythmShortDesc": {
+    "description": "v0.30 R91: Social rhythm sub-feature short description"
+  },
+  "socialRhythmHint": "Record daily routines, helps doctors judge rhythm stability",
+  "@socialRhythmHint": {
+    "description": "v0.30 R91: Social rhythm hint (dialog/list page)"
+  },
+  "socialRhythmAddButton": "Add social rhythm",
+  "@socialRhythmAddButton": {
+    "description": "v0.30 R91: Social rhythm list page add button"
+  },
+  "socialRhythmNoData": "No social rhythm entries yet",
+  "@socialRhythmNoData": {
+    "description": "v0.30 R91: Social rhythm list page empty state"
+  },
+  "socialRhythmWakeTime": "Wake {time}",
+  "@socialRhythmWakeTime": {
+    "description": "v0.30 R91: Social rhythm wake time summary",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "socialRhythmFirstMeal": "First meal {time}",
+  "@socialRhythmFirstMeal": {
+    "description": "v0.30 R91: Social rhythm first meal summary",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "socialRhythmLastMeal": "Last meal {time}",
+  "@socialRhythmLastMeal": {
+    "description": "v0.30 R91: Social rhythm last meal summary",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "socialRhythmLast": "Wake {wake} · social {social}h · work {work}h",
+  "@socialRhythmLast": {
+    "description": "v0.30 R91: Social rhythm integrated card lastValue summary",
+    "placeholders": {
+      "wake": {
+        "type": "String"
+      },
+      "social": {
+        "type": "int"
+      },
+      "work": {
+        "type": "int"
+      }
+    }
+  },
+  "stressEventName": "Stress Events",
+  "@stressEventName": {
+    "description": "v0.30 R91: Stress event sub-feature name"
+  },
+  "stressEventShortDesc": "Event type + intensity score",
+  "@stressEventShortDesc": {
+    "description": "v0.30 R91: Stress event sub-feature short description"
+  },
+  "stressEventHint": "Record stressful life events, helps doctors identify triggers",
+  "@stressEventHint": {
+    "description": "v0.30 R91: Stress event hint (dialog/list page)"
+  },
+  "stressEventAddButton": "Add stress event",
+  "@stressEventAddButton": {
+    "description": "v0.30 R91: Stress event list page add button"
+  },
+  "stressEventNoData": "No stress events yet",
+  "@stressEventNoData": {
+    "description": "v0.30 R91: Stress event list page empty state"
+  },
+  "stressEventEventType": "Event type",
+  "@stressEventEventType": {
+    "description": "v0.30 R91: Stress event type label (dialog dropdown)"
+  },
+  "stressEventIntensity": "Intensity",
+  "@stressEventIntensity": {
+    "description": "v0.30 R91: Stress event intensity score label"
+  },
+  "stressEventLast": "Intensity {intensity}/5",
+  "@stressEventLast": {
+    "description": "v0.30 R91: Stress event integrated card lastValue summary",
+    "placeholders": {
+      "intensity": {
+        "type": "int"
+      }
+    }
+  },
+  "treatmentName": "Treatment",
+  "@treatmentName": {
+    "description": "v0.30 R91: Treatment sub-feature name"
+  },
+  "treatmentShortDesc": "Medication / consultation / physiotherapy, link to meds",
+  "@treatmentShortDesc": {
+    "description": "v0.30 R91: Treatment sub-feature short description"
+  },
+  "treatmentHint": "Treatment entries can link to medication, write UI v0.31+",
+  "@treatmentHint": {
+    "description": "v0.30 R91: Treatment hint (list page)"
+  },
+  "treatmentNoData": "No treatment entries yet",
+  "@treatmentNoData": {
+    "description": "v0.30 R91: Treatment list page empty state"
+  },
+  "treatmentType": "Treatment type",
+  "@treatmentType": {
+    "description": "v0.30 R91: Treatment type label (dialog dropdown)"
+  },
+  "treatmentLast": "{type} · {description}",
+  "@treatmentLast": {
+    "description": "v0.30 R91: Treatment integrated card lastValue summary",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "weightName": "Weight",
+  "@weightName": {
+    "description": "v0.30 R91: Weight sub-feature name"
+  },
+  "weightShortDesc": "Weight + BMI (requires profile.height)",
+  "@weightShortDesc": {
+    "description": "v0.30 R91: Weight sub-feature short description"
+  },
+  "weightHint": "Record daily weight, helps doctors judge physical state",
+  "@weightHint": {
+    "description": "v0.30 R91: Weight hint (dialog/list page)"
+  },
+  "weightAddButton": "Add weight entry",
+  "@weightAddButton": {
+    "description": "v0.30 R91: Weight list page add button"
+  },
+  "weightNoData": "No weight entries yet",
+  "@weightNoData": {
+    "description": "v0.30 R91: Weight list page empty state"
+  },
+  "weightWeight": "Weight {kg} kg",
+  "@weightWeight": {
+    "description": "v0.30 R91: Weight lastValue summary",
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "weightBmi": "BMI {bmi}",
+  "@weightBmi": {
+    "description": "v0.30 R91: Weight BMI lastValue summary",
+    "placeholders": {
+      "bmi": {
+        "type": "String"
+      }
+    }
+  },
+  "weightLast": "{kg} kg · BMI {bmi}",
+  "@weightLast": {
+    "description": "v0.30 R91: Weight integrated card lastValue summary",
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      },
+      "bmi": {
+        "type": "String"
+      }
+    }
+  },
+  "periodMorning": "AM",
+  "@periodMorning": {
+    "description": "v0.30 R91: Mood period morning (AM)"
+  },
+  "periodNoon": "Noon",
+  "@periodNoon": {
+    "description": "v0.30 R91: Mood period noon"
+  },
+  "periodEvening": "PM",
+  "@periodEvening": {
+    "description": "v0.30 R91: Mood period evening (PM)"
+  },
+  "periodNight": "Night",
+  "@periodNight": {
+    "description": "v0.30 R91: Mood period night"
+  },
+  "periodUnspecified": "Unspecified",
+  "@periodUnspecified": {
+    "description": "v0.30 R91: Mood period fallback (legacy entries)"
+  },
+  "stressEventTypeWork": "Work",
+  "@stressEventTypeWork": {
+    "description": "v0.30 R91: Stress event type 1/5 work"
+  },
+  "stressEventTypeRelationship": "Relationship",
+  "@stressEventTypeRelationship": {
+    "description": "v0.30 R91: Stress event type 2/5 relationship"
+  },
+  "stressEventTypeHealth": "Health",
+  "@stressEventTypeHealth": {
+    "description": "v0.30 R91: Stress event type 3/5 health"
+  },
+  "stressEventTypeFinancial": "Financial",
+  "@stressEventTypeFinancial": {
+    "description": "v0.30 R91: Stress event type 4/5 financial"
+  },
+  "stressEventTypeOther": "Other",
+  "@stressEventTypeOther": {
+    "description": "v0.30 R91: Stress event type 5/5 other"
+  },
+  "regularityVeryIrregular": "Very irregular",
+  "@regularityVeryIrregular": {
+    "description": "v0.30 R91: regularity 1/5 very irregular"
+  },
+  "regularityIrregular": "Irregular",
+  "@regularityIrregular": {
+    "description": "v0.30 R91: regularity 2/5 irregular"
+  },
+  "regularityNormal": "Average",
+  "@regularityNormal": {
+    "description": "v0.30 R91: regularity 3/5 average"
+  },
+  "regularityRegular": "Regular",
+  "@regularityRegular": {
+    "description": "v0.30 R91: regularity 4/5 regular"
+  },
+  "regularityVeryRegular": "Very regular",
+  "@regularityVeryRegular": {
+    "description": "v0.30 R91: regularity 5/5 very regular"
+  },
+  "cardStatusNoData": "No entries yet",
+  "@cardStatusNoData": {
+    "description": "v0.30 R91: Card lastValue null fallback"
+  },
+  "cardStatusToday": "Today",
+  "@cardStatusToday": {
+    "description": "v0.30 R91: Card time status today"
   }
 }
