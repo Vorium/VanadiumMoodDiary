@@ -13,8 +13,15 @@
 // - AppDatabase.forTesting(NativeDatabase.memory()) — 真实 in-memory DB, 走 drift round-trip
 // - _StubDataExportService 覆盖 exportToJson, 跳过 5s timeout (生产 export_orchestrator 内部
 //   5s 防止 drift stream hang, 测试里用 stub 加速)
+//
+// v0.30 R95 sub-spec 7 task 31a: audit log 走 AES-256 加密 (EncryptionService.encryptString),
+// test 必须 setUp 注入固定 32-byte AES key, 避开 FlutterSecureStorage platform channel
+// (test 模式抛 MissingPluginException)
+import 'dart:typed_data';
+
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
+import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_tile.dart';
@@ -72,16 +79,29 @@ class _StubDataExportService extends DataExportService {
   }
 }
 
-/// 注入失败的 LegalConsentStore — 每次 recordDataExportConsent 抛异常
+/// 注入失败的 LegalConsentStore — 模拟 audit log 失败
 ///
-/// R95 测试专用: 验证 audit log 失败时主流程继续 (走 swallowError 集中器)
+/// v0.30 R95 (sub-spec 7 task 31a) 后: audit log 走 AES-256 加密,
+/// 加密失败时 [LegalConsentStore.recordDataExportConsent] 内部走 swallowError
+/// 集中器, **不抛** (跟之前 throw 行为不同 — 之前 throw 让 export_tile 主流程
+/// 风险依赖 catch 块, 现在 production 0 throw, 主流程天然不依赖 catch)。
+///
+/// 这里用 no-op 模拟"audit log 完全没生效"(覆盖原 throw 测试场景),
+/// 验证主流程不依赖 audit log 返回值/异常。
 class _FailingLegalConsentStore extends LegalConsentStore {
   int recordCalls = 0;
 
   @override
   Future<void> recordDataExportConsent(ConsentArtifact artifact) async {
+    // R95 task 31a 修后: 不抛 (production 走 swallowError 内部吞)。
+    // 这里用 no-op + recordCalls 自增模拟 "audit log 失败但 caller 不知情"。
     recordCalls++;
-    throw StateError('simulated audit log failure (R95 test)');
+  }
+
+  @override
+  Future<List<ConsentArtifact>> readDataExportConsentLog() async {
+    // 模拟 "audit log 读不到" — 返空 list 表示完全失效
+    return const <ConsentArtifact>[];
   }
 }
 
@@ -91,6 +111,10 @@ void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     db = AppDatabase.forTesting(NativeDatabase.memory());
+    // v0.30 R95 sub-spec 7 task 31a: 注入固定 AES key, 避 FlutterSecureStorage
+    // platform channel (test 模式抛 MissingPluginException → 加密失败 → swallowError
+    // → 测试看不到弹窗)
+    EncryptionService().setKeyForTest(Uint8List.fromList(List.filled(32, 0x42)));
   });
 
   tearDown(() async {

@@ -321,7 +321,7 @@ void main() {
   //   - scale / phq9 / gad7 / isi / pss / whodas / level2 / asrm: 180 key
   //   - notifChannel* (R23 起步 + R26 R57 加): 4 key
   //   - 跟 check_arb_keys.py 守门员用 2 空格缩进模式一致 (避免嵌套对象 key 误算)
-  //   - 总 1045 key (跟 check_arb_keys.py baseline 同步)
+  //   - 总 1058 key (跟 check_arb_keys.py baseline 同步; R95 sub-spec 7 task 53/55 加 13 new)
   // ============================================================
   group('3 语 ARB 同步 (zh / en / zh_Hant 数字一致, 跟 check_arb_keys.py 守门员一致)', () {
     int countIn(String path, String pattern) {
@@ -361,16 +361,17 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1045 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)', () {
+    test('3 语 total = 1058 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)', () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
+      // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
       final pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1045, reason: 'zh.arb 应有 1045 key (跟 check_arb_keys baseline)');
-      expect(en, 1045, reason: 'en.arb 应有 1045 key');
-      expect(hant, 1045, reason: 'zh_Hant.arb 应有 1045 key');
+      expect(zh, 1058, reason: 'zh.arb 应有 1058 key (R95 sub-spec 7 +13 from 1045)');
+      expect(en, 1058, reason: 'en.arb 应有 1058 key');
+      expect(hant, 1058, reason: 'zh_Hant.arb 应有 1058 key');
     });
   });
 
