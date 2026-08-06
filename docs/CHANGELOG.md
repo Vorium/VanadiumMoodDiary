@@ -2,6 +2,54 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-06 (R95 sub-spec 2 task 8: 9 处 catch (_) → swallowError 集中器 — 实测发现 R23 P1-10 已修完, 加 16 lock-in tests 防御, 1 commit, baseline 1698 → 1714 pass, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关)
+
+R95 sub-spec 2 task 8 目标: 按 R95 报告 §6.4, 把 9 处 `} catch (_) {}` 静默吞错 → `swallowError` 集中器 (1 处集中器自身保留)。
+
+**关键发现 (R95 sub-spec 2 task 8)**:
+
+- **R95 报告 §6.4 audit 陈旧**: 报告基于 R92 baseline + R93 增量, 但 **R23 round 39 (P1-10) + R22 round 30 (P1-3) 已经把所有 9 处业务 `} catch (_) {}` 改成 `} catch (e, st) { ... swallowError(...) }`**。R23 修这 9 处时 CHANGELOG 标了 (v0.23 round 39), 但 R92 6 视角报告没把 R23 算进去, R95 增量 audit 沿用 R92 数字。
+- **实测 0 改动需要**: 全 lib/ grep `} catch (_) {` 只有 1 处命中, 是 `swallow_error.dart` 集中器自身 (按 R17 模式保留)。
+- **第 10 处 (export_import_pipeline.dart:411) 故意不走 swallowError**: 走 `piiSafeLog` (P12 PII 脱敏, 不暴露原始异常避免 vent text/contact name 泄露), R23 P1-10 当时就评估过不强制改。
+
+**完成项 (1 commit, +16 lock-in tests)**:
+
+- **Task 8 步骤 1 (验证)**: PowerShell + grep 双验证, 9 业务文件已在 R23 P1-10 修过, 无需改动
+- **Task 8 步骤 2 (lock-in tests)**: 加 1 个 test 文件 `test/core/shared/swallow_error_catch_lock_in_round95_test.dart` (16 case), 锁住 4 个文件 7 处 catch 的 caller 契约 (失败返 fallback, 不抛):
+  - `JsonCodec.decodeStringList` (4 case: invalid / null / valid / wrong-type)
+  - `JsonCodec.decodeMap` (3 case: invalid / valid / wrong-type)
+  - `AssessmentRecord.tryFromEntity` (4 case: invalid JSON / null note / valid / wrong-type)
+  - `MedicationTimes.times` (5 case: invalid / empty / wrong-type / valid / partial item)
+- **Task 8 步骤 3 (验证)**: 17 守门员全绿 (16 .py + 1 dart check_all.dart, 跟 R95 sub-spec 1 baseline 一致, 2 warn-only 故意)
+- **Task 8 步骤 4 (文档)**: 0 analyzer error, 79 info-level (跟 baseline 一致, 不增加), CHANGELOG + VERSION_1.0_PLAN 同步, task-8-report.md 写完
+
+**总 R95 sub-spec 2 task 8 影响**:
+
+- 1 lock-in test 文件: 0 → 1 (swallow_error_catch_lock_in_round95_test.dart, 16 case)
+- baseline 1698 → **1714 pass** (+16 task 8 lock-in tests)
+- 0 老 test fail (1 pre-existing mood_period_aggregator_round91_test 跟 R95 无关, R93 CHANGELOG 标)
+- 0 代码改动 (9 业务文件 R23 P1-10 已修过, 唯一新增仅 test 文件)
+- 17 守门员全绿
+
+**R95 sub-spec 2 task 8 决策 (跟 R95 报告 §6.4 区别)**:
+
+- **不重复 R23 P1-10 的修复**: R23 round 39 (P1-10) + R22 round 30 (P1-3) 已修过所有 9 处 catch, R95 报告 §6.4 是基于 R92 数字的 stale audit, 任务 spec 要求"9 业务文件待修"实际上无文件待修
+- **加 lock-in tests 而不是改 code**: 把 9 处 swallowError 集中器化的行为 (caller 契约: 失败返 fallback 不抛) 锁住, 防止后续 refactor 把 `} catch (e, st) { ... swallowError(...) }` 退回 `} catch (_) {}` 静默吞错 (回归) 或抽掉 catch 直接抛 (破坏 caller)
+- **export_import_pipeline.dart:411 故意不改**: `piiSafeLog` 模式对 PII 脱敏更安全, 跟 swallowError 是不同语义 (前者 sanitize 给生产 log, 后者 fire-and-forget 给 dev devtools)
+- **3 个文件无法 lock-in 测试** (但已有 R23 真实测试覆盖):
+  - `theme_provider.dart` (R22 P1-3 修过, 需要 FlutterSecureStorage platform channel mock, 复杂度高)
+  - `export_schema_service.dart` (R23 P1-10 修过, mock drift TableInfo 需要实现 abstract methods)
+  - `export_import_pipeline.dart:411` (piiSafeLog 不在 swallowError 范围, R23 用真实 import 流程测过)
+
+**R95 sub-spec 2 后续排期** (R95 report §6.5-6.6):
+
+- 🔜 R95 sub-spec 2 task 9: 30+ 硬编码中文业务 hotspot → 走 ARB (估 1-2 周, 4-6 commit, +30 keys)
+- 🔜 R95 sub-spec 2 task 10: 删 4 个半成品 widget (email_preview / mood_dialog / refill / setup_step_med)
+- 🔜 R95 sub-spec 2 task 25-26: vent_compose dispose await + badge_sync_service catch (e) swallowError (P2-P3)
+- 🔜 R95 sub-spec 3: 拆 home_page 679 / trend_calendar 642 / mood_audio_section 553 god pages (task 5-7) + 拆 scale_translations 784 + l10n 708 (task 2)
+- 🔜 R95 sub-spec 4: 224 TextStyle / 208 EdgeInsets 集中器化 (task 3-4)
+- 🔜 R95 sub-spec 5: 业务真接 (IAP / 阿里云 SMS / 5 厂商 push / Email / PHQ-9 i18n)
+
 ## [0.30.0] - 2026-08-06 (R95 sub-spec 1 — 拆 data_management_section god section 6 sub-tile + 1 refactor (export_dialog 独立 widget), 0 业务变更, 7 commit + 16 R95 tests, baseline 1672 → 1698 pass, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关)
 
 R95 sub-spec 1 目标: 拆 `data_management_section.dart` 606 行 god section (R93 v1 留 R95+) → 6 sub-tile (export / cbt_pdf / report / history / import / clear) + 1 抽 dialog (export_dialog JSON 弹窗, 100+ 行), 复用 R93 task 1 模式 (medication_calendar 642→209 行)。**纯架构重构, 0 业务变更** (PIPL §13/§17/§28 / audit log / swallowError / AppSnackBar 集中器 / data export flow 全部保留)。

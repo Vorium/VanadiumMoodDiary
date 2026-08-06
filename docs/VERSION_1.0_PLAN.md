@@ -119,7 +119,7 @@
 | **R95 task 5** | 拆 `home_page.dart` 679 行 → 5 sub-section | 底层 (god page) | XL | 1-2 周 | — |
 | **R95 task 6** | 拆 `trend_calendar.dart` 642 行 → 3 sub-section | 底层 (god page) | XL | 1-2 周 | — |
 | **R95 task 7** | 拆 `mood_audio_section.dart` 553 行 → 4 sub-widget | 底层 (god widget) | L | 1-2 周 | — |
-| **R95 task 8** | 10 处 catch (_) 静默吞错 → `swallowError` 集中器 | 底层 (静默吞错) | M | 1 周 | — |
+| **R95 task 8** | ✅ 9 处 catch (_) → `swallowError` 集中器 (R95 sub-spec 2, 2026-08-06, 实际 R23 P1-10 已修, 加 16 lock-in tests 防御) | 底层 (静默吞错) | M | 1 周 | — |
 | **R95 task 9** | 30+ 硬编码中文业务 hotspot → 走 ARB (估 +30 keys) | 底层 (i18n) | L | 1-2 周 | task 2 |
 | **R95 task 10** | 删 4 个半成品 widget (email_preview / mood_dialog / refill / setup_step_med) | 底层 (半成品清理) | M | 1 周 | — |
 | **R95 task 25** | `vent_compose dispose 异步未 await` (R72 跨 5 轮未修) | 底层 (resource leak) | S | 2-3d | — |
