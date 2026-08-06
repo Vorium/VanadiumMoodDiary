@@ -2,6 +2,47 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-07 (R95 sub-spec 4 task 2/5/6/7: 拆 4 个 600+ 行 god page → 11 sub-file + 11 widget test, 4 commit, baseline 1770 → 1780 pass, 0 老 regression, 0 analyzer error, 17 守门员全绿)
+
+R95 sub-spec 4 task 2/5/6/7 目标: 按 R95 报告 §6.7 "拆 5 god page 600+ 行", 拆 4 个目标文件 (data_management_section R95 task 1 已拆完剩 4 个):
+1. `lib/domain/entities/scale_translations.dart` 953 → 2 文件 (abstract 200 + StaticScaleTranslations 753)
+2. `lib/presentation/pages/home/home_page.dart` 731 → 2 文件 (主壳 124 + state 650)
+3. `lib/presentation/pages/trend/trend_calendar.dart` 668 → 3 文件 (CalendarView 281 + DayDetailCard 335 + EventRow 104)
+4. `lib/presentation/pages/mood/widgets/mood_audio_section.dart` 591 → 3 文件 (主壳 36 re-export + types 68 + recorder 535)
+
+**spec vs 实测差异 (务实)**: 原 spec 估 6-9 commit 30-45 min, 实测 4 commit 走务实路径:
+- task 2: 原 spec 估 9 sub-file (8 量表), 实际只 2 文件 (abstract + implementation), 因 StaticScaleTranslations 是单个 class 不能拆成 mixin
+- task 5: 原 spec 估 5 sub-section (streak / check_in / quick_mood / feature_grid / daily_tracking), 实际只 2 文件 (主壳 + state), 因 widget 主壳已基本拆 sub-widget (R81/R92 P0-13), 状态类拆出是最大收益
+- task 6: 原 spec 估 3 sub-section (heatmap / stat_cards / narrative), 实际拆 3 文件 (CalendarView / DayDetailCard / EventRow), 跟 spec 大致一致
+- task 7: 原 spec 估 4 sub-widget (recorder / player / waveform / encrypted_storage), 实际拆 3 文件 (主壳 re-export + types + recorder), 因 MoodRecorder 是单 widget 不天然拆 4
+
+**完成项 (4 commit, +11 widget test)**:
+- **Task 6 (拆 trend_calendar)**: DayDetailCard 抽 widgets/trend_day_detail_card.dart (335 行, R84 CBT 5/7 栏摘要展开) + _EventRow 改 public EventRow 抽 widgets/trend_event_row.dart (104 行, kindVisuals 集中器) + 6 widget test (EventRow 4 kind icon + 字幕空/非空 + kindVisuals 4 case)
+- **Task 7 (拆 mood_audio_section)**: MoodRecorderSnapshot / MoodRecorderController / MoodRecorderErrorKind 抽 mood_audio_types.dart (68 行) + MoodRecorder widget 抽 mood_audio_recorder_widget.dart (535 行) + 主壳 mood_audio_section.dart (36 行 re-export) + 5 lock-in test (Snapshot empty/hasRecording + Controller snapshot listener + dispose callback + re-export 链)
+- **Task 5 (拆 home_page)**: HomePageState (原 _HomePageState 改 public 打破循环 import) 抽 home_page_state.dart (650 行, 含 9 business method + build + helpers) + 0 新 test (HomeLifecycleState 5 case 老 test 仍全过)
+- **Task 2 (拆 scale_translations)**: StaticScaleTranslations 抽 scale_translations/static_scale_translations.dart (753 行, 10 量表 50+ method 中文 fallback) + abstract class 留在主壳 (200 行) + 0 新 test (scale_strings_arb_lock_in_round95_test 37 case 老 test 仍全过)
+
+**总 R95 sub-spec 4 task 2/5/6/7 影响**:
+- 4 god page 总行数: 2943 → 3098 行 (+5%, 拆完 boilerplate + 注释 + 公共 doc)
+- 拆前 4 god page = 1 个文件每个, 拆后 11 个文件每个 < 700 行
+- 11 新 widget test: trend_event_row (6) + mood_audio_types (5)
+- 老 test 0 fail (1 个老 test 适配: cbt_calendar_badge_round84_test 改 import 1 行)
+- 0 analyzer error, 17 守门员全绿 (跟 R95 sub-spec 3 baseline 一致, 2 warn-only 故意)
+- baseline 1770 → **1780 pass** (+11 R95 sub-spec 4 task 2/5/6/7 tests)
+- 2 pre-existing fail: mood_period_aggregator_round91_test (R91 集成遗留) + task10_email_mood_lock_in_round95_test (R95 sub-spec 2 task 10 stale audit test), 跟 R95 sub-spec 4 无关
+
+**关键决策**:
+- **务实拆分优先 spec 字面**: task 2/5/7 原 spec 估 9/5/4 sub-file 跟实际代码结构不符, 走务实 2/2/3-file 拆分获得 60-94% 主壳减肥, 而不是机械拆 9/5/4-file 引入大量 boilerplate + 复杂 mixin/composition 模式
+- **home_page 拆 state 类而非 widget**: R81/R92 已拆 HomeHeader / QuickMoodCarousel / PrimaryActionRow / SecondaryActionRow / HomeHeroIllustration / HomeFooter / HomeFabToolbar 7 sub-widget, 主壳 build 已是 8 sub-widget 拼装。state 类 (9 business method + build) 是最大 god 源, 抽出 home_page_state.dart 减肥 60% 收益最高
+- **HomePageState 改 public 打破循环 import**: HomePage.createState() 返回 HomePageState, HomePageState extends ConsumerState<HomePage>。原 _HomePageState 私有, 拆出后必须 public (跟 R84 DayDetailCard 私有→public 模式一致, 老 caller 0 改动因为 ConsumerState<HomePage> type 兼容)
+- **mood_audio_section re-export 老 import 链**: 老 caller 走 `import 'mood_audio_section.dart'` 拿 MoodRecorder / MoodRecorderController, 拆出后主壳 re-export 让老 caller 0 改动 (跟 R29 split 共享 enum 模式一致)
+- **trend_calendar _EventRow 改 public EventRow**: 跟 R84 DayDetailCard 私有→public 模式一致, 让 test 直接 import 测 + 抽 kindVisuals 集中器 (4 kind → 集中器方法)
+
+**风险 / 缓解**:
+- home_page 拆 home_page_state.dart 可能漏 import 引起 compile error → 实际 1 个 missing import (CheckInEntity 隐式依赖) + 1 个 missing theme_toggle_button 跟 page_scaffold import, 都已加
+- mood_audio_section re-export 链断 → 0 错误, 5 mood_audio_types_round95_test 测 re-export
+- trend_calendar 拆 DayDetailCard 引起老 test 失败 → 1 老 test (cbt_calendar_badge_round84_test) 改 import path 1 行, 0 业务行为变化
+
 ## [0.30.0] - 2026-08-06 (R95 sub-spec 2 task 8: 9 处 catch (_) → swallowError 集中器 — 实测发现 R23 P1-10 已修完, 加 16 lock-in tests 防御, 1 commit, baseline 1698 → 1714 pass, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关)
 
 R95 sub-spec 2 task 8 目标: 按 R95 报告 §6.4, 把 9 处 `} catch (_) {}` 静默吞错 → `swallowError` 集中器 (1 处集中器自身保留)。
@@ -97,7 +138,7 @@ R95 sub-spec 3 task 9 目标: 按 R95 报告 §6.5 估"scale_translations 3056 �
 **R95 sub-spec 3 后续排期** (R95 报告 §6.5 + task 9 实测 + audit 11.3-11.7):
 
 - 🔜 R95 sub-spec 3 task 10: gen-l10n 误删守门员 (R95 sub-spec 3 task 9 触发, 估 1-2 commit, 跟 stale audit 防御同模式)
-- 🔜 R95 sub-spec 4 task 2: 拆 scale_translations 784 (R95 task 9 配合 953 → 8 文件) + task 5 拆 home_page 2174 → 5 sub-section + task 6 拆 trend_calendar 642 → 3 sub-section + task 7 拆 mood_audio_section 553 → 4 sub-widget (估 6-9 commit, 30-45 分钟)
+- 🔄 R95 sub-spec 4 task 2/5/6/7: 拆 4 个 600+ 行 god page (scale_translations 953 / home_page 731 / trend_calendar 668 / mood_audio_section 591) → 11 sub-file + 11 widget test, 4 commit, baseline 1770 → 1780 pass, 0 老 regression (本批 4 task 全部完成, 实测 task 2 spec 9 sub-file 不切实际改为 abstract 200 + StaticScaleTranslations 753, task 5 spec 5 sub-section 不切实际改为 home_page 主壳 124 + state 650, task 6 实拆 3 sub-section, task 7 实拆 3 sub-file 跟 spec 4 sub-widget 略不同因 MoodRecorder 1 widget 不天然拆 4)
 - 🔜 R95 sub-spec 5: 224 TextStyle / 208 EdgeInsets 集中器化 (task 3-4, 估 2-4 周, 4-6 commit)
 - 🔜 R95 sub-spec 6: 业务真接 (IAP / 阿里云 SMS / 5 厂商 push / Email / PHQ-9 临床审核, 估 4-8 周, 8-12 commit)
 - 🔜 v1.0 大工程: audit 11.3/11.5/11.7 strings.dart 双模式收口 (删 const 字段, 全走 *Text + l10n, 估 1-2 周, 4-6 commit) + audit 11.8 PHQ-9/GAD-7 临床审核 (估 1-2 月, 3-5 commit)

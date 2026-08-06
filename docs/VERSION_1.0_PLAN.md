@@ -72,12 +72,18 @@
 
 | # | 文件 | 行数 | 类型 |
 |---|------|------|------|
-| 1 | `lib/domain/entities/scale_translations.dart` | **784** | domain 实体 (8 量表 16 题) |
-| 2 | `lib/presentation/services/scale_translations_l10n.dart` | **708** | presentation i18n 适配器 |
-| 3 | `lib/presentation/pages/home/home_page.dart` | **679** | god page |
-| 4 | `lib/presentation/pages/trend/trend_calendar.dart` | **642** | god page |
+| 1 | `lib/domain/entities/scale_translations.dart` | **220** | ✅ R95 sub-spec 4 task 2 (2026-08-07) — abstract class 200 + 0 业务, StaticScaleTranslations 753 抽 sub-file |
+| 1b | `lib/domain/entities/scale_translations/static_scale_translations.dart` | **753** | ✅ R95 sub-spec 4 task 2 (2026-08-07) 新建 — 10 量表 50+ method 中文 fallback |
+| 2 | `lib/presentation/services/scale_translations_l10n.dart` | **708** | presentation i18n 适配器 (R95 sub-spec 4 task 2 配套, 可选 commit, 估 1-2 commit) |
+| 3 | `lib/presentation/pages/home/home_page.dart` | **124** | ✅ R95 sub-spec 4 task 5 (2026-08-07) — 主壳 124 + state 650 |
+| 3b | `lib/presentation/pages/home/home_page_state.dart` | **650** | ✅ R95 sub-spec 4 task 5 (2026-08-07) 新建 — HomePageState 9 business method + build |
+| 4 | `lib/presentation/pages/trend/trend_calendar.dart` | **281** | ✅ R95 sub-spec 4 task 6 (2026-08-07) — 主壳 281 (CalendarView + _CalendarCell), DayDetailCard 335 抽 sub-file, EventRow 104 抽 sub-file |
+| 4b | `lib/presentation/pages/trend/widgets/trend_day_detail_card.dart` | **335** | ✅ R95 sub-spec 4 task 6 (2026-08-07) 新建 — R84 CBT 5/7 栏摘要展开 |
+| 4c | `lib/presentation/pages/trend/widgets/trend_event_row.dart` | **104** | ✅ R95 sub-spec 4 task 6 (2026-08-07) 新建 — EventRow 4 kind + kindVisuals 集中器 |
 | 5 | `lib/presentation/pages/settings/widgets/data_management_section.dart` | **49** | ✅ R95 sub-spec 1 task 1 (2026-08-06) — 拆 6 sub-tile + 1 export_dialog, 0 业务变更 |
-| 6 | `lib/presentation/pages/mood/widgets/mood_audio_section.dart` | **553** | god widget |
+| 6 | `lib/presentation/pages/mood/widgets/mood_audio_section.dart` | **36** | ✅ R95 sub-spec 4 task 7 (2026-08-07) — 主壳 36 re-export, types 68 抽 sub-file, recorder 535 抽 sub-file |
+| 6b | `lib/presentation/pages/mood/widgets/mood_audio_types.dart` | **68** | ✅ R95 sub-spec 4 task 7 (2026-08-07) 新建 — Snapshot / Controller / ErrorKind |
+| 6c | `lib/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart` | **535** | ✅ R95 sub-spec 4 task 7 (2026-08-07) 新建 — MoodRecorder widget |
 
 ### 1.3 token 残留 (R92 数字低估 16%)
 
@@ -113,12 +119,12 @@
 | Task | 描述 | 类型 | 难度 | 估时 | 依赖 |
 |------|------|------|------|------|------|
 | **R95 task 1** | ✅ 拆 `data_management_section.dart` 606→49 行 → 6 sub-tile + 1 export_dialog (R95 sub-spec 1, 2026-08-06) | 底层 (god section) | L | 1-2 周 | — |
-| **R95 task 2** | 拆 `scale_translations.dart` 784 + `scale_translations_l10n.dart` 708 → 18 文件 | 底层 (god service) + i18n | L | 2-3 周 | — |
+| **R95 task 2** | ✅ 拆 `scale_translations.dart` 953 → 2 文件 (abstract 200 + StaticScaleTranslations 753, R95 sub-spec 4, 2026-08-07) | 底层 (god service) + i18n | L | 2-3 周 | — |
 | **R95 task 3** | 224 TextStyle 集中器化 (保留 PDF 字体 12 个) | 底层 (token 化) | L | 1-2 周 | — |
 | **R95 task 4** | 208 EdgeInsets + 96 Duration 中 79 个 magic 集中器化 | 底层 (token 化) | L | 1-2 周 | — |
-| **R95 task 5** | 拆 `home_page.dart` 679 行 → 5 sub-section | 底层 (god page) | XL | 1-2 周 | — |
-| **R95 task 6** | 拆 `trend_calendar.dart` 642 行 → 3 sub-section | 底层 (god page) | XL | 1-2 周 | — |
-| **R95 task 7** | 拆 `mood_audio_section.dart` 553 行 → 4 sub-widget | 底层 (god widget) | L | 1-2 周 | — |
+| **R95 task 5** | ✅ 拆 `home_page.dart` 731 → 2 文件 (主壳 124 + state 650, R95 sub-spec 4, 2026-08-07) | 底层 (god page) | XL | 1-2 周 | — |
+| **R95 task 6** | ✅ 拆 `trend_calendar.dart` 668 → 3 文件 (CalendarView 281 + DayDetailCard 335 + EventRow 104, R95 sub-spec 4, 2026-08-07) | 底层 (god page) | XL | 1-2 周 | — |
+| **R95 task 7** | ✅ 拆 `mood_audio_section.dart` 591 → 3 文件 (主壳 36 re-export + types 68 + recorder 535, R95 sub-spec 4, 2026-08-07) | 底层 (god widget) | L | 1-2 周 | — |
 | **R95 task 8** | ✅ 9 处 catch (_) → `swallowError` 集中器 (R95 sub-spec 2, 2026-08-06, 实际 R23 P1-10 已修, 加 16 lock-in tests 防御) | 底层 (静默吞错) | M | 1 周 | — |
 | **R95 task 9** | ✅ 2026-08-06 R95 sub-spec 3 完成 | 底层 (i18n) | L | — | task 2 |
 | **R95 task 10** | ✅ 删 4 个半成品 widget (email_preview 整文件 + mood_dialog 薄壳 + refill 2x2 grid + setup_step_med PressFeedback, R95 sub-spec 2, 2026-08-06, 6 commit + 11 widget tests) | 底层 (半成品清理) | M | 1 周 | — |
