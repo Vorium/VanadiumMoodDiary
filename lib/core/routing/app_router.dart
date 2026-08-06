@@ -48,12 +48,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     debugLogDiagnostics: false,
     redirect: (context, state) {
-      final isSetupDone = cache.isSetupDone;
-      final goingToSetup = state.matchedLocation == '/setup';
-
-      if (!isSetupDone && !goingToSetup) return '/setup';
-      if (isSetupDone && goingToSetup) return '/';
-      return null;
+      return setupRedirect(
+        isSetupDone: cache.isSetupDone,
+        matchedLocation: state.matchedLocation,
+      );
     },
     routes: AppRoutes.all(),
     errorBuilder: AppRoutes.errorBuilder,
@@ -67,4 +65,31 @@ final routerProvider = Provider<GoRouter>((ref) {
 class _RouterProfileCache {
   bool isSetupDone;
   _RouterProfileCache._(this.isSetupDone);
+}
+
+/// v0.30 R95 (sub-spec 7 task 32): 抽 redirect 决策为 top-level 纯函数
+///
+/// 之前内联在 routerProvider 的 redirect 闭包里, 难测试。
+/// 抽成 top-level static 函数, 单元测试直接覆盖 (看 setup_redirect_round95_test)。
+///
+/// **决策规则**:
+/// - 未完成 setup + 不在 setup 路径 → 跳 /setup
+/// - 已完成 setup + 在 setup 路径 → 跳 / (根)
+/// - 其他情况 → null (不 redirect)
+///
+/// **嵌套路径守卫** (task 32 修复):
+/// 之前 `== '/setup'` 严格匹配, 未来如果加 `/setup/consent` / `/setup/welcome`
+/// 等分步路径, 用户在这些子路径会被误判"不在 setup", 触发反向 redirect
+/// 循环跳根 → setup → ... 修后 `== '/setup' || startsWith('/setup/')` 守卫
+/// 嵌套。
+String? setupRedirect({
+  required bool isSetupDone,
+  required String matchedLocation,
+}) {
+  final goingToSetup = matchedLocation == '/setup' ||
+      matchedLocation.startsWith('/setup/');
+
+  if (!isSetupDone && !goingToSetup) return '/setup';
+  if (isSetupDone && goingToSetup) return '/';
+  return null;
 }
