@@ -16,6 +16,7 @@ import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/medication_calendar_page.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_day_detail.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -165,4 +166,130 @@ void main() {
       expect(find.textContaining('未设置服用时间'), findsOneWidget);
     },
   );
+
+  // ============================================================
+  // DayDetail sub-widget (Step 1.3) — 直接测 widget 渲染
+  // ============================================================
+  group('DayDetail sub-widget (R93 task 1.3):', () {
+    Widget _wrapDetail({
+      required DateTime date,
+      required List<MedicationEntity> meds,
+      required List<CheckInEntity> checkIns,
+      void Function(DateTime)? onAddLog,
+    }) {
+      return MaterialApp(
+        theme: ThemeData.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: MedicationCalendarDayDetail(
+                date: date,
+                checkIns: checkIns,
+                meds: meds,
+                onAddLog: onAddLog,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('单日有打卡: 显示日期头部 + 打卡 list + 药名', (tester) async {
+      _setBigView(tester);
+      final today = DateTime(2026, 8, 6);
+      await tester.pumpWidget(
+        _wrapDetail(
+          date: today,
+          meds: [_med(id: 1, name: '氟西汀')],
+          checkIns: [
+            CheckInEntity(
+              id: 1,
+              timestamp: DateTime(2026, 8, 6, 8, 30),
+              type: CheckInType.normal,
+              medicationId: 1,
+            ),
+            CheckInEntity(
+              id: 2,
+              timestamp: DateTime(2026, 8, 6, 20, 0),
+              type: CheckInType.normal,
+              medicationId: 1,
+            ),
+          ],
+          onAddLog: (_) {},
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 日期头部
+      expect(find.text('2026-08-06 的打卡'), findsOneWidget);
+      // 2 个打卡项 (08:30 / 20:00)
+      expect(find.textContaining('氟西汀'), findsNWidgets(2));
+      expect(find.textContaining('08:30'), findsOneWidget);
+      expect(find.textContaining('20:00'), findsOneWidget);
+      // 补打卡 button
+      expect(find.text('补打卡'), findsOneWidget);
+      expect(find.text('为今天补一次服药记录'), findsOneWidget);
+    });
+
+    testWidgets('单日无打卡: EmptyState 提示 + 补打卡 button 仍在', (tester) async {
+      _setBigView(tester);
+      final today = DateTime(2026, 8, 6);
+      await tester.pumpWidget(
+        _wrapDetail(
+          date: today,
+          meds: [_med(id: 1, name: '氟西汀')],
+          checkIns: const [],
+          onAddLog: (_) {},
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 日期头部仍在
+      expect(find.text('2026-08-06 的打卡'), findsOneWidget);
+      // EmptyState
+      expect(find.text('当天还没有打卡'), findsOneWidget);
+      // 补打卡 button 仍在
+      expect(find.text('补打卡'), findsOneWidget);
+    });
+
+    testWidgets('onAddLog 回调: 点补打卡 button 触发', (tester) async {
+      _setBigView(tester);
+      final today = DateTime(2026, 8, 6);
+      DateTime? captured;
+      await tester.pumpWidget(
+        _wrapDetail(
+          date: today,
+          meds: [_med(id: 1, name: '氟西汀')],
+          checkIns: const [],
+          onAddLog: (d) => captured = d,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('补打卡'));
+      await tester.pumpAndSettle();
+      expect(captured, today, reason: 'onAddLog 回调应传入选中的 date');
+    });
+
+    testWidgets('onAddLog=null: 不显示补打卡 button (只读 view)', (tester) async {
+      _setBigView(tester);
+      final today = DateTime(2026, 8, 6);
+      await tester.pumpWidget(
+        _wrapDetail(
+          date: today,
+          meds: const [],
+          checkIns: const [],
+          // onAddLog: null
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('补打卡'), findsNothing);
+      expect(find.text('为今天补一次服药记录'), findsNothing);
+    });
+  });
 }

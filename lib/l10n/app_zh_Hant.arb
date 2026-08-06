@@ -1248,6 +1248,28 @@
   "medsCalendarNoScheduleAction": "去設置時間",
   "medsCalendarLegendLabel": "依從：",
   "medsCalendarLegendMissed": "漏服",
+  "medsCalendarDayDetailTitle": "{date} 的打卡",
+  "@medsCalendarDayDetailTitle": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "medsCalendarDayDetailEmpty": "當天還沒有打卡",
+  "medsCalendarDayDetailAddLog": "補打卡",
+  "medsCalendarDayDetailAddLogHint": "為今天補一次服藥記錄",
+  "medsCalendarDayDetailLogItem": "{time} · {name}",
+  "@medsCalendarDayDetailLogItem": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "window7Subtitle": "一週內（適合周複診）",
   "window14Subtitle": "兩週內（推薦）",
   "window30Subtitle": "一個月內（適合月度評估）",

@@ -1891,6 +1891,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medsCalendarLegendMissed => '漏服';
 
   @override
+  String medsCalendarDayDetailTitle(String date) {
+    return '$date 的打卡';
+  }
+
+  @override
+  String get medsCalendarDayDetailEmpty => '当天还没有打卡';
+
+  @override
+  String get medsCalendarDayDetailAddLog => '补打卡';
+
+  @override
+  String get medsCalendarDayDetailAddLogHint => '为今天补一次服药记录';
+
+  @override
+  String medsCalendarDayDetailLogItem(String time, String name) {
+    return '$time · $name';
+  }
+
+  @override
   String get window7Subtitle => '一周内（适合周复诊）';
 
   @override
@@ -5325,6 +5344,25 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get medsCalendarLegendMissed => '漏服';
+
+  @override
+  String medsCalendarDayDetailTitle(String date) {
+    return '$date 的打卡';
+  }
+
+  @override
+  String get medsCalendarDayDetailEmpty => '當天還沒有打卡';
+
+  @override
+  String get medsCalendarDayDetailAddLog => '補打卡';
+
+  @override
+  String get medsCalendarDayDetailAddLogHint => '為今天補一次服藥記錄';
+
+  @override
+  String medsCalendarDayDetailLogItem(String time, String name) {
+    return '$time · $name';
+  }
 
   @override
   String get window7Subtitle => '一週內（適合周複診）';

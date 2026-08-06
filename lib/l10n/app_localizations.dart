@@ -3455,6 +3455,36 @@ abstract class AppLocalizations {
   /// **'漏服'**
   String get medsCalendarLegendMissed;
 
+  /// No description provided for @medsCalendarDayDetailTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'{date} 的打卡'**
+  String medsCalendarDayDetailTitle(String date);
+
+  /// No description provided for @medsCalendarDayDetailEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'当天还没有打卡'**
+  String get medsCalendarDayDetailEmpty;
+
+  /// No description provided for @medsCalendarDayDetailAddLog.
+  ///
+  /// In zh, this message translates to:
+  /// **'补打卡'**
+  String get medsCalendarDayDetailAddLog;
+
+  /// No description provided for @medsCalendarDayDetailAddLogHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'为今天补一次服药记录'**
+  String get medsCalendarDayDetailAddLogHint;
+
+  /// No description provided for @medsCalendarDayDetailLogItem.
+  ///
+  /// In zh, this message translates to:
+  /// **'{time} · {name}'**
+  String medsCalendarDayDetailLogItem(String time, String name);
+
   /// No description provided for @window7Subtitle.
   ///
   /// In zh, this message translates to:
