@@ -21,16 +21,22 @@ import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
-import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/medication_report_dialog.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/choose_window_dialog.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/cbt_pdf_tile.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/clear_tile.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_tile.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/history_tile.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/import_tile.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/report_tile.dart';
 
 /// 数据管理 section — 导出/报告/历史/导入/清空
 ///
 /// 从 settings_page.dart 提取 (v0.23 P1 refactor)
+/// v0.30 round 95 (sub-spec 1 task 1): 拆 6 sub-tile 入口, 主壳改 props callback 模式
 class DataManagementSection extends ConsumerWidget {
   const DataManagementSection({super.key});
 
@@ -39,89 +45,18 @@ class DataManagementSection extends ConsumerWidget {
     return Card(
       child: Column(
         children: [
-          AppListTile(
-            leading: Icon(
-              Icons.upload_outlined,
-              color: AppTokens.primaryColor(context),
-            ),
-            title: Text(AppLocalizations.of(context).settingsExportData),
-            subtitle: Text(
-              AppLocalizations.of(context).settingsExportSubtitle,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _exportData(context, ref),
-          ),
+          ExportTile(onExport: () => _exportData(context, ref)),
           const Divider(height: 1),
           // v0.30 round 88 (sub-spec 4): 导出 5/7 栏 CBT 思维记录 PDF 入口
-          // 紧跟"导出全部数据" 之后, 走 date range picker 选区间 → 调
-          // CbtThoughtRecordPdf.build → Printing.layoutPdf 弹系统打印/分享面板。
-          // 设计参考: medication_report_dialog._exportPdf (同 mode)。
-          AppListTile(
-            leading: Icon(
-              Icons.picture_as_pdf_outlined,
-              color: AppTokens.primaryColor(context),
-            ),
-            title: Text(AppLocalizations.of(context).cbtExportPdfButton),
-            subtitle: Text(
-              AppLocalizations.of(context).cbtExportPdfDialogTitle,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _exportCbtPdf(context, ref),
-          ),
+          CbtPdfTile(onExport: () => _exportCbtPdf(context, ref)),
           const Divider(height: 1),
-          AppListTile(
-            leading: Icon(
-              Icons.summarize_outlined,
-              color: AppTokens.primaryColor(context),
-            ),
-            title: Text(AppLocalizations.of(context).settingsMedReport),
-            subtitle: Text(
-              AppLocalizations.of(context).settingsMedReportSubtitle,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _chooseAndShowReport(context, ref),
-          ),
+          ReportTile(onShow: () => _chooseAndShowReport(context, ref)),
           const Divider(height: 1),
-          AppListTile(
-            leading:
-                Icon(Icons.history, color: AppTokens.primaryColor(context)),
-            title: Text(AppLocalizations.of(context).settingsReportHistory),
-            subtitle: Text(
-              AppLocalizations.of(context).settingsReportHistorySubtitle,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showReportHistory(context),
-          ),
+          HistoryTile(onShow: () => _showReportHistory(context)),
           const Divider(height: 1),
-          AppListTile(
-            leading: Icon(
-              Icons.download_outlined,
-              color: AppTokens.primaryColor(context),
-            ),
-            title: Text(AppLocalizations.of(context).settingsImportData),
-            subtitle: Text(
-              AppLocalizations.of(context).settingsImportSubtitle,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showImportDialog(context, ref),
-          ),
+          ImportTile(onImport: () => _showImportDialog(context, ref)),
           const Divider(height: 1),
-          AppListTile(
-            leading: Icon(
-              Icons.delete_forever_outlined,
-              color: AppTokens.errorColor(context),
-            ),
-            title: Text(
-              AppLocalizations.of(context).settingsClearAllData,
-              style: AppTokens.textStyleBody(context)
-                  .copyWith(color: AppTokens.errorColor(context)),
-            ),
-            subtitle: Text(
-              AppLocalizations.of(context).settingsClearAllDataSubtitle,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showClearAllDataDialog(context, ref),
-          ),
+          ClearTile(onClear: () => _showClearAllDataDialog(context, ref)),
         ],
       ),
     );
@@ -367,6 +302,9 @@ class DataManagementSection extends ConsumerWidget {
   ///
   /// 注: cbtReratedEntriesProvider 是 autoDispose — 在 handler 内 ref.read
   /// 同步取值即可, 不在 build 监听 (避免每次 build 重建 PDF)。
+  ///
+  /// v0.30 round 95 (sub-spec 1 task 3): 待修 R19B DateTime.now() race — 入口
+  /// `final now = DateTime.now();` 一次, 复用 4 处 (now.year - 5 / +1 / now.month / +1)。
   Future<void> _exportCbtPdf(BuildContext context, WidgetRef ref) async {
     if (!context.mounted) return;
     final l10n = AppLocalizations.of(context);
