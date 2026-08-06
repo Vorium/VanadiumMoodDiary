@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/info_banner.dart';
@@ -196,7 +197,7 @@ class CrisisHotlinePage extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.crisisHotlineSnackbarCopied(number)),
-        duration: const Duration(seconds: 2),
+        duration: AppMotion.snackBarDurationShort,
       ),
     );
   }

@@ -14,7 +14,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// 用法:
 /// ```dart
 /// SlideUp(
-///   delay: Duration(milliseconds: 200),
+///   delay: AppMotion.durFast,
 ///   child: MyPage(),
 /// )
 /// ```

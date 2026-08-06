@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -211,7 +212,7 @@ class _MedicationCalendarPageState
         content: Text(
           '补打卡功能接入中 (${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')})',
         ),
-        duration: const Duration(seconds: 2),
+        duration: AppMotion.snackBarDurationShort,
       ),
     );
   }
