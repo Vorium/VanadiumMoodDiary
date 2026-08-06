@@ -2,6 +2,43 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-06 (R95 sub-spec 1 — 拆 data_management_section god section 6 sub-tile + 1 refactor (export_dialog 独立 widget), 0 业务变更, 7 commit + 16 R95 tests, baseline 1672 → 1698 pass, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关)
+
+R95 sub-spec 1 目标: 拆 `data_management_section.dart` 606 行 god section (R93 v1 留 R95+) → 6 sub-tile (export / cbt_pdf / report / history / import / clear) + 1 抽 dialog (export_dialog JSON 弹窗, 100+ 行), 复用 R93 task 1 模式 (medication_calendar 642→209 行)。**纯架构重构, 0 业务变更** (PIPL §13/§17/§28 / audit log / swallowError / AppSnackBar 集中器 / data export flow 全部保留)。
+
+**6 步骤 + 1 refactor, 7 commit** (R95 sub-spec 1 task 1, baseline 1672 → 1698 pass, +16 R95 sub-spec 1 tests, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关):
+
+- **Task 1 步骤 1 (R95 步 1)**: 拆 6 sub-tile 骨架 (export / cbt_pdf / report / history / import / clear) + props callback 模式
+- **Task 1 步骤 2a/2b (R95 步 2)**: 抽 ExportTile (267 行, ConsumerWidget + ConsentDialog + audit log + JSON 弹窗 + PIPL §17) + 5 widget test (含 _StubDataExportService 跳过生产 5s timeout)
+- **Task 1 步骤 3 (R95 步 3)**: 抽 CbtPdfTile (129 行, ConsumerWidget + date range picker + CbtThoughtRecordPdf + pdfBuilder 注入) + 5 widget test
+- **Task 1 步骤 4a/4b (R95 步 4)**: 抽 ReportTile (160 行, ChooseWindowDialog + MedicationReport + swallowError 写 history) + 3 widget test; 抽 HistoryTile (ReportHistoryListDialog) + 2 widget test
+- **Task 1 步骤 5 (R95 步 5)**: 抽 ImportTile (220 行, JSON 导入 + 风险告知 + 用户确认; 抽 ImportDialog 私有 StatefulWidget 修 pre-existing dispose race bug) + 4 widget test
+- **Task 1 步骤 6 (R95 步 6)**: 抽 ClearTile (140 行, 二次确认 + clearAllUserData + vent audio + GoRouter /setup) + 4 widget test
+- **Task 1 步骤 6.5 (R95 步 6.5 — refactor)**: 抽 ExportDialog (270 行, Q4b 明文风险 + 责任划界 + 强制勾选 + Clipboard.setData) 从 export_tile 267→150 行 + 3 widget test
+- **Task 1 步骤 7 (R95 步 7)**: 17 守门员全绿 (16 .py + 1 dart check_all.dart), 0 analyzer error (1 pre-existing R93 warning + 79 info-level trailing_commas/prefer_const), 0 老 test fail, CHANGELOG + VERSION_1.0_PLAN 同步
+
+**总 R95 sub-spec 1 影响**:
+- 6 sub-tile 总计: 0 → 1110 行 (export_tile 150 + cbt_pdf_tile 129 + report_tile 160 + history_tile 73 + import_tile 220 + clear_tile 140 + export_dialog 270)
+- 主壳: 606 → 49 行 (-92%, 0 业务方法, 仅 6 sub-tile 拼装)
+- 5 widget test 文件: 0 → 5 (report/history/import/clear/export_dialog 各 1)
+- 16 R95 sub-spec 1 tests: 3 report + 2 history + 4 import + 4 clear + 3 export_dialog
+- 总 test 增加 (vs R93 baseline 1672): +26 (16 R95 sub-spec 1 + 10 R95 sub-spec 1 步骤 1-3 已有)
+- 1 pre-existing bug 修复 (R95 步 5 widget test 4 暴露 import 弹窗 controller 早于 dialog 退出动画 dispose, 抽 ImportDialog 私有 StatefulWidget 修)
+- 17 守门员全绿 (跟 R93 baseline 一致)
+
+**R95 sub-spec 1 关键决策** (跟 R93 task 1 区别):
+- **ConsumerWidget 模式 (非 props callback)**: sub-tile 持 ref, 主壳不传 callback。R93 task 1 主壳 props 持 ref + context, sub-tile 接受 callback; R95 sub-spec 1 决定 sub-tile 自包含完整流程, 测试可注入 onExport/onShow/onImport/onClear 回调跳过完整链路
+- **onXxx callback 注入点**: 6 sub-tile 全部接受 `Future<void> Function()?` 可选 callback, 测试可注入自定义 handler 跳过完整流 (ConsentDialog / ChooseWindowDialog / JSON 解析 / 二次确认)
+- **import_tile 抽 ImportDialog 私有 StatefulWidget**: 修 pre-existing dispose race bug (controller 早于 dialog 退出动画 dispose, TextField 报 "controller was used after being disposed")
+- **export_tile 抽 ExportDialog 独立 widget**: R95 步 6.5 新加 refactor, 拆 JSON 弹窗 100+ 行 (Q4b 明文风险 + 责任划界 + 强制勾选) → 独立可测 widget, export_tile 267→150 行
+
+**R95 sub-spec 1-2 关系** (后续 R95 sub-spec 2 排期):
+- ✅ R95 sub-spec 1 (本批): 拆 data_management_section god section → 6 sub-tile
+- 🔜 R95 sub-spec 2: 10 处 catch (_) 静默吞错 → swallowError 集中器化 (task 8) + 30+ 硬编码中文 → ARB (task 9) + 4 半成品 widget 清理 (task 10)
+- 🔜 R95 sub-spec 3: 拆 home_page 679 / trend_calendar 642 / mood_audio_section 553 god pages (task 5-7) + 拆 scale_translations 784 + l10n 708 (task 2)
+- 🔜 R95 sub-spec 4: 224 TextStyle / 208 EdgeInsets 集中器化 (task 3-4)
+- 🔜 R95 sub-spec 5: 业务真接 (IAP / 阿里云 SMS / 5 厂商 push / Email / PHQ-9 i18n)
+
 ## [0.30.0] - 2026-08-06 (R93 — 6 视角审计修复 sub-spec 9: 7 项未真接业务 FeatureFlag 守护 + UI hidden + 文档一致性 + 36 张 fastlane 占位清理)
 
 R93 目标: 按 6 视角审计 (R92 阶段 1 后) 暴露的 P0 上架 blocker (Apple 2.1 / PIPL §17 / emil 商业卡 / OEM push 业务暂停) + 业务闭环不全 (audio / 翻译), 把所有"需要真接的内容"先用 `FeatureFlag` 守护 + UI 完全 hidden (`SizeBox.shrink`, 非 disabled)。跳过所有外部资源 (签名 / 域名 / 法务 / 阿里云 / Mac / 5 厂商 push), 只跑纯代码 / 文档 / 测试改动。
