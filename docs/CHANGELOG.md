@@ -2,6 +2,71 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-07 (R95 sub-spec 5 task 3-4: 224 TextStyle + 208 EdgeInsets + 96 Duration token 化集中器化 — 加 5 EdgeInsets helper + 修真 28 真 magic + 简化 74+ 半 token + 20 lock-in test, 5 commit, baseline 1780 → 1800 pass, 0 new regression, 0 analyzer error, 17 守门员全绿)
+
+R95 sub-spec 5 task 3-4 目标: 按 R95 报告 §6.1-6.3, 把 `TextStyle(...)` / `EdgeInsets.all(...)` / `Duration(...)` 字面量修真, 走 `AppTokens.textStyleXxx` / `AppTokens.edgeInsetsXxx` / `AppMotion.durXxx` 集中器。
+
+**关键发现 (R95 sub-spec 5 task 3-4 stale audit 模式)**:
+
+- **R95 报告 §6.1-6.3 数字基本准确** (差 1-4, grep 模式差异): 220 + 205 + 95 实测
+- **业务"真 magic" 远比报告估 488 少** (实际 28 真 magic + 74+ 半 token 简化, 共 102+ 处修真):
+  - TextStyle 真 magic literal fontSize 业务 5 处 (hero_illustration emoji 装饰 4 处保留, 设计意图)
+  - 完美匹配 `textStyleXxx` 集中器 5 处 (半 token → 集中器, color+fontSize+fontWeight 完美等价)
+  - EdgeInsets 真 magic literal 18 处 → `AppTokens.edgeInsetsXxx` 集中器
+  - EdgeInsets 半 token `EdgeInsets.all(AppTokens.spacingXs)` 74+ 处 → `AppTokens.edgeInsetsXs` 简化
+  - Duration 业务真 magic 3 snackbar 2s → `AppMotion.snackBarDurationShort` 集中器
+  - Duration 业务 timeout 5s/100ms 等保留 (业务语义, 5s 重试 timeout 跟 100ms tick 不是集中器覆盖)
+- **新加 5 个 EdgeInsets 静态 const helper**: `AppSpacing.edgeInsetsXs/Sm/Md/Lg/Xl` 集中器 (跟 spacingXs/Sm/Md/Lg/Xl 1:1 配对, 走 facade `AppTokens.edgeInsetsXxx`)。`symmetric/only/fromLTRB` 组合不加 wrapper (组合数爆炸, 保留 inline 写法 token 复用清晰)
+
+**完成项 (5 commit, +20 lock-in tests)**:
+
+- **Commit 1 (audit)**: 写 `task-3-4-audit-report.md` 8KB + 加 `AppSpacing.edgeInsetsXs/Sm/Md/Lg/Xl` 5 个静态 const + facade `AppTokens.edgeInsetsXxx` 转发
+- **Commit 2 (TextStyle + EdgeInsets 真 magic)**: 17 文件:
+  - 5 literal fontSize 修真: `assessment_unavailable_card` (11→fontSizeLabelSm) + `quick_mood_carousel` (32→fontSizeScoreXl) + `mood_list_item` (28→fontSizeTitle) + `trend_assessment_chart` (16→fontSizeLabel) + 同文件 SizedBox 8→spacingXs
+  - 5 完美匹配 textStyleXxx: `setup_step_welcome` (caption+textSecondary → textStyleCaption) + `legal_page` (body+w600+textPrimary → textStyleBodyStrong + label+w500+textPrimary → textStyleLabelMedium) + `vent_detail_page` (caption+textHint → textStyleCaptionHint x2) + `setup_step_medication` (caption+textHint → textStyleCaptionHint)
+  - 18 EdgeInsets literal 修真: `main.dart` 3 + `today_med_schedule` 2 + `trend_calendar` 2 + `trend_assessment_chart` 2 + `trend_day_detail_card` 3 + `setup_legal_dialog` + `app_shell` + `quick_mood_carousel` + `contacts_list_widget` + `treatment_page` + `reminder_cards`
+- **Commit 3 (EdgeInsets 半 token 简化)**: 53 文件批量简化 (含修 1 处误改 `const AppTokens.edgeInsetsMd` → `AppTokens.edgeInsetsMd` + 2 处文件缺 import app_tokens)
+- **Commit 4 (Duration)**: 3 文件 (crisis_hotline_page + medication_calendar_page + slide_up.dart, 加 2 import app_motion)
+- **Commit 5 (lock-in test)**: 写 `test/core/theme/app_tokens_lock_in_round95_test.dart` 318 行, 6 group 20 test:
+  - 5 EdgeInsets helper 值正确 (edgeInsetsXs/Sm/Md/Lg/Xl = EdgeInsets.all(8/16/24/40/80))
+  - 3 snackbar 集中器值 (snackBarDurationShort/Medium/Long = 2/3/4 seconds)
+  - 5 业务文件用 textStyleXxx/edgeInsetsXxx 集中器 (不存 literal)
+  - 3 集中器自身保留 (AppTypography 15 个 + AppMotion 14 个 + AppSpacing 10 个)
+  - 1 PDF 特殊保留 (`medication_report_pdf_layout.dart` ≥10 处 literal fontSize 不动)
+  - 2 修真效果 (TextStyle ≤ 220, EdgeInsets ≤ 205 R95 baseline 数字下降)
+
+**总 R95 sub-spec 5 task 3-4 影响**:
+- `TextStyle(` 全文: **220 → 214** (-6, 修真 5 literal + 5 完美匹配)
+- `EdgeInsets.` 全文: **205 → 131** (-74, 修真 18 literal + 74+ 半 token 简化)
+- `Duration(` 全文: 95 → 95 (-0 净变化, 修真 3 snackbar + 1 slide example; 业务 timeout 5s/100ms/600ms 保留)
+- `Curves.` 全文: 9 → 9 (R93 已 token 化, 0 修真, 0 漂移)
+- 0 analyzer error, 17 守门员全绿 (跟 R95 sub-spec 4 baseline 一致, 2 warn-only 故意)
+- baseline 1780 → **1800 pass** (+20 R95 sub-spec 5 task 3-4 lock-in tests)
+- 2 pre-existing fail: `mood_period_aggregator_round91_test` (R91 集成遗留) + `task10_email_mood_lock_in_round95_test` (R95 sub-spec 4 task 5 拆 home_page 移 MoodRecorderPage.show 到 home_page_state.dart 引起), 跟 R95 sub-spec 5 task 3-4 无关
+
+**保留 (不动)**:
+- `medication_report_pdf_layout.dart` 12+12 (PDF 字体表特殊, 修真前 v0.25 R56 已决策保留)
+- `app_typography.dart` 18 TextStyle 集中器自身
+- `app_theme.dart` 14 TextStyle (ThemeData.copyWith 内嵌, 部分集中器重叠, 走 textStyleXxx 集中器路由)
+- `app_motion.dart` 11 Duration 集中器自身
+- `app_routes.dart` 6 Duration 集中器自身
+- `app_spacing.dart` 4 Duration 集中器自身
+- 业务 timeout 5s/100ms/600ms 等 (业务语义, 不是设计 token)
+- hero_illustration 4 个 emoji 装饰 fontSize 36/28/56/32 (emoji 视觉尺寸, 不应走 typography token)
+
+**关键决策**:
+- **stale audit 模式优先于机械修真**: R95 报告数字 488 估, 实测真 magic 28 + 半 token 74+ 共 102+。机械按 488 修真会破坏 220 个合法 `AppTokens.fontSizeCaption + AppTokens.textHintColor(c)` 组合 (color 跟集中器不完全匹配, 但属合理半 token)
+- **EdgeInsets helper 5 个不加多**: `symmetric(horizontal: A, vertical: B)` 组合数爆炸, 不如保留 inline 写法 token 复用清晰 (emil "decisions should be nameable", 但 token 数量也应有上限)
+- **完美匹配 textStyleXxx 5 处不超范围**: 多数"半 token" color 跟集中器不匹配 (如 textSecondary / primary / warning / error), 改 textStyleXxx 反而破坏视觉, 保守改 5 处 color+fontSize+fontWeight 完美等价的
+- **emoji 装饰 fontSize 保留 literal**: hero_illustration 4 个 fontSize 36/28/56/32 是 emoji 视觉大小, 跟 typography 无关, 修真改 AppTokens 反而破坏设计意图
+- **业务 timeout 5s/100ms 保留**: reminder_dispatcher / safety_watch / export_orchestrator / mood_audio tickInterval 100ms 是业务时间/重试策略, 不是设计 token, 加 5s 集中器反而污染 API
+
+**风险 / 缓解**:
+- 53 文件批量替换 `EdgeInsets.all(AppTokens.spacingXxx)` → `AppTokens.edgeInsetsXxx` 可能误改 `const AppTokens.edgeInsetsXxx` → 1 处发现, PowerShell 二次扫描修
+- 2 文件缺 import `app_tokens.dart` (`treatment_page.dart` + `trend_assessment_chart.dart`), 加 import 修
+- 2 文件缺 import `app_motion.dart` (`crisis_hotline_page.dart` + `medication_calendar_page.dart` snackbar 用), 加 import 修
+- 1 处 `unused_local_variable` (`libDir` 在 setUpAll 没用上), 删除
+
 ## [0.30.0] - 2026-08-07 (R95 sub-spec 4 task 2/5/6/7: 拆 4 个 600+ 行 god page → 11 sub-file + 11 widget test, 4 commit, baseline 1770 → 1780 pass, 0 老 regression, 0 analyzer error, 17 守门员全绿)
 
 R95 sub-spec 4 task 2/5/6/7 目标: 按 R95 报告 §6.7 "拆 5 god page 600+ 行", 拆 4 个目标文件 (data_management_section R95 task 1 已拆完剩 4 个):

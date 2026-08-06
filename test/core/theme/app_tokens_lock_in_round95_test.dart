@@ -104,12 +104,6 @@ void main() {
   // 用 file read + string contains 测, 不 mock 任何东西
 
   group('修真后业务文件用集中器 (lock-in)', () {
-    late Directory libDir;
-
-    setUpAll(() {
-      libDir = Directory('lib');
-    });
-
     test('edit_medication_dialog: 不再有 literal `EdgeInsets.all(8)` 等', () {
       final file = File(
         'lib/presentation/pages/medication/widgets/edit_medication_dialog.dart',

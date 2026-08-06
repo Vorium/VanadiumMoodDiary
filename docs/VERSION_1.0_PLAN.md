@@ -120,8 +120,8 @@
 |------|------|------|------|------|------|
 | **R95 task 1** | ✅ 拆 `data_management_section.dart` 606→49 行 → 6 sub-tile + 1 export_dialog (R95 sub-spec 1, 2026-08-06) | 底层 (god section) | L | 1-2 周 | — |
 | **R95 task 2** | ✅ 拆 `scale_translations.dart` 953 → 2 文件 (abstract 200 + StaticScaleTranslations 753, R95 sub-spec 4, 2026-08-07) | 底层 (god service) + i18n | L | 2-3 周 | — |
-| **R95 task 3** | 224 TextStyle 集中器化 (保留 PDF 字体 12 个) | 底层 (token 化) | L | 1-2 周 | — |
-| **R95 task 4** | 208 EdgeInsets + 96 Duration 中 79 个 magic 集中器化 | 底层 (token 化) | L | 1-2 周 | — |
+| **R95 task 3** | ✅ 224 TextStyle + 208 EdgeInsets 集中器化 (R95 sub-spec 5 task 3-4, 2026-08-07, 加 5 EdgeInsets helper + 修真 28 真 magic + 简化 74+ 半 token + 20 lock-in test, baseline 1780 → 1800 pass) | 底层 (token 化) | L | 1-2 周 | — |
+| **R95 task 4** | ✅ 96 Duration 集中器化 (R95 sub-spec 5 task 3-4, 2026-08-07, 修真 3 snackbar + 1 slide example, 业务 timeout 5s/100ms 保留) | 底层 (token 化) | L | 1-2 周 | task 3 |
 | **R95 task 5** | ✅ 拆 `home_page.dart` 731 → 2 文件 (主壳 124 + state 650, R95 sub-spec 4, 2026-08-07) | 底层 (god page) | XL | 1-2 周 | — |
 | **R95 task 6** | ✅ 拆 `trend_calendar.dart` 668 → 3 文件 (CalendarView 281 + DayDetailCard 335 + EventRow 104, R95 sub-spec 4, 2026-08-07) | 底层 (god page) | XL | 1-2 周 | — |
 | **R95 task 7** | ✅ 拆 `mood_audio_section.dart` 591 → 3 文件 (主壳 36 re-export + types 68 + recorder 535, R95 sub-spec 4, 2026-08-07) | 底层 (god widget) | L | 1-2 周 | — |
