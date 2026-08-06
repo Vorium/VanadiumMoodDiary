@@ -37,7 +37,10 @@ class FeatureFlags {
   // 临时关闭 IAP 入口,等 v0.28 真接 productId 后再开
   static const bool _prodIapEnabled = false;
   static const bool _prodPhqGad7I18nEnabled = false;
-  static const bool _prodBootReceiverEnabled = true;
+  // R93 阶段 2: BootReceiver 完善前 (R55 阶段), 设备重启后 WorkManager 触发
+  // 可能 crash。临时关闭避风险, 等 v0.28 真接 WorkManager 完善后翻 true。
+  // 跟 R72 Sprint 撤回逻辑一致 (Sprint 1 撤回后默认不开)。
+  static const bool _prodBootReceiverEnabled = false;
 
   // ====== Test override (nullable, null = use _prod) ======
   static bool? _currentEmergencyContactEnabled;
@@ -73,7 +76,7 @@ class FeatureFlags {
   /// Android BootReceiver 完善开关
   ///
   /// v0.28 WorkManager 完善之前临时关闭 (避 BootReceiver 重启时 crash)
-  /// 默认 true (跟现有行为一致 — 设备重启后重排通知)。
+  /// R93 阶段 2: 默认改为 false (设备重启后不重排通知, 等 WorkManager 完善后翻 true)。
   static bool get bootReceiverEnabled =>
       _currentBootReceiverEnabled ?? _prodBootReceiverEnabled;
 
