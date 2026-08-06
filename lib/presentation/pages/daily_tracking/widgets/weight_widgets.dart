@@ -16,6 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/domain/logic/bmi_calculator.dart';
@@ -145,7 +146,15 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
     try {
       // 尝试读 heightCm (字段可能不存在 → throw)
       return (profile as dynamic).heightCm as double?;
-    } catch (_) {
+    } catch (e, st) {
+      // v0.30 R92: 走 swallowError 集中器, 替代完全静默 (R39 P1-10 模式)
+      // 老 UserProfile (R27 前) 没有 heightCm 字段, 视为 null (兜底)
+      swallowError(
+        where: 'weight_widgets._readHeightCm',
+        error: e,
+        stack: st,
+        note: 'UserProfile.heightCm 字段读取失败, 走 null 兜底',
+      );
       return null;
     }
   }

@@ -12,6 +12,7 @@ import 'dart:convert';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/daos/check_in_dao.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/entities/assessment_entry.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:drift/drift.dart';
@@ -134,8 +135,15 @@ class AssessmentDao {
         answers: const [],
         note: rawNote,
       );
-    } catch (_) {
+    } catch (e, st) {
       // 老格式 free text 兜底 (R60 之前 phq9/gad7 老 entry note 是 "用户备注: ...")
+      // v0.30 R92: 走 swallowError 集中器, 替代完全静默 (R39 P1-10 模式)
+      swallowError(
+        where: 'assessment_dao._rowToEntry_parse',
+        error: e,
+        stack: st,
+        note: 'assessmentId=${row.id} type=${row.type} rawNote=$rawNote 解析失败, 走老格式 free text 兜底',
+      );
       return AssessmentEntry(
         id: row.id,
         timestamp: row.timestamp,
