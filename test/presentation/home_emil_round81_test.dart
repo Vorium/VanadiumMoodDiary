@@ -2,6 +2,13 @@
 //
 // 覆盖 R81-5 (SectionHeader chip 标签) + R81-3 (HomeFabToolbar
 // 浮动工具栏) 的 5 case 集成测, 验证 widget 行为 + 用户交互。
+//
+// v0.30 round 93 (阶段 2 audit-fixes): homeFabHotline 走
+// [FeatureFlags.emergencyContactEnabled] gate, 默认 false hidden。
+// 老 test 假设 4 工具按钮总渲染, 改 setUp 翻 emergencyContactEnabled=true
+// 让老 test 不破 (跟 settings_page_round45 / notification_status_card_round20
+// 修法一致)。
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
@@ -34,6 +41,16 @@ Future<void> _pump(
 }
 
 void main() {
+  // v0.30 round 93: 老 test 假设 4 工具按钮 (含 homeFabHotline) 总渲染,
+  // R93 改 emergencyContactEnabled=false 后 homeFabHotline hidden, setUp 翻
+  // enableForTest 让老 test 不破 (跟 settings_page_round45 修法一致)。
+  setUp(() {
+    FeatureFlags.enableForTest();
+  });
+  tearDown(() {
+    FeatureFlags.resetForTest();
+  });
+
   group('SectionHeader chip 字段 (R81-5)', () {
     testWidgets('chip=null → 纯文字模式 (无 chip 显示)', (tester) async {
       await _pump(tester, const SectionHeader(title: '近 30 天'));
