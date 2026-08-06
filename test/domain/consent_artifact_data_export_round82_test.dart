@@ -263,5 +263,47 @@ void main() {
       expect(log.length, 1, reason: '坏数据 skip, 不阻塞其他');
       expect(log.first.grantedBy, 'good_entry');
     });
+
+    test('v0.30 R95 task 31b: reset(ConsentKind.dataExport) 同步清 audit log (PIPL §47 删除权)', () async {
+      // 验证用户撤回 dataExport 同意时, audit log 也一起清 (PIPL §47 撤回留痕)
+      final store = LegalConsentStore();
+      await store.recordDataExportConsent(ConsentArtifact(
+        kind: ConsentKind.dataExport,
+        grantedAt: DateTime.utc(2026, 8, 15, 10),
+        grantedBy: 'user',
+        version: 'v0.30',
+      ));
+      // 确认有 audit log
+      expect((await store.readDataExportConsentLog()).length, 1);
+
+      // 撤回 dataExport
+      await store.reset(ConsentKind.dataExport);
+
+      // 锁: audit log 也清空
+      final log = await store.readDataExportConsentLog();
+      expect(log, isEmpty, reason: 'reset(dataExport) 应同步清 audit log');
+      // 锁: SharedPreferences 实际 key 也删了
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getStringList('legal_consent_data_export_log'), isNull);
+    });
+
+    test('v0.30 R95 task 31b: clearDataExportAuditLog() 显式入口 (settings "清空我的同意记录" 按钮)', () async {
+      // 显式 API 跟 reset 走同条路径, 但解耦: reset 是"撤回同意", clear 是
+      // "只清 log 不撤回同意"。当前实现下两条路径等价 (reset 自动清, 显式
+      // clear 是 same), 提供显式入口为 v1.0 业务侧独立按钮铺路。
+      final store = LegalConsentStore();
+      await store.recordDataExportConsent(ConsentArtifact(
+        kind: ConsentKind.dataExport,
+        grantedAt: DateTime.utc(2026, 8, 15, 10),
+        grantedBy: 'user',
+        version: 'v0.30',
+      ));
+
+      // 显式清
+      await store.clearDataExportAuditLog();
+
+      // 锁: audit log 空
+      expect(await store.readDataExportConsentLog(), isEmpty);
+    });
   });
 }

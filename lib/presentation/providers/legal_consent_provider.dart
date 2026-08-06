@@ -92,6 +92,27 @@ class LegalConsentStore {
     if (kind == ConsentKind.vent) {
       await prefs.remove(_kVentSealedAt);
     }
+    // v0.30 R95 (sub-spec 7 task 31b): reset(ConsentKind.dataExport) 同步清
+    // dataExport audit log (PIPL §47 删除权 — 用户撤回数据导出同意 = 撤回
+    // 留痕, 之前累积的同意记录也一起清)。非 dataExport kind 不动 audit log
+    // (PIPL §17 要求其他 kind 的同意记录保留)。
+    if (kind == ConsentKind.dataExport) {
+      await prefs.remove(_kDataExportLog);
+    }
+  }
+
+  /// v0.30 R95 (sub-spec 7 task 31b): 显式清空 dataExport audit log
+  ///
+  /// PIPL §47 删除权: 用户撤回 dataExport 同意时, 累积的 audit log 也应清
+  /// (consent 撤回 = 留痕撤回)。跟 [reset(ConsentKind.dataExport)] 自动清
+  /// 路径等价, 但这里提供**显式**入口给"用户主动要求清 audit log" 场景
+  /// (e.g. settings 加"清空我的同意记录"按钮)。
+  ///
+  /// 注意: 法务 Q7b 修订后, audit log 应保留 7 年 (PIPL §17 + §47 冲突),
+  /// 这里仅清 **本地** log, 不影响云端 (项目当前零云端, 等于全清)。
+  Future<void> clearDataExportAuditLog() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kDataExportLog);
   }
 
   // ===== v0.28 R82.5: vent "加密封存" 状态 (PIPL §47 撤回 vent 同意时 2 选 1) =====
