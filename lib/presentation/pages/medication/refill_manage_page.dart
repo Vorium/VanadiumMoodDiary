@@ -129,42 +129,58 @@ class RefillManagePage extends ConsumerWidget {
         const SizedBox(height: AppTokens.spacingMd),
 
         // 顶部汇总卡
+        // v0.30 round 95 (sub-spec 2 task 10): 4 StatCard Row 改 2x2 grid
+        // (R92 emil P1-2.1.4: 4 StatCard 数字挤一起, 视觉密度太高),
+        // 数字更大 / 间距更合理, 改 2x2 改善可读性。
         Card(
           child: Padding(
             padding: const EdgeInsets.all(AppTokens.spacingMd),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  // v0.27 round 67 (C-4): 走 StatCard 集中器
-                  child: StatCard(
-                    label: AppLocalizations.of(context).medsTotal,
-                    value: '${meds.length}',
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      // v0.27 round 67 (C-4): 走 StatCard 集中器
+                      child: StatCard(
+                        label: AppLocalizations.of(context).medsTotal,
+                        value: '${meds.length}',
+                      ),
+                    ),
+                    const SizedBox(width: AppTokens.spacingMd),
+                    Expanded(
+                      child: StatCard(
+                        label:
+                            AppLocalizations.of(context).medsRefillSetCount,
+                        value: '$configured',
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: AppTokens.spacingMd),
-                Expanded(
-                  child: StatCard(
-                    label: AppLocalizations.of(context).medsRefillSetCount,
-                    value: '$configured',
-                  ),
-                ),
-                const SizedBox(width: AppTokens.spacingMd),
-                Expanded(
-                  child: StatCard(
-                    label: AppLocalizations.of(context).medsRefillReminding,
-                    value: '$inWindow',
-                    valueColor:
-                        inWindow > 0 ? AppTokens.warningColor(context) : null,
-                  ),
-                ),
-                const SizedBox(width: AppTokens.spacingMd),
-                Expanded(
-                  child: StatCard(
-                    label: AppLocalizations.of(context).refillManageOverdue,
-                    value: '$overdue',
-                    valueColor:
-                        overdue > 0 ? AppTokens.errorColor(context) : null,
-                  ),
+                const SizedBox(height: AppTokens.spacingMd),
+                Row(
+                  children: [
+                    Expanded(
+                      child: StatCard(
+                        label:
+                            AppLocalizations.of(context).medsRefillReminding,
+                        value: '$inWindow',
+                        valueColor: inWindow > 0
+                            ? AppTokens.warningColor(context)
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: AppTokens.spacingMd),
+                    Expanded(
+                      child: StatCard(
+                        label:
+                            AppLocalizations.of(context).refillManageOverdue,
+                        value: '$overdue',
+                        valueColor: overdue > 0
+                            ? AppTokens.errorColor(context)
+                            : null,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

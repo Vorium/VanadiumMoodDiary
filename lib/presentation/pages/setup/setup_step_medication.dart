@@ -103,31 +103,23 @@ class SetupStepMedication extends StatelessWidget {
                 child: Text(l10n.setupBack),
               ),
               const Spacer(),
-              SizedBox(
-                width: AppTokens.buttonWidthNarrow,
-                height: AppTokens.buttonHeightCompact,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    PrimaryButton(
-                      isFullWidth: false,
-                      onPressed: saving ? null : onFinish,
-                      child: Text(l10n.setupNext),
-                    ),
-                    if (saving)
-                      IgnorePointer(
-                        child: SizedBox(
-                          width: AppTokens.iconSizeInline,
-                          height: AppTokens.iconSizeInline,
-                          // v0.27 R70 (emil B-5): 走 LoadingSpinner 集中器
-                          // 替代 inline CircularProgressIndicator (统一 strokeWidth + theme-aware color)
-                          child: LoadingSpinner(
-                            size: AppTokens.iconSizeInline,
-                            color: AppTokens.fgOnPrimary(context),
-                          ),
-                        ),
-                      ),
-                  ],
+              // v0.30 round 95 (sub-spec 2 task 10): PrimaryButton + Stack
+              // hacky 改 PressFeedback + LoadingSpinner (emil honest abstraction).
+              // saving 态 LoadingSpinner 叠加在 button 上, 不再需要 110×44 narrow
+              // SizedBox 强制 + Stack alignment hack。
+              // PressFeedback 模式 1 (接管 onTap), PrimaryButton.onPressed: null
+              // (避免 tap 事件被 PressFeedback 拦截后又被 FilledButton 处理)。
+              PressFeedback(
+                onTap: saving ? null : onFinish,
+                child: PrimaryButton(
+                  isFullWidth: false,
+                  onPressed: null, // PressFeedback 接管 tap
+                  child: saving
+                      ? LoadingSpinner(
+                          size: AppTokens.iconSizeInline,
+                          color: AppTokens.fgOnPrimary(context),
+                        )
+                      : Text(l10n.setupNext),
                 ),
               ),
             ],

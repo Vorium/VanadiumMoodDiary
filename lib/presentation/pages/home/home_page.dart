@@ -32,7 +32,7 @@ import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.d
 import 'package:chroniccare/presentation/pages/home/widgets/secondary_action_row.dart';
 import 'package:chroniccare/presentation/pages/medication/temp_medication_dialog.dart';
 import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart';
-import 'package:chroniccare/presentation/pages/mood/mood_dialog.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 
 /// 主页
 class HomePage extends ConsumerStatefulWidget {
@@ -419,7 +419,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           // emil 频度: occasional (跟 checkIn 同 primary action),
           // standard animation OK, PageView 横滑 200ms ease-out
           QuickMoodCarousel(
-            onOpenFullDialog: () => MoodDialog.show(context, ref),
+            onOpenFullDialog: () => MoodRecorderPage.show(context, ref),
           ),
 
           const SizedBox(height: AppTokens.spacingSm),
@@ -461,7 +461,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           // 次要操作行：情绪日记 + 树洞
           SecondaryActionRow(
-            onMoodTap: () => MoodDialog.show(context, ref),
+            onMoodTap: () => MoodRecorderPage.show(context, ref),
           ),
 
           // v0.30 round 92 (audit-fixes / P0 #13): 去掉 `const Spacer(flex: 1)`。
