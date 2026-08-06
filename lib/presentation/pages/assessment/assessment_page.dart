@@ -19,6 +19,8 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_quiz_panel.dart';
+import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_result_panel.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -87,76 +89,26 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
       child: PageTransitionSwitcher(
         switchKey: (_submitted && _result != null) ? 'result' : 'quiz',
         child: (_submitted && _result != null)
-            ? _buildResultView(_result!)
+            ? _buildResultView()
             : _buildQuizView(),
       ),
     );
   }
 
   Widget _buildQuizView() {
+    // v0.30 R92: 拆 god page, QuizPanel 走 props callback 模式
+    // 父 widget 持 state, sub-widget 不读全局
     final scale = _scale!;
     final answers = _answers!;
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppTokens.spacingMd),
-          color: AppTokens.primaryLightColor(context),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                scale.instruction,
-                style: const TextStyle(
-                  fontSize: AppTokens.fontSizeBody,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: AppTokens.spacingXs),
-              Text(
-                AppLocalizations.of(context)
-                    .assessmentAnsweredProgress(_answered, scale.items.length),
-                style: TextStyle(
-                  color: AppTokens.textSecondaryColor(context),
-                  fontSize: AppTokens.fontSizeCaption,
-                ),
-              ),
-              const SizedBox(height: AppTokens.spacingXs),
-              LinearProgressIndicator(
-                value: _answered / scale.items.length,
-                backgroundColor: AppTokens.dividerColor(context),
-                color: AppTokens.primaryColor(context),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
-            itemCount: scale.items.length,
-            itemBuilder: (ctx, i) => QuestionCard(
-              index: i + 1,
-              item: scale.items[i],
-              options: scale.options,
-              selected: answers[i],
-              onChanged: (v) => setState(() => answers[i] = v),
-            ),
-          ),
-        ),
-        SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.all(AppTokens.spacingMd),
-            child: SizedBox(
-              width: double.infinity,
-              height: AppTokens.buttonHeight,
-              child: PrimaryButton(
-                onPressed: _canSubmit ? _submit : null,
-                child: Text(AppLocalizations.of(context).assessmentSubmit),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return AssessmentQuizPanel(
+      scale: scale,
+      answers: answers,
+      answered: _answered,
+      canSubmit: _canSubmit,
+      onAnswerChanged: (questionIndex, optionIndex) {
+        setState(() => answers[questionIndex] = optionIndex);
+      },
+      onSubmit: _submit,
     );
   }
 
@@ -293,125 +245,26 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     );
   }
 
-  Widget _buildResultView(AssessmentResult result) {
+  Widget _buildResultView() {
+    // v0.30 R92: 拆 god page, ResultPanel 走 props callback 模式
+    // 历史对比 widgets 由父 widget 构造, 通过 historyWidgets 传入
     final scale = _scale!;
-    final isUrgent = result.urgentDoctorVisit;
-    final recommend = result.recommendDoctorVisit;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTokens.spacingMd),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppTokens.spacingLg),
-            decoration: BoxDecoration(
-              color: isUrgent
-                  ? AppTokens.tintedErrorSoft(context)
-                  : AppTokens.primaryLightColor(context),
-              borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  '${result.total}',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeScoreXxl,
-                    fontWeight: FontWeight.bold,
-                    color: isUrgent
-                        ? AppTokens.errorColor(context)
-                        : AppTokens.primaryColor(context),
-                  ),
-                ),
-                Text(
-                  AppLocalizations.of(context)
-                      .assessmentScoreTotal(scale.totalRange),
-                  style: AppTokens.textStyleBody(context)
-                      .copyWith(color: AppTokens.textSecondaryColor(context)),
-                ),
-                const SizedBox(height: AppTokens.spacingSm),
-                Text(
-                  result.summary,
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeHeadline,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // v0.13 (Round 8): 历史对比 + sparkline
-          ..._buildComparisonWidgets(scale.id),
-          const SizedBox(height: AppTokens.spacingMd),
-          if (recommend)
-            Card(
-              color: AppTokens.tintedWarningSoft(context),
-              child: Padding(
-                padding: const EdgeInsets.all(AppTokens.spacingMd),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.medical_services_outlined,
-                      color: AppTokens.warningColor(context),
-                    ),
-                    const SizedBox(width: AppTokens.spacingSm),
-                    Expanded(
-                      child: Text(
-                        isUrgent
-                            ? AppLocalizations.of(context)
-                                .assessmentRecommendUrgent
-                            : AppLocalizations.of(context).assessmentRecommend,
-                        style: TextStyle(
-                          color: AppTokens.textPrimaryColor(context),
-                          fontSize: AppTokens.fontSizeBody,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          const SizedBox(height: AppTokens.spacingMd),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppTokens.spacingMd),
-              child: Text(
-                AppLocalizations.of(context).assessmentDisclaimer,
-                style: AppTokens.textStyleBody(context)
-                    .copyWith(color: AppTokens.textSecondaryColor(context)),
-              ),
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingLg),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(AppLocalizations.of(context).assessmentBack),
-                ),
-              ),
-              const SizedBox(width: AppTokens.spacingSm),
-              Expanded(
-                child: PrimaryButton(
-                  isFullWidth: false,
-                  onPressed: () {
-                    final answers = _answers!;
-                    setState(() {
-                      _submitted = false;
-                      _result = null;
-                      for (int i = 0; i < answers.length; i++) {
-                        answers[i] = null;
-                      }
-                    });
-                  },
-                  child: Text(AppLocalizations.of(context).assessmentRetake),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+    final result = _result!;
+    return AssessmentResultPanel(
+      result: result,
+      scale: scale,
+      historyWidgets: _buildComparisonWidgets(scale.id),
+      onBack: () => Navigator.of(context).pop(),
+      onRetake: () {
+        final answers = _answers!;
+        setState(() {
+          _submitted = false;
+          _result = null;
+          for (int i = 0; i < answers.length; i++) {
+            answers[i] = null;
+          }
+        });
+      },
     );
   }
 
