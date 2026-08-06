@@ -23,12 +23,12 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String homeLastMed(String time) {
+  String homeLastMed(Object time) {
     return '最后吃药：$time';
   }
 
   @override
-  String homeNextReminder(String time) {
+  String homeNextReminder(Object time) {
     return '下次提醒：$time';
   }
 
@@ -240,7 +240,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsImportHint => '把导出的 JSON 粘贴到这里';
 
   @override
-  String settingsImportSuccess(String summary) {
+  String settingsImportSuccess(Object summary) {
     return '导入完成：$summary';
   }
 
@@ -317,12 +317,12 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String commonLoadFailed(String error) {
+  String commonLoadFailed(Object error) {
     return '加载失败：$error';
   }
 
   @override
-  String snackbarErrorTemplate(String action, String error) {
+  String snackbarErrorTemplate(Object action, Object error) {
     return '$action失败：$error';
   }
 
@@ -387,7 +387,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medsRefillPickDate => '选择续方日期';
 
   @override
-  String medsRefillSet(String date, int days) {
+  String medsRefillSet(Object date, int days) {
     return '已设置：$date 续方，提前 $days 天提醒';
   }
 
@@ -400,7 +400,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String medsRefillUpcoming(String date, int days, int reminderDays) {
+  String medsRefillUpcoming(Object date, int days, int reminderDays) {
     return '续方：$date（$days 天后）· 提前 $reminderDays 天提醒';
   }
 
@@ -852,7 +852,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String ventDurationMinutesSeconds(int m, String sec) {
+  String ventDurationMinutesSeconds(int m, Object sec) {
     return '$m分$sec秒';
   }
 
@@ -879,6 +879,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodListFilterPeriod => '时段';
+
+  @override
+  String get moodListPeriodAll => '全部';
 
   @override
   String get moodPeriodChartTitle => '心境 4 段趋势（近 30 天）';
@@ -935,7 +938,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodAudioRecordButton => '录语音';
 
   @override
-  String moodAudioRecorded(String duration) {
+  String moodAudioRecorded(Object duration) {
     return '已录 $duration';
   }
 
@@ -1031,7 +1034,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String medsRefillSubtitleTemplate(
-      String date, String suffix, int reminderDays) {
+      Object date, Object suffix, int reminderDays) {
     return '$date $suffix · 提前 $reminderDays 天提醒';
   }
 
@@ -1047,7 +1050,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentSubmit => '提交并查看结果';
 
   @override
-  String assessmentQuestionLabel(int index, String text, String selected) {
+  String assessmentQuestionLabel(int index, Object text, Object selected) {
     return '评估题 $index：$text，4 项单选，当前：$selected';
   }
 
@@ -1075,7 +1078,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeHeaderDefaultTitle => '慢病管家';
 
   @override
-  String homeHeaderKeepGoing(String name) {
+  String homeHeaderKeepGoing(Object name) {
     return '$name 还在坚持';
   }
 
@@ -1121,7 +1124,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get navAppName => '慢病管家';
 
   @override
-  String errorPageNotFound(String path) {
+  String errorPageNotFound(Object path) {
     return '页面不存在：$path';
   }
 
@@ -1169,7 +1172,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentHistoryTrend => '历史趋势';
 
   @override
-  String assessmentAverageScore(String score) {
+  String assessmentAverageScore(Object score) {
     return '平均 $score';
   }
 
@@ -1286,7 +1289,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupPresetDescription => '预置方案会填好药名 + 时间，您可以接着改。最终服药请按医嘱核对。';
 
   @override
-  String setupPresetLoaded(String name, int count) {
+  String setupPresetLoaded(Object name, int count) {
     return '已载入：$name（$count 个药）请核对药名和剂量';
   }
 
@@ -1437,12 +1440,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reportHistoryEmpty => '还没有报告历史\n生成一次报告后会自动记录';
 
   @override
-  String reportHistoryItemTitle(String date, int days) {
+  String reportHistoryItemTitle(Object date, int days) {
     return '$date · 近 $days 天';
   }
 
   @override
-  String reportHistoryItemPatient(String name) {
+  String reportHistoryItemPatient(Object name) {
     return '患者：$name';
   }
 
@@ -1479,7 +1482,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String homeAutofireCelebration(String name) {
+  String homeAutofireCelebration(Object name) {
     return '已打卡：$name ✅';
   }
 
@@ -1495,22 +1498,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeSafetyAlertSuffix => '（请尽快打卡或联系家人）';
 
   @override
-  String safetyAlertBodySent(String date) {
+  String safetyAlertBodySent(Object date) {
     return '上次打卡: $date。已自动通知紧急联系人，请确认安全。';
   }
 
   @override
-  String safetyAlertBodyMocked(String date) {
+  String safetyAlertBodyMocked(Object date) {
     return '上次打卡: $date。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。';
   }
 
   @override
-  String safetyAlertBodyFailed(String date) {
+  String safetyAlertBodyFailed(Object date) {
     return '上次打卡: $date。失联检测已触发，但通知发送失败。请检查网络。';
   }
 
   @override
-  String safetyAlertTitle(String name, int days) {
+  String safetyAlertTitle(Object name, int days) {
     return '⚠️ $name 已 $days 天未打卡';
   }
 
@@ -1551,7 +1554,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeNotifBannerDismiss => '知道了';
 
   @override
-  String themeTooltip(String mode) {
+  String themeTooltip(Object mode) {
     return '主题：$mode（点击切换）';
   }
 
@@ -1639,12 +1642,12 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String trendMoodEntriesSame(int count, String emoji) {
+  String trendMoodEntriesSame(int count, Object emoji) {
     return '$count 条情绪记录 · $emoji';
   }
 
   @override
-  String trendMoodEntriesRange(int count, String lowEmoji, String highEmoji) {
+  String trendMoodEntriesRange(int count, Object lowEmoji, Object highEmoji) {
     return '情绪 $count 条 · $lowEmoji→$highEmoji';
   }
 
@@ -1725,7 +1728,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String dataExportConsentBody(
-      String purpose, String dataCategories, String retention) {
+      Object purpose, Object dataCategories, Object retention) {
     return '您即将导出本地数据库中的所有数据。\n\n**目的**：$purpose\n**数据范围**：$dataCategories\n**保留方式**：$retention\n\n**根据《个人信息保护法》第 13 條**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。';
   }
 
@@ -1763,7 +1766,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get editMedValidationUnitInvalid => '单位必须是 mg 或 片';
 
   @override
-  String editMedSaveFailed(String error) {
+  String editMedSaveFailed(Object error) {
     return '保存失败：$error';
   }
 
@@ -1774,7 +1777,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get editMedStatusStopped => '已停药';
 
   @override
-  String editMedStoppedDate(String date) {
+  String editMedStoppedDate(Object date) {
     return '$date 停药';
   }
 
@@ -1857,12 +1860,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medsCalendarWindow90 => '90 天';
 
   @override
-  String medsCalendarLoadCheckinFailed(String error) {
+  String medsCalendarLoadCheckinFailed(Object error) {
     return '加载打卡失败：$error';
   }
 
   @override
-  String medsCalendarLoadMedFailed(String error) {
+  String medsCalendarLoadMedFailed(Object error) {
     return '加载药物失败：$error';
   }
 
@@ -1948,7 +1951,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodRecordButton => '记一下情绪 ✏️';
 
   @override
-  String medReportFileName(String date) {
+  String medReportFileName(Object date) {
     return '用药报告_$date';
   }
 
@@ -2034,7 +2037,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupConsentRejected => '已拒绝该联系人的知情同意，未写入。可重新填写后继续。';
 
   @override
-  String emailBodyI18n(String name, int days) {
+  String emailBodyI18n(Object name, int days) {
     return '我是 $name，已经 $days 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。';
   }
 
@@ -2081,7 +2084,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String safetyCheckResultError(String message) {
+  String safetyCheckResultError(Object message) {
     return '错误：$message';
   }
 
@@ -2186,7 +2189,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get checkInTypeGad7 => 'GAD-7 评估';
 
   @override
-  String dayDetailCheckInWith(String name) {
+  String dayDetailCheckInWith(Object name) {
     return '打卡 · $name';
   }
 
@@ -2194,7 +2197,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dayDetailDailyCheckIn => '每日打卡';
 
   @override
-  String dayDetailTempWith(String name) {
+  String dayDetailTempWith(Object name) {
     return '临时 · $name';
   }
 
@@ -2382,12 +2385,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeFabTop => '回到顶端';
 
   @override
-  String get homeFabHotlineTodo => '紧急热线入口建设中';
-
-  @override
-  String get homeFabTopTodo => '回到顶端(开发中)';
-
-  @override
   String get trendChip30Day => '近 30 天';
 
   @override
@@ -2428,6 +2425,86 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get crisisHotlineMoDesc => '中国澳门 24 小时';
+
+  @override
+  String get crisisHotlineTitle => '紧急心理援助热线';
+
+  @override
+  String get crisisHotlineSubtitle => '如果你或身边的人正在经历心理危机, 请拨打以下热线';
+
+  @override
+  String get crisisHotlineCn2Label => '全国 24 小时免费心理援助热线';
+
+  @override
+  String get crisisHotlineCn2Number => '800-810-1117';
+
+  @override
+  String get crisisHotlineCn2Desc => '中国大陆 24 小时免费拨打';
+
+  @override
+  String get crisisHotlineUsLabel => '988 Suicide & Crisis Lifeline';
+
+  @override
+  String get crisisHotlineUsNumber => '988';
+
+  @override
+  String get crisisHotlineUsDesc => '美国 / 加拿大 24 小时英文 / 西班牙文';
+
+  @override
+  String get crisisHotlineIntlLabel => '国际通用';
+
+  @override
+  String get crisisHotlineIntlDesc => '请联系当地急救或心理援助机构';
+
+  @override
+  String get crisisHotlineIntlNumber => '112 / 911';
+
+  @override
+  String get crisisHotlineRegionCn => '中国大陆';
+
+  @override
+  String get crisisHotlineRegionTw => '中国台湾';
+
+  @override
+  String get crisisHotlineRegionHk => '中国香港';
+
+  @override
+  String get crisisHotlineRegionUs => '美国 / 加拿大';
+
+  @override
+  String get crisisHotlineRegionIntl => '国际通用';
+
+  @override
+  String get crisisHotlineCnBeijingLabel => '北京心理危机研究与干预中心';
+
+  @override
+  String get crisisHotlineCnBeijingNumber => '010-82951332';
+
+  @override
+  String get crisisHotlineCnBeijingDesc => '北京 24 小时';
+
+  @override
+  String get crisisHotlineTw1995Label => '生命线 (24 小时)';
+
+  @override
+  String get crisisHotlineTw1995Number => '1995';
+
+  @override
+  String get crisisHotlineTw1995Desc => '中国台湾 24 小时';
+
+  @override
+  String get crisisHotlineUsTextLineLabel => 'Crisis Text Line (text HOME)';
+
+  @override
+  String get crisisHotlineUsTextLineNumber => '741741';
+
+  @override
+  String get crisisHotlineUsTextLineDesc => '美国 24 小时短信';
+
+  @override
+  String crisisHotlineSnackbarCopied(Object number) {
+    return '已复制: $number';
+  }
 
   @override
   String get setupLegalAgeAttestation =>
@@ -2646,7 +2723,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String assessmentCenterLastTime(String time) {
+  String assessmentCenterLastTime(Object time) {
     return '$time 填写';
   }
 
@@ -3054,7 +3131,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dailyTrackingMultiChartTitle => '近 30 天 4 指标';
 
   @override
-  String dailyTrackingLastTime(String time) {
+  String dailyTrackingLastTime(Object time) {
     return '$time 记录';
   }
 
@@ -3073,7 +3150,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String moodDiaryLast(String time, String score, String period) {
+  String moodDiaryLast(Object time, Object score, Object period) {
     return '$time · $score ($period)';
   }
 
@@ -3091,6 +3168,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get anxietyAgitationNoData => '暂无焦虑急躁记录';
+
+  @override
+  String get anxietyAgitationAnxietyLabel => '焦虑分数';
+
+  @override
+  String get anxietyAgitationAgitationLabel => '急躁分数';
 
   @override
   String anxietyAgitationAnxietyScore(int score) {
@@ -3123,17 +3206,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sleepNoData => '暂无睡眠记录';
 
   @override
-  String sleepBedtime(String time) {
+  String sleepBedtime(Object time) {
     return '入睡 $time';
   }
 
   @override
-  String sleepWakeTime(String time) {
+  String get sleepRegularityTitle => '规律性';
+
+  @override
+  String sleepWakeTime(Object time) {
     return '起床 $time';
   }
 
   @override
-  String sleepLast(String duration, int regularity) {
+  String sleepLast(Object duration, int regularity) {
     return '$duration · 规律 $regularity/5';
   }
 
@@ -3153,22 +3239,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get socialRhythmNoData => '暂无社会节律记录';
 
   @override
-  String socialRhythmWakeTime(String time) {
+  String socialRhythmWakeTime(Object time) {
     return '起床 $time';
   }
 
   @override
-  String socialRhythmFirstMeal(String time) {
+  String socialRhythmFirstMeal(Object time) {
     return '第一餐 $time';
   }
 
   @override
-  String socialRhythmLastMeal(String time) {
+  String socialRhythmLastMeal(Object time) {
     return '最后一餐 $time';
   }
 
   @override
-  String socialRhythmLast(String wake, int social, int work) {
+  String socialRhythmLast(Object wake, int social, int work) {
     return '起床 $wake · 社交 ${social}h · 工作 ${work}h';
   }
 
@@ -3211,10 +3297,49 @@ class AppLocalizationsZh extends AppLocalizations {
   String get treatmentNoData => '暂无治疗记录';
 
   @override
+  String get treatmentAddButton => '添加';
+
+  @override
+  String get treatmentAddTitle => '添加治疗记录';
+
+  @override
+  String get treatmentDate => '日期';
+
+  @override
+  String get treatmentCategory => '类别';
+
+  @override
+  String get treatmentCategoryMedicationAdjustment => '药物调整';
+
+  @override
+  String get treatmentCategoryConsultation => '心理咨询';
+
+  @override
+  String get treatmentCategoryHospitalization => '住院';
+
+  @override
+  String get treatmentCategoryOther => '其他';
+
+  @override
+  String get treatmentProvider => '医疗机构 / 医生';
+
+  @override
+  String get treatmentProviderHint => '例如: 心理医生王医生 / 北京协和医院';
+
+  @override
+  String get treatmentProviderRequired => '请填写医疗机构 / 医生';
+
+  @override
+  String get treatmentNote => '备注';
+
+  @override
+  String get treatmentNoteHint => '可选, 简短记录治疗要点';
+
+  @override
   String get treatmentType => '治疗类型';
 
   @override
-  String treatmentLast(String type, String description) {
+  String treatmentLast(Object type, Object description) {
     return '$type · $description';
   }
 
@@ -3234,17 +3359,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get weightNoData => '暂无体重记录';
 
   @override
-  String weightWeight(String kg) {
+  String weightWeight(Object kg) {
     return '体重 $kg kg';
   }
 
   @override
-  String weightBmi(String bmi) {
+  String weightBmi(Object bmi) {
     return 'BMI $bmi';
   }
 
   @override
-  String weightLast(String kg, String bmi) {
+  String weightLast(Object kg, Object bmi) {
     return '$kg kg · BMI $bmi';
   }
 
@@ -3297,6 +3422,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cardStatusNoData => '尚未记录';
 
   @override
+  String get sleepBedtimeTitle => '入睡时间';
+
+  @override
+  String get sleepWakeTimeTitle => '起床时间';
+
+  @override
+  String get socialRhythmWakeTimeTitle => '起床时间';
+
+  @override
+  String get socialRhythmFirstMealTitle => '第一餐时间';
+
+  @override
+  String get socialRhythmLastMealTitle => '最后一餐时间';
+
+  @override
   String get cardStatusToday => '今天';
 }
 
@@ -3319,12 +3459,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String homeLastMed(String time) {
+  String homeLastMed(Object time) {
     return '最後吃藥：$time';
   }
 
   @override
-  String homeNextReminder(String time) {
+  String homeNextReminder(Object time) {
     return '下次提醒：$time';
   }
 
@@ -3536,7 +3676,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsImportHint => '把導出的 JSON 粘貼到這裡';
 
   @override
-  String settingsImportSuccess(String summary) {
+  String settingsImportSuccess(Object summary) {
     return '導入完成：$summary';
   }
 
@@ -3613,12 +3753,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String commonLoadFailed(String error) {
+  String commonLoadFailed(Object error) {
     return '加載失敗：$error';
   }
 
   @override
-  String snackbarErrorTemplate(String action, String error) {
+  String snackbarErrorTemplate(Object action, Object error) {
     return '$action失敗：$error';
   }
 
@@ -3683,7 +3823,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medsRefillPickDate => '選擇續方日期';
 
   @override
-  String medsRefillSet(String date, int days) {
+  String medsRefillSet(Object date, int days) {
     return '已設置：$date 續方，提前 $days 天提醒';
   }
 
@@ -3696,7 +3836,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String medsRefillUpcoming(String date, int days, int reminderDays) {
+  String medsRefillUpcoming(Object date, int days, int reminderDays) {
     return '續方：$date（$days 天后）· 提前 $reminderDays 天提醒';
   }
 
@@ -4148,7 +4288,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String ventDurationMinutesSeconds(int m, String sec) {
+  String ventDurationMinutesSeconds(int m, Object sec) {
     return '$m分$sec秒';
   }
 
@@ -4175,6 +4315,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodListFilterPeriod => '時段';
+
+  @override
+  String get moodListPeriodAll => '全部';
 
   @override
   String get moodPeriodChartTitle => '心境 4 段趨勢（近 30 天）';
@@ -4231,7 +4374,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodAudioRecordButton => '錄語音';
 
   @override
-  String moodAudioRecorded(String duration) {
+  String moodAudioRecorded(Object duration) {
     return '已錄 $duration';
   }
 
@@ -4327,7 +4470,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String medsRefillSubtitleTemplate(
-      String date, String suffix, int reminderDays) {
+      Object date, Object suffix, int reminderDays) {
     return '$date $suffix · 提前 $reminderDays 天提醒';
   }
 
@@ -4343,7 +4486,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentSubmit => '提交併查看結果';
 
   @override
-  String assessmentQuestionLabel(int index, String text, String selected) {
+  String assessmentQuestionLabel(int index, Object text, Object selected) {
     return '評估題 $index：$text，4 項單選，當前：$selected';
   }
 
@@ -4371,7 +4514,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeHeaderDefaultTitle => '慢病管家';
 
   @override
-  String homeHeaderKeepGoing(String name) {
+  String homeHeaderKeepGoing(Object name) {
     return '$name 還在堅持';
   }
 
@@ -4417,7 +4560,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get navAppName => '慢病管家';
 
   @override
-  String errorPageNotFound(String path) {
+  String errorPageNotFound(Object path) {
     return '頁面不存在：$path';
   }
 
@@ -4465,7 +4608,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentHistoryTrend => '歷史趨勢';
 
   @override
-  String assessmentAverageScore(String score) {
+  String assessmentAverageScore(Object score) {
     return '平均 $score';
   }
 
@@ -4582,7 +4725,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupPresetDescription => '預置方案會填好藥名 + 時間，您可以接著改。最終服藥請按醫囑核對。';
 
   @override
-  String setupPresetLoaded(String name, int count) {
+  String setupPresetLoaded(Object name, int count) {
     return '已載入：$name（$count 個藥）請核對藥名和劑量';
   }
 
@@ -4733,12 +4876,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get reportHistoryEmpty => '還沒有報告歷史\n生成一次報告後會自動記錄';
 
   @override
-  String reportHistoryItemTitle(String date, int days) {
+  String reportHistoryItemTitle(Object date, int days) {
     return '$date · 近 $days 天';
   }
 
   @override
-  String reportHistoryItemPatient(String name) {
+  String reportHistoryItemPatient(Object name) {
     return '患者：$name';
   }
 
@@ -4775,7 +4918,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String homeAutofireCelebration(String name) {
+  String homeAutofireCelebration(Object name) {
     return '已打卡：$name ✅';
   }
 
@@ -4791,22 +4934,22 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeSafetyAlertSuffix => '（請儘快打卡或聯繫家人）';
 
   @override
-  String safetyAlertBodySent(String date) {
+  String safetyAlertBodySent(Object date) {
     return '上次打卡: $date。已自動通知緊急聯繫人，請確認安全。';
   }
 
   @override
-  String safetyAlertBodyMocked(String date) {
+  String safetyAlertBodyMocked(Object date) {
     return '上次打卡: $date。失聯檢測已觸發，但當前為開發模式，**未實際通知**緊急聯繫人。';
   }
 
   @override
-  String safetyAlertBodyFailed(String date) {
+  String safetyAlertBodyFailed(Object date) {
     return '上次打卡: $date。失聯檢測已觸發，但通知發送失敗。請檢查網絡。';
   }
 
   @override
-  String safetyAlertTitle(String name, int days) {
+  String safetyAlertTitle(Object name, int days) {
     return '⚠️ $name 已 $days 天未打卡';
   }
 
@@ -4847,7 +4990,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeNotifBannerDismiss => '知道了';
 
   @override
-  String themeTooltip(String mode) {
+  String themeTooltip(Object mode) {
     return '主題：$mode（點擊切換）';
   }
 
@@ -4935,12 +5078,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String trendMoodEntriesSame(int count, String emoji) {
+  String trendMoodEntriesSame(int count, Object emoji) {
     return '$count 條情緒記錄 · $emoji';
   }
 
   @override
-  String trendMoodEntriesRange(int count, String lowEmoji, String highEmoji) {
+  String trendMoodEntriesRange(int count, Object lowEmoji, Object highEmoji) {
     return '情緒 $count 條 · $lowEmoji→$highEmoji';
   }
 
@@ -5021,7 +5164,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String dataExportConsentBody(
-      String purpose, String dataCategories, String retention) {
+      Object purpose, Object dataCategories, Object retention) {
     return '您即將導出本地數據庫中的所有數據。\n\n**目的**：$purpose\n**數據範圍**：$dataCategories\n**保留方式**：$retention\n\n**根據《個人信息保護法》第 13 條**（數據可攜權 + 單獨同意），請確認您已瞭解上述用途，並同意本次導出。';
   }
 
@@ -5059,7 +5202,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get editMedValidationUnitInvalid => '單位必須是 mg 或 片';
 
   @override
-  String editMedSaveFailed(String error) {
+  String editMedSaveFailed(Object error) {
     return '保存失敗：$error';
   }
 
@@ -5070,7 +5213,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get editMedStatusStopped => '已停藥';
 
   @override
-  String editMedStoppedDate(String date) {
+  String editMedStoppedDate(Object date) {
     return '$date 停藥';
   }
 
@@ -5153,12 +5296,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medsCalendarWindow90 => '90 天';
 
   @override
-  String medsCalendarLoadCheckinFailed(String error) {
+  String medsCalendarLoadCheckinFailed(Object error) {
     return '加載打卡失敗：$error';
   }
 
   @override
-  String medsCalendarLoadMedFailed(String error) {
+  String medsCalendarLoadMedFailed(Object error) {
     return '加載藥物失敗：$error';
   }
 
@@ -5244,7 +5387,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodRecordButton => '記一下情緒 ✏️';
 
   @override
-  String medReportFileName(String date) {
+  String medReportFileName(Object date) {
     return '用藥報告_$date';
   }
 
@@ -5330,7 +5473,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupConsentRejected => '已拒絕該聯繫人的知情同意，未寫入。可重新填寫後繼續。';
 
   @override
-  String emailBodyI18n(String name, int days) {
+  String emailBodyI18n(Object name, int days) {
     return '我是 $name，已經 $days 天沒在 App 裡打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。';
   }
 
@@ -5377,7 +5520,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String safetyCheckResultError(String message) {
+  String safetyCheckResultError(Object message) {
     return '錯誤：$message';
   }
 
@@ -5482,7 +5625,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get checkInTypeGad7 => 'GAD-7 評估';
 
   @override
-  String dayDetailCheckInWith(String name) {
+  String dayDetailCheckInWith(Object name) {
     return '打卡 · $name';
   }
 
@@ -5490,7 +5633,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get dayDetailDailyCheckIn => '每日打卡';
 
   @override
-  String dayDetailTempWith(String name) {
+  String dayDetailTempWith(Object name) {
     return '臨時 · $name';
   }
 
@@ -5678,12 +5821,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeFabTop => '回到頂端';
 
   @override
-  String get homeFabHotlineTodo => '緊急熱線入口建設中';
-
-  @override
-  String get homeFabTopTodo => '回到頂端(開發中)';
-
-  @override
   String get trendChip30Day => '近 30 天';
 
   @override
@@ -5724,6 +5861,86 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get crisisHotlineMoDesc => '中國澳門 24 小時';
+
+  @override
+  String get crisisHotlineTitle => '緊急心理援助熱線';
+
+  @override
+  String get crisisHotlineSubtitle => '如果你或身邊的人正在經歷心理危機, 請撥打以下熱線';
+
+  @override
+  String get crisisHotlineCn2Label => '全國 24 小時免費心理援助熱線';
+
+  @override
+  String get crisisHotlineCn2Number => '800-810-1117';
+
+  @override
+  String get crisisHotlineCn2Desc => '中國大陸 24 小時免費撥打';
+
+  @override
+  String get crisisHotlineUsLabel => '988 Suicide & Crisis Lifeline';
+
+  @override
+  String get crisisHotlineUsNumber => '988';
+
+  @override
+  String get crisisHotlineUsDesc => '美國 / 加拿大 24 小時英文 / 西班牙文';
+
+  @override
+  String get crisisHotlineIntlLabel => '國際通用';
+
+  @override
+  String get crisisHotlineIntlDesc => '請聯繫當地急救或心理援助機構';
+
+  @override
+  String get crisisHotlineIntlNumber => '112 / 911';
+
+  @override
+  String get crisisHotlineRegionCn => '中國大陸';
+
+  @override
+  String get crisisHotlineRegionTw => '中國臺灣';
+
+  @override
+  String get crisisHotlineRegionHk => '中國香港';
+
+  @override
+  String get crisisHotlineRegionUs => '美國 / 加拿大';
+
+  @override
+  String get crisisHotlineRegionIntl => '國際通用';
+
+  @override
+  String get crisisHotlineCnBeijingLabel => '北京心理危機研究與干預中心';
+
+  @override
+  String get crisisHotlineCnBeijingNumber => '010-82951332';
+
+  @override
+  String get crisisHotlineCnBeijingDesc => '北京 24 小時';
+
+  @override
+  String get crisisHotlineTw1995Label => '生命線 (24 小時)';
+
+  @override
+  String get crisisHotlineTw1995Number => '1995';
+
+  @override
+  String get crisisHotlineTw1995Desc => '中國臺灣 24 小時';
+
+  @override
+  String get crisisHotlineUsTextLineLabel => 'Crisis Text Line (text HOME)';
+
+  @override
+  String get crisisHotlineUsTextLineNumber => '741741';
+
+  @override
+  String get crisisHotlineUsTextLineDesc => '美國 24 小時短信';
+
+  @override
+  String crisisHotlineSnackbarCopied(Object number) {
+    return '已複製: $number';
+  }
 
   @override
   String get setupLegalAgeAttestation =>
@@ -5942,7 +6159,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String assessmentCenterLastTime(String time) {
+  String assessmentCenterLastTime(Object time) {
     return '$time 填寫';
   }
 
@@ -6350,7 +6567,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get dailyTrackingMultiChartTitle => '近 30 天 4 指標';
 
   @override
-  String dailyTrackingLastTime(String time) {
+  String dailyTrackingLastTime(Object time) {
     return '$time 記錄';
   }
 
@@ -6369,7 +6586,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String moodDiaryLast(String time, String score, String period) {
+  String moodDiaryLast(Object time, Object score, Object period) {
     return '$time · $score ($period)';
   }
 
@@ -6387,6 +6604,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get anxietyAgitationNoData => '暫無焦慮急躁記錄';
+
+  @override
+  String get anxietyAgitationAnxietyLabel => '焦慮分數';
+
+  @override
+  String get anxietyAgitationAgitationLabel => '急躁分數';
 
   @override
   String anxietyAgitationAnxietyScore(int score) {
@@ -6419,17 +6642,20 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get sleepNoData => '暫無睡眠記錄';
 
   @override
-  String sleepBedtime(String time) {
+  String sleepBedtime(Object time) {
     return '入睡 $time';
   }
 
   @override
-  String sleepWakeTime(String time) {
+  String get sleepRegularityTitle => '規律性';
+
+  @override
+  String sleepWakeTime(Object time) {
     return '起床 $time';
   }
 
   @override
-  String sleepLast(String duration, int regularity) {
+  String sleepLast(Object duration, int regularity) {
     return '$duration · 規律 $regularity/5';
   }
 
@@ -6449,22 +6675,22 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get socialRhythmNoData => '暫無社會節律記錄';
 
   @override
-  String socialRhythmWakeTime(String time) {
+  String socialRhythmWakeTime(Object time) {
     return '起床 $time';
   }
 
   @override
-  String socialRhythmFirstMeal(String time) {
+  String socialRhythmFirstMeal(Object time) {
     return '第一餐 $time';
   }
 
   @override
-  String socialRhythmLastMeal(String time) {
+  String socialRhythmLastMeal(Object time) {
     return '最後一餐 $time';
   }
 
   @override
-  String socialRhythmLast(String wake, int social, int work) {
+  String socialRhythmLast(Object wake, int social, int work) {
     return '起床 $wake · 社交 ${social}h · 工作 ${work}h';
   }
 
@@ -6507,10 +6733,49 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get treatmentNoData => '暫無治療記錄';
 
   @override
+  String get treatmentAddButton => '添加';
+
+  @override
+  String get treatmentAddTitle => '添加治療記錄';
+
+  @override
+  String get treatmentDate => '日期';
+
+  @override
+  String get treatmentCategory => '類別';
+
+  @override
+  String get treatmentCategoryMedicationAdjustment => '藥物調整';
+
+  @override
+  String get treatmentCategoryConsultation => '心理諮詢';
+
+  @override
+  String get treatmentCategoryHospitalization => '住院';
+
+  @override
+  String get treatmentCategoryOther => '其他';
+
+  @override
+  String get treatmentProvider => '醫療機構 / 醫生';
+
+  @override
+  String get treatmentProviderHint => '例如: 心理醫生王醫生 / 北京協和醫院';
+
+  @override
+  String get treatmentProviderRequired => '請填寫醫療機構 / 醫生';
+
+  @override
+  String get treatmentNote => '備註';
+
+  @override
+  String get treatmentNoteHint => '可選, 簡短記錄治療要點';
+
+  @override
   String get treatmentType => '治療類型';
 
   @override
-  String treatmentLast(String type, String description) {
+  String treatmentLast(Object type, Object description) {
     return '$type · $description';
   }
 
@@ -6530,17 +6795,17 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get weightNoData => '暫無體重記錄';
 
   @override
-  String weightWeight(String kg) {
+  String weightWeight(Object kg) {
     return '體重 $kg kg';
   }
 
   @override
-  String weightBmi(String bmi) {
+  String weightBmi(Object bmi) {
     return 'BMI $bmi';
   }
 
   @override
-  String weightLast(String kg, String bmi) {
+  String weightLast(Object kg, Object bmi) {
     return '$kg kg · BMI $bmi';
   }
 
@@ -6591,6 +6856,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get cardStatusNoData => '尚未記錄';
+
+  @override
+  String get sleepBedtimeTitle => '入睡時間';
+
+  @override
+  String get sleepWakeTimeTitle => '起床時間';
+
+  @override
+  String get socialRhythmWakeTimeTitle => '起床時間';
+
+  @override
+  String get socialRhythmFirstMealTitle => '第一餐時間';
+
+  @override
+  String get socialRhythmLastMealTitle => '最後一餐時間';
 
   @override
   String get cardStatusToday => '今天';

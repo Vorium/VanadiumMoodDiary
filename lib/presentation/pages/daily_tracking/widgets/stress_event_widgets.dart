@@ -81,7 +81,7 @@ class StressEventListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text('加载失败: $e')),
+              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.bolt_outlined,
@@ -156,6 +156,7 @@ class _StressEventEntryDialogState
 
   Future<void> _save() async {
     if (_saving) return;
+    final l10n = AppLocalizations.of(context);
     final intensity = _intensity;
     if (intensity == null) return; // intensity required
     setState(() => _saving = true);
@@ -173,7 +174,7 @@ class _StressEventEntryDialogState
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
+          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
         );
       }
     }
@@ -247,11 +248,11 @@ class _StressEventEntryDialogState
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           onPressed: (_saving || _intensity == null) ? null : _save,
-          child: const Text('保存'),
+          child: Text(l10n.commonSave),
         ),
       ],
     );

@@ -16,6 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/domain/logic/bmi_calculator.dart';
@@ -56,7 +57,7 @@ class WeightListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text('加载失败: $e')),
+              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.monitor_weight_outlined,
@@ -145,7 +146,15 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
     try {
       // 尝试读 heightCm (字段可能不存在 → throw)
       return (profile as dynamic).heightCm as double?;
-    } catch (_) {
+    } catch (e, st) {
+      // v0.30 R92: 走 swallowError 集中器, 替代完全静默 (R39 P1-10 模式)
+      // 老 UserProfile (R27 前) 没有 heightCm 字段, 视为 null (兜底)
+      swallowError(
+        where: 'weight_widgets._readHeightCm',
+        error: e,
+        stack: st,
+        note: 'UserProfile.heightCm 字段读取失败, 走 null 兜底',
+      );
       return null;
     }
   }
@@ -161,6 +170,7 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
 
   Future<void> _save() async {
     if (_saving) return;
+    final l10n = AppLocalizations.of(context);
     final weightStr = _weightController.text.trim();
     if (weightStr.isEmpty) return;
     final weight = double.tryParse(weightStr);
@@ -184,7 +194,7 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
+          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
         );
       }
     }
@@ -239,11 +249,11 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           onPressed: _saving ? null : _save,
-          child: const Text('保存'),
+          child: Text(l10n.commonSave),
         ),
       ],
     );

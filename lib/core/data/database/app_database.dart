@@ -115,8 +115,16 @@ class AppDatabase extends _$AppDatabase {
   //   后续如真发布 v16 schema, `if (from <= 15)` 守卫需在中间加 16→17 步
   // - 8 列全 nullable,老数据自动 null (3 栏 mode 渲染)
   // - 用户升级后 mood entry 在 DayDetailCard 里走"3 栏 + 自由 note"分支
+  //
+  // v0.30 round 92: schemaVersion 18 → 19 - vent_entries DROP contentText (PIPL §28)
+  //   - R21 v0.21 (schemaVersion 8→9) 加 contentTextEnc (BLOB 加密) 同时保留 contentText (TEXT 明文)
+  //   - v8→v9 migration 一次性把 contentText 加密写回 contentTextEnc
+  //   - 但旧 contentText 列保留, R22-R91 (10+ round, 5+ 年) 用户升级后仍有
+  //     明文 + 加密双份存在 DB, 设备 root / 备份偷走 → PIPL §28 字段级明文泄露
+  //   - R92 DROP contentText 列, 一次性清理
+  //   - 守卫 `if (from < 19)` 跟 v15→v17 一致模式
   @override
-  int get schemaVersion => 18;
+  int get schemaVersion => 19;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -182,24 +190,27 @@ class AppDatabase extends _$AppDatabase {
           // - 加 contentTextEnc (BLOB nullable) 列
           // - 读旧 contentText 加密写回新列
           // - 旧 contentText 列保留(代码层不再用),后续 v10+ 彻底清理
+          // - v0.30 R92: ventEntries.contentText 字段已删, 老 v8 升级 (from <= 8) 用 raw query
+          //   直接读 contentText 列 (DB 实际还有,只是 schema 不暴露)
           if (from <= 8) {
             await m.addColumn(ventEntries, ventEntries.contentTextEnc);
             // 一次性加密所有历史 vent 文字
-            // 关键: 必须用 drift 的 typed select(ventEntries),不能用 raw query —
-            // raw query 走的是新 schema,row 拿不到 contentText 字段
-            final oldRows = await select(ventEntries).get();
+            // R92 后 schema 无 contentText, 改用 raw query 读 (drift typed select 拿不到)
+            // raw query 走 SQL, 直接读老 contentText 列
+            final oldRows = await customSelect(
+              'SELECT id, contentText FROM vent_entries WHERE contentText IS NOT NULL',
+              readsFrom: {ventEntries},
+            ).get();
             final enc = EncryptionService();
             for (final row in oldRows) {
               try {
-                final oldText = row.contentText;
+                final oldText = row.read<String?>('contentText');
                 if (oldText == null || oldText.isEmpty) continue;
                 final encrypted =
                     await enc.encrypt(Uint8List.fromList(utf8.encode(oldText)));
-                await (update(ventEntries)..where((t) => t.id.equals(row.id)))
-                    .write(
-                  VentEntriesCompanion(
-                    contentTextEnc: Value(encrypted),
-                  ),
+                await customStatement(
+                  'UPDATE vent_entries SET content_text_enc = ? WHERE id = ?',
+                  [encrypted, row.read<int>('id')],
                 );
               } catch (e, st) {
                 // v0.27 round 63 (P1-7 修复): 走 swallowError 集中器
@@ -207,12 +218,13 @@ class AppDatabase extends _$AppDatabase {
                 // 完全静默。dev 模式 devtools / `flutter logs` 看得到。
                 // 单条加密失败不阻塞整个升级, 该行 contentTextEnc 保持 null,
                 // 用户打开该条树洞时 VentMapper.toEntity 会兜底显示空内容。
+                final id = row.read<int>('id');
                 swallowError(
                   where: 'app_database.v8v9_vent_encrypt_fail',
                   error: e,
                   stack: st,
                   note:
-                      'ventId=${row.id} contentText 加密失败, contentTextEnc 保持 null',
+                      'ventId=$id contentText 加密失败, contentTextEnc 保持 null',
                 );
               }
             }
@@ -311,6 +323,25 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(treatmentEntries);
             await m.createTable(weightEntries);
             await m.createTable(anxietyAgitationEntries);
+          }
+          // v18 → v19: vent_entries DROP contentText TEXT 列 (PIPL §28 清理)
+          // - R21 v0.21 加 contentTextEnc (BLOB 加密) 同时保留 contentText (TEXT 明文)
+          // - v8→v9 migration 一次性加密 contentText 写回 contentTextEnc,
+          //   但 contentText 列仍保留, R22-R91 5+ 年用户 DB 仍有双份
+          // - 设备 root / 备份偷走 → 字段级明文泄露违反 PIPL §28
+          // - R92 DROP 列, 一次性清理
+          // - 守卫 `if (from < 19)` 跟 v15→v17 / v17→v18 一致模式
+          // - drift 2.x TableMigration: schema 移除列后, alterTable 自动生成 DROP COLUMN
+          if (from < 19) {
+            await m.alterTable(
+              TableMigration(
+                ventEntries,
+                columnTransformer: {
+                  // contentText 旧值置 null, drift 自动生成 DROP COLUMN
+                  // (因为 contentText 已从 schema 移除)
+                },
+              ),
+            );
           }
         },
         beforeOpen: (details) async {

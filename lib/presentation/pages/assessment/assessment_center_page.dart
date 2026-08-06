@@ -18,6 +18,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_center_card.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_unavailable_card.dart';
 import 'package:chroniccare/presentation/providers/assessment_providers.dart';
+import 'package:chroniccare/presentation/widgets/charts/assessment_multi_line_chart.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 中心化入口页 — 12 量表卡片 grid
@@ -40,7 +41,7 @@ class AssessmentCenterPage extends ConsumerWidget {
       title: l10n.assessmentCenterTitle,
       child: entriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('加载失败: $e')),
+        error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
         data: (entries) => _buildGrid(context, entries, scales, unavailableIds),
       ),
     );
@@ -62,8 +63,17 @@ class AssessmentCenterPage extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(AppTokens.spacingMd),
       children: [
-        // TODO (Task 5): 顶部 mini 趋势图
-        // _buildMiniChart(context, entries),
+        // v0.30 round 92 (audit-fixes / P0 #14): 顶部 mini 趋势图
+        // 复用 R90 AssessmentMultiLineChart widget (sub-spec 6 Task 4 实施),
+        // 80dp 高 mini 版 (跟 AppTokens.chartPlaceholderHeight 集中器同值)。
+        // 修前 (R90 Task 5 placeholder): `const SizedBox.shrink()` +
+        // `// TODO (Task 5)` 注释, 12 量表卡片堆在 ListView 顶部, 0 趋势图
+        // 入口。R92 真做: 复用 R90 widget, 走 allAssessmentEntriesProvider
+        // entries (page build 已 watch), 12 量表叠加 30 天。
+        AssessmentMultiLineChart(
+          entries: entries,
+          chartHeight: 80,
+        ),
         const SizedBox(height: AppTokens.spacingMd),
 
         // 10 开放量表 + 2 unavailable

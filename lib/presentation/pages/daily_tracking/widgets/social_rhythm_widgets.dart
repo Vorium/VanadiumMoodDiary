@@ -55,7 +55,7 @@ class SocialRhythmListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text('加载失败: $e')),
+              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.schedule_outlined,
@@ -153,6 +153,7 @@ class _SocialRhythmEntryDialogState
 
   Future<void> _save() async {
     if (_saving) return;
+    final l10n = AppLocalizations.of(context);
     final social = int.tryParse(_socialController.text.trim()) ?? 0;
     final work = int.tryParse(_workController.text.trim()) ?? 0;
     final exercise = int.tryParse(_exerciseController.text.trim()) ?? 0;
@@ -192,7 +193,7 @@ class _SocialRhythmEntryDialogState
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
+          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
         );
       }
     }
@@ -200,8 +201,9 @@ class _SocialRhythmEntryDialogState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(AppLocalizations.of(context).socialRhythmAddButton),
+      title: Text(l10n.socialRhythmAddButton),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -211,7 +213,7 @@ class _SocialRhythmEntryDialogState
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.wb_sunny_outlined),
-              title: const Text('起床时间'),
+              title: Text(l10n.socialRhythmWakeTimeTitle),
               trailing: Text(_fmtTime(_wakeTime)),
               onTap: () => _pickTime((v) => _wakeTime = v, _wakeTime),
             ),
@@ -219,7 +221,7 @@ class _SocialRhythmEntryDialogState
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.restaurant_outlined),
-              title: const Text('第一餐时间'),
+              title: Text(l10n.socialRhythmFirstMealTitle),
               trailing: Text(_fmtTime(_firstMealTime)),
               onTap: () => _pickTime((v) => _firstMealTime = v, _firstMealTime),
             ),
@@ -227,7 +229,7 @@ class _SocialRhythmEntryDialogState
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.dinner_dining_outlined),
-              title: const Text('最后一餐时间'),
+              title: Text(l10n.socialRhythmLastMealTitle),
               trailing: Text(_fmtTime(_lastMealTime)),
               onTap: () => _pickTime((v) => _lastMealTime = v, _lastMealTime),
             ),
@@ -265,11 +267,11 @@ class _SocialRhythmEntryDialogState
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           onPressed: _saving ? null : _save,
-          child: const Text('保存'),
+          child: Text(l10n.commonSave),
         ),
       ],
     );

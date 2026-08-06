@@ -44,7 +44,7 @@ class MoodListPeriodFilterBar extends ConsumerWidget {
           // "全部" chip (null = 不过滤)
           PressFeedback(
             child: ChoiceChip(
-              label: Text('全部'),
+              label: Text(l10n.moodListPeriodAll),
               selected: currentBucket == null,
               onSelected: (_) => notifier.setPeriod(null),
             ),

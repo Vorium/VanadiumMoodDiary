@@ -23,6 +23,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
@@ -136,8 +137,15 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     Future.microtask(() {
       try {
         _cbtDraftNotifier.reset();
-      } catch (_) {
-        // notifier 已 dispose (test teardown); 静默吞掉
+      } catch (e, st) {
+        // v0.30 R92: 走 swallowError 集中器, 替代完全静默 (R39 P1-10 模式)
+        // notifier 已 dispose (test teardown); 记录 dev 模式看 devtools
+        swallowError(
+          where: 'mood_recorder_page.dispose_cbtDraft_reset',
+          error: e,
+          stack: st,
+          note: 'cbtDraftNotifier.reset() 在 dispose 后调用, 记录但不阻断',
+        );
       }
     });
     super.dispose();
@@ -275,12 +283,16 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                     const SizedBox(height: AppTokens.spacingMd),
 
                     // 中间: 模式内容 (3 栏 vs wizard)
+                    // v0.30 round 92 (audit-fixes / P0 #11): wizard
+                    // 末步 "完成" 按钮调 onSaveRequested → 父 _save 触发
+                    // moodRepository.add 把 5/7 栏 CBT 字段落库 (修前 bug:
+                    // 直接 pop, 父 _save 没调, 字段丢库)。
                     switch (cbtState.level) {
                       ThoughtRecordLevel.three =>
                         const CbtThreeColumnMode(),
                       ThoughtRecordLevel.five ||
                       ThoughtRecordLevel.seven =>
-                        const CbtWizard(),
+                        CbtWizard(onSaveRequested: _save),
                     },
                     const SizedBox(height: AppTokens.spacingSm),
 

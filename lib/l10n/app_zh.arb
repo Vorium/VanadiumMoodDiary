@@ -15,7 +15,7 @@
   "@homeLastMed": {
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -23,7 +23,7 @@
   "@homeNextReminder": {
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -108,7 +108,7 @@
   "@settingsImportSuccess": {
     "placeholders": {
       "summary": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -159,7 +159,7 @@
   "@commonLoadFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -168,10 +168,10 @@
     "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)",
     "placeholders": {
       "action": {
-        "type": "String"
+        "type": "Object"
       },
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -199,7 +199,7 @@
   "@medsRefillSet": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -222,7 +222,7 @@
   "@medsRefillUpcoming": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -509,7 +509,7 @@
         "type": "int"
       },
       "sec": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -521,6 +521,10 @@
   "moodPeriodNight": "夜",
   "moodPeriodUnspecified": "未指定",
   "moodListFilterPeriod": "时段",
+  "moodListPeriodAll": "全部",
+  "@moodListPeriodAll": {
+    "description": "v0.30 R92: mood_list 情绪列表时段过滤 chip '全部' (R87 mood_list page l10n 漏, R92 补)"
+  },
   "moodPeriodChartTitle": "心境 4 段趋势（近 30 天）",
   "moodDimensionMood": "情绪",
   "moodDimensionMoodHint": "1=很差 5=很好",
@@ -543,7 +547,7 @@
   "@moodAudioRecorded": {
     "placeholders": {
       "duration": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -600,10 +604,10 @@
   "@medsRefillSubtitleTemplate": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "suffix": {
-        "type": "String"
+        "type": "Object"
       },
       "reminderDays": {
         "type": "int"
@@ -630,10 +634,10 @@
         "type": "int"
       },
       "text": {
-        "type": "String"
+        "type": "Object"
       },
       "selected": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -655,7 +659,7 @@
   "@homeHeaderKeepGoing": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -702,7 +706,7 @@
   "@errorPageNotFound": {
     "placeholders": {
       "path": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -743,7 +747,7 @@
   "@assessmentAverageScore": {
     "placeholders": {
       "score": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -826,7 +830,7 @@
   "@setupPresetLoaded": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       },
       "count": {
         "type": "int"
@@ -891,7 +895,7 @@
   "@reportHistoryItemTitle": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -902,7 +906,7 @@
   "@reportHistoryItemPatient": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -946,7 +950,7 @@
   "@homeAutofireCelebration": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -968,7 +972,7 @@
     "description": "SafetyAlert 通知 body — SMS 实际发送成功分支（P0-3 三态修正，v0.27 R60）",
     "placeholders": {
       "date": {
-        "type": "String",
+        "type": "Object",
         "example": "2026-07-30"
       }
     }
@@ -978,7 +982,7 @@
     "description": "SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三态修正）",
     "placeholders": {
       "date": {
-        "type": "String",
+        "type": "Object",
         "example": "2026-07-30"
       }
     }
@@ -988,7 +992,7 @@
     "description": "SafetyAlert 通知 body — SMS 实际发送失败分支（P0-3 三态修正）",
     "placeholders": {
       "date": {
-        "type": "String",
+        "type": "Object",
         "example": "2026-07-30"
       }
     }
@@ -998,7 +1002,7 @@
     "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬编码中文",
     "placeholders": {
       "name": {
-        "type": "String",
+        "type": "Object",
         "example": "您"
       },
       "days": {
@@ -1037,7 +1041,7 @@
   "@themeTooltip": {
     "placeholders": {
       "mode": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1091,7 +1095,7 @@
         "type": "int"
       },
       "emoji": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1102,10 +1106,10 @@
         "type": "int"
       },
       "lowEmoji": {
-        "type": "String"
+        "type": "Object"
       },
       "highEmoji": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1160,15 +1164,15 @@
     "description": "PIPL §13 数据可携权 dialog 正文, 用户导出 JSON 前取得单独同意 (R82 加)",
     "placeholders": {
       "purpose": {
-        "type": "String",
+        "type": "Object",
         "example": "本地备份 / 跨设备迁移"
       },
       "dataCategories": {
-        "type": "String",
+        "type": "Object",
         "example": "用药记录、打卡记录、紧急联系人、情绪日记"
       },
       "retention": {
-        "type": "String",
+        "type": "Object",
         "example": "剪贴板 + 用户自行保存到加密存储"
       }
     }
@@ -1188,7 +1192,7 @@
   "@editMedSaveFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1198,7 +1202,7 @@
   "@editMedStoppedDate": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1232,7 +1236,7 @@
   "@medsCalendarLoadCheckinFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1240,7 +1244,7 @@
   "@medsCalendarLoadMedFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1275,7 +1279,7 @@
   "@medReportFileName": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1312,7 +1316,7 @@
   "@emailBodyI18n": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -1368,7 +1372,7 @@
   "@safetyCheckResultError": {
     "placeholders": {
       "message": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1409,7 +1413,7 @@
   "@dayDetailCheckInWith": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1418,7 +1422,7 @@
   "@dayDetailTempWith": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1492,8 +1496,6 @@
   "homeFabVent": "心情树洞",
   "homeFabHotline": "紧急热线",
   "homeFabTop": "回到顶端",
-  "homeFabHotlineTodo": "紧急热线入口建设中",
-  "homeFabTopTodo": "回到顶端(开发中)",
   "trendChip30Day": "近 30 天",
   "assessmentChipCurrent": "本周",
   "crisisHotlineCnLabel": "全国 24 小时心理援助热线",
@@ -1508,6 +1510,66 @@
   "crisisHotlineMoLabel": "明爱生命热线 (24 小时)",
   "crisisHotlineMoNumber": "2826 1122",
   "crisisHotlineMoDesc": "中国澳门 24 小时",
+  "@crisisHotlineTitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 标题"
+  },
+  "crisisHotlineTitle": "紧急心理援助热线",
+  "@crisisHotlineSubtitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副标题"
+  },
+  "crisisHotlineSubtitle": "如果你或身边的人正在经历心理危机, 请拨打以下热线",
+  "@crisisHotlineCn2Label": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h 免费"
+  },
+  "crisisHotlineCn2Label": "全国 24 小时免费心理援助热线",
+  "crisisHotlineCn2Number": "800-810-1117",
+  "crisisHotlineCn2Desc": "中国大陆 24 小时免费拨打",
+  "@crisisHotlineUsLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): US 988 Lifeline"
+  },
+  "crisisHotlineUsLabel": "988 Suicide & Crisis Lifeline",
+  "crisisHotlineUsNumber": "988",
+  "crisisHotlineUsDesc": "美国 / 加拿大 24 小时英文 / 西班牙文",
+  "@crisisHotlineIntlLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 国际通用 fallback"
+  },
+  "crisisHotlineIntlLabel": "国际通用",
+  "crisisHotlineIntlDesc": "请联系当地急救或心理援助机构",
+  "@crisisHotlineIntlNumber": {
+    "description": "v0.30 round 92: 国际通用紧急号码"
+  },
+  "crisisHotlineIntlNumber": "112 / 911",
+  "@crisisHotlineRegionCn": {
+    "description": "v0.30 round 92: crisis_hotline_page 5 地区 section title"
+  },
+  "crisisHotlineRegionCn": "中国大陆",
+  "crisisHotlineRegionTw": "中国台湾",
+  "crisisHotlineRegionHk": "中国香港",
+  "crisisHotlineRegionUs": "美国 / 加拿大",
+  "crisisHotlineRegionIntl": "国际通用",
+  "@crisisHotlineCnBeijingLabel": {
+    "description": "v0.30 round 92: 北京心理危机研究与干预中心"
+  },
+  "crisisHotlineCnBeijingLabel": "北京心理危机研究与干预中心",
+  "crisisHotlineCnBeijingNumber": "010-82951332",
+  "crisisHotlineCnBeijingDesc": "北京 24 小时",
+  "@crisisHotlineTw1995Label": {
+    "description": "v0.30 round 92: 台湾生命线 (1995)"
+  },
+  "crisisHotlineTw1995Label": "生命线 (24 小时)",
+  "crisisHotlineTw1995Number": "1995",
+  "crisisHotlineTw1995Desc": "中国台湾 24 小时",
+  "@crisisHotlineUsTextLineLabel": {
+    "description": "v0.30 round 92: US Crisis Text Line (741741)"
+  },
+  "crisisHotlineUsTextLineLabel": "Crisis Text Line (text HOME)",
+  "crisisHotlineUsTextLineNumber": "741741",
+  "crisisHotlineUsTextLineDesc": "美国 24 小时短信",
+  "@crisisHotlineSnackbarCopied": {
+    "description": "v0.30 round 92: 复制号码后 snackbar 提示",
+    "placeholders": { "number": { "type": "Object" } }
+  },
+  "crisisHotlineSnackbarCopied": "已复制: {number}",
   "setupLegalAgeAttestation": "本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。",
   "moodCbtLevelLabel3": "3 栏",
   "moodCbtLevelLabel5": "5 栏",
@@ -1631,7 +1693,7 @@
     "description": "When the last assessment was taken (placeholder {time} is the formatted date)",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2176,7 +2238,7 @@
     "description": "v0.30 R91: 卡片 lastValue 时间占位 (placeholder {time} 是 formatted date)",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2206,13 +2268,13 @@
     "description": "v0.30 R91: 情绪日记 整合卡片 lastValue 完整摘要",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       },
       "score": {
-        "type": "String"
+        "type": "Object"
       },
       "period": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2235,6 +2297,14 @@
   "anxietyAgitationNoData": "暂无焦虑急躁记录",
   "@anxietyAgitationNoData": {
     "description": "v0.30 R91: 焦虑急躁 列表页 空状态"
+  },
+  "anxietyAgitationAnxietyLabel": "焦虑分数",
+  "@anxietyAgitationAnxietyLabel": {
+    "description": "v0.30 R92: 焦虑急躁 焦虑分数 slider 标签 (R91 daily_tracking l10n 漏, R92 补)"
+  },
+  "anxietyAgitationAgitationLabel": "急躁分数",
+  "@anxietyAgitationAgitationLabel": {
+    "description": "v0.30 R92: 焦虑急躁 急躁分数 slider 标签 (R91 daily_tracking l10n 漏, R92 补)"
   },
   "anxietyAgitationAnxietyScore": "焦虑 {score}",
   "@anxietyAgitationAnxietyScore": {
@@ -2288,19 +2358,18 @@
   },
   "sleepBedtime": "入睡 {time}",
   "@sleepBedtime": {
-    "description": "v0.30 R91: 睡眠 入睡时间 lastValue 摘要 (placeholder {time} 是 HH:mm)",
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
+    "description": "v0.30 R91: 睡眠 入睡时间 lastValue 摘要 (placeholder {time} 是 HH:mm)"
+  },
+  "sleepRegularityTitle": "规律性",
+  "@sleepRegularityTitle": {
+    "description": "v0.30 R92: 睡眠 规律性 slider 标题 (R91 daily_tracking l10n 漏, R92 补)"
   },
   "sleepWakeTime": "起床 {time}",
   "@sleepWakeTime": {
     "description": "v0.30 R91: 睡眠 起床时间 lastValue 摘要 (placeholder {time} 是 HH:mm)",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2309,7 +2378,7 @@
     "description": "v0.30 R91: 睡眠 整合卡片 lastValue 完整摘要 (duration 是 8h00min, regularity 是 1-5)",
     "placeholders": {
       "duration": {
-        "type": "String"
+        "type": "Object"
       },
       "regularity": {
         "type": "int"
@@ -2341,7 +2410,7 @@
     "description": "v0.30 R91: 社会节律 起床时间 lastValue 摘要",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2350,7 +2419,7 @@
     "description": "v0.30 R91: 社会节律 第一餐 lastValue 摘要",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2359,7 +2428,7 @@
     "description": "v0.30 R91: 社会节律 最后一餐 lastValue 摘要",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2368,7 +2437,7 @@
     "description": "v0.30 R91: 社会节律 整合卡片 lastValue 完整摘要",
     "placeholders": {
       "wake": {
-        "type": "String"
+        "type": "Object"
       },
       "social": {
         "type": "int"
@@ -2431,6 +2500,58 @@
   "@treatmentNoData": {
     "description": "v0.30 R91: 治疗 列表页 空状态"
   },
+  "@treatmentAddButton": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #15): 治疗 添加按钮 (列表页右上角)"
+  },
+  "treatmentAddButton": "添加",
+  "@treatmentAddTitle": {
+    "description": "v0.30 round 92: 治疗 AddTreatmentDialog title"
+  },
+  "treatmentAddTitle": "添加治疗记录",
+  "@treatmentDate": {
+    "description": "v0.30 round 92: 治疗 日期 field"
+  },
+  "treatmentDate": "日期",
+  "@treatmentCategory": {
+    "description": "v0.30 round 92: 治疗 类别 field (4 选 1)"
+  },
+  "treatmentCategory": "类别",
+  "@treatmentCategoryMedicationAdjustment": {
+    "description": "v0.30 round 92: 治疗 类别 1/4 药物调整"
+  },
+  "treatmentCategoryMedicationAdjustment": "药物调整",
+  "@treatmentCategoryConsultation": {
+    "description": "v0.30 round 92: 治疗 类别 2/4 心理咨询"
+  },
+  "treatmentCategoryConsultation": "心理咨询",
+  "@treatmentCategoryHospitalization": {
+    "description": "v0.30 round 92: 治疗 类别 3/4 住院"
+  },
+  "treatmentCategoryHospitalization": "住院",
+  "@treatmentCategoryOther": {
+    "description": "v0.30 round 92: 治疗 类别 4/4 其他"
+  },
+  "treatmentCategoryOther": "其他",
+  "@treatmentProvider": {
+    "description": "v0.30 round 92: 治疗 医疗机构 / 医生 (description 字段)"
+  },
+  "treatmentProvider": "医疗机构 / 医生",
+  "@treatmentProviderHint": {
+    "description": "v0.30 round 92: 治疗 医疗机构 hint"
+  },
+  "treatmentProviderHint": "例如: 心理医生王医生 / 北京协和医院",
+  "@treatmentProviderRequired": {
+    "description": "v0.30 round 92: 治疗 医疗机构为空 snackbar 提示"
+  },
+  "treatmentProviderRequired": "请填写医疗机构 / 医生",
+  "@treatmentNote": {
+    "description": "v0.30 round 92: 治疗 备注 field"
+  },
+  "treatmentNote": "备注",
+  "@treatmentNoteHint": {
+    "description": "v0.30 round 92: 治疗 备注 hint"
+  },
+  "treatmentNoteHint": "可选, 简短记录治疗要点",
   "treatmentType": "治疗类型",
   "@treatmentType": {
     "description": "v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)"
@@ -2440,10 +2561,10 @@
     "description": "v0.30 R91: 治疗 整合卡片 lastValue 摘要",
     "placeholders": {
       "type": {
-        "type": "String"
+        "type": "Object"
       },
       "description": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2472,7 +2593,7 @@
     "description": "v0.30 R91: 体重 lastValue 摘要 (placeholder {kg} 是 1 decimal)",
     "placeholders": {
       "kg": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2481,7 +2602,7 @@
     "description": "v0.30 R91: 体重 BMI lastValue 摘要 (placeholder {bmi} 是 1 decimal)",
     "placeholders": {
       "bmi": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2490,10 +2611,10 @@
     "description": "v0.30 R91: 体重 整合卡片 lastValue 摘要 (bmi 可选)",
     "placeholders": {
       "kg": {
-        "type": "String"
+        "type": "Object"
       },
       "bmi": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2561,6 +2682,27 @@
   "@cardStatusNoData": {
     "description": "v0.30 R91: 卡片 lastValue null 时 fallback"
   },
+  "sleepBedtimeTitle": "入睡时间",
+  "@sleepBedtimeTitle": {
+    "description": "v0.30 R92: sleepBedtimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+  },
+  "sleepWakeTimeTitle": "起床时间",
+  "@sleepWakeTimeTitle": {
+    "description": "v0.30 R92: sleepWakeTimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+  },
+  "socialRhythmWakeTimeTitle": "起床时间",
+  "@socialRhythmWakeTimeTitle": {
+    "description": "v0.30 R92: socialRhythmWakeTimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+  },
+  "socialRhythmFirstMealTitle": "第一餐时间",
+  "@socialRhythmFirstMealTitle": {
+    "description": "v0.30 R92: socialRhythmFirstMealTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+  },
+  "socialRhythmLastMealTitle": "最后一餐时间",
+  "@socialRhythmLastMealTitle": {
+    "description": "v0.30 R92: socialRhythmLastMealTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+  },
+
   "cardStatusToday": "今天",
   "@cardStatusToday": {
     "description": "v0.30 R91: 卡片时间状态 今天"

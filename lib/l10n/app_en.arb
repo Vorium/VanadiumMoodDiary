@@ -77,7 +77,7 @@
   "@settingsImportSuccess": {
     "placeholders": {
       "summary": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -128,7 +128,7 @@
   "@commonLoadFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -157,7 +157,7 @@
   "@medsRefillSet": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -180,7 +180,7 @@
   "@medsRefillUpcoming": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -467,7 +467,7 @@
         "type": "int"
       },
       "sec": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -501,7 +501,7 @@
   "@moodAudioRecorded": {
     "placeholders": {
       "duration": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -558,10 +558,10 @@
   "@medsRefillSubtitleTemplate": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "suffix": {
-        "type": "String"
+        "type": "Object"
       },
       "reminderDays": {
         "type": "int"
@@ -588,10 +588,10 @@
         "type": "int"
       },
       "text": {
-        "type": "String"
+        "type": "Object"
       },
       "selected": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -613,7 +613,7 @@
   "@homeHeaderKeepGoing": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -660,7 +660,7 @@
   "@errorPageNotFound": {
     "placeholders": {
       "path": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -701,7 +701,7 @@
   "@assessmentAverageScore": {
     "placeholders": {
       "score": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -784,7 +784,7 @@
   "@setupPresetLoaded": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       },
       "count": {
         "type": "int"
@@ -849,7 +849,7 @@
   "@reportHistoryItemTitle": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -860,7 +860,7 @@
   "@reportHistoryItemPatient": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -904,7 +904,7 @@
   "@homeAutofireCelebration": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -926,7 +926,7 @@
     "description": "SafetyAlert body — SMS actually sent branch (P0-3 three-state fix, v0.27 R60)",
     "placeholders": {
       "date": {
-        "type": "String",
+        "type": "Object",
         "example": "2026-07-30"
       }
     }
@@ -936,7 +936,7 @@
     "description": "SafetyAlert body — SMS mocked branch (avoid dev/release confusion, P0-3 three-state fix)",
     "placeholders": {
       "date": {
-        "type": "String",
+        "type": "Object",
         "example": "2026-07-30"
       }
     }
@@ -946,7 +946,7 @@
     "description": "SafetyAlert body — SMS failed branch (P0-3 three-state fix)",
     "placeholders": {
       "date": {
-        "type": "String",
+        "type": "Object",
         "example": "2026-07-30"
       }
     }
@@ -956,7 +956,7 @@
     "description": "SafetyAlert title — v0.27 R75 fix (R74-N7): was hardcoded Chinese",
     "placeholders": {
       "name": {
-        "type": "String",
+        "type": "Object",
         "example": "you"
       },
       "days": {
@@ -995,7 +995,7 @@
   "@themeTooltip": {
     "placeholders": {
       "mode": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1049,7 +1049,7 @@
         "type": "int"
       },
       "emoji": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1060,10 +1060,10 @@
         "type": "int"
       },
       "lowEmoji": {
-        "type": "String"
+        "type": "Object"
       },
       "highEmoji": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1118,15 +1118,15 @@
     "description": "PIPL §13 data portability dialog body, standalone consent before user exports JSON (R82)",
     "placeholders": {
       "purpose": {
-        "type": "String",
+        "type": "Object",
         "example": "Local backup / cross-device migration"
       },
       "dataCategories": {
-        "type": "String",
+        "type": "Object",
         "example": "Medication log, check-in log, emergency contacts, mood diary"
       },
       "retention": {
-        "type": "String",
+        "type": "Object",
         "example": "Clipboard + user-managed encrypted file"
       }
     }
@@ -1146,7 +1146,7 @@
   "@editMedSaveFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1156,7 +1156,7 @@
   "@editMedStoppedDate": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1190,7 +1190,7 @@
   "@medsCalendarLoadCheckinFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1198,7 +1198,7 @@
   "@medsCalendarLoadMedFailed": {
     "placeholders": {
       "error": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1233,7 +1233,7 @@
   "@medReportFileName": {
     "placeholders": {
       "date": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1270,7 +1270,7 @@
   "@emailBodyI18n": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       },
       "days": {
         "type": "int"
@@ -1326,7 +1326,7 @@
   "@safetyCheckResultError": {
     "placeholders": {
       "message": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1367,7 +1367,7 @@
   "@dayDetailCheckInWith": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1376,7 +1376,7 @@
   "@dayDetailTempWith": {
     "placeholders": {
       "name": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -1450,8 +1450,6 @@
   "homeFabVent": "Mood vent",
   "homeFabHotline": "Hotline",
   "homeFabTop": "Back to top",
-  "homeFabHotlineTodo": "Hotline entry coming soon",
-  "homeFabTopTodo": "Scroll-to-top coming soon",
   "trendChip30Day": "Last 30 days",
   "assessmentChipCurrent": "This week",
   "crisisHotlineCnLabel": "National 24-hour psychological assistance hotline",
@@ -1466,6 +1464,66 @@
   "crisisHotlineMoLabel": "Caritas Life Hotline (24h)",
   "crisisHotlineMoNumber": "2826 1122",
   "crisisHotlineMoDesc": "Macau 24h",
+  "@crisisHotlineTitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 标题"
+  },
+  "crisisHotlineTitle": "Crisis & Mental Health Hotlines",
+  "@crisisHotlineSubtitle": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副标题"
+  },
+  "crisisHotlineSubtitle": "If you or someone you know is in crisis, please call one of the hotlines below",
+  "@crisisHotlineCn2Label": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h toll-free"
+  },
+  "crisisHotlineCn2Label": "China National 24h Toll-free Mental Health Hotline",
+  "crisisHotlineCn2Number": "800-810-1117",
+  "crisisHotlineCn2Desc": "Mainland China 24h toll-free",
+  "@crisisHotlineUsLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): US 988 Lifeline"
+  },
+  "crisisHotlineUsLabel": "988 Suicide & Crisis Lifeline",
+  "crisisHotlineUsNumber": "988",
+  "crisisHotlineUsDesc": "US/Canada 24h English/Spanish",
+  "@crisisHotlineIntlLabel": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 国际通用 fallback"
+  },
+  "crisisHotlineIntlLabel": "International",
+  "crisisHotlineIntlDesc": "Please contact local emergency services or mental health organization",
+  "@crisisHotlineIntlNumber": {
+    "description": "v0.30 round 92: International emergency number"
+  },
+  "crisisHotlineIntlNumber": "112 / 911",
+  "@crisisHotlineRegionCn": {
+    "description": "v0.30 round 92: crisis_hotline_page 5 region section title"
+  },
+  "crisisHotlineRegionCn": "Mainland China",
+  "crisisHotlineRegionTw": "Taiwan",
+  "crisisHotlineRegionHk": "Hong Kong",
+  "crisisHotlineRegionUs": "USA / Canada",
+  "crisisHotlineRegionIntl": "International",
+  "@crisisHotlineCnBeijingLabel": {
+    "description": "v0.30 round 92: Beijing Suicide Research & Prevention Center"
+  },
+  "crisisHotlineCnBeijingLabel": "Beijing Suicide Research & Prevention Center",
+  "crisisHotlineCnBeijingNumber": "010-82951332",
+  "crisisHotlineCnBeijingDesc": "Beijing 24h",
+  "@crisisHotlineTw1995Label": {
+    "description": "v0.30 round 92: Taiwan Lifeline (1995)"
+  },
+  "crisisHotlineTw1995Label": "Taiwan Lifeline (24h)",
+  "crisisHotlineTw1995Number": "1995",
+  "crisisHotlineTw1995Desc": "Taiwan 24h",
+  "@crisisHotlineUsTextLineLabel": {
+    "description": "v0.30 round 92: US Crisis Text Line (741741)"
+  },
+  "crisisHotlineUsTextLineLabel": "Crisis Text Line (text HOME)",
+  "crisisHotlineUsTextLineNumber": "741741",
+  "crisisHotlineUsTextLineDesc": "US 24h text",
+  "@crisisHotlineSnackbarCopied": {
+    "description": "v0.30 round 92: snackbar after copying hotline number",
+    "placeholders": { "number": { "type": "Object" } }
+  },
+  "crisisHotlineSnackbarCopied": "Copied: {number}",
   "setupLegalAgeAttestation": "I solemnly declare that I am at least 18 years of age. If I am between 14 and 18 years of age, I confirm that I have obtained consent from my legal guardian and accept all legal consequences of any false statement.",
   "moodCbtLevelLabel3": "3-column",
   "moodCbtLevelLabel5": "5-column",
@@ -1589,7 +1647,7 @@
     "description": "When the last assessment was taken (placeholder {time} is the formatted date)",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2134,7 +2192,7 @@
     "description": "v0.30 R91: Card lastValue time placeholder",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2164,13 +2222,13 @@
     "description": "v0.30 R91: Mood diary integrated card lastValue full summary",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       },
       "score": {
-        "type": "String"
+        "type": "Object"
       },
       "period": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2249,7 +2307,7 @@
     "description": "v0.30 R91: Sleep bedtime summary (HH:mm)",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2258,7 +2316,7 @@
     "description": "v0.30 R91: Sleep wake time summary (HH:mm)",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2267,7 +2325,7 @@
     "description": "v0.30 R91: Sleep integrated card lastValue summary",
     "placeholders": {
       "duration": {
-        "type": "String"
+        "type": "Object"
       },
       "regularity": {
         "type": "int"
@@ -2299,7 +2357,7 @@
     "description": "v0.30 R91: Social rhythm wake time summary",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2308,7 +2366,7 @@
     "description": "v0.30 R91: Social rhythm first meal summary",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2317,7 +2375,7 @@
     "description": "v0.30 R91: Social rhythm last meal summary",
     "placeholders": {
       "time": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2326,7 +2384,7 @@
     "description": "v0.30 R91: Social rhythm integrated card lastValue summary",
     "placeholders": {
       "wake": {
-        "type": "String"
+        "type": "Object"
       },
       "social": {
         "type": "int"
@@ -2389,6 +2447,58 @@
   "@treatmentNoData": {
     "description": "v0.30 R91: Treatment list page empty state"
   },
+  "@treatmentAddButton": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #15): Treatment add button"
+  },
+  "treatmentAddButton": "Add",
+  "@treatmentAddTitle": {
+    "description": "v0.30 round 92: Treatment AddTreatmentDialog title"
+  },
+  "treatmentAddTitle": "Add Treatment Record",
+  "@treatmentDate": {
+    "description": "v0.30 round 92: Treatment date field"
+  },
+  "treatmentDate": "Date",
+  "@treatmentCategory": {
+    "description": "v0.30 round 92: Treatment category field"
+  },
+  "treatmentCategory": "Category",
+  "@treatmentCategoryMedicationAdjustment": {
+    "description": "v0.30 round 92: Treatment category 1/4"
+  },
+  "treatmentCategoryMedicationAdjustment": "Medication adjustment",
+  "@treatmentCategoryConsultation": {
+    "description": "v0.30 round 92: Treatment category 2/4"
+  },
+  "treatmentCategoryConsultation": "Consultation",
+  "@treatmentCategoryHospitalization": {
+    "description": "v0.30 round 92: Treatment category 3/4"
+  },
+  "treatmentCategoryHospitalization": "Hospitalization",
+  "@treatmentCategoryOther": {
+    "description": "v0.30 round 92: Treatment category 4/4"
+  },
+  "treatmentCategoryOther": "Other",
+  "@treatmentProvider": {
+    "description": "v0.30 round 92: Treatment provider"
+  },
+  "treatmentProvider": "Provider / Doctor",
+  "@treatmentProviderHint": {
+    "description": "v0.30 round 92: Treatment provider hint"
+  },
+  "treatmentProviderHint": "e.g. Dr. Smith / Mayo Clinic",
+  "@treatmentProviderRequired": {
+    "description": "v0.30 round 92: Treatment empty provider snackbar"
+  },
+  "treatmentProviderRequired": "Please enter provider / doctor",
+  "@treatmentNote": {
+    "description": "v0.30 round 92: Treatment note field"
+  },
+  "treatmentNote": "Note",
+  "@treatmentNoteHint": {
+    "description": "v0.30 round 92: Treatment note hint"
+  },
+  "treatmentNoteHint": "Optional, brief summary",
   "treatmentType": "Treatment type",
   "@treatmentType": {
     "description": "v0.30 R91: Treatment type label (dialog dropdown)"
@@ -2398,10 +2508,10 @@
     "description": "v0.30 R91: Treatment integrated card lastValue summary",
     "placeholders": {
       "type": {
-        "type": "String"
+        "type": "Object"
       },
       "description": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2430,7 +2540,7 @@
     "description": "v0.30 R91: Weight lastValue summary",
     "placeholders": {
       "kg": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2439,7 +2549,7 @@
     "description": "v0.30 R91: Weight BMI lastValue summary",
     "placeholders": {
       "bmi": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2448,10 +2558,10 @@
     "description": "v0.30 R91: Weight integrated card lastValue summary",
     "placeholders": {
       "kg": {
-        "type": "String"
+        "type": "Object"
       },
       "bmi": {
-        "type": "String"
+        "type": "Object"
       }
     }
   },
@@ -2519,8 +2629,45 @@
   "@cardStatusNoData": {
     "description": "v0.30 R91: Card lastValue null fallback"
   },
+  "sleepBedtimeTitle": "Bedtime",
+  "@sleepBedtimeTitle": {
+    "description": "v0.30 R92: sleepBedtimeTitle title label (R91 daily_tracking i18n gap title key, R92 patch)"
+  },
+  "sleepWakeTimeTitle": "Wake time",
+  "@sleepWakeTimeTitle": {
+    "description": "v0.30 R92: sleepWakeTimeTitle title label (R91 daily_tracking i18n gap title key, R92 patch)"
+  },
+  "socialRhythmWakeTimeTitle": "Wake time",
+  "@socialRhythmWakeTimeTitle": {
+    "description": "v0.30 R92: socialRhythmWakeTimeTitle title label (R91 daily_tracking i18n gap title key, R92 patch)"
+  },
+  "socialRhythmFirstMealTitle": "First meal time",
+  "@socialRhythmFirstMealTitle": {
+    "description": "v0.30 R92: socialRhythmFirstMealTitle title label (R91 daily_tracking i18n gap title key, R92 patch)"
+  },
+  "socialRhythmLastMealTitle": "Last meal time",
+  "@socialRhythmLastMealTitle": {
+    "description": "v0.30 R92: socialRhythmLastMealTitle title label (R91 daily_tracking i18n gap title key, R92 patch)"
+  },
+
   "cardStatusToday": "Today",
   "@cardStatusToday": {
     "description": "v0.30 R91: Card time status today"
+  },
+  "sleepRegularityTitle": "Regularity",
+  "@sleepRegularityTitle": {
+    "description": "v0.30 R92: Sleep regularity slider title (R91 daily_tracking i18n gap, R92 patch)"
+  },
+  "anxietyAgitationAnxietyLabel": "Anxiety Score",
+  "@anxietyAgitationAnxietyLabel": {
+    "description": "v0.30 R92: Anxiety/Agitation anxiety score slider label (R91 daily_tracking i18n gap, R92 patch)"
+  },
+  "anxietyAgitationAgitationLabel": "Agitation Score",
+  "@anxietyAgitationAgitationLabel": {
+    "description": "v0.30 R92: Anxiety/Agitation agitation score slider label (R91 daily_tracking i18n gap, R92 patch)"
+  },
+  "moodListPeriodAll": "All",
+  "@moodListPeriodAll": {
+    "description": "v0.30 R92: mood_list period filter chip 'All' (R87 mood_list page i18n gap, R92 patch)"
   }
 }

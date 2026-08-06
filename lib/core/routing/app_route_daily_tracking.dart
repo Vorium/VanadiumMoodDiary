@@ -25,11 +25,11 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/daily_tracking_page.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/treatment_page.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/anxiety_agitation_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/sleep_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/social_rhythm_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/stress_event_widgets.dart';
-import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_placeholder.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/weight_widgets.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
 
@@ -103,7 +103,7 @@ class AppRouteDailyTracking {
         path: '/treatment',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const TreatmentPlaceholderPage(),
+          const TreatmentPage(),
           context,
         ),
       ),

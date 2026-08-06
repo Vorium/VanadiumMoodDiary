@@ -127,13 +127,13 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'最后吃药：{time}'**
-  String homeLastMed(String time);
+  String homeLastMed(Object time);
 
   /// No description provided for @homeNextReminder.
   ///
   /// In zh, this message translates to:
   /// **'下次提醒：{time}'**
-  String homeNextReminder(String time);
+  String homeNextReminder(Object time);
 
   /// No description provided for @homeStillOnline.
   ///
@@ -541,7 +541,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'导入完成：{summary}'**
-  String settingsImportSuccess(String summary);
+  String settingsImportSuccess(Object summary);
 
   /// No description provided for @settingsActionImport.
   ///
@@ -679,13 +679,13 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'加载失败：{error}'**
-  String commonLoadFailed(String error);
+  String commonLoadFailed(Object error);
 
   /// Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)
   ///
   /// In zh, this message translates to:
   /// **'{action}失败：{error}'**
-  String snackbarErrorTemplate(String action, String error);
+  String snackbarErrorTemplate(Object action, Object error);
 
   /// No description provided for @snackbarCopied.
   ///
@@ -811,7 +811,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'已设置：{date} 续方，提前 {days} 天提醒'**
-  String medsRefillSet(String date, int days);
+  String medsRefillSet(Object date, int days);
 
   /// No description provided for @medsActionRefill.
   ///
@@ -829,7 +829,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'续方：{date}（{days} 天后）· 提前 {reminderDays} 天提醒'**
-  String medsRefillUpcoming(String date, int days, int reminderDays);
+  String medsRefillUpcoming(Object date, int days, int reminderDays);
 
   /// No description provided for @medsRefillDaysTitle.
   ///
@@ -1603,7 +1603,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{m}分{sec}秒'**
-  String ventDurationMinutesSeconds(int m, String sec);
+  String ventDurationMinutesSeconds(int m, Object sec);
 
   /// No description provided for @moodDialogTitle.
   ///
@@ -1652,6 +1652,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'时段'**
   String get moodListFilterPeriod;
+
+  /// v0.30 R92: mood_list 情绪列表时段过滤 chip '全部' (R87 mood_list page l10n 漏, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'全部'**
+  String get moodListPeriodAll;
 
   /// No description provided for @moodPeriodChartTitle.
   ///
@@ -1765,7 +1771,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'已录 {duration}'**
-  String moodAudioRecorded(String duration);
+  String moodAudioRecorded(Object duration);
 
   /// No description provided for @moodAudioRerecord.
   ///
@@ -1940,7 +1946,7 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{date} {suffix} · 提前 {reminderDays} 天提醒'**
   String medsRefillSubtitleTemplate(
-      String date, String suffix, int reminderDays);
+      Object date, Object suffix, int reminderDays);
 
   /// No description provided for @assessmentLoadingBack.
   ///
@@ -1964,7 +1970,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'评估题 {index}：{text}，4 项单选，当前：{selected}'**
-  String assessmentQuestionLabel(int index, String text, String selected);
+  String assessmentQuestionLabel(int index, Object text, Object selected);
 
   /// No description provided for @assessmentScoreTotal.
   ///
@@ -2012,7 +2018,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{name} 还在坚持'**
-  String homeHeaderKeepGoing(String name);
+  String homeHeaderKeepGoing(Object name);
 
   /// No description provided for @homeTooltipTrend.
   ///
@@ -2084,7 +2090,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'页面不存在：{path}'**
-  String errorPageNotFound(String path);
+  String errorPageNotFound(Object path);
 
   /// No description provided for @errorPageHint.
   ///
@@ -2162,7 +2168,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'平均 {score}'**
-  String assessmentAverageScore(String score);
+  String assessmentAverageScore(Object score);
 
   /// No description provided for @assessmentTotalRecords.
   ///
@@ -2372,7 +2378,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'已载入：{name}（{count} 个药）请核对药名和剂量'**
-  String setupPresetLoaded(String name, int count);
+  String setupPresetLoaded(Object name, int count);
 
   /// No description provided for @setupMedWhatDoYouTake.
   ///
@@ -2654,13 +2660,13 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{date} · 近 {days} 天'**
-  String reportHistoryItemTitle(String date, int days);
+  String reportHistoryItemTitle(Object date, int days);
 
   /// No description provided for @reportHistoryItemPatient.
   ///
   /// In zh, this message translates to:
   /// **'患者：{name}'**
-  String reportHistoryItemPatient(String name);
+  String reportHistoryItemPatient(Object name);
 
   /// No description provided for @reportHistoryItemNotSet.
   ///
@@ -2714,7 +2720,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'已打卡：{name} ✅'**
-  String homeAutofireCelebration(String name);
+  String homeAutofireCelebration(Object name);
 
   /// No description provided for @homeAutofireFallbackName.
   ///
@@ -2738,25 +2744,25 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'上次打卡: {date}。已自动通知紧急联系人，请确认安全。'**
-  String safetyAlertBodySent(String date);
+  String safetyAlertBodySent(Object date);
 
   /// SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三态修正）
   ///
   /// In zh, this message translates to:
   /// **'上次打卡: {date}。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。'**
-  String safetyAlertBodyMocked(String date);
+  String safetyAlertBodyMocked(Object date);
 
   /// SafetyAlert 通知 body — SMS 实际发送失败分支（P0-3 三态修正）
   ///
   /// In zh, this message translates to:
   /// **'上次打卡: {date}。失联检测已触发，但通知发送失败。请检查网络。'**
-  String safetyAlertBodyFailed(String date);
+  String safetyAlertBodyFailed(Object date);
 
   /// SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬编码中文
   ///
   /// In zh, this message translates to:
   /// **'⚠️ {name} 已 {days} 天未打卡'**
-  String safetyAlertTitle(String name, int days);
+  String safetyAlertTitle(Object name, int days);
 
   /// SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬编码中文, lastCheckIn==null 时返
   ///
@@ -2834,7 +2840,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'主题：{mode}（点击切换）'**
-  String themeTooltip(String mode);
+  String themeTooltip(Object mode);
 
   /// No description provided for @themeModeSystem.
   ///
@@ -2996,13 +3002,13 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{count} 条情绪记录 · {emoji}'**
-  String trendMoodEntriesSame(int count, String emoji);
+  String trendMoodEntriesSame(int count, Object emoji);
 
   /// No description provided for @trendMoodEntriesRange.
   ///
   /// In zh, this message translates to:
   /// **'情绪 {count} 条 · {lowEmoji}→{highEmoji}'**
-  String trendMoodEntriesRange(int count, String lowEmoji, String highEmoji);
+  String trendMoodEntriesRange(int count, Object lowEmoji, Object highEmoji);
 
   /// No description provided for @trendNoRecords.
   ///
@@ -3147,7 +3153,7 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 條**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。'**
   String dataExportConsentBody(
-      String purpose, String dataCategories, String retention);
+      Object purpose, Object dataCategories, Object retention);
 
   /// No description provided for @dataExportConsentConfirm.
   ///
@@ -3219,7 +3225,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'保存失败：{error}'**
-  String editMedSaveFailed(String error);
+  String editMedSaveFailed(Object error);
 
   /// No description provided for @editMedStatusActive.
   ///
@@ -3237,7 +3243,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{date} 停药'**
-  String editMedStoppedDate(String date);
+  String editMedStoppedDate(Object date);
 
   /// No description provided for @editMedNameHint.
   ///
@@ -3399,13 +3405,13 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'加载打卡失败：{error}'**
-  String medsCalendarLoadCheckinFailed(String error);
+  String medsCalendarLoadCheckinFailed(Object error);
 
   /// No description provided for @medsCalendarLoadMedFailed.
   ///
   /// In zh, this message translates to:
   /// **'加载药物失败：{error}'**
-  String medsCalendarLoadMedFailed(String error);
+  String medsCalendarLoadMedFailed(Object error);
 
   /// No description provided for @medsCalendarNoActive.
   ///
@@ -3573,7 +3579,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'用药报告_{date}'**
-  String medReportFileName(String date);
+  String medReportFileName(Object date);
 
   /// No description provided for @migrationPromptTitle.
   ///
@@ -3711,7 +3717,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'我是 {name}，已经 {days} 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。'**
-  String emailBodyI18n(String name, int days);
+  String emailBodyI18n(Object name, int days);
 
   /// No description provided for @emailFooterI18n.
   ///
@@ -3783,7 +3789,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'错误：{message}'**
-  String safetyCheckResultError(String message);
+  String safetyCheckResultError(Object message);
 
   /// No description provided for @settingsIapUpgradeTitle.
   ///
@@ -3987,7 +3993,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'打卡 · {name}'**
-  String dayDetailCheckInWith(String name);
+  String dayDetailCheckInWith(Object name);
 
   /// No description provided for @dayDetailDailyCheckIn.
   ///
@@ -3999,7 +4005,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'临时 · {name}'**
-  String dayDetailTempWith(String name);
+  String dayDetailTempWith(Object name);
 
   /// No description provided for @dayDetailTempMed.
   ///
@@ -4367,18 +4373,6 @@ abstract class AppLocalizations {
   /// **'回到顶端'**
   String get homeFabTop;
 
-  /// No description provided for @homeFabHotlineTodo.
-  ///
-  /// In zh, this message translates to:
-  /// **'紧急热线入口建设中'**
-  String get homeFabHotlineTodo;
-
-  /// No description provided for @homeFabTopTodo.
-  ///
-  /// In zh, this message translates to:
-  /// **'回到顶端(开发中)'**
-  String get homeFabTopTodo;
-
   /// No description provided for @trendChip30Day.
   ///
   /// In zh, this message translates to:
@@ -4462,6 +4456,162 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'中国澳门 24 小时'**
   String get crisisHotlineMoDesc;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 标题
+  ///
+  /// In zh, this message translates to:
+  /// **'紧急心理援助热线'**
+  String get crisisHotlineTitle;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'如果你或身边的人正在经历心理危机, 请拨打以下热线'**
+  String get crisisHotlineSubtitle;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h 免费
+  ///
+  /// In zh, this message translates to:
+  /// **'全国 24 小时免费心理援助热线'**
+  String get crisisHotlineCn2Label;
+
+  /// No description provided for @crisisHotlineCn2Number.
+  ///
+  /// In zh, this message translates to:
+  /// **'800-810-1117'**
+  String get crisisHotlineCn2Number;
+
+  /// No description provided for @crisisHotlineCn2Desc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国大陆 24 小时免费拨打'**
+  String get crisisHotlineCn2Desc;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): US 988 Lifeline
+  ///
+  /// In zh, this message translates to:
+  /// **'988 Suicide & Crisis Lifeline'**
+  String get crisisHotlineUsLabel;
+
+  /// No description provided for @crisisHotlineUsNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'988'**
+  String get crisisHotlineUsNumber;
+
+  /// No description provided for @crisisHotlineUsDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'美国 / 加拿大 24 小时英文 / 西班牙文'**
+  String get crisisHotlineUsDesc;
+
+  /// v0.30 round 92 (audit-fixes / P0 #12): 国际通用 fallback
+  ///
+  /// In zh, this message translates to:
+  /// **'国际通用'**
+  String get crisisHotlineIntlLabel;
+
+  /// No description provided for @crisisHotlineIntlDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'请联系当地急救或心理援助机构'**
+  String get crisisHotlineIntlDesc;
+
+  /// v0.30 round 92: 国际通用紧急号码
+  ///
+  /// In zh, this message translates to:
+  /// **'112 / 911'**
+  String get crisisHotlineIntlNumber;
+
+  /// v0.30 round 92: crisis_hotline_page 5 地区 section title
+  ///
+  /// In zh, this message translates to:
+  /// **'中国大陆'**
+  String get crisisHotlineRegionCn;
+
+  /// No description provided for @crisisHotlineRegionTw.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国台湾'**
+  String get crisisHotlineRegionTw;
+
+  /// No description provided for @crisisHotlineRegionHk.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国香港'**
+  String get crisisHotlineRegionHk;
+
+  /// No description provided for @crisisHotlineRegionUs.
+  ///
+  /// In zh, this message translates to:
+  /// **'美国 / 加拿大'**
+  String get crisisHotlineRegionUs;
+
+  /// No description provided for @crisisHotlineRegionIntl.
+  ///
+  /// In zh, this message translates to:
+  /// **'国际通用'**
+  String get crisisHotlineRegionIntl;
+
+  /// v0.30 round 92: 北京心理危机研究与干预中心
+  ///
+  /// In zh, this message translates to:
+  /// **'北京心理危机研究与干预中心'**
+  String get crisisHotlineCnBeijingLabel;
+
+  /// No description provided for @crisisHotlineCnBeijingNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'010-82951332'**
+  String get crisisHotlineCnBeijingNumber;
+
+  /// No description provided for @crisisHotlineCnBeijingDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'北京 24 小时'**
+  String get crisisHotlineCnBeijingDesc;
+
+  /// v0.30 round 92: 台湾生命线 (1995)
+  ///
+  /// In zh, this message translates to:
+  /// **'生命线 (24 小时)'**
+  String get crisisHotlineTw1995Label;
+
+  /// No description provided for @crisisHotlineTw1995Number.
+  ///
+  /// In zh, this message translates to:
+  /// **'1995'**
+  String get crisisHotlineTw1995Number;
+
+  /// No description provided for @crisisHotlineTw1995Desc.
+  ///
+  /// In zh, this message translates to:
+  /// **'中国台湾 24 小时'**
+  String get crisisHotlineTw1995Desc;
+
+  /// v0.30 round 92: US Crisis Text Line (741741)
+  ///
+  /// In zh, this message translates to:
+  /// **'Crisis Text Line (text HOME)'**
+  String get crisisHotlineUsTextLineLabel;
+
+  /// No description provided for @crisisHotlineUsTextLineNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'741741'**
+  String get crisisHotlineUsTextLineNumber;
+
+  /// No description provided for @crisisHotlineUsTextLineDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'美国 24 小时短信'**
+  String get crisisHotlineUsTextLineDesc;
+
+  /// v0.30 round 92: 复制号码后 snackbar 提示
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制: {number}'**
+  String crisisHotlineSnackbarCopied(Object number);
 
   /// No description provided for @setupLegalAgeAttestation.
   ///
@@ -4875,7 +5025,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{time} 填写'**
-  String assessmentCenterLastTime(String time);
+  String assessmentCenterLastTime(Object time);
 
   /// Empty state for assessment card when user has not yet taken the scale
   ///
@@ -5685,7 +5835,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{time} 记录'**
-  String dailyTrackingLastTime(String time);
+  String dailyTrackingLastTime(Object time);
 
   /// v0.30 R91: 整合入口页卡片 CTA 按钮
   ///
@@ -5715,7 +5865,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{time} · {score} ({period})'**
-  String moodDiaryLast(String time, String score, String period);
+  String moodDiaryLast(Object time, Object score, Object period);
 
   /// v0.30 R91: 焦虑急躁 子功能名 (整合页 + 列表页)
   ///
@@ -5746,6 +5896,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'暂无焦虑急躁记录'**
   String get anxietyAgitationNoData;
+
+  /// v0.30 R92: 焦虑急躁 焦虑分数 slider 标签 (R91 daily_tracking l10n 漏, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'焦虑分数'**
+  String get anxietyAgitationAnxietyLabel;
+
+  /// v0.30 R92: 焦虑急躁 急躁分数 slider 标签 (R91 daily_tracking l10n 漏, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'急躁分数'**
+  String get anxietyAgitationAgitationLabel;
 
   /// v0.30 R91: 焦虑急躁 焦虑维度 lastValue 摘要 (placeholder {score} 是 1-5)
   ///
@@ -5799,19 +5961,25 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'入睡 {time}'**
-  String sleepBedtime(String time);
+  String sleepBedtime(Object time);
+
+  /// v0.30 R92: 睡眠 规律性 slider 标题 (R91 daily_tracking l10n 漏, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'规律性'**
+  String get sleepRegularityTitle;
 
   /// v0.30 R91: 睡眠 起床时间 lastValue 摘要 (placeholder {time} 是 HH:mm)
   ///
   /// In zh, this message translates to:
   /// **'起床 {time}'**
-  String sleepWakeTime(String time);
+  String sleepWakeTime(Object time);
 
   /// v0.30 R91: 睡眠 整合卡片 lastValue 完整摘要 (duration 是 8h00min, regularity 是 1-5)
   ///
   /// In zh, this message translates to:
   /// **'{duration} · 规律 {regularity}/5'**
-  String sleepLast(String duration, int regularity);
+  String sleepLast(Object duration, int regularity);
 
   /// v0.30 R91: 社会节律 子功能名 (整合页 + 列表页)
   ///
@@ -5847,25 +6015,25 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'起床 {time}'**
-  String socialRhythmWakeTime(String time);
+  String socialRhythmWakeTime(Object time);
 
   /// v0.30 R91: 社会节律 第一餐 lastValue 摘要
   ///
   /// In zh, this message translates to:
   /// **'第一餐 {time}'**
-  String socialRhythmFirstMeal(String time);
+  String socialRhythmFirstMeal(Object time);
 
   /// v0.30 R91: 社会节律 最后一餐 lastValue 摘要
   ///
   /// In zh, this message translates to:
   /// **'最后一餐 {time}'**
-  String socialRhythmLastMeal(String time);
+  String socialRhythmLastMeal(Object time);
 
   /// v0.30 R91: 社会节律 整合卡片 lastValue 完整摘要
   ///
   /// In zh, this message translates to:
   /// **'起床 {wake} · 社交 {social}h · 工作 {work}h'**
-  String socialRhythmLast(String wake, int social, int work);
+  String socialRhythmLast(Object wake, int social, int work);
 
   /// v0.30 R91: 应激源 子功能名 (整合页 + 列表页)
   ///
@@ -5939,6 +6107,84 @@ abstract class AppLocalizations {
   /// **'暂无治疗记录'**
   String get treatmentNoData;
 
+  /// v0.30 round 92 (audit-fixes / P0 #15): 治疗 添加按钮 (列表页右上角)
+  ///
+  /// In zh, this message translates to:
+  /// **'添加'**
+  String get treatmentAddButton;
+
+  /// v0.30 round 92: 治疗 AddTreatmentDialog title
+  ///
+  /// In zh, this message translates to:
+  /// **'添加治疗记录'**
+  String get treatmentAddTitle;
+
+  /// v0.30 round 92: 治疗 日期 field
+  ///
+  /// In zh, this message translates to:
+  /// **'日期'**
+  String get treatmentDate;
+
+  /// v0.30 round 92: 治疗 类别 field (4 选 1)
+  ///
+  /// In zh, this message translates to:
+  /// **'类别'**
+  String get treatmentCategory;
+
+  /// v0.30 round 92: 治疗 类别 1/4 药物调整
+  ///
+  /// In zh, this message translates to:
+  /// **'药物调整'**
+  String get treatmentCategoryMedicationAdjustment;
+
+  /// v0.30 round 92: 治疗 类别 2/4 心理咨询
+  ///
+  /// In zh, this message translates to:
+  /// **'心理咨询'**
+  String get treatmentCategoryConsultation;
+
+  /// v0.30 round 92: 治疗 类别 3/4 住院
+  ///
+  /// In zh, this message translates to:
+  /// **'住院'**
+  String get treatmentCategoryHospitalization;
+
+  /// v0.30 round 92: 治疗 类别 4/4 其他
+  ///
+  /// In zh, this message translates to:
+  /// **'其他'**
+  String get treatmentCategoryOther;
+
+  /// v0.30 round 92: 治疗 医疗机构 / 医生 (description 字段)
+  ///
+  /// In zh, this message translates to:
+  /// **'医疗机构 / 医生'**
+  String get treatmentProvider;
+
+  /// v0.30 round 92: 治疗 医疗机构 hint
+  ///
+  /// In zh, this message translates to:
+  /// **'例如: 心理医生王医生 / 北京协和医院'**
+  String get treatmentProviderHint;
+
+  /// v0.30 round 92: 治疗 医疗机构为空 snackbar 提示
+  ///
+  /// In zh, this message translates to:
+  /// **'请填写医疗机构 / 医生'**
+  String get treatmentProviderRequired;
+
+  /// v0.30 round 92: 治疗 备注 field
+  ///
+  /// In zh, this message translates to:
+  /// **'备注'**
+  String get treatmentNote;
+
+  /// v0.30 round 92: 治疗 备注 hint
+  ///
+  /// In zh, this message translates to:
+  /// **'可选, 简短记录治疗要点'**
+  String get treatmentNoteHint;
+
   /// v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)
   ///
   /// In zh, this message translates to:
@@ -5949,7 +6195,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'{type} · {description}'**
-  String treatmentLast(String type, String description);
+  String treatmentLast(Object type, Object description);
 
   /// v0.30 R91: 体重 子功能名 (整合页 + 列表页)
   ///
@@ -5985,19 +6231,19 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'体重 {kg} kg'**
-  String weightWeight(String kg);
+  String weightWeight(Object kg);
 
   /// v0.30 R91: 体重 BMI lastValue 摘要 (placeholder {bmi} 是 1 decimal)
   ///
   /// In zh, this message translates to:
   /// **'BMI {bmi}'**
-  String weightBmi(String bmi);
+  String weightBmi(Object bmi);
 
   /// v0.30 R91: 体重 整合卡片 lastValue 摘要 (bmi 可选)
   ///
   /// In zh, this message translates to:
   /// **'{kg} kg · BMI {bmi}'**
-  String weightLast(String kg, String bmi);
+  String weightLast(Object kg, Object bmi);
 
   /// v0.30 R91: 心境 period 早 (morning)
   ///
@@ -6094,6 +6340,36 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'尚未记录'**
   String get cardStatusNoData;
+
+  /// v0.30 R92: sleepBedtimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'入睡时间'**
+  String get sleepBedtimeTitle;
+
+  /// v0.30 R92: sleepWakeTimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'起床时间'**
+  String get sleepWakeTimeTitle;
+
+  /// v0.30 R92: socialRhythmWakeTimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'起床时间'**
+  String get socialRhythmWakeTimeTitle;
+
+  /// v0.30 R92: socialRhythmFirstMealTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'第一餐时间'**
+  String get socialRhythmFirstMealTitle;
+
+  /// v0.30 R92: socialRhythmLastMealTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)
+  ///
+  /// In zh, this message translates to:
+  /// **'最后一餐时间'**
+  String get socialRhythmLastMealTitle;
 
   /// v0.30 R91: 卡片时间状态 今天
   ///
