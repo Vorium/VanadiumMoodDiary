@@ -20,8 +20,12 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 焦虑急躁记录列表 (监听 anxietyAgitationEntriesProvider stream)
+///
+/// v0.30 R91 Fix Round 1 (I-2): AppBar title 走 l10n.anxietyAgitationName,
+/// 跟 R87 MoodListPage pattern 一致. 路由 file 不再包 PageScaffold wrapper.
 class AnxietyAgitationListWidget extends ConsumerWidget {
   const AnxietyAgitationListWidget({super.key});
 
@@ -30,37 +34,40 @@ class AnxietyAgitationListWidget extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(anxietyAgitationEntriesProvider);
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingSm),
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton.icon(
-              icon: const Icon(Icons.add),
-              label: Text(l10n.anxietyAgitationAddButton),
-              onPressed: () => AnxietyAgitationEntryDialog.show(context),
+    return PageScaffold(
+      title: l10n.anxietyAgitationName,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(AppTokens.spacingSm),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.icon(
+                icon: const Icon(Icons.add),
+                label: Text(l10n.anxietyAgitationAddButton),
+                onPressed: () => AnxietyAgitationEntryDialog.show(context),
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: entriesAsync.when(
-            loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, st) => Center(child: Text('加载失败: $e')),
-            data: (entries) => entries.isEmpty
-                ? EmptyState(
-                    icon: Icons.psychology_outlined,
-                    title: l10n.anxietyAgitationNoData,
-                    subtitle: l10n.anxietyAgitationHint,
-                  )
-                : ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, i) =>
-                        _AnxietyAgitationEntryTile(entry: entries[i]),
-                  ),
+          Expanded(
+            child: entriesAsync.when(
+              loading: () => const LoadingSkeleton.fullScreen(),
+              error: (e, st) => Center(child: Text('加载失败: $e')),
+              data: (entries) => entries.isEmpty
+                  ? EmptyState(
+                      icon: Icons.psychology_outlined,
+                      title: l10n.anxietyAgitationNoData,
+                      subtitle: l10n.anxietyAgitationHint,
+                    )
+                  : ListView.builder(
+                      itemCount: entries.length,
+                      itemBuilder: (context, i) =>
+                          _AnxietyAgitationEntryTile(entry: entries[i]),
+                    ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -5672,7 +5672,7 @@ abstract class AppLocalizations {
   /// v0.30 R91: 主页 FAB 跳日常追踪入口页时的提示
   ///
   /// In zh, this message translates to:
-  /// **'全部趋势'**
+  /// **'日常追踪'**
   String get dailyTrackingFab;
 
   /// v0.30 R91: 多指标趋势图标题

@@ -2160,7 +2160,7 @@
   "@dailyTrackingTitle": {
     "description": "v0.30 R91: 日常追踪整合入口页 title"
   },
-  "dailyTrackingFab": "全部趨勢",
+  "dailyTrackingFab": "日常追蹤",
   "@dailyTrackingFab": {
     "description": "v0.30 R91: 主页 FAB 跳日常追踪入口页时的提示"
   },

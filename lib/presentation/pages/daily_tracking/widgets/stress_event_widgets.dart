@@ -22,6 +22,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 5 档事件类型 id (跟 spec 一致, 走 l10n 拿中文 label)
 const _kEventTypeIds = <String>[
@@ -51,6 +52,9 @@ String _eventTypeLabel(BuildContext context, String eventType) {
 }
 
 /// 应激源记录列表 (监听 stressEventEntriesProvider stream)
+///
+/// v0.30 R91 Fix Round 1 (I-2): AppBar title 走 l10n.stressEventName,
+/// 跟 R87 MoodListPage pattern 一致. 路由 file 不再包 PageScaffold wrapper.
 class StressEventListWidget extends ConsumerWidget {
   const StressEventListWidget({super.key});
 
@@ -59,37 +63,40 @@ class StressEventListWidget extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(stressEventEntriesProvider);
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(AppTokens.spacingSm),
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton.icon(
-              icon: const Icon(Icons.add),
-              label: Text(l10n.stressEventAddButton),
-              onPressed: () => StressEventEntryDialog.show(context),
+    return PageScaffold(
+      title: l10n.stressEventName,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(AppTokens.spacingSm),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.icon(
+                icon: const Icon(Icons.add),
+                label: Text(l10n.stressEventAddButton),
+                onPressed: () => StressEventEntryDialog.show(context),
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: entriesAsync.when(
-            loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, st) => Center(child: Text('加载失败: $e')),
-            data: (entries) => entries.isEmpty
-                ? EmptyState(
-                    icon: Icons.bolt_outlined,
-                    title: l10n.stressEventNoData,
-                    subtitle: l10n.stressEventHint,
-                  )
-                : ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, i) =>
-                        _StressEventEntryTile(entry: entries[i]),
-                  ),
+          Expanded(
+            child: entriesAsync.when(
+              loading: () => const LoadingSkeleton.fullScreen(),
+              error: (e, st) => Center(child: Text('加载失败: $e')),
+              data: (entries) => entries.isEmpty
+                  ? EmptyState(
+                      icon: Icons.bolt_outlined,
+                      title: l10n.stressEventNoData,
+                      subtitle: l10n.stressEventHint,
+                    )
+                  : ListView.builder(
+                      itemCount: entries.length,
+                      itemBuilder: (context, i) =>
+                          _StressEventEntryTile(entry: entries[i]),
+                    ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

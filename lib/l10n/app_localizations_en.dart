@@ -3216,7 +3216,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTrackingTitle => 'Daily Tracking';
 
   @override
-  String get dailyTrackingFab => 'All trends';
+  String get dailyTrackingFab => 'Daily Tracking';
 
   @override
   String get dailyTrackingMultiChartTitle => 'Last 30 days, 4 metrics';

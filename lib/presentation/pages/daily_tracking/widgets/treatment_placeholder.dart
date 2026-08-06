@@ -22,12 +22,16 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// v0.30 R91 Task 5 兜底: 治疗记录页 placeholder
 ///
 /// 显示现有 treatment entry 列表 (R91 brief 兜底, Task 4 没做 treatment
 /// widget, Task 5 加最小可用 list page 防止 整合页 /treatment 路由 404)。
 /// 写入 (entry dialog) 留 v0.31+ (跟 medication picker 整合)。
+///
+/// v0.30 R91 Fix Round 1 (I-2): AppBar title 走 l10n.treatmentName,
+/// 跟 R87 MoodListPage pattern 一致. 路由 file 不再包 PageScaffold wrapper.
 class TreatmentPlaceholderPage extends ConsumerWidget {
   const TreatmentPlaceholderPage({super.key});
 
@@ -36,57 +40,61 @@ class TreatmentPlaceholderPage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(treatmentEntriesProvider);
 
-    return Column(
-      children: [
-        // 顶部说明 (placeholder 标记, v0.31+ 删)
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(AppTokens.spacingSm),
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          child: Text(
-            'R91 兜底: 治疗 entry 显示 (写入功能 v0.31+ 跟 medication picker 整合)',
-            style: AppTokens.textStyleCaption(context),
-            textAlign: TextAlign.center,
+    return PageScaffold(
+      title: l10n.treatmentName,
+      child: Column(
+        children: [
+          // 顶部说明 (placeholder 标记, v0.31+ 删)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppTokens.spacingSm),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Text(
+              'R91 兜底: 治疗 entry 显示 (写入功能 v0.31+ 跟 medication picker 整合)',
+              style: AppTokens.textStyleCaption(context),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-        Expanded(
-          child: entriesAsync.when(
-            loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, st) => Center(child: Text('加载失败: $e')),
-            data: (entries) => entries.isEmpty
-                ? EmptyState(
-                    icon: Icons.medical_services_outlined,
-                    title: l10n.treatmentNoData,
-                    subtitle: l10n.treatmentHint,
-                  )
-                : ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, i) {
-                      final e = entries[i];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: AppTokens.spacingSm,
-                          vertical: AppTokens.spacingXxs,
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.medical_services,
-                            color: AppTokens.primaryColor(context),
+          Expanded(
+            child: entriesAsync.when(
+              loading: () => const LoadingSkeleton.fullScreen(),
+              error: (e, st) => Center(child: Text('加载失败: $e')),
+              data: (entries) => entries.isEmpty
+                  ? EmptyState(
+                      icon: Icons.medical_services_outlined,
+                      title: l10n.treatmentNoData,
+                      subtitle: l10n.treatmentHint,
+                    )
+                  : ListView.builder(
+                      itemCount: entries.length,
+                      itemBuilder: (context, i) {
+                        final e = entries[i];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: AppTokens.spacingSm,
+                            vertical: AppTokens.spacingXxs,
                           ),
-                          title: Text(
-                            l10n.treatmentLast(e.treatmentType, e.description),
-                            style: AppTokens.textStyleLabelStrong(context),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.medical_services,
+                              color: AppTokens.primaryColor(context),
+                            ),
+                            title: Text(
+                              l10n.treatmentLast(
+                                  e.treatmentType, e.description,),
+                              style: AppTokens.textStyleLabelStrong(context),
+                            ),
+                            subtitle: Text(
+                              '关联用药: ${e.linkedMedicationDisplay}',
+                            ),
                           ),
-                          subtitle: Text(
-                            '关联用药: ${e.linkedMedicationDisplay}',
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

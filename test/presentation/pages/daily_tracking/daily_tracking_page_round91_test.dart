@@ -187,12 +187,14 @@ void main() {
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
 
-    // 3. 验证展开态: 找到 "全部趋势" 按钮 (l10n.dailyTrackingFab,
-    //    v0.30 R91 Task 7 改 label 跟 FAB 跳 /daily-tracking 整合入口保持一致)
-    expect(find.text('全部趋势'), findsOneWidget);
+    // 3. 验证展开态: 找到 "日常追踪" 按钮 (l10n.dailyTrackingFab,
+    //    v0.30 R91 Task 7 改 label 跟 FAB 跳 /daily-tracking 整合入口保持一致;
+    //    v0.30 R91 Fix Round 1 (I-1): 进一步改 "日常追踪" 跟
+    //    l10n.dailyTrackingTitle 整合入口页 title 语义一致)
+    expect(find.text('日常追踪'), findsOneWidget);
 
-    // 4. tap "全部趋势" 按钮 → 应跳 /daily-tracking
-    await tester.tap(find.text('全部趋势'));
+    // 4. tap "日常追踪" 按钮 → 应跳 /daily-tracking
+    await tester.tap(find.text('日常追踪'));
     await tester.pumpAndSettle();
 
     // 5. 验证路由成功 → 目的地页 DAILY_TRACKING_DESTINATION 渲染

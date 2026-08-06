@@ -17,6 +17,10 @@
 // - /daily-tracking: occasional (从主页 FAB 跳), slide-right
 // - 7 子功能: occasional (从整合入口页跳), slide-right
 // - 跟 assessment (slide-right) / mood_list (slide-right) 同频度
+//
+// v0.30 R91 Fix Round 1 (I-2): 7 子页面 AppBar title 走 l10n (子 widget
+// 自己用 PageScaffold 包, 跟 R87 MoodListPage pattern 一致), 路由 file
+// 不再包 PageScaffold wrapper (避免硬编码中文 title).
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
@@ -28,7 +32,6 @@ import 'package:chroniccare/presentation/pages/daily_tracking/widgets/stress_eve
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_placeholder.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/weight_widgets.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
-import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// v0.30 round 91: 日常追踪路由 (8 个 slide-right 子页)
 class AppRouteDailyTracking {
@@ -47,11 +50,12 @@ class AppRouteDailyTracking {
       ),
       // 7 子功能路由 (整合页 7 卡片 tap 跳, occasional, 全部 slide-right)
       // 4 层架构: presentation/pages/daily_tracking/widgets/, 0 跨 feature。
+      // AppBar title 走 l10n, 由子 widget 自己 PageScaffold 包 (R87 pattern)。
       GoRoute(
         path: '/mood-diary',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const PageScaffold(title: '情绪日记', child: MoodListPage()),
+          const MoodListPage(),
           context,
         ),
       ),
@@ -59,7 +63,7 @@ class AppRouteDailyTracking {
         path: '/sleep',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const PageScaffold(title: '睡眠', child: SleepListWidget()),
+          const SleepListWidget(),
           context,
         ),
       ),
@@ -67,7 +71,7 @@ class AppRouteDailyTracking {
         path: '/social-rhythm',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const PageScaffold(title: '社会节律', child: SocialRhythmListWidget()),
+          const SocialRhythmListWidget(),
           context,
         ),
       ),
@@ -75,7 +79,7 @@ class AppRouteDailyTracking {
         path: '/stress-events',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const PageScaffold(title: '应激源', child: StressEventListWidget()),
+          const StressEventListWidget(),
           context,
         ),
       ),
@@ -83,7 +87,7 @@ class AppRouteDailyTracking {
         path: '/weight',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const PageScaffold(title: '体重', child: WeightListWidget()),
+          const WeightListWidget(),
           context,
         ),
       ),
@@ -91,10 +95,7 @@ class AppRouteDailyTracking {
         path: '/anxiety-agitation',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const PageScaffold(
-            title: '焦虑急躁',
-            child: AnxietyAgitationListWidget(),
-          ),
+          const AnxietyAgitationListWidget(),
           context,
         ),
       ),
@@ -102,10 +103,7 @@ class AppRouteDailyTracking {
         path: '/treatment',
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
-          const PageScaffold(
-            title: '治疗',
-            child: TreatmentPlaceholderPage(),
-          ),
+          const TreatmentPlaceholderPage(),
           context,
         ),
       ),

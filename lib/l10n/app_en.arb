@@ -2121,7 +2121,7 @@
   "@dailyTrackingTitle": {
     "description": "v0.30 R91: Daily tracking integrated entry page title"
   },
-  "dailyTrackingFab": "All trends",
+  "dailyTrackingFab": "Daily Tracking",
   "@dailyTrackingFab": {
     "description": "v0.30 R91: Home FAB tip when navigating to daily tracking"
   },

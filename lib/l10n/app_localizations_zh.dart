@@ -3048,7 +3048,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dailyTrackingTitle => '日常追踪';
 
   @override
-  String get dailyTrackingFab => '全部趋势';
+  String get dailyTrackingFab => '日常追踪';
 
   @override
   String get dailyTrackingMultiChartTitle => '近 30 天 4 指标';
@@ -6344,7 +6344,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get dailyTrackingTitle => '日常追蹤';
 
   @override
-  String get dailyTrackingFab => '全部趨勢';
+  String get dailyTrackingFab => '日常追蹤';
 
   @override
   String get dailyTrackingMultiChartTitle => '近 30 天 4 指標';

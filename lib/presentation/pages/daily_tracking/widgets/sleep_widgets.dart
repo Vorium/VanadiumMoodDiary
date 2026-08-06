@@ -25,6 +25,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 睡眠记录列表 (监听 sleepEntriesProvider stream)
 ///
@@ -32,6 +33,9 @@ import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 /// - 空 → EmptyState (添加按钮, 跳 SleepEntryDialog)
 /// - 非空 → ListView (Card + ListTile) + 顶部"添加"按钮
 /// - 加 FAB "添加" 跟 R87 mood_list 一致
+///
+/// v0.30 R91 Fix Round 1 (I-2): AppBar title 走 l10n.sleepName, 跟 R87
+/// MoodListPage pattern 一致. 路由 file 不再包 PageScaffold wrapper.
 class SleepListWidget extends ConsumerWidget {
   const SleepListWidget({super.key});
 
@@ -40,7 +44,9 @@ class SleepListWidget extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(sleepEntriesProvider);
 
-    return Column(
+    return PageScaffold(
+      title: l10n.sleepName,
+      child: Column(
       children: [
         // 顶部添加按钮 (R88 mood_dialog 风格, 不走 FAB — list 页面通常 FAB 被 Card 占用)
         Padding(
@@ -73,6 +79,7 @@ class SleepListWidget extends ConsumerWidget {
           ),
         ),
       ],
+    ),
     );
   }
 }
