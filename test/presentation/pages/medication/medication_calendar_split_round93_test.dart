@@ -173,7 +173,7 @@ void main() {
   // DayDetail sub-widget (Step 1.3) — 直接测 widget 渲染
   // ============================================================
   group('DayDetail sub-widget (R93 task 1.3):', () {
-    Widget _wrapDetail({
+    Widget wrapDetail({
       required DateTime date,
       required List<MedicationEntity> meds,
       required List<CheckInEntity> checkIns,
@@ -204,7 +204,7 @@ void main() {
       _setBigView(tester);
       final today = DateTime(2026, 8, 6);
       await tester.pumpWidget(
-        _wrapDetail(
+        wrapDetail(
           date: today,
           meds: [_med(id: 1, name: '氟西汀')],
           checkIns: [
@@ -241,7 +241,7 @@ void main() {
       _setBigView(tester);
       final today = DateTime(2026, 8, 6);
       await tester.pumpWidget(
-        _wrapDetail(
+        wrapDetail(
           date: today,
           meds: [_med(id: 1, name: '氟西汀')],
           checkIns: const [],
@@ -263,7 +263,7 @@ void main() {
       final today = DateTime(2026, 8, 6);
       DateTime? captured;
       await tester.pumpWidget(
-        _wrapDetail(
+        wrapDetail(
           date: today,
           meds: [_med(id: 1, name: '氟西汀')],
           checkIns: const [],
@@ -281,7 +281,7 @@ void main() {
       _setBigView(tester);
       final today = DateTime(2026, 8, 6);
       await tester.pumpWidget(
-        _wrapDetail(
+        wrapDetail(
           date: today,
           meds: const [],
           checkIns: const [],
@@ -299,7 +299,7 @@ void main() {
   // Legend sub-widget (Step 1.4) — 直接测 widget 渲染
   // ============================================================
   group('Legend sub-widget (R93 task 1.4):', () {
-    Widget _wrapLegend() {
+    Widget wrapLegend() {
       return MaterialApp(
         theme: ThemeData.light(),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -311,7 +311,7 @@ void main() {
 
     testWidgets('Legend 渲染 4 个色块 + 4 个标签', (tester) async {
       _setBigView(tester);
-      await tester.pumpWidget(_wrapLegend());
+      await tester.pumpWidget(wrapLegend());
       await tester.pumpAndSettle();
 
       // 4 个标签
