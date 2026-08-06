@@ -120,10 +120,10 @@
 | **R95 task 6** | 拆 `trend_calendar.dart` 642 行 → 3 sub-section | 底层 (god page) | XL | 1-2 周 | — |
 | **R95 task 7** | 拆 `mood_audio_section.dart` 553 行 → 4 sub-widget | 底层 (god widget) | L | 1-2 周 | — |
 | **R95 task 8** | ✅ 9 处 catch (_) → `swallowError` 集中器 (R95 sub-spec 2, 2026-08-06, 实际 R23 P1-10 已修, 加 16 lock-in tests 防御) | 底层 (静默吞错) | M | 1 周 | — |
-| **R95 task 9** | 30+ 硬编码中文业务 hotspot → 走 ARB (估 +30 keys) | 底层 (i18n) | L | 1-2 周 | task 2 |
-| **R95 task 10** | 删 4 个半成品 widget (email_preview / mood_dialog / refill / setup_step_med) | 底层 (半成品清理) | M | 1 周 | — |
-| **R95 task 25** | `vent_compose dispose 异步未 await` (R72 跨 5 轮未修) | 底层 (resource leak) | S | 2-3d | — |
-| **R95 task 26** | `badge_sync_service catch (e) 加 swallowError` (R76 P3-3) | 底层 (静默吞错) | S | 1-2d | — |
+| **R95 task 9** | 🔜 30+ 硬编码中文业务 hotspot → 走 ARB (R95 sub-spec 2 task 9-audit 验证: 估 +75-100 keys, 实际低估 2-4 倍) | 底层 (i18n) | L | 1-2 周 | task 2 |
+| **R95 task 10** | ✅ 删 4 个半成品 widget (email_preview 整文件 + mood_dialog 薄壳 + refill 2x2 grid + setup_step_med PressFeedback, R95 sub-spec 2, 2026-08-06, 6 commit + 11 widget tests) | 底层 (半成品清理) | M | 1 周 | — |
+| **R95 task 25** | ✅ `vent_compose dispose 异步未 await` (R95 sub-spec 2, 2026-08-06, 实际 R79 (cf3db24) 已修, 加 5 lock-in tests 防御) | 底层 (resource leak) | S | 2-3d | — |
+| **R95 task 26** | ✅ `badge_sync_service catch (e) 加 swallowError` (R95 sub-spec 2, 2026-08-06, 实际 R79 (fec978f) 已修, 加 3 lock-in tests 防御) | 底层 (静默吞错) | S | 1-2d | — |
 | **R95 task 30** | `assessment_dao._rowToEntry` 解析失败 PII 泄露 | 底层 (PII 泄露) | S | 2-3d | — |
 | **R95 task 31** | audit log 明文 (PIPL §47 删除权) | 底层 (PIPL 合规) | M | 1 周 | — |
 | **R95 task 5+** | `mood_period_aggregator` pre-existing fail 修 (R91 集成遗留) | 底层 (test fail) | M | 1-2d | — |

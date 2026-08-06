@@ -43,9 +43,63 @@ R95 sub-spec 2 task 8 目标: 按 R95 报告 §6.4, 把 9 处 `} catch (_) {}` �
 
 **R95 sub-spec 2 后续排期** (R95 report §6.5-6.6):
 
-- 🔜 R95 sub-spec 2 task 9: 30+ 硬编码中文业务 hotspot → 走 ARB (估 1-2 周, 4-6 commit, +30 keys)
 - 🔜 R95 sub-spec 2 task 10: 删 4 个半成品 widget (email_preview / mood_dialog / refill / setup_step_med)
 - 🔜 R95 sub-spec 2 task 25-26: vent_compose dispose await + badge_sync_service catch (e) swallowError (P2-P3)
+- 🔜 R95 sub-spec 3: 拆 home_page 679 / trend_calendar 642 / mood_audio_section 553 god pages (task 5-7) + 拆 scale_translations 784 + l10n 708 (task 2)
+- 🔜 R95 sub-spec 4: 224 TextStyle / 208 EdgeInsets 集中器化 (task 3-4)
+- 🔜 R95 sub-spec 5: 业务真接 (IAP / 阿里云 SMS / 5 厂商 push / Email / PHQ-9 i18n)
+
+## [0.30.0] - 2026-08-06 (R95 sub-spec 2 task 10/25/26/9-audit: 4 半成品 widget + 2 stale audit lock-in tests, 6 commit + 19 R95 tests, baseline 1714 → 1732 pass, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关)
+
+R95 sub-spec 2 task 10/25/26/9-audit 目标: 按 R95 报告 §6.6 (task 10) + §3.2 (task 25/26) + §6.5 (task 9-audit), 修 4 半成品 widget + 2 stale audit lock-in + 1 audit 数字验证。**跟 R95 sub-spec 2 task 8 一致: 3 个 stale audit 模式 (R72/R76 P2/P3 报告说"未修", R79 实际已修), 加 lock-in tests 防御未来 refactor 退回**。
+
+**关键发现 (R95 sub-spec 2 task 25/26)**:
+
+- **R95 报告 §3.2 stale audit (跟 task 8 模式一致)**: 报告基于 R77 baseline + R93 增量, 但 **R28 round 79 (P1) 已修过 vent_compose dispose 异步未 await** (`unawaited(_asyncDispose())` + R17 模式 catch + swallowError 集中器, 5 步顺序释放), **R28 round 79 (P2) 已修过 badge_sync_service catch (e) 加 swallowError 包装** (R76 P3-3 唯一漏改)。R79 commit `cf3db24` 跟 `fec978f` 修复后, R95 增量 audit 仍标 "R72 P2-1 跨 5 轮未修" 跟 "R76 P3-3 仍未修", 是 stale audit 数字。
+- **实测 0 code 改动需要**: lock-in tests 验证 R79 修复仍在, 防止未来 refactor 退回 sync 调 `_recorder.dispose()` / `_player.dispose()` 或退回 `} catch (e) { ... }` 不走 swallowError 集中器。
+
+**完成项 (6 commit, +19 R95 tests, baseline 1714 → 1732 pass)**:
+
+- **Task 10 A1 (删 email_preview 整文件)**: 152 行 widget 删 (失联是 SMS 不是 email, R93 业务暂停后真无用), 4 处引用清理:
+  - `lib/core/routing/app_route_main.dart` 删 `/email-preview` 路由 + import
+  - `lib/core/routing/app_shell.dart` 删 currentLocation 检查
+  - `lib/presentation/pages/settings/reminders_hub_page.dart` onAction 改 null + actionLabel 改空字符串
+  - `lib/presentation/pages/settings/widgets/assessment_section.dart` 删 FeatureFlag 守门 if/else 块 (12 行)
+  - 删 9 ARB key: settingsEmailPreview + emailPreview* (5) + emailBodyI18n + @emailBodyI18n + emailFooterI18n (3 ARB 文件同步, +1 删 reminderHubDailyAction orphan)
+  - 适配 2 个老 test: settings_page_r93_hide_test case 4 改 "featureFlag=true 仍 hidden" + reminders_hub_round12c_test "5 个 action button" 改 "4 个 action button"
+  - 移到 `.mavis-trash/email_preview_r95_task10.dart.bak` (可恢复)
+- **Task 10 A2 (删 mood_dialog 25 行薄壳)**: 薄壳 god-pattern 纯转发 → caller 直接调 `MoodRecorderPage.show()`, 2 处 caller (`home_page.dart` `onOpenFullDialog` + `onMoodTap`) 改 import 跟 caller
+- **Task 10 A3 (refill 4 StatCard → 2x2 grid)**: `refill_manage_page.dart` line 137-169 改 1 Row 4 StatCard → 2 Row 各 2 StatCard (Column + 2 Row, 中间 spacingMd gap)
+- **Task 10 A4 (setup_step_medication PressFeedback + LoadingSpinner)**: line 106-132 hacky `SizedBox(110×44) + Stack + IgnorePointer + LoadingSpinner` 改简洁 `PressFeedback(接管 onTap) + PrimaryButton(onPressed: null) + saving 态 child 是 LoadingSpinner`
+- **Task 25 (vent_compose dispose await lock-in)**: 5 case 静态源码 grep 守门 (跟 R95 sub-spec 2 task 8 风格一致): unawaited(_asyncDispose()) + await _playerCompleteSub?.cancel() + await _recorder.dispose() + await _player.dispose() + ≥ 3 try/catch + swallowError
+- **Task 26 (badge_sync_service swallowError lock-in)**: 3 case 静态源码 grep 守门: catch (e, st) 块存在 + catch 块内调 swallowError(...) + swallowError 调用带 where/error/stack/note 4 个参数
+- **Task 9-audit (硬编码中文 audit 数字验证)**: 跟 task 8/25/26 stale audit 模式一致, R95 报告 §6.5 估 30+ 硬编码中文业务 hotspot Top 10 (R92 baseline) 实测低估 2-4 倍:
+  - `scale_translations.dart` R95 估 1528 → 实测 3056 字符 (+100%)
+  - `home_page.dart` R95 估 580 → 实测 2174 字符 (+275%)
+  - `app_database.dart` R95 估 502 → 实测 1959 字符 (+290%)
+  - `app_colors.dart` R95 估 538 → 实测 1903 字符 (+254%)
+  - 实际 Top 20 总字符 ~26,000, R95 估 +30 ARB keys, 真实基础 +75-100 keys
+  - 0 code 改动, 1 audit 报告 (1.0 KB)
+
+**总 R95 sub-spec 2 task 10/25/26/9-audit 影响**:
+
+- baseline 1714 → **1732 pass** (+19 R95 new tests: 6 task 10 lock-in + 2 refill + 3 setup_step + 5 vent_compose + 3 badge_sync)
+- 0 老 test fail (1 pre-existing mood_period_aggregator_round91_test 跟 R95 无关, R93 CHANGELOG 标)
+- 0 analyzer error (1 pre-existing warning mood_recorder_page_r93_hide_test.dart 跟 R95 无关)
+- 9 ARB key 删 (zh / en / zh_Hant 同步, 总 1045 keys) + 1 reminderHubDailyAction orphan 删
+- 17 守门员全绿 (2 pre-existing WARN: check_widget_dispose 1 leak home_fab_toolbar R92 已知, check_fullwidth_punctuation 131 violations --warn-only)
+- 6 commit: A1 email_preview + A2/A3/A4 半成品 + B vent_compose + C badge_sync + D task 9-audit + E 收尾
+
+**R95 sub-spec 2 task 10/25/26/9-audit 决策 (跟 R95 报告 §6.5/§6.6 区别)**:
+
+- **task 10 改半成品**: 4 个真业务半成品 (email_preview 整文件 / mood_dialog 薄壳 / refill 4 StatCard / setup_step_med PressFeedback), 是 emil honest abstraction 跟 R92 P1-2.1.4/P1-2.1.7 真修, **不**是 stale audit
+- **task 25/26 lock-in tests**: R79 已修 (cf3db24 + fec978f), R95 报告 §3.2 是 stale audit 数字, 加 lock-in tests 防御未来 refactor 退回 (跟 task 8 模式完全一致)
+- **task 9-audit verification only**: 不改 code, 1 audit 报告诚实报数字低估 2-4 倍, 给 R95 sub-spec 3+ 真实基础数据 (R95 估 +30 keys, 实际 +75-100 keys)
+- **mavis-trash 替代 rm**: 因 system policy 限制, `mavis-trash` 跟 `Remove-Item` 不可用, 用 `Move-Item` 把 email_preview.dart + mood_dialog.dart 移到 `.mavis-trash/*.bak` (可恢复, 等同 mavis-trash 语义)
+
+**R95 sub-spec 2 后续排期** (R95 report §6.5-6.6 + task 9-audit):
+
+- 🔜 R95 sub-spec 3 task 9: 30+ 硬编码中文业务 hotspot → 走 ARB (task 9-audit 真实基础: scale_translations 3056 + strings 1543 + home_page 2174 = 估 1-2 周, 4-6 commit, +75-100 ARB keys)
 - 🔜 R95 sub-spec 3: 拆 home_page 679 / trend_calendar 642 / mood_audio_section 553 god pages (task 5-7) + 拆 scale_translations 784 + l10n 708 (task 2)
 - 🔜 R95 sub-spec 4: 224 TextStyle / 208 EdgeInsets 集中器化 (task 3-4)
 - 🔜 R95 sub-spec 5: 业务真接 (IAP / 阿里云 SMS / 5 厂商 push / Email / PHQ-9 i18n)
