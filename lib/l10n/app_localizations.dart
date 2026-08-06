@@ -6370,6 +6370,54 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'今天'**
   String get cardStatusToday;
+
+  /// v0.30 R95 sub-spec 7 task 53: 启动时本地数据初始化失败的短消息 (main.dart 205 行原硬编码)
+  ///
+  /// In zh, this message translates to:
+  /// **'无法初始化本地数据'**
+  String get migrationFailedInitData;
+
+  /// v0.30 R95 sub-spec 7 task 53: 数据初始化失败后给用户可操作提示
+  ///
+  /// In zh, this message translates to:
+  /// **'请尝试重启 App，或卸载后重新安装'**
+  String get migrationFailedActionHint;
+
+  /// v0.30 R95 sub-spec 7 task 53: 失败页底部技术信息, 内部异常脱敏后展示
+  ///
+  /// In zh, this message translates to:
+  /// **'技术信息: {error}'**
+  String migrationFailedFooter(String error);
+
+  /// v0.30 R95 sub-spec 7 task 53: 失败页重试按钮 (v1.0 加按钮用)
+  ///
+  /// In zh, this message translates to:
+  /// **'重试'**
+  String get migrationFailedRetryButton;
+
+  /// v0.30 R95 sub-spec 7 task 53: 失败页关闭按钮 (v1.0 加按钮用)
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭'**
+  String get migrationFailedCloseButton;
+
+  /// v0.30 R95 sub-spec 7 task 53: 启动时 loading 文案 (_MigrationPromptApp 内部)
+  ///
+  /// In zh, this message translates to:
+  /// **'启动中，请稍候...'**
+  String get migrationStartingHint;
+
+  /// v0.30 R95 sub-spec 7 task 53: 弹 dialog 时 navigator context 仍 null 的兜底消息
+  ///
+  /// In zh, this message translates to:
+  /// **'启动上下文尚未就绪，请稍后再试'**
+  String get migrationNavContextNull;
+
+  /// v0.30 R95 sub-spec 7 task 53: 错误前缀标签 (e.g. '错误: xxx')
+  ///
+  /// In zh, this message translates to:
+  /// **'错误'**
+  String get migrationFailedErrorPrefix;
 }
 
 class _AppLocalizationsDelegate

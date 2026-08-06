@@ -3614,4 +3614,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardStatusToday => 'Today';
+
+  @override
+  String get migrationFailedInitData => 'Unable to initialize local data';
+
+  @override
+  String get migrationFailedActionHint =>
+      'Try restarting the app, or uninstall and reinstall';
+
+  @override
+  String migrationFailedFooter(String error) {
+    return 'Technical info: $error';
+  }
+
+  @override
+  String get migrationFailedRetryButton => 'Retry';
+
+  @override
+  String get migrationFailedCloseButton => 'Close';
+
+  @override
+  String get migrationStartingHint => 'Starting up, please wait...';
+
+  @override
+  String get migrationNavContextNull =>
+      'Startup context not ready, please try again later';
+
+  @override
+  String get migrationFailedErrorPrefix => 'Error';
 }

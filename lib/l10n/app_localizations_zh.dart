@@ -3435,6 +3435,32 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cardStatusToday => '今天';
+
+  @override
+  String get migrationFailedInitData => '无法初始化本地数据';
+
+  @override
+  String get migrationFailedActionHint => '请尝试重启 App，或卸载后重新安装';
+
+  @override
+  String migrationFailedFooter(String error) {
+    return '技术信息: $error';
+  }
+
+  @override
+  String get migrationFailedRetryButton => '重试';
+
+  @override
+  String get migrationFailedCloseButton => '关闭';
+
+  @override
+  String get migrationStartingHint => '启动中，请稍候...';
+
+  @override
+  String get migrationNavContextNull => '启动上下文尚未就绪，请稍后再试';
+
+  @override
+  String get migrationFailedErrorPrefix => '错误';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -6868,4 +6894,30 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get cardStatusToday => '今天';
+
+  @override
+  String get migrationFailedInitData => '無法初始化本地資料';
+
+  @override
+  String get migrationFailedActionHint => '請嘗試重啟 App，或解除安裝後重新安裝';
+
+  @override
+  String migrationFailedFooter(String error) {
+    return '技術資訊: $error';
+  }
+
+  @override
+  String get migrationFailedRetryButton => '重試';
+
+  @override
+  String get migrationFailedCloseButton => '關閉';
+
+  @override
+  String get migrationStartingHint => '啟動中，請稍候...';
+
+  @override
+  String get migrationNavContextNull => '啟動上下文尚未就緒，請稍後再試';
+
+  @override
+  String get migrationFailedErrorPrefix => '錯誤';
 }

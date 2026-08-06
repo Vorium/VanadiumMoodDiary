@@ -2675,5 +2675,40 @@
   "moodListPeriodAll": "All",
   "@moodListPeriodAll": {
     "description": "v0.30 R92: mood_list period filter chip 'All' (R87 mood_list page i18n gap, R92 patch)"
+  },
+  "migrationFailedInitData": "Unable to initialize local data",
+  "@migrationFailedInitData": {
+    "description": "v0.30 R95 sub-spec 7 task 53: short message when local data init fails at startup (was hardcoded in main.dart line 205)"
+  },
+  "migrationFailedActionHint": "Try restarting the app, or uninstall and reinstall",
+  "@migrationFailedActionHint": {
+    "description": "v0.30 R95 sub-spec 7 task 53: actionable hint shown after data init failure"
+  },
+  "migrationFailedFooter": "Technical info: {error}",
+  "@migrationFailedFooter": {
+    "description": "v0.30 R95 sub-spec 7 task 53: technical info footer on failure page, sanitized internal exception",
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "migrationFailedRetryButton": "Retry",
+  "@migrationFailedRetryButton": {
+    "description": "v0.30 R95 sub-spec 7 task 53: retry button on failure page (v1.0 will add button)"
+  },
+  "migrationFailedCloseButton": "Close",
+  "@migrationFailedCloseButton": {
+    "description": "v0.30 R95 sub-spec 7 task 53: close button on failure page (v1.0 will add button)"
+  },
+  "migrationStartingHint": "Starting up, please wait...",
+  "@migrationStartingHint": {
+    "description": "v0.30 R95 sub-spec 7 task 53: loading text during startup (_MigrationPromptApp internal)"
+  },
+  "migrationNavContextNull": "Startup context not ready, please try again later",
+  "@migrationNavContextNull": {
+    "description": "v0.30 R95 sub-spec 7 task 53: fallback message when navigator context is null while showing dialog"
+  },
+  "migrationFailedErrorPrefix": "Error",
+  "@migrationFailedErrorPrefix": {
+    "description": "v0.30 R95 sub-spec 7 task 53: error prefix label (e.g. 'Error: xxx')"
   }
 }

@@ -2712,5 +2712,40 @@
   "cardStatusToday": "今天",
   "@cardStatusToday": {
     "description": "v0.30 R91: 卡片时间状态 今天"
+  },
+  "migrationFailedInitData": "无法初始化本地数据",
+  "@migrationFailedInitData": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 启动时本地数据初始化失败的短消息 (main.dart 205 行原硬编码)"
+  },
+  "migrationFailedActionHint": "请尝试重启 App，或卸载后重新安装",
+  "@migrationFailedActionHint": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 数据初始化失败后给用户可操作提示"
+  },
+  "migrationFailedFooter": "技术信息: {error}",
+  "@migrationFailedFooter": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 失败页底部技术信息, 内部异常脱敏后展示",
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "migrationFailedRetryButton": "重试",
+  "@migrationFailedRetryButton": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 失败页重试按钮 (v1.0 加按钮用)"
+  },
+  "migrationFailedCloseButton": "关闭",
+  "@migrationFailedCloseButton": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 失败页关闭按钮 (v1.0 加按钮用)"
+  },
+  "migrationStartingHint": "启动中，请稍候...",
+  "@migrationStartingHint": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 启动时 loading 文案 (_MigrationPromptApp 内部)"
+  },
+  "migrationNavContextNull": "启动上下文尚未就绪，请稍后再试",
+  "@migrationNavContextNull": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 弹 dialog 时 navigator context 仍 null 的兜底消息"
+  },
+  "migrationFailedErrorPrefix": "错误",
+  "@migrationFailedErrorPrefix": {
+    "description": "v0.30 R95 sub-spec 7 task 53: 错误前缀标签 (e.g. '错误: xxx')"
   }
 }

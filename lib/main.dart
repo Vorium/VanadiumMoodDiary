@@ -197,12 +197,15 @@ Future<void> _bootstrap() async {
     await DatabaseMigration.migrateIfNeeded();
   } on MigrationException catch (e) {
     // MigrationException.message 已经是面向用户的友好文本
-    runApp(_MigrationFailedApp(message: e.message));
+    // v0.30 R95 task 53: 改用 errorMessage 参数 (build 内 l10n 解析)
+    runApp(_MigrationFailedApp(errorMessage: e.message));
     return;
   } catch (e, st) {
     piiSafeLog('Main', '⚠️ 数据库迁移失败：$e\n$st');
     // N31 fix: 给用户友好消息，详细错只 log
-    runApp(const _MigrationFailedApp(message: '无法初始化本地数据'));
+    // v0.30 R95 (sub-spec 7 task 53): 改用 _MigrationFailedApp.errorMessage
+    // 模式, build 内 l10n 解析, 不在 bootstrap 阶段硬编码字符串
+    runApp(_MigrationFailedApp(errorMessage: e.toString()));
     return;
   }
 
@@ -257,6 +260,8 @@ Future<bool?> _showMigrationConfirmDialog(
     // v0.22 round 31 (sp-en P0-4): 之前降级返 `true` 会**自动确认删旧数据**，
     // race 时用户没看到 dialog 数据就丢了。改成降级返 `false`（保守拒绝），
     // 触发 caller 的 `_MigrationAbortedApp` abort UI，用户点"重试"再走一次。
+    // v0.30 R95 task 53: 内部降级消息仍走 piiSafeLog (dev-only log, 跟
+    // l10n 路径分离, 故意不外露)
     piiSafeLog(
       'Main',
       '⚠️ migration dialog: navigator context 仍为 null，降级拒绝（保守）',
@@ -396,9 +401,15 @@ class _MigrationAbortedApp extends StatelessWidget {
 /// **v0.24 round 45 (P0 fix)**: 之前 hardcode 中文，en 模式用户看到中文。
 /// 改成走 l10n，跟 [_MigrationAbortedApp] 同样模式（顶层 fallback MaterialApp
 /// + `AppLocalizations.of(context)`，由 MaterialApp 自动注入 Localizations）。
+///
+/// **v0.30 R95 (sub-spec 7 task 53)**: 内部 fallback 文本 (无法初始化本地数据
+/// / 启动上下文尚未就绪) 走 ARB, 不在 bootstrap 阶段硬编码。`errorMessage` 是
+/// 内部异常 (脱敏后), 用 l10n.migrationFailedFooter(error) 拼到 footer 区域。
 class _MigrationFailedApp extends StatelessWidget {
-  final String message;
-  const _MigrationFailedApp({required this.message});
+  /// 内部异常文本 (脱敏后), 走 l10n.migrationFailedFooter 拼到 footer
+  final String errorMessage;
+
+  const _MigrationFailedApp({required this.errorMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -428,8 +439,16 @@ class _MigrationFailedApp extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+                // v0.30 R95 task 53: 内部兜底文案走 ARB, 不再硬编码 "无法初始化本地数据"
+                // (R45 之前的硬编码 en 模式用户看到中文)
                 Text(
-                  l10n.migrationFailedBody,
+                  l10n.migrationFailedInitData,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                // v0.30 R95 task 53: 可操作提示
+                Text(
+                  l10n.migrationFailedActionHint,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -453,7 +472,9 @@ class _MigrationFailedApp extends StatelessWidget {
           child: Padding(
             padding: AppTokens.edgeInsetsSm,
             child: Text(
-              message,
+              // v0.30 R95 task 53: footer 走 l10n.migrationFailedFooter
+              // ({error} placeholder 拼脱敏后的 errorMessage)
+              l10n.migrationFailedFooter(errorMessage),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppTokens.fontSizeCaption,
