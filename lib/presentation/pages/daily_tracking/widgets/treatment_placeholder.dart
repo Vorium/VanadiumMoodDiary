@@ -12,10 +12,13 @@
 // entry dialog。TreatmentEntryDialog 留 v0.31+ (跟 medication picker 整合)。
 //
 // 4 层架构: presentation/pages/daily_tracking/widgets/, 0 跨 feature import。
+//
+// v0.30 R91 Task 7: i18n — 替换 hardcoded 中文 placeholder 走 l10n
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -30,6 +33,7 @@ class TreatmentPlaceholderPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(treatmentEntriesProvider);
 
     return Column(
@@ -50,10 +54,10 @@ class TreatmentPlaceholderPage extends ConsumerWidget {
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, st) => Center(child: Text('加载失败: $e')),
             data: (entries) => entries.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.medical_services_outlined,
-                    title: '暂无治疗记录',
-                    subtitle: 'R91 整合入口页兜底, v0.31+ 加治疗录入',
+                    title: l10n.treatmentNoData,
+                    subtitle: l10n.treatmentHint,
                   )
                 : ListView.builder(
                     itemCount: entries.length,
@@ -70,7 +74,7 @@ class TreatmentPlaceholderPage extends ConsumerWidget {
                             color: AppTokens.primaryColor(context),
                           ),
                           title: Text(
-                            '${e.treatmentType} · ${e.description}',
+                            l10n.treatmentLast(e.treatmentType, e.description),
                             style: AppTokens.textStyleLabelStrong(context),
                           ),
                           subtitle: Text(

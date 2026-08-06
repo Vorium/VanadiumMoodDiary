@@ -56,7 +56,10 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                   children: [
                     _FabButton(
                       icon: Icons.psychology_outlined,
-                      label: l10n.homeFabAssessment,
+                      // v0.30 R91 Task 7: FAB label 改 dailyTrackingFab
+                      // ("全部趋势") — 跟 FAB 跳 /daily-tracking 整合入口
+                      // 保持一致 (原 homeFabAssessment "心情测试" 已过时).
+                      label: l10n.dailyTrackingFab,
                       onTap: () {
                         setState(() => _expanded = false);
                         // v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口):

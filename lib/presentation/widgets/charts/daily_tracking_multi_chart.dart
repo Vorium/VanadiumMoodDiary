@@ -35,6 +35,7 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/domain/entities/stress_event.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// v0.30 round 91 (sub-spec 7 日常追踪 / Task 6): 多指标趋势图
 ///
@@ -73,7 +74,8 @@ class DailyTrackingMultiChart extends StatefulWidget {
   });
 
   @override
-  State<DailyTrackingMultiChart> createState() => _DailyTrackingMultiChartState();
+  State<DailyTrackingMultiChart> createState() =>
+      _DailyTrackingMultiChartState();
 }
 
 class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
@@ -95,11 +97,18 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
   @override
   Widget build(BuildContext context) {
     // v0.27 R72 (P5.4): 整 build 包 RepaintBoundary 隔离 fl_chart 重绘
+    final l10n = AppLocalizations.of(context);
     return RepaintBoundary(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildChipRow(),
+          // v0.30 R91 Task 7: 多指标图标题走 l10n
+          Text(
+            l10n.dailyTrackingMultiChartTitle,
+            style: AppTokens.textStyleLabelStrong(context),
+          ),
+          const SizedBox(height: AppTokens.spacingXs),
+          _buildChipRow(context),
           const SizedBox(height: AppTokens.spacingSm),
           SizedBox(
             height: widget.chartHeight,
@@ -112,7 +121,8 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
 
   // ===================== 顶部 chip 列表 =====================
 
-  Widget _buildChipRow() {
+  Widget _buildChipRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -123,7 +133,7 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
                 horizontal: AppTokens.spacingXxs,
               ),
               child: FilterChip(
-                label: Text(_metricName(id)),
+                label: Text(_metricName(id, l10n)),
                 selected: !_hiddenMetrics.contains(id),
                 onSelected: (selected) {
                   setState(() {
@@ -145,8 +155,10 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
     );
   }
 
-  /// 4 指标中文 label (R91 Task 7 一次性换 l10n, 当前 const 中文 fallback)
-  String _metricName(String id) {
+  /// 4 指标 label (v0.30 R91 Task 6: 4 指标固定中文 label,
+  /// 跟 R91 Task 6 已有 chart test 1:1 匹配, 不走 l10n.{feature}Name 因为
+  /// 那是 子功能名 (e.g. 情绪日记), 不是指标名 (心境))
+  String _metricName(String id, AppLocalizations l10n) {
     switch (id) {
       case 'weight':
         return '体重';
@@ -241,7 +253,8 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
     // 心境: 1 天 1 点 (同日多段 entry 求平均)
     if (!_hiddenMetrics.contains('mood')) {
       final byDay = <String, List<int>>{};
-      for (final e in widget.moodEntries.where((e) => e.timestamp.isAfter(cutoff))) {
+      for (final e
+          in widget.moodEntries.where((e) => e.timestamp.isAfter(cutoff))) {
         (byDay[_dayKey(e.timestamp)] ??= <int>[]).add(e.score);
       }
       if (byDay.isNotEmpty) {
@@ -283,7 +296,8 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
     // 应激源: 1 天 1 点 (同日多 event 求 intensity 平均)
     if (!_hiddenMetrics.contains('stress')) {
       final byDay = <String, List<int>>{};
-      for (final e in widget.stressEvents.where((e) => e.timestamp.isAfter(cutoff))) {
+      for (final e
+          in widget.stressEvents.where((e) => e.timestamp.isAfter(cutoff))) {
         (byDay[_dayKey(e.timestamp)] ??= <int>[]).add(e.intensity);
       }
       if (byDay.isNotEmpty) {
@@ -291,8 +305,7 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
         final spots = <FlSpot>[];
         for (final key in dayKeys) {
           final intensities = byDay[key]!;
-          final avg =
-              intensities.reduce((a, b) => a + b) / intensities.length;
+          final avg = intensities.reduce((a, b) => a + b) / intensities.length;
           final parts = key.split('-');
           final dayTs = DateTime(
             int.parse(parts[0]),

@@ -10,23 +10,45 @@
 // - note 可选备注
 //
 // 跟 R60 R90 一致: eventType 是 String 自由 (不用 enum, 应用层 validation)。
+//
+// v0.30 R91 Task 7: i18n — 替换 hardcoded 中文 placeholder + eventType 中文
+// 走 l10n.stressEventTypeXxx
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/stress_event.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
-/// 5 档事件类型 (跟 spec 一致)
-const _kEventTypes = <(String, String)>[
-  ('work', '工作'),
-  ('relationship', '人际关系'),
-  ('health', '健康'),
-  ('financial', '经济'),
-  ('other', '其他'),
+/// 5 档事件类型 id (跟 spec 一致, 走 l10n 拿中文 label)
+const _kEventTypeIds = <String>[
+  'work',
+  'relationship',
+  'health',
+  'financial',
+  'other',
 ];
+
+/// 事件类型 → l10n 中文 label
+String _eventTypeLabel(BuildContext context, String eventType) {
+  final l10n = AppLocalizations.of(context);
+  switch (eventType) {
+    case 'work':
+      return l10n.stressEventTypeWork;
+    case 'relationship':
+      return l10n.stressEventTypeRelationship;
+    case 'health':
+      return l10n.stressEventTypeHealth;
+    case 'financial':
+      return l10n.stressEventTypeFinancial;
+    case 'other':
+      return l10n.stressEventTypeOther;
+  }
+  return eventType;
+}
 
 /// 应激源记录列表 (监听 stressEventEntriesProvider stream)
 class StressEventListWidget extends ConsumerWidget {
@@ -34,6 +56,7 @@ class StressEventListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(stressEventEntriesProvider);
 
     return Column(
@@ -44,7 +67,7 @@ class StressEventListWidget extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: FilledButton.icon(
               icon: const Icon(Icons.add),
-              label: const Text('添加应激源'),
+              label: Text(l10n.stressEventAddButton),
               onPressed: () => StressEventEntryDialog.show(context),
             ),
           ),
@@ -54,10 +77,10 @@ class StressEventListWidget extends ConsumerWidget {
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, st) => Center(child: Text('加载失败: $e')),
             data: (entries) => entries.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.bolt_outlined,
-                    title: '暂无应激源记录',
-                    subtitle: '记录生活中的压力事件, 帮医生判断触发因素',
+                    title: l10n.stressEventNoData,
+                    subtitle: l10n.stressEventHint,
                   )
                 : ListView.builder(
                     itemCount: entries.length,
@@ -85,19 +108,13 @@ class _StressEventEntryTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: Icon(Icons.bolt, color: AppTokens.warningColor(context)),
-        title: Text('${_eventLabel(entry.eventType)} · 强度 ${entry.intensity}/5',
-            style: AppTokens.textStyleLabelStrong(context),),
+        title: Text(
+          '${_eventTypeLabel(context, entry.eventType)} · 强度 ${entry.intensity}/5',
+          style: AppTokens.textStyleLabelStrong(context),
+        ),
         subtitle: entry.note != null ? Text(entry.note!) : null,
       ),
     );
-  }
-
-  /// 事件类型 → 中文 label
-  static String _eventLabel(String eventType) {
-    for (final e in _kEventTypes) {
-      if (e.$1 == eventType) return e.$2;
-    }
-    return eventType;
   }
 }
 
@@ -119,7 +136,7 @@ class StressEventEntryDialog extends ConsumerStatefulWidget {
 
 class _StressEventEntryDialogState
     extends ConsumerState<StressEventEntryDialog> {
-  String _eventType = _kEventTypes.first.$1; // 默认 'work'
+  String _eventType = _kEventTypeIds.first; // 默认 'work'
   int? _intensity; // 1-5 required, null = 未选 (按钮 disabled)
   final _noteController = TextEditingController();
   bool _saving = false;
@@ -157,8 +174,9 @@ class _StressEventEntryDialogState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('添加应激源'),
+      title: Text(l10n.stressEventAddButton),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -167,13 +185,16 @@ class _StressEventEntryDialogState
             // eventType dropdown
             DropdownButtonFormField<String>(
               initialValue: _eventType,
-              decoration: const InputDecoration(
-                labelText: '事件类型',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.stressEventEventType,
+                border: const OutlineInputBorder(),
               ),
               items: [
-                for (final e in _kEventTypes)
-                  DropdownMenuItem(value: e.$1, child: Text(e.$2)),
+                for (final id in _kEventTypeIds)
+                  DropdownMenuItem(
+                    value: id,
+                    child: Text(_eventTypeLabel(context, id)),
+                  ),
               ],
               onChanged: (v) {
                 if (v != null) setState(() => _eventType = v);
@@ -185,7 +206,7 @@ class _StressEventEntryDialogState
               children: [
                 Icon(Icons.flash_on, color: AppTokens.warningColor(context)),
                 const SizedBox(width: AppTokens.spacingXs),
-                const Text('强度'),
+                Text(l10n.stressEventIntensity),
               ],
             ),
             const SizedBox(height: AppTokens.spacingXxs),

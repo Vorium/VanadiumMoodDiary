@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/data/repositories/daily_tracking/weight_repository_impl.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/weight_widgets.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -80,6 +81,10 @@ void main() {
         userProfileProvider.overrideWith((ref) => Stream.value(null)),
       ],
       child: const MaterialApp(
+        // v0.30 R91 Task 7: widget 用 l10n.weightXxx, 测试需要 locale
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale('zh'),
         home: Scaffold(body: SafeArea(child: WeightListWidget())),
       ),
     );

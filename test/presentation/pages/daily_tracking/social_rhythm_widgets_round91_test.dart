@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/data/repositories/daily_tracking/social_rhythm_repository_impl.dart';
 import 'package:chroniccare/domain/entities/social_rhythm_entry.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/social_rhythm_widgets.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 
@@ -83,6 +84,10 @@ void main() {
             (ref) => ref.watch(socialRhythmRepositoryProvider).watchAll(),),
       ],
       child: const MaterialApp(
+        // v0.30 R91 Task 7: widget 用 l10n.socialRhythmXxx, 测试需要 locale
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale('zh'),
         home: Scaffold(body: SafeArea(child: SocialRhythmListWidget())),
       ),
     );

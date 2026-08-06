@@ -75,7 +75,7 @@ class MoodPeriodAggregatorChart extends StatelessWidget {
           // 柱状图主体
           SizedBox(
             height: chartHeight,
-            child: BarChart(_buildBarChartData(context, aggregates)),
+            child: BarChart(_buildBarChartData(context, l10n, aggregates)),
           ),
 
           // 底部: 4 段 count caption (用户知道样本量)
@@ -90,6 +90,7 @@ class MoodPeriodAggregatorChart extends StatelessWidget {
 
   BarChartData _buildBarChartData(
     BuildContext context,
+    AppLocalizations l10n,
     Map<String, PeriodAggregate> aggregates,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -110,7 +111,8 @@ class MoodPeriodAggregatorChart extends StatelessWidget {
               // 4 柱按 period 顺序给 4 个主题色 (m3 调色板顺序, 跟 R90
               // AssessmentColorPalette 4 量表配色思路一致; Task 6 多指标
               // 图会扩成 4 指标色, 本 task 暂时 4 个 primary tint)
-              color: count == 0 ? colorScheme.outlineVariant : colorScheme.primary,
+              color:
+                  count == 0 ? colorScheme.outlineVariant : colorScheme.primary,
               borderRadius: BorderRadius.circular(AppTokens.radiusCellLg),
             ),
           ],
@@ -128,8 +130,7 @@ class MoodPeriodAggregatorChart extends StatelessWidget {
       titlesData: FlTitlesData(
         rightTitles:
             const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles:
-            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
@@ -151,7 +152,7 @@ class MoodPeriodAggregatorChart extends StatelessWidget {
               }
               final p = MoodPeriod.fourPeriods[idx];
               return Text(
-                _periodShortLabel(p),
+                _periodShortLabel(p, l10n),
                 style: AppTokens.textStyleMicro(context),
               );
             },
@@ -167,11 +168,12 @@ class MoodPeriodAggregatorChart extends StatelessWidget {
     BuildContext context,
     Map<String, PeriodAggregate> aggregates,
   ) {
+    final l10n = AppLocalizations.of(context);
     final spans = <InlineSpan>[];
     for (int i = 0; i < MoodPeriod.fourPeriods.length; i++) {
       final p = MoodPeriod.fourPeriods[i];
       final count = aggregates[p]?.count ?? 0;
-      spans.add(TextSpan(text: _periodShortLabel(p)));
+      spans.add(TextSpan(text: _periodShortLabel(p, l10n)));
       spans.add(
         TextSpan(
           text: ' $count',
@@ -192,20 +194,17 @@ class MoodPeriodAggregatorChart extends StatelessWidget {
     );
   }
 
-  /// 短标签 (跟 chart 底部 X 轴 label 同步)
-  String _periodShortLabel(String period) {
-    // 用 l10n 拿短 label — 跟 moodPeriodXxx 对齐
-    // 不用 context (build 已传), 走 AppLocalizations.of(context) 在 build 内
-    // 这里只 string fallback (跟 R13 MonthlyChart 同款 pattern)
+  /// 短标签 (v0.30 R91 Task 7: 走 l10n, 用 moodPeriodXxx 已存在 key)
+  String _periodShortLabel(String period, AppLocalizations l10n) {
     switch (period) {
       case MoodPeriod.morning:
-        return '早';
+        return l10n.moodPeriodMorning;
       case MoodPeriod.noon:
-        return '中';
+        return l10n.moodPeriodNoon;
       case MoodPeriod.evening:
-        return '晚';
+        return l10n.moodPeriodEvening;
       case MoodPeriod.night:
-        return '夜';
+        return l10n.moodPeriodNight;
     }
     return period;
   }

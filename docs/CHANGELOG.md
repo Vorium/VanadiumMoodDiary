@@ -2,6 +2,45 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-05 (R91 — sub-spec 7 i18n: 73 ARB keys (7 子功能 + 整合入口 + period + 类型 + regularity) + 3 lang + 5 widget 走 l10n + CHANGELOG R91)
+
+> R91 Task 7 目标: 把 R91 Task 1-6 实施的 7 子功能 UI (sleep / social_rhythm /
+> stress_event / weight / anxiety_agitation / treatment) + 整合入口页
+> (daily_tracking_page + daily_tracking_card) + 多指标图
+> (daily_tracking_multi_chart) 走完整 i18n 化。Task 1-5 已经把 6 新表 + DAO +
+> 整合入口 + 子功能 UI 都接好了, 但 placeholder 仍是 hardcoded 中文, 本 task
+> 一次性 wire 到 l10n。
+>
+> **1 task** (1 commit, +0 新 test, 4 widget test 改 l10n 接入):
+> - Task 7: 73 ARB keys (整合入口 5 + 7 子功能 56 + period 5 + treatmentType 4 +
+>   stressEventType 5 + regularity 5 + 卡片状态 2 - 12 unused orphan - 1
+>   homeFabAssessment) × 3 lang (zh/en/zh_Hant) + `daily_tracking_page` /
+>   `daily_tracking_card` / `daily_tracking_multi_chart` / `sleep_widgets` /
+>   `social_rhythm_widgets` / `stress_event_widgets` / `weight_widgets` /
+>   `anxiety_agitation_widgets` / `treatment_placeholder` /
+>   `mood_period_aggregator_chart` / `home_fab_toolbar` 替换 hardcoded 中文
+>   placeholder 走 l10n + 4 widget test 改 l10n locale 接入
+>
+> **架构边界**:
+> - 题目全文 (7 子功能 6+3 字段) 留 v1.0 (跟 R78 R90 一致), 走 const class 兜底中文
+> - 4 widget test 改 l10n locale 接入 (MaterialApp localizationsDelegates +
+>   supportedLocales + locale: Locale('zh'))
+> - 复用 R60 R90 check_zh_hant_consistency 守门员 (OpenCC s2tw 校验繁简一致)
+> - 复用 R60 R90 check_orphan_arb_keys 守门员 (orphan = 0 / 0 / 0)
+> - homeFabAssessment 移除 (旧 FAB label "心情测试", R91 改 dailyTrackingFab
+>   "全部趋势" 跟 FAB 跳 /daily-tracking 整合入口保持一致)
+>
+> **测试 evidence**:
+> - 1617/1617 pass (4 widget test 改 l10n locale 后 pass, 0 new test)
+> - 16 guards 全绿 (15 python + 1 dart)
+> - 0 analyze error / 0 warning (18 pre-existing info-level: deprecated RadioListTile
+>   + trailing comma in 4 new test files)
+> - 0 gen-l10n 误删 (R88 known regression 守门: app_zh.arb head: 928 → cur: 1000
+>   +72 keys 全新增, 0 删除 ARB 误删)
+> - flutter pub get 触发生成 4 dart file (app_localizations.dart +
+>   app_localizations_en.dart + app_localizations_zh.dart +
+>   app_localizations_zh_Hant 在 app_localizations_zh.dart 内), 0 keys 丢失
+
 ## [0.30.0] - 2026-08-05 (R91 — sub-spec 6 fix: 4 Critical + 3 Important review issues)
 
 > R91 目标: 修 sub-spec 6 R90 task 1-6 final whole-branch review 标出的

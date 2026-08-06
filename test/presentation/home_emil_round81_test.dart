@@ -78,7 +78,9 @@ void main() {
       expect(find.byIcon(Icons.close), findsNothing,
           reason: '初始收起不应该显示 close icon',);
       // 4 工具按钮 label 收起时不可见 (AnimatedSize 高度=0)
-      expect(find.text('心情测试'), findsNothing, reason: '收起时 4 工具按钮隐藏');
+      // v0.30 R91 Task 7: FAB label 改 dailyTrackingFab "全部趋势" (原 homeFabAssessment
+      // "心情测试" 已过时 — 跟 FAB 跳 /daily-tracking 整合入口保持一致)
+      expect(find.text('全部趋势'), findsNothing, reason: '收起时 4 工具按钮隐藏');
       expect(find.text('心情树洞'), findsNothing);
       expect(find.text('紧急热线'), findsNothing);
       expect(find.text('回到顶端'), findsNothing);
@@ -90,7 +92,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
       // 展开状态: 4 工具按钮可见
-      expect(find.text('心情测试'), findsOneWidget, reason: '展开后心情测试工具按钮可见');
+      expect(find.text('全部趋势'), findsOneWidget, reason: '展开后全部趋势工具按钮可见');
       expect(find.text('心情树洞'), findsOneWidget);
       expect(find.text('紧急热线'), findsOneWidget);
       expect(find.text('回到顶端'), findsOneWidget);
@@ -105,11 +107,11 @@ void main() {
       // 展开
       await tester.tap(find.byIcon(Icons.menu));
       await tester.pumpAndSettle();
-      expect(find.text('心情测试'), findsOneWidget);
+      expect(find.text('全部趋势'), findsOneWidget);
       // 收回
       await tester.tap(find.byIcon(Icons.close));
       await tester.pumpAndSettle();
-      expect(find.text('心情测试'), findsNothing, reason: '收回后 4 工具按钮隐藏');
+      expect(find.text('全部趋势'), findsNothing, reason: '收回后 4 工具按钮隐藏');
       expect(find.byIcon(Icons.menu), findsOneWidget,
           reason: '收回后主 FAB 变 menu icon',);
     });

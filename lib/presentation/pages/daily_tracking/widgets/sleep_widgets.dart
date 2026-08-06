@@ -13,12 +13,15 @@
 // 复用 R60 R90 calculator 模式:
 // - SleepCalculator.durationMin(bedtime, wakeTime) 算跨午夜时长
 // - 跟 daily_tracking_providers.sleepRepositoryProvider.add() 写库
+//
+// v0.30 R91 Task 7: i18n — 替换 hardcoded 中文 placeholder 走 l10n
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/domain/logic/sleep_calculator.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -34,6 +37,7 @@ class SleepListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(sleepEntriesProvider);
 
     return Column(
@@ -45,7 +49,7 @@ class SleepListWidget extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: FilledButton.icon(
               icon: const Icon(Icons.add),
-              label: const Text('添加睡眠记录'),
+              label: Text(l10n.sleepAddButton),
               onPressed: () => SleepEntryDialog.show(context),
             ),
           ),
@@ -56,10 +60,10 @@ class SleepListWidget extends ConsumerWidget {
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, st) => Center(child: Text('加载失败: $e')),
             data: (entries) => entries.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.bedtime_outlined,
-                    title: '暂无睡眠记录',
-                    subtitle: '点击右上角添加你的第一条睡眠记录',
+                    title: l10n.sleepNoData,
+                    subtitle: l10n.sleepHint,
                   )
                 : ListView.builder(
                     itemCount: entries.length,
@@ -80,6 +84,7 @@ class _SleepEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: AppTokens.spacingSm,
@@ -87,10 +92,12 @@ class _SleepEntryTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: Icon(Icons.bedtime, color: AppTokens.primaryColor(context)),
-        title: Text(entry.durationLabel,
-            style: AppTokens.textStyleLabelStrong(context),),
+        title: Text(
+          entry.durationLabel,
+          style: AppTokens.textStyleLabelStrong(context),
+        ),
         subtitle: Text(
-          '入睡 ${_fmt(entry.bedtime)} · 起床 ${_fmt(entry.wakeTime)}'
+          '${l10n.sleepBedtime(_fmt(entry.bedtime))} · ${l10n.sleepWakeTime(_fmt(entry.wakeTime))}'
           '${entry.hasRegularityScore ? ' · 规律 ${entry.regularityScore}/5' : ''}'
           '${entry.note != null ? ' · ${entry.note}' : ''}',
         ),
@@ -146,9 +153,19 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
     // 跨午夜: wakeTime hour < bedtime hour → +1 day
     final wakeTime = _wakeTime.hour >= _bedtime.hour
         ? DateTime(
-            now.year, now.month, now.day, _wakeTime.hour, _wakeTime.minute,)
+            now.year,
+            now.month,
+            now.day,
+            _wakeTime.hour,
+            _wakeTime.minute,
+          )
         : DateTime(
-            now.year, now.month, now.day + 1, _wakeTime.hour, _wakeTime.minute,);
+            now.year,
+            now.month,
+            now.day + 1,
+            _wakeTime.hour,
+            _wakeTime.minute,
+          );
     return SleepCalculator.durationMin(bedtime, wakeTime);
   }
 
@@ -178,18 +195,50 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
   String _fmtTime(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
+  /// regularity 1-5 → l10n 中文 label
+  String _regularityLabel(int score, AppLocalizations l10n) {
+    switch (score) {
+      case 1:
+        return l10n.regularityVeryIrregular;
+      case 2:
+        return l10n.regularityIrregular;
+      case 3:
+        return l10n.regularityNormal;
+      case 4:
+        return l10n.regularityRegular;
+      case 5:
+        return l10n.regularityVeryRegular;
+    }
+    return '$score';
+  }
+
   Future<void> _save() async {
     if (_saving) return;
     setState(() => _saving = true);
     try {
       final now = DateTime.now();
       final bedtime = DateTime(
-          now.year, now.month, now.day, _bedtime.hour, _bedtime.minute,);
+        now.year,
+        now.month,
+        now.day,
+        _bedtime.hour,
+        _bedtime.minute,
+      );
       final wakeTime = _wakeTime.hour >= _bedtime.hour
           ? DateTime(
-              now.year, now.month, now.day, _wakeTime.hour, _wakeTime.minute,)
-          : DateTime(now.year, now.month, now.day + 1, _wakeTime.hour,
-              _wakeTime.minute,);
+              now.year,
+              now.month,
+              now.day,
+              _wakeTime.hour,
+              _wakeTime.minute,
+            )
+          : DateTime(
+              now.year,
+              now.month,
+              now.day + 1,
+              _wakeTime.hour,
+              _wakeTime.minute,
+            );
       await ref.read(sleepRepositoryProvider).add(
             date: DateTime(now.year, now.month, now.day),
             bedtime: bedtime,
@@ -213,8 +262,9 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('添加睡眠记录'),
+      title: Text(l10n.sleepAddButton),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -242,15 +292,19 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
                   const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
               child: Row(
                 children: [
-                  Icon(Icons.timelapse,
-                      color: AppTokens.textHintColor(context),),
+                  Icon(
+                    Icons.timelapse,
+                    color: AppTokens.textHintColor(context),
+                  ),
                   const SizedBox(width: AppTokens.spacingXs),
-                  Text('时长: $_durationLabel',
-                      style: AppTokens.textStyleLabelMedium(context),),
+                  Text(
+                    '时长: $_durationLabel',
+                    style: AppTokens.textStyleLabelMedium(context),
+                  ),
                 ],
               ),
             ),
-            // regularity 5 档评分
+            // regularity 5 档评分 (v0.30 R91 Task 7: chip label 走 l10n.regularity*)
             const SizedBox(height: AppTokens.spacingSm),
             Row(
               children: [
@@ -265,7 +319,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
               children: [
                 for (var i = 1; i <= 5; i++)
                   ChoiceChip(
-                    label: Text('$i'),
+                    label: Text(_regularityLabel(i, l10n)),
                     selected: _regularityScore == i,
                     onSelected: (_) {
                       setState(() {

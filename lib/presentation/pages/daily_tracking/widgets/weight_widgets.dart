@@ -11,12 +11,15 @@
 //
 // 跟 BmiCalculator 复用: calculator 接受 heightCm 参数 (应用层传),
 // 0 依赖 profile (跟 R91 BMI calculator 1:1)。
+//
+// v0.30 R91 Task 7: i18n — 替换 hardcoded 中文 placeholder 走 l10n
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/domain/logic/bmi_calculator.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
@@ -28,6 +31,7 @@ class WeightListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(weightEntriesProvider);
 
     return Column(
@@ -38,7 +42,7 @@ class WeightListWidget extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: FilledButton.icon(
               icon: const Icon(Icons.add),
-              label: const Text('添加体重记录'),
+              label: Text(l10n.weightAddButton),
               onPressed: () => WeightEntryDialog.show(context),
             ),
           ),
@@ -48,10 +52,10 @@ class WeightListWidget extends ConsumerWidget {
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, st) => Center(child: Text('加载失败: $e')),
             data: (entries) => entries.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.monitor_weight_outlined,
-                    title: '暂无体重记录',
-                    subtitle: '记录每天的体重, 帮医生判断生理状态',
+                    title: l10n.weightNoData,
+                    subtitle: l10n.weightHint,
                   )
                 : ListView.builder(
                     itemCount: entries.length,
@@ -72,8 +76,9 @@ class _WeightEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final bmiLabel = entry.bmi != null
-        ? ' · BMI ${entry.bmi!.toStringAsFixed(1)}'
+        ? ' · ${l10n.weightBmi(entry.bmi!.toStringAsFixed(1))}'
         : ' · 暂无 BMI';
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -83,8 +88,10 @@ class _WeightEntryTile extends StatelessWidget {
       child: ListTile(
         leading:
             Icon(Icons.monitor_weight, color: AppTokens.primaryColor(context)),
-        title: Text('${entry.weightKg.toStringAsFixed(1)}kg$bmiLabel',
-            style: AppTokens.textStyleLabelStrong(context),),
+        title: Text(
+          '${l10n.weightWeight(entry.weightKg.toStringAsFixed(1))}$bmiLabel',
+          style: AppTokens.textStyleLabelStrong(context),
+        ),
         subtitle: entry.note != null ? Text(entry.note!) : null,
       ),
     );
@@ -158,7 +165,9 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
             timestamp: DateTime.now(),
             weightKg: weight,
             bmi: BmiCalculator.compute(
-                weightKg: weight, heightCm: _getHeightCm(),),
+              weightKg: weight,
+              heightCm: _getHeightCm(),
+            ),
             note: _noteController.text.trim().isEmpty
                 ? null
                 : _noteController.text.trim(),
@@ -176,8 +185,9 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('添加体重记录'),
+      title: Text(l10n.weightAddButton),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

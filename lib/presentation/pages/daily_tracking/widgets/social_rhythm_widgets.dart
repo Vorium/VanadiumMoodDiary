@@ -10,11 +10,14 @@
 // - socialMin int (默认 0, 社交时长分钟)
 // - workMin int (默认 0, 工作时长分钟)
 // - exerciseMin int (默认 0, 运动时长分钟)
+//
+// v0.30 R91 Task 7: i18n — 替换 hardcoded 中文 placeholder 走 l10n
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/social_rhythm_entry.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -27,6 +30,7 @@ class SocialRhythmListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(socialRhythmEntriesProvider);
 
     return Column(
@@ -37,7 +41,7 @@ class SocialRhythmListWidget extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: FilledButton.icon(
               icon: const Icon(Icons.add),
-              label: const Text('添加社会节律'),
+              label: Text(l10n.socialRhythmAddButton),
               onPressed: () => SocialRhythmEntryDialog.show(context),
             ),
           ),
@@ -47,10 +51,10 @@ class SocialRhythmListWidget extends ConsumerWidget {
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, st) => Center(child: Text('加载失败: $e')),
             data: (entries) => entries.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.schedule_outlined,
-                    title: '暂无社会节律记录',
-                    subtitle: '记录每天的作息, 帮医生判断节律稳定性',
+                    title: l10n.socialRhythmNoData,
+                    subtitle: l10n.socialRhythmHint,
                   )
                 : ListView.builder(
                     itemCount: entries.length,
@@ -71,6 +75,7 @@ class _SocialRhythmEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: AppTokens.spacingSm,
@@ -78,10 +83,12 @@ class _SocialRhythmEntryTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: Icon(Icons.schedule, color: AppTokens.primaryColor(context)),
-        title: Text('起床 ${_fmt(entry.wakeTime)}',
-            style: AppTokens.textStyleLabelStrong(context),),
+        title: Text(
+          l10n.socialRhythmWakeTime(_fmt(entry.wakeTime)),
+          style: AppTokens.textStyleLabelStrong(context),
+        ),
         subtitle: Text(
-          '第一餐 ${_fmt(entry.firstMealTime)} · 最后一餐 ${_fmt(entry.lastMealTime)} · '
+          '${l10n.socialRhythmFirstMeal(_fmt(entry.firstMealTime))} · ${l10n.socialRhythmLastMeal(_fmt(entry.lastMealTime))} · '
           '社交 ${entry.socialMin}min · 工作 ${entry.workMin}min · 运动 ${entry.exerciseMin}min',
         ),
       ),
@@ -130,7 +137,9 @@ class _SocialRhythmEntryDialogState
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
   Future<void> _pickTime(
-      void Function(TimeOfDay) setter, TimeOfDay current,) async {
+    void Function(TimeOfDay) setter,
+    TimeOfDay current,
+  ) async {
     final picked = await showTimePicker(context: context, initialTime: current);
     if (picked != null) setState(() => setter(picked));
   }
@@ -146,12 +155,27 @@ class _SocialRhythmEntryDialogState
       final today = DateTime(now.year, now.month, now.day);
       await ref.read(socialRhythmRepositoryProvider).add(
             date: today,
-            wakeTime: DateTime(today.year, today.month, today.day,
-                _wakeTime.hour, _wakeTime.minute,),
-            firstMealTime: DateTime(today.year, today.month, today.day,
-                _firstMealTime.hour, _firstMealTime.minute,),
-            lastMealTime: DateTime(today.year, today.month, today.day,
-                _lastMealTime.hour, _lastMealTime.minute,),
+            wakeTime: DateTime(
+              today.year,
+              today.month,
+              today.day,
+              _wakeTime.hour,
+              _wakeTime.minute,
+            ),
+            firstMealTime: DateTime(
+              today.year,
+              today.month,
+              today.day,
+              _firstMealTime.hour,
+              _firstMealTime.minute,
+            ),
+            lastMealTime: DateTime(
+              today.year,
+              today.month,
+              today.day,
+              _lastMealTime.hour,
+              _lastMealTime.minute,
+            ),
             socialMin: social,
             workMin: work,
             exerciseMin: exercise,
@@ -170,7 +194,7 @@ class _SocialRhythmEntryDialogState
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('添加社会节律'),
+      title: Text(AppLocalizations.of(context).socialRhythmAddButton),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

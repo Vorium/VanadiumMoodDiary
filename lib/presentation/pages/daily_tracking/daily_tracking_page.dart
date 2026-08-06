@@ -24,6 +24,7 @@ import 'package:chroniccare/domain/entities/stress_event.dart';
 import 'package:chroniccare/domain/entities/treatment_entry.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/daily_tracking_card.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/mood_period_aggregator_chart.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
@@ -36,12 +37,14 @@ import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 /// 7 卡片 grid (1 情绪日记合并 + 5 子功能 + 1 治疗), 顶部心境 4 段图。
 /// 类比 R90 `/assessment-center` 中心化入口页模式。
 ///
-/// v0.30 R91 Task 7: title 走 l10n.dailyTrackingTitle (Task 7 一次性换 placeholder)。
+/// v0.30 R91 Task 7: title / 7 卡片 title / 7 lastValue / period short label
+/// 全部走 l10n。
 class DailyTrackingPage extends ConsumerWidget {
   const DailyTrackingPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     // 7 个 latestEntryProvider (跟 R90 latestEntryByScaleProvider 模式,
     // 但统一用 sync Provider<Entity?> 跟 mood 一致 — 见 daily_tracking_providers)
     final mood = ref.watch(latestMoodEntryProvider);
@@ -61,8 +64,7 @@ class DailyTrackingPage extends ConsumerWidget {
         ref.watch(stressEventEntriesProvider).value ?? const [];
 
     return PageScaffold(
-      // TODO (Task 7 i18n): title 走 l10n.dailyTrackingTitle
-      title: '日常追踪',
+      title: l10n.dailyTrackingTitle,
       child: ListView(
         padding: const EdgeInsets.all(AppTokens.spacingMd),
         children: [
@@ -122,49 +124,57 @@ class DailyTrackingPage extends ConsumerWidget {
     required TreatmentEntryEntity? treatment,
     required WeightEntryEntity? weight,
   }) {
+    final l10n = AppLocalizations.of(context);
     // i 派发 7 子功能 (顺序固定, 跟 brief 1:1)
     switch (i) {
       case 0:
         return DailyTrackingCard(
-          title: '情绪日记',
+          title: l10n.moodDiaryName,
+          description: l10n.moodDiaryShortDesc,
           route: '/mood-diary',
-          lastValue: _moodLastValue(mood),
+          lastValue: _moodLastValue(mood, l10n),
         );
       case 1:
         return DailyTrackingCard(
-          title: '焦虑急躁',
+          title: l10n.anxietyAgitationName,
+          description: l10n.anxietyAgitationShortDesc,
           route: '/anxiety-agitation',
-          lastValue: _anxietyLastValue(anxiety),
+          lastValue: _anxietyLastValue(anxiety, l10n),
         );
       case 2:
         return DailyTrackingCard(
-          title: '睡眠',
+          title: l10n.sleepName,
+          description: l10n.sleepShortDesc,
           route: '/sleep',
-          lastValue: _sleepLastValue(sleep),
+          lastValue: _sleepLastValue(sleep, l10n),
         );
       case 3:
         return DailyTrackingCard(
-          title: '社会节律',
+          title: l10n.socialRhythmName,
+          description: l10n.socialRhythmShortDesc,
           route: '/social-rhythm',
-          lastValue: _socialRhythmLastValue(socialRhythm),
+          lastValue: _socialRhythmLastValue(socialRhythm, l10n),
         );
       case 4:
         return DailyTrackingCard(
-          title: '应激源',
+          title: l10n.stressEventName,
+          description: l10n.stressEventShortDesc,
           route: '/stress-events',
-          lastValue: _stressLastValue(stress),
+          lastValue: _stressLastValue(stress, l10n),
         );
       case 5:
         return DailyTrackingCard(
-          title: '治疗',
+          title: l10n.treatmentName,
+          description: l10n.treatmentShortDesc,
           route: '/treatment',
-          lastValue: _treatmentLastValue(treatment),
+          lastValue: _treatmentLastValue(treatment, l10n),
         );
       case 6:
         return DailyTrackingCard(
-          title: '体重',
+          title: l10n.weightName,
+          description: l10n.weightShortDesc,
           route: '/weight',
-          lastValue: _weightLastValue(weight),
+          lastValue: _weightLastValue(weight, l10n),
         );
     }
     return const SizedBox.shrink();
@@ -172,64 +182,79 @@ class DailyTrackingPage extends ConsumerWidget {
 
   // ============== 7 子功能 lastValue format 辅助 ==============
 
-  String? _moodLastValue(MoodEntryEntity? e) {
+  String? _moodLastValue(MoodEntryEntity? e, AppLocalizations l10n) {
     if (e == null) return null;
-    // period 短 label: 走 l10n.moodPeriodXxx (Task 2 已加)
-    // period = null 当 unspecified
+    // v0.30 R91 Task 7: 走 l10n.moodDiaryLast 完整摘要 (time + score + period)
     final period = MoodPeriod.normalize(e.period);
-    final periodLabel = _periodShortLabel(period);
-    return '上次 ${e.score}/5${periodLabel.isNotEmpty ? ' ($periodLabel)' : ''}';
+    final periodLabel = _periodShortLabel(period, l10n);
+    if (periodLabel.isEmpty) {
+      return l10n.moodDiaryScore(e.score);
+    }
+    return l10n.moodDiaryLast(
+      l10n.dailyTrackingLastTime(l10n.cardStatusToday),
+      l10n.moodDiaryScore(e.score),
+      periodLabel,
+    );
   }
 
-  String? _anxietyLastValue(AnxietyAgitationEntryEntity? e) {
+  String? _anxietyLastValue(
+      AnxietyAgitationEntryEntity? e, AppLocalizations l10n,) {
     if (e == null) return null;
-    return '上次 焦虑 ${e.anxietyScore} / 急躁 ${e.agitationScore}';
+    return l10n.anxietyAgitationLast(e.anxietyScore, e.agitationScore);
   }
 
-  String? _sleepLastValue(SleepEntryEntity? e) {
+  String? _sleepLastValue(SleepEntryEntity? e, AppLocalizations l10n) {
     if (e == null) return null;
-    final reg = e.regularityScore != null ? ' · 规律 ${e.regularityScore}/5' : '';
-    return '上次 ${e.durationLabel}$reg';
+    if (e.regularityScore != null) {
+      return l10n.sleepLast(e.durationLabel, e.regularityScore!);
+    }
+    return e.durationLabel;
   }
 
-  String? _socialRhythmLastValue(SocialRhythmEntryEntity? e) {
+  String? _socialRhythmLastValue(
+      SocialRhythmEntryEntity? e, AppLocalizations l10n,) {
     if (e == null) return null;
     final socialH = (e.socialMin / 60).toStringAsFixed(0);
     final workH = (e.workMin / 60).toStringAsFixed(0);
-    return '上次 社交 ${socialH}h · 工作 ${workH}h';
+    return l10n.socialRhythmLast(
+      '${e.wakeTime.hour.toString().padLeft(2, '0')}:${e.wakeTime.minute.toString().padLeft(2, '0')}',
+      int.parse(socialH),
+      int.parse(workH),
+    );
   }
 
-  String? _stressLastValue(StressEventEntity? e) {
+  String? _stressLastValue(StressEventEntity? e, AppLocalizations l10n) {
     if (e == null) return null;
-    return '上次 强度 ${e.intensity}/5';
+    return l10n.stressEventLast(e.intensity);
   }
 
-  String? _treatmentLastValue(TreatmentEntryEntity? e) {
+  String? _treatmentLastValue(TreatmentEntryEntity? e, AppLocalizations l10n) {
     if (e == null) return null;
-    // R91 brief: 治疗类型 + 描述
-    return '上次 ${e.treatmentType} · ${e.description}';
+    return l10n.treatmentLast(e.treatmentType, e.description);
   }
 
-  String? _weightLastValue(WeightEntryEntity? e) {
+  String? _weightLastValue(WeightEntryEntity? e, AppLocalizations l10n) {
     if (e == null) return null;
-    final bmi = e.bmi != null ? ' · BMI ${e.bmi!.toStringAsFixed(1)}' : '';
-    return '上次 ${e.weightKg.toStringAsFixed(1)} kg$bmi';
+    final kg = e.weightKg.toStringAsFixed(1);
+    if (e.bmi != null) {
+      return l10n.weightLast(kg, e.bmi!.toStringAsFixed(1));
+    }
+    return l10n.weightWeight(kg);
   }
 
-  /// period 短 label 兜底 (跟 mood_period_aggregator_chart.dart _periodShortLabel
-  /// 1:1, 后续 Task 7 抽 l10n)
-  String _periodShortLabel(String period) {
-    // 暂用 const 中文 fallback (跟 chart 同款, 跨日由 AppRoot midnight timer
-    // refresh 触发; Task 7 一次性 ARB 替换)
+  /// period 短 label (走 l10n)
+  String _periodShortLabel(String period, AppLocalizations l10n) {
     switch (period) {
       case MoodPeriod.morning:
-        return '早';
+        return l10n.periodMorning;
       case MoodPeriod.noon:
-        return '中';
+        return l10n.periodNoon;
       case MoodPeriod.evening:
-        return '晚';
+        return l10n.periodEvening;
       case MoodPeriod.night:
-        return '夜';
+        return l10n.periodNight;
+      case MoodPeriod.unspecified:
+        return l10n.periodUnspecified;
     }
     return '';
   }

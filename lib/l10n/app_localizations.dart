@@ -4349,12 +4349,6 @@ abstract class AppLocalizations {
   /// **'今天感觉如何？'**
   String get homeQuickMoodTitle;
 
-  /// No description provided for @homeFabAssessment.
-  ///
-  /// In zh, this message translates to:
-  /// **'心情测试'**
-  String get homeFabAssessment;
-
   /// No description provided for @homeFabVent.
   ///
   /// In zh, this message translates to:
@@ -5668,6 +5662,444 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'重度精神病性症状, 强烈建议就医'**
   String get level2PsychosisSeveritySummary3;
+
+  /// v0.30 R91: 日常追踪整合入口页 title
+  ///
+  /// In zh, this message translates to:
+  /// **'日常追踪'**
+  String get dailyTrackingTitle;
+
+  /// v0.30 R91: 主页 FAB 跳日常追踪入口页时的提示
+  ///
+  /// In zh, this message translates to:
+  /// **'全部趋势'**
+  String get dailyTrackingFab;
+
+  /// v0.30 R91: 多指标趋势图标题
+  ///
+  /// In zh, this message translates to:
+  /// **'近 30 天 4 指标'**
+  String get dailyTrackingMultiChartTitle;
+
+  /// v0.30 R91: 卡片 lastValue 时间占位 (placeholder {time} 是 formatted date)
+  ///
+  /// In zh, this message translates to:
+  /// **'{time} 记录'**
+  String dailyTrackingLastTime(String time);
+
+  /// v0.30 R91: 整合入口页卡片 CTA 按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'记录'**
+  String get dailyTrackingRecord;
+
+  /// v0.30 R91: 情绪日记 子功能名 (整合页 + 列表页)
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪日记'**
+  String get moodDiaryName;
+
+  /// v0.30 R91: 情绪日记 子功能简短描述 (卡片用)
+  ///
+  /// In zh, this message translates to:
+  /// **'心境 4 段 + score, 趋势分析'**
+  String get moodDiaryShortDesc;
+
+  /// v0.30 R91: 情绪日记 lastValue 摘要 (placeholder {score} 是 1-5)
+  ///
+  /// In zh, this message translates to:
+  /// **'心境 {score}/5'**
+  String moodDiaryScore(int score);
+
+  /// v0.30 R91: 情绪日记 整合卡片 lastValue 完整摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'{time} · {score} ({period})'**
+  String moodDiaryLast(String time, String score, String period);
+
+  /// v0.30 R91: 焦虑急躁 子功能名 (整合页 + 列表页)
+  ///
+  /// In zh, this message translates to:
+  /// **'焦虑急躁'**
+  String get anxietyAgitationName;
+
+  /// v0.30 R91: 焦虑急躁 子功能简短描述 (卡片用)
+  ///
+  /// In zh, this message translates to:
+  /// **'焦虑 + 急躁 双维度 5 档'**
+  String get anxietyAgitationShortDesc;
+
+  /// v0.30 R91: 焦虑急躁 提示 (对话框说明)
+  ///
+  /// In zh, this message translates to:
+  /// **'焦虑反向 1=严重 5=平静; 急躁正向 1=平静 5=极急'**
+  String get anxietyAgitationHint;
+
+  /// v0.30 R91: 焦虑急躁 列表页 添加按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'添加评估'**
+  String get anxietyAgitationAddButton;
+
+  /// v0.30 R91: 焦虑急躁 列表页 空状态
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无焦虑急躁记录'**
+  String get anxietyAgitationNoData;
+
+  /// v0.30 R91: 焦虑急躁 焦虑维度 lastValue 摘要 (placeholder {score} 是 1-5)
+  ///
+  /// In zh, this message translates to:
+  /// **'焦虑 {score}'**
+  String anxietyAgitationAnxietyScore(int score);
+
+  /// v0.30 R91: 焦虑急躁 急躁维度 lastValue 摘要 (placeholder {score} 是 1-5)
+  ///
+  /// In zh, this message translates to:
+  /// **'急躁 {score}'**
+  String anxietyAgitationAgitationScore(int score);
+
+  /// v0.30 R91: 焦虑急躁 整合卡片 lastValue 完整摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'焦虑 {anxiety} / 急躁 {agitation}'**
+  String anxietyAgitationLast(int anxiety, int agitation);
+
+  /// v0.30 R91: 睡眠 子功能名 (整合页 + 列表页)
+  ///
+  /// In zh, this message translates to:
+  /// **'睡眠'**
+  String get sleepName;
+
+  /// v0.30 R91: 睡眠 子功能简短描述 (卡片用)
+  ///
+  /// In zh, this message translates to:
+  /// **'入睡 + 时长 + 规律性'**
+  String get sleepShortDesc;
+
+  /// v0.30 R91: 睡眠 提示 (对话框 / 列表页说明)
+  ///
+  /// In zh, this message translates to:
+  /// **'记录每晚入睡 + 起床, 跨午夜自动算时长'**
+  String get sleepHint;
+
+  /// v0.30 R91: 睡眠 列表页 添加按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'添加睡眠记录'**
+  String get sleepAddButton;
+
+  /// v0.30 R91: 睡眠 列表页 空状态
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无睡眠记录'**
+  String get sleepNoData;
+
+  /// v0.30 R91: 睡眠 入睡时间 lastValue 摘要 (placeholder {time} 是 HH:mm)
+  ///
+  /// In zh, this message translates to:
+  /// **'入睡 {time}'**
+  String sleepBedtime(String time);
+
+  /// v0.30 R91: 睡眠 起床时间 lastValue 摘要 (placeholder {time} 是 HH:mm)
+  ///
+  /// In zh, this message translates to:
+  /// **'起床 {time}'**
+  String sleepWakeTime(String time);
+
+  /// v0.30 R91: 睡眠 整合卡片 lastValue 完整摘要 (duration 是 8h00min, regularity 是 1-5)
+  ///
+  /// In zh, this message translates to:
+  /// **'{duration} · 规律 {regularity}/5'**
+  String sleepLast(String duration, int regularity);
+
+  /// v0.30 R91: 社会节律 子功能名 (整合页 + 列表页)
+  ///
+  /// In zh, this message translates to:
+  /// **'社会节律'**
+  String get socialRhythmName;
+
+  /// v0.30 R91: 社会节律 子功能简短描述 (卡片用)
+  ///
+  /// In zh, this message translates to:
+  /// **'起床 + 第一餐 + 最后一餐 + 时长'**
+  String get socialRhythmShortDesc;
+
+  /// v0.30 R91: 社会节律 提示 (对话框 / 列表页说明)
+  ///
+  /// In zh, this message translates to:
+  /// **'记录每天的作息, 帮医生判断节律稳定性'**
+  String get socialRhythmHint;
+
+  /// v0.30 R91: 社会节律 列表页 添加按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'添加社会节律'**
+  String get socialRhythmAddButton;
+
+  /// v0.30 R91: 社会节律 列表页 空状态
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无社会节律记录'**
+  String get socialRhythmNoData;
+
+  /// v0.30 R91: 社会节律 起床时间 lastValue 摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'起床 {time}'**
+  String socialRhythmWakeTime(String time);
+
+  /// v0.30 R91: 社会节律 第一餐 lastValue 摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'第一餐 {time}'**
+  String socialRhythmFirstMeal(String time);
+
+  /// v0.30 R91: 社会节律 最后一餐 lastValue 摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'最后一餐 {time}'**
+  String socialRhythmLastMeal(String time);
+
+  /// v0.30 R91: 社会节律 整合卡片 lastValue 完整摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'起床 {wake} · 社交 {social}h · 工作 {work}h'**
+  String socialRhythmLast(String wake, int social, int work);
+
+  /// v0.30 R91: 应激源 子功能名 (整合页 + 列表页)
+  ///
+  /// In zh, this message translates to:
+  /// **'应激源'**
+  String get stressEventName;
+
+  /// v0.30 R91: 应激源 子功能简短描述 (卡片用)
+  ///
+  /// In zh, this message translates to:
+  /// **'事件类型 + 强度评分'**
+  String get stressEventShortDesc;
+
+  /// v0.30 R91: 应激源 提示 (对话框 / 列表页说明)
+  ///
+  /// In zh, this message translates to:
+  /// **'记录生活中的压力事件, 帮医生判断触发因素'**
+  String get stressEventHint;
+
+  /// v0.30 R91: 应激源 列表页 添加按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'添加应激源'**
+  String get stressEventAddButton;
+
+  /// v0.30 R91: 应激源 列表页 空状态
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无应激源记录'**
+  String get stressEventNoData;
+
+  /// v0.30 R91: 应激源 事件类型 标签 (对话框 dropdown)
+  ///
+  /// In zh, this message translates to:
+  /// **'事件类型'**
+  String get stressEventEventType;
+
+  /// v0.30 R91: 应激源 强度评分 标签
+  ///
+  /// In zh, this message translates to:
+  /// **'强度'**
+  String get stressEventIntensity;
+
+  /// v0.30 R91: 应激源 整合卡片 lastValue 摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'强度 {intensity}/5'**
+  String stressEventLast(int intensity);
+
+  /// v0.30 R91: 治疗 子功能名 (整合页 + 列表页 placeholder)
+  ///
+  /// In zh, this message translates to:
+  /// **'治疗'**
+  String get treatmentName;
+
+  /// v0.30 R91: 治疗 子功能简短描述 (卡片用)
+  ///
+  /// In zh, this message translates to:
+  /// **'用药 / 咨询 / 物理治疗, 关联 medication'**
+  String get treatmentShortDesc;
+
+  /// v0.30 R91: 治疗 提示 (列表页说明)
+  ///
+  /// In zh, this message translates to:
+  /// **'治疗条目可关联 medication, 写入功能 v0.31+'**
+  String get treatmentHint;
+
+  /// v0.30 R91: 治疗 列表页 空状态
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无治疗记录'**
+  String get treatmentNoData;
+
+  /// v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)
+  ///
+  /// In zh, this message translates to:
+  /// **'治疗类型'**
+  String get treatmentType;
+
+  /// v0.30 R91: 治疗 整合卡片 lastValue 摘要
+  ///
+  /// In zh, this message translates to:
+  /// **'{type} · {description}'**
+  String treatmentLast(String type, String description);
+
+  /// v0.30 R91: 体重 子功能名 (整合页 + 列表页)
+  ///
+  /// In zh, this message translates to:
+  /// **'体重'**
+  String get weightName;
+
+  /// v0.30 R91: 体重 子功能简短描述 (卡片用)
+  ///
+  /// In zh, this message translates to:
+  /// **'体重 + BMI (需 profile.height)'**
+  String get weightShortDesc;
+
+  /// v0.30 R91: 体重 提示 (对话框 / 列表页说明)
+  ///
+  /// In zh, this message translates to:
+  /// **'记录每天的体重, 帮医生判断生理状态'**
+  String get weightHint;
+
+  /// v0.30 R91: 体重 列表页 添加按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'添加体重记录'**
+  String get weightAddButton;
+
+  /// v0.30 R91: 体重 列表页 空状态
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无体重记录'**
+  String get weightNoData;
+
+  /// v0.30 R91: 体重 lastValue 摘要 (placeholder {kg} 是 1 decimal)
+  ///
+  /// In zh, this message translates to:
+  /// **'体重 {kg} kg'**
+  String weightWeight(String kg);
+
+  /// v0.30 R91: 体重 BMI lastValue 摘要 (placeholder {bmi} 是 1 decimal)
+  ///
+  /// In zh, this message translates to:
+  /// **'BMI {bmi}'**
+  String weightBmi(String bmi);
+
+  /// v0.30 R91: 体重 整合卡片 lastValue 摘要 (bmi 可选)
+  ///
+  /// In zh, this message translates to:
+  /// **'{kg} kg · BMI {bmi}'**
+  String weightLast(String kg, String bmi);
+
+  /// v0.30 R91: 心境 period 早 (morning)
+  ///
+  /// In zh, this message translates to:
+  /// **'早'**
+  String get periodMorning;
+
+  /// v0.30 R91: 心境 period 中 (noon)
+  ///
+  /// In zh, this message translates to:
+  /// **'中'**
+  String get periodNoon;
+
+  /// v0.30 R91: 心境 period 晚 (evening)
+  ///
+  /// In zh, this message translates to:
+  /// **'晚'**
+  String get periodEvening;
+
+  /// v0.30 R91: 心境 period 夜 (night)
+  ///
+  /// In zh, this message translates to:
+  /// **'夜'**
+  String get periodNight;
+
+  /// v0.30 R91: 心境 period fallback (R91 老 entry 兼容)
+  ///
+  /// In zh, this message translates to:
+  /// **'未指定'**
+  String get periodUnspecified;
+
+  /// v0.30 R91: 应激源事件类型 1/5 工作
+  ///
+  /// In zh, this message translates to:
+  /// **'工作'**
+  String get stressEventTypeWork;
+
+  /// v0.30 R91: 应激源事件类型 2/5 关系
+  ///
+  /// In zh, this message translates to:
+  /// **'关系'**
+  String get stressEventTypeRelationship;
+
+  /// v0.30 R91: 应激源事件类型 3/5 健康
+  ///
+  /// In zh, this message translates to:
+  /// **'健康'**
+  String get stressEventTypeHealth;
+
+  /// v0.30 R91: 应激源事件类型 4/5 财务
+  ///
+  /// In zh, this message translates to:
+  /// **'财务'**
+  String get stressEventTypeFinancial;
+
+  /// v0.30 R91: 应激源事件类型 5/5 其他
+  ///
+  /// In zh, this message translates to:
+  /// **'其他'**
+  String get stressEventTypeOther;
+
+  /// v0.30 R91: regularity 1/5 很不规律
+  ///
+  /// In zh, this message translates to:
+  /// **'很不规律'**
+  String get regularityVeryIrregular;
+
+  /// v0.30 R91: regularity 2/5 不规律
+  ///
+  /// In zh, this message translates to:
+  /// **'不规律'**
+  String get regularityIrregular;
+
+  /// v0.30 R91: regularity 3/5 一般
+  ///
+  /// In zh, this message translates to:
+  /// **'一般'**
+  String get regularityNormal;
+
+  /// v0.30 R91: regularity 4/5 规律
+  ///
+  /// In zh, this message translates to:
+  /// **'规律'**
+  String get regularityRegular;
+
+  /// v0.30 R91: regularity 5/5 很规律
+  ///
+  /// In zh, this message translates to:
+  /// **'很规律'**
+  String get regularityVeryRegular;
+
+  /// v0.30 R91: 卡片 lastValue null 时 fallback
+  ///
+  /// In zh, this message translates to:
+  /// **'尚未记录'**
+  String get cardStatusNoData;
+
+  /// v0.30 R91: 卡片时间状态 今天
+  ///
+  /// In zh, this message translates to:
+  /// **'今天'**
+  String get cardStatusToday;
 }
 
 class _AppLocalizationsDelegate

@@ -9,11 +9,14 @@
 // - note 可选备注
 //
 // 跟 brief 一致: 2 score required, note optional。
+//
+// v0.30 R91 Task 7: i18n — 替换 hardcoded 中文 placeholder 走 l10n
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/anxiety_agitation_entry.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -24,6 +27,7 @@ class AnxietyAgitationListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final entriesAsync = ref.watch(anxietyAgitationEntriesProvider);
 
     return Column(
@@ -34,7 +38,7 @@ class AnxietyAgitationListWidget extends ConsumerWidget {
             alignment: Alignment.centerRight,
             child: FilledButton.icon(
               icon: const Icon(Icons.add),
-              label: const Text('添加评估'),
+              label: Text(l10n.anxietyAgitationAddButton),
               onPressed: () => AnxietyAgitationEntryDialog.show(context),
             ),
           ),
@@ -44,10 +48,10 @@ class AnxietyAgitationListWidget extends ConsumerWidget {
             loading: () => const LoadingSkeleton.fullScreen(),
             error: (e, st) => Center(child: Text('加载失败: $e')),
             data: (entries) => entries.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.psychology_outlined,
-                    title: '暂无焦虑急躁记录',
-                    subtitle: '快速评估当前状态, 帮医生判断情绪变化',
+                    title: l10n.anxietyAgitationNoData,
+                    subtitle: l10n.anxietyAgitationHint,
                   )
                 : ListView.builder(
                     itemCount: entries.length,
@@ -68,6 +72,7 @@ class _AnxietyAgitationEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: AppTokens.spacingSm,
@@ -75,8 +80,10 @@ class _AnxietyAgitationEntryTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: Icon(Icons.psychology, color: AppTokens.primaryColor(context)),
-        title: Text('焦虑 ${entry.anxietyScore} · 急躁 ${entry.agitationScore}',
-            style: AppTokens.textStyleLabelStrong(context),),
+        title: Text(
+          '${l10n.anxietyAgitationAnxietyScore(entry.anxietyScore)} · ${l10n.anxietyAgitationAgitationScore(entry.agitationScore)}',
+          style: AppTokens.textStyleLabelStrong(context),
+        ),
         subtitle: entry.note != null ? Text(entry.note!) : null,
       ),
     );
@@ -140,8 +147,9 @@ class _AnxietyAgitationEntryDialogState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: const Text('添加焦虑急躁评估'),
+      title: Text(l10n.anxietyAgitationAddButton),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -150,13 +158,17 @@ class _AnxietyAgitationEntryDialogState
             // 焦虑分数 1-5 (1=严重 5=平静)
             Row(
               children: [
-                Icon(Icons.psychology_outlined,
-                    color: AppTokens.primaryColor(context),),
+                Icon(
+                  Icons.psychology_outlined,
+                  color: AppTokens.primaryColor(context),
+                ),
                 const SizedBox(width: AppTokens.spacingXs),
                 const Text('焦虑分数'),
                 const SizedBox(width: AppTokens.spacingSm),
-                const Text('1=严重 5=平静',
-                    style: TextStyle(fontSize: AppTokens.fontSizeCaption),),
+                const Text(
+                  '1=严重 5=平静',
+                  style: TextStyle(fontSize: AppTokens.fontSizeCaption),
+                ),
               ],
             ),
             const SizedBox(height: AppTokens.spacingXxs),
@@ -181,8 +193,10 @@ class _AnxietyAgitationEntryDialogState
                 const SizedBox(width: AppTokens.spacingXs),
                 const Text('急躁分数'),
                 const SizedBox(width: AppTokens.spacingSm),
-                const Text('1=平静 5=极急',
-                    style: TextStyle(fontSize: AppTokens.fontSizeCaption),),
+                const Text(
+                  '1=平静 5=极急',
+                  style: TextStyle(fontSize: AppTokens.fontSizeCaption),
+                ),
               ],
             ),
             const SizedBox(height: AppTokens.spacingXxs),

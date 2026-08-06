@@ -2373,9 +2373,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeQuickMoodTitle => '今天感觉如何？';
 
   @override
-  String get homeFabAssessment => '心情测试';
-
-  @override
   String get homeFabVent => '心情树洞';
 
   @override
@@ -3046,6 +3043,261 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get level2PsychosisSeveritySummary3 => '重度精神病性症状, 强烈建议就医';
+
+  @override
+  String get dailyTrackingTitle => '日常追踪';
+
+  @override
+  String get dailyTrackingFab => '全部趋势';
+
+  @override
+  String get dailyTrackingMultiChartTitle => '近 30 天 4 指标';
+
+  @override
+  String dailyTrackingLastTime(String time) {
+    return '$time 记录';
+  }
+
+  @override
+  String get dailyTrackingRecord => '记录';
+
+  @override
+  String get moodDiaryName => '情绪日记';
+
+  @override
+  String get moodDiaryShortDesc => '心境 4 段 + score, 趋势分析';
+
+  @override
+  String moodDiaryScore(int score) {
+    return '心境 $score/5';
+  }
+
+  @override
+  String moodDiaryLast(String time, String score, String period) {
+    return '$time · $score ($period)';
+  }
+
+  @override
+  String get anxietyAgitationName => '焦虑急躁';
+
+  @override
+  String get anxietyAgitationShortDesc => '焦虑 + 急躁 双维度 5 档';
+
+  @override
+  String get anxietyAgitationHint => '焦虑反向 1=严重 5=平静; 急躁正向 1=平静 5=极急';
+
+  @override
+  String get anxietyAgitationAddButton => '添加评估';
+
+  @override
+  String get anxietyAgitationNoData => '暂无焦虑急躁记录';
+
+  @override
+  String anxietyAgitationAnxietyScore(int score) {
+    return '焦虑 $score';
+  }
+
+  @override
+  String anxietyAgitationAgitationScore(int score) {
+    return '急躁 $score';
+  }
+
+  @override
+  String anxietyAgitationLast(int anxiety, int agitation) {
+    return '焦虑 $anxiety / 急躁 $agitation';
+  }
+
+  @override
+  String get sleepName => '睡眠';
+
+  @override
+  String get sleepShortDesc => '入睡 + 时长 + 规律性';
+
+  @override
+  String get sleepHint => '记录每晚入睡 + 起床, 跨午夜自动算时长';
+
+  @override
+  String get sleepAddButton => '添加睡眠记录';
+
+  @override
+  String get sleepNoData => '暂无睡眠记录';
+
+  @override
+  String sleepBedtime(String time) {
+    return '入睡 $time';
+  }
+
+  @override
+  String sleepWakeTime(String time) {
+    return '起床 $time';
+  }
+
+  @override
+  String sleepLast(String duration, int regularity) {
+    return '$duration · 规律 $regularity/5';
+  }
+
+  @override
+  String get socialRhythmName => '社会节律';
+
+  @override
+  String get socialRhythmShortDesc => '起床 + 第一餐 + 最后一餐 + 时长';
+
+  @override
+  String get socialRhythmHint => '记录每天的作息, 帮医生判断节律稳定性';
+
+  @override
+  String get socialRhythmAddButton => '添加社会节律';
+
+  @override
+  String get socialRhythmNoData => '暂无社会节律记录';
+
+  @override
+  String socialRhythmWakeTime(String time) {
+    return '起床 $time';
+  }
+
+  @override
+  String socialRhythmFirstMeal(String time) {
+    return '第一餐 $time';
+  }
+
+  @override
+  String socialRhythmLastMeal(String time) {
+    return '最后一餐 $time';
+  }
+
+  @override
+  String socialRhythmLast(String wake, int social, int work) {
+    return '起床 $wake · 社交 ${social}h · 工作 ${work}h';
+  }
+
+  @override
+  String get stressEventName => '应激源';
+
+  @override
+  String get stressEventShortDesc => '事件类型 + 强度评分';
+
+  @override
+  String get stressEventHint => '记录生活中的压力事件, 帮医生判断触发因素';
+
+  @override
+  String get stressEventAddButton => '添加应激源';
+
+  @override
+  String get stressEventNoData => '暂无应激源记录';
+
+  @override
+  String get stressEventEventType => '事件类型';
+
+  @override
+  String get stressEventIntensity => '强度';
+
+  @override
+  String stressEventLast(int intensity) {
+    return '强度 $intensity/5';
+  }
+
+  @override
+  String get treatmentName => '治疗';
+
+  @override
+  String get treatmentShortDesc => '用药 / 咨询 / 物理治疗, 关联 medication';
+
+  @override
+  String get treatmentHint => '治疗条目可关联 medication, 写入功能 v0.31+';
+
+  @override
+  String get treatmentNoData => '暂无治疗记录';
+
+  @override
+  String get treatmentType => '治疗类型';
+
+  @override
+  String treatmentLast(String type, String description) {
+    return '$type · $description';
+  }
+
+  @override
+  String get weightName => '体重';
+
+  @override
+  String get weightShortDesc => '体重 + BMI (需 profile.height)';
+
+  @override
+  String get weightHint => '记录每天的体重, 帮医生判断生理状态';
+
+  @override
+  String get weightAddButton => '添加体重记录';
+
+  @override
+  String get weightNoData => '暂无体重记录';
+
+  @override
+  String weightWeight(String kg) {
+    return '体重 $kg kg';
+  }
+
+  @override
+  String weightBmi(String bmi) {
+    return 'BMI $bmi';
+  }
+
+  @override
+  String weightLast(String kg, String bmi) {
+    return '$kg kg · BMI $bmi';
+  }
+
+  @override
+  String get periodMorning => '早';
+
+  @override
+  String get periodNoon => '中';
+
+  @override
+  String get periodEvening => '晚';
+
+  @override
+  String get periodNight => '夜';
+
+  @override
+  String get periodUnspecified => '未指定';
+
+  @override
+  String get stressEventTypeWork => '工作';
+
+  @override
+  String get stressEventTypeRelationship => '关系';
+
+  @override
+  String get stressEventTypeHealth => '健康';
+
+  @override
+  String get stressEventTypeFinancial => '财务';
+
+  @override
+  String get stressEventTypeOther => '其他';
+
+  @override
+  String get regularityVeryIrregular => '很不规律';
+
+  @override
+  String get regularityIrregular => '不规律';
+
+  @override
+  String get regularityNormal => '一般';
+
+  @override
+  String get regularityRegular => '规律';
+
+  @override
+  String get regularityVeryRegular => '很规律';
+
+  @override
+  String get cardStatusNoData => '尚未记录';
+
+  @override
+  String get cardStatusToday => '今天';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -5417,9 +5669,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeQuickMoodTitle => '今天感覺如何？';
 
   @override
-  String get homeFabAssessment => '心情測試';
-
-  @override
   String get homeFabVent => '心情樹洞';
 
   @override
@@ -6090,4 +6339,259 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get level2PsychosisSeveritySummary3 => '重度精神病性症狀, 強烈建議就醫';
+
+  @override
+  String get dailyTrackingTitle => '日常追蹤';
+
+  @override
+  String get dailyTrackingFab => '全部趨勢';
+
+  @override
+  String get dailyTrackingMultiChartTitle => '近 30 天 4 指標';
+
+  @override
+  String dailyTrackingLastTime(String time) {
+    return '$time 記錄';
+  }
+
+  @override
+  String get dailyTrackingRecord => '記錄';
+
+  @override
+  String get moodDiaryName => '情緒日記';
+
+  @override
+  String get moodDiaryShortDesc => '心境 4 段 + score, 趨勢分析';
+
+  @override
+  String moodDiaryScore(int score) {
+    return '心境 $score/5';
+  }
+
+  @override
+  String moodDiaryLast(String time, String score, String period) {
+    return '$time · $score ($period)';
+  }
+
+  @override
+  String get anxietyAgitationName => '焦慮急躁';
+
+  @override
+  String get anxietyAgitationShortDesc => '焦慮 + 急躁 雙維度 5 檔';
+
+  @override
+  String get anxietyAgitationHint => '焦慮反向 1=嚴重 5=平靜; 急躁正向 1=平靜 5=極急';
+
+  @override
+  String get anxietyAgitationAddButton => '添加評估';
+
+  @override
+  String get anxietyAgitationNoData => '暫無焦慮急躁記錄';
+
+  @override
+  String anxietyAgitationAnxietyScore(int score) {
+    return '焦慮 $score';
+  }
+
+  @override
+  String anxietyAgitationAgitationScore(int score) {
+    return '急躁 $score';
+  }
+
+  @override
+  String anxietyAgitationLast(int anxiety, int agitation) {
+    return '焦慮 $anxiety / 急躁 $agitation';
+  }
+
+  @override
+  String get sleepName => '睡眠';
+
+  @override
+  String get sleepShortDesc => '入睡 + 時長 + 規律性';
+
+  @override
+  String get sleepHint => '記錄每晚入睡 + 起床, 跨午夜自動算時長';
+
+  @override
+  String get sleepAddButton => '添加睡眠記錄';
+
+  @override
+  String get sleepNoData => '暫無睡眠記錄';
+
+  @override
+  String sleepBedtime(String time) {
+    return '入睡 $time';
+  }
+
+  @override
+  String sleepWakeTime(String time) {
+    return '起床 $time';
+  }
+
+  @override
+  String sleepLast(String duration, int regularity) {
+    return '$duration · 規律 $regularity/5';
+  }
+
+  @override
+  String get socialRhythmName => '社會節律';
+
+  @override
+  String get socialRhythmShortDesc => '起床 + 第一餐 + 最後一餐 + 時長';
+
+  @override
+  String get socialRhythmHint => '記錄每天的作息, 幫醫生判斷節律穩定性';
+
+  @override
+  String get socialRhythmAddButton => '添加社會節律';
+
+  @override
+  String get socialRhythmNoData => '暫無社會節律記錄';
+
+  @override
+  String socialRhythmWakeTime(String time) {
+    return '起床 $time';
+  }
+
+  @override
+  String socialRhythmFirstMeal(String time) {
+    return '第一餐 $time';
+  }
+
+  @override
+  String socialRhythmLastMeal(String time) {
+    return '最後一餐 $time';
+  }
+
+  @override
+  String socialRhythmLast(String wake, int social, int work) {
+    return '起床 $wake · 社交 ${social}h · 工作 ${work}h';
+  }
+
+  @override
+  String get stressEventName => '應激源';
+
+  @override
+  String get stressEventShortDesc => '事件類型 + 強度評分';
+
+  @override
+  String get stressEventHint => '記錄生活中的壓力事件, 幫醫生判斷觸發因素';
+
+  @override
+  String get stressEventAddButton => '添加應激源';
+
+  @override
+  String get stressEventNoData => '暫無應激源記錄';
+
+  @override
+  String get stressEventEventType => '事件類型';
+
+  @override
+  String get stressEventIntensity => '強度';
+
+  @override
+  String stressEventLast(int intensity) {
+    return '強度 $intensity/5';
+  }
+
+  @override
+  String get treatmentName => '治療';
+
+  @override
+  String get treatmentShortDesc => '用藥 / 諮詢 / 物理治療, 關聯 medication';
+
+  @override
+  String get treatmentHint => '治療條目可關聯 medication, 寫入功能 v0.31+';
+
+  @override
+  String get treatmentNoData => '暫無治療記錄';
+
+  @override
+  String get treatmentType => '治療類型';
+
+  @override
+  String treatmentLast(String type, String description) {
+    return '$type · $description';
+  }
+
+  @override
+  String get weightName => '體重';
+
+  @override
+  String get weightShortDesc => '體重 + BMI (需 profile.height)';
+
+  @override
+  String get weightHint => '記錄每天的體重, 幫醫生判斷生理狀態';
+
+  @override
+  String get weightAddButton => '添加體重記錄';
+
+  @override
+  String get weightNoData => '暫無體重記錄';
+
+  @override
+  String weightWeight(String kg) {
+    return '體重 $kg kg';
+  }
+
+  @override
+  String weightBmi(String bmi) {
+    return 'BMI $bmi';
+  }
+
+  @override
+  String weightLast(String kg, String bmi) {
+    return '$kg kg · BMI $bmi';
+  }
+
+  @override
+  String get periodMorning => '早';
+
+  @override
+  String get periodNoon => '中';
+
+  @override
+  String get periodEvening => '晚';
+
+  @override
+  String get periodNight => '夜';
+
+  @override
+  String get periodUnspecified => '未指定';
+
+  @override
+  String get stressEventTypeWork => '工作';
+
+  @override
+  String get stressEventTypeRelationship => '關係';
+
+  @override
+  String get stressEventTypeHealth => '健康';
+
+  @override
+  String get stressEventTypeFinancial => '財務';
+
+  @override
+  String get stressEventTypeOther => '其他';
+
+  @override
+  String get regularityVeryIrregular => '很不規律';
+
+  @override
+  String get regularityIrregular => '不規律';
+
+  @override
+  String get regularityNormal => '一般';
+
+  @override
+  String get regularityRegular => '規律';
+
+  @override
+  String get regularityVeryRegular => '很規律';
+
+  @override
+  String get cardStatusNoData => '尚未記錄';
+
+  @override
+  String get cardStatusToday => '今天';
 }
