@@ -11,7 +11,7 @@
 //    对齐。
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:chroniccare/presentation/pages/trend/trend_calendar.dart';
+import 'package:chroniccare/presentation/pages/trend/widgets/trend_day_detail_card.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
