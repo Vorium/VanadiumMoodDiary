@@ -3465,6 +3465,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get treatmentNoData => 'No treatment entries yet';
 
   @override
+  String get treatmentAddButton => 'Add';
+
+  @override
+  String get treatmentAddTitle => 'Add Treatment Record';
+
+  @override
+  String get treatmentDate => 'Date';
+
+  @override
+  String get treatmentCategory => 'Category';
+
+  @override
+  String get treatmentCategoryMedicationAdjustment => 'Medication adjustment';
+
+  @override
+  String get treatmentCategoryConsultation => 'Consultation';
+
+  @override
+  String get treatmentCategoryHospitalization => 'Hospitalization';
+
+  @override
+  String get treatmentCategoryOther => 'Other';
+
+  @override
+  String get treatmentProvider => 'Provider / Doctor';
+
+  @override
+  String get treatmentProviderHint => 'e.g. Dr. Smith / Mayo Clinic';
+
+  @override
+  String get treatmentProviderRequired => 'Please enter provider / doctor';
+
+  @override
+  String get treatmentNote => 'Note';
+
+  @override
+  String get treatmentNoteHint => 'Optional, brief summary';
+
+  @override
   String get treatmentType => 'Treatment type';
 
   @override

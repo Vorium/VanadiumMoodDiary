@@ -2486,6 +2486,58 @@
   "@treatmentNoData": {
     "description": "v0.30 R91: 治疗 列表页 空状态"
   },
+  "@treatmentAddButton": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #15): 治疗 新增按鈕"
+  },
+  "treatmentAddButton": "添加",
+  "@treatmentAddTitle": {
+    "description": "v0.30 round 92: 治疗 AddTreatmentDialog 標題"
+  },
+  "treatmentAddTitle": "添加治療記錄",
+  "@treatmentDate": {
+    "description": "v0.30 round 92: 治疗 日期欄位"
+  },
+  "treatmentDate": "日期",
+  "@treatmentCategory": {
+    "description": "v0.30 round 92: 治疗 類別欄位 (4 選 1)"
+  },
+  "treatmentCategory": "類別",
+  "@treatmentCategoryMedicationAdjustment": {
+    "description": "v0.30 round 92: 治疗 類別 1/4 藥物調整"
+  },
+  "treatmentCategoryMedicationAdjustment": "藥物調整",
+  "@treatmentCategoryConsultation": {
+    "description": "v0.30 round 92: 治疗 類別 2/4 心理諮詢"
+  },
+  "treatmentCategoryConsultation": "心理諮詢",
+  "@treatmentCategoryHospitalization": {
+    "description": "v0.30 round 92: 治疗 類別 3/4 住院"
+  },
+  "treatmentCategoryHospitalization": "住院",
+  "@treatmentCategoryOther": {
+    "description": "v0.30 round 92: 治疗 類別 4/4 其他"
+  },
+  "treatmentCategoryOther": "其他",
+  "@treatmentProvider": {
+    "description": "v0.30 round 92: 治疗 醫療機構 / 醫生 (description 欄位)"
+  },
+  "treatmentProvider": "醫療機構 / 醫生",
+  "@treatmentProviderHint": {
+    "description": "v0.30 round 92: 治疗 醫療機構 hint"
+  },
+  "treatmentProviderHint": "例如: 心理醫生王醫生 / 北京協和醫院",
+  "@treatmentProviderRequired": {
+    "description": "v0.30 round 92: 治疗 醫療機構為空 snackbar 提示"
+  },
+  "treatmentProviderRequired": "請填寫醫療機構 / 醫生",
+  "@treatmentNote": {
+    "description": "v0.30 round 92: 治疗 備註欄位"
+  },
+  "treatmentNote": "備註",
+  "@treatmentNoteHint": {
+    "description": "v0.30 round 92: 治疗 備註 hint"
+  },
+  "treatmentNoteHint": "可選, 簡短記錄治療要點",
   "treatmentType": "治療類型",
   "@treatmentType": {
     "description": "v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)"

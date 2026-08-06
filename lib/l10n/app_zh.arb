@@ -2489,6 +2489,58 @@
   "@treatmentNoData": {
     "description": "v0.30 R91: 治疗 列表页 空状态"
   },
+  "@treatmentAddButton": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #15): 治疗 添加按钮 (列表页右上角)"
+  },
+  "treatmentAddButton": "添加",
+  "@treatmentAddTitle": {
+    "description": "v0.30 round 92: 治疗 AddTreatmentDialog title"
+  },
+  "treatmentAddTitle": "添加治疗记录",
+  "@treatmentDate": {
+    "description": "v0.30 round 92: 治疗 日期 field"
+  },
+  "treatmentDate": "日期",
+  "@treatmentCategory": {
+    "description": "v0.30 round 92: 治疗 类别 field (4 选 1)"
+  },
+  "treatmentCategory": "类别",
+  "@treatmentCategoryMedicationAdjustment": {
+    "description": "v0.30 round 92: 治疗 类别 1/4 药物调整"
+  },
+  "treatmentCategoryMedicationAdjustment": "药物调整",
+  "@treatmentCategoryConsultation": {
+    "description": "v0.30 round 92: 治疗 类别 2/4 心理咨询"
+  },
+  "treatmentCategoryConsultation": "心理咨询",
+  "@treatmentCategoryHospitalization": {
+    "description": "v0.30 round 92: 治疗 类别 3/4 住院"
+  },
+  "treatmentCategoryHospitalization": "住院",
+  "@treatmentCategoryOther": {
+    "description": "v0.30 round 92: 治疗 类别 4/4 其他"
+  },
+  "treatmentCategoryOther": "其他",
+  "@treatmentProvider": {
+    "description": "v0.30 round 92: 治疗 医疗机构 / 医生 (description 字段)"
+  },
+  "treatmentProvider": "医疗机构 / 医生",
+  "@treatmentProviderHint": {
+    "description": "v0.30 round 92: 治疗 医疗机构 hint"
+  },
+  "treatmentProviderHint": "例如: 心理医生王医生 / 北京协和医院",
+  "@treatmentProviderRequired": {
+    "description": "v0.30 round 92: 治疗 医疗机构为空 snackbar 提示"
+  },
+  "treatmentProviderRequired": "请填写医疗机构 / 医生",
+  "@treatmentNote": {
+    "description": "v0.30 round 92: 治疗 备注 field"
+  },
+  "treatmentNote": "备注",
+  "@treatmentNoteHint": {
+    "description": "v0.30 round 92: 治疗 备注 hint"
+  },
+  "treatmentNoteHint": "可选, 简短记录治疗要点",
   "treatmentType": "治疗类型",
   "@treatmentType": {
     "description": "v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)"

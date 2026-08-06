@@ -6083,6 +6083,84 @@ abstract class AppLocalizations {
   /// **'暂无治疗记录'**
   String get treatmentNoData;
 
+  /// v0.30 round 92 (audit-fixes / P0 #15): 治疗 添加按钮 (列表页右上角)
+  ///
+  /// In zh, this message translates to:
+  /// **'添加'**
+  String get treatmentAddButton;
+
+  /// v0.30 round 92: 治疗 AddTreatmentDialog title
+  ///
+  /// In zh, this message translates to:
+  /// **'添加治疗记录'**
+  String get treatmentAddTitle;
+
+  /// v0.30 round 92: 治疗 日期 field
+  ///
+  /// In zh, this message translates to:
+  /// **'日期'**
+  String get treatmentDate;
+
+  /// v0.30 round 92: 治疗 类别 field (4 选 1)
+  ///
+  /// In zh, this message translates to:
+  /// **'类别'**
+  String get treatmentCategory;
+
+  /// v0.30 round 92: 治疗 类别 1/4 药物调整
+  ///
+  /// In zh, this message translates to:
+  /// **'药物调整'**
+  String get treatmentCategoryMedicationAdjustment;
+
+  /// v0.30 round 92: 治疗 类别 2/4 心理咨询
+  ///
+  /// In zh, this message translates to:
+  /// **'心理咨询'**
+  String get treatmentCategoryConsultation;
+
+  /// v0.30 round 92: 治疗 类别 3/4 住院
+  ///
+  /// In zh, this message translates to:
+  /// **'住院'**
+  String get treatmentCategoryHospitalization;
+
+  /// v0.30 round 92: 治疗 类别 4/4 其他
+  ///
+  /// In zh, this message translates to:
+  /// **'其他'**
+  String get treatmentCategoryOther;
+
+  /// v0.30 round 92: 治疗 医疗机构 / 医生 (description 字段)
+  ///
+  /// In zh, this message translates to:
+  /// **'医疗机构 / 医生'**
+  String get treatmentProvider;
+
+  /// v0.30 round 92: 治疗 医疗机构 hint
+  ///
+  /// In zh, this message translates to:
+  /// **'例如: 心理医生王医生 / 北京协和医院'**
+  String get treatmentProviderHint;
+
+  /// v0.30 round 92: 治疗 医疗机构为空 snackbar 提示
+  ///
+  /// In zh, this message translates to:
+  /// **'请填写医疗机构 / 医生'**
+  String get treatmentProviderRequired;
+
+  /// v0.30 round 92: 治疗 备注 field
+  ///
+  /// In zh, this message translates to:
+  /// **'备注'**
+  String get treatmentNote;
+
+  /// v0.30 round 92: 治疗 备注 hint
+  ///
+  /// In zh, this message translates to:
+  /// **'可选, 简短记录治疗要点'**
+  String get treatmentNoteHint;
+
   /// v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)
   ///
   /// In zh, this message translates to:

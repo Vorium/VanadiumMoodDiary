@@ -2447,6 +2447,58 @@
   "@treatmentNoData": {
     "description": "v0.30 R91: Treatment list page empty state"
   },
+  "@treatmentAddButton": {
+    "description": "v0.30 round 92 (audit-fixes / P0 #15): Treatment add button"
+  },
+  "treatmentAddButton": "Add",
+  "@treatmentAddTitle": {
+    "description": "v0.30 round 92: Treatment AddTreatmentDialog title"
+  },
+  "treatmentAddTitle": "Add Treatment Record",
+  "@treatmentDate": {
+    "description": "v0.30 round 92: Treatment date field"
+  },
+  "treatmentDate": "Date",
+  "@treatmentCategory": {
+    "description": "v0.30 round 92: Treatment category field"
+  },
+  "treatmentCategory": "Category",
+  "@treatmentCategoryMedicationAdjustment": {
+    "description": "v0.30 round 92: Treatment category 1/4"
+  },
+  "treatmentCategoryMedicationAdjustment": "Medication adjustment",
+  "@treatmentCategoryConsultation": {
+    "description": "v0.30 round 92: Treatment category 2/4"
+  },
+  "treatmentCategoryConsultation": "Consultation",
+  "@treatmentCategoryHospitalization": {
+    "description": "v0.30 round 92: Treatment category 3/4"
+  },
+  "treatmentCategoryHospitalization": "Hospitalization",
+  "@treatmentCategoryOther": {
+    "description": "v0.30 round 92: Treatment category 4/4"
+  },
+  "treatmentCategoryOther": "Other",
+  "@treatmentProvider": {
+    "description": "v0.30 round 92: Treatment provider"
+  },
+  "treatmentProvider": "Provider / Doctor",
+  "@treatmentProviderHint": {
+    "description": "v0.30 round 92: Treatment provider hint"
+  },
+  "treatmentProviderHint": "e.g. Dr. Smith / Mayo Clinic",
+  "@treatmentProviderRequired": {
+    "description": "v0.30 round 92: Treatment empty provider snackbar"
+  },
+  "treatmentProviderRequired": "Please enter provider / doctor",
+  "@treatmentNote": {
+    "description": "v0.30 round 92: Treatment note field"
+  },
+  "treatmentNote": "Note",
+  "@treatmentNoteHint": {
+    "description": "v0.30 round 92: Treatment note hint"
+  },
+  "treatmentNoteHint": "Optional, brief summary",
   "treatmentType": "Treatment type",
   "@treatmentType": {
     "description": "v0.30 R91: Treatment type label (dialog dropdown)"

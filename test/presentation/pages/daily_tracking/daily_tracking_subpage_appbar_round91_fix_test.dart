@@ -39,11 +39,11 @@ import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/treatment_page.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/anxiety_agitation_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/sleep_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/social_rhythm_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/stress_event_widgets.dart';
-import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_placeholder.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/weight_widgets.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
@@ -292,11 +292,13 @@ void main() {
       expect(find.text('焦虑急躁'), findsNothing);
     });
 
-    testWidgets('TreatmentPlaceholderPage → AppBar title "Treatment"',
+    testWidgets('TreatmentPage → AppBar title "Treatment"',
         (tester) async {
-      await pump(tester, const TreatmentPlaceholderPage());
+      // v0.30 round 92 (audit-fixes / P0 #15): TreatmentPlaceholderPage
+      // 替换为 TreatmentPage (4 字段 AddTreatmentDialog + 真 page)。
+      await pump(tester, const TreatmentPage());
       expect(find.text('Treatment'), findsOneWidget,
-          reason: 'TreatmentPlaceholderPage AppBar title 走 l10n.treatmentName',);
+          reason: 'TreatmentPage AppBar title 走 l10n.treatmentName',);
       expect(find.text('治疗'), findsNothing);
     });
 

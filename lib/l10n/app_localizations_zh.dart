@@ -3285,6 +3285,45 @@ class AppLocalizationsZh extends AppLocalizations {
   String get treatmentNoData => '暂无治疗记录';
 
   @override
+  String get treatmentAddButton => '添加';
+
+  @override
+  String get treatmentAddTitle => '添加治疗记录';
+
+  @override
+  String get treatmentDate => '日期';
+
+  @override
+  String get treatmentCategory => '类别';
+
+  @override
+  String get treatmentCategoryMedicationAdjustment => '药物调整';
+
+  @override
+  String get treatmentCategoryConsultation => '心理咨询';
+
+  @override
+  String get treatmentCategoryHospitalization => '住院';
+
+  @override
+  String get treatmentCategoryOther => '其他';
+
+  @override
+  String get treatmentProvider => '医疗机构 / 医生';
+
+  @override
+  String get treatmentProviderHint => '例如: 心理医生王医生 / 北京协和医院';
+
+  @override
+  String get treatmentProviderRequired => '请填写医疗机构 / 医生';
+
+  @override
+  String get treatmentNote => '备注';
+
+  @override
+  String get treatmentNoteHint => '可选, 简短记录治疗要点';
+
+  @override
   String get treatmentType => '治疗类型';
 
   @override
@@ -5821,7 +5860,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get crisisHotlineIntlLabel => '國際通用';
 
   @override
-  String get crisisHotlineIntlDesc => '請聯絡當地急救或心理援助機構';
+  String get crisisHotlineIntlDesc => '請聯繫當地急救或心理援助機構';
 
   @override
   String get crisisHotlineIntlNumber => '112 / 911';
@@ -6653,6 +6692,45 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get treatmentNoData => '暫無治療記錄';
+
+  @override
+  String get treatmentAddButton => '新增';
+
+  @override
+  String get treatmentAddTitle => '新增治療記錄';
+
+  @override
+  String get treatmentDate => '日期';
+
+  @override
+  String get treatmentCategory => '類別';
+
+  @override
+  String get treatmentCategoryMedicationAdjustment => '藥物調整';
+
+  @override
+  String get treatmentCategoryConsultation => '心理諮詢';
+
+  @override
+  String get treatmentCategoryHospitalization => '住院';
+
+  @override
+  String get treatmentCategoryOther => '其他';
+
+  @override
+  String get treatmentProvider => '醫療機構 / 醫生';
+
+  @override
+  String get treatmentProviderHint => '例如: 心理醫生王醫生 / 台北榮總';
+
+  @override
+  String get treatmentProviderRequired => '請填寫醫療機構 / 醫生';
+
+  @override
+  String get treatmentNote => '備註';
+
+  @override
+  String get treatmentNoteHint => '選填, 簡短記錄治療要點';
 
   @override
   String get treatmentType => '治療類型';
