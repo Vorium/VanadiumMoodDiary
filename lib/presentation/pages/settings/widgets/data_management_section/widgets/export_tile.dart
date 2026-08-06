@@ -1,19 +1,24 @@
 // v0.30 round 95 (sub-spec 1 task 2a): 抽 export_tile
+// v0.30 round 95 (sub-spec 1 task 6.5): 拆 JSON 弹窗 → export_dialog
 //
 // 数据导出入口 tile — 走 ConsentDialog + audit log + JSON 弹窗 + PIPL §17 告知
 //
-// 业务逻辑从主壳 (200+ 行) 抽到本 sub-tile:
+// 业务逻辑 (主壳保留):
 // - PIPL §13 单独同意 (ConsentDialog kind: dataExport)
 // - audit log 写 legalConsentStoreProvider (PIPL §17 可追溯), 失败走 swallowError
-// - JSON 弹窗: Q4b 明文风险 + 责任划界 + 强制勾选 + 复制按钮
-// - PIPL §28 vent 录音不导出 (settingsExportVentWarning Container 提示)
+// - ref.read(dataExportServiceProvider).exportToJson() 生成 JSON
+// - ExportDialog.show(...) 弹 JSON 弹窗 (Q4b 明文风险 + 责任划界 + 强制勾选)
+// - PIPL §28 vent 录音不导出 (ExportDialog 内 Container 提示)
+//
+// 业务封装 (R95 sub-spec 1 task 6.5 抽出):
+// - ExportDialog widget: JSON 弹窗全部 UI + 强制勾选 state + Clipboard.setData
+// - export_tile 主壳不再含 100+ 行 JSON 弹窗 UI, 只调 ExportDialog.show(...)
 //
 // props callback 模式 (R93 task 1 模式):
 // - 主壳持 ref + context
 // - sub-tile 接受 onExport 回调 (默认调内部 _exportData; 测试可注入自定义回调跳过完整流)
 // - sub-tile 不读全局 (除 ref 自带的 provider)
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/swallow_error.dart';
@@ -24,6 +29,7 @@ import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_dialog.dart';
 
 /// 导出全部数据 tile (PIPL §13 + §17 + §28 风险告知)
 ///
@@ -63,7 +69,10 @@ class ExportTile extends ConsumerWidget {
   ///
   /// 1. ConsentDialog kind=dataExport (PIPL §13 单独同意)
   /// 2. 写 audit log (PIPL §17 可追溯), 失败走 swallowError 不阻塞主流程
-  /// 3. exportToJson → JSON 弹窗 (Q4b 明文风险 + 责任划界 + 强制勾选)
+  /// 3. exportToJson → ExportDialog.show(...) JSON 弹窗 (Q4b 明文风险 + 责任划界 + 强制勾选)
+  ///
+  /// v0.30 round 95 (sub-spec 1 task 6.5): JSON 弹窗 UI 抽到 ExportDialog,
+  /// 本函数从 200+ 行 → 60 行, 业务逻辑保留。
   Future<void> _exportData(BuildContext context, WidgetRef ref) async {
     if (!context.mounted) return;
     // v0.27 R82: PIPL §13 单独同意 — 数据导出走 ConsentDialog (kind: dataExport)
@@ -106,167 +115,8 @@ class ExportTile extends ConsumerWidget {
     try {
       final json = await service.exportToJson();
       if (!context.mounted) return;
-      // v0.28 R83 (Q4b 律师): 导出 JSON dialog 加明文风险 + 责任划界
-      // + 强制勾选"我已了解风险"才允许复制 (PIPL §17 告知后用户确认,
-      // 责任划界由用户承担 — 跟"明文 = 用户自负"是法律标配)
-      bool isAcknowledged = false;
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => StatefulBuilder(
-          builder: (ctx, setLocal) => AlertDialog(
-            title: Text(
-              AppLocalizations.of(context).settingsExportDialogTitle,
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    AppLocalizations.of(context).settingsExportInstruction,
-                  ),
-                  const SizedBox(height: AppTokens.spacingXs),
-                  // 已有: vent 录音不导出 提示 (v0.26 round 57 加)
-                  Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingSm),
-                    decoration: BoxDecoration(
-                      color: AppTokens.tintedWarningSoft(context),
-                      borderRadius:
-                          BorderRadius.circular(AppTokens.radiusChip),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context).settingsExportVentWarning,
-                      style: AppTokens.textStyleLegal(context),
-                    ),
-                  ),
-                  const SizedBox(height: AppTokens.spacingSm),
-                  // Q4b: 明文风险 + 责任划界 (律师反馈 必改)
-                  Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingSm),
-                    decoration: BoxDecoration(
-                      color: AppTokens.tintedErrorSoft(context),
-                      borderRadius:
-                          BorderRadius.circular(AppTokens.radiusChip),
-                      border: Border.all(
-                        color: AppTokens.errorColor(context),
-                        width: 1,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.warning_amber_rounded,
-                              color: AppTokens.errorColor(context),
-                              size: AppTokens.iconSizeInline,
-                            ),
-                            const SizedBox(
-                              width: AppTokens.spacingXxs,
-                            ),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(context)
-                                    .settingsExportRiskTitle,
-                                style: AppTokens.textStyleLabel(context)
-                                    .copyWith(
-                                  color: AppTokens.errorColor(context),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTokens.spacingXxs),
-                        Text(
-                          AppLocalizations.of(context)
-                              .settingsExportRiskBody,
-                          style: AppTokens.textStyleBody(context),
-                        ),
-                        const SizedBox(height: AppTokens.spacingXxs),
-                        Text(
-                          AppLocalizations.of(context)
-                              .settingsExportRiskLiability,
-                          style: AppTokens.textStyleLegal(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppTokens.spacingSm),
-                  // 强制勾选 checkbox 才允许复制
-                  CheckboxListTile(
-                    value: isAcknowledged,
-                    onChanged: (v) =>
-                        setLocal(() => isAcknowledged = v ?? false),
-                    title: Text(
-                      AppLocalizations.of(context)
-                          .settingsExportRiskAcknowledge,
-                      style: AppTokens.textStyleBody(context),
-                    ),
-                    controlAffinity:
-                        ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                  ),
-                  const SizedBox(height: AppTokens.spacingSm),
-                  // JSON 容器
-                  Container(
-                    padding: const EdgeInsets.all(AppTokens.spacingSm),
-                    decoration: BoxDecoration(
-                      color: AppTokens.dividerColor(context),
-                      borderRadius:
-                          BorderRadius.circular(AppTokens.radiusChip),
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 300),
-                      child: SingleChildScrollView(
-                        child: SelectableText(
-                          json,
-                          // v0.26 round 57 (emil EMIL-INC-03): 走 textStyleMono 集中器
-                          // 替代内联 TextStyle('monospace', fontSizeCaptionSm)
-                          style: AppTokens.textStyleMono(
-                            context,
-                            size: AppTokens.fontSizeCaptionSm,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text(AppLocalizations.of(context).commonClose),
-              ),
-              ElevatedButton.icon(
-                icon: const Icon(
-                  Icons.copy,
-                  size: AppTokens.iconSizeInline,
-                ),
-                label: Text(AppLocalizations.of(context).settingsCopy),
-                onPressed: isAcknowledged
-                    ? () async {
-                        await Clipboard.setData(
-                          ClipboardData(text: json),
-                        );
-                        if (ctx.mounted) {
-                          // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
-                          AppSnackBar.showInfo(
-                            ctx,
-                            AppLocalizations.of(ctx).snackbarCopied,
-                          );
-                        }
-                      }
-                    : null,
-              ),
-            ],
-          ),
-        ),
-      );
+      // v0.30 round 95 (sub-spec 1 task 6.5): JSON 弹窗 UI 抽到 ExportDialog
+      await ExportDialog.show(context, json: json);
     } catch (e) {
       if (context.mounted) {
         AppSnackBar.showError(
