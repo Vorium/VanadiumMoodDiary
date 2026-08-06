@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/providers/iap_provider.dart';
@@ -52,100 +53,110 @@ class SettingsPage extends ConsumerWidget {
 
           // === 升级到 Pro (IAP, v0.27 round 65 appstore P0-4) ===
           // 仅未购买时显示; 已购后隐藏 (避免反复提示)
-          Consumer(
-            builder: (context, ref, _) {
-              final isPro = ref.watch(iapProProvider);
-              if (isPro) {
-                // 已购: 走简短提示卡 (绿色 "已是 Pro" 状态)
+          // v0.30 round 93 (阶段 2 audit-fixes): 整个 IAP 商业卡走
+          // [FeatureFlags.iapEnabled] gate, 业务真接 App Store Connect productId 前
+          // 完全 hidden (避 Apple 2.1 拒 — "未提供其他购买方式")。
+          if (FeatureFlags.iapEnabled) ...[
+            Consumer(
+              builder: (context, ref, _) {
+                final isPro = ref.watch(iapProProvider);
+                if (isPro) {
+                  // 已购: 走简短提示卡 (绿色 "已是 Pro" 状态)
+                  return Card(
+                    color: AppColors.tintedSuccessSoft(context),
+                    child: ListTile(
+                      // R69 (CC-9 emil P0 修复): 用 fgOnSuccess 替代裸 success,
+                      // 语义化("success 前景色"), 未来 success 改色时 fgOnSuccess 自动跟
+                      leading: const Icon(
+                        Icons.workspace_premium,
+                        color: AppColors.fgOnSuccess,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context).settingsIapProOwnedTitle,
+                        style: const TextStyle(
+                          fontSize: AppTokens.fontSizeBody,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.fgOnSuccess,
+                        ),
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(context)
+                            .settingsIapProOwnedSubtitle,
+                        style: const TextStyle(
+                          fontSize: AppTokens.fontSizeCaption,
+                          color: AppColors.fgOnSuccess,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                // 未购: 展示升级卡片
                 return Card(
-                  color: AppColors.tintedSuccessSoft(context),
-                  child: ListTile(
-                    // R69 (CC-9 emil P0 修复): 用 fgOnSuccess 替代裸 success,
-                    // 语义化("success 前景色"), 未来 success 改色时 fgOnSuccess 自动跟
-                    leading: const Icon(
-                      Icons.workspace_premium,
-                      color: AppColors.fgOnSuccess,
-                    ),
-                    title: Text(
-                      AppLocalizations.of(context).settingsIapProOwnedTitle,
-                      style: const TextStyle(
-                        fontSize: AppTokens.fontSizeBody,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.fgOnSuccess,
-                      ),
-                    ),
-                    subtitle: Text(
-                      AppLocalizations.of(context).settingsIapProOwnedSubtitle,
-                      style: const TextStyle(
-                        fontSize: AppTokens.fontSizeCaption,
-                        color: AppColors.fgOnSuccess,
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppTokens.spacingMd),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            // R69 (CC-9 emil P0 修复): 改 theme-aware 集中器,
+                            // dark mode 下 primary 自动反白
+                            Icon(
+                              Icons.workspace_premium,
+                              color: AppColors.primaryColor(context),
+                            ),
+                            const SizedBox(width: AppTokens.spacingSm),
+                            Expanded(
+                              child: Text(
+                                AppLocalizations.of(context)
+                                    .settingsIapUpgradeTitle,
+                                style: TextStyle(
+                                  fontSize: AppTokens.fontSizeTitle,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      AppColors.textPrimaryColor(context),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTokens.spacingSm),
+                        Text(
+                          AppLocalizations.of(context)
+                              .settingsIapUpgradeSubtitle,
+                          style: TextStyle(
+                            fontSize: AppTokens.fontSizeBody,
+                            color: AppColors.textSecondaryColor(context),
+                          ),
+                        ),
+                        const SizedBox(height: AppTokens.spacingMd),
+                        PrimaryButton(
+                          onPressed: () async {
+                            final buy = ref.read(buyLifetimeProvider);
+                            final ok = await buy();
+                            if (!context.mounted) return;
+                            AppSnackBar.showInfo(
+                              context,
+                              ok
+                                  ? AppLocalizations.of(context)
+                                      .iapPurchaseSuccess
+                                  : AppLocalizations.of(context)
+                                      .iapPurchaseFailed,
+                            );
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)
+                                .settingsIapUpgradeTitle,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
-              }
-              // 未购: 展示升级卡片
-              return Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppTokens.spacingMd),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          // R69 (CC-9 emil P0 修复): 改 theme-aware 集中器,
-                          // dark mode 下 primary 自动反白
-                          Icon(
-                            Icons.workspace_premium,
-                            color: AppColors.primaryColor(context),
-                          ),
-                          const SizedBox(width: AppTokens.spacingSm),
-                          Expanded(
-                            child: Text(
-                              AppLocalizations.of(context)
-                                  .settingsIapUpgradeTitle,
-                              style: TextStyle(
-                                fontSize: AppTokens.fontSizeTitle,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimaryColor(context),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppTokens.spacingSm),
-                      Text(
-                        AppLocalizations.of(context).settingsIapUpgradeSubtitle,
-                        style: TextStyle(
-                          fontSize: AppTokens.fontSizeBody,
-                          color: AppColors.textSecondaryColor(context),
-                        ),
-                      ),
-                      const SizedBox(height: AppTokens.spacingMd),
-                      PrimaryButton(
-                        onPressed: () async {
-                          final buy = ref.read(buyLifetimeProvider);
-                          final ok = await buy();
-                          if (!context.mounted) return;
-                          AppSnackBar.showInfo(
-                            context,
-                            ok
-                                ? AppLocalizations.of(context)
-                                    .iapPurchaseSuccess
-                                : AppLocalizations.of(context)
-                                    .iapPurchaseFailed,
-                          );
-                        },
-                        child: Text(
-                          AppLocalizations.of(context).settingsIapUpgradeTitle,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+              },
+            ),
+          ] else
+            const SizedBox.shrink(),
 
           const SizedBox(height: AppTokens.spacingLg),
 
@@ -220,19 +231,27 @@ class SettingsPage extends ConsumerWidget {
           // 联系人 section 内的 "添加联系人" 仍会触发 ConsentDialog (PIPL §13),
           // 业务跑 [FeatureFlags.emergencyContactEnabled] gate 后整个失联通信
           // 链路不会发出去。
-          SectionHeader(title: AppLocalizations.of(context).settingsContacts),
-          const SizedBox(height: AppTokens.spacingSm),
-          contactsAsync.when(
-            data: (contacts) => ContactsListWidget(contacts: contacts),
-            loading: () => const LoadingSkeleton.fullScreen(),
-            // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
-            error: (e, _) => ErrorState(
-              title:
-                  AppLocalizations.of(context).commonLoadFailed(e.toString()),
-              detail: e.toString(),
-              onRetry: () => ref.invalidate(contactsProvider),
+          // v0.30 round 93 (阶段 2 audit-fixes): 整个联系人 section
+          // 走 [FeatureFlags.emergencyContactEnabled] gate, 失联通信业务暂停期间
+          // 完全 hidden (setup step 1 仍可填, 由 setup wizard 独立 gate 控制)。
+          if (FeatureFlags.emergencyContactEnabled) ...[
+            SectionHeader(
+              title: AppLocalizations.of(context).settingsContacts,
             ),
-          ),
+            const SizedBox(height: AppTokens.spacingSm),
+            contactsAsync.when(
+              data: (contacts) => ContactsListWidget(contacts: contacts),
+              loading: () => const LoadingSkeleton.fullScreen(),
+              // v0.27 round 77 (R76-N8 修): commonLoadFailed 传 e.toString()
+              error: (e, _) => ErrorState(
+                title: AppLocalizations.of(context)
+                    .commonLoadFailed(e.toString()),
+                detail: e.toString(),
+                onRetry: () => ref.invalidate(contactsProvider),
+              ),
+            ),
+          ] else
+            const SizedBox.shrink(),
 
           const SizedBox(height: AppTokens.spacingMd),
         ],
