@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'package:chroniccare/core/l10n/safety_alert_l10n.dart';
+
 import 'app_localizations_en.dart';
 import 'app_localizations_zh.dart';
 
@@ -61,7 +63,12 @@ import 'app_localizations_zh.dart';
 /// you wish to add from the pop-up menu in the Value field. This list should
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
-abstract class AppLocalizations {
+///
+/// v0.29 R96+R97 修正: 显式 implements SafetyAlertL10n (在 core/l10n/),
+/// 让 data 层 (SafetyAlertBuilder / SafetyAlertDispatcher / SafetyWatchService)
+/// 接收 SafetyAlertL10n interface 时能直接拿 AppLocalizations 实例。
+/// 跑 `python scripts/apply_l10n_implements.py` 自动补回, 跑 `flutter analyze` 验证 0 error。
+abstract class AppLocalizations implements SafetyAlertL10n {
   AppLocalizations(String locale)
       : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 

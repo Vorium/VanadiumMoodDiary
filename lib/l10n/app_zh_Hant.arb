@@ -2715,15 +2715,15 @@
   "@moodListPeriodAll": {
     "description": "v0.30 R92: mood_list 情緒列表時段過濾 chip '全部' (R87 mood_list page l18n 漏, R92 補)"
   },
-  "migrationFailedInitData": "無法初始化本地資料",
+  "migrationFailedInitData": "無法初始化本地數據",
   "@migrationFailedInitData": {
     "description": "v0.30 R95 sub-spec 7 task 53: 啟動時本地資料初始化失敗的短訊息 (main.dart 205 行原硬編碼)"
   },
-  "migrationFailedActionHint": "請嘗試重啟 App，或解除安裝後重新安裝",
+  "migrationFailedActionHint": "請嘗試重啟 App，或卸載後重新安裝",
   "@migrationFailedActionHint": {
     "description": "v0.30 R95 sub-spec 7 task 53: 資料初始化失敗後給使用者可操作提示"
   },
-  "migrationFailedFooter": "技術資訊: {error}",
+  "migrationFailedFooter": "技術信息: {error}",
   "@migrationFailedFooter": {
     "description": "v0.30 R95 sub-spec 7 task 53: 失敗頁底部技術資訊, 內部異常脫敏後展示",
     "placeholders": {

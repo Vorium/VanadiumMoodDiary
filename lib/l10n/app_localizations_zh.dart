@@ -6915,14 +6915,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get cardStatusToday => '今天';
 
   @override
-  String get migrationFailedInitData => '無法初始化本地資料';
+  String get migrationFailedInitData => '無法初始化本地數據';
 
   @override
-  String get migrationFailedActionHint => '請嘗試重啟 App，或解除安裝後重新安裝';
+  String get migrationFailedActionHint => '請嘗試重啟 App，或卸載後重新安裝';
 
   @override
   String migrationFailedFooter(String error) {
-    return '技術資訊: $error';
+    return '技術信息: $error';
   }
 
   @override

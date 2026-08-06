@@ -442,7 +442,7 @@ class _MigrationFailedApp extends StatelessWidget {
                 // v0.30 R95 task 53: 内部兜底文案走 ARB, 不再硬编码 "无法初始化本地数据"
                 // (R45 之前的硬编码 en 模式用户看到中文)
                 Text(
-                  l10n.migrationFailedInitData,
+                  l10n.migrationFailedBody,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),

@@ -236,10 +236,11 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
             const SizedBox(height: AppTokens.spacingSm),
             TextField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: '备注',
-                border: OutlineInputBorder(),
-                hintText: '可选',
+              decoration: InputDecoration(
+                // v0.30 R95 sub-spec 7 task 55: 走 ARB 集中器, 替代 hardcoded 中文
+                labelText: l10n.dailyTrackingNoteLabel,
+                border: const OutlineInputBorder(),
+                hintText: l10n.dailyTrackingNoteHint,
               ),
               maxLines: 2,
             ),
