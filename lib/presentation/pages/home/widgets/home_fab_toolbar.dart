@@ -21,12 +21,20 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 主页浮动工具栏 — 收起 1 FAB, 展开 4 工具按钮
 class HomeFabToolbar extends StatefulWidget {
-  const HomeFabToolbar({super.key});
+  /// v0.30 round 92 (audit-fixes / P0 #13): homeFabTop 滚动目标
+  ///
+  /// 修前 bug: homeFabTop onPressed 调 `AppSnackBar.showInfo(homeFabTopTodo)`
+  /// 占位。修法: home_page 创建一个 ScrollController 包在主页 ListView 上,
+  /// 传给 toolbar; toolbar homeFabTop onPressed 调
+  /// `Scrollable.ensureVisible(scrollController.position.context, ...)`
+  /// 把主页滚到顶 (200ms curveStandard 动画)。
+  final ScrollController? scrollController;
+
+  const HomeFabToolbar({super.key, this.scrollController});
 
   @override
   State<HomeFabToolbar> createState() => _HomeFabToolbarState();
@@ -85,11 +93,18 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                       label: l10n.homeFabHotline,
                       onTap: () {
                         setState(() => _expanded = false);
-                        // v0.28 R81: 紧急热线入口 (1 tap 达, B 站'公益热线' 同款)
-                        // R75 已经准备 hotlineByRegion + 6 region × 2 i18n (R77 收尾)
-                        // 调 safety_alert_dialog 或 push 独立 route (R82+)
-                        // 当前简单弹一个 SnackBar 提示 + 跳 safety
-                        AppSnackBar.showInfo(context, l10n.homeFabHotlineTodo);
+                        // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线入口
+                        // (1 tap 达, B 站'公益热线' 同款)。R75 已备
+                        // hotlineByRegion 6 region + R83.5 partial 5 region
+                        // ARB keys (crisisHotline{Cn,Tw,Hk,Mo,*}Label/Number/Desc)
+                        // + R91 setup_legal_dialog _crisisHotlineSection 4 条
+                        // 已用。R92 改 push `/crisis-hotline` 独立页面
+                        // (5 地区列表 + 800-810-1117 全国)。
+                        //
+                        // 用 context.push (而非 GoRouter.of(context).go):
+                        // push 保留 back stack, 用户返回仍回主页 (go 会
+                        // 替换栈, 失去 home)。
+                        context.push('/crisis-hotline');
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
@@ -98,9 +113,28 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                       label: l10n.homeFabTop,
                       onTap: () {
                         setState(() => _expanded = false);
-                        // 回到顶端 — 实际滚动逻辑由 home_page 接管
-                        // R82+ 改 Scrollable.ensureVisible 滚到顶
-                        AppSnackBar.showInfo(context, l10n.homeFabTopTodo);
+                        // v0.30 round 92 (audit-fixes / P0 #13): 回到顶端
+                        // 走 `scrollController.animateTo(0, duration, curve)`
+                        // 滚到 minScrollExtent (顶)。修前: AppSnackBar
+                        // .showInfo(homeFabTopTodo) 占位 1.5 年。
+                        //
+                        // 用 scrollController.animateTo 而非
+                        // Scrollable.ensureVisible(context, ...) 的原因:
+                        // floatingActionButton 跟 Scaffold body 是 sibling
+                        // (Flutter Scaffold 内部 layout), toolbar context
+                        // 找不到 body 内的 Scrollable。直接用
+                        // home_page 传来的 ScrollController 走 animateTo
+                        // 不依赖 widget tree 路径, 行为可预期。
+                        final ctrl = widget.scrollController;
+                        if (ctrl != null && ctrl.hasClients) {
+                          ctrl.animateTo(
+                            0.0,
+                            duration:
+                                Motion.duration(context, AppTokens.durNormal),
+                            curve:
+                                Motion.curve(context, AppTokens.curveStandard),
+                          );
+                        }
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),

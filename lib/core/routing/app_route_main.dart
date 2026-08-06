@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/core/routing/app_shell.dart';
+import 'package:chroniccare/presentation/pages/crisis_hotline_page.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
 import 'package:chroniccare/presentation/pages/settings/email_preview.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
@@ -30,6 +31,16 @@ class AppRouteMain {
         path: '/setup',
         pageBuilder: (context, state) =>
             AppRoutes.slideUpPage(state.pageKey, const SetupPage(), context),
+      ),
+      // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线独立页
+      // 不进 shell (跨 feature 紧急入口, 顶层全屏), rare 频度 → slide-up
+      GoRoute(
+        path: '/crisis-hotline',
+        pageBuilder: (context, state) => AppRoutes.slideUpPage(
+          state.pageKey,
+          const CrisisHotlinePage(),
+          context,
+        ),
       ),
       // 整个 app shell: 宽屏带 NavigationRail, 窄屏纯 body
       ShellRoute(

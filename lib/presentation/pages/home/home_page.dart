@@ -162,6 +162,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// 跟 `_celebrationTimer` 模式一致 (R62 P1-6 同样修)。
   Timer? _deepLinkRaceTimer;
 
+  /// v0.30 round 92 (audit-fixes / P0 #13): homeFabTop 滚到顶用
+  ///
+  /// 修前: homeFabTop onPressed 调 AppSnackBar.showInfo 占位
+  /// (lib/presentation/pages/home/widgets/home_fab_toolbar.dart R81)。
+  /// 修法: 主屏 SingleChildScrollView 接 controller, HomeFabToolbar 通过
+  /// scrollController prop 拿到, 末项 onPressed 调 Scrollable.ensureVisible
+  /// 把主屏滚到 minScrollExtent (顶)。homeFabHotline 走 context.push 路由,
+  /// 跟 controller 无关。
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -189,6 +199,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     // 防止 widget dispose 后 race guard timer 仍 fire 调 _runSafetyCheck
     _deepLinkRaceTimer?.cancel();
     _deepLinkRaceTimer = null;
+    // v0.30 round 92 (audit-fixes / P0 #13): dispose 释放 ScrollController
+    // (R17 通用模式, widget leak guard)
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -365,8 +378,16 @@ class _HomePageState extends ConsumerState<HomePage> {
       // B 站"哗哩哗哩能量加油站" 4 工具入口, 收起 1 FAB / 展开 4 圆角按钮
       // (心情测试 / 心情树洞 / 紧急热线 / 回到顶端)
       // emil 频度: tens/day (toggle), standard animation OK
-      floatingActionButton: const HomeFabToolbar(),
-      child: Column(
+      //
+      // v0.30 round 92 (audit-fixes / P0 #13): 传 _scrollController 给
+      // toolbar, 让 homeFabTop 走 Scrollable.ensureVisible 滚到顶。
+      floatingActionButton: HomeFabToolbar(scrollController: _scrollController),
+      // v0.30 round 92 (audit-fixes / P0 #13): Column → SingleChildScrollView
+      // 让 homeFabTop 有可滚动的内容 (主屏填满视口时不需要滚, 但小屏 /
+      // 文字放大场景可能需要)。Spacer 保留主屏元素 stretch 排版。
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // v0.18 (P1-27) fix: home_page god-page 拆 5 widget,build 主体减肥
@@ -443,7 +464,11 @@ class _HomePageState extends ConsumerState<HomePage> {
             onMoodTap: () => MoodDialog.show(context, ref),
           ),
 
-          const Spacer(flex: 1),
+          // v0.30 round 92 (audit-fixes / P0 #13): 去掉 `const Spacer(flex: 1)`。
+          // 之前 Spacer 在 Column 内推 footer 到底, 但 SCV 给的 Column 高度
+          // 无界, Spacer 会触发 RenderFlex layout exception。改用
+          // SizedBox 给固定间距, footer 自然在主屏元素之后。
+          const SizedBox(height: AppTokens.spacingLg),
 
           // 底部信息
           todayAsync.when(
@@ -456,6 +481,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             error: (_, __) => const SizedBox.shrink(),
           ),
         ],
+        ),
       ),
     );
   }
