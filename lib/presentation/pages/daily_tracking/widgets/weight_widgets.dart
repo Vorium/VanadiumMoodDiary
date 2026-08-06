@@ -56,7 +56,7 @@ class WeightListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text('加载失败: $e')),
+              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.monitor_weight_outlined,
@@ -161,6 +161,7 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
 
   Future<void> _save() async {
     if (_saving) return;
+    final l10n = AppLocalizations.of(context);
     final weightStr = _weightController.text.trim();
     if (weightStr.isEmpty) return;
     final weight = double.tryParse(weightStr);
@@ -184,7 +185,7 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
+          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
         );
       }
     }
@@ -239,11 +240,11 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           onPressed: _saving ? null : _save,
-          child: const Text('保存'),
+          child: Text(l10n.commonSave),
         ),
       ],
     );

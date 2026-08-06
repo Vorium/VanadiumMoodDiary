@@ -41,7 +41,7 @@ class AssessmentCenterPage extends ConsumerWidget {
       title: l10n.assessmentCenterTitle,
       child: entriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('加载失败: $e')),
+        error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
         data: (entries) => _buildGrid(context, entries, scales, unavailableIds),
       ),
     );

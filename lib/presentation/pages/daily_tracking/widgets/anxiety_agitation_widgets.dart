@@ -52,7 +52,7 @@ class AnxietyAgitationListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text('加载失败: $e')),
+              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.psychology_outlined,
@@ -128,6 +128,7 @@ class _AnxietyAgitationEntryDialogState
 
   Future<void> _save() async {
     if (_saving) return;
+    final l10n = AppLocalizations.of(context);
     final anxiety = _anxietyScore;
     final agitation = _agitationScore;
     if (anxiety == null || agitation == null) return; // both required
@@ -146,7 +147,7 @@ class _AnxietyAgitationEntryDialogState
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
+          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
         );
       }
     }
@@ -170,7 +171,7 @@ class _AnxietyAgitationEntryDialogState
                   color: AppTokens.primaryColor(context),
                 ),
                 const SizedBox(width: AppTokens.spacingXs),
-                const Text('焦虑分数'),
+                Text(l10n.anxietyAgitationAnxietyLabel),
                 const SizedBox(width: AppTokens.spacingSm),
                 const Text(
                   '1=严重 5=平静',
@@ -198,7 +199,7 @@ class _AnxietyAgitationEntryDialogState
               children: [
                 Icon(Icons.flash_on, color: AppTokens.warningColor(context)),
                 const SizedBox(width: AppTokens.spacingXs),
-                const Text('急躁分数'),
+                Text(l10n.anxietyAgitationAgitationLabel),
                 const SizedBox(width: AppTokens.spacingSm),
                 const Text(
                   '1=平静 5=极急',
@@ -237,14 +238,14 @@ class _AnxietyAgitationEntryDialogState
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           onPressed:
               (_saving || _anxietyScore == null || _agitationScore == null)
                   ? null
                   : _save,
-          child: const Text('保存'),
+          child: Text(l10n.commonSave),
         ),
       ],
     );

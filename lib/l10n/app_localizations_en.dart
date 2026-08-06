@@ -23,12 +23,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String homeLastMed(String time) {
+  String homeLastMed(Object time) {
     return 'Last dose: $time';
   }
 
   @override
-  String homeNextReminder(String time) {
+  String homeNextReminder(Object time) {
     return 'Next reminder: $time';
   }
 
@@ -251,7 +251,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsImportHint => 'Paste your exported JSON here';
 
   @override
-  String settingsImportSuccess(String summary) {
+  String settingsImportSuccess(Object summary) {
     return 'Import complete: $summary';
   }
 
@@ -329,12 +329,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String commonLoadFailed(String error) {
+  String commonLoadFailed(Object error) {
     return 'Load failed: $error';
   }
 
   @override
-  String snackbarErrorTemplate(String action, String error) {
+  String snackbarErrorTemplate(Object action, Object error) {
     return '$action failed: $error';
   }
 
@@ -402,7 +402,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medsRefillPickDate => 'Pick refill date';
 
   @override
-  String medsRefillSet(String date, int days) {
+  String medsRefillSet(Object date, int days) {
     return 'Refill set: $date, remind $days days before';
   }
 
@@ -415,7 +415,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String medsRefillUpcoming(String date, int days, int reminderDays) {
+  String medsRefillUpcoming(Object date, int days, int reminderDays) {
     return 'Refill: $date ($days days left) · Remind $reminderDays days before';
   }
 
@@ -898,7 +898,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String ventDurationMinutesSeconds(int m, String sec) {
+  String ventDurationMinutesSeconds(int m, Object sec) {
     return '${m}m ${sec}s';
   }
 
@@ -925,6 +925,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodListFilterPeriod => 'Period';
+
+  @override
+  String get moodListPeriodAll => 'All';
 
   @override
   String get moodPeriodChartTitle => 'Mood 4-period trend (last 30 days)';
@@ -981,7 +984,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodAudioRecordButton => 'Record voice';
 
   @override
-  String moodAudioRecorded(String duration) {
+  String moodAudioRecorded(Object duration) {
     return 'Recorded $duration';
   }
 
@@ -1080,7 +1083,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String medsRefillSubtitleTemplate(
-      String date, String suffix, int reminderDays) {
+      Object date, Object suffix, int reminderDays) {
     return '$date $suffix · Remind $reminderDays days before';
   }
 
@@ -1096,7 +1099,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assessmentSubmit => 'Submit & View Results';
 
   @override
-  String assessmentQuestionLabel(int index, String text, String selected) {
+  String assessmentQuestionLabel(int index, Object text, Object selected) {
     return 'Question $index: $text, 4 options, current: $selected';
   }
 
@@ -1127,7 +1130,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeHeaderDefaultTitle => 'Chronic Care';
 
   @override
-  String homeHeaderKeepGoing(String name) {
+  String homeHeaderKeepGoing(Object name) {
     return '$name is still going strong';
   }
 
@@ -1173,7 +1176,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navAppName => 'Chronic Care';
 
   @override
-  String errorPageNotFound(String path) {
+  String errorPageNotFound(Object path) {
     return 'Page not found: $path';
   }
 
@@ -1224,7 +1227,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assessmentHistoryTrend => 'Historical Trend';
 
   @override
-  String assessmentAverageScore(String score) {
+  String assessmentAverageScore(Object score) {
     return 'Average $score';
   }
 
@@ -1347,7 +1350,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Presets fill in medication names + times. You can modify them. Always follow your doctor\'s instructions.';
 
   @override
-  String setupPresetLoaded(String name, int count) {
+  String setupPresetLoaded(Object name, int count) {
     return 'Loaded: $name ($count medications). Please verify names and dosages.';
   }
 
@@ -1514,12 +1517,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'No report history yet\nReports will be recorded automatically after generation';
 
   @override
-  String reportHistoryItemTitle(String date, int days) {
+  String reportHistoryItemTitle(Object date, int days) {
     return '$date · Last $days days';
   }
 
   @override
-  String reportHistoryItemPatient(String name) {
+  String reportHistoryItemPatient(Object name) {
     return 'Patient: $name';
   }
 
@@ -1557,7 +1560,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String homeAutofireCelebration(String name) {
+  String homeAutofireCelebration(Object name) {
     return 'Checked in: $name ✅';
   }
 
@@ -1574,22 +1577,22 @@ class AppLocalizationsEn extends AppLocalizations {
       '(please check in or contact family soon)';
 
   @override
-  String safetyAlertBodySent(String date) {
+  String safetyAlertBodySent(Object date) {
     return 'Last check-in: $date. Auto-notified emergency contacts. Please confirm safety.';
   }
 
   @override
-  String safetyAlertBodyMocked(String date) {
+  String safetyAlertBodyMocked(Object date) {
     return 'Last check-in: $date. Lost-contact detection triggered, but currently in dev mode — emergency contacts were **NOT** actually notified.';
   }
 
   @override
-  String safetyAlertBodyFailed(String date) {
+  String safetyAlertBodyFailed(Object date) {
     return 'Last check-in: $date. Lost-contact detection triggered, but notification failed. Please check network.';
   }
 
   @override
-  String safetyAlertTitle(String name, int days) {
+  String safetyAlertTitle(Object name, int days) {
     return '⚠️ $name hasn\'t checked in for $days days';
   }
 
@@ -1633,7 +1636,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeNotifBannerDismiss => 'Got it';
 
   @override
-  String themeTooltip(String mode) {
+  String themeTooltip(Object mode) {
     return 'Theme: $mode (tap to switch)';
   }
 
@@ -1721,12 +1724,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String trendMoodEntriesSame(int count, String emoji) {
+  String trendMoodEntriesSame(int count, Object emoji) {
     return '$count mood entries · $emoji';
   }
 
   @override
-  String trendMoodEntriesRange(int count, String lowEmoji, String highEmoji) {
+  String trendMoodEntriesRange(int count, Object lowEmoji, Object highEmoji) {
     return 'Mood $count entries · $lowEmoji→$highEmoji';
   }
 
@@ -1810,7 +1813,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dataExportConsentBody(
-      String purpose, String dataCategories, String retention) {
+      Object purpose, Object dataCategories, Object retention) {
     return 'You are about to export all data from the local database.\n\n**Purpose**: $purpose\n**Data scope**: $dataCategories\n**Retention**: $retention\n\n**Per PIPL Article 13** (data portability + standalone consent), please confirm you understand the above purpose and consent to this export.';
   }
 
@@ -1848,7 +1851,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editMedValidationUnitInvalid => 'Unit must be mg or tablet';
 
   @override
-  String editMedSaveFailed(String error) {
+  String editMedSaveFailed(Object error) {
     return 'Save failed: $error';
   }
 
@@ -1859,7 +1862,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editMedStatusStopped => 'Stopped';
 
   @override
-  String editMedStoppedDate(String date) {
+  String editMedStoppedDate(Object date) {
     return '$date stopped';
   }
 
@@ -1946,12 +1949,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medsCalendarWindow90 => '90 days';
 
   @override
-  String medsCalendarLoadCheckinFailed(String error) {
+  String medsCalendarLoadCheckinFailed(Object error) {
     return 'Failed to load check-ins: $error';
   }
 
   @override
-  String medsCalendarLoadMedFailed(String error) {
+  String medsCalendarLoadMedFailed(Object error) {
     return 'Failed to load medications: $error';
   }
 
@@ -2039,7 +2042,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodRecordButton => 'Log mood ✏️';
 
   @override
-  String medReportFileName(String date) {
+  String medReportFileName(Object date) {
     return 'Med Report_$date';
   }
 
@@ -2133,7 +2136,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Consent for this contact was rejected, not saved. Refill and continue.';
 
   @override
-  String emailBodyI18n(String name, int days) {
+  String emailBodyI18n(Object name, int days) {
     return 'I\'m $name. I haven\'t checked in on the app for $days days.\nCould you remind me to take my medication on time when convenient, to avoid relapse?';
   }
 
@@ -2181,7 +2184,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String safetyCheckResultError(String message) {
+  String safetyCheckResultError(Object message) {
     return 'Error: $message';
   }
 
@@ -2300,7 +2303,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkInTypeGad7 => 'GAD-7 assessment';
 
   @override
-  String dayDetailCheckInWith(String name) {
+  String dayDetailCheckInWith(Object name) {
     return 'Check-in · $name';
   }
 
@@ -2308,7 +2311,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dayDetailDailyCheckIn => 'Daily check-in';
 
   @override
-  String dayDetailTempWith(String name) {
+  String dayDetailTempWith(Object name) {
     return 'Temp · $name';
   }
 
@@ -2629,7 +2632,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get crisisHotlineUsTextLineDesc => 'US 24h text';
 
   @override
-  String crisisHotlineSnackbarCopied(String number) {
+  String crisisHotlineSnackbarCopied(Object number) {
     return 'Copied: $number';
   }
 
@@ -2862,7 +2865,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String assessmentCenterLastTime(String time) {
+  String assessmentCenterLastTime(Object time) {
     return 'Taken on $time';
   }
 
@@ -3300,7 +3303,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTrackingMultiChartTitle => 'Last 30 days, 4 metrics';
 
   @override
-  String dailyTrackingLastTime(String time) {
+  String dailyTrackingLastTime(Object time) {
     return '$time record';
   }
 
@@ -3319,7 +3322,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String moodDiaryLast(String time, String score, String period) {
+  String moodDiaryLast(Object time, Object score, Object period) {
     return '$time · $score ($period)';
   }
 
@@ -3339,6 +3342,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get anxietyAgitationNoData => 'No anxiety/agitation entries yet';
+
+  @override
+  String get anxietyAgitationAnxietyLabel => 'Anxiety Score';
+
+  @override
+  String get anxietyAgitationAgitationLabel => 'Agitation Score';
 
   @override
   String anxietyAgitationAnxietyScore(int score) {
@@ -3372,17 +3381,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sleepNoData => 'No sleep entries yet';
 
   @override
-  String sleepBedtime(String time) {
+  String sleepBedtime(Object time) {
     return 'Bedtime $time';
   }
 
   @override
-  String sleepWakeTime(String time) {
+  String get sleepRegularityTitle => 'Regularity';
+
+  @override
+  String sleepWakeTime(Object time) {
     return 'Wake $time';
   }
 
   @override
-  String sleepLast(String duration, int regularity) {
+  String sleepLast(Object duration, int regularity) {
     return '$duration · regularity $regularity/5';
   }
 
@@ -3404,22 +3416,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get socialRhythmNoData => 'No social rhythm entries yet';
 
   @override
-  String socialRhythmWakeTime(String time) {
+  String socialRhythmWakeTime(Object time) {
     return 'Wake $time';
   }
 
   @override
-  String socialRhythmFirstMeal(String time) {
+  String socialRhythmFirstMeal(Object time) {
     return 'First meal $time';
   }
 
   @override
-  String socialRhythmLastMeal(String time) {
+  String socialRhythmLastMeal(Object time) {
     return 'Last meal $time';
   }
 
   @override
-  String socialRhythmLast(String wake, int social, int work) {
+  String socialRhythmLast(Object wake, int social, int work) {
     return 'Wake $wake · social ${social}h · work ${work}h';
   }
 
@@ -3507,7 +3519,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get treatmentType => 'Treatment type';
 
   @override
-  String treatmentLast(String type, String description) {
+  String treatmentLast(Object type, Object description) {
     return '$type · $description';
   }
 
@@ -3528,17 +3540,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weightNoData => 'No weight entries yet';
 
   @override
-  String weightWeight(String kg) {
+  String weightWeight(Object kg) {
     return 'Weight $kg kg';
   }
 
   @override
-  String weightBmi(String bmi) {
+  String weightBmi(Object bmi) {
     return 'BMI $bmi';
   }
 
   @override
-  String weightLast(String kg, String bmi) {
+  String weightLast(Object kg, Object bmi) {
     return '$kg kg · BMI $bmi';
   }
 
@@ -3589,6 +3601,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cardStatusNoData => 'No entries yet';
+
+  @override
+  String get sleepBedtimeTitle => 'Bedtime';
+
+  @override
+  String get sleepWakeTimeTitle => 'Wake time';
+
+  @override
+  String get socialRhythmWakeTimeTitle => 'Wake time';
+
+  @override
+  String get socialRhythmFirstMealTitle => 'First meal time';
+
+  @override
+  String get socialRhythmLastMealTitle => 'Last meal time';
 
   @override
   String get cardStatusToday => 'Today';

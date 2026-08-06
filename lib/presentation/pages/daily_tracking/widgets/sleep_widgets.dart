@@ -64,7 +64,7 @@ class SleepListWidget extends ConsumerWidget {
         Expanded(
           child: entriesAsync.when(
             loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, st) => Center(child: Text('加载失败: $e')),
+            error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
             data: (entries) => entries.isEmpty
                 ? EmptyState(
                     icon: Icons.bedtime_outlined,
@@ -221,6 +221,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
 
   Future<void> _save() async {
     if (_saving) return;
+    final l10n = AppLocalizations.of(context);
     setState(() => _saving = true);
     try {
       final now = DateTime.now();
@@ -261,7 +262,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
+          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
         );
       }
     }
@@ -281,7 +282,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.nights_stay_outlined),
-              title: const Text('入睡时间'),
+              title: Text(l10n.sleepBedtimeTitle),
               trailing: Text(_fmtTime(_bedtime)),
               onTap: _pickBedtime,
             ),
@@ -289,7 +290,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.wb_sunny_outlined),
-              title: const Text('起床时间'),
+              title: Text(l10n.sleepWakeTimeTitle),
               trailing: Text(_fmtTime(_wakeTime)),
               onTap: _pickWakeTime,
             ),
@@ -317,7 +318,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
               children: [
                 Icon(Icons.repeat, color: AppTokens.textHintColor(context)),
                 const SizedBox(width: AppTokens.spacingXs),
-                const Text('规律性'),
+                Text(l10n.sleepRegularityTitle),
               ],
             ),
             const SizedBox(height: AppTokens.spacingXxs),
@@ -353,11 +354,11 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           onPressed: _saving ? null : _save,
-          child: const Text('保存'),
+          child: Text(l10n.commonSave),
         ),
       ],
     );
