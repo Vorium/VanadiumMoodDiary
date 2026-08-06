@@ -43,7 +43,7 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 
 part 'app_database.g.dart';
 
-/// 慢病管家数据库
+/// Chronic care database
 @DriftDatabase(
   tables: [
     CheckIns,
@@ -53,7 +53,7 @@ part 'app_database.g.dart';
     ReportHistories,
     MoodEntries,
     VentEntries,
-    // v0.30 round 91 (sub-spec 7 日常追踪): 6 新表
+    // v0.30 round 91 (sub-spec 7 daily tracking): 6 new tables
     SleepEntries,
     SocialRhythmEntries,
     StressEvents,
@@ -65,64 +65,64 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 
-  /// 测试用构造：传入内存 DB（不经过 path_provider / sqlcipher）
+  /// Test constructor: takes in-memory DB (skips path_provider / sqlcipher)
   @visibleForTesting
   AppDatabase.forTesting(super.executor);
 
-  // v0.18 round 18 (P1-15): schemaVersion 6 → 7
-  // - mood_entries 加 energy / sleep / anxiety 3 个 nullable column
-  // - 老数据自动有 null 3 字段(单 score 模式)
-  // - 新数据 4 维全填
-  // v0.18 round 18 (P2-P0-8): schemaVersion 7 → 8
-  // - 4 个查询索引(check_ins / mood_entries / vent_entries / medications)
-  // v0.21 round 22 (P0-1 修复): schemaVersion 8 → 9
-  // - vent_entries 加 contentTextEnc (BLOB, AES-256 加密) 列
-  // - 一次性把旧 contentText (TEXT, 明文) 全部加密写回新列
-  // - 旧 contentText 列保留(代码层不再用),后续 v10+ 彻底 DROP
-  // v0.21 round 22 (P1-22 修复): schemaVersion 9 → 10
-  // - user_profiles 加 4 个 consent 字段
-  // v0.21 round 23 (P1-24 修复): schemaVersion 10 → 11
-  // - user_profiles.userName 改 nullable
-  // - report_histories.userName 改 nullable
-  // - 老数据 "" 仍写回 "" (空字符串),但允许 null
-  // - 实际: drift 的 alter table 不支持改列属性,SQLite 也没有 ALTER COLUMN
-  //   所以这条变更**只在 createAll 里生效** (新装用户自动是新 schema)
-  //   升级用户 schema 没改,代码层判断 if (userName?.isNotEmpty ?? false)
-  //   兼容老数据 "" 和新数据 null
-  // v0.23 round 31 (P0 新功能): schemaVersion 11 → 12
-  // - mood_entries 加 audioPath / audioTranscript / audioDurationMs 3 个 nullable 列
-  // - 老数据自动为 null(纯文字模式行为不变)
-  // - audioPath 引用独立 mood_audio/ 目录的加密 .m4a.enc 文件
+  // v0.18 round 18 (P1-15): schemaVersion 6 to 7
+  // - mood_entries: add energy / sleep / anxiety 3 nullable columns
+  // - old data auto has null 3 fields (single score mode)
+  // - new data fills all 4 dimensions
+  // v0.18 round 18 (P2-P0-8): schemaVersion 7 to 8
+  // - 4 query indexes (check_ins / mood_entries / vent_entries / medications)
+  // v0.21 round 22 (P0-1 fix): schemaVersion 8 to 9
+  // - vent_entries: add contentTextEnc (BLOB, AES-256 encrypted) column
+  // - one-time encrypt all old contentText (TEXT, plaintext) back to new column
+  // - keep old contentText column (no longer used in code), DROP entirely in v10+
+  // v0.21 round 22 (P1-22 fix): schemaVersion 9 to 10
+  // - user_profiles: add 4 consent columns
+  // v0.21 round 23 (P1-24 fix): schemaVersion 10 to 11
+  // - user_profiles.userName: change to nullable
+  // - report_histories.userName: change to nullable
+  // - old data "" still writes back "" (empty string), but allow null
+  // - in practice: drift's alter table doesn't support column property change, SQLite has no ALTER COLUMN
+  //   so this change **only takes effect in createAll** (new install users auto get new schema)
+  //   upgrading user schema unchanged, code layer check if (userName?.isNotEmpty ?? false)
+  //   compatible with old data "" and new data null
+  // v0.23 round 31 (P0 new feature): schemaVersion 11 to 12
+  // - mood_entries: add audioPath / audioTranscript / audioDurationMs 3 nullable columns
+  // - old data auto null (text-only mode behavior unchanged)
+  // - audioPath references encrypted .m4a.enc file in independent mood_audio/ directory
   //
-  // v0.23 round 43: schemaVersion 12 → 13
-  // - check_ins 加 medicationId 索引（优化药物打卡查询）
+  // v0.23 round 43: schemaVersion 12 to 13
+  // - check_ins: add medicationId index (optimize medication check-in query)
   //
-  // v0.23 round 44: schemaVersion 13 → 14
-  // - contacts 加 (is_active, sort_order) 复合索引
-  // - report_histories 加 generated_at 索引
+  // v0.23 round 44: schemaVersion 13 to 14
+  // - contacts: add (is_active, sort_order) composite index
+  // - report_histories: add generated_at index
   //
-  // v0.27 round 63 (P0-2 修复): schemaVersion 14 → 15
-  // - contacts 加 4 个 consent 字段 (PIPL §13 留痕要求)
-  // - 4 字段全部 nullable,旧数据自动为 null
-  // - 老数据 (schemaVersion <= 14) 的联系人 "consent 历史" 只在 piiSafeLog
-  //   (R62 working tree 状态), DB 落库是这次新加。考虑 v1.0 法务过审
-  //   时是否给老用户"重新同意"流程 (本批不做, 留 R64+ 评估)
+  // v0.27 round 63 (P0-2 fix): schemaVersion 14 to 15
+  // - contacts: add 4 consent columns (PIPL §13 audit trail requirement)
+  // - all 4 columns nullable, old data auto null
+  // - old data (schemaVersion <= 14) contact 'consent history' only in piiSafeLog
+  //   (R62 working tree state), DB persistence is new this round. Consider for v1.0 legal review
+  //   whether to give old users 're-consent' flow (not in this round, defer to R64+)
   //
-  // v0.29 round 84: schemaVersion 15 → 17 - mood_entries +8 个 CBT 字段
+  // v0.29 round 84: schemaVersion 15 to 17 - mood_entries +8 CBT columns
   //   (situation / automaticThought / evidenceFor / evidenceAgainst /
   //    alternativeThought / reratedScore / coreBelief / behaviorResponse)
-  //   注: code diff 实际是 15→17 (无 16 中间版本); spec 误写"current prod is 16"
-  //   后续如真发布 v16 schema, `if (from <= 15)` 守卫需在中间加 16→17 步
-  // - 8 列全 nullable,老数据自动 null (3 栏 mode 渲染)
-  // - 用户升级后 mood entry 在 DayDetailCard 里走"3 栏 + 自由 note"分支
+  //   note: code diff is actually 15 to 17 (no 16 intermediate); spec mistakenly wrote 'current prod is 16'
+  //   if v16 schema is actually released later, `if (from <= 15)` guard needs intermediate 16 to 17 step
+  // - all 8 columns nullable, old data auto null (3-column mode rendering)
+  // - after upgrade, mood entry in DayDetailCard takes '3-column + free note' branch
   //
-  // v0.30 round 92: schemaVersion 18 → 19 - vent_entries DROP contentText (PIPL §28)
-  //   - R21 v0.21 (schemaVersion 8→9) 加 contentTextEnc (BLOB 加密) 同时保留 contentText (TEXT 明文)
-  //   - v8→v9 migration 一次性把 contentText 加密写回 contentTextEnc
-  //   - 但旧 contentText 列保留, R22-R91 (10+ round, 5+ 年) 用户升级后仍有
-  //     明文 + 加密双份存在 DB, 设备 root / 备份偷走 → PIPL §28 字段级明文泄露
-  //   - R92 DROP contentText 列, 一次性清理
-  //   - 守卫 `if (from < 19)` 跟 v15→v17 一致模式
+  // v0.30 round 92: schemaVersion 18 to 19 - vent_entries DROP contentText (PIPL §28)
+  //   - R21 v0.21 (schemaVersion 8 to 9) added contentTextEnc (BLOB encrypted) while keeping contentText (TEXT plaintext)
+  //   - v8 to v9 migration one-time encrypt contentText back to contentTextEnc
+  //   - but old contentText column kept, R22-R91 (10+ round, 5+ year) users still have after upgrade
+  //     plaintext + encrypted duplicate in DB, device root / backup steal → PIPL §28 field-level plaintext leak
+  //   - R92 DROP contentText column, one-time cleanup
+  //   - guard `if (from < 19)` matches v15 to v17 pattern
   @override
   int get schemaVersion => 19;
 
@@ -132,46 +132,46 @@ class AppDatabase extends _$AppDatabase {
           await m.createAll();
         },
         onUpgrade: (m, from, to) async {
-          // v1 → v2: 联系人 email 改 phone，medication 加 dosage / dosageUnit / 删 frequencyPerDay
+          // v1 to v2: contact email change to phone, medication add dosage / dosageUnit / remove frequencyPerDay
           if (from == 1) {
-            // Contacts: 旧 email 数据丢掉（用户主动决定删 email），
-            // 删表重建最简单（drift 的 deleteTable 接受表名）
+            // Contacts: drop old email data (user explicitly decided to delete email),
+            // drop and rebuild is simplest (drift's deleteTable takes table name)
             await m.deleteTable('contacts');
             await m.createTable(contacts);
-            // Medications: 加 dosage / dosageUnit
+            // Medications: add dosage / dosageUnit
             await m.addColumn(medications, medications.dosage);
             await m.addColumn(medications, medications.dosageUnit);
           }
-          // v2 → v3: 新增 report_histories 表（用药报告历史）
+          // v2 to v3: new report_histories table (medication report history)
           if (from <= 2) {
             await m.createTable(reportHistories);
           }
-          // v3 → v4: 新增 mood_entries 表（情绪日记）
+          // v3 to v4: new mood_entries table (mood diary)
           if (from <= 3) {
             await m.createTable(moodEntries);
           }
-          // v4 → v5: medications 加续方字段 refillAt + refillReminderDays
-          // 旧数据不需要迁移：null = 没设过续方提醒
+          // v4 to v5: medications add refill fields refillAt + refillReminderDays
+          // old data no migration needed: null = never set refill reminder
           if (from <= 4) {
             await m.addColumn(medications, medications.refillAt);
             await m.addColumn(medications, medications.refillReminderDays);
           }
-          // v5 → v6: 新增 vent_entries 表（树洞）
+          // v5 to v6: new vent_entries table (vent)
           if (from <= 5) {
             await m.createTable(ventEntries);
           }
-          // v6 → v7: mood_entries 加 4 维度 3 个新列 (energy / sleep / anxiety)
-          // 老数据 3 列默认 null(单 score 模式),新数据 4 维全填
+          // v6 to v7: mood_entries add 4-dimension 3 new columns (energy / sleep / anxiety)
+          // old data 3 columns default null (single score mode), new data 4 dimensions filled
           if (from <= 6) {
             await m.addColumn(moodEntries, moodEntries.energy);
             await m.addColumn(moodEntries, moodEntries.sleep);
             await m.addColumn(moodEntries, moodEntries.anxiety);
           }
-          // v7 → v8: 加 4 个查询索引,大表(1 年+ 用户)避免全表扫
-          // - check_ins (timestamp, type) — 覆盖 streak / 评估 / watchAll
-          // - mood_entries (timestamp) — 按天/月查情绪
-          // - vent_entries (timestamp DESC) — 树洞 watchAll 倒序
-          // - medications (isActive, startDate) — watchAll 过滤 + 续方排序
+          // v7 to v8: add 4 query indexes, large table (1+ year users) avoid full table scan
+          // - check_ins (timestamp, type) — covers streak / assessment / watchAll
+          // - mood_entries (timestamp) — query mood by day/month
+          // - vent_entries (timestamp DESC) — vent watchAll descending
+          // - medications (isActive, startDate) — watchAll filter + refill sort
           if (from <= 7) {
             await customStatement(
               'CREATE INDEX IF NOT EXISTS idx_checkin_ts_type ON check_ins(timestamp, type)',
@@ -186,17 +186,17 @@ class AppDatabase extends _$AppDatabase {
               'CREATE INDEX IF NOT EXISTS idx_med_active_start ON medications(is_active, start_date)',
             );
           }
-          // v8 → v9: vent 文字字段级加密 (P0-1 修复)
-          // - 加 contentTextEnc (BLOB nullable) 列
-          // - 读旧 contentText 加密写回新列
-          // - 旧 contentText 列保留(代码层不再用),后续 v10+ 彻底清理
-          // - v0.30 R92: ventEntries.contentText 字段已删, 老 v8 升级 (from <= 8) 用 raw query
-          //   直接读 contentText 列 (DB 实际还有,只是 schema 不暴露)
+          // v8 to v9: vent text field-level encryption (P0-1 fix)
+          // - add contentTextEnc (BLOB nullable) column
+          // - read old contentText, encrypt, write back to new column
+          // - keep old contentText column (no longer used in code), fully clean in v10+
+          // - v0.30 R92: ventEntries.contentText field already removed, old v8 upgrade (from <= 8) uses raw query
+          //   directly read contentText column (DB actually has it, just schema doesn't expose)
           if (from <= 8) {
             await m.addColumn(ventEntries, ventEntries.contentTextEnc);
-            // 一次性加密所有历史 vent 文字
-            // R92 后 schema 无 contentText, 改用 raw query 读 (drift typed select 拿不到)
-            // raw query 走 SQL, 直接读老 contentText 列
+            // one-time encrypt all historical vent text
+            // after R92 schema has no contentText, switch to raw query (drift typed select can't get it)
+            // raw query via SQL, directly read old contentText column
             final oldRows = await customSelect(
               'SELECT id, contentText FROM vent_entries WHERE contentText IS NOT NULL',
               readsFrom: {ventEntries},
@@ -213,25 +213,25 @@ class AppDatabase extends _$AppDatabase {
                   [encrypted, row.read<int>('id')],
                 );
               } catch (e, st) {
-                // v0.27 round 63 (P1-7 修复): 走 swallowError 集中器
-                // (R39 P1-10 模式), 替代全 lib 唯一 1 处 `catch (e) {}`
-                // 完全静默。dev 模式 devtools / `flutter logs` 看得到。
-                // 单条加密失败不阻塞整个升级, 该行 contentTextEnc 保持 null,
-                // 用户打开该条树洞时 VentMapper.toEntity 会兜底显示空内容。
+                // v0.27 round 63 (P1-7 fix): use swallowError sink
+                // (R39 P1-10 pattern), replace the only 1 `catch (e) {}` in entire lib
+                // completely silent. dev mode devtools / `flutter logs` visible.
+                // single entry encrypt failure doesn't block entire upgrade, that row's contentTextEnc stays null,
+                // when user opens that vent entry, VentMapper.toEntity will fallback to show empty content.
                 final id = row.read<int>('id');
                 swallowError(
                   where: 'app_database.v8v9_vent_encrypt_fail',
                   error: e,
                   stack: st,
                   note:
-                      'ventId=$id contentText 加密失败, contentTextEnc 保持 null',
+                      'ventId=$id contentText encrypt failed, contentTextEnc stays null',
                 );
               }
             }
           }
-          // v9 → v10: UserProfile 加 4 个 consent 字段 (P1-22 修复)
-          // - 4 字段都 nullable,旧数据自动为 null
-          // - setup 步骤 0 完成后会写版本号 + timestamp
+          // v9 to v10: UserProfile add 4 consent columns (P1-22 fix)
+          // - all 4 columns nullable, old data auto null
+          // - after setup step 0 completes, writes version + timestamp
           if (from <= 9) {
             await m.addColumn(userProfiles, userProfiles.userAgreementVersion);
             await m.addColumn(userProfiles, userProfiles.privacyPolicyVersion);
@@ -241,31 +241,31 @@ class AppDatabase extends _$AppDatabase {
             );
             await m.addColumn(userProfiles, userProfiles.consentRevokedAt);
           }
-          // v10 → v11: userName 改 nullable (P1-24 修复)
+          // v10 to v11: userName change to nullable (P1-24 fix)
           // - user_profiles.userName + report_histories.userName
-          // - 老数据 "" 仍写回 "" (空字符串),但允许 null
-          // - 实际: drift 的 alter table 不支持改列属性,SQLite 也没有 ALTER COLUMN
-          //   所以这条变更**只在 createAll 里生效** (新装用户自动是新 schema)
-          //   升级用户 schema 没改,**统一走 `core/shared/user_name_helper.dart`
-          //   的 `safeUserName()` 兼容老数据 "" 和新数据 null**
-          //   (v0.22 round 31 sp-en P0-3 抽 helper 集中 5+ 处散落判断)
-          // v11 → v12: mood_entries 加语音录入 3 字段 (v0.23 round 31)
-          // - audioPath / audioTranscript / audioDurationMs 全部 nullable
-          // - 老数据自动为 null,纯文字模式行为完全不变
-          // - 新数据:audioPath 必有(录音一定有文件),transcript/durationMs 可空
+          // - old data "" still writes back "" (empty string), but allow null
+          // - in practice: drift's alter table doesn't support column property change, SQLite has no ALTER COLUMN
+          //   so this change **only takes effect in createAll** (new install users auto get new schema)
+          //   upgrading user schema unchanged, **unified via `core/shared/user_name_helper.dart`
+          //   `safeUserName()` to be compatible with old data "" and new data null**
+          //   (v0.22 round 31 sp-en P0-3 extracted helper to centralize 5+ scattered checks)
+          // v11 to v12: mood_entries add voice recording 3 columns (v0.23 round 31)
+          // - audioPath / audioTranscript / audioDurationMs all nullable
+          // - old data auto null, text-only mode behavior completely unchanged
+          // - new data: audioPath required (recording always has file), transcript/durationMs optional
           if (from <= 11) {
             await m.addColumn(moodEntries, moodEntries.audioPath);
             await m.addColumn(moodEntries, moodEntries.audioTranscript);
             await m.addColumn(moodEntries, moodEntries.audioDurationMs);
           }
-          // v12 → v13: check_ins 加 medicationId 索引 (P2 优化)
-          // - 药物打卡查询按 medicationId 过滤,无索引走全表扫描
+          // v12 to v13: check_ins add medicationId index (P2 optimization)
+          // - medication check-in query filter by medicationId, no index does full table scan
           if (from <= 12) {
             await customStatement(
               'CREATE INDEX IF NOT EXISTS idx_checkin_med_id ON check_ins(medication_id)',
             );
           }
-          // v13 → v14: contacts + report_histories 加索引 (P2 优化)
+          // v13 to v14: contacts + report_histories add index (P2 optimization)
           if (from <= 13) {
             await customStatement(
               'CREATE INDEX IF NOT EXISTS idx_contact_active_sort ON contacts(is_active, sort_order)',
@@ -274,11 +274,11 @@ class AppDatabase extends _$AppDatabase {
               'CREATE INDEX IF NOT EXISTS idx_report_gen_at ON report_histories(generated_at)',
             );
           }
-          // v14 → v15: contacts 加 4 个 consent 字段 (P0-2 修复, PIPL §13 留痕)
-          // - 4 字段全部 nullable, 旧数据 (schemaVersion <= 14) 自动为 null
-          // - 新加联系人 (schemaVersion 15+) ContactRepositoryImpl.add() 强制
-          //   caller 传 ConsentArtifact, 4 字段写进 ContactsCompanion.insert(...)
-          // - 索引: consent_at 加索引 (按同意时间倒序查 audit log)
+          // v14 to v15: contacts add 4 consent columns (P0-2 fix, PIPL §13 audit trail)
+          // - all 4 columns nullable, old data (schemaVersion <= 14) auto null
+          // - new contact (schemaVersion 15+) ContactRepositoryImpl.add() forces
+          //   caller to pass ConsentArtifact, 4 columns written to ContactsCompanion.insert(...)
+          // - index: consent_at add index (query audit log by consent time descending)
           if (from <= 14) {
             await m.addColumn(contacts, contacts.consentAt);
             await m.addColumn(contacts, contacts.consentKind);
@@ -288,14 +288,14 @@ class AppDatabase extends _$AppDatabase {
               'CREATE INDEX IF NOT EXISTS idx_contact_consent_at ON contacts(consent_at)',
             );
           }
-          // v15 → v17: mood_entries +8 个 CBT 字段 (v0.29 round 84)
-          // 注: code diff 实际 15→17 (无中间 v16), spec 误写"16→17"
-          // (e14c6b3 fix spec 12→16 未对应任何代码 schema bump).
-          // 守卫 `if (from <= 16)` 同时覆盖当前 v15 用户 + 未来真出 v16 schema
-          // 时的安全网 (避免漏迁). 未来如真引入 v16 中间 schema, 这里需插一个
-          // `if (from == 16) { /* v16→v17 步 */ }` placeholder, 见上面 doc 注释.
-          // - 8 列全 nullable, 老数据自动 null (3 栏 mode 渲染,行为不变)
-          // - 升级后 DayDetailCard 走"3 栏 + 自由 note"分支,5/7 栏用户主动升级才用
+          // v15 to v17: mood_entries +8 CBT columns (v0.29 round 84)
+          // note: code diff is actually 15 to 17 (no intermediate v16), spec mistakenly wrote '16 to 17'
+          // (e14c6b3 fix spec 12 to 16 didn't correspond to any code schema bump).
+          // guard `if (from <= 16)` covers current v15 users + future actual v16 schema
+          // safety net (avoid missing migration). If v16 intermediate schema is actually introduced, need to insert
+          // `if (from == 16) { /* v16 to v17 step */ }` placeholder, see above doc comment.
+          // - all 8 columns nullable, old data auto null (3-column mode rendering, behavior unchanged)
+          // - after upgrade, DayDetailCard takes '3-column + free note' branch, 5/7 column users use only when actively upgrading
           if (from <= 16) {
             await m.addColumn(moodEntries, moodEntries.situation);
             await m.addColumn(moodEntries, moodEntries.automaticThought);
@@ -306,17 +306,17 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(moodEntries, moodEntries.coreBelief);
             await m.addColumn(moodEntries, moodEntries.behaviorResponse);
           }
-          // v17 → v18: 日常追踪 6 新表 + mood_entries 加 period 列 (v0.30 round 91)
-          // - 1. mood_entries 加 period 列 (TextColumn, nullable, 'unspecified' 默认)
-          // - 2. 创建 6 张新表: sleep_entries / social_rhythm_entries /
+          // v17 to v18: daily tracking 6 new tables + mood_entries add period column (v0.30 round 91)
+          // - 1. mood_entries add period column (TextColumn, nullable, 'unspecified' default)
+          // - 2. create 6 new tables: sleep_entries / social_rhythm_entries /
           //      stress_events / treatment_entries / weight_entries /
           //      anxiety_agitation_entries
-          // - 老用户升级 0 数据迁移 (新表空, 新列 nullable)
-          // - 守卫 `if (from < 18)` 跟 v15→v17 一致模式: 跟 v18 未来升级兼容
+          // - old user upgrade 0 data migration (new tables empty, new column nullable)
+          // - guard `if (from < 18)` matches v15 to v17 pattern: compatible with future v18 upgrade
           if (from < 18) {
-            // 1. period 列加到 mood_entries
+            // 1. period column added to mood_entries
             await m.addColumn(moodEntries, moodEntries.period);
-            // 2. 创建 6 张新表
+            // 2. create 6 new tables
             await m.createTable(sleepEntries);
             await m.createTable(socialRhythmEntries);
             await m.createTable(stressEvents);
@@ -324,15 +324,15 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(weightEntries);
             await m.createTable(anxietyAgitationEntries);
           }
-          // v18 → v19: vent_entries DROP contentText TEXT 列 (PIPL §28 清理)
-          // - R21 v0.21 加 contentTextEnc (BLOB 加密) 同时保留 contentText (TEXT 明文)
-          // - v8→v9 migration 一次性加密 contentText 写回 contentTextEnc,
-          //   但 contentText 列仍保留, R22-R91 5+ 年用户 DB 仍有双份
-          // - 设备 root / 备份偷走 → 字段级明文泄露违反 PIPL §28
-          // - R92 DROP 列, 一次性清理
-          // - 守卫 `if (from < 19)` 跟 v15→v17 / v17→v18 一致模式
-          // - drift 2.x TableMigration 不支持 explicit deletedColumns, 用 raw SQL
-          //   ALTER TABLE 删列 (SQLite 支持 ALTER TABLE DROP COLUMN 自 3.35.0)
+          // v18 to v19: vent_entries DROP contentText TEXT column (PIPL §28 cleanup)
+          // - R21 v0.21 added contentTextEnc (BLOB encrypted) while keeping contentText (TEXT plaintext)
+          // - v8 to v9 migration one-time encrypt contentText back to contentTextEnc,
+          //   but contentText column still kept, R22-R91 5+ year users DB still has duplicate
+          // - device root / backup steal → field-level plaintext leak violates PIPL §28
+          // - R92 DROP column, one-time cleanup
+          // - guard `if (from < 19)` matches v15 to v17 / v17 to v18 pattern
+          // - drift 2.x TableMigration doesn't support explicit deletedColumns, use raw SQL
+          //   ALTER TABLE drop column (SQLite supports ALTER TABLE DROP COLUMN since 3.35.0)
           if (from < 19) {
             await customStatement(
               'ALTER TABLE vent_entries DROP COLUMN content_text',
@@ -340,18 +340,18 @@ class AppDatabase extends _$AppDatabase {
           }
         },
         beforeOpen: (details) async {
-          // 启用外键
+          // enable foreign keys
           await customStatement('PRAGMA foreign_keys = ON');
         },
       );
 
-  // ============= CheckIns (v0.25 R53a: 委托给 CheckInDao) =============
+  // ============= CheckIns (v0.25 R53a: delegated to CheckInDao) =============
 
-  // v0.25 round 53a (spen P1 #12 god class 拆分): 抽 7 DAO + app_database
-  // 改成 1 行委托。caller 暂时不动 (保留 facade 兼容), 后续 R53b 渐进迁移。
+  // v0.25 round 53a (spen P1 #12 god class split): extract 7 DAO + app_database
+  // changed to 1-line delegation. caller temporarily unchanged (preserve facade compat), gradual migration in R53b.
   late final checkInDao = CheckInDao(this);
-  // v0.30 round 90 (sub-spec 6 量表中心): AssessmentDao 跨 10 量表聚合,
-  // 依赖 CheckInDao.watchAssessments (扩 10 type IN) + CheckIns 表。
+  // v0.30 round 90 (sub-spec 6 scale center): AssessmentDao cross 10 scale aggregation,
+  // depends on CheckInDao.watchAssessments (expand 10 type IN) + CheckIns table.
   late final assessmentDao = AssessmentDao(this, checkInDao);
   late final medicationDao = MedicationDao(this);
   late final contactDao = ContactDao(this);
@@ -360,7 +360,7 @@ class AppDatabase extends _$AppDatabase {
   late final moodDao = MoodDao(this);
   late final ventDao = VentDao(this);
 
-  // v0.30 round 91 (sub-spec 7 日常追踪): 6 新 DAO (manual wrapper 模式)
+  // v0.30 round 91 (sub-spec 7 daily tracking): 6 new DAO (manual wrapper pattern)
   late final sleepDao = SleepDao(this);
   late final socialRhythmDao = SocialRhythmDao(this);
   late final stressEventDao = StressEventDao(this);
@@ -368,17 +368,17 @@ class AppDatabase extends _$AppDatabase {
   late final weightDao = WeightDao(this);
   late final anxietyAgitationDao = AnxietyAgitationDao(this);
 
-  // v0.27 round 65 (spen P1-11): 删 32 行 facade 委派 (line 264-316), caller
-  // 已全迁到 _db.xxxDao.xxx() / db.xxxDao.xxx() (94 处). 保留 saveSetup /
-  // clearAllUserData (业务编排, 非纯委派).
+  // v0.27 round 65 (spen P1-11): remove 32-line facade delegation (line 264-316), caller
+  // fully migrated to _db.xxxDao.xxx() / db.xxxDao.xxx() (94 places). Keep saveSetup /
+  // clearAllUserData (business orchestration, not pure delegation).
 
-  /// 完成首次设置：在同一个事务里写入用户档案、联系人、药物，
-  /// 任何一个失败整体回滚，避免半成品数据
+  /// Complete first-time setup: in one transaction write user profile, contacts, medications,
+  /// any failure rolls back entirely, avoid half-baked data
   ///
-  /// v0.27 round 68 (CC-1 修复, PIPL §13 单独同意): 加 `contactConsents` 参数
-  /// (跟 `contactList` 等长)。setup 阶段每个填了的联系人必须有 ConsentArtifact,
-  /// 否则联系人不会写入(4 个 consent 字段必有值)。setup_page 必须在调 saveSetup
-  /// 之前对每个联系人弹 ConsentDialog 拿 consent。
+  /// v0.27 round 68 (CC-1 fix, PIPL §13 separate consent): add `contactConsents` parameter
+  /// (same length as `contactList`). Each contact filled in setup phase must have ConsentArtifact,
+  /// otherwise contact won't be written (4 consent columns required). setup_page must, before calling saveSetup,
+  /// show ConsentDialog for each contact to get consent.
   Future<void> saveSetup({
     required String userName,
     required List<({String name, String phone, int sortOrder})> contactList,
@@ -392,29 +392,29 @@ class AppDatabase extends _$AppDatabase {
             })>
         medicationList,
   }) async {
-    // v0.21 (P1-2 fix): 函数入口取一次 now, 避免 2 个 await 之间跨 midnight
-    // firstLaunchAt 跟 medStart 用了不同 DateTime.now() → 同一次 setup
-    // 在 23:59:59.x 跨过 0 点时,两个时间戳差 1 天。
+    // v0.21 (P1-2 fix): take now once at function entry, avoid crossing midnight between 2 awaits
+    // firstLaunchAt and medStart used different DateTime.now() → same setup
+    // when crossing 0:00 at 23:59:59.x, two timestamps differ by 1 day.
     final now = DateTime.now();
     await transaction(() async {
-      // upsert user profile（保留 firstLaunchAt）
-      // v0.27 round 65 (spen P1-11): 删 facade getUserProfile, saveSetup 内部
-      // 改用 userProfileDao.get() (R53a 已抽 7 DAO)
+      // upsert user profile (preserve firstLaunchAt)
+      // v0.27 round 65 (spen P1-11): remove facade getUserProfile, saveSetup internal
+      // switch to userProfileDao.get() (R53a already extracted 7 DAO)
       final existing = await userProfileDao.get();
       await into(userProfiles).insertOnConflictUpdate(
         UserProfilesCompanion.insert(
-          // v0.21 Round 23 (P1-24): userName 改 nullable
-          // 接受 null,UI "我是" 时退化为 "Friend" 或空
+          // v0.21 Round 23 (P1-24): userName change to nullable
+          // accept null, UI 'I am' falls back to 'Friend' or empty
           userName: Value(userName),
           checkInCycleHours: const Value(48),
           firstLaunchAt: existing?.firstLaunchAt ?? now,
         ),
       );
 
-      // insert contacts (R68 CC-1: PIPL §13 单独同意, 4 个 consent 字段必有)
+      // insert contacts (R68 CC-1: PIPL §13 separate consent, 4 consent columns required)
       assert(
         contactList.length == contactConsents.length,
-        'contactList 跟 contactConsents 必须等长 — setup_page 必须逐个弹 ConsentDialog',
+        'contactList and contactConsents must have same length — setup_page must show ConsentDialog for each',
       );
       for (var i = 0; i < contactList.length; i++) {
         final c = contactList[i];
@@ -424,8 +424,8 @@ class AppDatabase extends _$AppDatabase {
             name: c.name,
             phone: c.phone,
             sortOrder: Value(c.sortOrder),
-            // R68 CC-1 修复: 4 个 consent 字段从 setup 阶段就写
-            // (之前留空 → PIPL §13 技术层面不成立, §47 查询权无效)
+            // R68 CC-1 fix: 4 consent columns written from setup phase
+            // (previously left empty → PIPL §13 technically invalid, §47 query right invalid)
             consentAt: Value(consent.grantedAt),
             consentKind: Value(consent.kind.name),
             consentBy: Value(consent.grantedBy),
@@ -435,7 +435,7 @@ class AppDatabase extends _$AppDatabase {
       }
 
       // insert medications
-      // startDate 用同一个 now,确保 firstLaunchAt 跟 medStart 一致
+      // startDate uses the same now, ensure firstLaunchAt and medStart consistent
       final medStart = now;
       for (final m in medicationList) {
         await into(medications).insert(
@@ -451,22 +451,22 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
-  // ============= 隐私 / 清空数据 (v0.21 Round 22, P0-8 修复) =============
+  // ============= Privacy / clear data (v0.21 Round 22, P0-8 fix) =============
 
-  /// 清空所有用户数据表 (PIPL §47 主动删除权)
+  /// Clear all user data tables (PIPL §47 active delete right)
   ///
-  /// **不**重置 schemaVersion,**不**删 DB 文件 — 保留表结构,只清数据。
-  /// 调用方需自己处理后续(跳 setup / 通知用户)。
+  /// **not** reset schemaVersion, **not** delete DB file — keep table structure, only clear data.
+  /// Caller must handle follow-up (jump to setup / notify user).
   ///
-  /// 不删:无 (用户档案 / 联系人 / 药物 / 打卡 / 报告 / 情绪 / 树洞 都可清)。
-  /// 保留:无 (AppDatabase 无非用户表)。
+  /// Not deleted: none (user profile / contacts / medications / check-ins / reports / mood / vent all can be cleared).
+  /// Kept: none (AppDatabase has no non-user tables).
   ///
-  /// **不**清 vent audio 文件 (文件不在 DB),调用方需自己调
-  /// [VentAudioStorage.deleteAll] 删文件。
+  /// **not** clear vent audio files (files not in DB), caller must call itself
+  /// [VentAudioStorage.deleteAll] to delete files.
   Future<void> clearAllUserData() async {
     await transaction(() async {
-      // 顺序重要:外键依赖先清
-      // (当前 schema 无外键,顺序不重要,但保持防御性)
+      // order matters: foreign key dependencies clear first
+      // (current schema has no foreign keys, order doesn't matter, but keep defensive)
       await delete(checkIns).go();
       await delete(medications).go();
       await delete(contacts).go();
@@ -474,7 +474,7 @@ class AppDatabase extends _$AppDatabase {
       await delete(reportHistories).go();
       await delete(moodEntries).go();
       await delete(ventEntries).go();
-      // v0.30 round 91: 6 新表也清
+      // v0.30 round 91: 6 new tables also cleared
       await delete(sleepEntries).go();
       await delete(socialRhythmEntries).go();
       await delete(stressEvents).go();
@@ -484,5 +484,5 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
-  // _encodeTimes 移到了 MedicationRepository.encodeTimes（共用，格式不变）
+  // _encodeTimes moved to MedicationRepository.encodeTimes (shared, format unchanged)
 }
