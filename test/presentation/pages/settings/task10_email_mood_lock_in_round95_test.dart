@@ -106,24 +106,38 @@ void main() {
       );
     });
 
-    test('R95 fix 2: home_page.dart 调 MoodRecorderPage.show() (不调 MoodDialog.show)',
+    test('R95 fix 2: home_page*.dart 调 MoodRecorderPage.show() (不调 MoodDialog.show)',
         () {
-      final source = File(
+      // R95 sub-spec 6 task 6a fix: R95 sub-spec 4 task 5 拆 home_page → 主壳
+      // + home_page_state, MoodRecorderPage.show() 2 caller 都在
+      // home_page_state.dart, 主壳 home_page.dart 不再含业务调用
+      final homePageSource = File(
         'lib/presentation/pages/home/home_page.dart',
       ).readAsStringSync();
       expect(
-        source.contains('MoodDialog.show('),
+        homePageSource.contains('MoodDialog.show('),
         isFalse,
         reason: 'home_page.dart 不应再调 MoodDialog.show (薄壳已删), '
             '应直接调 MoodRecorderPage.show()',
       );
-      // 应有 ≥ 2 处 MoodRecorderPage.show (caller 改后)
-      final matches = 'MoodRecorderPage.show('.allMatches(source).length;
+
+      final homePageStateSource = File(
+        'lib/presentation/pages/home/home_page_state.dart',
+      ).readAsStringSync();
+      // 应有 ≥ 2 处 MoodRecorderPage.show (R95 sub-spec 4 task 5 拆后)
+      // onOpenFullDialog + onMoodTap 2 caller 都在 home_page_state.dart
+      final matches = 'MoodRecorderPage.show('.allMatches(homePageStateSource).length;
       expect(
         matches,
         greaterThanOrEqualTo(2),
-        reason: 'home_page.dart 应有 ≥ 2 处 MoodRecorderPage.show() '
+        reason: 'home_page_state.dart 应有 ≥ 2 处 MoodRecorderPage.show() '
             '(onOpenFullDialog + onMoodTap 2 caller), 实际 $matches',
+      );
+      // home_page_state.dart 也不应调 MoodDialog.show (薄壳已删)
+      expect(
+        homePageStateSource.contains('MoodDialog.show('),
+        isFalse,
+        reason: 'home_page_state.dart 也不应调 MoodDialog.show (薄壳已删)',
       );
     });
 

@@ -55,6 +55,9 @@ class MoodPeriodAggregator {
   /// - 5 段 (含 unspecified) 必返, 即使 count=0 也返回 avg=0.0
   /// - 老 entry 兼容: period = null 归 'unspecified' 桶
   /// - daysWindow = null = 全部 entry (不限时间, 给 trend page 用)
+  /// - now: 可选时间锚点, 默认 DateTime.now(); 给 test 注入固定时间避免 drift
+  ///   (R91 集成遗留 bug fix: test 用 `2026-08-05` 但实跑 today 是 `2026-08-07`
+  ///   导致 d=29 entry 在 30 天窗边界外被剔除, noon bucket count 从 8 → 7 fail)
   ///
   /// 例子:
   /// ```dart
@@ -65,12 +68,13 @@ class MoodPeriodAggregator {
   static Map<String, PeriodAggregate> aggregateByPeriod(
     List<MoodEntryEntity> entries, {
     int? daysWindow = 30,
+    DateTime? now,
   }) {
     // 1. 过滤时间窗
-    final now = DateTime.now();
+    final refNow = now ?? DateTime.now();
     final cutoff = daysWindow == null
         ? null
-        : now.subtract(Duration(days: daysWindow));
+        : refNow.subtract(Duration(days: daysWindow));
     final filtered = cutoff == null
         ? entries
         : entries.where((e) => !e.timestamp.isBefore(cutoff)).toList();

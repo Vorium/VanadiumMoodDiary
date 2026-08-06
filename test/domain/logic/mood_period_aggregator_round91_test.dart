@@ -63,7 +63,9 @@ void main() {
       }
 
       // 默认 30 天窗 → unspecified 4 条 (35+ 天前) 全被剔除
-      final result = MoodPeriodAggregator.aggregateByPeriod(entries);
+      // R95 sub-spec 6 task 6a fix: 传 now 避免 test 漂移 (实跑 today 是
+      // 2026-08-07, test 用 2026-08-05, 不传 now 会让 d=29 entry 被剔除)
+      final result = MoodPeriodAggregator.aggregateByPeriod(entries, now: now);
 
       // morning: 8 条, 全 score=3 → avg=3.0
       expect(result['morning']!.count, 8);
@@ -108,7 +110,7 @@ void main() {
         _entry(id: 3, at: now.subtract(const Duration(days: 10)), score: 4),
       ];
 
-      final result = MoodPeriodAggregator.aggregateByPeriod(entries);
+      final result = MoodPeriodAggregator.aggregateByPeriod(entries, now: now);
 
       // 3 条全归 unspecified, avg = (3+5+4)/3 = 4.0
       expect(result['unspecified']!.count, 3);
