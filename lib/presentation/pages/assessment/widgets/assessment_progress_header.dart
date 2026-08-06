@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 答题顶部进度 widget
 ///
@@ -40,8 +41,11 @@ class AssessmentProgressHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppTokens.spacingXs),
+          // 走 l10n key (R91 已有 assessmentAnsweredProgress, R92 拆 god page 时
+          // 误改成字面量 '$answered / $total', R92 task 6 fix 复用 l10n)
           Text(
-            '$answered / $total',
+            AppLocalizations.of(context)
+                .assessmentAnsweredProgress(answered, total),
             style: TextStyle(
               color: AppTokens.textSecondaryColor(context),
               fontSize: AppTokens.fontSizeCaption,
