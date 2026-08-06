@@ -331,16 +331,11 @@ class AppDatabase extends _$AppDatabase {
           // - 设备 root / 备份偷走 → 字段级明文泄露违反 PIPL §28
           // - R92 DROP 列, 一次性清理
           // - 守卫 `if (from < 19)` 跟 v15→v17 / v17→v18 一致模式
-          // - drift 2.x TableMigration: schema 移除列后, alterTable 自动生成 DROP COLUMN
+          // - drift 2.x TableMigration 不支持 explicit deletedColumns, 用 raw SQL
+          //   ALTER TABLE 删列 (SQLite 支持 ALTER TABLE DROP COLUMN 自 3.35.0)
           if (from < 19) {
-            await m.alterTable(
-              TableMigration(
-                ventEntries,
-                columnTransformer: {
-                  // contentText 旧值置 null, drift 自动生成 DROP COLUMN
-                  // (因为 contentText 已从 schema 移除)
-                },
-              ),
+            await customStatement(
+              'ALTER TABLE vent_entries DROP COLUMN content_text',
             );
           }
         },
