@@ -5,6 +5,7 @@ import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_reminder_section.dart';
 
@@ -79,17 +80,23 @@ class AssessmentSection extends StatelessWidget {
         const SizedBox(height: AppTokens.spacingMd),
 
         // 邮件预览
-        Card(
-          child: AppListTile(
-            leading: Icon(
-              Icons.email_outlined,
-              color: AppTokens.primaryColor(context),
+        // v0.30 round 93 (阶段 2 audit-fixes): 走 [FeatureFlags.emailServiceEnabled]
+        // gate, EmailService 真接 SendGrid 前完全 hidden (法务模板审核 + API key 申请
+        // 1-2 月, 业务暂停期间邮件功能无法真接)。
+        if (FeatureFlags.emailServiceEnabled)
+          Card(
+            child: AppListTile(
+              leading: Icon(
+                Icons.email_outlined,
+                color: AppTokens.primaryColor(context),
+              ),
+              title: Text(AppLocalizations.of(context).settingsEmailPreview),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/email-preview'),
             ),
-            title: Text(AppLocalizations.of(context).settingsEmailPreview),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/email-preview'),
-          ),
-        ),
+          )
+        else
+          const SizedBox.shrink(),
 
         const SizedBox(height: AppTokens.spacingMd),
 
