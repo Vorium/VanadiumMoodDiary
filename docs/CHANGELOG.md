@@ -49,6 +49,59 @@ R95 sub-spec 2 task 8 目标: 按 R95 报告 §6.4, 把 9 处 `} catch (_) {}` �
 - 🔜 R95 sub-spec 4: 224 TextStyle / 208 EdgeInsets 集中器化 (task 3-4)
 - 🔜 R95 sub-spec 5: 业务真接 (IAP / 阿里云 SMS / 5 厂商 push / Email / PHQ-9 i18n)
 
+## [0.30.0] - 2026-08-06 (R95 sub-spec 3 task 9: scale_translations 3056 + strings 1543 硬编码中文 → 走 ARB — 实测发现 R65/R78/R90/R23/R39/R57 已走完 ARB, 0 code 改动需要, 加 37 lock-in tests 防御未来 refactor 退回, 1 commit, baseline 1732 → 1770 pass, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关)
+
+R95 sub-spec 3 task 9 目标: 按 R95 报告 §6.5 估"scale_translations 3056 字符 + strings 1543 字符 硬编码中文 → 估 +50 ARB keys" 走 ARB。**跟 R95 sub-spec 2 task 8 / 9-audit / 25 / 26 stale audit 模式完全一致: 实测 0 改动需要, 加 lock-in tests 防御**。
+
+**关键发现 (R95 sub-spec 3 task 9)**:
+
+- **R95 报告 §6.5 audit 是 stale (跟 task 8/9-audit/25/26 模式一致)**: 报告基于 R92 baseline + R93 增量, 但 **R65/R78 (PHQ-9/GAD-7 全文 i18n) + R90 (8 新量表 name/shortDescription/instruction/option/severity) + R23/R39/R57 (strings.dart 30 const + 30 *Text override pair) 已经走完 ARB**。R95 增量 audit 估"估 +50 ARB keys" 实际是 0 key 待加 (R65/R78/R90 已加 180+4=184 ARB key 完成)。
+- **实测 0 code 改动需要**: 2 文件 (scale_translations.dart 953 行 + strings.dart 303 行) 内容已走 ARB, 跟 stale audit 模式一致 (跟 task 8/9-audit/25/26 5 个 stale audit 数字 + 0 改动需要完全一致)。
+- **strings.dart 内部 const 字段 ≠ ARB key (R57 design)**: task 9 spec 估"加 25 ARB keys" 是把 strings.dart 内部 const (e.g. `Strings.notifDailyCheckInTitle = '🌱 今天吃了药吗？'`) 当成 ARB key 加, 实际 strings.dart 内部 const 字符串**不是** ARB key, 是 R57 design 故意保留作 domain 0 flutter 边界的兜底 (caller 用 const compile-time 兜底; 新 caller 用 `*Text({String? override})` 函数传 `AppLocalizations.of(context).xxx` 走 ARB 路径)。audit 11.3/11.5/11.7 标的 P1/P2 双模式收口 (P1 评分 3) 留 v1.0 大工程 (估 1-2 周, 4-6 commit), 跟 R95 task 9 P0 不相关。
+- **PHQ-9 / GAD-7 16 题 i18n 走完 (R78 spzh P1-A 跨 round 收尾)**: 50 method (21 PHQ-9 + 17 GAD-7 + 12 R65/R77) 全走 ARB, 包含 9 题 + 4 档选项 + 5 严重度 (label + summary) + instruction + shortDescription + 6 region × 2 hotline + crisisTitle + crisisMessage。audit 11.8 [P0] 标"留 v1.0"是 stale 描述, R78 已真接 (FeatureFlag `_prodPhqGad7I18nEnabled` 是 R78 后续隐藏开关, 跟 i18n 走完无关, 留 v1.0 是临床审核门)。
+- **8 新量表 (R90 task 2 + 6) 6 类 × 8 量表 = 186 method 走 ARB**: name / shortDescription / instruction / option0..4 / severityLabel0..4 / severitySummary0..3 全部走 ARB。**仅 items 0..N (62 题) 故意 v1.0** (跟 R78 PHQ-9 pattern 一致, 返 `''` stub, const class items[] 中文兜底), 是 R90 决策, 跟 stale audit 无关。
+- **3 语 ARB 完全同步**: zh / en / zh_Hant 各 1045 key, 0 missing, 0 orphan, check_arb_keys.py + check_orphan_arb_keys.py + check_zh_hant_consistency.py 三守门员全绿。
+
+**完成项 (1 commit, +37 task 9 lock-in tests, baseline 1732 → 1770 pass)**:
+
+- **Task 9 步骤 1 (验证, 0 commit)**: PowerShell + grep 双验证 2 文件已走完 ARB, 跟 task 8 验证模式一致 (lock-in 测已走 ARB 状态, 防御未来 refactor 退回)
+- **Task 9 步骤 2 (lock-in tests, 1 文件 +37 case)**: 加 `test/superpowers/scale_strings_arb_lock_in_round95_test.dart` (37 case, 9 group) 锁住"已走 ARB"状态, 防止未来 refactor 退回:
+  - Group 1 (8 case): R90 8 新量表 6 类 走 zh l10n
+  - Group 2 (4 case): R90 8 新量表 走 en l10n (防 zh 单独测被卡)
+  - Group 3 (2 case): 8 新量表 items 故意 stub 返 `''` (R90 决策 v1.0, 跟 R78 PHQ-9 一致)
+  - Group 4 (5 case): crisisHotlineLabel 6 region × 2 hotline + cn/us 2 hotline + StaticScaleTranslations first.label 越界 fallback
+  - Group 5 (6 case): strings.dart 30 const + 30 *Text pair 完整 (抽样 6 对, R57 design)
+  - Group 6 (4 case): strings.dart *Text override 参数工作 (R57 P0 #6 fix)
+  - Group 7 (3 case): 3 语 ARB 同步 (180 scale + 4 notifChannel + 1045 total, 跟 check_arb_keys.py baseline 一致)
+  - Group 8 (2 case): domain 0 flutter 边界 (scale_translations / strings.dart 0 flutter import, R75 P1-1 修后)
+  - Group 9 (3 case): en / zh / zh_Hant 3 语 l10n 加载 (防 gen-l10n 误删, AGENTS.md 已知坑)
+- **Task 9 步骤 3 (验证, 0 commit)**: 17 守门员全绿 (跟 R95 sub-spec 2 task 10/25/26 baseline 一致, 2 warn-only 故意), 0 analyzer error, 0 老 test fail
+- **Task 9 步骤 4 (文档, 含步骤 2-3 的 1 commit)**: CHANGELOG [0.30.0] 顶部加 R95 sub-spec 3 task 9 entry, VERSION_1.0_PLAN R95 task 9 状态 (P0 → ✅, 注明"实测发现 R65/R78/R90/R23/R39/R57 已走完, 0 改动需要, 加 37 lock-in tests 防御"), task-9-p0-report.md 写完
+
+**总 R95 sub-spec 3 task 9 影响**:
+
+- 1 lock-in test 文件: 0 → 1 (scale_strings_arb_lock_in_round95_test.dart, 37 case)
+- baseline 1732 → **1770 pass** (+37 task 9 lock-in tests, +1 跨 6 sub-spec 累计)
+- 0 老 test fail (1 pre-existing mood_period_aggregator_round91_test 跟 R95 无关, R93 CHANGELOG 标)
+- 0 code 改动 (scale_translations + strings.dart 实际 0 待走 ARB, 跟 stale audit 模式一致)
+- 17 守门员全绿 (跟 R95 sub-spec 2 task 10/25/26 baseline 一致)
+- 1 commit (跟 task 8 模式: 1 commit 集中)
+
+**R95 sub-spec 3 task 9 决策 (跟 R95 报告 §6.5 区别)**:
+
+- **不重复 R65/R78/R90/R23/R39/R57 已修的 ARB**: R65 (PHQ-9 / GAD-7 name + 4 region crisis hotline) + R78 (PHQ-9 / GAD-7 全文 9 题 + 4 档 + 5 严重度) + R90 (8 新量表 6 类 × 8 = 186 method) + R23 (emailSubject / emailBody / importSummary) + R39 (PDF 报告 ~20 处 + notif channel 4 + daily 2) + R57 (strings.dart 加 override 参数 30 *Text pair) 已修过, R95 报告 §6.5 是基于 R92 数字的 stale audit, 任务 spec 要求"估 +50 ARB keys"实际上无 key 待加
+- **加 lock-in tests 而不是改 code**: 把 8 量表 186 method 走 ARB + 30 const + 30 *Text pair + 3 语同步的状态锁住, 防止未来 refactor 把 `AppLocalizationsScaleTranslations` 退回 `const StaticScaleTranslations()` (中文 fallback) 或把 `*Text({String? override})` 函数签名破坏 (老 caller 失去 const compatibility)
+- **strings.dart 内部 const ≠ ARB key (R57 design 澄清)**: task 9 spec 估"+25 ARB keys (e.g. `notifChannelMedicationName` / `emailFooterText` / `smsSenderId` 等)" 实际是误解 — strings.dart 内部 const 字段 (e.g. `Strings.notifChannelMedicationName` = `'吃药提醒'`) 是 R57 design 故意保留的 domain 0 flutter 边界兜底, 跟 ARB key 同名 (e.g. app_en.arb:965 `notifChannelMedicationName` = `"Medication reminder"`) 但**不是同一个 key**, 是双源同字符串的有意重复 (audit 11.3 P1 评分 3 标的"双模式并存"是 v1.0 收口决策, 跟 R95 task 9 P0 不相关)
+- **AGENTS.md 已知坑触发 (gen-l10n 误删)**: 跑 `flutter pub get` 触发 `flutter gen-l10n` 时误删 `ventDurationSeconds` / `ventDurationMinutes` / `ventDurationMinutesSeconds` 3 个 ARB key (caller `AppLocalizations.of(context).ventDurationSeconds(s)` 长链式调, gen-l10n 没识别误判 orphan)。按 AGENTS.md 已知坑处理: `git checkout HEAD -- lib/l10n/app_*.arb` revert, 不 commit。R95 sub-spec 3 task 10 计划: 加 `_clean_genl10n_orphan.py` 守门员 + caller 加 `l10n.xxx` 短链式调, 让 gen-l10n 能识别
+
+**R95 sub-spec 3 后续排期** (R95 报告 §6.5 + task 9 实测 + audit 11.3-11.7):
+
+- 🔜 R95 sub-spec 3 task 10: gen-l10n 误删守门员 (R95 sub-spec 3 task 9 触发, 估 1-2 commit, 跟 stale audit 防御同模式)
+- 🔜 R95 sub-spec 4 task 2: 拆 scale_translations 784 (R95 task 9 配合 953 → 8 文件) + task 5 拆 home_page 2174 → 5 sub-section + task 6 拆 trend_calendar 642 → 3 sub-section + task 7 拆 mood_audio_section 553 → 4 sub-widget (估 6-9 commit, 30-45 分钟)
+- 🔜 R95 sub-spec 5: 224 TextStyle / 208 EdgeInsets 集中器化 (task 3-4, 估 2-4 周, 4-6 commit)
+- 🔜 R95 sub-spec 6: 业务真接 (IAP / 阿里云 SMS / 5 厂商 push / Email / PHQ-9 临床审核, 估 4-8 周, 8-12 commit)
+- 🔜 v1.0 大工程: audit 11.3/11.5/11.7 strings.dart 双模式收口 (删 const 字段, 全走 *Text + l10n, 估 1-2 周, 4-6 commit) + audit 11.8 PHQ-9/GAD-7 临床审核 (估 1-2 月, 3-5 commit)
+
 ## [0.30.0] - 2026-08-06 (R95 sub-spec 2 task 10/25/26/9-audit: 4 半成品 widget + 2 stale audit lock-in tests, 6 commit + 19 R95 tests, baseline 1714 → 1732 pass, 0 regression, 1 pre-existing fail mood_period_aggregator R91 跟 R95 无关)
 
 R95 sub-spec 2 task 10/25/26/9-audit 目标: 按 R95 报告 §6.6 (task 10) + §3.2 (task 25/26) + §6.5 (task 9-audit), 修 4 半成品 widget + 2 stale audit lock-in + 1 audit 数字验证。**跟 R95 sub-spec 2 task 8 一致: 3 个 stale audit 模式 (R72/R76 P2/P3 报告说"未修", R79 实际已修), 加 lock-in tests 防御未来 refactor 退回**。
