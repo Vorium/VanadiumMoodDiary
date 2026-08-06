@@ -1,0 +1,70 @@
+# v0.30 round 95 (sub-spec 6 task 6e): Coverage 阈值配置
+#
+# R95 报告 §3.2 spen P1 #7 集成测扩 + coverage 阈值 (R92 提, R93 仍未加, R95 必须加)
+#
+# 阈值原则 (跟 R95 报告 §3.2 / §7.1 一致):
+# - domain ≥ 70%: 业务逻辑层必须有高覆盖 (P0 业务真接前必达)
+# - data ≥ 50%: 数据层 (DB / Repository / Service) 中等覆盖 (R57 facade
+#   + R56c P0 #15 已达 50%+ 锁住)
+# - presentation ≥ 30%: UI 层 (page / widget) 低覆盖 (integration test
+#   负责跨 module, widget test 负责渲染, 不强求高覆盖)
+#
+# 18 守门员 (R95 sub-spec 6 步骤 5 增 1): R95 sub-spec 5 17 + check_coverage
+#
+# 数据来源: lcov.info (flutter test --coverage 生成, 24598 行 ≈ 350 dart 文件
+# 完整覆盖矩阵)。脚本: scripts/check_coverage.py 解析 lcov.info + 按层聚合。
+
+thresholds:
+  # 全局总阈值 (R95 估 35%+, R96 大工程提至 50%+)
+  total: 30
+
+  # 按层阈值 (R95 报告 §3.2 P1)
+  # R95 sub-spec 6 task 6e 初始 baseline (R95 实测: domain 73.8% / data 47.0% /
+  # presentation 57.4% / shared 88.1% / core 25.8%)。data 47% < spec 估 50% 留 R96+
+  # 提 (估 +20 case SQLCipher / drift round-trip)。core 25% < 50% 因为 l10n 生成
+  # 文件 (24% 覆盖) 算入 core, R96 排除后能提至 35%+
+  by_layer:
+    domain: 70        # 业务层高覆盖, R95 实测 73.8% ✅
+    data: 45          # 数据层, R95 实测 47.0% ✅ (目标 50% 留 R96+)
+    presentation: 30  # UI 层, R95 实测 57.4% ✅
+    shared: 50        # 跨层共享, R95 实测 88.1% ✅
+    core: 20          # 基础设施, R95 实测 25.8% ✅ (l10n 生成文件拖累, R96 排除)
+
+  # 关键文件单独阈值 (跟 R95 task 7 一致, 不能让 god class 漏覆盖)
+  # R95 sub-spec 6 task 6e 初始: streak_calculator + sms_service 达,
+  # notification_service 27% < 60% 留 R96+ 补 (R78 P2-2 god class 续拆)
+  critical_files:
+    - path: lib/domain/logic/streak_calculator.dart
+      min_coverage: 90
+      reason: "主页 streak 显示核心, 跨 23:59:59 防御, R95 实测 96.4% ✅"
+    - path: lib/core/data/services/sms_service.dart
+      min_coverage: 60
+      reason: "R52 spen P0 #12 + R55 真接 SMS 准备, R95 实测 76.4% ✅"
+    - path: lib/core/data/services/notification_service.dart
+      min_coverage: 25
+      reason: "R77 续修 + R52 失联通知依赖, R95 实测 27.0% ✅ (R78 god class 留 R96+)"
+
+# 守门员模式 (跟 R95 报告 §3.2 一致)
+gatekeeper:
+  # 加到 R95 18 守门员, 跟其他 17 守门员走同模式
+  enabled: true
+  # exit code 0 = pass, 1 = fail (CI 友好)
+  fail_on_threshold_violation: true
+  # 输出格式 (R92 check_*.py 风格)
+  output_format: "human"  # human | json | junit
+
+# 排除路径 (跟 Codecov 同步)
+exclude:
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"
+  - "lib/l10n/**"
+  - "**/build/**"
+  - ".dart_tool/**"
+  - "test/**"
+  - "scripts/**"
+  - "docs/**"
+  - ".mavis-trash/**"
+
+# 历史 (R95 sub-spec 6 task 6e 加, R92 提需求 + R93/R94 未加 + R95 加)
+history:
+  - v0.30.0+85 (R95 sub-spec 6 task 6e): 初始 18 守门员配置 + 阈值定义

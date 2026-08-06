@@ -1,0 +1,106 @@
+# Codecov 配置 (R95 sub-spec 6 task 6e)
+#
+# R95 报告 §3.2 spen P1 #7 集成测扩 + coverage 阈值 + Codecov (R92 提, R93 仍未加, R95 加)
+# 跟 coverage_threshold.yaml 阈值同步
+
+codecov:
+  # 5 次 CI 重试 (跟 GitHub Actions 兼容)
+  max_report_age: off
+  require_ci_to_pass: true
+  notify:
+    # 5 个待 review PR 时, codecov bot 提示
+    after_n_builds: 5
+    wait_for_ci: true
+
+coverage:
+  precision: 2       # 2 位小数 (跟 lcov 同步)
+  round: down        # 向下取整
+  range: "70...90"   # codecov badge 颜色范围 (红→黄→绿)
+
+  status:
+    # 全局项目 (跟 R95 阈值一致)
+    project:
+      default:
+        target: auto        # 自动基线 (PR 时显示 delta)
+        threshold: 1%       # 允许 1% 下降
+        if_ci_failed: error
+        only_pulls: false
+
+    # 单文件 (跟 R95 critical_files 同步, 强约束关键业务)
+    patch:
+      default:
+        target: 70%         # 新增代码 ≥ 70% 覆盖
+        threshold: 5%       # 允许 5% 下降
+
+# 覆盖率目标 (R95 报告 §3.2 阈值, 跟 coverage_threshold.yaml 一致)
+# 详细数值在 coverage_threshold.yaml, 这里只标 Codecov 显示
+comment:
+  layout: "header, diff, flags, components, files, footer"
+  behavior: default
+  require_changes: false  # 总是显示 (即使无变化)
+  require_base: false     # 不要求 base (跟 first PR 兼容)
+  require_head: true
+  hide_project_coverage: false
+
+# 标志 (R95 4 层架构)
+flags:
+  domain:
+    paths:
+      - lib/domain/
+  data:
+    paths:
+      - lib/core/data/
+  presentation:
+    paths:
+      - lib/presentation/
+  shared:
+    paths:
+      - lib/core/shared/
+  core:
+    paths:
+      - lib/core/theme/
+      - lib/core/routing/
+      - lib/core/l10n/
+      - lib/main.dart
+      - lib/app.dart
+
+# 单独 component 配置 (跟 R95 5 个 layer 对齐)
+component_management:
+  individual_components:
+    - component_id: domain
+      name: "Domain (业务层)"
+      paths:
+        - lib/domain/**
+    - component_id: data
+      name: "Data (数据层)"
+      paths:
+        - lib/core/data/**
+    - component_id: presentation
+      name: "Presentation (UI 层)"
+      paths:
+        - lib/presentation/**
+    - component_id: shared
+      name: "Shared (跨层共享)"
+      paths:
+        - lib/core/shared/**
+    - component_id: core
+      name: "Core (基础设施)"
+      paths:
+        - lib/core/theme/**
+        - lib/core/routing/**
+        - lib/core/l10n/**
+        - lib/main.dart
+        - lib/app.dart
+
+# 排除路径 (跟 coverage_threshold.yaml 同步)
+ignore:
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"
+  - "lib/l10n/**"
+  - "**/build/**"
+  - ".dart_tool/**"
+  - "test/**"
+  - "scripts/**"
+  - "docs/**"
+  - ".mavis-trash/**"
+  - "**/migrations/**"
