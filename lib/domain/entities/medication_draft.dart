@@ -10,6 +10,7 @@
 //      一次性替换, 编译失败强制 caller 更新 — 测试驱动迁移)
 //   3. MedicationRepositoryImpl.add() 改接受 MedicationDraft
 //   4. caller 更新 (setup_step_medication / edit_medication_dialog 等)
+import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 
@@ -60,27 +61,39 @@ class MedicationDraft {
   });
 
   /// copyWith 模式 — UI 编辑场景 (e.g. 改 dosage 不动 name)
+  ///
+  /// v0.30 round 95 (sub-spec 7 R96c fix): nullable 字段 (startDate /
+  /// refillAt / endDate) 走 [DomainValue] 包装, 区分"保持原值"(`null`) 跟
+  /// "显式清空"(`DomainValue(null)`)。修前 [DateTime?] 无法区分二者, UI
+  /// 编辑场景 (e.g. 取消续方) 没办法把字段显式清回 null。
+  ///
+  /// 模式跟 [DomainValue] 集中器 (lib/core/shared/domain_value.dart) 一致
+  /// — 替代 drift 的 `Value<T>`, 保持 domain 层 0 drift 依赖。
+  ///
+  /// 不传 DomainValue (即传统 null) 走"保持原值"兼容老 caller;
+  /// 传 `DomainValue(null)` 显式清空;
+  /// 传 `DomainValue(dateTime)` 设新值。
   MedicationDraft copyWith({
     String? name,
     double? dosage,
     DosageUnit? dosageUnit,
     List<HourMinute>? times,
-    DateTime? startDate,
-    DateTime? refillAt,
+    DomainValue<DateTime?>? startDate,
+    DomainValue<DateTime?>? refillAt,
     int? refillReminderDays,
     bool? isActive,
-    DateTime? endDate,
+    DomainValue<DateTime?>? endDate,
   }) {
     return MedicationDraft(
       name: name ?? this.name,
       dosage: dosage ?? this.dosage,
       dosageUnit: dosageUnit ?? this.dosageUnit,
       times: times ?? this.times,
-      startDate: startDate ?? this.startDate,
-      refillAt: refillAt ?? this.refillAt,
+      startDate: startDate != null ? startDate.value : this.startDate,
+      refillAt: refillAt != null ? refillAt.value : this.refillAt,
       refillReminderDays: refillReminderDays ?? this.refillReminderDays,
       isActive: isActive ?? this.isActive,
-      endDate: endDate ?? this.endDate,
+      endDate: endDate != null ? endDate.value : this.endDate,
     );
   }
 }
