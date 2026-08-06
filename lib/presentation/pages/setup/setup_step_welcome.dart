@@ -136,10 +136,7 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
               padding: const EdgeInsets.only(top: AppTokens.spacingSm),
               child: Text(
                 l10n.setupContactConsent,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeCaption,
-                  color: AppTokens.textSecondaryColor(context),
-                ),
+                style: AppTokens.textStyleCaption(context),
               ),
             ),
           const SizedBox(height: AppTokens.spacingLg),

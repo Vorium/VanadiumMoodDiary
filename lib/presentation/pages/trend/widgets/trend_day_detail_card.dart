@@ -78,8 +78,8 @@ class DayDetailCard extends StatelessWidget {
                 if (detail.hasNormalCheckIn)
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
+                      horizontal: AppTokens.spacingChipGap,
+                      vertical: AppTokens.spacingXxxs,
                     ),
                     decoration: BoxDecoration(
                       // v0.22 round 29 (emil-01~12): 改用 tintedPrimaryDeep 集中器
@@ -100,8 +100,8 @@ class DayDetailCard extends StatelessWidget {
                 else
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
+                      horizontal: AppTokens.spacingChipGap,
+                      vertical: AppTokens.spacingXxxs,
                     ),
                     decoration: BoxDecoration(
                       color: AppTokens.dividerColor(context),
@@ -234,7 +234,10 @@ class DayDetailCard extends StatelessWidget {
           spacing: AppTokens.spacingXxs,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.spacingChipGap,
+                vertical: AppTokens.spacingXxxs,
+              ),
               decoration: BoxDecoration(
                 color: AppTokens.tintedPrimaryDeep(context),
                 borderRadius: BorderRadius.circular(AppTokens.radiusChip),

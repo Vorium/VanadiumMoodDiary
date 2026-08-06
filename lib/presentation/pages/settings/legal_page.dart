@@ -370,10 +370,7 @@ class _ConsentTile extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: AppTokens.textPrimaryColor(context),
-                      ),
+                      style: AppTokens.textStyleLabelMedium(context),
                     ),
                     const SizedBox(height: AppTokens.spacingXxs),
                     Text(
@@ -455,11 +452,7 @@ class _WithdrawOption extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: AppTokens.fontSizeBody,
-                  color: AppTokens.textPrimaryColor(context),
-                ),
+                style: AppTokens.textStyleBodyStrong(context),
               ),
               const SizedBox(height: AppTokens.spacingXxs),
               Text(

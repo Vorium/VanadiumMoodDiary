@@ -31,7 +31,7 @@ class MoodListItem extends StatelessWidget {
       onTap: onTap,
       leading: Text(
         MoodVisual.emojiFor(entry.score),
-        style: const TextStyle(fontSize: 28),
+        style: const TextStyle(fontSize: AppTokens.fontSizeTitle),
       ),
       title: Text(timestamp, style: AppTokens.textStyleCaption(context)),
       subtitle: Column(

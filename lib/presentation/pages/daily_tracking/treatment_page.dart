@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_add_dialog.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_list.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
@@ -46,7 +47,7 @@ class TreatmentPage extends ConsumerWidget {
           // 顶部添加按钮 (R91 sleep_widgets 风格 — 不用 FAB, list 页面通常
           // FAB 被 Card 占用, 走 FilledButton.icon 在右上角)
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AppTokens.spacingXs),
             child: Align(
               alignment: Alignment.centerRight,
               child: FilledButton.icon(

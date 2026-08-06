@@ -190,8 +190,8 @@ class ReminderCard extends StatelessWidget {
                       if (statusText.isNotEmpty)
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
+                            horizontal: AppTokens.spacingXs,
+                            vertical: AppTokens.spacingXxxs,
                           ),
                           decoration: BoxDecoration(
                             color: statusActive

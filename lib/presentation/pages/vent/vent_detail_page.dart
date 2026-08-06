@@ -231,10 +231,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                     const SizedBox(width: AppTokens.spacingSm),
                     Text(
                       _formatTime(entry.timestamp),
-                      style: TextStyle(
-                        fontSize: AppTokens.fontSizeCaption,
-                        color: AppTokens.textHintColor(context),
-                      ),
+                      style: AppTokens.textStyleCaptionHint(context),
                     ),
                   ],
                 ),
@@ -348,10 +345,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                 const SizedBox(height: AppTokens.spacingXl),
                 Text(
                   AppLocalizations.of(context).ventDetailPrivacy,
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHintColor(context),
-                  ),
+                  style: AppTokens.textStyleCaptionHint(context),
                 ),
               ],
             ),

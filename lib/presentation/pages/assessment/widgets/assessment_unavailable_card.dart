@@ -44,12 +44,12 @@ class AssessmentUnavailableCard extends StatelessWidget {
             const Spacer(),
             Text(
               l10n.assessmentCenterNotAvailable,
-              style: const TextStyle(fontSize: 11),
+              style: const TextStyle(fontSize: AppTokens.fontSizeLabelSm),
             ),
             Text(
               l10n.assessmentCenterComingSoon,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: AppTokens.fontSizeLabelSm,
                 color: AppTokens.textHintColor(context),
               ),
             ),

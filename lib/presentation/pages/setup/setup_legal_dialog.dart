@@ -108,7 +108,7 @@ class LegalDocumentDialog extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingSm),
           for (final line in lines)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
+              padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxxs),
               child: Text(
                 '• $line',
                 style: TextStyle(

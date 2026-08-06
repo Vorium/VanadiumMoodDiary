@@ -147,7 +147,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
         const SizedBox(height: AppTokens.spacingXs),
         for (int row = 0; row < 6; row++)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxxs),
             child: Row(
               children: [
                 for (int col = 0; col < 7; col++)
@@ -234,7 +234,7 @@ class _CalendarCell extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 1,
       child: Padding(
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(AppTokens.spacingXxxs),
         child: Material(
           color: bg ?? theme.colorScheme.surfaceContainerHighest,
           shape: RoundedRectangleBorder(

@@ -69,7 +69,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                         width: AppTokens.spacingMd,
                         height: 24,
                         child: Padding(
-                          padding: EdgeInsets.all(4),
+                          padding: EdgeInsets.all(AppTokens.spacingXxs),
                           child: LoadingSpinner(size: 16),
                         ),
                       )

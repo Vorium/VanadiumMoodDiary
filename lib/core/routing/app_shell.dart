@@ -78,7 +78,7 @@ class AppShell extends ConsumerWidget {
                 onDestinationSelected: (i) =>
                     context.go(_destinations(context)[i].path),
                 leading: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
                   child: Column(
                     children: [
                       Icon(

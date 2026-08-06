@@ -342,7 +342,7 @@ class _MigrationAbortedApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: AppTokens.edgeInsetsMd,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -408,7 +408,7 @@ class _MigrationFailedApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: AppTokens.edgeInsetsMd,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -451,7 +451,7 @@ class _MigrationFailedApp extends StatelessWidget {
         ),
         bottomNavigationBar: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppTokens.edgeInsetsSm,
             child: Text(
               message,
               textAlign: TextAlign.center,

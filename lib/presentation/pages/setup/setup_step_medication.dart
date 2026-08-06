@@ -271,10 +271,7 @@ class MedCard extends StatelessWidget {
                 padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
                 child: Text(
                   l10n.setupMedTimeOptional,
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHintColor(context),
-                  ),
+                  style: AppTokens.textStyleCaptionHint(context),
                 ),
               ),
           ],

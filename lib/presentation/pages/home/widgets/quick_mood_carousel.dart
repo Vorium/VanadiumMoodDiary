@@ -133,7 +133,7 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
                 final score = _scores[i];
                 final isSelected = score == _selected;
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingXxs),
                   child: PressFeedback(
                     onTap: _saving ? null : () => _recordQuick(score),
                     child: AnimatedContainer(
@@ -152,7 +152,7 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
                         children: [
                           Text(
                             MoodVisual.ipEmojiFor(score),
-                            style: const TextStyle(fontSize: 32),
+                            style: const TextStyle(fontSize: AppTokens.fontSizeScoreXl),
                           ),
                           const SizedBox(height: 2),
                           Text(
