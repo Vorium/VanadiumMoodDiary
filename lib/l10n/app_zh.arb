@@ -63,7 +63,6 @@
   "setupPrivacy3": "• 您可以随时导出",
   "settingsContacts": "紧急联系人",
   "settingsMedication": "常吃药",
-  "settingsEmailPreview": "预览停药通知邮件",
   "settingsAbout": "关于",
   "settingsDisclaimer": "免责声明",
   "settingsMedReport": "用药报告",
@@ -303,7 +302,6 @@
   "reminderHubDailyTitle": "每日打卡提醒",
   "reminderHubDailyDesc": "每天 20:00 推送「记得打卡」，漏 1 次没关系",
   "reminderHubDailyStatus": "已启用 · 每天 20:00",
-  "reminderHubDailyAction": "查看通知预览",
   "reminderHubMedicationTitle": "用药提醒",
   "reminderHubStatusError": "出错",
   "reminderHubRefillTitle": "续方提醒",
@@ -885,11 +883,6 @@
   "legalPageWithdrawAnalyticsSubtitle": "停止将评估／情绪记录纳入趋势分析（数据保留，不再入图表）",
   "legalPageConsentRecorded": "撤回时间：{time}",
   "legalPageConsentNever": "从未撤回",
-  "emailPreviewTitle": "通知预览",
-  "emailPreviewSetupRequired": "请先完成首次设置",
-  "emailPreviewDescription": "这是您将收到的失联通知预览：",
-  "emailPreviewNoContact": "（无联系人）",
-  "emailPreviewDisclaimer": "💡 这只是预览。实际短信通知在您漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。",
   "reportHistoryEmpty": "还没有报告历史\n生成一次报告后会自动记录",
   "reportHistoryItemTitle": "{date} · 近 {days} 天",
   "@reportHistoryItemTitle": {
@@ -1337,18 +1330,6 @@
     }
   },
   "setupConsentRejected": "已拒绝该联系人的知情同意，未写入。可重新填写后继续。",
-  "emailBodyI18n": "我是 {name}，已经 {days} 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。",
-  "@emailBodyI18n": {
-    "placeholders": {
-      "name": {
-        "type": "Object"
-      },
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "emailFooterI18n": "这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。",
   "medicationUnitMg": "mg",
   "medicationUnitTablet": "片",
   "safetyCheckResultDisabled": "安全开关已关闭",

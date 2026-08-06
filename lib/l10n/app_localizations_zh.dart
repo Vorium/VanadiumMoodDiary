@@ -113,9 +113,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsMedication => '常吃药';
 
   @override
-  String get settingsEmailPreview => '预览停药通知邮件';
-
-  @override
   String get settingsAbout => '关于';
 
   @override
@@ -592,9 +589,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get reminderHubDailyStatus => '已启用 · 每天 20:00';
-
-  @override
-  String get reminderHubDailyAction => '查看通知预览';
 
   @override
   String get reminderHubMedicationTitle => '用药提醒';
@@ -1421,22 +1415,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legalPageConsentNever => '从未撤回';
 
   @override
-  String get emailPreviewTitle => '通知预览';
-
-  @override
-  String get emailPreviewSetupRequired => '请先完成首次设置';
-
-  @override
-  String get emailPreviewDescription => '这是您将收到的失联通知预览：';
-
-  @override
-  String get emailPreviewNoContact => '（无联系人）';
-
-  @override
-  String get emailPreviewDisclaimer =>
-      '💡 这只是预览。实际短信通知在您漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。';
-
-  @override
   String get reportHistoryEmpty => '还没有报告历史\n生成一次报告后会自动记录';
 
   @override
@@ -2063,15 +2041,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get setupConsentRejected => '已拒绝该联系人的知情同意，未写入。可重新填写后继续。';
-
-  @override
-  String emailBodyI18n(Object name, int days) {
-    return '我是 $name，已经 $days 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。';
-  }
-
-  @override
-  String get emailFooterI18n =>
-      '这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。';
 
   @override
   String get medicationUnitMg => 'mg';
@@ -3577,9 +3546,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsMedication => '常吃藥';
 
   @override
-  String get settingsEmailPreview => '預覽停藥通知郵件';
-
-  @override
   String get settingsAbout => '關於';
 
   @override
@@ -4056,9 +4022,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get reminderHubDailyStatus => '已啟用 · 每天 20:00';
-
-  @override
-  String get reminderHubDailyAction => '查看通知預覽';
 
   @override
   String get reminderHubMedicationTitle => '用藥提醒';
@@ -4885,22 +4848,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get legalPageConsentNever => '從未撤回';
 
   @override
-  String get emailPreviewTitle => '通知預覽';
-
-  @override
-  String get emailPreviewSetupRequired => '請先完成首次設置';
-
-  @override
-  String get emailPreviewDescription => '這是您將收到的失聯通知預覽：';
-
-  @override
-  String get emailPreviewNoContact => '（無聯繫人）';
-
-  @override
-  String get emailPreviewDisclaimer =>
-      '💡 這只是預覽。實際短信通知在您漏 2 天沒打卡後自動發送（v0.6 mock 階段只打日誌，v1.0+ 接真實 SMS provider）。';
-
-  @override
   String get reportHistoryEmpty => '還沒有報告歷史\n生成一次報告後會自動記錄';
 
   @override
@@ -5527,15 +5474,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get setupConsentRejected => '已拒絕該聯繫人的知情同意，未寫入。可重新填寫後繼續。';
-
-  @override
-  String emailBodyI18n(Object name, int days) {
-    return '我是 $name，已經 $days 天沒在 App 裡打卡了。\n請你方便的時候提醒我按時吃藥，避免復發。';
-  }
-
-  @override
-  String get emailFooterI18n =>
-      '這是一條自動通知，由慢病管家 App 發送。\n本通知不包含任何醫療建議。\n如需停止接收，請在 App 設置中修改。';
 
   @override
   String get medicationUnitMg => 'mg';

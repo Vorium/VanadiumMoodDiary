@@ -291,12 +291,6 @@ abstract class AppLocalizations {
   /// **'常吃药'**
   String get settingsMedication;
 
-  /// No description provided for @settingsEmailPreview.
-  ///
-  /// In zh, this message translates to:
-  /// **'预览停药通知邮件'**
-  String get settingsEmailPreview;
-
   /// No description provided for @settingsAbout.
   ///
   /// In zh, this message translates to:
@@ -1172,12 +1166,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'已启用 · 每天 20:00'**
   String get reminderHubDailyStatus;
-
-  /// No description provided for @reminderHubDailyAction.
-  ///
-  /// In zh, this message translates to:
-  /// **'查看通知预览'**
-  String get reminderHubDailyAction;
 
   /// No description provided for @reminderHubMedicationTitle.
   ///
@@ -2620,36 +2608,6 @@ abstract class AppLocalizations {
   /// **'从未撤回'**
   String get legalPageConsentNever;
 
-  /// No description provided for @emailPreviewTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'通知预览'**
-  String get emailPreviewTitle;
-
-  /// No description provided for @emailPreviewSetupRequired.
-  ///
-  /// In zh, this message translates to:
-  /// **'请先完成首次设置'**
-  String get emailPreviewSetupRequired;
-
-  /// No description provided for @emailPreviewDescription.
-  ///
-  /// In zh, this message translates to:
-  /// **'这是您将收到的失联通知预览：'**
-  String get emailPreviewDescription;
-
-  /// No description provided for @emailPreviewNoContact.
-  ///
-  /// In zh, this message translates to:
-  /// **'（无联系人）'**
-  String get emailPreviewNoContact;
-
-  /// No description provided for @emailPreviewDisclaimer.
-  ///
-  /// In zh, this message translates to:
-  /// **'💡 这只是预览。实际短信通知在您漏 2 天没打卡后自动发送（v0.6 mock 阶段只打日志，v1.0+ 接真实 SMS provider）。'**
-  String get emailPreviewDisclaimer;
-
   /// No description provided for @reportHistoryEmpty.
   ///
   /// In zh, this message translates to:
@@ -3760,18 +3718,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'已拒绝该联系人的知情同意，未写入。可重新填写后继续。'**
   String get setupConsentRejected;
-
-  /// No description provided for @emailBodyI18n.
-  ///
-  /// In zh, this message translates to:
-  /// **'我是 {name}，已经 {days} 天没在 App 里打卡了。\n请你方便的时候提醒我按时吃药，避免复发。'**
-  String emailBodyI18n(Object name, int days);
-
-  /// No description provided for @emailFooterI18n.
-  ///
-  /// In zh, this message translates to:
-  /// **'这是一条自动通知，由慢病管家 App 发送。\n本通知不包含任何医疗建议。\n如需停止接收，请在 App 设置中修改。'**
-  String get emailFooterI18n;
 
   /// No description provided for @medicationUnitMg.
   ///

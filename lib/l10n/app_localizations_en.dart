@@ -114,9 +114,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsMedication => 'Medications';
 
   @override
-  String get settingsEmailPreview => 'Preview stop-reminder email';
-
-  @override
   String get settingsAbout => 'About';
 
   @override
@@ -626,9 +623,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderHubDailyStatus => 'Enabled · Daily at 20:00';
-
-  @override
-  String get reminderHubDailyAction => 'Preview notification';
 
   @override
   String get reminderHubMedicationTitle => 'Medication Reminder';
@@ -1495,24 +1489,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legalPageConsentNever => 'Never withdrawn';
 
   @override
-  String get emailPreviewTitle => 'Notification Preview';
-
-  @override
-  String get emailPreviewSetupRequired =>
-      'Please complete the initial setup first';
-
-  @override
-  String get emailPreviewDescription =>
-      'This is a preview of the safety notification you\'ll receive:';
-
-  @override
-  String get emailPreviewNoContact => '(No contacts)';
-
-  @override
-  String get emailPreviewDisclaimer =>
-      '💡 This is only a preview. Actual SMS is sent automatically after 2 missed check-ins (mock in v0.6, real SMS provider in v1.0+).';
-
-  @override
   String get reportHistoryEmpty =>
       'No report history yet\nReports will be recorded automatically after generation';
 
@@ -2162,15 +2138,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get setupConsentRejected =>
       'Consent for this contact was rejected, not saved. Refill and continue.';
-
-  @override
-  String emailBodyI18n(Object name, int days) {
-    return 'I\'m $name. I haven\'t checked in on the app for $days days.\nCould you remind me to take my medication on time when convenient, to avoid relapse?';
-  }
-
-  @override
-  String get emailFooterI18n =>
-      'This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings.';
 
   @override
   String get medicationUnitMg => 'mg';

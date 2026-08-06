@@ -1,7 +1,7 @@
 // v0.26 round 57 (spen P1 #4 god class 拆分): 主导航路由
 //
 // 拆 app_routes.dart 14 路由按 feature 5 文件:
-//   - app_route_main.dart       (本文件) — / setup / home / settings / 邮件预览
+//   - app_route_main.dart       (本文件) — / setup / home / settings
 //   - app_route_assessment.dart — /assessment, /assessment/history, /assessment/:id
 //   - app_route_medication.dart — /settings/reminders, /settings/refills, /medication/calendar
 //   - app_route_vent.dart       — /vent, /vent/compose, /vent/detail/:id
@@ -9,17 +9,19 @@
 //
 // 进度延续 R59 (app_router 拆 2 文件) 的渐进 facade 模式 — app_routes.dart
 // 退化为 3 transition helper + errorBuilder, 14 路由按 feature 子文件分布。
+//
+// v0.30 round 95 (sub-spec 2 task 10): 删 /email-preview 路由 + email_preview.dart
+// 失联是 SMS 不是 email, R93 业务暂停后整个 email preview 页面真无用。
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/core/routing/app_shell.dart';
 import 'package:chroniccare/presentation/pages/crisis_hotline_page.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
-import 'package:chroniccare/presentation/pages/settings/email_preview.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 
-/// v0.26 round 57: 主导航 + 设置流程 + 邮件预览
+/// v0.26 round 57: 主导航 + 设置流程
 class AppRouteMain {
   AppRouteMain._();
 
@@ -60,15 +62,6 @@ class AppRouteMain {
             pageBuilder: (context, state) => AppRoutes.fadePage(
               state.pageKey,
               const SettingsPage(),
-              context,
-            ),
-          ),
-          // 子页 (occasional → slide-from-right)
-          GoRoute(
-            path: '/email-preview',
-            pageBuilder: (context, state) => AppRoutes.slideRightPage(
-              state.pageKey,
-              const EmailPreviewPage(),
               context,
             ),
           ),

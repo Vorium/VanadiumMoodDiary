@@ -49,10 +49,9 @@ class AppShell extends ConsumerWidget {
     final dests = _destinations(context);
     for (int i = 0; i < dests.length; i++) {
       if (currentLocation == dests[i].path) return i;
-      // /email-preview 算设置子页
+      // /settings/* 子页都算设置 tab
       if (dests[i].path == '/settings' &&
-          (currentLocation.startsWith('/settings') ||
-              currentLocation == '/email-preview')) {
+          currentLocation.startsWith('/settings')) {
         return i;
       }
     }

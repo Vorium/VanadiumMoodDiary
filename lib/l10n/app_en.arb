@@ -32,7 +32,6 @@
   "setupPrivacy3": "• Exportable anytime",
   "settingsContacts": "Emergency contacts",
   "settingsMedication": "Medications",
-  "settingsEmailPreview": "Preview stop-reminder email",
   "settingsAbout": "About",
   "settingsDisclaimer": "Disclaimer",
   "settingsMedReport": "Medication report",
@@ -261,7 +260,6 @@
   "reminderHubDailyTitle": "Daily Check-in Reminder",
   "reminderHubDailyDesc": "Pushes \"time to check in\" at 20:00 daily — missing once is fine",
   "reminderHubDailyStatus": "Enabled · Daily at 20:00",
-  "reminderHubDailyAction": "Preview notification",
   "reminderHubMedicationTitle": "Medication Reminder",
   "reminderHubStatusError": "Error",
   "reminderHubRefillTitle": "Refill Reminder",
@@ -839,11 +837,6 @@
   "legalPageWithdrawAnalyticsSubtitle": "Stop including assessments/mood in trend analysis (data kept, charts skip)",
   "legalPageConsentRecorded": "Withdrawn at: {time}",
   "legalPageConsentNever": "Never withdrawn",
-  "emailPreviewTitle": "Notification Preview",
-  "emailPreviewSetupRequired": "Please complete the initial setup first",
-  "emailPreviewDescription": "This is a preview of the safety notification you'll receive:",
-  "emailPreviewNoContact": "(No contacts)",
-  "emailPreviewDisclaimer": "💡 This is only a preview. Actual SMS is sent automatically after 2 missed check-ins (mock in v0.6, real SMS provider in v1.0+).",
   "reportHistoryEmpty": "No report history yet\nReports will be recorded automatically after generation",
   "reportHistoryItemTitle": "{date} · Last {days} days",
   "@reportHistoryItemTitle": {
@@ -1291,18 +1284,6 @@
     }
   },
   "setupConsentRejected": "Consent for this contact was rejected, not saved. Refill and continue.",
-  "emailBodyI18n": "I'm {name}. I haven't checked in on the app for {days} days.\nCould you remind me to take my medication on time when convenient, to avoid relapse?",
-  "@emailBodyI18n": {
-    "placeholders": {
-      "name": {
-        "type": "Object"
-      },
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "emailFooterI18n": "This is an automated notification sent by the Chronic Care app.\nThis notification contains no medical advice.\nTo stop receiving these, please update your preferences in the app settings.",
   "medicationUnitMg": "mg",
   "medicationUnitTablet": "tablet",
   "safetyCheckResultDisabled": "Safety watch is disabled",

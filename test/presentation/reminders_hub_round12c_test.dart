@@ -88,12 +88,14 @@ void main() {
     expect(find.text('未配置'), findsNWidgets(2));
   });
 
-  testWidgets('5 个 action button 出现', (tester) async {
+  testWidgets('4 个 action button 出现 (R95 task 10 删了"查看通知预览")', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    expect(find.text('查看通知预览'), findsOneWidget);
+    // v0.30 round 95 (sub-spec 2 task 10): 删 /email-preview 路由,
+    // "查看通知预览" 按钮不再渲染 (actionLabel 改空字符串 + onAction: null)。
+    expect(find.text('查看通知预览'), findsNothing);
     expect(find.text('管理用药'), findsOneWidget);
     expect(find.text('管理续方'), findsOneWidget);
     expect(find.text('配置'), findsNWidgets(2));

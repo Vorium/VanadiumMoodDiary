@@ -6,13 +6,13 @@
 // 1. IAP 商业卡 → FeatureFlags.iapEnabled
 // 2. 联系人 section → FeatureFlags.emergencyContactEnabled
 // 3. 5 厂商 OEM 引导 → FeatureFlags.fiveVendorPushEnabled
-// 4. 邮件预览 → FeatureFlags.emailServiceEnabled
+// 4. 邮件预览 → FeatureFlags.emailServiceEnabled (R95 task 10 整 widget 删, 永远 hidden)
 //
 // 4 case:
 //   - case 1: 4 flag 默认 false → 4 section 全 hidden (verify by find)
 //   - case 2: iapEnabled=true → IAP 商业卡渲染 (workspace_premium icon)
 //   - case 3: emergencyContactEnabled=true → ContactsListWidget 渲染
-//   - case 4: emailServiceEnabled=true → 邮件预览 Card 渲染
+//   - case 4: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 删 widget 后)
 //   - case 5: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染
 //
 // 测试模式: 每个 case 调 `setXxxEnabledForTest(true)` 翻 flag, 验证 widget 渲染。
@@ -101,15 +101,18 @@ void main() {
     expect(find.byType(ContactsListWidget), findsOneWidget);
   });
 
-  testWidgets('R93 case 4: emailServiceEnabled=true → 邮件预览 Card 渲染',
+  testWidgets(
+      'R95 case 4: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 整 widget 删)',
       (tester) async {
+    // v0.30 round 95 (sub-spec 2 task 10): 删 EmailPreviewPage 整文件
+    // (失联是 SMS 不是 email, R93 业务暂停后真无用), 不再走 FeatureFlag 守门
+    // — featureFlag 翻 true 也不渲染, 业务上线时改 SMS 路径真接。
     FeatureFlags.setEmailServiceEnabledForTest(true);
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
-    // 邮件预览 Card 渲染: 滚动到评估 section 找 "预览停药通知邮件" 文字
-    await tester.scrollUntilVisible(find.text('预览停药通知邮件'), 100);
-    expect(find.text('预览停药通知邮件'), findsOneWidget);
+    // 邮件预览 hidden (settingsEmailPreview ARB key 已删, 整 widget 也删了)
+    expect(find.text('预览停药通知邮件'), findsNothing);
   });
 
   testWidgets('R93 case 5: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',

@@ -13,7 +13,6 @@ import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/reminders_hub_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -59,14 +58,18 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           const SizedBox(height: AppTokens.spacingMd),
 
           // 1. 每日打卡提醒
+          // v0.30 round 95 (sub-spec 2 task 10): 删 /email-preview 路由
+          // (失联是 SMS 不是 email, R93 业务暂停后真无用), onAction 改 null
+          // 按钮置灰, 业务上线 (EmailServiceEnabled flag 翻 true) 时再恢复。
+          // actionLabel 也改空字符串避免 linter 警告 + 跟其他 card 风格一致。
           ReminderCard(
             icon: Icons.check_circle_outline,
             title: AppLocalizations.of(context).reminderHubDailyTitle,
             description: AppLocalizations.of(context).reminderHubDailyDesc,
             statusText: AppLocalizations.of(context).reminderHubDailyStatus,
             statusActive: true,
-            actionLabel: AppLocalizations.of(context).reminderHubDailyAction,
-            onAction: () => context.push('/email-preview'),
+            actionLabel: '',
+            onAction: null,
           ),
 
           const SizedBox(height: AppTokens.spacingSm),
