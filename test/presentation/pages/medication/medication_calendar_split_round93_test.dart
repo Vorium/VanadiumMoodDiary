@@ -19,6 +19,7 @@ import 'package:chroniccare/presentation/pages/medication/medication_calendar_pa
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_day_detail.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_legend.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -319,6 +320,70 @@ void main() {
       expect(find.text('< 50%'), findsOneWidget);
       expect(find.text('< 100%'), findsOneWidget);
       expect(find.text('100%'), findsOneWidget);
+    });
+  });
+
+  // ============================================================
+  // cell tap → DayDetail (R93 task 1.5) — 集成测试
+  // ============================================================
+  group('cell tap 集成 (R93 task 1.5):', () {
+    testWidgets('点 cell → 下方显示 DayDetail 含选中日期 + 该日 log 列表', (tester) async {
+      _setBigView(tester);
+      // 构造 1 个 today 的打卡 (1 个 med1 早 8:30)
+      // 让打卡日 = today, 便于定位 "今天" 的 cell
+      final today = DateTime.now();
+      final checkIns = [
+        CheckInEntity(
+          id: 1,
+          timestamp: DateTime(today.year, today.month, today.day, 8, 30),
+          type: CheckInType.normal,
+          medicationId: 1,
+        ),
+      ];
+      final meds = [_med(id: 1, name: '氟西汀')];
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            medicationsProvider.overrideWith((ref) => Stream.value(meds)),
+            allCheckInsProvider
+                .overrideWith((ref) => Stream.value(checkIns)),
+          ],
+          child: MaterialApp(
+            theme: ThemeData.light(),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: const Locale('zh'),
+            home: const Scaffold(body: MedicationCalendarPage()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      // 初始: DayDetail 不显示
+      expect(find.textContaining('的打卡'), findsNothing);
+
+      // PressFeedback 顺序: 1 个 SegmentedButton + 30 cells (1 药 × 30 天)
+      // Cell 顺序: 0-29 (oldest → newest, today 是 index 29)
+      // "今天" 的 cell PressFeedback = index 1 (SegmentedButton) + 29 = 30
+      final allPressFeedbacks = find.byType(PressFeedback);
+      expect(
+        allPressFeedbacks.evaluate().length,
+        greaterThanOrEqualTo(31),
+        reason: '1 SegmentedButton + 30 cells = 31 PressFeedbacks',
+      );
+      final todayCell = allPressFeedbacks.at(30);
+      await tester.tap(todayCell);
+      await tester.pumpAndSettle();
+
+      // 验证: DayDetail 显示 + 含 today 日期 + 该日 log
+      expect(
+        find.textContaining('的打卡'),
+        findsOneWidget,
+        reason: '点 cell 后, DayDetail 应显示含日期的标题',
+      );
+      // today 的 log (氟西汀 08:30)
+      expect(find.textContaining('氟西汀'), findsAtLeast(1));
+      expect(find.textContaining('08:30'), findsOneWidget);
     });
   });
 }
