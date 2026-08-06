@@ -21,6 +21,7 @@ import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_grid.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_legend.dart';
 import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
@@ -129,12 +130,10 @@ class MedicationCalendarPage extends ConsumerWidget {
 
           const SizedBox(height: AppTokens.spacingMd),
 
-          // 图例 (Legend sub-widget, Step 1.4 拆)
-          // 当前 inline 留 Step 1.4 拆
+          // v0.30 round 93: 拆 Legend sub-widget (Step 1.4)
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
-            // TODO(round93 task 1.4): 抽 MedicationCalendarLegend sub-widget
-            child: _LegendInline(),
+            child: MedicationCalendarLegend(),
           ),
         ],
       ),
@@ -153,69 +152,6 @@ class MedicationCalendarPage extends ConsumerWidget {
         meds: meds,
         checkIns: checkIns,
         days: days,
-      ),
-    );
-  }
-}
-
-/// v0.30 round 93 (task 1.2): 临时 inline Legend
-///
-/// 完整 Legend widget 留 Step 1.4 抽。当前保留原 _Legend 行为避免回退。
-class _LegendInline extends StatelessWidget {
-  const _LegendInline();
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTokens.spacingSm),
-        child: Row(
-          children: [
-            Text(
-              AppLocalizations.of(context).medsCalendarLegendLabel,
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(width: AppTokens.spacingSm),
-            _legendItem(
-              AppTokens.dividerColor(context),
-              AppLocalizations.of(context).medsCalendarLegendMissed,
-              context,
-            ),
-            _legendItem(AppTokens.adherencePartial, '< 50%', context),
-            _legendItem(AppTokens.adherenceAlmost, '< 100%', context),
-            _legendItem(AppTokens.primaryColor(context), '100%', context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _legendItem(Color c, String label, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: AppTokens.spacingSm),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: AppTokens.legendDotSizeLg,
-            height: AppTokens.legendDotSizeLg,
-            decoration: BoxDecoration(
-              color: c,
-              borderRadius: BorderRadius.circular(AppTokens.radiusCell),
-            ),
-          ),
-          const SizedBox(width: AppTokens.spacingXxs),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeMicro,
-              color: AppTokens.textSecondaryColor(context),
-            ),
-          ),
-        ],
       ),
     );
   }

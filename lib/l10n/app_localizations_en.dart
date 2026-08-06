@@ -2001,6 +2001,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get medsCalendarLegendPartial => '< 50%';
+
+  @override
+  String get medsCalendarLegendAlmost => '< 100%';
+
+  @override
+  String get medsCalendarLegendFull => '100%';
+
+  @override
   String get window7Subtitle => 'Within a week (good for weekly visits)';
 
   @override

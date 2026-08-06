@@ -1910,6 +1910,15 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get medsCalendarLegendPartial => '< 50%';
+
+  @override
+  String get medsCalendarLegendAlmost => '< 100%';
+
+  @override
+  String get medsCalendarLegendFull => '100%';
+
+  @override
   String get window7Subtitle => '一周内（适合周复诊）';
 
   @override
@@ -5363,6 +5372,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String medsCalendarDayDetailLogItem(String time, String name) {
     return '$time · $name';
   }
+
+  @override
+  String get medsCalendarLegendPartial => '< 50%';
+
+  @override
+  String get medsCalendarLegendAlmost => '< 100%';
+
+  @override
+  String get medsCalendarLegendFull => '100%';
 
   @override
   String get window7Subtitle => '一週內（適合周複診）';

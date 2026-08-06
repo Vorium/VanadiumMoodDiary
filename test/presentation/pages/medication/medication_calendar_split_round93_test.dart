@@ -17,6 +17,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/medication_calendar_page.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_day_detail.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_legend.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -290,6 +291,34 @@ void main() {
 
       expect(find.text('补打卡'), findsNothing);
       expect(find.text('为今天补一次服药记录'), findsNothing);
+    });
+  });
+
+  // ============================================================
+  // Legend sub-widget (Step 1.4) — 直接测 widget 渲染
+  // ============================================================
+  group('Legend sub-widget (R93 task 1.4):', () {
+    Widget _wrapLegend() {
+      return MaterialApp(
+        theme: ThemeData.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: const Scaffold(body: MedicationCalendarLegend()),
+      );
+    }
+
+    testWidgets('Legend 渲染 4 个色块 + 4 个标签', (tester) async {
+      _setBigView(tester);
+      await tester.pumpWidget(_wrapLegend());
+      await tester.pumpAndSettle();
+
+      // 4 个标签
+      expect(find.text('依从：'), findsOneWidget);
+      expect(find.text('漏服'), findsOneWidget);
+      expect(find.text('< 50%'), findsOneWidget);
+      expect(find.text('< 100%'), findsOneWidget);
+      expect(find.text('100%'), findsOneWidget);
     });
   });
 }

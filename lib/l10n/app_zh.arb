@@ -1277,6 +1277,9 @@
       }
     }
   },
+  "medsCalendarLegendPartial": "< 50%",
+  "medsCalendarLegendAlmost": "< 100%",
+  "medsCalendarLegendFull": "100%",
   "window7Subtitle": "一周内（适合周复诊）",
   "window14Subtitle": "两周内（推荐）",
   "window30Subtitle": "一个月内（适合月度评估）",

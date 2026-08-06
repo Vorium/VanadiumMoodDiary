@@ -1270,6 +1270,9 @@
       }
     }
   },
+  "medsCalendarLegendPartial": "< 50%",
+  "medsCalendarLegendAlmost": "< 100%",
+  "medsCalendarLegendFull": "100%",
   "window7Subtitle": "一週內（適合周複診）",
   "window14Subtitle": "兩週內（推薦）",
   "window30Subtitle": "一個月內（適合月度評估）",

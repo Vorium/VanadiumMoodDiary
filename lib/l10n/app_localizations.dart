@@ -3485,6 +3485,24 @@ abstract class AppLocalizations {
   /// **'{time} · {name}'**
   String medsCalendarDayDetailLogItem(String time, String name);
 
+  /// No description provided for @medsCalendarLegendPartial.
+  ///
+  /// In zh, this message translates to:
+  /// **'< 50%'**
+  String get medsCalendarLegendPartial;
+
+  /// No description provided for @medsCalendarLegendAlmost.
+  ///
+  /// In zh, this message translates to:
+  /// **'< 100%'**
+  String get medsCalendarLegendAlmost;
+
+  /// No description provided for @medsCalendarLegendFull.
+  ///
+  /// In zh, this message translates to:
+  /// **'100%'**
+  String get medsCalendarLegendFull;
+
   /// No description provided for @window7Subtitle.
   ///
   /// In zh, this message translates to:

@@ -1231,6 +1231,9 @@
       }
     }
   },
+  "medsCalendarLegendPartial": "< 50%",
+  "medsCalendarLegendAlmost": "< 100%",
+  "medsCalendarLegendFull": "100%",
   "window7Subtitle": "Within a week (good for weekly visits)",
   "window14Subtitle": "Within two weeks (recommended)",
   "window30Subtitle": "Within a month (good for monthly reviews)",
