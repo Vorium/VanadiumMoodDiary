@@ -2,6 +2,54 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-07 (R95 sub-spec 6: 修 2 pre-existing fail + 拆 2 god widget (scale_translations_l10n 785 + setup_page 517) + 5 端到端集成测试 (check-in/streak/contacts/assessment/export/vent) + coverage 阈值 + Codecov 配置 + 18 守门员, 6 commit, baseline 1780 → 1951 pass, +5 R95 sub-spec 6 集成测试, 0 new regression, 0 analyzer error, 18 守门员全绿)
+
+R95 sub-spec 6 目标: 按 R95 报告 §3.2 spen P1, 收尾集成测扩 + coverage 阈值 + 修 2 已知 pre-existing fail + 拆 2 god widget 残留 (R95 sub-spec 4 task 3 留 R95 sub-spec 6 的 scale_translations_l10n 785 + setup_page 517)。
+
+**关键发现 (R95 sub-spec 6 stale audit 模式)**:
+
+- **R95 sub-spec 5 收尾报告 (0c41c46) 标"2 已知 pre-existing fail" 数字 stale**: 实测 R95 sub-spec 6 步骤 1 `flutter test` 真实 fail = **5 个** (mood_period_aggregator R91 + task10_email_mood_lock_in R95 sub-spec 2 task 10 跟 R95 sub-spec 4 task 5 拆 home_page 引起 + store_kit_service_round95 R95 sub-spec 5 新加但 production code 未跟上 + hour_minute_round93 + medication_draft_round93 2 个 R93 untracked 0 测试补齐 production code 未跟上)
+- **修 2/5 pre-existing fail (本批 spec 范围)**: mood_period_aggregator (date drift 修真, 加 `now` 参数 R78 calculator 模式) + task10_email_mood_lock_in (改 home_page_state.dart 路径 + 保留 home_page.dart 无 MoodDialog.show 验证)
+- **3 新发现 留 R96+**: store_kit_service (dev 模式 buyLifetime 不走 iapEnabled 短路) + hour_minute_safe (R93 0 测试补齐 production code 缺) + medication_draft_DomainValue (R93 0 测试补齐 production code 缺)
+- **2 god widget 拆解**: scale_translations_l10n 785 → 2 文件 (主壳 24 + static impl 760, 跟 R95 sub-spec 4 task 2 拆 scale_translations 0 老 caller 改动模式) + setup_page 517 → 2 文件 (主壳 25 + state 480, SetupPageState public 跟 R95 sub-spec 4 task 5 拆 home_page 0 老 caller 改动模式)
+- **5 集成测试 (从 1 扩到 6)**: 端到端 user journey 覆盖 check-in/streak/contacts/assessment/export/vent, ProviderContainer + 真 in-memory DB + FlutterSecureStorage MethodChannel mock
+- **coverage 阈值 + Codecov 配置**: R95 报告 §3.2 P1 需求, 18 守门员 (R95 sub-spec 5 17 + check_coverage 新加), domain 73.8% / data 47.0% / presentation 57.4% / shared 88.1% / core 25.8% 实测, data 跟 core 未达 spec 估 50% 留 R96+ 提 (已标 known issue)
+
+**完成项 (6 commit, +5 集成测试)**:
+
+- **Commit 1 (task 6a)**: 修 2 pre-existing fail (`lib/domain/logic/mood_period_aggregator.dart` +7 行加 `now` 参数 + `test/domain/logic/mood_period_aggregator_round91_test.dart` +2 行传 `now` + `test/presentation/pages/settings/task10_email_mood_lock_in_round95_test.dart` +11 行改 home_page_state.dart 路径) + 写 `docs/superpowers/sdd-logs/round95-misc/sdd/task-pre-existing-fail-audit.md` 7KB (5 fail 完整清单 + 修法 + 留 R96+ 标)
+- **Commit 2 (task 6b)**: 拆 scale_translations_l10n 785 → 2 文件 (主壳 24 re-export + `scale_translations_l10n/static_scale_translations_l10n.dart` 760 impl, 跟 R95 sub-spec 4 task 2 拆 scale_translations 模式一致, 0 老 caller 改动因 re-export)
+- **Commit 3 (task 6c)**: 拆 setup_page 517 → 2 文件 (主壳 25 ConsumerStatefulWidget 入口 + `setup_page_state.dart` 480 SetupPageState 公开 class 含 8 业务方法, 跟 R95 sub-spec 4 task 5 拆 home_page 模式一致, _SetupPageState 改 public 打破循环 import)
+- **Commit 4 (task 6d)**: 写 `test/integration/end_to_end_flows_round95_test.dart` 300 行, 5 集成测试:
+  - 集成 1: 打卡 → streak 实时计算 (CheckInRepository + StreakCalculator + allNormalCheckInsProvider.watchNormalCheckIns)
+  - 集成 2: 设置 → 紧急联系人 → contactsProvider (saveSetup + contactRepository.watchAll + ConsentArtifact PIPL §13)
+  - 集成 3: 评估 → PHQ-9 → DB round-trip (AssessmentRepository.submitEntry + check_ins 表 JSON 编码 score+severity+answers)
+  - 集成 4: 数据导出 → JSON 含 schema + data (DataExportService.exportToJson 7 段 + R57 schema version/exportedAt/checkIns/moodEntries)
+  - 集成 5: vent 树洞 → 写 → DB 落库 (VentRepository.add + EncryptionService + FlutterSecureStorage MethodChannel mock + delete PIPL §47)
+- **Commit 5 (task 6e)**: coverage 阈值 + Codecov 配置
+  - 写 `coverage_threshold.yaml` 2.8KB (5 layer 阈值 + 3 critical file)
+  - 写 `scripts/check_coverage.py` 7.8KB (lcov 解析 + 按层聚合 + 关键文件检查 + CI 友好 exit code)
+  - 写 `.codecov.yml` 2.8KB (5 flag 跟 4 层架构对齐 + 5 component_management + ignore 路径)
+  - 18 守门员 (R95 sub-spec 5 17 + check_coverage 新加)
+- **Commit 6 (收尾)**: 跑 18 守门员全绿 + 0 analyzer error + CHANGELOG + VERSION_1.0_PLAN + sub-spec-6-report
+
+**总 R95 sub-spec 6 影响**:
+
+- 0 analyzer error (我引入的, 7 error 全在 untracked R93 test 文件跟 R95 sub-spec 5 baseline 一致)
+- 18 守门员全绿 (跟 R95 sub-spec 5 baseline 一致, 2 warn-only 故意)
+- baseline 1780 → **1951 pass** (+5 R95 sub-spec 6 集成测试, +166 业务相关 4-层测试累加, 0 new regression)
+- 3 pre-existing fail (留 R96+): `store_kit_service_round95_test` (R95 sub-spec 5 新加 test, production code 缺) + `hour_minute_round93_test` (R93 untracked 0 测试补齐, production code 缺) + `medication_draft_round93_test` (R93 untracked 0 测试补齐, production code 缺)
+- 2 修完 pre-existing fail: `mood_period_aggregator_round91_test` (date drift 修真) + `task10_email_mood_lock_in_round95_test` (R95 sub-spec 4 task 5 路径适配)
+
+**R95 sub-spec 6 commit** (4 docs commit + 2 code commit = 6):
+
+- `7834cd3` task 6a: 修 2 pre-existing fail
+- `8dd36b4` task 6b: 拆 scale_translations_l10n
+- `01ba268` task 6c: 拆 setup_page
+- `8851771` task 6d: 5 集成测试
+- `2a282f6` task 6e: coverage 阈值 + Codecov
+- `<待 commit>` 收尾 + CHANGELOG + VERSION_1.0_PLAN + sub-spec-6-report
+
 ## [0.30.0] - 2026-08-07 (R95 sub-spec 5 task 3-4: 224 TextStyle + 208 EdgeInsets + 96 Duration token 化集中器化 — 加 5 EdgeInsets helper + 修真 28 真 magic + 简化 74+ 半 token + 20 lock-in test, 5 commit, baseline 1780 → 1800 pass, 0 new regression, 0 analyzer error, 17 守门员全绿)
 
 R95 sub-spec 5 task 3-4 目标: 按 R95 报告 §6.1-6.3, 把 `TextStyle(...)` / `EdgeInsets.all(...)` / `Duration(...)` 字面量修真, 走 `AppTokens.textStyleXxx` / `AppTokens.edgeInsetsXxx` / `AppMotion.durXxx` 集中器。

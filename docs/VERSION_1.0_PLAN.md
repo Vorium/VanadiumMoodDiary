@@ -74,7 +74,8 @@
 |---|------|------|------|
 | 1 | `lib/domain/entities/scale_translations.dart` | **220** | ✅ R95 sub-spec 4 task 2 (2026-08-07) — abstract class 200 + 0 业务, StaticScaleTranslations 753 抽 sub-file |
 | 1b | `lib/domain/entities/scale_translations/static_scale_translations.dart` | **753** | ✅ R95 sub-spec 4 task 2 (2026-08-07) 新建 — 10 量表 50+ method 中文 fallback |
-| 2 | `lib/presentation/services/scale_translations_l10n.dart` | **708** | presentation i18n 适配器 (R95 sub-spec 4 task 2 配套, 可选 commit, 估 1-2 commit) |
+| 2 | `lib/presentation/services/scale_translations_l10n.dart` | **24** | ✅ R95 sub-spec 6 task 6b (2026-08-07) — 主壳 24 re-export, AppLocalizationsScaleTranslations 760 抽 sub-file |
+| 2b | `lib/presentation/services/scale_translations_l10n/static_scale_translations_l10n.dart` | **760** | ✅ R95 sub-spec 6 task 6b (2026-08-07) 新建 — AppLocalizationsScaleTranslations 10 量表 186 method i18n 委托 |
 | 3 | `lib/presentation/pages/home/home_page.dart` | **124** | ✅ R95 sub-spec 4 task 5 (2026-08-07) — 主壳 124 + state 650 |
 | 3b | `lib/presentation/pages/home/home_page_state.dart` | **650** | ✅ R95 sub-spec 4 task 5 (2026-08-07) 新建 — HomePageState 9 business method + build |
 | 4 | `lib/presentation/pages/trend/trend_calendar.dart` | **281** | ✅ R95 sub-spec 4 task 6 (2026-08-07) — 主壳 281 (CalendarView + _CalendarCell), DayDetailCard 335 抽 sub-file, EventRow 104 抽 sub-file |
@@ -84,6 +85,8 @@
 | 6 | `lib/presentation/pages/mood/widgets/mood_audio_section.dart` | **36** | ✅ R95 sub-spec 4 task 7 (2026-08-07) — 主壳 36 re-export, types 68 抽 sub-file, recorder 535 抽 sub-file |
 | 6b | `lib/presentation/pages/mood/widgets/mood_audio_types.dart` | **68** | ✅ R95 sub-spec 4 task 7 (2026-08-07) 新建 — Snapshot / Controller / ErrorKind |
 | 6c | `lib/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart` | **535** | ✅ R95 sub-spec 4 task 7 (2026-08-07) 新建 — MoodRecorder widget |
+| 7 | `lib/presentation/pages/setup/setup_page.dart` | **25** | ✅ R95 sub-spec 6 task 6c (2026-08-07) — 主壳 25 ConsumerStatefulWidget 入口, SetupPageState 480 抽 sub-file |
+| 7b | `lib/presentation/pages/setup/setup_page_state.dart` | **480** | ✅ R95 sub-spec 6 task 6c (2026-08-07) 新建 — SetupPageState public 8 business method + build (跟 R95 sub-spec 4 task 5 拆 home_page_state 同模式) |
 
 ### 1.3 token 残留 (R92 数字低估 16%)
 
