@@ -11,7 +11,6 @@ import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/report_history_dialog.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/cbt_pdf_tile.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/clear_tile.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_tile.dart';
@@ -26,6 +25,7 @@ import 'package:chroniccare/presentation/pages/settings/widgets/data_management_
 /// v0.30 round 95 (sub-spec 1 task 2a): 抽 ExportTile (200+ 行 → sub-tile, 走 ConsumerWidget)
 /// v0.30 round 95 (sub-spec 1 task 3): 抽 CbtPdfTile
 /// v0.30 round 95 (sub-spec 1 task 4a): 抽 ReportTile (ChooseWindowDialog + medication report + swallowError)
+/// v0.30 round 95 (sub-spec 1 task 4b): 抽 HistoryTile (ReportHistoryListDialog)
 class DataManagementSection extends ConsumerWidget {
   const DataManagementSection({super.key});
 
@@ -42,21 +42,13 @@ class DataManagementSection extends ConsumerWidget {
           const Divider(height: 1),
           const ReportTile(),
           const Divider(height: 1),
-          HistoryTile(onShow: () => _showReportHistory(context)),
+          const HistoryTile(),
           const Divider(height: 1),
           ImportTile(onImport: () => _showImportDialog(context, ref)),
           const Divider(height: 1),
           ClearTile(onClear: () => _showClearAllDataDialog(context, ref)),
         ],
       ),
-    );
-  }
-
-  Future<void> _showReportHistory(BuildContext context) async {
-    if (!context.mounted) return;
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => const ReportHistoryListDialog(),
     );
   }
 
