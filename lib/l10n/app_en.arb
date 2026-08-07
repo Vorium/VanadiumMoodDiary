@@ -618,6 +618,7 @@
   "homeTooltipTrend": "View trend",
   "homeTooltipAssessmentHistory": "Assessment history",
   "homeTooltipSettings": "Settings",
+  "ventSwipeHint": "Swipe left or long-press to delete",
   "homeStreakRestart": "Start fresh today 🌱",
   "homeStreakDay1": "Day 1, taking the first step 🌱",
   "homeStreakDays": "{days}-day streak, keep going 🌿",

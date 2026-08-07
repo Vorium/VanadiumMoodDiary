@@ -9,11 +9,14 @@
 // - 详情页才显示完整内容
 // - 长按 / 滑动可单条删除
 
+import 'dart:async';
+
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -74,6 +77,12 @@ class VentListPage extends ConsumerWidget {
     return entriesAsync.when(
       data: (entries) {
         if (entries.isEmpty) return const _VentEmptyState();
+        // v0.30 R95 sub-spec 8 task 48: 首次进入 vent list 显示 1 次 swipe/long-press
+        // visual hint snackbar (emil P3 反复提 — 视觉提示用户有删除手势)
+        // 用 SharedPreferences 持久化标记 _ventSwipeHintShown, 后续进入不再显示
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _VentHintHelper.showSwipeHintIfFirstTime(context);
+        });
         // v0.21 Round 23 (P1-27): 下拉刷新
         return RefreshIndicator(
           onRefresh: () async {
@@ -356,5 +365,40 @@ class _EntryCard extends StatelessWidget {
     }
     return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} '
         '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+/// v0.30 R95 (sub-spec 8 task 48): vent list 首次 swipe/long-press visual hint
+///
+/// emil P3 反复提: vent 长按/swipe 删除缺 visual hint (用户首次用 vent 不知
+/// 道有删除手势)。修: 首次进入 vent list 显示 1 次 snackbar 提示, SharedPreferences
+/// 持久化标记避免每次进入都打扰。
+///
+/// 模式 (跟 project_notification_status_card 风格一致):
+/// - async fire-and-forget (snackbar 不阻塞 list render)
+/// - SP 持久化 key 跟其它"已看过"标记 (R42 添加, R56c 续)
+/// - snackbar 用 AppSnackBar.showInfo 集中器
+class _VentHintHelper {
+  static const _kSwipeHintShownKey = 'vent_swipe_hint_shown_v1';
+
+  /// 首次进入 vent list 显示 swipe/long-press 提示
+  ///
+  /// 流程:
+  /// 1. 读 SP _kSwipeHintShownKey
+  /// 2. true → 已显示过, 跳过
+  /// 3. false → 弹 snackbar 提示 + 写 SP
+  ///
+  /// mounted guard: 弹 snackbar 前检查 BuildContext (避免 postFrameCallback
+  /// 跨页面 lifecycle 撞 defunct context, R17 round 14 防御模式)
+  static Future<void> showSwipeHintIfFirstTime(BuildContext context) async {
+    if (context.mounted == false) return;
+    final prefs = await SharedPreferences.getInstance();
+    final shown = prefs.getBool(_kSwipeHintShownKey) ?? false;
+    if (shown) return;
+    if (context.mounted == false) return;
+    final l10n = AppLocalizations.of(context);
+    AppSnackBar.showInfo(context, l10n.ventSwipeHint);
+    // fire-and-forget 写 SP
+    unawaited(prefs.setBool(_kSwipeHintShownKey, true));
   }
 }
