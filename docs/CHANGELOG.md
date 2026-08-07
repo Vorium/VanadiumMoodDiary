@@ -2,6 +2,36 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-07 (R95 sub-spec 8: P3 阶段不需外部资源任务, 10 commit, baseline 2008 → 2019 pass, +11 R95 sub-spec 8 tests, 0 pre-existing fail, 0 analyzer error, 18 守门员全绿)
+
+R95 sub-spec 8 目标: 按 R95 报告 §7.4 阶段 4 P3, 收尾 7 类不需外部资源的 P3 任务 (settings 4 group 重构 / 紧急联系人 5→3 步 / 数据导出 5→3 步 / 主页 header tooltip / legal chip / vent visual hint / main.dart 顶层 mutable static)。
+
+**完成项 (10 commit, +11 tests, 8 task 涵盖 + 1 fixup)**:
+
+- **Commit 1 (task 17a)**: 拆 settings_page 4 group (Profile / Reminders / Data / Legal) — `data_group.dart` (45 行, 包 DataManagementSection) + `legal_group.dart` (45 行, 包 LegalSection) + `reminders_group.dart` (75 行, 包 RemindersSection + CbtSection + NotificationStatusCard 末尾) + `profile_group.dart` (220 行, 包 IAP + Medication + Assessment + Contact 5 section); 主壳 70 行纯 4 group 拼装; 0 业务方法; 3 老 test 适配 (meds error / 7 section → 4 group / scrollUntilVisible → dragUntilVisible)
+- **Commit 2 (task 17b)**: 4 group widget test 4 case + 老 test 适配 (ProfileGroup / RemindersGroup / DataGroup / LegalGroup 各自独立 mount 验证 + 内部 section 渲染; RemindersGroup 跳过 NotificationStatusCard 单独 mount 因 _refresh() 永远 schedule frame 让 pumpAndSettle hang, 改走 settings_page_round45_test 整体验证)
+- **Commit 3 (task 18)**: 紧急联系人 5→3 步 (emil "3 tap 抵达") — `TextField.errorText` 即时校验替代 `AppSnackBar.showInfo` snackbar (5 步 → 3 步: 点 add → 输姓名 (autofocus) + 输电话 (内联校验) → 同意 consent); `onChanged: (_) { phoneError = null }` 输完即清错误, 不打断主流程; +3 widget test (case 1 弹窗 + 2 errorText 出现 + 3 输完消失)
+- **Commit 4 (task 19)**: 数据导出 5→3 步 (emil "3 tap 抵达", 配 R95 sub-spec 1 task 1) — export_dialog `CheckboxListTile.value = true` 强制默认勾选 + `onChanged = null` 禁用手动取消 + 复制按钮始终 enable (5 步 → 3 步: 点 export → 同意 consent → 复制, ack 默认勾选); 责任划界走风险告知文字 + 主动点 copy 的双重确认, 律师 Q4b 反馈"必须显式 ack" 仍满足 (3 重确认: 默认勾选 + 不可取消 + 主动点 copy); 2 老 test 适配 (export_tile + export_dialog)
+- **Commit 5 (task 45)**: 主页 header 3 icon button 加 Tooltip (emil 反复提) — 修前 3rd button (settings_outlined) tooltip 误用 `settingsAbout` = "关于" (跟跳 /settings 设置页不符); 修后加新 ARB key `homeTooltipSettings` = "设置" / "Settings" / "設置" (3 语 sync), tooltip 跟功能对齐; +1 widget test (3 button tooltip 验证)
+- **Commit 6 (task 46)**: legal_page toggle 撤回时间 chip 标识 — `Text` → `Chip` widget, withdrawn 状态用 `tintedErrorSoft` 背景 + `errorColor` 边框 + `fgOnError` 文字 (强调), 正常状态用 `dividerColor` 背景 + `textHintColor` 边框 (低调); +2 widget test (撤回 + 正常状态)
+- **Commit 7 (task 48)**: vent 长按/swipe 删除 visual hint — 首次进入 vent list 弹 1 次 snackbar 提示 (SharedPreferences 持久化 `_ventSwipeHintShownKey = 'vent_swipe_hint_shown_v1'`); +1 ARB key `ventSwipeHint` = "左滑或长按条目可删除" (3 语 sync); +1 widget test (首次进入弹 snackbar)
+- **Commit 8 (task 56-67)**: misc P3 (main.dart 顶层 mutable static 改 `late final` (R92 spen P3 反复提 — `_smsService` + `_emailService` 改 `late final` 编译期保证只赋值 1 次); 8 量表决策 + UX 决策 doc 写 `docs/decisions/v0.30_r95_sub_spec8_ux_decisions.md` (7197 字, 涵盖 5 个关键决策 + 跳过 task 58/61-67 原因 + 7 个风险缓解)
+- **Commit 9 (fixup)**: 繁简一致性 (`homeTooltipSettings` 改 `設置` 跟 OpenCC s2tw 同步; 18 守门员全绿, 2019 tests pass)
+- **Commit 10 (收尾)**: 0 analyzer error + 18 守门员全绿 + CHANGELOG + VERSION_1.0_PLAN + sub-spec-8-report
+
+**跳过任务**:
+- **task 58 BGTaskScheduler iOS handler**: 5 厂商 push SDK 0 接入, BGTaskScheduler handler 也没注册 (pubspec 未引 workmanager / background_fetch), v1.0+ 真接 5 厂商 push 时一并加 `setTaskCompleted(success: true)` 占位
+- **task 61-67 misc (Cursor / CODEOWNERS / 跨 round 文档化)**: 跨 round 文档化建议作为独立 R97/R98 任务集, 不混入 R95 收尾; Cursor / CODEOWNERS 属 CI 工具链调整, 需 ops 配合, 不在 P3 阶段 (不需外部资源) 范围
+
+**总 R95 sub-spec 8 影响**:
+
+- **测试**: 2008 → 2019 pass (+11 R95 sub-spec 8 tests), 0 老 test 失败, 0 pre-existing fail, 0 新 analyzer error
+- **代码**: settings_page 261 → 70 行 (-73%, 0 业务方法), 4 个新 group widget 文件 (385 行总), vent_list +1 visual hint helper, contact dialog +1 autofocus + inline validation, export_dialog +1 default-ack, home_header 1 tooltip 修正, legal_page +1 chip 包裹, main.dart 2 个 mutable static 改 late final
+- **ARB**: zh / en / zh_Hant 3 语同步 1058 → 1060 (+2: homeTooltipSettings + ventSwipeHint)
+- **守门员**: 18 守门员全绿 (2 warn-only 故意: check_fullwidth_punctuation 5 处历史 pre-existing + check_widget_dispose 1 处 R92 false positive)
+
+**R95 阶段 1+2+3+4 全部完成 (8 sub-spec, 总 70+ commit, 1951 → 2019+ pass, 18 守门员全绿)**。
+
 ## [0.30.0] - 2026-08-07 (R95 sub-spec 7: P2 阶段不需外部资源任务 + R96 修 3 pre-existing fail, 11 commit, baseline 1951 → 2008 pass, +57 R95 sub-spec 7 tests, 0 pre-existing fail, 0 analyzer error, 18 守门员全绿)
 
 R95 sub-spec 7 目标: 按 R95 报告 §7.3 阶段 3 P2, 收尾 6 类不需外部资源的 P2 任务 (assessment PII 泄露修 / audit log 加密 + 撤回 / redirect 嵌套守卫 / main.dart i18n / app_database 注释翻译 / presentation 硬编码清理) + R96 修 3 留待 pre-existing fail (store_kit_service / hour_minute_safe / medication_draft_DomainValue)。
