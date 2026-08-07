@@ -19,13 +19,12 @@
 
 ## 3. 付费规则
 
-本 App 售价人民币 8 元(Google Play / Apple App Store 统一定价),一次性买断,**不收取订阅费**。
+本 App 当前版本**免费**。未来版本可能提供可选的一次性买断(计划定价人民币 8 元, Google Play / Apple App Store 统一定价),**不收取订阅费**。
 
-> **v0.27 R69 更新**: 当前 release 模式 IAP 业务整体暂停
-> (`FeatureFlags._prodIapEnabled = false`, R68 commit `d691551` 决策),
-> v0.27 本版本 App 内**不显示**"立即买断"入口。本付费规则段在
-> **v0.28 真接 productId 后启用**,届时用户协议版本号 bump 后
-> 重新走用户同意流程刷 `userAgreementVersion` 字段。
+> **v0.30 R100 更新 (P0#7, appstore A-5)**: IAP 业务当前整体暂停
+> (`FeatureFlags._prodIapEnabled = false`)。本版本无任何购买入口与
+> 收费行为, 定价描述仅适用于未来版本。真接 productId 后
+> 用户协议版本号 bump 重新走用户同意流程刷 `userAgreementVersion` 字段。
 
 ## 4. 退款政策
 
@@ -65,10 +64,10 @@
 
 ## 8. 联系方式
 
-- **本服务暂不提供邮件 / GitHub 渠道** (v0.30 R96 决策, 软隐藏 `support@chroniccare.app` + `github.com/example/chroniccare`)
+- **本服务暂不提供邮件 / GitHub 渠道** (v0.30 R96 决策, 邮件与仓库渠道待域名注册后启用)
   用户可通过 **App 内 设置 → 法律与隐私** 页面反馈问题
   详见 `docs/SPRINT1_LEGAL_TODO.md` 了解重新启用条件 (域名注册 + 邮箱注册 + GitHub 仓库创建后启用)
-- 隐私 / PIPL 投诉:**本服务不提供邮件渠道** (v0.27 R67 Sprint 1 决策, 软隐藏 `privacy@chroniccare.app`)
+- 隐私 / PIPL 投诉:**本服务不提供邮件渠道** (v0.27 R67 Sprint 1 决策, 隐私邮件渠道待域名注册后启用)
   用户可通过 **App 内 设置 → 法律与隐私** 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行, 撤回后业务立即停止)
   详见 `docs/LEGACY_API_NOTES.md` 了解软隐藏决策 + 重新启用条件
 
@@ -85,11 +84,11 @@
 | 版本 | 日期 | 状态 | 关键事项 |
 |------|------|------|---------|
 | v0.24 | 2026-07-15 | 草稿 (未经律师过审) | 初版 |
-| v0.27 R67 | 2026-07-31 | 草稿 (Sprint 1 修订) | 隐私 / PIPL 投诉邮箱已软隐藏 `privacy@chroniccare.app`,用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行) |
+| v0.27 R67 | 2026-07-31 | 草稿 (Sprint 1 修订) | 隐私 / PIPL 投诉邮件渠道已软隐藏 (占位邮箱待域名注册),用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行) |
 | v0.27 R69 | 2026-08-01 | 草稿 (P0 集中修复) | (1) 失联通知业务整体暂停 (CC-7 文档对齐), 4 处 wording 改"规划中,本版本未启用"; (2) "本 App 售价 8 元" 段加注脚 R68 决策 (CC-3 文档对齐, 文本保留, v0.28 启用); (3) 删除顶部 "TODO 律师过审" banner, 转本段修订历史 |
 | v0.27 R83 | 2026-08-02 | 草稿 (律师审核 ⚠️ 集中修复) | (1) §1 服务说明 失联通知措辞改"未来规划, 当前版本仅支持预存储紧急联系人, 不实际触发通知"; (2) §5 免责声明 危机热线补全港澳台 3 条 (台湾 1925 / 香港 2389 2222 / 澳门 2826 1122) + 中国大陆 2 条 (北京 010-82951332 / 全国 400-161-9995) |
 | v0.28+ | 待定 | **TODO (上 store 前必须由专业律师过审)** | 律师过审 + 替换"未经律师过审"标注 + (可选) 域名/邮箱/仓库注册后取消软隐藏恢复 §8 联系方式 + 重新走用户同意流程刷 `userAgreementVersion` 字段 |
 | v0.30 R93 | 2026-08-06 | 草稿 (R93 阶段 2 集中隐藏) | "本 App 售价 8 元" 段补 R93 状态: IAP 8 元买断业务暂停 (iapEnabled=false), Apple 2.1 拒 (未提供其他购买方式), 业务真接 productId 后翻 flag 启用; 失联通知 / 邮件 / 录音 / 5 厂商 push / 量表翻译 / BootReceiver 6 项业务暂停同上 |
-| v0.30 R96 | 2026-08-07 | 草稿 (P0-2/3/5 软隐藏) | §8 联系方式: `support@chroniccare.app` 邮箱 + `github.com/example/chroniccare` 仓库 2 处 TODO 占位改软隐藏 (跟 `privacy@chroniccare.app` 同一策略), 用户通过 App 内 设置 → 法律与隐私 页面反馈; 域名注册 + 邮箱注册 + GitHub 仓库创建后启用 |
+| v0.30 R96 | 2026-08-07 | 草稿 (P0-2/3/5 软隐藏) | §8 联系方式: 支持邮箱 + 仓库 2 处 TODO 占位改软隐藏 (跟隐私邮件渠道同一策略), 用户通过 App 内 设置 → 法律与隐私 页面反馈; 域名注册 + 邮箱注册 + GitHub 仓库创建后启用 |
 
 **集中器**: `docs/SPRINT1_LEGAL_TODO.md` / `docs/LEGACY_API_NOTES.md` (软隐藏决策)

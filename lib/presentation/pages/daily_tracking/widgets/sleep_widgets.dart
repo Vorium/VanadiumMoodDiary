@@ -105,7 +105,7 @@ class _SleepEntryTile extends StatelessWidget {
         ),
         subtitle: Text(
           '${l10n.sleepBedtime(_fmt(entry.bedtime))} · ${l10n.sleepWakeTime(_fmt(entry.wakeTime))}'
-          '${entry.hasRegularityScore ? ' · 规律 ${entry.regularityScore}/5' : ''}'
+          '${entry.hasRegularityScore ? ' · ${l10n.sleepRegularityScore(entry.regularityScore!)}' : ''}'
           '${entry.note != null ? ' · ${entry.note}' : ''}',
         ),
       ),
@@ -306,7 +306,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
                   ),
                   const SizedBox(width: AppTokens.spacingXs),
                   Text(
-                    '时长: $_durationLabel',
+                    l10n.sleepDurationLabel(_durationLabel),
                     style: AppTokens.textStyleLabelMedium(context),
                   ),
                 ],
@@ -341,10 +341,11 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
             // note
             TextField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: '备注',
-                border: OutlineInputBorder(),
-                hintText: '可选',
+              decoration: InputDecoration(
+                // R100 (P1#9): 走 ARB 集中器 (复用 dailyTrackingNote*)
+                labelText: l10n.dailyTrackingNoteLabel,
+                border: const OutlineInputBorder(),
+                hintText: l10n.dailyTrackingNoteHint,
               ),
               maxLines: 2,
             ),

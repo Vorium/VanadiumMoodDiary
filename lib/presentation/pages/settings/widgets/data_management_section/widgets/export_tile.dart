@@ -80,14 +80,15 @@ class ExportTile extends ConsumerWidget {
     // 法务复查时缺 §13 同意证据。修复后: 弹 ConsentDialog 走 dataExportConsent
     // 模板 (purpose / dataCategories / retention 3 placeholder) → 用户同意 →
     // 写 audit log (LegalConsentStore.recordDataExportConsent) → 继续 export。
+    final l10n = AppLocalizations.of(context);
     final consent = await ConsentDialog.show(
       context,
       kind: ConsentKind.dataExport,
-      placeholders: const {
-        'purpose': '本地备份 / 跨设备迁移',
-        'dataCategories':
-            '用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)',
-        'retention': '剪贴板 + 用户自行保存到加密存储',
+      // R100 (P1#9): 3 placeholder 走 ARB, 替代 hardcoded 中文
+      placeholders: {
+        'purpose': l10n.dataExportPurposeBackup,
+        'dataCategories': l10n.dataExportDataCategories,
+        'retention': l10n.dataExportRetentionClipboard,
       },
     );
     if (consent == null) {

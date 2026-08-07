@@ -87,7 +87,7 @@ class _WeightEntryTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final bmiLabel = entry.bmi != null
         ? ' · ${l10n.weightBmi(entry.bmi!.toStringAsFixed(1))}'
-        : ' · 暂无 BMI';
+        : ' · ${l10n.weightNoBmi}';
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: AppTokens.spacingSm,
@@ -212,10 +212,11 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
           children: [
             TextField(
               controller: _weightController,
-              decoration: const InputDecoration(
-                labelText: '体重 (kg)',
-                border: OutlineInputBorder(),
-                hintText: '如 60.5',
+              decoration: InputDecoration(
+                // R100 (P1#9): 走 ARB, 替代 hardcoded 中文
+                labelText: l10n.weightKgLabel,
+                border: const OutlineInputBorder(),
+                hintText: l10n.weightKgHint,
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
@@ -228,7 +229,7 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
                 Icon(Icons.calculate, color: AppTokens.textHintColor(context)),
                 const SizedBox(width: AppTokens.spacingXs),
                 Text(
-                  'BMI: ${_bmi?.toStringAsFixed(1) ?? "暂无 (需 profile.height)"}',
+                  'BMI: ${_bmi?.toStringAsFixed(1) ?? l10n.weightBmiNeedHeight}',
                   style: AppTokens.textStyleLabelMedium(context),
                 ),
               ],

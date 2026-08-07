@@ -173,9 +173,9 @@ class _AnxietyAgitationEntryDialogState
                 const SizedBox(width: AppTokens.spacingXs),
                 Text(l10n.anxietyAgitationAnxietyLabel),
                 const SizedBox(width: AppTokens.spacingSm),
-                const Text(
-                  '1=严重 5=平静',
-                  style: TextStyle(fontSize: AppTokens.fontSizeCaption),
+                Text(
+                  l10n.anxietyAgitationAnxietyScaleHint,
+                  style: const TextStyle(fontSize: AppTokens.fontSizeCaption),
                 ),
               ],
             ),
@@ -201,9 +201,9 @@ class _AnxietyAgitationEntryDialogState
                 const SizedBox(width: AppTokens.spacingXs),
                 Text(l10n.anxietyAgitationAgitationLabel),
                 const SizedBox(width: AppTokens.spacingSm),
-                const Text(
-                  '1=平静 5=极急',
-                  style: TextStyle(fontSize: AppTokens.fontSizeCaption),
+                Text(
+                  l10n.anxietyAgitationAgitationScaleHint,
+                  style: const TextStyle(fontSize: AppTokens.fontSizeCaption),
                 ),
               ],
             ),
@@ -225,10 +225,11 @@ class _AnxietyAgitationEntryDialogState
             // note
             TextField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: '备注',
-                border: OutlineInputBorder(),
-                hintText: '可选',
+              decoration: InputDecoration(
+                // R100 (P1#9): 走 ARB 集中器 (复用 dailyTrackingNote*)
+                labelText: l10n.dailyTrackingNoteLabel,
+                border: const OutlineInputBorder(),
+                hintText: l10n.dailyTrackingNoteHint,
               ),
               maxLines: 2,
             ),

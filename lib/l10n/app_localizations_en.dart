@@ -3697,4 +3697,93 @@ class AppLocalizationsEn extends AppLocalizations {
   String timeAgoHoursAgo(int hours) {
     return '$hours hours ago';
   }
+
+  @override
+  String get weightNoBmi => 'No BMI';
+
+  @override
+  String get weightKgLabel => 'Weight (kg)';
+
+  @override
+  String get weightKgHint => 'e.g. 60.5';
+
+  @override
+  String get weightBmiNeedHeight => 'N/A (height required)';
+
+  @override
+  String socialRhythmMinutesSummary(
+      Object social, Object work, Object exercise) {
+    return 'Social ${social}min · Work ${work}min · Exercise ${exercise}min';
+  }
+
+  @override
+  String get socialRhythmSocialMinLabel => 'Social time (minutes)';
+
+  @override
+  String get socialRhythmWorkMinLabel => 'Work time (minutes)';
+
+  @override
+  String get socialRhythmExerciseMinLabel => 'Exercise time (minutes)';
+
+  @override
+  String get anxietyAgitationAnxietyScaleHint => '1=severe 5=calm';
+
+  @override
+  String get anxietyAgitationAgitationScaleHint => '1=calm 5=very agitated';
+
+  @override
+  String sleepRegularityScore(int score) {
+    return 'Regularity $score/5';
+  }
+
+  @override
+  String sleepDurationLabel(Object duration) {
+    return 'Duration: $duration';
+  }
+
+  @override
+  String stressIntensityScore(int intensity) {
+    return 'Intensity $intensity/5';
+  }
+
+  @override
+  String moodCbtColumns(int count) {
+    return '$count columns';
+  }
+
+  @override
+  String medReportTitleWindow(int days) {
+    return 'Medication Report (last $days days)';
+  }
+
+  @override
+  String medCalendarBackfillStub(Object date) {
+    return 'Backfill check-in coming soon ($date)';
+  }
+
+  @override
+  String get setupCrisisHotlineTitle => '🆘 Crisis Intervention Hotline (24h)';
+
+  @override
+  String get consentWithdrawSafetyBody =>
+      'Safety watch will be disabled. The system will no longer notify emergency contacts via SMS / email.';
+
+  @override
+  String get consentWithdrawVentBody =>
+      'Vent (private journal) will be disabled. New vent entries will be rejected; existing entries are kept.';
+
+  @override
+  String get consentWithdrawAnalyticsBody =>
+      'Assessment / mood analytics charts will no longer be shown. Existing data is kept and restored when re-enabled.';
+
+  @override
+  String get dataExportPurposeBackup => 'Local backup / cross-device migration';
+
+  @override
+  String get dataExportDataCategories =>
+      'Medication records, check-ins, emergency contacts, mood diary, vent text (audio not exported)';
+
+  @override
+  String get dataExportRetentionClipboard =>
+      'Clipboard + user saves to encrypted storage themselves';
 }

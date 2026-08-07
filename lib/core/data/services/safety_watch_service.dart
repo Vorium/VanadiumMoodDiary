@@ -360,30 +360,11 @@ class SafetyCheckResult {
     this.errorMessage,
   });
 
-  /// 给 UI 用的可读文案
+  /// 给 UI 用的可读文案 (v0.27 R61 引入, R100 删掉返 key 的旧 getter)
   ///
-  /// v0.27 round 61 (P1-4 修正): 之前 hardcode 中文, 修正后走 i18n key
-  /// (`safetyCheckResult{Disabled|Ok|NoData|AlertedToday|DndSuppressed|
-  /// NoContacts|Alerted|AlertedMocked|Error}`), UI 端拿 `AppLocalizations` 调。
-  ///
-  /// **重要**: 修正 3 态分流 (P0-3) + 修正 i18n (P1-4) 已合 R61。
-  /// 已修正字段:
-  /// - `alerted` 分支加 `contactsMocked` 显示 ("已通知 X 位联系人 (Y mock)")
-  /// - 新 `AlertedMocked` 文案: "**开发模式**,未实际通知联系人"
-  /// - 全部 8 个 kind 走 ARB i18n, zh / en / zh_Hant 同步翻译
-  String get displayMessage {
-    // v0.27 round 61 (P1-4): 走 ARB i18n, 8 个 kind + 3 态分流
-    // data 层 (0 flutter 边界): 拿不到 AppLocalizations, 这里返 key 字符串。
-    // R99 (BUG-1): UI caller 已全部改走 [displayMessageL10n] (home_page_state
-    // 2 处), 本 getter 仅剩测试/日志用途。**UI 禁止直接用** (显示出来是
-    // i18n key 原文, 用户看到 'safetyCheckResultAlerted')。
-    return _displayKey;
-  }
-
-  /// v0.27 round 61 (P1-4): 走 l10n 翻译版
-  ///
-  /// caller (UI widget) 传 l10n 拿 i18n 字符串。data 层 0 flutter 仍用
-  /// [displayMessage] (返 i18n key) 兼容老 caller (会显示 key, 但不会崩)。
+  /// caller (UI widget) 传 l10n 拿 i18n 字符串。data 层 0 flutter 拿不到
+  /// AppLocalizations, 编译期强制走本方法 (旧 `displayMessage` 返 key
+  /// 字符串的 getter 已删, 防未来 caller 误用显示裸 key)。
   ///
   /// 8 个 kind 全部覆盖:
   /// - disabled / ok / noData / alertedToday / dndSuppressed / noContacts
@@ -415,31 +396,6 @@ class SafetyCheckResult {
         );
       case SafetyCheckKind.error:
         return l10n.safetyCheckResultError(errorMessage ?? '');
-    }
-  }
-
-  /// v0.27 round 61 (P1-4): i18n key 集中器 — data 层 0 flutter 时用
-  String get _displayKey {
-    switch (kind) {
-      case SafetyCheckKind.disabled:
-        return 'safetyCheckResultDisabled';
-      case SafetyCheckKind.ok:
-        return 'safetyCheckResultOk';
-      case SafetyCheckKind.noData:
-        return 'safetyCheckResultNoData';
-      case SafetyCheckKind.alertedToday:
-        return 'safetyCheckResultAlertedToday';
-      case SafetyCheckKind.dndSuppressed:
-        return 'safetyCheckResultDndSuppressed';
-      case SafetyCheckKind.noContacts:
-        return 'safetyCheckResultNoContacts';
-      case SafetyCheckKind.alerted:
-        if (contactsMocked > 0 && contactsNotified == 0) {
-          return 'safetyCheckResultAlertedMocked';
-        }
-        return 'safetyCheckResultAlerted';
-      case SafetyCheckKind.error:
-        return 'safetyCheckResultError';
     }
   }
 

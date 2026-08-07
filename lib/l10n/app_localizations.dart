@@ -6508,6 +6508,145 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{hours} 小时前'**
   String timeAgoHoursAgo(int hours);
+
+  /// v0.30 R100 (P1#9): 体重 tile BMI 缺失后缀 (暂无身高档案)
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无 BMI'**
+  String get weightNoBmi;
+
+  /// v0.30 R100 (P1#9): 体重 dialog 体重输入框 label
+  ///
+  /// In zh, this message translates to:
+  /// **'体重 (kg)'**
+  String get weightKgLabel;
+
+  /// v0.30 R100 (P1#9): 体重 dialog 体重输入框 hint
+  ///
+  /// In zh, this message translates to:
+  /// **'如 60.5'**
+  String get weightKgHint;
+
+  /// v0.30 R100 (P1#9): 体重 dialog BMI 实时行 缺身高档案时兜底文案
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无 (需填写身高)'**
+  String get weightBmiNeedHeight;
+
+  /// v0.30 R100 (P1#9): 社会节律 tile 摘要行 3 分钟数段
+  ///
+  /// In zh, this message translates to:
+  /// **'社交 {social}min · 工作 {work}min · 运动 {exercise}min'**
+  String socialRhythmMinutesSummary(
+      Object social, Object work, Object exercise);
+
+  /// v0.30 R100 (P1#9): 社会节律 dialog 社交分钟输入框 label
+  ///
+  /// In zh, this message translates to:
+  /// **'社交时长 (分钟)'**
+  String get socialRhythmSocialMinLabel;
+
+  /// v0.30 R100 (P1#9): 社会节律 dialog 工作分钟输入框 label
+  ///
+  /// In zh, this message translates to:
+  /// **'工作时长 (分钟)'**
+  String get socialRhythmWorkMinLabel;
+
+  /// v0.30 R100 (P1#9): 社会节律 dialog 运动分钟输入框 label
+  ///
+  /// In zh, this message translates to:
+  /// **'运动时长 (分钟)'**
+  String get socialRhythmExerciseMinLabel;
+
+  /// v0.30 R100 (P1#9): 焦虑急躁 dialog 焦虑分数刻度提示 (反向)
+  ///
+  /// In zh, this message translates to:
+  /// **'1=严重 5=平静'**
+  String get anxietyAgitationAnxietyScaleHint;
+
+  /// v0.30 R100 (P1#9): 焦虑急躁 dialog 急躁分数刻度提示 (正向)
+  ///
+  /// In zh, this message translates to:
+  /// **'1=平静 5=极急'**
+  String get anxietyAgitationAgitationScaleHint;
+
+  /// v0.30 R100 (P1#9): 睡眠 tile 摘要行 规律性分数段
+  ///
+  /// In zh, this message translates to:
+  /// **'规律 {score}/5'**
+  String sleepRegularityScore(int score);
+
+  /// v0.30 R100 (P1#9): 睡眠 dialog 时长只读行 (duration 是 HH h MM m 格式)
+  ///
+  /// In zh, this message translates to:
+  /// **'时长: {duration}'**
+  String sleepDurationLabel(Object duration);
+
+  /// v0.30 R100 (P1#9): 压力事件 tile 标题 强度分数段
+  ///
+  /// In zh, this message translates to:
+  /// **'强度 {intensity}/5'**
+  String stressIntensityScore(int intensity);
+
+  /// v0.30 R100 (P1#9): CBT 栏数参数化 (settings cbt_section + mood_list filter sheet 共用)
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 栏'**
+  String moodCbtColumns(int count);
+
+  /// v0.30 R100 (P1#9): 用药报告 dialog 标题 (含时间窗口)
+  ///
+  /// In zh, this message translates to:
+  /// **'用药报告（近 {days} 天）'**
+  String medReportTitleWindow(int days);
+
+  /// v0.30 R100 (P1#9): 用药日历 补打卡 stub SnackBar (date 是 YYYY-MM-DD)
+  ///
+  /// In zh, this message translates to:
+  /// **'补打卡功能接入中 ({date})'**
+  String medCalendarBackfillStub(Object date);
+
+  /// v0.30 R100 (P1#9): setup 法务 dialog 危机热线区块标题
+  ///
+  /// In zh, this message translates to:
+  /// **'🆘 心理危机干预热线 (24h)'**
+  String get setupCrisisHotlineTitle;
+
+  /// v0.30 R100 (P1#9): §14 撤回 safety 同意 fallback body (法律文案)
+  ///
+  /// In zh, this message translates to:
+  /// **'失联通知功能将停用。系统不再通过 SMS / 邮件自动通知紧急联系人。'**
+  String get consentWithdrawSafetyBody;
+
+  /// v0.30 R100 (P1#9): §14 撤回 vent 同意 fallback body (法律文案)
+  ///
+  /// In zh, this message translates to:
+  /// **'树洞 (私密倾诉) 功能将停用。新增树洞记录会被拒绝, 已有记录保留。'**
+  String get consentWithdrawVentBody;
+
+  /// v0.30 R100 (P1#9): §14 撤回 analytics 同意 fallback body (法律文案)
+  ///
+  /// In zh, this message translates to:
+  /// **'评估 / 情绪相关分析图表将不再展示。已有数据保留, 重新开启后恢复。'**
+  String get consentWithdrawAnalyticsBody;
+
+  /// v0.30 R100 (P1#9): 导出 consent dialog purpose placeholder
+  ///
+  /// In zh, this message translates to:
+  /// **'本地备份 / 跨设备迁移'**
+  String get dataExportPurposeBackup;
+
+  /// v0.30 R100 (P1#9): 导出 consent dialog dataCategories placeholder
+  ///
+  /// In zh, this message translates to:
+  /// **'用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)'**
+  String get dataExportDataCategories;
+
+  /// v0.30 R100 (P1#9): 导出 consent dialog retention placeholder
+  ///
+  /// In zh, this message translates to:
+  /// **'剪贴板 + 用户自行保存到加密存储'**
+  String get dataExportRetentionClipboard;
 }
 
 class _AppLocalizationsDelegate

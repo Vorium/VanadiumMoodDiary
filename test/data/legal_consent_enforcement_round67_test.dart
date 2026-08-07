@@ -6,8 +6,8 @@
 // 严重违反 (spzh 视角 P0-6 标记)。R67 修复后:
 // - VentRepositoryImpl.add() / restore() 入口检查 ConsentKind.vent 撤回状态
 //   → 撤回时 throw VentConsentWithdrawnError
-// - CareEngine.fire() 入口接受可选 isSafetyConsentWithdrawn 回调
-//   → 撤回时 return 不推通知
+// - FireCareStrategyUseCase (CareEngine 编排继任者, R100 删 legacy API)
+//   isSafetyConsentWithdrawn=true → disabled 不推通知
 // - trend_page build() 顶部检查 ConsentKind.analytics 撤回状态
 //   → 撤回时渲染 EmptyState 占位
 //
@@ -19,7 +19,7 @@ import 'package:chroniccare/core/shared/consent_gate.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart'
     show CheckInEntity, CheckInType;
 import 'package:chroniccare/domain/logic/care_engine.dart';
-import 'package:chroniccare/domain/repositories/notification_sender.dart';
+import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
@@ -41,21 +41,6 @@ class _FakeConsentGate implements ConsentGate {
   Future<bool> isWithdrawn(ConsentKind kind) async {
     if (kind == ConsentKind.vent) return ventWithdrawn;
     return false;
-  }
-}
-
-/// Fake NotificationSender: 计数 showNow 调用次数
-class _FakeNotificationSender implements NotificationSender {
-  int showNowCount = 0;
-
-  @override
-  Future<void> showNow({
-    required int id,
-    required String title,
-    required String body,
-    String? payload,
-  }) async {
-    showNowCount++;
   }
 }
 
@@ -169,84 +154,38 @@ void main() {
     });
   });
 
-  group('A-3.2 CareEngine.fire 撤回 safety 同意 → 不推通知', () {
-    test('gate=null (旧 caller, R67 前兼容) → fire 不拦截', () async {
-      final trigger = CareEngine.evaluate(
-        checkIns: _sampleCheckIns(),
-        now: DateTime(2026, 7, 31, 10, 30),
-      );
-      expect(
-        trigger.type,
-        isNot(CareTriggerType.none),
-        reason: '测试 setup: 应有触发 (secondDayMissed)',
-      );
-
-      final sender = _FakeNotificationSender();
-      await CareEngine.fire(trigger, sender);
-      // 不传 gate = 旧行为, 走 fire 全程 (try/catch 兜底)
-      expect(
-        sender.showNowCount,
-        greaterThan(0),
-        reason: 'gate=null 时 fire 跟 R67 前一致, 应调 showNow',
-      );
-    });
-
-    test('gate=() async => true → fire 直接 return, 不调 showNow', () async {
-      final trigger = CareEngine.evaluate(
-        checkIns: _sampleCheckIns(),
-        now: DateTime(2026, 7, 31, 10, 30),
-      );
-      expect(trigger.type, isNot(CareTriggerType.none));
-
-      final sender = _FakeNotificationSender();
-      await CareEngine.fire(
-        trigger,
-        sender,
-        isSafetyConsentWithdrawn: () async => true,
-      );
-      expect(
-        sender.showNowCount,
-        0,
-        reason: '撤回 safety 同意时, fire 应直接 return, 不调 showNow',
-      );
-    });
-
-    test('gate=() async => false → fire 正常调 showNow', () async {
-      final trigger = CareEngine.evaluate(
-        checkIns: _sampleCheckIns(),
-        now: DateTime(2026, 7, 31, 10, 30),
-      );
-
-      final sender = _FakeNotificationSender();
-      await CareEngine.fire(
-        trigger,
-        sender,
-        isSafetyConsentWithdrawn: () async => false,
-      );
-      expect(
-        sender.showNowCount,
-        greaterThan(0),
-        reason: '未撤回 safety 同意时, fire 应正常调 showNow',
-      );
-    });
-
-    test('trigger.shouldFire=false → fire 不调 gate (短路优化)', () async {
-      final sender = _FakeNotificationSender();
-      var gateCalled = false;
-      await CareEngine.fire(
-        const CareTrigger(
-          type: CareTriggerType.none,
-          title: '',
-          body: '',
+  // R100 (F-4/N-2): CareEngine.evaluate/fire legacy API 已删, 本组迁测
+  // 编排继任者 FireCareStrategyUseCase — 撤回 safety 同意 → disabled
+  // (use case 0 副作用, caller home_page 拿 disabled 早返不推通知)。
+  group('A-3.2 撤回 safety 同意 → 关怀 use case 返 disabled', () {
+    const useCase = FireCareStrategyUseCase();
+  
+    test('isSafetyConsentWithdrawn=true → disabled, 不评 strategy', () {
+      final r = useCase(
+        FireCareStrategyInput(
+          checkIns: _sampleCheckIns(),
+          now: DateTime(2026, 7, 31, 10, 30),
+          isSafetyConsentWithdrawn: true,
         ),
-        sender,
-        isSafetyConsentWithdrawn: () async {
-          gateCalled = true;
-          return true;
-        },
       );
-      expect(sender.showNowCount, 0);
-      expect(gateCalled, isFalse, reason: 'trigger 不应 fire 时, 不应读 gate (短路)');
+      expect(r.decision, FireCareDecision.disabled);
+      expect(r.strategy, CareTriggerType.none);
+      expect(r.shouldFire, isFalse);
+    });
+  
+    test('isSafetyConsentWithdrawn=false → 正常命中 secondDayMissed', () {
+      final r = useCase(
+        FireCareStrategyInput(
+          checkIns: _sampleCheckIns(),
+          now: DateTime(2026, 7, 31, 10, 30),
+        ),
+      );
+      expect(
+        r.strategy,
+        isNot(CareTriggerType.none),
+        reason: '未撤回时应有触发 (secondDayMissed)',
+      );
+      expect(r.shouldFire, isTrue);
     });
   });
 

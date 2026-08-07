@@ -3515,6 +3515,91 @@ class AppLocalizationsZh extends AppLocalizations {
   String timeAgoHoursAgo(int hours) {
     return '$hours 小时前';
   }
+
+  @override
+  String get weightNoBmi => '暂无 BMI';
+
+  @override
+  String get weightKgLabel => '体重 (kg)';
+
+  @override
+  String get weightKgHint => '如 60.5';
+
+  @override
+  String get weightBmiNeedHeight => '暂无 (需填写身高)';
+
+  @override
+  String socialRhythmMinutesSummary(
+      Object social, Object work, Object exercise) {
+    return '社交 ${social}min · 工作 ${work}min · 运动 ${exercise}min';
+  }
+
+  @override
+  String get socialRhythmSocialMinLabel => '社交时长 (分钟)';
+
+  @override
+  String get socialRhythmWorkMinLabel => '工作时长 (分钟)';
+
+  @override
+  String get socialRhythmExerciseMinLabel => '运动时长 (分钟)';
+
+  @override
+  String get anxietyAgitationAnxietyScaleHint => '1=严重 5=平静';
+
+  @override
+  String get anxietyAgitationAgitationScaleHint => '1=平静 5=极急';
+
+  @override
+  String sleepRegularityScore(int score) {
+    return '规律 $score/5';
+  }
+
+  @override
+  String sleepDurationLabel(Object duration) {
+    return '时长: $duration';
+  }
+
+  @override
+  String stressIntensityScore(int intensity) {
+    return '强度 $intensity/5';
+  }
+
+  @override
+  String moodCbtColumns(int count) {
+    return '$count 栏';
+  }
+
+  @override
+  String medReportTitleWindow(int days) {
+    return '用药报告（近 $days 天）';
+  }
+
+  @override
+  String medCalendarBackfillStub(Object date) {
+    return '补打卡功能接入中 ($date)';
+  }
+
+  @override
+  String get setupCrisisHotlineTitle => '🆘 心理危机干预热线 (24h)';
+
+  @override
+  String get consentWithdrawSafetyBody => '失联通知功能将停用。系统不再通过 SMS / 邮件自动通知紧急联系人。';
+
+  @override
+  String get consentWithdrawVentBody => '树洞 (私密倾诉) 功能将停用。新增树洞记录会被拒绝, 已有记录保留。';
+
+  @override
+  String get consentWithdrawAnalyticsBody =>
+      '评估 / 情绪相关分析图表将不再展示。已有数据保留, 重新开启后恢复。';
+
+  @override
+  String get dataExportPurposeBackup => '本地备份 / 跨设备迁移';
+
+  @override
+  String get dataExportDataCategories => '用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)';
+
+  @override
+  String get dataExportRetentionClipboard => '剪贴板 + 用户自行保存到加密存储';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -7028,4 +7113,89 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String timeAgoHoursAgo(int hours) {
     return '$hours 小時前';
   }
+
+  @override
+  String get weightNoBmi => '暫無 BMI';
+
+  @override
+  String get weightKgLabel => '體重 (kg)';
+
+  @override
+  String get weightKgHint => '如 60.5';
+
+  @override
+  String get weightBmiNeedHeight => '暫無 (需填寫身高)';
+
+  @override
+  String socialRhythmMinutesSummary(
+      Object social, Object work, Object exercise) {
+    return '社交 ${social}min · 工作 ${work}min · 運動 ${exercise}min';
+  }
+
+  @override
+  String get socialRhythmSocialMinLabel => '社交時長 (分鐘)';
+
+  @override
+  String get socialRhythmWorkMinLabel => '工作時長 (分鐘)';
+
+  @override
+  String get socialRhythmExerciseMinLabel => '運動時長 (分鐘)';
+
+  @override
+  String get anxietyAgitationAnxietyScaleHint => '1=嚴重 5=平靜';
+
+  @override
+  String get anxietyAgitationAgitationScaleHint => '1=平靜 5=極急';
+
+  @override
+  String sleepRegularityScore(int score) {
+    return '規律 $score/5';
+  }
+
+  @override
+  String sleepDurationLabel(Object duration) {
+    return '時長: $duration';
+  }
+
+  @override
+  String stressIntensityScore(int intensity) {
+    return '強度 $intensity/5';
+  }
+
+  @override
+  String moodCbtColumns(int count) {
+    return '$count 欄';
+  }
+
+  @override
+  String medReportTitleWindow(int days) {
+    return '用藥報告（近 $days 天）';
+  }
+
+  @override
+  String medCalendarBackfillStub(Object date) {
+    return '補打卡功能接入中 ($date)';
+  }
+
+  @override
+  String get setupCrisisHotlineTitle => '🆘 心理危機干預熱線 (24h)';
+
+  @override
+  String get consentWithdrawSafetyBody => '失聯通知功能將停用。系統不再通過 SMS / 郵件自動通知緊急聯繫人。';
+
+  @override
+  String get consentWithdrawVentBody => '樹洞 (私密傾訴) 功能將停用。新增樹洞記錄會被拒絕, 已有記錄保留。';
+
+  @override
+  String get consentWithdrawAnalyticsBody =>
+      '評估 / 情緒相關分析圖表將不再展示。已有數據保留, 重新開啟後恢復。';
+
+  @override
+  String get dataExportPurposeBackup => '本地備份 / 跨設備遷移';
+
+  @override
+  String get dataExportDataCategories => '用藥記錄、打卡記錄、緊急聯繫人、情緒日記、樹洞文字 (錄音不導出)';
+
+  @override
+  String get dataExportRetentionClipboard => '剪貼板 + 用戶自行保存到加密存儲';
 }

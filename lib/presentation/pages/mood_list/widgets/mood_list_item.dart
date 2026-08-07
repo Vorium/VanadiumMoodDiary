@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 
 class MoodListItem extends StatelessWidget {
   final MoodEntryEntity entry;
@@ -20,6 +21,7 @@ class MoodListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final timestamp = _formatTimestamp(entry.timestamp);
     final preview = entry.note?.isNotEmpty ?? false
         ? entry.note!
@@ -63,7 +65,7 @@ class MoodListItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                 ),
                 child: Text(
-                  entry.cbtLevel == 7 ? 'CBT 7 栏' : 'CBT 5 栏',
+                  entry.cbtLevel == 7 ? l10n.moodCbtChipBadge7 : l10n.moodCbtChipBadge5,
                   style: AppTokens.textStyleMicro(context).copyWith(
                     color: AppTokens.primaryColor(context),
                   ),

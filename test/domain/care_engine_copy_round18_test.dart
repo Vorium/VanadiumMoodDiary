@@ -1,7 +1,9 @@
-/// v0.18 round 18 (P1-11) CareEngine 抽 CareCopy 一致性测试
+/// v0.18 round 18 (P1-11) 关怀文案一致性测试
 ///
-/// 验证:CareEngine.evaluate 4 个 trigger 产出的 CareTrigger.title/body
-/// 跟 CareCopy.forTrigger 保持一致(防文案改 CareCopy 但漏改 CareEngine)。
+/// R100 迁移: 原验证 CareEngine.evaluate 产出的 CareTrigger.title/body
+/// 跟 CareCopy.forTrigger 一致。CareEngine.evaluate legacy API 已删,
+/// 改测编排继任者 FireCareStrategyUseCase 的 title/body 跟 CareCopy 一致
+/// (防文案改 CareCopy 但漏改 use case 装配)。
 library;
 
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/domain/logic/care_copy.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/logic/care_engine.dart';
+import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 
 CheckInEntity _checkIn(DateTime t) => CheckInEntity(
       id: 1,
@@ -16,21 +19,23 @@ CheckInEntity _checkIn(DateTime t) => CheckInEntity(
       type: CheckInType.normal,
     );
 
+FireCareStrategyResult _eval(List<CheckInEntity> checkIns, DateTime now) =>
+    const FireCareStrategyUseCase()(
+      FireCareStrategyInput(checkIns: checkIns, now: now),
+    );
+
 void main() {
-  group('CareEngine 文案 ↔ CareCopy 一致性', () {
+  group('use case 文案 ↔ CareCopy 一致性', () {
     test('secondDayMissed: 漏 1 天后第二天 10 点后', () {
       // 准备数据: 36h+ 前有 1 个打卡
       final now = DateTime(2026, 7, 18, 11, 0); // 周五 11 点
       final lastCheckIn = now.subtract(const Duration(hours: 40));
-      final trigger = CareEngine.evaluate(
-        checkIns: [_checkIn(lastCheckIn)],
-        now: now,
-      );
+      final r = _eval([_checkIn(lastCheckIn)], now);
 
-      expect(trigger.type, CareTriggerType.secondDayMissed);
+      expect(r.strategy, CareTriggerType.secondDayMissed);
       final expected = CareCopy.forTrigger(CareTriggerType.secondDayMissed);
-      expect(trigger.title, expected.title);
-      expect(trigger.body, expected.body);
+      expect(r.title, expected.title);
+      expect(r.body, expected.body);
     });
 
     test('lateCheckInHabit: 最近 3 天 22 点后打卡', () {
@@ -41,15 +46,12 @@ void main() {
         _checkIn(DateTime(2026, 7, 17, 23, 30)),
         _checkIn(DateTime(2026, 7, 16, 22, 30)),
       ];
-      final trigger = CareEngine.evaluate(
-        checkIns: checkIns,
-        now: now,
-      );
+      final r = _eval(checkIns, now);
 
-      expect(trigger.type, CareTriggerType.lateCheckInHabit);
+      expect(r.strategy, CareTriggerType.lateCheckInHabit);
       final expected = CareCopy.forTrigger(CareTriggerType.lateCheckInHabit);
-      expect(trigger.title, expected.title);
-      expect(trigger.body, expected.body);
+      expect(r.title, expected.title);
+      expect(r.body, expected.body);
     });
 
     test('weekendMissed: 周末漏打卡', () {
@@ -61,16 +63,13 @@ void main() {
       final checkIns = [
         _checkIn(DateTime(2026, 7, 19, 9, 0)),
       ];
-      final trigger = CareEngine.evaluate(
-        checkIns: checkIns,
-        now: now,
-      );
+      final r = _eval(checkIns, now);
 
       // 周末 (7/18 周六) 没打卡 → 触发 weekendMissed
-      expect(trigger.type, CareTriggerType.weekendMissed);
+      expect(r.strategy, CareTriggerType.weekendMissed);
       final expected = CareCopy.forTrigger(CareTriggerType.weekendMissed);
-      expect(trigger.title, expected.title);
-      expect(trigger.body, expected.body);
+      expect(r.title, expected.title);
+      expect(r.body, expected.body);
     });
 
     test('weekPerfect: 最近 7 天每天 22 点前都打卡', () {
@@ -79,25 +78,19 @@ void main() {
       final checkIns = [
         for (int i = 0; i < 7; i++) _checkIn(DateTime(2026, 7, 18 - i, 10, 0)),
       ];
-      final trigger = CareEngine.evaluate(
-        checkIns: checkIns,
-        now: now,
-      );
+      final r = _eval(checkIns, now);
 
-      expect(trigger.type, CareTriggerType.weekPerfect);
+      expect(r.strategy, CareTriggerType.weekPerfect);
       final expected = CareCopy.forTrigger(CareTriggerType.weekPerfect);
-      expect(trigger.title, expected.title);
-      expect(trigger.body, expected.body);
+      expect(r.title, expected.title);
+      expect(r.body, expected.body);
     });
 
-    test('none: 空 trigger (打卡列表空)', () {
-      final trigger = CareEngine.evaluate(
-        checkIns: [],
-        now: DateTime(2026, 7, 18, 10, 0),
-      );
-      expect(trigger.type, CareTriggerType.none);
-      expect(trigger.title, '');
-      expect(trigger.body, '');
+    test('none: 空结果 (打卡列表空)', () {
+      final r = _eval([], DateTime(2026, 7, 18, 10, 0));
+      expect(r.strategy, CareTriggerType.none);
+      expect(r.title, '');
+      expect(r.body, '');
     });
   });
 }

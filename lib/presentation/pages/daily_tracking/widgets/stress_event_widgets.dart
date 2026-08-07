@@ -108,6 +108,7 @@ class _StressEventEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: AppTokens.spacingSm,
@@ -116,7 +117,7 @@ class _StressEventEntryTile extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.bolt, color: AppTokens.warningColor(context)),
         title: Text(
-          '${_eventTypeLabel(context, entry.eventType)} · 强度 ${entry.intensity}/5',
+          '${_eventTypeLabel(context, entry.eventType)} · ${l10n.stressIntensityScore(entry.intensity)}',
           style: AppTokens.textStyleLabelStrong(context),
         ),
         subtitle: entry.note != null ? Text(entry.note!) : null,
@@ -235,10 +236,11 @@ class _StressEventEntryDialogState
             // note
             TextField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: '备注',
-                border: OutlineInputBorder(),
-                hintText: '可选',
+              decoration: InputDecoration(
+                // R100 (P1#9): 走 ARB 集中器 (复用 dailyTrackingNote*)
+                labelText: l10n.dailyTrackingNoteLabel,
+                border: const OutlineInputBorder(),
+                hintText: l10n.dailyTrackingNoteHint,
               ),
               maxLines: 2,
             ),

@@ -2760,5 +2760,120 @@
     "placeholders": {
       "hours": { "type": "int" }
     }
+  },
+  "weightNoBmi": "No BMI",
+  "@weightNoBmi": {
+    "description": "v0.30 R100 (P1#9): weight tile BMI missing suffix (no height profile)"
+  },
+  "weightKgLabel": "Weight (kg)",
+  "@weightKgLabel": {
+    "description": "v0.30 R100 (P1#9): weight dialog weight input label"
+  },
+  "weightKgHint": "e.g. 60.5",
+  "@weightKgHint": {
+    "description": "v0.30 R100 (P1#9): weight dialog weight input hint"
+  },
+  "weightBmiNeedHeight": "N/A (height required)",
+  "@weightBmiNeedHeight": {
+    "description": "v0.30 R100 (P1#9): weight dialog live BMI row fallback when no height profile"
+  },
+  "socialRhythmMinutesSummary": "Social {social}min · Work {work}min · Exercise {exercise}min",
+  "@socialRhythmMinutesSummary": {
+    "description": "v0.30 R100 (P1#9): social rhythm tile summary minute segments",
+    "placeholders": {
+      "social": { "type": "Object" },
+      "work": { "type": "Object" },
+      "exercise": { "type": "Object" }
+    }
+  },
+  "socialRhythmSocialMinLabel": "Social time (minutes)",
+  "@socialRhythmSocialMinLabel": {
+    "description": "v0.30 R100 (P1#9): social rhythm dialog social minutes input label"
+  },
+  "socialRhythmWorkMinLabel": "Work time (minutes)",
+  "@socialRhythmWorkMinLabel": {
+    "description": "v0.30 R100 (P1#9): social rhythm dialog work minutes input label"
+  },
+  "socialRhythmExerciseMinLabel": "Exercise time (minutes)",
+  "@socialRhythmExerciseMinLabel": {
+    "description": "v0.30 R100 (P1#9): social rhythm dialog exercise minutes input label"
+  },
+  "anxietyAgitationAnxietyScaleHint": "1=severe 5=calm",
+  "@anxietyAgitationAnxietyScaleHint": {
+    "description": "v0.30 R100 (P1#9): anxiety/agitation dialog anxiety scale hint (inverted)"
+  },
+  "anxietyAgitationAgitationScaleHint": "1=calm 5=very agitated",
+  "@anxietyAgitationAgitationScaleHint": {
+    "description": "v0.30 R100 (P1#9): anxiety/agitation dialog agitation scale hint"
+  },
+  "sleepRegularityScore": "Regularity {score}/5",
+  "@sleepRegularityScore": {
+    "description": "v0.30 R100 (P1#9): sleep tile summary regularity score segment",
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
+  "sleepDurationLabel": "Duration: {duration}",
+  "@sleepDurationLabel": {
+    "description": "v0.30 R100 (P1#9): sleep dialog read-only duration row",
+    "placeholders": {
+      "duration": { "type": "Object" }
+    }
+  },
+  "stressIntensityScore": "Intensity {intensity}/5",
+  "@stressIntensityScore": {
+    "description": "v0.30 R100 (P1#9): stress event tile title intensity score segment",
+    "placeholders": {
+      "intensity": { "type": "int" }
+    }
+  },
+  "moodCbtColumns": "{count} columns",
+  "@moodCbtColumns": {
+    "description": "v0.30 R100 (P1#9): parameterized CBT column count (settings cbt_section + mood_list filter sheet)",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "medReportTitleWindow": "Medication Report (last {days} days)",
+  "@medReportTitleWindow": {
+    "description": "v0.30 R100 (P1#9): medication report dialog title with time window",
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "medCalendarBackfillStub": "Backfill check-in coming soon ({date})",
+  "@medCalendarBackfillStub": {
+    "description": "v0.30 R100 (P1#9): medication calendar backfill stub SnackBar (date is YYYY-MM-DD)",
+    "placeholders": {
+      "date": { "type": "Object" }
+    }
+  },
+  "setupCrisisHotlineTitle": "🆘 Crisis Intervention Hotline (24h)",
+  "@setupCrisisHotlineTitle": {
+    "description": "v0.30 R100 (P1#9): setup legal dialog crisis hotline section title"
+  },
+  "consentWithdrawSafetyBody": "Safety watch will be disabled. The system will no longer notify emergency contacts via SMS / email.",
+  "@consentWithdrawSafetyBody": {
+    "description": "v0.30 R100 (P1#9): PIPL Art.14 withdraw safety consent fallback body (legal copy)"
+  },
+  "consentWithdrawVentBody": "Vent (private journal) will be disabled. New vent entries will be rejected; existing entries are kept.",
+  "@consentWithdrawVentBody": {
+    "description": "v0.30 R100 (P1#9): PIPL Art.14 withdraw vent consent fallback body (legal copy)"
+  },
+  "consentWithdrawAnalyticsBody": "Assessment / mood analytics charts will no longer be shown. Existing data is kept and restored when re-enabled.",
+  "@consentWithdrawAnalyticsBody": {
+    "description": "v0.30 R100 (P1#9): PIPL Art.14 withdraw analytics consent fallback body (legal copy)"
+  },
+  "dataExportPurposeBackup": "Local backup / cross-device migration",
+  "@dataExportPurposeBackup": {
+    "description": "v0.30 R100 (P1#9): export consent dialog purpose placeholder"
+  },
+  "dataExportDataCategories": "Medication records, check-ins, emergency contacts, mood diary, vent text (audio not exported)",
+  "@dataExportDataCategories": {
+    "description": "v0.30 R100 (P1#9): export consent dialog dataCategories placeholder"
+  },
+  "dataExportRetentionClipboard": "Clipboard + user saves to encrypted storage themselves",
+  "@dataExportRetentionClipboard": {
+    "description": "v0.30 R100 (P1#9): export consent dialog retention placeholder"
   }
 }

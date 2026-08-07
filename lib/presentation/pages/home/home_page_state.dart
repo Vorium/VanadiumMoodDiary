@@ -498,8 +498,8 @@ class HomePageState extends ConsumerState<HomePage> {
   ///   - `fireSms` (v1.0+ 真接阿里云后): 调 smsService.send
   ///   - `fireEmail` (v1.0+ 真接 SendGrid 后): 调 emailService
   ///   - `disabled` / `noAction`: 早返
-  /// - `CareEngine.evaluate` / `CareEngine.fire` 留作 legacy API
-  ///   (v0.28 删除, 见 docs/LEGACY_API_NOTES.md)
+  /// - R100 (F-4/N-2): `CareEngine.evaluate` / `CareEngine.fire` legacy API
+  ///   已删 (v0.28 起承诺, 拖到本轮落地), 编排全走 use case。
   Future<void> _fireCareEngine() async {
     try {
       // P0 fix: 复用 provider 树已缓存的打卡数据，不再重复查库

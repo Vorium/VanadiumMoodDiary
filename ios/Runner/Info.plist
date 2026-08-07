@@ -39,17 +39,22 @@
 		文档与实际: NSMicrophoneUsageDescription / NSSpeechRecognitionUsageDescription
 		/ NSPhotoLibraryUsageDescription 是真用的, 保留
 	-->
+	<!--
+		R100 (A-4): usage description 改英文基线, 中文走 InfoPlist.strings
+		per-locale 覆盖 (Base=en / zh-Hans / zh-Hant)。之前内联中文 →
+		英文 locale 用户权限弹窗显示中文。
+	-->
 	<key>NSMicrophoneUsageDescription</key>
-	<string>用于情绪日记的语音录入，本地处理，文件加密存储</string>
+	<string>Used for voice input in the mood diary. Processed locally, files stored encrypted.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>用于情绪日记的语音转文字，本地处理，不上传</string>
+	<string>Used for speech-to-text in the mood diary. Processed locally, never uploaded.</string>
 	<!--
 		v0.27 round 62 (R62): P0-5 NSPhotoLibraryAddUsageDescription
 		PDF 用药报告通过 share_plus 触发 PHPhotoLibrary 调用
 		缺此 key iOS 审核拒
 	-->
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>用于保存用药报告 PDF 到相册</string>
+	<string>Used to save medication report PDFs to your photo library.</string>
 	<!--
 		v0.27 round 67 (R67, Sprint 1 上架前 P0, appstore C-P0-7):
 		NSPhotoLibraryUsageDescription
@@ -59,13 +64,13 @@
 		privacy-sensitive data without a usage description")。
 	-->
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>用于分享用药报告 PDF 时选择保存位置</string>
+	<string>Used to choose where to save when sharing medication report PDFs.</string>
 	<!--
 		v0.27 round 61 (R61): 项目无 IDFA, 但加 NSUserTrackingUsageDescription
 		作为防御性 + App Store 透明性
 	-->
 	<key>NSUserTrackingUsageDescription</key>
-	<string>本应用不收集任何追踪数据，仅用于 App Store 透明性声明</string>
+	<string>This app does not collect any tracking data. This declaration is for App Store transparency only.</string>
 	<!--
 		v0.27 round 61 (R61): iPadOS 多任务 / Split View
 		UIRequiresFullScreen=false 允许 iPad Split View 多任务
@@ -136,23 +141,12 @@
 	<key>LSApplicationCategoryType</key>
 	<string>healthcare-fitness</string>
 	<!--
-		v0.27 round 62 (R62): P0-7 后台模式 fetch→processing
-		iOS 13+ Apple 弃用 fetch, 推 BGTaskScheduler (短任务) + BGProcessingTask (长任务)
-		audio: 录音时允许后台继续 (录音中切到后台不中断)
-		processing: 失联检测长任务, 走 BGProcessingTask (需 BGTaskSchedulerPermittedIdentifiers 注册)
+		v0.30 R100 (P0#6, appstore A-3): 删 UIBackgroundModes audio+processing +
+		BGTaskSchedulerPermittedIdentifiers 声明。原因: ventAudio / 失联通知业务
+		均 FeatureFlags 关闭, 声明的后台能力无实际使用 = Apple 2.5.4 拒因。
+		业务真接时 (vent 语音录音 / BGProcessingTask 失联检测) 再加回:
+		UIBackgroundModes=[audio, processing] + BGTaskSchedulerPermittedIdentifiers
+		=[com.chroniccare.safety-check] + AppDelegate.swift BGTaskScheduler.register。
 	-->
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>audio</string>
-		<string>processing</string>
-	</array>
-	<!--
-		v0.27 round 62 (R62): P0-7 BGTaskScheduler 标识符
-		必须与 AppDelegate.swift 中 BGTaskScheduler.shared.register(forTaskWithIdentifier:) 一致
-	-->
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>com.chroniccare.safety-check</string>
-	</array>
 </dict>
 </plist>

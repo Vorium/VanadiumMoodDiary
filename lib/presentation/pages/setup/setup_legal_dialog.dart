@@ -107,7 +107,7 @@ class LegalDocumentDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '🆘 心理危机干预热线 (24h)',
+            l10n.setupCrisisHotlineTitle,
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
               fontWeight: FontWeight.w600,

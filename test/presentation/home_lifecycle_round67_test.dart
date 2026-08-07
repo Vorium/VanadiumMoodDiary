@@ -8,8 +8,8 @@
 //    `fireCareStrategyUseCaseProvider`
 // 2. 改 home_page._fireCareEngine 调 use case, 按 result.decision dispatch
 //    (fireCareCopy / fireSms / fireEmail 3 个 channel)
-// 3. CareEngine.evaluate / CareEngine.fire 留作 legacy API (v0.28 删除,
-//    见 docs/LEGACY_API_NOTES.md)
+// 3. CareEngine.evaluate / CareEngine.fire legacy API 已删 (R100 F-4/N-2,
+//    v0.28 起承诺, 本轮落地)
 //
 // 本测试 3 case 覆盖:
 // 1. provider 已注册且返回 FireCareStrategyUseCase (基本 — 切换能用)
@@ -132,20 +132,6 @@ void main() {
       // title/body 仍从 CareCopy 拿 (跟 fireCareCopy 路径一致)
       expect(r.title, isNotEmpty);
       expect(r.body, isNotEmpty);
-    });
-  });
-
-  group('legacy API 收尾 (B-2 修复)', () {
-    test('CareEngine.evaluate 仍可用 (legacy API 保留到 v0.28)', () {
-      // 验证 CareEngine.evaluate 没被删, 留作 v0.28 删除前的过渡。
-      // home_page 已切走, 但其他模块 (R65 没列出 caller) 仍可调。
-      // v0.28 删除计划见 docs/LEGACY_API_NOTES.md。
-      final trigger = CareEngine.evaluate(
-        checkIns: const [],
-        now: DateTime(2026, 7, 15, 10, 0),
-      );
-      expect(trigger.type, CareTriggerType.none);
-      expect(trigger.shouldFire, isFalse);
     });
   });
 }

@@ -207,10 +207,13 @@ class _MedicationCalendarPageState
   void _onAddLogStub(DateTime date) {
     // 显式使用 ref / context 避免 lint 警告
     ref.invalidate(allCheckInsProvider);
+    final dateStr =
+        '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '补打卡功能接入中 (${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')})',
+          // R100 (P1#9): 走 ARB, 替代 hardcoded 中文
+          AppLocalizations.of(context).medCalendarBackfillStub(dateStr),
         ),
         duration: AppMotion.snackBarDurationShort,
       ),

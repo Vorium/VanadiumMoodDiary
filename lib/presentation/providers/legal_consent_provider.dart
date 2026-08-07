@@ -270,13 +270,16 @@ final legalConsentWithdrawnAtProvider =
 ///
 /// vent_list_page 监听此 provider, sealed=true → 显示"已加密封存"占位
 /// 不读 DB, 重新同意后 (reset) → 变 false → 正常显示。
-final ventSealedProvider = StreamProvider<bool>((ref) async* {
+/// R100 (N-3): 加 autoDispose — 离开 vent 页后释放 subscription。
+final ventSealedProvider = StreamProvider.autoDispose<bool>((ref) async* {
   final store = ref.watch(legalConsentStoreProvider);
   yield await store.isSealed(ConsentKind.vent);
 });
 
-/// v0.28 R82.5: vent 封存时间 stream
-final ventSealedAtProvider = StreamProvider<DateTime?>((ref) async* {
+/// v0.28 R82.5: vent 封存时间 stream (R100: 同上 autoDispose)
+final ventSealedAtProvider = StreamProvider.autoDispose<DateTime?>((
+  ref,
+) async* {
   final store = ref.watch(legalConsentStoreProvider);
   yield await store.sealedAt(ConsentKind.vent);
 });

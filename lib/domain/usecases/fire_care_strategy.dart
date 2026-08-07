@@ -170,6 +170,7 @@ class FireCareStrategyInput {
 /// CareEngine.evaluate(...) 拿 CareTrigger, 业务编排跟 UI 混在一起。
 /// 本 use case 让 presentation 只调 1 个 use case, 内部 4 strategy 评分 +
 /// 选 highest-priority + 装配 delivery channel decision。
+/// (R100: CareEngine.evaluate/fire legacy API 已删, 本 use case 是唯一入口)
 ///
 /// 业务规则:
 /// 1. config.enabled == false → disabled
@@ -208,7 +209,7 @@ class FireCareStrategyUseCase {
       );
     }
 
-    // 2. 过滤 normal check-ins (跟 CareEngine.evaluate 1:1)
+    // 2. 过滤 normal check-ins (跟旧 CareEngine.evaluate 1:1)
     final normal = input.checkIns.where((c) => c.isNormal).toList();
     if (normal.isEmpty) {
       return const FireCareStrategyResult(
@@ -258,7 +259,7 @@ class FireCareStrategyUseCase {
       CareDeliveryChannel.email => FireCareDecision.fireEmail,
     };
 
-    // 6. 文案 (从 CareCopy 拿, 跟 CareEngine._build 1:1)
+    // 6. 文案 (从 CareCopy 拿, 跟旧 CareEngine._build 1:1)
     final copy = CareCopy.forTrigger(best);
     return FireCareStrategyResult(
       decision: decision,

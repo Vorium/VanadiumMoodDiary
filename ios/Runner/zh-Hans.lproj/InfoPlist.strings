@@ -4,3 +4,10 @@
  * 简体用户看 "慢病管家" 而不是英文 "ChronicCare" (避免病耻感)
  */
 "CFBundleDisplayName" = "慢病管家";
+
+/* R100 (A-4): 5 项 usage description 简体覆盖 (英文基线在 Info.plist / Base) */
+"NSMicrophoneUsageDescription" = "用于情绪日记的语音录入，本地处理，文件加密存储";
+"NSSpeechRecognitionUsageDescription" = "用于情绪日记的语音转文字，本地处理，不上传";
+"NSPhotoLibraryAddUsageDescription" = "用于保存用药报告 PDF 到相册";
+"NSPhotoLibraryUsageDescription" = "用于分享用药报告 PDF 时选择保存位置";
+"NSUserTrackingUsageDescription" = "本应用不收集任何追踪数据，仅用于 App Store 透明性声明";

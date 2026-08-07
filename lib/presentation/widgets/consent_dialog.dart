@@ -150,11 +150,11 @@ class ConsentDialog {
         // Fallback: §14 撤回 toggle 在 legal_page 走 LegalConsentStore.withdraw,
         // 目前不弹 ConsentDialog。这里保留 5 kind 全 switch 是为 v1.0
         // 撤回确认弹窗留接口 (e.g. "关掉失联通知后, CareEngine 不再触发 SMS,
-        // 确认吗?"), 现阶段 fallback 用 contactConsent* 通用文案 + in-code
-        // kind 名描述, 不再额外加 ARB key。
+        // 确认吗?"), 现阶段 fallback 用 contactConsent* 通用文案 +
+        // consentWithdraw*Body 撤回后果文案 (R100 P1#9 走 ARB)。
         return _ConsentTemplate(
           title: l10n.contactConsentTitle,
-          body: Text(_fallbackBodyFor(kind)),
+          body: Text(_fallbackBodyFor(kind, l10n)),
           agreeLabel: l10n.contactConsentAgree,
           rejectLabel: l10n.contactConsentReject,
           version: l10n.contactConsentVersion,
@@ -163,14 +163,16 @@ class ConsentDialog {
   }
 
   /// §14 撤回场景 fallback body (R82: 现阶段不弹, 留接口)
-  static String _fallbackBodyFor(ConsentKind kind) {
+  ///
+  /// R100 (P1#9): 3 段法律文案走 ARB (consentWithdraw*Body)
+  static String _fallbackBodyFor(ConsentKind kind, AppLocalizations l10n) {
     switch (kind) {
       case ConsentKind.safety:
-        return '失联通知功能将停用。CareEngine 不再通过 SMS / 邮件自动通知紧急联系人。';
+        return l10n.consentWithdrawSafetyBody;
       case ConsentKind.vent:
-        return '树洞 (私密倾诉) 功能将停用。新增树洞记录会被拒绝, 已有记录保留。';
+        return l10n.consentWithdrawVentBody;
       case ConsentKind.analytics:
-        return '评估 / 情绪相关分析图表将不再展示。已有数据保留, 重新开启后恢复。';
+        return l10n.consentWithdrawAnalyticsBody;
       default:
         return '';
     }

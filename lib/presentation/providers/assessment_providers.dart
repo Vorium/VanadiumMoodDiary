@@ -31,12 +31,14 @@ final assessmentRepositoryProvider = Provider<AssessmentRepository>((ref) {
 final allScalesProvider = Provider<List<AssessmentScale>>((ref) => allScales());
 
 /// 监听所有 entry (10 量表聚合)
-final allAssessmentEntriesProvider = StreamProvider<List<AssessmentEntry>>(
-  (ref) {
-    final repo = ref.watch(assessmentRepositoryProvider);
-    return repo.watchAll();
-  },
-);
+/// R100 (N-3): 加 autoDispose — 仅 assessment 页面 watch, 离开后释放。
+final allAssessmentEntriesProvider =
+    StreamProvider.autoDispose<List<AssessmentEntry>>(
+      (ref) {
+        final repo = ref.watch(assessmentRepositoryProvider);
+        return repo.watchAll();
+      },
+    );
 
 /// 某量表最新 entry (中心化卡片显示用)
 ///

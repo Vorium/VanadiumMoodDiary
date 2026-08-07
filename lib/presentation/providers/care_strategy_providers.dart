@@ -18,7 +18,7 @@ import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 /// v0.27 round 67 (B-2 修复): FireCareStrategyUseCase provider
 ///
 /// caller (home_page._fireCareEngine) 拿 use case, 不再直接调
-/// `CareEngine.evaluate` / `CareEngine.fire` 静态方法 (legacy API, v0.28 删除)。
+/// `CareEngine.evaluate` / `CareEngine.fire` 静态方法 (legacy API, R100 已删)。
 ///
 /// 用法:
 /// ```dart

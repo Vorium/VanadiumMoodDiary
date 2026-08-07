@@ -133,7 +133,7 @@ lib/
 
 ```bash
 flutter analyze    # 必须 0 error
-flutter test       # 必须全过（当前 1163 cases, v0.27 round 63 后）
+flutter test       # 必须全过（当前 1997 cases, v0.30 round 100 后）
 python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 检查)
 ```
 

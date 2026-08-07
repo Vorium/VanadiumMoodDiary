@@ -75,7 +75,7 @@ class CbtSection extends ConsumerWidget {
                 children: [
                   for (final lv in ThoughtRecordLevel.values)
                     RadioListTile<ThoughtRecordLevel>(
-                      title: Text('${lv.columnCount} 栏'),
+                      title: Text(l10n.moodCbtColumns(lv.columnCount)),
                       subtitle: Text(_descriptionFor(lv, l10n)),
                       value: lv,
                     ),

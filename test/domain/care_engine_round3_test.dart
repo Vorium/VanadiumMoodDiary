@@ -1,5 +1,8 @@
+// R100 迁移: 原测 CareEngine.evaluate legacy API, 改测编排继任者
+// FireCareStrategyUseCase (语义 1:1, strategy 字段替代 trigger.type)。
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/logic/care_engine.dart';
+import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -9,17 +12,19 @@ void main() {
         type: CheckInType.fromWire(type),
       );
 
-  group('CareEngine 第三轮审查 fix', () {
+  FireCareStrategyResult eval(List<CheckInEntity> checkIns, DateTime now) =>
+      const FireCareStrategyUseCase()(
+        FireCareStrategyInput(checkIns: checkIns, now: now),
+      );
+
+  group('关怀规则第三轮审查 fix (R100 迁 use case)', () {
     test('P2 fix: 36.5h 触发 secondDayMissed (inMinutes 不用 inHours)', () {
       // 旧逻辑: inHours=36 → 36>36=false → 不触发
       // 新逻辑: inMinutes=36*60+30 → 触发
       final now = DateTime(2026, 7, 13, 10, 0);
       final lastCheckIn = now.subtract(const Duration(hours: 36, minutes: 30));
-      final t = CareEngine.evaluate(
-        checkIns: [ci(lastCheckIn)],
-        now: now,
-      );
-      expect(t.type, CareTriggerType.secondDayMissed);
+      final t = eval([ci(lastCheckIn)], now);
+      expect(t.strategy, CareTriggerType.secondDayMissed);
     });
 
     test('P2 fix: 35.5h 不触发 secondDayMissed', () {
@@ -36,12 +41,13 @@ void main() {
         for (int d = 0; d < 7; d++)
           ci(DateTime(2026, 7, 6 + d, 8, 0)), // 7-6..7-12 各 8 点
       ];
-      final t = CareEngine.evaluate(checkIns: checks, now: now);
+      final t = eval(checks, now);
       // 关键断言:不是 secondDayMissed
-      expect(t.type, isNot(CareTriggerType.secondDayMissed));
+      expect(t.strategy, isNot(CareTriggerType.secondDayMissed));
     });
 
-    test('P3 fix: 1 年前 1 次晚打卡,最近 7 天都 21 点准时 → 触发 weekPerfect', () {
+    test('P3 fix: 1 年前 1 次晚打卡,最近 7 天都 21 点准时 → 触发 weekPerfect',
+        () {
       final now = DateTime(2026, 7, 13, 10, 0);
       final checks = <CheckInEntity>[
         // 1 年前晚打卡(应被忽略)
@@ -49,8 +55,8 @@ void main() {
         // 最近 7 天都 21 点准时
         for (int d = 0; d < 7; d++) ci(DateTime(2026, 7, 7 + d, 21, 0)),
       ];
-      final t = CareEngine.evaluate(checkIns: checks, now: now);
-      expect(t.type, CareTriggerType.weekPerfect);
+      final t = eval(checks, now);
+      expect(t.strategy, CareTriggerType.weekPerfect);
     });
 
     test('P3 fix: 最近 7 天内 1 次晚打卡 → 不触发 weekPerfect', () {
@@ -59,8 +65,8 @@ void main() {
         for (int d = 0; d < 6; d++) ci(DateTime(2026, 7, 7 + d, 21, 0)),
         ci(DateTime(2026, 7, 13, 23, 0)), // 今天 23 点晚打卡
       ];
-      final t = CareEngine.evaluate(checkIns: checks, now: now);
-      expect(t.type, CareTriggerType.none);
+      final t = eval(checks, now);
+      expect(t.strategy, CareTriggerType.none);
     });
 
     test('P7 fix: 周六 20 点还没打卡 → 触发 weekendMissed', () {
@@ -68,8 +74,8 @@ void main() {
       // i=0 周六 7-11 没打卡,hour=20>=18 → return true
       final now = DateTime(2026, 7, 11, 20, 0);
       final checks = [ci(DateTime(2026, 7, 10, 12, 0))];
-      final t = CareEngine.evaluate(checkIns: checks, now: now);
-      expect(t.type, CareTriggerType.weekendMissed);
+      final t = eval(checks, now);
+      expect(t.strategy, CareTriggerType.weekendMissed);
     });
 
     test('P7 fix: 周六 10 点,前一个周日打了卡 → 不触发 (今天没过 18 点)', () {
@@ -81,16 +87,17 @@ void main() {
         ci(DateTime(2026, 7, 10, 22, 0)), // 周五 22:00(在 36h 内)
         ci(DateTime(2026, 7, 5, 12, 0)), // 上周日
       ];
-      final t = CareEngine.evaluate(checkIns: checks, now: now);
-      expect(t.type, CareTriggerType.none);
+      final t = eval(checks, now);
+      expect(t.strategy, CareTriggerType.none);
     });
 
-    test('P7 fix: 周六 20 点,前一个周日打了卡 → 优先 secondDayMissed (36h+ 远间隔)', () {
+    test('P7 fix: 周六 20 点,前一个周日打了卡 → 优先 secondDayMissed (36h+ 远间隔)',
+        () {
       // 验证:secondDayMissed 比 weekendMissed 优先
       final now = DateTime(2026, 7, 11, 20, 0);
       final checks = [ci(DateTime(2026, 7, 5, 12, 0))];
-      final t = CareEngine.evaluate(checkIns: checks, now: now);
-      expect(t.type, CareTriggerType.secondDayMissed);
+      final t = eval(checks, now);
+      expect(t.strategy, CareTriggerType.secondDayMissed);
     });
 
     test('P7 fix: 周六 20 点,周日 7-5 没打卡(只周五 7-10) → weekendMissed', () {
@@ -98,8 +105,8 @@ void main() {
       // 周六 7-11 hour=20>=18,no check → return true
       final now = DateTime(2026, 7, 11, 20, 0);
       final checks = [ci(DateTime(2026, 7, 10, 12, 0))];
-      final t = CareEngine.evaluate(checkIns: checks, now: now);
-      expect(t.type, CareTriggerType.weekendMissed);
+      final t = eval(checks, now);
+      expect(t.strategy, CareTriggerType.weekendMissed);
     });
   });
 }

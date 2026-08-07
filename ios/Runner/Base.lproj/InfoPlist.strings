@@ -8,3 +8,11 @@
  * iOS 8+ 强制要求 InfoPlist.strings 有 Base 引用。
  */
 "CFBundleDisplayName" = "ChronicCare";
+
+/* R100 (A-4): 5 项 usage description 英文基线 (跟 Info.plist 同步)
+ * 中文 locale 走 zh-Hans / zh-Hant 覆盖。 */
+"NSMicrophoneUsageDescription" = "Used for voice input in the mood diary. Processed locally, files stored encrypted.";
+"NSSpeechRecognitionUsageDescription" = "Used for speech-to-text in the mood diary. Processed locally, never uploaded.";
+"NSPhotoLibraryAddUsageDescription" = "Used to save medication report PDFs to your photo library.";
+"NSPhotoLibraryUsageDescription" = "Used to choose where to save when sharing medication report PDFs.";
+"NSUserTrackingUsageDescription" = "This app does not collect any tracking data. This declaration is for App Store transparency only.";

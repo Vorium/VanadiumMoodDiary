@@ -96,7 +96,7 @@ class _SocialRhythmEntryTile extends StatelessWidget {
         ),
         subtitle: Text(
           '${l10n.socialRhythmFirstMeal(_fmt(entry.firstMealTime))} · ${l10n.socialRhythmLastMeal(_fmt(entry.lastMealTime))} · '
-          '社交 ${entry.socialMin}min · 工作 ${entry.workMin}min · 运动 ${entry.exerciseMin}min',
+          '${l10n.socialRhythmMinutesSummary(entry.socialMin, entry.workMin, entry.exerciseMin)}',
         ),
       ),
     );
@@ -237,27 +237,27 @@ class _SocialRhythmEntryDialogState
             // 社交/工作/运动 分钟数
             TextField(
               controller: _socialController,
-              decoration: const InputDecoration(
-                labelText: '社交时长 (分钟)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.socialRhythmSocialMinLabel,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: AppTokens.spacingSm),
             TextField(
               controller: _workController,
-              decoration: const InputDecoration(
-                labelText: '工作时长 (分钟)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.socialRhythmWorkMinLabel,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: AppTokens.spacingSm),
             TextField(
               controller: _exerciseController,
-              decoration: const InputDecoration(
-                labelText: '运动时长 (分钟)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.socialRhythmExerciseMinLabel,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),

@@ -214,11 +214,16 @@ void main() {
     });
   });
 
-  group('displayMessage', () {
+  group('displayMessageL10n', () {
     test('各 kind 都有非空文案', () {
+      // R100: 旧 displayMessage getter 已删, 改测 l10n 版 (编译期强制走翻译)
       for (final kind in SafetyCheckKind.values) {
         final r = SafetyCheckResult(kind: kind);
-        expect(r.displayMessage, isNotEmpty, reason: '$kind 没有 displayMessage');
+        expect(
+          r.displayMessageL10n(_testL10n()),
+          isNotEmpty,
+          reason: '$kind 没有 displayMessageL10n 文案',
+        );
       }
     });
   });

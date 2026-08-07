@@ -2,6 +2,32 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-07 (R100 6 视角审计修复: P0 5 项 + P1 7 项全部闭环, 0 analyzer error, 17 守门员全绿, 1997 tests pass)
+
+R100 6 视角审计 (emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification) 产出 27 项待办, 本轮收完 P0 (上架阻塞) + P1 (高概率打回 / 用户可见) 共 12 项可代码化修复; P2 12 项 (架构重构 / a11y / golden test 等) 留上架后。报告: `docs/audit/2026-08-07/R100-6perspective-audit/`。
+
+**P0 (上架阻塞, 5 项)**:
+
+- **基线 commit**: R92-R99 堆积 ~280 文件分批入库 (baseline 8ce68fa)
+- **fastlane video PLACEHOLDER**: 删 Android en-US/zh-CN video.txt 占位文件 (Google Play 审核风险)
+- **iOS 后台声明**: 删 UIBackgroundModes audio+processing + BGTaskScheduler 声明 (Apple 2.5.4 拒因; AppDelegate 同步清理)
+- **user_agreement**: "8 元买断" 表述对齐实际 IAP 配置
+- **metadata**: Android title + iOS zh-Hans/Hant subtitle 删 "(失联通知规划中)" 误导表述
+
+**P1 (高概率打回 / 用户可见, 7 项)**:
+
+- **#9 UI 硬编码中文走 ARB**: 13 文件 34 处硬编码 → +23 new ARB key × 3 语 (1068 → 1091) + 复用 dailyTrackingNote*/moodCbtChipBadge*/moodListPeriodAll; 覆盖 weight/socialRhythm/anxiety/sleep/stress 摘要行 + dialog label, CBT 栏数参数化 moodCbtColumns, 用药报告窗口标题, 补打卡 stub, 危机热线标题, §14 撤回 3 段法律文案 (consentWithdraw*Body), 导出 consent 3 placeholder; lock-in test baseline 同步 1091
+- **#10 iOS usage description**: Info.plist 5 项中文 → 英文基线 + Base/zh-Hans/zh-Hant InfoPlist.strings 三语覆盖 (App Store 审核要求权限文案本地化)
+- **#11 SafetyCheckResult.displayMessage 旧 getter 删除**: 编译期强制走 displayMessageL10n(l10n), 防 UI 绕过翻译
+- **#12 3 StreamProvider 加 autoDispose**: ventSealed/ventSealedAt/allAssessmentEntries 离开页面后释放 subscription
+- **#13 CareEngine.evaluate/fire legacy 死代码删除**: care_engine.dart 164 → 34 行 (只剩 CareTriggerType 枚举); 生产 0 调用 (R67 已切 FireCareStrategyUseCase), 2 纯 legacy test 删除 + 3 test 迁 use case (含 PIPL 撤回 → isSafetyConsentWithdrawn=true → disabled)
+- **#14 法务文档占位域名**: privacy_policy/user_agreement 9 处未注册域名占位 (privacy@chroniccare.app 等) 改描述性措辞, 0 残留
+- **#15 工程卫生**: repo 根 89 个临时垃圾文件 (_*.py / test_*.txt / _trash_* / CRLF''') 移入 .mavis-trash/r100-root-junk/
+
+**验证**: 0 analyzer error + 17 守门员全绿 (fullwidth warn-only 历史遗留) + 1997 tests pass (基线 2019 - 删除 2 个 legacy CareEngine test 文件, 等效覆盖已由 care_strategies_round43 / fire_care_strategy_round65 承接)。
+
+**跳过项 (外部依赖)**: 域名注册 / 商店真机截图 / keystore / IAP 产品决策, 非代码可修。
+
 ## [0.30.0] - 2026-08-07 (R95 sub-spec 8: P3 阶段不需外部资源任务, 10 commit, baseline 2008 → 2019 pass, +11 R95 sub-spec 8 tests, 0 pre-existing fail, 0 analyzer error, 18 守门员全绿)
 
 R95 sub-spec 8 目标: 按 R95 报告 §7.4 阶段 4 P3, 收尾 7 类不需外部资源的 P3 任务 (settings 4 group 重构 / 紧急联系人 5→3 步 / 数据导出 5→3 步 / 主页 header tooltip / legal chip / vent visual hint / main.dart 顶层 mutable static)。

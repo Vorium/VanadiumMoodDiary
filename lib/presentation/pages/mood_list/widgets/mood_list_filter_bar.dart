@@ -166,6 +166,7 @@ class MoodListFilterBar extends ConsumerWidget {
     final picked = await showModalBottomSheet<_MaybePicked<int?>>(
       context: context,
       builder: (ctx) {
+        final l10n = AppLocalizations.of(ctx);
         // 5 档分数: null = 全部, 1..5 = 固定值
         return SafeArea(
           child: RadioGroup<int?>(
@@ -177,7 +178,7 @@ class MoodListFilterBar extends ConsumerWidget {
                 for (final v in const <int?>[null, 1, 2, 3, 4, 5])
                   RadioListTile<int?>(
                     value: v,
-                    title: Text(v == null ? '全部' : '$v'),
+                    title: Text(v == null ? l10n.moodListPeriodAll : '$v'),
                   ),
               ],
             ),
@@ -203,6 +204,7 @@ class MoodListFilterBar extends ConsumerWidget {
     final picked = await showModalBottomSheet<_MaybePicked<int?>>(
       context: context,
       builder: (ctx) {
+        final l10n = AppLocalizations.of(ctx);
         return SafeArea(
           child: RadioGroup<int?>(
             groupValue: current,
@@ -213,7 +215,9 @@ class MoodListFilterBar extends ConsumerWidget {
                 for (final v in const <int?>[null, 3, 5, 7])
                   RadioListTile<int?>(
                     value: v,
-                    title: Text(v == null ? '全部' : '$v 栏'),
+                    title: Text(
+                      v == null ? l10n.moodListPeriodAll : l10n.moodCbtColumns(v),
+                    ),
                   ),
               ],
             ),

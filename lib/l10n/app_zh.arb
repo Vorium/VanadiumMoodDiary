@@ -2812,5 +2812,120 @@
     "placeholders": {
       "hours": { "type": "int" }
     }
+  },
+  "weightNoBmi": "暂无 BMI",
+  "@weightNoBmi": {
+    "description": "v0.30 R100 (P1#9): 体重 tile BMI 缺失后缀 (暂无身高档案)"
+  },
+  "weightKgLabel": "体重 (kg)",
+  "@weightKgLabel": {
+    "description": "v0.30 R100 (P1#9): 体重 dialog 体重输入框 label"
+  },
+  "weightKgHint": "如 60.5",
+  "@weightKgHint": {
+    "description": "v0.30 R100 (P1#9): 体重 dialog 体重输入框 hint"
+  },
+  "weightBmiNeedHeight": "暂无 (需填写身高)",
+  "@weightBmiNeedHeight": {
+    "description": "v0.30 R100 (P1#9): 体重 dialog BMI 实时行 缺身高档案时兜底文案"
+  },
+  "socialRhythmMinutesSummary": "社交 {social}min · 工作 {work}min · 运动 {exercise}min",
+  "@socialRhythmMinutesSummary": {
+    "description": "v0.30 R100 (P1#9): 社会节律 tile 摘要行 3 分钟数段",
+    "placeholders": {
+      "social": { "type": "Object" },
+      "work": { "type": "Object" },
+      "exercise": { "type": "Object" }
+    }
+  },
+  "socialRhythmSocialMinLabel": "社交时长 (分钟)",
+  "@socialRhythmSocialMinLabel": {
+    "description": "v0.30 R100 (P1#9): 社会节律 dialog 社交分钟输入框 label"
+  },
+  "socialRhythmWorkMinLabel": "工作时长 (分钟)",
+  "@socialRhythmWorkMinLabel": {
+    "description": "v0.30 R100 (P1#9): 社会节律 dialog 工作分钟输入框 label"
+  },
+  "socialRhythmExerciseMinLabel": "运动时长 (分钟)",
+  "@socialRhythmExerciseMinLabel": {
+    "description": "v0.30 R100 (P1#9): 社会节律 dialog 运动分钟输入框 label"
+  },
+  "anxietyAgitationAnxietyScaleHint": "1=严重 5=平静",
+  "@anxietyAgitationAnxietyScaleHint": {
+    "description": "v0.30 R100 (P1#9): 焦虑急躁 dialog 焦虑分数刻度提示 (反向)"
+  },
+  "anxietyAgitationAgitationScaleHint": "1=平静 5=极急",
+  "@anxietyAgitationAgitationScaleHint": {
+    "description": "v0.30 R100 (P1#9): 焦虑急躁 dialog 急躁分数刻度提示 (正向)"
+  },
+  "sleepRegularityScore": "规律 {score}/5",
+  "@sleepRegularityScore": {
+    "description": "v0.30 R100 (P1#9): 睡眠 tile 摘要行 规律性分数段",
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  },
+  "sleepDurationLabel": "时长: {duration}",
+  "@sleepDurationLabel": {
+    "description": "v0.30 R100 (P1#9): 睡眠 dialog 时长只读行 (duration 是 HH h MM m 格式)",
+    "placeholders": {
+      "duration": { "type": "Object" }
+    }
+  },
+  "stressIntensityScore": "强度 {intensity}/5",
+  "@stressIntensityScore": {
+    "description": "v0.30 R100 (P1#9): 压力事件 tile 标题 强度分数段",
+    "placeholders": {
+      "intensity": { "type": "int" }
+    }
+  },
+  "moodCbtColumns": "{count} 栏",
+  "@moodCbtColumns": {
+    "description": "v0.30 R100 (P1#9): CBT 栏数参数化 (settings cbt_section + mood_list filter sheet 共用)",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "medReportTitleWindow": "用药报告（近 {days} 天）",
+  "@medReportTitleWindow": {
+    "description": "v0.30 R100 (P1#9): 用药报告 dialog 标题 (含时间窗口)",
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "medCalendarBackfillStub": "补打卡功能接入中 ({date})",
+  "@medCalendarBackfillStub": {
+    "description": "v0.30 R100 (P1#9): 用药日历 补打卡 stub SnackBar (date 是 YYYY-MM-DD)",
+    "placeholders": {
+      "date": { "type": "Object" }
+    }
+  },
+  "setupCrisisHotlineTitle": "🆘 心理危机干预热线 (24h)",
+  "@setupCrisisHotlineTitle": {
+    "description": "v0.30 R100 (P1#9): setup 法务 dialog 危机热线区块标题"
+  },
+  "consentWithdrawSafetyBody": "失联通知功能将停用。系统不再通过 SMS / 邮件自动通知紧急联系人。",
+  "@consentWithdrawSafetyBody": {
+    "description": "v0.30 R100 (P1#9): §14 撤回 safety 同意 fallback body (法律文案)"
+  },
+  "consentWithdrawVentBody": "树洞 (私密倾诉) 功能将停用。新增树洞记录会被拒绝, 已有记录保留。",
+  "@consentWithdrawVentBody": {
+    "description": "v0.30 R100 (P1#9): §14 撤回 vent 同意 fallback body (法律文案)"
+  },
+  "consentWithdrawAnalyticsBody": "评估 / 情绪相关分析图表将不再展示。已有数据保留, 重新开启后恢复。",
+  "@consentWithdrawAnalyticsBody": {
+    "description": "v0.30 R100 (P1#9): §14 撤回 analytics 同意 fallback body (法律文案)"
+  },
+  "dataExportPurposeBackup": "本地备份 / 跨设备迁移",
+  "@dataExportPurposeBackup": {
+    "description": "v0.30 R100 (P1#9): 导出 consent dialog purpose placeholder"
+  },
+  "dataExportDataCategories": "用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)",
+  "@dataExportDataCategories": {
+    "description": "v0.30 R100 (P1#9): 导出 consent dialog dataCategories placeholder"
+  },
+  "dataExportRetentionClipboard": "剪贴板 + 用户自行保存到加密存储",
+  "@dataExportRetentionClipboard": {
+    "description": "v0.30 R100 (P1#9): 导出 consent dialog retention placeholder"
   }
 }
