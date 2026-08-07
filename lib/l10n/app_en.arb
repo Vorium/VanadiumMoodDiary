@@ -617,6 +617,7 @@
   },
   "homeTooltipTrend": "View trend",
   "homeTooltipAssessmentHistory": "Assessment history",
+  "homeTooltipSettings": "Settings",
   "homeStreakRestart": "Start fresh today 🌱",
   "homeStreakDay1": "Day 1, taking the first step 🌱",
   "homeStreakDays": "{days}-day streak, keep going 🌿",

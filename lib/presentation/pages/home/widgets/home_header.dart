@@ -48,7 +48,12 @@ class HomeHeader extends StatelessWidget {
         ),
         PressFeedbackIconButton(
           icon: Icons.settings_outlined,
-          tooltip: AppLocalizations.of(context).settingsAbout,
+          // v0.30 R95 sub-spec 8 task 45: 主页 header 3 icon button 加 Tooltip
+          // 修前: 3rd button tooltip 误用 `settingsAbout` = "关于" (跟按钮跳
+          // /settings 设置页不符, tooltip 跟实际功能不一致)
+          // 修后: 加新 ARB key `homeTooltipSettings` = "设置", 跟按钮功能
+          // 对齐 (emil design 反复提 — tooltip 跟功能必须一致)
+          tooltip: AppLocalizations.of(context).homeTooltipSettings,
           onTap: () => context.push('/settings'),
         ),
       ],

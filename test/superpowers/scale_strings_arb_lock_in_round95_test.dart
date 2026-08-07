@@ -361,17 +361,18 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1058 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)', () {
+    test('3 语 total = 1059 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)', () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
+      // v0.30 R95 sub-spec 8 task 45 加 1 new (homeTooltipSettings) → 1058 → 1059
       final pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1058, reason: 'zh.arb 应有 1058 key (R95 sub-spec 7 +13 from 1045)');
-      expect(en, 1058, reason: 'en.arb 应有 1058 key');
-      expect(hant, 1058, reason: 'zh_Hant.arb 应有 1058 key');
+      expect(zh, 1059, reason: 'zh.arb 应有 1059 key (R95 sub-spec 8 task 45 +1 from 1058)');
+      expect(en, 1059, reason: 'en.arb 应有 1059 key');
+      expect(hant, 1059, reason: 'zh_Hant.arb 应有 1059 key');
     });
   });
 

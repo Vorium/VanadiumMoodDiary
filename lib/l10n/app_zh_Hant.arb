@@ -659,6 +659,7 @@
   },
   "homeTooltipTrend": "查看趨勢",
   "homeTooltipAssessmentHistory": "評估歷史",
+  "homeTooltipSettings": "設定",
   "homeStreakRestart": "今天重新開始 🌱",
   "homeStreakDay1": "第 1 天，邁出第一步 🌱",
   "homeStreakDays": "堅持 {days} 天，繼續 🌿",

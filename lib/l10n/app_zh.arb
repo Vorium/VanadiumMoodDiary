@@ -663,6 +663,7 @@
   },
   "homeTooltipTrend": "查看趋势",
   "homeTooltipAssessmentHistory": "评估历史",
+  "homeTooltipSettings": "设置",
   "homeStreakRestart": "今天重新开始 🌱",
   "homeStreakDay1": "第 1 天，迈出第一步 🌱",
   "homeStreakDays": "坚持 {days} 天，继续 🌿",
