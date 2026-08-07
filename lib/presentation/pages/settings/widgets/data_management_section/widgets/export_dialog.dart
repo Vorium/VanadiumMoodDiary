@@ -67,7 +67,12 @@ class _ExportDialogContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAcknowledged = false;
+    // v0.30 R95 sub-spec 8 task 19: 5→3 步 (emil "3 tap 抵达")
+    // 修前: 输风险 + check ack + copy = 3 步 (在 export dialog 内)
+    // 修后: 默认 ack 勾选, copy 按钮始终 enable, 用户点 copy 即明确 ack
+    // (Q4b 律师反馈"我已了解"勾选框改成 read-only 默认勾选, 责任划界
+    //  走风险告知文字 + 点 copy 的主动行为)
+    bool isAcknowledged = true;
     return StatefulBuilder(
       builder: (ctx, setLocal) => AlertDialog(
         title: Text(
@@ -151,11 +156,13 @@ class _ExportDialogContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              // 强制勾选 checkbox 才允许复制
+              // v0.30 R95 sub-spec 8 task 19: 5→3 步 — 强制勾选 checkbox 改
+              // 默认勾选 + 不允许取消 (用户点 copy = 主动 ack 行为)
               CheckboxListTile(
                 value: isAcknowledged,
-                onChanged: (v) =>
-                    setLocal(() => isAcknowledged = v ?? false),
+                // onChanged 置 null → 用户无法取消 (强制 ack, Q4b 律师
+                // 反馈的责任划界走风险告知 + 点 copy 的主动行为)
+                onChanged: null,
                 title: Text(
                   AppLocalizations.of(context)
                       .settingsExportRiskAcknowledge,

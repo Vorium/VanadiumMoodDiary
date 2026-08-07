@@ -1,9 +1,11 @@
 // v0.30 round 95 (sub-spec 1 task 6.5): export_dialog widget 测试
+// v0.30 R95 sub-spec 8 task 19: 5→3 步 — checkbox 默认勾选 + 不可取消,
+// 复制按钮始终 enable (点 copy = 主动 ack 行为)
 //
 // 覆盖 (跟 brief §1.6.5 步骤 6.5 测试 3 case 一致):
-// 1. 渲染 JSON (mock json string)
-// 2. 勾选 checkbox → 复制按钮 enable
-// 3. onCopy 回调 (替代真实 Clipboard.setData, 验证注入点)
+// 1. 渲染 JSON (mock json string) — checkbox 默认勾选, 复制按钮 enable
+// 2. 点复制按钮 → onCopy 回调 (无需手动勾选)
+// 3. 关闭按钮 → 静默退出
 //
 // 模式 (跟项目其它 settings widget test 一致):
 // - MaterialApp + AppLocalizations.localizationsDelegates + locale: Locale('zh')
@@ -49,10 +51,10 @@ Widget _wrap({Future<void> Function(String json)? onCopy}) {
 
 void main() {
   // ============================================================
-  // 1. 渲染 JSON (mock json string)
+  // 1. 渲染 JSON (mock json string) — task 19: checkbox 默认勾选, 复制 enable
   // ============================================================
   testWidgets(
-    '1) 渲染: Q4b 风险卡 + 强制勾选 checkbox + JSON 容器 (mock json)',
+    '1) 渲染: Q4b 风险卡 + 强制勾选 checkbox (默认勾选) + JSON 容器 (mock json)',
     (tester) async {
       _setBigView(tester);
       await tester.pumpWidget(_wrap());
@@ -75,20 +77,21 @@ void main() {
       expect(find.textContaining('R95 export_dialog test'), findsOneWidget,
           reason: 'SelectableText 应渲染 mock json 字符串');
 
-      // 复制按钮 (settingsCopy = "复制") — 应存在但未勾选前 disabled
+      // v0.30 R95 sub-spec 8 task 19: 5→3 步 — checkbox 默认勾选, 复制按钮
+      // 始终 enable (用户点 copy = 主动 ack 行为, Q4b 责任划界走风险告知文字)
       final copyBtnFinder = find.widgetWithText(ElevatedButton, '复制');
       expect(copyBtnFinder, findsOneWidget);
       final copyBtn = tester.widget<ElevatedButton>(copyBtnFinder);
-      expect(copyBtn.onPressed, isNull,
-          reason: 'Q4b: 未勾选时复制按钮应 disabled');
+      expect(copyBtn.onPressed, isNotNull,
+          reason: 'task 19: 默认勾选后复制按钮应 enable (点 copy = 主动 ack)');
     },
   );
 
   // ============================================================
-  // 2. 勾选 checkbox → 复制按钮 enable
+  // 2. 点复制按钮 → onCopy 回调 (无需手动勾选, task 19 简化流程)
   // ============================================================
   testWidgets(
-    '2) 勾选 checkbox → 复制按钮 enable (Q4b 防无意识复制)',
+    '2) 点复制按钮 → onCopy 回调 (task 19: 5→3 步, 无需手动勾选)',
     (tester) async {
       _setBigView(tester);
       int copyCallCount = 0;
@@ -104,22 +107,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsOneWidget);
 
-      // 勾选前: 复制按钮 disabled
-      var copyBtn = tester.widget<ElevatedButton>(
-        find.widgetWithText(ElevatedButton, '复制'),
-      );
-      expect(copyBtn.onPressed, isNull);
-
-      // 勾选 checkbox (CheckboxListTile 整体 tap)
-      await tester.tap(find.byType(CheckboxListTile));
-      await tester.pumpAndSettle();
-
-      // 勾选后: 复制按钮 enable
-      copyBtn = tester.widget<ElevatedButton>(
+      // v0.30 R95 sub-spec 8 task 19: checkbox 默认勾选, 复制按钮 enable
+      final copyBtn = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, '复制'),
       );
       expect(copyBtn.onPressed, isNotNull,
-          reason: 'Q4b: 勾选后复制按钮应 enabled');
+          reason: 'task 19: 默认勾选, 复制按钮 enable');
 
       // 点复制 → 触发 onCopy 回调
       await tester.tap(find.widgetWithText(ElevatedButton, '复制'));
