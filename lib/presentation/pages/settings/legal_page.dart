@@ -393,13 +393,35 @@ class _ConsentTile extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
-            child: Text(
-              timeText,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeLabelSm,
+            // v0.30 R95 sub-spec 8 task 46: legal_page toggle 撤回时间 chip 标识
+            // 修前: Text 渲染时间 (无视觉标识, 用户难一眼看出"已撤回"状态)
+            // 修后: Chip widget 包时间 (B 站风格 chip 标签, emil design
+            // 反复提 — 状态时间需有视觉标识, withdrawn 状态用 error 色 chip
+            // 强调, 正常状态用 hint 色 chip 低调)
+            child: Chip(
+              label: Text(
+                timeText,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeLabelSm,
+                  color: withdrawn
+                      ? AppTokens.fgOnError(context)
+                      : AppTokens.textHintColor(context),
+                ),
+              ),
+              backgroundColor: withdrawn
+                  ? AppTokens.tintedErrorSoft(context)
+                  : AppTokens.dividerColor(context),
+              side: BorderSide(
                 color: withdrawn
                     ? AppTokens.errorColor(context)
                     : AppTokens.textHintColor(context),
+                width: 0.5,
+              ),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.spacingXs,
+                vertical: 0,
               ),
             ),
           ),
