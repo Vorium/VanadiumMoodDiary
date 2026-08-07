@@ -38,7 +38,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// 注: SmsService 本身是无状态 facade (state 全在 SmsProvider 注入对象里),
 /// 所以即使 2 个实例也不会立即崩, 但 P0 安全场景下必须 1 个实例保证
 /// `isProductionReady` 检查结果一致。
-SmsService _smsService = SmsService();
+///
+/// v0.30 R95 sub-spec 8 task 56: 顶层 mutable static 改 `late final`
+/// (R92 spen P3 反复提 — 顶层 `var` 让 instance 可能在 bootstrap 中途被
+/// 改写, 难以追踪; `late final` 编译期保证只赋值 1 次, lint enforce 不可变)
+late final SmsService _smsService = SmsService();
 
 /// v0.27 round 67 (B-1 修复): 顶层静态 EmailService 入口
 ///
@@ -51,7 +55,10 @@ SmsService _smsService = SmsService();
 /// `emailServiceProvider.overrideWithValue(_emailService)` 这一步。
 /// 未来 v1.0+ 真接 SendGrid 引入 EmailService 到 SafetyWatchService
 /// 时再加 provider override 即可。
-EmailService _emailService = EmailService();
+///
+/// v0.30 R95 sub-spec 8 task 56: 顶层 mutable static 改 `late final`
+/// (跟 _smsService 配对, 一起改 immutable)
+late final EmailService _emailService = EmailService();
 
 /// 慢病管家 · App 入口
 ///
