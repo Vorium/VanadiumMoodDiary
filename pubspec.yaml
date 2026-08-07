@@ -53,6 +53,12 @@ dependencies:
   flutter_dotenv: ^6.0.1
   share_plus: ^10.1.4
   shared_preferences: ^2.3.3
+  # R97-P1-11 (2026-08-07): 危机热线一键拨打 tel: intent。
+  # 之前 crisis_hotline_page 只能复制号码, 危机时刻用户要多步操作 (打开拨号
+  # App + 粘贴 + 拨打), 违反 Google Play Health/Sensitive Apps policy 推荐
+  # "一键拨打危机热线"。加 url_launcher 后, tel: scheme 走系统拨号 App
+  # (Android Intent.ACTION_DIAL + iOS openURL:), 不需要 CALL_PHONE 权限。
+  url_launcher: ^6.3.1
 
   # 录音（树洞 audio）
   record: ^5.2.0

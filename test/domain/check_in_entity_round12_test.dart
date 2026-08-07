@@ -257,7 +257,7 @@ void main() {
   group('集成：从 DB 读 CheckIn → toEntity → UI 流程', () {
     test('内存 DB 写一条 → 读 → 转 entity → 字段一致', () async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(() async => await db.close());
+      addTearDown(() async => db.close());
 
       final ts = DateTime(2026, 7, 15, 8, 0);
       await db.checkInDao.insert(

@@ -71,7 +71,7 @@ void main() {
       onAddMed: () {},
       onShowPresets: () {},
       onRemoveMed: (_) {},
-    ));
+    ),);
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
     // 验证 PressFeedback 包 PrimaryButton (接管 onTap)
@@ -96,7 +96,7 @@ void main() {
       onAddMed: () {},
       onShowPresets: () {},
       onRemoveMed: (_) {},
-    ));
+    ),);
     // 用 pump 而非 pumpAndSettle — LoadingSpinner 内部 Animation 持续运行
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
@@ -116,7 +116,7 @@ void main() {
       onAddMed: () {},
       onShowPresets: () {},
       onRemoveMed: (_) {},
-    ));
+    ),);
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
     // 找 PressFeedback 包裹 PrimaryButton 的 widget, 点它

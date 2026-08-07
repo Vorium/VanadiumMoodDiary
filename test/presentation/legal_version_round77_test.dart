@@ -14,24 +14,24 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('computeLegalVersionAt (v0.27 round 77)', () {
-    test('基本格式: 0.27.0+64+65 + 2026-08-01 → v0.27-2026-08-01', () {
+    test('基本格式: 0.30.0+85 + 2026-08-01 → v0.30-2026-08-01', () {
       final result = computeLegalVersionAt(DateTime(2026, 8, 1));
-      expect(result, 'v0.27-2026-08-01');
+      expect(result, 'v0.30-2026-08-01');
     });
 
     test('日期月份 padding (1 → 01, 9 → 09)', () {
       final result = computeLegalVersionAt(DateTime(2026, 1, 5));
-      expect(result, 'v0.27-2026-01-05');
+      expect(result, 'v0.30-2026-01-05');
     });
 
     test('日期日 padding (5 → 05)', () {
       final result = computeLegalVersionAt(DateTime(2027, 9, 9));
-      expect(result, 'v0.27-2027-09-09');
+      expect(result, 'v0.30-2027-09-09');
     });
 
     test('跨年 (2026-12-31 → 2027-01-01) padding 正确', () {
       final result = computeLegalVersionAt(DateTime(2027, 1, 1));
-      expect(result, 'v0.27-2027-01-01');
+      expect(result, 'v0.30-2027-01-01');
     });
 
     test('同日期多次调用返相同 string (caller 缓存无副作用)', () {
@@ -49,7 +49,7 @@ void main() {
     test('返回 string 包含 "-" 分隔 version + date', () {
       final result = computeLegalVersionAt(DateTime(2026, 8, 1));
       expect(result.contains('-'), isTrue);
-      // 3 个 "-" (v0.27-2026-08-01): v0.27 | 2026-08 | 08-01
+      // 3 个 "-" (v0.30-2026-08-01): v0.30 | 2026-08 | 08-01
       expect('.'.allMatches(result).length, 1);
       expect('-'.allMatches(result).length, 3);
     });

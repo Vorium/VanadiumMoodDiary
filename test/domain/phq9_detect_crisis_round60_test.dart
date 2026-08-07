@@ -34,14 +34,14 @@ void main() {
 
   group('Phq9Scale.detectCrisis — 第 9 题阈值', () {
     test('scores[8] = 0 (无自杀念头) → null', () {
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = baseScores(); // 全 0
       final signal = s.detectCrisis(scores, stubResult);
       expect(signal, isNull);
     });
 
     test('scores[8] = 1 (阈值边界, 阳性) → CrisisSignal', () {
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = baseScores();
       scores[8] = 1;
       final signal = s.detectCrisis(scores, stubResult);
@@ -52,7 +52,7 @@ void main() {
     });
 
     test('scores[8] = 3 (几乎每天) → CrisisSignal', () {
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = baseScores();
       scores[8] = 3;
       final signal = s.detectCrisis(scores, stubResult);
@@ -61,7 +61,7 @@ void main() {
 
     test('scores[8] = 1 + 其他题高分 → 仍 CrisisSignal (q9 是关键)', () {
       // 即便总分 < 10 (没建议就医), q9 阳性也必须触发
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = baseScores();
       scores[8] = 1;
       // 其他 8 题全 0 → total = 1 < 10 (无 doctor visit)
@@ -70,7 +70,7 @@ void main() {
     });
 
     test('scores.length = 8 (缺第 9 题) → null (no crash)', () {
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = List<int>.filled(8, 0); // 缺第 9 题
       expect(() => s.detectCrisis(scores, stubResult), returnsNormally);
       expect(
@@ -81,13 +81,13 @@ void main() {
     });
 
     test('scores.length = 0 (全空) → null (no crash)', () {
-      final s = phq9Scale;
+      const s = phq9Scale;
       expect(() => s.detectCrisis(const [], stubResult), returnsNormally);
       expect(s.detectCrisis(const [], stubResult), isNull);
     });
 
     test('scores.length = 100 (超长) → 不应 crash (out of bounds check)', () {
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = List<int>.filled(100, 0);
       scores[8] = 1;
       expect(() => s.detectCrisis(scores, stubResult), returnsNormally);
@@ -98,7 +98,7 @@ void main() {
 
   group('Phq9Scale.detectCrisis — region 路由 (R51 修正核心)', () {
     void expectHotlineFor(HotlineRegion region, String mustContain) {
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = baseScores();
       scores[8] = 1;
       final signal = s.detectCrisis(scores, stubResult, region: region);
@@ -142,7 +142,7 @@ void main() {
     });
 
     test('detectCrisis 不传 region → 默认 cn (旧行为兼容)', () {
-      final s = phq9Scale;
+      const s = phq9Scale;
       final scores = baseScores();
       scores[8] = 1;
       final signal = s.detectCrisis(scores, stubResult);

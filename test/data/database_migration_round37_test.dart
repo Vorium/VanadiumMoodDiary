@@ -125,10 +125,10 @@ void main() {
       final columns = result.map((r) => r.read<String>('name')).toSet();
       // R92 后: content_text_enc 保留
       expect(columns, contains('content_text_enc'),
-          reason: 'R92 schemaVersion 19 vent_entries 必须保留 content_text_enc');
+          reason: 'R92 schemaVersion 19 vent_entries 必须保留 content_text_enc',);
       // R92 后: content_text 已 DROP (PIPL §28 清理)
       expect(columns.contains('content_text'), isFalse,
-          reason: 'R92 schemaVersion 19 vent_entries 不应再有 content_text 明文列');
+          reason: 'R92 schemaVersion 19 vent_entries 不应再有 content_text 明文列',);
     });
 
     test('mood_entries 加 4 维度 3 字段 (v6 → v7)', () async {

@@ -1,4 +1,4 @@
-﻿// setup_legal_dialog.dart — 法律文档查看对话框
+// setup_legal_dialog.dart — 法律文档查看对话框
 //
 // 从 setup_page.dart 拆分，v0.19 (Q2)
 //
@@ -79,6 +79,15 @@ class LegalDocumentDialog extends StatelessWidget {
     final lines = <String>[
       l10n.crisisHotlineCnLabel,
       '${l10n.crisisHotlineCnNumber} (${l10n.crisisHotlineCnDesc})',
+      // R97-P1-7 (2026-08-07): 补北京心理危机研究与干预中心热线。
+      //
+      // 修前 bug (spzh 审计): 顶部注释写"5 条 (大陆 2 + 港澳台 3)", 实际
+      // 只渲染 4 条 (大陆 1 + 港澳台 3), 漏 crisisHotlineCnBeijing。
+      // 与 user_agreement.md §5 表格 (5 条) 不同步, 同时让
+      // crisisHotlineCnBeijing* 3 个 ARB key 成为 orphan (触发
+      // check_orphan_arb_keys.py 守门员告警)。
+      l10n.crisisHotlineCnBeijingLabel,
+      '${l10n.crisisHotlineCnBeijingNumber} (${l10n.crisisHotlineCnBeijingDesc})',
       l10n.crisisHotlineTwLabel,
       '${l10n.crisisHotlineTwNumber} (${l10n.crisisHotlineTwDesc})',
       l10n.crisisHotlineHkLabel,

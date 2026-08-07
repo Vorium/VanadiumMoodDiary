@@ -1,4 +1,4 @@
-﻿// v0.16 round 20 (OEM 后台引导)
+// v0.16 round 20 (OEM 后台引导)
 //
 // 设置页「通知与提醒」自检卡。
 //
@@ -79,6 +79,10 @@ class _NotificationStatusCardState
     try {
       final service = ref.read(notificationServiceProvider);
       final l10n = AppLocalizations.of(context);
+      // R97-P1-6 (2026-08-07): 测试前先请求权限 (用户点"测试通知"按钮
+      // 是明确的上下文, 此刻请求权限符合 App Store 5.1.1 指南)。
+      // 之前在 main.dart init() 启动时弹, 用户没看到 UI 不知为何授权。
+      await service.requestPermission();
       await service.showNow(
         id: 99001, // 测试用 id,不会跟任何业务通知冲突（_refillBaseId 6000+）
         title: l10n.notificationStatusCardTestTitle,

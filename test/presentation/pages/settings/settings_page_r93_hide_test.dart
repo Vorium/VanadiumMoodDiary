@@ -39,9 +39,7 @@ void main() {
     FeatureFlags.resetForTest();
   });
 
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  tearDown(FeatureFlags.resetForTest);
 
   // helper: 构造测试 widget
   Widget buildSettingsPage() {
@@ -61,6 +59,8 @@ void main() {
   }
 
   testWidgets('R93 case 1: 4 flag 默认 false → 4 section 全 hidden', (tester) async {
+    // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, NotificationStatusCard
+    // 挪到 RemindersGroup 末尾, 维持 lazy load 体验, pumpAndSettle 仍可用。
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
@@ -80,6 +80,7 @@ void main() {
   testWidgets('R93 case 2: iapEnabled=true → IAP 商业卡渲染',
       (tester) async {
     FeatureFlags.setIapEnabledForTest(true);
+    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
@@ -93,6 +94,7 @@ void main() {
     // 用 enableForTest 翻 8 个全 true (含 emergencyContactEnabled), 验证联系人 section
     // 渲染。tearDown resetForTest 恢复 prod 默认。
     FeatureFlags.enableForTest();
+    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
@@ -108,6 +110,7 @@ void main() {
     // (失联是 SMS 不是 email, R93 业务暂停后真无用), 不再走 FeatureFlag 守门
     // — featureFlag 翻 true 也不渲染, 业务上线时改 SMS 路径真接。
     FeatureFlags.setEmailServiceEnabledForTest(true);
+    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
@@ -118,6 +121,7 @@ void main() {
   testWidgets('R93 case 5: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',
       (tester) async {
     FeatureFlags.setFiveVendorPushEnabledForTest(true);
+    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 

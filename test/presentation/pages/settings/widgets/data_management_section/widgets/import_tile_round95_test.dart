@@ -131,7 +131,7 @@ void main() {
 
       // 风险告知: settingsImportWarning 含 ⚠️
       expect(find.textContaining('⚠️'), findsWidgets,
-          reason: '风险告知应出现 ⚠️ 警告');
+          reason: '风险告知应出现 ⚠️ 警告',);
 
       // settingsImportWarning = "⚠️ 会覆盖现有所有数据，确定后再继续"
       expect(
@@ -166,7 +166,7 @@ void main() {
         onImport: () async {
           callCount++;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -178,7 +178,7 @@ void main() {
 
       // 验证: 没有 AlertDialog (跳过完整链路)
       expect(find.byType(AlertDialog), findsNothing,
-          reason: 'onImport 模式下, 不应弹 import dialog');
+          reason: 'onImport 模式下, 不应弹 import dialog',);
     },
   );
 
@@ -213,12 +213,12 @@ void main() {
 
       // 验证: dialog 关闭 (AlertDialog 消失)
       expect(find.byType(AlertDialog), findsNothing,
-          reason: '成功导入后, dialog 应关闭');
+          reason: '成功导入后, dialog 应关闭',);
 
       // 验证: AppSnackBar 显示导入成功 (含 summary)
       // settingsImportSuccess = "导入完成：{summary}" → 含 "导入完成："
       expect(find.textContaining('导入完成：'), findsOneWidget,
-          reason: '成功导入后, AppSnackBar 应显示导入完成 summary');
+          reason: '成功导入后, AppSnackBar 应显示导入完成 summary',);
     },
   );
 }

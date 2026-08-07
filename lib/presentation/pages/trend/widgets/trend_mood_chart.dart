@@ -1,4 +1,4 @@
-﻿// v0.24 round 46 (emil B-12 god class 续拆): 情绪日记折线图
+// v0.24 round 46 (emil B-12 god class 续拆): 情绪日记折线图
 //
 // 从 trend_charts.dart 拆出
 //
@@ -188,7 +188,7 @@ class MoodHistoryChart extends StatelessWidget {
                         getTitlesWidget: (value, _) {
                           if (xMaxDisplay <= 1) {
                             final dt = DateTime.fromMillisecondsSinceEpoch(
-                              (firstMs + (value * 86400 * 1000).round()),
+                              firstMs + (value * 86400 * 1000).round(),
                             );
                             return Text(
                               '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}',
@@ -196,7 +196,7 @@ class MoodHistoryChart extends StatelessWidget {
                             );
                           }
                           final dt = DateTime.fromMillisecondsSinceEpoch(
-                            (firstMs + (value * 86400 * 1000).round()),
+                            firstMs + (value * 86400 * 1000).round(),
                           );
                           return Text(
                             '${dt.month}/${dt.day}',

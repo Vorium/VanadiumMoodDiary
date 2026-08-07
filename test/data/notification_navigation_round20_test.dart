@@ -6,9 +6,7 @@ import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 
 void main() {
-  setUp(() {
-    NotificationNavigation.reset();
-  });
+  setUp(NotificationNavigation.reset);
 
   group('pathFor (via handleTap + onLink)', () {
     test('todayCheckIn → /check-in/today', () {

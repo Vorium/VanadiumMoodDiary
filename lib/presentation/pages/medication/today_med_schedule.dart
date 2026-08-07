@@ -1,4 +1,4 @@
-﻿// v0.14 (Round 17) 今日服药计划
+// v0.14 (Round 17) 今日服药计划
 //
 // 主页小卡：列出今天每种在用药物的服用时间点，
 // 并标出已打卡 / 未打卡的进度。
@@ -38,10 +38,12 @@ class TodayMedSchedule extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final medsAsync = ref.watch(medicationsProvider);
     final checkInsAsync = ref.watch(allCheckInsProvider);
+    // R97-P1-2: watch todayProvider 让 widget 跨 midnight 自动 rebuild,
+    // 不再在 build 内直接调 DateTime.now() (避免 stale + 方便测试 override)。
+    final today = ref.watch(todayProvider);
     return medsAsync.when(
       data: (meds) {
-        final entries =
-            _buildEntries(meds, checkInsAsync.value, DateTime.now());
+        final entries = _buildEntries(meds, checkInsAsync.value, today);
         if (entries.isEmpty) return const SizedBox.shrink();
         final done = entries.where((e) => e.done).length;
         return Card(

@@ -76,7 +76,7 @@ void main() {
 
     // 3. 删 DB (模拟 "卸载重装")
     await db.delete(db.moodEntries).go();
-    expect((await db.moodDao.getAll()), isEmpty);
+    expect(await db.moodDao.getAll(), isEmpty);
 
     // 4. 重新导入
     final result = await svc.importFromJson(exportJson);

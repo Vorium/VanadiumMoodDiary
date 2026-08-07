@@ -215,9 +215,10 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 | v0.27 R68 | 2026-08-01 | 草稿 (CC-6 修复) | CareEngine safety consent 撤回业务层真接 (`FireCareStrategyInput.isSafetyConsentWithdrawn` 字段 + use case 早返), §3 共享段 / §11 跨境 / §12 单独同意实现进度 5 处版本号 walkthrough (v0.25 → v0.27, R55 → 未真接) |
 | v0.27 R69 | 2026-08-01 | 草稿 (P0 集中修复) | (1) 删除顶部 "TODO 律师过审" banner, 转本段修订历史; (2) 失联通知 4 文档 wording 改"规划中,本版本未启用"; (3) §192 紧急联系人回复 Y 确认 ❌ TODO 改 ⏸ 暂停 |
 | v0.27 R83 | 2026-08-02 | 草稿 (律师审核 ⚠️ 集中修复) | (1) §0.5 紧急联系人告知改"未来规划,联系人配置仅为预存储"; (2) §3 信息的共享删除失联通知触发具体字段列表; (3) §7 第三方依赖改 22 行 SDK 表格 + IAP 真实披露(购买票据 + 应用 ID); (4) §10 未成年人保护 14-18 措辞改严正声明(本人郑重承诺...); (5) §11 跨境数据传输整段改"未来规划,本版本无跨境 PII 传输实际场景"; (6) §12 单独同意实现进度整段改"功能规划中,不在 v0.27 实现" |
-| v0.28+ | 待定 | **TODO (上 store 前必须由专业律师过审)** | 注册 `support@chroniccare.app` 邮箱 (1 处 TODO) 并替换 + 律师过审 + 同步到官网隐私 URL (https://chroniccare.app/privacy) + 重新走用户同意流程刷 `privacyPolicyVersion` 字段 |
+| v0.28+ | 待定 | **TODO (上 store 前必须由专业律师过审)** | 律师过审 + (可选) 域名/邮箱注册后取消软隐藏恢复联系方式 + 同步到官网隐私 URL (https://chroniccare.app/privacy) + 重新走用户同意流程刷 `privacyPolicyVersion` 字段 |
 | v0.30 R93 | 2026-08-06 | 草稿 (R93 阶段 2 集中隐藏) | 加 §0.6 "v0.30 业务暂停" section: 7 项未真接业务 (IAP 商业卡 / 失联通知 / 5 厂商 push / EmailService / vent + mood 录音 / PHQ-9 / GAD-7 / BootReceiver) 已用 FeatureFlag 隐藏, 业务暂停期间完全 hidden (Apple 2.1 + PIPL §17 + 法律责任) |
+| v0.30 R96 | 2026-08-07 | 草稿 (P0-2 软隐藏) | 联系方式 `support@chroniccare.app` 邮箱 TODO 占位改软隐藏 (跟 `privacy@chroniccare.app` 同一策略), 用户通过 App 内 设置 → 法律与隐私 页面反馈; 域名 + 邮箱注册后启用 (详见 user_agreement.md §8) |
 
 **集中器**: `docs/SPRINT1_LEGAL_TODO.md` / `docs/LEGACY_API_NOTES.md` (软隐藏决策)
 
-**最后更新**: 2026-08-06 (v0.30 round 93 — §0.6 业务暂停 7 项 FeatureFlag 隐藏策略)
+**最后更新**: 2026-08-07 (v0.30 round 96 — P0-2 联系方式邮箱软隐藏)

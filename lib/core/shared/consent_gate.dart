@@ -53,9 +53,10 @@ abstract class ConsentGate {
 
 /// SharedPreferences 实现的 ConsentGate (默认实现)
 ///
-/// 跟 [LegalConsentStore] (presentation 层) 共享同一份 SharedPreferences
-/// key 命名规则 (`legal_consent_withdrawn_<kind>`), 跟 presentation 层
-/// [legalConsentWithdrawnProvider] 双向同步。
+/// R97-P1-12 (2026-08-07): 移除 presentation 层 import (架构违规)。
+/// 跟 presentation 层 LegalConsentStore 共享同一份 SharedPreferences key
+/// 命名规则 (`legal_consent_withdrawn_<kind>`), 跟 presentation 层
+/// legalConsentWithdrawnProvider 双向同步 (通过 key 约定, 非 import)。
 class SharedPrefsConsentGate implements ConsentGate {
   static const _kPrefix = 'legal_consent_withdrawn_';
 

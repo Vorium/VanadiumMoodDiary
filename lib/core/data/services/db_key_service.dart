@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:chroniccare/core/data/services/database_migration.dart' show DatabaseMigration;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// 数据库加密密钥管理

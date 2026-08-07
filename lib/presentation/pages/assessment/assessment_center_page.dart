@@ -1,4 +1,4 @@
-﻿// v0.30 round 90 (sub-spec 6 量表中心): 中心化入口页
+// v0.30 round 90 (sub-spec 6 量表中心): 中心化入口页
 //
 // 路径: `/assessment-center`
 // 12 卡片 grid (10 开放 + 2 TODO 标 unavailable)
@@ -48,7 +48,7 @@ class AssessmentCenterPage extends ConsumerWidget {
             .where((s) => s.id != 'phq9' && s.id != 'gad7')
             .toList();
     final entriesAsync = ref.watch(allAssessmentEntriesProvider);
-    final unavailableIds = unavailableScaleIds;
+    const unavailableIds = unavailableScaleIds;
 
     return PageScaffold(
       title: l10n.assessmentCenterTitle,

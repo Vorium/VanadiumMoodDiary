@@ -24,6 +24,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/app_motion.dart';
@@ -174,10 +175,28 @@ class CrisisHotlinePage extends StatelessWidget {
                   '${entry.number}${entry.desc != null ? ' · ${entry.desc}' : ''}',
                   style: AppTokens.textStyleBody(context),
                 ),
-                trailing: Icon(
-                  Icons.copy_outlined,
-                  size: AppTokens.iconSizeSmall,
-                  color: AppTokens.textSecondaryColor(context),
+                // R97-P1-11 (2026-08-07): trailing 改 Row (拨打 + 复制 2 个
+                // IconButton), 危机时刻用户 1 tap 即可拨打, 不再需要"复制
+                // → 打开拨号 App → 粘贴 → 拨打"4 步。点 tile 主体仍走
+                // _copyNumber (保留快捷复制)。
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.phone_outlined),
+                      iconSize: AppTokens.iconSizeSmall,
+                      color: AppTokens.tintedPrimaryDeep(context),
+                      tooltip: l10n.crisisHotlineDialTooltip,
+                      onPressed: () => _dialNumber(context, l10n, entry.number),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.copy_outlined),
+                      iconSize: AppTokens.iconSizeSmall,
+                      color: AppTokens.textSecondaryColor(context),
+                      tooltip: l10n.crisisHotlineCopyTooltip,
+                      onPressed: () => _copyNumber(context, l10n, entry.number),
+                    ),
+                  ],
                 ),
                 onTap: () => _copyNumber(context, l10n, entry.number),
               ),
@@ -200,5 +219,35 @@ class CrisisHotlinePage extends StatelessWidget {
         duration: AppMotion.snackBarDurationShort,
       ),
     );
+  }
+
+  /// R97-P1-11 (2026-08-07): 一键拨打危机热线 (tel: intent)
+  ///
+  /// 走 [url_launcher] 的 [launchUrl] + `tel:` scheme, 系统拨号 App 接管
+  /// (Android Intent.ACTION_DIAL / iOS openURL:), 不需要 CALL_PHONE 权限。
+  /// 失败 (e.g. 平台无拨号 App / 沙箱环境) 走 snackbar 提示用户手动拨打。
+  ///
+  /// 安全: tel: scheme 不直接拨号 (不挂 CALL_PHONE), 只填充拨号界面,
+  /// 用户需再次按拨号键确认 — 防止误拨消耗话费 + 符合 Google Play
+  /// Health/Sensitive Apps 政策推荐流程。
+  Future<void> _dialNumber(
+    BuildContext context,
+    AppLocalizations l10n,
+    String number,
+  ) async {
+    final uri = Uri.parse('tel:$number');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      // ignore: use_build_context_synchronously — 同步紧跟 canLaunchUrl,
+      // widget 树稳定 (本页是无状态列表, 不会在 await 期间 dispose)。
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.crisisHotlineDialFailed(number)),
+          duration: AppMotion.snackBarDurationShort,
+        ),
+      );
+    }
   }
 }

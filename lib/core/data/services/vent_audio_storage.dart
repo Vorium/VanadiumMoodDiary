@@ -22,6 +22,7 @@
 
 import 'dart:io';
 
+import 'package:chroniccare/core/data/database/app_database.dart' show AppDatabase;
 import 'package:path/path.dart' as p;
 
 import 'package:chroniccare/core/data/privacy/encrypted_audio_storage.dart';

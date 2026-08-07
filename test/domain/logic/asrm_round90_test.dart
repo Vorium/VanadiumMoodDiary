@@ -8,7 +8,7 @@ import 'package:chroniccare/domain/logic/asrm.dart';
 void main() {
   group('AsrmScale.computeResult', () {
     test('全部 0 → 总分 0, 无躁狂 (rank 0)', () {
-      final scale = asrmScale;
+      const scale = asrmScale;
       final result = scale.computeResult(List.filled(5, 0));
       expect(result.total, 0);
       expect(result.recommendDoctorVisit, isFalse);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('全部 4 → 总分 20, 极重度躁狂 (rank 4)', () {
-      final scale = asrmScale;
+      const scale = asrmScale;
       final result = scale.computeResult(List.filled(5, 4));
       expect(result.total, 20);
       expect(result.recommendDoctorVisit, isTrue);

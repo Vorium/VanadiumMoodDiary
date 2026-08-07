@@ -28,6 +28,10 @@ class _StubNotificationService extends NotificationService {
   @override
   Future<void> init() async {}
 
+  // R97-P1-6: stub 必须重写 requestPermission (测试环境无真实 plugin)
+  @override
+  Future<bool> requestPermission() async => true;
+
   @override
   Future<int> get pendingCount async => pendingToReturn;
 
@@ -78,9 +82,7 @@ void main() {
   setUp(() {
     FeatureFlags.setFiveVendorPushEnabledForTest(true);
   });
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  tearDown(FeatureFlags.resetForTest);
 
   testWidgets('mobile 模式显示完整 card（3 个入口）', (tester) async {
     _setBigView(tester);

@@ -88,7 +88,11 @@
   "settingsAssessment": "心理評估",
   "settingsAssessmentHistory": "評估歷史",
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 評估的折線圖與對比",
-  "settingsAboutVersion": "v0.23.0 · 我今天吃了藥",
+  "@settingsAboutVersion": {
+      "description": "R99 (BUG-2): 關於頁版本行, version 走 kPubspecVersion 動態注入 (不再硬編碼)",
+      "placeholders": { "version": { "type": "String" } }
+  },
+  "settingsAboutVersion": "v{version} · 我今天吃了藥",
   "settingsDisclaimerText": "本應用不提供醫療建議，所有功能僅供參考。",
   "settingsExportRiskTitle": "明文風險提示",
   "settingsExportRiskBody": "您即將導出的數據為明文文件,含您的個人健康等敏感信息(用藥、打卡、緊急聯繫人、樹洞文字)。請務必保存到安全、可信的位置(加密 U 盤 / 私人云盤),避免上傳至公共雲盤或發送給不可信的第三方。",
@@ -474,6 +478,11 @@
   "ventDetailTitle": "樹洞",
   "ventDetailNotFound": "找不到了",
   "ventDetailPrivacy": "🔒 私密 · 只有您能看到",
+  "ventReportTooltip": "舉報或反饋",
+  "ventReportDialogTitle": "私密傾訴說明",
+  "ventReportDialogBody": "樹洞內容僅存儲在您的設備, 不會上傳任何服務器, 不存在用戶間互相看到的情況。\n\n如發現 App 本身的不當內容或想反饋問題, 請前往「法律與隱私」頁面聯繫開發者。",
+  "ventReportDialogAction": "前往法律與隱私",
+  "ventReportDialogClose": "關閉",
   "ventToday": "今天",
   "ventYesterday": "昨天",
   "ventComposeTitle": "放進樹洞",
@@ -1377,11 +1386,11 @@
       }
     }
   },
-  "settingsIapUpgradeTitle": "升級到 Pro",
-  "settingsIapUpgradeSubtitle": "¥8 一次性買斷 · 解鎖全部高級功能",
-  "settingsIapProOwnedTitle": "已是 Pro 版本",
-  "settingsIapProOwnedSubtitle": "感謝支持 · 全部高級功能已解鎖",
-  "iapPurchaseSuccess": "升級成功！歡迎使用 Pro。",
+  "settingsIapUpgradeTitle": "購買此 App",
+  "settingsIapUpgradeSubtitle": "¥8 一次性買斷 · 解鎖全部功能",
+  "settingsIapProOwnedTitle": "已購買",
+  "settingsIapProOwnedSubtitle": "感謝支持 · 全部功能已解鎖",
+  "iapPurchaseSuccess": "購買成功！感謝支持。",
   "iapPurchaseFailed": "購買未完成，請稍後再試。",
   "phoneRegionCn": "中國大陸",
   "phoneRegionHk": "中國香港",
@@ -1571,6 +1580,19 @@
     "placeholders": { "number": { "type": "Object" } }
   },
   "crisisHotlineSnackbarCopied": "已複製: {number}",
+  "@crisisHotlineDialTooltip": {
+    "description": "R97-P1-11 (2026-08-07): 危機熱線撥打按鈕 tooltip"
+  },
+  "crisisHotlineDialTooltip": "撥打",
+  "@crisisHotlineCopyTooltip": {
+    "description": "R97-P1-11 (2026-08-07): 危機熱線複製按鈕 tooltip"
+  },
+  "crisisHotlineCopyTooltip": "複製號碼",
+  "@crisisHotlineDialFailed": {
+    "description": "R97-P1-11 (2026-08-07): tel: intent 啟動失敗 snackbar 提示",
+    "placeholders": { "number": { "type": "Object" } }
+  },
+  "crisisHotlineDialFailed": "無法啟動撥號, 請手動撥打: {number}",
   "setupLegalAgeAttestation": "本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。",
   "moodCbtLevelLabel3": "3 欄",
   "moodCbtLevelLabel5": "5 欄",

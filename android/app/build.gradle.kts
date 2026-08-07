@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -54,7 +56,7 @@ android {
         create("release") {
             // 读 key.properties (若存在) → 用真实 keystore 签
             // 缺 key.properties → 抛 FileNotFoundException, 上 store 前会卡这
-            val keystoreProperties = java.util.Properties()
+            val keystoreProperties = Properties()
             val keystorePropertiesFile = rootProject.file("key.properties")
             if (keystorePropertiesFile.exists()) {
                 keystorePropertiesFile.inputStream().use { stream ->
@@ -73,11 +75,23 @@ android {
 
     buildTypes {
         release {
-            // v0.27 round 67 (Sprint 1, googleplay C-P0-9):
-            // **TODO 上 store 前切换**: 改成 signingConfigs.getByName("release")
-            // 当前保留 debug 是为了让 R67 commit 阶段 build 不挂 (无 key.properties)
-            // 上 store 时改成 release 即可 (见 docs/PLAYSTORE_SIGNING_GUIDE.md)
-            signingConfig = signingConfigs.getByName("debug")
+            // R97-P0-5 (2026-08-07): 切换到 release signingConfig (上 store 必需)。
+            //
+            // 修前 (R67): signingConfig 硬绑 debug, 上 store 时 .aab 用 debug
+            // keystore 签名 → Google Play Console 直接拒审 (Play App Signing)。
+            //
+            // 修复: 默认走 signingConfigs.getByName("release"), 该 config 在
+            // signingConfigs 块里读 key.properties (用户负责生成)。本地 dev
+            // 调试时若未配 key.properties, 加 -PdebugSigning=true 走 debug
+            // fallback, 例: `flutter build apk --release -PdebugSigning=true`。
+            // 上 store 时用户必须按 docs/PLAYSTORE_SIGNING_GUIDE.md 5 步走
+            // (cp key.properties.example → key.properties + 填 4 个真实值),
+            // 不传 -PdebugSigning 即自动用真实 release keystore。
+            signingConfig = if (project.hasProperty("debugSigning")) {
+                signingConfigs.getByName("debug")
+            } else {
+                signingConfigs.getByName("release")
+            }
             // v0.27 round 63 (R63, GooglePlay P1-7 修复): 显式禁 debug/jni-debug
             // release 默认 debuggable=false, 但显式更稳 + 防 R8 误判
             isDebuggable = false

@@ -10,9 +10,9 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
-import 'package:chroniccare/core/data/services/safety_detector.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
+import 'package:chroniccare/domain/logic/safety_detector.dart';
 import 'package:chroniccare/l10n/app_localizations.dart' show AppLocalizations;
 
 /// "安全开关" 服务 — 死了么/撸了么 思路
@@ -373,10 +373,10 @@ class SafetyCheckResult {
   /// - 全部 8 个 kind 走 ARB i18n, zh / en / zh_Hant 同步翻译
   String get displayMessage {
     // v0.27 round 61 (P1-4): 走 ARB i18n, 8 个 kind + 3 态分流
-    // data 层 (0 flutter 边界): 拿不到 AppLocalizations, 这里返 key 字符串
-    // 让 UI 层 (presentation 调此 getter 处) 显式调 AppLocalizations.of(context)
-    // 翻译。本 getter 保留向后兼容, 走 key 让旧 caller 不破; UI 改用
-    // SafetyCheckResult.displayMessageL10n(l10n) 拿翻译后字符串。
+    // data 层 (0 flutter 边界): 拿不到 AppLocalizations, 这里返 key 字符串。
+    // R99 (BUG-1): UI caller 已全部改走 [displayMessageL10n] (home_page_state
+    // 2 处), 本 getter 仅剩测试/日志用途。**UI 禁止直接用** (显示出来是
+    // i18n key 原文, 用户看到 'safetyCheckResultAlerted')。
     return _displayKey;
   }
 

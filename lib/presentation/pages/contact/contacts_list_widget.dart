@@ -228,7 +228,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                             // snackbar (emil "3 tap 抵达" — snackbar 打断流, 改内
                             // 联校验后输完即知, 不打断主流程)
                             setLocal(() => phoneError =
-                                AppLocalizations.of(ctx).snackbarPhoneInvalid);
+                                AppLocalizations.of(ctx).snackbarPhoneInvalid,);
                             return;
                           }
                           setLocal(() => saving = true);

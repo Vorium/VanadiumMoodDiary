@@ -1,4 +1,4 @@
-﻿// v0.15 (Round 18) 树洞详情页
+// v0.15 (Round 18) 树洞详情页
 //
 // 单条 tree hole 完整内容：文字 + 音频播放器
 // 路径参数：id（int）
@@ -127,6 +127,38 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     }
   }
 
+  /// R97-P1-4 (2026-08-07): UGC 举报/反馈入口。
+  ///
+  /// 背景：App Store Guideline 1.2.1 要求包含 UGC 的 App 必须提供
+  /// 举报机制。虽然本 App 的树洞内容仅本地存储、不会跨用户可见，
+  /// 但仍需提供"反馈/举报 App 本身内容"的入口以满足审核。
+  ///
+  /// 这里弹一个 dialog 说明本地存储机制，并提供跳转到「法律与隐私」
+  /// 页面联系开发者的入口（该页面已存在，包含开发者邮箱等联系方式）。
+  Future<void> _showReportDialog() async {
+    final l10n = AppLocalizations.of(context);
+    await showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: Text(l10n.ventReportDialogTitle),
+        content: Text(l10n.ventReportDialogBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: Text(l10n.ventReportDialogClose),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogCtx);
+              context.push('/settings/legal');
+            },
+            child: Text(l10n.ventReportDialogAction),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _delete(VentEntryEntity entry) async {
     // v0.21 Round 22 (P1-14 修复): 删除前重触感警示
     final l10n = AppLocalizations.of(context);
@@ -152,7 +184,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         ],
       ),
     );
-    if (ok == true && mounted) {
+    if ((ok ?? false) && mounted) {
       // 停播放
       try {
         await _player.stop();
@@ -182,6 +214,13 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     return PageScaffold(
       title: AppLocalizations.of(context).ventDetailTitle,
       actions: [
+        // R97-P1-4 (2026-08-07): UGC 举报/反馈按钮(App Store 1.2.1)
+        // 永远可用，跟 entry 是否存在无关（举报的是 App 本身的内容机制）
+        PressFeedbackIconButton(
+          icon: Icons.flag_outlined,
+          tooltip: AppLocalizations.of(context).ventReportTooltip,
+          onPressed: _showReportDialog,
+        ),
         entryAsync.maybeWhen(
           data: (entry) => PressFeedbackIconButton(
             icon: Icons.delete_outline,

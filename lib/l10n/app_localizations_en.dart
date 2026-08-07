@@ -196,7 +196,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'View line charts and comparisons for all PHQ-9 / GAD-7 assessments';
 
   @override
-  String get settingsAboutVersion => 'v0.23.0 · I took my meds today';
+  String settingsAboutVersion(String version) {
+    return 'v$version · I took my meds today';
+  }
 
   @override
   String get settingsDisclaimerText =>
@@ -852,6 +854,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventDetailPrivacy => '🔒 Private · Only you can see';
 
   @override
+  String get ventReportTooltip => 'Report or feedback';
+
+  @override
+  String get ventReportDialogTitle => 'Private vent notice';
+
+  @override
+  String get ventReportDialogBody =>
+      'Vent content is stored only on your device and is never uploaded to any server. No other user can see it.\n\nIf you find inappropriate content within the App itself or want to send feedback, please go to the \"Legal & Privacy\" page to contact the developer.';
+
+  @override
+  String get ventReportDialogAction => 'Go to Legal & Privacy';
+
+  @override
+  String get ventReportDialogClose => 'Close';
+
+  @override
   String get ventToday => 'Today';
 
   @override
@@ -1133,6 +1151,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeTooltipAssessmentHistory => 'Assessment history';
+
+  @override
+  String get homeTooltipSettings => 'Settings';
+
+  @override
+  String get ventSwipeHint => 'Swipe left or long-press to delete';
 
   @override
   String get homeStreakRestart => 'Start fresh today 🌱';
@@ -2184,21 +2208,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsIapUpgradeTitle => 'Upgrade to Pro';
+  String get settingsIapUpgradeTitle => 'Buy this app';
 
   @override
   String get settingsIapUpgradeSubtitle =>
-      '¥8 one-time purchase · unlock all premium features';
+      '¥8 one-time purchase · unlock all features';
 
   @override
-  String get settingsIapProOwnedTitle => 'You\'re on Pro';
+  String get settingsIapProOwnedTitle => 'Purchased';
 
   @override
   String get settingsIapProOwnedSubtitle =>
-      'Thanks for the support · all premium features unlocked';
+      'Thanks for the support · all features unlocked';
 
   @override
-  String get iapPurchaseSuccess => 'Upgrade successful! Welcome to Pro.';
+  String get iapPurchaseSuccess =>
+      'Purchase successful! Thanks for your support.';
 
   @override
   String get iapPurchaseFailed =>
@@ -2629,6 +2654,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String crisisHotlineSnackbarCopied(Object number) {
     return 'Copied: $number';
+  }
+
+  @override
+  String get crisisHotlineDialTooltip => 'Dial';
+
+  @override
+  String get crisisHotlineCopyTooltip => 'Copy number';
+
+  @override
+  String crisisHotlineDialFailed(Object number) {
+    return 'Unable to launch dialer, please call manually: $number';
   }
 
   @override

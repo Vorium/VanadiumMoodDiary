@@ -106,7 +106,7 @@ class MedicationListView extends StatelessWidget {
               onDelete: () => onDelete(activeMeds[i].id),
               onEdit: () => onEdit(activeMeds[i]),
               onEditRefill: () => onEditRefill(activeMeds[i]),
-              onSwipeDelete: (m) => onSwipeDelete(m),
+              onSwipeDelete: onSwipeDelete,
               enableSwipe: true,
             ),
           ],
@@ -146,7 +146,7 @@ class MedicationListView extends StatelessWidget {
               onDelete: () => onDelete(stoppedMeds[i].id),
               onEdit: () => onEdit(stoppedMeds[i]),
               onEditRefill: () {}, // 停药不调
-              onSwipeDelete: (m) => onSwipeDelete(m),
+              onSwipeDelete: onSwipeDelete,
               enableSwipe: false, // 停药不启用 swipe
             ),
           ],

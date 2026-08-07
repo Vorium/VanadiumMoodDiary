@@ -28,12 +28,8 @@ void main() {
   // v0.30 round 93: 老 test 假设 homeFabHotline 总渲染, R93 改
   // emergencyContactEnabled=false 后 hidden, setUp 翻 enableForTest 让老 test
   // 不破 (跟 settings_page_round45 / home_emil_round81 修法一致)。
-  setUp(() {
-    FeatureFlags.enableForTest();
-  });
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  setUp(FeatureFlags.enableForTest);
+  tearDown(FeatureFlags.resetForTest);
 
   /// 800x600 模拟小屏 (主屏内容超出视口, 必然要滚, maxScrollExtent > 0)
   void setBigView(WidgetTester tester) {

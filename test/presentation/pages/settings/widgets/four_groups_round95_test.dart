@@ -16,7 +16,6 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_group.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_group.dart';
@@ -24,7 +23,6 @@ import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.da
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/profile_group.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/reminders_group.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +40,7 @@ void main() {
     FeatureFlags.resetForTest();
   });
 
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  tearDown(FeatureFlags.resetForTest);
 
   // helper: 构造 group widget 测试环境
   // 4 group 是 ListView item (Column children), 直接 mount 会 overflow, 包
@@ -67,7 +63,8 @@ void main() {
     );
   }
 
-  testWidgets('ProfileGroup: Medication + Assessment 渲染 (NotificationStatusCard 在 RemindersGroup)',
+  testWidgets(
+      'ProfileGroup: Medication + Assessment 渲染 (NotificationStatusCard 在 RemindersGroup)',
       (tester) async {
     // v0.30 round 95 (sub-spec 8 task 17): ProfileGroup 含 4 section
     // (Medication / Assessment / Contact conditional / IAP conditional),
@@ -86,7 +83,8 @@ void main() {
     expect(find.byType(NotificationStatusCard), findsNothing);
   });
 
-  testWidgets('RemindersGroup: 独立 mount 验证 group 自身 render (内含 NotificationStatusCard 让 pumpAndSettle hang, 跳过)',
+  testWidgets(
+      'RemindersGroup: 独立 mount 验证 group 自身 render (内含 NotificationStatusCard 让 pumpAndSettle hang, 跳过)',
       (tester) async {
     // v0.30 round 95 (sub-spec 8 task 17): RemindersGroup 含 NotificationStatusCard
     // 在末尾, 后者 initState 触发 _refresh() 调 NotificationService.pendingCount
@@ -95,7 +93,7 @@ void main() {
     // 容); RemindersSection / CbtSection / NotificationStatusCard 各自在
     // settings_page_round45_test 整体测试覆盖 (那里 ListView lazy load 跳过
     // NotificationStatusCard initState)。
-    final group = RemindersGroup();
+    const group = RemindersGroup();
     expect(group, isA<RemindersGroup>());
   });
 

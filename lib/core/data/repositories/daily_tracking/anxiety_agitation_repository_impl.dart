@@ -2,14 +2,19 @@
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/domain/entities/anxiety_agitation_entry.dart';
+import 'package:chroniccare/domain/repositories/anxiety_agitation_repository.dart';
 import 'package:drift/drift.dart' show Value;
 
 /// AnxietyAgitation 仓库的 Drift 实现
-class AnxietyAgitationRepositoryImpl {
+///
+/// R97-P1-1 (2026-08-07): implements [AnxietyAgitationRepository] domain 接口
+/// (跟 sleep_repository_impl.dart 同模式, 详见该文件注释)。
+class AnxietyAgitationRepositoryImpl implements AnxietyAgitationRepository {
   final AppDatabase _db;
 
   AnxietyAgitationRepositoryImpl(this._db);
 
+  @override
   Stream<List<AnxietyAgitationEntryEntity>> watchAll() {
     return _db.anxietyAgitationDao.watchAll().map(
           (rows) => rows
@@ -26,6 +31,7 @@ class AnxietyAgitationRepositoryImpl {
         );
   }
 
+  @override
   Future<int> add({
     required DateTime timestamp,
     required int anxietyScore,
@@ -42,5 +48,6 @@ class AnxietyAgitationRepositoryImpl {
     );
   }
 
+  @override
   Future<int> delete(int id) => _db.anxietyAgitationDao.delete(id);
 }

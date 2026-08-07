@@ -26,7 +26,8 @@
 // package_info_plus 自动读 pubspec.yaml.version, 进一步降低漏改风险。
 
 /// 跟 pubspec.yaml `version:` 字段同步 (compile time const)
-const String kPubspecVersion = '0.27.0+64+65';
+/// R99 (BUG-2): 0.27.0+64+65 → 0.30.0+85 同步 (R78-R98 连续漏改)
+const String kPubspecVersion = '0.30.0+85';
 
 /// 计算法律协议版本号
 ///

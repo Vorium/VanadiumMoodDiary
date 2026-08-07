@@ -1,4 +1,4 @@
-﻿// assessment_widgets.dart — 心理评估页拆分出的独立组件
+// assessment_widgets.dart — 心理评估页拆分出的独立组件
 //
 // 从 assessment_page.dart 拆分，v0.19 (P1-15 + Q3)
 import 'package:flutter/material.dart';
@@ -266,19 +266,15 @@ class ComparisonCard extends StatelessWidget {
       case ComparisonTrend.improved:
         trendColor = AppTokens.primaryColor(context);
         trendIcon = Icons.arrow_downward;
-        break;
       case ComparisonTrend.worsened:
         trendColor = AppTokens.errorColor(context);
         trendIcon = Icons.arrow_upward;
-        break;
       case ComparisonTrend.unchanged:
         trendColor = AppTokens.textSecondaryColor(context);
         trendIcon = Icons.horizontal_rule;
-        break;
       case ComparisonTrend.firstAssessment:
         trendColor = AppTokens.primaryColor(context);
         trendIcon = Icons.fiber_new;
-        break;
     }
 
     return Card(

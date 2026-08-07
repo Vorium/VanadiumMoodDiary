@@ -11,6 +11,40 @@
 > **6 视角子报告**: [emil](audit/2026-08-06/r95-increment/01-emil.md) / [spen](audit/2026-08-06/r95-increment/02-spen.md) / [spzh](audit/2026-08-06/r95-increment/03-spzh.md) / [AppStore](audit/2026-08-06/r95-increment/04-appstore.md) / [GooglePlay](audit/2026-08-06/r95-increment/05-googleplay.md) / [flutter-spec](audit/2026-08-06/r95-increment/06-flutter-spec.md)
 > **R92 6 视角基线**: [docs/audit/2026-08-06/00-summary-report.md](audit/2026-08-06/00-summary-report.md) (35KB)
 > **R95 8 sub-spec 报告**: [docs/superpowers/sdd-logs/](../../superpowers/sdd-logs/) (round95-godpage-section / round95-silent-catch / round95-misc-p1 / round95-hardcoded-chinese / round95-godpage-split / round95-token / round95-test-coverage / round95-misc-p2 / round95-ux-p3)
+> **R100 6 视角审计** (2026-08-07, 最新): [00-summary](audit/2026-08-07/R100-6perspective-audit/00-summary.md) + [emil](audit/2026-08-07/R100-6perspective-audit/01-emilkowalski.md) / [spen](audit/2026-08-07/R100-6perspective-audit/02-superpowers-en.md) / [spzh](audit/2026-08-07/R100-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit/2026-08-07/R100-6perspective-audit/04-appstore.md) / [GooglePlay](audit/2026-08-07/R100-6perspective-audit/05-googleplay.md) / [flutter-spec](audit/2026-08-07/R100-6perspective-audit/06-flutter-spec.md)
+
+---
+
+## R100 审计更新 (2026-08-07, 6 视角实测)
+
+**状态**: R99 报的 BUG-1~5 全部复核闭环; 本轮 17 守门员 + analyze 全绿 (2019 tests)。**新增/确认 27 项待办** (P0=8 / P1=7 / P2=12; 架构级 8 项 / 底层 19 项), 完整排序表见 [R100 00-summary §三](audit/2026-08-07/R100-6perspective-audit/00-summary.md)。
+
+### R100 P0 快照 (上架阻塞, 按序执行)
+
+| # | 事项 | 层级 | 难度 | 阻塞方 |
+|---|------|------|------|--------|
+| 1 | ~280 文件未提交改动分批 commit (R92-R99 堆积) | 底层 | 简单 | 自己 |
+| 2 | 注册 chroniccare.app 域名 + 隐私/支持/数据删除页 (iOS 6 文件 URL + Play Data Safety 依赖) | 底层 | 中 | 域名注册商 |
+| 3 | 双平台真实截图 + feature graphic (Android 67B 占位 PNG ×10 / iOS screenshots/ 缺失) | 底层 | 中 | 真机/设计师 |
+| 4 | 删 Android video.txt PLACEHOLDER ×2 | 底层 | 简单 | 自己 |
+| 5 | 生成 release keystore + key.properties | 底层 | 简单 | 自己 |
+| 6 | 删 iOS UIBackgroundModes audio+processing + BGTaskScheduler 声明 (Apple 2.5.4 拒因) | 底层 | 简单 | 自己 |
+| 7 | user_agreement "8 元买断" 表述对齐 (改"未来版本"或真接 IAP) | 底层 | 简单 | 自己 |
+| 8 | metadata 删 "(失联通知规划中)" (Android title + iOS zh-Hans/Hant subtitle) | 底层 | 简单 | 自己 |
+
+### R100 P1 快照 (高概率打回 / 用户可见)
+
+- UI 硬编码中文 ~30 处走 ARB (+40 key × 3 语, en locale 可见)
+- InfoPlist.strings 补 5 项 usage description 英文基线 + zh 覆盖
+- 架构 3 连: 删 SafetyCheckResult.displayMessage 旧 getter / 3 StreamProvider 加 autoDispose / 删 CareEngine.evaluate-fire 死代码
+- 法务文档 9 处软隐藏说明去掉占位域名残留; repo 根 80+ 垃圾文件清理
+
+### R100 P2 快照 (上架后, 对应本文档 §2 路线图文档化排期)
+
+- **架构级** (8 项): home_page_state 656 行拆分 / 其余 5 个 480+ 行大文件 / services 31 文件分组 / usecase 补全 / ThemeExtension / routerProvider Notifier 化
+- **底层级** (4 项): a11y Semantics / golden test / ARB 半角标点 58 key / 中国区法务条款 (user_agreement 7 项 + sensitive_data_consent 3 项)
+
+**R100 关键结论**: 代码可修部分已收敛到 27 项且 0 新增功能 bug; 上架真正的阻塞是**外部资源** (域名 / 截图 / keystore / IAP 决策), 与 R95 结论一致 —— 可代码化部分接近 100% 完成。
 
 ---
 
@@ -550,3 +584,431 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 **dev doc 升级体量**: 32.7KB → 升级后 38KB+ (R95 实施后状态 + 6 视角评分变化 + R95 实施后修复优先级矩阵 + 7 sub-spec 引用)
 **R95+ 路线图总 task**: 60+ (R95 实施后 32/60 ✅ + 17/60 ⏸️ + 10/60 R96+ + 1/60 R97+)
 **下次 dev doc 同步**: R95 业务真接付费启动后 (估 1-2 月, 2026-09 ~ 2026-10)
+
+---
+
+## 9. R97 6 视角审计追加 (2026-08-07, 55 项新发现)
+
+> 本章节为 R95 sub-spec 8 实施后, 用户要求拉 6 个视角团队 (emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification) 对整个项目分别出一份审计报告的汇总追加。6 份报告去重后共 55 项独立发现 (P0=8 / P1=14 / P2=17 / P3=16), 每项标注 **类别 (架构/底层) + 修复难度 (low/medium/high) + 涉及视角**。
+>
+> **审计覆盖 5 个检查项**: ①外部链接隐藏 ②上架/架构/重构/半成品 ③顶层架构审视 ④底层逐行排查 ⑤开发需求文档更新
+>
+> **跟 R95 路线图 60 task 的关系**: 本章节 55 项发现中, 部分是 R95 已识别但被低估的 (如 P0-7 SMS 真接), 部分是 R95 后新发现的 (如 P0-1 check_safety 跨层 import, P0-2 主页危机入口被 FeatureFlag 隐藏)。新发现已纳入 R96+ 路线图。
+
+### 9.1 R97 6 视角审计发现统计
+
+| 视角 | P0 | P1 | P2 | P3 | 总计 | 评分 |
+|---|---|---|---|---|---|---|
+| emilkowalski (设计) | 0 | 1 | 5 | 8 | 14 | A- (架构 9.0/10) |
+| superpowers-en (工程) | 1 | 3 | 5 | 7 | 16 | B+ (1 P0 架构违规) |
+| superpowers-zh (合规+中文) | 4 | 1 | 6 | 4 | 15 | 🟢 架构达标 / 🔴 法务未解 |
+| AppStore (iOS 上架) | 3 | 3 | 4 | 3 | 13 | 上架就绪 ~45% |
+| GooglePlay (Android 上架) | 3 | 8 | 7 | 2 | 20 | 上架风险 🔴 高 |
+| flutter-specification (规范) | 0 | 3 | 6 | 7 | 16 | ⭐⭐⭐⭐ (4/5) |
+| **合计去重** | **8** | **14** | **17** | **16** | **55** | — |
+
+### 9.2 R97 P0 必修清单 (8 项, 上架/v1.0 blocker)
+
+| R97 ID | 问题 | 类别 | 难度 | 视角 | 对应 R95 task | 文件 |
+|---|---|---|---|---|---|---|
+| **R97-P0-1** | check_safety.dart 跨层 import data/services/safety_detector (R85 重构漏改 import + 旧文件未删, 4 层架构硬约束违规) | 架构 | low | spen | 新发现 | [check_safety.dart#L16](file:///d:/Batch/chroniccare/lib/domain/usecases/check_safety.dart) |
+| **R97-P0-2** | 主页心理危机热线入口被 FeatureFlag 完全隐藏 (emergencyContactEnabled=false 守卫, Apple 1.4.1 直接拒) | 底层 | low | AppStore | 新发现 | [home_fab_toolbar.dart#L97](file:///d:/Batch/chroniccare/lib/presentation/pages/home/widgets/home_fab_toolbar.dart) |
+| **R97-P0-3** | 域名 chroniccare.app 未注册 + 6 个 privacy/support URL 404 (Apple 5.1.1 + Google Play Data Safety form 双必拒) | 底层 | medium | spzh/AppStore/GooglePlay | R95 task 40 | [fastlane/metadata/ios/zh-Hans/privacy_url.txt](file:///d:/Batch/chroniccare/fastlane/metadata/ios/zh-Hans/privacy_url.txt) |
+| **R97-P0-4** | 3 份法律文档"草稿未经律师过审" (PIPL §28/§29 + Apple 5.1.5 强制, ¥45-90k) | 架构 | high | spzh/AppStore/GooglePlay | R95 task 20 | [privacy_policy.md#L212](file:///d:/Batch/chroniccare/assets/legal/privacy_policy.md) |
+| **R97-P0-5** | Release 签名 fallback debug keystore (signingConfig 硬绑 debug, Play Console 直接拒) | 底层 | low | emil/GooglePlay | R95 task 37 | [build.gradle.kts#L82](file:///d:/Batch/chroniccare/android/app/build.gradle.kts) |
+| **R97-P0-6** | USE_EXACT_ALARM 权限违反 Google Play 限制 (2024-07 起限制为 alarm clock/calendar 类, 精神心理服药提醒不在允许范围) | 底层 | low | GooglePlay | R95 task 38 | [AndroidManifest.xml#L33](file:///d:/Batch/chroniccare/android/app/src/main/AndroidManifest.xml) |
+| **R97-P0-7** | SMS / Email 真接未做 (AliyunSmsProvider.send() throw StateError, EmailService 未实现, 失联通知业务 100% 不可用) | 架构 | high | spzh/spen | R95 task 14/15 | [sms_service.dart#L195](file:///d:/Batch/chroniccare/lib/core/data/services/sms_service.dart) |
+| **R97-P0-8** | NMPA 医疗器械备案未明确 (PHQ-9/GAD-7 心理评估可能触发二类医疗器械备案, 未做法务咨询) | 架构 | high | spzh | R95 task 23 | [README.md#L265](file:///d:/Batch/chroniccare/README.md) |
+
+### 9.3 R97 P1 重要清单 (14 项, 上架前应修)
+
+| R97 ID | 问题 | 类别 | 难度 | 视角 | 文件 |
+|---|---|---|---|---|---|
+| **R97-P1-1** | daily_tracking 6 provider 暴露 Impl 类型 (违反 AGENTS "Provider<XRepository> 暴露接口"约束) | 架构 | medium | spen | [daily_tracking_providers.dart#L39](file:///d:/Batch/chroniccare/lib/presentation/providers/daily_tracking_providers.dart) |
+| **R97-P1-2** | TodayMedSchedule.build() 调 DateTime.now() (跨 midnight stale + rebuild 浪费) | 底层 | low | spen | [today_med_schedule.dart#L44](file:///d:/Batch/chroniccare/lib/presentation/pages/medication/today_med_schedule.dart) |
+| **R97-P1-3** | VentRepositoryImpl.delete() TOCTOU 事务范围错 (select 在事务外, rename 场景可能删错文件) | 底层 | medium | spen | [vent_repository_impl.dart#L105](file:///d:/Batch/chroniccare/lib/core/data/repositories/vent/vent_repository_impl.dart) |
+| **R97-P1-4** | vent 树洞 UGC 完全没有举报机制 (Apple 1.2.1 直接拒, 无举报按钮 + 无 UGC 政策声明) | 底层 | medium | AppStore | [vent_detail_page.dart](file:///d:/Batch/chroniccare/lib/presentation/pages/vent/vent_detail_page.dart) |
+| **R97-P1-5** | IAP 入口完全隐藏但 user_agreement 声明"售价 8 元" (描述与实际不符, Apple 2.1/3.1.1) | 底层 | medium | AppStore | [feature_flags.dart#L51](file:///d:/Batch/chroniccare/lib/core/data/feature_flags.dart) |
+| **R97-P1-6** | 首次启动立即请求通知权限 (main.dart bootstrap 阶段调 init() 内立即 requestPermissions, 违反"先解释后请求") | 底层 | medium | AppStore/GooglePlay | [main.dart#L161](file:///d:/Batch/chroniccare/lib/main.dart) |
+| **R97-P1-7** | setup_legal_dialog 危机热线展示不完整 (注释写 5 条实际只渲染 4 条, 漏 crisisHotlineCnBeijing, 与 user_agreement §5 表格不同步) | 底层 | low | spzh | [setup_legal_dialog.dart#L79](file:///d:/Batch/chroniccare/lib/presentation/pages/setup/setup_legal_dialog.dart) |
+| **R97-P1-8** | INTERNET 权限当前为非必需 (业务全部 flag=false 暂停, 0 网络调用但申请 INTERNET) | 底层 | low | GooglePlay | [AndroidManifest.xml#L30](file:///d:/Batch/chroniccare/android/app/src/main/AndroidManifest.xml) |
+| **R97-P1-9** | RECORD_AUDIO 权限与 ventAudioEnabled=false 不匹配 (业务暂停期应删除 microphone 权限) | 底层 | low | GooglePlay | [AndroidManifest.xml#L37](file:///d:/Batch/chroniccare/android/app/src/main/AndroidManifest.xml) |
+| **R97-P1-10** | BootReceiver 半成品 (R64+ TODO, manifest 声明 RECEIVE_BOOT_COMPLETED 但 FeatureFlag 禁用, Android 14+ 后台启动限制) | 底层 | medium | GooglePlay | [BootReceiver.kt#L29](file:///d:/Batch/chroniccare/android/app/src/main/kotlin/com/chroniccare/chroniccare/BootReceiver.kt) |
+| **R97-P1-11** | 危机热线只能复制号码, 无一键拨打 (Health/Sensitive Apps policy 推荐 tel: intent) | 底层 | low | GooglePlay | [crisis_hotline_page.dart#L182](file:///d:/Batch/chroniccare/lib/presentation/pages/crisis_hotline_page.dart) |
+| **R97-P1-12** | analysis_options.yaml lint 规则强度偏低 (仅 4 条显式规则, 远低于 Effective Dart 推荐) | 架构 | low | flutter-spec | [analysis_options.yaml#L17](file:///d:/Batch/chroniccare/analysis_options.yaml) |
+| **R97-P1-13** | unnecessary_late + dead_code + deprecated_member_use 3 处 warning (main.dart late final 误用 + export_dialog dead code + RadioListTile 弃用 API) | 底层 | low | flutter-spec | [main.dart#L45](file:///d:/Batch/chroniccare/lib/main.dart) |
+| **R97-P1-14** | PIPL §13 紧急联系人"单独同意"软实施 (用户担保已告知, 非联系人独立确认, v1.0 真接 SMS 时必须升级) | 架构 | high | spzh/AppStore | [setup_legal_dialog.dart#L24](file:///d:/Batch/chroniccare/lib/presentation/pages/setup/setup_legal_dialog.dart) |
+
+### 9.4 R97 P2 建议清单 (17 项, v1.0+ 可做)
+
+| R97 ID | 问题 | 类别 | 难度 | 视角 |
+|---|---|---|---|---|
+| **R97-P2-1** | UseCase 层薄厚不均 (9 repo 仅 4 usecase, 5 类业务 presentation→repo 直接对话) | 架构 | medium | spen |
+| **R97-P2-2** | CareEngine + FireCareStrategyUseCase 4 strategy DRY 重复 ~50 行 | 底层 | medium | spen |
+| **R97-P2-3** | latestXxxEntryProvider 用 .value?.firstOrNull 隐式假设 stream 排序 (违反 AGENTS 已知坑) | 底层 | low | spen |
+| **R97-P2-4** | AppTokens facade 306 行 god class (注释承诺 ≤50 行) + 5 个 magic size 常量未抽 | 架构 | medium | flutter-spec |
+| **R97-P2-5** | directives_ordering 违反 6 处 (dart: 排在 package: 之后, lint 未启用) | 底层 | low | flutter-spec |
+| **R97-P2-6** | FeatureFlags 注释与实现不一致 (4 vs 11 vs 8 flag) + setEmergencyContactEnabledForTest setter 缺失 | 底层 | low | flutter-spec |
+| **R97-P2-7** | 通知 channel name/title 硬编码中文 const (en/zh_Hant 用户看中文 channel) | 底层 | medium | spzh |
+| **R97-P2-8** | userNameFamily 残留"您的家人" (跟 R72 中性化决策不一致, 可能引发病耻感) | 底层 | low | spzh |
+| **R97-P2-9** | emailBody "避免复发" 不中性 (精神心理场景用词不中性) | 底层 | low | spzh |
+| **R97-P2-10** | setup_step_done 缺首次评估/紧急联系人引导 | 底层 | low | spzh |
+| **R97-P2-11** | PIPL §52 联系方式软隐藏 (邮箱渠道不可达, App 内反馈不便捷) | 架构 | medium | spzh |
+| **R97-P2-12** | 25 处 TODO 无版本号 (长期 TODO 滚雪球, 新人误判优先级) | 底层 | medium | spen |
+| **R97-P2-13** | proguard-rules.pro 缺 speech_to_text 完整 keep 规则 (v1.0 真接 STT 时可能 crash) | 底层 | low | GooglePlay |
+| **R97-P2-14** | SCHEDULE_EXACT_ALARM targetSdk=33+ 默认 denied (通知时间偏移 silent bug) | 底层 | low | GooglePlay |
+| **R97-P2-15** | 缺 android:largeHeap (PDF 导出 OOM 风险) | 底层 | low | GooglePlay |
+| **R97-P2-16** | FeatureFlags 全 8 项 false (商店描述与实际功能不符触发 Minimum Functionality 拒审) | 架构 | low | GooglePlay/AppStore |
+| **R97-P2-17** | PHQ-9/GAD-7 量表 i18n 未完成 (en/zh_Hant 用户看中文题目, 医疗法律责任) | 底层 | medium | AppStore |
+
+### 9.5 R97 P3 nice-to-have 清单 (16 项, 摘要)
+
+| R97 ID | 问题 | 类别 | 难度 |
+|---|---|---|---|
+| **R97-P3-1** | App Store 截图未准备 (33 张真机截图) | 架构 | medium |
+| **R97-P3-2** | fastlane/Appfile 需真实 APPLE_ID/TEAM_ID (R96 ENV 化但需用户填) | 架构 | low |
+| **R97-P3-3** | contacts 硬空 + fireSms/Email 硬抛 StateError (v1.0 切 SMS/Email 时埋雷) | 底层 | medium |
+| **R97-P3-4** | AppListTile 三元 `onTap != null ? null : onTap` 等价 null dead code | 底层 | low |
+| **R97-P3-5** | _StreakCounter 首次进入无 0→N 动画 (emil 风格首次也做轻量动画) | 底层 | low |
+| **R97-P3-6** | _nextReminderTime 硬编码 20:00 magic number (应抽 nextReminderProvider) | 底层 | low |
+| **R97-P3-7** | 跨时区 DateTime 不一致 (4 处 DateTime.now() 跟 tz.local 混用, 海外 DST 切换风险) | 底层 | low |
+| **R97-P3-8** | 版本考古注释过密 (main.dart 496 行注释占 40%, 违反 Effective Dart 文档简洁原则) | 底层 | low |
+| **R97-P3-9** | 4 个文件首行 UTF-8 BOM (vent_compose_page / vent_detail_page / legal_page / app_routes) | 底层 | low |
+| **R97-P3-10** | legal_page.dart 撤回时间未走 DateFormat (手工 padLeft 拼接, 未本地化) | 底层 | low |
+| **R97-P3-11** | contact 缺本人手机号校验 (用户把自己的号码填成紧急联系人) | 底层 | low |
+| **R97-P3-12** | ARB description 中英混杂 (zh 是中文 en 是英文, dartdoc 不友好) | 底层 | low |
+| **R97-P3-13** | commonSave 简繁不一致 (zh 与 zh_Hant 都是"保存", 繁体应是"儲存") | 底层 | low |
+| **R97-P3-14** | NotificationService facade 仍持 6 类 ID 常量 (ID range 应下沉到各自 sub-service) | 架构 | medium |
+| **R97-P3-15** | domain/logic 32 文件无目录分组 (建议分子目录 scales/ care/ medication/ trend/) | 架构 | low |
+| **R97-P3-16** | FireCareStrategyUseCase priority map 死代码 (4 strategy 互斥, priority map 是冗余) | 底层 | low |
+
+### 9.6 R97 5 大检查项总结
+
+#### 检查项 ①: 外部链接隐藏 — ✅ 运行时合规, ⚠️ 元数据占位待替换
+
+- **lib/ 内**: 0 处 `launchUrl`/`url_launcher` 调用, 4 处 https URL 全在注释 (sms_service.dart 阿里云文档 + chinese_holidays.dart 说明)
+- **fastlane/metadata/**: 6 个 privacy_url.txt + 6 个 support_url.txt 指向未注册域名 chroniccare.app (R97-P0-3)
+- **assets/legal/**: 3 份法律文档"草稿"标注 (R97-P0-4)
+- **AndroidManifest/Info.plist**: 0 外部 URL scheme 配置, 合规
+
+#### 检查项 ②: 上架/架构/重构/半成品 — 🔴 8 P0 阻塞
+
+- **上架 blocker**: 域名 + 律师 + 签名 + USE_EXACT_ALARM + NMPA (R97-P0-3/4/5/6/8)
+- **半成品**: SMS/Email/IAP/5 厂商 push/PHQ-9 i18n 5 项业务真接 + BootReceiver + NSESSS/CRDPSS 量表
+- **架构违规**: check_safety.dart 跨层 import (R97-P0-1)
+- **重构机会**: home_page_state 650 行 / mood_audio_section / notification_service facade / AppTokens god class
+
+#### 检查项 ③: 顶层架构审视 — ✅ 9.0/10 (国内中型项目天花板)
+
+- **4 层 + core umbrella**: domain 0 Flutter 0 Drift, check_all.dart 守门员强制
+- **依赖方向**: presentation → domain ← data 单向, 跨 feature 边界 check_cross_feature.py 守门
+- **Riverpod 3.x**: Provider<XRepository> 暴露接口 (但 daily_tracking 6 个违规暴露 Impl, R97-P1-1)
+- **隐私边界**: vent 独立表 + 架构强制不进分析/通知/关怀
+- **可优化**: UseCase 层覆盖不足 / services/ 28 文件无目录分组 / AppTokens facade 仍 306 行
+
+#### 检查项 ④: 底层逐行排查 — 14 项 P1+ 修复点
+
+- **架构违规**: check_safety.dart 跨层 import (R97-P0-1)
+- **bug**: VentRepositoryImpl.delete() TOCTOU (R97-P1-3) / TodayMedSchedule DateTime.now() (R97-P1-2)
+- **上架 blocker**: 主页危机入口隐藏 (R97-P0-2) / 通知权限时机 (R97-P1-6) / UGC 无举报 (R97-P1-4)
+- **lint**: unnecessary_late + dead_code + deprecated_member_use (R97-P1-13) + directives_ordering 6 处 (R97-P2-5)
+- **i18n**: 通知 channel 中文 const (R97-P2-7) / userNameFamily 病耻感 (R97-P2-8) / emailBody 不中性 (R97-P2-9)
+
+#### 检查项 ⑤: 开发需求文档更新 — ✅ 本章节已追加 R97 6 视角审计 55 项发现
+
+### 9.7 R97 跨视角共识高频项 (3+ 视角同意)
+
+| # | 问题 | 视角数 | 类别 | 难度 |
+|---|---|---|---|---|
+| 1 | 法务过审 (¥45-90k, 1-2 月) | 3 (spzh/AppStore/GooglePlay) | 架构 | high |
+| 2 | 域名 chroniccare.app 注册 + 部署 | 3 (spzh/AppStore/GooglePlay) | 底层 | medium |
+| 3 | SMS/Email 真接业务阻塞 | 3 (spzh/spen/AppStore) | 架构 | high |
+| 4 | 通知权限请求时机违反"先解释后请求" | 2 (AppStore/GooglePlay) | 底层 | medium |
+| 5 | FeatureFlags 全 false 商店描述不符 | 2 (GooglePlay/AppStore) | 架构 | low |
+| 6 | Release 签名 fallback debug | 2 (emil/GooglePlay) | 底层 | low |
+| 7 | 跨时区 DateTime 不一致 | 2 (emil/spen) | 底层 | low |
+| 8 | PIPL §13 联系人单独同意软实施 | 2 (spzh/AppStore) | 架构 | high |
+
+### 9.8 R97 修复路径建议 (按优先级)
+
+#### 第 1 周 (解锁 P0, 估 13-21 commit)
+
+1. **R97-P0-1** check_safety.dart 跨层 import — 30 分钟, 改 import + 删旧 safety_detector.dart + 改测试 import
+2. **R97-P0-2** 主页危机入口 — 10 分钟, 把 crisis hotline FAB 从 emergencyContactEnabled 守卫中拆出来
+3. **R97-P0-5** Release 签名 — 1-2h, 切 signingConfigs.getByName("release")
+4. **R97-P0-6** USE_EXACT_ALARM — 5 分钟, 删 manifest 第 33 行
+5. **R97-P0-3** 域名注册 — 1-2 天注册 + 7-20 天 ICP 备案 (并行)
+6. **R97-P0-4** 律师过审 — 1-2 周 + ¥45-90k (并行)
+7. **R97-P0-7** SMS/Email 真接 — 跟 R95 task 14/15 合并
+8. **R97-P0-8** NMPA 备案 — 法务咨询 1-2 月 (并行)
+
+#### 第 2 周 (修 P1, 估 8-15 commit)
+
+9. **R97-P1-1** daily_tracking 6 provider 暴露 Impl — 加 6 个 abstract interface
+10. **R97-P1-2** TodayMedSchedule.build() — 改用 ref.watch(todayProvider)
+11. **R97-P1-3** VentRepositoryImpl.delete() TOCTOU — select 挪进 transaction
+12. **R97-P1-4** vent UGC 举报 — 加举报按钮 + metadata 声明 UGC 政策
+13. **R97-P1-5** IAP 描述不符 — 改 user_agreement §3 为"当前免费"或真接 productId
+14. **R97-P1-6** 通知权限请求时机 — 拆 init() 为 initialize() + requestPermissions()
+15. **R97-P1-7** 危机热线展示 — 加 crisisHotlineCnBeijing 渲染
+16. **R97-P1-8/9** 删 INTERNET/RECORD_AUDIO 权限
+17. **R97-P1-10** BootReceiver — 从 manifest 删除注册 + RECEIVE_BOOT_COMPLETED 权限
+18. **R97-P1-11** 危机热线一键拨打 — 加 url_launcher + tel: intent
+19. **R97-P1-12** lint 规则 — 升级到 flutter_lints 推荐集
+20. **R97-P1-13** 3 处 warning — dart fix --apply
+
+#### 第 3-4 周 (降 P2 风险, 估 15-25 commit)
+
+21. **R97-P2-1** UseCase 层 — 补 AddMedicationUseCase / DeleteMedicationUseCase / WithdrawVentConsentUseCase
+22. **R97-P2-2** CareEngine + FireCareStrategyUseCase DRY — use case 直接调 CareEngine.evaluate
+23. **R97-P2-3** latestXxxEntryProvider — 显式 reduce(isAfter) 找最新
+24. **R97-P2-4** AppTokens facade — 5 个 magic size 常量挪到 AppSpacing
+25. **R97-P2-5** directives_ordering — 启用 lint + dart fix --apply
+26. **R97-P2-7** 通知 channel i18n — init() 内 dynamic 拿 l10n 注入 channel
+27. **R97-P2-8/9** userNameFamily / emailBody 中性化
+28. **R97-P2-12** TODO 加版本号 — 统一格式 `// TODO(v0.31, P1): <desc>`
+29. **R97-P2-14** SCHEDULE_EXACT_ALARM 自检卡 — NotificationStatusCard 加状态检测
+30. **R97-P2-15** android:largeHeap — application 标签加
+
+#### v1.0 前 (P3 nice-to-have, 估 10-20 commit)
+
+31. 截图准备 + Appfile 真实凭据
+32. AppListTile dead code 清理 + _StreakCounter 首次动画
+33. _nextReminderTime 抽 provider + 跨时区 DateTime 统一
+34. 版本考古注释梳理 + BOM 文件清理
+35. legal_page DateFormat + contact 本人手机号校验
+36. ARB description 统一英文 + commonSave 简繁修正
+37. NotificationService facade ID 常量下沉
+38. domain/logic 子目录分组
+39. FireCareStrategyUseCase priority map 死代码清理
+
+### 9.9 R97 上架风险评估
+
+**整体上架就绪度**: ~45% (跟 R95 实施后持平, R97 新发现 8 P0 抵消 R95 8 sub-spec 改善)
+
+**Apple App Store 风险**: 🔴 高 — 主页无危机入口 + 隐私 URL 404 + UGC 无举报 = 3 项必拒
+**Google Play 风险**: 🔴 高 — USE_EXACT_ALARM 违规 + Release 签名 + 隐私政策律师未过审 = 3 项必拒
+
+**建议路径**:
+- v0.30 不上 store (R97 8 P0 全部阻塞)
+- 第 1-2 周修 R97-P0-1/2/5/6 + R97-P1-1/2/3/4/6/7/8/9/10/11 共 12 项代码侧修复 (无需外部资源)
+- 第 3-4 周修 R97-P2 17 项降风险
+- 并行启动 R97-P0-3/4/7/8 外部资源 (域名 1-2 天 + ICP 7-20 天 + 律师 1-2 月 + SMS 1-2 月 + NMPA 1-2 月)
+- 最早 M6 (2026-11-15) 4 项外部资源并行完成后上 store
+
+### 9.10 R97 跟 R95 路线图对应关系
+
+| R97 发现 | R95 task 状态 | R97 后状态 |
+|---|---|---|
+| R97-P0-1 check_safety 跨层 import | R95 未识别 | **新发现, 必修** |
+| R97-P0-2 主页危机入口隐藏 | R95 未识别 (R93 FeatureFlag 守门副作用) | **新发现, 必修** |
+| R97-P0-3 域名未注册 | R95 task 40 ⏸️ 留 R96+ | R97 升级为 P0 |
+| R97-P0-4 律师未过审 | R95 task 20 ⏸️ 等付费 | 持平 |
+| R97-P0-5 Release 签名 | R95 task 37 ⏸️ 留 R96+ | R97 升级为 P0 |
+| R97-P0-6 USE_EXACT_ALARM | R95 task 38 ⏸️ 留 R96+ | R97 升级为 P0 (Google Play 2024-07 政策) |
+| R97-P0-7 SMS/Email 真接 | R95 task 14/15 ⏸️ 等付费 | 持平 |
+| R97-P0-8 NMPA 备案 | R95 task 23 ⏸️ 等付费 | 持平 |
+| R97-P1-1 daily_tracking Impl 暴露 | R95 未识别 (R91 daily-tracking 新增) | **新发现, 必修** |
+| R97-P1-4 UGC 无举报 | R95 未识别 | **新发现, 必修** |
+| R97-P1-6 通知权限时机 | R95 未识别 | **新发现, 必修** |
+| R97-P1-13 lint warning | R95 未识别 | **新发现, 必修** |
+
+**R97 新发现总计**: 6 项 (P0-1/P0-2/P1-1/P1-4/P1-6/P1-13), 其余为 R95 已识别但被低估或留 R96+ 的项
+
+---
+
+**R97 6 视角审计追加完成时间**: 2026-08-07
+**R97 审计覆盖**: emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification 6 视角
+**R97 发现总计**: 55 项 (P0=8 / P1=14 / P2=17 / P3=16)
+**R97 新发现**: 6 项 (R95 路线图未覆盖)
+**下次 dev doc 同步**: R97 P0/P1 修复完成后 (估 2-4 周)
+
+---
+
+## 10. R98 7 视角审计 + 底层逐行排查 + 外链核查追加 (2026-08-07, 38 项发现)
+
+> 本章节为 R97 6 视角审计后, 用户要求拉 6 个视角团队 + 外链核查 + 底层逐行排查共 8 个并行子代理对整个项目分别出一份审计报告的汇总追加。8 份报告去重后共 38 项独立发现 (P0=9 / P1=14 / P2=10 / P3=5), 每项标注 **类别 (架构/底层) + 修复难度 (low/medium/high) + 涉及视角**。
+>
+> **完整 R98 审计报告**: [docs/audit/2026-08-07/R98-7perspective-audit.md](audit/2026-08-07/R98-7perspective-audit.md)
+>
+> **审计覆盖 5 个检查项**: ①外部链接隐藏 ②上架/架构/重构/半成品 ③顶层架构审视 ④底层逐行排查 ⑤开发需求文档更新
+>
+> **跟 R97 的关系**: 本章节 38 项发现中, **22 项为 R97 未识别的新发现**, 16 项为 R97 已识别但被低估 (P2/P3 升级 P0/P1) 或留 R96+ 的项。R97 修了 12 项代码侧 P0/P1 (check_safety 跨层 import / 主页危机 FAB / Release 签名 / USE_EXACT_ALARM / 通知权限时机 / 危机热线 tel: 拨打等), 但 R98 新发现 9 项 P0 仍阻塞上架。
+
+### 10.1 R98 8 视角发现统计
+
+| 视角 | P0 | P1 | P2 | P3 | 总计 | 评分 |
+|---|---|---|---|---|---|---|
+| emilkowalski (设计) | 0 | 4 | 6 | 4 | 14 | 8.5/10 (架构成熟度) |
+| superpowers-en (工程) | 1 | 4 | 4 | 2 | 11 | 8/10 (规范度) |
+| superpowers-zh (合规+中文) | 4 | 3 | 3 | 0 | 10 | 6.5/10 (本土化合规) |
+| AppStore (iOS 上架) | 4 | 4 | 4 | 2 | 14 | 5.5/10 (上架就绪度) |
+| GooglePlay (Android 上架) | 3 | 6 | 4 | 1 | 14 | 6/10 (上架就绪度) |
+| flutter-specification (规范) | 0 | 5 | 4 | 1 | 10 | 8/10 (Flutter 规范) |
+| 外链核查 | 0 | 2 | 2 | 0 | 4 | 8.5/10 (外链隐藏度) |
+| 底层逐行排查 | 1 | 4 | 3 | 1 | 9 | 8.5/10 (代码健康度) |
+| **去重后** | **9** | **14** | **10** | **5** | **38** | — |
+
+### 10.2 R98 P0 必修清单 (9 项, 上架/v1.0 blocker)
+
+| R98 ID | 问题 | 类别 | 难度 | 视角 | 跟 R97 关系 | 文件 |
+|---|---|---|---|---|---|---|
+| **R98-P0-1** | PHQ-9 危机弹窗内无"立即拨打"按钮 (6 步操作路径, 精神心理患者危机时刻执行功能受损) | 底层 | low | spzh | **新发现** (R97 修 FAB 可见性, 弹窗内 action 未识别) | [assessment_page.dart#L185](file:///d:/Batch/chroniccare/lib/presentation/pages/assessment/assessment_page.dart) |
+| **R98-P0-2** | PHQ-9 i18n flag 关闭时 zh_Hant/en 用户看简体中文题目 (`FeatureFlags.phqGad7I18nEnabled=false`) = 医疗法律责任 | 架构 | high | spzh | R97-P2-17 升级 P0 | [phq9.dart#L170](file:///d:/Batch/chroniccare/lib/domain/logic/phq9.dart) |
+| **R98-P0-3** | iOS `UIBackgroundModes` 声明 `processing` 但 `handleSafetyCheckTask` 空实现, Apple 2.5.4 拒审风险 | 底层 | medium | AppStore | **新发现** | [Info.plist#L144](file:///d:/Batch/chroniccare/ios/Runner/Info.plist) + [AppDelegate.swift#L72](file:///d:/Batch/chroniccare/ios/Runner/AppDelegate.swift) |
+| **R98-P0-4** | iOS `fastlane/metadata/ios/{locale}/screenshots/` 完全缺失, Apple 4.2.1 强制 6.7" iPhone 截图 = 必拒 | 架构 | medium | AppStore | R97-P3-1 升级 P0 | [fastlane/metadata/ios/](file:///d:/Batch/chroniccare/fastlane/metadata/ios/) |
+| **R98-P0-5** | Android `feature_graphic.png` + 4 张 `phone_screenshots` 全是 67 字节 1×1 占位 PNG, Google Play 必拒 | 架构 | medium | GooglePlay | **新发现** | [fastlane/metadata/android/zh-CN/feature_graphic.png](file:///d:/Batch/chroniccare/fastlane/metadata/android/zh-CN/feature_graphic.png) |
+| **R98-P0-6** | Data Safety Form `data_deletion_endpoint.url = 'https://chroniccare.app/delete-data-instructions'` 不可访问 | 架构 | high | GooglePlay | 跟 R97-P0-3 同源 (域名未注册) | [generate_data_safety_form.py#L84](file:///d:/Batch/chroniccare/scripts/generate_data_safety_form.py) |
+| **R98-P0-7** | 5 厂商 push SDK 未真接, `fiveVendorPushEnabled=false`, 国产 ROM 静默杀后台场景失联通知失效 = 中国市场 P0 | 架构 | high | spzh | 跟 R97-P0-7 部分重叠 (push 跟 SMS 不同) | [feature_flags.dart#L66](file:///d:/Batch/chroniccare/lib/core/data/feature_flags.dart) |
+| **R98-P0-8** | PHQ-9 total ≥ 20 (重度抑郁) 但 Q9=0 时不触发危机资源 dialog, 临床实践上重度抑郁应弹危机资源 | 架构 | medium | spzh | **新发现** | [phq9.dart#L156](file:///d:/Batch/chroniccare/lib/domain/logic/phq9.dart) |
+| **R98-P0-9** | `CareEngine.evaluate` / `CareEngine.fire` 死代码 (注释承诺 v0.28 删除, v0.30 仍在, 0 处实际调用) | 架构 | medium | 底层排查 | **新发现** | [care_engine.dart#L59](file:///d:/Batch/chroniccare/lib/domain/logic/care_engine.dart) |
+
+### 10.3 R98 P1 重要清单 (14 项, 上架前应修)
+
+完整 P1 清单详见 [R98 完整审计报告 §3](audit/2026-08-07/R98-7perspective-audit.md#3-r98-p1-重要清单-14-项-上架前应修)。摘要:
+
+| R98 ID | 问题 | 类别 | 难度 | 视角 |
+|---|---|---|---|---|
+| **R98-P1-1** | 3 处 `.first` 未显式 sort (latestMoodEntryProvider / mood_quick_button / assessment_summary_strip) silent bug | 底层 | low | 底层排查 |
+| **R98-P1-2** | `home_page_state.dart:254-258` 显示 i18n key 字符串而非翻译文案, 用户看到 `⚠️ safetyCheckResultAlerted` | 底层 | low | emil |
+| **R98-P1-3** | `crossedMidnightSince` 用 `DateTime` 而 `nextMidnightRefresh` 用 `tz.TZDateTime`, DST 不一致 | 底层 | low | emil |
+| **R98-P1-4** | 3 个 StreamProvider 缺 autoDispose (allAssessmentEntries / ventSealed / ventSealedAt) | 底层 | low | emil |
+| **R98-P1-5** | iOS `InfoPlist.strings` 缺 en-US 版本, 5 项 usage description 仅中文 | 底层 | medium | AppStore |
+| **R98-P1-6** | IAP "8 元买断" 描述 vs 实际 0 元 + iapEnabled=false 矛盾 (R97-P1-5 未修) | 底层 | medium | AppStore |
+| **R98-P1-7** | iOS subtitle/description 提"规划中/即将上线", Apple 2.3.10 不允许 | 架构 | low | AppStore |
+| **R98-P1-8** | `setup_legal_dialog.dart:110` 硬编码中文 "🆘 心理危机干预热线 (24h)" 未走 ARB | 底层 | low | AppStore |
+| **R98-P1-9** | `assets/legal/` 8 处软隐藏邮箱 + 1 处 GitHub 占位, PIPL §52 实质未提供有效联系方式 | 架构 | medium | spzh + 外链 |
+| **R98-P1-10** | `ConsentGate` 不校验 `ConsentArtifact.version` 一致性, 法律文档升级不强制重走同意 | 架构 | medium | spzh |
+| **R98-P1-11** | `recordConsent` 未记录 `sensitiveDataConsentAt` 时间戳 + 未持久化 `emergencyContactSharing` | 底层 | medium | spzh |
+| **R98-P1-12** | `sensitive_data_consent.md` §4 文档与 `legal_page.dart` UI 不一致 (撤回失联通知) | 架构 | low | spzh |
+| **R98-P1-13** | 跨时区 DateTime 不一致 (跟 P1-3 同源, 4 处混用) | 底层 | low | emil + spen |
+| **R98-P1-14** | `check_zh_hant_consistency.py` 仅字符级不检 phrase (信息→資訊 / 软件→軟體) | 架构 | medium | spzh |
+
+### 10.4 R98 P2/P3 清单 (15 项, v1.0+ 可做)
+
+完整清单详见 [R98 完整审计报告 §4 + §5](audit/2026-08-07/R98-7perspective-audit.md#4-r98-p2-建议清单-10-项-v10-可做)。摘要:
+
+- **P2 (10 项)**: ThemeExtension 缺位 / routerProvider 反模式 / ThemeModeNotifier 异步 / textTheme 不全 / Form 校验未走 FormState / 0 golden test / a11y 覆盖不足 / directives_ordering lint / Android title 超长 / setup 第 4 勾选 onView 空
+- **P3 (5 项)**: main.dart magic number / Future.wait 泛型化 / drift batch 优化 / RadioListTile 弃用 API / trailing comma 清扫
+
+### 10.5 R98 5 大检查项总结
+
+#### 检查项 ①: 外部链接隐藏 — ✅ 代码层就绪 / ⚠️ 法律文档层 9 处软隐藏待清
+
+- **lib/ 代码层**: 0 处真实外链跳转, 4 处 https URL 全为注释, 0 个云上报 SDK, 1 处 url_launcher 严格 `tel:` 危机热线, ✅ **可直接上架**
+- **assets/legal/**: ⚠️ 8 处软隐藏邮箱 + 1 处 GitHub 占位, 用户在「设置 → 法律与隐私」页可见 (R98-P1-9)
+- **评分**: 8.5/10
+
+#### 检查项 ②: 上架/架构/重构/半成品 — 🔴 9 P0 阻塞 (4 项代码侧 + 5 项外部资源)
+
+- **上架 P0**: iOS processing 空挂 + iOS 缺 en-US InfoPlist.strings + iOS/Android 截图缺失/占位 + IAP 描述矛盾 + Data Safety Form URL 不可访问
+- **架构违规 (新发现)**: CareEngine.evaluate/fire 死代码 + 3 处 StreamProvider 缺 autoDispose
+- **半成品 (跟 R97 重叠)**: SMS/Email/IAP/5 厂商 push/PHQ-9 i18n 5 项业务真接
+- **重构机会**: home_page_state 590 行仍偏大 + ThemeExtension 完全缺位 + routerProvider 反模式 + ThemeModeNotifier 异步
+
+#### 检查项 ③: 顶层架构审视 — ✅ 9.0/10 (国内中型项目天花板, 跟 R97 持平)
+
+- 5 层架构 + domain 0 Flutter 0 Drift, `check_all.dart` 守门
+- 隐私边界: vent 独立表 + 架构强制不进分析/通知/关怀, 实际 grep 验证 0 渗入
+- 可优化: UseCase 层覆盖不足 / services/ 28 文件无目录分组 / AppTokens facade 仍 306 行
+
+#### 检查项 ④: 底层逐行排查 — 🔴 3 项 Major silent bug + 12 项 Minor
+
+- **3 项 Major silent bug (新发现)**: latestMoodEntryProvider 3 处 `.first` 未 sort (R98-P1-1) + home_page_state 显示 i18n key (R98-P1-2) + crossedMidnightSince DST 不一致 (R98-P1-3)
+- **12 项 Minor**: 3 个 StreamProvider 缺 autoDispose + main.dart 10+ magic number + Future.wait as 强转 + drift batch 优化 + moodEntriesProvider 吞 loading + RadioListTile 弃用 API + 0 golden test + a11y 覆盖偏少 + Form 校验未走 FormState + 104 trailing comma + import 顺序违反 + CareEngine 死代码
+
+#### 检查项 ⑤: 开发需求文档更新 — ✅ 本章节 + R98 完整审计报告
+
+### 10.6 R98 跨视角共识高频项
+
+| # | 问题 | 视角数 | 类别 | 难度 |
+|---|---|---|---|---|
+| 1 | PHQ-9 量表 i18n + 临床判定逻辑 (Q9 ≥1 弹窗无拨打 + ≥20 不弹) | 3 (spzh/AppStore/底层) | 架构+底层 | medium |
+| 2 | 法律文档"草稿未经律师过审" + 联系方式软隐藏 (PIPL §52) | 3 (spzh/AppStore/GooglePlay/外链) | 架构 | high |
+| 3 | 域名 chroniccare.app 未注册 (隐私 URL / Data Safety Form / 联系邮箱 全失效) | 4 (spzh/AppStore/GooglePlay/外链) | 底层 | medium |
+| 4 | iOS + Android 截图完全缺失 / 占位 PNG | 2 (AppStore/GooglePlay) | 架构 | medium |
+| 5 | SMS/Email/IAP/5 厂商 push 业务真接阻塞 | 3 (spzh/spen/AppStore) | 架构 | high |
+| 6 | 跨时区 DateTime 不一致 (DST bug) | 2 (emil/spen) | 底层 | low |
+
+### 10.7 R98 修复路径建议 (按优先级)
+
+#### 第 1 周 (解锁代码侧 P0, 估 8-12 commit)
+
+1. **R98-P0-1** PHQ-9 危机弹窗加"立即拨打"按钮 — 1h
+2. **R98-P0-3** iOS 删 `processing` 后台模式 + AppDelegate register 代码 — 30 分钟
+3. **R98-P0-9** 删 `CareEngine.evaluate` / `CareEngine.fire` 死代码 + 同步删 LEGACY_API_NOTES.md — 1h
+4. **R98-P1-1** 3 处 `.first` 加显式 sort — 30 分钟
+5. **R98-P1-2** `home_page_state.dart:254-258` 改用 `displayMessageL10n(l10n)` — 5 分钟
+6. **R98-P1-3** `crossedMidnightSince` 改 `tz.TZDateTime` — 30 分钟
+7. **R98-P1-4** 3 个 StreamProvider 加 `.autoDispose` — 10 分钟
+8. **R98-P1-8** `setup_legal_dialog.dart:110` 改走 ARB — 30 分钟
+9. **R98-P2-10** `setup_step_consent.dart:112-118` 第 4 勾选 onView 跳文档页 — 30 分钟
+
+#### 第 2 周 (修 P1, 估 6-10 commit)
+
+10. **R98-P1-5** 新建 `ios/Runner/en.lproj/InfoPlist.strings` + pbxproj PBXVariantGroup — 2h
+11. **R98-P1-6** 统一 IAP 描述 — 1h
+12. **R98-P1-7** 删 subtitle/description "规划中"措辞 — 30 分钟
+13. **R98-P1-9** 清理 assets/legal/ 8 处软隐藏邮箱 + GitHub 占位 — 1h
+14. **R98-P1-10** ConsentGate 加 version 校验 — 4h
+15. **R98-P1-11** recordConsent 补 sensitiveDataConsentAt — 2h
+16. **R98-P1-12** 同步 sensitive_data_consent.md §4 — 30 分钟
+17. **R98-P1-14** check_zh_hant_consistency.py 加 phrase 词典 — 4h
+
+#### 第 3-4 周 (外部资源并行 + P2 降风险, 估 10-20 commit)
+
+18. **R98-P0-4** iOS 截图 (6.7"/6.1"/5.5" iPhone + 12.9" iPad 各 1-3 张) — 4-8h
+19. **R98-P0-5** Android feature_graphic 1024×500 + 4 张 phone_screenshots — 4-8h
+20. **R98-P0-2** PHQ-9/GAD-7 16 题完整 ARB 翻译后翻 flag — 1-2 周
+21. **R98-P0-6** 域名注册 + 部署隐私政策/支持页面 — 1-2 天注册 + 7-20 天 ICP
+22. **R98-P0-7** 5 厂商 push SDK 申请 + 集成 — 1-2 月审核期
+23. **R98-P0-8** PHQ-9 ≥20 加 CrisisSignal.Kind.severe — 2h
+24. **R98-P2-1** ThemeExtension 重构 — 2-3 天
+25. **R98-P2-2** routerProvider 改 NotifierProvider — 1 天
+26. **R98-P2-3** ThemeModeNotifier 改 AsyncNotifier — 4h
+27. **R98-P2-5** setup 表单迁 Form + TextFormField — 1 天
+28. **R98-P2-6** 8-10 个核心 widget 加 golden test — 2-3 天
+
+### 10.8 R98 上架风险评估
+
+**整体上架就绪度**: ~50% (R97 修 12 项后 ~50%, R98 新发现 9 P0 抵消改善, 持平)
+
+**Apple App Store 风险**: 🔴 高 — 5 项必拒 (processing 空挂 + 截图缺失 + 隐私 URL 404 + IAP 描述矛盾 + InfoPlist.strings 缺 en-US)
+**Google Play 风险**: 🔴 高 — 4 项必拒 (feature_graphic 占位 + 截图占位 + Data Safety URL 不可访问 + 隐私政策律师未过审)
+
+**建议路径**:
+- v0.30 不上 store (R98 9 P0 全部阻塞)
+- 第 1-2 周修 R98-P0-1/3/9 + R98-P1-1/2/3/4/5/6/7/8/9/10/11/12/14 共 14 项代码侧修复 (无需外部资源)
+- 并行启动 R98-P0-2 (PHQ-9 i18n 1-2 周) + R98-P0-4/5 (截图 4-8h) + R98-P0-6 (域名 7-20 天 ICP) + R98-P0-7 (5 厂商 push 1-2 月)
+- 最早 M6 (2026-11-15) 4 项外部资源并行完成后上 store
+
+### 10.9 R98 跟 R97 路线图对应关系
+
+| R98 发现 | R97 状态 | R98 后状态 |
+|---|---|---|
+| R98-P0-1 PHQ-9 弹窗无拨打 | R97 修了 FAB 可见性, 弹窗内 action 未识别 | **新发现, 必修** |
+| R98-P0-2 PHQ-9 i18n flag 关 | R97-P2-17 (P2) | R98 升级 P0 (医疗法律责任) |
+| R98-P0-3 iOS processing 空挂 | R97 未识别 | **新发现, 必修** |
+| R98-P0-4 iOS 截图缺失 | R97-P3-1 (P3) | R98 升级 P0 (4.2.1 必拒) |
+| R98-P0-5 Android 截图占位 | R97 未识别 | **新发现, 必修** |
+| R98-P0-6 Data Safety Form | R97-P0-3 同源 (域名) | 持平 (具体到 data_deletion_endpoint) |
+| R98-P0-7 5 厂商 push | R97-P0-7 (SMS/Email) | 部分重叠 (push 跟 SMS 不同) |
+| R98-P0-8 PHQ-9 ≥20 不弹 | R97 未识别 | **新发现, 必修** |
+| R98-P0-9 CareEngine 死代码 | R97 未识别 | **新发现, 必修** |
+| R98-P1-1 .first 隐式排序 | R97-P2-3 (P2) | R98 升级 P1 (silent bug) |
+| R98-P1-2 displayMessage i18n key | R97 未识别 | **新发现, 必修** |
+| R98-P1-3 DST 不一致 | R97-P3-7 (P3) | R98 升级 P1 (海外用户 bug) |
+| R98-P1-4 StreamProvider autoDispose | R97 未识别 | **新发现, 必修** |
+| R98-P1-9 法律文档软隐藏 | R97-P2-11 (P2) | R98 升级 P1 (PIPL §52) |
+| R98-P1-10 ConsentGate version 校验 | R97 未识别 | **新发现, 必修** |
+| R98-P1-14 zh_Hant phrase 一致性 | R97-P3-13 (P3 commonSave) | R98 升级 P1 (医疗文案精确性) |
+
+**R98 新发现总计**: 22 项 (P0=5 / P1=8 / P2=6 / P3=3), 16 项为 R97 已识别但被低估或留 R96+ 的项升级
+
+---
+
+**R98 7 视角审计 + 底层逐行排查 + 外链核查追加完成时间**: 2026-08-07
+**R98 审计覆盖**: emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification 6 视角 + 外链核查 + 底层逐行排查 共 8 个并行子代理
+**R98 发现总计**: 38 项 (P0=9 / P1=14 / P2=10 / P3=5)
+**R98 新发现**: 22 项 (R97 路线图未覆盖)
+**下次 dev doc 同步**: R98 P0/P1 修复完成后 (估 2-4 周)

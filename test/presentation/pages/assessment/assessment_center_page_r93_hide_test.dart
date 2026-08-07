@@ -46,13 +46,9 @@ void main() {
     );
   }
 
-  setUp(() {
-    FeatureFlags.resetForTest();
-  });
+  setUp(FeatureFlags.resetForTest);
 
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  tearDown(FeatureFlags.resetForTest);
 
   testWidgets(
       'R93 case 1: phqGad7I18nEnabled 默认 false → 8 开放 + 2 unavailable = 10 卡片, PHQ-9 / GAD-7 隐藏',
@@ -65,9 +61,9 @@ void main() {
 
     // PHQ-9 / GAD-7 隐藏
     expect(find.text('PHQ-9 抑郁筛查'), findsNothing,
-        reason: 'R93: phqGad7I18nEnabled=false 时 PHQ-9 隐藏');
+        reason: 'R93: phqGad7I18nEnabled=false 时 PHQ-9 隐藏',);
     expect(find.text('GAD-7 焦虑筛查'), findsNothing,
-        reason: 'R93: phqGad7I18nEnabled=false 时 GAD-7 隐藏');
+        reason: 'R93: phqGad7I18nEnabled=false 时 GAD-7 隐藏',);
 
     // 其他 8 量表仍渲染 (chart chip + grid card 双重渲染, 走 findsWidgets ≥1)
     expect(find.text('ISI 失眠严重指数'), findsWidgets);

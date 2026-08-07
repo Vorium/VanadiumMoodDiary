@@ -121,7 +121,7 @@ void main() {
 
       // showDateRangePicker 弹 Dialog
       expect(find.byType(Dialog), findsOneWidget,
-          reason: 'showDateRangePicker 弹 Dialog');
+          reason: 'showDateRangePicker 弹 Dialog',);
     },
   );
 
@@ -137,7 +137,7 @@ void main() {
         onExport: () async {
           callCount++;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -149,7 +149,7 @@ void main() {
 
       // 验证: 没有 showDateRangePicker Dialog (跳过完整链路)
       expect(find.byType(Dialog), findsNothing,
-          reason: 'onExport 模式下, 不应弹 date picker');
+          reason: 'onExport 模式下, 不应弹 date picker',);
     },
   );
 
@@ -190,7 +190,7 @@ void main() {
       final failingPdf = _FailingCbtPdf();
       await tester.pumpWidget(_wrap(
         pdfBuilder: () => failingPdf,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // 渲染: AppListTile 出现 + pdfBuilder 注入成功 (不报 ProviderException)
@@ -201,7 +201,7 @@ void main() {
       await tester.tap(find.byType(AppListTile));
       await tester.pumpAndSettle();
       expect(find.byType(Dialog), findsOneWidget,
-          reason: 'date picker 应弹出');
+          reason: 'date picker 应弹出',);
 
       // 关闭 date picker (back button) — 走 cancel 分支
       await tester.tapAt(const Offset(50, 100)); // tap outside

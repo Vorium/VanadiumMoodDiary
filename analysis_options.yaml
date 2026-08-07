@@ -16,7 +16,63 @@ analyzer:
 
 linter:
   rules:
+    # ---- 已有 4 条 (保留) ----
     - avoid_print
     - prefer_const_constructors
     - prefer_const_literals_to_create_immutables
     - require_trailing_commas
+
+    # ---- R97-P1-12 (2026-08-07): Effective Dart + bug-catching 增强 ----
+    # 选规则原则:
+    #   1. 优先抓真 bug (类型 / 资源泄漏 / 集合误用)
+    #   2. 再补 Effective Dart 风格 (跟 flutter-spec 报告对齐)
+    #   3. 不加噪声大的 (prefer_final_locals / prefer_final_in_for_each / discarded_futures)
+    #      —— 这些会跟项目 swallowError fire-and-forget 模式冲突, 留 P2 再议
+
+    # --- 资源泄漏防护 (匹配 AGENTS.md "Stream subscription leak" / "close_sinks" 已知坑) ---
+    - cancel_subscriptions        # StreamSubscription 必须 .cancel() (AGENTS.md 已记录坑)
+    - close_sinks                 # StreamController 必须 .close()
+    - unawaited_futures           # Future 必须 await / unawaited() 显式标记 fire-and-forget
+
+    # --- 类型安全 (catch 真 bug) ---
+    - await_only_futures          # await 非 Future 是 bug
+    - collection_methods_unrelated_type   # List<int>.contains("str") 类误用
+    - unrelated_type_equality_checks      # int == String 永远 false 类 bug
+    - noop_primitive_operations   # "" + x 之类 no-op
+    - null_check_on_nullable_type_parameter
+
+    # --- Effective Dart 风格 ---
+    - prefer_const_declarations   # const 优先于 final (Effective Dart §25)
+    - prefer_typing_uninitialized_variables  # 未初始化变量必须显式类型
+    - prefer_void_to_null         # 不要用 Null 类型, 用 void
+    - prefer_generic_function_type_aliases   # typedef Foo<T> = ...
+    - prefer_constructors_over_static_methods
+    - unnecessary_parenthesis
+    - unnecessary_overrides
+    - unnecessary_await_in_return # return await x 多余 (Effective Dart)
+    - unnecessary_breaks          # switch 默认 break 多余 (Dart 3)
+    - unnecessary_lambdas         # closure 包 1 行函数调用 → tear-off
+    - unnecessary_null_checks     # `!` 多余
+    - use_if_null_to_convert_nulls_to_bools   # x == null ? false : x → x ?? false
+    - use_is_even_rather_than_modulo
+    - use_named_constants         # 同值常量复用 (DRY)
+    - use_string_buffers          # 循环拼字符串用 StringBuffer
+    # 注: use_setters_to_change_properties 暂不启用 — Dart setter 不能是 static,
+    # 项目 feature_flags.dart 7 个 setXxxForTest 是 static 测试 mutator, 规则会
+    # 误报。规则只对 instance method 有意义, 收益太窄。
+    - use_to_and_as_if_applicable # toString() / asMap() 命名约定
+    - void_checks
+
+    # --- 文档 / API 一致性 ---
+    - provide_deprecation_message  # @Deprecated 必须带 message
+    # 注: comment_references 暂不启用 — 项目大量 [Foo] 引用跨包类型 (如
+    # [StreamSubscription] 来自 dart:async 但文件未 import), 启用会出 29 个
+    # info-level warning, 收益 vs 噪声比不划算。留 P2 修完 doc 后再开。
+    - unintended_html_in_doc_comment  # doc comment 里 < > 被当 HTML
+
+    # --- Flutter 性能 ---
+    - use_colored_box             # Container(color:) → ColoredBox
+    - use_decorated_box           # Container(decoration:) → DecoratedBox
+
+    # --- 测试 ---
+    - use_test_throws_matchers    # try/catch fail() → throwsA matcher

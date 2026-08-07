@@ -28,7 +28,7 @@ void main() {
     test('trigger.shouldFire = false → 不调 notificationService.showNow',
         () async {
       final fake = FakeNotificationSender();
-      final trigger = const CareTrigger(
+      const trigger = CareTrigger(
         type: CareTriggerType.none,
         title: '',
         body: '',
@@ -40,7 +40,7 @@ void main() {
 
     test('trigger.shouldFire = true → 调 showNow + 标题+body+id', () async {
       final fake = FakeNotificationSender();
-      final trigger = const CareTrigger(
+      const trigger = CareTrigger(
         type: CareTriggerType.lateCheckInHabit,
         title: '记得早点休息',
         body: '你最近都晚睡',
@@ -55,7 +55,7 @@ void main() {
 
     test('showNow 抛异常 → 不崩 (try/catch 包了)', () async {
       final fake = _FailingNotificationSender();
-      final trigger = const CareTrigger(
+      const trigger = CareTrigger(
         type: CareTriggerType.weekPerfect,
         title: '真棒',
         body: '保持下去',

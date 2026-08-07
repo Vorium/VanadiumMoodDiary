@@ -34,9 +34,9 @@ class MonthlyChart extends StatelessWidget {
         ),
       );
     }
-    final maxY = (monthly
+    final maxY = monthly
         .map((m) => m.rate * 100)
-        .fold<double>(0, (a, b) => a > b ? a : b)).clamp(10, 100).toDouble();
+        .fold<double>(0, (a, b) => a > b ? a : b).clamp(10, 100).toDouble();
     // v0.27 R72 (P5.4): 整 build 包 RepaintBoundary
     // 跨 midnight 重建 / 切换月份时 BarChart 不重 paint
     return RepaintBoundary(

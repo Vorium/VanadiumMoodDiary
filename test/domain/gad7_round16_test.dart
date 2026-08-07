@@ -18,7 +18,7 @@ void main() {
   });
 
   group('Gad7Scale 接口契约', () {
-    final s = gad7Scale;
+    const s = gad7Scale;
 
     test('id = gad7', () {
       expect(s.id, 'gad7');
@@ -39,7 +39,7 @@ void main() {
   });
 
   group('Gad7Scale.computeResult 严重度切分', () {
-    final s = gad7Scale;
+    const s = gad7Scale;
     List<int> scores(int n) => List.filled(n, 1).toList(); // n 个 1 分
 
     test('0 → 几乎没有', () {

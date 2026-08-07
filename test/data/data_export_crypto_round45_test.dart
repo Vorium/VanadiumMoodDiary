@@ -78,7 +78,7 @@ void main() {
     });
 
     test('encrypt → decrypt round-trip', () async {
-      final original = '今天情绪低落, 工作压力大';
+      const original = '今天情绪低落, 工作压力大';
       final encrypted = await svc.encryptVentText(original);
       expect(encrypted, isNotNull);
       final decrypted = await svc.decryptVentText(encrypted);
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('同一文字二次 encrypt → 不同 BLOB (IV 随机性)', () async {
-      final text = '测试 IV 随机性';
+      const text = '测试 IV 随机性';
       final enc1 = await svc.encryptVentText(text);
       final enc2 = await svc.encryptVentText(text);
       expect(enc1, isNotNull);

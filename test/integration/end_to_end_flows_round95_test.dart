@@ -25,7 +25,6 @@
 //   audio session
 
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -75,8 +74,7 @@ void main() {
       orElse: () =>
           const StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
     );
-    expect(initialStreak.streak, 0,
-        reason: '初始无打卡 → streak=0');
+    expect(initialStreak.streak, 0, reason: '初始无打卡 → streak=0');
 
     // ===== Step 2: 写今天打卡 =====
     final checkInRepo = container.read(checkInRepositoryProvider);
@@ -85,14 +83,14 @@ void main() {
     // ===== Step 3: 直接走 repo watchNormalCheckIns (不依赖 StreamProvider autoDispose) =====
     final checkIns = await checkInRepo.watchNormalCheckIns().first;
     expect(checkIns.length, 1,
-        reason: '1 个今天 normal 打卡 → watchNormalCheckIns 返 1 条');
+        reason: '1 个今天 normal 打卡 → watchNormalCheckIns 返 1 条',);
     // 直接用 StreakCalculator 算 (不依赖 Provider stream sync 顺序)
     final streak = StreakCalculator.calculate(
       checkIns: checkIns,
       now: DateTime.now(),
     );
     expect(streak, 1,
-        reason: '1 个今天 normal 打卡 → StreakCalculator.calculate() 返 1');
+        reason: '1 个今天 normal 打卡 → StreakCalculator.calculate() 返 1',);
     expect(
       StreakCalculator.shouldShowStreakBroken(
         checkIns: checkIns,
@@ -115,32 +113,33 @@ void main() {
     // ===== Step 1: saveSetup 含 1 个紧急联系人 + 1 个同意 (PIPL §13) =====
     // contactList.length == contactConsents.length (PIPL §13 必填, 见 saveSetup 注释)
     await container.read(databaseProvider).saveSetup(
-          userName: '集成测试用户',
-          contactList: const [
-            (name: '家人A', phone: '13800000001', sortOrder: 0),
-          ],
-          contactConsents: [
-            ConsentArtifact(
-              kind: ConsentKind.emergencyContactSharing,
-              version: 'integration-test-v1',
-              grantedAt: DateTime.now(),
-              grantedBy: 'integration-test-user',
-            ),
-          ],
-          medicationList: const [],
-        );
+      userName: '集成测试用户',
+      contactList: const [
+        (name: '家人A', phone: '13800000001', sortOrder: 0),
+      ],
+      contactConsents: [
+        ConsentArtifact(
+          kind: ConsentKind.emergencyContactSharing,
+          version: 'integration-test-v1',
+          grantedAt: DateTime.now(),
+          grantedBy: 'integration-test-user',
+        ),
+      ],
+      medicationList: const [],
+    );
 
     // ===== Step 2: 直接走 contactRepository.watchAll (不依赖 StreamProvider autoDispose) =====
     final contactRepo = container.read(contactRepositoryProvider);
     final contacts = await contactRepo.watchAll().first;
     expect(contacts.length, 1,
-        reason: 'saveSetup 写 1 联系人 → contactRepository.watchAll 返 1');
+        reason: 'saveSetup 写 1 联系人 → contactRepository.watchAll 返 1',);
     expect(contacts.first.name, '家人A');
     expect(contacts.first.phone, '13800000001');
     expect(contacts.first.sortOrder, 0);
   });
 
-  test('集成 3: 评估 → PHQ-9 → DB round-trip (AssessmentRepository.submitEntry + check_ins 端到端)',
+  test(
+      '集成 3: 评估 → PHQ-9 → DB round-trip (AssessmentRepository.submitEntry + check_ins 端到端)',
       () async {
     final container = ProviderContainer(
       overrides: [
@@ -159,15 +158,14 @@ void main() {
       answers: const [3, 3, 3, 3, 3, 0, 0, 3, 0], // 9 题
       note: '集成测试 PHQ-9 高严重度',
     );
-    expect(id, greaterThan(0),
-        reason: 'submitEntry 返 drift auto-generate id');
+    expect(id, greaterThan(0), reason: 'submitEntry 返 drift auto-generate id');
 
     // ===== Step 2: 走真 check_ins 表读, 验证 JSON 编码 =====
     final database = container.read(databaseProvider);
     final checkIns = await database.select(database.checkIns).get();
     expect(checkIns.length, 1);
     expect(checkIns.first.type, 'phq9',
-        reason: 'R90 量表中心: assessment 走 check_ins.type = scaleId');
+        reason: 'R90 量表中心: assessment 走 check_ins.type = scaleId',);
     expect(checkIns.first.note, isNotNull);
     // 验证 JSON 编码含 score + severity + answers
     final noteJson = checkIns.first.note!;
@@ -207,26 +205,27 @@ void main() {
     // moodEntries / medications / ventEntries / reportHistories /
     // assessmentEntries / cbtThoughtRecords
     expect(jsonStr.contains('"version"'), isTrue,
-        reason: '导出 JSON 含 version 字段 (R57 schema 规范)');
+        reason: '导出 JSON 含 version 字段 (R57 schema 规范)',);
     expect(jsonStr.contains('"exportedAt"'), isTrue,
-        reason: '导出 JSON 含 exportedAt 时间戳');
+        reason: '导出 JSON 含 exportedAt 时间戳',);
     expect(jsonStr.contains('"checkIns"'), isTrue,
-        reason: '导出 JSON 含 checkIns 段 (7 段数据)');
+        reason: '导出 JSON 含 checkIns 段 (7 段数据)',);
     expect(jsonStr.contains('"moodEntries"'), isTrue,
-        reason: '导出 JSON 含 moodEntries 段 (7 段数据)');
+        reason: '导出 JSON 含 moodEntries 段 (7 段数据)',);
     expect(jsonStr.length, greaterThan(100),
-        reason: 'JSON 长度 > 100 字符 (含 schema + data)');
+        reason: 'JSON 长度 > 100 字符 (含 schema + data)',);
   });
 
-  test('集成 5: vent 树洞 → 写 → DB 落库 (VentRepository.add 端到端, FlutterSecureStorage mock)',
+  test(
+      '集成 5: vent 树洞 → 写 → DB 落库 (VentRepository.add 端到端, FlutterSecureStorage mock)',
       () async {
     // vent 加密服务走 FlutterSecureStorage MethodChannel, 需要 mock
     // R56c 模式: 在 test 里设 MethodChannel handler, 让 read/write 走 in-memory
     // map, 跟 R79 encryption service test 同模式
-    const channel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+    const channel =
+        MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
     final keyValueStore = <String, String>{};
-    TestDefaultBinaryMessengerBinding
-        .instance.defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
       if (call.method == 'read') {
         final key = (call.arguments as Map?)?['key'] as String?;
@@ -275,8 +274,7 @@ void main() {
     final ventId = await ventRepo.add(
       text: '集成测试 vent text 加密 round-trip',
     );
-    expect(ventId, greaterThan(0),
-        reason: 'add 返 drift auto-generate id');
+    expect(ventId, greaterThan(0), reason: 'add 返 drift auto-generate id');
 
     // ===== Step 2: 走 ventRepository.watchAll 验证落库 =====
     final allVent = await ventRepo.watchAll().first;
@@ -284,17 +282,16 @@ void main() {
     // vent text 在 DB 走 contentText (BLOB 加密), watchAll 返实体, text 由
     // service decrypt 后返 (跟 R20 vent audio 模式一致)
     expect(allVent.first.hasText, isTrue,
-        reason: 'vent text 加密落库, watchAll decrypt 后 hasText=true');
+        reason: 'vent text 加密落库, watchAll decrypt 后 hasText=true',);
     expect(allVent.first.audioPath, isNull);
 
     // ===== Step 3: 模拟撤回 (PIPL §47 删除权, R95 留 R96+ 真接) =====
     // ventRepository.delete 单条物理删 (PIPL §47 删除权), UI 立即隐藏
     final deleted = await ventRepo.delete(ventId);
     expect(deleted, isTrue,
-        reason: 'delete(ventId) 返 true (条目物理删, PIPL §47 删除权)');
+        reason: 'delete(ventId) 返 true (条目物理删, PIPL §47 删除权)',);
 
     final afterDelete = await ventRepo.watchAll().first;
-    expect(afterDelete.length, 0,
-        reason: 'delete 后 vent 不在列表 (UI 隐藏)');
+    expect(afterDelete.length, 0, reason: 'delete 后 vent 不在列表 (UI 隐藏)');
   });
 }

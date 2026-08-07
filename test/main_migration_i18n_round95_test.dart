@@ -118,7 +118,7 @@ void main() {
       // R95 task 53 范围: 不强制改 _MigrationPromptApp 的 loading skeleton
       // (它内部无硬编码中文), 但 lock-in 防止未来回归加硬编码
       // 这个 test 故意 skip (范围外), 仅作为 R95 task 53 完成度的辅助 lock-in
-    }, skip: '范围外: _MigrationPromptApp 走 LoadingSkeleton, 无硬编码中文, lock-in 由 widget test 验证');
+    }, skip: '范围外: _MigrationPromptApp 走 LoadingSkeleton, 无硬编码中文, lock-in 由 widget test 验证',);
 
     test('AppLocalizations 8 新 key 都暴露 getter', () {
       // 验证 generated AppLocalizations 有 8 个 getter (确保 gen-l10n 跑过)

@@ -1,4 +1,4 @@
-﻿// v0.30 round 95 (sub-spec 1 task 6.5): 拆 export_tile JSON 弹窗 → export_dialog
+// v0.30 round 95 (sub-spec 1 task 6.5): 拆 export_tile JSON 弹窗 → export_dialog
 //
 // 数据导出 JSON 弹窗 (Q4b 律师) — 从 export_tile (267 行) 抽出 JSON 弹窗 100+ 行
 //
@@ -12,6 +12,7 @@
 // ConsumerWidget 模式 (R95 sub-spec 1 步骤 2-6 一致):
 // - StatelessWidget 自包含 show (Future<bool?> show(BuildContext)) — 包装 showDialog
 // - 接受 onCopy 回调 (测试可注入自定义 handler 跳过 Clipboard 副作用)
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_tile.dart' show ExportTile;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -211,24 +212,32 @@ class _ExportDialogContent extends StatelessWidget {
               size: AppTokens.iconSizeInline,
             ),
             label: Text(AppLocalizations.of(context).settingsCopy),
-            onPressed: isAcknowledged
-                ? () async {
-                    if (onCopy != null) {
-                      await onCopy!(json);
-                    } else {
-                      await Clipboard.setData(
-                        ClipboardData(text: json),
-                      );
-                      if (ctx.mounted) {
-                        // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
-                        AppSnackBar.showInfo(
-                          ctx,
-                          AppLocalizations.of(ctx).snackbarCopied,
-                        );
-                      }
-                    }
-                  }
-                : null,
+            // R97-P1-13 (2026-08-07): dead_code 修复。
+            //
+            // 修前: `onPressed: isAcknowledged ? () async {...} : null,`,
+            // 但 [isAcknowledged] 是 always-true 局部变量 (R95 sub-spec 8
+            // task 19 设计: checkbox 强制 read-only 默认勾选, Q4b 律师反馈
+            // 责任划界走"点 copy = 主动 ack"), 永远不为 false → `: null,`
+            // 死分支触发 dead_code warning。
+            //
+            // 修法: 删 `: null,` 分支, 直接用 callback。`isAcknowledged`
+            // 变量保留 (CheckboxListTile value 仍引用, 文档化设计意图)。
+            onPressed: () async {
+              if (onCopy != null) {
+                await onCopy!(json);
+              } else {
+                await Clipboard.setData(
+                  ClipboardData(text: json),
+                );
+                if (ctx.mounted) {
+                  // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
+                  AppSnackBar.showInfo(
+                    ctx,
+                    AppLocalizations.of(ctx).snackbarCopied,
+                  );
+                }
+              }
+            },
           ),
         ],
       ),

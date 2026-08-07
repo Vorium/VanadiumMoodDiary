@@ -6,6 +6,7 @@ import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/services/legal_version.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_reminder_section.dart';
 
 /// 心理评估 section — 评估历史 + 周期提醒 + 量表列表 + 邮件预览 + 关于
@@ -93,7 +94,7 @@ class AssessmentSection extends StatelessWidget {
               color: AppTokens.primaryColor(context),
             ),
             title: Text(AppLocalizations.of(context).settingsAbout),
-            subtitle: Text(AppLocalizations.of(context).settingsAboutVersion),
+            subtitle: Text(AppLocalizations.of(context).settingsAboutVersion(kPubspecVersion.split('+').first)),
           ),
         ),
 

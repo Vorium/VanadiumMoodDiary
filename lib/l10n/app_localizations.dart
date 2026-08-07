@@ -5,8 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'package:chroniccare/core/l10n/safety_alert_l10n.dart';
-
 import 'app_localizations_en.dart';
 import 'app_localizations_zh.dart';
 
@@ -63,12 +61,7 @@ import 'app_localizations_zh.dart';
 /// you wish to add from the pop-up menu in the Value field. This list should
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
-///
-/// v0.29 R96+R97 修正: 显式 implements SafetyAlertL10n (在 core/l10n/),
-/// 让 data 层 (SafetyAlertBuilder / SafetyAlertDispatcher / SafetyWatchService)
-/// 接收 SafetyAlertL10n interface 时能直接拿 AppLocalizations 实例。
-/// 跑 `python scripts/apply_l10n_implements.py` 自动补回, 跑 `flutter analyze` 验证 0 error。
-abstract class AppLocalizations implements SafetyAlertL10n {
+abstract class AppLocalizations {
   AppLocalizations(String locale)
       : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
@@ -448,11 +441,11 @@ abstract class AppLocalizations implements SafetyAlertL10n {
   /// **'查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比'**
   String get settingsAssessmentHistorySubtitle;
 
-  /// No description provided for @settingsAboutVersion.
+  /// R99 (BUG-2): 关于页版本行, version 走 kPubspecVersion 动态注入 (不再硬编码)
   ///
   /// In zh, this message translates to:
-  /// **'v0.23.0 · 我今天吃了药'**
-  String get settingsAboutVersion;
+  /// **'v{version} · 我今天吃了药'**
+  String settingsAboutVersion(String version);
 
   /// No description provided for @settingsDisclaimerText.
   ///
@@ -1522,6 +1515,36 @@ abstract class AppLocalizations implements SafetyAlertL10n {
   /// **'🔒 私密 · 只有您能看到'**
   String get ventDetailPrivacy;
 
+  /// R97-P1-4 (2026-08-07): 树洞详情页举报 / 反馈按钮 tooltip (Apple 1.2.1 UGC 报告机制要求)
+  ///
+  /// In zh, this message translates to:
+  /// **'举报或反馈'**
+  String get ventReportTooltip;
+
+  /// R97-P1-4: 举报 / 反馈对话框标题
+  ///
+  /// In zh, this message translates to:
+  /// **'私密倾诉说明'**
+  String get ventReportDialogTitle;
+
+  /// R97-P1-4: 举报 / 反馈对话框正文, 说明 vent 是本地私密内容 + 引导到 legal 页反馈
+  ///
+  /// In zh, this message translates to:
+  /// **'树洞内容仅存储在您的设备, 不会上传任何服务器, 不存在用户间互相看到的情况。\n\n如发现 App 本身的不当内容或想反馈问题, 请前往「法律与隐私」页面联系开发者。'**
+  String get ventReportDialogBody;
+
+  /// R97-P1-4: 举报对话框跳转 legal 页按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'前往法律与隐私'**
+  String get ventReportDialogAction;
+
+  /// R97-P1-4: 举报对话框关闭按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭'**
+  String get ventReportDialogClose;
+
   /// No description provided for @ventToday.
   ///
   /// In zh, this message translates to:
@@ -2026,6 +2049,18 @@ abstract class AppLocalizations implements SafetyAlertL10n {
   /// In zh, this message translates to:
   /// **'评估历史'**
   String get homeTooltipAssessmentHistory;
+
+  /// No description provided for @homeTooltipSettings.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置'**
+  String get homeTooltipSettings;
+
+  /// No description provided for @ventSwipeHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'左滑或长按条目可删除'**
+  String get ventSwipeHint;
 
   /// No description provided for @homeStreakRestart.
   ///
@@ -3795,31 +3830,31 @@ abstract class AppLocalizations implements SafetyAlertL10n {
   /// No description provided for @settingsIapUpgradeTitle.
   ///
   /// In zh, this message translates to:
-  /// **'升级到 Pro'**
+  /// **'购买此 App'**
   String get settingsIapUpgradeTitle;
 
   /// No description provided for @settingsIapUpgradeSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'¥8 一次性买断 · 解锁全部高级功能'**
+  /// **'¥8 一次性买断 · 解锁全部功能'**
   String get settingsIapUpgradeSubtitle;
 
   /// No description provided for @settingsIapProOwnedTitle.
   ///
   /// In zh, this message translates to:
-  /// **'已是 Pro 版本'**
+  /// **'已购买'**
   String get settingsIapProOwnedTitle;
 
   /// No description provided for @settingsIapProOwnedSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'感谢支持 · 全部高级功能已解锁'**
+  /// **'感谢支持 · 全部功能已解锁'**
   String get settingsIapProOwnedSubtitle;
 
   /// No description provided for @iapPurchaseSuccess.
   ///
   /// In zh, this message translates to:
-  /// **'升级成功！欢迎使用 Pro。'**
+  /// **'购买成功！感谢支持。'**
   String get iapPurchaseSuccess;
 
   /// No description provided for @iapPurchaseFailed.
@@ -4613,6 +4648,24 @@ abstract class AppLocalizations implements SafetyAlertL10n {
   /// In zh, this message translates to:
   /// **'已复制: {number}'**
   String crisisHotlineSnackbarCopied(Object number);
+
+  /// R97-P1-11 (2026-08-07): 危机热线拨打按钮 tooltip
+  ///
+  /// In zh, this message translates to:
+  /// **'拨打'**
+  String get crisisHotlineDialTooltip;
+
+  /// R97-P1-11 (2026-08-07): 危机热线复制按钮 tooltip
+  ///
+  /// In zh, this message translates to:
+  /// **'复制号码'**
+  String get crisisHotlineCopyTooltip;
+
+  /// R97-P1-11 (2026-08-07): tel: intent 启动失败 snackbar 提示
+  ///
+  /// In zh, this message translates to:
+  /// **'无法启动拨号, 请手动拨打: {number}'**
+  String crisisHotlineDialFailed(Object number);
 
   /// No description provided for @setupLegalAgeAttestation.
   ///

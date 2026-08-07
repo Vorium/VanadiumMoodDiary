@@ -152,7 +152,7 @@ void main() {
   group('C2 fix: DB 集成 round-trip', () {
     test('DB insert type=whodas → read entity.isAssessment = true', () async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(() async => await db.close());
+      addTearDown(() async => db.close());
 
       await db.checkInDao.insert(
         CheckInsCompanion.insert(

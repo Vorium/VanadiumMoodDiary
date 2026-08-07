@@ -1,4 +1,4 @@
-﻿// mood_audio_recorder_widget.dart — MoodRecorder widget 主壳
+// mood_audio_recorder_widget.dart — MoodRecorder widget 主壳
 //
 // v0.30 round 95 (sub-spec 4 task 7): 从 mood_audio_section.dart 抽出
 //
@@ -184,7 +184,8 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
         _sttFailed = false;
       });
       // 订阅 STT 流
-      _sttSub?.cancel();
+      // R97-P1-12: unawaited 显式标记 fire-and-forget (cancel 不阻塞)
+      unawaited(_sttSub?.cancel());
       _sttSub = _service.sttTranscriptStream.listen((text) {
         if (!mounted) return;
         setState(() => _liveTranscript = text);
@@ -222,7 +223,8 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder> {
           note: 'STT stop failed',
         );
       }
-      _sttSub?.cancel();
+      // R97-P1-12: unawaited 显式标记 fire-and-forget
+      unawaited(_sttSub?.cancel());
       _sttSub = null;
 
       if (result == null) {

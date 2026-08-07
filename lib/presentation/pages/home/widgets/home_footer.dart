@@ -30,6 +30,9 @@ class HomeFooter extends StatelessWidget {
         // 主页内容"逐项落入"的细微高级感,emil "30-80ms stagger = 累积成高级感"
         // HomeFooter 2 项 (LastMedInfo + homeStillOnline), 各 delay staggerStepMs
         FadeIn(
+          // 0 * / 1 * staggerStepMs 是 stagger delay 视觉模式, 故意保留 0 * 显式
+          // 表达"第 0 项 delay 0"的对称性 (下一行 1 * staggerStepMs 跟它对仗)
+          // ignore: use_named_constants
           delay: const Duration(milliseconds: 0 * AppTokens.staggerStepMs),
           child: LastMedInfo(
             lastCheckIn: lastCheckIn?.timestamp,

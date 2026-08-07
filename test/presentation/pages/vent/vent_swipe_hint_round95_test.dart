@@ -18,11 +18,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  late SharedPreferences mockSp;
-
   setUp(() async {
     SharedPreferences.setMockInitialValues(<String, Object>{});
-    mockSp = await SharedPreferences.getInstance();
+    await SharedPreferences.getInstance();
   });
 
   Widget buildVentList({List<VentEntryEntity> entries = const []}) {
@@ -30,11 +28,11 @@ void main() {
       overrides: [
         ventEntriesProvider.overrideWith((ref) => Stream.value(entries)),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('zh'),
-        home: const VentListPage(),
+        locale: Locale('zh'),
+        home: VentListPage(),
       ),
     );
   }
@@ -52,6 +50,6 @@ void main() {
 
     // snackbar 显示 l10n.ventSwipeHint
     expect(find.text(l10n.ventSwipeHint), findsAtLeast(1),
-        reason: 'task 48: 首次进入 vent list 必显示 swipe hint snackbar');
+        reason: 'task 48: 首次进入 vent list 必显示 swipe hint snackbar',);
   });
 }

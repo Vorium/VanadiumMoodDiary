@@ -103,20 +103,30 @@ class VentRepositoryImpl implements VentRepository {
 
   @override
   Future<bool> delete(int id) async {
-    // 先查一下，看有没有 audio 路径要一起删
-    final entry = await (_db.select(_db.ventEntries)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
-    if (entry == null) return false;
-
-    // 事务保护 read + delete 原子性，防止 TOCTOU 竞态
-    final deleted = await _db.transaction(() async {
-      return await _db.ventDao.delete(id) > 0;
+    // R97-P1-3 (2026-08-07): TOCTOU 事务范围修复。
+    //
+    // 修前 bug (spen 审计发现): select 在事务外, 事务内只 delete。TOCTOU
+    // 场景: T1 select 读到 entry (audioPath=A) → T2 update 改 audioPath=B
+    // (rename) → T1 进事务 delete → affected=1 → T1 拿旧 path A 去删文件
+    // = 删错文件 (实际新文件 B 留在 disk, 旧文件 A 已被 rename 走 → 误删
+    // 别的文件)。
+    //
+    // 修复: 把 select 也挪进 transaction, 事务内拿到 entry 后立即 delete,
+    // 返回 entry (含 audioPath) 给外层删文件。事务原子保护 read + delete,
+    // T2 update 在 T1 事务外等待 → T1 commit 后 T2 拿不到 entry (已 delete)
+    // → T2 update affected=0 → 上层 caller 处理 (不再误删文件)。
+    final VentEntry? deleted = await _db.transaction(() async {
+      final entry = await (_db.select(_db.ventEntries)
+            ..where((t) => t.id.equals(id)))
+          .getSingleOrNull();
+      if (entry == null) return null;
+      final ok = await _db.ventDao.delete(id) > 0;
+      return ok ? entry : null;
     });
-    if (!deleted) return false;
+    if (deleted == null) return false;
 
-    // 删 audio 文件（best-effort，失败不影响）
-    final path = entry.audioPath;
+    // 删 audio 文件 (best-effort, 失败不影响 DB 已 delete 的事实)
+    final path = deleted.audioPath;
     if (path != null && path.isNotEmpty) {
       await _audioStorage.deleteAudio(path);
     }
@@ -156,12 +166,12 @@ class VentRepositoryImpl implements VentRepository {
     // 没了但 DB 还有指针(下次 watchAll 解密 null 报错)。先删 DB 的话,
     // 即使后续文件删失败, DB 已经是干净状态, audio 残留 = 孤儿 (下
     // 次启动 purgeOrphanPlainFiles 清)。
-    final paths = await (_db.select(_db.ventEntries))
+    final paths = await _db.select(_db.ventEntries)
         .map((r) => r.audioPath)
         .get();
 
     final deleted = await _db.transaction(() async {
-      return await _db.ventDao.deleteAll();
+      return _db.ventDao.deleteAll();
     });
 
     // 删 audio 文件 (best-effort, 重试 3 次)

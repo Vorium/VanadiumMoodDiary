@@ -76,7 +76,7 @@ void main() {
         onShow: () async {
           callCount++;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -89,7 +89,7 @@ void main() {
       // 验证: 没有 ReportHistoryListDialog (跳过完整链路)
       // ReportHistoryListDialog 内部是 Dialog 不是 AlertDialog
       expect(find.byType(Dialog), findsNothing,
-          reason: 'onShow 模式下, 不应弹 ReportHistoryListDialog');
+          reason: 'onShow 模式下, 不应弹 ReportHistoryListDialog',);
     },
   );
 }

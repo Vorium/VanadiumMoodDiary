@@ -18,9 +18,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 
 void main() {
-  setUpAll(() {
-    tz_data.initializeTimeZones();
-  });
+  setUpAll(tz_data.initializeTimeZones);
 
   group('computeNextDailyFireTime (纯函数)', () {
     test('今天的 hour:minute 还没到 → 返回今天', () {

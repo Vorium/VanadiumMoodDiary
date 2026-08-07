@@ -18,7 +18,6 @@
 // 1. 弹窗打开: 姓名输入框 autofocus (emil "3 tap 抵达" 第一步)
 // 2. phone 非法时, errorText 出现 (替代 snackbar, 不打断流)
 // 3. phone 合法时, errorText 消失 (输完即知)
-import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
@@ -61,8 +60,7 @@ void main() {
     );
   }
 
-  testWidgets('5→3 步 task 18 case 1: 弹窗打开, autofocus 姓名输入框',
-      (tester) async {
+  testWidgets('5→3 步 task 18 case 1: 弹窗打开, autofocus 姓名输入框', (tester) async {
     // v0.30 R95 sub-spec 8 task 18: 必须有 contact 才能显示 list 模式 (含
     // 添加 entry), 空列表走 empty state 模式 (action 走 /contacts/new 路由,
     // 跟弹窗逻辑无关)。1 个 contact 让 list 模式显示, "添加联系人" entry

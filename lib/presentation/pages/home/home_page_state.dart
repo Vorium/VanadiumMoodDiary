@@ -56,7 +56,8 @@ import 'package:chroniccare/presentation/pages/home/widgets/secondary_action_row
 import 'package:chroniccare/presentation/pages/medication/temp_medication_dialog.dart';
 import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
-import 'package:chroniccare/presentation/pages/home/home_page.dart' show HomeLifecycleState, HomePage;
+import 'package:chroniccare/presentation/pages/home/home_page.dart'
+    show HomeLifecycleState, HomePage;
 
 /// v0.30 round 95 (sub-spec 4 task 5): HomePage state class
 /// (原 `_HomePageState` 改成 public 打破循环 import, 命名跟 R84 DayDetailCard
@@ -202,7 +203,8 @@ class HomePageState extends ConsumerState<HomePage> {
           med?.name ?? AppLocalizations.of(context).homeAutofireFallbackName;
       // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
       // (打卡成功触感,emil 频度: tens/day)
-      Haptics.success();
+      // R97-P1-12: unawaited 显式标记 fire-and-forget (haptic 不阻塞 UI)
+      unawaited(Haptics.success());
       _showCelebrationOverlay(
         context,
         AppLocalizations.of(context).homeAutofireCelebration(medName),
@@ -249,9 +251,11 @@ class HomePageState extends ConsumerState<HomePage> {
       if (result.kind == SafetyCheckKind.alerted) {
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
         // 失联告警重要,延长到 6s 保留给用户时间读完
+        // R99 (BUG-1): displayMessageL10n(l10n) 拿翻译文案 — displayMessage
+        // 返 i18n key 字符串, 直接显示会让用户看到 'safetyCheckResultAlerted'
         AppSnackBar.showError(
           context,
-          action: '⚠️ ${result.displayMessage}',
+          action: '⚠️ ${result.displayMessageL10n(l10n)}',
           error: l10n.homeSafetyAlertSuffix,
         );
       }
@@ -315,99 +319,99 @@ class HomePageState extends ConsumerState<HomePage> {
       child: SingleChildScrollView(
         controller: _scrollController,
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // v0.18 (P1-27) fix: home_page god-page 拆 5 widget,build 主体减肥
-          // 顶部 header
-          HomeHeader(userName: userName),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // v0.18 (P1-27) fix: home_page god-page 拆 5 widget,build 主体减肥
+            // 顶部 header
+            HomeHeader(userName: userName),
 
-          // v0.28 R81 (emil design-4): 主页 hero 插画 (B 站治愈系风格)
-          // 蓝天 + 太阳 + 云 + 叶子, 4 元素 Stack, 静态 (rare 频度
-          // 不动画, 避免频度问题)。140dp 高, 跟功能区视觉分层。
-          const HomeHeroIllustration(),
+            // v0.28 R81 (emil design-4): 主页 hero 插画 (B 站治愈系风格)
+            // 蓝天 + 太阳 + 云 + 叶子, 4 元素 Stack, 静态 (rare 频度
+            // 不动画, 避免频度问题)。140dp 高, 跟功能区视觉分层。
+            const HomeHeroIllustration(),
 
-          const SizedBox(height: AppTokens.spacingMd),
+            const SizedBox(height: AppTokens.spacingMd),
 
-          // P17 fix: 通知失败 banner(一次性提示，可关闭)
-          if (!notifResult.ok)
-            NotificationFailureBanner(error: notifResult.error),
+            // P17 fix: 通知失败 banner(一次性提示，可关闭)
+            if (!notifResult.ok)
+              NotificationFailureBanner(error: notifResult.error),
 
-          const Spacer(flex: 1),
+            const Spacer(flex: 1),
 
-          // 鼓励文案(按 streak 动态切换)
-          EncouragementText(streak: streakSnapshot.streak),
+            // 鼓励文案(按 streak 动态切换)
+            EncouragementText(streak: streakSnapshot.streak),
 
-          const SizedBox(height: AppTokens.spacingMd),
+            const SizedBox(height: AppTokens.spacingMd),
 
-          // v0.28 R81 (emil design-2): 主页快速记心情 carousel
-          // B 站"哗哩哗哩能量加油站" 4 情绪横滑 风格, 1 tap 速记 score
-          // (其他维度 energy/sleep/anxiety 留 null, 完整 4 维度走 MoodDialog)
-          // carousel 默认居中"一般" (score 3), 4 档可见 + 1 档隐藏
-          // emil 频度: occasional (跟 checkIn 同 primary action),
-          // standard animation OK, PageView 横滑 200ms ease-out
-          QuickMoodCarousel(
-            onOpenFullDialog: () => MoodRecorderPage.show(context, ref),
-          ),
-
-          const SizedBox(height: AppTokens.spacingSm),
-
-          // 主操作行：打卡按钮 + 临时吃药 + snooze 5min
-          todayAsync.when(
-            data: (today) => PrimaryActionRow(
-              isChecked: today != null,
-              streakDays: streakSnapshot.streak,
-              isLoading: isChecking,
-              onCheckIn: () => _onCheckIn(streakSnapshot.streak),
-              onTempMed: () => TempMedicationDialog.show(context, ref),
-              onSnooze: _snooze5Min,
+            // v0.28 R81 (emil design-2): 主页快速记心情 carousel
+            // B 站"哗哩哗哩能量加油站" 4 情绪横滑 风格, 1 tap 速记 score
+            // (其他维度 energy/sleep/anxiety 留 null, 完整 4 维度走 MoodDialog)
+            // carousel 默认居中"一般" (score 3), 4 档可见 + 1 档隐藏
+            // emil 频度: occasional (跟 checkIn 同 primary action),
+            // standard animation OK, PageView 横滑 200ms ease-out
+            QuickMoodCarousel(
+              onOpenFullDialog: () => MoodRecorderPage.show(context, ref),
             ),
-            loading: () => const PrimaryActionRow(
-              isChecked: false,
-              streakDays: 0,
-              isLoading: true,
-              onCheckIn: _noop,
-              onTempMed: _noop,
-              onSnooze: _noop,
+
+            const SizedBox(height: AppTokens.spacingSm),
+
+            // 主操作行：打卡按钮 + 临时吃药 + snooze 5min
+            todayAsync.when(
+              data: (today) => PrimaryActionRow(
+                isChecked: today != null,
+                streakDays: streakSnapshot.streak,
+                isLoading: isChecking,
+                onCheckIn: () => _onCheckIn(streakSnapshot.streak),
+                onTempMed: () => TempMedicationDialog.show(context, ref),
+                onSnooze: _snooze5Min,
+              ),
+              loading: () => const PrimaryActionRow(
+                isChecked: false,
+                streakDays: 0,
+                isLoading: true,
+                onCheckIn: _noop,
+                onTempMed: _noop,
+                onSnooze: _noop,
+              ),
+              error: (_, __) => const PrimaryActionRow(
+                isChecked: false,
+                streakDays: 0,
+                isLoading: false,
+                onCheckIn: _noop,
+                onTempMed: _noop,
+                onSnooze: _noop,
+              ),
             ),
-            error: (_, __) => const PrimaryActionRow(
-              isChecked: false,
-              streakDays: 0,
-              isLoading: false,
-              onCheckIn: _noop,
-              onTempMed: _noop,
-              onSnooze: _noop,
+
+            const SizedBox(height: AppTokens.spacingSm),
+
+            // v0.14 (Round 17) 今日服药计划
+            const TodayMedSchedule(),
+
+            const SizedBox(height: AppTokens.spacingSm),
+
+            // 次要操作行：情绪日记 + 树洞
+            SecondaryActionRow(
+              onMoodTap: () => MoodRecorderPage.show(context, ref),
             ),
-          ),
 
-          const SizedBox(height: AppTokens.spacingSm),
+            // v0.30 round 92 (audit-fixes / P0 #13): 去掉 `const Spacer(flex: 1)`。
+            // 之前 Spacer 在 Column 内推 footer 到底, 但 SCV 给的 Column 高度
+            // 无界, Spacer 会触发 RenderFlex layout exception。改用
+            // SizedBox 给固定间距, footer 自然在主屏元素之后。
+            const SizedBox(height: AppTokens.spacingLg),
 
-          // v0.14 (Round 17) 今日服药计划
-          const TodayMedSchedule(),
-
-          const SizedBox(height: AppTokens.spacingSm),
-
-          // 次要操作行：情绪日记 + 树洞
-          SecondaryActionRow(
-            onMoodTap: () => MoodRecorderPage.show(context, ref),
-          ),
-
-          // v0.30 round 92 (audit-fixes / P0 #13): 去掉 `const Spacer(flex: 1)`。
-          // 之前 Spacer 在 Column 内推 footer 到底, 但 SCV 给的 Column 高度
-          // 无界, Spacer 会触发 RenderFlex layout exception。改用
-          // SizedBox 给固定间距, footer 自然在主屏元素之后。
-          const SizedBox(height: AppTokens.spacingLg),
-
-          // 底部信息
-          todayAsync.when(
-            data: (today) => HomeFooter(
-              lastCheckIn: today,
-              nextReminder: nextReminder,
-              showStreakBroken: streakSnapshot.shouldShowStreakBroken,
+            // 底部信息
+            todayAsync.when(
+              data: (today) => HomeFooter(
+                lastCheckIn: today,
+                nextReminder: nextReminder,
+                showStreakBroken: streakSnapshot.shouldShowStreakBroken,
+              ),
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
             ),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-          ),
-        ],
+          ],
         ),
       ),
     );
@@ -418,7 +422,8 @@ class HomePageState extends ConsumerState<HomePage> {
   /// 打卡:haptic + 触发实际打卡
   Future<void> _onCheckIn(int currentStreak) async {
     // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
-    Haptics.success();
+    // R97-P1-12: unawaited 显式标记 fire-and-forget
+    unawaited(Haptics.success());
     await ref.read(checkInNotifierProvider.notifier).checkIn();
     if (mounted) {
       final newStreak = currentStreak + 1;
@@ -459,9 +464,10 @@ class HomePageState extends ConsumerState<HomePage> {
       if (result.kind == SafetyCheckKind.alerted) {
         // 罕见：打卡后仍触发告警
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
+        // R99 (BUG-1): 同 _runSafetyCheck, 走 displayMessageL10n(l10n) 翻译版
         AppSnackBar.showError(
           context,
-          action: '⚠️ ${result.displayMessage}',
+          action: '⚠️ ${result.displayMessageL10n(l10n)}',
           error: l10n.homeSafetyAlertSuffix,
         );
       }
@@ -524,7 +530,6 @@ class HomePageState extends ConsumerState<HomePage> {
           final notif = ref.read(notificationServiceProvider);
           final id = 8000 + result.strategy.index;
           await notif.showNow(id: id, title: result.title, body: result.body);
-          break;
         case FireCareDecision.fireSms:
           // v0.27 round 67 (B-2 修复): 调 smsService.send
           // 当前 SMS provider 仍 mock (R55 真接 TODO), send() 走
@@ -573,7 +578,8 @@ class HomePageState extends ConsumerState<HomePage> {
   /// 用 medicationId=0 表示"通用打卡提醒 snooze"(避开真实 med id)
   Future<void> _snooze5Min() async {
     // v0.22 round 30 (emil P2-4): 走 Haptics.light 集中器
-    Haptics.light();
+    // R97-P1-12: unawaited 显式标记 fire-and-forget
+    unawaited(Haptics.light());
     try {
       await ref.read(notificationServiceProvider).snoozeOnce(
             medicationId: 0, // 0 = 通用 snooze

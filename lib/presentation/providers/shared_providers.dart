@@ -1,3 +1,4 @@
+import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart' show TodayMedSchedule;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
@@ -133,3 +134,22 @@ class DayChangeTickNotifier extends Notifier<int> {
 
 final dayChangeTickProvider =
     NotifierProvider<DayChangeTickNotifier, int>(DayChangeTickNotifier.new);
+
+/// R97-P1-2 (2026-08-07): 暴露"今天的 DateTime" — 跨 midnight 自动刷新。
+///
+/// 修前 bug: [TodayMedSchedule] 等 widget 在 build 内直接调 `DateTime.now()`,
+/// 跨 midnight 时若 medicationsProvider / allCheckInsProvider 未更新, widget
+/// 不 rebuild, DateTime.now() 不重取 → "今天"仍指昨天, 打卡进度 stale。
+///
+/// 修法: 本 provider watch [dayChangeTickProvider], 跨日时 AppRoot midnight
+/// timer tick → dayChangeTick 变 → 本 provider rebuild → 暴露新的
+/// `DateTime.now()`。widget watch 本 provider 即可跨日自动刷新, 不再在
+/// build 内直接调 `DateTime.now()` (也方便测试 override)。
+///
+/// 返回 device-local DateTime (跟 streak / legal version 一致)。海外用户
+/// 跨时区问题待 R97-P3-7 统一 tz.TZDateTime.now(tz.local) 后再修。
+final todayProvider = Provider<DateTime>((ref) {
+  // watch dayChangeTick 让本 provider 在跨日时 rebuild
+  ref.watch(dayChangeTickProvider);
+  return DateTime.now();
+});

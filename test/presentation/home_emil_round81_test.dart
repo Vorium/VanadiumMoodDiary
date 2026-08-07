@@ -44,12 +44,8 @@ void main() {
   // v0.30 round 93: 老 test 假设 4 工具按钮 (含 homeFabHotline) 总渲染,
   // R93 改 emergencyContactEnabled=false 后 homeFabHotline hidden, setUp 翻
   // enableForTest 让老 test 不破 (跟 settings_page_round45 修法一致)。
-  setUp(() {
-    FeatureFlags.enableForTest();
-  });
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  setUp(FeatureFlags.enableForTest);
+  tearDown(FeatureFlags.resetForTest);
 
   group('SectionHeader chip 字段 (R81-5)', () {
     testWidgets('chip=null → 纯文字模式 (无 chip 显示)', (tester) async {

@@ -14,15 +14,27 @@
   注: android:requestLegacyExternalStorage 不加 — app 私有目录够用,
        Android 11+ 该属性已被废弃, 没必要污染 manifest。
 
-  2. permissions 8 个 + queries 1 个 (PROCESS_TEXT)
-     - INTERNET: SMS / 邮件 (SendGrid / AliyunSms)
-     - POST_NOTIFICATIONS: Android 13+ 通知运行时权限
-     - SCHEDULE_EXACT_ALARM / USE_EXACT_ALARM: 精准闹钟
-     - WAKE_LOCK: 通知触发保持 CPU
-     - RECEIVE_BOOT_COMPLETED: 开机后恢复通知 (R63 加 BootReceiver.kt)
-     - VIBRATE: safety alert 通知震动
-     - RECORD_AUDIO: mood audio 录音
-  3. R63 加 receiver: BootReceiver 接 BOOT_COMPLETED 重排通知
+  R97 (2026-08-07) 删除 3 项权限 + 1 项硬件特性 + BootReceiver 注册:
+  - USE_EXACT_ALARM (R97-P0-6): Google Play 2024-07 起限制为 alarm clock /
+    calendar 类 App, 精神心理服药提醒不在允许范围。保留 SCHEDULE_EXACT_ALARM
+    (user-revocable, 所有 App 开放) 已够用。
+  - RECORD_AUDIO + microphone 硬件特性 (R97-P1-9): FeatureFlags
+    .ventAudioEnabled=false, vent / mood 录音按钮全 hidden, 当前版本无录音
+    调用。Google Play 对 microphone 权限审核特别严格 (隐私敏感), 业务暂停
+    期应删除。v1.0 真接录音业务时再加回。
+  - RECEIVE_BOOT_COMPLETED + BootReceiver 注册 (R97-P1-10): BootReceiver.kt
+    是 R64+ 半成品 (有 TODO), FeatureFlags.bootReceiverEnabled=false 已禁用,
+    Android 14+ 对 BroadcastReceiver 后台启动 Activity 有严格限制。当前实现
+    context.startActivity 在 Android 14+ 会 crash 或被系统静默拒绝。v1.0
+    用 WorkManager + FCM 替代。注: BootReceiver.kt 文件保留作为 v1.0
+    WorkManager 实现参考 (无 manifest 注册 = 不会被触发)。
+
+  permissions 5 个 + queries 1 个 (PROCESS_TEXT):
+  - INTERNET: in_app_purchase plugin 隐式依赖 (即使 iapEnabled=false 仍需)
+  - POST_NOTIFICATIONS: Android 13+ 通知运行时权限
+  - SCHEDULE_EXACT_ALARM: user-revocable 精准闹钟 (所有 App 开放)
+  - WAKE_LOCK: 通知触发保持 CPU
+  - VIBRATE: safety alert 通知震动
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -30,16 +42,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <!-- ============ 硬件特性 (可选, 录音) ============ -->
-    <uses-feature
-        android:name="android.hardware.microphone"
-        android:required="false" />
 
     <application
         android:label="慢病管家"
@@ -80,19 +84,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <!-- v0.27 round 63 (R63, GooglePlay P0-2 修复): BootReceiver
-             接 BOOT_COMPLETED 重排 flutter_local_notifications 全部通知。
-             精神心理患者重启手机后不能丢提醒 → 7 天后才发现"已停药"无提醒。 -->
-        <receiver
-            android:name=".BootReceiver"
-            android:exported="true"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

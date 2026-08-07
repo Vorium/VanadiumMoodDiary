@@ -6,20 +6,24 @@
 #   - team_id: Apple Developer 后台 → Membership → Team ID
 #   - itc_team_id: App Store Connect → Users and Access → Keys → (选 org)
 #
-# **敏感**:
-# - 真实 apple_id 写到这里前先确保 fastlane/Appfile 已被 .gitignore 排除
-#   或用 ENV (R67 暂用 hardcode TODO, 后续挪到 ENV)
-# - 如果用 API Key 模式 (推荐), 加:
+# v0.30 R96 (2026-08-07): 改 ENV 模式软隐藏, 真实凭据不进 git
+# (跟 .env / key.properties 同一策略, .env 已在 .gitignore 排除)
+#
+# **使用方式**:
+# 1. cp .env.example .env
+# 2. 在 .env 填真实值 (APPLE_ID / TEAM_ID / ITC_TEAM_ID)
+# 3. fastlane 会自动读 .env (需 dotenv gem, fastlane 默认带)
+#
+# **替代方案** (推荐, 更安全):
+# 用 API Key 模式替代 apple_id + team_id, 加到 Fastfile:
 #     app_store_connect_api_key(
 #       key_id: ENV["APPLE_KEY_ID"],
 #       issuer_id: ENV["APPLE_ISSUER_ID"],
 #       key_filepath: ENV["APPLE_KEY_FILEPATH"],
 #     )
+# API Key 模式不依赖 apple_id 登录, 更适合 CI/CD
 
-app_identifier("com.chroniccare.chroniccare")  # 跟 Info.plist / build.gradle.kts 一致
-# TODO (上 store 前必须替换为真实 Apple ID): 用真实登录邮箱
-apple_id("your-apple-id@example.com")
-# TODO (上 store 前必须替换): Apple Developer Team ID (10 字符, 后台 Membership 页)
-team_id("YOUR_TEAM_ID")
-# TODO (上 store 前必须替换): App Store Connect Team ID (ITC 前缀, 后台 Users and Access 页)
-itc_team_id("YOUR_ITC_TEAM_ID")
+app_identifier(ENV["APP_IDENTIFIER"] || "com.chroniccare.chroniccare")
+apple_id(ENV["APPLE_ID"])
+team_id(ENV["TEAM_ID"])
+itc_team_id(ENV["ITC_TEAM_ID"])

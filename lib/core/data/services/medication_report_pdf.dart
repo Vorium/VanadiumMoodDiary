@@ -44,7 +44,7 @@ class MedicationReportPdf {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
         header: (ctx) => PdfLayout.header(data),
-        footer: (ctx) => PdfLayout.footer(ctx),
+        footer: PdfLayout.footer,
         build: (ctx) => [
           PdfLayout.patientInfoBlock(data),
           pw.SizedBox(height: 16),

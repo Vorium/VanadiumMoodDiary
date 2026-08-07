@@ -36,9 +36,7 @@ void main() {
     // v0.30 round 93: 翻 phqGad7I18nEnabled=true 让老 test 12 Card 不破
     FeatureFlags.setPhqGad7I18nEnabledForTest(true);
   });
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  tearDown(FeatureFlags.resetForTest);
 
   // helper: 构造测试 widget
   //

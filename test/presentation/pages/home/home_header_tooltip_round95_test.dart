@@ -22,10 +22,10 @@ void main() {
   testWidgets('主页 header 3 icon button: tooltip 跟功能一致 (task 45)',
       (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('zh'),
+        locale: Locale('zh'),
         home: Scaffold(
           body: HomeHeader(userName: '测试用户'),
         ),
@@ -56,6 +56,6 @@ void main() {
     // v0.30 R95 sub-spec 8 task 45: 3rd button tooltip 跟功能对齐
     // (修前误用 "关于" settingsAbout, 修后用 homeTooltipSettings = "设置")
     expect(settingsBtn.tooltip, '设置',
-        reason: 'task 45: 设置 button tooltip 必须是"设置"而非"关于"');
+        reason: 'task 45: 设置 button tooltip 必须是"设置"而非"关于"',);
   });
 }

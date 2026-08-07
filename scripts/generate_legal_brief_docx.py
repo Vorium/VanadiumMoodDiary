@@ -434,8 +434,9 @@ user_agreement = '''# 用户协议
 
 ## 8. 联系方式
 
-- 开发者邮箱:`support@chroniccare.app`(**TODO 占位 — 上 store 前必须注册并替换为真实邮箱**, 详见 `docs/SPRINT1_LEGAL_TODO.md`)
-- GitHub Issues:`https://github.com/example/chroniccare/issues`(**TODO 占位,需确认或替换为真实项目仓库**, 详见 `docs/SPRINT1_LEGAL_TODO.md`)
+- **本服务暂不提供邮件 / GitHub 渠道** (v0.30 R96 决策, 软隐藏 `support@chroniccare.app` + `github.com/example/chroniccare`)
+  用户可通过 **App 内 设置 → 法律与隐私** 页面反馈问题
+  详见 `docs/SPRINT1_LEGAL_TODO.md` 了解重新启用条件 (域名注册 + 邮箱注册 + GitHub 仓库创建后启用)
 - 隐私 / PIPL 投诉:**本服务不提供邮件渠道** (v0.27 R67 Sprint 1 决策, 软隐藏 `privacy@chroniccare.app`)
   用户可通过 **App 内 设置 → 法律与隐私** 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行, 撤回后业务立即停止)
   详见 `docs/LEGACY_API_NOTES.md` 了解软隐藏决策 + 重新启用条件'''

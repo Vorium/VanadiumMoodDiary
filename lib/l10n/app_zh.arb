@@ -88,7 +88,11 @@
   "settingsAssessment": "心理评估",
   "settingsAssessmentHistory": "评估历史",
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比",
-  "settingsAboutVersion": "v0.23.0 · 我今天吃了药",
+  "@settingsAboutVersion": {
+      "description": "R99 (BUG-2): 关于页版本行, version 走 kPubspecVersion 动态注入 (不再硬编码)",
+      "placeholders": { "version": { "type": "String" } }
+  },
+  "settingsAboutVersion": "v{version} · 我今天吃了药",
   "settingsDisclaimerText": "本应用不提供医疗建议，所有功能仅供参考。",
   "settingsExportRiskTitle": "明文风险提示",
   "settingsExportRiskBody": "您即将导出的数据为明文文件,含您的个人健康等敏感信息(用药、打卡、紧急联系人、树洞文字)。请务必保存到安全、可信的位置(加密 U 盘 / 私人云盘),避免上传至公共云盘或发送给不可信的第三方。",
@@ -474,6 +478,26 @@
   "ventDetailTitle": "树洞",
   "ventDetailNotFound": "找不到了",
   "ventDetailPrivacy": "🔒 私密 · 只有您能看到",
+  "@ventReportTooltip": {
+    "description": "R97-P1-4 (2026-08-07): 树洞详情页举报 / 反馈按钮 tooltip (Apple 1.2.1 UGC 报告机制要求)"
+  },
+  "ventReportTooltip": "举报或反馈",
+  "@ventReportDialogTitle": {
+    "description": "R97-P1-4: 举报 / 反馈对话框标题"
+  },
+  "ventReportDialogTitle": "私密倾诉说明",
+  "@ventReportDialogBody": {
+    "description": "R97-P1-4: 举报 / 反馈对话框正文, 说明 vent 是本地私密内容 + 引导到 legal 页反馈"
+  },
+  "ventReportDialogBody": "树洞内容仅存储在您的设备, 不会上传任何服务器, 不存在用户间互相看到的情况。\n\n如发现 App 本身的不当内容或想反馈问题, 请前往「法律与隐私」页面联系开发者。",
+  "@ventReportDialogAction": {
+    "description": "R97-P1-4: 举报对话框跳转 legal 页按钮"
+  },
+  "ventReportDialogAction": "前往法律与隐私",
+  "@ventReportDialogClose": {
+    "description": "R97-P1-4: 举报对话框关闭按钮"
+  },
+  "ventReportDialogClose": "关闭",
   "ventToday": "今天",
   "ventYesterday": "昨天",
   "ventComposeTitle": "放进树洞",
@@ -1384,11 +1408,11 @@
       }
     }
   },
-  "settingsIapUpgradeTitle": "升级到 Pro",
-  "settingsIapUpgradeSubtitle": "¥8 一次性买断 · 解锁全部高级功能",
-  "settingsIapProOwnedTitle": "已是 Pro 版本",
-  "settingsIapProOwnedSubtitle": "感谢支持 · 全部高级功能已解锁",
-  "iapPurchaseSuccess": "升级成功！欢迎使用 Pro。",
+  "settingsIapUpgradeTitle": "购买此 App",
+  "settingsIapUpgradeSubtitle": "¥8 一次性买断 · 解锁全部功能",
+  "settingsIapProOwnedTitle": "已购买",
+  "settingsIapProOwnedSubtitle": "感谢支持 · 全部功能已解锁",
+  "iapPurchaseSuccess": "购买成功！感谢支持。",
   "iapPurchaseFailed": "购买未完成，请稍后再试。",
   "phoneRegionCn": "中国大陆",
   "phoneRegionHk": "中国香港",
@@ -1578,6 +1602,19 @@
     "placeholders": { "number": { "type": "Object" } }
   },
   "crisisHotlineSnackbarCopied": "已复制: {number}",
+  "@crisisHotlineDialTooltip": {
+    "description": "R97-P1-11 (2026-08-07): 危机热线拨打按钮 tooltip"
+  },
+  "crisisHotlineDialTooltip": "拨打",
+  "@crisisHotlineCopyTooltip": {
+    "description": "R97-P1-11 (2026-08-07): 危机热线复制按钮 tooltip"
+  },
+  "crisisHotlineCopyTooltip": "复制号码",
+  "@crisisHotlineDialFailed": {
+    "description": "R97-P1-11 (2026-08-07): tel: intent 启动失败 snackbar 提示",
+    "placeholders": { "number": { "type": "Object" } }
+  },
+  "crisisHotlineDialFailed": "无法启动拨号, 请手动拨打: {number}",
   "setupLegalAgeAttestation": "本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。",
   "moodCbtLevelLabel3": "3 栏",
   "moodCbtLevelLabel5": "5 栏",

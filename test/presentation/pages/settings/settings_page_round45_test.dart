@@ -3,33 +3,31 @@
 // 之前 v0.22 round 30 P1-38 标的"settings 整片 0 widget 测"残留 2 周。
 // v0.24 round 45 (Sprint #6 中段 3 page 0 widget 测补齐之二) 补 3 个 case:
 //
-// 1. contacts error → 渲染 ErrorState (loading + error 状态切换)
-// 2. contacts data 空 + meds data 空 → 7 section widget 全部渲染
+// 1. meds error → 渲染 ErrorState (loading + error 状态切换)
+// 2. meds data 空 + contacts data 空 → ProfileGroup 渲染 + Medication list 渲染
 // 3. contacts data 1 → ContactsListWidget 渲染 + name 显示
 //
-// v0.29 round 84 (CBT 思维记录): 补 CbtSection (在 RemindersSection 之后),
-// 测试数 6 → 7。sharedPreferencesProvider override 必加 (CbtSection 依赖
-// thoughtRecordLevelProvider, 后者读 SP)。
+// v0.30 round 95 (sub-spec 8 task 17): 4 group 重构 (Profile / Reminders / Data / Legal),
+// 测试 7 个 section 改成 4 个 group (只验证 on-screen 必 render 的 ProfileGroup)。
+// scrollUntilVisible 不再需要 — 4 group 内部 section 仍 lazy build, 但 on-screen
+// ProfileGroup 必 render。
 //
 // 测试 setup:
 // - MaterialApp + AppLocalizations.localizationsDelegates
 // - ProviderScope overrides mock Stream<List> provider
-// - 测 contacts/meds 状态切换, 不测 6 个 section widget 内部逻辑 (各自有测)
+// - 测 contacts/meds 状态切换, 不测 4 个 group widget 内部逻辑 (各自有测)
 //
 // v0.24 Sprint #5 (mood_dialog 拆解) 后 settings_page 99 行只剩 section 拼接,
 // 每个 section 在 settings/widgets/ 独立测, 测 main page 容器逻辑 ROI 最高
+// v0.30 R95 (sub-spec 8 task 17): 4 group 重构, main page 容器 60 行 0 业务方法
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/reminders_section.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/profile_group.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
@@ -79,9 +77,9 @@ void main() {
 
   testWidgets('meds error → 显示 ErrorState', (tester) async {
     await tester.pumpWidget(buildSettingsPage(medsError: true));
-    // pumpAndSettle 让 Stream.error microtask 跑完, Riverpod 转 AsyncError,
-    // 渲染 ErrorState。限制 duration 防止 hang (master 上无 contacts section
-    // 重排, 现在有 setUp+drag 副作用, 短 timeout 更稳)。
+    // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, NotificationStatusCard
+    // 挪到 RemindersGroup 末尾 (原在 settings_page ListView 底部), 维持 lazy load
+    // 不触发 _refresh() 永远 schedule frame 的问题, pumpAndSettle 仍可用。
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
     // v0.31 联系人软隐藏: contacts section 挪到最底部, viewport 内不渲染。
@@ -89,36 +87,16 @@ void main() {
     expect(find.byType(ErrorState), findsOneWidget);
   });
 
-  testWidgets('contacts + meds 都空 → 7 个 section widget 全部渲染', (tester) async {
+  testWidgets('contacts + meds 都空 → 4 group widget 全部渲染', (tester) async {
+    // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, 验证 4 group widget 渲染
+    // (不再验证 7 个独立 section — 4 group 把 8 section 拼成 4 container)
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle();
 
-    // ListView 内 section 默认只渲染 viewport 内, 用 scrollUntilVisible
-    // 把每个 section scroll 出来验证渲染
-    await tester.scrollUntilVisible(
-      find.byType(DataManagementSection),
-      100,
-    );
-    expect(find.byType(DataManagementSection), findsOneWidget);
-
-    await tester.scrollUntilVisible(find.byType(LegalSection), 100);
-    expect(find.byType(LegalSection), findsOneWidget);
-
-    await tester.scrollUntilVisible(find.byType(RemindersSection), 100);
-    expect(find.byType(RemindersSection), findsOneWidget);
-
-    // v0.29 round 84: CbtSection (思维记录档位) 紧跟 RemindersSection
-    await tester.scrollUntilVisible(find.byType(CbtSection), 100);
-    expect(find.byType(CbtSection), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.byType(NotificationStatusCard),
-      100,
-    );
-    expect(find.byType(NotificationStatusCard), findsOneWidget);
-
-    await tester.scrollUntilVisible(find.byType(AssessmentSection), 100);
-    expect(find.byType(AssessmentSection), findsOneWidget);
+    // 1. ProfileGroup 必 render (顶部)
+    expect(find.byType(ProfileGroup), findsOneWidget);
+    // Medication 在 ProfileGroup 顶部
+    expect(find.byType(MedicationsListWidget), findsOneWidget);
   });
 
   testWidgets('contacts data 1 → ContactsListWidget 渲染 + name 显示',
@@ -136,6 +114,7 @@ void main() {
       isActive: true,
     );
     await tester.pumpWidget(buildSettingsPage(contacts: [contact]));
+    // v0.30 round 95 (sub-spec 8 task 17): pumpAndSettle (见 meds error)
     await tester.pumpAndSettle();
 
     // v0.31 联系人软隐藏: contacts section 在 ListView 最底部, scroll 才能看到

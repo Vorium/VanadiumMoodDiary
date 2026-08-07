@@ -11,10 +11,14 @@
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/domain/entities/treatment_entry.dart';
+import 'package:chroniccare/domain/repositories/treatment_repository.dart';
 import 'package:drift/drift.dart' show Value;
 
 /// Treatment 仓库的 Drift 实现
-class TreatmentRepositoryImpl {
+///
+/// R97-P1-1 (2026-08-07): implements [TreatmentRepository] domain 接口
+/// (跟 sleep_repository_impl.dart 同模式, 详见该文件注释)。
+class TreatmentRepositoryImpl implements TreatmentRepository {
   final AppDatabase _db;
 
   TreatmentRepositoryImpl(this._db);
@@ -26,6 +30,7 @@ class TreatmentRepositoryImpl {
   /// - linkedMedicationId 指向 medications.id → entity.linkedMedicationName =
   ///   cache (写时 snapshot) ?? medications.name
   /// - medication rename 不影响 cache, 历史显示原名
+  @override
   Stream<List<TreatmentEntryEntity>> watchAll() {
     return _db.treatmentDao.watchAllTreatmentEntries().map(
           (rows) => rows
@@ -48,6 +53,7 @@ class TreatmentRepositoryImpl {
   ///
   /// 历史 API, 保留兼容: caller 必须自己传 linkedMedicationName
   /// (e.g. UI 已知 medication 显示名)。新 caller 改用 submitEntry。
+  @override
   Future<int> add({
     required DateTime timestamp,
     required String treatmentType,
@@ -79,6 +85,7 @@ class TreatmentRepositoryImpl {
   ///
   /// 写时 snapshot 意义: 后续 medication.name 被改, 历史 treatment 仍显示
   /// 当时的 name (joined 读 + cache 优先逻辑保证)。
+  @override
   Future<int> submitEntry({
     required String treatmentType,
     required String description,
@@ -107,5 +114,6 @@ class TreatmentRepositoryImpl {
     );
   }
 
+  @override
   Future<int> delete(int id) => _db.treatmentDao.delete(id);
 }

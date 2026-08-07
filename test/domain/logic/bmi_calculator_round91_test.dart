@@ -18,7 +18,7 @@ void main() {
     test('70kg / 175cm = 22.86 (正常)', () {
       final result = BmiCalculator.compute(weightKg: 70, heightCm: 175);
       expect(result, isNotNull);
-      expect(result!, closeTo(22.86, 0.01));
+      expect(result, closeTo(22.86, 0.01));
     });
 
     test('heightCm = null → null (profile 缺失兼容)', () {

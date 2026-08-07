@@ -228,12 +228,12 @@ void main() {
       // 锁: 存储内容是 base64 密文, 不含明文 PII
       final stored = raw.first;
       expect(stored, isNot(contains('user_sensitive_pii')),
-          reason: '存储不能含明文 grantedBy PII: $stored');
+          reason: '存储不能含明文 grantedBy PII: $stored',);
       expect(stored, isNot(contains('张三')),
-          reason: '存储不能含明文 grantedBy PII: $stored');
+          reason: '存储不能含明文 grantedBy PII: $stored',);
       // base64 特征: 只含 [A-Za-z0-9+/=] 字符
       expect(RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(stored), isTrue,
-          reason: '存储应是 base64 编码: $stored');
+          reason: '存储应是 base64 编码: $stored',);
       // 解出来是明文 (验证加密/解密对称)
       final plain = await EncryptionService().decryptString(stored);
       expect(plain, contains('user_sensitive_pii'));
@@ -272,7 +272,7 @@ void main() {
         grantedAt: DateTime.utc(2026, 8, 15, 10),
         grantedBy: 'user',
         version: 'v0.30',
-      ));
+      ),);
       // 确认有 audit log
       expect((await store.readDataExportConsentLog()).length, 1);
 
@@ -297,7 +297,7 @@ void main() {
         grantedAt: DateTime.utc(2026, 8, 15, 10),
         grantedBy: 'user',
         version: 'v0.30',
-      ));
+      ),);
 
       // 显式清
       await store.clearDataExportAuditLog();

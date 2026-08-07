@@ -334,7 +334,7 @@ void main() {
 
     test('scale / phq9 / gad7 / isi / pss / whodas / level2 / asrm = 180 key '
         '(R65/R78 + R90 走完 ARB, 3 语同步)', () {
-      final pattern = r'^  "(scale|phq9|gad7|isi|pss|whodas|level2|asrm)';
+      const pattern = r'^  "(scale|phq9|gad7|isi|pss|whodas|level2|asrm)';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
@@ -351,7 +351,7 @@ void main() {
       // channel ID 必须 compile-time), 0 引用 ARB key 是 R57 design 有意为之 —
       // 字符串值跟 strings.dart 内部 const 一致是 double-source-of-truth 风险,
       // 但 P2 收口决策 (audit 11.5/11.7) 留 v1.0。
-      final pattern = r'^  "notifChannel';
+      const pattern = r'^  "notifChannel';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
@@ -361,19 +361,22 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1060 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)', () {
+    test('3 语 total = 1068 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)', () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
       // v0.30 R95 sub-spec 8 task 45 加 1 new (homeTooltipSettings) → 1058 → 1059
       // v0.30 R95 sub-spec 8 task 48 加 1 new (ventSwipeHint) → 1059 → 1060
-      final pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
+      // R97-P0-2/P1-4/P1-11 (2026-08-07): +8 new (5 ventReport* + 3 crisisHotline*)
+      //   (IAP key 改名是净 0: settingsIapProUpgradeTitle → settingsIapUpgradeTitle 等)
+      //   → 1060 → 1068
+      const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1060, reason: 'zh.arb 应有 1060 key (R95 sub-spec 8 task 48 +1 from 1059)');
-      expect(en, 1060, reason: 'en.arb 应有 1060 key');
-      expect(hant, 1060, reason: 'zh_Hant.arb 应有 1060 key');
+      expect(zh, 1068, reason: 'zh.arb 应有 1068 key (R97 +8: 5 ventReport + 3 crisisHotline)');
+      expect(en, 1068, reason: 'en.arb 应有 1068 key');
+      expect(hant, 1068, reason: 'zh_Hant.arb 应有 1068 key');
     });
   });
 

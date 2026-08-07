@@ -21,9 +21,9 @@ class MoodListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timestamp = _formatTimestamp(entry.timestamp);
-    final preview = entry.note?.isNotEmpty == true
+    final preview = entry.note?.isNotEmpty ?? false
         ? entry.note!
-        : entry.automaticThought?.isNotEmpty == true
+        : entry.automaticThought?.isNotEmpty ?? false
               ? entry.automaticThought!
               : '...';
 

@@ -25,9 +25,7 @@ void _useTestKey() {
 }
 
 void main() {
-  setUpAll(() {
-    _useTestKey();
-  });
+  setUpAll(_useTestKey);
 
   // ============================================================
   // 1. 基类 metadata 契约

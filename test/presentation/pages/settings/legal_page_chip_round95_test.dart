@@ -14,7 +14,6 @@
 // 3. toggle 后 chip 颜色切换
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/settings/legal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -44,12 +43,12 @@ void main() {
     // (修前是 Text, 修后改 Chip 标识)
     final chipFinder = find.byType(Chip);
     expect(chipFinder, findsOneWidget,
-        reason: 'task 46: 撤回时间必包在 Chip widget 内');
+        reason: 'task 46: 撤回时间必包在 Chip widget 内',);
 
     // Chip 文字含撤回时间 (YYYY-MM-DD HH:MM)
-    final chipText = find.descendant(of: chipFinder, matching: find.byType(Text));
-    expect(chipText, findsOneWidget,
-        reason: 'Chip 必含时间文字');
+    final chipText =
+        find.descendant(of: chipFinder, matching: find.byType(Text));
+    expect(chipText, findsOneWidget, reason: 'Chip 必含时间文字');
   });
 
   testWidgets('legal_page _ConsentTile: 正常状态 chip 低调背景 (task 46)',

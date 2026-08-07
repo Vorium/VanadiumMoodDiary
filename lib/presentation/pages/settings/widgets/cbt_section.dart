@@ -55,20 +55,33 @@ class CbtSection extends ConsumerWidget {
               style: AppTokens.textStyleCaption(context),
             ),
             const SizedBox(height: AppTokens.spacingXxs),
-            for (final lv in ThoughtRecordLevel.values)
-              RadioListTile<ThoughtRecordLevel>(
-                title: Text('${lv.columnCount} 栏'),
-                subtitle: Text(_descriptionFor(lv, l10n)),
-                value: lv,
-                // 关键: groupValue 决定哪个 radio 显示 selected
-                groupValue: level,
-                onChanged: (newVal) {
-                  if (newVal != null) {
-                    // fire-and-forget: SP 写入异步, 不阻塞 UI
-                    unawaited(notifier.setLevel(newVal));
-                  }
-                },
+            // R97-P1-13 (2026-08-07): 迁移到 RadioGroup 新 API。
+            //
+            // Flutter 3.32+ 弃用 RadioListTile.groupValue / RadioListTile.onChanged
+            // 单 tile 自管理状态模式, 改用 RadioGroup 祖先 widget 集中管理
+            // groupValue + onChanged (满足 APG/ARIA 键盘导航 + 语义属性要求)。
+            // 修前 deprecated_member_use info warning 2 处。
+            //
+            // 语义不变: 3 个 tile 互斥单选, 选中后 fire-and-forget 写 SP。
+            RadioGroup<ThoughtRecordLevel>(
+              groupValue: level,
+              onChanged: (newVal) {
+                if (newVal != null) {
+                  // fire-and-forget: SP 写入异步, 不阻塞 UI
+                  unawaited(notifier.setLevel(newVal));
+                }
+              },
+              child: Column(
+                children: [
+                  for (final lv in ThoughtRecordLevel.values)
+                    RadioListTile<ThoughtRecordLevel>(
+                      title: Text('${lv.columnCount} 栏'),
+                      subtitle: Text(_descriptionFor(lv, l10n)),
+                      value: lv,
+                    ),
+                ],
               ),
+            ),
           ],
         ),
       ),

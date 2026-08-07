@@ -42,7 +42,7 @@ void main() {
 
   group('ContactEntityToDrift (Entity → row / Companion)', () {
     test('toDriftRow 完整 row', () {
-      final e = const ContactEntity(
+      const e = ContactEntity(
         id: 5,
         name: '姐姐',
         phone: '13700137000',
@@ -58,7 +58,7 @@ void main() {
     });
 
     test('toCompanion 默认 sortOrder=0 isActive=true', () {
-      final e = const ContactEntity(id: 0, name: 'X', phone: '13800138000');
+      const e = ContactEntity(id: 0, name: 'X', phone: '13800138000');
       final c = e.toCompanion();
       expect(c.sortOrder.value, 0);
       expect(c.isActive.value, true);
@@ -101,12 +101,12 @@ void main() {
     });
 
     test('isValidPhone 11 位数字通过', () {
-      final c = const ContactEntity(id: 1, name: 'X', phone: '13800138000');
+      const c = ContactEntity(id: 1, name: 'X', phone: '13800138000');
       expect(c.isValidPhone, isTrue);
     });
 
     test('isValidPhone +86 前缀通过', () {
-      final c = const ContactEntity(id: 1, name: 'X', phone: '+8613800138000');
+      const c = ContactEntity(id: 1, name: 'X', phone: '+8613800138000');
       expect(c.isValidPhone, isTrue);
     });
 
@@ -128,19 +128,19 @@ void main() {
     });
 
     test('bySortOrder 静态比较器', () {
-      final a = const ContactEntity(
+      const a = ContactEntity(
         id: 1,
         name: 'A',
         phone: '13800138000',
         sortOrder: 2,
       );
-      final b = const ContactEntity(
+      const b = ContactEntity(
         id: 2,
         name: 'B',
         phone: '13800138001',
         sortOrder: 1,
       );
-      final c = const ContactEntity(
+      const c = ContactEntity(
         id: 3,
         name: 'C',
         phone: '13800138002',
@@ -153,15 +153,15 @@ void main() {
     });
 
     test('copyWith 基础字段', () {
-      final original =
-          const ContactEntity(id: 1, name: 'A', phone: '13800138000');
+      const original =
+          ContactEntity(id: 1, name: 'A', phone: '13800138000');
       final copy = original.copyWith(name: 'B');
       expect(copy.name, 'B');
       expect(copy.id, original.id);
     });
 
     test('copyWith isActive', () {
-      final original = const ContactEntity(
+      const original = ContactEntity(
         id: 1,
         name: 'A',
         phone: '13800138000',
@@ -174,19 +174,19 @@ void main() {
 
   group('等值', () {
     test('== hashCode 字段全等才相等', () {
-      final a = const ContactEntity(
+      const a = ContactEntity(
         id: 1,
         name: 'A',
         phone: '13800138000',
         sortOrder: 0,
       );
-      final b = const ContactEntity(
+      const b = ContactEntity(
         id: 1,
         name: 'A',
         phone: '13800138000',
         sortOrder: 0,
       );
-      final c = const ContactEntity(
+      const c = ContactEntity(
         id: 1,
         name: 'B',
         phone: '13800138000',
@@ -201,7 +201,7 @@ void main() {
   group('集成：从 DB 读 Contact → toEntity → UI 流程', () {
     test('内存 DB 写一条 → 读 → 转 entity → 字段一致', () async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(() async => await db.close());
+      addTearDown(() async => db.close());
 
       await db.contactDao.insert(
         ContactsCompanion.insert(

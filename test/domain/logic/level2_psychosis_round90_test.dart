@@ -8,7 +8,7 @@ import 'package:chroniccare/domain/logic/level2_psychosis.dart';
 void main() {
   group('Level2PsychosisScale.computeResult', () {
     test('全部 0 → 总分 0, 无精神病性症状 (rank 0)', () {
-      final scale = level2PsychosisScale;
+      const scale = level2PsychosisScale;
       final result = scale.computeResult(List.filled(8, 0));
       expect(result.total, 0);
       expect(result.recommendDoctorVisit, isFalse);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('全部 3 → 总分 24, 重度精神病性症状 (rank 3)', () {
-      final scale = level2PsychosisScale;
+      const scale = level2PsychosisScale;
       final result = scale.computeResult(List.filled(8, 3));
       expect(result.total, 24);
       expect(result.recommendDoctorVisit, isTrue);

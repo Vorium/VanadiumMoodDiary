@@ -12,6 +12,7 @@
 // import `package:chroniccare/core/data/services/refill_notifier.dart` 不动),
 // 内部 delegate 到 `RefillScheduler.computeRefillFireTime` / `daysUntilRefill`。
 
+import 'package:chroniccare/core/data/database/app_database.dart' show Medication;
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 

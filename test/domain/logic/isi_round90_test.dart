@@ -8,7 +8,7 @@ import 'package:chroniccare/domain/logic/isi.dart';
 void main() {
   group('IsiScale.computeResult', () {
     test('全部 0 → 总分 0, 无失眠 (rank 0)', () {
-      final scale = isiScale;
+      const scale = isiScale;
       final result = scale.computeResult(List.filled(7, 0));
       expect(result.total, 0);
       expect(result.recommendDoctorVisit, isFalse);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('全部 4 → 总分 28, 重度失眠 (rank 3)', () {
-      final scale = isiScale;
+      const scale = isiScale;
       final result = scale.computeResult(List.filled(7, 4));
       expect(result.total, 28);
       expect(result.recommendDoctorVisit, isTrue);

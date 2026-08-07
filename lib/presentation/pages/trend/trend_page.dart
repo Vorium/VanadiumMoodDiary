@@ -68,7 +68,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
 
     return PageScaffold(
       title: AppLocalizations.of(context).trendTitle,
-      child: analyticsWithdrawn == true
+      child: analyticsWithdrawn ?? false
           ? _buildWithdrawnState(context)
           : checkInsAsync.when(
               data: (List<CheckInEntity> checkIns) {

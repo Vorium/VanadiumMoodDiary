@@ -189,7 +189,9 @@ class AppLocalizationsZh extends AppLocalizations {
       '查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比';
 
   @override
-  String get settingsAboutVersion => 'v0.23.0 · 我今天吃了药';
+  String settingsAboutVersion(String version) {
+    return 'v$version · 我今天吃了药';
+  }
 
   @override
   String get settingsDisclaimerText => '本应用不提供医疗建议，所有功能仅供参考。';
@@ -806,6 +808,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventDetailPrivacy => '🔒 私密 · 只有您能看到';
 
   @override
+  String get ventReportTooltip => '举报或反馈';
+
+  @override
+  String get ventReportDialogTitle => '私密倾诉说明';
+
+  @override
+  String get ventReportDialogBody =>
+      '树洞内容仅存储在您的设备, 不会上传任何服务器, 不存在用户间互相看到的情况。\n\n如发现 App 本身的不当内容或想反馈问题, 请前往「法律与隐私」页面联系开发者。';
+
+  @override
+  String get ventReportDialogAction => '前往法律与隐私';
+
+  @override
+  String get ventReportDialogClose => '关闭';
+
+  @override
   String get ventToday => '今天';
 
   @override
@@ -1081,6 +1099,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeTooltipAssessmentHistory => '评估历史';
+
+  @override
+  String get homeTooltipSettings => '设置';
+
+  @override
+  String get ventSwipeHint => '左滑或长按条目可删除';
 
   @override
   String get homeStreakRestart => '今天重新开始 🌱';
@@ -2086,19 +2110,19 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get settingsIapUpgradeTitle => '升级到 Pro';
+  String get settingsIapUpgradeTitle => '购买此 App';
 
   @override
-  String get settingsIapUpgradeSubtitle => '¥8 一次性买断 · 解锁全部高级功能';
+  String get settingsIapUpgradeSubtitle => '¥8 一次性买断 · 解锁全部功能';
 
   @override
-  String get settingsIapProOwnedTitle => '已是 Pro 版本';
+  String get settingsIapProOwnedTitle => '已购买';
 
   @override
-  String get settingsIapProOwnedSubtitle => '感谢支持 · 全部高级功能已解锁';
+  String get settingsIapProOwnedSubtitle => '感谢支持 · 全部功能已解锁';
 
   @override
-  String get iapPurchaseSuccess => '升级成功！欢迎使用 Pro。';
+  String get iapPurchaseSuccess => '购买成功！感谢支持。';
 
   @override
   String get iapPurchaseFailed => '购买未完成，请稍后再试。';
@@ -2501,6 +2525,17 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String crisisHotlineSnackbarCopied(Object number) {
     return '已复制: $number';
+  }
+
+  @override
+  String get crisisHotlineDialTooltip => '拨打';
+
+  @override
+  String get crisisHotlineCopyTooltip => '复制号码';
+
+  @override
+  String crisisHotlineDialFailed(Object number) {
+    return '无法启动拨号, 请手动拨打: $number';
   }
 
   @override
@@ -3667,7 +3702,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '查看所有 PHQ-9 ／ GAD-7 評估的折線圖與對比';
 
   @override
-  String get settingsAboutVersion => 'v0.23.0 · 我今天吃了藥';
+  String settingsAboutVersion(String version) {
+    return 'v$version · 我今天吃了藥';
+  }
 
   @override
   String get settingsDisclaimerText => '本應用不提供醫療建議，所有功能僅供參考。';
@@ -4284,6 +4321,22 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventDetailPrivacy => '🔒 私密 · 只有您能看到';
 
   @override
+  String get ventReportTooltip => '舉報或反饋';
+
+  @override
+  String get ventReportDialogTitle => '私密傾訴說明';
+
+  @override
+  String get ventReportDialogBody =>
+      '樹洞內容僅存儲在您的設備, 不會上傳任何服務器, 不存在用戶間互相看到的情況。\n\n如發現 App 本身的不當內容或想反饋問題, 請前往「法律與隱私」頁面聯繫開發者。';
+
+  @override
+  String get ventReportDialogAction => '前往法律與隱私';
+
+  @override
+  String get ventReportDialogClose => '關閉';
+
+  @override
   String get ventToday => '今天';
 
   @override
@@ -4559,6 +4612,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeTooltipAssessmentHistory => '評估歷史';
+
+  @override
+  String get homeTooltipSettings => '設置';
+
+  @override
+  String get ventSwipeHint => '左滑或長按條目可刪除';
 
   @override
   String get homeStreakRestart => '今天重新開始 🌱';
@@ -5564,19 +5623,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get settingsIapUpgradeTitle => '升級到 Pro';
+  String get settingsIapUpgradeTitle => '購買此 App';
 
   @override
-  String get settingsIapUpgradeSubtitle => '¥8 一次性買斷 · 解鎖全部高級功能';
+  String get settingsIapUpgradeSubtitle => '¥8 一次性買斷 · 解鎖全部功能';
 
   @override
-  String get settingsIapProOwnedTitle => '已是 Pro 版本';
+  String get settingsIapProOwnedTitle => '已購買';
 
   @override
-  String get settingsIapProOwnedSubtitle => '感謝支持 · 全部高級功能已解鎖';
+  String get settingsIapProOwnedSubtitle => '感謝支持 · 全部功能已解鎖';
 
   @override
-  String get iapPurchaseSuccess => '升級成功！歡迎使用 Pro。';
+  String get iapPurchaseSuccess => '購買成功！感謝支持。';
 
   @override
   String get iapPurchaseFailed => '購買未完成，請稍後再試。';
@@ -5979,6 +6038,17 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String crisisHotlineSnackbarCopied(Object number) {
     return '已複製: $number';
+  }
+
+  @override
+  String get crisisHotlineDialTooltip => '撥打';
+
+  @override
+  String get crisisHotlineCopyTooltip => '複製號碼';
+
+  @override
+  String crisisHotlineDialFailed(Object number) {
+    return '無法啟動撥號, 請手動撥打: $number';
   }
 
   @override

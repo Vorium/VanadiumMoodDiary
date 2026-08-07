@@ -88,9 +88,9 @@ void main() {
 
     // 验只显示 morning entry
     expect(find.text('morning entry'), findsOneWidget,
-        reason: 'filter=morning 应保留 morning entry');
+        reason: 'filter=morning 应保留 morning entry',);
     expect(find.text('noon entry'), findsNothing,
-        reason: 'filter=morning 应过滤掉 noon entry');
+        reason: 'filter=morning 应过滤掉 noon entry',);
     expect(find.text('evening entry'), findsNothing);
     expect(find.text('night entry'), findsNothing);
     expect(find.text('unspecified entry'), findsNothing);

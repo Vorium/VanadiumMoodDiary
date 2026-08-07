@@ -46,7 +46,7 @@ void main() {
 
     test('null fallback via ?? 0 模式', () {
       // 模拟 pathParameters['id'] ?? '' (null → '')
-      final String? raw = null;
+      const String? raw = null;
       expect(int.tryParse(raw ?? '') ?? 0, 0);
     });
   });

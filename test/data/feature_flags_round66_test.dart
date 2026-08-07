@@ -32,9 +32,7 @@ AppLocalizations _testL10n() => AppLocalizationsZh();
 void main() {
   // R66 设计: 整个文件测 production (flag=false) 行为, **不** enableForTest。
   // override FeatureFlags.resetForTest 是为了防 setUp 之前有别的 test leak。
-  setUp(() {
-    FeatureFlags.resetForTest();
-  });
+  setUp(FeatureFlags.resetForTest);
 
   group('FeatureFlags 默认值 (R66 联系人软隐藏)', () {
     test('emergencyContactEnabled 默认 false (生产安全)', () {

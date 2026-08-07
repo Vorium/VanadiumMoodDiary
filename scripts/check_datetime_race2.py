@@ -1,76 +1,56 @@
-#!/usr/bin/env python3
-"""精确扫: 同函数体内裸调 DateTime.now() 出现 >=2 次（没用 final now 缓存）
-
-v0.23 (P0-14): 改 ROOT 为相对路径, 兼容 CI (ubuntu) 和本地 (Windows)
-"""
+# R99 (BUG-4) rewrite: strip // comments; per-scope brace stack;
+# single hit merges upward only across non-function blocks;
+# exempt: single-capture (final now = ...) + branch-dup (same stmt).
 import os
 import re
-import sys
 from pathlib import Path
-
-ROOT = Path(os.getcwd()) / "lib"
-# 函数体匹配: 找 `() { ... }` 块, 统计 `DateTime.now()` 出现次数
-# Dart 函数通常有返回类型, 找 `... {` 开头 + `}` 结尾 (粗略花括号匹配)
-
+ROOT = Path(os.getcwd()) / 'lib'
 races = []
-
+CAP = re.compile(r'\b(?:final|var)\s+now\s*=\s*DateTime\.now\(\)')
+def check_scope(rel, start, hits, code):
+    single = False
+    for l in hits:
+        if CAP.search(code[l - 1]):
+            single = True
+    if single:
+        return
+    texts = set(code[l - 1].strip() for l in hits)
+    if len(texts) in range(0, 2):
+        return
+    races.append((rel, start, len(hits), hits))
 for f in ROOT.rglob('*.dart'):
     if '.g.dart' in f.name or '.freezed.dart' in f.name:
         continue
-    txt = f.read_text(encoding='utf-8')
-    lines = txt.splitlines()
-
-    # 用栈模拟花括号匹配
-    brace_depth = 0
-    in_func_start = -1
-    func_brace_level = -1
-    func_now_count = 0
-    func_now_lines = []
-
-    for i, line in enumerate(lines):
-        # 找函数起点: `Future<X> name(...) {` 或 `X name(...) {` 或 `=> {`
-        # 简化: 检测 `{` 深度变化
-        for ch_idx, ch in enumerate(line):
+    lines = f.read_text(encoding='utf-8').splitlines()
+    code = []
+    for ln in lines:
+        code.append(ln.split('//')[0].rstrip())
+    stack = []
+    rel = str(f.relative_to(ROOT.parent))
+    for i, c in enumerate(code):
+        for ch in c:
             if ch == '{':
-                if brace_depth == 0:
-                    # 进入新作用域 (可能是函数体)
-                    # 检查上一行是否函数签名
-                    if i > 0 and ('(' in lines[i-1] or '=>' in lines[i-1] or 'async' in lines[i]):
-                        in_func_start = i
-                        func_brace_level = 1
-                        func_now_count = 0
-                        func_now_lines = []
-                else:
-                    if in_func_start >= 0:
-                        func_brace_level += 1
-                brace_depth += 1
+                sig = c
+                for k in range(1, 6):
+                    if i - k not in range(0, len(code)):
+                        break
+                    prev = code[i - k]
+                    sig = prev + ' ' + sig
+                    if prev.endswith(';') or prev.endswith('{') or prev.endswith('}'):
+                        break
+                ctrl = ('if (' in sig) or ('if(' in sig) or ('for (' in sig) or ('while (' in sig) or ('switch (' in sig) or ('catch (' in sig) or ('catch(' in sig) or ('else' in sig)
+                kw = ('class ' in sig) or ('enum ' in sig) or ('mixin ' in sig) or ('extension ' in sig)
+                isf = ('(' in sig) and not ctrl and not kw
+                stack.append([i + 1, [], isf])
             elif ch == '}':
-                brace_depth -= 1
-                if in_func_start >= 0 and func_brace_level == 0:
-                    # 函数结束
-                    if func_now_count >= 2:
-                        # 检查是否用了 `final now = DateTime.now()` 模式
-                        # (如果函数体有 final/var now = DateTime.now() 单独一行,算 single-capture)
-                        single_capture = any(
-                            re.search(r'\b(?:final|var)\s+now\s*=\s*DateTime\.now\(\)', lines[l-1])
-                            for l in func_now_lines
-                        )
-                        if not single_capture:
-                            races.append((str(f.relative_to(ROOT.parent)),
-                                          in_func_start + 1,
-                                          func_now_count,
-                                          func_now_lines))
-                    in_func_start = -1
-                    func_brace_level = -1
-                    func_now_count = 0
-                    func_now_lines = []
-                if in_func_start >= 0:
-                    func_brace_level -= 1
-        # 在函数体内统计 DateTime.now() 调用
-        if in_func_start >= 0 and 'DateTime.now()' in line:
-            func_now_count += 1
-            func_now_lines.append(i + 1)
-
-print(f'真可疑 race (同函数 >=2 次 DateTime.now() 且没用 single-capture): {len(races)}')
-for path, line, count, lines_list in races:
-    print(f'  {path}:{line}  出现 {count} 次 (lines: {lines_list})')
+                if len(stack) != 0:
+                    start, hits, isf = stack.pop()
+                    if len(hits) in range(2, 100):
+                        check_scope(rel, start, hits, code)
+                    elif len(hits) == 1 and len(stack) != 0 and not isf:
+                        stack[-1][1].append(hits[0])
+        if 'DateTime.now()' in c and len(stack) != 0:
+            stack[-1][1].append(i + 1)
+print('\u771f\u53ef\u7591 race (\u540c\u51fd\u6570\u4f53 >=2 \u6b21 DateTime.now() \u4e14\u65e0 single-capture/\u5206\u652f\u590d\u5236): ' + str(len(races)))
+for path, line, count, hit_lines in races:
+    print('  ' + path + ':' + str(line) + ' \u51fa\u73b0 ' + str(count) + ' \u6b21 (lines: ' + str(hit_lines) + ')')

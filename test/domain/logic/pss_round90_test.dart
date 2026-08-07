@@ -12,7 +12,7 @@ void main() {
 
     test('极端低压力 (neg=0, pos=4) → 总分 0 (4 pos × (4-4)=0)', () {
       // 所有 10 题, 负向题 0 分, 正向题 4 分
-      final scale = pssScale;
+      const scale = pssScale;
       final scores = [0, 0, 0, 4, 4, 0, 4, 4, 0, 0];
       final result = scale.computeResult(scores);
       expect(result.total, 0);
@@ -21,7 +21,7 @@ void main() {
 
     test('极端高压力 (neg=4, pos=0) → 总分 40 (6 neg × 4 + 4 pos × (4-0)=16)', () {
       // 所有 10 题, 负向题 4 分, 正向题 0 分
-      final scale = pssScale;
+      const scale = pssScale;
       final scores = [4, 4, 4, 0, 0, 4, 0, 0, 4, 4];
       final result = scale.computeResult(scores);
       expect(result.total, 40);

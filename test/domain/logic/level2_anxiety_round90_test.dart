@@ -8,7 +8,7 @@ import 'package:chroniccare/domain/logic/level2_anxiety.dart';
 void main() {
   group('Level2AnxietyScale.computeResult', () {
     test('全部 0 → 总分 0, 无焦虑 (rank 0)', () {
-      final scale = level2AnxietyScale;
+      const scale = level2AnxietyScale;
       final result = scale.computeResult(List.filled(7, 0));
       expect(result.total, 0);
       expect(result.recommendDoctorVisit, isFalse);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('全部 3 → 总分 21, 重度焦虑 (rank 3)', () {
-      final scale = level2AnxietyScale;
+      const scale = level2AnxietyScale;
       final result = scale.computeResult(List.filled(7, 3));
       expect(result.total, 21);
       expect(result.recommendDoctorVisit, isTrue);

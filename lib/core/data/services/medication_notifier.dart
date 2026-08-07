@@ -20,6 +20,7 @@
 // v0.22 round 37 抽 SnoozeManager / BadgeSyncService / ReminderDispatcher 后的
 // 第 4-6 个子 facade。facade 缩到 ~250 行 init + 委托。
 
+import 'package:chroniccare/core/data/database/app_database.dart' show Medication;
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 

@@ -121,14 +121,26 @@ class NotificationService implements NotificationSender {
   Future<void> _ensureInitializedProxy() => init();
 
   /// 初始化 (app 启动时调用)
+  ///
+  /// R97-P1-6 (2026-08-07): 权限请求从 init() 中移除。
+  ///
+  /// 修前 bug (App Store 5.1.1 / Google Play policy): init() 在 main.dart
+  /// 启动时调, 立即弹通知权限请求 — 用户还没看到任何 UI, 不知道为什么
+  /// 要授权 → 拒绝率高 + 违反"权限应在 context 内请求"指南。
+  ///
+  /// 修后: init() 只做 plugin 初始化 + 时区 + tap 回调注册, **不请求权限**。
+  /// `DarwinInitializationSettings` 的 `request*Permission` 全设 false 避免
+  /// iOS 自动弹。权限请求走新方法 [requestPermission], 由 caller 在
+  /// context 内调 (e.g. setup 流程配完药后 / 设置页开提醒时 / 测试通知按钮)。
   Future<void> init() async {
     if (_initialized) return;
     const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+      // R97-P1-6: 全 false, 避免初始化时 iOS 自动弹权限请求
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
     );
 
     // v0.11 (Round 5): 注册 tap 回调
@@ -163,17 +175,35 @@ class NotificationService implements NotificationSender {
       );
     }
 
-    // 请求权限
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(alert: true, badge: true, sound: true);
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-
     _initialized = true;
+  }
+
+  /// R97-P1-6 (2026-08-07): 请求通知权限 (在 context 内调)
+  ///
+  /// 走 iOS `requestPermissions(alert, badge, sound)` + Android
+  /// `requestNotificationsPermission()`。caller 应在用户实际需要通知的
+  /// 时机调:
+  /// - setup 流程配完药准备调度提醒前 (setup_page_state.dart)
+  /// - 设置页开提醒 / 改提醒时间 (reminders_hub_page)
+  /// - "测试通知"按钮 (notification_status_card._fireTest)
+  ///
+  /// 返回 true = 用户授权, false = 拒绝 / 平台不支持 / web。
+  /// caller 拿到 false 应走 UI 提示引导用户去系统设置开启。
+  Future<bool> requestPermission() async {
+    final ios = _plugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    final iosOk = await ios?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    final androidOk = await android?.requestNotificationsPermission();
+    // 任意一个平台返 true = 用户授权; null = 平台不支持 (web/other) → 视作 true
+    // 避免误把 web 平台当作"用户拒绝" (web 没 permission 概念)
+    if (iosOk == null && androidOk == null) return true;
+    return (iosOk ?? false) || (androidOk ?? false);
   }
 
   /// flutter_local_notifications 回调

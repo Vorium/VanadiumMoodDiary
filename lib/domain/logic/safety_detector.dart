@@ -40,9 +40,29 @@
 // );
 // return _actOn(decision: decision, ...);
 // ```
-import 'package:chroniccare/core/data/services/safety_config_service.dart';
+//
+// v0.29 R85 (spzh P1 架构修复): 文件从 lib/core/data/services/ 挪到
+// lib/domain/logic/, 满足 4 层架构"domain 不依赖 data"硬约束。原先依赖
+// SafetyConfigService 提供的 top-level 静态 daysBetween / isSameDay
+// 已内联到本文件 (纯函数, 跟 [daysBetween] / [isSameDay] top-level 1:1
+// 实现), 删除 SafetyConfigService import。
+import 'package:chroniccare/core/data/services/safety_watch_service.dart' show SafetyCheckKind;
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
+
+/// v0.29 R85: 内联 daysBetween (从 SafetyConfigService 抽过来, 纯函数)
+int daysBetween(DateTime from, DateTime to) {
+  // v0.16 round 19B fix: 缓存 now 一次, 避免跨 await DateTime.now() 多次
+  // 调用 race (跨 midnight 后 now 变 → daysBetween 偏 1 天)
+  final fromDate = DateTime(from.year, from.month, from.day);
+  final toDate = DateTime(to.year, to.month, to.day);
+  return toDate.difference(fromDate).inDays;
+}
+
+/// v0.29 R85: 内联 isSameDay (从 SafetyConfigService 抽过来, 纯函数)
+bool isSameDay(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
 
 /// v0.27 round 64 (spen P1-12 god class 拆分): 安全判定 — 8 类 early-return 决策
 ///
@@ -83,7 +103,7 @@ class SafetyDetector {
       return const SafetyDecisionNoData();
     }
 
-    final daysSinceLast = SafetyConfigService.daysBetween(lastCheckInAt, now);
+    final daysSinceLast = daysBetween(lastCheckInAt, now);
 
     // 3. 正常 (在阈值内)
     if (daysSinceLast < threshold) {
@@ -92,7 +112,7 @@ class SafetyDetector {
 
     // 4. 今天已经发过
     if (lastAlertAt != null &&
-        SafetyConfigService.isSameDay(lastAlertAt, now)) {
+        isSameDay(lastAlertAt, now)) {
       return SafetyDecisionAlertedToday(daysSinceLast: daysSinceLast);
     }
 
@@ -112,7 +132,13 @@ class SafetyDetector {
     }
 
     // 8. 真触发 — facade 调 SafetyAlertDispatcher
-    return SafetyDecisionAlert(daysSinceLast: daysSinceLast);
+    // 前置 gate 1-7 已保证 lastCheckInAt / profile 非空, 显式塞字段避免
+    // facade 拿上游 nullable 变量 `!` 强转
+    return SafetyDecisionAlert(
+      daysSinceLast: daysSinceLast,
+      lastCheckInAt: lastCheckInAt,
+      profile: profile,
+    );
   }
 }
 
@@ -142,18 +168,32 @@ sealed class SafetyDecision {
 /// 含义: 检测到失联 + 所有 gate (enabled / threshold / same-day / DND /
 /// profile / contacts) 全过, **需要调 SafetyAlertDispatcher 实际发 SMS +
 /// 推本地通知**。facade 拿到这个 decision 后走 dispatch。
+///
+/// v0.28 Round 93 (#12 修复): detector 内部已知 [lastCheckInAt] /
+/// [profile] 非空 (前置 gate 保证), 显式塞到 decision 字段, 避免 facade
+/// 拿 nullable 变量 `!` 强转。upstream 改判也不会让 facade NPE。
 final class SafetyDecisionAlert extends SafetyDecision {
   @override
   final int daysSinceLast;
-  const SafetyDecisionAlert({required this.daysSinceLast});
+  final DateTime lastCheckInAt;
+  final UserProfileEntity profile;
+
+  const SafetyDecisionAlert({
+    required this.daysSinceLast,
+    required this.lastCheckInAt,
+    required this.profile,
+  });
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SafetyDecisionAlert && other.daysSinceLast == daysSinceLast;
+      other is SafetyDecisionAlert &&
+          other.daysSinceLast == daysSinceLast &&
+          other.lastCheckInAt == lastCheckInAt &&
+          other.profile == profile;
 
   @override
-  int get hashCode => daysSinceLast.hashCode;
+  int get hashCode => Object.hash(daysSinceLast, lastCheckInAt, profile);
 }
 
 /// Leaf 2/8: 正常 (在阈值内, 不需要告警)

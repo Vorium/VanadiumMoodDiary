@@ -1,4 +1,4 @@
-﻿// v0.15 (Round 18) 树洞列表页
+// v0.15 (Round 18) 树洞列表页
 //
 // 全屏页面：用户的所有树洞条目，按时间倒序
 // 顶部右上角有"+"按钮跳到撰写页
@@ -346,7 +346,7 @@ class _EntryCard extends StatelessWidget {
         ],
       ),
     );
-    if (ok == true && context.mounted) {
+    if ((ok ?? false) && context.mounted) {
       final repo =
           ProviderScope.containerOf(context).read(ventRepositoryProvider);
       await repo.delete(entry.id);

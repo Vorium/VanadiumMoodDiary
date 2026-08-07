@@ -1,4 +1,4 @@
-﻿// v0.14 (Round 12C) 提醒中心 �?集中查看/管理所有类型的提醒
+// v0.14 (Round 12C) 提醒中心 �?集中查看/管理所有类型的提醒
 //
 // 之前散落在各处的设置（notification / assessment / safety watch）整合到一个页�?
 //
@@ -311,7 +311,7 @@ class _AssessmentReminderSheetState
               ChoiceChipWrap<int>(
                 options: _options,
                 selected: _days,
-                labelOf: (d) => loc.reminderHubEveryNDays(d),
+                labelOf: loc.reminderHubEveryNDays,
                 onSelect: (d) => setState(() => _days = d),
                 disabled: _busy,
               ),
@@ -445,7 +445,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
               ChoiceChipWrap<int>(
                 options: _options,
                 selected: _threshold,
-                labelOf: (d) => loc.reminderHubNDays(d),
+                labelOf: loc.reminderHubNDays,
                 onSelect: (d) => setState(() => _threshold = d),
                 disabled: _busy,
               ),

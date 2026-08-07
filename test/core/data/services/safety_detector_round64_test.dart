@@ -10,9 +10,13 @@
 // - 不需要 mock (纯函数, 无依赖)
 // - 0 Flutter widget / Drift / SharedPreferences 依赖 → test 极快
 // - 用固定 DateTime 避免 `DateTime.now()` race
-import 'package:chroniccare/core/data/services/safety_detector.dart';
+//
+// v0.29 R85: SafetyDetector 已从 lib/core/data/services/ 挪到
+// lib/domain/logic/safety_detector.dart, 本测试改 import 新路径。
+// 测试内容不变 (SafetyDetector.detect API 1:1 兼容)。
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
+import 'package:chroniccare/domain/logic/safety_detector.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

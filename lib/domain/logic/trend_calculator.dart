@@ -214,13 +214,13 @@ class TrendCalculator {
     final byDate = <DateTime, _DailyAgg>{};
     for (final c in checkIns) {
       final d = _dateOnly(c.timestamp);
-      final agg = byDate.putIfAbsent(d, () => _DailyAgg());
+      final agg = byDate.putIfAbsent(d, _DailyAgg.new);
       agg.checkInCount++;
       if (c.isNormal) agg.hasNormalCheckIn = true;
     }
     for (final m in moodEntries) {
       final d = _dateOnly(m.timestamp);
-      final agg = byDate.putIfAbsent(d, () => _DailyAgg());
+      final agg = byDate.putIfAbsent(d, _DailyAgg.new);
       // 当天最高分
       if (agg.moodScore == null || m.score > agg.moodScore!) {
         agg.moodScore = m.score;

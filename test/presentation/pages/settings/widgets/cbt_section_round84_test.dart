@@ -9,6 +9,10 @@
 // - MaterialApp + AppLocalizations.localizationsDelegates + locale: Locale('zh')
 // - ProviderScope overrides: sharedPreferencesProvider (cbt_providers.dart 公开名)
 // - SharedPreferences.setMockInitialValues({...}) 注入初始值
+//
+// R97-P1-12 (2026-08-07): 迁移到 RadioGroup 新 API 测试。
+// 之前测试读 deprecated `RadioListTile.groupValue` 字段 — 迁移到 RadioGroup 后
+// 该字段为 null (group value 由祖先 RadioGroup 管理)。改读 RadioGroup.groupValue。
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
@@ -36,6 +40,17 @@ Widget _build({required SharedPreferences sp}) {
   );
 }
 
+/// 从 widget tree 取 RadioGroup[ThoughtRecordLevel] 的 groupValue。
+///
+/// R97-P1-12: 迁移后 group value 由 RadioGroup 祖先集中管理, 不再读
+/// RadioListTile.groupValue (deprecated + 始终 null)。
+ThoughtRecordLevel? _groupValueOf(WidgetTester tester) {
+  final group = tester.widget<RadioGroup<ThoughtRecordLevel>>(
+    find.byType(RadioGroup<ThoughtRecordLevel>),
+  );
+  return group.groupValue;
+}
+
 void main() {
   // 1. 默认 SP 空 → level=three → 3 个 radio 全部渲染 + 3 栏 selected
   testWidgets('默认 level=three 渲染 3 栏 / 5 栏 / 7 栏 radio + 3 栏默认 selected',
@@ -57,16 +72,8 @@ void main() {
     );
 
     // 默认 SP 没 key → fromInt(null ?? 3) → three
-    // 第一个 RadioListTile (3 栏) 的 groupValue == ThoughtRecordLevel.three
-    final radios = tester
-        .widgetList<RadioListTile<ThoughtRecordLevel>>(
-          find.byType(RadioListTile<ThoughtRecordLevel>),
-        )
-        .toList();
-    expect(radios[0].groupValue, ThoughtRecordLevel.three);
-    expect(radios[1].groupValue, ThoughtRecordLevel.three);
-    expect(radios[2].groupValue, ThoughtRecordLevel.three);
-    expect(radios[0].value, ThoughtRecordLevel.three);
+    // R97-P1-12: 读 RadioGroup.groupValue (不再读 deprecated RadioListTile.groupValue)
+    expect(_groupValueOf(tester), ThoughtRecordLevel.three);
   });
 
   // 2. 点击 5 栏 radio → SP 立即写 5
@@ -84,18 +91,12 @@ void main() {
     // SP 立即写入 5
     expect(sp.getInt(_kSpKey), 5);
 
-    // widget 重建后, 5 栏 radio groupValue 变成 five (覆盖已写 SP)
-    final radios = tester
-        .widgetList<RadioListTile<ThoughtRecordLevel>>(
-          find.byType(RadioListTile<ThoughtRecordLevel>),
-        )
-        .toList();
-    expect(radios[1].groupValue, ThoughtRecordLevel.five);
+    // widget 重建后, RadioGroup.groupValue 变成 five (覆盖已写 SP)
+    expect(_groupValueOf(tester), ThoughtRecordLevel.five);
   });
 
   // 3. mock initial SP value=7 → 渲染时 7 栏 selected
-  testWidgets('mock initial SP value=7 → 启动渲染时 7 栏 selected',
-      (tester) async {
+  testWidgets('mock initial SP value=7 → 启动渲染时 7 栏 selected', (tester) async {
     SharedPreferences.setMockInitialValues(<String, Object>{
       _kSpKey: 7,
     });
@@ -103,15 +104,7 @@ void main() {
     await tester.pumpWidget(_build(sp: sp));
     await tester.pumpAndSettle();
 
-    // 7 栏 radio groupValue == seven (其余仍是 seven 因为同 group)
-    final radios = tester
-        .widgetList<RadioListTile<ThoughtRecordLevel>>(
-          find.byType(RadioListTile<ThoughtRecordLevel>),
-        )
-        .toList();
-    expect(radios[0].groupValue, ThoughtRecordLevel.seven);
-    expect(radios[1].groupValue, ThoughtRecordLevel.seven);
-    expect(radios[2].groupValue, ThoughtRecordLevel.seven);
-    expect(radios[2].value, ThoughtRecordLevel.seven);
+    // RadioGroup.groupValue == seven (SP 初始值 7 → fromInt(7) → seven)
+    expect(_groupValueOf(tester), ThoughtRecordLevel.seven);
   });
 }

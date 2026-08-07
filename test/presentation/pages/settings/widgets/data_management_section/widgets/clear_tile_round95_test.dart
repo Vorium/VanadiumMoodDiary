@@ -162,7 +162,7 @@ void main() {
         onClear: () async {
           callCount++;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -174,7 +174,7 @@ void main() {
 
       // 验证: 没有 AlertDialog (跳过完整链路)
       expect(find.byType(AlertDialog), findsNothing,
-          reason: 'onClear 模式下, 不应弹二次确认 dialog');
+          reason: 'onClear 模式下, 不应弹二次确认 dialog',);
     },
   );
 
@@ -202,11 +202,11 @@ void main() {
 
       // 验证: dialog 关闭
       expect(find.byType(AlertDialog), findsNothing,
-          reason: '取消后 dialog 应关闭');
+          reason: '取消后 dialog 应关闭',);
 
       // 验证: ventAudio.deleteAllWithRetry 没被调用 (取消 → 不清)
       expect(ventAudio.deleteCalls, 0,
-          reason: '取消后, 不应调 ventAudio.deleteAllWithRetry');
+          reason: '取消后, 不应调 ventAudio.deleteAllWithRetry',);
     },
   );
 }

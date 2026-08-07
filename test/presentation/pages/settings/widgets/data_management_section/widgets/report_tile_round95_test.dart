@@ -87,7 +87,7 @@ void main() {
 
       // 3 RadioListTile (7/14/30 天)
       expect(find.byType(RadioListTile<int>), findsNWidgets(3),
-          reason: 'ChooseWindowDialog 应有 3 个 RadioListTile 选项 (7/14/30 天)');
+          reason: 'ChooseWindowDialog 应有 3 个 RadioListTile 选项 (7/14/30 天)',);
     },
   );
 
@@ -103,7 +103,7 @@ void main() {
         onShow: () async {
           callCount++;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -115,7 +115,7 @@ void main() {
 
       // 验证: 没有 ChooseWindowDialog AlertDialog (跳过完整链路)
       expect(find.byType(AlertDialog), findsNothing,
-          reason: 'onShow 模式下, 不应弹 ChooseWindowDialog');
+          reason: 'onShow 模式下, 不应弹 ChooseWindowDialog',);
     },
   );
 }

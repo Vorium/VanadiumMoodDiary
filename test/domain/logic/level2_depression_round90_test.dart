@@ -8,7 +8,7 @@ import 'package:chroniccare/domain/logic/level2_depression.dart';
 void main() {
   group('Level2DepressionScale.computeResult', () {
     test('全部 0 → 总分 0, 无抑郁 (rank 0)', () {
-      final scale = level2DepressionScale;
+      const scale = level2DepressionScale;
       final result = scale.computeResult(List.filled(8, 0));
       expect(result.total, 0);
       expect(result.recommendDoctorVisit, isFalse);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('全部 3 → 总分 24, 重度抑郁 (rank 3)', () {
-      final scale = level2DepressionScale;
+      const scale = level2DepressionScale;
       final result = scale.computeResult(List.filled(8, 3));
       expect(result.total, 24);
       expect(result.recommendDoctorVisit, isTrue);

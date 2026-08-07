@@ -19,7 +19,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
@@ -89,34 +88,40 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                       },
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
-                    // v0.30 round 93 (阶段 2 audit-fixes): 失联通知 / 紧急联系人 SMS
-                    // 业务暂停, 主页 homeFabHotline 走
-                    // [FeatureFlags.emergencyContactEnabled] gate, 完全 hidden
-                    // (R66 阶段一致: 病耻感 + 失联通信业务暂停)。
-                    // homeFabTop (回到顶端) 保留。
-                    if (FeatureFlags.emergencyContactEnabled) ...[
-                      _FabButton(
-                        icon: Icons.phone_in_talk_outlined,
-                        label: l10n.homeFabHotline,
-                        onTap: () {
-                          setState(() => _expanded = false);
-                          // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线入口
-                          // (1 tap 达, B 站'公益热线' 同款)。R75 已备
-                          // hotlineByRegion 6 region + R83.5 partial 5 region
-                          // ARB keys (crisisHotline{Cn,Tw,Hk,Mo,*}Label/Number/Desc)
-                          // + R91 setup_legal_dialog _crisisHotlineSection 4 条
-                          // 已用。R92 改 push `/crisis-hotline` 独立页面
-                          // (5 地区列表 + 800-810-1117 全国)。
-                          //
-                          // 用 context.push (而非 GoRouter.of(context).go):
-                          // push 保留 back stack, 用户返回仍回主页 (go 会
-                          // 替换栈, 失去 home)。
-                          context.push('/crisis-hotline');
-                        },
-                      ),
-                      const SizedBox(height: AppTokens.spacingSm),
-                    ] else
-                      const SizedBox.shrink(),
+                    // R97-P0-2 (2026-08-07): 危机热线 FAB 永远显示。
+                    //
+                    // 修前 (R93 阶段 2): 危机热线入口被
+                    // [FeatureFlags.emergencyContactEnabled] gate 守卫,
+                    // 业务暂停时主页完全看不到任何危机干预入口, 违反
+                    // Apple App Store Guideline 1.4.1 (Physical Harm) 强制要求
+                    // "精神心理类 App 必须在主页有可见的自杀干预入口"。
+                    //
+                    // 修复: 危机热线是静态信息 (5 地区列表 + 全国热线,
+                    // CrisisHotlinePage 已实现 + 路由 `/crisis-hotline` 已注册),
+                    // 不依赖 SMS 业务。把 hotline FAB 从 emergencyContactEnabled
+                    // 守卫中拆出来, 永远显示。SMS 业务继续独立 flag 守卫
+                    // (safety_watch_service._checkAndAlert 内 FeatureFlag
+                    // gate 不变)。
+                    _FabButton(
+                      icon: Icons.phone_in_talk_outlined,
+                      label: l10n.homeFabHotline,
+                      onTap: () {
+                        setState(() => _expanded = false);
+                        // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线入口
+                        // (1 tap 达, B 站'公益热线' 同款)。R75 已备
+                        // hotlineByRegion 6 region + R83.5 partial 5 region
+                        // ARB keys (crisisHotline{Cn,Tw,Hk,Mo,*}Label/Number/Desc)
+                        // + R91 setup_legal_dialog _crisisHotlineSection 4 条
+                        // 已用。R92 改 push `/crisis-hotline` 独立页面
+                        // (5 地区列表 + 800-810-1117 全国)。
+                        //
+                        // 用 context.push (而非 GoRouter.of(context).go):
+                        // push 保留 back stack, 用户返回仍回主页 (go 会
+                        // 替换栈, 失去 home)。
+                        context.push('/crisis-hotline');
+                      },
+                    ),
+                    const SizedBox(height: AppTokens.spacingSm),
                     _FabButton(
                       icon: Icons.vertical_align_top,
                       label: l10n.homeFabTop,
@@ -132,7 +137,7 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                         // floatingActionButton 跟 Scaffold body 是 sibling
                         // (Flutter Scaffold 内部 layout), toolbar context
                         // 找不到 body 内的 Scrollable。直接用
-                        // home_page 传来的 ScrollController 走 animateTo
+                        // home_page 传来的 ScrollController, 通过 animateTo
                         // 不依赖 widget tree 路径, 行为可预期。
                         final ctrl = widget.scrollController;
                         if (ctrl != null && ctrl.hasClients) {

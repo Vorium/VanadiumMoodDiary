@@ -2,14 +2,19 @@
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/domain/entities/social_rhythm_entry.dart';
+import 'package:chroniccare/domain/repositories/social_rhythm_repository.dart';
 import 'package:drift/drift.dart' show Value;
 
 /// SocialRhythm 仓库的 Drift 实现
-class SocialRhythmRepositoryImpl {
+///
+/// R97-P1-1 (2026-08-07): implements [SocialRhythmRepository] domain 接口
+/// (跟 sleep_repository_impl.dart 同模式, 详见该文件注释)。
+class SocialRhythmRepositoryImpl implements SocialRhythmRepository {
   final AppDatabase _db;
 
   SocialRhythmRepositoryImpl(this._db);
 
+  @override
   Stream<List<SocialRhythmEntryEntity>> watchAll() {
     return _db.socialRhythmDao.watchAll().map(
           (rows) => rows
@@ -29,6 +34,7 @@ class SocialRhythmRepositoryImpl {
         );
   }
 
+  @override
   Future<int> add({
     required DateTime date,
     required DateTime wakeTime,
@@ -51,5 +57,6 @@ class SocialRhythmRepositoryImpl {
     );
   }
 
+  @override
   Future<int> delete(int id) => _db.socialRhythmDao.delete(id);
 }

@@ -41,7 +41,7 @@ void main() {
       // 2) note 保留原文 (R60 兼容, 不丢用户数据)
       // 3) score=0, answers 空 (损坏 JSON 无法解析的兜底)
       const piiMarker = '用户敏感身份证号 110101199001011234';
-      final corruptedNote = '{"score": 5, "user_pii": "$piiMarker"';
+      const corruptedNote = '{"score": 5, "user_pii": "$piiMarker"';
       await db.into(db.checkIns).insert(
             CheckInsCompanion.insert(
               timestamp: DateTime(2026, 7, 1, 10, 0),

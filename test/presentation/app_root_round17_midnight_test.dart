@@ -16,9 +16,7 @@ tz.TZDateTime _local(int y, int m, int d, [int h = 0, int mi = 0, int s = 0]) {
 }
 
 void main() {
-  setUpAll(() {
-    tzdata.initializeTimeZones();
-  });
+  setUpAll(tzdata.initializeTimeZones);
 
   group('nextMidnightRefresh (v0.17 round 4 跨 midnight 自动 refresh)', () {
     test('0:00:00 时返回 ~5 秒（buffer）', () {

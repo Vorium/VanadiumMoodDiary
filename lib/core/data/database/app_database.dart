@@ -1,3 +1,4 @@
+import 'package:chroniccare/core/data/services/vent_audio_storage.dart' show VentAudioStorage;
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 

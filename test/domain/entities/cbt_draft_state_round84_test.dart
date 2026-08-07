@@ -95,7 +95,7 @@ void main() {
         ),
         1,
       );
-      final allFilled = const MoodEntryDraft(
+      const allFilled = MoodEntryDraft(
         score: 4,
         tags: [],
         situation: 's',

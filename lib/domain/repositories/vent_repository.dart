@@ -3,6 +3,7 @@
 // 4 层架构：domain 定义接口，data 层实现。
 // 树洞数据完全独立于情绪日记，本仓库也不参与任何分析/通知/关怀。
 
+import 'package:chroniccare/core/data/services/vent_audio_storage.dart' show VentAudioStorage;
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 
 /// 树洞仓库（domain 接口）

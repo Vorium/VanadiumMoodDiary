@@ -64,7 +64,7 @@ void main() {
   });
 
   test('P4 fix: 导入 v2 JSON → reportHistories + moodEntries 也被恢复', () async {
-    final json = '''
+    const json = '''
 {
   "version": 2,
   "exportedAt": "2026-07-13T12:00:00.000Z",
@@ -114,7 +114,7 @@ void main() {
   });
 
   test('P13 fix: 坏数据不写 DB,只跳过', () async {
-    final json = '''
+    const json = '''
 {
   "version": 2,
   "exportedAt": "2026-07-13T12:00:00.000Z",
@@ -192,7 +192,7 @@ void main() {
   });
 
   test('P0-3: 导入 v3 ventEntries 文字 + 录音元数据,丢弃 audioPath', () async {
-    final json = '''
+    const json = '''
 {
   "version": 3,
   "exportedAt": "2026-07-13T12:00:00.000Z",
@@ -240,7 +240,7 @@ void main() {
   });
 
   test('P0-3: 导入 v2 (没 ventEntries 段) 也能成功,只是 ventCount = 0', () async {
-    final json = '''
+    const json = '''
 {
   "version": 2,
   "exportedAt": "2026-07-13T12:00:00.000Z",
@@ -258,7 +258,7 @@ void main() {
   });
 
   test('P0-3: 导入 v3 但 ventEntries 是空数组 → ventCount = 0', () async {
-    final json = '''
+    const json = '''
 {
   "version": 3,
   "exportedAt": "2026-07-13T12:00:00.000Z",
@@ -277,7 +277,7 @@ void main() {
   });
 
   test('P0-3: 导入时坏 vent 数据 (timestamp 无效) 跳过,不抛错', () async {
-    final json = '''
+    const json = '''
 {
   "version": 3,
   "exportedAt": "2026-07-13T12:00:00.000Z",
@@ -309,7 +309,7 @@ void main() {
     final export1 = await svc.exportToJson();
     // 清空 (新数据库)
     await db.delete(db.ventEntries).go();
-    expect((await db.ventDao.watchAll().first), isEmpty);
+    expect(await db.ventDao.watchAll().first, isEmpty);
 
     // 重新导入
     final result = await svc.importFromJson(export1);

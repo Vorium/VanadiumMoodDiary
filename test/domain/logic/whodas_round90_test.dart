@@ -8,7 +8,7 @@ import 'package:chroniccare/domain/logic/whodas.dart';
 void main() {
   group('WhodasScale.computeResult', () {
     test('全部 0 → 总分 0, 无残疾 (rank 0)', () {
-      final scale = whodasScale;
+      const scale = whodasScale;
       final result = scale.computeResult(List.filled(12, 0));
       expect(result.total, 0);
       expect(result.recommendDoctorVisit, isFalse);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('全部 4 → 总分 48, 极重度残疾 (rank 4)', () {
-      final scale = whodasScale;
+      const scale = whodasScale;
       final result = scale.computeResult(List.filled(12, 4));
       expect(result.total, 48);
       expect(result.recommendDoctorVisit, isTrue);

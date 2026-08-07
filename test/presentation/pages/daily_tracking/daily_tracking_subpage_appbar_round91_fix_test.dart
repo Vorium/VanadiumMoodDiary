@@ -17,6 +17,11 @@
 //
 // 4 层架构: test 只引 flutter test + l10n + presentation widgets + 同
 // presentation providers, 0 跨 feature import.
+//
+// R97-P1-12 (2026-08-07): close_sinks 误报 — 6 个 _FakeXxxRepo 的 _ctrl 字段
+// 在 tearDown → repos.close() 里统一 .close(), 但 analyzer 无法跨 _FakeRepos
+// 间接层追踪到。close 模式已 verify (tearDown line 221-223)。
+// ignore_for_file: close_sinks
 import 'dart:async';
 
 import 'package:flutter/material.dart';

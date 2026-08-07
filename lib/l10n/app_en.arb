@@ -57,7 +57,11 @@
   "settingsAssessment": "Assessment",
   "settingsAssessmentHistory": "Assessment History",
   "settingsAssessmentHistorySubtitle": "View line charts and comparisons for all PHQ-9 / GAD-7 assessments",
-  "settingsAboutVersion": "v0.23.0 · I took my meds today",
+  "@settingsAboutVersion": {
+      "description": "R99 (BUG-2): about section version line, version injected from kPubspecVersion (no longer hardcoded)",
+      "placeholders": { "version": { "type": "String" } }
+  },
+  "settingsAboutVersion": "v{version} · I took my meds today",
   "settingsDisclaimerText": "This app does not provide medical advice. All features are for reference only.",
   "settingsExportRiskTitle": "Plaintext risk warning",
   "settingsExportRiskBody": "You are about to export data as a PLAINTEXT file containing your sensitive personal information (medication, check-ins, emergency contacts, vent text). Save it securely (encrypted USB / private cloud), never upload to public cloud or share with untrusted parties.",
@@ -432,6 +436,11 @@
   "ventDetailTitle": "Vent",
   "ventDetailNotFound": "Not found",
   "ventDetailPrivacy": "🔒 Private · Only you can see",
+  "ventReportTooltip": "Report or feedback",
+  "ventReportDialogTitle": "Private vent notice",
+  "ventReportDialogBody": "Vent content is stored only on your device and is never uploaded to any server. No other user can see it.\n\nIf you find inappropriate content within the App itself or want to send feedback, please go to the \"Legal & Privacy\" page to contact the developer.",
+  "ventReportDialogAction": "Go to Legal & Privacy",
+  "ventReportDialogClose": "Close",
   "ventToday": "Today",
   "ventYesterday": "Yesterday",
   "ventComposeTitle": "Vent",
@@ -1338,11 +1347,11 @@
       }
     }
   },
-  "settingsIapUpgradeTitle": "Upgrade to Pro",
-  "settingsIapUpgradeSubtitle": "¥8 one-time purchase · unlock all premium features",
-  "settingsIapProOwnedTitle": "You're on Pro",
-  "settingsIapProOwnedSubtitle": "Thanks for the support · all premium features unlocked",
-  "iapPurchaseSuccess": "Upgrade successful! Welcome to Pro.",
+  "settingsIapUpgradeTitle": "Buy this app",
+  "settingsIapUpgradeSubtitle": "¥8 one-time purchase · unlock all features",
+  "settingsIapProOwnedTitle": "Purchased",
+  "settingsIapProOwnedSubtitle": "Thanks for the support · all features unlocked",
+  "iapPurchaseSuccess": "Purchase successful! Thanks for your support.",
   "iapPurchaseFailed": "Purchase not completed. Please try again later.",
   "phoneRegionCn": "Mainland China",
   "phoneRegionHk": "Hong Kong, China",
@@ -1532,6 +1541,19 @@
     "placeholders": { "number": { "type": "Object" } }
   },
   "crisisHotlineSnackbarCopied": "Copied: {number}",
+  "@crisisHotlineDialTooltip": {
+    "description": "R97-P1-11 (2026-08-07): crisis hotline dial button tooltip"
+  },
+  "crisisHotlineDialTooltip": "Dial",
+  "@crisisHotlineCopyTooltip": {
+    "description": "R97-P1-11 (2026-08-07): crisis hotline copy button tooltip"
+  },
+  "crisisHotlineCopyTooltip": "Copy number",
+  "@crisisHotlineDialFailed": {
+    "description": "R97-P1-11 (2026-08-07): snackbar when tel: intent fails to launch",
+    "placeholders": { "number": { "type": "Object" } }
+  },
+  "crisisHotlineDialFailed": "Unable to launch dialer, please call manually: {number}",
   "setupLegalAgeAttestation": "I solemnly declare that I am at least 18 years of age. If I am between 14 and 18 years of age, I confirm that I have obtained consent from my legal guardian and accept all legal consequences of any false statement.",
   "moodCbtLevelLabel3": "3-column",
   "moodCbtLevelLabel5": "5-column",

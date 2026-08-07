@@ -10,9 +10,7 @@ import 'package:chroniccare/core/data/feature_flags.dart';
 void main() {
   group('FeatureFlags (R67 C-7)', () {
     // 每个 case 后清 override, 避免污染后续 test
-    tearDown(() {
-      FeatureFlags.resetForTest();
-    });
+    tearDown(FeatureFlags.resetForTest);
 
     test(
         '1. 默认值: emergencyContactEnabled=false, iapEnabled=false (R68), phqGad7I18nEnabled=false, bootReceiverEnabled=false (R93)',

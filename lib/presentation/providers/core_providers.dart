@@ -30,7 +30,7 @@ import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 /// 数据库 Provider (跨 feature 共享)
 final databaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
-  ref.onDispose(() => db.close());
+  ref.onDispose(db.close);
   return db;
 });
 

@@ -18,7 +18,6 @@ import 'package:chroniccare/presentation/pages/mood/widgets/mood_audio_section.d
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/mood_providers.dart';
-import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -61,9 +60,7 @@ void main() {
     FeatureFlags.resetForTest();
   });
 
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  tearDown(FeatureFlags.resetForTest);
 
   Widget wrap() {
     return ProviderScope(
@@ -90,11 +87,10 @@ void main() {
 
     // MoodRecorder widget (mic 录音 + 状态机) 不渲染
     expect(find.byType(MoodRecorder), findsNothing,
-        reason: 'R93: ventAudioEnabled=false 时 MoodRecorder mic 隐藏');
+        reason: 'R93: ventAudioEnabled=false 时 MoodRecorder mic 隐藏',);
   });
 
-  testWidgets(
-      'R93 case 2: ventAudioEnabled=true → MoodRecorder mic widget 渲染',
+  testWidgets('R93 case 2: ventAudioEnabled=true → MoodRecorder mic widget 渲染',
       (tester) async {
     // ventAudioEnabled 有 setVentAudioEnabledForTest setter (R93 阶段 2 新增)
     FeatureFlags.setVentAudioEnabledForTest(true);
@@ -103,6 +99,6 @@ void main() {
 
     // MoodRecorder widget 渲染
     expect(find.byType(MoodRecorder), findsOneWidget,
-        reason: 'R93: ventAudioEnabled=true 时 MoodRecorder mic 可见');
+        reason: 'R93: ventAudioEnabled=true 时 MoodRecorder mic 可见',);
   });
 }

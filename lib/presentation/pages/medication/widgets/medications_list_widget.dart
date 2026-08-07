@@ -65,7 +65,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     try {
       final result = await showEditMedicationDialog(context, med);
       if (!mounted) return;
-      if (result == true) {
+      if (result ?? false) {
         // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
         AppSnackBar.showInfo(
           context,

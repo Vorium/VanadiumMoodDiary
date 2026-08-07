@@ -72,7 +72,7 @@ void main() {
 
   group('shouldFire', () {
     test('none → false', () {
-      final t = const CareTrigger(
+      const t = CareTrigger(
         type: CareTriggerType.none,
         title: '',
         body: '',

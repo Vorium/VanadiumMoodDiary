@@ -8,7 +8,7 @@ import 'package:chroniccare/domain/logic/level2_mania.dart';
 void main() {
   group('Level2ManiaScale.computeResult', () {
     test('全部 0 → 总分 0, 无躁狂 (rank 0)', () {
-      final scale = level2ManiaScale;
+      const scale = level2ManiaScale;
       final result = scale.computeResult(List.filled(5, 0));
       expect(result.total, 0);
       expect(result.recommendDoctorVisit, isFalse);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('全部 3 → 总分 15, 重度躁狂 (rank 3)', () {
-      final scale = level2ManiaScale;
+      const scale = level2ManiaScale;
       final result = scale.computeResult(List.filled(5, 3));
       expect(result.total, 15);
       expect(result.recommendDoctorVisit, isTrue);

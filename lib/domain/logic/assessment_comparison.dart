@@ -11,6 +11,7 @@
 // 我们用 rank（0..N-1）来量化，等级下降 = 好转。
 
 import 'package:chroniccare/domain/logic/assessment_record.dart';
+import 'package:chroniccare/domain/logic/assessment_scale.dart' show AssessmentScale;
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 
 /// 严重度排名方向

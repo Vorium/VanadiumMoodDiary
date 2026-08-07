@@ -8,9 +8,9 @@
 // 4. lastAlertAt same day + 漏 3 天 → SafetyDecisionAlertedToday
 // 5. contacts 空 (stream timeout 降级) → SafetyDecisionNoContacts
 
-import 'package:chroniccare/core/data/services/safety_detector.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
+import 'package:chroniccare/domain/logic/safety_detector.dart';
 import 'package:chroniccare/domain/usecases/check_safety.dart';
 import 'package:flutter_test/flutter_test.dart';
 

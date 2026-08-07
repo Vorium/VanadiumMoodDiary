@@ -101,7 +101,7 @@ void main() {
   });
 
   /// 800x2000 模拟手机视口, MoodRecorderPage 全内容 (3 栏 + period + tags + audio + save) 可见
-  void _setBigView(WidgetTester tester) {
+  void setBigView(WidgetTester tester) {
     tester.view.physicalSize = const Size(800, 2000);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -110,7 +110,7 @@ void main() {
     });
   }
 
-  Widget _wrap({required _FakeMoodRepository fakeRepo}) {
+  Widget wrap({required _FakeMoodRepository fakeRepo}) {
     return ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sp),
@@ -128,8 +128,8 @@ void main() {
 
   testWidgets('mood_dialog 渲染 period dropdown (label "时段" + 默认 "未指定")',
       (tester) async {
-    _setBigView(tester);
-    await tester.pumpWidget(_wrap(fakeRepo: _FakeMoodRepository()));
+    setBigView(tester);
+    await tester.pumpWidget(wrap(fakeRepo: _FakeMoodRepository()));
     await tester.pumpAndSettle();
 
     // period label 可见 (moodDialogPeriodLabel = "时段")
@@ -140,9 +140,9 @@ void main() {
 
   testWidgets('选 period morning → 提交后 entry.period == "morning"',
       (tester) async {
-    _setBigView(tester);
+    setBigView(tester);
     final fakeRepo = _FakeMoodRepository();
-    await tester.pumpWidget(_wrap(fakeRepo: fakeRepo));
+    await tester.pumpWidget(wrap(fakeRepo: fakeRepo));
     await tester.pumpAndSettle();
 
     // 拿 ProviderContainer, 走 cbtDraftProvider 模拟 dropdown onChanged
@@ -162,8 +162,8 @@ void main() {
 
     // 验 moodRepository.add 收到 period='morning'
     expect(fakeRepo.lastAddedDraft, isNotNull,
-        reason: '点保存后 MoodRepository.add 应被调');
+        reason: '点保存后 MoodRepository.add 应被调',);
     expect(fakeRepo.lastAddedDraft!.period, 'morning',
-        reason: 'cbtDraftProvider 写 period → save 时透传给 repository');
+        reason: 'cbtDraftProvider 写 period → save 时透传给 repository',);
   });
 }

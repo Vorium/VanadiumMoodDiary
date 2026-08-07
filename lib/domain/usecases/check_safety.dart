@@ -1,21 +1,16 @@
 // v0.27 round 65 (spen 1.2.2 + alibaba 1.2 use case 层补):
 // 抽 CheckSafetyUseCase (SafetyDetector 的 domain 层包装)
 //
-// 之前 safety_watch_service._checkAndAlert 调 SafetyDetector.detect 拿 decision,
-// 业务编排 (加载 config + repos + stream) 跟 8 类 early-return 判定 (detector)
-// 串在一起。R64 已抽 SafetyDetector 到 lib/core/data/services/ 纯函数类, 但
-// detector 仍依赖 SafetyConfigService (data 层), presentation 调它需要 import
-// data/services/。
-//
-// 本 use case 把 detector 提升到 domain 层 — presentation 调 CheckSafetyUseCase
-// 拿 SafetyDecision (sealed), 不再 import data/services/。SafetyDetector 仍存在
-// 供 safety_watch_service facade 用 (避免循环依赖)。
+// v0.29 R85 (spzh P1 架构修复): SafetyDetector 已从 lib/core/data/services/
+// 挪到 lib/domain/logic/safety_detector.dart, 满足 4 层架构"domain 不依赖
+// data"硬约束。本 use case 改 import 新路径, 同时旧 lib/core/data/services/
+// safety_detector.dart 已删除 (避免 DRY + 死代码)。
 //
 // 0 副作用: 纯函数 wrapper, 0 Flutter / 0 Drift / 0 service 调。
 
-import 'package:chroniccare/core/data/services/safety_detector.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
+import 'package:chroniccare/domain/logic/safety_detector.dart';
 
 /// Use case 输入
 ///

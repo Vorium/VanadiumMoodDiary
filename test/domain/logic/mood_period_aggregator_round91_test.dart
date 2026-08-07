@@ -50,7 +50,7 @@ void main() {
           at: now.subtract(Duration(days: d)),
           score: s,
           period: p,
-        ));
+        ),);
       }
       // 加 4 条 unspecified (老 entry 模拟, period = null)
       for (int i = 0; i < 4; i++) {
@@ -59,7 +59,7 @@ void main() {
           at: now.subtract(Duration(days: 35 + i)),
           score: 4,
           period: null,
-        ));
+        ),);
       }
 
       // 默认 30 天窗 → unspecified 4 条 (35+ 天前) 全被剔除

@@ -21,12 +21,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   // 每个 case 跑完后恢复 prod 默认值, 避免污染后续 test
-  setUp(() {
-    FeatureFlags.resetForTest();
-  });
-  tearDown(() {
-    FeatureFlags.resetForTest();
-  });
+  setUp(FeatureFlags.resetForTest);
+  tearDown(FeatureFlags.resetForTest);
 
   group('FeatureFlags R93 阶段 2 默认值 (8 flag 全 false)', () {
     test('emergencyContactEnabled 默认 false', () {

@@ -53,7 +53,10 @@ class Phq9Result {
 
   const Phq9Result(this.total, this.severity, this.summary);
 
-  static Phq9Result fromTotal(int total) {
+  // R97-P1-12 (2026-08-07): static factory → factory constructor
+  // (Effective Dart: prefer_constructors_over_static_methods)
+  // 调用方 Phq9Result.fromTotal(x) 语法不变, 但更符合 Dart 惯例
+  factory Phq9Result.fromTotal(int total) {
     final cutoff = phq9Scale.severityCutoffs.firstWhere(
       (c) => total <= c.threshold,
       orElse: () => phq9Scale.severityCutoffs.last,

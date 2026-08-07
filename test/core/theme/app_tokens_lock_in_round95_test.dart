@@ -270,7 +270,7 @@ void main() {
           .where((f) =>
               f.path.endsWith('.dart') &&
               !f.path.endsWith('.g.dart') &&
-              !f.path.contains('app_tokens_lock_in_round95_test.dart'))
+              !f.path.contains('app_tokens_lock_in_round95_test.dart'),)
           .toList();
       var count = 0;
       for (final f in files) {
@@ -293,7 +293,7 @@ void main() {
           .where((f) =>
               f.path.endsWith('.dart') &&
               !f.path.endsWith('.g.dart') &&
-              !f.path.contains('app_tokens_lock_in_round95_test.dart'))
+              !f.path.contains('app_tokens_lock_in_round95_test.dart'),)
           .toList();
       var count = 0;
       for (final f in files) {

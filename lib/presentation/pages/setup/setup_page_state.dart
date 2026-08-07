@@ -473,6 +473,29 @@ class SetupPageState extends ConsumerState<SetupPage> {
           .watchAll()
           .first
           .timeout(const Duration(seconds: 5));
+
+      // R97-P1-6 (2026-08-07): 在 context 内请求通知权限。
+      //
+      // 修前: notification_service.init() 在 main.dart 启动时立即弹权限请求,
+      // 用户没看到任何 UI 不知为何授权 → 拒绝率高 + 违反 App Store 5.1.1
+      // "权限应在 context 内请求"指南。
+      //
+      // 修后: 改在 setup 流程配完药、即将调度提醒的时机请求 — 用户已明确
+      // 配置了药物 + 看到"提醒"相关 UI, 此刻请求权限符合用户预期。
+      // 用户拒绝时仍继续 setup (提醒调度失败不阻塞核心功能, 跟 main.dart
+      // try/catch 一致), 后续在 settings/reminders_hub 还可重新触发。
+      try {
+        await ref.read(notificationServiceProvider).requestPermission();
+      } catch (e, st) {
+        // 平台异常 (e.g. web 不支持) 不阻塞 setup, 走 swallowError 集中器
+        swallowError(
+          where: 'setup_page_state._goToStep3.requestPermission',
+          error: e,
+          stack: st,
+          note: '通知权限请求失败不阻塞 setup',
+        );
+      }
+
       await ref.read(notificationServiceProvider).rescheduleMedicationReminders(
             medications,
           );

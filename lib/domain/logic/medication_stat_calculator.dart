@@ -1,4 +1,4 @@
-﻿// v0.25 round 58: MedicationStatCalculator 抽离 (medication_report god class 拆分)
+// v0.25 round 58: MedicationStatCalculator 抽离 (medication_report god class 拆分)
 //
 // 之前 medication_report.dart 347 行含 5 个 static method + 3 个 data
 // class + toReportString, god class 标签。R58 拆 3 纯函数类:
@@ -79,7 +79,7 @@ class MedicationStatCalculator {
     // 天漏服 (e.g. startDate = periodStart + 7, 实际只 7 天可服药, 但
     // 旧逻辑 days - daysWithDose = 14 - 0 = 14 phantom 漏服).
     final missedDays =
-        (effectiveDaysClamped - daysWithDose.length).clamp(0, days).toInt();
+        (effectiveDaysClamped - daysWithDose.length).clamp(0, days);
     final missedDates = MissedDateBuilder.build(
       periodStart: periodStart,
       daysWithDose: daysWithDose,
