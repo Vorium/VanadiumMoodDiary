@@ -2,21 +2,35 @@
 
 > 我今天吃了药 · 精神心理患者吃药打卡 + 停药通知
 
-> **🚧 v0.30 R95 阶段 1+2+3+4 实施后 (2026-08-07)**: 8 sub-spec / 44 commit / 2019 pass (+347 R95 new tests) / 0 analyzer error / 18 守门员全绿 / 0 god page 残留 (8 god widget 拆完: data_mgmt / scale / scale_l10n / home / trend / mood_audio / setup / settings)。
+> **🚧 v0.30.0+85 (2026-08-10 R108 revisit 综合审视)**: 120 个旧报告归档 → 9 视角 subagent 重新跑 (7 lens + 顶层架构 + 底层逐行)。**加权综合 ≈ 6.2/10** (R108 拆 god class 进行中,working tree 引入 8 个回归 error + 上架"实物资产"未做,**临时从 R107 8.0 倒退 1.8 分**)。详细整合见 [`docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md`](docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (40KB / 9 份 subagent 报告合计 404KB)。旧 R107 报告归档到 [`docs/audit-history/r107-cleanup-2026-08-10/`](docs/audit-history/r107-cleanup-2026-08-10/)。
 >
-> **6 视角评分提升** (R92 → R95): emil **7.5→9.0** (+1.5) / spen **8.0→9.0** (+1.0) / flutter-spec **84%→88%** (+4%) / spzh 工程 **8.0→9.0** / spzh 合规 **3.5→4.5** / AppStore **6.0→6.5** / GooglePlay **38%→40%**。
+> **各视角最新评分 (R108 revisit)**:
+> - emil 设计 / UI / 动效: **8.5/10** (-0.5 vs R107 9.0, 主页 stagger 8→3 已闭环)
+> - superpowers-en 工程 / TDD: **6.5/10** (R108 拆解方向对,落地漏 compile gate,8 个 P0 引入 error)
+> - superpowers-zh 国内合规/PIPL: **6.5/10** (域名 + 5 厂商 push + 阿里云 SMS 3 大硬阻塞未解)
+> - flutter-specification v3.1: **6.8/10** (~88%, R108 引入 4 error 临时倒退 4%)
+> - AppStore iOS: **3.5/10** (iOS 截图 0 / LaunchImage 68B / review TODO 占位 / 锁屏 PII title / 5.1.3 抽审)
+> - GooglePlay Android: **5.5/10** (实物资产 100% 缺失:8 张截图 / feature_graphic / icon / 平板截图 / keystore)
+> - apple-health HealthKit: **3.0/10** (PrivacyInfo 5.1.3 抽审 / 慢病数据 37.5% 覆盖 / BMI 永远 null)
+> - 顶层架构: **8.4/10** (4 层架构 1:1 + SOLID 5/5 扣 SRP,15 god class 候选)
+> - 底层逐行: **7.0/10** (14 新发现,1 P0 = audit log 跨时区漂移)
 >
-> **业务真接 + 法务 + 资质 + 临床 + 设计师 + Mac 暂停, 8 FeatureFlag 仍守门 (R95 持续)**:
-> 1. IAP 8 元买断 (Apple 2.1 拒 — `iapEnabled=false`, 等 App Store Connect 真接)
-> 2. 失联通知 / 紧急联系人 SMS (阿里云未真接 — `emergencyContactEnabled=false`, 等 AccessKey + 阿里云审核)
-> 3. 5 厂商 push (米/华/OPPO/vivo/魅族 — `fiveVendorPushEnabled=false`, 等 5 厂商 1-2 月审核)
-> 4. EmailService 邮件导出 (SendGrid 未真接 — `emailServiceEnabled=false`, 等 API key)
-> 5. vent + mood audio 录音 (业务闭环不全 — `ventAudioEnabled=false`, 等业务真接)
-> 6. PHQ-9 / GAD-7 量表 (en/zh_Hant 翻译不全 — `phqGad7I18nEnabled=false`, 等法务 + 临床审核)
-> 7. Android BootReceiver (WorkManager 完善前 — `bootReceiverEnabled=false`)
-> 8. AliyunSms 真接 (`aliyunSmsEnabled=false`, 等 AccessKey)
+> **R108 revisit 关键 P0 (38 项去重后,按优先级排序)**:
+> 1. **优先级 1 上架硬阻塞** (5 项): iOS 截图 0 / Android 截图 67B + feature_graphic 67B / iOS LaunchImage 68B + AppIcon 偏小 / review_information 4 文件 TODO 占位 / en-US 描述含 4 类精神疾病名 5.1.3 抽审
+> 2. **优先级 2 外部依赖卡点** (4 项): chroniccare.app 域名未注册(7-20d ICP)/ 4 邮箱未注册(2h)/ 阿里云 SMS throw StateError(失联通知 100% 失效,1-2 月)/ 5 厂商 push 0 接入(1-2 月)
+> 3. **优先级 3 鸿蒙 + IAP** (2 项): 鸿蒙/OpenHarmony 0 适配 / store_kit productId 跟包名不一致
+> 4. **优先级 4 锁屏 PII 跨 3 视角共识** (1 项): 锁屏通知 title 仍含药名(R108 修了 body 但漏 title)
+> 5. **优先级 5 R108 引入的 8 个回归 error** (8 项,合计 ≤2.5h): audio_lifecycle 缺 imports / MoodEntry `recordingMode` 未 regenerate / provider undefined / notification_service 跨类访问 @visibleForTesting / legal_consent audit log 不带 UTC / vent_detail_page fire-and-forget Future / weight_widgets dynamic 反射 / PrivacyInfo HealthAndFitness 0 HealthKit
+> 6. **优先级 6 其他 P0** (12 项,单视角发现)
 >
-> **业务真接后翻 flag = 立即恢复, 数据模型 / Repository / 业务代码全部保留**。详见 `lib/core/data/feature_flags.dart` + `assets/legal/privacy_policy.md` §0.6 + `docs/VERSION_1.0_PLAN.md` R95 路线图。
+> **修复路线图**:
+> - **Phase 1 R108 收尾** (1-2 周): 修 8 个 P0 引入 error + 上架紧急 4h + 6 项 god class 收尾 (2d) + 5 个新守门员脚本 (3-4d) → 预期 7.5-8.0/10
+> - **Phase 2 外部依赖** (1-2 月): 域名 + 4 邮箱 + 5 厂商 push + 阿里云 SMS + 鸿蒙
+> - **Phase 3 R109 god class 专项** (1-2 月): 5-6 god class 拆 + use case 层厚化 → 预期 8.5/10
+> - **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace → 预期 9.0/10
+> - **Phase 5 R1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP → 预期 9.5/10
+>
+> **8 FeatureFlag 守门状态 (R108)**: 同 R107 状态,7 false / 1 true (ventAudioEnabled)。详见 `lib/core/data/feature_flags.dart` + 整合报告第 5.4 节。
 
 ## 🎯 产品
 

@@ -1,17 +1,498 @@
 # v0.30 R95+ 路线图 (原 VERSION_1.0_PLAN, R95 阶段 1+2+3+4 实施后升级版)
 
 **创建时间**: 2026-07-31 (R67)
-**升级时间**: 2026-08-07 (R95 阶段 1+2+3+4 实施后, Mavis 6 视角审视 + 8 sub-spec 实施 + 99-r95-final-summary 总结)
+**升级时间**: 2026-08-10 (R108 revisit 综合审视更新)
+**审查报告**: [docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md](../audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (R108 revisit 9 视角综合,40KB)
 **目的**: 记录 v0.30.0+85 R95 阶段 1+2+3+4 实施后路线图 + v1.0 bump 决策
 **当前**: pubspec.yaml `version: 0.30.0+85` (R95 阶段 1+2+3+4 完成, 8 sub-spec / 44 commit / +347 R95 new tests / 2019 pass / 18 守门员全绿 / 0 analyzer error)
 **上一版**: v0.27.0+64 (R67) → 0.30.0+85 (R95 实施后) 历经 19 + 8 = 27 commit, 4 sub-spec (R84/R87/R90/R91) + 2 阶段修复 (R92/R93) + 8 R95 sub-spec (1+2+3+4+5+6+7+8)
+
+## R108 revisit 综合审视 (2026-08-10, 9 视角从 0 重跑)
+
+**状态**: 120 个旧报告归档到 `docs/audit-history/` → 9 视角 subagent 从 0 重新跑(7 lens + 顶层架构 + 底层逐行),9 份报告合计 404KB。
+
+**R108 vs R107 加权综合评分**:
+- R107 8.0/10 → R108 6.2/10(**临时倒退 1.8 分**)
+- 倒退主因:R108 working tree 引入 8 个回归 error + 上架"实物资产"未做
+- R108 完工后预期恢复 7.5-8.0/10(修 8 个 P0 error + R108 god class 收尾 6 项 + 上架实物资产落地 10-15 项)
+
+**R108 P0 整合(去重后 38 项,按优先级)**:
+- 优先级 1 上架硬阻塞 (5 项): iOS 截图 0 / Android 截图 67B + feature_graphic 67B / iOS LaunchImage 68B / review TODO 占位 / 5.1.3 抽审
+- 优先级 2 外部依赖卡点 (4 项): chroniccare.app 域名 + 4 邮箱 + 阿里云 SMS + 5 厂商 push
+- 优先级 3 鸿蒙 + IAP (2 项)
+- 优先级 4 锁屏 PII 跨 3 视角共识 (1 项): title 仍含药名
+- 优先级 5 R108 引入 8 个回归 error (8 项,合计 ≤2.5h)
+- 优先级 6 其他 P0 (12 项)
+
+**修复路线图**:
+- **Phase 1 R108 收尾** (1-2 周): 8 P0 引入 error + 上架紧急 4h + 6 项 god class 收尾 (2d) + 5 个新守门员
+- **Phase 2 外部依赖** (1-2 月): 域名 ICP + 5 厂商 push + 阿里云 SMS
+- **Phase 3 R109 god class 专项** (1-2 月): 5-6 god class 拆 + use case 层厚化
+- **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace
+- **Phase 5 R1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP
+
+**详细整合**: [`docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md`](../audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (40KB)
 
 > **R95 整体总结报告** (R95 实施后): [docs/audit/2026-08-06/r95-increment/99-r95-final-summary.md](audit/2026-08-06/r95-increment/99-r95-final-summary.md) (25KB)
 > **R95+ 综合审视报告** (R95 实施前): [docs/audit/2026-08-06/r95-increment/00-r95-summary.md](audit/2026-08-06/r95-increment/00-r95-summary.md) (45KB)
 > **6 视角子报告**: [emil](audit/2026-08-06/r95-increment/01-emil.md) / [spen](audit/2026-08-06/r95-increment/02-spen.md) / [spzh](audit/2026-08-06/r95-increment/03-spzh.md) / [AppStore](audit/2026-08-06/r95-increment/04-appstore.md) / [GooglePlay](audit/2026-08-06/r95-increment/05-googleplay.md) / [flutter-spec](audit/2026-08-06/r95-increment/06-flutter-spec.md)
 > **R92 6 视角基线**: [docs/audit/2026-08-06/00-summary-report.md](audit/2026-08-06/00-summary-report.md) (35KB)
 > **R95 8 sub-spec 报告**: [docs/superpowers/sdd-logs/](../../superpowers/sdd-logs/) (round95-godpage-section / round95-silent-catch / round95-misc-p1 / round95-hardcoded-chinese / round95-godpage-split / round95-token / round95-test-coverage / round95-misc-p2 / round95-ux-p3)
-> **R100 6 视角审计** (2026-08-07, 最新): [00-summary](audit/2026-08-07/R100-6perspective-audit/00-summary.md) + [emil](audit/2026-08-07/R100-6perspective-audit/01-emilkowalski.md) / [spen](audit/2026-08-07/R100-6perspective-audit/02-superpowers-en.md) / [spzh](audit/2026-08-07/R100-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit/2026-08-07/R100-6perspective-audit/04-appstore.md) / [GooglePlay](audit/2026-08-07/R100-6perspective-audit/05-googleplay.md) / [flutter-spec](audit/2026-08-07/R100-6perspective-audit/06-flutter-spec.md)
+> **R100 6 视角审计** (2026-08-07): [00-summary](audit/2026-08-07/R100-6perspective-audit/00-summary.md) + [emil](audit/2026-08-07/R100-6perspective-audit/01-emilkowalski.md) / [spen](audit/2026-08-07/R100-6perspective-audit/02-superpowers-en.md) / [spzh](audit/2026-08-07/R100-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit/2026-08-07/R100-6perspective-audit/04-appstore.md) / [GooglePlay](audit/2026-08-07/R100-6perspective-audit/05-googleplay.md) / [flutter-spec](audit/2026-08-07/R100-6perspective-audit/06-flutter-spec.md)
+> **R101 6 视角深度审计** (2026-08-07): [00-summary](audit/2026-08-07/R101-6perspective-audit/00-summary.md) + [emil](audit/2026-08-07/R101-6perspective-audit/01-emilkowalski.md) / [spen](audit/2026-08-07/R101-6perspective-audit/02-superpowers-en.md) / [spzh](audit/2026-08-07/R101-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit/2026-08-07/R101-6perspective-audit/04-appstore.md) / [GooglePlay](audit/2026-08-07/R101-6perspective-audit/05-googleplay.md) / [flutter-spec](audit/2026-08-07/R101-6perspective-audit/06-flutter-spec.md)
+> **R105 7 视角审计** (2026-08-09, 最新): [00-summary](audit/2026-08-09/review-round-105/00-summary.md) + [emil](audit/2026-08-09/review-round-105/01-emilkowalski.md) / [spen](audit/2026-08-09/review-round-105/02-superpowers-en.md) / [spzh](audit/2026-08-09/review-round-105/03-superpowers-zh.md) / [flutter-spec](audit/2026-08-09/review-round-105/04-flutter-spec.md) / [AppStore](audit/2026-08-09/review-round-105/05-appstore.md) / [GPlay](audit/2026-08-09/review-round-105/06-googleplay.md) / [AppleHealth](audit/2026-08-09/review-round-105/07-apple-health.md)
+
+---
+
+## R104 审计更新 (2026-08-09, 7 视角综合审查)
+
+**状态**: 7 个 agent 并行深度扫描全部 395 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test。**新增/确认 72 项** (P0=12 / P1=20 / P2=20 / P3=10 + Apple Health 10 项), 完整报告见 [docs/audit/2026-08-09/7-perspective-audit-report.md](audit/2026-08-09/7-perspective-audit-report.md)。
+
+### R104 各视角评分总览
+
+| 视角 | 评分 | 关键发现 |
+|------|------|----------|
+| **emilkowalski** (UI/UX/动效) | **7.0/10** | token 化优秀，delight 层偏保守 |
+| **superpowers-en** (架构/性能) | **8.2/10** | 分层清晰，god class 拆分成熟 |
+| **superpowers-zh** (工程) | **8.5/10** | 代码质量高，i18n 覆盖广 |
+| **superpowers-zh** (合规) | **8.0/10** | PIPL 完整，HIPAA/GDPR 缺失 |
+| **flutter-specification** | **88/100** | 顶级 Flutter 项目，import 顺序待规范 |
+| **AppStore** (iOS) | **7.5/10** | 隐私架构标杆，截图/URL 阻塞 |
+| **GooglePlay** (Android) | **68/100** | 技术配置就绪，资产/流程阻塞 |
+| **Apple Health** | **2/10** | 零集成，架构就绪度 8/10 |
+
+### R104 外部链接隐藏确认
+
+**运行时代码**: ✅ 0 外部链接泄露 (唯一 url_launcher = tel: 危机热线)
+**上架物料层**: ⚠️ `chroniccare.app` 域名 + 3 个邮箱未注册
+
+### R104 半成品/未完成功能
+
+- **8 项 FeatureFlag 守护功能**: IAP / SMS / 5 厂商 push / Email / audio / PHQ-9 i18n / BootReceiver / AliyunSms
+- **29 处 TODO 注释**: SMS 真实发送 8 处 / 量表未开放 3 处 / med.colorIndex 2 处 / 其他 16 处
+
+### R104 P0 快照 (上架阻塞, 12 项)
+
+| # | 事项 | 层级 | 难度 | 来源 |
+|---|------|------|------|------|
+| 1 | `chroniccare.app` 域名未注册 → 隐私政策/Support URL 不可访问 | 底层/外部 | 中 | AppStore+GPlay |
+| 2 | iOS 截图为 0 → App Store Connect 必填 | 底层/资产 | 中 | AppStore |
+| 3 | Android 截图为 67B 占位 PNG | 底层/资产 | 中 | GPlay |
+| 4 | Release keystore 未生成 (Android) | 底层 | 简单 | GPlay |
+| 5 | iOS 签名未配置 (需 Mac + DEVELOPMENT_TEAM) | 底层 | 简单 | AppStore |
+| 6 | 法律文档 3 份未律师审核 | 底层/外部 | 高 | AppStore+GPlay |
+| 7 | review_information 目录缺失 (iOS) | 底层 | 简单 | AppStore |
+| 8 | Data Safety Form 未填 (Android) | 底层 | 中 | GPlay |
+| 9 | IARC 内容评级未配置 (Android) | 底层 | 中 | GPlay |
+| 10 | Podfile platform 13.0 vs Xcode 14.0 不一致 | 底层 | 简单 | AppStore |
+| 11 | gradle-wrapper.properties 本地路径 | 底层 | 简单 | GPlay |
+| 12 | Android App 名称只有英文 "ChronicCare" | 底层 | 简单 | GPlay |
+
+### R104 P1 快照 (高概率打回 / 架构问题, 20 项)
+
+**架构级 (6 项)**:
+- `clearAllUserData()` 缺少新表清理的防御性设计
+- `NotificationService` facade 仍有 ~500 行，init 逻辑过重
+- `AppDatabase` 承担业务编排 (`saveSetup`/`clearAllUserData`)
+- `ReminderService` 和 `SafetyWatchService` 职责重叠
+- `_daysBetween` 函数重复实现 (3 处)
+- Import 顺序不完全标准
+
+**底层/合规 (14 项)**:
+- domain 层 ~100 处硬编码中文 (量表/标签/文案)
+- Store description 描述已禁用功能
+- 隐私政策无英文版
+- medical_disclaimer 未进 onboarding 流程
+- HIPAA 缺失 (App 含 US 988 热线)
+- GDPR 缺失 (面向欧洲用户)
+- 隐私政策 §2.2 "树洞不导出" 与代码矛盾
+- 繁体中文法律文档缺失
+- SCHEDULE_EXACT_ALARM 运行时权限检查缺失
+- `EncryptionService` 单例 + `_cachedKey` 内存泄漏风险
+- Hero 插画用 emoji 作视觉主体 (跨平台不一致)
+- QuickMoodCarousel 错误静默吞掉
+- FAB 展开无 stagger 动画
+- 主页无入场动画
+
+### R104 P2 快照 (上架后改进, 20 项)
+
+**架构级 (3 项)**:
+- Provider 文件 18 个缺乏 feature-level 聚合
+- DAO 层和 Repository 层边界需文档化
+- `ImportResult` re-export 链过长
+
+**底层/动效 (7 项)**:
+- `app_tokens.dart` facade 306 行过度转发
+- Shimmer 实际只是 opacity 脉动
+- TodaySummaryCard 数值变化无动画
+- CheckInButton 状态切换缺 spring 物理
+- HomeFabToolbar toggle 无 haptic
+- QuickMoodCarousel 默认选中"一般"
+- NotificationFailureBanner 无入场/退出动画
+
+**底层/a11y (2 项)**:
+- textHint #999999 对比度 2.8:1 (WCAG AA 要求 4.5:1)
+- PageTransitionSwitcher 忽略 prefers-reduced-motion
+
+**底层/i18n (4 项)**:
+- `phone_validator.dart` 地区名硬编码中文
+- `influence_category.dart` 影响因素硬编码中文
+- data 层 30+ 处中文 debug log
+- zh_Hant ARB 疑似机器繁简转换
+
+**底层/合规 (4 项)**:
+- Audit log 无用户可见入口
+- 法律文档保留期限未声明
+- Widget key 使用不完整 (动态列表)
+- `swallowError` 全局 mutable sink 并发风险
+
+### R104 P3 快照 (技术债, 10 项)
+
+- Apple Health 零集成 (架构就绪度 8/10)
+- home_page_state.dart 568 行仍偏大
+- vent_compose_page.dart 495 行仍偏大
+- 28 项 emil UI polish (TextStyle/spacing/haptic)
+- AppTokens facade 需设 deprecation timeline
+- 量表题目 i18n 化 (~500+ 行中文)
+- `check_all.dart` 增加 `dart:io` 域检查
+- 6 个测试文件用 `r93_` 简写变体 (非标准 `round93_`)
+- scripts 根目录 6 个临时 .log 文件
+- Android screenshots 67B 占位文件需替换
+
+### R104 架构审视总结
+
+**优势 (高内聚低耦合)**:
+1. 4 层架构纯度高: domain 层 0 Flutter 依赖，`check_all.dart` 持续守护
+2. God Class 拆分成熟: NotificationService / SafetyWatchService / DataExportService 均已拆分
+3. 隐私安全设计标杆: PIPL §14 单独同意 + SQLCipher AES-256 + FeatureFlag 逐项守护
+4. Riverpod Provider 拆分合理: core / service / vent 三文件按职责隔离
+5. 迁移策略防御性强: 21 版 schema，每步 guard + 注释详尽
+6. 18 个守门员脚本: CI 全集成，覆盖架构纯度/代码质量/法律合规/国际化
+
+**需改进 (可重构模块)**:
+- `AppDatabase`: 承担业务编排 → 抽 `SetupService` / `DataWipeService`
+- `ReminderService` vs `SafetyWatchService`: 职责重叠 → 统一到 `SafetyWatchService`
+- `NotificationService`: facade 仍有 ~500 行 → 抽 `_ensureInitialized()` mixin
+- `_daysBetween`: 3 处重复实现 → 统一走 `core/shared/date_utils.dart`
+- Provider 文件: 18 个缺乏 feature-level 聚合 → 考虑 `providers/assessment/` 子目录
+
+### R104 Apple Health 集成评估
+
+**当前状态**: 零集成
+**架构就绪度**: 8/10 (4 层架构天然支持，只需新增 data 层 service)
+**数据模型就绪度**: 7/10 (sleep/weight 字段完整，medication 需加 timeSlotIndex)
+**隐私合规就绪度**: 6/10 (需修改隐私政策 + 处理"零云端"承诺与 iCloud 冲突)
+**上架阻塞度**: 0/10 (不阻塞上架，P3 nice-to-have)
+
+**推荐方案**: `health` Flutter 插件 (v12.0.0+)
+**分阶段实施**: Phase 1 sleep/weight 双向同步 (1 周) → Phase 2 medication 打卡写入 (3 天) → Phase 3 mood 写入 (3 天) → Phase 4 step/heart rate 读取 (1 周)
+
+### R104 上架阻塞项清单 (按执行顺序)
+
+**阶段 1 — 资产准备 (1-2 周)**:
+- [ ] 注册 `chroniccare.app` 域名 + ICP 备案
+- [ ] 部署隐私政策/支持页到 `chroniccare.app`
+- [ ] 生成 iOS 截图 (iPhone 6.7" + 6.5" + 5.5" 各 3-5 张)
+- [ ] 生成 Android 截图 (min 2 张, 推荐 4-8 张)
+- [ ] 创建 `fastlane/metadata/ios/en-US/review_information/review_notes.txt`
+
+**阶段 2 — 配置修复 (1-2 天)**:
+- [ ] 生成 Android release keystore + key.properties
+- [ ] 修复 `gradle-wrapper.properties` 本地路径
+- [ ] 修复 `Podfile` platform 版本不一致
+- [ ] Android `android:label` 改 `@string/app_name` + 添加中文 strings.xml
+- [ ] iOS `CODE_SIGN_STYLE = Automatic` 显式声明
+
+**阶段 3 — 内容审核 (1-2 月, 外部依赖)**:
+- [ ] 律师过审 3 份法律文档 (¥45-90k)
+- [ ] 补充英文版隐私政策
+- [ ] 补充繁体中文法律文档
+- [ ] 填写 Google Play Data Safety Form
+- [ ] 填写 IARC 内容评级问卷
+- [ ] 修正 Store description (删禁用功能描述)
+- [ ] medical_disclaimer 进 onboarding 流程
+
+**阶段 4 — 代码修复 (1 周)**:
+- [ ] `clearAllUserData()` 自动遍历 allTables
+- [ ] domain 层硬编码中文迁移到 ARB (~100 处)
+- [ ] 修正隐私政策 §2.2 矛盾描述
+- [ ] 补充 HIPAA Privacy Policy (面向 US 用户)
+- [ ] SCHEDULE_EXACT_ALARM 运行时权限检查
+- [ ] Import 顺序统一 (`dart fix --apply`)
+
+### R104 测试现状
+
+| 指标 | 数值 |
+|------|------|
+| 测试文件数 | 256 个 .dart + 2 个 .py |
+| 测试用例数 | 1,997 (1,688 unit + 309 widget) |
+| Skip 测试 | 1 个 (有意 lock-in) |
+| 集成测试 | 2 个 |
+| 覆盖率 | domain 73.8% / data 47.0% / presentation 57.4% |
+| 守门员脚本 | 18 个全绿 |
+
+### R104 关键结论
+
+**项目整体质量优秀**，在 Flutter 社区中属于 top 10% 水平。主要优势：
+1. 隐私架构标杆: PIPL 三重同意 + SQLCipher + FeatureFlag 逐项守护
+2. 代码质量高: 0 analyzer error + 1997 tests + 18 守门员
+3. 架构清晰: 4 层纯度 + god class 持续拆分
+4. 国际化完善: 三语 ARB + domain 层 override 注入模式
+
+**主要阻塞项集中在外部资源**：
+1. 域名未注册 → 隐私政策 URL 不可访问
+2. 截图缺失 → 双平台无法提交审核
+3. 法律文档未审核 → 合规风险
+4. 签名未配置 → 无法构建 release
+
+**可代码化部分接近 100% 完成**，剩余工作主要是资产生成和外部资源对接。
+
+---
+
+## R105 审计更新 (2026-08-09, 7 视角综合审查)
+
+**状态**: 7 个 agent 并行深度扫描**当前未提交工作区** (R101+ medication 重构 / mood 详情与趋势 / daily_tracking 自定义 / 上架物料批次)。**新增/确认 56 项** (P0=8 / P1=16 / P2=22 / P3=10), 完整报告见 [docs/audit/2026-08-09/review-round-105/00-summary.md](audit/2026-08-09/review-round-105/00-summary.md)。
+
+**基线**: `flutter analyze` 0 issue ✅ / `check_all.dart` 2/2 ✅ / `check_cross_feature.py` 131 文件 0 violation ✅ / **`check_orphan_arb_keys` FAIL (42 orphan) 🔴** / **`check_zh_hant_consistency` FAIL (16 处) 🔴** / schemaVersion 21。
+
+### R105 各视角评分总览
+
+| 视角 | R104 | R105 | 变化 | 主因 |
+|------|------|------|------|------|
+| **emilkowalski** | 9.0 | 7.5 | -1.5 | 新页 a11y (overflow/对比度/Semantics) + 假完成 (死胡同入口/未落库/未接线) |
+| **superpowers-en** | 9.0 | 7.5 | -1.5 | 2 处 P1 静默丢数据 + 2 guard 红 + DRY 回潮 |
+| **superpowers-zh** | 9.0 | 8.0 | -1.0 | 58 个 ARB 卫生回归 + 影响因素 i18n 半成品 |
+| **flutter-specification** | 88 | 84 | -4 | 2 P1 功能缺口 (丢输入/通知不重排) + mounted/守卫缺失 |
+| **AppStore** | 6.5 | 6.0 | -0.5 | 录音 flag/权限自相矛盾; 4 项 P0 已修 |
+| **GooglePlay** | 40 | 42 | +2 | 描述/免责/适配图标落地; 2 新回归 (wrapper 本地路径/录音矛盾) |
+| **Apple Health** | 2/10 | 2/10 | — | 零集成, 不阻塞上架 |
+
+### R105 外部链接隐藏确认
+
+**运行时代码**: ✅ 0 外部链接泄露 (唯一 url_launcher = tel: 危机热线; IAP 全 gated; 无 analytics 依赖)
+**新矛盾**: 🔴 `_prodVentAudioEnabled=true` (feature_flags.dart:70) 但同批删除 iOS mic/speech 权限描述 + Android RECORD_AUDIO → 录音 crash + Apple 2.5.1/Play 政策双重风险, **提交前必须二选一**
+**上架物料层**: ⚠️ `chroniccare.app` 域名 + 邮箱未注册 (P0)
+
+### R105 P0 快照 (提交前必须处理, 8 项)
+
+| # | 事项 | 层级 | 难度 | 来源 |
+|---|------|------|------|------|
+| 1 | 录音功能自相矛盾: flag=true 但 iOS/Android 权限声明已删 → crash + 上架拒 | 底层/权限 | 简单 | AppStore A1/A2 |
+| 2 | 3 个 test 仍断言 ventAudio 默认 false → `flutter test` 红 (CI regression) | 底层/CI | 简单 | AppStore A3 |
+| 3 | mood_detail 整页 Column 不可滚动 → overflow 裁切 | 底层/UI | 简单 | emil E101 |
+| 4 | add_medication `_save()` 丢 form/colorIndex/notes (用户选择静默丢失, 列表永远绿色) | 底层/数据 | 简单 | sp-en N1 + flutter F105-1 + emil E104 |
+| 5 | `chroniccare.app` 域名 + `privacy@` 邮箱未注册 → 隐私/Support URL 不可达 | 底层/外部 | 中 | AppStore A6 + GPlay GP-4 |
+| 6 | 法律文档未律师审核且本批删"草稿"标"定稿" | 底层/法务 | 高 | AppStore A9 + GPlay GP-5 |
+| 7 | iOS 签名未配置 + 截图缺失 + 内容评级未配置 (需 Mac/人工) | 底层/资产 | 中 | AppStore A7/A8/A10 |
+| 8 | Android release keystore 未生成 + 截图/feature_graphic 67B 占位 + IARC 未配置 | 底层/资产 | 中 | GPlay GP-1/2/3 |
+
+### R105 P1 快照 (高优, 16 项)
+
+- **功能缺口 (4)**: 新增药物不重排通知 (edit 对话框有, 向导漏); recordingMode 选择不落库; 影响因素 i18n key 建好未 wire + 中文入库; gradle-wrapper distributionUrl 回归本地路径
+- **guard 回归 (2)**: check_orphan_arb_keys 42 孤儿; check_zh_hant_consistency 16 处 (2 真错: 刮風→颳風/分布→分佈)
+- **a11y 硬伤 (6)**: 药丸白字对比度 <4.5:1; 打卡 checkbox 无 Semantics + 28px 目标; AnimatedSwitcher 不尊重 reduce-motion; fl_chart 隐式动画; record 按钮彩色文字对比; 今日汇总卡窄屏溢出
+- **UX/隐私 (4)**: 空态无 CTA; 档案卡 chevron 死胡同 + "点击展开"不可点; 锁屏通知暴露药名剂量; privacy_policy §0.6 与 flag 矛盾
+
+### R105 P2 快照 (上架后改进, 22 项)
+
+- **半成品接线 (3)**: MoodDetailPage / MoodFactorAnalysis 死代码; MoodReminderNotifier 无 UI 入口; medication_detail 编辑按钮 no-op
+- **正确性 (5)**: _save 无守卫/无 try-catch; showTimePicker 后无 mounted check ×2; dailyAvg 滚动平均 bug; DateTime.now() 跨日 stale ×2; onReorder 7 次写盘
+- **DRY 回潮 (5)**: 时间槽/打卡进度 3 份重复; 时间格式化 5+ 处手写; category 映射两套 switch; _dateOnly 未全收敛; MedForm 双源
+- **i18n/token (5)**: 图表 7 处硬编码 Apple 色; 'CBT'/'7D' 未走 ARB; 剂量弃用 Formatters.dosage; 通知 channel 名中文; error 裸 `Text('$e')`
+- **底层 (4)**: manifest debuggable 被删; roundIcon 缺 pre-26 raster; label 未用 @string/app_name; **Apple Health P0 前置** (entitlement + 2 usage key + healthKitEnabled flag + schema 22 去重列)
+
+### R105 P3 快照 (技术债, 10 项)
+
+- Apple HealthKit 集成 (P0 只读镜像→P1 写备份→P2 用药→P3 后台, 全阶段需 Mac)
+- 播放完不删 temp 文件 + 失败路径未 cancel _sttSub; _RecordingTimer 100ms setState 可再优
+- `_save` fire-and-forget; 硬编码 Tab/emoji/颜色 + pill 色重复
+- a11y 细节 (依从性数字对比/emoji ExcludeSemantics/carousel 首卡高亮/FAB Semantics)
+- dart format 6/10 主目标文件漂移; PIPL 新字段未同步同意书; 术语混用; Podfile 13.0 vs 14.0
+
+### R105 架构审视总结
+
+**优势 (延续)**: `check_all.dart` 2/2 全绿 (R104 的 tracking_item_config 违规已修), domain 0 Flutter, 跨 feature 0 violation, NotificationService facade 3 子拆分方向正确。
+
+**可重构模块 (按收益)**:
+
+| # | 模块 | 问题 | 建议 | 难度 |
+|---|------|------|------|------|
+| 1 | influence_category | 36 中文因素在 domain + key 未 wire + 中文入库 | chips/入库走 kInfluenceFactorKeys→l10n, domain 只留 key | 中 |
+| 2 | 时间槽/打卡进度/时间格式化 | 3 份重复 + 5+ 处手写 padLeft | 抽共享 helper + 统一 Formatters | 中 |
+| 3 | category→label/icon 映射 | 两套 switch | 统一到 tracking_item_config_ext.dart | 简单 |
+| 4 | MedForm 双源 | presentation enum 与 domain enum 重复 | 删 UI 侧引 domain | 简单 |
+| 5 | 半成品死代码 (MoodDetailPage/MoodFactorAnalysis/MoodReminderNotifier) | 无路由/无挂载/无 UI 入口 | 接线或删除 | 中 |
+
+### R105 半成品 / 未完成功能清单
+
+| 功能 | 状态 | 说明 |
+|------|------|------|
+| 录音 (vent+mood) | 🔥 半开半关 | flag=true 但权限已删, 提交前二选一 |
+| MoodDetailPage / MoodFactorAnalysis | 死代码 | 无路由无挂载 |
+| MoodReminderNotifier | 半成品 | 已注入 service 无 UI 开关 |
+| medication_detail 编辑 | 假按钮 | onPressed no-op |
+| 影响因素 i18n | 半成品 | key 建好未 wire, 中文入库 |
+| SMS / IAP / AliyunSMS / Email / 5 厂商 push | 半成品 (FeatureFlag 门控) | 全 flag=false, release 不可达 |
+| Apple HealthKit | 零集成 | v1.1 候选, 不阻塞上架 |
+
+### R105 测试现状
+
+| 指标 | 数值 |
+|------|------|
+| flutter analyze | 0 issue (4W+30I 已清零) |
+| 架构 check_all | 2/2 全绿 |
+| check_orphan_arb_keys | 🔴 42 orphan (全本批新增) |
+| check_zh_hant_consistency | 🔴 16 处 (全本批新增) |
+| schemaVersion | 21 (medications v19→v20, mood v20→v21) |
+
+### R105 关键结论
+
+**R104 的架构/质量 P0 已全部落地** (analyzer 0 issue, 架构 2/2 绿, SQL 注入/硬编码中文/架构违规全修复), 但**本批未提交重设计引入了 8 项 P0 + 16 项 P1** — 核心问题是"功能做到 80% 就停": 丢数据 (`_save`)、假按钮 (编辑)、死代码 (MoodDetailPage)、guard 红 (58 个 ARB/繁简)。**当前工作区不可提交**。
+
+**执行顺序**:
+1. **Sprint A (0.5 天)**: 录音决策二选一 + test 同步; mood_detail 滚动; `_save` 补三字段; 通知重排
+2. **Sprint B (1 天)**: recordingMode 落库或删 UI; 清 42 orphan + 16 zh_Hant; gradle-wrapper
+3. **Sprint C (2 天)**: 影响因素 i18n; a11y 对比度/Semantics; 空态 CTA; 锁屏通知脱敏; privacy 文档同步
+4. **Sprint D (持续)**: 死代码接线/删除; DRY 收敛; token/ARB 补全; Apple Health P0
+5. **外部依赖**: 域名注册 + 律师过审 (P0#5-6, 上架阻塞)
+
+---
+
+## R103 审计更新 (2026-08-08, 7 视角综合审查)
+
+**状态**: 7 个 agent 并行深度扫描全部 389 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test。**新增/确认 75 项** (P0=15 / P1=20 / P2=25 / P3=15), 完整报告见 [docs/audit/2026-08-08/R103-7perspective-audit/00-summary.md](audit/2026-08-08/R103-7perspective-audit/00-summary.md)。
+
+### R103 新增关键发现 (vs R102)
+
+| # | 发现 | 层级 | 来源 | R102 状态 |
+|---|------|------|------|-----------|
+| 1 | PageTransitionSwitcher 忽略 prefers-reduced-motion (Critical a11y) | 底层/a11y | emil | **新增** |
+| 2 | textHint #999999 对比度 2.8:1, 不满足 WCAG AA 4.5:1 | 底层/a11y | emil | **新增** |
+| 3 | 主页 hero (140px) + carousel (80px) 推 CTA 到折叠线以下 | 架构/UX | emil | R101 已提 |
+| 4 | Apple Health 零集成但本地追踪 10 类健康数据 | 架构 | Apple Health | **新增视角** |
+| 5 | SleepEntryEntity.durationLabel 硬编码英文格式 | 底层/i18n | spzh | **新增** |
+| 6 | TreatmentEntryEntity.linkedMedicationDisplay 硬编码中文 | 底层/i18n | spzh | **新增** |
+| 7 | EncryptionService() 在 legal_consent_provider 每次重新实例化 | 底层/性能 | spen | **新增** |
+| 8 | SharedPreferences.getInstance() 在 safety_config 重复调用 8 次 | 底层/性能 | spen | **新增** |
+| 9 | windowSizeOf medium breakpoint 不可达 (840=840) | 底层 | emil | **新增** |
+| 10 | Decorative emoji 被 screen reader 朗读 | 底层/a11y | emil | **新增** |
+
+### R103 P0 快照 (上架阻塞, 15 项)
+
+| # | 事项 | 层级 | 难度 | 来源 |
+|---|------|------|------|------|
+| 1 | `native.dart:27` SQL 注入 — PRAGMA key 密码拼接 | 底层/安全 | 简单 | flutter-spec |
+| 2 | `chroniccare.app` 域名 + 邮箱未注册 | 底层/外部 | 中 | AppStore+GPlay |
+| 3 | 法律文档 3 份未律师审核 (有 "TODO" 标记) | 底层/外部 | 高 | AppStore+GPlay |
+| 4 | Store description 描述已禁用功能 → Apple 2.1 拒 | 底层 | 简单 | AppStore |
+| 5 | InfoPlist.strings 未用权限声明 (mic/speech/tracking) | 底层 | 简单 | AppStore |
+| 6 | `AndroidManifest.xml:54` android:label 硬编码中文 | 底层 | 简单 | GooglePlay |
+| 7 | `today_summary_card.dart` 4 处硬编码中文 | 底层/i18n | 简单 | spzh |
+| 8 | 无内容评级配置 (IARC + Apple) | 底层 | 中 | AppStore+GPlay |
+| 9 | 医疗免责声明未进 onboarding 流程 | 底层 | 简单 | AppStore+GPlay |
+| 10 | PageTransitionSwitcher 忽略 prefers-reduced-motion | 底层/a11y | 简单 | emil |
+| 11 | `textHint` #999999 对比度 2.8:1, 不满足 WCAG AA | 底层/a11y | 简单 | emil |
+| 12 | `daily_tracking_multi_chart.dart` 4 处硬编码中文 | 底层/i18n | 简单 | spzh |
+| 13 | 双平台真实截图缺失 | 底层 | 中 | AppStore+GPlay |
+| 14 | Release keystore 未生成 (Android) | 底层 | 简单 | GooglePlay |
+| 15 | iOS 签名未配置 (需 Mac) | 底层 | 简单 | AppStore |
+
+---
+
+## R102 审计更新 (2026-08-08, 7 视角综合审查)
+
+**状态**: 7 个 agent 并行扫描全部 388 Dart 文件 + fastlane + legal + android/ios 配置。**新增/确认 57 项** (P0=8 / P1=15 / P2=18 / P3=16), 完整报告见 [reports/multi_perspective_audit_v0.30.md](../reports/multi_perspective_audit_v0.30.md)。
+
+> **外部链接确认**: 运行时代码 ✅ 0 外部链接泄露; fastlane metadata ⚠️ `chroniccare.app` 域名 + `privacy@chroniccare.app` 邮箱未注册; 法律文档 ⚠️ 3 份均未律师审核。
+
+### R102 新增关键发现 (vs R101)
+
+| # | 发现 | 层级 | 来源 | R101 状态 |
+|---|------|------|------|-----------|
+| 1 | `native.dart:27` PRAGMA key SQL 注入风险 | 底层/安全 | flutter-spec | **新增** |
+| 2 | `daily_tracking_multi_chart.dart:164-170` 硬编码中文 4 处 | 底层/i18n | superpowers-zh | **新增** |
+| 3 | `vent_compose_page.dart:441` 空 setState 每次击键整页重建 | 底层/性能 | flutter-spec | **新增** |
+| 4 | `mood_audio_recorder_widget.dart:197` 100ms setState 每秒 10 次重建 | 底层/性能 | flutter-spec | **新增** |
+| 5 | `hero_illustration.dart:51-53` Colors.black shadow dark mode 不可见 | 底层/UI | emil | R101 已提 |
+| 6 | `app_database.dart:410-480` saveSetup() 业务逻辑在数据层 | 架构 | spen | R101 已提 |
+| 7 | `app_database.dart:6-7` 数据层反向 import domain 实体 | 架构 | spen | R101 已提 |
+| 8 | 通知 channel 名 const 中文 en/zh_Hant 系统设置看中文 | 底层/i18n | superpowers-zh | R101 已提 |
+| 9 | Apple Health 零集成但本地追踪 10 类健康数据 | 架构 | Apple Health | **新增视角** |
+| 10 | `safety_config_service.dart` 8 个方法各调 SharedPreferences.getInstance() | 底层/性能 | spen | **新增** |
+
+### R102 P0 快照 (上架阻塞, 8 项)
+
+| # | 事项 | 层级 | 难度 | 来源 |
+|---|------|------|------|------|
+| 1 | `native.dart:27` SQL 注入 — PRAGMA key 密码拼接 | 底层/安全 | 简单 | flutter-spec |
+| 2 | `chroniccare.app` 域名 + 邮箱未注册 | 底层/外部 | 中 | AppStore+GPlay |
+| 3 | 法律文档 3 份未律师审核 (有 "TODO" 标记) | 底层/外部 | 高 | AppStore+GPlay |
+| 4 | Store description 描述已禁用功能 → Apple 2.1 拒 | 底层 | 简单 | AppStore |
+| 5 | Info.plist 未用权限声明 (mic/speech/tracking) | 底层 | 简单 | AppStore |
+| 6 | `AndroidManifest.xml:54` android:label 硬编码中文 | 底层 | 简单 | GooglePlay |
+| 7 | `daily_tracking_multi_chart.dart:164` 4 处硬编码中文 | 底层/i18n | 简单 | superpowers-zh |
+| 8 | 无内容评级配置 (IARC + Apple) | 底层 | 中 | AppStore+GPlay |
+
+### R102 修复路线图 (整合到现有)
+
+**Sprint A — 上架阻塞 (P0, 1-2 周)**: #1-8 全部
+**Sprint B — 高优质量 (P1, 1-2 周)**: 通知 i18n + saveSetup 抽 UseCase + 性能修复 + dark mode + Data Safety form
+**Sprint C — 架构改进 (P2, 2-3 周)**: date_utils DRY + SharedPreferences 缓存 + MoodEntryEntity 拆解 + bootstrap 拆子函数 + dead code 清理
+**Sprint D — 锦上添花 (P3, 持续)**: token 补全 + 断点动画 + care_engine 合并
+
+---
+
+## R101 审计更新 (2026-08-07, 6 视角深度遍历)
+
+**状态**: 6 个 agent 并行深度扫描全部 lib/ + test/ + docs/ + android/ + ios/ 文件。**新增/确认 65 项待办** (P0=12 / P1=15 / P2=20 / P3=18; 架构级 11 项 / 底层 54 项), 完整排序表见 [R101 00-summary §三](audit/2026-08-07/R101-6perspective-audit/00-summary.md)。
+
+> **外部链接确认**: 代码层 ✅ 全部隐藏 (唯一 url_launcher = tel: 危机热线); 上架物料层 ❌ 未就绪 (privacy_url/support_url 指向未注册 chroniccare.app)。
+
+### R101 P0 快照 (上架阻塞, 12 项)
+
+| # | 事项 | 层级 | 难度 | 估时 | 视角 |
+|---|------|------|------|------|------|
+| 1 | ~280 文件未提交改动分批 commit | 底层 | 简单 | 1-2h | sp-en |
+| 2 | 注册 chroniccare.app 域名 + 部署隐私/支持/数据删除页 | 底层 | 中 | 1-2d | App/GPlay |
+| 3 | 双平台真实截图 + feature graphic | 底层 | 中 | 1-2d | App/GPlay |
+| 4 | 删 video.txt PLACEHOLDER ×2 | 底层 | 简单 | 10min | GPlay |
+| 5 | 生成 release keystore + key.properties | 底层 | 简单 | 30min | GPlay |
+| 6 | 删 iOS UIBackgroundModes audio+processing | 底层 | 简单 | 10min | AppStore |
+| 7 | user_agreement "8 元买断" → "未来版本" | 底层 | 简单 | 30min | AppStore |
+| 8 | metadata 删 "(失联通知规划中)" | 底层 | 简单 | 10min | App/GPlay |
+| 9 | record/speech_to_text 加 tools:node="remove" | 底层 | 简单 | 15min | GPlay |
+| 10 | 法律文件删"草稿"标注 | 底层 | 简单 | 30min | GPlay |
+| 11 | 隐私政策联系方式补充 (真实邮箱) | 底层 | 简单 | 1h | App/GPlay |
+| 12 | SCHEDULE_EXACT_ALARM 运行时权限检查 | 底层 | 中 | 2-3d | GPlay |
+
+### R101 P1 快照 (高概率打回, 15 项)
+
+- 8 个新量表硬编码中文 (ASRM/ISI/PSS/WHODAS/Level2×4)
+- care_copy 关怀文案硬编码中文
+- 安全警报锁屏暴露敏感健康信息
+- 邮件通知暴露药名+剂量
+- Dynamic Type 完全不支持 (Apple 2.5.1)
+- 医疗免责声明不够显著
+- 描述宣传 "coming soon"
+- PHQ-9/GAD-7 i18n 未完成但描述宣传
+- 开发者联系方式缺失
+- check_all.dart 守护脚本 bug
+- domain→data 架构违规 2 处
+- data→flutter 架构违规 1 处
+- UI 硬编码中文 ~30 处
+- dart format 149 文件不一致
+
+### R101 P2 快照 (上架后, 20 项)
+
+- home_page_state 656 行拆分 / hero shadow dark mode / Haptics 缺失 / TextTheme 补全
+- data 层 l10n 耦合 / catch(e) 裸捕获 / swallowError 静默 / SQLCipher PRAGMA
+- 数据导出明文 / SQLite 兼容性 / 通知 Channel 中文 / Podfile / ATT 弹窗
+- shared_providers 反向 import / streakSummaryProvider 时间 / todayProvider 时区
+
+### R101 P3 快照 (技术债, 18 项)
+
+- 28 项 emil UI polish (TextStyle/spacing/haptic/progress indicator)
+- 架构: AppTokens facade 过重 / DAO 层时间 / 旧方法未删 / exception 语义
 
 ---
 
@@ -1014,3 +1495,165 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 **R98 发现总计**: 38 项 (P0=9 / P1=14 / P2=10 / P3=5)
 **R98 新发现**: 22 项 (R97 路线图未覆盖)
 **下次 dev doc 同步**: R98 P0/P1 修复完成后 (估 2-4 周)
+
+---
+
+## 11. R104 7 视角综合审计 (2026-08-09, 75 项发现)
+
+> 本章节为 R103 审计后, 用户要求拉 7 个视角团队 (emilkowalski / superpowers-en / superpowers-zh / flutter-specification / AppStore / GooglePlay / Apple Health) 对整个项目分别出一份审计报告的汇总追加。7 份报告去重后共 75 项独立发现 (P0=15 / P1=20 / P2=25 / P3=15), 每项标注 **类别 (架构/底层) + 修复难度 + 涉及视角**。
+>
+> **完整 R104 审计报告**: [docs/audit/2026-08-09/00-summary.md](audit/2026-08-09/00-summary.md)
+>
+> **审计覆盖 7 个视角**: emilkowalski (设计) / superpowers-en (工程) / superpowers-zh (中文) / flutter-specification (规范) / AppStore (iOS) / GooglePlay (Android) / Apple Health (新视角)
+>
+> **跟 R103 的关系**: R103 报 75 项, R104 确认大部分仍有效。新增: tracking_item_config.dart domain 层架构违规 (check_all.dart 实测确认) + 6 处新发现硬编码中文 + 12 处硬编码颜色无 dark mode。
+
+### 11.1 R104 7 视角发现统计
+
+| 视角 | P0 | P1 | P2 | P3 | 总计 | 评分 |
+|---|---|---|---|---|---|---|
+| emilkowalski (设计) | 2 | 3 | 3 | 0 | 8 | 9.0/10 |
+| superpowers-en (工程) | 1 | 3 | 4 | 0 | 8 | 9.0/10 |
+| superpowers-zh (合规+中文) | 7 | 5 | 1 | 0 | 13 | 9.0/10 |
+| flutter-specification (规范) | 1 | 4 | 3 | 2 | 10 | 88% |
+| AppStore (iOS 上架) | 7 | 5 | 2 | 0 | 14 | 6.5/10 |
+| GooglePlay (Android 上架) | 5 | 5 | 0 | 0 | 10 | 40% |
+| Apple Health (新视角) | 0 | 0 | 0 | 4 | 4 | N/A |
+| **去重后** | **15** | **20** | **25** | **15** | **75** | — |
+
+### 11.2 R104 P0 必修清单 (15 项, 上架阻塞)
+
+| # | 问题 | 架构/底层 | 难度 | 来源 |
+|---|------|-----------|------|------|
+| 1 | `native.dart:27` SQL 注入 — PRAGMA key 密码拼接 | 底层/安全 | 简单 | flutter-spec |
+| 2 | `tracking_item_config.dart:9` import flutter in domain | 架构 | 中 | sp-en |
+| 3 | `safetyCheckResultAlertedMocked` 3 语 mock/dev 字符串 | 底层/i18n | 简单 | sp-zh |
+| 4 | `mood_detail_page.dart` 2 处硬编码中文 ("录音"/"删除") | 底层/i18n | 简单 | sp-zh |
+| 5 | `add_medication_page.dart` 2 处硬编码中文 | 底层/i18n | 简单 | sp-zh |
+| 6 | `medication_page.dart` "在用"/"已停" 硬编码中文 | 底层/i18n | 简单 | sp-zh |
+| 7 | `today_summary_card.dart` 4 处硬编码中文 | 底层/i18n | 简单 | sp-zh |
+| 8 | `daily_tracking_multi_chart.dart` 4 处硬编码中文 | 底层/i18n | 简单 | sp-zh |
+| 9 | `PageTransitionSwitcher` 忽略 prefers-reduced-motion | 底层/a11y | 简单 | emil |
+| 10 | `textHint` #999999 对比度 2.8:1 不满足 WCAG AA | 底层/a11y | 简单 | emil |
+| 11 | `chroniccare.app` 域名 + 邮箱未注册 | 底层/外部 | 中 | App+GPlay |
+| 12 | 法律文档 3 份未律师审核 | 底层/外部 | 高 | App+GPlay |
+| 13 | Store description 描述已禁用功能 | 底层 | 简单 | AppStore |
+| 14 | Release keystore 未生成 (Android) | 底层 | 简单 | GPlay |
+| 15 | 无内容评级配置 (IARC + Apple) | 底层 | 中 | App+GPlay |
+
+### 11.3 R104 跟 R103 路线图对应关系
+
+| R104 发现 | R103 状态 | R104 后状态 |
+|---|---|---|
+| R104-1 SQL 注入 | R103-P0-1 | 持平 |
+| R104-2 tracking_item_config domain 违规 | R103 未识别 (check_all 新发现) | **新发现** |
+| R104-3 mock/dev 字符串 | R103 未识别 | **新发现** |
+| R104-4~8 硬编码中文 | R103-P0-7/12 部分重叠 | 确认 + 新增 6 处 |
+| R104-9/10 a11y | R103-P0-10/11 | 持平 |
+| R104-11~15 外部资源 | R103-P0-2~8 | 持平 |
+
+**R104 新发现**: 3 项 (tracking_item_config 违规 + mock/dev 字符串 + 6 处新硬编码中文)
+
+### 11.4 R104 修复路径建议
+
+#### Sprint A — 上架阻塞 (P0, 1-2 周)
+
+1. `native.dart` SQL 注入修复 (转义 → 参数化查询) — 30min
+2. `tracking_item_config.dart` 架构违规修复 (抽象化) — 2-3h
+3. 3 语 mock/dev 字符串清理 (~10 个 ARB key) — 1h
+4. 6 处硬编码中文 → ARB (~15 个新 key) — 2h
+5. `PageTransitionSwitcher` prefers-reduced-motion — 30min
+6. `textHint` 对比度修复 — 30min
+7. 域名注册 + 邮箱 — 1-2d
+8. 法律文档律师审核 — 4-8 周
+9. Store description 清理 — 30min
+10. Release keystore 生成 — 30min
+11. 内容评级配置 — 1-2d
+
+#### Sprint B — 高优质量 (P1, 1-2 周)
+
+1. 12 处硬编码颜色 → AppTokens + dark mode — 2h
+2. domain 层 i18n (influence_category / care_copy / assessment_comparison) — 1-2d
+3. 性能修复 (vent_compose setState / mood_audio setState) — 1h
+4. a11y 修复 (ExcludeSemantics / Semantics labels) — 2h
+5. 安全隐私 (锁屏通知 / 邮件通知) — 1-2d
+6. SharedPreferences 缓存 — 1h
+
+#### Sprint C — 架构改进 (P2, 2-3 周)
+
+1. date_utils DRY — 1h
+2. consent_gate 移层 — 2-3h
+3. saveSetup 抽 UseCase — 1-2d
+4. analyzer warning 清理 — 30min
+5. dead code 清理 — 30min
+
+---
+
+**R104 7 视角综合审计完成时间**: 2026-08-09
+**R104 审计覆盖**: emilkowalski / superpowers-en / superpowers-zh / flutter-specification / AppStore / GooglePlay / Apple Health 7 视角
+**R104 发现总计**: 75 项 (P0=15 / P1=20 / P2=25 / P3=15)
+**R104 新发现**: 3 项 (R103 路线图未覆盖)
+**下次 dev doc 同步**: R104 P0 修复完成后 (估 1-2 周)
+
+---
+
+## R107 cleanup 综合审视 (2026-08-10, 9 视角 + 1 顶层架构 + 1 底层逐行)
+
+**R107 cleanup 状态**: 2026-08-10 完成的"从 0 重新做"综合审计。R105 → R106 业务真接 + 6 平台 P0 修复后, R107 清空 docs/audit/2026-08-06~2026-08-10 旧报告（5 轮 26 份 / 1.2MB）归档到 `docs/audit-archive-2026-08-10/`，从 0 重做综合审计。
+
+**9 视角评分 (vs R105)**:
+
+| 视角 | R105 | **R107** | 变化 | 主要扣分 |
+|------|------|---------|------|----------|
+| emilkowalski (设计/UI/动效) | 7.5 | **9.0** | +1.5 | R95-R105 引入 28 处新违规：主页 8 层 stagger / AnimatedSwitcher 3 处 / token 化 60% 覆盖 |
+| superpowers-en (TDD/SDD) | 7.5 | **9.0** | +1.5 | N1 `_save()` `notes` / 2 守门员 FAIL / daily_tracking 7 widget DRY 退化 |
+| superpowers-zh (i18n/合规) | 8.0 | **7.0** | -1.0 | 4 项上架 blocker 卡外部依赖 |
+| flutter-specification | 84% | **92%** | +8% | ci.yml 不跑 coverage / 无 a11y 守门员 / SDK 范围宽 |
+| AppStore (iOS) | 6.0 | **4.5** | -1.5 | 9 项 P0 阻断：PrivacyInfo 未注册 / iCloud Backup 0 / 通知 body PII 锁屏泄漏 / 域名未注册 / 截图 0 张 |
+| GooglePlay | 42% | **55%** | +13% | 6 项 P0：截图 67B 假图 / feature_graphic 67B / icon 1443B / 缺 keystore / Data Safety 0% / Health Apps 0% |
+| apple-health (HealthKit) | 2/10 | A:3 / B:6.5 / C:8 | 3 选项 | 0 包 / 0 entitlement / 0 Info.plist / 0 UI 入口 / en-US description 5.1.3 抽审 |
+| 顶层架构 | (基线) | **8.2** | (基线) | 主要债务 = presentation 15 god class (~9600 行 / 占 lib 40%) |
+| 底层逐行 (46 项) | (基线) | 4 P0 + 12 P1 + 16 P2 + 14 P3 | (基线) | 资源泄漏 / 数据丢失 / 安全 |
+
+**R107 修复路线图 (按 ROI)**:
+
+| 阶段 | 周期 | 内容 |
+|------|------|------|
+| **R108 Phase 1** | 1-2 周 (~12-14 工作日 / 2-3 sprint) | 上架前 P0 必做 13 项 (iCloud Backup + canScheduleExactAlarms + 锁屏 body PII + PrivacyInfo 注册 + LaunchImage/AppIcon + 域名 + review_information + 截图 + UIBackgroundModes + keystore + Data Safety + en-US description + main.dart log) |
+| **R109 Phase 2** | 1-2 月 (~5-6 周 / 2-3 sprint) | P1 警告 + 拆 6 大 god class (main.dart 459L / home_page_state 597L / vent+mood_audio 2×500L / notification_service 426L / medication_page 540L / daily_tracking 7 widget) + 真实业务接入 (IAP 真接 productId) |
+| **R110+ Phase 3** | 6 月+ (v1.0) | 5 厂商 push SDK 接入 / AliyunSms 真接 / EmailService 真接 / PHQ-9 i18n / HealthKit 选项 B-C / 8 FeatureFlag 翻 true / a11y 全量 / 守门员加 `check_a11y.py` / feature-first 重构 (中期) / pub workspace 拆 vent / medication (长期) |
+
+**R107 cleanup 报告位置**: `docs/audit/2026-08-10-cleanup/`
+- 00-summary.md (30KB / 320 行, 10 章节汇总)
+- 01-emil.md (26.3KB) / 02-spen.md (28.5KB) / 03-spzh.md (35KB) / 04-flutter-spec.md (21KB) / 05-appstore.md (29.3KB) / 06-googleplay.md (36.5KB) / 07-apple-health.md (37KB) / 08-architecture.md (23KB) / 09-bottom-up-bugs.md (48.7KB)
+- **总计**: 254KB subagent 报告 + 30KB 汇总 = 284KB
+
+**R107 外部链接确认 (运行时 0 实际外链)**:
+- ✅ `lib/` 0 实际外链（grep `https?://` 0 命中）
+- ⚠️ 注释 3 处说明性（`sms_service.dart` 阿里云 SMS / `chinese_holidays.dart` holidayapi）
+- ⚠️ 上架物料 12 URL 不可达（`chroniccare.app` 域名未注册）
+- 🔴 2 邮箱未注册（`privacy@chroniccare.app` / `support@chroniccare.app`）
+
+**R107 P0 必修 13 项 (按 ROI 排序, 全表见 00-summary.md §四)**:
+1. iCloud Backup 排除 4 处 (`native.dart:18` + `encrypted_audio_storage.dart:99` + `swallow_log_sink.dart:54` + ...) — 3h
+2. `canScheduleExactAlarms()` TODO (5 视角共识, `notification_service.dart:313-325`) — 0.5d
+3. 锁屏通知 body 药名 PII (`strings.dart:103-119` `notifMedicationBody`) — 1h
+4. PrivacyInfo.xcprivacy 未注册 Xcode (`project.pbxproj:223-232`) — 15min
+5. iOS LaunchImage 68B + AppIcon 10932B 占位 — 1.5h
+6. chroniccare.app 域名 + 2 邮箱未注册 — 4h + 7-20d ICP
+7. iOS `review_information/` 目录缺 — 30min
+8. iOS 截图 0 + Android 67B 假图 + feature_graphic 67B — 3-5d
+9. UIBackgroundModes audio 缺 (R100 删 + R104 启用矛盾) — 5min
+10. Android keystore + Data Safety 28 子项 + Health Apps 4 块 — 2-3d
+11. en-US description "hypertension, diabetes" Apple 5.1.3 抽审风险 — 2.5h
+12. main.dart 裸 `developer.log` release 仍输出 — 1h
+13. 主页 8 层 FadeIn stagger 累加 0-280ms 未 clamp — 0.5h
+
+**R107 cleanup 文档同步状态**:
+- ✅ README.md 顶部 R107 cleanup 综合审视段
+- ✅ CHANGELOG.md 加 R101-R107 entries (R100 段维持, R101 缺失补回)
+- ✅ AGENTS.md 顶部 R107 段 + 守门员 17→18 (加 check_coverage.py) + tests 1997→2019
+- ✅ VERSION_1.0_PLAN.md (本文件) 加 R107 段
+- ⏸️ DEPLOYMENT.md 待 R108 修 P0#1-9 后再补 (域名注册 + 截图脚本 + keystore 流程)
+
+**R107 不做代码改动**: 本批纯审计 + 文档同步, 无 commit。下批 R108 修 P0 13 项（1-2 周）。

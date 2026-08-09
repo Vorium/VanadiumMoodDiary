@@ -133,7 +133,7 @@ lib/
 
 ```bash
 flutter analyze    # 必须 0 error
-flutter test       # 必须全过（当前 1997 cases, v0.30 round 100 后）
+flutter test       # 必须全过（当前 2019 cases, v0.30 R107 cleanup 后）
 python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 检查)
 ```
 
@@ -197,6 +197,52 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 **已知 bug 修复**：写这俩脚本时发现 Dart `RegExp` 默认 `^` 不 multi-line — 必须显式 `multiLine: true` 或用 `readAsLinesSync()` 逐行处理。
 
+## v0.30 R108 revisit 综合审视 (2026-08-10, 9 视角从 0 重跑)
+
+**状态**: 120 个旧报告归档到 `docs/audit-history/` → 9 视角 subagent 从 0 重新跑 (7 lens + 顶层架构 + 底层逐行)。**加权综合 ≈ 6.2/10** (R108 拆 god class 进行中,working tree 引入 8 个回归 error + 上架"实物资产"未做,**临时从 R107 8.0 倒退 1.8 分**)。详细整合见 `docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md` (40KB / 9 份 subagent 报告合计 404KB)。旧 R107 报告归档到 `docs/audit-history/r107-cleanup-2026-08-10/`。
+
+**评分变化 (R107 → R108)**:
+- emil 9.0 → 8.5 (-0.5, 主页 stagger 8→3 已闭环, 上架前 5 大 P0 未闭环)
+- superpowers-en 9.0 → 6.5 (-2.5, R108 拆解漏 compile gate, 8 个 P0 引入 error)
+- superpowers-zh 7.0 → 6.5 (-0.5, 域名 + 5 厂商 push + 阿里云 SMS 3 大硬阻塞未解)
+- flutter-spec 92% → 88% (-4%, R108 引入 4 error 临时倒退)
+- AppStore 4.5 → 3.5 (-1.0, 实物资产 100% 缺失)
+- GooglePlay 55% → 5.5/10 (= 55%, 持平但有大量 P0)
+- apple-health 3 → 3.0 (持平, HealthKit 0 集成)
+- 顶层架构: 8.2 → 8.4 (+0.2, 4 层架构 1:1 + 15 god class 候选清晰)
+- 底层逐行: 7.0/10 (新增 14 项发现, 1 P0 = audit log 跨时区漂移)
+
+**R108 revisit 38 P0 (去重后, 按优先级排序)**:
+- 优先级 1 上架硬阻塞 (5 项): iOS 截图 0 / Android 截图 67B + feature_graphic 67B / iOS LaunchImage 68B / review TODO 占位 / 5.1.3 抽审
+- 优先级 2 外部依赖卡点 (4 项): chroniccare.app 域名 (7-20d ICP) + 4 邮箱 + 阿里云 SMS (失联通知 100% 失效, 1-2 月) + 5 厂商 push (1-2 月)
+- 优先级 3 鸿蒙 + IAP (2 项)
+- 优先级 4 锁屏 PII 跨 3 视角共识 (1 项): 锁屏通知 title 仍含药名 (R108 修了 body 但漏 title)
+- 优先级 5 R108 引入 8 个回归 error (8 项, 合计 ≤2.5h): audio_lifecycle 缺 imports / MoodEntry recordingMode 未 regenerate / provider undefined / notification_service 跨类访问 @visibleForTesting / legal_consent audit log 不带 UTC / vent_detail_page fire-and-forget Future / weight_widgets dynamic 反射 / PrivacyInfo HealthAndFitness 0 HealthKit
+- 优先级 6 其他 P0 (12 项, 单视角发现)
+
+**R108 修完路径**:
+- **Phase 1 R108 收尾** (1-2 周): 8 P0 引入 error + 上架紧急 4h + 6 项 god class 收尾 (2d) + 5 个新守门员 → 预期 7.5-8.0/10
+- **Phase 2 外部依赖** (1-2 月): 域名 ICP + 4 邮箱 + 5 厂商 push + 阿里云 SMS
+- **Phase 3 R109 god class 专项** (1-2 月): 5-6 god class 拆 + use case 层厚化 → 预期 8.5/10
+- **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace → 预期 9.0/10
+- **Phase 5 R1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP → 预期 9.5/10
+
+**R108+ 路线图 (与 R107 路线图对比更新)**:
+- **R108** (1-2 周): 修 8 个 P0 引入 error + 上架紧急 4h + 6 项 god class 收尾 (vs R107 计划"上架前 P0 13 项")
+- **R109** (1-2 月): 拆 5-6 个 god class (medication_page 553 / setup_page_state 506 / add_medication_page 506 / notification_service 417 / static_scale_translations 659 / safety_watch_service 338 / mood_audio_service 311 / app_database 494 / legal_page 460 / reminders_hub_page 441 / mood_trend_page 517 / mood_audio_recorder_widget 529) + use case 层厚化 (8 个 usecase)
+- **R110** (2-3 周): feature-first 重构 + pub workspace 3 package
+- **v1.0** (2027-Q1): pub workspace + 5 厂商 push + AliyunSms + EmailService + PHQ-9 i18n + HealthKit + 鸿蒙 + IAP 真接
+
+**8 FeatureFlag 当前状态 (R108, 同 R107)**:
+1. `iapEnabled=false` (等 App Store Connect 真接)
+2. `emergencyContactEnabled=false` (等阿里云 AccessKey)
+3. `fiveVendorPushEnabled=false` (等 5 厂商 1-2 月审核)
+4. `emailServiceEnabled=false` (等 SendGrid API key)
+5. `ventAudioEnabled=**true**` (R104 已翻 true)
+6. `phqGad7I18nEnabled=false` (等法务 + 临床审核)
+7. `bootReceiverEnabled=false` (等 WorkManager 完善)
+8. `aliyunSmsEnabled=false` (等 AccessKey)
+
 ## v0.23 P0-P3 集中清理 (round 38-44)
 
 按"三视角审视"报告 (emil / superpowers-en / superpowers-zh) 全修:
@@ -224,7 +270,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 总计 (本批): 1057 → 1098 tests (+41), 0 analyzer error, 12 守护脚本全绿 (新增 check_orphan_arb_keys).
 
-**17 守护脚本清单** (v0.30 round 92 修正, 此前 16 漏 1 个 v0.28 R77 增 `check_16kb_alignment.py`):
+**18 守护脚本清单** (v0.30 R107 cleanup 修正, v0.30 R95 加 `check_coverage.py` 后总数 18 = 17 .py + 1 .dart):
 1. `python scripts/check_arb_keys.py` — zh / en / zh_Hant ARB 同步
 2. `python scripts/check_changelog.py` — pubspec 版本号 + CHANGELOG 顺序
 3. `python scripts/check_cross_feature.py` — 跨 feature import 边界
@@ -241,7 +287,8 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 14. `python scripts/check_strings_hardcoded.py` — **v0.26 R57 新增** — 硬编码中文 string 检测
 15. `python scripts/check_zh_hant_consistency.py` — **v0.26 R57 新增** — 繁简一致性 (OpenCC s2tw)
 16. `python scripts/check_16kb_alignment.py` — **v0.28 R77 新增** (v0.30 R92 文档补) — Android 16KB page size 验证 (Google Play 2025-11-01 强制)
-17. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
+17. `python scripts/check_coverage.py` — **v0.30 R95 新增** — 覆盖率阈值 (domain ≥ 70% / data ≥ 50% / presentation ≥ 30%)
+18. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
 
 **待办 (外部依赖, 非本批)**:
 - R55 真接阿里云 SMS (依赖法务 1-2 月模板审核 + 阿里云 AccessKey 申请)
