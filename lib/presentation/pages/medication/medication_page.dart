@@ -8,6 +8,15 @@
 // v0.30 R108 (P1 medication_page 拆): 抽时间段算法 (_TimeSlot enum + contains
 // 方法) 到 `domain/logic/medication_slot_calculator.dart`, 0 Flutter 0 Drift
 // 可直接覆盖测试。本文件删 _TimeSlot enum, 改用 [MedicationTimeSlot]。
+//
+// v0.31 round 11a (Apple Health redesign · Phase 3 Task 3.3):
+// 改 Apple Health 仪表盘风格 (spec §5.3 medication):
+// - 顶部 4-5 AppleHealthTile 横滚 (medication 主题 systemRed)
+// - 今日用药走 AppleListSection (iOS 群组列表)
+// - 我的药物走 AppleListSection
+// - 快捷操作 2x2 AppleHealthTile 网格 (medication 内同类操作入口)
+// - 底部 FAB 添加 (systemRed 圆点, spec §5.3 "FAB")
+// - 整体 spacing 16 (spacingMd) 替代 24 (spacingLg)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +32,8 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
@@ -80,6 +91,19 @@ class MedicationPage extends ConsumerWidget {
           ),
         ),
       ],
+      // v0.31 R11a (spec §5.3): FAB 添加 medication (systemRed 圆形)
+      floatingActionButton: medsAsync.maybeWhen(
+        data: (meds) => meds.isEmpty
+            ? null
+            : FloatingActionButton(
+                // 顶部已放 IconButton.add, FAB 这里改主题色点 (spec §5.3 "FAB")
+                backgroundColor: AppColors.healthMetricsColorFor('medication'),
+                foregroundColor: Colors.white,
+                onPressed: () => context.push('/medication/add'),
+                child: const Icon(Icons.add_rounded),
+              ),
+        orElse: () => null,
+      ),
       child: medsAsync.when(
         data: (meds) {
           final activeMeds =
@@ -96,66 +120,83 @@ class MedicationPage extends ConsumerWidget {
           return ListView(
             padding: AppTokens.edgeInsetsMd,
             children: [
-              // ── 今日服药计划 ──
-              _SectionHeader(
-                icon: Icons.today_outlined,
-                title: l10n.medTodaySchedule,
+              // ═══════════════════════════════════════════════════
+              // 顶部 4-5 AppleHealthTile 横滚 (medication 主题 systemRed)
+              // ═══════════════════════════════════════════════════
+              SizedBox(
+                height: AppleHealthTile.tileHeight,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTokens.pageMarginH,
+                  ),
+                  children: [
+                    // 今日待服 (medication 红, "待服" 计数)
+                    // TODO(Phase 5): 用 ARB key 替换 hardcode
+                    AppleHealthTile(
+                      metricId: 'medication',
+                      label: '待服',
+                      value: '${_pendingCount(slots)}',
+                    ),
+                    const SizedBox(width: AppTokens.spacingSm),
+                    // 已服 (medication 红, "已服" 计数)
+                    AppleHealthTile(
+                      metricId: 'medication',
+                      label: '已服',
+                      value: '${_takenCount(slots)}',
+                    ),
+                    const SizedBox(width: AppTokens.spacingSm),
+                    // 续方提醒 (medication 红, "需续方" 计数)
+                    AppleHealthTile(
+                      metricId: 'medication',
+                      label: '需续方',
+                      value: '${_refillAlertCount(meds)}',
+                      onTap: () => context.push('/settings/refills'),
+                    ),
+                    const SizedBox(width: AppTokens.spacingSm),
+                    // 用药日历 (medication 红, "日历" 入口)
+                    AppleHealthTile(
+                      metricId: 'medication',
+                      label: l10n.medsCalendarTitle, // "用药日历"
+                      value: '查看',
+                      onTap: () => context.push('/medication/calendar'),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: AppTokens.spacingSm),
+              const SizedBox(height: AppTokens.spacingMd),
+
+              // ═══════════════════════════════════════════════════
+              // 章节 1: 今日服药计划 — AppleListSection
+              // ═══════════════════════════════════════════════════
               if (activeMeds.isEmpty)
                 _EmptyScheduleCard(l10n: l10n)
               else
-                ...slots.entries.map(
-                  (e) => _TimeSlotCard(
-                    slot: e.key,
-                    entries: e.value,
-                    l10n: l10n,
-                  ),
-                ),
+                ..._buildSlotSections(context, slots, l10n, ref),
 
-              const SizedBox(height: AppTokens.spacingLg),
+              const SizedBox(height: AppTokens.spacingMd),
 
-              // ── 我的药物 ──
-              _SectionHeader(
-                icon: Icons.medication_outlined,
-                title: l10n.medMyMedications,
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              if (allMeds.isEmpty)
-                _EmptyMedicationsCard(l10n: l10n)
-              else
-                ...allMeds.map(
-                  (med) => _MedicationListCard(
-                    med: med,
-                    onTap: () => context.push('/medication/detail/${med.id}'),
-                  ),
-                ),
-
-              const SizedBox(height: AppTokens.spacingLg),
-
-              // ── 快捷操作 ──
-              _SectionHeader(
-                icon: Icons.shortcut_outlined,
-                title: l10n.medQuickActions,
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              Row(
+              // ═══════════════════════════════════════════════════
+              // 章节 2: 我的药物 — AppleListSection
+              // ═══════════════════════════════════════════════════
+              AppleListSection(
+                title: l10n.medMyMedications, // "我的药物"
+                margin: EdgeInsets.zero,
+                chip: '${allMeds.length}',
                 children: [
-                  Expanded(
-                    child: _QuickActionCard(
-                      icon: Icons.calendar_month_outlined,
-                      label: l10n.medCalendar,
-                      onTap: () => context.push('/medication/calendar'),
-                    ),
-                  ),
-                  const SizedBox(width: AppTokens.spacingSm),
-                  Expanded(
-                    child: _QuickActionCard(
-                      icon: Icons.inventory_2_outlined,
-                      label: l10n.medRefill,
-                      onTap: () => context.push('/settings/refills'),
-                    ),
-                  ),
+                  if (allMeds.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppTokens.spacingMd,
+                      ),
+                      child: _EmptyMedicationsCard(l10n: l10n),
+                    )
+                  else
+                    for (final med in allMeds)
+                      _MedicationListCell(
+                        med: med,
+                        onTap: () => context.push('/medication/detail/${med.id}'),
+                      ),
                 ],
               ),
             ],
@@ -165,6 +206,31 @@ class MedicationPage extends ConsumerWidget {
         error: (e, _) => Center(child: Text('$e')),
       ),
     );
+  }
+
+  /// 顶部 4 tile 计数 helper
+  int _pendingCount(Map<MedicationTimeSlot, List<_SlotEntry>> slots) {
+    var pending = 0;
+    for (final entries in slots.values) {
+      pending += entries.where((e) => !e.done).length;
+    }
+    return pending;
+  }
+
+  int _takenCount(Map<MedicationTimeSlot, List<_SlotEntry>> slots) {
+    var taken = 0;
+    for (final entries in slots.values) {
+      taken += entries.where((e) => e.done).length;
+    }
+    return taken;
+  }
+
+  /// 续方提醒数: 处于 inWindow 或 overdue 状态的药物数
+  int _refillAlertCount(List<MedicationEntity> meds) {
+    final now = DateTime.now();
+    return meds
+        .where((m) => m.hasRefill && (m.isInRefillWindow(now) || m.isRefillOverdue(now)))
+        .length;
   }
 
   /// 按时间段分组服药条目
@@ -220,50 +286,30 @@ class MedicationPage extends ConsumerWidget {
     }
     return result;
   }
-}
 
-// ═══════════════════════════════════════════════════════════════════
-// Sub-widgets
-// ═══════════════════════════════════════════════════════════════════
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.icon, required this.title});
-  final IconData icon;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppTokens.primaryColor(context)),
-        const SizedBox(width: AppTokens.spacingXs),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeBody,
-            fontWeight: FontWeight.w700,
-            color: AppTokens.textPrimaryColor(context),
+  /// 按时间段生成 AppleListSection
+  List<Widget> _buildSlotSections(
+    BuildContext context,
+    Map<MedicationTimeSlot, List<_SlotEntry>> slots,
+    AppLocalizations l10n,
+    WidgetRef ref,
+  ) {
+    return [
+      for (final slot in MedicationTimeSlot.all)
+        if (slots[slot] != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppTokens.spacingMd),
+            child: AppleListSection(
+              title: _slotLabel(slot, l10n), // "早上" / "下午" / etc
+              margin: EdgeInsets.zero,
+              chip: '${slots[slot]!.where((e) => e.done).length}/${slots[slot]!.length}',
+              children: [
+                for (final e in slots[slot]!) _SlotEntryRow(entry: e),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+    ];
   }
-}
-
-/// 时间段卡片 (早上/下午/晚上/睡前)
-class _TimeSlotCard extends StatelessWidget {
-  const _TimeSlotCard({
-    required this.slot,
-    required this.entries,
-    required this.l10n,
-  });
-
-  // v0.30 R108 (P1 medication_page 拆): 改用 [MedicationTimeSlot] (domain),
-  // 不再用 _TimeSlot enum (presentation-private)。Icon 通过 [_slotIcon(name)]
-  // 映射, l10n label 通过 [_slotLabel] 映射。
-  final MedicationTimeSlot slot;
-  final List<_SlotEntry> entries;
-  final AppLocalizations l10n;
 
   String _slotLabel(MedicationTimeSlot slot, AppLocalizations l10n) {
     // 跟 [MedicationTimeSlot.name] 一一对应 (R108 P1 拆)
@@ -280,76 +326,11 @@ class _TimeSlotCard extends StatelessWidget {
         return slot.name; // fallback (防止新增 slot 名称未对应)
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final done = entries.where((e) => e.done).length;
-    final total = entries.length;
-    final allDone = done == total;
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 时间段标题
-            Row(
-              children: [
-                Icon(
-                  // v0.30 R108 (P1 medication_page 拆): icon 改 [_slotIcon(name)]
-                  // 映射, domain MedicationTimeSlot 不持有 icon (UI 关注点)
-                  _slotIcon(slot.name),
-                  size: 18,
-                  color: AppTokens.textSecondaryColor(context),
-                ),
-                const SizedBox(width: AppTokens.spacingXs),
-                Text(
-                  _slotLabel(slot, l10n),
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeBodySm,
-                    fontWeight: FontWeight.w600,
-                    color: AppTokens.textPrimaryColor(context),
-                  ),
-                ),
-                const SizedBox(width: AppTokens.spacingXs),
-                Text(
-                  entries
-                      .map(
-                        (e) =>
-                            '${e.time.hour.toString().padLeft(2, '0')}:${e.time.minute.toString().padLeft(2, '0')}',
-                      )
-                      .toSet()
-                      .toList()
-                      .join('  '),
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHintColor(context),
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '$done/$total',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    fontWeight: FontWeight.w600,
-                    color: allDone
-                        ? AppTokens.primaryColor(context)
-                        : AppTokens.textHintColor(context),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            // 药物列表
-            ...entries.map((e) => _SlotEntryRow(entry: e)),
-          ],
-        ),
-      ),
-    );
-  }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// Sub-widgets
+// ═══════════════════════════════════════════════════════════════════
 
 /// 时间段内的单条药物 — 支持直接打卡
 class _SlotEntryRow extends ConsumerWidget {
@@ -376,12 +357,13 @@ class _SlotEntryRow extends ConsumerWidget {
                 Text(
                   e.med.name,
                   style: TextStyle(
-                    fontSize: AppTokens.fontSizeBodySm,
+                    fontSize: AppTokens.fontSizeBody,
                     fontWeight: FontWeight.w500,
                     color: AppTokens.textPrimaryColor(context),
                   ),
                 ),
                 Text(
+                  '${e.time.hour.toString().padLeft(2, '0')}:${e.time.minute.toString().padLeft(2, '0')} · '
                   '${e.med.dosage}${e.med.dosageUnit.id}',
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeCaption,
@@ -421,9 +403,9 @@ class _SlotEntryRow extends ConsumerWidget {
   }
 }
 
-/// 我的药物卡片
-class _MedicationListCard extends StatelessWidget {
-  const _MedicationListCard({required this.med, required this.onTap});
+/// 我的药物 list cell (AppleListSection 内部用)
+class _MedicationListCell extends StatelessWidget {
+  const _MedicationListCell({required this.med, required this.onTap});
   final MedicationEntity med;
   final VoidCallback onTap;
 
@@ -431,93 +413,72 @@ class _MedicationListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return PressFeedback(
-      child: Card(
-        margin: const EdgeInsets.only(bottom: AppTokens.spacingXs),
-        child: ListTile(
-          leading: MedicationPillIcon(
-            colorIndex: med.colorIndex,
-            size: 36,
-            initial: med.name,
-          ),
-          title: Text(
-            med.name,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              fontWeight: FontWeight.w500,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxs),
+        child: Row(
+          children: [
+            MedicationPillIcon(
+              colorIndex: med.colorIndex,
+              size: 36,
+              initial: med.name,
             ),
-          ),
-          subtitle: Text(
-            '${med.dosage}${med.dosageUnit.id}  '
-            '${med.times.map((t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}').join(', ')}',
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHintColor(context),
-            ),
-          ),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: med.isInUse
-                  ? AppTokens.tintedSuccessSoft(context)
-                  : AppTokens.dividerColor(context),
-              borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-            ),
-            child: Text(
-              med.isInUse
-                  ? l10n.medicationStatusInUse
-                  : l10n.medicationStatusStopped,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaptionSm,
-                fontWeight: FontWeight.w600,
-                color: med.isInUse
-                    ? AppColors.success
-                    : AppTokens.textHintColor(context),
+            const SizedBox(width: AppTokens.spacingSm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    med.name,
+                    style: TextStyle(
+                      fontSize: AppTokens.fontSizeBody,
+                      fontWeight: FontWeight.w500,
+                      color: AppTokens.textPrimaryColor(context),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${med.dosage}${med.dosageUnit.id}  ·  '
+                    '${med.times.map((t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}').join(', ')}',
+                    style: TextStyle(
+                      fontSize: AppTokens.fontSizeCaption,
+                      color: AppTokens.textHintColor(context),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          onTap: onTap,
-        ),
-      ),
-    );
-  }
-}
-
-/// 快捷操作卡片
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return PressFeedback(
-      child: Card(
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-          child: Padding(
-            padding: AppTokens.edgeInsetsMd,
-            child: Column(
-              children: [
-                Icon(icon, size: 28, color: AppTokens.primaryColor(context)),
-                const SizedBox(height: AppTokens.spacingXs),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
+            const SizedBox(width: AppTokens.spacingXs),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.spacingXs,
+                vertical: AppTokens.spacingXxxs,
+              ),
+              decoration: BoxDecoration(
+                color: med.isInUse
+                    ? AppTokens.tintedSuccessSoft(context)
+                    : AppTokens.dividerColor(context),
+                borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+              ),
+              child: Text(
+                med.isInUse
+                    ? l10n.medicationStatusInUse
+                    : l10n.medicationStatusStopped,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeCaptionSm,
+                  fontWeight: FontWeight.w600,
+                  color: med.isInUse
+                      ? AppColors.success
+                      : AppTokens.textHintColor(context),
                 ),
-              ],
+              ),
             ),
-          ),
+            const SizedBox(width: AppTokens.spacingXxs),
+            Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: AppTokens.textHintColor(context),
+            ),
+          ],
         ),
       ),
     );
@@ -531,36 +492,34 @@ class _EmptyMedicationsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsLg,
-        child: Column(
-          children: [
-            Icon(
-              Icons.medication_outlined,
-              size: 48,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
+      child: Column(
+        children: [
+          Icon(
+            Icons.medication_outlined,
+            size: 48,
+            color: AppTokens.textHintColor(context),
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          Text(
+            l10n.medEmptyTitle,
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeBody,
+              fontWeight: FontWeight.w600,
+              color: AppTokens.textSecondaryColor(context),
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingXxs),
+          Text(
+            l10n.medEmptySubtitle,
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeCaption,
               color: AppTokens.textHintColor(context),
             ),
-            const SizedBox(height: AppTokens.spacingSm),
-            Text(
-              l10n.medEmptyTitle,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                fontWeight: FontWeight.w600,
-                color: AppTokens.textSecondaryColor(context),
-              ),
-            ),
-            const SizedBox(height: AppTokens.spacingXxs),
-            Text(
-              l10n.medEmptySubtitle,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textHintColor(context),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -573,14 +532,15 @@ class _EmptyScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Row(
+    return AppleListSection(
+      title: l10n.medTodaySchedule,
+      margin: EdgeInsets.zero,
+      children: [
+        Row(
           children: [
             Icon(
               Icons.check_circle_outline,
-              size: 32,
+              size: 28,
               color: AppTokens.textHintColor(context),
             ),
             const SizedBox(width: AppTokens.spacingSm),
@@ -595,7 +555,7 @@ class _EmptyScheduleCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }
