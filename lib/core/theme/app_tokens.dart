@@ -10,7 +10,14 @@ import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/core/theme/app_spacing.dart';
 import 'package:chroniccare/core/theme/app_typography.dart';
 import 'package:flutter/material.dart'
-    show Color, Curve, TextStyle, BuildContext, BoxShadow, EdgeInsets;
+    show
+        Color,
+        Curve,
+        TextStyle,
+        BuildContext,
+        BoxShadow,
+        EdgeInsets,
+        FontWeight; // v0.31 R2 (Task 1.2): facade 转发 fontWeightUltralight/Light 需要
 
 // Re-export top-level symbols (Motion / MotionScheme / WindowSize / windowSizeOf)
 // 让老 import `package:chroniccare/core/theme/app_tokens.dart` 的 caller
@@ -48,6 +55,9 @@ export 'package:chroniccare/core/theme/app_spacing.dart'
 /// - v0.31 R1 · Apple Health redesign: 8 metric palette (healthMetricsColors / Ids /
 ///   healthMetricsColorFor / tintedMetricSoft) 转发; 14 个 const Color 走 AppColors.xxx
 ///   自动跟随新值, 本 facade 不重定义。
+/// - v0.31 R2 · Apple Health redesign Phase 1 Task 1.2: 3 档 metric 字号
+///   (fontSizeMetricXl/Lg/Md 34/28/22) + 2 档字重 (fontWeightUltralight w200 /
+///   fontWeightLight w300) 转发; 现有字号 / 行高自动跟随 AppTypography 新值。
 class AppTokens {
   AppTokens._();
 
@@ -97,11 +107,20 @@ class AppTokens {
   static const double fontSizeScoreLg = AppTypography.fontSizeScoreLg;
   static const double fontSizeScoreXl = AppTypography.fontSizeScoreXl;
   static const double fontSizeScoreXxl = AppTypography.fontSizeScoreXxl;
+  // v0.31 R2 (Apple Health redesign · Task 1.2): 3 档 metric 大数字转发
+  // (Apple Health 标志性 ultralight 数字 — 34 / 28 / 22)
+  static const double fontSizeMetricXl = AppTypography.fontSizeMetricXl;
+  static const double fontSizeMetricLg = AppTypography.fontSizeMetricLg;
+  static const double fontSizeMetricMd = AppTypography.fontSizeMetricMd;
   static const double lineHeightTight = AppTypography.lineHeightTight;
   static const double lineHeightNormal = AppTypography.lineHeightNormal;
   static const double lineHeightLoose = AppTypography.lineHeightLoose;
   static const double lineHeightSnug = AppTypography.lineHeightSnug;
   static const double lineHeightRelaxed = AppTypography.lineHeightRelaxed;
+  // v0.31 R2 (Apple Health redesign · Task 1.2): 2 档字重转发
+  // ultralight w200 (Apple Health 大数字) + light w300 (次大数字)
+  static const FontWeight fontWeightUltralight = AppTypography.fontWeightUltralight;
+  static const FontWeight fontWeightLight = AppTypography.fontWeightLight;
   static TextStyle textStyleTitle(BuildContext c) =>
       AppTypography.textStyleTitle(c);
   static TextStyle textStyleHeadline(BuildContext c) =>
