@@ -87,6 +87,8 @@ class SnoozeManager {
     // v0.31.1 round 6 (P0-05 修 AppStore BUG-2 + emil P0-C): iOS 通知详情加固
     // - categoryIdentifier: 贪睡类 (snooze 跟原 reminder 区分, 长按归类)
     // - interruptionLevel: timeSensitive → 贪睡通知穿透勿扰
+    // v0.31.1 round 7 (P0-06 修 GooglePlay P0-006): Android 锁屏 PII 防护
+    // - visibility: NotificationVisibility.secret → snooze 通知锁屏隐藏 (跟 reminder 一致)
     // 注: relevanceScore 17.2.4 不暴露, 见 notification_service.dart 同注释。
     final details = NotificationDetails(
       android: AndroidNotificationDetails(
@@ -95,6 +97,7 @@ class SnoozeManager {
         channelDescription: Strings.notifChannelMedicationDescText(),
         importance: Importance.high,
         priority: Priority.high,
+        visibility: NotificationVisibility.secret,
       ),
       iOS: const DarwinNotificationDetails(
         categoryIdentifier: 'com.chroniccare.snooze',

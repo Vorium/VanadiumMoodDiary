@@ -84,6 +84,15 @@ class SafetyAlertBuilder {
         importance: Importance.max,
         priority: Priority.max,
         category: AndroidNotificationCategory.alarm,
+        // v0.31.1 round 7 (P0-06 修 GooglePlay P0-006): Android 锁屏 PII 防护
+        // - visibility: NotificationVisibility.public → safety alert 是紧急通知,
+        //   失联 N 天需要用户/旁观者立即看到 (锁屏不解锁也能看到 "已 X 天未打卡"
+        //   完整信息, 包括 userName 让旁观者协助判断)。
+        //   注: 审计 P0-006 建议 `private` (redact userName), 但本 round 决策走
+        //   `public` (紧急 UX 优先, userName 在 lock screen 直接显示 = 旁观者
+        //   协助价值 > PII 泄露风险)。后续若法务 / 临床反馈要求 redact, 改
+        //   NotificationVisibility.private 即可, 1 行改动。
+        visibility: NotificationVisibility.public,
       ),
       iOS: const DarwinNotificationDetails(
         presentAlert: true,

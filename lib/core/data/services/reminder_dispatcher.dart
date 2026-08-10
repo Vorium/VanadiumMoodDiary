@@ -102,6 +102,9 @@ class ReminderDispatcher {
     // v0.31.1 round 6 (P0-05 修 AppStore BUG-2 + emil P0-C): iOS 通知详情加固
     // - categoryIdentifier: 用药提醒类 (medication / refill / mood / assessment 共用此 channel)
     // - interruptionLevel: timeSensitive → 紧急通知穿透勿扰
+    // v0.31.1 round 7 (P0-06 修 GooglePlay P0-006): Android 锁屏 PII 防护
+    // - visibility: NotificationVisibility.secret → 锁屏完全隐藏 reminder title/body
+    //   (medication name / 剂量 / mood score 等都不在锁屏展示)
     // 注: relevanceScore 17.2.4 不暴露, 见 notification_service.dart 同注释。
     return NotificationDetails(
       android: AndroidNotificationDetails(
@@ -110,6 +113,7 @@ class ReminderDispatcher {
         channelDescription: channelDescription,
         importance: high ? Importance.high : Importance.defaultImportance,
         priority: high ? Priority.high : Priority.defaultPriority,
+        visibility: NotificationVisibility.secret,
       ),
       iOS: const DarwinNotificationDetails(
         categoryIdentifier: 'com.chroniccare.medication.reminder',

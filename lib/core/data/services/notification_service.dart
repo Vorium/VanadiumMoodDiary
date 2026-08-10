@@ -221,11 +221,16 @@ class NotificationService implements NotificationSender {
     // v0.31.1 round 6 (P0-05 修 AppStore BUG-2 + emil P0-C): iOS 通知详情加固
     // - categoryIdentifier: iOS UNNotificationCategory 归类 (长按/管理通知分组)
     // - interruptionLevel: timeSensitive → 紧急通知穿透勿扰 + Focus 模式
+    // v0.31.1 round 7 (P0-06 修 GooglePlay P0-006): Android 锁屏 PII 防护
+    // - visibility: NotificationVisibility.secret → Android 7+ 锁屏完全不显示 title/body
+    //   (仅显示 "ChronicCare"), 防止有人偷看手机时看到 "该吃药了 · 点一下 = 打卡"
+    //   等内容推断出用户是精神心理 / 慢病患者
     // 注: flutter_local_notifications 17.2.4 / 22.3.0 DarwinNotificationDetails
     //   都不暴露 relevanceScore (iOS native UNNotificationContent.relevanceScore),
     //   锁屏 PII 防护的真正开关是 iOS 系统 "Show Previews" 设置, app 端无法绕过。
     //   title/body 已经在 R108 P0-3 / P0-012 修过去 PII (PIPL §23 锁屏公示),
-    //   此处只补 iOS 通知 metadata, 跟 safety_alert_builder.dart 模板对齐。
+    //   此处只补 iOS 通知 metadata + Android visibility, 跟 safety_alert_builder.dart
+    //   模板对齐。
     const details = NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,
@@ -233,6 +238,7 @@ class NotificationService implements NotificationSender {
         channelDescription: _channelDesc,
         importance: Importance.defaultImportance,
         priority: Priority.defaultPriority,
+        visibility: NotificationVisibility.secret,
       ),
       iOS: DarwinNotificationDetails(
         categoryIdentifier: 'com.chroniccare.reminder',
