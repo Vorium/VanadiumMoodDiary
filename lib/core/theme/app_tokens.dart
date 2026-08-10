@@ -1,8 +1,10 @@
-// v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
+// v0.31 round 1 (Apple Health redesign · Phase 1 Task 1.1): facade 同步 8 metric palette
 //
-// 拆解前: 644 行 god constant 8 大类混合 (颜色/字号/间距/圆角/动效/alpha/
-// shadow/业务 + MotionScheme + Motion)。
-// 拆解后: app_tokens.dart ≤50 行 facade, 4 个子文件:
+// 历史:
+// - v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
+//   拆解前: 644 行 god constant 8 大类混合 (颜色/字号/间距/圆角/动效/alpha/
+//   shadow/业务 + MotionScheme + Motion)。
+//   拆解后: app_tokens.dart ≤50 行 facade, 4 个子文件:
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/core/theme/app_spacing.dart';
@@ -43,6 +45,9 @@ export 'package:chroniccare/core/theme/app_spacing.dart'
 /// - v0.5  · 2026-07-12 增加 dark 颜色 + 响应式断点
 /// - v0.18 · 2026-07-18 (P1-5) 增加 dynamic Color getter,支持 dark mode
 /// - v0.27 R65 · 拆 4 文件, 留 facade
+/// - v0.31 R1 · Apple Health redesign: 8 metric palette (healthMetricsColors / Ids /
+///   healthMetricsColorFor / tintedMetricSoft) 转发; 14 个 const Color 走 AppColors.xxx
+///   自动跟随新值, 本 facade 不重定义。
 class AppTokens {
   AppTokens._();
 
@@ -312,4 +317,24 @@ class AppTokens {
   /// UI 层直接传给 LineChartBarData.dashArray
   static List<int> dailyTrackingDashFor(String metricId) =>
       AppColors.dailyTrackingDashFor(metricId);
+
+  // ===== v0.31 R1 (Apple Health redesign · Phase 1 Task 1.1): 8 metric palette 转发 =====
+  //
+  // 8 iOS system color, 顺序固定, 跟 healthMetricsIds 1:1 对应。
+  // 8 metric 入口: medication / mood / vent / assessment / checkIn / trend /
+  // contact / sleep。详见 AppColors.healthMetricsColors 注释。
+  static const List<Color> healthMetricsColors = AppColors.healthMetricsColors;
+  static const List<String> healthMetricsIds = AppColors.healthMetricsIds;
+
+  /// 按 metricId 拿 metric 色 (Color, 找不到返 0xFF9E9E9E 兜底)
+  ///
+  /// UI 层: `AppTokens.healthMetricsColorFor('medication')` → systemRed
+  static Color healthMetricsColorFor(String metricId) =>
+      AppColors.healthMetricsColorFor(metricId);
+
+  /// 按 metricId 拿 metric 浅色背景 (alpha 0.12, AppleHealthTile 容器底色)
+  ///
+  /// UI 层: `AppTokens.tintedMetricSoft(context, 'medication')` → systemRed 12%
+  static Color tintedMetricSoft(BuildContext c, String metricId) =>
+      AppColors.tintedMetricSoft(c, metricId);
 }
