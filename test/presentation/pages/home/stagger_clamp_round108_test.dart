@@ -81,24 +81,33 @@ void main() {
       );
     });
 
-    test('case 4: 5 个改无动画的 widget 名字仍出现 (无回归)', () {
-      // R108 修后, 5 个 widget 不再 wrap FadeIn:
+    test('case 4: 改无动画的 widget 名字仍出现 (无回归)', () {
+      // R108 修后, 这些 widget 不再 wrap FadeIn (Duration.zero):
       // - EncouragementText
       // - QuickMoodCarousel
-      // - PrimaryActionRow (在 todayAsync.when 内, 出现 ≥ 3 次: data/loading/error)
-      // - TodayMedSchedule
+      // - PrimaryActionRow
       // - SecondaryActionRow
+      //
+      // v0.31 R9a 改造: 删 TodayMedSchedule (Apple Health 仪表盘无"今日服药计划"
+      // 章节, 改在 /medication 子页查看), 不再要求 build 树含 TodayMedSchedule。
+      // 新增 4 widget 必出现: CheckInButton (R6 巨型 pill) / HomeHeader
+      // (R9a 改 Apple Health 头) / TodaySummaryCard (R9a 4 指标 2x2) /
+      // FadeIn (R108 保留 stagger 容器)。
       for (final widgetName in [
         'EncouragementText',
         'QuickMoodCarousel',
         'PrimaryActionRow',
-        'TodayMedSchedule',
         'SecondaryActionRow',
+        // v0.31 R9a 新增 4 widget 必出现
+        'CheckInButton',
+        'HomeHeader',
+        'TodaySummaryCard',
+        'FadeIn',
       ]) {
         expect(
           homePageStateContent.contains(widgetName),
           isTrue,
-          reason: '$widgetName 应该在 build 树里 (R108 改无动画但保留 widget)',
+          reason: '$widgetName 应该在 build 树里 (R108/R9a 改无动画但保留 widget)',
         );
       }
     });

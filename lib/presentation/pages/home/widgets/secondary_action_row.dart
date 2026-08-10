@@ -64,8 +64,8 @@ class SecondaryActionRow extends StatelessWidget {
         _RowCell(
           icon: Icons.forest_outlined,
           iconColor: AppColors.healthMetricsColorFor('vent'), // systemPurple
-          title: l10n.homeVentButton.replaceAll(' 🌲', ''), // "树洞"
           // TODO(Phase 5): 走 ARB
+          title: '树洞',
           subtitle: '私密空间 · 1 人可见',
           onTap: () => context.push('/vent'),
         ),

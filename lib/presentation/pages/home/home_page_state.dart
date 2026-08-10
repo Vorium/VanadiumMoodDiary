@@ -66,7 +66,6 @@ import 'package:chroniccare/presentation/pages/home/widgets/notification_failure
 import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/quick_mood_carousel.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/secondary_action_row.dart';
-import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 import 'package:chroniccare/presentation/widgets/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart'
@@ -343,13 +342,13 @@ class HomePageState extends ConsumerState<HomePage> {
                   isLoading: isChecking,
                   onPressed: () => _onCheckIn(streakSnapshot.streak),
                 ),
-                loading: () => CheckInButton(
+                loading: () => const CheckInButton(
                   isChecked: false,
                   streakDays: 0,
                   isLoading: true,
                   onPressed: _noop,
                 ),
-                error: (_, __) => CheckInButton(
+                error: (_, __) => const CheckInButton(
                   isChecked: false,
                   streakDays: 0,
                   isLoading: false,
@@ -448,41 +447,13 @@ class HomePageState extends ConsumerState<HomePage> {
       );
     }
     // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发，例如打卡是补卡)
+    if (!mounted) return;
     unawaited(_careDispatcher.runAfterCheckIn(
       context: context,
       isMounted: () => mounted,
-    ));
+    ),);
     // AI 关怀：打卡后评估是否触发(rule-based)
     unawaited(_careDispatcher.fireCareEngine());
-  }
-
-  /// Snooze 5min: 调度 5min 后的一次性本地通知
-  ///
-  /// 用 medicationId=0 表示"通用打卡提醒 snooze"(避开真实 med id)
-  Future<void> _snooze5Min() async {
-    // v0.22 round 30 (emil P2-4): 走 Haptics.light 集中器
-    // R97-P1-12: unawaited 显式标记 fire-and-forget
-    unawaited(Haptics.light());
-    try {
-      await ref.read(notificationServiceProvider).delegate.snoozeOnce(
-            medicationId: 0, // 0 = 通用 snooze
-            minutes: 5,
-            title: AppLocalizations.of(context).homeSnoozeTitle,
-            body: AppLocalizations.of(context).homeSnoozeBody,
-          );
-      if (!mounted) return;
-      AppSnackBar.showInfo(
-        context,
-        AppLocalizations.of(context).homeSnoozeConfirmed,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      AppSnackBar.showError(
-        context,
-        action: AppLocalizations.of(context).snackbarActionSnooze,
-        error: e,
-      );
-    }
   }
 
   /// 计算下次提醒时间(每天 20:00)
