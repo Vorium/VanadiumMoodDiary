@@ -11,6 +11,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
@@ -47,49 +48,53 @@ class TodayMedSchedule extends ConsumerWidget {
         if (entries.isEmpty) return const SizedBox.shrink();
         final done = entries.where((e) => e.done).length;
         return Card(
-          child: Padding(
-            padding: AppTokens.edgeInsetsMd,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.schedule_outlined,
-                      color: AppTokens.primaryColor(context),
-                      size: 20,
-                    ),
-                    const SizedBox(width: AppTokens.spacingXs),
-                    Text(
-                      AppLocalizations.of(context).medsTodaySchedule,
-                      style: const TextStyle(
-                        fontSize: AppTokens.fontSizeBody,
-                        fontWeight: FontWeight.w600,
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => context.push('/medication'),
+            child: Padding(
+              padding: AppTokens.edgeInsetsMd,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.schedule_outlined,
+                        color: AppTokens.primaryColor(context),
+                        size: 20,
                       ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '$done / ${entries.length}',
-                      style: TextStyle(
-                        fontSize: AppTokens.fontSizeCaption,
-                        color: done == entries.length
-                            ? AppTokens.primaryColor(context)
-                            : AppTokens.textHintColor(context),
-                        fontWeight: FontWeight.w600,
+                      const SizedBox(width: AppTokens.spacingXs),
+                      Text(
+                        AppLocalizations.of(context).medsTodaySchedule,
+                        style: const TextStyle(
+                          fontSize: AppTokens.fontSizeBody,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppTokens.spacingSm),
-                Wrap(
-                  // v0.27 R72 (emil E-P2-4): 走 AppTokens.spacingXs 集中器替代 inline 8
-                  spacing: AppTokens.spacingXs,
-                  runSpacing: AppTokens.spacingXs,
-                  children: [
-                    for (final e in entries) _TimeChip(entry: e),
-                  ],
-                ),
-              ],
+                      const Spacer(),
+                      Text(
+                        '$done / ${entries.length}',
+                        style: TextStyle(
+                          fontSize: AppTokens.fontSizeCaption,
+                          color: done == entries.length
+                              ? AppTokens.primaryColor(context)
+                              : AppTokens.textHintColor(context),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  Wrap(
+                    // v0.27 R72 (emil E-P2-4): 走 AppTokens.spacingXs 集中器替代 inline 8
+                    spacing: AppTokens.spacingXs,
+                    runSpacing: AppTokens.spacingXs,
+                    children: [
+                      for (final e in entries) _TimeChip(entry: e),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

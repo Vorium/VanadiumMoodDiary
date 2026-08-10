@@ -1,4 +1,4 @@
-﻿// v0.29 round 84 (CBT 思维记录): 5/7 栏 wizard
+// v0.29 round 84 (CBT 思维记录): 5/7 栏 wizard
 //
 // 步骤式布局: 进度条 + 步数指示 + 当前 step section + 上一/下一步按钮
 // 5 栏 5 步, 7 栏 7 步。切档由父组件 (mood_recorder_page) 通过
@@ -116,7 +116,8 @@ class CbtWizard extends ConsumerWidget {
                     notifier.setStep(state.stepIndex + 1);
                   }
                 },
-                child: Text(isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep),
+                child: Text(
+                    isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep,),
               ),
             ],
           ),
@@ -161,8 +162,10 @@ class CbtWizard extends ConsumerWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.moodCbtStep2Header,
-              style: AppTokens.textStyleLabel(context),),
+          Text(
+            l10n.moodCbtStep2Header,
+            style: AppTokens.textStyleLabel(context),
+          ),
           const SizedBox(height: AppTokens.spacingSm),
           // score 选择 (5 档:1-5)
           // v0.29 round 84 (Task 6 fix): chip 现在写 notifier.updateScore
@@ -214,8 +217,10 @@ class CbtWizard extends ConsumerWidget {
             onChanged: (v) => notifier.updateField(alternativeThought: v),
           ),
           const SizedBox(height: AppTokens.spacingMd),
-          Text(l10n.moodCbtScoreReratedLabel,
-              style: AppTokens.textStyleLabel(context),),
+          Text(
+            l10n.moodCbtScoreReratedLabel,
+            style: AppTokens.textStyleLabel(context),
+          ),
           Wrap(
             spacing: AppTokens.spacingSm,
             children: List.generate(5, (i) {

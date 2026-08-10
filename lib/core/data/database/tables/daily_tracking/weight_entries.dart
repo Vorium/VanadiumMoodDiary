@@ -1,4 +1,5 @@
-import 'package:chroniccare/domain/logic/bmi_calculator.dart' show BmiCalculator;
+import 'package:chroniccare/domain/logic/bmi_calculator.dart'
+    show BmiCalculator;
 import 'package:drift/drift.dart';
 
 /// 体重记录表

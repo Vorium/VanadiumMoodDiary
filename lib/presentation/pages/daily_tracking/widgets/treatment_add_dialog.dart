@@ -39,8 +39,7 @@ class AddTreatmentDialog extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<AddTreatmentDialog> createState() =>
-      _AddTreatmentDialogState();
+  ConsumerState<AddTreatmentDialog> createState() => _AddTreatmentDialogState();
 }
 
 class _AddTreatmentDialogState extends ConsumerState<AddTreatmentDialog> {

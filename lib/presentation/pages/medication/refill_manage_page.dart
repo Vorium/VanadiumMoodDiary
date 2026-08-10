@@ -1,4 +1,4 @@
-﻿// v0.14 (Round 13A) 续方管理页面
+// v0.14 (Round 13A) 续方管理页面
 //
 // 集中查看所有药物的续方状态：
 // - 每种药一行：药名 / 剂量 / 续方日期 / 距今天 X 天 / 状态徽章
@@ -149,8 +149,7 @@ class RefillManagePage extends ConsumerWidget {
                     const SizedBox(width: AppTokens.spacingMd),
                     Expanded(
                       child: StatCard(
-                        label:
-                            AppLocalizations.of(context).medsRefillSetCount,
+                        label: AppLocalizations.of(context).medsRefillSetCount,
                         value: '$configured',
                       ),
                     ),
@@ -161,8 +160,7 @@ class RefillManagePage extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: StatCard(
-                        label:
-                            AppLocalizations.of(context).medsRefillReminding,
+                        label: AppLocalizations.of(context).medsRefillReminding,
                         value: '$inWindow',
                         valueColor: inWindow > 0
                             ? AppTokens.warningColor(context)
@@ -172,12 +170,10 @@ class RefillManagePage extends ConsumerWidget {
                     const SizedBox(width: AppTokens.spacingMd),
                     Expanded(
                       child: StatCard(
-                        label:
-                            AppLocalizations.of(context).refillManageOverdue,
+                        label: AppLocalizations.of(context).refillManageOverdue,
                         value: '$overdue',
-                        valueColor: overdue > 0
-                            ? AppTokens.errorColor(context)
-                            : null,
+                        valueColor:
+                            overdue > 0 ? AppTokens.errorColor(context) : null,
                       ),
                     ),
                   ],

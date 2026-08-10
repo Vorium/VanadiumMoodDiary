@@ -44,6 +44,26 @@ class ReminderDispatcher {
   final String channelName;
   final String channelDescription;
 
+  /// R108 (P0#2): Android 12+ SCHEDULE_EXACT_ALARM 权限运行时检查
+  ///
+  /// true (default) = 使用 `exactAllowWhileIdle` mode, 精准闹钟
+  /// false = 使用 `inexactAllowWhileIdle` mode, 允许 ~15min 漂移 (用户撤回权限时)
+  ///
+  /// 由 [NotificationService.rescheduleAll] 在检测 Android 权限后设。
+  /// 设了之后所有后续 [zonedDaily] / [zonedAt] 调都按这个 mode 走。
+  /// 重排时 (启动 / medications 变化) rescheduleAll 入口会重新检查 + 覆盖。
+  bool _useExactAllowWhileIdle = true;
+
+  /// v0.30 R108 revisit (P0-016): 公开 setter,替代之前 `@visibleForTesting`
+  /// 直接写字段的模式(跨类访问 `useExactAllowWhileIdle` 触发 lint)。
+  void setExactMode(bool value) {
+    _useExactAllowWhileIdle = value;
+  }
+
+  /// v0.30 R108 revisit (P0-016): getter,给 [zonedDaily] / [zonedAt] 读
+  @visibleForTesting
+  bool get useExactAllowWhileIdle => _useExactAllowWhileIdle;
+
   /// 取消 id 在 [base, base+[count]) 范围内的所有 pending 通知
   ///
   /// 配套 [kReminderCancelRange] 公式, 任何 id 公式都遵循 base + N 模式
@@ -115,7 +135,11 @@ class ReminderDispatcher {
       body,
       scheduled,
       details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      // R108 (P0#2): Android 12+ SCHEDULE_EXACT_ALARM 权限运行时检查
+      // false → inexactAllowWhileIdle 兜底 (允许 ~15min 漂移, 不阻塞)
+      androidScheduleMode: useExactAllowWhileIdle
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time, // 每天重复
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
@@ -157,7 +181,11 @@ class ReminderDispatcher {
       body,
       scheduled,
       details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      // R108 (P0#2): Android 12+ SCHEDULE_EXACT_ALARM 权限运行时检查
+      // false → inexactAllowWhileIdle 兜底 (允许 ~15min 漂移, 不阻塞)
+      androidScheduleMode: useExactAllowWhileIdle
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: null, // 一次性不重复
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,

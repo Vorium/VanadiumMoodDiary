@@ -133,8 +133,7 @@ void main() {
   });
 
   group('R60 legacy free text note 兼容', () {
-    test('老格式 free text note → 兜底 score=0, answers=空, note 保留原文',
-        () async {
+    test('老格式 free text note → 兜底 score=0, answers=空, note 保留原文', () async {
       // 直接插一行老格式 free text note
       await db.into(db.checkIns).insert(
             CheckInsCompanion.insert(

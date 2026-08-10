@@ -26,13 +26,15 @@ void main() {
 
   group('StressEventDao (v0.30 round 91 新表)', () {
     test('insert + watchAll → 1 条按 timestamp DESC', () async {
-      await dao.insert(StressEventsCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 14, 30),
-        eventType: 'work',
-        intensity: 4,
-        note: const Value('deadline'),
-        linkedMoodEntryId: const Value(1),
-      ),);
+      await dao.insert(
+        StressEventsCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 14, 30),
+          eventType: 'work',
+          intensity: 4,
+          note: const Value('deadline'),
+          linkedMoodEntryId: const Value(1),
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.length, 1);
@@ -42,11 +44,13 @@ void main() {
     });
 
     test('不传 linkedMoodEntryId → 默认 null (FK 弱关联)', () async {
-      await dao.insert(StressEventsCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 14, 30),
-        eventType: 'relationship',
-        intensity: 3,
-      ),);
+      await dao.insert(
+        StressEventsCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 14, 30),
+          eventType: 'relationship',
+          intensity: 3,
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.first.linkedMoodEntryId, isNull);

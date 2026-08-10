@@ -108,9 +108,7 @@ class CbtDraftState {
     if (level == ThoughtRecordLevel.three) return 0;
     if (_isEmpty(d.situation)) return 0;
     if (_isEmpty(d.automaticThought)) return 1;
-    if (_isEmpty(d.evidenceFor) ||
-        _isEmpty(d.evidenceAgainst) ||
-        d.score < 1) {
+    if (_isEmpty(d.evidenceFor) || _isEmpty(d.evidenceAgainst) || d.score < 1) {
       return 2;
     }
     if (_isEmpty(d.alternativeThought) || d.reratedScore == null) return 3;
@@ -180,7 +178,8 @@ class CbtDraftNotifier extends Notifier<CbtDraftState> {
         automaticThought: automaticThought ?? state.draft.automaticThought,
         evidenceFor: evidenceFor ?? state.draft.evidenceFor,
         evidenceAgainst: evidenceAgainst ?? state.draft.evidenceAgainst,
-        alternativeThought: alternativeThought ?? state.draft.alternativeThought,
+        alternativeThought:
+            alternativeThought ?? state.draft.alternativeThought,
         reratedScore: reratedScore ?? state.draft.reratedScore,
         coreBelief: coreBelief ?? state.draft.coreBelief,
         behaviorResponse: behaviorResponse ?? state.draft.behaviorResponse,
@@ -235,7 +234,6 @@ class CbtDraftNotifier extends Notifier<CbtDraftState> {
   }
 }
 
-final cbtDraftProvider =
-    NotifierProvider<CbtDraftNotifier, CbtDraftState>(
+final cbtDraftProvider = NotifierProvider<CbtDraftNotifier, CbtDraftState>(
   CbtDraftNotifier.new,
 );

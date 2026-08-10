@@ -1,4 +1,5 @@
-import 'package:chroniccare/core/data/services/vent_audio_storage.dart' show VentAudioStorage;
+import 'package:chroniccare/core/data/services/vent_audio_storage.dart'
+    show VentAudioStorage;
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
@@ -6,7 +7,7 @@ import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 
 import 'package:chroniccare/core/data/database/connection/connection.dart'
-    if (dart.library.html) 'connection/web.dart'
+    if (dart.library.js_interop) 'connection/web.dart'
     if (dart.library.io) 'connection/native.dart';
 
 import 'dart:convert';
@@ -124,8 +125,22 @@ class AppDatabase extends _$AppDatabase {
   //     plaintext + encrypted duplicate in DB, device root / backup steal → PIPL §28 field-level plaintext leak
   //   - R92 DROP contentText column, one-time cleanup
   //   - guard `if (from < 19)` matches v15 to v17 pattern
+  //
+  // v0.30 R101: schemaVersion 19 to 20 - medications +3 columns (form/colorIndex/notes)
+  //   - form: 药物剂型 (tablet/capsule/liquid/patch/injection/other), 默认 'tablet'
+  //   - colorIndex: 药丸颜色索引 (0-5), 默认 0
+  //   - notes: 备注, nullable
+  //   - 3 列全部有默认值, 老数据自动兼容
+  //
+  // v0.30 R101: schemaVersion 20 to 21 - mood_entries +1 column (influenceFactorsJson)
+  //   - influenceFactorsJson: 影响因素 JSON 数组, 默认 '[]'
+  //   - 老数据自动兼容 (空列表)
+  //
+  // v0.30 R105: schemaVersion 21 to 22 - mood_entries +1 column (recordingMode)
+  //   - recordingMode: 记录模式 ('momentary' / 'daily'), nullable
+  //   - 老数据自动兼容 (null)
   @override
-  int get schemaVersion => 19;
+  int get schemaVersion => 22;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -339,6 +354,28 @@ class AppDatabase extends _$AppDatabase {
               'ALTER TABLE vent_entries DROP COLUMN content_text',
             );
           }
+          // v19 to v20: medications +3 columns (form/colorIndex/notes)
+          // - form: 药物剂型, 默认 'tablet'
+          // - colorIndex: 药丸颜色索引, 默认 0
+          // - notes: 备注, nullable
+          // - 3 列全部有默认值, 老数据自动兼容
+          if (from < 20) {
+            await m.addColumn(medications, medications.form);
+            await m.addColumn(medications, medications.colorIndex);
+            await m.addColumn(medications, medications.notes);
+          }
+          // v20 to v21: mood_entries +1 column (influenceFactorsJson)
+          // - 影响因素 JSON 数组, 默认 '[]'
+          // - 老数据自动兼容 (空列表)
+          if (from < 21) {
+            await m.addColumn(moodEntries, moodEntries.influenceFactorsJson);
+          }
+          // v21 to v22: mood_entries +1 column (recordingMode)
+          // - 记录模式 ('momentary' / 'daily'), nullable
+          // - 老数据自动兼容 (null)
+          if (from < 22) {
+            await m.addColumn(moodEntries, moodEntries.recordingMode);
+          }
         },
         beforeOpen: (details) async {
           // enable foreign keys
@@ -466,22 +503,9 @@ class AppDatabase extends _$AppDatabase {
   /// [VentAudioStorage.deleteAll] to delete files.
   Future<void> clearAllUserData() async {
     await transaction(() async {
-      // order matters: foreign key dependencies clear first
-      // (current schema has no foreign keys, order doesn't matter, but keep defensive)
-      await delete(checkIns).go();
-      await delete(medications).go();
-      await delete(contacts).go();
-      await delete(userProfiles).go();
-      await delete(reportHistories).go();
-      await delete(moodEntries).go();
-      await delete(ventEntries).go();
-      // v0.30 round 91: 6 new tables also cleared
-      await delete(sleepEntries).go();
-      await delete(socialRhythmEntries).go();
-      await delete(stressEvents).go();
-      await delete(treatmentEntries).go();
-      await delete(weightEntries).go();
-      await delete(anxietyAgitationEntries).go();
+      for (final table in allTables) {
+        await delete(table).go();
+      }
     });
   }
 

@@ -39,7 +39,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     // v0.30 R95 task 31a: 注入固定 32-byte AES key 走 test 路径,
     // 避开 FlutterSecureStorage platform channel (test 模式抛 MissingPluginException)
-    EncryptionService().setKeyForTest(Uint8List.fromList(List.filled(32, 0x42)));
+    EncryptionService()
+        .setKeyForTest(Uint8List.fromList(List.filled(32, 0x42)));
   });
 
   group('ConsentKind.dataExport (PIPL §13 单独同意 — round 82)', () {
@@ -61,7 +62,9 @@ void main() {
       });
     });
 
-    test('ConsentArtifact 5 字段 (kind/grantedAt/grantedBy/contactId/version) 构造 + 读取', () {
+    test(
+        'ConsentArtifact 5 字段 (kind/grantedAt/grantedBy/contactId/version) 构造 + 读取',
+        () {
       // 模拟一次 dataExport 同意的完整 ConsentArtifact
       // 5 字段: kind / grantedAt / grantedBy / contactId / version
       final grantedAt = DateTime.utc(2026, 8, 15, 10, 30);
@@ -81,7 +84,8 @@ void main() {
       expect(artifact.version, 'v0.27-2026-08-15');
     });
 
-    test('ConsentArtifact JSON round-trip (5 字段经 jsonEncode/jsonDecode 不丢)', () {
+    test('ConsentArtifact JSON round-trip (5 字段经 jsonEncode/jsonDecode 不丢)',
+        () {
       // 跟 LegalConsentStore.recordDataExportConsent / readDataExportConsentLog
       // 内的 jsonEncode/jsonDecode 路径对齐, 验证序列化协议正确
       final original = ConsentArtifact(
@@ -140,7 +144,9 @@ void main() {
       }
     });
 
-    test('dataExportConsentBody 3 placeholder (purpose / dataCategories / retention) 在 ARB 声明', () async {
+    test(
+        'dataExportConsentBody 3 placeholder (purpose / dataCategories / retention) 在 ARB 声明',
+        () async {
       for (final path in [
         'lib/l10n/app_zh.arb',
         'lib/l10n/app_en.arb',
@@ -159,7 +165,8 @@ void main() {
       }
     });
 
-    test('LegalConsentStore.recordDataExportConsent 写 SharedPreferences 后能读回', () async {
+    test('LegalConsentStore.recordDataExportConsent 写 SharedPreferences 后能读回',
+        () async {
       final store = LegalConsentStore();
       final artifact = ConsentArtifact(
         kind: ConsentKind.dataExport,
@@ -181,7 +188,8 @@ void main() {
       expect(log.first.version, 'v0.27-2026-08-15');
     });
 
-    test('recordDataExportConsent 多次调用累积到 log (不覆盖, PIPL §17 同意记录可追溯)', () async {
+    test('recordDataExportConsent 多次调用累积到 log (不覆盖, PIPL §17 同意记录可追溯)',
+        () async {
       final store = LegalConsentStore();
       final a1 = ConsentArtifact(
         kind: ConsentKind.dataExport,
@@ -206,7 +214,9 @@ void main() {
       expect(log[1].grantedAt, DateTime.utc(2026, 8, 15, 11));
     });
 
-    test('v0.30 R95 task 31a: SharedPreferences 存的是 base64 密文, 非明文 (PIPL §28 防设备 root)', () async {
+    test(
+        'v0.30 R95 task 31a: SharedPreferences 存的是 base64 密文, 非明文 (PIPL §28 防设备 root)',
+        () async {
       // 验证 1) 写入后 SharedPreferences 实际内容是 base64 密文
       //      2) 读回的明文不含 PII 字符串 (grantedBy 等)
       final store = LegalConsentStore();
@@ -227,13 +237,22 @@ void main() {
 
       // 锁: 存储内容是 base64 密文, 不含明文 PII
       final stored = raw.first;
-      expect(stored, isNot(contains('user_sensitive_pii')),
-          reason: '存储不能含明文 grantedBy PII: $stored',);
-      expect(stored, isNot(contains('张三')),
-          reason: '存储不能含明文 grantedBy PII: $stored',);
+      expect(
+        stored,
+        isNot(contains('user_sensitive_pii')),
+        reason: '存储不能含明文 grantedBy PII: $stored',
+      );
+      expect(
+        stored,
+        isNot(contains('张三')),
+        reason: '存储不能含明文 grantedBy PII: $stored',
+      );
       // base64 特征: 只含 [A-Za-z0-9+/=] 字符
-      expect(RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(stored), isTrue,
-          reason: '存储应是 base64 编码: $stored',);
+      expect(
+        RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(stored),
+        isTrue,
+        reason: '存储应是 base64 编码: $stored',
+      );
       // 解出来是明文 (验证加密/解密对称)
       final plain = await EncryptionService().decryptString(stored);
       expect(plain, contains('user_sensitive_pii'));
@@ -264,15 +283,19 @@ void main() {
       expect(log.first.grantedBy, 'good_entry');
     });
 
-    test('v0.30 R95 task 31b: reset(ConsentKind.dataExport) 同步清 audit log (PIPL §47 删除权)', () async {
+    test(
+        'v0.30 R95 task 31b: reset(ConsentKind.dataExport) 同步清 audit log (PIPL §47 删除权)',
+        () async {
       // 验证用户撤回 dataExport 同意时, audit log 也一起清 (PIPL §47 撤回留痕)
       final store = LegalConsentStore();
-      await store.recordDataExportConsent(ConsentArtifact(
-        kind: ConsentKind.dataExport,
-        grantedAt: DateTime.utc(2026, 8, 15, 10),
-        grantedBy: 'user',
-        version: 'v0.30',
-      ),);
+      await store.recordDataExportConsent(
+        ConsentArtifact(
+          kind: ConsentKind.dataExport,
+          grantedAt: DateTime.utc(2026, 8, 15, 10),
+          grantedBy: 'user',
+          version: 'v0.30',
+        ),
+      );
       // 确认有 audit log
       expect((await store.readDataExportConsentLog()).length, 1);
 
@@ -287,17 +310,21 @@ void main() {
       expect(prefs.getStringList('legal_consent_data_export_log'), isNull);
     });
 
-    test('v0.30 R95 task 31b: clearDataExportAuditLog() 显式入口 (settings "清空我的同意记录" 按钮)', () async {
+    test(
+        'v0.30 R95 task 31b: clearDataExportAuditLog() 显式入口 (settings "清空我的同意记录" 按钮)',
+        () async {
       // 显式 API 跟 reset 走同条路径, 但解耦: reset 是"撤回同意", clear 是
       // "只清 log 不撤回同意"。当前实现下两条路径等价 (reset 自动清, 显式
       // clear 是 same), 提供显式入口为 v1.0 业务侧独立按钮铺路。
       final store = LegalConsentStore();
-      await store.recordDataExportConsent(ConsentArtifact(
-        kind: ConsentKind.dataExport,
-        grantedAt: DateTime.utc(2026, 8, 15, 10),
-        grantedBy: 'user',
-        version: 'v0.30',
-      ),);
+      await store.recordDataExportConsent(
+        ConsentArtifact(
+          kind: ConsentKind.dataExport,
+          grantedAt: DateTime.utc(2026, 8, 15, 10),
+          grantedBy: 'user',
+          version: 'v0.30',
+        ),
+      );
 
       // 显式清
       await store.clearDataExportAuditLog();

@@ -26,8 +26,8 @@ class MoodListItem extends StatelessWidget {
     final preview = entry.note?.isNotEmpty ?? false
         ? entry.note!
         : entry.automaticThought?.isNotEmpty ?? false
-              ? entry.automaticThought!
-              : '...';
+            ? entry.automaticThought!
+            : '...';
 
     return ListTile(
       onTap: onTap,
@@ -65,7 +65,9 @@ class MoodListItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                 ),
                 child: Text(
-                  entry.cbtLevel == 7 ? l10n.moodCbtChipBadge7 : l10n.moodCbtChipBadge5,
+                  entry.cbtLevel == 7
+                      ? l10n.moodCbtChipBadge7
+                      : l10n.moodCbtChipBadge5,
                   style: AppTokens.textStyleMicro(context).copyWith(
                     color: AppTokens.primaryColor(context),
                   ),

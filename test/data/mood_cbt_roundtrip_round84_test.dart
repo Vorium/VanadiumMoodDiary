@@ -57,10 +57,14 @@ void main() {
 
   test('CBT 5 栏字段 round-trip 全部保留', () async {
     const draft = MoodEntryDraft(
-      score: 4, tags: ['焦虑'],
-      situation: '开会迟到', automaticThought: '大家觉得我不靠谱',
-      evidenceFor: '上次也迟到', evidenceAgainst: '过去一年只迟到一次',
-      alternativeThought: '偶尔一次正常', reratedScore: 3,
+      score: 4,
+      tags: ['焦虑'],
+      situation: '开会迟到',
+      automaticThought: '大家觉得我不靠谱',
+      evidenceFor: '上次也迟到',
+      evidenceAgainst: '过去一年只迟到一次',
+      alternativeThought: '偶尔一次正常',
+      reratedScore: 3,
     );
     final id = await db.moodDao.insert(_draftToCompanion(draft));
     final all = await db.moodDao.getAll();
@@ -78,10 +82,16 @@ void main() {
 
   test('7 栏字段 round-trip', () async {
     const draft = MoodEntryDraft(
-      score: 2, tags: [],
-      situation: 'x', automaticThought: 'y', evidenceFor: 'a',
-      evidenceAgainst: 'b', alternativeThought: 'c', reratedScore: 4,
-      coreBelief: '我不够好', behaviorResponse: '深呼吸',
+      score: 2,
+      tags: [],
+      situation: 'x',
+      automaticThought: 'y',
+      evidenceFor: 'a',
+      evidenceAgainst: 'b',
+      alternativeThought: 'c',
+      reratedScore: 4,
+      coreBelief: '我不够好',
+      behaviorResponse: '深呼吸',
     );
     final id = await db.moodDao.insert(_draftToCompanion(draft));
     final saved = (await db.moodDao.getAll()).firstWhere((e) => e.id == id);
@@ -111,11 +121,16 @@ void main() {
   test('moodRepository.add 透传 8 个 CBT 字段到 DB (P0 fix)', () async {
     final repo = MoodRepositoryImpl(db);
     const draft = MoodEntryDraft(
-      score: 4, tags: ['焦虑'],
-      situation: '开会迟到', automaticThought: '大家觉得我不可靠',
-      evidenceFor: '上次也迟到', evidenceAgainst: '过去一年只迟到一次',
-      alternativeThought: '偶尔一次正常', reratedScore: 3,
-      coreBelief: '我不够好', behaviorResponse: '深呼吸',
+      score: 4,
+      tags: ['焦虑'],
+      situation: '开会迟到',
+      automaticThought: '大家觉得我不可靠',
+      evidenceFor: '上次也迟到',
+      evidenceAgainst: '过去一年只迟到一次',
+      alternativeThought: '偶尔一次正常',
+      reratedScore: 3,
+      coreBelief: '我不够好',
+      behaviorResponse: '深呼吸',
     );
     final id = await repo.add(draft: draft);
     final saved = (await db.moodDao.getAll()).firstWhere((e) => e.id == id);

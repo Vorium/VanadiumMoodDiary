@@ -139,7 +139,7 @@ class AssessmentReminderService {
   Future<void> onAppStart() async {
     final enabled = await isEnabled();
     if (!enabled) {
-      await _notificationService.cancelAssessmentReminder();
+      await _notificationService.delegate.cancelAssessmentReminder();
       return;
     }
     final days = await getDays();
@@ -157,7 +157,7 @@ class AssessmentReminderService {
       lastAssessmentAt: await getLastAssessmentAt(),
     );
     if (fireAt == null) return;
-    await _notificationService.scheduleAssessmentReminder(
+    await _notificationService.delegate.scheduleAssessmentReminder(
       fireAt: fireAt,
       scaleId: 'phq9',
       days: days,
@@ -181,7 +181,7 @@ class AssessmentReminderService {
       now: now,
     );
     if (fireAt == null) return;
-    await _notificationService.scheduleAssessmentReminder(
+    await _notificationService.delegate.scheduleAssessmentReminder(
       fireAt: fireAt,
       scaleId: 'phq9',
       days: days,

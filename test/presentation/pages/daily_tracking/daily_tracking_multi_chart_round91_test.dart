@@ -57,8 +57,7 @@ void main() {
     expect(find.byType(FilterChip), findsNWidgets(4));
   });
 
-  testWidgets('体重 1 entry → LineChart 渲染 (1 line 蓝色实线)',
-      (tester) async {
+  testWidgets('体重 1 entry → LineChart 渲染 (1 line 蓝色实线)', (tester) async {
     final now = DateTime.now();
     final entries = [
       WeightEntryEntity(
@@ -165,14 +164,26 @@ void main() {
     );
 
     // 4 线型 (实/虚/点/双点)
-    expect(AppTokens.dailyTrackingDashFor('weight'), isEmpty,
-        reason: '体重 实线',);
-    expect(AppTokens.dailyTrackingDashFor('sleep'), [5, 5],
-        reason: '睡眠 虚线',);
-    expect(AppTokens.dailyTrackingDashFor('mood'), [2, 3],
-        reason: '心境 点线',);
-    expect(AppTokens.dailyTrackingDashFor('stress'), [8, 3, 2, 3],
-        reason: '应激源 双点',);
+    expect(
+      AppTokens.dailyTrackingDashFor('weight'),
+      isEmpty,
+      reason: '体重 实线',
+    );
+    expect(
+      AppTokens.dailyTrackingDashFor('sleep'),
+      [5, 5],
+      reason: '睡眠 虚线',
+    );
+    expect(
+      AppTokens.dailyTrackingDashFor('mood'),
+      [2, 3],
+      reason: '心境 点线',
+    );
+    expect(
+      AppTokens.dailyTrackingDashFor('stress'),
+      [8, 3, 2, 3],
+      reason: '应激源 双点',
+    );
 
     // 未知 metric 兜底
     expect(

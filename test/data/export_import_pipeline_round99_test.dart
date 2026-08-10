@@ -82,8 +82,7 @@ void main() {
       expect(result.ventEntryCount, 0);
     });
 
-    test('2. export + import 全 7 段数据 → counts 全对 + DB 查到',
-        () async {
+    test('2. export + import 全 7 段数据 → counts 全对 + DB 查到', () async {
       // 准备数据
       await db.userProfileDao.upsert(
         UserProfilesCompanion.insert(
@@ -92,41 +91,53 @@ void main() {
           firstLaunchAt: DateTime.utc(2026, 1, 1),
         ),
       );
-      await db.contactDao.insert(ContactsCompanion.insert(
-        name: '姐',
-        phone: '13800138003',
-        sortOrder: const Value(0),
-      ),);
-      await db.medicationDao.insert(MedicationsCompanion.insert(
-        name: '舍曲林',
-        dosage: 50.0, // required double, not Value<double>
-        dosageUnit: 'mg', // required String, not Value<String>
-        timesJson: const Value('["08:00"]'),
-        startDate: DateTime.utc(2026, 6, 1),
-      ),);
-      await db.checkInDao.insert(CheckInsCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1, 8, 5),
-        type: 'normal',
-      ),);
-      final moodId = await db.moodDao.insert(MoodEntriesCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1, 21, 0),
-        score: 4,
-        energy: const Value(3),
-        sleep: const Value(4),
-        anxiety: const Value(2),
-        tagsJson: const Value('["ok"]'),
-        note: const Value('还好'),
-      ),);
-      await db.reportDao.insert(ReportHistoriesCompanion.insert(
-        windowDays: 7,
-        generatedAt: DateTime.utc(2026, 7, 1),
-        userName: const Value('王五'),
-        reportText: '依从率 90%',
-      ),);
-      await db.ventDao.insert(VentEntriesCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1, 22, 0),
-        contentTextEnc: Value(await encText('今天很累')),
-      ),);
+      await db.contactDao.insert(
+        ContactsCompanion.insert(
+          name: '姐',
+          phone: '13800138003',
+          sortOrder: const Value(0),
+        ),
+      );
+      await db.medicationDao.insert(
+        MedicationsCompanion.insert(
+          name: '舍曲林',
+          dosage: 50.0, // required double, not Value<double>
+          dosageUnit: 'mg', // required String, not Value<String>
+          timesJson: const Value('["08:00"]'),
+          startDate: DateTime.utc(2026, 6, 1),
+        ),
+      );
+      await db.checkInDao.insert(
+        CheckInsCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1, 8, 5),
+          type: 'normal',
+        ),
+      );
+      final moodId = await db.moodDao.insert(
+        MoodEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1, 21, 0),
+          score: 4,
+          energy: const Value(3),
+          sleep: const Value(4),
+          anxiety: const Value(2),
+          tagsJson: const Value('["ok"]'),
+          note: const Value('还好'),
+        ),
+      );
+      await db.reportDao.insert(
+        ReportHistoriesCompanion.insert(
+          windowDays: 7,
+          generatedAt: DateTime.utc(2026, 7, 1),
+          userName: const Value('王五'),
+          reportText: '依从率 90%',
+        ),
+      );
+      await db.ventDao.insert(
+        VentEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1, 22, 0),
+          contentTextEnc: Value(await encText('今天很累')),
+        ),
+      );
 
       // export
       final exported = await svc.exportToJson();
@@ -163,10 +174,12 @@ void main() {
   group('R99 #27 import 覆盖语义 (P0)', () {
     test('3. import 会清空旧 contact + 写新 (覆盖语义)', () async {
       // 旧: 1 个 contact
-      await db.contactDao.insert(ContactsCompanion.insert(
-        name: '旧联系人',
-        phone: '13800000000',
-      ),);
+      await db.contactDao.insert(
+        ContactsCompanion.insert(
+          name: '旧联系人',
+          phone: '13800000000',
+        ),
+      );
       expect((await db.contactDao.watchActive().first).length, 1);
 
       // import: 0 contact
@@ -188,14 +201,18 @@ void main() {
       expect(await db.contactDao.watchActive().first, isEmpty);
     });
 
-    test('4. 二次 import 第二次 JSON 覆盖第一次 (PIPL §47 删除权场景)',
-        () async {
+    test('4. 二次 import 第二次 JSON 覆盖第一次 (PIPL §47 删除权场景)', () async {
       final json1 = jsonEncode({
         'version': ExportSchemaService.currentVersion,
         'exportedAt': '2026-07-01T00:00:00.000Z',
         'profile': null,
         'contacts': [
-          {'name': 'A', 'phone': '13800138001', 'sortOrder': 0, 'isActive': true},
+          {
+            'name': 'A',
+            'phone': '13800138001',
+            'sortOrder': 0,
+            'isActive': true,
+          },
         ],
         'medications': <Map<String, dynamic>>[],
         'checkIns': <Map<String, dynamic>>[],
@@ -208,7 +225,12 @@ void main() {
         'exportedAt': '2026-07-02T00:00:00.000Z',
         'profile': null,
         'contacts': [
-          {'name': 'B', 'phone': '13800138002', 'sortOrder': 0, 'isActive': true},
+          {
+            'name': 'B',
+            'phone': '13800138002',
+            'sortOrder': 0,
+            'isActive': true,
+          },
         ],
         'medications': <Map<String, dynamic>>[],
         'checkIns': <Map<String, dynamic>>[],
@@ -232,8 +254,7 @@ void main() {
   // ============== failure path ==============
 
   group('R99 #27 failure path (P0-3 三态)', () {
-    test('5. wrong version (5 > current 4) → failure 含"数据版本不匹配"',
-        () async {
+    test('5. wrong version (5 > current 4) → failure 含"数据版本不匹配"', () async {
       final json = jsonEncode({
         'version': 5, // 超过 currentVersion 4
         'contacts': <Map<String, dynamic>>[],
@@ -285,15 +306,18 @@ void main() {
   // ============== 字段 round-trip ==============
 
   group('R99 #27 字段 round-trip (7 段)', () {
-    test('11. vent 加密 round-trip: export 明文 → import 重新加密 → '
+    test(
+        '11. vent 加密 round-trip: export 明文 → import 重新加密 → '
         'DB 查到密文, decrypt 验一致', () async {
       // 源: 加密 vent 文字写入 DB
       const original = '今天心情很差,需要倾诉';
       final encrypted = await encText(original);
-      await db.ventDao.insert(VentEntriesCompanion.insert(
-        timestamp: DateTime.utc(2026, 7, 1, 22, 0),
-        contentTextEnc: Value(encrypted),
-      ),);
+      await db.ventDao.insert(
+        VentEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1, 22, 0),
+          contentTextEnc: Value(encrypted),
+        ),
+      );
 
       // export → 拿到明文
       final exported = await svc.exportToJson();

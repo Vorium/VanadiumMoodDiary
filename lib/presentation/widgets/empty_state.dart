@@ -42,16 +42,37 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     // v0.18 (P1-5): 用 dynamic Color getter 替代硬编码 light 颜色,
     // dark mode 下视觉正确。代价:TextStyle 不能 const(theme-aware 必须 dynamic)。
+    //
+    // v0.30 R101: 增强视觉 (参照 Apple Health 空态插画):
+    // - icon 外加渐变圆形背景
+    // - 整体更柔和的视觉引导
+    final primaryColor = AppTokens.primaryColor(context);
     return Center(
       child: Padding(
         padding: AppTokens.edgeInsetsXl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: AppTokens.iconSizeEmpty,
-              color: AppTokens.textHintColor(context),
+            // 渐变圆形背景 + icon
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    primaryColor.withValues(alpha: 0.08),
+                    primaryColor.withValues(alpha: 0.02),
+                  ],
+                ),
+              ),
+              child: Icon(
+                icon,
+                size: AppTokens.iconSizeEmpty,
+                color: primaryColor.withValues(alpha: 0.6),
+              ),
             ),
             const SizedBox(height: AppTokens.spacingMd),
             Text(

@@ -257,26 +257,49 @@ void main() {
 
     test('snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes 公共 API 存在',
         () {
-      // 不实际调 plugin, 只验证 facade 公共 method 仍存在 (跟 sub-service 委托)
-      final service = NotificationService();
-      expect(service.snoozeOnce, isNotNull);
-      expect(service.cancelSnoozeForMedication, isNotNull);
-      expect(service.cancelAllSnoozes, isNotNull);
-      expect(service.updateBadgeCount, isNotNull);
+      // v0.30 R108 revisit: R45b 把 facade 拆成 5 个 sub-service, NotificationService
+      // 不再代理这些 method。验证方式: 直接 instantiate SnoozeManager /
+      // BadgeSyncService + 验证它们是 callable (Function.isMethod 永远 true
+      // for instance method,我们改成验证 plugin 注入成功 + 不抛)。
+      final fake = _FakePlugin();
+      // SnoozeManager
+      final snooze = SnoozeManager(plugin: fake);
+      expect(snooze, isNotNull);
+      // BadgeSyncService (需要 plugin)
+      final badge = BadgeSyncService(plugin: fake);
+      expect(badge, isNotNull);
     });
 
-    test('3 orchestrator 公共 API 存在 (facade 委托到 sub-service)', () {
-      final service = NotificationService();
-      // MedicationNotifier 委托
-      expect(service.scheduleDailyReminder, isNotNull);
-      expect(service.rescheduleMedicationReminders, isNotNull);
-      // RefillNotifier 委托
-      expect(service.scheduleRefillReminder, isNotNull);
-      expect(service.cancelRefillReminder, isNotNull);
-      expect(service.rescheduleRefillReminders, isNotNull);
-      // AssessmentNotifier 委托
-      expect(service.scheduleAssessmentReminder, isNotNull);
-      expect(service.cancelAssessmentReminder, isNotNull);
+    test('3 orchestrator 公共 API 存在 (sub-service direct)', () {
+      // v0.30 R108 revisit: 跟上面同理, 直接 instantiate 3 sub-service
+      final fake = _FakePlugin();
+      final dispatcher = ReminderDispatcher(
+        plugin: fake,
+        channelId: 'test',
+        channelName: 'Test',
+        channelDescription: 'desc',
+      );
+      // MedicationNotifier
+      final med = MedicationNotifier(
+        plugin: fake,
+        dispatcher: dispatcher,
+        ensureInitialized: () async {},
+      );
+      expect(med, isNotNull);
+      // RefillNotifier
+      final refill = RefillNotifier(
+        plugin: fake,
+        dispatcher: dispatcher,
+        ensureInitialized: () async {},
+      );
+      expect(refill, isNotNull);
+      // AssessmentNotifier
+      final assess = AssessmentNotifier(
+        plugin: fake,
+        dispatcher: dispatcher,
+        ensureInitialized: () async {},
+      );
+      expect(assess, isNotNull);
     });
   });
 

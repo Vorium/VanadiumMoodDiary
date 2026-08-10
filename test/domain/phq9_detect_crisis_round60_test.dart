@@ -245,9 +245,13 @@ void main() {
       expect(signal, isNotNull);
       expect(signal!.hotlines.length, 2);
       expect(
-          signal.hotlines[0].label, 'National 24h Psychological Aid Hotline',);
-      expect(signal.hotlines[1].label,
-          'Beijing Suicide Research & Prevention Center',);
+        signal.hotlines[0].label,
+        'National 24h Psychological Aid Hotline',
+      );
+      expect(
+        signal.hotlines[1].label,
+        'Beijing Suicide Research & Prevention Center',
+      );
     });
 
     test('us 返 2 条 en label (988 + Crisis Text Line)', () {

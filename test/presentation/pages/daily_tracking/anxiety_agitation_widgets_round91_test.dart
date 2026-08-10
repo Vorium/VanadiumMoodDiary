@@ -40,13 +40,15 @@ class _FakeAnxietyAgitationRepository
   }) async {
     addCallCount++;
     final newId = _entries.length + 1;
-    _entries.add(AnxietyAgitationEntryEntity(
-      id: newId,
-      timestamp: timestamp,
-      anxietyScore: anxietyScore,
-      agitationScore: agitationScore,
-      note: note,
-    ),);
+    _entries.add(
+      AnxietyAgitationEntryEntity(
+        id: newId,
+        timestamp: timestamp,
+        anxietyScore: anxietyScore,
+        agitationScore: agitationScore,
+        note: note,
+      ),
+    );
     _ctrl.add(List.unmodifiable(_entries));
     return newId;
   }
@@ -75,7 +77,8 @@ void main() {
       overrides: [
         anxietyAgitationRepositoryProvider.overrideWithValue(fakeRepo),
         anxietyAgitationEntriesProvider.overrideWith(
-            (ref) => ref.watch(anxietyAgitationRepositoryProvider).watchAll(),),
+          (ref) => ref.watch(anxietyAgitationRepositoryProvider).watchAll(),
+        ),
       ],
       child: const MaterialApp(
         // v0.30 R91 Task 7: widget 用 l10n.anxietyAgitationXxx, 测试需要 locale
@@ -94,8 +97,11 @@ void main() {
     await tester.pump();
 
     // 1. 空态
-    expect(find.text('暂无焦虑急躁记录'), findsOneWidget,
-        reason: '空 entry 时显示 EmptyState title',);
+    expect(
+      find.text('暂无焦虑急躁记录'),
+      findsOneWidget,
+      reason: '空 entry 时显示 EmptyState title',
+    );
 
     // 2. tap 添加
     await tester.tap(find.text('添加评估'));
@@ -111,8 +117,11 @@ void main() {
     // 5 档 chip 全部 "1" "2" "3" "4" "5" 标签, dialog 2 个 section 各 5 chip
     // → find 第一个 "3" 落在焦虑段, find 最后一个 "3" 落在急躁段
     final threeChips = find.text('3');
-    expect(threeChips, findsNWidgets(2),
-        reason: '2 个 section (焦虑 + 急躁) 各 5 chip, "3" 出现 2 次',);
+    expect(
+      threeChips,
+      findsNWidgets(2),
+      reason: '2 个 section (焦虑 + 急躁) 各 5 chip, "3" 出现 2 次',
+    );
 
     await tester.tap(threeChips.first); // 焦虑分数 = 3
     await tester.pumpAndSettle();
@@ -124,9 +133,15 @@ void main() {
     await tester.pumpAndSettle();
 
     // 6. 验证: repo.add() 调 1 次 + dialog 关闭
-    expect(fakeRepo.addCallCount, 1,
-        reason: 'AnxietyAgitationRepository.add() 必须被调 1 次',);
-    expect(find.text('添加评估'), findsOneWidget,
-        reason: 'dialog 关闭后 "添加评估" 按钮重新可见',);
+    expect(
+      fakeRepo.addCallCount,
+      1,
+      reason: 'AnxietyAgitationRepository.add() 必须被调 1 次',
+    );
+    expect(
+      find.text('添加评估'),
+      findsOneWidget,
+      reason: 'dialog 关闭后 "添加评估" 按钮重新可见',
+    );
   });
 }

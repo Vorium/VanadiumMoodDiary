@@ -187,7 +187,12 @@ class LegalConsentStore {
     final existing = prefs.getStringList(_kDataExportLog) ?? <String>[];
     final plain = jsonEncode({
       'kind': artifact.kind.name,
-      'grantedAt': artifact.grantedAt.toIso8601String(),
+      // v0.30 R108 revisit (P0-017): 统一 UTC + 'Z' 后缀,避免跨时区 audit
+      // log 时间"瞬移" (北京→纽约 -12/13h) 触发 PIPL §13 法定记录时间不准。
+      // 跟 export_orchestrator / safety_config_service / last_error_capture 同
+      // 模式,加 .toUtc() 保证 `DateTime.parse()` 反序列化永远当 UTC 读,
+      // 不会因为设备 tz 漂移 (DST / 用户改设置) 出现同日/跨日计算错误。
+      'grantedAt': artifact.grantedAt.toUtc().toIso8601String(),
       'grantedBy': artifact.grantedBy,
       'contactId': artifact.contactId,
       'version': artifact.version,
@@ -222,15 +227,16 @@ class LegalConsentStore {
       try {
         final plain = await EncryptionService().decryptString(e);
         final map = jsonDecode(plain) as Map<String, dynamic>;
-        out.add(ConsentArtifact(
-          kind: ConsentKind.values
-              .firstWhere((k) => k.name == map['kind'] as String),
-          grantedAt: DateTime.parse(map['grantedAt'] as String),
-          grantedBy: map['grantedBy'] as String,
-          contactId: map['contactId'] as int?,
-          version: map['version'] as String,
-        ),
-      );
+        out.add(
+          ConsentArtifact(
+            kind: ConsentKind.values
+                .firstWhere((k) => k.name == map['kind'] as String),
+            grantedAt: DateTime.parse(map['grantedAt'] as String),
+            grantedBy: map['grantedBy'] as String,
+            contactId: map['contactId'] as int?,
+            version: map['version'] as String,
+          ),
+        );
       } catch (err, st) {
         // 单条坏数据: skip + swallow, 不阻塞其他条目
         swallowError(

@@ -1,4 +1,5 @@
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/shared/date_utils.dart';
 
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -136,7 +137,7 @@ class ReminderService implements ReminderChecker {
       ..sort((a, b) => a.startDate.compareTo(b.startDate));
     final firstMed = sortedMeds.isEmpty ? null : sortedMeds.first;
 
-    final daysSince = lastCheckIn == null ? 0 : _daysBetween(lastCheckIn, now);
+    final daysSince = lastCheckIn == null ? 0 : calendarDaysBetween(lastCheckIn, now);
     final hoursSince =
         lastCheckIn == null ? 0 : now.difference(lastCheckIn).inHours;
 
@@ -228,14 +229,4 @@ class ReminderService implements ReminderChecker {
     );
   }
 
-  /// 按"天"计算两时刻差（不直接用 Duration.inDays）
-  ///
-  /// 不直接用 Duration.inDays，因为：
-  /// - 23.98h 会被报成 0 天
-  /// - DST / 时区跨日可能少算 1 天
-  static int _daysBetween(DateTime a, DateTime b) {
-    final aDay = DateTime(a.year, a.month, a.day);
-    final bDay = DateTime(b.year, b.month, b.day);
-    return bDay.difference(aDay).inDays;
-  }
 }

@@ -31,8 +31,7 @@ class HistoryTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppListTile(
-      leading:
-          Icon(Icons.history, color: AppTokens.primaryColor(context)),
+      leading: Icon(Icons.history, color: AppTokens.primaryColor(context)),
       title: Text(AppLocalizations.of(context).settingsReportHistory),
       subtitle: Text(
         AppLocalizations.of(context).settingsReportHistorySubtitle,

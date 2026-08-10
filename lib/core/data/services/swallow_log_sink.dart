@@ -27,6 +27,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/core/data/utils/skip_backup.dart';
 
 /// 写入本地 swallow.log 的 sink (release 模式用)
 ///
@@ -50,9 +51,14 @@ class SwallowLogSink {
       : _maxBytes = maxBytes;
 
   /// 工厂: 默认路径 (app docs / swallow.log) + 1MB 上限
+  ///
+  /// R108 (P0 #1): 创建后 iOS 端标记 swallow.log 不参与 iCloud Backup
+  /// (含 PII 脱敏后的记录仍是用户行为数据, 不应上云)
   static Future<SwallowLogSink> create() async {
     final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/swallow.log');
+    // R108 P0-1: iCloud Backup opt-out
+    await SkipBackup.markAsSkipped(file.path);
     return SwallowLogSink(file);
   }
 
@@ -136,9 +142,8 @@ class SwallowLogSink {
     final truncated = content.substring(content.length - keepBytes);
     // 找到下一个换行符位置对齐 (避免半行)
     final firstNewline = truncated.indexOf('\n');
-    final aligned = firstNewline >= 0
-        ? truncated.substring(firstNewline + 1)
-        : truncated;
+    final aligned =
+        firstNewline >= 0 ? truncated.substring(firstNewline + 1) : truncated;
     await _file.writeAsString(aligned);
   }
 

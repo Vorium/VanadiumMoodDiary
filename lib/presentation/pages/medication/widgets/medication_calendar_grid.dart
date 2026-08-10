@@ -1,4 +1,4 @@
-﻿// v0.30 round 93 (audit-fixes task 1.2): MedicationCalendarGrid
+// v0.30 round 93 (audit-fixes task 1.2): MedicationCalendarGrid
 // 拆 medication_calendar_page.dart god page 第 1 步
 // - 30 天热力图: 头部日期标签 + N 药 × N 天 cell
 // - 颜色编码: 0=漏服灰 / <50%=浅橙 / <100%=almost / 100%=深绿
@@ -63,8 +63,7 @@ class MedicationCalendarGrid extends StatelessWidget {
       return EmptyState(
         icon: Icons.medication_outlined,
         title: AppLocalizations.of(context).medsCalendarNoActive,
-        actionLabel:
-            AppLocalizations.of(context).medsCalendarNoActiveAction,
+        actionLabel: AppLocalizations.of(context).medsCalendarNoActiveAction,
         onAction: () => GoRouter.of(context).push('/medication/new'),
       );
     }
@@ -75,10 +74,8 @@ class MedicationCalendarGrid extends StatelessWidget {
       return EmptyState(
         icon: Icons.schedule_outlined,
         title: AppLocalizations.of(context).medsCalendarNoSchedule,
-        subtitle:
-            AppLocalizations.of(context).medsCalendarNoScheduleHint,
-        actionLabel:
-            AppLocalizations.of(context).medsCalendarNoScheduleAction,
+        subtitle: AppLocalizations.of(context).medsCalendarNoScheduleHint,
+        actionLabel: AppLocalizations.of(context).medsCalendarNoScheduleAction,
         onAction: () => GoRouter.of(context).push('/medication/list'),
       );
     }
@@ -258,9 +255,8 @@ class _DataRow extends StatelessWidget {
                       cell: cell,
                       isSelected: selectedDate != null &&
                           _isSameDay(cell.day, selectedDate!),
-                      onTap: onCellTap == null
-                          ? null
-                          : () => onCellTap!(cell.day),
+                      onTap:
+                          onCellTap == null ? null : () => onCellTap!(cell.day),
                     ),
                   ),
               ],

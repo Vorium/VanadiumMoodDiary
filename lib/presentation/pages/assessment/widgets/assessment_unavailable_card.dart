@@ -1,4 +1,4 @@
-﻿// v0.30 round 90 (sub-spec 6 量表中心): NSESSS / CRDPSS unavailable 卡片
+// v0.30 round 90 (sub-spec 6 量表中心): NSESSS / CRDPSS unavailable 卡片
 //
 // 灰色 + 锁 icon + "需法务/临床审核" badge
 // 走 surfaceVariant 50% opacity (M3 兼容 dark/light)
@@ -21,7 +21,10 @@ class AssessmentUnavailableCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Card(
       // M3 surfaceVariant 50% opacity 兼容 dark/light
-      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+      color: Theme.of(context)
+          .colorScheme
+          .surfaceContainerHighest
+          .withValues(alpha: 0.5),
       child: Padding(
         padding: AppTokens.edgeInsetsMd,
         child: Column(

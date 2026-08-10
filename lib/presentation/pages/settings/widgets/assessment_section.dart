@@ -94,7 +94,8 @@ class AssessmentSection extends StatelessWidget {
               color: AppTokens.primaryColor(context),
             ),
             title: Text(AppLocalizations.of(context).settingsAbout),
-            subtitle: Text(AppLocalizations.of(context).settingsAboutVersion(kPubspecVersion.split('+').first)),
+            subtitle: Text(AppLocalizations.of(context)
+                .settingsAboutVersion(kPubspecVersion.split('+').first),),
           ),
         ),
 

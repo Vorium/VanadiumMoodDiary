@@ -5,9 +5,9 @@
  */
 "CFBundleDisplayName" = "慢病管家";
 
-/* R100 (A-4): 5 項 usage description 繁體覆蓋 (英文基線在 Info.plist / Base) */
-"NSMicrophoneUsageDescription" = "用於情緒日記的語音錄入，本地處理，檔案加密儲存";
-"NSSpeechRecognitionUsageDescription" = "用於情緒日記的語音轉文字，本地處理，不上傳";
+/* R103 (P0-5) 曾移除 mic/speech, R105 恢复 (ventAudioEnabled=true, 录音启用)
+ * 現保留實際使用的 4 項權限描述 */
+"NSMicrophoneUsageDescription" = "用於錄製樹洞傾訴和情緒日記的語音筆記";
+"NSSpeechRecognitionUsageDescription" = "用於將情緒日記中的語音筆記轉成文字";
 "NSPhotoLibraryAddUsageDescription" = "用於儲存用藥報告 PDF 到相簿";
 "NSPhotoLibraryUsageDescription" = "用於分享用藥報告 PDF 時選擇儲存位置";
-"NSUserTrackingUsageDescription" = "本應用程式不收集任何追蹤資料，僅用於 App Store 透明性聲明";

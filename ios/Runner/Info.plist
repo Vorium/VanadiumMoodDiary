@@ -44,10 +44,16 @@
 		per-locale 覆盖 (Base=en / zh-Hans / zh-Hant)。之前内联中文 →
 		英文 locale 用户权限弹窗显示中文。
 	-->
+	<!--
+		R102 (P0-5) 曾删除, R105 恢复: NSMicrophoneUsageDescription + NSSpeechRecognitionUsageDescription
+		原因: R104 FeatureFlags.ventAudioEnabled=true (启用 vent+mood 语音录制),
+		录音功能已启用, 必须声明权限否则运行时 crash + Apple Guideline §2.5.1 拒
+		(used-but-not-declared)。文案英文基线, 中文走 InfoPlist.strings per-locale。
+	-->
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Used for voice input in the mood diary. Processed locally, files stored encrypted.</string>
+	<string>Used to record voice notes for your vent posts and mood journal.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Used for speech-to-text in the mood diary. Processed locally, never uploaded.</string>
+	<string>Used to transcribe your voice notes into text in the mood journal.</string>
 	<!--
 		v0.27 round 62 (R62): P0-5 NSPhotoLibraryAddUsageDescription
 		PDF 用药报告通过 share_plus 触发 PHPhotoLibrary 调用
@@ -69,8 +75,12 @@
 		v0.27 round 61 (R61): 项目无 IDFA, 但加 NSUserTrackingUsageDescription
 		作为防御性 + App Store 透明性
 	-->
-	<key>NSUserTrackingUsageDescription</key>
-	<string>This app does not collect any tracking data. This declaration is for App Store transparency only.</string>
+	<!--
+		R102 (P0-5): 删除 NSUserTrackingUsageDescription
+		原因: 项目无 IDFA / ATT 框架使用, 声明 "does not collect tracking data"
+		本身可能被 Apple 视为误导 (Guideline §5.1.2)
+		v1.0 如接入分析 SDK 再加回。
+	-->
 	<!--
 		v0.27 round 61 (R61): iPadOS 多任务 / Split View
 		UIRequiresFullScreen=false 允许 iPad Split View 多任务
@@ -141,12 +151,18 @@
 	<key>LSApplicationCategoryType</key>
 	<string>healthcare-fitness</string>
 	<!--
-		v0.30 R100 (P0#6, appstore A-3): 删 UIBackgroundModes audio+processing +
-		BGTaskSchedulerPermittedIdentifiers 声明。原因: ventAudio / 失联通知业务
-		均 FeatureFlags 关闭, 声明的后台能力无实际使用 = Apple 2.5.4 拒因。
-		业务真接时 (vent 语音录音 / BGProcessingTask 失联检测) 再加回:
-		UIBackgroundModes=[audio, processing] + BGTaskSchedulerPermittedIdentifiers
-		=[com.chroniccare.safety-check] + AppDelegate.swift BGTaskScheduler.register。
+		v0.30 R108 (P0#2, appstore A-3): 恢复 UIBackgroundModes audio
+		原因: R100 (2026-08-08) 因 ventAudio 业务 FeatureFlags 关闭删 audio,
+		但 R104 (2026-08-09) 已将 FeatureFlags.ventAudioEnabled 翻 true
+		(vent+mood 语音录音真接)。声明跟实际能力不匹配, Apple 2.5.4 拒因,
+		且录音时 App 进后台被系统秒杀 = 录音丢失 + 用户体验崩。
+		R108 决策: 只恢复 audio (vent 录音后台继续录制), 不恢复 processing
+		(BGProcessingTask 失联检测等阿里云 SMS 真接后再加)。
+		加 R108 注释标记 + R100 删/恢复的来龙去脉, 防御未来再误删。
 	-->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 </dict>
 </plist>

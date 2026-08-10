@@ -61,17 +61,20 @@ Widget _wrap({
 }
 
 void main() {
-  testWidgets('R95 A4 fix 1: saving=false → PressFeedback > PrimaryButton > Text("下一步")',
+  testWidgets(
+      'R95 A4 fix 1: saving=false → PressFeedback > PrimaryButton > Text("下一步")',
       (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(
-      saving: false,
-      onFinish: () {},
-      onBack: () {},
-      onAddMed: () {},
-      onShowPresets: () {},
-      onRemoveMed: (_) {},
-    ),);
+    await tester.pumpWidget(
+      _wrap(
+        saving: false,
+        onFinish: () {},
+        onBack: () {},
+        onAddMed: () {},
+        onShowPresets: () {},
+        onRemoveMed: (_) {},
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
     // 验证 PressFeedback 包 PrimaryButton (接管 onTap)
@@ -87,16 +90,19 @@ void main() {
     expect(find.byType(LoadingSpinner), findsNothing);
   });
 
-  testWidgets('R95 A4 fix 2: saving=true → LoadingSpinner 替代 Text', (tester) async {
+  testWidgets('R95 A4 fix 2: saving=true → LoadingSpinner 替代 Text',
+      (tester) async {
     _setBigView(tester);
-    await tester.pumpWidget(_wrap(
-      saving: true,
-      onFinish: () {},
-      onBack: () {},
-      onAddMed: () {},
-      onShowPresets: () {},
-      onRemoveMed: (_) {},
-    ),);
+    await tester.pumpWidget(
+      _wrap(
+        saving: true,
+        onFinish: () {},
+        onBack: () {},
+        onAddMed: () {},
+        onShowPresets: () {},
+        onRemoveMed: (_) {},
+      ),
+    );
     // 用 pump 而非 pumpAndSettle — LoadingSpinner 内部 Animation 持续运行
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
@@ -109,14 +115,16 @@ void main() {
   testWidgets('R95 A4 fix 3: PressFeedback onTap 触发 onFinish', (tester) async {
     _setBigView(tester);
     var onFinishCalled = 0;
-    await tester.pumpWidget(_wrap(
-      saving: false,
-      onFinish: () => onFinishCalled++,
-      onBack: () {},
-      onAddMed: () {},
-      onShowPresets: () {},
-      onRemoveMed: (_) {},
-    ),);
+    await tester.pumpWidget(
+      _wrap(
+        saving: false,
+        onFinish: () => onFinishCalled++,
+        onBack: () {},
+        onAddMed: () {},
+        onShowPresets: () {},
+        onRemoveMed: (_) {},
+      ),
+    );
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
     // 找 PressFeedback 包裹 PrimaryButton 的 widget, 点它

@@ -45,6 +45,13 @@ class CheckInRepositoryImpl implements CheckInRepository {
   }
 
   @override
+  Stream<List<CheckInEntity>> watchTodayAll() {
+    return _db.checkInDao.watchTodayAll().map(
+          (rows) => rows.map((r) => r.toEntity()).toList(growable: false),
+        );
+  }
+
+  @override
   Stream<List<CheckInEntity>> watchNormalCheckIns() {
     return _db.checkInDao.watchNormal().map(
           (rows) => rows.map((r) => r.toEntity()).toList(growable: false),

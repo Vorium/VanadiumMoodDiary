@@ -25,7 +25,8 @@ void main() {
           home: Scaffold(body: child),
         );
 
-    testWidgets('checkIn normal event 渲染 check_circle + primary + 标题', (tester) async {
+    testWidgets('checkIn normal event 渲染 check_circle + primary + 标题',
+        (tester) async {
       final event = DayEvent(
         kind: DayEventKind.checkInNormal,
         time: DateTime(2026, 8, 6, 8, 30),
@@ -43,7 +44,8 @@ void main() {
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
     });
 
-    testWidgets('checkIn temp event 渲染 healing_outlined + warning color', (tester) async {
+    testWidgets('checkIn temp event 渲染 healing_outlined + warning color',
+        (tester) async {
       final event = DayEvent(
         kind: DayEventKind.checkInTemp,
         time: DateTime(2026, 8, 6, 14, 15),
@@ -68,7 +70,8 @@ void main() {
       expect(find.byIcon(Icons.mood_outlined), findsOneWidget);
     });
 
-    testWidgets('assessment event 渲染 psychology_outlined + tertiary color', (tester) async {
+    testWidgets('assessment event 渲染 psychology_outlined + tertiary color',
+        (tester) async {
       final event = DayEvent(
         kind: DayEventKind.assessment,
         time: DateTime(2026, 8, 6, 10, 0),
@@ -98,25 +101,38 @@ void main() {
       final context = _TestContext();
       // checkIn normal
       var (icon, _, _) = EventRow.kindVisuals(
-        DayEvent(kind: DayEventKind.checkInNormal, time: DateTime(2026, 8, 6, 8, 30), title: 'x'),
+        DayEvent(
+            kind: DayEventKind.checkInNormal,
+            time: DateTime(2026, 8, 6, 8, 30),
+            title: 'x',),
         context,
       );
       expect(icon, Icons.check_circle);
       // checkIn temp
       (icon, _, _) = EventRow.kindVisuals(
-        DayEvent(kind: DayEventKind.checkInTemp, time: DateTime(2026, 8, 6, 8, 30), title: 'x'),
+        DayEvent(
+            kind: DayEventKind.checkInTemp,
+            time: DateTime(2026, 8, 6, 8, 30),
+            title: 'x',),
         context,
       );
       expect(icon, Icons.healing_outlined);
       // assessment
       (icon, _, _) = EventRow.kindVisuals(
-        DayEvent(kind: DayEventKind.assessment, time: DateTime(2026, 8, 6, 8, 30), title: 'x'),
+        DayEvent(
+            kind: DayEventKind.assessment,
+            time: DateTime(2026, 8, 6, 8, 30),
+            title: 'x',),
         context,
       );
       expect(icon, Icons.psychology_outlined);
       // mood
       (icon, _, _) = EventRow.kindVisuals(
-        DayEvent(kind: DayEventKind.mood, time: DateTime(2026, 8, 6, 8, 30), title: 'x', moodScore: 3),
+        DayEvent(
+            kind: DayEventKind.mood,
+            time: DateTime(2026, 8, 6, 8, 30),
+            title: 'x',
+            moodScore: 3,),
         context,
       );
       expect(icon, Icons.mood_outlined);

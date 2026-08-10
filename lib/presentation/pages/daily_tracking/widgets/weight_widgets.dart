@@ -1,4 +1,4 @@
-﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): WeightListWidget + WeightEntryDialog
+// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): WeightListWidget + WeightEntryDialog
 //
 // 4 层架构: presentation/pages/daily_tracking/widgets/, 0 跨 feature import。
 // 复用 R88 mood_dialog 风格。
@@ -16,13 +16,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/domain/logic/bmi_calculator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/widgets/daily_tracking_widgets.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
-import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -57,7 +56,8 @@ class WeightListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+              error: (e, st) =>
+                  Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.monitor_weight_outlined,
@@ -135,28 +135,18 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
 
   /// 读 userProfileEntity 的 heightCm (R91 暂未存, 走 userProfileProvider).
   ///
-  /// R91 brief: "profile.height 读取 — 读 userProfileProvider.heightCm, 找不到时 bmi = null"
-  /// 当前 userProfileEntity 没有 heightCm 字段, 永远返 null (后续 v0.31+ setup 加身高).
+  /// v0.30 R108 revisit (P0-019): 删 dynamic 反射 + try/catch 模板
+  /// (UserProfileEntity 实际**没有** heightCm 字段, `(profile as dynamic).heightCm`
+  /// 永远抛 `NoSuchMethodError`,被 swallowError 吞掉,BMI 永远 null,用户加
+  /// 体重后看不到 BMI 数 = 字段白做)。
+  /// 短期: 直接返 null,BMI 显示"未设置身高"状态(可读性更好,不会假成功)。
+  /// 长期 (R109): user_profiles 表加 `heightCm REAL` 列 + setup flow 加
+  /// 身高输入页 + 此函数改读真实字段。
   double? _getHeightCm() {
-    final profileAsync = ref.read(userProfileProvider);
-    final profile = profileAsync.value;
-    // R91: UserProfileEntity 暂无 heightCm 字段, 后续 v0.31+ 加
-    // 这里走 dynamic getter 容错 (字段不存在时返 null)
-    if (profile == null) return null;
-    try {
-      // 尝试读 heightCm (字段可能不存在 → throw)
-      return (profile as dynamic).heightCm as double?;
-    } catch (e, st) {
-      // v0.30 R92: 走 swallowError 集中器, 替代完全静默 (R39 P1-10 模式)
-      // 老 UserProfile (R27 前) 没有 heightCm 字段, 视为 null (兜底)
-      swallowError(
-        where: 'weight_widgets._readHeightCm',
-        error: e,
-        stack: st,
-        note: 'UserProfile.heightCm 字段读取失败, 走 null 兜底',
-      );
-      return null;
-    }
+    // R108 短期方案:UserProfileEntity 暂无 heightCm 字段,直接返 null。
+    // 不再走 dynamic 反射 (永远抛错 + swallow 吞),也不读 userProfileProvider
+    // (没有 heightCm 可读)。R109 落地后此函数需重写。
+    return null;
   }
 
   /// 计算 BMI (实时跟 dialog 同步)
@@ -170,7 +160,6 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
 
   Future<void> _save() async {
     if (_saving) return;
-    final l10n = AppLocalizations.of(context);
     final weightStr = _weightController.text.trim();
     if (weightStr.isEmpty) return;
     final weight = double.tryParse(weightStr);
@@ -189,14 +178,12 @@ class _WeightEntryDialogState extends ConsumerState<WeightEntryDialog> {
                 ? null
                 : _noteController.text.trim(),
           );
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+      DailyTrackingNav.safePop(context);
     } catch (e) {
-      if (mounted) {
-        setState(() => _saving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
-        );
-      }
+      if (!mounted) return;
+      setState(() => _saving = false);
+      DailyTrackingSnackBar.showSaveError(context, e);
     }
   }
 

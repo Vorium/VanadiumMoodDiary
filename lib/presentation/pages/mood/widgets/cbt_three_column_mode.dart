@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
@@ -32,22 +33,38 @@ class CbtThreeColumnMode extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ① 情绪分数 1-5 (v0.29 round 84 Task 6 fix: 走 notifier.updateScore)
-        Text(l10n.moodCbtThreeScoreTitle,
-            style: AppTokens.textStyleLabel(context),),
+        // ① 情绪分数 1-5 (v0.30 R101: Slider + 颜色渐变, 参照 Apple Health)
+        Text(
+          l10n.moodCbtThreeScoreTitle,
+          style: AppTokens.textStyleLabel(context),
+        ),
         const SizedBox(height: AppTokens.spacingXs),
-        Wrap(
-          spacing: AppTokens.spacingSm,
-          children: List.generate(5, (i) {
-            final score = i + 1;
-            return ChoiceChip(
-              label: Text('$score'),
-              selected: state.draft.score == score,
-              onSelected: (_) {
-                notifier.updateScore(score);
-              },
-            );
-          }),
+        Row(
+          children: [
+            const Text('😢', style: TextStyle(fontSize: 20)),
+            Expanded(
+              child: Slider(
+                value: state.draft.score.toDouble(),
+                min: 1,
+                max: 5,
+                divisions: 4,
+                label: '${state.draft.score}',
+                activeColor: _scoreColor(state.draft.score),
+                onChanged: (v) => notifier.updateScore(v.round()),
+              ),
+            ),
+            const Text('😄', style: TextStyle(fontSize: 20)),
+          ],
+        ),
+        Center(
+          child: Text(
+            '${state.draft.score}/5',
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeBody,
+              fontWeight: FontWeight.w600,
+              color: _scoreColor(state.draft.score),
+            ),
+          ),
         ),
         const SizedBox(height: AppTokens.spacingMd),
 
@@ -75,5 +92,22 @@ class CbtThreeColumnMode extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Color _scoreColor(int score) {
+    switch (score) {
+      case 1:
+        return AppColors.error; // 红
+      case 2:
+        return AppColors.warningStrong; // 橙
+      case 3:
+        return AppColors.warning; // 黄
+      case 4:
+        return AppColors.success; // 浅绿
+      case 5:
+        return AppColors.primary; // 蓝
+      default:
+        return AppColors.disabled;
+    }
   }
 }

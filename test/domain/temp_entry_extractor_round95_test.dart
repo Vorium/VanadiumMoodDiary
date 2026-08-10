@@ -1,4 +1,4 @@
-﻿// v0.29 Round 95 (#66 修复): temp_entry_extractor 0 测试补齐
+// v0.29 Round 95 (#66 修复): temp_entry_extractor 0 测试补齐
 //
 // 覆盖:
 // - extract 空 list / 非 temp 全部过滤 / temp 顺序 / temp 描述空退化为 "—"
@@ -31,7 +31,10 @@ void main() {
     test('全是 normal checkIn 过滤后空', () {
       final list = [
         _ci(timestamp: DateTime(2026, 7, 15, 8), type: CheckInType.normal),
-        _ci(id: 2, timestamp: DateTime(2026, 7, 15, 9), type: CheckInType.normal),
+        _ci(
+            id: 2,
+            timestamp: DateTime(2026, 7, 15, 9),
+            type: CheckInType.normal,),
       ];
       expect(TempEntryExtractor.extract(list), isEmpty);
     });
@@ -116,14 +119,20 @@ void main() {
   group('TempEntryExtractor.extract 混合 normal + temp', () {
     test('normal 全部过滤 temp 按时间倒序保留', () {
       final list = [
-        _ci(id: 1, timestamp: DateTime(2026, 7, 15, 8), type: CheckInType.normal),
+        _ci(
+            id: 1,
+            timestamp: DateTime(2026, 7, 15, 8),
+            type: CheckInType.normal,),
         _ci(
           id: 2,
           timestamp: DateTime(2026, 7, 15, 10),
           type: CheckInType.temp,
           note: '{"name":"X","desc":"x"}',
         ),
-        _ci(id: 3, timestamp: DateTime(2026, 7, 15, 12), type: CheckInType.normal),
+        _ci(
+            id: 3,
+            timestamp: DateTime(2026, 7, 15, 12),
+            type: CheckInType.normal,),
         _ci(
           id: 4,
           timestamp: DateTime(2026, 7, 15, 18),

@@ -60,10 +60,16 @@ void main() {
     expect(find.byType(Card), findsNWidgets(10));
 
     // PHQ-9 / GAD-7 隐藏
-    expect(find.text('PHQ-9 抑郁筛查'), findsNothing,
-        reason: 'R93: phqGad7I18nEnabled=false 时 PHQ-9 隐藏',);
-    expect(find.text('GAD-7 焦虑筛查'), findsNothing,
-        reason: 'R93: phqGad7I18nEnabled=false 时 GAD-7 隐藏',);
+    expect(
+      find.text('PHQ-9 抑郁筛查'),
+      findsNothing,
+      reason: 'R93: phqGad7I18nEnabled=false 时 PHQ-9 隐藏',
+    );
+    expect(
+      find.text('GAD-7 焦虑筛查'),
+      findsNothing,
+      reason: 'R93: phqGad7I18nEnabled=false 时 GAD-7 隐藏',
+    );
 
     // 其他 8 量表仍渲染 (chart chip + grid card 双重渲染, 走 findsWidgets ≥1)
     expect(find.text('ISI 失眠严重指数'), findsWidgets);

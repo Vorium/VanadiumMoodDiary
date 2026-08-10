@@ -20,6 +20,15 @@ export 'package:chroniccare/core/theme/app_spacing.dart'
 
 /// v0.27 round 65 (alibaba B16 god constant 拆分): 慢病管家 · 设计 Token 规范
 ///
+/// **Deprecation notice**: 新代码推荐直接使用子模块:
+/// - `AppColors` — 颜色 + tinted + fg + dynamic color getter
+/// - `AppTypography` — fontSize + lineHeight + TextStyle helper
+/// - `AppSpacing` — spacing + radius + size + breakpoint
+/// - `AppMotion` — duration + curve + shadow + MotionScheme + Motion
+///
+/// `AppTokens` 保留为 facade 兼容层，老 caller 不需要改动。
+/// 新代码使用子模块可获得更好的类型安全和 IDE 补全。
+///
 /// **facade 入口**: 老 caller 走 `AppTokens.xxx` 不变, 内部走 4 个子模块
 /// static const 转发。新 caller 推荐走子模块 (AppColors / AppTypography /
 /// AppSpacing / AppMotion) — 单一职责, 改动一处生效。

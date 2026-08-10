@@ -100,17 +100,40 @@ class Strings {
       override ?? notifDailyCheckInBody;
 
   // 用药提醒 (按 medication 单独排) — v0.26 R57: 加 override 参数
+  //
+  // v0.30 R108 (P0#3): 锁屏 body 暴露药名 + 剂量 = 隐私泄漏 (PIPL §6 PII 最小化)
+  // 修前: notifMedicationBody(2.5, mg) → "2.5mg · 点一下 = 打卡" — 锁屏可见
+  //   任何旁人 (同事 / 家人 / 公共交通) 都看到用户吃的药 + 剂量, 暴露
+  //   精神心理 / 慢性病身份, 触发病耻感 + 隐私侵犯。
+  // 修后: body 改通用文案 ("该吃药了 · 点一下打卡"), 不再含 dosage / unit。
+  //   药名只在 title (💊 该吃药了：<name>) 出现 — 用户主动解锁后才看 title。
+  //   实际: iOS 通知 title 在锁屏横幅也显示, 药名仍可见 — 进一步修法
+  //   见 v1.0+ (用户可配置 title 是否脱敏, 跟锁屏可见性独立)。
   static String notifMedicationTitle(
     String medName, {
     String? override,
   }) =>
       override ?? '💊 该吃药了：$medName';
-  static String notifMedicationBody(
+  // R108 P0-3: body 改常量 (无 dosage / unit 入参), 锁屏不暴露药名
+  // 保留 [override] 参数支持 i18n (presentation 层可注入 l10n override)
+  static String notifMedicationBody({String? override}) =>
+      override ?? '该吃药了 · 点一下 = 打卡';
+
+  /// R108 P0-3: 保留旧版函数 (deprecated) 用于历史调用方 / 测试
+  ///
+  /// 签名跟新版不同 (有 dosage / unit 参数), 但**返回脱敏后的固定文案**,
+  /// 不再返回含 dosage 的字符串。这样老的 caller (medication_notifier
+  /// 历史 / 第三方 plugin) 不会因签名变更 crash, 同时新行为安全。
+  ///
+  /// 后续 R109+ 全面移除: 把所有 caller 改用 [notifMedicationBody] 无参版。
+  @Deprecated('R108 P0-3: 改用 notifMedicationBody() 无参版 — 锁屏 body '
+      '不再暴露 dosage / unit, 避免 PII 泄漏')
+  static String notifMedicationBodyLegacy(
     double dosage,
     DosageUnit unit, {
     String? override,
   }) =>
-      override ?? '$dosage${unit.id} · 点一下 = 打卡';
+      override ?? '该吃药了 · 点一下 = 打卡';
 
   // 续方提醒 — v0.26 R57: 加 override 参数
   static String notifRefillTitle(String medName, {String? override}) =>
@@ -127,6 +150,14 @@ class Strings {
     String? override,
   }) =>
       override ?? '已经 $days 天没做 $scaleIdUppercase 了，请花 2 分钟做一下评估';
+
+  // 情绪记录提醒 — v0.30 R101: 参照 MedicationNotifier 模式
+  static const notifMoodReminderTitle = '🌿 今天心情怎么样？';
+  static const notifMoodReminderBody = '花 1 分钟记录一下，帮自己更好地了解情绪';
+  static String notifMoodReminderTitleText({String? override}) =>
+      override ?? notifMoodReminderTitle;
+  static String notifMoodReminderBodyText({String? override}) =>
+      override ?? notifMoodReminderBody;
 
   // ============== v0.23 round 39 (P1-9 fix): 医生 PDF 报告 ==============
   // medication_report_pdf 之前 20+ 处 hardcode 中文, 集中到本类
@@ -300,4 +331,50 @@ class Strings {
       override ?? userNamePolite;
   static String userNameFamilyText({String? override}) =>
       override ?? userNameFamily;
+
+  // ============== v0.31 P1-5: 关怀文案 (care_copy.dart) i18n ==============
+  static String careCopyLateCheckInTitle({String? override}) =>
+      override ?? '🛏️ 提早一点更稳定';
+  static String careCopyLateCheckInBody({String? override}) =>
+      override ?? '21 点后打卡比例偏高 — 规律作息对药效有影响';
+  static String careCopyWeekendMissedTitle({String? override}) =>
+      override ?? '☀️ 周末保持节律';
+  static String careCopyWeekendMissedBody({String? override}) =>
+      override ?? '周末容易错过——现在打卡，多一点坚持';
+  static String careCopySecondDayMissedTitle({String? override}) =>
+      override ?? '🌿 后续保持就好';
+  static String careCopySecondDayMissedBody({String? override}) =>
+      override ?? '少 1 次没关系——后续保持就好';
+  static String careCopyWeekPerfectTitle({String? override}) =>
+      override ?? '🌟 一整周都准时！';
+  static String careCopyWeekPerfectBody({String? override}) =>
+      override ?? '今周已全部准时';
+
+  // ============== v0.31 P1-5: 评估对比 (assessment_comparison.dart) i18n ==============
+  static String assessmentComparisonImproved({String? override}) =>
+      override ?? '好转';
+  static String assessmentComparisonWorsened({String? override}) =>
+      override ?? '恶化';
+  static String assessmentComparisonUnchanged({String? override}) =>
+      override ?? '持平';
+  static String assessmentComparisonFirst({String? override}) =>
+      override ?? '首次评估';
+  static String assessmentDeltaSame(int delta, {String? override}) =>
+      override ?? '和上次一样（$delta）';
+  static String assessmentDeltaHigher(int delta, {String? override}) =>
+      override ?? '比上次高 $delta 分';
+  static String assessmentDeltaLower(int delta, {String? override}) =>
+      override ?? '比上次低 $delta 分';
+  static String assessmentSeverityRank(int rank, {String? override}) =>
+      override ?? '等级 $rank';
+
+  // ============== v0.31 P1-5: 打卡类型 (check_in_entity.dart) i18n ==============
+  static String checkInTypeAssessment({String? override}) =>
+      override ?? '心理量表评估';
+
+  // ============== v0.31 P1-5: 日历详情 (day_detail.dart) i18n ==============
+  static String dayDetailTotalScore(int total, {String? override}) =>
+      override ?? '总分 $total';
+  static String dayDetailScaleAssessment({String? override}) =>
+      override ?? '心理量表评估';
 }

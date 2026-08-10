@@ -69,8 +69,11 @@ abstract class ScaleTranslations {
   /// v0.27 R77 (spzh P1-A 收尾): 加 [index] 支持 6 region × 2 hotline (cn/us/tw 各 2 个,
   /// hk/sg/uk 各 1 个, index=1 越界走 fallback first.label)。
   /// tw/sg/uk 之前走 intl fallback, 现在每 region 都有独立 i18n key。
-  String crisisHotlineLabel(HotlineRegion region,
-      {int index = 0, String? override,});
+  String crisisHotlineLabel(
+    HotlineRegion region, {
+    int index = 0,
+    String? override,
+  });
 
   /// v0.27 R71 (spzh P1-A 续): 危机弹窗标题 (PHQ-9 Q9 阳性时)
   /// — 之前 detectCrisis 用 const 中文 '我们关心你' 硬编, en / zh_Hant 用户看中文

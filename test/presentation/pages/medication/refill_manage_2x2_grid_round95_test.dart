@@ -64,7 +64,8 @@ MedicationEntity _med({
 }
 
 void main() {
-  testWidgets('R95 A3 fix 1: 顶部汇总卡 2x2 grid (2 Row × 2 StatCard)', (tester) async {
+  testWidgets('R95 A3 fix 1: 顶部汇总卡 2x2 grid (2 Row × 2 StatCard)',
+      (tester) async {
     _setBigView(tester);
     // 1 个已过期 med (refillAt 过去) + 1 个提醒中 (refillAt 3 天后)
     final now = DateTime.now();
@@ -91,7 +92,8 @@ void main() {
     );
   });
 
-  testWidgets('R95 A3 fix 2: 总药数 / 已设续方 / 提醒中 / 已过期 4 label 渲染', (tester) async {
+  testWidgets('R95 A3 fix 2: 总药数 / 已设续方 / 提醒中 / 已过期 4 label 渲染',
+      (tester) async {
     _setBigView(tester);
     final meds = [
       _med(id: 1, name: '氟西汀'),

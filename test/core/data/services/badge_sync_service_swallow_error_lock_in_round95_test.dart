@@ -23,8 +23,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group(
-      'badge_sync_service swallowError lock-in (R95 sub-spec 2 task 26)', () {
+  group('badge_sync_service swallowError lock-in (R95 sub-spec 2 task 26)', () {
     late String source;
 
     setUpAll(() {
@@ -37,8 +36,8 @@ void main() {
     test('R79 fix 1: catch (e, st) 块存在 (带 stack trace)', () {
       // 验证 badge_sync_service.dart 唯一 1 个 catch 块带 stack trace
       // (跟 R17 模式一致, swallowError 需要 stack 参数)
-      final catchMatch = RegExp(r'\}\s*catch\s*\(\s*e\s*,\s*st\s*\)\s*\{')
-          .allMatches(source);
+      final catchMatch =
+          RegExp(r'\}\s*catch\s*\(\s*e\s*,\s*st\s*\)\s*\{').allMatches(source);
       expect(
         catchMatch.length,
         greaterThanOrEqualTo(1),
@@ -72,8 +71,7 @@ void main() {
       );
     });
 
-    test('R79 fix 3: swallowError 调用带 where / error / stack / note 4 个参数',
-        () {
+    test('R79 fix 3: swallowError 调用带 where / error / stack / note 4 个参数', () {
       // 验证 swallowError 调用带 4 个 named 参数 (R17 API)
       // - where (位置定位)
       // - error (异常对象)

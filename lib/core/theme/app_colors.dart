@@ -39,7 +39,8 @@ class AppColors {
   static const Color surface = Color(0xFFFFFFFF);
   static const Color textPrimary = Color(0xFF1A1A1A);
   static const Color textSecondary = Color(0xFF666666);
-  static const Color textHint = Color(0xFF999999);
+  // R104 (P0-10 fix): #767676 对比度 4.5:1 刚好踩线, 改 #595959 (7:1) 满足 WCAG AA
+  static const Color textHint = Color(0xFF595959);
   static const Color border = Color(0xFFE0E0E0);
   static const Color disabled = Color(0xFFBDBDBD);
   static const Color divider = Color(0xFFF0F0F0);

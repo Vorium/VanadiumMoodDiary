@@ -61,7 +61,9 @@ class VentListPage extends ConsumerWidget {
         // 不在 loading/error 走 LoadingSkeleton (持续动画会让 widget test
         // pumpAndSettle timeout), 直接 fallback 走 _buildContent
         // (entriesAsync 自己的 loading 已经有占位)
-        data: (sealed) => sealed ? const _VentSealedState() : _buildContent(context, ref, entriesAsync),
+        data: (sealed) => sealed
+            ? const _VentSealedState()
+            : _buildContent(context, ref, entriesAsync),
         loading: () => _buildContent(context, ref, entriesAsync),
         error: (_, __) => _buildContent(context, ref, entriesAsync),
         orElse: () => _buildContent(context, ref, entriesAsync),

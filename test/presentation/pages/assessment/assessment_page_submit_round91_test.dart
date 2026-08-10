@@ -44,13 +44,15 @@ class _TrackingAssessmentRepository implements AssessmentRepository {
     required List<int> answers,
     String? note,
   }) async {
-    submitted.add((
-      scaleId: scaleId,
-      score: score,
-      severityRank: severityRank,
-      answers: List<int>.from(answers),
-      note: note,
-    ),);
+    submitted.add(
+      (
+        scaleId: scaleId,
+        score: score,
+        severityRank: severityRank,
+        answers: List<int>.from(answers),
+        note: note,
+      ),
+    );
     return submitted.length;
   }
 
@@ -84,7 +86,8 @@ class _StrictCheckInRepository implements CheckInRepository {
   }
 
   @override
-  Stream<List<CheckInEntity>> watchAll() => const Stream<List<CheckInEntity>>.empty();
+  Stream<List<CheckInEntity>> watchAll() =>
+      const Stream<List<CheckInEntity>>.empty();
 
   @override
   Stream<List<CheckInEntity>> watchAssessments() =>
@@ -92,6 +95,10 @@ class _StrictCheckInRepository implements CheckInRepository {
 
   @override
   Stream<CheckInEntity?> watchToday() => Stream<CheckInEntity?>.value(null);
+
+  @override
+  Stream<List<CheckInEntity>> watchTodayAll() =>
+      const Stream<List<CheckInEntity>>.empty();
 
   @override
   Stream<List<CheckInEntity>> watchNormalCheckIns() =>
@@ -168,8 +175,11 @@ void main() {
     // 找到所有 ChoiceChip, 顺序: 每题 4 chip, 共 36 chip
     // 简单做法: 每题点第 1 个 chip (index 0, 4, 8, ..., 32)
     final chips = find.byType(ChoiceChip);
-    expect(chips, findsNWidgets(36),
-        reason: 'PHQ-9 = 9 题 × 4 选项 = 36 个 ChoiceChip',);
+    expect(
+      chips,
+      findsNWidgets(36),
+      reason: 'PHQ-9 = 9 题 × 4 选项 = 36 个 ChoiceChip',
+    );
 
     for (var i = 0; i < 9; i++) {
       await tester.tap(chips.at(i * 4), warnIfMissed: false);
@@ -183,8 +193,11 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验证: R90 submitEntry 被调用 1 次
-    expect(trackingRepo.submitted.length, 1,
-        reason: 'R90 AssessmentRepository.submitEntry 必须被调用 1 次',);
+    expect(
+      trackingRepo.submitted.length,
+      1,
+      reason: 'R90 AssessmentRepository.submitEntry 必须被调用 1 次',
+    );
     final call = trackingRepo.submitted.first;
     expect(call.scaleId, 'phq9');
     expect(call.score, 0);

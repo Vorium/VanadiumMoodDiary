@@ -13,7 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
-import 'package:chroniccare/presentation/pages/settings/legal_page.dart' show clearLegalConsentCache;
+import 'package:chroniccare/presentation/pages/settings/legal_page.dart'
+    show clearLegalConsentCache;
 
 void main() {
   // 走 SharedPreferences setMockInitialValues() 隔离每个 case 的 store
@@ -37,7 +38,8 @@ void main() {
       expect(await store.isSealed(ConsentKind.vent), isTrue);
       final sealedAt = await store.sealedAt(ConsentKind.vent);
       expect(sealedAt, isNotNull);
-      expect(sealedAt!.isAfter(before.subtract(const Duration(seconds: 1))), isTrue);
+      expect(sealedAt!.isAfter(before.subtract(const Duration(seconds: 1))),
+          isTrue,);
       expect(sealedAt.isBefore(after.add(const Duration(seconds: 1))), isTrue);
     });
 
@@ -124,7 +126,8 @@ void main() {
       // 设初始值
       SharedPreferences.setMockInitialValues({
         'legal_consent_withdrawn_vent': true,
-        'legal_consent_withdrawn_vent_at': DateTime.now().millisecondsSinceEpoch,
+        'legal_consent_withdrawn_vent_at':
+            DateTime.now().millisecondsSinceEpoch,
         'legal_consent_vent_sealed_at': DateTime.now().millisecondsSinceEpoch,
       });
 

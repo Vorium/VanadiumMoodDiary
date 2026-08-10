@@ -15,6 +15,7 @@
 
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
+import 'package:chroniccare/domain/entities/influence_category.dart';
 
 /// 情绪记录（领域实体）
 ///
@@ -97,6 +98,18 @@ class MoodEntryEntity {
   /// 4 段聚合 (心境图表按 morning/noon/evening/night 叠柱状/折线)。
   final String? period;
 
+  /// v0.30 R101: 影响因素 JSON 数组
+  ///
+  /// 参照 Apple Health State of Mind 的影响因素标签系统。
+  /// 6 大类 (关系/健康/活动/正念/天气/其他) 30+ 预设标签。
+  /// 老数据 = '[]' (空列表)。
+  final String influenceFactorsJson;
+
+  /// v0.30 R101: 记录模式 ('momentary' / 'daily')
+  ///
+  /// 老数据 = null (仅新录音 dialog 有选择)。
+  final String? recordingMode;
+
   const MoodEntryEntity({
     required this.id,
     required this.timestamp,
@@ -118,12 +131,21 @@ class MoodEntryEntity {
     this.coreBelief,
     this.behaviorResponse,
     this.period,
+    this.influenceFactorsJson = '[]',
+    this.recordingMode,
   });
 
   // ===== 业务方法 =====
 
   /// 解析后的标签列表
   List<String> get tags => JsonCodec.decodeStringList(tagsJson);
+
+  /// v0.30 R101: 解析后的影响因素列表
+  List<String> get influenceFactors =>
+      InfluenceCodec.decode(influenceFactorsJson);
+
+  /// v0.30 R101: 是否有影响因素
+  bool get hasInfluenceFactors => influenceFactors.isNotEmpty;
 
   /// 分数是否在 1-5 范围内
   bool get isValidScore => score >= 1 && score <= 5;
@@ -152,6 +174,8 @@ class MoodEntryEntity {
     DomainValue<String?>? coreBelief,
     DomainValue<String?>? behaviorResponse,
     DomainValue<String?>? period,
+    String? influenceFactorsJson,
+    DomainValue<String?>? recordingMode,
   }) {
     return MoodEntryEntity(
       id: id ?? this.id,
@@ -180,12 +204,16 @@ class MoodEntryEntity {
       alternativeThought: alternativeThought == null
           ? this.alternativeThought
           : alternativeThought.value,
-      reratedScore: reratedScore == null ? this.reratedScore : reratedScore.value,
+      reratedScore:
+          reratedScore == null ? this.reratedScore : reratedScore.value,
       coreBelief: coreBelief == null ? this.coreBelief : coreBelief.value,
       behaviorResponse: behaviorResponse == null
           ? this.behaviorResponse
           : behaviorResponse.value,
       period: period == null ? this.period : period.value,
+      influenceFactorsJson: influenceFactorsJson ?? this.influenceFactorsJson,
+      recordingMode:
+          recordingMode == null ? this.recordingMode : recordingMode.value,
     );
   }
 
@@ -250,11 +278,13 @@ class MoodEntryEntity {
         other.reratedScore == reratedScore &&
         other.coreBelief == coreBelief &&
         other.behaviorResponse == behaviorResponse &&
-        other.period == period;
+        other.period == period &&
+        other.influenceFactorsJson == influenceFactorsJson &&
+        other.recordingMode == recordingMode;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
         id,
         timestamp,
         score,
@@ -275,7 +305,9 @@ class MoodEntryEntity {
         coreBelief,
         behaviorResponse,
         period,
-      );
+        influenceFactorsJson,
+        recordingMode,
+      ]);
 
   @override
   String toString() => 'MoodEntryEntity('
@@ -288,5 +320,6 @@ class MoodEntryEntity {
       'alternativeThought=$alternativeThought, reratedScore=$reratedScore, '
       'coreBelief=$coreBelief, behaviorResponse=$behaviorResponse, '
       'period=$period, '
+      'influenceFactors=$influenceFactorsJson, '
       'at=$timestamp)';
 }

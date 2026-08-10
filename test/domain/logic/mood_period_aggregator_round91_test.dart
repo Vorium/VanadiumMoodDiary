@@ -45,21 +45,25 @@ void main() {
       for (int d = 0; d < 30; d++) {
         final p = periods[d % 4];
         final s = scores[d % 4];
-        entries.add(_entry(
-          id: d + 1,
-          at: now.subtract(Duration(days: d)),
-          score: s,
-          period: p,
-        ),);
+        entries.add(
+          _entry(
+            id: d + 1,
+            at: now.subtract(Duration(days: d)),
+            score: s,
+            period: p,
+          ),
+        );
       }
       // 加 4 条 unspecified (老 entry 模拟, period = null)
       for (int i = 0; i < 4; i++) {
-        entries.add(_entry(
-          id: 100 + i,
-          at: now.subtract(Duration(days: 35 + i)),
-          score: 4,
-          period: null,
-        ),);
+        entries.add(
+          _entry(
+            id: 100 + i,
+            at: now.subtract(Duration(days: 35 + i)),
+            score: 4,
+            period: null,
+          ),
+        );
       }
 
       // 默认 30 天窗 → unspecified 4 条 (35+ 天前) 全被剔除

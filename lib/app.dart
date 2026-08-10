@@ -122,10 +122,17 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_runRescheduleAllOnStart());
     });
+    // 性能优化: scheduleDailyReminder 从 _bootstrap() 移到 postFrameCallback，
+    // 不阻塞启动，等 widget tree 就绪后再排当日提醒
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_scheduleDailyReminderOnStart());
+    });
     // v0.17 round 4: 跨 midnight 自动 refresh streak
     // 不挂 timer → 跨过 23:59:59 streak 还在用"昨天"算的 (B8 fix 只防 build 内多次,
     // 跨 midnight 后新 build 会用 today 算，但 streak 数本身依赖 yesterday data)
-    _lastCheck = DateTime.now();
+    // R102 (P1): 改用 tz.TZDateTime.now(tz.local) 跟 _scheduleMidnightRefresh 一致,
+    // 避免 DST 边界 _lastCheck 和 timer 用不同时间基
+    _lastCheck = tz.TZDateTime.now(tz.local);
     _scheduleMidnightRefresh();
   }
 
@@ -189,6 +196,23 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
     }
   }
 
+  /// 性能优化: scheduleDailyReminder 从 _bootstrap() 移到 postFrameCallback
+  Future<void> _scheduleDailyReminderOnStart() async {
+    try {
+      final notificationService = ref.read(notificationServiceProvider);
+      await notificationService.delegate.scheduleDailyReminder(
+        hour: 20,
+        minute: 0,
+      );
+    } catch (e) {
+      piiSafeLog(
+        'AppRoot._scheduleDailyReminderOnStart',
+        '⚠️ scheduleDailyReminder 失败: $e',
+        error: e,
+      );
+    }
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -196,7 +220,8 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
     // v0.21 (P0-4 fix): app 回前台时检查跨日
     // 覆盖: 1) 飞国际航班改时区  2) 系统时间被改  3) app 被杀后重启跨日
     if (state == AppLifecycleState.resumed) {
-      final now = DateTime.now();
+      // R102 (P1): 改用 tz.TZDateTime.now(tz.local) 跟 initState 一致
+      final now = tz.TZDateTime.now(tz.local);
       final last = _lastCheck;
       if (last != null && crossedMidnightSince(last, now)) {
         ref.invalidate(streakSummaryProvider);

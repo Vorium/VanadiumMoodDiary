@@ -52,6 +52,11 @@ class ProfileGroup extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // v0.30 R101: 用户头像/健康档案入口 (参照 Apple Health Profile)
+        _UserProfileCard(l10n: l10n),
+
+        const SizedBox(height: AppTokens.spacingMd),
+
         // === 升级到 Pro (IAP, v0.27 round 65 appstore P0-4) ===
         // 仅未购买时显示; 已购后隐藏 (避免反复提示)
         // v0.30 round 93 (阶段 2 audit-fixes): 整个 IAP 商业卡走
@@ -130,7 +135,9 @@ class ProfileGroup extends ConsumerWidget {
                           if (!context.mounted) return;
                           AppSnackBar.showInfo(
                             context,
-                            ok ? l10n.iapPurchaseSuccess : l10n.iapPurchaseFailed,
+                            ok
+                                ? l10n.iapPurchaseSuccess
+                                : l10n.iapPurchaseFailed,
                           );
                         },
                         child: Text(l10n.settingsIapUpgradeTitle),
@@ -188,6 +195,64 @@ class ProfileGroup extends ConsumerWidget {
         ] else
           const SizedBox.shrink(),
       ],
+    );
+  }
+}
+
+/// 用户头像/健康档案入口卡 (参照 Apple Health Profile)
+class _UserProfileCard extends StatelessWidget {
+  const _UserProfileCard({required this.l10n});
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: AppTokens.edgeInsetsMd,
+        child: Row(
+          children: [
+            // 头像
+            CircleAvatar(
+              radius: 28,
+              backgroundColor:
+                  AppTokens.primaryColor(context).withValues(alpha: 0.1),
+              child: Icon(
+                Icons.person,
+                size: 32,
+                color: AppTokens.primaryColor(context),
+              ),
+            ),
+            const SizedBox(width: AppTokens.spacingMd),
+            // 用户名 + 描述
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.settingsProfileTitle,
+                    style: const TextStyle(
+                      fontSize: AppTokens.fontSizeBody,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.settingsProfileSubtitle,
+                    style: TextStyle(
+                      fontSize: AppTokens.fontSizeCaption,
+                      color: AppTokens.textHintColor(context),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: AppTokens.textHintColor(context),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

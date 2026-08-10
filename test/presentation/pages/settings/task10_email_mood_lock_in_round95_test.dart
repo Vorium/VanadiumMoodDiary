@@ -67,7 +67,8 @@ void main() {
       );
     });
 
-    test('R95 fix 3: 3 ARB 文件无 emailPreview*/settingsEmailPreview/emailBodyI18n/emailFooterI18n',
+    test(
+        'R95 fix 3: 3 ARB 文件无 emailPreview*/settingsEmailPreview/emailBodyI18n/emailFooterI18n',
         () {
       for (final path in [
         'lib/l10n/app_zh.arb',
@@ -106,7 +107,8 @@ void main() {
       );
     });
 
-    test('R95 fix 2: home_page*.dart 调 MoodRecorderPage.show() (不调 MoodDialog.show)',
+    test(
+        'R95 fix 2: home_page*.dart 调 MoodRecorderPage.show() (不调 MoodDialog.show)',
         () {
       // R95 sub-spec 6 task 6a fix: R95 sub-spec 4 task 5 拆 home_page → 主壳
       // + home_page_state, MoodRecorderPage.show() 2 caller 都在
@@ -126,7 +128,8 @@ void main() {
       ).readAsStringSync();
       // 应有 ≥ 2 处 MoodRecorderPage.show (R95 sub-spec 4 task 5 拆后)
       // onOpenFullDialog + onMoodTap 2 caller 都在 home_page_state.dart
-      final matches = 'MoodRecorderPage.show('.allMatches(homePageStateSource).length;
+      final matches =
+          'MoodRecorderPage.show('.allMatches(homePageStateSource).length;
       expect(
         matches,
         greaterThanOrEqualTo(2),

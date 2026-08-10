@@ -39,6 +39,8 @@ extension MoodEntryToEntity on MoodEntry {
       coreBelief: coreBelief,
       behaviorResponse: behaviorResponse,
       period: period,
+      influenceFactorsJson: influenceFactorsJson,
+      recordingMode: recordingMode,
     );
   }
 }
@@ -66,6 +68,8 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
       coreBelief: Value(coreBelief),
       behaviorResponse: Value(behaviorResponse),
       period: Value(period),
+      influenceFactorsJson: Value(influenceFactorsJson),
+      recordingMode: Value(recordingMode),
     );
   }
 }
@@ -100,6 +104,8 @@ MoodEntryEntity buildMoodEntryEntity({
   int? reratedScore,
   String? coreBelief,
   String? behaviorResponse,
+  String? influenceFactorsJson,
+  String? recordingMode,
 }) {
   return MoodEntryEntity(
     id: id,
@@ -121,5 +127,7 @@ MoodEntryEntity buildMoodEntryEntity({
     reratedScore: reratedScore,
     coreBelief: coreBelief,
     behaviorResponse: behaviorResponse,
+    influenceFactorsJson: influenceFactorsJson ?? '[]',
+    recordingMode: recordingMode,
   );
 }

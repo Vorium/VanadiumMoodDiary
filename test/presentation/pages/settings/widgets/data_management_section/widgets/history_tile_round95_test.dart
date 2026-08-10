@@ -72,11 +72,13 @@ void main() {
     (tester) async {
       _setBigView(tester);
       int callCount = 0;
-      await tester.pumpWidget(_wrap(
-        onShow: () async {
-          callCount++;
-        },
-      ),);
+      await tester.pumpWidget(
+        _wrap(
+          onShow: () async {
+            callCount++;
+          },
+        ),
+      );
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -88,8 +90,11 @@ void main() {
 
       // 验证: 没有 ReportHistoryListDialog (跳过完整链路)
       // ReportHistoryListDialog 内部是 Dialog 不是 AlertDialog
-      expect(find.byType(Dialog), findsNothing,
-          reason: 'onShow 模式下, 不应弹 ReportHistoryListDialog',);
+      expect(
+        find.byType(Dialog),
+        findsNothing,
+        reason: 'onShow 模式下, 不应弹 ReportHistoryListDialog',
+      );
     },
   );
 }

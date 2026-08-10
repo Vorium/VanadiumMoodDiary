@@ -53,7 +53,8 @@ class MoodListFilterBar extends ConsumerWidget {
                 size: AppTokens.iconSizeMicro,
               ),
               label: Text(l10n.moodListFilterDate),
-              onPressed: () => _pickDateRange(context, notifier, filter.dateRange),
+              onPressed: () =>
+                  _pickDateRange(context, notifier, filter.dateRange),
             ),
           ),
           const SizedBox(width: AppTokens.spacingXs),
@@ -84,7 +85,8 @@ class MoodListFilterBar extends ConsumerWidget {
                 size: AppTokens.iconSizeMicro,
               ),
               label: Text(l10n.moodListFilterCbt),
-              onPressed: () => _pickCbtLevel(context, notifier, filter.cbtLevel),
+              onPressed: () =>
+                  _pickCbtLevel(context, notifier, filter.cbtLevel),
             ),
           ),
           const SizedBox(width: AppTokens.spacingMd),
@@ -216,7 +218,9 @@ class MoodListFilterBar extends ConsumerWidget {
                   RadioListTile<int?>(
                     value: v,
                     title: Text(
-                      v == null ? l10n.moodListPeriodAll : l10n.moodCbtColumns(v),
+                      v == null
+                          ? l10n.moodListPeriodAll
+                          : l10n.moodCbtColumns(v),
                     ),
                   ),
               ],

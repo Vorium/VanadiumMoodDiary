@@ -23,7 +23,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:printing/printing.dart';
 
-import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart';
+import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart'
+    show CbtThoughtRecordPdf, DateRange;
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
@@ -113,7 +114,7 @@ class CbtPdfTile extends ConsumerWidget {
     try {
       final pdfBytes = await pdfFacade.build(
         entries: filtered,
-        dateRange: picked,
+        dateRange: DateRange(picked.start, picked.end),
         l10n: l10n,
       );
       if (!context.mounted) return;

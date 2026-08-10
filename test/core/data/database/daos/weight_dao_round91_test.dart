@@ -26,12 +26,14 @@ void main() {
 
   group('WeightDao (v0.30 round 91 新表)', () {
     test('insert + weightKg + bmi round-trip', () async {
-      await dao.insert(WeightEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 7, 0),
-        weightKg: 70.5,
-        bmi: const Value(23.0),
-        note: const Value('晨重'),
-      ),);
+      await dao.insert(
+        WeightEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 7, 0),
+          weightKg: 70.5,
+          bmi: const Value(23.0),
+          note: const Value('晨重'),
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.length, 1);
@@ -41,10 +43,12 @@ void main() {
     });
 
     test('不传 bmi → null (height 缺失兼容)', () async {
-      await dao.insert(WeightEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 7, 0),
-        weightKg: 70.0,
-      ),);
+      await dao.insert(
+        WeightEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 7, 0),
+          weightKg: 70.0,
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.first.bmi, isNull);

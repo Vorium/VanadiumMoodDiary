@@ -114,7 +114,8 @@ void main() {
     // v0.30 R95 sub-spec 7 task 31a: 注入固定 AES key, 避 FlutterSecureStorage
     // platform channel (test 模式抛 MissingPluginException → 加密失败 → swallowError
     // → 测试看不到弹窗)
-    EncryptionService().setKeyForTest(Uint8List.fromList(List.filled(32, 0x42)));
+    EncryptionService()
+        .setKeyForTest(Uint8List.fromList(List.filled(32, 0x42)));
   });
 
   tearDown(() async {
@@ -164,8 +165,11 @@ void main() {
 
       // ConsentDialog 模板 (dataExport) title 是 "数据导出同意"
       // 跟 settingsExportData 不同 — 这是 ConsentDialog 模板的 title
-      expect(find.text('数据导出同意'), findsOneWidget,
-          reason: 'ConsentDialog (dataExport 模板) title 应出现',);
+      expect(
+        find.text('数据导出同意'),
+        findsOneWidget,
+        reason: 'ConsentDialog (dataExport 模板) title 应出现',
+      );
     },
   );
 
@@ -185,8 +189,11 @@ void main() {
       // tap AppListTile → ConsentDialog
       await tester.tap(find.byType(AppListTile));
       await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget,
-          reason: '第一步: ConsentDialog 应弹出',);
+      expect(
+        find.byType(AlertDialog),
+        findsOneWidget,
+        reason: '第一步: ConsentDialog 应弹出',
+      );
 
       // 找 ConsentDialog 里的 "我了解并同意导出" 按钮 (dataExportConfirm)
       final agreeButton = find.descendant(
@@ -200,8 +207,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Q4b: 风险卡 (settingsExportRiskTitle = "明文风险提示") — JSON dialog 独有
-      expect(find.text('明文风险提示'), findsOneWidget,
-          reason: '同意后 JSON 弹窗应显示 Q4b 风险卡',);
+      expect(
+        find.text('明文风险提示'),
+        findsOneWidget,
+        reason: '同意后 JSON 弹窗应显示 Q4b 风险卡',
+      );
 
       // Q4b: 强制勾选 checkbox (settingsExportRiskAcknowledge = "我已了解风险,继续导出")
       // v0.30 R95 sub-spec 8 task 19: 5→3 步 — checkbox 默认勾选 (用户点 copy
@@ -213,8 +223,11 @@ void main() {
       final copyBtnFinder = find.widgetWithText(ElevatedButton, '复制');
       expect(copyBtnFinder, findsOneWidget);
       final copyBtn = tester.widget<ElevatedButton>(copyBtnFinder);
-      expect(copyBtn.onPressed, isNotNull,
-          reason: 'task 19: 默认勾选后复制按钮应 enable (点 copy = 主动 ack)',);
+      expect(
+        copyBtn.onPressed,
+        isNotNull,
+        reason: 'task 19: 默认勾选后复制按钮应 enable (点 copy = 主动 ack)',
+      );
     },
   );
 
@@ -234,8 +247,11 @@ void main() {
       // tap AppListTile → ConsentDialog
       await tester.tap(find.byType(AppListTile));
       await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget,
-          reason: '第一步: ConsentDialog 应弹出',);
+      expect(
+        find.byType(AlertDialog),
+        findsOneWidget,
+        reason: '第一步: ConsentDialog 应弹出',
+      );
 
       // 找 "暂不同意" 按钮 (dataExportRejectLabel)
       final rejectButton = find.descendant(
@@ -251,8 +267,11 @@ void main() {
       // 没有 JSON 弹窗 (settingsExportDialogTitle "导出数据" 不应在屏)
       // 注: "导出数据" 跟 ConsentDialog 模板无关, 只在 JSON dialog 出现
       // 验证: 没有 "明文风险提示" 风险卡
-      expect(find.text('明文风险提示'), findsNothing,
-          reason: '不同意后, JSON 弹窗不应出现',);
+      expect(
+        find.text('明文风险提示'),
+        findsNothing,
+        reason: '不同意后, JSON 弹窗不应出现',
+      );
     },
   );
 
@@ -288,12 +307,18 @@ void main() {
 
       // 验证: JSON 弹窗仍然出现 (主流程没被 audit log 失败阻塞)
       // 用 Q4b 风险卡 (settingsExportRiskTitle = "明文风险提示") — JSON dialog 独有
-      expect(find.text('明文风险提示'), findsOneWidget,
-          reason: 'audit log 失败不应阻塞主流程, JSON 弹窗仍应弹出',);
+      expect(
+        find.text('明文风险提示'),
+        findsOneWidget,
+        reason: 'audit log 失败不应阻塞主流程, JSON 弹窗仍应弹出',
+      );
 
       // 验证: audit log 被调用过
-      expect(failingConsentStore.recordCalls, 1,
-          reason: 'recordDataExportConsent 应被调用 1 次',);
+      expect(
+        failingConsentStore.recordCalls,
+        1,
+        reason: 'recordDataExportConsent 应被调用 1 次',
+      );
     },
   );
 }

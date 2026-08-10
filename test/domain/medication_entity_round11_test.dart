@@ -32,6 +32,8 @@ Medication _driftRow({
     isActive: isActive,
     refillAt: refillAt,
     refillReminderDays: refillReminderDays,
+    form: 'tablet',
+    colorIndex: 0,
   );
 }
 
@@ -101,6 +103,8 @@ void main() {
         isActive: true,
         refillAt: null,
         refillReminderDays: 7,
+        form: 'tablet',
+        colorIndex: 0,
       );
       expect(row.toEntity().times, isEmpty);
     });

@@ -12,7 +12,8 @@
 // ConsumerWidget 模式 (R95 sub-spec 1 步骤 2-6 一致):
 // - StatelessWidget 自包含 show (Future<bool?> show(BuildContext)) — 包装 showDialog
 // - 接受 onCopy 回调 (测试可注入自定义 handler 跳过 Clipboard 副作用)
-import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_tile.dart' show ExportTile;
+import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_tile.dart'
+    show ExportTile;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -93,8 +94,7 @@ class _ExportDialogContent extends StatelessWidget {
                 padding: AppTokens.edgeInsetsSm,
                 decoration: BoxDecoration(
                   color: AppTokens.tintedWarningSoft(context),
-                  borderRadius:
-                      BorderRadius.circular(AppTokens.radiusChip),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                 ),
                 child: Text(
                   AppLocalizations.of(context).settingsExportVentWarning,
@@ -107,8 +107,7 @@ class _ExportDialogContent extends StatelessWidget {
                 padding: AppTokens.edgeInsetsSm,
                 decoration: BoxDecoration(
                   color: AppTokens.tintedErrorSoft(context),
-                  borderRadius:
-                      BorderRadius.circular(AppTokens.radiusChip),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                   border: Border.all(
                     color: AppTokens.errorColor(context),
                     width: 1,
@@ -132,8 +131,7 @@ class _ExportDialogContent extends StatelessWidget {
                           child: Text(
                             AppLocalizations.of(context)
                                 .settingsExportRiskTitle,
-                            style: AppTokens.textStyleLabel(context)
-                                .copyWith(
+                            style: AppTokens.textStyleLabel(context).copyWith(
                               color: AppTokens.errorColor(context),
                               fontWeight: FontWeight.w600,
                             ),
@@ -143,14 +141,12 @@ class _ExportDialogContent extends StatelessWidget {
                     ),
                     const SizedBox(height: AppTokens.spacingXxs),
                     Text(
-                      AppLocalizations.of(context)
-                          .settingsExportRiskBody,
+                      AppLocalizations.of(context).settingsExportRiskBody,
                       style: AppTokens.textStyleBody(context),
                     ),
                     const SizedBox(height: AppTokens.spacingXxs),
                     Text(
-                      AppLocalizations.of(context)
-                          .settingsExportRiskLiability,
+                      AppLocalizations.of(context).settingsExportRiskLiability,
                       style: AppTokens.textStyleLegal(context),
                     ),
                   ],
@@ -165,12 +161,10 @@ class _ExportDialogContent extends StatelessWidget {
                 // 反馈的责任划界走风险告知 + 点 copy 的主动行为)
                 onChanged: null,
                 title: Text(
-                  AppLocalizations.of(context)
-                      .settingsExportRiskAcknowledge,
+                  AppLocalizations.of(context).settingsExportRiskAcknowledge,
                   style: AppTokens.textStyleBody(context),
                 ),
-                controlAffinity:
-                    ListTileControlAffinity.leading,
+                controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
                 dense: true,
               ),
@@ -180,8 +174,7 @@ class _ExportDialogContent extends StatelessWidget {
                 padding: AppTokens.edgeInsetsSm,
                 decoration: BoxDecoration(
                   color: AppTokens.dividerColor(context),
-                  borderRadius:
-                      BorderRadius.circular(AppTokens.radiusChip),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusChip),
                 ),
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxHeight: 300),

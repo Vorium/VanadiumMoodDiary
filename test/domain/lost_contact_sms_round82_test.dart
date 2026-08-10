@@ -180,7 +180,8 @@ void main() {
   group('buildLostContactSms — LostContactSmsKind enum', () {
     test('enum 2 值: safetyAlert / reminder', () {
       expect(LostContactSmsKind.values.length, 2);
-      expect(LostContactSmsKind.values, contains(LostContactSmsKind.safetyAlert));
+      expect(
+          LostContactSmsKind.values, contains(LostContactSmsKind.safetyAlert),);
       expect(LostContactSmsKind.values, contains(LostContactSmsKind.reminder));
       expect(LostContactSmsKind.safetyAlert.name, 'safetyAlert');
       expect(LostContactSmsKind.reminder.name, 'reminder');

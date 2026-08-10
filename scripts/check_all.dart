@@ -231,6 +231,9 @@ bool _isForbiddenImport(
   if (forbidden == 'package:chroniccare/data/') {
     return importUri.startsWith(forbidden) || resolvedLayer == 'data';
   }
+  if (forbidden == 'package:chroniccare/core/data/') {
+    return importUri.startsWith(forbidden) || resolvedLayer == 'data';
+  }
   if (forbidden == 'package:chroniccare/presentation/') {
     return importUri.startsWith(forbidden) || resolvedLayer == 'presentation';
   }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>技术支持 - ChronicCare 慢病管家</title>
+<meta name="description" content="ChronicCare 慢病管家的技术支持与联系方式">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #333; }
+  h1, h2, h3 { color: #1a1a1a; }
+  h1 { border-bottom: 2px solid #10b981; padding-bottom: 8px; }
+  h2 { margin-top: 32px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+  blockquote { border-left: 4px solid #10b981; padding-left: 16px; color: #555; background: #f0fdf4; padding: 12px 16px; margin: 16px 0; }
+  code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; }
+  a { color: #10b981; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .meta { color: #666; font-size: 14px; }
+  .contact-card { background: #f9fafb; padding: 16px; border-radius: 8px; margin: 16px 0; }
+  .faq { margin: 16px 0; }
+  .faq-q { font-weight: 600; color: #1a1a1a; margin-top: 16px; }
+  .faq-a { color: #555; margin-left: 16px; }
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 14px; color: #666; }
+</style>
+</head>
+<body>
+<h1>技术支持</h1>
+<p class="meta">最后更新: {{VERSION}}</p>
+
+<h2 id="contact">联系方式</h2>
+<div class="contact-card">
+<p><strong>邮箱</strong>: <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a> (24 小时内回复, 工作日 9:00-18:00 北京时间)</p>
+<p><strong>隐私专用</strong>: <a href="mailto:{{PRIVACY_EMAIL}}">{{PRIVACY_EMAIL}}</a> (隐私数据请求, 7 个工作日内回复)</p>
+<p><strong>紧急情况</strong>: 如有生命危险, 请立即拨打您所在地区的危机热线 (App 内"危机热线"页面提供 6 区域号码)</p>
+</div>
+
+<h2 id="faq">常见问题 (FAQ)</h2>
+
+<div class="faq">
+<p class="faq-q">Q1: 我的数据存储在哪里?</p>
+<p class="faq-a">所有数据存储在您设备本地, 使用 SQLCipher AES-256 加密。我们不收集任何数据到云端, 卸载 App 数据自动删除。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q2: 我可以导出/备份我的数据吗?</p>
+<p class="faq-a">可以。App 内 "设置 → 数据管理 → 导出" 可导出 JSON 加密文件。"导入" 可恢复 (仅在原设备有效)。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q3: 树洞 (vent) 内容会泄露吗?</p>
+<p class="faq-a">不会。树洞是本地存储的, 不参与任何通知、趋势、分析。我们刻意设计了隐私边界, 树洞内容不会出现在主页、关怀、家人通知等任何地方。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q4: App 是医疗设备吗?</p>
+<p class="faq-a">不是。ChronicCare 是 wellness 自管理工具, 不是医疗设备 (FDA / NMPA / EU MDR 都不归类)。PHQ-9 / GAD-7 评估仅供自我监测, 不用于医疗决策。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q5: App 支持哪些语言?</p>
+<p class="faq-a">简体中文 (zh-Hans) / 英文 (en) / 繁体中文 (zh-Hant) 3 种。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q6: 如何报告 Bug?</p>
+<p class="faq-a">发邮件至 <a href="mailto:{{SUPPORT_EMAIL}}">{{SUPPORT_EMAIL}}</a>, 附: 设备型号 / 系统版本 / 复现步骤 / 截图。</p>
+</div>
+
+<h2 id="version">版本历史</h2>
+<ul>
+  <li><strong>v0.30.0+85</strong> (2026-08-10): 加 R104 vent audio + 多语言支持</li>
+  <li><strong>v0.27</strong> (2026-07): R72 加 Data Safety Form 自动生成</li>
+  <li><strong>v0.22</strong> (2026-05): 初次上架版本</li>
+</ul>
+
+<div class="footer">
+<p>© {{YEAR}} ChronicCare. 本文档依据 CC BY 4.0 协议开源。</p>
+</div>
+</body>
+</html>

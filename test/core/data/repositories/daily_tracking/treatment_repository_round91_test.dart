@@ -62,8 +62,10 @@ void main() {
   });
 
   // v0.30 round 91 Task 3: TreatmentRepositoryImpl.submitEntry (写时 snapshot name)
-  group('TreatmentRepositoryImpl.submitEntry (R91 Task 3: 写时 snapshot name)', () {
-    test('基本 insert (无 linkedMedicationId) → entity.linkedMedicationName = null',
+  group('TreatmentRepositoryImpl.submitEntry (R91 Task 3: 写时 snapshot name)',
+      () {
+    test(
+        '基本 insert (无 linkedMedicationId) → entity.linkedMedicationName = null',
         () async {
       final id = await repo.submitEntry(
         treatmentType: 'consultation',
@@ -80,8 +82,7 @@ void main() {
       expect(e.linkedMedicationName, isNull);
     });
 
-    test(
-        'linked insert → snapshot name 写时 (medication rename 不影响 history)',
+    test('linked insert → snapshot name 写时 (medication rename 不影响 history)',
         () async {
       // 1. insert medication 'Aspirin' (id=1)
       await db.into(db.medications).insert(
@@ -109,12 +110,14 @@ void main() {
       final all = await repo.watchAll().first;
       expect(all.length, 1);
       expect(all.first.linkedMedicationId, 1);
-      expect(all.first.linkedMedicationName, 'Aspirin',
-          reason: 'snapshot 写时已存, medication rename 不影响历史治疗记录',);
+      expect(
+        all.first.linkedMedicationName,
+        'Aspirin',
+        reason: 'snapshot 写时已存, medication rename 不影响历史治疗记录',
+      );
     });
 
-    test('linkedMedicationId 不存在的 medication_id → name=null 不 crash',
-        () async {
+    test('linkedMedicationId 不存在的 medication_id → name=null 不 crash', () async {
       // submitEntry linkedMedicationId=999 (不存在) → snapshot 走 getSingleOrNull 返 null
       final id = await repo.submitEntry(
         treatmentType: 'medication',
@@ -127,8 +130,11 @@ void main() {
       expect(all.length, 1);
       // R60 模式: FK 不强制, 999 这种孤儿 FK 仍写入, 但 name = null
       expect(all.first.linkedMedicationId, 999);
-      expect(all.first.linkedMedicationName, isNull,
-          reason: 'medication 不存在时 snapshot = null, 不 crash',);
+      expect(
+        all.first.linkedMedicationName,
+        isNull,
+        reason: 'medication 不存在时 snapshot = null, 不 crash',
+      );
     });
   });
 }

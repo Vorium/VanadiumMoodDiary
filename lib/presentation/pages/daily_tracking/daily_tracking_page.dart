@@ -1,19 +1,16 @@
-﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口): 整合入口页
+// v0.30 round 100: 日常追踪模块化重构
 //
-// 路径: `/daily-tracking`
-// 7 卡片 grid (2 列): 情绪日记 + 5 子功能 + 1 治疗
-// 顶部: 心境 4 段图 (Task 2 已做, 集成)
+// Apple Health 风格:
+// - 顶部: 今日追踪汇总 (环形进度 + 已追踪 X/Y)
+// - 收藏区: 置顶的追踪项 (横向滚动卡片)
+// - 分类区: 按 情绪/身体/行为/医疗 分组, 可折叠
+// - 右上角: 自定义按钮 (排序/隐藏/收藏)
 //
-// 类比 R90 assessment_center_page 模式:
-// - 1 page = 1 directory (本文件在 daily_tracking/, widget 在 widgets/)
-// - 7 卡片 grid (2 列移动端)
-// - 顶部 mini 趋势图 (Task 6 实施, 留 SizedBox 占位; 本 task 集成现有
-//   MoodPeriodAggregatorChart 给 mood 段)
-//
-// 4 层架构: presentation/pages/daily_tracking/, 0 跨 page/ 引用。
-// 只用 presentation/providers/ + core/ + domain/ + 同 page widget。
+// 优化: 不再同时 watch 10 个 provider, 每个卡片独立 watch 自己的数据
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/anxiety_agitation_entry.dart';
@@ -21,32 +18,30 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/domain/entities/social_rhythm_entry.dart';
 import 'package:chroniccare/domain/entities/stress_event.dart';
+import 'package:chroniccare/domain/entities/tracking_item_config.dart';
 import 'package:chroniccare/domain/entities/treatment_entry.dart';
 import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/daily_tracking/widgets/daily_tracking_card.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/mood_period_aggregator_chart.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/widgets/today_summary_header.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_item_card.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
+import 'package:chroniccare/presentation/providers/tracking_config_provider.dart';
 import 'package:chroniccare/presentation/widgets/charts/daily_tracking_multi_chart.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
-/// v0.30 R91 Task 5: 日常追踪整合入口页
-///
-/// 7 卡片 grid (1 情绪日记合并 + 5 子功能 + 1 治疗), 顶部心境 4 段图。
-/// 类比 R90 `/assessment-center` 中心化入口页模式。
-///
-/// v0.30 R91 Task 7: title / 7 卡片 title / 7 lastValue / period short label
-/// 全部走 l10n。
+/// 日常追踪模块化入口页
 class DailyTrackingPage extends ConsumerWidget {
   const DailyTrackingPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    // 7 个 latestEntryProvider (跟 R90 latestEntryByScaleProvider 模式,
-    // 但统一用 sync Provider<Entity?> 跟 mood 一致 — 见 daily_tracking_providers)
+    final configState = ref.watch(trackingConfigProvider);
+
+    // 今日汇总数据
     final mood = ref.watch(latestMoodEntryProvider);
     final anxiety = ref.watch(latestAnxietyAgitationEntryProvider);
     final sleep = ref.watch(latestSleepEntryProvider);
@@ -54,10 +49,23 @@ class DailyTrackingPage extends ConsumerWidget {
     final stress = ref.watch(latestStressEventEntryProvider);
     final treatment = ref.watch(latestTreatmentEntryProvider);
     final weight = ref.watch(latestWeightEntryProvider);
-    // 心境 4 段图 (Task 2): 走 moodEntriesProvider sync list
+
+    // 计算今日已追踪项
+    final trackedItems = <String>[];
+    if (_isToday(mood)) trackedItems.add(l10n.moodDiaryName);
+    if (_isToday(anxiety)) trackedItems.add(l10n.anxietyAgitationName);
+    if (_isToday(sleep)) trackedItems.add(l10n.sleepName);
+    if (_isToday(socialRhythm)) trackedItems.add(l10n.socialRhythmName);
+    if (_isToday(stress)) trackedItems.add(l10n.stressEventName);
+    if (_isToday(treatment)) trackedItems.add(l10n.treatmentName);
+    if (_isToday(weight)) trackedItems.add(l10n.weightName);
+
+    final visibleItems = configState.allVisibleItems;
+    final pinnedItems = configState.pinnedItems;
+    final itemsByCategory = configState.itemsByCategory;
+
+    // 多指标趋势图数据
     final moodEntries = ref.watch(moodEntriesProvider);
-    // v0.30 R91 Task 6: 多指标趋势图 4 指标 (体重/睡眠/心境/应激源)
-    // 4 指标 entries 来自各自 StreamProvider (autoDispose), 30 天时间窗
     final weightEntries = ref.watch(weightEntriesProvider).value ?? const [];
     final sleepEntries = ref.watch(sleepEntriesProvider).value ?? const [];
     final stressEvents =
@@ -65,126 +73,184 @@ class DailyTrackingPage extends ConsumerWidget {
 
     return PageScaffold(
       title: l10n.dailyTrackingTitle,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.tune),
+          tooltip: l10n.trackingCustomize,
+          onPressed: () => context.push('/daily-tracking/customize'),
+        ),
+      ],
       child: ListView(
         padding: AppTokens.edgeInsetsMd,
         children: [
-          // v0.30 R91 Task 6: 顶部多指标 mini 趋势图 (4 指标 30 天)
-          // 复用 R90 assessment_multi_line_chart 模式, 4 chip toggle + 4 line
-          // 4 指标单位不同 → Y 归一化 0-1 (chart widget 内部做)
-          DailyTrackingMultiChart(
-            weights: weightEntries,
-            sleepEntries: sleepEntries,
-            moodEntries: moodEntries,
-            stressEvents: stressEvents,
+          // 1. 今日汇总
+          TodayTrackingSummary(
+            trackedCount: trackedItems.length,
+            totalCount: visibleItems.length,
+            trackedNames: trackedItems,
           ),
-          const SizedBox(height: AppTokens.spacingMd),
-          // 心境 4 段图 (Task 2 已做, 集成)
-          if (moodEntries.isNotEmpty)
-            MoodPeriodAggregatorChart(entries: moodEntries),
-          if (moodEntries.isNotEmpty)
-            const SizedBox(height: AppTokens.spacingMd),
 
-          // 7 卡片 grid (2 列)
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: AppTokens.spacingSm,
-              mainAxisSpacing: AppTokens.spacingSm,
-              childAspectRatio: 1.1,
+          // 2. 多指标趋势图
+          if (weightEntries.isNotEmpty ||
+              sleepEntries.isNotEmpty ||
+              moodEntries.isNotEmpty ||
+              stressEvents.isNotEmpty) ...[
+            const SizedBox(height: AppTokens.spacingMd),
+            DailyTrackingMultiChart(
+              weights: weightEntries,
+              sleepEntries: sleepEntries,
+              moodEntries: moodEntries,
+              stressEvents: stressEvents,
             ),
-            itemCount: 7,
-            itemBuilder: (context, i) => _buildCard(
-              context,
-              i,
-              mood: mood,
-              anxiety: anxiety,
-              sleep: sleep,
-              socialRhythm: socialRhythm,
-              stress: stress,
-              treatment: treatment,
-              weight: weight,
+          ],
+
+          // 3. 心境 4 段图
+          if (moodEntries.isNotEmpty) ...[
+            const SizedBox(height: AppTokens.spacingMd),
+            MoodPeriodAggregatorChart(entries: moodEntries),
+          ],
+
+          // 4. 收藏区 (横向滚动)
+          if (pinnedItems.isNotEmpty) ...[
+            const SizedBox(height: AppTokens.spacingMd),
+            _PinnedSection(
+              items: pinnedItems,
+              getLastValue: (id) => _getLastValue(
+                id, l10n, mood, anxiety, sleep, socialRhythm,
+                stress, treatment, weight,
+              ),
             ),
-          ),
+          ],
+
+          // 5. 分类区 (按类别分组)
+          for (final entry in itemsByCategory.entries) ...[
+            TrackingCategoryHeader(category: entry.key),
+            for (final item in entry.value)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppTokens.spacingXs),
+                child: TrackingItemCard(
+                  config: item,
+                  lastValue: _getLastValue(
+                    item.id, l10n, mood, anxiety, sleep, socialRhythm,
+                    stress, treatment, weight,
+                  ),
+                  onRecord: () => context.push(item.route),
+                  onLongPress: () => _showItemActions(context, ref, item),
+                ),
+              ),
+          ],
+
+          // 底部间距
+          const SizedBox(height: AppTokens.spacingXl),
         ],
       ),
     );
   }
 
-  /// 单张卡片 (按 i 派发到 7 子功能, 每张 format "上次 X" 摘要)
-  Widget _buildCard(
-    BuildContext context,
-    int i, {
-    required MoodEntryEntity? mood,
-    required AnxietyAgitationEntryEntity? anxiety,
-    required SleepEntryEntity? sleep,
-    required SocialRhythmEntryEntity? socialRhythm,
-    required StressEventEntity? stress,
-    required TreatmentEntryEntity? treatment,
-    required WeightEntryEntity? weight,
-  }) {
-    final l10n = AppLocalizations.of(context);
-    // i 派发 7 子功能 (顺序固定, 跟 brief 1:1)
-    switch (i) {
-      case 0:
-        return DailyTrackingCard(
-          title: l10n.moodDiaryName,
-          description: l10n.moodDiaryShortDesc,
-          route: '/mood-diary',
-          lastValue: _moodLastValue(mood, l10n),
-        );
-      case 1:
-        return DailyTrackingCard(
-          title: l10n.anxietyAgitationName,
-          description: l10n.anxietyAgitationShortDesc,
-          route: '/anxiety-agitation',
-          lastValue: _anxietyLastValue(anxiety, l10n),
-        );
-      case 2:
-        return DailyTrackingCard(
-          title: l10n.sleepName,
-          description: l10n.sleepShortDesc,
-          route: '/sleep',
-          lastValue: _sleepLastValue(sleep, l10n),
-        );
-      case 3:
-        return DailyTrackingCard(
-          title: l10n.socialRhythmName,
-          description: l10n.socialRhythmShortDesc,
-          route: '/social-rhythm',
-          lastValue: _socialRhythmLastValue(socialRhythm, l10n),
-        );
-      case 4:
-        return DailyTrackingCard(
-          title: l10n.stressEventName,
-          description: l10n.stressEventShortDesc,
-          route: '/stress-events',
-          lastValue: _stressLastValue(stress, l10n),
-        );
-      case 5:
-        return DailyTrackingCard(
-          title: l10n.treatmentName,
-          description: l10n.treatmentShortDesc,
-          route: '/treatment',
-          lastValue: _treatmentLastValue(treatment, l10n),
-        );
-      case 6:
-        return DailyTrackingCard(
-          title: l10n.weightName,
-          description: l10n.weightShortDesc,
-          route: '/weight',
-          lastValue: _weightLastValue(weight, l10n),
-        );
+  /// 判断是否是今天的记录
+  bool _isToday(dynamic entity) {
+    if (entity == null) return false;
+    final now = DateTime.now();
+    try {
+      DateTime ts;
+      if (entity is MoodEntryEntity) {
+        ts = entity.timestamp;
+      } else if (entity is AnxietyAgitationEntryEntity) {
+        ts = entity.timestamp;
+      } else if (entity is SleepEntryEntity) {
+        ts = entity.date;
+      } else if (entity is SocialRhythmEntryEntity) {
+        ts = entity.date;
+      } else if (entity is StressEventEntity) {
+        ts = entity.timestamp;
+      } else if (entity is TreatmentEntryEntity) {
+        ts = entity.timestamp;
+      } else if (entity is WeightEntryEntity) {
+        ts = entity.timestamp;
+      } else {
+        return false;
+      }
+      return ts.year == now.year && ts.month == now.month && ts.day == now.day;
+    } catch (_) {
+      return false;
     }
-    return const SizedBox.shrink();
   }
 
-  // ============== 7 子功能 lastValue format 辅助 ==============
+  /// 获取上次记录摘要
+  String? _getLastValue(
+    String id,
+    AppLocalizations l10n,
+    MoodEntryEntity? mood,
+    AnxietyAgitationEntryEntity? anxiety,
+    SleepEntryEntity? sleep,
+    SocialRhythmEntryEntity? socialRhythm,
+    StressEventEntity? stress,
+    TreatmentEntryEntity? treatment,
+    WeightEntryEntity? weight,
+  ) {
+    switch (id) {
+      case 'mood':
+        return _moodLastValue(mood, l10n);
+      case 'anxiety':
+        return _anxietyLastValue(anxiety, l10n);
+      case 'sleep':
+        return _sleepLastValue(sleep, l10n);
+      case 'social_rhythm':
+        return _socialRhythmLastValue(socialRhythm, l10n);
+      case 'stress':
+        return _stressLastValue(stress, l10n);
+      case 'treatment':
+        return _treatmentLastValue(treatment, l10n);
+      case 'weight':
+        return _weightLastValue(weight, l10n);
+    }
+    return null;
+  }
 
-  String? _moodLastValue(MoodEntryEntity? e, AppLocalizations l10n) {
+  /// 长按弹出操作菜单
+  void _showItemActions(
+    BuildContext context,
+    WidgetRef ref,
+    DailyTrackingItemConfig item,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(
+                item.isPinned ? Icons.push_pin_outlined : Icons.push_pin,
+                color: item.isPinned ? AppTokens.textHintColor(context) : null,
+              ),
+              title: Text(
+                item.isPinned ? l10n.trackingUnpin : l10n.trackingPin,
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                ref.read(trackingConfigProvider.notifier).togglePin(item.id);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.visibility_off_outlined),
+              title: Text(l10n.trackingHide),
+              onTap: () {
+                Navigator.pop(ctx);
+                ref.read(trackingConfigProvider.notifier).toggleHide(item.id);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ============== lastValue format 辅助 (复用原有逻辑) ==============
+
+  static String? _moodLastValue(MoodEntryEntity? e, AppLocalizations l10n) {
     if (e == null) return null;
-    // v0.30 R91 Task 7: 走 l10n.moodDiaryLast 完整摘要 (time + score + period)
     final period = MoodPeriod.normalize(e.period);
     final periodLabel = _periodShortLabel(period, l10n);
     if (periodLabel.isEmpty) {
@@ -197,13 +263,15 @@ class DailyTrackingPage extends ConsumerWidget {
     );
   }
 
-  String? _anxietyLastValue(
-      AnxietyAgitationEntryEntity? e, AppLocalizations l10n,) {
+  static String? _anxietyLastValue(
+    AnxietyAgitationEntryEntity? e,
+    AppLocalizations l10n,
+  ) {
     if (e == null) return null;
     return l10n.anxietyAgitationLast(e.anxietyScore, e.agitationScore);
   }
 
-  String? _sleepLastValue(SleepEntryEntity? e, AppLocalizations l10n) {
+  static String? _sleepLastValue(SleepEntryEntity? e, AppLocalizations l10n) {
     if (e == null) return null;
     if (e.regularityScore != null) {
       return l10n.sleepLast(e.durationLabel, e.regularityScore!);
@@ -211,8 +279,10 @@ class DailyTrackingPage extends ConsumerWidget {
     return e.durationLabel;
   }
 
-  String? _socialRhythmLastValue(
-      SocialRhythmEntryEntity? e, AppLocalizations l10n,) {
+  static String? _socialRhythmLastValue(
+    SocialRhythmEntryEntity? e,
+    AppLocalizations l10n,
+  ) {
     if (e == null) return null;
     final socialH = (e.socialMin / 60).toStringAsFixed(0);
     final workH = (e.workMin / 60).toStringAsFixed(0);
@@ -223,17 +293,26 @@ class DailyTrackingPage extends ConsumerWidget {
     );
   }
 
-  String? _stressLastValue(StressEventEntity? e, AppLocalizations l10n) {
+  static String? _stressLastValue(
+    StressEventEntity? e,
+    AppLocalizations l10n,
+  ) {
     if (e == null) return null;
     return l10n.stressEventLast(e.intensity);
   }
 
-  String? _treatmentLastValue(TreatmentEntryEntity? e, AppLocalizations l10n) {
+  static String? _treatmentLastValue(
+    TreatmentEntryEntity? e,
+    AppLocalizations l10n,
+  ) {
     if (e == null) return null;
     return l10n.treatmentLast(e.treatmentType, e.description);
   }
 
-  String? _weightLastValue(WeightEntryEntity? e, AppLocalizations l10n) {
+  static String? _weightLastValue(
+    WeightEntryEntity? e,
+    AppLocalizations l10n,
+  ) {
     if (e == null) return null;
     final kg = e.weightKg.toStringAsFixed(1);
     if (e.bmi != null) {
@@ -242,8 +321,7 @@ class DailyTrackingPage extends ConsumerWidget {
     return l10n.weightWeight(kg);
   }
 
-  /// period 短 label (走 l10n)
-  String _periodShortLabel(String period, AppLocalizations l10n) {
+  static String _periodShortLabel(String period, AppLocalizations l10n) {
     switch (period) {
       case MoodPeriod.morning:
         return l10n.periodMorning;
@@ -257,5 +335,66 @@ class DailyTrackingPage extends ConsumerWidget {
         return l10n.periodUnspecified;
     }
     return '';
+  }
+}
+
+/// 收藏区 (横向滚动卡片)
+class _PinnedSection extends StatelessWidget {
+  final List<DailyTrackingItemConfig> items;
+  final String? Function(String id) getLastValue;
+
+  const _PinnedSection({required this.items, required this.getLastValue});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            bottom: AppTokens.spacingXs,
+            left: AppTokens.spacingXxs,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.push_pin,
+                size: 14,
+                color: AppTokens.textHintColor(context),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                l10n.trackingPinned,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppTokens.textHintColor(context),
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 80,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: items.length,
+            separatorBuilder: (_, __) =>
+                const SizedBox(width: AppTokens.spacingSm),
+            itemBuilder: (context, i) {
+              final item = items[i];
+              return SizedBox(
+                width: 260,
+                child: TrackingItemCard(
+                  config: item,
+                  lastValue: getLastValue(item.id),
+                  onRecord: () => context.push(item.route),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }

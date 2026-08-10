@@ -40,6 +40,11 @@
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
 
+# Google Play Core (Flutter deferred components 未使用, R8 报 missing class)
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+
 # v0.27 round 63 (R63, GooglePlay P1-6 修复): app 自身 keep
 # 防 R8 混淆 MainActivity / BootReceiver / 任何未来 Kotlin 平台类
 # (Flutter 默认 proguard-android-optimize.txt 不 keep 业务包)

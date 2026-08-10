@@ -1,4 +1,4 @@
-﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): SocialRhythmListWidget + SocialRhythmEntryDialog
+// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): SocialRhythmListWidget + SocialRhythmEntryDialog
 //
 // 4 层架构: presentation/pages/daily_tracking/widgets/, 0 跨 feature import。
 // 复用 R88 mood_dialog 风格 (AlertDialog + ListTile + TextField + 保存/取消)。
@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/social_rhythm_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/widgets/daily_tracking_widgets.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -55,7 +56,8 @@ class SocialRhythmListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+              error: (e, st) =>
+                  Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.schedule_outlined,
@@ -102,8 +104,7 @@ class _SocialRhythmEntryTile extends StatelessWidget {
     );
   }
 
-  static String _fmt(DateTime t) =>
-      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+  static String _fmt(DateTime t) => DailyTrackingTimeFormat.formatDateTimeHHmm(t);
 }
 
 /// SocialRhythmEntryDialog — 6 字段 (3 TimeOfDay + 3 number)
@@ -140,8 +141,7 @@ class _SocialRhythmEntryDialogState
     super.dispose();
   }
 
-  String _fmtTime(TimeOfDay t) =>
-      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+  String _fmtTime(TimeOfDay t) => DailyTrackingTimeFormat.formatHHmm(t);
 
   Future<void> _pickTime(
     void Function(TimeOfDay) setter,
@@ -153,49 +153,29 @@ class _SocialRhythmEntryDialogState
 
   Future<void> _save() async {
     if (_saving) return;
-    final l10n = AppLocalizations.of(context);
     final social = int.tryParse(_socialController.text.trim()) ?? 0;
     final work = int.tryParse(_workController.text.trim()) ?? 0;
     final exercise = int.tryParse(_exerciseController.text.trim()) ?? 0;
     setState(() => _saving = true);
     try {
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
+      final today = DailyTrackingDate.today();
       await ref.read(socialRhythmRepositoryProvider).add(
             date: today,
-            wakeTime: DateTime(
-              today.year,
-              today.month,
-              today.day,
-              _wakeTime.hour,
-              _wakeTime.minute,
-            ),
-            firstMealTime: DateTime(
-              today.year,
-              today.month,
-              today.day,
-              _firstMealTime.hour,
-              _firstMealTime.minute,
-            ),
-            lastMealTime: DateTime(
-              today.year,
-              today.month,
-              today.day,
-              _lastMealTime.hour,
-              _lastMealTime.minute,
-            ),
+            wakeTime: DailyTrackingDate.combineWithDate(today, _wakeTime),
+            firstMealTime:
+                DailyTrackingDate.combineWithDate(today, _firstMealTime),
+            lastMealTime:
+                DailyTrackingDate.combineWithDate(today, _lastMealTime),
             socialMin: social,
             workMin: work,
             exerciseMin: exercise,
           );
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+      DailyTrackingNav.safePop(context);
     } catch (e) {
-      if (mounted) {
-        setState(() => _saving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
-        );
-      }
+      if (!mounted) return;
+      setState(() => _saving = false);
+      DailyTrackingSnackBar.showSaveError(context, e);
     }
   }
 

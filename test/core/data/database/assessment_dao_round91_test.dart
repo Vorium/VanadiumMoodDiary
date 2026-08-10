@@ -47,8 +47,11 @@ void main() {
       final entry = await dao.getLatestEntryByType('phq9');
       expect(entry, isNotNull);
       expect(entry!.score, 12, reason: 'R60 老格式 total 必须解析为 score');
-      expect(entry.answers, [0, 1, 2, 0, 1, 2, 3, 0, 0],
-          reason: 'R60 老格式 scores 必须解析为 answers',);
+      expect(
+        entry.answers,
+        [0, 1, 2, 0, 1, 2, 3, 0, 0],
+        reason: 'R60 老格式 scores 必须解析为 answers',
+      );
       expect(entry.scaleId, 'phq9');
     });
 

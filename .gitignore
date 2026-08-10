@@ -74,3 +74,11 @@ scripts/test_delivery_rate.dart
 # v0.30 round 92 (cleanup): 兜底排除 IntelliJ 项目文件
 # (R60+ 已有 *.iml 通配符, 这里加具体文件名更显眼, 万一 .gitignore 通配规则被 IDE 改动也能拦住)
 chroniccare.iml
+
+# v0.30 R108 revisit: 兜底排除 build/工具产物 (不进 commit)
+# - .gradle-*-all.zip: Flutter Gradle wrapper download (500MB+)
+# - coverage/: flutter test --coverage 输出 (R95+ 临时)
+# - .mavis-trash/: mavis session 删文件时移到这里, 不进 commit
+.gradle-*-all.zip
+coverage/
+.mavis-trash/

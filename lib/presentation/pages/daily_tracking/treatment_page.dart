@@ -1,4 +1,4 @@
-﻿// v0.30 round 92 (audit-fixes / P0 #15): treatment_page 真页面
+// v0.30 round 92 (audit-fixes / P0 #15): treatment_page 真页面
 //
 // 背景:
 // - R91 Task 3 加了 treatment_entries 表 + TreatmentRepositoryImpl +
@@ -60,7 +60,8 @@ class TreatmentPage extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+              error: (e, st) =>
+                  Center(child: Text(l10n.commonLoadFailed(e.toString()))),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.medical_services_outlined,

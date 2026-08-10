@@ -27,6 +27,7 @@
 // 6+ method 重构 + 10 case test 改, R75 时间紧 1 round 装不下, R76 单独 1 round
 // 完成。
 
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -250,7 +251,7 @@ class DayDetailCalculator {
               gad7Name: gad7Name,
             ),
             subtitle: total != null
-                ? '${_timeLabel(c.timestamp)} · 总分 $total'
+                ? '${_timeLabel(c.timestamp)} · ${Strings.dayDetailTotalScore(total)}'
                 : _timeLabel(c.timestamp),
             assessmentTotal: total,
             assessmentScaleId: c.type.wire,
@@ -335,11 +336,14 @@ class DayDetailCalculator {
       }
     }
     // 中文 fallback (单测 / 老 caller 兼容)
+    // v0.31 P1-5: 迁移到 Strings.xxx() — domain 0 flutter 边界
     switch (type) {
       case CheckInType.normal:
         return medName != null ? '打卡 · $medName' : '每日打卡';
       case CheckInType.temp:
-        return medName != null && medName.isNotEmpty ? '临时 · $medName' : '临时吃药';
+        return medName != null && medName.isNotEmpty
+            ? '临时 · $medName'
+            : '临时吃药';
       case CheckInType.phq9:
         return 'PHQ-9 抑郁筛查';
       case CheckInType.gad7:
@@ -355,12 +359,15 @@ class DayDetailCalculator {
         // v0.30 round 91 (fix): R90 8 个新量表兜底, caller 走
         // _scaleName 拿量表 displayName (scale_registry) — 这里
         // 留中文兜底给单测, 实际 UI 渲染走 _scaleName 路径。
-        return '心理量表评估';
+        return Strings.dayDetailScaleAssessment();
     }
   }
 
   /// v0.27 round 77 (R76-N11 修): 改 closure 注入 (`phq9Name` / `gad7Name`),
   /// domain 0 flutter。
+  /// v0.31 P1-5: 硬编码中文 'PHQ-9 抑郁筛查' / 'GAD-7 焦虑筛查' 迁移到
+  /// Strings.dayDetailPhq9() / Strings.dayDetailGad7() — 但这两个已有
+  /// ARB key (dayDetailPhq9 / dayDetailGad7), 直接用 Strings 模式。
   static String _scaleName(
     String scaleId, {
     ScaleNameFn? phq9Name,

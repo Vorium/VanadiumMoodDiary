@@ -1,4 +1,5 @@
-import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart' show TodayMedSchedule;
+import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart'
+    show TodayMedSchedule;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
@@ -22,6 +23,12 @@ final userProfileProvider = StreamProvider.autoDispose<UserProfileEntity?>(
 /// 今天的打卡
 final todayCheckInProvider = StreamProvider.autoDispose<CheckInEntity?>(
   (ref) => ref.watch(checkInRepositoryProvider).watchToday(),
+);
+
+/// 今天所有打卡（首页概览卡统计药物进度用，避免全表扫描）
+final todayAllCheckInsProvider =
+    StreamProvider.autoDispose<List<CheckInEntity>>(
+  (ref) => ref.watch(checkInRepositoryProvider).watchTodayAll(),
 );
 
 /// 所有打卡（含 normal + temp + phq9 + gad7），用于趋势图
@@ -101,6 +108,11 @@ final reportHistoriesProvider =
 /// 今日情绪记录
 final todayMoodProvider = StreamProvider.autoDispose<List<MoodEntryEntity>>(
   (ref) => ref.watch(moodRepositoryProvider).watchToday(),
+);
+
+/// 最新一条情绪（首页概览卡用，避免全表扫描）
+final latestMoodProvider = StreamProvider.autoDispose<MoodEntryEntity?>(
+  (ref) => ref.watch(moodRepositoryProvider).watchLatest(),
 );
 
 /// 所有情绪记录

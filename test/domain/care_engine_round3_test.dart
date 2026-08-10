@@ -46,8 +46,7 @@ void main() {
       expect(t.strategy, isNot(CareTriggerType.secondDayMissed));
     });
 
-    test('P3 fix: 1 年前 1 次晚打卡,最近 7 天都 21 点准时 → 触发 weekPerfect',
-        () {
+    test('P3 fix: 1 年前 1 次晚打卡,最近 7 天都 21 点准时 → 触发 weekPerfect', () {
       final now = DateTime(2026, 7, 13, 10, 0);
       final checks = <CheckInEntity>[
         // 1 年前晚打卡(应被忽略)
@@ -91,8 +90,7 @@ void main() {
       expect(t.strategy, CareTriggerType.none);
     });
 
-    test('P7 fix: 周六 20 点,前一个周日打了卡 → 优先 secondDayMissed (36h+ 远间隔)',
-        () {
+    test('P7 fix: 周六 20 点,前一个周日打了卡 → 优先 secondDayMissed (36h+ 远间隔)', () {
       // 验证:secondDayMissed 比 weekendMissed 优先
       final now = DateTime(2026, 7, 11, 20, 0);
       final checks = [ci(DateTime(2026, 7, 5, 12, 0))];

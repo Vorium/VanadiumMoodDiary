@@ -12,7 +12,8 @@
 // - ProviderScope overrides: cbtReratedEntriesProvider (控制 entries)
 // - pdfBuilder 构造参数: 默认 = CbtThoughtRecordPdf(), 测试可注入失败版本 (test 5)
 // - onExport 回调: 留测试可跳过 date range picker + PDF 完整链路
-import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart';
+import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart'
+    show CbtThoughtRecordPdf, DateRange;
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/cbt_pdf_tile.dart';
@@ -72,7 +73,7 @@ class _FailingCbtPdf extends CbtThoughtRecordPdf {
   @override
   Future<List<int>> build({
     required List<MoodEntryEntity> entries,
-    DateTimeRange? dateRange,
+    DateRange? dateRange,
     required AppLocalizations l10n,
   }) async {
     buildCalls++;
@@ -120,8 +121,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // showDateRangePicker 弹 Dialog
-      expect(find.byType(Dialog), findsOneWidget,
-          reason: 'showDateRangePicker 弹 Dialog',);
+      expect(
+        find.byType(Dialog),
+        findsOneWidget,
+        reason: 'showDateRangePicker 弹 Dialog',
+      );
     },
   );
 
@@ -133,11 +137,13 @@ void main() {
     (tester) async {
       _setBigView(tester);
       int callCount = 0;
-      await tester.pumpWidget(_wrap(
-        onExport: () async {
-          callCount++;
-        },
-      ),);
+      await tester.pumpWidget(
+        _wrap(
+          onExport: () async {
+            callCount++;
+          },
+        ),
+      );
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -148,8 +154,11 @@ void main() {
       expect(callCount, 1, reason: 'onExport 回调应被调用 1 次');
 
       // 验证: 没有 showDateRangePicker Dialog (跳过完整链路)
-      expect(find.byType(Dialog), findsNothing,
-          reason: 'onExport 模式下, 不应弹 date picker',);
+      expect(
+        find.byType(Dialog),
+        findsNothing,
+        reason: 'onExport 模式下, 不应弹 date picker',
+      );
     },
   );
 
@@ -188,9 +197,11 @@ void main() {
       _setBigView(tester);
       // 失败的 PDF builder
       final failingPdf = _FailingCbtPdf();
-      await tester.pumpWidget(_wrap(
-        pdfBuilder: () => failingPdf,
-      ),);
+      await tester.pumpWidget(
+        _wrap(
+          pdfBuilder: () => failingPdf,
+        ),
+      );
       await tester.pumpAndSettle();
 
       // 渲染: AppListTile 出现 + pdfBuilder 注入成功 (不报 ProviderException)
@@ -200,8 +211,11 @@ void main() {
       // tap AppListTile → 弹 date picker (不验证完整流程, 详见上方注释)
       await tester.tap(find.byType(AppListTile));
       await tester.pumpAndSettle();
-      expect(find.byType(Dialog), findsOneWidget,
-          reason: 'date picker 应弹出',);
+      expect(
+        find.byType(Dialog),
+        findsOneWidget,
+        reason: 'date picker 应弹出',
+      );
 
       // 关闭 date picker (back button) — 走 cancel 分支
       await tester.tapAt(const Offset(50, 100)); // tap outside

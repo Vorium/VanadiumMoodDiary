@@ -185,10 +185,16 @@ void main() {
       // 改用 pump(Duration) 推进时间
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
-      expect(fakeService.isRecording, isTrue,
-          reason: '点击录音后 service 内部 isRecording=true',);
-      expect(controller.snapshot.value.hasRecording, isFalse,
-          reason: '录音中 snapshot 仍空 (未 stop)',);
+      expect(
+        fakeService.isRecording,
+        isTrue,
+        reason: '点击录音后 service 内部 isRecording=true',
+      );
+      expect(
+        controller.snapshot.value.hasRecording,
+        isFalse,
+        reason: '录音中 snapshot 仍空 (未 stop)',
+      );
     });
 
     testWidgets('reRecord 按钮存在 (录音后), 不验证 snapshot (需 storage mock)',
@@ -220,8 +226,11 @@ void main() {
       addTearDown(fakeService.close);
 
       // 直接测 service 行为
-      expect(await fakeService.initialize(), isFalse,
-          reason: 'STT 不可用时 service.initialize() 返 false',);
+      expect(
+        await fakeService.initialize(),
+        isFalse,
+        reason: 'STT 不可用时 service.initialize() 返 false',
+      );
     });
   });
 
@@ -263,8 +272,11 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pump(const Duration(milliseconds: 100));
       // 不应抛 (widget 自身 dispose 链 cancel recording + cleanup)
-      expect(tester.takeException(), isNull,
-          reason: '录音中 unmount 仍能 dispose 资源链, 不抛 (跟 R79 vent_compose 同款)',);
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: '录音中 unmount 仍能 dispose 资源链, 不抛 (跟 R79 vent_compose 同款)',
+      );
     });
   });
 }

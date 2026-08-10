@@ -82,15 +82,21 @@ void main() {
 
     // ===== Step 3: 直接走 repo watchNormalCheckIns (不依赖 StreamProvider autoDispose) =====
     final checkIns = await checkInRepo.watchNormalCheckIns().first;
-    expect(checkIns.length, 1,
-        reason: '1 个今天 normal 打卡 → watchNormalCheckIns 返 1 条',);
+    expect(
+      checkIns.length,
+      1,
+      reason: '1 个今天 normal 打卡 → watchNormalCheckIns 返 1 条',
+    );
     // 直接用 StreakCalculator 算 (不依赖 Provider stream sync 顺序)
     final streak = StreakCalculator.calculate(
       checkIns: checkIns,
       now: DateTime.now(),
     );
-    expect(streak, 1,
-        reason: '1 个今天 normal 打卡 → StreakCalculator.calculate() 返 1',);
+    expect(
+      streak,
+      1,
+      reason: '1 个今天 normal 打卡 → StreakCalculator.calculate() 返 1',
+    );
     expect(
       StreakCalculator.shouldShowStreakBroken(
         checkIns: checkIns,
@@ -131,8 +137,11 @@ void main() {
     // ===== Step 2: 直接走 contactRepository.watchAll (不依赖 StreamProvider autoDispose) =====
     final contactRepo = container.read(contactRepositoryProvider);
     final contacts = await contactRepo.watchAll().first;
-    expect(contacts.length, 1,
-        reason: 'saveSetup 写 1 联系人 → contactRepository.watchAll 返 1',);
+    expect(
+      contacts.length,
+      1,
+      reason: 'saveSetup 写 1 联系人 → contactRepository.watchAll 返 1',
+    );
     expect(contacts.first.name, '家人A');
     expect(contacts.first.phone, '13800000001');
     expect(contacts.first.sortOrder, 0);
@@ -164,8 +173,11 @@ void main() {
     final database = container.read(databaseProvider);
     final checkIns = await database.select(database.checkIns).get();
     expect(checkIns.length, 1);
-    expect(checkIns.first.type, 'phq9',
-        reason: 'R90 量表中心: assessment 走 check_ins.type = scaleId',);
+    expect(
+      checkIns.first.type,
+      'phq9',
+      reason: 'R90 量表中心: assessment 走 check_ins.type = scaleId',
+    );
     expect(checkIns.first.note, isNotNull);
     // 验证 JSON 编码含 score + severity + answers
     final noteJson = checkIns.first.note!;
@@ -204,16 +216,31 @@ void main() {
     // R57 export schema 字段: version / exportedAt / profile / checkIns /
     // moodEntries / medications / ventEntries / reportHistories /
     // assessmentEntries / cbtThoughtRecords
-    expect(jsonStr.contains('"version"'), isTrue,
-        reason: '导出 JSON 含 version 字段 (R57 schema 规范)',);
-    expect(jsonStr.contains('"exportedAt"'), isTrue,
-        reason: '导出 JSON 含 exportedAt 时间戳',);
-    expect(jsonStr.contains('"checkIns"'), isTrue,
-        reason: '导出 JSON 含 checkIns 段 (7 段数据)',);
-    expect(jsonStr.contains('"moodEntries"'), isTrue,
-        reason: '导出 JSON 含 moodEntries 段 (7 段数据)',);
-    expect(jsonStr.length, greaterThan(100),
-        reason: 'JSON 长度 > 100 字符 (含 schema + data)',);
+    expect(
+      jsonStr.contains('"version"'),
+      isTrue,
+      reason: '导出 JSON 含 version 字段 (R57 schema 规范)',
+    );
+    expect(
+      jsonStr.contains('"exportedAt"'),
+      isTrue,
+      reason: '导出 JSON 含 exportedAt 时间戳',
+    );
+    expect(
+      jsonStr.contains('"checkIns"'),
+      isTrue,
+      reason: '导出 JSON 含 checkIns 段 (7 段数据)',
+    );
+    expect(
+      jsonStr.contains('"moodEntries"'),
+      isTrue,
+      reason: '导出 JSON 含 moodEntries 段 (7 段数据)',
+    );
+    expect(
+      jsonStr.length,
+      greaterThan(100),
+      reason: 'JSON 长度 > 100 字符 (含 schema + data)',
+    );
   });
 
   test(
@@ -281,15 +308,21 @@ void main() {
     expect(allVent.length, 1);
     // vent text 在 DB 走 contentText (BLOB 加密), watchAll 返实体, text 由
     // service decrypt 后返 (跟 R20 vent audio 模式一致)
-    expect(allVent.first.hasText, isTrue,
-        reason: 'vent text 加密落库, watchAll decrypt 后 hasText=true',);
+    expect(
+      allVent.first.hasText,
+      isTrue,
+      reason: 'vent text 加密落库, watchAll decrypt 后 hasText=true',
+    );
     expect(allVent.first.audioPath, isNull);
 
     // ===== Step 3: 模拟撤回 (PIPL §47 删除权, R95 留 R96+ 真接) =====
     // ventRepository.delete 单条物理删 (PIPL §47 删除权), UI 立即隐藏
     final deleted = await ventRepo.delete(ventId);
-    expect(deleted, isTrue,
-        reason: 'delete(ventId) 返 true (条目物理删, PIPL §47 删除权)',);
+    expect(
+      deleted,
+      isTrue,
+      reason: 'delete(ventId) 返 true (条目物理删, PIPL §47 删除权)',
+    );
 
     final afterDelete = await ventRepo.watchAll().first;
     expect(afterDelete.length, 0, reason: 'delete 后 vent 不在列表 (UI 隐藏)');

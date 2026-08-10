@@ -70,8 +70,7 @@ void main() {
     );
   }
 
-  testWidgets('chip "早" filter → 只显示 period=morning 的 entry',
-      (tester) async {
+  testWidgets('chip "早" filter → 只显示 period=morning 的 entry', (tester) async {
     await tester.pumpWidget(wrap(entries: makeEntries()));
     await tester.pumpAndSettle();
 
@@ -87,10 +86,16 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验只显示 morning entry
-    expect(find.text('morning entry'), findsOneWidget,
-        reason: 'filter=morning 应保留 morning entry',);
-    expect(find.text('noon entry'), findsNothing,
-        reason: 'filter=morning 应过滤掉 noon entry',);
+    expect(
+      find.text('morning entry'),
+      findsOneWidget,
+      reason: 'filter=morning 应保留 morning entry',
+    );
+    expect(
+      find.text('noon entry'),
+      findsNothing,
+      reason: 'filter=morning 应过滤掉 noon entry',
+    );
     expect(find.text('evening entry'), findsNothing);
     expect(find.text('night entry'), findsNothing);
     expect(find.text('unspecified entry'), findsNothing);

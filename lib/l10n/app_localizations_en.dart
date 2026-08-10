@@ -2194,7 +2194,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String safetyCheckResultAlertedMocked(int mocked) {
-    return '**Dev mode**, contacts not actually notified (mock: $mocked)';
+    return 'Test notification sent ($mocked contacts, not actually delivered)';
   }
 
   @override
@@ -3334,6 +3334,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyTrackingMultiChartTitle => 'Last 30 days, 4 metrics';
 
   @override
+  String get chartMetricWeight => 'Weight';
+
+  @override
+  String get chartMetricSleep => 'Sleep';
+
+  @override
+  String get chartMetricMood => 'Mood';
+
+  @override
+  String get chartMetricStress => 'Stress';
+
+  @override
   String dailyTrackingLastTime(Object time) {
     return '$time record';
   }
@@ -3786,4 +3798,548 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dataExportRetentionClipboard =>
       'Clipboard + user saves to encrypted storage themselves';
+
+  @override
+  String get medPageTitle => 'Medications';
+
+  @override
+  String get medAddTooltip => 'Add medication';
+
+  @override
+  String get medTodaySchedule => 'Today\'s Schedule';
+
+  @override
+  String get medMyMedications => 'My Medications';
+
+  @override
+  String get medQuickActions => 'Quick Actions';
+
+  @override
+  String get medCalendar => 'Calendar';
+
+  @override
+  String get medRefill => 'Refills';
+
+  @override
+  String get medSlotMorning => 'Morning';
+
+  @override
+  String get medSlotAfternoon => 'Afternoon';
+
+  @override
+  String get medSlotEvening => 'Evening';
+
+  @override
+  String get medSlotBedtime => 'Bedtime';
+
+  @override
+  String get medEmptyTitle => 'No medications yet';
+
+  @override
+  String get medEmptySubtitle => 'Tap + to add your first medication';
+
+  @override
+  String get medNoScheduleToday => 'No medications scheduled today';
+
+  @override
+  String get medAddTitle => 'Add Medication';
+
+  @override
+  String get medAddStep1Title => 'Medication Info';
+
+  @override
+  String get medAddStep2Title => 'Dosage & Schedule';
+
+  @override
+  String get medAddStep3Title => 'Confirm';
+
+  @override
+  String get medAddNameLabel => 'Medication name';
+
+  @override
+  String get medAddNameHint => 'e.g., Sertraline';
+
+  @override
+  String get medAddFormLabel => 'Form';
+
+  @override
+  String get medAddDosageLabel => 'Dose per time';
+
+  @override
+  String get medAddTimeLabel => 'Schedule';
+
+  @override
+  String get medAddTimeAdd => 'Add time';
+
+  @override
+  String get medAddColorLabel => 'Color (optional, for visual ID)';
+
+  @override
+  String get medAddConfirmName => 'Name';
+
+  @override
+  String get medAddConfirmForm => 'Form';
+
+  @override
+  String get medAddConfirmDosage => 'Dosage';
+
+  @override
+  String get medAddConfirmTime => 'Time';
+
+  @override
+  String get medAddPrev => 'Back';
+
+  @override
+  String get medAddNext => 'Next';
+
+  @override
+  String get medAddSave => 'Save';
+
+  @override
+  String medAddColorN(Object n) {
+    return 'Medication color $n';
+  }
+
+  @override
+  String get medFormTablet => 'Tablet';
+
+  @override
+  String get medFormCapsule => 'Capsule';
+
+  @override
+  String get medFormLiquid => 'Liquid';
+
+  @override
+  String get medFormPatch => 'Patch';
+
+  @override
+  String get medFormInjection => 'Injection';
+
+  @override
+  String get medFormOther => 'Other';
+
+  @override
+  String get medDetailTitle => 'Medication Detail';
+
+  @override
+  String get medNotFound => 'Medication not found';
+
+  @override
+  String get moodReminderTitle => 'Mood Logging Reminder';
+
+  @override
+  String get moodReminderSubtitle => 'Daily reminder to log your mood';
+
+  @override
+  String get moodReminderTimeLabel => 'Reminder time';
+
+  @override
+  String get moodReminderEnabled => 'Enable reminder';
+
+  @override
+  String get moodInfluenceTitle => 'Influence Factors';
+
+  @override
+  String get moodInfluenceSubtitle =>
+      'What influenced your mood? (select multiple)';
+
+  @override
+  String get moodInfluenceRelationships => 'Relationships';
+
+  @override
+  String get moodInfluenceHealth => 'Health';
+
+  @override
+  String get moodInfluenceActivities => 'Activities';
+
+  @override
+  String get moodInfluenceMindfulness => 'Mindfulness';
+
+  @override
+  String get moodInfluenceWeather => 'Weather';
+
+  @override
+  String get moodInfluenceOther => 'Other';
+
+  @override
+  String get influenceFactorFamily => 'Family';
+
+  @override
+  String get influenceFactorFriend => 'Friends';
+
+  @override
+  String get influenceFactorPartner => 'Partner';
+
+  @override
+  String get influenceFactorChild => 'Children';
+
+  @override
+  String get influenceFactorColleague => 'Colleagues';
+
+  @override
+  String get influenceFactorExercise => 'Exercise';
+
+  @override
+  String get influenceFactorSick => 'Sick';
+
+  @override
+  String get influenceFactorGoodSleep => 'Good Sleep';
+
+  @override
+  String get influenceFactorHealthyDiet => 'Healthy Diet';
+
+  @override
+  String get influenceFactorWork => 'Work';
+
+  @override
+  String get influenceFactorHobby => 'Hobbies';
+
+  @override
+  String get influenceFactorTravel => 'Travel';
+
+  @override
+  String get influenceFactorCommute => 'Commute';
+
+  @override
+  String get influenceFactorShopping => 'Shopping';
+
+  @override
+  String get influenceFactorGaming => 'Gaming';
+
+  @override
+  String get influenceFactorReading => 'Reading';
+
+  @override
+  String get influenceFactorEntertainment => 'Entertainment';
+
+  @override
+  String get influenceFactorMeditation => 'Meditation';
+
+  @override
+  String get influenceFactorBreathing => 'Breathing Exercise';
+
+  @override
+  String get influenceFactorJournaling => 'Journaling';
+
+  @override
+  String get influenceFactorYoga => 'Yoga';
+
+  @override
+  String get influenceFactorSunny => 'Sunny';
+
+  @override
+  String get influenceFactorCloudy => 'Cloudy';
+
+  @override
+  String get influenceFactorRainy => 'Rainy';
+
+  @override
+  String get influenceFactorSnowy => 'Snowy';
+
+  @override
+  String get influenceFactorWindy => 'Windy';
+
+  @override
+  String get moodDetailTitle => 'Mood Detail';
+
+  @override
+  String get moodDetailFactors => 'Influence Factors';
+
+  @override
+  String get moodDetailMoodState => 'Mood State';
+
+  @override
+  String get moodDetail4D => '4 Dimensions';
+
+  @override
+  String get moodDetailCbtRecord => 'CBT Thought Record';
+
+  @override
+  String get moodTrendTitle => 'Mood Trends';
+
+  @override
+  String get moodTrendWeek => 'Last 7 Days';
+
+  @override
+  String get moodTrendMonth => 'Last 30 Days';
+
+  @override
+  String get moodTrendDistribution => 'Score Distribution';
+
+  @override
+  String get moodTrendNoData => 'No data yet';
+
+  @override
+  String get moodEditTooltip => 'Edit';
+
+  @override
+  String get moodDeleteTooltip => 'Delete';
+
+  @override
+  String get moodDeleteConfirm =>
+      'Are you sure you want to delete this record?';
+
+  @override
+  String get moodFactorAnalysis => 'Factor Analysis';
+
+  @override
+  String get moodFactorAvgScore => 'Avg Score';
+
+  @override
+  String get moodFactorCount => 'Records';
+
+  @override
+  String get navMedication => 'Medications';
+
+  @override
+  String get moodModeMomentary => 'Right Now';
+
+  @override
+  String get moodModeDaily => 'Overall Today';
+
+  @override
+  String get moodTrendWeekTitle => 'Last 7 Days Trend';
+
+  @override
+  String get moodTrendMonthTitle => 'Last 30 Days Trend';
+
+  @override
+  String get moodTrendDistTitle => 'Score Distribution';
+
+  @override
+  String get moodTrendCbtTitle => 'CBT Re-rating Effect';
+
+  @override
+  String get moodTrendCbtHint => 'Positive = improved, Negative = worse';
+
+  @override
+  String get moodTrendCbtEmpty => 'No CBT re-rating data yet';
+
+  @override
+  String get moodTrendRecords => 'records';
+
+  @override
+  String get medDetailActive => 'Active';
+
+  @override
+  String get medDetailStopped => 'Stopped';
+
+  @override
+  String get medDetailAdherence => 'Adherence';
+
+  @override
+  String get medDetailLast30 => 'Last 30 days';
+
+  @override
+  String get medDetailDays => 'Days taken';
+
+  @override
+  String get medDetailLast30Record => 'Last 30 days';
+
+  @override
+  String get medDetailEdit => 'Edit';
+
+  @override
+  String get medDetailRefill => 'Refill';
+
+  @override
+  String get medDetailNoFactors => 'No influence factor data yet';
+
+  @override
+  String get moodCbtSituation => 'Situation';
+
+  @override
+  String get moodCbtAutoThought => 'Automatic Thought';
+
+  @override
+  String get moodCbtEvidenceFor => 'Evidence For';
+
+  @override
+  String get moodCbtEvidenceAgainst => 'Evidence Against';
+
+  @override
+  String get moodCbtAltThought => 'Alternative Thought';
+
+  @override
+  String get moodCbtRerated => 'Re-rated Score';
+
+  @override
+  String get moodCbtCoreBelief => 'Core Belief';
+
+  @override
+  String get moodCbtBehavior => 'Behavioral Response';
+
+  @override
+  String moodAudioRecording(Object duration) {
+    return 'Recording $duration';
+  }
+
+  @override
+  String get moodDeleted => 'Deleted';
+
+  @override
+  String get moodPeriodAfternoon => 'Afternoon';
+
+  @override
+  String get settingsProfileTitle => 'Profile';
+
+  @override
+  String get settingsProfileSubtitle => 'Health records, medical info';
+
+  @override
+  String get todaySummaryCheckIn => 'Check-in';
+
+  @override
+  String get todaySummaryMeds => 'Meds';
+
+  @override
+  String get todaySummaryMood => 'Mood';
+
+  @override
+  String get todaySummaryStreak => 'Streak';
+
+  @override
+  String todaySummaryStreakDays(int count) {
+    return '${count}d';
+  }
+
+  @override
+  String get setupConsentMedicalDisclaimer =>
+      'I have read and understand the Medical Disclaimer: this app does not provide medical advice, diagnosis, or treatment';
+
+  @override
+  String get setupConsentViewDisclaimer => 'View';
+
+  @override
+  String get trackingCustomize => 'Customize Trackers';
+
+  @override
+  String get trackingPin => 'Pin to Top';
+
+  @override
+  String get trackingUnpin => 'Unpin';
+
+  @override
+  String get trackingHide => 'Hide This Item';
+
+  @override
+  String get trackingPinned => 'Pinned';
+
+  @override
+  String get trackingCategoryEmotional => 'Emotional State';
+
+  @override
+  String get trackingCategoryPhysical => 'Physical Metrics';
+
+  @override
+  String get trackingCategoryBehavioral => 'Behavioral Rhythm';
+
+  @override
+  String get trackingCategoryMedical => 'Medical Records';
+
+  @override
+  String todayTrackingSummary(int tracked, int total) {
+    return 'Tracked $tracked/$total today';
+  }
+
+  @override
+  String moodRecordingLabel(String duration) {
+    return 'Recording $duration';
+  }
+
+  @override
+  String get medicationNameRequired => 'Please enter medication name';
+
+  @override
+  String medicationAdded(String name) {
+    return 'Added $name';
+  }
+
+  @override
+  String get medicationStatusInUse => 'Active';
+
+  @override
+  String get medicationStatusStopped => 'Stopped';
+
+  @override
+  String factorAnalysisCount(int count) {
+    return '$count entries';
+  }
+
+  @override
+  String get setupConsentAgreeAll =>
+      'I have read and agree to all the above agreements';
+
+  @override
+  String get setupConsentViewAll => 'View all agreements';
+
+  @override
+  String get careCopyLateCheckInTitle => '🛏️ A bit earlier is steadier';
+
+  @override
+  String get careCopyLateCheckInBody =>
+      'Check-ins after 9 PM are frequent — regular schedules help medication effectiveness';
+
+  @override
+  String get careCopyWeekendMissedTitle => '☀️ Keep your rhythm on weekends';
+
+  @override
+  String get careCopyWeekendMissedBody =>
+      'Weekends are easy to miss — check in now, a little more consistency';
+
+  @override
+  String get careCopySecondDayMissedTitle => '🌿 Just keep going';
+
+  @override
+  String get careCopySecondDayMissedBody =>
+      'Missing once is fine — just keep going from here';
+
+  @override
+  String get careCopyWeekPerfectTitle => '🌟 A whole week on time!';
+
+  @override
+  String get careCopyWeekPerfectBody => 'All on time this week';
+
+  @override
+  String get assessmentComparisonImproved => 'Improved';
+
+  @override
+  String get assessmentComparisonWorsened => 'Worsened';
+
+  @override
+  String get assessmentComparisonUnchanged => 'Unchanged';
+
+  @override
+  String get assessmentComparisonFirst => 'First assessment';
+
+  @override
+  String assessmentDeltaSame(int delta) {
+    return 'Same as last time ($delta)';
+  }
+
+  @override
+  String assessmentDeltaHigher(int delta) {
+    return '$delta points higher than last time';
+  }
+
+  @override
+  String assessmentDeltaLower(int delta) {
+    return '$delta points lower than last time';
+  }
+
+  @override
+  String assessmentSeverityRank(int rank) {
+    return 'Level $rank';
+  }
+
+  @override
+  String get checkInTypeAssessment => 'Psychological assessment';
+
+  @override
+  String dayDetailTotalScore(int total) {
+    return 'Total $total';
+  }
+
+  @override
+  String get dayDetailScaleAssessment => 'Psychological assessment';
 }

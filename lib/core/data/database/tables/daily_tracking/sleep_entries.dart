@@ -1,4 +1,5 @@
-import 'package:chroniccare/domain/logic/sleep_calculator.dart' show SleepCalculator;
+import 'package:chroniccare/domain/logic/sleep_calculator.dart'
+    show SleepCalculator;
 import 'package:drift/drift.dart';
 
 /// 睡眠记录表

@@ -33,26 +33,23 @@
 		- Tracking: false (零广告 SDK / 零第三方统计)
 		- Purposes: AppFunctionality (仅用于 App 本地功能, 不上传)
 
-		4 类数据对应本项目实际处理的敏感个人信息:
-		1. HealthAndFitness — PHQ-9 / GAD-7 / 情绪日记 / 药名 / 打卡
-		2. AudioData — 树洞录音 / 情绪语音 (本地 AES-256 加密)
-		3. ContactInfo — 紧急联系人 (失联通知用, R66 起业务暂停, 数据仅本地预存)
-		4. UserContent — 树洞文字 / 树洞录音元数据
+		v0.30 R108 revisit (P0-020): 删 HealthAndFitness 声明
+		(原注释: "PHQ-9 / GAD-7 / 情绪日记 / 药名 / 打卡")
+		Apple 5.1.3 used-but-not-declared + declared-but-not-used 抽审:
+		声明 HealthAndFitness 但**未**集成 HealthKit / HealthKit framework
+		(pubspec 无 health_kit, Runner.entitlements 空, Info.plist 无
+		NSHealthShareUsageDescription) → 5.1.3 拒审。
+		修: 删 HealthAndFitness dict, 3 类数据保留:
+		1. AudioData — 树洞录音 / 情绪语音 (本地 AES-256 加密)
+		2. ContactInfo — 紧急联系人 (失联通知用, R66 起业务暂停, 数据仅本地预存)
+		3. UserContent — 树洞文字 / 树洞录音元数据
+		PHQ-9 / GAD-7 / 情绪日记 / 药名 / 打卡 → 走 UserContent (用户自己产
+		生的内容, 不是 HealthKit 数据)。
+		长期 (R1.0): 真接 HealthKit 5-15d, 加回 HealthAndFitness + NSHealthShareUsageDescription
+		+ health_kit 依赖。
 	-->
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>
-		<dict>
-			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeHealthAndFitness</string>
-			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<false/>
-			<key>NSPrivacyCollectedDataTypeTracking</key>
-			<false/>
-			<key>NSPrivacyCollectedDataTypePurposes</key>
-			<array>
-				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
-			</array>
-		</dict>
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
 			<string>NSPrivacyCollectedDataTypeAudioData</string>

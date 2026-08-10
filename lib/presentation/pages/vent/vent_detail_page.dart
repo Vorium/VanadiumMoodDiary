@@ -68,14 +68,30 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     _completeSub?.cancel();
     _player.dispose();
     // P0-2: 清理临时解密文件(以防用户离开页面时还在播)
+    // v0.30 R108 revisit (P0-018): 之前 `try { deleteTempFile(...) }` 是
+    // fire-and-forget — return Future 但不 await, dispose() 立即返回,
+    // 调用方 (Flutter framework) 已经 dispose widget 树, 后续 async 路径
+    // 抛的 NoSuchMethodError / setState 错误**全吞**到 swallowError,用户
+    // 树洞明文 PII 文件残留 (设备 root 可读 = PIPL §28 漏洞)。
+    // 修: 用 unawaited(...) 显式标记, + .catchError 收口异常, 跟项目其他
+    // fire-and-forget Future (audio recorder stop / mood audio cleanup)
+    // 1:1 模式。
     if (_tempDecryptedPath != null) {
-      try {
-        ref.read(ventAudioStorageProvider).deleteTempFile(_tempDecryptedPath!);
-      } catch (e, st) {
-        // v0.22 round 30 (sp-en P1-3): 走 swallowError (app teardown 期间)
-        swallowError(where: 'vent_detail_page.dispose', error: e, stack: st);
-      }
+      final tempPath = _tempDecryptedPath!;
       _tempDecryptedPath = null;
+      unawaited(
+        ref
+            .read(ventAudioStorageProvider)
+            .deleteTempFile(tempPath)
+            .catchError((Object e, StackTrace st) {
+          // v0.22 round 30 (sp-en P1-3): 走 swallowError (app teardown 期间)
+          swallowError(
+            where: 'vent_detail_page.dispose',
+            error: e,
+            stack: st,
+          );
+        }),
+      );
     }
     super.dispose();
   }

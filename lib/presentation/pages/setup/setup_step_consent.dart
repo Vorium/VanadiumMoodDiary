@@ -18,7 +18,7 @@ import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// Step 0: 法律同意
 ///
-/// 用户必须勾选 4 个 checkbox 才能进入下一步(3 个协议 + 1 个年龄严正声明)。
+/// 用户必须勾选 5 个 checkbox 才能进入下一步(3 个协议 + 1 个年龄严正声明 + 1 个医疗免责声明)。
 /// 状态由父级管理（通过回调），本 widget 只负责 UI。
 class SetupStepConsent extends StatelessWidget {
   final bool consentUserAgreement;
@@ -26,14 +26,21 @@ class SetupStepConsent extends StatelessWidget {
   final bool consentSensitiveData;
   // v0.27 R83: 第 4 个勾选 — 年龄严正声明
   final bool consentAgeAttestation;
+  // R103: 第 5 个勾选 — 医学免责声明
+  final bool consentMedicalDisclaimer;
   final ValueChanged<bool> onConsentUserAgreementChanged;
   final ValueChanged<bool> onConsentPrivacyPolicyChanged;
   final ValueChanged<bool> onConsentSensitiveDataChanged;
   final ValueChanged<bool> onConsentAgeAttestationChanged;
+  final ValueChanged<bool> onConsentMedicalDisclaimerChanged;
   final VoidCallback onViewUserAgreement;
   final VoidCallback onViewPrivacyPolicy;
   final VoidCallback onViewSensitiveData;
+  final VoidCallback? onViewMedicalDisclaimer;
   final VoidCallback? onContinue;
+  // R104: 全部同意
+  final VoidCallback? onAgreeAll;
+  final VoidCallback? onViewAll;
 
   const SetupStepConsent({
     super.key,
@@ -41,19 +48,29 @@ class SetupStepConsent extends StatelessWidget {
     required this.consentPrivacyPolicy,
     required this.consentSensitiveData,
     required this.consentAgeAttestation,
+    required this.consentMedicalDisclaimer,
     required this.onConsentUserAgreementChanged,
     required this.onConsentPrivacyPolicyChanged,
     required this.onConsentSensitiveDataChanged,
     required this.onConsentAgeAttestationChanged,
+    required this.onConsentMedicalDisclaimerChanged,
     required this.onViewUserAgreement,
     required this.onViewPrivacyPolicy,
     required this.onViewSensitiveData,
+    this.onViewMedicalDisclaimer,
     this.onContinue,
+    this.onAgreeAll,
+    this.onViewAll,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final allChecked = consentUserAgreement &&
+        consentPrivacyPolicy &&
+        consentSensitiveData &&
+        consentAgeAttestation &&
+        consentMedicalDisclaimer;
     return SingleChildScrollView(
       key: const ValueKey(0),
       child: Column(
@@ -85,6 +102,14 @@ class SetupStepConsent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppTokens.spacingLg),
+          // R104: 一键全部同意
+          ConsentCheckRow(
+            checked: allChecked,
+            label: l10n.setupConsentAgreeAll,
+            onTap: onAgreeAll ?? () {},
+            onView: onViewAll ?? () {},
+          ),
+          const Divider(height: AppTokens.spacingLg),
           ConsentCheckRow(
             checked: consentUserAgreement,
             label: l10n.setupConsentUserAgreement,
@@ -112,9 +137,19 @@ class SetupStepConsent extends StatelessWidget {
           ConsentCheckRow(
             checked: consentAgeAttestation,
             label: l10n.setupLegalAgeAttestation,
-            onTap: () =>
-                onConsentAgeAttestationChanged(!consentAgeAttestation),
+            onTap: () => onConsentAgeAttestationChanged(!consentAgeAttestation),
             onView: () {},
+          ),
+          // R103 (P0-9): 第 5 个勾选 — 医学免责声明
+          // Apple Guideline 1.4.1 + Google Play 医疗 App 政策要求
+          const SizedBox(height: AppTokens.spacingSm),
+          ConsentCheckRow(
+            checked: consentMedicalDisclaimer,
+            label: l10n.setupConsentMedicalDisclaimer,
+            onTap: () => onConsentMedicalDisclaimerChanged(
+              !consentMedicalDisclaimer,
+            ),
+            onView: onViewMedicalDisclaimer ?? () {},
           ),
           const SizedBox(height: AppTokens.spacingXl),
           Builder(
@@ -122,7 +157,8 @@ class SetupStepConsent extends StatelessWidget {
               final allChecked = consentUserAgreement &&
                   consentPrivacyPolicy &&
                   consentSensitiveData &&
-                  consentAgeAttestation;
+                  consentAgeAttestation &&
+                  consentMedicalDisclaimer;
               return PrimaryButton(
                 onPressed: allChecked ? onContinue : null,
                 child: Text(l10n.setupConsentStart),

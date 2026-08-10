@@ -1,4 +1,4 @@
-﻿// v0.30 round 85 (CBT 重评效果图): score vs reratedScore 双线对比
+// v0.30 round 85 (CBT 重评效果图): score vs reratedScore 双线对比
 //
 // 跟 MoodHistoryChart 同模式 (fl_chart + RepaintBoundary + EmptyState):
 // - 数据 < 3 条 → 显示空态 (Card + icon + 2 text)
@@ -42,8 +42,7 @@ class ReratedScoreChart extends StatelessWidget {
   Widget _buildChart(BuildContext context) {
     // self-contained filter: caller 传进来的 entries 可能含 reratedScore == null
     // 的 partial CBT 记录 (cbtLevel=5 但没填完所有字段), 绘图前要剔除。
-    final withRerated =
-        entries.where((e) => e.reratedScore != null).toList();
+    final withRerated = entries.where((e) => e.reratedScore != null).toList();
     if (withRerated.length < 3) {
       return _emptyState(context);
     }

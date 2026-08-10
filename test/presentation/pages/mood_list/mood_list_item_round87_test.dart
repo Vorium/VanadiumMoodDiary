@@ -14,11 +14,11 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 
 void main() {
   Widget wrap(Widget child) => MaterialApp(
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    supportedLocales: AppLocalizations.supportedLocales,
-    locale: const Locale('zh'),
-    home: Scaffold(body: child),
-  );
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: Scaffold(body: child),
+      );
 
   testWidgets('3 栏 entry: 显示 timestamp + score emoji + note', (tester) async {
     final entry = MoodEntryEntity(

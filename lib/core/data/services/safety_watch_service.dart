@@ -15,6 +15,10 @@ import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/logic/safety_detector.dart';
 import 'package:chroniccare/l10n/app_localizations.dart' show AppLocalizations;
 
+// R101: SafetyCheckKind 移到 domain 层 safety_detector.dart, 这里 re-export
+export 'package:chroniccare/domain/logic/safety_detector.dart'
+    show SafetyCheckKind;
+
 /// "安全开关" 服务 — 死了么/撸了么 思路
 ///
 /// v0.10 (Round 4) 新增：
@@ -314,33 +318,6 @@ class SafetyWatchService {
       return const <ContactEntity>[];
     }
   }
-}
-
-/// 安全检查结果
-enum SafetyCheckKind {
-  /// 关闭
-  disabled,
-
-  /// 正常（< 阈值）
-  ok,
-
-  /// 没数据（新用户）
-  noData,
-
-  /// 今天已经发过告警
-  alertedToday,
-
-  /// 在 DND 时段，跳过
-  dndSuppressed,
-
-  /// 没有联系人（开启但没法通知）
-  noContacts,
-
-  /// 真的发告警了
-  alerted,
-
-  /// 出错
-  error,
 }
 
 class SafetyCheckResult {

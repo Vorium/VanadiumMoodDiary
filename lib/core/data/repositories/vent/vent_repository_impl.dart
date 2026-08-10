@@ -166,9 +166,8 @@ class VentRepositoryImpl implements VentRepository {
     // 没了但 DB 还有指针(下次 watchAll 解密 null 报错)。先删 DB 的话,
     // 即使后续文件删失败, DB 已经是干净状态, audio 残留 = 孤儿 (下
     // 次启动 purgeOrphanPlainFiles 清)。
-    final paths = await _db.select(_db.ventEntries)
-        .map((r) => r.audioPath)
-        .get();
+    final paths =
+        await _db.select(_db.ventEntries).map((r) => r.audioPath).get();
 
     final deleted = await _db.transaction(() async {
       return _db.ventDao.deleteAll();

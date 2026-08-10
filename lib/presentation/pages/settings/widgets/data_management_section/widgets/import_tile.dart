@@ -76,7 +76,8 @@ class ImportTile extends ConsumerWidget {
     if (!context.mounted) return;
     await showDialog<void>(
       context: context,
-      builder: (ctx) => ImportDialog(service: ref.read(dataExportServiceProvider)),
+      builder: (ctx) =>
+          ImportDialog(service: ref.read(dataExportServiceProvider)),
     );
   }
 }

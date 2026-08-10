@@ -9,10 +9,11 @@
  */
 "CFBundleDisplayName" = "ChronicCare";
 
-/* R100 (A-4): 5 项 usage description 英文基线 (跟 Info.plist 同步)
- * 中文 locale 走 zh-Hans / zh-Hant 覆盖。 */
-"NSMicrophoneUsageDescription" = "Used for voice input in the mood diary. Processed locally, files stored encrypted.";
-"NSSpeechRecognitionUsageDescription" = "Used for speech-to-text in the mood diary. Processed locally, never uploaded.";
+/* R103 (P0-5): 移除 NSMicrophone / NSSpeechRecognition / NSUserTracking
+ * R105: 恢复 NSMicrophone / NSSpeechRecognition (R104 ventAudioEnabled=true,
+ * 录音业务启用)。NSUserTracking 仍删 (项目无 IDFA)。
+ * 现保留实际使用的 4 项权限描述。 */
+"NSMicrophoneUsageDescription" = "Used to record voice notes for your vent posts and mood journal.";
+"NSSpeechRecognitionUsageDescription" = "Used to transcribe your voice notes into text in the mood journal.";
 "NSPhotoLibraryAddUsageDescription" = "Used to save medication report PDFs to your photo library.";
 "NSPhotoLibraryUsageDescription" = "Used to choose where to save when sharing medication report PDFs.";
-"NSUserTrackingUsageDescription" = "This app does not collect any tracking data. This declaration is for App Store transparency only.";

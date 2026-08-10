@@ -34,7 +34,8 @@ void main() {
   });
 
   group('task 30 PII 泄露修 — 损坏 JSON 兜底 + PII marker 不影响业务', () {
-    test('损坏 JSON 含 PII marker → 走 legacy free text 兜底 (note 保留原文, score=0, answers 空)',
+    test(
+        '损坏 JSON 含 PII marker → 走 legacy free text 兜底 (note 保留原文, score=0, answers 空)',
         () async {
       // v0.30 R95 task 30 lock-in: 损坏 JSON note 含 PII marker, 验证
       // 1) 兜底路径不抛

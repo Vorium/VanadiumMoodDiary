@@ -51,8 +51,25 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
   // 公开 4 档 (B 站对齐) + 1 隐藏档 (5 很好, 显示在最后一屏)
   static const _scores = [1, 2, 3, 4, 5];
 
-  int _selected = 3; // 默认选中"一般" (R82+ 评估是否改为 null)
+  int? _selected;
   bool _saving = false;
+  // 性能修复: PageController 从 build() 移到 initState，避免每次 rebuild 重建
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      initialPage: 2, // 默认居中"一般" (index 2 = score 3)
+      viewportFraction: 0.4,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   Future<void> _recordQuick(int score) async {
     if (_saving) return;
@@ -79,6 +96,14 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
         stack: st,
         note: '1 tap 速记 mood 失败, 用户可改走 MoodDialog',
       );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('记录失败，请重试'),
+            duration: AppTokens.snackBarDurationShort,
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -123,17 +148,15 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
             // (B 站同款, 主屏聚焦 1 档 + 左右滑探索)
             height: 80,
             child: PageView.builder(
-              controller: PageController(
-                initialPage: 2, // 默认居中"一般" (index 2 = score 3)
-                viewportFraction: 0.4,
-              ),
+              controller: _pageController,
               itemCount: _scores.length,
               onPageChanged: (i) => setState(() => _selected = _scores[i]),
               itemBuilder: (ctx, i) {
                 final score = _scores[i];
                 final isSelected = score == _selected;
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingXxs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppTokens.spacingXxs,),
                   child: PressFeedback(
                     onTap: _saving ? null : () => _recordQuick(score),
                     child: AnimatedContainer(
@@ -152,7 +175,8 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
                         children: [
                           Text(
                             MoodVisual.ipEmojiFor(score),
-                            style: const TextStyle(fontSize: AppTokens.fontSizeScoreXl),
+                            style: const TextStyle(
+                                fontSize: AppTokens.fontSizeScoreXl,),
                           ),
                           const SizedBox(height: 2),
                           Text(

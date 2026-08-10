@@ -25,6 +25,9 @@ abstract class CheckInRepository {
   /// 监听今天的每日打卡（type=normal）
   Stream<CheckInEntity?> watchToday();
 
+  /// 监听今天所有打卡（用于首页概览卡统计今日药物进度）
+  Stream<List<CheckInEntity>> watchTodayAll();
+
   /// 监听所有 normal 类型打卡（DB 级过滤，避免全表扫描）
   Stream<List<CheckInEntity>> watchNormalCheckIns();
 

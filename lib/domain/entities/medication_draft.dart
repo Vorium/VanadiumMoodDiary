@@ -13,6 +13,7 @@
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_form.dart';
 
 /// v0.25 round 60 (spen P1 #12 #4): 药物草稿 value object
 ///
@@ -48,6 +49,15 @@ class MedicationDraft {
   /// 停药日期 (isActive=false 时填, 默认 null)
   final DateTime? endDate;
 
+  /// v0.30 R101: 剂型 (片剂/胶囊/口服液/贴剂/注射/其他)
+  final MedicationForm form;
+
+  /// v0.30 R101: 颜色索引 (0-5, 对应 6 种药丸颜色)
+  final int colorIndex;
+
+  /// v0.30 R101: 备注
+  final String? notes;
+
   const MedicationDraft({
     required this.name,
     required this.dosage,
@@ -58,6 +68,9 @@ class MedicationDraft {
     this.refillReminderDays = 7,
     this.isActive = true,
     this.endDate,
+    this.form = MedicationForm.tablet,
+    this.colorIndex = 0,
+    this.notes,
   });
 
   /// copyWith 模式 — UI 编辑场景 (e.g. 改 dosage 不动 name)
@@ -83,6 +96,9 @@ class MedicationDraft {
     int? refillReminderDays,
     bool? isActive,
     DomainValue<DateTime?>? endDate,
+    MedicationForm? form,
+    int? colorIndex,
+    DomainValue<String?>? notes,
   }) {
     return MedicationDraft(
       name: name ?? this.name,
@@ -94,6 +110,9 @@ class MedicationDraft {
       refillReminderDays: refillReminderDays ?? this.refillReminderDays,
       isActive: isActive ?? this.isActive,
       endDate: endDate != null ? endDate.value : this.endDate,
+      form: form ?? this.form,
+      colorIndex: colorIndex ?? this.colorIndex,
+      notes: notes != null ? notes.value : this.notes,
     );
   }
 }

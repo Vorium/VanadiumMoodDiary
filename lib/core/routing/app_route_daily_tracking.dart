@@ -25,6 +25,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/daily_tracking_page.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/tracking_customize_page.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/treatment_page.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/anxiety_agitation_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/sleep_widgets.dart';
@@ -104,6 +105,15 @@ class AppRouteDailyTracking {
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
           const TreatmentPage(),
+          context,
+        ),
+      ),
+      // 自定义追踪项页 (排序/隐藏/收藏)
+      GoRoute(
+        path: '/daily-tracking/customize',
+        pageBuilder: (context, state) => AppRoutes.slideRightPage(
+          state.pageKey,
+          const TrackingCustomizePage(),
           context,
         ),
       ),

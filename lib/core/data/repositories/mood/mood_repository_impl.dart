@@ -37,6 +37,11 @@ class MoodRepositoryImpl implements MoodRepository {
   }
 
   @override
+  Stream<MoodEntryEntity?> watchLatest() {
+    return _db.moodDao.watchLatest().map((row) => row?.toEntity());
+  }
+
+  @override
   Future<int> add({required MoodEntryDraft draft}) {
     return _db.moodDao.insert(
       MoodEntriesCompanion.insert(
@@ -59,6 +64,8 @@ class MoodRepositoryImpl implements MoodRepository {
         coreBelief: Value(draft.coreBelief),
         behaviorResponse: Value(draft.behaviorResponse),
         period: Value(draft.period),
+        influenceFactorsJson: Value(draft.influenceFactorsJson ?? '[]'),
+        recordingMode: Value(draft.recordingMode),
       ),
     );
   }

@@ -91,8 +91,7 @@ void main() {
   });
 
   group('ConsentArtifact equatable 行为', () {
-    test('同字段 → 相等 (R82 注: 实际 class 无 == override, 是 identity 相等)',
-        () {
+    test('同字段 → 相等 (R82 注: 实际 class 无 == override, 是 identity 相等)', () {
       // 注: ConsentArtifact 是 const class, **未实现 == 运算符**。
       // 这是已知设计: domain Entity (e.g. MedicationEntity) 才有 == override,
       // ConsentArtifact 走 "immutable const + 引用相等" 简化模式。

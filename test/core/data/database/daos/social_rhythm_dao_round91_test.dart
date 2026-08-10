@@ -27,15 +27,17 @@ void main() {
   group('SocialRhythmDao (v0.30 round 91 新表)', () {
     test('insert + 3 个 time 字段全部 round-trip', () async {
       final date = DateTime(2026, 8, 1);
-      await dao.insert(SocialRhythmEntriesCompanion.insert(
-        date: date,
-        wakeTime: DateTime(2026, 8, 1, 7, 0),
-        firstMealTime: DateTime(2026, 8, 1, 8, 0),
-        lastMealTime: DateTime(2026, 8, 1, 19, 0),
-        socialMin: const Value(60),
-        workMin: const Value(480),
-        exerciseMin: const Value(30),
-      ),);
+      await dao.insert(
+        SocialRhythmEntriesCompanion.insert(
+          date: date,
+          wakeTime: DateTime(2026, 8, 1, 7, 0),
+          firstMealTime: DateTime(2026, 8, 1, 8, 0),
+          lastMealTime: DateTime(2026, 8, 1, 19, 0),
+          socialMin: const Value(60),
+          workMin: const Value(480),
+          exerciseMin: const Value(30),
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.length, 1);
@@ -49,12 +51,14 @@ void main() {
     });
 
     test('不传 socialMin/workMin/exerciseMin → 默认 0', () async {
-      await dao.insert(SocialRhythmEntriesCompanion.insert(
-        date: DateTime(2026, 8, 1),
-        wakeTime: DateTime(2026, 8, 1, 7, 0),
-        firstMealTime: DateTime(2026, 8, 1, 8, 0),
-        lastMealTime: DateTime(2026, 8, 1, 19, 0),
-      ),);
+      await dao.insert(
+        SocialRhythmEntriesCompanion.insert(
+          date: DateTime(2026, 8, 1),
+          wakeTime: DateTime(2026, 8, 1, 7, 0),
+          firstMealTime: DateTime(2026, 8, 1, 8, 0),
+          lastMealTime: DateTime(2026, 8, 1, 19, 0),
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.first.socialMin, 0);

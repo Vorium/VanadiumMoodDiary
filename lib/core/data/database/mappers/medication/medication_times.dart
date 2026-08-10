@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart' show MedicationRepositoryImpl;
+import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart'
+    show MedicationRepositoryImpl;
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 

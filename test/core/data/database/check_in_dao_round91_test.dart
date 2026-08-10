@@ -36,13 +36,17 @@ void main() {
               timestamp: ts,
               type: 'whodas',
               note: const Value(
-                  '{"score":24,"severity":2,"answers":[1,2,3,0,1,2,3,0,1,2,3,0]}',),
+                '{"score":24,"severity":2,"answers":[1,2,3,0,1,2,3,0,1,2,3,0]}',
+              ),
             ),
           );
 
       final result = await dao.getLatestAssessmentTimestamp();
-      expect(result, isNotNull,
-          reason: 'whodas 是 10 量表之一, timestamp 必须返回非 null',);
+      expect(
+        result,
+        isNotNull,
+        reason: 'whodas 是 10 量表之一, timestamp 必须返回非 null',
+      );
       expect(result, ts);
     });
 

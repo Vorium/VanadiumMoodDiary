@@ -52,15 +52,17 @@ class _FakeSleepRepository implements SleepRepositoryImpl {
   }) async {
     addCallCount++;
     final newId = _entries.length + 1;
-    _entries.add(SleepEntryEntity(
-      id: newId,
-      date: date,
-      bedtime: bedtime,
-      wakeTime: wakeTime,
-      durationMin: durationMin,
-      regularityScore: regularityScore,
-      note: note,
-    ),);
+    _entries.add(
+      SleepEntryEntity(
+        id: newId,
+        date: date,
+        bedtime: bedtime,
+        wakeTime: wakeTime,
+        durationMin: durationMin,
+        regularityScore: regularityScore,
+        note: note,
+      ),
+    );
     _ctrl.add(List.unmodifiable(_entries));
     return newId;
   }
@@ -89,7 +91,8 @@ void main() {
       overrides: [
         sleepRepositoryProvider.overrideWithValue(fakeRepo),
         sleepEntriesProvider.overrideWith(
-            (ref) => ref.watch(sleepRepositoryProvider).watchAll(),),
+          (ref) => ref.watch(sleepRepositoryProvider).watchAll(),
+        ),
       ],
       child: const MaterialApp(
         // v0.30 R91 Task 7: widget 用 l10n.sleepXxx, 测试需要 locale
@@ -107,8 +110,11 @@ void main() {
     await tester.pump();
 
     // 1. 初始: 空态 (EmptyState)
-    expect(find.text('暂无睡眠记录'), findsOneWidget,
-        reason: '空 entry 时显示 EmptyState title "暂无睡眠记录"',);
+    expect(
+      find.text('暂无睡眠记录'),
+      findsOneWidget,
+      reason: '空 entry 时显示 EmptyState title "暂无睡眠记录"',
+    );
 
     // 2. tap 添加按钮 → 弹 SleepEntryDialog
     await tester.tap(find.text('添加睡眠记录'));
@@ -121,18 +127,27 @@ void main() {
     expect(find.text('备注'), findsOneWidget);
     // 默认 23:00 → 07:00 = 8h = 480 min → durationLabel "8h00min"
     // dialog 显示 "时长: 8h00min" (Text widget 含前缀), 走 textContaining
-    expect(find.textContaining('8h00min'), findsOneWidget,
-        reason: '默认 bedtime=23:00 + wakeTime=07:00 跨午夜 → 8h00min',);
+    expect(
+      find.textContaining('8h00min'),
+      findsOneWidget,
+      reason: '默认 bedtime=23:00 + wakeTime=07:00 跨午夜 → 8h00min',
+    );
 
     // 4. tap 保存 → submit (调 repo.add, 关闭 dialog)
     await tester.tap(find.text('保存'));
     await tester.pumpAndSettle();
 
     // 5. 验证: repo.add() 被调 1 次
-    expect(fakeRepo.addCallCount, 1,
-        reason: '保存后 SleepRepository.add() 必须被调 1 次',);
+    expect(
+      fakeRepo.addCallCount,
+      1,
+      reason: '保存后 SleepRepository.add() 必须被调 1 次',
+    );
     // 6. dialog 关闭
-    expect(find.text('添加睡眠记录'), findsOneWidget,
-        reason: 'dialog 关闭后 "添加睡眠记录" 按钮重新可见',);
+    expect(
+      find.text('添加睡眠记录'),
+      findsOneWidget,
+      reason: 'dialog 关闭后 "添加睡眠记录" 按钮重新可见',
+    );
   });
 }

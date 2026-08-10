@@ -155,19 +155,18 @@ class _DailyTrackingMultiChartState extends State<DailyTrackingMultiChart> {
     );
   }
 
-  /// 4 指标 label (v0.30 R91 Task 6: 4 指标固定中文 label,
-  /// 跟 R91 Task 6 已有 chart test 1:1 匹配, 不走 l10n.{feature}Name 因为
-  /// 那是 子功能名 (e.g. 情绪日记), 不是指标名 (心境))
+  /// 4 指标 label
+  /// R102 (P0-7): 硬编码中文 → 走 ARB (chartMetricWeight/Sleep/Mood/Stress)
   String _metricName(String id, AppLocalizations l10n) {
     switch (id) {
       case 'weight':
-        return '体重';
+        return l10n.chartMetricWeight;
       case 'sleep':
-        return '睡眠';
+        return l10n.chartMetricSleep;
       case 'mood':
-        return '心境';
+        return l10n.chartMetricMood;
       case 'stress':
-        return '应激源';
+        return l10n.chartMetricStress;
     }
     return id;
   }

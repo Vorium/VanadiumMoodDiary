@@ -62,7 +62,8 @@ void main() {
         );
     return ProviderScope(
       overrides: [
-        allAssessmentEntriesProvider.overrideWith((ref) => Stream.value(entries)),
+        allAssessmentEntriesProvider
+            .overrideWith((ref) => Stream.value(entries)),
       ],
       child: MaterialApp.router(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

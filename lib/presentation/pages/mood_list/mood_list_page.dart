@@ -22,6 +22,7 @@
 //   跟 vent 严格隔离 (vent 独立表, 绝对不进任何分析)。
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
@@ -80,6 +81,12 @@ class _MoodListPageState extends ConsumerState<MoodListPage> {
 
     return PageScaffold(
       title: l10n.moodListPageTitle,
+      // R104: 添加新建情绪日记 FAB
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push('/mood/create'),
+        tooltip: l10n.moodDialogTitle,
+        child: const Icon(Icons.add),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

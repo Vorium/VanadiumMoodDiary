@@ -75,8 +75,7 @@ class MedicationReport {
     }
 
     // 漏服 = 期望 - 实际；多打的情况 clamp 到 0
-    final missedDoses =
-        (expectedDoses - actualDoses).clamp(0, expectedDoses);
+    final missedDoses = (expectedDoses - actualDoses).clamp(0, expectedDoses);
     // 补服 = 实际 - 期望（多打的，反映"漏服后补救"或"加量"）
     final extraDoses = (actualDoses - expectedDoses).clamp(0, 1 << 30);
     // 按时服药 = min(实际, 期望)

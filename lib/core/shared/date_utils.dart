@@ -1,0 +1,20 @@
+// R102 (P2): 日期工具函数单一来源
+//
+// 之前 safety_config_service.dart / safety_detector.dart / assessment_comparison.dart
+// 各自内联 daysBetween / isSameDay, 3 份重复代码。
+// 抽到 core/shared/ 供所有层共用 (shared/ 约束: 至少被 2 层用)。
+
+/// 跨日的"日历差"
+///
+/// 不直接用 Duration.inDays, 因为 DST / 时区可能导致 23.98 小时 ≈ 1 天
+/// 之类边界。
+int calendarDaysBetween(DateTime a, DateTime b) {
+  final aDay = DateTime(a.year, a.month, a.day);
+  final bDay = DateTime(b.year, b.month, b.day);
+  return bDay.difference(aDay).inDays;
+}
+
+/// 判断两个 DateTime 是否在同一天 (本地日期)
+bool isSameCalendarDay(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}

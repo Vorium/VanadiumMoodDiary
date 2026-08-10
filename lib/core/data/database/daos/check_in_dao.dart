@@ -77,6 +77,24 @@ class CheckInDao {
         .watchSingleOrNull();
   }
 
+  /// 监听今天所有打卡（用于首页概览卡统计今日药物进度）
+  Stream<List<CheckIn>> watchTodayAll() {
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+    return (_db.select(_db.checkIns)
+          ..where(
+            (t) =>
+                t.timestamp.isBiggerOrEqualValue(startOfDay) &
+                t.timestamp.isSmallerThanValue(endOfDay),
+          )
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+          ]))
+        .watch();
+  }
+
   /// 监听"正常"打卡 (排除评估/临时), 按时间倒序
   Stream<List<CheckIn>> watchNormal() {
     return (_db.select(_db.checkIns)

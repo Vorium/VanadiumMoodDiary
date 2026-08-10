@@ -126,14 +126,16 @@ void main() {
     });
 
     test('mask 邮箱', () {
-      final result = SwallowLogSink.sanitizeForLog('email: john.doe@example.com');
+      final result =
+          SwallowLogSink.sanitizeForLog('email: john.doe@example.com');
       expect(result, isNot(contains('john.doe@example.com')));
       // local 'john.doe' (8 chars) → j + 8 asterisks + @example.com
       expect(result, contains('j********@example.com'));
     });
 
     test('mask 长数字串 (身份证 / 银行卡)', () {
-      final result = SwallowLogSink.sanitizeForLog('idcard: 110101199001011234');
+      final result =
+          SwallowLogSink.sanitizeForLog('idcard: 110101199001011234');
       expect(result, isNot(contains('110101199001011234')));
       expect(result, contains('****'));
     });

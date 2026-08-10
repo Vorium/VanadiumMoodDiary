@@ -1,4 +1,4 @@
-﻿// v0.25 round 59: app_router.dart 退化为 routerProvider 入口 (god class 拆分)
+// v0.25 round 59: app_router.dart 退化为 routerProvider 入口 (god class 拆分)
 //
 // 之前 app_router.dart 418 行含:
 //   - 3 个 page transition helper
@@ -86,8 +86,8 @@ String? setupRedirect({
   required bool isSetupDone,
   required String matchedLocation,
 }) {
-  final goingToSetup = matchedLocation == '/setup' ||
-      matchedLocation.startsWith('/setup/');
+  final goingToSetup =
+      matchedLocation == '/setup' || matchedLocation.startsWith('/setup/');
 
   if (!isSetupDone && !goingToSetup) return '/setup';
   if (isSetupDone && goingToSetup) return '/';

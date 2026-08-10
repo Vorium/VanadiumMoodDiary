@@ -54,18 +54,21 @@ void main() {
     );
   }
 
-  testWidgets('homeFabHotline onPressed → 跳 /crisis-hotline 路由 (不再 snackbar stub)',
+  testWidgets(
+      'homeFabHotline onPressed → 跳 /crisis-hotline 路由 (不再 snackbar stub)',
       (tester) async {
     setBigView(tester);
-    final router = buildRouter(extraRoutes: [
-      GoRoute(
-        path: '/crisis-hotline',
-        builder: (context, state) => Scaffold(
-          appBar: AppBar(title: const Text('Crisis Hotline Test Marker')),
-          body: const Center(child: Text('crisis-hotline-marker-text')),
+    final router = buildRouter(
+      extraRoutes: [
+        GoRoute(
+          path: '/crisis-hotline',
+          builder: (context, state) => Scaffold(
+            appBar: AppBar(title: const Text('Crisis Hotline Test Marker')),
+            body: const Center(child: Text('crisis-hotline-marker-text')),
+          ),
         ),
-      ),
-    ],);
+      ],
+    );
 
     await tester.pumpWidget(
       ProviderScope(
@@ -80,14 +83,20 @@ void main() {
     await tester.pumpAndSettle();
 
     // 主页存在, /crisis-hotline marker 不在
-    expect(find.text('crisis-hotline-marker-text'), findsNothing,
-        reason: '初始路由 /, 不显示 crisis-hotline 页面',);
+    expect(
+      find.text('crisis-hotline-marker-text'),
+      findsNothing,
+      reason: '初始路由 /, 不显示 crisis-hotline 页面',
+    );
 
     // 展开 FAB toolbar (点主 FAB button)
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
-    expect(find.text('紧急热线'), findsOneWidget,
-        reason: '展开后 homeFabHotline label 可见',);
+    expect(
+      find.text('紧急热线'),
+      findsOneWidget,
+      reason: '展开后 homeFabHotline label 可见',
+    );
 
     // v0.30 round 92: widget test 模式下 context.push 偶发 silent no-op
     // (MaterialApp.router + Navigator 配合问题, 跟 production 路由 push
@@ -101,15 +110,21 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验路由跳到 /crisis-hotline
-    expect(router.routerDelegate.currentConfiguration.uri.toString(),
-        '/crisis-hotline',
-        reason: '/crisis-hotline 路由在 router 表已注册 + 可 navigate',);
-    expect(find.text('Crisis Hotline Test Marker'), findsOneWidget,
-        reason: '/crisis-hotline 路由的 builder 渲染',);
+    expect(
+      router.routerDelegate.currentConfiguration.uri.toString(),
+      '/crisis-hotline',
+      reason: '/crisis-hotline 路由在 router 表已注册 + 可 navigate',
+    );
+    expect(
+      find.text('Crisis Hotline Test Marker'),
+      findsOneWidget,
+      reason: '/crisis-hotline 路由的 builder 渲染',
+    );
     expect(find.text('crisis-hotline-marker-text'), findsOneWidget);
   });
 
-  testWidgets('homeFabTop onPressed → Scrollable.ensureVisible 滚到顶 (不再 snackbar stub)',
+  testWidgets(
+      'homeFabTop onPressed → Scrollable.ensureVisible 滚到顶 (不再 snackbar stub)',
       (tester) async {
     setBigView(tester);
     final router = buildRouter(extraRoutes: const []);
@@ -129,8 +144,11 @@ void main() {
     // 展开 FAB toolbar
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
-    expect(find.text('回到顶端'), findsOneWidget,
-        reason: '展开后 homeFabTop label 可见',);
+    expect(
+      find.text('回到顶端'),
+      findsOneWidget,
+      reason: '展开后 homeFabTop label 可见',
+    );
 
     // 拿主页 Scaffold 内的 Scrollable, 跳到底部
     final scrollableFinder = find.byType(Scrollable).first;
@@ -139,16 +157,22 @@ void main() {
 
     controller.jumpTo(controller.maxScrollExtent);
     await tester.pumpAndSettle();
-    expect(controller.pixels, greaterThan(0),
-        reason: 'precondition: 滚到底部后 pixels > 0',);
+    expect(
+      controller.pixels,
+      greaterThan(0),
+      reason: 'precondition: 滚到底部后 pixels > 0',
+    );
 
     // 点 homeFabTop → Scrollable.ensureVisible 滚到顶
     await tester.tap(find.text('回到顶端'));
     await tester.pumpAndSettle();
 
     // 验 pixels 回到 0 (顶) — Scrollable.ensureVisible 默认 alignment 0.0 = 顶
-    expect(controller.pixels, 0.0,
-        reason: 'homeFabTop onPressed 应滚到 minScrollExtent (顶)',);
+    expect(
+      controller.pixels,
+      0.0,
+      reason: 'homeFabTop onPressed 应滚到 minScrollExtent (顶)',
+    );
   });
 }
 

@@ -49,7 +49,10 @@ void main() {
     await tester.pumpAndSettle();
 
     // snackbar 显示 l10n.ventSwipeHint
-    expect(find.text(l10n.ventSwipeHint), findsAtLeast(1),
-        reason: 'task 48: 首次进入 vent list 必显示 swipe hint snackbar',);
+    expect(
+      find.text(l10n.ventSwipeHint),
+      findsAtLeast(1),
+      reason: 'task 48: 首次进入 vent list 必显示 swipe hint snackbar',
+    );
   });
 }

@@ -28,6 +28,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:chroniccare/core/data/services/encryption_service.dart';
+import 'package:chroniccare/core/data/utils/skip_backup.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// v0.23 (Round 43 spen-2): 加密 audio 文件管理基类
@@ -95,12 +96,18 @@ abstract class EncryptedAudioStorage {
   // ============================================================
 
   /// 取 audio 目录(不存在则创建)
+  ///
+  /// R108 (P0 #1): 创建后立即在 iOS 端标记目录不参与 iCloud Backup
+  /// (包括未来新加的 audio 文件)。精神心理患者树洞 / 情绪录音 = 最高敏感度
+  /// PII, 默认会随 iCloud Backup 上传 → 标记后 opt-out。
   Future<Directory> getDir() async {
     final docs = await getApplicationDocumentsDirectory();
     final dir = Directory(p.join(docs.path, dirName));
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
+    // R108 P0-1: 标记整个目录 = 子文件 / 未来新文件都不进 iCloud Backup
+    await SkipBackup.markAsSkipped(dir.path);
     return dir;
   }
 

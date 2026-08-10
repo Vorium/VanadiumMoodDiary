@@ -1,4 +1,4 @@
-﻿// v0.29 round 84 (CBT 思维记录): 3 栏 mode UI 改造
+// v0.29 round 84 (CBT 思维记录): 3 栏 mode UI 改造
 //
 // 改自 v0.28 (round 64) — 把 4 维度 MoodScoreChooser 替换为 3/5/7 栏档位切换
 // + CbtThreeColumnMode (3 栏) / CbtWizard stub (5/7 栏, Task 6 落地)
@@ -27,12 +27,14 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/entities/influence_category.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_audio_section.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/mood_influence_chips.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_submit_panel.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_tags.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_text_input.dart';
@@ -78,6 +80,12 @@ class MoodRecorderPage extends ConsumerStatefulWidget {
 class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   // ===== 跨 widget 状态 =====
   final Set<String> _tags = {};
+
+  // ===== v0.30 R101: 影响因素 =====
+  final List<String> _influenceFactors = [];
+
+  // ===== v0.30 R101: 记录模式 (瞬时/日常) =====
+  String _recordingMode = 'momentary';
 
   // ===== 文字备注 =====
   late final TextEditingController _noteController;
@@ -192,9 +200,8 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
               tags: _tags.toList(),
               note: hasText ? _noteController.text.trim() : null,
               audioPath: snap.audioPath,
-              audioTranscript: snap.finalTranscript.isEmpty
-                  ? null
-                  : snap.finalTranscript,
+              audioTranscript:
+                  snap.finalTranscript.isEmpty ? null : snap.finalTranscript,
               audioDurationMs: snap.audioDurationMs,
               situation: d.situation,
               automaticThought: d.automaticThought,
@@ -207,6 +214,12 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
               // v0.30 round 91: 心境时段 (morning/noon/evening/night/
               // unspecified), 透传 save → DB → mood_period_aggregator
               period: d.period,
+              // v0.30 R101: 影响因素
+              influenceFactorsJson: _influenceFactors.isEmpty
+                  ? null
+                  : InfluenceCodec.encode(_influenceFactors),
+              // v0.30 R101: 记录模式
+              recordingMode: _recordingMode,
             ),
           );
       if (!mounted) return;
@@ -283,14 +296,36 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                     ),
                     const SizedBox(height: AppTokens.spacingMd),
 
+                    // v0.30 R101: 记录模式切换 (此刻/今天)
+                    SegmentedButton<String>(
+                      segments: [
+                        ButtonSegment(
+                          value: 'momentary',
+                          label: Text(l10n.moodModeMomentary),
+                          icon: const Icon(Icons.access_time, size: 16),
+                        ),
+                        ButtonSegment(
+                          value: 'daily',
+                          label: Text(l10n.moodModeDaily),
+                          icon: const Icon(Icons.today, size: 16),
+                        ),
+                      ],
+                      selected: {_recordingMode},
+                      onSelectionChanged: (selection) {
+                        setState(() {
+                          _recordingMode = selection.first;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: AppTokens.spacingSm),
+
                     // 中间: 模式内容 (3 栏 vs wizard)
                     // v0.30 round 92 (audit-fixes / P0 #11): wizard
                     // 末步 "完成" 按钮调 onSaveRequested → 父 _save 触发
                     // moodRepository.add 把 5/7 栏 CBT 字段落库 (修前 bug:
                     // 直接 pop, 父 _save 没调, 字段丢库)。
                     switch (cbtState.level) {
-                      ThoughtRecordLevel.three =>
-                        const CbtThreeColumnMode(),
+                      ThoughtRecordLevel.three => const CbtThreeColumnMode(),
                       ThoughtRecordLevel.five ||
                       ThoughtRecordLevel.seven =>
                         CbtWizard(onSaveRequested: _save),
@@ -301,6 +336,19 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                     // 5 段 (morning/noon/evening/night/unspecified), 默认 unspecified
                     // 走 cbtDraftProvider 状态, 透传到 save → DB。
                     const PeriodField(),
+                    const SizedBox(height: AppTokens.spacingSm),
+
+                    // v0.30 R101: 影响因素标签 (参照 Apple Health State of Mind)
+                    MoodInfluenceChips(
+                      selected: _influenceFactors,
+                      onChanged: (factors) {
+                        setState(() {
+                          _influenceFactors
+                            ..clear()
+                            ..addAll(factors);
+                        });
+                      },
+                    ),
                     const SizedBox(height: AppTokens.spacingSm),
 
                     // 底部: 标签 + 文字备注 + 录音 + 保存/取消

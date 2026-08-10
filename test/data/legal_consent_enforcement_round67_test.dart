@@ -159,7 +159,7 @@ void main() {
   // (use case 0 副作用, caller home_page 拿 disabled 早返不推通知)。
   group('A-3.2 撤回 safety 同意 → 关怀 use case 返 disabled', () {
     const useCase = FireCareStrategyUseCase();
-  
+
     test('isSafetyConsentWithdrawn=true → disabled, 不评 strategy', () {
       final r = useCase(
         FireCareStrategyInput(
@@ -172,7 +172,7 @@ void main() {
       expect(r.strategy, CareTriggerType.none);
       expect(r.shouldFire, isFalse);
     });
-  
+
     test('isSafetyConsentWithdrawn=false → 正常命中 secondDayMissed', () {
       final r = useCase(
         FireCareStrategyInput(

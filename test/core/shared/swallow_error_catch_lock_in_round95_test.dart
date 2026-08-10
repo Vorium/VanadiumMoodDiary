@@ -88,7 +88,8 @@ void main() {
   // ==================== AssessmentRecord.tryFromEntity ====================
   // R23 round 39 (P1-10): catch (_) → swallowError, 失败返 null
 
-  group('AssessmentRecord.tryFromEntity — swallowError lock-in (R23 P1-10)', () {
+  group('AssessmentRecord.tryFromEntity — swallowError lock-in (R23 P1-10)',
+      () {
     test('note 是无效 JSON: 不抛, 返 null (catch 触发 swallowError)', () {
       final c = CheckInEntity(
         id: 1,
@@ -146,6 +147,8 @@ void main() {
           startDate: DateTime.utc(2026, 1, 1),
           isActive: true,
           refillReminderDays: 7,
+          form: 'tablet',
+          colorIndex: 0,
         );
 
     test('invalid JSON: 不抛, 返 const [] (catch 触发 swallowError)', () {

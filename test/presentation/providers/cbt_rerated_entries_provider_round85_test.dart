@@ -19,25 +19,27 @@ void main() {
     test('过滤 3 栏 entries (cbtLevel null), 只返回 5/7 栏', () {
       final container = ProviderContainer(
         overrides: [
-          moodEntriesProvider.overrideWith((ref) => [
-            MoodEntryEntity(
-              id: 1,
-              timestamp: DateTime(2026, 8, 1),
-              score: 3,
-              note: '3-栏',
-            ),
-            MoodEntryEntity(
-              id: 2,
-              timestamp: DateTime(2026, 8, 2),
-              score: 4,
-              situation: 's',
-              automaticThought: 'at',
-              evidenceFor: 'ef',
-              evidenceAgainst: 'ea',
-              alternativeThought: 'alt',
-              reratedScore: 3,
-            ),
-          ],),
+          moodEntriesProvider.overrideWith(
+            (ref) => [
+              MoodEntryEntity(
+                id: 1,
+                timestamp: DateTime(2026, 8, 1),
+                score: 3,
+                note: '3-栏',
+              ),
+              MoodEntryEntity(
+                id: 2,
+                timestamp: DateTime(2026, 8, 2),
+                score: 4,
+                situation: 's',
+                automaticThought: 'at',
+                evidenceFor: 'ef',
+                evidenceAgainst: 'ea',
+                alternativeThought: 'alt',
+                reratedScore: 3,
+              ),
+            ],
+          ),
         ],
       );
       addTearDown(container.dispose);
@@ -49,21 +51,23 @@ void main() {
     test('7 栏 entries 也返回', () {
       final container = ProviderContainer(
         overrides: [
-          moodEntriesProvider.overrideWith((ref) => [
-            MoodEntryEntity(
-              id: 1,
-              timestamp: DateTime(2026, 8, 1),
-              score: 2,
-              situation: 's',
-              automaticThought: 'at',
-              evidenceFor: 'ef',
-              evidenceAgainst: 'ea',
-              alternativeThought: 'alt',
-              reratedScore: 4,
-              coreBelief: 'cb',
-              behaviorResponse: 'br',
-            ),
-          ],),
+          moodEntriesProvider.overrideWith(
+            (ref) => [
+              MoodEntryEntity(
+                id: 1,
+                timestamp: DateTime(2026, 8, 1),
+                score: 2,
+                situation: 's',
+                automaticThought: 'at',
+                evidenceFor: 'ef',
+                evidenceAgainst: 'ea',
+                alternativeThought: 'alt',
+                reratedScore: 4,
+                coreBelief: 'cb',
+                behaviorResponse: 'br',
+              ),
+            ],
+          ),
         ],
       );
       addTearDown(container.dispose);

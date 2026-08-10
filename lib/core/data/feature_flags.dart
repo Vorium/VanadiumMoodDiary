@@ -66,7 +66,8 @@ class FeatureFlags {
   static const bool _prodFiveVendorPushEnabled = false;
   // R93 阶段 2 新增: vent audio 录音业务闭环不全 (storage / export 业务暂停)。
   // vent_compose_page + mood_recorder_page 隐藏 mic 录音 button。
-  static const bool _prodVentAudioEnabled = false;
+  // R104: 启用语音录制，支持用户录制语音存入树洞
+  static const bool _prodVentAudioEnabled = true;
 
   // ====== Test override (nullable, null = use _prod) ======
   static bool? _currentEmergencyContactEnabled;

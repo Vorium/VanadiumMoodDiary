@@ -14,7 +14,9 @@ import 'package:chroniccare/domain/logic/scale_registry.dart';
 
 void main() {
   group('allScales 中心化', () {
-    test('allScales 长度 = 10 (PHQ-9/GAD-7/ISI/PSS/WHODAS/Level2×4/ASRM, [0]=PHQ-9)', () {
+    test(
+        'allScales 长度 = 10 (PHQ-9/GAD-7/ISI/PSS/WHODAS/Level2×4/ASRM, [0]=PHQ-9)',
+        () {
       expect(allScales().length, 10);
       expect(allScales()[0].id, 'phq9'); // 顺序固定: PHQ-9 临床优先
     });

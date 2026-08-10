@@ -30,21 +30,23 @@ void main() {
         reratedScore: 3,
       ),
     ];
-    await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('zh'),
-      home: Scaffold(
-        body: SizedBox(
-          width: 400,
-          height: 600,
-          child: TestDayDetailCard(
-            date: DateTime(2026, 8, 4),
-            moodEntries: entries,
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: Scaffold(
+          body: SizedBox(
+            width: 400,
+            height: 600,
+            child: TestDayDetailCard(
+              date: DateTime(2026, 8, 4),
+              moodEntries: entries,
+            ),
           ),
         ),
       ),
-    ),);
+    );
     expect(find.text('CBT 5 栏'), findsOneWidget);
     expect(find.text('情境: 开会迟到'), findsOneWidget);
     expect(find.text('自动思维: 大家觉得我不靠谱'), findsOneWidget);
@@ -59,21 +61,23 @@ void main() {
         note: '普通记录',
       ),
     ];
-    await tester.pumpWidget(MaterialApp(
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('zh'),
-      home: Scaffold(
-        body: SizedBox(
-          width: 400,
-          height: 600,
-          child: TestDayDetailCard(
-            date: DateTime(2026, 8, 4),
-            moodEntries: entries,
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: Scaffold(
+          body: SizedBox(
+            width: 400,
+            height: 600,
+            child: TestDayDetailCard(
+              date: DateTime(2026, 8, 4),
+              moodEntries: entries,
+            ),
           ),
         ),
       ),
-    ),);
+    );
     expect(find.text('CBT 5 栏'), findsNothing);
   });
 }

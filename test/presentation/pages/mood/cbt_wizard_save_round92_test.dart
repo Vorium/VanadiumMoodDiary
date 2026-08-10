@@ -97,6 +97,10 @@ class _FakeMoodRepository implements MoodRepository {
 
   @override
   Stream<List<MoodEntryEntity>> watchToday() => const Stream.empty();
+
+  @override
+  Stream<MoodEntryEntity?> watchLatest() => Stream.value(
+      _store.isNotEmpty ? _store.last : null,);
 }
 
 void main() {
@@ -140,9 +144,7 @@ void main() {
     // 切到 5 栏 mode (setLevel 会跳到第一个未填 step)
     container.read(cbtDraftProvider.notifier).setLevel(ThoughtRecordLevel.five);
     // step 0 情境
-    container
-        .read(cbtDraftProvider.notifier)
-        .updateField(situation: '今天开会迟到了');
+    container.read(cbtDraftProvider.notifier).updateField(situation: '今天开会迟到了');
     container.read(cbtDraftProvider.notifier).setStep(1);
     // step 1 自动思维
     container
@@ -162,20 +164,20 @@ void main() {
     container
         .read(cbtDraftProvider.notifier)
         .updateField(alternativeThought: '一次迟到不能说明所有问题');
-    container
-        .read(cbtDraftProvider.notifier)
-        .updateField(reratedScore: 4);
+    container.read(cbtDraftProvider.notifier).updateField(reratedScore: 4);
     // 跳到 step 4 (5 栏确认页, lastStep = "完成" 按钮)
     container.read(cbtDraftProvider.notifier).setStep(4);
   }
 
   /// 走完 7 栏 wizard 所有 step + 填字段
   void fillSevenColumnFields(
-      WidgetTester tester, ProviderContainer container,) {
-    container.read(cbtDraftProvider.notifier).setLevel(ThoughtRecordLevel.seven);
+    WidgetTester tester,
+    ProviderContainer container,
+  ) {
     container
         .read(cbtDraftProvider.notifier)
-        .updateField(situation: '今天开会迟到了');
+        .setLevel(ThoughtRecordLevel.seven);
+    container.read(cbtDraftProvider.notifier).updateField(situation: '今天开会迟到了');
     container.read(cbtDraftProvider.notifier).setStep(1);
     container
         .read(cbtDraftProvider.notifier)
@@ -192,14 +194,10 @@ void main() {
     container
         .read(cbtDraftProvider.notifier)
         .updateField(alternativeThought: '一次迟到不能说明所有问题');
-    container
-        .read(cbtDraftProvider.notifier)
-        .updateField(reratedScore: 4);
+    container.read(cbtDraftProvider.notifier).updateField(reratedScore: 4);
     container.read(cbtDraftProvider.notifier).setStep(4);
     // step 4 = 7 栏核心信念
-    container
-        .read(cbtDraftProvider.notifier)
-        .updateField(coreBelief: '我应该完美');
+    container.read(cbtDraftProvider.notifier).updateField(coreBelief: '我应该完美');
     container.read(cbtDraftProvider.notifier).setStep(5);
     // step 5 = 7 栏行为应对
     container
@@ -209,8 +207,7 @@ void main() {
     container.read(cbtDraftProvider.notifier).setStep(6);
   }
 
-  testWidgets(
-      '5 栏 wizard 走完 5 步 → 点 "完成" 按钮 → moodRepository.add 被调 (字段不丢)',
+  testWidgets('5 栏 wizard 走完 5 步 → 点 "完成" 按钮 → moodRepository.add 被调 (字段不丢)',
       (tester) async {
     setBigView(tester);
     final fakeRepo = _FakeMoodRepository();
@@ -232,26 +229,49 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验 moodRepository.add 被调, 字段不丢
-    expect(fakeRepo.lastAddedDraft, isNotNull,
-        reason: '5 栏 "完成" 按钮应触发父 save → moodRepository.add',);
-    expect(fakeRepo.lastAddedDraft!.situation, '今天开会迟到了',
-        reason: '5 栏 situation 字段应透传',);
-    expect(fakeRepo.lastAddedDraft!.automaticThought, '同事会觉得我不靠谱',
-        reason: '5 栏 automaticThought 字段应透传',);
-    expect(fakeRepo.lastAddedDraft!.evidenceFor, '确实迟到了 10 分钟',
-        reason: '5 栏 evidenceFor 字段应透传',);
-    expect(fakeRepo.lastAddedDraft!.evidenceAgainst, '其他同事偶尔也迟到',
-        reason: '5 栏 evidenceAgainst 字段应透传',);
-    expect(fakeRepo.lastAddedDraft!.alternativeThought, '一次迟到不能说明所有问题',
-        reason: '5 栏 alternativeThought 字段应透传',);
-    expect(fakeRepo.lastAddedDraft!.reratedScore, 4,
-        reason: '5 栏 reratedScore 字段应透传',);
-    expect(fakeRepo.lastAddedDraft!.coreBelief, isNull,
-        reason: '5 栏 coreBelief 应为 null (5 栏不包含)',);
+    expect(
+      fakeRepo.lastAddedDraft,
+      isNotNull,
+      reason: '5 栏 "完成" 按钮应触发父 save → moodRepository.add',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.situation,
+      '今天开会迟到了',
+      reason: '5 栏 situation 字段应透传',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.automaticThought,
+      '同事会觉得我不靠谱',
+      reason: '5 栏 automaticThought 字段应透传',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.evidenceFor,
+      '确实迟到了 10 分钟',
+      reason: '5 栏 evidenceFor 字段应透传',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.evidenceAgainst,
+      '其他同事偶尔也迟到',
+      reason: '5 栏 evidenceAgainst 字段应透传',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.alternativeThought,
+      '一次迟到不能说明所有问题',
+      reason: '5 栏 alternativeThought 字段应透传',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.reratedScore,
+      4,
+      reason: '5 栏 reratedScore 字段应透传',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.coreBelief,
+      isNull,
+      reason: '5 栏 coreBelief 应为 null (5 栏不包含)',
+    );
   });
 
-  testWidgets(
-      '7 栏 wizard 走完 7 步 → 点 "完成" 按钮 → moodRepository.add 被调 (字段不丢)',
+  testWidgets('7 栏 wizard 走完 7 步 → 点 "完成" 按钮 → moodRepository.add 被调 (字段不丢)',
       (tester) async {
     setBigView(tester);
     final fakeRepo = _FakeMoodRepository();
@@ -273,12 +293,21 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验 moodRepository.add 被调, 7 栏独有字段 (coreBelief / behaviorResponse) 透传
-    expect(fakeRepo.lastAddedDraft, isNotNull,
-        reason: '7 栏 "完成" 按钮应触发父 save → moodRepository.add',);
+    expect(
+      fakeRepo.lastAddedDraft,
+      isNotNull,
+      reason: '7 栏 "完成" 按钮应触发父 save → moodRepository.add',
+    );
     expect(fakeRepo.lastAddedDraft!.situation, '今天开会迟到了');
-    expect(fakeRepo.lastAddedDraft!.coreBelief, '我应该完美',
-        reason: '7 栏 coreBelief 字段应透传',);
-    expect(fakeRepo.lastAddedDraft!.behaviorResponse, '下次提前 5 分钟准备',
-        reason: '7 栏 behaviorResponse 字段应透传',);
+    expect(
+      fakeRepo.lastAddedDraft!.coreBelief,
+      '我应该完美',
+      reason: '7 栏 coreBelief 字段应透传',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.behaviorResponse,
+      '下次提前 5 分钟准备',
+      reason: '7 栏 behaviorResponse 字段应透传',
+    );
   });
 }

@@ -63,7 +63,8 @@ void main() {
       expect(l10n.migrationFailedErrorPrefix, '错误');
     });
 
-    test('en locale: migrationFailedInitData = Unable to initialize local data', () {
+    test('en locale: migrationFailedInitData = Unable to initialize local data',
+        () {
       final l10n = AppLocalizationsEn();
       expect(l10n.migrationFailedInitData, 'Unable to initialize local data');
       expect(l10n.migrationFailedActionHint, contains('restarting'));
@@ -100,12 +101,14 @@ void main() {
       // 排除注释行 (// 开头) — 注释里出现 "无法初始化本地数据" 是 OK 的
       // (e.g. 引用 R95 task 53 改动说明)
       final lines = await File('lib/main.dart').readAsLines();
-      final codeLines = lines.where((line) => !line.trimLeft().startsWith('//'));
+      final codeLines =
+          lines.where((line) => !line.trimLeft().startsWith('//'));
       final codeContent = codeLines.join('\n');
       expect(
         codeContent.contains("'无法初始化本地数据'"),
         isFalse,
-        reason: 'R95 task 53: main.dart 代码不应有硬编码"无法初始化本地数据", 走 l10n.migrationFailedInitData',
+        reason:
+            'R95 task 53: main.dart 代码不应有硬编码"无法初始化本地数据", 走 l10n.migrationFailedInitData',
       );
       expect(
         codeContent.contains('"无法初始化本地数据"'),
@@ -114,11 +117,16 @@ void main() {
       );
     });
 
-    test('main.dart 0 硬编码 "启动中" (避免未来回归)', () async {
-      // R95 task 53 范围: 不强制改 _MigrationPromptApp 的 loading skeleton
-      // (它内部无硬编码中文), 但 lock-in 防止未来回归加硬编码
-      // 这个 test 故意 skip (范围外), 仅作为 R95 task 53 完成度的辅助 lock-in
-    }, skip: '范围外: _MigrationPromptApp 走 LoadingSkeleton, 无硬编码中文, lock-in 由 widget test 验证',);
+    test(
+      'main.dart 0 硬编码 "启动中" (避免未来回归)',
+      () async {
+        // R95 task 53 范围: 不强制改 _MigrationPromptApp 的 loading skeleton
+        // (它内部无硬编码中文), 但 lock-in 防止未来回归加硬编码
+        // 这个 test 故意 skip (范围外), 仅作为 R95 task 53 完成度的辅助 lock-in
+      },
+      skip:
+          '范围外: _MigrationPromptApp 走 LoadingSkeleton, 无硬编码中文, lock-in 由 widget test 验证',
+    );
 
     test('AppLocalizations 8 新 key 都暴露 getter', () {
       // 验证 generated AppLocalizations 有 8 个 getter (确保 gen-l10n 跑过)

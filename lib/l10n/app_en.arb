@@ -1317,7 +1317,7 @@
   },
   "safetyCheckResultDndSuppressed": "DND window, alert skipped",
   "safetyCheckResultNoContacts": "No emergency contacts, alert not sent",
-  "safetyCheckResultAlertedMocked": "**Dev mode**, contacts not actually notified (mock: {mocked})",
+  "safetyCheckResultAlertedMocked": "Test notification sent ({mocked} contacts, not actually delivered)",
   "@safetyCheckResultAlertedMocked": {
     "placeholders": {
       "mocked": {
@@ -2217,6 +2217,22 @@
   "@dailyTrackingMultiChartTitle": {
     "description": "v0.30 R91: Multi-metric trend chart title"
   },
+  "chartMetricWeight": "Weight",
+  "@chartMetricWeight": {
+    "description": "R102: Multi-metric trend chart — weight metric name"
+  },
+  "chartMetricSleep": "Sleep",
+  "@chartMetricSleep": {
+    "description": "R102: Multi-metric trend chart — sleep metric name"
+  },
+  "chartMetricMood": "Mood",
+  "@chartMetricMood": {
+    "description": "R102: Multi-metric trend chart — mood metric name"
+  },
+  "chartMetricStress": "Stress",
+  "@chartMetricStress": {
+    "description": "R102: Multi-metric trend chart — stress metric name"
+  },
   "dailyTrackingLastTime": "{time} record",
   "@dailyTrackingLastTime": {
     "description": "v0.30 R91: Card lastValue time placeholder",
@@ -2875,5 +2891,259 @@
   "dataExportRetentionClipboard": "Clipboard + user saves to encrypted storage themselves",
   "@dataExportRetentionClipboard": {
     "description": "v0.30 R100 (P1#9): export consent dialog retention placeholder"
-  }
+  },
+
+  "medPageTitle": "Medications",
+  "medAddTooltip": "Add medication",
+  "medTodaySchedule": "Today's Schedule",
+  "medMyMedications": "My Medications",
+  "medQuickActions": "Quick Actions",
+  "medCalendar": "Calendar",
+  "medRefill": "Refills",
+  "medSlotMorning": "Morning",
+  "medSlotAfternoon": "Afternoon",
+  "medSlotEvening": "Evening",
+  "medSlotBedtime": "Bedtime",
+  "medEmptyTitle": "No medications yet",
+  "medEmptySubtitle": "Tap + to add your first medication",
+  "medNoScheduleToday": "No medications scheduled today",
+  "medAddTitle": "Add Medication",
+  "medAddStep1Title": "Medication Info",
+  "medAddStep2Title": "Dosage & Schedule",
+  "medAddStep3Title": "Confirm",
+  "medAddNameLabel": "Medication name",
+  "medAddNameHint": "e.g., Sertraline",
+  "medAddFormLabel": "Form",
+  "medAddDosageLabel": "Dose per time",
+  "medAddTimeLabel": "Schedule",
+  "medAddTimeAdd": "Add time",
+  "medAddColorLabel": "Color (optional, for visual ID)",
+  "medAddConfirmName": "Name",
+  "medAddConfirmForm": "Form",
+  "medAddConfirmDosage": "Dosage",
+  "medAddConfirmTime": "Time",
+  "medAddPrev": "Back",
+  "medAddNext": "Next",
+  "medAddSave": "Save",
+  "medAddColorN": "Medication color {n}",
+  "medFormTablet": "Tablet",
+  "medFormCapsule": "Capsule",
+  "medFormLiquid": "Liquid",
+  "medFormPatch": "Patch",
+  "medFormInjection": "Injection",
+  "medFormOther": "Other",
+  "medDetailTitle": "Medication Detail",
+  "medNotFound": "Medication not found",
+
+  "moodReminderTitle": "Mood Logging Reminder",
+  "moodReminderSubtitle": "Daily reminder to log your mood",
+  "moodReminderTimeLabel": "Reminder time",
+  "moodReminderEnabled": "Enable reminder",
+
+  "moodInfluenceTitle": "Influence Factors",
+  "moodInfluenceSubtitle": "What influenced your mood? (select multiple)",
+  "moodInfluenceRelationships": "Relationships",
+  "moodInfluenceHealth": "Health",
+  "moodInfluenceActivities": "Activities",
+  "moodInfluenceMindfulness": "Mindfulness",
+  "moodInfluenceWeather": "Weather",
+  "moodInfluenceOther": "Other",
+
+  "influenceFactorFamily": "Family",
+  "influenceFactorFriend": "Friends",
+  "influenceFactorPartner": "Partner",
+  "influenceFactorChild": "Children",
+  "influenceFactorColleague": "Colleagues",
+  "influenceFactorExercise": "Exercise",
+  "influenceFactorSick": "Sick",
+  "influenceFactorGoodSleep": "Good Sleep",
+  "influenceFactorHealthyDiet": "Healthy Diet",
+  "influenceFactorWork": "Work",
+  "influenceFactorHobby": "Hobbies",
+  "influenceFactorTravel": "Travel",
+  "influenceFactorCommute": "Commute",
+  "influenceFactorShopping": "Shopping",
+  "influenceFactorGaming": "Gaming",
+  "influenceFactorReading": "Reading",
+  "influenceFactorEntertainment": "Entertainment",
+  "influenceFactorMeditation": "Meditation",
+  "influenceFactorBreathing": "Breathing Exercise",
+  "influenceFactorJournaling": "Journaling",
+  "influenceFactorYoga": "Yoga",
+  "influenceFactorSunny": "Sunny",
+  "influenceFactorCloudy": "Cloudy",
+  "influenceFactorRainy": "Rainy",
+  "influenceFactorSnowy": "Snowy",
+  "influenceFactorWindy": "Windy",
+
+  "moodDetailTitle": "Mood Detail",
+  "moodDetailFactors": "Influence Factors",
+  "moodDetailMoodState": "Mood State",
+  "moodDetail4D": "4 Dimensions",
+  "moodDetailCbtRecord": "CBT Thought Record",
+  "moodTrendTitle": "Mood Trends",
+  "moodTrendWeek": "Last 7 Days",
+  "moodTrendMonth": "Last 30 Days",
+  "moodTrendDistribution": "Score Distribution",
+  "moodTrendNoData": "No data yet",
+  "moodEditTooltip": "Edit",
+  "moodDeleteTooltip": "Delete",
+  "moodDeleteConfirm": "Are you sure you want to delete this record?",
+  "moodFactorAnalysis": "Factor Analysis",
+  "moodFactorAvgScore": "Avg Score",
+  "moodFactorCount": "Records",
+  "navMedication": "Medications",
+  "moodModeMomentary": "Right Now",
+  "moodModeDaily": "Overall Today",
+  "moodTrendWeekTitle": "Last 7 Days Trend",
+  "moodTrendMonthTitle": "Last 30 Days Trend",
+  "moodTrendDistTitle": "Score Distribution",
+  "moodTrendCbtTitle": "CBT Re-rating Effect",
+  "moodTrendCbtHint": "Positive = improved, Negative = worse",
+  "moodTrendCbtEmpty": "No CBT re-rating data yet",
+  "moodTrendRecords": "records",
+  "medDetailActive": "Active",
+  "medDetailStopped": "Stopped",
+  "medDetailAdherence": "Adherence",
+  "medDetailLast30": "Last 30 days",
+  "medDetailDays": "Days taken",
+  "medDetailLast30Record": "Last 30 days",
+  "medDetailEdit": "Edit",
+  "medDetailRefill": "Refill",
+  "medDetailNoFactors": "No influence factor data yet",
+  "moodCbtSituation": "Situation",
+  "moodCbtAutoThought": "Automatic Thought",
+  "moodCbtEvidenceFor": "Evidence For",
+  "moodCbtEvidenceAgainst": "Evidence Against",
+  "moodCbtAltThought": "Alternative Thought",
+  "moodCbtRerated": "Re-rated Score",
+  "moodCbtCoreBelief": "Core Belief",
+  "moodCbtBehavior": "Behavioral Response",
+  "moodAudioRecording": "Recording {duration}",
+  "moodDeleted": "Deleted",
+  "moodPeriodMorning": "Morning",
+  "moodPeriodAfternoon": "Afternoon",
+  "moodPeriodEvening": "Evening",
+  "moodPeriodNight": "Night",
+  "settingsProfileTitle": "Profile",
+  "settingsProfileSubtitle": "Health records, medical info",
+  "todaySummaryCheckIn": "Check-in",
+  "todaySummaryMeds": "Meds",
+  "todaySummaryMood": "Mood",
+  "todaySummaryStreak": "Streak",
+  "todaySummaryStreakDays": "{count}d",
+  "@todaySummaryStreakDays": {
+    "description": "R103: Today summary card streak days (placeholder {count} is day count)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setupConsentMedicalDisclaimer": "I have read and understand the Medical Disclaimer: this app does not provide medical advice, diagnosis, or treatment",
+  "setupConsentViewDisclaimer": "View",
+
+  "trackingCustomize": "Customize Trackers",
+  "trackingPin": "Pin to Top",
+  "trackingUnpin": "Unpin",
+  "trackingHide": "Hide This Item",
+  "trackingPinned": "Pinned",
+  "trackingCategoryEmotional": "Emotional State",
+  "trackingCategoryPhysical": "Physical Metrics",
+  "trackingCategoryBehavioral": "Behavioral Rhythm",
+  "trackingCategoryMedical": "Medical Records",
+  "todayTrackingSummary": "Tracked {tracked}/{total} today",
+  "@todayTrackingSummary": {
+    "description": "R100: Today tracking summary (placeholders: tracked=tracked count, total=total count)",
+    "placeholders": {
+      "tracked": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "moodRecordingLabel": "Recording {duration}",
+  "@moodRecordingLabel": {
+    "description": "R104: Mood detail recording label (placeholder {duration} is duration)",
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "medicationNameRequired": "Please enter medication name",
+  "medicationAdded": "Added {name}",
+  "@medicationAdded": {
+    "description": "R104: Medication added success message (placeholder {name} is medication name)",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "medicationStatusInUse": "Active",
+  "medicationStatusStopped": "Stopped",
+  "factorAnalysisCount": "{count} entries",
+  "@factorAnalysisCount": {
+    "description": "R104: Factor analysis record count (placeholder {count} is count)",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "setupConsentAgreeAll": "I have read and agree to all the above agreements",
+  "setupConsentViewAll": "View all agreements",
+  "@_v0_31_P1_5_domain_hardcoded_zh_to_arb": {},
+  "careCopyLateCheckInTitle": "🛏️ A bit earlier is steadier",
+  "careCopyLateCheckInBody": "Check-ins after 9 PM are frequent — regular schedules help medication effectiveness",
+  "careCopyWeekendMissedTitle": "☀️ Keep your rhythm on weekends",
+  "careCopyWeekendMissedBody": "Weekends are easy to miss — check in now, a little more consistency",
+  "careCopySecondDayMissedTitle": "🌿 Just keep going",
+  "careCopySecondDayMissedBody": "Missing once is fine — just keep going from here",
+  "careCopyWeekPerfectTitle": "🌟 A whole week on time!",
+  "careCopyWeekPerfectBody": "All on time this week",
+  "assessmentComparisonImproved": "Improved",
+  "assessmentComparisonWorsened": "Worsened",
+  "assessmentComparisonUnchanged": "Unchanged",
+  "assessmentComparisonFirst": "First assessment",
+  "assessmentDeltaSame": "Same as last time ({delta})",
+  "@assessmentDeltaSame": {
+    "description": "Assessment comparison: score delta is 0",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentDeltaHigher": "{delta} points higher than last time",
+  "@assessmentDeltaHigher": {
+    "description": "Assessment comparison: score higher than last time",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentDeltaLower": "{delta} points lower than last time",
+  "@assessmentDeltaLower": {
+    "description": "Assessment comparison: score lower than last time",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentSeverityRank": "Level {rank}",
+  "@assessmentSeverityRank": {
+    "description": "Assessment comparison: severity rank fallback for unknown scale",
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "checkInTypeAssessment": "Psychological assessment",
+  "dayDetailTotalScore": "Total {total}",
+  "@dayDetailTotalScore": {
+    "description": "Day detail: assessment event subtitle (total score)",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dayDetailScaleAssessment": "Psychological assessment"
 }

@@ -86,10 +86,15 @@ class _FakeMoodRepository implements MoodRepository {
   }
 
   @override
-  Stream<List<MoodEntryEntity>> watchAll() => Stream.value(List.unmodifiable(_store));
+  Stream<List<MoodEntryEntity>> watchAll() =>
+      Stream.value(List.unmodifiable(_store));
 
   @override
   Stream<List<MoodEntryEntity>> watchToday() => Stream.value(const []);
+
+  @override
+  Stream<MoodEntryEntity?> watchLatest() => Stream.value(
+      _store.isNotEmpty ? _store.last : null,);
 }
 
 void main() {
@@ -161,9 +166,15 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验 moodRepository.add 收到 period='morning'
-    expect(fakeRepo.lastAddedDraft, isNotNull,
-        reason: '点保存后 MoodRepository.add 应被调',);
-    expect(fakeRepo.lastAddedDraft!.period, 'morning',
-        reason: 'cbtDraftProvider 写 period → save 时透传给 repository',);
+    expect(
+      fakeRepo.lastAddedDraft,
+      isNotNull,
+      reason: '点保存后 MoodRepository.add 应被调',
+    );
+    expect(
+      fakeRepo.lastAddedDraft!.period,
+      'morning',
+      reason: 'cbtDraftProvider 写 period → save 时透传给 repository',
+    );
   });
 }

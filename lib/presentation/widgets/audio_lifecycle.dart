@@ -1,0 +1,439 @@
+// v0.30 R108 (P1 god class 拆 6 大 F - Fix #1): 抽 audio state machine 共享 mixin
+//
+// **背景 (R107 §3.4 vent_compose + mood_audio_recorder 重复)**:
+// 2 文件实现**几乎相同**的 audio state machine:
+// - 字段: `_isRecording` / `_isPlaying` / `_audioPath` / `_tempDecryptedPath`
+// - 4 步 dispose 链 (cancel stream → stop recorder → dispose recorder →
+//   dispose player → delete temp file) ~50-65 行 pattern 1:1
+// - 多个 `swallowError + unawaited + catchError` 模板
+//
+// **修复**: 抽 AudioLifecycleMixin, 4 状态字段 + 4 抽象方法 + 状态机方法 +
+// 共享 asyncDispose。 vent_compose_page 495→~300, mood_audio_recorder 530→~330。
+//
+// **设计原则**:
+// 1. 状态机 = enum AudioState { idle / recording / recorded / playing }
+//    替代 3-4 个独立 bool 字段
+// 2. 4 抽象方法由 subclass 实现 (record / playback / encryption / STT 业务)
+// 3. `startRecordingImpl` 返 `bool` — false = 权限检查等 pre-check 失败
+//    (subclass 已 fire AppSnackBar, mixin 回滚状态到 idle)
+// 4. `stopRecordingImpl` 返 `String?` — 加密后路径, mixin 写入 audioPath
+// 5. Mixin 不依赖 Riverpod / build_runner, 纯 Flutter + audioplayers
+// 6. swallowError 集中器, 跟 vent_compose_page R79 + mood_audio_section R61
+//    模式 1:1
+// 7. 保留 v0.x.y 历史注释 + P0/P1 修复说明, 不重写只聚合
+//
+// **频度 (emil 决策)**: 100+/day (mood 录音) + tens/day (vent 录音),
+// 状态切换是用户主路径, 必须可测。
+import 'dart:async';
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/widgets.dart';
+import 'package:record/record.dart';
+
+import 'package:chroniccare/core/shared/swallow_error.dart';
+
+/// v0.30 R108: audio 状态机 enum, 替代 4 个独立 bool 字段
+///
+/// idle → recording → recorded → playing → recorded → idle (re-record)
+///                              → idle (dispose)
+@immutable
+enum AudioState {
+  /// 初始态 / 录音已清空
+  idle,
+
+  /// 正在录音 (record 启动, temp 明文写入)
+  recording,
+
+  /// 录音完成 (已 stop + 加密, _audioPath 是 .m4a.enc)
+  recorded,
+
+  /// 正在播放解密后的 temp 明文
+  playing,
+}
+
+/// v0.30 R108 (P1 god class 拆 6 大 F - Fix #1): 共享 audio state machine mixin
+///
+/// 抽 vent_compose + mood_audio_recorder 重复:
+/// - 4 状态字段: `_isRecording` / `_isPlaying` / `_audioPath` / `_tempDecryptedPath`
+/// - 4 步 dispose 链 (cancel stream → stop recorder → dispose recorder →
+///   dispose player → delete temp file)
+/// - `swallowError` + try/catch 模板
+///
+/// **使用方式**:
+/// ```dart
+/// class _MyState extends State<MyWidget> with AudioLifecycleMixin<MyWidget> {
+///   late final AudioRecorder _recorder = AudioRecorder();
+///   late final AudioPlayer _player = AudioPlayer();
+///
+///   // mixin 提供字段: isRecording / isPlaying / audioPath / tempDecryptedPath
+///   // mixin 提供方法: startRecording / stopRecording / startPlayback /
+///   //   stopPlayback / asyncDisposeAudio
+///   // 4 抽象方法必须实现 (业务逻辑):
+///   @override
+///   Future<bool> startRecordingImpl() async { ... } // false = 权限拒绝等
+///   @override
+///   Future<String?> stopRecordingImpl() async { ... } // 返回加密路径
+///   @override
+///   Future<void> startPlaybackImpl(String encryptedPath) async { ... }
+///   @override
+///   Future<void> stopPlaybackImpl() async { ... }
+///   // 可选: 自定义 temp file 清理 (默认走 swallowError 占位)
+///   @override
+///   Future<void> cleanupTempFile() async { ... }
+/// }
+/// ```
+mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
+  // ===== 状态字段 (替代 4 个独立 bool / nullable) =====
+
+  /// 当前 audio 状态, 由 mixin 内部维护
+  @protected
+  AudioState audioState = AudioState.idle;
+
+  /// 加密后音频路径 (.m4a.enc), recorded / playing 时非空
+  @protected
+  String? audioPath;
+
+  /// 播放时生成的临时解密文件路径, dispose 时清理
+  ///
+  /// 复用 vent_compose_page `_tempDecryptedPath` 注释:
+  /// P0-2: 播放时生成的临时解密文件路径, dispose 时清理
+  @protected
+  String? tempDecryptedPath;
+
+  /// 播放 complete 事件 stream subscription
+  ///
+  /// vent_compose_page 跟 mood_audio_recorder 都有
+  /// `_player.onPlayerComplete.listen(...)` 注册, dispose 时 cancel。
+  @protected
+  StreamSubscription<void>? playerCompleteSub;
+
+  /// R102 (P1): 播放计时器 (vent_compose 不需要, 留给 subclass 用)
+  @protected
+  Timer? playbackTimer;
+
+  // ===== 公开 getter (供 widget build 使用, 跟旧 API 兼容) =====
+
+  /// 当前是否在录音 (state == recording)
+  bool get isRecording => audioState == AudioState.recording;
+
+  /// 当前是否在播放 (state == playing)
+  bool get isPlaying => audioState == AudioState.playing;
+
+  /// 是否有录音结果 (state == recorded / playing)
+  bool get hasRecording => audioState == AudioState.recorded ||
+      audioState == AudioState.playing;
+
+  // ===== 4 抽象方法 (subclass 实现业务逻辑) =====
+
+  /// 启动录音 (含权限检查 / temp 路径生成 / record.start)
+  ///
+  /// 返回:
+  /// - `true` = 成功启动 (recorder 已在写)
+  /// - `false` = pre-check 失败 (例如权限拒绝), subclass 应已 fire AppSnackBar
+  ///   `mixin 会自动回滚状态到 idle`
+  ///
+  /// 抛异常 = recorder.start 失败等系统错误, mixin 会 swallowError + 回滚
+  ///
+  /// **subclass 责任**:
+  /// 1. 检查麦克风权限
+  /// 2. 生成 temp 明文路径
+  /// 3. 调 `_recorder.start(...)`
+  Future<bool> startRecordingImpl();
+
+  /// 停止录音, 返回加密后路径 (或 null = 失败)
+  ///
+  /// 返回:
+  /// - `String` = 加密路径, mixin 写入 audioPath + state 转 recorded
+  /// - `null` = 停止失败 (subclass 应已 fire AppSnackBar), mixin 状态回 idle
+  ///
+  /// 抛异常 = encrypt 失败等系统错误, mixin 会 swallowError + 回滚
+  ///
+  /// **subclass 责任**:
+  /// 1. 调 `_recorder.stop()` 拿明文路径
+  /// 2. `storage.encryptAndWrite(...)` 写到 .m4a.enc
+  /// 3. 返回加密路径
+  Future<String?> stopRecordingImpl();
+
+  /// 启动播放
+  ///
+  /// **subclass 责任**:
+  /// 1. decryptToTemp 写 tempDecryptedPath
+  /// 2. 调 `_player.setSource(...)` 或 `_player.play(DeviceFileSource(...))`
+  /// 3. 注册 `_player.onPlayerComplete` 监听 (setState 回 recorded)
+  ///
+  /// 抛异常 = 播放失败, mixin 会清 temp + 状态回 recorded
+  Future<void> startPlaybackImpl(String encryptedPath);
+
+  /// 停止播放 (清 temp 留给 mixin 调 cleanupTempFile)
+  ///
+  /// **subclass 责任**:
+  /// 1. 调 `_player.stop()`
+  /// 2. 不要清 temp, 由 mixin 统一调 cleanupTempFile
+  ///
+  /// 抛异常被 mixin swallowError (播放失败不阻塞 UI)
+  Future<void> stopPlaybackImpl();
+
+  /// 清理 temp 解密文件
+  ///
+  /// 默认实现: swallow + log 占位, 提示 caller 需 override。
+  /// subclass 应 override 调 `ref.read(storageProvider).deleteTempFile(path)`。
+  @protected
+  Future<void> cleanupTempFile() async {
+    final temp = tempDecryptedPath;
+    if (temp == null) return;
+    try {
+      swallowError(
+        where: 'AudioLifecycleMixin.cleanupTempFile',
+        error: StateError(
+          'subclass 未 override cleanupTempFile, temp 不会被真删: $temp',
+        ),
+        note: 'R108: AudioLifecycleMixin subclass 应 override cleanupTempFile '
+            '调具体 storage.deleteTempFile (vent: ventAudioStorageProvider / '
+            'mood: moodAudioStorageProvider)',
+      );
+    } catch (e, st) {
+      swallowError(
+        where: 'AudioLifecycleMixin.cleanupTempFile',
+        error: e,
+        stack: st,
+      );
+    }
+  }
+
+  // ===== 状态机方法 (mixin 统一处理 setState + try/catch) =====
+
+  /// 启动录音
+  ///
+  /// 状态转换: idle → recording (impl 返 true) / idle → idle (impl 返 false / 抛)
+  /// 错误处理: 抛异常 → swallowError + 回 idle
+  Future<void> startRecording() async {
+    if (audioState != AudioState.idle) return;
+    setState(() => audioState = AudioState.recording);
+    try {
+      final ok = await startRecordingImpl();
+      if (!ok && mounted) {
+        // pre-check 失败 (e.g. 权限拒绝), subclass 已 fire AppSnackBar,
+        // mixin 回滚状态
+        setState(() => audioState = AudioState.idle);
+      }
+    } catch (e, st) {
+      swallowError(
+        where: 'AudioLifecycleMixin.startRecording',
+        error: e,
+        stack: st,
+      );
+      if (mounted) {
+        setState(() => audioState = AudioState.idle);
+      }
+    }
+  }
+
+  /// 停止录音
+  ///
+  /// 状态转换: recording → recorded (impl 返 non-null) / recording → idle (impl 返 null / 抛)
+  /// 业务逻辑: stopRecordingImpl 内部已 stop recorder + encrypt, 返回加密路径
+  Future<void> stopRecording() async {
+    if (audioState != AudioState.recording) return;
+    try {
+      final encryptedPath = await stopRecordingImpl();
+      if (!mounted) return;
+      setState(() {
+        if (encryptedPath == null) {
+          audioState = AudioState.idle;
+        } else {
+          audioPath = encryptedPath;
+          audioState = AudioState.recorded;
+        }
+      });
+    } catch (e, st) {
+      swallowError(
+        where: 'AudioLifecycleMixin.stopRecording',
+        error: e,
+        stack: st,
+      );
+      if (mounted) {
+        setState(() => audioState = AudioState.idle);
+      }
+    }
+  }
+
+  /// 启动播放
+  ///
+  /// 状态转换: recorded → playing
+  /// 业务逻辑: subclass 在 startPlaybackImpl 内部解密 → 写入 tempDecryptedPath →
+  ///   调 _player.play
+  /// 错误处理: 抛异常 → 清理 temp + 状态回 recorded
+  Future<void> startPlayback() async {
+    if (audioState != AudioState.recorded) return;
+    final path = audioPath;
+    if (path == null) return;
+    setState(() => audioState = AudioState.playing);
+    try {
+      // subclass 应在 startPlaybackImpl 内部 decryptToTemp + 写 tempDecryptedPath
+      await startPlaybackImpl(path);
+    } catch (e, st) {
+      swallowError(
+        where: 'AudioLifecycleMixin.startPlayback',
+        error: e,
+        stack: st,
+      );
+      // R108: 失败时清 temp file 避免堆积 (R22 round 28 spen-bug-02 + R30
+      // P1-3 fix 模式)
+      await cleanupTempFile();
+      if (mounted) {
+        setState(() {
+          audioState = AudioState.recorded;
+          tempDecryptedPath = null;
+        });
+      }
+    }
+  }
+
+  /// 停止播放
+  ///
+  /// 状态转换: playing → recorded
+  /// 业务逻辑: stopPlaybackImpl 调 _player.stop, mixin 调 cleanupTempFile
+  Future<void> stopPlayback() async {
+    if (audioState != AudioState.playing) return;
+    try {
+      await stopPlaybackImpl();
+    } catch (e, st) {
+      // v0.22 round 28 (spen-bug-02): 失败时清 temp file 避免堆积
+      swallowError(
+        where: 'AudioLifecycleMixin.stopPlayback',
+        error: e,
+        stack: st,
+      );
+    }
+    await cleanupTempFile();
+    if (mounted) {
+      setState(() {
+        audioState = AudioState.recorded;
+        tempDecryptedPath = null;
+      });
+    }
+  }
+
+  /// 重录 (清空录音状态)
+  ///
+  /// 状态转换: recorded / playing → idle
+  /// 副作用: 删 audioPath 文件 (subclass 应自己调 storage.deleteAudio)
+  ///
+  /// **注意**: 本方法只清状态, 删旧文件由 subclass 在调用前完成。
+  /// 跟 vent_compose `_reRecord` + mood_audio `_reRecord` 1:1。
+  void clearRecording() {
+    if (audioState == AudioState.recording) return;
+    if (mounted) {
+      setState(() {
+        audioState = AudioState.idle;
+        audioPath = null;
+        tempDecryptedPath = null;
+      });
+    }
+  }
+
+  // ===== 共享 asyncDispose 4 步链 =====
+
+  /// v0.28 R79 (P1 god class 拆 6 大 F - Fix #1): 异步释放资源的统一入口
+  ///
+  /// 顺序: cancel stream → stop recorder if recording → dispose recorder →
+  ///   dispose player → delete temp file
+  ///
+  /// 之前 vent_compose 50 行 / mood_audio 65 行 1:1 重复, 现在 mixin 统一
+  /// 提供。每步 catch 走 swallowError 集中器, 防止 stop/dispose 异常时
+  /// 整条链中断, 后续资源漏释放 (R17 模式)。
+  ///
+  /// **调用方式**:
+  /// ```dart
+  /// @override
+  /// void dispose() {
+  ///   unawaited(asyncDisposeAudio(
+  ///     player: _player,
+  ///     recorder: _recorder,
+  ///   ));
+  ///   super.dispose();
+  /// }
+  /// ```
+  ///
+  /// **iOS / Android native handle 释放** (vent_compose_page R79 修法):
+  /// 之前 sync 调 `_recorder.dispose()` / `_player.dispose()` 不 await,
+  /// native 资源释放不及时, 反复进/出 page 累积 → OOM / audio session 异常。
+  /// 修: 抽 asyncDisposeAudio() 内部顺序释放, 用 unawaited() 包装避免
+  /// State.dispose() 强制 sync 签名要求。
+  @protected
+  Future<void> asyncDisposeAudio({
+    required AudioPlayer? player,
+    required AudioRecorder? recorder,
+  }) async {
+    // 1) cancel player complete stream subscription (sync 收尾)
+    try {
+      await playerCompleteSub?.cancel();
+    } catch (e, st) {
+      swallowError(
+        where: 'AudioLifecycleMixin.asyncDisposeAudio.playerCompleteSub',
+        error: e,
+        stack: st,
+      );
+    }
+    playerCompleteSub = null;
+
+    // 2) cancel playback timer
+    playbackTimer?.cancel();
+    playbackTimer = null;
+
+    // 3) 如果还在录音, 先 stop (不 await 失败, 防止 hang)
+    if (audioState == AudioState.recording && recorder != null) {
+      try {
+        await recorder.stop();
+      } catch (e, st) {
+        // R79: stop 失败也继续 dispose, 防止 native 资源永远挂着
+        swallowError(
+          where: 'AudioLifecycleMixin.asyncDisposeAudio.recorderStop',
+          error: e,
+          stack: st,
+        );
+      }
+    }
+
+    // 4) dispose recorder (audioplayers 5.0+ dispose 释放 native handle)
+    if (recorder != null) {
+      try {
+        await recorder.dispose();
+      } catch (e, st) {
+        swallowError(
+          where: 'AudioLifecycleMixin.asyncDisposeAudio.recorderDispose',
+          error: e,
+          stack: st,
+        );
+      }
+    }
+
+    // 5) dispose player (audioplayers 5.0+ dispose 释放 native handle)
+    if (player != null) {
+      try {
+        await player.stop();
+      } catch (e, st) {
+        swallowError(
+          where: 'AudioLifecycleMixin.asyncDisposeAudio.playerStop',
+          error: e,
+          stack: st,
+        );
+      }
+      try {
+        await player.dispose();
+      } catch (e, st) {
+        swallowError(
+          where: 'AudioLifecycleMixin.asyncDisposeAudio.playerDispose',
+          error: e,
+          stack: st,
+        );
+      }
+    }
+
+    // 6) delete temp decrypted file (R22 P1-3 + R79 续)
+    if (tempDecryptedPath != null) {
+      await cleanupTempFile();
+      tempDecryptedPath = null;
+    }
+  }
+}

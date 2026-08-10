@@ -19,6 +19,7 @@
 // `String? override` (i18n 字符串由 caller 解析), 不直接 import
 // flutter_localizations。`String` 注入同 `core/l10n/strings.dart` 模式。
 
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/domain_value.dart';
 
 /// 打卡类型
@@ -113,6 +114,8 @@ extension CheckInTypeX on CheckInType {
   /// 了 phq9 / gad7, R90 i18n 跟 R78 一致, 题目 + 名称走 ARB,
   /// `checkInType*` label 留 v1.0)。Caller 应优先用 scale registry
   /// `scaleById(type.wire).displayName` 拿量表名, 而不是这个 fallback。
+  ///
+  /// v0.31 P1-5: `'心理量表评估'` 兜底迁移到 Strings.checkInTypeAssessment()
   String labelL10n({String? override}) {
     if (override != null) return override;
     switch (this) {
@@ -132,7 +135,7 @@ extension CheckInTypeX on CheckInType {
       case CheckInType.level2Mania:
       case CheckInType.asrm:
       case CheckInType.level2Psychosis:
-        return '心理量表评估';
+        return Strings.checkInTypeAssessment();
     }
   }
 }
@@ -175,8 +178,7 @@ class CheckInEntity {
   /// `CheckInType._assessmentScaleIds` 集合判断, 不写裸 enum 比较。
   /// 影响: day_detail / assessment_history / assessment_record.tryFromEntity
   /// 3 处 `c.isAssessment` 门控现在能识别新量表, 新量表 entry 不再被吞。
-  bool get isAssessment =>
-      CheckInType._assessmentScaleIds.contains(type.wire);
+  bool get isAssessment => CheckInType._assessmentScaleIds.contains(type.wire);
 
   /// 是否 PHQ-9
   bool get isPhq9 => type == CheckInType.phq9;

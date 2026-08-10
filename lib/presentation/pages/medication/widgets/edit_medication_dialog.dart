@@ -145,9 +145,9 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       final meds = await ref.refresh(medicationsProvider.future);
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       // medication reminders: 整个重排（停药会自然被 reschedule 排除）
-      await notif.rescheduleMedicationReminders(meds);
+      await notif.delegate.rescheduleMedicationReminders(meds);
       // refill reminders: 整个重排
-      await notif.rescheduleRefillReminders(meds);
+      await notif.delegate.rescheduleRefillReminders(meds);
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (e) {

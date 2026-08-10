@@ -30,6 +30,11 @@ import 'dart:developer' as developer;
 const bool _isProduct =
     bool.fromEnvironment('dart.vm.product', defaultValue: false);
 
+/// P2-19 (2026-08-09): 并发安全说明
+///
+/// 本函数是无状态纯函数（stateless pure function），不持有任何可变队列
+/// 或共享可变状态。Dart 单线程事件循环模型保证同一 isolate 内不会出现
+/// 并发写入问题，因此无需额外的锁或队列保护。
 void swallowError({
   required String where,
   required Object error,

@@ -85,8 +85,8 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     try {
       // 取消该药的所有相关推送
       final notif = ref.read(notificationServiceProvider);
-      await notif.cancelRefillReminder(id);
-      await notif.cancelSnoozeForMedication(id);
+      await notif.delegate.cancelRefillReminder(id);
+      await notif.delegate.cancelSnoozeForMedication(id);
       await ref.read(medicationRepositoryProvider).delete(id);
     } catch (e) {
       if (mounted) {
@@ -112,8 +112,8 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
     await Haptics.warning();
     try {
       final notif = ref.read(notificationServiceProvider);
-      await notif.cancelRefillReminder(med.id);
-      await notif.cancelSnoozeForMedication(med.id);
+      await notif.delegate.cancelRefillReminder(med.id);
+      await notif.delegate.cancelSnoozeForMedication(med.id);
       await ref.read(medicationRepositoryProvider).delete(med.id);
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
@@ -193,6 +193,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       await ref
           .read(notificationServiceProvider)
+          .delegate
           .rescheduleRefillReminders(meds);
 
       if (!mounted) return;

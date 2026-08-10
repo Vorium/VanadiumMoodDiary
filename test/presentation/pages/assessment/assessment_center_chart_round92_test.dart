@@ -68,17 +68,22 @@ void main() {
     await tester.pumpAndSettle();
 
     // 顶部 chart 存在
-    expect(find.byType(AssessmentMultiLineChart), findsOneWidget,
-        reason:
-            '顶部应渲染 AssessmentMultiLineChart (R90 widget 复用), 修前是 SizedBox.shrink + TODO',);
+    expect(
+      find.byType(AssessmentMultiLineChart),
+      findsOneWidget,
+      reason:
+          '顶部应渲染 AssessmentMultiLineChart (R90 widget 复用), 修前是 SizedBox.shrink + TODO',
+    );
 
     // 内部 LineChart 也存在 (AssessmentMultiLineChart 内部用 LineChart)
-    expect(find.byType(LineChart), findsOneWidget,
-        reason: 'AssessmentMultiLineChart 内部用 fl_chart LineChart 渲染',);
+    expect(
+      find.byType(LineChart),
+      findsOneWidget,
+      reason: 'AssessmentMultiLineChart 内部用 fl_chart LineChart 渲染',
+    );
   });
 
-  testWidgets(
-      'chart 走 allAssessmentEntriesProvider (entries 透传到 chart widget)',
+  testWidgets('chart 走 allAssessmentEntriesProvider (entries 透传到 chart widget)',
       (tester) async {
     setBigView(tester);
     // 注入 1 条 PHQ-9 entry (最近 30 天, scaleId=phq9)
@@ -95,7 +100,10 @@ void main() {
 
     // 验 chart 仍渲染 (entries=1 也渲染, 但 R90 widget 内部 list.isEmpty 跳过
     // PHQ-9 line 仍可能 0 line, widget 本身不空)
-    expect(find.byType(AssessmentMultiLineChart), findsOneWidget,
-        reason: 'entries 透传, chart widget 渲染 (即使 0 bar, widget 在)',);
+    expect(
+      find.byType(AssessmentMultiLineChart),
+      findsOneWidget,
+      reason: 'entries 透传, chart widget 渲染 (即使 0 bar, widget 在)',
+    );
   });
 }

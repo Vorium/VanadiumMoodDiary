@@ -35,8 +35,11 @@ void main() {
         timestamp: DateTime(2026),
         type: CheckInType.whodas,
       );
-      expect(e.isAssessment, isTrue,
-          reason: 'whodas 是新量表, isAssessment 必须为 true',);
+      expect(
+        e.isAssessment,
+        isTrue,
+        reason: 'whodas 是新量表, isAssessment 必须为 true',
+      );
     });
 
     test('新量表 level2_depression → isAssessment = true', () {
@@ -165,8 +168,11 @@ void main() {
       expect(rows.length, 1);
       final entity = rows.first.toEntity();
       expect(entity.type, CheckInType.whodas);
-      expect(entity.isAssessment, isTrue,
-          reason: 'DB→entity round-trip 后, 新量表 isAssessment 必须为 true',);
+      expect(
+        entity.isAssessment,
+        isTrue,
+        reason: 'DB→entity round-trip 后, 新量表 isAssessment 必须为 true',
+      );
     });
   });
 }

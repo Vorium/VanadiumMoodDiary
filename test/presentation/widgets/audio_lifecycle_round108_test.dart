@@ -1,0 +1,201 @@
+// v0.30 R108 (P1 god class 拆 6 大 F - Fix #1) audio_lifecycle lock-in test
+//
+// **背景 (R107 §3.4)**: vent_compose + mood_audio_recorder 重复 audio state
+// machine (~150 行重复), R108 抽 AudioLifecycleMixin 共享。
+//
+// **测试目标 (5 case)**:
+// 1. AudioLifecycleMixin 文件存在 + 含 4 状态 enum (idle/recording/recorded/playing)
+// 2. vent_compose_page.dart 用 mixin (with AudioLifecycleMixin + 4 抽象方法)
+// 3. mood_audio_recorder_widget.dart 用 mixin (with AudioLifecycleMixin + 4 抽象方法)
+// 4. asyncDisposeAudio 6 步链完整 (cancel stream → cancel timer → stop recorder
+//    if recording → dispose recorder → stop + dispose player → delete temp)
+// 5. 行数收缩: vent_compose < 500 (原 495, R108 持平或减少) /
+//    mood_audio_recorder < 600 (原 530, R108 持平或略增, 因 mood 业务复杂 +
+//    4 抽象方法, 但 4 步 dispose 链去重)
+//
+// **跟 R95 / R108 同模式**: 静态源码 grep 守门, 不依赖 audioplayers /
+// record / speech_to_text platform channel mock。
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  group('R108 Fix #1: AudioLifecycleMixin 共享 (vent + mood audio 去重)', () {
+    late String mixinSource;
+    late String ventSource;
+    late String moodSource;
+
+    setUpAll(() {
+      mixinSource = File(
+        'lib/presentation/widgets/audio_lifecycle.dart',
+      ).readAsStringSync();
+      ventSource = File(
+        'lib/presentation/pages/vent/vent_compose_page.dart',
+      ).readAsStringSync();
+      moodSource = File(
+        'lib/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart',
+      ).readAsStringSync();
+    });
+
+    test('A1: AudioLifecycleMixin 文件存在 + 4 状态 enum (idle/recording/recorded/playing)',
+        () {
+      // R108 Fix #1 文件必须存在
+      final mixinFile = File('lib/presentation/widgets/audio_lifecycle.dart');
+      expect(
+        mixinFile.existsSync(),
+        isTrue,
+        reason: 'lib/presentation/widgets/audio_lifecycle.dart 必须存在 '
+            '(R108 Fix #1 新文件)',
+      );
+
+      // mixin 定义
+      expect(
+        mixinSource.contains('mixin AudioLifecycleMixin'),
+        isTrue,
+        reason: 'AudioLifecycleMixin 必须定义 (R108 抽共享 mixin)',
+      );
+
+      // 4 状态 enum (替代旧 4 个独立 bool 字段)
+      for (final state in ['idle', 'recording', 'recorded', 'playing']) {
+        expect(
+          mixinSource.contains('AudioState.$state'),
+          isTrue,
+          reason: 'AudioState enum 必须含 4 状态 (替代 vent_compose / '
+                'mood_audio 的 _isRecording / _isPlaying 等独立字段), '
+                '缺: $state',
+        );
+      }
+    });
+
+    test('A2: vent_compose_page.dart 用 AudioLifecycleMixin', () {
+      // vent_compose 接入 mixin
+      expect(
+        ventSource.contains('with AudioLifecycleMixin<VentComposePage>'),
+        isTrue,
+        reason: 'vent_compose 必须用 AudioLifecycleMixin (R108 Fix #1)',
+      );
+
+      // 4 抽象方法实现 (override)
+      for (final method in [
+        'Future<bool> startRecordingImpl()',
+        'Future<String?> stopRecordingImpl()',
+        'Future<void> startPlaybackImpl(',
+        'Future<void> stopPlaybackImpl()',
+      ]) {
+        expect(
+          ventSource.contains(method),
+          isTrue,
+          reason: 'vent_compose 必须实现 4 抽象方法之一: $method',
+        );
+      }
+
+      // 旧 4 个独立 bool 字段已删 (防止 revert)
+      expect(
+        ventSource.contains('bool _isRecording = false'),
+        isFalse,
+        reason: 'vent_compose 不能再有 _isRecording 字段 (已走 mixin.isRecording getter)',
+      );
+      expect(
+        ventSource.contains('bool _isPlaying = false'),
+        isFalse,
+        reason: 'vent_compose 不能再有 _isPlaying 字段 (已走 mixin.isPlaying getter)',
+      );
+    });
+
+    test('A3: mood_audio_recorder_widget.dart 用 AudioLifecycleMixin', () {
+      // mood 接入 mixin
+      expect(
+        moodSource.contains('with AudioLifecycleMixin<MoodRecorder>'),
+        isTrue,
+        reason: 'mood_audio_recorder 必须用 AudioLifecycleMixin (R108 Fix #1)',
+      );
+
+      // 4 抽象方法实现
+      for (final method in [
+        'Future<bool> startRecordingImpl()',
+        'Future<String?> stopRecordingImpl()',
+        'Future<void> startPlaybackImpl(',
+        'Future<void> stopPlaybackImpl()',
+      ]) {
+        expect(
+          moodSource.contains(method),
+          isTrue,
+          reason: 'mood_audio_recorder 必须实现 4 抽象方法之一: $method',
+        );
+      }
+
+      // 旧 4 个独立 bool 字段已删
+      expect(
+        moodSource.contains('bool _isRecording = false'),
+        isFalse,
+        reason: 'mood_audio_recorder 不能再有 _isRecording 字段',
+      );
+      expect(
+        moodSource.contains('bool _isPlaying = false'),
+        isFalse,
+        reason: 'mood_audio_recorder 不能再有 _isPlaying 字段',
+      );
+    });
+
+    test('A4: asyncDisposeAudio 6 步链完整 + 每步 swallowError', () {
+      // 6 步链 (R108 集中, R79 修法从 vent_compose / mood_audio 抽出):
+      // 1. cancel playerCompleteSub
+      // 2. cancel playbackTimer
+      // 3. stop recorder if recording
+      // 4. dispose recorder
+      // 5. stop + dispose player
+      // 6. delete temp file (via cleanupTempFile)
+      for (final step in [
+        'playerCompleteSub?.cancel()',
+        'playbackTimer?.cancel()',
+        'await recorder.stop()',
+        'await recorder.dispose()',
+        'await player.stop()',
+        'await player.dispose()',
+        'cleanupTempFile()',
+      ]) {
+        expect(
+          mixinSource.contains(step),
+          isTrue,
+          reason: 'asyncDisposeAudio 必须含 6 步之一: $step',
+        );
+      }
+
+      // swallowError 集中器 (R17 模式防御: 单步异常阻断后续资源释放)
+      final swallowErrorCount = 'swallowError('.allMatches(mixinSource).length;
+      expect(
+        swallowErrorCount,
+        greaterThanOrEqualTo(6),
+        reason: 'asyncDisposeAudio 6 步都应走 swallowError (R17 模式), '
+            '实际 swallowError=$swallowErrorCount',
+      );
+    });
+
+    test('A5: 行数收缩 (vent < 500, mood < 600, mixin 存在)', () {
+      // R108 实际行数:
+      // - vent_compose: 495 → 445 (-50, 10% ↓)
+      // - mood_audio_recorder: 530 → 569 (+39, 7% ↑) — mood 用 MoodAudioService
+      //   抽象 recorder, 4 抽象方法 + STT/service dispose 增加 boilerplate
+      // - audio_lifecycle (new): 417 行, 其中 203 行 code
+      //
+      // 总 LOC: 1025 → 1431 (+406) — 抽象 overhead 抵消了部分去重收益,
+      // 但消除了 vent/mood 之间 state machine 重复 (R107 §3.4 共识)
+      //
+      // 行数目标定为较宽的 "持平" 标准 (vent 500, mood 600), 防止未来 revert
+      // 回到 god class。
+      final ventLines = ventSource.split('\n').length;
+      final moodLines = moodSource.split('\n').length;
+      expect(
+        ventLines,
+        lessThan(500),
+        reason: 'vent_compose 应保持 < 500 行 (原 495, R108 不增), 实际: $ventLines',
+      );
+      expect(
+        moodLines,
+        lessThan(600),
+        reason: 'mood_audio_recorder 应保持 < 600 行 (原 530, R108 略增但应 < 600), '
+            '实际: $moodLines',
+      );
+    });
+  });
+}

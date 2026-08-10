@@ -387,7 +387,16 @@ class ComparisonCard extends StatelessWidget {
                   ),
                   const SizedBox(width: AppTokens.spacingXxs),
                   Text(
-                    '${cmp.trendSymbol} ${cmp.trendLabel} · ${cmp.deltaLabel}',
+                    '${cmp.trendSymbol} ${cmp.trendLabel(
+                      improvedOverride: AppLocalizations.of(context).assessmentComparisonImproved,
+                      worsenedOverride: AppLocalizations.of(context).assessmentComparisonWorsened,
+                      unchangedOverride: AppLocalizations.of(context).assessmentComparisonUnchanged,
+                      firstAssessmentOverride: AppLocalizations.of(context).assessmentComparisonFirst,
+                    )} · ${cmp.deltaLabel(
+                      sameOverride: AppLocalizations.of(context).assessmentDeltaSame(cmp.scoreDelta ?? 0),
+                      higherOverride: AppLocalizations.of(context).assessmentDeltaHigher(cmp.scoreDelta ?? 0),
+                      lowerOverride: AppLocalizations.of(context).assessmentDeltaLower(-(cmp.scoreDelta ?? 0)),
+                    )}',
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeBody,
                       fontWeight: FontWeight.w500,

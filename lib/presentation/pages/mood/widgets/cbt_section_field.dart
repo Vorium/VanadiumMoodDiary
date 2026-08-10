@@ -84,7 +84,9 @@ class _CbtSectionFieldState extends State<CbtSectionField> {
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: () => CbtPromptSheet.show(
-                context, prompts: widget.prompts, onSelected: widget.onChanged,
+                context,
+                prompts: widget.prompts,
+                onSelected: widget.onChanged,
               ),
               icon: const Icon(Icons.help_outline, size: 16),
               label: const Text('?'),

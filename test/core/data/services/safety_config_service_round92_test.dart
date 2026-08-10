@@ -163,8 +163,7 @@ void main() {
       );
     });
 
-    test('同天 DND 9~18, hour=18 (end 等于, 区间 [start, end) 半开) → false',
-        () async {
+    test('同天 DND 9~18, hour=18 (end 等于, 区间 [start, end) 半开) → false', () async {
       final s = SafetyConfigService();
       await s.setDoNotDisturb(startHour: 9, endHour: 18);
       // hour=18 不在 [9, 18) 区间内, 不打扰结束

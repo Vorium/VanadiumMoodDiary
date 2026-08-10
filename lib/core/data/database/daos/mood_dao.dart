@@ -20,6 +20,19 @@ class MoodDao {
 
   Future<List<MoodEntry>> getAll() => _db.select(_db.moodEntries).get();
 
+  /// 监听最新一条 mood entry（首页概览卡用，避免全表扫描）
+  Stream<MoodEntry?> watchLatest() {
+    return (_db.select(_db.moodEntries)
+          ..orderBy([
+            (t) => OrderingTerm(
+                  expression: t.timestamp,
+                  mode: OrderingMode.desc,
+                ),
+          ])
+          ..limit(1))
+        .watchSingleOrNull();
+  }
+
   /// 监听今天的 mood entries (跨 midnight 单次 DateTime.now())
   Stream<List<MoodEntry>> watchToday() {
     final now = DateTime.now();

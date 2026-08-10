@@ -1,4 +1,4 @@
-﻿// v0.21 Round 22 (P0-2 修复): 法律与隐私页
+// v0.21 Round 22 (P0-2 修复): 法律与隐私页
 //
 // PIPL §26 撤回同意 UI 实现。
 // - 顶部 3 份法律文档入口(复用 showLegalDocument)
@@ -77,7 +77,8 @@ class _LegalPageState extends ConsumerState<LegalPage> {
           if (mounted) {
             AppSnackBar.showInfo(
               context,
-              AppLocalizations.of(context).legalVentWithdrawnDeleted(deletedCount),
+              AppLocalizations.of(context)
+                  .legalVentWithdrawnDeleted(deletedCount),
             );
           }
         } catch (e, st) {

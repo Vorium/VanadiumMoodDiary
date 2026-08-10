@@ -46,23 +46,47 @@
 // SafetyConfigService 提供的 top-level 静态 daysBetween / isSameDay
 // 已内联到本文件 (纯函数, 跟 [daysBetween] / [isSameDay] top-level 1:1
 // 实现), 删除 SafetyConfigService import。
-import 'package:chroniccare/core/data/services/safety_watch_service.dart' show SafetyCheckKind;
+import 'package:chroniccare/core/shared/date_utils.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 
-/// v0.29 R85: 内联 daysBetween (从 SafetyConfigService 抽过来, 纯函数)
-int daysBetween(DateTime from, DateTime to) {
-  // v0.16 round 19B fix: 缓存 now 一次, 避免跨 await DateTime.now() 多次
-  // 调用 race (跨 midnight 后 now 变 → daysBetween 偏 1 天)
-  final fromDate = DateTime(from.year, from.month, from.day);
-  final toDate = DateTime(to.year, to.month, to.day);
-  return toDate.difference(fromDate).inDays;
+/// v0.30 R101: SafetyCheckKind 从 data 层 safety_watch_service.dart 移到
+/// domain 层, 满足 4 层架构"domain 不依赖 data"硬约束。
+/// 8 种安全检查结果类型, 对应 [SafetyDecision] 的 8 个 leaf class。
+enum SafetyCheckKind {
+  /// 关闭
+  disabled,
+
+  /// 正常（< 阈值）
+  ok,
+
+  /// 没数据（新用户）
+  noData,
+
+  /// 今天已经发过告警
+  alertedToday,
+
+  /// 在 DND 时段，跳过
+  dndSuppressed,
+
+  /// 没有联系人（开启但没法通知）
+  noContacts,
+
+  /// 真的发告警了
+  alerted,
+
+  /// 出错
+  error,
 }
 
+/// v0.29 R85: 内联 daysBetween (从 SafetyConfigService 抽过来, 纯函数)
+/// R102 (P2): 改用 core/shared/date_utils.dart 单一来源
+int daysBetween(DateTime from, DateTime to) =>
+    calendarDaysBetween(from, to);
+
 /// v0.29 R85: 内联 isSameDay (从 SafetyConfigService 抽过来, 纯函数)
-bool isSameDay(DateTime a, DateTime b) {
-  return a.year == b.year && a.month == b.month && a.day == b.day;
-}
+/// R102 (P2): 改用 core/shared/date_utils.dart 单一来源
+bool isSameDay(DateTime a, DateTime b) => isSameCalendarDay(a, b);
 
 /// v0.27 round 64 (spen P1-12 god class 拆分): 安全判定 — 8 类 early-return 决策
 ///
@@ -111,8 +135,7 @@ class SafetyDetector {
     }
 
     // 4. 今天已经发过
-    if (lastAlertAt != null &&
-        isSameDay(lastAlertAt, now)) {
+    if (lastAlertAt != null && isSameDay(lastAlertAt, now)) {
       return SafetyDecisionAlertedToday(daysSinceLast: daysSinceLast);
     }
 

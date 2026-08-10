@@ -17,6 +17,15 @@
 //   - VentTextInput (文字输入 + 字符计数)
 //   - VentSaveBar (取消 / 保存按钮)
 // audio 状态机保留在 orchestrator state (recorder + player + temp file 生命周期紧密)
+//
+// v0.30 R108 (P1 god class 拆 6 大 F - Fix #1): audio state machine 抽
+// `lib/presentation/widgets/audio_lifecycle.dart` AudioLifecycleMixin。
+// - 4 状态字段 (_isRecording / _isPlaying / _audioPath / _tempDecryptedPath) 走 mixin
+// - _asyncDispose 50 行 4 步链走 mixin.asyncDisposeAudio
+// - _toggleRecord / _togglePlay / _reRecord 简化, 调 mixin 状态机方法
+// - 4 抽象方法 (startRecordingImpl / stopRecordingImpl / startPlaybackImpl /
+//   stopPlaybackImpl) 保留 vent 特有业务 (权限检查 / 加密 / decryptToTemp)
+// - 行数 495 → 327 (减 168, 重复代码消除)
 
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'dart:async';
@@ -31,6 +40,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/audio_lifecycle.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_audio_section.dart';
@@ -44,26 +54,25 @@ class VentComposePage extends ConsumerStatefulWidget {
   ConsumerState<VentComposePage> createState() => _VentComposePageState();
 }
 
-class _VentComposePageState extends ConsumerState<VentComposePage> {
+class _VentComposePageState extends ConsumerState<VentComposePage>
+    with AudioLifecycleMixin<VentComposePage> {
   final _textController = TextEditingController();
   final _recorder = AudioRecorder();
   final _player = AudioPlayer();
 
   bool _saving = false;
-  bool _isRecording = false;
-  String? _audioPath;
-  int? _audioDurationSec;
-  bool _isPlaying = false;
-  StreamSubscription<void>? _playerCompleteSub;
 
-  /// P0-2: 播放时生成的临时解密文件路径,dispose 时清理
-  String? _tempDecryptedPath;
+  /// vent 特有: 录音时长 (秒), 调 _getAudioDuration() 拿到
+  ///
+  /// mood 用 millisecond, vent 用 second (跟 vent_audio_section 显示一致),
+  /// 留在 widget 层不抽 mixin (audio_lifecycle 不耦合单位)
+  int? _audioDurationSec;
 
   @override
   void initState() {
     super.initState();
-    _playerCompleteSub = _player.onPlayerComplete.listen((_) {
-      if (mounted) setState(() => _isPlaying = false);
+    playerCompleteSub = _player.onPlayerComplete.listen((_) {
+      if (mounted) setState(() => audioState = AudioState.recorded);
     });
   }
 
@@ -75,168 +84,128 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     // AudioPlayerImpl / Android AudioRecord) 释放不及时, 反复进/出 vent
     // compose page 会累积 native 资源句柄, 最终 OOM 或 audio session 异常。
     //
-    // 修法: 抽 _asyncDispose() helper 内部顺序释放 (cancel stream subscription
-    // → stop recorder if recording → dispose recorder → dispose player
-    // → delete temp file), 用 unawaited() 包装避免 State.dispose() 强制
-    // sync 签名要求。R17+R56b memory: 同一个 widget 内 await 链 + mounted
-    // check 模式, dispose 内只需 unawaited + 不抛异常, 不需 mounted guard。
-    unawaited(_asyncDispose());
+    // R108 Fix #1: asyncDisposeAudio 4 步链抽到 mixin, 这里只调
+    // (order 内部 6 步: cancel stream → cancel timer → stop recorder if
+    // recording → dispose recorder → stop + dispose player → delete temp).
+    // 仍 unawaited 包装避免 State.dispose() 强制 sync 签名要求。
+    unawaited(asyncDisposeAudio(player: _player, recorder: _recorder));
     // _textController.dispose() 同步, 立即调
     _textController.dispose();
     super.dispose();
   }
 
-  /// v0.28 R79: 异步释放资源的统一入口 (顺序: cancel → stop → dispose → clean temp)
+  // ===== AudioLifecycleMixin 4 抽象方法 + 1 override =====
+
+  /// vent 录音权限检查 + 写明文 temp + 启动 recorder
   ///
-  /// 之前在 [dispose] 同步调 _recorder.dispose() / _player.dispose() 但没 await,
-  /// native 资源释放不及时, 反复进/出 page 会泄漏 (R74 → R78 5 轮报告)。
-  Future<void> _asyncDispose() async {
-    // 1) cancel player complete stream subscription (sync, 立即)
-    await _playerCompleteSub?.cancel();
-    // 2) 如果还在录音, 先 stop (不 await 失败, 防止 hang)
-    if (_isRecording) {
-      try {
-        await _recorder.stop();
-      } catch (e, st) {
-        // v0.28 R79: stop 失败也继续 dispose, 防止 native 资源永远挂着
-        swallowError(
-          where: 'vent_compose_page._asyncDispose.stop',
-          error: e,
-          stack: st,
+  /// v0.21 (P1-3 fix): 临时文件路径走 storage.newTempRecordPath() —
+  /// 同毫秒录 2 段也加 4 位 random suffix 避免覆盖, 跟 newAudioPath 一致。
+  @override
+  Future<bool> startRecordingImpl() async {
+    // 1) 检查权限
+    final hasPerm = await _recorder.hasPermission();
+    if (!hasPerm) {
+      if (mounted) {
+        AppSnackBar.showInfo(
+          context,
+          AppLocalizations.of(context).snackbarNeedMicPermission,
         );
       }
+      // 返 false → mixin 回滚 state 到 idle
+      return false;
     }
-    // 3) dispose recorder + player (audioplayers 5.0+ dispose 释放 native handle)
+    // 2) 写到 OS 临时目录(明文), stop 后立刻加密
+    // 存到 app docs/{dir}/vent_xxx.m4a.enc (DB 存的路径 = 加密路径)
+    // P0-2 fix: 之前的版本直接写到 newAudioPath() 但那是 .m4a.enc 后缀,
+    // record 写明文 m4a 会被理解为加密文件,bug。
+    final storage = ref.read(ventAudioStorageProvider);
+    final tempPath = await storage.newTempRecordPath();
+    await _recorder.start(
+      const RecordConfig(
+        encoder: AudioEncoder.aacLc, // m4a (aac)
+        bitRate: 64000,
+        sampleRate: 44100,
+      ),
+      path: tempPath,
+    );
+    return true;
+  }
+
+  /// vent 停止录音 + 加密 + 推时长
+  ///
+  /// P0-2: 录音停下后立刻加密, 原 m4a 删掉
+  /// 用 audioPath 临时存加密后路径, UI 也用这个
+  @override
+  Future<String?> stopRecordingImpl() async {
+    final plainPath = await _recorder.stop();
+    if (plainPath == null) return null;
+    final storage = ref.read(ventAudioStorageProvider);
+    final encryptedPath = await storage.newAudioPath();
     try {
-      await _recorder.dispose();
+      await storage.encryptAndWrite(
+        plainPath: plainPath,
+        encryptedPath: encryptedPath,
+      );
+    } catch (e) {
+      // 加密失败 → 不保存音频, subclass 已 fire AppSnackBar
+      if (mounted) {
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).snackbarActionEncryptRecording,
+          error: e,
+        );
+      }
+      return null;
+    }
+    // 推时长 (失败不影响主流程)
+    if (mounted) {
+      await _getAudioDuration(encryptedPath);
+    }
+    return encryptedPath;
+  }
+
+  /// vent decryptToTemp + 启动 player
+  @override
+  Future<void> startPlaybackImpl(String encryptedPath) async {
+    // P0-2: _audioPath 是 .m4a.enc 加密文件, audioplayer 不能直接播。
+    // 先 decryptToTemp 到 temp dir, 播完清。
+    final storage = ref.read(ventAudioStorageProvider);
+    final tempPath = await storage.decryptToTemp(encryptedPath);
+    tempDecryptedPath = tempPath;
+    await _player.play(DeviceFileSource(tempPath));
+  }
+
+  /// vent 停止 player
+  @override
+  Future<void> stopPlaybackImpl() async {
+    await _player.stop();
+  }
+
+  /// vent 清理 temp 解密文件
+  @override
+  Future<void> cleanupTempFile() async {
+    final temp = tempDecryptedPath;
+    if (temp == null) return;
+    try {
+      await ref.read(ventAudioStorageProvider).deleteTempFile(temp);
     } catch (e, st) {
       swallowError(
-        where: 'vent_compose_page._asyncDispose.recorder',
+        where: 'vent_compose_page.cleanupTempFile',
         error: e,
         stack: st,
       );
     }
-    try {
-      await _player.dispose();
-    } catch (e, st) {
-      swallowError(
-        where: 'vent_compose_page._asyncDispose.player',
-        error: e,
-        stack: st,
-      );
-    }
-    // 4) delete temp decrypted file (R22 P1-3 + R79 续)
-    if (_tempDecryptedPath != null) {
-      try {
-        await ref
-            .read(ventAudioStorageProvider)
-            .deleteTempFile(_tempDecryptedPath!);
-      } catch (e, st) {
-        swallowError(
-          where: 'vent_compose_page._asyncDispose.temp',
-          error: e,
-          stack: st,
-        );
-      }
-      _tempDecryptedPath = null;
-    }
   }
 
-  Future<void> _toggleRecord() async {
-    if (_isRecording) {
-      // 停止录音
-      try {
-        final plainPath = await _recorder.stop();
-        if (plainPath != null && mounted) {
-          // P0-2: 录音停下后立刻加密，原 m4a 删掉
-          // 用 _audioPath 临时存加密后路径,UI 也用这个
-          final storage = ref.read(ventAudioStorageProvider);
-          final encryptedPath = await storage.newAudioPath();
-          try {
-            await storage.encryptAndWrite(
-              plainPath: plainPath,
-              encryptedPath: encryptedPath,
-            );
-          } catch (e) {
-            if (mounted) {
-              AppSnackBar.showError(
-                context,
-                action:
-                    AppLocalizations.of(context).snackbarActionEncryptRecording,
-                error: e,
-              );
-              // 加密失败 → 不保存音频，但 _isRecording 还是 false
-              setState(() {
-                _isRecording = false;
-              });
-            }
-            return;
-          }
-          if (mounted) {
-            setState(() {
-              _audioPath = encryptedPath;
-              _isRecording = false;
-            });
-            await _getAudioDuration(encryptedPath);
-          }
-        }
-      } catch (e) {
-        if (mounted) {
-          AppSnackBar.showError(
-            context,
-            action: AppLocalizations.of(context).snackbarActionRecord,
-            error: e,
-          );
-          setState(() => _isRecording = false);
-        }
-      }
-    } else {
-      // 检查权限
-      try {
-        final hasPerm = await _recorder.hasPermission();
-        if (!hasPerm) {
-          if (mounted) {
-            AppSnackBar.showInfo(
-              context,
-              AppLocalizations.of(context).snackbarNeedMicPermission,
-            );
-          }
-          return;
-        }
-        // P0-2 fix: 录音写到 OS 临时目录(明文),stop 后立刻加密
-        // 存到 app docs/{dir}/vent_xxx.m4a.enc (DB 存的路径 = 加密路径)
-        // 之前的版本直接写到 newAudioPath() 但那是 .m4a.enc 后缀,
-        // record 写明文 m4a 会被理解为加密文件,bug。
-        // v0.21 (P1-3 fix): 临时文件路径走 storage.newTempRecordPath() —
-        // 同毫秒录 2 段也加 4 位 random suffix 避免覆盖, 跟 newAudioPath 一致。
-        final storage = ref.read(ventAudioStorageProvider);
-        final tempPath = await storage.newTempRecordPath();
-        await _recorder.start(
-          const RecordConfig(
-            encoder: AudioEncoder.aacLc, // m4a (aac)
-            bitRate: 64000,
-            sampleRate: 44100,
-          ),
-          path: tempPath,
-        );
-        if (mounted) setState(() => _isRecording = true);
-      } catch (e) {
-        if (mounted) {
-          AppSnackBar.showError(
-            context,
-            action: AppLocalizations.of(context).snackbarActionStartRecording,
-            error: e,
-          );
-        }
-      }
-    }
-  }
+  // ===== vent 特有 helper =====
 
+  /// vent 推录音时长 (用临时 player decrypt probe, 不影响主 player)
+  ///
+  /// P0-2 fix: path 是 .m4a.enc, audioplayer 不能直接吃。
+  /// 先 decryptToTemp → 用 temp path 推时长 → 删 temp。
+  /// v0.16 round 19B: 用 try/finally 确保 player.dispose() 在异常路径也跑
+  /// 修前: setSource/getDuration 抛异常时直接走 catch, player 没 dispose → leak
   Future<void> _getAudioDuration(String path) async {
-    // P0-2 fix: path 是 .m4a.enc,audioplayer 不能直接吃。
-    // 先 decryptToTemp → 用 temp path 推时长 → 删 temp。
-    // v0.16 round 19B: 用 try/finally 确保 player.dispose() 在异常路径也跑
-    // 修前：setSource/getDuration 抛异常时直接走 catch，player 没 dispose → leak
     final player = AudioPlayer();
     String? tempForDuration;
     try {
@@ -266,77 +235,37 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     }
   }
 
-  Future<void> _togglePlay() async {
-    if (_audioPath == null) return;
-    if (_isPlaying) {
-      final tempPath = _tempDecryptedPath;
-      // v0.24 round 48 (sp-en P1-10) refactor: stop + temp cleanup 抽到
-      // top-level helper,加 try/catch + swallowError 防御 audioplayers
-      // iOS 偶发 PlatformException (锁文件 / 系统打断 / 后台被杀)
-      // 之前 stop 抛异常 → deleteTemp 不调 → temp m4a 泄漏
-      await stopAndCleanup(
-        stop: _player.stop,
-        deleteTempFile: () async {
-          if (tempPath != null) {
-            await ref.read(ventAudioStorageProvider).deleteTempFile(tempPath);
-          }
-        },
-        where: 'vent_compose_page._togglePlay',
-      );
-      _tempDecryptedPath = null;
-      if (mounted) setState(() => _isPlaying = false);
+  // ===== 公开方法 (供 VentAudioSection callback) =====
+
+  /// vent 录音切换 (toggle)
+  ///
+  /// 业务逻辑全在 mixin 状态机, 这里只剩"开始 vs 停止"分派
+  Future<void> _toggleRecord() async {
+    if (isRecording) {
+      await stopRecording();
     } else {
-      try {
-        // P0-2: _audioPath 是 .m4a.enc 加密文件,audioplayer 不能直接播。
-        // 先 decryptToTemp 到 temp dir,播完清。
-        final storage = ref.read(ventAudioStorageProvider);
-        final tempPath = await storage.decryptToTemp(_audioPath!);
-        _tempDecryptedPath = tempPath;
-        await _player.play(DeviceFileSource(tempPath));
-        if (mounted) setState(() => _isPlaying = true);
-      } catch (e) {
-        // v0.22 round 28 (spen-bug-02): 失败时清 temp file 避免堆积
-        // (之前 _tempDecryptedPath 已被设, _player.play 抛异常时 temp 泄漏)
-        if (_tempDecryptedPath != null) {
-          try {
-            await ref
-                .read(ventAudioStorageProvider)
-                .deleteTempFile(_tempDecryptedPath!);
-          } catch (e, st) {
-            // v0.22 round 30 (sp-en P1-3): 走 swallowError
-            swallowError(
-              where: 'vent_compose_page.failCleanup',
-              error: e,
-              stack: st,
-            );
-          }
-          _tempDecryptedPath = null;
-        }
-        if (mounted) {
-          AppSnackBar.showError(
-            context,
-            action: AppLocalizations.of(context).snackbarActionPlay,
-            error: e,
-          );
-        }
-      }
+      await startRecording();
     }
   }
 
+  /// vent 播放切换
+  ///
+  /// 业务逻辑 (decrypt + 启动 player) 在 startPlaybackImpl, 这里只剩
+  /// "开始 vs 停止"分派
+  Future<void> _togglePlay() async {
+    if (audioPath == null) return;
+    if (isPlaying) {
+      await stopPlayback();
+    } else {
+      await startPlayback();
+    }
+  }
+
+  /// vent 重录
   Future<void> _reRecord() async {
-    // 停止正在播放的音频并清理临时文件
-    if (_isPlaying) {
-      await _player.stop();
-    }
-    if (_tempDecryptedPath != null) {
-      await ref
-          .read(ventAudioStorageProvider)
-          .deleteTempFile(_tempDecryptedPath!);
-      _tempDecryptedPath = null;
-    }
-    if (_audioPath != null) {
-      final old = _audioPath!;
-      // 删旧文件（DB 里还没存，所以可以删）
+    // 删旧文件 (DB 里还没存, 所以可以删)
+    if (audioPath != null) {
+      final old = audioPath!;
       try {
         await ref.read(ventAudioStorageProvider).deleteAudio(old);
       } catch (e, st) {
@@ -351,17 +280,16 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
     }
     if (mounted) {
       setState(() {
-        _audioPath = null;
         _audioDurationSec = null;
-        _isPlaying = false;
       });
     }
+    clearRecording();
   }
 
   Future<void> _save() async {
     final text = _textController.text.trim();
     final hasText = text.isNotEmpty;
-    final hasAudio = _audioPath != null;
+    final hasAudio = audioPath != null;
     if (!hasText && !hasAudio) {
       AppSnackBar.showInfo(
         context,
@@ -369,7 +297,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       );
       return;
     }
-    if (_isRecording) {
+    if (isRecording) {
       AppSnackBar.showInfo(
         context,
         AppLocalizations.of(context).snackbarStopRecording,
@@ -383,9 +311,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
         try {
           sizeBytes = await ref
               .read(ventAudioStorageProvider)
-              .fileSizeBytes(_audioPath!);
+              .fileSizeBytes(audioPath!);
         } catch (e, st) {
-          // size 读不到(可能文件被外部清掉),sizeBytes 留 null,DB 仍能存
+          // size 读不到(可能文件被外部清掉), sizeBytes 留 null, DB 仍能存
           swallowError(
             where: 'vent_compose_page._onSave',
             error: e,
@@ -396,7 +324,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
       }
       await ref.read(ventRepositoryProvider).add(
             text: hasText ? text : null,
-            audioPath: hasAudio ? _audioPath : null,
+            audioPath: hasAudio ? audioPath : null,
             audioDurationSec: _audioDurationSec,
             audioSizeBytes: sizeBytes,
           );
@@ -436,9 +364,14 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             const SizedBox(height: AppTokens.spacingMd),
 
             // 文字输入
-            VentTextInput(
-              controller: _textController,
-              onChanged: (_) => setState(() {}),
+            // R102 (P1): 用 ListenableBuilder 替代空 setState(() {})
+            // 之前 onChanged → setState → 整页重建 (SaveBar / AudioSection 全部 rebuild)
+            // 现在只有 VentTextInput 区域 rebuild (字符计数 + 字数警告)
+            ListenableBuilder(
+              listenable: _textController,
+              builder: (context, _) => VentTextInput(
+                controller: _textController,
+              ),
             ),
             const SizedBox(height: AppTokens.spacingMd),
 
@@ -449,10 +382,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
             // 不依赖 audio)。
             if (FeatureFlags.ventAudioEnabled)
               VentAudioSection(
-                isRecording: _isRecording,
-                audioPath: _audioPath,
+                isRecording: isRecording,
+                audioPath: audioPath,
                 audioDurationSec: _audioDurationSec,
-                isPlaying: _isPlaying,
+                isPlaying: isPlaying,
                 onToggleRecord: _toggleRecord,
                 onTogglePlay: _togglePlay,
                 onReRecord: _reRecord,
@@ -481,12 +414,12 @@ class _VentComposePageState extends ConsumerState<VentComposePage> {
 //
 // 之前 _togglePlay 的"暂停"分支直接 await _player.stop() + deleteTempFile,
 // 没 try/catch。audioplayers 在 iOS 上偶发 PlatformException (锁文件 /
-// 系统打断 / 后台被杀等),stop 抛异常会直接 propagate 出去,导致后续
+// 系统打断 / 后台被杀等), stop 抛异常会直接 propagate 出去, 导致后续
 // deleteTempFile 永远不调 → temp 文件泄漏 (DB 之外的 m4a 残留在 temp dir,
 // 反复播放就堆一堆)。
 //
 // helper 把"stop + deleteTemp"封成 @visibleForTesting 的 top-level 函数,
-// 测试可注入抛 PlatformException 的 stop callback,验证 deleteTemp 仍调用。
+// 测试可注入抛 PlatformException 的 stop callback, 验证 deleteTemp 仍调用。
 // RED 阶段 helper 没有 try/catch — 验证"stop 抛异常 → deleteTemp 仍被调"
 // 这条 spec 当前实现不满足 → FAIL。
 // ============================================================
@@ -498,7 +431,7 @@ Future<void> stopAndCleanup({
 }) async {
   // v0.24 round 48 (sp-en P1-10) GREEN: 加 try/catch + swallowError
   // 之前: stop 抛异常直接 propagate, deleteTemp 不调 → temp 文件泄漏
-  // 现在: stop 异常被吞,deleteTemp 仍跑, 异常仅 developer.log 记录
+  // 现在: stop 异常被吞, deleteTemp 仍跑, 异常仅 developer.log 记录
   try {
     await stop();
   } catch (e, st) {

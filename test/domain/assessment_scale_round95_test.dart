@@ -160,7 +160,8 @@ void main() {
 
     test('severityCutoffs 5 档 (rank 0-4, threshold 4/9/14/19/27)', () {
       expect(phq9Scale.severityCutoffs.length, 5);
-      final thresholds = phq9Scale.severityCutoffs.map((c) => c.threshold).toList();
+      final thresholds =
+          phq9Scale.severityCutoffs.map((c) => c.threshold).toList();
       expect(thresholds, [4, 9, 14, 19, 27]);
       for (var i = 0; i < 5; i++) {
         expect(phq9Scale.severityCutoffs[i].rank, i);

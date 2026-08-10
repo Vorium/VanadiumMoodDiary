@@ -114,8 +114,10 @@ void main() {
 
     test('phq9Item 9 题 en 走英文 (≠ 中文 fallback)', () {
       expect(t.phq9Item(0), 'Little interest or pleasure in doing things');
-      expect(t.phq9Item(8),
-          'Thoughts that you would be better off dead, or of hurting yourself in some way',);
+      expect(
+        t.phq9Item(8),
+        'Thoughts that you would be better off dead, or of hurting yourself in some way',
+      );
     });
 
     test('phq9Option en 返英文', () {
@@ -136,19 +138,25 @@ void main() {
     });
 
     test('phq9Instruction en 返英文', () {
-      expect(t.phq9Instruction(),
-          'Over the last 2 weeks, how often have you been bothered by the following problems?',);
+      expect(
+        t.phq9Instruction(),
+        'Over the last 2 weeks, how often have you been bothered by the following problems?',
+      );
     });
 
     test('phq9ShortDescription en 返英文', () {
-      expect(t.phq9ShortDescription(),
-          'Depression screening over the last 2 weeks',);
+      expect(
+        t.phq9ShortDescription(),
+        'Depression screening over the last 2 weeks',
+      );
     });
 
     test('gad7Item 7 题 en 返英文 (≠ 中文 fallback)', () {
       expect(t.gad7Item(0), 'Feeling nervous, anxious or on edge');
       expect(
-          t.gad7Item(6), 'Feeling afraid as if something awful might happen',);
+        t.gad7Item(6),
+        'Feeling afraid as if something awful might happen',
+      );
     });
 
     test('gad7SeverityLabel en 4 档返英文', () {
@@ -192,13 +200,17 @@ void main() {
 
     test('Phq9Scale + AppLocalizationsEn → items 走英文', () {
       final enScale = Phq9Scale(
-          translations:
-              AppLocalizationsScaleTranslations(AppLocalizationsEn()),);
+        translations: AppLocalizationsScaleTranslations(AppLocalizationsEn()),
+      );
       expect(enScale.items.length, 9);
       expect(
-          enScale.items[0].text, 'Little interest or pleasure in doing things',);
-      expect(enScale.items[8].text,
-          'Thoughts that you would be better off dead, or of hurting yourself in some way',);
+        enScale.items[0].text,
+        'Little interest or pleasure in doing things',
+      );
+      expect(
+        enScale.items[8].text,
+        'Thoughts that you would be better off dead, or of hurting yourself in some way',
+      );
     });
 
     test('Phq9Scale options 走 translations.phq9Option(0..3)', () {
@@ -219,8 +231,8 @@ void main() {
 
     test('Phq9Scale severityCutoffs 走英文 (en)', () {
       final enScale = Phq9Scale(
-          translations:
-              AppLocalizationsScaleTranslations(AppLocalizationsEn()),);
+        translations: AppLocalizationsScaleTranslations(AppLocalizationsEn()),
+      );
       expect(enScale.severityCutoffs[0].label, 'None');
       expect(enScale.severityCutoffs[2].label, 'Moderate');
       expect(enScale.severityCutoffs[4].label, 'Severe');
@@ -243,12 +255,14 @@ void main() {
 
     test('Gad7Scale + AppLocalizationsEn → items 走英文', () {
       final enScale = Gad7Scale(
-          translations:
-              AppLocalizationsScaleTranslations(AppLocalizationsEn()),);
+        translations: AppLocalizationsScaleTranslations(AppLocalizationsEn()),
+      );
       expect(enScale.items.length, 7);
       expect(enScale.items[0].text, 'Feeling nervous, anxious or on edge');
-      expect(enScale.items[6].text,
-          'Feeling afraid as if something awful might happen',);
+      expect(
+        enScale.items[6].text,
+        'Feeling afraid as if something awful might happen',
+      );
     });
 
     test('Gad7Scale severityCutoffs 4 档 label+summary 走 translations', () {
@@ -262,8 +276,8 @@ void main() {
 
     test('Gad7Scale severityCutoffs 走英文 (en)', () {
       final enScale = Gad7Scale(
-          translations:
-              AppLocalizationsScaleTranslations(AppLocalizationsEn()),);
+        translations: AppLocalizationsScaleTranslations(AppLocalizationsEn()),
+      );
       expect(enScale.severityCutoffs[0].label, 'None');
       expect(enScale.severityCutoffs[3].label, 'Severe');
     });

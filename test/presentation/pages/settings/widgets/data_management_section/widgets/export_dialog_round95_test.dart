@@ -26,7 +26,8 @@ void _setBigView(WidgetTester tester) {
   });
 }
 
-const _mockJson = '{"schemaVersion": 4, "stub": true, "data": "R95 export_dialog test"}';
+const _mockJson =
+    '{"schemaVersion": 4, "stub": true, "data": "R95 export_dialog test"}';
 
 Widget _wrap({Future<void> Function(String json)? onCopy}) {
   return ProviderScope(
@@ -74,16 +75,22 @@ void main() {
       expect(find.text('我已了解风险,继续导出'), findsOneWidget);
 
       // JSON 容器渲染 (SelectableText 含 mock json)
-      expect(find.textContaining('R95 export_dialog test'), findsOneWidget,
-          reason: 'SelectableText 应渲染 mock json 字符串',);
+      expect(
+        find.textContaining('R95 export_dialog test'),
+        findsOneWidget,
+        reason: 'SelectableText 应渲染 mock json 字符串',
+      );
 
       // v0.30 R95 sub-spec 8 task 19: 5→3 步 — checkbox 默认勾选, 复制按钮
       // 始终 enable (用户点 copy = 主动 ack 行为, Q4b 责任划界走风险告知文字)
       final copyBtnFinder = find.widgetWithText(ElevatedButton, '复制');
       expect(copyBtnFinder, findsOneWidget);
       final copyBtn = tester.widget<ElevatedButton>(copyBtnFinder);
-      expect(copyBtn.onPressed, isNotNull,
-          reason: 'task 19: 默认勾选后复制按钮应 enable (点 copy = 主动 ack)',);
+      expect(
+        copyBtn.onPressed,
+        isNotNull,
+        reason: 'task 19: 默认勾选后复制按钮应 enable (点 copy = 主动 ack)',
+      );
     },
   );
 
@@ -95,11 +102,13 @@ void main() {
     (tester) async {
       _setBigView(tester);
       int copyCallCount = 0;
-      await tester.pumpWidget(_wrap(
-        onCopy: (_) async {
-          copyCallCount++;
-        },
-      ),);
+      await tester.pumpWidget(
+        _wrap(
+          onCopy: (_) async {
+            copyCallCount++;
+          },
+        ),
+      );
       await tester.pumpAndSettle();
 
       // 弹 ExportDialog
@@ -111,8 +120,11 @@ void main() {
       final copyBtn = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, '复制'),
       );
-      expect(copyBtn.onPressed, isNotNull,
-          reason: 'task 19: 默认勾选, 复制按钮 enable',);
+      expect(
+        copyBtn.onPressed,
+        isNotNull,
+        reason: 'task 19: 默认勾选, 复制按钮 enable',
+      );
 
       // 点复制 → 触发 onCopy 回调
       await tester.tap(find.widgetWithText(ElevatedButton, '复制'));
@@ -131,11 +143,13 @@ void main() {
     (tester) async {
       _setBigView(tester);
       int copyCallCount = 0;
-      await tester.pumpWidget(_wrap(
-        onCopy: (_) async {
-          copyCallCount++;
-        },
-      ),);
+      await tester.pumpWidget(
+        _wrap(
+          onCopy: (_) async {
+            copyCallCount++;
+          },
+        ),
+      );
       await tester.pumpAndSettle();
 
       // 弹 ExportDialog
@@ -148,12 +162,18 @@ void main() {
       await tester.pumpAndSettle();
 
       // 验证: dialog 关闭
-      expect(find.byType(AlertDialog), findsNothing,
-          reason: '关闭后 dialog 应消失',);
+      expect(
+        find.byType(AlertDialog),
+        findsNothing,
+        reason: '关闭后 dialog 应消失',
+      );
 
       // 验证: onCopy 没被调用
-      expect(copyCallCount, 0,
-          reason: '关闭按钮不应触发 onCopy',);
+      expect(
+        copyCallCount,
+        0,
+        reason: '关闭按钮不应触发 onCopy',
+      );
     },
   );
 }

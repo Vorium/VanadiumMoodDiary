@@ -153,8 +153,7 @@ void main() {
     });
 
     test('copyWith 基础字段', () {
-      const original =
-          ContactEntity(id: 1, name: 'A', phone: '13800138000');
+      const original = ContactEntity(id: 1, name: 'A', phone: '13800138000');
       final copy = original.copyWith(name: 'B');
       expect(copy.name, 'B');
       expect(copy.id, original.id);

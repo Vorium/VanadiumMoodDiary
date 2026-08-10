@@ -52,8 +52,10 @@ void main() {
       final zh = AppLocalizationsZh();
       final en = AppLocalizationsEn();
       // title 在 zh 是 "明文风险提示", en 是 "Plaintext risk warning"
-      expect(zh.settingsExportRiskTitle, isNot(equals(en.settingsExportRiskTitle)));
-      expect(zh.settingsExportRiskAcknowledge, isNot(equals(en.settingsExportRiskAcknowledge)));
+      expect(zh.settingsExportRiskTitle,
+          isNot(equals(en.settingsExportRiskTitle)),);
+      expect(zh.settingsExportRiskAcknowledge,
+          isNot(equals(en.settingsExportRiskAcknowledge)),);
     });
   });
 
@@ -105,8 +107,10 @@ void main() {
 
       // onPressed == null → 按钮 disabled (Material 内部 enabled=false)
       final btnWidget = tester.widget<ElevatedButton>(copyBtn);
-      expect(btnWidget.onPressed, isNull,
-          reason: 'Q4b: 未勾选时复制按钮应 disabled, 防止无意识复制到不安全位置',
+      expect(
+        btnWidget.onPressed,
+        isNull,
+        reason: 'Q4b: 未勾选时复制按钮应 disabled, 防止无意识复制到不安全位置',
       );
     });
 
@@ -127,9 +131,7 @@ void main() {
                       title: const Text('我已了解风险,继续导出'),
                     ),
                     ElevatedButton(
-                      onPressed: isAcknowledged
-                          ? () {/* copy */}
-                          : null,
+                      onPressed: isAcknowledged ? () {/* copy */} : null,
                       child: const Text('复制'),
                     ),
                   ],
@@ -149,8 +151,10 @@ void main() {
       final btnWidget = tester.widget<ElevatedButton>(
         find.widgetWithText(ElevatedButton, '复制'),
       );
-      expect(btnWidget.onPressed, isNotNull,
-          reason: 'Q4b: 勾选后复制按钮应 enabled, 用户可继续导出',
+      expect(
+        btnWidget.onPressed,
+        isNotNull,
+        reason: 'Q4b: 勾选后复制按钮应 enabled, 用户可继续导出',
       );
     });
   });

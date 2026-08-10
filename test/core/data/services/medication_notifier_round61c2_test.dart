@@ -476,6 +476,14 @@ class _MockReminderDispatcher implements ReminderDispatcher {
 
   @override
   String get channelDescription => 'mock channel description';
+
+  @override
+  bool get useExactAllowWhileIdle => true;
+
+  @override
+  void setExactMode(bool value) {
+    // Mock: 不存, get 永远返 true (跟 production default 一致)
+  }
 }
 
 class _ZonedDailyCall {

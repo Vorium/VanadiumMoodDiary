@@ -52,8 +52,11 @@ void main() {
       await _pump(tester, const SectionHeader(title: '近 30 天'));
       expect(find.text('近 30 天'), findsOneWidget);
       // 无 chip 容器渲染
-      expect(find.byType(Container), findsNothing,
-          reason: 'chip=null 时不应该渲染 _ChipBadge 容器',);
+      expect(
+        find.byType(Container),
+        findsNothing,
+        reason: 'chip=null 时不应该渲染 _ChipBadge 容器',
+      );
     });
 
     testWidgets('chip="近 30 天" → 标题 + chip 同时显示', (tester) async {
@@ -61,8 +64,11 @@ void main() {
         tester,
         const SectionHeader(title: '近 30 天', chip: '近 30 天'),
       );
-      expect(find.text('近 30 天'), findsAtLeastNWidgets(2),
-          reason: '标题 + chip 都包含 "近 30 天" 文本',);
+      expect(
+        find.text('近 30 天'),
+        findsAtLeastNWidgets(2),
+        reason: '标题 + chip 都包含 "近 30 天" 文本',
+      );
     });
 
     testWidgets('chip + leading + action 复合模式正常显示', (tester) async {
@@ -86,10 +92,16 @@ void main() {
     testWidgets('初始收起 → 1 个主 FAB (menu icon), 0 工具按钮可见', (tester) async {
       await _pump(tester, const HomeFabToolbar());
       // 收起状态: 4 工具按钮隐藏 (AnimatedSize 折叠), 只显示主 FAB
-      expect(find.byIcon(Icons.menu), findsOneWidget,
-          reason: '初始收起显示 menu icon',);
-      expect(find.byIcon(Icons.close), findsNothing,
-          reason: '初始收起不应该显示 close icon',);
+      expect(
+        find.byIcon(Icons.menu),
+        findsOneWidget,
+        reason: '初始收起显示 menu icon',
+      );
+      expect(
+        find.byIcon(Icons.close),
+        findsNothing,
+        reason: '初始收起不应该显示 close icon',
+      );
       // 4 工具按钮 label 收起时不可见 (AnimatedSize 高度=0)
       // v0.30 R91 Task 7: FAB label 改 dailyTrackingFab (原 homeFabAssessment
       // "心情测试" 已过时 — 跟 FAB 跳 /daily-tracking 整合入口保持一致)
@@ -113,8 +125,11 @@ void main() {
       expect(find.text('回到顶端'), findsOneWidget);
       // 主 FAB 变 close icon
       expect(find.byIcon(Icons.close), findsOneWidget);
-      expect(find.byIcon(Icons.menu), findsNothing,
-          reason: '展开后主 FAB 变 close icon',);
+      expect(
+        find.byIcon(Icons.menu),
+        findsNothing,
+        reason: '展开后主 FAB 变 close icon',
+      );
     });
 
     testWidgets('再次点击 close FAB → 收回 4 工具按钮 + menu icon', (tester) async {
@@ -127,8 +142,11 @@ void main() {
       await tester.tap(find.byIcon(Icons.close));
       await tester.pumpAndSettle();
       expect(find.text('日常追踪'), findsNothing, reason: '收回后 4 工具按钮隐藏');
-      expect(find.byIcon(Icons.menu), findsOneWidget,
-          reason: '收回后主 FAB 变 menu icon',);
+      expect(
+        find.byIcon(Icons.menu),
+        findsOneWidget,
+        reason: '收回后主 FAB 变 menu icon',
+      );
     });
   });
 }

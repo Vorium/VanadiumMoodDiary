@@ -1378,7 +1378,7 @@
   },
   "safetyCheckResultDndSuppressed": "DND 时段，跳过告警",
   "safetyCheckResultNoContacts": "无紧急联系人，未发送",
-  "safetyCheckResultAlertedMocked": "**开发模式**，未实际通知联系人（mock: {mocked}）",
+  "safetyCheckResultAlertedMocked": "测试通知已发送（{mocked} 位联系人，实际未送达）",
   "@safetyCheckResultAlertedMocked": {
     "placeholders": {
       "mocked": {
@@ -2278,6 +2278,22 @@
   "@dailyTrackingMultiChartTitle": {
     "description": "v0.30 R91: 多指标趋势图标题"
   },
+  "chartMetricWeight": "体重",
+  "@chartMetricWeight": {
+    "description": "R102: 多指标趋势图 — 体重指标名"
+  },
+  "chartMetricSleep": "睡眠",
+  "@chartMetricSleep": {
+    "description": "R102: 多指标趋势图 — 睡眠指标名"
+  },
+  "chartMetricMood": "心境",
+  "@chartMetricMood": {
+    "description": "R102: 多指标趋势图 — 心境指标名"
+  },
+  "chartMetricStress": "应激源",
+  "@chartMetricStress": {
+    "description": "R102: 多指标趋势图 — 应激源指标名"
+  },
   "dailyTrackingLastTime": "{time} 记录",
   "@dailyTrackingLastTime": {
     "description": "v0.30 R91: 卡片 lastValue 时间占位 (placeholder {time} 是 formatted date)",
@@ -2927,5 +2943,301 @@
   "dataExportRetentionClipboard": "剪贴板 + 用户自行保存到加密存储",
   "@dataExportRetentionClipboard": {
     "description": "v0.30 R100 (P1#9): 导出 consent dialog retention placeholder"
-  }
+  },
+
+  "medPageTitle": "用药",
+  "medAddTooltip": "添加药物",
+  "medTodaySchedule": "今日服药",
+  "medMyMedications": "我的药物",
+  "medQuickActions": "快捷操作",
+  "medCalendar": "用药日历",
+  "medRefill": "续方管理",
+  "medSlotMorning": "早上",
+  "medSlotAfternoon": "下午",
+  "medSlotEvening": "晚上",
+  "medSlotBedtime": "睡前",
+  "medEmptyTitle": "还没有添加药物",
+  "medEmptySubtitle": "点击右上角 + 添加你的第一种药物",
+  "medNoScheduleToday": "今天没有服药计划",
+  "medAddTitle": "添加药物",
+  "medAddStep1Title": "药物信息",
+  "medAddStep2Title": "剂量与时间",
+  "medAddStep3Title": "确认",
+  "medAddNameLabel": "药物名称",
+  "medAddNameHint": "例如：舍曲林",
+  "medAddFormLabel": "剂型",
+  "medAddDosageLabel": "每次剂量",
+  "medAddTimeLabel": "服药时间",
+  "medAddTimeAdd": "添加时间",
+  "medAddColorLabel": "药物颜色（可选，帮助识别）",
+  "medAddConfirmName": "药名",
+  "medAddConfirmForm": "剂型",
+  "medAddConfirmDosage": "剂量",
+  "medAddConfirmTime": "时间",
+  "medAddPrev": "上一步",
+  "medAddNext": "下一步",
+  "medAddSave": "保存",
+  "medAddColorN": "药物颜色 {n}",
+  "medFormTablet": "片剂",
+  "medFormCapsule": "胶囊",
+  "medFormLiquid": "口服液",
+  "medFormPatch": "贴剂",
+  "medFormInjection": "注射",
+  "medFormOther": "其他",
+  "medDetailTitle": "药物详情",
+  "medNotFound": "药物未找到",
+
+  "moodReminderTitle": "情绪记录提醒",
+  "moodReminderSubtitle": "每天定时提醒你记录心情",
+  "moodReminderTimeLabel": "提醒时间",
+  "moodReminderEnabled": "开启提醒",
+  "@moodReminderTitle": {
+    "description": "v0.30 R101: 情绪记录提醒设置标题"
+  },
+  "@moodReminderEnabled": {
+    "description": "v0.30 R101: 情绪记录提醒开关"
+  },
+  "@medPageTitle": {
+    "description": "v0.30 R101: 用药主页标题"
+  },
+  "@medAddTooltip": {
+    "description": "v0.30 R101: 用药主页添加按钮 tooltip"
+  },
+  "@medTodaySchedule": {
+    "description": "v0.30 R101: 今日服药计划 section 标题"
+  },
+  "@medMyMedications": {
+    "description": "v0.30 R101: 我的药物 section 标题"
+  },
+  "@medQuickActions": {
+    "description": "v0.30 R101: 快捷操作 section 标题"
+  },
+  "@medSlotMorning": {
+    "description": "v0.30 R101: 时间段标签 - 早上"
+  },
+  "@medSlotAfternoon": {
+    "description": "v0.30 R101: 时间段标签 - 下午"
+  },
+  "@medSlotEvening": {
+    "description": "v0.30 R101: 时间段标签 - 晚上"
+  },
+  "@medSlotBedtime": {
+    "description": "v0.30 R101: 时间段标签 - 睡前"
+  },
+  "@medFormTablet": {
+    "description": "v0.30 R101: 剂型 - 片剂"
+  },
+  "@medFormCapsule": {
+    "description": "v0.30 R101: 剂型 - 胶囊"
+  },
+  "@medFormLiquid": {
+    "description": "v0.30 R101: 剂型 - 口服液"
+  },
+
+  "moodInfluenceTitle": "影响因素",
+  "moodInfluenceSubtitle": "什么影响了你的心情？（可多选）",
+  "moodInfluenceRelationships": "关系",
+  "moodInfluenceHealth": "健康",
+  "moodInfluenceActivities": "活动",
+  "moodInfluenceMindfulness": "正念",
+  "moodInfluenceWeather": "天气",
+  "moodInfluenceOther": "其他",
+
+  "influenceFactorFamily": "家人",
+  "influenceFactorFriend": "朋友",
+  "influenceFactorPartner": "伴侣",
+  "influenceFactorChild": "孩子",
+  "influenceFactorColleague": "同事",
+  "influenceFactorExercise": "运动",
+  "influenceFactorSick": "生病",
+  "influenceFactorGoodSleep": "睡眠好",
+  "influenceFactorHealthyDiet": "饮食健康",
+  "influenceFactorWork": "工作",
+  "influenceFactorHobby": "爱好",
+  "influenceFactorTravel": "旅行",
+  "influenceFactorCommute": "通勤",
+  "influenceFactorShopping": "购物",
+  "influenceFactorGaming": "游戏",
+  "influenceFactorReading": "阅读",
+  "influenceFactorEntertainment": "娱乐",
+  "influenceFactorMeditation": "冥想",
+  "influenceFactorBreathing": "呼吸练习",
+  "influenceFactorJournaling": "写日记",
+  "influenceFactorYoga": "瑜伽",
+  "influenceFactorSunny": "晴天",
+  "influenceFactorCloudy": "多云",
+  "influenceFactorRainy": "雨天",
+  "influenceFactorSnowy": "雪天",
+  "influenceFactorWindy": "刮风",
+
+  "moodDetailTitle": "情绪详情",
+  "moodDetailFactors": "影响因素",
+  "moodDetailMoodState": "情绪状态",
+  "moodDetail4D": "4 维度",
+  "moodDetailCbtRecord": "CBT 思维记录",
+  "moodTrendTitle": "情绪趋势",
+  "moodTrendWeek": "近 7 天",
+  "moodTrendMonth": "近 30 天",
+  "moodTrendDistribution": "分数分布",
+  "moodTrendNoData": "暂无数据",
+  "moodEditTooltip": "编辑",
+  "moodDeleteTooltip": "删除",
+  "moodDeleteConfirm": "确定删除这条记录吗？",
+  "moodFactorAnalysis": "因素关联分析",
+  "moodFactorAvgScore": "平均分",
+  "moodFactorCount": "记录数",
+  "navMedication": "用药",
+  "moodModeMomentary": "此刻",
+  "moodModeDaily": "今天",
+  "moodTrendWeekTitle": "近 7 天情绪趋势",
+  "moodTrendMonthTitle": "近 30 天情绪趋势",
+  "moodTrendDistTitle": "分数分布",
+  "moodTrendCbtTitle": "CBT 重评效果",
+  "moodTrendCbtHint": "正值 = 情绪改善, 负值 = 恶化",
+  "moodTrendCbtEmpty": "暂无 CBT 重评数据",
+  "moodTrendRecords": "条",
+  "medDetailActive": "在用",
+  "medDetailStopped": "已停",
+  "medDetailAdherence": "依从性",
+  "medDetailLast30": "近30天",
+  "medDetailDays": "服药天数",
+  "medDetailLast30Record": "近30天记录",
+  "medDetailEdit": "编辑",
+  "medDetailRefill": "续方",
+  "medDetailNoFactors": "暂无影响因素数据",
+  "moodCbtSituation": "情境",
+  "moodCbtAutoThought": "自动思维",
+  "moodCbtEvidenceFor": "支持证据",
+  "moodCbtEvidenceAgainst": "反对证据",
+  "moodCbtAltThought": "替代思维",
+  "moodCbtRerated": "重新评分",
+  "moodCbtCoreBelief": "核心信念",
+  "moodCbtBehavior": "行为应对",
+  "moodAudioRecording": "录音 {duration}",
+  "moodDeleted": "已删除",
+  "moodPeriodMorning": "早上",
+  "moodPeriodAfternoon": "下午",
+  "moodPeriodEvening": "晚上",
+  "moodPeriodNight": "夜间",
+  "settingsProfileTitle": "个人资料",
+  "settingsProfileSubtitle": "健康档案、医疗信息",
+  "todaySummaryCheckIn": "打卡",
+  "todaySummaryMeds": "药物",
+  "todaySummaryMood": "心情",
+  "todaySummaryStreak": "连续",
+  "todaySummaryStreakDays": "{count}天",
+  "@todaySummaryStreakDays": {
+    "description": "R103: 主页摘要卡连续打卡天数 (placeholder {count} 是天数)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setupConsentMedicalDisclaimer": "我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务",
+  "setupConsentViewDisclaimer": "查看",
+
+  "trackingCustomize": "自定义追踪项",
+  "trackingPin": "置顶",
+  "trackingUnpin": "取消置顶",
+  "trackingHide": "隐藏此项",
+  "trackingPinned": "收藏",
+  "trackingCategoryEmotional": "情绪状态",
+  "trackingCategoryPhysical": "身体指标",
+  "trackingCategoryBehavioral": "行为节律",
+  "trackingCategoryMedical": "医疗记录",
+  "todayTrackingSummary": "今日已追踪 {tracked}/{total} 项",
+  "@todayTrackingSummary": {
+    "description": "R100: 今日追踪汇总 (placeholders: tracked=已追踪数, total=总数)",
+    "placeholders": {
+      "tracked": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "moodRecordingLabel": "录音 {duration}",
+  "@moodRecordingLabel": {
+    "description": "R104: 情绪详情页录音标签 (placeholder {duration} 是时长)",
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "medicationNameRequired": "请输入药物名称",
+  "medicationAdded": "已添加 {name}",
+  "@medicationAdded": {
+    "description": "R104: 添加药物成功提示 (placeholder {name} 是药名)",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "medicationStatusInUse": "在用",
+  "medicationStatusStopped": "已停",
+  "factorAnalysisCount": "{count} 条",
+  "@factorAnalysisCount": {
+    "description": "R104: 影响因素分析记录数 (placeholder {count} 是数量)",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "setupConsentAgreeAll": "我已阅读并同意以上所有协议",
+  "setupConsentViewAll": "查看全部协议",
+  "@_v0_31_P1_5_domain_hardcoded_zh_to_arb": {},
+  "careCopyLateCheckInTitle": "🛏️ 提早一点更稳定",
+  "careCopyLateCheckInBody": "21 点后打卡比例偏高 — 规律作息对药效有影响",
+  "careCopyWeekendMissedTitle": "☀️ 周末保持节律",
+  "careCopyWeekendMissedBody": "周末容易错过——现在打卡，多一点坚持",
+  "careCopySecondDayMissedTitle": "🌿 后续保持就好",
+  "careCopySecondDayMissedBody": "少 1 次没关系——后续保持就好",
+  "careCopyWeekPerfectTitle": "🌟 一整周都准时！",
+  "careCopyWeekPerfectBody": "今周已全部准时",
+  "assessmentComparisonImproved": "好转",
+  "assessmentComparisonWorsened": "恶化",
+  "assessmentComparisonUnchanged": "持平",
+  "assessmentComparisonFirst": "首次评估",
+  "assessmentDeltaSame": "和上次一样（{delta}）",
+  "@assessmentDeltaSame": {
+    "description": "评估对比: 分数差为 0 时的文案",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentDeltaHigher": "比上次高 {delta} 分",
+  "@assessmentDeltaHigher": {
+    "description": "评估对比: 分数比上次高",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentDeltaLower": "比上次低 {delta} 分",
+  "@assessmentDeltaLower": {
+    "description": "评估对比: 分数比上次低",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentSeverityRank": "等级 {rank}",
+  "@assessmentSeverityRank": {
+    "description": "评估对比: 未知量表的严重度等级兜底",
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "checkInTypeAssessment": "心理量表评估",
+  "dayDetailTotalScore": "总分 {total}",
+  "@dayDetailTotalScore": {
+    "description": "日历详情: 评估事件副标题 (总分)",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dayDetailScaleAssessment": "心理量表评估"
 }

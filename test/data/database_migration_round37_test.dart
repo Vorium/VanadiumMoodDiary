@@ -19,7 +19,8 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 
 void main() {
   group('AppDatabase schemaVersion', () {
-    test('schemaVersion == 19 (v0.30 round 92: vent contentText DROP, 6 新表 + mood_entries period)',
+    test(
+        'schemaVersion == 19 (v0.30 round 92: vent contentText DROP, 6 新表 + mood_entries period)',
         () {
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
@@ -124,11 +125,17 @@ void main() {
           .get();
       final columns = result.map((r) => r.read<String>('name')).toSet();
       // R92 后: content_text_enc 保留
-      expect(columns, contains('content_text_enc'),
-          reason: 'R92 schemaVersion 19 vent_entries 必须保留 content_text_enc',);
+      expect(
+        columns,
+        contains('content_text_enc'),
+        reason: 'R92 schemaVersion 19 vent_entries 必须保留 content_text_enc',
+      );
       // R92 后: content_text 已 DROP (PIPL §28 清理)
-      expect(columns.contains('content_text'), isFalse,
-          reason: 'R92 schemaVersion 19 vent_entries 不应再有 content_text 明文列',);
+      expect(
+        columns.contains('content_text'),
+        isFalse,
+        reason: 'R92 schemaVersion 19 vent_entries 不应再有 content_text 明文列',
+      );
     });
 
     test('mood_entries 加 4 维度 3 字段 (v6 → v7)', () async {
@@ -171,8 +178,11 @@ void main() {
           )
           .get();
       final columns = result.map((r) => r.read<String>('name')).toSet();
-      expect(columns, contains('period'),
-          reason: 'v17→v18 migration must add period column',);
+      expect(
+        columns,
+        contains('period'),
+        reason: 'v17→v18 migration must add period column',
+      );
     });
 
     test('6 新表创建 (v17 → v18)', () async {

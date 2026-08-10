@@ -34,8 +34,11 @@ class StaticScaleTranslations implements ScaleTranslations {
   String gad7Name({String? override}) => override ?? 'GAD-7 焦虑筛查';
 
   @override
-  String crisisHotlineLabel(HotlineRegion region,
-      {int index = 0, String? override,}) {
+  String crisisHotlineLabel(
+    HotlineRegion region, {
+    int index = 0,
+    String? override,
+  }) {
     if (override != null) return override;
     final list = hotlineByRegion[region];
     if (list == null || list.isEmpty) return region.name;

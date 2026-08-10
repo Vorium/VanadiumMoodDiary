@@ -227,8 +227,10 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                             // v0.30 R95 sub-spec 8 task 18: inline errorText 替代
                             // snackbar (emil "3 tap 抵达" — snackbar 打断流, 改内
                             // 联校验后输完即知, 不打断主流程)
-                            setLocal(() => phoneError =
-                                AppLocalizations.of(ctx).snackbarPhoneInvalid,);
+                            setLocal(
+                              () => phoneError =
+                                  AppLocalizations.of(ctx).snackbarPhoneInvalid,
+                            );
                             return;
                           }
                           setLocal(() => saving = true);

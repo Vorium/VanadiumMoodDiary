@@ -42,8 +42,11 @@ void main() {
     // v0.30 R95 sub-spec 8 task 46: 撤回时间必包在 Chip widget 内
     // (修前是 Text, 修后改 Chip 标识)
     final chipFinder = find.byType(Chip);
-    expect(chipFinder, findsOneWidget,
-        reason: 'task 46: 撤回时间必包在 Chip widget 内',);
+    expect(
+      chipFinder,
+      findsOneWidget,
+      reason: 'task 46: 撤回时间必包在 Chip widget 内',
+    );
 
     // Chip 文字含撤回时间 (YYYY-MM-DD HH:MM)
     final chipText =

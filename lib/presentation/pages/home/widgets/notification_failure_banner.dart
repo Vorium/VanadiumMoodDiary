@@ -2,6 +2,7 @@
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// v0.18 round 14 (P1-21): 通知初始化失败时显示的顶部 banner
@@ -27,41 +28,43 @@ class _NotificationFailureBannerState extends State<NotificationFailureBanner> {
   @override
   Widget build(BuildContext context) {
     if (_dismissed) return const SizedBox.shrink();
-    return Container(
-      margin: const EdgeInsets.only(top: AppTokens.spacingSm),
-      padding: AppTokens.edgeInsetsMd,
-      decoration: BoxDecoration(
-        color: AppTokens.tintedWarningSoft(context),
-        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-        border: Border.all(color: AppTokens.tintedWarningBorder(context)),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.notifications_off_outlined,
-            color: AppTokens.warningColor(context),
-            size: 20,
-          ),
-          const SizedBox(width: AppTokens.spacingXs),
-          Expanded(
-            child: Text(
-              AppLocalizations.of(context).homeNotifBannerText,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: Theme.of(context).colorScheme.onSurface,
+    return FadeIn(
+      child: Container(
+        margin: const EdgeInsets.only(top: AppTokens.spacingSm),
+        padding: AppTokens.edgeInsetsMd,
+        decoration: BoxDecoration(
+          color: AppTokens.tintedWarningSoft(context),
+          borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+          border: Border.all(color: AppTokens.tintedWarningBorder(context)),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.notifications_off_outlined,
+              color: AppTokens.warningColor(context),
+              size: 20,
+            ),
+            const SizedBox(width: AppTokens.spacingXs),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context).homeNotifBannerText,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeCaption,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
-          ),
-          // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
-          PressFeedbackIconButton(
-            icon: Icons.close,
-            size: AppTokens.iconSizeInline,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-            onPressed: () => setState(() => _dismissed = true),
-            tooltip: AppLocalizations.of(context).homeNotifBannerDismiss,
-          ),
-        ],
+            // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
+            PressFeedbackIconButton(
+              icon: Icons.close,
+              size: AppTokens.iconSizeInline,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              onPressed: () => setState(() => _dismissed = true),
+              tooltip: AppLocalizations.of(context).homeNotifBannerDismiss,
+            ),
+          ],
+        ),
       ),
     );
   }

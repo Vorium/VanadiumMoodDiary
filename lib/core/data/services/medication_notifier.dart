@@ -20,7 +20,8 @@
 // v0.22 round 37 抽 SnoozeManager / BadgeSyncService / ReminderDispatcher 后的
 // 第 4-6 个子 facade。facade 缩到 ~250 行 init + 委托。
 
-import 'package:chroniccare/core/data/database/app_database.dart' show Medication;
+import 'package:chroniccare/core/data/database/app_database.dart'
+    show Medication;
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 
@@ -128,10 +129,12 @@ class MedicationNotifier {
           // v0.11: payload 携带 medId, 点通知直达该药打卡
           final payload =
               NotificationDeepLink.medicationCheckIn(med.id).encode();
+          // v0.30 R108 (P0#3): body 改通用文案, 不再暴露 dosage/unit
+          // 锁屏不泄漏 PII (药名 + 剂量) — 满足 PIPL §6 最小化原则
           await _dispatcher.zonedDaily(
             id: id,
             title: Strings.notifMedicationTitle(med.name),
-            body: Strings.notifMedicationBody(med.dosage, med.dosageUnit),
+            body: Strings.notifMedicationBody(),
             hour: t.hour,
             minute: t.minute,
             details: details,

@@ -48,14 +48,17 @@ class HomeHeroIllustration extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(AppTokens.radiusCard),
         boxShadow: [
+          // R102 (P1): 改用 Theme.of(context).colorScheme.shadow 替代
+          // Colors.black 硬编码, dark mode 下阴影自动适配
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Stack(
+      child: ExcludeSemantics(
+        child: Stack(
         children: [
           // 底层云 (左侧)
           Positioned(
@@ -112,7 +115,8 @@ class HomeHeroIllustration extends StatelessWidget {
             ),
           ),
         ],
-      ),
+        ),
+      ), // ExcludeSemantics
     );
   }
 }

@@ -12,6 +12,7 @@
 import 'package:chroniccare/core/shared/domain_value.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/entities/medication_form.dart';
 
 /// 药物（领域实体）
 ///
@@ -28,6 +29,15 @@ class MedicationEntity {
   final DateTime? refillAt;
   final int refillReminderDays;
 
+  /// v0.30 R101: 剂型 (片剂/胶囊/口服液/贴剂/注射/其他)
+  final MedicationForm form;
+
+  /// v0.30 R101: 颜色索引 (0-5, 对应 6 种药丸颜色)
+  final int colorIndex;
+
+  /// v0.30 R101: 备注
+  final String? notes;
+
   const MedicationEntity({
     required this.id,
     required this.name,
@@ -39,6 +49,9 @@ class MedicationEntity {
     required this.isActive,
     this.refillAt,
     required this.refillReminderDays,
+    this.form = MedicationForm.tablet,
+    this.colorIndex = 0,
+    this.notes,
   });
 
   /// 业务方法：是否在用
@@ -95,6 +108,9 @@ class MedicationEntity {
     bool? isActive,
     DomainValue<DateTime?>? refillAt,
     int? refillReminderDays,
+    MedicationForm? form,
+    int? colorIndex,
+    DomainValue<String?>? notes,
   }) {
     return MedicationEntity(
       id: id ?? this.id,
@@ -107,6 +123,9 @@ class MedicationEntity {
       isActive: isActive ?? this.isActive,
       refillAt: refillAt == null ? this.refillAt : refillAt.value,
       refillReminderDays: refillReminderDays ?? this.refillReminderDays,
+      form: form ?? this.form,
+      colorIndex: colorIndex ?? this.colorIndex,
+      notes: notes == null ? this.notes : notes.value,
     );
   }
 
@@ -123,7 +142,10 @@ class MedicationEntity {
         other.endDate == endDate &&
         other.isActive == isActive &&
         other.refillAt == refillAt &&
-        other.refillReminderDays == refillReminderDays;
+        other.refillReminderDays == refillReminderDays &&
+        other.form == form &&
+        other.colorIndex == colorIndex &&
+        other.notes == notes;
   }
 
   @override
@@ -138,12 +160,15 @@ class MedicationEntity {
         isActive,
         refillAt,
         refillReminderDays,
+        form,
+        colorIndex,
+        notes,
       );
 
   @override
   String toString() =>
       'MedicationEntity(id=$id, name=$name, dosage=$dosage${dosageUnit.id}, '
-      'isActive=$isActive, refillAt=$refillAt)';
+      'form=${form.id}, colorIndex=$colorIndex, isActive=$isActive, refillAt=$refillAt)';
 
   /// `List<HourMinute>` 相等比较（业务层用 ==,不能用默认 identity）
   static bool _listEq(List<HourMinute> a, List<HourMinute> b) {

@@ -30,7 +30,9 @@ class CheckInButton extends StatelessWidget {
       height: AppTokens.buttonHeight,
       child: AnimatedContainer(
         duration: Motion.duration(context, AppTokens.durNormal),
-        curve: AppTokens.curveStandard,
+        curve: isChecked
+            ? Motion.curve(context, AppTokens.curveDelight)
+            : Motion.curve(context, AppTokens.curveStandard),
         decoration: BoxDecoration(
           color: isChecked
               ? AppTokens.disabledColor(context)

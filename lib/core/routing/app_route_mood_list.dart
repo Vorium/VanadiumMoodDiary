@@ -9,6 +9,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
+import 'package:chroniccare/presentation/pages/mood_list/mood_trend_page.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 
 /// v0.30 round 87: mood list 路由 (1 个 slide-right 子页)
 class AppRouteMoodList {
@@ -23,6 +25,24 @@ class AppRouteMoodList {
         pageBuilder: (context, state) => AppRoutes.slideRightPage(
           state.pageKey,
           const MoodListPage(),
+          context,
+        ),
+      ),
+      // /mood-trend: 情绪趋势图 (周/月折线 + 分布直方图)
+      GoRoute(
+        path: '/mood-trend',
+        pageBuilder: (context, state) => AppRoutes.slideRightPage(
+          state.pageKey,
+          const MoodTrendPage(),
+          context,
+        ),
+      ),
+      // R104: /mood/create — 新建情绪日记 (MoodRecorderPage 作为页面)
+      GoRoute(
+        path: '/mood/create',
+        pageBuilder: (context, state) => AppRoutes.slideUpPage(
+          state.pageKey,
+          const MoodRecorderPage(),
           context,
         ),
       ),

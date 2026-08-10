@@ -1,6 +1,7 @@
-// v0.30 round 93 (test): FeatureFlags 8 flag 默认值 + enableForTest + resetForTest + 8 常量全 false 验证
+// v0.30 round 93 (test): FeatureFlags 8 flag 默认值 + enableForTest + resetForTest + 8 常量验证
 //
 // R93 阶段 2: 11 项 `_prodXxxEnabled = const false` 业务暂停策略验证
+// R105: ventAudioEnabled 由 false 改 true (R104 启用语音录制), 其余 7 flag 保持 false。
 // 8 个 flag:
 //   - emergencyContactEnabled (R66)
 //   - iapEnabled (R68)
@@ -24,7 +25,7 @@ void main() {
   setUp(FeatureFlags.resetForTest);
   tearDown(FeatureFlags.resetForTest);
 
-  group('FeatureFlags R93 阶段 2 默认值 (8 flag 全 false)', () {
+  group('FeatureFlags R93 阶段 2 默认值 (7 flag false + ventAudio true)', () {
     test('emergencyContactEnabled 默认 false', () {
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
     });
@@ -58,9 +59,9 @@ void main() {
       expect(FeatureFlags.fiveVendorPushEnabled, isFalse);
     });
 
-    test('ventAudioEnabled 默认 false (R93 阶段 2 新增)', () {
-      // vent audio 录音业务闭环不全 (storage / export 业务暂停)
-      expect(FeatureFlags.ventAudioEnabled, isFalse);
+    test('ventAudioEnabled 默认 true (R104 启用语音录制)', () {
+      // R93 阶段 2 默认 false (录音业务暂停), R104 起启用语音录制 → 默认 true
+      expect(FeatureFlags.ventAudioEnabled, isTrue);
     });
   });
 
@@ -79,7 +80,7 @@ void main() {
       expect(FeatureFlags.ventAudioEnabled, isTrue);
     });
 
-    test('resetForTest 恢复 prod (8 个全 null → 8 个全 false)', () {
+    test('resetForTest 恢复 prod (8 个全 null → prod 默认)', () {
       // 先翻 enableForTest
       FeatureFlags.enableForTest();
       expect(FeatureFlags.iapEnabled, isTrue);
@@ -92,7 +93,8 @@ void main() {
       expect(FeatureFlags.aliyunSmsEnabled, isFalse);
       expect(FeatureFlags.emailServiceEnabled, isFalse);
       expect(FeatureFlags.fiveVendorPushEnabled, isFalse);
-      expect(FeatureFlags.ventAudioEnabled, isFalse);
+      // R104 起 ventAudio 默认 true
+      expect(FeatureFlags.ventAudioEnabled, isTrue);
     });
 
     test('per-flag setter 单独 override (兼容 R67 模式)', () {
@@ -115,7 +117,8 @@ void main() {
       FeatureFlags.setVentAudioEnabledForTest(null);
       expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.aliyunSmsEnabled, isFalse);
-      expect(FeatureFlags.ventAudioEnabled, isFalse);
+      // R104 起 ventAudio 默认 true
+      expect(FeatureFlags.ventAudioEnabled, isTrue);
     });
   });
 }

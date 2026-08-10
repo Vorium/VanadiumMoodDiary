@@ -58,7 +58,8 @@ void main() {
     );
   }
 
-  testWidgets('R93 case 1: 4 flag 默认 false → 4 section 全 hidden', (tester) async {
+  testWidgets('R93 case 1: 4 flag 默认 false → 4 section 全 hidden',
+      (tester) async {
     // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, NotificationStatusCard
     // 挪到 RemindersGroup 末尾, 维持 lazy load 体验, pumpAndSettle 仍可用。
     await tester.pumpWidget(buildSettingsPage());
@@ -77,8 +78,7 @@ void main() {
     expect(find.text('预览停药通知邮件'), findsNothing);
   });
 
-  testWidgets('R93 case 2: iapEnabled=true → IAP 商业卡渲染',
-      (tester) async {
+  testWidgets('R93 case 2: iapEnabled=true → IAP 商业卡渲染', (tester) async {
     FeatureFlags.setIapEnabledForTest(true);
     // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
     await tester.pumpWidget(buildSettingsPage());
@@ -88,7 +88,8 @@ void main() {
     expect(find.byIcon(Icons.workspace_premium), findsAtLeast(1));
   });
 
-  testWidgets('R93 case 3: emergencyContactEnabled=true → ContactsListWidget 渲染',
+  testWidgets(
+      'R93 case 3: emergencyContactEnabled=true → ContactsListWidget 渲染',
       (tester) async {
     // emergencyContactEnabled 没有 setEmergencyContactEnabledForTest setter (R66 兼容)
     // 用 enableForTest 翻 8 个全 true (含 emergencyContactEnabled), 验证联系人 section
@@ -118,7 +119,8 @@ void main() {
     expect(find.text('预览停药通知邮件'), findsNothing);
   });
 
-  testWidgets('R93 case 5: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',
+  testWidgets(
+      'R93 case 5: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',
       (tester) async {
     FeatureFlags.setFiveVendorPushEnabledForTest(true);
     // v0.30 round 95 (sub-spec 8 task 17): 同 case 1

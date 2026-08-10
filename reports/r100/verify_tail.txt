@@ -1,0 +1,6 @@
+02:32 +1991 ~1 -1: D:/Batch/chroniccare/test/superpowers/scale_strings_arb_lock_in_round95_test.dart: en / zh / zh_Hant 3 语 l10n 加载 (防 gen-l10n 误删, AGENTS.md 已知坑) zh 加载 notifChannelMedicationName
+02:32 +1992 ~1 -1: D:/Batch/chroniccare/test/superpowers/scale_strings_arb_lock_in_round95_test.dart: en / zh / zh_Hant 3 语 l10n 加载 (防 gen-l10n 误删, AGENTS.md 已知坑) zh_Hant 加载 homeSnoozeTitle (OpenCC s2tw 繁化, 实际 ARB key)
+02:33 +1993 ~1 -1: D:/Batch/chroniccare/test/widget_test.dart: i18n: AppLocalizations 中文版可加载关键 key
+02:33 +1994 ~1 -1: D:/Batch/chroniccare/test/widget_test.dart: i18n: AppLocalizations 英文版可加载关键 key
+02:33 +1995 ~1 -1: D:/Batch/chroniccare/test/widget_test.dart: i18n: 中英文文案不同 (验证多语言真的生效)
+02:33 +1996 ~1 -1: Some tests failed.

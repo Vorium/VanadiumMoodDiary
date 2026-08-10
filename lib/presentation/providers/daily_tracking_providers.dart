@@ -71,8 +71,7 @@ final weightRepositoryProvider = Provider<WeightRepository>(
 );
 
 /// 焦虑急躁仓库
-final anxietyAgitationRepositoryProvider =
-    Provider<AnxietyAgitationRepository>(
+final anxietyAgitationRepositoryProvider = Provider<AnxietyAgitationRepository>(
   (ref) => AnxietyAgitationRepositoryImpl(ref.watch(databaseProvider)),
 );
 
@@ -85,8 +84,7 @@ final treatmentRepositoryProvider = Provider<TreatmentRepository>(
 // ============== 6 仓库 stream provider (UI 监听用, autoDispose) ==============
 
 /// 睡眠条目流 (按 date DESC 倒序, DAO 排好)
-final sleepEntriesProvider =
-    StreamProvider.autoDispose<List<SleepEntryEntity>>(
+final sleepEntriesProvider = StreamProvider.autoDispose<List<SleepEntryEntity>>(
   (ref) => ref.watch(sleepRepositoryProvider).watchAll(),
 );
 
@@ -148,8 +146,7 @@ final latestSocialRhythmEntryProvider =
 );
 
 /// 最新应激源记录
-final latestStressEventEntryProvider =
-    Provider.autoDispose<StressEventEntity?>(
+final latestStressEventEntryProvider = Provider.autoDispose<StressEventEntity?>(
   (ref) => ref.watch(stressEventEntriesProvider).value?.firstOrNull,
 );
 

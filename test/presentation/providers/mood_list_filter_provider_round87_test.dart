@@ -118,7 +118,9 @@ void main() {
         ],
       );
       addTearDown(container.dispose);
-      container.read(moodListFilterProvider.notifier).setSort(MoodListSort.scoreAsc);
+      container
+          .read(moodListFilterProvider.notifier)
+          .setSort(MoodListSort.scoreAsc);
       final result = container.read(filteredMoodEntriesProvider);
       expect(result.length, 5);
       expect(result[0].score, 1);

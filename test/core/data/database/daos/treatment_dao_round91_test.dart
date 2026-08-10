@@ -28,14 +28,16 @@ void main() {
 
   group('TreatmentDao (v0.30 round 91 新表)', () {
     test('insert + linked medication FK + name 缓存 round-trip', () async {
-      await dao.insert(TreatmentEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 10, 0),
-        treatmentType: 'medication',
-        description: '服药咨询',
-        linkedMedicationId: const Value(42),
-        linkedMedicationName: const Value('舍曲林'),
-        note: const Value('调整剂量'),
-      ),);
+      await dao.insert(
+        TreatmentEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 10, 0),
+          treatmentType: 'medication',
+          description: '服药咨询',
+          linkedMedicationId: const Value(42),
+          linkedMedicationName: const Value('舍曲林'),
+          note: const Value('调整剂量'),
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.length, 1);
@@ -46,11 +48,13 @@ void main() {
     });
 
     test('不传 linkedMedicationId/Name → null (普通治疗记录)', () async {
-      await dao.insert(TreatmentEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 14, 0),
-        treatmentType: 'consultation',
-        description: '心理咨询',
-      ),);
+      await dao.insert(
+        TreatmentEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 14, 0),
+          treatmentType: 'consultation',
+          description: '心理咨询',
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.first.linkedMedicationId, isNull);
@@ -75,20 +79,25 @@ void main() {
 
       // 2. insert treatment linkedMedicationId=1, 但 linkedMedicationName=null
       //    (cache 故意空, 强制 DAO 从 join 读 name — 模拟老 entry migration 场景)
-      await dao.insert(TreatmentEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 10, 0),
-        treatmentType: 'medication',
-        description: '服用 Aspirin',
-        linkedMedicationId: const Value(1),
-        // linkedMedicationName 故意不传 (cache null)
-      ),);
+      await dao.insert(
+        TreatmentEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 10, 0),
+          treatmentType: 'medication',
+          description: '服用 Aspirin',
+          linkedMedicationId: const Value(1),
+          // linkedMedicationName 故意不传 (cache null)
+        ),
+      );
 
       // 3. watchAllTreatmentEntries() → entry.linkedMedicationName = 'Aspirin' (从 join)
       final all = await dao.watchAllTreatmentEntries().first;
       expect(all.length, 1);
       expect(all.first.linkedMedicationId, 1);
-      expect(all.first.linkedMedicationName, 'Aspirin',
-          reason: 'cache null 时必须从 medications join 读 name',);
+      expect(
+        all.first.linkedMedicationName,
+        'Aspirin',
+        reason: 'cache null 时必须从 medications join 读 name',
+      );
     });
   });
 }

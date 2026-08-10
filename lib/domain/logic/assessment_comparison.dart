@@ -10,8 +10,11 @@
 // - GAD-7 (0-21): 4 档 → 0-4 / 5-9 / 10-14 / 15+
 // 我们用 rank（0..N-1）来量化，等级下降 = 好转。
 
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/core/shared/date_utils.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
-import 'package:chroniccare/domain/logic/assessment_scale.dart' show AssessmentScale;
+import 'package:chroniccare/domain/logic/assessment_scale.dart'
+    show AssessmentScale;
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 
 /// 严重度排名方向
@@ -63,16 +66,31 @@ class AssessmentComparison {
   });
 
   /// UI 用的趋势文案
-  String get trendLabel {
+  ///
+  /// v0.31 P1-5: 硬编码中文迁移到 ARB — 走 Strings.xxx({override}) 模式
+  String trendLabel({
+    String? improvedOverride,
+    String? worsenedOverride,
+    String? unchangedOverride,
+    String? firstAssessmentOverride,
+  }) {
     switch (trend) {
       case ComparisonTrend.improved:
-        return '好转';
+        return Strings.assessmentComparisonImproved(
+          override: improvedOverride,
+        );
       case ComparisonTrend.worsened:
-        return '恶化';
+        return Strings.assessmentComparisonWorsened(
+          override: worsenedOverride,
+        );
       case ComparisonTrend.unchanged:
-        return '持平';
+        return Strings.assessmentComparisonUnchanged(
+          override: unchangedOverride,
+        );
       case ComparisonTrend.firstAssessment:
-        return '首次评估';
+        return Strings.assessmentComparisonFirst(
+          override: firstAssessmentOverride,
+        );
     }
   }
 
@@ -91,12 +109,20 @@ class AssessmentComparison {
   }
 
   /// UI 用的"和上次比"完整文案
-  String? get deltaLabel {
+  ///
+  /// v0.31 P1-5: 硬编码中文迁移到 ARB — 走 Strings.xxx({override}) 模式
+  String? deltaLabel({
+    String? sameOverride,
+    String? higherOverride,
+    String? lowerOverride,
+  }) {
     if (previous == null || scoreDelta == null) return null;
     final d = scoreDelta!;
-    if (d == 0) return '和上次一样（$d）';
-    if (d > 0) return '比上次高 $d 分';
-    return '比上次低 ${-d} 分';
+    if (d == 0) return Strings.assessmentDeltaSame(d, override: sameOverride);
+    if (d > 0) {
+      return Strings.assessmentDeltaHigher(d, override: higherOverride);
+    }
+    return Strings.assessmentDeltaLower(-d, override: lowerOverride);
   }
 }
 
@@ -156,9 +182,12 @@ class AssessmentComparisonCalculator {
   /// 严重度档位名（中文）
   ///
   /// 数据源为各量表的 [AssessmentScale.severityCutoffs]。
+  ///
+  /// v0.31 P1-5: 硬编码中文迁移到 ARB — 走 Strings.xxx({override}) 模式
   static String severityLabelFor({
     required String scaleId,
     required int total,
+    String? override,
   }) {
     final scale = scaleById(scaleId);
     if (scale != null) {
@@ -169,7 +198,7 @@ class AssessmentComparisonCalculator {
       return cutoff.label;
     }
     final rank = severityRankFor(scaleId: scaleId, total: total);
-    return '等级 $rank';
+    return Strings.assessmentSeverityRank(rank, override: override);
   }
 
   /// 从历史 records 提取最近一次 + 上一次的对比
@@ -240,9 +269,6 @@ class AssessmentComparisonCalculator {
   }
 
   /// 跨日天数（同 trend_calculator 的逻辑）
-  static int _daysBetween(DateTime a, DateTime b) {
-    final aDay = DateTime(a.year, a.month, a.day);
-    final bDay = DateTime(b.year, b.month, b.day);
-    return bDay.difference(aDay).inDays;
-  }
+  /// R102 (P2): 改用 core/shared/date_utils.dart 单一来源
+  static int _daysBetween(DateTime a, DateTime b) => calendarDaysBetween(a, b);
 }

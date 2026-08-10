@@ -72,9 +72,8 @@ class MoodPeriodAggregator {
   }) {
     // 1. 过滤时间窗
     final refNow = now ?? DateTime.now();
-    final cutoff = daysWindow == null
-        ? null
-        : refNow.subtract(Duration(days: daysWindow));
+    final cutoff =
+        daysWindow == null ? null : refNow.subtract(Duration(days: daysWindow));
     final filtered = cutoff == null
         ? entries
         : entries.where((e) => !e.timestamp.isBefore(cutoff)).toList();

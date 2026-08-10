@@ -157,12 +157,14 @@ void main() {
     (tester) async {
       _setBigView(tester);
       int callCount = 0;
-      await tester.pumpWidget(_wrap(
-        db: db,
-        onClear: () async {
-          callCount++;
-        },
-      ),);
+      await tester.pumpWidget(
+        _wrap(
+          db: db,
+          onClear: () async {
+            callCount++;
+          },
+        ),
+      );
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -173,8 +175,11 @@ void main() {
       expect(callCount, 1, reason: 'onClear 回调应被调用 1 次');
 
       // 验证: 没有 AlertDialog (跳过完整链路)
-      expect(find.byType(AlertDialog), findsNothing,
-          reason: 'onClear 模式下, 不应弹二次确认 dialog',);
+      expect(
+        find.byType(AlertDialog),
+        findsNothing,
+        reason: 'onClear 模式下, 不应弹二次确认 dialog',
+      );
     },
   );
 
@@ -201,12 +206,18 @@ void main() {
       await tester.pumpAndSettle();
 
       // 验证: dialog 关闭
-      expect(find.byType(AlertDialog), findsNothing,
-          reason: '取消后 dialog 应关闭',);
+      expect(
+        find.byType(AlertDialog),
+        findsNothing,
+        reason: '取消后 dialog 应关闭',
+      );
 
       // 验证: ventAudio.deleteAllWithRetry 没被调用 (取消 → 不清)
-      expect(ventAudio.deleteCalls, 0,
-          reason: '取消后, 不应调 ventAudio.deleteAllWithRetry',);
+      expect(
+        ventAudio.deleteCalls,
+        0,
+        reason: '取消后, 不应调 ventAudio.deleteAllWithRetry',
+      );
     },
   );
 }

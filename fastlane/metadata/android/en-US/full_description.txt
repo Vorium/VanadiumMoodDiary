@@ -10,13 +10,8 @@ Did you take your medication today? A single tap records it. Build a streak. Cel
 • Medication reminders
 Schedule multiple daily reminders. Never miss a dose. Customizable snooze, refill tracking, and "I'm running low" alerts.
 
-• Lost-contact safety net (coming soon — currently disabled)
-If you stop checking in for 2+ days, ChronicCare would automatically notify your trusted contacts. As someone managing chronic conditions, you don't have to worry about being alone.
-
-NOTE: This feature is currently disabled in this release. The SMS / email delivery pipeline is pending legal review and SMS provider onboarding (target: v1.0). Setup → Trusted contacts flow is preserved so your data is ready when the feature ships.
-
 • Mood & mental health journal
-Daily mood check-ins with optional voice notes (encrypted and stored only on your device). Track your emotional patterns over weeks and months.
+Daily mood check-ins to track your emotional patterns over weeks and months. Record your thoughts in a private vent space.
 
 • Mental health assessments
 Built-in PHQ-9 (depression) and GAD-7 (anxiety) screening. Tracks progress over time with simple charts. Crisis resources available if scores are high.
@@ -25,11 +20,11 @@ Built-in PHQ-9 (depression) and GAD-7 (anxiety) screening. Tracks progress over 
 All data stays on your phone. SQLCipher encryption. No accounts, no cloud, no analytics. We can't see your data — neither can anyone else.
 
 • Vent space
-A private space to write or record your thoughts. Optional password protection. Audio recordings are encrypted on disk.
+A private space to write your thoughts. Encrypted and stored only on your device.
 
 WHO IS THIS FOR?
 
-• People managing chronic conditions (depression, anxiety, bipolar, PTSD, ADHD, hypertension, diabetes, etc.)
+• People managing chronic mental health conditions (depression, anxiety, bipolar, PTSD, ADHD, and others)
 • Caregivers who want to gently check in on loved ones
 • Anyone working to build a consistent medication routine
 

@@ -41,14 +41,16 @@ class _FakeStressEventRepository implements StressEventRepositoryImpl {
   }) async {
     addCallCount++;
     final newId = _entries.length + 1;
-    _entries.add(StressEventEntity(
-      id: newId,
-      timestamp: timestamp,
-      eventType: eventType,
-      intensity: intensity,
-      note: note,
-      linkedMoodEntryId: linkedMoodEntryId,
-    ),);
+    _entries.add(
+      StressEventEntity(
+        id: newId,
+        timestamp: timestamp,
+        eventType: eventType,
+        intensity: intensity,
+        note: note,
+        linkedMoodEntryId: linkedMoodEntryId,
+      ),
+    );
     _ctrl.add(List.unmodifiable(_entries));
     return newId;
   }
@@ -77,7 +79,8 @@ void main() {
       overrides: [
         stressEventRepositoryProvider.overrideWithValue(fakeRepo),
         stressEventEntriesProvider.overrideWith(
-            (ref) => ref.watch(stressEventRepositoryProvider).watchAll(),),
+          (ref) => ref.watch(stressEventRepositoryProvider).watchAll(),
+        ),
       ],
       child: const MaterialApp(
         // v0.30 R91 Task 7: widget 用 l10n.stressEventXxx, 测试需要 locale
@@ -96,8 +99,11 @@ void main() {
     await tester.pump();
 
     // 1. 空态
-    expect(find.text('暂无应激源记录'), findsOneWidget,
-        reason: '空 entry 时显示 EmptyState title',);
+    expect(
+      find.text('暂无应激源记录'),
+      findsOneWidget,
+      reason: '空 entry 时显示 EmptyState title',
+    );
 
     // 2. tap 添加
     await tester.tap(find.text('添加应激源'));
@@ -117,9 +123,15 @@ void main() {
     await tester.pumpAndSettle();
 
     // 6. 验证: repo.add() 调 1 次 + dialog 关闭
-    expect(fakeRepo.addCallCount, 1,
-        reason: 'StressEventRepository.add() 必须被调 1 次',);
-    expect(find.text('添加应激源'), findsOneWidget,
-        reason: 'dialog 关闭后 "添加应激源" 按钮重新可见',);
+    expect(
+      fakeRepo.addCallCount,
+      1,
+      reason: 'StressEventRepository.add() 必须被调 1 次',
+    );
+    expect(
+      find.text('添加应激源'),
+      findsOneWidget,
+      reason: 'dialog 关闭后 "添加应激源" 按钮重新可见',
+    );
   });
 }

@@ -308,4 +308,12 @@ class _MockReminderDispatcher implements ReminderDispatcher {
 
   @override
   String get channelDescription => 'mock channel description';
+
+  @override
+  bool get useExactAllowWhileIdle => true;
+
+  @override
+  void setExactMode(bool value) {
+    // Mock: no-op
+  }
 }

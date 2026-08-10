@@ -1,0 +1,2 @@
+lib\presentation\pages\daily_tracking\widgets\weight_widgets.dart:156: 'UserProfile.heightCm 字段读取失败, 走 null 兜底'
+lib\presentation\pages\settings\widgets\data_management_section\widgets\export_tile.dart:110: '写 audit log 失败, 主流程继续 (consent 已拿到)'

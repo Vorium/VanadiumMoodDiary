@@ -67,22 +67,23 @@ void main() {
         // 6 daily tracking repo entries — 给 latestXxxEntryProvider
         // (override 整 entries provider, latestXxxEntryProvider 走 .value
         // 拿 firstOrNull, 避免真实 DB 创建)
-        sleepEntriesProvider
-            .overrideWith((ref) => const Stream<List<SleepEntryEntity>>.empty()),
+        sleepEntriesProvider.overrideWith(
+            (ref) => const Stream<List<SleepEntryEntity>>.empty(),),
         socialRhythmEntriesProvider.overrideWith(
-            (ref) => const Stream<List<SocialRhythmEntryEntity>>.empty(),),
-        stressEventEntriesProvider
-            .overrideWith((ref) => const Stream<List<StressEventEntity>>.empty()),
-        weightEntriesProvider
-            .overrideWith((ref) => const Stream<List<WeightEntryEntity>>.empty()),
+          (ref) => const Stream<List<SocialRhythmEntryEntity>>.empty(),
+        ),
+        stressEventEntriesProvider.overrideWith(
+            (ref) => const Stream<List<StressEventEntity>>.empty(),),
+        weightEntriesProvider.overrideWith(
+            (ref) => const Stream<List<WeightEntryEntity>>.empty(),),
         anxietyAgitationEntriesProvider.overrideWith(
-            (ref) =>
-                const Stream<List<AnxietyAgitationEntryEntity>>.empty(),),
+          (ref) => const Stream<List<AnxietyAgitationEntryEntity>>.empty(),
+        ),
         // treatment: Task 3 加了 repo, R91 补了 provider, 整合页 "治疗" 卡片
         // 用 latestTreatmentEntryProvider 派生. 漏 override 会触发真实 DB
         // 创建, 报 "AppDatabase multiple times" + pending timer.
-        treatmentEntriesProvider
-            .overrideWith((ref) => const Stream<List<TreatmentEntryEntity>>.empty()),
+        treatmentEntriesProvider.overrideWith(
+            (ref) => const Stream<List<TreatmentEntryEntity>>.empty(),),
       ],
       child: MaterialApp.router(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -105,8 +106,11 @@ void main() {
     await tester.pumpAndSettle();
 
     // 7 张 Card (1 情绪日记 + 5 子功能 + 1 治疗)
-    expect(find.byType(Card), findsNWidgets(7),
-        reason: '整合入口页有 7 张 Card: 情绪日记/焦虑急躁/睡眠/社会节律/应激源/治疗/体重',);
+    expect(
+      find.byType(Card),
+      findsNWidgets(7),
+      reason: '整合入口页有 7 张 Card: 情绪日记/焦虑急躁/睡眠/社会节律/应激源/治疗/体重',
+    );
 
     // MoodPeriodAggregatorChart 集成 (Task 2 已做, 集成到整合页)
     // 即使 entries 为空, chart widget 不渲染 (SizedBox.shrink fallback)
@@ -149,8 +153,11 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验证路由成功 → 目的地页 MOOD_DIARY_DESTINATION 渲染
-    expect(find.text('MOOD_DIARY_DESTINATION'), findsOneWidget,
-        reason: '"情绪日记" 卡片 onTap 必须 push /mood-diary',);
+    expect(
+      find.text('MOOD_DIARY_DESTINATION'),
+      findsOneWidget,
+      reason: '"情绪日记" 卡片 onTap 必须 push /mood-diary',
+    );
   });
 
   testWidgets('主页 FAB 改 /daily-tracking', (tester) async {
@@ -198,8 +205,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // 5. 验证路由成功 → 目的地页 DAILY_TRACKING_DESTINATION 渲染
-    expect(find.text('DAILY_TRACKING_DESTINATION'), findsOneWidget,
-        reason: '主页 FAB 跳 /daily-tracking (改 1 行: /assessment-center → /daily-tracking)',);
+    expect(
+      find.text('DAILY_TRACKING_DESTINATION'),
+      findsOneWidget,
+      reason:
+          '主页 FAB 跳 /daily-tracking (改 1 行: /assessment-center → /daily-tracking)',
+    );
   });
 
   testWidgets('"情绪日记" 卡片显示 period (早/中/晚/夜)', (tester) async {
@@ -224,12 +235,18 @@ void main() {
     expect(find.byType(Card), findsNWidgets(7));
 
     // 验证 MoodPeriodAggregatorChart 渲染 (entries 非空, chart 显示)
-    expect(find.byType(MoodPeriodAggregatorChart), findsOneWidget,
-        reason: 'mood_entries 非空时, 心境 4 段图必须渲染',);
+    expect(
+      find.byType(MoodPeriodAggregatorChart),
+      findsOneWidget,
+      reason: 'mood_entries 非空时, 心境 4 段图必须渲染',
+    );
 
     // 验证 "情绪日记" 卡片 lastValue 含 period 短 label "早"
     // Card 1 (顺序 0 = 情绪日记) 必须含 "早" 字 (来自 moodPeriodMorning l10n)
-    expect(find.textContaining('早'), findsWidgets,
-        reason: '"情绪日记" 卡片 lastValue 必须含心境时段短 label',);
+    expect(
+      find.textContaining('早'),
+      findsWidgets,
+      reason: '"情绪日记" 卡片 lastValue 必须含心境时段短 label',
+    );
   });
 }

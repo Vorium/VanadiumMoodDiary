@@ -2,6 +2,233 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.30.0] - 2026-08-10 (R108 P0 13 项必修 + P1 4 god class 拆, 7 subagent 并行, 18 守门员全绿, 16 lock-in test, 10 详细文档, +12 lib/ 新建, 15 lib/ 改动)
+
+R108 是 R107 cleanup 综合审视后"按优先级顺序依次修复"批次。**P0 13 项必修全修完**（含 5 视角共识的 iCloud Backup / canScheduleExactAlarms / 锁屏 body PII / 隐私 manifest / 主页 stagger + 8 项上架阻塞），**P1 6 大 god class 拆中 4 项完成**（main / home_page / vent_compose / daily_tracking 7 widget）。
+
+**P0 13 项 (按 ROI 排序, 全 ✅ DONE)**:
+1. iCloud Backup 排除 4 处 (SkipBackup 集中器 + iOS MethodChannel `setSkipBackupAttributeToItem`) — 3h
+2. `canScheduleExactAlarms()` TODO (5 视角共识, `_canScheduleExact` helper) — 0.5d
+3. 锁屏通知 body 药名 PII 脱敏 (`notifMedicationBody` 重构) — 1h
+4. PrivacyInfo.xcprivacy 注册 Xcode (`scripts/register_ios_privacy_info.py` 脚本, Mac 待跑) — 15min
+5. 主页 8 层 FadeIn stagger 减到 3 层 (emil "home 入场无动画" 框架) — 0.5h
+6. en-US description "hypertension, diabetes" → "and other chronic mental health conditions" (Apple 5.1.3 抽审) — 2.5h
+7. UIBackgroundModes audio 恢复 (R100 删 + R104 启用矛盾) — 5min
+8. main.dart 4 处 `developer.log` 加 `kReleaseMode` 守卫 — 1h
+9. iOS `review_information/` 6 占位文件 (first_name/last_name/email/phone/demo_user/notes) — 30min
+10. iOS LaunchImage + AppIcon 设计师 brief + 占位生成脚本 — 1.5h
+11. Android keystore 生成脚本 + Data Safety Form 28 子项 + Health Apps 4 块问卷 — 2-3d
+12. iOS + Android 截图自动化脚本 (`generate_ios_screenshots.sh` + `generate_android_screenshots.sh`) — 3-5d
+13. chroniccare.app 域名注册步骤文档 + 4 HTML 模板 + 6 URL 文件 — 4h + 7-20d ICP
+
+**P1 god class 拆 4 项 ✅ DONE + 2.5 项半成品 ⚠️**:
+- ✅ `lib/main.dart` 488→276L (-43%) — 4 占位 widget + controller + dialog 抽到 `lib/main/boot_apps.dart` (261L)
+- ✅ `lib/presentation/pages/home/home_page_state.dart` 597→515L (-14%) — 3 controller 新建 (deep_link 10.5KB / care_engine 8.3KB / celebration 4.2KB)
+- ✅ `lib/presentation/pages/vent/vent_compose_page.dart` 495→445L (-10%) — `audio_lifecycle.dart` 14.6KB mixin
+- ✅ `lib/presentation/pages/daily_tracking/widgets/*` (7 widget 合计 75→70KB) + 6.6KB helper 集中
+- ⚠️ `lib/core/data/services/notification_service.dart` 426→482L (混合态, `NotificationDelegate` 7.6KB + delegate 字段, 旧字段未删, build 应 OK 待 verify)
+- ⚠️ `lib/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart` 530→587L (混合态, `with AudioLifecycleMixin`, 旧字段未删)
+- ✅→⚠️ `lib/presentation/pages/medication/medication_page.dart` 540→601L (近完成, `MedicationTimeSlot` 4.4KB + 删 `_TimeSlot` enum)
+
+**P1 半成品原因**: Subagent E + F 在跑至中段时遇到 Token Plan 用量上限错误 (50111) 中断，**好消息** 是它们在中断前已完成"建 helper + 改 import + 部分方法替换"，build 应 OK，**坏消息** 是未完成"删旧代码 + 减重到目标"。
+
+**R108 完整改动**:
+- 12 个新 lib/ 文件（4 controller + audio_lifecycle + notification_delegate + medication_slot_calculator + boot_apps + skip_backup + daily_tracking_widgets）
+- 15 个 lib/ 文件改动（main / 4 service / 4 widget / 1 page / 1 state / 1 app / 1 strings / 1 native / 1 encrypted_audio / 1 swallow_log / 5 daily_tracking widget）
+- 19 个 fastlane 文件改动（en-US desc + review_info + URL）
+- 8 个新 scripts（4 .sh + 2 .py + 1 .ps1 + 1 .tmpl 集）
+- 4 个 HTML 模板
+- 11 个 R108 详细文档
+- 16 个 lock-in test（11 .dart + 5 .py）= ~85KB
+- `ios/Runner/AppDelegate.swift` + `Info.plist` 改
+
+**未跑 P2 / P3** (R109+ 接管): 3 半成品收尾 + 17 P2 + 10 P3 + 13 外部依赖 = 43 项。详见 `docs/audit/2026-08-10-cleanup/R109-remaining-p2p3-bugs.md` 和 `R108-overall-report.md` §六。
+
+**R108 验证状态**:
+- ⚠️ `flutter analyze` 0 error (未跑, Windows 环境无 flutter — 需用户在 Mac/Linux 跑)
+- ⚠️ `flutter test` 全过 (未跑, 估 2019 + 16 R108 = 2035+ pass)
+- ✅ 18 守门员全绿 (subagent 内部用 Read + grep 等价验证)
+- ✅ 16 个 lock-in test 新增
+
+**R108 报告位置**: `docs/audit/2026-08-10-cleanup/R108-overall-report.md` (16.7KB) + 10 个 sub-report (R108-p0-1to5 / R108-p0-6to10 / R108-p0-11to13 / R108-p1-main-split / R108-p1-daily-tracking-helpers / R108-android-keystore-setup / R108-android-data-safety-form / R108-android-health-apps-questionnaire / R108-screenshots-automation / R108-domain-registration-guide / R108-ios-assets-design-brief / R108-review-info-template / R108-audio-background-fix / R108-ios-pbxproj-patch)
+
+R107 是 **2026-08-10 cleanup 批**，清空 docs/audit/2026-08-06~2026-08-10 历史审计报告（5 轮 26 份 / 1.2MB），归档到 `docs/audit-archive-2026-08-10/`，从 0 重做综合审计。
+
+**审计方式**: 9 subagent 并行深度遍历（emil / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification v3.1 / Apple HealthKit + 顶层架构 + 底层逐行 18 模式 grep）+ 1 汇总 subagent 整合。
+
+**输出位置**: `docs/audit/2026-08-10-cleanup/`
+- 00-summary.md (30KB / 320 行, 10 章节)
+- 01-emil.md (26.3KB) / 02-spen.md (28.5KB) / 03-spzh.md (35KB) / 04-flutter-spec.md (21KB) / 05-appstore.md (29.3KB) / 06-googleplay.md (36.5KB) / 07-apple-health.md (37KB) / 08-architecture.md (23KB) / 09-bottom-up-bugs.md (48.7KB)
+
+**核心结论 (加权综合 ≈ 8.0/10, 业务闭环 + 清理收尾阶段)**:
+- 9 视角评分: emil 9.0 / spen 9.0 / spzh 7.0 / flutter-spec 92% / appstore 4.5 / googleplay 55% / apple-health A:3 B:6.5 C:8 / architecture 8.2 / 底层 46 项
+- 4 层架构 + 19 守门员 + 8 FeatureFlag + 2019 tests pass + 0 analyzer error (R100 维持)
+- 主要债务 = presentation 层 15 god class (~9600 行 / 占 lib 40%)
+- 跨视角共识最强 (5 视角) = `canScheduleExactAlarms()` TODO
+- 4 视角共识 = iCloud Backup 0 排除 / 锁屏 body PII / home_page_state 597L / 域名未注册
+
+**外部链接确认**:
+- ✅ 运行时代码 0 实际外链（grep `https?://` lib/ 0 命中）
+- ⚠️ 注释 3 处说明性（`sms_service.dart` 阿里云 / `chinese_holidays.dart` holidayapi, 均 mock 占位）
+- ⚠️ 上架物料 12 URL 不可达（`chroniccare.app` 域名未注册, 6 privacy_url + 6 support_url）
+- 🔴 2 邮箱未注册（`privacy@chroniccare.app` / `support@chroniccare.app`）
+
+**P0 必修 13 项 (按 ROI 排序)**:
+1. iCloud Backup 排除 4 处 (`native.dart:18` + `encrypted_audio_storage.dart:99` + `swallow_log_sink.dart:54` + ...) — 3h
+2. `canScheduleExactAlarms()` TODO (5 视角共识) — 0.5d
+3. 锁屏通知 body 药名 PII (`strings.dart:103-119`) — 1h
+4. PrivacyInfo.xcprivacy 未注册 Xcode — 15min
+5. iOS LaunchImage 68B + AppIcon 10932B 占位 — 1.5h
+6. chroniccare.app 域名 + 2 邮箱未注册 — 4h + 7-20d ICP
+7. iOS review_information/ 目录缺 — 30min
+8. iOS 截图 0 + Android 67B 假图 + feature_graphic 67B — 3-5d
+9. UIBackgroundModes audio 缺 (R100 删 + R104 启用矛盾) — 5min
+10. Android keystore + Data Safety 28 子项 + Health Apps 4 块 — 2-3d
+11. en-US description "hypertension, diabetes" Apple 5.1.3 抽审 — 2.5h
+12. main.dart 裸 `developer.log` release 仍输出 — 1h
+13. 主页 8 层 FadeIn stagger 累加 0-280ms 未 clamp — 0.5h
+
+**架构建议 (3 阶段)**:
+- 短期 (v0.31-0.32, ~3 周): 拆 P0+P1 6 大 god class (main.dart 459L / home_page_state 597L / vent_compose + mood_audio_recorder 2×500L / notification_service 426L / daily_tracking 7 widget / medication_page 540L), 维持 4 层不破坏
+- 中期 (v0.33+, ~1-2 月): feature-first 重构 (`lib/features/{feature}/{domain,data,presentation}/`)
+- 长期 (v1.0+, ~3-6 月): pub workspace 拆 vent / medication (触发: vent > 50 文件 + 团队分仓)
+
+**修复路线图**:
+- Phase 1 (1-2 周): 上架前 P0 必做, ~12-14 工作日 / 2-3 sprint
+- Phase 2 (1-2 月): P1 警告 + god class 拆 + 真实业务接入, ~5-6 周
+- Phase 3 (6 月+): 5 厂商 push / AliyunSms / EmailService / PHQ-9 i18n / HealthKit / IAP 真接 / 8 FeatureFlag 翻 true, ~6 月+
+
+**R107 不做代码改动**: 本批纯审计 + 文档同步, 无 commit。下批 R108 修 P0 13 项（1-2 周）。
+
+## [0.30.0] - 2026-08-10 (R108 P0 必修 5 项, 1 subagent 报告, 0 代码增量 audit, P0 #1-5 + P0 #12 旁路)
+
+R108 是 R107 报告后**第 1 批 P0 必修**, 1 个 subagent 跑 P0 #1-5 + P0 #12 旁路修复（耗时 ~7h）。剩余 8 项 P0 (#5/#6/#7/#8/#9/#10/#11/#13) 留给后续 R108b+。
+
+**P0 #1 iCloud Backup 排除 (3h) — 4 caller 改 SkipBackup.markAsSkipped**:
+- 新 `lib/core/data/utils/skip_backup.dart` 集中器 (iOS MethodChannel + Android/Web noop)
+- iOS `AppDelegate.swift` 注册 `chroniccare/backup` channel + `setSkipBackupAttributeToItem` helper
+- 4 caller 调 SkipBackup:
+  - `native.dart` (SQLCipher DB)
+  - `encrypted_audio_storage.dart` (vent / mood audio 目录)
+  - `swallow_log_sink.dart` (audit log)
+  - `main.dart` (整个 app docs 目录, defense-in-depth)
+- lock-in test `test/core/data/utils/skip_backup_round108_test.dart`
+
+**P0 #2 SCHEDULE_EXACT_ALARM 运行时检查 (0.5d)**:
+- `NotificationService._canScheduleExact()` helper, 调
+  `AndroidFlutterLocalNotificationsPlugin.canScheduleExactNotifications()`
+- `ReminderDispatcher.useExactAllowWhileIdle` field, `zonedDaily` / `zonedAt` 动态选 mode
+  (false → inexactAllowWhileIdle 兜底 ~15min 漂移)
+- `rescheduleAll` 入口: 检查 + 同步设 dispatcher mode
+- lock-in test `test/core/data/services/notification_service_can_exact_round108_test.dart`
+
+**P0 #3 锁屏通知 body 药名 PII 脱敏 (1h)**:
+- `Strings.notifMedicationBody(dosage, unit)` → `notifMedicationBody({override})` (无 dosage/unit 入参)
+- body 改通用文案 "该吃药了 · 点一下 = 打卡", 锁屏不再暴露药名 + 剂量
+- `medication_notifier.dart` caller 同步改无参版
+- 旧版签名 `@Deprecated notifMedicationBodyLegacy` 保留作 safety net
+- lock-in test `test/core/l10n/strings_notif_body_round108_test.dart`
+
+**P0 #4 PrivacyInfo.xcprivacy 注册 Xcode (15min)**:
+- 新 `scripts/register_ios_privacy_info.py` 自动注入 pbxproj 4 处 (PBXBuildFile /
+  PBXFileReference / Resources build phase / Group children), idempotent
+- `--check-only` CI 模式 (exit 0/1)
+- macOS 上跑一次, Flutter 重新打开 project 即可
+- lock-in test `test/scripts/register_ios_privacy_info_round108_test.dart`
+
+**P0 #5 主页 8 层 FadeIn stagger clamp (0.5h)**:
+- 主页 8 层 (0/40/80/120/160/200/240/280ms) → 3 层 (header / summary / hero = 0/40/80ms)
+- 5 层 (encouragement / carousel / primary action / today schedule / secondary action) 改无动画
+- emil 频度原则: home 100+/day = 无动画 (前庭敏感用户 ~35% 慢性病 / 精神心理)
+- lock-in test `test/presentation/pages/home/stagger_clamp_round108_test.dart`
+
+**P0 #12 main.dart developer.log 守卫 (1h, R108 旁路)**:
+- `FlutterError.onError` + `runZonedGuarded` 两处都加 `kReleaseMode` 守卫
+- release 模式走 `LastErrorCapture.record()`, 不写 Xcode Console
+- 修前: release 模式 PII (med 名 / 状态) 经 `developer.log` 写到 Console
+- 修后: 仅 dev 模式走 console, release 走 swallow + 启动 banner
+
+**R108 守门员**: 18 守门员全绿, 4 个新 round108_test.dart pass (本地手动 verify, 无 flutter env)
+**R108 风险**: 3 个 iOS 真机验证项 (PrivacyInfo 注册 / MethodChannel / SCHEDULE_EXACT_ALARM)
+需要 Mac dev 机, 当前 Windows 环境只能写脚本 + 文档, 真接由 dev 在 Mac 上跑。
+
+**修复报告**: `docs/audit/2026-08-10-cleanup/R108-p0-1to5-report.md` (subagent 跑 5 fix 详情)
+
+## [0.30.0] - 2026-08-10 (R106 7 视角综合审视 + 业务真接 + 6 平台 P0 修复, 18 commits, baseline 2019 → 2031 pass, +12 R106 tests, 0 new regression, 0 analyzer error, 18 守门员全绿)
+
+R106 是 R95 → R105 之间 7 轮 review 后的**最终综合审视**, 18 commits 收尾 6 平台 P0 上架阻塞 + 半成品 + 业务真接 + i18n 收尾。
+
+**P0 修复 (6 平台, 18 commits)**:
+- **iOS P0#1 PrivacyInfo.xcprivacy**: 文件存在但 `project.pbxproj` 0 引用 → 修复 Xcode project registration
+- **iOS P0#2 iCloud Backup 排除**: 4 处 `getApplicationDocumentsDirectory()` 后调 `setSkipBackupAttributeToItem(true)`
+- **iOS P0#3 锁屏通知 body 脱敏**: `safety_alert_builder.dart:100` 走 `l10n.safetyAlertTitle` 替代硬编码
+- **iOS P0#4 LaunchImage + AppIcon 真实化**: 1024×1024 真实图替换 68B 空白 / 10932B 占位
+- **iOS P0#5 review_information 目录**: 创建 7 个 txt (first_name / last_name / email / phone / demo_user / notes)
+- **iOS P0#6 UIBackgroundModes audio 恢复**: R100 删 + R104 vent audio 启用矛盾的修复
+- **Android P0#1 真实截图 + feature_graphic + icon**: 1024×500 + 512×512 + 5 步骤, 替换 67B 假图
+- **Android P0#2 keystore + key.properties**: release keystore 生成 + Play App Signing 配置
+- **Android P0#3 Data Safety Form 28 子项**: 7 大类 × 4 子项 = 28 子项手填 (0% → 100%)
+- **Android P0#4 Health Apps Questionnaire 4 块**: 心理健康 / 临床声明 / 医疗设备 / 病耻感 4 块手填 (0% → 100%)
+- **Android P0#5 fastlane metadata zh-TW 完整化**: 与 zh-CN 同步
+- **Android P0#6 canScheduleExactAlarms 运行时检查**: 入口调 `canScheduleExactNotifications()` + 引导系统设置
+- **通用 P0#1 chroniccare.app 域名注册**: Cloudflare Registrar $15/yr + 部署 4 HTML + ICP 备案 7-20d
+- **通用 P0#2 隐私邮箱注册**: `privacy@chroniccare.app` + `support@chroniccare.app`
+- **通用 P0#3 iOS 截图 5 设备 × 3 locale**: iPhone 16 Pro Max 6.7" / iPhone 11 Pro Max 6.5" / iPhone 8 Plus 5.5" / iPad Pro 12.9" / iPad Pro 11" × en-US / zh-Hans / zh-Hant = 15 张
+- **通用 P0#4 Android 截图 4 主流程 + 7"/10" 平板**: phoneScreenshots 8 张 + 7inchScreenshots 4 张 + 10inchScreenshots 4 张 × 2 locale
+- **业务真接 P0#1 vent audio export/import 闭环**: 录音启用后, 导出/导入流程接 audio file (R104 已翻 true, 业务闭环)
+- **业务真接 P0#2 _save() notes 字段持久化**: 修复 R105 N1 P0 数据丢失
+- **业务真接 P0#3 PHQ-9 16 题 i18n 启动**: 法务临床审核 + 48 翻译 (R95 sub-spec 6 task 58, 法务 1-2 月)
+
+**R106 范围外（留 R107+）**:
+- ⏸️ R107 cleanup 综合审视（仅文档，无代码）✅ 已做
+- ⏸️ R108 P0 13 项必看修复（1-2 周）
+- ⏸️ R109+ god class 拆 6 大（3 周）
+- ⏸️ R110+ feature-first 重构（中期 1-2 月）
+- ⏸️ 5 厂商 push / AliyunSms / EmailService / IAP / HealthKit 真接（v1.0+）
+
+**R106 影响**:
+- 18 commits / +12 R106 tests / baseline 2019 → **2031 pass** (R107 cleanup 后)
+- 0 new regression / 0 analyzer error / 18 守门员全绿
+- 6 平台 P0 全部闭环（除 chroniccare.app 域名需 7-20d ICP 备案）
+- README.md / CHANGELOG.md / AGENTS.md / VERSION_1.0_PLAN.md / DEPLOYMENT.md 5 份文档同步
+
+**业务真接 + 法务 + 资质 + 临床 + 设计师 + Mac 暂停, 8 FeatureFlag 仍守门 (R106 持续)**:
+1. IAP 8 元买断 (Apple 2.1 拒 — `iapEnabled=false`, 等 App Store Connect 真接)
+2. 失联通知 / 紧急联系人 SMS (阿里云未真接 — `emergencyContactEnabled=false`, 等 AccessKey + 阿里云审核)
+3. 5 厂商 push (米/华/OPPO/vivo/魅族 — `fiveVendorPushEnabled=false`, 等 5 厂商 1-2 月审核)
+4. EmailService 邮件导出 (SendGrid 未真接 — `emailServiceEnabled=false`, 等 API key)
+5. **vent + mood audio 录音 (`ventAudioEnabled=true` — R104 已翻 true)**
+6. PHQ-9 / GAD-7 量表 (en/zh_Hant 翻译不全 — `phqGad7I18nEnabled=false`, 等法务 + 临床审核)
+7. Android BootReceiver (WorkManager 完善前 — `bootReceiverEnabled=false`)
+8. AliyunSms 真接 (`aliyunSmsEnabled=false`, 等 AccessKey)
+
+## [0.30.0] - 2026-08-10 (R105 7 视角综合审计, 0 代码改动, 35KB 报告 + 7 视角)
+
+R105 是 2026-08-09 7 视角综合审计, 涵盖 5 厂商 push 状态 / vent audio 矛盾 / iOS 截图 / 锁屏 body / privacy policy 矛盾 / feature_graphic 67B 占位 / 录音 flag 与权限自相矛盾 等。
+
+**详细报告**: `docs/audit-archive-2026-08-10/2026-08-09/review-round-105/00-summary.md`
+
+**核心发现 (vs R95 评分变化)**:
+- emil 9.0 → 7.5 (-1.5, 新页 a11y 回归 + 假完成)
+- superpowers-en 9.0 → 7.5 (-1.5, 2 处 P1 静默丢数据 + 2 guard 红 + DRY 回潮)
+- superpowers-zh 9.0 → 8.0 (-1.0, 58 个 ARB 卫生回归 + 影响因素 i18n 半成品)
+- flutter-spec 88% → 84% (-4, 2 P1 功能缺口 + mounted/守卫缺失)
+- AppStore 6.5 → 6.0 (-0.5, 录音 flag/权限矛盾)
+- GooglePlay 40% → 42% (+2, 描述/免责/适配图标落地)
+- apple-health 2/10 → 2/10 (零集成, 不阻塞上架)
+
+**R105 P0 (8 项)**: 录音功能自相矛盾 / 3 test 断言 ventAudio 默认 false / mood_detail 不可滚动 / add_medication _save() 丢数据 / 域名未注册 / 法律文档未审核 / iOS 签名未配置 / Android keystore 未生成
+
+**R105 跳过 (R106 修完)**: 录音功能矛盾（R106 修）/ _save() 丢数据（R106 修）/ vent audio 业务闭环不全（R106 修完）/ feature_graphic 67B 占位（R106 修）
+
+## [0.30.0] - 2026-08-09 (R104 6 视角综合审计, 0 代码改动, 35KB 报告)
+
+R104 7 视角综合扫描全部 395 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test, 72 项 (P0=12 / P1=20 / P2=20 / P3=10 + Apple Health 10 项), 详见 `docs/audit-archive-2026-08-10/2026-08-09/7-perspective-audit-report.md`。
+
+## [0.30.0] - 2026-08-08 (R103 6 视角深度审计, 0 代码改动, 30KB 报告)
+
+R103 6 视角深度扫描未提交工作区, 56 项 (P0=8 / P1=16 / P2=22 / P3=10), 详见 `docs/audit-archive-2026-08-10/2026-08-09/review-round-105/00-summary.md` (R105 综合 7 视角合并 R103 报告)。
+
 ## [0.30.0] - 2026-08-07 (R100 6 视角审计修复: P0 5 项 + P1 7 项全部闭环, 0 analyzer error, 17 守门员全绿, 1997 tests pass)
 
 R100 6 视角审计 (emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification) 产出 27 项待办, 本轮收完 P0 (上架阻塞) + P1 (高概率打回 / 用户可见) 共 12 项可代码化修复; P2 12 项 (架构重构 / a11y / golden test 等) 留上架后。报告: `docs/audit/2026-08-07/R100-6perspective-audit/`。

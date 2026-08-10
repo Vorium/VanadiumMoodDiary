@@ -51,55 +51,77 @@ void main() {
 
     test('pssName / pssShortDescription / pssInstruction 走 zh', () {
       expect(t.pssName(), 'PSS 压力量表');
-      expect(t.pssShortDescription(),
-          'Cohen 1983 压力量表 (10 题, 含 4 题反向)',);
+      expect(
+        t.pssShortDescription(),
+        'Cohen 1983 压力量表 (10 题, 含 4 题反向)',
+      );
       expect(t.pssInstruction(), '过去 1 个月里, 您有多经常有下列感受?');
     });
 
     test('whodasName / whodasShortDescription / whodasInstruction 走 zh', () {
       expect(t.whodasName(), 'WHODAS 2.0 残疾评定');
       expect(t.whodasShortDescription(), 'WHO 通用残疾评估 12 题简化版');
-      expect(t.whodasInstruction(),
-          '过去 30 天内, 您在以下活动中遇到多大困难?',);
+      expect(
+        t.whodasInstruction(),
+        '过去 30 天内, 您在以下活动中遇到多大困难?',
+      );
     });
 
     test('level2DepressionName / ShortDescription / Instruction 走 zh', () {
       expect(t.level2DepressionName(), 'DSM-5 Level 2 抑郁严重度');
-      expect(t.level2DepressionShortDescription(),
-          '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)',);
-      expect(t.level2DepressionInstruction(),
-          '过去 7 天内, 您有多经常被以下情绪困扰?',);
+      expect(
+        t.level2DepressionShortDescription(),
+        '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)',
+      );
+      expect(
+        t.level2DepressionInstruction(),
+        '过去 7 天内, 您有多经常被以下情绪困扰?',
+      );
     });
 
     test('level2AnxietyName / ShortDescription / Instruction 走 zh', () {
       expect(t.level2AnxietyName(), 'DSM-5 Level 2 焦虑严重度');
-      expect(t.level2AnxietyShortDescription(),
-          '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)',);
-      expect(t.level2AnxietyInstruction(),
-          '过去 7 天内, 您有多经常被以下感受困扰?',);
+      expect(
+        t.level2AnxietyShortDescription(),
+        '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)',
+      );
+      expect(
+        t.level2AnxietyInstruction(),
+        '过去 7 天内, 您有多经常被以下感受困扰?',
+      );
     });
 
     test('level2ManiaName / ShortDescription / Instruction 走 zh', () {
       expect(t.level2ManiaName(), 'DSM-5 Level 2 躁狂严重度');
-      expect(t.level2ManiaShortDescription(),
-          '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)',);
-      expect(t.level2ManiaInstruction(),
-          '过去 7 天内, 您有多经常体验以下情况?',);
+      expect(
+        t.level2ManiaShortDescription(),
+        '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)',
+      );
+      expect(
+        t.level2ManiaInstruction(),
+        '过去 7 天内, 您有多经常体验以下情况?',
+      );
     });
 
     test('asrmName / asrmShortDescription / asrmInstruction 走 zh', () {
       expect(t.asrmName(), 'ASRM 自评躁狂量表');
       expect(t.asrmShortDescription(), 'Altman 1997 自评躁狂量表 (5 题)');
-      expect(t.asrmInstruction(),
-          '过去 1 周内, 您有 (或感觉到) 以下情况的程度?',);
+      expect(
+        t.asrmInstruction(),
+        '过去 1 周内, 您有 (或感觉到) 以下情况的程度?',
+      );
     });
 
     test('level2PsychosisName / ShortDescription / Instruction 走 zh', () {
       expect(t.level2PsychosisName(), 'DSM-5 Level 2 精神病性症状');
-      expect(t.level2PsychosisShortDescription(),
-          '成人精神病性症状 8 题 (DSM-5 简化版)',);
-      expect(t.level2PsychosisInstruction(),
-          '过去 7 天内, 您有多经常体验以下情况?',);
+      expect(
+        t.level2PsychosisShortDescription(),
+        '成人精神病性症状 8 题 (DSM-5 简化版)',
+      );
+      expect(
+        t.level2PsychosisInstruction(),
+        '过去 7 天内, 您有多经常体验以下情况?',
+      );
     });
   });
 
@@ -112,10 +134,14 @@ void main() {
 
     test('isi 走 en (非中文)', () {
       expect(t.isiName(), 'ISI Insomnia Severity Index');
-      expect(t.isiShortDescription(),
-          'Morin 1993 Insomnia Severity Index (7 items)',);
-      expect(t.isiInstruction(),
-          'Over the past 2 weeks, how severe has your sleep problem been?',);
+      expect(
+        t.isiShortDescription(),
+        'Morin 1993 Insomnia Severity Index (7 items)',
+      );
+      expect(
+        t.isiInstruction(),
+        'Over the past 2 weeks, how severe has your sleep problem been?',
+      );
       expect(t.isiName(), isNot(equals('ISI 失眠严重指数')));
     });
 
@@ -125,12 +151,16 @@ void main() {
     });
 
     test('level2* 4 个量表走 en', () {
-      expect(t.level2DepressionName(),
-          'DSM-5 Level 2 Depression Severity',);
+      expect(
+        t.level2DepressionName(),
+        'DSM-5 Level 2 Depression Severity',
+      );
       expect(t.level2AnxietyName(), 'DSM-5 Level 2 Anxiety Severity');
       expect(t.level2ManiaName(), 'DSM-5 Level 2 Mania Severity');
-      expect(t.level2PsychosisName(),
-          'DSM-5 Level 2 Psychotic Symptoms',);
+      expect(
+        t.level2PsychosisName(),
+        'DSM-5 Level 2 Psychotic Symptoms',
+      );
     });
 
     test('asrm 走 en', () {
@@ -155,57 +185,86 @@ void main() {
         expect(t.pssItem(i), '', reason: 'pssItem($i) should be empty stub');
       }
       for (var i = 0; i < 12; i++) {
-        expect(t.whodasItem(i), '',
-            reason: 'whodasItem($i) should be empty stub',);
+        expect(
+          t.whodasItem(i),
+          '',
+          reason: 'whodasItem($i) should be empty stub',
+        );
       }
       for (var i = 0; i < 8; i++) {
-        expect(t.level2DepressionItem(i), '',
-            reason: 'level2DepressionItem($i) should be empty stub',);
+        expect(
+          t.level2DepressionItem(i),
+          '',
+          reason: 'level2DepressionItem($i) should be empty stub',
+        );
       }
       for (var i = 0; i < 7; i++) {
-        expect(t.level2AnxietyItem(i), '',
-            reason: 'level2AnxietyItem($i) should be empty stub',);
+        expect(
+          t.level2AnxietyItem(i),
+          '',
+          reason: 'level2AnxietyItem($i) should be empty stub',
+        );
       }
       for (var i = 0; i < 5; i++) {
-        expect(t.level2ManiaItem(i), '',
-            reason: 'level2ManiaItem($i) should be empty stub',);
+        expect(
+          t.level2ManiaItem(i),
+          '',
+          reason: 'level2ManiaItem($i) should be empty stub',
+        );
       }
       for (var i = 0; i < 5; i++) {
         expect(t.asrmItem(i), '', reason: 'asrmItem($i) should be empty stub');
       }
       for (var i = 0; i < 8; i++) {
-        expect(t.level2PsychosisItem(i), '',
-            reason: 'level2PsychosisItem($i) should be empty stub',);
+        expect(
+          t.level2PsychosisItem(i),
+          '',
+          reason: 'level2PsychosisItem($i) should be empty stub',
+        );
       }
     });
 
     test('override 参数优先于 stub (传 override 拿非空)', () {
-      expect(t.isiItem(0, override: 'custom ISI item 0'),
-          'custom ISI item 0',);
-      expect(t.pssItem(0, override: 'custom PSS item 0'),
-          'custom PSS item 0',);
+      expect(
+        t.isiItem(0, override: 'custom ISI item 0'),
+        'custom ISI item 0',
+      );
+      expect(
+        t.pssItem(0, override: 'custom PSS item 0'),
+        'custom PSS item 0',
+      );
     });
   });
 
   // ============================================================
   // Group 4: crisisHotlineLabel 6 region × 2 hotline + index fallback
   // ============================================================
-  group('crisisHotlineLabel 6 region × 2 hotline + index fallback (R77 spzh P1-A)', () {
+  group(
+      'crisisHotlineLabel 6 region × 2 hotline + index fallback (R77 spzh P1-A)',
+      () {
     final zh = AppLocalizationsZh();
     final t = AppLocalizationsScaleTranslations(zh);
 
     test('cn 2 hotline (index 0 + 1)', () {
-      expect(t.crisisHotlineLabel(HotlineRegion.cn, index: 0),
-          '全国 24 小时心理援助热线',);
-      expect(t.crisisHotlineLabel(HotlineRegion.cn, index: 1),
-          '北京心理危机研究与干预中心',);
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.cn, index: 0),
+        '全国 24 小时心理援助热线',
+      );
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.cn, index: 1),
+        '北京心理危机研究与干预中心',
+      );
     });
 
     test('us 2 hotline (index 0 + 1)', () {
-      expect(t.crisisHotlineLabel(HotlineRegion.us, index: 0),
-          '988 Suicide & Crisis Lifeline (US)',);
-      expect(t.crisisHotlineLabel(HotlineRegion.us, index: 1),
-          'Crisis Text Line (text HOME to 741741)',);
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.us, index: 0),
+        '988 Suicide & Crisis Lifeline (US)',
+      );
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.us, index: 1),
+        'Crisis Text Line (text HOME to 741741)',
+      );
     });
 
     test('hk / sg / uk 1 hotline + tw 2 hotline + cn/us 2 hotline', () {
@@ -213,26 +272,41 @@ void main() {
       // 走 switch case (index=0 走 first, index≥1 走 second, 没 first fallback
       // 越界处理 — 越界归 AppLocalizationsScaleTranslationsTw2 走
       // StaticScaleTranslations 才走 first.label 兜底, 是 R77 设计)
-      expect(t.crisisHotlineLabel(HotlineRegion.hk),
-          '撒玛利亚防止自杀会（24h 多语言）',);
-      expect(t.crisisHotlineLabel(HotlineRegion.sg),
-          'Samaritans of Singapore (24h)',);
-      expect(t.crisisHotlineLabel(HotlineRegion.uk),
-          'Samaritans UK & ROI (24h 免费)',);
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.hk),
+        '撒玛利亚防止自杀会（24h 多语言）',
+      );
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.sg),
+        'Samaritans of Singapore (24h)',
+      );
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.uk),
+        'Samaritans UK & ROI (24h 免费)',
+      );
       expect(t.crisisHotlineLabel(HotlineRegion.tw, index: 0), '生命线（24h）');
       expect(t.crisisHotlineLabel(HotlineRegion.tw, index: 1), '安心专线（心理咨商）');
       // cn/us 2 hotline 完整覆盖
-      expect(t.crisisHotlineLabel(HotlineRegion.cn, index: 0),
-          '全国 24 小时心理援助热线',);
-      expect(t.crisisHotlineLabel(HotlineRegion.cn, index: 1),
-          '北京心理危机研究与干预中心',);
-      expect(t.crisisHotlineLabel(HotlineRegion.us, index: 0),
-          '988 Suicide & Crisis Lifeline (US)',);
-      expect(t.crisisHotlineLabel(HotlineRegion.us, index: 1),
-          'Crisis Text Line (text HOME to 741741)',);
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.cn, index: 0),
+        '全国 24 小时心理援助热线',
+      );
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.cn, index: 1),
+        '北京心理危机研究与干预中心',
+      );
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.us, index: 0),
+        '988 Suicide & Crisis Lifeline (US)',
+      );
+      expect(
+        t.crisisHotlineLabel(HotlineRegion.us, index: 1),
+        'Crisis Text Line (text HOME to 741741)',
+      );
     });
 
-    test('StaticScaleTranslations 走 first.label 兜底 (R77 spzh P1-A 越界 fallback)', () {
+    test('StaticScaleTranslations 走 first.label 兜底 (R77 spzh P1-A 越界 fallback)',
+        () {
       // AppLocalizationsScaleTranslations 没 first 越界 fallback, 那是
       // StaticScaleTranslations 设计 (R77 spzh P1-A 注释说明)。
       const s = StaticScaleTranslations();
@@ -240,14 +314,19 @@ void main() {
       // (hotlineByRegion[tw][0].label 实测 '生命线 (24h)' 半角括号, 跟 ARB 全角不一致
       // 是 R17 历史数据, R51b 计划对齐)
       final firstLabel = s.crisisHotlineLabel(HotlineRegion.tw, index: 0);
-      expect(s.crisisHotlineLabel(HotlineRegion.tw, index: 99), firstLabel,
-          reason: 'StaticScaleTranslations 越界走 first.label (R77 设计)',);
+      expect(
+        s.crisisHotlineLabel(HotlineRegion.tw, index: 99),
+        firstLabel,
+        reason: 'StaticScaleTranslations 越界走 first.label (R77 设计)',
+      );
     });
 
     test('crisisTitle / crisisMessage 走 l10n (R71 spzh P1-A 续)', () {
       expect(t.crisisTitle(), '我们关心你');
-      expect(t.crisisMessage(),
-          '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。',);
+      expect(
+        t.crisisMessage(),
+        '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。',
+      );
     });
   });
 
@@ -293,26 +372,32 @@ void main() {
   group('strings.dart *Text override 参数工作 (R57 P0 #6 fix)', () {
     test('notifChannelMedicationNameText override 优先于 const', () {
       expect(
-          Strings.notifChannelMedicationNameText(override: 'Medication Alert'),
-          'Medication Alert',);
+        Strings.notifChannelMedicationNameText(override: 'Medication Alert'),
+        'Medication Alert',
+      );
     });
 
     test('notifDailyCheckInTitleText override 优先于 const', () {
       expect(
-          Strings.notifDailyCheckInTitleText(override: 'Did you take meds?'),
-          'Did you take meds?',);
+        Strings.notifDailyCheckInTitleText(override: 'Did you take meds?'),
+        'Did you take meds?',
+      );
     });
 
     test('emailSubject 函数化 + override 工作', () {
       expect(Strings.emailSubject('Alice', 3), '[停药提醒] Alice 已经 3 天没吃药了');
-      expect(Strings.emailSubject('Alice', 3, override: 'Custom subject'),
-          'Custom subject',);
+      expect(
+        Strings.emailSubject('Alice', 3, override: 'Custom subject'),
+        'Custom subject',
+      );
     });
 
     test('importSummaryContact 函数化 + override 工作 (R23 P1-9 fix)', () {
       expect(Strings.importSummaryContact(5), '5 联系人');
-      expect(Strings.importSummaryContact(5, override: '5 contacts'),
-          '5 contacts',);
+      expect(
+        Strings.importSummaryContact(5, override: '5 contacts'),
+        '5 contacts',
+      );
     });
   });
 
@@ -332,7 +417,8 @@ void main() {
       return regex.allMatches(content).length;
     }
 
-    test('scale / phq9 / gad7 / isi / pss / whodas / level2 / asrm = 180 key '
+    test(
+        'scale / phq9 / gad7 / isi / pss / whodas / level2 / asrm = 180 key '
         '(R65/R78 + R90 走完 ARB, 3 语同步)', () {
       const pattern = r'^  "(scale|phq9|gad7|isi|pss|whodas|level2|asrm)';
       const l10nDir = 'lib/l10n';
@@ -361,7 +447,8 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1091 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)', () {
+    test('3 语 total = 1202 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+        () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
       // v0.30 R95 sub-spec 8 task 45 加 1 new (homeTooltipSettings) → 1058 → 1059
@@ -372,14 +459,19 @@ void main() {
       // R100 (P1#9, 2026-08-07): +23 new (UI 硬编码中文走 ARB: weight/socialRhythm/
       //   anxiety/sleep/stress/cbt/medReport/medCalendar/hotline/consentWithdraw/export)
       //   → 1068 → 1091
+      // R102 (2026-08-08): +107 new (累计增量, baseline 已 1198)
+      // R102 (2026-08-08): +4 new (chartMetricWeight/Sleep/Mood/Stress)
+      //   → 1198 → 1202
+      // R103 (2026-08-08): +5 new (todaySummaryCheckIn/Meds/Mood/Streak/StreakDays)
+      //   → 1202 → 1203
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1091, reason: 'zh.arb 应有 1091 key (R100 +23 UI 硬编码中文走 ARB)');
-      expect(en, 1091, reason: 'en.arb 应有 1091 key');
-      expect(hant, 1091, reason: 'zh_Hant.arb 应有 1091 key');
+      expect(zh, 1203, reason: 'zh.arb 应有 1203 key (R103 baseline)');
+      expect(en, 1203, reason: 'en.arb 应有 1203 key');
+      expect(hant, 1203, reason: 'zh_Hant.arb 应有 1203 key');
     });
   });
 
@@ -421,8 +513,11 @@ void main() {
 
     test('zh_Hant 加载 homeSnoozeTitle (OpenCC s2tw 繁化, 实际 ARB key)', () {
       final hant = AppLocalizationsZh();
-      expect(hant.homeSnoozeTitle.isNotEmpty, isTrue,
-          reason: 'zh_Hant 应有 homeSnoozeTitle 繁中翻译',);
+      expect(
+        hant.homeSnoozeTitle.isNotEmpty,
+        isTrue,
+        reason: 'zh_Hant 应有 homeSnoozeTitle 繁中翻译',
+      );
     });
   });
 }

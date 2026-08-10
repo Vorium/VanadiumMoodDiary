@@ -1,23 +1,37 @@
 // home_page_state.dart — HomePage state 主壳
 //
 // v0.30 round 95 (sub-spec 4 task 5): 从 home_page.dart 抽出
+// v0.30 R108 (P1 home_page_state 拆 3 controller): 进一步抽 deep link /
+// care engine / celebration 业务到 controllers/ 子目录, state class 缩到
+// ~370L (R107 报告 §3.2 方案, 4 视角共识: emil + spen + architecture +
+// bottom-up)。
 //
-// 职责: HomePageState ConsumerState 类 (initState / dispose / 9 business
-// method / build) + 旁路 helper (庆祝 overlay / 下一提醒 / snooze 等)。
+// 职责: HomePageState ConsumerState 类 (initState / dispose / build +
+// 4 业务方法: _onCheckIn / _snooze5Min / _runSafetyCheck / _nextReminderTime)
+// + 3 controller 编排入口 + 旁路 helper。
 //
-// **拆出原因**: 原 home_page.dart 731 行, 主壳 HomePage widget + 顶部
-// HomeLifecycleState enum 占 138 行, HomePageState 占 590+ 行。拆出后
-// - home_page.dart (主壳): 138 行 (HomePage + HomeLifecycleState)
-// - home_page_state.dart (本文件): 590 行 (state class)
+// **拆出历史**:
+// - R95 (sub-spec 4 task 5): 731 行 → 主壳 138 行 + state 590 行
+// - R108 (P1 home_page_state 拆): state 597 行 → ~370 行, 3 controller
+//   各 50-80L 抽到 controllers/ 子目录
+//   - controllers/home_deep_link_handler.dart (~220L 含注释)
+//   - controllers/home_care_engine_dispatcher.dart (~150L 含注释)
+//   - controllers/home_celebration_controller.dart (~110L 含注释)
+//
+// **state class 当前职责**:
+// - 1 lifecycle enum (跟 deep link + safety check 共享, 留 state class)
+// - 1 ScrollController (主屏滚动, 留 state class)
+// - initState (调度 postFrameCallback 跑 safety check + deep link)
+// - dispose (取消 3 controller 内部 Timer + ScrollController)
+// - build (180L 主页 6 区域 widget tree)
+// - _onCheckIn (打卡主流程, 调 2 controller)
+// - _snooze5Min (5min 后通知)
+// - _runSafetyCheck (跟 _lifecycle 紧耦合, 留 state class)
+// - _nextReminderTime (20:00 计算, 跟 midnight timer 配合)
 //
 // 公共 API:
-// - [HomePage] (在 home_page.dart 公开) — consumer 进 home 时 widget
-// - [HomeLifecycleState] (在 home_page.dart 公开) — 5 状态 enum + 3 transition
-//   (R64 L2 refactor, 防御 race 状态)
-// - [HomePageState] (本文件 public, 替换原 _HomePageState) — state class
+// - [HomePageState] (public, 替换原 _HomePageState) — state class
 //   public 是为了打破 home_page.dart ↔ home_page_state.dart 循环 import
-//   (HomePage.createState() 返回 HomePageState, HomePageState extends
-//    ConsumerState<HomePage>)
 //
 // 4 层架构纯度: 本文件 import `flutter` / `flutter_riverpod` / `go_router`,
 // 跟 home_page 一样在 presentation 层, 0 violation (cross_feature 守门员覆盖)。
@@ -28,27 +42,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
-import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/providers/care_strategy_providers.dart';
+import 'package:chroniccare/presentation/pages/home/controllers/home_care_engine_dispatcher.dart';
+import 'package:chroniccare/presentation/pages/home/controllers/home_celebration_controller.dart';
+import 'package:chroniccare/presentation/pages/home/controllers/home_deep_link_handler.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
-import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
-import 'package:chroniccare/presentation/widgets/animations/celebration_bounce.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/theme_toggle_button.dart';
+import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/hero_illustration.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_header.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/today_summary_card.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/notification_failure_banner.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/quick_mood_carousel.dart';
@@ -63,6 +78,10 @@ import 'package:chroniccare/presentation/pages/home/home_page.dart'
 /// (原 `_HomePageState` 改成 public 打破循环 import, 命名跟 R84 DayDetailCard
 /// 私有→public 改造模式一致, 老 caller 0 改动因为 `ConsumerState` 泛型
 /// createState() 还是返回同一个对象, type 兼容)
+///
+/// v0.30 R108 (P1 home_page_state 拆): 进一步抽 3 controller, state class
+/// 保留 build + onCheckIn + snooze + runSafetyCheck + nextReminderTime,
+/// 目标 < 370L (R107 报告 §3.2 方案)。
 class HomePageState extends ConsumerState<HomePage> {
   /// v0.27 round 64 (L2 refactor): 3 bool → 1 enum 状态机
   ///
@@ -75,20 +94,20 @@ class HomePageState extends ConsumerState<HomePage> {
   /// 现在 [HomeLifecycleState] 用 named state 表达 5 种合法组合, transition
   /// 走 enum method 集中, race 组合 (medId + rerun 互斥) 抛 StateError 早发现。
   /// 见 [HomeLifecycleState] 注释。
+  ///
+  /// 留 state class 原因: _lifecycle 跟 _runSafetyCheck + _handleDeepLink 路径
+  /// 共享 (deep link 推进 _lifecycle, safety check 读 _lifecycle 判是否已跑),
+  /// 3 controller 不应独占。
   HomeLifecycleState _lifecycle = HomeLifecycleState.initial;
 
-  /// 庆祝 overlay 的 Timer (v0.27 round 62 P1-6 修)
+  /// v0.30 R108 (P1 home_page_state 拆): 3 controller 实例
   ///
-  /// 之前用 `Future.delayed` 不可 cancel，widget dispose 后 fire 引起 race。
-  /// 改 Timer 存字段 + dispose 时 `cancel()`。
-  Timer? _celebrationTimer;
-
-  /// Deep link race guard Timer (v0.27 round 63 P1-4 修)
-  ///
-  /// 之前 `_handleDeepLink` 用 `await Future<void>.delayed(...)`, dispose 后
-  /// 回调 fire 触发 setState 撞 defunct widget。改 Timer + dispose cancel,
-  /// 跟 `_celebrationTimer` 模式一致 (R62 P1-6 同样修)。
-  Timer? _deepLinkRaceTimer;
+  /// - [_deepLink]: deep link 业务 (解析 + autofire + hint + race Timer)
+  /// - [_careDispatcher]: 打卡后 care engine 编排 (safety check + use case)
+  /// - [_celebration]: 顶部庆祝 overlay (含 celebration Timer)
+  late final HomeDeepLinkHandler _deepLink;
+  late final HomeCareEngineDispatcher _careDispatcher;
+  late final HomeCelebrationController _celebration;
 
   /// v0.30 round 92 (audit-fixes / P0 #13): homeFabTop 滚到顶用
   ///
@@ -103,6 +122,10 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+    // v0.30 R108 (P1 home_page_state 拆): 初始化 3 controller
+    _deepLink = HomeDeepLinkHandler(ref);
+    _careDispatcher = HomeCareEngineDispatcher(ref);
+    _celebration = HomeCelebrationController();
     // v0.10 (Round 4): 首帧后跑一次 SafetyWatch.onAppStart
     // v0.17 round 14 (Bug-4): 用 unawaited 显式标记 fire-and-forget,
     // 之前 _runSafetyCheck() 在 void 上下文里被默默丢弃, linter 看不出
@@ -118,15 +141,11 @@ class HomePageState extends ConsumerState<HomePage> {
 
   @override
   void dispose() {
-    // v0.27 round 62 (P1-6 修复): 取消庆祝 overlay 的 Timer,
-    // 避免 widget 已 dispose 后回调 fire 触发 `entry.mounted` 检查
-    // 已经无效, 进而打 "OverlayEntry removed too many times" 警告。
-    _celebrationTimer?.cancel();
-    _celebrationTimer = null;
-    // v0.27 round 63 (P1-4 修复): 同款 cancel 模式应用到 deep link race guard,
-    // 防止 widget dispose 后 race guard timer 仍 fire 调 _runSafetyCheck
-    _deepLinkRaceTimer?.cancel();
-    _deepLinkRaceTimer = null;
+    // v0.30 R108 (P1 home_page_state 拆): 3 controller dispose
+    // (每个 controller 内部 cancel 自己的 Timer, 防 leak)
+    _deepLink.dispose();
+    _celebration.dispose();
+    // _careDispatcher 无 Timer 字段, 不需 dispose
     // v0.30 round 92 (audit-fixes / P0 #13): dispose 释放 ScrollController
     // (R17 通用模式, widget leak guard)
     _scrollController.dispose();
@@ -138,99 +157,61 @@ class HomePageState extends ConsumerState<HomePage> {
   /// 用户点 medication 通知 → 路由跳到 /check-in/medication/N
   /// → redirect 到 /?medId=N&autofire=1 → home_page 收到参数
   /// → 这里自动打卡 + 显示庆祝
+  ///
+  /// v0.30 R108 (P1 home_page_state 拆): 抽到 [HomeDeepLinkHandler],
+  /// 本方法只做 inspect + 路由 + 调 controller, 25L (原 80L)。
   Future<void> _handleDeepLink() async {
-    // v0.27 round 64: guard 改走 _lifecycle 状态机
-    // bothHandled 也算"已处理"(_handleDeepLink 路径 + safety check 都完成)
-    if (_lifecycle == HomeLifecycleState.deepLinkHandled ||
-        _lifecycle == HomeLifecycleState.bothHandled) {
-      return;
-    }
-    final medIdParam = GoRouterState.of(context).uri.queryParameters['medId'];
-    final autofire =
-        GoRouterState.of(context).uri.queryParameters['autofire'] == '1';
-    if (medIdParam == null) {
-      // 不是 deep link 跳来的，处理 safety reason
-      final reason = GoRouterState.of(context).uri.queryParameters['reason'];
-      if (reason == 'safety') {
-        // 强制重跑一次 (从通知跳来的场景)
-        // v0.14 fix: 用独立 flag,不受 _safetyCheckTriggered 影响
-        // 旧实现 `!_safetyCheckTriggered` 在第一跑已起来后永远 false
-        // v0.27 round 64: 改用 _lifecycle 状态机,onRerunRequested() 内部
-        // 保证 safetyRerunRequested / bothHandled 重复请求 idempotent
-        if (_lifecycle == HomeLifecycleState.safetyRerunRequested) {
-          return; // 已请求过
-        }
-        _lifecycle = _lifecycle.onRerunRequested();
-        // v0.27 round 63 (P1-4 修复): 用 Timer 替代 Future.delayed,
-        // 跟 _celebrationTimer 模式一致。Future.delayed 不可 cancel, widget
-        // dispose 后 fire 触发 _runSafetyCheck 撞 defunct widget。
-        // 旧实现 round 62 P1-9 改用 token 命名但仍 Future.delayed, 半修。
-        _deepLinkRaceTimer = Timer(
-          AppTokens.kDeepLinkRaceGuard,
-          () {
-            // Timer 自身 cancel 已在 dispose 跑, 这里加 mounted 双重保险
-            if (!mounted) return;
-            unawaited(_runSafetyCheck(force: true));
-          },
-        );
-      }
-      return;
-    }
-    _lifecycle = _lifecycle.onDeepLinkHandled();
-    final medId = int.tryParse(medIdParam);
-    if (medId == null) return;
-
-    if (autofire) {
-      // 自动打卡该药
-      await _autofireMedicationCheckIn(medId);
-    } else {
-      // 只显示该药的"该吃了"信息
-      _showMedicationHint(medId);
-    }
-  }
-
-  Future<void> _autofireMedicationCheckIn(int medId) async {
-    try {
-      await ref
-          .read(checkInNotifierProvider.notifier)
-          .checkIn(medicationId: medId);
-      if (!mounted) return;
-      // P0 fix: 复用 provider 树已缓存的药物数据，不再重复查库
-      final meds = ref.read(medicationsProvider).value ?? [];
-      final med = meds.where((m) => m.id == medId).firstOrNull;
-      if (!mounted) return;
-      final medName =
-          med?.name ?? AppLocalizations.of(context).homeAutofireFallbackName;
-      // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
-      // (打卡成功触感,emil 频度: tens/day)
-      // R97-P1-12: unawaited 显式标记 fire-and-forget (haptic 不阻塞 UI)
-      unawaited(Haptics.success());
-      _showCelebrationOverlay(
-        context,
-        AppLocalizations.of(context).homeAutofireCelebration(medName),
-      );
-      // 清除 query 防止刷新页面重复触发
-      GoRouter.of(context).go('/');
-    } catch (e) {
-      if (!mounted) return;
-      AppSnackBar.showError(
-        context,
-        action: AppLocalizations.of(context).snackbarActionAutoCheckin,
-        error: e,
-      );
-    }
-  }
-
-  void _showMedicationHint(int medId) {
-    AppSnackBar.showInfo(
-      context,
-      AppLocalizations.of(context).homeMedHint(medId),
+    final decision = _deepLink.inspect(
+      uri: GoRouterState.of(context).uri,
+      currentLifecycle: _lifecycle,
     );
+    _lifecycle = decision.nextLifecycle;
+    switch (decision.action) {
+      case DeepLinkAction.noop:
+        break;
+      case DeepLinkAction.scheduleSafetyRerun:
+        // 调度 race guard Timer, 到点重跑 safety check
+        _deepLink.scheduleRaceTimer(() {
+          if (!mounted) return;
+          unawaited(_runSafetyCheck(force: true));
+        });
+      case DeepLinkAction.autofire:
+        // 自动打卡该药
+        await _handleAutofire(decision.medId!);
+      case DeepLinkAction.showHint:
+        // 只显示该药的"该吃了"信息
+        _deepLink.showMedicationHint(decision.medId!, context);
+    }
+  }
+
+  /// v0.30 R108 (P1 home_page_state 拆): autofire 编排 wrapper
+  ///
+  /// 调 [HomeDeepLinkHandler.autofireMedicationCheckIn] 实际打卡,
+  /// 成功后调 [HomeCelebrationController.show] 显示庆祝 overlay,
+  /// 清除 query 防刷新重复触发。
+  Future<void> _handleAutofire(int medId) async {
+    final result = await _deepLink.autofireMedicationCheckIn(
+      medId: medId,
+      isMounted: () => mounted,
+      context: context,
+    );
+    if (!mounted) return;
+    if (result.success && result.medName != null) {
+      _celebration.show(
+        context,
+        AppLocalizations.of(context).homeAutofireCelebration(result.medName!),
+      );
+    }
+    // 清除 query 防止刷新页面重复触发
+    _deepLink.clearQuery(context);
   }
 
   /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
   ///
   /// [force] = true 时忽略 [_safetyCheckTriggered] 守卫(用于 deep link 重跑)
+  ///
+  /// 留 state class 原因: 直接读 / 写 _lifecycle 状态机, 跟 deep link 路径
+  /// 共享 lifecycle 推进逻辑。
   Future<void> _runSafetyCheck({bool force = false}) async {
     // v0.27 round 64: guard 改走 _lifecycle 状态机
     // safetyCheckCompleted / bothHandled 都代表 safety check 已跑过, force=false
@@ -323,12 +304,38 @@ class HomePageState extends ConsumerState<HomePage> {
           children: [
             // v0.18 (P1-27) fix: home_page god-page 拆 5 widget,build 主体减肥
             // 顶部 header
-            HomeHeader(userName: userName),
+            //
+            // v0.30 R108 (P0#5): 主页 stagger 8 层 → 3 层 (header + summary + hero)
+            // 修前: 8 层 FadeIn delay 0/40/80/120/160/200/240/280ms 累加,
+            //   前庭敏感用户 (约 35% 慢性病 / 精神心理患者) 报告不适。
+            //   emil 决策: 主页 100+/day 频度 → 无动画 (tens/day = 微弱,
+            //   occasional = 标准, rare = 可加 delight)。
+            // 修后: 3 层 (header / summary / hero) 保留 0/40/80ms 微 stagger,
+            //   5 层 (encouragement / carousel / primary action / today schedule /
+            //   secondary action) 改 Duration.zero = 无动画。
+            // 总累加 80ms 远低于前庭敏感阈值 (250ms)。
+            FadeIn(
+              child: HomeHeader(userName: userName),
+            ),
+
+            const SizedBox(height: AppTokens.spacingSm),
+
+            // v0.30 R101: 今日数据概览卡 (参照 Apple Health Pinned Favorites)
+            const FadeIn(
+              delay: Duration(milliseconds: AppTokens.staggerStepMs),
+              child: TodaySummaryCard(),
+            ),
+
+            const SizedBox(height: AppTokens.spacingSm),
 
             // v0.28 R81 (emil design-4): 主页 hero 插画 (B 站治愈系风格)
             // 蓝天 + 太阳 + 云 + 叶子, 4 元素 Stack, 静态 (rare 频度
             // 不动画, 避免频度问题)。140dp 高, 跟功能区视觉分层。
-            const HomeHeroIllustration(),
+            const FadeIn(
+              delay: Duration(
+                  milliseconds: 2 * AppTokens.staggerStepMs,),
+              child: HomeHeroIllustration(),
+            ),
 
             const SizedBox(height: AppTokens.spacingMd),
 
@@ -339,6 +346,7 @@ class HomePageState extends ConsumerState<HomePage> {
             const Spacer(flex: 1),
 
             // 鼓励文案(按 streak 动态切换)
+            // R108 P0-5: 改无动画 (home 100+/day 频度)
             EncouragementText(streak: streakSnapshot.streak),
 
             const SizedBox(height: AppTokens.spacingMd),
@@ -349,13 +357,17 @@ class HomePageState extends ConsumerState<HomePage> {
             // carousel 默认居中"一般" (score 3), 4 档可见 + 1 档隐藏
             // emil 频度: occasional (跟 checkIn 同 primary action),
             // standard animation OK, PageView 横滑 200ms ease-out
+            //
+            // R108 P0-5: 外层 FadeIn 改无动画 (carousel 内部 PageView 横滑动画保留)
             QuickMoodCarousel(
-              onOpenFullDialog: () => MoodRecorderPage.show(context, ref),
+              // R104 fix: 跳情绪日记列表页而非直接弹 dialog
+              onOpenFullDialog: () => context.push('/mood-list'),
             ),
 
             const SizedBox(height: AppTokens.spacingSm),
 
             // 主操作行：打卡按钮 + 临时吃药 + snooze 5min
+            // R108 P0-5: 外层 FadeIn 改无动画 (home 100+/day 频度)
             todayAsync.when(
               data: (today) => PrimaryActionRow(
                 isChecked: today != null,
@@ -386,11 +398,13 @@ class HomePageState extends ConsumerState<HomePage> {
             const SizedBox(height: AppTokens.spacingSm),
 
             // v0.14 (Round 17) 今日服药计划
+            // R108 P0-5: 改无动画
             const TodayMedSchedule(),
 
             const SizedBox(height: AppTokens.spacingSm),
 
             // 次要操作行：情绪日记 + 树洞
+            // R108 P0-5: 改无动画
             SecondaryActionRow(
               onMoodTap: () => MoodRecorderPage.show(context, ref),
             ),
@@ -420,6 +434,10 @@ class HomePageState extends ConsumerState<HomePage> {
   static void _noop() {}
 
   /// 打卡:haptic + 触发实际打卡
+  ///
+  /// v0.30 R108 (P1 home_page_state 拆): care engine 编排移到
+  /// [HomeCareEngineDispatcher], 本方法保留主流程 (haptic + checkIn +
+  /// 取消 snooze + 调 2 controller)。
   Future<void> _onCheckIn(int currentStreak) async {
     // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
     // R97-P1-12: unawaited 显式标记 fire-and-forget
@@ -428,13 +446,16 @@ class HomePageState extends ConsumerState<HomePage> {
     if (mounted) {
       final newStreak = currentStreak + 1;
       // 显示庆祝 overlay
-      _showCelebrationOverlay(context, _celebrationFor(context, newStreak));
+      _celebration.show(
+        context,
+        _celebration.pickStreakMessage(context, newStreak),
+      );
     }
     // 打卡成功：取消所有 snooze
     // v0.22 round 29 (spen-bug-04): 删 cancelSoftReminder 死代码 (scheduleSoftReminder
     // 已在 v0.18 P2-P0-5 删除, cancelSoftReminder 跟着成 no-op)
     try {
-      await ref.read(notificationServiceProvider).cancelAllSnoozes();
+      await ref.read(notificationServiceProvider).delegate.cancelAllSnoozes();
     } catch (e, st) {
       // 通知清理失败 → 主流程已完成，清理失败只意味着今天还可能再响一次
       swallowError(
@@ -445,132 +466,12 @@ class HomePageState extends ConsumerState<HomePage> {
       );
     }
     // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发，例如打卡是补卡)
-    unawaited(_runAfterCheckIn());
+    unawaited(_careDispatcher.runAfterCheckIn(
+      context: context,
+      isMounted: () => mounted,
+    ));
     // AI 关怀：打卡后评估是否触发(rule-based)
-    unawaited(_fireCareEngine());
-  }
-
-  /// 打卡后跑 SafetyWatch
-  ///
-  /// 设计：用户刚补卡理论上不该再触发，但系统可能因为日期错乱或打卡未及时入库
-  /// 仍认为"长期没打卡",所以这里也调一次。
-  Future<void> _runAfterCheckIn() async {
-    try {
-      // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
-      final l10n = AppLocalizations.of(context);
-      final result =
-          await ref.read(safetyWatchServiceProvider).onCheckIn(l10n: l10n);
-      if (!mounted) return;
-      if (result.kind == SafetyCheckKind.alerted) {
-        // 罕见：打卡后仍触发告警
-        // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
-        // R99 (BUG-1): 同 _runSafetyCheck, 走 displayMessageL10n(l10n) 翻译版
-        AppSnackBar.showError(
-          context,
-          action: '⚠️ ${result.displayMessageL10n(l10n)}',
-          error: l10n.homeSafetyAlertSuffix,
-        );
-      }
-    } catch (e, st) {
-      // SafetyWatch 失败 → 用户已经看到打卡成功的庆祝，失联检测后台再跑就行
-      swallowError(
-        where: 'home_page._runSafetyCheck',
-        error: e,
-        stack: st,
-        note: 'SafetyWatch failed, check-in celebration already shown',
-      );
-    }
-  }
-
-  /// CareEngine 触发(rule-based)
-  ///
-  /// v0.27 round 67 (B-2 修复): R65 use case 抽离收尾
-  ///
-  /// 修复前: 直接调 `CareEngine.evaluate(...)` + `CareEngine.fire(trigger, notif)`
-  /// 静态方法。R65 抽了 `FireCareStrategyUseCase` (业务编排下沉到 domain),
-  /// 但 home_page 这边没接入 → use case 是 dead code, 业务编排仍跟 UI
-  /// 混在 home_page 里。
-  ///
-  /// 修复后:
-  /// - 拿 `fireCareStrategyUseCaseProvider` 调 use case
-  /// - 拿 `result` (decision/strategy/title/body), 按 decision 路由分发:
-  ///   - `fireCareCopy` (default): 推本地通知 (跟 R67 前行为一致)
-  ///   - `fireSms` (v1.0+ 真接阿里云后): 调 smsService.send
-  ///   - `fireEmail` (v1.0+ 真接 SendGrid 后): 调 emailService
-  ///   - `disabled` / `noAction`: 早返
-  /// - R100 (F-4/N-2): `CareEngine.evaluate` / `CareEngine.fire` legacy API
-  ///   已删 (v0.28 起承诺, 拖到本轮落地), 编排全走 use case。
-  Future<void> _fireCareEngine() async {
-    try {
-      // P0 fix: 复用 provider 树已缓存的打卡数据，不再重复查库
-      final all = ref.read(allCheckInsProvider).value ?? [];
-      // v0.27 round 68 (CC-6 修复): 读 user 撤回失联通知同意状态
-      // (PIPL §14 + 隐私政策 §4 / §9 / §12 表格承诺"撤回后 CareEngine.fire 直接 return")
-      final isSafetyWithdrawn = await ref
-          .read(legalConsentWithdrawnProvider(ConsentKind.safety).future);
-      // v0.27 round 67 (B-2 修复): R65 抽离的 use case
-      final useCase = ref.read(fireCareStrategyUseCaseProvider);
-      final result = useCase(
-        FireCareStrategyInput(
-          checkIns: all,
-          now: DateTime.now(),
-          userProfile: null, // v1.0+ 用 (文案内嵌用户名)
-          contacts: const [], // v1.0+ 用 (SmsService.send 的 to:)
-          config: CareChannelConfig.defaultConfig, // careCopy
-          isSafetyConsentWithdrawn: isSafetyWithdrawn, // R68 CC-6 修复
-        ),
-      );
-      if (!result.shouldFire) return;
-
-      // v0.27 round 67 (B-2 修复): dispatch by decision
-      // 当前 defaultConfig = careCopy, 推本地通知 (跟 R67 前行为一致)
-      // v1.0+ 切 SMS/Email 时改 config.channel, 走下面 2 个分支
-      switch (result.decision) {
-        case FireCareDecision.fireCareCopy:
-          final notif = ref.read(notificationServiceProvider);
-          final id = 8000 + result.strategy.index;
-          await notif.showNow(id: id, title: result.title, body: result.body);
-        case FireCareDecision.fireSms:
-          // v0.27 round 67 (B-2 修复): 调 smsService.send
-          // 当前 SMS provider 仍 mock (R55 真接 TODO), send() 走
-          // SmsService.send mock 早返路径 → SmsResult.mock (不算 ok
-          // 也不算 fail)。R55 真接后这里就直接真发了。
-          //
-          // v0.27 round 75 (R74-N13 修): 之前硬编码 '00000000000' 占位
-          // phone, 真接 R55+ 时拿到 placeholder phone 发到占位号码
-          // (静默成功 + 失联告警失败)。改 throw StateError 让 caller 必填
-          // input.contacts, 防止生产模式发到占位号码。
-          // 当前 defaultConfig=careCopy, 此分支不会被触发, 留作路由占位。
-          throw StateError(
-            'FireCareDecision.fireSms requires non-empty input.contacts. '
-            'R55+ 真接 SMS 时 caller 必填, 当前 defaultConfig=careCopy '
-            '此分支不会触发。',
-          );
-        case FireCareDecision.fireEmail:
-          // v0.27 round 67 (B-2 修复): 调 emailService.sendMedicationReminder
-          // 当前 EmailService 是 mock, send 返 false (P1-8 fix 行为)。
-          // R55+ 真接 SendGrid 后这里就直接真发了。
-          //
-          // v0.27 round 75 (R74-N14 修): 之前硬编码 'placeholder@invalid.local'
-          // 占位 email, 改 throw StateError 防止发到占位地址 (PIPL §6 PII 暴露)。
-          throw StateError(
-            'FireCareDecision.fireEmail requires non-empty input.contacts. '
-            'R55+ 真接 Email 时 caller 必填, 当前 defaultConfig=careCopy '
-            '此分支不会触发。',
-          );
-        case FireCareDecision.disabled:
-        case FireCareDecision.noAction:
-          // 不会到这里 (shouldFire 已 check, 早返了)
-          break;
-      }
-    } catch (e, st) {
-      swallowError(
-        where: 'home_page._fireCareEngine',
-        error: e,
-        stack: st,
-        note: 'care engine failed — user may not receive care prompts',
-      );
-    }
+    unawaited(_careDispatcher.fireCareEngine());
   }
 
   /// Snooze 5min: 调度 5min 后的一次性本地通知
@@ -581,7 +482,7 @@ class HomePageState extends ConsumerState<HomePage> {
     // R97-P1-12: unawaited 显式标记 fire-and-forget
     unawaited(Haptics.light());
     try {
-      await ref.read(notificationServiceProvider).snoozeOnce(
+      await ref.read(notificationServiceProvider).delegate.snoozeOnce(
             medicationId: 0, // 0 = 通用 snooze
             minutes: 5,
             title: AppLocalizations.of(context).homeSnoozeTitle,
@@ -600,48 +501,6 @@ class HomePageState extends ConsumerState<HomePage> {
         error: e,
       );
     }
-  }
-
-  String _celebrationFor(BuildContext context, int streak) {
-    final l10n = AppLocalizations.of(context);
-    if (streak == 1) return l10n.homeCelebrationDay1;
-    if (streak < 7) return l10n.homeCelebrationStreakShort(streak);
-    if (streak < 30) return l10n.homeCelebrationStreakMedium(streak);
-    if (streak < 100) return l10n.homeCelebrationStreakLong(streak);
-    return l10n.homeCelebrationStreakMaster(streak);
-  }
-
-  /// 顶部 overlay 庆祝(短暂显示，自动消失)
-  void _showCelebrationOverlay(BuildContext context, String message) {
-    final overlay = Overlay.of(context);
-    late OverlayEntry entry;
-    entry = OverlayEntry(
-      builder: (ctx) => Positioned(
-        // R69 (emil P1-1 修复): 改 MediaQuery.padding.top + spacingLg,
-        // origin-aware 顶部定位, 避免键盘弹起 / 横屏 / 全面屏撞顶
-        top: MediaQuery.of(ctx).padding.top + AppTokens.spacingLg,
-        left: 0,
-        right: 0,
-        child: IgnorePointer(
-          child: Center(
-            // v0.24 round 48 (emil P1-2): 实际走 CelebrationBounce via typedef @Deprecated
-            // 未来 v0.25+ 全部迁移后, 可删 celebration_overlay.dart 整个文件
-            child: CelebrationBounce(message: message),
-          ),
-        ),
-      ),
-    );
-    overlay.insert(entry);
-    // v0.27 round 62 (P1-6 修复): 用 Timer 替代 Future.delayed,
-    // 存字段, dispose 时 cancel, 避免 widget 销毁后回调 fire 引起 race。
-    _celebrationTimer?.cancel();
-    _celebrationTimer = Timer(
-      const Duration(milliseconds: AppTokens.celebrationDisplayMs),
-      () {
-        if (entry.mounted) entry.remove();
-        _celebrationTimer = null;
-      },
-    );
   }
 
   /// 计算下次提醒时间(每天 20:00)

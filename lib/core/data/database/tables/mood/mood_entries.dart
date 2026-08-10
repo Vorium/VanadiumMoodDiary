@@ -98,4 +98,17 @@ class MoodEntries extends Table {
   /// 处理 'unspecified' 当 null)。4 段聚合 (心境图表按 4 段叠柱状/折线)。
   /// 简化 vs 4 张 mood_period 表 — 0 新表, 0 跨表 join。
   TextColumn get period => text().nullable()();
+
+  /// v0.30 R101: 影响因素 JSON 数组
+  ///
+  /// 参照 Apple Health State of Mind 的影响因素标签系统。
+  /// 6 大类 (关系/健康/活动/正念/天气/其他) 30+ 预设标签。
+  /// 老数据 = '[]' (空列表)。
+  TextColumn get influenceFactorsJson =>
+      text().withDefault(const Constant('[]'))();
+
+  /// v0.30 R101: 记录模式 ('momentary' / 'daily')
+  ///
+  /// 老数据 = null (仅新录音 dialog 有选择)。nullable 兼容老 entry。
+  TextColumn get recordingMode => text().nullable()();
 }

@@ -82,6 +82,7 @@ class _FakeSleepRepo implements SleepRepositoryImpl {
     yield const [];
     yield* _ctrl.stream;
   }
+
   @override
   Future<int> add({
     required DateTime date,
@@ -90,7 +91,8 @@ class _FakeSleepRepo implements SleepRepositoryImpl {
     required int durationMin,
     int? regularityScore,
     String? note,
-  }) async => 1;
+  }) async =>
+      1;
   @override
   Future<int> delete(int id) async => 1;
 }
@@ -102,6 +104,7 @@ class _FakeSocialRhythmRepo implements SocialRhythmRepositoryImpl {
     yield const [];
     yield* _ctrl.stream;
   }
+
   @override
   Future<int> add({
     required DateTime date,
@@ -111,7 +114,8 @@ class _FakeSocialRhythmRepo implements SocialRhythmRepositoryImpl {
     int socialMin = 0,
     int workMin = 0,
     int exerciseMin = 0,
-  }) async => 1;
+  }) async =>
+      1;
   @override
   Future<int> delete(int id) async => 1;
 }
@@ -123,6 +127,7 @@ class _FakeStressEventRepo implements StressEventRepositoryImpl {
     yield const [];
     yield* _ctrl.stream;
   }
+
   @override
   Future<int> add({
     required DateTime timestamp,
@@ -130,7 +135,8 @@ class _FakeStressEventRepo implements StressEventRepositoryImpl {
     required int intensity,
     String? note,
     int? linkedMoodEntryId,
-  }) async => 1;
+  }) async =>
+      1;
   @override
   Future<int> delete(int id) async => 1;
 }
@@ -142,13 +148,15 @@ class _FakeWeightRepo implements WeightRepositoryImpl {
     yield const [];
     yield* _ctrl.stream;
   }
+
   @override
   Future<int> add({
     required DateTime timestamp,
     required double weightKg,
     double? bmi,
     String? note,
-  }) async => 1;
+  }) async =>
+      1;
   @override
   Future<int> delete(int id) async => 1;
 }
@@ -160,13 +168,15 @@ class _FakeAnxietyAgitationRepo implements AnxietyAgitationRepositoryImpl {
     yield const [];
     yield* _ctrl.stream;
   }
+
   @override
   Future<int> add({
     required DateTime timestamp,
     required int anxietyScore,
     required int agitationScore,
     String? note,
-  }) async => 1;
+  }) async =>
+      1;
   @override
   Future<int> delete(int id) async => 1;
 }
@@ -178,6 +188,7 @@ class _FakeTreatmentRepo implements TreatmentRepositoryImpl {
     yield const [];
     yield* _ctrl.stream;
   }
+
   @override
   Future<int> add({
     required DateTime timestamp,
@@ -186,14 +197,16 @@ class _FakeTreatmentRepo implements TreatmentRepositoryImpl {
     int? linkedMedicationId,
     String? linkedMedicationName,
     String? note,
-  }) async => 1;
+  }) async =>
+      1;
   @override
   Future<int> submitEntry({
     required String treatmentType,
     required String description,
     int? linkedMedicationId,
     String? note,
-  }) async => 1;
+  }) async =>
+      1;
   @override
   Future<int> delete(int id) async => 1;
 }
@@ -202,16 +215,25 @@ void main() {
   // ============== I-1: l10n.dailyTrackingFab 3 lang 值 ==============
   group('I-1: l10n.dailyTrackingFab 3 lang 值', () {
     test('zh: "日常追踪" (跟 l10n.dailyTrackingTitle 一致)', () {
-      expect(AppLocalizationsZh().dailyTrackingFab, '日常追踪',
-          reason: 'FAB label 必须跟 /daily-tracking 整合入口页 title 语义一致',);
+      expect(
+        AppLocalizationsZh().dailyTrackingFab,
+        '日常追踪',
+        reason: 'FAB label 必须跟 /daily-tracking 整合入口页 title 语义一致',
+      );
     });
     test('en: "Daily Tracking"', () {
-      expect(AppLocalizationsEn().dailyTrackingFab, 'Daily Tracking',
-          reason: 'FAB label 英文跟 dailyTrackingTitle 保持一致',);
+      expect(
+        AppLocalizationsEn().dailyTrackingFab,
+        'Daily Tracking',
+        reason: 'FAB label 英文跟 dailyTrackingTitle 保持一致',
+      );
     });
     test('zh_Hant: "日常追蹤"', () {
-      expect(AppLocalizationsZhHant().dailyTrackingFab, '日常追蹤',
-          reason: 'FAB label 繁体跟 dailyTrackingTitle 保持一致',);
+      expect(
+        AppLocalizationsZhHant().dailyTrackingFab,
+        '日常追蹤',
+        reason: 'FAB label 繁体跟 dailyTrackingTitle 保持一致',
+      );
     });
   });
 
@@ -237,14 +259,13 @@ void main() {
             sleepRepositoryProvider.overrideWithValue(repos.sleep),
             socialRhythmRepositoryProvider
                 .overrideWithValue(repos.socialRhythm),
-            stressEventRepositoryProvider
-                .overrideWithValue(repos.stressEvent),
+            stressEventRepositoryProvider.overrideWithValue(repos.stressEvent),
             weightRepositoryProvider.overrideWithValue(repos.weight),
-            anxietyAgitationRepositoryProvider
-                .overrideWithValue(repos.anxiety),
+            anxietyAgitationRepositoryProvider.overrideWithValue(repos.anxiety),
             treatmentRepositoryProvider.overrideWithValue(repos.treatment),
             // moodEntriesProvider 给 MoodListPage 用, 避免 drift stream 挂起
-            moodEntriesProvider.overrideWith((ref) => const <MoodEntryEntity>[]),
+            moodEntriesProvider
+                .overrideWith((ref) => const <MoodEntryEntity>[]),
           ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -259,51 +280,73 @@ void main() {
 
     testWidgets('SleepListWidget → AppBar title "Sleep"', (tester) async {
       await pump(tester, const SleepListWidget());
-      expect(find.text('Sleep'), findsOneWidget,
-          reason: 'SleepListWidget AppBar title 必须走 l10n.sleepName = "Sleep"',);
+      expect(
+        find.text('Sleep'),
+        findsOneWidget,
+        reason: 'SleepListWidget AppBar title 必须走 l10n.sleepName = "Sleep"',
+      );
       // 同时验证不显示硬编码中文 "睡眠"
-      expect(find.text('睡眠'), findsNothing,
-          reason: '切到 en locale 后, AppBar 不应再显示硬编码中文',);
+      expect(
+        find.text('睡眠'),
+        findsNothing,
+        reason: '切到 en locale 后, AppBar 不应再显示硬编码中文',
+      );
     });
 
     testWidgets('SocialRhythmListWidget → AppBar title "Social Rhythm"',
         (tester) async {
       await pump(tester, const SocialRhythmListWidget());
-      expect(find.text('Social Rhythm'), findsOneWidget,
-          reason: 'SocialRhythmListWidget AppBar title 走 l10n.socialRhythmName',);
+      expect(
+        find.text('Social Rhythm'),
+        findsOneWidget,
+        reason: 'SocialRhythmListWidget AppBar title 走 l10n.socialRhythmName',
+      );
       expect(find.text('社会节律'), findsNothing);
     });
 
     testWidgets('StressEventListWidget → AppBar title "Stress Events"',
         (tester) async {
       await pump(tester, const StressEventListWidget());
-      expect(find.text('Stress Events'), findsOneWidget,
-          reason: 'StressEventListWidget AppBar title 走 l10n.stressEventName',);
+      expect(
+        find.text('Stress Events'),
+        findsOneWidget,
+        reason: 'StressEventListWidget AppBar title 走 l10n.stressEventName',
+      );
       expect(find.text('应激源'), findsNothing);
     });
 
     testWidgets('WeightListWidget → AppBar title "Weight"', (tester) async {
       await pump(tester, const WeightListWidget());
-      expect(find.text('Weight'), findsOneWidget,
-          reason: 'WeightListWidget AppBar title 走 l10n.weightName',);
+      expect(
+        find.text('Weight'),
+        findsOneWidget,
+        reason: 'WeightListWidget AppBar title 走 l10n.weightName',
+      );
       expect(find.text('体重'), findsNothing);
     });
 
-    testWidgets('AnxietyAgitationListWidget → AppBar title "Anxiety & Agitation"',
+    testWidgets(
+        'AnxietyAgitationListWidget → AppBar title "Anxiety & Agitation"',
         (tester) async {
       await pump(tester, const AnxietyAgitationListWidget());
-      expect(find.text('Anxiety & Agitation'), findsOneWidget,
-          reason: 'AnxietyAgitationListWidget AppBar title 走 l10n.anxietyAgitationName',);
+      expect(
+        find.text('Anxiety & Agitation'),
+        findsOneWidget,
+        reason:
+            'AnxietyAgitationListWidget AppBar title 走 l10n.anxietyAgitationName',
+      );
       expect(find.text('焦虑急躁'), findsNothing);
     });
 
-    testWidgets('TreatmentPage → AppBar title "Treatment"',
-        (tester) async {
+    testWidgets('TreatmentPage → AppBar title "Treatment"', (tester) async {
       // v0.30 round 92 (audit-fixes / P0 #15): TreatmentPlaceholderPage
       // 替换为 TreatmentPage (4 字段 AddTreatmentDialog + 真 page)。
       await pump(tester, const TreatmentPage());
-      expect(find.text('Treatment'), findsOneWidget,
-          reason: 'TreatmentPage AppBar title 走 l10n.treatmentName',);
+      expect(
+        find.text('Treatment'),
+        findsOneWidget,
+        reason: 'TreatmentPage AppBar title 走 l10n.treatmentName',
+      );
       expect(find.text('治疗'), findsNothing);
     });
 
@@ -312,10 +355,16 @@ void main() {
       // /mood-diary 走 MoodListPage (R87 已加 PageScaffold(title: l10n.moodListPageTitle))
       // 这里测试 en locale 下不显示硬编码 "情绪日记" (来自 /mood-diary 旧路由 wrapper)
       await pump(tester, const MoodListPage());
-      expect(find.text('Mood history'), findsOneWidget,
-          reason: 'MoodListPage AppBar title 走 l10n.moodListPageTitle',);
-      expect(find.text('情绪日记'), findsNothing,
-          reason: 'en locale 下 MoodListPage 不应显示硬编码中文 "情绪日记"',);
+      expect(
+        find.text('Mood history'),
+        findsOneWidget,
+        reason: 'MoodListPage AppBar title 走 l10n.moodListPageTitle',
+      );
+      expect(
+        find.text('情绪日记'),
+        findsNothing,
+        reason: 'en locale 下 MoodListPage 不应显示硬编码中文 "情绪日记"',
+      );
     });
   });
 }

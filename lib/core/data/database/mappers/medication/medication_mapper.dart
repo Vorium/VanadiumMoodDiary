@@ -14,6 +14,7 @@ import 'package:drift/drift.dart' show Value;
 
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/entities/medication_form.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 
@@ -32,6 +33,9 @@ extension MedicationToEntity on Medication {
       isActive: isActive,
       refillAt: refillAt,
       refillReminderDays: refillReminderDays,
+      form: MedicationForm.fromId(form),
+      colorIndex: colorIndex,
+      notes: notes,
     );
   }
 }
@@ -51,6 +55,9 @@ extension MedicationEntityToDrift on MedicationEntity {
       isActive: isActive,
       refillAt: refillAt,
       refillReminderDays: refillReminderDays,
+      form: form.id,
+      colorIndex: colorIndex,
+      notes: notes,
     );
   }
 
@@ -69,6 +76,9 @@ extension MedicationEntityToDrift on MedicationEntity {
       isActive: Value(isActive),
       refillAt: Value(refillAt),
       refillReminderDays: Value(refillReminderDays),
+      form: Value(form.id),
+      colorIndex: Value(colorIndex),
+      notes: Value(notes),
     );
   }
 }

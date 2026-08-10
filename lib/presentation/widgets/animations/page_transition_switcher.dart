@@ -51,10 +51,10 @@ class PageTransitionSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: duration,
-      // v0.22 round 34: 用 Motion.duration 走 reduce-motion
-      switchInCurve: AppTokens.curveStandard,
-      switchOutCurve: AppTokens.curveStandard,
+      duration: Motion.duration(context, duration),
+      // R103 (P0-10 fix): 用 Motion.curve 走 reduce-motion
+      switchInCurve: Motion.curve(context, AppTokens.curveStandard),
+      switchOutCurve: Motion.curve(context, AppTokens.curveStandard),
       transitionBuilder: transitionBuilder ??
           (child, animation) =>
               FadeTransition(opacity: animation, child: child),

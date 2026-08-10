@@ -14,20 +14,17 @@
   注: android:requestLegacyExternalStorage 不加 — app 私有目录够用,
        Android 11+ 该属性已被废弃, 没必要污染 manifest。
 
-  R97 (2026-08-07) 删除 3 项权限 + 1 项硬件特性 + BootReceiver 注册:
+  R97 (2026-08-07) 删除 2 项权限 + 1 项硬件特性 + BootReceiver 注册:
   - USE_EXACT_ALARM (R97-P0-6): Google Play 2024-07 起限制为 alarm clock /
     calendar 类 App, 精神心理服药提醒不在允许范围。保留 SCHEDULE_EXACT_ALARM
     (user-revocable, 所有 App 开放) 已够用。
-  - RECORD_AUDIO + microphone 硬件特性 (R97-P1-9): FeatureFlags
-    .ventAudioEnabled=false, vent / mood 录音按钮全 hidden, 当前版本无录音
-    调用。Google Play 对 microphone 权限审核特别严格 (隐私敏感), 业务暂停
-    期应删除。v1.0 真接录音业务时再加回。
   - RECEIVE_BOOT_COMPLETED + BootReceiver 注册 (R97-P1-10): BootReceiver.kt
     是 R64+ 半成品 (有 TODO), FeatureFlags.bootReceiverEnabled=false 已禁用,
     Android 14+ 对 BroadcastReceiver 后台启动 Activity 有严格限制。当前实现
     context.startActivity 在 Android 14+ 会 crash 或被系统静默拒绝。v1.0
     用 WorkManager + FCM 替代。注: BootReceiver.kt 文件保留作为 v1.0
     WorkManager 实现参考 (无 manifest 注册 = 不会被触发)。
+  注: RECORD_AUDIO (R97 曾删, R105 恢复, 见权限区注释)。
 
   permissions 5 个 + queries 1 个 (PROCESS_TEXT):
   - INTERNET: in_app_purchase plugin 隐式依赖 (即使 iapEnabled=false 仍需)
@@ -36,7 +33,8 @@
   - WAKE_LOCK: 通知触发保持 CPU
   - VIBRATE: safety alert 通知震动
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ============ 权限声明 ============ -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -44,16 +42,20 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- R97 (P1-9) 曾强制移除 RECORD_AUDIO, R105 恢复: R104 FeatureFlags
+         ventAudioEnabled=true, vent / mood 录音业务启用。record 插件 +
+         speech_to_text 插件需要此权限才能录制语音笔记。 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
-        android:label="慢病管家"
+        android:label="ChronicCare"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:networkSecurityConfig="@xml/network_security_config"
         android:enableOnBackInvokedCallback="true"
-        android:debuggable="false"
         android:allowBackup="false">
 
         <activity

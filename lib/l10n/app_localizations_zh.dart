@@ -875,16 +875,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodDialogPeriodLabel => '时段';
 
   @override
-  String get moodPeriodMorning => '早';
+  String get moodPeriodMorning => '早上';
 
   @override
   String get moodPeriodNoon => '中';
 
   @override
-  String get moodPeriodEvening => '晚';
+  String get moodPeriodEvening => '晚上';
 
   @override
-  String get moodPeriodNight => '夜';
+  String get moodPeriodNight => '夜间';
 
   @override
   String get moodPeriodUnspecified => '未指定';
@@ -2096,7 +2096,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String safetyCheckResultAlertedMocked(int mocked) {
-    return '**开发模式**，未实际通知联系人（mock: $mocked）';
+    return '测试通知已发送（$mocked 位联系人，实际未送达）';
   }
 
   @override
@@ -3163,6 +3163,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dailyTrackingMultiChartTitle => '近 30 天 4 指标';
 
   @override
+  String get chartMetricWeight => '体重';
+
+  @override
+  String get chartMetricSleep => '睡眠';
+
+  @override
+  String get chartMetricMood => '心境';
+
+  @override
+  String get chartMetricStress => '应激源';
+
+  @override
   String dailyTrackingLastTime(Object time) {
     return '$time 记录';
   }
@@ -3600,6 +3612,544 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dataExportRetentionClipboard => '剪贴板 + 用户自行保存到加密存储';
+
+  @override
+  String get medPageTitle => '用药';
+
+  @override
+  String get medAddTooltip => '添加药物';
+
+  @override
+  String get medTodaySchedule => '今日服药';
+
+  @override
+  String get medMyMedications => '我的药物';
+
+  @override
+  String get medQuickActions => '快捷操作';
+
+  @override
+  String get medCalendar => '用药日历';
+
+  @override
+  String get medRefill => '续方管理';
+
+  @override
+  String get medSlotMorning => '早上';
+
+  @override
+  String get medSlotAfternoon => '下午';
+
+  @override
+  String get medSlotEvening => '晚上';
+
+  @override
+  String get medSlotBedtime => '睡前';
+
+  @override
+  String get medEmptyTitle => '还没有添加药物';
+
+  @override
+  String get medEmptySubtitle => '点击右上角 + 添加你的第一种药物';
+
+  @override
+  String get medNoScheduleToday => '今天没有服药计划';
+
+  @override
+  String get medAddTitle => '添加药物';
+
+  @override
+  String get medAddStep1Title => '药物信息';
+
+  @override
+  String get medAddStep2Title => '剂量与时间';
+
+  @override
+  String get medAddStep3Title => '确认';
+
+  @override
+  String get medAddNameLabel => '药物名称';
+
+  @override
+  String get medAddNameHint => '例如：舍曲林';
+
+  @override
+  String get medAddFormLabel => '剂型';
+
+  @override
+  String get medAddDosageLabel => '每次剂量';
+
+  @override
+  String get medAddTimeLabel => '服药时间';
+
+  @override
+  String get medAddTimeAdd => '添加时间';
+
+  @override
+  String get medAddColorLabel => '药物颜色（可选，帮助识别）';
+
+  @override
+  String get medAddConfirmName => '药名';
+
+  @override
+  String get medAddConfirmForm => '剂型';
+
+  @override
+  String get medAddConfirmDosage => '剂量';
+
+  @override
+  String get medAddConfirmTime => '时间';
+
+  @override
+  String get medAddPrev => '上一步';
+
+  @override
+  String get medAddNext => '下一步';
+
+  @override
+  String get medAddSave => '保存';
+
+  @override
+  String medAddColorN(Object n) {
+    return '药物颜色 $n';
+  }
+
+  @override
+  String get medFormTablet => '片剂';
+
+  @override
+  String get medFormCapsule => '胶囊';
+
+  @override
+  String get medFormLiquid => '口服液';
+
+  @override
+  String get medFormPatch => '贴剂';
+
+  @override
+  String get medFormInjection => '注射';
+
+  @override
+  String get medFormOther => '其他';
+
+  @override
+  String get medDetailTitle => '药物详情';
+
+  @override
+  String get medNotFound => '药物未找到';
+
+  @override
+  String get moodReminderTitle => '情绪记录提醒';
+
+  @override
+  String get moodReminderSubtitle => '每天定时提醒你记录心情';
+
+  @override
+  String get moodReminderTimeLabel => '提醒时间';
+
+  @override
+  String get moodReminderEnabled => '开启提醒';
+
+  @override
+  String get moodInfluenceTitle => '影响因素';
+
+  @override
+  String get moodInfluenceSubtitle => '什么影响了你的心情？（可多选）';
+
+  @override
+  String get moodInfluenceRelationships => '关系';
+
+  @override
+  String get moodInfluenceHealth => '健康';
+
+  @override
+  String get moodInfluenceActivities => '活动';
+
+  @override
+  String get moodInfluenceMindfulness => '正念';
+
+  @override
+  String get moodInfluenceWeather => '天气';
+
+  @override
+  String get moodInfluenceOther => '其他';
+
+  @override
+  String get influenceFactorFamily => '家人';
+
+  @override
+  String get influenceFactorFriend => '朋友';
+
+  @override
+  String get influenceFactorPartner => '伴侣';
+
+  @override
+  String get influenceFactorChild => '孩子';
+
+  @override
+  String get influenceFactorColleague => '同事';
+
+  @override
+  String get influenceFactorExercise => '运动';
+
+  @override
+  String get influenceFactorSick => '生病';
+
+  @override
+  String get influenceFactorGoodSleep => '睡眠好';
+
+  @override
+  String get influenceFactorHealthyDiet => '饮食健康';
+
+  @override
+  String get influenceFactorWork => '工作';
+
+  @override
+  String get influenceFactorHobby => '爱好';
+
+  @override
+  String get influenceFactorTravel => '旅行';
+
+  @override
+  String get influenceFactorCommute => '通勤';
+
+  @override
+  String get influenceFactorShopping => '购物';
+
+  @override
+  String get influenceFactorGaming => '游戏';
+
+  @override
+  String get influenceFactorReading => '阅读';
+
+  @override
+  String get influenceFactorEntertainment => '娱乐';
+
+  @override
+  String get influenceFactorMeditation => '冥想';
+
+  @override
+  String get influenceFactorBreathing => '呼吸练习';
+
+  @override
+  String get influenceFactorJournaling => '写日记';
+
+  @override
+  String get influenceFactorYoga => '瑜伽';
+
+  @override
+  String get influenceFactorSunny => '晴天';
+
+  @override
+  String get influenceFactorCloudy => '多云';
+
+  @override
+  String get influenceFactorRainy => '雨天';
+
+  @override
+  String get influenceFactorSnowy => '雪天';
+
+  @override
+  String get influenceFactorWindy => '刮风';
+
+  @override
+  String get moodDetailTitle => '情绪详情';
+
+  @override
+  String get moodDetailFactors => '影响因素';
+
+  @override
+  String get moodDetailMoodState => '情绪状态';
+
+  @override
+  String get moodDetail4D => '4 维度';
+
+  @override
+  String get moodDetailCbtRecord => 'CBT 思维记录';
+
+  @override
+  String get moodTrendTitle => '情绪趋势';
+
+  @override
+  String get moodTrendWeek => '近 7 天';
+
+  @override
+  String get moodTrendMonth => '近 30 天';
+
+  @override
+  String get moodTrendDistribution => '分数分布';
+
+  @override
+  String get moodTrendNoData => '暂无数据';
+
+  @override
+  String get moodEditTooltip => '编辑';
+
+  @override
+  String get moodDeleteTooltip => '删除';
+
+  @override
+  String get moodDeleteConfirm => '确定删除这条记录吗？';
+
+  @override
+  String get moodFactorAnalysis => '因素关联分析';
+
+  @override
+  String get moodFactorAvgScore => '平均分';
+
+  @override
+  String get moodFactorCount => '记录数';
+
+  @override
+  String get navMedication => '用药';
+
+  @override
+  String get moodModeMomentary => '此刻';
+
+  @override
+  String get moodModeDaily => '今天';
+
+  @override
+  String get moodTrendWeekTitle => '近 7 天情绪趋势';
+
+  @override
+  String get moodTrendMonthTitle => '近 30 天情绪趋势';
+
+  @override
+  String get moodTrendDistTitle => '分数分布';
+
+  @override
+  String get moodTrendCbtTitle => 'CBT 重评效果';
+
+  @override
+  String get moodTrendCbtHint => '正值 = 情绪改善, 负值 = 恶化';
+
+  @override
+  String get moodTrendCbtEmpty => '暂无 CBT 重评数据';
+
+  @override
+  String get moodTrendRecords => '条';
+
+  @override
+  String get medDetailActive => '在用';
+
+  @override
+  String get medDetailStopped => '已停';
+
+  @override
+  String get medDetailAdherence => '依从性';
+
+  @override
+  String get medDetailLast30 => '近30天';
+
+  @override
+  String get medDetailDays => '服药天数';
+
+  @override
+  String get medDetailLast30Record => '近30天记录';
+
+  @override
+  String get medDetailEdit => '编辑';
+
+  @override
+  String get medDetailRefill => '续方';
+
+  @override
+  String get medDetailNoFactors => '暂无影响因素数据';
+
+  @override
+  String get moodCbtSituation => '情境';
+
+  @override
+  String get moodCbtAutoThought => '自动思维';
+
+  @override
+  String get moodCbtEvidenceFor => '支持证据';
+
+  @override
+  String get moodCbtEvidenceAgainst => '反对证据';
+
+  @override
+  String get moodCbtAltThought => '替代思维';
+
+  @override
+  String get moodCbtRerated => '重新评分';
+
+  @override
+  String get moodCbtCoreBelief => '核心信念';
+
+  @override
+  String get moodCbtBehavior => '行为应对';
+
+  @override
+  String moodAudioRecording(Object duration) {
+    return '录音 $duration';
+  }
+
+  @override
+  String get moodDeleted => '已删除';
+
+  @override
+  String get moodPeriodAfternoon => '下午';
+
+  @override
+  String get settingsProfileTitle => '个人资料';
+
+  @override
+  String get settingsProfileSubtitle => '健康档案、医疗信息';
+
+  @override
+  String get todaySummaryCheckIn => '打卡';
+
+  @override
+  String get todaySummaryMeds => '药物';
+
+  @override
+  String get todaySummaryMood => '心情';
+
+  @override
+  String get todaySummaryStreak => '连续';
+
+  @override
+  String todaySummaryStreakDays(int count) {
+    return '$count天';
+  }
+
+  @override
+  String get setupConsentMedicalDisclaimer =>
+      '我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务';
+
+  @override
+  String get setupConsentViewDisclaimer => '查看';
+
+  @override
+  String get trackingCustomize => '自定义追踪项';
+
+  @override
+  String get trackingPin => '置顶';
+
+  @override
+  String get trackingUnpin => '取消置顶';
+
+  @override
+  String get trackingHide => '隐藏此项';
+
+  @override
+  String get trackingPinned => '收藏';
+
+  @override
+  String get trackingCategoryEmotional => '情绪状态';
+
+  @override
+  String get trackingCategoryPhysical => '身体指标';
+
+  @override
+  String get trackingCategoryBehavioral => '行为节律';
+
+  @override
+  String get trackingCategoryMedical => '医疗记录';
+
+  @override
+  String todayTrackingSummary(int tracked, int total) {
+    return '今日已追踪 $tracked/$total 项';
+  }
+
+  @override
+  String moodRecordingLabel(String duration) {
+    return '录音 $duration';
+  }
+
+  @override
+  String get medicationNameRequired => '请输入药物名称';
+
+  @override
+  String medicationAdded(String name) {
+    return '已添加 $name';
+  }
+
+  @override
+  String get medicationStatusInUse => '在用';
+
+  @override
+  String get medicationStatusStopped => '已停';
+
+  @override
+  String factorAnalysisCount(int count) {
+    return '$count 条';
+  }
+
+  @override
+  String get setupConsentAgreeAll => '我已阅读并同意以上所有协议';
+
+  @override
+  String get setupConsentViewAll => '查看全部协议';
+
+  @override
+  String get careCopyLateCheckInTitle => '🛏️ 提早一点更稳定';
+
+  @override
+  String get careCopyLateCheckInBody => '21 点后打卡比例偏高 — 规律作息对药效有影响';
+
+  @override
+  String get careCopyWeekendMissedTitle => '☀️ 周末保持节律';
+
+  @override
+  String get careCopyWeekendMissedBody => '周末容易错过——现在打卡，多一点坚持';
+
+  @override
+  String get careCopySecondDayMissedTitle => '🌿 后续保持就好';
+
+  @override
+  String get careCopySecondDayMissedBody => '少 1 次没关系——后续保持就好';
+
+  @override
+  String get careCopyWeekPerfectTitle => '🌟 一整周都准时！';
+
+  @override
+  String get careCopyWeekPerfectBody => '今周已全部准时';
+
+  @override
+  String get assessmentComparisonImproved => '好转';
+
+  @override
+  String get assessmentComparisonWorsened => '恶化';
+
+  @override
+  String get assessmentComparisonUnchanged => '持平';
+
+  @override
+  String get assessmentComparisonFirst => '首次评估';
+
+  @override
+  String assessmentDeltaSame(int delta) {
+    return '和上次一样（$delta）';
+  }
+
+  @override
+  String assessmentDeltaHigher(int delta) {
+    return '比上次高 $delta 分';
+  }
+
+  @override
+  String assessmentDeltaLower(int delta) {
+    return '比上次低 $delta 分';
+  }
+
+  @override
+  String assessmentSeverityRank(int rank) {
+    return '等级 $rank';
+  }
+
+  @override
+  String get checkInTypeAssessment => '心理量表评估';
+
+  @override
+  String dayDetailTotalScore(int total) {
+    return '总分 $total';
+  }
+
+  @override
+  String get dayDetailScaleAssessment => '心理量表评估';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4473,16 +5023,16 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodDialogPeriodLabel => '時段';
 
   @override
-  String get moodPeriodMorning => '早';
+  String get moodPeriodMorning => '早上';
 
   @override
   String get moodPeriodNoon => '中';
 
   @override
-  String get moodPeriodEvening => '晚';
+  String get moodPeriodEvening => '晚上';
 
   @override
-  String get moodPeriodNight => '夜';
+  String get moodPeriodNight => '夜間';
 
   @override
   String get moodPeriodUnspecified => '未指定';
@@ -5694,7 +6244,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String safetyCheckResultAlertedMocked(int mocked) {
-    return '**開發模式**，未實際通知聯繫人（mock: $mocked）';
+    return '測試通知已發送（$mocked 位聯繫人，實際未送達）';
   }
 
   @override
@@ -6761,6 +7311,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get dailyTrackingMultiChartTitle => '近 30 天 4 指標';
 
   @override
+  String get chartMetricWeight => '體重';
+
+  @override
+  String get chartMetricSleep => '睡眠';
+
+  @override
+  String get chartMetricMood => '心境';
+
+  @override
+  String get chartMetricStress => '應激源';
+
+  @override
   String dailyTrackingLastTime(Object time) {
     return '$time 記錄';
   }
@@ -7198,4 +7760,542 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get dataExportRetentionClipboard => '剪貼板 + 用戶自行保存到加密存儲';
+
+  @override
+  String get medPageTitle => '用藥';
+
+  @override
+  String get medAddTooltip => '新增藥物';
+
+  @override
+  String get medTodaySchedule => '今日服藥';
+
+  @override
+  String get medMyMedications => '我的藥物';
+
+  @override
+  String get medQuickActions => '快捷操作';
+
+  @override
+  String get medCalendar => '用藥日曆';
+
+  @override
+  String get medRefill => '續方管理';
+
+  @override
+  String get medSlotMorning => '早上';
+
+  @override
+  String get medSlotAfternoon => '下午';
+
+  @override
+  String get medSlotEvening => '晚上';
+
+  @override
+  String get medSlotBedtime => '睡前';
+
+  @override
+  String get medEmptyTitle => '還沒有新增藥物';
+
+  @override
+  String get medEmptySubtitle => '點擊右上角 + 新增你的第一種藥物';
+
+  @override
+  String get medNoScheduleToday => '今天沒有服藥計劃';
+
+  @override
+  String get medAddTitle => '新增藥物';
+
+  @override
+  String get medAddStep1Title => '藥物資訊';
+
+  @override
+  String get medAddStep2Title => '劑量與時間';
+
+  @override
+  String get medAddStep3Title => '確認';
+
+  @override
+  String get medAddNameLabel => '藥物名稱';
+
+  @override
+  String get medAddNameHint => '例如：舍曲林';
+
+  @override
+  String get medAddFormLabel => '劑型';
+
+  @override
+  String get medAddDosageLabel => '每次劑量';
+
+  @override
+  String get medAddTimeLabel => '服藥時間';
+
+  @override
+  String get medAddTimeAdd => '新增時間';
+
+  @override
+  String get medAddColorLabel => '藥物顏色（可選，幫助識別）';
+
+  @override
+  String get medAddConfirmName => '藥名';
+
+  @override
+  String get medAddConfirmForm => '劑型';
+
+  @override
+  String get medAddConfirmDosage => '劑量';
+
+  @override
+  String get medAddConfirmTime => '時間';
+
+  @override
+  String get medAddPrev => '上一步';
+
+  @override
+  String get medAddNext => '下一步';
+
+  @override
+  String get medAddSave => '儲存';
+
+  @override
+  String medAddColorN(Object n) {
+    return '藥物顏色 $n';
+  }
+
+  @override
+  String get medFormTablet => '錠劑';
+
+  @override
+  String get medFormCapsule => '膠囊';
+
+  @override
+  String get medFormLiquid => '口服液';
+
+  @override
+  String get medFormPatch => '貼劑';
+
+  @override
+  String get medFormInjection => '注射';
+
+  @override
+  String get medFormOther => '其他';
+
+  @override
+  String get medDetailTitle => '藥物詳情';
+
+  @override
+  String get medNotFound => '藥物未找到';
+
+  @override
+  String get moodReminderTitle => '情緒記錄提醒';
+
+  @override
+  String get moodReminderSubtitle => '每天定時提醒你記錄心情';
+
+  @override
+  String get moodReminderTimeLabel => '提醒時間';
+
+  @override
+  String get moodReminderEnabled => '開啟提醒';
+
+  @override
+  String get moodInfluenceTitle => '影響因素';
+
+  @override
+  String get moodInfluenceSubtitle => '什麼影響了你的心情？（可多選）';
+
+  @override
+  String get moodInfluenceRelationships => '關係';
+
+  @override
+  String get moodInfluenceHealth => '健康';
+
+  @override
+  String get moodInfluenceActivities => '活動';
+
+  @override
+  String get moodInfluenceMindfulness => '正念';
+
+  @override
+  String get moodInfluenceWeather => '天氣';
+
+  @override
+  String get moodInfluenceOther => '其他';
+
+  @override
+  String get influenceFactorFamily => '家人';
+
+  @override
+  String get influenceFactorFriend => '朋友';
+
+  @override
+  String get influenceFactorPartner => '伴侶';
+
+  @override
+  String get influenceFactorChild => '孩子';
+
+  @override
+  String get influenceFactorColleague => '同事';
+
+  @override
+  String get influenceFactorExercise => '運動';
+
+  @override
+  String get influenceFactorSick => '生病';
+
+  @override
+  String get influenceFactorGoodSleep => '睡眠好';
+
+  @override
+  String get influenceFactorHealthyDiet => '飲食健康';
+
+  @override
+  String get influenceFactorWork => '工作';
+
+  @override
+  String get influenceFactorHobby => '愛好';
+
+  @override
+  String get influenceFactorTravel => '旅行';
+
+  @override
+  String get influenceFactorCommute => '通勤';
+
+  @override
+  String get influenceFactorShopping => '購物';
+
+  @override
+  String get influenceFactorGaming => '遊戲';
+
+  @override
+  String get influenceFactorReading => '閱讀';
+
+  @override
+  String get influenceFactorEntertainment => '娛樂';
+
+  @override
+  String get influenceFactorMeditation => '冥想';
+
+  @override
+  String get influenceFactorBreathing => '呼吸練習';
+
+  @override
+  String get influenceFactorJournaling => '寫日記';
+
+  @override
+  String get influenceFactorYoga => '瑜伽';
+
+  @override
+  String get influenceFactorSunny => '晴天';
+
+  @override
+  String get influenceFactorCloudy => '多雲';
+
+  @override
+  String get influenceFactorRainy => '雨天';
+
+  @override
+  String get influenceFactorSnowy => '雪天';
+
+  @override
+  String get influenceFactorWindy => '刮風';
+
+  @override
+  String get moodDetailTitle => '情緒詳情';
+
+  @override
+  String get moodDetailFactors => '影響因素';
+
+  @override
+  String get moodDetailMoodState => '情緒狀態';
+
+  @override
+  String get moodDetail4D => '4 維度';
+
+  @override
+  String get moodDetailCbtRecord => 'CBT 思維記錄';
+
+  @override
+  String get moodTrendTitle => '情緒趨勢';
+
+  @override
+  String get moodTrendWeek => '近 7 天';
+
+  @override
+  String get moodTrendMonth => '近 30 天';
+
+  @override
+  String get moodTrendDistribution => '分數分布';
+
+  @override
+  String get moodTrendNoData => '暫無資料';
+
+  @override
+  String get moodEditTooltip => '編輯';
+
+  @override
+  String get moodDeleteTooltip => '刪除';
+
+  @override
+  String get moodDeleteConfirm => '確定刪除這條記錄嗎？';
+
+  @override
+  String get moodFactorAnalysis => '因素關聯分析';
+
+  @override
+  String get moodFactorAvgScore => '平均分';
+
+  @override
+  String get moodFactorCount => '記錄數';
+
+  @override
+  String get navMedication => '用藥';
+
+  @override
+  String get moodModeMomentary => '此刻';
+
+  @override
+  String get moodModeDaily => '今天';
+
+  @override
+  String get moodTrendWeekTitle => '近 7 天情緒趨勢';
+
+  @override
+  String get moodTrendMonthTitle => '近 30 天情緒趨勢';
+
+  @override
+  String get moodTrendDistTitle => '分數分布';
+
+  @override
+  String get moodTrendCbtTitle => 'CBT 重評效果';
+
+  @override
+  String get moodTrendCbtHint => '正值 = 情緒改善, 負值 = 惡化';
+
+  @override
+  String get moodTrendCbtEmpty => '暫無 CBT 重評資料';
+
+  @override
+  String get moodTrendRecords => '條';
+
+  @override
+  String get medDetailActive => '在用';
+
+  @override
+  String get medDetailStopped => '已停';
+
+  @override
+  String get medDetailAdherence => '依從性';
+
+  @override
+  String get medDetailLast30 => '近30天';
+
+  @override
+  String get medDetailDays => '服藥天數';
+
+  @override
+  String get medDetailLast30Record => '近30天記錄';
+
+  @override
+  String get medDetailEdit => '編輯';
+
+  @override
+  String get medDetailRefill => '續方';
+
+  @override
+  String get medDetailNoFactors => '暫無影響因素資料';
+
+  @override
+  String get moodCbtSituation => '情境';
+
+  @override
+  String get moodCbtAutoThought => '自動思維';
+
+  @override
+  String get moodCbtEvidenceFor => '支持證據';
+
+  @override
+  String get moodCbtEvidenceAgainst => '反對證據';
+
+  @override
+  String get moodCbtAltThought => '替代思維';
+
+  @override
+  String get moodCbtRerated => '重新評分';
+
+  @override
+  String get moodCbtCoreBelief => '核心信念';
+
+  @override
+  String get moodCbtBehavior => '行為應對';
+
+  @override
+  String moodAudioRecording(Object duration) {
+    return '錄音 $duration';
+  }
+
+  @override
+  String get moodDeleted => '已刪除';
+
+  @override
+  String get moodPeriodAfternoon => '下午';
+
+  @override
+  String get settingsProfileTitle => '個人資料';
+
+  @override
+  String get settingsProfileSubtitle => '健康檔案、醫療資訊';
+
+  @override
+  String get todaySummaryCheckIn => '打卡';
+
+  @override
+  String get todaySummaryMeds => '藥物';
+
+  @override
+  String get todaySummaryMood => '心情';
+
+  @override
+  String get todaySummaryStreak => '連續';
+
+  @override
+  String todaySummaryStreakDays(int count) {
+    return '$count天';
+  }
+
+  @override
+  String get setupConsentMedicalDisclaimer =>
+      '我已閱讀並理解《醫學免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務';
+
+  @override
+  String get setupConsentViewDisclaimer => '查看';
+
+  @override
+  String get trackingCustomize => '自定義追蹤項';
+
+  @override
+  String get trackingPin => '置頂';
+
+  @override
+  String get trackingUnpin => '取消置頂';
+
+  @override
+  String get trackingHide => '隱藏此項';
+
+  @override
+  String get trackingPinned => '收藏';
+
+  @override
+  String get trackingCategoryEmotional => '情緒狀態';
+
+  @override
+  String get trackingCategoryPhysical => '身體指標';
+
+  @override
+  String get trackingCategoryBehavioral => '行為節律';
+
+  @override
+  String get trackingCategoryMedical => '醫療記錄';
+
+  @override
+  String todayTrackingSummary(int tracked, int total) {
+    return '今日已追蹤 $tracked/$total 項';
+  }
+
+  @override
+  String moodRecordingLabel(String duration) {
+    return '錄音 $duration';
+  }
+
+  @override
+  String get medicationNameRequired => '請輸入藥物名稱';
+
+  @override
+  String medicationAdded(String name) {
+    return '已添加 $name';
+  }
+
+  @override
+  String get medicationStatusInUse => '在用';
+
+  @override
+  String get medicationStatusStopped => '已停';
+
+  @override
+  String factorAnalysisCount(int count) {
+    return '$count 條';
+  }
+
+  @override
+  String get setupConsentAgreeAll => '我已閱讀並同意以上所有協議';
+
+  @override
+  String get setupConsentViewAll => '查看全部協議';
+
+  @override
+  String get careCopyLateCheckInTitle => '🛏️ 提早一點更穩定';
+
+  @override
+  String get careCopyLateCheckInBody => '21 點後打卡比例偏高 — 規律作息對藥效有影響';
+
+  @override
+  String get careCopyWeekendMissedTitle => '☀️ 週末保持節律';
+
+  @override
+  String get careCopyWeekendMissedBody => '週末容易錯過——現在打卡，多一點堅持';
+
+  @override
+  String get careCopySecondDayMissedTitle => '🌿 後續保持就好';
+
+  @override
+  String get careCopySecondDayMissedBody => '少 1 次沒關係——後續保持就好';
+
+  @override
+  String get careCopyWeekPerfectTitle => '🌟 一整週都準時！';
+
+  @override
+  String get careCopyWeekPerfectBody => '本週已全部準時';
+
+  @override
+  String get assessmentComparisonImproved => '好轉';
+
+  @override
+  String get assessmentComparisonWorsened => '惡化';
+
+  @override
+  String get assessmentComparisonUnchanged => '持平';
+
+  @override
+  String get assessmentComparisonFirst => '首次評估';
+
+  @override
+  String assessmentDeltaSame(int delta) {
+    return '和上次一樣（$delta）';
+  }
+
+  @override
+  String assessmentDeltaHigher(int delta) {
+    return '比上次高 $delta 分';
+  }
+
+  @override
+  String assessmentDeltaLower(int delta) {
+    return '比上次低 $delta 分';
+  }
+
+  @override
+  String assessmentSeverityRank(int rank) {
+    return '等級 $rank';
+  }
+
+  @override
+  String get checkInTypeAssessment => '心理量表評估';
+
+  @override
+  String dayDetailTotalScore(int total) {
+    return '總分 $total';
+  }
+
+  @override
+  String get dayDetailScaleAssessment => '心理量表評估';
 }

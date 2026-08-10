@@ -94,3 +94,10 @@ flutter:
     - assets/legal/user_agreement.md
     - assets/legal/privacy_policy.md
     - assets/legal/sensitive_data_consent.md
+    - assets/legal/medical_disclaimer.md
+dependency_overrides:
+  # v0.30 R108 revisit: drift_dev 2.34.0 + sqlparser 0.44.6 (latest) 不兼容
+  # (新版 0.44.6 改 sealed class DartPlaceholder, 删了 when 方法,
+  #  drift_dev 2.34.0 query_analyzer.dart:761 还在用 placeholder.when)
+  # 锁到 0.44.5 (上一个 0.44.x 还在用 class DartPlaceholder + when) 解开
+  sqlparser: 0.44.5

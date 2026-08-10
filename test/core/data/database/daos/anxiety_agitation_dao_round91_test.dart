@@ -26,12 +26,14 @@ void main() {
 
   group('AnxietyAgitationDao (v0.30 round 91 新表)', () {
     test('insert + anxietyScore + agitationScore round-trip', () async {
-      await dao.insert(AnxietyAgitationEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 15, 0),
-        anxietyScore: 3,
-        agitationScore: 2,
-        note: const Value('轻微焦虑'),
-      ),);
+      await dao.insert(
+        AnxietyAgitationEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 15, 0),
+          anxietyScore: 3,
+          agitationScore: 2,
+          note: const Value('轻微焦虑'),
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.length, 1);
@@ -41,22 +43,26 @@ void main() {
     });
 
     test('不传 note → null', () async {
-      await dao.insert(AnxietyAgitationEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 15, 0),
-        anxietyScore: 4,
-        agitationScore: 3,
-      ),);
+      await dao.insert(
+        AnxietyAgitationEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 15, 0),
+          anxietyScore: 4,
+          agitationScore: 3,
+        ),
+      );
 
       final all = await dao.watchAll().first;
       expect(all.first.note, isNull);
     });
 
     test('delete(id) → 返 1 + watchAll 返空', () async {
-      final id = await dao.insert(AnxietyAgitationEntriesCompanion.insert(
-        timestamp: DateTime(2026, 8, 1, 15, 0),
-        anxietyScore: 3,
-        agitationScore: 3,
-      ),);
+      final id = await dao.insert(
+        AnxietyAgitationEntriesCompanion.insert(
+          timestamp: DateTime(2026, 8, 1, 15, 0),
+          anxietyScore: 3,
+          agitationScore: 3,
+        ),
+      );
       final deleted = await dao.delete(id);
       expect(deleted, 1);
       final all = await dao.watchAll().first;

@@ -1,0 +1,1 @@
+This app does not require login — all data is stored locally on the device (SQLCipher + AES-256).

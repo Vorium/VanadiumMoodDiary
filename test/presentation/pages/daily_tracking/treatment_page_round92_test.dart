@@ -45,8 +45,7 @@ void main() {
   Widget wrap({required List<TreatmentEntryEntity> entries}) {
     return ProviderScope(
       overrides: [
-        treatmentEntriesProvider
-            .overrideWith((ref) => Stream.value(entries)),
+        treatmentEntriesProvider.overrideWith((ref) => Stream.value(entries)),
       ],
       child: MaterialApp.router(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -72,14 +71,19 @@ void main() {
     await tester.pumpAndSettle();
 
     // EmptyState 显示 (R91 existing treatmentNoData / treatmentHint)
-    expect(find.text('暂无治疗记录'), findsOneWidget,
-        reason: 'R91 treatmentNoData 文案应可见',);
-    expect(find.textContaining('治疗条目'), findsOneWidget,
-        reason: 'R91 treatmentHint 副文案应可见',);
+    expect(
+      find.text('暂无治疗记录'),
+      findsOneWidget,
+      reason: 'R91 treatmentNoData 文案应可见',
+    );
+    expect(
+      find.textContaining('治疗条目'),
+      findsOneWidget,
+      reason: 'R91 treatmentHint 副文案应可见',
+    );
   });
 
-  testWidgets('TreatmentPage 渲染: 有 entry → ListView 显示',
-      (tester) async {
+  testWidgets('TreatmentPage 渲染: 有 entry → ListView 显示', (tester) async {
     setBigView(tester);
     final entry = TreatmentEntryEntity(
       id: 1,
@@ -92,16 +96,24 @@ void main() {
     await tester.pumpAndSettle();
 
     // 列表有 1 条 entry (R92 format: "category · description" + subtitle)
-    expect(find.textContaining('心理咨询'), findsOneWidget,
-        reason: 'entry category (treatmentType) 透传显示',);
-    expect(find.textContaining('心理医生 (王医生)'), findsOneWidget,
-        reason: 'entry description (provider) 透传显示',);
-    expect(find.textContaining('聊得不错'), findsOneWidget,
-        reason: 'entry note 透传显示',);
+    expect(
+      find.textContaining('心理咨询'),
+      findsOneWidget,
+      reason: 'entry category (treatmentType) 透传显示',
+    );
+    expect(
+      find.textContaining('心理医生 (王医生)'),
+      findsOneWidget,
+      reason: 'entry description (provider) 透传显示',
+    );
+    expect(
+      find.textContaining('聊得不错'),
+      findsOneWidget,
+      reason: 'entry note 透传显示',
+    );
   });
 
-  testWidgets('TreatmentPage 顶部添加按钮 + AddTreatmentDialog 弹出',
-      (tester) async {
+  testWidgets('TreatmentPage 顶部添加按钮 + AddTreatmentDialog 弹出', (tester) async {
     setBigView(tester);
     await tester.pumpWidget(wrap(entries: const []));
     await tester.pumpAndSettle();
@@ -111,15 +123,30 @@ void main() {
     await tester.pumpAndSettle();
 
     // AddTreatmentDialog 弹出 (4 字段 visible)
-    expect(find.text('添加治疗记录'), findsOneWidget,
-        reason: 'AddTreatmentDialog title 可见',);
-    expect(find.text('日期'), findsOneWidget,
-        reason: 'date field 可见',);
-    expect(find.text('类别'), findsOneWidget,
-        reason: 'category field 可见',);
-    expect(find.text('医疗机构 / 医生'), findsOneWidget,
-        reason: 'provider field 可见',);
-    expect(find.text('备注'), findsOneWidget,
-        reason: 'note field 可见',);
+    expect(
+      find.text('添加治疗记录'),
+      findsOneWidget,
+      reason: 'AddTreatmentDialog title 可见',
+    );
+    expect(
+      find.text('日期'),
+      findsOneWidget,
+      reason: 'date field 可见',
+    );
+    expect(
+      find.text('类别'),
+      findsOneWidget,
+      reason: 'category field 可见',
+    );
+    expect(
+      find.text('医疗机构 / 医生'),
+      findsOneWidget,
+      reason: 'provider field 可见',
+    );
+    expect(
+      find.text('备注'),
+      findsOneWidget,
+      reason: 'note field 可见',
+    );
   });
 }

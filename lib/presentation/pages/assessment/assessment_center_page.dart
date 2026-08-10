@@ -44,9 +44,7 @@ class AssessmentCenterPage extends ConsumerWidget {
     final allScalesList = ref.watch(allScalesProvider);
     final scales = FeatureFlags.phqGad7I18nEnabled
         ? allScalesList
-        : allScalesList
-            .where((s) => s.id != 'phq9' && s.id != 'gad7')
-            .toList();
+        : allScalesList.where((s) => s.id != 'phq9' && s.id != 'gad7').toList();
     final entriesAsync = ref.watch(allAssessmentEntriesProvider);
     const unavailableIds = unavailableScaleIds;
 
@@ -54,7 +52,8 @@ class AssessmentCenterPage extends ConsumerWidget {
       title: l10n.assessmentCenterTitle,
       child: entriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+        error: (e, st) =>
+            Center(child: Text(l10n.commonLoadFailed(e.toString()))),
         data: (entries) => _buildGrid(context, entries, scales, unavailableIds),
       ),
     );

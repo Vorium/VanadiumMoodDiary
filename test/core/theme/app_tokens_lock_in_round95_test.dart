@@ -120,7 +120,8 @@ void main() {
       );
     });
 
-    test('legal_page: 用 textStyleXxx 集中器 (textStyleBodyStrong + textStyleLabelMedium)',
+    test(
+        'legal_page: 用 textStyleXxx 集中器 (textStyleBodyStrong + textStyleLabelMedium)',
         () {
       final file = File('lib/presentation/pages/settings/legal_page.dart');
       expect(file.existsSync(), true);
@@ -253,7 +254,8 @@ void main() {
       expect(
         matches.length,
         greaterThanOrEqualTo(10),
-        reason: 'PDF file should keep its literal fontSize for special PDF font table',
+        reason:
+            'PDF file should keep its literal fontSize for special PDF font table',
       );
     });
   });
@@ -267,10 +269,12 @@ void main() {
       final files = Directory('lib')
           .listSync(recursive: true)
           .whereType<File>()
-          .where((f) =>
-              f.path.endsWith('.dart') &&
-              !f.path.endsWith('.g.dart') &&
-              !f.path.contains('app_tokens_lock_in_round95_test.dart'),)
+          .where(
+            (f) =>
+                f.path.endsWith('.dart') &&
+                !f.path.endsWith('.g.dart') &&
+                !f.path.contains('app_tokens_lock_in_round95_test.dart'),
+          )
           .toList();
       var count = 0;
       for (final f in files) {
@@ -290,10 +294,12 @@ void main() {
       final files = Directory('lib')
           .listSync(recursive: true)
           .whereType<File>()
-          .where((f) =>
-              f.path.endsWith('.dart') &&
-              !f.path.endsWith('.g.dart') &&
-              !f.path.contains('app_tokens_lock_in_round95_test.dart'),)
+          .where(
+            (f) =>
+                f.path.endsWith('.dart') &&
+                !f.path.endsWith('.g.dart') &&
+                !f.path.contains('app_tokens_lock_in_round95_test.dart'),
+          )
           .toList();
       var count = 0;
       for (final f in files) {

@@ -41,13 +41,15 @@ class _FakeWeightRepository implements WeightRepositoryImpl {
   }) async {
     addCallCount++;
     final newId = _entries.length + 1;
-    _entries.add(WeightEntryEntity(
-      id: newId,
-      timestamp: timestamp,
-      weightKg: weightKg,
-      bmi: bmi,
-      note: note,
-    ),);
+    _entries.add(
+      WeightEntryEntity(
+        id: newId,
+        timestamp: timestamp,
+        weightKg: weightKg,
+        bmi: bmi,
+        note: note,
+      ),
+    );
     _ctrl.add(List.unmodifiable(_entries));
     return newId;
   }
@@ -76,7 +78,8 @@ void main() {
       overrides: [
         weightRepositoryProvider.overrideWithValue(fakeRepo),
         weightEntriesProvider.overrideWith(
-            (ref) => ref.watch(weightRepositoryProvider).watchAll(),),
+          (ref) => ref.watch(weightRepositoryProvider).watchAll(),
+        ),
         // userProfileProvider override: null (R91 user_profile 暂没 heightCm 字段)
         userProfileProvider.overrideWith((ref) => Stream.value(null)),
       ],
@@ -96,8 +99,11 @@ void main() {
     await tester.pump();
 
     // 1. 空态
-    expect(find.text('暂无体重记录'), findsOneWidget,
-        reason: '空 entry 时显示 EmptyState title',);
+    expect(
+      find.text('暂无体重记录'),
+      findsOneWidget,
+      reason: '空 entry 时显示 EmptyState title',
+    );
 
     // 2. tap 添加
     await tester.tap(find.text('添加体重记录'));
@@ -107,8 +113,11 @@ void main() {
     expect(find.text('体重 (kg)'), findsOneWidget);
     expect(find.text('备注'), findsOneWidget);
     // BMI 字段 (auto-computed, profile.height 缺失 → "暂无 (需 profile.height)")
-    expect(find.textContaining('BMI'), findsOneWidget,
-        reason: 'dialog 显示 BMI 行 (含 "BMI" prefix)',);
+    expect(
+      find.textContaining('BMI'),
+      findsOneWidget,
+      reason: 'dialog 显示 BMI 行 (含 "BMI" prefix)',
+    );
 
     // 4. 输入体重 60
     await tester.enterText(find.byType(TextField).first, '60');
@@ -120,7 +129,10 @@ void main() {
 
     // 6. 验证: repo.add() 调 1 次 + dialog 关闭
     expect(fakeRepo.addCallCount, 1, reason: 'WeightRepository.add() 必须被调 1 次');
-    expect(find.text('添加体重记录'), findsOneWidget,
-        reason: 'dialog 关闭后 "添加体重记录" 按钮重新可见',);
+    expect(
+      find.text('添加体重记录'),
+      findsOneWidget,
+      reason: 'dialog 关闭后 "添加体重记录" 按钮重新可见',
+    );
   });
 }

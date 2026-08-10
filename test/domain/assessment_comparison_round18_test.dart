@@ -454,7 +454,7 @@ void main() {
           currentSeverityRank: 0,
           previousSeverityRank: null,
           daysSincePrevious: null,
-        ).trendLabel,
+        ).trendLabel(),
         '首次评估',
       );
     });
@@ -491,7 +491,7 @@ void main() {
         previousSeverityRank: null,
         daysSincePrevious: null,
       );
-      expect(cmp.deltaLabel, isNull);
+      expect(cmp.deltaLabel(), isNull);
     });
 
     test('deltaLabel：上升 / 下降 / 不变', () {
@@ -517,9 +517,9 @@ void main() {
             daysSincePrevious: 14,
           );
 
-      expect(mk(0).deltaLabel, '和上次一样（0）');
-      expect(mk(3).deltaLabel, '比上次高 3 分');
-      expect(mk(-3).deltaLabel, '比上次低 3 分');
+      expect(mk(0).deltaLabel(), '和上次一样（0）');
+      expect(mk(3).deltaLabel(), '比上次高 3 分');
+      expect(mk(-3).deltaLabel(), '比上次低 3 分');
     });
   });
 }

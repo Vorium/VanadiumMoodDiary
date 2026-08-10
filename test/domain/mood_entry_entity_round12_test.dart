@@ -20,6 +20,7 @@ MoodEntry _driftRow({
     score: score,
     tagsJson: tagsJson,
     note: note,
+    influenceFactorsJson: '[]',
   );
 }
 
@@ -73,6 +74,7 @@ void main() {
         score: roundTripped.score.value,
         tagsJson: roundTripped.tagsJson.value,
         note: roundTripped.note.value,
+        influenceFactorsJson: '[]',
       );
       expect(row.id, original.id);
       expect(row.timestamp, original.timestamp);

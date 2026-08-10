@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
@@ -6,6 +7,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 ///
 /// - 窄屏（< 840）：全宽 + pageMarginH/V
 /// - 宽屏（>= 840）：内容居中，最大 720 宽，左右留白
+/// - R104: 自动显示返回按钮（当有上一级路由时）
 class PageScaffold extends StatelessWidget {
   final String? title;
   final Widget child;
@@ -14,6 +16,7 @@ class PageScaffold extends StatelessWidget {
   final List<Widget>? actions;
   final PreferredSizeWidget? appBarBottom;
   final Widget? leading;
+  final bool? automaticallyImplyLeading;
 
   const PageScaffold({
     super.key,
@@ -24,6 +27,7 @@ class PageScaffold extends StatelessWidget {
     this.actions,
     this.appBarBottom,
     this.leading,
+    this.automaticallyImplyLeading,
   });
 
   @override
@@ -31,6 +35,15 @@ class PageScaffold extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= AppTokens.breakpointExpanded;
+        // R104: 自动判断是否显示返回按钮
+        final canPop = GoRouter.of(context).canPop();
+        final showLeading = leading ??
+            (canPop
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded),
+                    onPressed: () => context.pop(),
+                  )
+                : null);
         return Scaffold(
           // 宽屏下不显示 AppBar（NavigationRail 在 AppShell 里负责导航）
           appBar: (title != null && !isWide)
@@ -38,7 +51,9 @@ class PageScaffold extends StatelessWidget {
                   title: Text(title!),
                   actions: actions,
                   bottom: appBarBottom,
-                  leading: leading,
+                  leading: showLeading,
+                  automaticallyImplyLeading:
+                      automaticallyImplyLeading ?? false,
                 )
               : null,
           body: SafeArea(

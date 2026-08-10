@@ -345,8 +345,7 @@ void main() {
         ProviderScope(
           overrides: [
             medicationsProvider.overrideWith((ref) => Stream.value(meds)),
-            allCheckInsProvider
-                .overrideWith((ref) => Stream.value(checkIns)),
+            allCheckInsProvider.overrideWith((ref) => Stream.value(checkIns)),
           ],
           child: MaterialApp(
             theme: ThemeData.light(),

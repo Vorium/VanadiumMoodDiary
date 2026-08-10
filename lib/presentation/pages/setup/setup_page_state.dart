@@ -58,6 +58,8 @@ class SetupPageState extends ConsumerState<SetupPage> {
   bool _consentSensitiveData = false;
   // v0.27 R83: 第 4 个勾选 — 年龄严正声明
   bool _consentAgeAttestation = false;
+  // R103 (P0-9): 第 5 个勾选 — 医学免责声明
+  bool _consentMedicalDisclaimer = false;
 
   // Step 1: welcome
   final _nameController = TextEditingController();
@@ -159,6 +161,7 @@ class SetupPageState extends ConsumerState<SetupPage> {
           consentPrivacyPolicy: _consentPrivacyPolicy,
           consentSensitiveData: _consentSensitiveData,
           consentAgeAttestation: _consentAgeAttestation,
+          consentMedicalDisclaimer: _consentMedicalDisclaimer,
           onConsentUserAgreementChanged: (v) =>
               setState(() => _consentUserAgreement = v),
           onConsentPrivacyPolicyChanged: (v) =>
@@ -167,12 +170,25 @@ class SetupPageState extends ConsumerState<SetupPage> {
               setState(() => _consentSensitiveData = v),
           onConsentAgeAttestationChanged: (v) =>
               setState(() => _consentAgeAttestation = v),
+          onConsentMedicalDisclaimerChanged: (v) =>
+              setState(() => _consentMedicalDisclaimer = v),
           onViewUserAgreement: () =>
               showLegalDocument(context, 'user_agreement'),
           onViewPrivacyPolicy: () =>
               showLegalDocument(context, 'privacy_policy'),
           onViewSensitiveData: () =>
               showLegalDocument(context, 'sensitive_data_consent'),
+          onViewMedicalDisclaimer: () =>
+              showLegalDocument(context, 'medical_disclaimer'),
+          // R104: 一键全部同意
+          onAgreeAll: () => setState(() {
+            _consentUserAgreement = true;
+            _consentPrivacyPolicy = true;
+            _consentSensitiveData = true;
+            _consentAgeAttestation = true;
+            _consentMedicalDisclaimer = true;
+          }),
+          onViewAll: () => showLegalDocument(context, 'user_agreement'),
           onContinue: () => setState(() => _step = 1),
         );
       case 1:
@@ -496,11 +512,13 @@ class SetupPageState extends ConsumerState<SetupPage> {
         );
       }
 
-      await ref.read(notificationServiceProvider).rescheduleMedicationReminders(
-            medications,
-          );
       await ref
           .read(notificationServiceProvider)
+          .delegate
+          .rescheduleMedicationReminders(medications);
+      await ref
+          .read(notificationServiceProvider)
+          .delegate
           .scheduleDailyReminder(hour: 20, minute: 0);
       if (!mounted) return;
 

@@ -12,6 +12,7 @@
 //
 // P1 fix: 从 core/shared/ 移入 domain/logic/（仅 domain 层使用，不满足 shared 2+ 层规则）
 
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/domain/logic/care_engine.dart';
 
 /// 关怀文案集中（CareEngine + 软提醒共用）
@@ -27,33 +28,35 @@ class CareCopy {
   /// - L29: "你这几天都" 隐含指责 → 改"21 点后打卡比例偏高"
   /// - L36: "容易忘记" 责怪语气 → 改"周末容易错过" (中性)
   /// - L41: "但记得吃药哦" 软催促 → 改"后续保持就好" (中性)
+  ///
+  /// v0.31 P1-5: 硬编码中文迁移到 ARB — 走 Strings.xxx({override}) 模式
   static ({String title, String body}) forTrigger(CareTriggerType type) {
     switch (type) {
       case CareTriggerType.lateCheckInHabit:
         return (
-          title: '🛏️ 提早一点更稳定',
-          body: '21 点后打卡比例偏高 — 规律作息对药效有影响',
+          title: Strings.careCopyLateCheckInTitle(),
+          body: Strings.careCopyLateCheckInBody(),
         );
       case CareTriggerType.weekendMissed:
         return (
-          title: '☀️ 周末保持节律',
+          title: Strings.careCopyWeekendMissedTitle(),
           // v0.27 R72 (spzh R66 P0-4 续): 中性化, 不提 '家人' (避免病耻感)
           // 原: '周末容易忘记——现在打卡，让家人放心'
           // v0.27 R77 (R76-N7 续): '容易忘记' 改 '容易错过' (中性, 不责怪)
-          body: '周末容易错过——现在打卡，多一点坚持',
+          body: Strings.careCopyWeekendMissedBody(),
         );
       case CareTriggerType.secondDayMissed:
         return (
-          title: '🌿 后续保持就好',
+          title: Strings.careCopySecondDayMissedTitle(),
           // v0.27 R77 (R76-N7 续): '但记得吃药哦' 软催促 → 删
-          body: '少 1 次没关系——后续保持就好',
+          body: Strings.careCopySecondDayMissedBody(),
         );
       case CareTriggerType.weekPerfect:
         return (
-          title: '🌟 一整周都准时！',
+          title: Strings.careCopyWeekPerfectTitle(),
           // v0.27 R72 (spzh R66 P0-4 续): 中性化, 仅事实描述 (避免 '你真棒' 褒语)
           // 原: '你真棒——保持下去'
-          body: '今周已全部准时',
+          body: Strings.careCopyWeekPerfectBody(),
         );
       case CareTriggerType.none:
         return (title: '', body: '');

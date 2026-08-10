@@ -93,6 +93,14 @@ class MoodEntryDraft {
   /// 4 段聚合 (mood_period_aggregator 跟 chart 读这一列分桶)。
   final String? period;
 
+  /// v0.30 R101: 影响因素 JSON 数组
+  ///
+  /// 参照 Apple Health State of Mind 的影响因素标签系统。
+  final String? influenceFactorsJson;
+
+  /// v0.30 R101: 记录模式 ('momentary' / 'daily')
+  final String? recordingMode;
+
   const MoodEntryDraft({
     required this.score,
     required this.tags,
@@ -113,5 +121,7 @@ class MoodEntryDraft {
     this.coreBelief,
     this.behaviorResponse,
     this.period,
+    this.influenceFactorsJson,
+    this.recordingMode,
   });
 }

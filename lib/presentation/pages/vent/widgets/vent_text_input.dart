@@ -26,12 +26,14 @@ class VentTextInput extends StatelessWidget {
     final textLen = controller.text.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 200),
           child: TextField(
             controller: controller,
             maxLines: null,
-            expands: true,
+            minLines: 8,
             maxLength: maxLength,
             textAlignVertical: TextAlignVertical.top,
             style: AppTokens.textStyleBody(context),

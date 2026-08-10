@@ -147,7 +147,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
         const SizedBox(height: AppTokens.spacingXs),
         for (int row = 0; row < 6; row++)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxxs),
+            padding:
+                const EdgeInsets.symmetric(vertical: AppTokens.spacingXxxs),
             child: Row(
               children: [
                 for (int col = 0; col < 7; col++)

@@ -21,6 +21,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/animations/animations.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 主页浮动工具栏 — 收起 1 FAB, 展开 4 工具按钮
@@ -45,6 +47,7 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
   bool _expanded = false;
 
   void _toggle() {
+    Haptics.light();
     setState(() => _expanded = !_expanded);
   }
 
@@ -62,30 +65,37 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
           child: _expanded
               ? Column(
                   children: [
-                    _FabButton(
-                      icon: Icons.psychology_outlined,
-                      // v0.30 R91 Task 7: FAB label 改 dailyTrackingFab
-                      // ("全部趋势") — 跟 FAB 跳 /daily-tracking 整合入口
-                      // 保持一致 (原 homeFabAssessment "心情测试" 已过时).
-                      label: l10n.dailyTrackingFab,
-                      onTap: () {
-                        setState(() => _expanded = false);
-                        // v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口):
-                        // 改跳 /daily-tracking (7 子功能整合入口: 情绪日记 +
-                        // 焦虑急躁 + 睡眠 + 社会节律 + 应激源 + 治疗 + 体重).
-                        // 之前 R90 跳 /assessment-center, R91 Task 5 整合
-                        // 入口取代单一评估入口, 用户从 7 卡片 grid 选子功能.
-                        context.push('/daily-tracking');
-                      },
+                    FadeIn(
+                      delay: Duration.zero,
+                      child: _FabButton(
+                        icon: Icons.psychology_outlined,
+                        // v0.30 R91 Task 7: FAB label 改 dailyTrackingFab
+                        // ("全部趋势") — 跟 FAB 跳 /daily-tracking 整合入口
+                        // 保持一致 (原 homeFabAssessment "心情测试" 已过时).
+                        label: l10n.dailyTrackingFab,
+                        onTap: () {
+                          setState(() => _expanded = false);
+                          // v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口):
+                          // 改跳 /daily-tracking (7 子功能整合入口: 情绪日记 +
+                          // 焦虑急躁 + 睡眠 + 社会节律 + 应激源 + 治疗 + 体重).
+                          // 之前 R90 跳 /assessment-center, R91 Task 5 整合
+                          // 入口取代单一评估入口, 用户从 7 卡片 grid 选子功能.
+                          context.push('/daily-tracking');
+                        },
+                      ),
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
-                    _FabButton(
-                      icon: Icons.forest_outlined,
-                      label: l10n.homeFabVent,
-                      onTap: () {
-                        setState(() => _expanded = false);
-                        context.push('/vent');
-                      },
+                    FadeIn(
+                      delay: const Duration(
+                          milliseconds: AppTokens.staggerStepMs,),
+                      child: _FabButton(
+                        icon: Icons.forest_outlined,
+                        label: l10n.homeFabVent,
+                        onTap: () {
+                          setState(() => _expanded = false);
+                          context.push('/vent');
+                        },
+                      ),
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                     // R97-P0-2 (2026-08-07): 危机热线 FAB 永远显示。
@@ -102,54 +112,62 @@ class _HomeFabToolbarState extends State<HomeFabToolbar>
                     // 守卫中拆出来, 永远显示。SMS 业务继续独立 flag 守卫
                     // (safety_watch_service._checkAndAlert 内 FeatureFlag
                     // gate 不变)。
-                    _FabButton(
-                      icon: Icons.phone_in_talk_outlined,
-                      label: l10n.homeFabHotline,
-                      onTap: () {
-                        setState(() => _expanded = false);
-                        // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线入口
-                        // (1 tap 达, B 站'公益热线' 同款)。R75 已备
-                        // hotlineByRegion 6 region + R83.5 partial 5 region
-                        // ARB keys (crisisHotline{Cn,Tw,Hk,Mo,*}Label/Number/Desc)
-                        // + R91 setup_legal_dialog _crisisHotlineSection 4 条
-                        // 已用。R92 改 push `/crisis-hotline` 独立页面
-                        // (5 地区列表 + 800-810-1117 全国)。
-                        //
-                        // 用 context.push (而非 GoRouter.of(context).go):
-                        // push 保留 back stack, 用户返回仍回主页 (go 会
-                        // 替换栈, 失去 home)。
-                        context.push('/crisis-hotline');
-                      },
+                    FadeIn(
+                      delay: const Duration(
+                          milliseconds: 2 * AppTokens.staggerStepMs,),
+                      child: _FabButton(
+                        icon: Icons.phone_in_talk_outlined,
+                        label: l10n.homeFabHotline,
+                        onTap: () {
+                          setState(() => _expanded = false);
+                          // v0.30 round 92 (audit-fixes / P0 #12): 紧急热线入口
+                          // (1 tap 达, B 站'公益热线' 同款)。R75 已备
+                          // hotlineByRegion 6 region + R83.5 partial 5 region
+                          // ARB keys (crisisHotline{Cn,Tw,Hk,Mo,*}Label/Number/Desc)
+                          // + R91 setup_legal_dialog _crisisHotlineSection 4 条
+                          // 已用。R92 改 push `/crisis-hotline` 独立页面
+                          // (5 地区列表 + 800-810-1117 全国)。
+                          //
+                          // 用 context.push (而非 GoRouter.of(context).go):
+                          // push 保留 back stack, 用户返回仍回主页 (go 会
+                          // 替换栈, 失去 home)。
+                          context.push('/crisis-hotline');
+                        },
+                      ),
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
-                    _FabButton(
-                      icon: Icons.vertical_align_top,
-                      label: l10n.homeFabTop,
-                      onTap: () {
-                        setState(() => _expanded = false);
-                        // v0.30 round 92 (audit-fixes / P0 #13): 回到顶端
-                        // 走 `scrollController.animateTo(0, duration, curve)`
-                        // 滚到 minScrollExtent (顶)。修前: AppSnackBar
-                        // .showInfo(homeFabTopTodo) 占位 1.5 年。
-                        //
-                        // 用 scrollController.animateTo 而非
-                        // Scrollable.ensureVisible(context, ...) 的原因:
-                        // floatingActionButton 跟 Scaffold body 是 sibling
-                        // (Flutter Scaffold 内部 layout), toolbar context
-                        // 找不到 body 内的 Scrollable。直接用
-                        // home_page 传来的 ScrollController, 通过 animateTo
-                        // 不依赖 widget tree 路径, 行为可预期。
-                        final ctrl = widget.scrollController;
-                        if (ctrl != null && ctrl.hasClients) {
-                          ctrl.animateTo(
-                            0.0,
-                            duration:
-                                Motion.duration(context, AppTokens.durNormal),
-                            curve:
-                                Motion.curve(context, AppTokens.curveStandard),
-                          );
-                        }
-                      },
+                    FadeIn(
+                      delay: const Duration(
+                          milliseconds: 3 * AppTokens.staggerStepMs,),
+                      child: _FabButton(
+                        icon: Icons.vertical_align_top,
+                        label: l10n.homeFabTop,
+                        onTap: () {
+                          setState(() => _expanded = false);
+                          // v0.30 round 92 (audit-fixes / P0 #13): 回到顶端
+                          // 走 `scrollController.animateTo(0, duration, curve)`
+                          // 滚到 minScrollExtent (顶)。修前: AppSnackBar
+                          // .showInfo(homeFabTopTodo) 占位 1.5 年。
+                          //
+                          // 用 scrollController.animateTo 而非
+                          // Scrollable.ensureVisible(context, ...) 的原因:
+                          // floatingActionButton 跟 Scaffold body 是 sibling
+                          // (Flutter Scaffold 内部 layout), toolbar context
+                          // 找不到 body 内的 Scrollable。直接用
+                          // home_page 传来的 ScrollController, 通过 animateTo
+                          // 不依赖 widget tree 路径, 行为可预期。
+                          final ctrl = widget.scrollController;
+                          if (ctrl != null && ctrl.hasClients) {
+                            ctrl.animateTo(
+                              0.0,
+                              duration: Motion.duration(
+                                  context, AppTokens.durNormal,),
+                              curve: Motion.curve(
+                                  context, AppTokens.curveStandard,),
+                            );
+                          }
+                        },
+                      ),
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                   ],

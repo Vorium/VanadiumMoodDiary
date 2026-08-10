@@ -63,6 +63,8 @@ class LegalDocumentDialog extends StatelessWidget {
         return l10n.setupLegalPrivacyPolicy;
       case 'sensitive_data_consent':
         return l10n.setupLegalSensitiveData;
+      case 'medical_disclaimer':
+        return l10n.settingsDisclaimer;
       default:
         return name;
     }
@@ -117,7 +119,8 @@ class LegalDocumentDialog extends StatelessWidget {
           const SizedBox(height: AppTokens.spacingSm),
           for (final line in lines)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxxs),
+              padding:
+                  const EdgeInsets.symmetric(vertical: AppTokens.spacingXxxs),
               child: Text(
                 '• $line',
                 style: TextStyle(

@@ -21,6 +21,9 @@ abstract class MoodRepository {
   /// 监听今日情绪
   Stream<List<MoodEntryEntity>> watchToday();
 
+  /// 监听最新一条情绪（首页概览卡用，避免全表扫描）
+  Stream<MoodEntryEntity?> watchLatest();
+
   /// 添加一条
   ///
   /// v0.24 round 48 (sp-en P1-14) 重构: 接收 [MoodEntryDraft] 参数对象,

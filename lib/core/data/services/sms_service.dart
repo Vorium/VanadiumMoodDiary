@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:chroniccare/core/data/services/last_error_capture.dart' show LastErrorCapture;
+import 'package:chroniccare/core/data/services/last_error_capture.dart'
+    show LastErrorCapture;
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 

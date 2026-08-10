@@ -1356,7 +1356,7 @@
   },
   "safetyCheckResultDndSuppressed": "DND 時段，跳過告警",
   "safetyCheckResultNoContacts": "無緊急聯繫人，未發送",
-  "safetyCheckResultAlertedMocked": "**開發模式**，未實際通知聯繫人（mock: {mocked}）",
+  "safetyCheckResultAlertedMocked": "測試通知已發送（{mocked} 位聯繫人，實際未送達）",
   "@safetyCheckResultAlertedMocked": {
     "placeholders": {
       "mocked": {
@@ -2256,6 +2256,22 @@
   "@dailyTrackingMultiChartTitle": {
     "description": "v0.30 R91: 多指标趋势图标题"
   },
+  "chartMetricWeight": "體重",
+  "@chartMetricWeight": {
+    "description": "R102: 多指標趨勢圖 — 體重指標名"
+  },
+  "chartMetricSleep": "睡眠",
+  "@chartMetricSleep": {
+    "description": "R102: 多指標趨勢圖 — 睡眠指標名"
+  },
+  "chartMetricMood": "心境",
+  "@chartMetricMood": {
+    "description": "R102: 多指標趨勢圖 — 心境指標名"
+  },
+  "chartMetricStress": "應激源",
+  "@chartMetricStress": {
+    "description": "R102: 多指標趨勢圖 — 應激源指標名"
+  },
   "dailyTrackingLastTime": "{time} 記錄",
   "@dailyTrackingLastTime": {
     "description": "v0.30 R91: 卡片 lastValue 时间占位 (placeholder {time} 是 formatted date)",
@@ -2914,5 +2930,259 @@
   "dataExportRetentionClipboard": "剪貼板 + 用戶自行保存到加密存儲",
   "@dataExportRetentionClipboard": {
     "description": "v0.30 R100 (P1#9): 導出 consent dialog retention placeholder"
-  }
+  },
+
+  "medPageTitle": "用藥",
+  "medAddTooltip": "新增藥物",
+  "medTodaySchedule": "今日服藥",
+  "medMyMedications": "我的藥物",
+  "medQuickActions": "快捷操作",
+  "medCalendar": "用藥日曆",
+  "medRefill": "續方管理",
+  "medSlotMorning": "早上",
+  "medSlotAfternoon": "下午",
+  "medSlotEvening": "晚上",
+  "medSlotBedtime": "睡前",
+  "medEmptyTitle": "還沒有新增藥物",
+  "medEmptySubtitle": "點擊右上角 + 新增你的第一種藥物",
+  "medNoScheduleToday": "今天沒有服藥計劃",
+  "medAddTitle": "新增藥物",
+  "medAddStep1Title": "藥物資訊",
+  "medAddStep2Title": "劑量與時間",
+  "medAddStep3Title": "確認",
+  "medAddNameLabel": "藥物名稱",
+  "medAddNameHint": "例如：舍曲林",
+  "medAddFormLabel": "劑型",
+  "medAddDosageLabel": "每次劑量",
+  "medAddTimeLabel": "服藥時間",
+  "medAddTimeAdd": "新增時間",
+  "medAddColorLabel": "藥物顏色（可選，幫助識別）",
+  "medAddConfirmName": "藥名",
+  "medAddConfirmForm": "劑型",
+  "medAddConfirmDosage": "劑量",
+  "medAddConfirmTime": "時間",
+  "medAddPrev": "上一步",
+  "medAddNext": "下一步",
+  "medAddSave": "儲存",
+  "medAddColorN": "藥物顏色 {n}",
+  "medFormTablet": "錠劑",
+  "medFormCapsule": "膠囊",
+  "medFormLiquid": "口服液",
+  "medFormPatch": "貼劑",
+  "medFormInjection": "注射",
+  "medFormOther": "其他",
+  "medDetailTitle": "藥物詳情",
+  "medNotFound": "藥物未找到",
+
+  "moodReminderTitle": "情緒記錄提醒",
+  "moodReminderSubtitle": "每天定時提醒你記錄心情",
+  "moodReminderTimeLabel": "提醒時間",
+  "moodReminderEnabled": "開啟提醒",
+
+  "moodInfluenceTitle": "影響因素",
+  "moodInfluenceSubtitle": "什麼影響了你的心情？（可多選）",
+  "moodInfluenceRelationships": "關係",
+  "moodInfluenceHealth": "健康",
+  "moodInfluenceActivities": "活動",
+  "moodInfluenceMindfulness": "正念",
+  "moodInfluenceWeather": "天氣",
+  "moodInfluenceOther": "其他",
+
+  "influenceFactorFamily": "家人",
+  "influenceFactorFriend": "朋友",
+  "influenceFactorPartner": "伴侶",
+  "influenceFactorChild": "孩子",
+  "influenceFactorColleague": "同事",
+  "influenceFactorExercise": "運動",
+  "influenceFactorSick": "生病",
+  "influenceFactorGoodSleep": "睡眠好",
+  "influenceFactorHealthyDiet": "飲食健康",
+  "influenceFactorWork": "工作",
+  "influenceFactorHobby": "愛好",
+  "influenceFactorTravel": "旅行",
+  "influenceFactorCommute": "通勤",
+  "influenceFactorShopping": "購物",
+  "influenceFactorGaming": "遊戲",
+  "influenceFactorReading": "閱讀",
+  "influenceFactorEntertainment": "娛樂",
+  "influenceFactorMeditation": "冥想",
+  "influenceFactorBreathing": "呼吸練習",
+  "influenceFactorJournaling": "寫日記",
+  "influenceFactorYoga": "瑜伽",
+  "influenceFactorSunny": "晴天",
+  "influenceFactorCloudy": "多雲",
+  "influenceFactorRainy": "雨天",
+  "influenceFactorSnowy": "雪天",
+  "influenceFactorWindy": "刮風",
+
+  "moodDetailTitle": "情緒詳情",
+  "moodDetailFactors": "影響因素",
+  "moodDetailMoodState": "情緒狀態",
+  "moodDetail4D": "4 維度",
+  "moodDetailCbtRecord": "CBT 思維記錄",
+  "moodTrendTitle": "情緒趨勢",
+  "moodTrendWeek": "近 7 天",
+  "moodTrendMonth": "近 30 天",
+  "moodTrendDistribution": "分數分布",
+  "moodTrendNoData": "暫無資料",
+  "moodEditTooltip": "編輯",
+  "moodDeleteTooltip": "刪除",
+  "moodDeleteConfirm": "確定刪除這條記錄嗎？",
+  "moodFactorAnalysis": "因素關聯分析",
+  "moodFactorAvgScore": "平均分",
+  "moodFactorCount": "記錄數",
+  "navMedication": "用藥",
+  "moodModeMomentary": "此刻",
+  "moodModeDaily": "今天",
+  "moodTrendWeekTitle": "近 7 天情緒趨勢",
+  "moodTrendMonthTitle": "近 30 天情緒趨勢",
+  "moodTrendDistTitle": "分數分布",
+  "moodTrendCbtTitle": "CBT 重評效果",
+  "moodTrendCbtHint": "正值 = 情緒改善, 負值 = 惡化",
+  "moodTrendCbtEmpty": "暫無 CBT 重評資料",
+  "moodTrendRecords": "條",
+  "medDetailActive": "在用",
+  "medDetailStopped": "已停",
+  "medDetailAdherence": "依從性",
+  "medDetailLast30": "近30天",
+  "medDetailDays": "服藥天數",
+  "medDetailLast30Record": "近30天記錄",
+  "medDetailEdit": "編輯",
+  "medDetailRefill": "續方",
+  "medDetailNoFactors": "暫無影響因素資料",
+  "moodCbtSituation": "情境",
+  "moodCbtAutoThought": "自動思維",
+  "moodCbtEvidenceFor": "支持證據",
+  "moodCbtEvidenceAgainst": "反對證據",
+  "moodCbtAltThought": "替代思維",
+  "moodCbtRerated": "重新評分",
+  "moodCbtCoreBelief": "核心信念",
+  "moodCbtBehavior": "行為應對",
+  "moodAudioRecording": "錄音 {duration}",
+  "moodDeleted": "已刪除",
+  "moodPeriodMorning": "早上",
+  "moodPeriodAfternoon": "下午",
+  "moodPeriodEvening": "晚上",
+  "moodPeriodNight": "夜間",
+  "settingsProfileTitle": "個人資料",
+  "settingsProfileSubtitle": "健康檔案、醫療資訊",
+  "todaySummaryCheckIn": "打卡",
+  "todaySummaryMeds": "藥物",
+  "todaySummaryMood": "心情",
+  "todaySummaryStreak": "連續",
+  "todaySummaryStreakDays": "{count}天",
+  "@todaySummaryStreakDays": {
+    "description": "R103: 主頁摘要卡連續打卡天數 (placeholder {count} 是天數)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "setupConsentMedicalDisclaimer": "我已閱讀並理解《醫學免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務",
+  "setupConsentViewDisclaimer": "查看",
+
+  "trackingCustomize": "自定義追蹤項",
+  "trackingPin": "置頂",
+  "trackingUnpin": "取消置頂",
+  "trackingHide": "隱藏此項",
+  "trackingPinned": "收藏",
+  "trackingCategoryEmotional": "情緒狀態",
+  "trackingCategoryPhysical": "身體指標",
+  "trackingCategoryBehavioral": "行為節律",
+  "trackingCategoryMedical": "醫療記錄",
+  "todayTrackingSummary": "今日已追蹤 {tracked}/{total} 項",
+  "@todayTrackingSummary": {
+    "description": "R100: 今日追蹤摘要 (placeholders: tracked=已追蹤數, total=總數)",
+    "placeholders": {
+      "tracked": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "moodRecordingLabel": "錄音 {duration}",
+  "@moodRecordingLabel": {
+    "description": "R104: 情緒詳情頁錄音標籤 (placeholder {duration} 是時長)",
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "medicationNameRequired": "請輸入藥物名稱",
+  "medicationAdded": "已添加 {name}",
+  "@medicationAdded": {
+    "description": "R104: 添加藥物成功提示 (placeholder {name} 是藥名)",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "medicationStatusInUse": "在用",
+  "medicationStatusStopped": "已停",
+  "factorAnalysisCount": "{count} 條",
+  "@factorAnalysisCount": {
+    "description": "R104: 影響因素分析記錄數 (placeholder {count} 是數量)",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "setupConsentAgreeAll": "我已閱讀並同意以上所有協議",
+  "setupConsentViewAll": "查看全部協議",
+  "@_v0_31_P1_5_domain_hardcoded_zh_to_arb": {},
+  "careCopyLateCheckInTitle": "🛏️ 提早一點更穩定",
+  "careCopyLateCheckInBody": "21 點後打卡比例偏高 — 規律作息對藥效有影響",
+  "careCopyWeekendMissedTitle": "☀️ 週末保持節律",
+  "careCopyWeekendMissedBody": "週末容易錯過——現在打卡，多一點堅持",
+  "careCopySecondDayMissedTitle": "🌿 後續保持就好",
+  "careCopySecondDayMissedBody": "少 1 次沒關係——後續保持就好",
+  "careCopyWeekPerfectTitle": "🌟 一整週都準時！",
+  "careCopyWeekPerfectBody": "本週已全部準時",
+  "assessmentComparisonImproved": "好轉",
+  "assessmentComparisonWorsened": "惡化",
+  "assessmentComparisonUnchanged": "持平",
+  "assessmentComparisonFirst": "首次評估",
+  "assessmentDeltaSame": "和上次一樣（{delta}）",
+  "@assessmentDeltaSame": {
+    "description": "評估對比: 分數差為 0 時的文案",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentDeltaHigher": "比上次高 {delta} 分",
+  "@assessmentDeltaHigher": {
+    "description": "評估對比: 分數比上次高",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentDeltaLower": "比上次低 {delta} 分",
+  "@assessmentDeltaLower": {
+    "description": "評估對比: 分數比上次低",
+    "placeholders": {
+      "delta": {
+        "type": "int"
+      }
+    }
+  },
+  "assessmentSeverityRank": "等級 {rank}",
+  "@assessmentSeverityRank": {
+    "description": "評估對比: 未知量表的嚴重度等級兜底",
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "checkInTypeAssessment": "心理量表評估",
+  "dayDetailTotalScore": "總分 {total}",
+  "@dayDetailTotalScore": {
+    "description": "日曆詳情: 評估事件副標題 (總分)",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dayDetailScaleAssessment": "心理量表評估"
 }

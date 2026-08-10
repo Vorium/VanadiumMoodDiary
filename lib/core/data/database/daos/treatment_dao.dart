@@ -42,8 +42,7 @@ class TreatmentDao {
   Stream<List<TreatmentEntry>> watchAllTreatmentEntries() {
     final query = _db.select(_db.treatmentEntries)
       ..orderBy([
-        (t) =>
-            OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
+        (t) => OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
       ]);
     final joined = query.join([
       leftOuterJoin(

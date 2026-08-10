@@ -86,8 +86,11 @@ void main() {
       expect(find.text('选择时间窗口'), findsOneWidget);
 
       // 3 RadioListTile (7/14/30 天)
-      expect(find.byType(RadioListTile<int>), findsNWidgets(3),
-          reason: 'ChooseWindowDialog 应有 3 个 RadioListTile 选项 (7/14/30 天)',);
+      expect(
+        find.byType(RadioListTile<int>),
+        findsNWidgets(3),
+        reason: 'ChooseWindowDialog 应有 3 个 RadioListTile 选项 (7/14/30 天)',
+      );
     },
   );
 
@@ -99,11 +102,13 @@ void main() {
     (tester) async {
       _setBigView(tester);
       int callCount = 0;
-      await tester.pumpWidget(_wrap(
-        onShow: () async {
-          callCount++;
-        },
-      ),);
+      await tester.pumpWidget(
+        _wrap(
+          onShow: () async {
+            callCount++;
+          },
+        ),
+      );
       await tester.pumpAndSettle();
 
       // tap AppListTile
@@ -114,8 +119,11 @@ void main() {
       expect(callCount, 1, reason: 'onShow 回调应被调用 1 次');
 
       // 验证: 没有 ChooseWindowDialog AlertDialog (跳过完整链路)
-      expect(find.byType(AlertDialog), findsNothing,
-          reason: 'onShow 模式下, 不应弹 ChooseWindowDialog',);
+      expect(
+        find.byType(AlertDialog),
+        findsNothing,
+        reason: 'onShow 模式下, 不应弹 ChooseWindowDialog',
+      );
     },
   );
 }

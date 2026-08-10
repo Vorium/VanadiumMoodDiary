@@ -2,6 +2,13 @@
 
 > 4 周从零到上架 App Store + Google Play
 
+> **🚧 R107 cleanup (2026-08-10) 9 视角综合审视后状态**:
+> - 18 守门员全绿 / 2019 tests pass / 0 analyzer error
+> - 8 FeatureFlag 守门 (iap / 失联 / 5 厂商 push / email / vent audio / phq-gad7 / boot / 阿里云 sms)
+> - **R107 P0 13 项上架阻塞 必修** (R108 修, 1-2 周): 详见 `docs/audit/2026-08-10-cleanup/00-summary.md` §四
+> - **关键: chroniccare.app 域名未注册 (4 视角共识)** — Apple 5.1.1 + Google Play 隐私 URL 不可达拒因
+> - **R108 修复流程**: 域名注册 (Cloudflare $15/yr + ICP 备案 7-20d) → iOS P0#1-9 (12.5h) → Android P0#1-6 (4-5d) → 通用 P0 (4h) → 总 ~12-14 工作日
+
 ---
 
 ## 阶段 0：开发环境（1 天）

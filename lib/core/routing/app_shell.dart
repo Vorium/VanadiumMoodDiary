@@ -12,8 +12,11 @@ import 'package:chroniccare/presentation/widgets/theme_toggle_button.dart';
 
 /// v0.25 round 59 (spen P1 #12 god class 拆分续): 响应式 shell
 ///
-/// - 窄屏 (< 840): 只显示 child (页面), 无侧栏
+/// - 窄屏 (< 840): 底部 NavigationBar (M3) 3 tab + child
 /// - 宽屏 (>= 840): 左侧 NavigationRail (extended 模式, 显示文字) + 右侧 child
+///
+/// v0.30 R101: 窄屏增加底部导航栏 (参照 Apple Health Tab Bar)，
+/// 解决"用户找不到回首页路径"的 P0 问题。
 class AppShell extends ConsumerWidget {
   final Widget child;
   final String currentLocation;
@@ -36,6 +39,12 @@ class AppShell extends ConsumerWidget {
         path: '/',
       ),
       _NavDest(
+        label: l10n?.navMedication ?? 'Medications',
+        icon: Icons.medication_outlined,
+        selectedIcon: Icons.medication,
+        path: '/medication',
+      ),
+      _NavDest(
         // v0.25 round 52: 同上 'Settings' fallback
         label: l10n?.navSettings ?? 'Settings',
         icon: Icons.settings_outlined,
@@ -54,6 +63,11 @@ class AppShell extends ConsumerWidget {
           currentLocation.startsWith('/settings')) {
         return i;
       }
+      // /medication/* 子页都算用药 tab
+      if (dests[i].path == '/medication' &&
+          currentLocation.startsWith('/medication')) {
+        return i;
+      }
     }
     return 0;
   }
@@ -64,8 +78,24 @@ class AppShell extends ConsumerWidget {
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= AppTokens.breakpointExpanded;
         if (!isWide) {
-          // 窄屏: 去掉各页面自己的 AppBar (shell 不管), child 自行处理
-          return child;
+          // 窄屏: 底部 NavigationBar (M3) + child
+          // 参照 Apple Health Tab Bar, 始终可见, 单手可达
+          final dests = _destinations(context);
+          return Scaffold(
+            body: child,
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: _currentIndex(context),
+              onDestinationSelected: (i) => context.go(dests[i].path),
+              destinations: [
+                for (final d in dests)
+                  NavigationDestination(
+                    icon: Icon(d.icon),
+                    selectedIcon: Icon(d.selectedIcon),
+                    label: d.label,
+                  ),
+              ],
+            ),
+          );
         }
         return Row(
           children: [
@@ -78,7 +108,8 @@ class AppShell extends ConsumerWidget {
                 onDestinationSelected: (i) =>
                     context.go(_destinations(context)[i].path),
                 leading: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
                   child: Column(
                     children: [
                       Icon(

@@ -62,8 +62,7 @@ void main() {
         answers: const [],
       ),
     ];
-    await tester
-        .pumpWidget(wrap(AssessmentMultiLineChart(entries: entries)));
+    await tester.pumpWidget(wrap(AssessmentMultiLineChart(entries: entries)));
     await tester.pumpAndSettle();
 
     // LineChart 渲染 (1 bar)
@@ -88,8 +87,7 @@ void main() {
       );
     }
     expect(entries.length, 10, reason: '10 个开放量表');
-    await tester
-        .pumpWidget(wrap(AssessmentMultiLineChart(entries: entries)));
+    await tester.pumpWidget(wrap(AssessmentMultiLineChart(entries: entries)));
     await tester.pumpAndSettle();
 
     // LineChart 渲染 (10 bars)
@@ -113,8 +111,7 @@ void main() {
         ),
       );
     }
-    await tester
-        .pumpWidget(wrap(AssessmentMultiLineChart(entries: entries)));
+    await tester.pumpWidget(wrap(AssessmentMultiLineChart(entries: entries)));
     await tester.pumpAndSettle();
 
     // 找 PHQ-9 chip (displayName = "PHQ-9 抑郁筛查" 走 phq9Scale.translations)

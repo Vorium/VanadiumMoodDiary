@@ -38,4 +38,13 @@ class Medications extends Table {
   /// 提前多少天提醒（默认 7 天）
   IntColumn get refillReminderDays =>
       integer().withDefault(const Constant(7))();
+
+  /// v0.30 R101: 剂型 (tablet/capsule/liquid/patch/injection/other)
+  TextColumn get form => text().withDefault(const Constant('tablet'))();
+
+  /// v0.30 R101: 颜色索引 (0-5, 对应 6 种药丸颜色)
+  IntColumn get colorIndex => integer().withDefault(const Constant(0))();
+
+  /// v0.30 R101: 备注
+  TextColumn get notes => text().nullable()();
 }

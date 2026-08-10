@@ -69,8 +69,7 @@ void main() {
     await db.close();
   });
 
-  testWidgets(
-      'CBT 5 栏端到端: 改档(SP) → wizard 路由 → 切档 → 5 步导航 → state → DB 落库',
+  testWidgets('CBT 5 栏端到端: 改档(SP) → wizard 路由 → 切档 → 5 步导航 → state → DB 落库',
       (tester) async {
     // 800x1600 模拟手机视口 (跟 R80 mood_recorder_round80 一致)
     tester.view.physicalSize = const Size(800, 1600);
@@ -126,8 +125,10 @@ void main() {
     );
 
     // ===== Step 2: 5 栏 wizard step 0 = 情境 =====
-    expect(find.text('情境'), findsOneWidget,
-        reason: '5 栏 wizard step 0 显示情境 section title (moodCbtSectionSituation)',
+    expect(
+      find.text('情境'),
+      findsOneWidget,
+      reason: '5 栏 wizard step 0 显示情境 section title (moodCbtSectionSituation)',
     );
 
     // ===== Step 3: cbtDraftProvider state 写入 (模拟用户填表) =====
@@ -135,22 +136,25 @@ void main() {
     // R84 cbt_widgets_round84_test 验证的 CbtSectionField 走同一份
     // onChanged → notifier 链路, 集成测聚焦 state 写入
     container.read(cbtDraftProvider.notifier).updateField(
-      situation: '开会迟到',
-    );
+          situation: '开会迟到',
+        );
     await tester.pumpAndSettle();
     expect(container.read(cbtDraftProvider).draft.situation, '开会迟到');
 
     // ===== Step 4: 下一步 → step 1 = 自动思维 =====
     await tester.tap(find.text('下一步'));
     await tester.pumpAndSettle();
-    expect(find.text('自动思维'), findsOneWidget,
-        reason: 'wizard step 1 显示自动思维 section title (moodCbtSectionAutomaticThought)',
+    expect(
+      find.text('自动思维'),
+      findsOneWidget,
+      reason:
+          'wizard step 1 显示自动思维 section title (moodCbtSectionAutomaticThought)',
     );
 
     // ===== Step 5: 填自动思维 + 验证 state =====
     container.read(cbtDraftProvider.notifier).updateField(
-      automaticThought: '大家觉得我不靠谱',
-    );
+          automaticThought: '大家觉得我不靠谱',
+        );
     await tester.pumpAndSettle();
     expect(
       container.read(cbtDraftProvider).draft.automaticThought,
@@ -161,21 +165,25 @@ void main() {
     await tester.tap(find.text('下一步'));
     await tester.pumpAndSettle();
     final scoreChips = find.byType(ChoiceChip);
-    expect(scoreChips, findsNWidgets(5),
-        reason: 'wizard step 2 情绪评分 5 档 ChoiceChip',
+    expect(
+      scoreChips,
+      findsNWidgets(5),
+      reason: 'wizard step 2 情绪评分 5 档 ChoiceChip',
     );
     // tap 第 4 个 chip (score=4)
     await tester.tap(scoreChips.at(3));
     await tester.pumpAndSettle();
-    expect(container.read(cbtDraftProvider).draft.score, 4,
-        reason: 'CbtDraftNotifier.updateScore 写入 score=4',
+    expect(
+      container.read(cbtDraftProvider).draft.score,
+      4,
+      reason: 'CbtDraftNotifier.updateScore 写入 score=4',
     );
 
     // ===== Step 7: 填 evidence =====
     container.read(cbtDraftProvider.notifier).updateField(
-      evidenceFor: '上次也迟到',
-      evidenceAgainst: '过去一年只迟到一次',
-    );
+          evidenceFor: '上次也迟到',
+          evidenceAgainst: '过去一年只迟到一次',
+        );
     await tester.pumpAndSettle();
     final draft2 = container.read(cbtDraftProvider).draft;
     expect(draft2.evidenceFor, '上次也迟到');
@@ -185,9 +193,9 @@ void main() {
     await tester.tap(find.text('下一步'));
     await tester.pumpAndSettle();
     container.read(cbtDraftProvider.notifier).updateField(
-      alternativeThought: '偶尔一次正常',
-      reratedScore: 3,
-    );
+          alternativeThought: '偶尔一次正常',
+          reratedScore: 3,
+        );
     await tester.pumpAndSettle();
     final draft3 = container.read(cbtDraftProvider).draft;
     expect(draft3.alternativeThought, '偶尔一次正常');
@@ -196,11 +204,15 @@ void main() {
     // ===== Step 9: 下一步 → step 4 = 确认页 =====
     await tester.tap(find.text('下一步'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('确认:'), findsOneWidget,
-        reason: 'wizard step 4 显示确认摘要',
+    expect(
+      find.textContaining('确认:'),
+      findsOneWidget,
+      reason: 'wizard step 4 显示确认摘要',
     );
-    expect(find.textContaining('开会迟到'), findsOneWidget,
-        reason: '确认页含情境摘要',
+    expect(
+      find.textContaining('开会迟到'),
+      findsOneWidget,
+      reason: '确认页含情境摘要',
     );
 
     // ===== Step 10: 验证 DB 端到端 =====
@@ -242,8 +254,10 @@ void main() {
     expect(entry.reratedScore, 3);
 
     // ===== Step 11: 验证 SP 持久化 (5 栏 写到 SP, 重新读) =====
-    expect(sp.getInt(kSpKey), 5,
-        reason: 'thoughtRecordLevelProvider.setLevel 写 SP 持久化',
+    expect(
+      sp.getInt(kSpKey),
+      5,
+      reason: 'thoughtRecordLevelProvider.setLevel 写 SP 持久化',
     );
   });
 }

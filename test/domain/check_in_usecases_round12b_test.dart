@@ -24,6 +24,9 @@ class _FakeCheckInRepository implements CheckInRepository {
   Stream<CheckInEntity?> watchToday() => Stream.value(null);
 
   @override
+  Stream<List<CheckInEntity>> watchTodayAll() => Stream.value(const []);
+
+  @override
   Future<int> checkIn({int? medicationId, DateTime? at}) async {
     final ci = CheckInEntity(
       id: _nextId++,

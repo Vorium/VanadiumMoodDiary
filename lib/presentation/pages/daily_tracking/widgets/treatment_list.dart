@@ -72,9 +72,7 @@ class TreatmentList extends ConsumerWidget {
                   background: const SwipeDeleteBackground(),
                   direction: DismissDirection.endToStart,
                   onDismissed: (_) {
-                    ref
-                        .read(treatmentRepositoryProvider)
-                        .delete(entry.id);
+                    ref.read(treatmentRepositoryProvider).delete(entry.id);
                   },
                   child: AppListTile.carded(
                     leading: Icon(
@@ -136,8 +134,6 @@ class TreatmentList extends ConsumerWidget {
   /// entry 显示: "类别 · 医生/医院"
   String _entryTitle(TreatmentEntryEntity e, AppLocalizations l10n) {
     final category = _categoryLabel(e.treatmentType, l10n);
-    return e.description.isEmpty
-        ? category
-        : '$category · ${e.description}';
+    return e.description.isEmpty ? category : '$category · ${e.description}';
   }
 }

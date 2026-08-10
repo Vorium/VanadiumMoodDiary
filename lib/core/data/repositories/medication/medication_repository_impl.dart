@@ -52,6 +52,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
       isActive: draft.isActive,
       refillAt: draft.refillAt,
       refillReminderDays: draft.refillReminderDays,
+      form: draft.form,
+      colorIndex: draft.colorIndex,
+      notes: draft.notes,
     );
     return _db.medicationDao.insert(entity.toCompanion());
   }

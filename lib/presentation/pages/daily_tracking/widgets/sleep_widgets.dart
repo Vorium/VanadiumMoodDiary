@@ -1,4 +1,4 @@
-﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): SleepListWidget + SleepEntryDialog
+// v0.30 round 91 (sub-spec 7 日常追踪 / Task 4 UI): SleepListWidget + SleepEntryDialog
 //
 // 4 层架构: presentation/pages/daily_tracking/widgets/, 0 跨 feature import。
 // 复用 R88 mood_dialog 风格 (AlertDialog + ListTile + ChoiceChip + TextField + 保存/取消)。
@@ -22,6 +22,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/domain/logic/sleep_calculator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/widgets/daily_tracking_widgets.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -47,39 +48,40 @@ class SleepListWidget extends ConsumerWidget {
     return PageScaffold(
       title: l10n.sleepName,
       child: Column(
-      children: [
-        // 顶部添加按钮 (R88 mood_dialog 风格, 不走 FAB — list 页面通常 FAB 被 Card 占用)
-        Padding(
-          padding: AppTokens.edgeInsetsSm,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton.icon(
-              icon: const Icon(Icons.add),
-              label: Text(l10n.sleepAddButton),
-              onPressed: () => SleepEntryDialog.show(context),
+        children: [
+          // 顶部添加按钮 (R88 mood_dialog 风格, 不走 FAB — list 页面通常 FAB 被 Card 占用)
+          Padding(
+            padding: AppTokens.edgeInsetsSm,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: FilledButton.icon(
+                icon: const Icon(Icons.add),
+                label: Text(l10n.sleepAddButton),
+                onPressed: () => SleepEntryDialog.show(context),
+              ),
             ),
           ),
-        ),
-        // 列表主体
-        Expanded(
-          child: entriesAsync.when(
-            loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, st) => Center(child: Text(l10n.commonLoadFailed(e.toString()))),
-            data: (entries) => entries.isEmpty
-                ? EmptyState(
-                    icon: Icons.bedtime_outlined,
-                    title: l10n.sleepNoData,
-                    subtitle: l10n.sleepHint,
-                  )
-                : ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, i) =>
-                        _SleepEntryTile(entry: entries[i]),
-                  ),
+          // 列表主体
+          Expanded(
+            child: entriesAsync.when(
+              loading: () => const LoadingSkeleton.fullScreen(),
+              error: (e, st) =>
+                  Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+              data: (entries) => entries.isEmpty
+                  ? EmptyState(
+                      icon: Icons.bedtime_outlined,
+                      title: l10n.sleepNoData,
+                      subtitle: l10n.sleepHint,
+                    )
+                  : ListView.builder(
+                      itemCount: entries.length,
+                      itemBuilder: (context, i) =>
+                          _SleepEntryTile(entry: entries[i]),
+                    ),
+            ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
     );
   }
 }
@@ -112,8 +114,7 @@ class _SleepEntryTile extends StatelessWidget {
     );
   }
 
-  static String _fmt(DateTime t) =>
-      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+  static String _fmt(DateTime t) => DailyTrackingTimeFormat.formatDateTimeHHmm(t);
 }
 
 /// SleepEntryDialog — 4 字段 (bedtime / wakeTime / regularity / note)
@@ -154,34 +155,19 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
 
   /// 自动算 durationMin (跨午夜支持)
   int get _durationMin {
-    final now = DateTime.now();
-    final bedtime =
-        DateTime(now.year, now.month, now.day, _bedtime.hour, _bedtime.minute);
+    final today = DailyTrackingDate.today();
+    final bedtime = DailyTrackingDate.combineWithDate(today, _bedtime);
     // 跨午夜: wakeTime hour < bedtime hour → +1 day
     final wakeTime = _wakeTime.hour >= _bedtime.hour
-        ? DateTime(
-            now.year,
-            now.month,
-            now.day,
-            _wakeTime.hour,
-            _wakeTime.minute,
-          )
-        : DateTime(
-            now.year,
-            now.month,
-            now.day + 1,
-            _wakeTime.hour,
-            _wakeTime.minute,
+        ? DailyTrackingDate.combineWithDate(today, _wakeTime)
+        : DailyTrackingDate.combineWithDate(
+            today.add(const Duration(days: 1)),
+            _wakeTime,
           );
     return SleepCalculator.durationMin(bedtime, wakeTime);
   }
 
-  String get _durationLabel {
-    final min = _durationMin;
-    final h = min ~/ 60;
-    final m = min % 60;
-    return '${h}h${m.toString().padLeft(2, '0')}min';
-  }
+  String get _durationLabel => DailyTrackingTimeFormat.formatDurationMin(_durationMin);
 
   Future<void> _pickBedtime() async {
     final picked = await showTimePicker(
@@ -199,8 +185,7 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
     if (picked != null) setState(() => _wakeTime = picked);
   }
 
-  String _fmtTime(TimeOfDay t) =>
-      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+  String _fmtTime(TimeOfDay t) => DailyTrackingTimeFormat.formatHHmm(t);
 
   /// regularity 1-5 → l10n 中文 label
   String _regularityLabel(int score, AppLocalizations l10n) {
@@ -221,34 +206,24 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
 
   Future<void> _save() async {
     if (_saving) return;
-    final l10n = AppLocalizations.of(context);
     setState(() => _saving = true);
     try {
       final now = DateTime.now();
-      final bedtime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        _bedtime.hour,
-        _bedtime.minute,
+      final bedtime = DailyTrackingDate.combineWithDate(
+        DailyTrackingDate.dateOnly(now),
+        _bedtime,
       );
       final wakeTime = _wakeTime.hour >= _bedtime.hour
-          ? DateTime(
-              now.year,
-              now.month,
-              now.day,
-              _wakeTime.hour,
-              _wakeTime.minute,
+          ? DailyTrackingDate.combineWithDate(
+              DailyTrackingDate.dateOnly(now),
+              _wakeTime,
             )
-          : DateTime(
-              now.year,
-              now.month,
-              now.day + 1,
-              _wakeTime.hour,
-              _wakeTime.minute,
+          : DailyTrackingDate.combineWithDate(
+              DailyTrackingDate.dateOnly(now).add(const Duration(days: 1)),
+              _wakeTime,
             );
       await ref.read(sleepRepositoryProvider).add(
-            date: DateTime(now.year, now.month, now.day),
+            date: DailyTrackingDate.dateOnly(now),
             bedtime: bedtime,
             wakeTime: wakeTime,
             durationMin: SleepCalculator.durationMin(bedtime, wakeTime),
@@ -257,14 +232,12 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
                 ? null
                 : _noteController.text.trim(),
           );
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+      DailyTrackingNav.safePop(context);
     } catch (e) {
-      if (mounted) {
-        setState(() => _saving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.editMedSaveFailed(e.toString()))),
-        );
-      }
+      if (!mounted) return;
+      setState(() => _saving = false);
+      DailyTrackingSnackBar.showSaveError(context, e);
     }
   }
 

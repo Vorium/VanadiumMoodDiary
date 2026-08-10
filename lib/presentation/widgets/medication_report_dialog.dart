@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
@@ -42,7 +42,8 @@ class _MedicationReportDialogState extends State<MedicationReportDialog> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            AppLocalizations.of(context).medReportTitleWindow(widget.windowDays),
+            AppLocalizations.of(context)
+                .medReportTitleWindow(widget.windowDays),
           ),
           actions: [
             // v0.27 round 62 (P1-15 修复): 改用 PressFeedbackIconButton 集中器
