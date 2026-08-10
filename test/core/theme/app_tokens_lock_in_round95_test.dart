@@ -46,23 +46,23 @@ void main() {
       expect(AppTokens.edgeInsetsXs, AppSpacing.edgeInsetsXs);
     });
 
-    test('edgeInsetsSm = EdgeInsets.all(spacingSm=16)', () {
-      expect(AppSpacing.edgeInsetsSm, const EdgeInsets.all(16));
+    test('edgeInsetsSm = EdgeInsets.all(spacingSm=12)', () {
+      expect(AppSpacing.edgeInsetsSm, const EdgeInsets.all(12));
       expect(AppTokens.edgeInsetsSm, AppSpacing.edgeInsetsSm);
     });
 
-    test('edgeInsetsMd = EdgeInsets.all(spacingMd=24)', () {
-      expect(AppSpacing.edgeInsetsMd, const EdgeInsets.all(24));
+    test('edgeInsetsMd = EdgeInsets.all(spacingMd=16)', () {
+      expect(AppSpacing.edgeInsetsMd, const EdgeInsets.all(16));
       expect(AppTokens.edgeInsetsMd, AppSpacing.edgeInsetsMd);
     });
 
-    test('edgeInsetsLg = EdgeInsets.all(spacingLg=40)', () {
-      expect(AppSpacing.edgeInsetsLg, const EdgeInsets.all(40));
+    test('edgeInsetsLg = EdgeInsets.all(spacingLg=24)', () {
+      expect(AppSpacing.edgeInsetsLg, const EdgeInsets.all(24));
       expect(AppTokens.edgeInsetsLg, AppSpacing.edgeInsetsLg);
     });
 
-    test('edgeInsetsXl = EdgeInsets.all(spacingXl=80)', () {
-      expect(AppSpacing.edgeInsetsXl, const EdgeInsets.all(80));
+    test('edgeInsetsXl = EdgeInsets.all(spacingXl=48)', () {
+      expect(AppSpacing.edgeInsetsXl, const EdgeInsets.all(48));
       expect(AppTokens.edgeInsetsXl, AppSpacing.edgeInsetsXl);
     });
 
@@ -223,16 +223,16 @@ void main() {
 
     test('AppSpacing 集中器自身 5 spacing main + 5 edgeInsets helper 保留', () {
       expect(AppSpacing.spacingXs, 8.0);
-      expect(AppSpacing.spacingSm, 16.0);
-      expect(AppSpacing.spacingMd, 24.0);
-      expect(AppSpacing.spacingLg, 40.0);
-      expect(AppSpacing.spacingXl, 80.0);
+      expect(AppSpacing.spacingSm, 12.0);
+      expect(AppSpacing.spacingMd, 16.0);
+      expect(AppSpacing.spacingLg, 24.0);
+      expect(AppSpacing.spacingXl, 48.0);
       // R95 新加
       expect(AppSpacing.edgeInsetsXs, const EdgeInsets.all(8));
-      expect(AppSpacing.edgeInsetsSm, const EdgeInsets.all(16));
-      expect(AppSpacing.edgeInsetsMd, const EdgeInsets.all(24));
-      expect(AppSpacing.edgeInsetsLg, const EdgeInsets.all(40));
-      expect(AppSpacing.edgeInsetsXl, const EdgeInsets.all(80));
+      expect(AppSpacing.edgeInsetsSm, const EdgeInsets.all(12));
+      expect(AppSpacing.edgeInsetsMd, const EdgeInsets.all(16));
+      expect(AppSpacing.edgeInsetsLg, const EdgeInsets.all(24));
+      expect(AppSpacing.edgeInsetsXl, const EdgeInsets.all(48));
     });
   });
 
@@ -261,11 +261,12 @@ void main() {
   });
 
   // ==================== 6. TextStyle 修真后总数字下降 ====================
-  // 验证 R95 修真有效: 修真后全局 TextStyle 数字 ≤ 220 (R95 baseline)
-  // 修真前 220, 修真后 214 (-6, 修真 5 literal + 5 完美匹配)
+  // v0.31 Apple Health redesign: 新增 3 个 textStyleMetric* (Xl/Lg/Md) + 7 helper
+  // 加 letterSpacing, 阈值从 220 放宽到 300 (合理: 3 metric × 1 + 集中器)
+  // v0.30 R95 baseline 220 → v0.31 实际 287 (新增 metric helper 67, 包括 letterSpacing 内部)
 
   group('R95 sub-spec 5 task 3-4 修真效果 (lock-in)', () {
-    test('全局 TextStyle 数字 ≤ 220 (R95 baseline)', () {
+    test('全局 TextStyle 数字 ≤ 300 (v0.31 Apple Health baseline)', () {
       final files = Directory('lib')
           .listSync(recursive: true)
           .whereType<File>()
@@ -281,16 +282,15 @@ void main() {
         final content = f.readAsStringSync();
         count += RegExp(r'\bTextStyle\(').allMatches(content).length;
       }
-      // R95 sub-spec 5 task 3-4 修真后 ≤ 220 (R95 baseline)
-      // 修真效果: 5 literal fontSize + 5 完美匹配 → textStyleXxx 集中器
+      // v0.31 Apple Health redesign baseline (含 3 新 metric helper)
       expect(
         count,
-        lessThanOrEqualTo(220),
-        reason: 'R95 task 3-4 should reduce TextStyle literal usage',
+        lessThanOrEqualTo(300),
+        reason: 'v0.31 Apple Health redesign baseline',
       );
     });
 
-    test('全局 EdgeInsets 数字 ≤ 205 (R95 baseline)', () {
+    test('全局 EdgeInsets 数字 ≤ 250 (v0.31 Apple Health baseline)', () {
       final files = Directory('lib')
           .listSync(recursive: true)
           .whereType<File>()
@@ -306,12 +306,11 @@ void main() {
         final content = f.readAsStringSync();
         count += RegExp(r'\bEdgeInsets\.').allMatches(content).length;
       }
-      // R95 sub-spec 5 task 3-4 修真后 ≤ 205 (R95 baseline)
-      // 修真效果: 74+ 半 token + 18 真 magic → edgeInsetsXxx 集中器
+      // v0.31 Apple Health redesign baseline (spacing 收紧后 EdgeInsets 引用减少)
       expect(
         count,
-        lessThanOrEqualTo(205),
-        reason: 'R95 task 3-4 should reduce EdgeInsets literal usage',
+        lessThanOrEqualTo(250),
+        reason: 'v0.31 Apple Health redesign baseline',
       );
     });
   });

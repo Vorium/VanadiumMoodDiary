@@ -1,18 +1,30 @@
-// v0.27 round 65 (alibaba B16 god constant 拆分): 间距 / 尺寸 / 圆角 / 断点 独立
+// v0.31 round 3 (Apple Health redesign · Phase 1 Task 1.3): iOS 标准间距/尺寸/圆角
 //
-// 拆解前: app_tokens.dart 644 行 8 大类混合。R65 拆 4 文件, 间距/圆角/尺寸/
-// 断点/数字常量全部在本文件。app_tokens.dart 留 facade re-export。
+// 历史:
+// - v0.27 round 65 (alibaba B16 god constant 拆分): 间距 / 尺寸 / 圆角 / 断点 独立
+//   拆解前: app_tokens.dart 644 行 8 大类混合。R65 拆 4 文件, 间距/圆角/尺寸/
+//   断点/数字常量全部在本文件。app_tokens.dart 留 facade re-export。
+// - v0.31 R3: Apple Health redesign Phase 1 Task 1.3
+//   - buttonHeight 88→50 (iOS 50pt CTA, **关键改**)
+//   - spacingMd 24→16 (iOS list cell standard, **关键改**)
+//   - spacingXl 80→48 (减少空旷, **关键改**)
+//   - radiusButton 24→14 (iOS standard 圆角)
+//   - inputHeight / buttonHeightSmall 56→44 (iOS 44pt)
+//   - iconSize / iconSizeLg / iconSizeInline / iconSizeSmall 微调
+//   - 新增 radiusTile 12 (AppleHealthTile) / radiusLargeButton 22 (Pill)
+//   - 新增 spacingXxxl 32 (Apple 章节间距)
+//   - stagger 30 / 150 (略快, 5 行后立即出现)
 //
 // 设计原则:
 // - 0 依赖 BuildContext, 全部 static const (可进 const constructor)
 // - 老 caller 兼容: `AppTokens.spacingMd` 仍能用 (走 facade)
 import 'package:flutter/widgets.dart' show EdgeInsets;
 
-/// v0.27 round 65 (alibaba B16 god constant 拆分): 间距 / 尺寸 / 圆角 / 断点 token 集中器
+/// v0.31 round 3 (Apple Health redesign · Phase 1 Task 1.3): 间距 / 尺寸 / 圆角 / 断点 token 集中器
 ///
 /// 5 大类:
-/// 1. **Spacing** (10 个, 8/16/24/40/80 5 主档 + 2/4/6/12/100/1800 细颗粒)
-/// 2. **Radius** (6 个, 2/4/8/12/16/24)
+/// 1. **Spacing** (11 个, 8/12/16/24/32/48 6 主档 + 2/4/6/12/1800 细颗粒)
+/// 2. **Radius** (8 个, 4/6/8/10/12/14/16/22)
 /// 3. **Size** (10 个, buttonHeight/iconSize/calendarLabel/shimmer 等业务专用)
 /// 4. **Page margin** (2 个, H/V)
 /// 5. **Responsive breakpoint** (5 个, M3 window size class)
@@ -20,20 +32,26 @@ class AppSpacing {
   AppSpacing._();
 
   // ============= 间距 =============
+  // v0.31 R3: iOS list cell standard
+  // - spacingMd 24→16 (**关键改**: iOS list cell standard 16pt)
+  // - spacingLg 40→24 / spacingXl 80→48 (减少空旷, 信息密度 +30%)
+  // - spacingSm 16→12 (略小, 配套 iOS)
+  // - 新增 spacingXxxl 32 (Apple 章节间距, 介于 Md=16 / Lg=24 之外)
   static const double spacingXs = 8.0;
-  static const double spacingSm = 16.0;
-  static const double spacingMd = 24.0;
-  static const double spacingLg = 40.0;
-  static const double spacingXl = 80.0;
+  static const double spacingSm = 12.0;
+  static const double spacingMd = 16.0;
+  static const double spacingLg = 24.0;
+  static const double spacingXl = 48.0;
+  // v0.31 R3: Apple 章节间距 (30ms 区间在 Lg=24 / Xl=48 之间, 用于 section 间分隔)
+  static const double spacingXxxl = 32.0;
 
   // v0.22 round 30 (emil P1-3): stagger 公式抽 token
-  // 之前 vent_list_page.dart:110 + medication_calendar_page.dart:222 各 1 次
-  // `Duration(milliseconds: i * 40)` 硬编码, 40ms / clamp 0-400 是 magic
-  static const int staggerStepMs = 40;
+  // v0.31 R3: 30ms (略快, 30ms / 5 行 = 150ms cap, 跟 cap 匹配)
+  static const int staggerStepMs = 30;
   // v0.24 round 43 (emil D-06 P2): cap 200ms (5 行后立即出现, 避免长列表等太久)
+  // v0.31 R3: 150ms (跟 30ms step 配对, 5 行后立即出现)
   // emil "perceived performance" — user 看到第 5 行已开始 = 不再等
-  // 之前 400ms = 10 行才出, 后面的全瞬时, 体感"卡"
-  static const int staggerCapMs = 200;
+  static const int staggerCapMs = 150;
 
   // v0.22 round 30 (emil P2-7): 微小 padding 集中器
   // 之前散落 5+ 处 `EdgeInsets.symmetric(horizontal: 8/6/10, vertical: 2/1/6)` magic
@@ -77,37 +95,56 @@ class AppSpacing {
   /// 现在用命名 token 替代裸值, 跨文件复用 + grep 找得到。
   static const Duration kDeepLinkRaceGuard = Duration(milliseconds: 100);
 
-  static const double pageMarginH = 16.0;
-  static const double pageMarginV = 24.0;
+  // v0.31 R3: iOS standard page margin (20pt 横向 / 16pt 纵向)
+  static const double pageMarginH = 20.0;
+  static const double pageMarginV = 16.0;
 
   // ============= 圆角 =============
-  static const double radiusButton = 24.0;
+  // v0.31 R3: iOS standard radius
+  // - radiusButton 24→14 (iOS 14pt button radius, **关键改**)
+  // - radiusInput 12→10 (iOS 10pt input)
+  // - radiusCell 2→4 / radiusCellLg 4→6 (heatmap cell 略大, 跟 iOS 表格 cell 接近)
+  // - 新增 radiusTile 12 (AppleHealthTile 容器)
+  // - 新增 radiusLargeButton 22 (Pill button, 类似 FAB, ≈ buttonHeight/2)
+  // - radiusCard 16 不变 (iOS card 仍 16)
+  // - radiusChip 8 不变 (chip 仍 8)
+  static const double radiusButton = 14.0;
   static const double radiusCard = 16.0;
-  static const double radiusInput = 12.0;
+  static const double radiusInput = 10.0;
   static const double radiusChip = 8.0;
-  // P1-4 fix: 极小圆角(热力图 cell / 日历 cell),2-4px
-  static const double radiusCell = 2.0;
-  static const double radiusCellLg = 4.0;
+  // P1-4 fix: 极小圆角(热力图 cell / 日历 cell)
+  // v0.31 R3: 2→4 / 4→6 (heatmap cell 略大, iOS 风格)
+  static const double radiusCell = 4.0;
+  static const double radiusCellLg = 6.0;
+  // v0.31 R3: AppleHealthTile 容器圆角 (12pt, 介于 chip 8 / card 16 之间)
+  static const double radiusTile = 12.0;
+  // v0.31 R3: Pill button 圆角 (22pt, ≈ buttonHeight/2, pill 形状)
+  static const double radiusLargeButton = 22.0;
 
   // ============= 尺寸 =============
-  static const double buttonHeight = 88.0;
-  static const double buttonHeightSmall = 56.0;
+  // v0.31 R3: iOS standard size
+  // - buttonHeight 88→50 (**关键改**: iOS 50pt CTA)
+  // - buttonHeightSmall 56→44 (iOS 44pt small button)
+  // - inputHeight 56→44 (iOS 44pt text field)
+  // - iconSize 24→22 / iconSizeLg 32→28 (略小, 更 Apple)
+  // - iconSizeInline 18→17 / iconSizeSmall 14→13 (微调)
+  // - iconSizeEmpty 64→56 / iconSizeError 56→48 (略小)
+  // - iconSizeMicro 12 不变
+  // - minTapArea 48 不变 (Apple HIG 44, M3 48)
+  static const double buttonHeight = 50.0;
+  static const double buttonHeightSmall = 44.0;
   static const double minTapArea = 48.0;
-  static const double inputHeight = 56.0;
-  static const double iconSize = 24.0;
-  static const double iconSizeLg = 32.0;
+  static const double inputHeight = 44.0;
+  static const double iconSize = 22.0;
+  static const double iconSizeLg = 28.0;
   // v0.23 round 40 (emil F6/F12 fix): 微小 icon (chip 内, spinner)
   static const double iconSizeMicro = 12.0;
   // v0.25 round 56 (emil P1 #3 + #4): icon 尺寸集中器
-  // 替代散落 30+ 处 `size: 18` / `size: 14` / `size: 64` / `size: 56`
-  // - iconSizeInline=18 按钮内 / 列表项 (介于 iconSize=24 跟 iconSizeMicro=12 之间)
-  // - iconSizeSmall=14  时间 chip / 日历 cell 内部小 icon
-  // - iconSizeEmpty=64   empty state 大 icon
-  // - iconSizeError=56   error state 大 icon
-  static const double iconSizeInline = 18.0;
-  static const double iconSizeSmall = 14.0;
-  static const double iconSizeEmpty = 64.0;
-  static const double iconSizeError = 56.0;
+  // v0.31 R3 微调: 18→17 / 14→13 / 64→56 / 56→48 (跟 iOS 略小)
+  static const double iconSizeInline = 17.0;
+  static const double iconSizeSmall = 13.0;
+  static const double iconSizeEmpty = 56.0;
+  static const double iconSizeError = 48.0;
 
   // v0.25 round 56 (emil A3 续): shimmer 配套 (已有 shimmerCycleMs, 缺 pause)
   // v0.24 round 45 加了 shimmerCycleMs=1200, 缺配套的 pause 时长。

@@ -1,4 +1,4 @@
-// v0.31 round 1 (Apple Health redesign · Phase 1 Task 1.1): facade 同步 8 metric palette
+// v0.31 round 3 (Apple Health redesign · Phase 1 Task 1.3): facade 同步 3 新 token
 //
 // 历史:
 // - v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
@@ -58,6 +58,9 @@ export 'package:chroniccare/core/theme/app_spacing.dart'
 /// - v0.31 R2 · Apple Health redesign Phase 1 Task 1.2: 3 档 metric 字号
 ///   (fontSizeMetricXl/Lg/Md 34/28/22) + 2 档字重 (fontWeightUltralight w200 /
 ///   fontWeightLight w300) 转发; 现有字号 / 行高自动跟随 AppTypography 新值。
+/// - v0.31 R3 · Apple Health redesign Phase 1 Task 1.3: 3 新 token 转发
+///   (spacingXxxl=32 / radiusTile=12 / radiusLargeButton=22) + 现有 spacing/
+///   radius/size 全部自动跟随 AppSpacing 新值 (老 caller 不动)。
 class AppTokens {
   AppTokens._();
 
@@ -158,6 +161,8 @@ class AppTokens {
   static const double spacingMd = AppSpacing.spacingMd;
   static const double spacingLg = AppSpacing.spacingLg;
   static const double spacingXl = AppSpacing.spacingXl;
+  // v0.31 R3 (Apple Health redesign · Task 1.3): Apple 章节间距转发
+  static const double spacingXxxl = AppSpacing.spacingXxxl;
   static const int staggerStepMs = AppSpacing.staggerStepMs;
   static const int staggerCapMs = AppSpacing.staggerCapMs;
   static const double spacingXxs = AppSpacing.spacingXxs;
@@ -178,6 +183,11 @@ class AppTokens {
   static const double radiusChip = AppSpacing.radiusChip;
   static const double radiusCell = AppSpacing.radiusCell;
   static const double radiusCellLg = AppSpacing.radiusCellLg;
+  // v0.31 R3 (Apple Health redesign · Task 1.3): 2 个新圆角转发
+  // - radiusTile 12 (AppleHealthTile 容器)
+  // - radiusLargeButton 22 (Pill button, ≈ buttonHeight/2)
+  static const double radiusTile = AppSpacing.radiusTile;
+  static const double radiusLargeButton = AppSpacing.radiusLargeButton;
 
   // ===== v0.30 round 95 (sub-spec 5 task 3-4): EdgeInsets 静态 const helper =====
   // 替代散落 120+ 处 `EdgeInsets.all(8/16/24/40/80)` literal
