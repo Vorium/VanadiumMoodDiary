@@ -109,11 +109,8 @@ class Strings {
   //   药名只在 title (💊 该吃药了：<name>) 出现 — 用户主动解锁后才看 title。
   //   实际: iOS 通知 title 在锁屏横幅也显示, 药名仍可见 — 进一步修法
   //   见 v1.0+ (用户可配置 title 是否脱敏, 跟锁屏可见性独立)。
-  static String notifMedicationTitle(
-    String medName, {
-    String? override,
-  }) =>
-      override ?? '💊 该吃药了：$medName';
+  static String notifMedicationTitle({String? override}) =>
+      override ?? '💊 该吃药了';
   // R108 P0-3: body 改常量 (无 dosage / unit 入参), 锁屏不暴露药名
   // 保留 [override] 参数支持 i18n (presentation 层可注入 l10n override)
   static String notifMedicationBody({String? override}) =>
@@ -136,8 +133,8 @@ class Strings {
       override ?? '该吃药了 · 点一下 = 打卡';
 
   // 续方提醒 — v0.26 R57: 加 override 参数
-  static String notifRefillTitle(String medName, {String? override}) =>
-      override ?? '💊 该续方了：$medName';
+  static String notifRefillTitle({String? override}) =>
+      override ?? '💊 该续方了';
   static String notifRefillBody(int daysLeft, {String? override}) =>
       override ?? '还剩约 $daysLeft 天断药，记得去医院或线上开药';
 

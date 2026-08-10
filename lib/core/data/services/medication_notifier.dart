@@ -130,10 +130,11 @@ class MedicationNotifier {
           final payload =
               NotificationDeepLink.medicationCheckIn(med.id).encode();
           // v0.30 R108 (P0#3): body 改通用文案, 不再暴露 dosage/unit
-          // 锁屏不泄漏 PII (药名 + 剂量) — 满足 PIPL §6 最小化原则
+          // v0.30 R108 revisit (P0-012): title 也去药名 (R108 漏修), 锁屏
+          //   横幅不泄漏 PII (PIPL §6 最小化 + 6 视角共识)
           await _dispatcher.zonedDaily(
             id: id,
-            title: Strings.notifMedicationTitle(med.name),
+            title: Strings.notifMedicationTitle(),
             body: Strings.notifMedicationBody(),
             hour: t.hour,
             minute: t.minute,

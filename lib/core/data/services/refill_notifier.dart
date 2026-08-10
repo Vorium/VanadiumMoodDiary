@@ -156,9 +156,11 @@ class RefillNotifier {
     final payload =
         NotificationDeepLink.medicationCheckIn(medication.id).encode();
     try {
+      // v0.30 R108 revisit (P0-012): 续方 title 也去药名 (跟 medication
+      //   title 同步), 锁屏不泄漏 PII
       await _dispatcher.zonedAt(
         id: id,
-        title: Strings.notifRefillTitle(medication.name),
+        title: Strings.notifRefillTitle(),
         body: Strings.notifRefillBody(daysLeft),
         fireAt: fireAt,
         details: details,
