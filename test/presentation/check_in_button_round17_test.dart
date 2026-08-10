@@ -167,4 +167,53 @@ void main() {
       expect(find.text('写第一句'), findsOneWidget);
     });
   });
+
+  // v0.31 round 6 (Apple Health redesign · Phase 2 Task 2.2): CheckInButton 重写
+  // 3 个新 test 覆盖 Apple Health 巨型 pill:
+  // - 完成态切到 check icon + spring curve 庆祝
+  // - 高度 64 (buttonHeight 50 + 14)
+  // - 圆角 32 (硬编码全圆角)
+  group('CheckInButton Apple Health pill (v0.31 R6 Task 2.2)', () {
+    testWidgets('完成态切到 check icon + spring curve 庆祝', (tester) async {
+      await tester.pumpWidget(_wrapButton(isChecked: false, streakDays: 0));
+      await tester.pumpAndSettle();
+      // 未打卡 = medicine icon, 不显示 check
+      expect(find.byIcon(Icons.medication_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.check_rounded), findsNothing);
+
+      // 切到已打卡
+      await tester.pumpWidget(_wrapButton(isChecked: true, streakDays: 1));
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      // 已打卡 = check icon, medicine icon 隐藏
+      expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.medication_rounded), findsNothing);
+      expect(find.text('今天已打卡 ✓'), findsOneWidget);
+
+      // 验证完成态切用 spring curve (庆祝 scale 0.95→1)
+      // 在 test 环境无 prefers-reduced-motion, Motion.curve 直接返 base
+      final switcher =
+          tester.widget<AnimatedSwitcher>(find.byType(AnimatedSwitcher));
+      expect(switcher.switchInCurve, AppTokens.curveSpring);
+    });
+
+    testWidgets('高度 64 (buttonHeight 50 + 14, Apple Health pill)',
+        (tester) async {
+      await tester.pumpWidget(_wrapButton(isChecked: false, streakDays: 0));
+      await tester.pumpAndSettle();
+      // v0.31 R6: 64 = buttonHeight 50 + 14 (硬编码 + 注释, 跟 buttonHeight 50 不同档)
+      final size = tester.getSize(find.byType(CheckInButton));
+      expect(size.height, 64);
+    });
+
+    testWidgets('圆角 32 (硬编码全圆角, Apple Health pill)', (tester) async {
+      await tester.pumpWidget(_wrapButton(isChecked: false, streakDays: 0));
+      await tester.pumpAndSettle();
+      // v0.31 R6: 32 = 硬编码全圆角 (跟 radiusLargeButton 22 / radiusButton 14 不同档)
+      final container = tester.widget<AnimatedContainer>(
+        find.byType(AnimatedContainer),
+      );
+      final decoration = container.decoration as BoxDecoration;
+      expect(decoration.borderRadius, BorderRadius.circular(32));
+    });
+  });
 }
