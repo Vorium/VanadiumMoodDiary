@@ -1,4 +1,4 @@
-// v0.31 round 3 (Apple Health redesign · Phase 1 Task 1.3): facade 同步 3 新 token
+// v0.31 round 4 (Apple Health redesign · Phase 1 Task 1.4): facade 同步 3 Apple curve
 //
 // 历史:
 // - v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
@@ -13,6 +13,7 @@ import 'package:flutter/material.dart'
     show
         Color,
         Curve,
+        Cubic, // v0.31 R4 (Task 1.4): facade 转发 3 Apple curve (Cubic 子类) 需要
         TextStyle,
         BuildContext,
         BoxShadow,
@@ -61,6 +62,10 @@ export 'package:chroniccare/core/theme/app_spacing.dart'
 /// - v0.31 R3 · Apple Health redesign Phase 1 Task 1.3: 3 新 token 转发
 ///   (spacingXxxl=32 / radiusTile=12 / radiusLargeButton=22) + 现有 spacing/
 ///   radius/size 全部自动跟随 AppSpacing 新值 (老 caller 不动)。
+/// - v0.31 R4 · Apple Health redesign Phase 1 Task 1.4: 3 Apple curve 转发
+///   (curveSpring / curveAppleSheet / curveAppleDrawer) + 现有 curve 全部
+///   自动跟随 AppMotion 新值 (老 caller 不动)。注意 AppMotion.durNormal /
+///   durSlow / durPress 跟 R4 同步调档 (300→250 / 500→400 / 160→100)。
 class AppTokens {
   AppTokens._();
 
@@ -249,6 +254,12 @@ class AppTokens {
   static const Curve curveAccelerate = AppMotion.curveAccelerate;
   static const Curve curveDelight = AppMotion.curveDelight;
   static const Curve curveBackOut = AppMotion.curveBackOut;
+  // v0.31 R4 (Apple Health redesign · Task 1.4): 3 Apple 自定义 cubic-bezier
+  // (spec §3.4.2, app_motion.dart 注释) — facade 转发, 老 caller 不动
+  // 用 Cubic 而非 Curve, 跟 source type 1:1 保留强类型 (const Cubic → const Cubic)
+  static const Cubic curveSpring = AppMotion.curveSpring;
+  static const Cubic curveAppleSheet = AppMotion.curveAppleSheet;
+  static const Cubic curveAppleDrawer = AppMotion.curveAppleDrawer;
 
   // ===== AppColors dynamic getter — 全部转发 (R65 兼容老 caller) =====
   static Color primaryColor(BuildContext c) => AppColors.primaryColor(c);
