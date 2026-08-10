@@ -36,14 +36,12 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:timezone/data/latest_all.dart' as tz_data;
-import 'package:timezone/timezone.dart' as tz;
 
 import 'package:chroniccare/core/data/services/assessment_notifier.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/mood_reminder_notifier.dart';
+import 'package:chroniccare/core/data/services/notification_initializer.dart';
 import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
@@ -54,6 +52,7 @@ import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// 本地通知服务 (facade god class 已拆 6 sub-service + 1 delegate namespace)
 ///
@@ -93,6 +92,8 @@ class NotificationService implements NotificationSender {
   late final RefillNotifier _refillNotifier;
   late final AssessmentNotifier _assessmentNotifier;
   late final MoodReminderNotifier _moodReminderNotifier;
+  // v0.30 R108 revisit (P0-029): 启动期职责抽到 NotificationInitializer
+  late final NotificationInitializer _initializer;
 
   /// R108 (P1 god class 拆 6 大 F - Fix #2): 12 委派 method 集中
   ///
@@ -147,6 +148,12 @@ class NotificationService implements NotificationSender {
       snoozeManager: _snoozeManager,
       badgeSync: _badgeSync,
     );
+    // v0.30 R108 revisit (P0-029): 启动期职责抽到 NotificationInitializer
+    _initializer = NotificationInitializer(
+      plugin: _plugin,
+      onResponse: _onResponse,
+      delegate: delegate,
+    );
   }
 
   static void _defaultOnTap(String? payload) {
@@ -169,48 +176,10 @@ class NotificationService implements NotificationSender {
   /// iOS 自动弹。权限请求走新方法 [requestPermission], 由 caller 在
   /// context 内调 (e.g. setup 流程配完药后 / 设置页开提醒时 / 测试通知按钮)。
   Future<void> init() async {
+    // v0.30 R108 revisit (P0-029): 启动期职责抽到 NotificationInitializer
+    //   (plugin init / timezone / launch payload / 权限 / exact alarm, ~80L)
     if (_initialized) return;
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const iosSettings = DarwinInitializationSettings(
-      // R97-P1-6: 全 false, 避免初始化时 iOS 自动弹权限请求
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
-
-    // v0.11 (Round 5): 注册 tap 回调
-    await _plugin.initialize(
-      const InitializationSettings(
-        android: androidSettings,
-        iOS: iosSettings,
-      ),
-      onDidReceiveNotificationResponse: _onResponse,
-    );
-
-    // v0.11 (Round 5): 处理"app 被杀着，通过通知拉起"的情况
-    final launchDetails = await _plugin.getNotificationAppLaunchDetails();
-    if (launchDetails?.didNotificationLaunchApp ?? false) {
-      final payload = launchDetails?.notificationResponse?.payload;
-      piiSafeLog(
-        'NotificationService',
-        '🚀 App 由通知拉起, payload=$payload',
-      );
-      NotificationNavigation.setLaunchPayload(payload);
-    }
-
-    // 初始化时区数据库 (zonedSchedule 需要)
-    try {
-      tz_data.initializeTimeZones();
-      final localTzName = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(localTzName));
-    } catch (e) {
-      piiSafeLog(
-        'NotificationService',
-        '⚠️ 时区初始化失败（web 端不支持）: $e',
-      );
-    }
-
+    await _initializer.init();
     _initialized = true;
   }
 
@@ -225,22 +194,9 @@ class NotificationService implements NotificationSender {
   ///
   /// 返回 true = 用户授权, false = 拒绝 / 平台不支持 / web。
   /// caller 拿到 false 应走 UI 提示引导用户去系统设置开启。
-  Future<bool> requestPermission() async {
-    final ios = _plugin.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-    final iosOk = await ios?.requestPermissions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    final androidOk = await android?.requestNotificationsPermission();
-    // 任意一个平台返 true = 用户授权; null = 平台不支持 (web/other) → 视作 true
-    // 避免误把 web 平台当作"用户拒绝" (web 没 permission 概念)
-    if (iosOk == null && androidOk == null) return true;
-    return (iosOk ?? false) || (androidOk ?? false);
-  }
+  ///
+  /// v0.30 R108 revisit (P0-029): 委派到 NotificationInitializer
+  Future<bool> requestPermission() => _initializer.requestPermission();
 
   /// flutter_local_notifications 回调
   static void _onResponse(NotificationResponse response) {
@@ -361,30 +317,9 @@ class NotificationService implements NotificationSender {
   /// - 测试环境 (MissingPluginException): 走 false 兜底
   ///
   /// 失败不抛, 走 swallowError 集中器, dev 模式可见, release 写 swallow.log
-  Future<bool> _canScheduleExact() async {
-    try {
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
-      if (android == null) {
-        // iOS / Web / desktop: 不需要 exact alarm 概念
-        return true;
-      }
-      final can = await android.canScheduleExactNotifications();
-      // null = 平台不支持查询 (老 OS / 未实现), 保守返回 true
-      // (走 exact mode, 失败时 zonedSchedule 会自行降级)
-      return can ?? true;
-    } catch (e, st) {
-      // R108 P0-2: 失败不阻塞主流程, 走 inexact 兜底 + log
-      // 跟 rescheduleAll 的 canExact=false 路径同, 行为一致
-      swallowError(
-        where: 'NotificationService._canScheduleExact',
-        error: e,
-        stack: st,
-        note: 'canScheduleExactNotifications() failed, falling back to inexact',
-      );
-      return false;
-    }
-  }
+  ///
+  /// v0.30 R108 revisit (P0-029): 委派到 NotificationInitializer
+  Future<bool> _canScheduleExact() => _initializer.canScheduleExact();
 
   // ============== SafetyAlert (facade 直实现, 不抽 sub-service) ==============
   //
