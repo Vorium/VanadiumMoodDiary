@@ -35,6 +35,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/spring.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -198,13 +199,20 @@ class _PillContent extends StatelessWidget {
   }
 }
 
-/// v0.31 R6: 进场 spring 动画 (scale 0.95→1 + opacity 0→1, curveSpring,
-/// durNormal 250ms, 一次性 initState forward).
+/// v0.31.1 R10 (P0-08): 进场 spring 物理模型动画 (scale 0.95→1 + opacity 0→1).
+///
+/// v0.31 R6 原版走 `Curves.easeOutCubic` 风格 cubic bezier (`AppTokens.curveSpring`),
+/// 但 spec §3.4.3 要求 iOS-style 物理 spring — 双轨制 (curve token + spring
+/// physics). 跨视角共识修 (emil P0-E + superpowers-en P1 + Apple Health P0-3):
+/// Spring.standard.toSimulation() 提供更"物理"的进场弹性, 跟外层
+/// AnimatedContainer (curveStandard, durNormal) 形成 spring + curve 双轨.
 ///
 /// 用 StatefulWidget 而非 TweenAnimationBuilder:
 /// - 仅一次性 (不像 streak 数字 tween 需要响应 prop 变化)
 /// - 明确 dispose() controller, 避免 check_widget_dispose 守门员报警
-/// - pumpAndSettle 自然等待 250ms 跑完, 不会跟外层 AnimatedContainer 冲突
+/// - `AnimationController.unbounded` 是 SpringSimulation 必要条件
+///   (SpringSimulation 会让 value 过冲/下冲 1.0, bounded controller 会 clamp
+///   破坏物理形态). pumpAndSettle 自然等待 SpringSimulation.isDone.
 class _EntrySpring extends StatefulWidget {
   final Widget child;
   const _EntrySpring({required this.child});
@@ -216,23 +224,20 @@ class _EntrySpring extends StatefulWidget {
 class _EntrySpringState extends State<_EntrySpring>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _scale;
-  late final Animation<double> _opacity;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppTokens.durNormal,
+    // v0.31.1 R10 (P0-08): Spring 物理模型 (spec §3.4.3)
+    // unbounded controller 是 SpringSimulation 必要条件
+    _controller = AnimationController.unbounded(vsync: this);
+    // Spring.standard = (mass: 1, stiffness: 200, damping: 20) —
+    // 临界阻尼 ~0.4s, 轻度过冲, iOS push 行为
+    // from=0.0, to=1.0: SpringSimulation 的 0→1 进程,
+    // build() 内手动把 0..1 映射成 scale 0.95..1.0 + opacity 0..1
+    _controller.animateWith(
+      Spring.standard.toSimulation(from: 0.0, to: 1.0, velocity: 0.0),
     );
-    _scale = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: AppTokens.curveSpring),
-    );
-    _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: AppTokens.curveSpring),
-    );
-    _controller.forward();
   }
 
   @override
@@ -245,10 +250,18 @@ class _EntrySpringState extends State<_EntrySpring>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder: (_, child) => Opacity(
-        opacity: _opacity.value,
-        child: Transform.scale(scale: _scale.value, child: child),
-      ),
+      builder: (_, child) {
+        // Spring value 范围: [0, 1+] (damping=20 临界阻尼, 极轻过冲).
+        // t 可能轻微过冲 1.0, 允许 scale 跟随 (弹感).
+        // opacity 严格 clamp 到 [0, 1] (透明度不能 > 1, 否则渲染无变化但语义错).
+        final t = _controller.value;
+        final scale = 0.95 + t * 0.05;
+        final opacity = t.clamp(0.0, 1.0);
+        return Opacity(
+          opacity: opacity,
+          child: Transform.scale(scale: scale, child: child),
+        );
+      },
       child: widget.child,
     );
   }
