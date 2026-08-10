@@ -125,6 +125,7 @@
   "settingsClearAllDataConfirm": "我已備份，確認清空",
   "settingsClearAllDataSuccess": "已清空所有數據",
   "commonSave": "保存",
+  "commonBack": "返回",
   "commonCancel": "取消",
   "commonDelete": "刪除",
   "commonEdit": "編輯",

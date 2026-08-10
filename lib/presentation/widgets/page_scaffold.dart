@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 通用页面骨架（响应式）
 ///
@@ -39,8 +41,9 @@ class PageScaffold extends StatelessWidget {
         final canPop = GoRouter.of(context).canPop();
         final showLeading = leading ??
             (canPop
-                ? IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded),
+                ? PressFeedbackIconButton(
+                    icon: Icons.arrow_back_rounded,
+                    tooltip: AppLocalizations.of(context).commonBack,
                     onPressed: () => context.pop(),
                   )
                 : null);

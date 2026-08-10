@@ -5,10 +5,9 @@
 // 但 R108 P1 漏修 7 处 + emil 2026-08-11 P0-C 又补 2 处, 累计 7 处 raw
 // IconButton( 散落 lib/。本守门员 grep 拦截回归, 避免新页面继续走 raw。
 //
-// 排除名单 (集中器自身 + 已知漏修, 已报主调度):
+// 排除名单 (集中器自身):
 // 1. press_feedback_icon_button.dart — 集中器内部 build 用 IconButton( 2 处
-// 2. page_scaffold.dart:42 — 默认 leading back button, 不在 P0-07 scope,
-//    报主调度后续 round 处理
+// (page_scaffold.dart:42 默认 leading back button 已在 P0-07b round 9 修)
 //
 // 验证: 全 lib/ 其它 .dart 文件 grep `IconButton(` 不在 PressFeedback 前,
 // 命中数 = 0。
@@ -19,15 +18,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('P0-07: 全 lib/ 不应再有 raw IconButton(', () {
-    test('lib/ 0 raw IconButton( 漏网 (排除集中器自身 + 已知漏修)', () async {
+    test('lib/ 0 raw IconButton( 漏网 (排除集中器自身)', () async {
       final libDir = Directory('lib');
       expect(libDir.existsSync(), isTrue,
           reason: 'lib/ 目录必须存在 (从项目根运行)');
 
-      // 排除名单 (集中器自身 + 已知 out-of-scope 漏修)
+      // 排除名单 (集中器自身)
       const excludedFiles = <String>{
         'lib/presentation/widgets/press_feedback_icon_button.dart',
-        'lib/presentation/widgets/page_scaffold.dart',
       };
 
       // 负向 lookbehind regex: 'IconButton(' not preceded by 'PressFeedback'

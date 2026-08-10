@@ -94,6 +94,7 @@
   "settingsClearAllDataConfirm": "I have backed up, clear it",
   "settingsClearAllDataSuccess": "All data cleared",
   "commonSave": "Save",
+  "commonBack": "Back",
   "commonCancel": "Cancel",
   "commonDelete": "Delete",
   "commonEdit": "Edit",
