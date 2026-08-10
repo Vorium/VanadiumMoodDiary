@@ -76,8 +76,10 @@ void main() {
   group('AppTokens 动画 token（v0.17 round 1 / A1）', () {
     test('durFast / durNormal / durSlow 存在且 ms 正确', () {
       expect(AppTokens.durFast.inMilliseconds, 200);
-      expect(AppTokens.durNormal.inMilliseconds, 300);
-      expect(AppTokens.durSlow.inMilliseconds, 500);
+      // v0.31 R4 (Apple Health redesign · Task 1.4): Apple 紧凑调档
+      // durNormal 300→250, durSlow 500→400 (durPress 160→100 见 lock-in)
+      expect(AppTokens.durNormal.inMilliseconds, 250);
+      expect(AppTokens.durSlow.inMilliseconds, 400);
     });
 
     test(

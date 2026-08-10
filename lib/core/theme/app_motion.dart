@@ -1,24 +1,39 @@
-// v0.27 round 65 (alibaba B16 god constant 拆分): 动效 / 阴影 / MotionScheme / Motion 独立
+// v0.31 round 4 (Apple Health redesign · Phase 1 Task 1.4): 动效 token 大调
 //
-// 拆解前: app_tokens.dart 644 行 8 大类混合。R65 拆 4 文件, duration/curve/
-// shadow/4 个 enum (MotionScheme)/Motion class 全部在本文件。
-// app_tokens.dart 留 facade re-export。
+// 历史:
+// - v0.17 round 1 (emil 动效 token): 之前只有 duration 缺 curve / easing
+// - v0.22 round 29: 加 4 个 const shadow
+// - v0.24 round 43 (emil D-04 P2): 加 4 个 theme-aware shadow 替代
+// - v0.27 round 59 (emil EMIL-T29): 删 4 个 const shadow, 强制 theme-aware
+// - v0.27 round 65 (alibaba B16 god constant 拆分): duration/curve/shadow/
+//   MotionScheme/Motion 全部在本文件; app_tokens.dart 留 facade re-export。
+// - v0.31 R4 (Apple Health redesign · Task 1.4):
+//   · Duration 调档 (durNormal 300→250, durSlow 500→400, durPress 160→100)
+//   · Curve 加 3 个 Apple 自定义 cubic-bezier (curveSpring / curveAppleSheet /
+//     curveAppleDrawer), 保留 6 个旧 curve
+//   · Shadow 大改: shadowCardOf/shadowCardDarkOf → [] 空 (Apple Health 0 阴影),
+//     shadowDialogOf 极轻 (blur 24, offset 0,8, alpha 0.08),
+//     shadowOverlayOf 极轻 (blur 16, offset 0,4, alpha 0.06)
+//   · Spring 走独立 spring.dart (本文件不嵌)
 //
 // 设计原则:
 // - duration/curve 走 const (可在 const constructor 用, 跟 textStyleXxx 互补)
 // - shadow 走 dynamic (接受 BuildContext, 走 M3 ColorScheme.shadow 适配 dark mode)
 // - MotionScheme 走 enum + extension, 强制 caller 选档 (emil 4 档决策框架)
 // - Motion class 提供 prefers-reduced-motion 包装 (P0-7 a11y 修正)
+// - Spring 走 spring.dart (spec §3.4.3, 物理模型而非 duration-based)
 // - 老 caller 兼容: `AppTokens.durNormal` 仍能用 (走 facade)
 import 'package:flutter/material.dart';
 
-/// v0.27 round 65 (alibaba B16 god constant 拆分): 动效 / 阴影 token 集中器
+/// v0.31 round 4 (Apple Health redesign): 动效 / 阴影 token 集中器
 ///
 /// 4 大类:
 /// 1. **Duration** (8 个, fast/normal/slow/press/pageTransition + snackbar 3 档)
-/// 2. **Curve** (6 个, standard/subtle/decelerate/accelerate/delight/backOut)
+/// 2. **Curve** (9 个, 6 旧 + 3 Apple 自定义 cubic-bezier)
 /// 3. **BoxShadow** (4 个 dynamic getter, 走 M3 ColorScheme.shadow 适配 dark mode)
 /// 4. **MotionScheme enum + Motion class** (4 档决策 + prefers-reduced-motion 包装)
+///
+/// Spring 物理模型见 `lib/core/theme/spring.dart` (本文件不嵌)。
 class AppMotion {
   AppMotion._();
 
@@ -31,8 +46,10 @@ class AppMotion {
   //   occasional（modal / drawer / snackbar）→ durNormal + curveStandard
   //   rare（onboarding / 庆祝）→ durSlow + curveDelight
   static const Duration durFast = Duration(milliseconds: 200);
-  static const Duration durNormal = Duration(milliseconds: 300);
-  static const Duration durSlow = Duration(milliseconds: 500);
+  // v0.31 R4 (Apple Health redesign · Task 1.4): 略快, Apple 紧凑 (300→250)
+  static const Duration durNormal = Duration(milliseconds: 250);
+  // v0.31 R4 (Apple Health redesign · Task 1.4): 略快 (500→400)
+  static const Duration durSlow = Duration(milliseconds: 400);
 
   // v0.24 round 45 (emil P1-16): 4 个细小 duration 抽 token
   // emil "magic numbers should be named" — 之前散落 6 处 hardcode
@@ -40,7 +57,9 @@ class AppMotion {
   // - shimmerCycleMs: LoadingSkeleton shimmer 完整循环周期 (1200ms, 是 magic 不是动画)
   // - durPageTransition: PageTransitionSwitcher fade 100ms (默认 fade 100, override 时)
   // - refreshMinVisibleMs: pull-to-refresh 最小可见时间 400ms (避免 "瞬闪" 感觉没刷新)
-  static const Duration durPress = Duration(milliseconds: 160);
+  // v0.31 R4 (Apple Health redesign · Task 1.4): 关键改 — iOS 即时反馈 100ms
+  // (160→100, spec §3.4.1 "PressFeedback 必须感觉"快" — 100ms 内必须看到反馈")
+  static const Duration durPress = Duration(milliseconds: 100);
   static const int shimmerCycleMs = 1200;
   static const Duration durPageTransition = Duration(milliseconds: 100);
   static const int refreshMinVisibleMs = 400;
@@ -85,56 +104,90 @@ class AppMotion {
   /// 主庆祝用 easeOutBack 更"稳",副粒子可用 elasticOut
   static const Curve curveBackOut = Curves.easeOutBack;
 
-  // ============= 阴影 (v0.27 round 59 emil EMIL-T29: 删 4 个 const shadow) =============
+  // v0.31 R4 (Apple Health redesign · Task 1.4): 3 Apple 自定义 cubic-bezier
+  // (spec §3.4.2, apple-design skill §4)
+  // 用 Cubic 而非 Curves, 可走 const constructor。
+
+  /// Apple springOut 近似 — `cubic-bezier(0.23, 1, 0.32, 1)`
+  /// 适用: 通用 spring 收敛 (celebration / tile hover / push 反馈)
+  /// 跟 `Spring` 物理模型配对: Spring.standard (stiffness 200, damping 20)
+  /// 用 `curve` 模拟; 真实 spring 见 spring.dart。
+  static const Cubic curveSpring = Cubic(0.23, 1, 0.32, 1);
+
+  /// iOS 抽屉/Sheet 曲线 — `cubic-bezier(0.32, 0.72, 0, 1)`
+  /// 适用: modal 从底部升起 (急停, 不回弹) — apple-design §4
+  static const Cubic curveAppleSheet = Cubic(0.32, 0.72, 0, 1);
+
+  /// iOS Drawer 曲线 — `cubic-bezier(0.77, 0, 0.175, 1)`
+  /// 适用: drawer / nav 滑入/滑出 (平滑长尾) — apple-design §4
+  static const Cubic curveAppleDrawer = Cubic(0.77, 0, 0.175, 1);
+
+  // ============= 阴影 (v0.31 R4 Apple Health 0 阴影) =============
   //
-  // 历史: v0.22 round 29 加 4 个 const shadow (shadowCard / shadowCardDark /
-  // shadowDialog / shadowOverlay), 全黑色 0x14-0x33 透明度。
-  // **dark mode 完全不可见** (黑色阴影打在 dark surface 上 = 透明),
-  // 这是 R49 修正过的 60+ 处 silent bug 同款风险。
+  // 历史 (R22 → R27 → R31):
+  // - v0.22 round 29 加 4 个 const shadow (shadowCard / shadowCardDark /
+  //   shadowDialog / shadowOverlay), 全黑色 0x14-0x33 透明度。
+  //   **dark mode 完全不可见** (黑色阴影打在 dark surface 上 = 透明),
+  //   这是 R49 修正过的 60+ 处 silent bug 同款风险。
+  // - v0.24 round 43 (emil D-04 P2) 加 4 个 theme-aware 替代。
+  // - v0.27 round 59 (emil EMIL-T29): 删 4 个 const 版本, 强制走 theme-aware。
+  // - v0.31 R4 (Apple Health redesign · Task 1.4): 大改 — Apple Health 完全
+  //   不用 shadow 表达层次, 改用 hairline divider + container color。
+  //   · shadowCardOf / shadowCardDarkOf → `[]` 空 (0 阴影)
+  //   · shadowDialogOf → 极轻 (blur 24, offset 0,8, alpha 0.08)
+  //   · shadowOverlayOf → 极轻 (blur 16, offset 0,4, alpha 0.06)
+  //   保留 dynamic getter 签名, 方便未来 dark mode 微调。
   //
-  // v0.24 round 43 (emil D-04 P2) 加 4 个 theme-aware 替代 (走 Theme.of(context)
-  // .colorScheme.shadow) 但保留 const 版本以兼容 const constructor。
-  // v0.27 round 59 (emil EMIL-T29): 删 4 个 const 版本, **强制** 所有用法走
-  // theme-aware getter, 避免后续 R49 同款 silent bug 重现。
-  //
-  // 用法: `boxShadow: AppMotion.shadowCardOf(context)`
+  // 用法: `boxShadow: AppMotion.shadowCardOf(context)` ← 直接走 `[]`
 
-  /// Theme-aware 卡片阴影 (dark mode 反白) — 替换原 const shadowCard
-  static List<BoxShadow> shadowCardOf(BuildContext context) => [
-        BoxShadow(
-          color: Theme.of(context).colorScheme.shadow,
-          blurRadius: 3,
-          offset: const Offset(0, 1),
-        ),
-      ];
+  /// Apple Health 卡片阴影: **0 阴影** (空 list, 跟 spec §3.4.4 一致)
+  ///
+  /// Apple Health 不用 shadow 表达层次, 改用:
+  /// - `Container.decoration.color` 容器色
+  /// - `Divider(thickness: 0.5)` hairline 分隔
+  /// - `background: F2F2F7` systemGroupedBackground 衬底
+  ///
+  /// 保留 theme-aware getter 签名 (走 BuildContext), 当前固定返 `[]`。
+  /// 调用方无感知, 0 渲染开销。
+  static List<BoxShadow> shadowCardOf(BuildContext context) => const <BoxShadow>[];
 
-  /// Theme-aware 卡片深阴影 (dark mode 反白) — 替换原 const shadowCardDark
-  /// 跟 shadowCardOf 区别: alpha 更高 (M3 spec: shadow 0.08 vs scrim 0.32)
-  static List<BoxShadow> shadowCardDarkOf(BuildContext context) => [
-        BoxShadow(
-          color: Theme.of(context).colorScheme.shadow,
-          blurRadius: 3,
-          offset: const Offset(0, 1),
-        ),
-      ];
+  /// Apple Health 卡片深阴影: **0 阴影** (空 list, 跟 shadowCardOf 同步)
+  ///
+  /// 保留独立 API 方便未来 dark mode 对"主色卡片"用低 alpha shadow 表达
+  /// (如 checkIn 按钮完成态 — main color 卡片可能要 1px 1px 极轻 shadow)。
+  static List<BoxShadow> shadowCardDarkOf(BuildContext context) =>
+      const <BoxShadow>[];
 
-  /// Theme-aware 对话框阴影 (dark mode 反白) — 替换原 const shadowDialog
-  static List<BoxShadow> shadowDialogOf(BuildContext context) => [
-        BoxShadow(
-          color: Theme.of(context).colorScheme.shadow,
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ];
+  /// 极轻对话框阴影 (iOS modal 标准 1 层)
+  ///
+  /// spec §3.4.4 step 8: blurRadius 24, offset Offset(0, 8), alpha 0.08
+  /// (M3 主题 ColorScheme.shadow 通常 alpha 0.16~0.20, 这里用 0.08 = 一半,
+  /// 走 scheme.shadow.withValues(alpha: 0.08) 自动 dark mode 适配)
+  static List<BoxShadow> shadowDialogOf(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return [
+      BoxShadow(
+        color: scheme.shadow.withValues(alpha: 0.08),
+        blurRadius: 24,
+        offset: const Offset(0, 8),
+      ),
+    ];
+  }
 
-  /// Theme-aware 浮层轻阴影 (dark mode 反白) — 替换原 const shadowOverlay
-  static List<BoxShadow> shadowOverlayOf(BuildContext context) => [
-        BoxShadow(
-          color: Theme.of(context).colorScheme.shadow,
-          blurRadius: 8,
-          offset: const Offset(0, 4),
-        ),
-      ];
+  /// 极轻浮层阴影 (snackbar / tooltip / dropdown)
+  ///
+  /// spec §3.4.4 step 9: blurRadius 16, offset Offset(0, 4), alpha 0.06
+  /// 比 shadowDialogOf 略轻, 给 snackbar / popover 用
+  static List<BoxShadow> shadowOverlayOf(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return [
+      BoxShadow(
+        color: scheme.shadow.withValues(alpha: 0.06),
+        blurRadius: 16,
+        offset: const Offset(0, 4),
+      ),
+    ];
+  }
 
   // ============= Scrim (v0.27 round 65 alibaba B9 magic alpha) =============
   //

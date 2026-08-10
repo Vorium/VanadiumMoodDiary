@@ -206,9 +206,11 @@ void main() {
 
     test('AppMotion 集中器自身 8 duration + 6 curve 仍存在', () {
       expect(AppMotion.durFast, const Duration(milliseconds: 200));
-      expect(AppMotion.durNormal, const Duration(milliseconds: 300));
-      expect(AppMotion.durSlow, const Duration(milliseconds: 500));
-      expect(AppMotion.durPress, const Duration(milliseconds: 160));
+      // v0.31 R4 (Apple Health redesign · Task 1.4): Apple 紧凑调档
+      // durNormal 300→250, durSlow 500→400, durPress 160→100 (iOS 即时反馈)
+      expect(AppMotion.durNormal, const Duration(milliseconds: 250));
+      expect(AppMotion.durSlow, const Duration(milliseconds: 400));
+      expect(AppMotion.durPress, const Duration(milliseconds: 100));
       expect(AppMotion.durPageTransition, const Duration(milliseconds: 100));
       expect(AppMotion.shimmerCycleMs, 1200);
       expect(AppMotion.refreshMinVisibleMs, 400);
