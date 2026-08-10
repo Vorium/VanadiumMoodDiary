@@ -39,27 +39,15 @@ import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// v0.27 round 62 (P0-3 修复): 全局静态 SmsService 入口
-///
-/// 修复后: 顶层 `_smsService` 是 bootstrap + provider tree 共用的**唯一**实例。
-/// runApp 时 `smsServiceProvider.overrideWithValue(_smsService)` 把同一份
-/// 注入 ProviderScope, 任何 `ref.watch(smsServiceProvider)` 拿到同一对象。
-///
-/// v0.30 R95 sub-spec 8 task 56: 顶层 mutable static 改 `final`
-///
-/// R97-P1-13 (2026-08-07): `late` 关键字去掉
-final SmsService _smsService = SmsService();
-
-/// v0.27 round 67 (B-1 修复): 顶层静态 EmailService 入口
-///
-/// 跟 `_smsService` 1:1 平行: release 模式启动时
-/// [EmailService.validateForRelease] 主动 check, 邮件 provider 未就绪
-/// 抛 [EmailProviderNotConfiguredError] 阻断, banner 显眼提示。
-///
-/// v0.30 R95 sub-spec 8 task 56: 顶层 mutable static 改 `final`
-///
-/// R97-P1-13 (2026-08-07): `late` 去掉
-final EmailService _emailService = EmailService();
+// v0.30 R108 revisit (P0-031): 删顶层 `final SmsService _smsService` 和
+//   `final EmailService _emailService` 顶层 static mutable 实例。
+// 之前模式: 顶层持有 + Provider 也定义,两路实例化 (顶层 main() 内
+//   validateForRelease 走 _smsService,ProviderScope 内 ref.watch 走
+//   Provider 创建的新实例), 违反 Riverpod DI 哲学 (Provider 才是 SOLE
+//   source of truth)。
+// 修后: _bootstrap() 内创建 local instance, validateForRelease + overrideWithValue
+//   共享同一份。Provider 仍是 fallback, 但实际永远被 override,不会两路实例化。
+// (历史注释保留在 git blame: R62 / R67 / R95 task 56 / R97-P1-13)
 
 /// 慢病管家 · App 入口
 ///
@@ -163,8 +151,14 @@ Future<void> _bootstrap() async {
 
   // 3. SMS / Email / StoreKit 守卫（互相独立，并行）
   //    release + mock → 抛异常,被 runZonedGuarded 抓住
-  SmsService.validateForRelease(_smsService.provider);
-  EmailService.validateForRelease(_emailService);
+  // v0.30 R108 revisit (P0-031): 删顶层 _smsService / _emailService,改在
+  //   _bootstrap() 内 local 创建, 跟 Provider overrideWithValue 共享同一份
+  //   instance (避免顶层 mutable 持有 + Provider 重新实例化的"两路 SmsService"
+  //   anti-pattern)。
+  final smsService = SmsService();
+  final emailService = EmailService();
+  SmsService.validateForRelease(smsService.provider);
+  EmailService.validateForRelease(emailService);
   if (FeatureFlags.iapEnabled) {
     await StoreKitService.warmup();
   } else {
@@ -196,7 +190,11 @@ Future<void> _bootstrap() async {
         ),
         notificationServiceProvider.overrideWithValue(notifResult.service),
         databaseProvider.overrideWithValue(sharedDb),
-        smsServiceProvider.overrideWithValue(_smsService),
+        // v0.30 R108 revisit (P0-031): smsServiceProvider / emailServiceProvider
+        //   override 改成 _bootstrap() 内的 local instance, 跟 validateForRelease
+        //   共享 (避免顶层 mutable + Provider 两路实例化)。
+        smsServiceProvider.overrideWithValue(smsService),
+        emailServiceProvider.overrideWithValue(emailService),
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       ],
       child: const AppRoot(),

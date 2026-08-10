@@ -37,6 +37,13 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
+// v0.30 R108 revisit (P1-050): 替代散落 5 处 `SizedBox(height: 12)` magic
+// 12 = "section gap" 视觉心理学最佳 (不跟 token sequence 4/8/16/24 重复, emil
+// 决策框架 — "decisions should be nameable")。
+// 加到 file-local 集中器, 不污染 AppTokens 设计系统全局 (本文件 4 个占位
+// App 共享这一档间距, 是 start-up UI 专用, 不属于业务 spacing)。
+const double _kSectionGap = 12.0;
+
 /// 弹 dialog 用的"启动中"App + navigatorKey
 ///
 /// 等待期间显示一个简单的 loading, 弹完 dialog 就销毁。
@@ -87,7 +94,7 @@ class MigrationAbortedApp extends StatelessWidget {
                   // 集中器, 替代硬编 Colors.orange (R40+ 漏掉)
                   color: AppTokens.warningColor(context),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppTokens.spacingSm),
                 Text(
                   l10n.migrationAbortedTitle,
                   style: const TextStyle(
@@ -95,7 +102,7 @@ class MigrationAbortedApp extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: _kSectionGap),
                 Text(
                   l10n.migrationAbortedBody,
                   textAlign: TextAlign.center,
@@ -150,7 +157,7 @@ class MigrationFailedApp extends StatelessWidget {
                   // 集中器, 替代硬编 Colors.red (R40+ 漏掉)
                   color: AppTokens.errorColor(context),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppTokens.spacingSm),
                 Text(
                   l10n.migrationFailedTitle,
                   style: const TextStyle(
@@ -158,20 +165,20 @@ class MigrationFailedApp extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: _kSectionGap),
                 // v0.30 R95 task 53: 内部兜底文案走 ARB, 不再硬编码 "无法初始化本地数据"
                 // (R45 之前的硬编码 en 模式用户看到中文)
                 Text(
                   l10n.migrationFailedBody,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: _kSectionGap),
                 // v0.30 R95 task 53: 可操作提示
                 Text(
                   l10n.migrationFailedActionHint,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppTokens.spacingSm),
                 // v0.24 round 48 (sp-zh P1-16): 失败时给用户安抚句,降低焦虑。
                 // 中文用户尤其敏感 — 精神心理患者迁移失败时最怕"数据丢了"。
                 // 这条文案用 l10n key,中英文都友好。
@@ -257,15 +264,15 @@ Future<bool?> showMigrationConfirmDialog(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(l10n.migrationPromptDetectedOld),
-              const SizedBox(height: 12),
+              const SizedBox(height: _kSectionGap),
               Text(l10n.migrationPromptChangesTitle),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppTokens.spacingXxs),
               Text(l10n.migrationPromptChangeEncrypt),
               Text(l10n.migrationPromptChangeClear),
               Text(l10n.migrationPromptChangeWarning),
-              const SizedBox(height: 12),
+              const SizedBox(height: _kSectionGap),
               Text(l10n.migrationPromptRecommendExport),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppTokens.spacingXxs),
               Text(l10n.migrationPromptDirectContinue),
             ],
           ),
