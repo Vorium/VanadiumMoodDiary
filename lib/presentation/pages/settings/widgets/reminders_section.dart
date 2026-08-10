@@ -32,7 +32,7 @@ class RemindersSection extends StatelessWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/settings/reminders'),
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, thickness: 0.5),
           AppListTile(
             leading: Icon(
               Icons.shopping_cart_outlined,

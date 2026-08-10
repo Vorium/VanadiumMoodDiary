@@ -1,14 +1,24 @@
-// v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
+// v0.31 round 4 (Apple Health redesign · Phase 1 Task 1.4): facade 同步 3 Apple curve
 //
-// 拆解前: 644 行 god constant 8 大类混合 (颜色/字号/间距/圆角/动效/alpha/
-// shadow/业务 + MotionScheme + Motion)。
-// 拆解后: app_tokens.dart ≤50 行 facade, 4 个子文件:
+// 历史:
+// - v0.27 round 65 (alibaba B16 god constant 拆分收尾): app_tokens.dart 瘦身
+//   拆解前: 644 行 god constant 8 大类混合 (颜色/字号/间距/圆角/动效/alpha/
+//   shadow/业务 + MotionScheme + Motion)。
+//   拆解后: app_tokens.dart ≤50 行 facade, 4 个子文件:
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/core/theme/app_spacing.dart';
 import 'package:chroniccare/core/theme/app_typography.dart';
 import 'package:flutter/material.dart'
-    show Color, Curve, TextStyle, BuildContext, BoxShadow, EdgeInsets;
+    show
+        Color,
+        Curve,
+        Cubic, // v0.31 R4 (Task 1.4): facade 转发 3 Apple curve (Cubic 子类) 需要
+        TextStyle,
+        BuildContext,
+        BoxShadow,
+        EdgeInsets,
+        FontWeight; // v0.31 R2 (Task 1.2): facade 转发 fontWeightUltralight/Light 需要
 
 // Re-export top-level symbols (Motion / MotionScheme / WindowSize / windowSizeOf)
 // 让老 import `package:chroniccare/core/theme/app_tokens.dart` 的 caller
@@ -43,6 +53,19 @@ export 'package:chroniccare/core/theme/app_spacing.dart'
 /// - v0.5  · 2026-07-12 增加 dark 颜色 + 响应式断点
 /// - v0.18 · 2026-07-18 (P1-5) 增加 dynamic Color getter,支持 dark mode
 /// - v0.27 R65 · 拆 4 文件, 留 facade
+/// - v0.31 R1 · Apple Health redesign: 8 metric palette (healthMetricsColors / Ids /
+///   healthMetricsColorFor / tintedMetricSoft) 转发; 14 个 const Color 走 AppColors.xxx
+///   自动跟随新值, 本 facade 不重定义。
+/// - v0.31 R2 · Apple Health redesign Phase 1 Task 1.2: 3 档 metric 字号
+///   (fontSizeMetricXl/Lg/Md 34/28/22) + 2 档字重 (fontWeightUltralight w200 /
+///   fontWeightLight w300) 转发; 现有字号 / 行高自动跟随 AppTypography 新值。
+/// - v0.31 R3 · Apple Health redesign Phase 1 Task 1.3: 3 新 token 转发
+///   (spacingXxxl=32 / radiusTile=12 / radiusLargeButton=22) + 现有 spacing/
+///   radius/size 全部自动跟随 AppSpacing 新值 (老 caller 不动)。
+/// - v0.31 R4 · Apple Health redesign Phase 1 Task 1.4: 3 Apple curve 转发
+///   (curveSpring / curveAppleSheet / curveAppleDrawer) + 现有 curve 全部
+///   自动跟随 AppMotion 新值 (老 caller 不动)。注意 AppMotion.durNormal /
+///   durSlow / durPress 跟 R4 同步调档 (300→250 / 500→400 / 160→100)。
 class AppTokens {
   AppTokens._();
 
@@ -92,11 +115,20 @@ class AppTokens {
   static const double fontSizeScoreLg = AppTypography.fontSizeScoreLg;
   static const double fontSizeScoreXl = AppTypography.fontSizeScoreXl;
   static const double fontSizeScoreXxl = AppTypography.fontSizeScoreXxl;
+  // v0.31 R2 (Apple Health redesign · Task 1.2): 3 档 metric 大数字转发
+  // (Apple Health 标志性 ultralight 数字 — 34 / 28 / 22)
+  static const double fontSizeMetricXl = AppTypography.fontSizeMetricXl;
+  static const double fontSizeMetricLg = AppTypography.fontSizeMetricLg;
+  static const double fontSizeMetricMd = AppTypography.fontSizeMetricMd;
   static const double lineHeightTight = AppTypography.lineHeightTight;
   static const double lineHeightNormal = AppTypography.lineHeightNormal;
   static const double lineHeightLoose = AppTypography.lineHeightLoose;
   static const double lineHeightSnug = AppTypography.lineHeightSnug;
   static const double lineHeightRelaxed = AppTypography.lineHeightRelaxed;
+  // v0.31 R2 (Apple Health redesign · Task 1.2): 2 档字重转发
+  // ultralight w200 (Apple Health 大数字) + light w300 (次大数字)
+  static const FontWeight fontWeightUltralight = AppTypography.fontWeightUltralight;
+  static const FontWeight fontWeightLight = AppTypography.fontWeightLight;
   static TextStyle textStyleTitle(BuildContext c) =>
       AppTypography.textStyleTitle(c);
   static TextStyle textStyleHeadline(BuildContext c) =>
@@ -134,6 +166,8 @@ class AppTokens {
   static const double spacingMd = AppSpacing.spacingMd;
   static const double spacingLg = AppSpacing.spacingLg;
   static const double spacingXl = AppSpacing.spacingXl;
+  // v0.31 R3 (Apple Health redesign · Task 1.3): Apple 章节间距转发
+  static const double spacingXxxl = AppSpacing.spacingXxxl;
   static const int staggerStepMs = AppSpacing.staggerStepMs;
   static const int staggerCapMs = AppSpacing.staggerCapMs;
   static const double spacingXxs = AppSpacing.spacingXxs;
@@ -154,6 +188,11 @@ class AppTokens {
   static const double radiusChip = AppSpacing.radiusChip;
   static const double radiusCell = AppSpacing.radiusCell;
   static const double radiusCellLg = AppSpacing.radiusCellLg;
+  // v0.31 R3 (Apple Health redesign · Task 1.3): 2 个新圆角转发
+  // - radiusTile 12 (AppleHealthTile 容器)
+  // - radiusLargeButton 22 (Pill button, ≈ buttonHeight/2)
+  static const double radiusTile = AppSpacing.radiusTile;
+  static const double radiusLargeButton = AppSpacing.radiusLargeButton;
 
   // ===== v0.30 round 95 (sub-spec 5 task 3-4): EdgeInsets 静态 const helper =====
   // 替代散落 120+ 处 `EdgeInsets.all(8/16/24/40/80)` literal
@@ -215,6 +254,12 @@ class AppTokens {
   static const Curve curveAccelerate = AppMotion.curveAccelerate;
   static const Curve curveDelight = AppMotion.curveDelight;
   static const Curve curveBackOut = AppMotion.curveBackOut;
+  // v0.31 R4 (Apple Health redesign · Task 1.4): 3 Apple 自定义 cubic-bezier
+  // (spec §3.4.2, app_motion.dart 注释) — facade 转发, 老 caller 不动
+  // 用 Cubic 而非 Curve, 跟 source type 1:1 保留强类型 (const Cubic → const Cubic)
+  static const Cubic curveSpring = AppMotion.curveSpring;
+  static const Cubic curveAppleSheet = AppMotion.curveAppleSheet;
+  static const Cubic curveAppleDrawer = AppMotion.curveAppleDrawer;
 
   // ===== AppColors dynamic getter — 全部转发 (R65 兼容老 caller) =====
   static Color primaryColor(BuildContext c) => AppColors.primaryColor(c);
@@ -312,4 +357,24 @@ class AppTokens {
   /// UI 层直接传给 LineChartBarData.dashArray
   static List<int> dailyTrackingDashFor(String metricId) =>
       AppColors.dailyTrackingDashFor(metricId);
+
+  // ===== v0.31 R1 (Apple Health redesign · Phase 1 Task 1.1): 8 metric palette 转发 =====
+  //
+  // 8 iOS system color, 顺序固定, 跟 healthMetricsIds 1:1 对应。
+  // 8 metric 入口: medication / mood / vent / assessment / checkIn / trend /
+  // contact / sleep。详见 AppColors.healthMetricsColors 注释。
+  static const List<Color> healthMetricsColors = AppColors.healthMetricsColors;
+  static const List<String> healthMetricsIds = AppColors.healthMetricsIds;
+
+  /// 按 metricId 拿 metric 色 (Color, 找不到返 0xFF9E9E9E 兜底)
+  ///
+  /// UI 层: `AppTokens.healthMetricsColorFor('medication')` → systemRed
+  static Color healthMetricsColorFor(String metricId) =>
+      AppColors.healthMetricsColorFor(metricId);
+
+  /// 按 metricId 拿 metric 浅色背景 (alpha 0.12, AppleHealthTile 容器底色)
+  ///
+  /// UI 层: `AppTokens.tintedMetricSoft(context, 'medication')` → systemRed 12%
+  static Color tintedMetricSoft(BuildContext c, String metricId) =>
+      AppColors.tintedMetricSoft(c, metricId);
 }

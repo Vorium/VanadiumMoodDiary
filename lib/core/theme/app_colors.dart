@@ -1,56 +1,88 @@
-// v0.27 round 65 (alibaba B16 god constant 拆分): 颜色 token 独立
+// v0.31 round 1 (Apple Health redesign · Phase 1 Task 1.1):
+// 颜色 token 从 M3 嫩绿系 → Apple Health iOS system color + 8 metric palette。
 //
-// 拆解前: app_tokens.dart 644 行混合 8 大类 (颜色/字号/间距/圆角/动效/alpha/
-// shadow/业务 + MotionScheme + Motion) god constant。
-// 拆解后:
-//   - app_colors.dart     (~250 行) 颜色 + dynamic getter + tintedXxx + fgXxx
-//   - app_typography.dart (~150 行) 字号 + 行高 + TextStyle helper
-//   - app_spacing.dart    (~120 行) 间距 + 圆角 + 尺寸 + 断点
-//   - app_motion.dart     (~200 行) duration + curve + shadow + MotionScheme + Motion
-//   - app_tokens.dart     (≤50 行)  facade 入口, static const re-export, 老 caller 不动
+// 历史:
+// - v0.27 round 65 (alibaba B16 god constant 拆分): 颜色 token 独立
+//   拆解前: app_tokens.dart 644 行混合 8 大类 (颜色/字号/间距/圆角/动效/alpha/
+//   shadow/业务 + MotionScheme + Motion) god constant。
+//   拆解后:
+//     - app_colors.dart     (~250 行) 颜色 + dynamic getter + tintedXxx + fgXxx
+//     - app_typography.dart (~150 行) 字号 + 行高 + TextStyle helper
+//     - app_spacing.dart    (~120 行) 间距 + 圆角 + 尺寸 + 断点
+//     - app_motion.dart     (~200 行) duration + curve + shadow + MotionScheme + Motion
+//     - app_tokens.dart     (≤50 行)  facade 入口, static const re-export, 老 caller 不动
+//
+// - v0.31 round 1 (本轮 Apple Health redesign):
+//   改 8 个 light 静态 const (background / surface / textPrimary / textSecondary /
+//     textHint / border / divider / primary / primaryDark) → iOS 风格
+//   改 3 个 dark 静态 const (backgroundDark / surfaceDark / textPrimaryDark)
+//   新增 healthMetricsColors (8 iOS system colors) + healthMetricsIds +
+//     healthMetricsColorFor + tintedMetricSoft
+//   保留 success / warning / error / 16 个 dynamic getter / 现有 18 个 dark 静态 const
 //
 // 设计原则:
-// - 单一职责: 颜色 + tinted + fg 全部在 AppColors 一处
+// - 单一职责: 颜色 + tinted + fg + health metric palette 全部在 AppColors 一处
 // - 老 caller 兼容: `AppTokens.primary` 仍能用 (走 facade static const 转发)
-// - 新 caller 鼓励: `AppColors.primary` (单一来源, 改动一处生效)
+// - 新 caller 鼓励: `AppColors.primary` / `AppColors.healthMetricsColorFor(id)`
 // - 跟 Material 3 ColorScheme 桥接: dynamic getter 走 Theme.of(context).colorScheme
+// - metric palette 跨 light/dark 用同色: 趋势/图标需要稳定视觉标识, 跟 R90 assessment
+//   palette 风格一致
 import 'package:flutter/material.dart';
 
 /// v0.27 round 65 (alibaba B16 god constant 拆分): 颜色 token 集中器
 ///
-/// 4 大类:
+/// v0.31 round 1 (Apple Health redesign): 加 8 iOS system metric palette
+///
+/// 5 大类:
 /// 1. **静态 const Color** (light/dark 二选一, 不依赖 BuildContext)
 /// 2. **Dynamic color getter** (接受 BuildContext, 走 M3 ColorScheme 适配)
 /// 3. **Tinted color getter** (alpha 0.08-0.85 调色, 软背景用)
 /// 4. **Foreground color getter** (text on top, 走 M3 onXxx)
+/// 5. **Health metric palette** (8 iOS system color, 跨 light/dark 稳定)
 class AppColors {
   AppColors._();
 
   // ============= 品牌色（亮/暗通用）=============
-  /// 主色：嫩绿（萌芽意象，呼应"还在坚持"）
-  static const Color primary = Color(0xFF6BCF7F);
+  /// v0.31 R1 (Apple Health redesign): 主色 → iOS systemGreen
+  /// (原 0xFF6BCF7F 嫩绿偏冷; iOS 0xFF34C759 更鲜亮, 是 Apple Health "favorites" 标准绿)
+  /// 决策记录: spec.md §6 决策 #1 ✅ 用户已确认
+  static const Color primary = Color(0xFF34C759);
 
-  /// 主色 - 按下态
-  static const Color primaryDark = Color(0xFF4FB05F);
+  /// v0.31 R1: 主色按下态 → iOS systemGreen dark
+  static const Color primaryDark = Color(0xFF248A3D);
 
-  // ============= 亮色色板（v0.4 已有）=============
+  // ============= 亮色色板 =============
   static const Color primaryLight = Color(0xFFE8F8EC);
-  static const Color background = Color(0xFFFAFAFA);
+  /// v0.31 R1: 背景 → iOS systemGroupedBackground (#F2F2F7)
+  static const Color background = Color(0xFFF2F2F7);
+  /// 卡片/容器表面 — 纯白不变
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color textPrimary = Color(0xFF1A1A1A);
-  static const Color textSecondary = Color(0xFF666666);
-  // R104 (P0-10 fix): #767676 对比度 4.5:1 刚好踩线, 改 #595959 (7:1) 满足 WCAG AA
-  static const Color textHint = Color(0xFF595959);
-  static const Color border = Color(0xFFE0E0E0);
+  /// v0.31 R1: 主文字 → iOS label 纯黑 (#000000, light mode)
+  static const Color textPrimary = Color(0xFF000000);
+  /// v0.31 R1: 次要文字 → iOS secondaryLabel (3C3C43 @ 60% alpha, const 取底色)
+  /// const 不能带 alpha; dynamic getter textSecondaryColor(c) 走 M3 onSurfaceVariant
+  /// 已自动应用 60% alpha。static const 仅给"硬编码背景"场景兜底, 实际 widget 走 getter。
+  static const Color textSecondary = Color(0xFF3C3C43);
+  /// v0.31 R1: 提示文字 → iOS tertiaryLabel (3C3C43 @ 30% alpha, const 取底色)
+  static const Color textHint = Color(0xFF3C3C43);
+  /// v0.31 R1: 边框 → iOS opaqueSeparator (#C6C6C8)
+  /// 跟 spec §3.1.1 "3C3C43 10% alpha / #C6C6C8" 二选一; 取后者因 const 不能带 alpha。
+  /// 实际 widget 走 borderColor(c) 走 M3 outline, 自带 12% alpha 感。
+  static const Color border = Color(0xFFC6C6C8);
   static const Color disabled = Color(0xFFBDBDBD);
-  static const Color divider = Color(0xFFF0F0F0);
+  /// v0.31 R1: 分割线 → iOS hairline (C6C6C8 @ 40% alpha, 在白底预计算 ≈ #E8E8E9)
+  /// 0.5px 视觉等效。const 不能带 alpha, 预计算到白底上的实际呈现值。
+  static const Color divider = Color(0xFFE8E8E9);
 
-  // ============= 暗色色板（v0.5 新增）=============
+  // ============= 暗色色板 =============
   // 注意：M3 实际用 ColorScheme.fromSeed 派生；这里是兜底色，
   // 仅当 widget 硬编码 AppColors.xxx 时（dark mode 下视觉会偏色）
-  static const Color backgroundDark = Color(0xFF121212);
-  static const Color surfaceDark = Color(0xFF1E1E1E);
-  static const Color textPrimaryDark = Color(0xFFE6E6E6);
+  /// v0.31 R1: 暗色背景 → iOS 暗色纯黑 (#000000)
+  static const Color backgroundDark = Color(0xFF000000);
+  /// v0.31 R1: 暗色表面 → iOS secondarySystemGroupedBackground (#1C1C1E)
+  static const Color surfaceDark = Color(0xFF1C1C1E);
+  /// v0.31 R1: 暗色主文字 → 纯白 (#FFFFFF)
+  static const Color textPrimaryDark = Color(0xFFFFFFFF);
   static const Color textSecondaryDark = Color(0xFFB0B0B0);
   static const Color textHintDark = Color(0xFF7A7A7A);
   static const Color borderDark = Color(0xFF2A2A2A);
@@ -368,5 +400,66 @@ class AppColors {
     final idx = dailyTrackingMetricIds.indexOf(metricId);
     if (idx < 0) return const <int>[];
     return dailyTrackingDashArrays[idx];
+  }
+
+  // ============= v0.31 R1 (Apple Health redesign · Phase 1 Task 1.1): 8 metric palette =============
+  //
+  // Apple Health 标志性 "favorites" 8 彩色 metric tile 调色板, 映射到本项目 8 个
+  // feature 入口 (medication / mood / vent / assessment / checkIn / trend / contact /
+  // sleep)。全部走 iOS system color, 跟 spec §3.1.3 表 1:1 对应。
+  //
+  // 设计原则 (跟 R90 assessment color palette + R91 daily tracking 一致):
+  // - 8 metric 是固定枚举 (不会扩张到 N 个), 直接放 AppColors 集中管理
+  // - 顺序固定: 跟 `healthMetricsIds` 1:1 对应, 修改需同步
+  // - 跨 light/dark 用同一色: 趋势/图标/tile 背景需要稳定视觉标识
+  //   (跟 R90 R91 同款, dark mode 下 alpha 自动按需调)
+  // - 未知 metric 兜底: 灰 0xFF9E9E9E (跟 R90 R91 同款)
+  // - 不用 theme-aware, 固定 const Color
+
+  /// 8 iOS system color (顺序固定, 跟 healthMetricsIds index 1:1)
+  /// 对应 spec §3.1.3 表 8 个 metric: medication / mood / vent / assessment /
+  /// checkIn / trend / contact / sleep
+  static const List<Color> healthMetricsColors = [
+    Color(0xFFFF3B30), // systemRed     — medication (用药 / 续方 / 提醒)
+    Color(0xFFFF2D55), // systemPink    — mood (心情 / 应激)
+    Color(0xFFAF52DE), // systemPurple  — vent (树洞 / 录音)
+    Color(0xFF5856D6), // systemIndigo  — assessment (心理评估)
+    Color(0xFF34C759), // systemGreen   — checkIn (打卡 / streak)  ← 同 primary
+    Color(0xFF007AFF), // systemBlue    — trend (趋势 / 图表)
+    Color(0xFFFF9500), // systemOrange  — contact (紧急联系人)
+    Color(0xFF5AC8FA), // systemTeal    — sleep (睡眠 / 日常, R1 暂未接入)
+  ];
+
+  /// 8 metric id (顺序固定, 跟 healthMetricsColors index 1:1)
+  /// UI 层用: `AppColors.healthMetricsColorFor('medication')` 拿对应色
+  static const List<String> healthMetricsIds = [
+    'medication',
+    'mood',
+    'vent',
+    'assessment',
+    'checkIn',
+    'trend',
+    'contact',
+    'sleep',
+  ];
+
+  /// 按 metricId 拿 metric 色 (Color, 找不到返 0xFF9E9E9E 深灰 兜底)
+  ///
+  /// UI 层直接用: `AppColors.healthMetricsColorFor('medication')` → systemRed
+  static Color healthMetricsColorFor(String metricId) {
+    final idx = healthMetricsIds.indexOf(metricId);
+    if (idx < 0) return const Color(0xFF9E9E9E);
+    return healthMetricsColors[idx];
+  }
+
+  /// 按 metricId 拿 metric 浅色背景 (alpha 0.12, AppleHealthTile 容器底色)
+  ///
+  /// 设计: Apple Health "favorites" tile 背景 = metric 色 @ 12% alpha。
+  /// 不用 const (alpha 应用是 runtime); 接受 BuildContext 为后续
+  /// dark mode 调 alpha 留接口 (跟 tintedXxxSoft 风格一致)。
+  ///
+  /// UI 层: `AppColors.tintedMetricSoft(context, 'medication')` → systemRed 12%
+  static Color tintedMetricSoft(BuildContext context, String metricId) {
+    return healthMetricsColorFor(metricId).withValues(alpha: 0.12);
   }
 }

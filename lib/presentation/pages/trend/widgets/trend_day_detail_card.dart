@@ -154,7 +154,7 @@ class DayDetailCard extends StatelessWidget {
               ),
             ],
             const SizedBox(height: AppTokens.spacingSm),
-            const Divider(height: 1),
+            const Divider(height: 1, thickness: 0.5),
             const SizedBox(height: AppTokens.spacingSm),
             if (detail.events.isEmpty)
               Padding(
@@ -181,7 +181,7 @@ class DayDetailCard extends StatelessWidget {
               Column(
                 children: [
                   for (int i = 0; i < detail.events.length; i++) ...[
-                    if (i > 0) const Divider(height: 1, indent: 32),
+                    if (i > 0) const Divider(height: 1, thickness: 0.5, indent: 32),
                     EventRow(event: detail.events[i]),
                     // v0.29 round 84 (CBT 思维记录): 在 mood event 行下展开 CBT 摘要
                     if (detail.events[i].kind == DayEventKind.mood)

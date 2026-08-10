@@ -207,7 +207,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                           'user_agreement',
                         ),
                       ),
-                      const Divider(height: 1),
+                      const Divider(height: 1, thickness: 0.5),
                       _DocTile(
                         icon: Icons.privacy_tip_outlined,
                         title: l10n.setupLegalPrivacyPolicy,
@@ -216,7 +216,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                           'privacy_policy',
                         ),
                       ),
-                      const Divider(height: 1),
+                      const Divider(height: 1, thickness: 0.5),
                       _DocTile(
                         icon: Icons.medical_services_outlined,
                         title: l10n.setupLegalSensitiveData,
@@ -255,7 +255,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                         withdrawnAt: _withdrawnAt[ConsentKind.safety],
                         onToggle: (v) => _toggle(ConsentKind.safety, v),
                       ),
-                      const Divider(height: 1),
+                      const Divider(height: 1, thickness: 0.5),
                       _ConsentTile(
                         kind: ConsentKind.vent,
                         title: l10n.legalPageWithdrawVent,
@@ -264,7 +264,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                         withdrawnAt: _withdrawnAt[ConsentKind.vent],
                         onToggle: (v) => _toggle(ConsentKind.vent, v),
                       ),
-                      const Divider(height: 1),
+                      const Divider(height: 1, thickness: 0.5),
                       _ConsentTile(
                         kind: ConsentKind.analytics,
                         title: l10n.legalPageWithdrawAnalytics,

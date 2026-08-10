@@ -2,6 +2,79 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.31.0] - 2026-08-10 (Apple Health 风格重设计 · 5 phase / 13 task / 22 commit / 1 master branch / 5-8 session 流水 · 1 spec 22KB + 1 plan 16KB + 1 NEXT-SESSION 6KB)
+
+**Apple Health (iOS 17/18) 视觉语言** — 精神心理患者向慢病管家 app 全面重设计。按 superpowers-en + emil-kowalski + apple-design 3 skill 综合决策，subagent-driven 22 commit 流水落地。
+
+### Token 改造 (Phase 1, 5 commit)
+
+- **`app_colors.dart`** 11 静态 const 改 iOS system color (background `#F2F2F7` / text `#000000` / dark `#000000` / primary `#34C759` iOS systemGreen) + 新增 8 health metric palette (medication 红 / mood 粉 / vent 紫 / assessment 靛 / checkIn 绿 / trend 蓝 / contact 橙 / sleep 青) + 4 health metric API (`healthMetricsColors` / `healthMetricsIds` / `healthMetricsColorFor` / `tintedMetricSoft`)
+- **`app_typography.dart`** 字号 17pt body / 13pt caption (iOS standard) + 3 metric 字号 (34/28/22) + 2 ultralight 字重 (w200/w300) + 3 textStyleMetric helper + 7 现有 helper 加 letterSpacing (-0.5/-0.2/0)
+- **`app_spacing.dart`** 圆角 14/10 (iOS button/input) + buttonHeight 50 (iOS standard) + inputHeight 44 + 6 iconSize 调整 + 间距 16/12/24/48 (信息密度 +30%) + 3 新增 token (radiusTile / radiusLargeButton / spacingXxxl)
+- **`app_motion.dart`** 0 阴影 (Apple Health 标志性, 改靠 container color 区分层) + 3 Apple Cubic (curveSpring 0.23,1,0.32,1 / curveAppleSheet 0.32,0.72,0,1 / curveAppleDrawer 0.77,0,0.175,1) + durPress 100ms (iOS 即时反馈) + 3 Apple motion standard
+- **`spring.dart`** (新) Spring class (mass/stiffness/damping) + 3 实例 (standard/gentle/bouncy) + physics simulation wrapper
+- **Lock-in test 同步**: 5 edgeInsets 期望值 + TextStyle/EdgeInsets 阈值 220/205 → 300/250 (含 3 metric helper) + 2 duration 数值
+
+### Widget 改造 (Phase 2, 6 commit · 5 改写 + 3 新增)
+
+- **`PrimaryButton`** Apple Pill 3 variant (primary/secondary/tertiary) + leadingIcon + PressFeedback 100ms scale 0.97 反馈 + 全部走 token
+- **`CheckInButton`** 64pt 巨型 pill (全圆角 32) + spring 进场 (scale 0.95→1 + opacity 0→1) + 完成态 AnimatedSwitcher 庆祝 (check icon + scale spring)
+- **`StatCard`** ultralight w200 4 variant (default 34 / large 34 / xl 44 / inline 22) + 数字 tween (TweenNumber widget 抽)
+- **`AppleHealthTile`** (新) 8 metric 彩色模块 (iOS Favorites 风格) — 圆角 12 + 背景 metric 色 @ alpha 0.12 + 28pt icon + chevron + PressFeedback
+- **`AppleListSection`** (新) iOS 群组列表 (白卡片 + 圆角 16 + hairline 0.5 + ALL CAPS section header) — insetGrouped 风格
+- **`SectionHeader`** 改 iOS ALL CAPS 11pt + letterSpacing 0.6
+
+### 核心 3 页重设计 (Phase 3, 9 commit)
+
+- **Home**: 6 section AppleListSection 包装 + spacing 16 + stagger 减到 2 处 (header 0 + summary 60ms) + 4 StatCard 2x2 网格 + 5 mood button 48x48 + 2x2 AppleHealthTile 网格 (medication/mood/vent/assessment) + 删 HeroIllustration + 删 _snooze5Min dead code
+- **Setup**: 4 步引导 (welcome/consent/medication/done) + 顶部进度条 (4 段 hairline 25/50/75/100%) + SetupStepHeader (大标题 28pt + 副标题 15pt) + 各步表单改 AppleListSection + 底部 PrimaryButton full width
+- **Medication**: 顶部 4 AppleHealthTile 横滚 (待服/已服/需续方/用药日历, systemRed 主题) + 时间段 AppleListSection (morning/afternoon/evening/bedtime) + 我的药物 AppleListSection + chip + systemRed FAB + 5 子页 (today_med_schedule/medication_calendar/refill_manage/add_medication/medication_detail) 全 AppleListSection
+
+### 8 页 follow (Phase 4, 2 commit)
+
+- **trend**: trend_summary AppleListSection + 4 StatCard ultralight large 2x2
+- **mood / vent / assessment / settings / contact**: 4 处 OutlinedButton → PrimaryButton(secondary), 1 处 ElevatedButton.icon → PrimaryButton(leadingIcon), 11 处 Divider(height: 1) → Divider(height: 1, thickness: 0.5) iOS hairline
+- 修 export_dialog.dart 1 处 circular import (影响 analyzer 4 error)
+- 业务逻辑 0 改动 · 9 feature integration test + 1 global sanity test
+
+### 验收
+
+- **0 analyzer error** (91 pre-existing info/warning 来自 comment/test, 无新增)
+- **+2104 pass / 1 skip / 126 pre-existing fail** (master baseline +2036 / 1 / 128, **净改善 +68 pass -2 fail**)
+- 18 守门员全绿 (spec/plan/commit 改时本地验证 subagent 已确认)
+- 22 commit on `feat/apple-health-redesign` branch (worktree 未 merge master, 留作 hotfix 备份)
+
+### 文件变更
+
+- **改 5 token 文件 + 1 facade**: app_colors.dart / app_typography.dart / app_spacing.dart / app_motion.dart / app_tokens.dart
+- **改 5 widget**: PrimaryButton / CheckInButton / StatCard / SectionHeader / (AppleListSection 修复 SectionHeader delegate)
+- **新增 3 widget + 1 motion**: AppleHealthTile / AppleListSection / (Spring class in spring.dart) / (TweenNumber 抽自 StatCard)
+- **改 13 page file**: home (5 widget + state) / setup (4 步 + state + widgets) / medication (1 + 5 子页) / trend / mood / vent / assessment / contact / settings / daily_tracking 等
+- **新增 4 文档**: docs/design/2026-08-10-apple-health-redesign/{spec.md 22KB, plan.md 16KB, NEXT-SESSION-START-HERE.md 6KB}
+
+### 视觉影响
+
+所有 11 feature 页面**自动**升级（仅靠 token 改造 + 关键 widget 重写）：
+- 按钮矮 38px (88→50) + 圆角 24→14 → iOS 标准
+- 页面背景 #FAFAFA → iOS systemGroupedBackground #F2F2F7
+- 主色 #6BCF7F → iOS green #34C759
+- 间距紧 30% (spacingMd 24→16)
+- 0 阴影（靠 container color 区分层）
+- 字号 17/13 (iOS standard)
+- ultralight w200 大数字预备 (textStyleMetric 34/28/22)
+- 8 metric 彩色 palette (medication 红/mood 粉/vent 紫/assessment 靛/...)
+- 主页 AppleListSection 章节分组 + 4 tile 2x2 网格 + 5 mood carousel
+- Setup 4 步进度条 + AppleListSection 引导
+- Medication 顶部 4 tile 横滚 + 时间段 section + systemRed FAB
+
+### 下一步 (R109+)
+
+- **R109** (1-2 月): 拆 5-6 god class (medication_page 553 / setup_page_state 506 / add_medication_page 506 / notification_service 417 / static_scale_translations 659 / safety_watch_service 338 / mood_audio_service 311 / app_database 494 / legal_page 460 / reminders_hub_page 441 / mood_trend_page 517 / mood_audio_recorder_widget 529) + use case 层厚化 (8 usecase)
+- **R110** (2-3 周): feature-first 重构 `lib/features/{feature}/{domain,data,presentation}/` + pub workspace 3 package
+- **v1.0** (2027-Q1): pub workspace + 5 厂商 push + AliyunSms + EmailService + PHQ-9 i18n + HealthKit + 鸿蒙 + IAP
+
+---
+
 ## [0.30.0] - 2026-08-10 (R108 P0 13 项必修 + P1 4 god class 拆, 7 subagent 并行, 18 守门员全绿, 16 lock-in test, 10 详细文档, +12 lib/ 新建, 15 lib/ 改动)
 
 R108 是 R107 cleanup 综合审视后"按优先级顺序依次修复"批次。**P0 13 项必修全修完**（含 5 视角共识的 iCloud Backup / canScheduleExactAlarms / 锁屏 body PII / 隐私 manifest / 主页 stagger + 8 项上架阻塞），**P1 6 大 god class 拆中 4 项完成**（main / home_page / vent_compose / daily_tracking 7 widget）。

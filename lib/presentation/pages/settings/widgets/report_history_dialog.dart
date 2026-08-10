@@ -52,7 +52,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
                 ],
               ),
             ),
-            const Divider(height: 1),
+            const Divider(height: 1, thickness: 0.5),
             // 列表
             Expanded(
               child: asyncHistories.when(
@@ -80,7 +80,7 @@ class ReportHistoryListDialog extends ConsumerWidget {
                   }
                   return ListView.separated(
                     itemCount: histories.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5),
                     itemBuilder: (ctx, i) {
                       final h = histories[i];
                       // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器

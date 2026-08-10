@@ -99,7 +99,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1 / 1'), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    // v0.31 round 11a: 改 check_circle_rounded (Apple Health 风格)
+    expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
   });
 
   testWidgets('多药多时间点 → 按时间排序', (tester) async {
@@ -144,6 +145,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('0 / 1'), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle), findsNothing);
+    // v0.31 round 11a: 改 check_circle_rounded
+    expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
   });
 }

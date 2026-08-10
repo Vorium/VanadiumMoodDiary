@@ -234,7 +234,7 @@ class _NotificationStatusCardState
                     onPressed: _refresh,
                   ),
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, thickness: 0.5),
           AppListTile(
             leading: Icon(
               Icons.send_outlined,
@@ -244,7 +244,7 @@ class _NotificationStatusCardState
             subtitle: Text(l10n.notificationStatusCardTestButtonSubtitle),
             onTap: _busy ? null : _fireTest,
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, thickness: 0.5),
           AppListTile(
             leading:
                 Icon(Icons.list_alt, color: AppTokens.primaryColor(context)),
@@ -252,7 +252,7 @@ class _NotificationStatusCardState
             subtitle: Text(l10n.notificationStatusCardViewButtonSubtitle),
             onTap: _busy ? null : _showDetails,
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, thickness: 0.5),
           // OEM 引导 — 用 ExpansionTile 折叠，不抢主屏空间
           // v0.30 round 93 (阶段 2 audit-fixes): 走
           // [FeatureFlags.fiveVendorPushEnabled] gate, 5 厂商 push SDK 接入前

@@ -1,10 +1,21 @@
-// v0.30 R101: 今日数据概览卡 — 参照 Apple Health Summary Pinned Favorites
+// v0.31 round 9a (Apple Health redesign · Phase 3 Task 3.1): TodaySummaryCard 重设
 //
-// 主页 Header 下方，汇总今日 3-4 个关键指标:
-// - 打卡状态 (✓/✗)
-// - 今日药物进度 (2/3)
-// - 最新心情分数
-// - 连续打卡天数
+// 历史:
+// - v0.30 R101: 今日数据概览卡 — 参照 Apple Health Summary Pinned Favorites
+//
+// v0.31 R9a 改造 (Apple Health 4 指标 2x2 网格):
+// - 4 个 StatCard 2x2 网格 (今日打卡 / 连续天数 / 用药进度 / 心情)
+// - 包装 AppleListSection("今日指标") 章节 (iOS 群组列表风格)
+// - 4 个 StatCard 顺序: 今日打卡 (checkIn 绿色) / 连续天数 (streak 警示色) /
+//   用药进度 (medication 红色, value="2/3") / 心情 (mood 粉色 emoji)
+// - 间距 12 (spacingSm) — 紧凑 2x2 grid
+// - Row[Col[Stat1, Stat2], Col[Stat3, Stat4]] 结构 + 中间 spacingMd 16 gap
+//
+// 设计选择:
+// - 4 个 metric 顺序按用户最关心度: 打卡 > streak > 用药 > 心情
+// - 打卡 / 心情用文字值 (✓ / emoji), streak / 用药用数字 (触发 StatCard tween)
+// - 沿用原有 providers (todayAllCheckInsProvider / streakSummaryProvider /
+//   medicationsProvider / latestMoodProvider) 不改业务数据流
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +25,13 @@ import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/stat_card.dart';
 
+/// 主页"今日指标" 4 项 2x2 网格 (Apple Health 风格 AppleListSection)
+///
+/// v0.31 round 9a: 用 4 个 StatCard 替代原 4 列横排, 信息密度提升一档
+/// (Apple Health Pinned Favorites 风格)。
 class TodaySummaryCard extends ConsumerWidget {
   const TodaySummaryCard({super.key});
 
@@ -41,113 +58,76 @@ class TodaySummaryCard extends ConsumerWidget {
     final medDone = todayMedIds.length;
     final medTotal = activeMeds.length;
 
-    // 最新心情（DB 级 LIMIT 1，不再全表扫描）
+    // 最新心情 (DB 级 LIMIT 1)
     final latestMood = latestMoodAsync.value;
 
     // 连续天数
     final streak = streakAsync.value;
+    final streakValue = streak?.streak ?? 0;
 
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Row(
-          children: [
-            _SummaryItem(
-              icon: hasCheckedIn
-                  ? Icons.check_circle
-                  : Icons.radio_button_unchecked,
-              iconColor: hasCheckedIn
-                  ? AppTokens.primaryColor(context)
-                  : AppTokens.textHintColor(context),
-              label: l10n.todaySummaryCheckIn,
-              value: hasCheckedIn ? '✓' : '—',
-            ),
-            _divider(context),
-            _SummaryItem(
-              icon: Icons.medication_outlined,
-              iconColor: medDone == medTotal && medTotal > 0
-                  ? AppTokens.primaryColor(context)
-                  : AppTokens.textHintColor(context),
-              label: l10n.todaySummaryMeds,
-              value: medTotal > 0 ? '$medDone/$medTotal' : '—',
-            ),
-            _divider(context),
-            _SummaryItem(
-              icon: Icons.mood_outlined,
-              iconColor: latestMood != null
-                  ? Color(MoodVisual.colorArgbFor(latestMood.score))
-                  : AppTokens.textHintColor(context),
-              label: l10n.todaySummaryMood,
-              value: latestMood != null
-                  ? MoodVisual.emojiFor(latestMood.score)
-                  : '—',
-            ),
-            _divider(context),
-            _SummaryItem(
-              icon: Icons.local_fire_department_outlined,
-              iconColor: (streak?.streak ?? 0) > 0
-                  ? AppColors.warning
-                  : AppTokens.textHintColor(context),
-              label: l10n.todaySummaryStreak,
-              value: l10n.todaySummaryStreakDays(streak?.streak ?? 0),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _divider(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 32,
-      color: AppTokens.dividerColor(context),
-      margin: const EdgeInsets.symmetric(horizontal: AppTokens.spacingXs),
-    );
-  }
-}
-
-class _SummaryItem extends StatelessWidget {
-  const _SummaryItem({
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Icon(icon, size: 20, color: iconColor),
-          const SizedBox(height: 4),
-          AnimatedSwitcher(
-            duration: AppTokens.durFast,
-            child: Text(
-              value,
-              key: ValueKey(value),
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                fontWeight: FontWeight.w700,
-                color: AppTokens.textPrimaryColor(context),
+    return AppleListSection(
+      // AppleListSection 自己 ALL CAPS 渲染, 中文不变
+      // (但 iOS section header 标准做法是 13pt w500 ALL CAPS letterSpacing 0.6;
+      //  中文是 case-less, 视觉等同 13pt w500 letterSpacing 0.6 textHint)
+      title: '今日指标',
+      margin: EdgeInsets.zero,
+      children: [
+        // 2x2 网格: Row[Col[Stat1, Stat2], Col[Stat3, Stat4]]
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    StatCard(
+                      label: l10n.todaySummaryCheckIn,
+                      value: hasCheckedIn ? '✓' : '—',
+                      valueColor: hasCheckedIn
+                          ? AppTokens.primaryColor(context)
+                          : AppTokens.textHintColor(context),
+                    ),
+                    const SizedBox(height: AppTokens.spacingSm),
+                    StatCard(
+                      label: l10n.todaySummaryStreak,
+                      value: streakValue.toString(),
+                      valueColor: streakValue > 0
+                          ? AppColors.warning
+                          : AppTokens.textHintColor(context),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(width: AppTokens.spacingSm),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    StatCard(
+                      label: l10n.todaySummaryMeds,
+                      value: medTotal > 0 ? '$medDone/$medTotal' : '—',
+                      valueColor: (medDone == medTotal && medTotal > 0)
+                          ? AppTokens.primaryColor(context)
+                          : AppTokens.textHintColor(context),
+                    ),
+                    const SizedBox(height: AppTokens.spacingSm),
+                    StatCard(
+                      label: l10n.todaySummaryMood,
+                      value: latestMood != null
+                          ? MoodVisual.emojiFor(latestMood.score)
+                          : '—',
+                      valueColor: latestMood != null
+                          ? Color(MoodVisual.colorArgbFor(latestMood.score))
+                          : AppTokens.textHintColor(context),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeCaptionSm,
-              color: AppTokens.textHintColor(context),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class VentSaveBar extends StatelessWidget {
   final bool isSaving;
@@ -29,7 +30,13 @@ class VentSaveBar extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton(
+          // v0.31 round 12 (Apple Health redesign · Phase 4 Task 4.1):
+          // OutlinedButton → PrimaryButton(secondary) Apple Pill 风。
+          // 跟 PrimaryButton(主保存按钮) 走同一集中器, 自动获得
+          // PressFeedback scale 反馈 + FilledButton.tonal 视觉。
+          child: PrimaryButton(
+            variant: PrimaryButtonVariant.secondary,
+            isFullWidth: true,
             onPressed: isSaving ? null : onCancel,
             child: Text(AppLocalizations.of(context).commonCancel),
           ),

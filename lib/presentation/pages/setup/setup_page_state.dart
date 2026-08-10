@@ -126,6 +126,13 @@ class SetupPageState extends ConsumerState<SetupPage> {
       },
       child: PageScaffold(
         title: AppLocalizations.of(context).setupStep(_step + 1, 4),
+        // v0.31 round 10 (Apple Health redesign · Phase 3 Task 3.2):
+        // 顶部 4 段 hairline 进度条, 走 currentStep 0-3 控制高亮
+        // (R10 spec §5.2 "顶部: 进度条 1/4 (小 hairline)")
+        appBarBottom: PreferredSize(
+          preferredSize: const Size.fromHeight(12), // 4+3+4 (top padding + bar + bottom padding)
+          child: SetupProgressBar(currentStep: _step, totalSteps: 4),
+        ),
         // v0.23 round 40 (emil F5/F7 fix): 改用 PageTransitionSwitcher 集中器
         // 之前 inline AnimatedSwitcher + 自定义 transitionBuilder (40+ 行)
         // 抽到 PageTransitionSwitcher.transitionBuilder 后 setup 这里只 1 个 widget

@@ -1,6 +1,12 @@
 // v0.30 R101: 药物详情页 — 参照 Apple Health Medication Detail
 //
 // 展示药物信息 + 30天依从性日历 + 操作（编辑/续方/停药）
+//
+// v0.31 round 11a (Apple Health redesign · Phase 3 Task 3.3):
+// 改 AppleListSection 风格 (spec §5.3 medication), 章节拆 3 个 ALL CAPS section:
+// - "基本信息" (drug name + dosage + active status)
+// - "用药历史" (adherence stats + 30-day mini calendar)
+// - "设置" (edit / refill 操作, PrimaryButton)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +18,9 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class MedicationDetailPage extends ConsumerWidget {
   const MedicationDetailPage({super.key, required this.medicationId});
@@ -56,148 +64,157 @@ class MedicationDetailPage extends ConsumerWidget {
         return PageScaffold(
           title: med.name,
           child: ListView(
-            padding: AppTokens.edgeInsetsMd,
+            padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
             children: [
-              // 药物信息卡
-              Card(
-                child: Padding(
-                  padding: AppTokens.edgeInsetsLg,
-                  child: Column(
-                    children: [
-                      MedicationPillIcon(
-                        colorIndex: med.colorIndex,
-                        size: 64,
-                        initial: med.name,
-                      ),
-                      const SizedBox(height: AppTokens.spacingMd),
-                      Text(
-                        med.name,
-                        style: const TextStyle(
-                          fontSize: AppTokens.fontSizeTitle,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: AppTokens.spacingXxs),
-                      Text(
-                        '${med.dosage}${med.dosageUnit.id}  ·  '
-                        '${med.times.map((t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}').join(', ')}',
-                        style: TextStyle(
-                          fontSize: AppTokens.fontSizeBody,
-                          color: AppTokens.textSecondaryColor(context),
-                        ),
-                      ),
-                      const SizedBox(height: AppTokens.spacingSm),
-                      _InfoChip(
-                        label: med.isInUse
-                            ? l10n.medDetailActive
-                            : l10n.medDetailStopped,
-                        color: med.isInUse
-                            ? AppColors.success
-                            : AppTokens.textHintColor(context),
-                      ),
-                    ],
-                  ),
+              // ═══════════════════════════════════════════════════
+              // 章节 1: 基本信息 — AppleListSection + ALL CAPS title
+              // ═══════════════════════════════════════════════════
+              AppleListSection(
+                title: '基本信息', // 走 ARB: medDetailBasicInfo, Phase 5 再补
+                margin: const EdgeInsets.symmetric(
+                  horizontal: AppTokens.pageMarginH,
                 ),
-              ),
-
-              const SizedBox(height: AppTokens.spacingMd),
-
-              // 依从性统计
-              Card(
-                child: Padding(
-                  padding: AppTokens.edgeInsetsMd,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.medDetailAdherence,
-                        style: const TextStyle(
-                          fontSize: AppTokens.fontSizeBody,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: AppTokens.spacingSm),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _StatCard(
-                              value: '$adherencePct%',
-                              label: l10n.medDetailLast30,
-                              color: adherencePct >= 80
-                                  ? AppColors.success
-                                  : AppTokens.warningColor(context),
-                            ),
-                          ),
-                          const SizedBox(width: AppTokens.spacingSm),
-                          Expanded(
-                            child: _StatCard(
-                              value: '${last30.length}/30',
-                              label: l10n.medDetailDays,
-                              color: AppTokens.primaryColor(context),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: AppTokens.spacingMd),
-
-              // 30天日历
-              Card(
-                child: Padding(
-                  padding: AppTokens.edgeInsetsMd,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.medDetailLast30Record,
-                        style: const TextStyle(
-                          fontSize: AppTokens.fontSizeBody,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: AppTokens.spacingSm),
-                      _MiniCalendar(
-                        checkInDays: last30,
-                        today: today,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: AppTokens.spacingMd),
-
-              // 操作按钮
-              Row(
                 children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.edit_outlined),
-                      label: Text(l10n.medDetailEdit),
-                      onPressed: () async {
-                        final saved =
-                            await showEditMedicationDialog(context, med);
-                        if (context.mounted && (saved ?? false)) {
-                          ref.invalidate(allMedicationsProvider);
-                          ref.invalidate(medicationsProvider);
-                        }
-                      },
+                  // 药 icon + name + dosage
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppTokens.spacingXs),
+                    child: Row(
+                      children: [
+                        MedicationPillIcon(
+                          colorIndex: med.colorIndex,
+                          size: 48,
+                          initial: med.name,
+                        ),
+                        const SizedBox(width: AppTokens.spacingMd),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                med.name,
+                                style: AppTokens.textStyleTitle(context).copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: AppTokens.spacingXxs),
+                              Text(
+                                '${med.dosage}${med.dosageUnit.id}  ·  '
+                                '${med.times.map((t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}').join(', ')}',
+                                style: TextStyle(
+                                  fontSize: AppTokens.fontSizeBody,
+                                  color: AppTokens.textSecondaryColor(context),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: AppTokens.spacingSm),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.inventory_2_outlined),
-                      label: Text(l10n.medDetailRefill),
-                      onPressed: () => context.push('/settings/refills'),
-                    ),
+                  // 状态 chip
+                  _InfoChip(
+                    label: med.isInUse
+                        ? l10n.medDetailActive
+                        : l10n.medDetailStopped,
+                    color: med.isInUse
+                        ? AppColors.success
+                        : AppTokens.textHintColor(context),
                   ),
                 ],
               ),
+
+              const SizedBox(height: AppTokens.spacingMd),
+
+              // ═══════════════════════════════════════════════════
+              // 章节 2: 用药历史 — AppleListSection + ALL CAPS title
+              // ═══════════════════════════════════════════════════
+              AppleListSection(
+                title: '用药历史', // 走 ARB: medDetailHistory, Phase 5 再补
+                margin: const EdgeInsets.symmetric(
+                  horizontal: AppTokens.pageMarginH,
+                ),
+                children: [
+                  // 依从性 label
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppTokens.spacingXs),
+                    child: Text(
+                      l10n.medDetailAdherence,
+                      style: AppTokens.textStyleLabelStrong(context),
+                    ),
+                  ),
+                  // 2 个数字 (ultralight metricMd 22) Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _StatCard(
+                          value: '$adherencePct%',
+                          label: l10n.medDetailLast30,
+                          color: adherencePct >= 80
+                              ? AppColors.success
+                              : AppTokens.warningColor(context),
+                        ),
+                      ),
+                      const SizedBox(width: AppTokens.spacingSm),
+                      Expanded(
+                        child: _StatCard(
+                          value: '${last30.length}/30',
+                          label: l10n.medDetailDays,
+                          color: AppTokens.primaryColor(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppTokens.spacingMd),
+                  // 30天日历
+                  Text(
+                    l10n.medDetailLast30Record,
+                    style: AppTokens.textStyleLabelStrong(context),
+                  ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  _MiniCalendar(
+                    checkInDays: last30,
+                    today: today,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: AppTokens.spacingMd),
+
+              // ═══════════════════════════════════════════════════
+              // 章节 3: 设置 — AppleListSection + ALL CAPS title
+              // ═══════════════════════════════════════════════════
+              AppleListSection(
+                title: '设置', // 走 ARB: medDetailSettings, Phase 5 再补
+                margin: const EdgeInsets.symmetric(
+                  horizontal: AppTokens.pageMarginH,
+                ),
+                children: [
+                  PrimaryButton(
+                    isFullWidth: true,
+                    variant: PrimaryButtonVariant.secondary,
+                    leadingIcon: const Icon(Icons.edit_outlined),
+                    onPressed: () async {
+                      final saved =
+                          await showEditMedicationDialog(context, med);
+                      if (context.mounted && (saved ?? false)) {
+                        ref.invalidate(allMedicationsProvider);
+                        ref.invalidate(medicationsProvider);
+                      }
+                    },
+                    child: Text(l10n.medDetailEdit),
+                  ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  PrimaryButton(
+                    isFullWidth: true,
+                    variant: PrimaryButtonVariant.secondary,
+                    leadingIcon: const Icon(Icons.inventory_2_outlined),
+                    onPressed: () => context.push('/settings/refills'),
+                    child: Text(l10n.medDetailRefill),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: AppTokens.spacingLg),
             ],
           ),
         );
@@ -219,18 +236,21 @@ class _InfoChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: AppTokens.fontSizeCaption,
-          fontWeight: FontWeight.w600,
-          color: color,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeCaption,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
         ),
       ),
     );
@@ -258,12 +278,15 @@ class _StatCard extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // v0.31 R7a: 数字改 ultralight w200 + 22pt (textStyleMetricMd 风格)
+          // (保留原色, 走 fontWeightUltralight 让 Apple Health 感更强)
           Text(
             value,
             style: TextStyle(
-              fontSize: AppTokens.fontSizeTitle,
-              fontWeight: FontWeight.w700,
+              fontSize: AppTokens.fontSizeMetricMd,
+              fontWeight: AppTokens.fontWeightUltralight,
               color: color,
+              letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 2),

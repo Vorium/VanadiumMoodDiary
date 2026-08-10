@@ -61,7 +61,7 @@ class AssessmentSection extends StatelessWidget {
                   onTap: () => context.push('/assessment/${_scales[i].id}'),
                 ),
                 if (i < _scales.length - 1)
-                  const Divider(height: 1, indent: 56),
+                  const Divider(height: 1, thickness: 0.5, indent: 56),
               ],
             ],
           ),

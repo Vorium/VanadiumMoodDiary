@@ -12,14 +12,13 @@
 // ConsumerWidget 模式 (R95 sub-spec 1 步骤 2-6 一致):
 // - StatelessWidget 自包含 show (Future<bool?> show(BuildContext)) — 包装 showDialog
 // - 接受 onCopy 回调 (测试可注入自定义 handler 跳过 Clipboard 副作用)
-import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/export_tile.dart'
-    show ExportTile;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// 数据导出 JSON 弹窗 (Q4b 律师反馈: 明文风险 + 责任划界 + 强制勾选)
 ///
@@ -199,12 +198,15 @@ class _ExportDialogContent extends StatelessWidget {
             onPressed: () => Navigator.pop(ctx),
             child: Text(AppLocalizations.of(context).commonClose),
           ),
-          ElevatedButton.icon(
-            icon: const Icon(
+          // v0.31 round 12 (Apple Health redesign � Phase 4 Task 4.1):
+          // ElevatedButton.icon � PrimaryButton(leadingIcon) Apple Pill �
+          PrimaryButton(
+            isFullWidth: false,
+            leadingIcon: const Icon(
               Icons.copy,
               size: AppTokens.iconSizeInline,
             ),
-            label: Text(AppLocalizations.of(context).settingsCopy),
+            child: Text(AppLocalizations.of(context).settingsCopy),
             // R97-P1-13 (2026-08-07): dead_code 修复。
             //
             // 修前: `onPressed: isAcknowledged ? () async {...} : null,`,

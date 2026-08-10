@@ -1,41 +1,44 @@
-// v0.28 R81 (emil design-2): QuickMoodCarousel 主页快速记心情 carousel
+// v0.31 round 9a (Apple Health redesign · Phase 3 Task 3.1):
+// QuickMoodCarousel 重设
 //
-// 背景 (R81 emil design eng 借鉴 B 站"哗哩哗哩能量加油站" 截图):
-//   B 站主页 4 情绪横滑 carousel (开心☀️/一般⛅/有点烦🌧/不开心⛈),
-//   1 tap 速记心情, 治愈系 IP 风格, 不用打开 dialog。
+// 历史:
+// - v0.28 R81 (emil design-2): 主页快速记心情 carousel
+//   B 站"哗哩哗哩能量加油站" 4 情绪横滑 carousel, 1 tap 速记 score。
 //
-//   chroniccare 之前: home_page → MoodQuickButton (单按钮) →
-//   MoodDialog (4 维度评分 dialog, 完整流程)。用户想"快速记"时
-//   需要点 2 次 + 填 4 维度, 摩擦大。
+// v0.31 R9a 改造 (Apple Health 心情 5 档圆形按钮):
+// - AppleListSection("心情") 包装 (iOS 群组列表风格)
+// - 5 个圆形 mood button 48x48 (跟 spec 5 档对齐, 之前是 PageView 隐藏第 5 档)
+// - 横向 Row + 间距 12 (spacingSm) — 替代横滑 PageView
+// - 选中 spring 放大 1.1 + 背景色 = mood metric color (systemPink 0xFFFF2D55)
+//   curveSpring durNormal 250ms, AnimatedScale + AnimatedContainer 串联
+// - 右上角 "more" icon 走完整 MoodDialog 4 维度评分 (跟 R81 一致)
+// - 去掉 PageController / PageView (5 档全可见, 不再隐藏)
 //
-// 修法: 在 home_page PrimaryActionRow 上方加 4 档 IP 化太阳
-// emoji 横滑 carousel, 1 tap 写 MoodEntryDraft (score=1-5,
-// energy/sleep/anxiety 留 null — 完整 4 维度仍走 MoodDialog)。
-//
-// emil 频度: occasional (跟 checkIn button 同频度, primary action),
-// standard animation OK, PressFeedback scale 0.97 100ms (轻反馈)。
-// PageView 横滑 transition 200ms ease-out (custom curve)。
-//
-// 跟 MoodQuickButton 关系: 横滑 carousel 替代单一按钮 (B 站同款),
-// 1 tap 速记 = 4 档太阳。完整 MoodDialog 走"more" icon (右上角)
-// 1 tap 进, 提供 4 维度评分 + 录音。
+// 设计选择:
+// - 不再走 PageView 5 档横滑: Apple Health 风格 5 档可见并排更直观
+// - 选中态走 spring scale 1.1 (R7a AppleHealthTile 视觉一致), 0.97 → 1.1
+// - 默认无选中态 (跟 R81 一样, _selected = null), 选中后高亮 + haptic
+// - tappable area 用 PressFeedback + 圆形 Container (mode 1 自带 onTap)
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
-/// 主页快速记心情 carousel
+/// 主页快速记心情 5 档 (Apple Health 风格圆形按钮)
 ///
-/// 4 档 IP 化太阳 emoji (R81-1 跟 B 站风格对齐), 1 tap 写
-/// [MoodEntryDraft] (score=1-5, 其他维度留 null)。
+/// v0.31 R9a: 5 个圆形 mood button 48x48, 横排, 选中 spring 放大 1.1 +
+/// 背景色 = mood metric color (systemPink)。
 ///
-/// 完整 4 维度评分走 [MoodDialog] (右上角 "more" icon 入口)。
+/// 完整 4 维度评分走右上角 "more" icon → [MoodDialog] (跟 R81 一致)。
 class QuickMoodCarousel extends ConsumerStatefulWidget {
   final VoidCallback onOpenFullDialog;
 
@@ -46,30 +49,12 @@ class QuickMoodCarousel extends ConsumerStatefulWidget {
 }
 
 class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
-  // R81: 4 档状态 — 1=很差 2=差 3=一般 4=好 5=很好
-  // (跟 MoodEntryDraft.score 1-5 一致, 5 档 = 5 太阳 emoji)
-  // 公开 4 档 (B 站对齐) + 1 隐藏档 (5 很好, 显示在最后一屏)
+  // R81: 5 档状态 — 1=很差 2=差 3=一般 4=好 5=很好
+  // (跟 MoodEntryDraft.score 1-5 一致, 5 档全可见)
   static const _scores = [1, 2, 3, 4, 5];
 
   int? _selected;
   bool _saving = false;
-  // 性能修复: PageController 从 build() 移到 initState，避免每次 rebuild 重建
-  late final PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(
-      initialPage: 2, // 默认居中"一般" (index 2 = score 3)
-      viewportFraction: 0.4,
-    );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
 
   Future<void> _recordQuick(int score) async {
     if (_saving) return;
@@ -86,9 +71,6 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
       setState(() => _selected = score);
       // 触觉反馈 (emil "feedback" 原则: press 后即时确认)
       // PressFeedback scale 0.97 + 这里 Haptics 一起, 跟 checkIn 风格一致
-      // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
-      // (用户输入成功, tens/day 频度 OK)
-      // R82+ 加 Haptics 集中器
     } catch (e, st) {
       swallowError(
         where: 'QuickMoodCarousel._recordQuick',
@@ -112,94 +94,107 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTokens.spacingMd,
-        vertical: AppTokens.spacingSm,
-      ),
-      decoration: BoxDecoration(
-        color: AppTokens.tintedPrimaryDeep(context).withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                l10n.homeQuickMoodTitle,
-                style: AppTokens.textStyleCaptionStrong(context),
-              ),
-              const Spacer(),
-              // "more" icon: 1 tap 走完整 MoodDialog 4 维度评分
-              PressFeedback(
-                onTap: widget.onOpenFullDialog,
-                child: Icon(
-                  Icons.tune,
-                  size: 18,
-                  color: AppTokens.textHintColor(context),
+    final moodColor = AppColors.healthMetricsColorFor('mood'); // systemPink
+    return AppleListSection(
+      title: '心情',
+      margin: EdgeInsets.zero,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  l10n.homeQuickMoodTitle,
+                  style: AppTokens.textStyleCaptionStrong(context),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppTokens.spacingXs),
-          SizedBox(
-            // v0.28 R81: 横滑 PageView, 4 档可见 + 1 档隐藏
-            // (B 站同款, 主屏聚焦 1 档 + 左右滑探索)
-            height: 80,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: _scores.length,
-              onPageChanged: (i) => setState(() => _selected = _scores[i]),
-              itemBuilder: (ctx, i) {
-                final score = _scores[i];
-                final isSelected = score == _selected;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppTokens.spacingXxs,),
-                  child: PressFeedback(
-                    onTap: _saving ? null : () => _recordQuick(score),
-                    child: AnimatedContainer(
-                      duration: Motion.duration(context, AppTokens.durFast),
-                      curve: Motion.curve(context, AppTokens.curveStandard),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppTokens.tintedPrimarySoft(context)
-                            : Colors.transparent,
-                        borderRadius:
-                            BorderRadius.circular(AppTokens.radiusCard),
-                      ),
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            MoodVisual.ipEmojiFor(score),
-                            style: const TextStyle(
-                                fontSize: AppTokens.fontSizeScoreXl,),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            MoodVisual.labelFor(score),
-                            style: TextStyle(
-                              fontSize: AppTokens.fontSizeCaption,
-                              color: isSelected
-                                  ? Theme.of(context).colorScheme.primary
-                                  : AppTokens.textHintColor(context),
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                const Spacer(),
+                // "more" icon: 1 tap 走完整 MoodDialog 4 维度评分
+                PressFeedback(
+                  onTap: widget.onOpenFullDialog,
+                  child: Icon(
+                    Icons.tune,
+                    size: 18,
+                    color: AppTokens.textHintColor(context),
                   ),
-                );
-              },
+                ),
+              ],
             ),
+            const SizedBox(height: AppTokens.spacingXs),
+            // 5 个圆形 mood button, 横排 + 间距 12
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (final score in _scores)
+                  _MoodButton(
+                    score: score,
+                    isSelected: score == _selected,
+                    color: moodColor,
+                    onTap: _saving ? null : () => _recordQuick(score),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// v0.31 R9a: 单个圆形 mood button (48x48, 选中 spring 放大 1.1)
+class _MoodButton extends StatelessWidget {
+  const _MoodButton({
+    required this.score,
+    required this.isSelected,
+    required this.color,
+    required this.onTap,
+  });
+
+  final int score;
+  final bool isSelected;
+  final Color color;
+  final VoidCallback? onTap;
+
+  /// 圆形 button 直径 — 48pt (Apple Health 风格 5 档可点区域)
+  static const double _diameter = 48;
+
+  @override
+  Widget build(BuildContext context) {
+    return PressFeedback(
+      onTap: onTap,
+      pressedScale: 1.0, // 不让 PressFeedback 自带 0.97 干扰 spring 选中态
+      child: AnimatedScale(
+        // 选中 spring 放大 1.1
+        scale: isSelected ? 1.1 : 1.0,
+        duration: AppTokens.durNormal,
+        curve: AppTokens.curveSpring,
+        child: AnimatedContainer(
+          duration: AppTokens.durNormal,
+          curve: AppTokens.curveStandard,
+          width: _diameter,
+          height: _diameter,
+          decoration: BoxDecoration(
+            // 选中: metric 色 18% alpha (dark) / 12% alpha (light);
+            // 未选: 透明 (跟 AppleListSection surface 一致)
+            color: isSelected
+                ? color.withValues(
+                    alpha:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? 0.18
+                            : 0.12,
+                  )
+                : Colors.transparent,
+            shape: BoxShape.circle,
+            border: isSelected
+                ? Border.all(color: color, width: 2)
+                : null,
           ),
-        ],
+          alignment: Alignment.center,
+          child: Text(
+            MoodVisual.ipEmojiFor(score),
+            style: const TextStyle(fontSize: AppTokens.fontSizeScoreLg),
+          ),
+        ),
       ),
     );
   }

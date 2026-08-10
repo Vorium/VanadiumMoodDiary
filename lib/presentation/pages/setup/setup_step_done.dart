@@ -1,12 +1,18 @@
 // setup_step_done.dart — 首次设置 Step 3: 完成
 //
 // 从 setup_page.dart 拆分，v0.19 (Q2)
+//
+// v0.31 round 10 (Apple Health redesign · Phase 3 Task 3.2):
+// 改 Apple 引导流程 (spec §5.2):
+// - 顶部 SetupStepHeader 大标题 28pt + 副标题 15pt
+// - 64pt systemGreen check icon
+// - 底部 PrimaryButton full width → context.go('/')
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// Step 3: 完成页
@@ -26,77 +32,100 @@ class SetupStepDone extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: AppTokens.spacingXl),
-          // v0.22 round 29 (emil-22): 用 Icon.check_circle 替代 emoji '🌱' + 64pt 字号 hack
-          // (M3 Image / Icon 风格统一, 自动 dark mode 适配)
+          // v0.31 round 10: 64pt systemGreen 大对勾 (iOS checkmark.circle.fill)
           Center(
             child: Icon(
               Icons.check_circle,
-              size: AppTokens.iconSizeEmpty,
+              // v0.31 round 10: 64pt 巨对勾 (Apple Health 完成态)
+              size: 64,
               color: AppTokens.primaryColor(context),
             ),
           ),
           const SizedBox(height: AppTokens.spacingLg),
-          Center(
+          // v0.31 round 10: 大字 "已就绪" (走 SetupStepHeader 28pt)
+          SetupStepHeader(
+            title: l10n.setupDoneTitle,
+            subtitle: l10n.setupDoneSubtitle,
+          ),
+          const SizedBox(height: AppTokens.spacingXl),
+          // v0.31 round 10: 每日提醒 / 隐私 section
+          // 走 ALL CAPS section header (用 SectionHeader) 紧跟在 SetupStepHeader 下方
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
             child: Text(
-              l10n.setupDoneTitle,
+              l10n.setupDailyRoutine,
               style: const TextStyle(
-                fontSize: AppTokens.fontSizeTitle,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingSm),
-          Center(
-            child: Text(
-              l10n.setupDoneSubtitle,
-              style: TextStyle(
                 fontSize: AppTokens.fontSizeBody,
-                color: AppTokens.textSecondaryColor(context),
+                fontWeight: FontWeight.w500,
               ),
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingXl),
-          Text(
-            l10n.setupDailyRoutine,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          Text(l10n.setupReminder1),
-          Text(l10n.setupReminder2),
-          Text(l10n.setupReminder3),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(l10n.setupReminder1),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(l10n.setupReminder2),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(l10n.setupReminder3),
+          ),
           const SizedBox(height: AppTokens.spacingXl),
-          Text(
-            l10n.setupPrivacy,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              fontWeight: FontWeight.w500,
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(
+              l10n.setupPrivacy,
+              style: const TextStyle(
+                fontSize: AppTokens.fontSizeBody,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          Text(l10n.setupPrivacy1),
-          Text(l10n.setupPrivacy2),
-          Text(l10n.setupPrivacy3),
-          const SizedBox(height: AppTokens.spacingXl),
-          Row(
-            children: [
-              TextButton(
-                onPressed: onBack,
-                child: Text(AppLocalizations.of(context).setupBack),
-              ),
-              const Spacer(),
-              // v0.22 round 28 (emil-31): "开始" PrimaryButton 外包 PressFeedback
-              PressFeedback(
-                child: PrimaryButton(
-                  isFullWidth: false,
-                  onPressed: () => context.go('/'),
-                  child: Text(l10n.setupStart),
-                ),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(l10n.setupPrivacy1),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(l10n.setupPrivacy2),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(l10n.setupPrivacy3),
+          ),
+          const SizedBox(height: AppTokens.spacingXl),
+          // v0.31 round 10: 底部 PrimaryButton full width → context.go('/')
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: PrimaryButton(
+              isFullWidth: true,
+              onPressed: () => context.go('/'),
+              child: Text(l10n.setupStart),
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingLg),
         ],
       ),
     );

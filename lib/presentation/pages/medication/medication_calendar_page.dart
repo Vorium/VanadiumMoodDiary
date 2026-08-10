@@ -15,6 +15,9 @@
 // v0.30 round 93 (audit-fixes task 1):
 //   - 拆 god page → CalendarGrid + DayDetail + Legend
 //   - 加 cell tap → 选中 date → 显示 DayDetail (新行为)
+// v0.31 round 11a (Apple Health redesign · Phase 3 Task 3.3):
+//   - 章节改 ALL CAPS SectionHeader (跟 spec §4.6 一致)
+//   - 日历 grid 章节用 AppleListSection 风格 (iOS 群组列表容器)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,12 +32,14 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medication_cal
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_legend.dart';
 import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/section_header.dart';
 
 class MedicationCalendarPage extends ConsumerStatefulWidget {
   const MedicationCalendarPage({super.key});
@@ -73,61 +78,80 @@ class _MedicationCalendarPageState
         children: [
           const SizedBox(height: AppTokens.spacingMd),
 
-          // 顶部说明
+          // 顶部说明 (保留, 不用 AppleListSection 包装因为是单行说明)
           // v0.27 round 67 (C-2): 走 InfoBanner 集中器
           InfoBanner(
             icon: Icons.medication_outlined,
             text: AppLocalizations.of(context).medsCalendarHeatmapDesc,
           ),
 
-          const SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingMd),
 
-          // 时间窗口选择
+          // v0.31 round 11a: 时间窗口章节 — 走 SectionHeader ALL CAPS
+          // + AppleListSection 风格容器 (spec §4.6 + §4.5)
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
-            // v0.22 round 29 (emil-34): Semantics 描述时间窗口
-            // (TalkBack 读"时间窗口 7/30/90 天，当前 30" 让用户知道是单选)
-            child: AppSemantics.container(
-              label: AppLocalizations.of(context)
-                  .medicationTimeWindowSemantics(days),
-              // v0.26 round 57 (emil EMIL-INC-06): 走 PressFeedback 集中器
-              // 替代裸 SegmentedButton (无 :active scale 反馈)
-              child: PressFeedback(
-                child: SegmentedButton<int>(
-                  segments: [
-                    ButtonSegment(
-                      value: 7,
-                      label: Text(
-                        AppLocalizations.of(context).medsCalendarWindow7,
+            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            child: const SectionHeader(
+              title: '时间窗口', // 走 ARB: medsCalendarWindowTitle, Phase 5 再补
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingXxs),
+
+          AppleListSection(
+            margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            children: [
+              // v0.22 round 29 (emil-34): Semantics 描述时间窗口
+              // (TalkBack 读"时间窗口 7/30/90 天，当前 30" 让用户知道是单选)
+              AppSemantics.container(
+                label: AppLocalizations.of(context)
+                    .medicationTimeWindowSemantics(days),
+                // v0.26 round 57 (emil EMIL-INC-06): 走 PressFeedback 集中器
+                // 替代裸 SegmentedButton (无 :active scale 反馈)
+                child: PressFeedback(
+                  child: SegmentedButton<int>(
+                    segments: [
+                      ButtonSegment(
+                        value: 7,
+                        label: Text(
+                          AppLocalizations.of(context).medsCalendarWindow7,
+                        ),
                       ),
-                    ),
-                    ButtonSegment(
-                      value: 30,
-                      label: Text(
-                        AppLocalizations.of(context).medsCalendarWindow30,
+                      ButtonSegment(
+                        value: 30,
+                        label: Text(
+                          AppLocalizations.of(context).medsCalendarWindow30,
+                        ),
                       ),
-                    ),
-                    ButtonSegment(
-                      value: 90,
-                      label: Text(
-                        AppLocalizations.of(context).medsCalendarWindow90,
+                      ButtonSegment(
+                        value: 90,
+                        label: Text(
+                          AppLocalizations.of(context).medsCalendarWindow90,
+                        ),
                       ),
-                    ),
-                  ],
-                  selected: {days},
-                  // v0.22 round 29 (emil-49): 跟 trend_page.dart:252 一致 showSelectedIcon: false
-                  // (避免 list/calendar 切换时 check 图标跳动)
-                  showSelectedIcon: false,
-                  onSelectionChanged: (s) => ref
-                      .read(calendarWindowProvider.notifier)
-                      .setDays(s.first),
+                    ],
+                    selected: {days},
+                    // v0.22 round 29 (emil-49): 跟 trend_page.dart:252 一致 showSelectedIcon: false
+                    // (避免 list/calendar 切换时 check 图标跳动)
+                    showSelectedIcon: false,
+                    onSelectionChanged: (s) => ref
+                        .read(calendarWindowProvider.notifier)
+                        .setDays(s.first),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
 
           const SizedBox(height: AppTokens.spacingMd),
+
+          // v0.31 round 11a: 日历 grid 章节 — SectionHeader ALL CAPS
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            child: const SectionHeader(
+              title: '依从性日历', // 走 ARB: medsCalendarTitle, Phase 5 再补
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingXxs),
 
           // v0.30 round 93: 拆 CalendarGrid sub-widget
           // 父 widget 传 data, sub-widget 渲染 (R92 props callback 模式)
@@ -161,8 +185,9 @@ class _MedicationCalendarPageState
           // DayDetail 只渲染, 不读全局 (R92 props callback 模式)
           if (_selectedDate != null && medsAsync.hasValue)
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.pageMarginH,
+              ),
               child: MedicationCalendarDayDetail(
                 date: _selectedDate!,
                 checkIns: checkInsAsync.value ?? const <CheckInEntity>[],
@@ -172,10 +197,18 @@ class _MedicationCalendarPageState
             ),
 
           // v0.30 round 93: 拆 Legend sub-widget (Step 1.4)
+          // v0.31 round 11a: Legend 章节用 SectionHeader ALL CAPS
+          const SizedBox(height: AppTokens.spacingMd),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+            padding: EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            child: SectionHeader(title: '图例'), // 走 ARB: medsCalendarLegendTitle
+          ),
+          const SizedBox(height: AppTokens.spacingXxs),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             child: MedicationCalendarLegend(),
           ),
+          const SizedBox(height: AppTokens.spacingLg),
         ],
       ),
     );
@@ -188,7 +221,7 @@ class _MedicationCalendarPageState
     required int days,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+      padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
       child: MedicationCalendarGrid(
         meds: meds,
         checkIns: checkIns,

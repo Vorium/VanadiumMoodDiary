@@ -56,10 +56,8 @@ import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
-import 'package:chroniccare/presentation/widgets/theme_toggle_button.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/hero_illustration.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_header.dart';
@@ -68,9 +66,8 @@ import 'package:chroniccare/presentation/pages/home/widgets/notification_failure
 import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/quick_mood_carousel.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/secondary_action_row.dart';
-import 'package:chroniccare/presentation/pages/medication/temp_medication_dialog.dart';
-import 'package:chroniccare/presentation/pages/medication/today_med_schedule.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
+import 'package:chroniccare/presentation/widgets/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart'
     show HomeLifecycleState, HomePage;
 
@@ -285,7 +282,9 @@ class HomePageState extends ConsumerState<HomePage> {
 
     return PageScaffold(
       title: AppLocalizations.of(context).appName,
-      actions: const [ThemeToggleButton()],
+      // v0.31 R9a: actions: [ThemeToggleButton()] 移到 HomeHeader 内,
+      // 主页 AppBar 走空 actions, 主题切换从右上角 in-body toggle 走。
+      actions: null,
       // v0.28 R81 (emil design-3): 浮动 FAB 工具栏
       // B 站"哗哩哗哩能量加油站" 4 工具入口, 收起 1 FAB / 展开 4 圆角按钮
       // (心情测试 / 心情树洞 / 紧急热线 / 回到顶端)
@@ -302,120 +301,102 @@ class HomePageState extends ConsumerState<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // v0.18 (P1-27) fix: home_page god-page 拆 5 widget,build 主体减肥
-            // 顶部 header
+            // v0.31 R9a (Apple Health 仪表盘): build 整合
             //
-            // v0.30 R108 (P0#5): 主页 stagger 8 层 → 3 层 (header + summary + hero)
-            // 修前: 8 层 FadeIn delay 0/40/80/120/160/200/240/280ms 累加,
-            //   前庭敏感用户 (约 35% 慢性病 / 精神心理患者) 报告不适。
-            //   emil 决策: 主页 100+/day 频度 → 无动画 (tens/day = 微弱,
-            //   occasional = 标准, rare = 可加 delight)。
-            // 修后: 3 层 (header / summary / hero) 保留 0/40/80ms 微 stagger,
-            //   5 层 (encouragement / carousel / primary action / today schedule /
-            //   secondary action) 改 Duration.zero = 无动画。
-            // 总累加 80ms 远低于前庭敏感阈值 (250ms)。
-            FadeIn(
-              child: HomeHeader(userName: userName),
-            ),
-
-            const SizedBox(height: AppTokens.spacingSm),
-
-            // v0.30 R101: 今日数据概览卡 (参照 Apple Health Pinned Favorites)
-            const FadeIn(
-              delay: Duration(milliseconds: AppTokens.staggerStepMs),
-              child: TodaySummaryCard(),
-            ),
-
-            const SizedBox(height: AppTokens.spacingSm),
-
-            // v0.28 R81 (emil design-4): 主页 hero 插画 (B 站治愈系风格)
-            // 蓝天 + 太阳 + 云 + 叶子, 4 元素 Stack, 静态 (rare 频度
-            // 不动画, 避免频度问题)。140dp 高, 跟功能区视觉分层。
-            const FadeIn(
-              delay: Duration(
-                  milliseconds: 2 * AppTokens.staggerStepMs,),
-              child: HomeHeroIllustration(),
-            ),
-
-            const SizedBox(height: AppTokens.spacingMd),
+            // 整体改 AppleListSection 包装各区块, 用 spacingMd 16 替代
+            // spacingLg 24, 简化 stagger (2 处: header delay 0 + summary delay 30),
+            // 移除 HeroIllustration (Apple Health 风格无大图, 用 section 列表代替).
+            //
+            // 顺序 (跟 spec §5.1 1:1):
+            // 1. 通知失败 banner (顶部, 保留)
+            // 2. HomeHeader (FadeIn delay 0)
+            // 3. CheckInButton (FadeIn delay 1*staggerStepMs=30ms)
+            // 4. AppleListSection("今日指标") + TodaySummaryCard (FadeIn delay 2*30=60ms)
+            // 5. AppleListSection("心情") + QuickMoodCarousel (Duration.zero)
+            // 6. AppleListSection("快捷操作") + PrimaryActionRow (Duration.zero)
+            // 7. AppleListSection("更多") + SecondaryActionRow (Duration.zero)
+            // 8. HomeFooter (Duration.zero)
+            // 9. EncouragementText (Duration.zero)
+            //
+            // stagger 累加最大 = 60ms (2 * staggerStepMs=30), 远低于前庭敏感
+            // 阈值 250ms, 跟 R108 P0#5 决策一致 (home 100+/day 频度).
 
             // P17 fix: 通知失败 banner(一次性提示，可关闭)
             if (!notifResult.ok)
               NotificationFailureBanner(error: notifResult.error),
 
-            const Spacer(flex: 1),
+            // 2: HomeHeader (28pt greeting + 15pt 日期 + 32x32 theme toggle)
+            FadeIn(
+              child: HomeHeader(userName: userName),
+            ),
 
-            // 鼓励文案(按 streak 动态切换)
-            // R108 P0-5: 改无动画 (home 100+/day 频度)
-            EncouragementText(streak: streakSnapshot.streak),
+            const SizedBox(height: AppTokens.spacingXs),
+
+            // 3: CheckInButton 巨型 pill 64pt (Apple Health 风格)
+            FadeIn(
+              delay: const Duration(milliseconds: AppTokens.staggerStepMs),
+              child: todayAsync.when(
+                data: (today) => CheckInButton(
+                  isChecked: today != null,
+                  streakDays: streakSnapshot.streak,
+                  isLoading: isChecking,
+                  onPressed: () => _onCheckIn(streakSnapshot.streak),
+                ),
+                loading: () => const CheckInButton(
+                  isChecked: false,
+                  streakDays: 0,
+                  isLoading: true,
+                  onPressed: _noop,
+                ),
+                error: (_, __) => const CheckInButton(
+                  isChecked: false,
+                  streakDays: 0,
+                  isLoading: false,
+                  onPressed: _noop,
+                ),
+              ),
+            ),
 
             const SizedBox(height: AppTokens.spacingMd),
 
-            // v0.28 R81 (emil design-2): 主页快速记心情 carousel
-            // B 站"哗哩哗哩能量加油站" 4 情绪横滑 风格, 1 tap 速记 score
-            // (其他维度 energy/sleep/anxiety 留 null, 完整 4 维度走 MoodDialog)
-            // carousel 默认居中"一般" (score 3), 4 档可见 + 1 档隐藏
-            // emil 频度: occasional (跟 checkIn 同 primary action),
-            // standard animation OK, PageView 横滑 200ms ease-out
-            //
-            // R108 P0-5: 外层 FadeIn 改无动画 (carousel 内部 PageView 横滑动画保留)
+            // 4: 今日指标 4 项 2x2 网格
+            const FadeIn(
+              delay: Duration(milliseconds: 2 * AppTokens.staggerStepMs),
+              child: TodaySummaryCard(),
+            ),
+
+            const SizedBox(height: AppTokens.spacingMd),
+
+            // 5: 心情 5 档圆形 button
             QuickMoodCarousel(
-              // R104 fix: 跳情绪日记列表页而非直接弹 dialog
               onOpenFullDialog: () => context.push('/mood-list'),
             ),
 
-            const SizedBox(height: AppTokens.spacingSm),
+            const SizedBox(height: AppTokens.spacingMd),
 
-            // 主操作行：打卡按钮 + 临时吃药 + snooze 5min
-            // R108 P0-5: 外层 FadeIn 改无动画 (home 100+/day 频度)
-            todayAsync.when(
-              data: (today) => PrimaryActionRow(
-                isChecked: today != null,
-                streakDays: streakSnapshot.streak,
-                isLoading: isChecking,
-                onCheckIn: () => _onCheckIn(streakSnapshot.streak),
-                onTempMed: () => TempMedicationDialog.show(context, ref),
-                onSnooze: _snooze5Min,
-              ),
-              loading: () => const PrimaryActionRow(
-                isChecked: false,
-                streakDays: 0,
-                isLoading: true,
-                onCheckIn: _noop,
-                onTempMed: _noop,
-                onSnooze: _noop,
-              ),
-              error: (_, __) => const PrimaryActionRow(
-                isChecked: false,
-                streakDays: 0,
-                isLoading: false,
-                onCheckIn: _noop,
-                onTempMed: _noop,
-                onSnooze: _noop,
-              ),
+            // 6: 快捷操作 2x2 彩色 tile 网格
+            PrimaryActionRow(
+              onMedicationTap: () => context.push('/medication'),
+              onMoodTap: () => MoodRecorderPage.show(context, ref),
+              onVentTap: () => context.push('/vent'),
+              onAssessmentTap: () => context.push('/assessment-center'),
             ),
 
-            const SizedBox(height: AppTokens.spacingSm),
+            const SizedBox(height: AppTokens.spacingMd),
 
-            // v0.14 (Round 17) 今日服药计划
-            // R108 P0-5: 改无动画
-            const TodayMedSchedule(),
-
-            const SizedBox(height: AppTokens.spacingSm),
-
-            // 次要操作行：情绪日记 + 树洞
-            // R108 P0-5: 改无动画
+            // 7: 更多 4 项 icon-row cell
             SecondaryActionRow(
               onMoodTap: () => MoodRecorderPage.show(context, ref),
             ),
 
-            // v0.30 round 92 (audit-fixes / P0 #13): 去掉 `const Spacer(flex: 1)`。
-            // 之前 Spacer 在 Column 内推 footer 到底, 但 SCV 给的 Column 高度
-            // 无界, Spacer 会触发 RenderFlex layout exception。改用
-            // SizedBox 给固定间距, footer 自然在主屏元素之后。
-            const SizedBox(height: AppTokens.spacingLg),
+            const SizedBox(height: AppTokens.spacingSm),
 
-            // 底部信息
+            // 鼓励文案(按 streak 动态切换)
+            EncouragementText(streak: streakSnapshot.streak),
+
+            const SizedBox(height: AppTokens.spacingSm),
+
+            // 8: 底部信息
             todayAsync.when(
               data: (today) => HomeFooter(
                 lastCheckIn: today,
@@ -466,41 +447,13 @@ class HomePageState extends ConsumerState<HomePage> {
       );
     }
     // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发，例如打卡是补卡)
+    if (!mounted) return;
     unawaited(_careDispatcher.runAfterCheckIn(
       context: context,
       isMounted: () => mounted,
-    ));
+    ),);
     // AI 关怀：打卡后评估是否触发(rule-based)
     unawaited(_careDispatcher.fireCareEngine());
-  }
-
-  /// Snooze 5min: 调度 5min 后的一次性本地通知
-  ///
-  /// 用 medicationId=0 表示"通用打卡提醒 snooze"(避开真实 med id)
-  Future<void> _snooze5Min() async {
-    // v0.22 round 30 (emil P2-4): 走 Haptics.light 集中器
-    // R97-P1-12: unawaited 显式标记 fire-and-forget
-    unawaited(Haptics.light());
-    try {
-      await ref.read(notificationServiceProvider).delegate.snoozeOnce(
-            medicationId: 0, // 0 = 通用 snooze
-            minutes: 5,
-            title: AppLocalizations.of(context).homeSnoozeTitle,
-            body: AppLocalizations.of(context).homeSnoozeBody,
-          );
-      if (!mounted) return;
-      AppSnackBar.showInfo(
-        context,
-        AppLocalizations.of(context).homeSnoozeConfirmed,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      AppSnackBar.showError(
-        context,
-        action: AppLocalizations.of(context).snackbarActionSnooze,
-        error: e,
-      );
-    }
   }
 
   /// 计算下次提醒时间(每天 20:00)

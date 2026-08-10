@@ -9,11 +9,20 @@
 //   需要先告知),但不强制勾选
 // - canContinue 只看 `validationError == null`(父级已经校验过名字必填 +
 //   手机号格式/重复)
+//
+// v0.31 round 10 (Apple Health redesign · Phase 3 Task 3.2):
+// 改 Apple 引导流程 (spec §5.2):
+// - 顶部 SetupStepHeader 大标题 28pt + 副标题 15pt
+// - name + contact 改 AppleListSection (圆角 16 容器, hairline 分隔)
+// - 添加联系人 button 改 PrimaryButton secondary (FilledButton.tonal)
+// - 底部 PrimaryButton full width (default isFullWidth: true)
+// - 间距统一 16
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// Step 1: 欢迎 + 紧急联系人(可选)
@@ -57,103 +66,147 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: AppTokens.spacingXl),
-          Text(
-            l10n.setupHello,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeTitle,
-              fontWeight: FontWeight.w600,
-              height: AppTokens.lineHeightTight,
-            ),
+          // v0.31 round 10: 顶部 SetupStepHeader (28pt 大标题 + 15pt 副标题)
+          SetupStepHeader(
+            title: l10n.setupHello,
+            subtitle: l10n.setupIntro,
           ),
-          const SizedBox(height: AppTokens.spacingSm),
-          Text(
-            l10n.setupIntro,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondaryColor(context),
-            ),
+          // ===== 姓名: AppleListSection =====
+          // v0.31 round 10: name 字段包 AppleListSection (圆角 16 容器, hairline 分隔)
+          AppleListSection(
+            margin: EdgeInsets.zero, // step content 自管 padding
+            children: [
+              Padding(
+                // 跟 AppleListSection 默认 cell padding 重叠但更宽松
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTokens.spacingMd,
+                  vertical: AppTokens.spacingSm,
+                ),
+                child: TextField(
+                  controller: widget.nameController,
+                  decoration: InputDecoration(
+                    labelText: l10n.setupName,
+                    hintText: l10n.setupNameHint,
+                    border: InputBorder.none, // AppleListSection 自带容器
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AppTokens.spacingXl),
-          TextField(
-            controller: widget.nameController,
-            decoration: InputDecoration(
-              labelText: l10n.setupName,
-              hintText: l10n.setupNameHint,
-            ),
-            textCapitalization: TextCapitalization.words,
-          ),
-          if (widget.validationError != null) ...[
-            const SizedBox(height: AppTokens.spacingXs),
-            Text(
-              widget.validationError!,
-              style: TextStyle(
-                color: AppTokens.errorColor(context),
-                fontSize: AppTokens.fontSizeCaption,
+          if (widget.validationError != null)
+            Padding(
+              padding: const EdgeInsets.only(
+                left: AppTokens.pageMarginH,
+                top: AppTokens.spacingXs,
+                right: AppTokens.pageMarginH,
+              ),
+              child: Text(
+                widget.validationError!,
+                style: TextStyle(
+                  color: AppTokens.errorColor(context),
+                  fontSize: AppTokens.fontSizeCaption,
+                ),
               ),
             ),
-          ],
-          const SizedBox(height: AppTokens.spacingXl),
-          Text(
-            l10n.setupContacts,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeTitle,
-              fontWeight: FontWeight.w600,
+          const SizedBox(height: AppTokens.spacingXl), // 24 (spec 章节间距)
+          // ===== 联系人 section =====
+          // v0.31 round 10: 紧急联系人改 AppleListSection
+          // title ALL CAPS (AppleListSection 自带 toUpperCase)
+          Padding(
+            padding: const EdgeInsets.only(
+              left: AppTokens.pageMarginH,
+              right: AppTokens.pageMarginH,
+              bottom: AppTokens.spacingXs,
+            ),
+            child: Text(
+              l10n.setupContacts,
+              style: const TextStyle(
+                fontSize: AppTokens.fontSizeTitle,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          const SizedBox(height: AppTokens.spacingSm),
-          Text(
-            l10n.setupWelcomeContactHint,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.textSecondaryColor(context),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: Text(
+              l10n.setupWelcomeContactHint,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeBody,
+                color: AppTokens.textSecondaryColor(context),
+              ),
             ),
           ),
           const SizedBox(height: AppTokens.spacingMd),
           for (int i = 0; i < widget.contactPhoneControllers.length; i++) ...[
-            _ContactRow(
-              index: i,
-              nameController: widget.contactNameControllers[i],
-              phoneController: widget.contactPhoneControllers[i],
+            AppleListSection(
+              margin: EdgeInsets.zero, // step content 自管 padding
+              children: [
+                _ContactRow(
+                  index: i,
+                  nameController: widget.contactNameControllers[i],
+                  phoneController: widget.contactPhoneControllers[i],
+                ),
+              ],
             ),
-            const SizedBox(height: AppTokens.spacingSm),
+            const SizedBox(height: AppTokens.spacingMd),
           ],
-          // v0.22 round 30 (emil P3-5): 包 PressFeedback 接管 tap
-          PressFeedback(
-            onTap: widget.onAddContact,
-            child: OutlinedButton.icon(
-              onPressed: null, // 委托给 PressFeedback
-              icon: const Icon(Icons.add),
-              label: Text(l10n.setupAddContact),
+          // v0.31 round 10: "添加联系人" 改 PrimaryButton secondary (FilledButton.tonal)
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: PrimaryButton(
+              variant: PrimaryButtonVariant.secondary,
+              isFullWidth: true,
+              leadingIcon: const Icon(Icons.add),
+              onPressed: widget.onAddContact,
+              child: Text(l10n.setupAddContact),
             ),
           ),
           // 2026-07-31: 把"已告知联系人" 改为**提示性**段落(非强制勾选)。
           // 复用 `setupContactConsent` 文案 key — 保留 key 避免 ARB orphan。
-          // 文案含义从"必须勾选"弱化为"如添加请告知对方"提示。
           if (widget.contactPhoneControllers
               .any((c) => c.text.trim().isNotEmpty))
             Padding(
-              padding: const EdgeInsets.only(top: AppTokens.spacingSm),
+              padding: const EdgeInsets.only(
+                left: AppTokens.pageMarginH,
+                right: AppTokens.pageMarginH,
+                top: AppTokens.spacingSm,
+              ),
               child: Text(
                 l10n.setupContactConsent,
                 style: AppTokens.textStyleCaption(context),
               ),
             ),
-          const SizedBox(height: AppTokens.spacingLg),
-          Row(
-            children: [
-              TextButton(
-                onPressed: widget.onBack,
-                child: Text(l10n.setupBack),
-              ),
-              const Spacer(),
-              PrimaryButton(
-                isFullWidth: false,
-                onPressed: canContinue ? widget.onContinue : null,
-                child: Text(l10n.setupNext),
-              ),
-            ],
+          const SizedBox(height: AppTokens.spacingXl), // 24
+          // ===== 底部按钮: PrimaryButton full width + 上一步 tertiary =====
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: PrimaryButton(
+              isFullWidth: true,
+              onPressed: canContinue ? widget.onContinue : null,
+              child: Text(l10n.setupNext),
+            ),
           ),
+          const SizedBox(height: AppTokens.spacingSm),
+          // v0.31 round 10: "上一步" 改 PrimaryButton tertiary (TextButton) — full width
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTokens.pageMarginH,
+            ),
+            child: PrimaryButton(
+              variant: PrimaryButtonVariant.tertiary,
+              isFullWidth: true,
+              onPressed: widget.onBack,
+              child: Text(l10n.setupBack),
+            ),
+          ),
+          const SizedBox(height: AppTokens.spacingLg),
         ],
       ),
     );
@@ -174,30 +227,34 @@ class _ContactRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: l10n.setupContactNameLabel(index + 1),
-                hintText: l10n.setupContactNameHint,
-              ),
+    // v0.31 round 10: AppleListSection 自带 cell padding, 这里只填内容
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTokens.spacingMd,
+        vertical: AppTokens.spacingSm,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            controller: nameController,
+            decoration: InputDecoration(
+              labelText: l10n.setupContactNameLabel(index + 1),
+              hintText: l10n.setupContactNameHint,
+              border: InputBorder.none,
             ),
-            const SizedBox(height: AppTokens.spacingSm),
-            TextField(
-              controller: phoneController,
-              decoration: InputDecoration(
-                labelText: l10n.setupContactPhoneLabel(index + 1),
-                hintText: l10n.setupContactPhoneHint,
-              ),
-              keyboardType: TextInputType.phone,
+          ),
+          const SizedBox(height: AppTokens.spacingSm),
+          TextField(
+            controller: phoneController,
+            decoration: InputDecoration(
+              labelText: l10n.setupContactPhoneLabel(index + 1),
+              hintText: l10n.setupContactPhoneHint,
+              border: InputBorder.none,
             ),
-          ],
-        ),
+            keyboardType: TextInputType.phone,
+          ),
+        ],
       ),
     );
   }

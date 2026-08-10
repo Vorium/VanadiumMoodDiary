@@ -30,17 +30,17 @@ class DataManagementSection extends ConsumerWidget {
       child: Column(
         children: [
           ExportTile(),
-          Divider(height: 1),
+          Divider(height: 1, thickness: 0.5),
           // v0.30 round 88 (sub-spec 4): 导出 5/7 栏 CBT 思维记录 PDF 入口
           // v0.30 round 95 (sub-spec 1 task 3): 抽到 cbt_pdf_tile.dart
           CbtPdfTile(),
-          Divider(height: 1),
+          Divider(height: 1, thickness: 0.5),
           ReportTile(),
-          Divider(height: 1),
+          Divider(height: 1, thickness: 0.5),
           HistoryTile(),
-          Divider(height: 1),
+          Divider(height: 1, thickness: 0.5),
           ImportTile(),
-          Divider(height: 1),
+          Divider(height: 1, thickness: 0.5),
           ClearTile(),
         ],
       ),
