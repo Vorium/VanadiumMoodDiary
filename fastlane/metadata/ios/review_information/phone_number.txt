@@ -1,1 +1,1 @@
-TODO: +86 真实手机号 (中国团队)
+[REPLACE_BEFORE_APPLE_REVIEW: +86 中国手机号 — 上架前必填真实信息 (Apple 审核联系用, 必填可接收短信/电话)]
