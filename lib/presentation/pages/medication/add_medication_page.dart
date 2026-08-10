@@ -3,6 +3,14 @@
 // Step 1: 药名 + 剂型
 // Step 2: 剂量 + 频率 + 时间
 // Step 3: 确认 + 颜色选择
+//
+// v0.31 round 11a (Apple Health redesign · Phase 3 Task 3.3):
+// 改 AppleListSection 风格 (spec §5.3 medication):
+// - Step 1 "基本信息" AppleListSection 包装 (药名 + 剂型)
+// - Step 2 "用药时间" AppleListSection 包装 (剂量 + 时间)
+// - 进度条 1/3 走 iOS 风格 hairline (高 4pt → 3pt)
+// - 底部按钮改 PrimaryButton (default + secondary)
+// - 间距统一 16 (spacingMd)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,9 +26,11 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class AddMedicationPage extends ConsumerStatefulWidget {
   const AddMedicationPage({super.key});
@@ -128,21 +138,21 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
       ),
       child: Column(
         children: [
-          // 进度指示器
+          // 进度指示器 (iOS hairline 风格, 3pt)
           Padding(
-            padding: AppTokens.edgeInsetsMd,
+            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             child: Row(
               children: List.generate(3, (i) {
                 final active = i <= _currentStep;
                 return Expanded(
                   child: Container(
-                    height: 4,
+                    height: 3,
                     margin: EdgeInsets.only(right: i < 2 ? 4 : 0),
                     decoration: BoxDecoration(
                       color: active
                           ? AppTokens.primaryColor(context)
                           : AppTokens.dividerColor(context),
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(1.5),
                     ),
                   ),
                 );
@@ -159,15 +169,17 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
                     : _buildStep3(l10n),
           ),
 
-          // 底部按钮
+          // 底部按钮 — v0.31 R11a: 改 PrimaryButton 3 variant
           SafeArea(
             child: Padding(
-              padding: AppTokens.edgeInsetsMd,
+              padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
               child: Row(
                 children: [
                   if (_currentStep > 0)
                     Expanded(
-                      child: OutlinedButton(
+                      child: PrimaryButton(
+                        variant: PrimaryButtonVariant.secondary,
+                        isFullWidth: true,
                         onPressed: _prevStep,
                         child: Text(l10n.medAddPrev),
                       ),
@@ -176,7 +188,8 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
                     const SizedBox(width: AppTokens.spacingSm),
                   Expanded(
                     flex: 2,
-                    child: FilledButton(
+                    child: PrimaryButton(
+                      isFullWidth: true,
                       onPressed: _saving ? null : _nextStep,
                       child: Text(
                         _currentStep < 2 ? l10n.medAddNext : l10n.medAddSave,
@@ -192,188 +205,216 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // Step 1: 药名 + 剂型
-  // ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════
+  // Step 1: 药名 + 剂型 (AppleListSection "基本信息")
+  // ═══════════════════════════════════════════════════
   Widget _buildStep1(AppLocalizations l10n) {
     return ListView(
-      padding: AppTokens.edgeInsetsMd,
+      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
       children: [
-        Text(
-          l10n.medAddStep1Title,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeTitle,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingLg),
-
-        // 药名
-        Text(
-          l10n.medAddNameLabel,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeBodySm,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingXs),
-        TextField(
-          controller: _nameController,
-          decoration: InputDecoration(
-            hintText: l10n.medAddNameHint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+        // 大标题
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          child: Text(
+            l10n.medAddStep1Title,
+            style: AppTokens.textStyleTitle(context).copyWith(
+              fontWeight: FontWeight.w600,
             ),
           ),
-          textInputAction: TextInputAction.next,
         ),
+        const SizedBox(height: AppTokens.spacingMd),
 
-        const SizedBox(height: AppTokens.spacingLg),
-
-        // 剂型
-        Text(
-          l10n.medAddFormLabel,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeBodySm,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingSm),
-        Wrap(
-          spacing: AppTokens.spacingSm,
-          runSpacing: AppTokens.spacingSm,
-          children: MedicationForm.values.map((f) {
-            final selected = _form == f;
-            return ChoiceChip(
-              label: Text(_formLabel(f, l10n)),
-              selected: selected,
-              onSelected: (_) => setState(() => _form = f),
-              avatar: Icon(_formIcon(f), size: 18),
-            );
-          }).toList(),
+        // "基本信息" AppleListSection
+        AppleListSection(
+          title: '基本信息', // 走 ARB: medAddBasicInfo, Phase 5 再补
+          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          children: [
+            // 药名
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.medAddNameLabel,
+                    style: AppTokens.textStyleCaptionHint(context),
+                  ),
+                  const SizedBox(height: AppTokens.spacingXxs),
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      hintText: l10n.medAddNameHint,
+                      border: InputBorder.none, // AppleListSection 自带容器
+                    ),
+                    textInputAction: TextInputAction.next,
+                  ),
+                ],
+              ),
+            ),
+            // 剂型
+            Padding(
+              padding: const EdgeInsets.only(top: AppTokens.spacingXs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.medAddFormLabel,
+                    style: AppTokens.textStyleCaptionHint(context),
+                  ),
+                  const SizedBox(height: AppTokens.spacingXs),
+                  Wrap(
+                    spacing: AppTokens.spacingSm,
+                    runSpacing: AppTokens.spacingSm,
+                    children: MedicationForm.values.map((f) {
+                      final selected = _form == f;
+                      return ChoiceChip(
+                        label: Text(_formLabel(f, l10n)),
+                        selected: selected,
+                        onSelected: (_) => setState(() => _form = f),
+                        avatar: Icon(_formIcon(f), size: 18),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // Step 2: 剂量 + 频率 + 时间
-  // ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════
+  // Step 2: 剂量 + 频率 + 时间 (AppleListSection "用药时间")
+  // ═══════════════════════════════════════════════════
   Widget _buildStep2(AppLocalizations l10n) {
     return ListView(
-      padding: AppTokens.edgeInsetsMd,
+      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
       children: [
-        Text(
-          l10n.medAddStep2Title,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeTitle,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingLg),
-
-        // 剂量
-        Text(
-          l10n.medAddDosageLabel,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeBodySm,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingXs),
-        Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: TextField(
-                controller: _dosageController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTokens.radiusInput),
-                  ),
-                ),
-              ),
+        // 大标题
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          child: Text(
+            l10n.medAddStep2Title,
+            style: AppTokens.textStyleTitle(context).copyWith(
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(width: AppTokens.spacingSm),
-            Expanded(
-              child: DropdownButtonFormField<DosageUnit>(
-                initialValue: _dosageUnit,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTokens.radiusInput),
+          ),
+        ),
+        const SizedBox(height: AppTokens.spacingMd),
+
+        // "用药时间" AppleListSection
+        AppleListSection(
+          title: '用药时间', // 走 ARB: medAddTime, Phase 5 再补
+          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          children: [
+            // 剂量 + 单位
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.medAddDosageLabel,
+                    style: AppTokens.textStyleCaptionHint(context),
                   ),
-                ),
-                items: DosageUnit.values
-                    .map(
-                      (u) => DropdownMenuItem(
-                        value: u,
-                        child: Text(u.id),
+                  const SizedBox(height: AppTokens.spacingXxs),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: TextField(
+                          controller: _dosageController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                        ),
                       ),
-                    )
-                    .toList(),
-                onChanged: (v) {
-                  if (v != null) setState(() => _dosageUnit = v);
-                },
+                      const SizedBox(width: AppTokens.spacingSm),
+                      Expanded(
+                        child: DropdownButtonFormField<DosageUnit>(
+                          initialValue: _dosageUnit,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          items: DosageUnit.values
+                              .map(
+                                (u) => DropdownMenuItem(
+                                  value: u,
+                                  child: Text(u.id),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (v) {
+                            if (v != null) setState(() => _dosageUnit = v);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-
-        const SizedBox(height: AppTokens.spacingLg),
-
-        // 服药时间 — 直接显示时间卡片，点击修改
-        Text(
-          l10n.medAddTimeLabel,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeBodySm,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingSm),
-        Wrap(
-          spacing: AppTokens.spacingSm,
-          runSpacing: AppTokens.spacingSm,
-          children: [
-            ..._times.asMap().entries.map((e) {
-              final i = e.key;
-              final t = e.value;
-              return InputChip(
-                avatar: const Icon(Icons.access_time, size: 18),
-                label: Text(
-                  HourMinute(hour: t.hour, minute: t.minute).toTimeString(),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+            // 时间列表
+            Padding(
+              padding: const EdgeInsets.only(top: AppTokens.spacingXs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.medAddTimeLabel,
+                    style: AppTokens.textStyleCaptionHint(context),
                   ),
-                ),
-                onPressed: () async {
-                  final picked = await showTimePicker(
-                    context: context,
-                    initialTime: t,
-                  );
-                  if (picked != null && mounted) {
-                    setState(() => _times[i] = picked);
-                  }
-                },
-                onDeleted: _times.length > 1
-                    ? () => setState(() => _times.removeAt(i))
-                    : null,
-              );
-            }),
-            // 添加时间按钮
-            ActionChip(
-              avatar: const Icon(Icons.add, size: 18),
-              label: Text(l10n.medAddTimeAdd),
-              onPressed: () async {
-                final picked = await showTimePicker(
-                  context: context,
-                  initialTime: const TimeOfDay(hour: 20, minute: 0),
-                );
-                if (picked != null && mounted) {
-                  setState(() => _times.add(picked));
-                }
-              },
+                  const SizedBox(height: AppTokens.spacingXs),
+                  Wrap(
+                    spacing: AppTokens.spacingSm,
+                    runSpacing: AppTokens.spacingSm,
+                    children: [
+                      ..._times.asMap().entries.map((e) {
+                        final i = e.key;
+                        final t = e.value;
+                        return InputChip(
+                          avatar: const Icon(Icons.access_time, size: 18),
+                          label: Text(
+                            HourMinute(hour: t.hour, minute: t.minute).toTimeString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          onPressed: () async {
+                            final picked = await showTimePicker(
+                              context: context,
+                              initialTime: t,
+                            );
+                            if (picked != null && mounted) {
+                              setState(() => _times[i] = picked);
+                            }
+                          },
+                          onDeleted: _times.length > 1
+                              ? () => setState(() => _times.removeAt(i))
+                              : null,
+                        );
+                      }),
+                      // 添加时间按钮
+                      ActionChip(
+                        avatar: const Icon(Icons.add, size: 18),
+                        label: Text(l10n.medAddTimeAdd),
+                        onPressed: () async {
+                          final picked = await showTimePicker(
+                            context: context,
+                            initialTime: const TimeOfDay(hour: 20, minute: 0),
+                          );
+                          if (picked != null && mounted) {
+                            setState(() => _times.add(picked));
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -381,9 +422,9 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // Step 3: 确认 + 颜色选择
-  // ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════
+  // Step 3: 确认 + 颜色选择 (AppleListSection "颜色" + "确认信息")
+  // ═══════════════════════════════════════════════════
   Widget _buildStep3(AppLocalizations l10n) {
     final dosage = _dosageController.text;
     final timesStr = _times
@@ -391,88 +432,89 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
         .join(', ');
 
     return ListView(
-      padding: AppTokens.edgeInsetsMd,
+      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
       children: [
-        Text(
-          l10n.medAddStep3Title,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeTitle,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingLg),
-
-        // 颜色选择
-        Text(
-          l10n.medAddColorLabel,
-          style: const TextStyle(
-            fontSize: AppTokens.fontSizeBodySm,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingSm),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(kMedPillColors.length, (i) {
-            final selected = _colorIndex == i;
-            return PressFeedback(
-              onTap: () => setState(() => _colorIndex = i),
-              child: Semantics(
-                label: l10n.medAddColorN(i + 1),
-                selected: selected,
-                button: true,
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: selected
-                        ? Border.all(
-                            color: AppTokens.primaryColor(context),
-                            width: 3,
-                          )
-                        : null,
-                  ),
-                  child: MedicationPillIcon(
-                    colorIndex: i,
-                    size: 40,
-                    initial: _nameController.text.isNotEmpty
-                        ? _nameController.text
-                        : null,
-                  ),
-                ),
-              ),
-            );
-          }),
-        ),
-
-        const SizedBox(height: AppTokens.spacingLg),
-
-        // 确认卡片
-        Card(
-          child: Padding(
-            padding: AppTokens.edgeInsetsMd,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _ConfirmRow(
-                  label: l10n.medAddConfirmName,
-                  value: _nameController.text,
-                ),
-                _ConfirmRow(
-                  label: l10n.medAddConfirmForm,
-                  value: _formLabel(_form, l10n),
-                ),
-                _ConfirmRow(
-                  label: l10n.medAddConfirmDosage,
-                  value: Formatters.dosage(
-                    double.tryParse(dosage) ?? 0,
-                    _dosageUnit,
-                  ),
-                ),
-                _ConfirmRow(label: l10n.medAddConfirmTime, value: timesStr),
-              ],
+        // 大标题
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          child: Text(
+            l10n.medAddStep3Title,
+            style: AppTokens.textStyleTitle(context).copyWith(
+              fontWeight: FontWeight.w600,
             ),
           ),
+        ),
+        const SizedBox(height: AppTokens.spacingMd),
+
+        // "颜色" AppleListSection
+        AppleListSection(
+          title: '颜色', // 走 ARB: medAddColor, Phase 5 再补
+          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          children: [
+            Text(
+              l10n.medAddColorLabel,
+              style: AppTokens.textStyleCaptionHint(context),
+            ),
+            const SizedBox(height: AppTokens.spacingXs),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(kMedPillColors.length, (i) {
+                final selected = _colorIndex == i;
+                return PressFeedback(
+                  onTap: () => setState(() => _colorIndex = i),
+                  child: Semantics(
+                    label: l10n.medAddColorN(i + 1),
+                    selected: selected,
+                    button: true,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: selected
+                            ? Border.all(
+                                color: AppTokens.primaryColor(context),
+                                width: 3,
+                              )
+                            : null,
+                      ),
+                      child: MedicationPillIcon(
+                        colorIndex: i,
+                        size: 40,
+                        initial: _nameController.text.isNotEmpty
+                            ? _nameController.text
+                            : null,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTokens.spacingMd),
+
+        // "确认信息" AppleListSection
+        AppleListSection(
+          title: '确认信息', // 走 ARB: medAddConfirm, Phase 5 再补
+          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          children: [
+            _ConfirmRow(
+              label: l10n.medAddConfirmName,
+              value: _nameController.text,
+            ),
+            _ConfirmRow(
+              label: l10n.medAddConfirmForm,
+              value: _formLabel(_form, l10n),
+            ),
+            _ConfirmRow(
+              label: l10n.medAddConfirmDosage,
+              value: Formatters.dosage(
+                double.tryParse(dosage) ?? 0,
+                _dosageUnit,
+              ),
+            ),
+            _ConfirmRow(label: l10n.medAddConfirmTime, value: timesStr),
+          ],
         ),
       ],
     );

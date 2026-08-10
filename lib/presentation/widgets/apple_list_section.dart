@@ -38,6 +38,8 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// API:
 /// - [title]     — 可选, 13pt w500 ALL CAPS letter-spacing 0.6 textHint
 ///                 不传则不渲染 title (适合"已用 section 包裹"嵌套场景)
+/// - [chip]      — 可选, title 右侧数量徽章 (e.g. "5"), 走 inline _ChipBadge
+///                 (跟 SectionHeader chip 同源, v0.28 R81 设计, 本地化用)
 /// - [children]  — 内容 cell list, 内部用 hairline Divider(thickness: 0.5) 分隔
 /// - [footer]    — 可选, 章节下方小字 (Apple iOS 标准 footer 文字)
 /// - [margin]    — 外边距, 默认 EdgeInsets.symmetric(horizontal: pageMarginH=20)
@@ -47,10 +49,15 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// v0.31 round 8a (Apple Health redesign · Phase 2 Task 2.4):
 /// 新增, 替代现有 `Card + Padding` 模式。Phase 3 将在 11 feature 页面
 /// (home/setup/medication/mood/...) 切换到 AppleListSection。
+///
+/// v0.31 round 11a: 加 [chip] 参数 (让 medication_page 等可显示 "5" 数量徽章).
+/// 注意: 标题仍 inline 渲染 13pt (spec §4.5), 不用 [SectionHeader] (那是 11pt per
+/// spec §4.6, 跟本 widget 13pt 是有意的两个不同字号).
 class AppleListSection extends StatelessWidget {
   const AppleListSection({
     super.key,
     this.title,
+    this.chip,
     required this.children,
     this.footer,
     this.margin,
@@ -60,6 +67,13 @@ class AppleListSection extends StatelessWidget {
   ///
   /// 不传则不渲染 title (适合"已用 section 包裹"嵌套场景)。
   final String? title;
+
+  /// v0.31 round 11a: 标题右侧数量徽章 (e.g. "5", 显示 5 种药)
+  ///
+  /// 走 [SectionHeader.chip] 模式 (B 站哗哩哗哩能量加油站风格)
+  /// 1 行 Row[title, chip], 跟 [SectionHeader] 一致。
+  /// 不传则不渲染 chip。
+  final String? chip;
 
   /// 内容 cell list, 内部用 hairline Divider(thickness: 0.5) 分隔
   ///
@@ -114,6 +128,9 @@ class AppleListSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // ===== 可选 title (13pt w500 ALL CAPS letterSpacing 0.6 textHint) =====
+          // v0.31 round 11a (revert): 不用 [SectionHeader] 因为它是 11pt
+          // (per spec §4.6), 这里要 13pt (per spec §4.5). 改 inline Text + 可选
+          // chip 模式, 跟 lock-in test apple_list_section_round8a 一致.
           if (title != null) ...[
             Padding(
               // 8 上 + 4 下 (spec "padding 8/4" — 给上方 section 留空, 紧贴 section 内容)
@@ -121,14 +138,22 @@ class AppleListSection extends StatelessWidget {
                 top: AppTokens.spacingXs, // 8
                 bottom: AppTokens.spacingXxs, // 4
               ),
-              child: Text(
-                title!.toUpperCase(),
-                style: TextStyle(
-                  fontSize: _titleFontSize,
-                  fontWeight: FontWeight.w500,
-                  color: AppTokens.textHintColor(context),
-                  letterSpacing: _titleLetterSpacing,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    title!.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: _titleFontSize, // 13 (per spec §4.5)
+                      color: AppTokens.textHintColor(context),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: _titleLetterSpacing, // 0.6
+                    ),
+                  ),
+                  if (chip != null) ...[
+                    const SizedBox(width: AppTokens.spacingXs),
+                    _ChipBadge(label: chip!),
+                  ],
+                ],
               ),
             ),
           ],
@@ -194,6 +219,37 @@ class AppleListSection extends StatelessWidget {
     return Padding(
       padding: _cellPadding,
       child: child,
+    );
+  }
+}
+
+/// v0.31 round 11a: 标题右侧数量徽章
+///
+/// 跟 [SectionHeader] 内部的 [_ChipBadge] 视觉一致 (B 站"哗哩哗哩能量加油站"风格),
+/// 但这里独立定义, 避免 widget 互依赖 (AppleListSection 不 import SectionHeader).
+class _ChipBadge extends StatelessWidget {
+  const _ChipBadge({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTokens.spacingSm,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppTokens.tintedPrimarySoft(context),
+        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: AppTokens.fontSizeCaption,
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
   }
 }

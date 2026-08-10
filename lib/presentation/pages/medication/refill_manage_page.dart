@@ -7,6 +7,13 @@
 //
 // 数据源：MedicationEntity（domain）+ MedicationRepository（abstract）
 // 业务方法直接用 entity.isInRefillWindow / .isRefillOverdue
+//
+// v0.31 round 11a (Apple Health redesign · Phase 3 Task 3.3):
+// 改 AppleListSection 风格 (spec §5.3 medication):
+// - 顶部 4 StatCard 改 ultralight `large` variant (34pt w200)
+// - 4 StatCard 放在 AppleListSection 内 (iOS 群组列表风格)
+// - 续方列表用 AppleListSection 包装, 内部用 hairline divider
+// - 章节走 SectionHeader ALL CAPS
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,10 +25,12 @@ import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/section_header.dart';
 import 'package:chroniccare/presentation/widgets/stat_card.dart';
 
 /// 续方状态
@@ -90,6 +99,7 @@ class RefillManagePage extends ConsumerWidget {
     List<MedicationEntity> meds,
   ) {
     final now = DateTime.now();
+    final l10n = AppLocalizations.of(context);
 
     // 给每种药计算状态
     final rows = meds
@@ -128,100 +138,117 @@ class RefillManagePage extends ConsumerWidget {
       children: [
         const SizedBox(height: AppTokens.spacingMd),
 
-        // 顶部汇总卡
-        // v0.30 round 95 (sub-spec 2 task 10): 4 StatCard Row 改 2x2 grid
-        // (R92 emil P1-2.1.4: 4 StatCard 数字挤一起, 视觉密度太高),
-        // 数字更大 / 间距更合理, 改 2x2 改善可读性。
-        Card(
-          child: Padding(
-            padding: AppTokens.edgeInsetsMd,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      // v0.27 round 67 (C-4): 走 StatCard 集中器
-                      child: StatCard(
-                        label: AppLocalizations.of(context).medsTotal,
-                        value: '${meds.length}',
-                      ),
+        // 章节 1: 顶部汇总 — SectionHeader ALL CAPS + AppleListSection
+        // v0.31 R11a: 4 StatCard 改 ultralight large variant (34pt w200)
+        // 装在 AppleListSection 内 (iOS 群组列表风格)
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          child: SectionHeader(title: '续方汇总'), // 走 ARB: refillManageSummary
+        ),
+        const SizedBox(height: AppTokens.spacingXxs),
+        AppleListSection(
+          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          children: [
+            // 2x2 StatCard 网格 — ultralight large variant (34pt w200)
+            IntrinsicHeight(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: StatCard(
+                      label: l10n.medsTotal,
+                      value: '${meds.length}',
+                      variant: StatCardVariant.large,
                     ),
-                    const SizedBox(width: AppTokens.spacingMd),
-                    Expanded(
-                      child: StatCard(
-                        label: AppLocalizations.of(context).medsRefillSetCount,
-                        value: '$configured',
-                      ),
+                  ),
+                  const SizedBox(width: AppTokens.spacingSm),
+                  Expanded(
+                    child: StatCard(
+                      label: l10n.medsRefillSetCount,
+                      value: '$configured',
+                      variant: StatCardVariant.large,
                     ),
-                  ],
-                ),
-                const SizedBox(height: AppTokens.spacingMd),
-                Row(
-                  children: [
-                    Expanded(
-                      child: StatCard(
-                        label: AppLocalizations.of(context).medsRefillReminding,
-                        value: '$inWindow',
-                        valueColor: inWindow > 0
-                            ? AppTokens.warningColor(context)
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(width: AppTokens.spacingMd),
-                    Expanded(
-                      child: StatCard(
-                        label: AppLocalizations.of(context).refillManageOverdue,
-                        value: '$overdue',
-                        valueColor:
-                            overdue > 0 ? AppTokens.errorColor(context) : null,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: AppTokens.spacingSm),
+            IntrinsicHeight(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: StatCard(
+                      label: l10n.medsRefillReminding,
+                      value: '$inWindow',
+                      variant: StatCardVariant.large,
+                      valueColor: inWindow > 0
+                          ? AppTokens.warningColor(context)
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(width: AppTokens.spacingSm),
+                  Expanded(
+                    child: StatCard(
+                      label: l10n.refillManageOverdue,
+                      value: '$overdue',
+                      variant: StatCardVariant.large,
+                      valueColor:
+                          overdue > 0 ? AppTokens.errorColor(context) : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
 
         const SizedBox(height: AppTokens.spacingMd),
 
+        // 章节 2: 续方列表 — SectionHeader ALL CAPS + AppleListSection
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          child: SectionHeader(
+            title: '药物列表', // 走 ARB: refillManageMedsList
+            chip: '${rows.length}', // 数量 chip
+          ),
+        ),
+        const SizedBox(height: AppTokens.spacingXxs),
+
         if (rows.isEmpty)
           Padding(
-            padding: AppTokens.edgeInsetsXl,
+            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             child: Center(
               child: Text(
-                AppLocalizations.of(context).medsNoMedicationsAdded,
+                l10n.medsNoMedicationsAdded,
                 style: AppTokens.textStyleBody(context)
                     .copyWith(color: AppTokens.textHintColor(context)),
               ),
             ),
           )
         else
-          Card(
-            child: Column(
-              children: [
-                for (int i = 0; i < rows.length; i++) ...[
-                  if (i > 0) const Divider(height: 1, indent: 56),
-                  _RefillRow(
-                    row: rows[i],
-                    onTap: () => _editMedication(context, rows[i].med),
-                  ),
-                ],
-              ],
-            ),
+          AppleListSection(
+            margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            children: [
+              // v0.31 R11a: 列表项 - 改用 _RefillRow (已包 AppListTile.standard)
+              for (final r in rows) _RefillRow(
+                row: r,
+                onTap: () => _editMedication(context, r.med),
+              ),
+            ],
           ),
 
         const SizedBox(height: AppTokens.spacingMd),
+        // iOS section footer — 章节下方说明文字
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacingMd),
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           child: Text(
-            AppLocalizations.of(context).medsRefillEditHint,
+            l10n.medsRefillEditHint,
             style: TextStyle(
               fontSize: AppTokens.fontSizeCaption,
               color: AppTokens.textHintColor(context),
             ),
           ),
         ),
+        const SizedBox(height: AppTokens.spacingLg),
       ],
     );
   }
