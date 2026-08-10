@@ -320,7 +320,9 @@ class _AssessmentReminderSheetState
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: PrimaryButton(
+                    variant: PrimaryButtonVariant.secondary,
+                    isFullWidth: true,
                     onPressed: _busy ? null : () => Navigator.pop(context),
                     child: Text(loc.commonCancel),
                   ),
@@ -454,7 +456,9 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: PrimaryButton(
+                    variant: PrimaryButtonVariant.secondary,
+                    isFullWidth: true,
                     onPressed: _busy ? null : () => Navigator.pop(context),
                     child: Text(loc.commonCancel),
                   ),

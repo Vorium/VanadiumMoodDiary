@@ -138,7 +138,13 @@ class AssessmentResultPanel extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
+                // v0.31 round 12 (Apple Health redesign · Phase 4 Task 4.1):
+                // OutlinedButton → PrimaryButton(secondary) Apple Pill 风。
+                // 跟同 Row PrimaryButton(主) 走同一集中器, 自动获得
+                // PressFeedback scale 反馈 + FilledButton.tonal 视觉。
+                child: PrimaryButton(
+                  variant: PrimaryButtonVariant.secondary,
+                  isFullWidth: true,
                   onPressed: onBack,
                   child: Text(l10n.assessmentBack),
                 ),

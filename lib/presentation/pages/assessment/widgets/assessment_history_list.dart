@@ -46,7 +46,7 @@ class AssessmentHistoryList extends StatelessWidget {
             ),
           ),
           for (int i = 0; i < records.length; i++) ...[
-            if (i > 0) const Divider(height: 1, indent: 56),
+            if (i > 0) const Divider(height: 1, thickness: 0.5, indent: 56),
             _HistoryItem(
               record: records[i],
               // v0.14 fix: 找上一条**同量表**的记录，而不是 list 里前一条

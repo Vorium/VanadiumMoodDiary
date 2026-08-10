@@ -48,7 +48,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       child: Column(
         children: [
           for (int i = 0; i < contacts.length; i++) ...[
-            if (i > 0) const Divider(height: 1),
+            if (i > 0) const Divider(height: 1, thickness: 0.5),
             // v0.21 Round 23 (P1-26): swipe-to-dismiss 左滑删除
             Dismissible(
               key: ValueKey('contact-${contacts[i].id}'),
@@ -83,7 +83,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
               ),
             ),
           ],
-          const Divider(height: 1),
+          const Divider(height: 1, thickness: 0.5),
           // v0.24 round 43 (emil D-05 P2): 添加联系人入口包 AppListTile
           // → 隐式获得 PressFeedback scale 反馈 (tens/day 频度)
           AppListTile(

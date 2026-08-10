@@ -40,7 +40,7 @@ class CbtPromptSheet {
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: prompts.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
+                separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5),
                 itemBuilder: (_, i) => ListTile(
                   leading: const Icon(Icons.chat_bubble_outline),
                   title: Text(prompts[i]),

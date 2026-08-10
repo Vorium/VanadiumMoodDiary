@@ -152,7 +152,7 @@ class _AssessmentReminderSectionState
             onChanged: _busy ? null : _toggle,
           ),
           if (enabled) ...[
-            const Divider(height: 1),
+            const Divider(height: 1, thickness: 0.5),
             AppListTile(
               leading:
                   Icon(Icons.schedule, color: AppTokens.primaryColor(context)),
@@ -175,7 +175,7 @@ class _AssessmentReminderSectionState
             ),
           ],
           if (enabled) ...[
-            const Divider(height: 1),
+            const Divider(height: 1, thickness: 0.5),
             Padding(
               padding: AppTokens.edgeInsetsMd,
               child: Row(
@@ -278,7 +278,11 @@ class _AssessmentDaysSheetState extends State<_AssessmentDaysSheet> {
             child: Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  // v0.31 round 12 (Apple Health redesign · Phase 4 Task 4.1):
+                  // OutlinedButton → PrimaryButton(secondary) Apple Pill 风。
+                  child: PrimaryButton(
+                    variant: PrimaryButtonVariant.secondary,
+                    isFullWidth: true,
                     onPressed: () => Navigator.pop(context),
                     child: Text(l10n.commonCancel),
                   ),
