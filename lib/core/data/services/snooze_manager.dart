@@ -84,6 +84,10 @@ class SnoozeManager {
     // 现在是 runtime 函数调用, 所以 details 整块不 const — 实际是 Android
     // 平台每次 init channel 时拿到的是新值 (老 channel name 已注册不会被改,
     // 需 uninstall 重装)。
+    // v0.31.1 round 6 (P0-05 修 AppStore BUG-2 + emil P0-C): iOS 通知详情加固
+    // - categoryIdentifier: 贪睡类 (snooze 跟原 reminder 区分, 长按归类)
+    // - interruptionLevel: timeSensitive → 贪睡通知穿透勿扰
+    // 注: relevanceScore 17.2.4 不暴露, 见 notification_service.dart 同注释。
     final details = NotificationDetails(
       android: AndroidNotificationDetails(
         'chroniccare.medication',
@@ -92,7 +96,10 @@ class SnoozeManager {
         importance: Importance.high,
         priority: Priority.high,
       ),
-      iOS: const DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(
+        categoryIdentifier: 'com.chroniccare.snooze',
+        interruptionLevel: InterruptionLevel.timeSensitive,
+      ),
     );
 
     final fireAt = tz.TZDateTime.now(tz.local).add(Duration(minutes: minutes));

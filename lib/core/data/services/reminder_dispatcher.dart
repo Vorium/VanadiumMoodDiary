@@ -99,6 +99,10 @@ class ReminderDispatcher {
   ///
   /// importance 走 high (reminder) / default (被动 push) 二选一
   NotificationDetails buildChannelDetails({bool high = true}) {
+    // v0.31.1 round 6 (P0-05 修 AppStore BUG-2 + emil P0-C): iOS 通知详情加固
+    // - categoryIdentifier: 用药提醒类 (medication / refill / mood / assessment 共用此 channel)
+    // - interruptionLevel: timeSensitive → 紧急通知穿透勿扰
+    // 注: relevanceScore 17.2.4 不暴露, 见 notification_service.dart 同注释。
     return NotificationDetails(
       android: AndroidNotificationDetails(
         channelId,
@@ -107,7 +111,10 @@ class ReminderDispatcher {
         importance: high ? Importance.high : Importance.defaultImportance,
         priority: high ? Priority.high : Priority.defaultPriority,
       ),
-      iOS: const DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(
+        categoryIdentifier: 'com.chroniccare.medication.reminder',
+        interruptionLevel: InterruptionLevel.timeSensitive,
+      ),
     );
   }
 
