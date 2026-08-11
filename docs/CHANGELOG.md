@@ -1,5 +1,55 @@
 ﻿# 变更日志
 
+## [0.32.0+115] - 2026-08-12 (R109 god class 拆 round 3 · medication_page 552L → 347L · 1 logic + 3 sub-widget 抽)
+
+R109 god class 专项 round 3, 1 commit (本批), presentation 层 god class
+拆 (跟 round 1-2 service/use case 拆不同维度), 闭环 medication_page
+552L god class.
+
+**变更明细**:
+
+**抽 3 个新文件**:
+- `lib/domain/logic/medication_page_stats_calculator.dart` (165L): 5 个
+  散落 helper 抽纯函数类 (跟 R108 抽 `medication_slot_calculator.dart`
+  同款):
+  - `buildTimeSlots` (47L) 4 时段分组 (早/午/晚/睡前)
+  - `pendingCount` / `takenCount` (2×7L) 顶部 tile 计数
+  - `refillAlertCount` (7L) 续方提醒计数
+  - `slotLabel` (15L) MedicationTimeSlot → l10n label (4 个 String 注入)
+  + 公开 `MedicationSlotEntry` 数据类 (替代原 `_SlotEntry` private).
+- `lib/presentation/pages/medication/widgets/medication_list_cell.dart`
+  (110L): `MedicationListCell` 公开 widget (替代原 `_MedicationListCell`
+  private). emil DRY 跟 R31 R108 子 widget 抽模式一致.
+- `lib/presentation/pages/medication/widgets/medication_empty_state_cards.dart`
+  (90L): 2 个空态 widget 合并 1 文件 (替代原 `_EmptyMedicationsCard` +
+  `_EmptyScheduleCard` private). 跟 R31 `medication_empty_state.dart`
+  集中器同款.
+
+**改 1 个文件**:
+- `medication_page.dart` 552L → 347L (-205L, -37%):
+  - 删 `_SlotEntry` private class (用 `typedef _SlotEntry = MedicationSlotEntry` 兼容, 不破坏 caller 引用)
+  - 5 个 helper 改调 calculator 静态方法 (行为 100% 一致)
+  - 4 个 sub-widget (`_SlotEntryRow` / `_MedicationListCell` / `_EmptyMedicationsCard` / `_EmptyScheduleCard`) 删 3 个 private, 公开化 3 个调外部
+  - main build 简化, 调 3 个外部 widget
+
+**未抽** (留给后续 round, 风险较高):
+- `_SlotEntryRow` (122L, 涉及打卡 callback + 4 个 widget prop, flutter test 不可跑 + widget 字段传递风险大) 留 R109 round 4 / 5
+- main build `medication_stats_row` (4 AppleHealthTile 横滚, 60L) 留 R109 round 4
+
+**总变更** (本批): 4 文件 (+365 / -360 行), 0 个新 test, 0 个 db migration, pubspec 0.32.0+114 → 0.32.0+115
+
+**R109 路线图** (round 1-3 完成, 后续 4-6 待做):
+- ✅ round 1 (6dd42a2): assessment_reminder → use case
+- ✅ round 2 (a4012a1): safety_watch_service 失联告警 → use case + 删 2 死代码
+- ✅ round 3 (本批): medication_page 552L → 347L (1 logic + 3 sub-widget)
+- round 4: add_medication_page 598L → 抽 form controller
+- round 5: setup_page_state 560L → 拆 4 step state
+- round 6: mood_trend_page 558L → 拆 4 sub-widget
+
+**验收**: 19 守门员全绿. 6 个 use case 文件全合规.
+
+---
+
 ## [0.32.0+114] - 2026-08-12 (R109 god class 拆 round 2 · use case 层厚化模板 round 2 · DispatchSafetyAlertUseCase 抽 + 死代码清理)
 
 R109 god class 专项 round 2, 1 commit (本批), use case 层厚化模板 round 2, 闭环 safety_watch_service 失联告警业务 + 删 2 个跨期死代码.
@@ -38,8 +88,6 @@ R109 god class 专项 round 2, 1 commit (本批), use case 层厚化模板 round
 **验收**: 19 守门员全绿 (18 旧 + check_usecase_layer 新加 round 1). 6 个 use case 文件全合规 (从 4 → 6, +50%).
 
 ---
-
-> 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
 ## [0.32.0+113] - 2026-08-12 (R109 god class 拆 round 1 · use case 层厚化模板 · ScheduleAssessmentReminderUseCase 抽)
 

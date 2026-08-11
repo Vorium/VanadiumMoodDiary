@@ -25,10 +25,12 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
-import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/domain/logic/medication_page_stats_calculator.dart';
 import 'package:chroniccare/domain/logic/medication_slot_calculator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_empty_state_cards.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_list_cell.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -48,16 +50,11 @@ import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart
 /// R32 (N-10 警告): _slotIcon 0 caller (R108 P1 拆解漏删), 删
 
 /// 一个时间段内的服药条目
-class _SlotEntry {
-  final MedicationEntity med;
-  final HourMinute time;
-  final bool done;
-  const _SlotEntry({
-    required this.med,
-    required this.time,
-    required this.done,
-  });
-}
+///
+/// v0.32 R109 (god class 拆 round 3): 抽到 `domain/logic/medication_page_stats_calculator.dart`
+/// 公开 `MedicationSlotEntry` 类, 跟原 `_SlotEntry` 1:1 对应 (med + time + done).
+/// 本类删, 所有 caller 改 import 公开类.
+typedef _SlotEntry = MedicationSlotEntry;
 
 class MedicationPage extends ConsumerWidget {
   const MedicationPage({super.key});
@@ -161,7 +158,7 @@ class MedicationPage extends ConsumerWidget {
               // 章节 1: 今日服药计划 — AppleListSection
               // ═══════════════════════════════════════════════════
               if (activeMeds.isEmpty)
-                _EmptyScheduleCard(l10n: l10n)
+                EmptyScheduleCard(l10n: l10n)
               else
                 ..._buildSlotSections(context, slots, l10n, ref),
 
@@ -180,11 +177,11 @@ class MedicationPage extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                         vertical: AppTokens.spacingMd,
                       ),
-                      child: _EmptyMedicationsCard(l10n: l10n),
+                      child: EmptyMedicationsCard(l10n: l10n),
                     )
                   else
                     for (final med in allMeds)
-                      _MedicationListCell(
+                      MedicationListCell(
                         med: med,
                         onTap: () => context.push('/medication/detail/${med.id}'),
                       ),
@@ -200,81 +197,36 @@ class MedicationPage extends ConsumerWidget {
   }
 
   /// 顶部 4 tile 计数 helper
+  /// v0.32 R109: 透传 calculator, 行为 100% 一致
   int _pendingCount(Map<MedicationTimeSlot, List<_SlotEntry>> slots) {
-    var pending = 0;
-    for (final entries in slots.values) {
-      pending += entries.where((e) => !e.done).length;
-    }
-    return pending;
+    final allEntries = slots.values.expand((e) => e);
+    return MedicationPageStatsCalculator.pendingCount(allEntries);
   }
 
   int _takenCount(Map<MedicationTimeSlot, List<_SlotEntry>> slots) {
-    var taken = 0;
-    for (final entries in slots.values) {
-      taken += entries.where((e) => e.done).length;
-    }
-    return taken;
+    final allEntries = slots.values.expand((e) => e);
+    return MedicationPageStatsCalculator.takenCount(allEntries);
   }
 
   /// 续方提醒数: 处于 inWindow 或 overdue 状态的药物数
-  int _refillAlertCount(List<MedicationEntity> meds) {
-    final now = DateTime.now();
-    return meds
-        .where((m) => m.hasRefill && (m.isInRefillWindow(now) || m.isRefillOverdue(now)))
-        .length;
-  }
+  /// v0.32 R109: 透传 calculator
+  int _refillAlertCount(List<MedicationEntity> meds) =>
+      MedicationPageStatsCalculator.refillAlertCount(meds);
 
   /// 按时间段分组服药条目
   ///
-  /// v0.30 R108 (P1 medication_page 拆): 改用 [MedicationTimeSlot.all]
-  /// 遍历 + [MedicationTimeSlot.contains] 判定, 跟原 _TimeSlot.values
-  /// 行为 1:1 一致 (保持 4 时段固定顺序: morning → afternoon → evening
-  /// → bedtime)。
+  /// v0.32 R109: 透传 calculator 静态方法, 行为跟原 47L 实现 100% 一致
   Map<MedicationTimeSlot, List<_SlotEntry>> _buildTimeSlots(
     List<MedicationEntity> meds,
     List<CheckInEntity>? checkIns,
     DateTime now,
   ) {
-    // 收集今天已打卡的 medId
-    final doneMedIds = <int>{};
-    if (checkIns != null) {
-      for (final c in checkIns) {
-        if (!c.isNormal) continue;
-        if (c.timestamp.year == now.year &&
-            c.timestamp.month == now.month &&
-            c.timestamp.day == now.day) {
-          if (c.medicationId != null) doneMedIds.add(c.medicationId!);
-        }
-      }
-    }
-
-    // 展平所有 med × time
-    final allEntries = <_SlotEntry>[];
-    for (final m in meds) {
-      for (final t in m.times) {
-        allEntries.add(
-          _SlotEntry(
-            med: m,
-            time: t,
-            done: doneMedIds.contains(m.id),
-          ),
-        );
-      }
-    }
-
-    // 按时间段分组
-    final result = <MedicationTimeSlot, List<_SlotEntry>>{};
-    for (final slot in MedicationTimeSlot.all) {
-      final slotEntries =
-          allEntries.where((e) => slot.contains(e.time.hour)).toList()
-            ..sort((a, b) {
-              final c = a.time.hour.compareTo(b.time.hour);
-              return c != 0 ? c : a.time.minute.compareTo(b.time.minute);
-            });
-      if (slotEntries.isNotEmpty) {
-        result[slot] = slotEntries;
-      }
-    }
+    final result = MedicationPageStatsCalculator.buildTimeSlots(
+      meds,
+      checkIns,
+      now,
+    );
+    // 转 Map<MedicationTimeSlot, List<_SlotEntry>> (类型别名 _SlotEntry = MedicationSlotEntry)
     return result;
   }
 
@@ -302,21 +254,15 @@ class MedicationPage extends ConsumerWidget {
     ];
   }
 
-  String _slotLabel(MedicationTimeSlot slot, AppLocalizations l10n) {
-    // 跟 [MedicationTimeSlot.name] 一一对应 (R108 P1 拆)
-    switch (slot.name) {
-      case 'morning':
-        return l10n.medSlotMorning;
-      case 'afternoon':
-        return l10n.medSlotAfternoon;
-      case 'evening':
-        return l10n.medSlotEvening;
-      case 'bedtime':
-        return l10n.medSlotBedtime;
-      default:
-        return slot.name; // fallback (防止新增 slot 名称未对应)
-    }
-  }
+  /// v0.32 R109: 透传 calculator slotLabel, 4 个 l10n getter 注入
+  String _slotLabel(MedicationTimeSlot slot, AppLocalizations l10n) =>
+      MedicationPageStatsCalculator.slotLabel(
+        slot: slot,
+        morningLabel: l10n.medSlotMorning,
+        afternoonLabel: l10n.medSlotAfternoon,
+        eveningLabel: l10n.medSlotEvening,
+        bedtimeLabel: l10n.medSlotBedtime,
+      );
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -394,159 +340,8 @@ class _SlotEntryRow extends ConsumerWidget {
   }
 }
 
-/// 我的药物 list cell (AppleListSection 内部用)
-class _MedicationListCell extends StatelessWidget {
-  const _MedicationListCell({required this.med, required this.onTap});
-  final MedicationEntity med;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return PressFeedback(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxs),
-        child: Row(
-          children: [
-            MedicationPillIcon(
-              colorIndex: med.colorIndex,
-              size: 36,
-              initial: med.name,
-            ),
-            const SizedBox(width: AppTokens.spacingSm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    med.name,
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeBody,
-                      fontWeight: FontWeight.w500,
-                      color: AppTokens.textPrimaryColor(context),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${med.dosage}${med.dosageUnit.id}  ·  '
-                    '${med.times.map((t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}').join(', ')}',
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textHintColor(context),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppTokens.spacingXs),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.spacingXs,
-                vertical: AppTokens.spacingXxxs,
-              ),
-              decoration: BoxDecoration(
-                color: med.isInUse
-                    ? AppTokens.tintedSuccessSoft(context)
-                    : AppTokens.dividerColor(context),
-                borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-              ),
-              child: Text(
-                med.isInUse
-                    ? l10n.medicationStatusInUse
-                    : l10n.medicationStatusStopped,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeCaptionSm,
-                  fontWeight: FontWeight.w600,
-                  color: med.isInUse
-                      ? AppColors.success
-                      : AppTokens.textHintColor(context),
-                ),
-              ),
-            ),
-            const SizedBox(width: AppTokens.spacingXxs),
-            Icon(
-              Icons.chevron_right,
-              size: 16,
-              color: AppTokens.textHintColor(context),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 空态：无药物
-class _EmptyMedicationsCard extends StatelessWidget {
-  const _EmptyMedicationsCard({required this.l10n});
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
-      child: Column(
-        children: [
-          Icon(
-            Icons.medication_outlined,
-            size: 48,
-            color: AppTokens.textHintColor(context),
-          ),
-          const SizedBox(height: AppTokens.spacingSm),
-          Text(
-            l10n.medEmptyTitle,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              fontWeight: FontWeight.w600,
-              color: AppTokens.textSecondaryColor(context),
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingXxs),
-          Text(
-            l10n.medEmptySubtitle,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHintColor(context),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 空态：无今日计划
-class _EmptyScheduleCard extends StatelessWidget {
-  const _EmptyScheduleCard({required this.l10n});
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppleListSection(
-      title: l10n.medTodaySchedule,
-      margin: EdgeInsets.zero,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.check_circle_outline,
-              size: 28,
-              color: AppTokens.textHintColor(context),
-            ),
-            const SizedBox(width: AppTokens.spacingSm),
-            Expanded(
-              child: Text(
-                l10n.medNoScheduleToday,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeBodySm,
-                  color: AppTokens.textHintColor(context),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
+// v0.32 R109 (god class 拆 round 3): 删 2 个 private 空态 widget
+//   (`_EmptyMedicationsCard` / `_EmptyScheduleCard`), 移到
+//   `widgets/medication_empty_state_cards.dart` 公开 class (EmptyMedicationsCard
+//   / EmptyScheduleCard), caller 改 import 公开类. emil DRY 跟 R31 R108
+//   子 widget 抽模式一致.
