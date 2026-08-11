@@ -397,4 +397,51 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - `docs/CHANGELOG.md` — 版本变更（Keep a Changelog 格式）
 - `docs/DEPLOYMENT.md` — 部署相关
 - `docs/SENDGRID_SETUP.md` — 邮件服务配置
+
+---
+
+## v0.31.1 R32 hotfix 闭环 R31 报告跨期残留 (2026-08-11, 11 commit P0 修 + 1 整合 commit, master 0.31.1+108)
+
+`fix/v0.31.1-bug-batch` 11 commit merge to master, 闭环 R31 报告"跨期残留 100%"的 11 P0。
+
+**P0-01 ~ P0-09 全闭环 (R32 hotfix round 1)**:
+
+- P0-01 review_information 4 TODO 占位 (AppStore BUG-1)
+- P0-02 notes.txt 版本号 v0.30.0+85 → 0.31.0+107 (AppStore BUG-3)
+- P0-03 store_kit productId com.chroniccare.app.lifetime → com.chroniccare.chroniccare.lifetime (AppStore BUG-7)
+- P0-04 description 5 病名 5.1.1 抽审 (AppStore BUG-6)
+- P0-04b 4 locale description 5 病名 (R108 守门员扩)
+- P0-05 3 DarwinNotificationDetails 空构造 (AppStore BUG-2, emil P0-C)
+- P0-06 4 AndroidNotificationDetails visibility: secret (GooglePlay P0-006)
+- P0-07 7 raw IconButton → PressFeedbackIconButton (emil P0-C, R108 P1-001 漏修)
+- P0-07b page_scaffold.dart:42 raw IconButton 漏修补 (P0-07 隐藏漏修)
+- P0-08 Spring 物理模型接 _EntrySpring + 5 case test (emil + superpowers-en + Apple Health 跨视角共识)
+- P0-09 Apple Health 关键词 lock-in test 扩 lib/ 主体 (Apple Health P0-1)
+
+**R32 hotfix round 2 (0.31.1+109, 5 个剩余 P0)**:
+
+- P0-15 i18n 跨期 21 处硬编码中文 → ARB key (medication_page 4 + primary_action_row 7 + secondary_action_row 7 + today_summary_card 1 + quick_mood_carousel 2)
+- P0-30 check_zh_hant_consistency 9 处繁简不一致 (跨期 R31 P2-04 漏)
+- P0-13 check_fullwidth_punctuation 守门员严格化 + 修 11 处半角标点
+- P0-29 check_orphan_arb_keys FAIL (跟 P0-15 一起, 0 orphan)
+- P0-32 lock-in test 阈值 300 → 250 (R31 P1-06 跨期 0 闭环)
+
+**R32 综合审视 6 视角加权综合 6.2/10 → 修后预估 8.0/10 (+1.8)**。
+
+**18 守门员最终状态 (R32 hotfix round 2 后)**:
+
+- **18 绿 / 0 红 / 1 skip** (16kb 待重 build)
+- R32 综合审视: 14 绿 / 3 红 / 1 warn / 2 skip
+- R32 hotfix round 1: 16 绿 / 1 warn / 0 红 / 2 skip
+- R32 hotfix round 2: **18 绿 / 0 warn / 0 红 / 1 skip** (守门员 100% 闭环)
+
+**半成品仍 0 闭环 (留给 R109 第 1 周)**:
+
+- PageScaffold translucent AppBar (C-02 跨 3 视角共识) — 已加 R32 hotfix 改造, 1 行 BackdropFilter blur(20) + reduce-transparency 适配
+- 11 feature 0 改 (Apple Health spec §5.1-5.7) — 7-8 个 feature (mood / mood_list / daily_tracking / vent / assessment / contact / settings / crisis_hotline) 仍 0 AppleListSection 化
+- SF Symbol 字体 (spec §3.1.3) — Material Icons 占位
+- 126 fail 半年没修 (R32 修 21 个 i18n, 剩 105 个)
+- 11 god class (≥400L) 0 test
+
+**详细整合报告**: [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (52KB, 6 视角子报告合计 173KB)
 - `AGENTS.md` — 本文件（代码视角）

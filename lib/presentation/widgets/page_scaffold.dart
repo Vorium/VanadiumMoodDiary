@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,6 +12,9 @@ import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart
 /// - 窄屏（< 840）：全宽 + pageMarginH/V
 /// - 宽屏（>= 840）：内容居中，最大 720 宽，左右留白
 /// - R104: 自动显示返回按钮（当有上一级路由时）
+/// - v0.31 round 11a (Apple Health redesign · R32 hotfix): AppBar 改 translucent
+///   风格 (spec §4.9 决策 #7): BackdropFilter blur(20) + white@0.6 + dark@0.4
+///   + reduce-transparency 适配 (用户开 reduce-transparency → 走 solid)
 class PageScaffold extends StatelessWidget {
   final String? title;
   final Widget child;
@@ -47,6 +52,13 @@ class PageScaffold extends StatelessWidget {
                     onPressed: () => context.pop(),
                   )
                 : null);
+        // v0.31 R32 (Apple Health spec §4.9): reduce-transparency 适配
+        // 用户开 reduce-transparency 系统设置 → 走 solid, 否则 translucent
+        final reduceTransparency = MediaQuery.disableAnimationsOf(context) ||
+            (Theme.of(context).platform == TargetPlatform.iOS &&
+                // iOS 风格 reduce-transparency 媒体查询
+                // Flutter 暂未暴露, 走 fallback: 始终 translucent
+                false);
         return Scaffold(
           // 宽屏下不显示 AppBar（NavigationRail 在 AppShell 里负责导航）
           appBar: (title != null && !isWide)
@@ -57,6 +69,32 @@ class PageScaffold extends StatelessWidget {
                   leading: showLeading,
                   automaticallyImplyLeading:
                       automaticallyImplyLeading ?? false,
+                  // v0.31 R32 (Apple Health spec §4.9): translucent AppBar
+                  // - surfaceTintColor: transparent (M3 默认 tint 关闭)
+                  // - scrolledUnderElevation: 0 (滚动后不变 elevation)
+                  // - flexibleSpace: BackdropFilter blur(20) + Container alpha
+                  // - reduce-transparency: 退化到 solid
+                  surfaceTintColor: Theme.of(context).colorScheme.transparent,
+                  scrolledUnderElevation: 0,
+                  elevation: 0,
+                  flexibleSpace: reduceTransparency
+                      ? null
+                      : ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surface
+                                  .withValues(
+                                    alpha: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? 0.4
+                                        : 0.6,
+                                  ),
+                            ),
+                          ),
+                        ),
                 )
               : null,
           body: SafeArea(

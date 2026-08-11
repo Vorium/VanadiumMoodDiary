@@ -287,7 +287,8 @@ void main() {
       // v0.31 Apple Health redesign baseline (含 3 新 metric helper)
       expect(
         count,
-        lessThanOrEqualTo(300),
+        // R32 hotfix round 2: 阈值 300 改回 250 (R95 baseline 220 + 30 buffer, R31 P1-06 跨期 0 闭环)
+        lessThanOrEqualTo(250),
         reason: 'v0.31 Apple Health redesign baseline',
       );
     });

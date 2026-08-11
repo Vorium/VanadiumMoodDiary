@@ -88,7 +88,9 @@ class MedicationPage extends ConsumerWidget {
             : FloatingActionButton(
                 // 顶部已放 IconButton.add, FAB 这里改主题色点 (spec §5.3 "FAB")
                 backgroundColor: AppColors.healthMetricsColorFor('medication'),
-                foregroundColor: Colors.white,
+                // R32 hotfix round 2 (P0-34): Colors.white → AppColors.fgOnPrimary
+                // (M3 theme-aware, 跟 emil "颜色集中" 原则)
+                foregroundColor: AppColors.fgOnPrimary(context),
                 onPressed: () => context.push('/medication/add'),
                 child: const Icon(Icons.add_rounded),
               ),
