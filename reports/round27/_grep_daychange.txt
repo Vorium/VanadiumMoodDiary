@@ -1,9 +1,0 @@
-﻿lib\app.dart - 3 处
-  142 ref.read(dayChangeTickProvider.notifier).tick();
-  159 // v0.21 (P0-6 fix): tick dayChangeTickProvider 通知所有 watch 它的 widget
-  160 ref.read(dayChangeTickProvider.notifier).tick();
-lib\presentation\pages\medication\medication_calendar_page.dart - 2 处
-  42 // v0.21 (P0-6 fix): watch dayChangeTickProvider 让跨 midnight 时本页自动 rebuild,
-  44 ref.watch(dayChangeTickProvider);
-lib\presentation\providers\data_providers.dart - 1 处
-  134 final dayChangeTickProvider =
