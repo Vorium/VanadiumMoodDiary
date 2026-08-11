@@ -13,6 +13,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 class MoodDetailPage extends ConsumerWidget {
   const MoodDetailPage({super.key, required this.entry});
@@ -25,8 +26,10 @@ class MoodDetailPage extends ConsumerWidget {
     return PageScaffold(
       title: l10n.moodDetailTitle,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.delete_outline),
+        // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
+        // PressFeedbackIconButton 集中器。
+        PressFeedbackIconButton(
+          icon: Icons.delete_outline,
           tooltip: l10n.moodDeleteTooltip,
           onPressed: () => _confirmDelete(context, ref),
         ),

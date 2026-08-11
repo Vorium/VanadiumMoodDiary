@@ -31,6 +31,7 @@ import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart
 import 'package:chroniccare/presentation/providers/tracking_config_provider.dart';
 import 'package:chroniccare/presentation/widgets/charts/daily_tracking_multi_chart.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 日常追踪模块化入口页
 class DailyTrackingPage extends ConsumerWidget {
@@ -74,8 +75,10 @@ class DailyTrackingPage extends ConsumerWidget {
     return PageScaffold(
       title: l10n.dailyTrackingTitle,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.tune),
+        // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
+        // PressFeedbackIconButton 集中器。
+        PressFeedbackIconButton(
+          icon: Icons.tune,
           tooltip: l10n.trackingCustomize,
           onPressed: () => context.push('/daily-tracking/customize'),
         ),

@@ -12,6 +12,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_item_config_ext.dart';
 import 'package:chroniccare/presentation/providers/tracking_config_provider.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// 追踪项自定义页 (排序/隐藏/收藏)
 class TrackingCustomizePage extends ConsumerWidget {
@@ -141,14 +142,15 @@ class _TrackingItemTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // 收藏按钮
-            IconButton(
-              icon: Icon(
-                config.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-                size: 20,
-                color: config.isPinned
-                    ? AppTokens.primaryColor(context)
-                    : AppTokens.textHintColor(context),
-              ),
+            // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
+            // PressFeedbackIconButton 集中器。color / size 提到顶层参数
+            // (集中器 build 内部会构 Icon)。
+            PressFeedbackIconButton(
+              icon: config.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+              color: config.isPinned
+                  ? AppTokens.primaryColor(context)
+                  : AppTokens.textHintColor(context),
+              size: 20,
               tooltip: config.isPinned ? l10n.trackingUnpin : l10n.trackingPin,
               onPressed: onTogglePin,
             ),

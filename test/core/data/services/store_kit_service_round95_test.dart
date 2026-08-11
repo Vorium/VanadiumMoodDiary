@@ -35,7 +35,7 @@ void main() {
     test('kLifetimeProductId 是 chroniccare.lifetime 格式', () {
       expect(
         StoreKitService.kLifetimeProductId,
-        'com.chroniccare.app.lifetime',
+        'com.chroniccare.chroniccare.lifetime',
       );
     });
   });

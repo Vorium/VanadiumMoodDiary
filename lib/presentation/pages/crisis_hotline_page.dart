@@ -32,6 +32,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 
 /// 单条热线 entry 数据 (label + number + 可选 desc)
@@ -182,16 +183,19 @@ class CrisisHotlinePage extends StatelessWidget {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.phone_outlined),
-                      iconSize: AppTokens.iconSizeSmall,
+                    // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
+                    // PressFeedbackIconButton 集中器, iconSize → size
+                    // (集中器参数名)。
+                    PressFeedbackIconButton(
+                      icon: Icons.phone_outlined,
+                      size: AppTokens.iconSizeSmall,
                       color: AppTokens.tintedPrimaryDeep(context),
                       tooltip: l10n.crisisHotlineDialTooltip,
                       onPressed: () => _dialNumber(context, l10n, entry.number),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.copy_outlined),
-                      iconSize: AppTokens.iconSizeSmall,
+                    PressFeedbackIconButton(
+                      icon: Icons.copy_outlined,
+                      size: AppTokens.iconSizeSmall,
                       color: AppTokens.textSecondaryColor(context),
                       tooltip: l10n.crisisHotlineCopyTooltip,
                       onPressed: () => _copyNumber(context, l10n, entry.number),

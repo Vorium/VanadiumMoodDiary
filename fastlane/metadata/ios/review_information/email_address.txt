@@ -1,1 +1,1 @@
-TODO: 真实邮箱 (用 chroniccare.app 注册后填入)
+[REPLACE_BEFORE_APPLE_REVIEW: 紧急联系邮箱 — 推荐 dev@chroniccare.app (域名注册后填入), 上架前必填真实信息]

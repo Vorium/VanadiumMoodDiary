@@ -30,6 +30,7 @@ import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class AddMedicationPage extends ConsumerStatefulWidget {
@@ -132,8 +133,13 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
 
     return PageScaffold(
       title: l10n.medAddTitle,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded),
+      // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
+      // PressFeedbackIconButton 集中器。原 IconButton 无 tooltip,
+      // 集中器要求必填, 用 R75 wizard 步骤 ARB key medAddPrev
+      // (en="Back" / zh="上一步") 语义匹配 wizard 步骤返回。
+      leading: PressFeedbackIconButton(
+        icon: Icons.arrow_back_rounded,
+        tooltip: l10n.medAddPrev,
         onPressed: _prevStep,
       ),
       child: Column(

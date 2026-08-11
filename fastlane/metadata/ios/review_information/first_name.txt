@@ -1,1 +1,1 @@
-TODO: 真实名字
+[REPLACE_BEFORE_APPLE_REVIEW: 真实名字 (first name) — Apple App Store Connect 联系人名，上架前必填真实信息]

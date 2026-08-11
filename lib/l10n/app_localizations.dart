@@ -591,6 +591,12 @@ abstract class AppLocalizations {
   /// **'保存'**
   String get commonSave;
 
+  /// No description provided for @commonBack.
+  ///
+  /// In zh, this message translates to:
+  /// **'返回'**
+  String get commonBack;
+
   /// No description provided for @commonCancel.
   ///
   /// In zh, this message translates to:

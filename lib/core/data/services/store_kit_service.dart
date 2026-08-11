@@ -9,7 +9,7 @@
 // 1. pubspec 加 in_app_purchase: ^7.0.0
 // 2. 本文件封装 IAP singleton + pro 状态缓存
 // 3. dev 模式走 kDebugMode 直接返 true (避免 dev 跑不通)
-// 4. **不**接真实 Apple 开发者账号 productId (com.chroniccare.app.lifetime)
+// 4. **不**接真实 Apple 开发者账号 productId (com.chroniccare.chroniccare.lifetime)
 //    - 留给 v0.28 真接 (外部依赖: App Store Connect 创建 productId + 法务过审 8 元定价)
 //
 // 数据流:
@@ -47,7 +47,7 @@ class StoreKitService {
   StoreKitService._();
 
   /// v0.28 真接时用, dev 模式 + release 占位都用这个常量
-  static const String kLifetimeProductId = 'com.chroniccare.app.lifetime';
+  static const String kLifetimeProductId = 'com.chroniccare.chroniccare.lifetime';
 
   /// SharedPreferences key (IAP flag 非 PII, 不走 SQLCipher)
   static const String _kProFlag = 'iap_pro_lifetime';

@@ -273,6 +273,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonSave => '保存';
 
   @override
+  String get commonBack => '返回';
+
+  @override
   String get commonCancel => '取消';
 
   @override
@@ -4419,6 +4422,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get commonSave => '保存';
+
+  @override
+  String get commonBack => '返回';
 
   @override
   String get commonCancel => '取消';

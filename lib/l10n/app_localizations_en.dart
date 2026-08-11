@@ -284,6 +284,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonSave => 'Save';
 
   @override
+  String get commonBack => 'Back';
+
+  @override
   String get commonCancel => 'Cancel';
 
   @override

@@ -37,6 +37,7 @@ import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// v0.30 R108 (P1 medication_page 拆): 抽到 domain 后, presentation 层只
 /// 负责 [MedicationTimeSlot.name] → icon + l10n label 的映射。
@@ -83,12 +84,13 @@ class MedicationPage extends ConsumerWidget {
     return PageScaffold(
       title: l10n.medPageTitle,
       actions: [
-        PressFeedback(
-          child: IconButton(
-            icon: const Icon(Icons.add_rounded),
-            tooltip: l10n.medAddTooltip,
-            onPressed: () => context.push('/medication/add'),
-          ),
+        // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
+        // PressFeedbackIconButton 集中器, 去掉外层 PressFeedback 包装
+        // (集中器内部已自带 PressFeedback)。
+        PressFeedbackIconButton(
+          icon: Icons.add_rounded,
+          tooltip: l10n.medAddTooltip,
+          onPressed: () => context.push('/medication/add'),
         ),
       ],
       // v0.31 R11a (spec §5.3): FAB 添加 medication (systemRed 圆形)
