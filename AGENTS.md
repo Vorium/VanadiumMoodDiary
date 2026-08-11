@@ -243,6 +243,49 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 7. `bootReceiverEnabled=false` (等 WorkManager 完善)
 8. `aliyunSmsEnabled=false` (等 AccessKey)
 
+## v0.31 Apple Health 风格重设计 + 8-11 cleanup 综合审视 (2026-08-10~11, 23 commit + 2 cleanup commit, 7 视角, 加权综合 6.2 → 7.5/10)
+
+**状态**: v0.31.0 Apple Health (iOS 17/18) 视觉语言**重设 22 commit** (master `01d8f4a`) + 8-11 cleanup **2 commit** (master `20670f3`) 收尾。**23 work commit 净 +7447/-3504**, 5 phase / 13 task / R1-R12b 流水。**加权综合 6.2 → 7.5/10** (R108 6.2 → +1.3 升, 上架层 0/10 跨期残留拉低 + 视觉层 9.5/10 优秀拉升)。详细整合见 `docs/audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md` (14KB), 7 视角 subagent 报告合计 79KB。R108 整合报告对照 `docs/audit-history/r107-cleanup-2026-08-10/R108-overall-report.md`。
+
+**核心变更**:
+
+- **5 token 集中器** (Phase 1, R1-R4): `app_colors.dart` (iOS system color + 8 health metric palette) / `app_typography.dart` (17pt body + 13pt caption + ultralight w200 大数字) / `app_spacing.dart` (圆角 14/10 + buttonHeight 50 + 信息密度 +30%) / `app_motion.dart` (0 阴影 + 3 Apple cubic-bezier) / `spring.dart` (Spring 物理模型 mass/stiffness/damping, **R109 接入**)
+- **6 widget 集中器** (Phase 2, R5-R8): `PrimaryButton` (Apple Pill 3 variant) / `CheckInButton` (64pt 巨型 pill + spring 进场) / `StatCard` (ultralight w200 4 variant + 数字 tween) / `AppleHealthTile` (8 metric 彩色模块) / `AppleListSection` (iOS 群组列表 insetGrouped) / `SectionHeader` (iOS ALL CAPS 11pt)
+- **5 page 重设** (Phase 3, R9-R11): Home (6 section AppleListSection + spacing 16 + stagger 8→3 闭环 + 4 StatCard 2x2 + 5 mood carousel) / Setup (4 步进度条 25/50/75/100%) / Medication (4 AppleHealthTile 横滚 + systemRed FAB + 5 子页) / Trend / Vent
+- **9 page follow** (Phase 4, R12): trend / mood / vent / assessment / settings / contact / daily_tracking 按钮+分隔线改 Apple Health 风格
+- **1 物理 Spring 模型** (P0 半成品): `spring.dart` 145 行 0 caller, spec §3.4.3 双轨制 (Spring 物理 vs curve 模拟) 空跑。R109 第 1 周接 `_EntrySpring` 走 `Spring.standard.toSimulation()`
+
+**18 守门员 18/18 全绿** (跨期 R95 `check_coverage.py` 起延续, R31 加 `check_apple_health_claim.py` 扩到 `lib/**/*.dart` 注释)
+
+**评分变化 (R108 → R31)**:
+- emil 8.5 → 8.5 (持平, 主页 stagger 8→3 闭环抵消新引入 4 处硬编码中文)
+- superpowers-en 6.5 → 8.5 (+2.0, R31 22 commit 100% 跟 test 同步, TDD 实践度 12/13 跟 test 同步)
+- superpowers-zh 6.5 → 7.5 (+1.0, 中文 doc 完整 + dartdoc 中文 spec §X.X 引用)
+- flutter-spec 88% → 97% (+9%, R31 5 token + 6 widget 集中化是 R65 后最成熟 "design engineering" 时刻)
+- AppStore 3.5 → 3.5 (持平, R108 5 项上架硬阻塞跨期 100% 残留 0 闭环, R31 新增 5 P0 上架阻塞 = 累计 10 P0)
+- GooglePlay 5.5 → 5.5 (持平, R108 26 P0 中 12 仍阻塞, R31 0 新 P0)
+- Apple Health 3.0 → 7.0 (+4.0, R31 视觉层 9.5/10 优秀, 11 feature 仍 0 改是减分项)
+- **加权综合 6.2 → 7.5 (+1.3)**
+
+**R31 17 P0 紧急修 (按优先级排序, R109 第 1 周闭环 1 周内可到 8.5/10)**:
+- **上架/合规 7 项** (P0-01~07, 3.5h 总和, 0.5h 立即可修): review_information 4 TODO 占位 / notes.txt 版本号过期 / store_kit_service productId 冗余 / description.txt 5.1.1 抽审 / 3 处 DarwinNotificationDetails 锁屏 PII / 4 处 AndroidNotificationDetails.visibility 锁屏 PII / 7 处 raw IconButton
+- **Apple Health 半成品 5 项** (P0-08~12, 4-5h): Spring 接 _EntrySpring / R108 P0-004 "Apple Health" 关键词 lock-in 扩 lib/ 注释 / PageScaffold translucent AppBar (spec §4.9) / dart format 2 文件 / 设计文档 44KB untracked 入库
+- **上架硬阻塞 5 项** (P0-13~17, 1-2 月, 设计师/外部依赖): iOS 截图 / iOS LaunchImage / Android 截图 + feature_graphic / chroniccare.app 域名 + 4 邮箱 ICP / AppIcon 1024×1024 ≥ 200KB
+
+**R31+ 路线图 (跟 R108 路线图合并更新)**:
+- **R31 hotfix (本周, 1 周)**: 闭环 17 P0 → 8.5/10
+- **R109 god class 专项** (1-2 月): 拆 setup_page_state 513L + setup_step_medication 614L (本批反涨 108L) + medication_page 524L + 11 个 R108 §六 候选 + use case 层厚化 (8 usecase) → 9.0/10
+- **R110 feature-first 重构** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace 3 package
+- **v1.0 (2027-Q1)**: HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP 真接 + 5 token 集中器转 pub workspace 公共 package
+
+**6 大跨视角共识 issue (新引入)**: spring.dart 死代码 (emil + superpowers-en + Apple Health) / 7 处 IconButton (emil) / spec baseline 数字矛盾 (emil + superpowers-zh + superpowers-en) / AGENTS.md 缺 v0.31 章节 (superpowers-zh + superpowers-en + flutter-spec + Apple Health) / 设计文档 untracked (superpowers-zh) / god class 反涨 (superpowers-zh)
+
+**untracked 待入库** (R31 hotfix commit 时一起):
+- `docs/audit/2026-08-11-cleanup/` 9 个文件 (9 份审视报告合计 79KB)
+- `docs/design/2026-08-10-apple-health-redesign/` 3 个文件 (spec.md 22KB + plan.md 16KB + NEXT-SESSION-START-HERE.md 6KB, 合计 44KB)
+
+**8 FeatureFlag 当前状态 (R31, 同 R108+R107)**: 同 R108 (5 已列, 3 待开通)
+
 ## v0.23 P0-P3 集中清理 (round 38-44)
 
 按"三视角审视"报告 (emil / superpowers-en / superpowers-zh) 全修:

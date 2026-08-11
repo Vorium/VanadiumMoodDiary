@@ -6,6 +6,34 @@
 
 **Apple Health (iOS 17/18) 视觉语言** — 精神心理患者向慢病管家 app 全面重设计。按 superpowers-en + emil-kowalski + apple-design 3 skill 综合决策，subagent-driven 22 commit 流水落地。
 
+### 综合审视 (8-11 cleanup, 7 视角 subagent, 加权 7.5/10)
+
+`docs/audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md` (14KB) + 7 份 subagent 报告合计 79KB。**R108 6.2 → R31 7.5/10 (+1.3)**, 23 work commit 净 +7447/-3504。
+
+- **17 P0** (R109 第 1 周闭环 1 周可到 8.5/10): 上架/合规 7 项 (review_information 4 TODO / notes.txt 版本号 / store_kit_service productId / description.txt 5.1.1 抽审 / 3 DarwinNotificationDetails 锁屏 PII / 4 AndroidNotificationDetails.visibility / 7 raw IconButton) + Apple Health 半成品 5 项 (Spring 接 _EntrySpring / "Apple Health" lock-in 扩 lib/ 注释 / PageScaffold translucent AppBar / dart format / 设计文档入库) + 上架硬阻塞 5 项 (iOS 截图 / iOS LaunchImage / Android 截图+feature_graphic / 域名+4 邮箱 / AppIcon ≥ 200KB)
+- **16 P1**: R11a 4 处硬编码中文 + 1 Colors.white (medication_page) / QuickMoodCarousel '心情' + '记录失败' / 48pt vs 72pt / lock-in test 阈值 220→300 改回 250 / curveAppleSheet/curveAppleDrawer 死代码 / setup_page_state 513L + setup_step_medication 614L (反涨 108L) god class / medication_page 524L 拆 controller / _StreakCounter 跟 _TweenNumber 95% 重复抽 tween_number / 11 feature 0 改 (mood/daily_tracking/vent/crisis_hotline)
+- **6 P2** + **11 P3**: dev doc 同步 6 项 (AGENTS 缺 v0.31 章节 / CHANGELOG 数字 stale 闭环 → 本 [0.31.0] 段已修 / 跨平台 reproduce 留 v0.32 / spec baseline 数字矛盾 / PrimaryButton doc 注释硬编码 / R12b global sanity test 改 AST) + 细节 polish 11 项 (CheckInButton fontWeight / PressFeedback haptics / `_StreakCounter` vs `_EntrySpring` 动画模式统一 / AppleListSection `toUpperCase` 对中文 no-op / SF Symbol 字体集成 / commit author 统一 / `_titleLetterSpacing` 抽 token / StatCard.xl 命名 / brand color 跨平台 / styles.xml SplashScreen)
+- **6 大跨视角共识 issue**: spring.dart 死代码 (emil + superpowers-en + Apple Health) / 7 处 IconButton (emil) / spec baseline 数字矛盾 (emil + superpowers-zh + superpowers-en) / AGENTS.md 缺 v0.31 章节 (superpowers-zh + superpowers-en + flutter-spec + Apple Health) / 设计文档 untracked (superpowers-zh) / god class 反涨 (superpowers-zh)
+
+### 验收数字 (8-11 cleanup 后, 8-11 真实跑, 2026-08-11)
+
+- **0 analyzer error / 23 warning / 67 info = 90 issues** (master HEAD `20670f3`, post-cleanup)
+- **+2103 pass / 1 skip / 126 fail** (master baseline +2036 / 1 / 128 pre-Apple Health, **净改善 +67 pass -2 fail**; 跟原 22 commit 收尾时 +2104/1/126 差 1 pass 因 R12b global sanity 4 case 跟 8-11 重新 baseline 对齐)
+- 18 守门员 18/18 全绿 (新增 `check_apple_health_claim.py` 扩 `lib/**/*.dart` 注释扫描)
+
+### 评分变化 (R108 → R31, 7 视角 subagent)
+
+| 视角 | R108 | R31 | 变化 | 原因 |
+|---|---|---|---|---|
+| emil | 8.5 | 8.5 | 持平 | 主页 stagger 8→3 闭环抵消新引入 4 处硬编码中文 |
+| superpowers-en | 6.5 | 8.5 | +2.0 | 22 commit 100% 跟 test 同步, TDD 实践度 12/13 |
+| superpowers-zh | 6.5 | 7.5 | +1.0 | 中文 doc 完整 + dartdoc 中文 spec §X.X 引用 |
+| flutter-spec | 88% | 97% | +9% | 5 token + 6 widget 集中化 = R65 后最成熟 design engineering 时刻 |
+| AppStore | 3.5 | 3.5 | 持平 | R108 5 项上架硬阻塞跨期 100% 残留 0 闭环 |
+| GooglePlay | 5.5 | 5.5 | 持平 | R108 26 P0 中 12 仍阻塞, R31 0 新 P0 |
+| Apple Health | 3.0 | 7.0 | +4.0 | 视觉层 9.5/10 优秀, 11 feature 仍 0 改是减分项 |
+| **加权综合** | **6.2** | **7.5** | **+1.3** | 视觉层 9.5/10 拉升 - 上架层 0/10 跨期残留拉低 |
+
 ### Token 改造 (Phase 1, 5 commit)
 
 - **`app_colors.dart`** 11 静态 const 改 iOS system color (background `#F2F2F7` / text `#000000` / dark `#000000` / primary `#34C759` iOS systemGreen) + 新增 8 health metric palette (medication 红 / mood 粉 / vent 紫 / assessment 靛 / checkIn 绿 / trend 蓝 / contact 橙 / sleep 青) + 4 health metric API (`healthMetricsColors` / `healthMetricsIds` / `healthMetricsColorFor` / `tintedMetricSoft`)
@@ -39,10 +67,11 @@
 
 ### 验收
 
-- **0 analyzer error** (91 pre-existing info/warning 来自 comment/test, 无新增)
-- **+2104 pass / 1 skip / 126 pre-existing fail** (master baseline +2036 / 1 / 128, **净改善 +68 pass -2 fail**)
-- 18 守门员全绿 (spec/plan/commit 改时本地验证 subagent 已确认)
-- 22 commit on `feat/apple-health-redesign` branch (worktree 未 merge master, 留作 hotfix 备份)
+- **0 analyzer error** (90 pre-existing info/warning 来自 comment/test, 无新增 — Round 13 4ebec68 收尾时 91, 8-11 cleanup 验证时 90 修正 1 处 test file trailing comma)
+- **+2103 pass / 1 skip / 126 pre-existing fail** (master baseline +2036 / 1 / 128, **净改善 +67 pass -2 fail**; 跟 22 commit 收尾时 +2104/1/126 差 1 pass 因 R12b global sanity 4 case 跟 8-11 重新 baseline 对齐, 8-11 真实跑)
+- 18 守门员 18/18 全绿 (8-11 cleanup 验证, 新增 `check_apple_health_claim.py` 扩 `lib/**/*.dart` 注释扫描)
+- 22 commit on `feat/apple-health-redesign` branch → merge `01d8f4a` 进 master, worktree 关闭
+- 8-11 cleanup 整合报告: `docs/audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md` (14KB, 7 视角)
 
 ### 文件变更
 
@@ -75,7 +104,34 @@
 
 ---
 
-## [0.30.0] - 2026-08-10 (R108 P0 13 项必修 + P1 4 god class 拆, 7 subagent 并行, 18 守门员全绿, 16 lock-in test, 10 详细文档, +12 lib/ 新建, 15 lib/ 改动)
+## [0.31.1] - 2026-08-11 (cleanup · 2 commit, 0 代码变更, 0 测试影响, +0/-0 pubspec, 删 95 个历史 artifact)
+
+8-11 cleanup 收尾, **0 业务代码改动**, **0 守门员回归**, 仅清历史残留 + 归档历史审视 subagent 报告。
+
+**变更明细**:
+
+- `dcd9a76` 0.31.1 cleanup: 删 `.mimocode/` 6 个 AI agent plan 残留 (R88 feature flag 取消后续产物, 无任何现行引用, 删后节省 6 文件磁盘空间)
+- `20670f3` 0.31.1 cleanup: 删 `reports/` 89 个历史审视 + `docs/audit/.../lens/` 9 份 R108 sub-report (v0.27-v0.30 期间 subagent 临时输出, 已归档 `docs/audit-history/`)
+
+**清理范围**:
+- 删 6 个 `.mimocode/` AI agent plan 残留文件 (R88 feature flag 取消后产物)
+- 删 89 个 `reports/` 历史审视文件 (v0.27-v0.30 期间 subagent 临时输出)
+- 删 9 个 `docs/audit-history/.../lens/` R108 sub-report (v0.27-v0.30 期间 subagent 临时输出, 已合并入 `docs/audit-history/r107-cleanup-2026-08-10/R108-overall-report.md` 16.7KB 整合报告)
+- **0 pubspec.yaml 改动** / **0 CHANGELOG 内容外改动** / **0 test 影响**
+
+**验收** (跟 0.31.0 post-merge 一致, 8-11 cleanup 真实跑):
+- **0 analyzer error / 23 warning / 67 info = 90 issues** (跟 0.31.0 master `01d8f4a` 一致, 无回归)
+- **+2103 pass / 1 skip / 126 fail** (跟 0.31.0 一致, 无回归)
+- 18 守门员 18/18 全绿
+- master HEAD `20670f3`
+
+**untracked 状态** (待 R31 hotfix commit 时一起入库):
+- `docs/audit/2026-08-11-cleanup/` 9 个文件 (00-FINAL-CONSOLIDATION.md + 00-spec.md + 7 份 lens 报告, 合计 79KB)
+- `docs/design/2026-08-10-apple-health-redesign/` 3 个文件 (spec.md 22KB + plan.md 16KB + NEXT-SESSION-START-HERE.md 6KB, 合计 44KB)
+
+**下一步 (R31 hotfix)**: 闭环 17 P0 (见 [0.31.0] 段综合审视章节), 1 周内到 8.5/10。
+
+---
 
 R108 是 R107 cleanup 综合审视后"按优先级顺序依次修复"批次。**P0 13 项必修全修完**（含 5 视角共识的 iCloud Backup / canScheduleExactAlarms / 锁屏 body PII / 隐私 manifest / 主页 stagger + 8 项上架阻塞），**P1 6 大 god class 拆中 4 项完成**（main / home_page / vent_compose / daily_tracking 7 widget）。
 
