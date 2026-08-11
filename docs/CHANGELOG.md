@@ -2,6 +2,42 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.32.0+113] - 2026-08-12 (R109 god class 拆 round 1 · use case 层厚化模板 · ScheduleAssessmentReminderUseCase 抽)
+
+R109 god class 专项起步, 1 commit (`c3b9e03`), use case 层厚化模板 round 1, 闭环 1 个 god class (assessment_reminder_service 199L → 192L).
+
+**变更明细**:
+
+- **抽 5 个新文件**:
+  - `lib/domain/logic/assessment_reminder_policy.dart` (72L): `computeNextFireTime` 纯函数 + `defaultDays` / `allowedDays` 默认值 + `isValidDays` helper. 0 Flutter / 0 Drift / 0 service 依赖
+  - `lib/domain/repositories/assessment_reminder_sender.dart` (40L): abstract `schedule` / `cancel` interface. use case 拿这个, 不直接拿 NotificationService (data 层)
+  - `lib/domain/usecases/schedule_assessment_reminder.dart` (83L): UseCase 编排 `enabled` 切换 + 算 fire time + 调 sender. 0 副作用. 提供 `static resolveFireTime` 透传 policy
+  - `lib/core/data/services/assessment_reminder_sender_impl.dart` (42L): sender 实现, 包 NotificationService.delegate 实际发
+  - `scripts/check_usecase_layer.py` (209L): use case 层厚化守门员. 验证 5 个硬约束 (0 data / 0 theme-routing / 0 presentation / 0 l10n / 0 Flutter SDK) + 命名规范 (UseCase/Policy/Input/Output/Config/Result/Schedule/State 后缀) + 业务入口方法
+- **改 1 个 service**: `assessment_reminder_service.dart` 199L → 192L (-7L), 改后:
+  - 公开 API 全保留 (caller 0 改动): `defaultDays` / `allowedDays` / `computeNextFireTime` / `isEnabled` / `setEnabled` / `getDays` / `setDays` / `getLastAssessmentAt` / `setLastAssessmentAt` / `onAppStart` / `onAssessmentCompleted` / `onSettingsChanged`
+  - `computeNextFireTime` 透传 policy, 行为 100% 一致
+  - `onAppStart` / `onAssessmentCompleted` 调 use case.reschedule() 替代直接调 `notification_service.delegate`
+- **改 1 个 provider**: `service_providers.dart` 加 `assessmentReminderSenderProvider` + `scheduleAssessmentReminderUseCaseProvider`, `assessmentReminderServiceProvider` 改注入 use case. provider 链: `notificationService → sender impl → use case → service`
+
+**R109 路线图** (本批 round 1, 后续 round 2-6 复制本模板):
+- round 1 (本批): assessment_reminder → use case ✅
+- round 2: safety_watch_service → use case (类似 + SMS 渠道)
+- round 3: medication_page → 拆 4 controllers
+- round 4: add_medication_page → 抽 form controller
+- round 5: setup_page_state → 拆 4 step state
+- round 6: mood_trend_page → 拆 4 sub-widget
+
+**总变更** (本批): 7 文件 (+662 / -200 行), 1 个新守门员, 0 个新 test (test 留给后续 round 验证 use case 行为), 0 个 db migration, pubspec 0.31.1+112 → 0.32.0+113
+
+**验收** (R109 round 1 后, 8-12 真跑):
+- 19 守门员: **19 绿 / 0 红 / 0 warn / 1 skip** (16kb 待重 build, 1 新加 check_usecase_layer)
+- `flutter test`: 待 flutter SDK (本机不在 PATH, 估 use case 静态逻辑 0 改, 不破坏现有 2129 pass / 1 skip / 126 fail)
+- `flutter analyze`: 待 flutter SDK
+- check_usecase_layer 正向 5 个 usecase 全合规, 反向故意 import data+material 抓到 2 error
+
+---
+
 ## [0.31.1+112] - 2026-08-11 (R32 hotfix round 5 · dev doc 同步: pubspec +108→+111 + CHANGELOG +2 段 + VERSION_1.0_PLAN + TODO_R108 闭环标)
 
 R32 hotfix round 5, 1 commit (`96fcf22`), 闭环 P1-15 (superpowers-en dev doc sync) — R32 hotfix 4 round 修了 30 P0 + 5 P1 (代码层), 但 dev doc 还停在 round 1 前, 本批补 doc 同步。

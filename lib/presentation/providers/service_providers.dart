@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/data/services/assessment_reminder_sender_impl.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
 import 'package:chroniccare/core/data/services/reminder_scheduler.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
+import 'package:chroniccare/domain/repositories/assessment_reminder_sender.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
+import 'package:chroniccare/domain/usecases/schedule_assessment_reminder.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// v0.17 round 14 (P1-3 拆 core_providers): 业务服务 provider
@@ -68,10 +71,29 @@ final safetyConfigServiceProvider = Provider<SafetyConfigService>(
 ///
 /// Apple Health 思路：每 N 天提醒做 PHQ-9 / GAD-7。
 /// 默认关闭。用户在 settings 开启 + 评估。
+///
+/// v0.31.1 R109 (god class 拆 round 1):
+/// service 退化 thin facade, 业务编排 (算 fire time + 调 sender) 搬到
+/// `ScheduleAssessmentReminderUseCase`. provider 链:
+///   notificationService → sender impl → use case → service
+final assessmentReminderSenderProvider = Provider<AssessmentReminderSender>(
+  (ref) => AssessmentReminderSenderImpl(
+    ref.watch(notificationServiceProvider),
+  ),
+);
+
+/// v0.31.1 R109: use case 拿 abstract sender, 0 Flutter / 0 service 依赖
+final scheduleAssessmentReminderUseCaseProvider =
+    Provider<ScheduleAssessmentReminderUseCase>(
+  (ref) => ScheduleAssessmentReminderUseCase(
+    ref.watch(assessmentReminderSenderProvider),
+  ),
+);
+
 final assessmentReminderServiceProvider = Provider<AssessmentReminderService>(
   (ref) => AssessmentReminderService(
     checkInRepo: ref.watch(checkInRepositoryProvider),
-    notificationService: ref.watch(notificationServiceProvider),
+    scheduleUseCase: ref.watch(scheduleAssessmentReminderUseCaseProvider),
   ),
 );
 
