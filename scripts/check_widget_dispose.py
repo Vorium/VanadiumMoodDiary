@@ -27,13 +27,15 @@ from pathlib import Path
 ROOT = Path(os.getcwd()) / "lib"
 
 # 资源释放关键字
+# R32 (P1-10 superpowers-en): 扩 4 类 (AnimationController / Timer / ChangeNotifier / ScrollController)
 DISPOSE_KEYWORDS = [
-    r'\.dispose\(\)',  # AnimationController / TextEditingController / StreamController / AudioPlayer
+    r'\.dispose\(\)',  # AnimationController / TextEditingController / StreamController / AudioPlayer / ChangeNotifier / ScrollController
     r'\.cancel\(\)',  # StreamSubscription / Timer / Ticker
-    r'removeListener',  # Listenable
+    r'removeListener',  # Listenable / ChangeNotifier
     r'removePostFrameCallback',  # WidgetsBinding
     r'unsubscribe',  # custom
     r'disposeStream',  # custom (项目用)
+    r'\.disposeScrollController',  # custom (项目用)
 ]
 
 

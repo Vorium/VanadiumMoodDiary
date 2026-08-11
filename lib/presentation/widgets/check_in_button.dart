@@ -39,6 +39,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/spring.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/animations/tween_number.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
@@ -270,78 +271,34 @@ class _EntrySpringState extends State<_EntrySpring>
 }
 
 /// streak 数字 tween 递增 (v0.17 round 1 / v0.23 P1 保留, R6 未动)
-class _StreakCounter extends StatefulWidget {
+// R32 (P1-13 superpowers-en): 改用公共 TweenNumber widget (跟 stat_card._TweenNumber 95% 重复)
+class _StreakCounter extends StatelessWidget {
   final int value;
   final bool isChecked;
   const _StreakCounter({required this.value, required this.isChecked});
 
   @override
-  State<_StreakCounter> createState() => _StreakCounterState();
-}
-
-class _StreakCounterState extends State<_StreakCounter>
-    with SingleTickerProviderStateMixin {
-  int _lastValue = 0;
-  late AnimationController _controller;
-  late double _currentAnimated;
-  late final VoidCallback _tickListener;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentAnimated = widget.value.toDouble();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppTokens.durSlow,
-    );
-    _tickListener = () {
-      setState(() {
-        _currentAnimated =
-            _lastValue + (widget.value - _lastValue) * _controller.value;
-      });
-    };
-    _controller.addListener(_tickListener);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _controller.duration = Motion.duration(context, AppTokens.durSlow);
-  }
-
-  @override
-  void didUpdateWidget(covariant _StreakCounter old) {
-    super.didUpdateWidget(old);
-    if (old.value != widget.value) {
-      _lastValue = _currentAnimated.round();
-      _controller
-        ..reset()
-        ..forward();
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_tickListener);
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AppSemantics.container(
-      label: AppLocalizations.of(context).homeStreak(_currentAnimated.round()),
-      liveRegion: true,
-      child: AppSemantics.exclude(
-        child: Text(
-          AppLocalizations.of(context).homeStreak(_currentAnimated.round()),
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeLabel,
-            color: AppTokens.fgOnPrimaryMuted(context),
-            height: AppTokens.lineHeightTight,
+    return TweenNumber(
+      value: value,
+      builder: (ctx, current) {
+        final streakText =
+            AppLocalizations.of(ctx).homeStreak(current);
+        return AppSemantics.container(
+          label: streakText,
+          liveRegion: true,
+          child: AppSemantics.exclude(
+            child: Text(
+              streakText,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeLabel,
+                color: AppTokens.fgOnPrimaryMuted(ctx),
+                height: AppTokens.lineHeightTight,
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

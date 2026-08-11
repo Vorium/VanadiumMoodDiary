@@ -9,8 +9,9 @@
 //   MotionScheme/Motion 全部在本文件; app_tokens.dart 留 facade re-export。
 // - v0.31 R4 (Apple Health redesign · Task 1.4):
 //   · Duration 调档 (durNormal 300→250, durSlow 500→400, durPress 160→100)
-//   · Curve 加 3 个 Apple 自定义 cubic-bezier (curveSpring / curveAppleSheet /
-//     curveAppleDrawer), 保留 6 个旧 curve
+//   · Curve 加 1 个 Apple 自定义 cubic-bezier (curveSpring, spec §3.4.3 Spring 物理模型),
+//     R32 P1-7 删 curveAppleSheet/Drawer 死代码 (Material.showModalBottomSheet 不暴露 transitionAnimationController)
+//   · 保留 6 个旧 curve
 //   · Shadow 大改: shadowCardOf/shadowCardDarkOf → [] 空 (Apple Health 0 阴影),
 //     shadowDialogOf 极轻 (blur 24, offset 0,8, alpha 0.08),
 //     shadowOverlayOf 极轻 (blur 16, offset 0,4, alpha 0.06)
@@ -114,13 +115,11 @@ class AppMotion {
   /// 用 `curve` 模拟; 真实 spring 见 spring.dart。
   static const Cubic curveSpring = Cubic(0.23, 1, 0.32, 1);
 
-  /// iOS 抽屉/Sheet 曲线 — `cubic-bezier(0.32, 0.72, 0, 1)`
-  /// 适用: modal 从底部升起 (急停, 不回弹) — apple-design §4
-  static const Cubic curveAppleSheet = Cubic(0.32, 0.72, 0, 1);
-
-  /// iOS Drawer 曲线 — `cubic-bezier(0.77, 0, 0.175, 1)`
-  /// 适用: drawer / nav 滑入/滑出 (平滑长尾) — apple-design §4
-  static const Cubic curveAppleDrawer = Cubic(0.77, 0, 0.175, 1);
+  // R32 (P1-7 死代码清理): curveAppleSheet / curveAppleDrawer 0 caller 跨期
+  // Material.showModalBottomSheet / Scaffold.endDrawer 不暴露 transitionAnimationController
+  // 参数 (需自定义 PageRouteBuilder), 项目没自定义 route 包装, 2 死代码无 caller.
+  // spec §3.4.2 写 modal/drawer 曲线集成未实现. R32 P0-20 推荐 (A) 方案 删.
+  // 改用 Material 默认 Curves.easeOutCubic (跟 Apple Health 实际渲染一致).
 
   // ============= 阴影 (v0.31 R4 Apple Health 0 阴影) =============
   //

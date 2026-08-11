@@ -8,3 +8,5 @@ export 'celebration_bounce.dart';
 export 'fade_in.dart';
 export 'page_transition_switcher.dart';
 export 'slide_up.dart';
+// R32 (P1-13 superpowers-en): 公共 TweenNumber widget (跟 stat_card._TweenNumber 95% 重复)
+export 'tween_number.dart';

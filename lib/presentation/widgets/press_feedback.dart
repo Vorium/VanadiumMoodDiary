@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 
 /// v0.18 round 14 (P0-8): 按钮按下时给 scale 反馈 (emil 必备)
 ///
@@ -57,12 +58,17 @@ class PressFeedback extends StatefulWidget {
   /// 按下/抬起的动画时长
   final Duration duration;
 
+  /// R32 (P1-8 Haptics): 按下时是否触发 haptic 反馈 (emil P0-5 缺)
+  /// 默认 lightImpact, 跟 Material 3 ripple 同档
+  final bool enableHaptics;
+
   const PressFeedback({
     super.key,
     required this.child,
     this.onTap,
     this.pressedScale = 0.97,
     this.duration = AppTokens.durPress,
+    this.enableHaptics = true,
   });
 
   @override
@@ -75,6 +81,11 @@ class _PressFeedbackState extends State<PressFeedback> {
   void _setPressed(bool value) {
     if (!mounted) return;
     if (_pressed == value) return;
+    // R32 (P1-8 Haptics): onTapDown 触发 Haptics.light (集中器, 5 类)
+    // 精神心理患者前庭/感官反馈需求高, 按下时给即时触觉确认
+    if (value && widget.enableHaptics) {
+      Haptics.light();
+    }
     setState(() => _pressed = value);
   }
 
