@@ -1,5 +1,55 @@
 ﻿# 变更日志
 
+## [0.32.0+116] - 2026-08-12 (R109 god class 拆 round 4 · add_medication_page 598L → 568L · 1 form validator + 1 sub-widget 抽)
+
+R109 god class 专项 round 4, 1 commit (本批), 3 step wizard state machine
+拆分 round 1, 闭环 add_medication_page 598L god class.
+
+**变更明细**:
+
+**抽 2 个新文件**:
+- `lib/domain/logic/add_medication_form_validator.dart` (90L): 3 个散落
+  form 验证逻辑抽纯函数类 (跟 R108 `medication_slot_calculator.dart` +
+  R109 round 3 `medication_page_stats_calculator.dart` 同款):
+  - `validateName` (4L) 名称非空验证 (原 line 68 `text.trim().isEmpty` 1:1)
+  - `parseDosage` (3L) 数字解析 (原 line 92 `tryParse ?? 0` 1:1)
+  - `canAdvanceFromStep1` (2L) 步骤 1 验证整合
+  - `toDraft` (12L) 完整 form state → MedicationDraft (原 line 92-106 1:1)
+  0 副作用 0 Flutter, 易单测, edit_medication_dialog 也能复用.
+- `lib/presentation/pages/medication/widgets/medication_confirm_row.dart`
+  (73L): `MedicationConfirmRow` 公开 widget (替代原 `_ConfirmRow` private).
+  emil DRY 跟 R31 R108 + R109 round 3 子 widget 抽模式一致.
+
+**改 1 个文件**:
+- `add_medication_page.dart` 598L → 568L (-30L, -5%):
+  - `_nextStep` 调 `AddMedicationFormValidator.canAdvanceFromStep1` 验证
+  - `_save` 调 `AddMedicationFormValidator.toDraft` 构造 MedicationDraft
+    (原 inline 11 行集中到 1 个调用)
+  - 4 处 `_ConfirmRow(...) ` 改 `MedicationConfirmRow(...)`
+  - 删 `_ConfirmRow` private class (35L)
+
+**未抽** (留给后续 round, 风险较高):
+- 3 step inline widget (Step1 药名+剂型 / Step2 剂量+时间 / Step3 颜色选择),
+  每 step 100+ 行 + 复杂 state callback 链, flutter test 跑不了 widget
+  字段传递风险大, 留 R109 round 5 (跟 setup_page_state 4 step state 一
+  起做 state controller 化)
+- `_formLabel` 12L MedicationForm → l10n label helper (跟 round 3
+  `slotLabel` 同款, 单 helper 价值低, 留 R110)
+
+**总变更** (本批): 4 文件 (+163 / -192 行), 净 -29 行, 0 个新 test, 0 个 db migration, pubspec 0.32.0+115 → 0.32.0+116
+
+**R109 路线图** (round 1-4 完成, 后续 5-6 待做):
+- ✅ round 1 (6dd42a2): assessment_reminder → use case
+- ✅ round 2 (a4012a1): safety_watch_service 失联告警 → use case + 删 2 死代码
+- ✅ round 3 (f5a7172): medication_page 552L → 347L (1 logic + 3 sub-widget)
+- ✅ round 4 (本批): add_medication_page 598L → 568L (1 form validator + 1 sub-widget)
+- round 5: setup_page_state 560L → 拆 4 step state
+- round 6: mood_trend_page 558L → 拆 4 sub-widget
+
+**验收**: 19 守门员全绿. 6 个 use case 文件全合规. cross_feature 136→137 files.
+
+---
+
 ## [0.32.0+115] - 2026-08-12 (R109 god class 拆 round 3 · medication_page 552L → 347L · 1 logic + 3 sub-widget 抽)
 
 R109 god class 专项 round 3, 1 commit (本批), presentation 层 god class

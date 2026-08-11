@@ -22,7 +22,9 @@ import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_form.dart';
+import 'package:chroniccare/domain/logic/add_medication_form_validator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_confirm_row.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -64,8 +66,10 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
   }
 
   void _nextStep() {
-    final l10n = AppLocalizations.of(context);
-    if (_currentStep == 0 && _nameController.text.trim().isEmpty) {
+    // v0.32 R109: 透传 validator 静态方法
+    if (_currentStep == 0 &&
+        !AddMedicationFormValidator.canAdvanceFromStep1(_nameController.text)) {
+      final l10n = AppLocalizations.of(context);
       AppSnackBar.showInfo(context, l10n.medicationNameRequired);
       return;
     }
@@ -89,22 +93,20 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
     setState(() => _saving = true);
     final repo = ref.read(medicationRepositoryProvider);
     final notif = ref.read(notificationServiceProvider);
-    final dosage = double.tryParse(_dosageController.text) ?? 0;
+    // v0.32 R109: 透传 validator 静态方法, draft 构造集中到 1 个调用
     final times =
         _times.map((t) => HourMinute(hour: t.hour, minute: t.minute)).toList();
-    final name = _nameController.text.trim();
+    final draft = AddMedicationFormValidator.toDraft(
+      name: _nameController.text,
+      dosageText: _dosageController.text,
+      dosageUnit: _dosageUnit,
+      times: times,
+      form: _form,
+      colorIndex: _colorIndex,
+    );
 
     try {
-      await repo.add(
-        MedicationDraft(
-          name: name,
-          dosage: dosage,
-          dosageUnit: _dosageUnit,
-          times: times,
-          form: _form,
-          colorIndex: _colorIndex,
-        ),
-      );
+      await repo.add(draft);
       // 新增药物后重排提醒 (edit_medication_dialog 同款模式), 否则新药无提醒直到重启
       final meds = await ref.refresh(medicationsProvider.future);
       await notif.delegate.rescheduleMedicationReminders(meds);
@@ -112,7 +114,7 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        AppSnackBar.showInfo(context, l10n.medicationAdded(name));
+        AppSnackBar.showInfo(context, l10n.medicationAdded(draft.name));
         context.pop();
       }
     } catch (e) {
@@ -504,22 +506,22 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
           title: '确认信息', // 走 ARB: medAddConfirm, Phase 5 再补
           margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
-            _ConfirmRow(
+            MedicationConfirmRow(
               label: l10n.medAddConfirmName,
               value: _nameController.text,
             ),
-            _ConfirmRow(
+            MedicationConfirmRow(
               label: l10n.medAddConfirmForm,
               value: _formLabel(_form, l10n),
             ),
-            _ConfirmRow(
+            MedicationConfirmRow(
               label: l10n.medAddConfirmDosage,
               value: Formatters.dosage(
                 double.tryParse(dosage) ?? 0,
                 _dosageUnit,
               ),
             ),
-            _ConfirmRow(label: l10n.medAddConfirmTime, value: timesStr),
+            MedicationConfirmRow(label: l10n.medAddConfirmTime, value: timesStr),
           ],
         ),
       ],
@@ -561,38 +563,6 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
   }
 }
 
-class _ConfirmRow extends StatelessWidget {
-  const _ConfirmRow({required this.label, required this.value});
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textHintColor(context),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// v0.32 R109 (god class 拆 round 4): 删 `_ConfirmRow` private class,
+// 移到 `widgets/medication_confirm_row.dart` 公开 `MedicationConfirmRow`,
+// caller 改 import 公开类. emil DRY 跟 R31 R108 子 widget 抽模式一致.
