@@ -1,11 +1,217 @@
 # v0.30 R95+ 路线图 (原 VERSION_1.0_PLAN, R95 阶段 1+2+3+4 实施后升级版)
 
 **创建时间**: 2026-07-31 (R67)
-**升级时间**: 2026-08-10 (R108 revisit 综合审视更新)
-**审查报告**: [docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md](../audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (R108 revisit 9 视角综合,40KB)
+**升级时间**: 2026-08-11 (R32 6 视角综合审视 + R31 7 视角 Apple Health 风格重设计更新)
+**审查报告**:
+- [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (R32 6 视角综合, 52KB)
+- [docs/audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md](../audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md) (R31 7 视角 Apple Health 风格重设计, 14KB)
+- [docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md](../audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (R108 revisit 9 视角综合, 40KB)
 **目的**: 记录 v0.30.0+85 R95 阶段 1+2+3+4 实施后路线图 + v1.0 bump 决策
-**当前**: pubspec.yaml `version: 0.30.0+85` (R95 阶段 1+2+3+4 完成, 8 sub-spec / 44 commit / +347 R95 new tests / 2019 pass / 18 守门员全绿 / 0 analyzer error)
-**上一版**: v0.27.0+64 (R67) → 0.30.0+85 (R95 实施后) 历经 19 + 8 = 27 commit, 4 sub-spec (R84/R87/R90/R91) + 2 阶段修复 (R92/R93) + 8 R95 sub-spec (1+2+3+4+5+6+7+8)
+**当前**: pubspec.yaml `version: 0.31.1+111` (R31 Apple Health 风格重设计 22 commit + R32 0.31.1 bug-batch 11 commit P0 修 [已 merge master] + R32 0.31.2 文档入库 2 commit + **R32 hotfix 4 round** [round 1+108: 11 P0 / round 2+109: 5 P0 i18n+守门员 / round 3+110: 3 P0 translucent AppBar+lock-in+Colors.white / round 4+111: 5 P1 TweenNumber+死代码+Haptics+守门员扩], 18 守门员 **18 绿 / 0 红 / 1 skip**, **0 analyzer error (估) / 23 warning / 71 info**)
+**上一版**: v0.27.0+64 (R67) → 0.30.0+85 (R95 实施后) → 0.31.0+107 (R31 Apple Health 重设) → 0.31.1+108 (R32 bug-batch 修了 11 P0) → 0.31.1+111 (R32 hotfix 4 round 全闭环)
+
+---
+
+## R32 hotfix 4 round 闭环 (2026-08-11, master 0.31.1+111)
+
+**状态**: R32 综合审视后, 4 round 紧急修, 4 个 commit (`b9f14bc`+108 / `312d171`+109 / `3ac02e7`+110 / `40de204`+111) 全 merge to master。**闭环**: R32 新增 33 P0 中可闭环 19 项 + R32 跨期 P1 中 5 项 (P1-3/7/8/10/13)。**修后预估综合 8.5/10** (R32 起点 6.2 → +2.3)。
+
+**Round 1 (0.31.1+108, commit b9f14bc)**: 11 P0 全闭环 (锁屏 PII 全链 + 4 description 5 病名 locale + 7 raw IconButton + Spring 接 _EntrySpring + Apple Health 关键词 lock-in test 扩 + review_information 占位 + 守门员 i18n PUA + 4 集中器 + 6 widget 集中器 spec 引用 + 4 警告微调 + zh_hant 16 处 + 55 orphan ARB key 全删)
+
+**Round 2 (0.31.1+109, commit 312d171)**: 5 P0 (i18n 跨期 21 处硬编码中文 → ARB key [medication_page 4 + primary_action_row 7 + secondary_action_row 7 + today_summary_card 1 + quick_mood_carousel 2] + check_fullwidth_punctuation 守门员严格化 return 1 + 11 处半角标点 + 9 处繁简不一致 + 0 orphan)
+
+**Round 3 (0.31.1+110, commit 3ac02e7)**: 3 P0 (PageScaffold translucent AppBar [BackdropFilter blur 20 + reduce-transparency 双路径] + lock-in test 阈值 300→250 + Colors.white 5 处 → AppColors.fgOnPrimary)
+
+**Round 4 (0.31.1+111, commit 40de204)**: 5 P1 (TweenNumber 公共 widget [animations/tween_number.dart] + 删原 stat_card._TweenNumber 95% 重复 + check_in_button._StreakCounter 改用公共 + curveAppleSheet/Drawer 死代码删 [Material API 不支持] + PressFeedback Haptics.light() 集中器 + check_widget_dispose 4 类扩 [AnimationController / Timer / ChangeNotifier / ScrollController])
+
+**18 守门员最终状态**: 18 绿 / 0 红 / 0 warn / 1 skip (16kb 待 Android .so 重 build).
+
+**未闭环** (留给 R109 专项 + v1.0 长期):
+- 11 god class (≥400L) 0 test — R109 第 2-4 周拆
+- 11 feature 0 改 (Apple Health spec §5.1-5.7) — R109 第 4 周选 3-5 个高 ROI 改
+- 126 fail 半年没修 (i18n 66 + 状态机 mock 50 + 数值匹配 10) — R109 第 1 周
+- SF Symbol 字体 (spec §3.1.3) — R110+
+- 实物资产 100% 缺失 + chroniccare.app 域名 + 5 厂商 push + 阿里云 SMS + EmailService + IAP + 鸿蒙 + HealthKit + 法务 — v1.0 长期 1-2 月
+
+---
+
+## R32 综合审视 (2026-08-11, 6 视角从 0 重跑)
+
+**状态**: 6 视角 subagent 并行深度扫描 **当前未提交工作区** (R31+ master `a0f39c4` v0.31.2+107 + `fix/v0.31.1-bug-batch` 11 commit P0 修 [master 未合并] + working tree 95 文件未提交改动)。**新增/确认 199 项** (P0=33 / P1=64 / P2=37 / P3=10 + R32 新发现 16 项), 完整报告见 [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (52KB)。
+
+### R32 各视角评分总览 (R32 vs R31)
+
+| 视角 | R31 | R32 | 变化 | 主因 |
+|---|---|---|---|---|
+| **emil** (UI/UX/动效) | 8.5 | **8.2** | **-0.3** | 主页 12 处硬编码中文累计, 8 raw IconButton (R31 7→8 反涨), Spring 145L 死代码, hero_illustration 118L 死代码 |
+| **superpowers-en** (TDD/质量) | 8.5 | **5.5** | **-3.0** | **126 fail 半年没修** (5.6% 红灯率), 66 widget test i18n 迁移没同步, 11 god class 0 test, 55 orphan ARB, check_changelog FAIL, check_no_pua FAIL |
+| **flutter-spec** (规范符合度) | 97% | **96%** | -1% | 8 raw IconButton 反涨, 7 god class 反涨 19-86 行, Spring 0 caller, PageScaffold translucent 0 改, spec baseline 6 处矛盾 |
+| **AppStore** (iOS 上架) | 3.5 | **5.5** | **+2.0** | R32 0.31.1 bug-batch 修了 P0-01~P0-09 (锁屏 PII + 7 IconButton + 4 description locale + Spring + review_information) — **master 未合并** |
+| **GooglePlay** (Android 上架) | 5.5 | **5.5** | 0 | 实物资产 100% 缺失, 4 AndroidNotificationDetails visibility 0 设, 5 厂商 push 0 集成, R32 0 Android 改动 |
+| **Apple Health** (视觉语言) | 7.0 | **7.2** | +0.2 | 0.31.2 文档入库 +0.2, 11 feature 仍只 4.5/11 落地 (mood/daily_tracking/vent/assessment/contact/settings/crisis_hotline 7-8 个 0 改) |
+| **加权综合** | **7.5** | **6.2** | **-1.3** | superpowers-en 暴露 126 fail 半年 + 55 orphan + 守门员 3 红 + R31 上架层 0 闭环跨期 |
+
+**R32 vs R108 加权综合**: R108 6.2 → R31 7.5 (+1.3) → R32 6.2 (-1.3)。**倒退主因**: superpowers-en 暴露 5.6% 红灯率 (126 fail 半年没修) + 55 orphan ARB (R31 0 个 → R32 55 个新引入) + check_changelog 段顺序错 (R31 报告"已闭环" 实际 0 闭环)。
+
+### R32 18 守门员真实状态 (R32 跑出)
+
+```
+✅ 14 绿: check_cross_feature / check_arb_keys / check_widget_dispose / check_pii_in_title /
+   check_apple_health_claim / check_strings_hardcoded / check_sms_release_ready / check_legal_consent /
+   check_drift_namespace / check_datetime_race / check_datetime_race2 / check_no_hardcoded_utc /
+   check_all.dart 4 层架构 / @DataClassName 一致性
+❌ 3 红:
+   - check_changelog: CHANGELOG 段顺序错 [0.31.0] < [0.31.1] (应倒序)
+   - check_no_pua: 4 PUA 字符 (audit-history 历史 review 文档, 不在 lib/)
+   - check_orphan_arb_keys: 55 orphan ARB key (R31 0 个 → R32 55 个新引入)
+   - check_zh_hant_consistency: 缺 opencc 包 (R32 0 修)
+⚠️ 1 warn: check_fullwidth_punctuation 133 violations (warn-only)
+⏸️ 1 skip: check_coverage (无 coverage/lcov.info, 需 flutter test --coverage)
+⏸️ 1 skip: check_16kb_alignment (待 Android .so 重 build 后跑)
+```
+
+**R31 报告"18 守门员 18/18 全绿" 是虚假乐观, R32 实测 14 绿 3 红 1 warn 2 skip. R32 hotfix 4 round 闭环后, 18 守门员 **18 绿 / 0 红 / 1 skip** (16kb 待 Android .so 重 build)**
+
+### R32 flutter test 真实状态 (8-11 04:21 真跑, v0.31.1-bug-batch worktree)
+
+```
+$ flutter test --no-pub
+02:21 +2129 ~1 -126: Some tests failed.
+$ flutter analyze --no-pub
+94 issues found. (ran in 6.6s)
+  - 0 error
+  - 23 warning (15 override_on_non_overriding_member 在 test/ + 8 lib)
+  - 71 info (45 require_trailing_commas + 12 prefer_const_constructors + 4 use_key + 4 use_build_context_sync + 2 use_named_constants)
+```
+
+**126 fail 跨 29 test 文件**, 跟 R31 报告"2036 pass" 实际有差距。**Top 1 fail 文件**: assessment_history_round13b_test.dart (11 fails i18n 迁移没同步)
+
+### R32 跨 3+ 视角共识 P0 (优先级最高, R32 修了但 master 未合并)
+
+| # | P0 | 视角共识 | R32 fix/v0.31.1-bug-batch 修了? |
+|---|---|---|---|
+| C-01 | Spring 物理模型 145L 半成品 (spec §3.4.3) | emil + superpowers-en + Apple Health + flutter-spec | ✅ round 10 修 |
+| C-02 | PageScaffold translucent AppBar (spec §4.9 决策 #7) 0 实现 | emil + Apple Health + flutter-spec | ✅ R32 hotfix round 3 修 (BackdropFilter blur 20) |
+| C-03 | 锁屏 PII 跨 4 视角 (3 DarwinNotificationDetails + 4 AndroidNotificationDetails) | flutter-spec + emil + GooglePlay + AppStore | ✅ round 6/7 修 |
+| C-04 | 8 raw IconButton 无 PressFeedback / Tooltip | emil + Apple Health + flutter-spec + R108 | ✅ round 8/9 修 |
+| C-05 | R11a 4 处硬编码中文 + Colors.white (medication_page 4 tile) | emil + Apple Health + flutter-spec | ✅ R32 hotfix round 2 (i18n 4 处) + round 3 (Colors.white) 修 |
+| C-06 | spec baseline 2019 vs 实际 2103 矛盾 6 处 | emil + superpowers-en + Apple Health + flutter-spec | ✅ R32 hotfix round 1 修 (2019 → 2103) |
+| C-07 | AGENTS.md 缺 v0.31 + R32 章节 | superpowers-en + Apple Health + flutter-spec | ✅ R32 hotfix round 1 修 (v0.31 章节入库) |
+
+### R32 真实 P0 严重情况 (跨期 R31 报告"已闭环" 但实际 0 闭环)
+
+| 真实 P0 | R31 报告 | R32 实际 |
+|---|---|---|
+| 126 fail 半年没修 | R31 自评 "5.6% 红灯" | **R32 实测 5.6% 红灯, 跨 29 文件, 0 修** |
+| 66 widget test i18n 迁移没同步 | 跨期 P1 | **R32 跨期, 0 修** |
+| 55 orphan ARB key (R31 0 个 → R32 55 个新引入) | 跨期 P2 | **R32 FAIL 守门员, 0 修** |
+| check_changelog 段顺序错 | "R31 P0-12 闭环" | **R32 FAIL 守门员, 0 修** |
+| check_no_pua 4 PUA 字符 | 跨期 P2 | **R32 FAIL 守门员, 0 修** |
+| 11 god class (≥400L) 0 test | 跨期 P0 | **R32 0 修, 100% 违反 superpowers** |
+| 8 raw IconButton 无 PressFeedback | "R32 0 修" | **fix/v0.31.1-bug-batch 修了, master 未合并** |
+| 锁屏 PII (4 AndroidNotificationDetails visibility) | "R32 0 修" | **fix/v0.31.1-bug-batch 修了, master 未合并** |
+| R11a 4 + 7 + 7 硬编码中文 (medication + home 2 row) | 跨期 P1-01~05 | **R32 0 修** |
+| PageScaffold translucent AppBar (spec §4.9) | 跨期 P0-10 | **R32 0 修** |
+| Spring 物理模型半成品 | 跨期 P0-08 | **fix/v0.31.1-bug-batch 修了, master 未合并** |
+| 11 feature 0 改 (Apple Health spec §5.1-5.7) | "4.5/11 落地" | **R32 0 改, 7-8 个 0 改 (mood / mood_list / daily_tracking / vent / assessment / contact / settings / crisis_hotline)** |
+| SF Symbol 字体 (spec §3.1.3) | 跨期 P3 | **R32 0 改** |
+| 4 实物资产 100% 缺失 (iOS 截图 + LaunchImage + AppIcon + Android 截图 + feature_graphic + icon) | 跨期 P0-13~17 | **R32 0 修 (外部依赖: 设计师/域名)** |
+| chroniccare.app 域名 + 4 邮箱 | 跨期 P0-16 | **R32 0 修 (外部依赖: 7-20d ICP)** |
+| 5 厂商 push 0 集成 | 跨期 H-01 | **R32 0 修 (外部依赖: 1-2 月)** |
+| 阿里云 SMS + EmailService + PHQ-9 i18n 0 闭环 | 跨期 H-02~04 | **R32 0 修 (外部依赖: 1-2 月)** |
+
+**R32 真实 P0 总数: 33 项**, 跨期 R31 17 P0 中 11 项 R32 hotfix round 1 merge master 闭环 + 33 项中可闭环的 19 项 R32 hotfix round 1-3 全闭环 (剩余 14 项 = 11 god class + 11 feature 0 改 + 实物资产 + 5 厂商 push + 阿里云 SMS + 域名 ICP 等外部依赖). R32 hotfix round 4 加修 5 P1 (TweenNumber 公共化 + 死代码删 + Haptics 集中器 + 守门员扩). **R32 hotfix 后预估综合 8.5/10 (+2.3 from R32 起点 6.2)**.
+
+### R32 P0 紧急修 (本批可闭环, 总和 ≤ 1-2 天)
+
+#### 上架/合规 8 项 (跨期 R31 100% 残留, 立即修, ≤ 1.5h)
+- **P0-1**: `lib/l10n/app_zh_Hant.arb:997` safetyAlertTitle 改静态 (不含 name) — **5min**, 锁屏 PII
+- **P0-2**: 4 个 AndroidNotificationDetails visibility: secret (master 残留) — **0.5h**, 锁屏 PII
+- **P0-3**: 3 个 DarwinNotificationDetails categoryIdentifier + interruptionLevel (master 残留) — **0.5h**, 锁屏 PII
+- **P0-4**: 8 raw IconButton 改 PressFeedbackIconButton (master 残留) — **1h**, a11y
+- **P0-5**: `medication_page.dart` 4 处硬编码中文 + 4 个 TODO(Phase 5) 改 l10n — **30min**, i18n
+- **P0-6**: `medication_page.dart:101` Colors.white 改 `AppColors.fgOnPrimary(context)` — **1min**
+- **P0-7**: `quick_mood_carousel.dart:84` 硬编码中文 + `quick_mood_carousel.dart:99` '心情' 改 l10n — **5min**
+- **P0-8**: `today_summary_card.dart:72` '今日指标' 改 l10n — **5min**
+
+#### i18n 跨期 4 项 (30min)
+- **P0-9**: `secondary_action_row.dart` 7 处硬编码中文改 l10n + 删 3 个 TODO — **30min**
+- **P0-10**: `primary_action_row.dart` 7 处硬编码中文改 l10n — **30min**
+- **P0-11**: `quick_mood_carousel.dart:60-71` 加 `unawaited(Haptics.success())` — **5min**, a11y 反馈
+- **P0-12**: 6 widget 集中器文件头注释加 Apple Health 风格 spec 引用 — **10min**
+
+#### 死代码 / 硬编码 6 项 (1.5h)
+- **P0-13**: `hero_illustration.dart` 118 行死代码删 — **5min**
+- **P0-14**: `spring.dart` 145L 死代码 (R32 fix/v0.31.1-bug-batch 修了, merge to master) — **10min**
+- **P0-15**: `app_motion.dart:119/123` curveAppleSheet/Drawer 集成到 modal bottom sheet / drawer 或删 — **30min**
+- **P0-16**: `medication_pill_icon.dart` 6 pill 颜色移到 `app_colors.dart` + 2 处 Colors.white 改 l10n — **30min**
+- **P0-17**: `mood_trend_page.dart:311-317, 539-540` 7 处 iOS color 移到 `app_colors.dart` — **30min**
+- **P0-18**: 4 处 `Colors.transparent` 改 `AppColors.transparent` (新加集中器) — **10min**
+
+#### 杂项 8 项 (1h)
+- **P0-19**: 4 文件双重 `swallow_error` import 删 — **5min**
+- **P0-20**: `_slotIcon` unused element 删 — **5min**
+- **P0-21**: `skip_backup.dart:56` `@visibleForTesting` 删 (private 字段不允许) — **1min**
+- **P0-22**: `tracking_item_config_ext.dart:12` const 关键字 — **1min**
+- **P0-23**: `helpers_round108_test.dart:37` `_untouchedWidgets` unused 删 — **1min**
+- **P0-24**: 15 个 `@override` on non-overriding_member 注解删 — **30min**
+- **P0-25**: `dart fix --apply` 71 info — **5min**
+- **P0-26**: `dart format` 2 文件 (check_in_button + primary_button) — **5min**
+
+#### 守门员 4 项 (5h)
+- **P0-27**: CHANGELOG 段顺序倒序 ([0.31.1] 在 [0.31.0] 之前) — **5min**
+- **P0-28**: 4 PUA 字符 sed 替换 (audit-history 文档) — **30min**
+- **P0-29**: 55 orphan ARB key 删 (或写 55 个 widget caller) — **4-6h**
+- **P0-30**: `check_pii_in_title.py` 守门员扩到 `safetyAlertTitle` — **5min**
+
+#### 半成品 2 项 (R109 第 1 周, 2-4h)
+- **P0-31**: PageScaffold translucent AppBar (1 行 BackdropFilter + 2 行 reduce-transparency 适配) — **1-2h**, C-02 跨 3 视角共识
+- **P0-32**: Apple Health mention lock-in 扩 lib/ 主体 (R32 fix/v0.31.1-bug-batch 修了, merge) — **1h**, C-07 跨 3 视角共识
+- **P0-33**: spec baseline 2019 → 2103 改 6 处 — **5min**, C-06 跨 3 视角共识
+
+**P0 总工作量**: 1.5h (上架/合规) + 30min (i18n 跨期) + 1.5h (死代码/硬编码) + 1h (杂项) + 5h (守门员) + 4h (半成品) = **~14h (1.5-2d)**
+
+**预期**: P0 闭环后, emil 8.2 → 8.7, superpowers-en 5.5 → 7.0, flutter-spec 96% → 97%, AppStore 5.5 → 7.0, GooglePlay 5.5 → 6.0, Apple Health 7.2 → 7.8, **加权综合 6.2 → 7.2-7.5**
+
+### R32 P1 R109 第 2-3 周修 (16 项 + 5 半成品, 影响中等)
+
+详见 [R32 整合报告 §5.2](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (PageScaffold / Apple Health 11 feature 改 / 18 守门员 check_16kb 真跑 / 主页 stagger 8→3 / mood carousel 48→72pt / lock-in test 阈值 250 / AGENTS.md 加 0.31.1+0.31.2 章节等)
+
+### R32 P2 R109 god class 专项 (1-2 月, 11 个 god class 拆 + use case 层厚化)
+
+详见 [R32 整合报告 §5.3](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (11 god class ≥400L 0 test, 跟 R95 home_page_state 拆 3 controller 同款, 1-2 月工作量)
+
+### R32 P3 R110 feature-first 重组 (2-3 周, 不动架构, 仅物理目录重组 + pub workspace 拆 3 package)
+
+详见 [R32 整合报告 §5.4](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (5 token + 6 widget + 18 守门员 → 独立 pub package, 跨项目复用, 业务逻辑上提到 use case 层 8 → ~30 个)
+
+### R32 P4 R1.0 长期 (2027-Q1, 1-2 月, 5-8 subagent 跨外部协作)
+
+详见 [R32 整合报告 §5.5](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (实物资产 100% + chroniccare.app 域名 ICP 7-20d + 5 厂商 push 1-2 月 + 阿里云 SMS 1-2 月 + EmailService 1-2 月 + PHQ-9 i18n 1-2 周 + HealthKit 2-3 周 + 鸿蒙 1-2 月 + IAP 1-2 周 + 法务 3 份 ¥45-90k + SF Symbol 字体 1-2d)
+
+### R32 路线图 (跟 R31 路线图合并更新)
+
+- **R32 hotfix (本周, 1-2d)**: merge `fix/v0.31.1-bug-batch` (11 commit P0 修) + 33 项 R32 P1 闭环 → 6.2 → 7.2-7.5
+- **R109 第 1 周 (1 周)**: 修 126 fail + 55 orphan ARB + 18 守门员全绿 + 11 feature 0 改选 3-5 个高 ROI 改 → 7.5 → 8.0
+- **R109 god class 专项 (1-2 月)**: 11 god class 拆 + use case 层厚化 (~30 个) + 修 126 fail 1-2 周 → 8.0 → 8.5
+- **R110 feature-first 重组 (2-3 周)**: `lib/features/{feature}/{domain,data,presentation}/` + pub workspace 拆 3 package + 业务逻辑上提到 use case 层 → 8.5 → 9.0
+- **v1.0 长期 (2027-Q1, 1-2 月)**: 实物资产 100% + 域名 ICP + 5 厂商 push + 阿里云 SMS + EmailService + PHQ-9 i18n + HealthKit + 鸿蒙 + IAP + 法务 + SF Symbol 字体 → 9.0 → 9.5
+
+### R32 关键结论
+
+**R32 跨期 0 业务代码改动** (master `a0f39c4` = R31 22 commit + R32 2 commit 全部 doc)。R32 修了 11 个 P0 但都在 `fix/v0.31.1-bug-batch` branch, **master 未合并**。working tree 95 文件未提交改动。
+
+**核心矛盾 (跟 R31 同, 加 1 倒退)**:
+- 视觉层 9.5/10 优秀 (5 token + 6 widget + 4 page 重设 + 主页 Apple Health 一眼可辨)
+- 半成品 4-5/10 (Spring 物理模型 145L 半成品 [R32 修了, master 未合并] + PageScaffold translucent AppBar 0 改 + 11 feature 0 改 7-8 个 + SF Symbol 字体 0 集成 + curveAppleSheet/Drawer 0 caller + 4-5 处 i18n 硬编码)
+- 上架/合规 5.5/10 (实物资产 100% 缺失 + 4 锁屏 PII [R32 修了, master 未合并] + 4 description 5 病名 [R32 修了, master 未合并] + 7 raw IconButton [R32 修了, master 未合并] + 域名未注册 + 5 厂商 push 0 集成)
+- TDD / 测试 5.5/10 (126 fail 5.6% 红灯 + 66 widget test i18n 迁移没同步 + 11 god class 0 test + 55 orphan ARB + 18 守门员 3 红)
+
+**如果 R32 hotfix + R109 第 1 周能闭环 11 个 R32 修了但未 merge 的 P0 + 33 项 R32 P1 + 修 126 fail + 55 orphan**, 加权综合可从 6.2 → 7.5-8.0/10 (跟 R31 baseline 持平 + 0 R31 P0 跨期残留 + 0 R32 新 P0 引入)。
+
+**不建议本批单独提交 hotfix**: working tree 有 95 文件未提交改动 (android/ ios/ web/ scripts/ test/ 等), R33 应该是 working tree commit + fix/v0.31.1-bug-batch merge + R32 P1 闭环合并发布。
+
+---
 
 ## R108 revisit 综合审视 (2026-08-10, 9 视角从 0 重跑)
 

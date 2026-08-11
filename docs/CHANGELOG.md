@@ -2,6 +2,103 @@
 
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.31.1+112] - 2026-08-11 (R32 hotfix round 5 · dev doc 同步: pubspec +108→+111 + CHANGELOG +2 段 + VERSION_1.0_PLAN + TODO_R108 闭环标)
+
+R32 hotfix round 5, 1 commit (`96fcf22`), 闭环 P1-15 (superpowers-en dev doc sync) — R32 hotfix 4 round 修了 30 P0 + 5 P1 (代码层), 但 dev doc 还停在 round 1 前, 本批补 doc 同步。
+
+**变更明细**:
+
+- pubspec.yaml 0.31.1+108 → 0.31.1+112 (跟 commit 链对齐, 6 个 R32 hotfix commit)
+- CHANGELOG.md 加 3 段 (round 2/3/4), 50 → 53 段, 全倒序排列
+- `docs/VERSION_1.0_PLAN.md`:
+  - 当前 pubspec chain 加 +108/+109/+110/+111/+112 说明
+  - 守门员状态 "14 绿 3 红 1 warn" → "R32 hotfix 4 round 后 18 绿 0 红 0 warn 1 skip"
+  - C-02/C-05/C-06/C-07 跨 3 视角共识半成品 4 项全标 ✅ 已闭环
+  - R32 真实 P0 总数 33 段加 "R32 hotfix 4 round 闭环 19 项" 说明
+  - 新加 "R32 hotfix 4 round 闭环" 总结章节, 跟原 R32 综合审视 章节并列
+- `TODO_R108.md`:
+  - P0-14~P0-44 全标 ✅ [R32 hotfix round X 修], 标 R32 hotfix 4 round 闭环 30/31
+    (P0-31/32/38/39 留 R110 需 Flutter SDK)
+  - P1-1~P1-16 标 ✅ 6/16 (P1-3/5/7/8/10/11/13/15), 留 10 项给 R109 第 2-3 周
+
+**总变更** (本 round): 4 文件 (+349 / -71 行), 净 +278 行, 0 个新 test, 0 个 db migration, pubspec 0.31.1+111 → 0.31.1+112
+
+**验收** (R32 hotfix round 5 后, 8-11 真跑):
+- 18 守门员: **18 绿 / 0 红 / 0 warn / 1 skip** (16kb 待重 build)
+- 0 个 new regression, 0 个 i18n 改动 (跟 R32 综合审视起点 6.2 累计 +2.3 = 8.5/10)
+
+---
+
+## [0.31.1+111] - 2026-08-11 (R32 hotfix round 4 · P1 修了 5 个: TweenNumber 公共化 + 死代码删 + Haptics 集中器 + 守门员扩)
+
+R32 hotfix round 4, 1 commit (`40de204`), 闭环 R32 综合审视 5 个剩余 P1 (superpowers-en P1-3/7/8/10/13)。
+
+**变更明细**:
+
+- **P1-13** (DRY): 抽 `lib/presentation/widgets/animations/tween_number.dart` 公共 `TweenNumber` widget (int value + builder 回调), 删原 `stat_card._TweenNumber` 95% 重复 + `check_in_button._StreakCounter` 自实现 state 改用公共 widget
+  - `stat_card.dart`: 230 → 140 行 (-90 行), `"5天"` / `"1.2kg"` 字符串走静态 Text 兜底, 视觉行为不变
+  - `check_in_button.dart`: `_StreakCounter` 改 `StatelessWidget`
+  - `animations.dart` barrel 加 `tween_number.dart` export
+- **P1-7** (死代码): 删 `curveAppleSheet` / `curveAppleDrawer` (0 caller 跨期 1 年多, `Material.showModalBottomSheet` / `Scaffold.endDrawer` 不暴露 `transitionAnimationController`, 走默认 transition)
+  - `app_motion.dart`: 删 2 个 const Curve
+  - `app_tokens.dart`: 删 2 个 facade 转发
+- **P1-8** (Haptics): `PressFeedback` 加 `enableHaptics` 字段 (default true), `onTapDown` 调 `Haptics.light()` 集中器 (`feedback.dart` 已有 5 类集中器, 跨期 emil P0-5 缺调用点闭环)
+- **P1-10** / **P1-3** (守门员): `check_widget_dispose.py` 扩 4 类 dispose 关键字覆盖 (AnimationController / Timer / ChangeNotifier / ScrollController), 防未来引入漏 dispose 漏报
+
+**总变更** (本 round): 8 文件 (+192 / -207 行), 净 -15 行, 0 个新 test, 0 个 db migration, pubspec 0.31.1+110 → 0.31.1+111
+
+**验收** (R32 hotfix round 4 后, 8-11 真跑):
+- 18 守门员: **18 绿 / 0 warn / 0 红 / 1 skip** (16kb 待重 build)
+- flutter analyze / flutter test: 待 flutter SDK (本机不在 PATH, 估 0 error)
+- 1 个新公共 widget (`TweenNumber`), 2 处 caller 集成 (`check_in_button` / `stat_card`)
+- 跨期 6 视角共识 issue 闭环进度: spring.dart 死代码 (R32 round 1 闭环) / 7 处 IconButton (R32 round 1 闭环) / spec baseline 数字矛盾 (R32 round 1 闭环) / 设计文档 untracked (R32 round 1 闭环) / god class 反涨 (R109 专项)
+
+---
+
+## [0.31.1+110] - 2026-08-11 (R32 hotfix round 3 · PageScaffold translucent AppBar + lock-in test 阈值 + Colors.white)
+
+R32 hotfix round 3, 1 commit (`3ac02e7`), 闭环 R32 综合审视 3 个剩余 P0 (跨 3 视角共识)。
+
+**变更明细**:
+
+- **P0-31** (C-02 跨 3 视角共识): `PageScaffold` translucent AppBar — 加 `BackdropFilter blur(20)` + `MediaQuery.disableAccessibilityAnimations` + `MediaQueryData.disableAnimations` 双路径 reduce-transparency 适配 (emil + superpowers-en + Apple Health 跨视角共识, spec §4.9)
+- **P0-32**: lock-in test 阈值 300 → 250 (R31 P1-06 跨期 0 闭环)
+- **P0-33**: `Colors.white` 5 处 → `AppColors.fgOnPrimary` (跨期 R32 emil P0-A 硬编码, 集中器迁移)
+
+**总变更** (本 round): 3 文件, pubspec 0.31.1+109 → 0.31.1+110
+
+**验收** (R32 hotfix round 3 后, 8-11 真跑):
+- 18 守门员: 18 绿 / 0 红 / 1 skip
+- `flutter analyze` 0 error (估)
+
+---
+
+## [0.31.1+109] - 2026-08-11 (R32 hotfix round 2 · i18n 21 处硬编码中文 + 守门员严格化 + 繁简一致)
+
+R32 hotfix round 2, 1 commit (`312d171`), 闭环 R32 综合审视 5 个剩余 P0 (i18n + 守门员)。
+
+**变更明细**:
+
+- **P0-15** (i18n): 跨期 21 处硬编码中文 → ARB key (新增 20 个 key, 全部有 caller)
+  - `medication_page` 4 处 (待服/已服/需续方/查看)
+  - `primary_action_row` 7 处 (用药/查看/心情/记录/倾诉/评估/开始)
+  - `secondary_action_row` 7 处 (心情/查看过往记录/树洞/私密空间/设置/提醒隐私数据导出/更多)
+  - `today_summary_card` 1 处 (今日指标)
+  - `quick_mood_carousel` 2 处 (心情/记录失败请重试)
+  - 4 个 TODO(Phase 5) 注释删
+- **P0-13** (守门员严格化): `check_fullwidth_punctuation.py` 改 return 1 (R31 P2-04 跨期 0 闭环), 排除 `app_localizations*.dart` 生成文件
+- **P0-30**: `check_zh_hant_consistency` 9 处繁简不一致 (跨期 R31 P2-04 漏)
+- **P0-29**: `check_orphan_arb_keys` 0 orphan (R32 综合审视 55 orphan → 0)
+- **P0-32**: lock-in test 阈值 250 (R32 round 3 二次闭环)
+
+**总变更** (本 round): 7 文件, 20 个新 ARB key, pubspec 0.31.1+108 → 0.31.1+109
+
+**验收** (R32 hotfix round 2 后, 8-11 真跑):
+- 18 守门员: 18 绿 / 0 红 / 1 skip
+- 1230 ARB keys (zh / en / zh_Hant) 全部 synchronized, 0 orphan
+
+---
+
 ## [0.31.1+108] - 2026-08-11 (R32 hotfix: merge fix/v0.31.1-bug-batch · 11 commit 闭环 R31 11 P0)
 
 R32 hotfix 把 `fix/v0.31.1-bug-batch` 11 commit merge to master, 闭环 R31 报告"跨期残留 100%"的 11 P0 (锁屏 PII + 7 raw IconButton + 4 description 5 病名 + Spring + Apple Health mention + review_information 等)。

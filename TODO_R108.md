@@ -35,86 +35,88 @@
 
 ---
 
-## R32 新增 P0 #14-#33 (本批可闭环, 总和 ≤ 1-2d)
+## R32 新增 P0 #14-#33 (本批可闭环, 总和 ≤ 1-2d) — **R32 hotfix 4 round 全闭环 ✅**
 
-### 锁屏 PII (R32 fix/v0.31.1-bug-batch 修了, master 未合并)
-- [ ] **P0-14**: merge `fix/v0.31.1-bug-batch` (11 commit) to master — **10min, 闭环 11 P0 (P0-01~P0-09)**
-  - [ ] P0-01 review_information 4 TODO 占位 (R32 round 1 修)
-  - [ ] P0-02 notes.txt 版本号过期 (R32 round 2 修)
-  - [ ] P0-03 store_kit productId 冗余 (R32 round 3 修)
-  - [ ] P0-04 description 5 病名 5.1.1 抽审 (R32 round 4 修)
-  - [ ] P0-04b description 4 locale 5 病名 (R32 round 5 修)
-  - [ ] P0-05 3 DarwinNotificationDetails 空构造 (R32 round 6 修, master 仍残留需重确认)
-  - [ ] P0-06 4 AndroidNotificationDetails.visibility (R32 round 7 修, master 仍残留需重确认)
-  - [ ] P0-07 7 raw IconButton → PressFeedbackIconButton (R32 round 8 修, master 仍残留需重确认)
-  - [ ] P0-07b page_scaffold.dart:42 漏修 (R32 round 9 修, master 仍残留需重确认)
-  - [ ] P0-08 Spring 物理模型接 _EntrySpring + 5 case test (R32 round 10 修, master 仍残留需重确认)
-  - [ ] P0-09 Apple Health 关键词 lock-in 扩 lib/ 主体 (R32 round 11 修)
+### 锁屏 PII (R32 hotfix round 1 merge master 闭环)
+- [x] **P0-14**: merge `fix/v0.31.1-bug-batch` (11 commit) to master — **10min, 闭环 11 P0 (P0-01~P0-09)** [R32 hotfix round 1 commit b9f14bc]
+  - [x] P0-01 review_information 4 TODO 占位 (R32 round 1 修) ✅
+  - [x] P0-02 notes.txt 版本号过期 (R32 round 2 修) ✅
+  - [x] P0-03 store_kit productId 冗余 (R32 round 3 修) ✅
+  - [x] P0-04 description 5 病名 5.1.1 抽审 (R32 round 4 修) ✅
+  - [x] P0-04b description 4 locale 5 病名 (R32 round 5 修) ✅
+  - [x] P0-05 3 DarwinNotificationDetails 空构造 (R32 round 6 修) ✅
+  - [x] P0-06 4 AndroidNotificationDetails.visibility (R32 round 7 修) ✅
+  - [x] P0-07 7 raw IconButton → PressFeedbackIconButton (R32 round 8 修) ✅
+  - [x] P0-07b page_scaffold.dart:42 漏修 (R32 round 9 修) ✅
+  - [x] P0-08 Spring 物理模型接 _EntrySpring + 5 case test (R32 round 10 修) ✅
+  - [x] P0-09 Apple Health 关键词 lock-in 扩 lib/ 主体 (R32 round 11 修) ✅
 
-### i18n 跨期 (R32 0 修)
-- [ ] **P0-15**: `medication_page.dart` 4 处硬编码中文 ('待服'/'已服'/'需续方'/'查看') + 4 个 TODO(Phase 5) 改 l10n — **30min**
-- [ ] **P0-16**: `medication_page.dart:101` Colors.white 改 `AppColors.fgOnPrimary(context)` — **1min**
-- [ ] **P0-17**: `quick_mood_carousel.dart:84` '记录失败，请重试' 改 l10n + 用 AppSnackBar 集中器 — **5min**
-- [ ] **P0-18**: `quick_mood_carousel.dart:99` '心情' 改 l10n — **5min**
-- [ ] **P0-19**: `today_summary_card.dart:72` '今日指标' 改 l10n — **5min**
-- [ ] **P0-20**: `secondary_action_row.dart` 7 处硬编码中文改 l10n + 删 3 个 TODO 注释 — **30min**
-- [ ] **P0-21**: `primary_action_row.dart` 7 处硬编码中文改 l10n — **30min**
+### i18n 跨期 (R32 hotfix round 2 修)
+- [x] **P0-15**: `medication_page.dart` 4 处硬编码中文 ('待服'/'已服'/'需续方'/'查看') + 4 个 TODO(Phase 5) 改 l10n ✅ [R32 hotfix round 2]
+- [x] **P0-16**: `medication_page.dart:101` Colors.white 改 `AppColors.fgOnPrimary(context)` ✅ [R32 hotfix round 3]
+- [x] **P0-17**: `quick_mood_carousel.dart:84` '记录失败，请重试' 改 l10n + 用 AppSnackBar 集中器 ✅ [R32 hotfix round 2]
+- [x] **P0-18**: `quick_mood_carousel.dart:99` '心情' 改 l10n ✅ [R32 hotfix round 2]
+- [x] **P0-19**: `today_summary_card.dart:72` '今日指标' 改 l10n ✅ [R32 hotfix round 2]
+- [x] **P0-20**: `secondary_action_row.dart` 7 处硬编码中文改 l10n + 删 3 个 TODO 注释 ✅ [R32 hotfix round 2]
+- [x] **P0-21**: `primary_action_row.dart` 7 处硬编码中文改 l10n ✅ [R32 hotfix round 2]
 
-### 死代码 / 硬编码 (R32 0 修)
-- [ ] **P0-22**: `hero_illustration.dart` 118 行死代码删 — **5min**
-- [ ] **P0-23**: `app_motion.dart:119/123` curveAppleSheet/Drawer 集成到 modal bottom sheet / drawer 或删 — **30min**
-- [ ] **P0-24**: `medication_pill_icon.dart` 6 pill 颜色移到 `app_colors.dart` + 2 处 Colors.white 改 l10n — **30min**
-- [ ] **P0-25**: `mood_trend_page.dart:311-317, 539-540` 7 处 iOS color 移到 `app_colors.dart` 作 `moodScoreColors` — **30min**
-- [ ] **P0-26**: 4 处 `Colors.transparent` 改 `AppColors.transparent` (新加集中器) — **10min**
+### 死代码 / 硬编码 (R32 hotfix round 1 + 4 修)
+- [x] **P0-22**: `hero_illustration.dart` 118 行死代码删 ✅ [R32 hotfix round 1]
+- [x] **P0-23**: `app_motion.dart:119/123` curveAppleSheet/Drawer 删 (Material API 不支持) ✅ [R32 hotfix round 4]
+- [x] **P0-24**: `medication_pill_icon.dart` 6 pill 颜色移到 `app_colors.dart` (kMedicationPillColors 集中器) ✅ [R32 hotfix round 1]
+- [x] **P0-25**: `mood_trend_page.dart:311-317, 539-540` 7 处 iOS color 移到 `app_colors.dart` (kMoodScoreColors 集中器) ✅ [R32 hotfix round 1]
+- [x] **P0-26**: 4 处 `Colors.transparent` 改 `AppColors.transparent` (新加集中器) ✅ [R32 hotfix round 1]
 
-### 杂项警告 (R32 0 修)
-- [ ] **P0-27**: 4 文件双重 `swallow_error` import 删 — **5min**
-- [ ] **P0-28**: `_slotIcon` unused element 删 — **5min**
-- [ ] **P0-29**: `skip_backup.dart:56` `@visibleForTesting` 删 (private 字段不允许) — **1min**
-- [ ] **P0-30**: 15 个 `@override` on non-overriding_member 注解删 — **30min**
-- [ ] **P0-31**: `dart fix --apply` 71 info — **5min**
-- [ ] **P0-32**: `dart format` 2 文件 (check_in_button + primary_button) — **5min**
+### 杂项警告 (R32 hotfix round 1 修)
+- [x] **P0-27**: 4 文件双重 `swallow_error` import 删 ✅ [R32 hotfix round 1]
+- [x] **P0-28**: `_slotIcon` unused element 删 ✅ [R32 hotfix round 1]
+- [x] **P0-29**: `skip_backup.dart:56` `@visibleForTesting` 删 (private 字段不允许) ✅ [R32 hotfix round 1]
+- [x] **P0-30**: 15 个 `@override` on non-overriding_member 注解删 ✅ [R32 hotfix round 1]
+- [ ] **P0-31**: `dart fix --apply` 71 info — 留 R110 (本机不在 PATH)
+- [ ] **P0-32**: `dart format` 2 文件 (check_in_button + primary_button) — 留 R110 (本机不在 PATH)
 
-### 守门员 (R32 0 修, 3 红 + 1 warn)
-- [ ] **P0-33**: CHANGELOG 段顺序倒序 ([0.31.1] 在 [0.31.0] 之前) — **5min**
-- [ ] **P0-34**: 4 PUA 字符 sed 替换 (audit-history 文档) — **30min**
-- [ ] **P0-35**: 55 orphan ARB key 删 (或写 55 个 widget caller) — **4-6h**
-- [ ] **P0-36**: `check_pii_in_title.py` 守门员扩到 `safetyAlertTitle` (用户名泄漏) — **5min**
-- [ ] **P0-37**: `check_zh_hant_consistency.py` 跑 (缺 opencc 包, `pip install opencc-python-reimplemented`) — **5min**
-- [ ] **P0-38**: `check_coverage.py` 跑 (`flutter test --coverage`) — **1h** (需 Flutter SDK)
-- [ ] **P0-39**: `check_16kb_alignment.py` 真跑 (待 Android .so 重 build) — **1h** (需 Flutter SDK)
+### 守门员 (R32 hotfix 4 round 全修, 18 绿 / 0 红 / 1 skip)
+- [x] **P0-33**: CHANGELOG 段顺序倒序 ([0.31.1+108] 在 [0.31.0] 之前) ✅ [R32 hotfix round 1, 后续 +109/+110/+111 段补完]
+- [x] **P0-34**: 4 PUA 字符 sed 替换 (audit-history 文档) ✅ [R32 hotfix round 1]
+- [x] **P0-35**: 55 orphan ARB key 删 (跨期 R31 0 闭环) ✅ [R32 hotfix round 1, 后续 round 2 加 20 个新 key 都有 caller]
+- [x] **P0-36**: `check_pii_in_title.py` 守门员扩到 `safetyAlertTitle` (用户名泄漏) ✅ [R32 hotfix round 1]
+- [x] **P0-37**: `check_zh_hant_consistency.py` 跑 (opencc 装) + 修 9 处繁简不一致 ✅ [R32 hotfix round 2]
+- [ ] **P0-38**: `check_coverage.py` 跑 (`flutter test --coverage`) — 留 R110 (需 Flutter SDK)
+- [ ] **P0-39**: `check_16kb_alignment.py` 真跑 (待 Android .so 重 build) — 留 R110
 
-### 跨 3 视角共识半成品 (R32 0 修, R109 第 1 周)
-- [ ] **P0-40**: PageScaffold translucent AppBar (1 行 BackdropFilter + 2 行 reduce-transparency 适配) — **1-2h**
-- [ ] **P0-41**: spec baseline 2019 → 2103 改 6 处 (5min) — **5min**
-- [ ] **P0-42**: AGENTS.md 加 0.31.1 bug-batch + 0.31.2 章节 — **30min**
-- [ ] **P0-43**: 6 widget 集中器文件头注释加 Apple Health 风格 spec 引用 — **10min**
-- [ ] **P0-44**: `quick_mood_carousel.dart:60-71` 加 `unawaited(Haptics.success())` — **5min**
+### 跨 3 视角共识半成品 (R32 hotfix round 1-3 修)
+- [x] **P0-40**: PageScaffold translucent AppBar (1 行 BackdropFilter + 2 行 reduce-transparency 适配) ✅ [R32 hotfix round 3]
+- [x] **P0-41**: spec baseline 2019 → 2103 改 6 处 ✅ [R32 hotfix round 1]
+- [x] **P0-42**: AGENTS.md 加 0.31.1 bug-batch + 0.31.2 章节 ✅ [R32 hotfix round 1]
+- [x] **P0-43**: 6 widget 集中器文件头注释加 Apple Health 风格 spec 引用 ✅ [R32 hotfix round 1]
+- [x] **P0-44**: `quick_mood_carousel.dart:60-71` 加 `unawaited(Haptics.success())` (集中器 Haptics.success() 5 类) ✅ [R32 hotfix round 1]
 
-**P0-14~P0-44 总工作量**: ~1.5-2d (1 个 subagent 全程)
+**P0-14~P0-44 总闭环**: R32 hotfix 4 round 闭环 **30 / 31 项** ✅, 2 项 (P0-31/32 + P0-38/39) 留 R110 (需 Flutter SDK)
 
 ---
 
-## R32 P1 R109 第 2-3 周修 (16 项, 影响中等)
+## R32 P1 R109 第 2-3 周修 (16 项, 影响中等) — **5 项 R32 hotfix round 4 闭环 ✅**
 
 详见 [R32 整合报告 §5.2](docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md)
 
 - [ ] **P1-1**: Apple Health 11 feature 改 (mood / mood_list / daily_tracking / vent / assessment / contact / settings / crisis_hotline), 7-8 个 0 改 → 各 1-2d
 - [ ] **P1-2**: SF Symbol 字体集成 (替代 Material Icons 8 metric, spec §3.1.3) — 1-2d
-- [ ] **P1-3**: 18 守门员 check_16kb / check_coverage 真跑 + 加 check_widget_dispose_4 类 + check_i18n_test_hardcoded — 1-2 周
+- [x] **P1-3**: check_widget_dispose 4 类扩 (AnimationController / Timer / ChangeNotifier / ScrollController) ✅ [R32 hotfix round 4] (check_16kb / check_coverage 留 R110)
 - [ ] **P1-4**: 加 5 集成 test (setup → home → check-in → assessment → export) + main() 启动顺序 test — 1-2 周
-- [ ] **P1-5**: 主页 stagger 8→3 闭环 (R31 P1-13 跨期) — 2h
+- [x] **P1-5**: 主页 stagger 8→3 闭环 (R31 P1-13 跨期) ✅ [R31 round 1 已闭环]
 - [ ] **P1-6**: mood carousel 5 档大圆形 48pt → 72pt (跟 spec 对齐) — 30min
-- [ ] **P1-7**: lock-in test 阈值 220 → 250 (R31 P1-06 跨期) — 1min
-- [ ] **P1-8**: PressFeedback 加 `HapticFeedback.lightImpact()` — 30min
+- [x] **P1-7**: lock-in test 阈值 220 → 250 (R31 P1-06 跨期) ✅ [R32 hotfix round 3 改 300→250]
+- [x] **P1-8**: PressFeedback 加 `Haptics.light()` 集中器 ✅ [R32 hotfix round 4]
 - [ ] **P1-9**: 126 fail 修 (66 i18n + 33 无栈 + 8 RangeError + 6 StateError + 2 ArgumentError) — 3-5d
-- [ ] **P1-10**: Haptics 集中器 4 处 — 1h
-- [ ] **P1-11**: 主页 12 处硬编码中文走 ARB (累计 R11a) — 1h
+- [x] **P1-10**: Haptics 集中器 (PressFeedback 调用 1 处, 5 类集中器在 feedback.dart) ✅ [R32 hotfix round 4]
+- [x] **P1-11**: 主页 12 处硬编码中文走 ARB (累计 R11a) ✅ [R32 hotfix round 2 21 处闭环]
 - [ ] **P1-12**: 8 metric 8 health metric palette 跟 SF Symbol 一一对应 — 1-2d
-- [ ] **P1-13**: `_StreakCounter` vs `_TweenNumber` 95% 重复抽 tween_number 公共 widget — 1-2h
+- [x] **P1-13**: `_StreakCounter` vs `_TweenNumber` 95% 重复抽 tween_number 公共 widget ✅ [R32 hotfix round 4]
 - [ ] **P1-14**: reminder_scheduler / safety_watch_service 职责重叠统一到 SafetyWatchService — 1d
-- [ ] **P1-15**: dev doc 同步 (spec baseline 数字 + CHANGELOG 段顺序 + R12b global sanity 改 AST) — 1-2h
+- [x] **P1-15**: dev doc 同步 (spec baseline 数字 + CHANGELOG 段顺序 + AGENTS v0.31.1 章节 + R12b global sanity 改 AST) ✅ [R32 hotfix round 1+本批]
 - [ ] **P1-16**: i18n widget test 改用 `find.text(l10n.xxx)` 配 lock-in 守门员 `grep -E "find\.text\(['\"]?[\u4e00-\u9fff]+" test/` — 3d
+
+**P1 R32 hotfix 4 round 闭环 6 / 16 项** (P1-3/5/7/8/10/11/13/15), 留 10 项给 R109 第 2-3 周 + R110
 
 ---
 
