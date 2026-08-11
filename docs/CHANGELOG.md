@@ -1,5 +1,54 @@
 ﻿# 变更日志
 
+## [0.32.0+117] - 2026-08-12 (R109 god class 拆 round 5 · setup_page_state 560L → 497L · 1 form validator + 1 modal sheet widget 抽)
+
+R109 god class 专项 round 5, 1 commit (本批), 4 step wizard state
+machine 拆分 round 2 (跟 round 4 add_medication_page 3 step 同款).
+
+**变更明细**:
+
+**抽 2 个新文件**:
+- `lib/domain/logic/setup_welcome_form_validator.dart` (90L): 3 个 form
+  验证逻辑抽纯函数类 (跟 R108 + R109 round 3-4 同款):
+  - `validateName` (3L) 名字非空验证
+  - `validatePhones` (12L) 手机号格式 + 重复校验 (接受 phone 列表, 0 副作用)
+  - `validateWelcomeForm` (5L) Step 1 完整 form 验证整合
+  0 副作用 0 Flutter, 接受 PhoneValidator 注入.
+- `lib/presentation/pages/setup/widgets/preset_templates_sheet.dart`
+  (130L): `PresetTemplatesSheetContent` 公开 widget (替代原
+  `_showPresetTemplatesSheet` modal content 70L inline builder).
+  emil DRY 跟 R31 R108 + R109 round 3-4 子 widget 抽模式一致.
+
+**改 1 个文件**:
+- `setup_page_state.dart` 560L → 497L (-63L, -11%):
+  - `_validateWelcomeForm` 调 `SetupWelcomeFormValidator.validateWelcomeForm`
+    (原 30L 减到 22L, 错误码通过 switch 映射回 l10n)
+  - `_showPresetTemplatesSheet` modal builder 70L inline 改 1 个调用
+    `PresetTemplatesSheetContent(hasExistingMeds: _meds.isNotEmpty)`
+
+**未抽** (留给后续 round, 风险较高):
+- `_finishSetup` 165L 业务编排 (PIPL 同意 + DB save + notification 重排)
+  跟 use case 模式同款, 但 PIPL ConsentDialog 需要 context 弹 modal →
+  presentation 层, 不能进 domain use case. 留 R109 round 6 / R110+
+  跟 R95 sub-spec 6 task 6c 模式一致.
+- 4 step inline widget (`SetupStepConsent` / `Welcome` / `Medication` /
+  `Done`) 已抽到独立文件 (190+133+326+261=910L), R95 sub-spec 6 task 6c
+  完成. R109 round 5 不再拆.
+
+**总变更** (本批): 4 文件 (+220 / -283 行), 净 -63 行, 0 个新 test, 0 个 db migration, pubspec 0.32.0+116 → 0.32.0+117
+
+**R109 路线图** (round 1-5 完成, 后续 6 待做):
+- ✅ round 1 (6dd42a2): assessment_reminder → use case
+- ✅ round 2 (a4012a1): safety_watch_service 失联告警 → use case + 删 2 死代码
+- ✅ round 3 (f5a7172): medication_page 552L → 347L (1 logic + 3 sub-widget)
+- ✅ round 4 (fde952e): add_medication_page 598L → 568L (1 form validator + 1 sub-widget)
+- ✅ round 5 (本批): setup_page_state 560L → 497L (1 form validator + 1 modal sheet)
+- round 6: mood_trend_page 558L → 拆 4 sub-widget
+
+**验收**: 19 守门员全绿. 6 个 use case 文件全合规. cross_feature 137→138 files.
+
+---
+
 ## [0.32.0+116] - 2026-08-12 (R109 god class 拆 round 4 · add_medication_page 598L → 568L · 1 form validator + 1 sub-widget 抽)
 
 R109 god class 专项 round 4, 1 commit (本批), 3 step wizard state machine

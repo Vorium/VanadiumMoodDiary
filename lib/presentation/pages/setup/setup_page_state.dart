@@ -31,6 +31,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart'
     show ConsentArtifact, ConsentKind;
 import 'package:chroniccare/domain/entities/hour_minute.dart';
+import 'package:chroniccare/domain/logic/setup_welcome_form_validator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
@@ -39,6 +40,7 @@ import 'package:chroniccare/presentation/pages/setup/setup_step_welcome.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_medication.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_done.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
+import 'package:chroniccare/presentation/pages/setup/widgets/preset_templates_sheet.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -255,102 +257,37 @@ class SetupPageState extends ConsumerState<SetupPage> {
   }
 
   String? _validateWelcomeForm() {
+    // v0.32 R109: 透传 SetupWelcomeFormValidator 静态方法
+    //   行为跟原 30L 实现 100% 一致 (name 必填 + phone 格式 + phone 重复)
+    //   错误码透传给 caller, caller 决定怎么映射到 l10n
+    final errorCode = SetupWelcomeFormValidator.validateWelcomeForm(
+      name: _nameController.text,
+      phones: _contactPhoneControllers.map((c) => c.text).toList(),
+    );
+    if (errorCode == null) return null;
+    // 把错误码映射回 l10n 文案, 跟原 behavior 1:1
     final l10n = AppLocalizations.of(context);
-    if (_nameController.text.trim().isEmpty) {
-      return l10n.setupValidationNameRequired;
-    }
-    // 2026-07-31 联系人软隐藏 (病耻感 + 失联通信业务暂停):
-    // 紧急联系人表单**完全可选**, 移除"必填 1 个"校验。
-    // 用户可以留空跳过, 后续在 settings 自行添加。
-    final filledPhones = _contactPhoneControllers
-        .map((c) => c.text.trim())
-        .where((p) => p.isNotEmpty)
-        .toList();
-    // 只校验用户**实际填了**的手机号 — 格式 + 重复
-    if (filledPhones.isNotEmpty) {
-      for (final phone in filledPhones) {
-        if (!PhoneValidator.isValid(phone)) {
-          return l10n.setupValidationPhoneInvalid;
-        }
-      }
-      final unique = filledPhones.toSet();
-      if (unique.length != filledPhones.length) {
+    switch (errorCode) {
+      case 'setup_validation_name_required':
+        return l10n.setupValidationNameRequired;
+      case 'setup_validation_phone_invalid':
+        return l10n.setupValidationPhoneInvalid;
+      case 'setup_validation_phone_duplicate':
         return l10n.setupValidationPhoneDuplicate;
-      }
+      default:
+        return null;
     }
-    return null;
   }
 
   Future<void> _showPresetTemplatesSheet() async {
-    final l10n = AppLocalizations.of(context);
+    // v0.32 R109: 抽 modal content 到 PresetTemplatesSheetContent 公开 widget
+    //   (原 70L modal builder 改 1 个调用)
     final result =
         await showModalBottomSheet<TemplateApplyResult<MedicationTemplate>>(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTokens.spacingMd,
-            vertical: AppTokens.spacingMd,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
-                child: Text(
-                  l10n.setupPresetTitle,
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeTitle,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-                child: Text(
-                  l10n.setupPresetDescription,
-                  style: TextStyle(
-                    color: AppTokens.textSecondaryColor(context),
-                    fontSize: AppTokens.fontSizeLabel,
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              for (final t in kMedicationTemplates)
-                // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
-                AppListTile.carded(
-                  leading:
-                      // v0.24 round 48 (sp-zh P1-17): emoji 视觉 < 文字,保持 fontSizeTitle 不变
-                      // (不是 token 化遗漏,是 deliberate 选择 — emoji 渲染有 size cap)
-                      Text(
-                    t.emoji,
-                    style: const TextStyle(
-                      fontSize: AppTokens.fontSizeTitle,
-                    ),
-                  ),
-                  title: Text(
-                    // v0.28 round 65 (spzh P2-G): name 走 i18n
-                    t.nameL10n(l10n),
-                    // v0.26 round 57 (emil B-10): 走 textStyleLabelMedium 集中器
-                    // 替代内联 TextStyle(w500)  (ListTile.title 默认 fontSizeLabel)
-                    style: AppTokens.textStyleLabelMedium(context),
-                  ),
-                  subtitle: Text(t.descriptionL10n(l10n)),
-                  trailing: const Icon(Icons.add_circle_outline),
-                  onTap: () => Navigator.of(ctx).pop(
-                    TemplateApplyResult(
-                      template: t,
-                      append: _meds.isNotEmpty,
-                    ),
-                  ),
-                ),
-              const SizedBox(height: AppTokens.spacingMd),
-            ],
-          ),
-        ),
+      builder: (ctx) => PresetTemplatesSheetContent(
+        hasExistingMeds: _meds.isNotEmpty,
       ),
     );
     if (result == null) return;
