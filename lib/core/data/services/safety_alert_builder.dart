@@ -29,8 +29,9 @@
 import 'package:chroniccare/core/data/services/sms_service.dart'
     show SmsDispatchOutcome;
 import 'package:chroniccare/core/shared/user_name_helper.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart'
+    show SafetyAlertL10nResolver;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// v0.27 round 65 (spen P1-12 god class 拆分收尾): SafetyAlert 通知内容构造器
 ///
@@ -52,8 +53,12 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 /// await _plugin.show(safetyAlertId, build.title, build.body, build.details);
 /// ```
 class SafetyAlertBuilder {
-  // 不可实例化 — 纯函数类
-  const SafetyAlertBuilder._();
+  // v0.32 R109 (god class 拆 round 2): 暴露 public const constructor,
+  // 让 service_providers.dart `Provider<SafetyAlertSender>` 工厂可
+  // `SafetyAlertBuilder()` 实例化 (sender impl 接收 builder 注入).
+  // 旧 `_()` private 已删, 改 public const, 仍 0 副作用 (只暴露
+  // static buildFor 入口, 实例本身 0 状态).
+  const SafetyAlertBuilder();
 
   /// 构造 SafetyAlert 通知的 (title, body, details) — 0 副作用
   ///
@@ -69,7 +74,7 @@ class SafetyAlertBuilder {
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
     required SmsDispatchOutcome outcome,
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10n,
     required String channelId,
     required String channelName,
     required String channelDescription,
@@ -109,7 +114,7 @@ class SafetyAlertBuilder {
     // R32 (P0-04 锁屏 PII 跨 3 视角共识): title 改静态不含 name (锁屏可见, PII 风险)
     // ignore: unused_local_variable
     final _ = name; // 兼容旧签名, 实际 l10n 已忽略
-    final title = l10n.safetyAlertTitle(daysWithoutCheckIn);
+    final title = l10n.titleFor(daysWithoutCheckIn);
 
     return (title: title, body: body, details: details);
   }
@@ -121,9 +126,9 @@ class SafetyAlertBuilder {
   /// v0.27 round 75 (R74-N8 修): "从未打卡" 走 l10n, 之前硬编码。
   static String _formatLastCheckIn(
     DateTime? lastCheckIn, {
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10n,
   }) {
-    if (lastCheckIn == null) return l10n.safetyAlertNeverCheckIn;
+    if (lastCheckIn == null) return l10n.neverCheckIn();
     final y = lastCheckIn.year.toString();
     final m = lastCheckIn.month.toString().padLeft(2, '0');
     final d = lastCheckIn.day.toString().padLeft(2, '0');
@@ -139,14 +144,14 @@ class SafetyAlertBuilder {
   static String _resolveBody({
     required SmsDispatchOutcome outcome,
     required String lastStr,
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10n,
   }) {
     if (outcome.smsOk > 0) {
-      return l10n.safetyAlertBodySent(lastStr);
+      return l10n.bodySent(lastStr);
     }
     if (outcome.smsMock > 0) {
-      return l10n.safetyAlertBodyMocked(lastStr);
+      return l10n.bodyMocked(lastStr);
     }
-    return l10n.safetyAlertBodyFailed(lastStr);
+    return l10n.bodyFailed(lastStr);
   }
 }

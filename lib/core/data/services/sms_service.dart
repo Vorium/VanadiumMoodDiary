@@ -242,17 +242,17 @@ class SmsResult {
 /// .showSafetyAlert` 用它决定通知文案走 `sent` / `mocked` / `failed` 哪一支。
 ///
 /// 修正前: 通知 hardcode "已自动通知紧急联系人", 哪怕 mock 模式 / 全部失败
-/// 也这么说, 对精神心理患者形成"谎言"。修正后 3 态明确分流。
+/// v0.32 R109 (god class 拆 round 2): `SmsDispatchOutcome` 抽到
+/// `domain/repositories/safety_alert_sender.dart` 共享层 (跨 use case
+/// 跟 data 层), data 层 `sms_service.dart` 删 typedef, 改 import
+/// domain. R25 round 52 (spen P0 #12) 原定义位置.
 ///
-/// 选择规则 (在 NotificationService._resolveSafetyAlertBody):
-/// - `smsOk > 0` → sent
-/// - `smsOk == 0 && smsMock > 0` → mocked (dev 模式常态)
-/// - `smsOk == 0 && smsFail > 0` → failed
-typedef SmsDispatchOutcome = ({
-  int smsOk,
-  int smsFail,
-  int smsMock,
-});
+/// v0.32 R109: 通过 `package:chroniccare/domain/repositories/safety_alert_sender.dart`
+///   隐式 re-export (Dart typedef 跨文件 transparent), 旧 caller
+///   `import 'package:chroniccare/core/data/services/sms_service.dart'
+///   show SmsDispatchOutcome;` 仍可工作, 但推荐改 import 新位置.
+export 'package:chroniccare/domain/repositories/safety_alert_sender.dart'
+    show SmsDispatchOutcome;
 
 /// SMS 服务（业务层）
 ///

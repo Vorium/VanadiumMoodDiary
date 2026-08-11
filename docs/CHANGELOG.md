@@ -1,5 +1,44 @@
 ﻿# 变更日志
 
+## [0.32.0+114] - 2026-08-12 (R109 god class 拆 round 2 · use case 层厚化模板 round 2 · DispatchSafetyAlertUseCase 抽 + 死代码清理)
+
+R109 god class 专项 round 2, 1 commit (本批), use case 层厚化模板 round 2, 闭环 safety_watch_service 失联告警业务 + 删 2 个跨期死代码.
+
+**变更明细**:
+
+**抽 4 个新文件** (R109 use case 模板 round 2):
+- `lib/domain/logic/safety_alert_policy.dart` (61L): `buildAlertSms` 纯函数 + `isEnabled` 静态 (FeatureFlags 早返). 跟 R109 round 1 assessment_reminder_policy 同款.
+- `lib/domain/repositories/safety_alert_sender.dart` (114L): abstract `send` interface + `SafetyAlertL10nResolver` 5 个 tear-off 闭包 (titleFor / bodySent / bodyMocked / bodyFailed / neverCheckIn) + `SmsDispatchOutcome` 共享 typedef (跨 use case / data 层).
+- `lib/domain/usecases/dispatch_safety_alert.dart` (75L): UseCase 编排 feature flag 守卫 + 算 body + 委派 sender. 0 副作用, 0 Flutter / 0 Drift / 0 data / 0 l10n import.
+- `lib/core/data/services/safety_alert_sender_impl.dart` (157L): sender 实现, 包 SmsService + NotificationService + SafetyConfigService + SafetyAlertBuilder 实际发.
+
+**改 5 个文件**:
+- `safety_watch_service.dart` (390L → ~410L): 删 `_alertDispatcher` 字段, 改注入 `DispatchSafetyAlertUseCase`. `_dispatchLostContact` 调 use case + tear-off l10nResolver.
+- `safety_alert_builder.dart`: `buildFor` 接受 `SafetyAlertL10nResolver` (替代 `AppLocalizations`), builder 公共 `const SafetyAlertBuilder()` 暴露 (旧 `_()` private 删).
+- `notification_service.dart`: `showSafetyAlert` 接受 `SafetyAlertL10nResolver`. 删顶层 `import 'package:chroniccare/l10n/app_localizations.dart';` (data 层 0 依赖 presentation l10n 更彻底).
+- `sms_service.dart`: 删 `SmsDispatchOutcome` typedef, 改 export 从 sender 文件. (Dart typedef 跨文件 transparent, 6 个 caller 自动找新位置).
+- `service_providers.dart`: 加 `safetyAlertSenderProvider` + `dispatchSafetyAlertUseCaseProvider`, `safetyWatchServiceProvider` 改注入 use case. provider 链: notificationService + smsService → sender impl → use case → service.
+
+**删 2 个跨期死代码** (R32 P0 死代码清理 R109 收尾):
+- `lib/core/data/services/safety_alert_dispatcher.dart` (141L): 业务编排类, 替代为 use case + sender impl.
+- `lib/core/l10n/safety_alert_l10n.dart` (84L): R29 R87 抽的 abstract interface, Dart nominal typing 强制 nominal subtyping, 没人 `implements SafetyAlertL10n`, 0 caller 实际用, 死代码. R109 改用 `SafetyAlertL10nResolver` tear-off 闭包 替代.
+
+**l10n 抽象新模式**: R29 R87 抽 interface 失败 (Dart nominal typing), R109 改用 `SafetyAlertL10nResolver` 5 个 `String Function` tear-off 闭包. caller 注入 `titleFor: l10n.safetyAlertTitle, bodySent: l10n.safetyAlertBodySent, ...`. use case 跟 sender 0 l10n import, 跨层干净.
+
+**总变更** (本批): 11 文件 (+493 / -260 行), 净 +233 行 (删 2 死代码 225 行 + 加 4 文件 407 行 + 改 5 文件 净 -95 行), 0 个新 test, 0 个 db migration, pubspec 0.32.0+113 → 0.32.0+114
+
+**R109 路线图** (round 1-2 完成, 后续 3-6 待做):
+- ✅ round 1: assessment_reminder → use case (commit 6dd42a2)
+- ✅ round 2 (本批): safety_watch_service 失联告警 → use case + 删 2 死代码
+- round 3: medication_page 552L → 拆 4 controllers
+- round 4: add_medication_page 598L → 抽 form controller
+- round 5: setup_page_state 560L → 拆 4 step state
+- round 6: mood_trend_page 558L → 拆 4 sub-widget
+
+**验收**: 19 守门员全绿 (18 旧 + check_usecase_layer 新加 round 1). 6 个 use case 文件全合规 (从 4 → 6, +50%).
+
+---
+
 > 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
 ## [0.32.0+113] - 2026-08-12 (R109 god class 拆 round 1 · use case 层厚化模板 · ScheduleAssessmentReminderUseCase 抽)

@@ -51,7 +51,7 @@ import 'package:chroniccare/core/data/services/snooze_manager.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 
 /// 本地通知服务 (facade god class 已拆 6 sub-service + 1 delegate namespace)
 ///
@@ -365,15 +365,20 @@ class NotificationService implements NotificationSender {
   /// v0.27 round 65 (P1-12 god class 拆分收尾): title/body/details 构造委派
   /// 到 [SafetyAlertBuilder.buildFor] (纯函数), facade 仅负责调 `_plugin.show`。
   ///
-  /// **注意**: 修正后**所有调用方必须传 [outcome] 和 [l10n]**, 用 `SafetyAlertDispatcher`
-  /// 提供的 (smsOk, smsFail, smsMock) 计数 + `AppLocalizations.of(context)`。
+  /// **注意**: 修正后**所有调用方必须传 [outcome] 和 [l10nResolver]**, 用 `SafetyAlertDispatcher`
+  /// 提供的 (smsOk, smsFail, smsMock) 计数 + `SafetyAlertL10nResolver` tear-off
+  /// 闭包 (call site 从 `AppLocalizations.of(context)` tear-off 注入).
   /// 直接 `showSafetyAlert(userName:..)` 调会编译失败 (required 参数)。
+  ///
+  /// v0.32 R109 (god class 拆 round 2): l10n 改 `SafetyAlertL10nResolver`
+  /// (tear-off 闭包), `notification_service` 删 `l10n/app_localizations.dart`
+  /// 顶层 import, 4 层架构 `data` 0 依赖 `presentation` 更彻底.
   Future<void> showSafetyAlert({
     String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
     required SmsDispatchOutcome outcome,
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10nResolver,
   }) async {
     await init();
     final build = SafetyAlertBuilder.buildFor(
@@ -381,7 +386,7 @@ class NotificationService implements NotificationSender {
       daysWithoutCheckIn: daysWithoutCheckIn,
       lastCheckIn: lastCheckIn,
       outcome: outcome,
-      l10n: l10n,
+      l10n: l10nResolver,
       channelId: _safetyChannelId,
       channelName: _safetyChannelName,
       channelDescription: _safetyChannelDesc,

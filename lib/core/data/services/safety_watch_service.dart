@@ -5,14 +5,15 @@ import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/logic/safety_detector.dart';
+import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
 import 'package:chroniccare/l10n/app_localizations.dart' show AppLocalizations;
 
 // R101: SafetyCheckKind 移到 domain 层 safety_detector.dart, 这里 re-export
@@ -54,14 +55,13 @@ class SafetyWatchService {
   final UserProfileRepository _userProfileRepo;
   final SmsService _smsService;
   final NotificationService _notificationService;
+  final DispatchSafetyAlertUseCase _dispatchUseCase;
 
   /// v0.25 round 57: 2 个 sub
   late final SafetyConfigService _config = SafetyConfigService();
-  late final SafetyAlertDispatcher _alertDispatcher = SafetyAlertDispatcher(
-    smsService: _smsService,
-    notificationService: _notificationService,
-    config: _config,
-  );
+  // v0.32 R109 (god class 拆 round 2): 删 SafetyAlertDispatcher, 改调
+  //   DispatchSafetyAlertUseCase (domain). 业务编排 (feature flag 守卫 +
+  //   body 计算) 在 use case, service 只做 l10nResolver tear-off + 委派.
 
   /// v0.23 round 38 (P0-3 fix): _contactRepo.watchAll().first 的 timeout 时长
   /// 默认 5s,测试可注入短值(50ms)避免 5s 等待
@@ -73,12 +73,14 @@ class SafetyWatchService {
     required UserProfileRepository userProfileRepo,
     required SmsService smsService,
     required NotificationService notificationService,
+    required DispatchSafetyAlertUseCase dispatchUseCase,
     Duration contactWatchTimeout = const Duration(seconds: 5),
   })  : _checkInRepo = checkInRepo,
         _contactRepo = contactRepo,
         _userProfileRepo = userProfileRepo,
         _smsService = smsService,
         _notificationService = notificationService,
+        _dispatchUseCase = dispatchUseCase,
         _contactWatchTimeout = contactWatchTimeout;
 
   // ============== 配置 API 已下沉到 SafetyConfigService ==============
@@ -265,6 +267,10 @@ class SafetyWatchService {
   ///
   /// 注: Dart switch expression 不支持 await, 所以从 [_actOnDecision] 单独
   /// 调。返回 `Future<SafetyCheckResult>` 跟原 facade 行为一致。
+  ///
+  /// v0.32 R109 (god class 拆 round 2): dispatcher 改 use case.
+  /// use case 拿 `SafetyAlertSender` (abstract), service 把 `AppLocalizations`
+  /// 5 个 getter tear-off 到 `SafetyAlertL10nResolver` 注入.
   Future<SafetyCheckResult> _dispatchLostContact({
     required String trigger,
     required DateTime lastCheckInAt,
@@ -274,14 +280,21 @@ class SafetyWatchService {
     required List<ContactEntity> contacts,
     required AppLocalizations l10n,
   }) async {
-    final dispatched = await _alertDispatcher.dispatchAlert(
+    final l10nResolver = SafetyAlertL10nResolver(
+      titleFor: l10n.safetyAlertTitle,
+      bodySent: l10n.safetyAlertBodySent,
+      bodyMocked: l10n.safetyAlertBodyMocked,
+      bodyFailed: l10n.safetyAlertBodyFailed,
+      neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
+    );
+    final dispatched = await _dispatchUseCase(
       contacts: contacts,
       userName: profile.userName,
       daysSinceLast: daysSinceLast,
       lastCheckIn: lastCheckInAt,
-      effectiveNow: effectiveNow,
+      now: effectiveNow,
       trigger: trigger,
-      l10n: l10n,
+      l10nResolver: l10nResolver,
     );
     return SafetyCheckResult(
       kind: SafetyCheckKind.alerted,

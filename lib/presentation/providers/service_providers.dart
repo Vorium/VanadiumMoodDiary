@@ -3,11 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_sender_impl.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
+import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/reminder_scheduler.dart';
+import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
+import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
+import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/domain/repositories/assessment_reminder_sender.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
+import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
 import 'package:chroniccare/domain/usecases/schedule_assessment_reminder.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 
@@ -44,6 +50,27 @@ final reminderCheckerProvider = Provider<ReminderChecker>(
 /// SafetyWatch 服务（v0.10 / Round 4 死了么思路）
 ///
 /// 默认关闭。用户在 settings 里开启后，每次 app 启动 / 打卡后跑 check。
+///
+/// v0.32 R109 (god class 拆 round 2): service 改调 use case, 加
+/// `safetyAlertSenderProvider` + `dispatchSafetyAlertUseCaseProvider`.
+/// provider 链: notificationService + smsService → sender impl → use case → service.
+final safetyAlertSenderProvider = Provider<SafetyAlertSender>(
+  (ref) => SafetyAlertSenderImpl(
+    smsService: ref.watch(smsServiceProvider),
+    notificationService: ref.watch(notificationServiceProvider),
+    config: ref.watch(safetyConfigServiceProvider),
+    builder: const SafetyAlertBuilder(),
+  ),
+);
+
+/// v0.32 R109: use case 拿 abstract sender, 0 Flutter / 0 service 依赖
+final dispatchSafetyAlertUseCaseProvider =
+    Provider<DispatchSafetyAlertUseCase>(
+  (ref) => DispatchSafetyAlertUseCase(
+    ref.watch(safetyAlertSenderProvider),
+  ),
+);
+
 final safetyWatchServiceProvider = Provider<SafetyWatchService>(
   (ref) => SafetyWatchService(
     checkInRepo: ref.watch(checkInRepositoryProvider),
@@ -51,6 +78,7 @@ final safetyWatchServiceProvider = Provider<SafetyWatchService>(
     userProfileRepo: ref.watch(userProfileRepositoryProvider),
     smsService: ref.watch(smsServiceProvider),
     notificationService: ref.watch(notificationServiceProvider),
+    dispatchUseCase: ref.watch(dispatchSafetyAlertUseCaseProvider),
   ),
 );
 
