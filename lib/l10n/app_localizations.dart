@@ -141,7 +141,6 @@ abstract class AppLocalizations {
   /// **'🌱 您还在线'**
   String get homeStillOnline;
 
-  /// No description provided for @homeTempMed.
   ///
   /// In zh, this message translates to:
   /// **'临时吃药 +'**
@@ -2044,19 +2043,16 @@ abstract class AppLocalizations {
   /// **'{name} 还在坚持'**
   String homeHeaderKeepGoing(Object name);
 
-  /// No description provided for @homeTooltipTrend.
   ///
   /// In zh, this message translates to:
   /// **'查看趋势'**
   String get homeTooltipTrend;
 
-  /// No description provided for @homeTooltipAssessmentHistory.
   ///
   /// In zh, this message translates to:
   /// **'评估历史'**
   String get homeTooltipAssessmentHistory;
 
-  /// No description provided for @homeTooltipSettings.
   ///
   /// In zh, this message translates to:
   /// **'设置'**
@@ -2767,8 +2763,10 @@ abstract class AppLocalizations {
   /// SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬编码中文
   ///
   /// In zh, this message translates to:
-  /// **'⚠️ {name} 已 {days} 天未打卡'**
-  String safetyAlertTitle(Object name, int days);
+  /// **'⚠️ 已 {days} 天未打卡'**
+  ///
+  /// R32 (P0-04 锁屏 PII 跨 3 视角共识): 改静态不含 name (锁屏可见, PII 风险)
+  String safetyAlertTitle(int days);
 
   /// SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬编码中文, lastCheckIn==null 时返
   ///
@@ -2806,19 +2804,16 @@ abstract class AppLocalizations {
   /// **'长时间未打卡时提醒'**
   String get notifChannelSafetyDesc;
 
-  /// No description provided for @homeSnoozeBody.
   ///
   /// In zh, this message translates to:
   /// **'刚才您点了「snooze」，是时候点一下 = 打卡了'**
   String get homeSnoozeBody;
 
-  /// No description provided for @homeSnoozeConfirmed.
   ///
   /// In zh, this message translates to:
   /// **'好，5 分钟后会再提醒您 👌'**
   String get homeSnoozeConfirmed;
 
-  /// No description provided for @homeSnoozeButton.
   ///
   /// In zh, this message translates to:
   /// **'⏰ 5 分钟后再提醒'**
@@ -3557,13 +3552,11 @@ abstract class AppLocalizations {
   /// **'加密录音'**
   String get snackbarActionEncryptRecording;
 
-  /// No description provided for @snackbarActionRecord.
   ///
   /// In zh, this message translates to:
   /// **'录音'**
   String get snackbarActionRecord;
 
-  /// No description provided for @snackbarActionStartRecording.
   ///
   /// In zh, this message translates to:
   /// **'开始录音'**
@@ -3575,7 +3568,6 @@ abstract class AppLocalizations {
   /// **'打卡'**
   String get snackbarActionCheckin;
 
-  /// No description provided for @snackbarActionSnooze.
   ///
   /// In zh, this message translates to:
   /// **'推迟提醒'**
@@ -6708,13 +6700,11 @@ abstract class AppLocalizations {
   /// **'快捷操作'**
   String get medQuickActions;
 
-  /// No description provided for @medCalendar.
   ///
   /// In zh, this message translates to:
   /// **'用药日历'**
   String get medCalendar;
 
-  /// No description provided for @medRefill.
   ///
   /// In zh, this message translates to:
   /// **'续方管理'**
@@ -6930,13 +6920,11 @@ abstract class AppLocalizations {
   /// **'情绪记录提醒'**
   String get moodReminderTitle;
 
-  /// No description provided for @moodReminderSubtitle.
   ///
   /// In zh, this message translates to:
   /// **'每天定时提醒你记录心情'**
   String get moodReminderSubtitle;
 
-  /// No description provided for @moodReminderTimeLabel.
   ///
   /// In zh, this message translates to:
   /// **'提醒时间'**
@@ -6996,157 +6984,131 @@ abstract class AppLocalizations {
   /// **'其他'**
   String get moodInfluenceOther;
 
-  /// No description provided for @influenceFactorFamily.
   ///
   /// In zh, this message translates to:
   /// **'家人'**
   String get influenceFactorFamily;
 
-  /// No description provided for @influenceFactorFriend.
   ///
   /// In zh, this message translates to:
   /// **'朋友'**
   String get influenceFactorFriend;
 
-  /// No description provided for @influenceFactorPartner.
   ///
   /// In zh, this message translates to:
   /// **'伴侣'**
   String get influenceFactorPartner;
 
-  /// No description provided for @influenceFactorChild.
   ///
   /// In zh, this message translates to:
   /// **'孩子'**
   String get influenceFactorChild;
 
-  /// No description provided for @influenceFactorColleague.
   ///
   /// In zh, this message translates to:
   /// **'同事'**
   String get influenceFactorColleague;
 
-  /// No description provided for @influenceFactorExercise.
   ///
   /// In zh, this message translates to:
   /// **'运动'**
   String get influenceFactorExercise;
 
-  /// No description provided for @influenceFactorSick.
   ///
   /// In zh, this message translates to:
   /// **'生病'**
   String get influenceFactorSick;
 
-  /// No description provided for @influenceFactorGoodSleep.
   ///
   /// In zh, this message translates to:
   /// **'睡眠好'**
   String get influenceFactorGoodSleep;
 
-  /// No description provided for @influenceFactorHealthyDiet.
   ///
   /// In zh, this message translates to:
   /// **'饮食健康'**
   String get influenceFactorHealthyDiet;
 
-  /// No description provided for @influenceFactorWork.
   ///
   /// In zh, this message translates to:
   /// **'工作'**
   String get influenceFactorWork;
 
-  /// No description provided for @influenceFactorHobby.
   ///
   /// In zh, this message translates to:
   /// **'爱好'**
   String get influenceFactorHobby;
 
-  /// No description provided for @influenceFactorTravel.
   ///
   /// In zh, this message translates to:
   /// **'旅行'**
   String get influenceFactorTravel;
 
-  /// No description provided for @influenceFactorCommute.
   ///
   /// In zh, this message translates to:
   /// **'通勤'**
   String get influenceFactorCommute;
 
-  /// No description provided for @influenceFactorShopping.
   ///
   /// In zh, this message translates to:
   /// **'购物'**
   String get influenceFactorShopping;
 
-  /// No description provided for @influenceFactorGaming.
   ///
   /// In zh, this message translates to:
   /// **'游戏'**
   String get influenceFactorGaming;
 
-  /// No description provided for @influenceFactorReading.
   ///
   /// In zh, this message translates to:
   /// **'阅读'**
   String get influenceFactorReading;
 
-  /// No description provided for @influenceFactorEntertainment.
   ///
   /// In zh, this message translates to:
   /// **'娱乐'**
   String get influenceFactorEntertainment;
 
-  /// No description provided for @influenceFactorMeditation.
   ///
   /// In zh, this message translates to:
   /// **'冥想'**
   String get influenceFactorMeditation;
 
-  /// No description provided for @influenceFactorBreathing.
   ///
   /// In zh, this message translates to:
   /// **'呼吸练习'**
   String get influenceFactorBreathing;
 
-  /// No description provided for @influenceFactorJournaling.
   ///
   /// In zh, this message translates to:
   /// **'写日记'**
   String get influenceFactorJournaling;
 
-  /// No description provided for @influenceFactorYoga.
   ///
   /// In zh, this message translates to:
   /// **'瑜伽'**
   String get influenceFactorYoga;
 
-  /// No description provided for @influenceFactorSunny.
   ///
   /// In zh, this message translates to:
   /// **'晴天'**
   String get influenceFactorSunny;
 
-  /// No description provided for @influenceFactorCloudy.
   ///
   /// In zh, this message translates to:
   /// **'多云'**
   String get influenceFactorCloudy;
 
-  /// No description provided for @influenceFactorRainy.
   ///
   /// In zh, this message translates to:
   /// **'雨天'**
   String get influenceFactorRainy;
 
-  /// No description provided for @influenceFactorSnowy.
   ///
   /// In zh, this message translates to:
   /// **'雪天'**
   String get influenceFactorSnowy;
 
-  /// No description provided for @influenceFactorWindy.
   ///
   /// In zh, this message translates to:
   /// **'刮风'**
@@ -7170,7 +7132,6 @@ abstract class AppLocalizations {
   /// **'情绪状态'**
   String get moodDetailMoodState;
 
-  /// No description provided for @moodDetail4D.
   ///
   /// In zh, this message translates to:
   /// **'4 维度'**
@@ -7194,7 +7155,6 @@ abstract class AppLocalizations {
   /// **'近 7 天'**
   String get moodTrendWeek;
 
-  /// No description provided for @moodTrendMonth.
   ///
   /// In zh, this message translates to:
   /// **'近 30 天'**
@@ -7212,7 +7172,6 @@ abstract class AppLocalizations {
   /// **'暂无数据'**
   String get moodTrendNoData;
 
-  /// No description provided for @moodEditTooltip.
   ///
   /// In zh, this message translates to:
   /// **'编辑'**
@@ -7236,13 +7195,11 @@ abstract class AppLocalizations {
   /// **'因素关联分析'**
   String get moodFactorAnalysis;
 
-  /// No description provided for @moodFactorAvgScore.
   ///
   /// In zh, this message translates to:
   /// **'平均分'**
   String get moodFactorAvgScore;
 
-  /// No description provided for @moodFactorCount.
   ///
   /// In zh, this message translates to:
   /// **'记录数'**
@@ -7266,13 +7223,11 @@ abstract class AppLocalizations {
   /// **'今天'**
   String get moodModeDaily;
 
-  /// No description provided for @moodTrendWeekTitle.
   ///
   /// In zh, this message translates to:
   /// **'近 7 天情绪趋势'**
   String get moodTrendWeekTitle;
 
-  /// No description provided for @moodTrendMonthTitle.
   ///
   /// In zh, this message translates to:
   /// **'近 30 天情绪趋势'**
@@ -7302,7 +7257,6 @@ abstract class AppLocalizations {
   /// **'暂无 CBT 重评数据'**
   String get moodTrendCbtEmpty;
 
-  /// No description provided for @moodTrendRecords.
   ///
   /// In zh, this message translates to:
   /// **'条'**
@@ -7356,7 +7310,6 @@ abstract class AppLocalizations {
   /// **'续方'**
   String get medDetailRefill;
 
-  /// No description provided for @medDetailNoFactors.
   ///
   /// In zh, this message translates to:
   /// **'暂无影响因素数据'**
@@ -7410,309 +7363,9 @@ abstract class AppLocalizations {
   /// **'行为应对'**
   String get moodCbtBehavior;
 
-  /// No description provided for @moodAudioRecording.
   ///
   /// In zh, this message translates to:
   /// **'录音 {duration}'**
-  String moodAudioRecording(Object duration);
-
-  /// No description provided for @moodDeleted.
-  ///
-  /// In zh, this message translates to:
-  /// **'已删除'**
-  String get moodDeleted;
-
-  /// No description provided for @moodPeriodAfternoon.
-  ///
-  /// In zh, this message translates to:
-  /// **'下午'**
-  String get moodPeriodAfternoon;
-
-  /// No description provided for @settingsProfileTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'个人资料'**
-  String get settingsProfileTitle;
-
-  /// No description provided for @settingsProfileSubtitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'健康档案、医疗信息'**
-  String get settingsProfileSubtitle;
-
-  /// No description provided for @todaySummaryCheckIn.
-  ///
-  /// In zh, this message translates to:
-  /// **'打卡'**
-  String get todaySummaryCheckIn;
-
-  /// No description provided for @todaySummaryMeds.
-  ///
-  /// In zh, this message translates to:
-  /// **'药物'**
-  String get todaySummaryMeds;
-
-  /// No description provided for @todaySummaryMood.
-  ///
-  /// In zh, this message translates to:
-  /// **'心情'**
-  String get todaySummaryMood;
-
-  /// No description provided for @todaySummaryStreak.
-  ///
-  /// In zh, this message translates to:
-  /// **'连续'**
-  String get todaySummaryStreak;
-
-  /// R103: 主页摘要卡连续打卡天数 (placeholder {count} 是天数)
-  ///
-  /// In zh, this message translates to:
-  /// **'{count}天'**
-  String todaySummaryStreakDays(int count);
-
-  /// No description provided for @setupConsentMedicalDisclaimer.
-  ///
-  /// In zh, this message translates to:
-  /// **'我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务'**
-  String get setupConsentMedicalDisclaimer;
-
-  /// No description provided for @setupConsentViewDisclaimer.
-  ///
-  /// In zh, this message translates to:
-  /// **'查看'**
-  String get setupConsentViewDisclaimer;
-
-  /// No description provided for @trackingCustomize.
-  ///
-  /// In zh, this message translates to:
-  /// **'自定义追踪项'**
-  String get trackingCustomize;
-
-  /// No description provided for @trackingPin.
-  ///
-  /// In zh, this message translates to:
-  /// **'置顶'**
-  String get trackingPin;
-
-  /// No description provided for @trackingUnpin.
-  ///
-  /// In zh, this message translates to:
-  /// **'取消置顶'**
-  String get trackingUnpin;
-
-  /// No description provided for @trackingHide.
-  ///
-  /// In zh, this message translates to:
-  /// **'隐藏此项'**
-  String get trackingHide;
-
-  /// No description provided for @trackingPinned.
-  ///
-  /// In zh, this message translates to:
-  /// **'收藏'**
-  String get trackingPinned;
-
-  /// No description provided for @trackingCategoryEmotional.
-  ///
-  /// In zh, this message translates to:
-  /// **'情绪状态'**
-  String get trackingCategoryEmotional;
-
-  /// No description provided for @trackingCategoryPhysical.
-  ///
-  /// In zh, this message translates to:
-  /// **'身体指标'**
-  String get trackingCategoryPhysical;
-
-  /// No description provided for @trackingCategoryBehavioral.
-  ///
-  /// In zh, this message translates to:
-  /// **'行为节律'**
-  String get trackingCategoryBehavioral;
-
-  /// No description provided for @trackingCategoryMedical.
-  ///
-  /// In zh, this message translates to:
-  /// **'医疗记录'**
-  String get trackingCategoryMedical;
-
-  /// R100: 今日追踪汇总 (placeholders: tracked=已追踪数, total=总数)
-  ///
-  /// In zh, this message translates to:
-  /// **'今日已追踪 {tracked}/{total} 项'**
-  String todayTrackingSummary(int tracked, int total);
-
-  /// R104: 情绪详情页录音标签 (placeholder {duration} 是时长)
-  ///
-  /// In zh, this message translates to:
-  /// **'录音 {duration}'**
-  String moodRecordingLabel(String duration);
-
-  /// No description provided for @medicationNameRequired.
-  ///
-  /// In zh, this message translates to:
-  /// **'请输入药物名称'**
-  String get medicationNameRequired;
-
-  /// R104: 添加药物成功提示 (placeholder {name} 是药名)
-  ///
-  /// In zh, this message translates to:
-  /// **'已添加 {name}'**
-  String medicationAdded(String name);
-
-  /// No description provided for @medicationStatusInUse.
-  ///
-  /// In zh, this message translates to:
-  /// **'在用'**
-  String get medicationStatusInUse;
-
-  /// No description provided for @medicationStatusStopped.
-  ///
-  /// In zh, this message translates to:
-  /// **'已停'**
-  String get medicationStatusStopped;
-
-  /// R104: 影响因素分析记录数 (placeholder {count} 是数量)
-  ///
-  /// In zh, this message translates to:
-  /// **'{count} 条'**
-  String factorAnalysisCount(int count);
-
-  /// No description provided for @setupConsentAgreeAll.
-  ///
-  /// In zh, this message translates to:
-  /// **'我已阅读并同意以上所有协议'**
-  String get setupConsentAgreeAll;
-
-  /// No description provided for @setupConsentViewAll.
-  ///
-  /// In zh, this message translates to:
-  /// **'查看全部协议'**
-  String get setupConsentViewAll;
-
-  /// No description provided for @careCopyLateCheckInTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'🛏️ 提早一点更稳定'**
-  String get careCopyLateCheckInTitle;
-
-  /// No description provided for @careCopyLateCheckInBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'21 点后打卡比例偏高 — 规律作息对药效有影响'**
-  String get careCopyLateCheckInBody;
-
-  /// No description provided for @careCopyWeekendMissedTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'☀️ 周末保持节律'**
-  String get careCopyWeekendMissedTitle;
-
-  /// No description provided for @careCopyWeekendMissedBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'周末容易错过——现在打卡，多一点坚持'**
-  String get careCopyWeekendMissedBody;
-
-  /// No description provided for @careCopySecondDayMissedTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'🌿 后续保持就好'**
-  String get careCopySecondDayMissedTitle;
-
-  /// No description provided for @careCopySecondDayMissedBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'少 1 次没关系——后续保持就好'**
-  String get careCopySecondDayMissedBody;
-
-  /// No description provided for @careCopyWeekPerfectTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'🌟 一整周都准时！'**
-  String get careCopyWeekPerfectTitle;
-
-  /// No description provided for @careCopyWeekPerfectBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'今周已全部准时'**
-  String get careCopyWeekPerfectBody;
-
-  /// No description provided for @assessmentComparisonImproved.
-  ///
-  /// In zh, this message translates to:
-  /// **'好转'**
-  String get assessmentComparisonImproved;
-
-  /// No description provided for @assessmentComparisonWorsened.
-  ///
-  /// In zh, this message translates to:
-  /// **'恶化'**
-  String get assessmentComparisonWorsened;
-
-  /// No description provided for @assessmentComparisonUnchanged.
-  ///
-  /// In zh, this message translates to:
-  /// **'持平'**
-  String get assessmentComparisonUnchanged;
-
-  /// No description provided for @assessmentComparisonFirst.
-  ///
-  /// In zh, this message translates to:
-  /// **'首次评估'**
-  String get assessmentComparisonFirst;
-
-  /// 评估对比: 分数差为 0 时的文案
-  ///
-  /// In zh, this message translates to:
-  /// **'和上次一样（{delta}）'**
-  String assessmentDeltaSame(int delta);
-
-  /// 评估对比: 分数比上次高
-  ///
-  /// In zh, this message translates to:
-  /// **'比上次高 {delta} 分'**
-  String assessmentDeltaHigher(int delta);
-
-  /// 评估对比: 分数比上次低
-  ///
-  /// In zh, this message translates to:
-  /// **'比上次低 {delta} 分'**
-  String assessmentDeltaLower(int delta);
-
-  /// 评估对比: 未知量表的严重度等级兜底
-  ///
-  /// In zh, this message translates to:
-  /// **'等级 {rank}'**
-  String assessmentSeverityRank(int rank);
-
-  /// No description provided for @checkInTypeAssessment.
-  ///
-  /// In zh, this message translates to:
-  /// **'心理量表评估'**
-  String get checkInTypeAssessment;
-
-  /// 日历详情: 评估事件副标题 (总分)
-  ///
-  /// In zh, this message translates to:
-  /// **'总分 {total}'**
-  String dayDetailTotalScore(int total);
-
-  /// No description provided for @dayDetailScaleAssessment.
-  ///
-  /// In zh, this message translates to:
-  /// **'心理量表评估'**
-  String get dayDetailScaleAssessment;
-}
-
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
-  const _AppLocalizationsDelegate();
-
-  @override
-  Future<AppLocalizations> load(Locale locale) {
-    return SynchronousFuture<AppLocalizations>(lookupAppLocalizations(locale));
-  }
 
   @override
   bool isSupported(Locale locale) =>

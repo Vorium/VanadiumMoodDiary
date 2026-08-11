@@ -52,7 +52,6 @@ import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
 
 /// 本地通知服务 (facade god class 已拆 6 sub-service + 1 delegate namespace)
 ///

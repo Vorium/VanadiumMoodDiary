@@ -28,7 +28,6 @@
     }
   },
   "homeStillOnline": "🌱 您還在線",
-  "homeTempMed": "臨時吃藥 +",
   "homeStreakBroken": "少 1 次沒關係，明天繼續",
   "setupStep": "第 {current} 步 ／ 共 {total} 步",
   "@setupStep": {
@@ -89,8 +88,12 @@
   "settingsAssessmentHistory": "評估歷史",
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 評估的折線圖與對比",
   "@settingsAboutVersion": {
-      "description": "R99 (BUG-2): 關於頁版本行, version 走 kPubspecVersion 動態注入 (不再硬編碼)",
-      "placeholders": { "version": { "type": "String" } }
+    "description": "R99 (BUG-2): 關於頁版本行, version 走 kPubspecVersion 動態注入 (不再硬編碼)",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
   },
   "settingsAboutVersion": "v{version} · 我今天吃了藥",
   "settingsDisclaimerText": "本應用不提供醫療建議，所有功能僅供參考。",
@@ -523,10 +526,10 @@
   },
   "moodDialogTitle": "今天怎麼樣？",
   "moodDialogPeriodLabel": "時段",
-  "moodPeriodMorning": "早",
+  "moodPeriodMorning": "早上",
   "moodPeriodNoon": "中",
-  "moodPeriodEvening": "晚",
-  "moodPeriodNight": "夜",
+  "moodPeriodEvening": "晚上",
+  "moodPeriodNight": "夜間",
   "moodPeriodUnspecified": "未指定",
   "moodListFilterPeriod": "時段",
   "moodPeriodChartTitle": "心境 4 段趨勢（近 30 天）",
@@ -667,9 +670,6 @@
       }
     }
   },
-  "homeTooltipTrend": "查看趨勢",
-  "homeTooltipAssessmentHistory": "評估歷史",
-  "homeTooltipSettings": "設置",
   "ventSwipeHint": "左滑或長按條目可刪除",
   "homeStreakRestart": "今天重新開始 🌱",
   "homeStreakDay1": "第 1 天，邁出第一步 🌱",
@@ -995,7 +995,7 @@
       }
     }
   },
-  "safetyAlertTitle": "⚠️ {name} 已 {days} 天未打卡",
+  "safetyAlertTitle": "⚠️ 已 {days} 天未打卡",
   "@safetyAlertTitle": {
     "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬編碼中文",
     "placeholders": {
@@ -1029,9 +1029,6 @@
   "@notifChannelSafetyDesc": {
     "description": "Android 通知 channel 描述 (safety) — v0.27 R77 修 (R76-N1)"
   },
-  "homeSnoozeBody": "剛才您點了「snooze」，是時候點一下 = 打卡了",
-  "homeSnoozeConfirmed": "好，5 分鐘後會再提醒您 👌",
-  "homeSnoozeButton": "⏰ 5 分鐘後再提醒",
   "homeVentButton": "傾訴 🌲",
   "homeNotifBannerText": "提醒沒設上，可能錯過打卡。請到系統設置允許通知。",
   "homeNotifBannerDismiss": "知道了",
@@ -1286,10 +1283,7 @@
   "snackbarActionGeneratePdf": "生成 PDF",
   "snackbarActionPlay": "播放",
   "snackbarActionEncryptRecording": "加密錄音",
-  "snackbarActionRecord": "錄音",
-  "snackbarActionStartRecording": "開始錄音",
   "snackbarActionCheckin": "打卡",
-  "snackbarActionSnooze": "推遲提醒",
   "snackbarActionAutoCheckin": "自動打卡",
   "snackbarActionFinishSetup": "完成設置",
   "snackbarActionUndo": "撤銷",
@@ -1578,7 +1572,11 @@
   "crisisHotlineUsTextLineDesc": "美國 24 小時短信",
   "@crisisHotlineSnackbarCopied": {
     "description": "v0.30 round 92: 複製號碼後 snackbar 提示",
-    "placeholders": { "number": { "type": "Object" } }
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
   },
   "crisisHotlineSnackbarCopied": "已複製: {number}",
   "@crisisHotlineDialTooltip": {
@@ -1591,7 +1589,11 @@
   "crisisHotlineCopyTooltip": "複製號碼",
   "@crisisHotlineDialFailed": {
     "description": "R97-P1-11 (2026-08-07): tel: intent 啟動失敗 snackbar 提示",
-    "placeholders": { "number": { "type": "Object" } }
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
   },
   "crisisHotlineDialFailed": "無法啟動撥號, 請手動撥打: {number}",
   "setupLegalAgeAttestation": "本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。",
@@ -2735,7 +2737,6 @@
   "@socialRhythmLastMealTitle": {
     "description": "v0.30 R92: socialRhythmLastMealTitle title 標籤 (R91 daily_tracking l10n 漏 title 模式 key, R92 補)"
   },
-
   "cardStatusToday": "今天",
   "@cardStatusToday": {
     "description": "v0.30 R91: 卡片时间状态 今天"
@@ -2768,7 +2769,9 @@
   "@migrationFailedFooter": {
     "description": "v0.30 R95 sub-spec 7 task 53: 失敗頁底部技術資訊, 內部異常脫敏後展示",
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "migrationFailedRetryButton": "重試",
@@ -2807,14 +2810,18 @@
   "@timeAgoDaysAgo": {
     "description": "v0.30 R95 sub-spec 7 task 55: 相對時間 '{N} 天前'",
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "timeAgoHoursAgo": "{hours} 小時前",
   "@timeAgoHoursAgo": {
     "description": "v0.30 R95 sub-spec 7 task 55: 相對時間 '{N} 小時前'",
     "placeholders": {
-      "hours": { "type": "int" }
+      "hours": {
+        "type": "int"
+      }
     }
   },
   "weightNoBmi": "暫無 BMI",
@@ -2837,9 +2844,15 @@
   "@socialRhythmMinutesSummary": {
     "description": "v0.30 R100 (P1#9): 社會節律 tile 摘要行 3 分鐘數段",
     "placeholders": {
-      "social": { "type": "Object" },
-      "work": { "type": "Object" },
-      "exercise": { "type": "Object" }
+      "social": {
+        "type": "Object"
+      },
+      "work": {
+        "type": "Object"
+      },
+      "exercise": {
+        "type": "Object"
+      }
     }
   },
   "socialRhythmSocialMinLabel": "社交時長 (分鐘)",
@@ -2866,42 +2879,54 @@
   "@sleepRegularityScore": {
     "description": "v0.30 R100 (P1#9): 睡眠 tile 摘要行 規律性分數段",
     "placeholders": {
-      "score": { "type": "int" }
+      "score": {
+        "type": "int"
+      }
     }
   },
   "sleepDurationLabel": "時長: {duration}",
   "@sleepDurationLabel": {
     "description": "v0.30 R100 (P1#9): 睡眠 dialog 時長唯讀行",
     "placeholders": {
-      "duration": { "type": "Object" }
+      "duration": {
+        "type": "Object"
+      }
     }
   },
   "stressIntensityScore": "強度 {intensity}/5",
   "@stressIntensityScore": {
     "description": "v0.30 R100 (P1#9): 壓力事件 tile 標題 強度分數段",
     "placeholders": {
-      "intensity": { "type": "int" }
+      "intensity": {
+        "type": "int"
+      }
     }
   },
   "moodCbtColumns": "{count} 欄",
   "@moodCbtColumns": {
     "description": "v0.30 R100 (P1#9): CBT 欄數參數化 (settings cbt_section + mood_list filter sheet 共用)",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "medReportTitleWindow": "用藥報告（近 {days} 天）",
   "@medReportTitleWindow": {
     "description": "v0.30 R100 (P1#9): 用藥報告 dialog 標題 (含時間窗口)",
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "medCalendarBackfillStub": "補打卡功能接入中 ({date})",
   "@medCalendarBackfillStub": {
     "description": "v0.30 R100 (P1#9): 用藥日曆 補打卡 stub SnackBar (date 是 YYYY-MM-DD)",
     "placeholders": {
-      "date": { "type": "Object" }
+      "date": {
+        "type": "Object"
+      }
     }
   },
   "setupCrisisHotlineTitle": "🆘 心理危機干預熱線 (24h)",
@@ -2932,23 +2957,20 @@
   "@dataExportRetentionClipboard": {
     "description": "v0.30 R100 (P1#9): 導出 consent dialog retention placeholder"
   },
-
   "medPageTitle": "用藥",
-  "medAddTooltip": "新增藥物",
+  "medAddTooltip": "添加藥物",
   "medTodaySchedule": "今日服藥",
   "medMyMedications": "我的藥物",
   "medQuickActions": "快捷操作",
-  "medCalendar": "用藥日曆",
-  "medRefill": "續方管理",
   "medSlotMorning": "早上",
   "medSlotAfternoon": "下午",
   "medSlotEvening": "晚上",
   "medSlotBedtime": "睡前",
-  "medEmptyTitle": "還沒有新增藥物",
-  "medEmptySubtitle": "點擊右上角 + 新增你的第一種藥物",
+  "medEmptyTitle": "還沒有添加藥物",
+  "medEmptySubtitle": "點擊右上角 + 添加你的第一種藥物",
   "medNoScheduleToday": "今天沒有服藥計劃",
-  "medAddTitle": "新增藥物",
-  "medAddStep1Title": "藥物資訊",
+  "medAddTitle": "添加藥物",
+  "medAddStep1Title": "藥物信息",
   "medAddStep2Title": "劑量與時間",
   "medAddStep3Title": "確認",
   "medAddNameLabel": "藥物名稱",
@@ -2956,7 +2978,7 @@
   "medAddFormLabel": "劑型",
   "medAddDosageLabel": "每次劑量",
   "medAddTimeLabel": "服藥時間",
-  "medAddTimeAdd": "新增時間",
+  "medAddTimeAdd": "添加時間",
   "medAddColorLabel": "藥物顏色（可選，幫助識別）",
   "medAddConfirmName": "藥名",
   "medAddConfirmForm": "劑型",
@@ -2964,9 +2986,9 @@
   "medAddConfirmTime": "時間",
   "medAddPrev": "上一步",
   "medAddNext": "下一步",
-  "medAddSave": "儲存",
+  "medAddSave": "保存",
   "medAddColorN": "藥物顏色 {n}",
-  "medFormTablet": "錠劑",
+  "medFormTablet": "片劑",
   "medFormCapsule": "膠囊",
   "medFormLiquid": "口服液",
   "medFormPatch": "貼劑",
@@ -2974,12 +2996,6 @@
   "medFormOther": "其他",
   "medDetailTitle": "藥物詳情",
   "medNotFound": "藥物未找到",
-
-  "moodReminderTitle": "情緒記錄提醒",
-  "moodReminderSubtitle": "每天定時提醒你記錄心情",
-  "moodReminderTimeLabel": "提醒時間",
-  "moodReminderEnabled": "開啟提醒",
-
   "moodInfluenceTitle": "影響因素",
   "moodInfluenceSubtitle": "什麼影響了你的心情？（可多選）",
   "moodInfluenceRelationships": "關係",
@@ -2988,60 +3004,24 @@
   "moodInfluenceMindfulness": "正念",
   "moodInfluenceWeather": "天氣",
   "moodInfluenceOther": "其他",
-
-  "influenceFactorFamily": "家人",
-  "influenceFactorFriend": "朋友",
-  "influenceFactorPartner": "伴侶",
-  "influenceFactorChild": "孩子",
-  "influenceFactorColleague": "同事",
-  "influenceFactorExercise": "運動",
-  "influenceFactorSick": "生病",
-  "influenceFactorGoodSleep": "睡眠好",
-  "influenceFactorHealthyDiet": "飲食健康",
-  "influenceFactorWork": "工作",
-  "influenceFactorHobby": "愛好",
-  "influenceFactorTravel": "旅行",
-  "influenceFactorCommute": "通勤",
-  "influenceFactorShopping": "購物",
-  "influenceFactorGaming": "遊戲",
-  "influenceFactorReading": "閱讀",
-  "influenceFactorEntertainment": "娛樂",
-  "influenceFactorMeditation": "冥想",
-  "influenceFactorBreathing": "呼吸練習",
-  "influenceFactorJournaling": "寫日記",
-  "influenceFactorYoga": "瑜伽",
-  "influenceFactorSunny": "晴天",
-  "influenceFactorCloudy": "多雲",
-  "influenceFactorRainy": "雨天",
-  "influenceFactorSnowy": "雪天",
-  "influenceFactorWindy": "刮風",
-
   "moodDetailTitle": "情緒詳情",
   "moodDetailFactors": "影響因素",
   "moodDetailMoodState": "情緒狀態",
-  "moodDetail4D": "4 維度",
   "moodDetailCbtRecord": "CBT 思維記錄",
   "moodTrendTitle": "情緒趨勢",
   "moodTrendWeek": "近 7 天",
-  "moodTrendMonth": "近 30 天",
-  "moodTrendDistribution": "分數分布",
-  "moodTrendNoData": "暫無資料",
-  "moodEditTooltip": "編輯",
+  "moodTrendDistribution": "分數分佈",
+  "moodTrendNoData": "暫無數據",
   "moodDeleteTooltip": "刪除",
   "moodDeleteConfirm": "確定刪除這條記錄嗎？",
   "moodFactorAnalysis": "因素關聯分析",
-  "moodFactorAvgScore": "平均分",
-  "moodFactorCount": "記錄數",
   "navMedication": "用藥",
   "moodModeMomentary": "此刻",
   "moodModeDaily": "今天",
-  "moodTrendWeekTitle": "近 7 天情緒趨勢",
-  "moodTrendMonthTitle": "近 30 天情緒趨勢",
-  "moodTrendDistTitle": "分數分布",
+  "moodTrendDistTitle": "分數分佈",
   "moodTrendCbtTitle": "CBT 重評效果",
   "moodTrendCbtHint": "正值 = 情緒改善, 負值 = 惡化",
-  "moodTrendCbtEmpty": "暫無 CBT 重評資料",
-  "moodTrendRecords": "條",
+  "moodTrendCbtEmpty": "暫無 CBT 重評數據",
   "medDetailActive": "在用",
   "medDetailStopped": "已停",
   "medDetailAdherence": "依從性",
@@ -3050,7 +3030,6 @@
   "medDetailLast30Record": "近30天記錄",
   "medDetailEdit": "編輯",
   "medDetailRefill": "續方",
-  "medDetailNoFactors": "暫無影響因素資料",
   "moodCbtSituation": "情境",
   "moodCbtAutoThought": "自動思維",
   "moodCbtEvidenceFor": "支持證據",
@@ -3059,19 +3038,14 @@
   "moodCbtRerated": "重新評分",
   "moodCbtCoreBelief": "核心信念",
   "moodCbtBehavior": "行為應對",
-  "moodAudioRecording": "錄音 {duration}",
   "moodDeleted": "已刪除",
-  "moodPeriodMorning": "早上",
   "moodPeriodAfternoon": "下午",
-  "moodPeriodEvening": "晚上",
-  "moodPeriodNight": "夜間",
   "settingsProfileTitle": "個人資料",
-  "settingsProfileSubtitle": "健康檔案、醫療資訊",
+  "settingsProfileSubtitle": "健康檔案、醫療信息",
   "todaySummaryCheckIn": "打卡",
   "todaySummaryMeds": "藥物",
   "todaySummaryMood": "心情",
   "todaySummaryStreak": "連續",
-  "todaySummaryStreakDays": "{count}天",
   "@todaySummaryStreakDays": {
     "description": "R103: 主頁摘要卡連續打卡天數 (placeholder {count} 是天數)",
     "placeholders": {
@@ -3081,8 +3055,6 @@
     }
   },
   "setupConsentMedicalDisclaimer": "我已閱讀並理解《醫學免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務",
-  "setupConsentViewDisclaimer": "查看",
-
   "trackingCustomize": "自定義追蹤項",
   "trackingPin": "置頂",
   "trackingUnpin": "取消置頂",
@@ -3096,15 +3068,21 @@
   "@todayTrackingSummary": {
     "description": "R100: 今日追蹤摘要 (placeholders: tracked=已追蹤數, total=總數)",
     "placeholders": {
-      "tracked": { "type": "int" },
-      "total": { "type": "int" }
+      "tracked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "moodRecordingLabel": "錄音 {duration}",
   "@moodRecordingLabel": {
     "description": "R104: 情緒詳情頁錄音標籤 (placeholder {duration} 是時長)",
     "placeholders": {
-      "duration": { "type": "String" }
+      "duration": {
+        "type": "String"
+      }
     }
   },
   "medicationNameRequired": "請輸入藥物名稱",
@@ -3112,7 +3090,9 @@
   "@medicationAdded": {
     "description": "R104: 添加藥物成功提示 (placeholder {name} 是藥名)",
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "medicationStatusInUse": "在用",
@@ -3121,11 +3101,12 @@
   "@factorAnalysisCount": {
     "description": "R104: 影響因素分析記錄數 (placeholder {count} 是數量)",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "setupConsentAgreeAll": "我已閱讀並同意以上所有協議",
-  "setupConsentViewAll": "查看全部協議",
   "@_v0_31_P1_5_domain_hardcoded_zh_to_arb": {},
   "careCopyLateCheckInTitle": "🛏️ 提早一點更穩定",
   "careCopyLateCheckInBody": "21 點後打卡比例偏高 — 規律作息對藥效有影響",
@@ -3134,7 +3115,6 @@
   "careCopySecondDayMissedTitle": "🌿 後續保持就好",
   "careCopySecondDayMissedBody": "少 1 次沒關係——後續保持就好",
   "careCopyWeekPerfectTitle": "🌟 一整週都準時！",
-  "careCopyWeekPerfectBody": "本週已全部準時",
   "assessmentComparisonImproved": "好轉",
   "assessmentComparisonWorsened": "惡化",
   "assessmentComparisonUnchanged": "持平",

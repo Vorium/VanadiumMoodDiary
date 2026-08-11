@@ -186,7 +186,7 @@
 
 | # | 文件:行号 | 类型 | 描述 | 修复难度 | 优先级 |
 |---|----------|---------------------------|------|---------|--------|
-| 1 | `lib/core/routing/app_router.dart:9-14` | **命名/可读性** | 注释是 **PUA 乱码**（`go_router 璺敱閰嶇疆` 应该是 `go_router 路由配置`），是项目唯一一处 mojibake 字符（grep `\uE000-\uF8FF` PUA 范围**只此 1 文件 35 PUA 字符**） | trivial | P1 |
+| 1 | `lib/core/routing/app_router.dart:9-14` | **命名/可读性** | 注释是 **PUA 乱码**（`go_router 璺过敱閰嶇疆` 应该是 `go_router 路由配置`），是项目唯一一处 mojibake 字符（grep `\uE000-\uF8FF` PUA 范围**只此 1 文件 35 PUA 字符**） | trivial | P1 |
 | 2 | `lib/core/data/services/notification_service.dart:27-50` | **命名** | 7 个 `_xxxId` 静态常量（`_defaultReminderId` / `_medicationReminderBaseId` / `_safetyAlertId` / `_refillBaseId` / `_assessmentReminderId` + SnoozeManager 3 个）分散在 4 个文件。**抽 `notification_ids.dart` 集中管理 + 范围互斥验证** | small | P2 |
 | 3 | `lib/core/data/services/notification_service.dart:198-217` | **错误处理** | `Future.wait(...).timeout(5s, onTimeout: () => <void>[])` 是兜底好实践，但**注释说"plugin 平台 channel 退化"未在 dev mode log**，timeout 时 swallow 静默 → 用户看不到"cancel 失败" | trivial | P2 |
 | 4 | `lib/core/data/services/notification_service.dart:30-37` | **命名/死代码** | 注释 `// v0.22 round 30 (sp-en P2-1): 角标虚拟 id 拆到 BadgeSyncService.badgeVirtualId` + 后面跟一空行 — **占位说明是 dead comment**，本身不是 bug | trivial | P3 |

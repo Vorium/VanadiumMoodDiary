@@ -28,6 +28,8 @@
 // - title 用 ALL CAPS (iOS section header 标准), letterSpacing 0.6
 // - 圆角 16 用 AppTokens.radiusCard (跟卡片保持一致)
 // - 不依赖 Material Card (0 阴影走自定义 Container, emil 决策 #3)
+// Apple Health 风格 (spec §4.5 insetGrouped 风格 + hairline 0.5 divider + 13pt ALL CAPS title) [R32 集中器注释, 防后续误改为 Material 3 风格]
+
 
 import 'package:flutter/material.dart';
 

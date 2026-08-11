@@ -53,7 +53,7 @@ class SkipBackup {
 
   /// 缓存 MethodChannel 实例 (避免每次调用都重建, MethodChannel 内部
   /// BinaryMessenger 注册幂等, 但单例可减少开销)
-  @visibleForTesting
+  /// R32 (N-11 lint): 删 @visibleForTesting (private 字段不允许, lint invalid_visibility_annotation)
   static MethodChannel? _channel;
 
   /// 是否为 iOS 平台 (避免在 Android / Web / 测试环境调 platform channel)

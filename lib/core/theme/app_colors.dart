@@ -462,4 +462,41 @@ class AppColors {
   static Color tintedMetricSoft(BuildContext context, String metricId) {
     return healthMetricsColorFor(metricId).withValues(alpha: 0.12);
   }
+
+  /// R32 (P0-26 集中器): 透明色集中器 (emil "decisions should be nameable")
+  /// 替代散落 5 处 `Colors.transparent` 硬编码
+  static const Color transparent = Color(0x00000000);
+
+  /// R32 (P0-09 集中器): 6 元素药物药丸颜色 (medication_page 专用)
+  ///
+  /// 跟 `healthMetricsColors` (8 metric) 1:1 重叠 4 个 (绿/红/蓝/紫),
+  /// 4 个 (黄/灰) 是 medication 专属 (e.g. 警示药 / 安慰剂)。
+  /// 独立保留: medication 历史选择 0-5 (跟 8 metric 0-7 索引无冲突)
+  static const List<Color> kMedicationPillColors = [
+    Color(0xFF34C759), // 绿 (systemGreen, 跟 metric 绿重叠)
+    Color(0xFFFFCC00), // 黄 (警示药, medication 专属)
+    Color(0xFFFF3B30), // 红 (systemRed, 跟 metric 红重叠)
+    Color(0xFF007AFF), // 蓝 (systemBlue, 跟 metric 蓝重叠)
+    Color(0xFFAF52DE), // 紫 (systemPurple, 跟 metric 紫重叠)
+    Color(0xFF8E8E93), // 灰 (安慰剂 / 中性, medication 专属)
+  ];
+
+  /// R32 (P0-10 集中器): 5 元素 mood 评分色板 (mood score 1-5)
+  ///
+  /// 顺序对应 1=最差 (红) → 5=最好 (蓝), 跟 mood_visual.dart scoreToLabel 一致。
+  /// 跟 healthMetricsColors (8 metric) 跟 assessmentPalette (12 量表色) 不打通,
+  /// 因此独立保留 (R91 删了 12 色 list 重复, 但 5 元 mood 没纳入)。
+  static const List<Color> kMoodScoreColors = [
+    Color(0xFFFF3B30), // 1 - 红 (systemRed, 跟 metric 红重叠)
+    Color(0xFFFF9500), // 2 - 橙 (systemOrange, mood 专属)
+    Color(0xFFFFCC00), // 3 - 黄 (systemYellow, 跟 medication 警示药黄重叠)
+    Color(0xFF34C759), // 4 - 绿 (systemGreen, 跟 metric 绿重叠)
+    Color(0xFF007AFF), // 5 - 蓝 (systemBlue, 跟 metric 蓝重叠)
+  ];
+
+  /// R32 (P0-10 helper): mood score 1-5 → 对应色 (越界 fallback 4=绿中性)
+  static Color moodScoreColor(int score) {
+    if (score < 1 || score > 5) return const Color(0xFF34C759);
+    return kMoodScoreColors[score - 1];
+  }
 }

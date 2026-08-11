@@ -63,10 +63,9 @@ abstract interface class SafetyAlertL10n {
 
   // ===== safetyAlert 系列 (SafetyAlertBuilder 用) =====
 
-  /// 失联通知标题
-  /// [name] 用户名
+  /// 失联通知标题 (R32 P0-04 锁屏 PII 跨 3 视角共识: 改静态不含 name)
   /// [days] 失联天数
-  String safetyAlertTitle(String name, int days);
+  String safetyAlertTitle(int days);
 
   /// 用户从未打卡过
   String get safetyAlertNeverCheckIn;

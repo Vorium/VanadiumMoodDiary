@@ -44,20 +44,8 @@ import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart
 ///
 /// 集中放这避免 _TimeSlotCard 内部散落 switch, 跟 R97 emil token 化
 /// 模式一致 (集中器去散落)。
-IconData _slotIcon(String name) {
-  switch (name) {
-    case 'morning':
-      return Icons.wb_sunny_outlined;
-    case 'afternoon':
-      return Icons.wb_cloudy_outlined;
-    case 'evening':
-      return Icons.wb_twilight_outlined;
-    case 'bedtime':
-      return Icons.nights_stay_outlined;
-    default:
-      return Icons.access_time_outlined; // fallback
-  }
-}
+///
+/// R32 (N-10 警告): _slotIcon 0 caller (R108 P1 拆解漏删), 删
 
 /// 一个时间段内的服药条目
 class _SlotEntry {

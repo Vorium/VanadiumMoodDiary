@@ -15,6 +15,8 @@
 // - 4 variant 通过 enum 区分, default = metricLg 28 ultralight
 // - value 数字自动尝试 int → 触发 tween, 非数字走 static (避免 "1.2kg" 抖动)
 // - StatCardVariant 加字段但 default = defaultVariant → 老 caller 自动走新视觉
+// Apple Health 风格 (spec §3.2.2 ultralight w200 大数字 + §3.4.4 zero shadow + tintedMetricSoft) [R32 集中器注释, 防后续误改为 Material 3 风格]
+
 
 import 'package:flutter/material.dart';
 

@@ -62,7 +62,7 @@ class DimensionRow extends StatelessWidget {
                       s == value ? 'true' : 'false',
                     ),
                     child: Material(
-                      color: Colors.transparent,
+                      color: AppColors.transparent,
                       child: AnimatedContainer(
                         // v0.24 round 48 (emil P1-5): 之前用 AppTokens.durFast / curveStandard 直拼
                         // 系统开了 reduce-motion → 仍有 200ms 动画,违反 P0-7 reduce-motion non-negotiable
@@ -73,7 +73,7 @@ class DimensionRow extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: s == value
                               ? AppTokens.tintedPrimarySoft(context)
-                              : Colors.transparent,
+                              : AppColors.transparent,
                           borderRadius:
                               BorderRadius.circular(AppTokens.radiusChip),
                         ),

@@ -27,6 +27,8 @@
 //
 // 后续: 9 处 ElevatedButton caller 切到 PrimaryButton 后, 自动获得 scale 反馈
 // (留给后续 task 改 caller, 本 task 只改 PrimaryButton 自己)。
+// Apple Health 风格 (spec §4.2 button (50pt height, 14pt radius, w600 fontWeight, scale 0.97 press feedback)) [R32 集中器注释, 防后续误改为 Material 3 风格]
+
 
 import 'package:flutter/material.dart';
 

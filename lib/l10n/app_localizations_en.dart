@@ -1595,8 +1595,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String safetyAlertTitle(Object name, int days) {
-    return '⚠️ $name hasn\'t checked in for $days days';
+  String safetyAlertTitle(int days) {
+    // R32 (P0-04 锁屏 PII 跨 3 视角共识): 改静态, 不传 name (锁屏可见, PII 风险)
+    return '⚠️ No check-in for $days days';
   }
 
   @override
@@ -4173,9 +4174,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodCbtBehavior => 'Behavioral Response';
 
   @override
-  String moodAudioRecording(Object duration) {
-    return 'Recording $duration';
-  }
 
   @override
   String get moodDeleted => 'Deleted';
@@ -4202,9 +4200,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todaySummaryStreak => 'Streak';
 
   @override
-  String todaySummaryStreakDays(int count) {
-    return '${count}d';
-  }
 
   @override
   String get setupConsentMedicalDisclaimer =>

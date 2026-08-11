@@ -395,7 +395,7 @@
 
 ### 7.1 客观
 - `flutter analyze` 0 error
-- `flutter test` 全过（baseline 2019 cases + 5+ 新 widget test）
+- `flutter test` 全过（baseline 2103 cases + 5+ 新 widget test）
 - 18 守门员全绿
 - Token 覆盖率 ≥ 95%（grep 0 硬编码 `Color(0xFF...)` / `fontSize: X` / `borderRadius: BorderRadius.circular(X)` in `lib/presentation/`）
 

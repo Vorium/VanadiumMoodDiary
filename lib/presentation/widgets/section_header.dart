@@ -13,6 +13,8 @@
 // - 新增 `isAllCaps` (默认 true) — toUpperCase() + letterSpacing 0.6
 // - 保留 API: title / leading / action / chip (4 字段不破)
 import 'package:flutter/material.dart';
+// Apple Health 风格 (spec §4.5 section header (11pt w500 ALL CAPS letter-spacing 0.6 textHint)) [R32 集中器注释, 防后续误改为 Material 3 风格]
+
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 

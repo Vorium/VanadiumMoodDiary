@@ -28,6 +28,8 @@
 //   而非运行时常量, 集中在本文件便于设计 review)
 // - 背景 alpha 跟 dark mode 调档 (light 0.12 / dark 0.18, 跟 iOS Health favorites
 //   在 OLED 黑底下需要更强对比一致)
+// Apple Health 风格 (spec §3.1.3 8 metric palette + §4.4 tile (12pt radius, 28pt icon, metricLg ultralight)) [R32 集中器注释, 防后续误改为 Material 3 风格]
+
 
 import 'package:flutter/material.dart';
 

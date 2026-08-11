@@ -65,7 +65,7 @@ if strings_file.exists():
 
 # 规则 2: lib/ 调 notif*Title() 不传 med.name (defence in depth)
 lib_dir = PROJECT_ROOT / 'lib'
-title_func_names = ['notifMedicationTitle', 'notifRefillTitle']
+title_func_names = ['notifMedicationTitle', 'notifRefillTitle', 'safetyAlertTitle']
 if lib_dir.exists():
     for dart_file in lib_dir.rglob('*.dart'):
         # 跳过 strings.dart 自己

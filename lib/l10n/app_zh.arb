@@ -28,7 +28,6 @@
     }
   },
   "homeStillOnline": "🌱 您还在线",
-  "homeTempMed": "临时吃药 +",
   "homeStreakBroken": "少 1 次没关系，明天继续",
   "setupStep": "第 {current} 步 ／ 共 {total} 步",
   "@setupStep": {
@@ -686,9 +685,6 @@
       }
     }
   },
-  "homeTooltipTrend": "查看趋势",
-  "homeTooltipAssessmentHistory": "评估历史",
-  "homeTooltipSettings": "设置",
   "ventSwipeHint": "左滑或长按条目可删除",
   "homeStreakRestart": "今天重新开始 🌱",
   "homeStreakDay1": "第 1 天，迈出第一步 🌱",
@@ -1017,7 +1013,7 @@
       }
     }
   },
-  "safetyAlertTitle": "⚠️ {name} 已 {days} 天未打卡",
+  "safetyAlertTitle": "⚠️ 已 {days} 天未打卡",
   "@safetyAlertTitle": {
     "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬编码中文",
     "placeholders": {
@@ -1051,9 +1047,6 @@
   "@notifChannelSafetyDesc": {
     "description": "Android 通知 channel 描述 (safety) — v0.27 R77 修 (R76-N1)"
   },
-  "homeSnoozeBody": "刚才您点了「snooze」，是时候点一下 = 打卡了",
-  "homeSnoozeConfirmed": "好，5 分钟后会再提醒您 👌",
-  "homeSnoozeButton": "⏰ 5 分钟后再提醒",
   "homeVentButton": "倾诉 🌲",
   "homeNotifBannerText": "提醒没设上，可能错过打卡。请到系统设置允许通知。",
   "homeNotifBannerDismiss": "知道了",
@@ -1308,10 +1301,7 @@
   "snackbarActionGeneratePdf": "生成 PDF",
   "snackbarActionPlay": "播放",
   "snackbarActionEncryptRecording": "加密录音",
-  "snackbarActionRecord": "录音",
-  "snackbarActionStartRecording": "开始录音",
   "snackbarActionCheckin": "打卡",
-  "snackbarActionSnooze": "推迟提醒",
   "snackbarActionAutoCheckin": "自动打卡",
   "snackbarActionFinishSetup": "完成设置",
   "snackbarActionUndo": "撤销",
@@ -2951,8 +2941,6 @@
   "medTodaySchedule": "今日服药",
   "medMyMedications": "我的药物",
   "medQuickActions": "快捷操作",
-  "medCalendar": "用药日历",
-  "medRefill": "续方管理",
   "medSlotMorning": "早上",
   "medSlotAfternoon": "下午",
   "medSlotEvening": "晚上",
@@ -2987,17 +2975,6 @@
   "medFormOther": "其他",
   "medDetailTitle": "药物详情",
   "medNotFound": "药物未找到",
-
-  "moodReminderTitle": "情绪记录提醒",
-  "moodReminderSubtitle": "每天定时提醒你记录心情",
-  "moodReminderTimeLabel": "提醒时间",
-  "moodReminderEnabled": "开启提醒",
-  "@moodReminderTitle": {
-    "description": "v0.30 R101: 情绪记录提醒设置标题"
-  },
-  "@moodReminderEnabled": {
-    "description": "v0.30 R101: 情绪记录提醒开关"
-  },
   "@medPageTitle": {
     "description": "v0.30 R101: 用药主页标题"
   },
@@ -3044,59 +3021,24 @@
   "moodInfluenceWeather": "天气",
   "moodInfluenceOther": "其他",
 
-  "influenceFactorFamily": "家人",
-  "influenceFactorFriend": "朋友",
-  "influenceFactorPartner": "伴侣",
-  "influenceFactorChild": "孩子",
-  "influenceFactorColleague": "同事",
-  "influenceFactorExercise": "运动",
-  "influenceFactorSick": "生病",
-  "influenceFactorGoodSleep": "睡眠好",
-  "influenceFactorHealthyDiet": "饮食健康",
-  "influenceFactorWork": "工作",
-  "influenceFactorHobby": "爱好",
-  "influenceFactorTravel": "旅行",
-  "influenceFactorCommute": "通勤",
-  "influenceFactorShopping": "购物",
-  "influenceFactorGaming": "游戏",
-  "influenceFactorReading": "阅读",
-  "influenceFactorEntertainment": "娱乐",
-  "influenceFactorMeditation": "冥想",
-  "influenceFactorBreathing": "呼吸练习",
-  "influenceFactorJournaling": "写日记",
-  "influenceFactorYoga": "瑜伽",
-  "influenceFactorSunny": "晴天",
-  "influenceFactorCloudy": "多云",
-  "influenceFactorRainy": "雨天",
-  "influenceFactorSnowy": "雪天",
-  "influenceFactorWindy": "刮风",
-
   "moodDetailTitle": "情绪详情",
   "moodDetailFactors": "影响因素",
   "moodDetailMoodState": "情绪状态",
-  "moodDetail4D": "4 维度",
   "moodDetailCbtRecord": "CBT 思维记录",
   "moodTrendTitle": "情绪趋势",
   "moodTrendWeek": "近 7 天",
-  "moodTrendMonth": "近 30 天",
   "moodTrendDistribution": "分数分布",
   "moodTrendNoData": "暂无数据",
-  "moodEditTooltip": "编辑",
   "moodDeleteTooltip": "删除",
   "moodDeleteConfirm": "确定删除这条记录吗？",
   "moodFactorAnalysis": "因素关联分析",
-  "moodFactorAvgScore": "平均分",
-  "moodFactorCount": "记录数",
   "navMedication": "用药",
   "moodModeMomentary": "此刻",
   "moodModeDaily": "今天",
-  "moodTrendWeekTitle": "近 7 天情绪趋势",
-  "moodTrendMonthTitle": "近 30 天情绪趋势",
   "moodTrendDistTitle": "分数分布",
   "moodTrendCbtTitle": "CBT 重评效果",
   "moodTrendCbtHint": "正值 = 情绪改善, 负值 = 恶化",
   "moodTrendCbtEmpty": "暂无 CBT 重评数据",
-  "moodTrendRecords": "条",
   "medDetailActive": "在用",
   "medDetailStopped": "已停",
   "medDetailAdherence": "依从性",
@@ -3105,7 +3047,6 @@
   "medDetailLast30Record": "近30天记录",
   "medDetailEdit": "编辑",
   "medDetailRefill": "续方",
-  "medDetailNoFactors": "暂无影响因素数据",
   "moodCbtSituation": "情境",
   "moodCbtAutoThought": "自动思维",
   "moodCbtEvidenceFor": "支持证据",
@@ -3114,7 +3055,6 @@
   "moodCbtRerated": "重新评分",
   "moodCbtCoreBelief": "核心信念",
   "moodCbtBehavior": "行为应对",
-  "moodAudioRecording": "录音 {duration}",
   "moodDeleted": "已删除",
   "moodPeriodMorning": "早上",
   "moodPeriodAfternoon": "下午",
@@ -3126,7 +3066,6 @@
   "todaySummaryMeds": "药物",
   "todaySummaryMood": "心情",
   "todaySummaryStreak": "连续",
-  "todaySummaryStreakDays": "{count}天",
   "@todaySummaryStreakDays": {
     "description": "R103: 主页摘要卡连续打卡天数 (placeholder {count} 是天数)",
     "placeholders": {
@@ -3136,7 +3075,6 @@
     }
   },
   "setupConsentMedicalDisclaimer": "我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务",
-  "setupConsentViewDisclaimer": "查看",
 
   "trackingCustomize": "自定义追踪项",
   "trackingPin": "置顶",
@@ -3180,7 +3118,6 @@
     }
   },
   "setupConsentAgreeAll": "我已阅读并同意以上所有协议",
-  "setupConsentViewAll": "查看全部协议",
   "@_v0_31_P1_5_domain_hardcoded_zh_to_arb": {},
   "careCopyLateCheckInTitle": "🛏️ 提早一点更稳定",
   "careCopyLateCheckInBody": "21 点后打卡比例偏高 — 规律作息对药效有影响",
@@ -3189,7 +3126,6 @@
   "careCopySecondDayMissedTitle": "🌿 后续保持就好",
   "careCopySecondDayMissedBody": "少 1 次没关系——后续保持就好",
   "careCopyWeekPerfectTitle": "🌟 一整周都准时！",
-  "careCopyWeekPerfectBody": "今周已全部准时",
   "assessmentComparisonImproved": "好转",
   "assessmentComparisonWorsened": "恶化",
   "assessmentComparisonUnchanged": "持平",

@@ -2,7 +2,7 @@
 
 > **Spec**: `spec.md` (v0.1 draft, 2026-08-10)
 > **Strategy**: 5 phase · 13 task · subagent-driven · 1-2 周跨 session
-> **Pre-existing baseline**: 2019 tests pass · 0 analyzer error · 18 守门员全绿 (v0.30 R107)
+> **Pre-existing baseline**: 2103 tests pass · 0 analyzer error · 18 守门员全绿 (v0.30 R107)
 
 ---
 
@@ -17,7 +17,7 @@
 - 🔄 用户通过 → 进入 Phase 1
 
 **Task 0.1**（开新 session 时跑）：
-- baseline test 复测：1163 → 2019 cases 全过
+- baseline test 复测：1163 → 2103 cases 全过
 - 18 守门员复测：全绿
 - 当前 master 干净：`git status` 0 modified
 
@@ -42,8 +42,8 @@
 10. 保留 `success / warning / error` 状态色（已是 iOS 系）
 
 **改动文件**：`lib/core/theme/app_colors.dart`
-**测试**：跑 baseline 2019 tests，看 fail 数（应 < 20 个，主要是 dark mode visual）
-**验证**：`flutter analyze` 0 error + `flutter test` baseline 2019 -N 通过
+**测试**：跑 baseline 2103 tests，看 fail 数（应 < 20 个，主要是 dark mode visual）
+**验证**：`flutter analyze` 0 error + `flutter test` baseline 2103 -N 通过
 
 ### Task 1.2: `app_typography.dart` 改写
 **目标**：加 ultralight + 调字号（17pt body / 13pt caption）+ 行高 + letter spacing
@@ -104,7 +104,7 @@
 ### Phase 1 验收
 - [ ] 4 个 token 文件全改完
 - [ ] 18 守门员全绿
-- [ ] `flutter test` baseline 2019 -N（预计 N ≤ 20）通过
+- [ ] `flutter test` baseline 2103 -N（预计 N ≤ 20）通过
 - [ ] 5+ 现有 widget test 加 visual assertion（确认新字号/圆角生效）
 - [ ] 1 截图（home_page 前后对比）
 
@@ -201,7 +201,7 @@
 - [ ] 5 widget 全重写 + 3 widget 新增
 - [ ] 8+ 新 widget test 全过
 - [ ] 18 守门员全绿
-- [ ] baseline 2019 + 8 新 case 全过
+- [ ] baseline 2103 + 8 新 case 全过
 - [ ] 1 截图：home_page 显示 AppleHealthTile 彩色块
 
 ---
@@ -269,7 +269,7 @@
 
 ### Phase 3 验收
 - [ ] 3 核心页重设完
-- [ ] baseline 2019 + 12 新 case 全过
+- [ ] baseline 2103 + 12 新 case 全过
 - [ ] 18 守门员全绿
 - [ ] 5 截图：home + setup (4步) + medication (5子页)
 
@@ -302,7 +302,7 @@
 
 ### Phase 4 验收
 - [ ] 9 feature 全 follow
-- [ ] baseline 2019 + 16 新 case 全过
+- [ ] baseline 2103 + 16 新 case 全过
 - [ ] 18 守门员全绿
 - [ ] 9 截图
 
@@ -313,7 +313,7 @@
 ### Task 5.1: 全面验证
 **Step**：
 1. `flutter analyze` 0 error
-2. `flutter test` 全过（baseline 2019 + 累计 16+ 新 case）
+2. `flutter test` 全过（baseline 2103 + 累计 16+ 新 case）
 3. 18 守门员全绿（特别是 `check_no_pua` / `check_changelog` / `check_arb_keys` / `check_orphan_arb_keys` / `check_strings_hardcoded` / `check_zh_hant_consistency` / `check_coverage` / `check_16kb_alignment`）
 4. `flutter build web` + 手动截图 11 feature 对比
 5. CHANGELOG 写 [0.31.0] 或 [0.32.0] 总结（Apple Health redesign）

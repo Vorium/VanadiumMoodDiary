@@ -381,7 +381,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
               // 录音 / 停止按钮
               PressFeedback(
                 child: Material(
-                  color: Colors.transparent,
+                  color: AppColors.transparent,
                   child: InkWell(
                     onTap: _toggleRecord,
                     borderRadius: BorderRadius.circular(AppTokens.radiusChip),

@@ -1518,8 +1518,8 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String safetyAlertTitle(Object name, int days) {
-    return '⚠️ $name 已 $days 天未打卡';
+  String safetyAlertTitle(int days) {
+    return '⚠️ 已 $days 天未打卡';
   }
 
   @override
@@ -3985,9 +3985,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodCbtBehavior => '行为应对';
 
   @override
-  String moodAudioRecording(Object duration) {
-    return '录音 $duration';
-  }
 
   @override
   String get moodDeleted => '已删除';
@@ -4014,9 +4011,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get todaySummaryStreak => '连续';
 
   @override
-  String todaySummaryStreakDays(int count) {
-    return '$count天';
-  }
 
   @override
   String get setupConsentMedicalDisclaimer =>
@@ -5669,8 +5663,8 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String safetyAlertTitle(Object name, int days) {
-    return '⚠️ $name 已 $days 天未打卡';
+  String safetyAlertTitle(int days) {
+    return '⚠️ 已 $days 天未打卡';
   }
 
   @override
@@ -8136,9 +8130,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodCbtBehavior => '行為應對';
 
   @override
-  String moodAudioRecording(Object duration) {
-    return '錄音 $duration';
-  }
 
   @override
   String get moodDeleted => '已刪除';
@@ -8165,9 +8156,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get todaySummaryStreak => '連續';
 
   @override
-  String todaySummaryStreakDays(int count) {
-    return '$count天';
-  }
 
   @override
   String get setupConsentMedicalDisclaimer =>

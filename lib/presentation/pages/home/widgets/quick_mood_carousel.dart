@@ -20,6 +20,8 @@
 // - 默认无选中态 (跟 R81 一样, _selected = null), 选中后高亮 + haptic
 // - tappable area 用 PressFeedback + 圆形 Container (mode 1 自带 onTap)
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,6 +33,7 @@ import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 主页快速记心情 5 档 (Apple Health 风格圆形按钮)
@@ -71,6 +74,8 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
       setState(() => _selected = score);
       // 触觉反馈 (emil "feedback" 原则: press 后即时确认)
       // PressFeedback scale 0.97 + 这里 Haptics 一起, 跟 checkIn 风格一致
+      // R32 (P0-11 a11y): 加 Haptics.success() (注释早写了但漏 1 行代码, 半年没补)
+      unawaited(Haptics.success());
     } catch (e, st) {
       swallowError(
         where: 'QuickMoodCarousel._recordQuick',
@@ -183,7 +188,7 @@ class _MoodButton extends StatelessWidget {
                             ? 0.18
                             : 0.12,
                   )
-                : Colors.transparent,
+                : AppColors.transparent,
             shape: BoxShape.circle,
             border: isSelected
                 ? Border.all(color: color, width: 2)

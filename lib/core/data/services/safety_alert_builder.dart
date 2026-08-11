@@ -106,7 +106,10 @@ class SafetyAlertBuilder {
     final body = _resolveBody(outcome: outcome, lastStr: lastStr, l10n: l10n);
     // v0.27 round 75 (R74-N7 修): title 改 l10n, 之前硬编码中文。
     // 紧急通知走 3 语言 zh / en / zh_Hant, 跟 body 一致。
-    final title = l10n.safetyAlertTitle(name, daysWithoutCheckIn);
+    // R32 (P0-04 锁屏 PII 跨 3 视角共识): title 改静态不含 name (锁屏可见, PII 风险)
+    // ignore: unused_local_variable
+    final _ = name; // 兼容旧签名, 实际 l10n 已忽略
+    final title = l10n.safetyAlertTitle(daysWithoutCheckIn);
 
     return (title: title, body: body, details: details);
   }

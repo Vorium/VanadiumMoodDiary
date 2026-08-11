@@ -2,18 +2,17 @@
 //
 // 每种药物有自定义颜色 (6色) + 固定形状 (圆角矩形药丸)。
 // 用于用药主页、药物列表、添加向导确认页。
+//
+// R32 (P0-09 集中器): 6 元素 palette 移到 `AppColors.kMedicationPillColors`,
+// `Colors.white` 改 `AppColors.fgOnPrimary(context)` (M3 theme-aware)。
 
 import 'package:flutter/material.dart';
 
-/// 6 种药物颜色
-const List<Color> kMedPillColors = [
-  Color(0xFF34C759), // 绿
-  Color(0xFFFFCC00), // 黄
-  Color(0xFFFF3B30), // 红
-  Color(0xFF007AFF), // 蓝
-  Color(0xFFAF52DE), // 紫
-  Color(0xFF8E8E93), // 灰
-];
+import 'package:chroniccare/core/theme/app_colors.dart';
+
+/// 6 种药物颜色 (R32 集中器, 转发到 AppColors.kMedicationPillColors)
+/// 保留为 backward-compat alias (caller: add_medication_page.dart:467)
+const List<Color> kMedPillColors = AppColors.kMedicationPillColors;
 
 /// 药丸颜色形状图标
 ///
@@ -34,6 +33,7 @@ class MedicationPillIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseColor =
         kMedPillColors[colorIndex.clamp(0, kMedPillColors.length - 1)];
+    final fgColor = AppColors.fgOnPrimary(context);
     return Container(
       width: size,
       height: size,
@@ -60,14 +60,14 @@ class MedicationPillIcon extends StatelessWidget {
             ? Text(
                 initial!.substring(0, 1).toUpperCase(),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: fgColor,
                   fontSize: size * 0.4,
                   fontWeight: FontWeight.w700,
                 ),
               )
             : Icon(
                 Icons.medication_rounded,
-                color: Colors.white,
+                color: fgColor,
                 size: size * 0.5,
               ),
       ),

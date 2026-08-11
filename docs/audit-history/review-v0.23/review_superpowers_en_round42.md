@@ -139,8 +139,8 @@ $ grep -c '[\uE000-\uF8FF]' lib/core/routing/app_router.dart
 ```
 
 **实际看到的 mojibake**（节选）：
-- L31: `璺敱鍒囨崲鍔ㄧ敾杈呭姪鍑芥暟` (应: "路由切换动画辅助函数")
-- L96: `璺敱 Provider` (应: "路由 Provider")
+- L31: `璺过敱鍒囨崲鍔ㄧ敾杈呭姪鍑芥暟` (应: "路由切换动画辅助函数")
+- L96: `璺过敱 Provider` (应: "路由 Provider")
 - L139: `瀛愰〉` (应: "子页")
 - L262: `椤甸潰涓嶅瓨鍦?` (应: "页面不存在")
 - L278: `杩斿洖棣栭〉` (应: "返回首页")
@@ -153,7 +153,7 @@ $ grep -c '[\uE000-\uF8FF]' lib/core/routing/app_router.dart
 **影响**：
 - P0 风险：grep / IDE / 复制粘贴时这些 mojibake 字符串被当垃圾，**未来维护者看到会以为是"作者意图"而误读**
 - **不是 hot bug**，是长期可读性 + 协作风险
-- 验证修复 1 行的难度：注释中 `璺敱` 跟中文字符看起来都像"非英文"，肉眼难分
+- 验证修复 1 行的难度：注释中 `璺过敱` 跟中文字符看起来都像"非英文"，肉眼难分
 
 **修复方案**：
 1. 用 `iconv` / PowerShell 重读文件 GBK→UTF-8 重新转换（`Get-Content -Encoding UTF8` 然后 `Out-File -Encoding UTF8`）

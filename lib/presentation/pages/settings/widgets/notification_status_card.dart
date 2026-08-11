@@ -277,7 +277,7 @@ class _OemBackgroundHint extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Theme(
       // 去掉 ExpansionTile 默认的圆形图标背景，跟整体风格一致
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      data: Theme.of(context).copyWith(dividerColor: AppColors.transparent),
       child: ExpansionTile(
         leading:
             Icon(Icons.phone_android, color: AppTokens.primaryColor(context)),

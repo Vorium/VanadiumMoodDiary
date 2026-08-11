@@ -7,6 +7,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -308,13 +309,8 @@ class _DistributionChart extends StatelessWidget {
       distribution[e.score] = (distribution[e.score] ?? 0) + 1;
     }
     final maxCount = distribution.values.fold<int>(0, (a, b) => a > b ? a : b);
-    const colors = [
-      Color(0xFFFF3B30),
-      Color(0xFFFF9500),
-      Color(0xFFFFCC00),
-      Color(0xFF34C759),
-      Color(0xFF007AFF),
-    ];
+    // R32 (P0-10 集中器): 5 元素 mood 色板移到 AppColors.kMoodScoreColors
+    final colors = AppColors.kMoodScoreColors;
 
     return Padding(
       padding: AppTokens.edgeInsetsMd,
@@ -535,9 +531,8 @@ class _CbtEffectChart extends StatelessWidget {
                     dotData: FlDotData(
                       show: true,
                       getDotPainter: (spot, _, __, ___) {
-                        final color = spot.y >= 0
-                            ? const Color(0xFF34C759)
-                            : const Color(0xFFFF3B30);
+                        // R32 (P0-10 集中器): mood score 颜色走 AppColors.moodScoreColor
+                        final color = AppColors.moodScoreColor(spot.y.round());
                         return FlDotCirclePainter(
                           radius: 4,
                           color: color,
