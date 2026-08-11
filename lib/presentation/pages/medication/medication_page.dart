@@ -122,24 +122,23 @@ class MedicationPage extends ConsumerWidget {
                   ),
                   children: [
                     // 今日待服 (medication 红, "待服" 计数)
-                    // TODO(Phase 5): 用 ARB key 替换 hardcode
                     AppleHealthTile(
                       metricId: 'medication',
-                      label: '待服',
+                      label: l10n.medTodayPending, // "待服"
                       value: '${_pendingCount(slots)}',
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
                     // 已服 (medication 红, "已服" 计数)
                     AppleHealthTile(
                       metricId: 'medication',
-                      label: '已服',
+                      label: l10n.medTodayTaken, // "已服"
                       value: '${_takenCount(slots)}',
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
                     // 续方提醒 (medication 红, "需续方" 计数)
                     AppleHealthTile(
                       metricId: 'medication',
-                      label: '需续方',
+                      label: l10n.medTodayRefill, // "需续方"
                       value: '${_refillAlertCount(meds)}',
                       onTap: () => context.push('/settings/refills'),
                     ),
@@ -148,7 +147,7 @@ class MedicationPage extends ConsumerWidget {
                     AppleHealthTile(
                       metricId: 'medication',
                       label: l10n.medsCalendarTitle, // "用药日历"
-                      value: '查看',
+                      value: l10n.homeQuickActionView, // "查看"
                       onTap: () => context.push('/medication/calendar'),
                     ),
                   ],

@@ -63,9 +63,9 @@ class PrimaryActionRow extends StatelessWidget {
                   Expanded(
                     child: AppleHealthTile(
                       metricId: 'medication',
-                      // TODO(Phase 5): 用 ARB key 替换 hardcode
-                      label: '用药',
-                      value: '查看',
+                      // R32 (P0-15 i18n 跨期): 走 ARB key
+                      label: l10n.homeQuickMedLabel, // "用药"
+                      value: l10n.homeQuickActionView, // "查看"
                       onTap: onMedicationTap,
                     ),
                   ),
@@ -73,8 +73,8 @@ class PrimaryActionRow extends StatelessWidget {
                   Expanded(
                     child: AppleHealthTile(
                       metricId: 'mood',
-                      label: '心情',
-                      value: '记录',
+                      label: l10n.homeQuickMoodLabel, // "心情"
+                      value: l10n.homeQuickActionRecord, // "记录"
                       onTap: onMoodTap,
                     ),
                   ),
@@ -86,8 +86,8 @@ class PrimaryActionRow extends StatelessWidget {
                   Expanded(
                     child: AppleHealthTile(
                       metricId: 'vent',
-                      label: l10n.homeVentButton.replaceAll(' 🌲', ''), // "树洞"
-                      value: '倾诉',
+                      label: l10n.homeQuickVentLabel, // "树洞"
+                      value: l10n.homeQuickActionVent, // "倾诉"
                       onTap: onVentTap,
                     ),
                   ),
@@ -95,8 +95,8 @@ class PrimaryActionRow extends StatelessWidget {
                   Expanded(
                     child: AppleHealthTile(
                       metricId: 'assessment',
-                      label: '评估',
-                      value: '开始',
+                      label: l10n.homeQuickAssessmentLabel, // "评估"
+                      value: l10n.homeQuickActionStart, // "开始"
                       onTap: onAssessmentTap,
                     ),
                   ),

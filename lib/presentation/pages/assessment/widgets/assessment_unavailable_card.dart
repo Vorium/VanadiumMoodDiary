@@ -1,6 +1,6 @@
 // v0.30 round 90 (sub-spec 6 量表中心): NSESSS / CRDPSS unavailable 卡片
 //
-// 灰色 + 锁 icon + "需法务/临床审核" badge
+// 灰色 + 锁 icon + "需法务／临床审核" badge
 // 走 surfaceVariant 50% opacity (M3 兼容 dark/light)
 //
 // 不在 scale_registry.allScales() 里 (TODO 状态), 卡片独立 widget 渲染,

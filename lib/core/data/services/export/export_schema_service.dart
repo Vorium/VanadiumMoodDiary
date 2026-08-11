@@ -70,7 +70,7 @@ class ExportSchemaService {
         where: 'ExportSchemaService.deleteOldDataSafely(${label ?? 'unknown'})',
         error: e,
         stack: st,
-        note: '表不存在(旧 schema),忽略',
+        note: '表不存在（旧 schema)，忽略',
       );
     }
   }

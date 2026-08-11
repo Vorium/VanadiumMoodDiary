@@ -88,15 +88,19 @@
   "settingsAssessmentHistory": "评估历史",
   "settingsAssessmentHistorySubtitle": "查看所有 PHQ-9 ／ GAD-7 评估的折线图与对比",
   "@settingsAboutVersion": {
-      "description": "R99 (BUG-2): 关于页版本行, version 走 kPubspecVersion 动态注入 (不再硬编码)",
-      "placeholders": { "version": { "type": "String" } }
+    "description": "R99 (BUG-2): 關於頁版本行， version 走 kPubspecVersion 動態注入 （不再硬編碼）",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
   },
   "settingsAboutVersion": "v{version} · 我今天吃了药",
   "settingsDisclaimerText": "本应用不提供医疗建议，所有功能仅供参考。",
   "settingsExportRiskTitle": "明文风险提示",
-  "settingsExportRiskBody": "您即将导出的数据为明文文件,含您的个人健康等敏感信息(用药、打卡、紧急联系人、树洞文字)。请务必保存到安全、可信的位置(加密 U 盘 / 私人云盘),避免上传至公共云盘或发送给不可信的第三方。",
-  "settingsExportRiskLiability": "一旦导出,文件的安全与保密由您自行负责,本 App 不再承担保护责任(PIPL §17 明确告知 + 用户确认)。",
-  "settingsExportRiskAcknowledge": "我已了解风险,继续导出",
+  "settingsExportRiskBody": "您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、紧急联系人、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。",
+  "settingsExportRiskLiability": "一旦导出，文件的安全与保密由您自行负责，本 App 不再承担保护责任（PIPL §17 明确告知 + 用户确认）。",
+  "settingsExportRiskAcknowledge": "我已了解风险，继续导出",
   "settingsExportDialogTitle": "导出数据",
   "settingsExportInstruction": "把下面这串 JSON 保存到安全的地方：",
   "settingsExportVentWarning": "说明：树洞（私密倾诉）的文字会导出，但录音文件不导出——录音存在 App 本地，重装后路径失效，无法跨设备复用。",
@@ -168,7 +172,7 @@
   },
   "snackbarErrorTemplate": "{action}失败：{error}",
   "@snackbarErrorTemplate": {
-    "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存/删除/导出/...)",
+    "description": "Generic error snackbar: '<action> failed: <error>'. Action is the user-facing action （保存／刪除／導出／…………)",
     "placeholders": {
       "action": {
         "type": "Object"
@@ -459,16 +463,16 @@
   "setupContactPhoneHint": "13800138000",
   "ventListTitle": "我的树洞",
   "legalVentWithdrawTitle": "撤回树洞同意",
-  "legalVentWithdrawBody": "树洞内容是您最私密的数据。撤回同意后,您可选择以下方式处理已有数据:",
+  "legalVentWithdrawBody": "树洞内容是您最私密的数据。撤回同意后，您可选择以下方式处理已有数据：",
   "legalVentWithdrawDelete": "立即删除",
-  "legalVentWithdrawDeleteDesc": "所有树洞文字 + 录音文件立即物理删除,不可恢复",
+  "legalVentWithdrawDeleteDesc": "所有树洞文字 + 录音文件立即物理删除，不可恢复",
   "legalVentWithdrawSeal": "加密封存",
-  "legalVentWithdrawSealDesc": "数据保留在本地但加密,UI 不可见,重新同意后可恢复",
+  "legalVentWithdrawSealDesc": "数据保留在本地但加密，UI 不可见，重新同意后可恢复",
   "legalVentWithdrawnDeleted": "已删除 {count, plural, =0{0 条} =1{1 条} other{{count} 条}}树洞",
-  "legalVentWithdrawnSealed": "已加密封存,数据保留在本地",
+  "legalVentWithdrawnSealed": "已加密封存，数据保留在本地",
   "legalVentDeleteRetry": "重试删除",
   "ventSealedTitle": "已加密封存",
-  "ventSealedSubtitle": "您已撤回树洞同意。所有数据已加密封存,UI 不可见。重新同意后可恢复。",
+  "ventSealedSubtitle": "您已撤回树洞同意。所有数据已加密封存，UI 不可见。重新同意后可恢复。",
   "ventSealedAction": "前往法律与隐私",
   "ventListWriteTooltip": "写一条",
   "ventEmptyTitle": "树洞还是空的",
@@ -478,25 +482,10 @@
   "ventDetailTitle": "树洞",
   "ventDetailNotFound": "找不到了",
   "ventDetailPrivacy": "🔒 私密 · 只有您能看到",
-  "@ventReportTooltip": {
-    "description": "R97-P1-4 (2026-08-07): 树洞详情页举报 / 反馈按钮 tooltip (Apple 1.2.1 UGC 报告机制要求)"
-  },
   "ventReportTooltip": "举报或反馈",
-  "@ventReportDialogTitle": {
-    "description": "R97-P1-4: 举报 / 反馈对话框标题"
-  },
   "ventReportDialogTitle": "私密倾诉说明",
-  "@ventReportDialogBody": {
-    "description": "R97-P1-4: 举报 / 反馈对话框正文, 说明 vent 是本地私密内容 + 引导到 legal 页反馈"
-  },
-  "ventReportDialogBody": "树洞内容仅存储在您的设备, 不会上传任何服务器, 不存在用户间互相看到的情况。\n\n如发现 App 本身的不当内容或想反馈问题, 请前往「法律与隐私」页面联系开发者。",
-  "@ventReportDialogAction": {
-    "description": "R97-P1-4: 举报对话框跳转 legal 页按钮"
-  },
+  "ventReportDialogBody": "树洞内容仅存储在您的设备， 不会上传任何服务器， 不存在用户间互相看到的情况。\n\n如发现 App 本身的不当内容或想反馈问题， 请前往「法律与隐私」页面联系开发者。",
   "ventReportDialogAction": "前往法律与隐私",
-  "@ventReportDialogClose": {
-    "description": "R97-P1-4: 举报对话框关闭按钮"
-  },
   "ventReportDialogClose": "关闭",
   "ventToday": "今天",
   "ventYesterday": "昨天",
@@ -537,16 +526,12 @@
   },
   "moodDialogTitle": "今天怎么样？",
   "moodDialogPeriodLabel": "时段",
-  "moodPeriodMorning": "早",
+  "moodPeriodMorning": "早上",
   "moodPeriodNoon": "中",
-  "moodPeriodEvening": "晚",
-  "moodPeriodNight": "夜",
+  "moodPeriodEvening": "晚上",
+  "moodPeriodNight": "夜间",
   "moodPeriodUnspecified": "未指定",
   "moodListFilterPeriod": "时段",
-  "moodListPeriodAll": "全部",
-  "@moodListPeriodAll": {
-    "description": "v0.30 R92: mood_list 情绪列表时段过滤 chip '全部' (R87 mood_list page l10n 漏, R92 补)"
-  },
   "moodPeriodChartTitle": "心境 4 段趋势（近 30 天）",
   "moodDimensionMood": "情绪",
   "moodDimensionMoodHint": "1=很差 5=很好",
@@ -760,7 +745,7 @@
   "assessmentReminderHelpText": "完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅您自己看得到。",
   "assessmentReminderHintAcute": "高强度监测（适合急性期）",
   "assessmentReminderHintCommon": "推荐（精神科常用）",
-  "assessmentReminderHintStable": "稳定期 ／ 月度复盘",
+  "assessmentReminderHintStable": "稳定期 ／ 月度覆盘",
   "assessmentReminderHintMaintenance": "维持治疗期",
   "assessmentReminderHintLongTerm": "长期随访",
   "assessmentHistoryTrend": "历史趋势",
@@ -846,7 +831,7 @@
   "setupValidationPhoneInvalid": "手机号格式不对",
   "setupValidationPhoneDuplicate": "紧急联系人手机号不能重复",
   "setupPresetTitle": "📋 选择预置方案",
-  "setupPresetDescription": "预置方案会填好药名 + 时间，您可以接着改。最终服药请按医嘱核对。",
+  "setupPresetDescription": "预置方案会填好药名 + 时间，您可以接著改。最终服药请按医嘱核对。",
   "setupPresetLoaded": "已载入：{name}（{count} 个药）请核对药名和剂量",
   "@setupPresetLoaded": {
     "placeholders": {
@@ -885,7 +870,7 @@
   "setupConsentSensitiveData": "我已阅读并同意《敏感个人信息处理同意书》",
   "setupConsentStart": "开始设置",
   "setupConsentWithdrawHint": "提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。",
-  "setupWelcomeContactHint": "（可选,后续可在设置中添加）",
+  "setupWelcomeContactHint": "（可选，后续可在设置中添加）",
   "setupLegalUserAgreement": "用户协议",
   "setupLegalPrivacyPolicy": "隐私政策",
   "setupLegalSensitiveData": "敏感个人信息处理同意书",
@@ -980,12 +965,9 @@
     }
   },
   "homeSafetyAlertSuffix": "（请尽快打卡或联系家人）",
-  "@homeSafetyAlertSuffix": {
-    "description": "Snackbar 后缀 — 跟 displayMessage 组合显示，提醒用户尽快打卡或联系家人"
-  },
-  "safetyAlertBodySent": "上次打卡: {date}。已自动通知紧急联系人，请确认安全。",
+  "safetyAlertBodySent": "上次打卡： {date}。已自动通知紧急联系人，请确认安全。",
   "@safetyAlertBodySent": {
-    "description": "SafetyAlert 通知 body — SMS 实际发送成功分支（P0-3 三态修正，v0.27 R60）",
+    "description": "SafetyAlert 通知 body — SMS 實際發送成功分支（P0-3 三態修正，v0.27 R60）",
     "placeholders": {
       "date": {
         "type": "Object",
@@ -993,9 +975,9 @@
       }
     }
   },
-  "safetyAlertBodyMocked": "上次打卡: {date}。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。",
+  "safetyAlertBodyMocked": "上次打卡： {date}。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。",
   "@safetyAlertBodyMocked": {
-    "description": "SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三态修正）",
+    "description": "SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三態修正）",
     "placeholders": {
       "date": {
         "type": "Object",
@@ -1003,9 +985,9 @@
       }
     }
   },
-  "safetyAlertBodyFailed": "上次打卡: {date}。失联检测已触发，但通知发送失败。请检查网络。",
+  "safetyAlertBodyFailed": "上次打卡： {date}。失联检测已触发，但通知发送失败。请检查网络。",
   "@safetyAlertBodyFailed": {
-    "description": "SafetyAlert 通知 body — SMS 实际发送失败分支（P0-3 三态修正）",
+    "description": "SafetyAlert 通知 body — SMS 實際發送失敗分支（P0-3 三態修正）",
     "placeholders": {
       "date": {
         "type": "Object",
@@ -1015,7 +997,7 @@
   },
   "safetyAlertTitle": "⚠️ 已 {days} 天未打卡",
   "@safetyAlertTitle": {
-    "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬编码中文",
+    "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬編碼中文",
     "placeholders": {
       "name": {
         "type": "Object",
@@ -1028,12 +1010,12 @@
   },
   "safetyAlertNeverCheckIn": "从未打卡",
   "@safetyAlertNeverCheckIn": {
-    "description": "SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬编码中文, lastCheckIn==null 时返"
+    "description": "SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬編碼中文， lastCheckIn==null 時返"
   },
   "homeSnoozeTitle": "⏰ 该打卡了（5min 后）",
   "notifChannelMedicationName": "吃药提醒",
   "@notifChannelMedicationName": {
-    "description": "Android 通知 channel 名 (medication) — v0.27 R77 修 (R76-N1): 之前 const 硬编码中文, en/zh_Hant 系统设置看中文"
+    "description": "Android 通知 channel 名 (medication) — v0.27 R77 修 (R76-N1): 之前 const 硬編碼中文， en/zh_Hant 系統設置看中文"
   },
   "notifChannelMedicationDesc": "到点提醒你吃药打卡",
   "@notifChannelMedicationDesc": {
@@ -1047,7 +1029,6 @@
   "@notifChannelSafetyDesc": {
     "description": "Android 通知 channel 描述 (safety) — v0.27 R77 修 (R76-N1)"
   },
-  "homeVentButton": "倾诉 🌲",
   "homeNotifBannerText": "提醒没设上，可能错过打卡。请到系统设置允许通知。",
   "homeNotifBannerDismiss": "知道了",
   "themeTooltip": "主题：{mode}（点击切换）",
@@ -1069,7 +1050,7 @@
   "trendViewList": "列表",
   "trendViewCalendar": "日历",
   "trendWithdrawnTitle": "趋势分析已撤回",
-  "trendWithdrawnSubtitle": "你撤回了「趋势分析」同意（PIPL §14）。趋势数据未删除, 重新开启后即可恢复。",
+  "trendWithdrawnSubtitle": "你撤回了「趋势分析」同意（PIPL §14）。趋势数据未删除， 重新开启后即可恢复。",
   "trendWithdrawnAction": "去重新开启",
   "trendWeekdayMon": "一",
   "trendWeekdayTue": "二",
@@ -1153,14 +1134,14 @@
   "trendNoMoodEntriesHint": "在主页点击「记一下情绪」开始记录",
   "trendCbtReratedChartTitle": "重评效果",
   "trendCbtReratedEmptyTitle": "还没有 5/7 栏 CBT 数据",
-  "trendCbtReratedEmptyHint": "先用 5/7 栏 CBT 填表, 才能看到重评效果",
+  "trendCbtReratedEmptyHint": "先用 5/7 栏 CBT 填表， 才能看到重评效果",
   "contactEmptyList": "还没有联系人，请先添加",
   "contactAddAction": "添加联系人",
   "contactAddTitle": "添加紧急联系人",
   "contactConsentTitle": "知情同意",
   "contactConsentBody": "您即将把这位联系人的手机号保存在本地数据库中。当您连续 {threshold} 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 29 条**（处理敏感个人信息需取得单独同意），请确认您已告知该联系人上述用途，并取得其单独同意。",
   "@contactConsentBody": {
-    "description": "PIPL §29 单独同意 dialog 正文, 精神心理患者敏感信息 (手机号 + 病历关联) 保护专用 (R77 修: 之前错引 §13, 应是 §29 敏感 PII)",
+    "description": "PIPL §29 單獨同意 dialog 正文， 精神心理患者敏感信息 （手機號 + 病歷關聯） 保護專用 (R77 修： 之前錯引 §13, 應是 §29 敏感 PII)",
     "placeholders": {
       "threshold": {
         "type": "int",
@@ -1172,21 +1153,21 @@
   "contactConsentReject": "暂不同意",
   "contactConsentVersion": "v1 · 2026-07-31",
   "dataExportConsentTitle": "数据导出同意",
-  "dataExportConsentBody": "您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 條**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。",
+  "dataExportConsentBody": "您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 条**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。",
   "@dataExportConsentBody": {
-    "description": "PIPL §13 数据可携权 dialog 正文, 用户导出 JSON 前取得单独同意 (R82 加)",
+    "description": "PIPL §13 數據可攜權 dialog 正文， 用戶導出 JSON 前取得單獨同意 (R82 加）",
     "placeholders": {
       "purpose": {
         "type": "Object",
-        "example": "本地备份 / 跨设备迁移"
+        "example": "本地備份 / 跨設備遷移"
       },
       "dataCategories": {
         "type": "Object",
-        "example": "用药记录、打卡记录、紧急联系人、情绪日记"
+        "example": "用藥記錄、打卡記錄、緊急聯繫人、情緒日記"
       },
       "retention": {
         "type": "Object",
-        "example": "剪贴板 + 用户自行保存到加密存储"
+        "example": "剪貼簿 + 用戶自行保存到加密存儲"
       }
     }
   },
@@ -1460,14 +1441,14 @@
   "scaleHotlineTw": "生命线（24h）",
   "scaleHotlineTw2": "安心专线（心理咨商）",
   "scaleHotlineSg": "Samaritans of Singapore (24h)",
-  "scaleHotlineUk": "Samaritans UK & ROI (24h 免费)",
+  "scaleHotlineUk": "Samaritans UK & ROI (24h 免费）",
   "scaleHotlineIntl": "国际通用 · 请联系当地急救或心理援助",
   "@scaleCrisisTitle": {
-    "description": "PHQ-9 第 9 题阳性时弹窗的标题（'我们关心你'）"
+    "description": "PHQ-9 第 9 題陽性時彈窗的標題（'我們關心你'）"
   },
   "scaleCrisisTitle": "我们关心你",
   "@scaleCrisisMessage": {
-    "description": "PHQ-9 第 9 题阳性时弹窗的正文, 含换行"
+    "description": "PHQ-9 第 9 題陽性時彈窗的正文， 含換行"
   },
   "scaleCrisisMessage": "你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。",
   "phq9Item0": "做事时提不起劲或没有兴趣",
@@ -1514,7 +1495,7 @@
   "gad7ShortDescription": "过去两周的焦虑倾向筛查",
   "homeQuickMoodTitle": "今天感觉如何？",
   "@homeQuickMoodTitle": {
-    "description": "R81: 主页快速记心情 carousel 标题 (B 站'记录每日心情'风格)"
+    "description": "R81: 主頁快速記心情 carousel 標題 (B 站'記錄每日心情'風格）"
   },
   "homeFabVent": "心情树洞",
   "homeFabHotline": "紧急热线",
@@ -1524,25 +1505,25 @@
   "crisisHotlineCnLabel": "全国 24 小时心理援助热线",
   "crisisHotlineCnNumber": "400-161-9995",
   "crisisHotlineCnDesc": "中国大陆 24 小时免费",
-  "crisisHotlineTwLabel": "安心专线 (24 小时)",
+  "crisisHotlineTwLabel": "安心专线 (24 小时）",
   "crisisHotlineTwNumber": "1925",
   "crisisHotlineTwDesc": "中国台湾 24 小时心理咨商",
-  "crisisHotlineHkLabel": "撒玛利亚防止自杀会 (24 小时)",
+  "crisisHotlineHkLabel": "撒玛利亚防止自杀会 (24 小时）",
   "crisisHotlineHkNumber": "2389 2222",
   "crisisHotlineHkDesc": "中国香港 24 小时多语言",
-  "crisisHotlineMoLabel": "明爱生命热线 (24 小时)",
+  "crisisHotlineMoLabel": "明爱生命热线 (24 小时）",
   "crisisHotlineMoNumber": "2826 1122",
   "crisisHotlineMoDesc": "中国澳门 24 小时",
   "@crisisHotlineTitle": {
-    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 标题"
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 標題"
   },
   "crisisHotlineTitle": "紧急心理援助热线",
   "@crisisHotlineSubtitle": {
-    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副标题"
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): crisis_hotline_page 副標題"
   },
-  "crisisHotlineSubtitle": "如果你或身边的人正在经历心理危机, 请拨打以下热线",
+  "crisisHotlineSubtitle": "如果你或身边的人正在经历心理危机， 请拨打以下热线",
   "@crisisHotlineCn2Label": {
-    "description": "v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h 免费"
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 800-810-1117 24h 免費"
   },
   "crisisHotlineCn2Label": "全国 24 小时免费心理援助热线",
   "crisisHotlineCn2Number": "800-810-1117",
@@ -1554,16 +1535,16 @@
   "crisisHotlineUsNumber": "988",
   "crisisHotlineUsDesc": "美国 / 加拿大 24 小时英文 / 西班牙文",
   "@crisisHotlineIntlLabel": {
-    "description": "v0.30 round 92 (audit-fixes / P0 #12): 国际通用 fallback"
+    "description": "v0.30 round 92 (audit-fixes / P0 #12): 國際通用 fallback"
   },
   "crisisHotlineIntlLabel": "国际通用",
   "crisisHotlineIntlDesc": "请联系当地急救或心理援助机构",
   "@crisisHotlineIntlNumber": {
-    "description": "v0.30 round 92: 国际通用紧急号码"
+    "description": "v0.30 round 92: 國際通用緊急號碼"
   },
   "crisisHotlineIntlNumber": "112 / 911",
   "@crisisHotlineRegionCn": {
-    "description": "v0.30 round 92: crisis_hotline_page 5 地区 section title"
+    "description": "v0.30 round 92: crisis_hotline_page 5 地區 section title"
   },
   "crisisHotlineRegionCn": "中国大陆",
   "crisisHotlineRegionTw": "中国台湾",
@@ -1571,15 +1552,15 @@
   "crisisHotlineRegionUs": "美国 / 加拿大",
   "crisisHotlineRegionIntl": "国际通用",
   "@crisisHotlineCnBeijingLabel": {
-    "description": "v0.30 round 92: 北京心理危机研究与干预中心"
+    "description": "v0.30 round 92: 北京心理危機研究與幹預中心"
   },
   "crisisHotlineCnBeijingLabel": "北京心理危机研究与干预中心",
   "crisisHotlineCnBeijingNumber": "010-82951332",
   "crisisHotlineCnBeijingDesc": "北京 24 小时",
   "@crisisHotlineTw1995Label": {
-    "description": "v0.30 round 92: 台湾生命线 (1995)"
+    "description": "v0.30 round 92: 臺灣生命線 (1995)"
   },
-  "crisisHotlineTw1995Label": "生命线 (24 小时)",
+  "crisisHotlineTw1995Label": "生命线 (24 小时）",
   "crisisHotlineTw1995Number": "1995",
   "crisisHotlineTw1995Desc": "中国台湾 24 小时",
   "@crisisHotlineUsTextLineLabel": {
@@ -1589,24 +1570,32 @@
   "crisisHotlineUsTextLineNumber": "741741",
   "crisisHotlineUsTextLineDesc": "美国 24 小时短信",
   "@crisisHotlineSnackbarCopied": {
-    "description": "v0.30 round 92: 复制号码后 snackbar 提示",
-    "placeholders": { "number": { "type": "Object" } }
+    "description": "v0.30 round 92: 複製號碼後 snackbar 提示",
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
   },
-  "crisisHotlineSnackbarCopied": "已复制: {number}",
+  "crisisHotlineSnackbarCopied": "已复制： {number}",
   "@crisisHotlineDialTooltip": {
-    "description": "R97-P1-11 (2026-08-07): 危机热线拨打按钮 tooltip"
+    "description": "R97-P1-11 (2026-08-07): 危機熱線撥打按鈕 tooltip"
   },
   "crisisHotlineDialTooltip": "拨打",
   "@crisisHotlineCopyTooltip": {
-    "description": "R97-P1-11 (2026-08-07): 危机热线复制按钮 tooltip"
+    "description": "R97-P1-11 (2026-08-07): 危機熱線複製按鈕 tooltip"
   },
   "crisisHotlineCopyTooltip": "复制号码",
   "@crisisHotlineDialFailed": {
-    "description": "R97-P1-11 (2026-08-07): tel: intent 启动失败 snackbar 提示",
-    "placeholders": { "number": { "type": "Object" } }
+    "description": "R97-P1-11 (2026-08-07): tel: intent 啟動失敗 snackbar 提示",
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
   },
-  "crisisHotlineDialFailed": "无法启动拨号, 请手动拨打: {number}",
-  "setupLegalAgeAttestation": "本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。",
+  "crisisHotlineDialFailed": "无法启动拨号， 请手动拨打： {number}",
+  "setupLegalAgeAttestation": "本人郑重承诺：我已年满 18 周岁。如本人为 14-18 周岁，本人保证已取得监护人代为同意，并愿意承担虚假陈述的一切法律后果。",
   "moodCbtLevelLabel3": "3 栏",
   "moodCbtLevelLabel5": "5 栏",
   "moodCbtLevelLabel7": "7 栏",
@@ -1619,7 +1608,7 @@
   "moodCbtSectionRerated": "重新评分",
   "moodCbtSectionCoreBelief": "核心信念",
   "moodCbtSectionBehavior": "行为应对",
-  "moodCbtExplainerBody": "CBT（认知行为疗法）思维记录帮你识别并重构负面自动思维。\n按 5 栏标准：先记录情境与想法，再找证据支持/反对，最后写下更平衡的替代想法。",
+  "moodCbtExplainerBody": "CBT（认知行为疗法）思维记录帮你识别并重构负面自动思维。\n按 5 栏标准：先记录情境与想法，再找证据支持／反对，最后写下更平衡的替代想法。",
   "moodCbtFieldHintSituation": "触发这个想法的事件是什么？发生在哪里、什么时候、有谁？",
   "moodCbtFieldHintAutomaticThought": "那一瞬间脑中闪过的想法、印象或意象是什么？",
   "moodCbtFieldHintEvidenceFor": "什么事支持这个想法？",
@@ -1666,9 +1655,9 @@
   "moodCbtComplete": "完成",
   "moodCbtStep2Header": "情绪 + 证据",
   "moodCbtConfirm": "确认",
-  "moodCbtConfirmEmpty": "(未填)",
-  "moodCbtAutoThoughtPrompt0": "如果你的好朋友遇到这事,你会怎么劝TA？",
-  "moodCbtAutoThoughtPrompt1": "最坏/最好/最现实的结果是什么？",
+  "moodCbtConfirmEmpty": "（未填）",
+  "moodCbtAutoThoughtPrompt0": "如果你的好朋友遇到这事，你会怎么劝TA？",
+  "moodCbtAutoThoughtPrompt1": "最坏／最好／最现实的结果是什么？",
   "moodCbtAutoThoughtPrompt2": "一年后你还会这么想吗？",
   "moodCbtAlternativePrompt0": "一年后你还会这么想吗？",
   "moodCbtAlternativePrompt1": "最现实的结果是什么？",
@@ -1683,12 +1672,12 @@
   "moodListSortScoreAsc": "分数升序",
   "moodListSortScoreDesc": "分数降序",
   "moodListPageTitle": "Mood 历史",
-  "moodListSearchHint": "搜索 note…",
+  "moodListSearchHint": "搜索 note……",
   "moodListEmpty": "还没有 mood 记录",
   "moodListNoMatch": "没有匹配的记录",
   "moodListEntryCount": "{count} 条记录",
   "@moodListEntryCount": {
-    "description": "mood 列表条目数,占位 {count}",
+    "description": "mood 列表條目數，佔位 {count}",
     "placeholders": {
       "count": {
         "type": "int"
@@ -1698,19 +1687,19 @@
   "cbtExportPdfEmpty": "还没有 5/7 栏 CBT 数据可导出",
   "cbtExportPdfButton": "导出 CBT 思维记录 PDF",
   "@cbtExportPdfButton": {
-    "description": "settings 数据管理 — 导出 5/7 栏 CBT 思维记录为 PDF 的按钮标题"
+    "description": "settings 數據管理 — 導出 5/7 欄 CBT 思維記錄為 PDF 的按鈕標題"
   },
   "cbtExportPdfDialogTitle": "选择日期范围生成 PDF",
   "cbtExportPdfSuccess": "已导出 {count} 条 CBT 思维记录",
   "@cbtExportPdfSuccess": {
-    "description": "SnackBar 成功提示, 占位 {count} 表示实际导出的条数",
+    "description": "SnackBar 成功提示， 佔位 {count} 表示實際導出的條數",
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "cbtExportPdfFailed": "PDF 导出失败,请重试",
+  "cbtExportPdfFailed": "PDF 导出失败，请重试",
   "assessmentCenterTitle": "量表中心",
   "@assessmentCenterTitle": {
     "description": "Assessment center page title"
@@ -1745,7 +1734,7 @@
   "@assessmentCenterMultiLineTitle": {
     "description": "Multi-line trend chart title showing all scales at once"
   },
-  "assessmentCenterNotAvailable": "需法务/临床审核",
+  "assessmentCenterNotAvailable": "需法务／临床审核",
   "@assessmentCenterNotAvailable": {
     "description": "Unavailable scale card reason (NSESSS / CRDPSS)"
   },
@@ -1761,7 +1750,7 @@
   "@isiShortDescription": {
     "description": "ISI Insomnia Severity Index short description for cards/list"
   },
-  "isiInstruction": "过去 2 周内, 您的睡眠问题有多严重?",
+  "isiInstruction": "过去 2 周内， 您的睡眠问题有多严重？",
   "@isiInstruction": {
     "description": "ISI Insomnia Severity Index top instruction before items"
   },
@@ -1805,15 +1794,15 @@
   "@isiSeveritySummary0": {
     "description": "ISI Insomnia Severity Index severity summary rank 0 (full, for result page)"
   },
-  "isiSeveritySummary1": "亚临床失眠, 建议关注",
+  "isiSeveritySummary1": "亚临床失眠， 建议关注",
   "@isiSeveritySummary1": {
     "description": "ISI Insomnia Severity Index severity summary rank 1 (full, for result page)"
   },
-  "isiSeveritySummary2": "中度失眠, 建议就医",
+  "isiSeveritySummary2": "中度失眠， 建议就医",
   "@isiSeveritySummary2": {
     "description": "ISI Insomnia Severity Index severity summary rank 2 (full, for result page)"
   },
-  "isiSeveritySummary3": "重度失眠, 强烈建议就医",
+  "isiSeveritySummary3": "重度失眠， 强烈建议就医",
   "@isiSeveritySummary3": {
     "description": "ISI Insomnia Severity Index severity summary rank 3 (full, for result page)"
   },
@@ -1821,11 +1810,11 @@
   "@pssName": {
     "description": "PSS Perceived Stress Scale scale name"
   },
-  "pssShortDescription": "Cohen 1983 压力量表 (10 题, 含 4 题反向)",
+  "pssShortDescription": "Cohen 1983 压力量表 (10 题， 含 4 题反向）",
   "@pssShortDescription": {
     "description": "PSS Perceived Stress Scale short description for cards/list"
   },
-  "pssInstruction": "过去 1 个月里, 您有多经常有下列感受?",
+  "pssInstruction": "过去 1 个月里， 您有多经常有下列感受？",
   "@pssInstruction": {
     "description": "PSS Perceived Stress Scale top instruction before items"
   },
@@ -1869,7 +1858,7 @@
   "@pssSeveritySummary1": {
     "description": "PSS Perceived Stress Scale severity summary rank 1 (full, for result page)"
   },
-  "pssSeveritySummary2": "高压力, 建议关注和寻求支持",
+  "pssSeveritySummary2": "高压力， 建议关注和寻求支持",
   "@pssSeveritySummary2": {
     "description": "PSS Perceived Stress Scale severity summary rank 2 (full, for result page)"
   },
@@ -1881,7 +1870,7 @@
   "@whodasShortDescription": {
     "description": "WHODAS 2.0 Disability Assessment short description for cards/list"
   },
-  "whodasInstruction": "过去 30 天内, 您在以下活动中遇到多大困难?",
+  "whodasInstruction": "过去 30 天内， 您在以下活动中遇到多大困难？",
   "@whodasInstruction": {
     "description": "WHODAS 2.0 Disability Assessment top instruction before items"
   },
@@ -1933,15 +1922,15 @@
   "@whodasSeveritySummary1": {
     "description": "WHODAS 2.0 Disability Assessment severity summary rank 1 (full, for result page)"
   },
-  "whodasSeveritySummary2": "中度残疾, 建议就医评估",
+  "whodasSeveritySummary2": "中度残疾， 建议就医评估",
   "@whodasSeveritySummary2": {
     "description": "WHODAS 2.0 Disability Assessment severity summary rank 2 (full, for result page)"
   },
-  "whodasSeveritySummary3": "重度残疾, 建议就医",
+  "whodasSeveritySummary3": "重度残疾， 建议就医",
   "@whodasSeveritySummary3": {
     "description": "WHODAS 2.0 Disability Assessment severity summary rank 3 (full, for result page)"
   },
-  "whodasSeveritySummary4": "极重度残疾, 强烈建议就医",
+  "whodasSeveritySummary4": "极重度残疾， 强烈建议就医",
   "@whodasSeveritySummary4": {
     "description": "WHODAS 2.0 Disability Assessment severity summary rank 4 (full, for result page)"
   },
@@ -1949,11 +1938,11 @@
   "@level2DepressionName": {
     "description": "DSM-5 Level 2 Depression Severity scale name"
   },
-  "level2DepressionShortDescription": "成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)",
+  "level2DepressionShortDescription": "成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版）",
   "@level2DepressionShortDescription": {
     "description": "DSM-5 Level 2 Depression Severity short description for cards/list"
   },
-  "level2DepressionInstruction": "过去 7 天内, 您有多经常被以下情绪困扰?",
+  "level2DepressionInstruction": "过去 7 天内， 您有多经常被以下情绪困扰？",
   "@level2DepressionInstruction": {
     "description": "DSM-5 Level 2 Depression Severity top instruction before items"
   },
@@ -1997,11 +1986,11 @@
   "@level2DepressionSeveritySummary1": {
     "description": "DSM-5 Level 2 Depression Severity severity summary rank 1 (full, for result page)"
   },
-  "level2DepressionSeveritySummary2": "中度抑郁, 建议就医",
+  "level2DepressionSeveritySummary2": "中度抑郁， 建议就医",
   "@level2DepressionSeveritySummary2": {
     "description": "DSM-5 Level 2 Depression Severity severity summary rank 2 (full, for result page)"
   },
-  "level2DepressionSeveritySummary3": "重度抑郁, 强烈建议就医",
+  "level2DepressionSeveritySummary3": "重度抑郁， 强烈建议就医",
   "@level2DepressionSeveritySummary3": {
     "description": "DSM-5 Level 2 Depression Severity severity summary rank 3 (full, for result page)"
   },
@@ -2009,11 +1998,11 @@
   "@level2AnxietyName": {
     "description": "DSM-5 Level 2 Anxiety Severity scale name"
   },
-  "level2AnxietyShortDescription": "成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)",
+  "level2AnxietyShortDescription": "成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版）",
   "@level2AnxietyShortDescription": {
     "description": "DSM-5 Level 2 Anxiety Severity short description for cards/list"
   },
-  "level2AnxietyInstruction": "过去 7 天内, 您有多经常被以下感受困扰?",
+  "level2AnxietyInstruction": "过去 7 天内， 您有多经常被以下感受困扰？",
   "@level2AnxietyInstruction": {
     "description": "DSM-5 Level 2 Anxiety Severity top instruction before items"
   },
@@ -2057,11 +2046,11 @@
   "@level2AnxietySeveritySummary1": {
     "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 1 (full, for result page)"
   },
-  "level2AnxietySeveritySummary2": "中度焦虑, 建议就医",
+  "level2AnxietySeveritySummary2": "中度焦虑， 建议就医",
   "@level2AnxietySeveritySummary2": {
     "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 2 (full, for result page)"
   },
-  "level2AnxietySeveritySummary3": "重度焦虑, 强烈建议就医",
+  "level2AnxietySeveritySummary3": "重度焦虑， 强烈建议就医",
   "@level2AnxietySeveritySummary3": {
     "description": "DSM-5 Level 2 Anxiety Severity severity summary rank 3 (full, for result page)"
   },
@@ -2069,11 +2058,11 @@
   "@level2ManiaName": {
     "description": "DSM-5 Level 2 Mania Severity scale name"
   },
-  "level2ManiaShortDescription": "成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)",
+  "level2ManiaShortDescription": "成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版）",
   "@level2ManiaShortDescription": {
     "description": "DSM-5 Level 2 Mania Severity short description for cards/list"
   },
-  "level2ManiaInstruction": "过去 7 天内, 您有多经常体验以下情况?",
+  "level2ManiaInstruction": "过去 7 天内， 您有多经常体验以下情况？",
   "@level2ManiaInstruction": {
     "description": "DSM-5 Level 2 Mania Severity top instruction before items"
   },
@@ -2117,11 +2106,11 @@
   "@level2ManiaSeveritySummary1": {
     "description": "DSM-5 Level 2 Mania Severity severity summary rank 1 (full, for result page)"
   },
-  "level2ManiaSeveritySummary2": "中度躁狂, 建议就医",
+  "level2ManiaSeveritySummary2": "中度躁狂， 建议就医",
   "@level2ManiaSeveritySummary2": {
     "description": "DSM-5 Level 2 Mania Severity severity summary rank 2 (full, for result page)"
   },
-  "level2ManiaSeveritySummary3": "重度躁狂, 强烈建议就医",
+  "level2ManiaSeveritySummary3": "重度躁狂， 强烈建议就医",
   "@level2ManiaSeveritySummary3": {
     "description": "DSM-5 Level 2 Mania Severity severity summary rank 3 (full, for result page)"
   },
@@ -2129,11 +2118,11 @@
   "@asrmName": {
     "description": "ASRM Altman Self-Rating Mania Scale scale name"
   },
-  "asrmShortDescription": "Altman 1997 自评躁狂量表 (5 题)",
+  "asrmShortDescription": "Altman 1997 自评躁狂量表 (5 题）",
   "@asrmShortDescription": {
     "description": "ASRM Altman Self-Rating Mania Scale short description for cards/list"
   },
-  "asrmInstruction": "过去 1 周内, 您有 (或感觉到) 以下情况的程度?",
+  "asrmInstruction": "过去 1 周内， 您有 （或感觉到） 以下情况的程度？",
   "@asrmInstruction": {
     "description": "ASRM Altman Self-Rating Mania Scale top instruction before items"
   },
@@ -2185,15 +2174,15 @@
   "@asrmSeveritySummary1": {
     "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 1 (full, for result page)"
   },
-  "asrmSeveritySummary2": "中度躁狂, 建议就医",
+  "asrmSeveritySummary2": "中度躁狂， 建议就医",
   "@asrmSeveritySummary2": {
     "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 2 (full, for result page)"
   },
-  "asrmSeveritySummary3": "重度躁狂, 建议就医",
+  "asrmSeveritySummary3": "重度躁狂， 建议就医",
   "@asrmSeveritySummary3": {
     "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 3 (full, for result page)"
   },
-  "asrmSeveritySummary4": "极重度躁狂, 强烈建议就医",
+  "asrmSeveritySummary4": "极重度躁狂， 强烈建议就医",
   "@asrmSeveritySummary4": {
     "description": "ASRM Altman Self-Rating Mania Scale severity summary rank 4 (full, for result page)"
   },
@@ -2201,11 +2190,11 @@
   "@level2PsychosisName": {
     "description": "DSM-5 Level 2 Psychotic Symptoms scale name"
   },
-  "level2PsychosisShortDescription": "成人精神病性症状 8 题 (DSM-5 简化版)",
+  "level2PsychosisShortDescription": "成人精神病性症状 8 题 (DSM-5 简化版）",
   "@level2PsychosisShortDescription": {
     "description": "DSM-5 Level 2 Psychotic Symptoms short description for cards/list"
   },
-  "level2PsychosisInstruction": "过去 7 天内, 您有多经常体验以下情况?",
+  "level2PsychosisInstruction": "过去 7 天内， 您有多经常体验以下情况？",
   "@level2PsychosisInstruction": {
     "description": "DSM-5 Level 2 Psychotic Symptoms top instruction before items"
   },
@@ -2249,45 +2238,45 @@
   "@level2PsychosisSeveritySummary1": {
     "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 1 (full, for result page)"
   },
-  "level2PsychosisSeveritySummary2": "中度精神病性症状, 建议就医",
+  "level2PsychosisSeveritySummary2": "中度精神病性症状， 建议就医",
   "@level2PsychosisSeveritySummary2": {
     "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 2 (full, for result page)"
   },
-  "level2PsychosisSeveritySummary3": "重度精神病性症状, 强烈建议就医",
+  "level2PsychosisSeveritySummary3": "重度精神病性症状， 强烈建议就医",
   "@level2PsychosisSeveritySummary3": {
     "description": "DSM-5 Level 2 Psychotic Symptoms severity summary rank 3 (full, for result page)"
   },
   "dailyTrackingTitle": "日常追踪",
   "@dailyTrackingTitle": {
-    "description": "v0.30 R91: 日常追踪整合入口页 title"
+    "description": "v0.30 R91: 日常追蹤整合入口頁 title"
   },
   "dailyTrackingFab": "日常追踪",
   "@dailyTrackingFab": {
-    "description": "v0.30 R91: 主页 FAB 跳日常追踪入口页时的提示"
+    "description": "v0.30 R91: 主頁 FAB 跳日常追蹤入口頁時的提示"
   },
   "dailyTrackingMultiChartTitle": "近 30 天 4 指标",
   "@dailyTrackingMultiChartTitle": {
-    "description": "v0.30 R91: 多指标趋势图标题"
+    "description": "v0.30 R91: 多指標趨勢圖標題"
   },
   "chartMetricWeight": "体重",
   "@chartMetricWeight": {
-    "description": "R102: 多指标趋势图 — 体重指标名"
+    "description": "R102: 多指標趨勢圖 — 體重指標名"
   },
   "chartMetricSleep": "睡眠",
   "@chartMetricSleep": {
-    "description": "R102: 多指标趋势图 — 睡眠指标名"
+    "description": "R102: 多指標趨勢圖 — 睡眠指標名"
   },
   "chartMetricMood": "心境",
   "@chartMetricMood": {
-    "description": "R102: 多指标趋势图 — 心境指标名"
+    "description": "R102: 多指標趨勢圖 — 心境指標名"
   },
   "chartMetricStress": "应激源",
   "@chartMetricStress": {
-    "description": "R102: 多指标趋势图 — 应激源指标名"
+    "description": "R102: 多指標趨勢圖 — 應激源指標名"
   },
   "dailyTrackingLastTime": "{time} 记录",
   "@dailyTrackingLastTime": {
-    "description": "v0.30 R91: 卡片 lastValue 时间占位 (placeholder {time} 是 formatted date)",
+    "description": "v0.30 R91: 卡片 lastValue 時間佔位 (placeholder {time} 是 formatted date)",
     "placeholders": {
       "time": {
         "type": "Object"
@@ -2296,19 +2285,19 @@
   },
   "dailyTrackingRecord": "记录",
   "@dailyTrackingRecord": {
-    "description": "v0.30 R91: 整合入口页卡片 CTA 按钮"
+    "description": "v0.30 R91: 整合入口頁卡片 CTA 按鈕"
   },
   "moodDiaryName": "情绪日记",
   "@moodDiaryName": {
-    "description": "v0.30 R91: 情绪日记 子功能名 (整合页 + 列表页)"
+    "description": "v0.30 R91: 情緒日記 子功能名 （整合頁 + 列表頁）"
   },
   "moodDiaryShortDesc": "心境 4 段 + score, 趋势分析",
   "@moodDiaryShortDesc": {
-    "description": "v0.30 R91: 情绪日记 子功能简短描述 (卡片用)"
+    "description": "v0.30 R91: 情緒日記 子功能簡短描述 （卡片用）"
   },
   "moodDiaryScore": "心境 {score}/5",
   "@moodDiaryScore": {
-    "description": "v0.30 R91: 情绪日记 lastValue 摘要 (placeholder {score} 是 1-5)",
+    "description": "v0.30 R91: 情緒日記 lastValue 摘要 (placeholder {score} 是 1-5)",
     "placeholders": {
       "score": {
         "type": "int"
@@ -2317,7 +2306,7 @@
   },
   "moodDiaryLast": "{time} · {score} ({period})",
   "@moodDiaryLast": {
-    "description": "v0.30 R91: 情绪日记 整合卡片 lastValue 完整摘要",
+    "description": "v0.30 R91: 情緒日記 整合卡片 lastValue 完整摘要",
     "placeholders": {
       "time": {
         "type": "Object"
@@ -2332,35 +2321,27 @@
   },
   "anxietyAgitationName": "焦虑急躁",
   "@anxietyAgitationName": {
-    "description": "v0.30 R91: 焦虑急躁 子功能名 (整合页 + 列表页)"
+    "description": "v0.30 R91: 焦慮急躁 子功能名 （整合頁 + 列表頁）"
   },
   "anxietyAgitationShortDesc": "焦虑 + 急躁 双维度 5 档",
   "@anxietyAgitationShortDesc": {
-    "description": "v0.30 R91: 焦虑急躁 子功能简短描述 (卡片用)"
+    "description": "v0.30 R91: 焦慮急躁 子功能簡短描述 （卡片用）"
   },
-  "anxietyAgitationHint": "焦虑反向 1=严重 5=平静; 急躁正向 1=平静 5=极急",
+  "anxietyAgitationHint": "焦虑反向 1=严重 5=平静； 急躁正向 1=平静 5=极急",
   "@anxietyAgitationHint": {
-    "description": "v0.30 R91: 焦虑急躁 提示 (对话框说明)"
+    "description": "v0.30 R91: 焦慮急躁 提示 （對話框說明）"
   },
   "anxietyAgitationAddButton": "添加评估",
   "@anxietyAgitationAddButton": {
-    "description": "v0.30 R91: 焦虑急躁 列表页 添加按钮"
+    "description": "v0.30 R91: 焦慮急躁 列表頁 添加按鈕"
   },
   "anxietyAgitationNoData": "暂无焦虑急躁记录",
   "@anxietyAgitationNoData": {
-    "description": "v0.30 R91: 焦虑急躁 列表页 空状态"
-  },
-  "anxietyAgitationAnxietyLabel": "焦虑分数",
-  "@anxietyAgitationAnxietyLabel": {
-    "description": "v0.30 R92: 焦虑急躁 焦虑分数 slider 标签 (R91 daily_tracking l10n 漏, R92 补)"
-  },
-  "anxietyAgitationAgitationLabel": "急躁分数",
-  "@anxietyAgitationAgitationLabel": {
-    "description": "v0.30 R92: 焦虑急躁 急躁分数 slider 标签 (R91 daily_tracking l10n 漏, R92 补)"
+    "description": "v0.30 R91: 焦慮急躁 列表頁 空狀態"
   },
   "anxietyAgitationAnxietyScore": "焦虑 {score}",
   "@anxietyAgitationAnxietyScore": {
-    "description": "v0.30 R91: 焦虑急躁 焦虑维度 lastValue 摘要 (placeholder {score} 是 1-5)",
+    "description": "v0.30 R91: 焦慮急躁 焦慮維度 lastValue 摘要 (placeholder {score} 是 1-5)",
     "placeholders": {
       "score": {
         "type": "int"
@@ -2369,7 +2350,7 @@
   },
   "anxietyAgitationAgitationScore": "急躁 {score}",
   "@anxietyAgitationAgitationScore": {
-    "description": "v0.30 R91: 焦虑急躁 急躁维度 lastValue 摘要 (placeholder {score} 是 1-5)",
+    "description": "v0.30 R91: 焦慮急躁 急躁維度 lastValue 摘要 (placeholder {score} 是 1-5)",
     "placeholders": {
       "score": {
         "type": "int"
@@ -2378,7 +2359,7 @@
   },
   "anxietyAgitationLast": "焦虑 {anxiety} / 急躁 {agitation}",
   "@anxietyAgitationLast": {
-    "description": "v0.30 R91: 焦虑急躁 整合卡片 lastValue 完整摘要",
+    "description": "v0.30 R91: 焦慮急躁 整合卡片 lastValue 完整摘要",
     "placeholders": {
       "anxiety": {
         "type": "int"
@@ -2390,35 +2371,36 @@
   },
   "sleepName": "睡眠",
   "@sleepName": {
-    "description": "v0.30 R91: 睡眠 子功能名 (整合页 + 列表页)"
+    "description": "v0.30 R91: 睡眠 子功能名 （整合頁 + 列表頁）"
   },
   "sleepShortDesc": "入睡 + 时长 + 规律性",
   "@sleepShortDesc": {
-    "description": "v0.30 R91: 睡眠 子功能简短描述 (卡片用)"
+    "description": "v0.30 R91: 睡眠 子功能簡短描述 （卡片用）"
   },
-  "sleepHint": "记录每晚入睡 + 起床, 跨午夜自动算时长",
+  "sleepHint": "记录每晚入睡 + 起床， 跨午夜自动算时长",
   "@sleepHint": {
-    "description": "v0.30 R91: 睡眠 提示 (对话框 / 列表页说明)"
+    "description": "v0.30 R91: 睡眠 提示 （對話框 / 列表頁說明）"
   },
   "sleepAddButton": "添加睡眠记录",
   "@sleepAddButton": {
-    "description": "v0.30 R91: 睡眠 列表页 添加按钮"
+    "description": "v0.30 R91: 睡眠 列表頁 添加按鈕"
   },
   "sleepNoData": "暂无睡眠记录",
   "@sleepNoData": {
-    "description": "v0.30 R91: 睡眠 列表页 空状态"
+    "description": "v0.30 R91: 睡眠 列表頁 空狀態"
   },
   "sleepBedtime": "入睡 {time}",
   "@sleepBedtime": {
-    "description": "v0.30 R91: 睡眠 入睡时间 lastValue 摘要 (placeholder {time} 是 HH:mm)"
-  },
-  "sleepRegularityTitle": "规律性",
-  "@sleepRegularityTitle": {
-    "description": "v0.30 R92: 睡眠 规律性 slider 标题 (R91 daily_tracking l10n 漏, R92 补)"
+    "description": "v0.30 R91: 睡眠 入睡時間 lastValue 摘要 (placeholder {time} 是 HH:mm)",
+    "placeholders": {
+      "time": {
+        "type": "Object"
+      }
+    }
   },
   "sleepWakeTime": "起床 {time}",
   "@sleepWakeTime": {
-    "description": "v0.30 R91: 睡眠 起床时间 lastValue 摘要 (placeholder {time} 是 HH:mm)",
+    "description": "v0.30 R91: 睡眠 起床時間 lastValue 摘要 (placeholder {time} 是 HH:mm)",
     "placeholders": {
       "time": {
         "type": "Object"
@@ -2439,27 +2421,27 @@
   },
   "socialRhythmName": "社会节律",
   "@socialRhythmName": {
-    "description": "v0.30 R91: 社会节律 子功能名 (整合页 + 列表页)"
+    "description": "v0.30 R91: 社會節律 子功能名 （整合頁 + 列表頁）"
   },
   "socialRhythmShortDesc": "起床 + 第一餐 + 最后一餐 + 时长",
   "@socialRhythmShortDesc": {
-    "description": "v0.30 R91: 社会节律 子功能简短描述 (卡片用)"
+    "description": "v0.30 R91: 社會節律 子功能簡短描述 （卡片用）"
   },
-  "socialRhythmHint": "记录每天的作息, 帮医生判断节律稳定性",
+  "socialRhythmHint": "记录每天的作息， 帮医生判断节律稳定性",
   "@socialRhythmHint": {
-    "description": "v0.30 R91: 社会节律 提示 (对话框 / 列表页说明)"
+    "description": "v0.30 R91: 社會節律 提示 （對話框 / 列表頁說明）"
   },
   "socialRhythmAddButton": "添加社会节律",
   "@socialRhythmAddButton": {
-    "description": "v0.30 R91: 社会节律 列表页 添加按钮"
+    "description": "v0.30 R91: 社會節律 列表頁 添加按鈕"
   },
   "socialRhythmNoData": "暂无社会节律记录",
   "@socialRhythmNoData": {
-    "description": "v0.30 R91: 社会节律 列表页 空状态"
+    "description": "v0.30 R91: 社會節律 列表頁 空狀態"
   },
   "socialRhythmWakeTime": "起床 {time}",
   "@socialRhythmWakeTime": {
-    "description": "v0.30 R91: 社会节律 起床时间 lastValue 摘要",
+    "description": "v0.30 R91: 社會節律 起床時間 lastValue 摘要",
     "placeholders": {
       "time": {
         "type": "Object"
@@ -2468,7 +2450,7 @@
   },
   "socialRhythmFirstMeal": "第一餐 {time}",
   "@socialRhythmFirstMeal": {
-    "description": "v0.30 R91: 社会节律 第一餐 lastValue 摘要",
+    "description": "v0.30 R91: 社會節律 第一餐 lastValue 摘要",
     "placeholders": {
       "time": {
         "type": "Object"
@@ -2477,7 +2459,7 @@
   },
   "socialRhythmLastMeal": "最后一餐 {time}",
   "@socialRhythmLastMeal": {
-    "description": "v0.30 R91: 社会节律 最后一餐 lastValue 摘要",
+    "description": "v0.30 R91: 社會節律 最後一餐 lastValue 摘要",
     "placeholders": {
       "time": {
         "type": "Object"
@@ -2486,7 +2468,7 @@
   },
   "socialRhythmLast": "起床 {wake} · 社交 {social}h · 工作 {work}h",
   "@socialRhythmLast": {
-    "description": "v0.30 R91: 社会节律 整合卡片 lastValue 完整摘要",
+    "description": "v0.30 R91: 社會節律 整合卡片 lastValue 完整摘要",
     "placeholders": {
       "wake": {
         "type": "Object"
@@ -2501,35 +2483,35 @@
   },
   "stressEventName": "应激源",
   "@stressEventName": {
-    "description": "v0.30 R91: 应激源 子功能名 (整合页 + 列表页)"
+    "description": "v0.30 R91: 應激源 子功能名 （整合頁 + 列表頁）"
   },
   "stressEventShortDesc": "事件类型 + 强度评分",
   "@stressEventShortDesc": {
-    "description": "v0.30 R91: 应激源 子功能简短描述 (卡片用)"
+    "description": "v0.30 R91: 應激源 子功能簡短描述 （卡片用）"
   },
-  "stressEventHint": "记录生活中的压力事件, 帮医生判断触发因素",
+  "stressEventHint": "记录生活中的压力事件， 帮医生判断触发因素",
   "@stressEventHint": {
-    "description": "v0.30 R91: 应激源 提示 (对话框 / 列表页说明)"
+    "description": "v0.30 R91: 應激源 提示 （對話框 / 列表頁說明）"
   },
   "stressEventAddButton": "添加应激源",
   "@stressEventAddButton": {
-    "description": "v0.30 R91: 应激源 列表页 添加按钮"
+    "description": "v0.30 R91: 應激源 列表頁 添加按鈕"
   },
   "stressEventNoData": "暂无应激源记录",
   "@stressEventNoData": {
-    "description": "v0.30 R91: 应激源 列表页 空状态"
+    "description": "v0.30 R91: 應激源 列表頁 空狀態"
   },
   "stressEventEventType": "事件类型",
   "@stressEventEventType": {
-    "description": "v0.30 R91: 应激源 事件类型 标签 (对话框 dropdown)"
+    "description": "v0.30 R91: 應激源 事件類型 標籤 （對話框 dropdown)"
   },
   "stressEventIntensity": "强度",
   "@stressEventIntensity": {
-    "description": "v0.30 R91: 应激源 强度评分 标签"
+    "description": "v0.30 R91: 應激源 強度評分 標籤"
   },
   "stressEventLast": "强度 {intensity}/5",
   "@stressEventLast": {
-    "description": "v0.30 R91: 应激源 整合卡片 lastValue 摘要",
+    "description": "v0.30 R91: 應激源 整合卡片 lastValue 摘要",
     "placeholders": {
       "intensity": {
         "type": "int"
@@ -2538,79 +2520,79 @@
   },
   "treatmentName": "治疗",
   "@treatmentName": {
-    "description": "v0.30 R91: 治疗 子功能名 (整合页 + 列表页 placeholder)"
+    "description": "v0.30 R91: 治療 子功能名 （整合頁 + 列表頁 placeholder)"
   },
-  "treatmentShortDesc": "用药 / 咨询 / 物理治疗, 关联 medication",
+  "treatmentShortDesc": "用药 / 咨询 / 物理治疗， 关联 medication",
   "@treatmentShortDesc": {
-    "description": "v0.30 R91: 治疗 子功能简短描述 (卡片用)"
+    "description": "v0.30 R91: 治療 子功能簡短描述 （卡片用）"
   },
   "treatmentHint": "治疗条目可关联 medication, 写入功能 v0.31+",
   "@treatmentHint": {
-    "description": "v0.30 R91: 治疗 提示 (列表页说明)"
+    "description": "v0.30 R91: 治療 提示 （列表頁說明）"
   },
   "treatmentNoData": "暂无治疗记录",
   "@treatmentNoData": {
-    "description": "v0.30 R91: 治疗 列表页 空状态"
+    "description": "v0.30 R91: 治療 列表頁 空狀態"
   },
   "@treatmentAddButton": {
-    "description": "v0.30 round 92 (audit-fixes / P0 #15): 治疗 添加按钮 (列表页右上角)"
+    "description": "v0.30 round 92 (audit-fixes / P0 #15): 治療 添加按鈕 （列表頁右上角）"
   },
   "treatmentAddButton": "添加",
   "@treatmentAddTitle": {
-    "description": "v0.30 round 92: 治疗 AddTreatmentDialog title"
+    "description": "v0.30 round 92: 治療 AddTreatmentDialog title"
   },
   "treatmentAddTitle": "添加治疗记录",
   "@treatmentDate": {
-    "description": "v0.30 round 92: 治疗 日期 field"
+    "description": "v0.30 round 92: 治療 日期 field"
   },
   "treatmentDate": "日期",
   "@treatmentCategory": {
-    "description": "v0.30 round 92: 治疗 类别 field (4 选 1)"
+    "description": "v0.30 round 92: 治療 類別 field (4 選 1)"
   },
   "treatmentCategory": "类别",
   "@treatmentCategoryMedicationAdjustment": {
-    "description": "v0.30 round 92: 治疗 类别 1/4 药物调整"
+    "description": "v0.30 round 92: 治療 類別 1/4 藥物調整"
   },
   "treatmentCategoryMedicationAdjustment": "药物调整",
   "@treatmentCategoryConsultation": {
-    "description": "v0.30 round 92: 治疗 类别 2/4 心理咨询"
+    "description": "v0.30 round 92: 治療 類別 2/4 心理諮詢"
   },
   "treatmentCategoryConsultation": "心理咨询",
   "@treatmentCategoryHospitalization": {
-    "description": "v0.30 round 92: 治疗 类别 3/4 住院"
+    "description": "v0.30 round 92: 治療 類別 3/4 住院"
   },
   "treatmentCategoryHospitalization": "住院",
   "@treatmentCategoryOther": {
-    "description": "v0.30 round 92: 治疗 类别 4/4 其他"
+    "description": "v0.30 round 92: 治療 類別 4/4 其他"
   },
   "treatmentCategoryOther": "其他",
   "@treatmentProvider": {
-    "description": "v0.30 round 92: 治疗 医疗机构 / 医生 (description 字段)"
+    "description": "v0.30 round 92: 治療 醫療機構 / 醫生 (description 字段）"
   },
   "treatmentProvider": "医疗机构 / 医生",
   "@treatmentProviderHint": {
-    "description": "v0.30 round 92: 治疗 医疗机构 hint"
+    "description": "v0.30 round 92: 治療 醫療機構 hint"
   },
-  "treatmentProviderHint": "例如: 心理医生王医生 / 北京协和医院",
+  "treatmentProviderHint": "例如： 心理医生王医生 / 北京协和医院",
   "@treatmentProviderRequired": {
-    "description": "v0.30 round 92: 治疗 医疗机构为空 snackbar 提示"
+    "description": "v0.30 round 92: 治療 醫療機構為空 snackbar 提示"
   },
   "treatmentProviderRequired": "请填写医疗机构 / 医生",
   "@treatmentNote": {
-    "description": "v0.30 round 92: 治疗 备注 field"
+    "description": "v0.30 round 92: 治療 備註 field"
   },
   "treatmentNote": "备注",
   "@treatmentNoteHint": {
-    "description": "v0.30 round 92: 治疗 备注 hint"
+    "description": "v0.30 round 92: 治療 備註 hint"
   },
-  "treatmentNoteHint": "可选, 简短记录治疗要点",
+  "treatmentNoteHint": "可选， 简短记录治疗要点",
   "treatmentType": "治疗类型",
   "@treatmentType": {
-    "description": "v0.30 R91: 治疗 治疗类型 标签 (对话框 dropdown)"
+    "description": "v0.30 R91: 治療 治療類型 標籤 （對話框 dropdown)"
   },
   "treatmentLast": "{type} · {description}",
   "@treatmentLast": {
-    "description": "v0.30 R91: 治疗 整合卡片 lastValue 摘要",
+    "description": "v0.30 R91: 治療 整合卡片 lastValue 摘要",
     "placeholders": {
       "type": {
         "type": "Object"
@@ -2622,27 +2604,27 @@
   },
   "weightName": "体重",
   "@weightName": {
-    "description": "v0.30 R91: 体重 子功能名 (整合页 + 列表页)"
+    "description": "v0.30 R91: 體重 子功能名 （整合頁 + 列表頁）"
   },
-  "weightShortDesc": "体重 + BMI (需 profile.height)",
+  "weightShortDesc": "体重 + BMI （需 profile.height)",
   "@weightShortDesc": {
-    "description": "v0.30 R91: 体重 子功能简短描述 (卡片用)"
+    "description": "v0.30 R91: 體重 子功能簡短描述 （卡片用）"
   },
-  "weightHint": "记录每天的体重, 帮医生判断生理状态",
+  "weightHint": "记录每天的体重， 帮医生判断生理状态",
   "@weightHint": {
-    "description": "v0.30 R91: 体重 提示 (对话框 / 列表页说明)"
+    "description": "v0.30 R91: 體重 提示 （對話框 / 列表頁說明）"
   },
   "weightAddButton": "添加体重记录",
   "@weightAddButton": {
-    "description": "v0.30 R91: 体重 列表页 添加按钮"
+    "description": "v0.30 R91: 體重 列表頁 添加按鈕"
   },
   "weightNoData": "暂无体重记录",
   "@weightNoData": {
-    "description": "v0.30 R91: 体重 列表页 空状态"
+    "description": "v0.30 R91: 體重 列表頁 空狀態"
   },
   "weightWeight": "体重 {kg} kg",
   "@weightWeight": {
-    "description": "v0.30 R91: 体重 lastValue 摘要 (placeholder {kg} 是 1 decimal)",
+    "description": "v0.30 R91: 體重 lastValue 摘要 (placeholder {kg} 是 1 decimal)",
     "placeholders": {
       "kg": {
         "type": "Object"
@@ -2651,7 +2633,7 @@
   },
   "weightBmi": "BMI {bmi}",
   "@weightBmi": {
-    "description": "v0.30 R91: 体重 BMI lastValue 摘要 (placeholder {bmi} 是 1 decimal)",
+    "description": "v0.30 R91: 體重 BMI lastValue 摘要 (placeholder {bmi} 是 1 decimal)",
     "placeholders": {
       "bmi": {
         "type": "Object"
@@ -2660,7 +2642,7 @@
   },
   "weightLast": "{kg} kg · BMI {bmi}",
   "@weightLast": {
-    "description": "v0.30 R91: 体重 整合卡片 lastValue 摘要 (bmi 可选)",
+    "description": "v0.30 R91: 體重 整合卡片 lastValue 摘要 (bmi 可選）",
     "placeholders": {
       "kg": {
         "type": "Object"
@@ -2688,35 +2670,35 @@
   },
   "periodUnspecified": "未指定",
   "@periodUnspecified": {
-    "description": "v0.30 R91: 心境 period fallback (R91 老 entry 兼容)"
+    "description": "v0.30 R91: 心境 period fallback (R91 老 entry 兼容）"
   },
   "stressEventTypeWork": "工作",
   "@stressEventTypeWork": {
-    "description": "v0.30 R91: 应激源事件类型 1/5 工作"
+    "description": "v0.30 R91: 應激源事件類型 1/5 工作"
   },
   "stressEventTypeRelationship": "关系",
   "@stressEventTypeRelationship": {
-    "description": "v0.30 R91: 应激源事件类型 2/5 关系"
+    "description": "v0.30 R91: 應激源事件類型 2/5 關係"
   },
   "stressEventTypeHealth": "健康",
   "@stressEventTypeHealth": {
-    "description": "v0.30 R91: 应激源事件类型 3/5 健康"
+    "description": "v0.30 R91: 應激源事件類型 3/5 健康"
   },
   "stressEventTypeFinancial": "财务",
   "@stressEventTypeFinancial": {
-    "description": "v0.30 R91: 应激源事件类型 4/5 财务"
+    "description": "v0.30 R91: 應激源事件類型 4/5 財務"
   },
   "stressEventTypeOther": "其他",
   "@stressEventTypeOther": {
-    "description": "v0.30 R91: 应激源事件类型 5/5 其他"
+    "description": "v0.30 R91: 應激源事件類型 5/5 其他"
   },
   "regularityVeryIrregular": "很不规律",
   "@regularityVeryIrregular": {
-    "description": "v0.30 R91: regularity 1/5 很不规律"
+    "description": "v0.30 R91: regularity 1/5 很不規律"
   },
   "regularityIrregular": "不规律",
   "@regularityIrregular": {
-    "description": "v0.30 R91: regularity 2/5 不规律"
+    "description": "v0.30 R91: regularity 2/5 不規律"
   },
   "regularityNormal": "一般",
   "@regularityNormal": {
@@ -2724,218 +2706,256 @@
   },
   "regularityRegular": "规律",
   "@regularityRegular": {
-    "description": "v0.30 R91: regularity 4/5 规律"
+    "description": "v0.30 R91: regularity 4/5 規律"
   },
   "regularityVeryRegular": "很规律",
   "@regularityVeryRegular": {
-    "description": "v0.30 R91: regularity 5/5 很规律"
+    "description": "v0.30 R91: regularity 5/5 很規律"
   },
   "cardStatusNoData": "尚未记录",
   "@cardStatusNoData": {
-    "description": "v0.30 R91: 卡片 lastValue null 时 fallback"
+    "description": "v0.30 R91: 卡片 lastValue null 時 fallback"
   },
   "sleepBedtimeTitle": "入睡时间",
   "@sleepBedtimeTitle": {
-    "description": "v0.30 R92: sleepBedtimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+    "description": "v0.30 R92: sleepBedtimeTitle title 標籤 (R91 daily_tracking l10n 漏 title 模式 key, R92 補）"
   },
   "sleepWakeTimeTitle": "起床时间",
   "@sleepWakeTimeTitle": {
-    "description": "v0.30 R92: sleepWakeTimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+    "description": "v0.30 R92: sleepWakeTimeTitle title 標籤 (R91 daily_tracking l10n 漏 title 模式 key, R92 補）"
   },
   "socialRhythmWakeTimeTitle": "起床时间",
   "@socialRhythmWakeTimeTitle": {
-    "description": "v0.30 R92: socialRhythmWakeTimeTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+    "description": "v0.30 R92: socialRhythmWakeTimeTitle title 標籤 (R91 daily_tracking l10n 漏 title 模式 key, R92 補）"
   },
   "socialRhythmFirstMealTitle": "第一餐时间",
   "@socialRhythmFirstMealTitle": {
-    "description": "v0.30 R92: socialRhythmFirstMealTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+    "description": "v0.30 R92: socialRhythmFirstMealTitle title 標籤 (R91 daily_tracking l10n 漏 title 模式 key, R92 補）"
   },
   "socialRhythmLastMealTitle": "最后一餐时间",
   "@socialRhythmLastMealTitle": {
-    "description": "v0.30 R92: socialRhythmLastMealTitle title 标签 (R91 daily_tracking l10n 漏 title 模式 key, R92 补)"
+    "description": "v0.30 R92: socialRhythmLastMealTitle title 標籤 (R91 daily_tracking l10n 漏 title 模式 key, R92 補）"
   },
-
   "cardStatusToday": "今天",
   "@cardStatusToday": {
-    "description": "v0.30 R91: 卡片时间状态 今天"
+    "description": "v0.30 R91: 卡片時間狀態 今天"
+  },
+  "sleepRegularityTitle": "规律性",
+  "@sleepRegularityTitle": {
+    "description": "v0.30 R92: 睡眠 規律性 slider 標題 (R91 daily_tracking l10n 漏， R92 補）"
+  },
+  "anxietyAgitationAnxietyLabel": "焦虑分数",
+  "@anxietyAgitationAnxietyLabel": {
+    "description": "v0.30 R92: 焦慮急躁 焦慮分數 slider 標籤 (R91 daily_tracking l10n 漏， R92 補）"
+  },
+  "anxietyAgitationAgitationLabel": "急躁分数",
+  "@anxietyAgitationAgitationLabel": {
+    "description": "v0.30 R92: 焦慮急躁 急躁分數 slider 標籤 (R91 daily_tracking l10n 漏， R92 補）"
+  },
+  "moodListPeriodAll": "全部",
+  "@moodListPeriodAll": {
+    "description": "v0.30 R92: mood_list 情緒列表時段過濾 chip '全部' (R87 mood_list page l10n 漏， R92 補）"
   },
   "migrationFailedInitData": "无法初始化本地数据",
   "@migrationFailedInitData": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 启动时本地数据初始化失败的短消息 (main.dart 205 行原硬编码)"
+    "description": "v0.30 R95 sub-spec 7 task 53: 啟動時本地數據初始化失敗的短消息 (main.dart 205 行原硬編碼）"
   },
   "migrationFailedActionHint": "请尝试重启 App，或卸载后重新安装",
   "@migrationFailedActionHint": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 数据初始化失败后给用户可操作提示"
+    "description": "v0.30 R95 sub-spec 7 task 53: 數據初始化失敗後給用戶可操作提示"
   },
-  "migrationFailedFooter": "技术信息: {error}",
+  "migrationFailedFooter": "技术信息： {error}",
   "@migrationFailedFooter": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 失败页底部技术信息, 内部异常脱敏后展示",
+    "description": "v0.30 R95 sub-spec 7 task 53: 失敗頁底部技術信息， 內部異常脫敏後展示",
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "migrationFailedRetryButton": "重试",
   "@migrationFailedRetryButton": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 失败页重试按钮 (v1.0 加按钮用)"
+    "description": "v0.30 R95 sub-spec 7 task 53: 失敗頁重試按鈕 (v1.0 加按鈕用）"
   },
   "migrationFailedCloseButton": "关闭",
   "@migrationFailedCloseButton": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 失败页关闭按钮 (v1.0 加按钮用)"
+    "description": "v0.30 R95 sub-spec 7 task 53: 失敗頁關閉按鈕 (v1.0 加按鈕用）"
   },
-  "migrationStartingHint": "启动中，请稍候...",
+  "migrationStartingHint": "启动中，请稍候……",
   "@migrationStartingHint": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 启动时 loading 文案 (_MigrationPromptApp 内部)"
+    "description": "v0.30 R95 sub-spec 7 task 53: 啟動時 loading 文案 (_MigrationPromptApp 內部）"
   },
   "migrationNavContextNull": "启动上下文尚未就绪，请稍后再试",
   "@migrationNavContextNull": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 弹 dialog 时 navigator context 仍 null 的兜底消息"
+    "description": "v0.30 R95 sub-spec 7 task 53: 彈 dialog 時 navigator context 仍 null 的兜底消息"
   },
   "migrationFailedErrorPrefix": "错误",
   "@migrationFailedErrorPrefix": {
-    "description": "v0.30 R95 sub-spec 7 task 53: 错误前缀标签 (e.g. '错误: xxx')"
+    "description": "v0.30 R95 sub-spec 7 task 53: 錯誤前綴標籤 (e.g. '錯誤： xxx')"
   },
   "dailyTrackingNoteLabel": "备注",
   "@dailyTrackingNoteLabel": {
-    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note label (anxiety_agitation / sleep / stress_event / treatment / weight 5 处共享)"
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note label (anxiety_agitation / sleep / stress_event / treatment / weight 5 處共享）"
   },
   "dailyTrackingNoteHint": "可选",
   "@dailyTrackingNoteHint": {
-    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note hint, 提示用户非必填"
+    "description": "v0.30 R95 sub-spec 7 task 55: daily_tracking 6 widget 通用 note hint, 提示用戶非必填"
   },
   "timeAgoJustNow": "刚刚",
   "@timeAgoJustNow": {
-    "description": "v0.30 R95 sub-spec 7 task 55: assessment_center_card 等相对时间显示 '刚刚' (just now)"
+    "description": "v0.30 R95 sub-spec 7 task 55: assessment_center_card 等相對時間顯示 '剛剛' (just now)"
   },
   "timeAgoDaysAgo": "{days} 天前",
   "@timeAgoDaysAgo": {
-    "description": "v0.30 R95 sub-spec 7 task 55: 相对时间 '{N} 天前' (N days ago)",
+    "description": "v0.30 R95 sub-spec 7 task 55: 相對時間 '{N} 天前' (N days ago)",
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "timeAgoHoursAgo": "{hours} 小时前",
   "@timeAgoHoursAgo": {
-    "description": "v0.30 R95 sub-spec 7 task 55: 相对时间 '{N} 小时前' (N hours ago)",
+    "description": "v0.30 R95 sub-spec 7 task 55: 相對時間 '{N} 小時前' (N hours ago)",
     "placeholders": {
-      "hours": { "type": "int" }
+      "hours": {
+        "type": "int"
+      }
     }
   },
   "weightNoBmi": "暂无 BMI",
   "@weightNoBmi": {
-    "description": "v0.30 R100 (P1#9): 体重 tile BMI 缺失后缀 (暂无身高档案)"
+    "description": "v0.30 R100 (P1#9): 體重 tile BMI 缺失後綴 （暫無身高檔案）"
   },
   "weightKgLabel": "体重 (kg)",
   "@weightKgLabel": {
-    "description": "v0.30 R100 (P1#9): 体重 dialog 体重输入框 label"
+    "description": "v0.30 R100 (P1#9): 體重 dialog 體重輸入框 label"
   },
   "weightKgHint": "如 60.5",
   "@weightKgHint": {
-    "description": "v0.30 R100 (P1#9): 体重 dialog 体重输入框 hint"
+    "description": "v0.30 R100 (P1#9): 體重 dialog 體重輸入框 hint"
   },
-  "weightBmiNeedHeight": "暂无 (需填写身高)",
+  "weightBmiNeedHeight": "暂无 （需填写身高）",
   "@weightBmiNeedHeight": {
-    "description": "v0.30 R100 (P1#9): 体重 dialog BMI 实时行 缺身高档案时兜底文案"
+    "description": "v0.30 R100 (P1#9): 體重 dialog BMI 實時行 缺身高檔案時兜底文案"
   },
   "socialRhythmMinutesSummary": "社交 {social}min · 工作 {work}min · 运动 {exercise}min",
   "@socialRhythmMinutesSummary": {
-    "description": "v0.30 R100 (P1#9): 社会节律 tile 摘要行 3 分钟数段",
+    "description": "v0.30 R100 (P1#9): 社會節律 tile 摘要行 3 分鐘數段",
     "placeholders": {
-      "social": { "type": "Object" },
-      "work": { "type": "Object" },
-      "exercise": { "type": "Object" }
+      "social": {
+        "type": "Object"
+      },
+      "work": {
+        "type": "Object"
+      },
+      "exercise": {
+        "type": "Object"
+      }
     }
   },
-  "socialRhythmSocialMinLabel": "社交时长 (分钟)",
+  "socialRhythmSocialMinLabel": "社交时长 （分钟）",
   "@socialRhythmSocialMinLabel": {
-    "description": "v0.30 R100 (P1#9): 社会节律 dialog 社交分钟输入框 label"
+    "description": "v0.30 R100 (P1#9): 社會節律 dialog 社交分鐘輸入框 label"
   },
-  "socialRhythmWorkMinLabel": "工作时长 (分钟)",
+  "socialRhythmWorkMinLabel": "工作时长 （分钟）",
   "@socialRhythmWorkMinLabel": {
-    "description": "v0.30 R100 (P1#9): 社会节律 dialog 工作分钟输入框 label"
+    "description": "v0.30 R100 (P1#9): 社會節律 dialog 工作分鐘輸入框 label"
   },
-  "socialRhythmExerciseMinLabel": "运动时长 (分钟)",
+  "socialRhythmExerciseMinLabel": "运动时长 （分钟）",
   "@socialRhythmExerciseMinLabel": {
-    "description": "v0.30 R100 (P1#9): 社会节律 dialog 运动分钟输入框 label"
+    "description": "v0.30 R100 (P1#9): 社會節律 dialog 運動分鐘輸入框 label"
   },
   "anxietyAgitationAnxietyScaleHint": "1=严重 5=平静",
   "@anxietyAgitationAnxietyScaleHint": {
-    "description": "v0.30 R100 (P1#9): 焦虑急躁 dialog 焦虑分数刻度提示 (反向)"
+    "description": "v0.30 R100 (P1#9): 焦慮急躁 dialog 焦慮分數刻度提示 （反向）"
   },
   "anxietyAgitationAgitationScaleHint": "1=平静 5=极急",
   "@anxietyAgitationAgitationScaleHint": {
-    "description": "v0.30 R100 (P1#9): 焦虑急躁 dialog 急躁分数刻度提示 (正向)"
+    "description": "v0.30 R100 (P1#9): 焦慮急躁 dialog 急躁分數刻度提示 （正向）"
   },
   "sleepRegularityScore": "规律 {score}/5",
   "@sleepRegularityScore": {
-    "description": "v0.30 R100 (P1#9): 睡眠 tile 摘要行 规律性分数段",
+    "description": "v0.30 R100 (P1#9): 睡眠 tile 摘要行 規律性分數段",
     "placeholders": {
-      "score": { "type": "int" }
+      "score": {
+        "type": "int"
+      }
     }
   },
-  "sleepDurationLabel": "时长: {duration}",
+  "sleepDurationLabel": "时长： {duration}",
   "@sleepDurationLabel": {
-    "description": "v0.30 R100 (P1#9): 睡眠 dialog 时长只读行 (duration 是 HH h MM m 格式)",
+    "description": "v0.30 R100 (P1#9): 睡眠 dialog 時長只讀行 (duration 是 HH h MM m 格式）",
     "placeholders": {
-      "duration": { "type": "Object" }
+      "duration": {
+        "type": "Object"
+      }
     }
   },
   "stressIntensityScore": "强度 {intensity}/5",
   "@stressIntensityScore": {
-    "description": "v0.30 R100 (P1#9): 压力事件 tile 标题 强度分数段",
+    "description": "v0.30 R100 (P1#9): 壓力事件 tile 標題 強度分數段",
     "placeholders": {
-      "intensity": { "type": "int" }
+      "intensity": {
+        "type": "int"
+      }
     }
   },
   "moodCbtColumns": "{count} 栏",
   "@moodCbtColumns": {
-    "description": "v0.30 R100 (P1#9): CBT 栏数参数化 (settings cbt_section + mood_list filter sheet 共用)",
+    "description": "v0.30 R100 (P1#9): CBT 欄數參數化 (settings cbt_section + mood_list filter sheet 共用）",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "medReportTitleWindow": "用药报告（近 {days} 天）",
   "@medReportTitleWindow": {
-    "description": "v0.30 R100 (P1#9): 用药报告 dialog 标题 (含时间窗口)",
+    "description": "v0.30 R100 (P1#9): 用藥報告 dialog 標題 （含時間窗口）",
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "medCalendarBackfillStub": "补打卡功能接入中 ({date})",
   "@medCalendarBackfillStub": {
-    "description": "v0.30 R100 (P1#9): 用药日历 补打卡 stub SnackBar (date 是 YYYY-MM-DD)",
+    "description": "v0.30 R100 (P1#9): 用藥日曆 補打卡 stub SnackBar (date 是 YYYY-MM-DD)",
     "placeholders": {
-      "date": { "type": "Object" }
+      "date": {
+        "type": "Object"
+      }
     }
   },
   "setupCrisisHotlineTitle": "🆘 心理危机干预热线 (24h)",
   "@setupCrisisHotlineTitle": {
-    "description": "v0.30 R100 (P1#9): setup 法务 dialog 危机热线区块标题"
+    "description": "v0.30 R100 (P1#9): setup 法務 dialog 危機熱線區塊標題"
   },
   "consentWithdrawSafetyBody": "失联通知功能将停用。系统不再通过 SMS / 邮件自动通知紧急联系人。",
   "@consentWithdrawSafetyBody": {
-    "description": "v0.30 R100 (P1#9): §14 撤回 safety 同意 fallback body (法律文案)"
+    "description": "v0.30 R100 (P1#9): §14 撤回 safety 同意 fallback body （法律文案）"
   },
-  "consentWithdrawVentBody": "树洞 (私密倾诉) 功能将停用。新增树洞记录会被拒绝, 已有记录保留。",
+  "consentWithdrawVentBody": "树洞 （私密倾诉） 功能将停用。新增树洞记录会被拒绝， 已有记录保留。",
   "@consentWithdrawVentBody": {
-    "description": "v0.30 R100 (P1#9): §14 撤回 vent 同意 fallback body (法律文案)"
+    "description": "v0.30 R100 (P1#9): §14 撤回 vent 同意 fallback body （法律文案）"
   },
-  "consentWithdrawAnalyticsBody": "评估 / 情绪相关分析图表将不再展示。已有数据保留, 重新开启后恢复。",
+  "consentWithdrawAnalyticsBody": "评估 / 情绪相关分析图表将不再展示。已有数据保留， 重新开启后恢复。",
   "@consentWithdrawAnalyticsBody": {
-    "description": "v0.30 R100 (P1#9): §14 撤回 analytics 同意 fallback body (法律文案)"
+    "description": "v0.30 R100 (P1#9): §14 撤回 analytics 同意 fallback body （法律文案）"
   },
   "dataExportPurposeBackup": "本地备份 / 跨设备迁移",
   "@dataExportPurposeBackup": {
-    "description": "v0.30 R100 (P1#9): 导出 consent dialog purpose placeholder"
+    "description": "v0.30 R100 (P1#9): 導出 consent dialog purpose placeholder"
   },
-  "dataExportDataCategories": "用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)",
+  "dataExportDataCategories": "用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 （录音不导出）",
   "@dataExportDataCategories": {
-    "description": "v0.30 R100 (P1#9): 导出 consent dialog dataCategories placeholder"
+    "description": "v0.30 R100 (P1#9): 導出 consent dialog dataCategories placeholder"
   },
   "dataExportRetentionClipboard": "剪贴板 + 用户自行保存到加密存储",
   "@dataExportRetentionClipboard": {
-    "description": "v0.30 R100 (P1#9): 导出 consent dialog retention placeholder"
+    "description": "v0.30 R100 (P1#9): 導出 consent dialog retention placeholder"
   },
-
   "medPageTitle": "用药",
   "medAddTooltip": "添加药物",
   "medTodaySchedule": "今日服药",
@@ -2975,43 +2995,6 @@
   "medFormOther": "其他",
   "medDetailTitle": "药物详情",
   "medNotFound": "药物未找到",
-  "@medPageTitle": {
-    "description": "v0.30 R101: 用药主页标题"
-  },
-  "@medAddTooltip": {
-    "description": "v0.30 R101: 用药主页添加按钮 tooltip"
-  },
-  "@medTodaySchedule": {
-    "description": "v0.30 R101: 今日服药计划 section 标题"
-  },
-  "@medMyMedications": {
-    "description": "v0.30 R101: 我的药物 section 标题"
-  },
-  "@medQuickActions": {
-    "description": "v0.30 R101: 快捷操作 section 标题"
-  },
-  "@medSlotMorning": {
-    "description": "v0.30 R101: 时间段标签 - 早上"
-  },
-  "@medSlotAfternoon": {
-    "description": "v0.30 R101: 时间段标签 - 下午"
-  },
-  "@medSlotEvening": {
-    "description": "v0.30 R101: 时间段标签 - 晚上"
-  },
-  "@medSlotBedtime": {
-    "description": "v0.30 R101: 时间段标签 - 睡前"
-  },
-  "@medFormTablet": {
-    "description": "v0.30 R101: 剂型 - 片剂"
-  },
-  "@medFormCapsule": {
-    "description": "v0.30 R101: 剂型 - 胶囊"
-  },
-  "@medFormLiquid": {
-    "description": "v0.30 R101: 剂型 - 口服液"
-  },
-
   "moodInfluenceTitle": "影响因素",
   "moodInfluenceSubtitle": "什么影响了你的心情？（可多选）",
   "moodInfluenceRelationships": "关系",
@@ -3020,7 +3003,6 @@
   "moodInfluenceMindfulness": "正念",
   "moodInfluenceWeather": "天气",
   "moodInfluenceOther": "其他",
-
   "moodDetailTitle": "情绪详情",
   "moodDetailFactors": "影响因素",
   "moodDetailMoodState": "情绪状态",
@@ -3037,7 +3019,7 @@
   "moodModeDaily": "今天",
   "moodTrendDistTitle": "分数分布",
   "moodTrendCbtTitle": "CBT 重评效果",
-  "moodTrendCbtHint": "正值 = 情绪改善, 负值 = 恶化",
+  "moodTrendCbtHint": "正值 = 情绪改善， 负值 = 恶化",
   "moodTrendCbtEmpty": "暂无 CBT 重评数据",
   "medDetailActive": "在用",
   "medDetailStopped": "已停",
@@ -3056,10 +3038,7 @@
   "moodCbtCoreBelief": "核心信念",
   "moodCbtBehavior": "行为应对",
   "moodDeleted": "已删除",
-  "moodPeriodMorning": "早上",
   "moodPeriodAfternoon": "下午",
-  "moodPeriodEvening": "晚上",
-  "moodPeriodNight": "夜间",
   "settingsProfileTitle": "个人资料",
   "settingsProfileSubtitle": "健康档案、医疗信息",
   "todaySummaryCheckIn": "打卡",
@@ -3067,7 +3046,7 @@
   "todaySummaryMood": "心情",
   "todaySummaryStreak": "连续",
   "@todaySummaryStreakDays": {
-    "description": "R103: 主页摘要卡连续打卡天数 (placeholder {count} 是天数)",
+    "description": "R103: 主頁摘要卡連續打卡天數 (placeholder {count} 是天數）",
     "placeholders": {
       "count": {
         "type": "int"
@@ -3075,7 +3054,6 @@
     }
   },
   "setupConsentMedicalDisclaimer": "我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务",
-
   "trackingCustomize": "自定义追踪项",
   "trackingPin": "置顶",
   "trackingUnpin": "取消置顶",
@@ -3087,34 +3065,44 @@
   "trackingCategoryMedical": "医疗记录",
   "todayTrackingSummary": "今日已追踪 {tracked}/{total} 项",
   "@todayTrackingSummary": {
-    "description": "R100: 今日追踪汇总 (placeholders: tracked=已追踪数, total=总数)",
+    "description": "R100: 今日追蹤彙總 (placeholders: tracked=已追蹤數， total=總數）",
     "placeholders": {
-      "tracked": { "type": "int" },
-      "total": { "type": "int" }
+      "tracked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "moodRecordingLabel": "录音 {duration}",
   "@moodRecordingLabel": {
-    "description": "R104: 情绪详情页录音标签 (placeholder {duration} 是时长)",
+    "description": "R104: 情緒詳情頁錄音標籤 (placeholder {duration} 是時長）",
     "placeholders": {
-      "duration": { "type": "String" }
+      "duration": {
+        "type": "String"
+      }
     }
   },
   "medicationNameRequired": "请输入药物名称",
   "medicationAdded": "已添加 {name}",
   "@medicationAdded": {
-    "description": "R104: 添加药物成功提示 (placeholder {name} 是药名)",
+    "description": "R104: 添加藥物成功提示 (placeholder {name} 是藥名）",
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "medicationStatusInUse": "在用",
   "medicationStatusStopped": "已停",
   "factorAnalysisCount": "{count} 条",
   "@factorAnalysisCount": {
-    "description": "R104: 影响因素分析记录数 (placeholder {count} 是数量)",
+    "description": "R104: 影響因素分析記錄數 (placeholder {count} 是數量）",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "setupConsentAgreeAll": "我已阅读并同意以上所有协议",
@@ -3132,7 +3120,7 @@
   "assessmentComparisonFirst": "首次评估",
   "assessmentDeltaSame": "和上次一样（{delta}）",
   "@assessmentDeltaSame": {
-    "description": "评估对比: 分数差为 0 时的文案",
+    "description": "評估對比： 分數差為 0 時的文案",
     "placeholders": {
       "delta": {
         "type": "int"
@@ -3141,7 +3129,7 @@
   },
   "assessmentDeltaHigher": "比上次高 {delta} 分",
   "@assessmentDeltaHigher": {
-    "description": "评估对比: 分数比上次高",
+    "description": "評估對比： 分數比上次高",
     "placeholders": {
       "delta": {
         "type": "int"
@@ -3150,7 +3138,7 @@
   },
   "assessmentDeltaLower": "比上次低 {delta} 分",
   "@assessmentDeltaLower": {
-    "description": "评估对比: 分数比上次低",
+    "description": "評估對比： 分數比上次低",
     "placeholders": {
       "delta": {
         "type": "int"
@@ -3159,7 +3147,7 @@
   },
   "assessmentSeverityRank": "等级 {rank}",
   "@assessmentSeverityRank": {
-    "description": "评估对比: 未知量表的严重度等级兜底",
+    "description": "評估對比： 未知量表的嚴重度等級兜底",
     "placeholders": {
       "rank": {
         "type": "int"
@@ -3169,12 +3157,86 @@
   "checkInTypeAssessment": "心理量表评估",
   "dayDetailTotalScore": "总分 {total}",
   "@dayDetailTotalScore": {
-    "description": "日历详情: 评估事件副标题 (总分)",
+    "description": "日曆詳情： 評估事件副標題 （總分）",
     "placeholders": {
       "total": {
         "type": "int"
       }
     }
   },
-  "dayDetailScaleAssessment": "心理量表评估"
+  "dayDetailScaleAssessment": "心理量表评估",
+  "medTodayPending": "待服",
+  "medTodayTaken": "已服",
+  "medTodayRefill": "需续方",
+  "homeQuickMedLabel": "用药",
+  "homeQuickMoodLabel": "心情",
+  "homeQuickVentLabel": "树洞",
+  "homeQuickAssessmentLabel": "评估",
+  "homeQuickActionView": "查看",
+  "homeQuickActionRecord": "记录",
+  "homeQuickActionVent": "倾诉",
+  "homeQuickActionStart": "开始",
+  "homeTodayMetrics": "今日指标",
+  "homeMoreMoodTitle": "心情",
+  "homeMoreMoodSubtitle": "查看过往记录",
+  "homeMoreVentTitle": "树洞",
+  "homeMoreVentSubtitle": "私密空间 · 1 人可见",
+  "homeMoreSettingsTitle": "设置",
+  "homeMoreSettingsSubtitle": "提醒 / 隐私 / 数据导出",
+  "moodQuickRecordFailed": "记录失败，请重试",
+  "homeMoreSectionTitle": "更多",
+  "@ventReportTooltip": {
+    "description": "R97-P1-4 (2026-08-07): 樹洞詳情頁舉報 / 反饋按鈕 tooltip (Apple 1.2.1 UGC 報告機制要求）"
+  },
+  "@ventReportDialogTitle": {
+    "description": "R97-P1-4: 舉報 / 反饋對話框標題"
+  },
+  "@ventReportDialogBody": {
+    "description": "R97-P1-4: 舉報 / 反饋對話框正文， 說明 vent 是本地私密內容 + 引導到 legal 頁反饋"
+  },
+  "@ventReportDialogAction": {
+    "description": "R97-P1-4: 舉報對話框跳轉 legal 頁按鈕"
+  },
+  "@ventReportDialogClose": {
+    "description": "R97-P1-4: 舉報對話框關閉按鈕"
+  },
+  "@homeSafetyAlertSuffix": {
+    "description": "Snackbar 後綴 — 跟 displayMessage 組合顯示，提醒用戶儘快打卡或聯繫家人"
+  },
+  "@medPageTitle": {
+    "description": "v0.30 R101: 用藥主頁標題"
+  },
+  "@medAddTooltip": {
+    "description": "v0.30 R101: 用藥主頁添加按鈕 tooltip"
+  },
+  "@medTodaySchedule": {
+    "description": "v0.30 R101: 今日服藥計劃 section 標題"
+  },
+  "@medMyMedications": {
+    "description": "v0.30 R101: 我的藥物 section 標題"
+  },
+  "@medQuickActions": {
+    "description": "v0.30 R101: 快捷操作 section 標題"
+  },
+  "@medSlotMorning": {
+    "description": "v0.30 R101: 時間段標籤 - 早上"
+  },
+  "@medSlotAfternoon": {
+    "description": "v0.30 R101: 時間段標籤 - 下午"
+  },
+  "@medSlotEvening": {
+    "description": "v0.30 R101: 時間段標籤 - 晚上"
+  },
+  "@medSlotBedtime": {
+    "description": "v0.30 R101: 時間段標籤 - 睡前"
+  },
+  "@medFormTablet": {
+    "description": "v0.30 R101: 劑型 - 片劑"
+  },
+  "@medFormCapsule": {
+    "description": "v0.30 R101: 劑型 - 膠囊"
+  },
+  "@medFormLiquid": {
+    "description": "v0.30 R101: 劑型 - 口服液"
+  }
 }

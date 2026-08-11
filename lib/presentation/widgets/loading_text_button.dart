@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
-/// "保存中/提交中" 状态的 button
+/// "保存中／提交中" 状态的 button
 ///
 /// 跟 FilledButton/TextButton 风格一致,只是 isLoading=true 时在文字上叠 spinner。
 ///

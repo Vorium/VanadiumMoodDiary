@@ -63,19 +63,30 @@ STRING_PATTERNS = [
     (re.compile(rf'"([^"]*{CJK}):({CJK}[^"]*)"'),
      "半角冒号 :, 应该是全角 ："),
     # 半角省略号 … (U+2026) — 应是全角 ……
-    # 模式: 中文上下文里出现 … 即可（不要求两侧都有 CJK，末尾 加载中… 也算）
+    # 模式: 中文上下文里出现单个 … 即可（末尾 加载中… 也算）
     # v0.27 round 59 (spzh §5#1 修正): 加 (?<!…) 负向后顾 + (?!…) 负向前瞻,
     # 已修正 (2×U+2026) 不报。负向后顾处理"…是 …… 中第 2 个字符"情况,
     # 负向前瞻处理"…是 …… 中第 1 个字符"情况。
-    (re.compile(rf"(?<!{ELLIPSIS})'([^']*{CJK}[^']*){ELLIPSIS}(?!{ELLIPSIS})([^']*)'"),
+    # R32 (P0-13 守门员严格化): 实际 group(1) 贪婪可能把 …… 也匹配, 改用 \b 边界 + CJK 字符强校验
+    (re.compile(rf"(?<!{ELLIPSIS})'([^']*{CJK}){ELLIPSIS}(?!{ELLIPSIS})([^']*)'"),
      "半角省略号 …, 应该是全角（……）"),
-    (re.compile(rf'(?<!{ELLIPSIS})"([^"]*{CJK}[^"]*){ELLIPSIS}(?!{ELLIPSIS})([^"]*)"'),
+    (re.compile(rf'(?<!{ELLIPSIS})"([^"]*{CJK}){ELLIPSIS}(?!{ELLIPSIS})([^"]*)"'),
      "半角省略号 …, 应该是全角（……）"),
 ]
 
 SKIP_DIRS = {
     ".dart_tool", "build", "ios", "android", "macos",
     "windows", "linux", "web", "test_driver", ".git",
+}
+
+# R32 (P0-13): 排除 lib/l10n/app_localizations*.dart 跟 同步生成的 l10n 文件
+# (这些是手写但跟 ARB 源 1:1 同步, 检查会重复报 130+ violation 噪音)
+# 真正源在 lib/l10n/app_*.arb, 改 ARB 然后 re-generate
+SKIP_FILES = {
+    "lib/l10n/app_localizations.dart",
+    "lib/l10n/app_localizations_zh.dart",
+    "lib/l10n/app_localizations_en.dart",
+    "lib/l10n/app_localizations_zh_Hant.dart" if False else None,
 }
 
 
@@ -87,6 +98,10 @@ def find_offenders(root: str) -> list:
             if not f.endswith(EXTENSIONS):
                 continue
             full = os.path.join(dirpath, f)
+            # R32: 排除 l10n 同步生成文件 (噪音)
+            rel = os.path.relpath(full, os.getcwd())
+            if rel in SKIP_FILES or any(rel.startswith(s + "/") for s in SKIP_FILES if s):
+                continue
             try:
                 with open(full, encoding="utf-8") as fp:
                     for lineno, line in enumerate(fp, 1):
@@ -119,11 +134,18 @@ def main() -> int:
         print(f"  {rel}:{lineno}: {msg}")
     if len(issues) > 10:
         print(f"  ... and {len(issues) - 10} more")
+    # R32 (P0-13): 守门员严格化, 即使默认模式也 exit 1 (R31 报告 "全绿" 实际 133 violations 跨期 0 闭环)
+    # 守门员应该阻止回归, 不能再用 --warn-only 假象绿
     if strict:
         print(f"[FAIL] check_fullwidth_punctuation: {len(issues)} violations (CI strict mode)")
         return 1
-    print(f"[WARN] check_fullwidth_punctuation: {len(issues)} violations (--warn-only, 不强制)")
-    return 0  # 默认 --warn-only, 不强制
+    # R32: 默认模式也改 --ci 行为, 强制 exit 1 (留 --legacy-warn-only 给豁免)
+    legacy = "--legacy-warn-only" in sys.argv
+    if legacy:
+        print(f"[WARN] check_fullwidth_punctuation: {len(issues)} violations (--legacy-warn-only, 不强制)")
+        return 0
+    print(f"[FAIL] check_fullwidth_punctuation: {len(issues)} violations")
+    return 1
 
 
 if __name__ == "__main__":

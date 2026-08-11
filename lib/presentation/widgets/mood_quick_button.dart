@@ -11,7 +11,7 @@ import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 /// 主页情绪快捷按钮
 ///
 /// 显示规则：
-/// - 今日已记录 → emoji + "今日情绪：好/差/一般/..."
+/// - 今日已记录 → emoji + "今日情绪：好／差／一般／..."
 /// - 今日未记录 → "记一下情绪 ✏️"
 ///
 /// v0.23 P1 refactor: 从 presentation/pages/mood/ 移到 widgets/，

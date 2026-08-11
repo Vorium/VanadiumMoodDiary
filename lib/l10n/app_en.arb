@@ -57,8 +57,12 @@
   "settingsAssessmentHistory": "Assessment History",
   "settingsAssessmentHistorySubtitle": "View line charts and comparisons for all PHQ-9 / GAD-7 assessments",
   "@settingsAboutVersion": {
-      "description": "R99 (BUG-2): about section version line, version injected from kPubspecVersion (no longer hardcoded)",
-      "placeholders": { "version": { "type": "String" } }
+    "description": "R99 (BUG-2): about section version line, version injected from kPubspecVersion (no longer hardcoded)",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
   },
   "settingsAboutVersion": "v{version} · I took my meds today",
   "settingsDisclaimerText": "This app does not provide medical advice. All features are for reference only.",
@@ -97,7 +101,7 @@
   "commonCancel": "Cancel",
   "commonDelete": "Delete",
   "commonEdit": "Edit",
-  "commonLoading": "Loading...",
+  "commonLoading": "Loading……",
   "lastStartupErrorBannerBody": "Last startup error, please screenshot and report",
   "commonClose": "Close",
   "commonRefresh": "Refresh",
@@ -216,7 +220,7 @@
   "notificationStatusCardNoTitle": "(No title)",
   "notificationStatusCardWebTitle": "Notifications are only available on Android / iOS",
   "notificationStatusCardWebSubtitle": "You're on the web. Notifications are controlled by the browser. Please test on your phone.",
-  "notificationStatusCardStatusLoading": "Loading…",
+  "notificationStatusCardStatusLoading": "Loading……",
   "notificationStatusCardStatusUnsupported": "Unsupported on this platform",
   "notificationStatusCardStatusNone": "⚠️ No pending notifications — reminders may not be set",
   "notificationStatusCardStatusCount": "✓ {count} notification(s) queued",
@@ -444,9 +448,9 @@
   "ventToday": "Today",
   "ventYesterday": "Yesterday",
   "ventComposeTitle": "Vent",
-  "ventComposeHint": "How was your day...",
+  "ventComposeHint": "How was your day……",
   "ventRecordIdle": "Tap to start recording",
-  "ventRecordActive": "Recording... tap to stop",
+  "ventRecordActive": "Recording…… tap to stop",
   "ventAudioLabel": "Recording",
   "ventAudioPlayTooltip": "Play recording",
   "ventAudioPauseTooltip": "Pause recording",
@@ -515,7 +519,7 @@
   "moodAudioRerecord": "Re-record",
   "moodAudioTranscriptLabel": "Transcript",
   "moodAudioTranscriptPartialHint": "(only the first 60s recognized)",
-  "moodAudioSttListening": "Recognizing…",
+  "moodAudioSttListening": "Recognizing……",
   "moodAudioSttFailed": "Recognition failed; audio saved only",
   "moodAudioSttUnavailable": "Speech-to-text not available on this device",
   "moodAudioMaxReached": "Reached 3-minute limit",
@@ -575,7 +579,7 @@
       }
     }
   },
-  "assessmentLoadingBack": "Returning...",
+  "assessmentLoadingBack": "Returning……",
   "assessmentAnsweredProgress": "Answered {answered} / {total}",
   "@assessmentAnsweredProgress": {
     "placeholders": {
@@ -986,7 +990,6 @@
   "@notifChannelSafetyDesc": {
     "description": "Android notification channel description (safety) — v0.27 R77 fix (R76-N1)"
   },
-  "homeVentButton": "Vent 🌲",
   "homeNotifBannerText": "Reminders not set — you may miss check-ins. Please enable notifications in system settings.",
   "homeNotifBannerDismiss": "Got it",
   "themeTooltip": "Theme: {mode} (tap to switch)",
@@ -1171,7 +1174,7 @@
   "medReportCopyHint": "Select all to copy, generate PDF, or share with your doctor",
   "medReportPdfLabel": "PDF",
   "medReportShareLabel": "Share",
-  "medReportPdfLoading": "Generating PDF...",
+  "medReportPdfLoading": "Generating PDF……",
   "medReportShareSubject": "Chronic Care · Medication Report",
   "tempMedDialogTitle": "Add Temporary Medication",
   "tempMedLinkLabel": "Link to regular medication (optional)",
@@ -1529,7 +1532,11 @@
   "crisisHotlineUsTextLineDesc": "US 24h text",
   "@crisisHotlineSnackbarCopied": {
     "description": "v0.30 round 92: snackbar after copying hotline number",
-    "placeholders": { "number": { "type": "Object" } }
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
   },
   "crisisHotlineSnackbarCopied": "Copied: {number}",
   "@crisisHotlineDialTooltip": {
@@ -1542,7 +1549,11 @@
   "crisisHotlineCopyTooltip": "Copy number",
   "@crisisHotlineDialFailed": {
     "description": "R97-P1-11 (2026-08-07): snackbar when tel: intent fails to launch",
-    "placeholders": { "number": { "type": "Object" } }
+    "placeholders": {
+      "number": {
+        "type": "Object"
+      }
+    }
   },
   "crisisHotlineDialFailed": "Unable to launch dialer, please call manually: {number}",
   "setupLegalAgeAttestation": "I solemnly declare that I am at least 18 years of age. If I am between 14 and 18 years of age, I confirm that I have obtained consent from my legal guardian and accept all legal consequences of any false statement.",
@@ -1622,7 +1633,7 @@
   "moodListSortScoreAsc": "Score ascending",
   "moodListSortScoreDesc": "Score descending",
   "moodListPageTitle": "Mood history",
-  "moodListSearchHint": "Search note…",
+  "moodListSearchHint": "Search note……",
   "moodListEmpty": "No mood entries yet",
   "moodListNoMatch": "No matching entries",
   "moodListEntryCount": "{count} entries",
@@ -2686,7 +2697,6 @@
   "@socialRhythmLastMealTitle": {
     "description": "v0.30 R92: socialRhythmLastMealTitle title label (R91 daily_tracking i18n gap title key, R92 patch)"
   },
-
   "cardStatusToday": "Today",
   "@cardStatusToday": {
     "description": "v0.30 R91: Card time status today"
@@ -2719,7 +2729,9 @@
   "@migrationFailedFooter": {
     "description": "v0.30 R95 sub-spec 7 task 53: technical info footer on failure page, sanitized internal exception",
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "migrationFailedRetryButton": "Retry",
@@ -2730,7 +2742,7 @@
   "@migrationFailedCloseButton": {
     "description": "v0.30 R95 sub-spec 7 task 53: close button on failure page (v1.0 will add button)"
   },
-  "migrationStartingHint": "Starting up, please wait...",
+  "migrationStartingHint": "Starting up, please wait……",
   "@migrationStartingHint": {
     "description": "v0.30 R95 sub-spec 7 task 53: loading text during startup (_MigrationPromptApp internal)"
   },
@@ -2758,14 +2770,18 @@
   "@timeAgoDaysAgo": {
     "description": "v0.30 R95 sub-spec 7 task 55: relative time 'N days ago'",
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "timeAgoHoursAgo": "{hours} hours ago",
   "@timeAgoHoursAgo": {
     "description": "v0.30 R95 sub-spec 7 task 55: relative time 'N hours ago'",
     "placeholders": {
-      "hours": { "type": "int" }
+      "hours": {
+        "type": "int"
+      }
     }
   },
   "weightNoBmi": "No BMI",
@@ -2788,9 +2804,15 @@
   "@socialRhythmMinutesSummary": {
     "description": "v0.30 R100 (P1#9): social rhythm tile summary minute segments",
     "placeholders": {
-      "social": { "type": "Object" },
-      "work": { "type": "Object" },
-      "exercise": { "type": "Object" }
+      "social": {
+        "type": "Object"
+      },
+      "work": {
+        "type": "Object"
+      },
+      "exercise": {
+        "type": "Object"
+      }
     }
   },
   "socialRhythmSocialMinLabel": "Social time (minutes)",
@@ -2817,42 +2839,54 @@
   "@sleepRegularityScore": {
     "description": "v0.30 R100 (P1#9): sleep tile summary regularity score segment",
     "placeholders": {
-      "score": { "type": "int" }
+      "score": {
+        "type": "int"
+      }
     }
   },
   "sleepDurationLabel": "Duration: {duration}",
   "@sleepDurationLabel": {
     "description": "v0.30 R100 (P1#9): sleep dialog read-only duration row",
     "placeholders": {
-      "duration": { "type": "Object" }
+      "duration": {
+        "type": "Object"
+      }
     }
   },
   "stressIntensityScore": "Intensity {intensity}/5",
   "@stressIntensityScore": {
     "description": "v0.30 R100 (P1#9): stress event tile title intensity score segment",
     "placeholders": {
-      "intensity": { "type": "int" }
+      "intensity": {
+        "type": "int"
+      }
     }
   },
   "moodCbtColumns": "{count} columns",
   "@moodCbtColumns": {
     "description": "v0.30 R100 (P1#9): parameterized CBT column count (settings cbt_section + mood_list filter sheet)",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "medReportTitleWindow": "Medication Report (last {days} days)",
   "@medReportTitleWindow": {
     "description": "v0.30 R100 (P1#9): medication report dialog title with time window",
     "placeholders": {
-      "days": { "type": "int" }
+      "days": {
+        "type": "int"
+      }
     }
   },
   "medCalendarBackfillStub": "Backfill check-in coming soon ({date})",
   "@medCalendarBackfillStub": {
     "description": "v0.30 R100 (P1#9): medication calendar backfill stub SnackBar (date is YYYY-MM-DD)",
     "placeholders": {
-      "date": { "type": "Object" }
+      "date": {
+        "type": "Object"
+      }
     }
   },
   "setupCrisisHotlineTitle": "🆘 Crisis Intervention Hotline (24h)",
@@ -2883,7 +2917,6 @@
   "@dataExportRetentionClipboard": {
     "description": "v0.30 R100 (P1#9): export consent dialog retention placeholder"
   },
-
   "medPageTitle": "Medications",
   "medAddTooltip": "Add medication",
   "medTodaySchedule": "Today's Schedule",
@@ -2923,7 +2956,6 @@
   "medFormOther": "Other",
   "medDetailTitle": "Medication Detail",
   "medNotFound": "Medication not found",
-
   "moodInfluenceTitle": "Influence Factors",
   "moodInfluenceSubtitle": "What influenced your mood? (select multiple)",
   "moodInfluenceRelationships": "Relationships",
@@ -2932,7 +2964,6 @@
   "moodInfluenceMindfulness": "Mindfulness",
   "moodInfluenceWeather": "Weather",
   "moodInfluenceOther": "Other",
-
   "moodDetailTitle": "Mood Detail",
   "moodDetailFactors": "Influence Factors",
   "moodDetailMoodState": "Mood State",
@@ -2968,10 +2999,7 @@
   "moodCbtCoreBelief": "Core Belief",
   "moodCbtBehavior": "Behavioral Response",
   "moodDeleted": "Deleted",
-  "moodPeriodMorning": "Morning",
   "moodPeriodAfternoon": "Afternoon",
-  "moodPeriodEvening": "Evening",
-  "moodPeriodNight": "Night",
   "settingsProfileTitle": "Profile",
   "settingsProfileSubtitle": "Health records, medical info",
   "todaySummaryCheckIn": "Check-in",
@@ -2987,7 +3015,6 @@
     }
   },
   "setupConsentMedicalDisclaimer": "I have read and understand the Medical Disclaimer: this app does not provide medical advice, diagnosis, or treatment",
-
   "trackingCustomize": "Customize Trackers",
   "trackingPin": "Pin to Top",
   "trackingUnpin": "Unpin",
@@ -3001,15 +3028,21 @@
   "@todayTrackingSummary": {
     "description": "R100: Today tracking summary (placeholders: tracked=tracked count, total=total count)",
     "placeholders": {
-      "tracked": { "type": "int" },
-      "total": { "type": "int" }
+      "tracked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "moodRecordingLabel": "Recording {duration}",
   "@moodRecordingLabel": {
     "description": "R104: Mood detail recording label (placeholder {duration} is duration)",
     "placeholders": {
-      "duration": { "type": "String" }
+      "duration": {
+        "type": "String"
+      }
     }
   },
   "medicationNameRequired": "Please enter medication name",
@@ -3017,7 +3050,9 @@
   "@medicationAdded": {
     "description": "R104: Medication added success message (placeholder {name} is medication name)",
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "medicationStatusInUse": "Active",
@@ -3026,7 +3061,9 @@
   "@factorAnalysisCount": {
     "description": "R104: Factor analysis record count (placeholder {count} is count)",
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "setupConsentAgreeAll": "I have read and agree to all the above agreements",
@@ -3088,5 +3125,25 @@
       }
     }
   },
-  "dayDetailScaleAssessment": "Psychological assessment"
+  "dayDetailScaleAssessment": "Psychological assessment",
+  "medTodayPending": "Pending",
+  "medTodayTaken": "Taken",
+  "medTodayRefill": "Refill",
+  "homeQuickMedLabel": "Meds",
+  "homeQuickMoodLabel": "Mood",
+  "homeQuickVentLabel": "Vent",
+  "homeQuickAssessmentLabel": "Assess",
+  "homeQuickActionView": "View",
+  "homeQuickActionRecord": "Log",
+  "homeQuickActionVent": "Talk",
+  "homeQuickActionStart": "Start",
+  "homeTodayMetrics": "Today",
+  "homeMoreMoodTitle": "Mood",
+  "homeMoreMoodSubtitle": "View past entries",
+  "homeMoreVentTitle": "Vent",
+  "homeMoreVentSubtitle": "Private space · 1 viewer",
+  "homeMoreSettingsTitle": "Settings",
+  "homeMoreSettingsSubtitle": "Reminders / Privacy / Data",
+  "moodQuickRecordFailed": "Record failed, please retry",
+  "homeMoreSectionTitle": "More"
 }

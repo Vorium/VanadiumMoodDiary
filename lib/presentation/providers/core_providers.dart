@@ -88,7 +88,7 @@ final notificationServiceProvider = Provider<NotificationService>(
 /// [SmsService.validateForRelease],release 模式 + 未配置 provider →
 /// 抛 [SmsProviderNotConfiguredError],被 runZonedGuarded 抓住,LastErrorCapture
 /// 记录,AppRoot 启动后顶部 banner 显眼提示。比之前"send() 时静默 fail +
-/// UI 显示 banner"更前置,把"假成功"风险降到 0。
+/// UI 显示 banner"更前置，把"假成功"风险降到 0。
 final smsServiceProvider = Provider<SmsService>((ref) => SmsService());
 
 /// 当前 SMS provider 名称(给 UI 检测用)

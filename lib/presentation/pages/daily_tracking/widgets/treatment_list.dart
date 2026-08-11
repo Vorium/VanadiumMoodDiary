@@ -131,7 +131,7 @@ class TreatmentList extends ConsumerWidget {
     return Icons.medical_services_outlined;
   }
 
-  /// entry 显示: "类别 · 医生/医院"
+  /// entry 显示： "类别 · 医生／医院"
   String _entryTitle(TreatmentEntryEntity e, AppLocalizations l10n) {
     final category = _categoryLabel(e.treatmentType, l10n);
     return e.description.isEmpty ? category : '$category · ${e.description}';

@@ -43,13 +43,14 @@ class SecondaryActionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AppleListSection(
-      title: '更多',
+      // R32 (P0-15 i18n 跨期): AppleListSection.title 改 l10n
+      title: l10n.homeMoreSectionTitle,
       margin: EdgeInsets.zero,
       children: [
         _RowCell(
           icon: Icons.mood,
           iconColor: AppColors.healthMetricsColorFor('mood'), // systemPink
-          title: '心情',
+          title: l10n.homeMoreMoodTitle, // "心情"
           subtitle: l10n.moodRecordButton, // "记一下情绪 ✏️"
           onTap: onMoodTap,
         ),
@@ -57,24 +58,21 @@ class SecondaryActionRow extends StatelessWidget {
           icon: Icons.list_alt,
           iconColor: AppTokens.textSecondaryColor(context),
           title: l10n.moodListPageTitle, // "Mood 历史"
-          // TODO(Phase 5): 走 ARB
-          subtitle: '查看过往记录',
+          subtitle: l10n.homeMoreMoodSubtitle, // "查看过往记录"
           onTap: () => context.push('/mood-list'),
         ),
         _RowCell(
           icon: Icons.forest_outlined,
           iconColor: AppColors.healthMetricsColorFor('vent'), // systemPurple
-          // TODO(Phase 5): 走 ARB
-          title: '树洞',
-          subtitle: '私密空间 · 1 人可见',
+          title: l10n.homeMoreVentTitle, // "树洞"
+          subtitle: l10n.homeMoreVentSubtitle, // "私密空间 · 1 人可见"
           onTap: () => context.push('/vent'),
         ),
         _RowCell(
           icon: Icons.settings_outlined,
           iconColor: AppTokens.textSecondaryColor(context),
-          // TODO(Phase 5): 走 ARB
-          title: '设置',
-          subtitle: '提醒 / 隐私 / 数据导出',
+          title: l10n.homeMoreSettingsTitle, // "设置"
+          subtitle: l10n.homeMoreSettingsSubtitle, // "提醒 / 隐私 / 数据导出"
           onTap: () => context.push('/settings'),
         ),
       ],

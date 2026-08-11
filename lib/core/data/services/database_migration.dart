@@ -14,7 +14,7 @@ import 'package:chroniccare/core/data/services/db_key_service.dart';
 ///
 /// 策略：
 /// - **删除旧 DB**，因为 sqlcipher 不能直接打开非加密 DB
-/// - 旧数据 v0.9 之前没有"导出/导入"流程（data_export_service 是 v0.7 引入），
+/// - 旧数据 v0.9 之前没有"导出／导入"流程（data_export_service 是 v0.7 引入），
 ///   实际损失有限（v0.1 ~ v0.6 阶段用户少）
 /// - v0.9 之后用户可以用"导出数据"备份，升级不再丢数据
 ///

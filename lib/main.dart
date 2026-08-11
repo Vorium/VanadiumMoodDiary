@@ -104,7 +104,8 @@ Future<void> main() async {
       }
       // v0.22 round 33 (sp-en P0): release 模式之前直接 swallow, 用户连
       // "哪里出错了"都看不到。改成 LastErrorCapture 记录,下次启动 AppRoot
-      // 检测到就显示顶部 banner "上次启动出错,请截图反馈"。
+      // 检测到就显示顶部 banner "上次启动出错，请截图反馈"。
+      // R32 (P0-13): 注释里半角逗号 → 全角逗号（守门员 check_fullwidth_punctuation 严格化）
       LastErrorCapture.record(error, stack);
     },
   );

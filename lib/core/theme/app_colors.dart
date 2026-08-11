@@ -305,7 +305,7 @@ class AppColors {
 
   /// v0.23 round 40 (emil F3/F8 fix): 反白弱一档 — onPrimary @ alpha 0.85
   /// 替代散落 5+ 处 `onPrimary.withValues(alpha: 0.85)` 硬编码
-  /// emil "decisions should be nameable" — 0.85 不应裸用,命名 "muted"
+  /// emil "decisions should be nameable" — 0.85 不应裸用，命名 "muted"
   static Color fgOnPrimaryMuted(BuildContext context) =>
       Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.85);
 

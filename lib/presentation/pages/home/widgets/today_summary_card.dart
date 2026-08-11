@@ -69,7 +69,8 @@ class TodaySummaryCard extends ConsumerWidget {
       // AppleListSection 自己 ALL CAPS 渲染, 中文不变
       // (但 iOS section header 标准做法是 13pt w500 ALL CAPS letterSpacing 0.6;
       //  中文是 case-less, 视觉等同 13pt w500 letterSpacing 0.6 textHint)
-      title: '今日指标',
+      // R32 (P0-15 i18n 跨期): 改 l10n
+      title: l10n.homeTodayMetrics, // "今日指标"
       margin: EdgeInsets.zero,
       children: [
         // 2x2 网格: Row[Col[Stat1, Stat2], Col[Stat3, Stat4]]

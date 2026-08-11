@@ -147,7 +147,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
   ///
   /// 背景：App Store Guideline 1.2.1 要求包含 UGC 的 App 必须提供
   /// 举报机制。虽然本 App 的树洞内容仅本地存储、不会跨用户可见，
-  /// 但仍需提供"反馈/举报 App 本身内容"的入口以满足审核。
+  /// 但仍需提供"反馈／举报 App 本身内容"的入口以满足审核。
   ///
   /// 这里弹一个 dialog 说明本地存储机制，并提供跳转到「法律与隐私」
   /// 页面联系开发者的入口（该页面已存在，包含开发者邮箱等联系方式）。

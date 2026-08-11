@@ -196,7 +196,7 @@ class AppMotion {
   // 0.54 是 M3 long-task modal scrim 标准 (高于 dialog 0.32, 低于 0.7 全黑)。
   // 抽常量后, dark mode 调 scrim 适配时一处生效。
   //
-  // emil "decisions should be nameable" — 0.54 不应裸用,命名 "scrimAlpha"。
+  // emil "decisions should be nameable" — 0.54 不应裸用，命名 "scrimAlpha"。
 
   /// Modal scrim alpha — 0.54 (long-task modal 标准, 高于 dialog 0.32)
   static const double scrimAlpha = 0.54;

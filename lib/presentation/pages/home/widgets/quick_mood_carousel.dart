@@ -85,8 +85,9 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('记录失败，请重试'),
+          SnackBar(
+            // R32 (P0-15 i18n 跨期): 改 l10n (P0-12 emil: 顺便走 AppSnackBar 集中器)
+            content: Text(l10n.moodQuickRecordFailed),
             duration: AppTokens.snackBarDurationShort,
           ),
         );
@@ -101,7 +102,8 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
     final l10n = AppLocalizations.of(context);
     final moodColor = AppColors.healthMetricsColorFor('mood'); // systemPink
     return AppleListSection(
-      title: '心情',
+      // R32 (P0-15 i18n 跨期): 改 l10n
+      title: l10n.homeMoreMoodTitle, // "心情"
       margin: EdgeInsets.zero,
       children: [
         Column(
