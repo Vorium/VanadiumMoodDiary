@@ -36,9 +36,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeStillOnline => '🌱 You\'re still online';
 
   @override
-  String get homeTempMed => 'Take temp dose +';
-
-  @override
   String get homeStreakBroken => 'Missing 1 is fine, tomorrow counts';
 
   @override
@@ -296,7 +293,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonEdit => 'Edit';
 
   @override
-  String get commonLoading => 'Loading...';
+  String get commonLoading => 'Loading……';
 
   @override
   String get lastStartupErrorBannerBody =>
@@ -477,7 +474,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'re on the web. Notifications are controlled by the browser. Please test on your phone.';
 
   @override
-  String get notificationStatusCardStatusLoading => 'Loading…';
+  String get notificationStatusCardStatusLoading => 'Loading……';
 
   @override
   String get notificationStatusCardStatusUnsupported =>
@@ -882,13 +879,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventComposeTitle => 'Vent';
 
   @override
-  String get ventComposeHint => 'How was your day...';
+  String get ventComposeHint => 'How was your day……';
 
   @override
   String get ventRecordIdle => 'Tap to start recording';
 
   @override
-  String get ventRecordActive => 'Recording... tap to stop';
+  String get ventRecordActive => 'Recording…… tap to stop';
 
   @override
   String get ventAudioLabel => 'Recording';
@@ -940,9 +937,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodListFilterPeriod => 'Period';
-
-  @override
-  String get moodListPeriodAll => 'All';
 
   @override
   String get moodPeriodChartTitle => 'Mood 4-period trend (last 30 days)';
@@ -1014,7 +1008,7 @@ class AppLocalizationsEn extends AppLocalizations {
       '(only the first 60s recognized)';
 
   @override
-  String get moodAudioSttListening => 'Recognizing…';
+  String get moodAudioSttListening => 'Recognizing……';
 
   @override
   String get moodAudioSttFailed => 'Recognition failed; audio saved only';
@@ -1103,7 +1097,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get assessmentLoadingBack => 'Returning...';
+  String get assessmentLoadingBack => 'Returning……';
 
   @override
   String assessmentAnsweredProgress(int answered, int total) {
@@ -1148,15 +1142,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeHeaderKeepGoing(Object name) {
     return '$name is still going strong';
   }
-
-  @override
-  String get homeTooltipTrend => 'View trend';
-
-  @override
-  String get homeTooltipAssessmentHistory => 'Assessment history';
-
-  @override
-  String get homeTooltipSettings => 'Settings';
 
   @override
   String get ventSwipeHint => 'Swipe left or long-press to delete';
@@ -1595,8 +1580,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String safetyAlertTitle(int days) {
-    // R32 (P0-04 锁屏 PII 跨 3 视角共识): 改静态, 不传 name (锁屏可见, PII 风险)
+  String safetyAlertTitle(Object name, int days) {
     return '⚠️ No check-in for $days days';
   }
 
@@ -1619,18 +1603,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notifChannelSafetyDesc =>
       'Alerts when you haven\'t checked in for a long time';
-
-  @override
-  String get homeSnoozeBody => 'You snoozed earlier — time to tap and check in';
-
-  @override
-  String get homeSnoozeConfirmed => 'OK, will remind you again in 5 min 👌';
-
-  @override
-  String get homeSnoozeButton => '⏰ Remind again in 5 min';
-
-  @override
-  String get homeVentButton => 'Vent 🌲';
 
   @override
   String get homeNotifBannerText =>
@@ -1913,7 +1885,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medReportShareLabel => 'Share';
 
   @override
-  String get medReportPdfLoading => 'Generating PDF...';
+  String get medReportPdfLoading => 'Generating PDF……';
 
   @override
   String get medReportShareSubject => 'Chronic Care · Medication Report';
@@ -2038,16 +2010,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snackbarActionEncryptRecording => 'Encrypt recording';
 
   @override
-  String get snackbarActionRecord => 'Record';
-
-  @override
-  String get snackbarActionStartRecording => 'Start recording';
-
-  @override
   String get snackbarActionCheckin => 'Check-in';
-
-  @override
-  String get snackbarActionSnooze => 'Snooze';
 
   @override
   String get snackbarActionAutoCheckin => 'Auto check-in';
@@ -2861,7 +2824,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodListPageTitle => 'Mood history';
 
   @override
-  String get moodListSearchHint => 'Search note…';
+  String get moodListSearchHint => 'Search note……';
 
   @override
   String get moodListEmpty => 'No mood entries yet';
@@ -3391,12 +3354,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get anxietyAgitationNoData => 'No anxiety/agitation entries yet';
 
   @override
-  String get anxietyAgitationAnxietyLabel => 'Anxiety Score';
-
-  @override
-  String get anxietyAgitationAgitationLabel => 'Agitation Score';
-
-  @override
   String anxietyAgitationAnxietyScore(int score) {
     return 'Anxiety $score';
   }
@@ -3431,9 +3388,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String sleepBedtime(Object time) {
     return 'Bedtime $time';
   }
-
-  @override
-  String get sleepRegularityTitle => 'Regularity';
 
   @override
   String sleepWakeTime(Object time) {
@@ -3668,6 +3622,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardStatusToday => 'Today';
 
   @override
+  String get sleepRegularityTitle => 'Regularity';
+
+  @override
+  String get anxietyAgitationAnxietyLabel => 'Anxiety Score';
+
+  @override
+  String get anxietyAgitationAgitationLabel => 'Agitation Score';
+
+  @override
+  String get moodListPeriodAll => 'All';
+
+  @override
   String get migrationFailedInitData => 'Unable to initialize local data';
 
   @override
@@ -3686,7 +3652,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get migrationFailedCloseButton => 'Close';
 
   @override
-  String get migrationStartingHint => 'Starting up, please wait...';
+  String get migrationStartingHint => 'Starting up, please wait……';
 
   @override
   String get migrationNavContextNull =>
@@ -3819,12 +3785,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medQuickActions => 'Quick Actions';
 
   @override
-  String get medCalendar => 'Calendar';
-
-  @override
-  String get medRefill => 'Refills';
-
-  @override
   String get medSlotMorning => 'Morning';
 
   @override
@@ -3929,18 +3889,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medNotFound => 'Medication not found';
 
   @override
-  String get moodReminderTitle => 'Mood Logging Reminder';
-
-  @override
-  String get moodReminderSubtitle => 'Daily reminder to log your mood';
-
-  @override
-  String get moodReminderTimeLabel => 'Reminder time';
-
-  @override
-  String get moodReminderEnabled => 'Enable reminder';
-
-  @override
   String get moodInfluenceTitle => 'Influence Factors';
 
   @override
@@ -3966,84 +3914,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodInfluenceOther => 'Other';
 
   @override
-  String get influenceFactorFamily => 'Family';
-
-  @override
-  String get influenceFactorFriend => 'Friends';
-
-  @override
-  String get influenceFactorPartner => 'Partner';
-
-  @override
-  String get influenceFactorChild => 'Children';
-
-  @override
-  String get influenceFactorColleague => 'Colleagues';
-
-  @override
-  String get influenceFactorExercise => 'Exercise';
-
-  @override
-  String get influenceFactorSick => 'Sick';
-
-  @override
-  String get influenceFactorGoodSleep => 'Good Sleep';
-
-  @override
-  String get influenceFactorHealthyDiet => 'Healthy Diet';
-
-  @override
-  String get influenceFactorWork => 'Work';
-
-  @override
-  String get influenceFactorHobby => 'Hobbies';
-
-  @override
-  String get influenceFactorTravel => 'Travel';
-
-  @override
-  String get influenceFactorCommute => 'Commute';
-
-  @override
-  String get influenceFactorShopping => 'Shopping';
-
-  @override
-  String get influenceFactorGaming => 'Gaming';
-
-  @override
-  String get influenceFactorReading => 'Reading';
-
-  @override
-  String get influenceFactorEntertainment => 'Entertainment';
-
-  @override
-  String get influenceFactorMeditation => 'Meditation';
-
-  @override
-  String get influenceFactorBreathing => 'Breathing Exercise';
-
-  @override
-  String get influenceFactorJournaling => 'Journaling';
-
-  @override
-  String get influenceFactorYoga => 'Yoga';
-
-  @override
-  String get influenceFactorSunny => 'Sunny';
-
-  @override
-  String get influenceFactorCloudy => 'Cloudy';
-
-  @override
-  String get influenceFactorRainy => 'Rainy';
-
-  @override
-  String get influenceFactorSnowy => 'Snowy';
-
-  @override
-  String get influenceFactorWindy => 'Windy';
-
-  @override
   String get moodDetailTitle => 'Mood Detail';
 
   @override
@@ -4051,9 +3921,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodDetailMoodState => 'Mood State';
-
-  @override
-  String get moodDetail4D => '4 Dimensions';
 
   @override
   String get moodDetailCbtRecord => 'CBT Thought Record';
@@ -4065,16 +3932,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodTrendWeek => 'Last 7 Days';
 
   @override
-  String get moodTrendMonth => 'Last 30 Days';
-
-  @override
   String get moodTrendDistribution => 'Score Distribution';
 
   @override
   String get moodTrendNoData => 'No data yet';
-
-  @override
-  String get moodEditTooltip => 'Edit';
 
   @override
   String get moodDeleteTooltip => 'Delete';
@@ -4087,12 +3948,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodFactorAnalysis => 'Factor Analysis';
 
   @override
-  String get moodFactorAvgScore => 'Avg Score';
-
-  @override
-  String get moodFactorCount => 'Records';
-
-  @override
   String get navMedication => 'Medications';
 
   @override
@@ -4100,12 +3955,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodModeDaily => 'Overall Today';
-
-  @override
-  String get moodTrendWeekTitle => 'Last 7 Days Trend';
-
-  @override
-  String get moodTrendMonthTitle => 'Last 30 Days Trend';
 
   @override
   String get moodTrendDistTitle => 'Score Distribution';
@@ -4118,9 +3967,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodTrendCbtEmpty => 'No CBT re-rating data yet';
-
-  @override
-  String get moodTrendRecords => 'records';
 
   @override
   String get medDetailActive => 'Active';
@@ -4147,9 +3993,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medDetailRefill => 'Refill';
 
   @override
-  String get medDetailNoFactors => 'No influence factor data yet';
-
-  @override
   String get moodCbtSituation => 'Situation';
 
   @override
@@ -4172,8 +4015,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodCbtBehavior => 'Behavioral Response';
-
-  @override
 
   @override
   String get moodDeleted => 'Deleted';
@@ -4200,13 +4041,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todaySummaryStreak => 'Streak';
 
   @override
-
-  @override
   String get setupConsentMedicalDisclaimer =>
       'I have read and understand the Medical Disclaimer: this app does not provide medical advice, diagnosis, or treatment';
-
-  @override
-  String get setupConsentViewDisclaimer => 'View';
 
   @override
   String get trackingCustomize => 'Customize Trackers';
@@ -4269,9 +4105,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'I have read and agree to all the above agreements';
 
   @override
-  String get setupConsentViewAll => 'View all agreements';
-
-  @override
   String get careCopyLateCheckInTitle => '🛏️ A bit earlier is steadier';
 
   @override
@@ -4294,9 +4127,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get careCopyWeekPerfectTitle => '🌟 A whole week on time!';
-
-  @override
-  String get careCopyWeekPerfectBody => 'All on time this week';
 
   @override
   String get assessmentComparisonImproved => 'Improved';
@@ -4340,4 +4170,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dayDetailScaleAssessment => 'Psychological assessment';
+
+  @override
+  String get medTodayPending => 'Pending';
+
+  @override
+  String get medTodayTaken => 'Taken';
+
+  @override
+  String get medTodayRefill => 'Refill';
+
+  @override
+  String get homeQuickMedLabel => 'Meds';
+
+  @override
+  String get homeQuickMoodLabel => 'Mood';
+
+  @override
+  String get homeQuickVentLabel => 'Vent';
+
+  @override
+  String get homeQuickAssessmentLabel => 'Assess';
+
+  @override
+  String get homeQuickActionView => 'View';
+
+  @override
+  String get homeQuickActionRecord => 'Log';
+
+  @override
+  String get homeQuickActionVent => 'Talk';
+
+  @override
+  String get homeQuickActionStart => 'Start';
+
+  @override
+  String get homeTodayMetrics => 'Today';
+
+  @override
+  String get homeMoreMoodTitle => 'Mood';
+
+  @override
+  String get homeMoreMoodSubtitle => 'View past entries';
+
+  @override
+  String get homeMoreVentTitle => 'Vent';
+
+  @override
+  String get homeMoreVentSubtitle => 'Private space · 1 viewer';
+
+  @override
+  String get homeMoreSettingsTitle => 'Settings';
+
+  @override
+  String get homeMoreSettingsSubtitle => 'Reminders / Privacy / Data';
+
+  @override
+  String get moodQuickRecordFailed => 'Record failed, please retry';
+
+  @override
+  String get homeMoreSectionTitle => 'More';
 }

@@ -37,6 +37,7 @@ import 'package:record/record.dart';
 
 import 'package:chroniccare/core/data/services/mood_audio_service.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/mood_providers.dart';

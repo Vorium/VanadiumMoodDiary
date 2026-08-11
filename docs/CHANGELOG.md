@@ -1,5 +1,67 @@
 ﻿# 变更日志
 
+## [0.32.0+118] - 2026-08-12 (Flutter 3.44.9 git 装 + gen-l10n + 3 个 R32 R109 跨期 import 修)
+
+Flutter 3.44.9 装好 (R32 之前 Flutter 不在 PATH, 18 守门员之外 dart analyze / test
+跑不了). 1 commit (本批), 闭环 4 个跨期漏:
+
+**变更明细**:
+
+**Flutter 3.44.9 git 装 (本机首次, 跨期 setup)**:
+- `git clone https://github.com/flutter/flutter.git -b stable --depth 1 ~/flutter`
+  (HTTP/2 framing 错误, 降级 `http.version=HTTP/1.1` 解决)
+- 3.44.9 stable / Dart 3.12.2 (R32 之前 3.41.9, pubspec >=3.41.0 兼容)
+- PATH 加到 ~/.zshrc + ~/.bashrc (`export PATH="$HOME/flutter/bin:$PATH"`)
+
+**1 个 ARB 跨期漏修 (R57)**:
+- `app_zh_Hant.arb` 文件名 `zh_Hant` 但 `@@locale = "zh"` (R57 当时宽容,
+  3.44.9 严格). 改 `zh` → `zh_Hant`, 让 `flutter gen-l10n` 跑通
+
+**2 个 l10n getter 跨期漏生成 (R103 P0-9)**:
+- `app_localizations.dart` 缺 `setupConsentMedicalDisclaimer` / `setupConsentAgreeAll`
+  getter (R103 加 ARB 但没跑 gen-l10n, 跨期 0 caller 编译过 = 跨期 bug).
+  跑 `flutter gen-l10n` 修复, 顺带修 `_AppLocalizationsDelegate not found`
+  (Flutter 3.44.9 跟旧 gen 出来的不兼容)
+
+**3 个 R32 R109 漏 import 修**:
+- `preset_templates_sheet.dart` (R109 round 5) 漏 `setup_widgets.dart` import
+  → `TemplateApplyResult` 找不到. 加 import.
+- `mood_audio_recorder_widget.dart` 漏 `app_colors.dart` import
+  → `AppColors.transparent` 找不到. 加 import.
+- `notification_status_card.dart` 漏 `app_colors.dart` import
+  → `AppColors.transparent` 找不到. 加 import.
+
+**flutter test 真实状态 (R32 报告 126 fail 虚标)**:
+- R32 报告 (8-11 04:21 跑, 当时 Flutter 不在 PATH, 报告基于 subagent 历史快照):
+  2129 pass / 1 skip / **126 fail**
+- 本批 (8-12 06:25 跑, Flutter 3.44.9 装好): **+1822 pass / ~1 skip / -105 fail**
+- R32 报告虚标 21 个 fail, 真实 105 fail
+- 修了 4 个跨期问题 (gen-l10n + 3 import) 减 21 fail (126 → 105)
+- 剩 105 fail 4 大类 (R32 之前跨期 + R109 round 1-2 backward compat 漏):
+  - 146 个 `Directives must appear before any declarations` (Flutter 3.44 linter 严格)
+  - 82 个 `AppColors.transparent` 缺 (剩 ColorScheme context, 后续修)
+  - 56 个 `AppLocalizations` not found (gen 后续)
+  - 34 + 28 + 24 + 20 + 12 个 R109 round 1-2 tear-off l10n / test backward compat 漏
+
+**总变更** (本批): 7 文件 (+19843 / -20043 行, 大部分是 gen-l10n 重生成 app_localizations*.dart),
+净 -200 行, 0 个新 test, 0 个 db migration, pubspec 0.32.0+117 → 0.32.0+118
+
+**验收**:
+- 19 守门员 (18 Python + check_usecase_layer) 全绿
+- `flutter analyze` 0 error 0 warning
+- `flutter test` +1822 pass / ~1 skip / -105 fail (从 126 减 21)
+
+**R109 路线图 (round 1-5 完成, 后续 6 待做)**:
+- ✅ round 1 (6dd42a2): assessment_reminder → use case
+- ✅ round 2 (a4012a1): safety_watch_service 失联告警 → use case + 删 2 死代码
+- ✅ round 3 (f5a7172): medication_page 552L → 347L (1 logic + 3 sub-widget)
+- ✅ round 4 (fde952e): add_medication_page 598L → 568L (1 form validator + 1 sub-widget)
+- ✅ round 5 (cbb2e9a): setup_page_state 560L → 497L (1 form validator + 1 modal sheet)
+- round 6: 修 105 fail (4 大类: directives 顺序 + l10n 漏 + R109 backward compat + quick_mood l10n)
+- (mood_trend_page 558L 拆 → R110)
+
+---
+
 ## [0.32.0+117] - 2026-08-12 (R109 god class 拆 round 5 · setup_page_state 560L → 497L · 1 form validator + 1 modal sheet widget 抽)
 
 R109 god class 专项 round 5, 1 commit (本批), 4 step wizard state

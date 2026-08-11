@@ -36,9 +36,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeStillOnline => '🌱 您还在线';
 
   @override
-  String get homeTempMed => '临时吃药 +';
-
-  @override
   String get homeStreakBroken => '少 1 次没关系，明天继续';
 
   @override
@@ -201,14 +198,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsExportRiskBody =>
-      '您即将导出的数据为明文文件,含您的个人健康等敏感信息(用药、打卡、紧急联系人、树洞文字)。请务必保存到安全、可信的位置(加密 U 盘 / 私人云盘),避免上传至公共云盘或发送给不可信的第三方。';
+      '您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、紧急联系人、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。';
 
   @override
   String get settingsExportRiskLiability =>
-      '一旦导出,文件的安全与保密由您自行负责,本 App 不再承担保护责任(PIPL §17 明确告知 + 用户确认)。';
+      '一旦导出，文件的安全与保密由您自行负责，本 App 不再承担保护责任（PIPL §17 明确告知 + 用户确认）。';
 
   @override
-  String get settingsExportRiskAcknowledge => '我已了解风险,继续导出';
+  String get settingsExportRiskAcknowledge => '我已了解风险，继续导出';
 
   @override
   String get settingsExportDialogTitle => '导出数据';
@@ -745,19 +742,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legalVentWithdrawTitle => '撤回树洞同意';
 
   @override
-  String get legalVentWithdrawBody => '树洞内容是您最私密的数据。撤回同意后,您可选择以下方式处理已有数据:';
+  String get legalVentWithdrawBody => '树洞内容是您最私密的数据。撤回同意后，您可选择以下方式处理已有数据：';
 
   @override
   String get legalVentWithdrawDelete => '立即删除';
 
   @override
-  String get legalVentWithdrawDeleteDesc => '所有树洞文字 + 录音文件立即物理删除,不可恢复';
+  String get legalVentWithdrawDeleteDesc => '所有树洞文字 + 录音文件立即物理删除，不可恢复';
 
   @override
   String get legalVentWithdrawSeal => '加密封存';
 
   @override
-  String get legalVentWithdrawSealDesc => '数据保留在本地但加密,UI 不可见,重新同意后可恢复';
+  String get legalVentWithdrawSealDesc => '数据保留在本地但加密，UI 不可见，重新同意后可恢复';
 
   @override
   String legalVentWithdrawnDeleted(num count) {
@@ -772,7 +769,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get legalVentWithdrawnSealed => '已加密封存,数据保留在本地';
+  String get legalVentWithdrawnSealed => '已加密封存，数据保留在本地';
 
   @override
   String get legalVentDeleteRetry => '重试删除';
@@ -781,7 +778,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventSealedTitle => '已加密封存';
 
   @override
-  String get ventSealedSubtitle => '您已撤回树洞同意。所有数据已加密封存,UI 不可见。重新同意后可恢复。';
+  String get ventSealedSubtitle => '您已撤回树洞同意。所有数据已加密封存，UI 不可见。重新同意后可恢复。';
 
   @override
   String get ventSealedAction => '前往法律与隐私';
@@ -818,7 +815,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get ventReportDialogBody =>
-      '树洞内容仅存储在您的设备, 不会上传任何服务器, 不存在用户间互相看到的情况。\n\n如发现 App 本身的不当内容或想反馈问题, 请前往「法律与隐私」页面联系开发者。';
+      '树洞内容仅存储在您的设备， 不会上传任何服务器， 不存在用户间互相看到的情况。\n\n如发现 App 本身的不当内容或想反馈问题， 请前往「法律与隐私」页面联系开发者。';
 
   @override
   String get ventReportDialogAction => '前往法律与隐私';
@@ -894,9 +891,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodListFilterPeriod => '时段';
-
-  @override
-  String get moodListPeriodAll => '全部';
 
   @override
   String get moodPeriodChartTitle => '心境 4 段趋势（近 30 天）';
@@ -1098,15 +1092,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get homeTooltipTrend => '查看趋势';
-
-  @override
-  String get homeTooltipAssessmentHistory => '评估历史';
-
-  @override
-  String get homeTooltipSettings => '设置';
-
-  @override
   String get ventSwipeHint => '左滑或长按条目可删除';
 
   @override
@@ -1181,7 +1166,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentReminderHintCommon => '推荐（精神科常用）';
 
   @override
-  String get assessmentReminderHintStable => '稳定期 ／ 月度复盘';
+  String get assessmentReminderHintStable => '稳定期 ／ 月度覆盘';
 
   @override
   String get assessmentReminderHintMaintenance => '维持治疗期';
@@ -1307,7 +1292,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupPresetTitle => '📋 选择预置方案';
 
   @override
-  String get setupPresetDescription => '预置方案会填好药名 + 时间，您可以接着改。最终服药请按医嘱核对。';
+  String get setupPresetDescription => '预置方案会填好药名 + 时间，您可以接著改。最终服药请按医嘱核对。';
 
   @override
   String setupPresetLoaded(Object name, int count) {
@@ -1379,7 +1364,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。';
 
   @override
-  String get setupWelcomeContactHint => '（可选,后续可在设置中添加）';
+  String get setupWelcomeContactHint => '（可选，后续可在设置中添加）';
 
   @override
   String get setupLegalUserAgreement => '用户协议';
@@ -1504,21 +1489,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String safetyAlertBodySent(Object date) {
-    return '上次打卡: $date。已自动通知紧急联系人，请确认安全。';
+    return '上次打卡： $date。已自动通知紧急联系人，请确认安全。';
   }
 
   @override
   String safetyAlertBodyMocked(Object date) {
-    return '上次打卡: $date。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。';
+    return '上次打卡： $date。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。';
   }
 
   @override
   String safetyAlertBodyFailed(Object date) {
-    return '上次打卡: $date。失联检测已触发，但通知发送失败。请检查网络。';
+    return '上次打卡： $date。失联检测已触发，但通知发送失败。请检查网络。';
   }
 
   @override
-  String safetyAlertTitle(int days) {
+  String safetyAlertTitle(Object name, int days) {
     return '⚠️ 已 $days 天未打卡';
   }
 
@@ -1539,18 +1524,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notifChannelSafetyDesc => '长时间未打卡时提醒';
-
-  @override
-  String get homeSnoozeBody => '刚才您点了「snooze」，是时候点一下 = 打卡了';
-
-  @override
-  String get homeSnoozeConfirmed => '好，5 分钟后会再提醒您 👌';
-
-  @override
-  String get homeSnoozeButton => '⏰ 5 分钟后再提醒';
-
-  @override
-  String get homeVentButton => '倾诉 🌲';
 
   @override
   String get homeNotifBannerText => '提醒没设上，可能错过打卡。请到系统设置允许通知。';
@@ -1598,7 +1571,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get trendWithdrawnSubtitle =>
-      '你撤回了「趋势分析」同意（PIPL §14）。趋势数据未删除, 重新开启后即可恢复。';
+      '你撤回了「趋势分析」同意（PIPL §14）。趋势数据未删除， 重新开启后即可恢复。';
 
   @override
   String get trendWithdrawnAction => '去重新开启';
@@ -1700,7 +1673,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get trendCbtReratedEmptyTitle => '还没有 5/7 栏 CBT 数据';
 
   @override
-  String get trendCbtReratedEmptyHint => '先用 5/7 栏 CBT 填表, 才能看到重评效果';
+  String get trendCbtReratedEmptyHint => '先用 5/7 栏 CBT 填表， 才能看到重评效果';
 
   @override
   String get contactEmptyList => '还没有联系人，请先添加';
@@ -1734,7 +1707,7 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String dataExportConsentBody(
       Object purpose, Object dataCategories, Object retention) {
-    return '您即将导出本地数据库中的所有数据。\n\n**目的**：$purpose\n**数据范围**：$dataCategories\n**保留方式**：$retention\n\n**根据《个人信息保护法》第 13 條**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。';
+    return '您即将导出本地数据库中的所有数据。\n\n**目的**：$purpose\n**数据范围**：$dataCategories\n**保留方式**：$retention\n\n**根据《个人信息保护法》第 13 条**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。';
   }
 
   @override
@@ -1948,16 +1921,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snackbarActionEncryptRecording => '加密录音';
 
   @override
-  String get snackbarActionRecord => '录音';
-
-  @override
-  String get snackbarActionStartRecording => '开始录音';
-
-  @override
   String get snackbarActionCheckin => '打卡';
-
-  @override
-  String get snackbarActionSnooze => '推迟提醒';
 
   @override
   String get snackbarActionAutoCheckin => '自动打卡';
@@ -2259,7 +2223,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scaleHotlineSg => 'Samaritans of Singapore (24h)';
 
   @override
-  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免费)';
+  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免费）';
 
   @override
   String get scaleHotlineIntl => '国际通用 · 请联系当地急救或心理援助';
@@ -2424,7 +2388,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get crisisHotlineCnDesc => '中国大陆 24 小时免费';
 
   @override
-  String get crisisHotlineTwLabel => '安心专线 (24 小时)';
+  String get crisisHotlineTwLabel => '安心专线 (24 小时）';
 
   @override
   String get crisisHotlineTwNumber => '1925';
@@ -2433,7 +2397,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get crisisHotlineTwDesc => '中国台湾 24 小时心理咨商';
 
   @override
-  String get crisisHotlineHkLabel => '撒玛利亚防止自杀会 (24 小时)';
+  String get crisisHotlineHkLabel => '撒玛利亚防止自杀会 (24 小时）';
 
   @override
   String get crisisHotlineHkNumber => '2389 2222';
@@ -2442,7 +2406,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get crisisHotlineHkDesc => '中国香港 24 小时多语言';
 
   @override
-  String get crisisHotlineMoLabel => '明爱生命热线 (24 小时)';
+  String get crisisHotlineMoLabel => '明爱生命热线 (24 小时）';
 
   @override
   String get crisisHotlineMoNumber => '2826 1122';
@@ -2454,7 +2418,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get crisisHotlineTitle => '紧急心理援助热线';
 
   @override
-  String get crisisHotlineSubtitle => '如果你或身边的人正在经历心理危机, 请拨打以下热线';
+  String get crisisHotlineSubtitle => '如果你或身边的人正在经历心理危机， 请拨打以下热线';
 
   @override
   String get crisisHotlineCn2Label => '全国 24 小时免费心理援助热线';
@@ -2508,7 +2472,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get crisisHotlineCnBeijingDesc => '北京 24 小时';
 
   @override
-  String get crisisHotlineTw1995Label => '生命线 (24 小时)';
+  String get crisisHotlineTw1995Label => '生命线 (24 小时）';
 
   @override
   String get crisisHotlineTw1995Number => '1995';
@@ -2527,7 +2491,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String crisisHotlineSnackbarCopied(Object number) {
-    return '已复制: $number';
+    return '已复制： $number';
   }
 
   @override
@@ -2538,12 +2502,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String crisisHotlineDialFailed(Object number) {
-    return '无法启动拨号, 请手动拨打: $number';
+    return '无法启动拨号， 请手动拨打： $number';
   }
 
   @override
   String get setupLegalAgeAttestation =>
-      '本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁,本人保证已取得监护人代为同意,并愿意承担虚假陈述的一切法律后果。';
+      '本人郑重承诺：我已年满 18 周岁。如本人为 14-18 周岁，本人保证已取得监护人代为同意，并愿意承担虚假陈述的一切法律后果。';
 
   @override
   String get moodCbtLevelLabel3 => '3 栏';
@@ -2583,7 +2547,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodCbtExplainerBody =>
-      'CBT（认知行为疗法）思维记录帮你识别并重构负面自动思维。\n按 5 栏标准：先记录情境与想法，再找证据支持/反对，最后写下更平衡的替代想法。';
+      'CBT（认知行为疗法）思维记录帮你识别并重构负面自动思维。\n按 5 栏标准：先记录情境与想法，再找证据支持／反对，最后写下更平衡的替代想法。';
 
   @override
   String get moodCbtFieldHintSituation => '触发这个想法的事件是什么？发生在哪里、什么时候、有谁？';
@@ -2668,13 +2632,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodCbtConfirm => '确认';
 
   @override
-  String get moodCbtConfirmEmpty => '(未填)';
+  String get moodCbtConfirmEmpty => '（未填）';
 
   @override
-  String get moodCbtAutoThoughtPrompt0 => '如果你的好朋友遇到这事,你会怎么劝TA？';
+  String get moodCbtAutoThoughtPrompt0 => '如果你的好朋友遇到这事，你会怎么劝TA？';
 
   @override
-  String get moodCbtAutoThoughtPrompt1 => '最坏/最好/最现实的结果是什么？';
+  String get moodCbtAutoThoughtPrompt1 => '最坏／最好／最现实的结果是什么？';
 
   @override
   String get moodCbtAutoThoughtPrompt2 => '一年后你还会这么想吗？';
@@ -2719,7 +2683,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodListPageTitle => 'Mood 历史';
 
   @override
-  String get moodListSearchHint => '搜索 note…';
+  String get moodListSearchHint => '搜索 note……';
 
   @override
   String get moodListEmpty => '还没有 mood 记录';
@@ -2747,7 +2711,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get cbtExportPdfFailed => 'PDF 导出失败,请重试';
+  String get cbtExportPdfFailed => 'PDF 导出失败，请重试';
 
   @override
   String get assessmentCenterTitle => '量表中心';
@@ -2772,7 +2736,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentCenterMultiLineTitle => '全部量表趋势';
 
   @override
-  String get assessmentCenterNotAvailable => '需法务/临床审核';
+  String get assessmentCenterNotAvailable => '需法务／临床审核';
 
   @override
   String get assessmentCenterComingSoon => '敬请期待';
@@ -2784,7 +2748,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get isiShortDescription => 'Morin 1993 失眠严重指数 7 题';
 
   @override
-  String get isiInstruction => '过去 2 周内, 您的睡眠问题有多严重?';
+  String get isiInstruction => '过去 2 周内， 您的睡眠问题有多严重？';
 
   @override
   String get isiOption0 => '无';
@@ -2817,22 +2781,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get isiSeveritySummary0 => '无临床失眠';
 
   @override
-  String get isiSeveritySummary1 => '亚临床失眠, 建议关注';
+  String get isiSeveritySummary1 => '亚临床失眠， 建议关注';
 
   @override
-  String get isiSeveritySummary2 => '中度失眠, 建议就医';
+  String get isiSeveritySummary2 => '中度失眠， 建议就医';
 
   @override
-  String get isiSeveritySummary3 => '重度失眠, 强烈建议就医';
+  String get isiSeveritySummary3 => '重度失眠， 强烈建议就医';
 
   @override
   String get pssName => 'PSS 压力量表';
 
   @override
-  String get pssShortDescription => 'Cohen 1983 压力量表 (10 题, 含 4 题反向)';
+  String get pssShortDescription => 'Cohen 1983 压力量表 (10 题， 含 4 题反向）';
 
   @override
-  String get pssInstruction => '过去 1 个月里, 您有多经常有下列感受?';
+  String get pssInstruction => '过去 1 个月里， 您有多经常有下列感受？';
 
   @override
   String get pssOption0 => '从未';
@@ -2865,7 +2829,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pssSeveritySummary1 => '中度压力';
 
   @override
-  String get pssSeveritySummary2 => '高压力, 建议关注和寻求支持';
+  String get pssSeveritySummary2 => '高压力， 建议关注和寻求支持';
 
   @override
   String get whodasName => 'WHODAS 2.0 残疾评定';
@@ -2874,7 +2838,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get whodasShortDescription => 'WHO 通用残疾评估 12 题简化版';
 
   @override
-  String get whodasInstruction => '过去 30 天内, 您在以下活动中遇到多大困难?';
+  String get whodasInstruction => '过去 30 天内， 您在以下活动中遇到多大困难？';
 
   @override
   String get whodasOption0 => '没有';
@@ -2913,23 +2877,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get whodasSeveritySummary1 => '轻度残疾';
 
   @override
-  String get whodasSeveritySummary2 => '中度残疾, 建议就医评估';
+  String get whodasSeveritySummary2 => '中度残疾， 建议就医评估';
 
   @override
-  String get whodasSeveritySummary3 => '重度残疾, 建议就医';
+  String get whodasSeveritySummary3 => '重度残疾， 建议就医';
 
   @override
-  String get whodasSeveritySummary4 => '极重度残疾, 强烈建议就医';
+  String get whodasSeveritySummary4 => '极重度残疾， 强烈建议就医';
 
   @override
   String get level2DepressionName => 'DSM-5 Level 2 抑郁严重度';
 
   @override
   String get level2DepressionShortDescription =>
-      '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)';
+      '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版）';
 
   @override
-  String get level2DepressionInstruction => '过去 7 天内, 您有多经常被以下情绪困扰?';
+  String get level2DepressionInstruction => '过去 7 天内， 您有多经常被以下情绪困扰？';
 
   @override
   String get level2DepressionOption0 => '完全没有';
@@ -2962,19 +2926,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get level2DepressionSeveritySummary1 => '轻度抑郁倾向';
 
   @override
-  String get level2DepressionSeveritySummary2 => '中度抑郁, 建议就医';
+  String get level2DepressionSeveritySummary2 => '中度抑郁， 建议就医';
 
   @override
-  String get level2DepressionSeveritySummary3 => '重度抑郁, 强烈建议就医';
+  String get level2DepressionSeveritySummary3 => '重度抑郁， 强烈建议就医';
 
   @override
   String get level2AnxietyName => 'DSM-5 Level 2 焦虑严重度';
 
   @override
-  String get level2AnxietyShortDescription => '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)';
+  String get level2AnxietyShortDescription => '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版）';
 
   @override
-  String get level2AnxietyInstruction => '过去 7 天内, 您有多经常被以下感受困扰?';
+  String get level2AnxietyInstruction => '过去 7 天内， 您有多经常被以下感受困扰？';
 
   @override
   String get level2AnxietyOption0 => '完全没有';
@@ -3007,19 +2971,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get level2AnxietySeveritySummary1 => '轻度焦虑倾向';
 
   @override
-  String get level2AnxietySeveritySummary2 => '中度焦虑, 建议就医';
+  String get level2AnxietySeveritySummary2 => '中度焦虑， 建议就医';
 
   @override
-  String get level2AnxietySeveritySummary3 => '重度焦虑, 强烈建议就医';
+  String get level2AnxietySeveritySummary3 => '重度焦虑， 强烈建议就医';
 
   @override
   String get level2ManiaName => 'DSM-5 Level 2 躁狂严重度';
 
   @override
-  String get level2ManiaShortDescription => '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)';
+  String get level2ManiaShortDescription => '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版）';
 
   @override
-  String get level2ManiaInstruction => '过去 7 天内, 您有多经常体验以下情况?';
+  String get level2ManiaInstruction => '过去 7 天内， 您有多经常体验以下情况？';
 
   @override
   String get level2ManiaOption0 => '完全没有';
@@ -3052,19 +3016,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get level2ManiaSeveritySummary1 => '轻度躁狂倾向';
 
   @override
-  String get level2ManiaSeveritySummary2 => '中度躁狂, 建议就医';
+  String get level2ManiaSeveritySummary2 => '中度躁狂， 建议就医';
 
   @override
-  String get level2ManiaSeveritySummary3 => '重度躁狂, 强烈建议就医';
+  String get level2ManiaSeveritySummary3 => '重度躁狂， 强烈建议就医';
 
   @override
   String get asrmName => 'ASRM 自评躁狂量表';
 
   @override
-  String get asrmShortDescription => 'Altman 1997 自评躁狂量表 (5 题)';
+  String get asrmShortDescription => 'Altman 1997 自评躁狂量表 (5 题）';
 
   @override
-  String get asrmInstruction => '过去 1 周内, 您有 (或感觉到) 以下情况的程度?';
+  String get asrmInstruction => '过去 1 周内， 您有 （或感觉到） 以下情况的程度？';
 
   @override
   String get asrmOption0 => '完全没有';
@@ -3103,22 +3067,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get asrmSeveritySummary1 => '轻度躁狂倾向';
 
   @override
-  String get asrmSeveritySummary2 => '中度躁狂, 建议就医';
+  String get asrmSeveritySummary2 => '中度躁狂， 建议就医';
 
   @override
-  String get asrmSeveritySummary3 => '重度躁狂, 建议就医';
+  String get asrmSeveritySummary3 => '重度躁狂， 建议就医';
 
   @override
-  String get asrmSeveritySummary4 => '极重度躁狂, 强烈建议就医';
+  String get asrmSeveritySummary4 => '极重度躁狂， 强烈建议就医';
 
   @override
   String get level2PsychosisName => 'DSM-5 Level 2 精神病性症状';
 
   @override
-  String get level2PsychosisShortDescription => '成人精神病性症状 8 题 (DSM-5 简化版)';
+  String get level2PsychosisShortDescription => '成人精神病性症状 8 题 (DSM-5 简化版）';
 
   @override
-  String get level2PsychosisInstruction => '过去 7 天内, 您有多经常体验以下情况?';
+  String get level2PsychosisInstruction => '过去 7 天内， 您有多经常体验以下情况？';
 
   @override
   String get level2PsychosisOption0 => '从来没有';
@@ -3151,10 +3115,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get level2PsychosisSeveritySummary1 => '轻度精神病性症状';
 
   @override
-  String get level2PsychosisSeveritySummary2 => '中度精神病性症状, 建议就医';
+  String get level2PsychosisSeveritySummary2 => '中度精神病性症状， 建议就医';
 
   @override
-  String get level2PsychosisSeveritySummary3 => '重度精神病性症状, 强烈建议就医';
+  String get level2PsychosisSeveritySummary3 => '重度精神病性症状， 强烈建议就医';
 
   @override
   String get dailyTrackingTitle => '日常追踪';
@@ -3208,19 +3172,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get anxietyAgitationShortDesc => '焦虑 + 急躁 双维度 5 档';
 
   @override
-  String get anxietyAgitationHint => '焦虑反向 1=严重 5=平静; 急躁正向 1=平静 5=极急';
+  String get anxietyAgitationHint => '焦虑反向 1=严重 5=平静； 急躁正向 1=平静 5=极急';
 
   @override
   String get anxietyAgitationAddButton => '添加评估';
 
   @override
   String get anxietyAgitationNoData => '暂无焦虑急躁记录';
-
-  @override
-  String get anxietyAgitationAnxietyLabel => '焦虑分数';
-
-  @override
-  String get anxietyAgitationAgitationLabel => '急躁分数';
 
   @override
   String anxietyAgitationAnxietyScore(int score) {
@@ -3244,7 +3202,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sleepShortDesc => '入睡 + 时长 + 规律性';
 
   @override
-  String get sleepHint => '记录每晚入睡 + 起床, 跨午夜自动算时长';
+  String get sleepHint => '记录每晚入睡 + 起床， 跨午夜自动算时长';
 
   @override
   String get sleepAddButton => '添加睡眠记录';
@@ -3256,9 +3214,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String sleepBedtime(Object time) {
     return '入睡 $time';
   }
-
-  @override
-  String get sleepRegularityTitle => '规律性';
 
   @override
   String sleepWakeTime(Object time) {
@@ -3277,7 +3232,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get socialRhythmShortDesc => '起床 + 第一餐 + 最后一餐 + 时长';
 
   @override
-  String get socialRhythmHint => '记录每天的作息, 帮医生判断节律稳定性';
+  String get socialRhythmHint => '记录每天的作息， 帮医生判断节律稳定性';
 
   @override
   String get socialRhythmAddButton => '添加社会节律';
@@ -3312,7 +3267,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get stressEventShortDesc => '事件类型 + 强度评分';
 
   @override
-  String get stressEventHint => '记录生活中的压力事件, 帮医生判断触发因素';
+  String get stressEventHint => '记录生活中的压力事件， 帮医生判断触发因素';
 
   @override
   String get stressEventAddButton => '添加应激源';
@@ -3335,7 +3290,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get treatmentName => '治疗';
 
   @override
-  String get treatmentShortDesc => '用药 / 咨询 / 物理治疗, 关联 medication';
+  String get treatmentShortDesc => '用药 / 咨询 / 物理治疗， 关联 medication';
 
   @override
   String get treatmentHint => '治疗条目可关联 medication, 写入功能 v0.31+';
@@ -3371,7 +3326,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get treatmentProvider => '医疗机构 / 医生';
 
   @override
-  String get treatmentProviderHint => '例如: 心理医生王医生 / 北京协和医院';
+  String get treatmentProviderHint => '例如： 心理医生王医生 / 北京协和医院';
 
   @override
   String get treatmentProviderRequired => '请填写医疗机构 / 医生';
@@ -3380,7 +3335,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get treatmentNote => '备注';
 
   @override
-  String get treatmentNoteHint => '可选, 简短记录治疗要点';
+  String get treatmentNoteHint => '可选， 简短记录治疗要点';
 
   @override
   String get treatmentType => '治疗类型';
@@ -3394,10 +3349,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get weightName => '体重';
 
   @override
-  String get weightShortDesc => '体重 + BMI (需 profile.height)';
+  String get weightShortDesc => '体重 + BMI （需 profile.height)';
 
   @override
-  String get weightHint => '记录每天的体重, 帮医生判断生理状态';
+  String get weightHint => '记录每天的体重， 帮医生判断生理状态';
 
   @override
   String get weightAddButton => '添加体重记录';
@@ -3487,6 +3442,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cardStatusToday => '今天';
 
   @override
+  String get sleepRegularityTitle => '规律性';
+
+  @override
+  String get anxietyAgitationAnxietyLabel => '焦虑分数';
+
+  @override
+  String get anxietyAgitationAgitationLabel => '急躁分数';
+
+  @override
+  String get moodListPeriodAll => '全部';
+
+  @override
   String get migrationFailedInitData => '无法初始化本地数据';
 
   @override
@@ -3494,7 +3461,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String migrationFailedFooter(String error) {
-    return '技术信息: $error';
+    return '技术信息： $error';
   }
 
   @override
@@ -3504,7 +3471,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get migrationFailedCloseButton => '关闭';
 
   @override
-  String get migrationStartingHint => '启动中，请稍候...';
+  String get migrationStartingHint => '启动中，请稍候……';
 
   @override
   String get migrationNavContextNull => '启动上下文尚未就绪，请稍后再试';
@@ -3541,7 +3508,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get weightKgHint => '如 60.5';
 
   @override
-  String get weightBmiNeedHeight => '暂无 (需填写身高)';
+  String get weightBmiNeedHeight => '暂无 （需填写身高）';
 
   @override
   String socialRhythmMinutesSummary(
@@ -3550,13 +3517,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get socialRhythmSocialMinLabel => '社交时长 (分钟)';
+  String get socialRhythmSocialMinLabel => '社交时长 （分钟）';
 
   @override
-  String get socialRhythmWorkMinLabel => '工作时长 (分钟)';
+  String get socialRhythmWorkMinLabel => '工作时长 （分钟）';
 
   @override
-  String get socialRhythmExerciseMinLabel => '运动时长 (分钟)';
+  String get socialRhythmExerciseMinLabel => '运动时长 （分钟）';
 
   @override
   String get anxietyAgitationAnxietyScaleHint => '1=严重 5=平静';
@@ -3571,7 +3538,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String sleepDurationLabel(Object duration) {
-    return '时长: $duration';
+    return '时长： $duration';
   }
 
   @override
@@ -3601,17 +3568,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get consentWithdrawSafetyBody => '失联通知功能将停用。系统不再通过 SMS / 邮件自动通知紧急联系人。';
 
   @override
-  String get consentWithdrawVentBody => '树洞 (私密倾诉) 功能将停用。新增树洞记录会被拒绝, 已有记录保留。';
+  String get consentWithdrawVentBody => '树洞 （私密倾诉） 功能将停用。新增树洞记录会被拒绝， 已有记录保留。';
 
   @override
   String get consentWithdrawAnalyticsBody =>
-      '评估 / 情绪相关分析图表将不再展示。已有数据保留, 重新开启后恢复。';
+      '评估 / 情绪相关分析图表将不再展示。已有数据保留， 重新开启后恢复。';
 
   @override
   String get dataExportPurposeBackup => '本地备份 / 跨设备迁移';
 
   @override
-  String get dataExportDataCategories => '用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 (录音不导出)';
+  String get dataExportDataCategories => '用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 （录音不导出）';
 
   @override
   String get dataExportRetentionClipboard => '剪贴板 + 用户自行保存到加密存储';
@@ -3630,12 +3597,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get medQuickActions => '快捷操作';
-
-  @override
-  String get medCalendar => '用药日历';
-
-  @override
-  String get medRefill => '续方管理';
 
   @override
   String get medSlotMorning => '早上';
@@ -3742,18 +3703,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medNotFound => '药物未找到';
 
   @override
-  String get moodReminderTitle => '情绪记录提醒';
-
-  @override
-  String get moodReminderSubtitle => '每天定时提醒你记录心情';
-
-  @override
-  String get moodReminderTimeLabel => '提醒时间';
-
-  @override
-  String get moodReminderEnabled => '开启提醒';
-
-  @override
   String get moodInfluenceTitle => '影响因素';
 
   @override
@@ -3778,84 +3727,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodInfluenceOther => '其他';
 
   @override
-  String get influenceFactorFamily => '家人';
-
-  @override
-  String get influenceFactorFriend => '朋友';
-
-  @override
-  String get influenceFactorPartner => '伴侣';
-
-  @override
-  String get influenceFactorChild => '孩子';
-
-  @override
-  String get influenceFactorColleague => '同事';
-
-  @override
-  String get influenceFactorExercise => '运动';
-
-  @override
-  String get influenceFactorSick => '生病';
-
-  @override
-  String get influenceFactorGoodSleep => '睡眠好';
-
-  @override
-  String get influenceFactorHealthyDiet => '饮食健康';
-
-  @override
-  String get influenceFactorWork => '工作';
-
-  @override
-  String get influenceFactorHobby => '爱好';
-
-  @override
-  String get influenceFactorTravel => '旅行';
-
-  @override
-  String get influenceFactorCommute => '通勤';
-
-  @override
-  String get influenceFactorShopping => '购物';
-
-  @override
-  String get influenceFactorGaming => '游戏';
-
-  @override
-  String get influenceFactorReading => '阅读';
-
-  @override
-  String get influenceFactorEntertainment => '娱乐';
-
-  @override
-  String get influenceFactorMeditation => '冥想';
-
-  @override
-  String get influenceFactorBreathing => '呼吸练习';
-
-  @override
-  String get influenceFactorJournaling => '写日记';
-
-  @override
-  String get influenceFactorYoga => '瑜伽';
-
-  @override
-  String get influenceFactorSunny => '晴天';
-
-  @override
-  String get influenceFactorCloudy => '多云';
-
-  @override
-  String get influenceFactorRainy => '雨天';
-
-  @override
-  String get influenceFactorSnowy => '雪天';
-
-  @override
-  String get influenceFactorWindy => '刮风';
-
-  @override
   String get moodDetailTitle => '情绪详情';
 
   @override
@@ -3863,9 +3734,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodDetailMoodState => '情绪状态';
-
-  @override
-  String get moodDetail4D => '4 维度';
 
   @override
   String get moodDetailCbtRecord => 'CBT 思维记录';
@@ -3877,16 +3745,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodTrendWeek => '近 7 天';
 
   @override
-  String get moodTrendMonth => '近 30 天';
-
-  @override
   String get moodTrendDistribution => '分数分布';
 
   @override
   String get moodTrendNoData => '暂无数据';
-
-  @override
-  String get moodEditTooltip => '编辑';
 
   @override
   String get moodDeleteTooltip => '删除';
@@ -3898,12 +3760,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodFactorAnalysis => '因素关联分析';
 
   @override
-  String get moodFactorAvgScore => '平均分';
-
-  @override
-  String get moodFactorCount => '记录数';
-
-  @override
   String get navMedication => '用药';
 
   @override
@@ -3913,25 +3769,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodModeDaily => '今天';
 
   @override
-  String get moodTrendWeekTitle => '近 7 天情绪趋势';
-
-  @override
-  String get moodTrendMonthTitle => '近 30 天情绪趋势';
-
-  @override
   String get moodTrendDistTitle => '分数分布';
 
   @override
   String get moodTrendCbtTitle => 'CBT 重评效果';
 
   @override
-  String get moodTrendCbtHint => '正值 = 情绪改善, 负值 = 恶化';
+  String get moodTrendCbtHint => '正值 = 情绪改善， 负值 = 恶化';
 
   @override
   String get moodTrendCbtEmpty => '暂无 CBT 重评数据';
-
-  @override
-  String get moodTrendRecords => '条';
 
   @override
   String get medDetailActive => '在用';
@@ -3958,9 +3805,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medDetailRefill => '续方';
 
   @override
-  String get medDetailNoFactors => '暂无影响因素数据';
-
-  @override
   String get moodCbtSituation => '情境';
 
   @override
@@ -3983,8 +3827,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodCbtBehavior => '行为应对';
-
-  @override
 
   @override
   String get moodDeleted => '已删除';
@@ -4011,13 +3853,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get todaySummaryStreak => '连续';
 
   @override
-
-  @override
   String get setupConsentMedicalDisclaimer =>
       '我已阅读并理解《医学免责声明》：本 App 不提供医疗建议、诊断或治疗，不能替代专业医疗服务';
-
-  @override
-  String get setupConsentViewDisclaimer => '查看';
 
   @override
   String get trackingCustomize => '自定义追踪项';
@@ -4079,9 +3916,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupConsentAgreeAll => '我已阅读并同意以上所有协议';
 
   @override
-  String get setupConsentViewAll => '查看全部协议';
-
-  @override
   String get careCopyLateCheckInTitle => '🛏️ 提早一点更稳定';
 
   @override
@@ -4101,9 +3935,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get careCopyWeekPerfectTitle => '🌟 一整周都准时！';
-
-  @override
-  String get careCopyWeekPerfectBody => '今周已全部准时';
 
   @override
   String get assessmentComparisonImproved => '好转';
@@ -4147,6 +3978,66 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dayDetailScaleAssessment => '心理量表评估';
+
+  @override
+  String get medTodayPending => '待服';
+
+  @override
+  String get medTodayTaken => '已服';
+
+  @override
+  String get medTodayRefill => '需续方';
+
+  @override
+  String get homeQuickMedLabel => '用药';
+
+  @override
+  String get homeQuickMoodLabel => '心情';
+
+  @override
+  String get homeQuickVentLabel => '树洞';
+
+  @override
+  String get homeQuickAssessmentLabel => '评估';
+
+  @override
+  String get homeQuickActionView => '查看';
+
+  @override
+  String get homeQuickActionRecord => '记录';
+
+  @override
+  String get homeQuickActionVent => '倾诉';
+
+  @override
+  String get homeQuickActionStart => '开始';
+
+  @override
+  String get homeTodayMetrics => '今日指标';
+
+  @override
+  String get homeMoreMoodTitle => '心情';
+
+  @override
+  String get homeMoreMoodSubtitle => '查看过往记录';
+
+  @override
+  String get homeMoreVentTitle => '树洞';
+
+  @override
+  String get homeMoreVentSubtitle => '私密空间 · 1 人可见';
+
+  @override
+  String get homeMoreSettingsTitle => '设置';
+
+  @override
+  String get homeMoreSettingsSubtitle => '提醒 / 隐私 / 数据导出';
+
+  @override
+  String get moodQuickRecordFailed => '记录失败，请重试';
+
+  @override
+  String get homeMoreSectionTitle => '更多';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -4179,9 +4070,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeStillOnline => '🌱 您還在線';
-
-  @override
-  String get homeTempMed => '臨時吃藥 +';
 
   @override
   String get homeStreakBroken => '少 1 次沒關係，明天繼續';
@@ -4346,14 +4234,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsExportRiskBody =>
-      '您即將導出的數據為明文文件,含您的個人健康等敏感信息(用藥、打卡、緊急聯繫人、樹洞文字)。請務必保存到安全、可信的位置(加密 U 盤 / 私人云盤),避免上傳至公共雲盤或發送給不可信的第三方。';
+      '您即將導出的數據為明文文件，含您的個人健康等敏感信息（用藥、打卡、緊急聯繫人、樹洞文字）。請務必保存到安全、可信的位置（加密 U 盤 / 私人云盤），避免上傳至公共雲盤或發送給不可信的第三方。';
 
   @override
   String get settingsExportRiskLiability =>
-      '一旦導出,文件的安全與保密由您自行負責,本 App 不再承擔保護責任(PIPL §17 明確告知 + 用戶確認)。';
+      '一旦導出，文件的安全與保密由您自行負責，本 App 不再承擔保護責任（PIPL §17 明確告知 + 用戶確認）。';
 
   @override
-  String get settingsExportRiskAcknowledge => '我已瞭解風險,繼續導出';
+  String get settingsExportRiskAcknowledge => '我已瞭解風險，繼續導出';
 
   @override
   String get settingsExportDialogTitle => '導出數據';
@@ -4890,19 +4778,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get legalVentWithdrawTitle => '撤回樹洞同意';
 
   @override
-  String get legalVentWithdrawBody => '樹洞內容是您最私密的數據。撤回同意後,您可選擇以下方式處理已有數據:';
+  String get legalVentWithdrawBody => '樹洞內容是您最私密的數據。撤回同意後，您可選擇以下方式處理已有數據：';
 
   @override
   String get legalVentWithdrawDelete => '立即刪除';
 
   @override
-  String get legalVentWithdrawDeleteDesc => '所有樹洞文字 + 錄音文件立即物理刪除,不可恢復';
+  String get legalVentWithdrawDeleteDesc => '所有樹洞文字 + 錄音文件立即物理刪除，不可恢復';
 
   @override
   String get legalVentWithdrawSeal => '加密封存';
 
   @override
-  String get legalVentWithdrawSealDesc => '數據保留在本地但加密,UI 不可見,重新同意後可恢復';
+  String get legalVentWithdrawSealDesc => '數據保留在本地但加密，UI 不可見，重新同意後可恢復';
 
   @override
   String legalVentWithdrawnDeleted(num count) {
@@ -4917,7 +4805,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get legalVentWithdrawnSealed => '已加密封存,數據保留在本地';
+  String get legalVentWithdrawnSealed => '已加密封存，數據保留在本地';
 
   @override
   String get legalVentDeleteRetry => '重試刪除';
@@ -4926,7 +4814,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventSealedTitle => '已加密封存';
 
   @override
-  String get ventSealedSubtitle => '您已撤回樹洞同意。所有數據已加密封存,UI 不可見。重新同意後可恢復。';
+  String get ventSealedSubtitle => '您已撤回樹洞同意。所有數據已加密封存，UI 不可見。重新同意後可恢復。';
 
   @override
   String get ventSealedAction => '前往法律與隱私';
@@ -4963,7 +4851,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get ventReportDialogBody =>
-      '樹洞內容僅存儲在您的設備, 不會上傳任何服務器, 不存在用戶間互相看到的情況。\n\n如發現 App 本身的不當內容或想反饋問題, 請前往「法律與隱私」頁面聯繫開發者。';
+      '樹洞內容僅存儲在您的設備， 不會上傳任何服務器， 不存在用戶間互相看到的情況。\n\n如發現 App 本身的不當內容或想反饋問題， 請前往「法律與隱私」頁面聯繫開發者。';
 
   @override
   String get ventReportDialogAction => '前往法律與隱私';
@@ -5039,9 +4927,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodListFilterPeriod => '時段';
-
-  @override
-  String get moodListPeriodAll => '全部';
 
   @override
   String get moodPeriodChartTitle => '心境 4 段趨勢（近 30 天）';
@@ -5241,15 +5126,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String homeHeaderKeepGoing(Object name) {
     return '$name 還在堅持';
   }
-
-  @override
-  String get homeTooltipTrend => '查看趨勢';
-
-  @override
-  String get homeTooltipAssessmentHistory => '評估歷史';
-
-  @override
-  String get homeTooltipSettings => '設置';
 
   @override
   String get ventSwipeHint => '左滑或長按條目可刪除';
@@ -5524,7 +5400,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '提示：您可以隨時在「設置 → 法律與隱私」撤回同意。拒絕或撤回後，App 的相關功能將無法使用。';
 
   @override
-  String get setupWelcomeContactHint => '（可選,後續可在設置中添加）';
+  String get setupWelcomeContactHint => '（可選，後續可在設置中添加）';
 
   @override
   String get setupLegalUserAgreement => '用戶協議';
@@ -5649,21 +5525,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String safetyAlertBodySent(Object date) {
-    return '上次打卡: $date。已自動通知緊急聯繫人，請確認安全。';
+    return '上次打卡： $date。已自動通知緊急聯繫人，請確認安全。';
   }
 
   @override
   String safetyAlertBodyMocked(Object date) {
-    return '上次打卡: $date。失聯檢測已觸發，但當前為開發模式，**未實際通知**緊急聯繫人。';
+    return '上次打卡： $date。失聯檢測已觸發，但當前為開發模式，**未實際通知**緊急聯繫人。';
   }
 
   @override
   String safetyAlertBodyFailed(Object date) {
-    return '上次打卡: $date。失聯檢測已觸發，但通知發送失敗。請檢查網絡。';
+    return '上次打卡： $date。失聯檢測已觸發，但通知發送失敗。請檢查網絡。';
   }
 
   @override
-  String safetyAlertTitle(int days) {
+  String safetyAlertTitle(Object name, int days) {
     return '⚠️ 已 $days 天未打卡';
   }
 
@@ -5684,18 +5560,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get notifChannelSafetyDesc => '長時間未打卡時提醒';
-
-  @override
-  String get homeSnoozeBody => '剛才您點了「snooze」，是時候點一下 = 打卡了';
-
-  @override
-  String get homeSnoozeConfirmed => '好，5 分鐘後會再提醒您 👌';
-
-  @override
-  String get homeSnoozeButton => '⏰ 5 分鐘後再提醒';
-
-  @override
-  String get homeVentButton => '傾訴 🌲';
 
   @override
   String get homeNotifBannerText => '提醒沒設上，可能錯過打卡。請到系統設置允許通知。';
@@ -5743,7 +5607,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get trendWithdrawnSubtitle =>
-      '你撤回了「趨勢分析」同意（PIPL §14）。趨勢數據未刪除, 重新開啟後即可恢復。';
+      '你撤回了「趨勢分析」同意（PIPL §14）。趨勢數據未刪除， 重新開啟後即可恢復。';
 
   @override
   String get trendWithdrawnAction => '去重新開啟';
@@ -5845,7 +5709,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get trendCbtReratedEmptyTitle => '還沒有 5/7 欄 CBT 數據';
 
   @override
-  String get trendCbtReratedEmptyHint => '先用 5/7 欄 CBT 填表, 才能看到重評效果';
+  String get trendCbtReratedEmptyHint => '先用 5/7 欄 CBT 填表， 才能看到重評效果';
 
   @override
   String get contactEmptyList => '還沒有聯繫人，請先添加';
@@ -6093,16 +5957,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get snackbarActionEncryptRecording => '加密錄音';
 
   @override
-  String get snackbarActionRecord => '錄音';
-
-  @override
-  String get snackbarActionStartRecording => '開始錄音';
-
-  @override
   String get snackbarActionCheckin => '打卡';
-
-  @override
-  String get snackbarActionSnooze => '推遲提醒';
 
   @override
   String get snackbarActionAutoCheckin => '自動打卡';
@@ -6404,7 +6259,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get scaleHotlineSg => 'Samaritans of Singapore (24h)';
 
   @override
-  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免費)';
+  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免費）';
 
   @override
   String get scaleHotlineIntl => '國際通用 · 請聯繫當地急救或心理援助';
@@ -6569,7 +6424,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get crisisHotlineCnDesc => '中國大陸 24 小時免費';
 
   @override
-  String get crisisHotlineTwLabel => '安心專線 (24 小時)';
+  String get crisisHotlineTwLabel => '安心專線 (24 小時）';
 
   @override
   String get crisisHotlineTwNumber => '1925';
@@ -6578,7 +6433,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get crisisHotlineTwDesc => '中國臺灣 24 小時心理諮商';
 
   @override
-  String get crisisHotlineHkLabel => '撒瑪利亞防止自殺會 (24 小時)';
+  String get crisisHotlineHkLabel => '撒瑪利亞防止自殺會 (24 小時）';
 
   @override
   String get crisisHotlineHkNumber => '2389 2222';
@@ -6587,7 +6442,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get crisisHotlineHkDesc => '中國香港 24 小時多語言';
 
   @override
-  String get crisisHotlineMoLabel => '明愛生命熱線 (24 小時)';
+  String get crisisHotlineMoLabel => '明愛生命熱線 (24 小時）';
 
   @override
   String get crisisHotlineMoNumber => '2826 1122';
@@ -6599,7 +6454,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get crisisHotlineTitle => '緊急心理援助熱線';
 
   @override
-  String get crisisHotlineSubtitle => '如果你或身邊的人正在經歷心理危機, 請撥打以下熱線';
+  String get crisisHotlineSubtitle => '如果你或身邊的人正在經歷心理危機， 請撥打以下熱線';
 
   @override
   String get crisisHotlineCn2Label => '全國 24 小時免費心理援助熱線';
@@ -6653,7 +6508,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get crisisHotlineCnBeijingDesc => '北京 24 小時';
 
   @override
-  String get crisisHotlineTw1995Label => '生命線 (24 小時)';
+  String get crisisHotlineTw1995Label => '生命線 (24 小時）';
 
   @override
   String get crisisHotlineTw1995Number => '1995';
@@ -6672,7 +6527,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String crisisHotlineSnackbarCopied(Object number) {
-    return '已複製: $number';
+    return '已複製： $number';
   }
 
   @override
@@ -6683,12 +6538,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String crisisHotlineDialFailed(Object number) {
-    return '無法啟動撥號, 請手動撥打: $number';
+    return '無法啟動撥號， 請手動撥打： $number';
   }
 
   @override
   String get setupLegalAgeAttestation =>
-      '本人鄭重承諾:我已年滿 18 週歲。如本人為 14-18 週歲,本人保證已取得監護人代為同意,並願意承擔虛假陳述的一切法律後果。';
+      '本人鄭重承諾：我已年滿 18 週歲。如本人為 14-18 週歲，本人保證已取得監護人代為同意，並願意承擔虛假陳述的一切法律後果。';
 
   @override
   String get moodCbtLevelLabel3 => '3 欄';
@@ -6728,7 +6583,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodCbtExplainerBody =>
-      'CBT（認知行為療法）思維記錄幫你識別並重構負面自動思維。\n按 5 欄標準：先記錄情境與想法，再找證據支持/反對，最後寫下更平衡的替代想法。';
+      'CBT（認知行為療法）思維記錄幫你識別並重構負面自動思維。\n按 5 欄標準：先記錄情境與想法，再找證據支持／反對，最後寫下更平衡的替代想法。';
 
   @override
   String get moodCbtFieldHintSituation => '觸發這個想法的事件是什麼？發生在哪裡、什麼時候、有誰？';
@@ -6813,13 +6668,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodCbtConfirm => '確認';
 
   @override
-  String get moodCbtConfirmEmpty => '(未填)';
+  String get moodCbtConfirmEmpty => '（未填）';
 
   @override
-  String get moodCbtAutoThoughtPrompt0 => '如果你的好朋友遇到這事,你會怎麼勸TA？';
+  String get moodCbtAutoThoughtPrompt0 => '如果你的好朋友遇到這事，你會怎麼勸TA？';
 
   @override
-  String get moodCbtAutoThoughtPrompt1 => '最壞/最好/最現實的結果是什麼？';
+  String get moodCbtAutoThoughtPrompt1 => '最壞／最好／最現實的結果是什麼？';
 
   @override
   String get moodCbtAutoThoughtPrompt2 => '一年後你還會這麼想嗎？';
@@ -6864,7 +6719,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodListPageTitle => 'Mood 歷史';
 
   @override
-  String get moodListSearchHint => '搜索 note…';
+  String get moodListSearchHint => '搜索 note……';
 
   @override
   String get moodListEmpty => '還沒有 mood 記錄';
@@ -6892,7 +6747,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get cbtExportPdfFailed => 'PDF 導出失敗,請重試';
+  String get cbtExportPdfFailed => 'PDF 導出失敗，請重試';
 
   @override
   String get assessmentCenterTitle => '量表中心';
@@ -6917,7 +6772,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentCenterMultiLineTitle => '全部量表趨勢';
 
   @override
-  String get assessmentCenterNotAvailable => '需法務/臨床審核';
+  String get assessmentCenterNotAvailable => '需法務／臨床審核';
 
   @override
   String get assessmentCenterComingSoon => '敬請期待';
@@ -6929,7 +6784,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get isiShortDescription => 'Morin 1993 失眠嚴重指數 7 題';
 
   @override
-  String get isiInstruction => '過去 2 周內, 您的睡眠問題有多嚴重?';
+  String get isiInstruction => '過去 2 周內， 您的睡眠問題有多嚴重？';
 
   @override
   String get isiOption0 => '無';
@@ -6962,22 +6817,22 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get isiSeveritySummary0 => '無臨床失眠';
 
   @override
-  String get isiSeveritySummary1 => '亞臨床失眠, 建議關注';
+  String get isiSeveritySummary1 => '亞臨床失眠， 建議關注';
 
   @override
-  String get isiSeveritySummary2 => '中度失眠, 建議就醫';
+  String get isiSeveritySummary2 => '中度失眠， 建議就醫';
 
   @override
-  String get isiSeveritySummary3 => '重度失眠, 強烈建議就醫';
+  String get isiSeveritySummary3 => '重度失眠， 強烈建議就醫';
 
   @override
   String get pssName => 'PSS 壓力量表';
 
   @override
-  String get pssShortDescription => 'Cohen 1983 壓力量表 (10 題, 含 4 題反向)';
+  String get pssShortDescription => 'Cohen 1983 壓力量表 (10 題， 含 4 題反向）';
 
   @override
-  String get pssInstruction => '過去 1 個月裡, 您有多經常有下列感受?';
+  String get pssInstruction => '過去 1 個月裡， 您有多經常有下列感受？';
 
   @override
   String get pssOption0 => '從未';
@@ -7010,7 +6865,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get pssSeveritySummary1 => '中度壓力';
 
   @override
-  String get pssSeveritySummary2 => '高壓力, 建議關注和尋求支持';
+  String get pssSeveritySummary2 => '高壓力， 建議關注和尋求支持';
 
   @override
   String get whodasName => 'WHODAS 2.0 殘疾評定';
@@ -7019,7 +6874,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get whodasShortDescription => 'WHO 通用殘疾評估 12 題簡化版';
 
   @override
-  String get whodasInstruction => '過去 30 天內, 您在以下活動中遇到多大困難?';
+  String get whodasInstruction => '過去 30 天內， 您在以下活動中遇到多大困難？';
 
   @override
   String get whodasOption0 => '沒有';
@@ -7058,23 +6913,23 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get whodasSeveritySummary1 => '輕度殘疾';
 
   @override
-  String get whodasSeveritySummary2 => '中度殘疾, 建議就醫評估';
+  String get whodasSeveritySummary2 => '中度殘疾， 建議就醫評估';
 
   @override
-  String get whodasSeveritySummary3 => '重度殘疾, 建議就醫';
+  String get whodasSeveritySummary3 => '重度殘疾， 建議就醫';
 
   @override
-  String get whodasSeveritySummary4 => '極重度殘疾, 強烈建議就醫';
+  String get whodasSeveritySummary4 => '極重度殘疾， 強烈建議就醫';
 
   @override
   String get level2DepressionName => 'DSM-5 Level 2 抑鬱嚴重度';
 
   @override
   String get level2DepressionShortDescription =>
-      '成人抑鬱嚴重度 8 題 (DSM-5 PROMIS 簡化版)';
+      '成人抑鬱嚴重度 8 題 (DSM-5 PROMIS 簡化版）';
 
   @override
-  String get level2DepressionInstruction => '過去 7 天內, 您有多經常被以下情緒困擾?';
+  String get level2DepressionInstruction => '過去 7 天內， 您有多經常被以下情緒困擾？';
 
   @override
   String get level2DepressionOption0 => '完全沒有';
@@ -7107,19 +6962,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get level2DepressionSeveritySummary1 => '輕度抑鬱傾向';
 
   @override
-  String get level2DepressionSeveritySummary2 => '中度抑鬱, 建議就醫';
+  String get level2DepressionSeveritySummary2 => '中度抑鬱， 建議就醫';
 
   @override
-  String get level2DepressionSeveritySummary3 => '重度抑鬱, 強烈建議就醫';
+  String get level2DepressionSeveritySummary3 => '重度抑鬱， 強烈建議就醫';
 
   @override
   String get level2AnxietyName => 'DSM-5 Level 2 焦慮嚴重度';
 
   @override
-  String get level2AnxietyShortDescription => '成人焦慮嚴重度 7 題 (DSM-5 PROMIS 簡化版)';
+  String get level2AnxietyShortDescription => '成人焦慮嚴重度 7 題 (DSM-5 PROMIS 簡化版）';
 
   @override
-  String get level2AnxietyInstruction => '過去 7 天內, 您有多經常被以下感受困擾?';
+  String get level2AnxietyInstruction => '過去 7 天內， 您有多經常被以下感受困擾？';
 
   @override
   String get level2AnxietyOption0 => '完全沒有';
@@ -7152,19 +7007,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get level2AnxietySeveritySummary1 => '輕度焦慮傾向';
 
   @override
-  String get level2AnxietySeveritySummary2 => '中度焦慮, 建議就醫';
+  String get level2AnxietySeveritySummary2 => '中度焦慮， 建議就醫';
 
   @override
-  String get level2AnxietySeveritySummary3 => '重度焦慮, 強烈建議就醫';
+  String get level2AnxietySeveritySummary3 => '重度焦慮， 強烈建議就醫';
 
   @override
   String get level2ManiaName => 'DSM-5 Level 2 躁狂嚴重度';
 
   @override
-  String get level2ManiaShortDescription => '成人躁狂嚴重度 5 題 (DSM-5 PROMIS 簡化版)';
+  String get level2ManiaShortDescription => '成人躁狂嚴重度 5 題 (DSM-5 PROMIS 簡化版）';
 
   @override
-  String get level2ManiaInstruction => '過去 7 天內, 您有多經常體驗以下情況?';
+  String get level2ManiaInstruction => '過去 7 天內， 您有多經常體驗以下情況？';
 
   @override
   String get level2ManiaOption0 => '完全沒有';
@@ -7197,19 +7052,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get level2ManiaSeveritySummary1 => '輕度躁狂傾向';
 
   @override
-  String get level2ManiaSeveritySummary2 => '中度躁狂, 建議就醫';
+  String get level2ManiaSeveritySummary2 => '中度躁狂， 建議就醫';
 
   @override
-  String get level2ManiaSeveritySummary3 => '重度躁狂, 強烈建議就醫';
+  String get level2ManiaSeveritySummary3 => '重度躁狂， 強烈建議就醫';
 
   @override
   String get asrmName => 'ASRM 自評躁狂量表';
 
   @override
-  String get asrmShortDescription => 'Altman 1997 自評躁狂量表 (5 題)';
+  String get asrmShortDescription => 'Altman 1997 自評躁狂量表 (5 題）';
 
   @override
-  String get asrmInstruction => '過去 1 周內, 您有 (或感覺到) 以下情況的程度?';
+  String get asrmInstruction => '過去 1 周內， 您有 （或感覺到） 以下情況的程度？';
 
   @override
   String get asrmOption0 => '完全沒有';
@@ -7248,22 +7103,22 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get asrmSeveritySummary1 => '輕度躁狂傾向';
 
   @override
-  String get asrmSeveritySummary2 => '中度躁狂, 建議就醫';
+  String get asrmSeveritySummary2 => '中度躁狂， 建議就醫';
 
   @override
-  String get asrmSeveritySummary3 => '重度躁狂, 建議就醫';
+  String get asrmSeveritySummary3 => '重度躁狂， 建議就醫';
 
   @override
-  String get asrmSeveritySummary4 => '極重度躁狂, 強烈建議就醫';
+  String get asrmSeveritySummary4 => '極重度躁狂， 強烈建議就醫';
 
   @override
   String get level2PsychosisName => 'DSM-5 Level 2 精神病性症狀';
 
   @override
-  String get level2PsychosisShortDescription => '成人精神病性症狀 8 題 (DSM-5 簡化版)';
+  String get level2PsychosisShortDescription => '成人精神病性症狀 8 題 (DSM-5 簡化版）';
 
   @override
-  String get level2PsychosisInstruction => '過去 7 天內, 您有多經常體驗以下情況?';
+  String get level2PsychosisInstruction => '過去 7 天內， 您有多經常體驗以下情況？';
 
   @override
   String get level2PsychosisOption0 => '從來沒有';
@@ -7296,10 +7151,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get level2PsychosisSeveritySummary1 => '輕度精神病性症狀';
 
   @override
-  String get level2PsychosisSeveritySummary2 => '中度精神病性症狀, 建議就醫';
+  String get level2PsychosisSeveritySummary2 => '中度精神病性症狀， 建議就醫';
 
   @override
-  String get level2PsychosisSeveritySummary3 => '重度精神病性症狀, 強烈建議就醫';
+  String get level2PsychosisSeveritySummary3 => '重度精神病性症狀， 強烈建議就醫';
 
   @override
   String get dailyTrackingTitle => '日常追蹤';
@@ -7353,19 +7208,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get anxietyAgitationShortDesc => '焦慮 + 急躁 雙維度 5 檔';
 
   @override
-  String get anxietyAgitationHint => '焦慮反向 1=嚴重 5=平靜; 急躁正向 1=平靜 5=極急';
+  String get anxietyAgitationHint => '焦慮反向 1=嚴重 5=平靜； 急躁正向 1=平靜 5=極急';
 
   @override
   String get anxietyAgitationAddButton => '添加評估';
 
   @override
   String get anxietyAgitationNoData => '暫無焦慮急躁記錄';
-
-  @override
-  String get anxietyAgitationAnxietyLabel => '焦慮分數';
-
-  @override
-  String get anxietyAgitationAgitationLabel => '急躁分數';
 
   @override
   String anxietyAgitationAnxietyScore(int score) {
@@ -7389,7 +7238,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get sleepShortDesc => '入睡 + 時長 + 規律性';
 
   @override
-  String get sleepHint => '記錄每晚入睡 + 起床, 跨午夜自動算時長';
+  String get sleepHint => '記錄每晚入睡 + 起床， 跨午夜自動算時長';
 
   @override
   String get sleepAddButton => '添加睡眠記錄';
@@ -7401,9 +7250,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String sleepBedtime(Object time) {
     return '入睡 $time';
   }
-
-  @override
-  String get sleepRegularityTitle => '規律性';
 
   @override
   String sleepWakeTime(Object time) {
@@ -7422,7 +7268,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get socialRhythmShortDesc => '起床 + 第一餐 + 最後一餐 + 時長';
 
   @override
-  String get socialRhythmHint => '記錄每天的作息, 幫醫生判斷節律穩定性';
+  String get socialRhythmHint => '記錄每天的作息， 幫醫生判斷節律穩定性';
 
   @override
   String get socialRhythmAddButton => '添加社會節律';
@@ -7457,7 +7303,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get stressEventShortDesc => '事件類型 + 強度評分';
 
   @override
-  String get stressEventHint => '記錄生活中的壓力事件, 幫醫生判斷觸發因素';
+  String get stressEventHint => '記錄生活中的壓力事件， 幫醫生判斷觸發因素';
 
   @override
   String get stressEventAddButton => '添加應激源';
@@ -7480,7 +7326,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get treatmentName => '治療';
 
   @override
-  String get treatmentShortDesc => '用藥 / 諮詢 / 物理治療, 關聯 medication';
+  String get treatmentShortDesc => '用藥 / 諮詢 / 物理治療， 關聯 medication';
 
   @override
   String get treatmentHint => '治療條目可關聯 medication, 寫入功能 v0.31+';
@@ -7516,7 +7362,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get treatmentProvider => '醫療機構 / 醫生';
 
   @override
-  String get treatmentProviderHint => '例如: 心理醫生王醫生 / 北京協和醫院';
+  String get treatmentProviderHint => '例如： 心理醫生王醫生 / 北京協和醫院';
 
   @override
   String get treatmentProviderRequired => '請填寫醫療機構 / 醫生';
@@ -7525,7 +7371,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get treatmentNote => '備註';
 
   @override
-  String get treatmentNoteHint => '可選, 簡短記錄治療要點';
+  String get treatmentNoteHint => '可選， 簡短記錄治療要點';
 
   @override
   String get treatmentType => '治療類型';
@@ -7539,10 +7385,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get weightName => '體重';
 
   @override
-  String get weightShortDesc => '體重 + BMI (需 profile.height)';
+  String get weightShortDesc => '體重 + BMI （需 profile.height)';
 
   @override
-  String get weightHint => '記錄每天的體重, 幫醫生判斷生理狀態';
+  String get weightHint => '記錄每天的體重， 幫醫生判斷生理狀態';
 
   @override
   String get weightAddButton => '添加體重記錄';
@@ -7632,6 +7478,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get cardStatusToday => '今天';
 
   @override
+  String get sleepRegularityTitle => '規律性';
+
+  @override
+  String get anxietyAgitationAnxietyLabel => '焦慮分數';
+
+  @override
+  String get anxietyAgitationAgitationLabel => '急躁分數';
+
+  @override
+  String get moodListPeriodAll => '全部';
+
+  @override
   String get migrationFailedInitData => '無法初始化本地數據';
 
   @override
@@ -7639,7 +7497,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String migrationFailedFooter(String error) {
-    return '技術信息: $error';
+    return '技術信息： $error';
   }
 
   @override
@@ -7649,7 +7507,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get migrationFailedCloseButton => '關閉';
 
   @override
-  String get migrationStartingHint => '啟動中，請稍候...';
+  String get migrationStartingHint => '啟動中，請稍候……';
 
   @override
   String get migrationNavContextNull => '啟動上下文尚未就緒，請稍後再試';
@@ -7686,7 +7544,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get weightKgHint => '如 60.5';
 
   @override
-  String get weightBmiNeedHeight => '暫無 (需填寫身高)';
+  String get weightBmiNeedHeight => '暫無 （需填寫身高）';
 
   @override
   String socialRhythmMinutesSummary(
@@ -7695,13 +7553,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get socialRhythmSocialMinLabel => '社交時長 (分鐘)';
+  String get socialRhythmSocialMinLabel => '社交時長 （分鐘）';
 
   @override
-  String get socialRhythmWorkMinLabel => '工作時長 (分鐘)';
+  String get socialRhythmWorkMinLabel => '工作時長 （分鐘）';
 
   @override
-  String get socialRhythmExerciseMinLabel => '運動時長 (分鐘)';
+  String get socialRhythmExerciseMinLabel => '運動時長 （分鐘）';
 
   @override
   String get anxietyAgitationAnxietyScaleHint => '1=嚴重 5=平靜';
@@ -7716,7 +7574,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String sleepDurationLabel(Object duration) {
-    return '時長: $duration';
+    return '時長： $duration';
   }
 
   @override
@@ -7746,17 +7604,17 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get consentWithdrawSafetyBody => '失聯通知功能將停用。系統不再通過 SMS / 郵件自動通知緊急聯繫人。';
 
   @override
-  String get consentWithdrawVentBody => '樹洞 (私密傾訴) 功能將停用。新增樹洞記錄會被拒絕, 已有記錄保留。';
+  String get consentWithdrawVentBody => '樹洞 （私密傾訴） 功能將停用。新增樹洞記錄會被拒絕， 已有記錄保留。';
 
   @override
   String get consentWithdrawAnalyticsBody =>
-      '評估 / 情緒相關分析圖表將不再展示。已有數據保留, 重新開啟後恢復。';
+      '評估 / 情緒相關分析圖表將不再展示。已有數據保留， 重新開啟後恢復。';
 
   @override
   String get dataExportPurposeBackup => '本地備份 / 跨設備遷移';
 
   @override
-  String get dataExportDataCategories => '用藥記錄、打卡記錄、緊急聯繫人、情緒日記、樹洞文字 (錄音不導出)';
+  String get dataExportDataCategories => '用藥記錄、打卡記錄、緊急聯繫人、情緒日記、樹洞文字 （錄音不導出）';
 
   @override
   String get dataExportRetentionClipboard => '剪貼板 + 用戶自行保存到加密存儲';
@@ -7765,7 +7623,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medPageTitle => '用藥';
 
   @override
-  String get medAddTooltip => '新增藥物';
+  String get medAddTooltip => '添加藥物';
 
   @override
   String get medTodaySchedule => '今日服藥';
@@ -7775,12 +7633,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get medQuickActions => '快捷操作';
-
-  @override
-  String get medCalendar => '用藥日曆';
-
-  @override
-  String get medRefill => '續方管理';
 
   @override
   String get medSlotMorning => '早上';
@@ -7795,19 +7647,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medSlotBedtime => '睡前';
 
   @override
-  String get medEmptyTitle => '還沒有新增藥物';
+  String get medEmptyTitle => '還沒有添加藥物';
 
   @override
-  String get medEmptySubtitle => '點擊右上角 + 新增你的第一種藥物';
+  String get medEmptySubtitle => '點擊右上角 + 添加你的第一種藥物';
 
   @override
   String get medNoScheduleToday => '今天沒有服藥計劃';
 
   @override
-  String get medAddTitle => '新增藥物';
+  String get medAddTitle => '添加藥物';
 
   @override
-  String get medAddStep1Title => '藥物資訊';
+  String get medAddStep1Title => '藥物信息';
 
   @override
   String get medAddStep2Title => '劑量與時間';
@@ -7831,7 +7683,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medAddTimeLabel => '服藥時間';
 
   @override
-  String get medAddTimeAdd => '新增時間';
+  String get medAddTimeAdd => '添加時間';
 
   @override
   String get medAddColorLabel => '藥物顏色（可選，幫助識別）';
@@ -7855,7 +7707,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medAddNext => '下一步';
 
   @override
-  String get medAddSave => '儲存';
+  String get medAddSave => '保存';
 
   @override
   String medAddColorN(Object n) {
@@ -7863,7 +7715,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get medFormTablet => '錠劑';
+  String get medFormTablet => '片劑';
 
   @override
   String get medFormCapsule => '膠囊';
@@ -7885,18 +7737,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get medNotFound => '藥物未找到';
-
-  @override
-  String get moodReminderTitle => '情緒記錄提醒';
-
-  @override
-  String get moodReminderSubtitle => '每天定時提醒你記錄心情';
-
-  @override
-  String get moodReminderTimeLabel => '提醒時間';
-
-  @override
-  String get moodReminderEnabled => '開啟提醒';
 
   @override
   String get moodInfluenceTitle => '影響因素';
@@ -7923,84 +7763,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodInfluenceOther => '其他';
 
   @override
-  String get influenceFactorFamily => '家人';
-
-  @override
-  String get influenceFactorFriend => '朋友';
-
-  @override
-  String get influenceFactorPartner => '伴侶';
-
-  @override
-  String get influenceFactorChild => '孩子';
-
-  @override
-  String get influenceFactorColleague => '同事';
-
-  @override
-  String get influenceFactorExercise => '運動';
-
-  @override
-  String get influenceFactorSick => '生病';
-
-  @override
-  String get influenceFactorGoodSleep => '睡眠好';
-
-  @override
-  String get influenceFactorHealthyDiet => '飲食健康';
-
-  @override
-  String get influenceFactorWork => '工作';
-
-  @override
-  String get influenceFactorHobby => '愛好';
-
-  @override
-  String get influenceFactorTravel => '旅行';
-
-  @override
-  String get influenceFactorCommute => '通勤';
-
-  @override
-  String get influenceFactorShopping => '購物';
-
-  @override
-  String get influenceFactorGaming => '遊戲';
-
-  @override
-  String get influenceFactorReading => '閱讀';
-
-  @override
-  String get influenceFactorEntertainment => '娛樂';
-
-  @override
-  String get influenceFactorMeditation => '冥想';
-
-  @override
-  String get influenceFactorBreathing => '呼吸練習';
-
-  @override
-  String get influenceFactorJournaling => '寫日記';
-
-  @override
-  String get influenceFactorYoga => '瑜伽';
-
-  @override
-  String get influenceFactorSunny => '晴天';
-
-  @override
-  String get influenceFactorCloudy => '多雲';
-
-  @override
-  String get influenceFactorRainy => '雨天';
-
-  @override
-  String get influenceFactorSnowy => '雪天';
-
-  @override
-  String get influenceFactorWindy => '刮風';
-
-  @override
   String get moodDetailTitle => '情緒詳情';
 
   @override
@@ -8008,9 +7770,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodDetailMoodState => '情緒狀態';
-
-  @override
-  String get moodDetail4D => '4 維度';
 
   @override
   String get moodDetailCbtRecord => 'CBT 思維記錄';
@@ -8022,16 +7781,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodTrendWeek => '近 7 天';
 
   @override
-  String get moodTrendMonth => '近 30 天';
+  String get moodTrendDistribution => '分數分佈';
 
   @override
-  String get moodTrendDistribution => '分數分布';
-
-  @override
-  String get moodTrendNoData => '暫無資料';
-
-  @override
-  String get moodEditTooltip => '編輯';
+  String get moodTrendNoData => '暫無數據';
 
   @override
   String get moodDeleteTooltip => '刪除';
@@ -8043,12 +7796,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodFactorAnalysis => '因素關聯分析';
 
   @override
-  String get moodFactorAvgScore => '平均分';
-
-  @override
-  String get moodFactorCount => '記錄數';
-
-  @override
   String get navMedication => '用藥';
 
   @override
@@ -8058,25 +7805,16 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodModeDaily => '今天';
 
   @override
-  String get moodTrendWeekTitle => '近 7 天情緒趨勢';
-
-  @override
-  String get moodTrendMonthTitle => '近 30 天情緒趨勢';
-
-  @override
-  String get moodTrendDistTitle => '分數分布';
+  String get moodTrendDistTitle => '分數分佈';
 
   @override
   String get moodTrendCbtTitle => 'CBT 重評效果';
 
   @override
-  String get moodTrendCbtHint => '正值 = 情緒改善, 負值 = 惡化';
+  String get moodTrendCbtHint => '正值 = 情緒改善， 負值 = 惡化';
 
   @override
-  String get moodTrendCbtEmpty => '暫無 CBT 重評資料';
-
-  @override
-  String get moodTrendRecords => '條';
+  String get moodTrendCbtEmpty => '暫無 CBT 重評數據';
 
   @override
   String get medDetailActive => '在用';
@@ -8103,9 +7841,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medDetailRefill => '續方';
 
   @override
-  String get medDetailNoFactors => '暫無影響因素資料';
-
-  @override
   String get moodCbtSituation => '情境';
 
   @override
@@ -8130,8 +7865,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodCbtBehavior => '行為應對';
 
   @override
-
-  @override
   String get moodDeleted => '已刪除';
 
   @override
@@ -8141,7 +7874,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsProfileTitle => '個人資料';
 
   @override
-  String get settingsProfileSubtitle => '健康檔案、醫療資訊';
+  String get settingsProfileSubtitle => '健康檔案、醫療信息';
 
   @override
   String get todaySummaryCheckIn => '打卡';
@@ -8156,13 +7889,8 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get todaySummaryStreak => '連續';
 
   @override
-
-  @override
   String get setupConsentMedicalDisclaimer =>
       '我已閱讀並理解《醫學免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務';
-
-  @override
-  String get setupConsentViewDisclaimer => '查看';
 
   @override
   String get trackingCustomize => '自定義追蹤項';
@@ -8224,9 +7952,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupConsentAgreeAll => '我已閱讀並同意以上所有協議';
 
   @override
-  String get setupConsentViewAll => '查看全部協議';
-
-  @override
   String get careCopyLateCheckInTitle => '🛏️ 提早一點更穩定';
 
   @override
@@ -8246,9 +7971,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get careCopyWeekPerfectTitle => '🌟 一整週都準時！';
-
-  @override
-  String get careCopyWeekPerfectBody => '本週已全部準時';
 
   @override
   String get assessmentComparisonImproved => '好轉';
@@ -8292,4 +8014,64 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get dayDetailScaleAssessment => '心理量表評估';
+
+  @override
+  String get medTodayPending => '待服';
+
+  @override
+  String get medTodayTaken => '已服';
+
+  @override
+  String get medTodayRefill => '需續方';
+
+  @override
+  String get homeQuickMedLabel => '用藥';
+
+  @override
+  String get homeQuickMoodLabel => '心情';
+
+  @override
+  String get homeQuickVentLabel => '樹洞';
+
+  @override
+  String get homeQuickAssessmentLabel => '評估';
+
+  @override
+  String get homeQuickActionView => '查看';
+
+  @override
+  String get homeQuickActionRecord => '記錄';
+
+  @override
+  String get homeQuickActionVent => '傾訴';
+
+  @override
+  String get homeQuickActionStart => '開始';
+
+  @override
+  String get homeTodayMetrics => '今日指標';
+
+  @override
+  String get homeMoreMoodTitle => '心情';
+
+  @override
+  String get homeMoreMoodSubtitle => '查看過往記錄';
+
+  @override
+  String get homeMoreVentTitle => '樹洞';
+
+  @override
+  String get homeMoreVentSubtitle => '私密空間 · 1 人可見';
+
+  @override
+  String get homeMoreSettingsTitle => '設置';
+
+  @override
+  String get homeMoreSettingsSubtitle => '提醒 / 隱私 / 數據導出';
+
+  @override
+  String get moodQuickRecordFailed => '記錄失敗，請重試';
+
+  @override
+  String get homeMoreSectionTitle => '更多';
 }
