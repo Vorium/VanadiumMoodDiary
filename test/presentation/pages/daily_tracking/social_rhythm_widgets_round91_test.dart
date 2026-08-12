@@ -116,9 +116,9 @@ void main() {
     expect(find.text('起床时间'), findsOneWidget);
     expect(find.text('第一餐时间'), findsOneWidget);
     expect(find.text('最后一餐时间'), findsOneWidget);
-    expect(find.text('社交时长 (分钟)'), findsOneWidget);
-    expect(find.text('工作时长 (分钟)'), findsOneWidget);
-    expect(find.text('运动时长 (分钟)'), findsOneWidget);
+    expect(find.text('社交时长 （分钟）'), findsOneWidget);
+    expect(find.text('工作时长 （分钟）'), findsOneWidget);
+    expect(find.text('运动时长 （分钟）'), findsOneWidget);
 
     // 4. tap 保存 (defaults: 07:00 / 12:00 / 19:00 + 0 / 0 / 0)
     await tester.tap(find.text('保存'));

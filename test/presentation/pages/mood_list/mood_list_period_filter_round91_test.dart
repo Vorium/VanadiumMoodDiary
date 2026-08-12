@@ -82,7 +82,7 @@ void main() {
     expect(find.text('unspecified entry'), findsOneWidget);
 
     // 点 chip "早" — 走 moodListFilterProvider.setPeriod('morning')
-    await tester.tap(find.text('早'));
+    await tester.tap(find.text('早上'));
     await tester.pumpAndSettle();
 
     // 验只显示 morning entry

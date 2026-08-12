@@ -62,7 +62,7 @@ void main() {
 
     // 顶部: 1 个 search TextField (含 hint "搜索 note…")
     expect(find.byType(TextField), findsOneWidget);
-    expect(find.text('搜索 note…'), findsOneWidget);
+    expect(find.text('搜索 note……'), findsOneWidget);
 
     // 3 filter chip (复用 Task 3 的 l10n key)
     expect(find.widgetWithText(ActionChip, '日期'), findsOneWidget);
