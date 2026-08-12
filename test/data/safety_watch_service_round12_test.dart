@@ -1,12 +1,14 @@
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
+import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
@@ -16,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'safety_test_helpers.dart';
 
 /// v0.27 round 60 (P0-3 修正): test helper - 拿 test 用的 mock l10n
 ///
@@ -41,10 +44,14 @@ void main() {
   // 配置 SharedPreferences, 不再走 safety.setEnabled / setThresholdDays facade
   late SafetyConfigService safetyConfig;
   late MockSmsService sms;
-  late StubNotificationService notif;
+  // v0.32 R109 round 6 part 2: 改 CountingNotificationService (helper) 跟踪
+  //   showSafetyAlert 调用次数 + 入参, 替代 R108 跨期 NotificationService
+  //   抽象空 mock (无法 track 调用).
+  late CountingNotificationService notif;
   late CheckInRepositoryImpl checkInRepo;
   late ContactRepositoryImpl contactRepo;
   late UserProfileRepositoryImpl userProfileRepo;
+  late DispatchSafetyAlertUseCase dispatchUseCase;
 
   setUp(() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
@@ -52,14 +59,28 @@ void main() {
     contactRepo = ContactRepositoryImpl(db);
     userProfileRepo = UserProfileRepositoryImpl(db);
     sms = MockSmsService();
-    notif = StubNotificationService();
+    notif = CountingNotificationService();
     safetyConfig = SafetyConfigService();
+    // v0.32 R109 round 6 part 2: 改用真 use case + SafetyAlertSenderImpl
+    //   (sms + notif + config + builder) 替代 R108 NoOp dispatch — 之前 NoOp
+    //   早返, 测不到 `notif.alertsShown hasLength(1)` 这种业务行为断言.
+    //   这里 sender impl 持有上面 `sms` / `notif` / `safetyConfig`, 走完整
+    //   业务链, test 能验真发.
+    dispatchUseCase = DispatchSafetyAlertUseCase(
+      SafetyAlertSenderImpl(
+        smsService: sms,
+        notificationService: notif,
+        config: safetyConfig,
+        builder: const SafetyAlertBuilder(),
+      ),
+    );
     safety = SafetyWatchService(
       checkInRepo: checkInRepo,
       contactRepo: contactRepo,
       userProfileRepo: userProfileRepo,
       smsService: sms,
       notificationService: notif,
+      dispatchUseCase: dispatchUseCase,
     );
   });
 
@@ -305,6 +326,7 @@ void main() {
         contactRepo: hangingRepo,
         userProfileRepo: userProfileRepo,
         smsService: sms,
+        dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
         notificationService: notif,
         contactWatchTimeout: const Duration(milliseconds: 50),
       );
@@ -326,6 +348,7 @@ void main() {
         contactRepo: errorRepo,
         userProfileRepo: userProfileRepo,
         smsService: sms,
+        dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
         notificationService: notif,
         contactWatchTimeout: const Duration(milliseconds: 50),
       );
@@ -399,67 +422,4 @@ class MockSms implements SmsProvider {
   }
 }
 
-class StubNotificationService implements NotificationService {
-  final List<
-      ({
-        String? userName,
-        int daysWithoutCheckIn,
-        DateTime? lastCheckIn,
-        SmsDispatchOutcome outcome
-      })> alertsShown = [];
 
-  @override
-  Future<void> showSafetyAlert({
-    // v0.21 Round 23 (P1-24): userName 改 nullable
-    // v0.27 round 60 (P0-3 修正): 加 outcome + l10n 参数
-    String? userName,
-    required int daysWithoutCheckIn,
-    required DateTime? lastCheckIn,
-    required SmsDispatchOutcome outcome,
-    required AppLocalizations l10n,
-  }) async {
-    alertsShown.add(
-      (
-        userName: userName,
-        daysWithoutCheckIn: daysWithoutCheckIn,
-        lastCheckIn: lastCheckIn,
-        outcome: outcome,
-      ),
-    );
-  }
-
-  // 其它方法 stub 掉,测试不调
-  @override
-  Future<void> init() async {}
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
-  @override
-  Future<void> cancelAll() async {}
-  @override
-  Future<void> rescheduleMedicationReminders(List<dynamic> medications) async {}
-  Future<void> scheduleSoftReminder({int hour = 10, int minute = 0}) async {}
-  // v0.22 round 29 (spen-bug-04): cancelSoftReminder 死代码删除
-  // (scheduleSoftReminder 也是 dead, 但 mock 留作兼容, 真实代码已删)
-  @override
-  Future<void> showNow({
-    required int id,
-    required String title,
-    required String body,
-    String? payload,
-  }) async {}
-  @override
-  Future<void> snoozeOnce({
-    required int medicationId,
-    required int minutes,
-    String? title,
-    String? body,
-  }) async {}
-  @override
-  Future<void> cancelSnoozeForMedication(int medicationId) async {}
-  @override
-  Future<void> cancelAllSnoozes() async {}
-  @override
-  Future<void> updateBadgeCount(int count) async {}
-  @override
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}

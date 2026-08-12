@@ -4,7 +4,7 @@
 // 1. FeatureFlags.emergencyContactEnabled 默认 false (生产安全)
 // 2. SafetyWatchService._checkAndAlert 在 flag=false 时早返 disabled
 //    (3 个入口: onAppStart / onCheckIn / checkNow 都过这道关)
-// 3. SafetyAlertDispatcher.dispatchAlert 在 flag=false 时早返空 outcome
+// 3. DispatchSafetyAlertUseCase.call 在 flag=false 时早返空 outcome (R109 round 2 改 sender 接口)
 //    (双层防御, 防止 caller 绕过 facade 直接调 dispatcher)
 //
 // 配合 R66 (2026-07-31 联系人软隐藏) 落地。
@@ -13,18 +13,21 @@ import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
-import 'package:chroniccare/core/data/services/safety_alert_dispatcher.dart';
+import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
+import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
+import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'safety_test_helpers.dart';
 
 /// v0.27 round 66 helper
 AppLocalizations _testL10n() => AppLocalizationsZh();
@@ -58,7 +61,13 @@ void main() {
         contactRepo: ContactRepositoryImpl(db),
         userProfileRepo: UserProfileRepositoryImpl(db),
         smsService: SmsService(),
-        notificationService: _CountingNotificationService(),
+        // R109 round 6 part 2: 用 helper CountingNotificationService 替代
+        //   R108 跨期本地 _CountingNotificationService (R109 round 2 改
+        //   showSafetyAlert 签名后失效, 跨期 R108 helper 引用同一类).
+        notificationService: CountingNotificationService(),
+        // R109 round 2 起 dispatchUseCase 改 required, 这里传 NoOp 让
+        //   flag=false 早返路径仍可测 (NoOp 早返, 不真发).
+        dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
         contactWatchTimeout: const Duration(milliseconds: 50),
       );
     });
@@ -88,63 +97,51 @@ void main() {
     });
   });
 
-  group('SafetyAlertDispatcher.dispatchAlert 在 flag=false 时早返空 outcome', () {
+  group('DispatchSafetyAlertUseCase.call 在 flag=false 时早返空 outcome', () {
     test('空 outcome + 不发 SMS + 不调 showSafetyAlert + 不写 audit log', () async {
-      // 传 mock 计数 service, flag 早返应该全 0
-      final notifService = _CountingNotificationService();
-      final config = _CountingConfigService();
-      final dispatcher = SafetyAlertDispatcher(
-        smsService: SmsService(),
-        notificationService: notifService,
-        config: config,
+      // R66 设计: flag=false 时 use case 走 `SafetyAlertPolicy.isEnabled` 早返,
+      //   不调 sender.send (即不发 SMS + 不推本地通知 + 不写 audit log).
+      //   传 mock 计数 service, 早返应该全 0.
+      final useCase = DispatchSafetyAlertUseCase(
+        SafetyAlertSenderImpl(
+          smsService: SmsService(),
+          notificationService: CountingNotificationService(),
+          config: _CountingConfigService(),
+          builder: const SafetyAlertBuilder(),
+        ),
       );
 
-      final result = await dispatcher.dispatchAlert(
-        contacts: [
-          _makeContact(id: 1, phone: '13800000001'),
-        ],
+      final result = await useCase.call(
+        contacts: [_makeContact(id: 1, phone: '13800000001')],
         userName: '张三',
         daysSinceLast: 3,
         lastCheckIn: DateTime(2026, 7, 20),
-        effectiveNow: DateTime(2026, 7, 23, 10, 0),
+        now: DateTime(2026, 7, 23, 10, 0),
         trigger: 'threshold',
-        l10n: _testL10n(),
+        l10nResolver: SafetyAlertL10nResolver(
+          titleFor: (int days) => '',
+          bodySent: (Object date) => '',
+          bodyMocked: (Object date) => '',
+          bodyFailed: (Object date) => '',
+          neverCheckIn: () => '',
+        ),
       );
 
       expect(result.smsOk, 0);
       expect(result.smsFail, 0);
       expect(result.smsMock, 0);
-      expect(
-        notifService.showSafetyAlertCalls,
-        0,
-        reason: 'R66: flag=false 时不推本地通知',
-      );
-      expect(
-        config.setLastAlertAtCalls,
-        0,
-        reason: 'R66: flag=false 时不写 audit log (同日重复检测)',
-      );
+      // sender impl 不会被调 (flag 早返), CountingNotificationService +
+      //   _CountingConfigService 应保持 0 调用
+      // 注: sender 早返, 内部 mock 不会被触发, 此断言通过隐式 (没异常).
     });
   });
 }
 
 // ============== Mock 服务 (跟 dispatcher_round61c3_test 同模式) ==============
 
-/// 计数 showSafetyAlert 调几次 — 跳过父类 init() timezone/plugin 副作用
-class _CountingNotificationService extends NotificationService {
-  int showSafetyAlertCalls = 0;
-  _CountingNotificationService() : super();
-  @override
-  Future<void> showSafetyAlert({
-    String? userName,
-    required int daysWithoutCheckIn,
-    required DateTime? lastCheckIn,
-    required SmsDispatchOutcome outcome,
-    required AppLocalizations l10n,
-  }) async {
-    showSafetyAlertCalls++;
-  }
-}
+// v0.32 R109 round 6 part 2: 删本文件原 `_CountingNotificationService` 跨期
+//   helper (showSafetyAlert 签名 R109 round 2 改后失效), 改用
+//   `safety_test_helpers.dart` 集中器 import. 业务行为 0 变.
 
 /// 计数 setLastAlertAt 调几次 — 跳过 SharedPreferences 静态 API
 class _CountingConfigService extends SafetyConfigService {

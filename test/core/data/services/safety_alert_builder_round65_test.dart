@@ -16,11 +16,23 @@
 // = 7 case 总计
 
 import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// R109 round 6 part 2 适配: R109 round 2 改 builder 接受
+/// `SafetyAlertL10nResolver` (tear-off 闭包), `AppLocalizations` 直接
+/// 包成 resolver 即可 (闭包自然 capture this).
+SafetyAlertL10nResolver _wrapL10n(AppLocalizations l) => SafetyAlertL10nResolver(
+      titleFor: l.safetyAlertTitle,
+      bodySent: (Object date) => l.safetyAlertBodySent(date.toString()),
+      bodyMocked: (Object date) => l.safetyAlertBodyMocked(date.toString()),
+      bodyFailed: (Object date) => l.safetyAlertBodyFailed(date.toString()),
+      neverCheckIn: () => l.safetyAlertNeverCheckIn,
+    );
 
 void main() {
   // 测试用 channel 三元 (跟 production 保持一致结构, 但不依赖 Strings const,
@@ -31,12 +43,16 @@ void main() {
 
   group('SafetyAlertBuilder.buildFor (3 态 SMS outcome 分流)', () {
     test('1. smsOk=2 > 0 → body 走 safetyAlertBodySent (l10n 关键词: "已自动通知")', () {
+      // v0.31.1 R32 (P0-04 锁屏 PII 跨 3 视角共识): title 改静态不含 name
+      // (锁屏可见, userName 是 PII 风险, R108 修了 body 但漏 title).
+      // title 走 l10n.titleFor(days) 拿 "⚠️ 已 N 天未打卡" 模板, userName
+      // 参数保留 (兼容旧 caller 签名) 但 builder 内部不用.
       final build = SafetyAlertBuilder.buildFor(
         userName: '张三',
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 2, smsFail: 0, smsMock: 0),
-        l10n: AppLocalizationsZh(),
+        l10n: _wrapL10n(AppLocalizationsZh()),
         channelId: channelId,
         channelName: channelName,
         channelDescription: channelDesc,
@@ -44,8 +60,8 @@ void main() {
 
       expect(
         build.title,
-        '⚠️ 张三 已 3 天未打卡',
-        reason: 'title 用 safeUserName + days, ⚠️ 前缀',
+        '⚠️ 已 3 天未打卡',
+        reason: 'R32 改: title 走 l10n 静态模板, 不含 userName (锁屏 PII)',
       );
       expect(build.body, contains('已自动通知'), reason: 'sent 文案: 已自动通知紧急联系人');
       expect(
@@ -61,13 +77,13 @@ void main() {
         daysWithoutCheckIn: 5,
         lastCheckIn: null,
         outcome: (smsOk: 0, smsFail: 0, smsMock: 1),
-        l10n: AppLocalizationsZh(),
+        l10n: _wrapL10n(AppLocalizationsZh()),
         channelId: channelId,
         channelName: channelName,
         channelDescription: channelDesc,
       );
 
-      expect(build.title, '⚠️ 李四 已 5 天未打卡');
+      expect(build.title, '⚠️ 已 5 天未打卡', reason: 'R32 改: title 不含 name');
       expect(build.body, contains('开发模式'), reason: 'mocked 文案: 当前为开发模式');
       expect(build.body, contains('未实际通知'), reason: 'mocked 文案: 未实际通知紧急联系人');
       expect(build.body, contains('从未打卡'), reason: 'lastCheckIn=null → "从未打卡"');
@@ -79,32 +95,34 @@ void main() {
         daysWithoutCheckIn: 7,
         lastCheckIn: DateTime(2026, 7, 16),
         outcome: (smsOk: 0, smsFail: 2, smsMock: 0),
-        l10n: AppLocalizationsZh(),
+        l10n: _wrapL10n(AppLocalizationsZh()),
         channelId: channelId,
         channelName: channelName,
         channelDescription: channelDesc,
       );
 
-      expect(build.title, '⚠️ 王五 已 7 天未打卡');
+      expect(build.title, '⚠️ 已 7 天未打卡', reason: 'R32 改: title 不含 name');
       expect(build.body, contains('通知发送失败'), reason: 'failed 文案: 通知发送失败');
       expect(build.body, contains('2026-07-16'));
       expect(build.body, isNot(contains('已自动通知')), reason: 'failed 不能误报"已通知"');
       expect(build.body, isNot(contains('开发模式')), reason: 'failed 不是 mocked');
     });
 
-    test('4. userName=null → title 退化为 "您" (R23 P1-24 nullable 修复)', () {
+    test('4. userName=null → title 跟 userName=非空 一致 (R32 锁屏 PII)', () {
+      // v0.31.1 R32 (P0-04 锁屏 PII): title 走 l10n 静态模板, 不含 name.
+      // 因此 userName=null 跟 userName=非空 title 完全一致.
       final build = SafetyAlertBuilder.buildFor(
         userName: null,
         daysWithoutCheckIn: 2,
         lastCheckIn: null,
         outcome: (smsOk: 0, smsFail: 0, smsMock: 0),
-        l10n: AppLocalizationsZh(),
+        l10n: _wrapL10n(AppLocalizationsZh()),
         channelId: channelId,
         channelName: channelName,
         channelDescription: channelDesc,
       );
 
-      expect(build.title, '⚠️ 您 已 2 天未打卡', reason: 'safeUserName(null) → "您"');
+      expect(build.title, '⚠️ 已 2 天未打卡', reason: 'R32: title 走 l10n, userName 不影响');
     });
 
     test('5. lastCheckIn = DateTime(2026, 7, 1) → 格式化 "2026-07-01" (补零)', () {
@@ -113,7 +131,7 @@ void main() {
         daysWithoutCheckIn: 1,
         lastCheckIn: DateTime(2026, 7, 1),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),
-        l10n: AppLocalizationsZh(),
+        l10n: _wrapL10n(AppLocalizationsZh()),
         channelId: channelId,
         channelName: channelName,
         channelDescription: channelDesc,
@@ -125,13 +143,14 @@ void main() {
     test('6. en locale → title 走 en l10n, body 走 en l10n (R75 改: title 走 l10n)',
         () {
       // v0.27 round 75 (R74-N7 修): title 改 l10n, 之前硬编码中文。
-      // en locale 走 en l10n → "⚠️ Alice hasn't checked in for 3 days"。
+      // en locale 走 en l10n → "⚠️ No check-in for 3 days" (R32 锁屏 PII 改
+      //   后 en 文案也不含 userName).
       final build = SafetyAlertBuilder.buildFor(
         userName: 'Alice',
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),
-        l10n: AppLocalizationsEn(),
+        l10n: _wrapL10n(AppLocalizationsEn()),
         channelId: channelId,
         channelName: channelName,
         channelDescription: channelDesc,
@@ -139,8 +158,8 @@ void main() {
 
       expect(
         build.title,
-        "⚠️ Alice hasn't checked in for 3 days",
-        reason: 'title 走 l10n, en 文案',
+        '⚠️ No check-in for 3 days',
+        reason: 'R32 改: title 走 l10n 静态模板, en 文案不含 userName (锁屏 PII)',
       );
       expect(
         build.body,
@@ -163,7 +182,7 @@ void main() {
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),
-        l10n: AppLocalizationsZh(),
+        l10n: _wrapL10n(AppLocalizationsZh()),
         channelId: 'custom.safety.id',
         channelName: 'custom.name',
         channelDescription: 'custom.desc',
@@ -201,12 +220,12 @@ void main() {
 
   // 跨 locale 烟雾测试: 3 locale 调 buildFor 都应正常, 不抛
   group('SafetyAlertBuilder.buildFor (3 locale 烟雾测试)', () {
-    for (final l10n in <AppLocalizations>[
-      AppLocalizationsZh(),
-      AppLocalizationsEn(),
+    for (final l10n in <SafetyAlertL10nResolver>[
+      _wrapL10n(AppLocalizationsZh()),
+      _wrapL10n(AppLocalizationsEn()),
       // AppLocalizationsZhHant() - 暂未生成, 跳过, 等生成后补
     ]) {
-      test('locale=${l10n.localeName} → buildFor 不抛 + 3 态全覆盖', () {
+      test('locale=${'zh'} → buildFor 不抛 + 3 态全覆盖', () {
         // 3 态各调一次, 确保 l10n key 在 3 locale 都非空
         for (final outcome in const [
           (smsOk: 1, smsFail: 0, smsMock: 0),
@@ -227,7 +246,7 @@ void main() {
           expect(
             build.body,
             isNotEmpty,
-            reason: 'locale=${l10n.localeName} body 必须非空 (3 态都要 l10n key)',
+            reason: 'locale=${'zh'} body 必须非空 (3 态都要 l10n key)',
           );
         }
       });

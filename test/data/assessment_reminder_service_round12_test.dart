@@ -1,35 +1,23 @@
 // v0.13 (Round 7) AssessmentReminderService 单元测试
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
+import 'package:chroniccare/domain/repositories/check_in_repository.dart';
+import 'package:chroniccare/domain/usecases/schedule_assessment_reminder.dart';
+import 'package:chroniccare/core/data/services/assessment_reminder_sender_impl.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class StubNotificationService extends NotificationService {
-  final List<({DateTime fireAt, String scaleId, int days})> scheduled = [];
-  int cancelCount = 0;
-
-  StubNotificationService() : super(onNotificationTap: (_) {});
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  Future<void> scheduleAssessmentReminder({
-    required DateTime fireAt,
-    String scaleId = 'phq9',
-    int days = 14,
-  }) async {
-    scheduled.add((fireAt: fireAt, scaleId: scaleId, days: days));
-  }
-
-  @override
-  Future<void> cancelAssessmentReminder() async {
-    cancelCount++;
-  }
+// R109 round 6 part 2: R109 round 1 改 AssessmentReminderService 接受
+//   ScheduleAssessmentReminderUseCase (非 NotificationService 直接), 旧
+//   test helper `StubNotificationService extends NotificationService` 失效
+//   (subclass NotificationService 不再是 use case 依赖). 改用 R109 round 6
+//   加的 `NoOpAssessmentReminderSender` (lib 自带, 跨期 helper, 等价
+//   行为: 记录 schedule/cancel 调用).
+class StubNotificationService {
+  StubNotificationService();
 }
 
 void main() {
@@ -140,7 +128,7 @@ void main() {
     test('默认 enabled=false', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: StubNotificationService(),
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.isEnabled(), isFalse);
     });
@@ -148,7 +136,7 @@ void main() {
     test('默认 days=14', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: StubNotificationService(),
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.getDays(), 14);
     });
@@ -156,7 +144,7 @@ void main() {
     test('setEnabled + getEnabled', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: StubNotificationService(),
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       await service.setEnabled(true);
       expect(await service.isEnabled(), isTrue);
@@ -167,7 +155,7 @@ void main() {
     test('setDays 接受 7/14/30/60/90', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: StubNotificationService(),
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       for (final d in AssessmentReminderService.allowedDays) {
         await service.setDays(d);
@@ -178,7 +166,7 @@ void main() {
     test('setDays 非法值抛 ArgumentError', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: StubNotificationService(),
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(() => service.setDays(13), throwsArgumentError);
       expect(() => service.setDays(0), throwsArgumentError);
@@ -191,7 +179,7 @@ void main() {
       });
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: StubNotificationService(),
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.getDays(), 14);
     });
@@ -199,7 +187,7 @@ void main() {
     test('lastAssessmentAt 读写', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: StubNotificationService(),
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.getLastAssessmentAt(), isNull);
       await service.setLastAssessmentAt(DateTime(2026, 7, 15, 16, 30));
@@ -215,16 +203,16 @@ void main() {
   group('onAppStart', () {
     late AppDatabase db;
     late CheckInRepositoryImpl checkInRepo;
-    late StubNotificationService notif;
+    late NoOpAssessmentReminderSender notif;
     late AssessmentReminderService service;
 
     setUp(() async {
       db = AppDatabase.forTesting(NativeDatabase.memory());
       checkInRepo = CheckInRepositoryImpl(db);
-      notif = StubNotificationService();
+      notif = NoOpAssessmentReminderSender();
       service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: notif,
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(notif),
       );
     });
 
@@ -327,16 +315,16 @@ void main() {
   group('onAssessmentCompleted', () {
     late AppDatabase db;
     late CheckInRepositoryImpl checkInRepo;
-    late StubNotificationService notif;
+    late NoOpAssessmentReminderSender notif;
     late AssessmentReminderService service;
 
     setUp(() async {
       db = AppDatabase.forTesting(NativeDatabase.memory());
       checkInRepo = CheckInRepositoryImpl(db);
-      notif = StubNotificationService();
+      notif = NoOpAssessmentReminderSender();
       service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: notif,
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(notif),
       );
     });
 
@@ -383,16 +371,16 @@ void main() {
   group('onSettingsChanged', () {
     late AppDatabase db;
     late CheckInRepositoryImpl checkInRepo;
-    late StubNotificationService notif;
+    late NoOpAssessmentReminderSender notif;
     late AssessmentReminderService service;
 
     setUp(() async {
       db = AppDatabase.forTesting(NativeDatabase.memory());
       checkInRepo = CheckInRepositoryImpl(db);
-      notif = StubNotificationService();
+      notif = NoOpAssessmentReminderSender();
       service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        notificationService: notif,
+        scheduleUseCase: ScheduleAssessmentReminderUseCase(notif),
       );
     });
 

@@ -22,10 +22,12 @@
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
+import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:drift/drift.dart';
@@ -35,6 +37,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
+import 'safety_test_helpers.dart';
 
 /// v0.27 round 60 (P0-3 修正): test helper
 AppLocalizations _testL10n() => AppLocalizationsZh();
@@ -54,7 +57,7 @@ void main() {
   // v0.27 round 61 (P1-12 拆分收尾): 改用 SafetyConfigService 直接配置
   late SafetyConfigService safetyConfig;
   late MockSmsService sms;
-  late StubNotificationService notif;
+  late CountingNotificationService notif;
 
   setUp(() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
@@ -62,14 +65,30 @@ void main() {
     final contactRepo = ContactRepositoryImpl(db);
     final userProfileRepo = UserProfileRepositoryImpl(db);
     sms = MockSmsService();
-    notif = StubNotificationService();
+    // R109 round 6 part 2: 改 CountingNotificationService (helper) 替代 R108
+    //   跨期空 NotificationService (R109 round 2 改 showSafetyAlert 签名后
+    //   失效). 真 use case 委派 sender impl 调 notif.showSafetyAlert,
+    //   alertsShown 跟踪记录.
+    notif = CountingNotificationService();
     safetyConfig = SafetyConfigService();
+    // v0.32 R109 round 6 part 2: 用真 DispatchSafetyAlertUseCase + sender impl,
+    //   test 目的是验 lastCheckIn 排序, 必须走真发才能 sms.sent.first.body 含
+    //   "3 天" (NoOp 早返连 SMS 都不发, test 失效).
+    final dispatchUseCase = DispatchSafetyAlertUseCase(
+      SafetyAlertSenderImpl(
+        smsService: sms,
+        notificationService: notif,
+        config: safetyConfig,
+        builder: const SafetyAlertBuilder(),
+      ),
+    );
     safety = SafetyWatchService(
       checkInRepo: checkInRepo,
       contactRepo: contactRepo,
       userProfileRepo: userProfileRepo,
       smsService: sms,
       notificationService: notif,
+      dispatchUseCase: dispatchUseCase,
     );
   });
 
@@ -170,19 +189,4 @@ class MockSms implements SmsProvider {
   }
 }
 
-class StubNotificationService implements NotificationService {
-  @override
-  Future<void> showSafetyAlert({
-    // v0.21 Round 23 (P1-24): userName 改 nullable
-    // v0.27 round 60 (P0-3 修正): 加 outcome + l10n 参数
-    String? userName,
-    required int daysWithoutCheckIn,
-    required DateTime? lastCheckIn,
-    required SmsDispatchOutcome outcome,
-    required AppLocalizations l10n,
-  }) async {}
-  // 其他方法的 stub 在本 test 用不到,显式 throw 提醒
-  @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      throw UnimplementedError('Stub: ${invocation.memberName}');
-}
+

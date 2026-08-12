@@ -73,3 +73,51 @@ class DispatchSafetyAlertUseCase {
     );
   }
 }
+
+/// v0.32 R109 round 6 part 2: 失联告警派发 use case (空实现, 给 test 复用)
+///
+/// 跟 `NoOpAssessmentReminderSender` (R109 round 6 part 2 lib 加) 同款:
+/// 0 副作用, 0 业务行为. test 跨期 helper, 替代原 R108 之前 test 自定义
+/// `_StubNotificationService` / `_CountingNotificationService` 内部子类
+/// (R109 round 2 改 service 接受 `DispatchSafetyAlertUseCase` 后, 旧
+/// notification service subclass 失效).
+class NoOpDispatchSafetyAlertUseCase extends DispatchSafetyAlertUseCase {
+  NoOpDispatchSafetyAlertUseCase() : super(_NoOpSafetyAlertSender());
+
+  /// 真实测试时记录 dispatch 调用结果
+  final List<SmsDispatchOutcome> outcomes = [];
+
+  @override
+  Future<SmsDispatchOutcome> call({
+    required contacts,
+    required String? userName,
+    required int daysSinceLast,
+    required DateTime? lastCheckIn,
+    required DateTime now,
+    required String trigger,
+    String? bodyOverride,
+    required l10nResolver,
+  }) async {
+    final outcome = (smsOk: 0, smsFail: 0, smsMock: 0);
+    outcomes.add(outcome);
+    return outcome;
+  }
+}
+
+/// NoOpSafetyAlertSender — 给 NoOpDispatchSafetyAlertUseCase 用的空 sender
+class _NoOpSafetyAlertSender extends SafetyAlertSender {
+  _NoOpSafetyAlertSender();
+
+  @override
+  Future<SmsDispatchOutcome> send({
+    required contacts,
+    required String body,
+    required int daysSinceLast,
+    required DateTime? lastCheckIn,
+    required DateTime effectiveNow,
+    required String? userName,
+    required l10nResolver,
+  }) async {
+    return (smsOk: 0, smsFail: 0, smsMock: 0);
+  }
+}
