@@ -213,16 +213,17 @@ void main() {
         reason: '同意后 JSON 弹窗应显示 Q4b 风险卡',
       );
 
-      // Q4b: 强制勾选 checkbox (settingsExportRiskAcknowledge = "我已了解风险,继续导出")
+      // Q4b: 强制勾选 checkbox (settingsExportRiskAcknowledge = "我已了解风险，继续导出")
       // v0.30 R95 sub-spec 8 task 19: 5→3 步 — checkbox 默认勾选 (用户点 copy
       // = 主动 ack 行为), 不再要求手动勾选
-      expect(find.text('我已了解风险,继续导出'), findsOneWidget);
+      expect(find.text('我已了解风险，继续导出'), findsOneWidget);
 
       // 复制按钮 (settingsCopy = "复制") — v0.30 R95 sub-spec 8 task 19: 默认
       // 勾选 + 不允许取消 → 复制按钮始终 enable
-      final copyBtnFinder = find.widgetWithText(ElevatedButton, '复制');
+      // v0.32 R109 round 6 part 2: R65 改 ElevatedButton→FilledButton 跨期
+      final copyBtnFinder = find.widgetWithText(FilledButton, '复制');
       expect(copyBtnFinder, findsOneWidget);
-      final copyBtn = tester.widget<ElevatedButton>(copyBtnFinder);
+      final copyBtn = tester.widget<FilledButton>(copyBtnFinder);
       expect(
         copyBtn.onPressed,
         isNotNull,

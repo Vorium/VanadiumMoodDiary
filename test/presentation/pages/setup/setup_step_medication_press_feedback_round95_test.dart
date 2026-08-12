@@ -127,8 +127,17 @@ void main() {
     );
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
-    // 找 PressFeedback 包裹 PrimaryButton 的 widget, 点它
-    final pressFeedbackFinder = find.byType(PressFeedback).last;
+    // 找 PressFeedback 包裹 PrimaryButton (下一步按钮) 的 widget, 点它
+    // v0.32 R109 round 6 part 2 修: R31 跨期 setup_step_medication 加了 2 个
+    //   PressFeedback (添加药物 button + 删除药物 button), .last 跨期错位
+    //   指向新加的 PressFeedback, 不是 "下一步" 按钮. 改用 ancestorOf 找
+    //   PrimaryButton 的 PressFeedback, 锁定 "下一步" 按钮.
+    final pressFeedbackFinder = find
+        .ancestor(
+          of: find.byType(PrimaryButton),
+          matching: find.byType(PressFeedback),
+        )
+        .first;
     expect(pressFeedbackFinder, findsOneWidget);
     await tester.tap(pressFeedbackFinder);
     await tester.pumpAndSettle(const Duration(milliseconds: 100));

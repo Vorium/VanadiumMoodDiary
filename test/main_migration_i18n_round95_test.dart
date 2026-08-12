@@ -85,7 +85,7 @@ void main() {
     test('zh 拼接 "技术信息: ${'some_error'}"', () {
       final l10n = AppLocalizationsZh();
       final out = l10n.migrationFailedFooter('SQLite 打开失败');
-      expect(out, '技术信息: SQLite 打开失败');
+      expect(out, '技术信息： SQLite 打开失败');
     });
 
     test('en 拼接 "Technical info: ${'some_error'}"', () {

@@ -135,8 +135,8 @@ void main() {
     await tester.pumpWidget(wrap());
     await tester.pumpAndSettle();
 
-    // 2 张 unavailable 卡片都显示 "需法务/临床审核" 文案
-    expect(find.text('需法务/临床审核'), findsNWidgets(2));
+    // 2 张 unavailable 卡片都显示 "需法务／临床审核" 文案 (全角斜杠)
+    expect(find.text('需法务／临床审核'), findsNWidgets(2));
 
     // NSESSS / CRDPSS 名字 (来自 unavailableScaleIds) — 走 _displayName fallback
     expect(find.text('NSESSS PTSD'), findsOneWidget);
