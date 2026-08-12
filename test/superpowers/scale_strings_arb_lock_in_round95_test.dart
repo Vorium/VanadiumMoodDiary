@@ -46,16 +46,16 @@ void main() {
     test('isiName / isiShortDescription / isiInstruction 走 zh', () {
       expect(t.isiName(), 'ISI 失眠严重指数');
       expect(t.isiShortDescription(), 'Morin 1993 失眠严重指数 7 题');
-      expect(t.isiInstruction(), '过去 2 周内, 您的睡眠问题有多严重?');
+      expect(t.isiInstruction(), '过去 2 周内， 您的睡眠问题有多严重？');
     });
 
     test('pssName / pssShortDescription / pssInstruction 走 zh', () {
       expect(t.pssName(), 'PSS 压力量表');
       expect(
         t.pssShortDescription(),
-        'Cohen 1983 压力量表 (10 题, 含 4 题反向)',
+        'Cohen 1983 压力量表 (10 题， 含 4 题反向）',
       );
-      expect(t.pssInstruction(), '过去 1 个月里, 您有多经常有下列感受?');
+      expect(t.pssInstruction(), '过去 1 个月里， 您有多经常有下列感受？');
     });
 
     test('whodasName / whodasShortDescription / whodasInstruction 走 zh', () {
@@ -63,7 +63,7 @@ void main() {
       expect(t.whodasShortDescription(), 'WHO 通用残疾评估 12 题简化版');
       expect(
         t.whodasInstruction(),
-        '过去 30 天内, 您在以下活动中遇到多大困难?',
+        '过去 30 天内， 您在以下活动中遇到多大困难？',
       );
     });
 
@@ -71,11 +71,11 @@ void main() {
       expect(t.level2DepressionName(), 'DSM-5 Level 2 抑郁严重度');
       expect(
         t.level2DepressionShortDescription(),
-        '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)',
+        '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版）',
       );
       expect(
         t.level2DepressionInstruction(),
-        '过去 7 天内, 您有多经常被以下情绪困扰?',
+        '过去 7 天内， 您有多经常被以下情绪困扰？',
       );
     });
 
@@ -83,11 +83,11 @@ void main() {
       expect(t.level2AnxietyName(), 'DSM-5 Level 2 焦虑严重度');
       expect(
         t.level2AnxietyShortDescription(),
-        '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)',
+        '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版）',
       );
       expect(
         t.level2AnxietyInstruction(),
-        '过去 7 天内, 您有多经常被以下感受困扰?',
+        '过去 7 天内， 您有多经常被以下感受困扰？',
       );
     });
 
@@ -95,20 +95,20 @@ void main() {
       expect(t.level2ManiaName(), 'DSM-5 Level 2 躁狂严重度');
       expect(
         t.level2ManiaShortDescription(),
-        '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)',
+        '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版）',
       );
       expect(
         t.level2ManiaInstruction(),
-        '过去 7 天内, 您有多经常体验以下情况?',
+        '过去 7 天内， 您有多经常体验以下情况？',
       );
     });
 
     test('asrmName / asrmShortDescription / asrmInstruction 走 zh', () {
       expect(t.asrmName(), 'ASRM 自评躁狂量表');
-      expect(t.asrmShortDescription(), 'Altman 1997 自评躁狂量表 (5 题)');
+      expect(t.asrmShortDescription(), 'Altman 1997 自评躁狂量表 (5 题）');
       expect(
         t.asrmInstruction(),
-        '过去 1 周内, 您有 (或感觉到) 以下情况的程度?',
+        '过去 1 周内， 您有 （或感觉到） 以下情况的程度？',
       );
     });
 
@@ -116,11 +116,11 @@ void main() {
       expect(t.level2PsychosisName(), 'DSM-5 Level 2 精神病性症状');
       expect(
         t.level2PsychosisShortDescription(),
-        '成人精神病性症状 8 题 (DSM-5 简化版)',
+        '成人精神病性症状 8 题 (DSM-5 简化版）',
       );
       expect(
         t.level2PsychosisInstruction(),
-        '过去 7 天内, 您有多经常体验以下情况?',
+        '过去 7 天内， 您有多经常体验以下情况？',
       );
     });
   });
@@ -469,9 +469,9 @@ void main() {
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1203, reason: 'zh.arb 应有 1203 key (R103 baseline)');
-      expect(en, 1203, reason: 'en.arb 应有 1203 key');
-      expect(hant, 1203, reason: 'zh_Hant.arb 应有 1203 key');
+      expect(zh, 1230, reason: 'zh.arb 应有 1230 key (R31 Apple Health + R32 R108 跨期累计 baseline)');
+      expect(en, 1230, reason: 'en.arb 应有 1230 key');
+      expect(hant, 1230, reason: 'zh_Hant.arb 应有 1230 key');
     });
   });
 

@@ -2223,7 +2223,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scaleHotlineSg => 'Samaritans of Singapore (24h)';
 
   @override
-  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免费）';
+  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免费)';
 
   @override
   String get scaleHotlineIntl => '国际通用 · 请联系当地急救或心理援助';
@@ -6259,7 +6259,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get scaleHotlineSg => 'Samaritans of Singapore (24h)';
 
   @override
-  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免費）';
+  String get scaleHotlineUk => 'Samaritans UK & ROI (24h 免費)';
 
   @override
   String get scaleHotlineIntl => '國際通用 · 請聯繫當地急救或心理援助';

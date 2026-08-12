@@ -4046,7 +4046,7 @@ abstract class AppLocalizations {
   /// No description provided for @scaleHotlineUk.
   ///
   /// In zh, this message translates to:
-  /// **'Samaritans UK & ROI (24h 免费）'**
+  /// **'Samaritans UK & ROI (24h 免费)'**
   String get scaleHotlineUk;
 
   /// No description provided for @scaleHotlineIntl.

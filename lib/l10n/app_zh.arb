@@ -1438,7 +1438,7 @@
   "scaleHotlineTw": "生命线（24h）",
   "scaleHotlineTw2": "安心专线（心理咨商）",
   "scaleHotlineSg": "Samaritans of Singapore (24h)",
-  "scaleHotlineUk": "Samaritans UK & ROI (24h 免费）",
+  "scaleHotlineUk": "Samaritans UK & ROI (24h 免费)",
   "scaleHotlineIntl": "国际通用 · 请联系当地急救或心理援助",
   "@scaleCrisisTitle": {
     "description": "PHQ-9 第 9 題陽性時彈窗的標題（'我們關心你'）"
