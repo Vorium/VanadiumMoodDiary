@@ -67,25 +67,26 @@ void main() {
   // Step 0: consent 状态机
   // ============================================================
   group('Step 0 (consent)', () {
-    testWidgets('初始显示 4 个 checkbox + "开始使用" 按钮 disabled', (tester) async {
+    testWidgets('初始显示 6 个 checkbox + "开始使用" 按钮 disabled', (tester) async {
       await _pumpSetup(tester);
       // v0.27 R77: consent step 初始 4 个 checkbox 全部未勾, "开始使用" 按钮禁用
       // 之前 R18 test 直接勾 3 个, 缺 0 状态验证
       // v0.27 R83: 加了第 4 个 (年龄严正声明) 后变 4 个
-      expect(find.byType(Checkbox), findsNWidgets(4));
+      // v0.31.1 R103: 加了第 5 个 (医学免责声明) 后变 5 单独 + 1 全部同意 master = 6
+      expect(find.byType(Checkbox), findsNWidgets(6));
     });
 
     testWidgets('勾 1 个 checkbox → consent 步骤仍在 step 0', (tester) async {
       await _pumpSetup(tester);
       // 找第一个 checkbox 勾
       final checkboxes = find.byType(Checkbox);
-      expect(checkboxes, findsNWidgets(4));
+      expect(checkboxes, findsNWidgets(6));
       await tester.tap(checkboxes.first);
       await tester.pumpAndSettle();
-      // 仍在 step 0, 4 个 checkbox 还在
+      // 仍在 step 0, 6 个 checkbox 还在
       expect(
         find.byType(Checkbox),
-        findsNWidgets(4),
+        findsNWidgets(6),
         reason: '勾 1 个 checkbox, 仍在 step 0',
       );
     });
@@ -98,16 +99,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.byType(Checkbox),
-        findsNWidgets(4),
+        findsNWidgets(6),
         reason: '勾 2 个 checkbox, 仍在 step 0',
       );
     });
 
-    testWidgets('勾满 4 个 checkbox → "开始设置" 按钮 enabled, 点击进入 step 1',
+    testWidgets('勾满 5 个单独 consent → "开始设置" 按钮 enabled, 点击进入 step 1',
         (tester) async {
       await _pumpSetup(tester);
       final checkboxes = find.byType(Checkbox);
-      for (var i = 0; i < 4; i++) {
+      // 6 个 checkbox: index 0 = "全部同意" master, 1-5 = 5 单独 consent
+      // 勾全部同意 (index 0) 会一次 toggle 5 个单独 consent, 但 test 锁定
+      // "逐个勾" 业务路径, 跳过 master, 勾 1-5 单独
+      for (var i = 1; i < 6; i++) {
         await tester.tap(checkboxes.at(i));
         await tester.pumpAndSettle();
       }
@@ -131,9 +135,9 @@ void main() {
   group('4 step 状态机转换', () {
     testWidgets('step 0 → step 1 (welcome) 完整转换路径', (tester) async {
       await _pumpSetup(tester);
-      // step 0
+      // step 0 — 跳过 "全部同意" master (index 0), 勾 1-5 单独 consent
       final checkboxes = find.byType(Checkbox);
-      for (var i = 0; i < 4; i++) {
+      for (var i = 1; i < 6; i++) {
         await tester.tap(checkboxes.at(i));
         await tester.pumpAndSettle();
       }
@@ -158,8 +162,8 @@ void main() {
       // - setup_step_welcome.dart
       // - setup_step_medication.dart
       // - setup_step_done.dart
-      // 简单 sanity: step 0 渲染时 checkboxes 出现 (v0.27 R83 4 个)
-      expect(find.byType(Checkbox), findsNWidgets(4));
+      // 简单 sanity: step 0 渲染时 6 个 checkboxes 出现 (R103 5 + 全部同意 master)
+      expect(find.byType(Checkbox), findsNWidgets(6));
     });
   });
 
@@ -180,8 +184,8 @@ void main() {
       // 状态机应重置回 step 0 (新 widget tree)
       expect(
         find.byType(Checkbox),
-        findsNWidgets(4),
-        reason: '重启后 widget 状态丢失, 应回到 step 0 consent + 4 个 checkbox',
+        findsNWidgets(6),
+        reason: '重启后 widget 状态丢失, 应回到 step 0 consent + 6 个 checkbox',
       );
     });
   });

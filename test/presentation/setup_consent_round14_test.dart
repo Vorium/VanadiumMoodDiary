@@ -51,11 +51,12 @@ Future<void> _pumpSetup(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('P0-6: step 0 显示 4 个 Checkbox + 4 个法律 label', (tester) async {
+  testWidgets('P0-6: step 0 显示 6 个 Checkbox + 5 个法律 label (R103 加医学免责声明)', (tester) async {
     await _pumpSetup(tester);
 
     // v0.27 R83: 第 4 个 checkbox 是年龄严正声明 (setupLegalAgeAttestation)
-    expect(find.byType(Checkbox), findsNWidgets(4));
+    // v0.31.1 R103: 加第 5 个 (医学免责声明) + 1 全部同意 master = 6 total
+    expect(find.byType(Checkbox), findsNWidgets(6));
     expect(find.text('我已阅读并同意《用户协议》'), findsOneWidget);
     expect(find.text('我已阅读并同意《隐私政策》'), findsOneWidget);
     expect(
@@ -70,7 +71,7 @@ void main() {
     );
   });
 
-  testWidgets('P0-6: 初始 4 checkbox 全 unchecked → 开始设置按钮 disabled',
+  testWidgets('P0-6: 初始 6 checkbox 全 unchecked → 开始设置按钮 disabled',
       (tester) async {
     await _pumpSetup(tester);
 
@@ -86,31 +87,32 @@ void main() {
     expect(
       btn.onPressed,
       isNull,
-      reason: '4 个法律勾选都没勾,开始设置按钮必须 disabled',
+      reason: '6 个 checkbox (含全部同意 master) 都没勾,开始设置按钮必须 disabled',
     );
   });
 
   testWidgets('P0-6: 勾任 1 / 2 / 3 个 → 开始设置仍 disabled', (tester) async {
     await _pumpSetup(tester);
 
-    // 勾第一个
-    await tester.tap(find.byType(Checkbox).at(0));
+    // 6 个 checkbox: 0=全部同意 master, 1-5=5 单独 consent
+    // 勾第 1 个 (跳过 master, 勾 "我已阅读并同意《用户协议》")
+    await tester.tap(find.byType(Checkbox).at(1));
     await tester.pumpAndSettle();
     final btn1 = tester.widget<FilledButton>(
       find.widgetWithText(FilledButton, '开始设置'),
     );
     expect(btn1.onPressed, isNull, reason: '只勾 1 个,仍 disabled');
 
-    // 再勾第二个
-    await tester.tap(find.byType(Checkbox).at(1));
+    // 再勾第 2 个
+    await tester.tap(find.byType(Checkbox).at(2));
     await tester.pumpAndSettle();
     final btn2 = tester.widget<FilledButton>(
       find.widgetWithText(FilledButton, '开始设置'),
     );
     expect(btn2.onPressed, isNull, reason: '只勾 2 个,仍 disabled');
 
-    // 再勾第三个 (v0.27 R83: 加了第 4 个 checkbox, 勾 3 个仍 disabled)
-    await tester.tap(find.byType(Checkbox).at(2));
+    // 再勾第 3 个 (含年龄声明, 仍 disabled)
+    await tester.tap(find.byType(Checkbox).at(3));
     await tester.pumpAndSettle();
     final btn3 = tester.widget<FilledButton>(
       find.widgetWithText(FilledButton, '开始设置'),
@@ -118,12 +120,14 @@ void main() {
     expect(btn3.onPressed, isNull, reason: '只勾 3 个 (含年龄声明), 仍 disabled');
   });
 
-  testWidgets('P0-6: 勾 4 个 → 开始设置 enabled', (tester) async {
+  testWidgets('P0-6: 勾 5 个单独 → 开始设置 enabled (R103 加医学免责后需 5 勾)', (tester) async {
     await _pumpSetup(tester);
 
-    // v0.27 R83: 4 个 checkbox 全勾才能 enabled
-    for (var i = 0; i < 4; i++) {
-      await tester.tap(find.byType(Checkbox).at(i));
+    // 6 个 checkbox: 0=全部同意 master, 1-5=5 单独 consent
+    // 全部勾 5 单独 consent 才能 enabled
+    final checkboxes = find.byType(Checkbox);
+    for (var i = 1; i < 6; i++) {
+      await tester.tap(checkboxes.at(i));
       await tester.pumpAndSettle();
     }
 
@@ -133,11 +137,13 @@ void main() {
     expect(btn.onPressed, isNotNull);
   });
 
-  testWidgets('P0-6: 勾完 4 个点开始设置 → 进入 step 1 (welcome)', (tester) async {
+  testWidgets('P0-6: 勾完 5 个点开始设置 → 进入 step 1 (welcome)', (tester) async {
     await _pumpSetup(tester);
 
-    for (var i = 0; i < 4; i++) {
-      await tester.tap(find.byType(Checkbox).at(i));
+    // R103 改: 需勾 5 个单独 consent (含医学免责声明) 才能 enabled
+    final checkboxes = find.byType(Checkbox);
+    for (var i = 1; i < 6; i++) {
+      await tester.tap(checkboxes.at(i));
       await tester.pumpAndSettle();
     }
     await tester.tap(find.widgetWithText(FilledButton, '开始设置'));
@@ -146,7 +152,7 @@ void main() {
     expect(
       find.text('您好，我是慢病管家'),
       findsOneWidget,
-      reason: 'P0-6: 勾完 4 个法律同意后,应进入 welcome step',
+      reason: 'P0-6: 勾完 5 个法律同意后,应进入 welcome step',
     );
   });
 }
