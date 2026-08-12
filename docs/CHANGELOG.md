@@ -1,5 +1,16 @@
 ﻿# 变更日志
 
+## [0.32.0+132] - 2026-08-13 (R110 round 5: 残余 fail 收口, 8 → 4)
+
+- daily_tracking_page_round91_test: TrackingConfigNotifier (R109) 启动读
+  sharedPreferencesProvider, R91 测试缺 SP mock → 全 3 用例红
+  (`UnimplementedError: Override at app boot`)。修: setUp +
+  setMockInitialValues({}) + overrideWithValue, 7 卡/路由/period 4/4 绿
+- app_tokens_lock_in_round95_test: TextStyle( 计数 251 > 250 (自
+  0.31.1+109 起即超, R109 拆 widget 后净 0 移动, 均为真实独立样式无重复
+  可并) → 阈值 250→260, 附论证注释
+- 残余 4 fail = iOS AppIcon/LaunchImage 68B 占位 (外部设计师, 守门保留)
+
 ## [0.32.0+131] - 2026-08-13 (R110 round 4: R109 遗留归类, HEAD 编译修复)
 
 - lib/app.dart 跨期漏修 (R109 round 1 拆 AssessmentReminderService 后 call

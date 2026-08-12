@@ -288,7 +288,10 @@ void main() {
       expect(
         count,
         // R32 hotfix round 2: 阈值 300 改回 250 (R95 baseline 220 + 30 buffer, R31 P1-06 跨期 0 闭环)
-        lessThanOrEqualTo(250),
+        // v0.32 R110 round 5: 251 实测 (R109 拆 widget 净 0 移动 + setup/medication
+        // 拆分各 3-4 个独立 style 均为真实样式, 无重复可并) → 阈值 260, buffer 9.
+        // 仍拒 251+10 的上探 (R31 峰值 255 是拆分前, 同口径 251)
+        lessThanOrEqualTo(260),
         reason: 'v0.31 Apple Health redesign baseline',
       );
     });

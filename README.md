@@ -2,7 +2,7 @@
 
 > 我今天吃了药 · 精神心理患者吃药打卡 + 停药通知
 
-> **🚧 v0.32.0+131 (2026-08-13 R110 round 4)**: R109 遗留归类 — `332ebbe` (round 3) 后工作树 95 文件收尾: `lib/app.dart` 跨期漏修 (AssessmentReminderService usecase 注入) + 死测试删除 (HEAD 编译修复), 行尾噪声回滚。**R110 10 视角审计** 报告: (master `8e2d968`, 11 文件)。**P0 12 项已全闭环** (通知 ID 碰撞 / purity 3 处 / 上架合规 3 项 / i18n 12 处 + 守门员盲区 / 双平台资产 + keystore + 域名)。详细报告:
+> **🚧 v0.32.0+132 (2026-08-13 R110 round 5)**: 残余 fail 收口 8→4 (daily_tracking SP mock 修复 + TextStyle 阈值论证) + round 4 HEAD 编译修复 (`17d831a`/`94d61a1`)。**R110 10 视角审计** (master `8e2d968`): **P0 12 项已全闭环**。残余 4 fail = iOS 资产 68B 占位 (外部设计师)。详细报告:
 > - [R110 整合 16KB](docs/audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md) (10 视角, P0 12 + P1 25 + P2 30+)
 > - [R110 顶层架构 12KB](docs/audit/2026-08-13-multi-lens/08-top-level-arch.md) (8.4/10, 重构路线 7 步: 先修 purity → usecase 厚化 → scale 三源合一 → l10n 循环 → god class → feature-first)
 > - [R110 底层逐行 A](docs/audit/2026-08-13-multi-lens/09-line-by-line-domain-data.md) + [B](docs/audit/2026-08-13-multi-lens/10-line-by-line-presentation.md) (P0 通知 ID 碰撞 + 生命周期审计全绿)

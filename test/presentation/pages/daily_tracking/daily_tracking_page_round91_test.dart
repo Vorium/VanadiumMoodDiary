@@ -36,9 +36,20 @@ import 'package:chroniccare/presentation/pages/daily_tracking/daily_tracking_pag
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/mood_period_aggregator_chart.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  // v0.32 R110 round 5: TrackingConfigNotifier (R109) 启动读
+  // sharedPreferencesProvider — 空 mock 即可 (无持久化配置 → 7 卡全显)
+  late SharedPreferences sp;
+
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    sp = await SharedPreferences.getInstance();
+  });
+
   // helper: 构造测试 widget — 走 inline GoRouter (跟 R90 同款, 实跳路由
   // 验证导航, 不直接 mock context.push)
   Widget wrap({
@@ -63,6 +74,8 @@ void main() {
         );
     return ProviderScope(
       overrides: [
+        // R109: TrackingConfigNotifier 读 SharedPreferences (pinned/hidden)
+        sharedPreferencesProvider.overrideWithValue(sp),
         // mood: 提供 entries 给 chart + latestMoodEntryProvider
         allMoodProvider.overrideWith((ref) => Stream.value(moodEntries)),
         // 6 daily tracking repo entries — 给 latestXxxEntryProvider
