@@ -119,7 +119,7 @@ class TodaySummaryCard extends ConsumerWidget {
                           ? MoodVisual.emojiFor(latestMood.score)
                           : '—',
                       valueColor: latestMood != null
-                          ? Color(MoodVisual.colorArgbFor(latestMood.score))
+                          ? AppColors.moodScoreColor(latestMood.score)
                           : AppTokens.textHintColor(context),
                     ),
                   ],

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -61,7 +62,7 @@ class MoodDetailPage extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: AppTokens.fontSizeTitle,
                             fontWeight: FontWeight.w700,
-                            color: Color(MoodVisual.colorArgbFor(entry.score)),
+                            color: AppColors.moodScoreColor(entry.score),
                           ),
                         ),
                         Text(

@@ -27,7 +27,11 @@ extension MedicationTimes on Medication {
           final h = item['h'];
           final m = item['m'];
           if (h is int && m is int) {
-            result.add(HourMinute(hour: h, minute: m));
+            // v0.32 R110 round 6 (B1-4): 边界校验 — legacy v1-v4 / import
+            // 脏行 (h:24, m:90) 走 HourMinute.safe() clamp, 不再构造
+            // 越界对象 (debug assert 崩) 或让 zonedDaily 吞错。R96b
+            // 同款模式: 用户输入 / DB 老数据 / 外部 import 场景用 safe()。
+            result.add(HourMinute.safe(hour: h, minute: m));
           }
         }
       }

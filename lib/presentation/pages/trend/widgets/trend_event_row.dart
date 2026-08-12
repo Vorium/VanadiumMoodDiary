@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
 
 /// 单条事件行 (public, v0.30 round 95 拆出, 原 _EventRow 私有)
@@ -95,7 +96,7 @@ class EventRow extends StatelessWidget {
         return (
           Icons.mood_outlined,
           e.moodScore != null
-              ? Color(MoodVisual.colorArgbFor(e.moodScore!))
+              ? AppColors.moodScoreColor(e.moodScore!)
               : AppTokens.textSecondaryColor(context),
           time,
         );

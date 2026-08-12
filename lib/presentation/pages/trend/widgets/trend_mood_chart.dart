@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_utils.dart';
@@ -134,7 +135,7 @@ class MoodHistoryChart extends StatelessWidget {
                         show: true,
                         getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
                           radius: 5,
-                          color: Color(MoodVisual.colorArgbFor(spot.y.round())),
+                          color: AppColors.moodScoreColor(spot.y.round()),
                           strokeWidth: 1.5,
                           strokeColor: AppTokens.fgOnPrimary(context),
                         ),
@@ -218,7 +219,7 @@ class MoodHistoryChart extends StatelessWidget {
                             '${dt.month}/${dt.day} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}\n'
                             '${MoodVisual.emojiFor(score)} ${MoodVisual.labelFor(score)}',
                             TextStyle(
-                              color: Color(MoodVisual.colorArgbFor(score)),
+                              color: AppColors.moodScoreColor(score),
                               fontWeight: FontWeight.w600,
                               fontSize: AppTokens.fontSizeCaptionSm,
                             ),

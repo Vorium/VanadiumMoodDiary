@@ -19,6 +19,7 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -222,7 +223,7 @@ class _CalendarCell extends StatelessWidget {
       // 命名: tintedPrimaryHigh = primary check-in bg, 区别于 primary soft (0.1)
       bg = AppTokens.tintedPrimaryHigh(context);
     } else if (day.moodScore != null) {
-      bg = Color(MoodVisual.colorArgbFor(day.moodScore!));
+      bg = AppColors.moodScoreColor(day.moodScore!);
     } else {
       bg = null;
     }

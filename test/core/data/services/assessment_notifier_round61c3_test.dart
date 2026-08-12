@@ -58,7 +58,8 @@ void main() {
       expect(call.fireAt, futureFire);
     });
 
-    test('fireAt = 过去 → 跳过 (不调 zonedAt)', () async {
+    // v0.32 R110 round 6 (B1-7): 过去 fireAt 不再静默跳过 — catch-up 重排
+    test('fireAt = 过去 → catch-up 重排 now+1h (不静默丢)', () async {
       final mockDispatcher = _MockReminderDispatcher();
       final notifier = AssessmentNotifier(
         plugin: FlutterLocalNotificationsPlugin(),
@@ -69,7 +70,15 @@ void main() {
       final pastFire = DateTime.now().subtract(const Duration(days: 1));
       await notifier.scheduleAssessmentReminder(fireAt: pastFire);
 
-      expect(mockDispatcher.zonedAtCalls, isEmpty);
+      expect(mockDispatcher.zonedAtCalls, hasLength(1),
+          reason: '过去 fireAt 必须重排, 不能静默丢弃 (B1-7)');
+      final call = mockDispatcher.zonedAtCalls.single;
+      expect(call.id, 5000001);
+      expect(
+        call.fireAt.isAfter(DateTime.now().add(const Duration(minutes: 59))),
+        isTrue,
+        reason: 'catch-up 落点 = now+1h 附近 (跟 policy 语义一致)',
+      );
     });
   });
 

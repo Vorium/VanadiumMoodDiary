@@ -57,10 +57,32 @@ class AssessmentNotifier {
     await _plugin.cancel(assessmentReminderId);
 
     if (fireAt.isBefore(now)) {
+      // v0.32 R110 round 6 (B1-7): 过去 fireAt **不再静默丢弃** — 改 catch-up
+      // now+1h 重排 (跟 AssessmentReminderPolicy "计算结果 < 现在 → +1h"
+      // 语义对齐)。修复前: 任何竞态/分歧 (policy now vs 调度 now, 或未来
+      // caller 传错) → 评估提醒永不重发, 静默丢失。
+      final catchUp = now.add(const Duration(hours: 1));
       piiSafeLog(
         'AssessmentNotifier',
-        '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, 跳过',
+        '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, catch-up '
+        '重排到 $catchUp (不再静默丢弃, B1-7)',
       );
+      try {
+        await _dispatcher.zonedAt(
+          id: assessmentReminderId,
+          title: Strings.notifAssessmentTitle(),
+          body: Strings.notifAssessmentBody(days, scaleId.toUpperCase()),
+          fireAt: catchUp,
+          details: _dispatcher.buildChannelDetails(),
+          payload: NotificationDeepLink.assessment(scaleId).encode(),
+        );
+      } catch (e) {
+        piiSafeLog(
+          'AssessmentNotifier',
+          '❌ 评估提醒 catch-up 调度失败: $e',
+          error: e,
+        );
+      }
       return;
     }
 

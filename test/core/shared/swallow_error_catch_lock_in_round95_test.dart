@@ -175,6 +175,27 @@ void main() {
       expect(result[1].minute, 30);
     });
 
+    // v0.32 R110 round 6 (B1-4): 越界 h/m 走 HourMinute.safe() clamp
+    // (legacy v1-v4 / import 脏行, R96b 模式), 不 assert 崩不吞错
+    test('越界 h/m (h:24, m:90) clamp 而非构造越界对象', () {
+      final m = makeMed('[{"h":24,"m":90},{"h":-1,"m":0}]');
+      final result = m.times;
+      expect(result.length, 2, reason: '脏行被 safe() 保留, 不丢弃');
+      expect(result[0].hour, 23);
+      expect(result[0].minute, 59);
+      expect(result[1].hour, 0);
+      expect(result[1].minute, 0);
+    });
+
+    test('整数 + 越界混合: 正常项原样, 越界项 clamp', () {
+      final m = makeMed('[{"h":8,"m":0},{"h":26,"m":5}]');
+      final result = m.times;
+      expect(result[0].hour, 8);
+      expect(result[0].minute, 0);
+      expect(result[1].hour, 23);
+      expect(result[1].minute, 5);
+    });
+
     test('item 缺 h 或 m: 跳过该 item, 不抛', () {
       final m = makeMed('[{"h":8,"m":0},{"h":12},{"m":15}]');
       final result = m.times;

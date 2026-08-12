@@ -73,7 +73,7 @@ pod install
   team_id "<10 字符 Apple Team ID>"
   itc_team_id "<App Store Connect Team ID>"
   ```
-- In-App Purchases → 创建 productId `com.chroniccare.app.lifetime`,定价 8 元 CNY
+- In-App Purchases → 创建 productId `com.chroniccare.chroniccare.lifetime`（跟 store_kit_service.dart:50 `kLifetimeProductId` 同步; R32 P0-03 已从 `.app.lifetime` 修正）,定价 8 元 CNY
 - 改 `lib/core/data/feature_flags.dart:38` `_prodIapEnabled = true`
 - App Privacy → 填 4 大类(参考 `scripts/generate_data_safety_form.py` 输出)
 

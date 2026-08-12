@@ -1,5 +1,34 @@
 ﻿# 变更日志
 
+## [0.32.0+133] - 2026-08-13 (R110 round 6: P1 快修批 — mood 单源 / 上架措辞 / 鲁棒修复)
+
+- EM-01 (视觉): mood 颜色双源合一 — 6 处 `MoodVisual.colorArgbFor` 旧灰蓝
+  板 (详情页/趋势日历/趋势折线×2/事件行/今日卡片) → `AppColors.moodScoreColor`
+  (R32 iOS 红橙黄绿蓝), 删除 mood_visual.colorArgbFor, round9 测试改
+  moodScoreColor 断言。锁屏 PII 无药名不受影响
+- EM-04: page_scaffold `&& false` iOS reduce-transparency 死分支删除
+  (R110 audit EM-04/FS-10/AH-08), 留注释说明 Flutter 未暴露该媒体查询
+- SP-en-6: 恢复 aliyun_sms_provider_round57_test (原 .disabled 静默覆盖率
+  洞)。旧 dio 真接测试与 R63 守门 (send throw + isProductionReady=false)
+  冲突 → 重写为当前 stub 契约测试 7 例 (含 validateForRelease 阻断前提)
+- AS-09: iOS en-US description "Built-in psychological screening" →
+  "Self-administered...check-ins" (去 screening 抽审风险词)
+- GP-6: Android full_description 3 处 — "stay connected with loved ones"
+  caregiver 宣传 (功能禁用) 移除 + screening 同款措辞 + "WHO IS THIS FOR"
+  去掉 caregiver 条目
+- GP-8: AndroidManifest android:label 硬编码 "ChronicCare" → @string/app_name
+- AS-10: STOREFRONT_RELEASE_SOP productId 修正 (com.chroniccare.chroniccare.
+  lifetime, R32 P0-03 后文档滞后)
+- B1-4 (鲁棒): MedicationTimes.times 越界 h/m (h:24/m:90 legacy 脏行) →
+  HourMinute.safe() clamp (R96b 模式), +2 回归测试
+- B1-7 (逻辑): AssessmentNotifier 过去 fireAt 不再静默丢弃 — catch-up
+  now+1h 重排 (跟 policy 语义对齐), 修复"评估提醒永不重发"隐患, 测试更新
+- 审计复核: AS-13 (setup PIPL §13 同意) R110 round 3 前已实现
+  (_finishSetup R68 loop) = 假阳性; AS-11 (pubspec 漂移) round 2 已闭环;
+  GP-14 badge visibility round 3 已闭环; SP-en-6 迁移部分 round37 已覆盖
+- 外部保留: GP-11 Data Safety 表单 (console 侧), GP-12 16KB 真实 objdump
+  验证 (4h 工具链), AS-12 资产 (设计师)
+
 ## [0.32.0+132] - 2026-08-13 (R110 round 5: 残余 fail 收口, 8 → 4)
 
 - daily_tracking_page_round91_test: TrackingConfigNotifier (R109) 启动读

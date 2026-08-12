@@ -2,7 +2,7 @@
 
 > 我今天吃了药 · 精神心理患者吃药打卡 + 停药通知
 
-> **🚧 v0.32.0+132 (2026-08-13 R110 round 5)**: 残余 fail 收口 8→4 (daily_tracking SP mock 修复 + TextStyle 阈值论证) + round 4 HEAD 编译修复 (`17d831a`/`94d61a1`)。**R110 10 视角审计** (master `8e2d968`): **P0 12 项已全闭环**。残余 4 fail = iOS 资产 68B 占位 (外部设计师)。详细报告:
+> **🚧 v0.32.0+133 (2026-08-13 R110 round 6)**: P1 快修批 — mood 双色源合一 (iOS palette 单一来源) / 上架措辞去异 (iOS+Android "screening"+caregiver 宣传) / aliyun 死测试复活 / 2 鲁棒修复 (B1-4 边界 clamp, B1-7 提醒 catch-up)。**P0 12 项 + P1 25 项中 13 项已闭环**。残余 4 fail = iOS 资产占位 (设计师) + 外部项 (keystore/域名/表单/截图)。详细报告:
 > - [R110 整合 16KB](docs/audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md) (10 视角, P0 12 + P1 25 + P2 30+)
 > - [R110 顶层架构 12KB](docs/audit/2026-08-13-multi-lens/08-top-level-arch.md) (8.4/10, 重构路线 7 步: 先修 purity → usecase 厚化 → scale 三源合一 → l10n 循环 → god class → feature-first)
 > - [R110 底层逐行 A](docs/audit/2026-08-13-multi-lens/09-line-by-line-domain-data.md) + [B](docs/audit/2026-08-13-multi-lens/10-line-by-line-presentation.md) (P0 通知 ID 碰撞 + 生命周期审计全绿)

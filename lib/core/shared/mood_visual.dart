@@ -74,27 +74,4 @@ class MoodVisual {
   ///
   /// presentation 层应使用 AppLocalizations 的 moodLabelN 键替代此方法。
   static String labelFor(int score) => Strings.moodLabel(score);
-
-  // ===== 颜色（ARGB int，UI 层包成 Color）=====
-
-  /// 分数 → ARGB int（0xAARRGGBB）
-  ///
-  /// 返回 int 而非 Color，shared/ 不依赖 flutter/material。
-  /// UI 层用 `Color(MoodVisual.colorArgbFor(score))` 包一下。
-  static int colorArgbFor(int score) {
-    switch (score) {
-      case 1:
-        return 0xFF6B7280;
-      case 2:
-        return 0xFF60A5FA;
-      case 3:
-        return 0xFF9CA3AF;
-      case 4:
-        return 0xFF6BCF7F;
-      case 5:
-        return 0xFF4FB05F;
-      default:
-        return 0xFF9CA3AF;
-    }
-  }
 }

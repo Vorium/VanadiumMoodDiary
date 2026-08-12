@@ -56,13 +56,11 @@ class PageScaffold extends StatelessWidget {
                     onPressed: () => context.pop(),
                   )
                 : null);
-        // v0.31 R32 (Apple Health spec §4.9): reduce-transparency 适配
-        // 用户开 reduce-transparency 系统设置 → 走 solid, 否则 translucent
-        final reduceTransparency = MediaQuery.disableAnimationsOf(context) ||
-            (Theme.of(context).platform == TargetPlatform.iOS &&
-                // iOS 风格 reduce-transparency 媒体查询
-                // Flutter 暂未暴露, 走 fallback: 始终 translucent
-                false);
+        // v0.31 R32 (Apple Health spec §4.9): reduce-transparency 适配 —
+        // 用户开 reduce-motion → 走 solid, 否则 translucent。
+        // (Flutter 未暴露 iOS reduce-transparency 媒体查询, iOS 保持
+        // translucent 跟 Apple Health 一致)
+        final reduceTransparency = MediaQuery.disableAnimationsOf(context);
         return Scaffold(
           // 宽屏下不显示 AppBar（NavigationRail 在 AppShell 里负责导航）
           appBar: (title != null && !isWide)
