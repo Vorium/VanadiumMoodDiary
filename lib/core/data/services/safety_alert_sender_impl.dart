@@ -78,17 +78,17 @@ class SafetyAlertSenderImpl implements SafetyAlertSender {
       smsFail: smsFail,
       smsMock: smsMock,
     );
+    // v0.32 R109 round 6: notification_service.showSafetyAlert
+    //   + safety_alert_builder.buildFor 都已接受 SafetyAlertL10nResolver
+    //   (R109 round 2 末尾改动), 删原 _AppLocalizationsAdapter + _resolveL10n
+    //   适配器 (56 fail 修). 0 死代码, adapter 是 R109 round 2 临时桥, 后续
+    //   改 builder 接口后已不需要.
     await _notificationService.showSafetyAlert(
       userName: userName,
       daysWithoutCheckIn: daysSinceLast,
       lastCheckIn: lastCheckIn,
       outcome: outcome,
-      // v0.32 R109: tear-off 闭包 (跨期 R29 R87 抽 interface 失败, Dart
-      // nominal typing 不允许 AppLocalizations 隐式 implements, 改用
-      // 函数 tear-off 走通, 0 死代码).
-      // builder.buildFor 接受 AppLocalizations, 实际只调 5 个 getter, 用
-      // 适配 adapter 转 SafetyAlertL10nResolver → AppLocalizations.
-      l10n: _resolveL10n(l10nResolver),
+      l10nResolver: l10nResolver,
     );
 
     // 写 audit log (避免短时间内重复打扰)
@@ -102,56 +102,8 @@ class SafetyAlertSenderImpl implements SafetyAlertSender {
 
     return outcome;
   }
-
-  /// SafetyAlertL10nResolver tear-off 闭包 → 适配 AppLocalizations 给 builder
-  ///
-  /// R109: 适配层, 5 个 String Function 跟 AppLocalizations 同名方法
-  /// 1:1 对应. 这里建 1 个轻量 adapter class (`_AppLocalizationsAdapter`)
-  /// 包装 tear-off, 内部用 noSuchMethod forward 调闭包. 0 reflection
-  /// 开销, 5 个 getter 显式 override.
-  AppLocalizations _resolveL10n(SafetyAlertL10nResolver r) =>
-      _AppLocalizationsAdapter.fromResolver(r);
 }
 
-/// SafetyAlertL10nResolver tear-off → AppLocalizations 适配器
-///
-/// R109: 跨期 R29 R87 抽 SafetyAlertL10n interface 失败 (Dart nominal
-/// typing), R109 改用 tear-off 闭包 + 这个 adapter 转回 AppLocalizations
-/// 给 `SafetyAlertBuilder.buildFor` (它签名要求 AppLocalizations).
-///
-/// 只实现 builder 实际调的 5 个 getter, 0 reflection, 0 dart:mirrors.
-class _AppLocalizationsAdapter implements AppLocalizations {
-  final SafetyAlertL10nResolver _r;
-
-  _AppLocalizationsAdapter(this._r);
-
-  factory _AppLocalizationsAdapter.fromResolver(SafetyAlertL10nResolver r) =>
-      _AppLocalizationsAdapter(r);
-
-  // 5 个 builder 实际调的 getter
-  @override
-  String safetyAlertTitle(int days) => _r.titleFor(days);
-
-  @override
-  String safetyAlertBodySent(String date) => _r.bodySent(date);
-
-  @override
-  String safetyAlertBodyMocked(String date) => _r.bodyMocked(date);
-
-  @override
-  String safetyAlertBodyFailed(String date) => _r.bodyFailed(date);
-
-  @override
-  String get safetyAlertNeverCheckIn => _r.neverCheckIn();
-
-  // 其它未实现的方法会抛 NoSuchMethodError, builder 不会调到,
-  // 测试覆盖已验证 (notification_service.showSafetyAlert 流程不变).
-  @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      throw NoSuchMethodError(
-        this,
-        invocation.memberName,
-        invocation.positionalArguments,
-        invocation.namedArguments,
-      );
-}
+// v0.32 R109 round 6: 删 _AppLocalizationsAdapter (56 fail 修, 死代码).
+//   之前 R109 round 2 改 builder/showSafetyAlert 接受 SafetyAlertL10nResolver
+//   时, 漏删这里. 现在 sender_impl 直接传 l10nResolver 给 showSafetyAlert.

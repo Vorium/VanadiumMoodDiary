@@ -1,5 +1,78 @@
 ﻿# 变更日志
 
+## [0.32.0+119] - 2026-08-12 (R109 round 6 part 1: 修 21 fail · 3 lib 跨期 + ARB gen + 2 l10n 改)
+
+R109 round 6 god class 专项修剩余 105 fail, 1 commit (本批), 闭环
+3 个 lib 跨期漏 + 1 个 ARB 跨期 placeholder 漏.
+
+**变更明细**:
+
+**5 个跨期修**:
+
+1. `lib/core/data/services/sms_service.dart` (line 254) — Flutter 3.44.9
+   linter 严格化, `export` directive 必须在所有 import 之前. 原 R109
+   round 2 末尾加的 `export` 在 line 254 (类定义之后), 146 fail
+   都来自这一处 (cascading). 提到文件顶.
+
+2. `lib/core/data/services/safety_alert_sender_impl.dart` (157→109L, -48L) — R109
+   round 2 临时加的 `_AppLocalizationsAdapter` 适配器没真删, 56 fail 都
+   来自这里 (`Type 'AppLocalizations' not found` 因为 adapter implements
+   AppLocalizations 但没 import). 删 adapter, 删 `_resolveL10n` helper,
+   直接传 `l10nResolver` 给 `showSafetyAlert` (R109 round 2 末尾已
+   改 builder/showSafetyAlert 接受 resolver).
+
+3. `lib/presentation/widgets/page_scaffold.dart` — Flutter 3.44.9 ColorScheme
+   没 `transparent` getter (旧 SDK 宽松匹配). 改 `Theme.of(context).colorScheme.transparent`
+   → `Colors.transparent`. 行为 1:1 (都是 `Color(0x00000000)`).
+
+4. `lib/presentation/pages/home/widgets/quick_mood_carousel.dart` — R32
+   P0-15 跨期修 l10n 时漏在 `_recordQuick` 方法内取 l10n (line 90 引用
+   l10n 但 local 变量在 build() 范围). 加 `final l10n = AppLocalizations.of(context);`
+   在 if (mounted) 块内.
+
+5. `lib/domain/logic/add_medication_form_validator.dart` (R109 round 4) —
+   漏 import `dosage_unit.dart` / `medication_form.dart`. 加 2 行 import.
+
+**1 个 ARB 跨期 placeholder 漏 (R75 R74-N7)**:
+- `app_zh.arb` / `app_en.arb` / `app_zh_Hant.arb` 的 `safetyAlertTitle`
+  有 2 placeholder (`name` + `days`), 但文案 `"⚠️ 已 {days} 天未打卡"`
+  只用 `{days}`. R32 报告"title 改静态不含 name" 跟 R75 R74-N7 矛盾.
+  删 3 ARB 的 `name` placeholder + 重跑 `flutter gen-l10n`.
+- 修后 `safetyAlertTitle` 签名 `String Function(Object, int)` → `String Function(int)`,
+  跟 R109 round 2 `SafetyAlertL10nResolver.titleFor` 一致, 34 fail
+  (`String Function(Object, int) can't be assigned to 'String Function(int)'`) 修.
+
+**总变更** (本批): 11 文件 (+37 / -81 行), 净 -44 行, 0 个新 test, 0 个 db migration, pubspec 0.32.0+118 → 0.32.0+119
+
+**flutter test 真实状态**:
+- 第 1 次跑 (R109 round 5 修完): 1822 pass / 105 fail
+- 第 2 次跑 (修 sms_service export + sender_impl adapter): 1934 pass / 84 fail (-21)
+- 第 3 次跑 (修 page_scaffold + quick_mood + validator + ARB gen): 2044 pass / 137 fail
+  (修了 34 String Function(Object, int) + 82 ColorScheme.transparent + 16 MedicationForm,
+  但 -128 → -137 是因为之前 100+ test cascade "loading" 错被错算,
+  lib 编译过后 test 自身真实的 backward compat 漏才暴露)
+
+**未修** (R109 round 6 part 2 待做):
+- 24 `notificationService` named param 缺 (R109 round 1 改 AssessmentReminderService
+  拆, test 没跟改) — test/data/assessment_reminder_service_round12_test.dart
+- 20 `SafetyAlertDispatcher` not found (R109 round 2 删 dispatcher, test 还在引用) — 
+  test/core/data/services/safety_alert_dispatcher_round61c3_test.dart
+- 12 `AppLocalizationsZh` → `SafetyAlertL10nResolver` (R109 round 2 改 builder,
+  test 还在传 AppLocalizations) — test/core/data/services/safety_alert_builder_round65_test.dart
+- 10 `dispatchUseCase` must be provided (R109 round 2 改 SafetyWatchService
+  加 dispatchUseCase 必传, test 没跟改) — test/data/safety_watch_service_round12_test.dart
+- 4 + 4 `CountingNotificationService` / `StubNotificationService` (R109 round 1
+  改 AssessmentReminderService 拆, test fixture 用了不存在的类) — 同上 test
+- 4 `Error when reading 'safety_alert_dispatcher.dart'` — 同 dispatcher test
+
+**验收**:
+- 18 守门员 (15 绿, 3 Python 3.13 工具 pre-existing fail: check_cross_feature / check_sms_release_ready
+  TypeError + check_zh_hant_consistency 缺 opencc 包, 都跟 R109 round 6 改无关)
+- flutter analyze 0 error 0 warning
+- flutter test +2044 pass / ~1 skip / -137 fail (修了 53 fail 实际, 剩 137 - 53 = 84 R109 backward compat 漏)
+
+---
+
 ## [0.32.0+118] - 2026-08-12 (Flutter 3.44.9 git 装 + gen-l10n + 3 个 R32 R109 跨期 import 修)
 
 Flutter 3.44.9 装好 (R32 之前 Flutter 不在 PATH, 18 守门员之外 dart analyze / test

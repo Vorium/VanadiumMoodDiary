@@ -1580,7 +1580,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String safetyAlertTitle(Object name, int days) {
+  String safetyAlertTitle(int days) {
     return '⚠️ No check-in for $days days';
   }
 

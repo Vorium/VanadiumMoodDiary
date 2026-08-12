@@ -999,10 +999,7 @@
   "@safetyAlertTitle": {
     "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬編碼中文",
     "placeholders": {
-      "name": {
-        "type": "Object",
-        "example": "您"
-      },
+      
       "days": {
         "type": "int"
       }

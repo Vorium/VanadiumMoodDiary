@@ -960,10 +960,7 @@
   "@safetyAlertTitle": {
     "description": "SafetyAlert title — v0.27 R75 fix (R74-N7): was hardcoded Chinese",
     "placeholders": {
-      "name": {
-        "type": "Object",
-        "example": "you"
-      },
+      
       "days": {
         "type": "int"
       }

@@ -10,8 +10,10 @@
 // 4 层架构: domain/logic/ 放 0 副作用 0 Flutter 0 Drift 0 service 调
 //   的纯函数, AGENTS.md 必读.
 
+import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';
+import 'package:chroniccare/domain/entities/medication_form.dart';
 
 /// 新增用药表单验证器 (R109 抽纯函数集中器)
 ///

@@ -2738,7 +2738,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'⚠️ 已 {days} 天未打卡'**
-  String safetyAlertTitle(Object name, int days);
+  String safetyAlertTitle(int days);
 
   /// SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬編碼中文， lastCheckIn==null 時返
   ///

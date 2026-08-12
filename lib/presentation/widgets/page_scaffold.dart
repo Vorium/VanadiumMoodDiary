@@ -74,7 +74,11 @@ class PageScaffold extends StatelessWidget {
                   // - scrolledUnderElevation: 0 (滚动后不变 elevation)
                   // - flexibleSpace: BackdropFilter blur(20) + Container alpha
                   // - reduce-transparency: 退化到 solid
-                  surfaceTintColor: Theme.of(context).colorScheme.transparent,
+                  // R109 round 6 (v0.32.0+119): Flutter 3.44.9 linter 严格化,
+                  //   ColorScheme 没 transparent getter (旧 SDK 宽松匹配), 改用
+                  //   `Colors.transparent` (Material 标准 const Color).
+                  //   行为 1:1 (都是完全透明的 Color(0x00000000)).
+                  surfaceTintColor: Colors.transparent,
                   scrolledUnderElevation: 0,
                   elevation: 0,
                   flexibleSpace: reduceTransparency

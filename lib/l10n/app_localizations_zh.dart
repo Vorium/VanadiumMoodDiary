@@ -1503,7 +1503,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String safetyAlertTitle(Object name, int days) {
+  String safetyAlertTitle(int days) {
     return '⚠️ 已 $days 天未打卡';
   }
 
@@ -5539,7 +5539,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String safetyAlertTitle(Object name, int days) {
+  String safetyAlertTitle(int days) {
     return '⚠️ 已 $days 天未打卡';
   }
 

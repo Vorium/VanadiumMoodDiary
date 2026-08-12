@@ -84,6 +84,10 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
         note: '1 tap 速记 mood 失败, 用户可改走 MoodDialog',
       );
       if (mounted) {
+        // R109 round 6 (v0.32.0+119): R32 P0-15 跨期修 l10n 时漏在
+        //   `_recordQuick` 方法内取 l10n (line 90 引用了 l10n 但 local
+        //   变量在 build() 范围), 加 final l10n 修 10 fail.
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             // R32 (P0-15 i18n 跨期): 改 l10n (P0-12 emil: 顺便走 AppSnackBar 集中器)

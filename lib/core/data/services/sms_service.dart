@@ -1,3 +1,13 @@
+// v0.32 R109: 通过 `package:chroniccare/domain/repositories/safety_alert_sender.dart`
+//   隐式 re-export (Dart typedef 跨文件 transparent), 旧 caller
+//   `import 'package:chroniccare/core/data/services/sms_service.dart'
+//   show SmsDispatchOutcome;` 仍可工作, 但推荐改 import 新位置.
+//
+// R109 round 6 (v0.32.0+119): Flutter 3.44.9 linter 严格化, `export` directive
+//   必须在所有 import 之前, 提到文件顶 (原来在 line 254, 146 个 fail).
+export 'package:chroniccare/domain/repositories/safety_alert_sender.dart'
+    show SmsDispatchOutcome;
+
 import 'dart:async';
 import 'package:chroniccare/core/data/services/last_error_capture.dart'
     show LastErrorCapture;
@@ -247,13 +257,6 @@ class SmsResult {
 /// 跟 data 层), data 层 `sms_service.dart` 删 typedef, 改 import
 /// domain. R25 round 52 (spen P0 #12) 原定义位置.
 ///
-/// v0.32 R109: 通过 `package:chroniccare/domain/repositories/safety_alert_sender.dart`
-///   隐式 re-export (Dart typedef 跨文件 transparent), 旧 caller
-///   `import 'package:chroniccare/core/data/services/sms_service.dart'
-///   show SmsDispatchOutcome;` 仍可工作, 但推荐改 import 新位置.
-export 'package:chroniccare/domain/repositories/safety_alert_sender.dart'
-    show SmsDispatchOutcome;
-
 /// SMS 服务（业务层）
 ///
 /// 用法：
