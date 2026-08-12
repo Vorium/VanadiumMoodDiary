@@ -1,5 +1,16 @@
 ﻿# 变更日志
 
+## [0.32.0+131] - 2026-08-13 (R110 round 4: R109 遗留归类, HEAD 编译修复)
+
+- lib/app.dart 跨期漏修 (R109 round 1 拆 AssessmentReminderService 后 call
+  site 未同步): `_runAssessmentReminderOnStart` 改走
+  `scheduleAssessmentReminderUseCaseProvider` (修复前 HEAD 无法编译)
+- 删 test/core/data/services/safety_alert_dispatcher_round61c3_test.dart
+  (SafetyAlertDispatcher 类已删, import 不存在的文件 → flutter test 编译全挂;
+  功能已由 reminder_dispatcher / R12+R66+R110 测试覆盖)
+- 工作树 95 文件归类: 92 个纯行尾噪声 + 平台配置 (android/ios/web/scripts
+  _archive 无实质 diff) 全部回滚 HEAD; 净 commit 仅上述 2 文件
+
 ## [0.32.0+130] - 2026-08-13 (R110 round 3: 审计 P0 12 项全部代码闭环)
 
 - 通知 ID 碰撞 (B1-1): safety/assessment/mood/badge/care push 5 个固定 ID 迁

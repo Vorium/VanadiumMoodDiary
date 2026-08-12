@@ -9,6 +9,7 @@ import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/core/routing/app_router.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -145,12 +146,17 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
   /// v0.23 round 38 (P0-4 fix): 复用 [checkInRepositoryProvider] 而不是
   /// `new CheckInRepositoryImpl(sharedDb)`,避免第 2 个 CheckInRepository
   /// 实例(每个实例会 subscribe drift stream,导致 stream 重复订阅内存漏)。
+  ///
+  /// v0.32 R109 round 6 part 2: 跨期漏改 `notificationService:` 参数,
+  /// R109 round 1 拆 `AssessmentReminderService` 接受
+  /// `scheduleUseCase: ScheduleAssessmentReminderUseCase`. 改用
+  /// `scheduleAssessmentReminderUseCaseProvider` (跟 service_providers
+  /// 注入链一致).
   Future<void> _runAssessmentReminderOnStart() async {
     try {
-      final notificationService = ref.read(notificationServiceProvider);
       final service = AssessmentReminderService(
         checkInRepo: ref.read(checkInRepositoryProvider),
-        notificationService: notificationService,
+        scheduleUseCase: ref.read(scheduleAssessmentReminderUseCaseProvider),
       );
       await service.onAppStart();
     } catch (e) {
