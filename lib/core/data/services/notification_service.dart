@@ -302,6 +302,7 @@ class NotificationService implements NotificationSender {
     piiSafeLog('NotificationService', 'rescheduleAll start (R70 简化方案)');
     // R108 P0-2: 运行时检查 SCHEDULE_EXACT_ALARM 权限 (Android only)
     // false → 走 inexactAllowWhileIdle 兜底 (允许 ~15min 漂移, 不阻塞)
+    // dispatcher.useExactAllowWhileIdle field 由 setExactMode() 同步 (true→exact, false→inexact)
     final canExact = await _canScheduleExact();
     _dispatcher.setExactMode(canExact);
     if (!canExact) {

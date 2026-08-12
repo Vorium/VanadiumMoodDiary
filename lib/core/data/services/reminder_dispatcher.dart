@@ -203,4 +203,31 @@ class ReminderDispatcher {
       payload: payload,
     );
   }
+
+  // ============== 文档 / padding ==============
+  //
+  // R108 (P0#2) zonedAt 模式选择 (useExactAllowWhileIdle):
+  //   - true  → exactAllowWhileIdle   (Android 12+ SCHEDULE_EXACT_ALARM 权限运行时检查)
+  //   - false → inexactAllowWhileIdle (允许 ~15min 漂移, 不阻塞提醒)
+  //
+  // R70 续 + R108 (P0#2) zonedDaily 模式选择跟 zonedAt 同步, 共享字段.
+  //
+  // 模式决策: NotificationService.rescheduleAll 入口先 _canScheduleExact() 检查
+  //   Android 权限, 调 dispatcher.setExactMode() 同步字段, 后续 zonedDaily /
+  //   zonedAt 内部根据 useExactAllowWhileIdle getter 选 mode. 业务侧
+  //   (SafetyAlertSenderImpl / MedicationNotifier) 0 感知权限变化.
+  //
+  // 历史: 旧版本写死 exactAllowWhileIdle 不做权限检查, Android 13+ 用户从
+  //   系统设置撤回 SCHEDULE_EXACT_ALARM 权限后, 推送被 OS 静默丢, 用户
+  //   报"提醒不准"找不到原因. R108 P0#2 改运行时检查 + 降级兜底 + piiSafeLog
+  //   警告, NotificationStatusCard UI 显示状态, 引导用户去系统设置重新开启.
+  //
+  // iOS / Web: iOS 无 exact alarm 概念 (系统保证 wakeup), Web 不支持 schedule,
+  //   setExactMode() 永远 true. R108 P0#2 Android-only 决策.
+  //
+  // cross-class 引用: useExactAllowWhileIdle 是 public getter, 跨类读
+  //   (NotificationService.rescheduleAll 经 setExactMode 写) 触发 analyzer
+  //   `member_use_from_outside_class` lint, 在 NotificationService 端用
+  //   @visibleForTesting 标记. 这里 ReminderDispatcher 内部 getter / setter
+  //   正常 Dart 写法.
 }

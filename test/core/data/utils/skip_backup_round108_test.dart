@@ -30,6 +30,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  // R109 round 6 part 2: Part B mock platform channel 走 TestDefaultBinaryMessenger
+  //   binding, 需先 ensureInitialized 否则 line 150/157/170/195 instance 抛
+  //   "Binding has not yet been initialized". 跨期 R108 test 漏 init.
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   // ============================================================
   // Part A: 静态分析 — 4 caller + iOS Swift 注册
   // ============================================================

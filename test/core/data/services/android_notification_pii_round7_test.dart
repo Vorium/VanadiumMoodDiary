@@ -27,9 +27,22 @@ import 'dart:io';
 
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// R109 round 6 part 2: R109 round 2 改 SafetyAlertBuilder.buildFor
+/// 接受 `SafetyAlertL10nResolver` (tear-off 闭包). test 跨期 R108 漏改
+/// 还在传 `AppLocalizations` 实例 — 包成 resolver 即可 (闭包自然 capture).
+SafetyAlertL10nResolver _wrapEnL10n(AppLocalizationsEn l) =>
+    SafetyAlertL10nResolver(
+      titleFor: l.safetyAlertTitle,
+      bodySent: (Object date) => l.safetyAlertBodySent(date.toString()),
+      bodyMocked: (Object date) => l.safetyAlertBodyMocked(date.toString()),
+      bodyFailed: (Object date) => l.safetyAlertBodyFailed(date.toString()),
+      neverCheckIn: () => l.safetyAlertNeverCheckIn,
+    );
 
 /// 4 个待检查文件 (相对 worktree 根)
 const _kTargetFiles = <String>[
@@ -182,7 +195,7 @@ void main() {
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),
-        l10n: AppLocalizationsEn(),
+        l10n: _wrapEnL10n(AppLocalizationsEn()),
         channelId: 'chroniccare.safety',
         channelName: 'Safety Alert',
         channelDescription: 'Long-time no check-in',
