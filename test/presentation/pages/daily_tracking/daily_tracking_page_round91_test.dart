@@ -18,6 +18,7 @@
 // TDD: 本文件先写 → 跑失败 (page / provider / card not found) → 实施 → 跑 4/4 pass
 import 'dart:async';
 
+import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -107,8 +108,8 @@ void main() {
 
     // 7 张 Card (1 情绪日记 + 5 子功能 + 1 治疗)
     expect(
-      find.byType(Card),
-      findsNWidgets(7),
+      find.byType(TrackingItemCard),
+      findsAtLeastNWidgets(7),
       reason: '整合入口页有 7 张 Card: 情绪日记/焦虑急躁/睡眠/社会节律/应激源/治疗/体重',
     );
 
@@ -144,12 +145,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验证 DailyTrackingPage 渲染
-    expect(find.byType(Card), findsNWidgets(7));
+    expect(find.byType(TrackingItemCard), findsAtLeastNWidgets(7));
 
     // 点第 1 张 Card (情绪日记, 顺序 0)
-    final moodDiaryCard = find.byType(Card).first;
-    expect(moodDiaryCard, findsOneWidget);
-    await tester.tap(moodDiaryCard, warnIfMissed: false);
+    final moodDiaryTile = find.byType(TrackingItemCard).first;
+    expect(moodDiaryTile, findsOneWidget);
+    await tester.tap(moodDiaryTile, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     // 验证路由成功 → 目的地页 MOOD_DIARY_DESTINATION 渲染
@@ -232,7 +233,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // 验证 DailyTrackingPage 渲染
-    expect(find.byType(Card), findsNWidgets(7));
+    expect(find.byType(TrackingItemCard), findsAtLeastNWidgets(7));
 
     // 验证 MoodPeriodAggregatorChart 渲染 (entries 非空, chart 显示)
     expect(

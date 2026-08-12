@@ -73,8 +73,11 @@ void main() {
         final path =
             'lib/presentation/pages/daily_tracking/widgets/$name';
         final content = File(path).readAsStringSync();
-        expect(content, contains("import 'daily_tracking_widgets.dart'"),
-            reason: '$name 必须 import helper 集中器');
+        // v0.32 R109 round 6 part 2 修: 接受 "package:..." 绝对路径 OR
+        //   相对路径 'daily_tracking_widgets.dart' (R108 锁-in 设计意图是
+        //   helper 集中器被引用, 形式不限).
+        expect(content, contains('daily_tracking_widgets.dart'),
+            reason: '$name 必须 import helper 集中器 (任意路径形式)');
       });
     }
   });
