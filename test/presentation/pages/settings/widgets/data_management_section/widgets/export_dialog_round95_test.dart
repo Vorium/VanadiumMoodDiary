@@ -38,7 +38,7 @@ Widget _wrap({Future<void> Function(String json)? onCopy}) {
       home: Builder(
         builder: (ctx) => Scaffold(
           body: Center(
-            child: ElevatedButton(
+            child: FilledButton(
               onPressed: () =>
                   ExportDialog.show(ctx, json: _mockJson, onCopy: onCopy),
               child: const Text('open'),
@@ -71,8 +71,8 @@ void main() {
       // Q4b 风险卡 (settingsExportRiskTitle = "明文风险提示")
       expect(find.text('明文风险提示'), findsOneWidget);
 
-      // Q4b 强制勾选 checkbox (settingsExportRiskAcknowledge = "我已了解风险,继续导出")
-      expect(find.text('我已了解风险,继续导出'), findsOneWidget);
+      // Q4b 强制勾选 checkbox (settingsExportRiskAcknowledge = "我已了解风险，继续导出")
+      expect(find.text('我已了解风险，继续导出'), findsOneWidget);
 
       // JSON 容器渲染 (SelectableText 含 mock json)
       expect(
@@ -83,9 +83,9 @@ void main() {
 
       // v0.30 R95 sub-spec 8 task 19: 5→3 步 — checkbox 默认勾选, 复制按钮
       // 始终 enable (用户点 copy = 主动 ack 行为, Q4b 责任划界走风险告知文字)
-      final copyBtnFinder = find.widgetWithText(ElevatedButton, '复制');
+      final copyBtnFinder = find.widgetWithText(FilledButton, '复制');
       expect(copyBtnFinder, findsOneWidget);
-      final copyBtn = tester.widget<ElevatedButton>(copyBtnFinder);
+      final copyBtn = tester.widget<FilledButton>(copyBtnFinder);
       expect(
         copyBtn.onPressed,
         isNotNull,
@@ -117,8 +117,8 @@ void main() {
       expect(find.byType(AlertDialog), findsOneWidget);
 
       // v0.30 R95 sub-spec 8 task 19: checkbox 默认勾选, 复制按钮 enable
-      final copyBtn = tester.widget<ElevatedButton>(
-        find.widgetWithText(ElevatedButton, '复制'),
+      final copyBtn = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, '复制'),
       );
       expect(
         copyBtn.onPressed,
@@ -127,7 +127,7 @@ void main() {
       );
 
       // 点复制 → 触发 onCopy 回调
-      await tester.tap(find.widgetWithText(ElevatedButton, '复制'));
+      await tester.tap(find.widgetWithText(FilledButton, '复制'));
       await tester.pumpAndSettle();
 
       // 验证: onCopy 被调用 1 次
