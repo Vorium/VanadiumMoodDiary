@@ -1,5 +1,22 @@
 ﻿# 变更日志
 
+## [0.32.0+134] - 2026-08-13 (R110 round 7a: B1-3 睡眠环形统计 + FS-2 daily_tracking 子树隔离)
+
+- B1-3 (修复): 睡眠规律分数改为 **Mardia 环形统计** — 旧实现线性
+  mean/stdDev (hour×60+minute) 在跨午夜场景 (23:50/00:10 交替) 得出
+  σ≈1430min → 分数 1, 错误。新实现 `sleep_calculator.dart`:
+  R = √(Σsin²+Σcos²)/N, σ_rad = √(−2·ln R), σ_min = σ_rad/2π×1440,
+  沿用 30/60/90/120 分档。回归: 跨午夜交替 → 5, 均匀 00/08/16 → 1,
+  23:50±40min → 4 (σ≈31min), 22:00-04:00 簇 → 1 (σ≈172min),
+  round91 测试 10/10 过
+- FS-2 (性能): daily_tracking_page 子树隔离 — 原 build 一次性 watch
+  7 个 latest 流 + 4 个 entries 流, 任一 entry 新写入整页 403L 重建。
+  拆 3 个自 watch 小节: `_LatestSummarySection` (7 latest) /
+  `_MultiChartSection` (4 entries) / `_MoodChartSection` (moodEntries);
+  `TrackingItemCard` 删 `lastValue` 参数, 卡片自行 watch 自己的流
+  (7 个 lastValue 格式化辅助平移至卡片)。现在一次 tick 只重建
+  汇总 + 对应单卡片, 图表区不动
+
 ## [0.32.0+133] - 2026-08-13 (R110 round 6: P1 快修批 — mood 单源 / 上架措辞 / 鲁棒修复)
 
 - EM-01 (视觉): mood 颜色双源合一 — 6 处 `MoodVisual.colorArgbFor` 旧灰蓝

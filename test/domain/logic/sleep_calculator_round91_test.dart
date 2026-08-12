@@ -45,8 +45,10 @@ void main() {
       expect(SleepCalculator.regularityScore(entries), 5);
     });
 
-    test('7 天 bedtime 波动 5h+ → score = 1 (最不规律)', () {
-      // 故意波动大: 22:00, 03:00, 04:00, 22:00, 03:00, 04:00, 22:00
+    // v0.32 R110 round 7a (B1-3): 圆形统计后重算 — 22:00~04:00 聚簇
+    // Mardia σ ≈ 172min ≥ 120 → band 1 (跟原断言一致, bands 未动)
+    test('7 天 bedtime 波动 5h+ (22:00-04:00 聚簇) → score = 1 (最不规律)', () {
+      // 22:00, 03:00, 04:00 交替, 主导入睡窗口 22:00-04:00
       final entries = [
         DateTime(2026, 7, 1, 22, 0),
         DateTime(2026, 7, 2, 3, 0),
@@ -66,6 +68,60 @@ void main() {
         DateTime(2026, 7, 2, 22, 0),
       ];
       expect(SleepCalculator.regularityScore(entries), isNull);
+    });
+
+    // v0.32 R110 round 7a (B1-3): 圆形时间 — 跨午夜交替 (23:50/00:10)
+    // 是"最规律"的作息, 线性 mean/stdDev 会算出 ~710min 巨大 stdDev → 1
+    test('跨午夜交替 23:50/00:10 → score = 5 (B1-3 circular)', () {
+      final entries = [
+        DateTime(2026, 7, 1, 23, 50),
+        DateTime(2026, 7, 2, 0, 10),
+        DateTime(2026, 7, 3, 23, 50),
+        DateTime(2026, 7, 4, 0, 10),
+        DateTime(2026, 7, 5, 23, 50),
+        DateTime(2026, 7, 6, 0, 10),
+        DateTime(2026, 7, 7, 23, 50),
+      ];
+      expect(SleepCalculator.regularityScore(entries), 5,
+          reason: '23:50/00:10 交替是跨午夜规律作息, 圆形距离 ~10min');
+    });
+
+    test('跨午夜但 3 天交替 → 仍 ≥ 4 (B1-3 circular 小样本)', () {
+      final entries = [
+        DateTime(2026, 7, 1, 23, 50),
+        DateTime(2026, 7, 2, 0, 10),
+        DateTime(2026, 7, 3, 23, 50),
+      ];
+      final score = SleepCalculator.regularityScore(entries);
+      expect(score, isNotNull);
+      expect(score, greaterThanOrEqualTo(4));
+    });
+
+    test('圆形均匀分布 00/08/16 点 → score = 1 (无中心)', () {
+      final entries = [
+        DateTime(2026, 7, 1, 0, 0),
+        DateTime(2026, 7, 2, 8, 0),
+        DateTime(2026, 7, 3, 16, 0),
+        DateTime(2026, 7, 4, 0, 0),
+        DateTime(2026, 7, 5, 8, 0),
+        DateTime(2026, 7, 6, 16, 0),
+        DateTime(2026, 7, 7, 0, 0),
+      ];
+      expect(SleepCalculator.regularityScore(entries), 1,
+          reason: '无主导入睡时段的均匀分布 = 最不规律');
+    });
+
+    test('23:50±40min 跨午夜 (±40 聚簇) → Mardia σ≈31min → 4 (band 边界)', () {
+      final entries = [
+        DateTime(2026, 7, 1, 23, 50),
+        DateTime(2026, 7, 2, 23, 10),
+        DateTime(2026, 7, 3, 0, 30),
+        DateTime(2026, 7, 4, 23, 50),
+        DateTime(2026, 7, 5, 23, 10),
+        DateTime(2026, 7, 6, 0, 30),
+        DateTime(2026, 7, 7, 23, 50),
+      ];
+      expect(SleepCalculator.regularityScore(entries), 4);
     });
   });
 }
