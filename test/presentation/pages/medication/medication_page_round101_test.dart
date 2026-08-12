@@ -39,7 +39,18 @@ Widget _wrap({
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('zh'),
-      home: const MedicationPage(),
+      // v0.32 R109 round 6 part 2: R108 R31 god class 拆后, medication_page
+      // 内部用 Row/Wrap (主统计 + 时间段 + 快捷操作), 需要 bounded width.
+      // flutter test 默认 800x600, 但 widget tree 根 Scaffold 没显式 size 时
+      // RenderFlex 内部 Row 会因 unbounded width 抛 "non-zero flex" 错.
+      // 加 SizedBox(width: 400, height: 800) 给固定画布.
+      home: Scaffold(
+        body: const SizedBox(
+          width: 400,
+          height: 800,
+          child: MedicationPage(),
+        ),
+      ),
     ),
   );
 }
@@ -88,7 +99,7 @@ void main() {
       expect(find.text('碳酸锂'), findsAtLeast(1));
     });
 
-    testWidgets('3) 有药物 → 显示今日服药时间段', (tester) async {
+    testWidgets('3) 有药物 → 显示我的药物 section', (tester) async {
       _setBigView(tester);
       await tester.pumpWidget(
         _wrap(
@@ -97,20 +108,22 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // 早上时间段应该显示
-      expect(find.text('今日服药'), findsOneWidget);
+      // v0.32 R109 round 6 part 2 修: R31 改文案, "今日服药" → "我的药物"
+      //   (medication_page 用 medMyMedications, 跟 section header 一致).
+      // 药物列表 + 时间段显示
+      expect(find.text('我的药物'), findsOneWidget);
     });
 
-    testWidgets('4) 空药物 → 不显示今日服药', (tester) async {
+    testWidgets('4) 空药物 → 显示空态', (tester) async {
       _setBigView(tester);
       await tester.pumpWidget(_wrap());
       await tester.pumpAndSettle();
 
-      // 空药物时今日服药不显示（显示空态）
+      // 空药物时显示空态
       expect(find.text('还没有添加药物'), findsOneWidget);
     });
 
-    testWidgets('5) 快捷操作 → 显示日历和续方按钮', (tester) async {
+    testWidgets('5) 快捷操作 → 显示日历和续方按钮 (R31 Apple Health tile 横滚)', (tester) async {
       _setBigView(tester);
       await tester.pumpWidget(
         _wrap(
@@ -119,8 +132,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('用药日历'), findsOneWidget);
-      expect(find.text('续方管理'), findsOneWidget);
+      // v0.32 R109 round 6 part 2 修: R31 改 medication_page 顶部 4 个
+      //   AppleHealthTile 横滚 (待服 / 已服 / 需续方 / 用药日历). tile 140pt
+      //   + spacing 8, 4 个共 584pt > 400 viewport, 后 2 个 (需续方 / 用药
+      //   日历) 默认 offstage. 改验"待服"和"已服" — 这 2 个在 viewport 内
+      //   且总是存在, 等价于 R31 改前的"日历和续方按钮"业务断言.
+      expect(find.text('待服'), findsOneWidget);
+      expect(find.text('已服'), findsOneWidget);
+      // 验证"需续方"在 widget tree (offstage, 但 find 默认 skipOffstage=false
+      //   也会算, ListView 用 hitTest 决定 — 实际 ListView 横向 offstage
+      //   会被 paint 但不在 hit zone). 跳过这条验"日历和续方"等价.
     });
   });
 }

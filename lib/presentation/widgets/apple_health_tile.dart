@@ -69,7 +69,17 @@ class AppleHealthTile extends StatelessWidget {
   final VoidCallback? onTap;
 
   /// 默认高度 (88pt — 16 padding * 2 + ~56 content)
-  static const double tileHeight = 88;
+  static const double tileHeight = 110;
+
+  /// 默认 tile 宽度 (跟 height 配套, ListView 横滚 / Wrap 自适应)
+  ///
+  /// v0.32 R109 round 6 part 2 修: R31 加 AppleHealthTile 时没指定 width,
+  /// 在 ListView 横滚 + unbounded parent 时 Row 内部 Expanded 抛
+  /// "non-zero flex but incoming width constraints are unbounded" 错
+  /// (medication_page_round101 / helpers_round108 / daily_tracking 等 widget
+  /// test 跨期 fail). 加 140pt 固定 width, ListView 横滚能自然布局.
+  /// 配套 height 88 → 110 (放 icon 28 + label caption 13 + value metricLg 28 + spacing).
+  static const double tileWidth = 140;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +92,7 @@ class AppleHealthTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: tileHeight,
+        width: tileWidth,
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(AppTokens.radiusTile),
@@ -91,6 +102,7 @@ class AppleHealthTile extends StatelessWidget {
           vertical: AppTokens.spacingMd,
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // 左: metric icon (28pt, metric 色)
             Icon(
@@ -99,7 +111,7 @@ class AppleHealthTile extends StatelessWidget {
               size: 28,
             ),
             const SizedBox(width: AppTokens.spacingSm),
-            // 中: label + value
+            // 中: label + value — FittedBox 让长 label 缩字不溢出
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,11 +124,15 @@ class AppleHealthTile extends StatelessWidget {
                       color: AppTokens.textSecondaryColor(context),
                       fontWeight: FontWeight.w500,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     value,
                     style: AppTypography.textStyleMetricLg(context),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
