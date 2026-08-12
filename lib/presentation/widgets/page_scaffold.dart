@@ -43,7 +43,11 @@ class PageScaffold extends StatelessWidget {
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= AppTokens.breakpointExpanded;
         // R104: 自动判断是否显示返回按钮
-        final canPop = GoRouter.of(context).canPop();
+        // v0.32 R109 round 6 part 2: test 环境没用 MaterialApp.router 包装,
+        //   GoRouter.of(context) 抛 "No GoRouter found in context".
+        //   优雅降级: 拿不到 router 时 canPop = false (无返回按钮), widget test
+        //   仍能 pump + 验证子 widget. 跟 R32 之前 hardcode 行为一致.
+        final canPop = _canRouterPop(context);
         final showLeading = leading ??
             (canPop
                 ? PressFeedbackIconButton(
@@ -124,5 +128,15 @@ class PageScaffold extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// R109 round 6 part 2: 优雅降级, test 环境无 GoRouter 时返 false
+  /// (无返回按钮), 不抛 "No GoRouter found in context".
+  static bool _canRouterPop(BuildContext context) {
+    try {
+      return GoRouter.of(context).canPop();
+    } on Object {
+      return false;
+    }
   }
 }
