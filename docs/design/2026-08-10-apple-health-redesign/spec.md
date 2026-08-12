@@ -66,6 +66,7 @@
 ### 2.3 Reduced-motion + Reduced-transparency + 高对比
 - 系统开 reduce-motion → 所有 spring/duration 降为 0 / linear（已通过 `Motion.duration` 实现）
 - 系统开 reduce-transparency → translucent AppBar 变 solid
+  - **实现状态 (R110 2026-08-13 审计记录)**: Flutter 未暴露 reduce-transparency 媒体查询, `page_scaffold.dart:61-65` 目前恒 translucent (`&& false` 死分支, 错用 disableAnimations 代理)。R111 用 AccessibilityInfo/原生 bridge 做真代理, 或本行降级为 spec 文档化取舍。
 - 系统开高对比 → 所有容器加 1px 边框 + 强对比色
 
 ---
@@ -314,6 +315,8 @@
 
 ## 5. 页面级应用（11 feature）
 
+> **完成度 (R110 2026-08-13 审计实测): 4.5/11** — home (12 ALS + 4 AHT) / setup (5 ALS) / medication (17 ALS + 4 AHT) / trend (1 ALS) 已改; mood / mood_list / vent / assessment / contact / settings / daily_tracking / crisis_hotline **仍 0 AppleListSection 化** (Card+ListTile 旧方言), 见 docs/audit/2026-08-13-multi-lens/ EM-02/AH-04。
+
 ### 5.1 Home（重点改）— Apple Health 仪表盘
 - 改前：6 区域堆叠
 - 改后：
@@ -395,8 +398,8 @@
 
 ### 7.1 客观
 - `flutter analyze` 0 error
-- `flutter test` 全过（baseline 2103 cases + 5+ 新 widget test）
-- 18 守门员全绿
+- `flutter test` 全过（baseline 2103 cases + 5+ 新 widget test；R110 实测 ~2246 pass / 9 fail, R109 收尾后清零）
+- 21 守门员全绿
 - Token 覆盖率 ≥ 95%（grep 0 硬编码 `Color(0xFF...)` / `fontSize: X` / `borderRadius: BorderRadius.circular(X)` in `lib/presentation/`）
 
 ### 7.2 主观（截图对比）

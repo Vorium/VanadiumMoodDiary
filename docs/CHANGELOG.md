@@ -1,5 +1,34 @@
 ﻿# 变更日志
 
+## [0.32.0+130] - 2026-08-13 (R110 round 1-2: 10 视角审计入库 + docs 对齐)
+
+- docs/audit/2026-08-13-multi-lens/ 11 份报告入库 (00-FINAL + 10 视角, P0 12 项)
+- 仓库卫生: R32 报告 7 文件补交 (修 VERSION_1.0_PLAN.md / TODO_R108.md 死链),
+  audit_round84/85 归档 docs/audit-history/, .bak 清理, worktree prune,
+  .gitignore 加 .worktrees/ + sprint2-zh-hant-tmp/
+- AGENTS.md / README.md / design spec 基线数字对齐 (schemaVersion 22 /
+  守门员 21 / 测试数实测)
+
+## [0.32.0+129] - 2026-08-12 (R109 round 6 part 2 续 9: 全角标点 + FilledButton + PressFeedback 跨期 4 test 修)
+
+## [0.32.0+128] - 2026-08-12 (R109 round 6 part 2 续 8: 中文全角标点跨期 3 test 修)
+
+## [0.32.0+127] - 2026-08-12 (R109 round 6 part 2 续 7: schemaVersion 19→22 + ElevatedButton→FilledButton + 标点)
+
+## [0.32.0+126] - 2026-08-12 (R109 round 6 part 2 续 6: R108 helpers import 锁-in 形式放宽 + R91 Card→TrackingItemCard)
+
+## [0.32.0+125] - 2026-08-12 (R109 round 6 part 2 续 5: AppleHealthTile width 140 + height 110 + maxLines, 修 14 fail)
+
+## [0.32.0+124] - 2026-08-12 (R109 round 6 part 2 续 4: R103 consent 第 5 勾 (医学免责) 跨期 4 test 修)
+
+## [0.32.0+123] - 2026-08-12 (R109 round 6 part 2 续 3: R95 量表 zh 标点统一 + UK hotline mixed 标点修)
+
+## [0.32.0+122] - 2026-08-12 (R109 round 6 part 2 续 2: PageScaffold GoRouter 优雅降级, 修 ~67 跨期 fail)
+
+## [0.32.0+121] - 2026-08-12 (R109 round 6 part 2 续: R108 P0#2 + 锁屏 PII 跨期 fail 修)
+
+## [0.32.0+120] - 2026-08-12 (R109 round 6 part 2: 4 test backward compat (lib helper 抽 + R32 锁屏 PII 期望同步))
+
 ## [0.32.0+119] - 2026-08-12 (R109 round 6 part 1: 修 21 fail · 3 lib 跨期 + ARB gen + 2 l10n 改)
 
 R109 round 6 god class 专项修剩余 105 fail, 1 commit (本批), 闭环

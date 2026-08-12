@@ -2,32 +2,37 @@
 
 > 我今天吃了药 · 精神心理患者吃药打卡 + 停药通知
 
-> **🚧 v0.31.1+108 (2026-08-11 R109 综合审视)**: v0.31.0 Apple Health 风格重设计 23 commit (master `01d8f4a`) + v0.31.1 cleanup 2 commit (master `20670f3`) + **R109 综合审视入库 245KB** (master `5952515`, commit 18 files / +3213 行)。**加权综合 7.8/10** (R108 6.2 → 8-11 7.5 → R109 7.8, 累计 +1.6 升; 视觉层 9.5/10 优秀; 上架/合规 21 P0 跨期 100% 残留待 R109 第 1 周闭环)。详细报告:
+> **🚧 v0.32.0+130 (2026-08-13 R110 10 视角综合审视)**: R109 god class 专项 17 commit (master `b22b284` 0.32.0+129) + **R110 10 视角审计入库** (master `8e2d968`, 11 文件)。**P0 12 项** (通知 ID 碰撞 / purity 3 处 / 上架合规 3 项 / i18n 12 处 + 守门员盲区 / 双平台资产 + keystore + 域名)。详细报告:
+> - [R110 整合 16KB](docs/audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md) (10 视角, P0 12 + P1 25 + P2 30+)
+> - [R110 顶层架构 12KB](docs/audit/2026-08-13-multi-lens/08-top-level-arch.md) (8.4/10, 重构路线 7 步: 先修 purity → usecase 厚化 → scale 三源合一 → l10n 循环 → god class → feature-first)
+> - [R110 底层逐行 A](docs/audit/2026-08-13-multi-lens/09-line-by-line-domain-data.md) + [B](docs/audit/2026-08-13-multi-lens/10-line-by-line-presentation.md) (P0 通知 ID 碰撞 + 生命周期审计全绿)
 > - [R109 整合 26KB](docs/audit/2026-08-11-cleanup/00-FINAL-R110-CONSOLIDATION.md) (加权 7.8/10, 26 P0 + 27 P1 + 18 P2)
-> - [R109 顶层架构 13KB](docs/audit/2026-08-11-cleanup/09-top-level-arch.md) (8.5/10, 13 god class 候选清单 + 5 phase 路线)
-> - [c 阶段底层逐行 19KB](docs/audit/2026-08-11-cleanup/08-line-by-line.md) (31 条新发现: A 9 / B 5 / C 8 / D 10 / E 14)
-> - [8-11 cleanup 7 视角 14KB](docs/audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md) (7.5/10 baseline)
+> - [R32 整合 52KB](docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (6 视角, 199 项)
 > - [旧 R108 报告 16.7KB](docs/audit-history/r107-cleanup-2026-08-10/R108-overall-report.md) (6.2/10)
 >
-> **各视角最新评分 (R109)**:
-> - emil 设计 / UI / 动效: **8.5/10** (持平 R108, 4 token 集中器 + 6 widget 集中器是 R65 后最成熟 design engineering 时刻)
-> - superpowers-en 工程 / TDD: **8.5/10** (+2.0, R31 12/13 改写 commit 跟 test 同步, TDD 实践度优秀)
-> - superpowers-zh 国内合规/PIPL: **7.0/10** (-0.5, dev doc 同步未全)
-> - flutter-specification v3.1: **97%** (49/50 阻断, R31 +9% 升, dart format 2 文件待修)
-> - AppStore iOS: **3.5/10** (持平 R108, 5 项上架硬阻塞 100% 残留, **c 阶段新发现 5 病名 5 locale 跨期漏扫** P0-08~P0-12)
-> - GooglePlay Android: **5.5/10** (持平 R108, 实物资产 100% 缺失, Apple Health 23 commit 0 native 改动)
-> - Apple Health 视觉语言: **7.0/10** (R107 8.0 倒退 1.0, 5 token + 6 widget 落地优秀, **11 feature 只 4-5 个深度改写**, spec §4.9 PageScaffold 未改, spring.dart 死代码)
-> - 顶层架构: **8.5/10** (持平, 4 层架构 1:1 + 5 token + 6 widget 集中化, 13 god class 候选清晰)
-> - 底层逐行 (R109 新增): **7.5/10** (c 阶段 31 条新发现, 4 个跨期漏扫 P0 + 9 A 类 bug + 10 god class + 14 优化点)
+> **各视角最新评分 (R110)**:
+> - emil 设计 / UI / 动效: **8.0/10** (token 集中器 100% 采纳, 8 feature 未 AppleListSection 化 + mood 双色板漂移拉低)
+> - superpowers-en 工程 / TDD: **7.5/10** (纪律真实改善, 15+ god class 0 test 积压)
+> - superpowers-zh 国内合规/PIPL: **7.0/10** (docs 滞后 10+ 版本 + 12 处硬编码中文 + 守门员盲区)
+> - flutter-specification v3.1: **8.0/10** (生命周期 0 泄漏, 3 处 purity 违规 + usecase 薄)
+> - AppStore iOS: **3.5/10** (代码面干净, 资产/URL/元数据占位阻塞)
+> - GooglePlay Android: **4.0/10** (权限姿态强, keystore + 资产 + privacy URL 阻塞)
+> - Apple Health 视觉语言: **7.0/10** (视觉 4.5/11 完成, HealthKit 0 集成 enforced)
+> - 顶层架构: **8.4/10** (l10n 循环 + purity 违规 + usecase 层厚化路径清晰)
+> - 底层逐行: **7.2/10** (P0 通知 ID 碰撞 + sleep 圆统计, 其余全绿)
 >
-> **R109 关键 P0 (26 项去重后, 按优先级排序, R109 第 1 周闭环 5-7h)**:
-> 1. **优先级 1 上架/合规** (12 项, 跨期 + c 阶段跨期漏扫 5 locale): review_information 4 TODO + notes 版本过期 + store_kit productId 冗余 + en-US description 5 病名 + 3 DarwinNotificationDetails 空构造 + 4 AndroidNotificationDetails visibility + 7 处 raw IconButton + iOS keywords "mental,health" + promotional_text "mental health" + zh-Hans/zh-Hant/Android zh-CN 5 病名 + 5 处 AndroidNotificationDetails visibility (8-11 漏算 1)
-> 2. **优先级 2 Apple Health 半成品** (5 项, 8-11 P0-18~P0-22): spring.dart 145 行 0 caller 接 _EntrySpring + 134 处 "Apple Health" 注释 lock-in 扩 lib/ + PageScaffold translucent AppBar (spec §4.9) + dart format 2 文件 + 设计文档入库
-> 3. **优先级 3 c 阶段 P0 bug** (4 项, R109 P0-23~P0-26): 10 量表 ID 3 处硬编码抽 scale_registry.allScaleIds() + recordConsent 静默丢失 PIPL §13 + watchToday 跨 midnight 不刷新 + mood_audio_service dispose 漏 _stt
-> 4. **优先级 4 5 项外部依赖** (留 user 手动, 1-2 月): iOS 截图 + iOS LaunchImage 实物 + Android 8 张截图 + feature_graphic + icon + chroniccare.app 域名 + 4 邮箱 ICP
+> **R110 关键 P0 (12 项去重后, 按优先级排序)**:
+> 1. **底层 bug**: 通知 ID 碰撞 — 固定 ID 5000/7000/8000/9999 落在 cancel 区间内被静默误杀 (B1-1, ≤1h)
+> 2. **CI 红**: domain purity 3 处违规, check_all.dart FAIL (AR-1, ≤2h)
+> 3. **上架合规**: 紧急联系人部分可见 + "Mock/开发模式" 用户文案 + release 启动抛错横幅 (AS-07/08/14, ≤4h)
+> 4. **i18n**: 12 处硬编码中文 + 守门员盲区 (SP-zh-15/16, ≤3h)
+> 5. **上架元数据**: review 4 占位 + notes 过时 + 版本漂移 (AS-01/02/11, 10min)
+> 6. **外部依赖**: 双平台截图/图标 100% 占位 + keystore 缺失 + chroniccare.app 域名 ICP (设计师 + 1h + 7-20d)
+> 7. **架构**: scale_translations 三源 1591L + data→l10n 循环 + usecase 层薄 (AR-2/3/4, 2-3wk)
 >
-> **修复路线图 (R109+, 5 phase)**:
-> - **Phase 1 R109 第 1 周** (1 周, 5-7h): 闭环 26 P0 → 9.0/10
+> **修复路线图 (R110+, 4 phase)**:
+> - **Phase 1 R110 本周** (1 周, 5-8h): 闭环代码级 P0 (通知 ID / purity / gate / i18n) → 8.3/10
+> - **Phase 2 R109 收尾** (1 周): working tree 99 文件归类 + 126 fail 复验
 > - **Phase 2 R109 第 2-3 周** (2 周, 8-12h): 16 P1 + god class 拆 3 个 (setup_step_medication 614L / setup_page_state 513L / medication_page 524L) → 9.0/10
 > - **Phase 3 R109 god class 专项** (4 周): 拆 13 god class (跨期累计去重) + 8 god class 0 unit test → 9.5/10
 > - **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace 3 package → 9.7/10
@@ -218,7 +223,7 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 - **ultralight w200 大数字** + **17pt body / 13pt caption** typography (跟 Apple iOS 17/18 Health app 一致)
 - **ALL CAPS section header** + **iOS hairline divider 0.5** + **0 阴影** 4 大视觉签名
 - **主页 stagger 8→3 闭环** (emil "home 入场无动画" 框架)
-- **18 守门员 18/18 全绿** (跨期 R95 `check_coverage.py` 起延续, R31 加 `check_apple_health_claim.py` 扩到 `lib/**/*.dart` 注释)
+- **21 守门员 21 全绿** (跨期 R95 `check_coverage.py` 起延续, R31 加 `check_apple_health_claim.py`, R32 加 `check_pii_in_title.py`, R109 round 1 加 `check_usecase_layer.py` → 20 .py + 1 .dart)
 - **0 业务逻辑改动** + **0 跨 feature import** + **跨平台 0 影响** (100% presentation 层)
 - **设计文档** 44KB: `docs/design/2026-08-10-apple-health-redesign/{spec.md, plan.md, NEXT-SESSION-START-HERE.md}`
 

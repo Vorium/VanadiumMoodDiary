@@ -101,10 +101,10 @@ lib/
 进项目先扫这 5 个：
 
 1. `lib/main.dart` — 启动顺序、SQLCipher 初始化、通知 init
-2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 12，所有表 + migration
+2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 22，所有表 + migration
 3. `lib/domain/logic/care_engine.dart` — 失联检测 / 续方 / 通知触发核心规则
 4. `lib/presentation/providers/core_providers.dart` — 全局 provider 注册表
-5. `lib/routing/app_router.dart` — 所有页面路由 + shell（NavigationRail）
+5. `lib/core/routing/app_router.dart` — 所有页面路由 + shell（NavigationRail）
 
 ## 命名约定
 
@@ -255,7 +255,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **9 page follow** (Phase 4, R12): trend / mood / vent / assessment / settings / contact / daily_tracking 按钮+分隔线改 Apple Health 风格
 - **1 物理 Spring 模型** (P0 半成品): `spring.dart` 145 行 0 caller, spec §3.4.3 双轨制 (Spring 物理 vs curve 模拟) 空跑。R109 第 1 周接 `_EntrySpring` 走 `Spring.standard.toSimulation()`
 
-**18 守门员 18/18 全绿** (跨期 R95 `check_coverage.py` 起延续, R31 加 `check_apple_health_claim.py` 扩到 `lib/**/*.dart` 注释)
+**21 守门员 21 全绿** (跨期 R95 `check_coverage.py` 起延续, R31 加 `check_apple_health_claim.py` 扩到 `lib/**/*.dart` 注释, R109 round 1 加 `check_usecase_layer.py`, R110 加 `check_strings_hardcoded.py` inline 规则 → 20 .py + 1 .dart = 21)
 
 **评分变化 (R108 → R31)**:
 - emil 8.5 → 8.5 (持平, 主页 stagger 8→3 闭环抵消新引入 4 处硬编码中文)
@@ -313,7 +313,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 总计 (本批): 1057 → 1098 tests (+41), 0 analyzer error, 12 守护脚本全绿 (新增 check_orphan_arb_keys).
 
-**18 守护脚本清单** (v0.30 R107 cleanup 修正, v0.30 R95 加 `check_coverage.py` 后总数 18 = 17 .py + 1 .dart):
+**21 守护脚本清单** (v0.30 R107 cleanup 修正, v0.30 R95 加 `check_coverage.py`, R31 加 `check_apple_health_claim.py`, R32 加 `check_pii_in_title.py`, R109 round 1 加 `check_usecase_layer.py` 后总数 21 = 20 .py + 1 .dart):
 1. `python scripts/check_arb_keys.py` — zh / en / zh_Hant ARB 同步
 2. `python scripts/check_changelog.py` — pubspec 版本号 + CHANGELOG 顺序
 3. `python scripts/check_cross_feature.py` — 跨 feature import 边界
@@ -327,11 +327,14 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 11. `python scripts/check_orphan_arb_keys.py` — **R56e 新增** — ARB key 定义但未引用
 12. `python scripts/check_legal_consent.py` — **v0.26 R57 新增** — 单独同意 / PIPL §13 / §14 检测
 13. `python scripts/check_sms_release_ready.py` — **v0.26 R57 新增** (v0.27 R58 降为 warn-only) — SMS 上线前 checklist
-14. `python scripts/check_strings_hardcoded.py` — **v0.26 R57 新增** — 硬编码中文 string 检测
+14. `python scripts/check_strings_hardcoded.py` — **v0.26 R57 新增** (v0.32 R110 扩 inline 字面量规则) — 硬编码中文 string 检测
 15. `python scripts/check_zh_hant_consistency.py` — **v0.26 R57 新增** — 繁简一致性 (OpenCC s2tw)
 16. `python scripts/check_16kb_alignment.py` — **v0.28 R77 新增** (v0.30 R92 文档补) — Android 16KB page size 验证 (Google Play 2025-11-01 强制)
 17. `python scripts/check_coverage.py` — **v0.30 R95 新增** — 覆盖率阈值 (domain ≥ 70% / data ≥ 50% / presentation ≥ 30%)
-18. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
+18. `python scripts/check_apple_health_claim.py` — **R31 新增** — "Apple Health" 关键词 + health_kit 声明扫描 (防假声明)
+19. `python scripts/check_pii_in_title.py` — **R32 新增** — 通知 title/body 锁屏 PII 检测
+20. `python scripts/check_usecase_layer.py` — **R109 round 1 新增** — use case 层硬约束 (0 data/0 theme/0 presentation/0 l10n/0 Flutter)
+21. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
 
 **待办 (外部依赖, 非本批)**:
 - R55 真接阿里云 SMS (依赖法务 1-2 月模板审核 + 阿里云 AccessKey 申请)
@@ -428,20 +431,31 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 **R32 综合审视 6 视角加权综合 6.2/10 → 修后预估 8.0/10 (+1.8)**。
 
-**18 守门员最终状态 (R32 hotfix round 2 后)**:
+**21 守门员最终状态 (R110 round 3 (2026-08-13) 后)**:
 
-- **18 绿 / 0 红 / 1 skip** (16kb 待重 build)
-- R32 综合审视: 14 绿 / 3 红 / 1 warn / 2 skip
-- R32 hotfix round 1: 16 绿 / 1 warn / 0 红 / 2 skip
-- R32 hotfix round 2: **18 绿 / 0 warn / 0 红 / 1 skip** (守门员 100% 闭环)
+- **21 绿 / 0 红 / 1 skip** (16kb 待重 build)
+- 明细见下方 v0.32 R110 章节 + `docs/audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md`
 
-**半成品仍 0 闭环 (留给 R109 第 1 周)**:
+**半成品 (R110 round 3 (2026-08-13) 后还剩)**:
 
-- PageScaffold translucent AppBar (C-02 跨 3 视角共识) — 已加 R32 hotfix 改造, 1 行 BackdropFilter blur(20) + reduce-transparency 适配
-- 11 feature 0 改 (Apple Health spec §5.1-5.7) — 7-8 个 feature (mood / mood_list / daily_tracking / vent / assessment / contact / settings / crisis_hotline) 仍 0 AppleListSection 化
+- 7 feature 0 改 (Apple Health spec §5.1-5.7) — mood / mood_list / vent / assessment / contact / settings / daily_tracking / crisis_hotline 仍 0-部分 AppleListSection 化 (EM-02/AH-04)
 - SF Symbol 字体 (spec §3.1.3) — Material Icons 占位
-- 126 fail 半年没修 (R32 修 21 个 i18n, 剩 105 个)
-- 11 god class (≥400L) 0 test
+- HealthKit 集成 = 0 (守门员 enforced, v1.0 2027-Q1 计划)
+- 15+ god class (≥400L) 0 test
 
 **详细整合报告**: [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (52KB, 6 视角子报告合计 173KB)
 - `AGENTS.md` — 本文件（代码视角）
+
+## v0.32 R110 10 视角综合审视 (2026-08-13, 并行 subagent 只读审计)
+
+**状态**: 10 个 subagent (7 产品视角 + 顶层架构 + 2 路底层逐行) 从 0 重跑。**P0 12 项** (通知 ID 碰撞 / purity 3 处 / 上架合规 3 项 / i18n 12 处 + 守门员盲区 / 双平台资产 + keystore + 域名)。报告: `docs/audit/2026-08-13-multi-lens/` (11 文件, 00-FINAL 整合 + 10 视角)。
+
+**R110 核心变更**:
+
+- **round 1**: 审计入库 + 仓库卫生 (R32 报告补交死链修复 / .bak / worktree prune / 归档 / .gitignore)
+- **round 2**: docs 对齐 (README / AGENTS / design spec / CHANGELOG 补 [0.32.0+120..+130] / pubspec 0.32.0+130 / notes.txt 去虚假声明)
+- **round 3**: P0 代码闭环 — 通知 ID 固定带 2M+ (safety/assessment/mood/badge/care) + 回归测试; domain purity 3 处 (phone_validator→core/shared / FeatureFlags 构造注入 / visibleForTesting→meta); 紧急联系人 setup 表单 + reminders_hub 安全卡 gate; Mock/开发模式文案中性化; validateForRelease gate; 12 处硬编码中文 → ARB (11 key × 3 语); 2 个死路由 404 + /medication 入 ShellRoute; badge_sync visibility secret; check_strings_hardcoded inline 规则
+
+**P0 遗留 (外部依赖)**: chroniccare.app 域名 ICP (7-20d) + 双平台截图/图标 (设计师) + keystore 生成 (1h) + review_information 真实值
+
+**R110+ 路线图**: R110 收尾 (R109 working tree 99 文件归类 commit + 126 fail 复验) → R109 遗留 (setup_page_state 497 / add_medication 568 / mood_audio_recorder_widget 589 等 god class 拆 + usecase 厚化 6→14-16) → scale_translations 三源合一 → AR-2 l10n 循环解耦 → feature-first + pub workspace → v1.0 (2027-Q1: HealthKit / 鸿蒙 / 5 厂商 push / 阿里云 SMS / IAP 真接)

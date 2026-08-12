@@ -1,4 +1,4 @@
-App Reviewer Guide — ChronicCare 0.31.0+107
+App Reviewer Guide — ChronicCare 0.32.0+130
 
 1. No login required. The app is fully local — no accounts, no cloud, no analytics.
 2. First-time setup: app shows a 4-step onboarding flow (consent → welcome → medication → done).
@@ -7,6 +7,4 @@ App Reviewer Guide — ChronicCare 0.31.0+107
 5. Languages: en-US / zh-Hans / zh-Hant (Simplified + Traditional Chinese). Switch in Settings.
 6. Crisis resources: accessible from Settings → Crisis Hotlines (6 regions). Tap to dial.
 7. Voice notes (vent/mood): optional feature, requires microphone permission. All recordings encrypted.
-8. Feature flags: 7 backend-dependent features (IAP, SMS, Email, 5-vendor push, etc.) are paused pending external dependencies (Apple/Google/SendGrid/AliyunSms). They do NOT show in UI.
-
-If you have any questions, please contact us at the email address above.
+8. The app is fully free in this version. No in-app purchases, no accounts, no web links.
