@@ -24,9 +24,9 @@ class BadgeSyncService {
 
   /// 虚拟通知 id — 一个稳定的"空"通知携带 badgeNumber
   /// iOS 路径每次 show 之前 cancel 同一个 id, 所以固定即可
-  /// 不跟 _defaultReminderId(1001) / _medicationReminderBaseId(2000-21999) /
-  ///   _safetyAlertId(5000) / _refillBaseId(6000-7999) / _assessmentReminderId(7000) 冲突
-  static const int badgeVirtualId = 9999;
+  /// v0.32 R110 (B1-1): 原 9999 落入 medication/refill cancel 区间被误杀,
+  /// 迁到 5M+ 固定带 (跟 safety/assessment/mood/care push 同带)
+  static const int badgeVirtualId = 5000100;
 
   // 跟 notification_service 共用 channel (避免创建新 channel 浪费权限)
   // badge 用 importance.min (不弹不响), 共用 medication channel 没事
@@ -64,6 +64,9 @@ class BadgeSyncService {
           priority: Priority.min,
           ongoing: true,
           autoCancel: false,
+          // R110 round 3 (GP-14): visibility secret — 角标虚拟通知也不带 PII,
+          // 锁屏 / 通知栏都不显示内容
+          visibility: NotificationVisibility.secret,
         ),
         iOS: DarwinNotificationDetails(
           presentAlert: false,

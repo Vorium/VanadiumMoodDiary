@@ -663,7 +663,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderHubSmsMockWarning =>
-      'SMS channel not connected (using Mock). When safety watch triggers, only local notifications are sent — no real SMS to emergency contacts. Must integrate a real SMS provider before store launch.';
+      'Lost-contact alert service is coming soon.';
 
   @override
   String reminderHubSafetyDescEnabled(int threshold) {
@@ -1052,6 +1052,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refillManageOverdue => 'Overdue';
+
+  @override
+  String get refillManageMedsList => 'Medication List';
+
+  @override
+  String get refillManageSummary => 'Refill Summary';
 
   @override
   String get medsNoMedicationsAdded => 'No medications added yet';
@@ -1571,7 +1577,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String safetyAlertBodyMocked(Object date) {
-    return 'Last check-in: $date. Lost-contact detection triggered, but currently in dev mode — emergency contacts were **NOT** actually notified.';
+    return 'Last check-in: $date. Lost-contact alert triggered.';
   }
 
   @override
@@ -1925,6 +1931,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medsCalendarWindow90 => '90 days';
 
   @override
+  String get medsCalendarWindowTitle => 'Time Window';
+
+  @override
   String medsCalendarLoadCheckinFailed(Object error) {
     return 'Failed to load check-ins: $error';
   }
@@ -1953,6 +1962,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get medsCalendarLegendLabel => 'Adherence:';
+
+  @override
+  String get medsCalendarLegendTitle => 'Legend';
 
   @override
   String get medsCalendarLegendMissed => 'Missed';
@@ -3812,6 +3824,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medAddStep1Title => 'Medication Info';
 
   @override
+  String get medAddConfirm => 'Confirm';
+
+  @override
+  String get medAddColor => 'Color';
+
+  @override
+  String get medAddTime => 'Medication Times';
+
+  @override
+  String get medAddBasicInfo => 'Basic Info';
+
+  @override
   String get medAddStep2Title => 'Dosage & Schedule';
 
   @override
@@ -3988,6 +4012,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get medDetailEdit => 'Edit';
+
+  @override
+  String get medDetailSettings => 'Settings';
+
+  @override
+  String get medDetailHistory => 'Medication History';
+
+  @override
+  String get medDetailBasicInfo => 'Basic Info';
 
   @override
   String get medDetailRefill => 'Refill';

@@ -69,25 +69,25 @@ class Level2DepressionScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 5,
           rank: 0,
-          label: '无抑郁',
+          label: '无抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无抑郁倾向',
         ),
         SeverityCutoff(
           threshold: 10,
           rank: 1,
-          label: '轻度抑郁',
+          label: '轻度抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '轻度抑郁倾向',
         ),
         SeverityCutoff(
           threshold: 15,
           rank: 2,
-          label: '中度抑郁',
+          label: '中度抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度抑郁, 建议就医',
         ),
         SeverityCutoff(
           threshold: 24,
           rank: 3,
-          label: '重度抑郁',
+          label: '重度抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度抑郁, 强烈建议就医',
         ),
       ];

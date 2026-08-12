@@ -77,8 +77,11 @@ class NotificationService implements NotificationSender {
   static const _safetyChannelName = Strings.notifChannelSafetyName;
   static const _safetyChannelDesc = Strings.notifChannelSafetyDesc;
 
-  /// 安全警报 id (5000) — 跟 medication 2000+ / refill 6000+ / assessment 7000 / badge 9999 不冲突
-  static const int safetyAlertId = 5000;
+  /// 安全警报 id — v0.32 R110 (B1-1): 原 5000 落入 medication/refill
+  /// cancel 区间被静默误杀, 迁到 5M+ 固定带 (远离 med [2000,202000) /
+  /// refill [6000,206000) / snooze [300000,2300000), int32 安全)。
+  /// 回归测试: test/core/data/services/notification_id_band_round110_test.dart
+  static const int safetyAlertId = 5000000;
 
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
@@ -405,18 +408,23 @@ class NotificationService implements NotificationSender {
 
   // ============== ID 范围常量 (跨 sub-service 文档化) ==============
   //
-  // 6 类常量散落到 6 sub-service (单一职责), 这里留文档化列表:
-  //   - MedicationNotifier.defaultReminderId       = 1001
-  //   - MedicationNotifier.medicationReminderBaseId = 2000
-  //   - safetyAlertId                              = 5000
-  //   - RefillNotifier.refillBaseId                = 6000
-  //   - AssessmentNotifier.assessmentReminderId    = 7000
-  //   - BadgeSyncService.badgeVirtualId            = 9999
-  //   - SnoozeManager.snoozeBaseId                 = 300000
-  // 顺序保证 cancel range 不冲突 (每个 base 间隔 200000+ 远).
+  // 7 类常量散落到 7 sub-service (单一职责), 这里留文档化列表:
+  //   - MedicationNotifier.defaultReminderId        = 1001
+  //   - MedicationNotifier.medicationReminderBaseId = 2000  (cancel [2000, 202000))
+  //   - RefillNotifier.refillBaseId                = 6000  (cancel [6000, 206000))
+  //   - SnoozeManager.snoozeBaseId + cancelRange    = 300000 + 2000000 → [300000, 2300000)
+  //   - 固定带 (v0.32 R110 B1-1, 原 5000/7000/8000/9999 落入上面 cancel
+  //     区间被静默误杀后全部迁到 5M+; 回归测试 notification_id_band_round110):
+  //     - NotificationService.safetyAlertId           = 5000000
+  //     - AssessmentNotifier.assessmentReminderId     = 5000001
+  //     - MoodReminderNotifier.moodReminderId         = 5000002
+  //     - HomeCareEngineDispatcher.kCarePushBaseId     = 5000010 (+ strategy.index)
+  //     - BadgeSyncService.badgeVirtualId             = 5000100
+  //   - defaultReminderId 1001 在 med cancel 下界 2000 之下, 天然安全
+  // 顺序保证 cancel range 不冲突 (固定带 ≥ 2,300,000 远超所有 cancel 上界).
   //
   // R108 Fix #2 修订: 12 委派 method 已抽到 [NotificationDelegate],
-  // 上面"6 类常量"列表保持 (sub-service 单一职责)。
+  // 上面"7 类常量"列表保持 (sub-service 单一职责)。
 
   /// v0.16 round 19B: 通知 id 公式兼容访问 (供现有 test 引用)
   ///

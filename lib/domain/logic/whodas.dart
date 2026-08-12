@@ -75,31 +75,31 @@ class WhodasScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 4,
           rank: 0,
-          label: '无残疾',
+          label: '无残疾',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无残疾',
         ),
         SeverityCutoff(
           threshold: 9,
           rank: 1,
-          label: '轻度残疾',
+          label: '轻度残疾',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '轻度残疾',
         ),
         SeverityCutoff(
           threshold: 15,
           rank: 2,
-          label: '中度残疾',
+          label: '中度残疾',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度残疾, 建议就医评估',
         ),
         SeverityCutoff(
           threshold: 24,
           rank: 3,
-          label: '重度残疾',
+          label: '重度残疾',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度残疾, 建议就医',
         ),
         SeverityCutoff(
           threshold: 48,
           rank: 4,
-          label: '极重度残疾',
+          label: '极重度残疾',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '极重度残疾, 强烈建议就医',
         ),
       ];

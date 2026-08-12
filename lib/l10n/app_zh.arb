@@ -334,7 +334,7 @@
   "reminderHubStatusDisabled": "未启用",
   "reminderHubConfigure": "配置",
   "reminderHubSafetyTitle": "失联通知（安全开关）",
-  "reminderHubSmsMockWarning": "SMS 通道未接通（当前使用 Mock）。失联触发时只会推本地通知，不会真发短信给紧急联系人。上 store 前必须接入真实 SMS provider。",
+  "reminderHubSmsMockWarning": "失联通知服务即将开放，敬请期待。",
   "reminderHubSafetyDescEnabled": "连续 {threshold} 天没打卡 → 自动 SMS 通知紧急联系人 + 本地推送",
   "@reminderHubSafetyDescEnabled": {
     "placeholders": {
@@ -576,6 +576,8 @@
   "medsRefillSetCount": "已设续方",
   "medsRefillReminding": "提醒中",
   "refillManageOverdue": "已过期",
+  "refillManageMedsList": "药物列表",
+  "refillManageSummary": "续方汇总",
   "medsNoMedicationsAdded": "还没有添加药物",
   "medsRefillEditHint": "点击任一行可编辑续方日期。提醒窗口：续方前 N 天（N=reminderDays）。",
   "medsRefillStatusNotConfigured": "未设置",
@@ -975,7 +977,7 @@
       }
     }
   },
-  "safetyAlertBodyMocked": "上次打卡： {date}。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。",
+  "safetyAlertBodyMocked": "上次打卡： {date}。已触发失联提醒。",
   "@safetyAlertBodyMocked": {
     "description": "SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三態修正）",
     "placeholders": {
@@ -999,7 +1001,6 @@
   "@safetyAlertTitle": {
     "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬編碼中文",
     "placeholders": {
-      
       "days": {
         "type": "int"
       }
@@ -1223,6 +1224,7 @@
   "medsCalendarWindow7": "7 天",
   "medsCalendarWindow30": "30 天",
   "medsCalendarWindow90": "90 天",
+  "medsCalendarWindowTitle": "时间窗口",
   "medsCalendarLoadCheckinFailed": "加载打卡失败：{error}",
   "@medsCalendarLoadCheckinFailed": {
     "placeholders": {
@@ -1245,6 +1247,7 @@
   "medsCalendarNoActiveAction": "添加药物",
   "medsCalendarNoScheduleAction": "去设置时间",
   "medsCalendarLegendLabel": "依从：",
+  "medsCalendarLegendTitle": "图例",
   "medsCalendarLegendMissed": "漏服",
   "medsCalendarDayDetailTitle": "{date} 的打卡",
   "@medsCalendarDayDetailTitle": {
@@ -2967,6 +2970,10 @@
   "medNoScheduleToday": "今天没有服药计划",
   "medAddTitle": "添加药物",
   "medAddStep1Title": "药物信息",
+  "medAddConfirm": "确认信息",
+  "medAddColor": "颜色",
+  "medAddTime": "用药时间",
+  "medAddBasicInfo": "基本信息",
   "medAddStep2Title": "剂量与时间",
   "medAddStep3Title": "确认",
   "medAddNameLabel": "药物名称",
@@ -3025,6 +3032,9 @@
   "medDetailDays": "服药天数",
   "medDetailLast30Record": "近30天记录",
   "medDetailEdit": "编辑",
+  "medDetailSettings": "设置",
+  "medDetailHistory": "用药历史",
+  "medDetailBasicInfo": "基本信息",
   "medDetailRefill": "续方",
   "moodCbtSituation": "情境",
   "moodCbtAutoThought": "自动思维",

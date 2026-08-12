@@ -10,7 +10,7 @@
 //
 // 5 region 各自 ARB key:
 //   phoneRegionCn / phoneRegionHk / phoneRegionMo / phoneRegionTw / phoneRegionIntl
-import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/core/shared/phone_validator.dart';
 
 /// region 显示名 (中文 fallback, override 模式同 Strings)
 ///

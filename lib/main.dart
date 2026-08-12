@@ -156,10 +156,17 @@ Future<void> _bootstrap() async {
   //   _bootstrap() 内 local 创建, 跟 Provider overrideWithValue 共享同一份
   //   instance (避免顶层 mutable 持有 + Provider 重新实例化的"两路 SmsService"
   //   anti-pattern)。
+  // v0.32 R110 round 3 (C5 gate): 整条失联通信业务被
+  //   FeatureFlags.emergencyContactEnabled=false 暂停时, validateForRelease
+  //   不再抛错阻断启动 (暂停的功能不该报"未配置"错误 banner)。
   final smsService = SmsService();
   final emailService = EmailService();
-  SmsService.validateForRelease(smsService.provider);
-  EmailService.validateForRelease(emailService);
+  if (FeatureFlags.emergencyContactEnabled) {
+    SmsService.validateForRelease(smsService.provider);
+  }
+  if (FeatureFlags.emailServiceEnabled) {
+    EmailService.validateForRelease(emailService);
+  }
   if (FeatureFlags.iapEnabled) {
     await StoreKitService.warmup();
   } else {

@@ -31,8 +31,8 @@ void main() {
   });
 
   group('AssessmentNotifier ID 常量', () {
-    test('assessmentReminderId = 7000', () {
-      expect(AssessmentNotifier.assessmentReminderId, 7000);
+    test('assessmentReminderId = 5000001 (R110 5M+ 固定带)', () {
+      expect(AssessmentNotifier.assessmentReminderId, 5000001);
     });
   });
 
@@ -54,7 +54,7 @@ void main() {
 
       expect(mockDispatcher.zonedAtCalls.length, 1);
       final call = mockDispatcher.zonedAtCalls.single;
-      expect(call.id, 7000);
+      expect(call.id, 5000001);
       expect(call.fireAt, futureFire);
     });
 
@@ -91,7 +91,7 @@ void main() {
 
       await notifier.cancelAssessmentReminder();
 
-      expect(cancelCount, 1, reason: 'cancel 应调 1 次 plugin.cancel(7000)');
+      expect(cancelCount, 1, reason: 'cancel 应调 1 次 plugin.cancel(5000001)');
     });
   });
 }

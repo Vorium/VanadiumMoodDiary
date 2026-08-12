@@ -69,25 +69,25 @@ class IsiScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 7,
           rank: 0,
-          label: '无失眠',
+          label: '无失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无临床失眠',
         ),
         SeverityCutoff(
           threshold: 14,
           rank: 1,
-          label: '阈下失眠',
+          label: '阈下失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '亚临床失眠, 建议关注',
         ),
         SeverityCutoff(
           threshold: 21,
           rank: 2,
-          label: '中度失眠',
+          label: '中度失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度失眠, 建议就医',
         ),
         SeverityCutoff(
           threshold: 28,
           rank: 3,
-          label: '重度失眠',
+          label: '重度失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度失眠, 强烈建议就医',
         ),
       ];

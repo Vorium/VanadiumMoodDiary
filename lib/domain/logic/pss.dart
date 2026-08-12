@@ -82,19 +82,19 @@ class PssScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 13,
           rank: 0,
-          label: '低压力',
+          label: '低压力',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '低压力',
         ),
         SeverityCutoff(
           threshold: 26,
           rank: 1,
-          label: '中度压力',
+          label: '中度压力',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度压力',
         ),
         SeverityCutoff(
           threshold: 40,
           rank: 2,
-          label: '高压力',
+          label: '高压力',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '高压力, 建议关注和寻求支持',
         ),
       ];

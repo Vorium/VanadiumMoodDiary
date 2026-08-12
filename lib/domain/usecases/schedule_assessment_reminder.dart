@@ -11,8 +11,8 @@
 //
 // 4 层架构: domain/usecases/ 放 0 Flutter / 0 Drift / 0 data import 的
 //   纯编排, AGENTS.md 必读.
-
-import 'package:flutter/foundation.dart' show visibleForTesting;
+// R110 round 3: 删 `@visibleForTesting` + flutter/foundation import
+//   (domain purity 违规, resolveFireTime 无人引用, 注释改普通 public).
 
 import 'package:chroniccare/domain/logic/assessment_reminder_policy.dart';
 import 'package:chroniccare/domain/repositories/assessment_reminder_sender.dart';
@@ -36,7 +36,6 @@ class ScheduleAssessmentReminderUseCase {
   /// 算下次 fire time (透传 policy, 给 caller 显式调)
   ///
   /// [now] 注入方便 widget / unit test, 默认 [DateTime.now]
-  @visibleForTesting
   static DateTime? resolveFireTime({
     required bool enabled,
     required int days,

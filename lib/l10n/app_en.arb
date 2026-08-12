@@ -292,7 +292,7 @@
   "reminderHubStatusDisabled": "Disabled",
   "reminderHubConfigure": "Configure",
   "reminderHubSafetyTitle": "Safety Watch (Safety Switch)",
-  "reminderHubSmsMockWarning": "SMS channel not connected (using Mock). When safety watch triggers, only local notifications are sent — no real SMS to emergency contacts. Must integrate a real SMS provider before store launch.",
+  "reminderHubSmsMockWarning": "Lost-contact alert service is coming soon.",
   "reminderHubSafetyDescEnabled": "{threshold} consecutive missed check-ins → auto SMS to emergency contacts + local push",
   "@reminderHubSafetyDescEnabled": {
     "placeholders": {
@@ -534,6 +534,8 @@
   "medsRefillSetCount": "Set",
   "medsRefillReminding": "Reminding",
   "refillManageOverdue": "Overdue",
+  "refillManageMedsList": "Medication List",
+  "refillManageSummary": "Refill Summary",
   "medsNoMedicationsAdded": "No medications added yet",
   "medsRefillEditHint": "Tap any row to edit the refill date. Reminder window: N days before refill (N=reminderDays).",
   "medsRefillStatusNotConfigured": "Not set",
@@ -936,7 +938,7 @@
       }
     }
   },
-  "safetyAlertBodyMocked": "Last check-in: {date}. Lost-contact detection triggered, but currently in dev mode — emergency contacts were **NOT** actually notified.",
+  "safetyAlertBodyMocked": "Last check-in: {date}. Lost-contact alert triggered.",
   "@safetyAlertBodyMocked": {
     "description": "SafetyAlert body — SMS mocked branch (avoid dev/release confusion, P0-3 three-state fix)",
     "placeholders": {
@@ -960,7 +962,6 @@
   "@safetyAlertTitle": {
     "description": "SafetyAlert title — v0.27 R75 fix (R74-N7): was hardcoded Chinese",
     "placeholders": {
-      
       "days": {
         "type": "int"
       }
@@ -1184,6 +1185,7 @@
   "medsCalendarWindow7": "7 days",
   "medsCalendarWindow30": "30 days",
   "medsCalendarWindow90": "90 days",
+  "medsCalendarWindowTitle": "Time Window",
   "medsCalendarLoadCheckinFailed": "Failed to load check-ins: {error}",
   "@medsCalendarLoadCheckinFailed": {
     "placeholders": {
@@ -1206,6 +1208,7 @@
   "medsCalendarNoActiveAction": "Add medication",
   "medsCalendarNoScheduleAction": "Add schedule",
   "medsCalendarLegendLabel": "Adherence:",
+  "medsCalendarLegendTitle": "Legend",
   "medsCalendarLegendMissed": "Missed",
   "medsCalendarDayDetailTitle": "Check-ins on {date}",
   "@medsCalendarDayDetailTitle": {
@@ -2928,6 +2931,10 @@
   "medNoScheduleToday": "No medications scheduled today",
   "medAddTitle": "Add Medication",
   "medAddStep1Title": "Medication Info",
+  "medAddConfirm": "Confirm",
+  "medAddColor": "Color",
+  "medAddTime": "Medication Times",
+  "medAddBasicInfo": "Basic Info",
   "medAddStep2Title": "Dosage & Schedule",
   "medAddStep3Title": "Confirm",
   "medAddNameLabel": "Medication name",
@@ -2986,6 +2993,9 @@
   "medDetailDays": "Days taken",
   "medDetailLast30Record": "Last 30 days",
   "medDetailEdit": "Edit",
+  "medDetailSettings": "Settings",
+  "medDetailHistory": "Medication History",
+  "medDetailBasicInfo": "Basic Info",
   "medDetailRefill": "Refill",
   "moodCbtSituation": "Situation",
   "moodCbtAutoThought": "Automatic Thought",

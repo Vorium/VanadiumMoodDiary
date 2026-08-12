@@ -69,25 +69,25 @@ class Level2PsychosisScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 5,
           rank: 0,
-          label: '无症状',
+          label: '无症状',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无精神病性症状',
         ),
         SeverityCutoff(
           threshold: 10,
           rank: 1,
-          label: '轻度',
+          label: '轻度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '轻度精神病性症状',
         ),
         SeverityCutoff(
           threshold: 15,
           rank: 2,
-          label: '中度',
+          label: '中度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度精神病性症状, 建议就医',
         ),
         SeverityCutoff(
           threshold: 24,
           rank: 3,
-          label: '重度',
+          label: '重度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度精神病性症状, 强烈建议就医',
         ),
       ];

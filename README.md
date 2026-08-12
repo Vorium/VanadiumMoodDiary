@@ -38,9 +38,13 @@
 > - **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace 3 package → 9.7/10
 > - **Phase 5 v1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP → 9.9/10
 >
-> **8 FeatureFlag 守门状态 (R109)**: 1 true / 7 false。详见 `lib/core/data/feature_flags.dart`。
+> **8 FeatureFlag 守门状态 (R110)**: 1 true / 7 false。详见 `lib/core/data/feature_flags.dart`。
 > - `ventAudioEnabled`=**true** (R104 已翻)
-> - `iapEnabled` / `emergencyContactEnabled` / `fiveVendorPushEnabled` / `emailServiceEnabled` / `phqGad7I18nEnabled` / `bootReceiverEnabled` / `aliyunSmsEnabled` = **false** (等外部依赖)
+> - `iapEnabled=false` (等 App Store Connect 真接)
+> - `emergencyContactEnabled=false` (等阿里云 AccessKey, 整条失联通信业务暂停:
+>   setup 联系人表单 / 提醒中心失联卡 / release 启动校验全 gate 掉)
+> - `fiveVendorPushEnabled=false` / `emailServiceEnabled=false` / `phqGad7I18nEnabled=false` /
+>   `bootReceiverEnabled=false` / `aliyunSmsEnabled=false` (等外部依赖)
 
 ## 🎯 产品
 

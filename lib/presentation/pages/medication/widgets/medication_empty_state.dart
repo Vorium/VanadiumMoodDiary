@@ -39,7 +39,7 @@ class MedicationEmptyState extends StatelessWidget {
           icon: Icons.medication_outlined,
           title: l10n.medsListEmpty,
           actionLabel: l10n.medsListAddAction,
-          onAction: () => GoRouter.of(context).push('/medication/new'),
+          onAction: () => GoRouter.of(context).push('/medication/add'),
         );
       case MedicationEmptyKind.noActive:
         return EmptyState(
@@ -47,7 +47,7 @@ class MedicationEmptyState extends StatelessWidget {
           title: l10n.medsListNoActive,
           subtitle: l10n.medsListNoActiveHint,
           actionLabel: l10n.medsListAddAction,
-          onAction: () => GoRouter.of(context).push('/medication/new'),
+          onAction: () => GoRouter.of(context).push('/medication/add'),
         );
     }
   }

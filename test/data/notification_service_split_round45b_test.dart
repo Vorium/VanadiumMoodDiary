@@ -135,37 +135,39 @@ void main() {
     });
 
     test('AssessmentNotifier 1 const', () {
-      expect(AssessmentNotifier.assessmentReminderId, 7000);
-      // 7000 > 6000 (assessment > refill)
+      // R110 (B1-1): 原 7000 落入 refill cancel 区间, 迁 5M+ 固定带
+      expect(AssessmentNotifier.assessmentReminderId, 5000001);
+      // 5000001 > 6000 (assessment > refill base, 且 > refill cancel 上界)
       expect(
         AssessmentNotifier.assessmentReminderId,
         greaterThan(RefillNotifier.refillBaseId),
       );
     });
 
-    test('6 个 const + BadgeSync 跟 SnoozeManager 不冲突 (集中列表)', () {
-      // 1001 < 2000 (med base) < 5000 (safety) < 6000 (refill base) <
-      //   7000 (assessment) < 9999 (badge) < 300000 (snooze)
-      expect(NotificationService.safetyAlertId, 5000);
-      expect(BadgeSyncService.badgeVirtualId, 9999);
+    test('5M+ 固定带 (R110 B1-1) 有序 + 彻底跳出 cancel 区间', () {
+      // R110: safety/assessment/mood/care/badge 全部迁 5,000,000+ 固定带,
+      // 严格大于 snooze 最大 cancel 上界 (300000 + 2M = 2300000)。
+      expect(NotificationService.safetyAlertId, 5000000);
+      expect(AssessmentNotifier.assessmentReminderId, 5000001);
+      expect(BadgeSyncService.badgeVirtualId, 5000100);
       expect(SnoozeManager(plugin: _FakePlugin()).snoozeBaseId, 300000);
 
-      // 顺序: 1001 < 2000 < 5000 < 6000 < 7000 < 9999 < 300000
+      // 固定带内部严格递增 + 全部 > 2300000 (任何 cancel 区间都杀不到)
       const ids = <int>[
-        MedicationNotifier.defaultReminderId,
-        MedicationNotifier.medicationReminderBaseId,
         NotificationService.safetyAlertId,
-        RefillNotifier.refillBaseId,
         AssessmentNotifier.assessmentReminderId,
         BadgeSyncService.badgeVirtualId,
       ];
-      // 验证严格递增 (cancel range 不冲突)
       for (int i = 1; i < ids.length; i++) {
         expect(
           ids[i],
           greaterThan(ids[i - 1]),
-          reason: 'ID ${ids[i]} 应大于 ${ids[i - 1]}',
+          reason: '固定带 ID ${ids[i]} 应大于 ${ids[i - 1]}',
         );
+      }
+      for (final id in ids) {
+        expect(id, greaterThan(2300000),
+            reason: '固定带 $id 必须跳出 snooze cancel 上界');
       }
     });
   });

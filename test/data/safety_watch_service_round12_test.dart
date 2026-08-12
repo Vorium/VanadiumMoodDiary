@@ -73,6 +73,9 @@ void main() {
         config: safetyConfig,
         builder: const SafetyAlertBuilder(),
       ),
+      // R110 round 3: flag 构造注入 (domain purity 修复), 构造时动态读
+      // (setUp 先 enableForTest), 语义跟原 call() 内静态读 1:1
+      emergencyContactEnabled: FeatureFlags.emergencyContactEnabled,
     );
     safety = SafetyWatchService(
       checkInRepo: checkInRepo,

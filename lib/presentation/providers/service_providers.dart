@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_sender_impl.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
@@ -64,10 +65,12 @@ final safetyAlertSenderProvider = Provider<SafetyAlertSender>(
 );
 
 /// v0.32 R109: use case 拿 abstract sender, 0 Flutter / 0 service 依赖
+/// v0.32 R110 round 3: feature flag 构造注入 (domain purity 修复)
 final dispatchSafetyAlertUseCaseProvider =
     Provider<DispatchSafetyAlertUseCase>(
   (ref) => DispatchSafetyAlertUseCase(
     ref.watch(safetyAlertSenderProvider),
+    emergencyContactEnabled: FeatureFlags.emergencyContactEnabled,
   ),
 );
 

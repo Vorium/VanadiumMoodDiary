@@ -9,6 +9,7 @@
 // 4. 心理评估提醒（AssessmentReminderService�?
 // 5. 失联通知（SafetyWatchService - 死了�?撸了么）
 
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/reminders_hub_provider.dart';
 import 'package:flutter/material.dart';
@@ -133,7 +134,12 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           const SizedBox(height: AppTokens.spacingSm),
 
           // 5. 失联通知
-          _buildSafetyCard(context, configAsync),
+          // R110 round 3 (AS-07 gate): flag=false (生产默认) 时整段不渲染,
+          // 跟 setup 联系人表单 gate 一致 (App Store 5.1.1 抽审安全)
+          if (FeatureFlags.emergencyContactEnabled) ...[
+            const SizedBox(height: AppTokens.spacingSm),
+            _buildSafetyCard(context, configAsync),
+          ],
 
           const SizedBox(height: AppTokens.spacingMd),
         ],

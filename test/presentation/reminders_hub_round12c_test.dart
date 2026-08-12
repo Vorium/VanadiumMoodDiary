@@ -1,6 +1,7 @@
 // v0.14 (Round 12C) RemindersHubPage widget 测试
 //
 // 验证 5 个提醒卡片的渲染 + 状态显示
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:flutter/material.dart';
@@ -51,8 +52,12 @@ Widget _wrap({
 
 void main() {
   setUp(() {
+    // R110 round 3 (AS-07 gate): 失联通知卡挂 flag, test 翻 true
+    FeatureFlags.enableForTest();
     SharedPreferences.setMockInitialValues({});
   });
+
+  tearDown(FeatureFlags.resetForTest);
 
   testWidgets('reminders hub 渲染 5 个核心卡片标题', (tester) async {
     _setBigView(tester);

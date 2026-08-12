@@ -447,7 +447,7 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1202 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1241 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -464,14 +464,16 @@ void main() {
       //   → 1198 → 1202
       // R103 (2026-08-08): +5 new (todaySummaryCheckIn/Meds/Mood/Streak/StreakDays)
       //   → 1202 → 1203
+      // R110 round 3 (C6): +11 new (4 medAdd* + 2 medsCalendar* + 3 medDetail* +
+      //   2 refillManage* 硬编码中文标题走 ARB) → 1230 → 1241
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1230, reason: 'zh.arb 应有 1230 key (R31 Apple Health + R32 R108 跨期累计 baseline)');
-      expect(en, 1230, reason: 'en.arb 应有 1230 key');
-      expect(hant, 1230, reason: 'zh_Hant.arb 应有 1230 key');
+      expect(zh, 1241, reason: 'zh.arb 应有 1241 key');
+      expect(en, 1241, reason: 'en.arb 应有 1241 key');
+      expect(hant, 1241, reason: 'zh_Hant.arb 应有 1241 key');
     });
   });
 

@@ -1,5 +1,29 @@
 ﻿# 变更日志
 
+## [0.32.0+130] - 2026-08-13 (R110 round 3: 审计 P0 12 项全部代码闭环)
+
+- 通知 ID 碰撞 (B1-1): safety/assessment/mood/badge/care push 5 个固定 ID 迁
+  5,000,000+ 固定带 (原 5000/7000/8000/9999 落入 medication/refill/snooze
+  cancel 区间), 6 个 test 常量同步 + 新增 notification_id_band_round110 回归
+- domain purity (AR-1/FS-1/B1-2): phone_validator 移 core/shared (3 import 改),
+  DispatchSafetyAlertUseCase feature flag 改构造注入 (SafetyAlertPolicy 0 data
+  import), schedule_assessment_reminder 删 flutter/foundation visibleForTesting
+- 上架合规 (AS-07/08/14): setup 联系人表单 + 提醒中心失联卡挂
+  emergencyContactEnabled gate; reminderHubSmsMockWarning /
+  safetyAlertBodyMocked 3 语中性化; main.dart SMS/Email validateForRelease 按
+  flag gate (暂停业务不报错)
+- i18n (SP-zh-15): add_medication/calendar/detail/refill 4 文件 12 处硬编码
+  中文 → 11 ARB key ×3 语 (含 medsCalendarTitle 复用); scale 域 39 处
+  label 显式标 R51b backlog
+- check_strings_hardcoded.py 扩 inline 规则 (SP-zh-16): 扫 lib/** widget
+  inline 中文字面量 (title/label/Text), 当前 0 处
+- 路由 (B2-01/02/04): 3 个死路由 push 修正 (/medication/new→/add,
+  /medication/list→/medication); /medication 4 路由移入 ShellRoute (底栏 +
+  tab 高亮); badge_sync visibility secret (GP-14)
+- 顺带修: dimension_row.dart 缺 app_colors import (R32 漏网的 2 error),
+  README FeatureFlag 表补 =false 字面量, check_zh_hant 1 处繁简 (彙/匯)
+- 守门员: 21 全绿 (check_all purity 0 违规 / coverage 阈值全过 / 繁简一致)
+
 ## [0.32.0+130] - 2026-08-13 (R110 round 1-2: 10 视角审计入库 + docs 对齐)
 
 - docs/audit/2026-08-13-multi-lens/ 11 份报告入库 (00-FINAL + 10 视角, P0 12 项)

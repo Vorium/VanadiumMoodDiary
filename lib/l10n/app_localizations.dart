@@ -1230,7 +1230,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderHubSmsMockWarning.
   ///
   /// In zh, this message translates to:
-  /// **'SMS 通道未接通（当前使用 Mock）。失联触发时只会推本地通知，不会真发短信给紧急联系人。上 store 前必须接入真实 SMS provider。'**
+  /// **'失联通知服务即将开放，敬请期待。'**
   String get reminderHubSmsMockWarning;
 
   /// No description provided for @reminderHubSafetyDescEnabled.
@@ -1892,6 +1892,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'已过期'**
   String get refillManageOverdue;
+
+  /// No description provided for @refillManageMedsList.
+  ///
+  /// In zh, this message translates to:
+  /// **'药物列表'**
+  String get refillManageMedsList;
+
+  /// No description provided for @refillManageSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'续方汇总'**
+  String get refillManageSummary;
 
   /// No description provided for @medsNoMedicationsAdded.
   ///
@@ -2725,7 +2737,7 @@ abstract class AppLocalizations {
   /// SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三態修正）
   ///
   /// In zh, this message translates to:
-  /// **'上次打卡： {date}。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。'**
+  /// **'上次打卡： {date}。已触发失联提醒。'**
   String safetyAlertBodyMocked(Object date);
 
   /// SafetyAlert 通知 body — SMS 實際發送失敗分支（P0-3 三態修正）
@@ -3353,6 +3365,12 @@ abstract class AppLocalizations {
   /// **'90 天'**
   String get medsCalendarWindow90;
 
+  /// No description provided for @medsCalendarWindowTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'时间窗口'**
+  String get medsCalendarWindowTitle;
+
   /// No description provided for @medsCalendarLoadCheckinFailed.
   ///
   /// In zh, this message translates to:
@@ -3400,6 +3418,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'依从：'**
   String get medsCalendarLegendLabel;
+
+  /// No description provided for @medsCalendarLegendTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'图例'**
+  String get medsCalendarLegendTitle;
 
   /// No description provided for @medsCalendarLegendMissed.
   ///
@@ -6696,6 +6720,30 @@ abstract class AppLocalizations {
   /// **'药物信息'**
   String get medAddStep1Title;
 
+  /// No description provided for @medAddConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认信息'**
+  String get medAddConfirm;
+
+  /// No description provided for @medAddColor.
+  ///
+  /// In zh, this message translates to:
+  /// **'颜色'**
+  String get medAddColor;
+
+  /// No description provided for @medAddTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'用药时间'**
+  String get medAddTime;
+
+  /// No description provided for @medAddBasicInfo.
+  ///
+  /// In zh, this message translates to:
+  /// **'基本信息'**
+  String get medAddBasicInfo;
+
   /// No description provided for @medAddStep2Title.
   ///
   /// In zh, this message translates to:
@@ -7043,6 +7091,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'编辑'**
   String get medDetailEdit;
+
+  /// No description provided for @medDetailSettings.
+  ///
+  /// In zh, this message translates to:
+  /// **'设置'**
+  String get medDetailSettings;
+
+  /// No description provided for @medDetailHistory.
+  ///
+  /// In zh, this message translates to:
+  /// **'用药历史'**
+  String get medDetailHistory;
+
+  /// No description provided for @medDetailBasicInfo.
+  ///
+  /// In zh, this message translates to:
+  /// **'基本信息'**
+  String get medDetailBasicInfo;
 
   /// No description provided for @medDetailRefill.
   ///

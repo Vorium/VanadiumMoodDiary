@@ -5,7 +5,7 @@
 //
 // 测试设计 (覆盖 3 态 SMS outcome + lastCheckIn 2 态 + userName 2 态):
 // 1. smsOk > 0 + userName + lastCheckIn some → title/body 走 "已自动通知" (sent)
-// 2. smsMock > 0 + lastCheckIn null → body 走 "开发模式" (mocked) + "从未打卡"
+// 2. smsMock > 0 + lastCheckIn null → body 走 "中性化 mocked" (已触发失联提醒) + "从未打卡"
 // 3. smsFail > 0 + 全 0 → body 走 "通知发送失败" (failed 兜底)
 // 4. userName = null → title 退化为 "您"
 // 5. lastCheckIn = DateTime(2026, 7, 1) → body 包含 "2026-07-01" 格式化
@@ -84,8 +84,8 @@ void main() {
       );
 
       expect(build.title, '⚠️ 已 5 天未打卡', reason: 'R32 改: title 不含 name');
-      expect(build.body, contains('开发模式'), reason: 'mocked 文案: 当前为开发模式');
-      expect(build.body, contains('未实际通知'), reason: 'mocked 文案: 未实际通知紧急联系人');
+      expect(build.body, contains('已触发失联提醒'), reason: 'mocked 文案: R110 round 3 中性化后走 "已触发失联提醒"');
+      expect(build.body, isNot(contains('开发模式')), reason: 'R110 round 3: 中性化后不再出现开发模式字样');
       expect(build.body, contains('从未打卡'), reason: 'lastCheckIn=null → "从未打卡"');
     });
 

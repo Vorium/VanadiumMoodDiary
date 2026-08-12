@@ -627,8 +627,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reminderHubSafetyTitle => '失联通知（安全开关）';
 
   @override
-  String get reminderHubSmsMockWarning =>
-      'SMS 通道未接通（当前使用 Mock）。失联触发时只会推本地通知，不会真发短信给紧急联系人。上 store 前必须接入真实 SMS provider。';
+  String get reminderHubSmsMockWarning => '失联通知服务即将开放，敬请期待。';
 
   @override
   String reminderHubSafetyDescEnabled(int threshold) {
@@ -1004,6 +1003,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get refillManageOverdue => '已过期';
+
+  @override
+  String get refillManageMedsList => '药物列表';
+
+  @override
+  String get refillManageSummary => '续方汇总';
 
   @override
   String get medsNoMedicationsAdded => '还没有添加药物';
@@ -1494,7 +1499,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String safetyAlertBodyMocked(Object date) {
-    return '上次打卡： $date。失联检测已触发，但当前为开发模式，**未实际通知**紧急联系人。';
+    return '上次打卡： $date。已触发失联提醒。';
   }
 
   @override
@@ -1838,6 +1843,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medsCalendarWindow90 => '90 天';
 
   @override
+  String get medsCalendarWindowTitle => '时间窗口';
+
+  @override
   String medsCalendarLoadCheckinFailed(Object error) {
     return '加载打卡失败：$error';
   }
@@ -1864,6 +1872,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get medsCalendarLegendLabel => '依从：';
+
+  @override
+  String get medsCalendarLegendTitle => '图例';
 
   @override
   String get medsCalendarLegendMissed => '漏服';
@@ -3626,6 +3637,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medAddStep1Title => '药物信息';
 
   @override
+  String get medAddConfirm => '确认信息';
+
+  @override
+  String get medAddColor => '颜色';
+
+  @override
+  String get medAddTime => '用药时间';
+
+  @override
+  String get medAddBasicInfo => '基本信息';
+
+  @override
   String get medAddStep2Title => '剂量与时间';
 
   @override
@@ -3800,6 +3823,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get medDetailEdit => '编辑';
+
+  @override
+  String get medDetailSettings => '设置';
+
+  @override
+  String get medDetailHistory => '用药历史';
+
+  @override
+  String get medDetailBasicInfo => '基本信息';
 
   @override
   String get medDetailRefill => '续方';
@@ -4663,8 +4695,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get reminderHubSafetyTitle => '失聯通知（安全開關）';
 
   @override
-  String get reminderHubSmsMockWarning =>
-      'SMS 通道未接通（當前使用 Mock）。失聯觸發時只會推本地通知，不會真發短信給緊急聯繫人。上 store 前必須接入真實 SMS provider。';
+  String get reminderHubSmsMockWarning => '失聯通知服務即將開放，敬請期待。';
 
   @override
   String reminderHubSafetyDescEnabled(int threshold) {
@@ -5040,6 +5071,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get refillManageOverdue => '已過期';
+
+  @override
+  String get refillManageMedsList => '藥物列表';
+
+  @override
+  String get refillManageSummary => '續方彙總';
 
   @override
   String get medsNoMedicationsAdded => '還沒有添加藥物';
@@ -5530,7 +5567,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String safetyAlertBodyMocked(Object date) {
-    return '上次打卡： $date。失聯檢測已觸發，但當前為開發模式，**未實際通知**緊急聯繫人。';
+    return '上次打卡： $date。已觸發失聯提醒。';
   }
 
   @override
@@ -5874,6 +5911,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medsCalendarWindow90 => '90 天';
 
   @override
+  String get medsCalendarWindowTitle => '時間窗口';
+
+  @override
   String medsCalendarLoadCheckinFailed(Object error) {
     return '加載打卡失敗：$error';
   }
@@ -5900,6 +5940,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get medsCalendarLegendLabel => '依從：';
+
+  @override
+  String get medsCalendarLegendTitle => '圖例';
 
   @override
   String get medsCalendarLegendMissed => '漏服';
@@ -7662,6 +7705,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medAddStep1Title => '藥物信息';
 
   @override
+  String get medAddConfirm => '確認信息';
+
+  @override
+  String get medAddColor => '顏色';
+
+  @override
+  String get medAddTime => '用藥時間';
+
+  @override
+  String get medAddBasicInfo => '基本信息';
+
+  @override
   String get medAddStep2Title => '劑量與時間';
 
   @override
@@ -7836,6 +7891,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get medDetailEdit => '編輯';
+
+  @override
+  String get medDetailSettings => '設置';
+
+  @override
+  String get medDetailHistory => '用藥歷史';
+
+  @override
+  String get medDetailBasicInfo => '基本信息';
 
   @override
   String get medDetailRefill => '續方';

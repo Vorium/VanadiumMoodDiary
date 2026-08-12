@@ -11,24 +11,21 @@
 //   纯函数, AGENTS.md 必读. 跟 `lib/domain/logic/refill_scheduler.dart`
 //   / `lib/domain/logic/assessment_reminder_policy.dart` 同款.
 
-import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/logic/lost_contact_sms.dart';
 
 /// 失联告警业务规则
-///
-/// R109 round 2: 把 `SafetyAlertDispatcher` 里的纯业务规则提到
-/// domain/logic, use case 编排层 0 副作用.
-///
-/// 业务规则:
-/// - feature flag 关闭 → 不发任何 SMS / 通知 / audit (病耻感 + 失联通信业务暂停)
-/// - 短信文案优先用 bodyOverride, 否则走 `buildLostContactSms` 模板
-class SafetyAlertPolicy {
-  /// 失联告警业务是否启用
   ///
-  /// 实际读 `FeatureFlags.emergencyContactEnabled` (compile-time const
-  /// bool, R107 起改 false 等 v1.0 阿里云 SMS 真接). 抽成静态方法
-  /// 让 use case 单点 check, 避免散落到 service 多个 if 分支.
-  static bool get isEnabled => FeatureFlags.emergencyContactEnabled;
+  /// R109 round 2: 把 `SafetyAlertDispatcher` 里的纯业务规则提到
+  /// domain/logic, use case 编排层 0 副作用.
+  ///
+  /// 业务规则:
+  /// - feature flag 关闭 → 不发任何 SMS / 通知 / audit (病耻感 + 失联通信业务暂停,
+  ///   flag 值由 use case 构造注入, 本层 0 data import — R110 round 3 修 purity)
+  /// - 短信文案优先用 bodyOverride, 否则走 `buildLostContactSms` 模板
+  ///
+  /// 4 层架构: domain/logic 严禁 import `core/data/`, feature flag 走
+  /// `DispatchSafetyAlertUseCase` 构造注入 (`emergencyContactEnabled`).
+class SafetyAlertPolicy {
 
   /// 构造发给联系人的短信内容
   ///

@@ -3,6 +3,9 @@
 // 拆 app_routes.dart 14 路由按 feature 5 文件, 本文件管用药类:
 // v0.30 R101: 新增 /medication (用药主页) + /medication/add (添加向导)
 //   + /medication/detail/:id (药物详情)
+// v0.32 R110 round 3 (B2-04 fix): 4 个 /medication* 路由移进
+//   ShellRoute.routes (app_route_main), 用药 tab 高亮 + 底栏常驻 —
+//   原先 /medication 在顶层, shell 永远包不到它。
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
@@ -18,6 +21,7 @@ import 'package:chroniccare/presentation/pages/settings/reminders_hub_page.dart'
 class AppRouteMedication {
   AppRouteMedication._();
 
+  /// 提醒 + 法律路由 (顶层, 不进 shell)
   static List<RouteBase> all() {
     return [
       // v0.14 (Round 12C) 提醒中心
@@ -47,6 +51,12 @@ class AppRouteMedication {
           context,
         ),
       ),
+    ];
+  }
+
+  /// 用药 4 路由 (R110 round 3 移进 ShellRoute, 底栏常驻 + tab 高亮)
+  static List<RouteBase> shellRoutes() {
+    return [
       // v0.14 (Round 13C) 用药日历 (医生视角热力图)
       GoRoute(
         path: '/medication/calendar',

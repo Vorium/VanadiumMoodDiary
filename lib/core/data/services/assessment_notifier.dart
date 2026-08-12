@@ -23,7 +23,9 @@ import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 /// v0.24 round 45: 委托 ReminderDispatcher 处理 zonedAt。
 class AssessmentNotifier {
   /// 心理评估周期提醒 id (单条推送, 稳定; 评估完成重排 = 覆盖)
-  static const int assessmentReminderId = 7000;
+  /// v0.32 R110 (B1-1): 原 7000 落入 medication/refill cancel 区间被误杀,
+  /// 迁 5M+ 固定带
+  static const int assessmentReminderId = 5000001;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final ReminderDispatcher _dispatcher;

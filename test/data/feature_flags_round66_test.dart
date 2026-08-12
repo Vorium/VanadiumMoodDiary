@@ -99,8 +99,8 @@ void main() {
 
   group('DispatchSafetyAlertUseCase.call 在 flag=false 时早返空 outcome', () {
     test('空 outcome + 不发 SMS + 不调 showSafetyAlert + 不写 audit log', () async {
-      // R66 设计: flag=false 时 use case 走 `SafetyAlertPolicy.isEnabled` 早返,
-      //   不调 sender.send (即不发 SMS + 不推本地通知 + 不写 audit log).
+      // R66 设计: flag=false 时 use case 早返 (R110 round 3 改构造注入,
+      //   resetForTest 后构造时动态读 → false, 语义跟原 isEnabled 1:1).
       //   传 mock 计数 service, 早返应该全 0.
       final useCase = DispatchSafetyAlertUseCase(
         SafetyAlertSenderImpl(
@@ -109,6 +109,7 @@ void main() {
           config: _CountingConfigService(),
           builder: const SafetyAlertBuilder(),
         ),
+        emergencyContactEnabled: FeatureFlags.emergencyContactEnabled,
       );
 
       final result = await useCase.call(

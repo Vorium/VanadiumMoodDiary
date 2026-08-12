@@ -9,7 +9,7 @@ library;
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/core/shared/phone_validator.dart';
 
 void main() {
   group('PhoneValidator.parse - 中国大陆', () {

@@ -53,9 +53,11 @@ class ContactEntity {
   /// 是否手机号格式正确
   ///
   /// v0.18 P1-14: 扩展支持 5 个 region（cn / hk / mo / tw / intl）。
-  /// 必须跟 `lib/core/data/utils/phone_validator.dart` 保持同步
-  /// （domain 不能 import data,regex 复制一份）。
-  /// CI 用 `phone_validator_sync_test.dart` 验证两边 regex 一致。
+  /// 必须跟 `lib/core/shared/phone_validator.dart` 保持同步
+  /// （R110 round 3: phone_validator 移 core/shared 后 domain 可直连,
+  /// 但 contact_entity 的 regex 仍为 0 依赖自带副本, 两边保持一致）。
+  /// CI 曾用 `phone_validator_sync_test.dart` 验证两边 regex 一致
+  /// （R109 清理时已删, 现在靠 round18 test 兜底）。
   // 缓存正则（避免每次 isValidPhone 调用创建 8 个 RegExp）
   static final _cnWithPrefix = RegExp(r'^(\+?86[-\s]?)?1[3-9]\d{9}$');
   static final _hkWithPrefix = RegExp(r'^(\+?852[-\s]?)?[45789]\d{7}$');

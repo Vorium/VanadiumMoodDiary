@@ -11,6 +11,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 
 class _NoopNotificationService extends NotificationService {
   @override
@@ -21,6 +22,9 @@ class _NoopNotificationService extends NotificationService {
 String _phone(String prefix, String suffix) => '$prefix$suffix';
 
 Future<void> _pumpSetup(WidgetTester tester) async {
+  // R110 round 3 (AS-07 gate): 联系人 section 挂 flag, test 翻 true
+  FeatureFlags.enableForTest();
+  addTearDown(FeatureFlags.resetForTest);
   tester.view.physicalSize = const Size(800, 1600);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(() {

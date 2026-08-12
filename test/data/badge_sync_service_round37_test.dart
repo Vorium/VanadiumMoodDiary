@@ -23,17 +23,18 @@ void main() {
   });
 
   group('BadgeSyncService.badgeVirtualId', () {
-    test('id = 9999 不跟 default / medication / safety / refill / assessment 冲突',
-        () {
-      // 1001 (default) < 2000-21999 (med) < 5000 (safety) < 6000-7999 (refill) < 7000 (assessment)
-      // 9999 是单独的虚拟 id, 不冲突
+    test('id = 5000100 (R110 5M+ 固定带) 不跟其他 id 冲突', () {
+      // R110 (B1-1): 原 9999 落入 medication/refill cancel 区间被误杀,
+      // 迁到 5M+ 固定带: 5000000 safety / 5000001 assessment /
+      //   5000002 mood / 5000010 care push / 5000100 badge
       const id = BadgeSyncService.badgeVirtualId;
-      expect(id, 9999);
+      expect(id, 5000100);
       expect(id, isNot(1001));
       expect(id, isNot(2000));
-      expect(id, isNot(5000));
+      expect(id, isNot(5000000));
       expect(id, isNot(6000));
-      expect(id, isNot(7000));
+      expect(id, isNot(5000001));
+      expect(id, isNot(300000));
     });
   });
 

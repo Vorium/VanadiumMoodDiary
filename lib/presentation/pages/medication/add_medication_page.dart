@@ -234,7 +234,7 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
 
         // "基本信息" AppleListSection
         AppleListSection(
-          title: '基本信息', // 走 ARB: medAddBasicInfo, Phase 5 再补
+          title: l10n.medAddBasicInfo,
           margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             // 药名
@@ -313,7 +313,7 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
 
         // "用药时间" AppleListSection
         AppleListSection(
-          title: '用药时间', // 走 ARB: medAddTime, Phase 5 再补
+          title: l10n.medAddTime,
           margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             // 剂量 + 单位
@@ -456,7 +456,7 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
 
         // "颜色" AppleListSection
         AppleListSection(
-          title: '颜色', // 走 ARB: medAddColor, Phase 5 再补
+          title: l10n.medAddColor,
           margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             Text(
@@ -503,7 +503,7 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
 
         // "确认信息" AppleListSection
         AppleListSection(
-          title: '确认信息', // 走 ARB: medAddConfirm, Phase 5 再补
+          title: l10n.medAddConfirm,
           margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             MedicationConfirmRow(

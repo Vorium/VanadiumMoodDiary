@@ -70,7 +70,7 @@ class MedicationDetailPage extends ConsumerWidget {
               // 章节 1: 基本信息 — AppleListSection + ALL CAPS title
               // ═══════════════════════════════════════════════════
               AppleListSection(
-                title: '基本信息', // 走 ARB: medDetailBasicInfo, Phase 5 再补
+                title: l10n.medDetailBasicInfo,
                 margin: const EdgeInsets.symmetric(
                   horizontal: AppTokens.pageMarginH,
                 ),
@@ -129,7 +129,7 @@ class MedicationDetailPage extends ConsumerWidget {
               // 章节 2: 用药历史 — AppleListSection + ALL CAPS title
               // ═══════════════════════════════════════════════════
               AppleListSection(
-                title: '用药历史', // 走 ARB: medDetailHistory, Phase 5 再补
+                title: l10n.medDetailHistory,
                 margin: const EdgeInsets.symmetric(
                   horizontal: AppTokens.pageMarginH,
                 ),
@@ -184,7 +184,7 @@ class MedicationDetailPage extends ConsumerWidget {
               // 章节 3: 设置 — AppleListSection + ALL CAPS title
               // ═══════════════════════════════════════════════════
               AppleListSection(
-                title: '设置', // 走 ARB: medDetailSettings, Phase 5 再补
+                title: l10n.medDetailSettings,
                 margin: const EdgeInsets.symmetric(
                   horizontal: AppTokens.pageMarginH,
                 ),

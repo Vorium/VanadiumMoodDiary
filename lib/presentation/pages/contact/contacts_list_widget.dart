@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/core/shared/phone_validator.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';

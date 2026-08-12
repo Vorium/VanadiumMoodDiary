@@ -22,7 +22,8 @@ import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 ///
 /// 输入: contacts / userName / daysSinceLast / lastCheckIn / now / trigger / bodyOverride / l10nResolver
 /// 编排:
-///   1. SafetyAlertPolicy.isEnabled false → 返 0 outcome (feature flag 守卫)
+///   1. emergencyContactEnabled false → 返 0 outcome (feature flag 守卫,
+///      R110 round 3 改构造注入, 本文件 0 data import — 修 purity 违规)
 ///   2. body = bodyOverride ?? policy.buildAlertSms
 ///   3. sender.send(...) 批量发 + 推通知 + 写 audit
 ///
@@ -30,8 +31,12 @@ import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 /// 0 Flutter / 0 Drift / 0 l10n: 只依赖 domain abstract + policy
 class DispatchSafetyAlertUseCase {
   final SafetyAlertSender _sender;
+  final bool emergencyContactEnabled;
 
-  const DispatchSafetyAlertUseCase(this._sender);
+  const DispatchSafetyAlertUseCase(
+    this._sender, {
+    required this.emergencyContactEnabled,
+  });
 
   /// 派发失联告警 (编排主入口)
   ///
@@ -51,8 +56,8 @@ class DispatchSafetyAlertUseCase {
     String? bodyOverride,
     required SafetyAlertL10nResolver l10nResolver,
   }) async {
-    // Feature flag 早返 — 暂停整个失联通信业务
-    if (!SafetyAlertPolicy.isEnabled) {
+    // Feature flag 早返 — 暂停整个失联通信业务 (构造注入, 避免 domain 依赖 data)
+    if (!emergencyContactEnabled) {
       return (smsOk: 0, smsFail: 0, smsMock: 0);
     }
     // body 计算 (优先 bodyOverride, 跟原 dispatcher 行为 100% 一致)
@@ -82,7 +87,8 @@ class DispatchSafetyAlertUseCase {
 /// (R109 round 2 改 service 接受 `DispatchSafetyAlertUseCase` 后, 旧
 /// notification service subclass 失效).
 class NoOpDispatchSafetyAlertUseCase extends DispatchSafetyAlertUseCase {
-  NoOpDispatchSafetyAlertUseCase() : super(_NoOpSafetyAlertSender());
+  NoOpDispatchSafetyAlertUseCase()
+      : super(_NoOpSafetyAlertSender(), emergencyContactEnabled: true);
 
   /// 真实测试时记录 dispatch 调用结果
   final List<SmsDispatchOutcome> outcomes = [];

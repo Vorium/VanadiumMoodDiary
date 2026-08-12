@@ -64,7 +64,7 @@ class MedicationCalendarGrid extends StatelessWidget {
         icon: Icons.medication_outlined,
         title: AppLocalizations.of(context).medsCalendarNoActive,
         actionLabel: AppLocalizations.of(context).medsCalendarNoActiveAction,
-        onAction: () => GoRouter.of(context).push('/medication/new'),
+        onAction: () => GoRouter.of(context).push('/medication/add'),
       );
     }
     // 排除没排程的药 (times=[]) — 否则 expected=1 永远 0% 红色 (Bug G)
@@ -76,7 +76,7 @@ class MedicationCalendarGrid extends StatelessWidget {
         title: AppLocalizations.of(context).medsCalendarNoSchedule,
         subtitle: AppLocalizations.of(context).medsCalendarNoScheduleHint,
         actionLabel: AppLocalizations.of(context).medsCalendarNoScheduleAction,
-        onAction: () => GoRouter.of(context).push('/medication/list'),
+        onAction: () => GoRouter.of(context).push('/medication'),
       );
     }
 

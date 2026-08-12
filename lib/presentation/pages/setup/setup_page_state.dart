@@ -25,7 +25,7 @@
 //   拿 SetupPage 类型 + createState() 返回 SetupPageState 0 改动
 
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
-import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/core/shared/phone_validator.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart'

@@ -7,6 +7,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/data/feature_flags.dart';
 
 class _NoopNotificationService extends NotificationService {
   @override
@@ -19,6 +20,9 @@ void main() {
   testWidgets(
     'setup 第 2 步: 显示药物列表（可添加、可配时间）',
     (tester) async {
+      // R110 round 3 (AS-07 gate): 联系人 section 挂 flag, test 翻 true
+      FeatureFlags.enableForTest();
+      addTearDown(FeatureFlags.resetForTest);
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -114,6 +118,9 @@ void main() {
   testWidgets(
     'setup 第 2 步: 添加药物后能看到药物卡片',
     (tester) async {
+      // R110 round 3 (AS-07 gate): 联系人 section 挂 flag, test 翻 true
+      FeatureFlags.enableForTest();
+      addTearDown(FeatureFlags.resetForTest);
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {

@@ -42,6 +42,10 @@ import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 ///
 /// 抽自原 home_page_state._runAfterCheckIn (30L) + _fireCareEngine (89L) = 119L。
 class HomeCareEngineDispatcher {
+  /// v0.32 R110 (B1-1): care push 固定带 id 基数 (5M+ 带,
+  /// 远离 med [2000,202000) / refill [6000,206000) / snooze [300000,2300000))
+  static const int kCarePushBaseId = 5000010;
+
   final WidgetRef ref;
 
   HomeCareEngineDispatcher(this.ref);
@@ -129,7 +133,9 @@ class HomeCareEngineDispatcher {
       switch (result.decision) {
         case FireCareDecision.fireCareCopy:
           final notif = ref.read(notificationServiceProvider);
-          final id = 8000 + result.strategy.index;
+          // v0.32 R110 (B1-1): 原 8000+index 落入 medication/refill cancel
+          // 区间被误杀, 迁 5M+ 固定带 (跟 safety/assessment/mood/badge 同带)
+          final id = kCarePushBaseId + result.strategy.index;
           await notif.showNow(id: id, title: result.title, body: result.body);
         case FireCareDecision.fireSms:
           // v0.27 round 67 (B-2 修复): 调 smsService.send

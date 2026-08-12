@@ -19,12 +19,13 @@ import 'package:chroniccare/core/l10n/strings.dart';
 /// 情绪记录提醒通知编排
 ///
 /// 公开 1 个 method:
-///   - [scheduleMoodReminder] 每天 hour:minute 提醒记录心情 (id=8000)
+///   - [scheduleMoodReminder] 每天 hour:minute 提醒记录心情 (id=5000002, v0.32 R110 B1-1 迁 5M+ 带)
 ///
 /// 参照 MedicationNotifier 模式，委托 ReminderDispatcher。
 class MoodReminderNotifier {
-  /// 情绪记录提醒 id (不跟 medication id 冲突)
-  static const int moodReminderId = 8000;
+  /// 情绪记录提醒 id — v0.32 R110 (B1-1): 原 8000 落入 medication/refill
+  /// cancel 区间被误杀, 迁 5M+ 固定带
+  static const int moodReminderId = 5000002;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final ReminderDispatcher _dispatcher;

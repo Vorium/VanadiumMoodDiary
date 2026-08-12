@@ -11,7 +11,7 @@
 // `gad7_round16_test.dart`) 走 `const StaticScaleTranslations()` 中文 fallback,
 // 本测试只覆盖 ScaleTranslations 接口契约 + AppLocalizations 包装 i18n 路径。
 
-import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/core/shared/phone_validator.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';

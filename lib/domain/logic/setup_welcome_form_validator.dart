@@ -13,7 +13,7 @@
 // 4 层架构: domain/logic/ 放 0 副作用 0 Flutter 0 Drift 0 service 调
 //   的纯函数, AGENTS.md 必读. 接受 phone validator 注入 (0 副作用).
 
-import 'package:chroniccare/core/data/utils/phone_validator.dart';
+import 'package:chroniccare/core/shared/phone_validator.dart';
 
 /// Setup Step 1 (welcome) form 验证器 (R109 抽纯函数集中器)
 ///

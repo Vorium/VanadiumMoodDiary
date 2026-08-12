@@ -17,8 +17,14 @@
 // - 添加联系人 button 改 PrimaryButton secondary (FilledButton.tonal)
 // - 底部 PrimaryButton full width (default isFullWidth: true)
 // - 间距统一 16
+//
+// v0.32 R110 round 3 (AS-07 gate): 整段紧急联系人 section 挂
+// `FeatureFlags.emergencyContactEnabled` — flag=false (生产默认) 时
+// setup 完全不出现联系人表单 (跟 R66 软隐藏 + 失联通信业务暂停 一致,
+// 避免 App Store 5.1.1 抽审看到未上线的失联通知入口)。
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
@@ -111,76 +117,81 @@ class _SetupStepWelcomeState extends State<SetupStepWelcome> {
             ),
           const SizedBox(height: AppTokens.spacingXl), // 24 (spec 章节间距)
           // ===== 联系人 section =====
-          // v0.31 round 10: 紧急联系人改 AppleListSection
-          // title ALL CAPS (AppleListSection 自带 toUpperCase)
-          Padding(
-            padding: const EdgeInsets.only(
-              left: AppTokens.pageMarginH,
-              right: AppTokens.pageMarginH,
-              bottom: AppTokens.spacingXs,
-            ),
-            child: Text(
-              l10n.setupContacts,
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeTitle,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTokens.pageMarginH,
-            ),
-            child: Text(
-              l10n.setupWelcomeContactHint,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                color: AppTokens.textSecondaryColor(context),
-              ),
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingMd),
-          for (int i = 0; i < widget.contactPhoneControllers.length; i++) ...[
-            AppleListSection(
-              margin: EdgeInsets.zero, // step content 自管 padding
-              children: [
-                _ContactRow(
-                  index: i,
-                  nameController: widget.contactNameControllers[i],
-                  phoneController: widget.contactPhoneControllers[i],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTokens.spacingMd),
-          ],
-          // v0.31 round 10: "添加联系人" 改 PrimaryButton secondary (FilledButton.tonal)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTokens.pageMarginH,
-            ),
-            child: PrimaryButton(
-              variant: PrimaryButtonVariant.secondary,
-              isFullWidth: true,
-              leadingIcon: const Icon(Icons.add),
-              onPressed: widget.onAddContact,
-              child: Text(l10n.setupAddContact),
-            ),
-          ),
-          // 2026-07-31: 把"已告知联系人" 改为**提示性**段落(非强制勾选)。
-          // 复用 `setupContactConsent` 文案 key — 保留 key 避免 ARB orphan。
-          if (widget.contactPhoneControllers
-              .any((c) => c.text.trim().isNotEmpty))
+          // R110 round 3 (AS-07): flag=false 时整段不渲染 (联系人业务暂停)
+          if (FeatureFlags.emergencyContactEnabled) ...[
+            // v0.31 round 10: 紧急联系人改 AppleListSection
+            // title ALL CAPS (AppleListSection 自带 toUpperCase)
             Padding(
               padding: const EdgeInsets.only(
                 left: AppTokens.pageMarginH,
                 right: AppTokens.pageMarginH,
-                top: AppTokens.spacingSm,
+                bottom: AppTokens.spacingXs,
               ),
               child: Text(
-                l10n.setupContactConsent,
-                style: AppTokens.textStyleCaption(context),
+                l10n.setupContacts,
+                style: const TextStyle(
+                  fontSize: AppTokens.fontSizeTitle,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.pageMarginH,
+              ),
+              child: Text(
+                l10n.setupWelcomeContactHint,
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeBody,
+                  color: AppTokens.textSecondaryColor(context),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppTokens.spacingMd),
+            for (int i = 0;
+                i < widget.contactPhoneControllers.length;
+                i++) ...[
+              AppleListSection(
+                margin: EdgeInsets.zero, // step content 自管 padding
+                children: [
+                  _ContactRow(
+                    index: i,
+                    nameController: widget.contactNameControllers[i],
+                    phoneController: widget.contactPhoneControllers[i],
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppTokens.spacingMd),
+            ],
+            // v0.31 round 10: "添加联系人" 改 PrimaryButton secondary (FilledButton.tonal)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTokens.pageMarginH,
+              ),
+              child: PrimaryButton(
+                variant: PrimaryButtonVariant.secondary,
+                isFullWidth: true,
+                leadingIcon: const Icon(Icons.add),
+                onPressed: widget.onAddContact,
+                child: Text(l10n.setupAddContact),
+              ),
+            ),
+            // 2026-07-31: 把"已告知联系人" 改为**提示性**段落(非强制勾选)。
+            // 复用 `setupContactConsent` 文案 key — 保留 key 避免 ARB orphan。
+            if (widget.contactPhoneControllers
+                .any((c) => c.text.trim().isNotEmpty))
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: AppTokens.pageMarginH,
+                  right: AppTokens.pageMarginH,
+                  top: AppTokens.spacingSm,
+                ),
+                child: Text(
+                  l10n.setupContactConsent,
+                  style: AppTokens.textStyleCaption(context),
+                ),
+              ),
+          ],
           const SizedBox(height: AppTokens.spacingXl), // 24
           // ===== 底部按钮: PrimaryButton full width + 上一步 tertiary =====
           Padding(

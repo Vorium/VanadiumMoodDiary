@@ -91,8 +91,8 @@ class _MedicationCalendarPageState
           // + AppleListSection 风格容器 (spec §4.6 + §4.5)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-            child: const SectionHeader(
-              title: '时间窗口', // 走 ARB: medsCalendarWindowTitle, Phase 5 再补
+            child: SectionHeader(
+              title: AppLocalizations.of(context).medsCalendarWindowTitle,
             ),
           ),
           const SizedBox(height: AppTokens.spacingXxs),
@@ -147,8 +147,8 @@ class _MedicationCalendarPageState
           // v0.31 round 11a: 日历 grid 章节 — SectionHeader ALL CAPS
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-            child: const SectionHeader(
-              title: '依从性日历', // 走 ARB: medsCalendarTitle, Phase 5 再补
+            child: SectionHeader(
+              title: AppLocalizations.of(context).medsCalendarTitle,
             ),
           ),
           const SizedBox(height: AppTokens.spacingXxs),
@@ -199,9 +199,9 @@ class _MedicationCalendarPageState
           // v0.30 round 93: 拆 Legend sub-widget (Step 1.4)
           // v0.31 round 11a: Legend 章节用 SectionHeader ALL CAPS
           const SizedBox(height: AppTokens.spacingMd),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-            child: SectionHeader(title: '图例'), // 走 ARB: medsCalendarLegendTitle
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            child: SectionHeader(title: AppLocalizations.of(context).medsCalendarLegendTitle),
           ),
           const SizedBox(height: AppTokens.spacingXxs),
           const Padding(

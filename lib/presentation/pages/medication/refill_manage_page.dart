@@ -141,9 +141,9 @@ class RefillManagePage extends ConsumerWidget {
         // 章节 1: 顶部汇总 — SectionHeader ALL CAPS + AppleListSection
         // v0.31 R11a: 4 StatCard 改 ultralight large variant (34pt w200)
         // 装在 AppleListSection 内 (iOS 群组列表风格)
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          child: SectionHeader(title: '续方汇总'), // 走 ARB: refillManageSummary
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          child: SectionHeader(title: l10n.refillManageSummary),
         ),
         const SizedBox(height: AppTokens.spacingXxs),
         AppleListSection(
@@ -207,7 +207,7 @@ class RefillManagePage extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           child: SectionHeader(
-            title: '药物列表', // 走 ARB: refillManageMedsList
+            title: l10n.refillManageMedsList,
             chip: '${rows.length}', // 数量 chip
           ),
         ),
