@@ -82,3 +82,9 @@ chroniccare.iml
 .gradle-*-all.zip
 coverage/
 .mavis-trash/
+
+# Worktrees / git 辅助产物
+.worktrees/
+
+# R82+ scripts/_archive 转换临时产物
+scripts/_archive/sprint2-zh-hant-tmp/
