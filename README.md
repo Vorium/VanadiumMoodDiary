@@ -2,41 +2,42 @@
 
 > 我今天吃了药 · 精神心理患者吃药打卡 + 停药通知
 
-> **🚧 v0.32.0+140 (2026-08-13 R110 round 7b-6)**: B1-3 睡眠规律分改用 Mardia 环形统计 (跨午夜不再误判, 回归 10/10) + FS-2 daily_tracking 子树隔离 (8+ 流 watch 下沉到小节/卡片, 一次 tick 不再整页重建)。**P0 12 项 + P1 25 项中 20 项已闭环**。残余 4 fail = iOS 资产占位 (设计师) + 外部项 (keystore/域名/表单/截图)。详细报告:
+> **🚧 v0.32.0+142 (2026-08-13 R111 hotfix round 8 + R112 修复战役 ✅ 收尾批 round 8b)**: R112 9 视角审视 (加权 7.1/10) 的代码级 P0/P1 全部按优先级修复 — 详见 [R112 整合](docs/audit/2026-08-13-r112-multi-lens/00-FINAL-CONSOLIDATION.md) + [修复账本](docs/audit/2026-08-13-r112-multi-lens/10-FIX-LEDGER.md) + 9 份 fix-reports。**E6 export 补 6 张 daily tracking 表 / E7-E9 + E-01/E-02 生命周期与 PII / AR-16~20 架构四件套 + 2 死 usecase 接线 + 1,600L 死代码删除 / 8 feature 全部 ALS 化 (Card 清零) / 上架文案×8 + wrapper + 生成器刷新 / keystore 生成 + god class 批1-2 拆 3 个**。**2533 pass / 4 fail [iOS 资产占位, 设计师] / 1 skip, analyze 0 error / 0 warning, 22 守门员全绿**。残余 = 上架外部项 (域名 ICP / 设计师资产 / review 4 占位 / console 表单人工填 — 文本已生成在 build/) + god class 18 个 (R113) + R51b 量表 items i18n (v1.0) + keystore 密码备份 1Password (⚠️ 请用户操作)。详细报告:
+> - [R112 整合](docs/audit/2026-08-13-r112-multi-lens/00-FINAL-CONSOLIDATION.md) (9 视角, 代码级 P0 4 + 上架外部 P0 11, P1 24, 加权 ≈7.1/10)
+> - [R112 顶层架构](docs/audit/2026-08-13-r112-multi-lens/07-top-level-arch.md) (6.0/10, 结论: 4 层+umbrella 够用, feature-first/pub workspace 暂不做, 先删 1,600L 死代码)
+> - [R112 底层逐行 A](docs/audit/2026-08-13-r112-multi-lens/08-line-by-line-domain-data.md) + [B](docs/audit/2026-08-13-r112-multi-lens/09-line-by-line-presentation.md) (E6 整 6 表丢数据 + 泄漏链, 纪律全绿)
+> - [R111 整合](docs/audit/2026-08-13-r111-multi-lens/00-FINAL-CONSOLIDATION.md) (9 视角, P0 8 + P1 21, 加权 7.3/10)
 > - [R110 整合 16KB](docs/audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md) (10 视角, P0 12 + P1 25 + P2 30+)
-> - [R110 顶层架构 12KB](docs/audit/2026-08-13-multi-lens/08-top-level-arch.md) (8.4/10, 重构路线 7 步: 先修 purity → usecase 厚化 → scale 三源合一 → l10n 循环 → god class → feature-first)
-> - [R110 底层逐行 A](docs/audit/2026-08-13-multi-lens/09-line-by-line-domain-data.md) + [B](docs/audit/2026-08-13-multi-lens/10-line-by-line-presentation.md) (P0 通知 ID 碰撞 + 生命周期审计全绿)
-> - [R109 整合 26KB](docs/audit/2026-08-11-cleanup/00-FINAL-R110-CONSOLIDATION.md) (加权 7.8/10, 26 P0 + 27 P1 + 18 P2)
+> - [R110 顶层架构 12KB](docs/audit/2026-08-13-multi-lens/08-top-level-arch.md) (8.4/10, 重构路线 7 步)
+> - [R110 底层逐行 A](docs/audit/2026-08-13-multi-lens/09-line-by-line-domain-data.md) + [B](docs/audit/2026-08-13-multi-lens/10-line-by-line-presentation.md)
+> - [R109 整合 26KB](docs/audit/2026-08-11-cleanup/00-FINAL-R110-CONSOLIDATION.md) (加权 7.8/10)
 > - [R32 整合 52KB](docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (6 视角, 199 项)
 > - [旧 R108 报告 16.7KB](docs/audit-history/r107-cleanup-2026-08-10/R108-overall-report.md) (6.2/10)
 >
-> **各视角最新评分 (R110)**:
-> - emil 设计 / UI / 动效: **8.0/10** (token 集中器 100% 采纳, 8 feature 未 AppleListSection 化 + mood 双色板漂移拉低)
-> - superpowers-en 工程 / TDD: **7.5/10** (纪律真实改善, 15+ god class 0 test 积压)
-> - superpowers-zh 国内合规/PIPL: **7.0/10** (docs 滞后 10+ 版本 + 12 处硬编码中文 + 守门员盲区)
-> - flutter-specification v3.1: **8.0/10** (生命周期 0 泄漏, 3 处 purity 违规 + usecase 薄)
-> - AppStore iOS: **3.5/10** (代码面干净, 资产/URL/元数据占位阻塞)
-> - GooglePlay Android: **4.0/10** (权限姿态强, keystore + 资产 + privacy URL 阻塞)
-> - Apple Health 视觉语言: **7.0/10** (视觉 4.5/11 完成, HealthKit 0 集成 enforced)
-> - 顶层架构: **8.4/10** (l10n 循环 + purity 违规 + usecase 层厚化路径清晰)
-> - 底层逐行: **7.2/10** (P0 通知 ID 碰撞 + sleep 圆统计, 其余全绿)
+> **各视角最新评分 (R112 审视时; 代码级 P0/P1 已全部按优先级修复, 预估 8.3/10)**:
+> - emil 设计 / UI / 动效: **7.5/10** (token 层 9/10; 落地层 Card 方言 8 feature 0 进展 + 新 helper 引入 1 裸 id 回归)
+> - superpowers 工程 / TDD / docs: **8.5/10** (TDD 历史最佳档: export v5 round-trip 7 test / v19→v22 真 dry-run / 36 量表一致性 test; 3 warning + CHANGELOG 提前宣称不符)
+> - flutter-specification: **8.5/10** (R111 遗留 8/12 闭环, export v5 分层合规; spec §5.5-5.7 视觉债 + golden 0)
+> - AppStore iOS: **4.0/10** (代码面 9.5 且 R112 再收敛 — userName 双删锁屏最干净; 5 P0 全外部 + 新 AS-22 描述已关闭功能拒因级)
+> - GooglePlay Android: **6.0/10** (元数据 3/4 收口; 6 P0 全外部; 4 新 P1: 文案点名被隐藏量表 / gradle wrapper 机器路径 / 2 生成器过期)
+> - Apple Health 视觉语言: **7.0/10** (HealthKit 合规 10/10, lib/presentation 0 硬编码 Color 实测达标; 8 feature 0 ALS + spec 数字膨胀已重算)
+> - 顶层架构: **6.0/10** (边界层满血 + 新实锤 2 个守门盲区 data→l10n/data→routing; AR-16/17/18/19 跨期, AR-17 恶化到 4 源; god class 21 个)
+> - 底层逐行: **8.0/10** (1 新 P0 E6 + 7 新 P1; DateTime.now 43 处单次化 / 0 空 catch / 通知 ID 5M 带 / 锁屏 PII 0 全绿)
 >
-> **R110 关键 P0 (12 项去重后, 按优先级排序)**:
-> 1. **底层 bug**: 通知 ID 碰撞 — 固定 ID 5000/7000/8000/9999 落在 cancel 区间内被静默误杀 (B1-1, ≤1h)
-> 2. **CI 红**: domain purity 3 处违规, check_all.dart FAIL (AR-1, ≤2h)
-> 3. **上架合规**: 紧急联系人部分可见 + "Mock/开发模式" 用户文案 + release 启动抛错横幅 (AS-07/08/14, ≤4h)
-> 4. **i18n**: 12 处硬编码中文 + 守门员盲区 (SP-zh-15/16, ≤3h)
-> 5. **上架元数据**: review 4 占位 + notes 过时 + 版本漂移 (AS-01/02/11, 10min)
-> 6. **外部依赖**: 双平台截图/图标 100% 占位 + keystore 缺失 + chroniccare.app 域名 ICP (设计师 + 1h + 7-20d)
-> 7. **架构**: scale_translations 三源 1591L + data→l10n 循环 + usecase 层薄 (AR-2/3/4, 2-3wk)
+> **R112 关键 P0/P1 (✅ 代码级全部已修复; 外部项 0 进展待外部依赖)**:
+> 1. **★P0 底层**: export v5 仍缺 6 张 daily tracking 表 (sleep/weight/socialRhythm/stress/treatment/anxiety) — 换机整块静默丢失 (E6, ~1d, 与 v5 同批补避免二次 bump)
+> 2. **★P1 底层**: mood_audio_recorder + vent_compose dispose 期 ref.read → StateError 被吞 → native 句柄每次泄漏 + 明文 temp 文件永不删除 (E-01, 0.5d)
+> 3. **★P1 底层**: legal_page 裸 developer.log 泄 PII 到 release console (E-02, 0.2h)
+> 4. **★P1 数据**: profile PIPL §14 4 字段不导出 (E7) / 软停药药名导出丢失 (E8) / 趋势日历裸 scaleId (E9) / settings 裸 id 回归 (emil R112-01)
+> 5. **P0 架构跨期**: AR-17 scale 4 源 (810L 死代码) → AR-18 2 个死 usecase → AR-16 l10n 循环 (守门盲区先红) → AR-19 saveSetup (2-3d~1wk)
+> 6. **P1 上架新发现 (1h 内全可修)**: AS-22 description 描述已关闭功能 / GP-R112-01 文案点名被隐藏量表 / AS-21 promo 措辞 / AS-23 Fastfile 脚枪 / GP-R112-02 gradle wrapper 机器路径
+> 7. **上架外部 P0 (11 项, 0 进展)**: 域名 ICP → 双平台资产 → keystore → console 表单 → review 占位
 >
-> **修复路线图 (R110+, 4 phase)**:
-> - **Phase 1 R110 本周** (1 周, 5-8h): 闭环代码级 P0 (通知 ID / purity / gate / i18n) → 8.3/10
-> - **Phase 2 R109 收尾** (1 周): working tree 99 文件归类 + 126 fail 复验
-> - **Phase 2 R109 第 2-3 周** (2 周, 8-12h): 16 P1 + god class 拆 3 个 (setup_step_medication 614L / setup_page_state 513L / medication_page 524L) → 9.0/10
-> - **Phase 3 R109 god class 专项** (4 周): 拆 13 god class (跨期累计去重) + 8 god class 0 unit test → 9.5/10
-> - **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace 3 package → 9.7/10
-> - **Phase 5 v1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP → 9.9/10
+> **修复路线图 (R112+)**:
+> - **R112 hotfix 收尾** (本周, ~3.5-4d): E6+E7+E8+E9 export 补全 (1d) → E-01/E-02 (0.7d) → 裸 id + 对比度 (0.2d) → 3 warning 清零 (0.1h) → 上架文案/wrapper (1h) → AR-17 删死代码 + 接线 2 usecase (3d) → 预期 8.3/10
+> - **R113 视觉专项** (1-2wk): 8 feature ALS 化 (settings 4 组 + vent + assessment 优先) + 集中器自清 + golden 3 widget
+> - **R112/113 架构专项** (1-2mo): AR-16 守门先红后修 → AR-19 + ConsentPreferenceStore 数据编排下沉 → AR-20 god class 接力 (先测后拆)
+> - **外部闸门** (并行): 域名 ICP (7-20d) → keystore (1h) → 首次 release build 冒烟 + 16KB objdump (1d) → console 4 表单 → 设计师资产 → v1.0 (2027-Q1)
 >
 > **8 FeatureFlag 守门状态 (R110)**: 1 true / 7 false。详见 `lib/core/data/feature_flags.dart`。
 > - `ventAudioEnabled`=**true** (R104 已翻)
@@ -209,8 +210,8 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 
 ### 详细报告 (R95 实施过程)
 
-- [docs/audit/2026-08-06/r95-increment/99-r95-final-summary.md](docs/audit/2026-08-06/r95-increment/99-r95-final-summary.md) (25KB, **R95 实施后整体总结**)
-- [docs/audit/2026-08-06/r95-increment/00-r95-summary.md](docs/audit/2026-08-06/r95-increment/00-r95-summary.md) (44KB, R95 实施前综合审视)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/99-r95-final-summary.md](docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/99-r95-final-summary.md) (25KB, **R95 实施后整体总结**)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/00-r95-summary.md](docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/00-r95-summary.md) (44KB, R95 实施前综合审视)
 - [docs/VERSION_1.0_PLAN.md](docs/VERSION_1.0_PLAN.md) (53.4KB, R95+ 路线图 + v1.0 决策路径)
 - 8 sub-spec 报告: `docs/superpowers/sdd-logs/round95-*/sdd/`
 
@@ -258,7 +259,7 @@ dart scripts/check_all.dart   # 一次出 2 份报告：纯度 + 一致性
 ## 🧪 测试
 
 ```bash
-flutter test                          # 跑所有测试（v0.30 R95 实施后 2019 cases, +347 R95 new tests, 0 fail, 0 analyzer error）
+flutter test                          # 跑所有测试（R112 实测 2377 pass / 4 fail [iOS 资产占位] / 1 skip; R95 起 +413 新 test）
 flutter test --coverage               # 覆盖率（R95 sub-spec 6 配置阈值: domain ≥ 70% / data ≥ 50% / presentation ≥ 30%, 实测 73.8% / 47.0% / 57.4%）
 dart run build_runner watch --delete-conflicting-outputs  # 监听代码生成
 

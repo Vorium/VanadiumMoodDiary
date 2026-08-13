@@ -66,7 +66,7 @@
 ### 2.3 Reduced-motion + Reduced-transparency + 高对比
 - 系统开 reduce-motion → 所有 spring/duration 降为 0 / linear（已通过 `Motion.duration` 实现）
 - 系统开 reduce-transparency → translucent AppBar 变 solid
-  - **实现状态 (R110 2026-08-13 审计记录)**: Flutter 未暴露 reduce-transparency 媒体查询, `page_scaffold.dart:61-65` 目前恒 translucent (`&& false` 死分支, 错用 disableAnimations 代理)。R111 用 AccessibilityInfo/原生 bridge 做真代理, 或本行降级为 spec 文档化取舍。
+  - **实现状态 (R111 2026-08-13 审计记录)**: Flutter 未暴露 reduce-transparency 媒体查询。R32 已删 `&& false` 死分支, 现用 `MediaQuery.disableAnimationsOf` 作代理 (`page_scaffold.dart:59-63,86-88`, 注释文档化取舍: 开 reduce-motion 才走 solid) — 仍非真 iOS reduce-transparency 检测 (R111 AH-08, P2)。真代理需 AccessibilityInfo/原生 bridge, 或维持本行取舍。
 - 系统开高对比 → 所有容器加 1px 边框 + 强对比色
 
 ---
@@ -125,7 +125,7 @@
 | 旧 | 新 | 用途 |
 |---|---|---|
 | `fontSizeTitle 28` | `fontSizeTitle 28` | 不变（页面大标题） |
-| `fontSizeHeadline 24` | `fontSizeHeadline 22` | 略小，更 Apple |
+| `fontSizeHeadline 24` | `fontSizeHeadline 22` | 略小，更 Apple ⚠️ R112 审计: 未落地, 代码仍 24 (app_typography.dart:40), 待决策改值或删条目 |
 | `fontSizeButton 20` | `fontSizeButton 17` | **关键改：iOS button 标准 17pt** |
 | `fontSizeBody 18` | `fontSizeBody 17` | **关键改：iOS body 标准 17pt** |
 | `fontSizeLabel 16` | `fontSizeLabel 15` | iOS subheadline |
@@ -151,7 +151,7 @@
 - `lineHeightNormal 1.5` → `1.4`（Apple body 紧凑）
 - `lineHeightLoose 1.8` → `1.6`（Apple long-form 紧凑）
 - `lineHeightSnug 1.4` 不变
-- `lineHeightRelaxed 1.6` → `1.5`
+- `lineHeightRelaxed 1.6` → `1.5` ⚠️ R112 审计: 未落地, 代码仍 1.6 (app_typography.dart:78), 待决策
 
 #### 3.2.4 字符间距
 - 大字（≥ 22pt）`letterSpacing: -0.5`（Apple SF Pro Display 收紧）
@@ -284,7 +284,7 @@
 
 ### 4.6 `SectionHeader` — iOS section header
 - 改前：label 16 / w500 / textSecondary
-- 改后：fontSizeCaptionSm (11) / w500 / textHint / **letterSpacing 0.6 ALL CAPS**
+- 改后：fontSizeCaption (13) / w500 / textHint / **letterSpacing 0.6 ALL CAPS**（v0.32 R111 EM-02b: 11→13, 与 AppleListSection title 统一, Apple iOS insetGrouped 实际 13pt）
 - 新增 `AppleListSection` 集成
 
 ### 4.7 `HomeHeader` — Apple Health greeting
@@ -315,7 +315,7 @@
 
 ## 5. 页面级应用（11 feature）
 
-> **完成度 (R110 2026-08-13 审计实测): 4.5/11** — home (12 ALS + 4 AHT) / setup (5 ALS) / medication (17 ALS + 4 AHT) / trend (1 ALS) 已改; mood / mood_list / vent / assessment / contact / settings / daily_tracking / crisis_hotline **仍 0 AppleListSection 化** (Card+ListTile 旧方言), 见 docs/audit/2026-08-13-multi-lens/ EM-02/AH-04。
+> **完成度 (R112 修复战役后 2026-08-13 实测): 11/11 页面级全落地** — 全 lib 实测 `AppleListSection(` **65 处 runtime 调用 / 35 文件**; R112 round 8 (F1/F2 视觉专项) 把 R111 遗留的 8 个 feature (settings 4 组 / contact / crisis_hotline / reminders_hub / vent / assessment / mood_list / daily_tracking) 批量 Card→ALS 化, Card 清零; vent systemPurple FAB (AH-15) + medication 4 tile 语义化 (AH-16) 同批落地。§5.5-5.7 (mood 5 档圆形按钮 spring 选中 / vent pill 录音按钮 / assessment 题目页) 仍为后续打磨项。旧注 "17/20/55 ALS" 数字膨胀不可复现 (R112 AH-13), 统计口径 = 调用点非文件数。
 
 ### 5.1 Home（重点改）— Apple Health 仪表盘
 - 改前：6 区域堆叠
@@ -398,7 +398,7 @@
 
 ### 7.1 客观
 - `flutter analyze` 0 error
-- `flutter test` 全过（baseline 2103 cases + 5+ 新 widget test；R110 实测 ~2246 pass / 9 fail, R109 收尾后清零）
+- `flutter test` 全过（baseline 2103 cases + 5+ 新 widget test；R112 实测 **2377 pass / 4 fail [全 iOS 资产占位, 设计师外部依赖] / 1 skip**, 0 代码 fail; test 声明数 2312）
 - 21 守门员全绿
 - Token 覆盖率 ≥ 95%（grep 0 硬编码 `Color(0xFF...)` / `fontSize: X` / `borderRadius: BorderRadius.circular(X)` in `lib/presentation/`）
 

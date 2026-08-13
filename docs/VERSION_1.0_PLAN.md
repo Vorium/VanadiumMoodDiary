@@ -3,12 +3,29 @@
 **创建时间**: 2026-07-31 (R67)
 **升级时间**: 2026-08-11 (R32 6 视角综合审视 + R31 7 视角 Apple Health 风格重设计更新)
 **审查报告**:
-- [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (R32 6 视角综合, 52KB)
-- [docs/audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md](../audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md) (R31 7 视角 Apple Health 风格重设计, 14KB)
-- [docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md](../audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (R108 revisit 9 视角综合, 40KB)
+- [docs/audit/2026-08-13-r111-multi-lens/00-FINAL-CONSOLIDATION.md](audit/2026-08-13-r111-multi-lens/00-FINAL-CONSOLIDATION.md) (R111 9 视角综合, 2026-08-13)
+- [docs/audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md](audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md) (R110 10 视角综合, 2026-08-13)
+- [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (R32 6 视角综合, 52KB)
+- [docs/audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md](audit/2026-08-11-cleanup/00-FINAL-CONSOLIDATION.md) (R31 7 视角 Apple Health 风格重设计, 14KB)
+- [docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md](audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (R108 revisit 9 视角综合, 40KB)
 **目的**: 记录 v0.30.0+85 R95 阶段 1+2+3+4 实施后路线图 + v1.0 bump 决策
-**当前**: pubspec.yaml `version: 0.31.1+111` (R31 Apple Health 风格重设计 22 commit + R32 0.31.1 bug-batch 11 commit P0 修 [已 merge master] + R32 0.31.2 文档入库 2 commit + **R32 hotfix 4 round** [round 1+108: 11 P0 / round 2+109: 5 P0 i18n+守门员 / round 3+110: 3 P0 translucent AppBar+lock-in+Colors.white / round 4+111: 5 P1 TweenNumber+死代码+Haptics+守门员扩], 18 守门员 **18 绿 / 0 红 / 1 skip**, **0 analyzer error (估) / 23 warning / 71 info**)
-**上一版**: v0.27.0+64 (R67) → 0.30.0+85 (R95 实施后) → 0.31.0+107 (R31 Apple Health 重设) → 0.31.1+108 (R32 bug-batch 修了 11 P0) → 0.31.1+111 (R32 hotfix 4 round 全闭环)
+**当前**: pubspec.yaml `version: 0.32.0+142` (R111 hotfix round 8 按优先级修复 [2026-08-13], 2377 pass / 4 fail [iOS 资产占位] / 1 skip, `flutter analyze` 0 error / 0 warning, 22 守门员全绿 — E1/E2/E3 export v5 + 27 warning 清零 + EM/FS/SP P1 全闭环 + R111-03 补打卡 + GP-10 权限重授权)
+**上一版**: v0.27.0+64 (R67) → 0.30.0+85 (R95 实施后) → 0.31.0+107 (R31 Apple Health 重设) → 0.31.1+108 (R32 bug-batch 修了 11 P0) → 0.31.1+111 (R32 hotfix 4 round 全闭环) → 0.32.0+129 (R110 round 3) → 0.32.0+140 (R111)
+
+---
+
+## R111 9 视角综合审视 (2026-08-13, master 0.32.0+140)
+
+**状态**: 9 个 subagent 并行只读审计 (emilkowalski / superpowers / flutter-specification / AppStore / GooglePlay / Apple Health + 顶层架构 + 2 路底层逐行)。**R110 12 P0 代码闭环全实锤** (通知 ID 5M 带 / purity 0 violation / 紧急联系人 gate / 12 处 i18n / 死路由 + shell / badge visibility)。**加权综合 ≈ 7.3/10**, hotfix 修完代码级 P0/P1 后预估 8.3/10。
+
+**新 P0/P1 重点** (详细见 [00-FINAL-CONSOLIDATION.md](audit/2026-08-13-r111-multi-lens/00-FINAL-CONSOLIDATION.md)):
+- **E1/E2 (P1 bug, ≤1d+2h)**: export/import JSON schema v4 落后 DB schema 22 — medications 漏 5 字段 + moodEntries 漏 7 字段换机静默丢失; contact consent 4 字段不导出 → PIPL §13 留痕断裂 (R68 gate 绕过)
+- **SP-111-02 (P1, ≤1h)**: `flutter analyze` 27 warning 违反 0-warning 门禁 (10 处 test fake 死 @override + 11 处 lib unused)
+- **EM-21 (P1, 1-2d)**: en locale mood 标签显示中文 (ARB 无 moodLabelN key)
+- **架构 4 P0 跨期残留**: AR-17 scale_translations 三源 (810L l10n impl 实锤 0 caller 死代码, 2-3d 删 1,590L) / AR-18 usecase 6→14-16 0 进展 / AR-19 saveSetup+clearAllUserData 仍在 AppDatabase / AR-16 l10n 循环 (pub workspace 死锁)
+- **上架**: 硬阻塞 100% 外部依赖与 R110 一致 (域名 ICP 7-20d + 双平台资产 + keystore + console 3 表单 [新增 RECORD_AUDIO Audio 申报])
+
+**R111 hotfix 计划 (本周)**: E1+E2 export v5 升级 → 27 warning 清零 → EM-16/14/21 → FS-14 /contacts/new 死路由 → SP-111-04 量表 items 断言 → AS-16 守门员 + 上架元数据 → 死链/数字同步 (本文件已同步)。
 
 ---
 
@@ -37,7 +54,7 @@
 
 ## R32 综合审视 (2026-08-11, 6 视角从 0 重跑)
 
-**状态**: 6 视角 subagent 并行深度扫描 **当前未提交工作区** (R31+ master `a0f39c4` v0.31.2+107 + `fix/v0.31.1-bug-batch` 11 commit P0 修 [master 未合并] + working tree 95 文件未提交改动)。**新增/确认 199 项** (P0=33 / P1=64 / P2=37 / P3=10 + R32 新发现 16 项), 完整报告见 [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (52KB)。
+**状态**: 6 视角 subagent 并行深度扫描 **当前未提交工作区** (R31+ master `a0f39c4` v0.31.2+107 + `fix/v0.31.1-bug-batch` 11 commit P0 修 [master 未合并] + working tree 95 文件未提交改动)。**新增/确认 199 项** (P0=33 / P1=64 / P2=37 / P3=10 + R32 新发现 16 项), 完整报告见 [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (52KB)。
 
 ### R32 各视角评分总览 (R32 vs R31)
 
@@ -175,19 +192,19 @@ $ flutter analyze --no-pub
 
 ### R32 P1 R109 第 2-3 周修 (16 项 + 5 半成品, 影响中等)
 
-详见 [R32 整合报告 §5.2](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (PageScaffold / Apple Health 11 feature 改 / 18 守门员 check_16kb 真跑 / 主页 stagger 8→3 / mood carousel 48→72pt / lock-in test 阈值 250 / AGENTS.md 加 0.31.1+0.31.2 章节等)
+详见 [R32 整合报告 §5.2](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (PageScaffold / Apple Health 11 feature 改 / 18 守门员 check_16kb 真跑 / 主页 stagger 8→3 / mood carousel 48→72pt / lock-in test 阈值 250 / AGENTS.md 加 0.31.1+0.31.2 章节等)
 
 ### R32 P2 R109 god class 专项 (1-2 月, 11 个 god class 拆 + use case 层厚化)
 
-详见 [R32 整合报告 §5.3](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (11 god class ≥400L 0 test, 跟 R95 home_page_state 拆 3 controller 同款, 1-2 月工作量)
+详见 [R32 整合报告 §5.3](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (11 god class ≥400L 0 test, 跟 R95 home_page_state 拆 3 controller 同款, 1-2 月工作量)
 
 ### R32 P3 R110 feature-first 重组 (2-3 周, 不动架构, 仅物理目录重组 + pub workspace 拆 3 package)
 
-详见 [R32 整合报告 §5.4](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (5 token + 6 widget + 18 守门员 → 独立 pub package, 跨项目复用, 业务逻辑上提到 use case 层 8 → ~30 个)
+详见 [R32 整合报告 §5.4](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (5 token + 6 widget + 18 守门员 → 独立 pub package, 跨项目复用, 业务逻辑上提到 use case 层 8 → ~30 个)
 
 ### R32 P4 R1.0 长期 (2027-Q1, 1-2 月, 5-8 subagent 跨外部协作)
 
-详见 [R32 整合报告 §5.5](../audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (实物资产 100% + chroniccare.app 域名 ICP 7-20d + 5 厂商 push 1-2 月 + 阿里云 SMS 1-2 月 + EmailService 1-2 月 + PHQ-9 i18n 1-2 周 + HealthKit 2-3 周 + 鸿蒙 1-2 月 + IAP 1-2 周 + 法务 3 份 ¥45-90k + SF Symbol 字体 1-2d)
+详见 [R32 整合报告 §5.5](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (实物资产 100% + chroniccare.app 域名 ICP 7-20d + 5 厂商 push 1-2 月 + 阿里云 SMS 1-2 月 + EmailService 1-2 月 + PHQ-9 i18n 1-2 周 + HealthKit 2-3 周 + 鸿蒙 1-2 月 + IAP 1-2 周 + 法务 3 份 ¥45-90k + SF Symbol 字体 1-2d)
 
 ### R32 路线图 (跟 R31 路线图合并更新)
 
@@ -237,22 +254,22 @@ $ flutter analyze --no-pub
 - **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace
 - **Phase 5 R1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP
 
-**详细整合**: [`docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md`](../audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (40KB)
+**详细整合**: [`docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md`](audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (40KB)
 
-> **R95 整体总结报告** (R95 实施后): [docs/audit/2026-08-06/r95-increment/99-r95-final-summary.md](audit/2026-08-06/r95-increment/99-r95-final-summary.md) (25KB)
-> **R95+ 综合审视报告** (R95 实施前): [docs/audit/2026-08-06/r95-increment/00-r95-summary.md](audit/2026-08-06/r95-increment/00-r95-summary.md) (45KB)
-> **6 视角子报告**: [emil](audit/2026-08-06/r95-increment/01-emil.md) / [spen](audit/2026-08-06/r95-increment/02-spen.md) / [spzh](audit/2026-08-06/r95-increment/03-spzh.md) / [AppStore](audit/2026-08-06/r95-increment/04-appstore.md) / [GooglePlay](audit/2026-08-06/r95-increment/05-googleplay.md) / [flutter-spec](audit/2026-08-06/r95-increment/06-flutter-spec.md)
-> **R92 6 视角基线**: [docs/audit/2026-08-06/00-summary-report.md](audit/2026-08-06/00-summary-report.md) (35KB)
-> **R95 8 sub-spec 报告**: [docs/superpowers/sdd-logs/](../../superpowers/sdd-logs/) (round95-godpage-section / round95-silent-catch / round95-misc-p1 / round95-hardcoded-chinese / round95-godpage-split / round95-token / round95-test-coverage / round95-misc-p2 / round95-ux-p3)
-> **R100 6 视角审计** (2026-08-07): [00-summary](audit/2026-08-07/R100-6perspective-audit/00-summary.md) + [emil](audit/2026-08-07/R100-6perspective-audit/01-emilkowalski.md) / [spen](audit/2026-08-07/R100-6perspective-audit/02-superpowers-en.md) / [spzh](audit/2026-08-07/R100-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit/2026-08-07/R100-6perspective-audit/04-appstore.md) / [GooglePlay](audit/2026-08-07/R100-6perspective-audit/05-googleplay.md) / [flutter-spec](audit/2026-08-07/R100-6perspective-audit/06-flutter-spec.md)
-> **R101 6 视角深度审计** (2026-08-07): [00-summary](audit/2026-08-07/R101-6perspective-audit/00-summary.md) + [emil](audit/2026-08-07/R101-6perspective-audit/01-emilkowalski.md) / [spen](audit/2026-08-07/R101-6perspective-audit/02-superpowers-en.md) / [spzh](audit/2026-08-07/R101-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit/2026-08-07/R101-6perspective-audit/04-appstore.md) / [GooglePlay](audit/2026-08-07/R101-6perspective-audit/05-googleplay.md) / [flutter-spec](audit/2026-08-07/R101-6perspective-audit/06-flutter-spec.md)
-> **R105 7 视角审计** (2026-08-09, 最新): [00-summary](audit/2026-08-09/review-round-105/00-summary.md) + [emil](audit/2026-08-09/review-round-105/01-emilkowalski.md) / [spen](audit/2026-08-09/review-round-105/02-superpowers-en.md) / [spzh](audit/2026-08-09/review-round-105/03-superpowers-zh.md) / [flutter-spec](audit/2026-08-09/review-round-105/04-flutter-spec.md) / [AppStore](audit/2026-08-09/review-round-105/05-appstore.md) / [GPlay](audit/2026-08-09/review-round-105/06-googleplay.md) / [AppleHealth](audit/2026-08-09/review-round-105/07-apple-health.md)
+> **R95 整体总结报告** (R95 实施后): [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/99-r95-final-summary.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/99-r95-final-summary.md) (25KB)
+> **R95+ 综合审视报告** (R95 实施前): [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/00-r95-summary.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/00-r95-summary.md) (45KB)
+> **6 视角子报告**: [emil](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/01-emil.md) / [spen](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/02-spen.md) / [spzh](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/03-spzh.md) / [AppStore](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/04-appstore.md) / [GooglePlay](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/05-googleplay.md) / [flutter-spec](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/06-flutter-spec.md)
+> **R92 6 视角基线**: [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/00-summary-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/00-summary-report.md) (35KB)
+> **R95 8 sub-spec 报告**: [docs/superpowers/sdd-logs/](superpowers/sdd-logs/) (round95-godpage-section / round95-silent-catch / round95-misc-p1 / round95-hardcoded-chinese / round95-godpage-split / round95-token / round95-test-coverage / round95-misc-p2 / round95-ux-p3)
+> **R100 6 视角审计** (2026-08-07): [00-summary](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/00-summary.md) + [emil](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/01-emilkowalski.md) / [spen](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/02-superpowers-en.md) / [spzh](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/04-appstore.md) / [GooglePlay](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/05-googleplay.md) / [flutter-spec](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/06-flutter-spec.md)
+> **R101 6 视角深度审计** (2026-08-07): [00-summary](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/00-summary.md) + [emil](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/01-emilkowalski.md) / [spen](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/02-superpowers-en.md) / [spzh](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/03-superpowers-zh.md) / [AppStore](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/04-appstore.md) / [GooglePlay](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/05-googleplay.md) / [flutter-spec](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/06-flutter-spec.md)
+> **R105 7 视角审计** (2026-08-09, 最新): [00-summary](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/00-summary.md) + [emil](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/01-emilkowalski.md) / [spen](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/02-superpowers-en.md) / [spzh](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/03-superpowers-zh.md) / [flutter-spec](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/04-flutter-spec.md) / [AppStore](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/05-appstore.md) / [GPlay](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/06-googleplay.md) / [AppleHealth](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/07-apple-health.md)
 
 ---
 
 ## R104 审计更新 (2026-08-09, 7 视角综合审查)
 
-**状态**: 7 个 agent 并行深度扫描全部 395 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test。**新增/确认 72 项** (P0=12 / P1=20 / P2=20 / P3=10 + Apple Health 10 项), 完整报告见 [docs/audit/2026-08-09/7-perspective-audit-report.md](audit/2026-08-09/7-perspective-audit-report.md)。
+**状态**: 7 个 agent 并行深度扫描全部 395 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test。**新增/确认 72 项** (P0=12 / P1=20 / P2=20 / P3=10 + Apple Health 10 项), 完整报告见 [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-09/7-perspective-audit-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/7-perspective-audit-report.md)。
 
 ### R104 各视角评分总览
 
@@ -457,7 +474,7 @@ $ flutter analyze --no-pub
 
 ## R105 审计更新 (2026-08-09, 7 视角综合审查)
 
-**状态**: 7 个 agent 并行深度扫描**当前未提交工作区** (R101+ medication 重构 / mood 详情与趋势 / daily_tracking 自定义 / 上架物料批次)。**新增/确认 56 项** (P0=8 / P1=16 / P2=22 / P3=10), 完整报告见 [docs/audit/2026-08-09/review-round-105/00-summary.md](audit/2026-08-09/review-round-105/00-summary.md)。
+**状态**: 7 个 agent 并行深度扫描**当前未提交工作区** (R101+ medication 重构 / mood 详情与趋势 / daily_tracking 自定义 / 上架物料批次)。**新增/确认 56 项** (P0=8 / P1=16 / P2=22 / P3=10), 完整报告见 [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/00-summary.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/00-summary.md)。
 
 **基线**: `flutter analyze` 0 issue ✅ / `check_all.dart` 2/2 ✅ / `check_cross_feature.py` 131 文件 0 violation ✅ / **`check_orphan_arb_keys` FAIL (42 orphan) 🔴** / **`check_zh_hant_consistency` FAIL (16 处) 🔴** / schemaVersion 21。
 
@@ -566,7 +583,7 @@ $ flutter analyze --no-pub
 
 ## R103 审计更新 (2026-08-08, 7 视角综合审查)
 
-**状态**: 7 个 agent 并行深度扫描全部 389 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test。**新增/确认 75 项** (P0=15 / P1=20 / P2=25 / P3=15), 完整报告见 [docs/audit/2026-08-08/R103-7perspective-audit/00-summary.md](audit/2026-08-08/R103-7perspective-audit/00-summary.md)。
+**状态**: 7 个 agent 并行深度扫描全部 389 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test。**新增/确认 75 项** (P0=15 / P1=20 / P2=25 / P3=15), 完整报告见 [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-08/R103-7perspective-audit/00-summary.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-08/R103-7perspective-audit/00-summary.md)。
 
 ### R103 新增关键发现 (vs R102)
 
@@ -650,7 +667,7 @@ $ flutter analyze --no-pub
 
 ## R101 审计更新 (2026-08-07, 6 视角深度遍历)
 
-**状态**: 6 个 agent 并行深度扫描全部 lib/ + test/ + docs/ + android/ + ios/ 文件。**新增/确认 65 项待办** (P0=12 / P1=15 / P2=20 / P3=18; 架构级 11 项 / 底层 54 项), 完整排序表见 [R101 00-summary §三](audit/2026-08-07/R101-6perspective-audit/00-summary.md)。
+**状态**: 6 个 agent 并行深度扫描全部 lib/ + test/ + docs/ + android/ + ios/ 文件。**新增/确认 65 项待办** (P0=12 / P1=15 / P2=20 / P3=18; 架构级 11 项 / 底层 54 项), 完整排序表见 [R101 00-summary §三](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R101-6perspective-audit/00-summary.md)。
 
 > **外部链接确认**: 代码层 ✅ 全部隐藏 (唯一 url_launcher = tel: 危机热线); 上架物料层 ❌ 未就绪 (privacy_url/support_url 指向未注册 chroniccare.app)。
 
@@ -704,7 +721,7 @@ $ flutter analyze --no-pub
 
 ## R100 审计更新 (2026-08-07, 6 视角实测)
 
-**状态**: R99 报的 BUG-1~5 全部复核闭环; 本轮 17 守门员 + analyze 全绿 (2019 tests)。**新增/确认 27 项待办** (P0=8 / P1=7 / P2=12; 架构级 8 项 / 底层 19 项), 完整排序表见 [R100 00-summary §三](audit/2026-08-07/R100-6perspective-audit/00-summary.md)。
+**状态**: R99 报的 BUG-1~5 全部复核闭环; 本轮 17 守门员 + analyze 全绿 (2019 tests)。**新增/确认 27 项待办** (P0=8 / P1=7 / P2=12; 架构级 8 项 / 底层 19 项), 完整排序表见 [R100 00-summary §三](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/00-summary.md)。
 
 > **修复进度 (2026-08-07 round 100)**: P0 5 项可代码化修复 + P1 7 项全部闭环 (round 100 commit); 剩 P0 外部依赖 3 项 (域名/截图/keystore) + P2 12 项留上架后。验证: 0 analyzer error + 17 守门员全绿 + 1997 tests pass, 详见 CHANGELOG [0.30.0] R100 条目。
 
@@ -1165,8 +1182,8 @@ $ flutter analyze --no-pub
 | `docs/CHANGELOG.md` | 每 task 完成后增 entry | 每 task | ✅ **2026-08-07 R95 8 sub-spec entry 全加** (sub-spec 1+2+3+4+5+6+7+8) |
 | `AGENTS.md` | 18 守门员 (含 R95 新加 2) + 8 god widget 状态表 | R95 阶段 1 后 | ⏳ **待更新** (R95 跑完 8 god widget 状态变化未同步到 AGENTS.md) |
 | `README.md` | R95 红 banner (业务真接进度) | 每月 | ⏳ **待更新** (R95 业务真接暂停状态未同步到 README 红 banner) |
-| `docs/audit/2026-08-06/r95-increment/` | 6 视角子报告 + 99-r95-final-summary 总结 | 每阶段后 | ✅ **2026-08-07 已写** (7 份 md, 86.8KB) |
-| `docs/decisions/v0.30_round95_design_decisions.md` (新建) | R95 关键设计决策 (token 化 / god page 拆 / 业务真接) | 关键决策点 | ⏳ **待新建** (R95 8 sub-spec 报告已分散在 sdd-logs/, 可选汇总) |
+| `docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/` | 6 视角子报告 + 99-r95-final-summary 总结 | 每阶段后 | ✅ **2026-08-07 已写** (7 份 md, 86.8KB) |
+| `docs/decisions/v0.30_r95_sub_spec8_ux_decisions.md` (已建) | R95 关键设计决策 (token 化 / god page 拆 / 业务真接) | 关键决策点 | ✅ **已建** (sub-spec 8 UX 决策; 8 sub-spec 报告分散在 sdd-logs/, 可选再汇总) |
 | `docs/VERSION_1.0_PLAN.md` R95 task 状态表 | 60 task 状态实时更新 | 每周 | ✅ **本文件已标 32/60 ✅ + 17/60 ⏸️ + 10/60 R96+** |
 
 ### 7.2 R95 决策 ledger (`.superpowers/sdd-logs/round95-*.md`)
@@ -1215,38 +1232,38 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 ### 8.1 R95 综合报告 (R95 阶段 1+2+3+4 实施后, 2026-08-07)
 
-- [docs/audit/2026-08-06/r95-increment/99-r95-final-summary.md](audit/2026-08-06/r95-increment/99-r95-final-summary.md) (25KB, **R95 实施后整体总结**, 2026-08-07 Mavis 写)
-- [docs/audit/2026-08-06/r95-increment/00-r95-summary.md](audit/2026-08-06/r95-increment/00-r95-summary.md) (44KB, 主综合报告 + R95+ 路线图, 2026-08-06 Mavis 写)
-- [docs/audit/2026-08-06/r95-increment/01-emil.md](audit/2026-08-06/r95-increment/01-emil.md) (5.7KB, 设计工程)
-- [docs/audit/2026-08-06/r95-increment/02-spen.md](audit/2026-08-06/r95-increment/02-spen.md) (6.5KB, 英文软件工程)
-- [docs/audit/2026-08-06/r95-increment/03-spzh.md](audit/2026-08-06/r95-increment/03-spzh.md) (7.2KB, 国内合规 + 中文)
-- [docs/audit/2026-08-06/r95-increment/04-appstore.md](audit/2026-08-06/r95-increment/04-appstore.md) (6.3KB, iOS 上架)
-- [docs/audit/2026-08-06/r95-increment/05-googleplay.md](audit/2026-08-06/r95-increment/05-googleplay.md) (6.0KB, Android 上架)
-- [docs/audit/2026-08-06/r95-increment/06-flutter-spec.md](audit/2026-08-06/r95-increment/06-flutter-spec.md) (10.8KB, v3.1 规范)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/99-r95-final-summary.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/99-r95-final-summary.md) (25KB, **R95 实施后整体总结**, 2026-08-07 Mavis 写)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/00-r95-summary.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/00-r95-summary.md) (44KB, 主综合报告 + R95+ 路线图, 2026-08-06 Mavis 写)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/01-emil.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/01-emil.md) (5.7KB, 设计工程)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/02-spen.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/02-spen.md) (6.5KB, 英文软件工程)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/03-spzh.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/03-spzh.md) (7.2KB, 国内合规 + 中文)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/04-appstore.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/04-appstore.md) (6.3KB, iOS 上架)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/05-googleplay.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/05-googleplay.md) (6.0KB, Android 上架)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/06-flutter-spec.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/r95-increment/06-flutter-spec.md) (10.8KB, v3.1 规范)
 
 ### 8.2 R95 8 sub-spec 实施报告 (2026-08-06 ~ 2026-08-07)
 
-- [docs/superpowers/sdd-logs/round95-godpage-section/sdd/task-1-report.md](../../superpowers/sdd-logs/round95-godpage-section/sdd/task-1-report.md) (sub-spec 1, 9 commit, 拆 data_mgmt_section 606→44)
-- [docs/superpowers/sdd-logs/round95-silent-catch/sdd/task-8-report.md](../../superpowers/sdd-logs/round95-silent-catch/sdd/task-8-report.md) (sub-spec 2 task 8, 1 commit, catch 集中器化 + 16 lock-in tests)
-- [docs/superpowers/sdd-logs/round95-misc-p1/sdd/task-10-25-26-report.md](../../superpowers/sdd-logs/round95-misc-p1/sdd/task-10-25-26-report.md) (sub-spec 2 task 10/25/26, 1 commit, 半成品 + dispose + badge sync)
-- [docs/superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-audit-report.md](../../superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-audit-report.md) (sub-spec 2 task 9 audit, 1 commit, 30+ 硬编码中文 audit 验证)
-- [docs/superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-p0-report.md](../../superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-p0-report.md) (sub-spec 3, 1 commit, 4599 字符 → ARB + 37 lock-in tests)
-- [docs/superpowers/sdd-logs/round95-godpage-split/sdd/sub-spec-4-report.md](../../superpowers/sdd-logs/round95-godpage-split/sdd/sub-spec-4-report.md) (sub-spec 4, 5 commit, 拆 4 god page 2943→661 行)
-- [docs/superpowers/sdd-logs/round95-token/sdd/task-3-4-audit-report.md](../../superpowers/sdd-logs/round95-token/sdd/task-3-4-audit-report.md) (sub-spec 5 audit, 1 commit, token 残留 audit 验证)
-- [docs/superpowers/sdd-logs/round95-token/sdd/task-3-4-report.md](../../superpowers/sdd-logs/round95-token/sdd/task-3-4-report.md) (sub-spec 5, 5 commit, 102+ 处 token 化 + 20 lock-in tests)
-- [docs/superpowers/sdd-logs/round95-test-coverage/sdd/sub-spec-6-report.md](../../superpowers/sdd-logs/round95-test-coverage/sdd/sub-spec-6-report.md) (sub-spec 6, 6 commit, pre-existing fail + god widget + 集成测试 + coverage 阈值)
-- [docs/superpowers/sdd-logs/round95-misc-p2/sdd/sub-spec-7-report.md](../../superpowers/sdd-logs/round95-misc-p2/sdd/sub-spec-7-report.md) (sub-spec 7, 13 commit, task 30/31/32/53/54/55 + R96 留待)
-- [docs/superpowers/sdd-logs/round95-ux-p3/sdd/sub-spec-8-report.md](../../superpowers/sdd-logs/round95-ux-p3/sdd/sub-spec-8-report.md) (sub-spec 8, 12 commit, task 17/18/19/45-67 P3 UX)
+- [docs/superpowers/sdd-logs/round95-godpage-section/sdd/task-1-report.md](superpowers/sdd-logs/round95-godpage-section/sdd/task-1-report.md) (sub-spec 1, 9 commit, 拆 data_mgmt_section 606→44)
+- [docs/superpowers/sdd-logs/round95-silent-catch/sdd/task-8-report.md](superpowers/sdd-logs/round95-silent-catch/sdd/task-8-report.md) (sub-spec 2 task 8, 1 commit, catch 集中器化 + 16 lock-in tests)
+- [docs/superpowers/sdd-logs/round95-misc-p1/sdd/task-10-25-26-report.md](superpowers/sdd-logs/round95-misc-p1/sdd/task-10-25-26-report.md) (sub-spec 2 task 10/25/26, 1 commit, 半成品 + dispose + badge sync)
+- [docs/superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-audit-report.md](superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-audit-report.md) (sub-spec 2 task 9 audit, 1 commit, 30+ 硬编码中文 audit 验证)
+- [docs/superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-p0-report.md](superpowers/sdd-logs/round95-hardcoded-chinese/sdd/task-9-p0-report.md) (sub-spec 3, 1 commit, 4599 字符 → ARB + 37 lock-in tests)
+- [docs/superpowers/sdd-logs/round95-godpage-split/sdd/sub-spec-4-report.md](superpowers/sdd-logs/round95-godpage-split/sdd/sub-spec-4-report.md) (sub-spec 4, 5 commit, 拆 4 god page 2943→661 行)
+- [docs/superpowers/sdd-logs/round95-token/sdd/task-3-4-audit-report.md](superpowers/sdd-logs/round95-token/sdd/task-3-4-audit-report.md) (sub-spec 5 audit, 1 commit, token 残留 audit 验证)
+- [docs/superpowers/sdd-logs/round95-token/sdd/task-3-4-report.md](superpowers/sdd-logs/round95-token/sdd/task-3-4-report.md) (sub-spec 5, 5 commit, 102+ 处 token 化 + 20 lock-in tests)
+- [docs/superpowers/sdd-logs/round95-test-coverage/sdd/sub-spec-6-report.md](superpowers/sdd-logs/round95-test-coverage/sdd/sub-spec-6-report.md) (sub-spec 6, 6 commit, pre-existing fail + god widget + 集成测试 + coverage 阈值)
+- [docs/superpowers/sdd-logs/round95-misc-p2/sdd/sub-spec-7-report.md](superpowers/sdd-logs/round95-misc-p2/sdd/sub-spec-7-report.md) (sub-spec 7, 13 commit, task 30/31/32/53/54/55 + R96 留待)
+- [docs/superpowers/sdd-logs/round95-ux-p3/sdd/sub-spec-8-report.md](superpowers/sdd-logs/round95-ux-p3/sdd/sub-spec-8-report.md) (sub-spec 8, 12 commit, task 17/18/19/45-67 P3 UX)
 
 ### 8.3 R92 6 视角基线报告 (R93 修复依据, 2026-08-06)
 
-- [docs/audit/2026-08-06/00-summary-report.md](audit/2026-08-06/00-summary-report.md) (35KB, 综合)
-- [docs/audit/2026-08-06/01-emilkowalski-design-report.md](audit/2026-08-06/01-emilkowalski-design-report.md) (45.9KB, emil)
-- [docs/audit/2026-08-06/02-superpowers-en-report.md](audit/2026-08-06/02-superpowers-en-report.md) (76.7KB, spen)
-- [docs/audit/2026-08-06/03-superpowers-zh-report.md](audit/2026-08-06/03-superpowers-zh-report.md) (73.9KB, spzh)
-- [docs/audit/2026-08-06/04-appstore-ios-report.md](audit/2026-08-06/04-appstore-ios-report.md) (61.4KB, AppStore)
-- [docs/audit/2026-08-06/05-googleplay-android-report.md](audit/2026-08-06/05-googleplay-android-report.md) (55.1KB, GooglePlay)
-- [docs/audit/2026-08-06/06-flutter-spec-report.md](audit/2026-08-06/06-flutter-spec-report.md) (72.8KB, flutter-spec)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/00-summary-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/00-summary-report.md) (35KB, 综合)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/01-emilkowalski-design-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/01-emilkowalski-design-report.md) (45.9KB, emil)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/02-superpowers-en-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/02-superpowers-en-report.md) (76.7KB, spen)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/03-superpowers-zh-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/03-superpowers-zh-report.md) (73.9KB, spzh)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/04-appstore-ios-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/04-appstore-ios-report.md) (61.4KB, AppStore)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/05-googleplay-android-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/05-googleplay-android-report.md) (55.1KB, GooglePlay)
+- [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-06/06-flutter-spec-report.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-06/06-flutter-spec-report.md) (72.8KB, flutter-spec)
 
 ### 8.4 R67 + R95 决策保留
 
@@ -1300,33 +1317,33 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 | R97 ID | 问题 | 类别 | 难度 | 视角 | 对应 R95 task | 文件 |
 |---|---|---|---|---|---|---|
-| **R97-P0-1** | check_safety.dart 跨层 import data/services/safety_detector (R85 重构漏改 import + 旧文件未删, 4 层架构硬约束违规) | 架构 | low | spen | 新发现 | [check_safety.dart#L16](file:///d:/Batch/chroniccare/lib/domain/usecases/check_safety.dart) |
-| **R97-P0-2** | 主页心理危机热线入口被 FeatureFlag 完全隐藏 (emergencyContactEnabled=false 守卫, Apple 1.4.1 直接拒) | 底层 | low | AppStore | 新发现 | [home_fab_toolbar.dart#L97](file:///d:/Batch/chroniccare/lib/presentation/pages/home/widgets/home_fab_toolbar.dart) |
-| **R97-P0-3** | 域名 chroniccare.app 未注册 + 6 个 privacy/support URL 404 (Apple 5.1.1 + Google Play Data Safety form 双必拒) | 底层 | medium | spzh/AppStore/GooglePlay | R95 task 40 | [fastlane/metadata/ios/zh-Hans/privacy_url.txt](file:///d:/Batch/chroniccare/fastlane/metadata/ios/zh-Hans/privacy_url.txt) |
-| **R97-P0-4** | 3 份法律文档"草稿未经律师过审" (PIPL §28/§29 + Apple 5.1.5 强制, ¥45-90k) | 架构 | high | spzh/AppStore/GooglePlay | R95 task 20 | [privacy_policy.md#L212](file:///d:/Batch/chroniccare/assets/legal/privacy_policy.md) |
-| **R97-P0-5** | Release 签名 fallback debug keystore (signingConfig 硬绑 debug, Play Console 直接拒) | 底层 | low | emil/GooglePlay | R95 task 37 | [build.gradle.kts#L82](file:///d:/Batch/chroniccare/android/app/build.gradle.kts) |
-| **R97-P0-6** | USE_EXACT_ALARM 权限违反 Google Play 限制 (2024-07 起限制为 alarm clock/calendar 类, 精神心理服药提醒不在允许范围) | 底层 | low | GooglePlay | R95 task 38 | [AndroidManifest.xml#L33](file:///d:/Batch/chroniccare/android/app/src/main/AndroidManifest.xml) |
-| **R97-P0-7** | SMS / Email 真接未做 (AliyunSmsProvider.send() throw StateError, EmailService 未实现, 失联通知业务 100% 不可用) | 架构 | high | spzh/spen | R95 task 14/15 | [sms_service.dart#L195](file:///d:/Batch/chroniccare/lib/core/data/services/sms_service.dart) |
-| **R97-P0-8** | NMPA 医疗器械备案未明确 (PHQ-9/GAD-7 心理评估可能触发二类医疗器械备案, 未做法务咨询) | 架构 | high | spzh | R95 task 23 | [README.md#L265](file:///d:/Batch/chroniccare/README.md) |
+| **R97-P0-1** | check_safety.dart 跨层 import data/services/safety_detector (R85 重构漏改 import + 旧文件未删, 4 层架构硬约束违规) | 架构 | low | spen | 新发现 | [check_safety.dart#L16](../lib/domain/usecases/check_safety.dart) |
+| **R97-P0-2** | 主页心理危机热线入口被 FeatureFlag 完全隐藏 (emergencyContactEnabled=false 守卫, Apple 1.4.1 直接拒) | 底层 | low | AppStore | 新发现 | [home_fab_toolbar.dart#L97](../lib/presentation/pages/home/widgets/home_fab_toolbar.dart) |
+| **R97-P0-3** | 域名 chroniccare.app 未注册 + 6 个 privacy/support URL 404 (Apple 5.1.1 + Google Play Data Safety form 双必拒) | 底层 | medium | spzh/AppStore/GooglePlay | R95 task 40 | [fastlane/metadata/ios/zh-Hans/privacy_url.txt](../fastlane/metadata/ios/zh-Hans/privacy_url.txt) |
+| **R97-P0-4** | 3 份法律文档"草稿未经律师过审" (PIPL §28/§29 + Apple 5.1.5 强制, ¥45-90k) | 架构 | high | spzh/AppStore/GooglePlay | R95 task 20 | [privacy_policy.md#L212](../assets/legal/privacy_policy.md) |
+| **R97-P0-5** | Release 签名 fallback debug keystore (signingConfig 硬绑 debug, Play Console 直接拒) | 底层 | low | emil/GooglePlay | R95 task 37 | [build.gradle.kts#L82](../android/app/build.gradle.kts) |
+| **R97-P0-6** | USE_EXACT_ALARM 权限违反 Google Play 限制 (2024-07 起限制为 alarm clock/calendar 类, 精神心理服药提醒不在允许范围) | 底层 | low | GooglePlay | R95 task 38 | [AndroidManifest.xml#L33](../android/app/src/main/AndroidManifest.xml) |
+| **R97-P0-7** | SMS / Email 真接未做 (AliyunSmsProvider.send() throw StateError, EmailService 未实现, 失联通知业务 100% 不可用) | 架构 | high | spzh/spen | R95 task 14/15 | [sms_service.dart#L195](../lib/core/data/services/sms_service.dart) |
+| **R97-P0-8** | NMPA 医疗器械备案未明确 (PHQ-9/GAD-7 心理评估可能触发二类医疗器械备案, 未做法务咨询) | 架构 | high | spzh | R95 task 23 | [README.md#L265](../README.md) |
 
 ### 9.3 R97 P1 重要清单 (14 项, 上架前应修)
 
 | R97 ID | 问题 | 类别 | 难度 | 视角 | 文件 |
 |---|---|---|---|---|---|
-| **R97-P1-1** | daily_tracking 6 provider 暴露 Impl 类型 (违反 AGENTS "Provider<XRepository> 暴露接口"约束) | 架构 | medium | spen | [daily_tracking_providers.dart#L39](file:///d:/Batch/chroniccare/lib/presentation/providers/daily_tracking_providers.dart) |
-| **R97-P1-2** | TodayMedSchedule.build() 调 DateTime.now() (跨 midnight stale + rebuild 浪费) | 底层 | low | spen | [today_med_schedule.dart#L44](file:///d:/Batch/chroniccare/lib/presentation/pages/medication/today_med_schedule.dart) |
-| **R97-P1-3** | VentRepositoryImpl.delete() TOCTOU 事务范围错 (select 在事务外, rename 场景可能删错文件) | 底层 | medium | spen | [vent_repository_impl.dart#L105](file:///d:/Batch/chroniccare/lib/core/data/repositories/vent/vent_repository_impl.dart) |
-| **R97-P1-4** | vent 树洞 UGC 完全没有举报机制 (Apple 1.2.1 直接拒, 无举报按钮 + 无 UGC 政策声明) | 底层 | medium | AppStore | [vent_detail_page.dart](file:///d:/Batch/chroniccare/lib/presentation/pages/vent/vent_detail_page.dart) |
-| **R97-P1-5** | IAP 入口完全隐藏但 user_agreement 声明"售价 8 元" (描述与实际不符, Apple 2.1/3.1.1) | 底层 | medium | AppStore | [feature_flags.dart#L51](file:///d:/Batch/chroniccare/lib/core/data/feature_flags.dart) |
-| **R97-P1-6** | 首次启动立即请求通知权限 (main.dart bootstrap 阶段调 init() 内立即 requestPermissions, 违反"先解释后请求") | 底层 | medium | AppStore/GooglePlay | [main.dart#L161](file:///d:/Batch/chroniccare/lib/main.dart) |
-| **R97-P1-7** | setup_legal_dialog 危机热线展示不完整 (注释写 5 条实际只渲染 4 条, 漏 crisisHotlineCnBeijing, 与 user_agreement §5 表格不同步) | 底层 | low | spzh | [setup_legal_dialog.dart#L79](file:///d:/Batch/chroniccare/lib/presentation/pages/setup/setup_legal_dialog.dart) |
-| **R97-P1-8** | INTERNET 权限当前为非必需 (业务全部 flag=false 暂停, 0 网络调用但申请 INTERNET) | 底层 | low | GooglePlay | [AndroidManifest.xml#L30](file:///d:/Batch/chroniccare/android/app/src/main/AndroidManifest.xml) |
-| **R97-P1-9** | RECORD_AUDIO 权限与 ventAudioEnabled=false 不匹配 (业务暂停期应删除 microphone 权限) | 底层 | low | GooglePlay | [AndroidManifest.xml#L37](file:///d:/Batch/chroniccare/android/app/src/main/AndroidManifest.xml) |
-| **R97-P1-10** | BootReceiver 半成品 (R64+ TODO, manifest 声明 RECEIVE_BOOT_COMPLETED 但 FeatureFlag 禁用, Android 14+ 后台启动限制) | 底层 | medium | GooglePlay | [BootReceiver.kt#L29](file:///d:/Batch/chroniccare/android/app/src/main/kotlin/com/chroniccare/chroniccare/BootReceiver.kt) |
-| **R97-P1-11** | 危机热线只能复制号码, 无一键拨打 (Health/Sensitive Apps policy 推荐 tel: intent) | 底层 | low | GooglePlay | [crisis_hotline_page.dart#L182](file:///d:/Batch/chroniccare/lib/presentation/pages/crisis_hotline_page.dart) |
-| **R97-P1-12** | analysis_options.yaml lint 规则强度偏低 (仅 4 条显式规则, 远低于 Effective Dart 推荐) | 架构 | low | flutter-spec | [analysis_options.yaml#L17](file:///d:/Batch/chroniccare/analysis_options.yaml) |
-| **R97-P1-13** | unnecessary_late + dead_code + deprecated_member_use 3 处 warning (main.dart late final 误用 + export_dialog dead code + RadioListTile 弃用 API) | 底层 | low | flutter-spec | [main.dart#L45](file:///d:/Batch/chroniccare/lib/main.dart) |
-| **R97-P1-14** | PIPL §13 紧急联系人"单独同意"软实施 (用户担保已告知, 非联系人独立确认, v1.0 真接 SMS 时必须升级) | 架构 | high | spzh/AppStore | [setup_legal_dialog.dart#L24](file:///d:/Batch/chroniccare/lib/presentation/pages/setup/setup_legal_dialog.dart) |
+| **R97-P1-1** | daily_tracking 6 provider 暴露 Impl 类型 (违反 AGENTS "Provider<XRepository> 暴露接口"约束) | 架构 | medium | spen | [daily_tracking_providers.dart#L39](../lib/presentation/providers/daily_tracking_providers.dart) |
+| **R97-P1-2** | TodayMedSchedule.build() 调 DateTime.now() (跨 midnight stale + rebuild 浪费) | 底层 | low | spen | [today_med_schedule.dart#L44](../lib/presentation/pages/medication/today_med_schedule.dart) |
+| **R97-P1-3** | VentRepositoryImpl.delete() TOCTOU 事务范围错 (select 在事务外, rename 场景可能删错文件) | 底层 | medium | spen | [vent_repository_impl.dart#L105](../lib/core/data/repositories/vent/vent_repository_impl.dart) |
+| **R97-P1-4** | vent 树洞 UGC 完全没有举报机制 (Apple 1.2.1 直接拒, 无举报按钮 + 无 UGC 政策声明) | 底层 | medium | AppStore | [vent_detail_page.dart](../lib/presentation/pages/vent/vent_detail_page.dart) |
+| **R97-P1-5** | IAP 入口完全隐藏但 user_agreement 声明"售价 8 元" (描述与实际不符, Apple 2.1/3.1.1) | 底层 | medium | AppStore | [feature_flags.dart#L51](../lib/core/data/feature_flags.dart) |
+| **R97-P1-6** | 首次启动立即请求通知权限 (main.dart bootstrap 阶段调 init() 内立即 requestPermissions, 违反"先解释后请求") | 底层 | medium | AppStore/GooglePlay | [main.dart#L161](../lib/main.dart) |
+| **R97-P1-7** | setup_legal_dialog 危机热线展示不完整 (注释写 5 条实际只渲染 4 条, 漏 crisisHotlineCnBeijing, 与 user_agreement §5 表格不同步) | 底层 | low | spzh | [setup_legal_dialog.dart#L79](../lib/presentation/pages/setup/setup_legal_dialog.dart) |
+| **R97-P1-8** | INTERNET 权限当前为非必需 (业务全部 flag=false 暂停, 0 网络调用但申请 INTERNET) | 底层 | low | GooglePlay | [AndroidManifest.xml#L30](../android/app/src/main/AndroidManifest.xml) |
+| **R97-P1-9** | RECORD_AUDIO 权限与 ventAudioEnabled=false 不匹配 (业务暂停期应删除 microphone 权限) | 底层 | low | GooglePlay | [AndroidManifest.xml#L37](../android/app/src/main/AndroidManifest.xml) |
+| **R97-P1-10** | BootReceiver 半成品 (R64+ TODO, manifest 声明 RECEIVE_BOOT_COMPLETED 但 FeatureFlag 禁用, Android 14+ 后台启动限制) | 底层 | medium | GooglePlay | [BootReceiver.kt#L29](../android/app/src/main/kotlin/com/chroniccare/chroniccare/BootReceiver.kt) |
+| **R97-P1-11** | 危机热线只能复制号码, 无一键拨打 (Health/Sensitive Apps policy 推荐 tel: intent) | 底层 | low | GooglePlay | [crisis_hotline_page.dart#L182](../lib/presentation/pages/crisis_hotline_page.dart) |
+| **R97-P1-12** | analysis_options.yaml lint 规则强度偏低 (仅 4 条显式规则, 远低于 Effective Dart 推荐) | 架构 | low | flutter-spec | [analysis_options.yaml#L17](../analysis_options.yaml) |
+| **R97-P1-13** | unnecessary_late + dead_code + deprecated_member_use 3 处 warning (main.dart late final 误用 + export_dialog dead code + RadioListTile 弃用 API) | 底层 | low | flutter-spec | [main.dart#L45](../lib/main.dart) |
+| **R97-P1-14** | PIPL §13 紧急联系人"单独同意"软实施 (用户担保已告知, 非联系人独立确认, v1.0 真接 SMS 时必须升级) | 架构 | high | spzh/AppStore | [setup_legal_dialog.dart#L24](../lib/presentation/pages/setup/setup_legal_dialog.dart) |
 
 ### 9.4 R97 P2 建议清单 (17 项, v1.0+ 可做)
 
@@ -1518,7 +1535,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 > 本章节为 R97 6 视角审计后, 用户要求拉 6 个视角团队 + 外链核查 + 底层逐行排查共 8 个并行子代理对整个项目分别出一份审计报告的汇总追加。8 份报告去重后共 38 项独立发现 (P0=9 / P1=14 / P2=10 / P3=5), 每项标注 **类别 (架构/底层) + 修复难度 (low/medium/high) + 涉及视角**。
 >
-> **完整 R98 审计报告**: [docs/audit/2026-08-07/R98-7perspective-audit.md](audit/2026-08-07/R98-7perspective-audit.md)
+> **完整 R98 审计报告**: [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R98-7perspective-audit.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R98-7perspective-audit.md)
 >
 > **审计覆盖 5 个检查项**: ①外部链接隐藏 ②上架/架构/重构/半成品 ③顶层架构审视 ④底层逐行排查 ⑤开发需求文档更新
 >
@@ -1542,19 +1559,19 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 | R98 ID | 问题 | 类别 | 难度 | 视角 | 跟 R97 关系 | 文件 |
 |---|---|---|---|---|---|---|
-| **R98-P0-1** | PHQ-9 危机弹窗内无"立即拨打"按钮 (6 步操作路径, 精神心理患者危机时刻执行功能受损) | 底层 | low | spzh | **新发现** (R97 修 FAB 可见性, 弹窗内 action 未识别) | [assessment_page.dart#L185](file:///d:/Batch/chroniccare/lib/presentation/pages/assessment/assessment_page.dart) |
-| **R98-P0-2** | PHQ-9 i18n flag 关闭时 zh_Hant/en 用户看简体中文题目 (`FeatureFlags.phqGad7I18nEnabled=false`) = 医疗法律责任 | 架构 | high | spzh | R97-P2-17 升级 P0 | [phq9.dart#L170](file:///d:/Batch/chroniccare/lib/domain/logic/phq9.dart) |
-| **R98-P0-3** | iOS `UIBackgroundModes` 声明 `processing` 但 `handleSafetyCheckTask` 空实现, Apple 2.5.4 拒审风险 | 底层 | medium | AppStore | **新发现** | [Info.plist#L144](file:///d:/Batch/chroniccare/ios/Runner/Info.plist) + [AppDelegate.swift#L72](file:///d:/Batch/chroniccare/ios/Runner/AppDelegate.swift) |
-| **R98-P0-4** | iOS `fastlane/metadata/ios/{locale}/screenshots/` 完全缺失, Apple 4.2.1 强制 6.7" iPhone 截图 = 必拒 | 架构 | medium | AppStore | R97-P3-1 升级 P0 | [fastlane/metadata/ios/](file:///d:/Batch/chroniccare/fastlane/metadata/ios/) |
-| **R98-P0-5** | Android `feature_graphic.png` + 4 张 `phone_screenshots` 全是 67 字节 1×1 占位 PNG, Google Play 必拒 | 架构 | medium | GooglePlay | **新发现** | [fastlane/metadata/android/zh-CN/feature_graphic.png](file:///d:/Batch/chroniccare/fastlane/metadata/android/zh-CN/feature_graphic.png) |
-| **R98-P0-6** | Data Safety Form `data_deletion_endpoint.url = 'https://chroniccare.app/delete-data-instructions'` 不可访问 | 架构 | high | GooglePlay | 跟 R97-P0-3 同源 (域名未注册) | [generate_data_safety_form.py#L84](file:///d:/Batch/chroniccare/scripts/generate_data_safety_form.py) |
-| **R98-P0-7** | 5 厂商 push SDK 未真接, `fiveVendorPushEnabled=false`, 国产 ROM 静默杀后台场景失联通知失效 = 中国市场 P0 | 架构 | high | spzh | 跟 R97-P0-7 部分重叠 (push 跟 SMS 不同) | [feature_flags.dart#L66](file:///d:/Batch/chroniccare/lib/core/data/feature_flags.dart) |
-| **R98-P0-8** | PHQ-9 total ≥ 20 (重度抑郁) 但 Q9=0 时不触发危机资源 dialog, 临床实践上重度抑郁应弹危机资源 | 架构 | medium | spzh | **新发现** | [phq9.dart#L156](file:///d:/Batch/chroniccare/lib/domain/logic/phq9.dart) |
-| **R98-P0-9** | `CareEngine.evaluate` / `CareEngine.fire` 死代码 (注释承诺 v0.28 删除, v0.30 仍在, 0 处实际调用) | 架构 | medium | 底层排查 | **新发现** | [care_engine.dart#L59](file:///d:/Batch/chroniccare/lib/domain/logic/care_engine.dart) |
+| **R98-P0-1** | PHQ-9 危机弹窗内无"立即拨打"按钮 (6 步操作路径, 精神心理患者危机时刻执行功能受损) | 底层 | low | spzh | **新发现** (R97 修 FAB 可见性, 弹窗内 action 未识别) | [assessment_page.dart#L185](../lib/presentation/pages/assessment/assessment_page.dart) |
+| **R98-P0-2** | PHQ-9 i18n flag 关闭时 zh_Hant/en 用户看简体中文题目 (`FeatureFlags.phqGad7I18nEnabled=false`) = 医疗法律责任 | 架构 | high | spzh | R97-P2-17 升级 P0 | [phq9.dart#L170](../lib/domain/logic/phq9.dart) |
+| **R98-P0-3** | iOS `UIBackgroundModes` 声明 `processing` 但 `handleSafetyCheckTask` 空实现, Apple 2.5.4 拒审风险 | 底层 | medium | AppStore | **新发现** | [Info.plist#L144](../ios/Runner/Info.plist) + [AppDelegate.swift#L72](../ios/Runner/AppDelegate.swift) |
+| **R98-P0-4** | iOS `fastlane/metadata/ios/{locale}/screenshots/` 完全缺失, Apple 4.2.1 强制 6.7" iPhone 截图 = 必拒 | 架构 | medium | AppStore | R97-P3-1 升级 P0 | [fastlane/metadata/ios/](../fastlane/metadata/ios/) |
+| **R98-P0-5** | Android `feature_graphic.png` + 4 张 `phone_screenshots` 全是 67 字节 1×1 占位 PNG, Google Play 必拒 | 架构 | medium | GooglePlay | **新发现** | [fastlane/metadata/android/zh-CN/feature_graphic.png](../fastlane/metadata/android/zh-CN/feature_graphic.png) |
+| **R98-P0-6** | Data Safety Form `data_deletion_endpoint.url = 'https://chroniccare.app/delete-data-instructions'` 不可访问 | 架构 | high | GooglePlay | 跟 R97-P0-3 同源 (域名未注册) | [generate_data_safety_form.py#L84](../scripts/generate_data_safety_form.py) |
+| **R98-P0-7** | 5 厂商 push SDK 未真接, `fiveVendorPushEnabled=false`, 国产 ROM 静默杀后台场景失联通知失效 = 中国市场 P0 | 架构 | high | spzh | 跟 R97-P0-7 部分重叠 (push 跟 SMS 不同) | [feature_flags.dart#L66](../lib/core/data/feature_flags.dart) |
+| **R98-P0-8** | PHQ-9 total ≥ 20 (重度抑郁) 但 Q9=0 时不触发危机资源 dialog, 临床实践上重度抑郁应弹危机资源 | 架构 | medium | spzh | **新发现** | [phq9.dart#L156](../lib/domain/logic/phq9.dart) |
+| **R98-P0-9** | `CareEngine.evaluate` / `CareEngine.fire` 死代码 (注释承诺 v0.28 删除, v0.30 仍在, 0 处实际调用) | 架构 | medium | 底层排查 | **新发现** | [care_engine.dart#L59](../lib/domain/logic/care_engine.dart) |
 
 ### 10.3 R98 P1 重要清单 (14 项, 上架前应修)
 
-完整 P1 清单详见 [R98 完整审计报告 §3](audit/2026-08-07/R98-7perspective-audit.md#3-r98-p1-重要清单-14-项-上架前应修)。摘要:
+完整 P1 清单详见 [R98 完整审计报告 §3](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R98-7perspective-audit.md#3-r98-p1-重要清单-14-项-上架前应修)。摘要:
 
 | R98 ID | 问题 | 类别 | 难度 | 视角 |
 |---|---|---|---|---|
@@ -1575,7 +1592,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 ### 10.4 R98 P2/P3 清单 (15 项, v1.0+ 可做)
 
-完整清单详见 [R98 完整审计报告 §4 + §5](audit/2026-08-07/R98-7perspective-audit.md#4-r98-p2-建议清单-10-项-v10-可做)。摘要:
+完整清单详见 [R98 完整审计报告 §4 + §5](audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R98-7perspective-audit.md#4-r98-p2-建议清单-10-项-v10-可做)。摘要:
 
 - **P2 (10 项)**: ThemeExtension 缺位 / routerProvider 反模式 / ThemeModeNotifier 异步 / textTheme 不全 / Form 校验未走 FormState / 0 golden test / a11y 覆盖不足 / directives_ordering lint / Android title 超长 / setup 第 4 勾选 onView 空
 - **P3 (5 项)**: main.dart magic number / Future.wait 泛型化 / drift batch 优化 / RadioListTile 弃用 API / trailing comma 清扫
@@ -1708,7 +1725,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 > 本章节为 R103 审计后, 用户要求拉 7 个视角团队 (emilkowalski / superpowers-en / superpowers-zh / flutter-specification / AppStore / GooglePlay / Apple Health) 对整个项目分别出一份审计报告的汇总追加。7 份报告去重后共 75 项独立发现 (P0=15 / P1=20 / P2=25 / P3=15), 每项标注 **类别 (架构/底层) + 修复难度 + 涉及视角**。
 >
-> **完整 R104 审计报告**: [docs/audit/2026-08-09/00-summary.md](audit/2026-08-09/00-summary.md)
+> **完整 R104 审计报告**: [docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-09/00-summary.md](audit-history/r95-r105-history-2026-08-06_09/2026-08-09/00-summary.md)
 >
 > **审计覆盖 7 个视角**: emilkowalski (设计) / superpowers-en (工程) / superpowers-zh (中文) / flutter-specification (规范) / AppStore (iOS) / GooglePlay (Android) / Apple Health (新视角)
 >
@@ -1805,7 +1822,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 ## R107 cleanup 综合审视 (2026-08-10, 9 视角 + 1 顶层架构 + 1 底层逐行)
 
-**R107 cleanup 状态**: 2026-08-10 完成的"从 0 重新做"综合审计。R105 → R106 业务真接 + 6 平台 P0 修复后, R107 清空 docs/audit/2026-08-06~2026-08-10 旧报告（5 轮 26 份 / 1.2MB）归档到 `docs/audit-archive-2026-08-10/`，从 0 重做综合审计。
+**R107 cleanup 状态**: 2026-08-10 完成的"从 0 重新做"综合审计。R105 → R106 业务真接 + 6 平台 P0 修复后, R107 清空 docs/audit/2026-08-06~2026-08-10 旧报告（5 轮 26 份 / 1.2MB）归档到 `docs/audit-history/r95-r105-history-2026-08-06_09/`，从 0 重做综合审计。
 
 **9 视角评分 (vs R105)**:
 
@@ -1829,7 +1846,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 | **R109 Phase 2** | 1-2 月 (~5-6 周 / 2-3 sprint) | P1 警告 + 拆 6 大 god class (main.dart 459L / home_page_state 597L / vent+mood_audio 2×500L / notification_service 426L / medication_page 540L / daily_tracking 7 widget) + 真实业务接入 (IAP 真接 productId) |
 | **R110+ Phase 3** | 6 月+ (v1.0) | 5 厂商 push SDK 接入 / AliyunSms 真接 / EmailService 真接 / PHQ-9 i18n / HealthKit 选项 B-C / 8 FeatureFlag 翻 true / a11y 全量 / 守门员加 `check_a11y.py` / feature-first 重构 (中期) / pub workspace 拆 vent / medication (长期) |
 
-**R107 cleanup 报告位置**: `docs/audit/2026-08-10-cleanup/`
+**R107 cleanup 报告位置**: `docs/audit-history/r107-cleanup-2026-08-10/`
 - 00-summary.md (30KB / 320 行, 10 章节汇总)
 - 01-emil.md (26.3KB) / 02-spen.md (28.5KB) / 03-spzh.md (35KB) / 04-flutter-spec.md (21KB) / 05-appstore.md (29.3KB) / 06-googleplay.md (36.5KB) / 07-apple-health.md (37KB) / 08-architecture.md (23KB) / 09-bottom-up-bugs.md (48.7KB)
 - **总计**: 254KB subagent 报告 + 30KB 汇总 = 284KB

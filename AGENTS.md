@@ -133,7 +133,7 @@ lib/
 
 ```bash
 flutter analyze    # 必须 0 error
-flutter test       # 必须全过（当前 2019 cases, v0.30 R107 cleanup 后）
+flutter test       # 必须全过（R112 实测 2377 pass / 4 fail [iOS 资产占位] / 1 skip; 目标 0 fail, 4 fail 等设计师资产）
 python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 检查)
 ```
 
@@ -313,7 +313,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 总计 (本批): 1057 → 1098 tests (+41), 0 analyzer error, 12 守护脚本全绿 (新增 check_orphan_arb_keys).
 
-**21 守护脚本清单** (v0.30 R107 cleanup 修正, v0.30 R95 加 `check_coverage.py`, R31 加 `check_apple_health_claim.py`, R32 加 `check_pii_in_title.py`, R109 round 1 加 `check_usecase_layer.py` 后总数 21 = 20 .py + 1 .dart):
+**22 守护脚本清单** (v0.30 R107 cleanup 修正, v0.30 R95 加 `check_coverage.py`, R31 加 `check_apple_health_claim.py`, R32 加 `check_pii_in_title.py`, R109 round 1 加 `check_usecase_layer.py`, R111 round 8 加 `check_review_information_todo.py` 后总数 22 = 21 .py + 1 .dart):
 1. `python scripts/check_arb_keys.py` — zh / en / zh_Hant ARB 同步
 2. `python scripts/check_changelog.py` — pubspec 版本号 + CHANGELOG 顺序
 3. `python scripts/check_cross_feature.py` — 跨 feature import 边界
@@ -334,7 +334,8 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 18. `python scripts/check_apple_health_claim.py` — **R31 新增** — "Apple Health" 关键词 + health_kit 声明扫描 (防假声明)
 19. `python scripts/check_pii_in_title.py` — **R32 新增** — 通知 title/body 锁屏 PII 检测
 20. `python scripts/check_usecase_layer.py` — **R109 round 1 新增** — use case 层硬约束 (0 data/0 theme/0 presentation/0 l10n/0 Flutter)
-21. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
+21. `python scripts/check_review_information_todo.py` — **R111 round 8 新增** — review_information 未标记占位防回退 + notes.txt 版本同步 (AS-16)
+22. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
 
 **待办 (外部依赖, 非本批)**:
 - R55 真接阿里云 SMS (依赖法务 1-2 月模板审核 + 阿里云 AccessKey 申请)
@@ -431,7 +432,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 **R32 综合审视 6 视角加权综合 6.2/10 → 修后预估 8.0/10 (+1.8)**。
 
-**21 守门员最终状态 (R110 round 3 (2026-08-13) 后)**:
+**21 守门员最终状态 (R111 2026-08-13 实测)**:
 
 - **21 绿 / 0 红 / 1 skip** (16kb 待重 build)
 - 明细见下方 v0.32 R110 章节 + `docs/audit/2026-08-13-multi-lens/00-FINAL-CONSOLIDATION.md`
@@ -441,7 +442,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - 7 feature 0 改 (Apple Health spec §5.1-5.7) — mood / mood_list / vent / assessment / contact / settings / daily_tracking / crisis_hotline 仍 0-部分 AppleListSection 化 (EM-02/AH-04)
 - SF Symbol 字体 (spec §3.1.3) — Material Icons 占位
 - HealthKit 集成 = 0 (守门员 enforced, v1.0 2027-Q1 计划)
-- 15+ god class (≥400L) 0 test
+- 22 个 god class (≥400L) — round 7b 已给 6 个补 test (add_medication 6 / edit_medication 8 / assessment_widgets 11 / mood_audio_recorder 6 / mood_trend 6 / vent_detail 5), 剩 4-5 个 0 专用测试 (setup_page_state / legal_page / reminders_hub / home_page_state 等); 拆解仅 medication_page 553→347 完成
 
 **详细整合报告**: [docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md](docs/audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (52KB, 6 视角子报告合计 173KB)
 - `AGENTS.md` — 本文件（代码视角）
@@ -459,3 +460,46 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **P0 遗留 (外部依赖)**: chroniccare.app 域名 ICP (7-20d) + 双平台截图/图标 (设计师) + keystore 生成 (1h) + review_information 真实值
 
 **R110+ 路线图**: R110 收尾 (R109 working tree 99 文件归类 commit + 126 fail 复验) → R109 遗留 (setup_page_state 497 / add_medication 568 / mood_audio_recorder_widget 589 等 god class 拆 + usecase 厚化 6→14-16) → scale_translations 三源合一 → AR-2 l10n 循环解耦 → feature-first + pub workspace → v1.0 (2027-Q1: HealthKit / 鸿蒙 / 5 厂商 push / 阿里云 SMS / IAP 真接)
+
+## v0.32 R111 9 视角综合审视 (2026-08-13, 并行 subagent 只读审计)
+
+**状态**: 9 个 subagent (6 产品视角 + 顶层架构 + 2 路底层逐行) 从 0 重跑, working tree 干净基线。**R110 12 P0 代码闭环全实锤** (通知 ID 5M 带 + 回归守卫 / purity 0 violation / 紧急联系人 3 处 gate / Mock 文案 gate 内 / validateForRelease gate / 12 处 i18n + inline 守门员 0 / 2 死路由 + /medication 入 shell / badge secret ×5)。round 7b 为 6 个 god class 补 42 test (test:lib 36%→55%), 126 fail 收口到 4 个资产占位。**加权综合 ≈ 7.3/10** (架构 6.0 / 底层 8.0 / 视觉 7.5 / 上架 2.5), hotfix 后预估 8.3/10。报告: `docs/audit/2026-08-13-r111-multi-lens/` (10 文件)。
+
+**R111 新发现 P0/P1 (代码级)**:
+
+- **E1/E2 (P1 bug, ≤1d+2h)**: export/import JSON schema v4 落后 DB schema 22 — medications 漏 5 字段 (refillAt/refillReminderDays/form/colorIndex/notes) + moodEntries 漏 7 字段 (audio/period/influenceFactors/recordingMode) 换机/重装**静默丢失**; contact consent 4 字段不导出 → PIPL §13 留痕断裂 (R68 gate 只挡 add, 导入绕过)。共用 export/import 路径, 一次 v5 schema 升级 + round-trip test 闭环
+- **SP-111-02 (≤1h)**: `flutter analyze` 27 warning 违反 0-warning 门禁 — 10 处 test fake 死 @override (R108 delegate 拆分后 scheduleDailyReminder 移走) + 11 处 lib unused import/field (R109 重构残留)
+- **EM-21 (1-2d)**: en locale mood 标签显示中文 (ARB 无 moodLabelN key, presentation 3 处用 core Strings.moodLabel 硬编码)
+- **FS-14 (0.5h)**: /contacts/new 死 push → 404 (emergencyContactEnabled 翻 true 即踩雷)
+- **EM-16 (0.5h)**: 状态色当文字色对比度 1.9:1 (fgOnWarning 已存在未用) · **EM-14 (≤2h)**: disabled 按钮仍 press scale+haptic 假反馈
+- **SP-111-04 (≤1d)**: static_scale_translations 8 新量表 domain 中文 items 0 直接断言 (最大 0-test 块)
+
+**架构 4 P0 跨期残留 (0 进展)**: AR-17 scale_translations 三源 (810L l10n impl **0 运行时 caller 实锤死代码**, 2-3d 删 1,590L 重复) / AR-18 usecase 6 文件 736L (计划 14-16) / AR-19 saveSetup+clearAllUserData 仍在 app_database:420-510 / AR-16 4 个 data 文件 import 生成 ARB (pub workspace 死锁)。god class 22 个反涨, 仅 medication_page 553→347 拆成。
+
+**上架**: 代码面 9.5/10 达提交水准 (锁屏 PII / PrivacyInfo / IAP 隐藏 / 0 假声明全绿); 硬阻塞 100% 外部依赖与 R110 一致 — 域名 ICP (7-20d) + 双平台资产 (设计师) + keystore (1h) + review_information 4 占位 + console 3 表单 (**新增 RECORD_AUDIO Audio 申报**, R105 恢复 + ventAudioEnabled=true)。
+
+**R111 hotfix 计划 (本周)**: E1+E2 export v5 升级 (1d) → 27 warning 清零 (1h) → EM-16/14/21 (≤3h) → FS-14 死路由 (0.5h) → SP-111-04 量表 items 断言 (1d) → AS-16 check_review_information_todo.py 守门员 + notes.txt/short_description/changelogs (1h) → 死链 32 处 (本批已修 README/CHANGELOG/VERSION_1.0_PLAN/DEPLOYMENT) + AGENTS/spec 数字同步 (本批已修) → 预期 8.3/10
+
+**R111+ 路线图 (与 R110 合并更新)**: R112 架构专项 (AR-17 合一 → AR-18/19 usecase+DB 编排 → AR-16 l10n 循环 → AR-20 god class 接力) · 视觉专项 (EM-02/AH-04 8 feature ALS 化 1-2d/页) · 外部闸门 (域名 → 资产 → keystore → release build 冒烟 + 16KB objdump → console 表单 → review 真实值 + 5.1.3 问卷) · v1.0 (2027-Q1)
+
+## v0.32 R112 9 视角综合审视 (2026-08-13, 并行 subagent 只读审计)
+
+**状态**: 9 个 subagent (6 产品视角 + 顶层架构 + 2 路底层逐行) 从 0 重跑, baseline = working tree R112 进行中 (127M + 13??, pubspec 0.32.0+142)。**R111 待验证清单 8/8 全实读闭环属实** (E1/E2/E3 export v5 7 case round-trip / FS-14 / EM-14/16/21 / R111-02/03 / SP-111-02 warning 27→3 / mojibake / spring 接真 caller)。实测: test 2377 pass / 4 fail (iOS 资产) / 1 skip; analyze 0 error / **3 warning / 133 info** (CHANGELOG "0 warning" 宣称不实)。**加权 ≈ 7.1/10** (emil 7.5 / superpowers 8.5 / flutter-spec 8.5 / AppStore 4.0 / GooglePlay 6.0 / AppleHealth 7.0 / 顶层架构 6.0 / 底层 8.0+8.0), 修完代码级 P0/P1 预估 8.3/10。报告: `docs/audit/2026-08-13-r112-multi-lens/` (10 文件)。
+
+**R112 新发现 P0/P1 (代码级, 按优先级)**:
+
+- **★E6 (P0, ~1d, 与 v5 同批修)**: export v5 仍**完全缺 6 张 daily tracking 表** (sleep/weight/socialRhythm/stress/treatment/anxietyAgitation, R91 功能) — 换机整块静默丢失; R111 E1 只对 medications/mood/contacts 逐字段对照漏了整表; import 也不 clear 这 6 表
+- **★E-01 (P1, 0.5d)**: mood_audio_recorder_widget + vent_compose dispose 链 unmount 后 `ref.read` → Riverpod 3.4.2 `_assertNotDisposed` 无条件抛 → 被吞 → MoodAudioService native 句柄每次泄漏 (100+/day) + 明文 temp 文件永不删除 (PIPL §28)。修法 = B1-11 同款字段缓存 storage (initState 捕获)
+- **★E-02 (P1, 0.2h)**: legal_page.dart:94 裸 `developer.log` 无 kReleaseMode 守卫 (全 lib 唯一), vent 删除失败 stack 泄 PII
+- **★E7/E8/E9 (P1, 2h+4h+1h)**: profile PIPL §14 同意留痕 4 字段不导出 (E2 只修 contact 侧) / medications 导出走 watchActive() 丢软停药药名 (与报告 watchAllIncludingInactive 矛盾) / 趋势日历 8 新量表显示 raw scaleId
+- **★裸 id 回归 (P1, 10min)**: settings 量表列表 phq9/gad7 subtitle 显示裸 id — scale_name_l10n switch 漏 2 case + 测试 `ids.sublist(2)` 盲区 (新 helper 必须全 id 覆盖 + isNot(id) 断言)
+- **EM-16b (P1, ≤1h)**: 对比度只修 warning 档 — success 2.4:1 / error 3.0:1 / warningStrong 2.3:1 仍作文字色; fgOnSuccess=success 假 token
+- **上架文案 4 新 P1 (1h 内)**: AS-22 description "stay connected with loved ones" 描述已 gate 关闭功能 (2.1 拒因级) / GP-R112-01 Android 文案点名被隐藏的 PHQ-9/GAD-7 / AS-21 promotional "mental health assessments" (R109 宣称删从未落地) / AS-23 Fastfile submit_for_review 脚枪
+- **GP-R112-02 (P1, 15min)**: gradle-wrapper.properties 提交 `file:///C:/Users/18449/...` 机器路径 + wrapper 三件套被 .gitignore 排除 → 干净机器 release build 必断
+
+**架构新实锤 (2 个守门盲区)**: check_all data 规则只禁 `presentation/`, **不禁 `l10n/` 不禁 `core/routing/`** — AR-16 (data→生成 ARB 4 文件) 与 R112-ARCH-02 (data→notification_navigation 传递 Flutter) 三年没人管得住。修法 = 先让 gate 红。**结论: 4 层 + core umbrella 对 81K 行够用, feature-first (2-3wk 纯 move 边际收益 < 成本) 与 pub workspace (零云端无买家) 现在都不推荐**; AR-17 R112 恶化到 4 源 (scale_name_l10n 新增但 assessment_center_card 私有 switch 未迁) + 810L 死代码 0 runtime caller 再实锤; AR-18 usecase 2/6 是死代码 (CheckSafety / ScheduleRefillReminder, service 直连 logic); god class 21 个 (仅 medication_page 拆成, export_import_pipeline 530L 新入口)。
+
+**R112 hotfix 收尾 ✅ 已执行完毕 (2026-08-13, 修复战役 3 wave / 10 subagent + 主 agent 整合)**: E6+E7+E8+E9 export 补全 ✅ → E-01/E-02 ✅ → 裸 id + EM-16b ✅ → 3 warning 清零 + CHANGELOG 改实测数 ✅ → 上架文案 ×4 + wrapper ✅ → GP-R112-03/04 生成器刷新 ✅ → AR-17 删 1,600L 死代码 + 接线 2 usecase ✅ → 8 feature ALS 化 ✅ (EM-02/AH-04) → AR-16/ARCH-02 守门先红后修 ✅ → AR-19/ARCH-01/ARCH-03 编排下沉 ✅ → AR-23 swallowError 分簇 ✅ → golden ×3 + P3 卫生 ✅。终态: **2483 pass / 4 fail (iOS 资产) / 1 skip; analyze 0e/0w; 22 守门员全绿**。账本: `docs/audit/2026-08-13-r112-multi-lens/10-FIX-LEDGER.md`。未 commit (等用户确认)。
+**残余 (R113+ 路线)**: 上架外部 P0 剩余 (域名 ICP / 设计师资产 / review 4 占位 / console 4 表单人工填 — 文本已生成在 build/ / release build 冒烟+16KB objdump 实测 — 本机无 Android SDK, keystore 已生成, check_16kb_alignment.py 已支持 --aab 真验证) · AR-20 god class 18 个长线拆解 (批1 pipeline + 批2 setup_page_state 503→331 + add_medication 573→258 已拆) · R51b 8 量表 items i18n (v1.0) · AH-08/09 真 reduce-transparency/SF Symbol (v1.0) · keystore 密码备份 1Password (用户操作)。
+
+**R112+ 路线图 (与 R111 合并更新)**: R113 视觉专项 (8 feature ALS 化: settings 4 组 → vent → assessment → mood_list; 集中器自清; golden 3 widget) · 架构专项 (AR-16 守门先红 0.5d → AR-19+R112-ARCH-01 ConsentPreferenceStore 数据编排下沉 5d → AR-20 god class 接力批1 export pipeline 拆 4 子函数) · 外部闸门 (域名 ICP → keystore → 首次 release build 冒烟 + 16KB objdump → console 4 表单 → 设计师资产 → review 真实值 + 5.1.3 问卷) · v1.0 (2027-Q1)

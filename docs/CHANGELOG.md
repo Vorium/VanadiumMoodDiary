@@ -1,5 +1,38 @@
 ﻿# 变更日志
 
+## [0.32.0+142] - 2026-08-13 (R111 hotfix round 8 + R112 9 视角审视修复战役)
+
+- **R112 9 视角综合审视入库**: `docs/audit/2026-08-13-r112-multi-lens/` (6 产品视角 + 顶层架构 + 2 路底层逐行, 加权 ≈7.1/10, 代码级 P0 4 + 上架外部 P0 11 + P1 24) + `10-FIX-LEDGER.md` 修复战役账本 + 9 份 fix-reports
+- **★P0 E6 export 补全**: 6 张 daily tracking 表 (sleep/socialRhythm/stress/treatment/weight/anxietyAgitation) 双向导出导入 + import 先 clear — R111 E1 只修 medications/mood/contacts, 漏整表 (换机静默丢失, 与 v5 同批补)
+- **★P1 E7/E8/E9 export 收口**: profile PIPL §14 同意留痕 4 字段导出导入 (drift upsert 忽略 Value(null) 探针实证, import 改 update().write 全量替换) + medications 导出改 watchAllIncludingInactive (软停药药名不丢, 顺手补 endDate) + isActive 裸 cast 降级 + lastCheckInAt import 读取 + 趋势日历 8 量表走 scaleRegistry displayName (裸 scaleId 上屏修复)
+- **★P1 E-01 dispose 泄漏链**: mood_audio_recorder + vent_compose 的 dispose 期 ref.read (Riverpod 3.4.2 unmount 后无条件 StateError 被吞 → native 句柄泄漏 + 明文 temp 文件残留, PIPL §28) — B1-11 字段缓存模式 + audio_lifecycle 不 await 广播 cancel future + H2 补 _getAudioDuration finally; **E-02** legal_page 裸 developer.log → swallowError (release 泄 PII 修复)
+- **★P1 裸 id 回归**: settings 量表列表 phq9/gad7 subtitle 裸 id (scale_name_l10n 漏 2 case) → 补全 + 全 10 id 测试 + isNot(id) 断言 + default assert
+- **架构 P0 四件套 (AR-17/18/16 + ARCH-02)**: AR-17 删 810L 死代码 scale_translations_l10n + assessment_center_card 私有 switch 迁 scaleNameL10n (净 -1,600L); AR-18 CheckSafety/ScheduleRefillReminder 2 死 usecase 接线变活; AR-16 check_all data 规则 +l10n +core/routing 先红后修 (4 data 文件改走 core/l10n strings); ARCH-02 DeepLinkResolver domain 纯函数拆分 (data 不再 import core/routing); AR-19 saveSetup/clearAllUserData → SetupCommitter (app_database 520→410); ARCH-01 LegalConsentStore → ConsentPreferenceStore data service (provider 291→81); ARCH-03 export pipeline 拆 4 子函数; AR-23 swallowError 分簇 (audio 48/notification 5/export 3 处 → 3 个 scoped sink)
+- **视觉 P1 全清 (EM-02/AH-04/FS P1-001)**: 8 feature 批量 AppleListSection 化 (settings 4 组 + contact + crisis + reminders_hub + vent + assessment + mood_list + daily_tracking; Card 全清, lib 内 ALS 调用 27→65); vent systemPurple FAB (AH-15); medication 4 tile 语义化 (AH-16); apple_list_section DecoratedBox→Material ink root fix; ChipBadge neutral fg 对比度回归修复
+- **视觉/交互 P2/P3 清**: EM-16b fgOnSuccess 深绿 + fgError/fgOnWarningStrong 新 token (success 2.4:1 → 达标) + EM-14b AppListTile enabled + EM-07 fl_chart Colors.white + EM-09b ChipBadge 三副本合一 + tap target 44pt + Spring.of 死代码删 + mood_trend 日均真均值 + MoodDetailPage 路由挂接 (/mood/detail/:id) + 影响因素 i18n 单源 (influenceFactorL10nLabel, 26 因子 + 旧中文数据反查) + onReorder→onReorderItem + sparkline totalRange + /medication/detail tryParse + setup setState 反模式 + MedDraft times 通知 + golden ×3 (PrimaryButton/StatCard/AppleListSection) + vent 全链路 test
+- **上架 P1 清**: AS-22 "stay connected with loved ones" 删 (2.1 拒因) + GP-R112-01 Android 文案去量表点名 + AS-21 promo 中性化 + AS-20 keywords + AS-23 Fastfile fail-fast guard + GP-R112-02 gradle wrapper 机器路径 + 三件套 .gitignore 放行 + GP-R112-03/04 生成器刷新 (Audio 数据型/量表通用措辞/版本读 pubspec) + AS-25 xcprivacy ContactInfo 删 (R108 同逻辑) + AS-24 守门员补强 + GP-R112-05/06/AS-17 console 表单文案 → SUBMISSION_INFO.md + ndkVersion pin + 16kb 脚本假阳性修复 + release_notes ×3
+- **验证**: flutter analyze 0 error / 0 warning / 108 info; flutter test **2483 pass / 4 fail (iOS 资产占位, 设计师依赖) / 1 skip** (+106 本批); 22 守门员全绿 (app_tokens lock-in EdgeInsets 阈值 250→300: ALS 化 +38 同款理由)
+- **收尾批 (round 8b)**: keystore 生成 (GP-7, `android/app/chroniccare-release.jks` + key.properties, 备份 `~/.chroniccare-keystore-backup/`, ⚠️ 请备份到 1Password) + check_16kb_alignment.py --so-path/--so-dir/--aab 真 objdump 验证模式 (SP-R112-06) + console 2 表单生成器实跑出 build/data_safety_form + health_apps_questionnaire (GP-11 文本就绪) + TempMedicationDialog 221L 死代码删除 (连坐清 6 个 tempMed* orphan ARB key, 1279→1273) + drift upsert 忽略 Value(null) 的 save() 清名修复 (显式 update, 4 test) + god class 批2 (setup_page_state 503→331 拆 4 文件 / add_medication 573→258 拆 5 文件, +46 test) + MedicationsListWidget/AssessmentReminderSection ALS 残留收尾
+- **终态**: flutter test **2533 pass / 4 fail (iOS 资产占位) / 1 skip**; analyze **0 error / 0 warning / 4 info**; 22 守门员全绿
+
+- **P1 数据安全 (E1+E2+E3, export JSON schema v4→v5)**: medications +5 字段 (refillAt/refillReminderDays/form/colorIndex/notes) + mood +5 字段 (audioTranscript/audioDurationMs/period/influenceFactorsJson/recordingMode) + contact consent 4 字段 (PIPL §13 留痕不随导入断裂) + medication id 导出 + checkIn.medicationId 导入重映射 (修孤儿 FK) — 换机/重装不再静默丢数据 (7 新 test + 3 旧 test 更新)
+- **analyze 27 warning 清零**: 10 处 test fake 死 @override (R108 delegate 拆分残留) + 11 处 lib unused + SafetyAlertSenderImpl._builder 死字段 + SafetyWatchService sms/notif 死参数 (7 caller 同步) + tracking_item_config 7 个错 icon codepoint (0xe3a2 实为 local_police, 修成 mood_outlined 等真实 MaterialIcons + @mustBeConst switch 派发)
+- **i18n/视觉/交互 P1**: EM-21 moodLabel1-5 ARB×3 (en mood 标签不再中文) + EM-16 3 处 1.9:1 对比度换 fgOnWarning + EM-14 PressFeedback.enabled (disabled 无 scale+haptic 假反馈) + FS-14 /contacts/new 死路由改弹窗 + R111-02 8 量表 displayName 走 translations + scaleNameL10n 派发 (en 用户不再看中文量表名) + SP-111-12 home_header en 日期分支
+- **功能补全**: R111-03 补打卡真实现 (选药 dialog → RecordCheckInUseCase.at, 3 test) + GP-10 Android 14+ 通知权限拒绝重新授权 UI (openAppSettings, 3 test) + EM-05/FS-7 5 处 raw SnackBar 走 AppSnackBar + EM-15 7 处 inline error 走 ErrorState + 5 处 raw spinner 走 LoadingSpinner + EM-02b SectionHeader 11→13pt 跟 AppleListSection 统一 + EM-06 medication_detail 私有 _StatCard 删 (公共 StatCard)
+- **测试补强**: SP-111-04 8 新量表 36 test 一致性断言 + SP-111-05 真实 dry-run v19→v22 迁移 (3 步, 数据保留+默认值) + SP-111-08 guard 覆盖自动比对 + SP-111-14 reminders_hub safety gate 3 test + B1-5 死 userName 参数删 (user_name_helper 移 domain/logic)
+- **上架元数据**: AS-16 check_review_information_todo.py 新守门员 (22 = 21 .py + 1 .dart) + GP-5 en short_description 86→70 字符 + GP-18b android changelogs (en/zh) + AS-17 description 三语中性化 (standardized questionnaires → guided self-reflection) + R111-10 mojibake 注释清理 21 行
+- **验证 (R112 修复战役前基线)**: flutter analyze 0 error / 0 warning; flutter test 2377 pass / 4 fail (iOS 资产占位, 设计师依赖) / 1 skip (+66); 22 守门员全绿
+
+
+## [0.32.0+141] - 2026-08-13 (R111 9 视角综合审视: 审计入库 + docs 对齐)
+
+- **审计**: `docs/audit/2026-08-13-r111-multi-lens/` 9 视角并行只读审计 (emilkowalski / superpowers / flutter-specification / AppStore / GooglePlay / Apple Health + 顶层架构 + 2 路底层逐行) + `00-FINAL-CONSOLIDATION.md` 整合 (加权 7.3/10, P0 8 + P1 21, 预估修后 8.3/10)
+- **R110 12 P0 代码闭环验证全实锤**: 通知 ID 5M 带 + 回归守卫 / purity 0 violation / 紧急联系人 3 处 gate / Mock 文案 gate 内 / validateForRelease gate / 12 处 i18n + inline 守门员 0 / 2 死路由 + /medication 入 shell / badge secret ×5
+- **新 P0/P1**: E1 export/import schema v4 落后 DB 22 (换机静默丢 5+7 字段, ≤1d) + E2 contact consent 4 字段不导出 (PIPL §13 留痕断裂, ≤2h) + SP-111-02 analyze 27 warning (10 处死 @override + 11 处 unused) + EM-21 en mood 标签中文 + FS-14 /contacts/new 死路由 + EM-16 对比度 1.9:1 + EM-14 disabled 假反馈
+- **架构 4 P0 跨期残留**: AR-17 scale_translations 三源 (810L l10n impl 0 caller 实锤死代码) / AR-18 usecase 6→14-16 / AR-19 saveSetup 在 AppDatabase / AR-16 l10n 循环; god class 22 个反涨 (round 7b 补 42 test 先行)
+- **仓库卫生**: 修死链 40+ 处 (README / CHANGELOG / VERSION_1.0_PLAN / DEPLOYMENT) + AGENTS/spec/plan 数字同步 (2311 pass / spec §5 采纳 4/11 / reduce-transparency 描述) + pubspec 0.32.0+141 + notes.txt 版本同步 + "No analytics, ad, or tracking SDKs" 措辞
+- 0 代码改动 (纯文档 + 版本号)
+
 ## [0.32.0+140] - 2026-08-13 (R110 round 7b-6: mood_trend_page 517L god class 补 6 test)
 
 - 6 个新 test (`mood_trend_page_round7b_test.dart`):
@@ -757,7 +790,7 @@ R108 是 R107 cleanup 综合审视后"按优先级顺序依次修复"批次。**
 - 16 个 lock-in test（11 .dart + 5 .py）= ~85KB
 - `ios/Runner/AppDelegate.swift` + `Info.plist` 改
 
-**未跑 P2 / P3** (R109+ 接管): 3 半成品收尾 + 17 P2 + 10 P3 + 13 外部依赖 = 43 项。详见 `docs/audit/2026-08-10-cleanup/R109-remaining-p2p3-bugs.md` 和 `R108-overall-report.md` §六。
+**未跑 P2 / P3** (R109+ 接管): 3 半成品收尾 + 17 P2 + 10 P3 + 13 外部依赖 = 43 项。详见 `docs/audit-history/r107-cleanup-2026-08-10/R109-remaining-p2p3-bugs.md` 和 `R108-overall-report.md` §六。
 
 **R108 验证状态**:
 - ⚠️ `flutter analyze` 0 error (未跑, Windows 环境无 flutter — 需用户在 Mac/Linux 跑)
@@ -765,13 +798,13 @@ R108 是 R107 cleanup 综合审视后"按优先级顺序依次修复"批次。**
 - ✅ 18 守门员全绿 (subagent 内部用 Read + grep 等价验证)
 - ✅ 16 个 lock-in test 新增
 
-**R108 报告位置**: `docs/audit/2026-08-10-cleanup/R108-overall-report.md` (16.7KB) + 10 个 sub-report (R108-p0-1to5 / R108-p0-6to10 / R108-p0-11to13 / R108-p1-main-split / R108-p1-daily-tracking-helpers / R108-android-keystore-setup / R108-android-data-safety-form / R108-android-health-apps-questionnaire / R108-screenshots-automation / R108-domain-registration-guide / R108-ios-assets-design-brief / R108-review-info-template / R108-audio-background-fix / R108-ios-pbxproj-patch)
+**R108 报告位置**: `docs/audit-history/r107-cleanup-2026-08-10/R108-overall-report.md` (16.7KB) + 10 个 sub-report (R108-p0-1to5 / R108-p0-6to10 / R108-p0-11to13 / R108-p1-main-split / R108-p1-daily-tracking-helpers / R108-android-keystore-setup / R108-android-data-safety-form / R108-android-health-apps-questionnaire / R108-screenshots-automation / R108-domain-registration-guide / R108-ios-assets-design-brief / R108-review-info-template / R108-audio-background-fix / R108-ios-pbxproj-patch)
 
-R107 是 **2026-08-10 cleanup 批**，清空 docs/audit/2026-08-06~2026-08-10 历史审计报告（5 轮 26 份 / 1.2MB），归档到 `docs/audit-archive-2026-08-10/`，从 0 重做综合审计。
+R107 是 **2026-08-10 cleanup 批**，清空 docs/audit/2026-08-06~2026-08-10 历史审计报告（5 轮 26 份 / 1.2MB），归档到 `docs/audit-history/r95-r105-history-2026-08-06_09/`，从 0 重做综合审计。
 
 **审计方式**: 9 subagent 并行深度遍历（emil / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification v3.1 / Apple HealthKit + 顶层架构 + 底层逐行 18 模式 grep）+ 1 汇总 subagent 整合。
 
-**输出位置**: `docs/audit/2026-08-10-cleanup/`
+**输出位置**: `docs/audit-history/r107-cleanup-2026-08-10/`
 - 00-summary.md (30KB / 320 行, 10 章节)
 - 01-emil.md (26.3KB) / 02-spen.md (28.5KB) / 03-spzh.md (35KB) / 04-flutter-spec.md (21KB) / 05-appstore.md (29.3KB) / 06-googleplay.md (36.5KB) / 07-apple-health.md (37KB) / 08-architecture.md (23KB) / 09-bottom-up-bugs.md (48.7KB)
 
@@ -969,7 +1002,7 @@ R108 是 R107 报告后**第 1 批 P0 必修**, 1 个 subagent 跑 P0 #1-5 + P0 
 **R108 风险**: 3 个 iOS 真机验证项 (PrivacyInfo 注册 / MethodChannel / SCHEDULE_EXACT_ALARM)
 需要 Mac dev 机, 当前 Windows 环境只能写脚本 + 文档, 真接由 dev 在 Mac 上跑。
 
-**修复报告**: `docs/audit/2026-08-10-cleanup/R108-p0-1to5-report.md` (subagent 跑 5 fix 详情)
+**修复报告**: `docs/audit-history/r107-cleanup-2026-08-10/R108-p0-1to5-report.md` (subagent 跑 5 fix 详情)
 
 ## [0.30.0] - 2026-08-10 (R106 7 视角综合审视 + 业务真接 + 6 平台 P0 修复, 18 commits, baseline 2019 → 2031 pass, +12 R106 tests, 0 new regression, 0 analyzer error, 18 守门员全绿)
 
@@ -1023,7 +1056,7 @@ R106 是 R95 → R105 之间 7 轮 review 后的**最终综合审视**, 18 commi
 
 R105 是 2026-08-09 7 视角综合审计, 涵盖 5 厂商 push 状态 / vent audio 矛盾 / iOS 截图 / 锁屏 body / privacy policy 矛盾 / feature_graphic 67B 占位 / 录音 flag 与权限自相矛盾 等。
 
-**详细报告**: `docs/audit-archive-2026-08-10/2026-08-09/review-round-105/00-summary.md`
+**详细报告**: `docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/00-summary.md`
 
 **核心发现 (vs R95 评分变化)**:
 - emil 9.0 → 7.5 (-1.5, 新页 a11y 回归 + 假完成)
@@ -1040,15 +1073,15 @@ R105 是 2026-08-09 7 视角综合审计, 涵盖 5 厂商 push 状态 / vent aud
 
 ## [0.30.0] - 2026-08-09 (R104 6 视角综合审计, 0 代码改动, 35KB 报告)
 
-R104 7 视角综合扫描全部 395 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test, 72 项 (P0=12 / P1=20 / P2=20 / P3=10 + Apple Health 10 项), 详见 `docs/audit-archive-2026-08-10/2026-08-09/7-perspective-audit-report.md`。
+R104 7 视角综合扫描全部 395 Dart 文件 + fastlane + legal + android/ios 配置 + scripts + test, 72 项 (P0=12 / P1=20 / P2=20 / P3=10 + Apple Health 10 项), 详见 `docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-09/7-perspective-audit-report.md`。
 
 ## [0.30.0] - 2026-08-08 (R103 6 视角深度审计, 0 代码改动, 30KB 报告)
 
-R103 6 视角深度扫描未提交工作区, 56 项 (P0=8 / P1=16 / P2=22 / P3=10), 详见 `docs/audit-archive-2026-08-10/2026-08-09/review-round-105/00-summary.md` (R105 综合 7 视角合并 R103 报告)。
+R103 6 视角深度扫描未提交工作区, 56 项 (P0=8 / P1=16 / P2=22 / P3=10), 详见 `docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-09/review-round-105/00-summary.md` (R105 综合 7 视角合并 R103 报告)。
 
 ## [0.30.0] - 2026-08-07 (R100 6 视角审计修复: P0 5 项 + P1 7 项全部闭环, 0 analyzer error, 17 守门员全绿, 1997 tests pass)
 
-R100 6 视角审计 (emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification) 产出 27 项待办, 本轮收完 P0 (上架阻塞) + P1 (高概率打回 / 用户可见) 共 12 项可代码化修复; P2 12 项 (架构重构 / a11y / golden test 等) 留上架后。报告: `docs/audit/2026-08-07/R100-6perspective-audit/`。
+R100 6 视角审计 (emilkowalski / superpowers-en / superpowers-zh / AppStore / GooglePlay / flutter-specification) 产出 27 项待办, 本轮收完 P0 (上架阻塞) + P1 (高概率打回 / 用户可见) 共 12 项可代码化修复; P2 12 项 (架构重构 / a11y / golden test 等) 留上架后。报告: `docs/audit-history/r95-r105-history-2026-08-06_09/2026-08-07/R100-6perspective-audit/`。
 
 **P0 (上架阻塞, 5 项)**:
 
@@ -2896,7 +2929,7 @@ a5d6d50 R77 重构-5: trend_calendar TextStyle 走 token
 
 ## [Unreleased] - 2026-07-31 (R65 — spzh P2 5 文件 i18n 化 + 量表 PHQ-9/GAD-7 抽象起步)
 
-> R65 目标: 处理 `docs/reviews/2026-07-31-seven-lens/spzh/report.md` P2-F/G/H/I + P1-A:
+> R65 目标: 处理 `docs/audit-history/r95-seven-lens-2026-07-31/spzh/report.md` P2-F/G/H/I + P1-A:
 > - **5 文件 i18n 化** (P2-F/G/H/I, M 难度) — 抽 helper / override 模式同 `core/l10n/strings.dart`
 > - **量表 PHQ-9/GAD-7 抽象起步** (P1-A, L 难度) — `ScaleTranslations` abstract + `AssessmentScale.translations` 字段, 16 题全文留 v1.0
 >
@@ -2926,7 +2959,7 @@ a5d6d50 R77 重构-5: trend_calendar TextStyle 走 token
 
 ## [Unreleased] - 2026-07-31 (R63 — 7 视角审视后"半成品"集中收尾)
 
-> R63 目标: 处理 `docs/reviews/2026-07-31-seven-lens/` 7 视角整合报告
+> R63 目标: 处理 `docs/audit-history/r95-seven-lens-2026-07-31/` 7 视角整合报告
 > 标出的"半成品"问题（⏳/🔶 状态）。共修 **30 项**:
 > - **P0 必改 10 项**（6 视角共识最高频 + iOS/Android 上架阻塞）
 > - **P1 重要 10 项**（7 视角共识高频）
@@ -2982,14 +3015,14 @@ a5d6d50 R77 重构-5: trend_calendar TextStyle 走 token
 ### Architecture
 - **pubspec 升版**: `0.27.0+62` → `0.27.0+63`
 - **schemaVersion bump**: 14 → 15（contacts 表加 4 consent 字段 + 索引）
-- **7 视角整合报告**: `docs/reviews/2026-07-31-seven-lens/CONSOLIDATED.md`（35.9KB, 123 问题去重 ~50 项）
+- **7 视角整合报告**: `docs/audit-history/r95-seven-lens-2026-07-31/CONSOLIDATED.md`（35.9KB, 123 问题去重 ~50 项）
 
 ### Changed
 - 7 份独立子报告（emil / spen / spzh / appstore / googleplay / alibaba / flutter）+ 1 份整合报告
 - 1 个 Kotlin 类 (`BootReceiver.kt`)
 - 1 个 entitlements plist (`Runner.entitlements`)
 - 1 个 keystore 模板 (`android/key.properties.example`)
-- 1 个共享上下文 (`docs/reviews/2026-07-31-seven-lens/_shared/context.md`)
+- 1 个共享上下文 (`docs/audit-history/r95-seven-lens-2026-07-31/_shared/context.md`)
 - 1 个 9 文件 ios/ 项目结构首次 commit
 
 ## [0.27.0] - 2026-07-31 (R62 — 独立小项修复 + P0/P1 集中收尾)
@@ -3138,9 +3171,9 @@ a5d6d50 R77 重构-5: trend_calendar TextStyle 走 token
 
 ### Architecture & Refactor (round 58-59 v0.27 启动 + 三视角审视修正)
 - **v0.27 round 58** 三视角审视 (emil / spen / spzh) 启动:
-  - emil: 35 发现 (P0×1 + P1×17 + P2×12 + P3×5) → `docs/reviews/v0.27/review-emilkowalski-v027.md` (42KB)
-  - spen: 66 发现 (P0×4 + P1×16 + P2×30 + P3×16) → `docs/reviews/review-superpowers-en-v027.md` (47KB)
-  - spzh: 126 spzh 独有发现 (P0×0 + P1×5 + P2×35 + P3×86) → `docs/reviews/review-superpowers-zh-v027.md` (48KB)
+  - emil: 35 发现 (P0×1 + P1×17 + P2×12 + P3×5) → `docs/audit-history/review-v0.27/review-emilkowalski-v027.md` (42KB)
+  - spen: 66 发现 (P0×4 + P1×16 + P2×30 + P3×16) → `docs/audit-history/review-superpowers-en-v027.md` (47KB)
+  - spzh: 126 spzh 独有发现 (P0×0 + P1×5 + P2×35 + P3×86) → `docs/audit-history/review-superpowers-zh-v027.md` (48KB)
 - **v0.27 round 59** 三视角 P0/P1 修正批次 1 (XS+S 修正 7 项):
   - **P0-3** (spen §5#18 latent P0 fix): `setup_page.dart:404` 修正 fail-soft `onTimeout: () => const []` 丢数据 → fail-loud (让 TimeoutException 抛出 → setup 失败 + UI 提示)
   - **EMIL-T29**: 删 4 个 const shadow token (`shadowCard` / `shadowCardDark` / `shadowDialog` / `shadowOverlay`) + 修正 `celebration_bounce.dart:115` 走 theme-aware `shadowOverlayOf(context)` (防 R49 同款 silent bug 重现)

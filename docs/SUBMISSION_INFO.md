@@ -37,11 +37,11 @@ R107 阶段半完成：4 文件是 R71 commit 创建时占位；v0.31.1 P0-01 �
 
 | 编号 | 项 | 文件 | 状态 | 预计修复阶段 |
 |---|---|---|---|---|
-| **P0-02** | `notes.txt` 同步发布版本号 | `fastlane/metadata/ios/review_information/notes.txt` | ⏳ | v0.31.1 round 2 |
+| **P0-02** | `notes.txt` 同步发布版本号 | `fastlane/metadata/ios/review_information/notes.txt` | ✅ v0.32.0+142 已同步 + check_review_information_todo.py 守门员防回退 | — |
 | **P0-03** | 锁屏通知 title 移除药名（PII 锁屏泄漏）| `lib/core/l10n/strings.dart:112,139` | ⏳ | v0.31.1 round 3 |
-| **P0-04** | en-US description.txt 改写（"screening" → "self-reflection tools"，避免 5.1.3 抽审）| `fastlane/metadata/ios/en-US/description.txt` | ⏳ | v0.31.1 round 4 |
+| **P0-04** | en-US description.txt 改写（"standardized questionnaires" → "guided self-reflection"，避免 5.1.3 抽审）| `fastlane/metadata/ios/en-US/description.txt` | ✅ v0.32 round 8 (R111 AS-17: en + zh-Hans + zh-Hant 三语中性化) | — |
 | **P0-05** | 5 厂商 push 通道接入 | `android/app/build.gradle.kts` + 5 厂商 SDK | ⏳ | 1-2 月（外部）|
-| **P0-06** | en-US "chronic mental health conditions (depression, anxiety, bipolar, PTSD, ADHD)" 措辞中性化 | `fastlane/metadata/ios/en-US/description.txt` | ⏳ | 跟 P0-04 一起 |
+| **P0-06** | en-US "chronic mental health conditions (depression, anxiety, bipolar, PTSD, ADHD)" 措辞中性化 | `fastlane/metadata/ios/en-US/description.txt` | ✅ R110 round 6 已闭环 (grep 0 病名) | — |
 | **P0-07** | `Info.plist` 加 `NSHealthShareUsageDescription` / `NSHealthUpdateUsageDescription`（P0-03 HealthKit 集成时）| `ios/Runner/Info.plist` | ⏳ | R110+ 阶段 |
 | **P0-08** | `fastlane/Appfile` apple_id / team_id / itc_team_id 占位替换 | `fastlane/Appfile:21-24` | ⏳ | 上架前 1 周 |
 | **P0-09** | `ios/Podfile` Mac 首次重生成 + commit `Podfile.lock` | `ios/Podfile` | ⏳ | 首次 Mac build |
@@ -90,6 +90,50 @@ R107 阶段半完成：4 文件是 R71 commit 创建时占位；v0.31.1 P0-01 �
 - Android icon：**1443 字节 Flutter 默认 logo**
 
 **修法**：设计师出图后替换 / 跑 `scripts/generate_android_screenshots.sh`（脚本就位但需真跑 + AVD 名 placeholder 替换）。
+
+---
+
+## 2.5 Play Console 表单文案 (R112)
+
+> **来源**: `docs/audit/2026-08-13-r112-multi-lens/05-googleplay.md` GP-R112-05/06 + `04-appstore.md` P1-04 (AS-17)
+> **状态**: 草稿就绪, 提交周复制粘贴进 console。3 表单 = Exact Alarm + Permissions Declaration (麦克风) + App Store 5.1.3 Health Disclosure。
+
+### 2.5.1 Exact Alarm 申报 (Play Console → App content → Exact alarm)
+
+**填写值**: Declare use of `SCHEDULE_EXACT_ALARM` → "Core functionality: 定时服药依从性提醒"
+
+**申报理由 (英文, 粘贴用)**:
+
+> ChronicCare's core functionality is medication adherence: users rely on scheduled medication reminders that must fire at the exact dose time set by their clinician (e.g., 8:00, 12:00, 20:00). An inexact alarm that drifts by minutes-to-hours would defeat the app's primary purpose and could cause missed doses. The alarm is user-configured and the app fully supports a graceful fallback: on Android 14+ it checks `canScheduleExactAlarms()`, and when permission is denied or revoked it degrades to inexact scheduling automatically (code already in place), so the user experience remains functional without the permission.
+
+**技术侧降级已就绪**: `lib/core/data/services/reminder_dispatcher.dart:149-153,195-199` (canScheduleExactAlarms 检查 + inexact 兜底, R108 P0#2 闭环)。**被驳回即删权限走 inexact, 代码零改动**。
+
+### 2.5.2 Permissions Declaration — Microphone (RECORD_AUDIO)
+
+**填写值 (video/audio statement)**:
+
+> The microphone is used only for the user's own voice notes in the private "vent space" and mood journal. Recordings are initiated by the user, stored locally on the device with AES-256 encryption, never uploaded, never shared with third parties, and never used for advertising or diagnosis. The user can delete any recording at any time from within the app.
+
+**中文备份**:
+
+> 麦克风仅用于用户主动录制"树洞"与情绪日记中的语音笔记。录音仅本地加密存储 (AES-256), 不上传、不与第三方共享、不用于广告或诊断。用户可随时在 App 内删除任何录音。
+
+### 2.5.3 App Store 5.1.3 Health Information Disclosure Questionnaire 草稿
+
+> **触发**: App 内含自我评估量表 + 严重度提示 + 危机资源 → 提交时几乎必然触发 Health 类问卷 (AS-17)。文案与 description 中性化口径一致。
+
+| 问卷项 | 草稿回答 |
+|---|---|
+| App 是否属于医疗/健康 App? | Yes (mental wellbeing self-management) |
+| 是否提供诊断/治疗? | No — self-assessment & tracking only |
+| 是否为医疗器械 (FDA/NMPA/CE)? | No — wellness tool, no regulated functions |
+| 健康内容来源 | Standardized public self-assessment scales, presented for self-monitoring only |
+| 是否向用户提供医疗建议? | No — always advises consulting a qualified healthcare professional |
+| 严重度提示如何措辞? | 温和提示 "结果仅供参考, 若持续困扰建议咨询专业人士", 非诊断结论 |
+| 危机处理 | 提供各地区危机热线 (tel: 链接), 明确声明非危机干预服务 |
+| 数据位置 | 100% on-device, SQLCipher AES-256, 零云端 |
+
+**说明**: 问卷答案与 `scripts/generate_health_apps_questionnaire.py` 4 大块 disclosure 保持一致 (R112 已把 PHQ-9/GAD-7 点名改通用量表措辞 + 补录音声明)。
 
 ---
 
