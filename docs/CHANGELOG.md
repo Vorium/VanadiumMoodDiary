@@ -1,5 +1,15 @@
 ﻿# 变更日志
 
+## [0.32.0+140] - 2026-08-13 (R110 round 7b-6: mood_trend_page 517L god class 补 6 test)
+
+- 6 个新 test (`mood_trend_page_round7b_test.dart`):
+  - 空数据 → 暂无数据 + 3 tab
+  - 有数据 → SegmentedButton 4 档时间范围 + LineChart + 默认选中 7D
+  - 切换 7D → 30D → 重绘不崩
+  - 分数分布 tab → BarChart
+  - CBT tab: 无数据提示 / 有数据标题+提示+LineChart
+- 注: 私有 _TimeRange 泛型用 bySubtype + dynamic 断言 days
+
 ## [0.32.0+139] - 2026-08-13 (R110 round 7b-5: vent_detail_page 426L god class 补 5 test + B1-10/B1-11)
 
 - 5 个新 test (`vent_detail_page_round7b_test.dart`):
