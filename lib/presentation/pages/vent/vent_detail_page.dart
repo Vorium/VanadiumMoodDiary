@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
+import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -68,6 +69,12 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     _completeSub?.cancel();
     _player.dispose();
     // P0-2: 清理临时解密文件(以防用户离开页面时还在播)
+    // v0.32 round 7b-5 (B1-11): 之前 dispose() 里直接 ref.read(...)
+    // — Riverpod 3 在 State.dispose 阶段 ref 已不可用 (element 正在
+    // unmount), 播放过录音后离开页面 = StateError "Using ref when a
+    // widget is about to or has been unmounted"。修: 播放时把 storage
+    // 引用存到 State 字段, dispose 里用字段 (ref.read 只在 initState/
+    // build/event handler 里合法)。
     // v0.30 R108 revisit (P0-018): 之前 `try { deleteTempFile(...) }` 是
     // fire-and-forget — return Future 但不 await, dispose() 立即返回,
     // 调用方 (Flutter framework) 已经 dispose widget 树, 后续 async 路径
@@ -76,14 +83,12 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     // 修: 用 unawaited(...) 显式标记, + .catchError 收口异常, 跟项目其他
     // fire-and-forget Future (audio recorder stop / mood audio cleanup)
     // 1:1 模式。
-    if (_tempDecryptedPath != null) {
+    final storage = _storage;
+    if (storage != null && _tempDecryptedPath != null) {
       final tempPath = _tempDecryptedPath!;
       _tempDecryptedPath = null;
       unawaited(
-        ref
-            .read(ventAudioStorageProvider)
-            .deleteTempFile(tempPath)
-            .catchError((Object e, StackTrace st) {
+        storage.deleteTempFile(tempPath).catchError((Object e, StackTrace st) {
           // v0.22 round 30 (sp-en P1-3): 走 swallowError (app teardown 期间)
           swallowError(
             where: 'vent_detail_page.dispose',
@@ -99,6 +104,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
   /// P0-2: 当前播放用的临时解密文件，页面离开时清
   String? _tempDecryptedPath;
 
+  /// B1-11: 播放时缓存的 storage 引用 (dispose 阶段不能 ref.read)
+  VentAudioStorage? _storage;
+
   Future<void> _togglePlay(VentEntryEntity entry) async {
     final path = entry.audioPath;
     if (path == null) return;
@@ -109,7 +117,9 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     } else {
       try {
         // P0-2: path 是 .m4a.enc 加密文件 → 先 decryptToTemp → audioplayer 播
-        final storage = ref.read(ventAudioStorageProvider);
+        // B1-11: 缓存 provider 引用给 dispose() 用
+        _storage ??= ref.read(ventAudioStorageProvider);
+        final storage = _storage!;
         // 如果已有 temp (从 pause 恢复),直接复用
         _tempDecryptedPath ??= await storage.decryptToTemp(path);
         await _player.play(DeviceFileSource(_tempDecryptedPath!));
@@ -238,12 +248,18 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
           onPressed: _showReportDialog,
         ),
         entryAsync.maybeWhen(
-          data: (entry) => PressFeedbackIconButton(
-            icon: Icons.delete_outline,
-            color: AppTokens.errorColor(context),
-            tooltip: AppLocalizations.of(context).commonDelete,
-            onPressed: entry == null ? null : () => _delete(entry),
-          ),
+          // v0.32 round 7b-5 (B1-10): entry == null (找不到) 时之前传
+          // onPressed: null → PressFeedbackIconButton 断言
+          // (onPressed == null) ^ (onTap == null) 直接崩 (debug)，
+          // 找不到的树洞反而闪崩溃而不是 EmptyState。改隐藏删除按钮。
+          data: (entry) => entry == null
+              ? const SizedBox.shrink()
+              : PressFeedbackIconButton(
+                  icon: Icons.delete_outline,
+                  color: AppTokens.errorColor(context),
+                  tooltip: AppLocalizations.of(context).commonDelete,
+                  onPressed: () => _delete(entry),
+                ),
           orElse: () => const SizedBox.shrink(),
         ),
       ],

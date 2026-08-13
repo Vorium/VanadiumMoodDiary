@@ -1,5 +1,25 @@
 ﻿# 变更日志
 
+## [0.32.0+139] - 2026-08-13 (R110 round 7b-5: vent_detail_page 426L god class 补 5 test + B1-10/B1-11)
+
+- 5 个新 test (`vent_detail_page_round7b_test.dart`):
+  - 文字条目渲染 (正文/时间戳/头像 icon/删除按钮)
+  - 音频条目播放/暂停 toggle (mock audioplayers 三件套: global init +
+    create 捕获 playerId 注册 EventChannel + setSourceUrl 延迟推 prepared)
+  - 举报/反馈 dialog → 前往法律与隐私路由跳转 (App Store 1.2.1)
+  - 删除确认 → repo.delete + pop
+  - 找不到条目 → EmptyState
+- B1-10: entry == null 时删除按钮传 onPressed: null →
+  PressFeedbackIconButton 断言崩溃 (debug 必炸, release 按钮失效) →
+  entry == null 时隐藏删除按钮
+- B1-11: dispose() 里 ref.read(ventAudioStorageProvider) → Riverpod 3
+  State.dispose 阶段 ref 不可用, 播过录音后离开页面必抛 StateError →
+  播放时缓存 _storage 字段, dispose 用字段
+- 测试基建: audioplayers GlobalAudioScope/platform 是进程级单例,
+  _initCompleter 跨 testWidgets 残留会让第 2 个测试 AudioPlayer._create()
+  永久挂起 → setUp 里重置 AudioplayersPlatformInterface.instance /
+  GlobalAudioplayersPlatformInterface.instance
+
 ## [0.32.0+138] - 2026-08-13 (R110 round 7b-4: edit_medication_dialog 413L god class 补 8 test + B1-9)
 
 - 8 个新 test (`edit_medication_dialog_round7b_test.dart`):
