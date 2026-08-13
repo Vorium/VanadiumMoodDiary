@@ -1,5 +1,16 @@
 ﻿# 变更日志
 
+## [0.32.0+137] - 2026-08-13 (R110 round 7b-3: assessment_widgets 429L god class 补 11 test)
+
+- 11 个新 test (`assessment_widgets_round7b_test.dart`):
+  - SparklinePainter 5 个纯函数单测 — PictureRecorder + toImage 像素
+    计数硬验证: 空数据 0 像素 / 单点 / 多点 / 无平均线正常画 /
+    shouldRepaint 判据 (totals/maxTotal/averageLine 变化才重绘)
+  - QuestionCard 3 个 widget test: 题号+题文+全选项渲染 / 点选项 →
+    onChanged 回调对应分值 / selected chip 高亮
+  - ComparisonCard 3 态: 首次评估提示文案 (无上次/无对比) / 恶化 →
+    上次+本次分数 + ↑ + 恶化文案 / 好转 → ↓ + 好转文案
+
 ## [0.32.0+136] - 2026-08-13 (R110 round 7b-2: mood_audio_recorder_widget 589L god class 补 6 test)
 
 - 6 个新 widget test (`mood_audio_recorder_round7b_test.dart`), 全部走
