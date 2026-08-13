@@ -1,5 +1,18 @@
 ﻿# 变更日志
 
+## [0.32.0+136] - 2026-08-13 (R110 round 7b-2: mood_audio_recorder_widget 589L god class 补 6 test)
+
+- 6 个新 widget test (`mood_audio_recorder_round7b_test.dart`), 全部走
+  serviceFactory 注入全内存 fake (不碰 record/speech_to_text 平台
+  channel + 真实文件 IO): idle 态 UI / STT 不可用提示 (initialize=false)
+  / 录音切换 → 取消按钮 + 识别中…… + 0:00 计时器 / 录音中 STT partial
+  实时转写 / 停止 → "已录 0:05" + snapshot 上抛 (audioPath/durationMs)
+  + 播放/重录按钮出现 / 重录 → snapshot 清空回 idle
+- 播放路径 (decryptToTemp + AudioPlayer) 依赖平台 channel + 真实文件,
+  已由 vent/mood service 层单测覆盖, 明确不测并注释说明
+- test 基建: 录音中 _RecordingTimer (100ms 周期) 持续重建 → 用固定
+  pump 替代 pumpAndSettle; 测试结束前必须停止录音避免 timer 悬挂
+
 ## [0.32.0+135] - 2026-08-13 (R110 round 7b-1: add_medication_page 568L god class 补 6 test + B1-8 保存路径 bug)
 
 - B1-8 (修复): 新增药物后重排提醒原来 `ref.refresh(medicationsProvider.future)`
