@@ -20,8 +20,6 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 
 class _NoopNotificationService extends NotificationService {
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
 }
 
 Future<void> _pumpSetup(WidgetTester tester) async {

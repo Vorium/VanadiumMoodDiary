@@ -117,6 +117,54 @@ const Map<InfluenceCategory, List<String>> kInfluenceFactorKeys = {
   ],
 };
 
+/// zh 字面量 → i18n key 反查表 (兼容存量中文数据)
+///
+/// v0.32 R112-03: 录入侧改存 key 之前, DB 里存的是中文 (kInfluenceFactors
+/// 字面量)。展示侧先走 [influenceFactorNormalizeKey] 反查成 key, 再走
+/// ARB 派发, 老数据也能正确本地化。
+/// 与 [kInfluenceFactors] / [kInfluenceFactorKeys] 索引一一对应。
+const Map<String, String> kInfluenceFactorZhToKey = {
+  '家人': 'influenceFactorFamily',
+  '朋友': 'influenceFactorFriend',
+  '伴侣': 'influenceFactorPartner',
+  '孩子': 'influenceFactorChild',
+  '同事': 'influenceFactorColleague',
+  '运动': 'influenceFactorExercise',
+  '生病': 'influenceFactorSick',
+  '睡眠好': 'influenceFactorGoodSleep',
+  '饮食健康': 'influenceFactorHealthyDiet',
+  '工作': 'influenceFactorWork',
+  '爱好': 'influenceFactorHobby',
+  '旅行': 'influenceFactorTravel',
+  '通勤': 'influenceFactorCommute',
+  '购物': 'influenceFactorShopping',
+  '游戏': 'influenceFactorGaming',
+  '阅读': 'influenceFactorReading',
+  '娱乐': 'influenceFactorEntertainment',
+  '冥想': 'influenceFactorMeditation',
+  '呼吸练习': 'influenceFactorBreathing',
+  '写日记': 'influenceFactorJournaling',
+  '瑜伽': 'influenceFactorYoga',
+  '晴天': 'influenceFactorSunny',
+  '多云': 'influenceFactorCloudy',
+  '雨天': 'influenceFactorRainy',
+  '雪天': 'influenceFactorSnowy',
+  '刮风': 'influenceFactorWindy',
+};
+
+/// 归一化影响因素存储值为 i18n key
+///
+/// v0.32 R112-03:
+/// - 已是 key → 原样返回 (幂等)
+/// - 旧中文数据 (kInfluenceFactors 字面量) → 反查成 key
+/// - 未知自定义值 → 原样返回 (展示侧直接上屏, 不丢数据)
+String influenceFactorNormalizeKey(String raw) {
+  for (final keys in kInfluenceFactorKeys.values) {
+    if (keys.contains(raw)) return raw;
+  }
+  return kInfluenceFactorZhToKey[raw] ?? raw;
+}
+
 /// 影响因素 JSON 编解码工具
 class InfluenceCodec {
   InfluenceCodec._();

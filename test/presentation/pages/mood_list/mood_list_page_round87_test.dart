@@ -18,6 +18,7 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 void main() {
   // helper: 3 条 mood entries (覆盖不同 score / note)
@@ -73,6 +74,11 @@ void main() {
     expect(find.text('今天很开心'), findsOneWidget);
     expect(find.text('感觉很难受'), findsOneWidget);
     expect(find.text('一般般'), findsOneWidget);
+
+    // v0.32 R112 (EM-02/AH-04, spec §5.5): 列表走 AppleListSection
+    // + entry count title ("3 条记录", l10n.moodListEntryCount)
+    expect(find.byType(AppleListSection), findsOneWidget);
+    expect(find.text('3 条记录'), findsOneWidget);
   });
 
   testWidgets('空数据: 显示 EmptyState', (tester) async {

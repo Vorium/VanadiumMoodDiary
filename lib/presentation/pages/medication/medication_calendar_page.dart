@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/core/theme/app_motion.dart';
+import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -32,13 +32,16 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medication_cal
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_calendar_legend.dart';
 import 'package:chroniccare/presentation/providers/calendar_window_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 
 class MedicationCalendarPage extends ConsumerStatefulWidget {
@@ -90,7 +93,8 @@ class _MedicationCalendarPageState
           // v0.31 round 11a: 时间窗口章节 — 走 SectionHeader ALL CAPS
           // + AppleListSection 风格容器 (spec §4.6 + §4.5)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             child: SectionHeader(
               title: AppLocalizations.of(context).medsCalendarWindowTitle,
             ),
@@ -98,7 +102,8 @@ class _MedicationCalendarPageState
           const SizedBox(height: AppTokens.spacingXxs),
 
           AppleListSection(
-            margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            margin:
+                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             children: [
               // v0.22 round 29 (emil-34): Semantics 描述时间窗口
               // (TalkBack 读"时间窗口 7/30/90 天，当前 30" 让用户知道是单选)
@@ -146,7 +151,8 @@ class _MedicationCalendarPageState
 
           // v0.31 round 11a: 日历 grid 章节 — SectionHeader ALL CAPS
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             child: SectionHeader(
               title: AppLocalizations.of(context).medsCalendarTitle,
             ),
@@ -192,7 +198,7 @@ class _MedicationCalendarPageState
                 date: _selectedDate!,
                 checkIns: checkInsAsync.value ?? const <CheckInEntity>[],
                 meds: medsAsync.value ?? const <MedicationEntity>[],
-                onAddLog: _onAddLogStub,
+                onAddLog: _onAddLog,
               ),
             ),
 
@@ -200,8 +206,11 @@ class _MedicationCalendarPageState
           // v0.31 round 11a: Legend 章节用 SectionHeader ALL CAPS
           const SizedBox(height: AppTokens.spacingMd),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-            child: SectionHeader(title: AppLocalizations.of(context).medsCalendarLegendTitle),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            child: SectionHeader(
+              title: AppLocalizations.of(context).medsCalendarLegendTitle,
+            ),
           ),
           const SizedBox(height: AppTokens.spacingXxs),
           const Padding(
@@ -232,24 +241,92 @@ class _MedicationCalendarPageState
     );
   }
 
-  /// v0.30 round 93 (task 1.5): 补打卡 stub
+  /// v0.32 round 8 (R111 R111-03 fix): 补打卡真实现
   ///
-  /// 完整实现待 R93 task 4 (schema) / task 5 (Repository 扩展) 接入
-  /// RecordCheckInUseCase 的 `at` 参数。当前只显示 SnackBar 提示。
-  /// 不影响 cell tap → DayDetail 显示的核心功能 (task 1.5 主目标)。
-  void _onAddLogStub(DateTime date) {
-    // 显式使用 ref / context 避免 lint 警告
-    ref.invalidate(allCheckInsProvider);
-    final dateStr =
-        '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          // R100 (P1#9): 走 ARB, 替代 hardcoded 中文
-          AppLocalizations.of(context).medCalendarBackfillStub(dateStr),
-        ),
-        duration: AppMotion.snackBarDurationShort,
-      ),
+  /// 之前 _onAddLogStub 只弹 "补打卡功能接入中" SnackBar (B2-09 残留)。
+  /// RecordCheckInUseCase.call 已有 `at` 参数, 只差 UI 接入。流程:
+  /// 选药 dialog → CheckInNotifier.checkIn(medicationId, at: date)
+  /// → 成功 SnackBar (AppSnackBar) + invalidate providers。
+  Future<void> _onAddLog(DateTime date) async {
+    final l10n = AppLocalizations.of(context);
+    final meds =
+        ref.read(medicationsProvider).value ?? const <MedicationEntity>[];
+    MedicationEntity? selected = meds.isNotEmpty ? meds.first : null;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final l = AppLocalizations.of(ctx);
+        return StatefulBuilder(
+          builder: (ctx, setLocal) {
+            return AlertDialog(
+              title: Text(l.medsCalendarDayDetailAddLog),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (meds.isNotEmpty)
+                    DropdownButtonFormField<MedicationEntity?>(
+                      initialValue: selected,
+                      decoration: InputDecoration(
+                        labelText: l.commonMedName,
+                        border: InputBorder.none,
+                      ),
+                      items: [
+                        DropdownMenuItem<MedicationEntity?>(
+                          value: null,
+                          child: Text(l.tempMedNoLink),
+                        ),
+                        for (final m in meds)
+                          DropdownMenuItem<MedicationEntity?>(
+                            value: m,
+                            child: Text(m.name),
+                          ),
+                      ],
+                      onChanged: (v) => setLocal(() => selected = v),
+                    ),
+                  const SizedBox(height: AppTokens.spacingSm),
+                  Text(
+                    Formatters.date(date),
+                    textAlign: TextAlign.center,
+                    style: AppTokens.textStyleLabel(context),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text(l.commonCancel),
+                ),
+                PrimaryButton(
+                  isFullWidth: false,
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text(l.medCalendarBackfillConfirm),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
+
+    if (confirmed != true || !mounted) return;
+    try {
+      await ref
+          .read(checkInNotifierProvider.notifier)
+          .checkIn(medicationId: selected?.id, at: date);
+      if (!mounted) return;
+      AppSnackBar.showInfo(
+        context,
+        l10n.medCalendarBackfillSuccess(
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
+        ),
+      );
+      ref.invalidate(allCheckInsProvider);
+      ref.invalidate(streakSummaryProvider);
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackBar.showError(context, action: l10n.snackbarActionSave, error: e);
+    }
   }
 }

@@ -4,6 +4,10 @@
 // - 下方一个下拉/选择行：提醒间隔（7/14/30/60/90 天）
 // - 关闭时整体灰显
 // - 改完即生效（onSettingsChanged）
+//
+// v0.32 round 14 (R112 F1 遗留): 2 处 Card → AppleListSection
+// (iOS insetGrouped 白块 + hairline 0.5 + 0 阴影, spec §4.5),
+// 对齐已 ALS 化的 settings 宿主 (assessment_section)。
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +18,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class AssessmentReminderSection extends ConsumerStatefulWidget {
@@ -113,95 +118,91 @@ class _AssessmentReminderSectionState
 
   @override
   Widget build(BuildContext context) {
+    // v0.32 round 14 (R112 F1 遗留): Card → AppleListSection
+    // (iOS insetGrouped 白块 + hairline 0.5 + 0 阴影, spec §4.5),
+    // 对齐已 ALS 化的 settings 宿主 (assessment_section)。
     if (_enabled == null || _days == null) {
-      return const Card(
-        child: Padding(
-          padding: AppTokens.edgeInsetsMd,
-          child: SizedBox(
+      return const AppleListSection(
+        margin: EdgeInsets.zero,
+        children: [
+          SizedBox(
             height: AppTokens.spacingXl,
             child: LoadingSkeleton.fullScreen(),
           ),
-        ),
+        ],
       );
     }
     final enabled = _enabled!;
     final days = _days!;
-    return Card(
-      child: Column(
-        children: [
-          SwitchListTile(
-            secondary: Icon(
-              Icons.event_repeat,
-              color: AppTokens.primaryColor(context),
-            ),
-            title:
-                Text(AppLocalizations.of(context).reminderHubAssessmentTitle),
-            subtitle: Text(
-              enabled
-                  ? AppLocalizations.of(context)
-                      .assessmentReminderSubtitleEnabled(days)
-                  : AppLocalizations.of(context)
-                      .reminderHubAssessmentDescDisabled,
-              style: TextStyle(
-                color: enabled
-                    ? Theme.of(context).colorScheme.onSurface
-                    : AppTokens.textHintColor(context),
-              ),
-            ),
-            value: enabled,
-            onChanged: _busy ? null : _toggle,
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          secondary: Icon(
+            Icons.event_repeat,
+            color: AppTokens.primaryColor(context),
           ),
-          if (enabled) ...[
-            const Divider(height: 1, thickness: 0.5),
-            AppListTile(
-              leading:
-                  Icon(Icons.schedule, color: AppTokens.primaryColor(context)),
-              title: Text(AppLocalizations.of(context).reminderHubInterval),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    AppLocalizations.of(context).reminderHubNDays(days),
-                    style: const TextStyle(
-                      fontSize: AppTokens.fontSizeBody,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: AppTokens.spacingXs),
-                  const Icon(Icons.chevron_right),
-                ],
-              ),
-              onTap: _busy ? null : _changeDays,
+          title: Text(AppLocalizations.of(context).reminderHubAssessmentTitle),
+          subtitle: Text(
+            enabled
+                ? AppLocalizations.of(context)
+                    .assessmentReminderSubtitleEnabled(days)
+                : AppLocalizations.of(context)
+                    .reminderHubAssessmentDescDisabled,
+            style: TextStyle(
+              color: enabled
+                  ? Theme.of(context).colorScheme.onSurface
+                  : AppTokens.textHintColor(context),
             ),
-          ],
-          if (enabled) ...[
-            const Divider(height: 1, thickness: 0.5),
-            Padding(
-              padding: AppTokens.edgeInsetsMd,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.lightbulb_outline,
-                    size: AppTokens.iconSizeInline,
+          ),
+          value: enabled,
+          onChanged: _busy ? null : _toggle,
+        ),
+        if (enabled) ...[
+          AppListTile(
+            contentPadding: EdgeInsets.zero,
+            leading:
+                Icon(Icons.schedule, color: AppTokens.primaryColor(context)),
+            title: Text(AppLocalizations.of(context).reminderHubInterval),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppLocalizations.of(context).reminderHubNDays(days),
+                  style: const TextStyle(
+                    fontSize: AppTokens.fontSizeBody,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: AppTokens.spacingXs),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+            onTap: _busy ? null : _changeDays,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.lightbulb_outline,
+                size: AppTokens.iconSizeInline,
+                color: AppTokens.textSecondaryColor(context),
+              ),
+              const SizedBox(width: AppTokens.spacingXs),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context).assessmentReminderHelpText,
+                  style: TextStyle(
+                    fontSize: AppTokens.fontSizeCaption,
                     color: AppTokens.textSecondaryColor(context),
                   ),
-                  const SizedBox(width: AppTokens.spacingXs),
-                  Expanded(
-                    child: Text(
-                      AppLocalizations.of(context).assessmentReminderHelpText,
-                      style: TextStyle(
-                        fontSize: AppTokens.fontSizeCaption,
-                        color: AppTokens.textSecondaryColor(context),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ],
-      ),
+      ],
     );
   }
 }

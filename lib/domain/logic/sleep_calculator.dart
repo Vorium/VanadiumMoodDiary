@@ -48,9 +48,9 @@ class SleepCalculator {
     final n = last7DaysBedtimes.length;
     const minutesPerDay = 24 * 60;
     final sinSum = last7DaysBedtimes.fold<double>(
-        0, (a, d) => a + math.sin(_toAngle(d)));
+        0, (a, d) => a + math.sin(_toAngle(d)),);
     final cosSum = last7DaysBedtimes.fold<double>(
-        0, (a, d) => a + math.cos(_toAngle(d)));
+        0, (a, d) => a + math.cos(_toAngle(d)),);
     final r = math.sqrt(sinSum * sinSum + cosSum * cosSum) / n;
     // Mardia circular standard deviation: σ = √(−2·ln R) 弧度
     final stdDevRad = math.sqrt(-2 * math.log(r));

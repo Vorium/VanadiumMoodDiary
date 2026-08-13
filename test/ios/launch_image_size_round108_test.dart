@@ -19,7 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('R108 Fix #10: LaunchImage 占位防御 (≥ 1KB)', () {
-    final launchDir = 'ios/Runner/Assets.xcassets/LaunchImage.imageset';
+    const launchDir = 'ios/Runner/Assets.xcassets/LaunchImage.imageset';
     const requiredFiles = <String>[
       'LaunchImage.png',
       'LaunchImage@2x.png',
@@ -47,17 +47,17 @@ void main() {
       final content = file.readAsStringSync();
       for (final filename in requiredFiles) {
         expect(content.contains(filename), isTrue,
-            reason: 'Contents.json 应引用 $filename');
+            reason: 'Contents.json 应引用 $filename',);
       }
     });
 
     test('scripts/generate_ios_assets.sh 存在 (设计师/CI 用占位生成器)', () {
       final file = File('scripts/generate_ios_assets.sh');
       expect(file.existsSync(), isTrue,
-          reason: '占位生成器脚本应存在, 设计师可一键生成占位图通过 lock-in test');
+          reason: '占位生成器脚本应存在, 设计师可一键生成占位图通过 lock-in test',);
       final content = file.readAsStringSync();
       expect(content.contains('LaunchImage'), isTrue,
-          reason: '脚本应处理 LaunchImage');
+          reason: '脚本应处理 LaunchImage',);
     });
   });
 }

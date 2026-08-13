@@ -22,7 +22,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:chroniccare/core/data/services/encryption_service.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// 树洞文字 encrypt/decrypt 包装
 ///
@@ -54,7 +54,7 @@ class ExportCryptoService {
       final plain = await _encryption.decrypt(Uint8List.fromList(blob));
       return utf8.decode(plain);
     } catch (e, st) {
-      swallowError(
+      exportErrorSink(
         where: 'ExportCryptoService.decryptVentText',
         error: e,
         stack: st,

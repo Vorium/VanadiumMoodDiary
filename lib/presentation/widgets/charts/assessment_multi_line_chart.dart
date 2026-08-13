@@ -26,8 +26,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/domain/entities/assessment_entry.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
+import 'package:chroniccare/presentation/services/scale_name_l10n.dart';
 import 'package:chroniccare/presentation/widgets/charts/assessment_color_palette.dart';
 
 class AssessmentMultiLineChart extends StatefulWidget {
@@ -136,8 +138,9 @@ class _AssessmentMultiLineChartState extends State<AssessmentMultiLineChart> {
   }
 
   String _scaleName(String id) {
-    final scale = scaleById(id);
-    return scale?.displayName ?? id;
+    // v0.32 round 8 (R111 R111-02 fix): 走 l10n 派发 (tooltip legend
+    // en 用户不再看中文量表名)
+    return scaleNameL10n(id, AppLocalizations.of(context));
   }
 
   /// fl_chart 0.69 在 empty dashArray 上崩 (CircularIntervalList.next

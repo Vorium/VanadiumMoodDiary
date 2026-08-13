@@ -16,8 +16,8 @@
 
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/phq9.dart';
+import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
-import 'package:chroniccare/presentation/services/scale_translations_l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -231,11 +231,11 @@ void main() {
 
   // v0.27 R77 (spzh P1-A 收尾): Phq9Scale.detectCrisis hotlines label 走
   // translations.crisisHotlineLabel (region, index), 6 region × 2 hotline
-  // 全 i18n 化。注入 AppLocalizationsScaleTranslations(en) 验证 en label
+  // 全 i18n 化。v0.32 R112 (AR-17): AppLocalizationsScaleTranslations 已删,
+  // 改本地 _EnHotlineTranslations 替身 (走 ARB en getter) 验证 en label
   // ≠ hotlineByRegion[region][i].label (中文 fallback)。
   group('Phq9Scale.detectCrisis — hotlines label 走 translations (R77 收尾)', () {
-    final enL10n = AppLocalizationsEn();
-    final enTranslations = AppLocalizationsScaleTranslations(enL10n);
+    final enTranslations = _EnHotlineTranslations(AppLocalizationsEn());
     final scale = Phq9Scale(translations: enTranslations);
     final scores = List<int>.filled(9, 0)..[8] = 1; // q9 阳性
 
@@ -296,4 +296,37 @@ void main() {
       expect(signal.hotlines[0].label, 'Samaritans UK & ROI (24h free)');
     });
   });
+}
+
+/// v0.32 R112 (AR-17): 本地 en hotline 测试替身
+///
+/// 替代已删除的 `AppLocalizationsScaleTranslations`, 只 override
+/// crisisHotlineLabel 走 ARB en getter (6 region × 2 hotline), 其余 method
+/// 走 StaticScaleTranslations 中文 fallback。
+class _EnHotlineTranslations extends StaticScaleTranslations {
+  final AppLocalizationsEn l10n;
+  _EnHotlineTranslations(this.l10n);
+
+  @override
+  String crisisHotlineLabel(
+    HotlineRegion region, {
+    int index = 0,
+    String? override,
+  }) {
+    if (override != null) return override;
+    switch (region) {
+      case HotlineRegion.cn:
+        return index == 0 ? l10n.scaleHotlineCn : l10n.scaleHotlineCn2;
+      case HotlineRegion.us:
+        return index == 0 ? l10n.scaleHotlineUs : l10n.scaleHotlineUs2;
+      case HotlineRegion.hk:
+        return l10n.scaleHotlineHk;
+      case HotlineRegion.tw:
+        return index == 0 ? l10n.scaleHotlineTw : l10n.scaleHotlineTw2;
+      case HotlineRegion.sg:
+        return l10n.scaleHotlineSg;
+      case HotlineRegion.uk:
+        return l10n.scaleHotlineUk;
+    }
+  }
 }

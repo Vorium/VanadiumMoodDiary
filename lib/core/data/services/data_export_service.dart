@@ -32,7 +32,7 @@
 // - v1: 基础 (profile / contacts / medications / checkIns)
 // - v2: + reportHistories + moodEntries (v0.9)
 // - v3: + ventEntries 文字 (v0.15)
-// - v4 (current): 4D 情绪 energy/sleep/anxiety (v0.18)
+// - v5 (current): + R111 E1/E2/E3 + 6 daily tracking 表 + PIPL §14 留痕 (v0.32 round 8)
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';

@@ -5,6 +5,7 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/mood_label.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/secondary_button.dart';
 
@@ -47,7 +48,14 @@ class MoodQuickButton extends ConsumerWidget {
               ),
               const SizedBox(width: AppTokens.spacingXs),
               Text(
-                '${AppLocalizations.of(context).moodTodayLabel}${MoodVisual.labelFor(latest.score)}',
+                // v0.32 round 8 (R112-06 emil): 参数化 ARB key
+                // (moodTodayLabelWithValue), 修前字符串拼接
+                // `'${l10n.moodTodayLabel}${moodLabel(...)}'` 对 zh 是 "今日情绪：好"
+                // 自然, 但 en "Mood: Good" 靠 moodTodayLabel 带尾随空格硬拼,
+                // 空格在 ARB 里不可见容易漂移。走 placeholder 后 3 语独立控制。
+                AppLocalizations.of(context).moodTodayLabelWithValue(
+                  moodLabel(AppLocalizations.of(context), latest.score),
+                ),
                 style: const TextStyle(
                   fontSize: AppTokens.fontSizeLabel,
                   fontWeight: FontWeight.w500,

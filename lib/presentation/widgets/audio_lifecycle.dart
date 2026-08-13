@@ -30,7 +30,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/widgets.dart';
 import 'package:record/record.dart';
 
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// v0.30 R108: audio 状态机 enum, 替代 4 个独立 bool 字段
 ///
@@ -120,8 +120,8 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
   bool get isPlaying => audioState == AudioState.playing;
 
   /// 是否有录音结果 (state == recorded / playing)
-  bool get hasRecording => audioState == AudioState.recorded ||
-      audioState == AudioState.playing;
+  bool get hasRecording =>
+      audioState == AudioState.recorded || audioState == AudioState.playing;
 
   // ===== 4 抽象方法 (subclass 实现业务逻辑) =====
 
@@ -182,7 +182,7 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     final temp = tempDecryptedPath;
     if (temp == null) return;
     try {
-      swallowError(
+      audioErrorSink(
         where: 'AudioLifecycleMixin.cleanupTempFile',
         error: StateError(
           'subclass 未 override cleanupTempFile, temp 不会被真删: $temp',
@@ -192,7 +192,7 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
             'mood: moodAudioStorageProvider)',
       );
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'AudioLifecycleMixin.cleanupTempFile',
         error: e,
         stack: st,
@@ -217,7 +217,7 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
         setState(() => audioState = AudioState.idle);
       }
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'AudioLifecycleMixin.startRecording',
         error: e,
         stack: st,
@@ -246,7 +246,7 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
         }
       });
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'AudioLifecycleMixin.stopRecording',
         error: e,
         stack: st,
@@ -272,7 +272,7 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
       // subclass 应在 startPlaybackImpl 内部 decryptToTemp + 写 tempDecryptedPath
       await startPlaybackImpl(path);
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'AudioLifecycleMixin.startPlayback',
         error: e,
         stack: st,
@@ -299,7 +299,7 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
       await stopPlaybackImpl();
     } catch (e, st) {
       // v0.22 round 28 (spen-bug-02): 失败时清 temp file 避免堆积
-      swallowError(
+      audioErrorSink(
         where: 'AudioLifecycleMixin.stopPlayback',
         error: e,
         stack: st,
@@ -360,16 +360,27 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
   /// native 资源释放不及时, 反复进/出 page 累积 → OOM / audio session 异常。
   /// 修: 抽 asyncDisposeAudio() 内部顺序释放, 用 unawaited() 包装避免
   /// State.dispose() 强制 sync 签名要求。
+  ///
+  /// **v0.32 R112 (E-01) 补**: 链内 2 处不 await —
+  /// 1. stream subscription 的 `cancel()` future: audioplayers 派生 broadcast
+  ///    subscription 的 cancel future 在 root zone 才 resolve (fake-async
+  ///    测试内永不 resolve), await 会卡死整条链 → 后续 recorder / temp 清理
+  ///    全不跑。cancel 本身同步生效, fire-and-forget 即可。
+  /// 2. `player.dispose()`: audioplayers dispose 内部 `Future.wait` 一堆
+  ///    内部 stream cancel (同 1), await 同样卡死链。native release 在
+  ///    dispose 内部已同步发起, fire-and-forget + catchError 不丢资源,
+  ///    且保证第 6 步 temp 清理不被 dispose future 阻塞 (PIPL §28)。
   @protected
   Future<void> asyncDisposeAudio({
     required AudioPlayer? player,
     required AudioRecorder? recorder,
   }) async {
     // 1) cancel player complete stream subscription (sync 收尾)
+    // R112 (E-01): 不 await cancel() (root zone future 坑), cancel 同步生效
     try {
-      await playerCompleteSub?.cancel();
+      unawaited(playerCompleteSub?.cancel());
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'AudioLifecycleMixin.asyncDisposeAudio.playerCompleteSub',
         error: e,
         stack: st,
@@ -387,7 +398,7 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
         await recorder.stop();
       } catch (e, st) {
         // R79: stop 失败也继续 dispose, 防止 native 资源永远挂着
-        swallowError(
+        audioErrorSink(
           where: 'AudioLifecycleMixin.asyncDisposeAudio.recorderStop',
           error: e,
           stack: st,
@@ -398,9 +409,22 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     // 4) dispose recorder (audioplayers 5.0+ dispose 释放 native handle)
     if (recorder != null) {
       try {
-        await recorder.dispose();
+        // R112 (E-01): 不 await recorder.dispose() — record 包 dispose 内部
+        // await _stateStreamSubscription.cancel() (root zone future 坑,
+        // 同 player.dispose), await 卡死链 → 后续 player / temp 清理全不跑。
+        // native handle 释放由 dispose future 自己完成, fire-and-forget +
+        // catchError 收口。
+        unawaited(
+          recorder.dispose().catchError((Object e, StackTrace st) {
+            audioErrorSink(
+              where: 'AudioLifecycleMixin.asyncDisposeAudio.recorderDispose',
+              error: e,
+              stack: st,
+            );
+          }),
+        );
       } catch (e, st) {
-        swallowError(
+        audioErrorSink(
           where: 'AudioLifecycleMixin.asyncDisposeAudio.recorderDispose',
           error: e,
           stack: st,
@@ -413,16 +437,28 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
       try {
         await player.stop();
       } catch (e, st) {
-        swallowError(
+        audioErrorSink(
           where: 'AudioLifecycleMixin.asyncDisposeAudio.playerStop',
           error: e,
           stack: st,
         );
       }
       try {
-        await player.dispose();
+        // R112 (E-01): 不 await player.dispose() — 内部 Future.wait(stream
+        // cancel) 同 1) 的 root zone future 坑, await 卡死链 → 第 6 步
+        // temp 明文清理永不跑 (PIPL §28)。dispose 的 native release 同步
+        // 发起, fire-and-forget + catchError 收口。
+        unawaited(
+          player.dispose().catchError((Object e, StackTrace st) {
+            audioErrorSink(
+              where: 'AudioLifecycleMixin.asyncDisposeAudio.playerDispose',
+              error: e,
+              stack: st,
+            );
+          }),
+        );
       } catch (e, st) {
-        swallowError(
+        audioErrorSink(
           where: 'AudioLifecycleMixin.asyncDisposeAudio.playerDispose',
           error: e,
           stack: st,
@@ -431,6 +467,9 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     }
 
     // 6) delete temp decrypted file (R22 P1-3 + R79 续)
+    // R112 (E-01): cleanupTempFile 由 subclass override, dispose 期实现
+    // 必须走 initState 捕获的 storage 字段 (ref.read 在 unmount 后抛
+    // StateError 被吞 → temp 明文永不删, PIPL §28)。
     if (tempDecryptedPath != null) {
       await cleanupTempFile();
       tempDecryptedPath = null;

@@ -35,7 +35,6 @@
 import 'package:flutter/material.dart';
 // Apple Health 风格 (spec §3.4.3 spring physics + §4.2 Apple Health giant pill (64pt height, 32pt radius, w700 fontWeight)) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
-
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/spring.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -88,6 +87,9 @@ class CheckInButton extends StatelessWidget {
           // v0.31 R6: PressFeedback 替换 InkWell, mode 1 (带 onTap) 处理
           // tap+disabled. onTap null 时 PressFeedback 降级到 mode 2 (Listener)
           // 仍可触发 scale 视觉反馈, 行为跟旧 InkWell 一致.
+          // v0.32 round 8 (R111 EM-14 fix): 完成/加载态 enabled=false,
+          // 禁用态无 scale + haptic 假反馈
+          enabled: !isChecked && !isLoading,
           onTap: (isChecked || isLoading) ? null : onPressed,
           child: AnimatedContainer(
             duration: Motion.duration(context, AppTokens.durNormal),
@@ -104,8 +106,7 @@ class CheckInButton extends StatelessWidget {
                 AnimatedSwitcher(
                   duration: Motion.duration(context, AppTokens.durNormal),
                   // v0.31 R6: 入场用 spring 庆祝 (scale 0.95→1)
-                  switchInCurve:
-                      Motion.curve(context, AppTokens.curveSpring),
+                  switchInCurve: Motion.curve(context, AppTokens.curveSpring),
                   switchOutCurve:
                       Motion.curve(context, AppTokens.curveAccelerate),
                   transitionBuilder: (child, anim) => FadeTransition(
@@ -169,8 +170,7 @@ class _PillContent extends StatelessWidget {
     // v0.31 R6: 完成态 check icon / 未打卡 medicine icon (24pt, Apple 标准)
     final IconData iconData =
         isChecked ? Icons.check_rounded : Icons.medication_rounded;
-    final String mainText =
-        isChecked ? l10n.homeCheckedIn : l10n.homeCheckIn;
+    final String mainText = isChecked ? l10n.homeCheckedIn : l10n.homeCheckIn;
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -282,8 +282,7 @@ class _StreakCounter extends StatelessWidget {
     return TweenNumber(
       value: value,
       builder: (ctx, current) {
-        final streakText =
-            AppLocalizations.of(ctx).homeStreak(current);
+        final streakText = AppLocalizations.of(ctx).homeStreak(current);
         return AppSemantics.container(
           label: streakText,
           liveRegion: true,

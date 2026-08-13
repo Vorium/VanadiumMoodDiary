@@ -42,12 +42,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_care_engine_dispatcher.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_celebration_controller.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_deep_link_handler.dart';
+import 'package:chroniccare/presentation/services/safety_check_result_l10n.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
@@ -222,9 +224,20 @@ class HomePageState extends ConsumerState<HomePage> {
     _lifecycle = _lifecycle.onSafetyCheckCompleted();
     try {
       // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
+      // v0.32 R112 (AR-16): l10n 改 SafetyAlertL10nResolver tear-off 注入
+      // (data 0 依赖 l10n/ 生成 ARB); displayMessageL10n 走 presentation
+      // extension (SafetyCheckResultL10n)。
       final l10n = AppLocalizations.of(context);
-      final result =
-          await ref.read(safetyWatchServiceProvider).onAppStart(l10n: l10n);
+      final l10nResolver = SafetyAlertL10nResolver(
+        titleFor: l10n.safetyAlertTitle,
+        bodySent: l10n.safetyAlertBodySent,
+        bodyMocked: l10n.safetyAlertBodyMocked,
+        bodyFailed: l10n.safetyAlertBodyFailed,
+        neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
+      );
+      final result = await ref
+          .read(safetyWatchServiceProvider)
+          .onAppStart(l10nResolver: l10nResolver);
       if (!mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器

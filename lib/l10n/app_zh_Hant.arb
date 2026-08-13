@@ -253,6 +253,9 @@
   "medsRefillHint7": "推薦（默認）",
   "medsRefillHint14": "兩週時間掛號",
   "medsRefillHint30": "一個月週期",
+  "notificationStatusCardPermissionDeniedTitle": "通知權限已關閉",
+  "notificationStatusCardPermissionDeniedBody": "無法發送用藥提醒。請在系統設置中允許通知，或點擊下方按鈕前往設置。",
+  "notificationStatusCardPermissionGoSettings": "前往系統設置",
   "notificationStatusCardTestTitle": "🔔 通知自檢",
   "notificationStatusCardTestBody": "看到這條 = 通知工作正常。如果沒看到，看下面的國產手機設置",
   "notificationStatusCardTestSent": "已發送測試通知 — 幾秒內應該能收到",
@@ -1213,13 +1216,7 @@
   "medReportShareLabel": "分享",
   "medReportPdfLoading": "生成 PDF 中……",
   "medReportShareSubject": "慢病管家 · 用藥報告",
-  "tempMedDialogTitle": "添加臨時吃藥",
-  "tempMedLinkLabel": "關聯到常吃藥（可選）",
-  "tempMedLinkHint": "不選 = 臨時事件",
   "tempMedNoLink": "不關聯",
-  "tempMedNameHint": "如：布洛芬",
-  "tempMedReasonLabel": "原因",
-  "tempMedReasonHint": "如：感冒",
   "medsCalendarHeatmapDesc": "以藥為單位的依從性熱力圖。顏色越深 = 當天打卡次數越接近期望次數。",
   "medsCalendarWindow7": "7 天",
   "medsCalendarWindow30": "30 天",
@@ -1258,6 +1255,16 @@
     }
   },
   "medsCalendarDayDetailEmpty": "當天還沒有打卡",
+  "medCalendarBackfillConfirm": "確認補打卡",
+  "medCalendarBackfillSuccess": "已補打卡 {date}",
+  "@medCalendarBackfillSuccess": {
+    "description": "v0.32 round 8 (R111-03): 用藥日曆 補打卡成功 SnackBar",
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
   "medsCalendarDayDetailAddLog": "補打卡",
   "medsCalendarDayDetailAddLogHint": "為今天補一次服藥記錄",
   "medsCalendarDayDetailLogItem": "{time} · {name}",
@@ -1290,6 +1297,36 @@
   "contactDeleted": "已刪除聯繫人",
   "medicationDeleted": "已刪除藥物",
   "moodTodayLabel": "今日情緒：",
+  "moodTodayLabelWithValue": "今日情緒：{value}",
+  "@moodTodayLabelWithValue": {
+    "description": "首頁情緒快捷按鈕: 今日已記錄時的完整標籤 (R112-06 emil, 參數化拼接)",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
+  "moodLabel1": "很差",
+  "@moodLabel1": {
+    "description": "情緒分數 1/5 的本地化標籤 (R112-07 emil metadata 補)"
+  },
+  "moodLabel2": "差",
+  "@moodLabel2": {
+    "description": "情緒分數 2/5 的本地化標籤 (R112-07 emil metadata 補)"
+  },
+  "moodLabel3": "一般",
+  "@moodLabel3": {
+    "description": "情緒分數 3/5 的本地化標籤 (R112-07 emil metadata 補)"
+  },
+  "moodLabel4": "好",
+  "@moodLabel4": {
+    "description": "情緒分數 4/5 的本地化標籤 (R112-07 emil metadata 補)"
+  },
+  "moodLabel5": "很好",
+  "@moodLabel5": {
+    "description": "情緒分數 5/5 的本地化標籤 (R112-07 emil metadata 補)"
+  },
   "moodRecordButton": "記一下情緒 ✏️",
   "medReportFileName": "用藥報告_{date}",
   "@medReportFileName": {
@@ -2919,15 +2956,7 @@
       }
     }
   },
-  "medCalendarBackfillStub": "補打卡功能接入中 ({date})",
-  "@medCalendarBackfillStub": {
-    "description": "v0.30 R100 (P1#9): 用藥日曆 補打卡 stub SnackBar (date 是 YYYY-MM-DD)",
-    "placeholders": {
-      "date": {
-        "type": "Object"
-      }
-    }
-  },
+
   "setupCrisisHotlineTitle": "🆘 心理危機干預熱線 (24h)",
   "@setupCrisisHotlineTitle": {
     "description": "v0.30 R100 (P1#9): setup 法務 dialog 危機熱線區塊標題"
@@ -3007,10 +3036,37 @@
   "moodInfluenceMindfulness": "正念",
   "moodInfluenceWeather": "天氣",
   "moodInfluenceOther": "其他",
+  "influenceFactorFamily": "家人",
+  "influenceFactorFriend": "朋友",
+  "influenceFactorPartner": "伴侶",
+  "influenceFactorChild": "孩子",
+  "influenceFactorColleague": "同事",
+  "influenceFactorExercise": "運動",
+  "influenceFactorSick": "生病",
+  "influenceFactorGoodSleep": "睡眠好",
+  "influenceFactorHealthyDiet": "飲食健康",
+  "influenceFactorWork": "工作",
+  "influenceFactorHobby": "愛好",
+  "influenceFactorTravel": "旅行",
+  "influenceFactorCommute": "通勤",
+  "influenceFactorShopping": "購物",
+  "influenceFactorGaming": "遊戲",
+  "influenceFactorReading": "閱讀",
+  "influenceFactorEntertainment": "娛樂",
+  "influenceFactorMeditation": "冥想",
+  "influenceFactorBreathing": "呼吸練習",
+  "influenceFactorJournaling": "寫日記",
+  "influenceFactorYoga": "瑜伽",
+  "influenceFactorSunny": "晴天",
+  "influenceFactorCloudy": "多雲",
+  "influenceFactorRainy": "雨天",
+  "influenceFactorSnowy": "雪天",
+  "influenceFactorWindy": "颳風",
   "moodDetailTitle": "情緒詳情",
   "moodDetailFactors": "影響因素",
   "moodDetailMoodState": "情緒狀態",
   "moodDetailCbtRecord": "CBT 思維記錄",
+  "moodEntryNotFound": "找不到這條情緒記錄",
   "moodTrendTitle": "情緒趨勢",
   "moodTrendWeek": "近 7 天",
   "moodTrendDistribution": "分數分佈",
@@ -3062,6 +3118,7 @@
   },
   "setupConsentMedicalDisclaimer": "我已閱讀並理解《醫學免責聲明》：本 App 不提供醫療建議、診斷或治療，不能替代專業醫療服務",
   "trackingCustomize": "自定義追蹤項",
+  "trackingUnknownItem": "未知項目",
   "trackingPin": "置頂",
   "trackingUnpin": "取消置頂",
   "trackingHide": "隱藏此項",

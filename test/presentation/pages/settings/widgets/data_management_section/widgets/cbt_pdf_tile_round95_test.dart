@@ -14,6 +14,7 @@
 // - onExport 回调: 留测试可跳过 date range picker + PDF 完整链路
 import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart'
     show CbtThoughtRecordPdf, DateRange;
+import 'package:chroniccare/core/data/services/cbt_thought_record_pdf_layout.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section/widgets/cbt_pdf_tile.dart';
@@ -74,7 +75,7 @@ class _FailingCbtPdf extends CbtThoughtRecordPdf {
   Future<List<int>> build({
     required List<MoodEntryEntity> entries,
     DateRange? dateRange,
-    required AppLocalizations l10n,
+    required CbtPdfL10n l10n,
   }) async {
     buildCalls++;
     throw StateError('simulated PDF build failure (R95 test)');

@@ -1,13 +1,19 @@
 // assessment_widgets.dart — 心理评估页拆分出的独立组件
 //
 // 从 assessment_page.dart 拆分，v0.19 (P1-15 + Q3)
+//
+// v0.32 R112 (EM-02/AH-04, spec §5.7): 历史对比 Card → AppleListSection
+// (ComparisonCard / AssessmentSparkline); QuestionCard (答题页) 保留
+// Card 方言 (spec §5.7 "题目页保留")。
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
+import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/app_semantics.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 评估趋势 sparkline（简易自绘，避免再引第三方）
@@ -20,37 +26,40 @@ class AssessmentSparkline extends StatelessWidget {
     required this.scaleId,
   });
 
+  /// v0.32 round 8 (R112-06 fix): sparkline Y 轴上限走量表 totalRange
+  ///
+  /// 修前写死 `scaleId == 'phq9' ? 27 : 21` — WHODAS (48) / PSS (40) /
+  /// ISI (28) / ASRM (20) 等总分超上限时 y 坐标为负画出界。走 domain
+  /// scale_registry 单一数据源, 未知量表 / 0 防御回退 21 (跟旧行为一致)。
+  static int sparklineMaxTotalFor(String scaleId) {
+    final range = scaleById(scaleId)?.totalRange;
+    if (range == null || range <= 0) return 21;
+    return range;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Column(
+    // v0.32 R112 (spec §5.7): Card → AppleListSection (margin zero,
+    // 结果页 SingleChildScrollView 自带 padding)
+    return AppleListSection(
+      title: AppLocalizations.of(context).assessmentHistoryTrend,
+      margin: EdgeInsets.zero,
+      children: [
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.show_chart,
-                  color: AppTokens.primaryColor(context),
-                  size: 20,
+            if (history.average != null)
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: AppTokens.spacingXxs,
                 ),
-                const SizedBox(width: AppTokens.spacingXs),
-                Text(
-                  AppLocalizations.of(context).assessmentHistoryTrend,
-                  style: AppTokens.textStyleLabelMedium(context),
-                ),
-                const Spacer(),
-                if (history.average != null)
-                  Text(
-                    AppLocalizations.of(context).assessmentAverageScore(
-                      history.average!.toStringAsFixed(1),
-                    ),
-                    style: AppTokens.textStyleCaption(context),
+                child: Text(
+                  AppLocalizations.of(context).assessmentAverageScore(
+                    history.average!.toStringAsFixed(1),
                   ),
-              ],
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
+                  style: AppTokens.textStyleCaption(context),
+                ),
+              ),
             SizedBox(
               height: AppTokens.spacingXl,
               child: CustomPaint(
@@ -58,7 +67,9 @@ class AssessmentSparkline extends StatelessWidget {
                 painter: SparklinePainter(
                   totals: history.totals,
                   timestamps: history.timestamps,
-                  maxTotal: scaleId == 'phq9' ? 27 : 21,
+                  // v0.32 round 8 (R112-06 fix): 走量表 totalRange
+                  // (修前写死 phq9 27/其他 21 → WHODAS 48 等画出界)
+                  maxTotal: sparklineMaxTotalFor(scaleId),
                   lineColor: AppTokens.primaryColor(context),
                   averageLine: history.average,
                   averageColor: AppTokens.textHintColor(context),
@@ -86,7 +97,7 @@ class AssessmentSparkline extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }
@@ -277,27 +288,15 @@ class ComparisonCard extends StatelessWidget {
         trendIcon = Icons.fiber_new;
     }
 
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Column(
+    // v0.32 R112 (spec §5.7): Card → AppleListSection (header Row 的
+    // icon + title 改 section title, content 平铺)
+    return AppleListSection(
+      title: AppLocalizations.of(context).assessmentComparePrevious,
+      margin: EdgeInsets.zero,
+      children: [
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.compare_arrows,
-                  color: AppTokens.primaryColor(context),
-                  size: 20,
-                ),
-                const SizedBox(width: AppTokens.spacingXs),
-                Text(
-                  AppLocalizations.of(context).assessmentComparePrevious,
-                  style: AppTokens.textStyleLabelMedium(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
             if (isFirst)
               Row(
                 children: [
@@ -388,14 +387,21 @@ class ComparisonCard extends StatelessWidget {
                   const SizedBox(width: AppTokens.spacingXxs),
                   Text(
                     '${cmp.trendSymbol} ${cmp.trendLabel(
-                      improvedOverride: AppLocalizations.of(context).assessmentComparisonImproved,
-                      worsenedOverride: AppLocalizations.of(context).assessmentComparisonWorsened,
-                      unchangedOverride: AppLocalizations.of(context).assessmentComparisonUnchanged,
-                      firstAssessmentOverride: AppLocalizations.of(context).assessmentComparisonFirst,
+                      improvedOverride: AppLocalizations.of(context)
+                          .assessmentComparisonImproved,
+                      worsenedOverride: AppLocalizations.of(context)
+                          .assessmentComparisonWorsened,
+                      unchangedOverride: AppLocalizations.of(context)
+                          .assessmentComparisonUnchanged,
+                      firstAssessmentOverride: AppLocalizations.of(context)
+                          .assessmentComparisonFirst,
                     )} · ${cmp.deltaLabel(
-                      sameOverride: AppLocalizations.of(context).assessmentDeltaSame(cmp.scoreDelta ?? 0),
-                      higherOverride: AppLocalizations.of(context).assessmentDeltaHigher(cmp.scoreDelta ?? 0),
-                      lowerOverride: AppLocalizations.of(context).assessmentDeltaLower(-(cmp.scoreDelta ?? 0)),
+                      sameOverride: AppLocalizations.of(context)
+                          .assessmentDeltaSame(cmp.scoreDelta ?? 0),
+                      higherOverride: AppLocalizations.of(context)
+                          .assessmentDeltaHigher(cmp.scoreDelta ?? 0),
+                      lowerOverride: AppLocalizations.of(context)
+                          .assessmentDeltaLower(-(cmp.scoreDelta ?? 0)),
                     )}',
                     style: TextStyle(
                       fontSize: AppTokens.fontSizeBody,
@@ -419,7 +425,7 @@ class ComparisonCard extends StatelessWidget {
             ],
           ],
         ),
-      ),
+      ],
     );
   }
 

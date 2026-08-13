@@ -4,6 +4,9 @@
 //
 // 高内聚：只关心 scaleId + records → 折线图
 // 低耦合：被 AssessmentHistoryPage orchestrator 调，靠 assessment_severity_style 配色
+//
+// v0.32 R112 (EM-02/AH-04, spec §5.7): Card / AppListTile.carded →
+// AppleListSection (iOS 群组列表)
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +14,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_severity_style.dart';
-import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 class AssessmentChartCard extends StatelessWidget {
   final String scaleId;
@@ -26,17 +29,31 @@ class AssessmentChartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     if (records.length < 2) {
-      // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
-      // carded 命名构造自带 Card 包裹, 替代 inline Card(child: ListTile)
-      return AppListTile.carded(
-        leading:
-            Icon(iconForScale(scaleId), color: AppTokens.primaryColor(context)),
-        title: Text(nameForScale(scaleId, l10n)),
-        subtitle: Text(
-          records.isEmpty
-              ? l10n.assessmentChartNoData
-              : l10n.assessmentChartNeedMore,
-        ),
+      // v0.26 round 57 (emil C-12) 走 AppListTile.carded 集中器
+      // v0.32 R112 (spec §5.7): carded → AppleListSection cell
+      return AppleListSection(
+        title: nameForScale(scaleId, l10n),
+        margin: EdgeInsets.zero,
+        children: [
+          Row(
+            children: [
+              Icon(
+                iconForScale(scaleId),
+                color: AppTokens.primaryColor(context),
+              ),
+              const SizedBox(width: AppTokens.spacingSm),
+              Expanded(
+                child: Text(
+                  records.isEmpty
+                      ? l10n.assessmentChartNoData
+                      : l10n.assessmentChartNeedMore,
+                  style: AppTokens.textStyleCaption(context)
+                      .copyWith(color: AppTokens.textSecondaryColor(context)),
+                ),
+              ),
+            ],
+          ),
+        ],
       );
     }
     // 排序：最早在前（折线图从左到右时间正序）
@@ -44,38 +61,25 @@ class AssessmentChartCard extends StatelessWidget {
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
     final maxScore = maxScoreForScale(scaleId);
 
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Column(
+    return AppleListSection(
+      title: nameForScale(scaleId, l10n),
+      margin: EdgeInsets.zero,
+      children: [
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(
-                  iconForScale(scaleId),
-                  color: AppTokens.primaryColor(context),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                AppLocalizations.of(context)
+                    .assessmentChartRecordCount(sorted.length),
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeCaption,
+                  color: AppTokens.textHintColor(context),
                 ),
-                const SizedBox(width: AppTokens.spacingSm),
-                Text(
-                  nameForScale(scaleId, l10n),
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeBody,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  AppLocalizations.of(context)
-                      .assessmentChartRecordCount(sorted.length),
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHintColor(context),
-                  ),
-                ),
-              ],
+              ),
             ),
-            const SizedBox(height: AppTokens.spacingMd),
+            const SizedBox(height: AppTokens.spacingSm),
             SizedBox(
               height: 180,
               child: LineChart(
@@ -185,7 +189,7 @@ class AssessmentChartCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }

@@ -14,8 +14,6 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 
 class _NoopNotificationService extends NotificationService {
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
 }
 
 // 工具：用变量拼接避开 IDE/工具的"手机号混淆"自动替换

@@ -39,23 +39,30 @@ class ImportTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppListTile(
-      leading: Icon(
-        Icons.download_outlined,
-        color: AppTokens.primaryColor(context),
+    // v0.32 round 13 (R112 EM-02/AH-04): 透明 Material 包 ListTile,
+    // 防 Flutter debug assert (ListTile 在 AppleListSection 白色
+    // DecoratedBox 容器内 ink 不可见)
+    return Material(
+      type: MaterialType.transparency,
+      child: AppListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(
+          Icons.download_outlined,
+          color: AppTokens.primaryColor(context),
+        ),
+        title: Text(AppLocalizations.of(context).settingsImportData),
+        subtitle: Text(
+          AppLocalizations.of(context).settingsImportSubtitle,
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          if (onImport != null) {
+            onImport!();
+          } else {
+            _showImportDialog(context, ref);
+          }
+        },
       ),
-      title: Text(AppLocalizations.of(context).settingsImportData),
-      subtitle: Text(
-        AppLocalizations.of(context).settingsImportSubtitle,
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        if (onImport != null) {
-          onImport!();
-        } else {
-          _showImportDialog(context, ref);
-        }
-      },
     );
   }
 

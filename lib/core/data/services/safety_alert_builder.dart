@@ -7,7 +7,7 @@
 //   4. 调 _plugin.show 推本地通知 (6 行)
 //
 // 修法: 抽本文件 — 纯函数 SafetyAlertBuilder.buildFor, 接受所有 inputs
-// (userName + daysWithoutCheckIn + lastCheckIn + outcome + l10n + 3 channel const),
+// (daysWithoutCheckIn + lastCheckIn + outcome + l10n + 3 channel const),
 // 返 ({String title, String body, NotificationDetails details}) record。
 // notification_service.showSafetyAlert 退化为 5 行委派。
 //
@@ -28,20 +28,18 @@
 //   - 两个职责正交, builder 不发任何东西, dispatcher 也不构造文案
 import 'package:chroniccare/core/data/services/sms_service.dart'
     show SmsDispatchOutcome;
-import 'package:chroniccare/core/shared/user_name_helper.dart';
 import 'package:chroniccare/domain/repositories/safety_alert_sender.dart'
     show SafetyAlertL10nResolver;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// v0.27 round 65 (spen P1-12 god class 拆分收尾): SafetyAlert 通知内容构造器
 ///
-/// 纯函数: 给定 inputs (userName + daysWithoutCheckIn + lastCheckIn + outcome +
+/// 纯函数: 给定 inputs (daysWithoutCheckIn + lastCheckIn + outcome +
 /// l10n + channel 三元) → 返完整可推的 [NotificationDetails] + title + body。
 ///
 /// caller 模式:
 /// ```dart
 /// final build = SafetyAlertBuilder.buildFor(
-///   userName: userName,
 ///   daysWithoutCheckIn: daysSinceLast,
 ///   lastCheckIn: lastCheckIn,
 ///   outcome: outcome,
@@ -62,7 +60,8 @@ class SafetyAlertBuilder {
 
   /// 构造 SafetyAlert 通知的 (title, body, details) — 0 副作用
   ///
-  /// [userName] nullable, 退化为 "您" (safeUserName helper, R23 P1-24 修复)
+  /// v0.32 round 8 (R111 B1-5 fix): 删死 userName 参数 (R32 锁屏 PII 决策后
+  /// title 有意不含名字, 参数只算完就丢 = 死代码)
   /// [daysWithoutCheckIn] 必填, 进 title 跟 body
   /// [lastCheckIn] nullable, null 时 body 走 "从未打卡", 否则走
   ///   "上次打卡: YYYY-MM-DD" (本地格式化, 不走 l10n 避免时区漂移)
@@ -70,7 +69,6 @@ class SafetyAlertBuilder {
   /// [l10n] 必填, 3 态文案来源 (zh / en / zh_Hant)
   /// [channelId] [channelName] [channelDescription] 必填, Android channel 三元
   static ({String title, String body, NotificationDetails details}) buildFor({
-    required String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
     required SmsDispatchOutcome outcome,
@@ -79,8 +77,6 @@ class SafetyAlertBuilder {
     required String channelName,
     required String channelDescription,
   }) {
-    final name = safeUserName(userName);
-
     final details = NotificationDetails(
       android: AndroidNotificationDetails(
         channelId,
@@ -111,9 +107,7 @@ class SafetyAlertBuilder {
     final body = _resolveBody(outcome: outcome, lastStr: lastStr, l10n: l10n);
     // v0.27 round 75 (R74-N7 修): title 改 l10n, 之前硬编码中文。
     // 紧急通知走 3 语言 zh / en / zh_Hant, 跟 body 一致。
-    // R32 (P0-04 锁屏 PII 跨 3 视角共识): title 改静态不含 name (锁屏可见, PII 风险)
-    // ignore: unused_local_variable
-    final _ = name; // 兼容旧签名, 实际 l10n 已忽略
+    // R32 (P0-04 锁屏 PII 跨 3 视角共识): title 静态不含 name (锁屏可见, PII 风险)
     final title = l10n.titleFor(daysWithoutCheckIn);
 
     return (title: title, body: body, details: details);

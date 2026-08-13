@@ -20,6 +20,8 @@ import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_cen
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_unavailable_card.dart';
 import 'package:chroniccare/presentation/providers/assessment_providers.dart';
 import 'package:chroniccare/presentation/widgets/charts/assessment_multi_line_chart.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 中心化入口页 — 12 量表卡片 grid
@@ -51,9 +53,10 @@ class AssessmentCenterPage extends ConsumerWidget {
     return PageScaffold(
       title: l10n.assessmentCenterTitle,
       child: entriesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        // v0.32 round 8 (R111 EM-15 fix): LoadingSpinner + ErrorState 集中器
+        loading: () => const Center(child: LoadingSpinner()),
         error: (e, st) =>
-            Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+            ErrorState(title: l10n.commonLoadFailed(e.toString())),
         data: (entries) => _buildGrid(context, entries, scales, unavailableIds),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 一个药物草稿（用于预置方案 + 手动录入之间的桥梁）
 ///
@@ -9,11 +8,16 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 ///
 /// v0.16 (Round 19): `times` 从 `List<HourMinute>` 改为 `List<HourMinute>`，消除 flutter 依赖
 ///
-/// v0.28 round 65 (spzh P2-G): `name` / `hint` 从硬编中文字符串 → i18n 方法
-/// (`nameL10n` / `hintL10n`)。template 的 name/description 同理
-/// (`nameL10n` / `descriptionL10n` on `MedicationTemplate`)。
+/// v0.28 round 65 (spzh P2-G): `name` / `hint` 从硬编中文字符串 → i18n key
+/// 字符串。template 的 name/description 同理 (`nameKey` / `descriptionKey`)。
+///
+/// v0.32 R112 (AR-16): `nameL10n` / `hintL10n` / `descriptionL10n` (原
+/// 接受 AppLocalizations, data→l10n 循环) 移到 presentation extension
+/// `lib/presentation/services/preset_med_l10n.dart` — 本文件 0 l10n 依赖,
+/// 只保留 key 数据。
 class MedicationDraft {
-  /// i18n key for 药名 (e.g. "SSRI 类抗抑郁药")，caller 走 [nameL10n] 解析
+  /// i18n key for 药名 (e.g. "SSRI 类抗抑郁药")，caller 走
+  /// presentation extension `nameL10n` 解析
   final String nameKey;
 
   /// 每次剂量
@@ -25,7 +29,8 @@ class MedicationDraft {
   /// 服药时间点（一天可以多次）
   final List<HourMinute> times;
 
-  /// i18n key for 备注（标常见用途），caller 走 [hintL10n] 解析
+  /// i18n key for 备注（标常见用途），caller 走
+  /// presentation extension `hintL10n` 解析
   final String? hintKey;
 
   const MedicationDraft({
@@ -35,54 +40,16 @@ class MedicationDraft {
     required this.times,
     this.hintKey,
   });
-
-  /// i18n 药名 — caller 传 AppLocalizations 拿 zh/en/zh_Hant 文案
-  String nameL10n(AppLocalizations l10n) => _resolveName(l10n);
-
-  /// i18n 备注 (可空) — caller 传 AppLocalizations 拿 zh/en/zh_Hant 文案
-  String? hintL10n(AppLocalizations l10n) =>
-      hintKey == null ? null : _resolveHint(l10n, hintKey!);
-
-  String _resolveName(AppLocalizations l10n) {
-    switch (nameKey) {
-      case 'presetMedSsriName':
-        return l10n.presetMedSsriName;
-      case 'presetMedMoodStabilizerName':
-        return l10n.presetMedMoodStabilizerName;
-      case 'presetMedSleepAidName':
-        return l10n.presetMedSleepAidName;
-      case 'presetMedAntipsychoticName':
-        return l10n.presetMedAntipsychoticName;
-      case 'presetMedSedativeAnxiolyticName':
-        return l10n.presetMedSedativeAnxiolyticName;
-      default:
-        return nameKey;
-    }
-  }
-
-  String _resolveHint(AppLocalizations l10n, String key) {
-    switch (key) {
-      case 'presetMedSsriHint':
-        return l10n.presetMedSsriHint;
-      case 'presetMedMoodStabilizerHint':
-        return l10n.presetMedMoodStabilizerHint;
-      case 'presetMedSleepAidHint':
-        return l10n.presetMedSleepAidHint;
-      case 'presetMedAntipsychoticHint':
-        return l10n.presetMedAntipsychoticHint;
-      case 'presetMedSedativeAnxiolyticHint':
-        return l10n.presetMedSedativeAnxiolyticHint;
-      default:
-        return key;
-    }
-  }
 }
 
 /// 预置方案
 ///
 /// v0.28 round 65 (spzh P2-G): `name` / `description` 从硬编中文字符串
-/// → i18n 方法 ([nameL10n] / [descriptionL10n])。`id` / `emoji` 是数据
+/// → i18n key 字符串。`id` / `emoji` 是数据
 /// 不变 (id 是 wire 协议, emoji 是 visual 标识)。
+///
+/// v0.32 R112 (AR-16): `nameL10n` / `descriptionL10n` 移到 presentation
+/// extension `lib/presentation/services/preset_med_l10n.dart`。
 class MedicationTemplate {
   final String id;
   final String emoji;
@@ -97,38 +64,6 @@ class MedicationTemplate {
     required this.descriptionKey,
     required this.meds,
   });
-
-  /// i18n 方案名
-  String nameL10n(AppLocalizations l10n) {
-    switch (nameKey) {
-      case 'presetMedSsriMorningTitle':
-        return l10n.presetMedSsriMorningTitle;
-      case 'presetMedMoodStabilizerTwiceTitle':
-        return l10n.presetMedMoodStabilizerTwiceTitle;
-      case 'presetMedComboSsriBedtimeTitle':
-        return l10n.presetMedComboSsriBedtimeTitle;
-      case 'presetMedComboAntipsychoticFullTitle':
-        return l10n.presetMedComboAntipsychoticFullTitle;
-      default:
-        return nameKey;
-    }
-  }
-
-  /// i18n 方案描述
-  String descriptionL10n(AppLocalizations l10n) {
-    switch (descriptionKey) {
-      case 'presetMedSsriMorningDesc':
-        return l10n.presetMedSsriMorningDesc;
-      case 'presetMedMoodStabilizerTwiceDesc':
-        return l10n.presetMedMoodStabilizerTwiceDesc;
-      case 'presetMedComboSsriBedtimeDesc':
-        return l10n.presetMedComboSsriBedtimeDesc;
-      case 'presetMedComboAntipsychoticFullDesc':
-        return l10n.presetMedComboAntipsychoticFullDesc;
-      default:
-        return descriptionKey;
-    }
-  }
 }
 
 /// 全部预置方案
@@ -140,7 +75,7 @@ class MedicationTemplate {
 /// v0.23 (P0-11): 去顶层 const, 内部 MedicationDraft 用 DosageUnit.tablet.id
 /// (Dart const 表达式不支持 enum instance property access, 顶层 const 强制内部 const)
 /// v0.28 round 65 (spzh P2-G): 内部 MedicationDraft 的 `name` / `hint` 改成
-/// i18n key (String)，渲染时由 caller 传 AppLocalizations 解析。
+/// i18n key (String)，渲染时由 caller 走 presentation extension 解析。
 final kMedicationTemplates = <MedicationTemplate>[
   MedicationTemplate(
     id: 'mood_ssri_morning',

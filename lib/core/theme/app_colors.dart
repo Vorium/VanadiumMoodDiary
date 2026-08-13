@@ -17,7 +17,7 @@
 //     textHint / border / divider / primary / primaryDark) → iOS 风格
 //   改 3 个 dark 静态 const (backgroundDark / surfaceDark / textPrimaryDark)
 //   新增 healthMetricsColors (8 iOS system colors) + healthMetricsIds +
-//     healthMetricsColorFor + tintedMetricSoft
+//     healthMetricsColorFor (v0.32 R112 AH-16: tintedMetricSoft 0 caller 删)
 //   保留 success / warning / error / 16 个 dynamic getter / 现有 18 个 dark 静态 const
 //
 // 设计原则:
@@ -53,23 +53,30 @@ class AppColors {
 
   // ============= 亮色色板 =============
   static const Color primaryLight = Color(0xFFE8F8EC);
+
   /// v0.31 R1: 背景 → iOS systemGroupedBackground (#F2F2F7)
   static const Color background = Color(0xFFF2F2F7);
+
   /// 卡片/容器表面 — 纯白不变
   static const Color surface = Color(0xFFFFFFFF);
+
   /// v0.31 R1: 主文字 → iOS label 纯黑 (#000000, light mode)
   static const Color textPrimary = Color(0xFF000000);
+
   /// v0.31 R1: 次要文字 → iOS secondaryLabel (3C3C43 @ 60% alpha, const 取底色)
   /// const 不能带 alpha; dynamic getter textSecondaryColor(c) 走 M3 onSurfaceVariant
   /// 已自动应用 60% alpha。static const 仅给"硬编码背景"场景兜底, 实际 widget 走 getter。
   static const Color textSecondary = Color(0xFF3C3C43);
+
   /// v0.31 R1: 提示文字 → iOS tertiaryLabel (3C3C43 @ 30% alpha, const 取底色)
   static const Color textHint = Color(0xFF3C3C43);
+
   /// v0.31 R1: 边框 → iOS opaqueSeparator (#C6C6C8)
   /// 跟 spec §3.1.1 "3C3C43 10% alpha / #C6C6C8" 二选一; 取后者因 const 不能带 alpha。
   /// 实际 widget 走 borderColor(c) 走 M3 outline, 自带 12% alpha 感。
   static const Color border = Color(0xFFC6C6C8);
   static const Color disabled = Color(0xFFBDBDBD);
+
   /// v0.31 R1: 分割线 → iOS hairline (C6C6C8 @ 40% alpha, 在白底预计算 ≈ #E8E8E9)
   /// 0.5px 视觉等效。const 不能带 alpha, 预计算到白底上的实际呈现值。
   static const Color divider = Color(0xFFE8E8E9);
@@ -79,8 +86,10 @@ class AppColors {
   // 仅当 widget 硬编码 AppColors.xxx 时（dark mode 下视觉会偏色）
   /// v0.31 R1: 暗色背景 → iOS 暗色纯黑 (#000000)
   static const Color backgroundDark = Color(0xFF000000);
+
   /// v0.31 R1: 暗色表面 → iOS secondarySystemGroupedBackground (#1C1C1E)
   static const Color surfaceDark = Color(0xFF1C1C1E);
+
   /// v0.31 R1: 暗色主文字 → 纯白 (#FFFFFF)
   static const Color textPrimaryDark = Color(0xFFFFFFFF);
   static const Color textSecondaryDark = Color(0xFFB0B0B0);
@@ -297,11 +306,30 @@ class AppColors {
       Theme.of(context).colorScheme.onSurface;
 
   /// v0.23 round 40 (emil F1 fix): 成功前景色 — 成功 chip 文字
-  /// success color 在 light/dark 都跟 onSurface 区分度足,直接用 const
-  static const Color fgOnSuccess = success;
+  ///
+  /// v0.32 round 8 (R112 EM-16b fix): 深绿 #2E7D32 (Material Green 800) —
+  /// 修前 `fgOnSuccess = success` 是浅绿别名 (假 token, 白底对比度仅
+  /// 2.4:1, 低于 WCAG AA 4.5:1)。深绿在白底 ≈ 5.1:1, light/dark 都可读。
+  static const Color fgOnSuccess = Color(0xFF2E7D32);
 
   /// v0.23 round 40 (emil F1 fix): 警告前景色 — 警告 chip 文字
   static const Color fgOnWarning = Color(0xFFE65100); // 深橙,在 light/dark 都可读
+
+  /// v0.32 round 8 (R112 EM-16b fix): 错误文字前景色 — 深红 #C62828
+  /// (Material Red 800, 白底 ≈ 5.6:1)
+  ///
+  /// 跟 [fgOnError] (dynamic getter, "on error 表面" 语义 = onError 白字,
+  /// 用在错误 banner / delete 底上) 区分: 本 token 是 error 状态色**作为
+  /// 文字色**用在浅底上的深色档 (emil EM-16b 同族修复, 浅红 #E57373
+  /// 白底 3.0:1 不达标)。
+  static const Color fgError = Color(0xFFC62828);
+
+  /// v0.32 round 8 (R112 EM-16b fix): warningStrong 文字前景色 — 深橙
+  /// #BF360C (Material Deep Orange 900, 白底 ≈ 5.6:1)
+  ///
+  /// warningStrong #FF8A65 白底 2.3:1 不达标, 作文字色时用本深色档
+  /// (跟 fgOnWarning #E65100 同模式, 但更深一档以区分"中度"语义)。
+  static const Color fgWarningStrong = Color(0xFFBF360C);
 
   /// v0.23 round 40 (emil F3/F8 fix): 反白弱一档 — onPrimary @ alpha 0.85
   /// 替代散落 5+ 处 `onPrimary.withValues(alpha: 0.85)` 硬编码
@@ -450,17 +478,6 @@ class AppColors {
     final idx = healthMetricsIds.indexOf(metricId);
     if (idx < 0) return const Color(0xFF9E9E9E);
     return healthMetricsColors[idx];
-  }
-
-  /// 按 metricId 拿 metric 浅色背景 (alpha 0.12, AppleHealthTile 容器底色)
-  ///
-  /// 设计: Apple Health "favorites" tile 背景 = metric 色 @ 12% alpha。
-  /// 不用 const (alpha 应用是 runtime); 接受 BuildContext 为后续
-  /// dark mode 调 alpha 留接口 (跟 tintedXxxSoft 风格一致)。
-  ///
-  /// UI 层: `AppColors.tintedMetricSoft(context, 'medication')` → systemRed 12%
-  static Color tintedMetricSoft(BuildContext context, String metricId) {
-    return healthMetricsColorFor(metricId).withValues(alpha: 0.12);
   }
 
   /// R32 (P0-26 集中器): 透明色集中器 (emil "decisions should be nameable")

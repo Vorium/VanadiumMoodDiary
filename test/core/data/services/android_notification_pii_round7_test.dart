@@ -191,7 +191,6 @@ void main() {
       // SafetyAlertBuilder 是纯函数类 (不可实例化), 走静态 buildFor()。
       // 用 en_US l10n 跑真实构造路径, 验证 visibility 字段。
       final build = SafetyAlertBuilder.buildFor(
-        userName: 'Alice',
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),

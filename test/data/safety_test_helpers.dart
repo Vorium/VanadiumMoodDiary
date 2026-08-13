@@ -17,7 +17,6 @@ import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 
 /// R109 round 6 part 2: showSafetyAlert 调用的快照
 typedef SafetyAlertCall = ({
-  String? userName,
   int daysWithoutCheckIn,
   DateTime? lastCheckIn,
   SmsDispatchOutcome outcome,
@@ -27,6 +26,8 @@ typedef SafetyAlertCall = ({
 ///
 /// 替代 R108 跨期 helper (R109 round 2 改 `showSafetyAlert` 接受
 /// `SafetyAlertL10nResolver` 后, 旧 helper 签名失效).
+///
+/// v0.32 R112 (R112-09): userName 死参数删后同步 (body 0 引用).
 class CountingNotificationService extends NotificationService {
   final List<SafetyAlertCall> alertsShown = [];
   int showSafetyAlertCalls = 0;
@@ -35,7 +36,6 @@ class CountingNotificationService extends NotificationService {
 
   @override
   Future<void> showSafetyAlert({
-    String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
     required SmsDispatchOutcome outcome,
@@ -43,10 +43,9 @@ class CountingNotificationService extends NotificationService {
   }) async {
     showSafetyAlertCalls++;
     alertsShown.add((
-      userName: userName,
       daysWithoutCheckIn: daysWithoutCheckIn,
       lastCheckIn: lastCheckIn,
       outcome: outcome,
-    ));
+    ),);
   }
 }

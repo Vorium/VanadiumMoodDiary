@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 class _StubNotificationService extends NotificationService {
   int pendingToReturn;
@@ -90,6 +91,9 @@ void main() {
     await tester.pumpWidget(_wrap(service));
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): 容器 Card → AppleListSection
+    expect(find.byType(AppleListSection), findsOneWidget);
+    expect(find.byType(Card), findsNothing);
     // 标题
     expect(find.text('通知与提醒'), findsOneWidget);
     // 状态显示
@@ -131,7 +135,7 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 1));
 
     expect(service.showNowCalled, isTrue);
-    expect(service.showNowId, 99001); // 测试用 id,不会冲突
+    expect(service.showNowId, 50000100); // 5M+ 带外测试 id (R112-06 改自 99001)
     expect(service.showNowTitle, contains('通知自检'));
   });
 

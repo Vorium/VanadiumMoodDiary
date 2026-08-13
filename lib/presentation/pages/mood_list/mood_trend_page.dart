@@ -12,6 +12,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 时间范围
@@ -98,7 +99,7 @@ class _MoodTrendPageState extends ConsumerState<MoodTrendPage>
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: LoadingSpinner()),
         error: (e, _) => Center(child: Text('$e')),
       ),
     );
@@ -177,6 +178,27 @@ class _TimeRangeSelector extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════
 // 通用折线图 (支持 7/30/180/365 天)
 // ═══════════════════════════════════════════════════════════════
+
+/// v0.32 R112-01: 按天计算情绪分真均值 (sum/count)
+///
+/// 修前 bug: 老实现 `(dailyAvg[day]! + score) / 2` 是加权衰减平均
+/// (第 n 条权重 1/2^(n-1)), [5,1,1] 算出 2.0 而非真均值 2.33。
+/// 本函数用 (sum, count) 累计再除, 同日多条每条等权。
+/// 早于 [cutoff] 的条目直接跳过。
+Map<DateTime, double> computeDailyAverages(
+  List<MoodEntryEntity> entries,
+  DateTime cutoff,
+) {
+  final sums = <DateTime, (int sum, int count)>{};
+  for (final e in entries) {
+    if (e.timestamp.isBefore(cutoff)) continue;
+    final day = DateTime(e.timestamp.year, e.timestamp.month, e.timestamp.day);
+    final cur = sums[day];
+    sums[day] = cur == null ? (e.score, 1) : (cur.$1 + e.score, cur.$2 + 1);
+  }
+  return sums.map((day, acc) => MapEntry(day, acc.$1 / acc.$2));
+}
+
 class _MoodLineChart extends StatelessWidget {
   const _MoodLineChart({required this.entries, required this.days});
   final List<MoodEntryEntity> entries;
@@ -186,15 +208,8 @@ class _MoodLineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final cutoff = now.subtract(Duration(days: days - 1));
-    final dailyAvg = <DateTime, double>{};
-    for (final e in entries) {
-      if (e.timestamp.isBefore(cutoff)) continue;
-      final day =
-          DateTime(e.timestamp.year, e.timestamp.month, e.timestamp.day);
-      dailyAvg[day] = (dailyAvg[day] ?? 0) == 0
-          ? e.score.toDouble()
-          : ((dailyAvg[day]! + e.score) / 2);
-    }
+    // v0.32 R112-01: 真均值 (修前是加权衰减平均)
+    final dailyAvg = computeDailyAverages(entries, cutoff);
 
     final spots = <FlSpot>[];
     for (int i = days - 1; i >= 0; i--) {
@@ -310,7 +325,7 @@ class _DistributionChart extends StatelessWidget {
     }
     final maxCount = distribution.values.fold<int>(0, (a, b) => a > b ? a : b);
     // R32 (P0-10 集中器): 5 元素 mood 色板移到 AppColors.kMoodScoreColors
-    final colors = AppColors.kMoodScoreColors;
+    const colors = AppColors.kMoodScoreColors;
 
     return Padding(
       padding: AppTokens.edgeInsetsMd,
@@ -380,6 +395,8 @@ class _DistributionChart extends StatelessWidget {
                         if (idx < 1 || idx > 5) return const SizedBox();
                         return Text(
                           labels[idx],
+                          // EM-08: chart 横轴 emoji 刻度装饰性 20,
+                          // deliberate 保留 (emoji 有 size cap)
                           style: const TextStyle(fontSize: 20),
                         );
                       },

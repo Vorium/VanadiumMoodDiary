@@ -20,6 +20,7 @@
 import 'dart:typed_data';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/services/consent_preference_store.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
@@ -47,7 +48,7 @@ void _setBigView(WidgetTester tester) {
 Widget _wrap({
   required AppDatabase db,
   DataExportService? exportService,
-  LegalConsentStore? consentStore,
+  ConsentPreferenceStore? consentStore,
 }) {
   return ProviderScope(
     overrides: [
@@ -79,16 +80,21 @@ class _StubDataExportService extends DataExportService {
   }
 }
 
-/// 注入失败的 LegalConsentStore — 模拟 audit log 失败
+/// 注入失败的 ConsentPreferenceStore — 模拟 audit log 失败
 ///
 /// v0.30 R95 (sub-spec 7 task 31a) 后: audit log 走 AES-256 加密,
-/// 加密失败时 [LegalConsentStore.recordDataExportConsent] 内部走 swallowError
+/// 加密失败时 [ConsentPreferenceStore.recordDataExportConsent] 内部走 swallowError
 /// 集中器, **不抛** (跟之前 throw 行为不同 — 之前 throw 让 export_tile 主流程
 /// 风险依赖 catch 块, 现在 production 0 throw, 主流程天然不依赖 catch)。
 ///
 /// 这里用 no-op 模拟"audit log 完全没生效"(覆盖原 throw 测试场景),
 /// 验证主流程不依赖 audit log 返回值/异常。
-class _FailingLegalConsentStore extends LegalConsentStore {
+///
+/// v0.32 架构批 2 (R112-ARCH-01): 基类从 LegalConsentStore 迁到
+/// ConsentPreferenceStore (data 层), 构造注入 SharedPreferences。
+class _FailingLegalConsentStore extends ConsentPreferenceStore {
+  _FailingLegalConsentStore(super.mockPrefs);
+
   int recordCalls = 0;
 
   @override
@@ -285,7 +291,8 @@ void main() {
       _setBigView(tester);
       final exportService = _StubDataExportService(db);
       // 注入失败的 legalConsentStore — recordDataExportConsent 抛异常
-      final failingConsentStore = _FailingLegalConsentStore();
+      final failingConsentStore =
+          _FailingLegalConsentStore(await SharedPreferences.getInstance());
       await tester.pumpWidget(
         _wrap(
           db: db,

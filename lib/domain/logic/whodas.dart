@@ -33,14 +33,15 @@ class WhodasScale implements AssessmentScale {
   @override
   String get id => 'whodas';
 
+  // v0.32 round 8 (R111 E4/R111-02 fix): 走 translations (跟 phq9 一致)
   @override
-  String get displayName => 'WHODAS 2.0 残疾评定';
+  String get displayName => translations.whodasName();
 
   @override
-  String get shortDescription => 'WHO 通用残疾评估 12 题简化版';
+  String get shortDescription => translations.whodasShortDescription();
 
   @override
-  String get instruction => '过去 30 天内, 您在以下活动中遇到多大困难?';
+  String get instruction => translations.whodasInstruction();
 
   @override
   List<AssessmentItem> get items => const [

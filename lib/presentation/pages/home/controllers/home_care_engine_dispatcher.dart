@@ -29,6 +29,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/care_strategy_providers.dart';
@@ -36,6 +37,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/services/safety_check_result_l10n.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
 /// v0.30 R108 (P1 home_page_state 拆): 打卡后 SafetyWatch + CareEngine 编排
@@ -62,10 +64,23 @@ class HomeCareEngineDispatcher {
   }) async {
     try {
       // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
+      // v0.32 R112 (AR-16): l10n 改 SafetyAlertL10nResolver tear-off 注入
+      // (data 0 依赖 l10n/ 生成 ARB); displayMessageL10n 走 presentation
+      // extension (SafetyCheckResultL10n)。
       final l10n = AppLocalizations.of(context);
-      final result =
-          await ref.read(safetyWatchServiceProvider).onCheckIn(l10n: l10n);
-      if (!isMounted()) return;
+      final l10nResolver = SafetyAlertL10nResolver(
+        titleFor: l10n.safetyAlertTitle,
+        bodySent: l10n.safetyAlertBodySent,
+        bodyMocked: l10n.safetyAlertBodyMocked,
+        bodyFailed: l10n.safetyAlertBodyFailed,
+        neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
+      );
+      final result = await ref
+          .read(safetyWatchServiceProvider)
+          .onCheckIn(l10nResolver: l10nResolver);
+      // v0.32 round 8 (R112 卫生): 加 context.mounted guard 消
+      // use_build_context_synchronously (isMounted 闭包 analyzer 不识别)
+      if (!isMounted() || !context.mounted) return;
       if (result.kind == SafetyCheckKind.alerted) {
         // 罕见：打卡后仍触发告警
         // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器

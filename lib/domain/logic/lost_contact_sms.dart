@@ -1,5 +1,5 @@
 import 'package:chroniccare/core/l10n/strings.dart';
-import 'package:chroniccare/core/shared/user_name_helper.dart';
+import 'package:chroniccare/domain/logic/user_name_helper.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 
 /// v0.27 round 62 (P1-5 修复): 失联通知 SMS 模板单一 source

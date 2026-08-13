@@ -1,52 +1,49 @@
 // setup_page_state.dart — 首次设置引导页 state (R95 sub-spec 6 task 6c 拆解)
 //
+// v0.32 R112 (AR-20 批2a): god class 拆 — 503L → 编排入口 (~230L), 3 职责
+// 各拆 1 文件 (每文件 ≤2 职责):
+// - 5 bool consent 状态 → setup_consent_state.dart (SetupConsentState)
+// - 联系人同意弹窗循环 → setup_contact_consent_flow.dart
+// - 提交序列 + 收集 → setup_submit_flow.dart
+// - 4 步 wizard 壳 (PopScope/PageScaffold/进度条/切换动画) →
+//   widgets/setup_wizard_frame.dart
+// - template → 草稿构造 → setup_widgets.dart (MedDraft.fromTemplate)
+// 本文件只留: 步骤坐标 (_step) + controller 生命周期 + _buildStep 拼装 +
+// _finishSetup 编排入口 (saving 标志 + 错误 snackbar + swallowError)。
+//
 // 职责:
 // 1. [SetupPageState] 4 步 wizard 状态 + 业务方法 (跟 _HomePageState 改 public
 //    HomePageState 模式一致, R95 sub-spec 4 task 5)
 //
 // 状态分组:
-// - Step 0 consent: 4 个 bool 勾选 (userAgreement / privacyPolicy /
-//   sensitiveData / ageAttestation)
+// - Step 0 consent: SetupConsentState 5 个 bool 勾选
 // - Step 1 welcome: nameController + contactName/PhoneControllers (动态数组)
 // - Step 2 medication: _meds (MedDraft list) + _saving
 // - Step 3 done: 终态, 触发 GoRouter /home
-//
-// 业务方法 (8):
-// - _onTextChanged: 7 controller listener
-// - _buildStep: 4 step switch + SetupStepXxx 拼装
-// - _validateWelcomeForm: 名字 + 手机号格式 + 重复校验
-// - _showPresetTemplatesSheet: 模态弹窗选 template
-// - _finishSetup: PIPL §13 同意循环 + DB save + notification 重排
 //
 // 跟 R95 sub-spec 4 task 5 模式一致:
 // - _SetupPageState 私有 → public SetupPageState (避免循环 import)
 // - 主壳 setup_page.dart 只 ConsumerStatefulWidget 入口
 // - 老 caller (e.g. router) `import 'package:chroniccare/presentation/pages/setup/setup_page.dart'`
 //   拿 SetupPage 类型 + createState() 返回 SetupPageState 0 改动
-
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
-import 'package:chroniccare/core/shared/phone_validator.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart'
-    show ConsentArtifact, ConsentKind;
-import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/logic/setup_welcome_form_validator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/pages/setup/setup_consent_state.dart';
+import 'package:chroniccare/presentation/pages/setup/setup_contact_consent_flow.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_consent.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_welcome.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_medication.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_done.dart';
+import 'package:chroniccare/presentation/pages/setup/setup_submit_flow.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/pages/setup/widgets/preset_templates_sheet.dart';
-import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/pages/setup/widgets/setup_wizard_frame.dart';
+import 'package:chroniccare/presentation/services/preset_med_l10n.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
-import 'package:chroniccare/presentation/widgets/animations/animations.dart';
-import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
-import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -54,14 +51,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class SetupPageState extends ConsumerState<SetupPage> {
   int _step = 0;
 
-  // Step 0: consent
-  bool _consentUserAgreement = false;
-  bool _consentPrivacyPolicy = false;
-  bool _consentSensitiveData = false;
-  // v0.27 R83: 第 4 个勾选 — 年龄严正声明
-  bool _consentAgeAttestation = false;
-  // R103 (P0-9): 第 5 个勾选 — 医学免责声明
-  bool _consentMedicalDisclaimer = false;
+  // Step 0: consent — 5 bool 勾选 (userAgreement / privacyPolicy /
+  // sensitiveData / ageAttestation / medicalDisclaimer)
+  final SetupConsentState _consent = SetupConsentState();
 
   // Step 1: welcome
   final _nameController = TextEditingController();
@@ -116,49 +108,10 @@ class SetupPageState extends ConsumerState<SetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: _step != 0,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        // v0.22 round 29 (emil-38): 走 AppSnackBar.info 集中器
-        AppSnackBar.showInfo(
-          context,
-          AppLocalizations.of(context).setupConsentRequired,
-        );
-      },
-      child: PageScaffold(
-        title: AppLocalizations.of(context).setupStep(_step + 1, 4),
-        // v0.31 round 10 (Apple Health redesign · Phase 3 Task 3.2):
-        // 顶部 4 段 hairline 进度条, 走 currentStep 0-3 控制高亮
-        // (R10 spec §5.2 "顶部: 进度条 1/4 (小 hairline)")
-        appBarBottom: PreferredSize(
-          preferredSize: const Size.fromHeight(12), // 4+3+4 (top padding + bar + bottom padding)
-          child: SetupProgressBar(currentStep: _step, totalSteps: 4),
-        ),
-        // v0.23 round 40 (emil F5/F7 fix): 改用 PageTransitionSwitcher 集中器
-        // 之前 inline AnimatedSwitcher + 自定义 transitionBuilder (40+ 行)
-        // 抽到 PageTransitionSwitcher.transitionBuilder 后 setup 这里只 1 个 widget
-        child: PageTransitionSwitcher(
-          switchKey: _step,
-          duration: Motion.duration(context, MotionScheme.standard.duration),
-          transitionBuilder: (child, anim) {
-            return FadeTransition(
-              opacity: anim,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0.04),
-                  end: Offset.zero,
-                ).animate(anim),
-                child: child,
-              ),
-            );
-          },
-          child: KeyedSubtree(
-            key: ValueKey<int>(_step),
-            child: _buildStep(),
-          ),
-        ),
-      ),
+    // v0.32 R112 (AR-20 批2a): 壳抽 SetupWizardFrame
+    return SetupWizardFrame(
+      step: _step,
+      child: _buildStep(),
     );
   }
 
@@ -166,21 +119,21 @@ class SetupPageState extends ConsumerState<SetupPage> {
     switch (_step) {
       case 0:
         return SetupStepConsent(
-          consentUserAgreement: _consentUserAgreement,
-          consentPrivacyPolicy: _consentPrivacyPolicy,
-          consentSensitiveData: _consentSensitiveData,
-          consentAgeAttestation: _consentAgeAttestation,
-          consentMedicalDisclaimer: _consentMedicalDisclaimer,
+          consentUserAgreement: _consent.userAgreement,
+          consentPrivacyPolicy: _consent.privacyPolicy,
+          consentSensitiveData: _consent.sensitiveData,
+          consentAgeAttestation: _consent.ageAttestation,
+          consentMedicalDisclaimer: _consent.medicalDisclaimer,
           onConsentUserAgreementChanged: (v) =>
-              setState(() => _consentUserAgreement = v),
+              setState(() => _consent.userAgreement = v),
           onConsentPrivacyPolicyChanged: (v) =>
-              setState(() => _consentPrivacyPolicy = v),
+              setState(() => _consent.privacyPolicy = v),
           onConsentSensitiveDataChanged: (v) =>
-              setState(() => _consentSensitiveData = v),
+              setState(() => _consent.sensitiveData = v),
           onConsentAgeAttestationChanged: (v) =>
-              setState(() => _consentAgeAttestation = v),
+              setState(() => _consent.ageAttestation = v),
           onConsentMedicalDisclaimerChanged: (v) =>
-              setState(() => _consentMedicalDisclaimer = v),
+              setState(() => _consent.medicalDisclaimer = v),
           onViewUserAgreement: () =>
               showLegalDocument(context, 'user_agreement'),
           onViewPrivacyPolicy: () =>
@@ -190,13 +143,7 @@ class SetupPageState extends ConsumerState<SetupPage> {
           onViewMedicalDisclaimer: () =>
               showLegalDocument(context, 'medical_disclaimer'),
           // R104: 一键全部同意
-          onAgreeAll: () => setState(() {
-            _consentUserAgreement = true;
-            _consentPrivacyPolicy = true;
-            _consentSensitiveData = true;
-            _consentAgeAttestation = true;
-            _consentMedicalDisclaimer = true;
-          }),
+          onAgreeAll: () => setState(_consent.agreeAll),
           onViewAll: () => showLegalDocument(context, 'user_agreement'),
           onContinue: () => setState(() => _step = 1),
         );
@@ -300,17 +247,8 @@ class SetupPageState extends ConsumerState<SetupPage> {
       _meds.clear();
 
       for (final d in result.template.meds) {
-        final m = MedDraft()
-          // v0.28 round 65 (spzh P2-G): 药名走 i18n (zh/en/zh_Hant),
-          // 用户可编辑覆盖 — 初始值按 l10n 给当前 locale 文案
-          ..nameController.text = d.nameL10n(AppLocalizations.of(context))
-          ..dosageController.text = d.dosage == d.dosage.toInt()
-              ? d.dosage.toInt().toString()
-              : d.dosage.toString()
-          ..dosageUnit = d.dosageUnit
-          ..times.addAll(
-            d.times.map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute)),
-          );
+        // v0.32 R112 (AR-20 批2a): 构造逻辑抽 MedDraft.fromTemplate
+        final m = MedDraft.fromTemplate(d, AppLocalizations.of(context));
         m.attachListener(_onTextChanged);
         _meds.add(m);
       }
@@ -332,143 +270,37 @@ class SetupPageState extends ConsumerState<SetupPage> {
     if (_saving) return;
     setState(() => _saving = true);
 
-    final validationError = _validateWelcomeForm();
-    if (validationError != null) {
-      setState(() => _saving = false);
-      return;
-    }
-
-    final userName = _nameController.text.trim();
-    final contactList = <({String name, String phone, int sortOrder})>[];
-    final contactConsents = <ConsentArtifact>[];
-    // v0.27 round 68 (CC-1 修复, PIPL §13 单独同意): setup 阶段对每个填了的
-    // 联系人弹 ConsentDialog,只有同意的才入 contactList (跟 contactConsents 等长)
-    // 跟主路径 contacts_list_widget.dart:208-212 走同一 ConsentDialog 集中器
-    for (int i = 0; i < _contactPhoneControllers.length; i++) {
-      final phone = _contactPhoneControllers[i].text.trim();
-      if (phone.isEmpty) continue;
-      // PIPL §13: 弹同意 dialog, 用户拒绝 → 不写该联系人,终止 setup
-      // v0.27 round 82: 改用 placeholders map (R82 抽象化 ConsentDialog)
-      final consent = await ConsentDialog.show(
-        context,
-        kind: ConsentKind.emergencyContactSharing,
-        placeholders: const {
-          'thresholdDays': 2, // 跟 care_strategies.secondDayMissed 一致
-        },
-      );
-      if (consent == null) {
-        // 用户拒绝: 终止整个 setup (PIPL §13 严同意, 部分填也不行)
-        if (mounted) {
-          AppSnackBar.showInfo(
-            context,
-            AppLocalizations.of(context).setupConsentRejected,
-          );
-        }
-        setState(() => _saving = false);
-        return;
-      }
-      // v0.27 R73 (重构-1): analyzer 期望 await 后用 context 之前有 mounted guard。
-      // 之前直接用 `AppLocalizations.of(context)` 在 await 之后, analyzer 报
-      // use_build_context_synchronously (R17+R56b 已知模式, 之前 5 处都靠 mounted
-      // check 跟 context 同一对象 修, 这里 for-loop 内 context 跨 await 用, 同款)。
-      if (!mounted) {
-        setState(() => _saving = false);
-        return;
-      }
-      final normalized = PhoneValidator.normalize(phone) ?? phone;
-      final name = _contactNameControllers[i].text.trim().isEmpty
-          ? AppLocalizations.of(context).setupContactFallbackName(i + 1)
-          : _contactNameControllers[i].text.trim();
-      contactList.add((name: name, phone: normalized, sortOrder: i));
-      contactConsents.add(consent);
-    }
-
-    final medicationList = <({
-      String name,
-      double dosage,
-      String dosageUnit,
-      List<HourMinute> times,
-    })>[];
-    for (final m in _meds) {
-      final name = m.nameController.text.trim();
-      if (name.isEmpty) continue;
-      final dosage = double.tryParse(m.dosageController.text.trim()) ?? 0;
-      medicationList.add(
-        (
-          name: name,
-          dosage: dosage,
-          dosageUnit: m.dosageUnit,
-          times: m.times
-              .map((t) => HourMinute(hour: t.hour, minute: t.minute))
-              .toList(),
-        ),
-      );
-    }
-
     try {
-      await ref.read(databaseProvider).saveSetup(
-            userName: userName,
-            contactList: contactList,
-            contactConsents: contactConsents, // R68 CC-1
-            medicationList: medicationList,
-          );
-      // v0.21 Round 22 (P1-22 修复): PIPL §14 同意记录
-      // setup 步骤 0 勾选完成时,记录同意时刻 + 协议版本号,
-      // 后续可证明"用户当时同意了哪一版协议"
-      if (!mounted) return;
-      await ref.read(userProfileRepositoryProvider).recordConsent(
-            // v0.27 round 77 (R76-N6 修): 跟 consent_dialog 同步从 provider 读
-            // 启动时算的 legal version, 不再有 hardcode const
-            userAgreementVersion: ref.read(legalVersionProvider),
-            privacyPolicyVersion: ref.read(legalVersionProvider),
-          );
+      final validationError = _validateWelcomeForm();
+      if (validationError != null) return;
+
+      // v0.27 round 68 (CC-1 修复, PIPL §13 单独同意): setup 阶段对每个填了的
+      // 联系人弹 ConsentDialog, 只有同意的才入 contactList。
+      // v0.32 R112 (AR-20 批2a): 循环抽 SetupContactConsentFlow.collect
+      final collected = await SetupContactConsentFlow.collect(
+        context: context,
+        nameControllers: _contactNameControllers,
+        phoneControllers: _contactPhoneControllers,
+      );
+      if (collected == null) return;
       if (!mounted) return;
 
-      // v0.27 round 59 (spen §5#18 latent P0 fix): 修正 fail-soft timeout 丢数据
-      // R52 加 5s timeout 防御 drift stream hang (DB lock 时罕见)
-      // 但 fail-soft onTimeout: () => const [] 让"用户若有 N 个药"被吞成 0 个 → 失通知
-      // 修正成 fail-loud: 让 TimeoutException 抛出 → 落入外层 catch → setup 失败 + UI 提示
-      final medications = await ref
-          .read(medicationRepositoryProvider)
-          .watchAll()
-          .first
-          .timeout(const Duration(seconds: 5));
+      final userName = _nameController.text.trim();
+      final medicationList = SetupSubmitFlow.collectMedications(_meds);
 
-      // R97-P1-6 (2026-08-07): 在 context 内请求通知权限。
-      //
-      // 修前: notification_service.init() 在 main.dart 启动时立即弹权限请求,
-      // 用户没看到任何 UI 不知为何授权 → 拒绝率高 + 违反 App Store 5.1.1
-      // "权限应在 context 内请求"指南。
-      //
-      // 修后: 改在 setup 流程配完药、即将调度提醒的时机请求 — 用户已明确
-      // 配置了药物 + 看到"提醒"相关 UI, 此刻请求权限符合用户预期。
-      // 用户拒绝时仍继续 setup (提醒调度失败不阻塞核心功能, 跟 main.dart
-      // try/catch 一致), 后续在 settings/reminders_hub 还可重新触发。
-      try {
-        await ref.read(notificationServiceProvider).requestPermission();
-      } catch (e, st) {
-        // 平台异常 (e.g. web 不支持) 不阻塞 setup, 走 swallowError 集中器
-        swallowError(
-          where: 'setup_page_state._goToStep3.requestPermission',
-          error: e,
-          stack: st,
-          note: '通知权限请求失败不阻塞 setup',
-        );
-      }
-
-      await ref
-          .read(notificationServiceProvider)
-          .delegate
-          .rescheduleMedicationReminders(medications);
-      await ref
-          .read(notificationServiceProvider)
-          .delegate
-          .scheduleDailyReminder(hour: 20, minute: 0);
+      // v0.32 R112 (AR-20 批2a): 提交序列抽 SetupSubmitFlow.run, 错误
+      // 原样上抛 → 本 catch 管 error snackbar
+      await SetupSubmitFlow.run(
+        ref: ref,
+        context: context,
+        userName: userName,
+        contactList: collected.contactList,
+        contactConsents: collected.contactConsents,
+        medicationList: medicationList,
+      );
       if (!mounted) return;
 
-      if (mounted) {
-        setState(() => _step = 3);
-      }
+      setState(() => _step = 3);
     } catch (e, st) {
       if (mounted) {
         // v0.22 round 30 (sp-zh P1-16): 走 AppSnackBar.error 集中器
@@ -487,6 +319,8 @@ class SetupPageState extends ConsumerState<SetupPage> {
         stack: st,
       );
     } finally {
+      // v0.32 round 8 (R112-04 fix): 修前 unmounted State 上调 setState
+      // 抛 — unmounted 后直接改字段 (_saving 复位不用走 UI)
       if (mounted) {
         setState(() => _saving = false);
       } else {

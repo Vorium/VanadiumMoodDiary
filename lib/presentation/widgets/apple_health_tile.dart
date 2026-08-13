@@ -10,7 +10,7 @@
 //   28 ultralight], 右 chevron 16pt textHint]
 // - PressFeedback 包整体 (scale 0.97)
 // - 暗色模式: alpha 0.18, 文字色走 theme
-// - 默认高度 ~88pt
+// - 默认高度 ~110pt (tileHeight, v0.32 R109 round 6 从 88 升到 110 — R112-06 注释漂移修)
 //
 // 用法:
 // ```dart

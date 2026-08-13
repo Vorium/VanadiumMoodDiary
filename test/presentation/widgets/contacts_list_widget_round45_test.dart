@@ -4,9 +4,12 @@
 // v0.24 round 45 (Sprint #6 中段 3 page 0 widget 测补齐之一) 补 4 个 case:
 //
 // 1. contacts 空 → 渲染 EmptyState (icon + title + action button)
-// 2. contacts 1+ → 渲染 List (Card + Dismissible rows)
+// 2. contacts 1+ → 渲染 List (AppleListSection + Dismissible rows, v0.32 round 13
+//    R112 EM-02/AH-04 视觉债: Card 容器改 AppleListSection)
 // 3. contact name 显示 (l10n 走 AppLocalizations.of(context).contactName)
-// 4. EmptyState action button 触发 onAction callback → context.push('/contacts/new')
+// 4. EmptyState action button 触发 onAction → 打开添加弹窗
+//    (v0.32 round 8 R111 FS-14 fix: 原走 /contacts/new 死路由 → 404,
+//    改走 _showAddContactDialog, 跟非空列表同一 ConsentDialog 流程)
 //
 // 测试 setup:
 // - MaterialApp + AppLocalizations.localizationsDelegates (跟 last_startup_error_banner_round31 同模式)
@@ -15,6 +18,7 @@
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -26,10 +30,6 @@ GoRouter _buildRouter() {
       GoRoute(
         path: '/',
         builder: (_, __) => const ContactsListWidget(contacts: []),
-      ),
-      GoRoute(
-        path: '/contacts/new',
-        builder: (_, __) => const Scaffold(body: Text('NEW_CONTACT_PAGE')),
       ),
     ],
   );
@@ -93,7 +93,10 @@ void main() {
     expect(find.byIcon(Icons.contacts_outlined), findsNothing);
   });
 
-  testWidgets('contacts 3 → 渲染 3 个 Dismissible + 2 个 Divider', (tester) async {
+  testWidgets('contacts 3 → 渲染 3 个 Dismissible (AppleListSection 容器)',
+      (tester) async {
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): 容器 Card → AppleListSection,
+    // 手写 Divider 删 (hairline 由容器自动串联), 断言同步改
     const contacts = [
       ContactEntity(
         id: 1,
@@ -135,14 +138,14 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.byType(AppleListSection), findsOneWidget);
     expect(find.byType(Dismissible), findsNWidgets(3));
     expect(find.text('A'), findsOneWidget);
     expect(find.text('B'), findsOneWidget);
     expect(find.text('C'), findsOneWidget);
   });
 
-  testWidgets(
-      'EmptyState action button 触发 onAction → context.push(/contacts/new)',
+  testWidgets('EmptyState action button 触发 onAction → 打开添加弹窗 (FS-14 fix)',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp.router(
@@ -154,11 +157,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 点击 EmptyState 的 "添加联系人" 按钮 → 路由到 /contacts/new
+    // 点击 EmptyState 的 "添加联系人" 按钮 → 打开 _showAddContactDialog 弹窗
     await tester.tap(find.text('添加联系人'));
     await tester.pumpAndSettle();
 
-    // 验证路由成功 → 显示 NEW_CONTACT_PAGE
-    expect(find.text('NEW_CONTACT_PAGE'), findsOneWidget);
+    // v0.32 round 8 (R111 FS-14 fix): 不再 push /contacts/new (死路由 404),
+    // 弹窗直开 (跟非空列表的 "+ 添加另一个联系人" entry 同一个 flow)
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.text('添加紧急联系人'), findsOneWidget);
+    // 弹窗里 2 个 TextField (姓名 + 手机号)
+    expect(find.byType(TextField), findsNWidgets(2));
   });
 }

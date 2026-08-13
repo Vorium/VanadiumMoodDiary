@@ -9,15 +9,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer' as developer;
 
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 class LegalPage extends ConsumerStatefulWidget {
@@ -90,7 +91,15 @@ class _LegalPageState extends ConsumerState<LegalPage> {
             );
           }
           // 不抛 — 错误已显示, 让用户重试 toggle
-          developer.log('vent deleteAll failed', error: e, stackTrace: st);
+          // v0.32 R112 (E-02): 之前裸 developer.log 无 kReleaseMode 守卫,
+          // release 模式把含文件路径/PII 的 stack 写进 console (R108 P0#12
+          // 锁定的漏洞类别)。换 swallowError (内部 _isProduct 守卫)。
+          swallowError(
+            where: 'legal_page.ventDeleteAll',
+            error: e,
+            stack: st,
+            note: 'deleteAll failed — snackbar 已提示用户重试',
+          );
           return;
         }
       } else {
@@ -190,7 +199,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
     return PageScaffold(
       title: l10n.legalPageTitle,
       child: !_loaded
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: LoadingSpinner())
           : ListView(
               padding: AppTokens.edgeInsetsMd,
               children: [

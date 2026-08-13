@@ -20,6 +20,7 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medications_li
 import 'package:chroniccare/presentation/pages/medication/widgets/refill_days_dialog.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,8 +29,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class _NoopNotificationService extends NotificationService {
   @override
   Future<void> init() async {}
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
 }
 
 class _StubMedicationRepository implements MedicationRepository {
@@ -194,6 +193,9 @@ void main() {
       expect(find.text('没有在用的药'), findsOneWidget);
       // "已停药" 出现 1+ 次 (section header + chip badge), 用 findsWidgets
       expect(find.text('已停药'), findsWidgets);
+      // v0.32 round 14 (R112 F1 遗留): stopped 列表 Card → AppleListSection
+      expect(find.byType(AppleListSection), findsOneWidget);
+      expect(find.byType(Card), findsNothing);
     });
 
     testWidgets('MedicationListView (active meds) 显示日历入口 + 列表', (tester) async {
@@ -216,6 +218,10 @@ void main() {
       // 用药日历入口 (v0.14 round 13C)
       expect(find.text('用药日历'), findsOneWidget);
       expect(find.text('氟西汀'), findsOneWidget);
+      // v0.32 round 14 (R112 F1 遗留): 日历入口 + active 列表
+      // 2 处 Card → AppleListSection (hairline 由容器自动串联)
+      expect(find.byType(AppleListSection), findsNWidgets(2));
+      expect(find.byType(Card), findsNothing);
     });
 
     testWidgets(
@@ -237,6 +243,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('氟西汀'), findsOneWidget);
+      // v0.32 round 14 (R112 F1 遗留): 日历入口 + active 列表 2 ALS, 0 Card
+      expect(find.byType(AppleListSection), findsNWidgets(2));
+      expect(find.byType(Card), findsNothing);
     });
   });
 

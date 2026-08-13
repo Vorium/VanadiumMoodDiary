@@ -25,6 +25,7 @@ import 'package:chroniccare/presentation/pages/settings/widgets/profile_group.da
 import 'package:chroniccare/presentation/pages/settings/widgets/reminders_group.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,6 +82,9 @@ void main() {
     expect(find.byType(AssessmentSection), findsOneWidget);
     // NotificationStatusCard 不应在 ProfileGroup (在 RemindersGroup)
     expect(find.byType(NotificationStatusCard), findsNothing);
+    // v0.32 round 14 (R112 F1 遗留): MedicationsListWidget (meds=[] → 空态)
+    // + AssessmentReminderSection 都无 Card — ProfileGroup 子树 0 Card
+    expect(find.byType(Card), findsNothing);
   });
 
   testWidgets(
@@ -107,6 +111,9 @@ void main() {
     expect(find.byType(DataGroup), findsOneWidget);
     // DataManagementSection 渲染
     expect(find.byType(DataManagementSection), findsOneWidget);
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): 容器 Card → AppleListSection
+    expect(find.byType(AppleListSection), findsOneWidget);
+    expect(find.byType(Card), findsNothing);
   });
 
   testWidgets('LegalGroup: LegalSection 渲染', (tester) async {
@@ -119,5 +126,8 @@ void main() {
     expect(find.byType(LegalGroup), findsOneWidget);
     // LegalSection 渲染
     expect(find.byType(LegalSection), findsOneWidget);
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): 容器 Card → AppleListSection
+    expect(find.byType(AppleListSection), findsOneWidget);
+    expect(find.byType(Card), findsNothing);
   });
 }

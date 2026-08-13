@@ -15,7 +15,6 @@
 
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
@@ -30,17 +29,14 @@ class SafetyAlertSenderImpl implements SafetyAlertSender {
   final SmsService _smsService;
   final NotificationService _notificationService;
   final SafetyConfigService _config;
-  final SafetyAlertBuilder _builder;
 
   const SafetyAlertSenderImpl({
     required SmsService smsService,
     required NotificationService notificationService,
     required SafetyConfigService config,
-    required SafetyAlertBuilder builder,
   })  : _smsService = smsService,
         _notificationService = notificationService,
-        _config = config,
-        _builder = builder;
+        _config = config;
 
   @override
   Future<SmsDispatchOutcome> send({
@@ -83,8 +79,8 @@ class SafetyAlertSenderImpl implements SafetyAlertSender {
     //   (R109 round 2 末尾改动), 删原 _AppLocalizationsAdapter + _resolveL10n
     //   适配器 (56 fail 修). 0 死代码, adapter 是 R109 round 2 临时桥, 后续
     //   改 builder 接口后已不需要.
+    // v0.32 R112 (R112-09): userName 死参数已删 (body 0 引用).
     await _notificationService.showSafetyAlert(
-      userName: userName,
       daysWithoutCheckIn: daysSinceLast,
       lastCheckIn: lastCheckIn,
       outcome: outcome,

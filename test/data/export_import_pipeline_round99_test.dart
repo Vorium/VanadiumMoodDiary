@@ -254,9 +254,9 @@ void main() {
   // ============== failure path ==============
 
   group('R99 #27 failure path (P0-3 三态)', () {
-    test('5. wrong version (5 > current 4) → failure 含"数据版本不匹配"', () async {
+    test('6. wrong version (6 > current 5) → failure 含"数据版本不匹配"', () async {
       final json = jsonEncode({
-        'version': 5, // 超过 currentVersion 4
+        'version': 6, // 超过 currentVersion 5
         'contacts': <Map<String, dynamic>>[],
       });
       final result = await runImportFromJson(orch, json);

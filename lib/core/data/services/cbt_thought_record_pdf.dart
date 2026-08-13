@@ -7,9 +7,10 @@
 //
 // **设计原则**:
 // - 1 页 1 entry,5/7 栏分别渲染 (走 cbtLevel 区分 5 vs 7 档位)
-// - i18n 走 caller 注入 AppLocalizations (避免 service 层读 BuildContext)
+// - i18n 走 caller 注入 [CbtPdfL10n] (避免 service 层读 BuildContext;
+//   R112 AR-16: 0 依赖 l10n/ 生成 ARB)
 // - entries 必须过滤 cbtLevel >= 5 (调用方负责,例如 cbtReratedEntriesProvider)
-// - dateRange 可选 filter,DateTimeRange.start/end 含闭区间
+// - dateRange 可选 filter,DateRange.start/end 含闭区间
 // - 字体走 pdf 内置 Helvetica (跟 MedicationReportPdf 一致,不引字体文件)
 //
 // R101: 用自定义 DateRange 替代 flutter/material DateTimeRange, 满足
@@ -19,7 +20,6 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'package:chroniccare/core/data/services/cbt_thought_record_pdf_layout.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// R101: 纯 Dart 日期范围, 替代 flutter/material DateTimeRange
 class DateRange {
@@ -38,13 +38,14 @@ class CbtThoughtRecordPdf {
   ///
   /// - [entries] 必须已过滤 cbtLevel >= 5 (调用方负责)
   /// - [dateRange] 可选,过滤 timestamp ∈ [start, end] (闭区间)
-  /// - [l10n] i18n strings (caller 注入,避免 service 层读 context)
+  /// - [l10n] i18n strings ([CbtPdfL10n] interface, caller 注入,
+  ///   避免 service 层读 context)
   ///
   /// 过滤后为空 → 走 empty page (单页 "无数据" 提示)
   Future<List<int>> build({
     required List<MoodEntryEntity> entries,
     DateRange? dateRange,
-    required AppLocalizations l10n,
+    required CbtPdfL10n l10n,
   }) async {
     final doc = pw.Document();
     final filtered = dateRange == null

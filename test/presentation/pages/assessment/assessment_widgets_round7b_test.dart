@@ -107,13 +107,17 @@ void main() {
     const options = {0: '完全没有', 1: '偶尔', 2: '经常', 3: '几乎每天'};
 
     testWidgets('渲染题号 + 题文 + 全部选项', (tester) async {
-      await tester.pumpWidget(wrap(const QuestionCard(
-        index: 1,
-        item: AssessmentItem(0, '感到紧张吗'),
-        options: options,
-        selected: null,
-        onChanged: _noop,
-      )));
+      await tester.pumpWidget(
+        wrap(
+          const QuestionCard(
+            index: 1,
+            item: AssessmentItem(0, '感到紧张吗'),
+            options: options,
+            selected: null,
+            onChanged: _noop,
+          ),
+        ),
+      );
 
       expect(find.text('Q1. 感到紧张吗'), findsOneWidget);
       for (final v in options.values) {
@@ -123,26 +127,34 @@ void main() {
 
     testWidgets('点选项 → onChanged 回调对应分值', (tester) async {
       int? changed;
-      await tester.pumpWidget(wrap(QuestionCard(
-        index: 2,
-        item: const AssessmentItem(1, '难以入睡吗'),
-        options: options,
-        selected: null,
-        onChanged: (v) => changed = v,
-      )));
+      await tester.pumpWidget(
+        wrap(
+          QuestionCard(
+            index: 2,
+            item: const AssessmentItem(1, '难以入睡吗'),
+            options: options,
+            selected: null,
+            onChanged: (v) => changed = v,
+          ),
+        ),
+      );
 
       await tester.tap(find.text('几乎每天'));
       expect(changed, 3);
     });
 
     testWidgets('selected 高亮对应 chip', (tester) async {
-      await tester.pumpWidget(wrap(const QuestionCard(
-        index: 3,
-        item: AssessmentItem(2, '容易疲劳吗'),
-        options: options,
-        selected: 2,
-        onChanged: _noop,
-      )));
+      await tester.pumpWidget(
+        wrap(
+          const QuestionCard(
+            index: 3,
+            item: AssessmentItem(2, '容易疲劳吗'),
+            options: options,
+            selected: 2,
+            onChanged: _noop,
+          ),
+        ),
+      );
 
       final chip = tester.widget<ChoiceChip>(
         find.ancestor(
@@ -176,18 +188,21 @@ void main() {
 
     testWidgets('首次评估 → 提示文案, 无分数对比', (tester) async {
       final current = rec(12, DateTime(2026, 8, 1));
-      await tester.pumpWidget(wrap(AssessmentComparison(
-        current: current,
-        previous: null,
-        scoreDelta: null,
-        trend: ComparisonTrend.firstAssessment,
-        currentSeverityRank: 2,
-        previousSeverityRank: null,
-        daysSincePrevious: null,
-      )));
+      await tester.pumpWidget(
+        wrap(
+          AssessmentComparison(
+            current: current,
+            previous: null,
+            scoreDelta: null,
+            trend: ComparisonTrend.firstAssessment,
+            currentSeverityRank: 2,
+            previousSeverityRank: null,
+            daysSincePrevious: null,
+          ),
+        ),
+      );
 
-      expect(find.text('这是您的第一次评估。下次评估后会显示和这次的对比。'),
-          findsOneWidget);
+      expect(find.text('这是您的第一次评估。下次评估后会显示和这次的对比。'), findsOneWidget);
       expect(find.text('上次'), findsNothing);
       expect(find.text('本次'), findsNothing);
     });
@@ -195,15 +210,19 @@ void main() {
     testWidgets('恶化 → 上次/本次分数 + ↑ + 恶化文案', (tester) async {
       final previous = rec(5, DateTime(2026, 7, 20));
       final current = rec(18, DateTime(2026, 8, 1));
-      await tester.pumpWidget(wrap(AssessmentComparison(
-        current: current,
-        previous: previous,
-        scoreDelta: 13,
-        trend: ComparisonTrend.worsened,
-        currentSeverityRank: 3,
-        previousSeverityRank: 1,
-        daysSincePrevious: 12,
-      )));
+      await tester.pumpWidget(
+        wrap(
+          AssessmentComparison(
+            current: current,
+            previous: previous,
+            scoreDelta: 13,
+            trend: ComparisonTrend.worsened,
+            currentSeverityRank: 3,
+            previousSeverityRank: 1,
+            daysSincePrevious: 12,
+          ),
+        ),
+      );
 
       expect(find.text('上次'), findsOneWidget);
       expect(find.text('本次'), findsOneWidget);
@@ -216,15 +235,19 @@ void main() {
     testWidgets('好转 → ↓ + 好转文案', (tester) async {
       final previous = rec(16, DateTime(2026, 7, 20));
       final current = rec(4, DateTime(2026, 8, 1));
-      await tester.pumpWidget(wrap(AssessmentComparison(
-        current: current,
-        previous: previous,
-        scoreDelta: -12,
-        trend: ComparisonTrend.improved,
-        currentSeverityRank: 1,
-        previousSeverityRank: 3,
-        daysSincePrevious: 12,
-      )));
+      await tester.pumpWidget(
+        wrap(
+          AssessmentComparison(
+            current: current,
+            previous: previous,
+            scoreDelta: -12,
+            trend: ComparisonTrend.improved,
+            currentSeverityRank: 1,
+            previousSeverityRank: 3,
+            daysSincePrevious: 12,
+          ),
+        ),
+      );
 
       expect(find.byIcon(Icons.arrow_downward), findsWidgets);
       expect(find.textContaining('好转'), findsWidgets);

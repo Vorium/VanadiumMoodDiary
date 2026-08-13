@@ -193,7 +193,11 @@ class HomeDeepLinkHandler {
       // P0 fix: 复用 provider 树已缓存的药物数据，不再重复查库
       final meds = ref.read(medicationsProvider).value ?? [];
       final med = meds.where((m) => m.id == medId).firstOrNull;
-      if (!isMounted()) return const AutofireResult(success: false);
+      // v0.32 round 8 (R112 卫生): 加 context.mounted guard 消
+      // use_build_context_synchronously (isMounted 闭包 analyzer 不识别)
+      if (!isMounted() || !context.mounted) {
+        return const AutofireResult(success: false);
+      }
       final medName =
           med?.name ?? AppLocalizations.of(context).homeAutofireFallbackName;
       // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
@@ -202,7 +206,10 @@ class HomeDeepLinkHandler {
       unawaited(Haptics.success());
       return AutofireResult(success: true, medName: medName);
     } catch (e) {
-      if (!isMounted()) return const AutofireResult(success: false);
+      // v0.32 round 8 (R112 卫生): context.mounted guard 消 lint
+      if (!isMounted() || !context.mounted) {
+        return const AutofireResult(success: false);
+      }
       AppSnackBar.showError(
         context,
         action: AppLocalizations.of(context).snackbarActionAutoCheckin,

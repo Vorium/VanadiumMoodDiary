@@ -88,7 +88,11 @@ class AppRouteMedication {
       GoRoute(
         path: '/medication/detail/:id',
         pageBuilder: (context, state) {
-          final id = int.parse(state.pathParameters['id']!);
+          // v0.32 round 8 (R112-07 fix): int.tryParse 替代 int.parse —
+          // 恶意/脏 URL /medication/detail/abc 修前抛 FormatException 崩 app
+          // (跟 app_route_vent.dart:38 同款模式), 修后 fallback 0 →
+          // MedicationDetailPage medNotFound 分支 ("药物未找到")
+          final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
           return AppRoutes.slideRightPage(
             state.pageKey,
             MedicationDetailPage(medicationId: id),

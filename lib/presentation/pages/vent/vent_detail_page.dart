@@ -16,7 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -90,7 +90,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
       unawaited(
         storage.deleteTempFile(tempPath).catchError((Object e, StackTrace st) {
           // v0.22 round 30 (sp-en P1-3): 走 swallowError (app teardown 期间)
-          swallowError(
+          audioErrorSink(
             where: 'vent_detail_page.dispose',
             error: e,
             stack: st,
@@ -133,7 +133,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                 .deleteTempFile(_tempDecryptedPath!);
           } catch (e, st) {
             // v0.22 round 30 (sp-en P1-3): 走 swallowError
-            swallowError(
+            audioErrorSink(
               where: 'vent_detail_page._togglePlay.failCleanup',
               error: e,
               stack: st,
@@ -216,7 +216,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         await _player.stop();
       } catch (e, st) {
         // player.stop 失败不影响删除流程(可能已经停止),dev 模式可见
-        swallowError(
+        audioErrorSink(
           where: 'vent_detail_page._confirmDelete',
           error: e,
           stack: st,

@@ -32,14 +32,15 @@ class Level2DepressionScale implements AssessmentScale {
   @override
   String get id => 'level2_depression';
 
+  // v0.32 round 8 (R111 E4/R111-02 fix): 走 translations (跟 phq9 一致)
   @override
-  String get displayName => 'DSM-5 Level 2 抑郁严重度';
+  String get displayName => translations.level2DepressionName();
 
   @override
-  String get shortDescription => '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)';
+  String get shortDescription => translations.level2DepressionShortDescription();
 
   @override
-  String get instruction => '过去 7 天内, 您有多经常被以下情绪困扰?';
+  String get instruction => translations.level2DepressionInstruction();
 
   @override
   List<AssessmentItem> get items => const [

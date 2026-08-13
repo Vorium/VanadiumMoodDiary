@@ -110,7 +110,11 @@ class ExportOrchestrator {
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
     final medications = await _db.medicationDao
-        .watchActive()
+        // v0.32 round 8 (R112 E8 fix): watchActive → watchAllIncludingInactive。
+        // 之前软停药 (isActive=false) 整行不导出 → 换机后药名从历史消失
+        // (报告 / 趋势 / treatment join 全断)。E3 medIdMap 重映射自然覆盖
+        // inactive 药, 无孤儿 FK 风险。
+        .watchAllIncludingInactive()
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
     final checkIns = await _db.checkInDao
@@ -120,6 +124,33 @@ class ExportOrchestrator {
     final reportHistories = await _reportRepo.getAll();
     final moodEntries = await _db.moodDao.getAll();
     final ventEntries = await _db.ventDao
+        .watchAll()
+        .first
+        .timeout(streamTimeout, onTimeout: () => const []);
+
+    // v0.32 round 8 (R112 E6 fix): 6 张 daily tracking 表 (R91, DB schema 22)。
+    // 之前 export/import 完全缺这 6 段 → 换机整块静默丢失。
+    final sleepEntries = await _db.sleepDao
+        .watchAll()
+        .first
+        .timeout(streamTimeout, onTimeout: () => const []);
+    final socialRhythmEntries = await _db.socialRhythmDao
+        .watchAll()
+        .first
+        .timeout(streamTimeout, onTimeout: () => const []);
+    final stressEvents = await _db.stressEventDao
+        .watchAll()
+        .first
+        .timeout(streamTimeout, onTimeout: () => const []);
+    final treatmentEntries = await _db.treatmentDao
+        .watchAll()
+        .first
+        .timeout(streamTimeout, onTimeout: () => const []);
+    final weightEntries = await _db.weightDao
+        .watchAll()
+        .first
+        .timeout(streamTimeout, onTimeout: () => const []);
+    final anxietyAgitationEntries = await _db.anxietyAgitationDao
         .watchAll()
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
@@ -136,6 +167,18 @@ class ExportOrchestrator {
               // P0-10: 顺便带上 lastCheckInAt, 导入后立即可见
               if (profile.lastCheckInAt != null)
                 'lastCheckInAt': isoUtc(profile.lastCheckInAt!),
+              // v0.32 round 8 (R112 E7 fix): PIPL §14 同意留痕 4 字段
+              // (R63 加, R68 gate 只挡 setup 路径, 导出/导入直接绕过 → 换机
+              // 留痕断裂)。v5 起导出, 老 v4 文件无这 4 字段, import 时
+              // 优雅降级 null。
+              if (profile.userAgreementVersion != null)
+                'userAgreementVersion': profile.userAgreementVersion,
+              if (profile.privacyPolicyVersion != null)
+                'privacyPolicyVersion': profile.privacyPolicyVersion,
+              if (profile.sensitiveDataConsentAt != null)
+                'sensitiveDataConsentAt': isoUtc(profile.sensitiveDataConsentAt!),
+              if (profile.consentRevokedAt != null)
+                'consentRevokedAt': isoUtc(profile.consentRevokedAt!),
             },
       'contacts': [
         for (final c in contacts)
@@ -144,17 +187,37 @@ class ExportOrchestrator {
             'phone': c.phone,
             'sortOrder': c.sortOrder,
             'isActive': c.isActive,
+            // v0.32 round 8 (R111 E2 fix): PIPL §13 留痕 4 字段 (R63 加,
+            // R68 gate 只挡 add(), 导入直接绕过 → 留痕断裂)。v5 起导出,
+            // 老 v4 文件无这 4 字段, import 时优雅降级 null。
+            if (c.consentAt != null) 'consentAt': isoUtc(c.consentAt!),
+            if (c.consentKind != null) 'consentKind': c.consentKind,
+            if (c.consentBy != null) 'consentBy': c.consentBy,
+            if (c.consentVersion != null) 'consentVersion': c.consentVersion,
           },
       ],
       'medications': [
         for (final m in medications)
           {
+            // v0.32 round 8 (R111 E3 fix): 导出原 id, import 时建
+            // old→new id 映射, checkIn.medicationId 重映射 (修孤儿 FK)
+            'id': m.id,
             'name': m.name,
             'dosage': m.dosage,
             'dosageUnit': m.dosageUnit,
             'timesJson': m.timesJson,
             'startDate': isoUtc(m.startDate),
+            // v0.32 round 8 (R112 E8 fix): endDate 补导出 — 软停药历史
+            // 的停药日期换机不丢 (import 侧 v5 已有 endDate 反序列化)。
+            if (m.endDate != null) 'endDate': isoUtc(m.endDate!),
             'isActive': m.isActive,
+            // v0.32 round 8 (R111 E1 fix): 续方/剂型/颜色/备注 5 字段
+            // (R101 加了 3 个, R12 加了 2 个, 全部漏 export → 换机静默丢失)
+            if (m.refillAt != null) 'refillAt': isoUtc(m.refillAt!),
+            'refillReminderDays': m.refillReminderDays,
+            'form': m.form,
+            'colorIndex': m.colorIndex,
+            if (m.notes != null) 'notes': m.notes,
           },
       ],
       'checkIns': [
@@ -178,6 +241,10 @@ class ExportOrchestrator {
       'moodEntries': [
         for (final m in moodEntries)
           {
+            // v0.32 round 8 (R112 E6 fix): 导出原 id, import 时建
+            // old→new id 映射, stressEvents.linkedMoodEntryId 重映射
+            // (跟 E3 checkIn.medicationId 同款修孤儿 FK)。
+            'id': m.id,
             'timestamp': isoUtc(m.timestamp),
             'score': m.score,
             // v0.18 4D 情绪: energy / sleep / anxiety (nullable, 老数据为 null)
@@ -200,6 +267,17 @@ class ExportOrchestrator {
             if (m.coreBelief != null) 'coreBelief': m.coreBelief,
             if (m.behaviorResponse != null)
               'behaviorResponse': m.behaviorResponse,
+            // v0.32 round 8 (R111 E1 fix): 语音转录 / 时长 + period /
+            // influenceFactors / recordingMode (R31/R91/R101 加, 全部漏 export
+            // → 换机静默丢失)。audioPath 不导出 — vent 先例: stale 路径跨
+            // 设备不可用, 只保文字转录 + 元数据。
+            if (m.audioTranscript != null)
+              'audioTranscript': m.audioTranscript,
+            if (m.audioDurationMs != null) 'audioDurationMs': m.audioDurationMs,
+            if (m.period != null) 'period': m.period,
+            // influenceFactorsJson 非 nullable (DB 默认 '[]')
+            'influenceFactorsJson': m.influenceFactorsJson,
+            if (m.recordingMode != null) 'recordingMode': m.recordingMode,
           },
       ],
       'ventEntries': [
@@ -216,6 +294,74 @@ class ExportOrchestrator {
               audioSizeBytes: v.audioSizeBytes,
               audioPath: v.audioPath,
             ),
+          },
+      ],
+      // v0.32 round 8 (R112 E6 fix): 6 张 daily tracking 表 (R91)。全字段
+      // 导出, 外键 (stress.linkedMoodEntryId / treatment.linkedMedicationId)
+      // 导出原 id, import 时走 old→new 映射 (跟 E3 同款)。
+      'sleepEntries': [
+        for (final s in sleepEntries)
+          {
+            'date': isoUtc(s.date),
+            'bedtime': isoUtc(s.bedtime),
+            'wakeTime': isoUtc(s.wakeTime),
+            'durationMin': s.durationMin,
+            if (s.regularityScore != null) 'regularityScore': s.regularityScore,
+            if (s.note != null) 'note': s.note,
+          },
+      ],
+      'socialRhythmEntries': [
+        for (final s in socialRhythmEntries)
+          {
+            'date': isoUtc(s.date),
+            'wakeTime': isoUtc(s.wakeTime),
+            'firstMealTime': isoUtc(s.firstMealTime),
+            'lastMealTime': isoUtc(s.lastMealTime),
+            'socialMin': s.socialMin,
+            'workMin': s.workMin,
+            'exerciseMin': s.exerciseMin,
+          },
+      ],
+      'stressEvents': [
+        for (final s in stressEvents)
+          {
+            'timestamp': isoUtc(s.timestamp),
+            'eventType': s.eventType,
+            'intensity': s.intensity,
+            if (s.note != null) 'note': s.note,
+            if (s.linkedMoodEntryId != null)
+              'linkedMoodEntryId': s.linkedMoodEntryId,
+          },
+      ],
+      'treatmentEntries': [
+        for (final t in treatmentEntries)
+          {
+            'timestamp': isoUtc(t.timestamp),
+            'treatmentType': t.treatmentType,
+            'description': t.description,
+            if (t.linkedMedicationId != null)
+              'linkedMedicationId': t.linkedMedicationId,
+            if (t.linkedMedicationName != null)
+              'linkedMedicationName': t.linkedMedicationName,
+            if (t.note != null) 'note': t.note,
+          },
+      ],
+      'weightEntries': [
+        for (final w in weightEntries)
+          {
+            'timestamp': isoUtc(w.timestamp),
+            'weightKg': w.weightKg,
+            if (w.bmi != null) 'bmi': w.bmi,
+            if (w.note != null) 'note': w.note,
+          },
+      ],
+      'anxietyAgitationEntries': [
+        for (final a in anxietyAgitationEntries)
+          {
+            'timestamp': isoUtc(a.timestamp),
+            'anxietyScore': a.anxietyScore,
+            'agitationScore': a.agitationScore,
+            if (a.note != null) 'note': a.note,
           },
       ],
     };

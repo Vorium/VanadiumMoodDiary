@@ -85,10 +85,16 @@ class DispatchSafetyAlertUseCase {
 /// 0 副作用, 0 业务行为. test 跨期 helper, 替代原 R108 之前 test 自定义
 /// `_StubNotificationService` / `_CountingNotificationService` 内部子类
 /// (R109 round 2 改 service 接受 `DispatchSafetyAlertUseCase` 后, 旧
-/// notification service subclass 失效).
+/// notification service subclass 失效)。
+///
+/// ⚠️ v0.32 R112 (R112-10): 本类是 **test-only helper 放生产文件**
+/// (R109 收尾遗留) — **严禁在生产代码构造**。`@visibleForTesting` marker
+/// 因 domain 纯度守门 (check_all domain 0 `package:flutter/`, 含
+/// flutter/foundation re-export, 见 R110 round 3 schedule_assessment_reminder
+/// 同款先例) 无法加, 用本注释标记; 抽 test 公共 helper 包的大迁移留后续。
 class NoOpDispatchSafetyAlertUseCase extends DispatchSafetyAlertUseCase {
   NoOpDispatchSafetyAlertUseCase()
-      : super(_NoOpSafetyAlertSender(), emergencyContactEnabled: true);
+      : super(_NoOpSafetyAlertSenderState(), emergencyContactEnabled: true);
 
   /// 真实测试时记录 dispatch 调用结果
   final List<SmsDispatchOutcome> outcomes = [];
@@ -104,15 +110,18 @@ class NoOpDispatchSafetyAlertUseCase extends DispatchSafetyAlertUseCase {
     String? bodyOverride,
     required l10nResolver,
   }) async {
-    final outcome = (smsOk: 0, smsFail: 0, smsMock: 0);
+    const outcome = (smsOk: 0, smsFail: 0, smsMock: 0);
     outcomes.add(outcome);
     return outcome;
   }
 }
 
-/// NoOpSafetyAlertSender — 给 NoOpDispatchSafetyAlertUseCase 用的空 sender
-class _NoOpSafetyAlertSender extends SafetyAlertSender {
-  _NoOpSafetyAlertSender();
+/// _NoOpSafetyAlertSenderState — 给 NoOpDispatchSafetyAlertUseCase 用的空 sender
+/// v0.32 round 8 (R111 SP-111-16 fix): 改名 State 后缀, 消除 check_usecase_layer
+/// 唯一 warning (R109 命名规范: 类名须以 UseCase/Policy/Input/Output/Config/
+/// Result/Schedule/State 结尾)
+class _NoOpSafetyAlertSenderState extends SafetyAlertSender {
+  _NoOpSafetyAlertSenderState();
 
   @override
   Future<SmsDispatchOutcome> send({

@@ -32,7 +32,6 @@
 import 'package:chroniccare/core/data/services/notification_delegate.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -46,9 +45,7 @@ import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
-import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
-import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
 import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
@@ -106,10 +103,17 @@ class NotificationService implements NotificationSender {
   late final NotificationDelegate delegate;
 
   /// v0.11 (Round 5): 用户点通知的回调
-  /// 默认调 [NotificationNavigation.handleTap]
-  final void Function(String? payload) onNotificationTap;
+  ///
+  /// v0.32 R112 (R112-ARCH-02): data 0 依赖 core/routing (传递 Flutter
+  /// 依赖)。默认 null = 只 log 不导航 (测试 / provider fallback), 生产由
+  /// app 层 (main.dart) 注入 `NotificationNavigation.handleTap`。
+  final void Function(String? payload)? onNotificationTap;
 
-  NotificationService({this.onNotificationTap = _defaultOnTap})
+  /// v0.32 R112 (R112-ARCH-02): app 被通知拉起的 payload 回调
+  /// 生产由 app 层注入 `NotificationNavigation.setLaunchPayload`。
+  final void Function(String? payload)? onLaunchPayload;
+
+  NotificationService({this.onNotificationTap, this.onLaunchPayload})
       : _plugin = FlutterLocalNotificationsPlugin() {
     // 6 sub-service 在 constructor 注入 (DI 模式, emil 推荐 testability)
     // ReminderDispatcher 是 SnoozeManager / MedicationNotifier / RefillNotifier / AssessmentNotifier 的共享底层
@@ -155,11 +159,8 @@ class NotificationService implements NotificationSender {
       plugin: _plugin,
       onResponse: _onResponse,
       delegate: delegate,
+      onLaunchPayload: onLaunchPayload,
     );
-  }
-
-  static void _defaultOnTap(String? payload) {
-    NotificationNavigation.handleTap(payload);
   }
 
   /// sub-service init 代理 — 委托到本类 init, 保证 sub-service 调用时主 service 已 init
@@ -201,12 +202,15 @@ class NotificationService implements NotificationSender {
   Future<bool> requestPermission() => _initializer.requestPermission();
 
   /// flutter_local_notifications 回调
-  static void _onResponse(NotificationResponse response) {
+  ///
+  /// v0.32 R112 (R112-ARCH-02): 改 instance method (tap 回调改实例字段),
+  /// null 时只 log 不导航。
+  void _onResponse(NotificationResponse response) {
     piiSafeLog(
       'NotificationService',
       '👆 通知被点击, payload=${response.payload}',
     );
-    _defaultOnTap(response.payload);
+    onNotificationTap?.call(response.payload);
   }
 
   /// 立即显示一条通知 (不调度, 立即推)
@@ -354,8 +358,8 @@ class NotificationService implements NotificationSender {
   ///
   /// 和普通 reminder 不同的 channel: 高 importance + 震动 + 锁屏可见
   /// v0.11 (Round 5): payload 携带天数, 点通知直达 home + 显示告警
-  /// v0.21 Round 23 (P1-24): userName 改 nullable
-  /// 未填姓名时退化为 "您", 避免 "⚠️  已 3 天未打卡" 这种空
+  /// v0.32 R112 (R112-09): 删 `userName` 死参数 (body 0 引用, v0.21
+  /// Round 23 改 nullable 后一直无用途)。
   ///
   /// v0.27 round 60 (P0-3 修正): 加 [SmsDispatchOutcome] 参数 + [l10n] 走
   /// i18n, 通知文案 3 态分流 (sent / mocked / failed)。之前 hardcode
@@ -372,13 +376,11 @@ class NotificationService implements NotificationSender {
   /// **注意**: 修正后**所有调用方必须传 [outcome] 和 [l10nResolver]**, 用 `SafetyAlertDispatcher`
   /// 提供的 (smsOk, smsFail, smsMock) 计数 + `SafetyAlertL10nResolver` tear-off
   /// 闭包 (call site 从 `AppLocalizations.of(context)` tear-off 注入).
-  /// 直接 `showSafetyAlert(userName:..)` 调会编译失败 (required 参数)。
   ///
   /// v0.32 R109 (god class 拆 round 2): l10n 改 `SafetyAlertL10nResolver`
   /// (tear-off 闭包), `notification_service` 删 `l10n/app_localizations.dart`
   /// 顶层 import, 4 层架构 `data` 0 依赖 `presentation` 更彻底.
   Future<void> showSafetyAlert({
-    String? userName,
     required int daysWithoutCheckIn,
     required DateTime? lastCheckIn,
     required SmsDispatchOutcome outcome,
@@ -386,7 +388,6 @@ class NotificationService implements NotificationSender {
   }) async {
     await init();
     final build = SafetyAlertBuilder.buildFor(
-      userName: userName,
       daysWithoutCheckIn: daysWithoutCheckIn,
       lastCheckIn: lastCheckIn,
       outcome: outcome,

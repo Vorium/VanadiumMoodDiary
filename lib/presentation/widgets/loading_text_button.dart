@@ -2,7 +2,6 @@
 //
 // 之前 4+ 处 `Stack([Text, if saving Spinner])` 重复:
 // - mood_dialog.dart:149-165 (保存按钮 saving 态)
-// - medication/temp_medication_dialog.dart:128-141 (保存按钮)
 // - vent/vent_compose_page.dart:418-431 (保存按钮)
 // - settings/settings_page.dart:680-688 (清空数据按钮)
 //

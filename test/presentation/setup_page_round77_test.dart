@@ -32,8 +32,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _NoopNotificationService extends NotificationService {
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
 }
 
 Future<void> _pumpSetup(WidgetTester tester) async {

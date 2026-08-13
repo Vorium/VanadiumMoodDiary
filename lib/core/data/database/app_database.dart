@@ -1,16 +1,11 @@
-import 'package:chroniccare/core/data/services/vent_audio_storage.dart'
-    show VentAudioStorage;
-import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart' show visibleForTesting;
-
-import 'package:chroniccare/domain/entities/consent_artifact.dart';
-import 'package:chroniccare/domain/entities/hour_minute.dart';
-
 import 'package:chroniccare/core/data/database/connection/connection.dart'
     if (dart.library.js_interop) 'connection/web.dart'
     if (dart.library.io) 'connection/native.dart';
 
 import 'dart:convert';
+
+import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'package:chroniccare/core/data/database/daos/assessment_dao.dart';
 import 'package:chroniccare/core/data/database/daos/check_in_dao.dart';
@@ -26,7 +21,6 @@ import 'package:chroniccare/core/data/database/daos/social_rhythm_dao.dart';
 import 'package:chroniccare/core/data/database/daos/stress_event_dao.dart';
 import 'package:chroniccare/core/data/database/daos/treatment_dao.dart';
 import 'package:chroniccare/core/data/database/daos/weight_dao.dart';
-import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
 import 'package:chroniccare/core/data/database/tables/check_in/check_ins.dart';
 import 'package:chroniccare/core/data/database/tables/contact/contacts.dart';
 import 'package:chroniccare/core/data/database/tables/daily_tracking/anxiety_agitation_entries.dart';
@@ -262,7 +256,7 @@ class AppDatabase extends _$AppDatabase {
           // - old data "" still writes back "" (empty string), but allow null
           // - in practice: drift's alter table doesn't support column property change, SQLite has no ALTER COLUMN
           //   so this change **only takes effect in createAll** (new install users auto get new schema)
-          //   upgrading user schema unchanged, **unified via `core/shared/user_name_helper.dart`
+          //   upgrading user schema unchanged, **unified via `domain/logic/user_name_helper.dart`
           //   `safeUserName()` to be compatible with old data "" and new data null**
           //   (v0.22 round 31 sp-en P0-3 extracted helper to centralize 5+ scattered checks)
           // v11 to v12: mood_entries add voice recording 3 columns (v0.23 round 31)
@@ -407,107 +401,10 @@ class AppDatabase extends _$AppDatabase {
   late final anxietyAgitationDao = AnxietyAgitationDao(this);
 
   // v0.27 round 65 (spen P1-11): remove 32-line facade delegation (line 264-316), caller
-  // fully migrated to _db.xxxDao.xxx() / db.xxxDao.xxx() (94 places). Keep saveSetup /
-  // clearAllUserData (business orchestration, not pure delegation).
-
-  /// Complete first-time setup: in one transaction write user profile, contacts, medications,
-  /// any failure rolls back entirely, avoid half-baked data
-  ///
-  /// v0.27 round 68 (CC-1 fix, PIPL §13 separate consent): add `contactConsents` parameter
-  /// (same length as `contactList`). Each contact filled in setup phase must have ConsentArtifact,
-  /// otherwise contact won't be written (4 consent columns required). setup_page must, before calling saveSetup,
-  /// show ConsentDialog for each contact to get consent.
-  Future<void> saveSetup({
-    required String userName,
-    required List<({String name, String phone, int sortOrder})> contactList,
-    required List<ConsentArtifact> contactConsents,
-    required List<
-            ({
-              String name,
-              double dosage,
-              String dosageUnit,
-              List<HourMinute> times,
-            })>
-        medicationList,
-  }) async {
-    // v0.21 (P1-2 fix): take now once at function entry, avoid crossing midnight between 2 awaits
-    // firstLaunchAt and medStart used different DateTime.now() → same setup
-    // when crossing 0:00 at 23:59:59.x, two timestamps differ by 1 day.
-    final now = DateTime.now();
-    await transaction(() async {
-      // upsert user profile (preserve firstLaunchAt)
-      // v0.27 round 65 (spen P1-11): remove facade getUserProfile, saveSetup internal
-      // switch to userProfileDao.get() (R53a already extracted 7 DAO)
-      final existing = await userProfileDao.get();
-      await into(userProfiles).insertOnConflictUpdate(
-        UserProfilesCompanion.insert(
-          // v0.21 Round 23 (P1-24): userName change to nullable
-          // accept null, UI 'I am' falls back to 'Friend' or empty
-          userName: Value(userName),
-          checkInCycleHours: const Value(48),
-          firstLaunchAt: existing?.firstLaunchAt ?? now,
-        ),
-      );
-
-      // insert contacts (R68 CC-1: PIPL §13 separate consent, 4 consent columns required)
-      assert(
-        contactList.length == contactConsents.length,
-        'contactList and contactConsents must have same length — setup_page must show ConsentDialog for each',
-      );
-      for (var i = 0; i < contactList.length; i++) {
-        final c = contactList[i];
-        final consent = contactConsents[i];
-        await into(contacts).insert(
-          ContactsCompanion.insert(
-            name: c.name,
-            phone: c.phone,
-            sortOrder: Value(c.sortOrder),
-            // R68 CC-1 fix: 4 consent columns written from setup phase
-            // (previously left empty → PIPL §13 technically invalid, §47 query right invalid)
-            consentAt: Value(consent.grantedAt),
-            consentKind: Value(consent.kind.name),
-            consentBy: Value(consent.grantedBy),
-            consentVersion: Value(consent.version),
-          ),
-        );
-      }
-
-      // insert medications
-      // startDate uses the same now, ensure firstLaunchAt and medStart consistent
-      final medStart = now;
-      for (final m in medicationList) {
-        await into(medications).insert(
-          MedicationsCompanion.insert(
-            name: m.name,
-            dosage: m.dosage,
-            dosageUnit: m.dosageUnit,
-            timesJson: Value(encodeTimes(m.times)),
-            startDate: medStart,
-          ),
-        );
-      }
-    });
-  }
-
-  // ============= Privacy / clear data (v0.21 Round 22, P0-8 fix) =============
-
-  /// Clear all user data tables (PIPL §47 active delete right)
-  ///
-  /// **not** reset schemaVersion, **not** delete DB file — keep table structure, only clear data.
-  /// Caller must handle follow-up (jump to setup / notify user).
-  ///
-  /// Not deleted: none (user profile / contacts / medications / check-ins / reports / mood / vent all can be cleared).
-  /// Kept: none (AppDatabase has no non-user tables).
-  ///
-  /// **not** clear vent audio files (files not in DB), caller must call itself
-  /// [VentAudioStorage.deleteAll] to delete files.
-  Future<void> clearAllUserData() async {
-    await transaction(() async {
-      for (final table in allTables) {
-        await delete(table).go();
-      }
-    });
-  }
-
-  // _encodeTimes moved to MedicationRepository.encodeTimes (shared, format unchanged)
+  // fully migrated to _db.xxxDao.xxx() / db.xxxDao.xxx() (94 places).
+  //
+  // v0.32 架构批 2 (AR-19): saveSetup / clearAllUserData (business
+  // orchestration, not pure delegation) 迁到 SetupCommitter
+  // (lib/core/data/services/setup_committer.dart)。AppDatabase 只剩
+  // DAO facade + schema/migration, transaction 语义原样保留。
 }

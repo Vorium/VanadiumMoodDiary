@@ -12,6 +12,7 @@ import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/medication_page.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,8 +45,8 @@ Widget _wrap({
       // flutter test 默认 800x600, 但 widget tree 根 Scaffold 没显式 size 时
       // RenderFlex 内部 Row 会因 unbounded width 抛 "non-zero flex" 错.
       // 加 SizedBox(width: 400, height: 800) 给固定画布.
-      home: Scaffold(
-        body: const SizedBox(
+      home: const Scaffold(
+        body: SizedBox(
           width: 400,
           height: 800,
           child: MedicationPage(),
@@ -123,7 +124,8 @@ void main() {
       expect(find.text('还没有添加药物'), findsOneWidget);
     });
 
-    testWidgets('5) 快捷操作 → 显示日历和续方按钮 (R31 Apple Health tile 横滚)', (tester) async {
+    testWidgets('5) 快捷操作 → 显示日历和续方按钮 (R31 Apple Health tile 横滚)',
+        (tester) async {
       _setBigView(tester);
       await tester.pumpWidget(
         _wrap(
@@ -142,6 +144,36 @@ void main() {
       // 验证"需续方"在 widget tree (offstage, 但 find 默认 skipOffstage=false
       //   也会算, ListView 用 hitTest 决定 — 实际 ListView 横向 offstage
       //   会被 paint 但不在 hit zone). 跳过这条验"日历和续方"等价.
+    });
+
+    testWidgets('6) v0.32 R112 AH-16: 4 tile metricId 语义化 (修前全同 medication 红)',
+        (tester) async {
+      _setBigView(tester);
+      await tester.pumpWidget(
+        _wrap(
+          meds: [_med()],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 横滚 4 tile 全在 tree (cacheExtent 内), 拿 metricId 断言语义映射:
+      // 待服=medication(红) / 已服=checkIn(绿) / 需续方=contact(橙) / 日历=trend(蓝)
+      final tiles = tester
+          .widgetList<AppleHealthTile>(
+            find.byType(AppleHealthTile, skipOffstage: false),
+          )
+          .toList();
+      expect(tiles, hasLength(4));
+      expect(tiles[0].metricId, 'medication');
+      expect(tiles[1].metricId, 'checkIn');
+      expect(tiles[2].metricId, 'contact');
+      expect(tiles[3].metricId, 'trend');
+      // 4 tile icon 也随 metricId 区分 (不再全 Icons.medication)
+      expect(
+        tiles.map((t) => t.metricId).toSet(),
+        hasLength(4),
+        reason: 'AH-16: 4 tile 必须 4 种语义, 不允许同色同 icon',
+      );
     });
   });
 }

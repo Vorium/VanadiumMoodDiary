@@ -71,7 +71,7 @@ void main() {
       await notifier.scheduleAssessmentReminder(fireAt: pastFire);
 
       expect(mockDispatcher.zonedAtCalls, hasLength(1),
-          reason: '过去 fireAt 必须重排, 不能静默丢弃 (B1-7)');
+          reason: '过去 fireAt 必须重排, 不能静默丢弃 (B1-7)',);
       final call = mockDispatcher.zonedAtCalls.single;
       expect(call.id, 5000001);
       expect(

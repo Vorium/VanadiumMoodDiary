@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/services/setup_committer.dart';
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/medication/medication_repository_impl.dart';
@@ -33,6 +34,13 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   ref.onDispose(db.close);
   return db;
 });
+
+/// v0.32 round 8 (R112 AR-19): setup/清空数据编排下沉到 data 层
+/// SetupCommitter (saveSetup/clearAllUserData 从 AppDatabase 门面抽出,
+/// transaction 语义 + PIPL §13 StateError 校验保持)
+final setupCommitterProvider = Provider<SetupCommitter>(
+  (ref) => SetupCommitter(ref.watch(databaseProvider)),
+);
 
 /// v0.16 (Round 19): data class → impl，provider 暴露 domain 接口
 final userProfileRepositoryProvider = Provider<UserProfileRepository>(

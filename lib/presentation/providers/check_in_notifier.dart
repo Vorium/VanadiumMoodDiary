@@ -20,11 +20,13 @@ class CheckInNotifier extends Notifier<AsyncValue<void>> {
   ///
   /// v0.11 (Round 5): [medicationId] 用于 deep linking 通知 → 自动打卡该药
   /// v0.14 (Round 12B): 委托给 RecordCheckInUseCase
-  Future<void> checkIn({int? medicationId}) async {
+  /// v0.32 round 8 (R111 R111-03 fix): 加 [at] 参数 — 补打卡走
+  ///   RecordCheckInUseCase 的注入时间 (补记过去某天)
+  Future<void> checkIn({int? medicationId, DateTime? at}) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final useCase = ref.read(recordCheckInUseCaseProvider);
-      await useCase(medicationId: medicationId);
+      await useCase(medicationId: medicationId, at: at);
     });
   }
 

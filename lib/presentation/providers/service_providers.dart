@@ -4,13 +4,10 @@ import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_sender_impl.dart';
 import 'package:chroniccare/core/data/services/assessment_reminder_service.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/reminder_scheduler.dart';
-import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
 import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
-import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/domain/repositories/assessment_reminder_sender.dart';
 import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
@@ -60,7 +57,6 @@ final safetyAlertSenderProvider = Provider<SafetyAlertSender>(
     smsService: ref.watch(smsServiceProvider),
     notificationService: ref.watch(notificationServiceProvider),
     config: ref.watch(safetyConfigServiceProvider),
-    builder: const SafetyAlertBuilder(),
   ),
 );
 
@@ -79,8 +75,6 @@ final safetyWatchServiceProvider = Provider<SafetyWatchService>(
     checkInRepo: ref.watch(checkInRepositoryProvider),
     contactRepo: ref.watch(contactRepositoryProvider),
     userProfileRepo: ref.watch(userProfileRepositoryProvider),
-    smsService: ref.watch(smsServiceProvider),
-    notificationService: ref.watch(notificationServiceProvider),
     dispatchUseCase: ref.watch(dispatchSafetyAlertUseCaseProvider),
   ),
 );

@@ -142,7 +142,8 @@ class RefillManagePage extends ConsumerWidget {
         // v0.31 R11a: 4 StatCard 改 ultralight large variant (34pt w200)
         // 装在 AppleListSection 内 (iOS 群组列表风格)
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          padding:
+              const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           child: SectionHeader(title: l10n.refillManageSummary),
         ),
         const SizedBox(height: AppTokens.spacingXxs),
@@ -180,9 +181,8 @@ class RefillManagePage extends ConsumerWidget {
                       label: l10n.medsRefillReminding,
                       value: '$inWindow',
                       variant: StatCardVariant.large,
-                      valueColor: inWindow > 0
-                          ? AppTokens.warningColor(context)
-                          : null,
+                      valueColor:
+                          inWindow > 0 ? AppTokens.warningColor(context) : null,
                     ),
                   ),
                   const SizedBox(width: AppTokens.spacingSm),
@@ -205,7 +205,8 @@ class RefillManagePage extends ConsumerWidget {
 
         // 章节 2: 续方列表 — SectionHeader ALL CAPS + AppleListSection
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          padding:
+              const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           child: SectionHeader(
             title: l10n.refillManageMedsList,
             chip: '${rows.length}', // 数量 chip
@@ -215,7 +216,8 @@ class RefillManagePage extends ConsumerWidget {
 
         if (rows.isEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             child: Center(
               child: Text(
                 l10n.medsNoMedicationsAdded,
@@ -226,20 +228,23 @@ class RefillManagePage extends ConsumerWidget {
           )
         else
           AppleListSection(
-            margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            margin:
+                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             children: [
               // v0.31 R11a: 列表项 - 改用 _RefillRow (已包 AppListTile.standard)
-              for (final r in rows) _RefillRow(
-                row: r,
-                onTap: () => _editMedication(context, r.med),
-              ),
+              for (final r in rows)
+                _RefillRow(
+                  row: r,
+                  onTap: () => _editMedication(context, r.med),
+                ),
             ],
           ),
 
         const SizedBox(height: AppTokens.spacingMd),
         // iOS section footer — 章节下方说明文字
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+          padding:
+              const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           child: Text(
             l10n.medsRefillEditHint,
             style: TextStyle(

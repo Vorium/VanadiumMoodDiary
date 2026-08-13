@@ -1,4 +1,4 @@
-﻿// setup_step_medication.dart — 首次设置 Step 2: 药物列表
+// setup_step_medication.dart — 首次设置 Step 2: 药物列表
 //
 // 从 setup_page.dart 拆分，v0.19 (Q2)
 //
@@ -278,13 +278,14 @@ class MedCard extends StatelessWidget {
                 PressFeedback(
                   child: InputChip(
                     label: Text(_formatTime(med.times[tIdx])),
-                    onDeleted: () => med.times.removeAt(tIdx),
+                    // v0.32 round 8 (R112-09 fix): 走 med.removeTimeAt 触发
+                    // 变更通知 (修前裸 removeAt 无通知 → 删除没反应假 bug)
+                    onDeleted: () => med.removeTimeAt(tIdx),
                   ),
                 ),
               PressFeedback(
                 child: ActionChip(
-                  avatar:
-                      const Icon(Icons.add, size: AppTokens.iconSizeInline),
+                  avatar: const Icon(Icons.add, size: AppTokens.iconSizeInline),
                   label: Text(l10n.setupMedAddTime),
                   onPressed: () async {
                     final picked = await showTimePicker(
@@ -294,11 +295,10 @@ class MedCard extends StatelessWidget {
                           : const TimeOfDay(hour: 8, minute: 0),
                     );
                     if (picked != null && context.mounted) {
-                      med.times.add(picked);
-                      med.times.sort(
-                        (a, b) => (a.hour * 60 + a.minute)
-                            .compareTo(b.hour * 60 + b.minute),
-                      );
+                      // v0.32 round 8 (R112-09 fix): 走 med.addTime (自动
+                      // 排序 + 变更通知, 修前裸 add + sort 无通知 → 添加
+                      // 没反应假 bug)
+                      med.addTime(picked);
                     }
                   },
                 ),

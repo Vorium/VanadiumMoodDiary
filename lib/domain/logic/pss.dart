@@ -34,14 +34,15 @@ class PssScale implements AssessmentScale {
   @override
   String get id => 'pss';
 
+  // v0.32 round 8 (R111 E4/R111-02 fix): 走 translations (跟 phq9 一致)
   @override
-  String get displayName => 'PSS 压力量表';
+  String get displayName => translations.pssName();
 
   @override
-  String get shortDescription => 'Cohen 1983 压力量表 (10 题, 含 4 题反向)';
+  String get shortDescription => translations.pssShortDescription();
 
   @override
-  String get instruction => '过去 1 个月里, 您有多经常有下列感受?';
+  String get instruction => translations.pssInstruction();
 
   @override
   List<AssessmentItem> get items => const [

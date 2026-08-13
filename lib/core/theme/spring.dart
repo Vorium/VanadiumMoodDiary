@@ -15,28 +15,13 @@
 // Apple Health 全程用 spring 表达"物理" (PushTransition / scale 反馈 /
 // celebration overlay / tile hover)。spec §3.4 step 11: 现有 MotionScheme 保留,
 // spring 走双轨制 — 按场景选 (push 用 spring, fade 用 MotionScheme.standard)。
-import 'package:flutter/material.dart' show BuildContext;
+//
+// v0.32 round 8 (R112-03 fix): 删 `SpringType` enum + `Spring.of` factory
+// 死代码 (0 caller, 内部 `final _ = context` 占位 hack 纯属摆设)。保留
+// 3 个静态实例 (standard/gentle/bouncy) + toDescription/toSimulation 作为
+// 物理模型公共 API — gentle/bouncy 当前也 0 caller, 但作为 spec §3.4.3
+// 的完整模型面保留 (接真 caller 时直接用)。
 import 'package:flutter/physics.dart' show SpringDescription, SpringSimulation;
-
-/// v0.31 R4 (Apple Health redesign · Task 1.4): Spring 类型枚举
-///
-/// Apple Health 通用 spring 档位 (apple-design §5, spec §3.4.3):
-/// - [standard]: 临界阻尼 0.4s — 通用 push/hover/state change (最常用)
-/// - [gentle]:   慢 + 轻阻尼 0.5s — modal 进出 / drawer / 大块元素位置切换
-/// - [bouncy]:   临界 + 轻阻尼 0.5s — celebration / tile hover / 成就解锁
-enum SpringType {
-  /// 临界阻尼 — 0.4s
-  /// 适用: 通用 push/hover/state change (最常用)
-  standard,
-
-  /// 慢 + 轻阻尼 — 0.5s
-  /// 适用: modal 进出 / drawer / 大块元素位置切换
-  gentle,
-
-  /// 临界 + 轻阻尼 — 0.5s 轻弹
-  /// 适用: celebration / tile hover / 成就解锁
-  bouncy,
-}
 
 /// v0.31 R4 (Apple Health redesign · Task 1.4): iOS Spring 物理模型
 ///
@@ -45,7 +30,7 @@ enum SpringType {
 ///
 /// 用法:
 /// ```dart
-/// final spring = Spring.standard;  // 或 Spring.of(context, SpringType.standard)
+/// final spring = Spring.standard;
 /// controller.animateWith(spring.toSimulation(from: 0, to: 1));
 /// ```
 ///
@@ -120,26 +105,5 @@ class Spring {
     double velocity = 0,
   }) {
     return SpringSimulation(toDescription(), from, to, velocity);
-  }
-
-  /// `Spring.of(context, SpringType.standard)` 工厂方法 (spec §3.4.6)
-  ///
-  /// 当前直接走静态实例 (跟 context 无关)。
-  /// 留 `BuildContext` 参数是为了未来接入:
-  /// - user accessibility preference (e.g. reduced motion → 走更轻 spring)
-  /// - user theme override (e.g. elderly 模式 → 慢速 spring)
-  ///
-  /// 现在忽略 context, 仅按 [type] 分发。
-  static Spring of(BuildContext context, SpringType type) {
-    // ignore: unused_local_variable
-    final _ = context; // 占位避免 lint, 未来用
-    switch (type) {
-      case SpringType.standard:
-        return standard;
-      case SpringType.gentle:
-        return gentle;
-      case SpringType.bouncy:
-        return bouncy;
-    }
   }
 }

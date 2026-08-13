@@ -13,6 +13,7 @@ import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_utils.dart';
+import 'package:chroniccare/presentation/widgets/mood_label.dart';
 
 class MoodHistoryChart extends StatelessWidget {
   final List<MoodEntryEntity> entries;
@@ -107,7 +108,7 @@ class MoodHistoryChart extends StatelessWidget {
                       ),
                       const SizedBox(width: AppTokens.spacingXxxs),
                       Text(
-                        MoodVisual.labelFor(s),
+                        moodLabel(AppLocalizations.of(context), s),
                         style: AppTokens.textStyleMicro(context),
                       ),
                     ],
@@ -217,7 +218,7 @@ class MoodHistoryChart extends StatelessWidget {
                           final score = nearest.score.clamp(1, 5);
                           return LineTooltipItem(
                             '${dt.month}/${dt.day} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}\n'
-                            '${MoodVisual.emojiFor(score)} ${MoodVisual.labelFor(score)}',
+                            '${MoodVisual.emojiFor(score)} ${moodLabel(AppLocalizations.of(context), score)}',
                             TextStyle(
                               color: AppColors.moodScoreColor(score),
                               fontWeight: FontWeight.w600,

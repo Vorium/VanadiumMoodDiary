@@ -21,7 +21,7 @@ void main() {
     test('lib/ 0 raw IconButton( 漏网 (排除集中器自身)', () async {
       final libDir = Directory('lib');
       expect(libDir.existsSync(), isTrue,
-          reason: 'lib/ 目录必须存在 (从项目根运行)');
+          reason: 'lib/ 目录必须存在 (从项目根运行)',);
 
       // 排除名单 (集中器自身)
       const excludedFiles = <String>{

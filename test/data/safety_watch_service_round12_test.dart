@@ -1,7 +1,6 @@
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
 import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
@@ -10,8 +9,10 @@ import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
+import 'package:chroniccare/presentation/services/safety_check_result_l10n.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,6 +26,19 @@ import 'safety_test_helpers.dart';
 /// `AppLocalizations` 是 abstract, 不能直接 new, 用 `AppLocalizationsZh()` 拿
 /// 中文实例。具体文案在 widget test / i18n test 里覆盖, 这里只测业务逻辑。
 AppLocalizations _testL10n() => AppLocalizationsZh();
+
+/// v0.32 R112 (AR-16): entry point 改拿 SafetyAlertL10nResolver tear-off
+/// 闭包 (data 0 依赖 l10n/ 生成 ARB)。
+SafetyAlertL10nResolver _testResolver() {
+  final l10n = _testL10n();
+  return SafetyAlertL10nResolver(
+    titleFor: l10n.safetyAlertTitle,
+    bodySent: l10n.safetyAlertBodySent,
+    bodyMocked: l10n.safetyAlertBodyMocked,
+    bodyFailed: l10n.safetyAlertBodyFailed,
+    neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
+  );
+}
 
 /// 内存数据库 + mock services，跑 SafetyWatch 逻辑测试
 void main() {
@@ -70,8 +84,7 @@ void main() {
       SafetyAlertSenderImpl(
         smsService: sms,
         notificationService: notif,
-        config: safetyConfig,
-        builder: const SafetyAlertBuilder(),
+            config: safetyConfig,
       ),
       // R110 round 3: flag 构造注入 (domain purity 修复), 构造时动态读
       // (setUp 先 enableForTest), 语义跟原 call() 内静态读 1:1
@@ -81,8 +94,6 @@ void main() {
       checkInRepo: checkInRepo,
       contactRepo: contactRepo,
       userProfileRepo: userProfileRepo,
-      smsService: sms,
-      notificationService: notif,
       dispatchUseCase: dispatchUseCase,
     );
   });
@@ -124,7 +135,7 @@ void main() {
       // 5 天前打卡
       await checkInAt(DateTime.now().subtract(const Duration(days: 5)));
       // 默认关闭
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.disabled);
       expect(sms.sent, isEmpty);
       expect(notif.alertsShown, isEmpty);
@@ -146,7 +157,7 @@ void main() {
       // 期望 0 实际 1 → flake。
       final fixedNow = DateTime(2026, 7, 17, 10, 0);
       await checkInAt(fixedNow.subtract(const Duration(hours: 6)));
-      final result = await safety.checkNow(l10n: _testL10n(), now: fixedNow);
+      final result = await safety.checkNow(l10nResolver: _testResolver(), now: fixedNow);
       expect(result.kind, SafetyCheckKind.ok);
       expect(result.daysSinceLast, 0);
     });
@@ -154,7 +165,7 @@ void main() {
     test('新用户(没数据) → noData', () async {
       await setupProfile(name: '张三');
       // 没联系人 + 没打卡
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.noData);
     });
 
@@ -163,7 +174,7 @@ void main() {
       await setupContact(phone: '13800138000');
       // 3 天前打卡（> 2 阈值）
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.alerted);
       expect(result.daysSinceLast, 3);
       expect(result.contactsNotified, 1);
@@ -179,10 +190,10 @@ void main() {
       await setupProfile(name: '张三');
       await setupContact(phone: '13800138000');
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
-      final r1 = await safety.checkNow(l10n: _testL10n());
+      final r1 = await safety.checkNow(l10nResolver: _testResolver());
       expect(r1.kind, SafetyCheckKind.alerted);
       // 第二次
-      final r2 = await safety.checkNow(l10n: _testL10n());
+      final r2 = await safety.checkNow(l10nResolver: _testResolver());
       expect(r2.kind, SafetyCheckKind.alertedToday);
       expect(sms.sent, hasLength(1), reason: '同一天不应该重复发短信');
     });
@@ -197,7 +208,7 @@ void main() {
         endHour: (hour + 1) % 24,
       );
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.dndSuppressed);
       expect(sms.sent, isEmpty, reason: 'DND 时段不应该发短信');
     });
@@ -206,7 +217,7 @@ void main() {
       await setupProfile(name: '张三');
       // 没添加联系人
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.noContacts);
     });
 
@@ -215,7 +226,7 @@ void main() {
       await setupContact(phone: '13800138000');
       sms.shouldFail = true;
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.alerted);
       expect(result.contactsFailed, 1);
     });
@@ -259,7 +270,7 @@ void main() {
       await safetyConfig.setEnabled(true);
       await safetyConfig.setThresholdDays(2);
       await checkInAt(DateTime.now().subtract(const Duration(hours: 1)));
-      final result = await safety.onCheckIn(l10n: _testL10n());
+      final result = await safety.onCheckIn(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.ok);
     });
   });
@@ -272,7 +283,7 @@ void main() {
       await safetyConfig.setThresholdDays(1);
       // 24 小时前打卡 (跨 midnight 之后恰好 1 天)
       await checkInAt(DateTime.now().subtract(const Duration(hours: 24)));
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       // 阈值 1, days = 1 满足 "days >= threshold" → 触发
       expect(result.kind, SafetyCheckKind.alerted);
       expect(result.daysSinceLast, 1);
@@ -285,7 +296,7 @@ void main() {
       await safetyConfig.setThresholdDays(1);
       // 1 小时前打卡
       await checkInAt(DateTime.now().subtract(const Duration(hours: 1)));
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.ok);
     });
 
@@ -313,7 +324,7 @@ void main() {
       }
       await safetyConfig.setDoNotDisturb(startHour: start, endHour: end);
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.dndSuppressed);
       expect(sms.sent, isEmpty);
     });
@@ -328,10 +339,8 @@ void main() {
         checkInRepo: checkInRepo,
         contactRepo: hangingRepo,
         userProfileRepo: userProfileRepo,
-        smsService: sms,
-        dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
-        notificationService: notif,
-        contactWatchTimeout: const Duration(milliseconds: 50),
+          dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
+          contactWatchTimeout: const Duration(milliseconds: 50),
       );
       await setupProfile(name: '张三');
       // 触发条件: 3 天没打卡
@@ -339,7 +348,7 @@ void main() {
       await safetyConfig.setEnabled(true);
       await safetyConfig.setThresholdDays(2);
       // 不应 hang,50ms 内返 noContacts
-      final result = await localSafety.checkNow(l10n: _testL10n());
+      final result = await localSafety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.noContacts);
       expect(sms.sent, isEmpty); // 没真发
     });
@@ -350,16 +359,14 @@ void main() {
         checkInRepo: checkInRepo,
         contactRepo: errorRepo,
         userProfileRepo: userProfileRepo,
-        smsService: sms,
-        dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
-        notificationService: notif,
-        contactWatchTimeout: const Duration(milliseconds: 50),
+          dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
+          contactWatchTimeout: const Duration(milliseconds: 50),
       );
       await setupProfile(name: '张三');
       await checkInAt(DateTime.now().subtract(const Duration(days: 3)));
       await safetyConfig.setEnabled(true);
       await safetyConfig.setThresholdDays(2);
-      final result = await localSafety.checkNow(l10n: _testL10n());
+      final result = await localSafety.checkNow(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.noContacts);
       expect(sms.sent, isEmpty);
     });

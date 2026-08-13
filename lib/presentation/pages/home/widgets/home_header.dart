@@ -18,6 +18,7 @@
 // - dark mode 自动通过 themeMode provider 切换 icon (mode=dark → light_mode icon)
 // - PressFeedbackIconButton 32x32 用 constraints 控制尺寸 (跟 R24 集中器一致)
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -80,7 +81,7 @@ class HomeHeader extends ConsumerWidget {
                 const SizedBox(height: 2),
                 // 副字日期 15pt textSecondary
                 Text(
-                  _formatDate(effectiveDate),
+                  _formatDate(effectiveDate, l10n),
                   style: AppTokens.textStyleLabel(context).copyWith(
                     color: AppTokens.textSecondaryColor(context),
                   ),
@@ -104,9 +105,14 @@ class HomeHeader extends ConsumerWidget {
     );
   }
 
-  /// 格式化日期 — 2026年8月10日 (Apple Health 风格)
-  String _formatDate(DateTime d) {
-    return '${d.year}年${d.month}月${d.day}日';
+  /// 格式化日期 — zh: 2026年8月10日 / en: August 10, 2026
+  /// v0.32 round 8 (R111 SP-111-12 fix): en 分支 (SP-zh-17 跨期残留,
+  /// 之前 en locale 也显示中文 "年月日")
+  String _formatDate(DateTime d, AppLocalizations l10n) {
+    if (l10n.localeName.startsWith('zh')) {
+      return '${d.year}年${d.month}月${d.day}日';
+    }
+    return DateFormat.yMMMMd('en').format(d);
   }
 
   String _modeLabel(AppLocalizations l10n, ThemeMode m) {

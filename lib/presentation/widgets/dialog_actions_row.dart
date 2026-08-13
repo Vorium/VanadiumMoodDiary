@@ -4,7 +4,6 @@
 //       - choose_window_dialog.dart    PrimaryButton (sync confirm)
 //       - refill_days_dialog.dart      ElevatedButton (sync confirm, 应迁 M3 FilledButton)
 //       - edit_medication_dialog.dart  LoadingTextButton (async save with isLoading)
-//       - temp_medication_dialog.dart  LoadingTextButton (async save with isLoading)
 //
 // emil "DRY for taste" 原则: 同款视觉 = 同一 widget。
 // 抽到 DialogActionsRow 集中器, 统一用 [LoadingTextButton] (variant=filled) 作

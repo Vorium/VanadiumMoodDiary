@@ -22,12 +22,10 @@
 
 import 'dart:io';
 
-import 'package:chroniccare/core/data/database/app_database.dart'
-    show AppDatabase;
 import 'package:path/path.dart' as p;
 
 import 'package:chroniccare/core/data/privacy/encrypted_audio_storage.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 export 'package:chroniccare/core/data/privacy/encrypted_audio_storage.dart'
     show EncryptedAudioStorage;
@@ -77,7 +75,7 @@ class VentAudioStorage extends EncryptedAudioStorage {
 
   /// v0.22 round 33 (sp-en P0): 删所有音频文件,**重试 3 次**。
   ///
-  /// 跟 [AppDatabase.clearAllUserData] 配对(settings_page 清空数据流程):
+  /// 跟 [SetupCommitter.clearAllUserData] 配对(settings_page 清空数据流程):
   /// DB 事务提交后 audio 文件删除失败 = vent 录音残留(sp-en 标 P0 风险)。
   /// DB 和 FS 是 2 个独立子系统,无法强一致。重试 + swallow 把残留概率压到最低。
   ///
@@ -87,7 +85,7 @@ class VentAudioStorage extends EncryptedAudioStorage {
       try {
         return await deleteAll();
       } catch (e, st) {
-        swallowError(
+        audioErrorSink(
           where: 'vent_audio_storage.deleteAllWithRetry',
           error: e,
           stack: st,
@@ -131,7 +129,7 @@ class VentAudioStorage extends EncryptedAudioStorage {
             await entity.delete();
             purged++;
           } catch (e, st) {
-            swallowError(
+            audioErrorSink(
               where: 'vent_audio_storage.purgeOrphanPlainFiles',
               error: e,
               stack: st,

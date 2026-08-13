@@ -4,7 +4,8 @@
 //
 // 业务逻辑从主壳 (~50 行) 抽到本 sub-tile:
 // - AlertDialog 二次确认: title + body + 取消/清空按钮 (FilledButton error color)
-// - ref.read(databaseProvider).clearAllUserData() 清 DB
+// - ref.read(databaseProvider) → SetupCommitter(db).clearAllUserData() 清 DB
+//   (v0.32 架构批 2 AR-19: 编排迁 data 层 SetupCommitter)
 // - ref.read(ventAudioStorageProvider).deleteAllWithRetry() 清录音
 // - piiSafeLog 录音删除失败提示
 // - 成功: AppSnackBar.showInfo + GoRouter.go('/setup') 重启
@@ -40,34 +41,41 @@ class ClearTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppListTile(
-      leading: Icon(
-        Icons.delete_forever_outlined,
-        color: AppTokens.errorColor(context),
+    // v0.32 round 13 (R112 EM-02/AH-04): 透明 Material 包 ListTile,
+    // 防 Flutter debug assert (ListTile 在 AppleListSection 白色
+    // DecoratedBox 容器内 ink 不可见)
+    return Material(
+      type: MaterialType.transparency,
+      child: AppListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(
+          Icons.delete_forever_outlined,
+          color: AppTokens.errorColor(context),
+        ),
+        title: Text(
+          AppLocalizations.of(context).settingsClearAllData,
+          style: AppTokens.textStyleBody(context)
+              .copyWith(color: AppTokens.errorColor(context)),
+        ),
+        subtitle: Text(
+          AppLocalizations.of(context).settingsClearAllDataSubtitle,
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          if (onClear != null) {
+            onClear!();
+          } else {
+            _showClearAllDataDialog(context, ref);
+          }
+        },
       ),
-      title: Text(
-        AppLocalizations.of(context).settingsClearAllData,
-        style: AppTokens.textStyleBody(context)
-            .copyWith(color: AppTokens.errorColor(context)),
-      ),
-      subtitle: Text(
-        AppLocalizations.of(context).settingsClearAllDataSubtitle,
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        if (onClear != null) {
-          onClear!();
-        } else {
-          _showClearAllDataDialog(context, ref);
-        }
-      },
     );
   }
 
   /// v0.30 round 95 (sub-spec 1 task 6): 完整 clear 流程
   ///
   /// 1. AlertDialog 二次确认 (title + body + 取消/清空 FilledButton error color)
-  /// 2. db.clearAllUserData() 清 DB
+  /// 2. SetupCommitter(db).clearAllUserData() 清 DB (AR-19, transaction 语义)
   /// 3. ventAudio.deleteAllWithRetry() 清录音 (3 retries, 失败 piiSafeLog)
   /// 4. 成功: AppSnackBar.showInfo + GoRouter.go('/setup') 重启
   /// 5. 失败: AppSnackBar.showError
@@ -102,12 +110,14 @@ class ClearTile extends ConsumerWidget {
     if (confirmed != true) return;
     if (!context.mounted) return;
 
-    final db = ref.read(databaseProvider);
     final ventAudio = ref.read(ventAudioStorageProvider);
     final navigator = GoRouter.of(context);
 
     try {
-      await db.clearAllUserData();
+      // v0.32 架构批 2 (AR-19): clearAllUserData 迁到 SetupCommitter (data 层
+      // 编排, transaction 语义不变), 走 setupCommitterProvider (composition
+      // root 接线)。
+      await ref.read(setupCommitterProvider).clearAllUserData();
       final audioDeleted = await ventAudio.deleteAllWithRetry();
       if (audioDeleted == 0 && await ventAudio.totalSizeBytes() > 0) {
         piiSafeLog('Settings', '⚠️ vent audio delete failed after 3 retries');

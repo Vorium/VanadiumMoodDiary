@@ -198,8 +198,8 @@ class _ExportDialogContent extends StatelessWidget {
             onPressed: () => Navigator.pop(ctx),
             child: Text(AppLocalizations.of(context).commonClose),
           ),
-          // v0.31 round 12 (Apple Health redesign � Phase 4 Task 4.1):
-          // ElevatedButton.icon � PrimaryButton(leadingIcon) Apple Pill �
+          // v0.31 round 12 (Apple Health redesign — Phase 4 Task 4.1):
+          // ElevatedButton.icon → PrimaryButton(leadingIcon) Apple Pill 化
           PrimaryButton(
             isFullWidth: false,
             leadingIcon: const Icon(

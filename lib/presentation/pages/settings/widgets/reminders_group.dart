@@ -45,9 +45,11 @@ class RemindersGroup extends ConsumerWidget {
         const RemindersSection(),
         // v0.29 round 84 (CBT 思维记录): 思维记录档位设置
         // 紧跟"提醒"主题 — 切档体验一致
-        const SizedBox(height: AppTokens.spacingLg),
+        // v0.32 round 13 (R112 EM-02/AH-04): spacingLg → spacingMd
+        // (跟 home AppleListSection 章节间距 16 一致, spec §5.1)
+        const SizedBox(height: AppTokens.spacingMd),
         const CbtSection(),
-        const SizedBox(height: AppTokens.spacingLg),
+        const SizedBox(height: AppTokens.spacingMd),
         // 通知自检卡 (放本 group 末尾, 通知=reminders 主题相关)
         const NotificationStatusCard(),
       ],

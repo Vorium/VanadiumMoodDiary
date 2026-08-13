@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_prompt_sheet.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class CbtSectionField extends StatefulWidget {
   final String title;
@@ -82,14 +83,19 @@ class _CbtSectionFieldState extends State<CbtSectionField> {
           const SizedBox(height: AppTokens.spacingXxs),
           Align(
             alignment: Alignment.centerLeft,
-            child: TextButton.icon(
+            // v0.32 round 8 (FS P3 按钮集中器迁移): TextButton.icon →
+            // PrimaryButton tertiary (TextButton 集中器 + PressFeedback
+            // scale 反馈, 跟 PrimaryButton 3 variant 体系一致)
+            child: PrimaryButton(
+              variant: PrimaryButtonVariant.tertiary,
+              isFullWidth: false,
+              leadingIcon: const Icon(Icons.help_outline, size: 16),
               onPressed: () => CbtPromptSheet.show(
                 context,
                 prompts: widget.prompts,
                 onSelected: widget.onChanged,
               ),
-              icon: const Icon(Icons.help_outline, size: 16),
-              label: const Text('?'),
+              child: const Text('?'),
             ),
           ),
         ],

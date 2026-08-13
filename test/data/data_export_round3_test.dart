@@ -166,8 +166,8 @@ void main() {
     expect(json, isNot(contains('/fake/path/vent_xxx.m4a')));
     // 但 hadAudio 标志会带
     expect(json, contains('"hadAudio": true'));
-    // version bump 到 4 (v0.18 4D 情绪: energy/sleep/anxiety)
-    expect(json, contains('"version": 4'));
+    // version = 5 (v0.32 round 8 R111: 全量字段 + FK 重映射)
+    expect(json, contains('"version": 5'));
   });
 
   test('P0-3: 纯文字 vent 条目正常导出', () async {

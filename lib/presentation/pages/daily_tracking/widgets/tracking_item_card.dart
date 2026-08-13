@@ -51,8 +51,11 @@ class TrackingItemCard extends ConsumerWidget {
 
     return GestureDetector(
       onLongPress: onLongPress,
-      child: Card(
-        elevation: 0,
+      // v0.32 round 8 (R112 F2 ALS 化残留): Card → Material + 描边 — 0 阴影
+      // Apple Health 风格, InkWell 保留 (Card 是旧方言)
+      child: Material(
+        color: theme.colorScheme.surface,
+        clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTokens.radiusCard),
           side: BorderSide(
@@ -86,7 +89,7 @@ class TrackingItemCard extends ConsumerWidget {
                       if (lastValue != null) ...[
                         const SizedBox(height: 2),
                         Text(
-                          lastValue!,
+                          lastValue,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.textTheme.bodySmall?.color
                                 ?.withValues(alpha: 0.7),
@@ -178,7 +181,9 @@ class TrackingItemCard extends ConsumerWidget {
       case 'treatmentName':
         return l10n.treatmentName;
       default:
-        return key;
+        // v0.32 R112 P3: 漏加 switch 分支时不上屏 raw key 名 —
+        // 返兜底文案 (未知项目), 新增追踪项时必须同步加分支
+        return l10n.trackingUnknownItem;
     }
   }
 

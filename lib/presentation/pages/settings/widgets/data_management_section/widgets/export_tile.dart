@@ -21,7 +21,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
@@ -45,23 +45,30 @@ class ExportTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppListTile(
-      leading: Icon(
-        Icons.upload_outlined,
-        color: AppTokens.primaryColor(context),
+    // v0.32 round 13 (R112 EM-02/AH-04): 透明 Material 包 ListTile,
+    // 防 Flutter debug assert (ListTile 在 AppleListSection 白色
+    // DecoratedBox 容器内 ink 不可见)
+    return Material(
+      type: MaterialType.transparency,
+      child: AppListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(
+          Icons.upload_outlined,
+          color: AppTokens.primaryColor(context),
+        ),
+        title: Text(AppLocalizations.of(context).settingsExportData),
+        subtitle: Text(
+          AppLocalizations.of(context).settingsExportSubtitle,
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          if (onExport != null) {
+            onExport!();
+          } else {
+            _exportData(context, ref);
+          }
+        },
       ),
-      title: Text(AppLocalizations.of(context).settingsExportData),
-      subtitle: Text(
-        AppLocalizations.of(context).settingsExportSubtitle,
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        if (onExport != null) {
-          onExport!();
-        } else {
-          _exportData(context, ref);
-        }
-      },
     );
   }
 
@@ -79,7 +86,7 @@ class ExportTile extends ConsumerWidget {
     // 替代之前的"敏感文字警告" 通用 dialog。修复前只警告, 没生成 ConsentArtifact,
     // 法务复查时缺 §13 同意证据。修复后: 弹 ConsentDialog 走 dataExportConsent
     // 模板 (purpose / dataCategories / retention 3 placeholder) → 用户同意 →
-    // 写 audit log (LegalConsentStore.recordDataExportConsent) → 继续 export。
+    // 写 audit log (ConsentPreferenceStore.recordDataExportConsent) → 继续 export。
     final l10n = AppLocalizations.of(context);
     final consent = await ConsentDialog.show(
       context,
@@ -103,7 +110,7 @@ class ExportTile extends ConsumerWidget {
     } catch (e, st) {
       // 写 audit log 失败不应该阻塞主流程 (consent 已拿到, 用户已明确同意)
       // 走 swallowError 跟 _showMedicationReport 写 history 失败的模式一致
-      swallowError(
+      exportErrorSink(
         where: 'ExportTile._exportData.recordAudit',
         error: e,
         stack: st,

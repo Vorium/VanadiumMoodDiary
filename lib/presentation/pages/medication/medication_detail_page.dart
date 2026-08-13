@@ -19,6 +19,8 @@ import 'package:chroniccare/presentation/pages/medication/widgets/medication_pil
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/stat_card.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
@@ -92,7 +94,8 @@ class MedicationDetailPage extends ConsumerWidget {
                             children: [
                               Text(
                                 med.name,
-                                style: AppTokens.textStyleTitle(context).copyWith(
+                                style:
+                                    AppTokens.textStyleTitle(context).copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -146,20 +149,22 @@ class MedicationDetailPage extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: _StatCard(
+                        // v0.32 round 8 (R111 EM-06 fix): 私有 _StatCard 删,
+                        // 换公共 StatCard (R31 Apple Health 集中器)
+                        child: StatCard(
                           value: '$adherencePct%',
                           label: l10n.medDetailLast30,
-                          color: adherencePct >= 80
+                          valueColor: adherencePct >= 80
                               ? AppColors.success
                               : AppTokens.warningColor(context),
                         ),
                       ),
                       const SizedBox(width: AppTokens.spacingSm),
                       Expanded(
-                        child: _StatCard(
+                        child: StatCard(
                           value: '${last30.length}/30',
                           label: l10n.medDetailDays,
-                          color: AppTokens.primaryColor(context),
+                          valueColor: AppTokens.primaryColor(context),
                         ),
                       ),
                     ],
@@ -220,7 +225,7 @@ class MedicationDetailPage extends ConsumerWidget {
         );
       },
       loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: LoadingSpinner()),
       ),
       error: (e, _) => Scaffold(
         body: Center(child: Text('$e')),
@@ -252,52 +257,6 @@ class _InfoChip extends StatelessWidget {
             color: color,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.value,
-    required this.label,
-    required this.color,
-  });
-
-  final String value;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: AppTokens.edgeInsetsMd,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-      ),
-      child: Column(
-        children: [
-          // v0.31 R7a: 数字改 ultralight w200 + 22pt (textStyleMetricMd 风格)
-          // (保留原色, 走 fontWeightUltralight 让 Apple Health 感更强)
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeMetricMd,
-              fontWeight: AppTokens.fontWeightUltralight,
-              color: color,
-              letterSpacing: -0.5,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHintColor(context),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -343,6 +302,8 @@ class _MiniCalendar extends StatelessWidget {
             child: Text(
               '${d.day}',
               style: TextStyle(
+                // EM-08: 日历小格 day 数字 10 (格内紧凑, 无对应 token
+                // 档位), deliberate 保留
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: done

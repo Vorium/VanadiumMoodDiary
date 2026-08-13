@@ -142,17 +142,17 @@ void main() {
       final content = mainDart.readAsLinesSync().join('\n');
       // 应该出现
       expect(content.contains('runApp(const EarlyLoadingApp()'), isTrue,
-          reason: 'main.dart 应 runApp(EarlyLoadingApp())');
+          reason: 'main.dart 应 runApp(EarlyLoadingApp())',);
       expect(content.contains('runApp(MigrationPromptApp(controller:'), isTrue,
-          reason: 'main.dart 应 runApp(MigrationPromptApp(...))');
+          reason: 'main.dart 应 runApp(MigrationPromptApp(...))',);
       expect(content.contains('runApp(MigrationAbortedApp(onRetry:'), isTrue,
-          reason: 'main.dart 应 runApp(MigrationAbortedApp(...))');
+          reason: 'main.dart 应 runApp(MigrationAbortedApp(...))',);
       expect(content.contains('runApp(MigrationFailedApp(errorMessage:'), isTrue,
-          reason: 'main.dart 应 runApp(MigrationFailedApp(...))');
+          reason: 'main.dart 应 runApp(MigrationFailedApp(...))',);
       expect(content.contains('await showMigrationConfirmDialog('), isTrue,
-          reason: 'main.dart 应调 showMigrationConfirmDialog');
+          reason: 'main.dart 应调 showMigrationConfirmDialog',);
       expect(content.contains('MigrationPromptController()'), isTrue,
-          reason: 'main.dart 应 new MigrationPromptController()');
+          reason: 'main.dart 应 new MigrationPromptController()',);
     });
 
     test('R108 P0#12 守卫未破坏: main.dart developer.log 总数 = 3', () {

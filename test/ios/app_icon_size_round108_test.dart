@@ -16,7 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('R108 Fix #10: AppIcon 占位防御 (1024 ≥ 50KB, 小尺寸 ≥ 200B)', () {
-    final iconDir = 'ios/Runner/Assets.xcassets/AppIcon.appiconset';
+    const iconDir = 'ios/Runner/Assets.xcassets/AppIcon.appiconset';
 
     test('Icon-App-1024x1024@1x.png ≥ 50KB (App Store 上传必看)', () {
       final file = File('$iconDir/Icon-App-1024x1024@1x.png');
@@ -68,9 +68,9 @@ void main() {
       final content = file.readAsStringSync();
       // Contents.json 应至少引用 1024 (主尺寸) + 60@3x (iPhone App icon)
       expect(content.contains('1024x1024'), isTrue,
-          reason: 'Contents.json 应引用 1024×1024 (App Store 主尺寸)');
+          reason: 'Contents.json 应引用 1024×1024 (App Store 主尺寸)',);
       expect(content.contains('60x60'), isTrue,
-          reason: 'Contents.json 应引用 60×60 (iPhone App icon)');
+          reason: 'Contents.json 应引用 60×60 (iPhone App icon)',);
     });
   });
 }

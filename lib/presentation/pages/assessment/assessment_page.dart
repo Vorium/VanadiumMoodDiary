@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/services/scale_name_l10n.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -82,7 +83,9 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
       );
     }
     return PageScaffold(
-      title: _scale!.displayName,
+      // v0.32 round 8 (R111 R111-02 fix): 走 scaleNameL10n (en 用户不再看
+      // 中文量表名, const 单例 displayName 只是 zh fallback)
+      title: scaleNameL10n(_scale!.id, AppLocalizations.of(context)),
       // v0.24 round 43 (emil P1-01 H-04 / D-03):
       // 用 PageTransitionSwitcher 让 quiz→result 平滑切换(100ms fade)
       // 精神心理患者对长时动效敏感,只用 fade 不用 slide

@@ -83,7 +83,7 @@ void main() {
         DateTime(2026, 7, 7, 23, 50),
       ];
       expect(SleepCalculator.regularityScore(entries), 5,
-          reason: '23:50/00:10 交替是跨午夜规律作息, 圆形距离 ~10min');
+          reason: '23:50/00:10 交替是跨午夜规律作息, 圆形距离 ~10min',);
     });
 
     test('跨午夜但 3 天交替 → 仍 ≥ 4 (B1-3 circular 小样本)', () {
@@ -108,7 +108,7 @@ void main() {
         DateTime(2026, 7, 7, 0, 0),
       ];
       expect(SleepCalculator.regularityScore(entries), 1,
-          reason: '无主导入睡时段的均匀分布 = 最不规律');
+          reason: '无主导入睡时段的均匀分布 = 最不规律',);
     });
 
     test('23:50±40min 跨午夜 (±40 聚簇) → Mardia σ≈31min → 4 (band 边界)', () {

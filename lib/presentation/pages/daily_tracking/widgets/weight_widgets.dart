@@ -24,6 +24,7 @@ import 'package:chroniccare/presentation/pages/daily_tracking/widgets/daily_trac
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// 体重记录列表 (监听 weightEntriesProvider stream)
@@ -56,8 +57,9 @@ class WeightListWidget extends ConsumerWidget {
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) =>
-                  Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+              error: (e, st) => ErrorState(
+                  title: l10n.commonLoadFailed(e.toString()),
+                ),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.monitor_weight_outlined,

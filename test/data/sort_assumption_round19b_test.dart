@@ -22,11 +22,11 @@
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
 import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
+import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
@@ -41,6 +41,19 @@ import 'safety_test_helpers.dart';
 
 /// v0.27 round 60 (P0-3 修正): test helper
 AppLocalizations _testL10n() => AppLocalizationsZh();
+
+/// v0.32 R112 (AR-16): entry point 改拿 SafetyAlertL10nResolver tear-off
+/// 闭包 (data 0 依赖 l10n/ 生成 ARB)。
+SafetyAlertL10nResolver _testResolver() {
+  final l10n = _testL10n();
+  return SafetyAlertL10nResolver(
+    titleFor: l10n.safetyAlertTitle,
+    bodySent: l10n.safetyAlertBodySent,
+    bodyMocked: l10n.safetyAlertBodyMocked,
+    bodyFailed: l10n.safetyAlertBodyFailed,
+    neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
+  );
+}
 
 void main() {
   // 2026-07-31 联系人软隐藏: 失联通信业务默认 disabled,
@@ -78,8 +91,7 @@ void main() {
       SafetyAlertSenderImpl(
         smsService: sms,
         notificationService: notif,
-        config: safetyConfig,
-        builder: const SafetyAlertBuilder(),
+            config: safetyConfig,
       ),
       // R110 round 3: flag 构造注入, 构造时动态读 (test enableForTest → true)
       emergencyContactEnabled: FeatureFlags.emergencyContactEnabled,
@@ -88,8 +100,6 @@ void main() {
       checkInRepo: checkInRepo,
       contactRepo: contactRepo,
       userProfileRepo: userProfileRepo,
-      smsService: sms,
-      notificationService: notif,
       dispatchUseCase: dispatchUseCase,
     );
   });
@@ -140,7 +150,7 @@ void main() {
         ),
       );
 
-      final result = await safety.checkNow(l10n: _testL10n());
+      final result = await safety.checkNow(l10nResolver: _testResolver());
       // latest 是 1h 前 → < 2 天阈值 → ok
       expect(result.kind, SafetyCheckKind.ok, reason: 'latest = 1h 前应 < 2 天阈值');
       expect(

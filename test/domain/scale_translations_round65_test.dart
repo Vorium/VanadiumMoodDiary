@@ -10,6 +10,9 @@
 // 21 case phq9/gad7 crisis test (`phq9_detect_crisis_round60_test.dart` +
 // `gad7_round16_test.dart`) 走 `const StaticScaleTranslations()` 中文 fallback,
 // 本测试只覆盖 ScaleTranslations 接口契约 + AppLocalizations 包装 i18n 路径。
+//
+// v0.32 R112 (AR-17): AppLocalizationsScaleTranslations 已删 (0 运行时 caller),
+// i18n 路径改直测 ARB getter; 量表名派发锁在 scale_name_l10n_round8_test。
 
 import 'package:chroniccare/core/shared/phone_validator.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
@@ -20,7 +23,6 @@ import 'package:chroniccare/domain/logic/phq9.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
 import 'package:chroniccare/l10n/region_display_name.dart';
-import 'package:chroniccare/presentation/services/scale_translations_l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -76,162 +78,105 @@ void main() {
     });
   });
 
-  group('AppLocalizationsScaleTranslations (v0.28 round 65 zh 路径)', () {
+  group('ARB getter (v0.28 round 65 zh 路径, R112 AR-17 直测)', () {
+    final l10n = AppLocalizationsZh();
+
     test('phq9Name zh 返中文', () {
-      // AppLocalizationsZh 是 auto-gen concrete class
-      final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.phq9Name(), 'PHQ-9 抑郁筛查');
+      expect(l10n.assessmentScalePhq9, 'PHQ-9 抑郁筛查');
     });
 
     test('gad7Name zh 返中文', () {
-      final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.gad7Name(), 'GAD-7 焦虑筛查');
+      expect(l10n.assessmentScaleGad7, 'GAD-7 焦虑筛查');
     });
 
     test('crisisHotlineLabel cn 返中文 hotline', () {
-      final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.cn), '全国 24 小时心理援助热线');
+      expect(l10n.scaleHotlineCn, '全国 24 小时心理援助热线');
     });
 
     test('crisisHotlineLabel us 返英文 hotline', () {
-      final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
       // zh locale: scaleHotlineUs 仍是英文 (en 源语言)
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.us),
-        '988 Suicide & Crisis Lifeline (US)',
-      );
+      expect(l10n.scaleHotlineUs, '988 Suicide & Crisis Lifeline (US)');
     });
 
     test('crisisHotlineLabel hk 返中文/繁 hotline (tw 走 intl fallback)', () {
-      final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.hk), contains('撒玛利亚'));
+      expect(l10n.scaleHotlineHk, contains('撒玛利亚'));
     });
   });
 
-  group('AppLocalizationsScaleTranslations (v0.28 round 65 en 路径)', () {
+  group('ARB getter (v0.28 round 65 en 路径, R112 AR-17 直测)', () {
+    final l10n = AppLocalizationsEn();
+
     test('phq9Name en 返英文', () {
-      final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.phq9Name(), 'PHQ-9 Depression Screening');
+      expect(l10n.assessmentScalePhq9, 'PHQ-9 Depression Screening');
     });
 
     test('gad7Name en 返英文', () {
-      final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.gad7Name(), 'GAD-7 Anxiety Screening');
+      expect(l10n.assessmentScaleGad7, 'GAD-7 Anxiety Screening');
     });
 
     test('crisisHotlineLabel cn en 仍是英文 (源语言 en)', () {
-      final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      // en locale: scaleHotlineCn 翻译 = "National 24h Psychological Aid Hotline"
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.cn),
-        'National 24h Psychological Aid Hotline',
-      );
+      expect(l10n.scaleHotlineCn, 'National 24h Psychological Aid Hotline');
     });
 
     test('crisisHotlineLabel us en 返英文', () {
-      final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.us),
-        '988 Suicide & Crisis Lifeline (US)',
-      );
+      expect(l10n.scaleHotlineUs, '988 Suicide & Crisis Lifeline (US)');
     });
   });
 
-  group(
-      'AppLocalizationsScaleTranslations (v0.27 R77: 6 region × 2 hotline 全 i18n)',
+  group('ARB getter (v0.27 R77: 6 region × 2 hotline 全 i18n, R112 AR-17 直测)',
       () {
     test('cn 返 zh 第 1 条 (全国 24h)', () {
       final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.cn, index: 0),
-        '全国 24 小时心理援助热线',
-      );
+      expect(l10n.scaleHotlineCn, '全国 24 小时心理援助热线');
     });
 
     test('cn index=1 返 zh 第 2 条 (北京心理危机)', () {
       final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.cn, index: 1),
-        '北京心理危机研究与干预中心',
-      );
+      expect(l10n.scaleHotlineCn2, '北京心理危机研究与干预中心');
     });
 
     test('us 返英文 (988)', () {
       final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.us, index: 0),
-        '988 Suicide & Crisis Lifeline (US)',
-      );
+      expect(l10n.scaleHotlineUs, '988 Suicide & Crisis Lifeline (US)');
     });
 
     test('us index=1 返英文 (Crisis Text Line)', () {
       final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
       expect(
-        t.crisisHotlineLabel(HotlineRegion.us, index: 1),
+        l10n.scaleHotlineUs2,
         'Crisis Text Line (text HOME to 741741)',
       );
     });
 
     test('tw 返 zh 第 1 条 (生命线 24h)', () {
       final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.tw, index: 0),
-        '生命线（24h）',
-      );
+      expect(l10n.scaleHotlineTw, '生命线（24h）');
     });
 
     test('tw index=1 返 zh 第 2 条 (1925 心理咨商)', () {
       final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.tw, index: 1),
-        '安心专线（心理咨商）',
-      );
+      expect(l10n.scaleHotlineTw2, '安心专线（心理咨商）');
     });
 
     test('sg 返英文 (Samaritans Singapore)', () {
       final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.sg, index: 0),
-        'Samaritans of Singapore (24h)',
-      );
+      expect(l10n.scaleHotlineSg, 'Samaritans of Singapore (24h)');
     });
 
     test('uk 返英文 (Samaritans UK)', () {
       final l10n = AppLocalizationsEn();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(
-        t.crisisHotlineLabel(HotlineRegion.uk, index: 0),
-        'Samaritans UK & ROI (24h free)',
-      );
+      expect(l10n.scaleHotlineUk, 'Samaritans UK & ROI (24h free)');
     });
 
     test('hk 返中文/繁 hotline', () {
       final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
-      expect(t.crisisHotlineLabel(HotlineRegion.hk), contains('撒玛利亚'));
+      expect(l10n.scaleHotlineHk, contains('撒玛利亚'));
     });
 
     test('index 越界 (cn 1 个, 取 5) 走 first.label fallback', () {
-      final l10n = AppLocalizationsZh();
-      final t = AppLocalizationsScaleTranslations(l10n);
+      const s = StaticScaleTranslations();
       // hk 只有 1 个 hotline, index=5 越界 → 走 first.label
-      expect(t.crisisHotlineLabel(HotlineRegion.hk, index: 5), isNotEmpty);
+      expect(s.crisisHotlineLabel(HotlineRegion.hk, index: 5), isNotEmpty);
     });
   });
 
@@ -248,15 +193,15 @@ void main() {
       expect(gad7Scale.displayName, 'GAD-7 焦虑筛查');
     });
 
-    test('Phq9Scale 注入 AppLocalizations 包装 → displayName 走 ARB', () {
-      final t = AppLocalizationsScaleTranslations(AppLocalizationsEn());
-      final scale = Phq9Scale(translations: t);
+    test('Phq9Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)',
+        () {
+      final scale = Phq9Scale(translations: _EnNameTranslations());
       expect(scale.displayName, 'PHQ-9 Depression Screening');
     });
 
-    test('Gad7Scale 注入 AppLocalizations 包装 → displayName 走 ARB', () {
-      final t = AppLocalizationsScaleTranslations(AppLocalizationsEn());
-      final scale = Gad7Scale(translations: t);
+    test('Gad7Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)',
+        () {
+      final scale = Gad7Scale(translations: _EnNameTranslations());
       expect(scale.displayName, 'GAD-7 Anxiety Screening');
     });
   });
@@ -355,4 +300,16 @@ void main() {
       );
     });
   });
+}
+
+/// v0.32 R112 (AR-17): 本地 en 量表名测试替身
+///
+/// 替代已删除的 `AppLocalizationsScaleTranslations`, 只 override 2 个 name
+/// method 验证 `translations:` 注入链路, 其余走 StaticScaleTranslations fallback。
+class _EnNameTranslations extends StaticScaleTranslations {
+  @override
+  String phq9Name({String? override}) => override ?? 'PHQ-9 Depression Screening';
+
+  @override
+  String gad7Name({String? override}) => override ?? 'GAD-7 Anxiety Screening';
 }

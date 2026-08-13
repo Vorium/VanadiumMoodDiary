@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/report_history_entity.dart';
@@ -80,7 +80,8 @@ class ReportHistoryListDialog extends ConsumerWidget {
                   }
                   return ListView.separated(
                     itemCount: histories.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5),
+                    separatorBuilder: (_, __) =>
+                        const Divider(height: 1, thickness: 0.5),
                     itemBuilder: (ctx, i) {
                       final h = histories[i];
                       // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器

@@ -29,7 +29,9 @@ import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// 治疗记录页 (R91 兜底 placeholder → R92 真页面)
 class TreatmentPage extends ConsumerWidget {
@@ -45,23 +47,28 @@ class TreatmentPage extends ConsumerWidget {
       child: Column(
         children: [
           // 顶部添加按钮 (R91 sleep_widgets 风格 — 不用 FAB, list 页面通常
-          // FAB 被 Card 占用, 走 FilledButton.icon 在右上角)
+          // FAB 被 Card 占用, 走按钮在右上角)
+          // v0.32 round 8 (FS P3 按钮集中器迁移): FilledButton.icon →
+          // PrimaryButton primary + leadingIcon (同视觉, 加 PressFeedback
+          // scale 0.97 反馈 + 50pt Pill 高度统一)
           Padding(
             padding: AppTokens.edgeInsetsXs,
             child: Align(
               alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                icon: const Icon(Icons.add),
-                label: Text(l10n.treatmentAddButton),
+              child: PrimaryButton(
+                isFullWidth: false,
+                leadingIcon: const Icon(Icons.add),
                 onPressed: () => AddTreatmentDialog.show(context),
+                child: Text(l10n.treatmentAddButton),
               ),
             ),
           ),
           Expanded(
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
-              error: (e, st) =>
-                  Center(child: Text(l10n.commonLoadFailed(e.toString()))),
+              error: (e, st) => ErrorState(
+                  title: l10n.commonLoadFailed(e.toString()),
+                ),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.medical_services_outlined,

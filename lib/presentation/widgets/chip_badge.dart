@@ -39,9 +39,12 @@ class ChipBadge extends StatelessWidget {
     // 之前 success / warning 跟 neutral 配色完全一样 = 抽类目标失败
     // (emil "good defaults" — 调用方写 success 视觉零区别 → 退化成 neutral)
     final (bg, fg) = switch (tone) {
+      // v0.32 round 8 (R112 EM-09b regression fix): neutral fg 用 primary
+      // 色而非 fgOnPrimary — tintedPrimarySoft 是浅底, 白字对比度 ~1.1:1
+      // 不可读 (v0.31 私有 _ChipBadge 副本用的是 colorScheme.primary)
       ChipBadgeTone.neutral => (
           AppTokens.tintedPrimarySoft(context),
-          AppTokens.fgOnPrimary(context),
+          AppTokens.primaryColor(context),
         ),
       ChipBadgeTone.success => (
           AppTokens.tintedSuccessSoft(context),

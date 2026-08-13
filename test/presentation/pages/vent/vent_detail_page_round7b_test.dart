@@ -141,7 +141,7 @@ Future<void> _pumpPage(
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('zh'),
     ),
-  ));
+  ),);
   await tester.pumpAndSettle();
   await tester.tap(find.text('open-detail'));
   await tester.pumpAndSettle();

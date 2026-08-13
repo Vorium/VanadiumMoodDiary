@@ -191,7 +191,9 @@ class PrimaryButton extends StatelessWidget {
 
     // v0.31 R5: 包 PressFeedback 提供 scale(0.97) 100ms 反馈
     // mode 2 (Listener, 不接管 tap) → button 的 InkWell 仍负责 tap + ripple
-    return PressFeedback(child: sized);
+    // v0.32 round 8 (R111 EM-14 fix): onPressed=null (禁用) → enabled=false,
+    // 禁用态无 scale + haptic 假反馈
+    return PressFeedback(enabled: onPressed != null, child: sized);
   }
 
   /// v0.31 R5: leadingIcon 颜色跟 button foreground 一致

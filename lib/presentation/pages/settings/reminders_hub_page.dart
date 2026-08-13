@@ -1,13 +1,13 @@
-// v0.14 (Round 12C) 提醒中心 �?集中查看/管理所有类型的提醒
+// v0.14 (Round 12C) 提醒中心 — 集中查看/管理所有类型的提醒
 //
-// 之前散落在各处的设置（notification / assessment / safety watch）整合到一个页�?
+// 之前散落在各处的设置（notification / assessment / safety watch）整合到一个页面
 //
 // 五大类提醒：
-// 1. 每日打卡提醒（notification_service.scheduleDailyReminder，固�?20:00�?
-// 2. 用药提醒（notification_service - 每个 medication 的每�?time�?
-// 3. 续方提醒（medication.refillAt - refillReminderDays�?
-// 4. 心理评估提醒（AssessmentReminderService�?
-// 5. 失联通知（SafetyWatchService - 死了�?撸了么）
+// 1. 每日打卡提醒（notification_service.scheduleDailyReminder，固定 20:00）
+// 2. 用药提醒（notification_service - 每个 medication 的每个 time）
+// 3. 续方提醒（medication.refillAt - refillReminderDays）
+// 4. 心理评估提醒（AssessmentReminderService）
+// 5. 失联通知（SafetyWatchService - "死了么／撸了么"）
 
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
@@ -36,9 +36,9 @@ class RemindersHubPage extends ConsumerStatefulWidget {
 
 class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   // v0.23 round 41 (spen P3-35): 改用 FutureProvider 替代 setState 模式
-  // 之前 4 �?nullable 字段 + initState _load + setState 异步填�?
-  // 模式落后�?v0.17 round 7 �?calendarWindowProvider FutureProvider
-  // 改成 watch remindersHubConfigProvider,异步值自�?rebuild
+  // 之前 4 个 nullable 字段 + initState _load + setState 异步填充
+  // 模式落后了。v0.17 round 7 用 calendarWindowProvider FutureProvider
+  // 改成 watch remindersHubConfigProvider,异步值自动 rebuild
   @override
   Widget build(BuildContext context) {
     final medsAsync = ref.watch(medicationsProvider);
@@ -50,7 +50,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           const SizedBox(height: AppTokens.spacingMd),
 
           // 顶部说明
-          // v0.27 round 67 (C-2): �?InfoBanner 集中�?
+          // v0.27 round 67 (C-2): 用 InfoBanner 集中器
           InfoBanner(
             icon: Icons.notifications_active_outlined,
             text: AppLocalizations.of(context).reminderHubDescription,
@@ -73,7 +73,9 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             onAction: null,
           ),
 
-          const SizedBox(height: AppTokens.spacingSm),
+          // v0.32 round 13 (R112 EM-02/AH-04): spacingSm -> spacingMd
+          // (跟 home AppleListSection 章节间距 16 一致, spec §5.1)
+          const SizedBox(height: AppTokens.spacingMd),
 
           // 2. 用药提醒
           medsAsync.when(
@@ -99,7 +101,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             ),
           ),
 
-          const SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingMd),
 
           // 3. 续方提醒
           medsAsync.when(
@@ -125,19 +127,19 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
             ),
           ),
 
-          const SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingMd),
 
           // 4. 心理评估提醒
-          // v0.23 round 41 (spen P3-35): 显式�?configAsync �?_buildAssessmentCard
+          // v0.23 round 41 (spen P3-35): 显式传 configAsync 进 _buildAssessmentCard
           _buildAssessmentCard(context, configAsync),
 
-          const SizedBox(height: AppTokens.spacingSm),
+          const SizedBox(height: AppTokens.spacingMd),
 
           // 5. 失联通知
           // R110 round 3 (AS-07 gate): flag=false (生产默认) 时整段不渲染,
           // 跟 setup 联系人表单 gate 一致 (App Store 5.1.1 抽审安全)
           if (FeatureFlags.emergencyContactEnabled) ...[
-            const SizedBox(height: AppTokens.spacingSm),
+            const SizedBox(height: AppTokens.spacingMd),
             _buildSafetyCard(context, configAsync),
           ],
 
@@ -148,7 +150,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
   }
 
   void _showAssessmentSettings(BuildContext context) {
-    // v0.23 round 41 (spen P3-35): 显式取一�?configAsync,闭包内不再依�?build scope
+    // v0.23 round 41 (spen P3-35): 显式取一次 configAsync,闭包内不再依赖 build scope
     final configAsync = ref.read(remindersHubConfigProvider);
     showModalBottomSheet<void>(
       context: context,
@@ -184,7 +186,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     BuildContext context,
     AsyncValue<RemindersHubConfig> configAsync,
   ) {
-    // v0.23 round 41 (spen P3-35): �?configAsync 替代本地 nullable 字段
+    // v0.23 round 41 (spen P3-35): 用 configAsync 替代本地 nullable 字段
     return AssessmentReminderCard(
       enabled: _configOrFallback(configAsync).assessmentEnabled,
       days: _configOrFallback(configAsync).assessmentDays,
@@ -199,15 +201,15 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     return SafetyReminderCard(
       enabled: _configOrFallback(configAsync).safetyEnabled,
       threshold: _configOrFallback(configAsync).safetyThreshold,
-      // P0-1 fix: 检测当�?SMS provider,如果�?mock 状态显�?banner
+      // P0-1 fix: 检测当前 SMS provider,如果是 mock 状态显示 banner
       isMockSms: ref.watch(smsProviderNameProvider) == 'mock',
       onConfigure: () => _showSafetySettings(context),
     );
   }
 
-  /// configAsync 没加载完时给 fallback 默认�?加载完用真实�?
+  /// configAsync 没加载完时给 fallback 默认值,加载完用真实值
   ///
-  /// v0.23 round 41 (spen P3-35): 替代之前 4 �?nullable 字段 + setState
+  /// v0.23 round 41 (spen P3-35): 替代之前 4 个 nullable 字段 + setState
   RemindersHubConfig _configOrFallback(AsyncValue<RemindersHubConfig> async) {
     return async.maybeWhen(
       data: (c) => c,
@@ -313,7 +315,7 @@ class _AssessmentReminderSheetState
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              // v0.27 round 67 (C-5): �?ChoiceChipWrap 集中�?
+              // v0.27 round 67 (C-5): 用 ChoiceChipWrap 集中器
               ChoiceChipWrap<int>(
                 options: _options,
                 selected: _days,
@@ -384,7 +386,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
     setState(() => _busy = true);
     try {
       // v0.27 round 61 (P1-12 拆分收尾): 改走 safetyConfigServiceProvider
-      // 直接�?SharedPreferences, 不再�?safetyWatchServiceProvider facade�?
+      // 直接读 SharedPreferences, 不再走 safetyWatchServiceProvider facade 层
       final config = ref.read(safetyConfigServiceProvider);
       await config.setEnabled(_enabled);
       if (_enabled) {
@@ -449,7 +451,7 @@ class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
                 ),
               ),
               const SizedBox(height: AppTokens.spacingSm),
-              // v0.27 round 67 (C-5): �?ChoiceChipWrap 集中�?
+              // v0.27 round 67 (C-5): 用 ChoiceChipWrap 集中器
               ChoiceChipWrap<int>(
                 options: _options,
                 selected: _threshold,

@@ -42,8 +42,9 @@ class HomeFabToolbar extends StatefulWidget {
   State<HomeFabToolbar> createState() => _HomeFabToolbarState();
 }
 
-class _HomeFabToolbarState extends State<HomeFabToolbar>
-    with SingleTickerProviderStateMixin {
+// v0.32 round 8 (R111 FS-11 fix): 删冗余 SingleTickerProviderStateMixin
+// (0 AnimationController, 0 ticker 使用)
+class _HomeFabToolbarState extends State<HomeFabToolbar> {
   bool _expanded = false;
 
   void _toggle() {

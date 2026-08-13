@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/notification_payload.dart';
+import 'package:chroniccare/domain/logic/notification_deep_link_resolver.dart';
 
 /// 全局 Deep Link 路由器
 ///
@@ -16,6 +17,10 @@ import 'package:chroniccare/core/data/services/notification_payload.dart';
 /// - 启动 payload 用 pendingPayload 缓存,bind() 时自动消费
 ///
 /// P1 fix: 从 core/data/services/ 移入 core/routing/（本体是路由逻辑，不应在 data 层）
+///
+/// v0.32 R112 (R112-ARCH-02): payload → route 决策下沉到 domain 纯函数
+/// [resolveNotificationDeepLinkRoute] (0 Flutter 依赖), 本类只保留 GoRouter
+/// 绑定 + onLink 观察。data 层 service 不再 import 本文件 (改注入回调)。
 class NotificationNavigation {
   /// 已绑定的 GoRouter(在 AppRoot 第一次 build 时设置)
   static GoRouter? _router;
@@ -23,7 +28,7 @@ class NotificationNavigation {
   /// App 启动时收到的 launch payload(app 被杀着，用户点通知拉起)
   ///
   /// AppRoot bind() 时如果这里有值，会立即跳走并清空
-  static NotificationDeepLink? _pendingLaunchLink;
+  static String? _pendingLaunchPayload;
 
   /// 通知 callback 触发的 deep link(可选，用于埋点)
   static final ValueNotifier<NotificationDeepLink?> onLink =
@@ -32,21 +37,25 @@ class NotificationNavigation {
   /// 由 AppRoot.build() 调用，把 router 绑进来
   static void bind(GoRouter router) {
     _router = router;
-    if (_pendingLaunchLink != null) {
-      _goInternal(_pendingLaunchLink!, fromLaunch: true);
-      _pendingLaunchLink = null;
+    final payload = _pendingLaunchPayload;
+    if (payload != null) {
+      _pendingLaunchPayload = null;
+      final route = resolveNotificationDeepLinkRoute(payload);
+      if (route != null) {
+        _go(route, fromLaunch: true);
+      }
     }
   }
 
   /// main.dart 在 init NotificationService 时传入
   /// app 是被通知拉起时调用，记录 payload 等 router 就绪
   static void setLaunchPayload(String? rawPayload) {
-    final link = NotificationDeepLink.parse(rawPayload);
-    if (link == null) return;
+    final route = resolveNotificationDeepLinkRoute(rawPayload);
+    if (route == null) return;
     if (_router != null) {
-      _goInternal(link, fromLaunch: true);
+      _go(route, fromLaunch: true);
     } else {
-      _pendingLaunchLink = link;
+      _pendingLaunchPayload = rawPayload;
     }
   }
 
@@ -54,26 +63,25 @@ class NotificationNavigation {
   ///
   /// [onLink] 通知也会被触发(settings / 调试用)
   static void handleTap(String? rawPayload) {
+    final route = resolveNotificationDeepLinkRoute(rawPayload);
+    if (route == null) return;
     final link = NotificationDeepLink.parse(rawPayload);
-    if (link == null) return;
-    onLink.value = link;
-    _goInternal(link, fromLaunch: false);
+    if (link != null) onLink.value = link;
+    _go(route, fromLaunch: false);
   }
 
-  static void _goInternal(
-    NotificationDeepLink link, {
+  static void _go(
+    String path, {
     required bool fromLaunch,
   }) {
     final router = _router;
     if (router == null) {
       piiSafeLog(
         'NotificationNavigation',
-        '⚠️ NotificationNavigation._goInternal: router 未绑定',
+        '⚠️ NotificationNavigation._go: router 未绑定',
       );
       return;
     }
-    final path = _pathFor(link);
-    if (path == null) return;
     try {
       router.go(path);
       piiSafeLog(
@@ -89,29 +97,10 @@ class NotificationNavigation {
     }
   }
 
-  /// DeepLinkTarget → app_router 里的 path
-  ///
-  /// 注意:app_router 里可能有 redirect,这里写最终 path
-  static String? _pathFor(NotificationDeepLink link) {
-    switch (link.target) {
-      case DeepLinkTarget.todayCheckIn:
-        return '/check-in/today';
-      case DeepLinkTarget.medicationCheckIn:
-        final medId = link.medicationId;
-        if (medId == null) return null;
-        return '/check-in/medication/$medId';
-      case DeepLinkTarget.assessment:
-        final scaleId = link.scaleId ?? 'phq9';
-        return '/assessment/$scaleId';
-      case DeepLinkTarget.safetyAlert:
-        return '/check-in/today?reason=safety';
-    }
-  }
-
   /// 测试 / 调试用
   static void reset() {
     _router = null;
-    _pendingLaunchLink = null;
+    _pendingLaunchPayload = null;
     onLink.value = null;
   }
 }

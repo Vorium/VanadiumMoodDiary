@@ -32,14 +32,17 @@ class IsiScale implements AssessmentScale {
   @override
   String get id => 'isi';
 
+  // v0.32 round 8 (R111 E4/R111-02 fix): 走 translations (跟 phq9 一致),
+  // 老 const 单例走 StaticScaleTranslations 中文 fallback 1:1, 0 行为变化;
+  // presentation 传 AppLocalizationsScaleTranslations 时 en 用户不再看中文
   @override
-  String get displayName => 'ISI 失眠严重指数';
+  String get displayName => translations.isiName();
 
   @override
-  String get shortDescription => 'Morin 1993 失眠严重指数 7 题';
+  String get shortDescription => translations.isiShortDescription();
 
   @override
-  String get instruction => '过去 2 周内, 您的睡眠问题有多严重?';
+  String get instruction => translations.isiInstruction();
 
   @override
   List<AssessmentItem> get items => const [

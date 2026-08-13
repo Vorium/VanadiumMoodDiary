@@ -38,7 +38,8 @@ import 'package:record/record.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/audio_lifecycle.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
@@ -68,9 +69,18 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
   /// 留在 widget 层不抽 mixin (audio_lifecycle 不耦合单位)
   int? _audioDurationSec;
 
+  /// v0.32 R112 (E-01): B1-11 同款字段缓存 — dispose 链 (mixin
+  /// asyncDisposeAudio 第 6 步 cleanupTempFile) 在 widget unmount 后才跑,
+  /// 那时 ref.read 抛 StateError (Riverpod 3.4.2 无条件, release 也抛) 被
+  /// swallowError 吞 → 播放后离开页面 temp 解密明文文件永不删 (PIPL §28)。
+  /// initState 把 storage 捕获进字段, cleanupTempFile 只用字段不碰 ref。
+  VentAudioStorage? _storage;
+
   @override
   void initState() {
     super.initState();
+    // E-01 字段缓存: ref.read 只在 initState 合法, 这里一次性捕获
+    _storage = ref.read(ventAudioStorageProvider);
     playerCompleteSub = _player.onPlayerComplete.listen((_) {
       if (mounted) setState(() => audioState = AudioState.recorded);
     });
@@ -182,14 +192,18 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
   }
 
   /// vent 清理 temp 解密文件
+  ///
+  /// v0.32 R112 (E-01): 走 _storage (initState 捕获) 而非 ref.read —
+  /// 本方法在 mixin.asyncDisposeAudio 第 6 步 (unmount 后) 被调, ref.read
+  /// 抛 StateError 被吞 → temp 明文永不删 (PIPL §28, B1-11 同款修法)。
   @override
   Future<void> cleanupTempFile() async {
     final temp = tempDecryptedPath;
     if (temp == null) return;
     try {
-      await ref.read(ventAudioStorageProvider).deleteTempFile(temp);
+      await _storage!.deleteTempFile(temp);
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'vent_compose_page.cleanupTempFile',
         error: e,
         stack: st,
@@ -209,7 +223,19 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
     final player = AudioPlayer();
     String? tempForDuration;
     try {
-      final storage = ref.read(ventAudioStorageProvider);
+      // v0.32 round 8 (R112 E-01 同源防御): 走 _storage 字段 — 本方法
+      // 从 stopRecordingImpl 起链, 若用户录音后立刻 pop, finally 在
+      // unmount 后仍可能执行, ref.read 抛 StateError 被吞 → temp 泄漏。
+      // _storage 是 initState 捕获的字段, 不依赖 element 生命周期。
+      // (字段不参与类型提升, 显式 local 缓存 + null 分支)
+      VentAudioStorage storage;
+      final cached = _storage;
+      if (cached != null) {
+        storage = cached;
+      } else {
+        storage = ref.read(ventAudioStorageProvider);
+        _storage = storage;
+      }
       tempForDuration = await storage.decryptToTemp(path);
       await player.setSource(DeviceFileSource(tempForDuration));
       final d = await player.getDuration();
@@ -219,18 +245,29 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
         });
       }
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'vent_compose_page._getAudioDuration',
         error: e,
         stack: st,
         note: 'audio duration probe failed — non-critical',
       );
     } finally {
-      await player.dispose();
+      // v0.32 R112 (E-01): 不 await player.dispose() — audioplayers dispose
+      // 内部 Future.wait(内部 stream cancel) 的 future 可能永不 resolve
+      // (root zone 坑), await 会把 deleteTempFile 一起卡死 → 明文 temp
+      // 泄漏 (PIPL §28)。fire-and-forget + catchError 收口, native release
+      // 由 dispose future 自己完成。
+      unawaited(
+        player.dispose().catchError((Object e, StackTrace st) {
+          audioErrorSink(
+            where: 'vent_compose_page._getAudioDuration.playerDispose',
+            error: e,
+            stack: st,
+          );
+        }),
+      );
       if (tempForDuration != null) {
-        await ref
-            .read(ventAudioStorageProvider)
-            .deleteTempFile(tempForDuration);
+        await _storage!.deleteTempFile(tempForDuration);
       }
     }
   }
@@ -270,7 +307,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
         await ref.read(ventAudioStorageProvider).deleteAudio(old);
       } catch (e, st) {
         // 文件可能已被用户/系统清掉；删失败不阻塞重录流程
-        swallowError(
+        audioErrorSink(
           where: 'vent_compose_page._reRecord',
           error: e,
           stack: st,
@@ -314,7 +351,7 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
               .fileSizeBytes(audioPath!);
         } catch (e, st) {
           // size 读不到(可能文件被外部清掉), sizeBytes 留 null, DB 仍能存
-          swallowError(
+          audioErrorSink(
             where: 'vent_compose_page._onSave',
             error: e,
             stack: st,
@@ -435,11 +472,11 @@ Future<void> stopAndCleanup({
   try {
     await stop();
   } catch (e, st) {
-    swallowError(where: '$where.stop', error: e, stack: st);
+    audioErrorSink(where: '$where.stop', error: e, stack: st);
   }
   try {
     await deleteTempFile();
   } catch (e, st) {
-    swallowError(where: '$where.deleteTemp', error: e, stack: st);
+    audioErrorSink(where: '$where.deleteTemp', error: e, stack: st);
   }
 }

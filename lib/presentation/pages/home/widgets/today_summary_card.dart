@@ -93,8 +93,10 @@ class TodaySummaryCard extends ConsumerWidget {
                     StatCard(
                       label: l10n.todaySummaryStreak,
                       value: streakValue.toString(),
+                      // v0.32 round 8 (R111 EM-16 fix): warning 黄作文字色
+                      // 对比度 1.9:1 不达标, 换 fgOnWarning (深橙, light/dark 可读)
                       valueColor: streakValue > 0
-                          ? AppColors.warning
+                          ? AppColors.fgOnWarning
                           : AppTokens.textHintColor(context),
                     ),
                   ],

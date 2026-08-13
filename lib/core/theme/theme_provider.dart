@@ -15,6 +15,14 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
 
   final bool useStorage;
 
+  /// v0.32 round 8 (R112 竞态修): 手动 set 的 generation 计数。
+  ///
+  /// 竞态场景: 冷启动 `_load()` 读 secure storage (异步, 慢), 期间用户
+  /// 手动点了主题切换 → `set()` 已把 state 改成新值; `_load` 晚到会用
+  /// 旧持久化值覆盖新设置。修法: 每次 `set()` 递增 generation, `_load`
+  /// 启动时快照, 结果晚到 (generation 已变) 即丢弃。
+  int _generation = 0;
+
   ThemeModeNotifier({this.useStorage = true});
 
   @override
@@ -26,9 +34,12 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
   }
 
   Future<void> _load() async {
+    final generationAtStart = _generation;
     try {
       final raw = await _storage.read(key: _key);
       if (raw == null) return;
+      // R112 竞态修: 读期间用户手动 set 过 → 丢弃晚到的旧值
+      if (generationAtStart != _generation) return;
       final i = int.tryParse(raw);
       if (i == null || i < 0 || i >= ThemeMode.values.length) return;
       state = ThemeMode.values[i];
@@ -40,6 +51,7 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
   }
 
   Future<void> set(ThemeMode mode) async {
+    _generation++;
     state = mode;
     if (!useStorage) return;
     try {

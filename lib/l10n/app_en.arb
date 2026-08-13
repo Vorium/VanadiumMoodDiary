@@ -211,6 +211,9 @@
   "medsRefillHint7": "Recommended (default)",
   "medsRefillHint14": "Two weeks to book",
   "medsRefillHint30": "One-month cycle",
+  "notificationStatusCardPermissionDeniedTitle": "Notifications are off",
+  "notificationStatusCardPermissionDeniedBody": "Medication reminders can't be delivered. Please allow notifications in system settings, or tap the button below.",
+  "notificationStatusCardPermissionGoSettings": "Open Settings",
   "notificationStatusCardTestTitle": "🔔 Notification Test",
   "notificationStatusCardTestBody": "If you see this, notifications work. If not, check the phone settings below",
   "notificationStatusCardTestSent": "Test notification sent — should arrive in a few seconds",
@@ -1174,13 +1177,7 @@
   "medReportShareLabel": "Share",
   "medReportPdfLoading": "Generating PDF……",
   "medReportShareSubject": "Chronic Care · Medication Report",
-  "tempMedDialogTitle": "Add Temporary Medication",
-  "tempMedLinkLabel": "Link to regular medication (optional)",
-  "tempMedLinkHint": "None = one-time event",
   "tempMedNoLink": "No link",
-  "tempMedNameHint": "e.g. Ibuprofen",
-  "tempMedReasonLabel": "Reason",
-  "tempMedReasonHint": "e.g. cold",
   "medsCalendarHeatmapDesc": "Adherence heatmap by medication. Darker = closer to expected daily doses.",
   "medsCalendarWindow7": "7 days",
   "medsCalendarWindow30": "30 days",
@@ -1219,6 +1216,16 @@
     }
   },
   "medsCalendarDayDetailEmpty": "No check-ins yet on this day",
+  "medCalendarBackfillConfirm": "Confirm",
+  "medCalendarBackfillSuccess": "Check-in added for {date}",
+  "@medCalendarBackfillSuccess": {
+    "description": "v0.32 round 8 (R111-03): medication calendar backfill success snackbar",
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
   "medsCalendarDayDetailAddLog": "Add check-in",
   "medsCalendarDayDetailAddLogHint": "Add a missing dose for today",
   "medsCalendarDayDetailLogItem": "{time} · {name}",
@@ -1251,6 +1258,36 @@
   "contactDeleted": "Contact deleted",
   "medicationDeleted": "Medication deleted",
   "moodTodayLabel": "Mood: ",
+  "moodTodayLabelWithValue": "Mood: {value}",
+  "@moodTodayLabelWithValue": {
+    "description": "Home mood quick button: full label when already logged today (R112-06 emil, parameterized concatenation)",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+
+  "moodLabel1": "Very bad",
+  "@moodLabel1": {
+    "description": "Localized label for mood score 1 of 5 (R112-07 emil metadata)"
+  },
+  "moodLabel2": "Bad",
+  "@moodLabel2": {
+    "description": "Localized label for mood score 2 of 5 (R112-07 emil metadata)"
+  },
+  "moodLabel3": "Fair",
+  "@moodLabel3": {
+    "description": "Localized label for mood score 3 of 5 (R112-07 emil metadata)"
+  },
+  "moodLabel4": "Good",
+  "@moodLabel4": {
+    "description": "Localized label for mood score 4 of 5 (R112-07 emil metadata)"
+  },
+  "moodLabel5": "Very good",
+  "@moodLabel5": {
+    "description": "Localized label for mood score 5 of 5 (R112-07 emil metadata)"
+  },
   "moodRecordButton": "Log mood ✏️",
   "medReportFileName": "Med Report_{date}",
   "@medReportFileName": {
@@ -2880,15 +2917,7 @@
       }
     }
   },
-  "medCalendarBackfillStub": "Backfill check-in coming soon ({date})",
-  "@medCalendarBackfillStub": {
-    "description": "v0.30 R100 (P1#9): medication calendar backfill stub SnackBar (date is YYYY-MM-DD)",
-    "placeholders": {
-      "date": {
-        "type": "Object"
-      }
-    }
-  },
+
   "setupCrisisHotlineTitle": "🆘 Crisis Intervention Hotline (24h)",
   "@setupCrisisHotlineTitle": {
     "description": "v0.30 R100 (P1#9): setup legal dialog crisis hotline section title"
@@ -2968,10 +2997,37 @@
   "moodInfluenceMindfulness": "Mindfulness",
   "moodInfluenceWeather": "Weather",
   "moodInfluenceOther": "Other",
+  "influenceFactorFamily": "Family",
+  "influenceFactorFriend": "Friends",
+  "influenceFactorPartner": "Partner",
+  "influenceFactorChild": "Children",
+  "influenceFactorColleague": "Colleagues",
+  "influenceFactorExercise": "Exercise",
+  "influenceFactorSick": "Illness",
+  "influenceFactorGoodSleep": "Good sleep",
+  "influenceFactorHealthyDiet": "Healthy diet",
+  "influenceFactorWork": "Work",
+  "influenceFactorHobby": "Hobby",
+  "influenceFactorTravel": "Travel",
+  "influenceFactorCommute": "Commute",
+  "influenceFactorShopping": "Shopping",
+  "influenceFactorGaming": "Gaming",
+  "influenceFactorReading": "Reading",
+  "influenceFactorEntertainment": "Entertainment",
+  "influenceFactorMeditation": "Meditation",
+  "influenceFactorBreathing": "Breathing exercises",
+  "influenceFactorJournaling": "Journaling",
+  "influenceFactorYoga": "Yoga",
+  "influenceFactorSunny": "Sunny",
+  "influenceFactorCloudy": "Cloudy",
+  "influenceFactorRainy": "Rainy",
+  "influenceFactorSnowy": "Snowy",
+  "influenceFactorWindy": "Windy",
   "moodDetailTitle": "Mood Detail",
   "moodDetailFactors": "Influence Factors",
   "moodDetailMoodState": "Mood State",
   "moodDetailCbtRecord": "CBT Thought Record",
+  "moodEntryNotFound": "Mood entry not found",
   "moodTrendTitle": "Mood Trends",
   "moodTrendWeek": "Last 7 Days",
   "moodTrendDistribution": "Score Distribution",
@@ -3023,6 +3079,7 @@
   },
   "setupConsentMedicalDisclaimer": "I have read and understand the Medical Disclaimer: this app does not provide medical advice, diagnosis, or treatment",
   "trackingCustomize": "Customize Trackers",
+  "trackingUnknownItem": "Unknown item",
   "trackingPin": "Pin to Top",
   "trackingUnpin": "Unpin",
   "trackingHide": "Hide This Item",

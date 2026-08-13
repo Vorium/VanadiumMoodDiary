@@ -36,7 +36,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:record/record.dart';
 
 import 'package:chroniccare/core/data/services/mood_audio_service.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/data/services/mood_audio_storage.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -70,13 +71,18 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
   // Stream subscription for STT partial results
   StreamSubscription<String>? _sttSub;
 
-  MoodAudioService get _service =>
-      widget.controller.serviceFactory?.call() ??
-      ref.read(moodAudioServiceProvider);
+  // v0.32 R112 (E-01): B1-11 同款字段缓存 — dispose 链 unmount 后不能 ref.read, 只用 initState 捕获字段。
+  MoodAudioService? _serviceField;
+  MoodAudioStorage? _storageField;
+
+  MoodAudioService get _service => _serviceField!;
 
   @override
   void initState() {
     super.initState();
+    _serviceField = widget.controller.serviceFactory?.call() ??
+        ref.read(moodAudioServiceProvider);
+    _storageField = ref.read(moodAudioStorageProvider);
     final player = AudioPlayer();
     // mood_audio player 实例: 走 AudioLifecycleMixin 共享 asyncDisposeAudio,
     // 私有字段存它
@@ -115,7 +121,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
     // 时 future 仍可能跑 — 每个都 catchError 走 swallowError 兜底 + unawaited 跟踪。
     unawaited(
       _disposeResources().catchError((Object e, StackTrace st) {
-        swallowError(
+        audioErrorSink(
           where: 'mood_audio_section.dispose._disposeResources',
           error: e,
           stack: st,
@@ -132,19 +138,20 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
   /// mixin.asyncDisposeAudio (player + temp), service 释放仍在本类。
   Future<void> _disposeResources() async {
     // 1) stop stream subscriptions (R27 round 61 P0-1 fix)
+    // R112 (E-01): 不 await cancel() (root zone future 卡死链, B1-11 同款)。
     try {
-      await playerCompleteSub?.cancel();
+      unawaited(playerCompleteSub?.cancel());
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_section.dispose.playerCompleteSub',
         error: e,
         stack: st,
       );
     }
     try {
-      await _sttSub?.cancel();
+      unawaited(_sttSub?.cancel());
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_section.dispose.sttSub',
         error: e,
         stack: st,
@@ -163,7 +170,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
     try {
       await _service.cancelRecording();
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_section.dispose.cancelRecording',
         error: e,
         stack: st,
@@ -175,7 +182,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
     try {
       await _service.dispose();
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_section.dispose.service',
         error: e,
         stack: st,
@@ -222,7 +229,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
     try {
       await _service.stopStt();
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_section.stopStt',
         error: e,
         stack: st,
@@ -288,15 +295,17 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
     await _player?.stop();
   }
 
-  /// mood 清理 temp 解密文件
+  /// mood 清理 temp 解密文件 (R112 E-01: 走 _storageField 而非 ref.read —
+  /// unmount 后被 asyncDisposeAudio 第 6 步调, ref.read 抛 StateError 被吞
+  /// → temp 明文永不删, PIPL §28)。
   @override
   Future<void> cleanupTempFile() async {
     final temp = tempDecryptedPath;
     if (temp == null) return;
     try {
-      await ref.read(moodAudioStorageProvider).deleteTempFile(temp);
+      await _storageField!.deleteTempFile(temp);
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_section.cleanupTempFile',
         error: e,
         stack: st,
@@ -322,7 +331,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
       try {
         await ref.read(moodAudioStorageProvider).deleteAudio(previousPath);
       } catch (e, st) {
-        swallowError(
+        audioErrorSink(
           where: 'mood_audio_section._reRecord',
           error: e,
           stack: st,

@@ -47,7 +47,7 @@ Future<void> _pump(WidgetTester tester, List<MoodEntryEntity> entries) async {
       locale: const Locale('zh'),
       home: const MoodTrendPage(),
     ),
-  ));
+  ),);
   await tester.pumpAndSettle();
 }
 

@@ -32,14 +32,15 @@ class Level2ManiaScale implements AssessmentScale {
   @override
   String get id => 'level2_mania';
 
+  // v0.32 round 8 (R111 E4/R111-02 fix): 走 translations (跟 phq9 一致)
   @override
-  String get displayName => 'DSM-5 Level 2 躁狂严重度';
+  String get displayName => translations.level2ManiaName();
 
   @override
-  String get shortDescription => '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)';
+  String get shortDescription => translations.level2ManiaShortDescription();
 
   @override
-  String get instruction => '过去 7 天内, 您有多经常体验以下情况?';
+  String get instruction => translations.level2ManiaInstruction();
 
   @override
   List<AssessmentItem> get items => const [

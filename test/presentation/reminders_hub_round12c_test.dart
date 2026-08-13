@@ -15,12 +15,11 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/reminders_hub_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 class _NoopNotificationService extends NotificationService {
   @override
   Future<void> init() async {}
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
 }
 
 void _setBigView(WidgetTester tester) {
@@ -157,11 +156,15 @@ void main() {
     );
   });
 
-  testWidgets('5 个 card 都用 Card 容器', (tester) async {
+  testWidgets('5 个 card 都用 AppleListSection 容器', (tester) async {
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): ReminderCard 容器
+    // Card → AppleListSection (iOS insetGrouped 风格, spec §4.5),
+    // 结构断言同步改
     _setBigView(tester);
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    expect(find.byType(Card), findsNWidgets(5));
+    expect(find.byType(AppleListSection), findsNWidgets(5));
+    expect(find.byType(Card), findsNothing);
   });
 }

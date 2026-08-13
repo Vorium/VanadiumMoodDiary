@@ -4,11 +4,15 @@
 //
 // TDD: red → green
 // 参考: medication_report_pdf_round57_test.dart (同 facade + layout 模式)
+//
+// v0.32 R112 (AR-16): l10n 改 CbtPdfL10n interface, test 走
+// AppLocalizationsCbtPdfL10n 适配器 (presentation)。
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
+import 'package:chroniccare/presentation/services/cbt_pdf_l10n.dart';
 
 void main() {
   test('5 栏 entries build → Uint8List non-empty 且 PDF 魔术字正确', () async {
@@ -28,7 +32,7 @@ void main() {
     ];
     final result = await pdf.build(
       entries: entries,
-      l10n: AppLocalizationsZh(),
+      l10n: AppLocalizationsCbtPdfL10n(AppLocalizationsZh()),
     );
     expect(result, isNotEmpty);
     // PDF 魔术字: %PDF-1.x
@@ -39,7 +43,7 @@ void main() {
     final pdf = CbtThoughtRecordPdf();
     final result = await pdf.build(
       entries: const <MoodEntryEntity>[],
-      l10n: AppLocalizationsZh(),
+      l10n: AppLocalizationsCbtPdfL10n(AppLocalizationsZh()),
     );
     expect(result, isNotEmpty);
     expect(String.fromCharCodes(result.sublist(0, 4)), '%PDF');

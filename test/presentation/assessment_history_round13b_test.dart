@@ -3,6 +3,7 @@ import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_history_page.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -111,6 +112,11 @@ void main() {
 
     // 完整记录
     expect(find.text('完整记录'), findsOneWidget);
+
+    // v0.32 R112 (EM-02/AH-04, spec §5.7): 历史页 Card 方言清除,
+    // SummaryStrip / ChartCard / HistoryList 全走 AppleListSection
+    expect(find.byType(AppleListSection), findsNWidgets(3));
+    expect(find.byType(Card), findsNothing);
   });
 
   testWidgets('PHQ-9 + GAD-7 混合 → 2 张图', (tester) async {

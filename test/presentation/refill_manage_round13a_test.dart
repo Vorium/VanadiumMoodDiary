@@ -16,8 +16,6 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 class _NoopNotificationService extends NotificationService {
   @override
   Future<void> init() async {}
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
 }
 
 void _setBigView(WidgetTester tester) {

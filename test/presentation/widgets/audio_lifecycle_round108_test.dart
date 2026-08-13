@@ -137,7 +137,7 @@ void main() {
       );
     });
 
-    test('A4: asyncDisposeAudio 6 步链完整 + 每步 swallowError', () {
+    test('A4: asyncDisposeAudio 6 步链完整 + 每步 audioErrorSink', () {
       // 6 步链 (R108 集中, R79 修法从 vent_compose / mood_audio 抽出):
       // 1. cancel playerCompleteSub
       // 2. cancel playbackTimer
@@ -161,13 +161,15 @@ void main() {
         );
       }
 
-      // swallowError 集中器 (R17 模式防御: 单步异常阻断后续资源释放)
-      final swallowErrorCount = 'swallowError('.allMatches(mixinSource).length;
+      // audioErrorSink (R17 模式防御: 单步异常阻断后续资源释放;
+      // R112 AR-23: audio 簇改调 scoped wrapper, 内部仍走 swallowError)
+      final audioErrorSinkCount = 'audioErrorSink('.allMatches(mixinSource).length;
       expect(
-        swallowErrorCount,
+        audioErrorSinkCount,
         greaterThanOrEqualTo(6),
-        reason: 'asyncDisposeAudio 6 步都应走 swallowError (R17 模式), '
-            '实际 swallowError=$swallowErrorCount',
+        reason: 'asyncDisposeAudio 6 步都应走 audioErrorSink (R17 模式, '
+            'AR-23 分簇后 audio 簇统一走 audioErrorSink), '
+            '实际 audioErrorSink=$audioErrorSinkCount',
       );
     });
 

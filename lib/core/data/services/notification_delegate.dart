@@ -84,19 +84,19 @@ class NotificationDelegate {
   /// 每日打卡 + medication 推送 (id=1001 / 2000+medId*10+i)
   final MedicationNotifier medicationNotifier;
 
-  /// 情绪记录提醒 (id=8000)
+  /// 情绪记录提醒 (id=5000002, R110 B1-1 固定带)
   final MoodReminderNotifier moodReminderNotifier;
 
   /// 续方提醒 (id=6000+medId)
   final RefillNotifier refillNotifier;
 
-  /// 心理评估周期提醒 (id=7000)
+  /// 心理评估周期提醒 (id=5000001, R110 B1-1 固定带)
   final AssessmentNotifier assessmentNotifier;
 
   /// Snooze 延迟通知 (id=300000+)
   final SnoozeManager snoozeManager;
 
-  /// 角标同步 (iOS badge, id=9999)
+  /// 角标同步 (iOS badge, id=5000100, R110 B1-1 固定带)
   final BadgeSyncService badgeSync;
 
   const NotificationDelegate({
@@ -124,7 +124,7 @@ class NotificationDelegate {
 
   // ============== MoodReminderNotifier 委派 ==============
 
-  /// 设置每天 hour:minute 情绪记录提醒 (id=8000)
+  /// 设置每天 hour:minute 情绪记录提醒 (id=5000002, R110 B1-1 固定带)
   Future<void> scheduleMoodReminder({
     required bool enabled,
     int hour = 20,

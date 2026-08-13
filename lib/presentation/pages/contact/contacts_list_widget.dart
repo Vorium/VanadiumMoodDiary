@@ -10,6 +10,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/consent_dialog.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
@@ -17,7 +18,6 @@ import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/swipe_delete_background.dart';
-import 'package:go_router/go_router.dart';
 
 /// 紧急联系人列表 + 添加按钮
 class ContactsListWidget extends ConsumerStatefulWidget {
@@ -40,16 +40,22 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
         icon: Icons.contacts_outlined,
         title: AppLocalizations.of(context).contactEmptyList,
         actionLabel: AppLocalizations.of(context).contactAddAction,
-        onAction: () => GoRouter.of(context).push('/contacts/new'),
+        // v0.32 round 8 (R111 FS-14 fix): 原来 push '/contacts/new'
+        // (死路由 → 404)。改走跟非空列表同一个 _showAddContactDialog
+        // (ConsentDialog + add, PIPL §13 gate 一致)
+        onAction: () => _showAddContactDialog(ref),
       );
     }
 
-    return Card(
-      child: Column(
-        children: [
-          for (int i = 0; i < contacts.length; i++) ...[
-            if (i > 0) const Divider(height: 1, thickness: 0.5),
-            // v0.21 Round 23 (P1-26): swipe-to-dismiss 左滑删除
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): Card 容器改
+    // AppleListSection (iOS insetGrouped 风格, spec §4.5), 手写
+    // Divider 删 (hairline 由容器自动串联), tile contentPadding 归零
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        for (int i = 0; i < contacts.length; i++)
+          // v0.21 Round 23 (P1-26): swipe-to-dismiss 左滑删除
+          _alsCell(
             Dismissible(
               key: ValueKey('contact-${contacts[i].id}'),
               direction: DismissDirection.endToStart,
@@ -58,6 +64,7 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
               // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
               // 替代 inline ListTile (Dismissible 包裹, 不影响 ListTile 本身)
               child: AppListTile.standard(
+                contentPadding: EdgeInsets.zero,
                 leading: Icon(
                   Icons.person_outline,
                   color: AppTokens.primaryColor(context),
@@ -82,17 +89,18 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
                       ),
               ),
             ),
-          ],
-          const Divider(height: 1, thickness: 0.5),
-          // v0.24 round 43 (emil D-05 P2): 添加联系人入口包 AppListTile
-          // → 隐式获得 PressFeedback scale 反馈 (tens/day 频度)
+          ),
+        // v0.24 round 43 (emil D-05 P2): 添加联系人入口包 AppListTile
+        // → 隐式获得 PressFeedback scale 反馈 (tens/day 频度)
+        _alsCell(
           AppListTile(
+            contentPadding: EdgeInsets.zero,
             leading: Icon(Icons.add, color: AppTokens.primaryColor(context)),
             title: Text(AppLocalizations.of(context).setupAddContact),
             onTap: () => _showAddContactDialog(ref),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -326,4 +334,11 @@ class _ContactsListWidgetState extends ConsumerState<ContactsListWidget> {
       phoneController.dispose();
     }
   }
+}
+
+/// v0.32 round 13 (R112 EM-02/AH-04): ListTile 在 AppleListSection 的
+/// 白色 DecoratedBox 容器内会触发 Flutter debug assert — 包一层透明
+/// Material 让 ListTile ink 画在最近的 Material 祖先上
+Widget _alsCell(Widget child) {
+  return Material(type: MaterialType.transparency, child: child);
 }

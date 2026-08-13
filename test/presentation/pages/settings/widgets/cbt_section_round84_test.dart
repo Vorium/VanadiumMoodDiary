@@ -17,6 +17,7 @@ import 'package:chroniccare/domain/entities/thought_record_level.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/cbt_section.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -64,6 +65,10 @@ void main() {
     expect(find.text('3 栏'), findsOneWidget);
     expect(find.text('5 栏'), findsOneWidget);
     expect(find.text('7 栏'), findsOneWidget);
+
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): 容器 Card → AppleListSection
+    expect(find.byType(AppleListSection), findsOneWidget);
+    expect(find.byType(Card), findsNothing);
 
     // 3 个 RadioListTile 全部存在
     expect(

@@ -31,7 +31,7 @@ void main() {
           label: '今日',
           value: '3',
           variant: StatCardVariant.defaultVariant,
-        )),
+        ),),
       );
       final style = valueStyle(tester, '3');
       expect(style.fontSize, AppTokens.fontSizeMetricLg); // 28
@@ -45,7 +45,7 @@ void main() {
           label: '总打卡',
           value: '128',
           variant: StatCardVariant.large,
-        )),
+        ),),
       );
       final style = valueStyle(tester, '128');
       expect(style.fontSize, AppTokens.fontSizeMetricXl); // 34 (max)
@@ -60,7 +60,7 @@ void main() {
           label: '评估',
           value: '12',
           variant: StatCardVariant.xl,
-        )),
+        ),),
       );
       final style = valueStyle(tester, '12');
       // xl = textStyleTitle 字号 28 + 改 w200
@@ -77,7 +77,7 @@ void main() {
           label: '简报',
           value: '7',
           variant: StatCardVariant.inline,
-        )),
+        ),),
       );
       final style = valueStyle(tester, '7');
       expect(style.fontSize, AppTokens.fontSizeMetricMd); // 22 (min)

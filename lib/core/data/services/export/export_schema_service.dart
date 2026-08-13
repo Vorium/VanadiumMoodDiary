@@ -14,7 +14,20 @@
 // - v1: 基础 (profile / contacts / medications / checkIns)
 // - v2: + `reportHistories` + `moodEntries` (v0.9 引入)
 // - v3: + `ventEntries` 文字 (v0.15 引入, 跨设备恢复需要)
-// - v4 (current): 4D 情绪 (energy / sleep / anxiety) (v0.18 引入)
+// - v4: 4D 情绪 (energy / sleep / anxiety) (v0.18 引入)
+// - v5 (current): R111 E1/E2/E3 (v0.32 round 8) — medications +5 字段
+//   (refillAt / refillReminderDays / form / colorIndex / notes) + mood +5 字段
+//   (audioTranscript / audioDurationMs / period / influenceFactorsJson /
+//   recordingMode) + contact consent 4 字段 (PIPL §13 留痕) + medication id
+//   导出 → checkIn.medicationId 导入重映射 (修孤儿 FK)
+// - v5 (R112, 未发布继续扩): E6 6 张 daily tracking 表 (sleepEntries /
+//   socialRhythmEntries / stressEvents / treatmentEntries / weightEntries /
+//   anxietyAgitationEntries, R91) + profile PIPL §14 同意留痕 4 字段
+//   (userAgreementVersion / privacyPolicyVersion / sensitiveDataConsentAt /
+//   consentRevokedAt) + medications 改 watchAllIncludingInactive (软停药不丢)
+//   + endDate 导出 + mood id 导出 → stress.linkedMoodEntryId /
+//   treatment.linkedMedicationId 重映射 + lastCheckInAt 导入 + isActive
+//   脏数据容错 (is-check 替代裸 cast)。老 v4 文件无新 key → 优雅降级。
 //
 // **emil 设计决策**:
 // - "decisions should be nameable" — schema version 兼容 + 字段校验 决策独立命名
@@ -25,7 +38,7 @@
 // - `validateDate` 内部用 `DateTime.tryParse` (v0.21 P0-2 fix: 替代 try/catch 反模式)
 
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:drift/drift.dart' show Table, TableInfo;
 
 /// JSON schema version 管理 + 字段校验 helper
@@ -34,8 +47,8 @@ import 'package:drift/drift.dart' show Table, TableInfo;
 class ExportSchemaService {
   const ExportSchemaService();
 
-  /// 当前 schema 版本 (v0.18 round 14: 加入 4D 情绪 = version 4)
-  static const int currentVersion = 4;
+  /// 当前 schema 版本 (v5: v0.32 round 8 R111 E1/E2/E3 全量字段 + FK 重映射)
+  static const int currentVersion = 5;
 
   /// 校验 JSON version 字段
   ///
@@ -66,7 +79,7 @@ class ExportSchemaService {
     try {
       await db.delete(table).go();
     } catch (e, st) {
-      swallowError(
+      exportErrorSink(
         where: 'ExportSchemaService.deleteOldDataSafely(${label ?? 'unknown'})',
         error: e,
         stack: st,

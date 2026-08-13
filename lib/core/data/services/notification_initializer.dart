@@ -26,8 +26,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'package:chroniccare/core/data/services/notification_delegate.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/core/routing/notification_navigation.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// v0.30 R108 revisit (P0-029): NotificationInitializer
 ///
@@ -39,9 +38,11 @@ class NotificationInitializer {
     required FlutterLocalNotificationsPlugin plugin,
     required void Function(NotificationResponse response) onResponse,
     required NotificationDelegate delegate,
+    void Function(String? payload)? onLaunchPayload,
   })  : _plugin = plugin,
         _onResponse = onResponse,
-        _delegate = delegate;
+        _delegate = delegate,
+        _onLaunchPayload = onLaunchPayload;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final void Function(NotificationResponse response) _onResponse;
@@ -49,6 +50,11 @@ class NotificationInitializer {
   // 保持 facade 作为 SOLE source of truth (R108 revisit P0-031 同款原则)。
   // ignore: unused_field
   final NotificationDelegate _delegate;
+
+  /// v0.32 R112 (R112-ARCH-02): app 被通知拉起的 payload 回调
+  /// (生产 = NotificationNavigation.setLaunchPayload, app 层注入 —
+  /// data 0 依赖 core/routing 传递 Flutter 依赖)。
+  final void Function(String? payload)? _onLaunchPayload;
 
   bool _initialized = false;
 
@@ -90,7 +96,7 @@ class NotificationInitializer {
         'NotificationInitializer',
         '🚀 App 由通知拉起, payload=$payload',
       );
-      NotificationNavigation.setLaunchPayload(payload);
+      _onLaunchPayload?.call(payload);
     }
 
     // 初始化时区数据库 (zonedSchedule 需要)
@@ -162,7 +168,7 @@ class NotificationInitializer {
     } catch (e, st) {
       // R108 P0-2: 失败不阻塞主流程, 走 inexact 兜底 + log
       // 跟 rescheduleAll 的 canExact=false 路径同, 行为一致
-      swallowError(
+      notificationErrorSink(
         where: 'NotificationInitializer.canScheduleExact',
         error: e,
         stack: st,

@@ -30,8 +30,6 @@ import 'package:flutter_test/flutter_test.dart';
 class _NoopNotificationService extends NotificationService {
   @override
   Future<void> init() async {}
-  @override
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
 }
 
 class _RecordingMedicationRepository implements MedicationRepository {
@@ -116,7 +114,7 @@ Future<void> _openDialog(WidgetTester tester, _RecordingMedicationRepository rep
         ),
       ),
     ),
-  ));
+  ),);
   await tester.pumpAndSettle();
   await tester.tap(find.text('open'));
   await tester.pumpAndSettle();
@@ -139,7 +137,7 @@ void main() {
       _med(times: const [
         HourMinute(hour: 8, minute: 0),
         HourMinute(hour: 20, minute: 0),
-      ]),
+      ],),
     );
     await _openDialog(tester, repo);
 
@@ -252,7 +250,7 @@ void main() {
       _med(times: const [
         HourMinute(hour: 8, minute: 0),
         HourMinute(hour: 20, minute: 0),
-      ]),
+      ],),
     );
     await _openDialog(tester, repo);
 

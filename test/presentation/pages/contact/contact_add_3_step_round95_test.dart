@@ -62,8 +62,9 @@ void main() {
 
   testWidgets('5→3 步 task 18 case 1: 弹窗打开, autofocus 姓名输入框', (tester) async {
     // v0.30 R95 sub-spec 8 task 18: 必须有 contact 才能显示 list 模式 (含
-    // 添加 entry), 空列表走 empty state 模式 (action 走 /contacts/new 路由,
-    // 跟弹窗逻辑无关)。1 个 contact 让 list 模式显示, "添加联系人" entry
+    // 添加 entry), 空列表走 empty state 模式 (action 走 _showAddContactDialog
+    // 弹窗, v0.32 round 8 R111 FS-14 fix, 原 /contacts/new 死路由已删)。
+    // 1 个 contact 让 list 模式显示, "添加联系人" entry
     // 点开弹窗。
     const existing = ContactEntity(
       id: 1,

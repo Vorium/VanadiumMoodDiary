@@ -40,6 +40,11 @@ class MedicationRow extends StatelessWidget {
   /// false = stopped 药不启用 swipe (IconButton 路径已覆盖)
   final bool enableSwipe;
 
+  /// v0.32 round 14 (R112 F1 遗留): ListTile contentPadding 透传 —
+  /// 放进 AppleListSection 时传 EdgeInsets.zero (cell padding 16/12
+  /// 由容器提供, 避免 ListTile 自带 16 横向 double padding)
+  final EdgeInsetsGeometry? contentPadding;
+
   const MedicationRow({
     super.key,
     required this.med,
@@ -51,6 +56,7 @@ class MedicationRow extends StatelessWidget {
     required this.onEditRefill,
     required this.onSwipeDelete,
     this.enableSwipe = true,
+    this.contentPadding,
   });
 
   @override
@@ -60,6 +66,7 @@ class MedicationRow extends StatelessWidget {
     // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
     // 替代 inline ListTile (Dismissible 包裹, 不影响 ListTile 本身)
     final tile = AppListTile.standard(
+      contentPadding: contentPadding,
       leading: Icon(
         isStopped ? Icons.medication : Icons.medication_outlined,
         color: isStopped

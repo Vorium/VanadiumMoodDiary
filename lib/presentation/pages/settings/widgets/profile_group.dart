@@ -30,6 +30,7 @@ import 'package:chroniccare/presentation/pages/settings/widgets/assessment_secti
 import 'package:chroniccare/presentation/providers/iap_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
@@ -62,42 +63,60 @@ class ProfileGroup extends ConsumerWidget {
         // v0.30 round 93 (阶段 2 audit-fixes): 整个 IAP 商业卡走
         // [FeatureFlags.iapEnabled] gate, 业务真接 App Store Connect productId 前
         // 完全 hidden (避 Apple 2.1 拒 — "未提供其他购买方式")。
+        //
+        // v0.32 round 13 (R112 EM-02/AH-04 视觉债): Card 改 AppleListSection
         if (FeatureFlags.iapEnabled) ...[
           Consumer(
             builder: (context, ref, _) {
               final isPro = ref.watch(iapProProvider);
               if (isPro) {
                 // 已购: 走简短提示卡 (绿色 "已是 Pro" 状态)
-                return Card(
-                  color: AppColors.tintedSuccessSoft(context),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.workspace_premium,
-                      color: AppColors.fgOnSuccess,
-                    ),
-                    title: Text(
-                      l10n.settingsIapProOwnedTitle,
-                      style: const TextStyle(
-                        fontSize: AppTokens.fontSizeBody,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.fgOnSuccess,
+                return AppleListSection(
+                  margin: EdgeInsets.zero,
+                  children: [
+                    // v0.32 round 13: 透明 Material 包 ListTile, 防
+                    // Flutter debug assert (ListTile 在 AppleListSection
+                    // 白色 DecoratedBox 容器内 ink 不可见)
+                    Material(
+                      type: MaterialType.transparency,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.tintedSuccessSoft(context),
+                          borderRadius:
+                              BorderRadius.circular(AppTokens.radiusChip),
+                        ),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(
+                            Icons.workspace_premium,
+                            color: AppColors.fgOnSuccess,
+                          ),
+                          title: Text(
+                            l10n.settingsIapProOwnedTitle,
+                            style: const TextStyle(
+                              fontSize: AppTokens.fontSizeBody,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.fgOnSuccess,
+                            ),
+                          ),
+                          subtitle: Text(
+                            l10n.settingsIapProOwnedSubtitle,
+                            style: const TextStyle(
+                              fontSize: AppTokens.fontSizeCaption,
+                              color: AppColors.fgOnSuccess,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    subtitle: Text(
-                      l10n.settingsIapProOwnedSubtitle,
-                      style: const TextStyle(
-                        fontSize: AppTokens.fontSizeCaption,
-                        color: AppColors.fgOnSuccess,
-                      ),
-                    ),
-                  ),
+                  ],
                 );
               }
               // 未购: 展示升级卡片
-              return Card(
-                child: Padding(
-                  padding: AppTokens.edgeInsetsMd,
-                  child: Column(
+              return AppleListSection(
+                margin: EdgeInsets.zero,
+                children: [
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Row(
@@ -144,15 +163,18 @@ class ProfileGroup extends ConsumerWidget {
                       ),
                     ],
                   ),
-                ),
+                ],
               );
             },
           ),
-          const SizedBox(height: AppTokens.spacingLg),
+          const SizedBox(height: AppTokens.spacingMd),
         ] else
           const SizedBox.shrink(),
 
         // === 药物 ===
+        // 注: MedicationsListWidget 内部 Card 属 medication feature
+        // (跨 feature 不动), 本 section 保留 SectionHeader + 原 list,
+        // 待 medication feature 自转 ALS 后无缝接入。
         SectionHeader(title: l10n.settingsMedication),
         const SizedBox(height: AppTokens.spacingSm),
         medsAsync.when(
@@ -164,7 +186,7 @@ class ProfileGroup extends ConsumerWidget {
             onRetry: () => ref.invalidate(medicationsProvider),
           ),
         ),
-        const SizedBox(height: AppTokens.spacingLg),
+        const SizedBox(height: AppTokens.spacingMd),
 
         // === 心理评估 + 邮件预览 + 关于 ===
         // v0.28 R81 (emil design-5): chip 标签 (B 站风格)
@@ -174,7 +196,7 @@ class ProfileGroup extends ConsumerWidget {
         ),
         const SizedBox(height: AppTokens.spacingSm),
         const AssessmentSection(),
-        const SizedBox(height: AppTokens.spacingLg),
+        const SizedBox(height: AppTokens.spacingMd),
 
         // === 联系人 (2026-07-31 挪到最底部, 病耻感考量) ===
         // v0.30 round 93 (阶段 2 audit-fixes): 整个联系人 section
@@ -200,16 +222,18 @@ class ProfileGroup extends ConsumerWidget {
 }
 
 /// 用户头像/健康档案入口卡 (参照 Apple Health Profile)
+///
+/// v0.32 round 13 (R112 EM-02/AH-04 视觉债): Card 改 AppleListSection
 class _UserProfileCard extends StatelessWidget {
   const _UserProfileCard({required this.l10n});
   final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Row(
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        Row(
           children: [
             // 头像
             CircleAvatar(
@@ -246,13 +270,11 @@ class _UserProfileCard extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              color: AppTokens.textHintColor(context),
-            ),
+            // v0.32 round 8 (R111 EM-17 fix): 删 chevron — 本卡是静态展示
+            // (无 profile 路由可跳), chevron 假 affordance 误导可点
           ],
         ),
-      ),
+      ],
     );
   }
 }

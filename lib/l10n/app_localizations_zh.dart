@@ -427,6 +427,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medsRefillHint30 => '一个月周期';
 
   @override
+  String get notificationStatusCardPermissionDeniedTitle => '通知权限已关闭';
+
+  @override
+  String get notificationStatusCardPermissionDeniedBody =>
+      '无法发送用药提醒。请在系统设置中允许通知，或点击下方按钮前往设置。';
+
+  @override
+  String get notificationStatusCardPermissionGoSettings => '前往系统设置';
+
+  @override
   String get notificationStatusCardTestTitle => '🔔 通知自检';
 
   @override
@@ -1810,25 +1820,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medReportShareSubject => '慢病管家 · 用药报告';
 
   @override
-  String get tempMedDialogTitle => '添加临时吃药';
-
-  @override
-  String get tempMedLinkLabel => '关联到常吃药（可选）';
-
-  @override
-  String get tempMedLinkHint => '不选 = 临时事件';
-
-  @override
   String get tempMedNoLink => '不关联';
-
-  @override
-  String get tempMedNameHint => '如：布洛芬';
-
-  @override
-  String get tempMedReasonLabel => '原因';
-
-  @override
-  String get tempMedReasonHint => '如：感冒';
 
   @override
   String get medsCalendarHeatmapDesc => '以药为单位的依从性热力图。颜色越深 = 当天打卡次数越接近期望次数。';
@@ -1886,6 +1878,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get medsCalendarDayDetailEmpty => '当天还没有打卡';
+
+  @override
+  String get medCalendarBackfillConfirm => '确认补打卡';
+
+  @override
+  String medCalendarBackfillSuccess(Object date) {
+    return '已补打卡 $date';
+  }
 
   @override
   String get medsCalendarDayDetailAddLog => '补打卡';
@@ -1954,6 +1954,26 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodTodayLabel => '今日情绪：';
+
+  @override
+  String moodTodayLabelWithValue(String value) {
+    return '今日情绪：$value';
+  }
+
+  @override
+  String get moodLabel1 => '很差';
+
+  @override
+  String get moodLabel2 => '差';
+
+  @override
+  String get moodLabel3 => '一般';
+
+  @override
+  String get moodLabel4 => '好';
+
+  @override
+  String get moodLabel5 => '很好';
 
   @override
   String get moodRecordButton => '记一下情绪 ✏️';
@@ -3568,11 +3588,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String medCalendarBackfillStub(Object date) {
-    return '补打卡功能接入中 ($date)';
-  }
-
-  @override
   String get setupCrisisHotlineTitle => '🆘 心理危机干预热线 (24h)';
 
   @override
@@ -3750,6 +3765,84 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodInfluenceOther => '其他';
 
   @override
+  String get influenceFactorFamily => '家人';
+
+  @override
+  String get influenceFactorFriend => '朋友';
+
+  @override
+  String get influenceFactorPartner => '伴侣';
+
+  @override
+  String get influenceFactorChild => '孩子';
+
+  @override
+  String get influenceFactorColleague => '同事';
+
+  @override
+  String get influenceFactorExercise => '运动';
+
+  @override
+  String get influenceFactorSick => '生病';
+
+  @override
+  String get influenceFactorGoodSleep => '睡眠好';
+
+  @override
+  String get influenceFactorHealthyDiet => '饮食健康';
+
+  @override
+  String get influenceFactorWork => '工作';
+
+  @override
+  String get influenceFactorHobby => '爱好';
+
+  @override
+  String get influenceFactorTravel => '旅行';
+
+  @override
+  String get influenceFactorCommute => '通勤';
+
+  @override
+  String get influenceFactorShopping => '购物';
+
+  @override
+  String get influenceFactorGaming => '游戏';
+
+  @override
+  String get influenceFactorReading => '阅读';
+
+  @override
+  String get influenceFactorEntertainment => '娱乐';
+
+  @override
+  String get influenceFactorMeditation => '冥想';
+
+  @override
+  String get influenceFactorBreathing => '呼吸练习';
+
+  @override
+  String get influenceFactorJournaling => '写日记';
+
+  @override
+  String get influenceFactorYoga => '瑜伽';
+
+  @override
+  String get influenceFactorSunny => '晴天';
+
+  @override
+  String get influenceFactorCloudy => '多云';
+
+  @override
+  String get influenceFactorRainy => '雨天';
+
+  @override
+  String get influenceFactorSnowy => '雪天';
+
+  @override
+  String get influenceFactorWindy => '刮风';
+
+  @override
   String get moodDetailTitle => '情绪详情';
 
   @override
@@ -3760,6 +3853,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodDetailCbtRecord => 'CBT 思维记录';
+
+  @override
+  String get moodEntryNotFound => '找不到这条情绪记录';
 
   @override
   String get moodTrendTitle => '情绪趋势';
@@ -3890,6 +3986,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get trackingCustomize => '自定义追踪项';
+
+  @override
+  String get trackingUnknownItem => '未知项目';
 
   @override
   String get trackingPin => '置顶';
@@ -4493,6 +4592,16 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get medsRefillHint30 => '一個月週期';
+
+  @override
+  String get notificationStatusCardPermissionDeniedTitle => '通知權限已關閉';
+
+  @override
+  String get notificationStatusCardPermissionDeniedBody =>
+      '無法發送用藥提醒。請在系統設置中允許通知，或點擊下方按鈕前往設置。';
+
+  @override
+  String get notificationStatusCardPermissionGoSettings => '前往系統設置';
 
   @override
   String get notificationStatusCardTestTitle => '🔔 通知自檢';
@@ -5878,25 +5987,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medReportShareSubject => '慢病管家 · 用藥報告';
 
   @override
-  String get tempMedDialogTitle => '添加臨時吃藥';
-
-  @override
-  String get tempMedLinkLabel => '關聯到常吃藥（可選）';
-
-  @override
-  String get tempMedLinkHint => '不選 = 臨時事件';
-
-  @override
   String get tempMedNoLink => '不關聯';
-
-  @override
-  String get tempMedNameHint => '如：布洛芬';
-
-  @override
-  String get tempMedReasonLabel => '原因';
-
-  @override
-  String get tempMedReasonHint => '如：感冒';
 
   @override
   String get medsCalendarHeatmapDesc => '以藥為單位的依從性熱力圖。顏色越深 = 當天打卡次數越接近期望次數。';
@@ -5954,6 +6045,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get medsCalendarDayDetailEmpty => '當天還沒有打卡';
+
+  @override
+  String get medCalendarBackfillConfirm => '確認補打卡';
+
+  @override
+  String medCalendarBackfillSuccess(Object date) {
+    return '已補打卡 $date';
+  }
 
   @override
   String get medsCalendarDayDetailAddLog => '補打卡';
@@ -6022,6 +6121,26 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodTodayLabel => '今日情緒：';
+
+  @override
+  String moodTodayLabelWithValue(String value) {
+    return '今日情緒：$value';
+  }
+
+  @override
+  String get moodLabel1 => '很差';
+
+  @override
+  String get moodLabel2 => '差';
+
+  @override
+  String get moodLabel3 => '一般';
+
+  @override
+  String get moodLabel4 => '好';
+
+  @override
+  String get moodLabel5 => '很好';
 
   @override
   String get moodRecordButton => '記一下情緒 ✏️';
@@ -7636,11 +7755,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String medCalendarBackfillStub(Object date) {
-    return '補打卡功能接入中 ($date)';
-  }
-
-  @override
   String get setupCrisisHotlineTitle => '🆘 心理危機干預熱線 (24h)';
 
   @override
@@ -7818,6 +7932,84 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodInfluenceOther => '其他';
 
   @override
+  String get influenceFactorFamily => '家人';
+
+  @override
+  String get influenceFactorFriend => '朋友';
+
+  @override
+  String get influenceFactorPartner => '伴侶';
+
+  @override
+  String get influenceFactorChild => '孩子';
+
+  @override
+  String get influenceFactorColleague => '同事';
+
+  @override
+  String get influenceFactorExercise => '運動';
+
+  @override
+  String get influenceFactorSick => '生病';
+
+  @override
+  String get influenceFactorGoodSleep => '睡眠好';
+
+  @override
+  String get influenceFactorHealthyDiet => '飲食健康';
+
+  @override
+  String get influenceFactorWork => '工作';
+
+  @override
+  String get influenceFactorHobby => '愛好';
+
+  @override
+  String get influenceFactorTravel => '旅行';
+
+  @override
+  String get influenceFactorCommute => '通勤';
+
+  @override
+  String get influenceFactorShopping => '購物';
+
+  @override
+  String get influenceFactorGaming => '遊戲';
+
+  @override
+  String get influenceFactorReading => '閱讀';
+
+  @override
+  String get influenceFactorEntertainment => '娛樂';
+
+  @override
+  String get influenceFactorMeditation => '冥想';
+
+  @override
+  String get influenceFactorBreathing => '呼吸練習';
+
+  @override
+  String get influenceFactorJournaling => '寫日記';
+
+  @override
+  String get influenceFactorYoga => '瑜伽';
+
+  @override
+  String get influenceFactorSunny => '晴天';
+
+  @override
+  String get influenceFactorCloudy => '多雲';
+
+  @override
+  String get influenceFactorRainy => '雨天';
+
+  @override
+  String get influenceFactorSnowy => '雪天';
+
+  @override
+  String get influenceFactorWindy => '颳風';
+
+  @override
   String get moodDetailTitle => '情緒詳情';
 
   @override
@@ -7828,6 +8020,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodDetailCbtRecord => 'CBT 思維記錄';
+
+  @override
+  String get moodEntryNotFound => '找不到這條情緒記錄';
 
   @override
   String get moodTrendTitle => '情緒趨勢';
@@ -7958,6 +8153,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get trackingCustomize => '自定義追蹤項';
+
+  @override
+  String get trackingUnknownItem => '未知項目';
 
   @override
   String get trackingPin => '置頂';

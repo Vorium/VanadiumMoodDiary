@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 /// 心理评估提醒卡片
 class AssessmentReminderCard extends StatelessWidget {
@@ -153,10 +154,13 @@ class ReminderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Row(
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): Card 容器改
+    // AppleListSection (iOS insetGrouped 风格, spec §4.5),
+    // 内部 icon + title + status chip + description + action 布局原样保留
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -240,7 +244,7 @@ class ReminderCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }

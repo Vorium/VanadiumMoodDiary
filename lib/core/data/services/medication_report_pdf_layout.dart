@@ -53,7 +53,7 @@ class PdfLayout {
         children: [
           pw.Text(
             Strings.pdfTitle,
-            style: pw.TextStyle(
+            style: const pw.TextStyle(
               fontSize: 18,
               fontWeight: pw.FontWeight.bold,
             ),
@@ -167,7 +167,7 @@ class PdfLayout {
       ),
       child: pw.Text(
         s,
-        style: pw.TextStyle(
+        style: const pw.TextStyle(
           fontSize: 13,
           fontWeight: pw.FontWeight.bold,
           color: PdfColors.green800,
@@ -217,7 +217,7 @@ class PdfLayout {
             children: [
               pw.Text(
                 '${i + 1}. ${m.name} ${Formatters.dosage(m.dosage, m.dosageUnit)} · $freqStr',
-                style: pw.TextStyle(
+                style: const pw.TextStyle(
                   fontSize: 12,
                   fontWeight: pw.FontWeight.bold,
                 ),
@@ -253,7 +253,7 @@ class PdfLayout {
   /// 临时用药表 — 4 列 (日期 / 时间 / 药名 / 备注)
   static pw.Widget tempMedTable(MedicationReportData data) {
     return pw.TableHelper.fromTextArray(
-      headerStyle: pw.TextStyle(
+      headerStyle: const pw.TextStyle(
         fontSize: 10,
         fontWeight: pw.FontWeight.bold,
         color: PdfColors.white,

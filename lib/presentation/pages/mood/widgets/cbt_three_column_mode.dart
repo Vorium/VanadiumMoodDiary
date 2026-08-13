@@ -41,6 +41,8 @@ class CbtThreeColumnMode extends ConsumerWidget {
         const SizedBox(height: AppTokens.spacingXs),
         Row(
           children: [
+            // EM-08: 装饰性 emoji 刻度 (😢/😄), 20 是 slider 两端视觉
+            // 配重字号 (无对应 token 档位), deliberate 保留
             const Text('😢', style: TextStyle(fontSize: 20)),
             Expanded(
               child: Slider(
@@ -53,6 +55,7 @@ class CbtThreeColumnMode extends ConsumerWidget {
                 onChanged: (v) => notifier.updateScore(v.round()),
               ),
             ),
+            // EM-08: 同上 😄 装饰性 emoji 20, deliberate 保留
             const Text('😄', style: TextStyle(fontSize: 20)),
           ],
         ),
@@ -62,7 +65,7 @@ class CbtThreeColumnMode extends ConsumerWidget {
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
               fontWeight: FontWeight.w600,
-              color: _scoreColor(state.draft.score),
+              color: _scoreTextColor(state.draft.score),
             ),
           ),
         ),
@@ -110,4 +113,22 @@ class CbtThreeColumnMode extends ConsumerWidget {
         return AppColors.disabled;
     }
   }
+
+  /// v0.32 round 8 (R112 EM-16b fix): 分数文字色 — 浅色状态色白底对比度
+  /// 2.3~3.0:1 不达标 (R111 EM-16 只修了 warning 档), 文字统一走深色档
+  /// token; slider 轨道仍走 _scoreColor (浅色装饰)
+  /// - 1 → fgError 深红 #C62828
+  /// - 2 → fgWarningStrong 深橙 #BF360C
+  /// - 3 → fgOnWarning 深橙 #E65100 (R111 EM-16)
+  /// - 4 → fgOnSuccess 深绿 #2E7D32
+  /// - 5 → primaryDark (品牌深绿 #248A3D; primary #34C759 白底 2.1:1
+  ///   不达标, R112 EM-16b 补丁)
+  Color _scoreTextColor(int score) => switch (score) {
+        1 => AppColors.fgError,
+        2 => AppColors.fgWarningStrong,
+        3 => AppColors.fgOnWarning,
+        4 => AppColors.fgOnSuccess,
+        5 => AppColors.primaryDark,
+        _ => AppColors.disabled,
+      };
 }

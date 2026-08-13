@@ -31,6 +31,7 @@ import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_filte
 import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_item.dart';
 import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_period_filter_bar.dart';
 import 'package:chroniccare/presentation/providers/mood_list_filter_provider.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
@@ -140,9 +141,29 @@ class _MoodListPageState extends ConsumerState<MoodListPage> {
         title: hasActiveFilter ? l10n.moodListNoMatch : l10n.moodListEmpty,
       );
     }
-    return ListView.builder(
-      itemCount: entries.length,
-      itemBuilder: (ctx, i) => MoodListItem(entry: entries[i]),
+    // v0.32 R112 (EM-02/AH-04, spec §5.5): ListView.builder 平铺 →
+    // AppleListSection (iOS 群组列表), title 显示 entry count
+    // (l10n.moodListEntryCount, R87 设计"列表 + 顶部 entry count")。
+    return ListView(
+      padding: const EdgeInsets.only(
+        top: AppTokens.spacingXs,
+        bottom: AppTokens.spacingLg,
+      ),
+      children: [
+        AppleListSection(
+          title: l10n.moodListEntryCount(entries.length),
+          margin: EdgeInsets.zero,
+          children: [
+            for (final entry in entries)
+              MoodListItem(
+                entry: entry,
+                // v0.32 R112-02: 点击条目 → 详情页 (路由在
+                // core/routing/app_route_mood_list.dart 注册 /mood/detail/:id)
+                onTap: () => context.push('/mood/detail/${entry.id}'),
+              ),
+          ],
+        ),
+      ],
     );
   }
 }

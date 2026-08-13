@@ -33,11 +33,12 @@ void main() {
         'lib/core/data/services/notification_delegate.dart',
       ).readAsStringSync();
 
-      // 8 caller 文件 (R108 Fix #2 迁移清单):
+      // 8 caller 文件 (R108 Fix #2 迁移清单, R112 AR-20 批2b 加 submit flow):
       // - app.dart (rescheduleAll 保留, scheduleDailyReminder 委派)
       // - home_page_state.dart (cancelAllSnoozes, snoozeOnce)
       // - setup_page_state.dart (rescheduleMedicationReminders, scheduleDailyReminder)
       // - add_medication_page.dart (rescheduleMedicationReminders, rescheduleRefillReminders)
+      // - add_medication_submit_flow.dart (R112: 双 reschedule 抽到本文件)
       // - edit_medication_dialog.dart (rescheduleMedicationReminders, rescheduleRefillReminders)
       // - medications_list_widget.dart (cancelRefillReminder, cancelSnoozeForMedication,
       //                                  rescheduleRefillReminders, 3 处)
@@ -47,6 +48,7 @@ void main() {
         'lib/presentation/pages/home/home_page_state.dart',
         'lib/presentation/pages/setup/setup_page_state.dart',
         'lib/presentation/pages/medication/add_medication_page.dart',
+        'lib/presentation/pages/medication/add_medication_submit_flow.dart',
         'lib/presentation/pages/medication/widgets/edit_medication_dialog.dart',
         'lib/presentation/pages/medication/widgets/medications_list_widget.dart',
         'lib/core/data/services/assessment_reminder_service.dart',
@@ -168,7 +170,8 @@ void main() {
       );
     });
 
-    test('B4: facade 主体保留 6 method (init/requestPermission/showNow/cancelAll/pendingCount/showSafetyAlert)',
+    test(
+        'B4: facade 主体保留 6 method (init/requestPermission/showNow/cancelAll/pendingCount/showSafetyAlert)',
         () {
       // R108 主体保留:
       for (final method in [
@@ -188,7 +191,7 @@ void main() {
       }
     });
 
-    test('B5: 所有 caller 改走 .delegate.xxx() 路径 (7 文件迁移)', () {
+    test('B5: 所有 caller 改走 .delegate.xxx() 路径 (8 文件迁移)', () {
       // 7 caller 文件验证: 不能再直接调委派 method (e.g. notif.snoozeOnce)
       // 必须走 notif.delegate.snoozeOnce
       //

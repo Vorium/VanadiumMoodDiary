@@ -9,9 +9,11 @@
 //
 // v0.22 round 31 (sp-en P0-3): 抽到 `core/shared/`，消除 5+ 处
 // `(userName == null || userName.isEmpty)` 重复逻辑。
-// 放 `core/shared/` 而非 `domain/entities/`，因为它属于"跨层共享的
-// 纯工具"（presentation / data / domain 都用得上），跟 `formatters` /
-// `mood_visual` 同类。
+//
+// v0.32 round 8 (R111 B1-5 联动): 从 `core/shared/` 移到 `domain/logic/`。
+// 删 SafetyAlertBuilder.buildFor 死 userName 参数后, 唯一剩下的调用方是
+// domain 层 (lost_contact_sms / email_template), check_all.dart 一致性
+// 规则要求 shared/ 文件至少被 2 层使用 → 移到 domain/logic/ 满足规则。
 
 import 'package:chroniccare/core/l10n/strings.dart';
 

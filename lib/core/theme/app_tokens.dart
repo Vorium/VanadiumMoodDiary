@@ -54,7 +54,8 @@ export 'package:chroniccare/core/theme/app_spacing.dart'
 /// - v0.18 · 2026-07-18 (P1-5) 增加 dynamic Color getter,支持 dark mode
 /// - v0.27 R65 · 拆 4 文件, 留 facade
 /// - v0.31 R1 · Apple Health redesign: 8 metric palette (healthMetricsColors / Ids /
-///   healthMetricsColorFor / tintedMetricSoft) 转发; 14 个 const Color 走 AppColors.xxx
+///   healthMetricsColorFor) 转发 (v0.32 R112 AH-16: tintedMetricSoft 0 caller 删);
+///   14 个 const Color 走 AppColors.xxx
 ///   自动跟随新值, 本 facade 不重定义。
 /// - v0.31 R2 · Apple Health redesign Phase 1 Task 1.2: 3 档 metric 字号
 ///   (fontSizeMetricXl/Lg/Md 34/28/22) + 2 档字重 (fontWeightUltralight w200 /
@@ -128,7 +129,8 @@ class AppTokens {
   static const double lineHeightRelaxed = AppTypography.lineHeightRelaxed;
   // v0.31 R2 (Apple Health redesign · Task 1.2): 2 档字重转发
   // ultralight w200 (Apple Health 大数字) + light w300 (次大数字)
-  static const FontWeight fontWeightUltralight = AppTypography.fontWeightUltralight;
+  static const FontWeight fontWeightUltralight =
+      AppTypography.fontWeightUltralight;
   static const FontWeight fontWeightLight = AppTypography.fontWeightLight;
   static TextStyle textStyleTitle(BuildContext c) =>
       AppTypography.textStyleTitle(c);
@@ -371,10 +373,4 @@ class AppTokens {
   /// UI 层: `AppTokens.healthMetricsColorFor('medication')` → systemRed
   static Color healthMetricsColorFor(String metricId) =>
       AppColors.healthMetricsColorFor(metricId);
-
-  /// 按 metricId 拿 metric 浅色背景 (alpha 0.12, AppleHealthTile 容器底色)
-  ///
-  /// UI 层: `AppTokens.tintedMetricSoft(context, 'medication')` → systemRed 12%
-  static Color tintedMetricSoft(BuildContext c, String metricId) =>
-      AppColors.tintedMetricSoft(c, metricId);
 }

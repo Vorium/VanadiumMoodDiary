@@ -7,14 +7,12 @@ import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
-import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/domain/logic/safety_detector.dart';
+import 'package:chroniccare/domain/usecases/check_safety.dart';
 import 'package:chroniccare/domain/usecases/dispatch_safety_alert.dart';
-import 'package:chroniccare/l10n/app_localizations.dart' show AppLocalizations;
 
 // R101: SafetyCheckKind 移到 domain 层 safety_detector.dart, 这里 re-export
 export 'package:chroniccare/domain/logic/safety_detector.dart'
@@ -53,9 +51,11 @@ class SafetyWatchService {
   final CheckInRepository _checkInRepo;
   final ContactRepository _contactRepo;
   final UserProfileRepository _userProfileRepo;
-  final SmsService _smsService;
-  final NotificationService _notificationService;
   final DispatchSafetyAlertUseCase _dispatchUseCase;
+
+  /// v0.32 R112 (AR-18): 判定接线 CheckSafetyUseCase (之前直接调
+  ///   SafetyDetector.detect 绕过 usecase = 死代码)。可选注入便于测试。
+  final CheckSafetyUseCase _checkSafetyUseCase;
 
   /// v0.25 round 57: 2 个 sub
   late final SafetyConfigService _config = SafetyConfigService();
@@ -71,16 +71,14 @@ class SafetyWatchService {
     required CheckInRepository checkInRepo,
     required ContactRepository contactRepo,
     required UserProfileRepository userProfileRepo,
-    required SmsService smsService,
-    required NotificationService notificationService,
     required DispatchSafetyAlertUseCase dispatchUseCase,
+    CheckSafetyUseCase checkSafetyUseCase = const CheckSafetyUseCase(),
     Duration contactWatchTimeout = const Duration(seconds: 5),
   })  : _checkInRepo = checkInRepo,
         _contactRepo = contactRepo,
         _userProfileRepo = userProfileRepo,
-        _smsService = smsService,
-        _notificationService = notificationService,
         _dispatchUseCase = dispatchUseCase,
+        _checkSafetyUseCase = checkSafetyUseCase,
         _contactWatchTimeout = contactWatchTimeout;
 
   // ============== 配置 API 已下沉到 SafetyConfigService ==============
@@ -104,9 +102,14 @@ class SafetyWatchService {
   /// 修正前 hardcode "已自动通知紧急联系人", 即使 SMS mock / 失败也这么说,
   /// 对精神心理患者形成"谎言"。修正后 3 态明确。
   ///
+  /// v0.32 R112 (AR-16): l10n 改 `SafetyAlertL10nResolver` tear-off 闭包
+  /// (caller 从 AppLocalizations 注入), data 0 依赖 l10n/ 生成 ARB。
+  ///
   /// v0.27 round 67 (C-7 重构): FeatureFlags.bootReceiverEnabled=false 时
   /// 跳过 rescheduleAll, 避免 v0.28 WorkManager 完善之前 BootReceiver crash。
-  Future<SafetyCheckResult> onAppStart({required AppLocalizations l10n}) async {
+  Future<SafetyCheckResult> onAppStart({
+    required SafetyAlertL10nResolver l10nResolver,
+  }) async {
     if (!FeatureFlags.bootReceiverEnabled) {
       piiSafeLog(
         'SafetyWatchService',
@@ -114,12 +117,15 @@ class SafetyWatchService {
       );
       return const SafetyCheckResult(kind: SafetyCheckKind.disabled);
     }
-    return _checkAndAlert(trigger: 'app_start', l10n: l10n);
+    return _checkAndAlert(trigger: 'app_start', l10nResolver: l10nResolver);
   }
 
   /// 打卡成功后调用（home_page 调）
-  Future<SafetyCheckResult> onCheckIn({required AppLocalizations l10n}) async {
-    final result = await _checkAndAlert(trigger: 'check_in', l10n: l10n);
+  Future<SafetyCheckResult> onCheckIn({
+    required SafetyAlertL10nResolver l10nResolver,
+  }) async {
+    final result =
+        await _checkAndAlert(trigger: 'check_in', l10nResolver: l10nResolver);
     if (result.kind == SafetyCheckKind.alerted) {
       piiSafeLog(
         'SafetyWatchService',
@@ -135,10 +141,14 @@ class SafetyWatchService {
   /// 不接受 `now` 时跨 midnight(00:00-06:00)会让 `DateTime.now().subtract(hours: 6)`
   /// 落到前一天,`_daysBetween` 算成 1,触发 flaky test。
   Future<SafetyCheckResult> checkNow({
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10nResolver,
     DateTime? now,
   }) async {
-    return _checkAndAlert(trigger: 'manual', now: now, l10n: l10n);
+    return _checkAndAlert(
+      trigger: 'manual',
+      now: now,
+      l10nResolver: l10nResolver,
+    );
   }
 
   // ============== 核心 facade (R64 拆分后) ==============
@@ -159,7 +169,7 @@ class SafetyWatchService {
   Future<SafetyCheckResult> _checkAndAlert({
     required String trigger,
     DateTime? now,
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10nResolver,
   }) async {
     // Feature flag 早返 — 暂停整个失联通知业务
     if (!FeatureFlags.emergencyContactEnabled) {
@@ -179,16 +189,19 @@ class SafetyWatchService {
       final profile = await _userProfileRepo.get();
       final contacts = await _loadContacts();
 
-      // 2. 判定 (纯函数, 0 副作用)
-      final decision = SafetyDetector.detect(
-        enabled: enabled,
-        threshold: threshold,
-        lastCheckInAt: lastCheckInAt,
-        now: effectiveNow,
-        lastAlertAt: lastAlertAt,
-        inDnd: inDnd,
-        profile: profile,
-        contacts: contacts,
+      // 2. 判定 (v0.32 R112 AR-18: 走 CheckSafetyUseCase, 替代直接调
+      //    SafetyDetector.detect — usecase 从死代码变活)
+      final decision = _checkSafetyUseCase(
+        CheckSafetyInput(
+          enabled: enabled,
+          threshold: threshold,
+          lastCheckInAt: lastCheckInAt,
+          now: effectiveNow,
+          lastAlertAt: lastAlertAt,
+          inDnd: inDnd,
+          profile: profile,
+          contacts: contacts,
+        ),
       );
 
       // 3. 委派 (Alert 走 dispatcher, 其余返 SafetyCheckResult)
@@ -199,7 +212,7 @@ class SafetyWatchService {
         effectiveNow: effectiveNow,
         profile: profile,
         contacts: contacts,
-        l10n: l10n,
+        l10nResolver: l10nResolver,
       );
     } catch (e, st) {
       piiSafeLog(
@@ -227,7 +240,7 @@ class SafetyWatchService {
     required DateTime effectiveNow,
     required UserProfileEntity? profile,
     required List<ContactEntity> contacts,
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10nResolver,
   }) async {
     return switch (decision) {
       SafetyDecisionDisabled() =>
@@ -258,7 +271,7 @@ class SafetyWatchService {
           effectiveNow: effectiveNow,
           profile: profile!,
           contacts: contacts,
-          l10n: l10n,
+          l10nResolver: l10nResolver,
         ),
     };
   }
@@ -269,8 +282,8 @@ class SafetyWatchService {
   /// 调。返回 `Future<SafetyCheckResult>` 跟原 facade 行为一致。
   ///
   /// v0.32 R109 (god class 拆 round 2): dispatcher 改 use case.
-  /// use case 拿 `SafetyAlertSender` (abstract), service 把 `AppLocalizations`
-  /// 5 个 getter tear-off 到 `SafetyAlertL10nResolver` 注入.
+  /// use case 拿 `SafetyAlertSender` (abstract), service 把 l10nResolver
+  /// 原样透传 (R112 AR-16: caller 注入 tear-off 闭包, data 0 依赖 ARB).
   Future<SafetyCheckResult> _dispatchLostContact({
     required String trigger,
     required DateTime lastCheckInAt,
@@ -278,15 +291,8 @@ class SafetyWatchService {
     required DateTime effectiveNow,
     required UserProfileEntity profile,
     required List<ContactEntity> contacts,
-    required AppLocalizations l10n,
+    required SafetyAlertL10nResolver l10nResolver,
   }) async {
-    final l10nResolver = SafetyAlertL10nResolver(
-      titleFor: l10n.safetyAlertTitle,
-      bodySent: l10n.safetyAlertBodySent,
-      bodyMocked: l10n.safetyAlertBodyMocked,
-      bodyFailed: l10n.safetyAlertBodyFailed,
-      neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
-    );
     final dispatched = await _dispatchUseCase(
       contacts: contacts,
       userName: profile.userName,
@@ -350,44 +356,18 @@ class SafetyCheckResult {
     this.errorMessage,
   });
 
-  /// 给 UI 用的可读文案 (v0.27 R61 引入, R100 删掉返 key 的旧 getter)
+  /// 给 UI 用的可读文案 — 已移到 presentation extension
   ///
-  /// caller (UI widget) 传 l10n 拿 i18n 字符串。data 层 0 flutter 拿不到
-  /// AppLocalizations, 编译期强制走本方法 (旧 `displayMessage` 返 key
-  /// 字符串的 getter 已删, 防未来 caller 误用显示裸 key)。
+  /// v0.32 R112 (AR-16): `displayMessageL10n(AppLocalizations)` 原在本类
+  /// (data 层直接依赖 l10n/ 生成 ARB), 移到
+  /// `lib/presentation/services/safety_check_result_l10n.dart` 的
+  /// `SafetyCheckResultL10n` extension — caller 语法不变
+  /// (`result.displayMessageL10n(l10n)`), data 层 0 l10n 依赖。
   ///
-  /// 8 个 kind 全部覆盖:
+  /// 8 个 kind 全部覆盖 (旧方法注释保留在 extension 文件):
   /// - disabled / ok / noData / alertedToday / dndSuppressed / noContacts
   /// - alerted (3 态: ok / mocked / failed)
   /// - error
-  String displayMessageL10n(AppLocalizations l10n) {
-    switch (kind) {
-      case SafetyCheckKind.disabled:
-        return l10n.safetyCheckResultDisabled;
-      case SafetyCheckKind.ok:
-        return l10n.safetyCheckResultOk(daysSinceLast ?? 0);
-      case SafetyCheckKind.noData:
-        return l10n.safetyCheckResultNoData;
-      case SafetyCheckKind.alertedToday:
-        return l10n.safetyCheckResultAlertedToday(daysSinceLast ?? 0);
-      case SafetyCheckKind.dndSuppressed:
-        return l10n.safetyCheckResultDndSuppressed;
-      case SafetyCheckKind.noContacts:
-        return l10n.safetyCheckResultNoContacts;
-      case SafetyCheckKind.alerted:
-        // 3 态: ok > mock > fail (跟 NotificationService._resolveSafetyAlertBody 一致)
-        if (contactsMocked > 0 && contactsNotified == 0) {
-          return l10n.safetyCheckResultAlertedMocked(contactsMocked);
-        }
-        return l10n.safetyCheckResultAlerted(
-          daysSinceLast ?? 0,
-          contactsNotified,
-          contactsFailed,
-        );
-      case SafetyCheckKind.error:
-        return l10n.safetyCheckResultError(errorMessage ?? '');
-    }
-  }
 
   /// 转成 JSON，给 audit log / settings 显示用
   Map<String, dynamic> toJson() => {

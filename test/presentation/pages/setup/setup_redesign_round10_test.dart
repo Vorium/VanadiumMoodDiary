@@ -25,11 +25,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-class _NoopNotificationService extends NotificationService {
-  // scheduleDailyReminder 已在 R108 fix 后迁到 NotificationDelegate,
-  // 这里留 noop 占位 (跟 setup_consent_round14_test 同模式)
-  Future<void> scheduleDailyReminder({int hour = 20, int minute = 0}) async {}
-}
+// v0.32 round 8 (R112 卫生): 删 scheduleDailyReminder 死 fake override —
+// R108 后该方法迁到 NotificationDelegate, 这里的 noop 不再 override 任何
+// 基类成员 (漏网 0 用途死代码)。
+class _NoopNotificationService extends NotificationService {}
 
 /// 最小 GoRouter 包裹: PageScaffold 用 GoRouter.of(context).canPop() 决定
 /// 是否显示返回按钮。测试只需在 context 里塞一个 GoRouter 实例即可。

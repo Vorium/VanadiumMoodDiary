@@ -39,6 +39,12 @@ const _purityRules = <String, List<String>>{
   ],
   'data': [
     'package:chroniccare/presentation/',
+    // v0.32 R112 (AR-16 修): data→l10n 循环 (生成 ARB 传递 import
+    // flutter/widgets) + data→core/routing 传递 Flutter/GoRouter 依赖。
+    // 之前 data 规则只禁 presentation, 2 条传递依赖 3 轮审计 0 gate 管
+    // (AR-16 + R112-ARCH-02 守门盲区)。R112 加守门, 修完后永不再犯。
+    'package:chroniccare/l10n/',
+    'package:chroniccare/core/routing/',
   ],
   'presentation': <String>[],
 };
@@ -242,6 +248,12 @@ bool _isForbiddenImport(
   // reviewer 手工扫, 守门失效。R77 加 l10n 守门, 任何 domain 文件 import
   // `package:chroniccare/l10n/` 立即 CI fail。
   if (forbidden == 'package:chroniccare/l10n/') {
+    return importUri.startsWith(forbidden);
+  }
+  // v0.32 R112 (AR-16/R112-ARCH-02): data→core/routing 传递依赖守门, 同上
+  // (core/routing 本体 import flutter/widgets + go_router, data 引用它 =
+  // 传递依赖 Flutter)。
+  if (forbidden == 'package:chroniccare/core/routing/') {
     return importUri.startsWith(forbidden);
   }
   return false;

@@ -24,7 +24,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import 'package:chroniccare/core/data/services/mood_audio_storage.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// 录音 + STT 编排结果
 class MoodAudioResult {
@@ -155,7 +155,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
       _sttAvailable = await _stt.initialize(
         onError: (errorNotification) {
           // STT 错误 = graceful degrade, 不影响录音
-          swallowError(
+          audioErrorSink(
             where: 'mood_audio_service.stt.onError',
             error: errorNotification.errorMsg,
             note: 'STT error during listen — recording continues',
@@ -168,7 +168,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
       return _sttAvailable;
     } catch (e, st) {
       // 设备不支持 / 初始化失败 = graceful degrade
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_service.initialize',
         error: e,
         stack: st,
@@ -230,7 +230,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
         );
         _isSttListening = true;
       } catch (e, st) {
-        swallowError(
+        audioErrorSink(
           where: 'mood_audio_service.startSttListen',
           error: e,
           stack: st,
@@ -258,7 +258,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
         // 强制 stop recorder (footgun: callback 抛错时录音仍继续)
         unawaited(
           stopRecording().catchError((Object e, StackTrace st) {
-            swallowError(
+            audioErrorSink(
               where: 'mood_audio_service._recordingTimer.maxDuration',
               error: e,
               stack: st,
@@ -297,7 +297,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
     try {
       await _recorder.stop();
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_service.cancelRecording',
         error: e,
         stack: st,
@@ -321,7 +321,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
         // 注意: speech_to_text 在 stop() 时会触发最后 1 次 onResult with final=true,
       }
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_service.stopStt',
         error: e,
         stack: st,
@@ -339,7 +339,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
         await _stt.stop();
       }
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_service._stopSttInternal',
         error: e,
         stack: st,
@@ -357,7 +357,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
       }
       await _recorder.dispose();
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: 'mood_audio_service.dispose',
         error: e,
         stack: st,

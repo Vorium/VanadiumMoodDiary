@@ -303,14 +303,14 @@ void main() {
       expect(json['exportedAt'], '2026-07-01T10:00:00.000Z');
     });
 
-    test('version = 4 (含 4D 情绪)', () async {
+    test('version = 5 (v0.32 round 8 R111: 全量字段 + FK 重映射)', () async {
       final json = parseJson(await svc.exportToJson());
-      expect(json['version'], 4);
+      expect(json['version'], 5);
     });
 
     test('空 DB 导出 → 全空数组,null profile', () async {
       final json = parseJson(await svc.exportToJson());
-      expect(json['version'], 4);
+      expect(json['version'], 5);
       expect(json['profile'], isNull);
       expect(json['contacts'], isEmpty);
       expect(json['medications'], isEmpty);
@@ -387,7 +387,7 @@ void main() {
       });
       final result = await svc.importFromJson(json);
       expect(result.success, isFalse);
-      // 中文错误 "数据版本不匹配（期望 1-4，实际 99）"
+      // 中文错误 "数据版本不匹配（期望 1-5，实际 99）"
       expect(result.error, contains('99'));
     });
   });

@@ -87,7 +87,7 @@ const List<DailyTrackingItemConfig> kDefaultTrackingItems = [
     id: 'mood',
     nameKey: 'moodDiaryName',
     descKey: 'moodDiaryShortDesc',
-    iconCodePoint: 0xe3a2, // Icons.mood_outlined
+    iconCodePoint: 0xf1e5, // Icons.mood_outlined
     colorValue: 0xFFFF9500,
     category: TrackingCategory.emotional,
     route: '/mood-diary',
@@ -98,7 +98,7 @@ const List<DailyTrackingItemConfig> kDefaultTrackingItems = [
     id: 'anxiety',
     nameKey: 'anxietyAgitationName',
     descKey: 'anxietyAgitationShortDesc',
-    iconCodePoint: 0xe165, // Icons.psychology_outlined
+    iconCodePoint: 0xf2d2, // Icons.psychology_outlined
     colorValue: 0xFF5856D6,
     category: TrackingCategory.emotional,
     route: '/anxiety-agitation',
@@ -108,7 +108,7 @@ const List<DailyTrackingItemConfig> kDefaultTrackingItems = [
     id: 'sleep',
     nameKey: 'sleepName',
     descKey: 'sleepShortDesc',
-    iconCodePoint: 0xe548, // Icons.bedtime_outlined
+    iconCodePoint: 0xeecb, // Icons.bedtime_outlined
     colorValue: 0xFF5AC8FA,
     category: TrackingCategory.physical,
     route: '/sleep',
@@ -119,7 +119,7 @@ const List<DailyTrackingItemConfig> kDefaultTrackingItems = [
     id: 'weight',
     nameKey: 'weightName',
     descKey: 'weightShortDesc',
-    iconCodePoint: 0xef4a, // Icons.monitor_weight_outlined
+    iconCodePoint: 0xf1e2, // Icons.monitor_weight_outlined
     colorValue: 0xFF34C759,
     category: TrackingCategory.physical,
     route: '/weight',
@@ -129,7 +129,7 @@ const List<DailyTrackingItemConfig> kDefaultTrackingItems = [
     id: 'social_rhythm',
     nameKey: 'socialRhythmName',
     descKey: 'socialRhythmShortDesc',
-    iconCodePoint: 0xe192, // Icons.schedule_outlined
+    iconCodePoint: 0xf339, // Icons.schedule_outlined
     colorValue: 0xFF007AFF,
     category: TrackingCategory.behavioral,
     route: '/social-rhythm',
@@ -139,7 +139,7 @@ const List<DailyTrackingItemConfig> kDefaultTrackingItems = [
     id: 'stress',
     nameKey: 'stressEventName',
     descKey: 'stressEventShortDesc',
-    iconCodePoint: 0xe3a7, // Icons.bolt_outlined
+    iconCodePoint: 0xeedd, // Icons.bolt_outlined
     colorValue: 0xFFFF3B30,
     category: TrackingCategory.behavioral,
     route: '/stress-events',
@@ -149,7 +149,7 @@ const List<DailyTrackingItemConfig> kDefaultTrackingItems = [
     id: 'treatment',
     nameKey: 'treatmentName',
     descKey: 'treatmentShortDesc',
-    iconCodePoint: 0xf0d0, // Icons.medical_services_outlined
+    iconCodePoint: 0xf1be, // Icons.medical_services_outlined
     colorValue: 0xFFAF52DE,
     category: TrackingCategory.medical,
     route: '/treatment',

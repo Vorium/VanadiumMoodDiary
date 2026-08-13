@@ -102,12 +102,12 @@ class DailyTrackingSnackBar {
   /// ```
   static void showSaveError(BuildContext context, Object error) {
     if (!context.mounted) return;
-    final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.editMedSaveFailed(error.toString())),
-        duration: AppTokens.snackBarDurationLong,
-      ),
+    // v0.32 round 8 (R111 EM-05 fix): 走 AppSnackBar 集中器 (commonSave
+    // + snackbarErrorTemplate 输出跟 editMedSaveFailed 1:1 一致)
+    AppSnackBar.showError(
+      context,
+      action: AppLocalizations.of(context).commonSave,
+      error: error,
     );
   }
 

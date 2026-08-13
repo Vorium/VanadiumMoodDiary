@@ -5,10 +5,14 @@
 //
 // 全 StatelessWidget, 状态由 parent 透传 (3 Set 引用)。
 // 渲染:
-// 1. 用药日历入口 Card (v0.14 round 13C)
+// 1. 用药日历入口 (v0.14 round 13C, v0.32 round 14 ALS 化)
 // 2. active list: MedicationRow × N (Dismissible swipe 启用)
 //    或 active empty state (MedicationEmptyState.noActive)
 // 3. stopped list (可选): MedicationRow × N (Dismissible 关闭)
+//
+// v0.32 round 14 (R112 F1 遗留): 2 处 Card + AppListTile.carded → 3 处
+// AppleListSection (iOS insetGrouped 白块 + hairline 0.5 + 0 阴影,
+// spec §4.5), 对齐已 ALS 化的 settings 宿主 (profile_group)。
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +23,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_empty_state.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_row.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 /// 药物列表渲染 (header card + active list + stopped list)
 ///
@@ -76,16 +81,24 @@ class MedicationListView extends StatelessWidget {
   }
 
   Widget _buildCalendarEntry(BuildContext context) {
-    // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
-    return AppListTile.carded(
-      leading: Icon(
-        Icons.calendar_view_month,
-        color: AppTokens.primaryColor(context),
-      ),
-      title: Text(AppLocalizations.of(context).medsCalendarTitle),
-      subtitle: Text(AppLocalizations.of(context).medsCalendarSubtitle),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.push('/medication/calendar'),
+    // v0.32 round 14 (R112 F1 遗留): AppListTile.carded (Card) →
+    // AppleListSection (iOS insetGrouped 白块 + 0 阴影, spec §4.5),
+    // 与 settings 宿主 (profile_group) 已 ALS 化的方言对齐
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        AppListTile.standard(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(
+            Icons.calendar_view_month,
+            color: AppTokens.primaryColor(context),
+          ),
+          title: Text(AppLocalizations.of(context).medsCalendarTitle),
+          subtitle: Text(AppLocalizations.of(context).medsCalendarSubtitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/medication/calendar'),
+        ),
+      ],
     );
   }
 
@@ -93,25 +106,25 @@ class MedicationListView extends StatelessWidget {
     BuildContext context,
     List<MedicationEntity> activeMeds,
   ) {
-    return Card(
-      child: Column(
-        children: [
-          for (int i = 0; i < activeMeds.length; i++) ...[
-            if (i > 0) const Divider(height: 1),
-            MedicationRow(
-              med: activeMeds[i],
-              isDeleting: deleting.contains(activeMeds[i].id),
-              isEditing: editing.contains(activeMeds[i].id),
-              isEditingRefill: editingRefill.contains(activeMeds[i].id),
-              onDelete: () => onDelete(activeMeds[i].id),
-              onEdit: () => onEdit(activeMeds[i]),
-              onEditRefill: () => onEditRefill(activeMeds[i]),
-              onSwipeDelete: onSwipeDelete,
-              enableSwipe: true,
-            ),
-          ],
-        ],
-      ),
+    // v0.32 round 14 (R112 F1 遗留): Card + 手写 Divider → AppleListSection
+    // (hairline 0.5 由容器自动串联, cell padding 16/12 由容器提供)
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        for (final med in activeMeds)
+          MedicationRow(
+            med: med,
+            isDeleting: deleting.contains(med.id),
+            isEditing: editing.contains(med.id),
+            isEditingRefill: editingRefill.contains(med.id),
+            onDelete: () => onDelete(med.id),
+            onEdit: () => onEdit(med),
+            onEditRefill: () => onEditRefill(med),
+            onSwipeDelete: onSwipeDelete,
+            enableSwipe: true,
+            contentPadding: EdgeInsets.zero,
+          ),
+      ],
     );
   }
 
@@ -133,25 +146,24 @@ class MedicationListView extends StatelessWidget {
     BuildContext context,
     List<MedicationEntity> stoppedMeds,
   ) {
-    return Card(
-      child: Column(
-        children: [
-          for (int i = 0; i < stoppedMeds.length; i++) ...[
-            if (i > 0) const Divider(height: 1),
-            MedicationRow(
-              med: stoppedMeds[i],
-              isDeleting: deleting.contains(stoppedMeds[i].id),
-              isEditing: editing.contains(stoppedMeds[i].id),
-              isEditingRefill: false, // 停药不显示续方按钮
-              onDelete: () => onDelete(stoppedMeds[i].id),
-              onEdit: () => onEdit(stoppedMeds[i]),
-              onEditRefill: () {}, // 停药不调
-              onSwipeDelete: onSwipeDelete,
-              enableSwipe: false, // 停药不启用 swipe
-            ),
-          ],
-        ],
-      ),
+    // v0.32 round 14 (R112 F1 遗留): Card + 手写 Divider → AppleListSection
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        for (final med in stoppedMeds)
+          MedicationRow(
+            med: med,
+            isDeleting: deleting.contains(med.id),
+            isEditing: editing.contains(med.id),
+            isEditingRefill: false, // 停药不显示续方按钮
+            onDelete: () => onDelete(med.id),
+            onEdit: () => onEdit(med),
+            onEditRefill: () {}, // 停药不调
+            onSwipeDelete: onSwipeDelete,
+            enableSwipe: false, // 停药不启用 swipe
+            contentPadding: EdgeInsets.zero,
+          ),
+      ],
     );
   }
 }

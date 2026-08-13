@@ -23,6 +23,7 @@ import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/refill_scheduler.dart';
+import 'package:chroniccare/domain/usecases/schedule_refill_reminder.dart';
 
 /// 续方提醒编排 (per-medication refill 提醒)
 ///
@@ -46,13 +47,21 @@ class RefillNotifier {
   /// facade 的 init() 包装, 保证 sub-service 调用时主 service 已 init
   final Future<void> Function() _ensureInitialized;
 
+  /// v0.32 R112 (AR-18): 续方排程计算接线 ScheduleRefillReminderUseCase
+  /// (之前直接调 RefillScheduler.computeRefillFireTime 绕过 usecase = 死代码)。
+  /// 可选注入便于测试, 默认 const 实现。
+  final ScheduleRefillReminderUseCase _scheduleUseCase;
+
   RefillNotifier({
     required FlutterLocalNotificationsPlugin plugin,
     required ReminderDispatcher dispatcher,
     required Future<void> Function() ensureInitialized,
+    ScheduleRefillReminderUseCase scheduleUseCase =
+        const ScheduleRefillReminderUseCase(),
   })  : _plugin = plugin,
         _dispatcher = dispatcher,
-        _ensureInitialized = ensureInitialized;
+        _ensureInitialized = ensureInitialized,
+        _scheduleUseCase = scheduleUseCase;
 
   /// 续方提醒通知 id 公式：`refillBaseId + medicationId`
   ///
@@ -103,14 +112,31 @@ class RefillNotifier {
   /// 调度一个 medication 的续方提醒
   ///
   /// - [medication] 必须有非空 [Medication.refillAt], 否则函数静默 no-op
+  /// - inactive 药物跳过 (跟 ScheduleRefillReminderUseCase 规则 1:1, R112 AR-18)
   /// - 触发时间：`refillAt - reminderDays` 当天 9:00
   /// - 同一 med 多次调用 = 覆盖前一次 (id 稳定)
   /// - payload = medicationCheckIn(medId) — 点通知直达打卡
+  ///
+  /// v0.32 R112 (AR-18): fire time / isExpired 计算走
+  ///   ScheduleRefillReminderUseCase (use case 从死代码变活)。
   Future<void> scheduleRefillReminder(MedicationEntity medication) async {
-    final fireAt = computeRefillFireTime(
-      refillAt: medication.refillAt,
-      reminderDays: medication.refillReminderDays,
+    // v0.16 round 19 fix: 之前 2 次 DateTime.now() 跨 midnight 时可能不一致
+    // (fireAt 检查用 yesterday 23:59, daysLeft 计算用 today 00:00)
+    final now = DateTime.now();
+    final schedules = _scheduleUseCase(
+      medications: [medication],
+      now: now,
     );
+    if (schedules.isEmpty) {
+      piiSafeLog(
+        'RefillNotifier',
+        '⏭️ scheduleRefillReminder: medId=${medication.id} '
+            'inactive 或无 refillAt, 跳过',
+      );
+      return;
+    }
+    final schedule = schedules.single;
+    final fireAt = schedule.fireAt;
     if (fireAt == null) {
       piiSafeLog(
         'RefillNotifier',
@@ -119,11 +145,8 @@ class RefillNotifier {
       return;
     }
 
-    // v0.16 round 19 fix: 之前 2 次 DateTime.now() 跨 midnight 时可能不一致
-    // (fireAt 检查用 yesterday 23:59, daysLeft 计算用 today 00:00)
-    final now = DateTime.now();
     // 已经过期的提醒不再调度 (避免给历史数据"补响")
-    if (fireAt.isBefore(now)) {
+    if (schedule.isExpired) {
       piiSafeLog(
         'RefillNotifier',
         '⏭️ scheduleRefillReminder: medId=${medication.id} '
@@ -193,16 +216,23 @@ class RefillNotifier {
   /// 改成 200000 覆盖 medId <= 199999（远超实际用户量，且 int32 安全）。
   ///
   /// v0.18 (P2-P0-2): 接受 [MedicationEntity] (domain) 而非 [Medication] (Drift row)
+  ///
+  /// v0.32 R112 (AR-18): inactive / 无 refillAt / 已过期 的过滤 + fire time
+  /// 计算走 ScheduleRefillReminderUseCase (use case 从死代码变活)。
   Future<void> rescheduleRefillReminders(
     List<MedicationEntity> medications,
   ) async {
     await _ensureInitialized();
     // v0.23 (Round 37): cancel 范围走 dispatcher 集中
     await _dispatcher.cancelByIdRange(refillBaseId);
+    final now = DateTime.now();
+    final schedules = _scheduleUseCase(medications: medications, now: now);
     int scheduled = 0;
-    for (final med in medications) {
-      if (!med.isActive) continue;
-      if (med.refillAt == null) continue;
+    for (final schedule in schedules) {
+      if (schedule.fireAt == null || schedule.isExpired) continue;
+      final med = medications.firstWhere(
+        (m) => m.id == schedule.medicationId,
+      );
       await scheduleRefillReminder(med);
       scheduled++;
     }

@@ -11,27 +11,31 @@
 // - 进度条 1/3 走 iOS 风格 hairline (高 4pt → 3pt)
 // - 底部按钮改 PrimaryButton (default + secondary)
 // - 间距统一 16 (spacingMd)
+//
+// v0.32 R112 (AR-20 god class 批2b): 573L → 拆 3 职责 (职责数 3 → 1):
+// - 表单 UI (3 步) → widgets/add_medication_step1/2/3_form.dart
+//   (+ add_medication_form_shared.dart 共享标题/剂型映射)
+// - 校验 → domain/logic/add_medication_form_validator.dart (R109)
+// - 提交流程 → add_medication_submit_flow.dart (本目录)
+// 本页只留: form state + 步骤编排 + UX (snackbar / pop / _saving)。
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
-import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_form.dart';
 import 'package:chroniccare/domain/logic/add_medication_form_validator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/medication/widgets/medication_confirm_row.dart';
-import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
+import 'package:chroniccare/presentation/pages/medication/add_medication_submit_flow.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step1_form.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step2_form.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step3_form.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/presentation/providers/shared_providers.dart';
-import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
@@ -106,16 +110,13 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
     );
 
     try {
-      await repo.add(draft);
-      // 新增药物后重排提醒 (edit_medication_dialog 同款模式), 否则新药无提醒直到重启
-      // v0.32 R110 round 7b (B1-8): 原来 `ref.refresh(medicationsProvider.future)`
-      // 在 autoDispose provider 无监听者时会在 loading 态被 dispose → 
-      // "disposed during loading state" Bad state → 保存成功却报失败。
-      // 改用 repository.watchAll().first 拿最新列表 (repo 非 autoDispose, 无
-      // 生命周期问题), 语义等价 (单次最新快照)。
-      final meds = await repo.watchAll().first;
-      await notif.delegate.rescheduleMedicationReminders(meds);
-      await notif.delegate.rescheduleRefillReminders(meds);
+      // v0.32 R112 (AR-20 批2b): repo.add + 双 reschedule 抽
+      // AddMedicationSubmitFlow (B1-8 watchAll().first 语义保留, 见该文件)
+      await AddMedicationSubmitFlow.run(
+        repo: repo,
+        delegate: notif.delegate,
+        draft: draft,
+      );
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
@@ -153,7 +154,8 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
         children: [
           // 进度指示器 (iOS hairline 风格, 3pt)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             child: Row(
               children: List.generate(3, (i) {
                 final active = i <= _currentStep;
@@ -174,18 +176,42 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
           ),
 
           // R104 fix: 条件渲染替代 IndexedStack，setState 立即重建当前步骤
+          // R112 AR-20 批2b: 3 步表单抽 widgets/add_medication_form.dart
           Expanded(
             child: _currentStep == 0
-                ? _buildStep1(l10n)
+                ? AddMedicationStep1Form(
+                    nameController: _nameController,
+                    form: _form,
+                    onFormChanged: (f) => setState(() => _form = f),
+                  )
                 : _currentStep == 1
-                    ? _buildStep2(l10n)
-                    : _buildStep3(l10n),
+                    ? AddMedicationStep2Form(
+                        dosageController: _dosageController,
+                        dosageUnit: _dosageUnit,
+                        onDosageUnitChanged: (u) =>
+                            setState(() => _dosageUnit = u),
+                        times: _times,
+                        onTimeChanged: (i, t) => setState(() => _times[i] = t),
+                        onTimeDeleted: (i) =>
+                            setState(() => _times.removeAt(i)),
+                        onTimeAdded: (t) => setState(() => _times.add(t)),
+                      )
+                    : AddMedicationStep3Form(
+                        name: _nameController.text,
+                        form: _form,
+                        dosageText: _dosageController.text,
+                        dosageUnit: _dosageUnit,
+                        times: _times,
+                        colorIndex: _colorIndex,
+                        onColorChanged: (i) => setState(() => _colorIndex = i),
+                      ),
           ),
 
           // 底部按钮 — v0.31 R11a: 改 PrimaryButton 3 variant
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
               child: Row(
                 children: [
                   if (_currentStep > 0)
@@ -217,357 +243,16 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
       ),
     );
   }
-
-  // ═══════════════════════════════════════════════════
-  // Step 1: 药名 + 剂型 (AppleListSection "基本信息")
-  // ═══════════════════════════════════════════════════
-  Widget _buildStep1(AppLocalizations l10n) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
-      children: [
-        // 大标题
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          child: Text(
-            l10n.medAddStep1Title,
-            style: AppTokens.textStyleTitle(context).copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingMd),
-
-        // "基本信息" AppleListSection
-        AppleListSection(
-          title: l10n.medAddBasicInfo,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          children: [
-            // 药名
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxs),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.medAddNameLabel,
-                    style: AppTokens.textStyleCaptionHint(context),
-                  ),
-                  const SizedBox(height: AppTokens.spacingXxs),
-                  TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      hintText: l10n.medAddNameHint,
-                      border: InputBorder.none, // AppleListSection 自带容器
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                ],
-              ),
-            ),
-            // 剂型
-            Padding(
-              padding: const EdgeInsets.only(top: AppTokens.spacingXs),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.medAddFormLabel,
-                    style: AppTokens.textStyleCaptionHint(context),
-                  ),
-                  const SizedBox(height: AppTokens.spacingXs),
-                  Wrap(
-                    spacing: AppTokens.spacingSm,
-                    runSpacing: AppTokens.spacingSm,
-                    children: MedicationForm.values.map((f) {
-                      final selected = _form == f;
-                      return ChoiceChip(
-                        label: Text(_formLabel(f, l10n)),
-                        selected: selected,
-                        onSelected: (_) => setState(() => _form = f),
-                        avatar: Icon(_formIcon(f), size: 18),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // ═══════════════════════════════════════════════════
-  // Step 2: 剂量 + 频率 + 时间 (AppleListSection "用药时间")
-  // ═══════════════════════════════════════════════════
-  Widget _buildStep2(AppLocalizations l10n) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
-      children: [
-        // 大标题
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          child: Text(
-            l10n.medAddStep2Title,
-            style: AppTokens.textStyleTitle(context).copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingMd),
-
-        // "用药时间" AppleListSection
-        AppleListSection(
-          title: l10n.medAddTime,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          children: [
-            // 剂量 + 单位
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingXxs),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.medAddDosageLabel,
-                    style: AppTokens.textStyleCaptionHint(context),
-                  ),
-                  const SizedBox(height: AppTokens.spacingXxs),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: TextField(
-                          controller: _dosageController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppTokens.spacingSm),
-                      Expanded(
-                        child: DropdownButtonFormField<DosageUnit>(
-                          initialValue: _dosageUnit,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                          ),
-                          items: DosageUnit.values
-                              .map(
-                                (u) => DropdownMenuItem(
-                                  value: u,
-                                  child: Text(u.id),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (v) {
-                            if (v != null) setState(() => _dosageUnit = v);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // 时间列表
-            Padding(
-              padding: const EdgeInsets.only(top: AppTokens.spacingXs),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.medAddTimeLabel,
-                    style: AppTokens.textStyleCaptionHint(context),
-                  ),
-                  const SizedBox(height: AppTokens.spacingXs),
-                  Wrap(
-                    spacing: AppTokens.spacingSm,
-                    runSpacing: AppTokens.spacingSm,
-                    children: [
-                      ..._times.asMap().entries.map((e) {
-                        final i = e.key;
-                        final t = e.value;
-                        return InputChip(
-                          avatar: const Icon(Icons.access_time, size: 18),
-                          label: Text(
-                            HourMinute(hour: t.hour, minute: t.minute).toTimeString(),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          onPressed: () async {
-                            final picked = await showTimePicker(
-                              context: context,
-                              initialTime: t,
-                            );
-                            if (picked != null && mounted) {
-                              setState(() => _times[i] = picked);
-                            }
-                          },
-                          onDeleted: _times.length > 1
-                              ? () => setState(() => _times.removeAt(i))
-                              : null,
-                        );
-                      }),
-                      // 添加时间按钮
-                      ActionChip(
-                        avatar: const Icon(Icons.add, size: 18),
-                        label: Text(l10n.medAddTimeAdd),
-                        onPressed: () async {
-                          final picked = await showTimePicker(
-                            context: context,
-                            initialTime: const TimeOfDay(hour: 20, minute: 0),
-                          );
-                          if (picked != null && mounted) {
-                            setState(() => _times.add(picked));
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // ═══════════════════════════════════════════════════
-  // Step 3: 确认 + 颜色选择 (AppleListSection "颜色" + "确认信息")
-  // ═══════════════════════════════════════════════════
-  Widget _buildStep3(AppLocalizations l10n) {
-    final dosage = _dosageController.text;
-    final timesStr = _times
-        .map((t) => HourMinute(hour: t.hour, minute: t.minute).toTimeString())
-        .join(', ');
-
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingMd),
-      children: [
-        // 大标题
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          child: Text(
-            l10n.medAddStep3Title,
-            style: AppTokens.textStyleTitle(context).copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingMd),
-
-        // "颜色" AppleListSection
-        AppleListSection(
-          title: l10n.medAddColor,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          children: [
-            Text(
-              l10n.medAddColorLabel,
-              style: AppTokens.textStyleCaptionHint(context),
-            ),
-            const SizedBox(height: AppTokens.spacingXs),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(kMedPillColors.length, (i) {
-                final selected = _colorIndex == i;
-                return PressFeedback(
-                  onTap: () => setState(() => _colorIndex = i),
-                  child: Semantics(
-                    label: l10n.medAddColorN(i + 1),
-                    selected: selected,
-                    button: true,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: selected
-                            ? Border.all(
-                                color: AppTokens.primaryColor(context),
-                                width: 3,
-                              )
-                            : null,
-                      ),
-                      child: MedicationPillIcon(
-                        colorIndex: i,
-                        size: 40,
-                        initial: _nameController.text.isNotEmpty
-                            ? _nameController.text
-                            : null,
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTokens.spacingMd),
-
-        // "确认信息" AppleListSection
-        AppleListSection(
-          title: l10n.medAddConfirm,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          children: [
-            MedicationConfirmRow(
-              label: l10n.medAddConfirmName,
-              value: _nameController.text,
-            ),
-            MedicationConfirmRow(
-              label: l10n.medAddConfirmForm,
-              value: _formLabel(_form, l10n),
-            ),
-            MedicationConfirmRow(
-              label: l10n.medAddConfirmDosage,
-              value: Formatters.dosage(
-                double.tryParse(dosage) ?? 0,
-                _dosageUnit,
-              ),
-            ),
-            MedicationConfirmRow(label: l10n.medAddConfirmTime, value: timesStr),
-          ],
-        ),
-      ],
-    );
-  }
-
-  String _formLabel(MedicationForm f, AppLocalizations l10n) {
-    switch (f) {
-      case MedicationForm.tablet:
-        return l10n.medFormTablet;
-      case MedicationForm.capsule:
-        return l10n.medFormCapsule;
-      case MedicationForm.liquid:
-        return l10n.medFormLiquid;
-      case MedicationForm.patch:
-        return l10n.medFormPatch;
-      case MedicationForm.injection:
-        return l10n.medFormInjection;
-      case MedicationForm.other:
-        return l10n.medFormOther;
-    }
-  }
-
-  IconData _formIcon(MedicationForm f) {
-    switch (f) {
-      case MedicationForm.tablet:
-        return Icons.medication_rounded;
-      case MedicationForm.capsule:
-        return Icons.vaccines_rounded;
-      case MedicationForm.liquid:
-        return Icons.water_drop_outlined;
-      case MedicationForm.patch:
-        return Icons.healing_outlined;
-      case MedicationForm.injection:
-        return Icons.colorize_outlined;
-      case MedicationForm.other:
-        return Icons.more_horiz_rounded;
-    }
-  }
 }
 
 // v0.32 R109 (god class 拆 round 4): 删 `_ConfirmRow` private class,
 // 移到 `widgets/medication_confirm_row.dart` 公开 `MedicationConfirmRow`,
 // caller 改 import 公开类. emil DRY 跟 R31 R108 子 widget 抽模式一致.
+//
+// v0.32 R112 (AR-20 god class 批2b): 删 `_buildStep1/2/3` 3 个 inline
+// builder + `_formLabel`/`_formIcon` 2 helper, 移到
+// `widgets/add_medication_step1/2/3_form.dart` (3 公开 form widget) +
+// `widgets/add_medication_form_shared.dart` (MedicationStepTitle /
+// medicationFormLabel / medicationFormIcon);
+// `_save` 的 repo.add + 双 reschedule 抽 `add_medication_submit_flow.dart`
+// 公开 `AddMedicationSubmitFlow`. page 职责 3 → 1 (编排).

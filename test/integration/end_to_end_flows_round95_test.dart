@@ -31,6 +31,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
+import 'package:chroniccare/core/data/services/setup_committer.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/logic/streak_calculator.dart';
@@ -116,9 +117,10 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    // ===== Step 1: saveSetup 含 1 个紧急联系人 + 1 个同意 (PIPL §13) =====
-    // contactList.length == contactConsents.length (PIPL §13 必填, 见 saveSetup 注释)
-    await container.read(databaseProvider).saveSetup(
+    // ===== Step 1: completeSetup 含 1 个紧急联系人 + 1 个同意 (PIPL §13) =====
+    // contactList.length == contactConsents.length (PIPL §13 必填, 见 SetupCommitter 注释)
+    // v0.32 架构批 2 (AR-19): saveSetup 迁到 SetupCommitter (data 层编排)
+    await SetupCommitter(container.read(databaseProvider)).completeSetup(
       userName: '集成测试用户',
       contactList: const [
         (name: '家人A', phone: '13800000001', sortOrder: 0),
@@ -140,7 +142,7 @@ void main() {
     expect(
       contacts.length,
       1,
-      reason: 'saveSetup 写 1 联系人 → contactRepository.watchAll 返 1',
+      reason: 'completeSetup 写 1 联系人 → contactRepository.watchAll 返 1',
     );
     expect(contacts.first.name, '家人A');
     expect(contacts.first.phone, '13800000001');

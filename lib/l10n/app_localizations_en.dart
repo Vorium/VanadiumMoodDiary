@@ -442,6 +442,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medsRefillHint30 => 'One-month cycle';
 
   @override
+  String get notificationStatusCardPermissionDeniedTitle =>
+      'Notifications are off';
+
+  @override
+  String get notificationStatusCardPermissionDeniedBody =>
+      'Medication reminders can\'t be delivered. Please allow notifications in system settings, or tap the button below.';
+
+  @override
+  String get notificationStatusCardPermissionGoSettings => 'Open Settings';
+
+  @override
   String get notificationStatusCardTestTitle => '🔔 Notification Test';
 
   @override
@@ -1897,25 +1908,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medReportShareSubject => 'Chronic Care · Medication Report';
 
   @override
-  String get tempMedDialogTitle => 'Add Temporary Medication';
-
-  @override
-  String get tempMedLinkLabel => 'Link to regular medication (optional)';
-
-  @override
-  String get tempMedLinkHint => 'None = one-time event';
-
-  @override
   String get tempMedNoLink => 'No link';
-
-  @override
-  String get tempMedNameHint => 'e.g. Ibuprofen';
-
-  @override
-  String get tempMedReasonLabel => 'Reason';
-
-  @override
-  String get tempMedReasonHint => 'e.g. cold';
 
   @override
   String get medsCalendarHeatmapDesc =>
@@ -1976,6 +1969,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get medsCalendarDayDetailEmpty => 'No check-ins yet on this day';
+
+  @override
+  String get medCalendarBackfillConfirm => 'Confirm';
+
+  @override
+  String medCalendarBackfillSuccess(Object date) {
+    return 'Check-in added for $date';
+  }
 
   @override
   String get medsCalendarDayDetailAddLog => 'Add check-in';
@@ -2044,6 +2045,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodTodayLabel => 'Mood: ';
+
+  @override
+  String moodTodayLabelWithValue(String value) {
+    return 'Mood: $value';
+  }
+
+  @override
+  String get moodLabel1 => 'Very bad';
+
+  @override
+  String get moodLabel2 => 'Bad';
+
+  @override
+  String get moodLabel3 => 'Fair';
+
+  @override
+  String get moodLabel4 => 'Good';
+
+  @override
+  String get moodLabel5 => 'Very good';
 
   @override
   String get moodRecordButton => 'Log mood ✏️';
@@ -3751,11 +3772,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String medCalendarBackfillStub(Object date) {
-    return 'Backfill check-in coming soon ($date)';
-  }
-
-  @override
   String get setupCrisisHotlineTitle => '🆘 Crisis Intervention Hotline (24h)';
 
   @override
@@ -3938,6 +3954,84 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodInfluenceOther => 'Other';
 
   @override
+  String get influenceFactorFamily => 'Family';
+
+  @override
+  String get influenceFactorFriend => 'Friends';
+
+  @override
+  String get influenceFactorPartner => 'Partner';
+
+  @override
+  String get influenceFactorChild => 'Children';
+
+  @override
+  String get influenceFactorColleague => 'Colleagues';
+
+  @override
+  String get influenceFactorExercise => 'Exercise';
+
+  @override
+  String get influenceFactorSick => 'Illness';
+
+  @override
+  String get influenceFactorGoodSleep => 'Good sleep';
+
+  @override
+  String get influenceFactorHealthyDiet => 'Healthy diet';
+
+  @override
+  String get influenceFactorWork => 'Work';
+
+  @override
+  String get influenceFactorHobby => 'Hobby';
+
+  @override
+  String get influenceFactorTravel => 'Travel';
+
+  @override
+  String get influenceFactorCommute => 'Commute';
+
+  @override
+  String get influenceFactorShopping => 'Shopping';
+
+  @override
+  String get influenceFactorGaming => 'Gaming';
+
+  @override
+  String get influenceFactorReading => 'Reading';
+
+  @override
+  String get influenceFactorEntertainment => 'Entertainment';
+
+  @override
+  String get influenceFactorMeditation => 'Meditation';
+
+  @override
+  String get influenceFactorBreathing => 'Breathing exercises';
+
+  @override
+  String get influenceFactorJournaling => 'Journaling';
+
+  @override
+  String get influenceFactorYoga => 'Yoga';
+
+  @override
+  String get influenceFactorSunny => 'Sunny';
+
+  @override
+  String get influenceFactorCloudy => 'Cloudy';
+
+  @override
+  String get influenceFactorRainy => 'Rainy';
+
+  @override
+  String get influenceFactorSnowy => 'Snowy';
+
+  @override
+  String get influenceFactorWindy => 'Windy';
+
+  @override
   String get moodDetailTitle => 'Mood Detail';
 
   @override
@@ -3948,6 +4042,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodDetailCbtRecord => 'CBT Thought Record';
+
+  @override
+  String get moodEntryNotFound => 'Mood entry not found';
 
   @override
   String get moodTrendTitle => 'Mood Trends';
@@ -4079,6 +4176,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trackingCustomize => 'Customize Trackers';
+
+  @override
+  String get trackingUnknownItem => 'Unknown item';
 
   @override
   String get trackingPin => 'Pin to Top';

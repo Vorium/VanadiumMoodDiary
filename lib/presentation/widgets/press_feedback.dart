@@ -62,6 +62,13 @@ class PressFeedback extends StatefulWidget {
   /// 默认 lightImpact, 跟 Material 3 ripple 同档
   final bool enableHaptics;
 
+  /// v0.32 round 8 (R111 EM-14 fix): 是否可交互
+  ///
+  /// false = 禁用态 (按钮置灰时) — child 原样渲染, 0 事件监听 /
+  /// 0 scale / 0 haptic。避免"看着灰, 按下却 scale + 震动"的假反馈。
+  /// PrimaryButton / CheckInButton 把自身 disabled 态传进来。
+  final bool enabled;
+
   const PressFeedback({
     super.key,
     required this.child,
@@ -69,6 +76,7 @@ class PressFeedback extends StatefulWidget {
     this.pressedScale = 0.97,
     this.duration = AppTokens.durPress,
     this.enableHaptics = true,
+    this.enabled = true,
   });
 
   @override
@@ -91,6 +99,10 @@ class _PressFeedbackState extends State<PressFeedback> {
 
   @override
   Widget build(BuildContext context) {
+    // v0.32 round 8 (R111 EM-14 fix): 禁用态原样渲染 child,
+    // 0 事件监听 / 0 scale / 0 haptic (假反馈)
+    if (!widget.enabled) return widget.child;
+
     // P0-7: 尊重系统 prefers-reduced-motion。
     final effectiveDuration = Motion.duration(context, widget.duration);
     final scale = _pressed ? widget.pressedScale : 1.0;

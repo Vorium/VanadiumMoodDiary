@@ -13,7 +13,6 @@ import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/repositories/check_in/check_in_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/contact/contact_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
 import 'package:chroniccare/core/data/services/safety_alert_sender_impl.dart';
 import 'package:chroniccare/core/data/services/safety_config_service.dart';
 import 'package:chroniccare/core/data/services/safety_watch_service.dart';
@@ -31,6 +30,19 @@ import 'safety_test_helpers.dart';
 
 /// v0.27 round 66 helper
 AppLocalizations _testL10n() => AppLocalizationsZh();
+
+/// v0.32 R112 (AR-16): entry point 改拿 SafetyAlertL10nResolver tear-off
+/// 闭包 (data 0 依赖 l10n/ 生成 ARB)。
+SafetyAlertL10nResolver _testResolver() {
+  final l10n = _testL10n();
+  return SafetyAlertL10nResolver(
+    titleFor: l10n.safetyAlertTitle,
+    bodySent: l10n.safetyAlertBodySent,
+    bodyMocked: l10n.safetyAlertBodyMocked,
+    bodyFailed: l10n.safetyAlertBodyFailed,
+    neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
+  );
+}
 
 void main() {
   // R66 设计: 整个文件测 production (flag=false) 行为, **不** enableForTest。
@@ -60,11 +72,6 @@ void main() {
         checkInRepo: CheckInRepositoryImpl(db),
         contactRepo: ContactRepositoryImpl(db),
         userProfileRepo: UserProfileRepositoryImpl(db),
-        smsService: SmsService(),
-        // R109 round 6 part 2: 用 helper CountingNotificationService 替代
-        //   R108 跨期本地 _CountingNotificationService (R109 round 2 改
-        //   showSafetyAlert 签名后失效, 跨期 R108 helper 引用同一类).
-        notificationService: CountingNotificationService(),
         // R109 round 2 起 dispatchUseCase 改 required, 这里传 NoOp 让
         //   flag=false 早返路径仍可测 (NoOp 早返, 不真发).
         dispatchUseCase: NoOpDispatchSafetyAlertUseCase(),
@@ -77,7 +84,7 @@ void main() {
     });
 
     test('onAppStart → kind = disabled (不查 config / 不查 contacts)', () async {
-      final result = await service.onAppStart(l10n: _testL10n());
+      final result = await service.onAppStart(l10nResolver: _testResolver());
       expect(
         result.kind,
         SafetyCheckKind.disabled,
@@ -86,13 +93,13 @@ void main() {
     });
 
     test('onCheckIn → kind = disabled', () async {
-      final result = await service.onCheckIn(l10n: _testL10n());
+      final result = await service.onCheckIn(l10nResolver: _testResolver());
       expect(result.kind, SafetyCheckKind.disabled);
     });
 
     test('checkNow → kind = disabled', () async {
       final result =
-          await service.checkNow(l10n: _testL10n(), now: DateTime(2026, 7, 31));
+          await service.checkNow(l10nResolver: _testResolver(), now: DateTime(2026, 7, 31));
       expect(result.kind, SafetyCheckKind.disabled);
     });
   });
@@ -107,7 +114,6 @@ void main() {
           smsService: SmsService(),
           notificationService: CountingNotificationService(),
           config: _CountingConfigService(),
-          builder: const SafetyAlertBuilder(),
         ),
         emergencyContactEnabled: FeatureFlags.emergencyContactEnabled,
       );

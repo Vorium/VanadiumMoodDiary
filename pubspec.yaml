@@ -2,7 +2,7 @@ name: chroniccare
 # v0.27 R69: 双语描述, App Store / Google Play en 模式 UX 一致
 description: "我今天吃了药 - ChronicCare: medication reminder & mood tracker for people managing chronic conditions"
 publish_to: 'none'
-version: 0.32.0+140
+version: 0.32.0+142
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -79,6 +79,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+
+  # v0.32 round 8 (FS P2-005): 显式声明 — vent_detail_page_round7b_test
+  # 直接 import audioplayers_platform_interface 触发
+  # depend_on_referenced_packages info (它只是 audioplayers 的传递依赖)。
+  # 用 dev 声明 (只测试 mock 平台通道用), 保持 runtime 依赖面不变。
+  audioplayers_platform_interface: ^7.1.0
 
   # 代码生成
   build_runner: ^2.4.13

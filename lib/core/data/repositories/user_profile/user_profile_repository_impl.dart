@@ -34,13 +34,19 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   }) async {
     await _db.transaction(() async {
       final existing = await _db.userProfileDao.get();
-      await _db.userProfileDao.upsert(
-        UserProfilesCompanion.insert(
-          userName: Value(userName),
-          checkInCycleHours: Value(checkInCycleHours),
-          firstLaunchAt: existing?.firstLaunchAt ?? DateTime.now(),
-        ),
+      final companion = UserProfilesCompanion.insert(
+        userName: Value(userName),
+        checkInCycleHours: Value(checkInCycleHours),
+        firstLaunchAt: existing?.firstLaunchAt ?? DateTime.now(),
       );
+      if (existing != null) {
+        // v0.32 round 8 (R112 drift probe): insertOnConflictUpdate 忽略
+        // Value(null) — 已存在行时走显式 update().write 才能清空 userName
+        // (用户删除姓名场景), 与 export import profile 段同款修法
+        await _db.update(_db.userProfiles).write(companion);
+      } else {
+        await _db.userProfileDao.upsert(companion);
+      }
     });
   }
 

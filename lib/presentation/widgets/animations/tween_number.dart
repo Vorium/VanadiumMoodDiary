@@ -13,7 +13,6 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 
 /// 公共 tween number widget (P1-13 superpowers-en)

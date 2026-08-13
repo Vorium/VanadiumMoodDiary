@@ -3,11 +3,11 @@
 // 之前 notification_service.showSafetyAlert 50 行 0 test (只是 facade 委派),
 // R65 抽到 SafetyAlertBuilder (纯函数) 后补 6 case TDD test, 锁 5 个分支:
 //
-// 测试设计 (覆盖 3 态 SMS outcome + lastCheckIn 2 态 + userName 2 态):
-// 1. smsOk > 0 + userName + lastCheckIn some → title/body 走 "已自动通知" (sent)
+// 测试设计 (覆盖 3 态 SMS outcome + lastCheckIn 2 态):
+// 1. smsOk > 0 + lastCheckIn some → title/body 走 "已自动通知" (sent)
 // 2. smsMock > 0 + lastCheckIn null → body 走 "中性化 mocked" (已触发失联提醒) + "从未打卡"
 // 3. smsFail > 0 + 全 0 → body 走 "通知发送失败" (failed 兜底)
-// 4. userName = null → title 退化为 "您"
+// 4. R32 锁屏 PII: title 静态模板 (无 userName 参数, v0.32 round 8 删)
 // 5. lastCheckIn = DateTime(2026, 7, 1) → body 包含 "2026-07-01" 格式化
 // 6. 3 locale 覆盖 (zh / en / zh_Hant): 验证 i18n key 都不为 null + 各自 locale 内容
 //
@@ -45,10 +45,8 @@ void main() {
     test('1. smsOk=2 > 0 → body 走 safetyAlertBodySent (l10n 关键词: "已自动通知")', () {
       // v0.31.1 R32 (P0-04 锁屏 PII 跨 3 视角共识): title 改静态不含 name
       // (锁屏可见, userName 是 PII 风险, R108 修了 body 但漏 title).
-      // title 走 l10n.titleFor(days) 拿 "⚠️ 已 N 天未打卡" 模板, userName
-      // 参数保留 (兼容旧 caller 签名) 但 builder 内部不用.
+      // v0.32 round 8 (R111 B1-5): userName 死参数已删.
       final build = SafetyAlertBuilder.buildFor(
-        userName: '张三',
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 2, smsFail: 0, smsMock: 0),
@@ -73,7 +71,6 @@ void main() {
 
     test('2. smsMock=1 > 0 + lastCheckIn=null → body 走 mocked + "从未打卡"', () {
       final build = SafetyAlertBuilder.buildFor(
-        userName: '李四',
         daysWithoutCheckIn: 5,
         lastCheckIn: null,
         outcome: (smsOk: 0, smsFail: 0, smsMock: 1),
@@ -91,7 +88,6 @@ void main() {
 
     test('3. smsFail=2 + 全 0 → body 走 failed (兜底)', () {
       final build = SafetyAlertBuilder.buildFor(
-        userName: '王五',
         daysWithoutCheckIn: 7,
         lastCheckIn: DateTime(2026, 7, 16),
         outcome: (smsOk: 0, smsFail: 2, smsMock: 0),
@@ -108,11 +104,10 @@ void main() {
       expect(build.body, isNot(contains('开发模式')), reason: 'failed 不是 mocked');
     });
 
-    test('4. userName=null → title 跟 userName=非空 一致 (R32 锁屏 PII)', () {
+    test('4. title 走 l10n 静态模板 (R32 锁屏 PII)', () {
       // v0.31.1 R32 (P0-04 锁屏 PII): title 走 l10n 静态模板, 不含 name.
-      // 因此 userName=null 跟 userName=非空 title 完全一致.
+      // v0.32 round 8 (R111 B1-5): userName 死参数已删 (R32 后 builder 不再用).
       final build = SafetyAlertBuilder.buildFor(
-        userName: null,
         daysWithoutCheckIn: 2,
         lastCheckIn: null,
         outcome: (smsOk: 0, smsFail: 0, smsMock: 0),
@@ -127,7 +122,6 @@ void main() {
 
     test('5. lastCheckIn = DateTime(2026, 7, 1) → 格式化 "2026-07-01" (补零)', () {
       final build = SafetyAlertBuilder.buildFor(
-        userName: '赵六',
         daysWithoutCheckIn: 1,
         lastCheckIn: DateTime(2026, 7, 1),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),
@@ -146,7 +140,6 @@ void main() {
       // en locale 走 en l10n → "⚠️ No check-in for 3 days" (R32 锁屏 PII 改
       //   后 en 文案也不含 userName).
       final build = SafetyAlertBuilder.buildFor(
-        userName: 'Alice',
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),
@@ -178,7 +171,6 @@ void main() {
         () {
       // 验证 NotificationDetails 字段正确 (R65 重构不丢任何属性)
       final build = SafetyAlertBuilder.buildFor(
-        userName: '张三',
         daysWithoutCheckIn: 3,
         lastCheckIn: DateTime(2026, 7, 20),
         outcome: (smsOk: 1, smsFail: 0, smsMock: 0),
@@ -233,7 +225,6 @@ void main() {
           (smsOk: 0, smsFail: 1, smsMock: 0),
         ]) {
           final build = SafetyAlertBuilder.buildFor(
-            userName: 'Test',
             daysWithoutCheckIn: 3,
             lastCheckIn: DateTime(2026, 7, 20),
             outcome: outcome,

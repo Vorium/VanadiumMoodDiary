@@ -54,7 +54,7 @@ class MigrationPromptController {
 /// v0.30 R108 (god class 拆): 公开 widget, 原 _MigrationPromptApp
 class MigrationPromptApp extends StatelessWidget {
   final MigrationPromptController controller;
-  const MigrationPromptApp({required this.controller});
+  const MigrationPromptApp({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class MigrationPromptApp extends StatelessWidget {
 /// **N12 fix**: "已备份，重试"按钮调 [main] 重启流程，不必杀进程。
 class MigrationAbortedApp extends StatelessWidget {
   final Future<void> Function() onRetry;
-  const MigrationAbortedApp({required this.onRetry});
+  const MigrationAbortedApp({super.key, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +136,7 @@ class MigrationFailedApp extends StatelessWidget {
   /// 内部异常文本 (脱敏后), 走 l10n.migrationFailedFooter 拼到 footer
   final String errorMessage;
 
-  const MigrationFailedApp({required this.errorMessage});
+  const MigrationFailedApp({super.key, required this.errorMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +217,7 @@ class MigrationFailedApp extends StatelessWidget {
 
 /// R104: 最小 loading App — 启动时立即显示，让用户看到白屏时间缩短
 class EarlyLoadingApp extends StatelessWidget {
-  const EarlyLoadingApp();
+  const EarlyLoadingApp({super.key});
 
   @override
   Widget build(BuildContext context) {

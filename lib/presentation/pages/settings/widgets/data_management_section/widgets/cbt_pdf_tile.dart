@@ -28,6 +28,7 @@ import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart'
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
+import 'package:chroniccare/presentation/services/cbt_pdf_l10n.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 
@@ -49,23 +50,30 @@ class CbtPdfTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppListTile(
-      leading: Icon(
-        Icons.picture_as_pdf_outlined,
-        color: AppTokens.primaryColor(context),
+    // v0.32 round 13 (R112 EM-02/AH-04): 透明 Material 包 ListTile,
+    // 防 Flutter debug assert (ListTile 在 AppleListSection 白色
+    // DecoratedBox 容器内 ink 不可见)
+    return Material(
+      type: MaterialType.transparency,
+      child: AppListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(
+          Icons.picture_as_pdf_outlined,
+          color: AppTokens.primaryColor(context),
+        ),
+        title: Text(AppLocalizations.of(context).cbtExportPdfButton),
+        subtitle: Text(
+          AppLocalizations.of(context).cbtExportPdfDialogTitle,
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          if (onExport != null) {
+            onExport!();
+          } else {
+            _exportCbtPdf(context, ref);
+          }
+        },
       ),
-      title: Text(AppLocalizations.of(context).cbtExportPdfButton),
-      subtitle: Text(
-        AppLocalizations.of(context).cbtExportPdfDialogTitle,
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        if (onExport != null) {
-          onExport!();
-        } else {
-          _exportCbtPdf(context, ref);
-        }
-      },
     );
   }
 
@@ -115,7 +123,8 @@ class CbtPdfTile extends ConsumerWidget {
       final pdfBytes = await pdfFacade.build(
         entries: filtered,
         dateRange: DateRange(picked.start, picked.end),
-        l10n: l10n,
+        // v0.32 R112 (AR-16): data 0 依赖 l10n/ 生成 ARB, 走 CbtPdfL10n 适配器
+        l10n: AppLocalizationsCbtPdfL10n(l10n),
       );
       if (!context.mounted) return;
       // Printing.layoutPdf 要求 LayoutCallback 返回 FutureOr<Uint8List> (见

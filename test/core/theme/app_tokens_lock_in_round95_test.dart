@@ -313,9 +313,14 @@ void main() {
         count += RegExp(r'\bEdgeInsets\.').allMatches(content).length;
       }
       // v0.31 Apple Health redesign baseline (spacing 收紧后 EdgeInsets 引用减少)
+      // v0.32 R112 round 8: 288 实测 — F1/F2 视觉专项把 settings/contact/
+      // crisis/reminders_hub/vent/assessment/mood_list/daily_tracking 8 feature
+      // 批量 Card→AppleListSection 化 (净 +38 处半 token EdgeInsets, 与
+      // R110 round 5 同款理由: 均为真实新结构 spacing, 无重复可并) → 阈值 300,
+      // buffer 12。仍拒 288+12 的上探。
       expect(
         count,
-        lessThanOrEqualTo(250),
+        lessThanOrEqualTo(300),
         reason: 'v0.31 Apple Health redesign baseline',
       );
     });

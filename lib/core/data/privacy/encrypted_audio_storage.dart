@@ -29,7 +29,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/data/utils/skip_backup.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// v0.23 (Round 43 spen-2): 加密 audio 文件管理基类
 ///
@@ -171,7 +171,7 @@ abstract class EncryptedAudioStorage {
             await plainFile.delete();
           }
         } catch (cleanupErr, cleanupSt) {
-          swallowError(
+          audioErrorSink(
             where: '$debugTag.encryptAndWrite',
             error: cleanupErr,
             stack: cleanupSt,
@@ -186,7 +186,7 @@ abstract class EncryptedAudioStorage {
     try {
       await plainFile.delete();
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: '$debugTag.encryptAndWrite',
         error: e,
         stack: st,
@@ -226,7 +226,7 @@ abstract class EncryptedAudioStorage {
         await f.delete();
       }
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: '$debugTag.deleteTempFile',
         error: e,
         stack: st,
@@ -246,7 +246,7 @@ abstract class EncryptedAudioStorage {
       }
       return true;
     } catch (e, st) {
-      swallowError(
+      audioErrorSink(
         where: '$debugTag.deleteAudio',
         error: e,
         stack: st,
@@ -267,7 +267,7 @@ abstract class EncryptedAudioStorage {
           await entity.delete();
           count++;
         } catch (e, st) {
-          swallowError(
+          audioErrorSink(
             where: '$debugTag.deleteAll',
             error: e,
             stack: st,
@@ -298,7 +298,7 @@ abstract class EncryptedAudioStorage {
         } catch (e, st) {
           // 单文件 stat 失败 → 跳过这个文件, 继续累加其它
           // v0.17 round 14 (P1-5): 之前静默, 现在 dev 模式可见
-          swallowError(
+          audioErrorSink(
             where: '$debugTag.totalSizeBytes',
             error: e,
             stack: st,

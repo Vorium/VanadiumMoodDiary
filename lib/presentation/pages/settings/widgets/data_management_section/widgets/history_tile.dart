@@ -30,20 +30,27 @@ class HistoryTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AppListTile(
-      leading: Icon(Icons.history, color: AppTokens.primaryColor(context)),
-      title: Text(AppLocalizations.of(context).settingsReportHistory),
-      subtitle: Text(
-        AppLocalizations.of(context).settingsReportHistorySubtitle,
+    // v0.32 round 13 (R112 EM-02/AH-04): 透明 Material 包 ListTile,
+    // 防 Flutter debug assert (ListTile 在 AppleListSection 白色
+    // DecoratedBox 容器内 ink 不可见)
+    return Material(
+      type: MaterialType.transparency,
+      child: AppListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(Icons.history, color: AppTokens.primaryColor(context)),
+        title: Text(AppLocalizations.of(context).settingsReportHistory),
+        subtitle: Text(
+          AppLocalizations.of(context).settingsReportHistorySubtitle,
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          if (onShow != null) {
+            onShow!();
+          } else {
+            _showReportHistory(context);
+          }
+        },
       ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {
-        if (onShow != null) {
-          onShow!();
-        } else {
-          _showReportHistory(context);
-        }
-      },
     );
   }
 

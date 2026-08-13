@@ -86,7 +86,7 @@ void main() {
       // med id 公式: 2000 + medId*10 + i (i ∈ [0,9]);
       // medId 19999 → max = 2000 + 199990 + 9 = 201999 (仍在 med cancel 内)
       const int maxMedId = 19999;
-      final maxMedIdValue = 2000 + maxMedId * 10 + 9;
+      const maxMedIdValue = 2000 + maxMedId * 10 + 9;
       expect(maxMedIdValue, lessThan(2000 + kReminderCancelRange));
 
       // refill id 公式: 6000 + medId; 上限 medId 19999 → 25999 < 206000 安全

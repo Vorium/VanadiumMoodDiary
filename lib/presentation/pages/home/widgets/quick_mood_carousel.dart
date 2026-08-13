@@ -32,6 +32,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
@@ -88,13 +89,9 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
         //   `_recordQuick` 方法内取 l10n (line 90 引用了 l10n 但 local
         //   变量在 build() 范围), 加 final l10n 修 10 fail.
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            // R32 (P0-15 i18n 跨期): 改 l10n (P0-12 emil: 顺便走 AppSnackBar 集中器)
-            content: Text(l10n.moodQuickRecordFailed),
-            duration: AppTokens.snackBarDurationShort,
-          ),
-        );
+        // v0.32 round 8 (R111 EM-05 fix): 走 AppSnackBar 集中器
+        // (P0-12 emil 建议过但 R32 漏)
+        AppSnackBar.showInfo(context, l10n.moodQuickRecordFailed);
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -121,12 +118,21 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
                 ),
                 const Spacer(),
                 // "more" icon: 1 tap 走完整 MoodDialog 4 维度评分
+                // v0.32 round 8 (R112-02 fix): 18pt 裸 icon 无最小 tap target
+                // (<44pt Apple HIG), 包 44×44 SizedBox + Center — 视觉 icon
+                // 大小不变, tap 区域扩到 44pt
                 PressFeedback(
                   onTap: widget.onOpenFullDialog,
-                  child: Icon(
-                    Icons.tune,
-                    size: 18,
-                    color: AppTokens.textHintColor(context),
+                  child: SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Center(
+                      child: Icon(
+                        Icons.tune,
+                        size: 18,
+                        color: AppTokens.textHintColor(context),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -177,11 +183,13 @@ class _MoodButton extends StatelessWidget {
       child: AnimatedScale(
         // 选中 spring 放大 1.1
         scale: isSelected ? 1.1 : 1.0,
-        duration: AppTokens.durNormal,
-        curve: AppTokens.curveSpring,
+        // v0.32 round 8 (R111 EM-18 fix): 走 Motion wrapper
+        // (全代码库最后一个 reduce-motion 盲区)
+        duration: Motion.duration(context, AppTokens.durNormal),
+        curve: Motion.curve(context, AppTokens.curveSpring),
         child: AnimatedContainer(
-          duration: AppTokens.durNormal,
-          curve: AppTokens.curveStandard,
+          duration: Motion.duration(context, AppTokens.durNormal),
+          curve: Motion.curve(context, AppTokens.curveStandard),
           width: _diameter,
           height: _diameter,
           decoration: BoxDecoration(
@@ -189,16 +197,13 @@ class _MoodButton extends StatelessWidget {
             // 未选: 透明 (跟 AppleListSection surface 一致)
             color: isSelected
                 ? color.withValues(
-                    alpha:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? 0.18
-                            : 0.12,
+                    alpha: Theme.of(context).brightness == Brightness.dark
+                        ? 0.18
+                        : 0.12,
                   )
                 : AppColors.transparent,
             shape: BoxShape.circle,
-            border: isSelected
-                ? Border.all(color: color, width: 2)
-                : null,
+            border: isSelected ? Border.all(color: color, width: 2) : null,
           ),
           alignment: Alignment.center,
           child: Text(

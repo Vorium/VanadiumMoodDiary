@@ -5,15 +5,17 @@
 // 1. Spring.standard: mass 1, stiffness 200, damping 20 — 临界阻尼 ~0.4s
 // 2. Spring.gentle:   mass 1, stiffness 150, damping 18 — 0.5s (慢 + 轻阻尼)
 // 3. Spring.bouncy:   mass 1, stiffness 200, damping 12 — 0.5s 轻弹 (庆祝)
-// 4. Spring.of(context, type) factory: 3 类型各返正确实例 (testWidgets 拿 ctx)
-// 5. Spring.toSimulation + toDescription: 返 SpringSimulation 物理形态正确
+// 4. Spring.toSimulation + toDescription: 返 SpringSimulation 物理形态正确
+//
+// v0.32 round 8 (R112-03): Spring.of + SpringType 死代码已删 (0 caller,
+// 3 静态实例 + toSimulation 保留作为物理模型 API) — 原 case 4
+// (Spring.of factory 分发) 同步删除。
 //
 // 跨视角共识: emil P0-E + superpowers-en P1 + Apple Health P0-3
 // (3 视角都指出 Spring 物理模型 0 caller 死代码, R10 接 _EntrySpring 后
 // 必须有物理模型本身的 unit test 兜底)
 
-import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart' hide SpringType;
+import 'package:flutter/physics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/theme/spring.dart';
@@ -28,8 +30,7 @@ void main() {
       expect(Spring.standard.damping, 20.0);
     });
 
-    test('Spring.gentle: 慢 + 轻阻尼 0.5s (stiffness 150 < standard 200)',
-        () {
+    test('Spring.gentle: 慢 + 轻阻尼 0.5s (stiffness 150 < standard 200)', () {
       // spec §3.4.3: 慢 + 轻阻尼 0.5s — modal 进出 / drawer
       expect(Spring.gentle.mass, 1.0);
       expect(Spring.gentle.stiffness, 150.0);
@@ -38,38 +39,13 @@ void main() {
       expect(Spring.gentle.stiffness, lessThan(Spring.standard.stiffness));
     });
 
-    test('Spring.bouncy: 临界 + 轻阻尼 0.5s 轻弹 (damping 12 < standard 20)',
-        () {
+    test('Spring.bouncy: 临界 + 轻阻尼 0.5s 轻弹 (damping 12 < standard 20)', () {
       // spec §3.4.3: 0.5s 轻弹 — celebration / tile hover
       expect(Spring.bouncy.mass, 1.0);
       expect(Spring.bouncy.stiffness, 200.0);
       expect(Spring.bouncy.damping, 12.0);
       // 跟 standard 比: damping 12 < 20 (更弹, 多次震荡)
       expect(Spring.bouncy.damping, lessThan(Spring.standard.damping));
-    });
-
-    testWidgets('Spring.of(context, type) factory: 3 类型各返正确实例',
-        (tester) async {
-      // Spring.of 内部不读 ctx (R4b 留 ctx 为未来 reduced motion / theme 接入),
-      // 仅按 type 分发. 测 3 case + ctx 不影响结果.
-      late BuildContext capturedCtx;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (ctx) {
-                capturedCtx = ctx;
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-        ),
-      );
-      expect(capturedCtx, isA<BuildContext>());
-
-      expect(Spring.of(capturedCtx, SpringType.standard), same(Spring.standard));
-      expect(Spring.of(capturedCtx, SpringType.gentle), same(Spring.gentle));
-      expect(Spring.of(capturedCtx, SpringType.bouncy), same(Spring.bouncy));
     });
 
     test(

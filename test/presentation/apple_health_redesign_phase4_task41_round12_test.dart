@@ -39,13 +39,13 @@ void main() {
   testWidgets(
     'trend SummaryCard → AppleListSection 内 4 StatCard (ultralight large)',
     (tester) async {
-      final summary = StreakSummary(
+      const summary = StreakSummary(
         currentStreak: 5,
         longestStreak: 12,
         totalCheckIns: 30,
         totalDays: 60,
       );
-      await tester.pumpWidget(_wrap(SummaryCard(summary: summary)));
+      await tester.pumpWidget(_wrap(const SummaryCard(summary: summary)));
       await tester.pumpAndSettle();
 
       // AppleListSection 容器
@@ -63,9 +63,9 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         _wrap(
-          AppleListSection(
+          const AppleListSection(
             title: 'summary',
-            children: const [Text('A'), Text('B')],
+            children: [Text('A'), Text('B')],
           ),
         ),
       );
@@ -157,8 +157,8 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         _wrap(
-          AppleListSection(
-            children: const [Text('A'), Text('B'), Text('C')],
+          const AppleListSection(
+            children: [Text('A'), Text('B'), Text('C')],
           ),
         ),
       );

@@ -5,11 +5,14 @@
 // - 有条目：列表渲染（首条预览、时长）
 // - 有 audio 的条目：显示 mic 图标 + 时长
 // - "+"按钮 + 写第一句按钮都跳到 compose
+// - v0.32 R112 (EM-02/AH-04): ALS 结构 + systemPurple FAB
+import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -219,6 +222,42 @@ void main() {
     expect(find.text('第一条'), findsOneWidget);
     expect(find.text('第二条'), findsOneWidget);
     expect(find.text('第三条'), findsOneWidget);
+  });
+
+  testWidgets(
+      'v0.32 R112 ALS 结构: 列表无 Card, 有 AppleListSection + systemPurple FAB',
+      (tester) async {
+    _setBigView(tester);
+    await tester.pumpWidget(
+      _wrap([
+        VentEntryEntity(
+          id: 1,
+          timestamp: DateTime(2026, 7, 15, 10, 30),
+          contentText: '今天有点累，先说一下吧',
+        ),
+      ]),
+    );
+    await tester.pumpAndSettle();
+
+    // Card 方言清除 (spec §5.6: AppleListSection 替代 Card + Padding)
+    expect(find.byType(AppleListSection), findsOneWidget);
+    expect(find.byType(Card), findsNothing);
+
+    // AH-15: systemPurple FAB (跟 medication systemRed FAB 同模式)
+    final fab = tester.widget<FloatingActionButton>(
+      find.byType(FloatingActionButton),
+    );
+    expect(fab.backgroundColor, AppColors.healthMetricsColorFor('vent'));
+  });
+
+  testWidgets('v0.32 R112 ALS 结构: 空列表无 FAB (EmptyState 自带 action)',
+      (tester) async {
+    _setBigView(tester);
+    await tester.pumpWidget(_wrap([]));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.text('写第一句'), findsOneWidget);
   });
 }
 

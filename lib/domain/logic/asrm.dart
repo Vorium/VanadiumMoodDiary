@@ -33,14 +33,15 @@ class AsrmScale implements AssessmentScale {
   @override
   String get id => 'asrm';
 
+  // v0.32 round 8 (R111 E4/R111-02 fix): 走 translations (跟 phq9 一致)
   @override
-  String get displayName => 'ASRM 自评躁狂量表';
+  String get displayName => translations.asrmName();
 
   @override
-  String get shortDescription => 'Altman 1997 自评躁狂量表 (5 题)';
+  String get shortDescription => translations.asrmShortDescription();
 
   @override
-  String get instruction => '过去 1 周内, 您有 (或感觉到) 以下情况的程度?';
+  String get instruction => translations.asrmInstruction();
 
   @override
   List<AssessmentItem> get items => const [

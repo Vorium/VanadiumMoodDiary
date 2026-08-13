@@ -8,6 +8,7 @@
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
+import 'package:chroniccare/presentation/pages/mood_list/mood_detail_page.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_trend_page.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
@@ -43,6 +44,18 @@ class AppRouteMoodList {
         pageBuilder: (context, state) => AppRoutes.slideUpPage(
           state.pageKey,
           const MoodRecorderPage(),
+          context,
+        ),
+      ),
+      // v0.32 round 8 (R112-02): /mood/detail/:id — 情绪详情 (列表条目点击进入,
+      // occasional 频度, slide-right; R112 前 MoodDetailPage 是无路由死代码)
+      GoRoute(
+        path: '/mood/detail/:id',
+        pageBuilder: (context, state) => AppRoutes.slideRightPage(
+          state.pageKey,
+          MoodDetailPage(
+            entryId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
           context,
         ),
       ),

@@ -1,7 +1,7 @@
 // v0.27 round 82: ConsentArtifact dataExport 流程 + ConsentDialog 抽象化 测试
 //
 // 任务: ConsentDialog.show 抽象化支持 5 个 kind + 数据导出走 PIPL §13
-// 单独同意 + LegalConsentStore.recordDataExportConsent 写 audit log
+// 单独同意 + ConsentPreferenceStore.recordDataExportConsent 写 audit log
 // (修复前 dataExport 只有"敏感文字警告" 通用 dialog, 没生成 ConsentArtifact,
 // 法务复查时缺 §13 同意证据)
 //
@@ -18,7 +18,7 @@
 // 4. ConsentArtifact JSON round-trip (5 字段经 jsonEncode/jsonDecode 不丢)
 // 5. 4 个新 i18n key (dataExportConsentTitle/Body/Confirm/Version) 在 3 个 ARB 同步
 // 6. dataExportConsentBody 3 placeholder (purpose / dataCategories / retention) 声明
-// 7. LegalConsentStore.recordDataExportConsent 写 SharedPreferences 后能读回
+// 7. ConsentPreferenceStore.recordDataExportConsent 写 SharedPreferences 后能读回
 // 8. recordDataExportConsent 多次调用累积到 log (不覆盖, 满足 PIPL §17 同意记录)
 // 9. v0.30 R95 task 31a: 验证 SharedPreferences 存的是 base64 密文, 非明文
 // 10. v0.30 R95 task 31a: 1 条坏密文 skip, 其他条目继续
@@ -31,7 +31,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
-import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
+import 'package:chroniccare/core/data/services/consent_preference_store.dart';
 
 void main() {
   setUp(() {
@@ -86,7 +86,7 @@ void main() {
 
     test('ConsentArtifact JSON round-trip (5 字段经 jsonEncode/jsonDecode 不丢)',
         () {
-      // 跟 LegalConsentStore.recordDataExportConsent / readDataExportConsentLog
+      // 跟 ConsentPreferenceStore.recordDataExportConsent / readDataExportConsentLog
       // 内的 jsonEncode/jsonDecode 路径对齐, 验证序列化协议正确
       final original = ConsentArtifact(
         kind: ConsentKind.dataExport,
@@ -95,7 +95,7 @@ void main() {
         contactId: null,
         version: 'v0.27-2026-08-15',
       );
-      // 序列化 (走 Map, 跟 LegalConsentStore.recordDataExportConsent 同步)
+      // 序列化 (走 Map, 跟 ConsentPreferenceStore.recordDataExportConsent 同步)
       final encoded = jsonEncode({
         'kind': original.kind.name,
         'grantedAt': original.grantedAt.toIso8601String(),
@@ -165,9 +165,10 @@ void main() {
       }
     });
 
-    test('LegalConsentStore.recordDataExportConsent 写 SharedPreferences 后能读回',
+    test('ConsentPreferenceStore.recordDataExportConsent 写 SharedPreferences 后能读回',
         () async {
-      final store = LegalConsentStore();
+      final store =
+          ConsentPreferenceStore(await SharedPreferences.getInstance());
       final artifact = ConsentArtifact(
         kind: ConsentKind.dataExport,
         grantedAt: DateTime.utc(2026, 8, 15, 12, 0),
@@ -190,7 +191,8 @@ void main() {
 
     test('recordDataExportConsent 多次调用累积到 log (不覆盖, PIPL §17 同意记录可追溯)',
         () async {
-      final store = LegalConsentStore();
+      final store =
+          ConsentPreferenceStore(await SharedPreferences.getInstance());
       final a1 = ConsentArtifact(
         kind: ConsentKind.dataExport,
         grantedAt: DateTime.utc(2026, 8, 15, 10),
@@ -219,7 +221,8 @@ void main() {
         () async {
       // 验证 1) 写入后 SharedPreferences 实际内容是 base64 密文
       //      2) 读回的明文不含 PII 字符串 (grantedBy 等)
-      final store = LegalConsentStore();
+      final store =
+          ConsentPreferenceStore(await SharedPreferences.getInstance());
       final artifact = ConsentArtifact(
         kind: ConsentKind.dataExport,
         grantedAt: DateTime.utc(2026, 8, 15, 10, 30),
@@ -261,7 +264,8 @@ void main() {
     test('v0.30 R95 task 31a: 1 条坏密文 skip, 其他条目继续读', () async {
       // 模拟 SharedPreferences 有 1 条合法加密 + 1 条坏数据 (非 base64 / 错误 key)
       // 验证 readDataExportConsentLog 只 skip 坏条目, 返合法条目
-      final store = LegalConsentStore();
+      final store =
+          ConsentPreferenceStore(await SharedPreferences.getInstance());
       final a1 = ConsentArtifact(
         kind: ConsentKind.dataExport,
         grantedAt: DateTime.utc(2026, 8, 15, 12),
@@ -287,7 +291,8 @@ void main() {
         'v0.30 R95 task 31b: reset(ConsentKind.dataExport) 同步清 audit log (PIPL §47 删除权)',
         () async {
       // 验证用户撤回 dataExport 同意时, audit log 也一起清 (PIPL §47 撤回留痕)
-      final store = LegalConsentStore();
+      final store =
+          ConsentPreferenceStore(await SharedPreferences.getInstance());
       await store.recordDataExportConsent(
         ConsentArtifact(
           kind: ConsentKind.dataExport,
@@ -316,7 +321,8 @@ void main() {
       // 显式 API 跟 reset 走同条路径, 但解耦: reset 是"撤回同意", clear 是
       // "只清 log 不撤回同意"。当前实现下两条路径等价 (reset 自动清, 显式
       // clear 是 same), 提供显式入口为 v1.0 业务侧独立按钮铺路。
-      final store = LegalConsentStore();
+      final store =
+          ConsentPreferenceStore(await SharedPreferences.getInstance());
       await store.recordDataExportConsent(
         ConsentArtifact(
           kind: ConsentKind.dataExport,

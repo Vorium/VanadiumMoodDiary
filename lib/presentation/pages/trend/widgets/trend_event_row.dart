@@ -11,7 +11,6 @@
 // 历史遗留, 现在拆出来后 import 测更顺。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';

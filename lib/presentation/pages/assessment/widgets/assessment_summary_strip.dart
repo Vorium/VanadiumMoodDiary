@@ -1,15 +1,18 @@
-﻿// v0.24 round 46 (emil B-11 god class 续拆): SummaryStrip 抽到独立文件
+// v0.24 round 46 (emil B-11 god class 续拆): SummaryStrip 抽到独立文件
 //
 // 顶部汇总条：总次数 / 最新 PHQ-9 / 最新 GAD-7
 //
 // 高内聚：只关心 records → 3 stat 卡片
 // 低耦合：被 AssessmentHistoryPage orchestrator 调，靠 assessmentSeverityStyle 算颜色
+//
+// v0.32 R112 (EM-02/AH-04, spec §5.7): Card → AppleListSection
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/assessment_record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_severity_style.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 class AssessmentSummaryStrip extends StatelessWidget {
   final List<AssessmentRecord> records;
@@ -22,10 +25,10 @@ class AssessmentSummaryStrip extends StatelessWidget {
     final latestGad7 = _latest(records, 'gad7');
     final totalCount = records.length;
     final l10n = AppLocalizations.of(context);
-    return Card(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Row(
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        Row(
           children: [
             Expanded(
               child: _Stat(
@@ -80,7 +83,7 @@ class AssessmentSummaryStrip extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 

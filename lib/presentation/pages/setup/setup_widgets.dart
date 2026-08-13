@@ -9,25 +9,73 @@
 //   章节头 (跟 SectionHeader ALL CAPS 11pt 不同 — 这两个是 Hero 级别)。
 import 'package:flutter/material.dart';
 
+import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/services/preset_med_l10n.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 内存态的药物草稿
+///
+/// v0.32 round 8 (R112-09 fix): 加 times 变更通知回调 —
+/// 修前 `times` 是裸 List，MedCard 的 InputChip onDeleted / ActionChip 添加
+/// 直接改 list 不触发任何通知 → 用户"删除、添加没反应"假 bug。修后
+/// [addTime] / [removeTimeAt] 触发 [attachListener] 注册的回调（跟
+/// nameController/dosageController listener 同款模式），接
+/// SetupPageState._onTextChanged → setState 重建。
 class MedDraft {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController dosageController = TextEditingController();
   String dosageUnit = 'mg';
   final List<TimeOfDay> times = [];
 
+  VoidCallback? _onTimesChanged;
+
   void attachListener(VoidCallback cb) {
     nameController.addListener(cb);
     dosageController.addListener(cb);
+    // v0.32 round 8 (R112-09): times 变更也走同一回调
+    _onTimesChanged = cb;
+  }
+
+  /// v0.32 round 8 (R112-09): 添加服药时间 — 自动按 hour*60+minute 升序
+  /// 排序 + 触发变更通知 (替代裸 `times.add` + 手动 sort)
+  void addTime(TimeOfDay t) {
+    times.add(t);
+    times.sort(
+      (a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute),
+    );
+    _onTimesChanged?.call();
+  }
+
+  /// v0.32 round 8 (R112-09): 删除服药时间 — 触发变更通知
+  /// (替代裸 `times.removeAt`)
+  void removeTimeAt(int index) {
+    times.removeAt(index);
+    _onTimesChanged?.call();
+  }
+
+  /// v0.32 R112 (AR-20 批2a): 预置方案草稿 → 内存态草稿工厂
+  ///
+  /// 拆自 setup_page_state._showPresetTemplatesSheet 的 20L 构造逻辑
+  /// (1:1): 药名走 i18n (spzh P2-G, 用户可编辑覆盖), 整数剂量去 .0,
+  /// times 转 TimeOfDay。
+  static MedDraft fromTemplate(MedicationDraft d, AppLocalizations l10n) {
+    return MedDraft()
+      ..nameController.text = d.nameL10n(l10n)
+      ..dosageController.text = d.dosage == d.dosage.toInt()
+          ? d.dosage.toInt().toString()
+          : d.dosage.toString()
+      ..dosageUnit = d.dosageUnit
+      ..times.addAll(
+        d.times.map((hm) => TimeOfDay(hour: hm.hour, minute: hm.minute)),
+      );
   }
 
   void dispose() {
     nameController.dispose();
     dosageController.dispose();
+    _onTimesChanged = null;
   }
 }
 

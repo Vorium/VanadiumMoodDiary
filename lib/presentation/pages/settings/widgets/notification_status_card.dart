@@ -18,6 +18,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart'
+    show openAppSettings;
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
 import 'package:chroniccare/core/theme/app_colors.dart';
@@ -26,7 +28,8 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
@@ -83,9 +86,61 @@ class _NotificationStatusCardState
       // R97-P1-6 (2026-08-07): 测试前先请求权限 (用户点"测试通知"按钮
       // 是明确的上下文, 此刻请求权限符合 App Store 5.1.1 指南)。
       // 之前在 main.dart init() 启动时弹, 用户没看到 UI 不知为何授权。
-      await service.requestPermission();
+      final granted = await service.requestPermission();
+      if (!granted && !kIsWeb) {
+        // v0.32 round 8 (R111 GP-10 fix): Android 14+ 永久拒绝后无法再弹
+        // 系统框, 用户误拒 → 提醒静默失效且无重新授权入口。弹引导 dialog,
+        // "前往系统设置" 走 permission_handler.openAppSettings。
+        if (!mounted) return;
+        final goSettings = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(
+              AppLocalizations.of(ctx)
+                  .notificationStatusCardPermissionDeniedTitle,
+            ),
+            content: Text(
+              AppLocalizations.of(ctx)
+                  .notificationStatusCardPermissionDeniedBody,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(AppLocalizations.of(ctx).commonClose),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  AppLocalizations.of(ctx)
+                      .notificationStatusCardPermissionGoSettings,
+                ),
+              ),
+            ],
+          ),
+        );
+        if (goSettings ?? false) {
+          try {
+            await openAppSettings();
+          } catch (e, st) {
+            // 打开系统设置失败不炸 (罕见, 平台不支持时用户手动走路径)
+            notificationErrorSink(
+              where: 'notification_status_card.openAppSettings',
+              error: e,
+              stack: st,
+              note: 'openAppSettings failed',
+            );
+          }
+        }
+        return;
+      }
       await service.showNow(
-        id: 99001, // 测试用 id,不会跟任何业务通知冲突（_refillBaseId 6000+）
+        // v0.32 round 8 (R112-06 注释漂移修): 测试 id 改 5M+ 带外
+        // (50000100)。旧 99001 落在 refill band [6000, 206000) 内
+        // (6000 + medId=93001 理论碰撞), 5M+ 带是 R110 B1-1 固定带
+        // (safety 5000000 / assessment 5000001 / mood 5000002 /
+        // carePush 5000010+ / badge 5000100), 50000100 不与任何 cancel
+        // range (上界 2300000) 或固定 id 冲突。
+        id: 50000100,
         title: l10n.notificationStatusCardTestTitle,
         body: l10n.notificationStatusCardTestBody,
       );
@@ -115,7 +170,7 @@ class _NotificationStatusCardState
         pending = await plugin.pendingNotificationRequests();
       } catch (e, st) {
         // v0.23 (Round 37 P0): 走 swallowError, dev mode 能看到失败
-        swallowError(
+        notificationErrorSink(
           where: 'notification_status_card._showDetails.pending',
           error: e,
           stack: st,
@@ -179,15 +234,26 @@ class _NotificationStatusCardState
       final l10n = AppLocalizations.of(context);
       // v0.26 round 57 (emil C-12): 走 AppListTile.carded 集中器
       // carded 命名构造自带 Card 包裹
-      return AppListTile.carded(
-        leading:
-            Icon(Icons.info_outline, color: AppTokens.textHintColor(context)),
-        title: Text(l10n.notificationStatusCardWebTitle),
-        subtitle: Text(
-          l10n.notificationStatusCardWebSubtitle,
-          style: AppTokens.textStyleBody(context)
-              .copyWith(color: AppTokens.textHintColor(context)),
-        ),
+      // v0.32 round 13 (R112 EM-02/AH-04): Card 改 AppleListSection
+      return AppleListSection(
+        margin: EdgeInsets.zero,
+        children: [
+          _alsCell(
+            AppListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(
+                Icons.info_outline,
+                color: AppTokens.textHintColor(context),
+              ),
+              title: Text(l10n.notificationStatusCardWebTitle),
+              subtitle: Text(
+                l10n.notificationStatusCardWebSubtitle,
+                style: AppTokens.textStyleBody(context)
+                    .copyWith(color: AppTokens.textHintColor(context)),
+              ),
+            ),
+          ),
+        ],
       );
     }
 
@@ -201,12 +267,16 @@ class _NotificationStatusCardState
                 ? l10n.notificationStatusCardStatusNone
                 : l10n.notificationStatusCardStatusCount(pending);
 
-    return Card(
-      child: Column(
-        children: [
-          // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
-          // 替代 inline ListTile (在 Card > Column 内, 不用 carded 避免 Card 嵌套)
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): Card 容器改
+    // AppleListSection (iOS insetGrouped 风格, spec §4.5)
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
+        // 替代 inline ListTile (在 Card > Column 内, 不用 carded 避免 Card 嵌套)
+        _alsCell(
           AppListTile.standard(
+            contentPadding: EdgeInsets.zero,
             leading: Icon(
               Icons.notifications_active_outlined,
               color: AppTokens.primaryColor(context),
@@ -235,8 +305,10 @@ class _NotificationStatusCardState
                     onPressed: _refresh,
                   ),
           ),
-          const Divider(height: 1, thickness: 0.5),
+        ),
+        _alsCell(
           AppListTile(
+            contentPadding: EdgeInsets.zero,
             leading: Icon(
               Icons.send_outlined,
               color: AppTokens.primaryColor(context),
@@ -245,26 +317,25 @@ class _NotificationStatusCardState
             subtitle: Text(l10n.notificationStatusCardTestButtonSubtitle),
             onTap: _busy ? null : _fireTest,
           ),
-          const Divider(height: 1, thickness: 0.5),
+        ),
+        _alsCell(
           AppListTile(
+            contentPadding: EdgeInsets.zero,
             leading:
                 Icon(Icons.list_alt, color: AppTokens.primaryColor(context)),
             title: Text(l10n.notificationStatusCardViewButtonTitle),
             subtitle: Text(l10n.notificationStatusCardViewButtonSubtitle),
             onTap: _busy ? null : _showDetails,
           ),
-          const Divider(height: 1, thickness: 0.5),
-          // OEM 引导 — 用 ExpansionTile 折叠，不抢主屏空间
-          // v0.30 round 93 (阶段 2 audit-fixes): 走
-          // [FeatureFlags.fiveVendorPushEnabled] gate, 5 厂商 push SDK 接入前
-          // 完全 hidden (业务暂停, 5 厂商引导文字不适配, 用户在国产 ROM 上收不到
-          // 通知时可参考主屏"测试通知"自检卡)。
-          if (FeatureFlags.fiveVendorPushEnabled)
-            const _OemBackgroundHint()
-          else
-            const SizedBox.shrink(),
-        ],
-      ),
+        ),
+        // OEM 引导 — 用 ExpansionTile 折叠，不抢主屏空间
+        // v0.30 round 93 (阶段 2 audit-fixes): 走
+        // [FeatureFlags.fiveVendorPushEnabled] gate, 5 厂商 push SDK 接入前
+        // 完全 hidden (业务暂停, 5 厂商引导文字不适配, 用户在国产 ROM 上收不到
+        // 通知时可参考主屏"测试通知"自检卡)。
+        if (FeatureFlags.fiveVendorPushEnabled)
+          _alsCell(const _OemBackgroundHint()),
+      ],
     );
   }
 }
@@ -280,6 +351,9 @@ class _OemBackgroundHint extends StatelessWidget {
       // 去掉 ExpansionTile 默认的圆形图标背景，跟整体风格一致
       data: Theme.of(context).copyWith(dividerColor: AppColors.transparent),
       child: ExpansionTile(
+        // v0.32 round 13 (R112 EM-02/AH-04): 容器改 AppleListSection 后
+        // cell padding 由容器提供, tilePadding 归零避免双倍缩进
+        tilePadding: EdgeInsets.zero,
         leading:
             Icon(Icons.phone_android, color: AppTokens.primaryColor(context)),
         title: Text(l10n.notificationStatusCardOemTitle),
@@ -290,11 +364,8 @@ class _OemBackgroundHint extends StatelessWidget {
             fontSize: AppTokens.fontSizeCaptionSm,
           ),
         ),
-        childrenPadding: const EdgeInsets.fromLTRB(
-          AppTokens.spacingMd,
-          0,
-          AppTokens.spacingMd,
-          AppTokens.spacingMd,
+        childrenPadding: const EdgeInsets.only(
+          bottom: AppTokens.spacingMd,
         ),
         children: [
           _OemBrand(
@@ -410,4 +481,11 @@ class _OemBrand extends StatelessWidget {
       ),
     );
   }
+}
+
+/// v0.32 round 13 (R112 EM-02/AH-04): ListTile 在 AppleListSection 的
+/// 白色 DecoratedBox 容器内会触发 Flutter debug assert — 包一层透明
+/// Material 让 ListTile ink 画在最近的 Material 祖先上
+Widget _alsCell(Widget child) {
+  return Material(type: MaterialType.transparency, child: child);
 }

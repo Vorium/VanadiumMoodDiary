@@ -23,7 +23,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -149,7 +149,7 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
       } catch (e, st) {
         // v0.30 R92: 走 swallowError 集中器, 替代完全静默 (R39 P1-10 模式)
         // notifier 已 dispose (test teardown); 记录 dev 模式看 devtools
-        swallowError(
+        audioErrorSink(
           where: 'mood_recorder_page.dispose_cbtDraft_reset',
           error: e,
           stack: st,

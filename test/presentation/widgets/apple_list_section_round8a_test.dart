@@ -150,10 +150,15 @@ void main() {
         ),
       );
 
-      // 找 DecoratedBox → BoxDecoration.color 应该是 surfaceDark (#1C1C1E)
-      final decor = tester.widget<DecoratedBox>(find.byType(DecoratedBox));
-      final box = decor.decoration as BoxDecoration;
-      expect(box.color, const Color(0xFF1C1C1E),
+      // 找 Material (R112 round 8 ink root fix: DecoratedBox → Material) →
+      // color 应该是 surfaceDark (#1C1C1E)
+      final surface = tester.widget<Material>(
+        find.descendant(
+          of: find.byType(AppleListSection),
+          matching: find.byType(Material),
+        ),
+      );
+      expect(surface.color, const Color(0xFF1C1C1E),
           reason:
               'dark mode 容器 surface = #1C1C1E (iOS secondarySystemGroupedBackground)',);
     });

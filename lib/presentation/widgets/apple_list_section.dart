@@ -30,18 +30,19 @@
 // - 不依赖 Material Card (0 阴影走自定义 Container, emil 决策 #3)
 // Apple Health 风格 (spec §4.5 insetGrouped 风格 + hairline 0.5 divider + 13pt ALL CAPS title) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
-
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 
 /// Apple Health / iOS 群组列表 (insetGrouped) 风格章节
 ///
 /// API:
 /// - [title]     — 可选, 13pt w500 ALL CAPS letter-spacing 0.6 textHint
 ///                 不传则不渲染 title (适合"已用 section 包裹"嵌套场景)
-/// - [chip]      — 可选, title 右侧数量徽章 (e.g. "5"), 走 inline _ChipBadge
-///                 (跟 SectionHeader chip 同源, v0.28 R81 设计, 本地化用)
+/// - [chip]      — 可选, title 右侧数量徽章 (e.g. "5"), 走公共 ChipBadge
+///                 (跟 SectionHeader chip 同源, v0.28 R81 设计, 本地化用;
+///                 v0.32 round 8 EM-09b 删私有 _ChipBadge 副本)
 /// - [children]  — 内容 cell list, 内部用 hairline Divider(thickness: 0.5) 分隔
 /// - [footer]    — 可选, 章节下方小字 (Apple iOS 标准 footer 文字)
 /// - [margin]    — 外边距, 默认 EdgeInsets.symmetric(horizontal: pageMarginH=20)
@@ -53,8 +54,9 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// (home/setup/medication/mood/...) 切换到 AppleListSection。
 ///
 /// v0.31 round 11a: 加 [chip] 参数 (让 medication_page 等可显示 "5" 数量徽章).
-/// 注意: 标题仍 inline 渲染 13pt (spec §4.5), 不用 [SectionHeader] (那是 11pt per
-/// spec §4.6, 跟本 widget 13pt 是有意的两个不同字号).
+/// 注意: 标题 inline 渲染 13pt (spec §4.5), 不走 [SectionHeader] — 它
+/// v0.32 round 8 (R111 EM-02b) 后同为 13pt 但无 chip 参数, 本 widget 保留
+/// inline 实现跟锁 test 一致 (R112-06 注释漂移修).
 class AppleListSection extends StatelessWidget {
   const AppleListSection({
     super.key,
@@ -75,6 +77,10 @@ class AppleListSection extends StatelessWidget {
   /// 走 [SectionHeader.chip] 模式 (B 站哗哩哗哩能量加油站风格)
   /// 1 行 Row[title, chip], 跟 [SectionHeader] 一致。
   /// 不传则不渲染 chip。
+  ///
+  /// v0.32 round 8 (R112 EM-09b fix): 走公共 widgets/ChipBadge 集中器
+  /// (修前本文件私有 _ChipBadge 副本, 跟 ChipBadge + SectionHeader 副本
+  /// 3 份同视觉代码)
   final String? chip;
 
   /// 内容 cell list, 内部用 hairline Divider(thickness: 0.5) 分隔
@@ -130,9 +136,11 @@ class AppleListSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // ===== 可选 title (13pt w500 ALL CAPS letterSpacing 0.6 textHint) =====
-          // v0.31 round 11a (revert): 不用 [SectionHeader] 因为它是 11pt
-          // (per spec §4.6), 这里要 13pt (per spec §4.5). 改 inline Text + 可选
-          // chip 模式, 跟 lock-in test apple_list_section_round8a 一致.
+          // v0.31 round 11a (revert): 不用 [SectionHeader] — 它 v0.32 round 8
+          // (R111 EM-02b) 已从 11pt 升到 13pt (fontSizeCaption, 跟本 widget 同字号),
+          // 但 SectionHeader 无 chip 参数且布局语义不同 (cell 内小标题 vs
+          // 章节 header). 保留 inline Text + 可选 chip 模式,
+          // 跟 lock-in test apple_list_section_round8a 一致.
           if (title != null) ...[
             Padding(
               // 8 上 + 4 下 (spec "padding 8/4" — 给上方 section 留空, 紧贴 section 内容)
@@ -153,20 +161,23 @@ class AppleListSection extends StatelessWidget {
                   ),
                   if (chip != null) ...[
                     const SizedBox(width: AppTokens.spacingXs),
-                    _ChipBadge(label: chip!),
+                    ChipBadge(label: chip!),
                   ],
                 ],
               ),
             ),
           ],
           // ===== 内容: 圆角 16 白色 (surface) 容器 =====
+          // v0.32 round 8 (R112 F1/F2 ALS 化 root fix): DecoratedBox → Material
+          // — ListTile/InkWell 放进非 Material 的 DecoratedBox 会触发
+          // "ink splashes may be invisible" debug assert (cbt_section 等 widget
+          // test 实测崩); Material(clipBehavior: antiAlias) 提供 ink 支持
+          // 且 ClipRRect 可省 (Material 自带 clip)
           ClipRRect(
             borderRadius: BorderRadius.circular(AppTokens.radiusCard), // 16
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: surfaceColor,
-                // 0 阴影 (跟 Apple Health 卡片一致, emil 决策 #3)
-              ),
+            child: Material(
+              color: surfaceColor,
+              clipBehavior: Clip.antiAlias,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: _buildCells(dividerColor),
@@ -221,37 +232,6 @@ class AppleListSection extends StatelessWidget {
     return Padding(
       padding: _cellPadding,
       child: child,
-    );
-  }
-}
-
-/// v0.31 round 11a: 标题右侧数量徽章
-///
-/// 跟 [SectionHeader] 内部的 [_ChipBadge] 视觉一致 (B 站"哗哩哗哩能量加油站"风格),
-/// 但这里独立定义, 避免 widget 互依赖 (AppleListSection 不 import SectionHeader).
-class _ChipBadge extends StatelessWidget {
-  const _ChipBadge({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTokens.spacingSm,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: AppTokens.tintedPrimarySoft(context),
-        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: AppTokens.fontSizeCaption,
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
     );
   }
 }

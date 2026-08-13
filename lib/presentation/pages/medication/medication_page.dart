@@ -36,9 +36,10 @@ import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// v0.30 R108 (P1 medication_page 拆): 抽到 domain 后, presentation 层只
@@ -127,24 +128,27 @@ class MedicationPage extends ConsumerWidget {
                       value: '${_pendingCount(slots)}',
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
-                    // 已服 (medication 红, "已服" 计数)
+                    // v0.32 R112 (AH-16): 已服 → checkIn (systemGreen,
+                    // 打卡/完成语义; 修前 4 tile 全同色同 icon)
                     AppleHealthTile(
-                      metricId: 'medication',
+                      metricId: 'checkIn',
                       label: l10n.medTodayTaken, // "已服"
                       value: '${_takenCount(slots)}',
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
-                    // 续方提醒 (medication 红, "需续方" 计数)
+                    // v0.32 R112 (AH-16): 续方提醒 → contact (systemOrange,
+                    // R112 审计建议 refill=orange; 修前同 medication 红)
                     AppleHealthTile(
-                      metricId: 'medication',
+                      metricId: 'contact',
                       label: l10n.medTodayRefill, // "需续方"
                       value: '${_refillAlertCount(meds)}',
                       onTap: () => context.push('/settings/refills'),
                     ),
                     const SizedBox(width: AppTokens.spacingSm),
-                    // 用药日历 (medication 红, "日历" 入口)
+                    // v0.32 R112 (AH-16): 用药日历 → trend (systemBlue,
+                    // R112 审计建议 history=blue; 修前同 medication 红)
                     AppleHealthTile(
-                      metricId: 'medication',
+                      metricId: 'trend',
                       label: l10n.medsCalendarTitle, // "用药日历"
                       value: l10n.homeQuickActionView, // "查看"
                       onTap: () => context.push('/medication/calendar'),
@@ -183,15 +187,17 @@ class MedicationPage extends ConsumerWidget {
                     for (final med in allMeds)
                       MedicationListCell(
                         med: med,
-                        onTap: () => context.push('/medication/detail/${med.id}'),
+                        onTap: () =>
+                            context.push('/medication/detail/${med.id}'),
                       ),
                 ],
               ),
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        loading: () => const Center(child: LoadingSpinner()),
+        // v0.32 round 8 (R111 EM-15 fix): inline Text error → ErrorState
+        error: (e, _) => ErrorState(title: '$e'),
       ),
     );
   }
@@ -245,7 +251,8 @@ class MedicationPage extends ConsumerWidget {
             child: AppleListSection(
               title: _slotLabel(slot, l10n), // "早上" / "下午" / etc
               margin: EdgeInsets.zero,
-              chip: '${slots[slot]!.where((e) => e.done).length}/${slots[slot]!.length}',
+              chip:
+                  '${slots[slot]!.where((e) => e.done).length}/${slots[slot]!.length}',
               children: [
                 for (final e in slots[slot]!) _SlotEntryRow(entry: e),
               ],

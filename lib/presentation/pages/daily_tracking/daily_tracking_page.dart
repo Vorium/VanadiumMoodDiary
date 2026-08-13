@@ -32,6 +32,7 @@ import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_i
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/providers/tracking_config_provider.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/charts/daily_tracking_multi_chart.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
@@ -78,17 +79,22 @@ class DailyTrackingPage extends ConsumerWidget {
           ],
 
           // 5. 分类区 (按类别分组)
+          // v0.32 R112 (EM-02/AH-04): TrackingCategoryHeader + Padding(Card)
+          // → AppleListSection (iOS 群组列表, 类别名走 ALL CAPS title)
           for (final entry in itemsByCategory.entries) ...[
-            TrackingCategoryHeader(category: entry.key),
-            for (final item in entry.value)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppTokens.spacingXs),
-                child: TrackingItemCard(
-                  config: item,
-                  onRecord: () => context.push(item.route),
-                  onLongPress: () => _showItemActions(context, ref, item),
-                ),
-              ),
+            AppleListSection(
+              title: _categoryLabel(l10n, entry.key),
+              margin: EdgeInsets.zero,
+              children: [
+                for (final item in entry.value)
+                  TrackingItemCard(
+                    config: item,
+                    onRecord: () => context.push(item.route),
+                    onLongPress: () => _showItemActions(context, ref, item),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppTokens.spacingSm),
           ],
 
           // 底部间距
@@ -96,6 +102,20 @@ class DailyTrackingPage extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// v0.32 R112: 分类名 → l10n (原 TrackingCategoryHeader 私有映射平移)
+  String _categoryLabel(AppLocalizations l10n, TrackingCategory cat) {
+    switch (cat) {
+      case TrackingCategory.emotional:
+        return l10n.trackingCategoryEmotional;
+      case TrackingCategory.physical:
+        return l10n.trackingCategoryPhysical;
+      case TrackingCategory.behavioral:
+        return l10n.trackingCategoryBehavioral;
+      case TrackingCategory.medical:
+        return l10n.trackingCategoryMedical;
+    }
   }
 
   /// 长按弹出操作菜单
@@ -194,10 +214,7 @@ class _LatestSummarySection extends ConsumerWidget {
     if (_isToday(treatment)) trackedItems.add(l10n.treatmentName);
     if (_isToday(weight)) trackedItems.add(l10n.weightName);
 
-    final totalCount = ref
-        .watch(trackingConfigProvider)
-        .allVisibleItems
-        .length;
+    final totalCount = ref.watch(trackingConfigProvider).allVisibleItems.length;
 
     return TodayTrackingSummary(
       trackedCount: trackedItems.length,

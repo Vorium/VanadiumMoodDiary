@@ -9,9 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/entities/influence_category.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/services/influence_factor_l10n.dart';
 
 /// 因素关联分析卡片
 class MoodFactorAnalysis extends ConsumerWidget {
@@ -66,8 +68,11 @@ class MoodFactorAnalysis extends ConsumerWidget {
     for (final e in entries) {
       if (!e.hasInfluenceFactors) continue;
       for (final factor in e.influenceFactors) {
-        factorScores.putIfAbsent(factor, () => []);
-        factorScores[factor]!.add(e.score);
+        // v0.32 R112-03: 归一化成 i18n key 再分组 (兼容存量中文数据),
+        // 展示侧走 influenceFactorL10nLabel ARB 派发
+        final key = influenceFactorNormalizeKey(factor);
+        factorScores.putIfAbsent(key, () => []);
+        factorScores[key]!.add(e.score);
       }
     }
 
@@ -104,11 +109,22 @@ class _FactorRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // 指示条颜色走浅色状态色 (装饰用)
     final color = avgScore >= 4
         ? AppColors.success
         : avgScore >= 3
             ? AppColors.warning
             : AppColors.error;
+    // v0.32 round 8 (R112 EM-16b fix): 状态色只作指示条/装饰,
+    // 文字色走深色档 token (浅色状态色白底对比度 2.3~3.0:1 不达标):
+    // - ≥4 → fgOnSuccess 深绿 #2E7D32
+    // - 3   → fgOnWarning 深橙 #E65100 (R111 EM-16)
+    // - <3  → fgError 深红 #C62828
+    final textColor = avgScore >= 4
+        ? AppColors.fgOnSuccess
+        : avgScore >= 3
+            ? AppColors.fgOnWarning
+            : AppColors.fgError;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -124,10 +140,10 @@ class _FactorRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppTokens.spacingSm),
-          // 因素名
+          // 因素名 (key → locale 文案, 未知自定义值原样上屏)
           Expanded(
             child: Text(
-              factor,
+              influenceFactorL10nLabel(l10n, factor),
               style: const TextStyle(
                 fontSize: AppTokens.fontSizeBodySm,
                 fontWeight: FontWeight.w500,
@@ -140,7 +156,7 @@ class _FactorRow extends StatelessWidget {
             style: TextStyle(
               fontSize: AppTokens.fontSizeBody,
               fontWeight: FontWeight.w700,
-              color: color,
+              color: textColor,
             ),
           ),
           const SizedBox(width: AppTokens.spacingXs),

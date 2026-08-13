@@ -27,13 +27,13 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/core/theme/app_motion.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/info_banner.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
-import 'package:chroniccare/presentation/widgets/section_header.dart';
 
 /// 单条热线 entry 数据 (label + number + 可选 desc)
 @immutable
@@ -154,56 +154,68 @@ class CrisisHotlinePage extends StatelessWidget {
           ),
           const SizedBox(height: AppTokens.spacingMd),
           // 5 地区分组
+          // v0.32 round 13 (R112 EM-02/AH-04 视觉债): SectionHeader +
+          // AppListTile.carded 旧方言改 AppleListSection (iOS insetGrouped
+          // 风格, spec §4.5), 地区标题走 AppleListSection title
+          // (13pt ALL CAPS textHint)
           for (final group in groups) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.spacingMd,
-                vertical: AppTokens.spacingSm,
-              ),
-              child: SectionHeader(title: group.title),
+            AppleListSection(
+              title: group.title,
+              margin: EdgeInsets.zero,
+              children: [
+                for (final entry in group.entries)
+                  // v0.32 round 13: 透明 Material 包 ListTile, 防
+                  // Flutter debug assert (ListTile 在 AppleListSection
+                  // 白色 DecoratedBox 容器内 ink 不可见)
+                  Material(
+                    type: MaterialType.transparency,
+                    child: AppListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        Icons.phone_in_talk_outlined,
+                        color: AppTokens.tintedPrimaryDeep(context),
+                      ),
+                      title: Text(
+                        entry.label,
+                        style: AppTokens.textStyleLabelStrong(context),
+                      ),
+                      subtitle: Text(
+                        '${entry.number}${entry.desc != null ? ' · ${entry.desc}' : ''}',
+                        style: AppTokens.textStyleBody(context),
+                      ),
+                      // R97-P1-11 (2026-08-07): trailing 改 Row (拨打 + 复制 2 个
+                      // IconButton), 危机时刻用户 1 tap 即可拨打, 不再需要"复制
+                      // → 打开拨号 App → 粘贴 → 拨打"4 步。点 tile 主体仍走
+                      // _copyNumber (保留快捷复制)。
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
+                          // PressFeedbackIconButton 集中器, iconSize → size
+                          // (集中器参数名)。
+                          PressFeedbackIconButton(
+                            icon: Icons.phone_outlined,
+                            size: AppTokens.iconSizeSmall,
+                            color: AppTokens.tintedPrimaryDeep(context),
+                            tooltip: l10n.crisisHotlineDialTooltip,
+                            onPressed: () =>
+                                _dialNumber(context, l10n, entry.number),
+                          ),
+                          PressFeedbackIconButton(
+                            icon: Icons.copy_outlined,
+                            size: AppTokens.iconSizeSmall,
+                            color: AppTokens.textSecondaryColor(context),
+                            tooltip: l10n.crisisHotlineCopyTooltip,
+                            onPressed: () =>
+                                _copyNumber(context, l10n, entry.number),
+                          ),
+                        ],
+                      ),
+                      onTap: () => _copyNumber(context, l10n, entry.number),
+                    ),
+                  ),
+              ],
             ),
-            for (final entry in group.entries)
-              AppListTile.carded(
-                leading: Icon(
-                  Icons.phone_in_talk_outlined,
-                  color: AppTokens.tintedPrimaryDeep(context),
-                ),
-                title: Text(
-                  entry.label,
-                  style: AppTokens.textStyleLabelStrong(context),
-                ),
-                subtitle: Text(
-                  '${entry.number}${entry.desc != null ? ' · ${entry.desc}' : ''}',
-                  style: AppTokens.textStyleBody(context),
-                ),
-                // R97-P1-11 (2026-08-07): trailing 改 Row (拨打 + 复制 2 个
-                // IconButton), 危机时刻用户 1 tap 即可拨打, 不再需要"复制
-                // → 打开拨号 App → 粘贴 → 拨打"4 步。点 tile 主体仍走
-                // _copyNumber (保留快捷复制)。
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // v0.31.1 round 8 (emil P0-C + R108 P1-001 漏修): 改用
-                    // PressFeedbackIconButton 集中器, iconSize → size
-                    // (集中器参数名)。
-                    PressFeedbackIconButton(
-                      icon: Icons.phone_outlined,
-                      size: AppTokens.iconSizeSmall,
-                      color: AppTokens.tintedPrimaryDeep(context),
-                      tooltip: l10n.crisisHotlineDialTooltip,
-                      onPressed: () => _dialNumber(context, l10n, entry.number),
-                    ),
-                    PressFeedbackIconButton(
-                      icon: Icons.copy_outlined,
-                      size: AppTokens.iconSizeSmall,
-                      color: AppTokens.textSecondaryColor(context),
-                      tooltip: l10n.crisisHotlineCopyTooltip,
-                      onPressed: () => _copyNumber(context, l10n, entry.number),
-                    ),
-                  ],
-                ),
-                onTap: () => _copyNumber(context, l10n, entry.number),
-              ),
             const SizedBox(height: AppTokens.spacingMd),
           ],
         ],
@@ -217,12 +229,8 @@ class CrisisHotlinePage extends StatelessWidget {
   /// 其他 app (e.g. 通讯录 / 拨号) 拨打。3 语 i18n 走 l10n。
   void _copyNumber(BuildContext context, AppLocalizations l10n, String number) {
     Clipboard.setData(ClipboardData(text: number));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.crisisHotlineSnackbarCopied(number)),
-        duration: AppMotion.snackBarDurationShort,
-      ),
-    );
+    // v0.32 round 8 (R111 EM-05 fix): 走 AppSnackBar 集中器
+    AppSnackBar.showInfo(context, l10n.crisisHotlineSnackbarCopied(number));
   }
 
   /// R97-P1-11 (2026-08-07): 一键拨打危机热线 (tel: intent)
@@ -246,12 +254,7 @@ class CrisisHotlinePage extends StatelessWidget {
       // ignore: use_build_context_synchronously — 同步紧跟 canLaunchUrl,
       // widget 树稳定 (本页是无状态列表, 不会在 await 期间 dispose)。
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.crisisHotlineDialFailed(number)),
-          duration: AppMotion.snackBarDurationShort,
-        ),
-      );
+      AppSnackBar.showInfo(context, l10n.crisisHotlineDialFailed(number));
     }
   }
 }

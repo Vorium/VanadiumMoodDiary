@@ -16,6 +16,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 /// v0.29 round 84 (settings): 思维记录档位 radio 入口
 ///
@@ -31,60 +32,65 @@ class CbtSection extends ConsumerWidget {
     final level = ref.watch(thoughtRecordLevelProvider);
     final notifier = ref.read(thoughtRecordLevelProvider.notifier);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppTokens.spacingMd,
-          vertical: AppTokens.spacingSm,
+    // v0.32 round 13 (R112 EM-02/AH-04 视觉债): Card 容器改
+    // AppleListSection (iOS insetGrouped 风格, spec §4.5), 内部标题/
+    // 描述/RadioGroup 布局原样保留。透明 Material 包 RadioListTile
+    // (ListTile 在 ALS 白色 DecoratedBox 容器内 ink 不可见 assert)
+    return AppleListSection(
+      margin: EdgeInsets.zero,
+      children: [
+        Material(
+          type: MaterialType.transparency,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: AppTokens.spacingXxs,
+                  bottom: AppTokens.spacingXxs,
+                ),
+                child: Text(
+                  l10n.settingsCbtLevel,
+                  style: AppTokens.textStyleTitle(context),
+                ),
+              ),
+              Text(
+                l10n.settingsCbtLevelDescription,
+                style: AppTokens.textStyleCaption(context),
+              ),
+              const SizedBox(height: AppTokens.spacingXxs),
+              // R97-P1-13 (2026-08-07): 迁移到 RadioGroup 新 API。
+              //
+              // Flutter 3.32+ 弃用 RadioListTile.groupValue / RadioListTile.onChanged
+              // 单 tile 自管理状态模式, 改用 RadioGroup 祖先 widget 集中管理
+              // groupValue + onChanged (满足 APG/ARIA 键盘导航 + 语义属性要求)。
+              // 修前 deprecated_member_use info warning 2 处。
+              //
+              // 语义不变: 3 个 tile 互斥单选, 选中后 fire-and-forget 写 SP。
+              RadioGroup<ThoughtRecordLevel>(
+                groupValue: level,
+                onChanged: (newVal) {
+                  if (newVal != null) {
+                    // fire-and-forget: SP 写入异步, 不阻塞 UI
+                    unawaited(notifier.setLevel(newVal));
+                  }
+                },
+                child: Column(
+                  children: [
+                    for (final lv in ThoughtRecordLevel.values)
+                      RadioListTile<ThoughtRecordLevel>(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(l10n.moodCbtColumns(lv.columnCount)),
+                        subtitle: Text(_descriptionFor(lv, l10n)),
+                        value: lv,
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: AppTokens.spacingXxs,
-                bottom: AppTokens.spacingXxs,
-              ),
-              child: Text(
-                l10n.settingsCbtLevel,
-                style: AppTokens.textStyleTitle(context),
-              ),
-            ),
-            Text(
-              l10n.settingsCbtLevelDescription,
-              style: AppTokens.textStyleCaption(context),
-            ),
-            const SizedBox(height: AppTokens.spacingXxs),
-            // R97-P1-13 (2026-08-07): 迁移到 RadioGroup 新 API。
-            //
-            // Flutter 3.32+ 弃用 RadioListTile.groupValue / RadioListTile.onChanged
-            // 单 tile 自管理状态模式, 改用 RadioGroup 祖先 widget 集中管理
-            // groupValue + onChanged (满足 APG/ARIA 键盘导航 + 语义属性要求)。
-            // 修前 deprecated_member_use info warning 2 处。
-            //
-            // 语义不变: 3 个 tile 互斥单选, 选中后 fire-and-forget 写 SP。
-            RadioGroup<ThoughtRecordLevel>(
-              groupValue: level,
-              onChanged: (newVal) {
-                if (newVal != null) {
-                  // fire-and-forget: SP 写入异步, 不阻塞 UI
-                  unawaited(notifier.setLevel(newVal));
-                }
-              },
-              child: Column(
-                children: [
-                  for (final lv in ThoughtRecordLevel.values)
-                    RadioListTile<ThoughtRecordLevel>(
-                      title: Text(l10n.moodCbtColumns(lv.columnCount)),
-                      subtitle: Text(_descriptionFor(lv, l10n)),
-                      value: lv,
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 

@@ -33,6 +33,7 @@ import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/services/store_kit_service.dart';
 import 'package:chroniccare/core/data/utils/skip_backup.dart';
+import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/main/boot_apps.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
@@ -225,8 +226,15 @@ Future<void> _initTimezones() async {
 }
 
 /// 并行任务 3: 初始化通知服务 + 返回结果
+///
+/// v0.32 R112 (R112-ARCH-02): navigation 回调在 app 层接线 — data service
+/// 0 依赖 core/routing (传递 Flutter 依赖)。tap 走
+/// NotificationNavigation.handleTap, launch payload 走 setLaunchPayload。
 Future<_NotificationInitResult> _initNotification() async {
-  final service = NotificationService();
+  final service = NotificationService(
+    onNotificationTap: NotificationNavigation.handleTap,
+    onLaunchPayload: NotificationNavigation.setLaunchPayload,
+  );
   try {
     await service.init();
     // scheduleDailyReminder 延迟到 AppRoot.initState 的 postFrameCallback,

@@ -5,7 +5,7 @@
 // 2. 新数据 null
 // 3. 正常姓名
 // 4. 自定义 fallback
-import 'package:chroniccare/core/shared/user_name_helper.dart';
+import 'package:chroniccare/domain/logic/user_name_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -15,14 +15,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('AliyunSmsProvider (R57, 当前为 R63 守门 stub)', () {
-    AliyunSmsProvider _full() => AliyunSmsProvider(
+    AliyunSmsProvider full() => AliyunSmsProvider(
           accessKeyId: 'test-key-id',
           accessKeySecret: 'test-key-secret',
           signName: '慢病管家',
           templateCode: 'SMS_999999',
         );
 
-    AliyunSmsProvider _empty() => AliyunSmsProvider(
+    AliyunSmsProvider empty() => AliyunSmsProvider(
           accessKeyId: '',
           accessKeySecret: '',
           signName: '',
@@ -30,30 +30,30 @@ void main() {
         );
 
     test('name = "aliyun" (供 UI 检测)', () {
-      expect(_full().name, 'aliyun');
+      expect(full().name, 'aliyun');
     });
 
     test('isProductionReady = false 即使 4 字段齐全 (R63 守门)', () {
       // R63 设计: send() 未真接 → 4 字段齐全也 false → release 启动
       // validateForRelease 阻断 + banner 显眼告警, 防"假成功"静默失效
-      expect(_full().isProductionReady, false,
-          reason: 'send() 未真接 (R55 阿里云 AccessKey 外部阻塞) 前必须 false');
+      expect(full().isProductionReady, false,
+          reason: 'send() 未真接 (R55 阿里云 AccessKey 外部阻塞) 前必须 false',);
     });
 
     test('isProductionReady = false 字段缺失', () {
-      expect(_empty().isProductionReady, false);
+      expect(empty().isProductionReady, false);
     });
 
     test('send() throw StateError (v1.0 TODO 痕迹, 不静默假成功)', () {
       expect(
-        () => _full().send(to: '13800138000', body: 'hello'),
+        () => full().send(to: '13800138000', body: 'hello'),
         throwsStateError,
       );
     });
 
     test('send() throw 不论参数如何 (stub 阶段)', () async {
       expect(
-        () => _empty().send(to: '13800138000', body: 'x', templateId: 'SMS_1'),
+        () => empty().send(to: '13800138000', body: 'x', templateId: 'SMS_1'),
         throwsA(isA<StateError>()),
       );
     });

@@ -92,6 +92,7 @@ class PressFeedbackIconButton extends StatelessWidget {
     if (onTap != null) {
       return PressFeedback(
         onTap: onTap,
+        enabled: true,
         child: IconButton(
           icon: iconWidget,
           tooltip: tooltip,
@@ -101,7 +102,12 @@ class PressFeedbackIconButton extends StatelessWidget {
         ),
       );
     }
+    // v0.32 round 8 (R112-09 emil): 模式 2 传 enabled — 构造 assert
+    // `(onPressed == null) ^ (onTap == null)` 在 release build 被 strip,
+    // 双 null 理论可达: IconButton 灰禁用但 PressFeedback Listener 仍
+    // scale + haptic 假反馈。显式 enabled 让禁用态走原样渲染。
     return PressFeedback(
+      enabled: onPressed != null,
       child: IconButton(
         icon: iconWidget,
         tooltip: tooltip,

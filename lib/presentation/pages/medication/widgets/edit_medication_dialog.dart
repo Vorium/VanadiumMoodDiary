@@ -16,7 +16,6 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/dialog_actions_row.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
-import 'package:chroniccare/presentation/providers/shared_providers.dart';
 
 /// 弹出编辑 dialog，返回 true 表示有保存成功，false/null = 取消
 Future<bool?> showEditMedicationDialog(
@@ -146,7 +145,8 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       // provider 在 loading 期间被 dispose → "disposed during loading"
       // Bad state → 保存成功却显示失败。改走 repo.watchAll().first
       // (非 autoDispose, 语义等同: 等 DB 重新 emit 最新列表)。
-      final meds = await ref.read(medicationRepositoryProvider).watchAll().first;
+      final meds =
+          await ref.read(medicationRepositoryProvider).watchAll().first;
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       // medication reminders: 整个重排（停药会自然被 reschedule 排除）
       await notif.delegate.rescheduleMedicationReminders(meds);

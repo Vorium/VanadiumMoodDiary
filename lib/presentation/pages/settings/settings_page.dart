@@ -38,11 +38,13 @@ class SettingsPage extends ConsumerWidget {
         children: const [
           SizedBox(height: AppTokens.spacingMd),
           ProfileGroup(),
-          SizedBox(height: AppTokens.spacingLg),
+          // v0.32 round 13 (R112 EM-02/AH-04): spacingLg → spacingMd
+          // (跟 home AppleListSection 章节间距 16 一致, spec §5.1)
+          SizedBox(height: AppTokens.spacingMd),
           RemindersGroup(),
-          SizedBox(height: AppTokens.spacingLg),
+          SizedBox(height: AppTokens.spacingMd),
           DataGroup(),
-          SizedBox(height: AppTokens.spacingLg),
+          SizedBox(height: AppTokens.spacingMd),
           LegalGroup(),
           SizedBox(height: AppTokens.spacingMd),
         ],

@@ -20,7 +20,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// v0.16 round 19/19B 教训: cancel range 必须 ≥ base + maxId * 系数。
 /// 统一给 200000, 覆盖 medId 几万个 (远超实际用户量, int32 安全 ~2.1B)。
@@ -85,7 +85,7 @@ class ReminderDispatcher {
       try {
         await _plugin.cancel(id).timeout(const Duration(seconds: 2));
       } catch (e, st) {
-        swallowError(
+        notificationErrorSink(
           where: 'reminder_dispatcher.cancelByIdRange',
           error: e,
           stack: st,

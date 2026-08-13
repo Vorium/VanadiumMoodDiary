@@ -167,7 +167,7 @@ void main() {
       }
       for (final id in ids) {
         expect(id, greaterThan(2300000),
-            reason: '固定带 $id 必须跳出 snooze cancel 上界');
+            reason: '固定带 $id 必须跳出 snooze cancel 上界',);
       }
     });
   });
@@ -249,12 +249,14 @@ void main() {
       expect(called, isFalse); // 没调, 不变 true
     });
 
-    test('NotificationService 默认 onNotificationTap 委托到 NotificationNavigation',
-        () {
-      // 默认 callback 是 _defaultOnTap, 内部调 NotificationNavigation.handleTap
-      // 这里不实际触发 (handleTap 需 router bind), 只验证默认 callback 不为 null
+    test('NotificationService 默认 onNotificationTap 为 null (app 层接线, '
+        'R112 ARCH-02)', () {
+      // v0.32 R112 (R112-ARCH-02): data 0 依赖 core/routing, 默认回调改
+      // null (只 log 不导航), 生产由 main.dart 注入
+      // `NotificationNavigation.handleTap`。
       final service = NotificationService();
-      expect(service.onNotificationTap, isNotNull);
+      expect(service.onNotificationTap, isNull);
+      expect(service.onLaunchPayload, isNull);
     });
 
     test('snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes 公共 API 存在',

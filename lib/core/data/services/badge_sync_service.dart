@@ -16,7 +16,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
-import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// 角标同步 (iOS badge 数字)
 class BadgeSyncService {
@@ -89,7 +89,7 @@ class BadgeSyncService {
       // 集中器, 错误记录到 LastErrorCapture + piiSafeLog。PIPL §6 错误
       // 透明度 + dev tooling: piiSafeLog 输出脱敏 + developer.log 记
       // 完整 stack, release 包只走 piiSafeLog。
-      swallowError(
+      notificationErrorSink(
         where: 'BadgeSyncService.updateBadgeCount',
         error: e,
         stack: st,

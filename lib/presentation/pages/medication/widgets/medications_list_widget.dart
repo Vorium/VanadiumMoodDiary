@@ -7,6 +7,9 @@
 // v0.24 (Round 45) god class 拆解 (Sprint #5d) —
 //   抽 MedicationListView / MedicationRow / MedicationEmptyState / RefillDaysDialog 4 子 widget
 //   本文件保留: 3 Set 状态 + 4 handler (业务流程) + delegate build
+// v0.32 (Round 14) R112 F1 遗留: 渲染子组件 (MedicationListView) Card →
+//   AppleListSection (iOS insetGrouped, spec §4.5), 对齐已 ALS 化的
+//   settings 宿主 (profile_group)。本文件业务逻辑 0 改。
 //
 // 公开 API: MedicationsListWidget({required List<MedicationEntity> meds})
 // 调用方: medication_page.dart 等, 公开签名不变 (零改动)

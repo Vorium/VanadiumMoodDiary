@@ -145,10 +145,7 @@ void main() {
   group('Part B: SkipBackup 集中器行为 (mock platform channel)', () {
     const channel = MethodChannel('chroniccare/backup');
 
-    setUp(() {
-      // 重置 channel 缓存, 允许 mock 重新注册
-      SkipBackup.resetChannelForTest();
-    });
+    setUp(SkipBackup.resetChannelForTest);
 
     tearDown(() {
       // 清理 mock handler, 避免污染下一个 test

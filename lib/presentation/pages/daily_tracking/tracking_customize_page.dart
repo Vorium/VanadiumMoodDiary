@@ -30,29 +30,18 @@ class TrackingCustomizePage extends ConsumerWidget {
       child: ReorderableListView.builder(
         padding: AppTokens.edgeInsetsMd,
         itemCount: items.length,
-        onReorder: (oldIndex, newIndex) {
-          if (newIndex > oldIndex) newIndex--;
-          // 更新所有项的 sortOrder
+        // v0.32 R112-05: 迁 onReorderItem (onReorder deprecated,
+        // newIndex 已自动补偿, 无需手动 `if (newIndex > oldIndex) newIndex--`)
+        onReorderItem: (oldIndex, newIndex) {
+          final orders = computeReorderOrders(
+            length: items.length,
+            oldIndex: oldIndex,
+            newIndex: newIndex,
+          );
           for (int i = 0; i < items.length; i++) {
             final item = items[i];
-            int newOrder;
-            if (i == oldIndex) {
-              newOrder = newIndex;
-            } else if (oldIndex < newIndex &&
-                i > oldIndex &&
-                i <= newIndex) {
-              newOrder = i - 1;
-            } else if (oldIndex > newIndex &&
-                i >= newIndex &&
-                i < oldIndex) {
-              newOrder = i + 1;
-            } else {
-              newOrder = i;
-            }
-            if (item.sortOrder != newOrder) {
-              ref
-                  .read(trackingConfigProvider.notifier)
-                  .reorder(item.id, newOrder);
+            if (item.sortOrder != orders[i]) {
+              ref.read(trackingConfigProvider.notifier).reorder(item.id, orders[i]);
             }
           }
         },
@@ -61,6 +50,9 @@ class TrackingCustomizePage extends ConsumerWidget {
           return _TrackingItemTile(
             key: ValueKey(item.id),
             config: item,
+            // v0.32 R112-05: 传 itemBuilder 位置 i (修前用 config.sortOrder,
+            // tile 没收到 i — 拖拽时给框架报错误 index)
+            index: i,
             theme: theme,
             l10n: l10n,
             onToggleHide: () {
@@ -76,8 +68,26 @@ class TrackingCustomizePage extends ConsumerWidget {
   }
 }
 
+/// v0.32 R112-05: 计算拖拽后每项的新 sortOrder (纯函数, 便于测试)
+///
+/// 语义: 把 oldIndex 项移除后插到 newIndex (onReorderItem 的 newIndex 已
+/// 自动补偿), 各项目标 sortOrder = 目标位置 index。
+/// 返回 `List<int>` orders, orders[i] = 原列表第 i 项的新位置。
+List<int> computeReorderOrders({
+  required int length,
+  required int oldIndex,
+  required int newIndex,
+}) {
+  final positions = List<int>.generate(length, (i) => i);
+  final moved = positions.removeAt(oldIndex);
+  positions.insert(newIndex, moved);
+  return List<int>.generate(length, positions.indexOf);
+}
+
 class _TrackingItemTile extends StatelessWidget {
   final DailyTrackingItemConfig config;
+  /// v0.32 R112-05: itemBuilder 位置 (拖拽 listener 用)
+  final int index;
   final ThemeData theme;
   final AppLocalizations l10n;
   final VoidCallback onToggleHide;
@@ -86,6 +96,7 @@ class _TrackingItemTile extends StatelessWidget {
   const _TrackingItemTile({
     super.key,
     required this.config,
+    required this.index,
     required this.theme,
     required this.l10n,
     required this.onToggleHide,
@@ -162,7 +173,9 @@ class _TrackingItemTile extends StatelessWidget {
             ),
             // 拖拽手柄
             ReorderableDragStartListener(
-              index: config.sortOrder,
+              // v0.32 R112-05: 用 itemBuilder 位置 index (修前用
+              // config.sortOrder, 重排后位置与 sortOrder 脱钩会报错 index)
+              index: index,
               child: Icon(
                 Icons.drag_handle,
                 color: AppTokens.textHintColor(context),
@@ -191,7 +204,9 @@ class _TrackingItemTile extends StatelessWidget {
       case 'treatmentName':
         return l10n.treatmentName;
       default:
-        return key;
+        // v0.32 R112 P3: 漏加 switch 分支时不上屏 raw key 名 —
+        // 返兜底文案 (未知项目), 新增追踪项时必须同步加分支
+        return l10n.trackingUnknownItem;
     }
   }
 

@@ -193,9 +193,7 @@ class _ScheduleEntryCell extends StatelessWidget {
           ),
           // 右侧状态 icon
           Icon(
-            e.done
-                ? Icons.check_circle_rounded
-                : Icons.radio_button_unchecked,
+            e.done ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
             size: 22,
             color: e.done
                 ? AppTokens.primaryColor(context)

@@ -15,8 +15,8 @@
 import 'package:flutter/material.dart';
 // Apple Health 风格 (spec §4.5 section header (11pt w500 ALL CAPS letter-spacing 0.6 textHint)) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
-
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 
 /// section 标题文字
 ///
@@ -60,6 +60,10 @@ class SectionHeader extends StatelessWidget {
   /// v0.28 R81 (emil design-5): 可选 chip 标签 (title 右侧)
   /// B 站"哗哩哗哩能量加油站" 风格 chip (心情测试 / 关于B站 / 等等),
   /// 跟 AppLocalizations 标准化 ARB key 集成
+  ///
+  /// v0.32 round 8 (R112 EM-09b fix): 走公共 widgets/ChipBadge 集中器
+  /// (修前本文件私有 _ChipBadge 副本, 跟 ChipBadge + AppleListSection 副本
+  /// 3 份同视觉代码)
   final String? chip;
 
   /// v0.31 round 8b (Apple Health redesign · Phase 2 Task 2.4):
@@ -72,7 +76,10 @@ class SectionHeader extends StatelessWidget {
   final String title;
 
   /// v0.31 round 8b: 字号 16 → 11 (fontSizeCaptionSm, iOS section header 11pt)
-  static const double _fontSize = AppTokens.fontSizeCaptionSm; // 11.0
+  /// v0.32 round 8 (R111 EM-02b fix): 11 → 13 (fontSizeCaption) 跟
+  /// AppleListSection title 统一 — 修前同屏两套 header 字号 (SectionHeader
+  /// 11pt vs AppleListSection 13pt, Apple iOS insetGrouped 实际是 13pt)
+  static const double _fontSize = AppTokens.fontSizeCaption; // 13.0
 
   /// v0.31 round 8b: 字重 w500 (不变)
   static const FontWeight _fontWeight = FontWeight.w500;
@@ -100,7 +107,7 @@ class SectionHeader extends StatelessWidget {
         children: [
           Text(displayText, style: titleStyle),
           const SizedBox(width: AppTokens.spacingXs),
-          _ChipBadge(label: chip!),
+          ChipBadge(label: chip!),
         ],
       );
     }
@@ -114,7 +121,7 @@ class SectionHeader extends StatelessWidget {
         Text(displayText, style: titleStyle),
         if (chip != null) ...[
           const SizedBox(width: AppTokens.spacingXs),
-          _ChipBadge(label: chip!),
+          ChipBadge(label: chip!),
         ],
         const Spacer(),
         if (action != null) ...[
@@ -122,37 +129,6 @@ class SectionHeader extends StatelessWidget {
           action!,
         ],
       ],
-    );
-  }
-}
-
-/// v0.28 R81 (emil design-5): chip 标签 widget
-///
-/// B 站"哗哩哗哩能量加油站" 风格 chip (心情测试 / 关于B站 等),
-/// 标题旁小圆角标签, 跟 SectionHeader.chip 集成。
-class _ChipBadge extends StatelessWidget {
-  final String label;
-  const _ChipBadge({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTokens.spacingSm,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: AppTokens.tintedPrimarySoft(context),
-        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: AppTokens.fontSizeCaption,
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
     );
   }
 }
