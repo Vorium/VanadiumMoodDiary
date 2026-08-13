@@ -108,7 +108,12 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
     try {
       await repo.add(draft);
       // 新增药物后重排提醒 (edit_medication_dialog 同款模式), 否则新药无提醒直到重启
-      final meds = await ref.refresh(medicationsProvider.future);
+      // v0.32 R110 round 7b (B1-8): 原来 `ref.refresh(medicationsProvider.future)`
+      // 在 autoDispose provider 无监听者时会在 loading 态被 dispose → 
+      // "disposed during loading state" Bad state → 保存成功却报失败。
+      // 改用 repository.watchAll().first 拿最新列表 (repo 非 autoDispose, 无
+      // 生命周期问题), 语义等价 (单次最新快照)。
+      final meds = await repo.watchAll().first;
       await notif.delegate.rescheduleMedicationReminders(meds);
       await notif.delegate.rescheduleRefillReminders(meds);
 

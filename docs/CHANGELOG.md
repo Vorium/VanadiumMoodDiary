@@ -1,5 +1,20 @@
 ﻿# 变更日志
 
+## [0.32.0+135] - 2026-08-13 (R110 round 7b-1: add_medication_page 568L god class 补 6 test + B1-8 保存路径 bug)
+
+- B1-8 (修复): 新增药物后重排提醒原来 `ref.refresh(medicationsProvider.future)`
+  — autoDispose provider 无监听者时会在 loading 态被 dispose → "disposed
+  during loading state" Bad state → **保存成功却弹"保存失败"**。改
+  `repo.watchAll().first` (repository 非 autoDispose, 无生命周期问题,
+  语义等价 = 最新单次快照)
+- 6 个新 widget test (`add_medication_page_round7b_test.dart`): Step1 空
+  药名校验不前进 / Step2 时间编辑 / Step3 确认信息 (名称/剂型/50mg/08:00)
+  / 保存成功 → repo.add 收正确 draft (name/dosage/unit/times/form) +
+  pop 回上页 / 保存失败 → error snackbar + 可重试 / Step1 返回箭头 pop
+- test 基建: 通知 channel mock (`pendingNotificationRequests` → []) —
+  flutter_local_notifications 平台 channel 在 widget test 无宿主时
+  `pendingNotificationRequests()` 永不完成, delegate reschedule 挂死
+
 ## [0.32.0+134] - 2026-08-13 (R110 round 7a: B1-3 睡眠环形统计 + FS-2 daily_tracking 子树隔离)
 
 - B1-3 (修复): 睡眠规律分数改为 **Mardia 环形统计** — 旧实现线性
