@@ -10,7 +10,8 @@ plugins {
 android {
     namespace = "com.chroniccare.chroniccare"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // GP-R112-07: pin 固定 NDK 版本 (16KB 对齐不随 flutter.ndkVersion 漂移)
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true

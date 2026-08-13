@@ -1,1 +1,1 @@
-Daily check-in + mood tracker for people managing chronic conditions. Private & local.
+Daily check-in + mood tracker for chronic conditions. Private & local.

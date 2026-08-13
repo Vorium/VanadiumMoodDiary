@@ -1,4 +1,4 @@
-ChronicCare helps you take medication on time, track your mood, and stay connected with loved ones — all while keeping your data 100% on your phone.
+ChronicCare helps you take medication on time, track your mood, and build steady daily routines — all while keeping your data 100% on your phone.
 
 Designed for people living with chronic conditions, mental health challenges, and anyone who needs gentle, daily support to build healthy routines.
 
@@ -14,7 +14,7 @@ Schedule multiple daily reminders. Never miss a dose. Customizable snooze, refil
 Daily mood check-ins to track your emotional patterns over weeks and months. Record your thoughts in a private vent space.
 
 • Mental health assessments
-Self-administered mood and mental wellbeing check-ins using two widely-recognized standardized questionnaires to help you reflect on your feelings over time. Crisis resources are highlighted if your answers suggest extra support may be needed.
+Optional guided self-reflection questionnaires to help you notice patterns in your feelings over time. Your answers stay on your device. If you ever feel you need extra support, crisis resources are listed in Settings.
 
 • Privacy by design
 All data stays on your phone. SQLCipher encryption. No accounts, no cloud, no analytics. We can't see your data — neither can anyone else.
@@ -25,8 +25,8 @@ A private space to write your thoughts. Encrypted and stored only on your device
 WHO IS THIS FOR?
 
 • People who want to track daily mental wellbeing and build healthy routines
-• Caregivers who want to gently check in on loved ones
 • Anyone working to build a consistent medication routine
+• People who prefer an offline-first, private tracking tool
 
 IMPORTANT
 

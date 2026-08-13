@@ -17,8 +17,18 @@ v0.30 R108: Google Play Health Apps Questionnaire 模板生成器
   build/health_apps_questionnaire.md    (人类可读 checklist)
 """
 import json
+import re
 from datetime import datetime
 from pathlib import Path
+
+
+def parse_pubspec_version(project_root: Path) -> str:
+    """从 pubspec.yaml 动态解析版本号 (GP-R112-04: 原硬编码 0.30.0+85)"""
+    pubspec = project_root / 'pubspec.yaml'
+    if not pubspec.exists():
+        return 'unknown'
+    m = re.search(r'^version:\s*(\S+)', pubspec.read_text(encoding='utf-8'), re.MULTILINE)
+    return m.group(1) if m else 'unknown'
 
 
 # 4 大块 问卷 (Google Play 实际表单项, 2025-Q3 调研)
@@ -29,13 +39,15 @@ HEALTH_APPS_BLOCKS = {
         "chroniccare_answer": "Yes",
         "disclosure": [
             "ChronicCare is a mental health and behavioral health app focused on helping patients with chronic mental health conditions (depression, anxiety, bipolar disorder, etc.) track their daily medication adherence, mood, and emotional well-being.",
-            "The app includes PHQ-9 (Patient Health Questionnaire-9) for depression screening and GAD-7 (Generalized Anxiety Disorder-7) for anxiety screening. These are validated clinical scales used by healthcare professionals worldwide.",
+            "The app includes a set of standardized self-assessment scales (insomnia, stress, disability, mood, and other screening scales) for self-monitoring. These are validated scales used by healthcare professionals worldwide.",
+            "Voice notes recorded by the user (vent space / mood journal) are stored locally with AES-256 encryption. They are never uploaded, never shared, and are not used for diagnosis, advertising, or any other purpose.",
             "The app integrates crisis hotline numbers for 6 regions (China 400-161-9995, US 988, UK Samaritans 116 123, Hong Kong 2382 0000, Taiwan 1925, Singapore Samaritans of Singapore 1-767) to support users in mental health emergencies.",
             "The app explicitly disclaims that it does NOT replace professional medical care, therapy, or crisis intervention. Users are advised to consult a qualified healthcare professional for any medical decisions.",
         ],
         "key_phrases": [
             "Mental health support tool, not a substitute for professional care",
-            "Includes validated clinical scales (PHQ-9, GAD-7) for self-monitoring",
+            "Includes standardized self-assessment scales for self-monitoring",
+            "User-recorded voice notes are local-only, encrypted, never shared",
             "Crisis hotline integration for emergency support",
             "Local-only data storage, zero cloud, AES-256 encryption",
         ],
@@ -46,13 +58,13 @@ HEALTH_APPS_BLOCKS = {
         "chroniccare_answer": "No clinical claims; references validated scales",
         "disclosure": [
             "ChronicCare does NOT make any claims about diagnosing, treating, curing, or preventing any disease or medical condition.",
-            "The app references two validated clinical scales (PHQ-9 and GAD-7) which are widely used by healthcare professionals for depression and anxiety screening. These scales are referenced for **self-monitoring purposes only** and their results are NOT used for any diagnostic or treatment decision.",
+            "The app references standardized self-assessment scales which are widely used by healthcare professionals. These scales are referenced for **self-monitoring purposes only** and their results are NOT used for any diagnostic or treatment decision.",
             "The app does NOT claim to be a substitute for professional medical advice, diagnosis, or treatment. Users are explicitly advised to seek the advice of a qualified healthcare professional with any questions regarding a medical condition.",
             "The app includes a 'Medical Disclaimer' (see `assets/legal/medical_disclaimer.md`) which states: 'This app is a self-management tool only. It is not intended to be a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.'",
         ],
         "key_phrases": [
             "No diagnostic or treatment claims",
-            "References validated scales (PHQ-9, GAD-7) for self-monitoring only",
+            "References standardized self-assessment scales for self-monitoring only",
             "Explicit medical disclaimer in the app and in legal documents",
             "Does not claim to replace professional care",
         ],
@@ -65,7 +77,7 @@ HEALTH_APPS_BLOCKS = {
             "ChronicCare is **NOT** a medical device as defined by the U.S. Food and Drug Administration (FDA), the National Medical Products Administration (NMPA) of China, the European Union Medical Device Regulation (EU MDR), or any other medical device regulatory authority.",
             "The app does NOT perform any measurement, monitoring, or diagnostic function that would require medical device classification.",
             "The app does NOT measure vital signs (e.g., heart rate, blood pressure, blood glucose), does NOT administer any treatment, and does NOT provide any clinical decision support.",
-            "The app is a **wellness and self-management tool** that helps users track their daily medication adherence, mood, and emotional well-being. The PHQ-9 and GAD-7 scales are presented for self-monitoring purposes only, and their results are not intended to be used for any medical decision.",
+            "The app is a **wellness and self-management tool** that helps users track their daily medication adherence, mood, and emotional well-being. The self-assessment scales are presented for self-monitoring purposes only, and their results are not intended to be used for any medical decision.",
             "The app does NOT make any claim that it is a medical device, and does NOT include any functionality that would subject it to medical device regulations.",
         ],
         "key_phrases": [
@@ -101,11 +113,12 @@ HEALTH_APPS_BLOCKS = {
 
 def build_block_responses() -> dict:
     """build 4 大块 完整响应"""
+    project_root = Path(__file__).resolve().parent.parent
     return {
         "metadata": {
             "generated_at": datetime.now().isoformat(),
             "project": "chroniccare",
-            "app_version": "0.30.0+85",
+            "app_version": parse_pubspec_version(project_root),
             "play_console_form": "Health Apps Questionnaire",
             "estimated_completion_time": "10-15 minutes (人工复制粘贴 4 大块)",
         },

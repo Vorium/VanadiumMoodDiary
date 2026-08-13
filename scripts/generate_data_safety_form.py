@@ -26,13 +26,20 @@ from datetime import datetime
 def parse_privacy_policy(path: Path) -> dict:
     """从 privacy_policy.md 解析数据收集声明"""
     if not path.exists():
-        return {'sections': [], 'shared': [], 'collected': []}
+        return {'sections': []}
     text = path.read_text(encoding='utf-8')
     return {
-        'version': re.search(r'v0\.27\.0\+(\d+)', text).group(0)
-        if re.search(r'v0\.27\.0\+\d+', text) else 'unknown',
         'sections': re.findall(r'^## (\d+\..+)$', text, re.MULTILINE),
     }
+
+
+def parse_pubspec_version(project_root: Path) -> str:
+    """从 pubspec.yaml 动态解析版本号 (GP-R112-03: 原正则 v0.27.0+x 恒 unknown)"""
+    pubspec = project_root / 'pubspec.yaml'
+    if not pubspec.exists():
+        return 'unknown'
+    m = re.search(r'^version:\s*(\S+)', pubspec.read_text(encoding='utf-8'), re.MULTILINE)
+    return m.group(1) if m else 'unknown'
 
 
 def parse_privacy_info_xcprivacy(path: Path) -> list:
@@ -63,19 +70,42 @@ def parse_privacy_info_xcprivacy(path: Path) -> list:
 
 
 def build_health_data_section() -> dict:
-    """build health data section (PHQ-9 + GAD-7 + medication + mood + audio)"""
+    """build health data section (自我评估量表 + medication + mood)
+
+    GP-R112-03: 去 PHQ-9/GAD-7 点名 — prod 下 phqGad7I18nEnabled=false,
+    实际露 8 量表 (ISI/PSS/WHODAS/ASRM/level2×4), 文案写通用措辞。
+    """
     return {
         'category': 'Health info',
         'subcategories': [
-            'Health conditions (PHQ-9 抑郁筛查 / GAD-7 焦虑筛查 answers)',
+            'Self-assessment scale answers (guided self-reflection scales, on-device only)',
             'Medications (药名 / 剂量 / 用药时间)',
-            'Mood and emotional state (1-5 颗星 + 60 秒语音 + 标签)',
+            'Mood and emotional state (1-5 颗星 + 标签)',
         ],
         'encrypted_in_transit': True,
         'encrypted_at_rest': True,
         'user_can_request_deletion': True,
         'collected_for_functionality': True,
-        'notes': 'v0.27 R68 业务暂停: 失联通知业务整体暂停 (FeatureFlags.emergencyContactEnabled=false), 不实际触发 SMS / Email 触达。Health data 仅本地存储 (SQLCipher AES-256 + FlutterSecureStorage Keychain), 零云端。',
+        'notes': 'Health data 仅本地存储 (SQLCipher AES-256 + FlutterSecureStorage Keychain), 零云端, 零共享。',
+    }
+
+
+def build_audio_data_section() -> dict:
+    """build audio files data section
+
+    GP-R112-03: ventAudioEnabled=true + manifest RECORD_AUDIO → Audio 是真实
+    收集的数据型, Play Data Safety 必须单列 "Photos and videos or audio" 大类。
+    """
+    return {
+        'category': 'Photos and videos or audio',
+        'subcategories': [
+            'Voice notes (树洞/情绪语音笔记, 仅本地 AES-256 加密存储)',
+        ],
+        'encrypted_in_transit': True,
+        'encrypted_at_rest': True,
+        'user_can_request_deletion': True,
+        'collected_for_functionality': True,
+        'notes': '录音仅由用户主动录制, 本地加密存储, 不共享、不用于广告或诊断。',
     }
 
 
@@ -91,7 +121,6 @@ def build_deletion_endpoint() -> dict:
 
 def main():
     project_root = Path(__file__).resolve().parent.parent
-    privacy_policy = project_root / 'assets' / 'legal' / 'privacy_policy.md'
     privacy_info = project_root / 'ios' / 'Runner' / 'PrivacyInfo.xcprivacy'
     out_dir = project_root / 'build'
     out_dir.mkdir(exist_ok=True)
@@ -101,16 +130,17 @@ def main():
     print('=' * 60)
     print()
 
-    pp = parse_privacy_policy(privacy_policy)
     pi = parse_privacy_info_xcprivacy(privacy_info)
     health = build_health_data_section()
+    audio = build_audio_data_section()
     deletion = build_deletion_endpoint()
+    app_version = parse_pubspec_version(project_root)
 
     form = {
         'metadata': {
             'generated_at': datetime.now().isoformat(),
             'project': 'chroniccare',
-            'app_version': pp.get('version', 'unknown'),
+            'app_version': app_version,
             'privacy_policy_url': 'https://chroniccare.app/privacy',
             'data_deletion_endpoint': deletion['url'],
         },
@@ -133,14 +163,12 @@ def main():
                 'purpose': 'App functionality',
             },
             'personal_info': {
-                'collected': True,
-                'types': [
-                    'Name (联系人姓名, 选填)',
-                    'Phone number (紧急联系人手机号, 选填)',
-                ],
-                'purpose': 'App functionality (失联通知业务当前暂停, 数据仅本地存储)',
+                'collected': False,
+                'types': [],
+                'purpose': '未收集 — emergencyContactEnabled=false, 紧急联系人功能全 gate (无任何入口)。v1.0 SMS 真接时改 collected=True 并更新 types。',
             },
             'health_info': health,
+            'audio_files': audio,
         },
         'data_shared': {
             'shared_with_third_parties': False,
@@ -197,8 +225,15 @@ def main():
 - 用途: {form['data_collected']['app_activity']['purpose']}
 
 ### 个人信息
-- 收集: ✅ ({', '.join(form['data_collected']['personal_info']['types'])})
+- 收集: {'✅' if form['data_collected']['personal_info']['collected'] else '❌'} ({', '.join(form['data_collected']['personal_info']['types']) or '无'})
 - 用途: {form['data_collected']['personal_info']['purpose']}
+
+### 音频 (Photos and videos or audio)
+- 收集: ✅ ({', '.join(form['data_collected']['audio_files']['subcategories'])})
+- 加密传输: {form['data_collected']['audio_files']['encrypted_in_transit']}
+- 加密存储: {form['data_collected']['audio_files']['encrypted_at_rest']}
+- 用户可请求删除: {form['data_collected']['audio_files']['user_can_request_deletion']}
+- 备注: {form['data_collected']['audio_files']['notes']}
 
 ### 健康信息 (Health)
 - 收集: ✅

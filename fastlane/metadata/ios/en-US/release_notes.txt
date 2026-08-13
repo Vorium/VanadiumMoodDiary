@@ -1,0 +1,1 @@
+Export/import now backs up your complete history (medications, mood entries, contacts). Notification permission re-authorization UI on Android 14+. Assessment scale names now display correctly in English, and analyzer warnings are cleared.

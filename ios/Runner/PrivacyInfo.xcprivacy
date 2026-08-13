@@ -47,12 +47,14 @@
 		生的内容, 不是 HealthKit 数据)。
 		长期 (R1.0): 真接 HealthKit 5-15d, 加回 HealthAndFitness + NSHealthShareUsageDescription
 		+ health_kit 依赖。
-	-->
-	<key>NSPrivacyCollectedDataTypes</key>
-	<array>
+
+		v0.32 R112 (AS-25): 删 ContactInfo 声明 — 与 R108 删 HealthAndFitness
+		同逻辑 (declared-but-not-used)。emergencyContactEnabled=false →
+		App 无任何入口采集联系人数据, 声明 ContactInfo 是假声明。
+		v1.0 SMS 真接 (emergencyContactEnabled 翻 true) 时加回:
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeAudioData</string>
+			<string>NSPrivacyCollectedDataTypeContactInfo</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>
@@ -62,9 +64,12 @@
 				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
 			</array>
 		</dict>
+	-->
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array>
 		<dict>
 			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeContactInfo</string>
+			<string>NSPrivacyCollectedDataTypeAudioData</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>

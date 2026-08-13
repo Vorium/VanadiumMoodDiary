@@ -41,6 +41,19 @@ platform :ios do
 
   desc "Release to App Store (Production)"
   lane :release do
+    # 0. fail-fast guard (AS-23): 0 截图时禁止一键提交残缺包
+    # Apple 新 App 提交至少需 iPhone 6.7"/6.5" 截图; 当前截图由设计师出图 (外部),
+    # 出图前跑 release lane 会 build → 上传 → 无截图自动提交 → 被拒/卡审核。
+    # 出图后 (fastlane/metadata/ios/*/screenshots/ 非空) 本 guard 自动放行。
+    screenshots = Dir.glob(File.join('fastlane', 'metadata', 'ios', '*', 'screenshots', '*'))
+    if screenshots.empty?
+      UI.user_error!(
+        'Release aborted: no screenshots found under fastlane/metadata/ios/*/screenshots/. ' \
+        'Apple rejects new app submissions without screenshots. ' \
+        'Add screenshots first, or use `fastlane ios metadata` to sync metadata only.'
+      )
+    end
+
     # 1. 重新 build
     build_app(
       workspace: "Runner.xcworkspace",

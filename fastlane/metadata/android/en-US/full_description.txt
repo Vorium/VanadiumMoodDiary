@@ -14,7 +14,7 @@ Schedule multiple daily reminders. Never miss a dose. Customizable snooze, refil
 Daily mood check-ins to track your emotional patterns over weeks and months. Record your thoughts in a private vent space.
 
 • Mental health assessments
-Self-administered mood and mental wellbeing check-ins using two widely-recognized standardized questionnaires to help you reflect on your feelings over time. Crisis resources are highlighted if your answers suggest extra support may be needed.
+Optional guided self-reflection scales to help you notice patterns in your feelings over time. Crisis resources are highlighted if your answers suggest extra support may be needed.
 
 • Privacy by design
 All data stays on your phone. SQLCipher encryption. No accounts, no cloud, no analytics. We can't see your data — neither can anyone else.

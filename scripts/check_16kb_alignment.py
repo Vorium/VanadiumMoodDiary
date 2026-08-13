@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 v0.27 R70: 16KB page size alignment check (Google Play 2025-11 强制)
+v0.32 R112 round 8 (SP-R112-06): --so-path 真实验证模式 (objdump LOAD 段对齐判定)
 
 Google Play 2025-11 起, targetSdk 35+ 的所有原生库 (lib/*.so) 必须 16KB 对齐。
 - 检测: pubspec.yaml 第三方 plugin 列表 + Flutter SDK ndkVersion
@@ -8,15 +9,22 @@ Google Play 2025-11 起, targetSdk 35+ 的所有原生库 (lib/*.so) 必须 16KB
   + `unzip -l app.aab` 列出 lib/ + `objdump -p lib/*.so | grep LOAD` 验证 segment >= 16384
 
 执行方式:
-  python scripts/check_16kb_alignment.py
+  python scripts/check_16kb_alignment.py                          # 配置级检查
+  python scripts/check_16kb_alignment.py --so-path <libfoo.so>    # 单 .so 真实验证
+  python scripts/check_16kb_alignment.py --so-dir <dir>           # 目录下全部 .so 真实验证
+  python scripts/check_16kb_alignment.py --aab <app-release.aab>  # 解 AAB 后全量验证 (需 unzip+objdump)
 
 策略 (R70 简化版):
 - 检查 pubspec.yaml ndkVersion 声明 (flutter 默认 27.0.12077973 已 16KB 对齐)
 - 检查已知可能 16KB 不对齐的 plugin (sqlcipher_flutter_libs 0.6.4 / record 5.x / audioplayers 6.x)
   给出警告 + 提示用户跑 `flutter build appbundle` 实测
-- 完整 .aab 16KB 验需要 unzipped lib + objdump (CI 跑成本高, R70 留作 docs)
+- R112 round 8 起: --so-path/--so-dir/--aab 模式跑真 objdump, LOAD 段
+  align 必须 >= 2**14 = 16384, 有 exit-code 语义 (CI 可挂)
 """
 import sys
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 import re
 
@@ -29,6 +37,9 @@ RISKY_PLUGINS = {
     'audioplayers': '< 5.0.0 旧版本未 16KB 对齐',
     'flutter_secure_storage': '< 9.0.0 旧版本未 16KB 对齐',
 }
+
+REQUIRED_ALIGN = 2**14  # 16384
+
 
 def check_pubspec():
     pubspec_path = Path('pubspec.yaml')
@@ -46,7 +57,6 @@ def check_pubspec():
         print('       推荐显式声明 `ndkVersion = "27.0.12077973"` (Flutter 3.41.9 默认 16KB 对齐)')
 
     # 检查已知有风险 plugin
-    warnings_count = 0
     for plugin, warning in RISKY_PLUGINS.items():
         match = re.search(rf'^{re.escape(plugin)}\s*:\s*\^?(\S+)', content, re.MULTILINE)
         if match:
@@ -75,11 +85,15 @@ def check_gradle():
         return False
     content = gradle_path.read_text(encoding='utf-8')
 
-    # 检查 ndkVersion
-    if 'ndkVersion' in content:
-        print('[OK] android/app/build.gradle.kts 显式 ndkVersion')
+    # 检查 ndkVersion (GP-R112-07: 区分 pin 值与 flutter.ndkVersion 属性引用)
+    if re.search(r'ndkVersion\s*=\s*["\'][\d.]+["\']', content):
+        pin = re.search(r'ndkVersion\s*=\s*["\']([\d.]+)["\']', content)
+        print(f'[OK] android/app/build.gradle.kts pin ndkVersion = {pin.group(1)}')
+    elif 'flutter.ndkVersion' in content:
+        print('[WARN] android/app/build.gradle.kts 用 flutter.ndkVersion 属性引用, 版本随 Flutter 漂移')
+        print('       推荐 pin `ndkVersion = "27.0.12077973"` (Flutter 3.41.9 默认, 16KB 对齐)')
     else:
-        print('[WARN] android/app/build.gradle.kts 未显式 ndkVersion, 走 flutter.ndkVersion')
+        print('[WARN] android/app/build.gradle.kts 未显式 ndkVersion, 走 flutter.ndkVersion 默认')
 
     # 检查 targetSdk
     if 'targetSdk' in content:
@@ -94,30 +108,96 @@ def check_gradle():
     return True
 
 
+def verify_so(so_path: Path) -> bool:
+    """objdump 解析单个 .so 的 LOAD 段对齐, align 必须 >= 2**14。"""
+    if shutil.which('objdump') is None:
+        print('[SKIP] objdump 不可用 (需 binutils/NDK toolchain), 跳过真实验证')
+        return True  # 无工具时不判 FAIL, 由配置级检查兜底
+    out = subprocess.run(
+        ['objdump', '-p', str(so_path)],
+        capture_output=True, text=True,
+    ).stdout
+    alignments = [int(m) for m in re.findall(r'\bLOAD\b.*?\balign\s+(2\*\*\d+)', out, re.S)]
+    # objdump 输出形如 "align 2**14"; 若正则未命中, 退化为行级解析
+    if not alignments:
+        for line in out.splitlines():
+            if 'LOAD' in line and 'align' in line:
+                m = re.search(r'align\s+2\*\*(\d+)', line)
+                if m:
+                    alignments.append(2 ** int(m.group(1)))
+    if not alignments:
+        print(f'[FAIL] {so_path}: 无 LOAD 段信息 (objdump 输出异常)')
+        return False
+    ok = all(a >= REQUIRED_ALIGN for a in alignments)
+    if ok:
+        print(f'[OK] {so_path.name}: LOAD align {alignments} (>= {REQUIRED_ALIGN})')
+    else:
+        print(f'[FAIL] {so_path}: LOAD align {alignments} (< {REQUIRED_ALIGN} = 2**14, Play 2025-11 拒收)')
+    return ok
+
+
+def verify_so_dir(so_dir: Path) -> bool:
+    files = sorted(so_dir.rglob('*.so'))
+    if not files:
+        print(f'[FAIL] {so_dir}: 0 个 .so 文件')
+        return False
+    print(f'[INFO] 验证 {len(files)} 个 .so')
+    return all(verify_so(f) for f in files)
+
+
+def verify_aab(aab_path: Path) -> bool:
+    """解 AAB 拿 base/lib/**/lib*.so 全量验证 (需 unzip)。"""
+    if shutil.which('unzip') is None:
+        print('[SKIP] unzip 不可用, 无法解 AAB')
+        return True
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run(['unzip', '-q', str(aab_path), '-d', tmp], check=True)
+        lib_dir = Path(tmp) / 'base' / 'lib'
+        if not lib_dir.exists():
+            print(f'[FAIL] {aab_path}: 无 base/lib (AAB 结构异常)')
+            return False
+        return verify_so_dir(lib_dir)
+
+
 def main():
+    args = [a for a in sys.argv[1:]]
+    so_path = so_dir = aab = None
+    for a in args:
+        if a.startswith('--so-path='):
+            so_path = Path(a.split('=', 1)[1])
+        elif a.startswith('--so-dir='):
+            so_dir = Path(a.split('=', 1)[1])
+        elif a.startswith('--aab='):
+            aab = Path(a.split('=', 1)[1])
+
     print('=' * 60)
     print('16KB page size alignment check (Google Play 2025-11 强制)')
-    print('v0.27 R70')
+    print('v0.32 R112 round 8 (SP-R112-06: --so-path/--so-dir/--aab 真实验证)')
     print('=' * 60)
 
     pubspec_ok = check_pubspec()
     print()
     gradle_ok = check_gradle()
     print()
+
+    artifact_ok = True
+    if so_path is not None:
+        artifact_ok = verify_so(so_path)
+    elif so_dir is not None:
+        artifact_ok = verify_so_dir(so_dir)
+    elif aab is not None:
+        artifact_ok = verify_aab(aab)
+    else:
+        print('[INFO] 未提供 --so-path/--so-dir/--aab, 只跑配置级检查')
+        print('       完整验证: python scripts/check_16kb_alignment.py --aab build/app/outputs/bundle/release/app-release.aab')
+
+    print()
     print('=' * 60)
     print('总结: pubspec.yaml=' + ('OK' if pubspec_ok else 'FAIL') +
-          ', build.gradle.kts=' + ('OK' if gradle_ok else 'FAIL'))
-    print()
-    print('R70 简化版: 基础配置检查, 完整 16KB 验需要:')
-    print('  1. flutter build appbundle --release')
-    print('  2. unzip -l build/app/outputs/bundle/release/app-release.aab | grep "\\.so"')
-    print('  3. unzip app-release.aab -d unpacked/')
-    print('  4. for so in unpacked/lib/*/lib/*.so; do')
-    print('       objdump -p "$so" | grep "LOAD" | head -1')
-    print('     done')
-    print('  5. 验证 segment align >= 2**14 = 16384')
+          ', build.gradle.kts=' + ('OK' if gradle_ok else 'FAIL') +
+          ', 产物验证=' + ('OK/SKIP' if artifact_ok else 'FAIL'))
     print('=' * 60)
-    return 0 if (pubspec_ok and gradle_ok) else 1
+    return 0 if (pubspec_ok and gradle_ok and artifact_ok) else 1
 
 
 if __name__ == '__main__':

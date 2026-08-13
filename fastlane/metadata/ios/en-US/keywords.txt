@@ -1,1 +1,1 @@
-medication,reminder,mood,mental,health,chronic,tracker
+medication,reminder,mood,health,chronic,tracker
