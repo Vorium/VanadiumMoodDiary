@@ -141,8 +141,12 @@ class _EditMedicationDialogState extends ConsumerState<_EditMedicationDialog> {
       final notif = ref.read(notificationServiceProvider);
       // v0.23 (P0-2 H1 fix): invalidate + read 同步 race 拿到 stale meds
       // → rescheduleMedicationReminders 用旧 ID 公式, 通知时间错位
-      // 修: refresh(provider.future) 强制等 stream 重新 emit, 直接用返回的新值
-      final meds = await ref.refresh(medicationsProvider.future);
+      // v0.32 round 7b-4 (B1-9, 同 add_medication_page B1-8):
+      // refresh(medicationsProvider.future) 在 test env 中 autoDispose
+      // provider 在 loading 期间被 dispose → "disposed during loading"
+      // Bad state → 保存成功却显示失败。改走 repo.watchAll().first
+      // (非 autoDispose, 语义等同: 等 DB 重新 emit 最新列表)。
+      final meds = await ref.read(medicationRepositoryProvider).watchAll().first;
       // v0.18 (P2-P0-2): notification_service 改接受 entity, 删 mapper 调用
       // medication reminders: 整个重排（停药会自然被 reschedule 排除）
       await notif.delegate.rescheduleMedicationReminders(meds);

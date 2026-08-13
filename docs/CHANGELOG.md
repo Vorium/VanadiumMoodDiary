@@ -1,5 +1,17 @@
 ﻿# 变更日志
 
+## [0.32.0+138] - 2026-08-13 (R110 round 7b-4: edit_medication_dialog 413L god class 补 8 test + B1-9)
+
+- 8 个新 test (`edit_medication_dialog_round7b_test.dart`):
+  - 预填字段 (药名/剂量/单位/时间 chips) + 正在使用状态
+  - 原样保存 → update 相同值 + pop true / 取消 → pop false 0 update
+  - 校验: 空药名 / 剂量 0 → 错误文案 + 不保存
+  - 停药 switch → isActive=false + endDate 非空 / 恢复 → isActive=true + endDate null
+  - 删除时间 chip → times 少一个
+- B1-9 (B1-8 同款 bug): `_save()` 里 `ref.refresh(medicationsProvider.future)`
+  autoDispose provider loading 期间被 dispose → 保存成功却报失败。
+  改 `ref.read(medicationRepositoryProvider).watchAll().first` (非 autoDispose)。
+
 ## [0.32.0+137] - 2026-08-13 (R110 round 7b-3: assessment_widgets 429L god class 补 11 test)
 
 - 11 个新 test (`assessment_widgets_round7b_test.dart`):
