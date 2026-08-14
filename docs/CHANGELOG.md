@@ -1,4 +1,11 @@
 ﻿# 变更日志
+## [1.0.0+146] - 2026-08-14 (首个正式版 v1.0.0 发布)
+
+- **首个正式版发布**: 版本号 0.32.0 → 1.0.0 (语义版本归位, build 号 145 → 146 连续)
+- **README 精简重写**: 发布版 README — 移除 R95~R112 审计历史/评分/路线图, 保留产品介绍 + 快速开始 + 功能清单 + 测试 + 打包 + 合规, 开发历史链接到 `docs/audit/`
+- **版本同步**: pubspec / CHANGELOG / fastlane notes.txt / android local.properties / Android changelogs ×2 全同步 1.0.0+146
+- **上架外部依赖状态**: 域名 ICP / 设计师资产 / review 4 占位 / console 表单仍为有标记占位 (守门员 warn-only, SUBMISSION_INFO.md 登记), 代码面 9.5/10 达提交水准
+
 ## [0.32.0+145] - 2026-08-14 (R112 release 冒烟: 渲染专项: AppBar blur→solid 掉帧修复 + STT 转写隔离 + RepaintBoundary + 窄屏防溢出 + 真 Spring 选中动画)
 
 - **渲染专项: AppBar blur→solid 掉帧修复 + STT 转写隔离 + RepaintBoundary + 窄屏防溢出 + 真 Spring 选中动画** (release 冒烟实测修复, 版本 0.32.0+145)

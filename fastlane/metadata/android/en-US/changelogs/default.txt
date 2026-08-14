@@ -1,4 +1,4 @@
-Version 0.32.0:
+Version 1.0.0:
 
 • Data export now includes refill reminders, medication form/color/notes, voice transcripts, mood periods, and contact consent records — switching phones keeps everything.
 • Check-ins now link correctly to their medications after restoring data.
