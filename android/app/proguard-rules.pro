@@ -10,6 +10,17 @@
 -keep class com.dexterous.** { *; }
 -keep class androidx.core.app.NotificationCompat** { *; }
 
+# flutter_local_notifications 依赖 Gson TypeToken 反序列化已排程通知
+# v0.32 round 8f (release 冒烟实测崩溃修复): R8 默认剥 Signature 属性 →
+# TypeToken 泛型参数丢失 → "TypeToken must be created with a type argument"
+# (setup 第 3 步 pendingNotificationRequests() 抛 PlatformException)。
+# -keepattributes Signature 是根治 (保留泛型签名), 下面 keep 属双保险。
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.google.gson.** { *; }
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+
 # audioplayers
 -keep class xyz.luan.audioplayers.** { *; }
 -dontwarn xyz.luan.audioplayers.**
