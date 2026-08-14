@@ -117,8 +117,12 @@ def verify_so(so_path: Path) -> bool:
         ['objdump', '-p', str(so_path)],
         capture_output=True, text=True,
     ).stdout
-    alignments = [int(m) for m in re.findall(r'\bLOAD\b.*?\balign\s+(2\*\*\d+)', out, re.S)]
-    # objdump 输出形如 "align 2**14"; 若正则未命中, 退化为行级解析
+    # objdump 输出形如 "LOAD off ... align 2**14"; 捕获指数再算 2**exp
+    alignments = [
+        2 ** int(m)
+        for m in re.findall(r'\bLOAD\b.*?\balign\s+2\*\*(\d+)', out, re.S)
+    ]
+    # 若正则未命中 (不同 objdump 格式), 退化为行级解析
     if not alignments:
         for line in out.splitlines():
             if 'LOAD' in line and 'align' in line:

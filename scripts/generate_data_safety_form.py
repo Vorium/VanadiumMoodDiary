@@ -112,7 +112,7 @@ def build_audio_data_section() -> dict:
 def build_deletion_endpoint() -> dict:
     """build data deletion endpoint info"""
     return {
-        'url': 'https://chroniccare.app/delete-data-instructions',
+        'url': '[PENDING_DOMAIN] https://chroniccare.app/delete-data-instructions',
         'in_app_deletion': '设置 → 数据管理 → 导出 / 清空',
         'uninstall_deletion': 'Android 12+: 卸载 App 自动清; Android < 12: 手动通过系统设置清',
         'notes': 'App 内一键清空所有数据 (跟 R67 ConsentGate 集成), 卸载后本地数据库删除。',
@@ -141,7 +141,7 @@ def main():
             'generated_at': datetime.now().isoformat(),
             'project': 'chroniccare',
             'app_version': app_version,
-            'privacy_policy_url': 'https://chroniccare.app/privacy',
+            'privacy_policy_url': '[PENDING_DOMAIN] https://chroniccare.app/privacy',
             'data_deletion_endpoint': deletion['url'],
         },
         'data_collected': {

@@ -110,6 +110,47 @@ if pubspec.exists() and notes.exists():
     else:
         print(f'[ok] notes.txt 版本 {notes_version} 与 pubspec 同步')
 
+# 规则 4 (R112 round 8b): 隐私/支持 URL 文件占位管控 — chroniccare.app 域名
+# 未注册 (ICP 外部依赖), URL 文件必须是有标记占位 [PENDING_DOMAIN: ...]
+# (warn-only) 或真实 https:// URL (域名注册后)。其余内容 = FAIL (会 404 被拒)。
+URL_FILES = [
+    PROJECT_ROOT / 'fastlane' / 'metadata' / 'ios' / loc / name
+    for loc in ('en-US', 'zh-Hans', 'zh-Hant')
+    for name in ('privacy_url.txt', 'support_url.txt')
+] + [
+    PROJECT_ROOT / 'fastlane' / 'metadata' / 'android' / loc / name
+    for loc in ('en-US', 'zh-CN')
+    for name in ('privacy_url.txt', 'support_url.txt')
+]
+PENDING_DOMAIN_MARKER = '[PENDING_DOMAIN:'
+for path in URL_FILES:
+    rel = path.relative_to(PROJECT_ROOT)
+    if not path.exists():
+        FAILURES.append(f'[FAIL] {rel} 缺失 — fastlane 上传会缺隐私/支持链接')
+        continue
+    content = path.read_text(encoding='utf-8', errors='ignore').strip()
+    if content.startswith(PENDING_DOMAIN_MARKER):
+        WARNINGS.append(f'[warn] {rel} 域名占位未填 (外部依赖 ICP) — {content[:60]}...')
+    elif not content.startswith('https://'):
+        FAILURES.append(
+            f'[FAIL] {rel} 内容既非 https:// URL 也非 {PENDING_DOMAIN_MARKER} 占位 — '
+            f'会被 Apple/Play 拒 (404 链接)'
+        )
+    else:
+        print(f'[ok] {rel} 真实 URL')
+
+# 规则 5 (R112 round 8b): 法务文档不得含未注册域名的裸邮箱 (@chroniccare.app)
+# — 必须用占位 【邮箱待启用: 域名注册后填入】 (域名注册后可撤销本规则)。
+LEGAL_DIR = PROJECT_ROOT / 'assets' / 'legal'
+BARE_EMAIL = re.compile(r'[\w.+-]+@chroniccare\.app')
+for md in sorted(LEGAL_DIR.glob('*.md')):
+    content = md.read_text(encoding='utf-8', errors='ignore')
+    for m in BARE_EMAIL.finditer(content):
+        FAILURES.append(
+            f'[FAIL] {md.relative_to(PROJECT_ROOT)} 含未注册域名邮箱 {m.group(0)!r} '
+            f'— 404 邮箱会被拒/不可达, 改用占位 【邮箱待启用: 域名注册后填入】'
+        )
+
 if FAILURES:
     print('=' * 60)
     print('[check_review_information_todo.py] FAIL')
