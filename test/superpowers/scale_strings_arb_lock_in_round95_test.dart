@@ -637,14 +637,13 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1275 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1269 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
       // v0.30 R95 sub-spec 8 task 45 加 1 new (homeTooltipSettings) → 1058 → 1059
       // v0.30 R95 sub-spec 8 task 48 加 1 new (ventSwipeHint) → 1059 → 1060
       // R97-P0-2/P1-4/P1-11 (2026-08-07): +8 new (5 ventReport* + 3 crisisHotline*)
-      //   (IAP key 改名是净 0: settingsIapProUpgradeTitle → settingsIapUpgradeTitle 等)
       //   → 1060 → 1068
       // R100 (P1#9, 2026-08-07): +23 new (UI 硬编码中文走 ARB: weight/socialRhythm/
       //   anxiety/sleep/stress/cbt/medReport/medCalendar/hotline/consentWithdraw/export)
@@ -668,14 +667,17 @@ void main() {
       //   3 个录音暂停控制 key → 1273 → 1276
       //   录音态 UI 改版后 ventRecordActive (旧'正在录音…点停止') 成 orphan
       //   → 1276 → 1275
+      // v1.0.0+147: 删 6 个 IAP key (settingsIapUpgrade{Title,Subtitle} +
+      //   settingsIapProOwned{Title,Subtitle} + iapPurchase{Success,Failed}, 永久免费)
+      //   → 1275 → 1269
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1275, reason: 'zh.arb 应有 1275 key');
-      expect(en, 1275, reason: 'en.arb 应有 1275 key');
-      expect(hant, 1275, reason: 'zh_Hant.arb 应有 1275 key');
+      expect(zh, 1269, reason: 'zh.arb 应有 1269 key');
+      expect(en, 1269, reason: 'en.arb 应有 1269 key');
+      expect(hant, 1269, reason: 'zh_Hant.arb 应有 1269 key');
     });
   });
 

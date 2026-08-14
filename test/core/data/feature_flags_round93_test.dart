@@ -1,10 +1,10 @@
-// v0.30 round 93 (test): FeatureFlags 8 flag 默认值 + enableForTest + resetForTest + 8 常量验证
+// v0.30 round 93 (test): FeatureFlags 7 flag 默认值 + enableForTest + resetForTest + 常量验证
 //
-// R93 阶段 2: 11 项 `_prodXxxEnabled = const false` 业务暂停策略验证
-// R105: ventAudioEnabled 由 false 改 true (R104 启用语音录制), 其余 7 flag 保持 false。
-// 8 个 flag:
+// R93 阶段 2: `_prodXxxEnabled = const false` 业务暂停策略验证
+// R105: ventAudioEnabled 由 false 改 true (R104 启用语音录制), 其余 6 flag 保持 false。
+// v1.0.0+147: 永久免费定版, 8 flag → 7 flag。
+// 7 个 flag:
 //   - emergencyContactEnabled (R66)
-//   - iapEnabled (R68)
 //   - phqGad7I18nEnabled (R65b)
 //   - bootReceiverEnabled (R93 阶段 2 默认 true → false)
 //   - aliyunSmsEnabled (R93 阶段 2 新增)
@@ -13,10 +13,10 @@
 //   - ventAudioEnabled (R93 阶段 2 新增)
 //
 // 11 case:
-//   - 8 case: 8 flag 各自默认值 false
-//   - 1 case: enableForTest 翻 8 个全 true
-//   - 1 case: resetForTest 恢复 prod (8 个全 null)
-//   - 1 case: 8 项 prod 常量全 false (compile-time 验证)
+//   - 7 case: 7 flag 各自默认值 false
+//   - 1 case: enableForTest 翻 7 个全 true
+//   - 1 case: resetForTest 恢复 prod (7 个全 null)
+//   - 2 case: per-flag setter 单独 override
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,13 +25,9 @@ void main() {
   setUp(FeatureFlags.resetForTest);
   tearDown(FeatureFlags.resetForTest);
 
-  group('FeatureFlags R93 阶段 2 默认值 (7 flag false + ventAudio true)', () {
+  group('FeatureFlags R93 阶段 2 默认值 (6 flag false + ventAudio true)', () {
     test('emergencyContactEnabled 默认 false', () {
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
-    });
-
-    test('iapEnabled 默认 false', () {
-      expect(FeatureFlags.iapEnabled, isFalse);
     });
 
     test('phqGad7I18nEnabled 默认 false', () {
@@ -66,12 +62,11 @@ void main() {
   });
 
   group('FeatureFlags R93 阶段 2 test override', () {
-    test('enableForTest 翻 8 个全 true (兼容 R66 老 test)', () {
-      // 28 个老 test 调 enableForTest 走真实业务
-      // R93 阶段 2 翻 8 个全 true (含新增 4 个) 保证老 test 不破
+    test('enableForTest 翻 7 个全 true (兼容 R66 老 test)', () {
+      // 老 test 调 enableForTest 走真实业务
+      // R93 阶段 2 翻 7 个全 true (含新增 4 个) 保证老 test 不破
       FeatureFlags.enableForTest();
       expect(FeatureFlags.emergencyContactEnabled, isTrue);
-      expect(FeatureFlags.iapEnabled, isTrue);
       expect(FeatureFlags.phqGad7I18nEnabled, isTrue);
       expect(FeatureFlags.bootReceiverEnabled, isTrue);
       expect(FeatureFlags.aliyunSmsEnabled, isTrue);
@@ -80,14 +75,13 @@ void main() {
       expect(FeatureFlags.ventAudioEnabled, isTrue);
     });
 
-    test('resetForTest 恢复 prod (8 个全 null → prod 默认)', () {
+    test('resetForTest 恢复 prod (7 个全 null → prod 默认)', () {
       // 先翻 enableForTest
       FeatureFlags.enableForTest();
-      expect(FeatureFlags.iapEnabled, isTrue);
+      expect(FeatureFlags.aliyunSmsEnabled, isTrue);
       // reset 恢复 prod 默认值
       FeatureFlags.resetForTest();
       expect(FeatureFlags.emergencyContactEnabled, isFalse);
-      expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.phqGad7I18nEnabled, isFalse);
       expect(FeatureFlags.bootReceiverEnabled, isFalse);
       expect(FeatureFlags.aliyunSmsEnabled, isFalse);
@@ -98,24 +92,18 @@ void main() {
     });
 
     test('per-flag setter 单独 override (兼容 R67 模式)', () {
-      // R67 阶段加的 4 个 per-flag setter 模式, R93 加 4 个新 setter
-      FeatureFlags.setIapEnabledForTest(true);
-      expect(FeatureFlags.iapEnabled, isTrue);
-      // 其他 flag 不受影响
-      expect(FeatureFlags.emergencyContactEnabled, isFalse);
-      expect(FeatureFlags.aliyunSmsEnabled, isFalse);
-
+      // R67 阶段加的 per-flag setter 模式, R93 加新 setter
       FeatureFlags.setAliyunSmsEnabledForTest(true);
       expect(FeatureFlags.aliyunSmsEnabled, isTrue);
+      // 其他 flag 不受影响
+      expect(FeatureFlags.emergencyContactEnabled, isFalse);
 
       FeatureFlags.setVentAudioEnabledForTest(true);
       expect(FeatureFlags.ventAudioEnabled, isTrue);
 
       // 重置
-      FeatureFlags.setIapEnabledForTest(null);
       FeatureFlags.setAliyunSmsEnabledForTest(null);
       FeatureFlags.setVentAudioEnabledForTest(null);
-      expect(FeatureFlags.iapEnabled, isFalse);
       expect(FeatureFlags.aliyunSmsEnabled, isFalse);
       // R104 起 ventAudio 默认 true
       expect(FeatureFlags.ventAudioEnabled, isTrue);

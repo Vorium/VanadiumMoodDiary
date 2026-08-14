@@ -2114,24 +2114,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get settingsIapUpgradeTitle => '购买此 App';
-
-  @override
-  String get settingsIapUpgradeSubtitle => '¥8 一次性买断 · 解锁全部功能';
-
-  @override
-  String get settingsIapProOwnedTitle => '已购买';
-
-  @override
-  String get settingsIapProOwnedSubtitle => '感谢支持 · 全部功能已解锁';
-
-  @override
-  String get iapPurchaseSuccess => '购买成功！感谢支持。';
-
-  @override
-  String get iapPurchaseFailed => '购买未完成，请稍后再试。';
-
-  @override
   String get phoneRegionCn => '中国大陆';
 
   @override
@@ -6285,24 +6267,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String safetyCheckResultError(Object message) {
     return '錯誤：$message';
   }
-
-  @override
-  String get settingsIapUpgradeTitle => '購買此 App';
-
-  @override
-  String get settingsIapUpgradeSubtitle => '¥8 一次性買斷 · 解鎖全部功能';
-
-  @override
-  String get settingsIapProOwnedTitle => '已購買';
-
-  @override
-  String get settingsIapProOwnedSubtitle => '感謝支持 · 全部功能已解鎖';
-
-  @override
-  String get iapPurchaseSuccess => '購買成功！感謝支持。';
-
-  @override
-  String get iapPurchaseFailed => '購買未完成，請稍後再試。';
 
   @override
   String get phoneRegionCn => '中國大陸';

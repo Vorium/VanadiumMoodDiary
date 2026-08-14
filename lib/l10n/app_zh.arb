@@ -1419,12 +1419,6 @@
       }
     }
   },
-  "settingsIapUpgradeTitle": "购买此 App",
-  "settingsIapUpgradeSubtitle": "¥8 一次性买断 · 解锁全部功能",
-  "settingsIapProOwnedTitle": "已购买",
-  "settingsIapProOwnedSubtitle": "感谢支持 · 全部功能已解锁",
-  "iapPurchaseSuccess": "购买成功！感谢支持。",
-  "iapPurchaseFailed": "购买未完成，请稍后再试。",
   "phoneRegionCn": "中国大陆",
   "phoneRegionHk": "中国香港",
   "phoneRegionMo": "中国澳门",

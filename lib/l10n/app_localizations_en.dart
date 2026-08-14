@@ -2214,28 +2214,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsIapUpgradeTitle => 'Buy this app';
-
-  @override
-  String get settingsIapUpgradeSubtitle =>
-      '¥8 one-time purchase · unlock all features';
-
-  @override
-  String get settingsIapProOwnedTitle => 'Purchased';
-
-  @override
-  String get settingsIapProOwnedSubtitle =>
-      'Thanks for the support · all features unlocked';
-
-  @override
-  String get iapPurchaseSuccess =>
-      'Purchase successful! Thanks for your support.';
-
-  @override
-  String get iapPurchaseFailed =>
-      'Purchase not completed. Please try again later.';
-
-  @override
   String get phoneRegionCn => 'Mainland China';
 
   @override

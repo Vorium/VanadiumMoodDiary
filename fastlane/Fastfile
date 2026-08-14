@@ -75,8 +75,7 @@ platform :ios do
       submit_for_review: true,
       automatic_release: false,
       precheck_include_in_app_purchases: false,
-      # 2026-07-31 现状: 0 个 IAP (v0.23 R55 暂停, 等 v1.0 重启)
-      # 真接 IAP 时改 true + 填 product_id 列表
+      # v1.0.0+147 起永久免费, 0 个 in-app purchase
     )
   end
 

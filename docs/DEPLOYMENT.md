@@ -4,7 +4,7 @@
 
 > **🚧 R107 cleanup (2026-08-10) 9 视角综合审视后状态**:
 > - 18 守门员全绿 / 2019 tests pass / 0 analyzer error
-> - 8 FeatureFlag 守门 (iap / 失联 / 5 厂商 push / email / vent audio / phq-gad7 / boot / 阿里云 sms)
+> - 7 FeatureFlag 守门 (失联 / 5 厂商 push / email / vent audio / phq-gad7 / boot / 阿里云 sms; v1.0.0+147 删 iap — 永久免费)
 > - **R107 P0 13 项上架阻塞 必修** (R108 修, 1-2 周): 详见 `docs/audit-history/r107-cleanup-2026-08-10/00-summary.md` §四
 > - **关键: chroniccare.app 域名未注册 (4 视角共识)** — Apple 5.1.1 + Google Play 隐私 URL 不可达拒因
 > - **R108 修复流程**: 域名注册 (Cloudflare $15/yr + ICP 备案 7-20d) → iOS P0#1-9 (12.5h) → Android P0#1-6 (4-5d) → 通用 P0 (4h) → 总 ~12-14 工作日
@@ -389,8 +389,7 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 - Age Rating: 17+ (Medical/Treatment Information)
 
 **Pricing**
-- 8 元一次性买断 (R68 决策保留, 业务真接 productId 时启用)
-- **v0.30 R93 状态**: `FeatureFlags.iapEnabled=false`, 商业卡在设置页已 hidden (Apple 2.1 拒 — 未提供其他购买方式), 上架前需保证商业卡 hidden + 不在 description 提"8 元"价格
+- **永久完全免费** (v1.0.0+147 定版): 无任何购买入口 / 收费行为 / 内购 / 订阅, 全部功能免费开放
 
 **App Privacy** (PIPL §13/§14/§17/§28)
 - Data Used to Track You: No
@@ -425,9 +424,8 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 
 > 上 store 前必过 5 项检查, **R93 阶段 2 新增**集中守门, 避免上架后被拒:
 
-### 6.1 ✅ 7 项 FeatureFlag 全部 hidden (R93 阶段 2 已完成)
+### 6.1 ✅ 6 项 FeatureFlag 全部 hidden (R93 阶段 2 已完成, v1.0.0+147 删已取消业务)
 
-- [x] IAP 8 元买断 (`iapEnabled=false`) — 设置页"升级到 Pro"商业卡 hidden
 - [x] 失联通知 (`emergencyContactEnabled=false`) — 设置页联系人 section + 主页 homeFabHotline hidden
 - [x] 5 厂商 push (`fiveVendorPushEnabled=false`) — NotificationStatusCard OEM 引导 hidden
 - [x] EmailService 邮件 (`emailServiceEnabled=false`) — AssessmentSection 邮件预览 hidden
@@ -452,7 +450,6 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 
 ### 6.4 ⚠️ 仍需手动完成 (R93+ 业务真接时)
 
-- [ ] IAP 8 元买断真接 (App Store Connect productId 创建)
 - [ ] 阿里云 SMS 真接 (法务模板审核 + AccessKey 申请)
 - [ ] EmailService 真接 (SendGrid API key + 法务模板审核)
 - [ ] 5 厂商 push SDK 接入 (米/华/OPPO/vivo/魅族审核)
@@ -506,7 +503,7 @@ git push origin master
 
 ### 7.4 数据迁移 (R93+ 业务真接时)
 
-- 业务真接时 (IAP / SMS / Email / 5 厂商 push) 涉及 schema 改动
+- 业务真接时 (SMS / Email / 5 厂商 push) 涉及 schema 改动
 - drift schemaVersion +1 + migration (R92 阶段 1 模式)
 - 备份用户数据 → DB 升级 → 数据恢复
 - 不动数据模型字段 (零迁移成本, FeatureFlag 守护)

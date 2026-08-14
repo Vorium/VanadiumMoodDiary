@@ -31,7 +31,6 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/services/sms_service.dart';
-import 'package:chroniccare/core/data/services/store_kit_service.dart';
 import 'package:chroniccare/core/data/utils/skip_backup.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/main/boot_apps.dart';
@@ -151,7 +150,7 @@ Future<void> _bootstrap() async {
     }
   }
 
-  // 3. SMS / Email / StoreKit 守卫（互相独立，并行）
+  // 3. SMS / Email 守卫（互相独立，并行）
   //    release + mock → 抛异常,被 runZonedGuarded 抓住
   // v0.30 R108 revisit (P0-031): 删顶层 _smsService / _emailService,改在
   //   _bootstrap() 内 local 创建, 跟 Provider overrideWithValue 共享同一份
@@ -167,11 +166,6 @@ Future<void> _bootstrap() async {
   }
   if (FeatureFlags.emailServiceEnabled) {
     EmailService.validateForRelease(emailService);
-  }
-  if (FeatureFlags.iapEnabled) {
-    await StoreKitService.warmup();
-  } else {
-    piiSafeLog('main', 'IAP disabled by FeatureFlags — skip warmup');
   }
 
   // 4. 执行迁移（migrateIfNeeded 失败必须 throw,见 database_migration.dart）

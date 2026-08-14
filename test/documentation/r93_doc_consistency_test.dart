@@ -22,10 +22,11 @@ void main() {
         isTrue,
         reason: 'privacy_policy.md 缺 §0.6 v0.30 业务暂停 section',
       );
+      // v1.0.0+147: 永久免费, 法务文档 0 IAP / 0 买断残留 (lock-in 防回退)
       expect(
-        privacy.contains('FeatureFlags.iapEnabled'),
-        isTrue,
-        reason: 'privacy_policy.md 缺 FeatureFlags.iapEnabled 说明',
+        privacy.contains('IAP') || privacy.contains('买断') || privacy.contains('8 元'),
+        isFalse,
+        reason: 'privacy_policy.md 含 IAP / 买断残留 (v1.0.0+147 已删, 防回退)',
       );
       expect(
         privacy.contains('FeatureFlags.emergencyContactEnabled'),
@@ -46,6 +47,11 @@ void main() {
         isTrue,
         reason: 'sensitive_data_consent.md 缺 R93 阶段 2 说明',
       );
+      expect(
+        sensitive.contains('IAP') || sensitive.contains('买断'),
+        isFalse,
+        reason: 'sensitive_data_consent.md 含 IAP / 买断残留 (v1.0.0+147 已删, 防回退)',
+      );
 
       // user_agreement.md 加修订历史 entry (R93 阶段 2 集中隐藏)
       final userAgreement =
@@ -56,29 +62,35 @@ void main() {
         reason: 'user_agreement.md 缺 v0.30 R93 修订历史 entry',
       );
       expect(
-        userAgreement.contains('IAP 8 元买断业务暂停'),
+        userAgreement.contains('永久完全免费'),
         isTrue,
-        reason: 'user_agreement.md 缺 IAP 业务暂停说明',
+        reason: 'user_agreement.md 缺 §3 永久免费承诺 (v1.0.0+147 定版)',
+      );
+      expect(
+        userAgreement.contains('买断') || userAgreement.contains('8 元'),
+        isFalse,
+        reason: 'user_agreement.md 含买断 / 8 元残留 (v1.0.0+147 已删, 防回退)',
       );
     });
 
-    test('README.md 含 R95 红 banner + FeatureFlag 业务暂停说明', () {
+    test('README.md 含 FeatureFlag 业务暂停说明 + 永久免费声明', () {
       // R97-P1-12 (2026-08-07): README 在 commit f0dcaa6 升级为 R95 阶段 1+2+3+4
-      // 状态, 不再含 R93 "阶段 2 集中修复" banner。改验 R95 banner + FeatureFlag
+      // 状态, 不再含 R93 "阶段 2 集中修复" banner。改验 FeatureFlag
       // 业务暂停说明 (这两个 flag 是长期存在的, 跟 R93/R95 阶段无关)。
+      // v1.0.0+146/v1.0.0+147: README 精简重写 + 永久免费定版。
       final readme = File('README.md').readAsStringSync();
       expect(
-        readme.contains('v0.30 R95'),
+        readme.contains('永久完全免费'),
         isTrue,
-        reason: 'README.md 缺 v0.30 R95 版本标识',
+        reason: 'README.md 缺永久免费声明',
       );
       expect(
-        readme.contains('iapEnabled=false'),
-        isTrue,
-        reason: 'README.md 缺 iapEnabled=false 业务暂停说明',
+        readme.contains('iapEnabled') || readme.contains('8 元') || readme.contains('IAP'),
+        isFalse,
+        reason: 'README.md 含 iapEnabled / 8 元 / IAP 残留 (v1.0.0+147 已删, 防回退)',
       );
       expect(
-        readme.contains('emergencyContactEnabled=false'),
+        readme.contains('emergencyContactEnabled'),
         isTrue,
         reason: 'README.md 缺 emergencyContactEnabled=false 业务暂停说明',
       );
@@ -108,9 +120,9 @@ void main() {
         reason: 'DEPLOYMENT.md 阶段 6 缺 R93 阶段 2 标识',
       );
       expect(
-        deployment.contains('7 项 FeatureFlag 全部 hidden'),
+        deployment.contains('6 项 FeatureFlag 全部 hidden'),
         isTrue,
-        reason: 'DEPLOYMENT.md 阶段 6 缺 7 项 FeatureFlag checklist 标题',
+        reason: 'DEPLOYMENT.md 阶段 6 缺 6 项 FeatureFlag checklist 标题 (v1.0.0+147 删 IAP)',
       );
     });
   });

@@ -3827,42 +3827,6 @@ abstract class AppLocalizations {
   /// **'错误：{message}'**
   String safetyCheckResultError(Object message);
 
-  /// No description provided for @settingsIapUpgradeTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'购买此 App'**
-  String get settingsIapUpgradeTitle;
-
-  /// No description provided for @settingsIapUpgradeSubtitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'¥8 一次性买断 · 解锁全部功能'**
-  String get settingsIapUpgradeSubtitle;
-
-  /// No description provided for @settingsIapProOwnedTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'已购买'**
-  String get settingsIapProOwnedTitle;
-
-  /// No description provided for @settingsIapProOwnedSubtitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'感谢支持 · 全部功能已解锁'**
-  String get settingsIapProOwnedSubtitle;
-
-  /// No description provided for @iapPurchaseSuccess.
-  ///
-  /// In zh, this message translates to:
-  /// **'购买成功！感谢支持。'**
-  String get iapPurchaseSuccess;
-
-  /// No description provided for @iapPurchaseFailed.
-  ///
-  /// In zh, this message translates to:
-  /// **'购买未完成，请稍后再试。'**
-  String get iapPurchaseFailed;
-
   /// No description provided for @phoneRegionCn.
   ///
   /// In zh, this message translates to:

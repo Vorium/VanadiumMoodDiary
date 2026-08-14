@@ -16,7 +16,7 @@
 
 **目标用户**：精神心理疾病患者（抑郁、焦虑、双相等），需长期规律服药的人群。
 
-**商业模式**：8 元付费下载（Google Play + App Store）；当前版本免费，IAP 待接入（`iapEnabled=false`）。
+**商业模式**：永久完全免费，无任何购买入口、收费项目或订阅。
 
 ## ✨ 功能
 
@@ -132,7 +132,7 @@ flutter build web              # Web (H5)
 
 ## 🐛 已知约束
 
-- 8 FeatureFlag 守门：`ventAudioEnabled=true`；`iapEnabled` / `emergencyContactEnabled` / `fiveVendorPushEnabled` / `emailServiceEnabled` / `phqGad7I18nEnabled` / `bootReceiverEnabled` / `aliyunSmsEnabled` 均 `false`（等外部依赖：App Store Connect / 阿里云 AccessKey / 5 厂商 push / SendGrid / 法务+临床审核）
+- 7 FeatureFlag 守门：`ventAudioEnabled=true`；`emergencyContactEnabled` / `fiveVendorPushEnabled` / `emailServiceEnabled` / `phqGad7I18nEnabled` / `bootReceiverEnabled` / `aliyunSmsEnabled` 均 `false`（等外部依赖：阿里云 AccessKey / 5 厂商 push / SendGrid / 法务+临床审核）
 - SMS / Email / 5 厂商 push 走占位——失联通知生产真接依赖阿里云 SMS（1-2 月审核）
 - 国产 ROM 静默杀后台：需用户手动开启自启动 + 精确闹钟白名单（设置页有品牌引导）
 - iOS 推送需真机测试（模拟器无 APNs）；Web 走 IndexedDB，Chrome 隐身模式可能失败

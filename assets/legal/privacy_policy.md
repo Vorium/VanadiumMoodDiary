@@ -33,19 +33,18 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 
 | # | 业务 | 业务暂停原因 | FeatureFlag |
 |---|------|--------------|-------------|
-| 1 | IAP 8 元买断 (升级到 Pro 商业卡) | App Store Connect productId 未真接, Apple 2.1 拒 (未提供其他购买方式) | `FeatureFlags.iapEnabled` |
-| 2 | 失联通知 / 紧急联系人 SMS | AliyunSmsProvider 阿里云 SMS 未真接 (法务模板审核 + AccessKey 1-2 月), PIPL §17 上架 blocker | `FeatureFlags.emergencyContactEnabled` |
-| 3 | 5 厂商 push (米/华/OPPO/vivo/魅族) | 5 厂商 SDK 接入未真接 (1-2 月审核), iOS/Android 上架 blocker | `FeatureFlags.fiveVendorPushEnabled` |
-| 4 | EmailService 邮件导出 (SendGrid) | SendGrid API key + 法务模板审核未真接 (1-2 月), PIPL §13 单独同意链 | `FeatureFlags.emailServiceEnabled` |
-| 5 | ~~vent + mood audio 录音~~ **(已启用)** | ~~录音业务闭环不全~~ R104 起启用语音录制, 数据本地加密存储 | ~~`FeatureFlags.ventAudioEnabled`~~ 已 true |
-| 6 | PHQ-9 / GAD-7 量表 (en / zh_Hant) | 16 题 + 严重度 + 危机电话翻译不完整 (法律责任), i18n 走 fallback key | `FeatureFlags.phqGad7I18nEnabled` |
-| 7 | Android BootReceiver | v0.28 WorkManager 完善前 (设备重启后触发可能 crash) | `FeatureFlags.bootReceiverEnabled` |
+| 1 | 失联通知 / 紧急联系人 SMS | AliyunSmsProvider 阿里云 SMS 未真接 (法务模板审核 + AccessKey 1-2 月), PIPL §17 上架 blocker | `FeatureFlags.emergencyContactEnabled` |
+| 2 | 5 厂商 push (米/华/OPPO/vivo/魅族) | 5 厂商 SDK 接入未真接 (1-2 月审核), iOS/Android 上架 blocker | `FeatureFlags.fiveVendorPushEnabled` |
+| 3 | EmailService 邮件导出 (SendGrid) | SendGrid API key + 法务模板审核未真接 (1-2 月), PIPL §13 单独同意链 | `FeatureFlags.emailServiceEnabled` |
+| 4 | ~~vent + mood audio 录音~~ **(已启用)** | ~~录音业务闭环不全~~ R104 起启用语音录制, 数据本地加密存储 | ~~`FeatureFlags.ventAudioEnabled`~~ 已 true |
+| 5 | PHQ-9 / GAD-7 量表 (en / zh_Hant) | 16 题 + 严重度 + 危机电话翻译不完整 (法律责任), i18n 走 fallback key | `FeatureFlags.phqGad7I18nEnabled` |
+| 6 | Android BootReceiver | v0.28 WorkManager 完善前 (设备重启后触发可能 crash) | `FeatureFlags.bootReceiverEnabled` |
 
 **用户影响**: 除已启用的录音外, 上述暂停功能在设置页 / 主页 / 量表中心 / vent / mood 入口全部 hidden。数据模型 / Repository / 业务代码全部保留, 业务真接后翻 flag = 立即恢复。
 
 **数据保护**: 业务暂停期间, 用户的紧急联系人 / 邮件等数据**仍按 §1 / §3 描述本地加密存储**, 不上传不跨境, 业务恢复时无需迁移。录音 (已启用) 同样按 §1 / §3 本地加密存储。
 
-> 详见 `docs/CHANGELOG.md` `[0.30.0]` R93 entry + `lib/core/data/feature_flags.dart` 8 项 flag 集中定义。
+> 详见 `docs/CHANGELOG.md` `[0.30.0]` R93 entry + `lib/core/data/feature_flags.dart` 7 项 flag 集中定义 (v1.0.0+147 起永久完全免费)。
 
 
 
@@ -126,7 +125,6 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 | `go_router` | Flutter Community | 无 (本地路由) | 页面导航 |
 | `flutter_riverpod` | Remi Rousselet | 无 (本地状态管理) | App 状态管理 |
 | `drift` + `drift_dev` | Simon Binder | 无 (本地 ORM) | SQLite ORM |
-| `in_app_purchase` | Google / Apple (平台 API) | **支付交易必要信息(购买票据 + 应用 ID)** | 应用内买断(Google Play / Apple App Store IAP) |
 | `speech_to_text` | Sujan Thapa | 无 (本地 STT, mobile 走平台 on-device / cloud, web 走 Chrome Web Speech API) | 情绪日记语音录入 |
 | `path_provider` / `path` | Flutter Community | 无 (本地路径 API) | App 文件目录访问 |
 | `shared_preferences` | Flutter Community | 无 (本地键值) | 设置项持久化 |
@@ -136,9 +134,7 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 | `intl` | Dart Team | 无 (本地国际化) | 日期 / 数字格式化 |
 | `pointycastle` | The Legion of the Bouncy Castle | 无 (本地加密库) | AES 加密实现 |
 
-**特别说明(`in_app_purchase` 真实披露):** 本 App 通过 Google Play / Apple App Store 平台 IAP 通道处理一次性买断交易,平台会按其隐私政策处理支付交易必要信息(购买票据 + 应用 ID),本 App 不另行收集或存储支付账号 / 银行卡号等信息。详见 Google Play 与 Apple App Store 的隐私政策。
-
-**本 App 不通过任何 SDK 主动收集用户数据,上述 SDK 仅在用户主动触发对应功能时被调用。**
+**本 App 完全免费, 无任何购买 / 收费 / 内购行为, 因此不存在支付相关数据收集。本 App 不通过任何 SDK 主动收集用户数据,上述 SDK 仅在用户主动触发对应功能时被调用。**
 
 ## 8. 政策的变更
 
@@ -170,7 +166,7 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 - 14-18 周岁用户**需监护人代为签署同意**,App 在设置流程中要求用户勾选严正声明:"本人郑重承诺:我已年满 18 周岁。如本人为 14-18 周岁, 本人保证已取得监护人代为同意, 并愿意承担虚假陈述的一切法律后果。"
 - App 不会主动收集任何 14 周岁以下用户的敏感个人信息
 - 如发现 14 周岁以下用户误用,监护人可通过 **App 内 设置 → 法律与隐私** 页面发起数据删除请求,我们将在 7 个工作日内响应 (v0.27 R67 Sprint 1 决策, 邮件渠道待域名注册后启用)
-- 本 App 不会向未成年人推送任何营销内容、广告或诱导付费信息
+- 本 App 不会向未成年人推送任何营销内容或广告
 
 ## 11. 跨境数据传输 (未来规划,本版本无跨境 PII 传输实际场景)
 
@@ -222,8 +218,9 @@ App 提供"紧急联系人"配置入口,用户可**预先存储** 1 个或多个
 | v0.27 R67 | 2026-07-31 | Sprint 1 修订 | 隐私 / PIPL 投诉邮件渠道已软隐藏 (占位邮箱待域名注册),用户通过 App 内 设置 → 法律与隐私 页面行使 PIPL §14 撤回同意权 (R67 ConsentGate 集中器统一执行) |
 | v0.27 R68 | 2026-08-01 | CC-6 修复 | CareEngine safety consent 撤回业务层真接 (`FireCareStrategyInput.isSafetyConsentWithdrawn` 字段 + use case 早返), §3 共享段 / §11 跨境 / §12 单独同意实现进度 5 处版本号 walkthrough (v0.25 → v0.27, R55 → 未真接) |
 | v0.27 R69 | 2026-08-01 | P0 集中修复 | (1) 删除顶部 "TODO 律师过审" banner, 转本段修订历史; (2) 失联通知 4 文档 wording 改"规划中,本版本未启用"; (3) §192 紧急联系人回复 Y 确认 ❌ TODO 改 ⏸ 暂停 |
-| v0.27 R83 | 2026-08-02 | 律师审核 ⚠️ 集中修复 | (1) §0.5 紧急联系人告知改"未来规划,联系人配置仅为预存储"; (2) §3 信息的共享删除失联通知触发具体字段列表; (3) §7 第三方依赖改 22 行 SDK 表格 + IAP 真实披露(购买票据 + 应用 ID); (4) §10 未成年人保护 14-18 措辞改严正声明(本人郑重承诺...); (5) §11 跨境数据传输整段改"未来规划,本版本无跨境 PII 传输实际场景"; (6) §12 单独同意实现进度整段改"功能规划中,不在 v0.27 实现" |
-| v0.30 R93 | 2026-08-06 | R93 阶段 2 集中隐藏 | 加 §0.6 "v0.30 业务暂停" section: 7 项未真接业务 (IAP 商业卡 / 失联通知 / 5 厂商 push / EmailService / vent + mood 录音 / PHQ-9 / GAD-7 / BootReceiver) 已用 FeatureFlag 隐藏, 业务暂停期间完全 hidden (Apple 2.1 + PIPL §17 + 法律责任) |
+| v0.27 R83 | 2026-08-02 | 律师审核 ⚠️ 集中修复 | (1) §0.5 紧急联系人告知改"未来规划,联系人配置仅为预存储"; (2) §3 信息的共享删除失联通知触发具体字段列表; (3) §7 第三方依赖改 22 行 SDK 表格; (4) §10 未成年人保护 14-18 措辞改严正声明(本人郑重承诺...); (5) §11 跨境数据传输整段改"未来规划,本版本无跨境 PII 传输实际场景"; (6) §12 单独同意实现进度整段改"功能规划中,不在 v0.27 实现" |
+| v0.30 R93 | 2026-08-06 | R93 阶段 2 集中隐藏 | 加 §0.6 "v0.30 业务暂停" section: 6 项未真接业务 (失联通知 / 5 厂商 push / EmailService / vent + mood 录音 / PHQ-9 / GAD-7 / BootReceiver) 已用 FeatureFlag 隐藏, 业务暂停期间完全 hidden (PIPL §17 + 法律责任) |
+| v1.0.0+147 | 2026-08-14 | 永久免费定版 | 删 §0.6 表第 1 行 + §7 SDK 表格第 1 行 + 支付披露段: 本 App 永久完全免费 |
 | v0.30 R101 | 2026-08-07 | 联系方式 + 定稿 | 联系方式邮箱改为 【邮箱待启用: 域名注册后填入】; 删"草稿"标注; 失联通知描述改为"紧急联系人预存储" |
 
 **集中器**: `docs/SPRINT1_LEGAL_TODO.md` / `docs/LEGACY_API_NOTES.md` (软隐藏决策)

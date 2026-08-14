@@ -6,7 +6,7 @@
 // - v0.30 (R95 sub-spec 8 task 17): 4 group 拼装, 主壳 ~70 行
 //
 // 4 group (emil "信息架构重排一致思路"):
-// - ProfileGroup (用户档案): IAP + 药物 + 通知自检 + 心理评估 + 联系人
+// - ProfileGroup (用户档案): 药物 + 通知自检 + 心理评估 + 联系人
 // - RemindersGroup (提醒): 提醒 + CBT 思维记录
 // - DataGroup (数据): 数据管理
 // - LegalGroup (法律): 法律与隐私

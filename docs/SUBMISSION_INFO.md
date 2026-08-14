@@ -191,7 +191,7 @@ R107 阶段半完成：4 文件是 R71 commit 创建时占位；v0.31.1 P0-01 �
 | 文档 | 现状 | 必改 |
 |---|---|---|
 | `privacy_policy.md` | v0.22 草稿，标注"未经律师过审" | 律师签字 + 删"草稿" + 删 v0.28+ TODO 段 + 加 chroniccare.app URL + HealthKit 章节（接 P0-07 时）|
-| `user_agreement.md` | v0.22 草稿 | 律师签字 + 删"草稿" + 删 8 元 IAP 段（P0-07 IAP 真接时改）|
+| `user_agreement.md` | v0.22 草稿 | 律师签字 + 删"草稿" + 删定价段（v1.0.0+147 已完成, 永久免费）|
 | `sensitive_data_consent.md` | v0.22 草稿 | 律师签字 + 删"草稿" + 树洞录音部分"当前未加密"改"已加密 (AES-256, 2026-07 起启用)" |
 | `DEPLOYMENT.md` | R72 spzh 部分修正 | 律师复审敏感措辞 |
 | `MEDICAL_DISCLAIMER.md` | v0.22 草稿 | 律师签字 + 加 NMPA 监管声明 |
@@ -252,7 +252,6 @@ R109+ 阶段：
 - 5 厂商 push SDK 接入
 - 阿里云 SMS 真接
 - SendGrid Email 真接
-- IAP 真接（8 元买断）
 - HealthKit 接入（可选）
 - 鸿蒙 / OpenHarmony 适配（可选）
 

@@ -2,7 +2,7 @@ name: chroniccare
 # v0.27 R69: 双语描述, App Store / Google Play en 模式 UX 一致
 description: "我今天吃了药 - ChronicCare: medication reminder & mood tracker for people managing chronic conditions"
 publish_to: 'none'
-version: 1.0.0+146
+version: 1.0.0+147
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -63,12 +63,6 @@ dependencies:
   # 录音（树洞 audio）
   record: ^5.2.0
   audioplayers: ^6.1.0
-
-  # v0.27 round 65 (appstore P0-4 IAP 集成)
-  # Apple App Store 3.1.5 (a) 强制数字商品/服务走 IAP
-  # 8 元一次性买断 → NonConsumablePurchase (非订阅)
-  # 当前 dev 模式走 kDebugMode 直接返 true,productId 留 v0.28 真接
-  in_app_purchase: ^3.3.0
 
   # v0.23 (Round 31 in development) 情绪日记语音录入 — 本地 STT
   # 7.x: mobile 走平台 on-device / cloud STT, web 走 Chrome Web Speech API

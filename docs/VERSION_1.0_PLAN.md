@@ -48,7 +48,7 @@
 - 11 feature 0 改 (Apple Health spec §5.1-5.7) — R109 第 4 周选 3-5 个高 ROI 改
 - 126 fail 半年没修 (i18n 66 + 状态机 mock 50 + 数值匹配 10) — R109 第 1 周
 - SF Symbol 字体 (spec §3.1.3) — R110+
-- 实物资产 100% 缺失 + chroniccare.app 域名 + 5 厂商 push + 阿里云 SMS + EmailService + IAP + 鸿蒙 + HealthKit + 法务 — v1.0 长期 1-2 月
+- 实物资产 100% 缺失 + chroniccare.app 域名 + 5 厂商 push + 阿里云 SMS + EmailService  + 鸿蒙 + HealthKit + 法务 — v1.0 长期 1-2 月
 
 ---
 
@@ -204,7 +204,7 @@ $ flutter analyze --no-pub
 
 ### R32 P4 R1.0 长期 (2027-Q1, 1-2 月, 5-8 subagent 跨外部协作)
 
-详见 [R32 整合报告 §5.5](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (实物资产 100% + chroniccare.app 域名 ICP 7-20d + 5 厂商 push 1-2 月 + 阿里云 SMS 1-2 月 + EmailService 1-2 月 + PHQ-9 i18n 1-2 周 + HealthKit 2-3 周 + 鸿蒙 1-2 月 + IAP 1-2 周 + 法务 3 份 ¥45-90k + SF Symbol 字体 1-2d)
+详见 [R32 整合报告 §5.5](audit/2026-08-11-r32-multi-lens/00-FINAL-CONSOLIDATION.md) (实物资产 100% + chroniccare.app 域名 ICP 7-20d + 5 厂商 push 1-2 月 + 阿里云 SMS 1-2 月 + EmailService 1-2 月 + PHQ-9 i18n 1-2 周 + HealthKit 2-3 周 + 鸿蒙 1-2 月  1-2 周 + 法务 3 份 ¥45-90k + SF Symbol 字体 1-2d)
 
 ### R32 路线图 (跟 R31 路线图合并更新)
 
@@ -212,7 +212,7 @@ $ flutter analyze --no-pub
 - **R109 第 1 周 (1 周)**: 修 126 fail + 55 orphan ARB + 18 守门员全绿 + 11 feature 0 改选 3-5 个高 ROI 改 → 7.5 → 8.0
 - **R109 god class 专项 (1-2 月)**: 11 god class 拆 + use case 层厚化 (~30 个) + 修 126 fail 1-2 周 → 8.0 → 8.5
 - **R110 feature-first 重组 (2-3 周)**: `lib/features/{feature}/{domain,data,presentation}/` + pub workspace 拆 3 package + 业务逻辑上提到 use case 层 → 8.5 → 9.0
-- **v1.0 长期 (2027-Q1, 1-2 月)**: 实物资产 100% + 域名 ICP + 5 厂商 push + 阿里云 SMS + EmailService + PHQ-9 i18n + HealthKit + 鸿蒙 + IAP + 法务 + SF Symbol 字体 → 9.0 → 9.5
+- **v1.0 长期 (2027-Q1, 1-2 月)**: 实物资产 100% + 域名 ICP + 5 厂商 push + 阿里云 SMS + EmailService + PHQ-9 i18n + HealthKit + 鸿蒙  + 法务 + SF Symbol 字体 → 9.0 → 9.5
 
 ### R32 关键结论
 
@@ -242,7 +242,7 @@ $ flutter analyze --no-pub
 **R108 P0 整合(去重后 38 项,按优先级)**:
 - 优先级 1 上架硬阻塞 (5 项): iOS 截图 0 / Android 截图 67B + feature_graphic 67B / iOS LaunchImage 68B / review TODO 占位 / 5.1.3 抽审
 - 优先级 2 外部依赖卡点 (4 项): chroniccare.app 域名 + 4 邮箱 + 阿里云 SMS + 5 厂商 push
-- 优先级 3 鸿蒙 + IAP (2 项)
+- 优先级 3 鸿蒙  (2 项)
 - 优先级 4 锁屏 PII 跨 3 视角共识 (1 项): title 仍含药名
 - 优先级 5 R108 引入 8 个回归 error (8 项,合计 ≤2.5h)
 - 优先级 6 其他 P0 (12 项)
@@ -252,7 +252,7 @@ $ flutter analyze --no-pub
 - **Phase 2 外部依赖** (1-2 月): 域名 ICP + 5 厂商 push + 阿里云 SMS
 - **Phase 3 R109 god class 专项** (1-2 月): 5-6 god class 拆 + use case 层厚化
 - **Phase 4 R110 feature-first** (2-3 周): `lib/features/{feature}/{domain,data,presentation}/` + pub workspace
-- **Phase 5 R1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS + IAP
+- **Phase 5 R1.0 长期** (2027-Q1): HealthKit + 鸿蒙 + 5 厂商 push + 阿里云 SMS 
 
 **详细整合**: [`docs/audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md`](audit/2026-08-10-r108-revisit/00-FINAL-CONSOLIDATION.md) (40KB)
 
@@ -291,7 +291,7 @@ $ flutter analyze --no-pub
 
 ### R104 半成品/未完成功能
 
-- **8 项 FeatureFlag 守护功能**: IAP / SMS / 5 厂商 push / Email / audio / PHQ-9 i18n / BootReceiver / AliyunSms
+- **8 项 FeatureFlag 守护功能**: SMS / 5 厂商 push / Email / audio / PHQ-9 i18n / BootReceiver / AliyunSms
 - **29 处 TODO 注释**: SMS 真实发送 8 处 / 量表未开放 3 处 / med.colorIndex 2 处 / 其他 16 处
 
 ### R104 P0 快照 (上架阻塞, 12 项)
@@ -492,7 +492,7 @@ $ flutter analyze --no-pub
 
 ### R105 外部链接隐藏确认
 
-**运行时代码**: ✅ 0 外部链接泄露 (唯一 url_launcher = tel: 危机热线; IAP 全 gated; 无 analytics 依赖)
+**运行时代码**: ✅ 0 外部链接泄露 (唯一 url_launcher = tel: 危机热线; 无 analytics 依赖)
 **新矛盾**: 🔴 `_prodVentAudioEnabled=true` (feature_flags.dart:70) 但同批删除 iOS mic/speech 权限描述 + Android RECORD_AUDIO → 录音 crash + Apple 2.5.1/Play 政策双重风险, **提交前必须二选一**
 **上架物料层**: ⚠️ `chroniccare.app` 域名 + 邮箱未注册 (P0)
 
@@ -555,7 +555,7 @@ $ flutter analyze --no-pub
 | MoodReminderNotifier | 半成品 | 已注入 service 无 UI 开关 |
 | medication_detail 编辑 | 假按钮 | onPressed no-op |
 | 影响因素 i18n | 半成品 | key 建好未 wire, 中文入库 |
-| SMS / IAP / AliyunSMS / Email / 5 厂商 push | 半成品 (FeatureFlag 门控) | 全 flag=false, release 不可达 |
+| SMS / AliyunSMS / Email / 5 厂商 push | 半成品 (FeatureFlag 门控) | 全 flag=false, release 不可达 |
 | Apple HealthKit | 零集成 | v1.1 候选, 不阻塞上架 |
 
 ### R105 测试现状
@@ -681,7 +681,7 @@ $ flutter analyze --no-pub
 | 4 | 删 video.txt PLACEHOLDER ×2 | 底层 | 简单 | 10min | GPlay |
 | 5 | 生成 release keystore + key.properties | 底层 | 简单 | 30min | GPlay |
 | 6 | 删 iOS UIBackgroundModes audio+processing | 底层 | 简单 | 10min | AppStore |
-| 7 | user_agreement "8 元买断" → "未来版本" | 底层 | 简单 | 30min | AppStore |
+| 7 | user_agreement 定价段对齐 (v1.0.0+147 已删, 永久免费) | 底层 | 简单 | 30min | AppStore |
 | 8 | metadata 删 "(失联通知规划中)" | 底层 | 简单 | 10min | App/GPlay |
 | 9 | record/speech_to_text 加 tools:node="remove" | 底层 | 简单 | 15min | GPlay |
 | 10 | 法律文件删"草稿"标注 | 底层 | 简单 | 30min | GPlay |
@@ -735,7 +735,7 @@ $ flutter analyze --no-pub
 | 4 | 删 Android video.txt PLACEHOLDER ×2 | 底层 | 简单 | 自己 |
 | 5 | 生成 release keystore + key.properties | 底层 | 简单 | 自己 |
 | 6 | 删 iOS UIBackgroundModes audio+processing + BGTaskScheduler 声明 (Apple 2.5.4 拒因) | 底层 | 简单 | 自己 |
-| 7 | user_agreement "8 元买断" 表述对齐 (改"未来版本"或真接 IAP) | 底层 | 简单 | 自己 |
+| 7 | user_agreement 定价段表述对齐 (v1.0.0+147 已删, 永久免费) | 底层 | 简单 | 自己 |
 | 8 | metadata 删 "(失联通知规划中)" (Android title + iOS zh-Hans/Hant subtitle) | 底层 | 简单 | 自己 |
 
 ### R100 P1 快照 (高概率打回 / 用户可见)
@@ -750,7 +750,7 @@ $ flutter analyze --no-pub
 - **架构级** (8 项): home_page_state 656 行拆分 / 其余 5 个 480+ 行大文件 / services 31 文件分组 / usecase 补全 / ThemeExtension / routerProvider Notifier 化
 - **底层级** (4 项): a11y Semantics / golden test / ARB 半角标点 58 key / 中国区法务条款 (user_agreement 7 项 + sensitive_data_consent 3 项)
 
-**R100 关键结论**: 代码可修部分已收敛到 27 项且 0 新增功能 bug; 上架真正的阻塞是**外部资源** (域名 / 截图 / keystore / IAP 决策), 与 R95 结论一致 —— 可代码化部分接近 100% 完成。
+**R100 关键结论**: 代码可修部分已收敛到 27 项且 0 新增功能 bug; 上架真正的阻塞是**外部资源** (域名 / 截图 / keystore), 与 R95 结论一致 —— 可代码化部分接近 100% 完成。
 
 ---
 
@@ -760,7 +760,7 @@ $ flutter analyze --no-pub
 
 | Round | 范围 | 关键产出 |
 |-------|------|----------|
-| R68-R77 | R67 Sprint 1 修复 | IAP 隐藏 + 16KB alignment + 通知状态卡 + 法律文档 |
+| R68-R77 | R67 Sprint 1 修复 | 16KB alignment + 通知状态卡 + 法律文档 |
 | R78-R83 | Sprint 1 法律 + vent 加密 | 3 法律 md + vent contentTextEnc + privacy |
 | R84-R91 | 4 sub-spec (CBT thought record / PDF export / mood list / daily tracking) + 8 量表 assessment center + treatment placeholder | 19 commit |
 | R92 | 6 视角审计修复 (sub-spec 7) | 410KB 报告 + 6 task 修复 |
@@ -783,7 +783,7 @@ $ flutter analyze --no-pub
 - ✅ **Coverage 阈值** (domain 73.8% / data 47.0% / presentation 57.4% / shared 88.1% / core 25.8%)
 - ✅ **6 stale audit 处理** (R95 报告基于 R92 baseline, 未把 R88-91 增量算进去, 跑实际 grep 验证 + 加 lock-in tests)
 - ✅ **+347 R95 new tests** (1672 → 2019 pass, 0 pre-existing fail, 0 老 test fail)
-- ⏸️ **业务真接 (5 task) 暂停** (5 厂商 push / PHQ-9 i18n / IAP / 阿里云 SMS / Email, 需外部资源: 法务 ¥45-90k / 5 厂商 1-2 月审核 / 阿里云 AccessKey)
+- ⏸️ **业务真接 (5 task) 暂停** (5 厂商 push / PHQ-9 i18n / 阿里云 SMS / Email, 需外部资源: 法务 ¥45-90k / 5 厂商 1-2 月审核 / 阿里云 AccessKey)
 - ⏸️ **需外部资源 task** (task 20 法务 / task 21-23 主体资质 + 临床审核 + NMPA / task 33-43 iOS/Android 上架配置 / task 44/47 设计师 / task 59 鸿蒙 / task 60 TestFlight)
 
 ### 0.3 R92 → R95 6 视角评分变化
@@ -909,7 +909,6 @@ $ flutter analyze --no-pub
 |------|------|------|------|------|------|---------------|
 | **R95 task 11** | 5 厂商 push SDK 接入 (米/华/OPP/vivo/魅族) | 业务真接 | XL | 4-8 周 | 法务 | ⏸️ 等法务付费 + 5 厂商 1-2 月审核 |
 | **R95 task 12** | 8 量表 PHQ-9 / GAD-7 16 题 i18n 真接 (法务 + 临床审核) | 业务真接 | XL | 4-6 周 | task 2 | ⏸️ 等法务 + 临床审核 |
-| **R95 task 13** | IAP 8 元买断真接 productId (App Store Connect) | 业务真接 | M | 1-2 周 | 苹果审核 | ⏸️ 等 App Store Connect |
 | **R95 task 14** | 阿里云 SMS 真接 (法务模板 + AccessKey 申请) | 业务真接 | XL | 1-2d + 2-4w 审核 | task 11 法务 | ⏸️ 等 AccessKey + 阿里云审核 |
 | **R95 task 15** | EmailService 真接 SendGrid (法务模板 + API key) | 业务真接 | L | 1-2w | 法务 | ⏸️ 等 API key |
 | **R95 task 16** | 主页信息架构重排 (emil "3 tap 抵达") | 架构 (UX) | XL | 1-2 周 | task 5 | ⏸️ 留 R96+ |
@@ -1037,7 +1036,6 @@ $ flutter analyze --no-pub
 | 4 | 阿里云 SMS 真接 (法务 + AccessKey) | spzh / AppStore / GooglePlay | XL | 1-2d + 2-4w 审核 | ⏸️ 等 AccessKey (task 14) |
 | 5 | EmailService 真接 SendGrid | spzh / AppStore / GooglePlay | L | 1-2 周 | ⏸️ 等 API key (task 15) |
 | 6 | 域名 + 邮箱注册 | spzh / AppStore / GooglePlay | S-M | 1-2d | ⏸️ 留 R96+ (task 40/41) |
-| 7 | IAP 8 元买断真接 | spzh / AppStore / GooglePlay | M | 1-2 周 | ⏸️ 等 App Store Connect (task 13) |
 | 8 | 拆 6 个 god page (data_mgmt / scale / scale_l10n / home / trend / mood_audio + setup + settings) | emil / spen / flutter-spec | L-XL | 6-9 周 | ✅ **R95 sub-spec 1+4+6+8** 跑完 (8 god widget 全拆) |
 | 9 | 224 TextStyle + 208 EdgeInsets 集中器化 | emil / flutter-spec | L | 1-2 周 | ✅ **R95 sub-spec 5** 跑完 (102+ 处修真 + 20 lock-in tests) |
 | 10 | 30+ 硬编码中文 → 走 ARB | spzh / flutter-spec | L | 1-2 周 | ✅ **R95 sub-spec 3+7** 跑完 (P0 全走 ARB + 注释翻译 app_database 1499→0 中文) |
@@ -1089,7 +1087,7 @@ $ flutter analyze --no-pub
 | ✅ P0-A: Sprint 1 上架前 P0 全修 | ✅ R67 完成 + R95 持续 | R67 | 16 守护脚本全绿 + 0 analyzer error |
 | ✅ P0-B: Sprint 2 iOS / Android 守护补齐 | ✅ R95 18 守门员 + 5 集成测试 + coverage 阈值 | R95 | 18 守门员 (新加 check_coverage.py), 5 集成测试, coverage 阈值 domain 73.8% / data 47% |
 | ⏳ P0-C: 法务过审 (R67 §1/§2/§3 法律文档) | ⏳ R95 task 20-23 + 3 法律 md 已加 R95 阶段 2 说明 | R95+ | ¥45-90k 法务, 1-2 月, **等付费** |
-| ✅ P0-D: 业务真接 (5 厂商 push + PHQ-9 i18n + IAP + 阿里云 SMS + Email) FeatureFlag 守门 | ✅ R93 8 业务 FeatureFlag 守门 + R95 持续 | R93 | R95 加 README 红 banner, **业务真接真接等付费** (task 11-15) |
+| ✅ P0-D: 业务真接 (5 厂商 push + PHQ-9 i18n  + 阿里云 SMS + Email) FeatureFlag 守门 | ✅ R93 7 业务 FeatureFlag 守门 + R95 持续 | R93 | R95 加 README 红 banner, **业务真接真接等付费** (task 11-15) |
 | ⏳ P0-E: 主体资质 + 临床审核 + NMPA 备案 | ⏳ R95 task 21-23 | R95+ | 1-2 月, **等付费** |
 | ✅ P1: Sprint 3 P1 警告全清 (R66 标 12+12 项) | ✅ R95 sub-spec 6 + 7 跑 7/18 P1 task | R95 | 7/18 task ✅ (task 17/18/19/27/28/32/37), 11/18 ⏸️ 等外部 |
 | ✅ P2: 重构机会 (R66 §4 重构清单) | ✅ R95 32/60 task ✅ | R95 | 32/60 task ✅ (53%), 17/60 ⏸️ 等外部, 10/60 misc 留 R96+ |
@@ -1105,7 +1103,7 @@ $ flutter analyze --no-pub
 | M2 R95 阶段 2 | 2026-08-07 ✅ | R95 task 17/18/19/27/28/37 完成 (7/18 P1 task ✅, +171 tests, 6 commit) | ✅ **已跑完** (实际 1 天, 7/18 task) |
 | M3 R95 阶段 3 | 2026-08-07 ✅ | R95 sub-spec 7 完成 (task 30/31a/31b/32/53/54/55 + R96a/96b/96c, +57 tests 1951 → 2008, 13 commit) | ✅ **已跑完** (实际 1 天) |
 | M3.5 R95 阶段 4 | 2026-08-07 ✅ | R95 sub-spec 8 完成 (task 17/18/19/45/46/48/56-67, +11 tests 2008 → 2019, 12 commit) | ✅ **已跑完** (实际 1 天) |
-| M4 R95 业务真接 | **暂停, 等付费** | R95 task 11-15 (5 厂商 push / PHQ-9 i18n / IAP / 阿里云 SMS / Email) 真接, 1-2 月审核 | ⏸️ **等付费启动** |
+| M4 R95 业务真接 | **暂停, 等付费** | R95 task 11-15 (5 厂商 push / PHQ-9 i18n / 阿里云 SMS / Email) 真接, 1-2 月审核 | ⏸️ **等付费启动** |
 | M5 法务过审 | 2026-09-15 (估, 并行 M4) | ¥45-90k 法务付费 + 3 份 md 律师签字 | ⏸️ **等付费** |
 | M6 主体资质 + 临床 + NMPA | 2026-11-15 (估, 并行 M4) | ICP / 公安备案 / 等保 / NMPA 备案 | ⏸️ **等付费** |
 | M7 提交审核 | 2026-12 (估) | v0.35.0+90 (R95 阶段 1+2+3+4 + 业务真接) 提交 Apple + Google | ⏸️ **等 M4-M6 完成** |
@@ -1118,7 +1116,6 @@ $ flutter analyze --no-pub
 - [ ] 法务过审完 (R95 task 20) — ⏸️ 等付费
 - [ ] 5 厂商 push SDK 接入 (R95 task 11) — ⏸️ 等审核
 - [ ] PHQ-9 / GAD-7 16 题 i18n 真接 (R95 task 12) — ⏸️ 等法务+临床
-- [ ] IAP 8 元买断真接 (R95 task 13) — ⏸️ 等 App Store Connect
 - [ ] 主体资质 + 临床审核 + NMPA 备案 (R95 task 21-23) — ⏸️ 等付费
 - [ ] 至少 100 个真实用户跑过 (TestFlight 100+, task 60) — ⏸️ 留 R96+
 - [x] 18 守护脚本 0 violation (含 R60 新增的 check_16kb_alignment.py + R95 新加的 check_all.dart + check_coverage.py) — ✅ **全绿**
@@ -1334,7 +1331,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 | **R97-P1-2** | TodayMedSchedule.build() 调 DateTime.now() (跨 midnight stale + rebuild 浪费) | 底层 | low | spen | [today_med_schedule.dart#L44](../lib/presentation/pages/medication/today_med_schedule.dart) |
 | **R97-P1-3** | VentRepositoryImpl.delete() TOCTOU 事务范围错 (select 在事务外, rename 场景可能删错文件) | 底层 | medium | spen | [vent_repository_impl.dart#L105](../lib/core/data/repositories/vent/vent_repository_impl.dart) |
 | **R97-P1-4** | vent 树洞 UGC 完全没有举报机制 (Apple 1.2.1 直接拒, 无举报按钮 + 无 UGC 政策声明) | 底层 | medium | AppStore | [vent_detail_page.dart](../lib/presentation/pages/vent/vent_detail_page.dart) |
-| **R97-P1-5** | IAP 入口完全隐藏但 user_agreement 声明"售价 8 元" (描述与实际不符, Apple 2.1/3.1.1) | 底层 | medium | AppStore | [feature_flags.dart#L51](../lib/core/data/feature_flags.dart) |
+| **R97-P1-5** | user_agreement 定价段描述与实际不符 (v1.0.0+147 已删, Apple 2.1/3.1.1) | 底层 | medium | AppStore | [user_agreement.md](../assets/legal/user_agreement.md) |
 | **R97-P1-6** | 首次启动立即请求通知权限 (main.dart bootstrap 阶段调 init() 内立即 requestPermissions, 违反"先解释后请求") | 底层 | medium | AppStore/GooglePlay | [main.dart#L161](../lib/main.dart) |
 | **R97-P1-7** | setup_legal_dialog 危机热线展示不完整 (注释写 5 条实际只渲染 4 条, 漏 crisisHotlineCnBeijing, 与 user_agreement §5 表格不同步) | 底层 | low | spzh | [setup_legal_dialog.dart#L79](../lib/presentation/pages/setup/setup_legal_dialog.dart) |
 | **R97-P1-8** | INTERNET 权限当前为非必需 (业务全部 flag=false 暂停, 0 网络调用但申请 INTERNET) | 底层 | low | GooglePlay | [AndroidManifest.xml#L30](../android/app/src/main/AndroidManifest.xml) |
@@ -1400,7 +1397,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 #### 检查项 ②: 上架/架构/重构/半成品 — 🔴 8 P0 阻塞
 
 - **上架 blocker**: 域名 + 律师 + 签名 + USE_EXACT_ALARM + NMPA (R97-P0-3/4/5/6/8)
-- **半成品**: SMS/Email/IAP/5 厂商 push/PHQ-9 i18n 5 项业务真接 + BootReceiver + NSESSS/CRDPSS 量表
+- **半成品**: SMS/Email/5 厂商 push/PHQ-9 i18n 5 项业务真接 + BootReceiver + NSESSS/CRDPSS 量表
 - **架构违规**: check_safety.dart 跨层 import (R97-P0-1)
 - **重构机会**: home_page_state 650 行 / mood_audio_section / notification_service facade / AppTokens god class
 
@@ -1454,7 +1451,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 10. **R97-P1-2** TodayMedSchedule.build() — 改用 ref.watch(todayProvider)
 11. **R97-P1-3** VentRepositoryImpl.delete() TOCTOU — select 挪进 transaction
 12. **R97-P1-4** vent UGC 举报 — 加举报按钮 + metadata 声明 UGC 政策
-13. **R97-P1-5** IAP 描述不符 — 改 user_agreement §3 为"当前免费"或真接 productId
+13. **R97-P1-5** 定价段描述不符 — v1.0.0+147 已改 user_agreement §3 为永久免费
 14. **R97-P1-6** 通知权限请求时机 — 拆 init() 为 initialize() + requestPermissions()
 15. **R97-P1-7** 危机热线展示 — 加 crisisHotlineCnBeijing 渲染
 16. **R97-P1-8/9** 删 INTERNET/RECORD_AUDIO 权限
@@ -1580,7 +1577,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 | **R98-P1-3** | `crossedMidnightSince` 用 `DateTime` 而 `nextMidnightRefresh` 用 `tz.TZDateTime`, DST 不一致 | 底层 | low | emil |
 | **R98-P1-4** | 3 个 StreamProvider 缺 autoDispose (allAssessmentEntries / ventSealed / ventSealedAt) | 底层 | low | emil |
 | **R98-P1-5** | iOS `InfoPlist.strings` 缺 en-US 版本, 5 项 usage description 仅中文 | 底层 | medium | AppStore |
-| **R98-P1-6** | IAP "8 元买断" 描述 vs 实际 0 元 + iapEnabled=false 矛盾 (R97-P1-5 未修) | 底层 | medium | AppStore |
+| **R98-P1-6** | 定价段描述 vs 实际不一致 (v1.0.0+147 已修, 永久免费) | 底层 | medium | AppStore |
 | **R98-P1-7** | iOS subtitle/description 提"规划中/即将上线", Apple 2.3.10 不允许 | 架构 | low | AppStore |
 | **R98-P1-8** | `setup_legal_dialog.dart:110` 硬编码中文 "🆘 心理危机干预热线 (24h)" 未走 ARB | 底层 | low | AppStore |
 | **R98-P1-9** | `assets/legal/` 8 处软隐藏邮箱 + 1 处 GitHub 占位, PIPL §52 实质未提供有效联系方式 | 架构 | medium | spzh + 外链 |
@@ -1607,9 +1604,9 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 #### 检查项 ②: 上架/架构/重构/半成品 — 🔴 9 P0 阻塞 (4 项代码侧 + 5 项外部资源)
 
-- **上架 P0**: iOS processing 空挂 + iOS 缺 en-US InfoPlist.strings + iOS/Android 截图缺失/占位 + IAP 描述矛盾 + Data Safety Form URL 不可访问
+- **上架 P0**: iOS processing 空挂 + iOS 缺 en-US InfoPlist.strings + iOS/Android 截图缺失/占位  描述矛盾 + Data Safety Form URL 不可访问
 - **架构违规 (新发现)**: CareEngine.evaluate/fire 死代码 + 3 处 StreamProvider 缺 autoDispose
-- **半成品 (跟 R97 重叠)**: SMS/Email/IAP/5 厂商 push/PHQ-9 i18n 5 项业务真接
+- **半成品 (跟 R97 重叠)**: SMS/Email/5 厂商 push/PHQ-9 i18n 5 项业务真接
 - **重构机会**: home_page_state 590 行仍偏大 + ThemeExtension 完全缺位 + routerProvider 反模式 + ThemeModeNotifier 异步
 
 #### 检查项 ③: 顶层架构审视 — ✅ 9.0/10 (国内中型项目天花板, 跟 R97 持平)
@@ -1633,7 +1630,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 | 2 | 法律文档"草稿未经律师过审" + 联系方式软隐藏 (PIPL §52) | 3 (spzh/AppStore/GooglePlay/外链) | 架构 | high |
 | 3 | 域名 chroniccare.app 未注册 (隐私 URL / Data Safety Form / 联系邮箱 全失效) | 4 (spzh/AppStore/GooglePlay/外链) | 底层 | medium |
 | 4 | iOS + Android 截图完全缺失 / 占位 PNG | 2 (AppStore/GooglePlay) | 架构 | medium |
-| 5 | SMS/Email/IAP/5 厂商 push 业务真接阻塞 | 3 (spzh/spen/AppStore) | 架构 | high |
+| 5 | SMS/Email/5 厂商 push 业务真接阻塞 | 3 (spzh/spen/AppStore) | 架构 | high |
 | 6 | 跨时区 DateTime 不一致 (DST bug) | 2 (emil/spen) | 底层 | low |
 
 ### 10.7 R98 修复路径建议 (按优先级)
@@ -1653,7 +1650,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 #### 第 2 周 (修 P1, 估 6-10 commit)
 
 10. **R98-P1-5** 新建 `ios/Runner/en.lproj/InfoPlist.strings` + pbxproj PBXVariantGroup — 2h
-11. **R98-P1-6** 统一 IAP 描述 — 1h
+11. **R98-P1-6** 统一定价段描述 — v1.0.0+147 已修
 12. **R98-P1-7** 删 subtitle/description "规划中"措辞 — 30 分钟
 13. **R98-P1-9** 清理 assets/legal/ 8 处软隐藏邮箱 + GitHub 占位 — 1h
 14. **R98-P1-10** ConsentGate 加 version 校验 — 4h
@@ -1679,7 +1676,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 
 **整体上架就绪度**: ~50% (R97 修 12 项后 ~50%, R98 新发现 9 P0 抵消改善, 持平)
 
-**Apple App Store 风险**: 🔴 高 — 5 项必拒 (processing 空挂 + 截图缺失 + 隐私 URL 404 + IAP 描述矛盾 + InfoPlist.strings 缺 en-US)
+**Apple App Store 风险**: 🔴 高 — 5 项必拒 (processing 空挂 + 截图缺失 + 隐私 URL 404  描述矛盾 + InfoPlist.strings 缺 en-US)
 **Google Play 风险**: 🔴 高 — 4 项必拒 (feature_graphic 占位 + 截图占位 + Data Safety URL 不可访问 + 隐私政策律师未过审)
 
 **建议路径**:
@@ -1843,7 +1840,7 @@ R95 实施后, 实际跑的 8 sub-spec 目录:
 | 阶段 | 周期 | 内容 |
 |------|------|------|
 | **R108 Phase 1** | 1-2 周 (~12-14 工作日 / 2-3 sprint) | 上架前 P0 必做 13 项 (iCloud Backup + canScheduleExactAlarms + 锁屏 body PII + PrivacyInfo 注册 + LaunchImage/AppIcon + 域名 + review_information + 截图 + UIBackgroundModes + keystore + Data Safety + en-US description + main.dart log) |
-| **R109 Phase 2** | 1-2 月 (~5-6 周 / 2-3 sprint) | P1 警告 + 拆 6 大 god class (main.dart 459L / home_page_state 597L / vent+mood_audio 2×500L / notification_service 426L / medication_page 540L / daily_tracking 7 widget) + 真实业务接入 (IAP 真接 productId) |
+| **R109 Phase 2** | 1-2 月 (~5-6 周 / 2-3 sprint) | P1 警告 + 拆 6 大 god class (main.dart 459L / home_page_state 597L / vent+mood_audio 2×500L / notification_service 426L / medication_page 540L / daily_tracking 7 widget)  |
 | **R110+ Phase 3** | 6 月+ (v1.0) | 5 厂商 push SDK 接入 / AliyunSms 真接 / EmailService 真接 / PHQ-9 i18n / HealthKit 选项 B-C / 8 FeatureFlag 翻 true / a11y 全量 / 守门员加 `check_a11y.py` / feature-first 重构 (中期) / pub workspace 拆 vent / medication (长期) |
 
 **R107 cleanup 报告位置**: `docs/audit-history/r107-cleanup-2026-08-10/`

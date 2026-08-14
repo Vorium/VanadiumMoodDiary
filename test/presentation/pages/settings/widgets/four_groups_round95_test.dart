@@ -67,8 +67,8 @@ void main() {
   testWidgets(
       'ProfileGroup: Medication + Assessment 渲染 (NotificationStatusCard 在 RemindersGroup)',
       (tester) async {
-    // v0.30 round 95 (sub-spec 8 task 17): ProfileGroup 含 4 section
-    // (Medication / Assessment / Contact conditional / IAP conditional),
+    // v0.30 round 95 (sub-spec 8 task 17): ProfileGroup 含 3 section
+    // (Medication / Assessment / Contact conditional; v1.0.0+147 删商业卡),
     // NotificationStatusCard 挪到 RemindersGroup 末尾 (避免 initState 永远
     // schedule frame 让 widget test hang)。
     await tester.pumpWidget(buildGroup(const ProfileGroup()));

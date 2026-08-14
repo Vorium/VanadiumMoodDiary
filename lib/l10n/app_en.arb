@@ -1380,12 +1380,6 @@
       }
     }
   },
-  "settingsIapUpgradeTitle": "Buy this app",
-  "settingsIapUpgradeSubtitle": "¥8 one-time purchase · unlock all features",
-  "settingsIapProOwnedTitle": "Purchased",
-  "settingsIapProOwnedSubtitle": "Thanks for the support · all features unlocked",
-  "iapPurchaseSuccess": "Purchase successful! Thanks for your support.",
-  "iapPurchaseFailed": "Purchase not completed. Please try again later.",
   "phoneRegionCn": "Mainland China",
   "phoneRegionHk": "Hong Kong, China",
   "phoneRegionMo": "Macao, China",

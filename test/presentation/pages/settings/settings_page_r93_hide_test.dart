@@ -1,19 +1,19 @@
-// v0.30 round 93 (test): settings_page 4 section 隐藏验证
+// v0.30 round 93 (test): settings_page 3 section 隐藏验证
 //
 // R93 阶段 2: "所有需要真接的内容先隐藏" 策略
-// 4 section 走 FeatureFlag gate, 业务暂停期间完全 hidden:
+// 3 section 走 FeatureFlag gate, 业务暂停期间完全 hidden:
 //
-// 1. IAP 商业卡 → FeatureFlags.iapEnabled
-// 2. 联系人 section → FeatureFlags.emergencyContactEnabled
-// 3. 5 厂商 OEM 引导 → FeatureFlags.fiveVendorPushEnabled
-// 4. 邮件预览 → FeatureFlags.emailServiceEnabled (R95 task 10 整 widget 删, 永远 hidden)
+// 1. 联系人 section → FeatureFlags.emergencyContactEnabled
+// 2. 5 厂商 OEM 引导 → FeatureFlags.fiveVendorPushEnabled
+// 3. 邮件预览 → FeatureFlags.emailServiceEnabled (R95 task 10 整 widget 删, 永远 hidden)
+//
+// v1.0.0+147: 删商业卡 case (永久免费定版, 原 case 2 删除)。
 //
 // 4 case:
-//   - case 1: 4 flag 默认 false → 4 section 全 hidden (verify by find)
-//   - case 2: iapEnabled=true → IAP 商业卡渲染 (workspace_premium icon)
-//   - case 3: emergencyContactEnabled=true → ContactsListWidget 渲染
-//   - case 4: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 删 widget 后)
-//   - case 5: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染
+//   - case 1: 3 flag 默认 false → 3 section 全 hidden (verify by find)
+//   - case 2: emergencyContactEnabled=true → ContactsListWidget 渲染
+//   - case 3: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 删 widget 后)
+//   - case 4: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染
 //
 // 测试模式: 每个 case 调 `setXxxEnabledForTest(true)` 翻 flag, 验证 widget 渲染。
 // tearDown resetForTest 恢复 prod 默认。
@@ -58,41 +58,28 @@ void main() {
     );
   }
 
-  testWidgets('R93 case 1: 4 flag 默认 false → 4 section 全 hidden',
+  testWidgets('R93 case 1: 3 flag 默认 false → 3 section 全 hidden',
       (tester) async {
     // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, NotificationStatusCard
     // 挪到 RemindersGroup 末尾, 维持 lazy load 体验, pumpAndSettle 仍可用。
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
-    // 1. IAP 商业卡 hidden (workspace_premium icon 不应渲染)
-    expect(find.byIcon(Icons.workspace_premium), findsNothing);
-
-    // 2. 联系人 section hidden (ContactsListWidget 不应渲染)
+    // 1. 联系人 section hidden (ContactsListWidget 不应渲染)
     expect(find.byType(ContactsListWidget), findsNothing);
 
-    // 3. 5 厂商 OEM 引导 hidden (ExpansionTile 标题 "国产手机没收到通知？" 不应渲染)
+    // 2. 5 厂商 OEM 引导 hidden (ExpansionTile 标题 "国产手机没收到通知？" 不应渲染)
     expect(find.text('国产手机没收到通知？'), findsNothing);
 
-    // 4. 邮件预览 hidden (settingsEmailPreview = "预览停药通知邮件" 不应渲染)
+    // 3. 邮件预览 hidden (settingsEmailPreview = "预览停药通知邮件" 不应渲染)
     expect(find.text('预览停药通知邮件'), findsNothing);
   });
 
-  testWidgets('R93 case 2: iapEnabled=true → IAP 商业卡渲染', (tester) async {
-    FeatureFlags.setIapEnabledForTest(true);
-    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
-    await tester.pumpWidget(buildSettingsPage());
-    await tester.pumpAndSettle(const Duration(milliseconds: 100));
-
-    // IAP 商业卡: workspace_premium icon + "升级到 Pro" title 渲染
-    expect(find.byIcon(Icons.workspace_premium), findsAtLeast(1));
-  });
-
   testWidgets(
-      'R93 case 3: emergencyContactEnabled=true → ContactsListWidget 渲染',
+      'R93 case 2: emergencyContactEnabled=true → ContactsListWidget 渲染',
       (tester) async {
     // emergencyContactEnabled 没有 setEmergencyContactEnabledForTest setter (R66 兼容)
-    // 用 enableForTest 翻 8 个全 true (含 emergencyContactEnabled), 验证联系人 section
+    // 用 enableForTest 翻全 true (含 emergencyContactEnabled), 验证联系人 section
     // 渲染。tearDown resetForTest 恢复 prod 默认。
     FeatureFlags.enableForTest();
     // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
@@ -105,7 +92,7 @@ void main() {
   });
 
   testWidgets(
-      'R95 case 4: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 整 widget 删)',
+      'R95 case 3: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 整 widget 删)',
       (tester) async {
     // v0.30 round 95 (sub-spec 2 task 10): 删 EmailPreviewPage 整文件
     // (失联是 SMS 不是 email, R93 业务暂停后真无用), 不再走 FeatureFlag 守门
@@ -120,7 +107,7 @@ void main() {
   });
 
   testWidgets(
-      'R93 case 5: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',
+      'R93 case 4: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',
       (tester) async {
     FeatureFlags.setFiveVendorPushEnabledForTest(true);
     // v0.30 round 95 (sub-spec 8 task 17): 同 case 1

@@ -1,4 +1,13 @@
 ﻿# 变更日志
+## [1.0.0+147] - 2026-08-14 (永久免费定版: 去除所有收费相关内容)
+
+- **永久免费定版**: App 永久完全免费, 无任何购买入口 / 收费行为 / 内购 / 订阅费, 无收费计划
+- **删 IAP 代码**: store_kit_service (141L) + iap_provider (56L) + FeatureFlags.iapEnabled flag + main.dart StoreKit warmup + 设置页 Pro 商业卡整段 + in_app_purchase 依赖 + 6 个 ARB key ×3 语 — 8 flag → 7 flag (lib/ 0 IAP 残留)
+- **法务文档 ×3 重写**: user_agreement §3 免费承诺 + §4 退款政策重写 / privacy_policy 删 §0.6 IAP 行 + §7 SDK 表 in_app_purchase 行 + 支付披露段 + §10 诱导付费措辞 / sensitive_data_consent 删 IAP 引用 + 修订历史各加 v1.0.0+147 行
+- **活跃 docs 清理**: README / DEPLOYMENT / SUBMISSION_INFO / STOREFRONT_RELEASE_SOP / VERSION_1.0_PLAN 删全部 IAP / 8 元 / productId 残留 (历史存档 docs/audit / docs/design / WHITEPAPER 不动)
+- **fastlane**: notes.txt point 8 改永久免费 + Fastfile 去 IAP 注释 + Android changelogs 保持
+- **测试**: 删 store_kit_service_round95_test + 改 5 个 IAP 相关 test (r93_doc_consistency 加"0 IAP/买断残留" lock-in 防回退断言)
+
 ## [1.0.0+146] - 2026-08-14 (首个正式版 v1.0.0 发布)
 
 - **首个正式版发布**: 版本号 0.32.0 → 1.0.0 (语义版本归位, build 号 145 → 146 连续)
