@@ -91,3 +91,32 @@ scripts/_archive/sprint2-zh-hant-tmp/
 
 # flutter_test golden 失败对比产物
 test/presentation/widgets/failures/
+
+# v0.32 R113: 参考官方 Flutter 模板 (flutter_tools/templates/app/.gitignore.tmpl)
+# + GitHub Flutter.gitignore 补齐通用条目。
+# android/.gitignore / ios/.gitignore 已覆盖各自子目录, 这里是 root 层兜底。
+*.class
+*.swp
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+
+# Symbolication / Obfuscation 产物
+app.*.symbols
+app.*.map.json
+
+# Android Studio 直接 build 到 app/ 下的产物目录
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Windows 桌面构建产物 (Flutter 多平台模板通用条目)
+*.dll
+*.exe
+*.msi
