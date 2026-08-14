@@ -2,7 +2,7 @@ name: chroniccare
 # v0.27 R69: 双语描述, App Store / Google Play en 模式 UX 一致
 description: "我今天吃了药 - ChronicCare: medication reminder & mood tracker for people managing chronic conditions"
 publish_to: 'none'
-version: 0.32.0+142
+version: 0.32.0+143
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
