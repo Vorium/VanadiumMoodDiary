@@ -101,7 +101,8 @@ Future<void> resumeRecording() async {}
 @override
 bool get isPaused => false;
 
-Future<MoodAudioResult?> stopRecording() async {
+@override
+  Future<MoodAudioResult?> stopRecording() async {
     _isRecording = false;
     _isSttListening = false;
     if (_pendingPlainPath == null) return null;
