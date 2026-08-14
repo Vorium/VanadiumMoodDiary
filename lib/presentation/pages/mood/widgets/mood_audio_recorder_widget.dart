@@ -221,11 +221,22 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
     return true;
   }
 
+  /// v0.32 R112 round 8h: 暂停录音 (转发 service)
+  @override
+  Future<void> pauseRecordingImpl() async {
+    await _service.pauseRecording();
+  }
+
+  /// v0.32 R112 round 8h: 继续录音 (转发 service)
+  @override
+  Future<void> resumeRecordingImpl() async {
+    await _service.resumeRecording();
+  }
+
   /// mood 停止录音 + STT stop + 加密
   @override
   Future<String?> stopRecordingImpl() async {
     final result = await _service.stopRecording();
-    // STT 停止
     try {
       await _service.stopStt();
     } catch (e, st) {
@@ -433,6 +444,24 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
                 ),
               ),
               const SizedBox(width: AppTokens.spacingSm),
+              if (isRecording || isPaused) ...[
+                // v0.32 R112 round 8h: 暂停/继续切换 (录音中)
+                PressFeedbackIconButton(
+                  icon: isPaused ? Icons.play_arrow : Icons.pause,
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    if (isPaused) {
+                      resumeRecording();
+                    } else {
+                      pauseRecording();
+                    }
+                  },
+                  tooltip: isPaused
+                      ? l10n.audioRecordResumeTooltip
+                      : l10n.audioRecordPauseTooltip,
+                ),
+                const SizedBox(width: AppTokens.spacingSm),
+              ],
               if (isRecording) ...[
                 // R102 (P1): 用 _RecordingTimer 独立 widget 替代内联 Text
                 // 之前 onTick → setState(() {}) 每 100ms 重建整个 widget (537 行)

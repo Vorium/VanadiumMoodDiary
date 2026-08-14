@@ -896,13 +896,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventRecordIdle => 'Tap to start recording';
 
   @override
-  String get ventRecordActive => 'Recording…… tap to stop';
-
-  @override
   String get ventAudioLabel => 'Recording';
 
   @override
   String get ventAudioPlayTooltip => 'Play recording';
+
+  @override
+  String get audioRecordPauseTooltip => 'Pause recording';
+
+  @override
+  String get audioRecordResumeTooltip => 'Resume recording';
+
+  @override
+  String get audioRecordStopTooltip => 'Stop recording';
 
   @override
   String get ventAudioPauseTooltip => 'Pause recording';

@@ -848,13 +848,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventRecordIdle => '按一下开始录音';
 
   @override
-  String get ventRecordActive => '正在录音……点停止';
-
-  @override
   String get ventAudioLabel => '录音';
 
   @override
   String get ventAudioPlayTooltip => '播放录音';
+
+  @override
+  String get audioRecordPauseTooltip => '暂停录音';
+
+  @override
+  String get audioRecordResumeTooltip => '继续录音';
+
+  @override
+  String get audioRecordStopTooltip => '停止录音';
 
   @override
   String get ventAudioPauseTooltip => '暂停录音';
@@ -5015,13 +5021,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventRecordIdle => '按一下開始錄音';
 
   @override
-  String get ventRecordActive => '正在錄音……點停止';
-
-  @override
   String get ventAudioLabel => '錄音';
 
   @override
   String get ventAudioPlayTooltip => '播放錄音';
+
+  @override
+  String get audioRecordPauseTooltip => '暫停錄音';
+
+  @override
+  String get audioRecordResumeTooltip => '繼續錄音';
+
+  @override
+  String get audioRecordStopTooltip => '停止錄音';
 
   @override
   String get ventAudioPauseTooltip => '暫停錄音';

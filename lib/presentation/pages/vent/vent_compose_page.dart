@@ -174,6 +174,12 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
     return encryptedPath;
   }
 
+  // R112 round 8h: 暂停/继续 (record 保持 temp 文件打开)
+  @override
+  Future<void> pauseRecordingImpl() => _recorder.pause();
+  @override
+  Future<void> resumeRecordingImpl() => _recorder.resume();
+
   /// vent decryptToTemp + 启动 player
   @override
   Future<void> startPlaybackImpl(String encryptedPath) async {
@@ -274,14 +280,21 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
 
   // ===== 公开方法 (供 VentAudioSection callback) =====
 
-  /// vent 录音切换 (toggle)
-  ///
-  /// 业务逻辑全在 mixin 状态机, 这里只剩"开始 vs 停止"分派
+  /// vent 录音切换 (开始 vs 停止; paused 也走 stop)
   Future<void> _toggleRecord() async {
-    if (isRecording) {
+    if (isRecording || isPaused) {
       await stopRecording();
     } else {
       await startRecording();
+    }
+  }
+
+  /// v0.32 R112 round 8h: 暂停 / 继续录音切换 (paused 停止也走 _toggleRecord)
+  Future<void> _togglePause() async {
+    if (isPaused) {
+      await resumeRecording();
+    } else if (isRecording) {
+      await pauseRecording();
     }
   }
 
@@ -334,7 +347,8 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
       );
       return;
     }
-    if (isRecording) {
+    // paused 时也不能保存 (先停止录音)
+    if (isRecording || isPaused) {
       AppSnackBar.showInfo(
         context,
         AppLocalizations.of(context).snackbarStopRecording,
@@ -420,10 +434,13 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
             if (FeatureFlags.ventAudioEnabled)
               VentAudioSection(
                 isRecording: isRecording,
+                isPaused: isPaused,
+                recordingElapsed: recordingElapsed,
                 audioPath: audioPath,
                 audioDurationSec: _audioDurationSec,
                 isPlaying: isPlaying,
                 onToggleRecord: _toggleRecord,
+                onTogglePause: _togglePause,
                 onTogglePlay: _togglePlay,
                 onReRecord: _reRecord,
               )

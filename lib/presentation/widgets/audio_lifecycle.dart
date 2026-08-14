@@ -36,6 +36,8 @@ import 'package:chroniccare/core/shared/error_sinks.dart';
 ///
 /// idle → recording → recorded → playing → recorded → idle (re-record)
 ///                              → idle (dispose)
+/// v0.32 R112 round 8h: 加 paused — recording ⇄ paused (暂停/继续录音)
+/// recording / paused → recorded (stop); paused → idle (stop 返 null)
 @immutable
 enum AudioState {
   /// 初始态 / 录音已清空
@@ -43,6 +45,9 @@ enum AudioState {
 
   /// 正在录音 (record 启动, temp 明文写入)
   recording,
+
+  /// 录音暂停 (recorder.pause(), 可 resume 继续 / stop 结束)
+  paused,
 
   /// 录音完成 (已 stop + 加密, _audioPath 是 .m4a.enc)
   recorded,
@@ -65,14 +70,19 @@ enum AudioState {
 ///   late final AudioRecorder _recorder = AudioRecorder();
 ///   late final AudioPlayer _player = AudioPlayer();
 ///
-///   // mixin 提供字段: isRecording / isPlaying / audioPath / tempDecryptedPath
-///   // mixin 提供方法: startRecording / stopRecording / startPlayback /
-///   //   stopPlayback / asyncDisposeAudio
-///   // 4 抽象方法必须实现 (业务逻辑):
+///   // mixin 提供字段: isRecording / isPaused / isPlaying / audioPath /
+///   //   tempDecryptedPath / recordingElapsed (R112 round 8h)
+///   // mixin 提供方法: startRecording / pauseRecording / resumeRecording /
+///   //   stopRecording / startPlayback / stopPlayback / asyncDisposeAudio
+///   // 6 抽象方法必须实现 (业务逻辑):
 ///   @override
 ///   Future<bool> startRecordingImpl() async { ... } // false = 权限拒绝等
 ///   @override
 ///   Future<String?> stopRecordingImpl() async { ... } // 返回加密路径
+///   @override
+///   Future<void> pauseRecordingImpl() async { ... } // R112 round 8h
+///   @override
+///   Future<void> resumeRecordingImpl() async { ... } // R112 round 8h
 ///   @override
 ///   Future<void> startPlaybackImpl(String encryptedPath) async { ... }
 ///   @override
@@ -111,10 +121,54 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
   @protected
   Timer? playbackTimer;
 
+  // ===== v0.32 R112 round 8h: 录音时长追踪 (pause 冻结) =====
+
+  /// 当前录音已录时长 (暂停期间冻结, 供 UI 显示 mm:ss)
+  Duration recordingElapsed = Duration.zero;
+
+  DateTime? _recordingStartedAt;
+  DateTime? _pausedAt;
+  Duration _pausedTotal = Duration.zero;
+  Timer? _elapsedTimer;
+
+  /// 500ms tick 刷新 recordingElapsed (暂停时不更新 = 冻结显示)
+  void _startElapsedTicker() {
+    _elapsedTimer?.cancel();
+    _recordingStartedAt = DateTime.now();
+    _pausedAt = null;
+    _pausedTotal = Duration.zero;
+    recordingElapsed = Duration.zero;
+    _elapsedTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      final startedAt = _recordingStartedAt;
+      if (startedAt == null) return;
+      final pausedAt = _pausedAt;
+      final now = DateTime.now();
+      var elapsed = now.difference(startedAt) - _pausedTotal;
+      if (pausedAt != null) {
+        elapsed -= now.difference(pausedAt);
+      }
+      if (elapsed < Duration.zero) elapsed = Duration.zero;
+      if (mounted && recordingElapsed != elapsed) {
+        setState(() => recordingElapsed = elapsed);
+      }
+    });
+  }
+
+  void _stopElapsedTicker() {
+    _elapsedTimer?.cancel();
+    _elapsedTimer = null;
+    _recordingStartedAt = null;
+    _pausedAt = null;
+    _pausedTotal = Duration.zero;
+  }
+
   // ===== 公开 getter (供 widget build 使用, 跟旧 API 兼容) =====
 
   /// 当前是否在录音 (state == recording)
   bool get isRecording => audioState == AudioState.recording;
+
+  /// 当前是否录音暂停 (state == paused)
+  bool get isPaused => audioState == AudioState.paused;
 
   /// 当前是否在播放 (state == playing)
   bool get isPlaying => audioState == AudioState.playing;
@@ -153,6 +207,20 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
   /// 2. `storage.encryptAndWrite(...)` 写到 .m4a.enc
   /// 3. 返回加密路径
   Future<String?> stopRecordingImpl();
+
+  /// v0.32 R112 round 8h: 暂停录音 (recorder.pause, temp 文件保持打开)
+  ///
+  /// **subclass 责任**: 调 `_recorder.pause()` / `_service.pauseRecording()`
+  ///
+  /// 抛异常被 mixin swallowError (暂停失败保持 recording, UI 可重试)
+  Future<void> pauseRecordingImpl();
+
+  /// v0.32 R112 round 8h: 继续录音 (recorder.resume)
+  ///
+  /// **subclass 责任**: 调 `_recorder.resume()` / `_service.resumeRecording()`
+  ///
+  /// 抛异常被 mixin swallowError (恢复失败保持 paused, UI 可重试)
+  Future<void> resumeRecordingImpl();
 
   /// 启动播放
   ///
@@ -211,7 +279,10 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     setState(() => audioState = AudioState.recording);
     try {
       final ok = await startRecordingImpl();
-      if (!ok && mounted) {
+      if (ok) {
+        // v0.32 R112 round 8h: 启动时长 ticker (pause 时冻结显示)
+        _startElapsedTicker();
+      } else if (mounted) {
         // pre-check 失败 (e.g. 权限拒绝), subclass 已 fire AppSnackBar,
         // mixin 回滚状态
         setState(() => audioState = AudioState.idle);
@@ -228,12 +299,62 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
+  /// v0.32 R112 round 8h: 暂停录音
+  ///
+  /// 状态转换: recording → paused (impl 成功) / recording → recording (失败)
+  /// 时长 ticker 冻结 (recordingElapsed 不再增长)
+  Future<void> pauseRecording() async {
+    if (audioState != AudioState.recording) return;
+    try {
+      await pauseRecordingImpl();
+      if (!mounted) return;
+      _pausedAt = DateTime.now();
+      setState(() => audioState = AudioState.paused);
+    } catch (e, st) {
+      audioErrorSink(
+        where: 'AudioLifecycleMixin.pauseRecording',
+        error: e,
+        stack: st,
+      );
+      // 保持 recording, UI 可重试
+    }
+  }
+
+  /// v0.32 R112 round 8h: 继续录音
+  ///
+  /// 状态转换: paused → recording (impl 成功) / paused → paused (失败)
+  /// 暂停时长计入 _pausedTotal, 恢复后 recordingElapsed 继续增长
+  Future<void> resumeRecording() async {
+    if (audioState != AudioState.paused) return;
+    try {
+      await resumeRecordingImpl();
+      if (!mounted) return;
+      final pausedAt = _pausedAt;
+      if (pausedAt != null) {
+        _pausedTotal += DateTime.now().difference(pausedAt);
+      }
+      _pausedAt = null;
+      setState(() => audioState = AudioState.recording);
+    } catch (e, st) {
+      audioErrorSink(
+        where: 'AudioLifecycleMixin.resumeRecording',
+        error: e,
+        stack: st,
+      );
+      // 保持 paused, UI 可重试
+    }
+  }
+
   /// 停止录音
   ///
-  /// 状态转换: recording → recorded (impl 返 non-null) / recording → idle (impl 返 null / 抛)
+  /// 状态转换: recording / paused → recorded (impl 返 non-null) / recording / paused → idle (impl 返 null / 抛)
   /// 业务逻辑: stopRecordingImpl 内部已 stop recorder + encrypt, 返回加密路径
   Future<void> stopRecording() async {
-    if (audioState != AudioState.recording) return;
+    // v0.32 R112 round 8h: 允许从 paused 停止 (recorder.stop 对 paused 有效)
+    if (audioState != AudioState.recording && audioState != AudioState.paused) {
+      return;
+    }
+    _stopElapsedTicker();
     try {
       final encryptedPath = await stopRecordingImpl();
       if (!mounted) return;
@@ -322,7 +443,10 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
   /// **注意**: 本方法只清状态, 删旧文件由 subclass 在调用前完成。
   /// 跟 vent_compose `_reRecord` + mood_audio `_reRecord` 1:1。
   void clearRecording() {
-    if (audioState == AudioState.recording) return;
+    if (audioState == AudioState.recording || audioState == AudioState.paused) {
+      return;
+    }
+    _stopElapsedTicker();
     if (mounted) {
       setState(() {
         audioState = AudioState.idle;
@@ -388,12 +512,14 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     }
     playerCompleteSub = null;
 
-    // 2) cancel playback timer
+    // 2) cancel playback timer + 录音时长 ticker
     playbackTimer?.cancel();
     playbackTimer = null;
+    _stopElapsedTicker();
 
-    // 3) 如果还在录音, 先 stop (不 await 失败, 防止 hang)
-    if (audioState == AudioState.recording && recorder != null) {
+    // 3) 如果还在录音 (含 paused), 先 stop (不 await 失败, 防止 hang)
+    if ((audioState == AudioState.recording || audioState == AudioState.paused) &&
+        recorder != null) {
       try {
         await recorder.stop();
       } catch (e, st) {

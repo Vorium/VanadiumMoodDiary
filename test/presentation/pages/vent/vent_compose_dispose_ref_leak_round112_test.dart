@@ -193,7 +193,10 @@ void main() {
     await tester.tap(find.text('按一下开始录音'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
-    expect(find.text('正在录音……点停止'), findsOneWidget);
+    // v0.32 R112 round 8h: 录音态 UI 改为 [暂停][时长][停止] 行
+    // (修前是 "正在录音……点停止" 且停止按钮被禁用)
+    expect(find.byIcon(Icons.pause), findsOneWidget);
+    expect(find.byIcon(Icons.stop), findsOneWidget);
 
     // 录音中 unmount → mixin.asyncDisposeAudio:
     // 修前: 链在 await recorder.dispose() 卡死 (record 包 dispose 内部

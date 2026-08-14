@@ -5,6 +5,13 @@
 //
 // 高内聚：只关心录音按钮 / 播放按钮 / 重录按钮的 UI 切换
 // 低耦合：orchestrator 调 (isRecording, audioPath, audioDurationSec, isPlaying) + 3 个 callback
+//
+// v0.32 R112 round 8h: 录音中加 暂停/继续 控制 —
+// - 修前录音态渲染 _buildIdleButton 且 `onPressed: isRecording ? null : ...`
+//   = 录音中停止按钮被禁用 (v0.24 起 bug), 用户只能等 3min 自动停, 且
+//   无任何暂停能力 (用户报"树洞录音不能暂停")
+// - 修后 recording/paused 渲染 _buildRecordingRow:
+//   [暂停/继续] [实时时长 mm:ss, 暂停冻结] [停止]
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -16,20 +23,26 @@ enum _AudioState { idle, recording, recorded }
 
 class VentAudioSection extends StatelessWidget {
   final bool isRecording;
+  final bool isPaused;
+  final Duration recordingElapsed;
   final String? audioPath;
   final int? audioDurationSec;
   final bool isPlaying;
   final VoidCallback onToggleRecord;
+  final VoidCallback onTogglePause;
   final VoidCallback onTogglePlay;
   final VoidCallback onReRecord;
 
   const VentAudioSection({
     super.key,
     required this.isRecording,
+    required this.isPaused,
+    required this.recordingElapsed,
     required this.audioPath,
     required this.audioDurationSec,
     required this.isPlaying,
     required this.onToggleRecord,
+    required this.onTogglePause,
     required this.onTogglePlay,
     required this.onReRecord,
   });
@@ -37,13 +50,13 @@ class VentAudioSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = audioPath == null
-        ? (isRecording ? _AudioState.recording : _AudioState.idle)
+        ? (isRecording || isPaused ? _AudioState.recording : _AudioState.idle)
         : _AudioState.recorded;
     return PageTransitionSwitcher(
       switchKey: state,
       child: switch (state) {
         _AudioState.idle => _buildIdleButton(context),
-        _AudioState.recording => _buildIdleButton(context),
+        _AudioState.recording => _buildRecordingRow(context),
         _AudioState.recorded => _buildRecordedRow(context),
       },
     );
@@ -52,25 +65,67 @@ class VentAudioSection extends StatelessWidget {
   Widget _buildIdleButton(BuildContext context) {
     return Center(
       child: TextButton.icon(
-        onPressed: isRecording ? null : onToggleRecord,
+        onPressed: onToggleRecord,
         icon: Icon(
-          isRecording ? Icons.stop_circle : Icons.mic,
-          color: isRecording
-              ? AppTokens.errorColor(context)
-              : AppTokens.primaryColor(context),
+          Icons.mic,
+          color: AppTokens.primaryColor(context),
           size: 28,
         ),
         label: Text(
-          isRecording
-              ? AppLocalizations.of(context).ventRecordActive
-              : AppLocalizations.of(context).ventRecordIdle,
+          AppLocalizations.of(context).ventRecordIdle,
           style: TextStyle(
             fontSize: AppTokens.fontSizeBody,
-            color: isRecording
-                ? AppTokens.errorColor(context)
-                : AppTokens.primaryColor(context),
+            color: AppTokens.primaryColor(context),
           ),
         ),
+      ),
+    );
+  }
+
+  // v0.32 R112 round 8h: 录音中行 — [暂停/继续] [时长] [停止]
+  // 修前此处渲染 _buildIdleButton 且录音中 onPressed=null (停止按钮禁用)
+  Widget _buildRecordingRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: AppTokens.edgeInsetsSm,
+      decoration: BoxDecoration(
+        color: AppTokens.primaryLightColor(context),
+        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+      ),
+      child: Row(
+        children: [
+          // 暂停 / 继续切换
+          PressFeedbackIconButton(
+            icon: isPaused ? Icons.play_arrow : Icons.pause,
+            color: AppTokens.primaryColor(context),
+            onPressed: onTogglePause,
+            tooltip: isPaused
+                ? l10n.audioRecordResumeTooltip
+                : l10n.audioRecordPauseTooltip,
+          ),
+          Icon(
+            Icons.mic,
+            color: AppTokens.primaryColor(context),
+            size: AppTokens.iconSizeInline,
+          ),
+          const SizedBox(width: AppTokens.spacingChipGap),
+          Text(
+            _formatDuration(recordingElapsed),
+            style: TextStyle(
+              fontSize: AppTokens.fontSizeBody,
+              color: AppTokens.primaryColor(context),
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          const Spacer(),
+          // 停止 (录音中可点 — 修前禁用 bug)
+          PressFeedbackIconButton(
+            icon: Icons.stop,
+            color: AppTokens.errorColor(context),
+            onPressed: onToggleRecord,
+            tooltip: l10n.audioRecordStopTooltip,
+          ),
+        ],
       ),
     );
   }
@@ -122,6 +177,12 @@ class VentAudioSection extends StatelessWidget {
   String _formatSec(BuildContext context, int sec) {
     final m = (sec ~/ 60).toString().padLeft(2, '0');
     final s = (sec % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  String _formatDuration(Duration d) {
+    final m = (d.inMinutes).toString().padLeft(2, '0');
+    final s = (d.inSeconds % 60).toString().padLeft(2, '0');
     return '$m:$s';
   }
 }

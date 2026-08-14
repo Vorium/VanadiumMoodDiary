@@ -637,7 +637,7 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1273 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1275 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -664,14 +664,18 @@ void main() {
       //   净 +1; moodLabel1-5 只加 @metadata 不占 key) → 1278 → 1279
       // v0.32 R112 修复战役收尾: TempMedicationDialog 死代码删除连坐
       //   6 个 tempMed* orphan key 清掉 → 1279 → 1273
+      // v0.32 R112 round 8h: audioRecord{Pause,Resume,Stop}Tooltip
+      //   3 个录音暂停控制 key → 1273 → 1276
+      //   录音态 UI 改版后 ventRecordActive (旧'正在录音…点停止') 成 orphan
+      //   → 1276 → 1275
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1273, reason: 'zh.arb 应有 1273 key');
-      expect(en, 1273, reason: 'en.arb 应有 1273 key');
-      expect(hant, 1273, reason: 'zh_Hant.arb 应有 1273 key');
+      expect(zh, 1275, reason: 'zh.arb 应有 1275 key');
+      expect(en, 1275, reason: 'en.arb 应有 1275 key');
+      expect(hant, 1275, reason: 'zh_Hant.arb 应有 1275 key');
     });
   });
 

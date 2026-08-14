@@ -193,6 +193,57 @@ void main() {
     );
   }
 
+  // v0.32 R112 round 8h: 录音暂停/继续 (用户报"树洞录音不能暂停")
+  testWidgets('录音 → 暂停 (时长冻结) → 继续 → 停止', (tester) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+
+    // 1. 进 compose
+    await tester.tap(find.text('写第一句'));
+    await tester.pumpAndSettle();
+
+    // 2. 点 mic 开始录音
+    await tester.tap(find.text('按一下开始录音'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    // recording 行: pause icon + stop icon 都在, 且 stop 不再是禁用
+    expect(find.byIcon(Icons.pause), findsOneWidget);
+    expect(find.byIcon(Icons.stop), findsOneWidget);
+
+    // 3. 暂停 → play_arrow 出现, 时长冻结
+    await tester.tap(find.byIcon(Icons.pause));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+    final frozen = tester
+        .widget<Text>(
+          find.textContaining(RegExp(r'^\d{2}:\d{2}$')),
+        )
+        .data;
+    await tester.pump(const Duration(seconds: 2));
+    final stillFrozen = tester
+        .widget<Text>(
+          find.textContaining(RegExp(r'^\d{2}:\d{2}$')),
+        )
+        .data;
+    expect(stillFrozen, frozen, reason: '暂停期间时长冻结');
+
+    // 4. 继续 → pause icon 回来
+    await tester.tap(find.byIcon(Icons.play_arrow));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.pause), findsOneWidget);
+
+    // 5. 停止 (recorder.stop mock 返 null → 回 idle, mic 按钮再现)
+    await tester.tap(find.byIcon(Icons.stop));
+    await tester.pumpAndSettle();
+    expect(find.text('按一下开始录音'), findsOneWidget);
+  });
+
   testWidgets('全链路: 空列表 → 写第一句 → 输入文字 → 放进树洞 → 列表出现新条目',
       (tester) async {
     tester.view.physicalSize = const Size(800, 1600);

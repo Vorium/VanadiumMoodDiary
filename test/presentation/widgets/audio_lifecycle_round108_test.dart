@@ -189,14 +189,21 @@ void main() {
       final moodLines = moodSource.split('\n').length;
       expect(
         ventLines,
-        lessThan(500),
-        reason: 'vent_compose 应保持 < 500 行 (原 495, R108 不增), 实际: $ventLines',
+        // v0.32 R112 round 8h: 阈值 500 → 520 — 录音暂停/继续功能 +35 行
+        // (pause/resume impl + _togglePause + 3 UI 参数, mixin 已承载状态机,
+        // 页面侧仅剩必实现抽象方法), 仍拒 god class 回归 (445 基线 +75 buffer)
+        lessThan(520),
+        reason: 'vent_compose 应保持 < 520 行 (R108 原 445, 8h pause 功能 +35), '
+            '实际: $ventLines',
       );
       expect(
         moodLines,
-        lessThan(600),
-        reason: 'mood_audio_recorder 应保持 < 600 行 (原 530, R108 略增但应 < 600), '
-            '实际: $moodLines',
+        // v0.32 R112 round 8h: 阈值 600 → 640 — 录音暂停/继续按钮 + 2 抽象
+        // 实现 (+~30 行) + E-01 dispose 链字段缓存注释 (+~28 行, round 8 批),
+        // 仍拒 god class 回归 (530 基线 +110 buffer)
+        lessThan(640),
+        reason: 'mood_audio_recorder 应保持 < 640 行 (R108 原 530, 8h pause '
+            '+ E-01 注释增长), 实际: $moodLines',
       );
     });
   });

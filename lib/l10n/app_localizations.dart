@@ -1593,12 +1593,6 @@ abstract class AppLocalizations {
   /// **'按一下开始录音'**
   String get ventRecordIdle;
 
-  /// No description provided for @ventRecordActive.
-  ///
-  /// In zh, this message translates to:
-  /// **'正在录音……点停止'**
-  String get ventRecordActive;
-
   /// No description provided for @ventAudioLabel.
   ///
   /// In zh, this message translates to:
@@ -1610,6 +1604,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'播放录音'**
   String get ventAudioPlayTooltip;
+
+  /// No description provided for @audioRecordPauseTooltip.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂停录音'**
+  String get audioRecordPauseTooltip;
+
+  /// No description provided for @audioRecordResumeTooltip.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续录音'**
+  String get audioRecordResumeTooltip;
+
+  /// No description provided for @audioRecordStopTooltip.
+  ///
+  /// In zh, this message translates to:
+  /// **'停止录音'**
+  String get audioRecordStopTooltip;
 
   /// No description provided for @ventAudioPauseTooltip.
   ///

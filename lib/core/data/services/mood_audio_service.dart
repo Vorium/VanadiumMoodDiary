@@ -76,6 +76,15 @@ abstract class MoodAudioService {
   /// 加密 + 删明文。
   Future<MoodAudioResult?> stopRecording();
 
+  /// v0.32 R112 round 8h: 暂停录音 (elapsed 冻结, recorder 保持打开)
+  Future<void> pauseRecording();
+
+  /// v0.32 R112 round 8h: 继续录音
+  Future<void> resumeRecording();
+
+  /// v0.32 R112 round 8h: 是否暂停中
+  bool get isPaused;
+
   /// 取消录音(不保存, 直接清掉临时文件)
   Future<void> cancelRecording();
 
@@ -105,6 +114,10 @@ class MoodAudioServiceImpl implements MoodAudioService {
 
   // ===== 录音状态 =====
   bool _isRecording = false;
+  // v0.32 R112 round 8h: pause 支持
+  bool _isPaused = false;
+  DateTime? _pausedAt;
+  Duration _pausedTotal = Duration.zero;
   DateTime? _recordingStart;
   Timer? _recordingTimer;
   Duration _recordingElapsed = Duration.zero;
@@ -142,6 +155,9 @@ class MoodAudioServiceImpl implements MoodAudioService {
 
   @override
   bool get isRecording => _isRecording;
+
+  @override
+  bool get isPaused => _isPaused;
 
   @override
   bool get isSttListening => _isSttListening;
@@ -209,6 +225,9 @@ class MoodAudioServiceImpl implements MoodAudioService {
     );
 
     _isRecording = true;
+    _isPaused = false;
+    _pausedAt = null;
+    _pausedTotal = Duration.zero;
     _recordingStart = DateTime.now();
     _recordingElapsed = Duration.zero;
 
@@ -244,7 +263,10 @@ class MoodAudioServiceImpl implements MoodAudioService {
     _recordingTimer?.cancel();
     _recordingTimer = Timer.periodic(_effectiveTickInterval, (_) {
       if (!_isRecording || _recordingStart == null) return;
-      _recordingElapsed = DateTime.now().difference(_recordingStart!);
+      // v0.32 R112 round 8h: 暂停期间冻结 elapsed (不增长)
+      if (_isPaused) return;
+      _recordingElapsed = DateTime.now().difference(_recordingStart!) -
+          _pausedTotal;
       _onTickCb?.call(_recordingElapsed);
       if (_recordingElapsed >= _effectiveMaxDuration) {
         // 6. 到 3min 自动 stop
@@ -279,6 +301,10 @@ class MoodAudioServiceImpl implements MoodAudioService {
 
     final plainPath = await _recorder.stop();
     _isRecording = false;
+    // v0.32 R112 round 8h: 复位 pause 状态
+    _isPaused = false;
+    _pausedAt = null;
+    _pausedTotal = Duration.zero;
     final elapsed = _recordingElapsed;
 
     if (plainPath == null) {
@@ -288,6 +314,26 @@ class MoodAudioServiceImpl implements MoodAudioService {
       plainPath: plainPath,
       durationMs: elapsed.inMilliseconds,
     );
+  }
+
+  @override
+  Future<void> pauseRecording() async {
+    if (!_isRecording || _isPaused) return;
+    await _recorder.pause();
+    _isPaused = true;
+    _pausedAt = DateTime.now();
+  }
+
+  @override
+  Future<void> resumeRecording() async {
+    if (!_isRecording || !_isPaused) return;
+    await _recorder.resume();
+    final pausedAt = _pausedAt;
+    if (pausedAt != null) {
+      _pausedTotal += DateTime.now().difference(pausedAt);
+    }
+    _pausedAt = null;
+    _isPaused = false;
   }
 
   @override
@@ -305,6 +351,10 @@ class MoodAudioServiceImpl implements MoodAudioService {
       );
     }
     _isRecording = false;
+    // v0.32 R112 round 8h: 复位 pause 状态
+    _isPaused = false;
+    _pausedAt = null;
+    _pausedTotal = Duration.zero;
     _tempRecordPath = null;
     // STT 也停
     await _stopSttInternal();

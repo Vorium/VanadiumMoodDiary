@@ -49,7 +49,16 @@ class _FakeMoodAudioService implements MoodAudioService {
     required void Function() onMaxReached,
   }) async {}
   @override
-  Future<MoodAudioResult?> stopRecording() async => null;
+  @override
+Future<void> pauseRecording() async {}
+
+@override
+Future<void> resumeRecording() async {}
+
+@override
+bool get isPaused => false;
+
+Future<MoodAudioResult?> stopRecording() async => null;
   @override
   Future<void> cancelRecording() async {}
   @override

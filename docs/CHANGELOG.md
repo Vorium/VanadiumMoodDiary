@@ -1,4 +1,8 @@
 ﻿# 变更日志
+## [0.32.0+144] - 2026-08-14 (R112 release 冒烟: 树洞录音暂停/继续 + 停止按钮修复 (AudioState.paused + mixin ticker 冻结 + 3 语 ARB))
+
+- **树洞录音暂停/继续 + 停止按钮修复 (AudioState.paused + mixin ticker 冻结 + 3 语 ARB)** (release 冒烟实测修复, 版本 0.32.0+144)
+
 ## [0.32.0+143] - 2026-08-14 (R112 release 冒烟: R8 保留 Gson Signature 修复通知排程崩溃)
 
 - **R8 保留 Gson Signature 修复通知排程崩溃** (release 冒烟实测修复, 版本 0.32.0+143)
