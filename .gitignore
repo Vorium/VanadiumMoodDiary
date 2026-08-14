@@ -88,3 +88,6 @@ coverage/
 
 # R82+ scripts/_archive 转换临时产物
 scripts/_archive/sprint2-zh-hant-tmp/
+
+# flutter_test golden 失败对比产物
+test/presentation/widgets/failures/
