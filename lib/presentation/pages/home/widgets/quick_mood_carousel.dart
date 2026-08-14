@@ -29,6 +29,7 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/spring.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -159,7 +160,12 @@ class _QuickMoodCarouselState extends ConsumerState<QuickMoodCarousel> {
 }
 
 /// v0.31 R9a: 单个圆形 mood button (48x48, 选中 spring 放大 1.1)
-class _MoodButton extends StatelessWidget {
+///
+/// v0.32 R112 round 8i (渲染专项): AnimatedScale（cubic-bezier 模拟）→
+/// 真物理 Spring (Spring.gentle.toSimulation) — spec §3.4.3 双轨制
+/// "手势、状态切换用 spring" 落地第 2 个 caller（修前生硬感），同时
+/// reduce-motion 时短路为即时切换。
+class _MoodButton extends StatefulWidget {
   const _MoodButton({
     required this.score,
     required this.isSelected,
@@ -176,38 +182,79 @@ class _MoodButton extends StatelessWidget {
   static const double _diameter = 48;
 
   @override
+  State<_MoodButton> createState() => _MoodButtonState();
+}
+
+class _MoodButtonState extends State<_MoodButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _springController = AnimationController(
+    vsync: this,
+    value: widget.isSelected ? 1.0 : 0.0,
+    duration: AppTokens.durNormal,
+  );
+
+  @override
+  void didUpdateWidget(_MoodButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isSelected != widget.isSelected) {
+      _animateSelection();
+    }
+  }
+
+  void _animateSelection() {
+    final target = widget.isSelected ? 1.0 : 0.0;
+    // reduce-motion: 直接跳到位 (不走 spring 动画)
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _springController.value = target;
+      return;
+    }
+    _springController.animateWith(
+      Spring.gentle.toSimulation(from: _springController.value, to: target),
+    );
+  }
+
+  @override
+  void dispose() {
+    _springController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PressFeedback(
-      onTap: onTap,
+      onTap: widget.onTap,
       pressedScale: 1.0, // 不让 PressFeedback 自带 0.97 干扰 spring 选中态
-      child: AnimatedScale(
-        // 选中 spring 放大 1.1
-        scale: isSelected ? 1.1 : 1.0,
-        // v0.32 round 8 (R111 EM-18 fix): 走 Motion wrapper
-        // (全代码库最后一个 reduce-motion 盲区)
-        duration: Motion.duration(context, AppTokens.durNormal),
-        curve: Motion.curve(context, AppTokens.curveSpring),
+      child: ScaleTransition(
+        // 选中 spring 放大 1.1 (Spring.gentle 物理模拟)
+        scale: Tween<double>(begin: 1.0, end: 1.1).animate(
+          CurvedAnimation(
+            parent: _springController,
+            curve: Curves.linear,
+          ),
+        ),
         child: AnimatedContainer(
           duration: Motion.duration(context, AppTokens.durNormal),
           curve: Motion.curve(context, AppTokens.curveStandard),
-          width: _diameter,
-          height: _diameter,
+          width: _MoodButton._diameter,
+          height: _MoodButton._diameter,
           decoration: BoxDecoration(
             // 选中: metric 色 18% alpha (dark) / 12% alpha (light);
             // 未选: 透明 (跟 AppleListSection surface 一致)
-            color: isSelected
-                ? color.withValues(
+            color: widget.isSelected
+                ? widget.color.withValues(
                     alpha: Theme.of(context).brightness == Brightness.dark
                         ? 0.18
                         : 0.12,
                   )
                 : AppColors.transparent,
             shape: BoxShape.circle,
-            border: isSelected ? Border.all(color: color, width: 2) : null,
+            border: widget.isSelected
+                ? Border.all(color: widget.color, width: 2)
+                : null,
           ),
           alignment: Alignment.center,
           child: Text(
-            MoodVisual.ipEmojiFor(score),
+            MoodVisual.ipEmojiFor(widget.score),
             style: const TextStyle(fontSize: AppTokens.fontSizeScoreLg),
           ),
         ),

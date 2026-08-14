@@ -40,6 +40,7 @@ import 'package:chroniccare/core/data/services/mood_audio_storage.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/stt_live_transcript.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/mood_providers.dart';
 import 'package:chroniccare/presentation/widgets/audio_lifecycle.dart';
@@ -62,14 +63,14 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
     with AudioLifecycleMixin<MoodRecorder> {
   // ===== mood 特有字段 (STT / transcript) =====
 
+  /// v0.32 R112 round 8i: 实时转写文本 — 只做字段缓存 (更新时**不** setState,
+  /// 显示重建由 SttLiveTranscript 子 widget 自持订阅完成); stopRecordingImpl
+  /// 在停录时读它做 final transcript。
   String _liveTranscript = '';
   String _finalTranscript = '';
   int? _audioDurationMs;
   bool _sttAvailable = false;
   bool _sttFailed = false;
-
-  // Stream subscription for STT partial results
-  StreamSubscription<String>? _sttSub;
 
   // v0.32 R112 (E-01): B1-11 同款字段缓存 — dispose 链 unmount 后不能 ref.read, 只用 initState 捕获字段。
   MoodAudioService? _serviceField;
@@ -148,17 +149,7 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
         stack: st,
       );
     }
-    try {
-      unawaited(_sttSub?.cancel());
-    } catch (e, st) {
-      audioErrorSink(
-        where: 'mood_audio_section.dispose.sttSub',
-        error: e,
-        stack: st,
-      );
-    }
     playerCompleteSub = null;
-    _sttSub = null;
 
     // 2) mixin asyncDisposeAudio: stop + dispose player + delete temp
     await asyncDisposeAudio(
@@ -196,17 +187,13 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
   @override
   Future<bool> startRecordingImpl() async {
     setState(() {
-      _liveTranscript = '';
       _finalTranscript = '';
       _sttFailed = false;
     });
-    // 订阅 STT 流
-    // R97-P1-12: unawaited 显式标记 fire-and-forget (cancel 不阻塞)
-    unawaited(_sttSub?.cancel());
-    _sttSub = _service.sttTranscriptStream.listen((text) {
-      if (!mounted) return;
-      setState(() => _liveTranscript = text);
-    });
+    // v0.32 R112 round 8i (渲染专项): STT 实时转写订阅移到
+    // SttLiveTranscript 子 widget 自持 — 修前每个 partial 结果 (说话时
+    // 每秒多次) setState 重建整个 627 行 dialog = 录音中明显掉帧。
+    // 修后只有 ~30 行的转写行重建。
     await _service.startRecording(
       onTick: (elapsed) {
         if (!mounted) return;
@@ -247,9 +234,8 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
         note: 'STT stop failed',
       );
     }
-    // R97-P1-12: unawaited 显式标记 fire-and-forget
-    unawaited(_sttSub?.cancel());
-    _sttSub = null;
+    // v0.32 R112 round 8i: STT 订阅由 SttLiveTranscript 自持 (unmount 时
+    // 自动 cancel), 此处不再持有 _sttSub
 
     if (result == null) {
       return null;
@@ -526,17 +512,12 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
             ),
           ],
           // 实时识别文字
-          if (isRecording && _liveTranscript.isNotEmpty) ...[
-            const SizedBox(height: AppTokens.spacingXs),
-            Text(
-              _liveTranscript,
-              style: AppTokens.textStyleCaption(context).copyWith(
-                fontStyle: FontStyle.italic,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+          // v0.32 R112 round 8i: 实时转写走自持订阅的子 widget (只重建自己)
+          if (isRecording)
+            SttLiveTranscript(
+              stream: ref.read(moodAudioServiceProvider).sttTranscriptStream,
+              onText: (t) => _liveTranscript = t,
             ),
-          ],
           // 录完识别文字
           if (!isRecording && hasRecording && _finalTranscript.isNotEmpty) ...[
             const SizedBox(height: AppTokens.spacingXs),
@@ -577,6 +558,10 @@ class _MoodRecorderState extends ConsumerState<MoodRecorder>
   }
 }
 
+/// R102 (P1): 独立计时器 widget — 只有这个 widget 每 100ms rebuild
+///
+/// 之前 onTick → setState(() {}) 重建整个 MoodAudioRecorderWidget (537 行),
+/// 现在只有这个 ~30 行的 widget rebuild, 其余录音控制 / STT / 播放 UI 不受影响。
 /// R102 (P1): 独立计时器 widget — 只有这个 widget 每 100ms rebuild
 ///
 /// 之前 onTick → setState(() {}) 重建整个 MoodAudioRecorderWidget (537 行),

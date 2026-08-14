@@ -109,12 +109,18 @@ class VentAudioSection extends StatelessWidget {
             size: AppTokens.iconSizeInline,
           ),
           const SizedBox(width: AppTokens.spacingChipGap),
-          Text(
-            _formatDuration(recordingElapsed),
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.primaryColor(context),
-              fontFeatures: const [FontFeature.tabularFigures()],
+          // v0.32 R112 round 8i: 大字号/窄屏防溢出 — 时长 FittedBox 缩放
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                _formatDuration(recordingElapsed),
+                style: TextStyle(
+                  fontSize: AppTokens.fontSizeBody,
+                  color: AppTokens.primaryColor(context),
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
             ),
           ),
           const Spacer(),
@@ -155,13 +161,18 @@ class VentAudioSection extends StatelessWidget {
             size: AppTokens.iconSizeInline,
           ),
           const SizedBox(width: AppTokens.spacingChipGap),
-          Text(
-            audioDurationSec != null
-                ? _formatSec(context, audioDurationSec!)
-                : AppLocalizations.of(context).ventAudioLabel,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              color: AppTokens.primaryColor(context),
+          // v0.32 R112 round 8i: 大字号/窄屏防溢出
+          Flexible(
+            child: Text(
+              audioDurationSec != null
+                  ? _formatSec(context, audioDurationSec!)
+                  : AppLocalizations.of(context).ventAudioLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeBody,
+                color: AppTokens.primaryColor(context),
+              ),
             ),
           ),
           const Spacer(),

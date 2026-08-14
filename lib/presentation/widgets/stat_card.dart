@@ -105,20 +105,22 @@ class StatCard extends StatelessWidget {
             value,
             style: baseStyle.copyWith(color: color),
           );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        numberWidget,
-        const SizedBox(height: AppTokens.spacingXxs),
-        Text(
-          label,
-          style: AppTokens.textStyleCaption(context).copyWith(
-            color: AppTokens.textHintColor(context),
-            fontWeight: FontWeight.w400,
+    return RepaintBoundary(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          numberWidget,
+          const SizedBox(height: AppTokens.spacingXxs),
+          Text(
+            label,
+            style: AppTokens.textStyleCaption(context).copyWith(
+              color: AppTokens.textHintColor(context),
+              fontWeight: FontWeight.w400,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

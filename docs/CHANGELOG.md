@@ -1,4 +1,8 @@
 ﻿# 变更日志
+## [0.32.0+145] - 2026-08-14 (R112 release 冒烟: 渲染专项: AppBar blur→solid 掉帧修复 + STT 转写隔离 + RepaintBoundary + 窄屏防溢出 + 真 Spring 选中动画)
+
+- **渲染专项: AppBar blur→solid 掉帧修复 + STT 转写隔离 + RepaintBoundary + 窄屏防溢出 + 真 Spring 选中动画** (release 冒烟实测修复, 版本 0.32.0+145)
+
 ## [0.32.0+144] - 2026-08-14 (R112 release 冒烟: 树洞录音暂停/继续 + 停止按钮修复 (AudioState.paused + mixin ticker 冻结 + 3 语 ARB))
 
 - **树洞录音暂停/继续 + 停止按钮修复 (AudioState.paused + mixin ticker 冻结 + 3 语 ARB)** (release 冒烟实测修复, 版本 0.32.0+144)

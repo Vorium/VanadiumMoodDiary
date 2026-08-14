@@ -89,7 +89,9 @@ class _MoodTrendPageState extends ConsumerState<MoodTrendPage>
                 onTimeRangeChanged: (r) => setState(() => _timeRange = r),
               ),
               _DistributionChart(
-                  entries: entries, title: l10n.moodTrendDistTitle,),
+                entries: entries,
+                title: l10n.moodTrendDistTitle,
+              ),
               _CbtEffectChart(
                 entries: entries,
                 title: l10n.moodTrendCbtTitle,
@@ -220,88 +222,92 @@ class _MoodLineChart extends StatelessWidget {
     // 底部标签间隔
     final labelInterval = days <= 7 ? 1.0 : (days <= 30 ? 5.0 : 30.0);
 
-    return LineChart(
-      LineChartData(
-        titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: 1,
-              reservedSize: 30,
-              getTitlesWidget: (v, _) => v < 1 || v > 5
-                  ? const SizedBox()
-                  : Text(
-                      v.toInt().toString(),
-                      style: TextStyle(
-                        fontSize: AppTokens.fontSizeCaptionSm,
-                        color: AppTokens.textHintColor(context),
+    // v0.32 R112 round 8i (渲染专项): RepaintBoundary 隔离图表绘制 —
+    // 外层 tab/时间范围切换时图表自身 paint 不进父 layer 重绘
+    return RepaintBoundary(
+      child: LineChart(
+        LineChartData(
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                reservedSize: 30,
+                getTitlesWidget: (v, _) => v < 1 || v > 5
+                    ? const SizedBox()
+                    : Text(
+                        v.toInt().toString(),
+                        style: TextStyle(
+                          fontSize: AppTokens.fontSizeCaptionSm,
+                          color: AppTokens.textHintColor(context),
+                        ),
                       ),
-                    ),
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 30,
-              interval: labelInterval,
-              getTitlesWidget: (v, _) {
-                final idx = v.toInt();
-                if (idx < 0 || idx >= days) return const SizedBox();
-                final day =
-                    DateTime(now.year, now.month, now.day - (days - 1 - idx));
-                // 只显示月/日，短格式
-                return Text(
-                  '${day.month}/${day.day}',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaptionSm,
-                    color: AppTokens.textHintColor(context),
-                  ),
-                );
-              },
-            ),
-          ),
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        ),
-        minY: 0.5,
-        maxY: 5.5,
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: days <= 30,
-            color: AppTokens.primaryColor(context),
-            barWidth: days <= 30 ? 3 : 1.5,
-            dotData: FlDotData(
-              show: days <= 7,
-              getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
-                radius: 4,
-                color: AppTokens.primaryColor(context),
-                strokeWidth: 2,
-                strokeColor: Colors.white,
               ),
             ),
-            belowBarData: BarAreaData(
-              show: true,
-              color: AppTokens.primaryColor(context).withValues(alpha: 0.1),
-            ),
-          ),
-        ],
-        lineTouchData: LineTouchData(
-          touchTooltipData: LineTouchTooltipData(
-            getTooltipItems: (spots) => spots
-                .map(
-                  (s) => LineTooltipItem(
-                    s.y.toStringAsFixed(1),
-                    const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: AppTokens.fontSizeCaption,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 30,
+                interval: labelInterval,
+                getTitlesWidget: (v, _) {
+                  final idx = v.toInt();
+                  if (idx < 0 || idx >= days) return const SizedBox();
+                  final day =
+                      DateTime(now.year, now.month, now.day - (days - 1 - idx));
+                  // 只显示月/日，短格式
+                  return Text(
+                    '${day.month}/${day.day}',
+                    style: TextStyle(
+                      fontSize: AppTokens.fontSizeCaptionSm,
+                      color: AppTokens.textHintColor(context),
                     ),
-                  ),
-                )
-                .toList(),
+                  );
+                },
+              ),
+            ),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          minY: 0.5,
+          maxY: 5.5,
+          lineBarsData: [
+            LineChartBarData(
+              spots: spots,
+              isCurved: days <= 30,
+              color: AppTokens.primaryColor(context),
+              barWidth: days <= 30 ? 3 : 1.5,
+              dotData: FlDotData(
+                show: days <= 7,
+                getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
+                  radius: 4,
+                  color: AppTokens.primaryColor(context),
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                ),
+              ),
+              belowBarData: BarAreaData(
+                show: true,
+                color: AppTokens.primaryColor(context).withValues(alpha: 0.1),
+              ),
+            ),
+          ],
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipItems: (spots) => spots
+                  .map(
+                    (s) => LineTooltipItem(
+                      s.y.toStringAsFixed(1),
+                      const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: AppTokens.fontSizeCaption,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
           ),
         ),
       ),
@@ -327,92 +333,97 @@ class _DistributionChart extends StatelessWidget {
     // R32 (P0-10 集中器): 5 元素 mood 色板移到 AppColors.kMoodScoreColors
     const colors = AppColors.kMoodScoreColors;
 
-    return Padding(
-      padding: AppTokens.edgeInsetsMd,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              fontWeight: FontWeight.w600,
+    return RepaintBoundary(
+      child: Padding(
+        padding: AppTokens.edgeInsetsMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: AppTokens.fontSizeBody,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: AppTokens.spacingMd),
-          Expanded(
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: maxCount > 0 ? maxCount.toDouble() * 1.2 : 5,
-                barGroups: List.generate(5, (i) {
-                  return BarChartGroupData(
-                    x: i + 1,
-                    barRods: [
-                      BarChartRodData(
-                        toY: (distribution[i + 1] ?? 0).toDouble(),
-                        color: colors[i],
-                        width: 40,
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(6),),
-                      ),
-                    ],
-                  );
-                }),
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: maxCount > 0
-                      ? (maxCount / 4).ceilToDouble().clamp(1, double.infinity)
-                      : 1,
-                  getDrawingHorizontalLine: (v) => FlLine(
-                    color: AppTokens.dividerColor(context),
-                    strokeWidth: 0.5,
+            const SizedBox(height: AppTokens.spacingMd),
+            Expanded(
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  maxY: maxCount > 0 ? maxCount.toDouble() * 1.2 : 5,
+                  barGroups: List.generate(5, (i) {
+                    return BarChartGroupData(
+                      x: i + 1,
+                      barRods: [
+                        BarChartRodData(
+                          toY: (distribution[i + 1] ?? 0).toDouble(),
+                          color: colors[i],
+                          width: 40,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(6),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: maxCount > 0
+                        ? (maxCount / 4)
+                            .ceilToDouble()
+                            .clamp(1, double.infinity)
+                        : 1,
+                    getDrawingHorizontalLine: (v) => FlLine(
+                      color: AppTokens.dividerColor(context),
+                      strokeWidth: 0.5,
+                    ),
                   ),
-                ),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: (v, _) => v != v.roundToDouble()
-                          ? const SizedBox()
-                          : Text(
-                              v.toInt().toString(),
-                              style: TextStyle(
-                                fontSize: AppTokens.fontSizeCaptionSm,
-                                color: AppTokens.textHintColor(context),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                        getTitlesWidget: (v, _) => v != v.roundToDouble()
+                            ? const SizedBox()
+                            : Text(
+                                v.toInt().toString(),
+                                style: TextStyle(
+                                  fontSize: AppTokens.fontSizeCaptionSm,
+                                  color: AppTokens.textHintColor(context),
+                                ),
                               ),
-                            ),
+                      ),
                     ),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (v, _) {
-                        const labels = ['', '😢', '😟', '😐', '🙂', '😄'];
-                        final idx = v.toInt();
-                        if (idx < 1 || idx > 5) return const SizedBox();
-                        return Text(
-                          labels[idx],
-                          // EM-08: chart 横轴 emoji 刻度装饰性 20,
-                          // deliberate 保留 (emoji 有 size cap)
-                          style: const TextStyle(fontSize: 20),
-                        );
-                      },
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (v, _) {
+                          const labels = ['', '😢', '😟', '😐', '🙂', '😄'];
+                          final idx = v.toInt();
+                          if (idx < 1 || idx > 5) return const SizedBox();
+                          return Text(
+                            labels[idx],
+                            // EM-08: chart 横轴 emoji 刻度装饰性 20,
+                            // deliberate 保留 (emoji 有 size cap)
+                            style: const TextStyle(fontSize: 20),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

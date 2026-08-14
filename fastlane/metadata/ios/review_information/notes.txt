@@ -1,4 +1,4 @@
-App Reviewer Guide — ChronicCare 0.32.0+144
+App Reviewer Guide — ChronicCare 0.32.0+145
 
 1. No login required. The app is fully local — no accounts, no cloud, no analytics.
 2. First-time setup: app shows a 4-step onboarding flow (consent → welcome → medication → done).

@@ -305,11 +305,13 @@
 ### 4.9 PageScaffold + AppBar — Translucent 风格
 - 改前：固定不透明 AppBar
 - 改后：
-  - AppBar 背景：white @ alpha 0.6 + BackdropFilter blur(20)
+  - AppBar 背景：surface @ alpha 0.97 (light) / 0.92 (dark) 实色半透明
+    （v0.32 R112 round 8i 渲染专项: BackdropFilter blur(20) → solid alpha —
+    blur 是 Flutter 最贵滤镜之一, 内容滚动逐帧重采样导致 Android 中低端
+    机滚动/转场持续掉帧; solid alpha 视觉几乎无差, 零逐帧开销。blur 待
+    v1.0+ 平台层 blur 方案再评估）
   - elevation: 0
-  - 暗色下：black @ alpha 0.4 + blur(20)
   - 顶部 hairline divider（仅滚动时显示）
-  - 适配 reduce-transparency 媒体查询（变 solid）
 
 ---
 

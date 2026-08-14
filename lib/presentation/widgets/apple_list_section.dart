@@ -150,13 +150,18 @@ class AppleListSection extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Text(
-                    title!.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: _titleFontSize, // 13 (per spec §4.5)
-                      color: AppTokens.textHintColor(context),
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: _titleLetterSpacing, // 0.6
+                  // v0.32 R112 round 8i: 窄屏/大字号防溢出 — title 弹性收缩
+                  Flexible(
+                    child: Text(
+                      title!.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: _titleFontSize, // 13 (per spec §4.5)
+                        color: AppTokens.textHintColor(context),
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: _titleLetterSpacing, // 0.6
+                      ),
                     ),
                   ),
                   if (chip != null) ...[

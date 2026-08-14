@@ -1,5 +1,3 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -60,49 +58,34 @@ class PageScaffold extends StatelessWidget {
         // 用户开 reduce-motion → 走 solid, 否则 translucent。
         // (Flutter 未暴露 iOS reduce-transparency 媒体查询, iOS 保持
         // translucent 跟 Apple Health 一致)
-        final reduceTransparency = MediaQuery.disableAnimationsOf(context);
+        //
+        // v0.32 R112 round 8i (渲染专项): BackdropFilter blur(20) → solid
+        // translucent — 修前内容每帧滚动都要重采样 AppBar 背景模糊
+        // (Flutter 最贵滤镜之一), Android 中低端机滚动/转场持续掉帧。
+        // 修后 surface @ alpha 0.97 (light) / 0.92 (dark) 实色半透明,
+        // 视觉几乎无差 (内容只在 bar 下方 1-2px 露出), 零逐帧开销。
+        // spec §4.9 已同步 (spec 决策 #7 translucent 从 blur 改为 solid
+        // alpha, blur 待 v1.0+ 平台层 blur 方案再评估)。
+        final translucentBar = AppBar(
+          title: Text(title!),
+          actions: actions,
+          bottom: appBarBottom,
+          leading: showLeading,
+          automaticallyImplyLeading: automaticallyImplyLeading ?? false,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          flexibleSpace: Container(
+            color: Theme.of(context).colorScheme.surface.withValues(
+                  alpha: Theme.of(context).brightness == Brightness.dark
+                      ? 0.92
+                      : 0.97,
+                ),
+          ),
+        );
         return Scaffold(
           // 宽屏下不显示 AppBar（NavigationRail 在 AppShell 里负责导航）
-          appBar: (title != null && !isWide)
-              ? AppBar(
-                  title: Text(title!),
-                  actions: actions,
-                  bottom: appBarBottom,
-                  leading: showLeading,
-                  automaticallyImplyLeading:
-                      automaticallyImplyLeading ?? false,
-                  // v0.31 R32 (Apple Health spec §4.9): translucent AppBar
-                  // - surfaceTintColor: transparent (M3 默认 tint 关闭)
-                  // - scrolledUnderElevation: 0 (滚动后不变 elevation)
-                  // - flexibleSpace: BackdropFilter blur(20) + Container alpha
-                  // - reduce-transparency: 退化到 solid
-                  // R109 round 6 (v0.32.0+119): Flutter 3.44.9 linter 严格化,
-                  //   ColorScheme 没 transparent getter (旧 SDK 宽松匹配), 改用
-                  //   `Colors.transparent` (Material 标准 const Color).
-                  //   行为 1:1 (都是完全透明的 Color(0x00000000)).
-                  surfaceTintColor: Colors.transparent,
-                  scrolledUnderElevation: 0,
-                  elevation: 0,
-                  flexibleSpace: reduceTransparency
-                      ? null
-                      : ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                            child: Container(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surface
-                                  .withValues(
-                                    alpha: Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? 0.4
-                                        : 0.6,
-                                  ),
-                            ),
-                          ),
-                        ),
-                )
-              : null,
+          appBar: (title != null && !isWide) ? translucentBar : null,
           body: SafeArea(
             child: Center(
               child: ConstrainedBox(

@@ -105,7 +105,15 @@ class SectionHeader extends StatelessWidget {
       }
       return Row(
         children: [
-          Text(displayText, style: titleStyle),
+          // v0.32 R112 round 8i: 窄屏/大字号防溢出
+          Flexible(
+            child: Text(
+              displayText,
+              style: titleStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           const SizedBox(width: AppTokens.spacingXs),
           ChipBadge(label: chip!),
         ],
@@ -118,7 +126,15 @@ class SectionHeader extends StatelessWidget {
           leading!,
           const SizedBox(width: AppTokens.spacingXs),
         ],
-        Text(displayText, style: titleStyle),
+        // v0.32 R112 round 8i: 窄屏/大字号防溢出
+        Flexible(
+          child: Text(
+            displayText,
+            style: titleStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
         if (chip != null) ...[
           const SizedBox(width: AppTokens.spacingXs),
           ChipBadge(label: chip!),

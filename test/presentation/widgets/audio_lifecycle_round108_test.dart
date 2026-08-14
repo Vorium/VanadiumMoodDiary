@@ -200,10 +200,10 @@ void main() {
         moodLines,
         // v0.32 R112 round 8h: 阈值 600 → 640 — 录音暂停/继续按钮 + 2 抽象
         // 实现 (+~30 行) + E-01 dispose 链字段缓存注释 (+~28 行, round 8 批),
-        // 仍拒 god class 回归 (530 基线 +110 buffer)
+        // 8i 渲染专项把 SttLiveTranscript 抽独立文件 (-53 行, 现 612)
         lessThan(640),
         reason: 'mood_audio_recorder 应保持 < 640 行 (R108 原 530, 8h pause '
-            '+ E-01 注释增长), 实际: $moodLines',
+            '+ E-01 注释, 8i 抽转写 widget 后 612), 实际: $moodLines',
       );
     });
   });
