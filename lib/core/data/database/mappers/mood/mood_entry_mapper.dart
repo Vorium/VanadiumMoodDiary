@@ -41,6 +41,7 @@ extension MoodEntryToEntity on MoodEntry {
       period: period,
       influenceFactorsJson: influenceFactorsJson,
       recordingMode: recordingMode,
+      statusPhrase: statusPhrase,
     );
   }
 }
@@ -70,6 +71,7 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
       period: Value(period),
       influenceFactorsJson: Value(influenceFactorsJson),
       recordingMode: Value(recordingMode),
+      statusPhrase: Value(statusPhrase),
     );
   }
 }
@@ -106,6 +108,7 @@ MoodEntryEntity buildMoodEntryEntity({
   String? behaviorResponse,
   String? influenceFactorsJson,
   String? recordingMode,
+  String? statusPhrase,
 }) {
   return MoodEntryEntity(
     id: id,
@@ -129,5 +132,6 @@ MoodEntryEntity buildMoodEntryEntity({
     behaviorResponse: behaviorResponse,
     influenceFactorsJson: influenceFactorsJson ?? '[]',
     recordingMode: recordingMode,
+    statusPhrase: statusPhrase,
   );
 }

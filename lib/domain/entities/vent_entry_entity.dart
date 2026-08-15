@@ -37,6 +37,9 @@ class VentEntryEntity {
   /// 录音文件大小（字节，可空）
   final int? audioSizeBytes;
 
+  /// 标签 JSON 数组（默认 '[]'）
+  final String tagsJson;
+
   const VentEntryEntity({
     required this.id,
     required this.timestamp,
@@ -44,6 +47,7 @@ class VentEntryEntity {
     this.audioPath,
     this.audioDurationSec,
     this.audioSizeBytes,
+    this.tagsJson = '[]',
   });
 
   // ===== 业务方法 =====
@@ -120,6 +124,7 @@ class VentEntryEntity {
     DomainValue<String?>? audioPath,
     DomainValue<int?>? audioDurationSec,
     DomainValue<int?>? audioSizeBytes,
+    String? tagsJson,
   }) {
     return VentEntryEntity(
       id: id ?? this.id,
@@ -131,6 +136,7 @@ class VentEntryEntity {
           : audioDurationSec.value,
       audioSizeBytes:
           audioSizeBytes == null ? this.audioSizeBytes : audioSizeBytes.value,
+      tagsJson: tagsJson ?? this.tagsJson,
     );
   }
 
@@ -143,7 +149,8 @@ class VentEntryEntity {
         other.contentText == contentText &&
         other.audioPath == audioPath &&
         other.audioDurationSec == audioDurationSec &&
-        other.audioSizeBytes == audioSizeBytes;
+        other.audioSizeBytes == audioSizeBytes &&
+        other.tagsJson == tagsJson;
   }
 
   @override
@@ -154,6 +161,7 @@ class VentEntryEntity {
         audioPath,
         audioDurationSec,
         audioSizeBytes,
+        tagsJson,
       );
 
   @override

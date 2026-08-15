@@ -41,6 +41,7 @@ extension VentToEntity on VentEntry {
       audioPath: audioPath,
       audioDurationSec: audioDurationSec,
       audioSizeBytes: audioSizeBytes,
+      tagsJson: tagsJson,
     );
   }
 }
@@ -62,6 +63,7 @@ extension VentEntryEntityToDrift on VentEntryEntity {
       audioPath: Value(audioPath),
       audioDurationSec: Value(audioDurationSec),
       audioSizeBytes: Value(audioSizeBytes),
+      tagsJson: Value(tagsJson),
     );
   }
 }

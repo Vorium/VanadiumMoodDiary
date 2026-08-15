@@ -110,6 +110,9 @@ class MoodEntryEntity {
   /// 老数据 = null (仅新录音 dialog 有选择)。
   final String? recordingMode;
 
+  /// 状态短语（预设或自定义, 可空）
+  final String? statusPhrase;
+
   const MoodEntryEntity({
     required this.id,
     required this.timestamp,
@@ -133,6 +136,7 @@ class MoodEntryEntity {
     this.period,
     this.influenceFactorsJson = '[]',
     this.recordingMode,
+    this.statusPhrase,
   });
 
   // ===== 业务方法 =====
@@ -176,6 +180,7 @@ class MoodEntryEntity {
     DomainValue<String?>? period,
     String? influenceFactorsJson,
     DomainValue<String?>? recordingMode,
+    DomainValue<String?>? statusPhrase,
   }) {
     return MoodEntryEntity(
       id: id ?? this.id,
@@ -214,6 +219,8 @@ class MoodEntryEntity {
       influenceFactorsJson: influenceFactorsJson ?? this.influenceFactorsJson,
       recordingMode:
           recordingMode == null ? this.recordingMode : recordingMode.value,
+      statusPhrase:
+          statusPhrase == null ? this.statusPhrase : statusPhrase.value,
     );
   }
 
@@ -280,7 +287,8 @@ class MoodEntryEntity {
         other.behaviorResponse == behaviorResponse &&
         other.period == period &&
         other.influenceFactorsJson == influenceFactorsJson &&
-        other.recordingMode == recordingMode;
+        other.recordingMode == recordingMode &&
+        other.statusPhrase == statusPhrase;
   }
 
   @override
@@ -307,6 +315,7 @@ class MoodEntryEntity {
         period,
         influenceFactorsJson,
         recordingMode,
+        statusPhrase,
       ]);
 
   @override
