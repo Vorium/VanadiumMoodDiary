@@ -101,6 +101,7 @@ MoodReviewSummary summarize(
       e.evidenceFor != null ||
       e.evidenceAgainst != null ||
       e.alternativeThought != null ||
+      e.reratedScore != null ||
       e.coreBelief != null ||
       e.behaviorResponse != null).length;
 

@@ -14,6 +14,7 @@ MoodEntryEntity _e({
   String influenceFactorsJson = '[]',
   String? period,
   String? situation,
+  int? reratedScore,
 }) {
   return MoodEntryEntity(
     id: id,
@@ -26,6 +27,7 @@ MoodEntryEntity _e({
     influenceFactorsJson: influenceFactorsJson,
     period: period,
     situation: situation,
+    reratedScore: reratedScore,
   );
 }
 
@@ -119,6 +121,17 @@ void main() {
         [
           _e(id: 1, ts: start),
           _e(id: 2, ts: start.add(const Duration(hours: 1)), situation: '开会'),
+        ],
+        const [],
+      );
+      expect(s.cbtCount, 1);
+    });
+
+    test('cbtCount: 仅 reratedScore 非 null 也计 1', () {
+      final s = summarize(
+        [
+          _e(id: 1, ts: start),
+          _e(id: 2, ts: start.add(const Duration(hours: 1)), reratedScore: 4),
         ],
         const [],
       );
