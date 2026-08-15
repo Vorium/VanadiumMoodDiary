@@ -120,3 +120,6 @@ app.*.map.json
 *.dll
 *.exe
 *.msi
+
+# SDD 计划工作区 (git-ignored scratch)
+.superpowers/
