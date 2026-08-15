@@ -70,6 +70,7 @@ class VentRepositoryImpl implements VentRepository {
     String? audioPath,
     int? audioDurationSec,
     int? audioSizeBytes,
+    String? tagsJson,
     DateTime? at,
   }) async {
     // v0.27 round 67: PIPL §14 撤回同意 → add 直接拒绝
@@ -97,6 +98,8 @@ class VentRepositoryImpl implements VentRepository {
         audioPath: Value(hasAudio ? audioPath : null),
         audioDurationSec: Value(audioDurationSec),
         audioSizeBytes: Value(audioSizeBytes),
+        // 1.1.0 round 5c: 标签 JSON (null → drift 落默认 '[]')
+        tagsJson: Value(tagsJson ?? '[]'),
       ),
     );
   }
@@ -147,11 +150,13 @@ class VentRepositoryImpl implements VentRepository {
     // v0.21 Round 23 (P1-26): Dismissible Undo → 重新插入原内容
     // 注意: audio 文件在 delete 时已删,restore 只恢复 text(音频无法复活)
     // 用 add + at 注入原时间,新 id 由 drift auto-increment 生成
+    // 1.1.0 round 5c: 保留 tagsJson (否则 undo 后标签静默丢失)
     return add(
       text: entry.contentText,
       audioPath: null,
       audioDurationSec: null,
       audioSizeBytes: null,
+      tagsJson: entry.tagsJson,
       at: entry.timestamp,
     );
   }

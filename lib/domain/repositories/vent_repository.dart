@@ -22,6 +22,7 @@ abstract class VentRepository {
   /// [audioPath] 录音文件绝对路径（可空）
   /// [audioDurationSec] 录音时长（可空）
   /// [audioSizeBytes] 录音文件大小（可空）
+  /// [tagsJson] 标签 JSON 数组（1.1.0 round 5c 新增, 默认 '[]'）
   /// [at] 注入时间（测试用），默认 DateTime.now()
   ///
   /// text 和 audio 至少要有一个；都为空时抛 ArgumentError。
@@ -31,6 +32,7 @@ abstract class VentRepository {
     String? audioPath,
     int? audioDurationSec,
     int? audioSizeBytes,
+    String? tagsJson,
     DateTime? at,
   });
 

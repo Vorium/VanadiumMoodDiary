@@ -852,14 +852,17 @@ void main() {
       //   SecondaryActionRow 删除连坐 −14 orphan (homeQuick* 6 +
       //   homeMore* 7 + moodQuickRecordFailed 1)
       //   → 1204 → 1202
+      // 1.1.0 round 5c (Task 13 树洞标签): +4 (ventTagSectionTitle /
+      //   ventTagCustomHint / ventTagFilterAll / ventTagFilterEmpty)
+      //   → 1202 → 1206
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1202, reason: 'zh.arb 应有 1202 key');
-      expect(en, 1202, reason: 'en.arb 应有 1202 key');
-      expect(hant, 1202, reason: 'zh_Hant.arb 应有 1202 key');
+      expect(zh, 1206, reason: 'zh.arb 应有 1206 key');
+      expect(en, 1206, reason: 'en.arb 应有 1206 key');
+      expect(hant, 1206, reason: 'zh_Hant.arb 应有 1206 key');
     });
   });
 

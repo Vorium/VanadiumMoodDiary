@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
+import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -273,6 +274,8 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
               title: AppLocalizations.of(context).ventDetailNotFound,
             );
           }
+          // 1.1.0 round 5c: 只读标签 chips (无标签不显示)
+          final tags = JsonCodec.decodeStringList(entry.tagsJson);
           return SingleChildScrollView(
             padding: AppTokens.edgeInsetsMd,
             child: Column(
@@ -411,6 +414,21 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                         ),
                       ],
                     ),
+                  ),
+                ],
+                // 1.1.0 round 5c: 标签 chips (内容下方, 无标签整段隐藏)
+                if (tags.isNotEmpty) ...[
+                  const SizedBox(height: AppTokens.spacingMd),
+                  Wrap(
+                    spacing: AppTokens.spacingXs,
+                    runSpacing: 4,
+                    children: [
+                      for (final tag in tags)
+                        Chip(
+                          label: Text(tag),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                    ],
                   ),
                 ],
                 const SizedBox(height: AppTokens.spacingXl),

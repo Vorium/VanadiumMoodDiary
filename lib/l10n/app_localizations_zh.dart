@@ -788,6 +788,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventComposeHint => '今天过得怎么样……';
 
   @override
+  String get ventTagSectionTitle => '标签';
+
+  @override
+  String get ventTagCustomHint => '自定义标签……';
+
+  @override
+  String get ventTagFilterAll => '全部';
+
+  @override
+  String get ventTagFilterEmpty => '没有带这个标签的树洞';
+
+  @override
   String get ventRecordIdle => '按一下开始录音';
 
   @override
@@ -4711,6 +4723,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get ventComposeHint => '今天過得怎麼樣……';
+
+  @override
+  String get ventTagSectionTitle => '標籤';
+
+  @override
+  String get ventTagCustomHint => '自定義標籤……';
+
+  @override
+  String get ventTagFilterAll => '全部';
+
+  @override
+  String get ventTagFilterEmpty => '沒有帶這個標籤的樹洞';
 
   @override
   String get ventRecordIdle => '按一下開始錄音';

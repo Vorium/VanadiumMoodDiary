@@ -65,6 +65,7 @@ class _FakeVentRepository implements VentRepository {
     String? audioPath,
     int? audioDurationSec,
     int? audioSizeBytes,
+    String? tagsJson,
     DateTime? at,
   }) async =>
       1;
@@ -189,7 +190,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 录音
+    // 录音 (1.1.0 round 5c: 页面改 SingleChildScrollView + 标签区增高,
+    // 录音按钮可能折出视口 → 先 ensureVisible)
+    await tester.ensureVisible(find.text('按一下开始录音'));
     await tester.tap(find.text('按一下开始录音'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));

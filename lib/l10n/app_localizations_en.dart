@@ -833,6 +833,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventComposeHint => 'How was your day……';
 
   @override
+  String get ventTagSectionTitle => 'Tags';
+
+  @override
+  String get ventTagCustomHint => 'Custom tag…';
+
+  @override
+  String get ventTagFilterAll => 'All';
+
+  @override
+  String get ventTagFilterEmpty => 'No entries with this tag';
+
+  @override
   String get ventRecordIdle => 'Tap to start recording';
 
   @override

@@ -57,6 +57,7 @@ class _FakeVentRepository implements VentRepository {
     String? audioPath,
     int? audioDurationSec,
     int? audioSizeBytes,
+    String? tagsJson,
     DateTime? at,
   }) async =>
       1;

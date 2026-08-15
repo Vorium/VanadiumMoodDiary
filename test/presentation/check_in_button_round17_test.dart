@@ -29,6 +29,7 @@ class _EmptyVentRepo implements VentRepository {
     String? audioPath,
     int? audioDurationSec,
     int? audioSizeBytes,
+    String? tagsJson,
     DateTime? at,
   }) async =>
       0;

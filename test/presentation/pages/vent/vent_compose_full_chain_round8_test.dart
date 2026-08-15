@@ -62,6 +62,7 @@ class _FakeVentRepository implements VentRepository {
     String? audioPath,
     int? audioDurationSec,
     int? audioSizeBytes,
+    String? tagsJson,
     DateTime? at,
   }) async {
     final id = _entries.length + 1;
@@ -73,6 +74,7 @@ class _FakeVentRepository implements VentRepository {
         audioPath: audioPath,
         audioDurationSec: audioDurationSec,
         audioSizeBytes: audioSizeBytes,
+        tagsJson: tagsJson ?? '[]',
       ),
     );
     _controller.add(List.unmodifiable(_entries));
@@ -263,9 +265,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(VentComposePage), findsOneWidget);
 
-    // 3. 输入文字
+    // 3. 输入文字 (1.1.0 round 5c: 页面现在有 2 个 TextField — 文字输入
+    // + 标签自定义输入; 文字输入是树里第一个)
     await tester.enterText(
-      find.byType(TextField),
+      find.byType(TextField).first,
       '今天有点累，但撑过来了',
     );
     await tester.pump();

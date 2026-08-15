@@ -1491,6 +1491,30 @@ abstract class AppLocalizations {
   /// **'今天过得怎么样……'**
   String get ventComposeHint;
 
+  /// No description provided for @ventTagSectionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'标签'**
+  String get ventTagSectionTitle;
+
+  /// No description provided for @ventTagCustomHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'自定义标签……'**
+  String get ventTagCustomHint;
+
+  /// No description provided for @ventTagFilterAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部'**
+  String get ventTagFilterAll;
+
+  /// No description provided for @ventTagFilterEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有带这个标签的树洞'**
+  String get ventTagFilterEmpty;
+
   /// No description provided for @ventRecordIdle.
   ///
   /// In zh, this message translates to:

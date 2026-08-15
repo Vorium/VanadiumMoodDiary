@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -34,11 +35,21 @@ import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
-class VentListPage extends ConsumerWidget {
+/// v1.1.0 round 5c: ConsumerWidget → ConsumerStatefulWidget
+/// (加 `_filterTag` 标签筛选 state, 客户端过滤)。
+class VentListPage extends ConsumerStatefulWidget {
   const VentListPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VentListPage> createState() => _VentListPageState();
+}
+
+class _VentListPageState extends ConsumerState<VentListPage> {
+  /// 1.1.0 round 5c: 当前筛选标签 (null = 全部)
+  String? _filterTag;
+
+  @override
+  Widget build(BuildContext context) {
     final entriesAsync = ref.watch(ventEntriesProvider);
     // v0.28 R82.5: 检测 vent 加密封存状态 (法务 Q7b 必改, PIPL §47)
     // sealed=true → 不读 DB, 显示"已加密封存"占位 (数据物理上还在,
@@ -69,10 +80,10 @@ class VentListPage extends ConsumerWidget {
         // (entriesAsync 自己的 loading 已经有占位)
         data: (sealed) => sealed
             ? const _VentSealedState()
-            : _buildContent(context, ref, entriesAsync),
-        loading: () => _buildContent(context, ref, entriesAsync),
-        error: (_, __) => _buildContent(context, ref, entriesAsync),
-        orElse: () => _buildContent(context, ref, entriesAsync),
+            : _buildContent(context, entriesAsync),
+        loading: () => _buildContent(context, entriesAsync),
+        error: (_, __) => _buildContent(context, entriesAsync),
+        orElse: () => _buildContent(context, entriesAsync),
       ),
     );
   }
@@ -97,29 +108,67 @@ class VentListPage extends ConsumerWidget {
     );
   }
 
+  /// 1.1.0 round 5c: 从 entries 收集去重标签 (按出现顺序)
+  List<String> _distinctTags(List<VentEntryEntity> entries) {
+    final tags = <String>{};
+    for (final e in entries) {
+      tags.addAll(JsonCodec.decodeStringList(e.tagsJson));
+    }
+    return tags.toList(growable: false);
+  }
+
   Widget _buildContent(
     BuildContext context,
-    WidgetRef ref,
     AsyncValue<List<VentEntryEntity>> entriesAsync,
   ) {
     return entriesAsync.when(
       data: (entries) {
         if (entries.isEmpty) return const _VentEmptyState();
+        // 1.1.0 round 5c: 标签筛选 chips + 客户端过滤
+        final distinctTags = _distinctTags(entries);
+        final filter = _filterTag;
+        final filtered = filter == null
+            ? entries
+            : entries
+                .where(
+                  (e) =>
+                      JsonCodec.decodeStringList(e.tagsJson).contains(filter),
+                )
+                .toList(growable: false);
         // v0.30 R95 sub-spec 8 task 48: 首次进入 vent list 显示 1 次 swipe/long-press
         // visual hint snackbar (emil P3 反复提 — 视觉提示用户有删除手势)
         // 用 SharedPreferences 持久化标记 _ventSwipeHintShown, 后续进入不再显示
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _VentHintHelper.showSwipeHintIfFirstTime(context);
-        });
+        if (filtered.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _VentHintHelper.showSwipeHintIfFirstTime(context);
+          });
+        }
         // v0.21 Round 23 (P1-27): 下拉刷新
-        return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(ventEntriesProvider);
-            await Future<void>.delayed(
-              const Duration(milliseconds: AppTokens.refreshMinVisibleMs),
-            );
-          },
-          child: _EntryList(entries: entries),
+        return Column(
+          children: [
+            // 1.1.0 round 5c: 筛选行 — 有条目带标签时才显示;
+            // 筛选激活后即使标签已消失也保留 (含"全部"兜底, 避免卡死空态)
+            if (distinctTags.isNotEmpty || filter != null)
+              _buildTagFilterBar(context, distinctTags),
+            Expanded(
+              child: filtered.isEmpty
+                  ? EmptyState(
+                      icon: Icons.filter_alt_off_outlined,
+                      title: AppLocalizations.of(context).ventTagFilterEmpty,
+                    )
+                  : RefreshIndicator(
+                      onRefresh: () async {
+                        ref.invalidate(ventEntriesProvider);
+                        await Future<void>.delayed(
+                          const Duration(
+                            milliseconds: AppTokens.refreshMinVisibleMs,
+                          ),
+                        );
+                      },
+                      child: _EntryList(entries: filtered),
+                    ),
+            ),
+          ],
         );
       },
       loading: () => const LoadingSkeleton.fullScreen(),
@@ -129,6 +178,35 @@ class VentListPage extends ConsumerWidget {
         title: AppLocalizations.of(context).commonLoadFailed(e.toString()),
         detail: e.toString(),
         onRetry: () => ref.invalidate(ventEntriesProvider),
+      ),
+    );
+  }
+
+  /// 1.1.0 round 5c: 顶部横向滚动的筛选 chips ('全部' + 去重标签)
+  Widget _buildTagFilterBar(BuildContext context, List<String> tags) {
+    final l10n = AppLocalizations.of(context);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTokens.spacingMd,
+        vertical: AppTokens.spacingXs,
+      ),
+      child: Row(
+        children: [
+          FilterChip(
+            label: Text(l10n.ventTagFilterAll),
+            selected: _filterTag == null,
+            onSelected: (_) => setState(() => _filterTag = null),
+          ),
+          for (final tag in tags) ...[
+            const SizedBox(width: AppTokens.spacingXs),
+            FilterChip(
+              label: Text(tag),
+              selected: _filterTag == tag,
+              onSelected: (_) => setState(() => _filterTag = tag),
+            ),
+          ],
+        ],
       ),
     );
   }

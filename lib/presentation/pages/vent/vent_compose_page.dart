@@ -40,11 +40,13 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
+import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/audio_lifecycle.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_audio_section.dart';
+import 'package:chroniccare/presentation/pages/vent/widgets/vent_tag_picker.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_text_input.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_save_bar.dart';
 
@@ -62,6 +64,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
   final _player = AudioPlayer();
 
   bool _saving = false;
+
+  /// 1.1.0 round 5c: 已选标签集合 (VentTagPicker 多选状态)
+  Set<String> _selectedTags = {};
 
   /// vent 特有: 录音时长 (秒), 调 _getAudioDuration() 拿到
   ///
@@ -378,6 +383,8 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
             audioPath: hasAudio ? audioPath : null,
             audioDurationSec: _audioDurationSec,
             audioSizeBytes: sizeBytes,
+            // 1.1.0 round 5c: 标签 JSON (排序保证存储稳定, 便于 diff/导出)
+            tagsJson: JsonCodec.encodeStringList(_selectedTags.toList()..sort()),
           );
       if (mounted) {
         context.pop(); // 回到列表
@@ -398,7 +405,9 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
   Widget build(BuildContext context) {
     return PageScaffold(
       title: AppLocalizations.of(context).ventComposeTitle,
-      child: Padding(
+      // 1.1.0 round 5c: Padding+Column → SingleChildScrollView (标签区
+      // 增加 ~200pt 高度, 小屏/键盘弹出时固定 Column 会 RenderFlex overflow)
+      child: SingleChildScrollView(
         padding: AppTokens.edgeInsetsMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -423,6 +432,13 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
               builder: (context, _) => VentTextInput(
                 controller: _textController,
               ),
+            ),
+            const SizedBox(height: AppTokens.spacingMd),
+
+            // 标签选择 (1.1.0 round 5c): 预置 chips + 自定义输入
+            VentTagPicker(
+              selected: _selectedTags,
+              onChanged: (next) => setState(() => _selectedTags = next),
             ),
             const SizedBox(height: AppTokens.spacingMd),
 
