@@ -111,4 +111,10 @@ class MoodEntries extends Table {
   ///
   /// 老数据 = null (仅新录音 dialog 有选择)。nullable 兼容老 entry。
   TextColumn get recordingMode => text().nullable()();
+
+  /// 状态短语（v1.1.0）— 预设短语或自定义一句话, 可空
+  ///
+  /// 记录 dialog 的"此刻状态"section 写入; 主页情绪大卡展示。
+  /// 老数据 = null（大卡退化显示 4 维概括）。
+  TextColumn get statusPhrase => text().nullable()();
 }

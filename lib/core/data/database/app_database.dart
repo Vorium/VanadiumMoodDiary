@@ -133,8 +133,13 @@ class AppDatabase extends _$AppDatabase {
   // v0.30 R105: schemaVersion 21 to 22 - mood_entries +1 column (recordingMode)
   //   - recordingMode: 记录模式 ('momentary' / 'daily'), nullable
   //   - 老数据自动兼容 (null)
+  //
+  // v1.1.0 round 2: schemaVersion 22 to 23 (v22 + 2 列)
+  //   - vent_entries +1 column (tagsJson): 标签 JSON 数组, 默认 '[]'
+  //   - mood_entries +1 column (statusPhrase): 状态短语, nullable
+  //   - 老数据自动兼容 (tagsJson 空列表 / statusPhrase null)
   @override
-  int get schemaVersion => 22;
+  int get schemaVersion => 23;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -369,6 +374,14 @@ class AppDatabase extends _$AppDatabase {
           // - 老数据自动兼容 (null)
           if (from < 22) {
             await m.addColumn(moodEntries, moodEntries.recordingMode);
+          }
+          // v22 to v23: vent_entries +tagsJson, mood_entries +statusPhrase
+          // (v1.1.0 情绪优先重构)
+          // - tagsJson: 默认 '[]', 老数据自动空列表
+          // - statusPhrase: nullable, 老数据自动 null
+          if (from < 23) {
+            await m.addColumn(ventEntries, ventEntries.tagsJson);
+            await m.addColumn(moodEntries, moodEntries.statusPhrase);
           }
         },
         beforeOpen: (details) async {

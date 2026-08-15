@@ -50,4 +50,10 @@ class VentEntries extends Table {
 
   /// 录音大小（字节，可空）
   IntColumn get audioSizeBytes => integer().nullable()();
+
+  /// 标签 JSON 数组：'["家庭","工作"]'（v1.1.0）
+  ///
+  /// 隐私边界：仅本地整理检索，不进任何分析/趋势/通知。
+  /// 老数据 = '[]'（空列表）。
+  TextColumn get tagsJson => text().withDefault(const Constant('[]'))();
 }

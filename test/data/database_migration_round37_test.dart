@@ -20,13 +20,12 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 void main() {
   group('AppDatabase schemaVersion', () {
     test(
-        'schemaVersion == 22 (v0.32 R108 跨期 + 3 R32 hotfix 累计)',
+        'schemaVersion == 23 (v1.1.0 round 2: vent.tagsJson + mood.statusPhrase)',
         () {
-      // v0.32 R109 round 6 part 2 修: 跨期 R32 R108 R31 累计 19 → 22
-      //   (R108 跨期 +3: vent contentText DROP, 6 新表, mood_entries period).
+      // v1.1.0 round 2: 22 → 23 (vent_entries +tagsJson, mood_entries +statusPhrase).
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      expect(db.schemaVersion, 22);
+      expect(db.schemaVersion, 23);
       db.close();
     });
   });
@@ -51,13 +50,13 @@ void main() {
       expect(db.migration.onCreate, isA<Function>());
     });
 
-    test('schemaVersion 22 = 21 migration steps (v1→2 ... v21→v22)', () {
-      // v0.32 R109 round 6 part 2 修: 跨期 R32 R108 R31 累计 18 → 21 steps.
-      // v0 (创建) → v22 (当前) = 22 个 step
+    test('schemaVersion 23 = 22 migration steps (v1→2 ... v22→v23)', () {
+      // v1.1.0 round 2: 21 → 22 steps (v22→v23 +2 列).
+      // v0 (创建) → v23 (当前) = 23 个 step
       // 但 v0 → v1 没 step (v1 是初始 schema)
-      // 所以 onUpgrade 处理 v1→v2 ... v21→v22 共 21 个 step
+      // 所以 onUpgrade 处理 v1→v2 ... v22→v23 共 22 个 step
       // 验证 schemaVersion 跟实际 if (from <= N) block 数量匹配
-      const expectedSteps = 21;
+      const expectedSteps = 22;
       // 简单 sanity: schemaVersion >= 1 + 至少 1 个 onUpgrade step
       expect(db.schemaVersion, greaterThanOrEqualTo(2));
       expect(expectedSteps, db.schemaVersion - 1);
@@ -204,6 +203,32 @@ void main() {
       expect(names, contains('treatment_entries'));
       expect(names, contains('weight_entries'));
       expect(names, contains('anxiety_agitation_entries'));
+    });
+
+    test('vent_entries 加 tags_json 字段 (v22 → v23)', () async {
+      final cols = await db.customSelect(
+        'PRAGMA table_info(vent_entries)',
+        readsFrom: {db.ventEntries},
+      ).get();
+      final names = cols.map((r) => r.read<String>('name')).toSet();
+      expect(
+        names.contains('tags_json'),
+        isTrue,
+        reason: 'v23 vent_entries.tagsJson 列缺失',
+      );
+    });
+
+    test('mood_entries 加 status_phrase 字段 (v22 → v23)', () async {
+      final cols = await db.customSelect(
+        'PRAGMA table_info(mood_entries)',
+        readsFrom: {db.moodEntries},
+      ).get();
+      final names = cols.map((r) => r.read<String>('name')).toSet();
+      expect(
+        names.contains('status_phrase'),
+        isTrue,
+        reason: 'v23 mood_entries.statusPhrase 列缺失',
+      );
     });
   });
 

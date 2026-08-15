@@ -9,9 +9,9 @@
 //   迁移 block 自动比对 — schemaVersion 再 +1 忘加 block 时, 老测试照样绿。
 //
 // 修法:
-// 1. 真实 dry-run: 建 v22 schema → 手动 DROP 5 个新列 + user_version 降到 19
-//    (模拟老用户 v19 库) → 重开 AppDatabase → onUpgrade 走 19→20→21→22
-//    3 个真实 step → 断言列回归 + 老数据保留 + 默认值正确。
+// 1. 真实 dry-run: 建 v23 schema → 手动 DROP 7 个新列 + user_version 降到 19
+//    (模拟老用户 v19 库) → 重开 AppDatabase → onUpgrade 走 19→20→21→22→23
+//    4 个真实 step → 断言列回归 + 老数据保留 + 默认值正确。
 // 2. 自动比对: 解析 app_database.dart 源文件的 onUpgrade guard
 //    (`if (from == N)` / `if (from <= N)` / `if (from < N)`),
 //    断言每个老版本 v ∈ [1, schemaVersion-1] 都被至少 1 个 guard 覆盖 —
@@ -24,7 +24,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 
 void main() {
-  group('v0.32 round 8 (SP-111-05) — 真实 dry-run v19 → v22', () {
+  group('v0.32 round 8 (SP-111-05) — 真实 dry-run v19 → v23', () {
     late Directory tempDir;
     late File dbFile;
 
@@ -37,9 +37,9 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('19→20→21→22 3 个真实 step: 列回归 + 老数据保留 + 默认值正确',
+    test('19→20→21→22→23 4 个真实 step: 列回归 + 老数据保留 + 默认值正确',
         () async {
-      // ---- 第 1 阶段: 建 v22 schema + 写老数据 ----
+      // ---- 第 1 阶段: 建 v23 schema + 写老数据 ----
       final db1 = AppDatabase.forTesting(NativeDatabase(dbFile));
       await db1.medicationDao.insert(
         MedicationsCompanion.insert(
@@ -55,9 +55,14 @@ void main() {
           score: 4,
         ),
       );
+      await db1.ventDao.insert(
+        VentEntriesCompanion.insert(
+          timestamp: DateTime.utc(2026, 7, 1, 22, 0),
+        ),
+      );
 
-      // ---- 第 2 阶段: 手动降级到 v19 (DROP 5 个新列 + user_version=19) ----
-      // 模拟 2026 年 R101/R105 之前的老用户库
+      // ---- 第 2 阶段: 手动降级到 v19 (DROP 7 个新列 + user_version=19) ----
+      // 模拟 2026 年 R101/R105/v1.1.0 之前的老用户库
       await db1.customStatement('ALTER TABLE medications DROP COLUMN form');
       await db1
           .customStatement('ALTER TABLE medications DROP COLUMN color_index');
@@ -67,17 +72,22 @@ void main() {
       );
       await db1
           .customStatement('ALTER TABLE mood_entries DROP COLUMN recording_mode');
+      await db1.customStatement(
+        'ALTER TABLE mood_entries DROP COLUMN status_phrase',
+      );
+      await db1
+          .customStatement('ALTER TABLE vent_entries DROP COLUMN tags_json');
       await db1.customStatement('PRAGMA user_version = 19');
       await db1.close();
 
-      // ---- 第 3 阶段: 重开 → onUpgrade 走 19→20→21→22 真实 step ----
+      // ---- 第 3 阶段: 重开 → onUpgrade 走 19→20→21→22→23 真实 step ----
       final db2 = AppDatabase.forTesting(NativeDatabase(dbFile));
 
-      // user_version 升到 22
+      // user_version 升到 23
       final versionRow = await db2.customSelect('PRAGMA user_version').getSingle();
-      expect(versionRow.data.values.first, 22);
+      expect(versionRow.data.values.first, 23);
 
-      // 5 个新列全部回归
+      // 7 个新列全部回归
       final medCols = (await db2.customSelect('PRAGMA table_info(medications)').get())
           .map((r) => r.read<String>('name'))
           .toSet();
@@ -90,6 +100,12 @@ void main() {
               .toSet();
       expect(moodCols, contains('influence_factors_json'));
       expect(moodCols, contains('recording_mode'));
+      expect(moodCols, contains('status_phrase'));
+      final ventCols =
+          (await db2.customSelect('PRAGMA table_info(vent_entries)').get())
+              .map((r) => r.read<String>('name'))
+              .toSet();
+      expect(ventCols, contains('tags_json'));
 
       // 老数据保留 + 迁移默认值正确
       final meds = await db2.medicationDao.watchActive().first;
@@ -104,6 +120,12 @@ void main() {
       expect(moods.first.influenceFactorsJson, '[]',
           reason: "ADD COLUMN 默认 '[]' 应写回老行",);
       expect(moods.first.recordingMode, isNull);
+      expect(moods.first.statusPhrase, isNull,
+          reason: 'ADD COLUMN nullable 老数据应自动 null',);
+      final vents = await db2.ventDao.watchAll().first;
+      expect(vents.length, 1);
+      expect(vents.first.tagsJson, '[]',
+          reason: "ADD COLUMN 默认 '[]' 应写回老行",);
 
       await db2.close();
     });
