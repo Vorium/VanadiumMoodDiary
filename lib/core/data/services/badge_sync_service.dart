@@ -25,7 +25,7 @@ class BadgeSyncService {
   /// 虚拟通知 id — 一个稳定的"空"通知携带 badgeNumber
   /// iOS 路径每次 show 之前 cancel 同一个 id, 所以固定即可
   /// v0.32 R110 (B1-1): 原 9999 落入 medication/refill cancel 区间被误杀,
-  /// 迁到 5M+ 固定带 (跟 safety/assessment/mood/care push 同带)
+  /// 迁到 5M+ 固定带 (跟 assessment 5000001 / mood 5000002 同带)
   static const int badgeVirtualId = 5000100;
 
   // 跟 notification_service 共用 channel (避免创建新 channel 浪费权限)

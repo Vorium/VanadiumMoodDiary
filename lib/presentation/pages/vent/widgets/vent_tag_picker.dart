@@ -32,7 +32,10 @@ class _VentTagPickerState extends State<VentTagPicker> {
   void _addCustom(String raw) {
     final tag = raw.trim();
     if (!VentTagLibrary.isValidTag(tag)) return;
-    _toggle(tag);
+    // 自定义输入 = 已选标签时保持选中 (不 toggle 掉), 只清输入
+    if (!widget.selected.contains(tag)) {
+      widget.onChanged({...widget.selected, tag});
+    }
     _customCtrl.clear();
   }
 

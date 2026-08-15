@@ -2968,29 +2968,11 @@ abstract class AppLocalizations {
   /// **'先用 5/7 栏 CBT 填表， 才能看到重评效果'**
   String get trendCbtReratedEmptyHint;
 
-  /// No description provided for @contactConsentTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'知情同意'**
-  String get contactConsentTitle;
-
-  /// No description provided for @contactConsentAgree.
-  ///
-  /// In zh, this message translates to:
-  /// **'已告知并取得同意'**
-  String get contactConsentAgree;
-
   /// No description provided for @contactConsentReject.
   ///
   /// In zh, this message translates to:
   /// **'暂不同意'**
   String get contactConsentReject;
-
-  /// No description provided for @contactConsentVersion.
-  ///
-  /// In zh, this message translates to:
-  /// **'v1 · 2026-07-31'**
-  String get contactConsentVersion;
 
   /// No description provided for @dataExportConsentTitle.
   ///
@@ -3016,6 +2998,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'v1 · 2026-08-15'**
   String get dataExportConsentVersion;
+
+  /// 1.1.0 round 6d: vent/analytics fallback 中性标题 (不再复用联系人 §13 措辞)
+  ///
+  /// In zh, this message translates to:
+  /// **'知情同意'**
+  String get consentDialogGenericTitle;
+
+  /// 1.1.0 round 6d: vent/analytics fallback 中性同意按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'我已了解并同意'**
+  String get consentDialogGenericAgree;
+
+  /// 1.1.0 round 6d: vent/analytics fallback 中性拒绝按钮
+  ///
+  /// In zh, this message translates to:
+  /// **'暂不同意'**
+  String get consentDialogGenericReject;
+
+  /// 1.1.0 round 6d: vent/analytics fallback 同意留痕版本脚注
+  ///
+  /// In zh, this message translates to:
+  /// **'v1 · 2026-08-15'**
+  String get consentDialogGenericVersion;
 
   /// No description provided for @editMedDialogTitle.
   ///

@@ -6,6 +6,7 @@
 // 3. 自定义输入 + onSubmitted → onChanged 含新标签
 // 4. 空/纯空格输入被忽略 (不触发 onChanged)
 // 5. 超长 (超过 VentTagLibrary.maxCustomTagLength) 自定义标签被忽略
+// 6. 自定义输入 = 已选预设 → 保持选中 (不 toggle 掉), 只清输入 (round 6d)
 //
 // 纯 widget 测试: 无 repo / 无 platform channel mock 需求。
 
@@ -91,5 +92,26 @@ void main() {
 
     // TextField maxLength formatter 截断到 12 字, onChanged 收到截断后的合法标签
     expect(received, {'长' * VentTagLibrary.maxCustomTagLength});
+  });
+
+  testWidgets('6) 自定义输入 = 已选预设 → 保持选中 (不 toggle 掉), 只清输入',
+      (tester) async {
+    Set<String>? received;
+    await tester.pumpWidget(_wrap({'家庭'}, (next) => received = next));
+
+    await tester.enterText(find.byType(TextField), '家庭');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    // 不触发 onChanged (无 toggle-off), 父级仍持有 {'家庭'}
+    expect(received, isNull);
+    // 输入框被清空
+    final field = tester.widget<TextField>(find.byType(TextField));
+    expect(field.controller?.text, isEmpty);
+    // chip 仍选中
+    final chip = tester.widget<FilterChip>(
+      find.widgetWithText(FilterChip, '家庭'),
+    );
+    expect(chip.selected, isTrue);
   });
 }

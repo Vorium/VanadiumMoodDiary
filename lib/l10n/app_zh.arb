@@ -1046,10 +1046,7 @@
   "trendCbtReratedChartTitle": "重评效果",
   "trendCbtReratedEmptyTitle": "还没有 5/7 栏 CBT 数据",
   "trendCbtReratedEmptyHint": "先用 5/7 栏 CBT 填表， 才能看到重评效果",
-  "contactConsentTitle": "知情同意",
-  "contactConsentAgree": "已告知并取得同意",
   "contactConsentReject": "暂不同意",
-  "contactConsentVersion": "v1 · 2026-07-31",
   "dataExportConsentTitle": "数据导出同意",
   "dataExportConsentBody": "您即将导出本地数据库中的所有数据。\n\n**目的**：{purpose}\n**数据范围**：{dataCategories}\n**保留方式**：{retention}\n\n**根据《个人信息保护法》第 13 条**（数据可携权 + 单独同意），请确认您已了解上述用途，并同意本次导出。",
   "@dataExportConsentBody": {
@@ -1071,6 +1068,22 @@
   },
   "dataExportConsentConfirm": "我了解并同意导出",
   "dataExportConsentVersion": "v1 · 2026-08-15",
+  "consentDialogGenericTitle": "知情同意",
+  "@consentDialogGenericTitle": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 中性标题 (不再复用联系人 §13 措辞)"
+  },
+  "consentDialogGenericAgree": "我已了解并同意",
+  "@consentDialogGenericAgree": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 中性同意按钮"
+  },
+  "consentDialogGenericReject": "暂不同意",
+  "@consentDialogGenericReject": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 中性拒绝按钮"
+  },
+  "consentDialogGenericVersion": "v1 · 2026-08-15",
+  "@consentDialogGenericVersion": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 同意留痕版本脚注"
+  },
   "editMedDialogTitle": "编辑药物",
   "editMedValidationNameRequired": "请填写药名",
   "editMedValidationDosageInvalid": "剂量必须是大于 0 的数字",

@@ -17,7 +17,8 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 /// - [ConsentKind.dataExport] → 用新 `dataExportConsent*` 模板
 ///   (placeholders 需要 `purpose` / `dataCategories` / `retention`)
 /// - [ConsentKind.vent] / [ConsentKind.analytics] →
-///   fallback 模板 (PIPL §14 撤回 toggle 目前不弹 dialog, 留接口给 v1.0)
+///   fallback 模板 (PIPL §14 撤回 toggle 目前不弹 dialog, 留接口给 v1.0),
+///   round 6d 起走中性 `consentDialogGeneric*` 文案 (不再复用 §13 联系人措辞)
 ///
 /// 1.1.0 round 4 (emotion-first refactor): emergencyContactSharing / safety
 /// 2 分支整摘 (失联通信业务暂停定版, 无 caller)。
@@ -137,12 +138,14 @@ class ConsentDialog {
         // Fallback: §14 撤回 toggle 在 legal_page 走 LegalConsentStore.withdraw,
         // 目前不弹 ConsentDialog。1.1.0 round 4b 后仅 vent / analytics
         // 可能走此路径 (safety / emergencyContactSharing 已随外联整摘)。
+        // round 6d: 标题/按钮改中性 consentDialogGeneric* 文案, 不再复用
+        // §13 联系人措辞 (contactConsentTitle/Agree/Version 已删)。
         return _ConsentTemplate(
-          title: l10n.contactConsentTitle,
+          title: l10n.consentDialogGenericTitle,
           body: Text(_fallbackBodyFor(kind, l10n)),
-          agreeLabel: l10n.contactConsentAgree,
-          rejectLabel: l10n.contactConsentReject,
-          version: l10n.contactConsentVersion,
+          agreeLabel: l10n.consentDialogGenericAgree,
+          rejectLabel: l10n.consentDialogGenericReject,
+          version: l10n.consentDialogGenericVersion,
         );
     }
   }

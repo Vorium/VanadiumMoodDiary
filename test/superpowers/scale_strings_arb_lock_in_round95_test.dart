@@ -801,7 +801,7 @@ void main() {
       expect(hant, 2, reason: 'zh_Hant.arb 应有 2 notifChannel* key');
     });
 
-    test('3 语 total = 1220 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1221 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -864,14 +864,18 @@ void main() {
       //   moodReviewTopTags / moodReviewTopFactors / moodReviewTimeOfDay /
       //   moodReviewCbtCount) → 1209 → 1220
       // 1.1.0 round 6c (Task 17 终验修复): lock-in 基线补齐 1206 → 1220
+      // 1.1.0 round 6d (final review 修复): +4 consentDialogGeneric* (Title/
+      //   Agree/Reject/Version vent/analytics 中性 fallback) −3
+      //   contactConsent{Title,Agree,Version} orphan (contactConsentReject
+      //   保留, dataExport 路径复用) → 1220 → 1221
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1220, reason: 'zh.arb 应有 1220 key');
-      expect(en, 1220, reason: 'en.arb 应有 1220 key');
-      expect(hant, 1220, reason: 'zh_Hant.arb 应有 1220 key');
+      expect(zh, 1221, reason: 'zh.arb 应有 1221 key');
+      expect(en, 1221, reason: 'en.arb 应有 1221 key');
+      expect(hant, 1221, reason: 'zh_Hant.arb 应有 1221 key');
     });
   });
 

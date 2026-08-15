@@ -80,7 +80,7 @@ void main() {
       expect(s.avgAnxiety, isNull);
     });
 
-    test('topTags top5 按频次降序, 同频次按出现顺序', () {
+    test('topTags top5 按频次降序, 同频次按字典序稳定', () {
       final s = summarize(
         [
           _e(id: 1, ts: start, tagsJson: '["焦虑","失眠"]'),
@@ -89,8 +89,20 @@ void main() {
         ],
         const [],
       );
-      expect(s.topTags.first, '焦虑');
-      expect(s.topTags.length, 5);
+      expect(s.topTags, ['焦虑', '失眠', '低落', '平静', '易怒']);
+    });
+
+    test('同频次 tie-break: 字典序确定性 (两次调用结果一致)', () {
+      final entries = [
+        _e(id: 1, ts: start, tagsJson: '["b"]'),
+        _e(id: 2, ts: start.add(const Duration(hours: 1)), tagsJson: '["a"]'),
+        _e(id: 3, ts: start.add(const Duration(hours: 2)), tagsJson: '["a","b"]'),
+      ];
+      // a=2, b=2 同频次 → 字典序 ['a', 'b'], 每次调用结果一致 (sort 不稳定不炸)
+      final s1 = summarize(entries, const []);
+      final s2 = summarize(entries, const []);
+      expect(s1.topTags, ['a', 'b']);
+      expect(s2.topTags, ['a', 'b']);
     });
 
     test('topInfluenceFactors 频次降序', () {

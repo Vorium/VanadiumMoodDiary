@@ -1046,10 +1046,7 @@
   "trendCbtReratedChartTitle": "重評效果",
   "trendCbtReratedEmptyTitle": "還沒有 5/7 欄 CBT 數據",
   "trendCbtReratedEmptyHint": "先用 5/7 欄 CBT 填表， 才能看到重評效果",
-  "contactConsentTitle": "知情同意",
-  "contactConsentAgree": "已告知並取得同意",
   "contactConsentReject": "暫不同意",
-  "contactConsentVersion": "v1 · 2026-07-31",
   "dataExportConsentTitle": "數據導出同意",
   "dataExportConsentBody": "您即將導出本地數據庫中的所有數據。\n\n**目的**：{purpose}\n**數據範圍**：{dataCategories}\n**保留方式**：{retention}\n\n**根據《個人信息保護法》第 13 條**（數據可攜權 + 單獨同意），請確認您已瞭解上述用途，並同意本次導出。",
   "@dataExportConsentBody": {
@@ -1071,6 +1068,22 @@
   },
   "dataExportConsentConfirm": "我瞭解並同意導出",
   "dataExportConsentVersion": "v1 · 2026-08-15",
+  "consentDialogGenericTitle": "知情同意",
+  "@consentDialogGenericTitle": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 中性標題 (不再複用聯繫人 §13 措辭)"
+  },
+  "consentDialogGenericAgree": "我已瞭解並同意",
+  "@consentDialogGenericAgree": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 中性同意按鈕"
+  },
+  "consentDialogGenericReject": "暫不同意",
+  "@consentDialogGenericReject": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 中性拒絕按鈕"
+  },
+  "consentDialogGenericVersion": "v1 · 2026-08-15",
+  "@consentDialogGenericVersion": {
+    "description": "1.1.0 round 6d: vent/analytics fallback 同意留痕版本腳註"
+  },
   "editMedDialogTitle": "編輯藥物",
   "editMedValidationNameRequired": "請填寫藥名",
   "editMedValidationDosageInvalid": "劑量必須是大於 0 的數字",

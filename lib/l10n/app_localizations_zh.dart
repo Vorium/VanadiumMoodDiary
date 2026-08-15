@@ -1620,16 +1620,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get trendCbtReratedEmptyHint => '先用 5/7 栏 CBT 填表， 才能看到重评效果';
 
   @override
-  String get contactConsentTitle => '知情同意';
-
-  @override
-  String get contactConsentAgree => '已告知并取得同意';
-
-  @override
   String get contactConsentReject => '暂不同意';
-
-  @override
-  String get contactConsentVersion => 'v1 · 2026-07-31';
 
   @override
   String get dataExportConsentTitle => '数据导出同意';
@@ -1645,6 +1636,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dataExportConsentVersion => 'v1 · 2026-08-15';
+
+  @override
+  String get consentDialogGenericTitle => '知情同意';
+
+  @override
+  String get consentDialogGenericAgree => '我已了解并同意';
+
+  @override
+  String get consentDialogGenericReject => '暂不同意';
+
+  @override
+  String get consentDialogGenericVersion => 'v1 · 2026-08-15';
 
   @override
   String get editMedDialogTitle => '编辑药物';
@@ -5599,16 +5602,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get trendCbtReratedEmptyHint => '先用 5/7 欄 CBT 填表， 才能看到重評效果';
 
   @override
-  String get contactConsentTitle => '知情同意';
-
-  @override
-  String get contactConsentAgree => '已告知並取得同意';
-
-  @override
   String get contactConsentReject => '暫不同意';
-
-  @override
-  String get contactConsentVersion => 'v1 · 2026-07-31';
 
   @override
   String get dataExportConsentTitle => '數據導出同意';
@@ -5624,6 +5618,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get dataExportConsentVersion => 'v1 · 2026-08-15';
+
+  @override
+  String get consentDialogGenericTitle => '知情同意';
+
+  @override
+  String get consentDialogGenericAgree => '我已瞭解並同意';
+
+  @override
+  String get consentDialogGenericReject => '暫不同意';
+
+  @override
+  String get consentDialogGenericVersion => 'v1 · 2026-08-15';
 
   @override
   String get editMedDialogTitle => '編輯藥物';

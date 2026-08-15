@@ -61,7 +61,11 @@ List<String> _topN(List<String> values, int n) {
     counts[v] = (counts[v] ?? 0) + 1;
   }
   final sorted = counts.entries.toList()
-    ..sort((a, b) => b.value.compareTo(a.value));
+    ..sort((a, b) {
+      final c = b.value.compareTo(a.value);
+      // Dart sort 不稳定: 同频次加字典序 tie-break 保证确定性
+      return c != 0 ? c : a.key.compareTo(b.key);
+    });
   return sorted.take(n).map((e) => e.key).toList(growable: false);
 }
 

@@ -1,6 +1,7 @@
 name: chroniccare
 # v0.27 R69: 双语描述, App Store / Google Play en 模式 UX 一致
-description: "我今天吃了药 - ChronicCare: medication reminder & mood tracker for people managing chronic conditions"
+# 1.1.0 round 6d: 改情绪优先定位 (情绪日记 + 树洞倾诉优先, 用药记录辅助, 对齐 README)
+description: "情绪日记 + 树洞倾诉优先 — ChronicCare: mood journal & vent-first self-care app for mental wellness, with medication tracking as support"
 publish_to: 'none'
 version: 1.1.0+148
 

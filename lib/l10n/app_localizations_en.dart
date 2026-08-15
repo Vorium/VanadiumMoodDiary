@@ -1697,16 +1697,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Fill in a 5/7-column CBT thought record first to see your rerating effect';
 
   @override
-  String get contactConsentTitle => 'Informed Consent';
-
-  @override
-  String get contactConsentAgree => 'I have informed and obtained consent';
-
-  @override
   String get contactConsentReject => 'Decline for now';
-
-  @override
-  String get contactConsentVersion => 'v1 · 2026-07-31';
 
   @override
   String get dataExportConsentTitle => 'Data Export Consent';
@@ -1722,6 +1713,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataExportConsentVersion => 'v1 · 2026-08-15';
+
+  @override
+  String get consentDialogGenericTitle => 'Informed Consent';
+
+  @override
+  String get consentDialogGenericAgree => 'I understand and consent';
+
+  @override
+  String get consentDialogGenericReject => 'Decline for now';
+
+  @override
+  String get consentDialogGenericVersion => 'v1 · 2026-08-15';
 
   @override
   String get editMedDialogTitle => 'Edit Medication';

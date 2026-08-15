@@ -182,7 +182,6 @@ class AppTokens {
   static const int textLengthWarningThreshold =
       AppSpacing.textLengthWarningThreshold;
   static const int celebrationDisplayMs = AppSpacing.celebrationDisplayMs;
-  static const Duration kDeepLinkRaceGuard = AppSpacing.kDeepLinkRaceGuard;
   static const double pageMarginH = AppSpacing.pageMarginH;
   static const double pageMarginV = AppSpacing.pageMarginV;
   static const double radiusButton = AppSpacing.radiusButton;

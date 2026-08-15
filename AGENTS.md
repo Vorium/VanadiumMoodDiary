@@ -59,25 +59,26 @@ lib/
 │   └── app_localizations_en.dart
 ├── domain/                # 0 Flutter 0 Drift 业务层
 │   ├── entities/         # *Entity 后缀
-│   ├── logic/            # 业务规则（量表/streak/care engine/报告/email 模板）
+│   ├── logic/            # 业务规则（量表/streak/报告/情绪回顾聚合/标签库）
 │   ├── repositories/     # 抽象接口（无实现）
 │   └── usecases/         # 用例（业务编排）
 └── presentation/          # UI 层
     ├── providers/         # Riverpod providers（按职责拆 3 文件）
     │   ├── core_providers.dart   # DB + 基础服务 + 7 个 repo
-    │   ├── service_providers.dart  # reminder / safety / assessment / data export
+    │   ├── service_providers.dart  # assessment reminder / data export
     │   └── vent_providers.dart   # vent audio + entries
-    ├── pages/             # 1 个页面 = 1 个目录（按 feature 拆 8 个）
+    ├── pages/             # 1 个页面 = 1 个目录（按 feature 拆 10 个）
     │   ├── home/         # 主页（打卡 / 庆祝 / mood / vent 入口）
     │   ├── setup/        # 首次设置（4 步：consent / welcome / medication / done）
     │   ├── settings/     # 设置（含 settings/widgets/ 子组件 + reminders_hub）
     │   ├── trend/        # 趋势（list + calendar 视图）
     │   ├── assessment/   # 心理评估（答题 + 历史 + 提醒 section）
-    │   ├── check_in/     # 打卡按钮
-    │   ├── contact/      # 紧急联系人列表
     │   ├── medication/   # 用药（calendar / refill / today / report / dialogs）
     │   ├── mood/         # 情绪（dialog + quick button）
-    │   └── vent/         # 树洞（list / compose / detail）
+    │   ├── mood_list/    # 情绪列表 + 情绪回顾
+    │   ├── vent/         # 树洞（list / compose / detail）
+    │   ├── daily_tracking/  # 每日跟踪（睡眠 / 体重 / 社交节律 / 压力等 6 项）
+    │   └── crisis_hotline_page.dart  # 危机热线（5 区域一键拨打）
     └── widgets/           # 通用组件
         ├── page_scaffold.dart
         ├── app_snack_bar.dart

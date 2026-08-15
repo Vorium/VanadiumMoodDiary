@@ -88,13 +88,6 @@ class AppSpacing {
   static const EdgeInsets edgeInsetsLg = EdgeInsets.all(spacingLg);
   static const EdgeInsets edgeInsetsXl = EdgeInsets.all(spacingXl);
 
-  /// v0.27 round 62 (P1-9 修复): Deep link race guard 100ms
-  ///
-  /// 之前 `home_page.dart:87` 用 `Future.delayed(Duration(milliseconds: 100))`
-  /// 等 GoRouter 把 query param 完整传过来再跑 safety check, 避免 race。
-  /// 现在用命名 token 替代裸值, 跨文件复用 + grep 找得到。
-  static const Duration kDeepLinkRaceGuard = Duration(milliseconds: 100);
-
   // v0.31 R3: iOS standard page margin (20pt 横向 / 16pt 纵向)
   static const double pageMarginH = 20.0;
   static const double pageMarginV = 16.0;
