@@ -472,6 +472,9 @@
   "moodTagLowEnergy": "Low energy",
   "moodNoteLabel": "Note (optional)",
   "moodNoteHint": "What happened today?",
+  "moodStatusPhraseTitle": "Status phrase",
+  "moodStatusPhraseHint": "Or type how you feel right now…",
+  "moodStatusPhraseShowAll": "All",
   "moodAudioRecordButton": "Record voice",
   "moodAudioRecorded": "Recorded {duration}",
   "@moodAudioRecorded": {

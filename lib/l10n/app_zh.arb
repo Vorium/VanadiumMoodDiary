@@ -514,6 +514,9 @@
   "moodTagLowEnergy": "能量低",
   "moodNoteLabel": "备注（可选）",
   "moodNoteHint": "今天发生什么？",
+  "moodStatusPhraseTitle": "状态短语",
+  "moodStatusPhraseHint": "或输入一句此刻的心情…",
+  "moodStatusPhraseShowAll": "全部",
   "moodAudioRecordButton": "录语音",
   "moodAudioRecorded": "已录 {duration}",
   "@moodAudioRecorded": {

@@ -1731,6 +1731,24 @@ abstract class AppLocalizations {
   /// **'今天发生什么？'**
   String get moodNoteHint;
 
+  /// No description provided for @moodStatusPhraseTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'状态短语'**
+  String get moodStatusPhraseTitle;
+
+  /// No description provided for @moodStatusPhraseHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'或输入一句此刻的心情…'**
+  String get moodStatusPhraseHint;
+
+  /// No description provided for @moodStatusPhraseShowAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部'**
+  String get moodStatusPhraseShowAll;
+
   /// No description provided for @moodAudioRecordButton.
   ///
   /// In zh, this message translates to:

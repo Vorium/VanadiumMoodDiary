@@ -64,6 +64,17 @@ class MoodListItem extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // v1.1.0 round 5d: 状态短语 (在标签/CBT badge 行前)
+                  if (entry.statusPhrase != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
+                      child: Text(
+                        '“${entry.statusPhrase}”',
+                        style: AppTokens.textStyleMicro(context).copyWith(
+                          color: AppTokens.primaryColor(context),
+                        ),
+                      ),
+                    ),
                   if (entry.isCbtRecord)
                     Padding(
                       padding: const EdgeInsets.only(top: AppTokens.spacingXxs),

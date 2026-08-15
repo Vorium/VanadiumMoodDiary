@@ -39,6 +39,7 @@ import 'package:chroniccare/presentation/pages/mood/widgets/mood_submit_panel.da
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_tags.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_text_input.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/period_field.dart';
+import 'package:chroniccare/presentation/pages/mood/widgets/status_phrase_field.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_three_column_mode.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_wizard.dart';
 
@@ -89,6 +90,9 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
 
   // ===== 文字备注 =====
   late final TextEditingController _noteController;
+
+  // ===== v1.1.0 round 5d: 状态短语 (预设 chip / 自定义, 可空) =====
+  String? _statusPhrase;
 
   // ===== 保存状态 =====
   bool _saving = false;
@@ -220,6 +224,8 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                   : InfluenceCodec.encode(_influenceFactors),
               // v0.30 R101: 记录模式
               recordingMode: _recordingMode,
+              // v1.1.0 round 5d: 状态短语 (预设或自定义, null = 未选)
+              statusPhrase: _statusPhrase,
             ),
           );
       if (!mounted) return;
@@ -363,6 +369,16 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                           }
                         });
                       },
+                    ),
+                    const SizedBox(height: AppTokens.spacingSm),
+                    // v1.1.0 round 5d: 状态短语 (预设 chip 按 score 方向
+                    // 优先 + 自定义输入), 插入在 mood tags section 之后。
+                    // score 来自 cbtDraftProvider (3 栏 score chooser 或
+                    // 5/7 栏 wizard step 2 写入)。
+                    StatusPhraseField(
+                      score: cbtState.draft.score,
+                      value: _statusPhrase,
+                      onChanged: (v) => setState(() => _statusPhrase = v),
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                     MoodTextInput(controller: _noteController),

@@ -66,6 +66,7 @@ class MoodRepositoryImpl implements MoodRepository {
         period: Value(draft.period),
         influenceFactorsJson: Value(draft.influenceFactorsJson ?? '[]'),
         recordingMode: Value(draft.recordingMode),
+        statusPhrase: Value(draft.statusPhrase),
       ),
     );
   }

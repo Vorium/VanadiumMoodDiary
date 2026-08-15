@@ -101,6 +101,9 @@ class MoodEntryDraft {
   /// v0.30 R101: 记录模式 ('momentary' / 'daily')
   final String? recordingMode;
 
+  /// v1.1.0 round 5d: 状态短语（预设或自定义, 可空）
+  final String? statusPhrase;
+
   const MoodEntryDraft({
     required this.score,
     required this.tags,
@@ -123,5 +126,6 @@ class MoodEntryDraft {
     this.period,
     this.influenceFactorsJson,
     this.recordingMode,
+    this.statusPhrase,
   });
 }

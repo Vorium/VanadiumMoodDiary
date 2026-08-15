@@ -914,6 +914,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodNoteHint => '今天发生什么？';
 
   @override
+  String get moodStatusPhraseTitle => '状态短语';
+
+  @override
+  String get moodStatusPhraseHint => '或输入一句此刻的心情…';
+
+  @override
+  String get moodStatusPhraseShowAll => '全部';
+
+  @override
   String get moodAudioRecordButton => '录语音';
 
   @override
@@ -4849,6 +4858,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodNoteHint => '今天發生什麼？';
+
+  @override
+  String get moodStatusPhraseTitle => '狀態短語';
+
+  @override
+  String get moodStatusPhraseHint => '或輸入一句此刻的心情…';
+
+  @override
+  String get moodStatusPhraseShowAll => '全部';
 
   @override
   String get moodAudioRecordButton => '錄語音';

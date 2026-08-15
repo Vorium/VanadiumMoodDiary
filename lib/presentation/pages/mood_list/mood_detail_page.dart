@@ -123,6 +123,23 @@ class MoodDetailPage extends ConsumerWidget {
                                 color: AppColors.moodScoreColor(entry.score),
                               ),
                             ),
+                            // v1.1.0 round 5d: 状态短语 — score 下的显著行
+                            if (entry.statusPhrase != null)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: AppTokens.spacingXxs,
+                                ),
+                                child: Text(
+                                  '“${entry.statusPhrase}”',
+                                  style: TextStyle(
+                                    fontSize: AppTokens.fontSizeBody,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.moodScoreColor(
+                                      entry.score,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             Text(
                               _formatDateTime(entry.timestamp),
                               style: TextStyle(

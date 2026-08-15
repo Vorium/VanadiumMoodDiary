@@ -959,6 +959,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodNoteHint => 'What happened today?';
 
   @override
+  String get moodStatusPhraseTitle => 'Status phrase';
+
+  @override
+  String get moodStatusPhraseHint => 'Or type how you feel right now…';
+
+  @override
+  String get moodStatusPhraseShowAll => 'All';
+
+  @override
   String get moodAudioRecordButton => 'Record voice';
 
   @override
