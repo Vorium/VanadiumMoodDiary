@@ -1,5 +1,7 @@
 # SendGrid 集成指南
 
+> **⚠️ Legacy 存档 (v1.1.0)**: Email 业务已于 v1.1.0 删除, 本文档为历史存档, 不再维护。
+
 > 慢病管家用 SendGrid 发"停药通知"邮件。本文档告诉你**15 分钟内**完成配置。
 
 > **⚠️ v0.22 round 29 状态说明**：当前 `EmailService` 是 **mock-only**（v0.16 删 dio 依赖，

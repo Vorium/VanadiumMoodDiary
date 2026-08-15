@@ -1,5 +1,8 @@
 # Sprint 2 待办集中索引（v0.27 R77 引入）
 
+> **⚠️ Legacy 标注 (v1.1.0)**: SMS / Email 业务已于 v1.1.0 删除, 本文档为
+> 历史存档 — §1.3 / §1.4 及 Sprint 3 路线图中的对应条目不再有效。
+
 > **背景 (R76 报告 P3-7)**: 5+ 个真接大工程已分散在 3 doc
 > (`SMS_PROVIDERS.md` / `LEGACY_API_NOTES.md` / `SPRINT1_LEGAL_TODO.md` /
 > `VERSION_1.0_PLAN.md`), R77 集中索引让 reviewer 一次找到。
@@ -47,6 +50,8 @@
 
 ### 1.3 SMS 真接阿里云 (R55 起步, 法务 + AccessKey 依赖)
 
+> **⚠️ Legacy (v1.1.0)**: SMS 业务已删除, 本节为历史存档不再维护。
+
 - **当前状态**: SmsService fail-fast 守门员 + placeholder 占位 (R75 改 throw StateError)。
 - **未做**: 法务 1-2 月模板审核 + 阿里云 AccessKey 申请 + SMS API 集成。
 - **估时**: 1-2 月 (法务阻塞)
@@ -54,6 +59,8 @@
 - **详情**: `docs/SMS_PROVIDERS.md` 完整 TODO + 阿里云 API 文档链接。
 
 ### 1.4 Email 真接 SendGrid (R55 起步, AccessKey 依赖)
+
+> **⚠️ Legacy (v1.1.0)**: Email 业务已删除, 本节为历史存档不再维护。
 
 - **当前状态**: EmailService 类似 SmsService, R75 改 throw StateError。
 - **未做**: SendGrid API key 申请 + 模板审核 + 集成。

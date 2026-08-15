@@ -4,7 +4,7 @@
 
 > **🚧 R107 cleanup (2026-08-10) 9 视角综合审视后状态**:
 > - 18 守门员全绿 / 2019 tests pass / 0 analyzer error
-> - 7 FeatureFlag 守门 (失联 / 5 厂商 push / email / vent audio / phq-gad7 / boot / 阿里云 sms; v1.0.0+147 删 iap — 永久免费)
+> - 4 FeatureFlag 守门 (fiveVendorPush / phqGad7I18n / bootReceiver / ventAudio=true; v1.1.0 删外联 3 flag, v1.0.0+147 删 iap — 永久免费)
 > - **R107 P0 13 项上架阻塞 必修** (R108 修, 1-2 周): 详见 `docs/audit-history/r107-cleanup-2026-08-10/00-summary.md` §四
 > - **关键: chroniccare.app 域名未注册 (4 视角共识)** — Apple 5.1.1 + Google Play 隐私 URL 不可达拒因
 > - **R108 修复流程**: 域名注册 (Cloudflare $15/yr + ICP 备案 7-20d) → iOS P0#1-9 (12.5h) → Android P0#1-6 (4-5d) → 通用 P0 (4h) → 总 ~12-14 工作日
@@ -139,8 +139,8 @@ bundle exec fastlane android metadata      # → 只同步 metadata
 
 ### App Store 描述 + 完整描述模板
 
-> **R69 update:** 失联通知业务整体暂停, 描述里加 "Lost-contact safety net
-> (coming soon — currently disabled)" 段, 跟 user_agreement.md CC-7 wording 修一致.
+> **v1.1.0 update:** 外联通知业务已于 v1.1.0 删除 (非暂停), 描述不再含
+> "Lost-contact safety net" 段。
 
 类似 Google Play，但加上：
 - 适用年龄：12+
@@ -153,7 +153,6 @@ bundle exec fastlane android metadata      # → 只同步 metadata
 ## 阶段 7：发布后（持续）
 
 ### 监控
-- SendGrid Dashboard：每日送达率
 - Google Play Console：下载、评分、崩溃
 - App Store Connect：下载、评分、崩溃
 - 邮箱：用户反馈
@@ -164,7 +163,6 @@ bundle exec fastlane android metadata      # → 只同步 metadata
 - 黑产/刷量 → 监控异常下载
 
 ### 迭代（v1.0+）
-- 短信通知（已加到 plan）
 - 量表自评
 - 趋势图
 
@@ -232,7 +230,7 @@ python scripts/check_changelog.py
 
 > **背景:** spzh 视角 P0 #5: 之前 DEPLOYMENT.md 只简略提 Google Play + App
 > Store,**国内 5 大应用市场** + **5 厂商 push 通道** 0 提及 = 国产 ROM
-> 静默杀后台通知 → 推送送达率 < 70% → 失联通知失效 → 用户死亡风险。
+> 静默杀后台通知 → 推送送达率 < 70% → 提醒失效 → 用药依从性风险。
 
 ### 8.1 国内 5 大应用市场 (必须上)
 
@@ -284,8 +282,7 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 > **总周期: 1-2 月全部接入。** 同时保留 `flutter_local_notifications` 作为
 > 兜底通道(其他 Android 设备 + 海外)。
 
-**架构:** `NotificationService` 抽象 `PushProvider` 接口(类似
-`SmsProvider`),按设备型号路由到对应厂商 SDK,统一封装。
+**架构:** `NotificationService` 抽象 `PushProvider` 接口,按设备型号路由到对应厂商 SDK,统一封装。
 
 ### 8.3 上架材料 checklist (4 store 共用)
 
@@ -318,8 +315,7 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 >    评估结果仅供用户自我参考,**不替代医生诊断**。
 > 2. **不涉及治疗方案**:本应用不推荐任何药物或治疗方案,所有用药
 >    提醒由用户**自行**或**医生**配置。
-> 3. **不作为医疗决策依据**:本应用的失联通知机制是用户主动设置
->    的"安全网"功能,**不构成医疗监护**。
+> 3. **不作为医疗决策依据**:本应用不提供任何医疗决策支持,**不构成医疗监护**。
 > 4. **未申请医疗器械注册**:本应用未在国家药品监督管理局(NMPA)
 >    申请任何医疗器械注册证。
 >
@@ -352,7 +348,6 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 > 本应用严格遵守《中华人民共和国个人信息保护法》(PIPL):
 >
 > - §13/§14 处理 PII 前取得用户单独同意
-> - §23 向紧急联系人提供 PII 前取得单独告知
 > - §28 处理敏感 PII(健康医疗)取得单独同意
 > - §38/§39 跨境 PII 传输合规(详见 `privacy_policy.md` §11)
 > - §47 用户删除权(应用内一键删除 + 卸载清除)
@@ -362,15 +357,16 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 
 ## 附录 B: 已知 v0.25 阻塞上 store 的合规 TODO
 
+> **v1.1.0 update:** 原表前 2 行 (PIPL §13 联系人单独同意 + AliyunSmsProvider
+> 真接) 随 v1.1.0 外联业务删除已移除。
+
 | # | 阻塞项 | 依赖 | 估时 | 计划 round |
 |---|--------|------|------|-----------|
-| 1 | **PIPL §13 单独同意实现** (联系人回复 Y) | SMS provider 真接 | 4-8h | R55 |
-| 2 | **AliyunSmsProvider 真接** | 阿里云备案 + 签名 + 模板审核 | 2+ 月 | R55 |
-| 3 | **5 厂商 push SDK 接入** | 各厂商审核 | 1-2 月 | R55 |
-| 4 | **软件著作权登记** | CPDA 受理 | 1-2 月 | 法务负责 |
-| 5 | **ICP 备案** | 域名注册 | 7-15 天 | 法务负责 |
-| 6 | **法务 review 3 法律文档** | 律师 | 1-2 周 | 法务负责 |
-| 7 | **HIPAA / GDPR 律师过审** | 国际律师 | 1-2 周 | 法务负责 |
+| 1 | **5 厂商 push SDK 接入** | 各厂商审核 | 1-2 月 | R55 |
+| 2 | **软件著作权登记** | CPDA 受理 | 1-2 月 | 法务负责 |
+| 3 | **ICP 备案** | 域名注册 | 7-15 天 | 法务负责 |
+| 4 | **法务 review 3 法律文档** | 律师 | 1-2 周 | 法务负责 |
+| 5 | **HIPAA / GDPR 律师过审** | 国际律师 | 1-2 周 | 法务负责 |
 
 > 上 store 路径: 4 store 缺一不可 + 5 厂商 push 缺一不可 + 法务 review 缺一不可。
 > 估总: 3-6 月 (法务 + 厂商审核是瓶颈)。- 多语言
@@ -424,14 +420,12 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 
 > 上 store 前必过 5 项检查, **R93 阶段 2 新增**集中守门, 避免上架后被拒:
 
-### 6.1 ✅ 6 项 FeatureFlag 全部 hidden (R93 阶段 2 已完成, v1.0.0+147 删已取消业务)
+### 6.1 ✅ 4 项 FeatureFlag 当前状态 (v1.1.0 定版: 外联 3 flag 已删, ventAudio 已启用)
 
-- [x] 失联通知 (`emergencyContactEnabled=false`) — 设置页联系人 section + 主页 homeFabHotline hidden
 - [x] 5 厂商 push (`fiveVendorPushEnabled=false`) — NotificationStatusCard OEM 引导 hidden
-- [x] EmailService 邮件 (`emailServiceEnabled=false`) — AssessmentSection 邮件预览 hidden
-- [x] vent + mood 录音 (`ventAudioEnabled=false`) — VentAudioSection + MoodRecorder hidden
+- [x] vent + mood 录音 (`ventAudioEnabled=true`) — VentAudioSection + MoodRecorder 可见
 - [x] PHQ-9 / GAD-7 量表 (`phqGad7I18nEnabled=false`) — AssessmentCenter 8 量表保留 6 显
-- [x] BootReceiver (`bootReceiverEnabled=false`) — SafetyWatchService.onAppStart 跳过 rescheduleAll
+- [x] BootReceiver (`bootReceiverEnabled=false`) — 开机通知重排跳过
 
 ### 6.2 ✅ 文档一致性 (R93 阶段 2 已完成)
 
@@ -450,8 +444,6 @@ notifications 17.x` 在 iOS 完美,但 Android 上需接入厂商 push SDK
 
 ### 6.4 ⚠️ 仍需手动完成 (R93+ 业务真接时)
 
-- [ ] 阿里云 SMS 真接 (法务模板审核 + AccessKey 申请)
-- [ ] EmailService 真接 (SendGrid API key + 法务模板审核)
 - [ ] 5 厂商 push SDK 接入 (米/华/OPPO/vivo/魅族审核)
 - [ ] PHQ-9 / GAD-7 en / zh_Hant 翻译完整 (法务 + 临床审核)
 - [ ] Android WorkManager 完善 (BootReceiver 真接)
@@ -503,7 +495,7 @@ git push origin master
 
 ### 7.4 数据迁移 (R93+ 业务真接时)
 
-- 业务真接时 (SMS / Email / 5 厂商 push) 涉及 schema 改动
+- 业务真接时 (5 厂商 push 等) 涉及 schema 改动
 - drift schemaVersion +1 + migration (R92 阶段 1 模式)
 - 备份用户数据 → DB 升级 → 数据恢复
 - 不动数据模型字段 (零迁移成本, FeatureFlag 守护)
@@ -513,5 +505,4 @@ git push origin master
 - 业务真接时通过 in-app 通知用户"X 功能已上线"
 - 走本地 NotificationService (已有, 跟日常打卡提醒同一通道)
 - 不接 push (5 厂商 SDK 仍未真接)
-- 邮件通知走 EmailService 真接后启用
 

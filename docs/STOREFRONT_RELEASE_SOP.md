@@ -208,7 +208,7 @@ bundletool validate --bundle=build/app/outputs/bundle/release/app-release.aab
 
 ## 8. BootReceiver 完整方案(简化版未兑现 R64)
 
-**当前状态**:`android/app/src/main/kotlin/.../BootReceiver.kt:18-21` 注释 "留给 R64 完善",**实际未兑现** = 重启后通知未真正重排,失联通知 100% 漏。
+**当前状态**:`android/app/src/main/kotlin/.../BootReceiver.kt:18-21` 注释 "留给 R64 完善",**实际未兑现** = 重启后通知未真正重排,提醒可能漏。
 
 **完整方案**(半天):
 ```kotlin
@@ -233,32 +233,6 @@ _bootChannel.setMethodCallHandler((call) async {
 
 ---
 
-## 9. 接阿里云 SMS 真接(失联通知,法务 1-2 月)
-
-**当前**:`lib/core/data/services/sms_service.dart:83` `MockSmsProvider.send()` 抛 `UnimplementedError`,release 模式被 `validateForRelease` 阻断(`feature_flags.dart:35` `_prodEmergencyContactEnabled=false`)。
-
-**真接步骤**:
-1. 阿里云注册 + 申请 AccessKey + 短信签名 + 短信模板(法务审核 1-2 月)
-2. `lib/core/data/services/sms_service.dart:90-201` `AliyunSmsProvider.send()` 实现
-3. `feature_flags.dart:35` `_prodEmergencyContactEnabled = true`
-4. 隐私政策 + 用户协议更新失联通知描述
-5. PIPL §38 跨境评估(如海外联系人)
-
-**不可压缩瓶颈**:**法务 1-2 月** + **阿里云审核**。
-
----
-
-## 10. 失联通知业务暂停的 UX 显眼提示(R82 P1)
-
-**R82 报告**:`FeatureFlags.emergencyContactEnabled=false` 整段暂停,但**UX 无显眼提示**,用户以为失联通知工作实际 100% 不通知。
-
-**R82 修法**(1 小时):
-- 主页顶部加永久 banner:`⚠️ 失联通知业务暂停,见设置 → 法律与隐私`
-- 设置页"紧急联系人"section 顶部同款 banner
-- i18n key 3 个:zh / en / zh_Hant 同步
-
----
-
 ## 总览
 
 | # | 任务 | 阻塞 | 难度 | 估时 |
@@ -271,11 +245,9 @@ _bootChannel.setMethodCallHandler((call) async {
 | 6 | iOS / Android 16KB 验证 | 🟡 警告 | S | macOS 30min |
 | 7 | 5 厂商 push SDK 接入 | 🟡 警告(国产 ROM) | XL | 1-2 月 |
 | 8 | BootReceiver 完整方案 | 🟡 警告 | M | 半天 |
-| 9 | 阿里云 SMS 真接 | 🟡 警告(失联通知) | XL | 1-2 月 + 法务 |
-| 10 | 失联通知 UX 显眼 banner | 🟡 P1 UX | S | 1h |
 
 **核心 5 项必做(1-5)**:不修上架 100% 被拒,AI 帮不上。
-**改进项 5 项(6-10)**:上架后持续做,送达率 + UX 提升。
+**改进项 3 项(6-8)**:上架后持续做,送达率提升。
 
 ---
 

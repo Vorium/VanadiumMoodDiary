@@ -14,11 +14,20 @@
 - Export v6 — 删 contacts 段 + statusPhrase/tagsJson (老 v5 文件 contacts key 忽略)
 - FeatureFlags 7 → 4 — emergencyContactEnabled / aliyunSmsEnabled / emailServiceEnabled 3 个外联 flag 整摘
 - 守门员 22 → 21 — check_sms_release_ready 随 SMS 外联删除; check_pii_in_title / check_legal_consent 同步收窄
+- ConsentKind 5 → 3 — emergencyContactSharing / safety 2 值随外联整摘 (剩 dataExport / vent / analytics)
+- VentRepository.add 加 tagsJson 参数 (树洞标签落库)
+- 终验收尾 (round 6c/6d): lock-in 基线 1206→1220 / 状态短语 hint 全角省略号 / topN 稳定排序 / 自定义标签选中语义 / consent 中性文案 / 死 token 清理
 
 ### Removed
 - 紧急联系人 — contact 页 / setup 联系人表单 / contacts 表 + migration drop / 死路由
 - 失联通知 — SafetyWatch / CareEngine / ReminderChecker / SMS 服务全删 + settings 失联卡 / home safety check
 - 邮件服务 — EmailService + 邮件预览路由 (R95 已删页面, 本轮删服务)
+- 死代码清理 (round 4c) — user_name_helper / userName* strings (round 4b 已删 phone_validator / region_display_name)
+
+### Fixed
+- P0 合规修复 (round 7) — 3 法务文档删失联/联系人残留 + 5 ARB 文案 ×3 语 + VentHeroCard 语音条目预览
+- P1 i18n 显示层本地化 (round 7b) — 预设标签 / 状态短语 / 鼓励文案 / 导入摘要 + maxLength
+- P2 守门员 (round 7c) — domain 中文规则 3 / coverage 假绿 / check_pii_in_title 5·5 收窄 + /mood-list /mood-trend 入口补齐
 
 ## [1.0.0+147] - 2026-08-14 (永久免费定版: 去除所有收费相关内容)
 

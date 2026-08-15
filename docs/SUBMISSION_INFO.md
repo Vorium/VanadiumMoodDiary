@@ -250,8 +250,6 @@ v0.31.2 阶段（1-2 月内）：
 
 R109+ 阶段：
 - 5 厂商 push SDK 接入
-- 阿里云 SMS 真接
-- SendGrid Email 真接
 - HealthKit 接入（可选）
 - 鸿蒙 / OpenHarmony 适配（可选）
 

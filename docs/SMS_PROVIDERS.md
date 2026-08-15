@@ -1,5 +1,7 @@
 # SMS Provider 接入指南 (v0.25 R55 增补)
 
+> **⚠️ Legacy 存档 (v1.1.0)**: SMS 业务已于 v1.1.0 删除, 本文档为历史存档, 不再维护。
+
 > **背景:** spzh 视角 P0 #6: `AliyunSmsProvider.send()` 当前 throw
 > `UnimplementedError` 占位,release 模式下失联通知永远抛错 = production
 > **不可用**。**本文档提供:** 阿里云 SMS SDK 真接详细 plan + 接入步骤
