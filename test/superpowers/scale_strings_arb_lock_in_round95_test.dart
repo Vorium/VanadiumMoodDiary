@@ -722,11 +722,6 @@ void main() {
       expect(Strings.snoozeTitleText(), '💊 提醒吃药（snooze）');
     });
 
-    test('userNameDefault pair: const = *Text 默认值', () {
-      expect(Strings.userNameDefault, '用户');
-      expect(Strings.userNameDefaultText(), '用户');
-    });
-
     test('pdfLabelPatient pair: const = *Text 默认值', () {
       expect(Strings.pdfLabelPatient, '患者');
       expect(Strings.pdfLabelPatientText(), '患者');

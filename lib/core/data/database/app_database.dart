@@ -260,9 +260,8 @@ class AppDatabase extends _$AppDatabase {
           // - old data "" still writes back "" (empty string), but allow null
           // - in practice: drift's alter table doesn't support column property change, SQLite has no ALTER COLUMN
           //   so this change **only takes effect in createAll** (new install users auto get new schema)
-          //   upgrading user schema unchanged, **unified via `domain/logic/user_name_helper.dart`
-          //   `safeUserName()` to be compatible with old data "" and new data null**
-          //   (v0.22 round 31 sp-en P0-3 extracted helper to centralize 5+ scattered checks)
+          //   upgrading users keep old schema; code reads userName defensively
+          //   (null/"" both tolerated) so old data "" and new data null are compatible
           // v11 to v12: mood_entries add voice recording 3 columns (v0.23 round 31)
           // - audioPath / audioTranscript / audioDurationMs all nullable
           // - old data auto null, text-only mode behavior completely unchanged

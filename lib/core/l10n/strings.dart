@@ -266,18 +266,6 @@ class Strings {
   static String snoozeTitleText({String? override}) => override ?? snoozeTitle;
   static String snoozeBodyText({String? override}) => override ?? snoozeBody;
 
-  // ============== v0.27 round 62 (P1-8 修复): 用户名 fallback 集中 ==============
-  // 之前 user_name_helper 多处 hardcode "您" / "用户" 中文字符串, 集中到
-  // 本类: 2 个 const 字段 (中文 fallback, 老 caller 直接用) + 2 个
-  // i18n 化函数 `*Text({String? override})` (新 caller 传 l10n 拿多语言)。
-  // 1.1.0 round 4b: userNameFamily ("您的家人") 随失联 SMS/邮件模板整摘。
-  static const userNameDefault = '用户';
-  static const userNamePolite = '您';
-  static String userNameDefaultText({String? override}) =>
-      override ?? userNameDefault;
-  static String userNamePoliteText({String? override}) =>
-      override ?? userNamePolite;
-
   // ============== v0.31 P1-5: 评估对比 (assessment_comparison.dart) i18n ==============
   static String assessmentComparisonImproved({String? override}) =>
       override ?? '好转';

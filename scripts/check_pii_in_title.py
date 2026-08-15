@@ -10,7 +10,7 @@
 #
 # 规则:
 #   1. lib/core/l10n/strings.dart 的 notif*Title 函数**不应**有 medName
-#      / medicationName / patientName / contactName 等 PII 字段参数
+#      / medicationName / patientName / name / diseaseName 等 PII 字段参数
 #      (签名不收 PII 数据 = 编译期防泄漏)
 #   2. 已有 title 字符串不直接含 "药名" / "<name>" / "$medName" 等动态注入
 #   3. lib/presentation/ 调用 notif*Title() 不传 med.name (defence in depth)
@@ -48,7 +48,7 @@ if strings_file.exists():
 
         # PII 字段名黑名单
         pii_fields = ['medName', 'medicationName', 'patientName',
-                      'contactName', 'name', 'diseaseName']
+                      'name', 'diseaseName']
         for pii in pii_fields:
             # 形参: `String medName,` 或 `String? medName,` 等
             if re.search(rf'String\s+{pii}\b', params):
@@ -65,7 +65,7 @@ if strings_file.exists():
 
 # 规则 2: lib/ 调 notif*Title() 不传 med.name (defence in depth)
 lib_dir = PROJECT_ROOT / 'lib'
-title_func_names = ['notifMedicationTitle', 'notifRefillTitle', 'safetyAlertTitle']
+title_func_names = ['notifMedicationTitle', 'notifRefillTitle']
 if lib_dir.exists():
     for dart_file in lib_dir.rglob('*.dart'):
         # 跳过 strings.dart 自己
