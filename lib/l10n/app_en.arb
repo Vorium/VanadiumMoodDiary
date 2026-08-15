@@ -1512,6 +1512,17 @@
       }
     }
   },
+  "moodReviewTitle": "Mood review",
+  "moodReviewWeek": "Week",
+  "moodReviewMonth": "Month",
+  "moodReviewEntriesCount": "Days recorded",
+  "moodReviewAvgScore": "Avg. mood",
+  "moodReviewDelta": "Change vs. previous",
+  "moodReviewDeltaNoData": "No previous data",
+  "moodReviewTopTags": "Top tags",
+  "moodReviewTopFactors": "Top factors",
+  "moodReviewPeriod": "Time of day",
+  "moodReviewCbtCount": "CBT entries",
   "cbtExportPdfEmpty": "No 5/7-column CBT data available to export",
   "cbtExportPdfButton": "Export CBT thought record PDF",
   "@cbtExportPdfButton": {

@@ -4769,6 +4769,72 @@ abstract class AppLocalizations {
   /// **'{count} 条记录'**
   String moodListEntryCount(int count);
 
+  /// No description provided for @moodReviewTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪回顾'**
+  String get moodReviewTitle;
+
+  /// No description provided for @moodReviewWeek.
+  ///
+  /// In zh, this message translates to:
+  /// **'每周'**
+  String get moodReviewWeek;
+
+  /// No description provided for @moodReviewMonth.
+  ///
+  /// In zh, this message translates to:
+  /// **'月'**
+  String get moodReviewMonth;
+
+  /// No description provided for @moodReviewEntriesCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'记录天数'**
+  String get moodReviewEntriesCount;
+
+  /// No description provided for @moodReviewAvgScore.
+  ///
+  /// In zh, this message translates to:
+  /// **'平均心情'**
+  String get moodReviewAvgScore;
+
+  /// No description provided for @moodReviewDelta.
+  ///
+  /// In zh, this message translates to:
+  /// **'较上期变化'**
+  String get moodReviewDelta;
+
+  /// No description provided for @moodReviewDeltaNoData.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无上期数据'**
+  String get moodReviewDeltaNoData;
+
+  /// No description provided for @moodReviewTopTags.
+  ///
+  /// In zh, this message translates to:
+  /// **'高频标签'**
+  String get moodReviewTopTags;
+
+  /// No description provided for @moodReviewTopFactors.
+  ///
+  /// In zh, this message translates to:
+  /// **'高频影响因素'**
+  String get moodReviewTopFactors;
+
+  /// No description provided for @moodReviewPeriod.
+  ///
+  /// In zh, this message translates to:
+  /// **'心境时段'**
+  String get moodReviewPeriod;
+
+  /// No description provided for @moodReviewCbtCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'CBT 记录数'**
+  String get moodReviewCbtCount;
+
   /// No description provided for @cbtExportPdfEmpty.
   ///
   /// In zh, this message translates to:

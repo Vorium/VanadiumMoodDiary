@@ -1554,6 +1554,17 @@
       }
     }
   },
+  "moodReviewTitle": "情绪回顾",
+  "moodReviewWeek": "每周",
+  "moodReviewMonth": "月",
+  "moodReviewEntriesCount": "记录天数",
+  "moodReviewAvgScore": "平均心情",
+  "moodReviewDelta": "较上期变化",
+  "moodReviewDeltaNoData": "暂无上期数据",
+  "moodReviewTopTags": "高频标签",
+  "moodReviewTopFactors": "高频影响因素",
+  "moodReviewPeriod": "心境时段",
+  "moodReviewCbtCount": "CBT 记录数",
   "cbtExportPdfEmpty": "还没有 5/7 栏 CBT 数据可导出",
   "cbtExportPdfButton": "导出 CBT 思维记录 PDF",
   "@cbtExportPdfButton": {

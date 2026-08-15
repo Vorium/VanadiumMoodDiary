@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_detail_page.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
+import 'package:chroniccare/presentation/pages/mood_list/mood_review_page.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_trend_page.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 
@@ -56,6 +57,17 @@ class AppRouteMoodList {
           MoodDetailPage(
             entryId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
           ),
+          context,
+        ),
+      ),
+      // 1.1.0 round 5e (Task 15): /mood-review — 情绪回顾页 (周/月统计摘要)
+      // 从首页情绪大卡 review 按钮跳入 (occasional, slide-right),
+      // top-level (不进 ShellRoute — 心情 tab 回落由 TabBar 默认选中兜底)
+      GoRoute(
+        path: '/mood-review',
+        pageBuilder: (context, state) => AppRoutes.slideRightPage(
+          state.pageKey,
+          const MoodReviewPage(),
           context,
         ),
       ),

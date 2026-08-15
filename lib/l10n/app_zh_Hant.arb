@@ -1554,6 +1554,17 @@
       }
     }
   },
+  "moodReviewTitle": "情緒回顧",
+  "moodReviewWeek": "每週",
+  "moodReviewMonth": "月",
+  "moodReviewEntriesCount": "記錄天數",
+  "moodReviewAvgScore": "平均心情",
+  "moodReviewDelta": "較上期變化",
+  "moodReviewDeltaNoData": "暫無上期數據",
+  "moodReviewTopTags": "高頻標籤",
+  "moodReviewTopFactors": "高頻影響因素",
+  "moodReviewPeriod": "心境時段",
+  "moodReviewCbtCount": "CBT 記錄數",
   "cbtExportPdfEmpty": "還沒有 5/7 欄 CBT 數據可導出",
   "cbtExportPdfButton": "導出 CBT 思維記錄 PDF",
   "@cbtExportPdfButton": {

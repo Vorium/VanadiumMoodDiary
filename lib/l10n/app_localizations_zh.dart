@@ -2573,6 +2573,39 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get moodReviewTitle => '情绪回顾';
+
+  @override
+  String get moodReviewWeek => '每周';
+
+  @override
+  String get moodReviewMonth => '月';
+
+  @override
+  String get moodReviewEntriesCount => '记录天数';
+
+  @override
+  String get moodReviewAvgScore => '平均心情';
+
+  @override
+  String get moodReviewDelta => '较上期变化';
+
+  @override
+  String get moodReviewDeltaNoData => '暂无上期数据';
+
+  @override
+  String get moodReviewTopTags => '高频标签';
+
+  @override
+  String get moodReviewTopFactors => '高频影响因素';
+
+  @override
+  String get moodReviewPeriod => '心境时段';
+
+  @override
+  String get moodReviewCbtCount => 'CBT 记录数';
+
+  @override
   String get cbtExportPdfEmpty => '还没有 5/7 栏 CBT 数据可导出';
 
   @override
@@ -6517,6 +6550,39 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String moodListEntryCount(int count) {
     return '$count 條記錄';
   }
+
+  @override
+  String get moodReviewTitle => '情緒回顧';
+
+  @override
+  String get moodReviewWeek => '每週';
+
+  @override
+  String get moodReviewMonth => '月';
+
+  @override
+  String get moodReviewEntriesCount => '記錄天數';
+
+  @override
+  String get moodReviewAvgScore => '平均心情';
+
+  @override
+  String get moodReviewDelta => '較上期變化';
+
+  @override
+  String get moodReviewDeltaNoData => '暫無上期數據';
+
+  @override
+  String get moodReviewTopTags => '高頻標籤';
+
+  @override
+  String get moodReviewTopFactors => '高頻影響因素';
+
+  @override
+  String get moodReviewPeriod => '心境時段';
+
+  @override
+  String get moodReviewCbtCount => 'CBT 記錄數';
 
   @override
   String get cbtExportPdfEmpty => '還沒有 5/7 欄 CBT 數據可導出';

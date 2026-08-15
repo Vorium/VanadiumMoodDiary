@@ -2703,6 +2703,39 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get moodReviewTitle => 'Mood review';
+
+  @override
+  String get moodReviewWeek => 'Week';
+
+  @override
+  String get moodReviewMonth => 'Month';
+
+  @override
+  String get moodReviewEntriesCount => 'Days recorded';
+
+  @override
+  String get moodReviewAvgScore => 'Avg. mood';
+
+  @override
+  String get moodReviewDelta => 'Change vs. previous';
+
+  @override
+  String get moodReviewDeltaNoData => 'No previous data';
+
+  @override
+  String get moodReviewTopTags => 'Top tags';
+
+  @override
+  String get moodReviewTopFactors => 'Top factors';
+
+  @override
+  String get moodReviewPeriod => 'Time of day';
+
+  @override
+  String get moodReviewCbtCount => 'CBT entries';
+
+  @override
   String get cbtExportPdfEmpty => 'No 5/7-column CBT data available to export';
 
   @override
