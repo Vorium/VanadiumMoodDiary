@@ -1,17 +1,19 @@
 ﻿// v0.22 round 35 (sp-en 重构): 抽 [reminder_cards.dart]
 //
-// 从 reminders_hub_page.dart (27KB) 拆出 5 个 _XxxReminderCard widget:
+// 从 reminders_hub_page.dart (27KB) 拆出 4 个 _XxxReminderCard widget:
 // - _ReminderCard (基础 widget)
 // - _AssessmentReminderCard
-// - _SafetyReminderCard
 // - _MedicationReminderCard
 // - _RefillReminderCard
 //
-// emil 设计原则 3 "build cohesive experience" — 5 个 widget 都是 'icon + title
-// + description + status chip + configure button' 模式, 抽 1 个 base + 4 个
+// emil 设计原则 3 "build cohesive experience" — 4 个 widget 都是 'icon + title
+// + description + status chip + configure button' 模式, 抽 1 个 base + 3 个
 // specific 保持视觉一致。
 //
-// 拆出后 reminders_hub_page.dart 从 28KB → ~15KB, 拆出的 5 个 widget 可独立测。
+// 拆出后 reminders_hub_page.dart 从 28KB → ~15KB, 拆出的 widget 可独立测。
+//
+// 1.1.0 round 4f: SafetyReminderCard (失联通知卡) 整摘 — 失联通信业务暂停定版,
+// 0 renderer 死代码。reminderHubSafety* ARB key 随之清理。
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,79 +56,6 @@ class AssessmentReminderCard extends StatelessWidget {
       statusActive: isEnabled,
       actionLabel: l10n.reminderHubConfigure,
       onAction: isLoading ? null : onConfigure,
-    );
-  }
-}
-
-/// 失联通知提醒卡片
-class SafetyReminderCard extends StatelessWidget {
-  final bool? enabled;
-  final int? threshold;
-  final bool isMockSms;
-  final VoidCallback onConfigure;
-  const SafetyReminderCard({
-    super.key,
-    required this.enabled,
-    required this.threshold,
-    required this.isMockSms,
-    required this.onConfigure,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final isLoading = enabled == null;
-    final isEnabled = enabled ?? false;
-    final t = threshold ?? 2;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (isMockSms)
-          Container(
-            margin: const EdgeInsets.only(bottom: AppTokens.spacingSm),
-            padding: AppTokens.edgeInsetsSm,
-            decoration: BoxDecoration(
-              color: AppTokens.tintedErrorSoft(context),
-              borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-              border:
-                  Border.all(color: AppTokens.errorColor(context), width: 1),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  color: AppTokens.errorColor(context),
-                  size: AppTokens.iconSizeInline,
-                ),
-                const SizedBox(width: AppTokens.spacingXs),
-                Expanded(
-                  child: Text(
-                    l10n.reminderHubSmsMockWarning,
-                    style: AppTokens.textStyleLegal(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ReminderCard(
-          icon: Icons.shield_outlined,
-          title: l10n.reminderHubSafetyTitle,
-          description: isLoading
-              ? l10n.commonLoading
-              : isEnabled
-                  ? l10n.reminderHubSafetyDescEnabled(t)
-                  : l10n.reminderHubSafetyDescDisabled,
-          statusText: isLoading
-              ? ''
-              : isEnabled
-                  ? l10n.reminderHubSafetyStatusEnabled(t)
-                  : l10n.reminderHubStatusDisabled,
-          statusActive: isEnabled,
-          actionLabel: l10n.reminderHubConfigure,
-          onAction: isLoading ? null : onConfigure,
-        ),
-      ],
     );
   }
 }

@@ -80,7 +80,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupReminder2 => '✓ 您点 1 下 = 打卡';
 
   @override
-  String get setupReminder3 => '✓ 漏 2 天我会联系紧急人';
+  String get setupReminder3 => '✓ 漏 2 天提醒会升级，请及时打卡';
 
   @override
   String get setupPrivacy => '您的数据：';
@@ -617,25 +617,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get reminderHubConfigure => '配置';
-
-  @override
-  String get reminderHubSafetyTitle => '失联通知（安全开关）';
-
-  @override
-  String get reminderHubSmsMockWarning => '失联通知服务即将开放，敬请期待。';
-
-  @override
-  String reminderHubSafetyDescEnabled(int threshold) {
-    return '连续 $threshold 天没打卡 → 自动 SMS 通知紧急联系人 + 本地推送';
-  }
-
-  @override
-  String get reminderHubSafetyDescDisabled => '关闭 · 不会自动通知紧急联系人';
-
-  @override
-  String reminderHubSafetyStatusEnabled(int threshold) {
-    return '已启用 · 阈值 $threshold 天';
-  }
 
   @override
   String reminderHubMedicationDescActive(int count, int times) {
@@ -4108,7 +4089,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupReminder2 => '✓ 您點 1 下 = 打卡';
 
   @override
-  String get setupReminder3 => '✓ 漏 2 天我會聯繫緊急人';
+  String get setupReminder3 => '✓ 漏 2 天提醒會升級，請及時打卡';
 
   @override
   String get setupPrivacy => '您的數據：';
@@ -4645,25 +4626,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get reminderHubConfigure => '配置';
-
-  @override
-  String get reminderHubSafetyTitle => '失聯通知（安全開關）';
-
-  @override
-  String get reminderHubSmsMockWarning => '失聯通知服務即將開放，敬請期待。';
-
-  @override
-  String reminderHubSafetyDescEnabled(int threshold) {
-    return '連續 $threshold 天沒打卡 → 自動 SMS 通知緊急聯繫人 + 本地推送';
-  }
-
-  @override
-  String get reminderHubSafetyDescDisabled => '關閉 · 不會自動通知緊急聯繫人';
-
-  @override
-  String reminderHubSafetyStatusEnabled(int threshold) {
-    return '已啟用 · 閾值 $threshold 天';
-  }
 
   @override
   String reminderHubMedicationDescActive(int count, int times) {

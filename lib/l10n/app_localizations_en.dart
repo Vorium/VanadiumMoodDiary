@@ -80,7 +80,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupReminder2 => '✓ 1 tap = check in';
 
   @override
-  String get setupReminder3 => '✓ 2 missed days → I\'ll alert your contact';
+  String get setupReminder3 =>
+      '✓ 2 missed days → reminders escalate, please check in';
 
   @override
   String get setupPrivacy => 'Your data:';
@@ -652,27 +653,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderHubConfigure => 'Configure';
-
-  @override
-  String get reminderHubSafetyTitle => 'Safety Watch (Safety Switch)';
-
-  @override
-  String get reminderHubSmsMockWarning =>
-      'Lost-contact alert service is coming soon.';
-
-  @override
-  String reminderHubSafetyDescEnabled(int threshold) {
-    return '$threshold consecutive missed check-ins → auto SMS to emergency contacts + local push';
-  }
-
-  @override
-  String get reminderHubSafetyDescDisabled =>
-      'Off · Won\'t auto-notify emergency contacts';
-
-  @override
-  String reminderHubSafetyStatusEnabled(int threshold) {
-    return 'Enabled · Threshold $threshold days';
-  }
 
   @override
   String reminderHubMedicationDescActive(int count, int times) {

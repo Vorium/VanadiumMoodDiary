@@ -21,7 +21,7 @@
   "setupDailyRoutine": "Daily routine:",
   "setupReminder1": "✓ 1 reminder per day",
   "setupReminder2": "✓ 1 tap = check in",
-  "setupReminder3": "✓ 2 missed days → I'll alert your contact",
+  "setupReminder3": "✓ 2 missed days → reminders escalate, please check in",
   "setupPrivacy": "Your data:",
   "setupPrivacy1": "• Encrypted on device",
   "setupPrivacy2": "• Never uploaded to any server",
@@ -289,25 +289,6 @@
   },
   "reminderHubStatusDisabled": "Disabled",
   "reminderHubConfigure": "Configure",
-  "reminderHubSafetyTitle": "Safety Watch (Safety Switch)",
-  "reminderHubSmsMockWarning": "Lost-contact alert service is coming soon.",
-  "reminderHubSafetyDescEnabled": "{threshold} consecutive missed check-ins → auto SMS to emergency contacts + local push",
-  "@reminderHubSafetyDescEnabled": {
-    "placeholders": {
-      "threshold": {
-        "type": "int"
-      }
-    }
-  },
-  "reminderHubSafetyDescDisabled": "Off · Won't auto-notify emergency contacts",
-  "reminderHubSafetyStatusEnabled": "Enabled · Threshold {threshold} days",
-  "@reminderHubSafetyStatusEnabled": {
-    "placeholders": {
-      "threshold": {
-        "type": "int"
-      }
-    }
-  },
   "reminderHubMedicationDescActive": "{count} active medications, reminders at {times} time slots",
   "@reminderHubMedicationDescActive": {
     "placeholders": {

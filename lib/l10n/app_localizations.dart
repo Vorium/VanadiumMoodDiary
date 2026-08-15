@@ -228,7 +228,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupReminder3.
   ///
   /// In zh, this message translates to:
-  /// **'✓ 漏 2 天我会联系紧急人'**
+  /// **'✓ 漏 2 天提醒会升级，请及时打卡'**
   String get setupReminder3;
 
   /// No description provided for @setupPrivacy.
@@ -1208,36 +1208,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'配置'**
   String get reminderHubConfigure;
-
-  /// No description provided for @reminderHubSafetyTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'失联通知（安全开关）'**
-  String get reminderHubSafetyTitle;
-
-  /// No description provided for @reminderHubSmsMockWarning.
-  ///
-  /// In zh, this message translates to:
-  /// **'失联通知服务即将开放，敬请期待。'**
-  String get reminderHubSmsMockWarning;
-
-  /// No description provided for @reminderHubSafetyDescEnabled.
-  ///
-  /// In zh, this message translates to:
-  /// **'连续 {threshold} 天没打卡 → 自动 SMS 通知紧急联系人 + 本地推送'**
-  String reminderHubSafetyDescEnabled(int threshold);
-
-  /// No description provided for @reminderHubSafetyDescDisabled.
-  ///
-  /// In zh, this message translates to:
-  /// **'关闭 · 不会自动通知紧急联系人'**
-  String get reminderHubSafetyDescDisabled;
-
-  /// No description provided for @reminderHubSafetyStatusEnabled.
-  ///
-  /// In zh, this message translates to:
-  /// **'已启用 · 阈值 {threshold} 天'**
-  String reminderHubSafetyStatusEnabled(int threshold);
 
   /// No description provided for @reminderHubMedicationDescActive.
   ///

@@ -637,7 +637,7 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1233 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1228 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -674,14 +674,17 @@ void main() {
       //   (contact*/setupContact*/safetyCheckResult*/reminderHubSafety* 等) +
       //   consentWithdrawSafetyBody + commonAction{Delete,Save} 2 个存量 orphan
       //   → 1269 → 1233
+      // 1.1.0 round 4f (review 修复): SafetyReminderCard 死类整摘, 连带
+      //   reminderHubSafety{Title,DescEnabled,DescDisabled,StatusEnabled} +
+      //   reminderHubSmsMockWarning 5 key 清掉 → 1233 → 1228
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1233, reason: 'zh.arb 应有 1233 key');
-      expect(en, 1233, reason: 'en.arb 应有 1233 key');
-      expect(hant, 1233, reason: 'zh_Hant.arb 应有 1233 key');
+      expect(zh, 1228, reason: 'zh.arb 应有 1228 key');
+      expect(en, 1228, reason: 'en.arb 应有 1228 key');
+      expect(hant, 1228, reason: 'zh_Hant.arb 应有 1228 key');
     });
   });
 

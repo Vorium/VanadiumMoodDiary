@@ -52,7 +52,7 @@
   "setupDailyRoutine": "我每天會做：",
   "setupReminder1": "✓ 推送 1 次提醒",
   "setupReminder2": "✓ 您點 1 下 = 打卡",
-  "setupReminder3": "✓ 漏 2 天我會聯繫緊急人",
+  "setupReminder3": "✓ 漏 2 天提醒會升級，請及時打卡",
   "setupPrivacy": "您的數據：",
   "setupPrivacy1": "• 本地加密",
   "setupPrivacy2": "• 不會上傳到任何雲端服務器",
@@ -331,25 +331,6 @@
   },
   "reminderHubStatusDisabled": "未啟用",
   "reminderHubConfigure": "配置",
-  "reminderHubSafetyTitle": "失聯通知（安全開關）",
-  "reminderHubSmsMockWarning": "失聯通知服務即將開放，敬請期待。",
-  "reminderHubSafetyDescEnabled": "連續 {threshold} 天沒打卡 → 自動 SMS 通知緊急聯繫人 + 本地推送",
-  "@reminderHubSafetyDescEnabled": {
-    "placeholders": {
-      "threshold": {
-        "type": "int"
-      }
-    }
-  },
-  "reminderHubSafetyDescDisabled": "關閉 · 不會自動通知緊急聯繫人",
-  "reminderHubSafetyStatusEnabled": "已啟用 · 閾值 {threshold} 天",
-  "@reminderHubSafetyStatusEnabled": {
-    "placeholders": {
-      "threshold": {
-        "type": "int"
-      }
-    }
-  },
   "reminderHubMedicationDescActive": "共 {count} 種在用藥物，{times} 個時間點會推送提醒",
   "@reminderHubMedicationDescActive": {
     "placeholders": {
