@@ -31,6 +31,12 @@ Widget wrapHome({
     initialLocation: '/',
     routes: [
       GoRoute(path: '/', builder: (context, state) => const HomePage()),
+      // round 7c: /mood-list 入口补齐 (查看全部 → 路由到达断言用 stub)
+      GoRoute(
+        path: '/mood-list',
+        builder: (context, state) =>
+            const Scaffold(body: Text('mood-list-stub')),
+      ),
     ],
   );
   return ProviderScope(
@@ -132,8 +138,7 @@ void main() {
       );
     });
 
-    testWidgets('5. audio-only 树洞条目显示语音预览而非空态 (P0-3 修复)',
-        (tester) async {
+    testWidgets('5. audio-only 树洞条目显示语音预览而非空态 (P0-3 修复)', (tester) async {
       final vent = VentEntryEntity(
         id: 1,
         timestamp: DateTime(2026, 8, 15, 9, 0),
@@ -152,6 +157,28 @@ void main() {
         find.text('🎙️ 语音'),
         findsOneWidget,
         reason: 'audio-only 条目应显示 ventVoiceLabel 语音预览',
+      );
+    });
+
+    testWidgets('6. tap 查看全部 → /mood-list 路由到达 (round 7c 死路由入口补齐)',
+        (tester) async {
+      final mood = MoodEntryEntity(
+        id: 1,
+        timestamp: DateTime(2026, 8, 15, 14, 30),
+        score: 4,
+        statusPhrase: '被治愈了',
+      );
+      await tester.pumpWidget(wrapHome(mood: mood));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('查看全部'));
+      await tester.tap(find.text('查看全部'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('mood-list-stub'),
+        findsOneWidget,
+        reason: 'tap 查看全部应 push /mood-list 路由',
       );
     });
   });

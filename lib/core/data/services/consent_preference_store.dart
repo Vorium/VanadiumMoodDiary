@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // v0.32 架构批 2 (R112-ARCH-01): ConsentPreferenceStore — 同意状态持久化
 //
 // 背景 (R112 top-level-arch 报告 R112-ARCH-01):

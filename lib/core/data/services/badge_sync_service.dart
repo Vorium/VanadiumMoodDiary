@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // v0.22 round 30 (sp-en P2-1): 把 notification_service 的角标更新逻辑
 // 抽到独立 BadgeSyncService 类。
 //

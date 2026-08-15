@@ -1,3 +1,4 @@
+// 规则 3 标记: 量表中文 fallback — v1.0+ i18n (R51b backlog, 显示层走 l10n)
 // DSM-5 Level 2 精神病性症状量表 (成人)
 //
 // 数据来源: APA 公开 PROMIS / DSM-5 Level 2 精神病症状简化版

@@ -1,3 +1,4 @@
+// 规则 3 标记: 量表中文 fallback — v1.0+ i18n (R51b backlog, 显示层走 l10n)
 // WHODAS 2.0 (12 题简化版) 量表
 //
 // 数据来源: WHO 官方 36 题简化版, 覆盖 6 domain

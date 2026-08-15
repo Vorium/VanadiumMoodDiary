@@ -1,3 +1,4 @@
+// 规则 3 标记: 内部 note 中文 (非用户可见), 豁免 i18n 扫描
 /// 评估记录模型
 ///
 /// 把 CheckInEntity 里 type ∈ {phq9, gad7} 的 note JSON 解析为强类型 record，

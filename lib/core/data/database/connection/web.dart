@@ -1,3 +1,4 @@
+// 规则 3 标记: web 平台提示 中文 fallback — v1.0+ i18n (显示层走 ARB)
 // v0.18 (P2-P0-7) Web 平台 DB connection.
 //
 // 之前: web 端 IndexedDB 落明文 PII(姓名/电话/用药/情绪/树洞)

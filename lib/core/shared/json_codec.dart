@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 import 'dart:convert';
 
 import 'package:chroniccare/core/shared/swallow_error.dart';

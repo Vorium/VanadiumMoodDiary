@@ -1,3 +1,4 @@
+// 规则 3 标记: 医生 PDF 报告中文 fallback — v1.0+ i18n (显示层走 strings.dart / l10n)
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';

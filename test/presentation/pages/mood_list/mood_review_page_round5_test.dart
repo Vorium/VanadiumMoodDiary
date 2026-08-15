@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -69,6 +70,35 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('zh'),
         home: MoodReviewPage(now: now),
+      ),
+    );
+  }
+
+  // round 7c: /mood-trend 入口补齐 → tap 导航断言用 router 包装
+  Widget wrapWithRouter({List<MoodEntryEntity> entries = const []}) {
+    final router = GoRouter(
+      initialLocation: '/mood-review',
+      routes: [
+        GoRoute(
+          path: '/mood-review',
+          builder: (context, state) => MoodReviewPage(now: now),
+        ),
+        GoRoute(
+          path: '/mood-trend',
+          builder: (context, state) =>
+              const Scaffold(body: Text('mood-trend-stub')),
+        ),
+      ],
+    );
+    return ProviderScope(
+      overrides: [
+        allMoodProvider.overrideWith((ref) => Stream.value(entries)),
+      ],
+      child: MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
       ),
     );
   }
@@ -162,6 +192,32 @@ void main() {
       expect(
         tester.getTopLeft(find.text('早上')).dy,
         lessThan(tester.getTopLeft(find.text('夜间')).dy),
+      );
+    });
+
+    testWidgets('8. footer 下显示 查看趋势图 按钮 (round 7c /mood-trend 入口)',
+        (tester) async {
+      await tester.pumpWidget(wrap(entries: makeEntries()));
+      await tester.pumpAndSettle();
+
+      // footer 在 ListView 底部 (lazy 未构建), 先滚动到可见
+      await tester.scrollUntilVisible(find.text('查看趋势图'), 200);
+      expect(find.text('查看趋势图'), findsOneWidget);
+    });
+
+    testWidgets('9. tap 查看趋势图 → /mood-trend 路由到达 (round 7c 死路由入口补齐)',
+        (tester) async {
+      await tester.pumpWidget(wrapWithRouter(entries: makeEntries()));
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(find.text('查看趋势图'), 200);
+      await tester.tap(find.text('查看趋势图'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('mood-trend-stub'),
+        findsOneWidget,
+        reason: 'tap 查看趋势图应 push /mood-trend 路由',
       );
     });
   });

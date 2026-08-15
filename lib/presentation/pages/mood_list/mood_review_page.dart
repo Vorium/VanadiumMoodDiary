@@ -18,6 +18,7 @@
 // - 隐私边界 (AGENTS.md): 跟 vent 严格隔离, 数据只来自 mood 表
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
@@ -208,6 +209,13 @@ class _MoodReviewPageState extends ConsumerState<MoodReviewPage> {
                   localizedEncouragement(context, s.encouragement),
                   textAlign: TextAlign.center,
                   style: AppTokens.textStyleCaption(context),
+                ),
+              ),
+              // round 7c: /mood-trend 死路由入口补齐 (P2 gatekeeper blind spot)
+              Center(
+                child: TextButton(
+                  onPressed: () => context.push('/mood-trend'),
+                  child: Text(l10n.moodReviewViewTrend),
                 ),
               ),
             ],

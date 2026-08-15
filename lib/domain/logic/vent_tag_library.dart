@@ -1,3 +1,4 @@
+// 规则 3 标记: canonical zh fallback, 显示层走 l10n preset_content_l10n.dart
 /// 树洞预设标签库（v1.1.0）
 ///
 /// 隐私边界：标签仅用于本地整理检索，不进任何分析/趋势/通知。

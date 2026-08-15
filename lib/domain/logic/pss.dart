@@ -1,3 +1,4 @@
+// 规则 3 标记: 量表中文 fallback — v1.0+ i18n (R51b backlog, 显示层走 l10n)
 // PSS 压力量表 (Perceived Stress Scale)
 //
 // 数据来源: Cohen, S. (1983) - Perceived Stress Scale, 10 题版本 (PSS-10)

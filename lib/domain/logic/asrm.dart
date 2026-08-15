@@ -1,3 +1,4 @@
+// 规则 3 标记: 量表中文 fallback — v1.0+ i18n (R51b backlog, 显示层走 l10n)
 // Altman 自评躁狂量表 (ASRM)
 //
 // 数据来源: Altman et al. (1997) - The Altman Self-Rating Mania Scale

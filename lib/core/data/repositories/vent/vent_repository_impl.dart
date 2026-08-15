@@ -1,3 +1,4 @@
+// 规则 3 标记: 树洞错误 中文 fallback — v1.0+ i18n (显示层走 ARB)
 // v0.15 (Round 18) VentRepositoryImpl — data 层 Drift 实现
 // v0.21 (Round 22, P0-1) — text 字段级加密，repository 内部处理
 //

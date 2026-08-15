@@ -2329,6 +2329,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeMoodHeroReview => 'Review';
 
   @override
+  String get homeMoodHeroViewAll => 'View all';
+
+  @override
   String get homeMoodHeroNoData => 'No mood logged yet today';
 
   @override
@@ -2737,6 +2740,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodReviewCbtCount => 'CBT entries';
+
+  @override
+  String get moodReviewViewTrend => 'View trend chart';
 
   @override
   String get cbtExportPdfEmpty => 'No 5/7-column CBT data available to export';

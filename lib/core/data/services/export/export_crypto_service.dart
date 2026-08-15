@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // 树洞文字 encrypt/decrypt 包装 — v0.24 Sprint #5c (emil god class 拆解)
 //
 // **职责**: AES-256 encrypt/decrypt blob ↔ utf8 string, 失败返回 null 不抛异常

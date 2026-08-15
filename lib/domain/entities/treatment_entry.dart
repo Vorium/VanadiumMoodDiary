@@ -1,3 +1,4 @@
+// 规则 3 标记: linkedMedicationDisplay 中文 fallback — v1.0+ i18n (显示层走 ARB)
 // v0.30 round 91 (sub-spec 7 日常追踪): TreatmentEntryEntity
 //
 // 4 层架构: domain 0 flutter 0 drift。

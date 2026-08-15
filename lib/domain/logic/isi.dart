@@ -1,3 +1,4 @@
+// 规则 3 标记: 量表中文 fallback — v1.0+ i18n (R51b backlog, 显示层走 l10n)
 // ISI 失眠严重指数 (Insomnia Severity Index)
 //
 // 数据来源: Morin et al. (1993) - Insomnia Severity Index

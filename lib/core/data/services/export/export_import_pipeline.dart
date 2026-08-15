@@ -1,3 +1,4 @@
+// 规则 3 标记: 导入错误文案 中文 fallback — v1.0+ i18n (显示层走 ARB)
 // 数据导入 pipeline — v0.27 round 77 (R76-N8 重构 续)
 //
 // 背景 (R76 superpowers-en 报告 P1-8):

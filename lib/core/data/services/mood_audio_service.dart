@@ -1,3 +1,4 @@
+// 规则 3 标记: 麦克风错误 中文 fallback — v1.0+ i18n (显示层走 ARB)
 // v0.23 (Round 31) MoodAudioService — 情绪日记录音 + STT 编排
 //
 // 仿 vent_compose_page 内联实现,抽成 service 类便于:

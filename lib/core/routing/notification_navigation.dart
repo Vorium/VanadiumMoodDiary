@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 
 import 'package:flutter/widgets.dart';

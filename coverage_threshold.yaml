@@ -51,6 +51,9 @@ gatekeeper:
   output_format: "human"  # human | json | junit
 
 # 排除路径 (跟 Codecov 同步)
+# 1.1.0 round 7c: 本列表之前是死配置 (check_coverage.py 从不读取) — 现在
+# 脚本实现读取 (fnmatch 过滤 SF 条目后聚合)。lib/l10n 生成文件 + drift .g.dart
+# 排除后 data/core 层覆盖数大幅上升 (yaml 顶部 R95 注释已预告 R96 排除计划)。
 exclude:
   - "**/*.g.dart"
   - "**/*.freezed.dart"
@@ -65,3 +68,4 @@ exclude:
 # 历史 (R95 sub-spec 6 task 6e 加, R92 提需求 + R93/R94 未加 + R95 加)
 history:
   - v0.30.0+85 (R95 sub-spec 6 task 6e): 初始 18 守门员配置 + 阈值定义
+  - "1.1.0 round 7c (P2 gatekeeper 假绿修复): total / exclude 死配置 -> 脚本实现读取; critical_files 缺失从 skip 改 fail; 新增 lcov staleness gate (ALLOW_STALE_COVERAGE=1 逃生)"

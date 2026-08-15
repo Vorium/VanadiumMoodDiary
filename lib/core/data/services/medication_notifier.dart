@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // v0.24 round 45 (Sprint #5b) — MedicationNotifier 抽类
 //
 // 从 NotificationService (629 行) 拆出 medication 编排:

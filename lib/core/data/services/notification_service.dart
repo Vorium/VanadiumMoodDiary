@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // v0.24 round 45 (Sprint #5b) — notification_service facade 瘦身
 // v0.27 round 65 (Sprint #12) — showSafetyAlert 50 行委派到 SafetyAlertBuilder
 // v0.30 R108 (P1 god class 拆 6 大 F - Fix #2) — 12 委派合 `delegate` namespace

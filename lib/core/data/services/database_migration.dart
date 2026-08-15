@@ -1,3 +1,4 @@
+// 规则 3 标记: 迁移错误提示 中文 fallback — v1.0+ i18n (显示层走 ARB)
 import 'dart:io';
 
 import 'package:flutter/services.dart' show MissingPluginException;

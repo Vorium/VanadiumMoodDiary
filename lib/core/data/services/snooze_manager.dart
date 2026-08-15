@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // v0.18 round 18 (P1-28) SnoozeManager — 从 NotificationService 拆出
 //
 // 设计：facade pattern，NotificationService 公共 API 保持原签名,

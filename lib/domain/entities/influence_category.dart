@@ -1,3 +1,4 @@
+// 规则 3 标记: 影响因素中文 fallback — v1.0+ i18n (显示层走 ARB)
 // v0.30 R101: 影响因素分类枚举 + 预设常量
 //
 // 参照 Apple Health State of Mind 的影响因素标签系统。

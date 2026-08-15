@@ -1,3 +1,4 @@
+// 规则 3 标记: 量表中文 fallback — v1.0+ i18n (R51b backlog, 显示层走 l10n)
 // GAD-7 广泛性焦虑量表
 //
 // 数据来源：Spitzer et al. (2006) 7-item Generalized Anxiety Disorder Scale

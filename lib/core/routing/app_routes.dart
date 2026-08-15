@@ -1,4 +1,5 @@
-﻿// v0.26 round 57 (spen P1 #4 god class 拆分): AppRoutes 退化为 3 transition + errorBuilder
+// 规则 3 标记: error page 文案中文 fallback (l10n 优先) — v1.0+ i18n
+// v0.26 round 57 (spen P1 #4 god class 拆分): AppRoutes 退化为 3 transition + errorBuilder
 //
 // 拆分前: app_routes.dart 280 行含 3 transition + 14 GoRoute + errorBuilder
 // 拆分后:

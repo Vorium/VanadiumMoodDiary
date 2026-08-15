@@ -4085,6 +4085,12 @@ abstract class AppLocalizations {
   /// **'回顾'**
   String get homeMoodHeroReview;
 
+  /// No description provided for @homeMoodHeroViewAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看全部'**
+  String get homeMoodHeroViewAll;
+
   /// No description provided for @homeMoodHeroNoData.
   ///
   /// In zh, this message translates to:
@@ -4840,6 +4846,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'CBT 记录数'**
   String get moodReviewCbtCount;
+
+  /// No description provided for @moodReviewViewTrend.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看趋势图'**
+  String get moodReviewViewTrend;
 
   /// No description provided for @cbtExportPdfEmpty.
   ///

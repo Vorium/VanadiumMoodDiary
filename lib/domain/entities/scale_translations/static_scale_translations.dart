@@ -1,3 +1,4 @@
+// 规则 3 标记: 量表中文 fallback — v1.0+ i18n (R51b backlog, 显示层走 l10n)
 // static_scale_translations.dart — 静态中文 fallback 实现
 //
 // v0.30 round 95 (sub-spec 4 task 2): 从 scale_translations.dart 抽出

@@ -1322,6 +1322,7 @@
   "homeMoodHeroTitle": "Today's Mood",
   "homeMoodHeroRecord": "Log mood",
   "homeMoodHeroReview": "Review",
+  "homeMoodHeroViewAll": "View all",
   "homeMoodHeroNoData": "No mood logged yet today",
   "homeMoodHeroLastRecorded": "Last logged {time}",
   "@homeMoodHeroLastRecorded": {
@@ -1536,6 +1537,7 @@
   "moodReviewTopFactors": "Top factors",
   "moodReviewPeriod": "Time of day",
   "moodReviewCbtCount": "CBT entries",
+  "moodReviewViewTrend": "View trend chart",
   "cbtExportPdfEmpty": "No 5/7-column CBT data available to export",
   "cbtExportPdfButton": "Export CBT thought record PDF",
   "@cbtExportPdfButton": {

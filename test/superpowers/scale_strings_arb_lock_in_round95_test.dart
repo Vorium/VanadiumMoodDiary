@@ -871,14 +871,16 @@ void main() {
       // 1.1.0 round 7b (P1 i18n, 2026-08-16): +35 new (8 ventTag* 预设标签 +
       //   17 statusPhrase* 状态短语 + 5 moodReviewEncouragement* 鼓励文案 +
       //   5 importSummary* 导入摘要带 {n}) → 1221 → 1256
+      // 1.1.0 round 7c (P2 gatekeeper, 2026-08-16): +2 new (homeMoodHeroViewAll
+      //   /mood-list 入口 + moodReviewViewTrend /mood-trend 入口) → 1256 → 1258
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1256, reason: 'zh.arb 应有 1256 key');
-      expect(en, 1256, reason: 'en.arb 应有 1256 key');
-      expect(hant, 1256, reason: 'zh_Hant.arb 应有 1256 key');
+      expect(zh, 1258, reason: 'zh.arb 应有 1258 key');
+      expect(en, 1258, reason: 'en.arb 应有 1258 key');
+      expect(hant, 1258, reason: 'zh_Hant.arb 应有 1258 key');
     });
   });
 

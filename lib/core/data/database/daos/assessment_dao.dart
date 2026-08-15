@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // v0.30 round 90 (sub-spec 6 量表中心): 跨 10 量表 聚合 DAO
 //
 // 不开新表, 走 check_ins.type = '<scale_id>' + note 字段 JSON 编码

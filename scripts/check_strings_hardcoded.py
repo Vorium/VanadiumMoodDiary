@@ -4,6 +4,10 @@
 # v0.32 R110 round 3 (SP-zh-16): 扩 inline 字面量规则 — 原来只扫 strings.dart
 #   的 static const, 漏 `title: '中文'` / `Text('中文')` 这类 widget inline
 #   硬编码 (SP-zh-15 报告 add_medication_page 等 4 文件 12 处)。
+# 1.1.0 round 7c (P2 gatekeeper): 加规则 3 — 规则 1 只扫 strings.dart、
+#   规则 2 只扫 widget inline 模式, domain 层 `static const List<String> =
+#   ['家庭',...]` 和 `return '中文'` 静默通过。规则 3 扫 lib/domain/ +
+#   lib/core/ (排除 strings.dart / *.g.dart / 注释) 的 CJK 字面量。
 #
 # 作用: 检测 lib/ 下的硬编码中文 (应该走 ARB key / Strings.xxx)
 #
@@ -17,6 +21,12 @@
 #   `(title|label|hintText|tooltip|subtitle|description|actionLabel|statusText|
 #    message): '<中文>'` 或 `Text('<中文>')` — widget inline 硬编码
 #   - 本行行尾带 '走 ARB' / 'TODO' / 'i18n' 注释 -> PASS (显式标记的 Phase 5 遗留)
+#   - 否则 FAIL
+#
+# 规则 3 (1.1.0 round 7c 新增, lib/domain/ + lib/core/):
+#   源码行 (去注释后) 含 CJK 字面量 — 量表 items / 预设标签 / fallback 文案
+#   - 放行条件 (跟规则 1 同哲学): 本行或前 10 行注释含 'i18n' / '走 l10n' /
+#     'canonical fallback' / 'v1.0+ i18n' 标记, 或文件头前 20 行有同款标记
 #   - 否则 FAIL
 #
 # 退出: 0 = pass, 1 = fail
@@ -74,6 +84,16 @@ INLINE_ANNOTATION_RE = re.compile(
     r'走\s*(?:ARB|l10n|i18n)|TODO|i18n|R110', re.IGNORECASE
 )
 
+# 规则 3 (round 7c): 放行标记 — 注释内出现任一词即放行
+RULE3_MARKER_RE = re.compile(
+    r'i18n|走\s*l10n|canonical fallback|v1\.0\+ i18n', re.IGNORECASE
+)
+
+# 规则 3 (round 7c): CJK 字符串字面量 (单行, 含引号内中文)
+RULE3_STR_LIT_RE = re.compile(
+    r'''['"][^'"]*[\u4e00-\u9fff][^'"]*['"]'''
+)
+
 
 def has_i18n_todo(line: str, comment_lines: list[str]) -> bool:
     """检查本行 + 周围注释行是否含 i18n / v1.0+ 标记"""
@@ -96,6 +116,19 @@ def is_comment_line(line: str) -> bool:
     """跳过注释行 (// 或 块注释内)"""
     stripped = line.lstrip()
     return stripped.startswith('//') or stripped.startswith('*') or stripped.startswith('/*')
+
+
+def strip_comments(line: str) -> str:
+    """去掉 // 行注释 + 同行内 /* */ 块注释 (规则 3 用, 防注释里中文误报)"""
+    line = re.sub(r'/\*.*?\*/', '', line)
+    idx = line.find('//')
+    return line[:idx] if idx >= 0 else line
+
+
+def comment_part(line: str) -> str:
+    """抽出本行注释部分 (行注释 // 之后; 整行注释原样返回)"""
+    idx = line.find('//')
+    return line[idx:] if idx >= 0 else ''
 
 
 def scan_inline_cjk(lib_dir: Path) -> list[tuple[str, int, str]]:
@@ -121,6 +154,48 @@ def scan_inline_cjk(lib_dir: Path) -> list[tuple[str, int, str]]:
             if INLINE_ANNOTATION_RE.search(line):
                 continue
             violations.append((p, line_no, line.strip()[:100]))
+    return violations
+
+
+def scan_rule3_cjk() -> list[tuple[str, int, str]]:
+    """1.1.0 round 7c: 扫 lib/domain/ + lib/core/ 的 CJK 字面量源码行
+
+    排除: strings.dart (规则 1 覆盖) / *.g.dart / 注释行。
+    放行: 本行或前 10 行注释含规则 3 标记, 或文件头前 20 行有同款标记。
+    """
+    violations: list[tuple[str, int, str]] = []
+    for sub in ('lib/domain', 'lib/core'):
+        dir_path = ROOT / sub
+        if not dir_path.exists():
+            continue
+        for p in sorted(dir_path.rglob('*.dart')):
+            if p.name == 'strings.dart' or p.name.endswith('.g.dart'):
+                continue
+            try:
+                lines = p.read_text(encoding='utf-8').splitlines()
+            except (UnicodeDecodeError, OSError):
+                continue
+            # 文件头前 20 行注释含标记 -> 整个文件放行
+            header_marked = any(
+                RULE3_MARKER_RE.search(comment_part(l)) for l in lines[:20]
+            )
+            for line_no, line in enumerate(lines, 1):
+                if not CJK_RE.search(line):
+                    continue
+                if is_comment_line(line):
+                    continue
+                code = strip_comments(line)
+                if not RULE3_STR_LIT_RE.search(code):
+                    continue
+                if header_marked:
+                    continue
+                # 本行 + 前 10 行注释标记
+                ctx = lines[max(0, line_no - 11):line_no]
+                if RULE3_MARKER_RE.search(comment_part(line)):
+                    continue
+                if any(RULE3_MARKER_RE.search(comment_part(l)) for l in ctx):
+                    continue
+                violations.append((p, line_no, line.strip()[:100]))
     return violations
 
 
@@ -191,11 +266,25 @@ def main() -> int:
             print(f"    ... 还有 {len(inline) - 40} 处")
         exit_code = 1
 
+    # ---- 规则 3 (1.1.0 round 7c): domain/core CJK 字面量 ----
+    rule3 = scan_rule3_cjk()
+    if rule3:
+        print(f"[FAIL] check_strings_hardcoded (规则 3, round 7c 新增): "
+              f"{len(rule3)} 处 domain/core CJK 字面量无标记")
+        print(f"  规则: lib/domain/ + lib/core/ 源码行 (去注释后) 含 CJK 字面量")
+        print(f"    必须: 本行/前 10 行注释含 'i18n' / '走 l10n' / 'canonical fallback' /")
+        print(f"    'v1.0+ i18n' 标记, 或文件头前 20 行有同款标记 (如 '量表中文 fallback')")
+        for path, line_no, snippet in rule3[:40]:
+            print(f"    {path.relative_to(ROOT).as_posix()}:{line_no}: {snippet}")
+        if len(rule3) > 40:
+            print(f"    ... 还有 {len(rule3) - 40} 处")
+        exit_code = 1
+
     if exit_code == 0:
         total_cn = len(STRING_ASSIGN_RE.findall(text))
         print(f"[OK] check_strings_hardcoded: 规则 1 = {total_cn} 处中文 static const/String "
               f"({total_override_pairs} 处 R57 override 配对 + 其余带 i18n 标记); "
-              f"规则 2 (inline) = 0 处")
+              f"规则 2 (inline) = 0 处; 规则 3 (domain/core) = 0 处")
     return exit_code
 
 

@@ -99,6 +99,12 @@ class MoodHeroCard extends ConsumerWidget {
                     onPressed: () => context.push('/mood-review'),
                     child: Text(l10n.homeMoodHeroReview),
                   ),
+                  // round 7c: /mood-list 死路由入口补齐 (P2 gatekeeper blind spot)
+                  const SizedBox(width: AppTokens.spacingSm),
+                  TextButton(
+                    onPressed: () => context.push('/mood-list'),
+                    child: Text(l10n.homeMoodHeroViewAll),
+                  ),
                 ],
               ),
             ],

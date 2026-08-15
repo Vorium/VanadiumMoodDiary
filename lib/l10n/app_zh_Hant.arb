@@ -1364,6 +1364,7 @@
   "homeMoodHeroTitle": "今日心情",
   "homeMoodHeroRecord": "記錄心情",
   "homeMoodHeroReview": "回顧",
+  "homeMoodHeroViewAll": "查看全部",
   "homeMoodHeroNoData": "今天還沒記錄心情",
   "homeMoodHeroLastRecorded": "上次記錄 {time}",
   "@homeMoodHeroLastRecorded": {
@@ -1578,6 +1579,7 @@
   "moodReviewTopFactors": "高頻影響因素",
   "moodReviewPeriod": "心境時段",
   "moodReviewCbtCount": "CBT 記錄數",
+  "moodReviewViewTrend": "查看趨勢圖",
   "cbtExportPdfEmpty": "還沒有 5/7 欄 CBT 數據可導出",
   "cbtExportPdfButton": "導出 CBT 思維記錄 PDF",
   "@cbtExportPdfButton": {

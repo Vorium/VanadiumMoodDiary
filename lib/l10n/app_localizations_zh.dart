@@ -2217,6 +2217,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeMoodHeroReview => '回顾';
 
   @override
+  String get homeMoodHeroViewAll => '查看全部';
+
+  @override
   String get homeMoodHeroNoData => '今天还没记录心情';
 
   @override
@@ -2607,6 +2610,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodReviewCbtCount => 'CBT 记录数';
+
+  @override
+  String get moodReviewViewTrend => '查看趋势图';
 
   @override
   String get cbtExportPdfEmpty => '还没有 5/7 栏 CBT 数据可导出';
@@ -6314,6 +6320,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeMoodHeroReview => '回顧';
 
   @override
+  String get homeMoodHeroViewAll => '查看全部';
+
+  @override
   String get homeMoodHeroNoData => '今天還沒記錄心情';
 
   @override
@@ -6704,6 +6713,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodReviewCbtCount => 'CBT 記錄數';
+
+  @override
+  String get moodReviewViewTrend => '查看趨勢圖';
 
   @override
   String get cbtExportPdfEmpty => '還沒有 5/7 欄 CBT 數據可導出';

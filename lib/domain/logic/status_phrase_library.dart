@@ -1,3 +1,4 @@
+// 规则 3 标记: canonical zh fallback, 显示层走 l10n preset_content_l10n.dart
 // lib/domain/logic/status_phrase_library.dart
 /// 情绪状态短语库（v1.1.0）— 预设短语 + 自定义输入
 ///

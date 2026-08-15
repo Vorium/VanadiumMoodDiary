@@ -1,3 +1,4 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
 // v0.30 R108 revisit (P0-029): NotificationInitializer 抽自 NotificationService
 //
 // 拆前: NotificationService facade 482L (init + 5 sub-service 委派 +
