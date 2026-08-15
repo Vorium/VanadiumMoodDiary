@@ -1085,7 +1085,13 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get navCheckIn => '打卡';
+  String get navMood => '心情';
+
+  @override
+  String get navVent => '树洞';
+
+  @override
+  String get navTrend => '趋势';
 
   @override
   String get navSettings => '设置';
@@ -3659,9 +3665,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodFactorAnalysis => '因素关联分析';
 
   @override
-  String get navMedication => '用药';
-
-  @override
   String get moodModeMomentary => '此刻';
 
   @override
@@ -5011,7 +5014,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get navCheckIn => '打卡';
+  String get navMood => '心情';
+
+  @override
+  String get navVent => '樹洞';
+
+  @override
+  String get navTrend => '趨勢';
 
   @override
   String get navSettings => '設置';
@@ -7583,9 +7592,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodFactorAnalysis => '因素關聯分析';
-
-  @override
-  String get navMedication => '用藥';
 
   @override
   String get moodModeMomentary => '此刻';

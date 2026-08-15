@@ -2,6 +2,9 @@
 //
 // 拆 app_routes.dart 14 路由按 feature 5 文件, 本文件管树洞类:
 // 隐私边界: vent 路由仅作导航入口, 不引入任何分析/通知/关怀依赖。
+//
+// 1.1.0 round 5 (emotion-first refactor): R110 同款 — 树洞 3 路由移进
+// ShellRoute (app_route_main), 底栏常驻 + tab 高亮。
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/routing/app_routes.dart';
@@ -13,7 +16,8 @@ import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 class AppRouteVent {
   AppRouteVent._();
 
-  static List<RouteBase> all() {
+  /// 1.1.0 round 5: 树洞 3 路由移进 ShellRoute (底栏常驻 + tab 高亮)
+  static List<RouteBase> shellRoutes() {
     return [
       GoRoute(
         path: '/vent',

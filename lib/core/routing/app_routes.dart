@@ -21,7 +21,6 @@ import 'package:chroniccare/core/routing/app_route_daily_tracking.dart';
 import 'package:chroniccare/core/routing/app_route_main.dart';
 import 'package:chroniccare/core/routing/app_route_medication.dart';
 import 'package:chroniccare/core/routing/app_route_mood_list.dart';
-import 'package:chroniccare/core/routing/app_route_vent.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
@@ -123,7 +122,8 @@ class AppRoutes {
       ...AppRouteMain.all(),
       ...AppRouteAssessment.all(),
       ...AppRouteMedication.all(),
-      ...AppRouteVent.all(),
+      // AppRouteVent 已并入 AppRouteMain 的 ShellRoute (1.1.0 round 5),
+      // 不再重复注册 (go_router duplicate path 会抛)
       ...AppRouteCheckIn.all(),
       ...AppRouteMoodList.all(),
       ...AppRouteDailyTracking.all(),

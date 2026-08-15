@@ -668,7 +668,9 @@
       }
     }
   },
-  "navCheckIn": "打卡",
+  "navMood": "心情",
+  "navVent": "樹洞",
+  "navTrend": "趨勢",
   "navSettings": "設置",
   "navAppName": "慢病管家",
   "errorPageNotFound": "頁面不存在：{path}",
@@ -2877,7 +2879,6 @@
   "moodDeleteTooltip": "刪除",
   "moodDeleteConfirm": "確定刪除這條記錄嗎？",
   "moodFactorAnalysis": "因素關聯分析",
-  "navMedication": "用藥",
   "moodModeMomentary": "此刻",
   "moodModeDaily": "今天",
   "moodTrendDistTitle": "分數分佈",

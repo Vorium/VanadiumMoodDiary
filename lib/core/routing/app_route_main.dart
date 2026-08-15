@@ -14,7 +14,9 @@
 // 失联是 SMS 不是 email, R93 业务暂停后整个 email preview 页面真无用。
 import 'package:go_router/go_router.dart';
 
+import 'package:chroniccare/core/routing/app_route_assessment.dart';
 import 'package:chroniccare/core/routing/app_route_medication.dart';
+import 'package:chroniccare/core/routing/app_route_vent.dart';
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/core/routing/app_shell.dart';
 import 'package:chroniccare/presentation/pages/crisis_hotline_page.dart';
@@ -68,6 +70,9 @@ class AppRouteMain {
           ),
           // R110 round 3 (B2-04 fix): 用药 4 路由进 shell (底栏 + tab 高亮)
           ...AppRouteMedication.shellRoutes(),
+          // 1.1.0 round 5: 树洞 + 趋势入 shell (导航 tab 高亮 + 底栏常驻)
+          ...AppRouteVent.shellRoutes(),
+          ...AppRouteAssessment.shellRoutes(),
         ],
       ),
     ];

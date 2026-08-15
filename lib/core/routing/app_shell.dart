@@ -12,8 +12,11 @@ import 'package:chroniccare/presentation/widgets/theme_toggle_button.dart';
 
 /// v0.25 round 59 (spen P1 #12 god class 拆分续): 响应式 shell
 ///
-/// - 窄屏 (< 840): 底部 NavigationBar (M3) 3 tab + child
+/// - 窄屏 (< 840): 底部 NavigationBar (M3) 4 tab + child
 /// - 宽屏 (>= 840): 左侧 NavigationRail (extended 模式, 显示文字) + 右侧 child
+///
+/// 1.1.0 round 5 (emotion-first refactor): tab 3 → 4 (心情/树洞/趋势/设置),
+/// /vent /trend 移进 ShellRoute, 打卡/用药 tab 摘除。
 ///
 /// v0.30 R101: 窄屏增加底部导航栏 (参照 Apple Health Tab Bar)，
 /// 解决"用户找不到回首页路径"的 P0 问题。
@@ -33,16 +36,22 @@ class AppShell extends ConsumerWidget {
       _NavDest(
         // v0.25 round 52 (spen P0 #11): i18n 失败时 fallback 改英文,
         // 不再用 mojibake 中文 ('鎵撳崱' / '璁剧疆' 是 Big5 错码后的乱码)
-        label: l10n?.navCheckIn ?? 'Check-in',
-        icon: Icons.check_circle_outline,
-        selectedIcon: Icons.check_circle,
+        label: l10n?.navMood ?? 'Mood',
+        icon: Icons.sentiment_satisfied_outlined,
+        selectedIcon: Icons.sentiment_satisfied,
         path: '/',
       ),
       _NavDest(
-        label: l10n?.navMedication ?? 'Medications',
-        icon: Icons.medication_outlined,
-        selectedIcon: Icons.medication,
-        path: '/medication',
+        label: l10n?.navVent ?? 'Vent',
+        icon: Icons.forum_outlined,
+        selectedIcon: Icons.forum,
+        path: '/vent',
+      ),
+      _NavDest(
+        label: l10n?.navTrend ?? 'Trends',
+        icon: Icons.show_chart,
+        selectedIcon: Icons.show_chart,
+        path: '/trend',
       ),
       _NavDest(
         // v0.25 round 52: 同上 'Settings' fallback
@@ -58,14 +67,9 @@ class AppShell extends ConsumerWidget {
     final dests = _destinations(context);
     for (int i = 0; i < dests.length; i++) {
       if (currentLocation == dests[i].path) return i;
-      // /settings/* 子页都算设置 tab
-      if (dests[i].path == '/settings' &&
-          currentLocation.startsWith('/settings')) {
-        return i;
-      }
-      // /medication/* 子页都算用药 tab
-      if (dests[i].path == '/medication' &&
-          currentLocation.startsWith('/medication')) {
+      // 子页都算父 tab (根路径 '/' 必须精确匹配, 否则任何路径都命中 0)
+      if (dests[i].path != '/' &&
+          currentLocation.startsWith('${dests[i].path}/')) {
         return i;
       }
     }

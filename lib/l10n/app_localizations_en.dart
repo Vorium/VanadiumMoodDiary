@@ -1136,7 +1136,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get navCheckIn => 'Check in';
+  String get navMood => 'Mood';
+
+  @override
+  String get navVent => 'Vent';
+
+  @override
+  String get navTrend => 'Trends';
 
   @override
   String get navSettings => 'Settings';
@@ -3832,9 +3838,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodFactorAnalysis => 'Factor Analysis';
-
-  @override
-  String get navMedication => 'Medications';
 
   @override
   String get moodModeMomentary => 'Right Now';

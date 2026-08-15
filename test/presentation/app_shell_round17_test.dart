@@ -98,7 +98,7 @@ void main() {
     expect(find.byType(NavigationRail), findsNothing);
   });
 
-  testWidgets('宽屏 (>= 840) 显示 NavigationRail,选中"打卡"', (tester) async {
+  testWidgets('宽屏 (>= 840) 显示 NavigationRail,选中"心情"', (tester) async {
     _setSize(tester, 1024);
     await tester.pumpWidget(
       _wrapShell(
@@ -109,8 +109,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('home'), findsOneWidget);
     expect(find.byType(NavigationRail), findsOneWidget);
-    // rail 显示两个 destination
-    expect(find.text('打卡'), findsOneWidget);
+    // rail 显示 destination (1.1.0 round 5: 3 → 4 tab)
+    expect(find.text('心情'), findsOneWidget);
     expect(find.text('设置'), findsOneWidget);
   });
 

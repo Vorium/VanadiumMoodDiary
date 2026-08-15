@@ -2020,11 +2020,23 @@ abstract class AppLocalizations {
   /// **'{days} 天 🏔️'**
   String homeStreakMaster(int days);
 
-  /// No description provided for @navCheckIn.
+  /// No description provided for @navMood.
   ///
   /// In zh, this message translates to:
-  /// **'打卡'**
-  String get navCheckIn;
+  /// **'心情'**
+  String get navMood;
+
+  /// No description provided for @navVent.
+  ///
+  /// In zh, this message translates to:
+  /// **'树洞'**
+  String get navVent;
+
+  /// No description provided for @navTrend.
+  ///
+  /// In zh, this message translates to:
+  /// **'趋势'**
+  String get navTrend;
 
   /// No description provided for @navSettings.
   ///
@@ -6815,12 +6827,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'因素关联分析'**
   String get moodFactorAnalysis;
-
-  /// No description provided for @navMedication.
-  ///
-  /// In zh, this message translates to:
-  /// **'用药'**
-  String get navMedication;
 
   /// No description provided for @moodModeMomentary.
   ///

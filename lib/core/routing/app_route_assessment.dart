@@ -15,13 +15,19 @@ import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
 class AppRouteAssessment {
   AppRouteAssessment._();
 
-  static List<RouteBase> all() {
+  /// 趋势路由 (1.1.0 round 5 移进 ShellRoute, 底栏常驻 + tab 高亮)
+  static List<RouteBase> shellRoutes() {
     return [
       GoRoute(
         path: '/trend',
         pageBuilder: (context, state) =>
             AppRoutes.slideRightPage(state.pageKey, const TrendPage(), context),
       ),
+    ];
+  }
+
+  static List<RouteBase> all() {
+    return [
       // v0.30 round 90: 12 量表中心化入口 (10 开放 + 2 TODO unavailable)
       // 跟 R60 /assessment/:id 单 scale 模式并存, 用户从 home/settings 进来选量表
       GoRoute(

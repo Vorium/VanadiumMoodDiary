@@ -668,7 +668,9 @@
       }
     }
   },
-  "navCheckIn": "打卡",
+  "navMood": "心情",
+  "navVent": "树洞",
+  "navTrend": "趋势",
   "navSettings": "设置",
   "navAppName": "慢病管家",
   "errorPageNotFound": "页面不存在：{path}",
@@ -2877,7 +2879,6 @@
   "moodDeleteTooltip": "删除",
   "moodDeleteConfirm": "确定删除这条记录吗？",
   "moodFactorAnalysis": "因素关联分析",
-  "navMedication": "用药",
   "moodModeMomentary": "此刻",
   "moodModeDaily": "今天",
   "moodTrendDistTitle": "分数分布",
