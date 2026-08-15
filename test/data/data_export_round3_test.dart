@@ -135,7 +135,8 @@ void main() {
 ''';
     final result = await svc.importFromJson(json);
     expect(result.success, true);
-    expect(result.contactCount, 1); // 只有一个有效
+    // v6: fixture 的 contacts 段被忽略 (不导入, 表 Task 9 才删)
+    expect(await db.contactDao.watchActive().first, isEmpty);
     expect(result.medicationCount, 0); // name 空被跳
     expect(result.moodEntryCount, 0); // timestamp 坏被跳
   });
@@ -166,8 +167,8 @@ void main() {
     expect(json, isNot(contains('/fake/path/vent_xxx.m4a')));
     // 但 hadAudio 标志会带
     expect(json, contains('"hadAudio": true'));
-    // version = 5 (v0.32 round 8 R111: 全量字段 + FK 重映射)
-    expect(json, contains('"version": 5'));
+    // version = 6 (v1.1.0 情绪优先重构: 删 contacts +statusPhrase/tagsJson)
+    expect(json, contains('"version": 6'));
   });
 
   test('P0-3: 纯文字 vent 条目正常导出', () async {

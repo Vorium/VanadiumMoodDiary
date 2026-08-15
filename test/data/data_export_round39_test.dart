@@ -97,15 +97,15 @@ void main() {
     });
   });
 
-  // ============== contacts 段 ==============
+  // ============== v6 无 contacts 段 ==============
 
-  group('v0.23 round 39 (P1-5) — contacts round-trip', () {
-    test('导出 0 个 contact → 空数组', () async {
+  group('v1.1.0 round 3 (Task 6) — v6 无 contacts 段', () {
+    test('导出 0 contact → 无 contacts key', () async {
       final json = parseJson(await svc.exportToJson());
-      expect(json['contacts'], isEmpty);
+      expect(json.containsKey('contacts'), isFalse);
     });
 
-    test('导出多 contact 保留 name/phone/sortOrder/isActive', () async {
+    test('DB 有 contact → 也不导出 (v6 摘除)', () async {
       await db.contactDao.insert(
         ContactsCompanion.insert(
           name: '妈妈',
@@ -121,27 +121,7 @@ void main() {
         ),
       );
       final json = parseJson(await svc.exportToJson());
-      final contacts = json['contacts'] as List;
-      // 2 个都是 isActive=true (默认),全导出
-      expect(contacts.length, 2);
-      expect(contacts[0]['name'], '妈妈');
-      expect(contacts[0]['phone'], '13800138001');
-      expect(contacts[0]['sortOrder'], 0);
-      expect(contacts[0]['isActive'], true);
-      expect(contacts[1]['name'], '爸爸');
-      expect(contacts[1]['sortOrder'], 1);
-    });
-
-    test('isActive=false 的 contact 不在 export 结果 (watchContacts 过滤)', () async {
-      await db.contactDao.insert(
-        ContactsCompanion.insert(
-          name: '已删除',
-          phone: '13800138099',
-          isActive: const Value(false),
-        ),
-      );
-      final json = parseJson(await svc.exportToJson());
-      expect(json['contacts'], isEmpty);
+      expect(json.containsKey('contacts'), isFalse);
     });
   });
 
@@ -303,16 +283,17 @@ void main() {
       expect(json['exportedAt'], '2026-07-01T10:00:00.000Z');
     });
 
-    test('version = 5 (v0.32 round 8 R111: 全量字段 + FK 重映射)', () async {
+    test('version = 6 (v1.1.0 情绪优先重构: 删 contacts +statusPhrase/tagsJson)',
+        () async {
       final json = parseJson(await svc.exportToJson());
-      expect(json['version'], 5);
+      expect(json['version'], 6);
     });
 
     test('空 DB 导出 → 全空数组,null profile', () async {
       final json = parseJson(await svc.exportToJson());
-      expect(json['version'], 5);
+      expect(json['version'], 6);
       expect(json['profile'], isNull);
-      expect(json['contacts'], isEmpty);
+      expect(json.containsKey('contacts'), isFalse);
       expect(json['medications'], isEmpty);
       expect(json['checkIns'], isEmpty);
       expect(json['moodEntries'], isEmpty);
@@ -324,17 +305,16 @@ void main() {
   // ============== ImportResult summary ==============
 
   group('v0.23 round 39 (P1-5) — ImportResult.summary', () {
-    test('summary 拼接 6 类计数', () async {
+    test('summary 拼接 5 类计数 (v6 无联系人)', () async {
       final result = ImportResult.success(
-        contactCount: 2,
         medicationCount: 3,
         checkInCount: 100,
         reportHistoryCount: 5,
         moodEntryCount: 20,
         ventEntryCount: 7,
       );
-      // 走 v0.23 round 39 P1-9 加的 Strings
-      expect(result.summary, contains('2 联系人'));
+      // 走 v0.23 round 39 P1-9 加的 Strings; v6 起不含联系人
+      expect(result.summary, isNot(contains('联系人')));
       expect(result.summary, contains('3 药'));
       expect(result.summary, contains('100 打卡'));
       expect(result.summary, contains('5 报告'));
@@ -344,12 +324,11 @@ void main() {
 
     test('summary 0 报告/情绪/树洞 → 拼接里不出现这些项', () async {
       final result = ImportResult.success(
-        contactCount: 1,
         medicationCount: 1,
         checkInCount: 1,
       );
-      // summary 格式 "1 联系人 / 1 药 / 1 打卡"
-      expect(result.summary, '1 联系人 / 1 药 / 1 打卡');
+      // summary 格式 "1 药 / 1 打卡"
+      expect(result.summary, '1 药 / 1 打卡');
     });
   });
 
@@ -387,7 +366,7 @@ void main() {
       });
       final result = await svc.importFromJson(json);
       expect(result.success, isFalse);
-      // 中文错误 "数据版本不匹配（期望 1-5，实际 99）"
+      // 中文错误 "数据版本不匹配（期望 1-6，实际 99）"
       expect(result.error, contains('99'));
     });
   });

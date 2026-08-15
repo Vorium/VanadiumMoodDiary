@@ -105,10 +105,6 @@ class ExportOrchestrator {
     // v0.24 round 48 (sp-en P2-14): 改名为 streamTimeout 去掉下划线
     // (no_leading_underscores_for_local_identifiers lint)
     const streamTimeout = Duration(seconds: 5);
-    final contacts = await _db.contactDao
-        .watchActive()
-        .first
-        .timeout(streamTimeout, onTimeout: () => const []);
     final medications = await _db.medicationDao
         // v0.32 round 8 (R112 E8 fix): watchActive → watchAllIncludingInactive。
         // 之前软停药 (isActive=false) 整行不导出 → 换机后药名从历史消失
@@ -180,22 +176,6 @@ class ExportOrchestrator {
               if (profile.consentRevokedAt != null)
                 'consentRevokedAt': isoUtc(profile.consentRevokedAt!),
             },
-      'contacts': [
-        for (final c in contacts)
-          {
-            'name': c.name,
-            'phone': c.phone,
-            'sortOrder': c.sortOrder,
-            'isActive': c.isActive,
-            // v0.32 round 8 (R111 E2 fix): PIPL §13 留痕 4 字段 (R63 加,
-            // R68 gate 只挡 add(), 导入直接绕过 → 留痕断裂)。v5 起导出,
-            // 老 v4 文件无这 4 字段, import 时优雅降级 null。
-            if (c.consentAt != null) 'consentAt': isoUtc(c.consentAt!),
-            if (c.consentKind != null) 'consentKind': c.consentKind,
-            if (c.consentBy != null) 'consentBy': c.consentBy,
-            if (c.consentVersion != null) 'consentVersion': c.consentVersion,
-          },
-      ],
       'medications': [
         for (final m in medications)
           {
@@ -278,6 +258,8 @@ class ExportOrchestrator {
             // influenceFactorsJson 非 nullable (DB 默认 '[]')
             'influenceFactorsJson': m.influenceFactorsJson,
             if (m.recordingMode != null) 'recordingMode': m.recordingMode,
+            // v1.1.0: 状态短语 (预设或自定义)
+            if (m.statusPhrase != null) 'statusPhrase': m.statusPhrase,
           },
       ],
       'ventEntries': [
@@ -289,6 +271,7 @@ class ExportOrchestrator {
             'timestamp': isoUtc(v.timestamp),
             'contentText':
                 await _cryptoService.decryptVentText(v.contentTextEnc),
+            'tagsJson': v.tagsJson,
             ..._audioService.buildAudioMetadata(
               audioDurationSec: v.audioDurationSec,
               audioSizeBytes: v.audioSizeBytes,
@@ -384,11 +367,11 @@ class ExportOrchestrator {
 ///
 /// 跟 ImportOrchestrator 紧耦合, 留在本文件更易读。
 /// 之前 facade 内引用 Strings 拼 summary, 拆出来后 Strings 属于 l10n 层,
-/// 留 facade 拿, 这里只提供 6 个 int 字段 + success/error 标志。
+/// 留 facade 拿, 这里只提供 5 个 int 字段 (v1.1.0 round 3 删 contactCount)
+/// + success/error 标志。
 class ImportResult {
   final bool success;
   final String? error;
-  final int contactCount;
   final int medicationCount;
   final int checkInCount;
   final int reportHistoryCount;
@@ -400,7 +383,6 @@ class ImportResult {
   const ImportResult({
     required this.success,
     this.error,
-    this.contactCount = 0,
     this.medicationCount = 0,
     this.checkInCount = 0,
     this.reportHistoryCount = 0,
@@ -409,7 +391,6 @@ class ImportResult {
   });
 
   factory ImportResult.success({
-    required int contactCount,
     required int medicationCount,
     required int checkInCount,
     int reportHistoryCount = 0,
@@ -418,7 +399,6 @@ class ImportResult {
   }) =>
       ImportResult(
         success: true,
-        contactCount: contactCount,
         medicationCount: medicationCount,
         checkInCount: checkInCount,
         reportHistoryCount: reportHistoryCount,
@@ -437,7 +417,6 @@ class ImportResult {
   /// / refill_notifier 用法一致)。
   String get summary {
     final parts = <String>[
-      Strings.importSummaryContact(contactCount),
       Strings.importSummaryMedication(medicationCount),
       Strings.importSummaryCheckIn(checkInCount),
     ];

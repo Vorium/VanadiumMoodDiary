@@ -20,7 +20,8 @@
 // v0.32 架构批 2 (R112-ARCH-03): 执行 R77 注释的 4 子任务拆分计划
 //   - runImportFromJson 拆为 4 private 顶层函数:
 //     _clearData / _importProfile / _importEntities / _importVent
-//   - ImportResultBuilder 聚合 7 个计数 (medIdMap / moodIdMap 老→新 id
+//   - ImportResultBuilder 聚合 6 个计数 (v1.1.0 round 3 删 contactCount;
+//     medIdMap / moodIdMap 老→新 id
 //     映射在 _importEntities 内部闭环, 不泄漏到其它子任务)
 //   - 行为 100% 不变 (data_export_v5_round8 / export_import_pipeline_round99
 //     等兜底测试全绿)
@@ -42,7 +43,6 @@ import 'package:chroniccare/domain/repositories/report_history_repository.dart';
 /// 4 个子任务各自 +1, 最后 [build] 装配成 [ImportResult.success]。
 /// 6 张 daily tracking 表 (R91) 不进 ImportResult 摘要 (跟拆分前一致)。
 class ImportResultBuilder {
-  int contactCount = 0;
   int medicationCount = 0;
   int checkInCount = 0;
   int reportHistoryCount = 0;
@@ -50,7 +50,6 @@ class ImportResultBuilder {
   int ventEntryCount = 0;
 
   ImportResult build() => ImportResult.success(
-        contactCount: contactCount,
         medicationCount: medicationCount,
         checkInCount: checkInCount,
         reportHistoryCount: reportHistoryCount,
@@ -129,7 +128,8 @@ Future<void> _clearData(
 ) async {
   await db.delete(db.checkIns).go();
   await db.delete(db.medications).go();
-  await db.delete(db.contacts).go();
+  // v1.1.0 round 3 (Task 6): contacts 表不清 — Task 9 才删表, 导入器
+  // 不再引用 contacts (v5 文件含 contacts key 时忽略)。
   // 旧 schema 缺失表安全删除
   await schemaService.deleteOldDataSafely(
     db,
@@ -248,7 +248,7 @@ Future<void> _importProfile(AppDatabase db, Map<String, dynamic> data) async {
   }
 }
 
-/// 子任务 3/4: contacts / medications / checkIns / reportHistories /
+/// 子任务 3/4: medications / checkIns / reportHistories /
 /// moodEntries / 6 张 daily tracking 表
 ///
 /// medIdMap (medications old→new) 供 checkIns.medicationId 和
@@ -261,65 +261,6 @@ Future<void> _importEntities(
   int version,
   ImportResultBuilder counts,
 ) async {
-  // contacts
-  for (final c in (data['contacts'] as List? ?? [])) {
-    if (c is! Map) continue;
-    final m = c;
-    final name = ExportSchemaService.validateString(
-      m['name'],
-      'contact.name',
-      maxLen: 50,
-    );
-    final phone = ExportSchemaService.validateString(
-      m['phone'],
-      'contact.phone',
-      maxLen: 20,
-      pattern: RegExp(r'^\+?\d{6,20}$'),
-    );
-    if (name == null || phone == null) continue;
-    await db.contactDao.insert(
-      ContactsCompanion.insert(
-        name: name,
-        phone: phone,
-        sortOrder: Value(
-          ExportSchemaService.validateIntOr(m['sortOrder'], 0),
-        ),
-        // v0.32 round 8 (R112-05 fix): `m['isActive'] as bool? ?? true`
-        // 是全 pipeline 唯一裸 cast, v4 脏数据 (0/1 int 或 "true" string)
-        // 抛 TypeError 崩整个导入。改 is-check 优雅降级 true。
-        isActive: Value(m['isActive'] is bool ? m['isActive'] as bool : true),
-        // v0.32 round 8 (R111 E2 fix): PIPL §13 留痕 4 字段 (R63 加)。
-        // R68 gate 只挡 add() 路径, 导入直接绕过 → 留痕断裂。v5 起
-        // 导入保留, 老 v4 文件无这 4 字段 → null (老数据, 法务可接受)。
-        consentAt: Value(
-          ExportSchemaService.validateDate(m['consentAt']),
-        ),
-        consentKind: Value(
-          ExportSchemaService.validateString(
-            m['consentKind'],
-            'contact.consentKind',
-            maxLen: 50,
-          ),
-        ),
-        consentBy: Value(
-          ExportSchemaService.validateString(
-            m['consentBy'],
-            'contact.consentBy',
-            maxLen: 50,
-          ),
-        ),
-        consentVersion: Value(
-          ExportSchemaService.validateString(
-            m['consentVersion'],
-            'contact.consentVersion',
-            maxLen: 50,
-          ),
-        ),
-      ),
-    );
-    counts.contactCount++;
-  }
-
   // medications
   //
   // v0.32 round 8 (R111 E3 fix): 建 old→new id 映射, 供 checkIns 段
@@ -631,6 +572,13 @@ Future<void> _importEntities(
               maxLen: 20,
             ),
           ),
+          statusPhrase: Value(
+            ExportSchemaService.validateString(
+              m['statusPhrase'],
+              'mood.statusPhrase',
+              maxLen: 100,
+            ),
+          ),
         ),
       );
       // v0.32 round 8 (R112 E6 fix): 记录 old→new id 映射 (老 v4 文件
@@ -918,6 +866,14 @@ Future<void> _importVent(
         ),
         audioSizeBytes: Value(
           audioService.parseAudioSizeBytes(m['audioSizeBytes']),
+        ),
+        tagsJson: Value(
+          ExportSchemaService.validateString(
+            m['tagsJson'],
+            'vent.tagsJson',
+            maxLen: 1000,
+          ) ??
+          '[]',
         ),
       ),
     );

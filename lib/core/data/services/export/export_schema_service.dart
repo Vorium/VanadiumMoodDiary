@@ -28,6 +28,9 @@
 //   + endDate 导出 + mood id 导出 → stress.linkedMoodEntryId /
 //   treatment.linkedMedicationId 重映射 + lastCheckInAt 导入 + isActive
 //   脏数据容错 (is-check 替代裸 cast)。老 v4 文件无新 key → 优雅降级。
+// - v6 (current): v1.1.0 情绪优先重构 (round 3) — 删 contacts 段
+//   (外联全链删除, 表 Task 9 才删, 导入不再清/写 contacts), mood
+//   +statusPhrase, vent +tagsJson。老 v5 文件含 contacts key → 忽略。
 //
 // **emil 设计决策**:
 // - "decisions should be nameable" — schema version 兼容 + 字段校验 决策独立命名
@@ -47,8 +50,9 @@ import 'package:drift/drift.dart' show Table, TableInfo;
 class ExportSchemaService {
   const ExportSchemaService();
 
-  /// 当前 schema 版本 (v5: v0.32 round 8 R111 E1/E2/E3 全量字段 + FK 重映射)
-  static const int currentVersion = 5;
+  /// 当前 schema 版本 (v6: v1.1.0 情绪优先重构 — 删 contacts 段,
+  /// mood +statusPhrase, vent +tagsJson)
+  static const int currentVersion = 6;
 
   /// 校验 JSON version 字段
   ///

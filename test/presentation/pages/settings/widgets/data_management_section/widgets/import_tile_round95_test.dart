@@ -63,7 +63,6 @@ class _StubImportOkService extends DataExportService {
   Future<ImportResult> importFromJson(String json) async {
     return const ImportResult(
       success: true,
-      contactCount: 2,
       medicationCount: 1,
       checkInCount: 7,
       reportHistoryCount: 0,

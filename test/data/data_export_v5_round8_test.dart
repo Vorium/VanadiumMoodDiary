@@ -153,8 +153,9 @@ void main() {
     });
   });
 
-  group('v0.32 round 8 (R111 E2) — contact consent PIPL §13 留痕 round-trip', () {
-    test('5. 导出含 consent 4 字段, import 后保留 (导入不再绕过 R68 gate)',
+  group('v1.1.0 round 3 (Task 6) — v6 无 contacts 段 (原 E2 contact round-trip 改造)',
+      () {
+    test('5. 导出不再含 contacts key, import 也不清 contacts (Task 9 才删表)',
         () async {
       await db.contactDao.insert(
         ContactsCompanion.insert(
@@ -167,23 +168,15 @@ void main() {
         ),
       );
       final json = parseJson(await svc.exportToJson());
-      final c = (json['contacts'] as List)[0] as Map<String, dynamic>;
-      expect(c['consentAt'], '2026-08-01T10:00:00.000Z');
-      expect(c['consentKind'], 'emergencyContactSharing');
-      expect(c['consentBy'], 'user');
-      expect(c['consentVersion'], 'v1');
+      expect(json.containsKey('contacts'), isFalse);
 
       final exported = await svc.exportToJson();
-      await db.delete(db.contacts).go();
       final result = await svc.importFromJson(exported);
-      expect(result.success, isTrue);
+      expect(result.success, isTrue, reason: result.error);
+      // v6 刻意: 导入器不再引用 contacts (不清表、不写表)
       final contacts = await db.contactDao.watchActive().first;
       expect(contacts.length, 1);
-      final imported = contacts.first;
-      expect(imported.consentAt, DateTime.utc(2026, 8, 1, 10, 0).toLocal());
-      expect(imported.consentKind, 'emergencyContactSharing');
-      expect(imported.consentBy, 'user');
-      expect(imported.consentVersion, 'v1');
+      expect(contacts.first.name, '姐');
     });
   });
 
@@ -376,9 +369,9 @@ void main() {
       });
       final result = await svc.importFromJson(dirtyJson);
       expect(result.success, isTrue, reason: result.error);
+      // v6: fixture 的 contacts key 被忽略 (不再导入)
       final contacts = await db.contactDao.watchActive().first;
-      expect(contacts.length, 1);
-      expect(contacts.first.isActive, isTrue);
+      expect(contacts, isEmpty);
       final meds = await db.medicationDao.watchActive().first;
       expect(meds.length, 1);
       expect(meds.first.isActive, isTrue);

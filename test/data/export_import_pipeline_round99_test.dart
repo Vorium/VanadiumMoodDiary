@@ -74,7 +74,6 @@ void main() {
       final exported = await svc.exportToJson();
       final result = await runImportFromJson(orch, exported);
       expect(result.success, isTrue);
-      expect(result.contactCount, 0);
       expect(result.medicationCount, 0);
       expect(result.checkInCount, 0);
       expect(result.reportHistoryCount, 0);
@@ -82,20 +81,13 @@ void main() {
       expect(result.ventEntryCount, 0);
     });
 
-    test('2. export + import 全 7 段数据 → counts 全对 + DB 查到', () async {
+    test('2. export + import 全 6 段数据 → counts 全对 + DB 查到', () async {
       // 准备数据
       await db.userProfileDao.upsert(
         UserProfilesCompanion.insert(
           userName: const Value('王五'),
           checkInCycleHours: const Value(48),
           firstLaunchAt: DateTime.utc(2026, 1, 1),
-        ),
-      );
-      await db.contactDao.insert(
-        ContactsCompanion.insert(
-          name: '姐',
-          phone: '13800138003',
-          sortOrder: const Value(0),
         ),
       );
       await db.medicationDao.insert(
@@ -147,13 +139,11 @@ void main() {
       // 清空 DB 再 import 同一份
       await db.delete(db.checkIns).go();
       await db.delete(db.medications).go();
-      await db.delete(db.contacts).go();
       await db.moodDao.delete(moodId);
 
       // import
       final result = await runImportFromJson(orch, exported);
       expect(result.success, isTrue);
-      expect(result.contactCount, 1);
       expect(result.medicationCount, 1);
       expect(result.checkInCount, 1);
       expect(result.moodEntryCount, 1);
@@ -163,31 +153,38 @@ void main() {
       // DB 实际有数据
       final profile = await db.userProfileDao.get();
       expect(profile?.userName, '王五');
-      final contacts = await db.contactDao.watchActive().first;
-      expect(contacts.length, 1);
-      expect(contacts.first.name, '姐');
+      final meds = await db.medicationDao.watchActive().first;
+      expect(meds.length, 1);
+      expect(meds.first.name, '舍曲林');
     });
   });
 
   // ============== 覆盖语义 ==============
 
   group('R99 #27 import 覆盖语义 (P0)', () {
-    test('3. import 会清空旧 contact + 写新 (覆盖语义)', () async {
-      // 旧: 1 个 contact
+    test('3. import 会清空旧 med 但不清 contacts (v6 刻意行为)', () async {
+      // 旧: 1 个 contact + 1 个 med
       await db.contactDao.insert(
         ContactsCompanion.insert(
           name: '旧联系人',
           phone: '13800000000',
         ),
       );
-      expect((await db.contactDao.watchActive().first).length, 1);
+      await db.medicationDao.insert(
+        MedicationsCompanion.insert(
+          name: '旧药',
+          dosage: 10.0,
+          dosageUnit: 'mg',
+          startDate: DateTime.utc(2026, 6, 1),
+        ),
+      );
+      expect((await db.medicationDao.watchActive().first).length, 1);
 
-      // import: 0 contact
+      // import: 0 med
       final json = jsonEncode({
         'version': ExportSchemaService.currentVersion,
         'exportedAt': '2026-07-01T00:00:00.000Z',
         'profile': null,
-        'contacts': <Map<String, dynamic>>[],
         'medications': <Map<String, dynamic>>[],
         'checkIns': <Map<String, dynamic>>[],
         'reportHistories': <Map<String, dynamic>>[],
@@ -196,9 +193,11 @@ void main() {
       });
       final result = await runImportFromJson(orch, json);
       expect(result.success, isTrue);
-      expect(result.contactCount, 0);
-      // 旧 contact 被清空
-      expect(await db.contactDao.watchActive().first, isEmpty);
+      expect(result.medicationCount, 0);
+      // 旧 med 被清空
+      expect(await db.medicationDao.watchActive().first, isEmpty);
+      // contacts 表 Task 9 才删, v6 导入器刻意不清它
+      expect((await db.contactDao.watchActive().first).first.name, '旧联系人');
     });
 
     test('4. 二次 import 第二次 JSON 覆盖第一次 (PIPL §47 删除权场景)', () async {
@@ -206,15 +205,14 @@ void main() {
         'version': ExportSchemaService.currentVersion,
         'exportedAt': '2026-07-01T00:00:00.000Z',
         'profile': null,
-        'contacts': [
+        'medications': [
           {
             'name': 'A',
-            'phone': '13800138001',
-            'sortOrder': 0,
-            'isActive': true,
+            'dosage': 10.0,
+            'dosageUnit': 'mg',
+            'startDate': '2026-06-01T00:00:00.000Z',
           },
         ],
-        'medications': <Map<String, dynamic>>[],
         'checkIns': <Map<String, dynamic>>[],
         'reportHistories': <Map<String, dynamic>>[],
         'moodEntries': <Map<String, dynamic>>[],
@@ -224,15 +222,14 @@ void main() {
         'version': ExportSchemaService.currentVersion,
         'exportedAt': '2026-07-02T00:00:00.000Z',
         'profile': null,
-        'contacts': [
+        'medications': [
           {
             'name': 'B',
-            'phone': '13800138002',
-            'sortOrder': 0,
-            'isActive': true,
+            'dosage': 10.0,
+            'dosageUnit': 'mg',
+            'startDate': '2026-06-01T00:00:00.000Z',
           },
         ],
-        'medications': <Map<String, dynamic>>[],
         'checkIns': <Map<String, dynamic>>[],
         'reportHistories': <Map<String, dynamic>>[],
         'moodEntries': <Map<String, dynamic>>[],
@@ -240,24 +237,23 @@ void main() {
       });
       final r1 = await runImportFromJson(orch, json1);
       expect(r1.success, isTrue);
-      expect((await db.contactDao.watchActive().first).first.name, 'A');
+      expect((await db.medicationDao.watchActive().first).first.name, 'A');
 
       final r2 = await runImportFromJson(orch, json2);
       expect(r2.success, isTrue);
       // A 被清,只剩 B
-      final contacts = await db.contactDao.watchActive().first;
-      expect(contacts.length, 1);
-      expect(contacts.first.name, 'B');
+      final meds = await db.medicationDao.watchActive().first;
+      expect(meds.length, 1);
+      expect(meds.first.name, 'B');
     });
   });
 
   // ============== failure path ==============
 
   group('R99 #27 failure path (P0-3 三态)', () {
-    test('6. wrong version (6 > current 5) → failure 含"数据版本不匹配"', () async {
+    test('6. wrong version (7 > current 6) → failure 含"数据版本不匹配"', () async {
       final json = jsonEncode({
-        'version': 6, // 超过 currentVersion 5
-        'contacts': <Map<String, dynamic>>[],
+        'version': 7, // 超过 currentVersion 6
       });
       final result = await runImportFromJson(orch, json);
       expect(result.success, isFalse);
@@ -266,9 +262,7 @@ void main() {
 
     test('6. version 缺省 / null → failure', () async {
       // version 字段缺失,validateVersion(null) 应返 null → failure
-      final json = jsonEncode({
-        'contacts': <Map<String, dynamic>>[],
-      });
+      final json = jsonEncode({});
       final result = await runImportFromJson(orch, json);
       expect(result.success, isFalse);
       expect(result.error, contains('数据版本不匹配'));
@@ -289,7 +283,6 @@ void main() {
     test('9. version=0 (低于 1) → failure', () async {
       final json = jsonEncode({
         'version': 0,
-        'contacts': <Map<String, dynamic>>[],
       });
       final result = await runImportFromJson(orch, json);
       expect(result.success, isFalse);

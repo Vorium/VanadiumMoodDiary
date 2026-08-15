@@ -3,7 +3,7 @@
 // Sprint #5c 把 data_export_service god class 拆 3 子 service, 这里是
 // ExportSchemaService 的独立 test, 覆盖:
 //
-// 1. validateVersion 1-5 范围 (P0 兼容; v0.32 round 8 R111 E1/E2/E3 升 v5)
+// 1. validateVersion 1-6 范围 (P0 兼容; v1.1.0 round 3 情绪优先重构升 v6)
 // 2. validateString length / pattern / null / 非 String
 // 3. validateInt defaultValue 兜底 / range
 // 4. validateIntOr 非空默认
@@ -19,8 +19,9 @@ void main() {
   const svc = ExportSchemaService();
 
   group('v0.24 round 45 (Sprint #5c) — ExportSchemaService.currentVersion', () {
-    test('currentVersion = 5 (v0.32 round 8 R111: 全量字段 + FK 重映射)', () {
-      expect(ExportSchemaService.currentVersion, 5);
+    test('currentVersion = 6 (v1.1.0 情绪优先重构: 删 contacts +statusPhrase/tagsJson)',
+        () {
+      expect(ExportSchemaService.currentVersion, 6);
     });
   });
 
@@ -30,16 +31,20 @@ void main() {
       expect(svc.validateVersion(1), 1);
     });
 
-    test('4 → 4 (current)', () {
+    test('4 → 4 (老版本)', () {
       expect(svc.validateVersion(4), 4);
+    });
+
+    test('6 → 6 (current)', () {
+      expect(svc.validateVersion(6), 6);
     });
 
     test('0 → null (低于最小)', () {
       expect(svc.validateVersion(0), isNull);
     });
 
-    test('6 → null (高于 current)', () {
-      expect(svc.validateVersion(6), isNull);
+    test('7 → null (高于 current)', () {
+      expect(svc.validateVersion(7), isNull);
     });
 
     test('99 → null (未来版本)', () {
