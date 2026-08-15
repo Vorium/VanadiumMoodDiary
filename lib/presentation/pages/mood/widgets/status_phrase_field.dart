@@ -7,13 +7,16 @@
 // - 预设组 (StatusPhraseLibrary.phrasesForScore(score)) 按当前 score 方向
 //   优先展示; "全部" 展开显示 StatusPhraseLibrary.all 全 17 条
 // - 已选 chip 再 tap → onChanged(null) (清除)
-// - TextField 自定义输入, submit → onChanged(trimmed)
-// - 自定义值 (不在预设 all 内) 渲染为额外已选 chip, tap → 清除
+// - TextField 自定义输入 (maxLength 100 对齐导入 cap), submit → onChanged(trimmed)
+// - 已选值不在当前展示组 (自定义值或换 score 后落在别的组) → 渲染为额外
+//   已选 chip (1.1.0 round 7b 修: 之前 isCustom 只认"不在 all 内", 换
+//   score 后已选预设短语整组不可见且无法取消), tap → onChanged(null)
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/status_phrase_library.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 
 /// 情绪状态短语选择器（预设 chip + 自定义输入）
 ///
@@ -70,8 +73,7 @@ class _StatusPhraseFieldState extends State<StatusPhraseField> {
     final presets = _showAll
         ? StatusPhraseLibrary.all
         : StatusPhraseLibrary.phrasesForScore(widget.score);
-    final isCustom =
-        value != null && !StatusPhraseLibrary.all.contains(value);
+    final isCustom = value != null && !presets.contains(value);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -97,13 +99,13 @@ class _StatusPhraseFieldState extends State<StatusPhraseField> {
           children: [
             for (final phrase in presets)
               FilterChip(
-                label: Text(phrase),
+                label: Text(localizedStatusPhrase(context, phrase)),
                 selected: value == phrase,
                 onSelected: (_) => _pick(phrase),
               ),
             if (isCustom)
               FilterChip(
-                label: Text(value),
+                label: Text(localizedStatusPhrase(context, value)),
                 selected: true,
                 onSelected: (_) => _clearCustom(),
               ),
@@ -112,6 +114,7 @@ class _StatusPhraseFieldState extends State<StatusPhraseField> {
         const SizedBox(height: AppTokens.spacingXs),
         TextField(
           controller: _controller,
+          maxLength: 100,
           decoration: InputDecoration(
             hintText: l10n.moodStatusPhraseHint,
             isDense: true,

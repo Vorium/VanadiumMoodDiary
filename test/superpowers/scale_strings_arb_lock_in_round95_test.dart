@@ -868,14 +868,17 @@ void main() {
       //   Agree/Reject/Version vent/analytics 中性 fallback) −3
       //   contactConsent{Title,Agree,Version} orphan (contactConsentReject
       //   保留, dataExport 路径复用) → 1220 → 1221
+      // 1.1.0 round 7b (P1 i18n, 2026-08-16): +35 new (8 ventTag* 预设标签 +
+      //   17 statusPhrase* 状态短语 + 5 moodReviewEncouragement* 鼓励文案 +
+      //   5 importSummary* 导入摘要带 {n}) → 1221 → 1256
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1221, reason: 'zh.arb 应有 1221 key');
-      expect(en, 1221, reason: 'en.arb 应有 1221 key');
-      expect(hant, 1221, reason: 'zh_Hant.arb 应有 1221 key');
+      expect(zh, 1256, reason: 'zh.arb 应有 1256 key');
+      expect(en, 1256, reason: 'en.arb 应有 1256 key');
+      expect(hant, 1256, reason: 'zh_Hant.arb 应有 1256 key');
     });
   });
 

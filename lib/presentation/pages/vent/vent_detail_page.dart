@@ -17,6 +17,7 @@ import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -425,7 +426,7 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
                     children: [
                       for (final tag in tags)
                         Chip(
-                          label: Text(tag),
+                          label: Text(localizedVentTag(context, tag)),
                           visualDensity: VisualDensity.compact,
                         ),
                     ],

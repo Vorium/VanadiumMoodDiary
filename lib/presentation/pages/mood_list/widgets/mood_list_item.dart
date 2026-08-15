@@ -17,6 +17,7 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 class MoodListItem extends StatelessWidget {
@@ -65,11 +66,14 @@ class MoodListItem extends StatelessWidget {
                     ],
                   ),
                   // v1.1.0 round 5d: 状态短语 (在标签/CBT badge 行前)
+                  // round 7b: 显示层走 ARB 本地化 (存储仍是 canonical zh)
                   if (entry.statusPhrase != null)
                     Padding(
                       padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
                       child: Text(
-                        '“${entry.statusPhrase}”',
+                        '“${localizedStatusPhrase(context, entry.statusPhrase!)}”',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: AppTokens.textStyleMicro(context).copyWith(
                           color: AppTokens.primaryColor(context),
                         ),

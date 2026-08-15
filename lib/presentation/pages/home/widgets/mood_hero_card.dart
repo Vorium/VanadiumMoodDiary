@@ -20,6 +20,7 @@ import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
@@ -67,7 +68,9 @@ class MoodHeroCard extends ConsumerWidget {
     AppLocalizations l10n,
     MoodEntryEntity entry,
   ) {
-    final phrase = entry.statusPhrase;
+    final phrase = entry.statusPhrase == null
+        ? null
+        : localizedStatusPhrase(context, entry.statusPhrase!);
     final summary = phrase ?? _dimensionSummary(l10n, entry);
     return AppleListSection(
       title: l10n.homeMoodHeroTitle,

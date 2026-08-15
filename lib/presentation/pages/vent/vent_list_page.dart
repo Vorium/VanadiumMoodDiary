@@ -22,6 +22,7 @@ import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -201,7 +202,7 @@ class _VentListPageState extends ConsumerState<VentListPage> {
           for (final tag in tags) ...[
             const SizedBox(width: AppTokens.spacingXs),
             FilterChip(
-              label: Text(tag),
+              label: Text(localizedVentTag(context, tag)),
               selected: _filterTag == tag,
               onSelected: (_) => setState(() => _filterTag = tag),
             ),

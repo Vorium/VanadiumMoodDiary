@@ -7427,6 +7427,216 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'今日指标'**
   String get homeTodayMetrics;
+
+  /// No description provided for @ventTagFamily.
+  ///
+  /// In zh, this message translates to:
+  /// **'家庭'**
+  String get ventTagFamily;
+
+  /// No description provided for @ventTagWork.
+  ///
+  /// In zh, this message translates to:
+  /// **'工作'**
+  String get ventTagWork;
+
+  /// No description provided for @ventTagStudy.
+  ///
+  /// In zh, this message translates to:
+  /// **'学业'**
+  String get ventTagStudy;
+
+  /// No description provided for @ventTagRelationship.
+  ///
+  /// In zh, this message translates to:
+  /// **'亲密关系'**
+  String get ventTagRelationship;
+
+  /// No description provided for @ventTagFriends.
+  ///
+  /// In zh, this message translates to:
+  /// **'朋友'**
+  String get ventTagFriends;
+
+  /// No description provided for @ventTagHealth.
+  ///
+  /// In zh, this message translates to:
+  /// **'身体'**
+  String get ventTagHealth;
+
+  /// No description provided for @ventTagMood.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪'**
+  String get ventTagMood;
+
+  /// No description provided for @ventTagOther.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他'**
+  String get ventTagOther;
+
+  /// No description provided for @statusPhraseLow1.
+  ///
+  /// In zh, this message translates to:
+  /// **'有点难过'**
+  String get statusPhraseLow1;
+
+  /// No description provided for @statusPhraseLow2.
+  ///
+  /// In zh, this message translates to:
+  /// **'心情很低落'**
+  String get statusPhraseLow2;
+
+  /// No description provided for @statusPhraseLow3.
+  ///
+  /// In zh, this message translates to:
+  /// **'想哭'**
+  String get statusPhraseLow3;
+
+  /// No description provided for @statusPhraseLow4.
+  ///
+  /// In zh, this message translates to:
+  /// **'提不起劲'**
+  String get statusPhraseLow4;
+
+  /// No description provided for @statusPhraseTired1.
+  ///
+  /// In zh, this message translates to:
+  /// **'疲惫但平静'**
+  String get statusPhraseTired1;
+
+  /// No description provided for @statusPhraseTired2.
+  ///
+  /// In zh, this message translates to:
+  /// **'好累'**
+  String get statusPhraseTired2;
+
+  /// No description provided for @statusPhraseTired3.
+  ///
+  /// In zh, this message translates to:
+  /// **'身体被掏空'**
+  String get statusPhraseTired3;
+
+  /// No description provided for @statusPhraseTired4.
+  ///
+  /// In zh, this message translates to:
+  /// **'只想躺着'**
+  String get statusPhraseTired4;
+
+  /// No description provided for @statusPhraseCalm1.
+  ///
+  /// In zh, this message translates to:
+  /// **'平静'**
+  String get statusPhraseCalm1;
+
+  /// No description provided for @statusPhraseCalm2.
+  ///
+  /// In zh, this message translates to:
+  /// **'安稳'**
+  String get statusPhraseCalm2;
+
+  /// No description provided for @statusPhraseCalm3.
+  ///
+  /// In zh, this message translates to:
+  /// **'淡淡的'**
+  String get statusPhraseCalm3;
+
+  /// No description provided for @statusPhraseCalm4.
+  ///
+  /// In zh, this message translates to:
+  /// **'没什么特别'**
+  String get statusPhraseCalm4;
+
+  /// No description provided for @statusPhrasePositive1.
+  ///
+  /// In zh, this message translates to:
+  /// **'被治愈了'**
+  String get statusPhrasePositive1;
+
+  /// No description provided for @statusPhrasePositive2.
+  ///
+  /// In zh, this message translates to:
+  /// **'心情不错'**
+  String get statusPhrasePositive2;
+
+  /// No description provided for @statusPhrasePositive3.
+  ///
+  /// In zh, this message translates to:
+  /// **'充满能量'**
+  String get statusPhrasePositive3;
+
+  /// No description provided for @statusPhrasePositive4.
+  ///
+  /// In zh, this message translates to:
+  /// **'有盼头'**
+  String get statusPhrasePositive4;
+
+  /// No description provided for @statusPhrasePositive5.
+  ///
+  /// In zh, this message translates to:
+  /// **'很快乐'**
+  String get statusPhrasePositive5;
+
+  /// No description provided for @moodReviewEncouragementEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'这周还没记录心情，从现在开始吧'**
+  String get moodReviewEncouragementEmpty;
+
+  /// No description provided for @moodReviewEncouragementLow.
+  ///
+  /// In zh, this message translates to:
+  /// **'最近有些辛苦，记得照顾自己'**
+  String get moodReviewEncouragementLow;
+
+  /// No description provided for @moodReviewEncouragementMid.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪有起伏，倾诉会好受些'**
+  String get moodReviewEncouragementMid;
+
+  /// No description provided for @moodReviewEncouragementHigh.
+  ///
+  /// In zh, this message translates to:
+  /// **'状态不错，继续保持'**
+  String get moodReviewEncouragementHigh;
+
+  /// No description provided for @moodReviewEncouragementNoAvg.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续记录，慢慢了解自己的情绪'**
+  String get moodReviewEncouragementNoAvg;
+
+  /// 1.1.0 round 7b: 导入摘要 - 药条数
+  ///
+  /// In zh, this message translates to:
+  /// **'{n} 药'**
+  String importSummaryMedication(int n);
+
+  /// 1.1.0 round 7b: 导入摘要 - 打卡条数
+  ///
+  /// In zh, this message translates to:
+  /// **'{n} 打卡'**
+  String importSummaryCheckIn(int n);
+
+  /// 1.1.0 round 7b: 导入摘要 - 报告条数
+  ///
+  /// In zh, this message translates to:
+  /// **'{n} 报告'**
+  String importSummaryReport(int n);
+
+  /// 1.1.0 round 7b: 导入摘要 - 情绪条数
+  ///
+  /// In zh, this message translates to:
+  /// **'{n} 情绪'**
+  String importSummaryMood(int n);
+
+  /// 1.1.0 round 7b: 导入摘要 - 树洞条数
+  ///
+  /// In zh, this message translates to:
+  /// **'{n} 树洞'**
+  String importSummaryVent(int n);
 }
 
 class _AppLocalizationsDelegate

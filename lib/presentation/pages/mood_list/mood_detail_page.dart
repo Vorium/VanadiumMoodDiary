@@ -12,6 +12,7 @@ import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/domain/entities/influence_category.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/presentation/services/influence_factor_l10n.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -124,13 +125,14 @@ class MoodDetailPage extends ConsumerWidget {
                               ),
                             ),
                             // v1.1.0 round 5d: 状态短语 — score 下的显著行
+                            // round 7b: 显示层走 ARB 本地化
                             if (entry.statusPhrase != null)
                               Padding(
                                 padding: const EdgeInsets.only(
                                   top: AppTokens.spacingXxs,
                                 ),
                                 child: Text(
-                                  '“${entry.statusPhrase}”',
+                                  '“${localizedStatusPhrase(context, entry.statusPhrase!)}”',
                                   style: TextStyle(
                                     fontSize: AppTokens.fontSizeBody,
                                     fontWeight: FontWeight.w500,

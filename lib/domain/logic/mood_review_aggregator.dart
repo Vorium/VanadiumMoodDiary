@@ -5,6 +5,12 @@
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 
+/// 鼓励文案分档 (1.1.0 round 7b)
+///
+/// domain 层只产 tier (0 中文文案), 显示层按 locale 走
+/// `localizedEncouragement` (lib/l10n/preset_content_l10n.dart) 拿 ARB 文案。
+enum MoodReviewEncouragementTier { empty, low, mid, high, noAvg }
+
 /// 周/月情绪摘要
 class MoodReviewSummary {
   final int entriesCount;
@@ -20,8 +26,8 @@ class MoodReviewSummary {
   final Map<String, int> periodCounts;
   final int cbtCount;
 
-  /// 鼓励文案 (按均分分档)
-  final String encouragement;
+  /// 鼓励文案分档 (按均分分档, 显示层按 tier 本地化)
+  final MoodReviewEncouragementTier encouragement;
 
   const MoodReviewSummary({
     required this.entriesCount,
@@ -34,7 +40,7 @@ class MoodReviewSummary {
     this.topInfluenceFactors = const [],
     this.periodCounts = const {},
     this.cbtCount = 0,
-    this.encouragement = '',
+    this.encouragement = MoodReviewEncouragementTier.noAvg,
   });
 }
 
@@ -45,7 +51,8 @@ List<MoodEntryEntity> filterByRange(
   DateTime endInclusive,
 ) {
   return entries
-      .where((e) => !e.timestamp.isBefore(start) && !e.timestamp.isAfter(endInclusive))
+      .where((e) =>
+          !e.timestamp.isBefore(start) && !e.timestamp.isAfter(endInclusive))
       .toList(growable: false);
 }
 
@@ -69,12 +76,12 @@ List<String> _topN(List<String> values, int n) {
   return sorted.take(n).map((e) => e.key).toList(growable: false);
 }
 
-String _encouragement(double? avgScore, int entriesCount) {
-  if (entriesCount == 0) return '这周还没记录心情，从现在开始吧';
-  if (avgScore == null) return '继续记录，慢慢了解自己的情绪';
-  if (avgScore < 2.5) return '最近有些辛苦，记得照顾自己';
-  if (avgScore < 3.5) return '情绪有起伏，倾诉会好受些';
-  return '状态不错，继续保持';
+MoodReviewEncouragementTier _encouragement(double? avgScore, int entriesCount) {
+  if (entriesCount == 0) return MoodReviewEncouragementTier.empty;
+  if (avgScore == null) return MoodReviewEncouragementTier.noAvg;
+  if (avgScore < 2.5) return MoodReviewEncouragementTier.low;
+  if (avgScore < 3.5) return MoodReviewEncouragementTier.mid;
+  return MoodReviewEncouragementTier.high;
 }
 
 MoodReviewSummary summarize(
@@ -91,7 +98,8 @@ MoodReviewSummary summarize(
     for (final e in current) ...JsonCodec.decodeStringList(e.tagsJson),
   ];
   final allFactors = <String>[
-    for (final e in current) ...JsonCodec.decodeStringList(e.influenceFactorsJson),
+    for (final e in current)
+      ...JsonCodec.decodeStringList(e.influenceFactorsJson),
   ];
   final periodCounts = <String, int>{};
   for (final e in current) {
@@ -99,15 +107,17 @@ MoodReviewSummary summarize(
     if (p == null || p == 'unspecified') continue;
     periodCounts[p] = (periodCounts[p] ?? 0) + 1;
   }
-  final cbtCount = current.where((e) =>
-      e.situation != null ||
-      e.automaticThought != null ||
-      e.evidenceFor != null ||
-      e.evidenceAgainst != null ||
-      e.alternativeThought != null ||
-      e.reratedScore != null ||
-      e.coreBelief != null ||
-      e.behaviorResponse != null).length;
+  final cbtCount = current
+      .where((e) =>
+          e.situation != null ||
+          e.automaticThought != null ||
+          e.evidenceFor != null ||
+          e.evidenceAgainst != null ||
+          e.alternativeThought != null ||
+          e.reratedScore != null ||
+          e.coreBelief != null ||
+          e.behaviorResponse != null)
+      .length;
 
   return MoodReviewSummary(
     entriesCount: current.length,

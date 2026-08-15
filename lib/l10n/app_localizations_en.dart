@@ -4161,4 +4161,123 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeTodayMetrics => 'Today';
+
+  @override
+  String get ventTagFamily => 'Family';
+
+  @override
+  String get ventTagWork => 'Work';
+
+  @override
+  String get ventTagStudy => 'Study';
+
+  @override
+  String get ventTagRelationship => 'Relationship';
+
+  @override
+  String get ventTagFriends => 'Friends';
+
+  @override
+  String get ventTagHealth => 'Health';
+
+  @override
+  String get ventTagMood => 'Mood';
+
+  @override
+  String get ventTagOther => 'Other';
+
+  @override
+  String get statusPhraseLow1 => 'A little sad';
+
+  @override
+  String get statusPhraseLow2 => 'Feeling really down';
+
+  @override
+  String get statusPhraseLow3 => 'Feel like crying';
+
+  @override
+  String get statusPhraseLow4 => 'No energy';
+
+  @override
+  String get statusPhraseTired1 => 'Tired but calm';
+
+  @override
+  String get statusPhraseTired2 => 'So tired';
+
+  @override
+  String get statusPhraseTired3 => 'Drained';
+
+  @override
+  String get statusPhraseTired4 => 'Just want to lie down';
+
+  @override
+  String get statusPhraseCalm1 => 'Calm';
+
+  @override
+  String get statusPhraseCalm2 => 'At ease';
+
+  @override
+  String get statusPhraseCalm3 => 'Mellow';
+
+  @override
+  String get statusPhraseCalm4 => 'Nothing special';
+
+  @override
+  String get statusPhrasePositive1 => 'Feeling healed';
+
+  @override
+  String get statusPhrasePositive2 => 'Feeling good';
+
+  @override
+  String get statusPhrasePositive3 => 'Full of energy';
+
+  @override
+  String get statusPhrasePositive4 => 'Hopeful';
+
+  @override
+  String get statusPhrasePositive5 => 'Very happy';
+
+  @override
+  String get moodReviewEncouragementEmpty =>
+      'Haven\'t recorded your mood this week — start now';
+
+  @override
+  String get moodReviewEncouragementLow =>
+      'It\'s been a rough time — take care of yourself';
+
+  @override
+  String get moodReviewEncouragementMid =>
+      'Moods have been up and down — venting may help';
+
+  @override
+  String get moodReviewEncouragementHigh => 'You\'re doing well — keep it up';
+
+  @override
+  String get moodReviewEncouragementNoAvg =>
+      'Keep logging to better understand your emotions';
+
+  @override
+  String importSummaryMedication(int n) {
+    return '$n medications';
+  }
+
+  @override
+  String importSummaryCheckIn(int n) {
+    return '$n check-ins';
+  }
+
+  @override
+  String importSummaryReport(int n) {
+    return '$n reports';
+  }
+
+  @override
+  String importSummaryMood(int n) {
+    return '$n moods';
+  }
+
+  @override
+  String importSummaryVent(int n) {
+    return '$n vents';
+  }
 }

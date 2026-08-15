@@ -18,12 +18,58 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/services/data_export_service.dart';
+import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
+
+/// 1.1.0 round 7b (P1 i18n): 本地构建导入摘要
+///
+/// service 层 (ImportResult.summary) 保持 canonical 中文 fallback 不动
+/// (数据导出 JSON 里不带摘要, 只有 UI 显示; 但仍留 canonical 兼容老 caller),
+/// 显示层用计数字段 + ARB (importSummary* 带 {n}) 按 locale 拼接。
+/// Strings.importSummaryXxx({override}) 走 R57 先例: override 非 null 时
+/// 优先 ARB 值。
+String _localizedImportSummary(AppLocalizations l10n, ImportResult r) {
+  final parts = <String>[
+    Strings.importSummaryMedication(
+      r.medicationCount,
+      override: l10n.importSummaryMedication(r.medicationCount),
+    ),
+    Strings.importSummaryCheckIn(
+      r.checkInCount,
+      override: l10n.importSummaryCheckIn(r.checkInCount),
+    ),
+  ];
+  if (r.reportHistoryCount > 0) {
+    parts.add(
+      Strings.importSummaryReport(
+        r.reportHistoryCount,
+        override: l10n.importSummaryReport(r.reportHistoryCount),
+      ),
+    );
+  }
+  if (r.moodEntryCount > 0) {
+    parts.add(
+      Strings.importSummaryMood(
+        r.moodEntryCount,
+        override: l10n.importSummaryMood(r.moodEntryCount),
+      ),
+    );
+  }
+  if (r.ventEntryCount > 0) {
+    parts.add(
+      Strings.importSummaryVent(
+        r.ventEntryCount,
+        override: l10n.importSummaryVent(r.ventEntryCount),
+      ),
+    );
+  }
+  return parts.join(' / ');
+}
 
 /// 数据导入 tile (JSON 导入 + 风险告知)
 ///
@@ -162,11 +208,13 @@ class _ImportDialogState extends State<ImportDialog> {
             if (!context.mounted) return;
             if (result.success) {
               Navigator.pop(context);
+              // 1.1.0 round 7b (P1 i18n): 不再直接显示 service 层的
+              // canonical 中文 summary (result.summary), 改用计数字段 +
+              // AppLocalizations 本地构建 (en 用户不再看到 "N 药" 中文)
+              final l10n = AppLocalizations.of(context);
+              final summary = _localizedImportSummary(l10n, result);
               AppSnackBar.showInfo(
-                context,
-                AppLocalizations.of(context)
-                    .settingsImportSuccess(result.summary),
-              );
+                  context, l10n.settingsImportSuccess(summary));
             } else {
               setState(() => _importing = false);
               // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器

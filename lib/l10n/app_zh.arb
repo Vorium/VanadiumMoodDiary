@@ -3130,5 +3130,80 @@
   },
   "@medFormLiquid": {
     "description": "v0.30 R101: 劑型 - 口服液"
+  },
+  "ventTagFamily": "家庭",
+  "ventTagWork": "工作",
+  "ventTagStudy": "学业",
+  "ventTagRelationship": "亲密关系",
+  "ventTagFriends": "朋友",
+  "ventTagHealth": "身体",
+  "ventTagMood": "情绪",
+  "ventTagOther": "其他",
+  "statusPhraseLow1": "有点难过",
+  "statusPhraseLow2": "心情很低落",
+  "statusPhraseLow3": "想哭",
+  "statusPhraseLow4": "提不起劲",
+  "statusPhraseTired1": "疲惫但平静",
+  "statusPhraseTired2": "好累",
+  "statusPhraseTired3": "身体被掏空",
+  "statusPhraseTired4": "只想躺着",
+  "statusPhraseCalm1": "平静",
+  "statusPhraseCalm2": "安稳",
+  "statusPhraseCalm3": "淡淡的",
+  "statusPhraseCalm4": "没什么特别",
+  "statusPhrasePositive1": "被治愈了",
+  "statusPhrasePositive2": "心情不错",
+  "statusPhrasePositive3": "充满能量",
+  "statusPhrasePositive4": "有盼头",
+  "statusPhrasePositive5": "很快乐",
+  "moodReviewEncouragementEmpty": "这周还没记录心情，从现在开始吧",
+  "moodReviewEncouragementLow": "最近有些辛苦，记得照顾自己",
+  "moodReviewEncouragementMid": "情绪有起伏，倾诉会好受些",
+  "moodReviewEncouragementHigh": "状态不错，继续保持",
+  "moodReviewEncouragementNoAvg": "继续记录，慢慢了解自己的情绪",
+  "importSummaryMedication": "{n} 药",
+  "@importSummaryMedication": {
+    "description": "1.1.0 round 7b: 导入摘要 - 药条数",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "importSummaryCheckIn": "{n} 打卡",
+  "@importSummaryCheckIn": {
+    "description": "1.1.0 round 7b: 导入摘要 - 打卡条数",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "importSummaryReport": "{n} 报告",
+  "@importSummaryReport": {
+    "description": "1.1.0 round 7b: 导入摘要 - 报告条数",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "importSummaryMood": "{n} 情绪",
+  "@importSummaryMood": {
+    "description": "1.1.0 round 7b: 导入摘要 - 情绪条数",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "importSummaryVent": "{n} 树洞",
+  "@importSummaryVent": {
+    "description": "1.1.0 round 7b: 导入摘要 - 树洞条数",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -3984,6 +3984,121 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeTodayMetrics => '今日指标';
+
+  @override
+  String get ventTagFamily => '家庭';
+
+  @override
+  String get ventTagWork => '工作';
+
+  @override
+  String get ventTagStudy => '学业';
+
+  @override
+  String get ventTagRelationship => '亲密关系';
+
+  @override
+  String get ventTagFriends => '朋友';
+
+  @override
+  String get ventTagHealth => '身体';
+
+  @override
+  String get ventTagMood => '情绪';
+
+  @override
+  String get ventTagOther => '其他';
+
+  @override
+  String get statusPhraseLow1 => '有点难过';
+
+  @override
+  String get statusPhraseLow2 => '心情很低落';
+
+  @override
+  String get statusPhraseLow3 => '想哭';
+
+  @override
+  String get statusPhraseLow4 => '提不起劲';
+
+  @override
+  String get statusPhraseTired1 => '疲惫但平静';
+
+  @override
+  String get statusPhraseTired2 => '好累';
+
+  @override
+  String get statusPhraseTired3 => '身体被掏空';
+
+  @override
+  String get statusPhraseTired4 => '只想躺着';
+
+  @override
+  String get statusPhraseCalm1 => '平静';
+
+  @override
+  String get statusPhraseCalm2 => '安稳';
+
+  @override
+  String get statusPhraseCalm3 => '淡淡的';
+
+  @override
+  String get statusPhraseCalm4 => '没什么特别';
+
+  @override
+  String get statusPhrasePositive1 => '被治愈了';
+
+  @override
+  String get statusPhrasePositive2 => '心情不错';
+
+  @override
+  String get statusPhrasePositive3 => '充满能量';
+
+  @override
+  String get statusPhrasePositive4 => '有盼头';
+
+  @override
+  String get statusPhrasePositive5 => '很快乐';
+
+  @override
+  String get moodReviewEncouragementEmpty => '这周还没记录心情，从现在开始吧';
+
+  @override
+  String get moodReviewEncouragementLow => '最近有些辛苦，记得照顾自己';
+
+  @override
+  String get moodReviewEncouragementMid => '情绪有起伏，倾诉会好受些';
+
+  @override
+  String get moodReviewEncouragementHigh => '状态不错，继续保持';
+
+  @override
+  String get moodReviewEncouragementNoAvg => '继续记录，慢慢了解自己的情绪';
+
+  @override
+  String importSummaryMedication(int n) {
+    return '$n 药';
+  }
+
+  @override
+  String importSummaryCheckIn(int n) {
+    return '$n 打卡';
+  }
+
+  @override
+  String importSummaryReport(int n) {
+    return '$n 报告';
+  }
+
+  @override
+  String importSummaryMood(int n) {
+    return '$n 情绪';
+  }
+
+  @override
+  String importSummaryVent(int n) {
+    return '$n 树洞';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -7966,4 +8081,119 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeTodayMetrics => '今日指標';
+
+  @override
+  String get ventTagFamily => '家庭';
+
+  @override
+  String get ventTagWork => '工作';
+
+  @override
+  String get ventTagStudy => '學業';
+
+  @override
+  String get ventTagRelationship => '親密關係';
+
+  @override
+  String get ventTagFriends => '朋友';
+
+  @override
+  String get ventTagHealth => '身體';
+
+  @override
+  String get ventTagMood => '情緒';
+
+  @override
+  String get ventTagOther => '其他';
+
+  @override
+  String get statusPhraseLow1 => '有點難過';
+
+  @override
+  String get statusPhraseLow2 => '心情很低落';
+
+  @override
+  String get statusPhraseLow3 => '想哭';
+
+  @override
+  String get statusPhraseLow4 => '提不起勁';
+
+  @override
+  String get statusPhraseTired1 => '疲憊但平靜';
+
+  @override
+  String get statusPhraseTired2 => '好累';
+
+  @override
+  String get statusPhraseTired3 => '身體被掏空';
+
+  @override
+  String get statusPhraseTired4 => '只想躺著';
+
+  @override
+  String get statusPhraseCalm1 => '平靜';
+
+  @override
+  String get statusPhraseCalm2 => '安穩';
+
+  @override
+  String get statusPhraseCalm3 => '淡淡的';
+
+  @override
+  String get statusPhraseCalm4 => '沒什麼特別';
+
+  @override
+  String get statusPhrasePositive1 => '被治癒了';
+
+  @override
+  String get statusPhrasePositive2 => '心情不錯';
+
+  @override
+  String get statusPhrasePositive3 => '充滿能量';
+
+  @override
+  String get statusPhrasePositive4 => '有盼頭';
+
+  @override
+  String get statusPhrasePositive5 => '很快樂';
+
+  @override
+  String get moodReviewEncouragementEmpty => '這周還沒記錄心情，從現在開始吧';
+
+  @override
+  String get moodReviewEncouragementLow => '最近有些辛苦，記得照顧自己';
+
+  @override
+  String get moodReviewEncouragementMid => '情緒有起伏，傾訴會好受些';
+
+  @override
+  String get moodReviewEncouragementHigh => '狀態不錯，繼續保持';
+
+  @override
+  String get moodReviewEncouragementNoAvg => '繼續記錄，慢慢了解自己的情緒';
+
+  @override
+  String importSummaryMedication(int n) {
+    return '$n 藥';
+  }
+
+  @override
+  String importSummaryCheckIn(int n) {
+    return '$n 打卡';
+  }
+
+  @override
+  String importSummaryReport(int n) {
+    return '$n 報告';
+  }
+
+  @override
+  String importSummaryMood(int n) {
+    return '$n 情緒';
+  }
+
+  @override
+  String importSummaryVent(int n) {
+    return '$n 樹洞';
+  }
 }

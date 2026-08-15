@@ -5,7 +5,7 @@
 // - SegmentedButton 周/月 切换 (月度窗口 = 本月 1 日 ~ now)
 // - AppleListSection 分组: 记录天数/均分/delta → 高频标签 → 高频影响因素
 //   → 心境时段 → CBT 记录数
-// - footer: domain 层鼓励文案 (按均分分档, 空数据也有空态文案)
+// - footer: 鼓励文案 (domain 层产 tier, 显示层 localizedEncouragement 走 ARB)
 // - loading: LoadingSkeleton.fullScreen
 //
 // 取数: ref.watch(allMoodProvider) (shared_providers.dart, StreamProvider
@@ -23,6 +23,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
 import 'package:chroniccare/domain/logic/mood_review_aggregator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -92,9 +93,8 @@ class _MoodReviewPageState extends ConsumerState<MoodReviewPage> {
       child: entriesAsync.when(
         data: (entries) {
           final now = widget.now ?? DateTime.now();
-          final start = _monthly
-              ? DateTime(now.year, now.month, 1)
-              : _weekStart(now);
+          final start =
+              _monthly ? DateTime(now.year, now.month, 1) : _weekStart(now);
           final prevStart = _monthly
               ? DateTime(now.year, now.month - 1, 1)
               : _weekStart(now).subtract(const Duration(days: 7));
@@ -205,7 +205,7 @@ class _MoodReviewPageState extends ConsumerState<MoodReviewPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  s.encouragement,
+                  localizedEncouragement(context, s.encouragement),
                   textAlign: TextAlign.center,
                   style: AppTokens.textStyleCaption(context),
                 ),

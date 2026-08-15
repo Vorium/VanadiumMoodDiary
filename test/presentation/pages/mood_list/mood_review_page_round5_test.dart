@@ -129,12 +129,11 @@ void main() {
       await tester.pumpWidget(wrap());
       await tester.pumpAndSettle();
 
-      // domain 层空态鼓励文案 (mood_review_aggregator._encouragement)
+      // round 7b: domain 层产 tier, footer 走 localizedEncouragement → zh ARB
       expect(find.text('这周还没记录心情，从现在开始吧'), findsOneWidget);
     });
 
-    testWidgets('7. 时段分组显示本地化标签 (复用 mood_detail 时段 l10n)',
-        (tester) async {
+    testWidgets('7. 时段分组显示本地化标签 (复用 mood_detail 时段 l10n)', (tester) async {
       // 本周 2 条带时段: morning + night (全部落在周窗口 08-10 ~ 08-15)
       final entries = [
         MoodEntryEntity(

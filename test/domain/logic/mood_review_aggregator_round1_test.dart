@@ -56,7 +56,7 @@ void main() {
       expect(s.scoreDelta, isNull);
       expect(s.topTags, isEmpty);
       expect(s.cbtCount, 0);
-      expect(s.encouragement, contains('记录'));
+      expect(s.encouragement, MoodReviewEncouragementTier.empty);
     });
 
     test('单条: 均分 = 该条分数, delta null', () {
@@ -70,7 +70,12 @@ void main() {
       final s = summarize(
         [
           _e(id: 1, ts: start, score: 2, energy: 2),
-          _e(id: 2, ts: start.add(const Duration(hours: 1)), score: 4, energy: 4, sleep: 5),
+          _e(
+              id: 2,
+              ts: start.add(const Duration(hours: 1)),
+              score: 4,
+              energy: 4,
+              sleep: 5),
         ],
         const [],
       );
@@ -84,8 +89,14 @@ void main() {
       final s = summarize(
         [
           _e(id: 1, ts: start, tagsJson: '["焦虑","失眠"]'),
-          _e(id: 2, ts: start.add(const Duration(hours: 1)), tagsJson: '["焦虑","平静"]'),
-          _e(id: 3, ts: start.add(const Duration(hours: 2)), tagsJson: '["焦虑","失眠","易怒","低落","疲惫"]'),
+          _e(
+              id: 2,
+              ts: start.add(const Duration(hours: 1)),
+              tagsJson: '["焦虑","平静"]'),
+          _e(
+              id: 3,
+              ts: start.add(const Duration(hours: 2)),
+              tagsJson: '["焦虑","失眠","易怒","低落","疲惫"]'),
         ],
         const [],
       );
@@ -96,7 +107,10 @@ void main() {
       final entries = [
         _e(id: 1, ts: start, tagsJson: '["b"]'),
         _e(id: 2, ts: start.add(const Duration(hours: 1)), tagsJson: '["a"]'),
-        _e(id: 3, ts: start.add(const Duration(hours: 2)), tagsJson: '["a","b"]'),
+        _e(
+            id: 3,
+            ts: start.add(const Duration(hours: 2)),
+            tagsJson: '["a","b"]'),
       ];
       // a=2, b=2 同频次 → 字典序 ['a', 'b'], 每次调用结果一致 (sort 不稳定不炸)
       final s1 = summarize(entries, const []);
@@ -109,7 +123,10 @@ void main() {
       final s = summarize(
         [
           _e(id: 1, ts: start, influenceFactorsJson: '["工作压力"]'),
-          _e(id: 2, ts: start.add(const Duration(hours: 1)), influenceFactorsJson: '["工作压力","睡眠不足"]'),
+          _e(
+              id: 2,
+              ts: start.add(const Duration(hours: 1)),
+              influenceFactorsJson: '["工作压力","睡眠不足"]'),
         ],
         const [],
       );
@@ -164,13 +181,13 @@ void main() {
       expect(s.scoreDelta, isNull);
     });
 
-    test('鼓励文案分档: 低/中/高', () {
+    test('鼓励文案分档: 低/中/高 (1.1.0 round 7b: String → tier)', () {
       final low = summarize([_e(id: 1, ts: start, score: 2)], const []);
-      expect(low.encouragement, contains('照顾自己'));
+      expect(low.encouragement, MoodReviewEncouragementTier.low);
       final mid = summarize([_e(id: 2, ts: start, score: 3)], const []);
-      expect(mid.encouragement, contains('倾诉'));
+      expect(mid.encouragement, MoodReviewEncouragementTier.mid);
       final high = summarize([_e(id: 3, ts: start, score: 4)], const []);
-      expect(high.encouragement, contains('保持'));
+      expect(high.encouragement, MoodReviewEncouragementTier.high);
     });
 
     test('本月跨日多条: entriesCount 正确', () {

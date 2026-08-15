@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/logic/vent_tag_library.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/l10n/preset_content_l10n.dart';
 
 /// 树洞标签多选（预置 chips + 自定义输入）
 class VentTagPicker extends StatefulWidget {
   final Set<String> selected;
   final ValueChanged<Set<String>> onChanged;
-  const VentTagPicker({super.key, required this.selected, required this.onChanged});
+  const VentTagPicker(
+      {super.key, required this.selected, required this.onChanged});
 
   @override
   State<VentTagPicker> createState() => _VentTagPickerState();
@@ -46,7 +48,8 @@ class _VentTagPickerState extends State<VentTagPicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.ventTagSectionTitle, style: AppTokens.textStyleLabelStrong(context)),
+        Text(l10n.ventTagSectionTitle,
+            style: AppTokens.textStyleLabelStrong(context)),
         const SizedBox(height: AppTokens.spacingXs),
         Wrap(
           spacing: AppTokens.spacingXs,
@@ -54,7 +57,7 @@ class _VentTagPickerState extends State<VentTagPicker> {
           children: [
             for (final tag in allTags)
               FilterChip(
-                label: Text(tag),
+                label: Text(localizedVentTag(context, tag)),
                 selected: widget.selected.contains(tag),
                 onSelected: (_) => _toggle(tag),
               ),
