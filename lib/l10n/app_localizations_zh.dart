@@ -917,7 +917,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodStatusPhraseTitle => '状态短语';
 
   @override
-  String get moodStatusPhraseHint => '或输入一句此刻的心情…';
+  String get moodStatusPhraseHint => '或输入一句此刻的心情……';
 
   @override
   String get moodStatusPhraseShowAll => '全部';
@@ -4896,7 +4896,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodStatusPhraseTitle => '狀態短語';
 
   @override
-  String get moodStatusPhraseHint => '或輸入一句此刻的心情…';
+  String get moodStatusPhraseHint => '或輸入一句此刻的心情……';
 
   @override
   String get moodStatusPhraseShowAll => '全部';

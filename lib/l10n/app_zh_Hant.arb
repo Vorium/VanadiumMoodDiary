@@ -515,7 +515,7 @@
   "moodNoteLabel": "備註（可選）",
   "moodNoteHint": "今天發生什麼？",
   "moodStatusPhraseTitle": "狀態短語",
-  "moodStatusPhraseHint": "或輸入一句此刻的心情…",
+  "moodStatusPhraseHint": "或輸入一句此刻的心情……",
   "moodStatusPhraseShowAll": "全部",
   "moodAudioRecordButton": "錄語音",
   "moodAudioRecorded": "已錄 {duration}",

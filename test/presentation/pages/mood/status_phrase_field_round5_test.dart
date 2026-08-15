@@ -121,7 +121,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final field = find.byWidgetPredicate(
-      (w) => w is TextField && w.decoration?.hintText == '或输入一句此刻的心情…',
+      (w) => w is TextField && w.decoration?.hintText == '或输入一句此刻的心情……',
     );
     expect(field, findsOneWidget);
     await tester.enterText(field, '  自定义一句  ');
@@ -138,7 +138,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final field = find.byWidgetPredicate(
-      (w) => w is TextField && w.decoration?.hintText == '或输入一句此刻的心情…',
+      (w) => w is TextField && w.decoration?.hintText == '或输入一句此刻的心情……',
     );
     await tester.enterText(field, '自定义一句');
     await tester.testTextInput.receiveAction(TextInputAction.done);

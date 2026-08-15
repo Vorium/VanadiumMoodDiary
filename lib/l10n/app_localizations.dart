@@ -1740,7 +1740,7 @@ abstract class AppLocalizations {
   /// No description provided for @moodStatusPhraseHint.
   ///
   /// In zh, this message translates to:
-  /// **'或输入一句此刻的心情…'**
+  /// **'或输入一句此刻的心情……'**
   String get moodStatusPhraseHint;
 
   /// No description provided for @moodStatusPhraseShowAll.

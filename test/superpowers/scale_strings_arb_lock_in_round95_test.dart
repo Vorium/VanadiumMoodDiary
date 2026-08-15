@@ -801,7 +801,7 @@ void main() {
       expect(hant, 2, reason: 'zh_Hant.arb 应有 2 notifChannel* key');
     });
 
-    test('3 语 total = 1228 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1220 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -855,14 +855,23 @@ void main() {
       // 1.1.0 round 5c (Task 13 树洞标签): +4 (ventTagSectionTitle /
       //   ventTagCustomHint / ventTagFilterAll / ventTagFilterEmpty)
       //   → 1202 → 1206
+      // 1.1.0 round 5d (Task 14 状态短语): +3 (moodStatusPhraseTitle /
+      //   moodStatusPhraseHint / moodStatusPhraseShowAll)
+      //   → 1206 → 1209
+      // 1.1.0 round 5e (Task 15 情绪回顾页): +11 (moodReviewTitle /
+      //   moodReviewWeek / moodReviewMonth / moodReviewRecordedDays /
+      //   moodReviewAvgMood / moodReviewVsPrev / moodReviewNoPrev /
+      //   moodReviewTopTags / moodReviewTopFactors / moodReviewTimeOfDay /
+      //   moodReviewCbtCount) → 1209 → 1220
+      // 1.1.0 round 6c (Task 17 终验修复): lock-in 基线补齐 1206 → 1220
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1206, reason: 'zh.arb 应有 1206 key');
-      expect(en, 1206, reason: 'en.arb 应有 1206 key');
-      expect(hant, 1206, reason: 'zh_Hant.arb 应有 1206 key');
+      expect(zh, 1220, reason: 'zh.arb 应有 1220 key');
+      expect(en, 1220, reason: 'en.arb 应有 1220 key');
+      expect(hant, 1220, reason: 'zh_Hant.arb 应有 1220 key');
     });
   });
 
