@@ -84,9 +84,10 @@ void main() {
     test('case 4: 改无动画的 widget 名字仍出现 (无回归)', () {
       // R108 修后, 这些 widget 不再 wrap FadeIn (Duration.zero):
       // - EncouragementText
-      // - QuickMoodCarousel
       // - PrimaryActionRow
-      // - SecondaryActionRow
+      //
+      // 1.1.0 round 5b (Task 12): QuickMoodCarousel / SecondaryActionRow 删除,
+      // 替换为 MoodHeroCard / VentHeroCard (双主卡, Duration.zero 无动画)。
       //
       // v0.31 R9a 改造: 删 TodayMedSchedule (Apple Health 仪表盘无"今日服药计划"
       // 章节, 改在 /medication 子页查看), 不再要求 build 树含 TodayMedSchedule。
@@ -95,9 +96,10 @@ void main() {
       // FadeIn (R108 保留 stagger 容器)。
       for (final widgetName in [
         'EncouragementText',
-        'QuickMoodCarousel',
         'PrimaryActionRow',
-        'SecondaryActionRow',
+        // 1.1.0 round 5b 双主卡替代被删 widget
+        'MoodHeroCard',
+        'VentHeroCard',
         // v0.31 R9a 新增 4 widget 必出现
         'CheckInButton',
         'HomeHeader',

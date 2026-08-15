@@ -83,9 +83,10 @@ void main() {
       reason: 'homeFabTop 不依赖 emergencyContactEnabled, 始终保留',
     );
 
-    // 其他 FAB 渲染: 日常追踪 / 心情树洞 / 回到顶端
+    // 其他 FAB 渲染: 日常追踪 / 树洞 / 回到顶端
+    // 1.1.0 round 5b: homeFabVent zh 值 "心情树洞" → "树洞" (跟 navVent 一致)
     expect(find.text('日常追踪'), findsOneWidget);
-    expect(find.text('心情树洞'), findsOneWidget);
+    expect(find.text('树洞'), findsOneWidget);
   });
 
   testWidgets('R93 case 2: emergencyContactEnabled=true → homeFabHotline 渲染',

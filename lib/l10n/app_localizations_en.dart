@@ -2293,10 +2293,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gad7ShortDescription => 'Anxiety screening over the last 2 weeks';
 
   @override
-  String get homeQuickMoodTitle => 'How are you today?';
+  String get homeFabVent => 'Mood vent';
 
   @override
-  String get homeFabVent => 'Mood vent';
+  String get homeMoodHeroTitle => 'Today\'s Mood';
+
+  @override
+  String get homeMoodHeroRecord => 'Log mood';
+
+  @override
+  String get homeMoodHeroReview => 'Review';
+
+  @override
+  String get homeMoodHeroNoData => 'No mood logged yet today';
+
+  @override
+  String homeMoodHeroLastRecorded(String time) {
+    return 'Last logged $time';
+  }
+
+  @override
+  String get homeVentHeroTitle => 'Vent';
+
+  @override
+  String get homeVentHeroWrite => 'Write';
+
+  @override
+  String get homeVentHeroNoData =>
+      'Nothing here yet. Write your first thought.';
+
+  @override
+  String get homeActionMedication => 'Meds';
+
+  @override
+  String get homeActionAssessment => 'Scales';
+
+  @override
+  String get homeActionMoodReview => 'Mood review';
+
+  @override
+  String get homeActionDailyTracking => 'Daily tracking';
 
   @override
   String get homeFabHotline => 'Hotline';
@@ -4058,53 +4094,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medTodayRefill => 'Refill';
 
   @override
-  String get homeQuickMedLabel => 'Meds';
-
-  @override
-  String get homeQuickMoodLabel => 'Mood';
-
-  @override
-  String get homeQuickVentLabel => 'Vent';
-
-  @override
-  String get homeQuickAssessmentLabel => 'Assess';
-
-  @override
   String get homeQuickActionView => 'View';
 
   @override
   String get homeQuickActionRecord => 'Log';
 
   @override
-  String get homeQuickActionVent => 'Talk';
-
-  @override
   String get homeQuickActionStart => 'Start';
 
   @override
   String get homeTodayMetrics => 'Today';
-
-  @override
-  String get homeMoreMoodTitle => 'Mood';
-
-  @override
-  String get homeMoreMoodSubtitle => 'View past entries';
-
-  @override
-  String get homeMoreVentTitle => 'Vent';
-
-  @override
-  String get homeMoreVentSubtitle => 'Private space · 1 viewer';
-
-  @override
-  String get homeMoreSettingsTitle => 'Settings';
-
-  @override
-  String get homeMoreSettingsSubtitle => 'Reminders / Privacy / Data';
-
-  @override
-  String get moodQuickRecordFailed => 'Record failed, please retry';
-
-  @override
-  String get homeMoreSectionTitle => 'More';
 }

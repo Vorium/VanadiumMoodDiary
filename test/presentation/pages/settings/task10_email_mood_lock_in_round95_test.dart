@@ -113,6 +113,9 @@ void main() {
       // R95 sub-spec 6 task 6a fix: R95 sub-spec 4 task 5 拆 home_page → 主壳
       // + home_page_state, MoodRecorderPage.show() 2 caller 都在
       // home_page_state.dart, 主壳 home_page.dart 不再含业务调用
+      //
+      // 1.1.0 round 5b (Task 12): QuickMoodCarousel / SecondaryActionRow 删除,
+      // 2 caller 移到 MoodHeroCard (widgets/mood_hero_card.dart 记录/回顾入口)
       final homePageSource = File(
         'lib/presentation/pages/home/home_page.dart',
       ).readAsStringSync();
@@ -126,21 +129,31 @@ void main() {
       final homePageStateSource = File(
         'lib/presentation/pages/home/home_page_state.dart',
       ).readAsStringSync();
-      // 应有 ≥ 2 处 MoodRecorderPage.show (R95 sub-spec 4 task 5 拆后)
-      // onOpenFullDialog + onMoodTap 2 caller 都在 home_page_state.dart
-      final matches =
-          'MoodRecorderPage.show('.allMatches(homePageStateSource).length;
-      expect(
-        matches,
-        greaterThanOrEqualTo(2),
-        reason: 'home_page_state.dart 应有 ≥ 2 处 MoodRecorderPage.show() '
-            '(onOpenFullDialog + onMoodTap 2 caller), 实际 $matches',
-      );
       // home_page_state.dart 也不应调 MoodDialog.show (薄壳已删)
       expect(
         homePageStateSource.contains('MoodDialog.show('),
         isFalse,
         reason: 'home_page_state.dart 也不应调 MoodDialog.show (薄壳已删)',
+      );
+
+      // 1.1.0 round 5b (Task 12): MoodRecorderPage.show() 2 caller
+      // (_empty + _loaded 记录入口) 在 MoodHeroCard
+      final moodHeroCardSource = File(
+        'lib/presentation/pages/home/widgets/mood_hero_card.dart',
+      ).readAsStringSync();
+      final matches =
+          'MoodRecorderPage.show('.allMatches(moodHeroCardSource).length;
+      expect(
+        matches,
+        greaterThanOrEqualTo(2),
+        reason: 'mood_hero_card.dart 应有 ≥ 2 处 MoodRecorderPage.show() '
+            '(空数据 + 有数据 2 记录入口), 实际 $matches',
+      );
+      // mood_hero_card.dart 也不应调 MoodDialog.show (薄壳已删)
+      expect(
+        moodHeroCardSource.contains('MoodDialog.show('),
+        isFalse,
+        reason: 'mood_hero_card.dart 也不应调 MoodDialog.show (薄壳已删)',
       );
     });
 

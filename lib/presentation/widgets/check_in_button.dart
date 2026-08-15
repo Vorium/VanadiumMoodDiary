@@ -56,12 +56,17 @@ class CheckInButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading;
 
+  /// 1.1.0 round 5b (Task 12): compact 变体 — 打卡从"巨型 pill 主 CTA"
+  /// 降级为普通按钮后使用 (height 48 / radius 24 / 字号 fontSizeButton 17)
+  final bool compact;
+
   const CheckInButton({
     super.key,
     required this.isChecked,
     required this.streakDays,
     required this.onPressed,
     this.isLoading = false,
+    this.compact = false,
   });
 
   @override
@@ -75,13 +80,18 @@ class CheckInButton extends StatelessWidget {
     // v0.31 R6: 字号 20 (pill 大按钮字, fontSizeButton 17 / fontSizeBody 15
     // 都不够 pill 视觉重量 → 硬编码 + 注释)
     const double pillFontSize = 20;
+    // 1.1.0 round 5b (Task 12): compact 降级尺寸 — 48/24/17 (按钮标准档,
+    // 全圆角保持药丸感)
+    final height = compact ? 48.0 : pillHeight;
+    final radius = compact ? 24.0 : pillRadius;
+    final fontSize = compact ? AppTokens.fontSizeButton : pillFontSize;
 
     final fg = AppTokens.fgOnPrimary(context);
     final fgMuted = AppTokens.fgOnPrimaryMuted(context);
 
     return SizedBox(
       width: double.infinity,
-      height: pillHeight,
+      height: height,
       child: _EntrySpring(
         child: PressFeedback(
           // v0.31 R6: PressFeedback 替换 InkWell, mode 1 (带 onTap) 处理
@@ -98,7 +108,7 @@ class CheckInButton extends StatelessWidget {
               color: isChecked
                   ? AppTokens.disabledColor(context)
                   : AppTokens.primaryColor(context),
-              borderRadius: BorderRadius.circular(pillRadius),
+              borderRadius: BorderRadius.circular(radius),
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -125,7 +135,7 @@ class CheckInButton extends StatelessWidget {
                     key: ValueKey<bool>(isChecked),
                     isChecked: isChecked,
                     streakDays: streakDays,
-                    fontSize: pillFontSize,
+                    fontSize: fontSize,
                     fg: fg,
                     fgMuted: fgMuted,
                   ),

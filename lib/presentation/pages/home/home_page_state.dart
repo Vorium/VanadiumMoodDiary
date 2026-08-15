@@ -60,12 +60,11 @@ import 'package:chroniccare/presentation/pages/home/widgets/encouragement_text.d
 import 'package:chroniccare/presentation/pages/home/widgets/home_fab_toolbar.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_footer.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/home_header.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/mood_hero_card.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/today_summary_card.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/notification_failure_banner.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/quick_mood_carousel.dart';
-import 'package:chroniccare/presentation/pages/home/widgets/secondary_action_row.dart';
-import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
+import 'package:chroniccare/presentation/pages/home/widgets/vent_hero_card.dart';
 import 'package:chroniccare/presentation/widgets/check_in_button.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart'
     show HomeLifecycleState, HomePage;
@@ -231,21 +230,28 @@ class HomePageState extends ConsumerState<HomePage> {
             // v0.31 R9a (Apple Health 仪表盘): build 整合
             //
             // 整体改 AppleListSection 包装各区块, 用 spacingMd 16 替代
-            // spacingLg 24, 简化 stagger (2 处: header delay 0 + summary delay 30),
-            // 移除 HeroIllustration (Apple Health 风格无大图, 用 section 列表代替).
+            // spacingLg 24, 简化 stagger (2 处: checkIn delay 1*step + summary
+            // delay 2*step), 移除 HeroIllustration (Apple Health 风格无大图,
+            // 用 section 列表代替).
             //
-            // 顺序 (跟 spec §5.1 1:1):
+            // 1.1.0 round 5b (Task 12): 双主卡重构 —
+            // QuickMoodCarousel / SecondaryActionRow 整删 (树洞/心情升格
+            // hero 卡), 插入 MoodHeroCard + VentHeroCard, CheckInButton 降级
+            // compact (打卡不再是最核心主 CTA), PrimaryActionRow 换血
+            // 用药/量表/情绪回顾/日常追踪。
+            //
+            // 顺序 (跟 task-12 brief 1:1):
             // 1. 通知失败 banner (顶部, 保留)
             // 2. HomeHeader (FadeIn delay 0)
-            // 3. CheckInButton (FadeIn delay 1*staggerStepMs=30ms)
-            // 4. AppleListSection("今日指标") + TodaySummaryCard (FadeIn delay 2*30=60ms)
-            // 5. AppleListSection("心情") + QuickMoodCarousel (Duration.zero)
-            // 6. AppleListSection("快捷操作") + PrimaryActionRow (Duration.zero)
-            // 7. AppleListSection("更多") + SecondaryActionRow (Duration.zero)
-            // 8. HomeFooter (Duration.zero)
-            // 9. EncouragementText (Duration.zero)
+            // 3. MoodHeroCard (Duration.zero)
+            // 4. VentHeroCard (Duration.zero)
+            // 5. CheckInButton compact (FadeIn delay 1*staggerStepMs=40ms)
+            // 6. AppleListSection("今日指标") + TodaySummaryCard (FadeIn delay 2*40=80ms)
+            // 7. AppleListSection("快捷操作") + PrimaryActionRow (Duration.zero)
+            // 8. EncouragementText (Duration.zero)
+            // 9. HomeFooter (Duration.zero)
             //
-            // stagger 累加最大 = 60ms (2 * staggerStepMs=30), 远低于前庭敏感
+            // stagger 累加最大 = 80ms (2 * staggerStepMs=40), 远低于前庭敏感
             // 阈值 250ms, 跟 R108 P0#5 决策一致 (home 100+/day 频度).
 
             // P17 fix: 通知失败 banner(一次性提示，可关闭)
@@ -259,7 +265,17 @@ class HomePageState extends ConsumerState<HomePage> {
 
             const SizedBox(height: AppTokens.spacingXs),
 
-            // 3: CheckInButton 巨型 pill 64pt (Apple Health 风格)
+            // 3: 情绪大卡 — 最新状态短语 + 记录/回顾入口
+            const MoodHeroCard(),
+
+            const SizedBox(height: AppTokens.spacingMd),
+
+            // 4: 树洞卡 — 最新倾诉 1 行预览 + 写心事入口
+            const VentHeroCard(),
+
+            const SizedBox(height: AppTokens.spacingMd),
+
+            // 5: CheckInButton 打卡降级 compact (48pt pill, 主 CTA 位让给双主卡)
             FadeIn(
               delay: const Duration(milliseconds: AppTokens.staggerStepMs),
               child: todayAsync.when(
@@ -267,18 +283,21 @@ class HomePageState extends ConsumerState<HomePage> {
                   isChecked: today != null,
                   streakDays: streakSnapshot.streak,
                   isLoading: isChecking,
+                  compact: true,
                   onPressed: () => _onCheckIn(streakSnapshot.streak),
                 ),
                 loading: () => const CheckInButton(
                   isChecked: false,
                   streakDays: 0,
                   isLoading: true,
+                  compact: true,
                   onPressed: _noop,
                 ),
                 error: (_, __) => const CheckInButton(
                   isChecked: false,
                   streakDays: 0,
                   isLoading: false,
+                  compact: true,
                   onPressed: _noop,
                 ),
               ),
@@ -286,7 +305,7 @@ class HomePageState extends ConsumerState<HomePage> {
 
             const SizedBox(height: AppTokens.spacingMd),
 
-            // 4: 今日指标 4 项 2x2 网格
+            // 6: 今日指标 4 项 2x2 网格
             const FadeIn(
               delay: Duration(milliseconds: 2 * AppTokens.staggerStepMs),
               child: TodaySummaryCard(),
@@ -294,26 +313,12 @@ class HomePageState extends ConsumerState<HomePage> {
 
             const SizedBox(height: AppTokens.spacingMd),
 
-            // 5: 心情 5 档圆形 button
-            QuickMoodCarousel(
-              onOpenFullDialog: () => context.push('/mood-list'),
-            ),
-
-            const SizedBox(height: AppTokens.spacingMd),
-
-            // 6: 快捷操作 2x2 彩色 tile 网格
+            // 7: 快捷操作 2x2 彩色 tile 网格 (用药/量表/情绪回顾/日常追踪)
             PrimaryActionRow(
               onMedicationTap: () => context.push('/medication'),
-              onMoodTap: () => MoodRecorderPage.show(context, ref),
-              onVentTap: () => context.push('/vent'),
               onAssessmentTap: () => context.push('/assessment-center'),
-            ),
-
-            const SizedBox(height: AppTokens.spacingMd),
-
-            // 7: 更多 4 项 icon-row cell
-            SecondaryActionRow(
-              onMoodTap: () => MoodRecorderPage.show(context, ref),
+              onMoodReviewTap: () => context.push('/mood-review'),
+              onDailyTrackingTap: () => context.push('/daily-tracking'),
             ),
 
             const SizedBox(height: AppTokens.spacingSm),

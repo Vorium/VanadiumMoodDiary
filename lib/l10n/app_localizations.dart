@@ -4013,17 +4013,83 @@ abstract class AppLocalizations {
   /// **'过去两周的焦虑倾向筛查'**
   String get gad7ShortDescription;
 
-  /// R81: 主頁快速記心情 carousel 標題 (B 站'記錄每日心情'風格）
-  ///
-  /// In zh, this message translates to:
-  /// **'今天感觉如何？'**
-  String get homeQuickMoodTitle;
-
   /// No description provided for @homeFabVent.
   ///
   /// In zh, this message translates to:
-  /// **'心情树洞'**
+  /// **'树洞'**
   String get homeFabVent;
+
+  /// No description provided for @homeMoodHeroTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日心情'**
+  String get homeMoodHeroTitle;
+
+  /// No description provided for @homeMoodHeroRecord.
+  ///
+  /// In zh, this message translates to:
+  /// **'记录心情'**
+  String get homeMoodHeroRecord;
+
+  /// No description provided for @homeMoodHeroReview.
+  ///
+  /// In zh, this message translates to:
+  /// **'回顾'**
+  String get homeMoodHeroReview;
+
+  /// No description provided for @homeMoodHeroNoData.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天还没记录心情'**
+  String get homeMoodHeroNoData;
+
+  /// 1.1.0 round 5b: 情绪大卡上次记录时间 (Task 12)
+  ///
+  /// In zh, this message translates to:
+  /// **'上次记录 {time}'**
+  String homeMoodHeroLastRecorded(String time);
+
+  /// No description provided for @homeVentHeroTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'树洞'**
+  String get homeVentHeroTitle;
+
+  /// No description provided for @homeVentHeroWrite.
+  ///
+  /// In zh, this message translates to:
+  /// **'写心事'**
+  String get homeVentHeroWrite;
+
+  /// No description provided for @homeVentHeroNoData.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有倾诉, 写第一条心事'**
+  String get homeVentHeroNoData;
+
+  /// No description provided for @homeActionMedication.
+  ///
+  /// In zh, this message translates to:
+  /// **'用药'**
+  String get homeActionMedication;
+
+  /// No description provided for @homeActionAssessment.
+  ///
+  /// In zh, this message translates to:
+  /// **'量表'**
+  String get homeActionAssessment;
+
+  /// No description provided for @homeActionMoodReview.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪回顾'**
+  String get homeActionMoodReview;
+
+  /// No description provided for @homeActionDailyTracking.
+  ///
+  /// In zh, this message translates to:
+  /// **'日常追踪'**
+  String get homeActionDailyTracking;
 
   /// No description provided for @homeFabHotline.
   ///
@@ -7224,30 +7290,6 @@ abstract class AppLocalizations {
   /// **'需续方'**
   String get medTodayRefill;
 
-  /// No description provided for @homeQuickMedLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'用药'**
-  String get homeQuickMedLabel;
-
-  /// No description provided for @homeQuickMoodLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'心情'**
-  String get homeQuickMoodLabel;
-
-  /// No description provided for @homeQuickVentLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'树洞'**
-  String get homeQuickVentLabel;
-
-  /// No description provided for @homeQuickAssessmentLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'评估'**
-  String get homeQuickAssessmentLabel;
-
   /// No description provided for @homeQuickActionView.
   ///
   /// In zh, this message translates to:
@@ -7260,12 +7302,6 @@ abstract class AppLocalizations {
   /// **'记录'**
   String get homeQuickActionRecord;
 
-  /// No description provided for @homeQuickActionVent.
-  ///
-  /// In zh, this message translates to:
-  /// **'倾诉'**
-  String get homeQuickActionVent;
-
   /// No description provided for @homeQuickActionStart.
   ///
   /// In zh, this message translates to:
@@ -7277,54 +7313,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'今日指标'**
   String get homeTodayMetrics;
-
-  /// No description provided for @homeMoreMoodTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'心情'**
-  String get homeMoreMoodTitle;
-
-  /// No description provided for @homeMoreMoodSubtitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'查看过往记录'**
-  String get homeMoreMoodSubtitle;
-
-  /// No description provided for @homeMoreVentTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'树洞'**
-  String get homeMoreVentTitle;
-
-  /// No description provided for @homeMoreVentSubtitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'私密空间 · 1 人可见'**
-  String get homeMoreVentSubtitle;
-
-  /// No description provided for @homeMoreSettingsTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'设置'**
-  String get homeMoreSettingsTitle;
-
-  /// No description provided for @homeMoreSettingsSubtitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'提醒 / 隐私 / 数据导出'**
-  String get homeMoreSettingsSubtitle;
-
-  /// No description provided for @moodQuickRecordFailed.
-  ///
-  /// In zh, this message translates to:
-  /// **'记录失败，请重试'**
-  String get moodQuickRecordFailed;
-
-  /// No description provided for @homeMoreSectionTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'更多'**
-  String get homeMoreSectionTitle;
 }
 
 class _AppLocalizationsDelegate

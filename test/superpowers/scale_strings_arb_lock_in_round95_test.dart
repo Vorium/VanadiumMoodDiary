@@ -846,14 +846,20 @@ void main() {
       //   notifChannelSafety 2 + safetyAlert* 5 + careCopy* 7;
       //   careCopyWeekPerfectBody 只存 Strings 不存 ARB)
       //   → 1228 → 1203
+      // 1.1.0 round 5 (导航 4 tab 等): +1 net → 1203 → 1204 (本批前基线)
+      // 1.1.0 round 5b (Task 12 首页双主卡): +12 new (homeMoodHero* 5 +
+      //   homeVentHero* 3 + homeAction* 4), QuickMoodCarousel /
+      //   SecondaryActionRow 删除连坐 −14 orphan (homeQuick* 6 +
+      //   homeMore* 7 + moodQuickRecordFailed 1)
+      //   → 1204 → 1202
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1203, reason: 'zh.arb 应有 1203 key');
-      expect(en, 1203, reason: 'en.arb 应有 1203 key');
-      expect(hant, 1203, reason: 'zh_Hant.arb 应有 1203 key');
+      expect(zh, 1202, reason: 'zh.arb 应有 1202 key');
+      expect(en, 1202, reason: 'en.arb 应有 1202 key');
+      expect(hant, 1202, reason: 'zh_Hant.arb 应有 1202 key');
     });
   });
 

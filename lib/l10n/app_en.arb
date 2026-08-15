@@ -1298,11 +1298,27 @@
   "gad7SeveritySummary3": "Severe anxiety",
   "gad7Instruction": "Over the last 2 weeks, how often have you been bothered by the following problems?",
   "gad7ShortDescription": "Anxiety screening over the last 2 weeks",
-  "homeQuickMoodTitle": "How are you today?",
-  "@homeQuickMoodTitle": {
-    "description": "R81: Home page quick mood carousel title (B 站 inspired)"
-  },
   "homeFabVent": "Mood vent",
+  "homeMoodHeroTitle": "Today's Mood",
+  "homeMoodHeroRecord": "Log mood",
+  "homeMoodHeroReview": "Review",
+  "homeMoodHeroNoData": "No mood logged yet today",
+  "homeMoodHeroLastRecorded": "Last logged {time}",
+  "@homeMoodHeroLastRecorded": {
+    "description": "1.1.0 round 5b: Mood hero card last-recorded time (Task 12)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeVentHeroTitle": "Vent",
+  "homeVentHeroWrite": "Write",
+  "homeVentHeroNoData": "Nothing here yet. Write your first thought.",
+  "homeActionMedication": "Meds",
+  "homeActionAssessment": "Scales",
+  "homeActionMoodReview": "Mood review",
+  "homeActionDailyTracking": "Daily tracking",
   "homeFabHotline": "Hotline",
   "homeFabTop": "Back to top",
   "trendChip30Day": "Last 30 days",
@@ -2987,21 +3003,8 @@
   "medTodayPending": "Pending",
   "medTodayTaken": "Taken",
   "medTodayRefill": "Refill",
-  "homeQuickMedLabel": "Meds",
-  "homeQuickMoodLabel": "Mood",
-  "homeQuickVentLabel": "Vent",
-  "homeQuickAssessmentLabel": "Assess",
   "homeQuickActionView": "View",
   "homeQuickActionRecord": "Log",
-  "homeQuickActionVent": "Talk",
   "homeQuickActionStart": "Start",
-  "homeTodayMetrics": "Today",
-  "homeMoreMoodTitle": "Mood",
-  "homeMoreMoodSubtitle": "View past entries",
-  "homeMoreVentTitle": "Vent",
-  "homeMoreVentSubtitle": "Private space · 1 viewer",
-  "homeMoreSettingsTitle": "Settings",
-  "homeMoreSettingsSubtitle": "Reminders / Privacy / Data",
-  "moodQuickRecordFailed": "Record failed, please retry",
-  "homeMoreSectionTitle": "More"
+  "homeTodayMetrics": "Today"
 }

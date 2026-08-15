@@ -2181,10 +2181,45 @@ class AppLocalizationsZh extends AppLocalizations {
   String get gad7ShortDescription => '过去两周的焦虑倾向筛查';
 
   @override
-  String get homeQuickMoodTitle => '今天感觉如何？';
+  String get homeFabVent => '树洞';
 
   @override
-  String get homeFabVent => '心情树洞';
+  String get homeMoodHeroTitle => '今日心情';
+
+  @override
+  String get homeMoodHeroRecord => '记录心情';
+
+  @override
+  String get homeMoodHeroReview => '回顾';
+
+  @override
+  String get homeMoodHeroNoData => '今天还没记录心情';
+
+  @override
+  String homeMoodHeroLastRecorded(String time) {
+    return '上次记录 $time';
+  }
+
+  @override
+  String get homeVentHeroTitle => '树洞';
+
+  @override
+  String get homeVentHeroWrite => '写心事';
+
+  @override
+  String get homeVentHeroNoData => '还没有倾诉, 写第一条心事';
+
+  @override
+  String get homeActionMedication => '用药';
+
+  @override
+  String get homeActionAssessment => '量表';
+
+  @override
+  String get homeActionMoodReview => '情绪回顾';
+
+  @override
+  String get homeActionDailyTracking => '日常追踪';
 
   @override
   String get homeFabHotline => '紧急热线';
@@ -3882,55 +3917,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medTodayRefill => '需续方';
 
   @override
-  String get homeQuickMedLabel => '用药';
-
-  @override
-  String get homeQuickMoodLabel => '心情';
-
-  @override
-  String get homeQuickVentLabel => '树洞';
-
-  @override
-  String get homeQuickAssessmentLabel => '评估';
-
-  @override
   String get homeQuickActionView => '查看';
 
   @override
   String get homeQuickActionRecord => '记录';
 
   @override
-  String get homeQuickActionVent => '倾诉';
-
-  @override
   String get homeQuickActionStart => '开始';
 
   @override
   String get homeTodayMetrics => '今日指标';
-
-  @override
-  String get homeMoreMoodTitle => '心情';
-
-  @override
-  String get homeMoreMoodSubtitle => '查看过往记录';
-
-  @override
-  String get homeMoreVentTitle => '树洞';
-
-  @override
-  String get homeMoreVentSubtitle => '私密空间 · 1 人可见';
-
-  @override
-  String get homeMoreSettingsTitle => '设置';
-
-  @override
-  String get homeMoreSettingsSubtitle => '提醒 / 隐私 / 数据导出';
-
-  @override
-  String get moodQuickRecordFailed => '记录失败，请重试';
-
-  @override
-  String get homeMoreSectionTitle => '更多';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -6110,10 +6106,45 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get gad7ShortDescription => '過去兩週的焦慮傾向篩查';
 
   @override
-  String get homeQuickMoodTitle => '今天感覺如何？';
+  String get homeFabVent => '樹洞';
 
   @override
-  String get homeFabVent => '心情樹洞';
+  String get homeMoodHeroTitle => '今日心情';
+
+  @override
+  String get homeMoodHeroRecord => '記錄心情';
+
+  @override
+  String get homeMoodHeroReview => '回顧';
+
+  @override
+  String get homeMoodHeroNoData => '今天還沒記錄心情';
+
+  @override
+  String homeMoodHeroLastRecorded(String time) {
+    return '上次記錄 $time';
+  }
+
+  @override
+  String get homeVentHeroTitle => '樹洞';
+
+  @override
+  String get homeVentHeroWrite => '寫心事';
+
+  @override
+  String get homeVentHeroNoData => '還沒有傾訴, 寫第一條心事';
+
+  @override
+  String get homeActionMedication => '用藥';
+
+  @override
+  String get homeActionAssessment => '量表';
+
+  @override
+  String get homeActionMoodReview => '情緒回顧';
+
+  @override
+  String get homeActionDailyTracking => '日常追蹤';
 
   @override
   String get homeFabHotline => '緊急熱線';
@@ -7811,53 +7842,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medTodayRefill => '需續方';
 
   @override
-  String get homeQuickMedLabel => '用藥';
-
-  @override
-  String get homeQuickMoodLabel => '心情';
-
-  @override
-  String get homeQuickVentLabel => '樹洞';
-
-  @override
-  String get homeQuickAssessmentLabel => '評估';
-
-  @override
   String get homeQuickActionView => '查看';
 
   @override
   String get homeQuickActionRecord => '記錄';
 
   @override
-  String get homeQuickActionVent => '傾訴';
-
-  @override
   String get homeQuickActionStart => '開始';
 
   @override
   String get homeTodayMetrics => '今日指標';
-
-  @override
-  String get homeMoreMoodTitle => '心情';
-
-  @override
-  String get homeMoreMoodSubtitle => '查看過往記錄';
-
-  @override
-  String get homeMoreVentTitle => '樹洞';
-
-  @override
-  String get homeMoreVentSubtitle => '私密空間 · 1 人可見';
-
-  @override
-  String get homeMoreSettingsTitle => '設置';
-
-  @override
-  String get homeMoreSettingsSubtitle => '提醒 / 隱私 / 數據導出';
-
-  @override
-  String get moodQuickRecordFailed => '記錄失敗，請重試';
-
-  @override
-  String get homeMoreSectionTitle => '更多';
 }

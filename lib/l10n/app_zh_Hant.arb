@@ -1340,11 +1340,27 @@
   "gad7SeveritySummary3": "重度焦慮傾向",
   "gad7Instruction": "過去兩週內，你有多經常被以下問題困擾？",
   "gad7ShortDescription": "過去兩週的焦慮傾向篩查",
-  "homeQuickMoodTitle": "今天感覺如何？",
-  "@homeQuickMoodTitle": {
-    "description": "R81: 主頁快速記心情 carousel 標題 (B 站'記錄每日心情'風格）"
+  "homeFabVent": "樹洞",
+  "homeMoodHeroTitle": "今日心情",
+  "homeMoodHeroRecord": "記錄心情",
+  "homeMoodHeroReview": "回顧",
+  "homeMoodHeroNoData": "今天還沒記錄心情",
+  "homeMoodHeroLastRecorded": "上次記錄 {time}",
+  "@homeMoodHeroLastRecorded": {
+    "description": "1.1.0 round 5b: 情緒大卡上次記錄時間 (Task 12)",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
   },
-  "homeFabVent": "心情樹洞",
+  "homeVentHeroTitle": "樹洞",
+  "homeVentHeroWrite": "寫心事",
+  "homeVentHeroNoData": "還沒有傾訴, 寫第一條心事",
+  "homeActionMedication": "用藥",
+  "homeActionAssessment": "量表",
+  "homeActionMoodReview": "情緒回顧",
+  "homeActionDailyTracking": "日常追蹤",
   "homeFabHotline": "緊急熱線",
   "homeFabTop": "回到頂端",
   "trendChip30Day": "近 30 天",
@@ -3029,23 +3045,10 @@
   "medTodayPending": "待服",
   "medTodayTaken": "已服",
   "medTodayRefill": "需續方",
-  "homeQuickMedLabel": "用藥",
-  "homeQuickMoodLabel": "心情",
-  "homeQuickVentLabel": "樹洞",
-  "homeQuickAssessmentLabel": "評估",
   "homeQuickActionView": "查看",
   "homeQuickActionRecord": "記錄",
-  "homeQuickActionVent": "傾訴",
   "homeQuickActionStart": "開始",
   "homeTodayMetrics": "今日指標",
-  "homeMoreMoodTitle": "心情",
-  "homeMoreMoodSubtitle": "查看過往記錄",
-  "homeMoreVentTitle": "樹洞",
-  "homeMoreVentSubtitle": "私密空間 · 1 人可見",
-  "homeMoreSettingsTitle": "設置",
-  "homeMoreSettingsSubtitle": "提醒 / 隱私 / 數據導出",
-  "moodQuickRecordFailed": "記錄失敗，請重試",
-  "homeMoreSectionTitle": "更多",
   "@ventReportTooltip": {
     "description": "R97-P1-4 (2026-08-07): 樹洞詳情頁舉報 / 反饋按鈕 tooltip (Apple 1.2.1 UGC 報告機制要求）"
   },

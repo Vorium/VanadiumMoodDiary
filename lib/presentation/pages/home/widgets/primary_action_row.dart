@@ -13,14 +13,10 @@
 // - onTap 走 caller 决定的路由 (本 widget 不 hardcode context.push, 让 home_page
 //   注入 onXxxTap 回调, 跟其他 widget 模式一致)
 //
-// 设计选择:
-// - 4 个 tile 各 1 个 metric: spec §3.1.3 表映射, 4 个核心 feature 入口
-// - 删了原 temp med / snooze SecondaryButton: 不在 Apple Health 仪表盘风格内
-//   (snooze 5min 是次要动作, 后续如需可在 "更多" 区块加)
-// - CheckInButton 巨型 pill 移到 build 段单独 1 个 section (跟 spec §5.1 1:1),
-//   不再藏在 PrimaryActionRow 内
-// - 4 个 tile label / value 暂时 hardcode 中文 (Phase 5 会通过 ARB 正式化, 本 task
-//   不允许动 l10n 文件, 见 plan §I)
+// 1.1.0 round 5b (emotion-first refactor · Task 12): 换血 4 tile —
+// 用药(medication) / 量表(assessment) / 情绪回顾(mood) / 日常追踪(trend),
+// 回调改 onMedicationTap / onAssessmentTap / onMoodReviewTap /
+// onDailyTrackingTap (树洞/心情记录入口升格为 hero 卡, 不再放快捷操作)。
 
 import 'package:flutter/material.dart';
 
@@ -33,18 +29,22 @@ import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 ///
 /// v0.31 R9a: 4 个 AppleHealthTile 替代原 3 个 button column
 /// (CheckIn / TempMed / Snooze)。
+///
+/// 1.1.0 round 5b (Task 12): 4 tile 换血为 用药/量表/情绪回顾/日常追踪
+/// (原 medication/mood/vent/assessment → vent 升格 hero 卡, mood 改
+/// 情绪回顾)。
 class PrimaryActionRow extends StatelessWidget {
   final VoidCallback onMedicationTap;
-  final VoidCallback onMoodTap;
-  final VoidCallback onVentTap;
   final VoidCallback onAssessmentTap;
+  final VoidCallback onMoodReviewTap;
+  final VoidCallback onDailyTrackingTap;
 
   const PrimaryActionRow({
     super.key,
     required this.onMedicationTap,
-    required this.onMoodTap,
-    required this.onVentTap,
     required this.onAssessmentTap,
+    required this.onMoodReviewTap,
+    required this.onDailyTrackingTap,
   });
 
   @override
@@ -63,8 +63,7 @@ class PrimaryActionRow extends StatelessWidget {
                   Expanded(
                     child: AppleHealthTile(
                       metricId: 'medication',
-                      // R32 (P0-15 i18n 跨期): 走 ARB key
-                      label: l10n.homeQuickMedLabel, // "用药"
+                      label: l10n.homeActionMedication, // "用药"
                       value: l10n.homeQuickActionView, // "查看"
                       onTap: onMedicationTap,
                     ),
@@ -72,10 +71,10 @@ class PrimaryActionRow extends StatelessWidget {
                   const SizedBox(width: AppTokens.spacingSm),
                   Expanded(
                     child: AppleHealthTile(
-                      metricId: 'mood',
-                      label: l10n.homeQuickMoodLabel, // "心情"
-                      value: l10n.homeQuickActionRecord, // "记录"
-                      onTap: onMoodTap,
+                      metricId: 'assessment',
+                      label: l10n.homeActionAssessment, // "量表"
+                      value: l10n.homeQuickActionStart, // "开始"
+                      onTap: onAssessmentTap,
                     ),
                   ),
                 ],
@@ -85,19 +84,19 @@ class PrimaryActionRow extends StatelessWidget {
                 children: [
                   Expanded(
                     child: AppleHealthTile(
-                      metricId: 'vent',
-                      label: l10n.homeQuickVentLabel, // "树洞"
-                      value: l10n.homeQuickActionVent, // "倾诉"
-                      onTap: onVentTap,
+                      metricId: 'mood',
+                      label: l10n.homeActionMoodReview, // "情绪回顾"
+                      value: l10n.homeMoodHeroReview, // "回顾"
+                      onTap: onMoodReviewTap,
                     ),
                   ),
                   const SizedBox(width: AppTokens.spacingSm),
                   Expanded(
                     child: AppleHealthTile(
-                      metricId: 'assessment',
-                      label: l10n.homeQuickAssessmentLabel, // "评估"
-                      value: l10n.homeQuickActionStart, // "开始"
-                      onTap: onAssessmentTap,
+                      metricId: 'trend',
+                      label: l10n.homeActionDailyTracking, // "日常追踪"
+                      value: l10n.homeQuickActionRecord, // "记录"
+                      onTap: onDailyTrackingTap,
                     ),
                   ),
                 ],

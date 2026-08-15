@@ -108,7 +108,7 @@ void main() {
       // v0.30 R91 Fix Round 1 (I-1): dailyTrackingFab 进一步改 "日常追踪"
       // (跟 l10n.dailyTrackingTitle 整合入口页 title 语义一致)
       expect(find.text('日常追踪'), findsNothing, reason: '收起时 4 工具按钮隐藏');
-      expect(find.text('心情树洞'), findsNothing);
+      expect(find.text('树洞'), findsNothing);
       expect(find.text('紧急热线'), findsNothing);
       expect(find.text('回到顶端'), findsNothing);
     });
@@ -120,7 +120,7 @@ void main() {
       await tester.pumpAndSettle();
       // 展开状态: 4 工具按钮可见
       expect(find.text('日常追踪'), findsOneWidget, reason: '展开后日常追踪工具按钮可见');
-      expect(find.text('心情树洞'), findsOneWidget);
+      expect(find.text('树洞'), findsOneWidget);
       expect(find.text('紧急热线'), findsOneWidget);
       expect(find.text('回到顶端'), findsOneWidget);
       // 主 FAB 变 close icon
