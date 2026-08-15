@@ -103,7 +103,7 @@ lib/
 ## 🧪 测试
 
 ```bash
-flutter test            # 全部（实测 2533 pass / 4 fail [iOS 资产占位, 设计师] / 1 skip）
+flutter test            # 全部（实测 2277 pass / 1 fail [ARB 锁基线待同步, 见 AGENTS v1.1.0] / 1 skip [16KB]）
 flutter test --coverage # 阈值: domain ≥ 70% / data ≥ 50% / presentation ≥ 30%
 
 # 21 个守门员（架构纯度 / i18n / 锁屏 PII / 合规 / 覆盖率等）
