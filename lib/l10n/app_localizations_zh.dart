@@ -155,7 +155,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsReminderCenter => '提醒中心';
 
   @override
-  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用药时间、续方、心理评估、失联通知';
+  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用药时间、续方、心理评估';
 
   @override
   String get settingsRefillManagement => '续方管理';
@@ -186,7 +186,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsExportRiskBody =>
-      '您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、紧急联系人、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。';
+      '您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。';
 
   @override
   String get settingsExportRiskLiability =>
@@ -246,7 +246,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsClearAllDataDialogBody =>
-      '以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。';
+      '以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。';
 
   @override
   String get settingsClearAllDataConfirm => '我已备份，确认清空';
@@ -576,7 +576,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。';
 
   @override
-  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估、失联通知。';
+  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估。';
 
   @override
   String get reminderHubDailyTitle => '每日打卡提醒';
@@ -3482,7 +3482,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dataExportPurposeBackup => '本地备份 / 跨设备迁移';
 
   @override
-  String get dataExportDataCategories => '用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 （录音不导出）';
+  String get dataExportDataCategories => '用药记录、打卡记录、情绪日记、树洞文字 （录音不导出）';
 
   @override
   String get dataExportRetentionClipboard => '剪贴板 + 用户自行保存到加密存储';
@@ -4137,7 +4137,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsReminderCenter => '提醒中心';
 
   @override
-  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用藥時間、續方、心理評估、失聯通知';
+  String get settingsReminderCenterSubtitle => '管理所有提醒：每日打卡、用藥時間、續方、心理評估';
 
   @override
   String get settingsRefillManagement => '續方管理';
@@ -4168,7 +4168,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsExportRiskBody =>
-      '您即將導出的數據為明文文件，含您的個人健康等敏感信息（用藥、打卡、緊急聯繫人、樹洞文字）。請務必保存到安全、可信的位置（加密 U 盤 / 私人云盤），避免上傳至公共雲盤或發送給不可信的第三方。';
+      '您即將導出的數據為明文文件，含您的個人健康等敏感信息（用藥、打卡、樹洞文字）。請務必保存到安全、可信的位置（加密 U 盤 / 私人云盤），避免上傳至公共雲盤或發送給不可信的第三方。';
 
   @override
   String get settingsExportRiskLiability =>
@@ -4228,7 +4228,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsClearAllDataDialogBody =>
-      '以下數據將被永久刪除，無法恢復：\n• 打卡記錄\n• 用藥與服藥歷史\n• 心理評估結果\n• 情緒日記\n• 樹洞（文字+錄音）\n• 緊急聯繫人\n\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。';
+      '以下數據將被永久刪除，無法恢復：\n• 打卡記錄\n• 用藥與服藥歷史\n• 心理評估結果\n• 情緒日記\n• 樹洞（文字+錄音）\n\n清空後 App 會跳回首次設置流程。建議先導出 JSON 備份。';
 
   @override
   String get settingsClearAllDataConfirm => '我已備份，確認清空';
@@ -4558,7 +4558,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '通用建議：精確鬧鐘被某些 ROM 靜默拒絕時，首次啟動 App 時系統會彈「是否允許」，請選「允許」。';
 
   @override
-  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用藥時間、續方日期、心理評估、失聯通知。';
+  String get reminderHubDescription => '集中管理所有提醒：每天打卡、用藥時間、續方日期、心理評估。';
 
   @override
   String get reminderHubDailyTitle => '每日打卡提醒';
@@ -7464,7 +7464,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get dataExportPurposeBackup => '本地備份 / 跨設備遷移';
 
   @override
-  String get dataExportDataCategories => '用藥記錄、打卡記錄、緊急聯繫人、情緒日記、樹洞文字 （錄音不導出）';
+  String get dataExportDataCategories => '用藥記錄、打卡記錄、情緒日記、樹洞文字 （錄音不導出）';
 
   @override
   String get dataExportRetentionClipboard => '剪貼板 + 用戶自行保存到加密存儲';

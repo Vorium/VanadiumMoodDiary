@@ -378,7 +378,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsReminderCenterSubtitle.
   ///
   /// In zh, this message translates to:
-  /// **'管理所有提醒：每日打卡、用药时间、续方、心理评估、失联通知'**
+  /// **'管理所有提醒：每日打卡、用药时间、续方、心理评估'**
   String get settingsReminderCenterSubtitle;
 
   /// No description provided for @settingsRefillManagement.
@@ -432,7 +432,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsExportRiskBody.
   ///
   /// In zh, this message translates to:
-  /// **'您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、紧急联系人、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。'**
+  /// **'您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。'**
   String get settingsExportRiskBody;
 
   /// No description provided for @settingsExportRiskLiability.
@@ -540,7 +540,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsClearAllDataDialogBody.
   ///
   /// In zh, this message translates to:
-  /// **'以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。'**
+  /// **'以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。'**
   String get settingsClearAllDataDialogBody;
 
   /// No description provided for @settingsClearAllDataConfirm.
@@ -1134,7 +1134,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderHubDescription.
   ///
   /// In zh, this message translates to:
-  /// **'集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估、失联通知。'**
+  /// **'集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估。'**
   String get reminderHubDescription;
 
   /// No description provided for @reminderHubDailyTitle.
@@ -6465,7 +6465,7 @@ abstract class AppLocalizations {
   /// v0.30 R100 (P1#9): 導出 consent dialog dataCategories placeholder
   ///
   /// In zh, this message translates to:
-  /// **'用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 （录音不导出）'**
+  /// **'用药记录、打卡记录、情绪日记、树洞文字 （录音不导出）'**
   String get dataExportDataCategories;
 
   /// v0.30 R100 (P1#9): 導出 consent dialog retention placeholder

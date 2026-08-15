@@ -131,5 +131,28 @@ void main() {
         reason: '打卡降级 compact 后高度应 < 64',
       );
     });
+
+    testWidgets('5. audio-only 树洞条目显示语音预览而非空态 (P0-3 修复)',
+        (tester) async {
+      final vent = VentEntryEntity(
+        id: 1,
+        timestamp: DateTime(2026, 8, 15, 9, 0),
+        audioPath: 'vent_audio/1.m4a.enc',
+        audioDurationSec: 30,
+      );
+      await tester.pumpWidget(wrapHome(vent: [vent]));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('还没有倾诉, 写第一条心事'),
+        findsNothing,
+        reason: '已有语音倾诉时不应显示空态文案',
+      );
+      expect(
+        find.text('🎙️ 语音'),
+        findsOneWidget,
+        reason: 'audio-only 条目应显示 ventVoiceLabel 语音预览',
+      );
+    });
   });
 }

@@ -46,7 +46,7 @@
   "settingsImportSubtitle": "Restore from JSON (overwrites existing data)",
   "settingsReminders": "Reminders",
   "settingsReminderCenter": "Reminder Center",
-  "settingsReminderCenterSubtitle": "Manage all reminders: daily check-in, medication times, refills, assessment, safety watch",
+  "settingsReminderCenterSubtitle": "Manage all reminders: daily check-in, medication times, refills, assessment",
   "settingsRefillManagement": "Refill Management",
   "settingsRefillManagementSubtitle": "View refill status for all medications",
   "settingsAssessment": "Assessment",
@@ -63,7 +63,7 @@
   "settingsAboutVersion": "v{version} · I took my meds today",
   "settingsDisclaimerText": "This app does not provide medical advice. All features are for reference only.",
   "settingsExportRiskTitle": "Plaintext risk warning",
-  "settingsExportRiskBody": "You are about to export data as a PLAINTEXT file containing your sensitive personal information (medication, check-ins, emergency contacts, vent text). Save it securely (encrypted USB / private cloud), never upload to public cloud or share with untrusted parties.",
+  "settingsExportRiskBody": "You are about to export data as a PLAINTEXT file containing your sensitive personal information (medication, check-ins, vent text). Save it securely (encrypted USB / private cloud), never upload to public cloud or share with untrusted parties.",
   "settingsExportRiskLiability": "Once exported, the security and confidentiality of the file is your responsibility. ChronicCare no longer bears protection duty (PIPL §17 informed + user-confirmed).",
   "settingsExportRiskAcknowledge": "I understand the risks, continue",
   "settingsExportDialogTitle": "Export Data",
@@ -89,7 +89,7 @@
   "settingsClearAllData": "Clear all data",
   "settingsClearAllDataSubtitle": "Delete all check-ins / meds / assessments / vent / contacts (irreversible)",
   "settingsClearAllDataDialogTitle": "Clear all data?",
-  "settingsClearAllDataDialogBody": "The following data will be permanently deleted:\n• Check-in history\n• Medication and dose history\n• Assessment results\n• Mood journal\n• Vent (text + audio)\n• Emergency contacts\n\nAfter clearing, the app returns to first-time setup. We recommend exporting a JSON backup first.",
+  "settingsClearAllDataDialogBody": "The following data will be permanently deleted:\n• Check-in history\n• Medication and dose history\n• Assessment results\n• Mood journal\n• Vent (text + audio)\n\nAfter clearing, the app returns to first-time setup. We recommend exporting a JSON backup first.",
   "settingsClearAllDataConfirm": "I have backed up, clear it",
   "settingsClearAllDataSuccess": "All data cleared",
   "commonSave": "Save",
@@ -262,7 +262,7 @@
   "notificationStatusCardOemStepOthers1": "Settings → Apps → Chronic Care → Notifications → Enable all",
   "notificationStatusCardOemStepOthers2": "Settings → Battery → Background running → Allow",
   "notificationStatusCardOemGeneralTip": "General tip: When exact alarms are silently blocked by some ROMs, the system will ask \"Allow?\" on first launch — please select \"Allow\".",
-  "reminderHubDescription": "Manage all reminders in one place: daily check-in, medication times, refill dates, assessment, safety watch.",
+  "reminderHubDescription": "Manage all reminders in one place: daily check-in, medication times, refill dates, assessment.",
   "reminderHubDailyTitle": "Daily Check-in Reminder",
   "reminderHubDailyDesc": "Pushes \"time to check in\" at 20:00 daily — missing once is fine",
   "reminderHubDailyStatus": "Enabled · Daily at 20:00",
@@ -2787,7 +2787,7 @@
   "@dataExportPurposeBackup": {
     "description": "v0.30 R100 (P1#9): export consent dialog purpose placeholder"
   },
-  "dataExportDataCategories": "Medication records, check-ins, emergency contacts, mood diary, vent text (audio not exported)",
+  "dataExportDataCategories": "Medication records, check-ins, mood diary, vent text (audio not exported)",
   "@dataExportDataCategories": {
     "description": "v0.30 R100 (P1#9): export consent dialog dataCategories placeholder"
   },

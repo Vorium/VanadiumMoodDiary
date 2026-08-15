@@ -34,13 +34,7 @@ class VentHeroCard extends ConsumerWidget {
       children: [
         ListTile(
           leading: const Icon(Icons.forum_outlined),
-          title: latest == null || latest.contentText == null
-              ? Text(l10n.homeVentHeroNoData)
-              : Text(
-                  latest.contentText!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+          title: _preview(l10n, latest),
           trailing: FilledButton.tonal(
             onPressed: () => context.push('/vent/compose'),
             child: Text(l10n.homeVentHeroWrite),
@@ -49,5 +43,22 @@ class VentHeroCard extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  /// 最新条目的 1 行预览:
+  /// - 无条目 → 空态文案
+  /// - 有文字 → 文字截断预览
+  /// - 仅语音 → ventVoiceLabel (与 vent_list_page 同款判定, P0-3 修复)
+  Widget _preview(AppLocalizations l10n, VentEntryEntity? latest) {
+    if (latest == null) return Text(l10n.homeVentHeroNoData);
+    if (latest.hasText) {
+      return Text(
+        latest.contentText!,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+    if (latest.hasAudio) return Text(l10n.ventVoiceLabel);
+    return Text(l10n.homeVentHeroNoData);
   }
 }

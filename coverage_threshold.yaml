@@ -37,9 +37,6 @@ thresholds:
     - path: lib/domain/logic/streak_calculator.dart
       min_coverage: 90
       reason: "主页 streak 显示核心, 跨 23:59:59 防御, R95 实测 96.4% ✅"
-    - path: lib/core/data/services/sms_service.dart
-      min_coverage: 60
-      reason: "R52 spen P0 #12 + R55 真接 SMS 准备, R95 实测 76.4% ✅"
     - path: lib/core/data/services/notification_service.dart
       min_coverage: 25
       reason: "R77 续修 + R52 失联通知依赖, R95 实测 27.0% ✅ (R78 god class 留 R96+)"

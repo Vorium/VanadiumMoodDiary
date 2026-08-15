@@ -77,7 +77,7 @@
   "settingsImportSubtitle": "从 JSON 恢复（覆盖现有数据）",
   "settingsReminders": "提醒",
   "settingsReminderCenter": "提醒中心",
-  "settingsReminderCenterSubtitle": "管理所有提醒：每日打卡、用药时间、续方、心理评估、失联通知",
+  "settingsReminderCenterSubtitle": "管理所有提醒：每日打卡、用药时间、续方、心理评估",
   "settingsRefillManagement": "续方管理",
   "settingsRefillManagementSubtitle": "集中查看所有药物的续方状态",
   "settingsAssessment": "心理评估",
@@ -94,7 +94,7 @@
   "settingsAboutVersion": "v{version} · 我今天吃了药",
   "settingsDisclaimerText": "本应用不提供医疗建议，所有功能仅供参考。",
   "settingsExportRiskTitle": "明文风险提示",
-  "settingsExportRiskBody": "您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、紧急联系人、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。",
+  "settingsExportRiskBody": "您即将导出的数据为明文文件，含您的个人健康等敏感信息（用药、打卡、树洞文字）。请务必保存到安全、可信的位置（加密 U 盘 / 私人云盘），避免上传至公共云盘或发送给不可信的第三方。",
   "settingsExportRiskLiability": "一旦导出，文件的安全与保密由您自行负责，本 App 不再承担保护责任（PIPL §17 明确告知 + 用户确认）。",
   "settingsExportRiskAcknowledge": "我已了解风险，继续导出",
   "settingsExportDialogTitle": "导出数据",
@@ -120,7 +120,7 @@
   "settingsClearAllData": "清空所有数据",
   "settingsClearAllDataSubtitle": "删除全部打卡 ／ 用药 ／ 评估 ／ 树洞 ／ 联系人（无法恢复）",
   "settingsClearAllDataDialogTitle": "确认清空所有数据？",
-  "settingsClearAllDataDialogBody": "以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n• 紧急联系人\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
+  "settingsClearAllDataDialogBody": "以下数据将被永久删除，无法恢复：\n• 打卡记录\n• 用药与服药历史\n• 心理评估结果\n• 情绪日记\n• 树洞（文字+录音）\n\n清空后 App 会跳回首次设置流程。建议先导出 JSON 备份。",
   "settingsClearAllDataConfirm": "我已备份，确认清空",
   "settingsClearAllDataSuccess": "已清空所有数据",
   "commonSave": "保存",
@@ -304,7 +304,7 @@
   "notificationStatusCardOemStepOthers1": "设置 → 应用 → 慢病管家 → 通知 → 全部开启",
   "notificationStatusCardOemStepOthers2": "设置 → 电池 → 后台运行 → 改为「允许」",
   "notificationStatusCardOemGeneralTip": "通用建议：精确闹钟被某些 ROM 静默拒绝时，首次启动 App 时系统会弹「是否允许」，请选「允许」。",
-  "reminderHubDescription": "集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估、失联通知。",
+  "reminderHubDescription": "集中管理所有提醒：每天打卡、用药时间、续方日期、心理评估。",
   "reminderHubDailyTitle": "每日打卡提醒",
   "reminderHubDailyDesc": "每天 20:00 推送「记得打卡」，漏 1 次没关系",
   "reminderHubDailyStatus": "已启用 · 每天 20:00",
@@ -2829,7 +2829,7 @@
   "@dataExportPurposeBackup": {
     "description": "v0.30 R100 (P1#9): 導出 consent dialog purpose placeholder"
   },
-  "dataExportDataCategories": "用药记录、打卡记录、紧急联系人、情绪日记、树洞文字 （录音不导出）",
+  "dataExportDataCategories": "用药记录、打卡记录、情绪日记、树洞文字 （录音不导出）",
   "@dataExportDataCategories": {
     "description": "v0.30 R100 (P1#9): 導出 consent dialog dataCategories placeholder"
   },

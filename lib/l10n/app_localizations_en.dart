@@ -161,7 +161,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsReminderCenterSubtitle =>
-      'Manage all reminders: daily check-in, medication times, refills, assessment, safety watch';
+      'Manage all reminders: daily check-in, medication times, refills, assessment';
 
   @override
   String get settingsRefillManagement => 'Refill Management';
@@ -194,7 +194,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsExportRiskBody =>
-      'You are about to export data as a PLAINTEXT file containing your sensitive personal information (medication, check-ins, emergency contacts, vent text). Save it securely (encrypted USB / private cloud), never upload to public cloud or share with untrusted parties.';
+      'You are about to export data as a PLAINTEXT file containing your sensitive personal information (medication, check-ins, vent text). Save it securely (encrypted USB / private cloud), never upload to public cloud or share with untrusted parties.';
 
   @override
   String get settingsExportRiskLiability =>
@@ -257,7 +257,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsClearAllDataDialogBody =>
-      'The following data will be permanently deleted:\n• Check-in history\n• Medication and dose history\n• Assessment results\n• Mood journal\n• Vent (text + audio)\n• Emergency contacts\n\nAfter clearing, the app returns to first-time setup. We recommend exporting a JSON backup first.';
+      'The following data will be permanently deleted:\n• Check-in history\n• Medication and dose history\n• Assessment results\n• Mood journal\n• Vent (text + audio)\n\nAfter clearing, the app returns to first-time setup. We recommend exporting a JSON backup first.';
 
   @override
   String get settingsClearAllDataConfirm => 'I have backed up, clear it';
@@ -610,7 +610,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderHubDescription =>
-      'Manage all reminders in one place: daily check-in, medication times, refill dates, assessment, safety watch.';
+      'Manage all reminders in one place: daily check-in, medication times, refill dates, assessment.';
 
   @override
   String get reminderHubDailyTitle => 'Daily Check-in Reminder';
@@ -3655,7 +3655,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataExportDataCategories =>
-      'Medication records, check-ins, emergency contacts, mood diary, vent text (audio not exported)';
+      'Medication records, check-ins, mood diary, vent text (audio not exported)';
 
   @override
   String get dataExportRetentionClipboard =>

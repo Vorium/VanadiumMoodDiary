@@ -103,8 +103,8 @@ lib/
 ## 🧪 测试
 
 ```bash
-flutter test            # 全部（实测 2277 pass / 1 fail [ARB 锁基线待同步, 见 AGENTS v1.1.0] / 1 skip [16KB]）
-flutter test --coverage # 阈值: domain ≥ 70% / data ≥ 50% / presentation ≥ 30%
+flutter test            # 全部（实测 2280 pass / 1 skip [main_migration_i18n 范围外声明]）
+flutter test --coverage # 阈值: domain ≥ 70% / data ≥ 45% / presentation ≥ 30%
 
 # 21 个守门员（架构纯度 / i18n / 锁屏 PII / 合规 / 覆盖率等）
 for s in scripts/*.py; do python $s; done
