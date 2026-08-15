@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
 import 'package:chroniccare/domain/logic/mood_review_aggregator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -44,6 +45,41 @@ class _MoodReviewPageState extends ConsumerState<MoodReviewPage> {
   DateTime _weekStart(DateTime now) {
     final d = now.subtract(Duration(days: now.weekday - 1));
     return DateTime(d.year, d.month, d.day);
+  }
+
+  /// 时段 key → 本地化标签 (复用 mood_detail_page._periodLabel 同款映射 +
+  /// ARB moodPeriod* key, 不新增重复 key; round 5e fix 1)
+  String _periodLabel(AppLocalizations l10n, String period) {
+    switch (period) {
+      case MoodPeriod.morning:
+        return l10n.moodPeriodMorning;
+      case MoodPeriod.noon:
+      case 'afternoon':
+        return l10n.moodPeriodAfternoon;
+      case MoodPeriod.evening:
+        return l10n.moodPeriodEvening;
+      case MoodPeriod.night:
+        return l10n.moodPeriodNight;
+      default:
+        return period;
+    }
+  }
+
+  /// 稳定显示序: morning → noon → evening → night, 未知 key 按字母序垫底
+  /// (Map 迭代序不保证, 直接遍历会闪烁/乱序; round 5e fix 1)
+  List<MapEntry<String, int>> _orderedPeriodEntries(
+    Map<String, int> counts,
+  ) {
+    final entries = counts.entries.toList();
+    final ordered = <MapEntry<String, int>>[];
+    for (final p in MoodPeriod.fourPeriods) {
+      final i = entries.indexWhere((e) => e.key == p);
+      if (i >= 0) {
+        ordered.add(entries.removeAt(i));
+      }
+    }
+    entries.sort((a, b) => a.key.compareTo(b.key));
+    return [...ordered, ...entries];
   }
 
   @override
@@ -149,9 +185,9 @@ class _MoodReviewPageState extends ConsumerState<MoodReviewPage> {
                 AppleListSection(
                   title: l10n.moodReviewPeriod,
                   children: [
-                    for (final e in s.periodCounts.entries)
+                    for (final e in _orderedPeriodEntries(s.periodCounts))
                       ListTile(
-                        title: Text(e.key),
+                        title: Text(_periodLabel(l10n, e.key)),
                         trailing: Text('${e.value}'),
                       ),
                   ],

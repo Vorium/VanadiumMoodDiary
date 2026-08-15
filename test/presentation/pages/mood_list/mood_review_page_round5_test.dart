@@ -132,5 +132,38 @@ void main() {
       // domain 层空态鼓励文案 (mood_review_aggregator._encouragement)
       expect(find.text('这周还没记录心情，从现在开始吧'), findsOneWidget);
     });
+
+    testWidgets('7. 时段分组显示本地化标签 (复用 mood_detail 时段 l10n)',
+        (tester) async {
+      // 本周 2 条带时段: morning + night (全部落在周窗口 08-10 ~ 08-15)
+      final entries = [
+        MoodEntryEntity(
+          id: 5,
+          timestamp: DateTime(2026, 8, 12, 9, 0),
+          score: 3,
+          period: 'morning',
+        ),
+        MoodEntryEntity(
+          id: 6,
+          timestamp: DateTime(2026, 8, 13, 23, 0),
+          score: 3,
+          period: 'night',
+        ),
+      ];
+      await tester.pumpWidget(wrap(entries: entries));
+      await tester.pumpAndSettle();
+
+      // 本地化标签渲染 (moodPeriodMorning=morning→早上, moodPeriodNight=night→夜间)
+      expect(find.text('早上'), findsOneWidget);
+      expect(find.text('夜间'), findsOneWidget);
+      // 裸 key 不再泄露给用户
+      expect(find.text('morning'), findsNothing);
+      expect(find.text('night'), findsNothing);
+      // 稳定显示序: morning 在 night 上方
+      expect(
+        tester.getTopLeft(find.text('早上')).dy,
+        lessThan(tester.getTopLeft(find.text('夜间')).dy),
+      );
+    });
   });
 }
