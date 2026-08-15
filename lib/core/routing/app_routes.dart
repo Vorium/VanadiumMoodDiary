@@ -3,11 +3,15 @@
 // 拆分前: app_routes.dart 280 行含 3 transition + 14 GoRoute + errorBuilder
 // 拆分后:
 //   - app_routes.dart (本文件, 115 行): 3 transition helper + errorBuilder + all() 委托
-//   - app_route_main.dart       — / setup / home / settings / 邮件预览
-//   - app_route_assessment.dart — /trend, /assessment, /assessment/history, /assessment/:id
-//   - app_route_medication.dart — /settings/reminders, /settings/refills, /settings/legal, /medication/calendar
-//   - app_route_vent.dart       — /vent, /vent/compose, /vent/detail/:id
+//   - app_route_main.dart       — /setup /crisis-hotline + ShellRoute (/, /settings)
+//   - app_route_assessment.dart — shellRoutes: /trend; all(): /assessment-center,
+//                                 /assessment (redirect), /assessment/history, /assessment/:id
+//   - app_route_medication.dart — shellRoutes: 用药 4 路由; all(): 设置类子路由
+//   - app_route_vent.dart       — shellRoutes: /vent /vent/compose /vent/detail/:id
 //   - app_route_check_in.dart   — /check-in/medication/:id, /check-in/today
+//
+// v1.1.0 round 5: /vent /trend 入 ShellRoute (导航 4 tab 心情/树洞/趋势/设置),
+// AppRouteVent 不再从 AppRoutes.all() 注册 (go_router duplicate path 会抛)。
 //
 // 进度延续 R59 (app_router 拆 2 文件) 的渐进 facade 模式:
 //   R59: app_router 418 → 51 行 (-88%)

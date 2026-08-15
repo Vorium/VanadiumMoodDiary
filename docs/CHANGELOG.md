@@ -1,4 +1,25 @@
 ﻿# 变更日志
+## [1.1.0+148] - 2026-08-15 (情绪优先重构: 外联删除定版 + 树洞标签/状态短语/情绪回顾 + 导航 4 tab)
+
+### Added
+- 树洞标签 — 预设标签库 vent_tag_library + compose 选择 + 列表筛选 + 详情显示 + tagsJson 落库
+- 情绪状态短语 — 状态短语库 status_phrase_library + 记录 dialog 预设/自定义 + 列表/详情显示 + statusPhrase 落库
+- 情绪回顾页 — 周/月统计摘要 (mood_review_aggregator + 12 case 测试) + /mood-review 路由 + 时段标签本地化
+- 导航 4 tab — 心情/树洞/趋势/设置 (/vent /trend 入 ShellRoute, 底栏常驻 + tab 高亮)
+- 首页双主卡 — MoodHeroCard + VentHeroCard, 打卡降级 compact, 快捷操作换血 (用药/量表/情绪回顾/日常追踪)
+
+### Changed
+- 产品定位翻转 — 情绪日记 + 树洞倾诉优先、用药记录辅助 (README/AGENTS 重写)
+- Schema 23 — vent +tagsJson / mood +statusPhrase 两列 + migration
+- Export v6 — 删 contacts 段 + statusPhrase/tagsJson (老 v5 文件 contacts key 忽略)
+- FeatureFlags 7 → 4 — emergencyContactEnabled / aliyunSmsEnabled / emailServiceEnabled 3 个外联 flag 整摘
+- 守门员 22 → 21 — check_sms_release_ready 随 SMS 外联删除; check_pii_in_title / check_legal_consent 同步收窄
+
+### Removed
+- 紧急联系人 — contact 页 / setup 联系人表单 / contacts 表 + migration drop / 死路由
+- 失联通知 — SafetyWatch / CareEngine / ReminderChecker / SMS 服务全删 + settings 失联卡 / home safety check
+- 邮件服务 — EmailService + 邮件预览路由 (R95 已删页面, 本轮删服务)
+
 ## [1.0.0+147] - 2026-08-14 (永久免费定版: 去除所有收费相关内容)
 
 - **永久免费定版**: App 永久完全免费, 无任何购买入口 / 收费行为 / 内购 / 订阅费, 无收费计划

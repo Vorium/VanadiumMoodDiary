@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # v0.30 R108 revisit (P0-012): check_pii_in_title 守门员
 #
-# 作用: 验证通知 title (锁屏可见) 不含 PII (药名 / 剂量 / 紧急联系人 / 病名)
+# 作用: 验证通知 title (锁屏可见) 不含 PII (药名 / 剂量 / 患者名 / 病名)
 #
 # 背景: 精神心理 / 慢性病患者用 App, 通知在 iOS / Android 锁屏横幅
 #   可见。title 含药名 = 路人瞥一眼知道用户吃的什么药, 触发病耻感
 #   + 隐私侵犯。R108 P0-3 修了 body, R108 revisit P0-012 修了 title
 #   (6 视角共识)。
+#
+# 1.1.0 round 4c: 外联通知 (safety/contact) 随业务删除, 黑名单同步收窄 —
+#   当前只守 medication/refill 通知 (notifMedicationTitle / notifRefillTitle)。
 #
 # 规则:
 #   1. lib/core/l10n/strings.dart 的 notif*Title 函数**不应**有 medName

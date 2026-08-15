@@ -245,13 +245,13 @@ class HomePageState extends ConsumerState<HomePage> {
             // 2. HomeHeader (FadeIn delay 0)
             // 3. MoodHeroCard (Duration.zero)
             // 4. VentHeroCard (Duration.zero)
-            // 5. CheckInButton compact (FadeIn delay 1*staggerStepMs=40ms)
-            // 6. AppleListSection("今日指标") + TodaySummaryCard (FadeIn delay 2*40=80ms)
+            // 5. CheckInButton compact (FadeIn delay 1*staggerStepMs=30ms)
+            // 6. AppleListSection("今日指标") + TodaySummaryCard (FadeIn delay 2*30=60ms)
             // 7. AppleListSection("快捷操作") + PrimaryActionRow (Duration.zero)
             // 8. EncouragementText (Duration.zero)
             // 9. HomeFooter (Duration.zero)
             //
-            // stagger 累加最大 = 80ms (2 * staggerStepMs=40), 远低于前庭敏感
+            // stagger 累加最大 = 60ms (2 * staggerStepMs=30), 远低于前庭敏感
             // 阈值 250ms, 跟 R108 P0#5 决策一致 (home 100+/day 频度).
 
             // P17 fix: 通知失败 banner(一次性提示，可关闭)

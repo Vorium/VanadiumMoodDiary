@@ -10,8 +10,9 @@ import 'package:chroniccare/presentation/pages/assessment/assessment_history_pag
 import 'package:chroniccare/presentation/pages/assessment/assessment_page.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
 
-/// v0.26 round 57: 评估 + 趋势路由 (3 个 + 1 个 redirect)
+/// v0.26 round 57: 评估 + 趋势路由 (shell 1 个 + 3 个 + 1 个 redirect)
 /// v0.30 round 90 (sub-spec 6 量表中心): 加 /assessment-center 中心化入口
+/// v1.1.0 round 5: /trend 移入 shellRoutes() (导航 4 tab, 底栏常驻)
 class AppRouteAssessment {
   AppRouteAssessment._();
 

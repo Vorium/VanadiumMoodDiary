@@ -4,7 +4,7 @@
 
 ## 项目速览
 
-**产品**：精神心理患者吃药打卡 App（参考"死了么"模式做私域加强版）。
+**产品**：情绪日记 + 树洞倾诉优先的精神心理自我关怀 App，用药记录辅助（1.1.0 情绪优先重构后定位）。
 
 **栈**：Flutter 3.41.9 / Dart 3.12.2 / Riverpod 3.3.2 / Drift 2.20.3 (SQLCipher) / go_router 14.6。
 
@@ -18,7 +18,7 @@
 - `lib/core/shared/` — 跨层共享(formatters / json_codec / mood_visual)
 - `lib/core/theme/` — AppTokens + M3 主题
 - `lib/core/routing/` — go_router
-- `lib/core/l10n/` — domain 层 strings(供通知/邮件用)
+- `lib/core/l10n/` — domain 层 strings(供通知用)
 - `lib/l10n/` — presentation 层 flutter_localizations(供 UI 用)
 - `lib/domain/` — 0 Flutter 0 Drift 业务层
 - `lib/presentation/` — UI 层
@@ -30,12 +30,12 @@ lib/
 ├── core/                  # 基础设施 umbrella
 │   ├── data/              # data 层（DB / Repositories / Services / Utils）
 │   │   ├── database/     # Drift 表 / 数据库 / 迁移
-│   │   │   ├── tables/   # 1 个表 = 1 子目录（check_in/, contact/, ...）
+│   │   │   ├── tables/   # 1 个表 = 1 子目录（check_in/, medication/, mood/, vent/, ...）
 │   │   │   ├── mappers/  # row ↔ entity 翻译（1 文件 1 mapper）
 │   │   │   ├── connection/  # conditional import (web / native)
 │   │   │   └── app_database.dart
 │   │   ├── repositories/  # *RepositoryImpl（按 feature 平铺, 计划按 feature 子目录）
-│   │   ├── services/     # 通知/邮件/SMS/录音/导出/加密
+│   │   ├── services/     # 通知/录音/导出/加密
 │   │   └── utils/         # phone_validator 等
 │   ├── shared/            # 跨层共享（domain + data + presentation 都可用）
 │   │   ├── formatters.dart
@@ -49,7 +49,7 @@ lib/
 │   │   └── theme_toggle_button.dart
 │   ├── routing/           # go_router 配置
 │   │   └── app_router.dart  # 所有路由 + fade/slide-right/slide-up 3 类 transition
-│   └── l10n/              # domain 层 strings（通知/邮件 fallback）
+│   └── l10n/              # domain 层 strings（通知 fallback）
 │       └── strings.dart
 ├── l10n/                  # presentation 层 flutter_localizations
 │   ├── app_zh.arb         # 中文文案源
@@ -101,8 +101,8 @@ lib/
 进项目先扫这 5 个：
 
 1. `lib/main.dart` — 启动顺序、SQLCipher 初始化、通知 init
-2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 22，所有表 + migration
-3. `lib/domain/logic/care_engine.dart` — 失联检测 / 续方 / 通知触发核心规则
+2. `lib/core/data/database/app_database.dart` — schemaVersion 当前 23，所有表 + migration
+3. `lib/domain/logic/mood_review_aggregator.dart` — 情绪回顾聚合核心规则 (1.1.0 新增)
 4. `lib/presentation/providers/core_providers.dart` — 全局 provider 注册表
 5. `lib/core/routing/app_router.dart` — 所有页面路由 + shell（NavigationRail）
 
@@ -143,11 +143,10 @@ python scripts/check_cross_feature.py  # 必须 0 violation (跨 feature import 
 
 | 模块 | 进什么 | 不进什么 |
 |---|---|---|
-| 树洞（vent） | 无 | 趋势 / 评估 / CareEngine / SafetyWatch / 通知 / 关怀 |
+| 树洞（vent） | 无 | 趋势 / 评估 / 通知 / 关怀 |
 | 情绪日记（mood） | mood-specific reports | 通知（v0.15 之后可加） |
-| 心理评估（assessment） | 评估历史趋势 | 失联通知（除非 CrisisSignal） |
+| 心理评估（assessment） | 评估历史趋势 | 外部通知 |
 | 打卡（check-in） | streak / 趋势 | 评估 |
-| 失联通知（SafetyWatch） | 通知家人 | 内部 detail（仅 SMS） |
 
 如果发现树洞内容进了趋势页 = **bug**，立即修。
 
@@ -233,15 +232,11 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **R110** (2-3 周): feature-first 重构 + pub workspace 3 package
 - **v1.0** (2027-Q1): pub workspace + 5 厂商 push + AliyunSms + EmailService + PHQ-9 i18n + HealthKit + 鸿蒙 + IAP 真接
 
-**8 FeatureFlag 当前状态 (R108, 同 R107)**:
-1. `iapEnabled=false` (等 App Store Connect 真接)
-2. `emergencyContactEnabled=false` (等阿里云 AccessKey)
-3. `fiveVendorPushEnabled=false` (等 5 厂商 1-2 月审核)
-4. `emailServiceEnabled=false` (等 SendGrid API key)
-5. `ventAudioEnabled=**true**` (R104 已翻 true)
-6. `phqGad7I18nEnabled=false` (等法务 + 临床审核)
-7. `bootReceiverEnabled=false` (等 WorkManager 完善)
-8. `aliyunSmsEnabled=false` (等 AccessKey)
+**4 FeatureFlag 当前状态 (历史 8 → 7 → 4; v1.0.0+147 删 iap, 1.1.0 round 4b 删 3 外联 flag)**:
+1. `ventAudioEnabled=**true**` (R104 已翻 true)
+2. `fiveVendorPushEnabled=false` (等 5 厂商 1-2 月审核)
+3. `phqGad7I18nEnabled=false` (等法务 + 临床审核)
+4. `bootReceiverEnabled=false` (等 WorkManager 完善)
 
 ## v0.31 Apple Health 风格重设计 + 8-11 cleanup 综合审视 (2026-08-10~11, 23 commit + 2 cleanup commit, 7 视角, 加权综合 6.2 → 7.5/10)
 
@@ -284,7 +279,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - `docs/audit/2026-08-11-cleanup/` 9 个文件 (9 份审视报告合计 79KB)
 - `docs/design/2026-08-10-apple-health-redesign/` 3 个文件 (spec.md 22KB + plan.md 16KB + NEXT-SESSION-START-HERE.md 6KB, 合计 44KB)
 
-**8 FeatureFlag 当前状态 (R31, 同 R108+R107)**: 同 R108 (5 已列, 3 待开通)
+**4 FeatureFlag 当前状态 (R31 同 R108+R107 → v1.0.0+147 删 iap → 1.1.0 round 4b 删 3 外联)**: 同 v1.1.0 章节 (4 flag)。
 
 ## v0.23 P0-P3 集中清理 (round 38-44)
 
@@ -313,7 +308,7 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 
 总计 (本批): 1057 → 1098 tests (+41), 0 analyzer error, 12 守护脚本全绿 (新增 check_orphan_arb_keys).
 
-**22 守护脚本清单** (v0.30 R107 cleanup 修正, v0.30 R95 加 `check_coverage.py`, R31 加 `check_apple_health_claim.py`, R32 加 `check_pii_in_title.py`, R109 round 1 加 `check_usecase_layer.py`, R111 round 8 加 `check_review_information_todo.py` 后总数 22 = 21 .py + 1 .dart):
+**21 守护脚本清单** (v0.30 R107 cleanup 修正, v0.30 R95 加 `check_coverage.py`, R31 加 `check_apple_health_claim.py`, R32 加 `check_pii_in_title.py`, R109 round 1 加 `check_usecase_layer.py`, R111 round 8 加 `check_review_information_todo.py` 后总数 22, 1.1.0 round 4b 删 `check_sms_release_ready.py` [SMS 外联删除] → 21 = 20 .py + 1 .dart):
 1. `python scripts/check_arb_keys.py` — zh / en / zh_Hant ARB 同步
 2. `python scripts/check_changelog.py` — pubspec 版本号 + CHANGELOG 顺序
 3. `python scripts/check_cross_feature.py` — 跨 feature import 边界
@@ -325,20 +320,18 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 9. `python scripts/check_no_pua.py` — PUA 字符
 10. `python scripts/check_widget_dispose.py` — 资源泄漏
 11. `python scripts/check_orphan_arb_keys.py` — **R56e 新增** — ARB key 定义但未引用
-12. `python scripts/check_legal_consent.py` — **v0.26 R57 新增** — 单独同意 / PIPL §13 / §14 检测
-13. `python scripts/check_sms_release_ready.py` — **v0.26 R57 新增** (v0.27 R58 降为 warn-only) — SMS 上线前 checklist
-14. `python scripts/check_strings_hardcoded.py` — **v0.26 R57 新增** (v0.32 R110 扩 inline 字面量规则) — 硬编码中文 string 检测
-15. `python scripts/check_zh_hant_consistency.py` — **v0.26 R57 新增** — 繁简一致性 (OpenCC s2tw)
-16. `python scripts/check_16kb_alignment.py` — **v0.28 R77 新增** (v0.30 R92 文档补) — Android 16KB page size 验证 (Google Play 2025-11-01 强制)
-17. `python scripts/check_coverage.py` — **v0.30 R95 新增** — 覆盖率阈值 (domain ≥ 70% / data ≥ 50% / presentation ≥ 30%)
-18. `python scripts/check_apple_health_claim.py` — **R31 新增** — "Apple Health" 关键词 + health_kit 声明扫描 (防假声明)
-19. `python scripts/check_pii_in_title.py` — **R32 新增** — 通知 title/body 锁屏 PII 检测
-20. `python scripts/check_usecase_layer.py` — **R109 round 1 新增** — use case 层硬约束 (0 data/0 theme/0 presentation/0 l10n/0 Flutter)
-21. `python scripts/check_review_information_todo.py` — **R111 round 8 新增** — review_information 未标记占位防回退 + notes.txt 版本同步 (AS-16)
-22. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
+12. `python scripts/check_legal_consent.py` — **v0.26 R57 新增** (1.1.0 round 4b 删紧急联系人 §13 检测) — 单独同意 / PIPL §13 / §14 检测
+13. `python scripts/check_strings_hardcoded.py` — **v0.26 R57 新增** (v0.32 R110 扩 inline 字面量规则) — 硬编码中文 string 检测
+14. `python scripts/check_zh_hant_consistency.py` — **v0.26 R57 新增** — 繁简一致性 (OpenCC s2tw)
+15. `python scripts/check_16kb_alignment.py` — **v0.28 R77 新增** (v0.30 R92 文档补) — Android 16KB page size 验证 (Google Play 2025-11-01 强制)
+16. `python scripts/check_coverage.py` — **v0.30 R95 新增** — 覆盖率阈值 (domain ≥ 70% / data ≥ 50% / presentation ≥ 30%)
+17. `python scripts/check_apple_health_claim.py` — **R31 新增** — "Apple Health" 关键词 + health_kit 声明扫描 (防假声明)
+18. `python scripts/check_pii_in_title.py` — **R32 新增** (1.1.0 round 4c 删 safety/contact 黑名单项) — 通知 title/body 锁屏 PII 检测
+19. `python scripts/check_usecase_layer.py` — **R109 round 1 新增** — use case 层硬约束 (0 data/0 theme/0 presentation/0 l10n/0 Flutter)
+20. `python scripts/check_review_information_todo.py` — **R111 round 8 新增** — review_information 未标记占位防回退 + notes.txt 版本同步 (AS-16)
+21. `dart scripts/check_all.dart` — 4 层架构纯度 + 一致性
 
 **待办 (外部依赖, 非本批)**:
-- R55 真接阿里云 SMS (依赖法务 1-2 月模板审核 + 阿里云 AccessKey 申请)
 - R51b PHQ-9 题目 + 严重度 + 危机电话完整走 ARB (v1.0 大工程, 当前仅 hotline 6 region 走 hot path)
 
 ## 关键约束
@@ -400,7 +393,6 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - `README.md` — 产品视角
 - `docs/CHANGELOG.md` — 版本变更（Keep a Changelog 格式）
 - `docs/DEPLOYMENT.md` — 部署相关
-- `docs/SENDGRID_SETUP.md` — 邮件服务配置
 
 ---
 
@@ -503,3 +495,21 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **残余 (R113+ 路线)**: 上架外部 P0 剩余 (域名 ICP / 设计师资产 / review 4 占位 / console 4 表单人工填 — 文本已生成在 build/ / release build 冒烟+16KB objdump 实测 — 本机无 Android SDK, keystore 已生成, check_16kb_alignment.py 已支持 --aab 真验证) · AR-20 god class 18 个长线拆解 (批1 pipeline + 批2 setup_page_state 503→331 + add_medication 573→258 已拆) · R51b 8 量表 items i18n (v1.0) · AH-08/09 真 reduce-transparency/SF Symbol (v1.0) · keystore 密码备份 1Password (用户操作)。
 
 **R112+ 路线图 (与 R111 合并更新)**: R113 视觉专项 (8 feature ALS 化: settings 4 组 → vent → assessment → mood_list; 集中器自清; golden 3 widget) · 架构专项 (AR-16 守门先红 0.5d → AR-19+R112-ARCH-01 ConsentPreferenceStore 数据编排下沉 5d → AR-20 god class 接力批1 export pipeline 拆 4 子函数) · 外部闸门 (域名 ICP → keystore → 首次 release build 冒烟 + 16KB objdump → console 4 表单 → 设计师资产 → review 真实值 + 5.1.3 问卷) · v1.0 (2027-Q1)
+
+## v1.1.0 情绪优先重构 (2026-08-15, rounds 1-6, 外联删除定版 + 情绪/树洞优先)
+
+**状态**: 产品定位翻转 — 从"吃药打卡 + 失联通知"重定位为**情绪日记 + 树洞倾诉优先、用药记录辅助**。6 round 落地: 外联全链删除 + 3 新功能 + 导航/首页重构。**FeatureFlags 7→4, 守门员 22→21, schemaVersion 22→23, export schema v5→v6**。
+
+**核心变更**:
+
+- **round 1/1b/1c (domain)**: 树洞预设标签库 `vent_tag_library` + 情绪状态短语库 `status_phrase_library` + 情绪回顾聚合器 `mood_review_aggregator` (12 case 测试)
+- **round 2 (data)**: schema 23 — vent +tagsJson / mood +statusPhrase 两列 + migration + round-trip 测试
+- **round 3 (data)**: export v6 — 删 contacts 段 + statusPhrase/tagsJson, 老 v5 文件 contacts key 忽略
+- **round 4/4b/4c (presentation + 外联删除)**: contact 页/setup 联系人表单/settings 失联卡/home safety check 全删; SMS/邮件/SafetyWatch/CareEngine/ReminderChecker 服务全删 + contacts 表 + migration drop; FeatureFlags 7→4; 守门员 22→21 (check_sms_release_ready 删, check_pii_in_title/check_legal_consent 同步收窄); user_name_helper 等死代码清理
+- **round 5/5b (导航 + 首页)**: 4 tab 心情/树洞/趋势/设置 (/vent /trend 入 ShellRoute); 首页双主卡 MoodHeroCard + VentHeroCard, 打卡降级 compact
+- **round 5c/5d/5e (3 新功能 UI)**: 树洞标签 (compose 选择 + 列表筛选 + 详情显示) / 状态短语 (dialog 预设+自定义 + 列表/详情) / 情绪回顾页 (周/月统计摘要 + /mood-review 路由)
+- **round 6 (文档)**: README/CHANGELOG/AGENTS 同步 + 版本 1.1.0+148
+
+**隐私边界 (1.1.0 更新)**: 失联通知/SafetyWatch 行整删 (外联定版); 树洞仍绝对不进趋势/评估/通知/关怀。
+
+**4 FeatureFlag**: `ventAudioEnabled=true` / `fiveVendorPushEnabled` / `phqGad7I18nEnabled` / `bootReceiverEnabled` 均 false (等外部依赖)。
