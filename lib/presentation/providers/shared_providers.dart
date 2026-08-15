@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
-import 'package:chroniccare/domain/entities/contact_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/entities/report_history_entity.dart';
@@ -68,11 +67,6 @@ final streakSummaryProvider = Provider<AsyncValue<StreakSnapshot>>((ref) {
     );
   });
 });
-
-/// 联系人列表
-final contactsProvider = StreamProvider.autoDispose<List<ContactEntity>>(
-  (ref) => ref.watch(contactRepositoryProvider).watchAll(),
-);
 
 /// 吃药列表（v0.13 Round 11: 返回 MedicationEntity，不直接暴露 Drift row）
 final medicationsProvider = StreamProvider.autoDispose<List<MedicationEntity>>(

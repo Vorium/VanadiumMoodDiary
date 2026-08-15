@@ -4,8 +4,8 @@ import 'package:chroniccare/domain/entities/dosage_unit.dart';
 ///
 /// v0.17 round 14 (P1-6): presentation 文字迁到 flutter_localizations
 /// (`lib/l10n/app_zh.arb` / `app_en.arb`)。
-/// 但 domain 层不能 import flutter,所以通知/邮件模板 (EmailTemplate) 仍用
-/// 这里 hardcode 字符串 (v0.6 mock 短信中文文案)。
+/// 但 domain 层不能 import flutter,所以通知模板仍用
+/// 这里 hardcode 字符串。
 ///
 /// v0.23 round 39 (P1-9 fix): 通知标题/正文/Channel 名等也集中到本类,
 /// 通知 service 不再 hardcode 中文。domain 层虽不能 import flutter, 但
@@ -20,45 +20,12 @@ import 'package:chroniccare/domain/entities/dosage_unit.dart';
 ///   2) presentation 层可选择性升级到 i18n, 不破坏其它 caller
 ///   3) 测试可注入 mock override
 ///
-/// v1.0+ 计划: domain EmailTemplate 接收 i18n strings 作为参数，完全脱离本文件。
+/// 1.1.0 round 4b (emotion-first refactor): email* 段 (停药提醒邮件模板)
+/// 随 EmailService 整摘, careCopy* 段随 care_copy.dart 整摘,
+/// importSummaryContact 随导出 contacts 段整摘, notifChannelSafety*
+/// 随 showSafetyAlert 整摘, userNameFamily 随失联 SMS/邮件模板整摘。
 class Strings {
   Strings._();
-
-  // 通知 / 邮件模板 (outgoing message, 通常单语言, 暂用中文)
-  // v0.26 R57 (spzh P0 #6): 加 override 参数 (向后兼容)
-  static String emailSubject(String name, int days, {String? override}) =>
-      override ?? '[停药提醒] $name 已经 $days 天没吃药了';
-  // v0.21 Round 22 (P0-7 修复): PIPL §6 最小化原则。
-  // 之前强加 userName 字段,userName 为空 / 用户不想暴露真名时模板崩。
-  // 现在 userName 走 fallback:空/纯空白 → "用户" (默认代称),不强行暴露。
-  // v0.26 R57: 加 override 参数 (向后兼容)
-  static String emailBody(String userName, int days, {String? override}) {
-    if (override != null) return override;
-    final name = userName.trim().isEmpty ? '用户' : userName.trim();
-    return '我是 $name，已经 $days 天没在本应用里打卡了。\n'
-        '请你方便的时候提醒我按时吃药，避免复发。';
-  }
-
-  static String emailLastMed(String time, {String? override}) =>
-      override ?? '最后吃药：$time';
-  static String emailMedInfo(
-    String name,
-    double dosage,
-    DosageUnit unit, {
-    String? override,
-  }) =>
-      override ?? '$name $dosage${unit.id}';
-  static String emailCycle(int hours, {String? override}) =>
-      override ?? '签到周期：$hours 小时';
-  // v0.26 R57: const 保留 (老 caller snooze_manager 等仍用
-  // `static const Strings.emailFooter`); 同时加
-  // `emailFooterText({String? override})` 函数供新 caller 走 i18n override。
-  // v0.27 round 63 (P1-8 修复): 注释与代码同步 — const 字段 + i18n 函数并存
-  // (老 caller 用 const, 新 caller 用函数), 行为不变。
-  static const emailFooter = '这是一条自动通知，由慢病管家发送。\n'
-      '本通知不包含任何医疗建议。\n'
-      '如需停止接收，请在本应用设置中修改。';
-  static String emailFooterText({String? override}) => override ?? emailFooter;
 
   // ============== v0.23 round 39 (P1-9 fix): 通知标题/正文/Channel ==============
   // 通知 service 之前 hardcode 中文, 集中到本类, 便于 i18n 化。
@@ -71,8 +38,6 @@ class Strings {
   // 新 caller 走函数版 with override
   static const notifChannelMedicationName = '吃药提醒';
   static const notifChannelMedicationDesc = '到点提醒你吃药打卡';
-  static const notifChannelSafetyName = '安全警报';
-  static const notifChannelSafetyDesc = '长时间未打卡时提醒';
 
   /// v0.26 R57: 新 caller 走 i18n 路径用此 i18n 化函数 (presentation 层可注入 override)
   /// 与上面的 [notifChannelMedicationName] const 字段并存 — 老 caller
@@ -84,10 +49,6 @@ class Strings {
       override ?? notifChannelMedicationName;
   static String notifChannelMedicationDescText({String? override}) =>
       override ?? notifChannelMedicationDesc;
-  static String notifChannelSafetyNameText({String? override}) =>
-      override ?? notifChannelSafetyName;
-  static String notifChannelSafetyDescText({String? override}) =>
-      override ?? notifChannelSafetyDesc;
 
   // 每日打卡提醒 (20:00) — const 保留 (medication_notifier 用 const Strings.notifDailyCheckInTitle)
   static const notifDailyCheckInTitle = '🌱 今天吃了药吗？';
@@ -133,8 +94,7 @@ class Strings {
       override ?? '该吃药了 · 点一下 = 打卡';
 
   // 续方提醒 — v0.26 R57: 加 override 参数
-  static String notifRefillTitle({String? override}) =>
-      override ?? '💊 该续方了';
+  static String notifRefillTitle({String? override}) => override ?? '💊 该续方了';
   static String notifRefillBody(int daysLeft, {String? override}) =>
       override ?? '还剩约 $daysLeft 天断药，记得去医院或线上开药';
 
@@ -274,8 +234,6 @@ class Strings {
   // v0.27 round 63 (P1-8 修复): 注释与代码同步 — 这 6 项是函数, 没 const
   // 字段; 跟上面的 channel / daily / snooze 模式 (const + 函数 pair) 不同。
 
-  static String importSummaryContact(int n, {String? override}) =>
-      override ?? '$n 联系人';
   static String importSummaryMedication(int n, {String? override}) =>
       override ?? '$n 药';
   static String importSummaryCheckIn(int n, {String? override}) =>
@@ -309,43 +267,16 @@ class Strings {
   static String snoozeBodyText({String? override}) => override ?? snoozeBody;
 
   // ============== v0.27 round 62 (P1-8 修复): 用户名 fallback 集中 ==============
-  // 之前 user_name_helper / email_template / reminder_scheduler /
-  // safety_alert_dispatcher / notification_service 5+ 处 hardcode "您" /
-  // "您的家人" / "用户" 中文字符串, 集中到本类: 3 个 const 字段 (中文
-  // fallback, 老 caller 直接用) + 3 个 i18n 化函数 `*Text({String?
-  // override})` (新 caller 传 l10n 拿多语言)。
-  // 注: SMS / 邮件场景发的是中国紧急联系人, 中文是合理 fallback;
-  //   en 模式 UI 显示走 AppLocalizations (override 模式)。
-  // v0.27 round 63 (P1-8 修复): 注释与代码同步 — 删上面"override 模式"
-  // 笼统说法, 明确 override 只适用 `*Text` 函数, const 字段无 override
-  // (本身就是常量, 不可注入)。
+  // 之前 user_name_helper 多处 hardcode "您" / "用户" 中文字符串, 集中到
+  // 本类: 2 个 const 字段 (中文 fallback, 老 caller 直接用) + 2 个
+  // i18n 化函数 `*Text({String? override})` (新 caller 传 l10n 拿多语言)。
+  // 1.1.0 round 4b: userNameFamily ("您的家人") 随失联 SMS/邮件模板整摘。
   static const userNameDefault = '用户';
   static const userNamePolite = '您';
-  static const userNameFamily = '您的家人';
   static String userNameDefaultText({String? override}) =>
       override ?? userNameDefault;
   static String userNamePoliteText({String? override}) =>
       override ?? userNamePolite;
-  static String userNameFamilyText({String? override}) =>
-      override ?? userNameFamily;
-
-  // ============== v0.31 P1-5: 关怀文案 (care_copy.dart) i18n ==============
-  static String careCopyLateCheckInTitle({String? override}) =>
-      override ?? '🛏️ 提早一点更稳定';
-  static String careCopyLateCheckInBody({String? override}) =>
-      override ?? '21 点后打卡比例偏高 — 规律作息对药效有影响';
-  static String careCopyWeekendMissedTitle({String? override}) =>
-      override ?? '☀️ 周末保持节律';
-  static String careCopyWeekendMissedBody({String? override}) =>
-      override ?? '周末容易错过——现在打卡，多一点坚持';
-  static String careCopySecondDayMissedTitle({String? override}) =>
-      override ?? '🌿 后续保持就好';
-  static String careCopySecondDayMissedBody({String? override}) =>
-      override ?? '少 1 次没关系——后续保持就好';
-  static String careCopyWeekPerfectTitle({String? override}) =>
-      override ?? '🌟 一整周都准时！';
-  static String careCopyWeekPerfectBody({String? override}) =>
-      override ?? '今周已全部准时';
 
   // ============== v0.31 P1-5: 评估对比 (assessment_comparison.dart) i18n ==============
   static String assessmentComparisonImproved({String? override}) =>

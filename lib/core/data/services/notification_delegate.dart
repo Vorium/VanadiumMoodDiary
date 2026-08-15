@@ -22,14 +22,14 @@
 // **修复**: 抽 NotificationDelegate, 12 委派 method 集中, facade 暴露
 // `service.delegate.xxx(...)` 路径。
 // - caller: `notif.scheduleDailyReminder(...)` → `notif.delegate.scheduleDailyReminder(...)`
-// - facade 自身瘦 60+ 行, 主体保留 6 method:
-//   init / requestPermission / showNow / cancelAll / pendingCount /
-//   showSafetyAlert + rescheduleAll (orchestrator) + _canScheduleExact (P0#2)
+// - facade 自身瘦 60+ 行, 主体保留 5 method:
+//   init / requestPermission / showNow / cancelAll / pendingCount
+//   + rescheduleAll (orchestrator) + _canScheduleExact (P0#2)
+//   (1.1.0 round 4b: showSafetyAlert 随外联服务整摘)
 //
 // **保留 facade 公开 API**:
 // - `NotificationService.onNotificationTap` (v0.11 Round 5, 用户点通知回调)
-// - `NotificationService.showNow` (CareEngine 主动 push, NotificationSender 接口)
-// - `NotificationService.showSafetyAlert` (独立 channel, facade 直实现)
+// - `NotificationService.showNow` (主动 push, NotificationSender 接口)
 // - `NotificationService.rescheduleAll` (orchestrator, 调 _canScheduleExact +
 //   3 sub-delegate)
 // - `NotificationService.cancelAll` / `pendingCount` (pass-through 到 _plugin)
@@ -196,6 +196,5 @@ class NotificationDelegate {
   // ============== BadgeSyncService 委派 ==============
 
   /// 更新角标数字 (iOS badge, count=0 清零)
-  Future<void> updateBadgeCount(int count) =>
-      badgeSync.updateBadgeCount(count);
+  Future<void> updateBadgeCount(int count) => badgeSync.updateBadgeCount(count);
 }

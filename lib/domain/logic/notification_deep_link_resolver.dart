@@ -12,12 +12,13 @@
 // `Uri.parse('chroniccare://check-in/today')` 把 'check-in' 解析为 host,
 // 'today' 为 path)。
 //
-// 4 类 action → 最终 go_router path (注意: app_router 可能有 redirect,
+// 3 类 action → 最终 go_router path (注意: app_router 可能有 redirect,
 // 这里写最终 path):
 // - today        → /check-in/today
 // - medication   → /check-in/medication/{medId}
 // - assessment   → /assessment/{scaleId}
-// - safety-alert → /check-in/today?reason=safety
+// 1.1.0 round 4b: safety-alert (→ /check-in/today?reason=safety) 随外联
+// 服务整摘删除。
 
 /// 通知 payload → 最终路由 path 决策 (纯函数)
 ///
@@ -45,8 +46,6 @@ String? resolveNotificationDeepLinkRoute(String? payload) {
       final segs = uri.pathSegments;
       if (segs.isEmpty) return null;
       return '/assessment/${segs[0]}';
-    case 'safety-alert':
-      return '/check-in/today?reason=safety';
     default:
       return null;
   }

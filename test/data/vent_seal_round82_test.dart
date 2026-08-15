@@ -70,15 +70,11 @@ void main() {
     test('seal 仅支持 ConsentKind.vent: 其它 kind 抛 ArgumentError', () async {
       final store = await makeStore();
       expect(
-        () => store.seal(ConsentKind.safety),
-        throwsA(isA<ArgumentError>()),
-      );
-      expect(
         () => store.seal(ConsentKind.analytics),
         throwsA(isA<ArgumentError>()),
       );
       expect(
-        () => store.seal(ConsentKind.emergencyContactSharing),
+        () => store.seal(ConsentKind.dataExport),
         throwsA(isA<ArgumentError>()),
       );
       expect(
@@ -90,10 +86,10 @@ void main() {
     test('isSealed / sealedAt 对非 vent kind 一律返 false / null (语义安全)', () async {
       final store = await makeStore();
       // 即便误调 seal(其它 kind) 抛错, isSealed 永远返 false
-      expect(await store.isSealed(ConsentKind.safety), isFalse);
       expect(await store.isSealed(ConsentKind.analytics), isFalse);
-      expect(await store.sealedAt(ConsentKind.safety), isNull);
+      expect(await store.isSealed(ConsentKind.dataExport), isFalse);
       expect(await store.sealedAt(ConsentKind.analytics), isNull);
+      expect(await store.sealedAt(ConsentKind.dataExport), isNull);
     });
 
     test('unseal(vent) 清除封存标志: isSealed=false, sealedAt=null', () async {
@@ -126,7 +122,7 @@ void main() {
       final store = await makeStore();
       await store.seal(ConsentKind.vent);
 
-      await store.reset(ConsentKind.safety);
+      await store.reset(ConsentKind.dataExport);
       await store.reset(ConsentKind.analytics);
 
       // vent 仍封存

@@ -10,11 +10,10 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 ///
 /// PIPL §13 单独同意要求处理敏感个人信息时**显式**告知用户 + 取得同意。
 ///
-/// v0.27 round 82: 抽象化支持 5 个 [ConsentKind]
-/// 修复前 `show()` 写死 `kind: ConsentKind.emergencyContactSharing` +
-/// `thresholdDays: int` 必传参数, 只能支持加联系人场景。修复后用
-/// `placeholders: Map<String, Object>?` 替代 `thresholdDays`, 内部按 `kind`
-/// 选不同渲染模板:
+/// v0.27 round 82: 抽象化支持多个 [ConsentKind]
+/// 修复前 `show()` 写死单一 kind + `thresholdDays: int` 必传参数, 只能支持
+/// 加联系人场景。修复后用 `placeholders: Map<String, Object>?` 替代
+/// `thresholdDays`, 内部按 `kind` 选不同渲染模板:
 /// - [ConsentKind.dataExport] → 用新 `dataExportConsent*` 模板
 ///   (placeholders 需要 `purpose` / `dataCategories` / `retention`)
 /// - [ConsentKind.vent] / [ConsentKind.analytics] →
@@ -133,13 +132,11 @@ class ConsentDialog {
           rejectLabel: l10n.contactConsentReject,
           version: l10n.dataExportConsentVersion,
         );
-      case ConsentKind.emergencyContactSharing:
-      case ConsentKind.safety:
       case ConsentKind.vent:
       case ConsentKind.analytics:
         // Fallback: §14 撤回 toggle 在 legal_page 走 LegalConsentStore.withdraw,
-        // 目前不弹 ConsentDialog。1.1.0 round 4 后仅 vent / analytics
-        // 可能走此路径 (safety / emergencyContactSharing 无 caller)。
+        // 目前不弹 ConsentDialog。1.1.0 round 4b 后仅 vent / analytics
+        // 可能走此路径 (safety / emergencyContactSharing 已随外联整摘)。
         return _ConsentTemplate(
           title: l10n.contactConsentTitle,
           body: Text(_fallbackBodyFor(kind, l10n)),

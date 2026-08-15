@@ -159,7 +159,7 @@ scripts = [
     "check_datetime_race.py", "check_datetime_race2.py", "check_drift_namespace.py",
     "check_fullwidth_punctuation.py", "check_no_hardcoded_utc.py", "check_no_pua.py",
     "check_widget_dispose.py", "check_orphan_arb_keys.py", "check_legal_consent.py",
-    "check_sms_release_ready.py", "check_strings_hardcoded.py",
+    "check_strings_hardcoded.py",
     "check_zh_hant_consistency.py", "check_all.dart",
 ]
 scripts_dir = ROOT / "scripts"

@@ -801,8 +801,6 @@
   "legalPageDocuments": "Legal documents",
   "legalPageWithdrawTitle": "Withdraw consent",
   "legalPageWithdrawDescription": "After withdrawing, the related feature is immediately disabled (data is kept, can be re-enabled).",
-  "legalPageWithdrawSafety": "Withdraw safety notification consent",
-  "legalPageWithdrawSafetySubtitle": "Stop sending SMS/email to emergency contacts when you miss check-ins",
   "legalPageWithdrawVent": "Withdraw vent (sensitive) consent",
   "legalPageWithdrawVentSubtitle": "Stop storing new vent text/audio (existing data kept, delete manually)",
   "legalPageWithdrawAnalytics": "Withdraw assessment/mood analytics consent",
@@ -882,49 +880,6 @@
       }
     }
   },
-  "safetyAlertBodySent": "Last check-in: {date}. Auto-notified emergency contacts. Please confirm safety.",
-  "@safetyAlertBodySent": {
-    "description": "SafetyAlert body — SMS actually sent branch (P0-3 three-state fix, v0.27 R60)",
-    "placeholders": {
-      "date": {
-        "type": "Object",
-        "example": "2026-07-30"
-      }
-    }
-  },
-  "safetyAlertBodyMocked": "Last check-in: {date}. Lost-contact alert triggered.",
-  "@safetyAlertBodyMocked": {
-    "description": "SafetyAlert body — SMS mocked branch (avoid dev/release confusion, P0-3 three-state fix)",
-    "placeholders": {
-      "date": {
-        "type": "Object",
-        "example": "2026-07-30"
-      }
-    }
-  },
-  "safetyAlertBodyFailed": "Last check-in: {date}. Lost-contact detection triggered, but notification failed. Please check network.",
-  "@safetyAlertBodyFailed": {
-    "description": "SafetyAlert body — SMS failed branch (P0-3 three-state fix)",
-    "placeholders": {
-      "date": {
-        "type": "Object",
-        "example": "2026-07-30"
-      }
-    }
-  },
-  "safetyAlertTitle": "⚠️ No check-in for {days} days",
-  "@safetyAlertTitle": {
-    "description": "SafetyAlert title — v0.27 R75 fix (R74-N7): was hardcoded Chinese",
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyAlertNeverCheckIn": "No check-ins yet",
-  "@safetyAlertNeverCheckIn": {
-    "description": "SafetyAlert lastStr — v0.27 R75 fix (R74-N8): was hardcoded Chinese, returned when lastCheckIn==null"
-  },
   "homeSnoozeTitle": "⏰ Time to check in (in 5 min)",
   "notifChannelMedicationName": "Medication reminder",
   "@notifChannelMedicationName": {
@@ -933,14 +888,6 @@
   "notifChannelMedicationDesc": "Reminds you to check in when it's time",
   "@notifChannelMedicationDesc": {
     "description": "Android notification channel description (medication) — v0.27 R77 fix (R76-N1)"
-  },
-  "notifChannelSafetyName": "Safety alert",
-  "@notifChannelSafetyName": {
-    "description": "Android notification channel name (safety) — v0.27 R77 fix (R76-N1)"
-  },
-  "notifChannelSafetyDesc": "Alerts when you haven't checked in for a long time",
-  "@notifChannelSafetyDesc": {
-    "description": "Android notification channel description (safety) — v0.27 R77 fix (R76-N1)"
   },
   "homeNotifBannerText": "Reminders not set — you may miss check-ins. Please enable notifications in system settings.",
   "homeNotifBannerDismiss": "Got it",
@@ -1251,11 +1198,6 @@
   "medicationUnitMg": "mg",
   "medicationUnitTablet": "tablet",
   "safetyCheckResultDisabled": "Safety watch is disabled",
-  "phoneRegionCn": "Mainland China",
-  "phoneRegionHk": "Hong Kong, China",
-  "phoneRegionMo": "Macao, China",
-  "phoneRegionTw": "Taiwan, China",
-  "phoneRegionIntl": "International",
   "presetMedSsriMorningTitle": "Single med · SSRI morning",
   "presetMedSsriMorningDesc": "1 medication, taken daily at 8 AM (for SSRI / SNRI class)",
   "presetMedMoodStabilizerTwiceTitle": "Mood stabilizer · morning & evening",
@@ -1274,10 +1216,6 @@
   "presetMedAntipsychoticHint": "Common atypical antipsychotics (follow your doctor's prescription)",
   "presetMedSedativeAnxiolyticName": "Sedative / anxiolytic adjunct",
   "presetMedSedativeAnxiolyticHint": "Common sedative / anxiolytic adjuncts (follow your doctor's prescription)",
-  "checkInTypeDaily": "Daily check-in",
-  "checkInTypeTemp": "Temp dose",
-  "checkInTypePhq9": "PHQ-9 assessment",
-  "checkInTypeGad7": "GAD-7 assessment",
   "dayDetailCheckInWith": "Check-in · {name}",
   "@dayDetailCheckInWith": {
     "placeholders": {
@@ -2994,13 +2932,6 @@
   },
   "setupConsentAgreeAll": "I have read and agree to all the above agreements",
   "@_v0_31_P1_5_domain_hardcoded_zh_to_arb": {},
-  "careCopyLateCheckInTitle": "🛏️ A bit earlier is steadier",
-  "careCopyLateCheckInBody": "Check-ins after 9 PM are frequent — regular schedules help medication effectiveness",
-  "careCopyWeekendMissedTitle": "☀️ Keep your rhythm on weekends",
-  "careCopyWeekendMissedBody": "Weekends are easy to miss — check in now, a little more consistency",
-  "careCopySecondDayMissedTitle": "🌿 Just keep going",
-  "careCopySecondDayMissedBody": "Missing once is fine — just keep going from here",
-  "careCopyWeekPerfectTitle": "🌟 A whole week on time!",
   "assessmentComparisonImproved": "Improved",
   "assessmentComparisonWorsened": "Worsened",
   "assessmentComparisonUnchanged": "Unchanged",

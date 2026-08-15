@@ -44,13 +44,7 @@ void main() {
     expect(json['version'], 6);
   });
 
-  test('2. 导出不含 contacts key (DB 有 contacts 也不导出)', () async {
-    await db.contactDao.insert(
-      ContactsCompanion.insert(
-        name: '妈妈',
-        phone: '13800138001',
-      ),
-    );
+  test('2. 导出不含 contacts key (1.1.0 round 4b: 表已整删)', () async {
     final json = parseJson(await svc.exportToJson());
     expect(json.containsKey('contacts'), isFalse);
   });

@@ -15,10 +15,12 @@
 //     保持双向同步。
 //
 // 语义 (跟原 LegalConsentStore 1:1):
-//   - 撤回只对 §14 3 kind (safety / vent / analytics) 实际生效
-//   - §13 强场景 (emergencyContactSharing / dataExport) 走单独同意 + audit log
+//   - 撤回只对 §14 2 kind (vent / analytics) 实际生效
+//   - §13 强场景 (dataExport) 走单独同意 + audit log
 //   - reset(dataExport) 同步清 audit log (PIPL §47 删除权)
 //   - vent seal/unseal (PIPL §47 撤回 vent 同意时 2 选 1: 立即删除 / 加密封存)
+// 1.1.0 round 4b: 外联 2 kind (emergencyContactSharing / safety) 整摘,
+//   contactId audit 字段随 contacts 表删除。
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,10 +32,12 @@ import 'package:chroniccare/domain/entities/consent_artifact.dart'
 
 /// 撤回同意状态存储 (data 层)
 ///
-/// v0.27 round 63: 操作 [ConsentKind] 5 个 kind — 包括 PIPL §13 强场景
-/// (emergencyContactSharing / dataExport) 和 §14 撤回场景 (safety / vent /
-/// analytics)。撤回只对 §14 3 个 kind 实际生效 (§13 是单独同意强场景,
-/// 撤回流程在 v1.0 走联系人本人确认 "Y" 通道, 不在本类管理)。
+/// v0.27 round 63: 操作 [ConsentKind] 3 个 kind — 包括 PIPL §13 强场景
+/// (dataExport) 和 §14 撤回场景 (vent / analytics)。撤回只对 §14 2 个
+/// kind 实际生效 (§13 是单独同意强场景, 撤回流程由数据导出同意流程管理)。
+///
+/// 1.1.0 round 4b: emergencyContactSharing / safety 2 kind 随外联服务
+/// 整摘删除。
 ///
 /// v0.27 round 82: 加 [recordDataExportConsent] / [readDataExportConsentLog],
 /// 给 dataExport kind 留 audit log (PIPL §13 单独同意强场景需可追溯)。
@@ -163,7 +167,7 @@ class ConsentPreferenceStore {
   /// v0.30 R95 (sub-spec 7 task 31a): audit log 走 AES-256 加密存储
   /// - 复用 [EncryptionService.encryptString] (跟 R21 vent contentTextEnc
   ///   BLOB 模式同源密钥, device-bound)
-  /// - 加密前 JSON 含 PII 标记 (grantedBy / contactId), 设备 root / 备份偷走
+  /// - 加密前 JSON 含 PII 标记 (grantedBy), 设备 root / 备份偷走
   ///   → 明文泄露违反 PIPL §28
   /// - SharedPreferences 仍存 string list, 但每条 entry 是 base64(iv+ciphertext),
   ///   加密失败 → 走 [swallowError] 集中器 (跟 R21 vent 加密失败模式一致)
@@ -179,12 +183,13 @@ class ConsentPreferenceStore {
       'kind': artifact.kind.name,
       // v0.30 R108 revisit (P0-017): 统一 UTC + 'Z' 后缀,避免跨时区 audit
       // log 时间"瞬移" (北京→纽约 -12/13h) 触发 PIPL §13 法定记录时间不准。
-      // 跟 export_orchestrator / safety_config_service / last_error_capture 同
+      // 跟 export_orchestrator / last_error_capture 同
       // 模式,加 .toUtc() 保证 `DateTime.parse()` 反序列化永远当 UTC 读,
       // 不会因为设备 tz 漂移 (DST / 用户改设置) 出现同日/跨日计算错误。
+      // 1.1.0 round 4b: contactId 字段随 contacts 表整摘删除 (数据导出
+      // 同意不再关联联系人 id)。
       'grantedAt': artifact.grantedAt.toUtc().toIso8601String(),
       'grantedBy': artifact.grantedBy,
-      'contactId': artifact.contactId,
       'version': artifact.version,
     });
     try {
@@ -222,7 +227,6 @@ class ConsentPreferenceStore {
                 .firstWhere((k) => k.name == map['kind'] as String),
             grantedAt: DateTime.parse(map['grantedAt'] as String),
             grantedBy: map['grantedBy'] as String,
-            contactId: map['contactId'] as int?,
             version: map['version'] as String,
           ),
         );

@@ -843,8 +843,6 @@
   "legalPageDocuments": "法律文档",
   "legalPageWithdrawTitle": "撤回同意",
   "legalPageWithdrawDescription": "撤回某项同意后，相关功能立即停用（数据不删除，可重新打开）。",
-  "legalPageWithdrawSafety": "撤回失联通知同意",
-  "legalPageWithdrawSafetySubtitle": "不再因漏打卡触发短信／邮件通知给紧急联系人",
   "legalPageWithdrawVent": "撤回树洞（敏感倾诉）处理同意",
   "legalPageWithdrawVentSubtitle": "停止存储新树洞文字／录音（已有数据保留，需手动删除）",
   "legalPageWithdrawAnalytics": "撤回评估／情绪分析同意",
@@ -924,49 +922,6 @@
       }
     }
   },
-  "safetyAlertBodySent": "上次打卡： {date}。已自动通知紧急联系人，请确认安全。",
-  "@safetyAlertBodySent": {
-    "description": "SafetyAlert 通知 body — SMS 實際發送成功分支（P0-3 三態修正，v0.27 R60）",
-    "placeholders": {
-      "date": {
-        "type": "Object",
-        "example": "2026-07-30"
-      }
-    }
-  },
-  "safetyAlertBodyMocked": "上次打卡： {date}。已触发失联提醒。",
-  "@safetyAlertBodyMocked": {
-    "description": "SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三態修正）",
-    "placeholders": {
-      "date": {
-        "type": "Object",
-        "example": "2026-07-30"
-      }
-    }
-  },
-  "safetyAlertBodyFailed": "上次打卡： {date}。失联检测已触发，但通知发送失败。请检查网络。",
-  "@safetyAlertBodyFailed": {
-    "description": "SafetyAlert 通知 body — SMS 實際發送失敗分支（P0-3 三態修正）",
-    "placeholders": {
-      "date": {
-        "type": "Object",
-        "example": "2026-07-30"
-      }
-    }
-  },
-  "safetyAlertTitle": "⚠️ 已 {days} 天未打卡",
-  "@safetyAlertTitle": {
-    "description": "SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬編碼中文",
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyAlertNeverCheckIn": "从未打卡",
-  "@safetyAlertNeverCheckIn": {
-    "description": "SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬編碼中文， lastCheckIn==null 時返"
-  },
   "homeSnoozeTitle": "⏰ 该打卡了（5min 后）",
   "notifChannelMedicationName": "吃药提醒",
   "@notifChannelMedicationName": {
@@ -975,14 +930,6 @@
   "notifChannelMedicationDesc": "到点提醒你吃药打卡",
   "@notifChannelMedicationDesc": {
     "description": "Android 通知 channel 描述 (medication) — v0.27 R77 修 (R76-N1)"
-  },
-  "notifChannelSafetyName": "安全警报",
-  "@notifChannelSafetyName": {
-    "description": "Android 通知 channel 名 (safety) — v0.27 R77 修 (R76-N1)"
-  },
-  "notifChannelSafetyDesc": "长时间未打卡时提醒",
-  "@notifChannelSafetyDesc": {
-    "description": "Android 通知 channel 描述 (safety) — v0.27 R77 修 (R76-N1)"
   },
   "homeNotifBannerText": "提醒没设上，可能错过打卡。请到系统设置允许通知。",
   "homeNotifBannerDismiss": "知道了",
@@ -1293,11 +1240,6 @@
   "medicationUnitMg": "mg",
   "medicationUnitTablet": "片",
   "safetyCheckResultDisabled": "安全开关已关闭",
-  "phoneRegionCn": "中国大陆",
-  "phoneRegionHk": "中国香港",
-  "phoneRegionMo": "中国澳门",
-  "phoneRegionTw": "中国台湾",
-  "phoneRegionIntl": "国际",
   "presetMedSsriMorningTitle": "单药 · SSRI 早一次",
   "presetMedSsriMorningDesc": "1 种药，每天早 8 点服用（适用 SSRI ／ SNRI 类）",
   "presetMedMoodStabilizerTwiceTitle": "情绪稳定剂 · 早晚两次",
@@ -1316,10 +1258,6 @@
   "presetMedAntipsychoticHint": "常见非典型抗精神病药（具体药名以医生处方为准）",
   "presetMedSedativeAnxiolyticName": "镇静／抗焦虑辅助",
   "presetMedSedativeAnxiolyticHint": "常见镇静／抗焦虑辅助药（具体药名以医生处方为准）",
-  "checkInTypeDaily": "每日打卡",
-  "checkInTypeTemp": "临时吃药",
-  "checkInTypePhq9": "PHQ-9 评估",
-  "checkInTypeGad7": "GAD-7 评估",
   "dayDetailCheckInWith": "打卡 · {name}",
   "@dayDetailCheckInWith": {
     "placeholders": {
@@ -3036,13 +2974,6 @@
   },
   "setupConsentAgreeAll": "我已阅读并同意以上所有协议",
   "@_v0_31_P1_5_domain_hardcoded_zh_to_arb": {},
-  "careCopyLateCheckInTitle": "🛏️ 提早一点更稳定",
-  "careCopyLateCheckInBody": "21 点后打卡比例偏高 — 规律作息对药效有影响",
-  "careCopyWeekendMissedTitle": "☀️ 周末保持节律",
-  "careCopyWeekendMissedBody": "周末容易错过——现在打卡，多一点坚持",
-  "careCopySecondDayMissedTitle": "🌿 后续保持就好",
-  "careCopySecondDayMissedBody": "少 1 次没关系——后续保持就好",
-  "careCopyWeekPerfectTitle": "🌟 一整周都准时！",
   "assessmentComparisonImproved": "好转",
   "assessmentComparisonWorsened": "恶化",
   "assessmentComparisonUnchanged": "持平",

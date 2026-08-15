@@ -15,12 +15,13 @@
 //
 // 1.1.0 round 4 (emotion-first refactor): care push (kCarePushBaseId) 随
 // HomeCareEngineDispatcher 整摘, 本 test 固定 ID 列表同步删除该项。
+// 1.1.0 round 4b: safetyAlertId 随 NotificationService.showSafetyAlert
+// 整摘, 固定 ID 剩 3 个。
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/data/services/assessment_notifier.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/mood_reminder_notifier.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 
 void main() {
@@ -30,9 +31,8 @@ void main() {
   const int snoozeCancelMax = 300000 + 2000000;
 
   group('notification ID 固定带 (v0.32 R110 B1-1 回归)', () {
-    test('5 个固定 ID 全部 ≥ 5M 带 (远离 med/refill/snooze cancel 区间)', () {
+    test('3 个固定 ID 全部 ≥ 5M 带 (远离 med/refill/snooze cancel 区间)', () {
       final fixedIds = <int>[
-        NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
         BadgeSyncService.badgeVirtualId,
@@ -49,7 +49,6 @@ void main() {
 
     test('固定 ID 不落在 medication cancel 区间 [2000, 202000)', () {
       final fixedIds = <int>[
-        NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
         BadgeSyncService.badgeVirtualId,
@@ -67,7 +66,6 @@ void main() {
 
     test('固定 ID 不落在 refill cancel 区间 [6000, 206000)', () {
       final fixedIds = <int>[
-        NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
         BadgeSyncService.badgeVirtualId,
@@ -100,12 +98,11 @@ void main() {
 
     test('固定 ID 彼此互不冲突', () {
       final ids = <int>{
-        NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
         BadgeSyncService.badgeVirtualId,
       };
-      expect(ids.length, 4, reason: '固定 ID 集合必须全是唯一值');
+      expect(ids.length, 3, reason: '固定 ID 集合必须全是唯一值');
     });
   });
 }

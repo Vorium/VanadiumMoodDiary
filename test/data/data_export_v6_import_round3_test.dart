@@ -72,11 +72,7 @@ void main() {
     expect(vents.first.tagsJson, '["家庭"]');
   });
 
-  test('2. v5 文件含 contacts key → import 成功, contacts 忽略, 其他表照常',
-      () async {
-    await db.contactDao.insert(
-      ContactsCompanion.insert(name: '旧', phone: '13800000001'),
-    );
+  test('2. v5 文件含 contacts key → import 成功, contacts 忽略, 其他表照常', () async {
     final v5Json = jsonEncode({
       'version': 5,
       'exportedAt': '2026-08-13T00:00:00.000Z',
@@ -109,10 +105,7 @@ void main() {
     final meds = await db.medicationDao.watchActive().first;
     expect(meds.length, 1);
     expect(meds.first.name, '舍曲林');
-    // v5 contacts 段被忽略: 不导入 '姐', 不清旧 '旧' (v6 刻意不清表)
-    final contacts = await db.contactDao.watchActive().first;
-    expect(contacts.length, 1);
-    expect(contacts.first.name, '旧');
+    // v5 contacts 段被忽略 (1.1.0 round 4b: contacts 表已整删, 不导入)
     expect(result.summary, isNot(contains('联系人')));
   });
 

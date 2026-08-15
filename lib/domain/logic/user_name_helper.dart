@@ -20,7 +20,9 @@ import 'package:chroniccare/core/l10n/strings.dart';
 /// 把可空的 `userName` 转为可显示的展示文本。
 ///
 /// [fallback] 默认 `Strings.userNamePolite` ("您")。
-/// 通知 / 邮件场景常用 `Strings.userNameFamily` ("您的家人") 更礼貌。
+///
+/// 1.1.0 round 4b: 原 `Strings.userNameFamily` ("您的家人", 失联 SMS/邮件
+/// 场景) 已随外联服务整摘删除。
 ///
 /// v0.27 round 62 (P1-8 修复): 把 hardcode 中文默认值从 '您'
 /// 改到 `Strings.userNamePolite` 集中常量, 跟 email_template /

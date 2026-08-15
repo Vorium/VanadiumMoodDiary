@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'package:chroniccare/core/data/database/daos/assessment_dao.dart';
 import 'package:chroniccare/core/data/database/daos/check_in_dao.dart';
-import 'package:chroniccare/core/data/database/daos/contact_dao.dart';
 import 'package:chroniccare/core/data/database/daos/medication_dao.dart';
 import 'package:chroniccare/core/data/database/daos/mood_dao.dart';
 import 'package:chroniccare/core/data/database/daos/report_dao.dart';
@@ -22,7 +21,6 @@ import 'package:chroniccare/core/data/database/daos/stress_event_dao.dart';
 import 'package:chroniccare/core/data/database/daos/treatment_dao.dart';
 import 'package:chroniccare/core/data/database/daos/weight_dao.dart';
 import 'package:chroniccare/core/data/database/tables/check_in/check_ins.dart';
-import 'package:chroniccare/core/data/database/tables/contact/contacts.dart';
 import 'package:chroniccare/core/data/database/tables/daily_tracking/anxiety_agitation_entries.dart';
 import 'package:chroniccare/core/data/database/tables/daily_tracking/sleep_entries.dart';
 import 'package:chroniccare/core/data/database/tables/daily_tracking/social_rhythm_entries.dart';
@@ -40,11 +38,14 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 part 'app_database.g.dart';
 
 /// Chronic care database
+///
+/// 1.1.0 round 4b (emotion-first refactor): Contacts 表整摘 (外联通信业务
+/// 删除定版, 用户决策 D1 不可逆) — 老用户走 migration from < 23
+/// `deleteTable('contacts')`, 新装 createAll 不再建。
 @DriftDatabase(
   tables: [
     CheckIns,
     Medications,
-    Contacts,
     UserProfiles,
     ReportHistories,
     MoodEntries,
@@ -147,12 +148,10 @@ class AppDatabase extends _$AppDatabase {
           await m.createAll();
         },
         onUpgrade: (m, from, to) async {
-          // v1 to v2: contact email change to phone, medication add dosage / dosageUnit / remove frequencyPerDay
+          // v1 to v2: contact email change to phone (历史: contacts 已随
+          // v1.1.0 round 4b 整摘, from < 23 步统一 deleteTable),
+          // medication add dosage / dosageUnit / remove frequencyPerDay
           if (from == 1) {
-            // Contacts: drop old email data (user explicitly decided to delete email),
-            // drop and rebuild is simplest (drift's deleteTable takes table name)
-            await m.deleteTable('contacts');
-            await m.createTable(contacts);
             // Medications: add dosage / dosageUnit
             await m.addColumn(medications, medications.dosage);
             await m.addColumn(medications, medications.dosageUnit);
@@ -280,29 +279,17 @@ class AppDatabase extends _$AppDatabase {
               'CREATE INDEX IF NOT EXISTS idx_checkin_med_id ON check_ins(medication_id)',
             );
           }
-          // v13 to v14: contacts + report_histories add index (P2 optimization)
+          // v13 to v14: report_histories add index (P2 optimization)
+          // 1.1.0 round 4b: 原 contacts index 行随 contacts 表整摘删除
+          // (表本身 from < 23 步 deleteTable, 无需再建索引)
           if (from <= 13) {
-            await customStatement(
-              'CREATE INDEX IF NOT EXISTS idx_contact_active_sort ON contacts(is_active, sort_order)',
-            );
             await customStatement(
               'CREATE INDEX IF NOT EXISTS idx_report_gen_at ON report_histories(generated_at)',
             );
           }
-          // v14 to v15: contacts add 4 consent columns (P0-2 fix, PIPL §13 audit trail)
-          // - all 4 columns nullable, old data (schemaVersion <= 14) auto null
-          // - new contact (schemaVersion 15+) ContactRepositoryImpl.add() forces
-          //   caller to pass ConsentArtifact, 4 columns written to ContactsCompanion.insert(...)
-          // - index: consent_at add index (query audit log by consent time descending)
-          if (from <= 14) {
-            await m.addColumn(contacts, contacts.consentAt);
-            await m.addColumn(contacts, contacts.consentKind);
-            await m.addColumn(contacts, contacts.consentBy);
-            await m.addColumn(contacts, contacts.consentVersion);
-            await customStatement(
-              'CREATE INDEX IF NOT EXISTS idx_contact_consent_at ON contacts(consent_at)',
-            );
-          }
+          // v14 to v15 (1.1.0 round 4b): 原 contacts 4 consent 列迁移块随
+          // contacts 表整摘删除 — 老用户 contacts 数据在 from < 23 步统一
+          // deleteTable, 无需再管 consent 列。
           // v15 to v17: mood_entries +8 CBT columns (v0.29 round 84)
           // note: code diff is actually 15 to 17 (no intermediate v16), spec mistakenly wrote '16 to 17'
           // (e14c6b3 fix spec 12 to 16 didn't correspond to any code schema bump).
@@ -379,7 +366,11 @@ class AppDatabase extends _$AppDatabase {
           // (v1.1.0 情绪优先重构)
           // - tagsJson: 默认 '[]', 老数据自动空列表
           // - statusPhrase: nullable, 老数据自动 null
+          // 1.1.0 round 4b: 彻底删除外联推送 — contacts 表整删
+          // (用户决策 D1, 不可逆), deleteTable 必须在 addColumn 之前
+          // (表删除不依赖新列)
           if (from < 23) {
+            await m.deleteTable('contacts');
             await m.addColumn(ventEntries, ventEntries.tagsJson);
             await m.addColumn(moodEntries, moodEntries.statusPhrase);
           }
@@ -399,7 +390,6 @@ class AppDatabase extends _$AppDatabase {
   // depends on CheckInDao.watchAssessments (expand 10 type IN) + CheckIns table.
   late final assessmentDao = AssessmentDao(this, checkInDao);
   late final medicationDao = MedicationDao(this);
-  late final contactDao = ContactDao(this);
   late final userProfileDao = UserProfileDao(this);
   late final reportDao = ReportDao(this);
   late final moodDao = MoodDao(this);

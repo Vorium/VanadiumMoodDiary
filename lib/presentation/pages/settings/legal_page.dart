@@ -2,7 +2,8 @@
 //
 // PIPL §26 撤回同意 UI 实现。
 // - 顶部 3 份法律文档入口(复用 showLegalDocument)
-// - 底部 3 个 toggle:失联通知 / 树洞 / 评估分析
+// - 底部 2 个 toggle:树洞 / 评估分析
+//   (1.1.0 round 4b: 失联通知 toggle 随外联服务整摘)
 // - 每个 toggle 旁边显示"撤回时间"或"从未撤回"
 // - toggle 持久化到 SharedPreferences
 
@@ -29,14 +30,14 @@ class LegalPage extends ConsumerStatefulWidget {
 }
 
 class _LegalPageState extends ConsumerState<LegalPage> {
-  // v0.27 round 63 (P0-3 修复续): legal_page UI 只显示 3 个 toggle
-  // (safety / vent / analytics), 不显示 emergencyContactSharing / dataExport
-  // (PIPL §13 强场景, 走 ConsentDialog 单独同意流程)。
-  // 用 _visibleKinds 显式列 UI 可见 kind, 避免跟全 5 值 ConsentKind.values
+  // v0.27 round 63 (P0-3 修复续): legal_page UI 只显示 2 个 toggle
+  // (vent / analytics), 不显示 dataExport (PIPL §13 强场景, 走
+  // ConsentDialog 单独同意流程)。
+  // 1.1.0 round 4b: safety toggle 随外联服务整摘 (3 → 2)。
+  // 用 _visibleKinds 显式列 UI 可见 kind, 避免跟全 3 值 ConsentKind.values
   // 混用, snackbar (current/total) 计数走 _visibleKinds.indexOf 跟长度,
   // 不会因 enum 顺序变化而错位。
   static const _visibleKinds = [
-    ConsentKind.safety,
     ConsentKind.vent,
     ConsentKind.analytics,
   ];
@@ -66,7 +67,8 @@ class _LegalPageState extends ConsumerState<LegalPage> {
   Future<void> _toggle(ConsentKind kind, bool withdraw) async {
     final store = ref.read(legalConsentStoreProvider);
     // v0.28 R82.5 (法务 Q7b 必改, PIPL §47): vent 撤回弹 3 选 1 dialog
-    // 立即删除 / 加密封存 / 取消。safety / analytics 走原直接 toggle 路径
+    // 立即删除 / 加密封存 / 取消。analytics 走原直接 toggle 路径
+    // (1.1.0 round 4b: safety 分支随外联服务整摘)
     if (withdraw && kind == ConsentKind.vent) {
       final choice = await _showVentWithdrawDialog();
       if (choice == null) return; // 用户取消, 状态不变
@@ -124,7 +126,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
       return;
     }
 
-    // safety / analytics 走原路径 (无数据清理)
+    // analytics 走原路径 (无数据清理)
     if (withdraw) {
       await store.withdraw(kind);
       _withdrawnAt[kind] = DateTime.now();
@@ -136,7 +138,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
       setState(() => _withdrawn[kind] = withdraw);
       // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
       // v0.27 round 63 (P0-3 修复续): snackbar 计数走 _visibleKinds 长度 + index,
-      // 不用 ConsentKind.values (含 §13 强场景 2 值, 用户从未在 UI 看到,
+      // 不用 ConsentKind.values (含 §13 强场景 dataExport, 用户从未在 UI 看到,
       // 计数会从 1/3 跳到 3/3 再到 5/3, 语义错乱)。
       final current = _visibleKinds.indexOf(kind) + 1;
       final total = _visibleKinds.length;
@@ -256,15 +258,6 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                 Card(
                   child: Column(
                     children: [
-                      _ConsentTile(
-                        kind: ConsentKind.safety,
-                        title: l10n.legalPageWithdrawSafety,
-                        subtitle: l10n.legalPageWithdrawSafetySubtitle,
-                        withdrawn: _withdrawn[ConsentKind.safety]!,
-                        withdrawnAt: _withdrawnAt[ConsentKind.safety],
-                        onToggle: (v) => _toggle(ConsentKind.safety, v),
-                      ),
-                      const Divider(height: 1, thickness: 0.5),
                       _ConsentTile(
                         kind: ConsentKind.vent,
                         title: l10n.legalPageWithdrawVent,

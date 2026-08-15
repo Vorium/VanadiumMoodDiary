@@ -1423,13 +1423,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'After withdrawing, the related feature is immediately disabled (data is kept, can be re-enabled).';
 
   @override
-  String get legalPageWithdrawSafety => 'Withdraw safety notification consent';
-
-  @override
-  String get legalPageWithdrawSafetySubtitle =>
-      'Stop sending SMS/email to emergency contacts when you miss check-ins';
-
-  @override
   String get legalPageWithdrawVent => 'Withdraw vent (sensitive) consent';
 
   @override
@@ -1513,29 +1506,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String safetyAlertBodySent(Object date) {
-    return 'Last check-in: $date. Auto-notified emergency contacts. Please confirm safety.';
-  }
-
-  @override
-  String safetyAlertBodyMocked(Object date) {
-    return 'Last check-in: $date. Lost-contact alert triggered.';
-  }
-
-  @override
-  String safetyAlertBodyFailed(Object date) {
-    return 'Last check-in: $date. Lost-contact detection triggered, but notification failed. Please check network.';
-  }
-
-  @override
-  String safetyAlertTitle(int days) {
-    return '⚠️ No check-in for $days days';
-  }
-
-  @override
-  String get safetyAlertNeverCheckIn => 'No check-ins yet';
-
-  @override
   String get homeSnoozeTitle => '⏰ Time to check in (in 5 min)';
 
   @override
@@ -1544,13 +1514,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notifChannelMedicationDesc =>
       'Reminds you to check in when it\'s time';
-
-  @override
-  String get notifChannelSafetyName => 'Safety alert';
-
-  @override
-  String get notifChannelSafetyDesc =>
-      'Alerts when you haven\'t checked in for a long time';
 
   @override
   String get homeNotifBannerText =>
@@ -2063,21 +2026,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyCheckResultDisabled => 'Safety watch is disabled';
 
   @override
-  String get phoneRegionCn => 'Mainland China';
-
-  @override
-  String get phoneRegionHk => 'Hong Kong, China';
-
-  @override
-  String get phoneRegionMo => 'Macao, China';
-
-  @override
-  String get phoneRegionTw => 'Taiwan, China';
-
-  @override
-  String get phoneRegionIntl => 'International';
-
-  @override
   String get presetMedSsriMorningTitle => 'Single med · SSRI morning';
 
   @override
@@ -2142,18 +2090,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get presetMedSedativeAnxiolyticHint =>
       'Common sedative / anxiolytic adjuncts (follow your doctor\'s prescription)';
-
-  @override
-  String get checkInTypeDaily => 'Daily check-in';
-
-  @override
-  String get checkInTypeTemp => 'Temp dose';
-
-  @override
-  String get checkInTypePhq9 => 'PHQ-9 assessment';
-
-  @override
-  String get checkInTypeGad7 => 'GAD-7 assessment';
 
   @override
   String dayDetailCheckInWith(Object name) {
@@ -4065,30 +4001,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get setupConsentAgreeAll =>
       'I have read and agree to all the above agreements';
-
-  @override
-  String get careCopyLateCheckInTitle => '🛏️ A bit earlier is steadier';
-
-  @override
-  String get careCopyLateCheckInBody =>
-      'Check-ins after 9 PM are frequent — regular schedules help medication effectiveness';
-
-  @override
-  String get careCopyWeekendMissedTitle => '☀️ Keep your rhythm on weekends';
-
-  @override
-  String get careCopyWeekendMissedBody =>
-      'Weekends are easy to miss — check in now, a little more consistency';
-
-  @override
-  String get careCopySecondDayMissedTitle => '🌿 Just keep going';
-
-  @override
-  String get careCopySecondDayMissedBody =>
-      'Missing once is fine — just keep going from here';
-
-  @override
-  String get careCopyWeekPerfectTitle => '🌟 A whole week on time!';
 
   @override
   String get assessmentComparisonImproved => 'Improved';

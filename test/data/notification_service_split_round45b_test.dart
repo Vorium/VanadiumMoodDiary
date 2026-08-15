@@ -145,16 +145,15 @@ void main() {
     });
 
     test('5M+ 固定带 (R110 B1-1) 有序 + 彻底跳出 cancel 区间', () {
-      // R110: safety/assessment/mood/care/badge 全部迁 5,000,000+ 固定带,
+      // R110: assessment/mood/badge 全部迁 5,000,000+ 固定带,
       // 严格大于 snooze 最大 cancel 上界 (300000 + 2M = 2300000)。
-      expect(NotificationService.safetyAlertId, 5000000);
+      // 1.1.0 round 4b: safetyAlertId (5000000) 随 showSafetyAlert 整摘删除。
       expect(AssessmentNotifier.assessmentReminderId, 5000001);
       expect(BadgeSyncService.badgeVirtualId, 5000100);
       expect(SnoozeManager(plugin: _FakePlugin()).snoozeBaseId, 300000);
 
       // 固定带内部严格递增 + 全部 > 2300000 (任何 cancel 区间都杀不到)
       const ids = <int>[
-        NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         BadgeSyncService.badgeVirtualId,
       ];
@@ -166,8 +165,11 @@ void main() {
         );
       }
       for (final id in ids) {
-        expect(id, greaterThan(2300000),
-            reason: '固定带 $id 必须跳出 snooze cancel 上界',);
+        expect(
+          id,
+          greaterThan(2300000),
+          reason: '固定带 $id 必须跳出 snooze cancel 上界',
+        );
       }
     });
   });
@@ -249,7 +251,8 @@ void main() {
       expect(called, isFalse); // 没调, 不变 true
     });
 
-    test('NotificationService 默认 onNotificationTap 为 null (app 层接线, '
+    test(
+        'NotificationService 默认 onNotificationTap 为 null (app 层接线, '
         'R112 ARCH-02)', () {
       // v0.32 R112 (R112-ARCH-02): data 0 依赖 core/routing, 默认回调改
       // null (只 log 不导航), 生产由 main.dart 注入

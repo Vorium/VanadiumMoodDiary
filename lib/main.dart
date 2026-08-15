@@ -24,13 +24,10 @@ import 'dart:developer' as developer;
 
 import 'package:chroniccare/app.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/database_migration.dart';
-import 'package:chroniccare/core/data/services/email_service.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/core/data/services/sms_service.dart';
 import 'package:chroniccare/core/data/utils/skip_backup.dart';
 import 'package:chroniccare/core/routing/notification_navigation.dart';
 import 'package:chroniccare/main/boot_apps.dart';
@@ -48,6 +45,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 // 修后: _bootstrap() 内创建 local instance, validateForRelease + overrideWithValue
 //   共享同一份。Provider 仍是 fallback, 但实际永远被 override,不会两路实例化。
 // (历史注释保留在 git blame: R62 / R67 / R95 task 56 / R97-P1-13)
+//
+// 1.1.0 round 4b (emotion-first refactor): SMS / Email 服务整链删除
+//   (外联通信业务删除定版), 上面的 validateForRelease + 2 个 override
+//   随 SmsService / EmailService 一起摘掉。
 
 /// 慢病管家 · App 入口
 ///
@@ -145,30 +146,13 @@ Future<void> _bootstrap() async {
       proceedCompleter,
     );
     if (shouldProceed != true) {
-      runApp(MigrationAbortedApp(onRetry: main));
+      runApp(const MigrationAbortedApp(onRetry: main));
       return;
     }
   }
 
-  // 3. SMS / Email 守卫（互相独立，并行）
-  //    release + mock → 抛异常,被 runZonedGuarded 抓住
-  // v0.30 R108 revisit (P0-031): 删顶层 _smsService / _emailService,改在
-  //   _bootstrap() 内 local 创建, 跟 Provider overrideWithValue 共享同一份
-  //   instance (避免顶层 mutable 持有 + Provider 重新实例化的"两路 SmsService"
-  //   anti-pattern)。
-  // v0.32 R110 round 3 (C5 gate): 整条失联通信业务被
-  //   FeatureFlags.emergencyContactEnabled=false 暂停时, validateForRelease
-  //   不再抛错阻断启动 (暂停的功能不该报"未配置"错误 banner)。
-  final smsService = SmsService();
-  final emailService = EmailService();
-  if (FeatureFlags.emergencyContactEnabled) {
-    SmsService.validateForRelease(smsService.provider);
-  }
-  if (FeatureFlags.emailServiceEnabled) {
-    EmailService.validateForRelease(emailService);
-  }
-
-  // 4. 执行迁移（migrateIfNeeded 失败必须 throw,见 database_migration.dart）
+  // 3. 执行迁移（migrateIfNeeded 失败必须 throw,见 database_migration.dart）
+  // 1.1.0 round 4b: SMS / Email validateForRelease 守卫块已随外联服务整摘
   try {
     await DatabaseMigration.migrateIfNeeded();
   } on MigrationException catch (e) {
@@ -193,11 +177,6 @@ Future<void> _bootstrap() async {
         ),
         notificationServiceProvider.overrideWithValue(notifResult.service),
         databaseProvider.overrideWithValue(sharedDb),
-        // v0.30 R108 revisit (P0-031): smsServiceProvider / emailServiceProvider
-        //   override 改成 _bootstrap() 内的 local instance, 跟 validateForRelease
-        //   共享 (避免顶层 mutable + Provider 两路实例化)。
-        smsServiceProvider.overrideWithValue(smsService),
-        emailServiceProvider.overrideWithValue(emailService),
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       ],
       child: const AppRoot(),

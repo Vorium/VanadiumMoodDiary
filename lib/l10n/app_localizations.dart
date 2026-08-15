@@ -2506,18 +2506,6 @@ abstract class AppLocalizations {
   /// **'撤回某项同意后，相关功能立即停用（数据不删除，可重新打开）。'**
   String get legalPageWithdrawDescription;
 
-  /// No description provided for @legalPageWithdrawSafety.
-  ///
-  /// In zh, this message translates to:
-  /// **'撤回失联通知同意'**
-  String get legalPageWithdrawSafety;
-
-  /// No description provided for @legalPageWithdrawSafetySubtitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'不再因漏打卡触发短信／邮件通知给紧急联系人'**
-  String get legalPageWithdrawSafetySubtitle;
-
   /// No description provided for @legalPageWithdrawVent.
   ///
   /// In zh, this message translates to:
@@ -2638,36 +2626,6 @@ abstract class AppLocalizations {
   /// **'💊 准备打卡药物 #{id}'**
   String homeMedHint(int id);
 
-  /// SafetyAlert 通知 body — SMS 實際發送成功分支（P0-3 三態修正，v0.27 R60）
-  ///
-  /// In zh, this message translates to:
-  /// **'上次打卡： {date}。已自动通知紧急联系人，请确认安全。'**
-  String safetyAlertBodySent(Object date);
-
-  /// SafetyAlert 通知 body — SMS mock 模式分支（避免 dev/release 模式混淆，P0-3 三態修正）
-  ///
-  /// In zh, this message translates to:
-  /// **'上次打卡： {date}。已触发失联提醒。'**
-  String safetyAlertBodyMocked(Object date);
-
-  /// SafetyAlert 通知 body — SMS 實際發送失敗分支（P0-3 三態修正）
-  ///
-  /// In zh, this message translates to:
-  /// **'上次打卡： {date}。失联检测已触发，但通知发送失败。请检查网络。'**
-  String safetyAlertBodyFailed(Object date);
-
-  /// SafetyAlert 通知 title — v0.27 R75 修 (R74-N7): 之前硬編碼中文
-  ///
-  /// In zh, this message translates to:
-  /// **'⚠️ 已 {days} 天未打卡'**
-  String safetyAlertTitle(int days);
-
-  /// SafetyAlert 通知 body lastStr — v0.27 R75 修 (R74-N8): 之前硬編碼中文， lastCheckIn==null 時返
-  ///
-  /// In zh, this message translates to:
-  /// **'从未打卡'**
-  String get safetyAlertNeverCheckIn;
-
   /// No description provided for @homeSnoozeTitle.
   ///
   /// In zh, this message translates to:
@@ -2685,18 +2643,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'到点提醒你吃药打卡'**
   String get notifChannelMedicationDesc;
-
-  /// Android 通知 channel 名 (safety) — v0.27 R77 修 (R76-N1)
-  ///
-  /// In zh, this message translates to:
-  /// **'安全警报'**
-  String get notifChannelSafetyName;
-
-  /// Android 通知 channel 描述 (safety) — v0.27 R77 修 (R76-N1)
-  ///
-  /// In zh, this message translates to:
-  /// **'长时间未打卡时提醒'**
-  String get notifChannelSafetyDesc;
 
   /// No description provided for @homeNotifBannerText.
   ///
@@ -3587,36 +3533,6 @@ abstract class AppLocalizations {
   /// **'安全开关已关闭'**
   String get safetyCheckResultDisabled;
 
-  /// No description provided for @phoneRegionCn.
-  ///
-  /// In zh, this message translates to:
-  /// **'中国大陆'**
-  String get phoneRegionCn;
-
-  /// No description provided for @phoneRegionHk.
-  ///
-  /// In zh, this message translates to:
-  /// **'中国香港'**
-  String get phoneRegionHk;
-
-  /// No description provided for @phoneRegionMo.
-  ///
-  /// In zh, this message translates to:
-  /// **'中国澳门'**
-  String get phoneRegionMo;
-
-  /// No description provided for @phoneRegionTw.
-  ///
-  /// In zh, this message translates to:
-  /// **'中国台湾'**
-  String get phoneRegionTw;
-
-  /// No description provided for @phoneRegionIntl.
-  ///
-  /// In zh, this message translates to:
-  /// **'国际'**
-  String get phoneRegionIntl;
-
   /// No description provided for @presetMedSsriMorningTitle.
   ///
   /// In zh, this message translates to:
@@ -3724,30 +3640,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'常见镇静／抗焦虑辅助药（具体药名以医生处方为准）'**
   String get presetMedSedativeAnxiolyticHint;
-
-  /// No description provided for @checkInTypeDaily.
-  ///
-  /// In zh, this message translates to:
-  /// **'每日打卡'**
-  String get checkInTypeDaily;
-
-  /// No description provided for @checkInTypeTemp.
-  ///
-  /// In zh, this message translates to:
-  /// **'临时吃药'**
-  String get checkInTypeTemp;
-
-  /// No description provided for @checkInTypePhq9.
-  ///
-  /// In zh, this message translates to:
-  /// **'PHQ-9 评估'**
-  String get checkInTypePhq9;
-
-  /// No description provided for @checkInTypeGad7.
-  ///
-  /// In zh, this message translates to:
-  /// **'GAD-7 评估'**
-  String get checkInTypeGad7;
 
   /// No description provided for @dayDetailCheckInWith.
   ///
@@ -7241,48 +7133,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'我已阅读并同意以上所有协议'**
   String get setupConsentAgreeAll;
-
-  /// No description provided for @careCopyLateCheckInTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'🛏️ 提早一点更稳定'**
-  String get careCopyLateCheckInTitle;
-
-  /// No description provided for @careCopyLateCheckInBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'21 点后打卡比例偏高 — 规律作息对药效有影响'**
-  String get careCopyLateCheckInBody;
-
-  /// No description provided for @careCopyWeekendMissedTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'☀️ 周末保持节律'**
-  String get careCopyWeekendMissedTitle;
-
-  /// No description provided for @careCopyWeekendMissedBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'周末容易错过——现在打卡，多一点坚持'**
-  String get careCopyWeekendMissedBody;
-
-  /// No description provided for @careCopySecondDayMissedTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'🌿 后续保持就好'**
-  String get careCopySecondDayMissedTitle;
-
-  /// No description provided for @careCopySecondDayMissedBody.
-  ///
-  /// In zh, this message translates to:
-  /// **'少 1 次没关系——后续保持就好'**
-  String get careCopySecondDayMissedBody;
-
-  /// No description provided for @careCopyWeekPerfectTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'🌟 一整周都准时！'**
-  String get careCopyWeekPerfectTitle;
 
   /// No description provided for @assessmentComparisonImproved.
   ///

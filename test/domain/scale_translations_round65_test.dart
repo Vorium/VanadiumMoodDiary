@@ -14,15 +14,12 @@
 // v0.32 R112 (AR-17): AppLocalizationsScaleTranslations 已删 (0 运行时 caller),
 // i18n 路径改直测 ARB getter; 量表名派发锁在 scale_name_l10n_round8_test。
 
-import 'package:chroniccare/core/shared/phone_validator.dart';
-import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/gad7.dart';
 import 'package:chroniccare/domain/logic/phq9.dart';
 import 'package:chroniccare/l10n/app_localizations_en.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
-import 'package:chroniccare/l10n/region_display_name.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -193,111 +190,14 @@ void main() {
       expect(gad7Scale.displayName, 'GAD-7 焦虑筛查');
     });
 
-    test('Phq9Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)',
-        () {
+    test('Phq9Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)', () {
       final scale = Phq9Scale(translations: _EnNameTranslations());
       expect(scale.displayName, 'PHQ-9 Depression Screening');
     });
 
-    test('Gad7Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)',
-        () {
+    test('Gad7Scale 注入自定义 translations → displayName 走注入 (AR-17 本地替身)', () {
       final scale = Gad7Scale(translations: _EnNameTranslations());
       expect(scale.displayName, 'GAD-7 Anxiety Screening');
-    });
-  });
-
-  // v0.28 round 65 (spzh P2-F / P2-H): phoneRegion* / checkInType* 5+4=9 个
-  // i18n key 的实际引用 — regionDisplayName + CheckInType.labelL10n helper
-  // 都接受 `String? override` 由 caller 注入 ARB 字符串。直接引用 l10n.* 测试
-  // 避免 check_orphan_arb_keys 误报 orphan (脚本 grep `\.<key>\b` 不穿透
-  // helper 函数间接调用)。
-  group('regionDisplayName + CheckInType.labelL10n i18n key 引用 (防 orphan)', () {
-    test('5 region phoneRegion* zh 走 l10n.phoneRegionCn 等', () {
-      final l10n = AppLocalizationsZh();
-      expect(
-        regionDisplayName(PhoneRegion.cn, override: l10n.phoneRegionCn),
-        l10n.phoneRegionCn,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.hk, override: l10n.phoneRegionHk),
-        l10n.phoneRegionHk,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.mo, override: l10n.phoneRegionMo),
-        l10n.phoneRegionMo,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.tw, override: l10n.phoneRegionTw),
-        l10n.phoneRegionTw,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.intl, override: l10n.phoneRegionIntl),
-        l10n.phoneRegionIntl,
-      );
-    });
-
-    test('5 region phoneRegion* en 走 l10n.phoneRegionCn 等', () {
-      final l10n = AppLocalizationsEn();
-      expect(
-        regionDisplayName(PhoneRegion.cn, override: l10n.phoneRegionCn),
-        l10n.phoneRegionCn,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.hk, override: l10n.phoneRegionHk),
-        l10n.phoneRegionHk,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.mo, override: l10n.phoneRegionMo),
-        l10n.phoneRegionMo,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.tw, override: l10n.phoneRegionTw),
-        l10n.phoneRegionTw,
-      );
-      expect(
-        regionDisplayName(PhoneRegion.intl, override: l10n.phoneRegionIntl),
-        l10n.phoneRegionIntl,
-      );
-    });
-
-    test('4 checkInType* zh 走 l10n.checkInTypeDaily 等', () {
-      final l10n = AppLocalizationsZh();
-      expect(
-        CheckInType.normal.labelL10n(override: l10n.checkInTypeDaily),
-        l10n.checkInTypeDaily,
-      );
-      expect(
-        CheckInType.temp.labelL10n(override: l10n.checkInTypeTemp),
-        l10n.checkInTypeTemp,
-      );
-      expect(
-        CheckInType.phq9.labelL10n(override: l10n.checkInTypePhq9),
-        l10n.checkInTypePhq9,
-      );
-      expect(
-        CheckInType.gad7.labelL10n(override: l10n.checkInTypeGad7),
-        l10n.checkInTypeGad7,
-      );
-    });
-
-    test('4 checkInType* en 走 l10n.checkInTypeDaily 等', () {
-      final l10n = AppLocalizationsEn();
-      expect(
-        CheckInType.normal.labelL10n(override: l10n.checkInTypeDaily),
-        l10n.checkInTypeDaily,
-      );
-      expect(
-        CheckInType.temp.labelL10n(override: l10n.checkInTypeTemp),
-        l10n.checkInTypeTemp,
-      );
-      expect(
-        CheckInType.phq9.labelL10n(override: l10n.checkInTypePhq9),
-        l10n.checkInTypePhq9,
-      );
-      expect(
-        CheckInType.gad7.labelL10n(override: l10n.checkInTypeGad7),
-        l10n.checkInTypeGad7,
-      );
     });
   });
 }
@@ -308,7 +208,8 @@ void main() {
 /// method 验证 `translations:` 注入链路, 其余走 StaticScaleTranslations fallback。
 class _EnNameTranslations extends StaticScaleTranslations {
   @override
-  String phq9Name({String? override}) => override ?? 'PHQ-9 Depression Screening';
+  String phq9Name({String? override}) =>
+      override ?? 'PHQ-9 Depression Screening';
 
   @override
   String gad7Name({String? override}) => override ?? 'GAD-7 Anxiety Screening';

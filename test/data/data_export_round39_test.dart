@@ -105,21 +105,7 @@ void main() {
       expect(json.containsKey('contacts'), isFalse);
     });
 
-    test('DB 有 contact → 也不导出 (v6 摘除)', () async {
-      await db.contactDao.insert(
-        ContactsCompanion.insert(
-          name: '妈妈',
-          phone: '13800138001',
-          sortOrder: const Value(0),
-        ),
-      );
-      await db.contactDao.insert(
-        ContactsCompanion.insert(
-          name: '爸爸',
-          phone: '13800138002',
-          sortOrder: const Value(1),
-        ),
-      );
+    test('导出不含 contacts key (1.1.0 round 4b: 表已整删)', () async {
       final json = parseJson(await svc.exportToJson());
       expect(json.containsKey('contacts'), isFalse);
     });

@@ -3,6 +3,11 @@
 // 之前 safety_config_service.dart / safety_detector.dart / assessment_comparison.dart
 // 各自内联 daysBetween / isSameDay, 3 份重复代码。
 // 抽到 core/shared/ 供所有层共用 (shared/ 约束: 至少被 2 层用)。
+//
+// 1.1.0 round 4b (emotion-first refactor): safety_config_service /
+// safety_detector 随外联服务整摘, 本文件唯一消费者剩 domain 层
+// assessment_comparison — 从 core/shared/ 移入 domain/logic/ (满足
+// shared/ 至少 2 层用约束, check_all 守门员)。
 
 /// 跨日的"日历差"
 ///

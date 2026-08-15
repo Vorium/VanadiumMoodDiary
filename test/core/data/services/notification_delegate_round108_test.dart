@@ -8,8 +8,9 @@
 // 1. NotificationDelegate 文件存在 + 含 6 sub-service field
 // 2. 12 委派 method 在 delegate 集中, 不在 facade 主体
 // 3. notification_service.dart 行数 < 460 (原 426, R108 持平或减少)
-// 4. facade 主体保留 6 method (init / requestPermission / showNow /
-//    cancelAll / pendingCount / showSafetyAlert) + rescheduleAll
+// 4. facade 主体保留 5 method (init / requestPermission / showNow /
+//    cancelAll / pendingCount) + rescheduleAll
+//    (1.1.0 round 4b: showSafetyAlert 随外联服务整摘)
 // 5. 所有 caller 改走 .delegate.xxx() 路径 (8 文件迁移验证)
 //
 // **跟 R108 P0#2 同模式**: 静态源码 grep 守门, 不依赖 flutter_local_notifications
@@ -171,16 +172,15 @@ void main() {
     });
 
     test(
-        'B4: facade 主体保留 6 method (init/requestPermission/showNow/cancelAll/pendingCount/showSafetyAlert)',
+        'B4: facade 主体保留 5 method (init/requestPermission/showNow/cancelAll/pendingCount)',
         () {
-      // R108 主体保留:
+      // R108 主体保留 (1.1.0 round 4b: showSafetyAlert 随外联服务整摘):
       for (final method in [
         'Future<void> init()',
         'Future<bool> requestPermission()',
         'Future<void> showNow(',
         'Future<void> cancelAll()',
         'Future<int> get pendingCount',
-        'Future<void> showSafetyAlert(',
         'Future<void> rescheduleAll(',
       ]) {
         expect(

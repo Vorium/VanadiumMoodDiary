@@ -13,9 +13,9 @@
 //
 // 本测试覆盖 (10 cases):
 // 1. ConsentKind.dataExport 枚举值存在
-// 2. ConsentKind 5 kind 完整 (R63 同步验证 + R82 确认无回归)
-// 3. ConsentArtifact 5 字段 (kind/grantedAt/grantedBy/contactId/version) 构造 + 读取
-// 4. ConsentArtifact JSON round-trip (5 字段经 jsonEncode/jsonDecode 不丢)
+// 2. ConsentKind 3 kind 完整 (R63 同步验证 + round 4b 外联 2 值摘)
+// 3. ConsentArtifact 4 字段 (kind/grantedAt/grantedBy/version) 构造 + 读取
+// 4. ConsentArtifact JSON round-trip (4 字段经 jsonEncode/jsonDecode 不丢)
 // 5. 4 个新 i18n key (dataExportConsentTitle/Body/Confirm/Version) 在 3 个 ARB 同步
 // 6. dataExportConsentBody 3 placeholder (purpose / dataCategories / retention) 声明
 // 7. ConsentPreferenceStore.recordDataExportConsent 写 SharedPreferences 后能读回
@@ -49,50 +49,45 @@ void main() {
       expect(ConsentKind.dataExport.name, 'dataExport');
     });
 
-    test('5 kind 完整 (R63 同步验证 + R82 确认无回归)', () {
+    test('3 kind 完整 (1.1.0 round 4b: 外联 2 值整摘)', () {
       // 跟 test/domain/consent_kind_unified_round63_test.dart 同步验证,
-      // 确保 R82 抽象化 ConsentDialog 时没动 domain entity
-      expect(ConsentKind.values.length, 5);
+      // 确保 round 4b 摘除 emergencyContactSharing / safety 时没动其余
+      expect(ConsentKind.values.length, 3);
       expect(ConsentKind.values.map((k) => k.name).toSet(), {
-        'emergencyContactSharing',
         'dataExport',
-        'safety',
         'vent',
         'analytics',
       });
     });
 
-    test(
-        'ConsentArtifact 5 字段 (kind/grantedAt/grantedBy/contactId/version) 构造 + 读取',
-        () {
+    test('ConsentArtifact 4 字段 (kind/grantedAt/grantedBy/version) 构造 + 读取', () {
       // 模拟一次 dataExport 同意的完整 ConsentArtifact
-      // 5 字段: kind / grantedAt / grantedBy / contactId / version
+      // 4 字段: kind / grantedAt / grantedBy / version
+      // (1.1.0 round 4b: contactId 随 contacts 表整摘)
       final grantedAt = DateTime.utc(2026, 8, 15, 10, 30);
       final artifact = ConsentArtifact(
         kind: ConsentKind.dataExport,
         grantedAt: grantedAt,
         grantedBy: 'user',
-        contactId: null, // dataExport 不关联 contact
         version: 'v0.27-2026-08-15',
       );
 
-      // 5 字段读取 (即"反序列化"通过直接访问)
+      // 4 字段读取 (即"反序列化"通过直接访问)
       expect(artifact.kind, ConsentKind.dataExport);
       expect(artifact.grantedAt, grantedAt);
       expect(artifact.grantedBy, 'user');
-      expect(artifact.contactId, isNull);
       expect(artifact.version, 'v0.27-2026-08-15');
     });
 
-    test('ConsentArtifact JSON round-trip (5 字段经 jsonEncode/jsonDecode 不丢)',
+    test('ConsentArtifact JSON round-trip (4 字段经 jsonEncode/jsonDecode 不丢)',
         () {
       // 跟 ConsentPreferenceStore.recordDataExportConsent / readDataExportConsentLog
       // 内的 jsonEncode/jsonDecode 路径对齐, 验证序列化协议正确
+      // (1.1.0 round 4b: contactId 字段随 contacts 表整摘)
       final original = ConsentArtifact(
         kind: ConsentKind.dataExport,
         grantedAt: DateTime.utc(2026, 8, 15, 10, 30, 45),
         grantedBy: 'user',
-        contactId: null,
         version: 'v0.27-2026-08-15',
       );
       // 序列化 (走 Map, 跟 ConsentPreferenceStore.recordDataExportConsent 同步)
@@ -100,7 +95,6 @@ void main() {
         'kind': original.kind.name,
         'grantedAt': original.grantedAt.toIso8601String(),
         'grantedBy': original.grantedBy,
-        'contactId': original.contactId,
         'version': original.version,
       });
       // 反序列化 (跟 readDataExportConsentLog 对称)
@@ -109,14 +103,12 @@ void main() {
         kind: ConsentKind.values.firstWhere((k) => k.name == map['kind']),
         grantedAt: DateTime.parse(map['grantedAt'] as String),
         grantedBy: map['grantedBy'] as String,
-        contactId: map['contactId'] as int?,
         version: map['version'] as String,
       );
 
       expect(restored.kind, original.kind);
       expect(restored.grantedAt, original.grantedAt);
       expect(restored.grantedBy, original.grantedBy);
-      expect(restored.contactId, original.contactId);
       expect(restored.version, original.version);
     });
 
@@ -165,7 +157,8 @@ void main() {
       }
     });
 
-    test('ConsentPreferenceStore.recordDataExportConsent 写 SharedPreferences 后能读回',
+    test(
+        'ConsentPreferenceStore.recordDataExportConsent 写 SharedPreferences 后能读回',
         () async {
       final store =
           ConsentPreferenceStore(await SharedPreferences.getInstance());
@@ -173,7 +166,6 @@ void main() {
         kind: ConsentKind.dataExport,
         grantedAt: DateTime.utc(2026, 8, 15, 12, 0),
         grantedBy: 'user',
-        contactId: null,
         version: 'v0.27-2026-08-15',
       );
 
@@ -227,7 +219,6 @@ void main() {
         kind: ConsentKind.dataExport,
         grantedAt: DateTime.utc(2026, 8, 15, 10, 30),
         grantedBy: 'user_sensitive_pii_张三',
-        contactId: null,
         version: 'v0.30-2026-08-15',
       );
       await store.recordDataExportConsent(artifact);

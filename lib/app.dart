@@ -119,7 +119,8 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
     // - 不依赖 Android intent extra
     // - 不依赖 bootReceiverEnabled flag
     // - idempotent, 安全
-    // - 跟 SafetyWatchService.onAppStart 互补
+    // - 1.1.0 round 4b: 原 SafetyWatchService.onAppStart 互补路径已随外联
+    //   服务整摘, rescheduleAll 单独承担全通知重排
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_runRescheduleAllOnStart());
     });

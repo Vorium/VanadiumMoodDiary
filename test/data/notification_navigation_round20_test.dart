@@ -36,19 +36,6 @@ void main() {
         'gad7',
       );
     });
-
-    test('safetyAlert → /check-in/today?reason=safety', () {
-      final link = NotificationDeepLink.safetyAlert(5);
-      NotificationNavigation.handleTap(link.encode());
-      expect(
-        NotificationNavigation.onLink.value!.target,
-        DeepLinkTarget.safetyAlert,
-      );
-      expect(
-        NotificationNavigation.onLink.value!.daysSince,
-        5,
-      );
-    });
   });
 
   group('handleTap', () {

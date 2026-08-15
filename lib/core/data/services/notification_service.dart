@@ -1,6 +1,7 @@
 // v0.24 round 45 (Sprint #5b) — notification_service facade 瘦身
 // v0.27 round 65 (Sprint #12) — showSafetyAlert 50 行委派到 SafetyAlertBuilder
 // v0.30 R108 (P1 god class 拆 6 大 F - Fix #2) — 12 委派合 `delegate` namespace
+// 1.1.0 round 4b — showSafetyAlert 随 SafetyAlertBuilder 整摘删除
 //
 // 拆解前: 629 行 facade god class
 // 拆解后 (R24): 424 行 facade + 4 sub-service + 1 builder
@@ -9,12 +10,11 @@
 // facade 主体保留 (R108 Fix #2 后):
 //   - init (60 行): plugin init + tz + 权限
 //   - requestPermission (15 行): R97-P1-6 拆分
-//   - showNow (20 行): CareEngine 主动 push, NotificationSender 接口
+//   - showNow (20 行): 通知主动 push, NotificationSender 接口
 //   - cancelAll (4 行): pass-through 到 _plugin
 //   - pendingCount (15 行): pass-through + web 兜底
-//   - showSafetyAlert (28 行): 委派 SafetyAlertBuilder.buildFor + _plugin.show
 //   - rescheduleAll (30 行): orchestrator + _canScheduleExact (R108 P0#2)
-//   - 3 channel const + 1 safety id
+//   - 2 channel const (medication channel 走 ReminderDispatcher)
 //   - 2 visibleForTesting static (refillNotificationId / computeRefillFireTime)
 //
 // delegate 集中 (R108 新增, 12 method):
@@ -25,8 +25,8 @@
 //   - SnoozeManager: snoozeOnce / cancelSnoozeForMedication / cancelAllSnoozes
 //   - BadgeSyncService: updateBadgeCount
 //
-// 6 类 ID 范围常量 (v0.16 round 19 文档化):
-//   1001 (default) < 2000-21999 (med) < 5000 (safety) < 6000-206000 (refill)
+// 5 类 ID 范围常量 (v0.16 round 19 文档化):
+//   1001 (default) < 2000-21999 (med) < 6000-206000 (refill)
 //   < 7000 (assessment) < 9999 (badge) < 300000+ (snooze)
 
 import 'package:chroniccare/core/data/services/notification_delegate.dart';
@@ -41,20 +41,18 @@ import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/mood_reminder_notifier.dart';
 import 'package:chroniccare/core/data/services/notification_initializer.dart';
-import 'package:chroniccare/core/data/services/notification_payload.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
-import 'package:chroniccare/core/data/services/safety_alert_builder.dart';
 import 'package:chroniccare/core/data/services/snooze_manager.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/repositories/notification_sender.dart';
-import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 
 /// 本地通知服务 (facade god class 已拆 6 sub-service + 1 delegate namespace)
 ///
 /// 6 类通知编排已拆 5 sub-service (SnoozeManager / BadgeSyncService /
 /// ReminderDispatcher / MedicationNotifier / RefillNotifier / AssessmentNotifier) +
-/// facade 保留 showSafetyAlert (独立 channel 不走 dispatcher)。
+/// 1 delegate namespace。1.1.0 round 4b: showSafetyAlert (失联安全警报)
+/// 随外联服务整摘删除。
 ///
 /// R108 (P1 god class 拆 6 大 F - Fix #2): 12 委派 method 抽到
 /// [NotificationDelegate], facade 暴露 `delegate` 字段, caller 改走
@@ -63,22 +61,11 @@ import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 /// v0.7 升级保留:
 /// - 每天 20:00 通用打卡提醒 (在 MedicationNotifier)
 /// - 每个 medication 每个 time 配 zonedSchedule 推送 (在 MedicationNotifier)
-/// - "漏 1 天" 主动 push 安慰 (在 facade showSafetyAlert)
 class NotificationService implements NotificationSender {
-  // ===== 3 channel const + 1 safety id (facade 直持) =====
+  // ===== 2 channel const (facade 直持, medication channel 走 ReminderDispatcher) =====
   static const _channelId = 'chroniccare.medication';
   static const _channelName = Strings.notifChannelMedicationName;
   static const _channelDesc = Strings.notifChannelMedicationDesc;
-  // safety channel (跟 medication channel 分开, 独立 importance=alarm)
-  static const _safetyChannelId = 'chroniccare.safety';
-  static const _safetyChannelName = Strings.notifChannelSafetyName;
-  static const _safetyChannelDesc = Strings.notifChannelSafetyDesc;
-
-  /// 安全警报 id — v0.32 R110 (B1-1): 原 5000 落入 medication/refill
-  /// cancel 区间被静默误杀, 迁到 5M+ 固定带 (远离 med [2000,202000) /
-  /// refill [6000,206000) / snooze [300000,2300000), int32 安全)。
-  /// 回归测试: test/core/data/services/notification_id_band_round110_test.dart
-  static const int safetyAlertId = 5000000;
 
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
@@ -215,7 +202,7 @@ class NotificationService implements NotificationSender {
 
   /// 立即显示一条通知 (不调度, 立即推)
   ///
-  /// 用于 CareEngine 触发的主动 push (不是定时任务)
+  /// 用于主动 push (不是定时任务)
   @override
   Future<void> showNow({
     required int id,
@@ -235,8 +222,8 @@ class NotificationService implements NotificationSender {
     //   都不暴露 relevanceScore (iOS native UNNotificationContent.relevanceScore),
     //   锁屏 PII 防护的真正开关是 iOS 系统 "Show Previews" 设置, app 端无法绕过。
     //   title/body 已经在 R108 P0-3 / P0-012 修过去 PII (PIPL §23 锁屏公示),
-    //   此处只补 iOS 通知 metadata + Android visibility, 跟 safety_alert_builder.dart
-    //   模板对齐。
+    //   此处只补 iOS 通知 metadata + Android visibility (1.1.0 round 4b:
+    //   原 safety_alert_builder.dart 模板已随外联服务整摘, 本类不再引用)。
     const details = NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,
@@ -291,8 +278,8 @@ class NotificationService implements NotificationSender {
   // - 调用方: main.dart runApp 之后 addPostFrameCallback, 传入从 DB 读的 meds
   //
   // 实现: 调 3 个 sub-notifier 的对应 reschedule。
-  // 主流程: SafetyWatchService.onAppStart 已走 bootReceiverEnabled 守门,
-  // 跟这里 rescheduleAll 互补 (一个管 safety 通知重排, 一个管全通知重排)。
+  // 1.1.0 round 4b: 原 SafetyWatchService.onAppStart (safety 通知重排)
+  // 已随外联服务整摘, rescheduleAll 管全通知重排。
   //
   // v0.30 R108 (P0#2): SCHEDULE_EXACT_ALARM 运行时权限检查
   //
@@ -316,7 +303,7 @@ class NotificationService implements NotificationSender {
       piiSafeLog(
         'NotificationService',
         '⚠️ R108: SCHEDULE_EXACT_ALARM 不可用, 降级 inexactAllowWhileIdle. '
-        'Android 13+ 用户可能从系统设置撤回了权限, 引导重新开启',
+            'Android 13+ 用户可能从系统设置撤回了权限, 引导重新开启',
       );
     }
     // 1. 每日通用打卡提醒 (id=1001 fallback)
@@ -345,87 +332,24 @@ class NotificationService implements NotificationSender {
   /// v0.30 R108 revisit (P0-029): 委派到 NotificationInitializer
   Future<bool> _canScheduleExact() => _initializer.canScheduleExact();
 
-  // ============== SafetyAlert (facade 直实现, 不抽 sub-service) ==============
-  //
-  // v0.27 round 65 (spen P1-12 god class 拆分收尾):
-  // 50 行 facade 委派到 SafetyAlertBuilder.buildFor (5 行),
-  // facade 只负责调 _plugin.show, 文案/channel/3 态分流全部走 builder。
-  //
-  // 决策 (设计文档 §3.2): showSafetyAlert 1 个 method 50 行不值得 1 个 sub-service
-  // 走独立 "chroniccare.safety" channel, 不用 ReminderDispatcher (因为是 _plugin.show)
-
-  /// 推送"安全警报"通知 (v0.10 / Round 4 — 死了么思路)
-  ///
-  /// 和普通 reminder 不同的 channel: 高 importance + 震动 + 锁屏可见
-  /// v0.11 (Round 5): payload 携带天数, 点通知直达 home + 显示告警
-  /// v0.32 R112 (R112-09): 删 `userName` 死参数 (body 0 引用, v0.21
-  /// Round 23 改 nullable 后一直无用途)。
-  ///
-  /// v0.27 round 60 (P0-3 修正): 加 [SmsDispatchOutcome] 参数 + [l10n] 走
-  /// i18n, 通知文案 3 态分流 (sent / mocked / failed)。之前 hardcode
-  /// "已自动通知紧急联系人", 即使 SMS 没真发出去 (mock 模式 / send 失败)
-  /// 也显示, 形成对精神心理患者的"谎言"。修正后:
-  ///
-  /// - `smsOk > 0` → "已自动通知紧急联系人" (`safetyAlertBodySent`)
-  /// - `smsOk == 0 && smsMock > 0` → "失联检测已触发, 但当前为开发模式, 未实际通知" (`safetyAlertBodyMocked`)
-  /// - `smsOk == 0 && smsFail > 0` → "失联检测已触发, 但通知发送失败" (`safetyAlertBodyFailed`)
-  ///
-  /// v0.27 round 65 (P1-12 god class 拆分收尾): title/body/details 构造委派
-  /// 到 [SafetyAlertBuilder.buildFor] (纯函数), facade 仅负责调 `_plugin.show`。
-  ///
-  /// **注意**: 修正后**所有调用方必须传 [outcome] 和 [l10nResolver]**, 用 `SafetyAlertDispatcher`
-  /// 提供的 (smsOk, smsFail, smsMock) 计数 + `SafetyAlertL10nResolver` tear-off
-  /// 闭包 (call site 从 `AppLocalizations.of(context)` tear-off 注入).
-  ///
-  /// v0.32 R109 (god class 拆 round 2): l10n 改 `SafetyAlertL10nResolver`
-  /// (tear-off 闭包), `notification_service` 删 `l10n/app_localizations.dart`
-  /// 顶层 import, 4 层架构 `data` 0 依赖 `presentation` 更彻底.
-  Future<void> showSafetyAlert({
-    required int daysWithoutCheckIn,
-    required DateTime? lastCheckIn,
-    required SmsDispatchOutcome outcome,
-    required SafetyAlertL10nResolver l10nResolver,
-  }) async {
-    await init();
-    final build = SafetyAlertBuilder.buildFor(
-      daysWithoutCheckIn: daysWithoutCheckIn,
-      lastCheckIn: lastCheckIn,
-      outcome: outcome,
-      l10n: l10nResolver,
-      channelId: _safetyChannelId,
-      channelName: _safetyChannelName,
-      channelDescription: _safetyChannelDesc,
-    );
-    final payload =
-        NotificationDeepLink.safetyAlert(daysWithoutCheckIn).encode();
-    await _plugin.show(
-      safetyAlertId,
-      build.title,
-      build.body,
-      build.details,
-      payload: payload,
-    );
-  }
-
   // ============== ID 范围常量 (跨 sub-service 文档化) ==============
   //
-  // 7 类常量散落到 7 sub-service (单一职责), 这里留文档化列表:
+  // 6 类常量散落到 6 sub-service (单一职责), 这里留文档化列表:
   //   - MedicationNotifier.defaultReminderId        = 1001
   //   - MedicationNotifier.medicationReminderBaseId = 2000  (cancel [2000, 202000))
   //   - RefillNotifier.refillBaseId                = 6000  (cancel [6000, 206000))
   //   - SnoozeManager.snoozeBaseId + cancelRange    = 300000 + 2000000 → [300000, 2300000)
   //   - 固定带 (v0.32 R110 B1-1, 原 5000/7000/8000/9999 落入上面 cancel
   //     区间被静默误杀后全部迁到 5M+; 回归测试 notification_id_band_round110):
-  //     - NotificationService.safetyAlertId           = 5000000
   //     - AssessmentNotifier.assessmentReminderId     = 5000001
   //     - MoodReminderNotifier.moodReminderId         = 5000002
-  //     - HomeCareEngineDispatcher.kCarePushBaseId     = 5000010 (+ strategy.index)
   //     - BadgeSyncService.badgeVirtualId             = 5000100
   //   - defaultReminderId 1001 在 med cancel 下界 2000 之下, 天然安全
+  // 1.1.0 round 4b: safetyAlertId (5000000) 随 showSafetyAlert 整摘删除。
   // 顺序保证 cancel range 不冲突 (固定带 ≥ 2,300,000 远超所有 cancel 上界).
   //
   // R108 Fix #2 修订: 12 委派 method 已抽到 [NotificationDelegate],
-  // 上面"7 类常量"列表保持 (sub-service 单一职责)。
+  // 上面"6 类常量"列表保持 (sub-service 单一职责)。
 
   /// v0.16 round 19B: 通知 id 公式兼容访问 (供现有 test 引用)
   ///

@@ -15,7 +15,7 @@
 // - v2: + `reportHistories` + `moodEntries` (v0.9 引入)
 // - v3: + `ventEntries` 文字 (v0.15 引入, 跨设备恢复需要)
 // - v4: 4D 情绪 (energy / sleep / anxiety) (v0.18 引入)
-// - v5 (current): R111 E1/E2/E3 (v0.32 round 8) — medications +5 字段
+// - v5: R111 E1/E2/E3 (v0.32 round 8) — medications +5 字段
 //   (refillAt / refillReminderDays / form / colorIndex / notes) + mood +5 字段
 //   (audioTranscript / audioDurationMs / period / influenceFactorsJson /
 //   recordingMode) + contact consent 4 字段 (PIPL §13 留痕) + medication id

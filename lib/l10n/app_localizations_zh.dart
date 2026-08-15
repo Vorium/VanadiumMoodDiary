@@ -1355,12 +1355,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get legalPageWithdrawDescription => '撤回某项同意后，相关功能立即停用（数据不删除，可重新打开）。';
 
   @override
-  String get legalPageWithdrawSafety => '撤回失联通知同意';
-
-  @override
-  String get legalPageWithdrawSafetySubtitle => '不再因漏打卡触发短信／邮件通知给紧急联系人';
-
-  @override
   String get legalPageWithdrawVent => '撤回树洞（敏感倾诉）处理同意';
 
   @override
@@ -1440,29 +1434,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String safetyAlertBodySent(Object date) {
-    return '上次打卡： $date。已自动通知紧急联系人，请确认安全。';
-  }
-
-  @override
-  String safetyAlertBodyMocked(Object date) {
-    return '上次打卡： $date。已触发失联提醒。';
-  }
-
-  @override
-  String safetyAlertBodyFailed(Object date) {
-    return '上次打卡： $date。失联检测已触发，但通知发送失败。请检查网络。';
-  }
-
-  @override
-  String safetyAlertTitle(int days) {
-    return '⚠️ 已 $days 天未打卡';
-  }
-
-  @override
-  String get safetyAlertNeverCheckIn => '从未打卡';
-
-  @override
   String get homeSnoozeTitle => '⏰ 该打卡了（5min 后）';
 
   @override
@@ -1470,12 +1441,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notifChannelMedicationDesc => '到点提醒你吃药打卡';
-
-  @override
-  String get notifChannelSafetyName => '安全警报';
-
-  @override
-  String get notifChannelSafetyDesc => '长时间未打卡时提醒';
 
   @override
   String get homeNotifBannerText => '提醒没设上，可能错过打卡。请到系统设置允许通知。';
@@ -1971,21 +1936,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get safetyCheckResultDisabled => '安全开关已关闭';
 
   @override
-  String get phoneRegionCn => '中国大陆';
-
-  @override
-  String get phoneRegionHk => '中国香港';
-
-  @override
-  String get phoneRegionMo => '中国澳门';
-
-  @override
-  String get phoneRegionTw => '中国台湾';
-
-  @override
-  String get phoneRegionIntl => '国际';
-
-  @override
   String get presetMedSsriMorningTitle => '单药 · SSRI 早一次';
 
   @override
@@ -2039,18 +1989,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get presetMedSedativeAnxiolyticHint => '常见镇静／抗焦虑辅助药（具体药名以医生处方为准）';
-
-  @override
-  String get checkInTypeDaily => '每日打卡';
-
-  @override
-  String get checkInTypeTemp => '临时吃药';
-
-  @override
-  String get checkInTypePhq9 => 'PHQ-9 评估';
-
-  @override
-  String get checkInTypeGad7 => 'GAD-7 评估';
 
   @override
   String dayDetailCheckInWith(Object name) {
@@ -3889,27 +3827,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupConsentAgreeAll => '我已阅读并同意以上所有协议';
 
   @override
-  String get careCopyLateCheckInTitle => '🛏️ 提早一点更稳定';
-
-  @override
-  String get careCopyLateCheckInBody => '21 点后打卡比例偏高 — 规律作息对药效有影响';
-
-  @override
-  String get careCopyWeekendMissedTitle => '☀️ 周末保持节律';
-
-  @override
-  String get careCopyWeekendMissedBody => '周末容易错过——现在打卡，多一点坚持';
-
-  @override
-  String get careCopySecondDayMissedTitle => '🌿 后续保持就好';
-
-  @override
-  String get careCopySecondDayMissedBody => '少 1 次没关系——后续保持就好';
-
-  @override
-  String get careCopyWeekPerfectTitle => '🌟 一整周都准时！';
-
-  @override
   String get assessmentComparisonImproved => '好转';
 
   @override
@@ -5364,12 +5281,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get legalPageWithdrawDescription => '撤回某項同意後，相關功能立即停用（數據不刪除，可重新打開）。';
 
   @override
-  String get legalPageWithdrawSafety => '撤回失聯通知同意';
-
-  @override
-  String get legalPageWithdrawSafetySubtitle => '不再因漏打卡觸發短信／郵件通知給緊急聯繫人';
-
-  @override
   String get legalPageWithdrawVent => '撤回樹洞（敏感傾訴）處理同意';
 
   @override
@@ -5449,29 +5360,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String safetyAlertBodySent(Object date) {
-    return '上次打卡： $date。已自動通知緊急聯繫人，請確認安全。';
-  }
-
-  @override
-  String safetyAlertBodyMocked(Object date) {
-    return '上次打卡： $date。已觸發失聯提醒。';
-  }
-
-  @override
-  String safetyAlertBodyFailed(Object date) {
-    return '上次打卡： $date。失聯檢測已觸發，但通知發送失敗。請檢查網絡。';
-  }
-
-  @override
-  String safetyAlertTitle(int days) {
-    return '⚠️ 已 $days 天未打卡';
-  }
-
-  @override
-  String get safetyAlertNeverCheckIn => '從未打卡';
-
-  @override
   String get homeSnoozeTitle => '⏰ 該打卡了（5min 後）';
 
   @override
@@ -5479,12 +5367,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get notifChannelMedicationDesc => '到點提醒你吃藥打卡';
-
-  @override
-  String get notifChannelSafetyName => '安全警報';
-
-  @override
-  String get notifChannelSafetyDesc => '長時間未打卡時提醒';
 
   @override
   String get homeNotifBannerText => '提醒沒設上，可能錯過打卡。請到系統設置允許通知。';
@@ -5980,21 +5862,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get safetyCheckResultDisabled => '安全開關已關閉';
 
   @override
-  String get phoneRegionCn => '中國大陸';
-
-  @override
-  String get phoneRegionHk => '中國香港';
-
-  @override
-  String get phoneRegionMo => '中國澳門';
-
-  @override
-  String get phoneRegionTw => '中國臺灣';
-
-  @override
-  String get phoneRegionIntl => '國際';
-
-  @override
   String get presetMedSsriMorningTitle => '單藥 · SSRI 早一次';
 
   @override
@@ -6048,18 +5915,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get presetMedSedativeAnxiolyticHint => '常見鎮靜／抗焦慮輔助藥（具體藥名以醫生處方為準）';
-
-  @override
-  String get checkInTypeDaily => '每日打卡';
-
-  @override
-  String get checkInTypeTemp => '臨時吃藥';
-
-  @override
-  String get checkInTypePhq9 => 'PHQ-9 評估';
-
-  @override
-  String get checkInTypeGad7 => 'GAD-7 評估';
 
   @override
   String dayDetailCheckInWith(Object name) {
@@ -7896,27 +7751,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get setupConsentAgreeAll => '我已閱讀並同意以上所有協議';
-
-  @override
-  String get careCopyLateCheckInTitle => '🛏️ 提早一點更穩定';
-
-  @override
-  String get careCopyLateCheckInBody => '21 點後打卡比例偏高 — 規律作息對藥效有影響';
-
-  @override
-  String get careCopyWeekendMissedTitle => '☀️ 週末保持節律';
-
-  @override
-  String get careCopyWeekendMissedBody => '週末容易錯過——現在打卡，多一點堅持';
-
-  @override
-  String get careCopySecondDayMissedTitle => '🌿 後續保持就好';
-
-  @override
-  String get careCopySecondDayMissedBody => '少 1 次沒關係——後續保持就好';
-
-  @override
-  String get careCopyWeekPerfectTitle => '🌟 一整週都準時！';
 
   @override
   String get assessmentComparisonImproved => '好轉';

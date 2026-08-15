@@ -108,7 +108,6 @@ void main() {
     await committer.clearAllUserData();
 
     expect(await db.userProfileDao.get(), isNull);
-    expect(await db.contactDao.watchActive().first, isEmpty);
     expect(await db.medicationDao.watchAllIncludingInactive().first, isEmpty);
     expect(await db.checkInDao.watchAll().first, isEmpty);
   });

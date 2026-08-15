@@ -1,15 +1,15 @@
 // v0.32 R112 (R112-ARCH-02): notification_deep_link_resolver 纯函数单测
 //
 // 覆盖:
-// - 4 类 action → 最终 route path (today / medication / assessment /
-//   safety-alert)
+// - 3 类 action → 最终 route path (today / medication / assessment)
+//   (1.1.0 round 4b: safety-alert 随外联服务整摘)
 // - null / 空 / 非法 payload → null (不跳转)
 // - 未知 action / 缺 path segment → null
 import 'package:chroniccare/domain/logic/notification_deep_link_resolver.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('resolveNotificationDeepLinkRoute — 4 类 action → path', () {
+  group('resolveNotificationDeepLinkRoute — 3 类 action → path', () {
     test('today → /check-in/today', () {
       expect(
         resolveNotificationDeepLinkRoute('chroniccare://today'),
@@ -24,8 +24,7 @@ void main() {
       );
     });
 
-    test('medication/0 (非法 id 兜底 0, 跟 parse 一致) → /check-in/medication/0',
-        () {
+    test('medication/0 (非法 id 兜底 0, 跟 parse 一致) → /check-in/medication/0', () {
       expect(
         resolveNotificationDeepLinkRoute('chroniccare://medication/abc'),
         '/check-in/medication/0',
@@ -39,10 +38,10 @@ void main() {
       );
     });
 
-    test('safety-alert/5 → /check-in/today?reason=safety (天数不进 path)', () {
+    test('safety-alert/5 → null (round 4b: safety-alert action 整摘)', () {
       expect(
         resolveNotificationDeepLinkRoute('chroniccare://safety-alert/5'),
-        '/check-in/today?reason=safety',
+        isNull,
       );
     });
   });
@@ -69,11 +68,13 @@ void main() {
     });
 
     test('medication 缺 path segment → null', () {
-      expect(resolveNotificationDeepLinkRoute('chroniccare://medication'), isNull);
+      expect(
+          resolveNotificationDeepLinkRoute('chroniccare://medication'), isNull);
     });
 
     test('assessment 缺 path segment → null', () {
-      expect(resolveNotificationDeepLinkRoute('chroniccare://assessment'), isNull);
+      expect(
+          resolveNotificationDeepLinkRoute('chroniccare://assessment'), isNull);
     });
   });
 }

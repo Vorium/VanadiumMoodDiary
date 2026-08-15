@@ -61,7 +61,7 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           // 1. 每日打卡提醒
           // v0.30 round 95 (sub-spec 2 task 10): 删 /email-preview 路由
           // (失联是 SMS 不是 email, R93 业务暂停后真无用), onAction 改 null
-          // 按钮置灰, 业务上线 (EmailServiceEnabled flag 翻 true) 时再恢复。
+          // 按钮置灰 (1.1.0 round 4b: EmailService 整链删除, 无恢复计划)。
           // actionLabel 也改空字符串避免 linter 警告 + 跟其他 card 风格一致。
           ReminderCard(
             icon: Icons.check_circle_outline,

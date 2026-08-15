@@ -9,7 +9,8 @@
 //   data 层写 AssessmentReminderSenderImpl 包 NotificationService 实际发.
 //
 // 4 层架构: domain/repositories/ 放 abstract, 0 实现, AGENTS.md 必读.
-// 跟 `ReminderChecker` 同款 (R16 round 7 抽的, use case 拿这个).
+// 跟 `ReminderChecker` 同款 (R16 round 7 抽的, use case 拿这个;
+// 1.1.0 round 4b: ReminderChecker 已随外联服务整摘).
 
 /// 心理评估提醒发送器 (abstract)
 ///

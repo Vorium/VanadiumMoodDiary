@@ -32,7 +32,8 @@
 // - v1: 基础 (profile / contacts / medications / checkIns)
 // - v2: + reportHistories + moodEntries (v0.9)
 // - v3: + ventEntries 文字 (v0.15)
-// - v5 (current): + R111 E1/E2/E3 + 6 daily tracking 表 + PIPL §14 留痕 (v0.32 round 8)
+// - v6 (current): v1.1.0 情绪优先重构 — 删 contacts 段 + mood.statusPhrase
+//   + vent.tagsJson (v0.32 round 8 + 1.1.0 round 3), 详见 export_schema_service.dart
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';

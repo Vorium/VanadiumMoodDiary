@@ -38,13 +38,6 @@ void main() {
       expect(link.scaleId, 'gad7');
     });
 
-    test('safety alert', () {
-      final link = NotificationDeepLink.parse('chroniccare://safety-alert/3');
-      expect(link, isNotNull);
-      expect(link!.target, DeepLinkTarget.safetyAlert);
-      expect(link.daysSince, 3);
-    });
-
     test('null/空 payload', () {
       expect(NotificationDeepLink.parse(null), isNull);
       expect(NotificationDeepLink.parse(''), isNull);
@@ -82,17 +75,11 @@ void main() {
       expect(link.encode(), 'chroniccare://assessment/phq9');
     });
 
-    test('safety-alert days=3', () {
-      final link = NotificationDeepLink.safetyAlert(3);
-      expect(link.encode(), 'chroniccare://safety-alert/3');
-    });
-
     test('encode → parse 圆环对称', () {
       for (final link in [
         NotificationDeepLink.todayCheckIn(),
         NotificationDeepLink.medicationCheckIn(7),
         NotificationDeepLink.assessment('gad7'),
-        NotificationDeepLink.safetyAlert(5),
       ]) {
         final encoded = link.encode();
         final decoded = NotificationDeepLink.parse(encoded);
@@ -125,7 +112,6 @@ void main() {
         NotificationDeepLink.todayCheckIn(),
         NotificationDeepLink.medicationCheckIn(99999),
         NotificationDeepLink.assessment('phq9'),
-        NotificationDeepLink.safetyAlert(99),
       ]) {
         expect(
           link.encode().length,

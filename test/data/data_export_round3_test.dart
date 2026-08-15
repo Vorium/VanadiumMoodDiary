@@ -135,8 +135,7 @@ void main() {
 ''';
     final result = await svc.importFromJson(json);
     expect(result.success, true);
-    // v6: fixture 的 contacts 段被忽略 (不导入, 表 Task 9 才删)
-    expect(await db.contactDao.watchActive().first, isEmpty);
+    // v6 + round 4b: fixture 的 contacts 段被忽略 (不导入, 表已整删)
     expect(result.medicationCount, 0); // name 空被跳
     expect(result.moodEntryCount, 0); // timestamp 坏被跳
   });

@@ -9,14 +9,14 @@
 // - 业务规则（如：失败重试、event 触发）放 use case 里，不放 notifier
 // - call() 入口：`(args) => repo.xxx()` 的薄封装，业务规则逐步丰富
 //
-// 当前 3 个 use case 对应 CheckInNotifier 之前的 3 个方法：
+// 当前 2 个 use case 对应 CheckInNotifier 之前的 2 个方法：
 // - RecordCheckInUseCase.checkIn()         → 每日打卡
 // - RecordTempMedicationUseCase.addTemp()  → 临时吃药
-// - TriggerReminderUseCase.trigger()       → 手动触发失联检测（debug 入口）
+// 1.1.0 round 4b: TriggerReminderUseCase (手动触发失联检测, debug 入口)
+// 随 ReminderChecker 整摘删除。
 
 import 'package:chroniccare/core/shared/date_time_resolver.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
-import 'package:chroniccare/domain/repositories/reminder_checker.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 
 /// 每日打卡 use case
@@ -62,19 +62,5 @@ class RecordTempMedicationUseCase {
     DateTime? at,
   }) {
     return _repo.addTempMedication(name: name, note: note, at: at);
-  }
-}
-
-/// 手动触发失联检测（debug / settings 入口）
-class TriggerReminderUseCase {
-  final ReminderChecker _checker;
-  TriggerReminderUseCase(this._checker);
-
-  /// 主动跑一次失联检测 + 发送通知
-  ///
-  /// 返回 true = 通知已发送，false = 跳过了（未到时间或没联系人）
-  Future<bool> call() async {
-    final result = await _checker.checkAndSend();
-    return result.level != ReminderLevel.none;
   }
 }

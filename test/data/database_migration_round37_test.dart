@@ -243,7 +243,7 @@ void main() {
       await db.close();
     });
 
-    test('5 个核心表都存在', () async {
+    test('5 个核心表都存在 (contacts 已随 v1.1.0 外联删除整摘)', () async {
       final tables = await db
           .customSelect(
             "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
@@ -257,8 +257,14 @@ void main() {
       expect(names, contains('vent_entries'));
       expect(names, contains('user_profiles'));
       // 衍生表
-      expect(names, contains('contacts'));
       expect(names, contains('report_histories'));
+      // 1.1.0 round 4b: contacts 表整删 (外联通信业务删除定版), 反向断言不存在
+      expect(
+        names.contains('contacts'),
+        isFalse,
+        reason: 'contacts 表应已随 v1.1.0 外联服务整删 (migration from < 23 '
+            'deleteTable contacts, 新装 createAll 也不再建)',
+      );
     });
   });
 }

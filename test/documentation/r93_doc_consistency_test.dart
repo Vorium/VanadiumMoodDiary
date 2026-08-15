@@ -24,15 +24,14 @@ void main() {
       );
       // v1.0.0+147: 永久免费, 法务文档 0 IAP / 0 买断残留 (lock-in 防回退)
       expect(
-        privacy.contains('IAP') || privacy.contains('买断') || privacy.contains('8 元'),
+        privacy.contains('IAP') ||
+            privacy.contains('买断') ||
+            privacy.contains('8 元'),
         isFalse,
         reason: 'privacy_policy.md 含 IAP / 买断残留 (v1.0.0+147 已删, 防回退)',
       );
-      expect(
-        privacy.contains('FeatureFlags.emergencyContactEnabled'),
-        isTrue,
-        reason: 'privacy_policy.md 缺 FeatureFlags.emergencyContactEnabled 说明',
-      );
+      // 1.1.0 round 4b: emergencyContactEnabled flag 随外联服务整摘, 文档
+      // 一致性断言移除 (docs 全文去外联由文档任务跟进)。
 
       // sensitive_data_consent.md 加修订历史 entry (R93 阶段 2 集中隐藏)
       final sensitive =
@@ -85,15 +84,14 @@ void main() {
         reason: 'README.md 缺永久免费声明',
       );
       expect(
-        readme.contains('iapEnabled') || readme.contains('8 元') || readme.contains('IAP'),
+        readme.contains('iapEnabled') ||
+            readme.contains('8 元') ||
+            readme.contains('IAP'),
         isFalse,
         reason: 'README.md 含 iapEnabled / 8 元 / IAP 残留 (v1.0.0+147 已删, 防回退)',
       );
-      expect(
-        readme.contains('emergencyContactEnabled'),
-        isTrue,
-        reason: 'README.md 缺 emergencyContactEnabled=false 业务暂停说明',
-      );
+      // 1.1.0 round 4b: emergencyContactEnabled flag 随外联服务整摘, 文档
+      // 一致性断言移除 (docs 全文去外联由文档任务跟进)。
     });
 
     test('DEPLOYMENT.md 阶段 5/6/7 节都有', () {
@@ -122,7 +120,8 @@ void main() {
       expect(
         deployment.contains('6 项 FeatureFlag 全部 hidden'),
         isTrue,
-        reason: 'DEPLOYMENT.md 阶段 6 缺 6 项 FeatureFlag checklist 标题 (v1.0.0+147 删 IAP)',
+        reason:
+            'DEPLOYMENT.md 阶段 6 缺 6 项 FeatureFlag checklist 标题 (v1.0.0+147 删 IAP)',
       );
     });
   });

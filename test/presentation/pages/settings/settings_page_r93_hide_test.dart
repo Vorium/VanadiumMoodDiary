@@ -4,16 +4,17 @@
 // section 走 FeatureFlag gate, 业务暂停期间完全 hidden:
 //
 // 1. 5 厂商 OEM 引导 → FeatureFlags.fiveVendorPushEnabled
-// 2. 邮件预览 → FeatureFlags.emailServiceEnabled (R95 task 10 整 widget 删, 永远 hidden)
+// 2. 邮件预览 → R95 task 10 整 widget 删, 永远 hidden
 //
 // v1.0.0+147: 删商业卡 case (永久免费定版, 原 case 2 删除)。
 //
 // 1.1.0 round 4 (emotion-first refactor): 联系人 section 整摘
 // (ProfileGroup 不再渲染 ContactsListWidget, 原 case 2 删除)。
+// 1.1.0 round 4b: emailServiceEnabled flag 随 EmailService 整摘,
+// 原 case 3 (flag 翻 true 仍 hidden) 删除。
 //
-// 3 case:
+// 2 case:
 //   - case 1: 2 flag 默认 false → section 全 hidden (verify by find)
-//   - case 3: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 删 widget 后)
 //   - case 4: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染
 //
 // 测试模式: 每个 case 调 `setXxxEnabledForTest(true)` 翻 flag, 验证 widget 渲染。
@@ -57,8 +58,7 @@ void main() {
     );
   }
 
-  testWidgets('R93 case 1: 2 flag 默认 false → section 全 hidden',
-      (tester) async {
+  testWidgets('R93 case 1: 2 flag 默认 false → section 全 hidden', (tester) async {
     // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, NotificationStatusCard
     // 挪到 RemindersGroup 末尾, 维持 lazy load 体验, pumpAndSettle 仍可用。
     await tester.pumpWidget(buildSettingsPage());
@@ -71,20 +71,9 @@ void main() {
     expect(find.text('预览停药通知邮件'), findsNothing);
   });
 
-  testWidgets(
-      'R95 case 3: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 整 widget 删)',
-      (tester) async {
-    // v0.30 round 95 (sub-spec 2 task 10): 删 EmailPreviewPage 整文件
-    // (失联是 SMS 不是 email, R93 业务暂停后真无用), 不再走 FeatureFlag 守门
-    // — featureFlag 翻 true 也不渲染, 业务上线时改 SMS 路径真接。
-    FeatureFlags.setEmailServiceEnabledForTest(true);
-    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
-    await tester.pumpWidget(buildSettingsPage());
-    await tester.pumpAndSettle(const Duration(milliseconds: 100));
-
-    // 邮件预览 hidden (settingsEmailPreview ARB key 已删, 整 widget 也删了)
-    expect(find.text('预览停药通知邮件'), findsNothing);
-  });
+  // R95 case 3 (1.1.0 round 4b): emailServiceEnabled flag 随 EmailService
+  // 整摘删除, 该 case 移除 (邮件预览 widget R95 task 10 已整删, 无 flag
+  // 可翻, hidden 状态由 case 1 覆盖)。
 
   testWidgets(
       'R93 case 4: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',

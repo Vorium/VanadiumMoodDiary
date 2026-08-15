@@ -162,14 +162,9 @@ void main() {
   // ============== 覆盖语义 ==============
 
   group('R99 #27 import 覆盖语义 (P0)', () {
-    test('3. import 会清空旧 med 但不清 contacts (v6 刻意行为)', () async {
-      // 旧: 1 个 contact + 1 个 med
-      await db.contactDao.insert(
-        ContactsCompanion.insert(
-          name: '旧联系人',
-          phone: '13800000000',
-        ),
-      );
+    test('3. import 会清空旧 med (1.1.0 round 4b: contacts 表已整删, 无 contacts 语义)',
+        () async {
+      // 旧: 1 个 med
       await db.medicationDao.insert(
         MedicationsCompanion.insert(
           name: '旧药',
@@ -196,8 +191,7 @@ void main() {
       expect(result.medicationCount, 0);
       // 旧 med 被清空
       expect(await db.medicationDao.watchActive().first, isEmpty);
-      // contacts 表 Task 9 才删, v6 导入器刻意不清它
-      expect((await db.contactDao.watchActive().first).first.name, '旧联系人');
+      // 1.1.0 round 4b: contacts 表已整删, 无 contacts 语义可断言
     });
 
     test('4. 二次 import 第二次 JSON 覆盖第一次 (PIPL §47 删除权场景)', () async {

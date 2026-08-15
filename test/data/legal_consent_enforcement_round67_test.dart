@@ -2,24 +2,20 @@
 // 撤回同意业务层生效验证
 //
 // 背景: R67 修复前, `legalConsentWithdrawnProvider` 只被 legal_page 自身读,
-// 业务层 (VentRepositoryImpl / CareEngine / trend_page) 0 拦截 → PIPL §14
+// 业务层 (VentRepositoryImpl / trend_page) 0 拦截 → PIPL §14
 // 严重违反 (spzh 视角 P0-6 标记)。R67 修复后:
 // - VentRepositoryImpl.add() / restore() 入口检查 ConsentKind.vent 撤回状态
 //   → 撤回时 throw VentConsentWithdrawnError
-// - FireCareStrategyUseCase (CareEngine 编排继任者, R100 删 legacy API)
-//   isSafetyConsentWithdrawn=true → disabled 不推通知
 // - trend_page build() 顶部检查 ConsentKind.analytics 撤回状态
 //   → 撤回时渲染 EmptyState 占位
 //
-// 3 case 覆盖 3 个 entry point, 验证 R67 修复实际生效。
+// 1.1.0 round 4b (emotion-first refactor): FireCareStrategyUseCase (关怀
+// use case) 随 CareEngine 整摘, A-3.2 组删除。剩余 2 case 覆盖 2 个
+// entry point (vent repo + trend page), 验证 R67 修复实际生效。
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/repositories/vent/vent_repository_impl.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/shared/consent_gate.dart';
-import 'package:chroniccare/domain/entities/check_in_entity.dart'
-    show CheckInEntity, CheckInType;
-import 'package:chroniccare/domain/logic/care_engine.dart';
-import 'package:chroniccare/domain/usecases/fire_care_strategy.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/trend/trend_page.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
@@ -42,23 +38,6 @@ class _FakeConsentGate implements ConsentGate {
     if (kind == ConsentKind.vent) return ventWithdrawn;
     return false;
   }
-}
-
-List<CheckInEntity> _sampleCheckIns() {
-  // 模拟"漏 1 天后第二天 10:30 还没打卡" → secondDayMissed 触发
-  // (前天 20:00 打卡, 昨天没打卡, 今天 10:30)
-  return [
-    CheckInEntity(
-      id: 1,
-      timestamp: DateTime(2026, 7, 30, 9, 0),
-      type: CheckInType.normal,
-    ),
-    CheckInEntity(
-      id: 2,
-      timestamp: DateTime(2026, 7, 28, 20, 0),
-      type: CheckInType.normal,
-    ),
-  ];
 }
 
 Widget _buildTrendPage({required bool analyticsWithdrawn}) {
@@ -154,40 +133,7 @@ void main() {
     });
   });
 
-  // R100 (F-4/N-2): CareEngine.evaluate/fire legacy API 已删, 本组迁测
-  // 编排继任者 FireCareStrategyUseCase — 撤回 safety 同意 → disabled
-  // (use case 0 副作用, caller home_page 拿 disabled 早返不推通知)。
-  group('A-3.2 撤回 safety 同意 → 关怀 use case 返 disabled', () {
-    const useCase = FireCareStrategyUseCase();
-
-    test('isSafetyConsentWithdrawn=true → disabled, 不评 strategy', () {
-      final r = useCase(
-        FireCareStrategyInput(
-          checkIns: _sampleCheckIns(),
-          now: DateTime(2026, 7, 31, 10, 30),
-          isSafetyConsentWithdrawn: true,
-        ),
-      );
-      expect(r.decision, FireCareDecision.disabled);
-      expect(r.strategy, CareTriggerType.none);
-      expect(r.shouldFire, isFalse);
-    });
-
-    test('isSafetyConsentWithdrawn=false → 正常命中 secondDayMissed', () {
-      final r = useCase(
-        FireCareStrategyInput(
-          checkIns: _sampleCheckIns(),
-          now: DateTime(2026, 7, 31, 10, 30),
-        ),
-      );
-      expect(
-        r.strategy,
-        isNot(CareTriggerType.none),
-        reason: '未撤回时应有触发 (secondDayMissed)',
-      );
-      expect(r.shouldFire, isTrue);
-    });
-  });
+  // A-3.2 (1.1.0 round 4b): FireCareStrategyUseCase 组随 CareEngine 整摘删除。
 
   group('A-3.3 trend_page 撤回 analytics 同意 → EmptyState', () {
     testWidgets('analytics 未撤回 → 不显示 EmptyState', (tester) async {

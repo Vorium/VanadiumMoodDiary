@@ -21,13 +21,10 @@ class AppRouteCheckIn {
         },
       ),
       // 点 default / soft 通知 → 跳 home
+      // 1.1.0 round 4b: reason=safety 分支随 safety-alert deep link 整摘
       GoRoute(
         path: '/check-in/today',
         redirect: (_, state) {
-          final reason = state.uri.queryParameters['reason'];
-          if (reason == 'safety') {
-            return '/?reason=safety';
-          }
           return '/';
         },
       ),

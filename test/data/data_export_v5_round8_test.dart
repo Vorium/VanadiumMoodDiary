@@ -45,8 +45,7 @@ void main() {
       jsonDecode(json) as Map<String, dynamic>;
 
   group('v0.32 round 8 (R111 E1) — medication v5 字段 round-trip', () {
-    test(
-        '1. 导出含 5 个新增字段 (refillAt/refillReminderDays/form/colorIndex/notes)',
+    test('1. 导出含 5 个新增字段 (refillAt/refillReminderDays/form/colorIndex/notes)',
         () async {
       await db.medicationDao.insert(
         MedicationsCompanion.insert(
@@ -153,36 +152,22 @@ void main() {
     });
   });
 
-  group('v1.1.0 round 3 (Task 6) — v6 无 contacts 段 (原 E2 contact round-trip 改造)',
+  group(
+      'v1.1.0 round 3 (Task 6) — v6 无 contacts 段 (原 E2 contact round-trip 改造)',
       () {
-    test('5. 导出不再含 contacts key, import 也不清 contacts (Task 9 才删表)',
-        () async {
-      await db.contactDao.insert(
-        ContactsCompanion.insert(
-          name: '姐',
-          phone: '13800138003',
-          consentAt: Value(DateTime.utc(2026, 8, 1, 10, 0)),
-          consentKind: const Value('emergencyContactSharing'),
-          consentBy: const Value('user'),
-          consentVersion: const Value('v1'),
-        ),
-      );
+    test('5. 导出不再含 contacts key (1.1.0 round 4b: 表已整删)', () async {
       final json = parseJson(await svc.exportToJson());
       expect(json.containsKey('contacts'), isFalse);
 
       final exported = await svc.exportToJson();
       final result = await svc.importFromJson(exported);
       expect(result.success, isTrue, reason: result.error);
-      // v6 刻意: 导入器不再引用 contacts (不清表、不写表)
-      final contacts = await db.contactDao.watchActive().first;
-      expect(contacts.length, 1);
-      expect(contacts.first.name, '姐');
+      // v6 + round 4b: 导入器不引用 contacts (表已整删, 无清/写可言)
     });
   });
 
   group('v0.32 round 8 (R111 E3) — checkIn.medicationId 重映射', () {
-    test('6. import 后 checkIn.medicationId 指向新插入的 med id (非孤儿 FK)',
-        () async {
+    test('6. import 后 checkIn.medicationId 指向新插入的 med id (非孤儿 FK)', () async {
       final medId = await db.medicationDao.insert(
         MedicationsCompanion.insert(
           name: '舍曲林',
@@ -369,9 +354,7 @@ void main() {
       });
       final result = await svc.importFromJson(dirtyJson);
       expect(result.success, isTrue, reason: result.error);
-      // v6: fixture 的 contacts key 被忽略 (不再导入)
-      final contacts = await db.contactDao.watchActive().first;
-      expect(contacts, isEmpty);
+      // v6 + round 4b: fixture 的 contacts key 被忽略 (表已整删, 不再导入)
       final meds = await db.medicationDao.watchActive().first;
       expect(meds.length, 1);
       expect(meds.first.isActive, isTrue);

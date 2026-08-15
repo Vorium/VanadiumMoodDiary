@@ -237,232 +237,414 @@ void main() {
   // i18n, v1.0 R51b) 预留翻译, 本锁保持引用 + 锁 3 语非空。
   // ============================================================
   group('R90 8 新量表 options/severity ARB key 引用锁 (R112 AR-17)', () {
-  test('R90 8 新量表 options/severity ARB key 引用锁 (防 orphan, Task 6 预留)', () {
-    final zh = AppLocalizationsZh();
-    final en = AppLocalizationsEn();
-    expect(zh.asrmOption0, isNotEmpty, reason: 'asrmOption0 zh 预留翻译非空');
-    expect(en.asrmOption0, isNotEmpty, reason: 'asrmOption0 en 预留翻译非空');
-    expect(zh.asrmOption1, isNotEmpty, reason: 'asrmOption1 zh 预留翻译非空');
-    expect(en.asrmOption1, isNotEmpty, reason: 'asrmOption1 en 预留翻译非空');
-    expect(zh.asrmOption2, isNotEmpty, reason: 'asrmOption2 zh 预留翻译非空');
-    expect(en.asrmOption2, isNotEmpty, reason: 'asrmOption2 en 预留翻译非空');
-    expect(zh.asrmOption3, isNotEmpty, reason: 'asrmOption3 zh 预留翻译非空');
-    expect(en.asrmOption3, isNotEmpty, reason: 'asrmOption3 en 预留翻译非空');
-    expect(zh.asrmOption4, isNotEmpty, reason: 'asrmOption4 zh 预留翻译非空');
-    expect(en.asrmOption4, isNotEmpty, reason: 'asrmOption4 en 预留翻译非空');
-    expect(zh.asrmSeverityLabel0, isNotEmpty, reason: 'asrmSeverityLabel0 zh 预留翻译非空');
-    expect(en.asrmSeverityLabel0, isNotEmpty, reason: 'asrmSeverityLabel0 en 预留翻译非空');
-    expect(zh.asrmSeverityLabel1, isNotEmpty, reason: 'asrmSeverityLabel1 zh 预留翻译非空');
-    expect(en.asrmSeverityLabel1, isNotEmpty, reason: 'asrmSeverityLabel1 en 预留翻译非空');
-    expect(zh.asrmSeverityLabel2, isNotEmpty, reason: 'asrmSeverityLabel2 zh 预留翻译非空');
-    expect(en.asrmSeverityLabel2, isNotEmpty, reason: 'asrmSeverityLabel2 en 预留翻译非空');
-    expect(zh.asrmSeverityLabel3, isNotEmpty, reason: 'asrmSeverityLabel3 zh 预留翻译非空');
-    expect(en.asrmSeverityLabel3, isNotEmpty, reason: 'asrmSeverityLabel3 en 预留翻译非空');
-    expect(zh.asrmSeverityLabel4, isNotEmpty, reason: 'asrmSeverityLabel4 zh 预留翻译非空');
-    expect(en.asrmSeverityLabel4, isNotEmpty, reason: 'asrmSeverityLabel4 en 预留翻译非空');
-    expect(zh.asrmSeveritySummary0, isNotEmpty, reason: 'asrmSeveritySummary0 zh 预留翻译非空');
-    expect(en.asrmSeveritySummary0, isNotEmpty, reason: 'asrmSeveritySummary0 en 预留翻译非空');
-    expect(zh.asrmSeveritySummary1, isNotEmpty, reason: 'asrmSeveritySummary1 zh 预留翻译非空');
-    expect(en.asrmSeveritySummary1, isNotEmpty, reason: 'asrmSeveritySummary1 en 预留翻译非空');
-    expect(zh.asrmSeveritySummary2, isNotEmpty, reason: 'asrmSeveritySummary2 zh 预留翻译非空');
-    expect(en.asrmSeveritySummary2, isNotEmpty, reason: 'asrmSeveritySummary2 en 预留翻译非空');
-    expect(zh.asrmSeveritySummary3, isNotEmpty, reason: 'asrmSeveritySummary3 zh 预留翻译非空');
-    expect(en.asrmSeveritySummary3, isNotEmpty, reason: 'asrmSeveritySummary3 en 预留翻译非空');
-    expect(zh.asrmSeveritySummary4, isNotEmpty, reason: 'asrmSeveritySummary4 zh 预留翻译非空');
-    expect(en.asrmSeveritySummary4, isNotEmpty, reason: 'asrmSeveritySummary4 en 预留翻译非空');
-    expect(zh.gad7SeveritySummary0, isNotEmpty, reason: 'gad7SeveritySummary0 zh 预留翻译非空');
-    expect(en.gad7SeveritySummary0, isNotEmpty, reason: 'gad7SeveritySummary0 en 预留翻译非空');
-    expect(zh.gad7SeveritySummary1, isNotEmpty, reason: 'gad7SeveritySummary1 zh 预留翻译非空');
-    expect(en.gad7SeveritySummary1, isNotEmpty, reason: 'gad7SeveritySummary1 en 预留翻译非空');
-    expect(zh.gad7SeveritySummary2, isNotEmpty, reason: 'gad7SeveritySummary2 zh 预留翻译非空');
-    expect(en.gad7SeveritySummary2, isNotEmpty, reason: 'gad7SeveritySummary2 en 预留翻译非空');
-    expect(zh.gad7SeveritySummary3, isNotEmpty, reason: 'gad7SeveritySummary3 zh 预留翻译非空');
-    expect(en.gad7SeveritySummary3, isNotEmpty, reason: 'gad7SeveritySummary3 en 预留翻译非空');
-    expect(zh.isiOption0, isNotEmpty, reason: 'isiOption0 zh 预留翻译非空');
-    expect(en.isiOption0, isNotEmpty, reason: 'isiOption0 en 预留翻译非空');
-    expect(zh.isiOption1, isNotEmpty, reason: 'isiOption1 zh 预留翻译非空');
-    expect(en.isiOption1, isNotEmpty, reason: 'isiOption1 en 预留翻译非空');
-    expect(zh.isiOption2, isNotEmpty, reason: 'isiOption2 zh 预留翻译非空');
-    expect(en.isiOption2, isNotEmpty, reason: 'isiOption2 en 预留翻译非空');
-    expect(zh.isiOption3, isNotEmpty, reason: 'isiOption3 zh 预留翻译非空');
-    expect(en.isiOption3, isNotEmpty, reason: 'isiOption3 en 预留翻译非空');
-    expect(zh.isiOption4, isNotEmpty, reason: 'isiOption4 zh 预留翻译非空');
-    expect(en.isiOption4, isNotEmpty, reason: 'isiOption4 en 预留翻译非空');
-    expect(zh.isiSeverityLabel0, isNotEmpty, reason: 'isiSeverityLabel0 zh 预留翻译非空');
-    expect(en.isiSeverityLabel0, isNotEmpty, reason: 'isiSeverityLabel0 en 预留翻译非空');
-    expect(zh.isiSeverityLabel1, isNotEmpty, reason: 'isiSeverityLabel1 zh 预留翻译非空');
-    expect(en.isiSeverityLabel1, isNotEmpty, reason: 'isiSeverityLabel1 en 预留翻译非空');
-    expect(zh.isiSeverityLabel2, isNotEmpty, reason: 'isiSeverityLabel2 zh 预留翻译非空');
-    expect(en.isiSeverityLabel2, isNotEmpty, reason: 'isiSeverityLabel2 en 预留翻译非空');
-    expect(zh.isiSeverityLabel3, isNotEmpty, reason: 'isiSeverityLabel3 zh 预留翻译非空');
-    expect(en.isiSeverityLabel3, isNotEmpty, reason: 'isiSeverityLabel3 en 预留翻译非空');
-    expect(zh.isiSeveritySummary0, isNotEmpty, reason: 'isiSeveritySummary0 zh 预留翻译非空');
-    expect(en.isiSeveritySummary0, isNotEmpty, reason: 'isiSeveritySummary0 en 预留翻译非空');
-    expect(zh.isiSeveritySummary1, isNotEmpty, reason: 'isiSeveritySummary1 zh 预留翻译非空');
-    expect(en.isiSeveritySummary1, isNotEmpty, reason: 'isiSeveritySummary1 en 预留翻译非空');
-    expect(zh.isiSeveritySummary2, isNotEmpty, reason: 'isiSeveritySummary2 zh 预留翻译非空');
-    expect(en.isiSeveritySummary2, isNotEmpty, reason: 'isiSeveritySummary2 en 预留翻译非空');
-    expect(zh.isiSeveritySummary3, isNotEmpty, reason: 'isiSeveritySummary3 zh 预留翻译非空');
-    expect(en.isiSeveritySummary3, isNotEmpty, reason: 'isiSeveritySummary3 en 预留翻译非空');
-    expect(zh.level2AnxietyOption0, isNotEmpty, reason: 'level2AnxietyOption0 zh 预留翻译非空');
-    expect(en.level2AnxietyOption0, isNotEmpty, reason: 'level2AnxietyOption0 en 预留翻译非空');
-    expect(zh.level2AnxietyOption1, isNotEmpty, reason: 'level2AnxietyOption1 zh 预留翻译非空');
-    expect(en.level2AnxietyOption1, isNotEmpty, reason: 'level2AnxietyOption1 en 预留翻译非空');
-    expect(zh.level2AnxietyOption2, isNotEmpty, reason: 'level2AnxietyOption2 zh 预留翻译非空');
-    expect(en.level2AnxietyOption2, isNotEmpty, reason: 'level2AnxietyOption2 en 预留翻译非空');
-    expect(zh.level2AnxietyOption3, isNotEmpty, reason: 'level2AnxietyOption3 zh 预留翻译非空');
-    expect(en.level2AnxietyOption3, isNotEmpty, reason: 'level2AnxietyOption3 en 预留翻译非空');
-    expect(zh.level2AnxietySeverityLabel0, isNotEmpty, reason: 'level2AnxietySeverityLabel0 zh 预留翻译非空');
-    expect(en.level2AnxietySeverityLabel0, isNotEmpty, reason: 'level2AnxietySeverityLabel0 en 预留翻译非空');
-    expect(zh.level2AnxietySeverityLabel1, isNotEmpty, reason: 'level2AnxietySeverityLabel1 zh 预留翻译非空');
-    expect(en.level2AnxietySeverityLabel1, isNotEmpty, reason: 'level2AnxietySeverityLabel1 en 预留翻译非空');
-    expect(zh.level2AnxietySeverityLabel2, isNotEmpty, reason: 'level2AnxietySeverityLabel2 zh 预留翻译非空');
-    expect(en.level2AnxietySeverityLabel2, isNotEmpty, reason: 'level2AnxietySeverityLabel2 en 预留翻译非空');
-    expect(zh.level2AnxietySeverityLabel3, isNotEmpty, reason: 'level2AnxietySeverityLabel3 zh 预留翻译非空');
-    expect(en.level2AnxietySeverityLabel3, isNotEmpty, reason: 'level2AnxietySeverityLabel3 en 预留翻译非空');
-    expect(zh.level2AnxietySeveritySummary0, isNotEmpty, reason: 'level2AnxietySeveritySummary0 zh 预留翻译非空');
-    expect(en.level2AnxietySeveritySummary0, isNotEmpty, reason: 'level2AnxietySeveritySummary0 en 预留翻译非空');
-    expect(zh.level2AnxietySeveritySummary1, isNotEmpty, reason: 'level2AnxietySeveritySummary1 zh 预留翻译非空');
-    expect(en.level2AnxietySeveritySummary1, isNotEmpty, reason: 'level2AnxietySeveritySummary1 en 预留翻译非空');
-    expect(zh.level2AnxietySeveritySummary2, isNotEmpty, reason: 'level2AnxietySeveritySummary2 zh 预留翻译非空');
-    expect(en.level2AnxietySeveritySummary2, isNotEmpty, reason: 'level2AnxietySeveritySummary2 en 预留翻译非空');
-    expect(zh.level2AnxietySeveritySummary3, isNotEmpty, reason: 'level2AnxietySeveritySummary3 zh 预留翻译非空');
-    expect(en.level2AnxietySeveritySummary3, isNotEmpty, reason: 'level2AnxietySeveritySummary3 en 预留翻译非空');
-    expect(zh.level2DepressionOption0, isNotEmpty, reason: 'level2DepressionOption0 zh 预留翻译非空');
-    expect(en.level2DepressionOption0, isNotEmpty, reason: 'level2DepressionOption0 en 预留翻译非空');
-    expect(zh.level2DepressionOption1, isNotEmpty, reason: 'level2DepressionOption1 zh 预留翻译非空');
-    expect(en.level2DepressionOption1, isNotEmpty, reason: 'level2DepressionOption1 en 预留翻译非空');
-    expect(zh.level2DepressionOption2, isNotEmpty, reason: 'level2DepressionOption2 zh 预留翻译非空');
-    expect(en.level2DepressionOption2, isNotEmpty, reason: 'level2DepressionOption2 en 预留翻译非空');
-    expect(zh.level2DepressionOption3, isNotEmpty, reason: 'level2DepressionOption3 zh 预留翻译非空');
-    expect(en.level2DepressionOption3, isNotEmpty, reason: 'level2DepressionOption3 en 预留翻译非空');
-    expect(zh.level2DepressionSeverityLabel0, isNotEmpty, reason: 'level2DepressionSeverityLabel0 zh 预留翻译非空');
-    expect(en.level2DepressionSeverityLabel0, isNotEmpty, reason: 'level2DepressionSeverityLabel0 en 预留翻译非空');
-    expect(zh.level2DepressionSeverityLabel1, isNotEmpty, reason: 'level2DepressionSeverityLabel1 zh 预留翻译非空');
-    expect(en.level2DepressionSeverityLabel1, isNotEmpty, reason: 'level2DepressionSeverityLabel1 en 预留翻译非空');
-    expect(zh.level2DepressionSeverityLabel2, isNotEmpty, reason: 'level2DepressionSeverityLabel2 zh 预留翻译非空');
-    expect(en.level2DepressionSeverityLabel2, isNotEmpty, reason: 'level2DepressionSeverityLabel2 en 预留翻译非空');
-    expect(zh.level2DepressionSeverityLabel3, isNotEmpty, reason: 'level2DepressionSeverityLabel3 zh 预留翻译非空');
-    expect(en.level2DepressionSeverityLabel3, isNotEmpty, reason: 'level2DepressionSeverityLabel3 en 预留翻译非空');
-    expect(zh.level2DepressionSeveritySummary0, isNotEmpty, reason: 'level2DepressionSeveritySummary0 zh 预留翻译非空');
-    expect(en.level2DepressionSeveritySummary0, isNotEmpty, reason: 'level2DepressionSeveritySummary0 en 预留翻译非空');
-    expect(zh.level2DepressionSeveritySummary1, isNotEmpty, reason: 'level2DepressionSeveritySummary1 zh 预留翻译非空');
-    expect(en.level2DepressionSeveritySummary1, isNotEmpty, reason: 'level2DepressionSeveritySummary1 en 预留翻译非空');
-    expect(zh.level2DepressionSeveritySummary2, isNotEmpty, reason: 'level2DepressionSeveritySummary2 zh 预留翻译非空');
-    expect(en.level2DepressionSeveritySummary2, isNotEmpty, reason: 'level2DepressionSeveritySummary2 en 预留翻译非空');
-    expect(zh.level2DepressionSeveritySummary3, isNotEmpty, reason: 'level2DepressionSeveritySummary3 zh 预留翻译非空');
-    expect(en.level2DepressionSeveritySummary3, isNotEmpty, reason: 'level2DepressionSeveritySummary3 en 预留翻译非空');
-    expect(zh.level2ManiaOption0, isNotEmpty, reason: 'level2ManiaOption0 zh 预留翻译非空');
-    expect(en.level2ManiaOption0, isNotEmpty, reason: 'level2ManiaOption0 en 预留翻译非空');
-    expect(zh.level2ManiaOption1, isNotEmpty, reason: 'level2ManiaOption1 zh 预留翻译非空');
-    expect(en.level2ManiaOption1, isNotEmpty, reason: 'level2ManiaOption1 en 预留翻译非空');
-    expect(zh.level2ManiaOption2, isNotEmpty, reason: 'level2ManiaOption2 zh 预留翻译非空');
-    expect(en.level2ManiaOption2, isNotEmpty, reason: 'level2ManiaOption2 en 预留翻译非空');
-    expect(zh.level2ManiaOption3, isNotEmpty, reason: 'level2ManiaOption3 zh 预留翻译非空');
-    expect(en.level2ManiaOption3, isNotEmpty, reason: 'level2ManiaOption3 en 预留翻译非空');
-    expect(zh.level2ManiaSeverityLabel0, isNotEmpty, reason: 'level2ManiaSeverityLabel0 zh 预留翻译非空');
-    expect(en.level2ManiaSeverityLabel0, isNotEmpty, reason: 'level2ManiaSeverityLabel0 en 预留翻译非空');
-    expect(zh.level2ManiaSeverityLabel1, isNotEmpty, reason: 'level2ManiaSeverityLabel1 zh 预留翻译非空');
-    expect(en.level2ManiaSeverityLabel1, isNotEmpty, reason: 'level2ManiaSeverityLabel1 en 预留翻译非空');
-    expect(zh.level2ManiaSeverityLabel2, isNotEmpty, reason: 'level2ManiaSeverityLabel2 zh 预留翻译非空');
-    expect(en.level2ManiaSeverityLabel2, isNotEmpty, reason: 'level2ManiaSeverityLabel2 en 预留翻译非空');
-    expect(zh.level2ManiaSeverityLabel3, isNotEmpty, reason: 'level2ManiaSeverityLabel3 zh 预留翻译非空');
-    expect(en.level2ManiaSeverityLabel3, isNotEmpty, reason: 'level2ManiaSeverityLabel3 en 预留翻译非空');
-    expect(zh.level2ManiaSeveritySummary0, isNotEmpty, reason: 'level2ManiaSeveritySummary0 zh 预留翻译非空');
-    expect(en.level2ManiaSeveritySummary0, isNotEmpty, reason: 'level2ManiaSeveritySummary0 en 预留翻译非空');
-    expect(zh.level2ManiaSeveritySummary1, isNotEmpty, reason: 'level2ManiaSeveritySummary1 zh 预留翻译非空');
-    expect(en.level2ManiaSeveritySummary1, isNotEmpty, reason: 'level2ManiaSeveritySummary1 en 预留翻译非空');
-    expect(zh.level2ManiaSeveritySummary2, isNotEmpty, reason: 'level2ManiaSeveritySummary2 zh 预留翻译非空');
-    expect(en.level2ManiaSeveritySummary2, isNotEmpty, reason: 'level2ManiaSeveritySummary2 en 预留翻译非空');
-    expect(zh.level2ManiaSeveritySummary3, isNotEmpty, reason: 'level2ManiaSeveritySummary3 zh 预留翻译非空');
-    expect(en.level2ManiaSeveritySummary3, isNotEmpty, reason: 'level2ManiaSeveritySummary3 en 预留翻译非空');
-    expect(zh.level2PsychosisOption0, isNotEmpty, reason: 'level2PsychosisOption0 zh 预留翻译非空');
-    expect(en.level2PsychosisOption0, isNotEmpty, reason: 'level2PsychosisOption0 en 预留翻译非空');
-    expect(zh.level2PsychosisOption1, isNotEmpty, reason: 'level2PsychosisOption1 zh 预留翻译非空');
-    expect(en.level2PsychosisOption1, isNotEmpty, reason: 'level2PsychosisOption1 en 预留翻译非空');
-    expect(zh.level2PsychosisOption2, isNotEmpty, reason: 'level2PsychosisOption2 zh 预留翻译非空');
-    expect(en.level2PsychosisOption2, isNotEmpty, reason: 'level2PsychosisOption2 en 预留翻译非空');
-    expect(zh.level2PsychosisOption3, isNotEmpty, reason: 'level2PsychosisOption3 zh 预留翻译非空');
-    expect(en.level2PsychosisOption3, isNotEmpty, reason: 'level2PsychosisOption3 en 预留翻译非空');
-    expect(zh.level2PsychosisSeverityLabel0, isNotEmpty, reason: 'level2PsychosisSeverityLabel0 zh 预留翻译非空');
-    expect(en.level2PsychosisSeverityLabel0, isNotEmpty, reason: 'level2PsychosisSeverityLabel0 en 预留翻译非空');
-    expect(zh.level2PsychosisSeverityLabel1, isNotEmpty, reason: 'level2PsychosisSeverityLabel1 zh 预留翻译非空');
-    expect(en.level2PsychosisSeverityLabel1, isNotEmpty, reason: 'level2PsychosisSeverityLabel1 en 预留翻译非空');
-    expect(zh.level2PsychosisSeverityLabel2, isNotEmpty, reason: 'level2PsychosisSeverityLabel2 zh 预留翻译非空');
-    expect(en.level2PsychosisSeverityLabel2, isNotEmpty, reason: 'level2PsychosisSeverityLabel2 en 预留翻译非空');
-    expect(zh.level2PsychosisSeverityLabel3, isNotEmpty, reason: 'level2PsychosisSeverityLabel3 zh 预留翻译非空');
-    expect(en.level2PsychosisSeverityLabel3, isNotEmpty, reason: 'level2PsychosisSeverityLabel3 en 预留翻译非空');
-    expect(zh.level2PsychosisSeveritySummary0, isNotEmpty, reason: 'level2PsychosisSeveritySummary0 zh 预留翻译非空');
-    expect(en.level2PsychosisSeveritySummary0, isNotEmpty, reason: 'level2PsychosisSeveritySummary0 en 预留翻译非空');
-    expect(zh.level2PsychosisSeveritySummary1, isNotEmpty, reason: 'level2PsychosisSeveritySummary1 zh 预留翻译非空');
-    expect(en.level2PsychosisSeveritySummary1, isNotEmpty, reason: 'level2PsychosisSeveritySummary1 en 预留翻译非空');
-    expect(zh.level2PsychosisSeveritySummary2, isNotEmpty, reason: 'level2PsychosisSeveritySummary2 zh 预留翻译非空');
-    expect(en.level2PsychosisSeveritySummary2, isNotEmpty, reason: 'level2PsychosisSeveritySummary2 en 预留翻译非空');
-    expect(zh.level2PsychosisSeveritySummary3, isNotEmpty, reason: 'level2PsychosisSeveritySummary3 zh 预留翻译非空');
-    expect(en.level2PsychosisSeveritySummary3, isNotEmpty, reason: 'level2PsychosisSeveritySummary3 en 预留翻译非空');
-    expect(zh.phq9SeveritySummary0, isNotEmpty, reason: 'phq9SeveritySummary0 zh 预留翻译非空');
-    expect(en.phq9SeveritySummary0, isNotEmpty, reason: 'phq9SeveritySummary0 en 预留翻译非空');
-    expect(zh.phq9SeveritySummary1, isNotEmpty, reason: 'phq9SeveritySummary1 zh 预留翻译非空');
-    expect(en.phq9SeveritySummary1, isNotEmpty, reason: 'phq9SeveritySummary1 en 预留翻译非空');
-    expect(zh.phq9SeveritySummary3, isNotEmpty, reason: 'phq9SeveritySummary3 zh 预留翻译非空');
-    expect(en.phq9SeveritySummary3, isNotEmpty, reason: 'phq9SeveritySummary3 en 预留翻译非空');
-    expect(zh.phq9SeveritySummary4, isNotEmpty, reason: 'phq9SeveritySummary4 zh 预留翻译非空');
-    expect(en.phq9SeveritySummary4, isNotEmpty, reason: 'phq9SeveritySummary4 en 预留翻译非空');
-    expect(zh.pssOption0, isNotEmpty, reason: 'pssOption0 zh 预留翻译非空');
-    expect(en.pssOption0, isNotEmpty, reason: 'pssOption0 en 预留翻译非空');
-    expect(zh.pssOption1, isNotEmpty, reason: 'pssOption1 zh 预留翻译非空');
-    expect(en.pssOption1, isNotEmpty, reason: 'pssOption1 en 预留翻译非空');
-    expect(zh.pssOption2, isNotEmpty, reason: 'pssOption2 zh 预留翻译非空');
-    expect(en.pssOption2, isNotEmpty, reason: 'pssOption2 en 预留翻译非空');
-    expect(zh.pssOption3, isNotEmpty, reason: 'pssOption3 zh 预留翻译非空');
-    expect(en.pssOption3, isNotEmpty, reason: 'pssOption3 en 预留翻译非空');
-    expect(zh.pssOption4, isNotEmpty, reason: 'pssOption4 zh 预留翻译非空');
-    expect(en.pssOption4, isNotEmpty, reason: 'pssOption4 en 预留翻译非空');
-    expect(zh.pssSeverityLabel0, isNotEmpty, reason: 'pssSeverityLabel0 zh 预留翻译非空');
-    expect(en.pssSeverityLabel0, isNotEmpty, reason: 'pssSeverityLabel0 en 预留翻译非空');
-    expect(zh.pssSeverityLabel1, isNotEmpty, reason: 'pssSeverityLabel1 zh 预留翻译非空');
-    expect(en.pssSeverityLabel1, isNotEmpty, reason: 'pssSeverityLabel1 en 预留翻译非空');
-    expect(zh.pssSeverityLabel2, isNotEmpty, reason: 'pssSeverityLabel2 zh 预留翻译非空');
-    expect(en.pssSeverityLabel2, isNotEmpty, reason: 'pssSeverityLabel2 en 预留翻译非空');
-    expect(zh.pssSeveritySummary0, isNotEmpty, reason: 'pssSeveritySummary0 zh 预留翻译非空');
-    expect(en.pssSeveritySummary0, isNotEmpty, reason: 'pssSeveritySummary0 en 预留翻译非空');
-    expect(zh.pssSeveritySummary1, isNotEmpty, reason: 'pssSeveritySummary1 zh 预留翻译非空');
-    expect(en.pssSeveritySummary1, isNotEmpty, reason: 'pssSeveritySummary1 en 预留翻译非空');
-    expect(zh.pssSeveritySummary2, isNotEmpty, reason: 'pssSeveritySummary2 zh 预留翻译非空');
-    expect(en.pssSeveritySummary2, isNotEmpty, reason: 'pssSeveritySummary2 en 预留翻译非空');
-    expect(zh.scaleHotlineIntl, isNotEmpty, reason: 'scaleHotlineIntl zh 预留翻译非空');
-    expect(en.scaleHotlineIntl, isNotEmpty, reason: 'scaleHotlineIntl en 预留翻译非空');
-    expect(zh.whodasOption0, isNotEmpty, reason: 'whodasOption0 zh 预留翻译非空');
-    expect(en.whodasOption0, isNotEmpty, reason: 'whodasOption0 en 预留翻译非空');
-    expect(zh.whodasOption1, isNotEmpty, reason: 'whodasOption1 zh 预留翻译非空');
-    expect(en.whodasOption1, isNotEmpty, reason: 'whodasOption1 en 预留翻译非空');
-    expect(zh.whodasOption2, isNotEmpty, reason: 'whodasOption2 zh 预留翻译非空');
-    expect(en.whodasOption2, isNotEmpty, reason: 'whodasOption2 en 预留翻译非空');
-    expect(zh.whodasOption3, isNotEmpty, reason: 'whodasOption3 zh 预留翻译非空');
-    expect(en.whodasOption3, isNotEmpty, reason: 'whodasOption3 en 预留翻译非空');
-    expect(zh.whodasOption4, isNotEmpty, reason: 'whodasOption4 zh 预留翻译非空');
-    expect(en.whodasOption4, isNotEmpty, reason: 'whodasOption4 en 预留翻译非空');
-    expect(zh.whodasSeverityLabel0, isNotEmpty, reason: 'whodasSeverityLabel0 zh 预留翻译非空');
-    expect(en.whodasSeverityLabel0, isNotEmpty, reason: 'whodasSeverityLabel0 en 预留翻译非空');
-    expect(zh.whodasSeverityLabel1, isNotEmpty, reason: 'whodasSeverityLabel1 zh 预留翻译非空');
-    expect(en.whodasSeverityLabel1, isNotEmpty, reason: 'whodasSeverityLabel1 en 预留翻译非空');
-    expect(zh.whodasSeverityLabel2, isNotEmpty, reason: 'whodasSeverityLabel2 zh 预留翻译非空');
-    expect(en.whodasSeverityLabel2, isNotEmpty, reason: 'whodasSeverityLabel2 en 预留翻译非空');
-    expect(zh.whodasSeverityLabel3, isNotEmpty, reason: 'whodasSeverityLabel3 zh 预留翻译非空');
-    expect(en.whodasSeverityLabel3, isNotEmpty, reason: 'whodasSeverityLabel3 en 预留翻译非空');
-    expect(zh.whodasSeverityLabel4, isNotEmpty, reason: 'whodasSeverityLabel4 zh 预留翻译非空');
-    expect(en.whodasSeverityLabel4, isNotEmpty, reason: 'whodasSeverityLabel4 en 预留翻译非空');
-    expect(zh.whodasSeveritySummary0, isNotEmpty, reason: 'whodasSeveritySummary0 zh 预留翻译非空');
-    expect(en.whodasSeveritySummary0, isNotEmpty, reason: 'whodasSeveritySummary0 en 预留翻译非空');
-    expect(zh.whodasSeveritySummary1, isNotEmpty, reason: 'whodasSeveritySummary1 zh 预留翻译非空');
-    expect(en.whodasSeveritySummary1, isNotEmpty, reason: 'whodasSeveritySummary1 en 预留翻译非空');
-    expect(zh.whodasSeveritySummary2, isNotEmpty, reason: 'whodasSeveritySummary2 zh 预留翻译非空');
-    expect(en.whodasSeveritySummary2, isNotEmpty, reason: 'whodasSeveritySummary2 en 预留翻译非空');
-    expect(zh.whodasSeveritySummary3, isNotEmpty, reason: 'whodasSeveritySummary3 zh 预留翻译非空');
-    expect(en.whodasSeveritySummary3, isNotEmpty, reason: 'whodasSeveritySummary3 en 预留翻译非空');
-    expect(zh.whodasSeveritySummary4, isNotEmpty, reason: 'whodasSeveritySummary4 zh 预留翻译非空');
-    expect(en.whodasSeveritySummary4, isNotEmpty, reason: 'whodasSeveritySummary4 en 预留翻译非空');
-  });
+    test('R90 8 新量表 options/severity ARB key 引用锁 (防 orphan, Task 6 预留)', () {
+      final zh = AppLocalizationsZh();
+      final en = AppLocalizationsEn();
+      expect(zh.asrmOption0, isNotEmpty, reason: 'asrmOption0 zh 预留翻译非空');
+      expect(en.asrmOption0, isNotEmpty, reason: 'asrmOption0 en 预留翻译非空');
+      expect(zh.asrmOption1, isNotEmpty, reason: 'asrmOption1 zh 预留翻译非空');
+      expect(en.asrmOption1, isNotEmpty, reason: 'asrmOption1 en 预留翻译非空');
+      expect(zh.asrmOption2, isNotEmpty, reason: 'asrmOption2 zh 预留翻译非空');
+      expect(en.asrmOption2, isNotEmpty, reason: 'asrmOption2 en 预留翻译非空');
+      expect(zh.asrmOption3, isNotEmpty, reason: 'asrmOption3 zh 预留翻译非空');
+      expect(en.asrmOption3, isNotEmpty, reason: 'asrmOption3 en 预留翻译非空');
+      expect(zh.asrmOption4, isNotEmpty, reason: 'asrmOption4 zh 预留翻译非空');
+      expect(en.asrmOption4, isNotEmpty, reason: 'asrmOption4 en 预留翻译非空');
+      expect(zh.asrmSeverityLabel0, isNotEmpty,
+          reason: 'asrmSeverityLabel0 zh 预留翻译非空');
+      expect(en.asrmSeverityLabel0, isNotEmpty,
+          reason: 'asrmSeverityLabel0 en 预留翻译非空');
+      expect(zh.asrmSeverityLabel1, isNotEmpty,
+          reason: 'asrmSeverityLabel1 zh 预留翻译非空');
+      expect(en.asrmSeverityLabel1, isNotEmpty,
+          reason: 'asrmSeverityLabel1 en 预留翻译非空');
+      expect(zh.asrmSeverityLabel2, isNotEmpty,
+          reason: 'asrmSeverityLabel2 zh 预留翻译非空');
+      expect(en.asrmSeverityLabel2, isNotEmpty,
+          reason: 'asrmSeverityLabel2 en 预留翻译非空');
+      expect(zh.asrmSeverityLabel3, isNotEmpty,
+          reason: 'asrmSeverityLabel3 zh 预留翻译非空');
+      expect(en.asrmSeverityLabel3, isNotEmpty,
+          reason: 'asrmSeverityLabel3 en 预留翻译非空');
+      expect(zh.asrmSeverityLabel4, isNotEmpty,
+          reason: 'asrmSeverityLabel4 zh 预留翻译非空');
+      expect(en.asrmSeverityLabel4, isNotEmpty,
+          reason: 'asrmSeverityLabel4 en 预留翻译非空');
+      expect(zh.asrmSeveritySummary0, isNotEmpty,
+          reason: 'asrmSeveritySummary0 zh 预留翻译非空');
+      expect(en.asrmSeveritySummary0, isNotEmpty,
+          reason: 'asrmSeveritySummary0 en 预留翻译非空');
+      expect(zh.asrmSeveritySummary1, isNotEmpty,
+          reason: 'asrmSeveritySummary1 zh 预留翻译非空');
+      expect(en.asrmSeveritySummary1, isNotEmpty,
+          reason: 'asrmSeveritySummary1 en 预留翻译非空');
+      expect(zh.asrmSeveritySummary2, isNotEmpty,
+          reason: 'asrmSeveritySummary2 zh 预留翻译非空');
+      expect(en.asrmSeveritySummary2, isNotEmpty,
+          reason: 'asrmSeveritySummary2 en 预留翻译非空');
+      expect(zh.asrmSeveritySummary3, isNotEmpty,
+          reason: 'asrmSeveritySummary3 zh 预留翻译非空');
+      expect(en.asrmSeveritySummary3, isNotEmpty,
+          reason: 'asrmSeveritySummary3 en 预留翻译非空');
+      expect(zh.asrmSeveritySummary4, isNotEmpty,
+          reason: 'asrmSeveritySummary4 zh 预留翻译非空');
+      expect(en.asrmSeveritySummary4, isNotEmpty,
+          reason: 'asrmSeveritySummary4 en 预留翻译非空');
+      expect(zh.gad7SeveritySummary0, isNotEmpty,
+          reason: 'gad7SeveritySummary0 zh 预留翻译非空');
+      expect(en.gad7SeveritySummary0, isNotEmpty,
+          reason: 'gad7SeveritySummary0 en 预留翻译非空');
+      expect(zh.gad7SeveritySummary1, isNotEmpty,
+          reason: 'gad7SeveritySummary1 zh 预留翻译非空');
+      expect(en.gad7SeveritySummary1, isNotEmpty,
+          reason: 'gad7SeveritySummary1 en 预留翻译非空');
+      expect(zh.gad7SeveritySummary2, isNotEmpty,
+          reason: 'gad7SeveritySummary2 zh 预留翻译非空');
+      expect(en.gad7SeveritySummary2, isNotEmpty,
+          reason: 'gad7SeveritySummary2 en 预留翻译非空');
+      expect(zh.gad7SeveritySummary3, isNotEmpty,
+          reason: 'gad7SeveritySummary3 zh 预留翻译非空');
+      expect(en.gad7SeveritySummary3, isNotEmpty,
+          reason: 'gad7SeveritySummary3 en 预留翻译非空');
+      expect(zh.isiOption0, isNotEmpty, reason: 'isiOption0 zh 预留翻译非空');
+      expect(en.isiOption0, isNotEmpty, reason: 'isiOption0 en 预留翻译非空');
+      expect(zh.isiOption1, isNotEmpty, reason: 'isiOption1 zh 预留翻译非空');
+      expect(en.isiOption1, isNotEmpty, reason: 'isiOption1 en 预留翻译非空');
+      expect(zh.isiOption2, isNotEmpty, reason: 'isiOption2 zh 预留翻译非空');
+      expect(en.isiOption2, isNotEmpty, reason: 'isiOption2 en 预留翻译非空');
+      expect(zh.isiOption3, isNotEmpty, reason: 'isiOption3 zh 预留翻译非空');
+      expect(en.isiOption3, isNotEmpty, reason: 'isiOption3 en 预留翻译非空');
+      expect(zh.isiOption4, isNotEmpty, reason: 'isiOption4 zh 预留翻译非空');
+      expect(en.isiOption4, isNotEmpty, reason: 'isiOption4 en 预留翻译非空');
+      expect(zh.isiSeverityLabel0, isNotEmpty,
+          reason: 'isiSeverityLabel0 zh 预留翻译非空');
+      expect(en.isiSeverityLabel0, isNotEmpty,
+          reason: 'isiSeverityLabel0 en 预留翻译非空');
+      expect(zh.isiSeverityLabel1, isNotEmpty,
+          reason: 'isiSeverityLabel1 zh 预留翻译非空');
+      expect(en.isiSeverityLabel1, isNotEmpty,
+          reason: 'isiSeverityLabel1 en 预留翻译非空');
+      expect(zh.isiSeverityLabel2, isNotEmpty,
+          reason: 'isiSeverityLabel2 zh 预留翻译非空');
+      expect(en.isiSeverityLabel2, isNotEmpty,
+          reason: 'isiSeverityLabel2 en 预留翻译非空');
+      expect(zh.isiSeverityLabel3, isNotEmpty,
+          reason: 'isiSeverityLabel3 zh 预留翻译非空');
+      expect(en.isiSeverityLabel3, isNotEmpty,
+          reason: 'isiSeverityLabel3 en 预留翻译非空');
+      expect(zh.isiSeveritySummary0, isNotEmpty,
+          reason: 'isiSeveritySummary0 zh 预留翻译非空');
+      expect(en.isiSeveritySummary0, isNotEmpty,
+          reason: 'isiSeveritySummary0 en 预留翻译非空');
+      expect(zh.isiSeveritySummary1, isNotEmpty,
+          reason: 'isiSeveritySummary1 zh 预留翻译非空');
+      expect(en.isiSeveritySummary1, isNotEmpty,
+          reason: 'isiSeveritySummary1 en 预留翻译非空');
+      expect(zh.isiSeveritySummary2, isNotEmpty,
+          reason: 'isiSeveritySummary2 zh 预留翻译非空');
+      expect(en.isiSeveritySummary2, isNotEmpty,
+          reason: 'isiSeveritySummary2 en 预留翻译非空');
+      expect(zh.isiSeveritySummary3, isNotEmpty,
+          reason: 'isiSeveritySummary3 zh 预留翻译非空');
+      expect(en.isiSeveritySummary3, isNotEmpty,
+          reason: 'isiSeveritySummary3 en 预留翻译非空');
+      expect(zh.level2AnxietyOption0, isNotEmpty,
+          reason: 'level2AnxietyOption0 zh 预留翻译非空');
+      expect(en.level2AnxietyOption0, isNotEmpty,
+          reason: 'level2AnxietyOption0 en 预留翻译非空');
+      expect(zh.level2AnxietyOption1, isNotEmpty,
+          reason: 'level2AnxietyOption1 zh 预留翻译非空');
+      expect(en.level2AnxietyOption1, isNotEmpty,
+          reason: 'level2AnxietyOption1 en 预留翻译非空');
+      expect(zh.level2AnxietyOption2, isNotEmpty,
+          reason: 'level2AnxietyOption2 zh 预留翻译非空');
+      expect(en.level2AnxietyOption2, isNotEmpty,
+          reason: 'level2AnxietyOption2 en 预留翻译非空');
+      expect(zh.level2AnxietyOption3, isNotEmpty,
+          reason: 'level2AnxietyOption3 zh 预留翻译非空');
+      expect(en.level2AnxietyOption3, isNotEmpty,
+          reason: 'level2AnxietyOption3 en 预留翻译非空');
+      expect(zh.level2AnxietySeverityLabel0, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel0 zh 预留翻译非空');
+      expect(en.level2AnxietySeverityLabel0, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel0 en 预留翻译非空');
+      expect(zh.level2AnxietySeverityLabel1, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel1 zh 预留翻译非空');
+      expect(en.level2AnxietySeverityLabel1, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel1 en 预留翻译非空');
+      expect(zh.level2AnxietySeverityLabel2, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel2 zh 预留翻译非空');
+      expect(en.level2AnxietySeverityLabel2, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel2 en 预留翻译非空');
+      expect(zh.level2AnxietySeverityLabel3, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel3 zh 预留翻译非空');
+      expect(en.level2AnxietySeverityLabel3, isNotEmpty,
+          reason: 'level2AnxietySeverityLabel3 en 预留翻译非空');
+      expect(zh.level2AnxietySeveritySummary0, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary0 zh 预留翻译非空');
+      expect(en.level2AnxietySeveritySummary0, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary0 en 预留翻译非空');
+      expect(zh.level2AnxietySeveritySummary1, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary1 zh 预留翻译非空');
+      expect(en.level2AnxietySeveritySummary1, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary1 en 预留翻译非空');
+      expect(zh.level2AnxietySeveritySummary2, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary2 zh 预留翻译非空');
+      expect(en.level2AnxietySeveritySummary2, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary2 en 预留翻译非空');
+      expect(zh.level2AnxietySeveritySummary3, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary3 zh 预留翻译非空');
+      expect(en.level2AnxietySeveritySummary3, isNotEmpty,
+          reason: 'level2AnxietySeveritySummary3 en 预留翻译非空');
+      expect(zh.level2DepressionOption0, isNotEmpty,
+          reason: 'level2DepressionOption0 zh 预留翻译非空');
+      expect(en.level2DepressionOption0, isNotEmpty,
+          reason: 'level2DepressionOption0 en 预留翻译非空');
+      expect(zh.level2DepressionOption1, isNotEmpty,
+          reason: 'level2DepressionOption1 zh 预留翻译非空');
+      expect(en.level2DepressionOption1, isNotEmpty,
+          reason: 'level2DepressionOption1 en 预留翻译非空');
+      expect(zh.level2DepressionOption2, isNotEmpty,
+          reason: 'level2DepressionOption2 zh 预留翻译非空');
+      expect(en.level2DepressionOption2, isNotEmpty,
+          reason: 'level2DepressionOption2 en 预留翻译非空');
+      expect(zh.level2DepressionOption3, isNotEmpty,
+          reason: 'level2DepressionOption3 zh 预留翻译非空');
+      expect(en.level2DepressionOption3, isNotEmpty,
+          reason: 'level2DepressionOption3 en 预留翻译非空');
+      expect(zh.level2DepressionSeverityLabel0, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel0 zh 预留翻译非空');
+      expect(en.level2DepressionSeverityLabel0, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel0 en 预留翻译非空');
+      expect(zh.level2DepressionSeverityLabel1, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel1 zh 预留翻译非空');
+      expect(en.level2DepressionSeverityLabel1, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel1 en 预留翻译非空');
+      expect(zh.level2DepressionSeverityLabel2, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel2 zh 预留翻译非空');
+      expect(en.level2DepressionSeverityLabel2, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel2 en 预留翻译非空');
+      expect(zh.level2DepressionSeverityLabel3, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel3 zh 预留翻译非空');
+      expect(en.level2DepressionSeverityLabel3, isNotEmpty,
+          reason: 'level2DepressionSeverityLabel3 en 预留翻译非空');
+      expect(zh.level2DepressionSeveritySummary0, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary0 zh 预留翻译非空');
+      expect(en.level2DepressionSeveritySummary0, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary0 en 预留翻译非空');
+      expect(zh.level2DepressionSeveritySummary1, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary1 zh 预留翻译非空');
+      expect(en.level2DepressionSeveritySummary1, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary1 en 预留翻译非空');
+      expect(zh.level2DepressionSeveritySummary2, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary2 zh 预留翻译非空');
+      expect(en.level2DepressionSeveritySummary2, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary2 en 预留翻译非空');
+      expect(zh.level2DepressionSeveritySummary3, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary3 zh 预留翻译非空');
+      expect(en.level2DepressionSeveritySummary3, isNotEmpty,
+          reason: 'level2DepressionSeveritySummary3 en 预留翻译非空');
+      expect(zh.level2ManiaOption0, isNotEmpty,
+          reason: 'level2ManiaOption0 zh 预留翻译非空');
+      expect(en.level2ManiaOption0, isNotEmpty,
+          reason: 'level2ManiaOption0 en 预留翻译非空');
+      expect(zh.level2ManiaOption1, isNotEmpty,
+          reason: 'level2ManiaOption1 zh 预留翻译非空');
+      expect(en.level2ManiaOption1, isNotEmpty,
+          reason: 'level2ManiaOption1 en 预留翻译非空');
+      expect(zh.level2ManiaOption2, isNotEmpty,
+          reason: 'level2ManiaOption2 zh 预留翻译非空');
+      expect(en.level2ManiaOption2, isNotEmpty,
+          reason: 'level2ManiaOption2 en 预留翻译非空');
+      expect(zh.level2ManiaOption3, isNotEmpty,
+          reason: 'level2ManiaOption3 zh 预留翻译非空');
+      expect(en.level2ManiaOption3, isNotEmpty,
+          reason: 'level2ManiaOption3 en 预留翻译非空');
+      expect(zh.level2ManiaSeverityLabel0, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel0 zh 预留翻译非空');
+      expect(en.level2ManiaSeverityLabel0, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel0 en 预留翻译非空');
+      expect(zh.level2ManiaSeverityLabel1, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel1 zh 预留翻译非空');
+      expect(en.level2ManiaSeverityLabel1, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel1 en 预留翻译非空');
+      expect(zh.level2ManiaSeverityLabel2, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel2 zh 预留翻译非空');
+      expect(en.level2ManiaSeverityLabel2, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel2 en 预留翻译非空');
+      expect(zh.level2ManiaSeverityLabel3, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel3 zh 预留翻译非空');
+      expect(en.level2ManiaSeverityLabel3, isNotEmpty,
+          reason: 'level2ManiaSeverityLabel3 en 预留翻译非空');
+      expect(zh.level2ManiaSeveritySummary0, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary0 zh 预留翻译非空');
+      expect(en.level2ManiaSeveritySummary0, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary0 en 预留翻译非空');
+      expect(zh.level2ManiaSeveritySummary1, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary1 zh 预留翻译非空');
+      expect(en.level2ManiaSeveritySummary1, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary1 en 预留翻译非空');
+      expect(zh.level2ManiaSeveritySummary2, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary2 zh 预留翻译非空');
+      expect(en.level2ManiaSeveritySummary2, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary2 en 预留翻译非空');
+      expect(zh.level2ManiaSeveritySummary3, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary3 zh 预留翻译非空');
+      expect(en.level2ManiaSeveritySummary3, isNotEmpty,
+          reason: 'level2ManiaSeveritySummary3 en 预留翻译非空');
+      expect(zh.level2PsychosisOption0, isNotEmpty,
+          reason: 'level2PsychosisOption0 zh 预留翻译非空');
+      expect(en.level2PsychosisOption0, isNotEmpty,
+          reason: 'level2PsychosisOption0 en 预留翻译非空');
+      expect(zh.level2PsychosisOption1, isNotEmpty,
+          reason: 'level2PsychosisOption1 zh 预留翻译非空');
+      expect(en.level2PsychosisOption1, isNotEmpty,
+          reason: 'level2PsychosisOption1 en 预留翻译非空');
+      expect(zh.level2PsychosisOption2, isNotEmpty,
+          reason: 'level2PsychosisOption2 zh 预留翻译非空');
+      expect(en.level2PsychosisOption2, isNotEmpty,
+          reason: 'level2PsychosisOption2 en 预留翻译非空');
+      expect(zh.level2PsychosisOption3, isNotEmpty,
+          reason: 'level2PsychosisOption3 zh 预留翻译非空');
+      expect(en.level2PsychosisOption3, isNotEmpty,
+          reason: 'level2PsychosisOption3 en 预留翻译非空');
+      expect(zh.level2PsychosisSeverityLabel0, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel0 zh 预留翻译非空');
+      expect(en.level2PsychosisSeverityLabel0, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel0 en 预留翻译非空');
+      expect(zh.level2PsychosisSeverityLabel1, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel1 zh 预留翻译非空');
+      expect(en.level2PsychosisSeverityLabel1, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel1 en 预留翻译非空');
+      expect(zh.level2PsychosisSeverityLabel2, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel2 zh 预留翻译非空');
+      expect(en.level2PsychosisSeverityLabel2, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel2 en 预留翻译非空');
+      expect(zh.level2PsychosisSeverityLabel3, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel3 zh 预留翻译非空');
+      expect(en.level2PsychosisSeverityLabel3, isNotEmpty,
+          reason: 'level2PsychosisSeverityLabel3 en 预留翻译非空');
+      expect(zh.level2PsychosisSeveritySummary0, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary0 zh 预留翻译非空');
+      expect(en.level2PsychosisSeveritySummary0, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary0 en 预留翻译非空');
+      expect(zh.level2PsychosisSeveritySummary1, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary1 zh 预留翻译非空');
+      expect(en.level2PsychosisSeveritySummary1, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary1 en 预留翻译非空');
+      expect(zh.level2PsychosisSeveritySummary2, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary2 zh 预留翻译非空');
+      expect(en.level2PsychosisSeveritySummary2, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary2 en 预留翻译非空');
+      expect(zh.level2PsychosisSeveritySummary3, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary3 zh 预留翻译非空');
+      expect(en.level2PsychosisSeveritySummary3, isNotEmpty,
+          reason: 'level2PsychosisSeveritySummary3 en 预留翻译非空');
+      expect(zh.phq9SeveritySummary0, isNotEmpty,
+          reason: 'phq9SeveritySummary0 zh 预留翻译非空');
+      expect(en.phq9SeveritySummary0, isNotEmpty,
+          reason: 'phq9SeveritySummary0 en 预留翻译非空');
+      expect(zh.phq9SeveritySummary1, isNotEmpty,
+          reason: 'phq9SeveritySummary1 zh 预留翻译非空');
+      expect(en.phq9SeveritySummary1, isNotEmpty,
+          reason: 'phq9SeveritySummary1 en 预留翻译非空');
+      expect(zh.phq9SeveritySummary3, isNotEmpty,
+          reason: 'phq9SeveritySummary3 zh 预留翻译非空');
+      expect(en.phq9SeveritySummary3, isNotEmpty,
+          reason: 'phq9SeveritySummary3 en 预留翻译非空');
+      expect(zh.phq9SeveritySummary4, isNotEmpty,
+          reason: 'phq9SeveritySummary4 zh 预留翻译非空');
+      expect(en.phq9SeveritySummary4, isNotEmpty,
+          reason: 'phq9SeveritySummary4 en 预留翻译非空');
+      expect(zh.pssOption0, isNotEmpty, reason: 'pssOption0 zh 预留翻译非空');
+      expect(en.pssOption0, isNotEmpty, reason: 'pssOption0 en 预留翻译非空');
+      expect(zh.pssOption1, isNotEmpty, reason: 'pssOption1 zh 预留翻译非空');
+      expect(en.pssOption1, isNotEmpty, reason: 'pssOption1 en 预留翻译非空');
+      expect(zh.pssOption2, isNotEmpty, reason: 'pssOption2 zh 预留翻译非空');
+      expect(en.pssOption2, isNotEmpty, reason: 'pssOption2 en 预留翻译非空');
+      expect(zh.pssOption3, isNotEmpty, reason: 'pssOption3 zh 预留翻译非空');
+      expect(en.pssOption3, isNotEmpty, reason: 'pssOption3 en 预留翻译非空');
+      expect(zh.pssOption4, isNotEmpty, reason: 'pssOption4 zh 预留翻译非空');
+      expect(en.pssOption4, isNotEmpty, reason: 'pssOption4 en 预留翻译非空');
+      expect(zh.pssSeverityLabel0, isNotEmpty,
+          reason: 'pssSeverityLabel0 zh 预留翻译非空');
+      expect(en.pssSeverityLabel0, isNotEmpty,
+          reason: 'pssSeverityLabel0 en 预留翻译非空');
+      expect(zh.pssSeverityLabel1, isNotEmpty,
+          reason: 'pssSeverityLabel1 zh 预留翻译非空');
+      expect(en.pssSeverityLabel1, isNotEmpty,
+          reason: 'pssSeverityLabel1 en 预留翻译非空');
+      expect(zh.pssSeverityLabel2, isNotEmpty,
+          reason: 'pssSeverityLabel2 zh 预留翻译非空');
+      expect(en.pssSeverityLabel2, isNotEmpty,
+          reason: 'pssSeverityLabel2 en 预留翻译非空');
+      expect(zh.pssSeveritySummary0, isNotEmpty,
+          reason: 'pssSeveritySummary0 zh 预留翻译非空');
+      expect(en.pssSeveritySummary0, isNotEmpty,
+          reason: 'pssSeveritySummary0 en 预留翻译非空');
+      expect(zh.pssSeveritySummary1, isNotEmpty,
+          reason: 'pssSeveritySummary1 zh 预留翻译非空');
+      expect(en.pssSeveritySummary1, isNotEmpty,
+          reason: 'pssSeveritySummary1 en 预留翻译非空');
+      expect(zh.pssSeveritySummary2, isNotEmpty,
+          reason: 'pssSeveritySummary2 zh 预留翻译非空');
+      expect(en.pssSeveritySummary2, isNotEmpty,
+          reason: 'pssSeveritySummary2 en 预留翻译非空');
+      expect(zh.scaleHotlineIntl, isNotEmpty,
+          reason: 'scaleHotlineIntl zh 预留翻译非空');
+      expect(en.scaleHotlineIntl, isNotEmpty,
+          reason: 'scaleHotlineIntl en 预留翻译非空');
+      expect(zh.whodasOption0, isNotEmpty, reason: 'whodasOption0 zh 预留翻译非空');
+      expect(en.whodasOption0, isNotEmpty, reason: 'whodasOption0 en 预留翻译非空');
+      expect(zh.whodasOption1, isNotEmpty, reason: 'whodasOption1 zh 预留翻译非空');
+      expect(en.whodasOption1, isNotEmpty, reason: 'whodasOption1 en 预留翻译非空');
+      expect(zh.whodasOption2, isNotEmpty, reason: 'whodasOption2 zh 预留翻译非空');
+      expect(en.whodasOption2, isNotEmpty, reason: 'whodasOption2 en 预留翻译非空');
+      expect(zh.whodasOption3, isNotEmpty, reason: 'whodasOption3 zh 预留翻译非空');
+      expect(en.whodasOption3, isNotEmpty, reason: 'whodasOption3 en 预留翻译非空');
+      expect(zh.whodasOption4, isNotEmpty, reason: 'whodasOption4 zh 预留翻译非空');
+      expect(en.whodasOption4, isNotEmpty, reason: 'whodasOption4 en 预留翻译非空');
+      expect(zh.whodasSeverityLabel0, isNotEmpty,
+          reason: 'whodasSeverityLabel0 zh 预留翻译非空');
+      expect(en.whodasSeverityLabel0, isNotEmpty,
+          reason: 'whodasSeverityLabel0 en 预留翻译非空');
+      expect(zh.whodasSeverityLabel1, isNotEmpty,
+          reason: 'whodasSeverityLabel1 zh 预留翻译非空');
+      expect(en.whodasSeverityLabel1, isNotEmpty,
+          reason: 'whodasSeverityLabel1 en 预留翻译非空');
+      expect(zh.whodasSeverityLabel2, isNotEmpty,
+          reason: 'whodasSeverityLabel2 zh 预留翻译非空');
+      expect(en.whodasSeverityLabel2, isNotEmpty,
+          reason: 'whodasSeverityLabel2 en 预留翻译非空');
+      expect(zh.whodasSeverityLabel3, isNotEmpty,
+          reason: 'whodasSeverityLabel3 zh 预留翻译非空');
+      expect(en.whodasSeverityLabel3, isNotEmpty,
+          reason: 'whodasSeverityLabel3 en 预留翻译非空');
+      expect(zh.whodasSeverityLabel4, isNotEmpty,
+          reason: 'whodasSeverityLabel4 zh 预留翻译非空');
+      expect(en.whodasSeverityLabel4, isNotEmpty,
+          reason: 'whodasSeverityLabel4 en 预留翻译非空');
+      expect(zh.whodasSeveritySummary0, isNotEmpty,
+          reason: 'whodasSeveritySummary0 zh 预留翻译非空');
+      expect(en.whodasSeveritySummary0, isNotEmpty,
+          reason: 'whodasSeveritySummary0 en 预留翻译非空');
+      expect(zh.whodasSeveritySummary1, isNotEmpty,
+          reason: 'whodasSeveritySummary1 zh 预留翻译非空');
+      expect(en.whodasSeveritySummary1, isNotEmpty,
+          reason: 'whodasSeveritySummary1 en 预留翻译非空');
+      expect(zh.whodasSeveritySummary2, isNotEmpty,
+          reason: 'whodasSeveritySummary2 zh 预留翻译非空');
+      expect(en.whodasSeveritySummary2, isNotEmpty,
+          reason: 'whodasSeveritySummary2 en 预留翻译非空');
+      expect(zh.whodasSeveritySummary3, isNotEmpty,
+          reason: 'whodasSeveritySummary3 zh 预留翻译非空');
+      expect(en.whodasSeveritySummary3, isNotEmpty,
+          reason: 'whodasSeveritySummary3 en 预留翻译非空');
+      expect(zh.whodasSeveritySummary4, isNotEmpty,
+          reason: 'whodasSeveritySummary4 zh 预留翻译非空');
+      expect(en.whodasSeveritySummary4, isNotEmpty,
+          reason: 'whodasSeveritySummary4 en 预留翻译非空');
+    });
   });
 
   // ============================================================
@@ -573,30 +755,14 @@ void main() {
         'Did you take meds?',
       );
     });
-
-    test('emailSubject 函数化 + override 工作', () {
-      expect(Strings.emailSubject('Alice', 3), '[停药提醒] Alice 已经 3 天没吃药了');
-      expect(
-        Strings.emailSubject('Alice', 3, override: 'Custom subject'),
-        'Custom subject',
-      );
-    });
-
-    test('importSummaryContact 函数化 + override 工作 (R23 P1-9 fix)', () {
-      expect(Strings.importSummaryContact(5), '5 联系人');
-      expect(
-        Strings.importSummaryContact(5, override: '5 contacts'),
-        '5 contacts',
-      );
-    });
   });
 
   // ============================================================
   // Group 7: 3 语 ARB 同步 (zh / en / zh_Hant 数字一致)
   //   - scale / phq9 / gad7 / isi / pss / whodas / level2 / asrm: 180 key
-  //   - notifChannel* (R23 起步 + R26 R57 加): 4 key
+  //   - notifChannel* (R23 起步 + R26 R57 加): 2 key (round 4b safety 摘)
   //   - 跟 check_arb_keys.py 守门员用 2 空格缩进模式一致 (避免嵌套对象 key 误算)
-  //   - 总 1058 key (跟 check_arb_keys.py baseline 同步; R95 sub-spec 7 task 53/55 加 13 new)
+  //   - 总 1203 key (跟 check_arb_keys.py baseline 同步; round 4b 外联 25 key 摘)
   // ============================================================
   group('3 语 ARB 同步 (zh / en / zh_Hant 数字一致, 跟 check_arb_keys.py 守门员一致)', () {
     int countIn(String path, String pattern) {
@@ -620,21 +786,24 @@ void main() {
       expect(hant, 180, reason: 'zh_Hant.arb 应有 180 scale* key');
     });
 
-    test('notifChannel* (R23 起步 + R26 R57 加) = 4 key (3 语同步)', () {
-      // R57 P0 #6 fix: notifChannel* 4 个 ARB key 是 strings.dart 内部 const
+    test(
+        'notifChannel* (R23 起步 + R26 R57 加, round 4b: safety 2 key 摘) = 2 key (3 语同步)',
+        () {
+      // R57 P0 #6 fix: notifChannel* 2 个 ARB key 是 strings.dart 内部 const
       // 字段的 i18n 镜像 (供 presentation 层 UI 翻译), 老 caller (notification_service /
       // badge_sync_service / snooze_manager) 用 const 编译期常量 (因 Android
       // channel ID 必须 compile-time), 0 引用 ARB key 是 R57 design 有意为之 —
       // 字符串值跟 strings.dart 内部 const 一致是 double-source-of-truth 风险,
       // 但 P2 收口决策 (audit 11.5/11.7) 留 v1.0。
+      // 1.1.0 round 4b: notifChannelSafety{Name,Desc} 随 safety alert 整摘。
       const pattern = r'^  "notifChannel';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 4, reason: 'zh.arb 应有 4 notifChannel* key');
-      expect(en, 4, reason: 'en.arb 应有 4 notifChannel* key');
-      expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
+      expect(zh, 2, reason: 'zh.arb 应有 2 notifChannel* key');
+      expect(en, 2, reason: 'en.arb 应有 2 notifChannel* key');
+      expect(hant, 2, reason: 'zh_Hant.arb 应有 2 notifChannel* key');
     });
 
     test('3 语 total = 1228 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
@@ -677,14 +846,19 @@ void main() {
       // 1.1.0 round 4f (review 修复): SafetyReminderCard 死类整摘, 连带
       //   reminderHubSafety{Title,DescEnabled,DescDisabled,StatusEnabled} +
       //   reminderHubSmsMockWarning 5 key 清掉 → 1233 → 1228
+      // 1.1.0 round 4b (emotion-first refactor): 外联 25 orphan key 整摘
+      //   (phoneRegion* 5 + checkInType{...} 4 + legalPageWithdrawSafety 2 +
+      //   notifChannelSafety 2 + safetyAlert* 5 + careCopy* 7;
+      //   careCopyWeekPerfectBody 只存 Strings 不存 ARB)
+      //   → 1228 → 1203
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1228, reason: 'zh.arb 应有 1228 key');
-      expect(en, 1228, reason: 'en.arb 应有 1228 key');
-      expect(hant, 1228, reason: 'zh_Hant.arb 应有 1228 key');
+      expect(zh, 1203, reason: 'zh.arb 应有 1203 key');
+      expect(en, 1203, reason: 'en.arb 应有 1203 key');
+      expect(hant, 1203, reason: 'zh_Hant.arb 应有 1203 key');
     });
   });
 
@@ -704,7 +878,8 @@ void main() {
 
     test('strings.dart 0 flutter import (domain 层 0 flutter 边界)', () {
       // Strings 是 const + i18n 化函数, 不依赖 flutter
-      expect(Strings.emailSubject('Alice', 3), '[停药提醒] Alice 已经 3 天没吃药了');
+      // 1.1.0 round 4b: email* 段随 EmailService 整摘, 改测仍存的 notifDaily
+      expect(Strings.notifDailyCheckInTitle, '🌱 今天吃了药吗？');
       expect(Strings.notifChannelMedicationName, '吃药提醒');
       // 改 const 在 build 阶段, 不能传 l10n (R57 决策)
     });

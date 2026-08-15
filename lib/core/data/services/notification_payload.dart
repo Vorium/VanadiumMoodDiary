@@ -14,6 +14,8 @@
 import 'package:flutter/foundation.dart' show immutable;
 
 /// 支持的 deep link 目标
+///
+/// 1.1.0 round 4b: safetyAlert (失联安全告警) 随外联服务整摘删除。
 enum DeepLinkTarget {
   /// 跳到主页 + 触发"打卡"动效
   todayCheckIn,
@@ -23,9 +25,6 @@ enum DeepLinkTarget {
 
   /// 跳到 PHQ-9 / GAD-7 评估页
   assessment,
-
-  /// 跳到主页 + 显示安全告警 SnackBar
-  safetyAlert,
 }
 
 /// 解析后的 deep link
@@ -52,14 +51,6 @@ class NotificationDeepLink {
     );
   }
 
-  /// safety alert:args = { 'days': '3' }
-  factory NotificationDeepLink.safetyAlert(int daysSince) {
-    return NotificationDeepLink._(
-      target: DeepLinkTarget.safetyAlert,
-      args: {'days': daysSince.toString()},
-    );
-  }
-
   /// today check-in
   factory NotificationDeepLink.todayCheckIn() {
     return const NotificationDeepLink._(
@@ -70,7 +61,6 @@ class NotificationDeepLink {
 
   int? get medicationId => int.tryParse(args['medId'] ?? '');
   String? get scaleId => args['scaleId'];
-  int? get daysSince => int.tryParse(args['days'] ?? '');
 
   /// 编码成 URI 字符串(payload 字段)
   ///
@@ -85,8 +75,6 @@ class NotificationDeepLink {
         return '$scheme://medication/${medicationId ?? 0}';
       case DeepLinkTarget.assessment:
         return '$scheme://assessment/${scaleId ?? "phq9"}';
-      case DeepLinkTarget.safetyAlert:
-        return '$scheme://safety-alert/${daysSince ?? 0}';
     }
   }
 
@@ -116,12 +104,6 @@ class NotificationDeepLink {
         final segs = uri.pathSegments;
         if (segs.isEmpty) return null;
         return NotificationDeepLink.assessment(segs[0]);
-
-      case 'safety-alert':
-        final segs = uri.pathSegments;
-        if (segs.isEmpty) return null;
-        final days = int.tryParse(segs[0]) ?? 0;
-        return NotificationDeepLink.safetyAlert(days);
 
       default:
         return null;

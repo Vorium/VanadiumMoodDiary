@@ -89,9 +89,6 @@ jobs:
       - name: Legal consent TODO check
         run: python scripts/check_legal_consent.py
 
-      - name: SMS release readiness check
-        run: python scripts/check_sms_release_ready.py
-
       - name: Hardcoded strings (with i18n override) check
         run: python scripts/check_strings_hardcoded.py
 
