@@ -17,7 +17,6 @@ import 'package:drift/drift.dart' show Value;
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/database/mappers/medication/medication_times.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 
 /// 首次设置提交 + 清空数据 (从 AppDatabase 抽出的业务编排)
@@ -26,17 +25,13 @@ class SetupCommitter {
 
   const SetupCommitter(this.db);
 
-  /// Complete first-time setup: in one transaction write user profile, contacts, medications,
+  /// Complete first-time setup: in one transaction write user profile, medications,
   /// any failure rolls back entirely, avoid half-baked data
   ///
-  /// v0.27 round 68 (CC-1 fix, PIPL §13 separate consent): add `contactConsents` parameter
-  /// (same length as `contactList`). Each contact filled in setup phase must have ConsentArtifact,
-  /// otherwise contact won't be written (4 consent columns required). setup_page must, before calling completeSetup,
-  /// show ConsentDialog for each contact to get consent.
+  /// 1.1.0 round 4: contacts 写入段整摘 (失联通信业务暂停定版) —
+  /// contactList / contactConsents 参数 + PIPL §13 consent 长度校验删除。
   Future<void> completeSetup({
     required String userName,
-    required List<({String name, String phone, int sortOrder})> contactList,
-    required List<ConsentArtifact> contactConsents,
     required List<
             ({
               String name,
@@ -62,36 +57,6 @@ class SetupCommitter {
               firstLaunchAt: existing?.firstLaunchAt ?? now,
             ),
           );
-
-      // insert contacts (R68 CC-1: PIPL §13 separate consent, 4 consent columns required)
-      // v0.32 round 8 (R111 E5 fix): assert → release 安全 check。
-      // assert 只 debug 生效; release 长度不一致会 RangeError (fail-fast 但无
-      // 清晰错误) 或静默漏 consent (PIPL §13 留痕断裂)。改: 不一致时抛
-      // StateError (release 也生效, 错误信息清晰)。
-      if (contactList.length != contactConsents.length) {
-        throw StateError(
-          'contactList (${contactList.length}) 与 contactConsents '
-          '(${contactConsents.length}) 长度不一致 — setup_page 必须为每个 '
-          '联系人弹 ConsentDialog (PIPL §13)',
-        );
-      }
-      for (var i = 0; i < contactList.length; i++) {
-        final c = contactList[i];
-        final consent = contactConsents[i];
-        await db.into(db.contacts).insert(
-              ContactsCompanion.insert(
-                name: c.name,
-                phone: c.phone,
-                sortOrder: Value(c.sortOrder),
-                // R68 CC-1 fix: 4 consent columns written from setup phase
-                // (previously left empty → PIPL §13 technically invalid, §47 query right invalid)
-                consentAt: Value(consent.grantedAt),
-                consentKind: Value(consent.kind.name),
-                consentBy: Value(consent.grantedBy),
-                consentVersion: Value(consent.version),
-              ),
-            );
-      }
 
       // insert medications
       // startDate uses the same now, ensure firstLaunchAt and medStart consistent

@@ -1,7 +1,8 @@
 // v0.14 (Round 12C) RemindersHubPage widget 测试
 //
-// 验证 5 个提醒卡片的渲染 + 状态显示
-import 'package:chroniccare/core/data/feature_flags.dart';
+// 验证 4 个提醒卡片的渲染 + 状态显示
+//
+// 1.1.0 round 4 (emotion-first refactor): 失联通知卡整摘, 5 卡 → 4 卡。
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:flutter/material.dart';
@@ -51,14 +52,10 @@ Widget _wrap({
 
 void main() {
   setUp(() {
-    // R110 round 3 (AS-07 gate): 失联通知卡挂 flag, test 翻 true
-    FeatureFlags.enableForTest();
     SharedPreferences.setMockInitialValues({});
   });
 
-  tearDown(FeatureFlags.resetForTest);
-
-  testWidgets('reminders hub 渲染 5 个核心卡片标题', (tester) async {
+  testWidgets('reminders hub 渲染 4 个核心卡片标题', (tester) async {
     _setBigView(tester);
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -67,7 +64,7 @@ void main() {
     expect(find.text('用药提醒'), findsOneWidget);
     expect(find.text('续方提醒'), findsOneWidget);
     expect(find.text('周期评估提醒'), findsOneWidget);
-    expect(find.text('失联通知（安全开关）'), findsOneWidget);
+    expect(find.text('失联通知（安全开关）'), findsNothing);
   });
 
   testWidgets('顶部 banner 提示集中管理', (tester) async {
@@ -86,8 +83,8 @@ void main() {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // 评估 + 安全开关 = 2 个 "未启用"
-    expect(find.text('未启用'), findsNWidgets(2));
+    // round 4: 失联卡摘, 只剩评估 1 个 "未启用"
+    expect(find.text('未启用'), findsNWidgets(1));
     // 用药 + 续方 = 2 个 "未配置"
     expect(find.text('未配置'), findsNWidgets(2));
   });
@@ -102,7 +99,8 @@ void main() {
     expect(find.text('查看通知预览'), findsNothing);
     expect(find.text('管理用药'), findsOneWidget);
     expect(find.text('管理续方'), findsOneWidget);
-    expect(find.text('配置'), findsNWidgets(2));
+    // round 4: 失联卡摘, "配置" 只剩评估 1 个
+    expect(find.text('配置'), findsNWidgets(1));
   });
 
   testWidgets('用药提醒卡有正确描述（无药物时）', (tester) async {
@@ -156,7 +154,7 @@ void main() {
     );
   });
 
-  testWidgets('5 个 card 都用 AppleListSection 容器', (tester) async {
+  testWidgets('4 个 card 都用 AppleListSection 容器', (tester) async {
     // v0.32 round 13 (R112 EM-02/AH-04 视觉债): ReminderCard 容器
     // Card → AppleListSection (iOS insetGrouped 风格, spec §4.5),
     // 结构断言同步改
@@ -164,7 +162,8 @@ void main() {
     await tester.pumpWidget(_wrap());
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    expect(find.byType(AppleListSection), findsNWidgets(5));
+    // round 4: 失联卡摘, 4 卡 → 4 AppleListSection
+    expect(find.byType(AppleListSection), findsNWidgets(4));
     expect(find.byType(Card), findsNothing);
   });
 }

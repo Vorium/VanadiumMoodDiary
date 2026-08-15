@@ -3,7 +3,6 @@
 // v0.32 R112 (AR-20 批2a): god class 拆 — 503L → 编排入口 (~230L), 3 职责
 // 各拆 1 文件 (每文件 ≤2 职责):
 // - 5 bool consent 状态 → setup_consent_state.dart (SetupConsentState)
-// - 联系人同意弹窗循环 → setup_contact_consent_flow.dart
 // - 提交序列 + 收集 → setup_submit_flow.dart
 // - 4 步 wizard 壳 (PopScope/PageScaffold/进度条/切换动画) →
 //   widgets/setup_wizard_frame.dart
@@ -11,13 +10,16 @@
 // 本文件只留: 步骤坐标 (_step) + controller 生命周期 + _buildStep 拼装 +
 // _finishSetup 编排入口 (saving 标志 + 错误 snackbar + swallowError)。
 //
+// 1.1.0 round 4: 联系人同意弹窗循环 (setup_contact_consent_flow.dart) 与
+// 联系人 controllers 整摘 (失联通信业务暂停定版)。
+//
 // 职责:
 // 1. [SetupPageState] 4 步 wizard 状态 + 业务方法 (跟 _HomePageState 改 public
 //    HomePageState 模式一致, R95 sub-spec 4 task 5)
 //
 // 状态分组:
 // - Step 0 consent: SetupConsentState 5 个 bool 勾选
-// - Step 1 welcome: nameController + contactName/PhoneControllers (动态数组)
+// - Step 1 welcome: nameController
 // - Step 2 medication: _meds (MedDraft list) + _saving
 // - Step 3 done: 终态, 触发 GoRouter /home
 //
@@ -31,7 +33,6 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/logic/setup_welcome_form_validator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_consent_state.dart';
-import 'package:chroniccare/presentation/pages/setup/setup_contact_consent_flow.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_step_consent.dart';
@@ -57,12 +58,6 @@ class SetupPageState extends ConsumerState<SetupPage> {
 
   // Step 1: welcome
   final _nameController = TextEditingController();
-  final List<TextEditingController> _contactNameControllers = [
-    TextEditingController(),
-  ];
-  final List<TextEditingController> _contactPhoneControllers = [
-    TextEditingController(),
-  ];
 
   // Step 2: medication
   final List<MedDraft> _meds = [];
@@ -72,12 +67,6 @@ class SetupPageState extends ConsumerState<SetupPage> {
   void initState() {
     super.initState();
     _nameController.addListener(_onTextChanged);
-    for (final c in _contactNameControllers) {
-      c.addListener(_onTextChanged);
-    }
-    for (final c in _contactPhoneControllers) {
-      c.addListener(_onTextChanged);
-    }
     for (final m in _meds) {
       m.attachListener(_onTextChanged);
     }
@@ -92,14 +81,6 @@ class SetupPageState extends ConsumerState<SetupPage> {
   void dispose() {
     _nameController.removeListener(_onTextChanged);
     _nameController.dispose();
-    for (final c in _contactNameControllers) {
-      c.removeListener(_onTextChanged);
-      c.dispose();
-    }
-    for (final c in _contactPhoneControllers) {
-      c.removeListener(_onTextChanged);
-      c.dispose();
-    }
     for (final m in _meds) {
       m.dispose();
     }
@@ -150,19 +131,7 @@ class SetupPageState extends ConsumerState<SetupPage> {
       case 1:
         return SetupStepWelcome(
           nameController: _nameController,
-          contactNameControllers: _contactNameControllers,
-          contactPhoneControllers: _contactPhoneControllers,
           validationError: _validateWelcomeForm(),
-          onAddContact: () {
-            setState(() {
-              final nameCtrl = TextEditingController();
-              final phoneCtrl = TextEditingController();
-              nameCtrl.addListener(_onTextChanged);
-              phoneCtrl.addListener(_onTextChanged);
-              _contactNameControllers.add(nameCtrl);
-              _contactPhoneControllers.add(phoneCtrl);
-            });
-          },
           onBack: () => setState(() => _step = 0),
           onContinue: () => setState(() => _step = 2),
         );
@@ -194,9 +163,6 @@ class SetupPageState extends ConsumerState<SetupPage> {
       default:
         return SetupStepWelcome(
           nameController: _nameController,
-          contactNameControllers: _contactNameControllers,
-          contactPhoneControllers: _contactPhoneControllers,
-          onAddContact: () {},
           onBack: () {},
           onContinue: () {},
         );
@@ -205,11 +171,10 @@ class SetupPageState extends ConsumerState<SetupPage> {
 
   String? _validateWelcomeForm() {
     // v0.32 R109: 透传 SetupWelcomeFormValidator 静态方法
-    //   行为跟原 30L 实现 100% 一致 (name 必填 + phone 格式 + phone 重复)
+    //   行为跟原 30L 实现 100% 一致 (name 必填)
     //   错误码透传给 caller, caller 决定怎么映射到 l10n
     final errorCode = SetupWelcomeFormValidator.validateWelcomeForm(
       name: _nameController.text,
-      phones: _contactPhoneControllers.map((c) => c.text).toList(),
     );
     if (errorCode == null) return null;
     // 把错误码映射回 l10n 文案, 跟原 behavior 1:1
@@ -217,10 +182,6 @@ class SetupPageState extends ConsumerState<SetupPage> {
     switch (errorCode) {
       case 'setup_validation_name_required':
         return l10n.setupValidationNameRequired;
-      case 'setup_validation_phone_invalid':
-        return l10n.setupValidationPhoneInvalid;
-      case 'setup_validation_phone_duplicate':
-        return l10n.setupValidationPhoneDuplicate;
       default:
         return null;
     }
@@ -274,17 +235,6 @@ class SetupPageState extends ConsumerState<SetupPage> {
       final validationError = _validateWelcomeForm();
       if (validationError != null) return;
 
-      // v0.27 round 68 (CC-1 修复, PIPL §13 单独同意): setup 阶段对每个填了的
-      // 联系人弹 ConsentDialog, 只有同意的才入 contactList。
-      // v0.32 R112 (AR-20 批2a): 循环抽 SetupContactConsentFlow.collect
-      final collected = await SetupContactConsentFlow.collect(
-        context: context,
-        nameControllers: _contactNameControllers,
-        phoneControllers: _contactPhoneControllers,
-      );
-      if (collected == null) return;
-      if (!mounted) return;
-
       final userName = _nameController.text.trim();
       final medicationList = SetupSubmitFlow.collectMedications(_meds);
 
@@ -294,8 +244,6 @@ class SetupPageState extends ConsumerState<SetupPage> {
         ref: ref,
         context: context,
         userName: userName,
-        contactList: collected.contactList,
-        contactConsents: collected.contactConsents,
         medicationList: medicationList,
       );
       if (!mounted) return;

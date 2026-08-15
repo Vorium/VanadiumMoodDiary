@@ -8,11 +8,13 @@
 // v0.27 round 59 (spen §5#18 latent P0 fix): watchAll 5s timeout 是
 // fail-loud — TimeoutException 抛出落入 caller catch → setup 失败 + UI
 // 提示 (修前 fail-soft 吞数据 → 失通知)。
+//
+// 1.1.0 round 4: contactList / contactConsents 参数整摘 (联系人同意弹窗
+// 循环已删, 失联通信业务暂停定版)。
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/swallow_error.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -67,8 +69,6 @@ class SetupSubmitFlow {
     required WidgetRef ref,
     required BuildContext context,
     required String userName,
-    required List<({String name, String phone, int sortOrder})> contactList,
-    required List<ConsentArtifact> contactConsents,
     required List<
             ({
               String name,
@@ -82,8 +82,6 @@ class SetupSubmitFlow {
     // transaction 语义不变)。
     await ref.read(setupCommitterProvider).completeSetup(
           userName: userName,
-          contactList: contactList,
-          contactConsents: contactConsents, // R68 CC-1
           medicationList: medicationList,
         );
     if (!context.mounted) return;

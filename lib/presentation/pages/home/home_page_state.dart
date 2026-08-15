@@ -7,8 +7,8 @@
 // bottom-up)。
 //
 // 职责: HomePageState ConsumerState 类 (initState / dispose / build +
-// 4 业务方法: _onCheckIn / _snooze5Min / _runSafetyCheck / _nextReminderTime)
-// + 3 controller 编排入口 + 旁路 helper。
+// 3 业务方法: _onCheckIn / _snooze5Min / _nextReminderTime)
+// + 2 controller 编排入口 + 旁路 helper。
 //
 // **拆出历史**:
 // - R95 (sub-spec 4 task 5): 731 行 → 主壳 138 行 + state 590 行
@@ -17,16 +17,18 @@
 //   - controllers/home_deep_link_handler.dart (~220L 含注释)
 //   - controllers/home_care_engine_dispatcher.dart (~150L 含注释)
 //   - controllers/home_celebration_controller.dart (~110L 含注释)
+// - 1.1.0 round 4 (emotion-first refactor): safety check 整摘 —
+//   home_care_engine_dispatcher 删除, _runSafetyCheck 删除, care engine
+//   编排 (_onCheckIn 内 runAfterCheckIn + fireCareEngine) 删除,
+//   lifecycle 5 态 → 2 态。
 //
 // **state class 当前职责**:
-// - 1 lifecycle enum (跟 deep link + safety check 共享, 留 state class)
+// - 1 lifecycle enum (deep link 推进, 留 state class)
 // - 1 ScrollController (主屏滚动, 留 state class)
-// - initState (调度 postFrameCallback 跑 safety check + deep link)
-// - dispose (取消 3 controller 内部 Timer + ScrollController)
+// - initState (调度 postFrameCallback 跑 deep link)
+// - dispose (取消 2 controller 内部 Timer + ScrollController)
 // - build (180L 主页 6 区域 widget tree)
-// - _onCheckIn (打卡主流程, 调 2 controller)
-// - _snooze5Min (5min 后通知)
-// - _runSafetyCheck (跟 _lifecycle 紧耦合, 留 state class)
+// - _onCheckIn (打卡主流程: haptic + checkIn + 庆祝 + 取消 snooze)
 // - _nextReminderTime (20:00 计算, 跟 midnight timer 配合)
 //
 // 公共 API:
@@ -41,19 +43,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/data/services/safety_watch_service.dart';
-import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/pages/home/controllers/home_care_engine_dispatcher.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_celebration_controller.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_deep_link_handler.dart';
-import 'package:chroniccare/presentation/services/safety_check_result_l10n.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/notification_init_provider.dart';
-import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -84,28 +81,15 @@ import 'package:chroniccare/presentation/pages/home/home_page.dart'
 class HomePageState extends ConsumerState<HomePage> {
   /// v0.27 round 64 (L2 refactor): 3 bool → 1 enum 状态机
   ///
-  /// 之前 3 个独立 bool (`_safetyCheckTriggered` / `_safetyRerunRequested` /
-  /// `_deepLinkHandled`) 有 3 种 race-prone 组合:
-  ///   1. `_safetyRerunRequested=true` 但 `_safetyCheckTriggered=false` (Timer 触发后却没基础 guard)
-  ///   2. `_deepLinkHandled=true` 但 `_safetyCheckTriggered=false` (deep link 路径走时首次 safety 还没跑)
-  ///   3. 全部 3 true (逻辑上死路径, 但 flag 组合上可达, 易误读)
-  ///
-  /// 现在 [HomeLifecycleState] 用 named state 表达 5 种合法组合, transition
-  /// 走 enum method 集中, race 组合 (medId + rerun 互斥) 抛 StateError 早发现。
-  /// 见 [HomeLifecycleState] 注释。
-  ///
-  /// 留 state class 原因: _lifecycle 跟 _runSafetyCheck + _handleDeepLink 路径
-  /// 共享 (deep link 推进 _lifecycle, safety check 读 _lifecycle 判是否已跑),
-  /// 3 controller 不应独占。
+  /// 1.1.0 round 4: safety check 路径整摘后只剩 deep link 一个推进源,
+  /// 5 状态简化为 2 状态 (initial / deepLinkHandled), 见 [HomeLifecycleState]。
   HomeLifecycleState _lifecycle = HomeLifecycleState.initial;
 
-  /// v0.30 R108 (P1 home_page_state 拆): 3 controller 实例
+  /// v0.30 R108 (P1 home_page_state 拆): 2 controller 实例
   ///
-  /// - [_deepLink]: deep link 业务 (解析 + autofire + hint + race Timer)
-  /// - [_careDispatcher]: 打卡后 care engine 编排 (safety check + use case)
+  /// - [_deepLink]: deep link 业务 (解析 + autofire + hint)
   /// - [_celebration]: 顶部庆祝 overlay (含 celebration Timer)
   late final HomeDeepLinkHandler _deepLink;
-  late final HomeCareEngineDispatcher _careDispatcher;
   late final HomeCelebrationController _celebration;
 
   /// v0.30 round 92 (audit-fixes / P0 #13): homeFabTop 滚到顶用
@@ -121,17 +105,9 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    // v0.30 R108 (P1 home_page_state 拆): 初始化 3 controller
+    // v0.30 R108 (P1 home_page_state 拆): 初始化 2 controller
     _deepLink = HomeDeepLinkHandler(ref);
-    _careDispatcher = HomeCareEngineDispatcher(ref);
     _celebration = HomeCelebrationController();
-    // v0.10 (Round 4): 首帧后跑一次 SafetyWatch.onAppStart
-    // v0.17 round 14 (Bug-4): 用 unawaited 显式标记 fire-and-forget,
-    // 之前 _runSafetyCheck() 在 void 上下文里被默默丢弃, linter 看不出
-    // "哦这其实是 fire-and-forget" 的意图。unawaited 让代码自描述。
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(_runSafetyCheck());
-    });
     // v0.11 (Round 5): 首帧后处理 deep link query param
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_handleDeepLink());
@@ -140,11 +116,9 @@ class HomePageState extends ConsumerState<HomePage> {
 
   @override
   void dispose() {
-    // v0.30 R108 (P1 home_page_state 拆): 3 controller dispose
-    // (每个 controller 内部 cancel 自己的 Timer, 防 leak)
-    _deepLink.dispose();
+    // v0.30 R108 (P1 home_page_state 拆): celebration controller dispose
+    // (内部 cancel 自己的 Timer, 防 leak)
     _celebration.dispose();
-    // _careDispatcher 无 Timer 字段, 不需 dispose
     // v0.30 round 92 (audit-fixes / P0 #13): dispose 释放 ScrollController
     // (R17 通用模式, widget leak guard)
     _scrollController.dispose();
@@ -159,6 +133,7 @@ class HomePageState extends ConsumerState<HomePage> {
   ///
   /// v0.30 R108 (P1 home_page_state 拆): 抽到 [HomeDeepLinkHandler],
   /// 本方法只做 inspect + 路由 + 调 controller, 25L (原 80L)。
+  /// 1.1.0 round 4: safety rerun 分支删除 (reason=safety 路径已摘)。
   Future<void> _handleDeepLink() async {
     final decision = _deepLink.inspect(
       uri: GoRouterState.of(context).uri,
@@ -168,12 +143,6 @@ class HomePageState extends ConsumerState<HomePage> {
     switch (decision.action) {
       case DeepLinkAction.noop:
         break;
-      case DeepLinkAction.scheduleSafetyRerun:
-        // 调度 race guard Timer, 到点重跑 safety check
-        _deepLink.scheduleRaceTimer(() {
-          if (!mounted) return;
-          unawaited(_runSafetyCheck(force: true));
-        });
       case DeepLinkAction.autofire:
         // 自动打卡该药
         await _handleAutofire(decision.medId!);
@@ -203,61 +172,6 @@ class HomePageState extends ConsumerState<HomePage> {
     }
     // 清除 query 防止刷新页面重复触发
     _deepLink.clearQuery(context);
-  }
-
-  /// 调 SafetyWatch.onAppStart,按结果显示一次性 SnackBar
-  ///
-  /// [force] = true 时忽略 [_safetyCheckTriggered] 守卫(用于 deep link 重跑)
-  ///
-  /// 留 state class 原因: 直接读 / 写 _lifecycle 状态机, 跟 deep link 路径
-  /// 共享 lifecycle 推进逻辑。
-  Future<void> _runSafetyCheck({bool force = false}) async {
-    // v0.27 round 64: guard 改走 _lifecycle 状态机
-    // safetyCheckCompleted / bothHandled 都代表 safety check 已跑过, force=false
-    // 时跳过。force=true (Timer 触发) 总是跑, 走 onSafetyCheckCompleted() 推进状态
-    if (!force) {
-      if (_lifecycle == HomeLifecycleState.safetyCheckCompleted ||
-          _lifecycle == HomeLifecycleState.bothHandled) {
-        return;
-      }
-    }
-    _lifecycle = _lifecycle.onSafetyCheckCompleted();
-    try {
-      // v0.27 round 60 (P0-3 修正): 传 l10n, 通知 3 态分流 + UI 文案走 l10n
-      // v0.32 R112 (AR-16): l10n 改 SafetyAlertL10nResolver tear-off 注入
-      // (data 0 依赖 l10n/ 生成 ARB); displayMessageL10n 走 presentation
-      // extension (SafetyCheckResultL10n)。
-      final l10n = AppLocalizations.of(context);
-      final l10nResolver = SafetyAlertL10nResolver(
-        titleFor: l10n.safetyAlertTitle,
-        bodySent: l10n.safetyAlertBodySent,
-        bodyMocked: l10n.safetyAlertBodyMocked,
-        bodyFailed: l10n.safetyAlertBodyFailed,
-        neverCheckIn: () => l10n.safetyAlertNeverCheckIn,
-      );
-      final result = await ref
-          .read(safetyWatchServiceProvider)
-          .onAppStart(l10nResolver: l10nResolver);
-      if (!mounted) return;
-      if (result.kind == SafetyCheckKind.alerted) {
-        // v0.21 Round 22 (P0-10 修复): 走 AppSnackBar.error 集中器
-        // 失联告警重要,延长到 6s 保留给用户时间读完
-        // R99 (BUG-1): displayMessageL10n(l10n) 拿翻译文案 — displayMessage
-        // 返 i18n key 字符串, 直接显示会让用户看到 'safetyCheckResultAlerted'
-        AppSnackBar.showError(
-          context,
-          action: '⚠️ ${result.displayMessageL10n(l10n)}',
-          error: l10n.homeSafetyAlertSuffix,
-        );
-      }
-    } catch (e, st) {
-      swallowError(
-        where: 'home_page._runSafetyCheck',
-        error: e,
-        stack: st,
-        note: 'safety check failed — user may not be notified',
-      );
-    }
   }
 
   @override
@@ -431,7 +345,10 @@ class HomePageState extends ConsumerState<HomePage> {
   ///
   /// v0.30 R108 (P1 home_page_state 拆): care engine 编排移到
   /// [HomeCareEngineDispatcher], 本方法保留主流程 (haptic + checkIn +
-  /// 取消 snooze + 调 2 controller)。
+  /// 取消 snooze + 庆祝 overlay)。
+  ///
+  /// 1.1.0 round 4: care engine 编排整摘 (runAfterCheckIn + fireCareEngine
+  /// 及 dispatcher 删除), 打卡主流程只剩 haptic + checkIn + 庆祝 + 取消 snooze。
   Future<void> _onCheckIn(int currentStreak) async {
     // v0.22 round 30 (emil P2-4): 走 Haptics.success 集中器
     // R97-P1-12: unawaited 显式标记 fire-and-forget
@@ -459,14 +376,6 @@ class HomePageState extends ConsumerState<HomePage> {
         note: 'cancel soft reminder / snoozes failed, today may ring once more',
       );
     }
-    // v0.10 (Round 4): 打卡后跑 SafetyWatch (也可能触发，例如打卡是补卡)
-    if (!mounted) return;
-    unawaited(_careDispatcher.runAfterCheckIn(
-      context: context,
-      isMounted: () => mounted,
-    ),);
-    // AI 关怀：打卡后评估是否触发(rule-based)
-    unawaited(_careDispatcher.fireCareEngine());
   }
 
   /// 计算下次提醒时间(每天 20:00)

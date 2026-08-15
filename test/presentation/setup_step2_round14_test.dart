@@ -1,4 +1,7 @@
 // 验证 setup 第 2 步：药物列表（v0.6：多药物 + 剂量 + 时间）
+//
+// 1.1.0 round 4 (emotion-first refactor): 联系人表单整摘, 走下一步前
+// 只填名字。
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,20 +10,14 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
-import 'package:chroniccare/core/data/feature_flags.dart';
 
 class _NoopNotificationService extends NotificationService {
 }
-
-String _phone(String p, String s) => '$p$s';
 
 void main() {
   testWidgets(
     'setup 第 2 步: 显示药物列表（可添加、可配时间）',
     (tester) async {
-      // R110 round 3 (AS-07 gate): 联系人 section 挂 flag, test 翻 true
-      FeatureFlags.enableForTest();
-      addTearDown(FeatureFlags.resetForTest);
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -56,28 +53,19 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, '开始设置'));
       await tester.pumpAndSettle();
 
-      // 走到第 2 步
+      // 走到第 2 步 (round 4: 联系人表单已摘, 只填名字)
       await tester.enterText(
         find.widgetWithText(TextField, '您的名字（选填）'),
         '小明',
       );
-      await tester.enterText(
-        find.widgetWithText(TextField, '联系人 1 姓名'),
-        '妈妈',
-      );
-      await tester.enterText(
-        find.widgetWithText(TextField, '紧急联系人手机号 1'),
-        _phone('1380013', '8000'),
-      );
       await tester.pumpAndSettle();
 
-      // 2026-07-31 v0.31 联系人软隐藏: step 1 末尾的 contact consent
-      // Checkbox 已删除, 这里只验证 0 个 checkbox, 然后直接点下一步。
+      // 1.1.0 round 4: 联系人表单整摘, step 1 只剩姓名 TextField
       final step1Checkboxes = find.byType(Checkbox);
       expect(
         step1Checkboxes,
         findsNothing,
-        reason: 'v0.31 联系人软隐藏: step 1 不再有 contact consent Checkbox',
+        reason: 'step 1 只有姓名输入, 无任何 Checkbox',
       );
 
       final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
@@ -116,9 +104,6 @@ void main() {
   testWidgets(
     'setup 第 2 步: 添加药物后能看到药物卡片',
     (tester) async {
-      // R110 round 3 (AS-07 gate): 联系人 section 挂 flag, test 翻 true
-      FeatureFlags.enableForTest();
-      addTearDown(FeatureFlags.resetForTest);
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
@@ -154,23 +139,18 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, '开始设置'));
       await tester.pumpAndSettle();
 
-      // 走到第 2 步
+      // 走到第 2 步 (round 4: 联系人表单已摘, 只填名字)
       await tester.enterText(
         find.widgetWithText(TextField, '您的名字（选填）'),
         '小明',
       );
-      await tester.enterText(
-        find.widgetWithText(TextField, '紧急联系人手机号 1'),
-        _phone('1380013', '8000'),
-      );
       await tester.pumpAndSettle();
-      // 2026-07-31 v0.31 联系人软隐藏: contact consent Checkbox 已删除,
-      // 这里只验证 0 个 checkbox, 然后直接点下一步。
+      // 1.1.0 round 4: 联系人表单整摘, step 1 只剩姓名 TextField
       final step1Checkboxes = find.byType(Checkbox);
       expect(
         step1Checkboxes,
         findsNothing,
-        reason: 'v0.31 联系人软隐藏: step 1 不再有 contact consent Checkbox',
+        reason: 'step 1 只有姓名输入, 无任何 Checkbox',
       );
       await tester.tap(
         find.widgetWithText(FilledButton, '下一步 →'),

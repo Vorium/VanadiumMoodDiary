@@ -4,16 +4,14 @@
 // 编排 + 提交), 0 专用测试 (SP-111-06 / SP-en-3)。按 AR-20 "先补 test 再拆"
 // 模式: 本文件锁定既有行为, 拆分后必须全绿 (行为 1:1, 测试只加不减)。
 //
+// 1.1.0 round 4 (emotion-first refactor): 联系人整摘 —
+// consent 弹窗编排 group (PIPL §13) 与 E5 StateError case 删除。
+//
 // 覆盖缺口 (对照 round77 / round18 / round14 已有测试):
 // 1. 4 步导航流转: consent→welcome→medication→done 完整走通 + step 2 返回
-// 2. consent 弹窗编排: 填联系人手机号 → 完成时弹 PIPL §13 同意 dialog;
-//    拒绝 → snackbar + 停留 step 2 + committer 不被调; 同意 → 联系人入提交
-//    数据 (E.164 normalize); 手机号留空 → 跳过 dialog 直接提交
-// 3. 提交成功: committer 收到 userName/contacts/meds + recordConsent 被调
+// 2. 提交成功: committer 收到 userName/meds + recordConsent 被调
 //    (PIPL §14) + 进 step 3 (done)
-// 4. 提交失败: committer 抛异常 → error snackbar + 停留 step 2 + saving 复位
-// 5. E5 (R111 fix): committer 抛 StateError (contactList/contactConsents
-//    长度不一致) → 走同一失败路径, 错误信息透传 snackbar
+// 3. 提交失败: committer 抛异常 → error snackbar + 停留 step 2 + saving 复位
 //
 // 依赖注:
 // - flutter_local_notifications channel 全 mock (refill_notifier_round61c
@@ -22,10 +20,8 @@
 // - 数据面全部 fake (committer / userProfileRepo / medicationRepo), 不碰真
 //   drift isolate (testWidgets FakeAsync 下真 DB await 会 hang)
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/setup_committer.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -50,9 +46,6 @@ class _RecordingSetupCommitter extends SetupCommitter {
   Object? throwOnComplete;
   int calls = 0;
   String? receivedUserName;
-  final List<({String name, String phone, int sortOrder})> receivedContacts =
-      [];
-  final List<ConsentArtifact> receivedConsents = [];
   final List<
           ({
             String name,
@@ -65,8 +58,6 @@ class _RecordingSetupCommitter extends SetupCommitter {
   @override
   Future<void> completeSetup({
     required String userName,
-    required List<({String name, String phone, int sortOrder})> contactList,
-    required List<ConsentArtifact> contactConsents,
     required List<
             ({
               String name,
@@ -79,8 +70,6 @@ class _RecordingSetupCommitter extends SetupCommitter {
     calls++;
     if (throwOnComplete != null) throw throwOnComplete!;
     receivedUserName = userName;
-    receivedContacts.addAll(contactList);
-    receivedConsents.addAll(contactConsents);
     receivedMeds.addAll(medicationList);
   }
 }
@@ -160,9 +149,6 @@ Future<_RecordingSetupCommitter> _pumpSetup(
   WidgetTester tester, {
   Object? throwOnComplete,
 }) async {
-  // R110 round 3 (AS-07 gate): 联系人 section 挂 flag, test 翻 true
-  FeatureFlags.enableForTest();
-  addTearDown(FeatureFlags.resetForTest);
   tester.view.physicalSize = const Size(800, 1600);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(() {
@@ -225,12 +211,8 @@ Future<_RecordingSetupCommitter> _pumpSetup(
   return committer;
 }
 
-/// step 0 → step 2: 勾 5 单独 consent → 填名字 (+可选联系人) → 到药物步
-Future<void> _walkToMedicationStep(
-  WidgetTester tester, {
-  String contactName = '',
-  String contactPhone = '',
-}) async {
+/// step 0 → step 2: 勾 5 单独 consent → 填名字 → 到药物步
+Future<void> _walkToMedicationStep(WidgetTester tester) async {
   final checkboxes = find.byType(Checkbox);
   for (var i = 1; i < 6; i++) {
     await tester.tap(checkboxes.at(i));
@@ -243,18 +225,6 @@ Future<void> _walkToMedicationStep(
     find.widgetWithText(TextField, '您的名字（选填）'),
     '小明',
   );
-  if (contactName.isNotEmpty) {
-    await tester.enterText(
-      find.widgetWithText(TextField, '联系人 1 姓名'),
-      contactName,
-    );
-  }
-  if (contactPhone.isNotEmpty) {
-    await tester.enterText(
-      find.widgetWithText(TextField, '紧急联系人手机号 1'),
-      contactPhone,
-    );
-  }
   await tester.pumpAndSettle();
   await tester.tap(find.text('下一步 →'));
   await tester.pumpAndSettle();
@@ -322,10 +292,6 @@ void main() {
       expect(committer.receivedMeds.single.dosage, 50.0);
       expect(committer.receivedMeds.single.dosageUnit, 'mg');
 
-      // 不填联系人 → 0 个同意弹窗, contacts 空
-      expect(committer.receivedContacts, isEmpty);
-      expect(committer.receivedConsents, isEmpty);
-
       // PIPL §14: recordConsent 被调 1 次
       final container = ProviderScope.containerOf(
         tester.element(find.byType(SetupPage)),
@@ -351,91 +317,7 @@ void main() {
     });
   });
 
-  group('consent 弹窗编排 (PIPL §13)', () {
-    testWidgets('3. 填联系人手机号 → 完成时弹同意 dialog → 同意入提交数据',
-        (tester) async {
-      final committer = await _pumpSetup(tester);
-      await _walkToMedicationStep(
-        tester,
-        contactName: '妈妈',
-        contactPhone: '13800138000',
-      );
-
-      await tester.ensureVisible(find.text('下一步 →'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('下一步 →'));
-      await _pumpUntilFound(tester, find.byType(AlertDialog));
-
-      // PIPL §13 同意 dialog 弹出
-      expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text('知情同意'), findsOneWidget);
-
-      // 同意 → 提交继续
-      await tester.tap(find.text('已告知并取得同意'));
-      await _pumpUntilFound(tester, find.text('全部完成！'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('全部完成！'), findsOneWidget);
-      expect(committer.calls, 1);
-      expect(committer.receivedContacts.length, 1);
-      expect(committer.receivedContacts.single.name, '妈妈');
-      // v0.18 P1-14: phone 走 E.164 normalize
-      expect(committer.receivedContacts.single.phone, '+8613800138000');
-      // R68 CC-1: contactList 与 contactConsents 等长
-      expect(committer.receivedConsents.length, 1);
-      expect(committer.receivedConsents.single.kind,
-          ConsentKind.emergencyContactSharing,);
-    });
-
-    testWidgets('4. 拒绝同意 → setupConsentRejected snackbar + 停留 step 2 + committer 不被调',
-        (tester) async {
-      final committer = await _pumpSetup(tester);
-      await _walkToMedicationStep(
-        tester,
-        contactName: '妈妈',
-        contactPhone: '13800138000',
-      );
-
-      await tester.ensureVisible(find.text('下一步 →'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('下一步 →'));
-      await _pumpUntilFound(tester, find.byType(AlertDialog));
-      expect(find.byType(AlertDialog), findsOneWidget);
-
-      await tester.tap(find.text('暂不同意'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('已拒绝该联系人'), findsOneWidget,
-          reason: '拒绝后应显示 setupConsentRejected 提示',);
-      expect(find.text('您常吃什么药？'), findsOneWidget,
-          reason: 'PIPL §13 严同意: 拒绝 → 终止 setup, 停留 step 2',);
-      expect(committer.calls, 0, reason: '拒绝后 committer 不应被调');
-
-      // saving 复位 → 完成按钮可重试
-      _expectSavingReset(tester);
-
-      await _drainSnackbars(tester);
-    });
-
-    testWidgets('5. 联系人手机号留空 → 不弹 dialog 直接提交', (tester) async {
-      final committer = await _pumpSetup(tester);
-      await _walkToMedicationStep(tester, contactName: '妈妈');
-
-      await tester.ensureVisible(find.text('下一步 →'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('下一步 →'));
-      await _pumpUntilFound(tester, find.text('全部完成！'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AlertDialog), findsNothing,
-          reason: '手机号空 → 跳过 consent dialog',);
-      expect(find.text('全部完成！'), findsOneWidget);
-      expect(committer.receivedContacts, isEmpty);
-      expect(committer.receivedConsents, isEmpty);
-    });
-  });
-
-  group('提交成功/失败 + E5', () {
+  group('提交成功/失败', () {
     testWidgets('6. committer 抛异常 → error snackbar + 停留 step 2 + saving 复位',
         (tester) async {
       final committer =
@@ -455,42 +337,6 @@ void main() {
       expect(committer.calls, 1);
 
       // saving 复位 → 完成按钮可重试
-      _expectSavingReset(tester);
-
-      await _drainSnackbars(tester);
-    });
-
-    testWidgets('7. E5: committer 抛 StateError (长度不一致) → 同一失败路径 + 错误透传',
-        (tester) async {
-      await _pumpSetup(
-        tester,
-        throwOnComplete: StateError(
-          'contactList (1) 与 contactConsents (0) 长度不一致 — '
-          'setup_page 必须为每个联系人弹 ConsentDialog (PIPL §13)',
-        ),
-      );
-      await _walkToMedicationStep(
-        tester,
-        contactName: '妈妈',
-        contactPhone: '13800138000',
-      );
-
-      await tester.ensureVisible(find.text('下一步 →'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('下一步 →'));
-      await _pumpUntilFound(tester, find.byType(AlertDialog));
-
-      // 同意 dialog 先弹 (同意后 committer 才抛)
-      await tester.tap(find.text('已告知并取得同意'));
-      await _pumpUntilFound(tester, find.textContaining('完成设置失败'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('完成设置失败'), findsOneWidget,
-          reason: 'E5 StateError 应走统一失败路径 (error snackbar)',);
-      expect(find.textContaining('长度不一致'), findsOneWidget,
-          reason: 'E5 错误信息应透传到 snackbar',);
-      expect(find.text('您常吃什么药？'), findsOneWidget,
-          reason: 'E5 后应停留 step 2',);
       _expectSavingReset(tester);
 
       await _drainSnackbars(tester);

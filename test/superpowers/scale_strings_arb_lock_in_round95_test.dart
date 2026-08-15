@@ -637,7 +637,7 @@ void main() {
       expect(hant, 4, reason: 'zh_Hant.arb 应有 4 notifChannel* key');
     });
 
-    test('3 语 total = 1269 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1233 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -670,14 +670,18 @@ void main() {
       // v1.0.0+147: 删 6 个 IAP key (settingsIapUpgrade{Title,Subtitle} +
       //   settingsIapProOwned{Title,Subtitle} + iapPurchase{Success,Failed}, 永久免费)
       //   → 1275 → 1269
+      // 1.1.0 round 4 (emotion-first refactor): 联系人/失联 34 orphan key 整摘
+      //   (contact*/setupContact*/safetyCheckResult*/reminderHubSafety* 等) +
+      //   consentWithdrawSafetyBody + commonAction{Delete,Save} 2 个存量 orphan
+      //   → 1269 → 1233
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1269, reason: 'zh.arb 应有 1269 key');
-      expect(en, 1269, reason: 'en.arb 应有 1269 key');
-      expect(hant, 1269, reason: 'zh_Hant.arb 应有 1269 key');
+      expect(zh, 1233, reason: 'zh.arb 应有 1233 key');
+      expect(en, 1233, reason: 'en.arb 应有 1233 key');
+      expect(hant, 1233, reason: 'zh_Hant.arb 应有 1233 key');
     });
   });
 

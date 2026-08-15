@@ -56,16 +56,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupNameHint => 'Alex';
 
   @override
-  String get setupContacts => 'Emergency contact (optional)';
-
-  @override
-  String get setupAddContact => '+ Add another contact';
-
-  @override
-  String get setupContactConsent =>
-      'If you add a contact, please notify them that the app may send them a safety message (required by law)';
-
-  @override
   String get setupNext => 'Next →';
 
   @override
@@ -103,9 +93,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setupPrivacy3 => '• Exportable anytime';
-
-  @override
-  String get settingsContacts => 'Emergency contacts';
 
   @override
   String get settingsMedication => 'Medications';
@@ -348,9 +335,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get snackbarStopRecording => 'Please stop recording first';
-
-  @override
-  String get snackbarPhoneInvalid => 'Phone format invalid (CN/HK/MO/TW/intl)';
 
   @override
   String get commonConfirmOk => 'OK';
@@ -758,33 +742,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get reminderHubSafetyDescription =>
-      'N consecutive missed check-ins → auto SMS to all enabled emergency contacts + local push';
-
-  @override
-  String get reminderHubTriggerThreshold =>
-      'Trigger threshold (consecutive N days missed)';
-
-  @override
   String reminderHubNDays(int days) {
     return '$days days';
   }
-
-  @override
-  String setupContactNameLabel(int index) {
-    return 'Contact $index name';
-  }
-
-  @override
-  String get setupContactNameHint => 'Name (optional)';
-
-  @override
-  String setupContactPhoneLabel(int index) {
-    return 'Emergency contact phone $index';
-  }
-
-  @override
-  String get setupContactPhoneHint => '13800138000';
 
   @override
   String get ventListTitle => 'My Vent';
@@ -1365,13 +1325,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupValidationNameRequired => 'Please enter your name';
 
   @override
-  String get setupValidationPhoneInvalid => 'Invalid phone number format';
-
-  @override
-  String get setupValidationPhoneDuplicate =>
-      'Emergency contact phone numbers cannot be duplicated';
-
-  @override
   String get setupPresetTitle => '📋 Choose a Preset';
 
   @override
@@ -1452,10 +1405,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get setupConsentWithdrawHint =>
       'Tip: You can withdraw consent anytime in Settings → Legal & Privacy. Some features will be unavailable after withdrawal.';
-
-  @override
-  String get setupWelcomeContactHint =>
-      '(Optional — you can add later in Settings)';
 
   @override
   String get setupLegalUserAgreement => 'User Agreement';
@@ -1582,10 +1531,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeMedHint(int id) {
     return '💊 Ready to check in medication #$id';
   }
-
-  @override
-  String get homeSafetyAlertSuffix =>
-      '(please check in or contact family soon)';
 
   @override
   String safetyAlertBodySent(Object date) {
@@ -1782,21 +1727,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Fill in a 5/7-column CBT thought record first to see your rerating effect';
 
   @override
-  String get contactEmptyList => 'No contacts yet — add one';
-
-  @override
-  String get contactAddAction => 'Add contact';
-
-  @override
-  String get contactAddTitle => 'Add Emergency Contact';
-
-  @override
   String get contactConsentTitle => 'Informed Consent';
-
-  @override
-  String contactConsentBody(int threshold) {
-    return 'You are about to save this contact\'s phone number in the local database. If you don\'t check in for $threshold consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 29** (sensitive personal information requires separate consent), please confirm you have informed the contact of the above purpose and obtained their explicit consent.';
-  }
 
   @override
   String get contactConsentAgree => 'I have informed and obtained consent';
@@ -1821,21 +1752,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataExportConsentVersion => 'v1 · 2026-08-15';
-
-  @override
-  String get contactDefaultName => 'Contact';
-
-  @override
-  String get contactNameLabel => 'Name';
-
-  @override
-  String get contactPhoneLabel => 'Phone';
-
-  @override
-  String get commonActionDelete => 'Delete';
-
-  @override
-  String get commonActionSave => 'Save';
 
   @override
   String get editMedDialogTitle => 'Edit Medication';
@@ -2044,9 +1960,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ventEntryDeleted => 'Vent entry deleted';
 
   @override
-  String get contactDeleted => 'Contact deleted';
-
-  @override
   String get medicationDeleted => 'Medication deleted';
 
   @override
@@ -2161,15 +2074,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Result shown but save failed. Please try again later.';
 
   @override
-  String setupContactFallbackName(int index) {
-    return 'Contact $index';
-  }
-
-  @override
-  String get setupConsentRejected =>
-      'Consent for this contact was rejected, not saved. Refill and continue.';
-
-  @override
   String get medicationUnitMg => 'mg';
 
   @override
@@ -2177,41 +2081,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get safetyCheckResultDisabled => 'Safety watch is disabled';
-
-  @override
-  String safetyCheckResultOk(int days) {
-    return 'OK (last check-in $days days ago)';
-  }
-
-  @override
-  String get safetyCheckResultNoData => 'New user, no check-ins yet';
-
-  @override
-  String safetyCheckResultAlertedToday(int days) {
-    return 'Alert already sent today (last check-in $days days ago)';
-  }
-
-  @override
-  String get safetyCheckResultDndSuppressed => 'DND window, alert skipped';
-
-  @override
-  String get safetyCheckResultNoContacts =>
-      'No emergency contacts, alert not sent';
-
-  @override
-  String safetyCheckResultAlertedMocked(int mocked) {
-    return 'Test notification sent ($mocked contacts, not actually delivered)';
-  }
-
-  @override
-  String safetyCheckResultAlerted(int days, int notified, int failed) {
-    return 'Alerted: $days days since last check-in, $notified contact(s) notified ($failed failed)';
-  }
-
-  @override
-  String safetyCheckResultError(Object message) {
-    return 'Error: $message';
-  }
 
   @override
   String get phoneRegionCn => 'Mainland China';
@@ -3757,10 +3626,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setupCrisisHotlineTitle => '🆘 Crisis Intervention Hotline (24h)';
-
-  @override
-  String get consentWithdrawSafetyBody =>
-      'Safety watch will be disabled. The system will no longer notify emergency contacts via SMS / email.';
 
   @override
   String get consentWithdrawVentBody =>

@@ -13,9 +13,6 @@
   "setupIntro": "1 minute setup, then 1 tap per day",
   "setupName": "Your name (optional)",
   "setupNameHint": "Alex",
-  "setupContacts": "Emergency contact (optional)",
-  "setupAddContact": "+ Add another contact",
-  "setupContactConsent": "If you add a contact, please notify them that the app may send them a safety message (required by law)",
   "setupNext": "Next →",
   "setupMedNameHint": "e.g. as printed on the box (optional)",
   "setupStart": "Start day 1",
@@ -29,7 +26,6 @@
   "setupPrivacy1": "• Encrypted on device",
   "setupPrivacy2": "• Never uploaded to any server",
   "setupPrivacy3": "• Exportable anytime",
-  "settingsContacts": "Emergency contacts",
   "settingsMedication": "Medications",
   "settingsAbout": "About",
   "settingsDisclaimer": "Disclaimer",
@@ -144,7 +140,6 @@
   "snackbarNeedMicPermission": "Microphone permission needed",
   "snackbarEmptyVent": "Write something or record a voice note",
   "snackbarStopRecording": "Please stop recording first",
-  "snackbarPhoneInvalid": "Phone format invalid (CN/HK/MO/TW/intl)",
   "commonConfirmOk": "OK",
   "commonMedName": "Medication",
   "commonDoseUnit": "tablet",
@@ -394,8 +389,6 @@
       }
     }
   },
-  "reminderHubSafetyDescription": "N consecutive missed check-ins → auto SMS to all enabled emergency contacts + local push",
-  "reminderHubTriggerThreshold": "Trigger threshold (consecutive N days missed)",
   "reminderHubNDays": "{days} days",
   "@reminderHubNDays": {
     "placeholders": {
@@ -404,24 +397,6 @@
       }
     }
   },
-  "setupContactNameLabel": "Contact {index} name",
-  "@setupContactNameLabel": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "setupContactNameHint": "Name (optional)",
-  "setupContactPhoneLabel": "Emergency contact phone {index}",
-  "@setupContactPhoneLabel": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "setupContactPhoneHint": "13800138000",
   "ventListTitle": "My Vent",
   "legalVentWithdrawTitle": "Withdraw Vent consent",
   "legalVentWithdrawBody": "Vent contains your most private content. After withdrawing consent, you can choose how to handle existing data:",
@@ -793,8 +768,6 @@
   "assessmentScaleGad7": "GAD-7 Anxiety Screening",
   "setupConsentRequired": "Please read and agree to the legal documents first",
   "setupValidationNameRequired": "Please enter your name",
-  "setupValidationPhoneInvalid": "Invalid phone number format",
-  "setupValidationPhoneDuplicate": "Emergency contact phone numbers cannot be duplicated",
   "setupPresetTitle": "📋 Choose a Preset",
   "setupPresetDescription": "Presets fill in medication names + times. You can modify them. Always follow your doctor's instructions.",
   "setupPresetLoaded": "Loaded: {name} ({count} medications). Please verify names and dosages.",
@@ -835,7 +808,6 @@
   "setupConsentSensitiveData": "I have read and agree to the Sensitive Data Consent",
   "setupConsentStart": "Start Setup",
   "setupConsentWithdrawHint": "Tip: You can withdraw consent anytime in Settings → Legal & Privacy. Some features will be unavailable after withdrawal.",
-  "setupWelcomeContactHint": "(Optional — you can add later in Settings)",
   "setupLegalUserAgreement": "User Agreement",
   "setupLegalPrivacyPolicy": "Privacy Policy",
   "setupLegalSensitiveData": "Sensitive Data Consent",
@@ -928,10 +900,6 @@
         "type": "int"
       }
     }
-  },
-  "homeSafetyAlertSuffix": "(please check in or contact family soon)",
-  "@homeSafetyAlertSuffix": {
-    "description": "Snackbar suffix paired with displayMessage — nudges user to check in or contact family"
   },
   "safetyAlertBodySent": "Last check-in: {date}. Auto-notified emergency contacts. Please confirm safety.",
   "@safetyAlertBodySent": {
@@ -1099,20 +1067,7 @@
   "trendCbtReratedChartTitle": "Rerating effect",
   "trendCbtReratedEmptyTitle": "No 5/7-column CBT data yet",
   "trendCbtReratedEmptyHint": "Fill in a 5/7-column CBT thought record first to see your rerating effect",
-  "contactEmptyList": "No contacts yet — add one",
-  "contactAddAction": "Add contact",
-  "contactAddTitle": "Add Emergency Contact",
   "contactConsentTitle": "Informed Consent",
-  "contactConsentBody": "You are about to save this contact's phone number in the local database. If you don't check in for {threshold} consecutive days, the app will automatically notify this contact via SMS.\n\n**Per PIPL Article 29** (sensitive personal information requires separate consent), please confirm you have informed the contact of the above purpose and obtained their explicit consent.",
-  "@contactConsentBody": {
-    "description": "PIPL §29 standalone consent dialog body (R77 fix: was mis-citing §13, should be §29 for sensitive PII)",
-    "placeholders": {
-      "threshold": {
-        "type": "int",
-        "example": "2"
-      }
-    }
-  },
   "contactConsentAgree": "I have informed and obtained consent",
   "contactConsentReject": "Decline for now",
   "contactConsentVersion": "v1 · 2026-07-31",
@@ -1137,11 +1092,6 @@
   },
   "dataExportConsentConfirm": "I understand and consent to export",
   "dataExportConsentVersion": "v1 · 2026-08-15",
-  "contactDefaultName": "Contact",
-  "contactNameLabel": "Name",
-  "contactPhoneLabel": "Phone",
-  "commonActionDelete": "Delete",
-  "commonActionSave": "Save",
   "editMedDialogTitle": "Edit Medication",
   "editMedValidationNameRequired": "Please enter medication name",
   "editMedValidationDosageInvalid": "Dosage must be greater than 0",
@@ -1257,7 +1207,6 @@
   "snackbarActionFinishSetup": "Finish setup",
   "snackbarActionUndo": "Undo",
   "ventEntryDeleted": "Vent entry deleted",
-  "contactDeleted": "Contact deleted",
   "medicationDeleted": "Medication deleted",
   "moodTodayLabel": "Mood: ",
   "moodTodayLabelWithValue": "Mood: {value}",
@@ -1269,7 +1218,6 @@
       }
     }
   },
-
   "moodLabel1": "Very bad",
   "@moodLabel1": {
     "description": "Localized label for mood score 1 of 5 (R112-07 emil metadata)"
@@ -1319,67 +1267,9 @@
   "moodRatingButtonSemantics": "{score} out of 5{selected, select, true{, selected} other{}}",
   "medicationTimeWindowSemantics": "Time window {days} days, 7/30/90 single select",
   "assessmentSaveFailed": "Result shown but save failed. Please try again later.",
-  "setupContactFallbackName": "Contact {index}",
-  "@setupContactFallbackName": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "setupConsentRejected": "Consent for this contact was rejected, not saved. Refill and continue.",
   "medicationUnitMg": "mg",
   "medicationUnitTablet": "tablet",
   "safetyCheckResultDisabled": "Safety watch is disabled",
-  "safetyCheckResultOk": "OK (last check-in {days} days ago)",
-  "@safetyCheckResultOk": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultNoData": "New user, no check-ins yet",
-  "safetyCheckResultAlertedToday": "Alert already sent today (last check-in {days} days ago)",
-  "@safetyCheckResultAlertedToday": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultDndSuppressed": "DND window, alert skipped",
-  "safetyCheckResultNoContacts": "No emergency contacts, alert not sent",
-  "safetyCheckResultAlertedMocked": "Test notification sent ({mocked} contacts, not actually delivered)",
-  "@safetyCheckResultAlertedMocked": {
-    "placeholders": {
-      "mocked": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultAlerted": "Alerted: {days} days since last check-in, {notified} contact(s) notified ({failed} failed)",
-  "@safetyCheckResultAlerted": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      },
-      "notified": {
-        "type": "int"
-      },
-      "failed": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultError": "Error: {message}",
-  "@safetyCheckResultError": {
-    "placeholders": {
-      "message": {
-        "type": "Object"
-      }
-    }
-  },
   "phoneRegionCn": "Mainland China",
   "phoneRegionHk": "Hong Kong, China",
   "phoneRegionMo": "Macao, China",
@@ -2913,14 +2803,9 @@
       }
     }
   },
-
   "setupCrisisHotlineTitle": "🆘 Crisis Intervention Hotline (24h)",
   "@setupCrisisHotlineTitle": {
     "description": "v0.30 R100 (P1#9): setup legal dialog crisis hotline section title"
-  },
-  "consentWithdrawSafetyBody": "Safety watch will be disabled. The system will no longer notify emergency contacts via SMS / email.",
-  "@consentWithdrawSafetyBody": {
-    "description": "v0.30 R100 (P1#9): PIPL Art.14 withdraw safety consent fallback body (legal copy)"
   },
   "consentWithdrawVentBody": "Vent (private journal) will be disabled. New vent entries will be rejected; existing entries are kept.",
   "@consentWithdrawVentBody": {

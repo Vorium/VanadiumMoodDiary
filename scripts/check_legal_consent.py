@@ -2,13 +2,19 @@
 # v0.26 round 57 (owner P1 #3 / spzh C-09): check_legal_consent 守门员
 #
 # 作用: 验证 `lib/presentation/pages/setup/setup_legal_dialog.dart` 不含
-#   `TODO` / `PIPL §13 单独同意` (等法务合规 token)
+#   `TODO` 等法务合规未实施 token
 #
 # 背景: spzh v0.25 round 56h P0 报告: PIPL §13 单独同意 0 实施 (R55 留 TODO)。
-#   守门员: 扫 setup_legal_dialog.dart, 命中 TODO / "PIPL §13 单独同意" 字符串 → 报 [FAIL]
+#   守门员: 扫 setup_legal_dialog.dart, 命中 TODO → 报 [FAIL]
 #   修正方法:
 #     - TODO 去掉 (走 implemented 流程)
-#     - 或 PIPL §13 单独同意 实现后, 注释里改 "✅ 已实施" 之类
+#
+# 1.1.0 round 4 (emotion-first refactor): 紧急联系人同意 (PIPL §13) 整摘 —
+#   setup_contact_consent_flow / ConsentDialog emergencyContactSharing 分支
+#   全删 (失联通信业务暂停定版), 本脚本删除 §13 单独同意 token 扫描, 只保留
+#   TODO 扫描。dataExport (PIPL §13 数据可携权) / vent (PIPL §14) 检测不受
+#   本脚本管辖 (dataExport 走 export_tile 的 ConsentDialog.dataExport 路径,
+#   vent 走 check_legal_consent 之外的 consent gate 测试)。
 #
 # 范围: lib/presentation/pages/setup/setup_legal_dialog.dart 单文件
 # 退出: 0 = pass, 1 = fail
@@ -29,11 +35,10 @@ ROOT = Path(__file__).resolve().parent.parent
 LEGAL_DIALOG = ROOT / "lib" / "presentation" / "pages" / "setup" / "setup_legal_dialog.dart"
 
 # 严格匹配 (R57 时这 2 个 token 必须都已经处理掉):
-#   - TODO        → 还留 TODO 注释 → 报 fail
-#   - PIPL §13 单独同意 (在 setup_legal_dialog.dart 上下文里意味着还没实施)
+#   - TODO → 还留 TODO 注释 → 报 fail
+# 1.1.0 round 4: PIPL §13 单独同意 token 已删 (功能整摘)。
 PATTERNS = [
     (re.compile(r'\bTODO\b'), 'TODO 标记 (修正: 改 implemented 流程)'),
-    (re.compile(r'PIPL\s*§13\s*单独同意'), 'PIPL §13 单独同意 TODO (修正: 实施 + 改 ✅)'),
 ]
 
 # 允许豁免的行模式 (注释里写 "已实施" / "✅ done" 之类)
@@ -78,14 +83,14 @@ def main() -> int:
     if hits:
         print(f"[FAIL] check_legal_consent: {len(hits)} 处未实施 token")
         print(f"  文件: {LEGAL_DIALOG.relative_to(ROOT).as_posix()}")
-        print(f"  修正: TODO 走 implemented, PIPL §13 单独同意实施后改 ✅ 标记")
+        print(f"  修正: TODO 走 implemented")
         print(f"  详情:")
         for line_no, name, snippet in hits:
             print(f"    L{line_no}: [{name}] {snippet}")
         return 1
 
     print(f"[OK] check_legal_consent: {LEGAL_DIALOG.relative_to(ROOT).as_posix()} "
-          f"无 TODO / 无 PIPL §13 单独同意 TODO")
+          f"无 TODO")
     return 0
 
 

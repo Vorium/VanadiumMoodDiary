@@ -1,13 +1,14 @@
-// v0.30 round 95 (sub-spec 6 task 6d): 5 端到端集成测试
+// v0.30 round 95 (sub-spec 6 task 6d): 端到端集成测试
 //
-// 覆盖跨 module 的 5 个 user journey (spen P1 #7 集成测扩):
+// 覆盖跨 module 的 user journey (spen P1 #7 集成测扩):
 // 1. 打卡 → streak 实时计算 (CheckIn + StreakCalculator + HomePage state)
-// 2. 设置 → 紧急联系人 → contactsProvider watch (Setup + ContactRepository)
-// 3. 评估 → PHQ-9 → DB round-trip (AssessmentRepository.submitEntry +
+// 2. 评估 → PHQ-9 → DB round-trip (AssessmentRepository.submitEntry +
 //    check_ins 表 JSON 编码)
-// 4. 数据导出 → JSON 含 schema + data (DataExportService.exportToJson)
-// 5. vent 树洞 → 写 → encryption round-trip (VentRepository.add + contentText
+// 3. 数据导出 → JSON 含 schema + data (DataExportService.exportToJson)
+// 4. vent 树洞 → 写 → encryption round-trip (VentRepository.add + contentText
 //    加密落库 → watchAll decrypt)
+//
+// 1.1.0 round 4 (emotion-first refactor): 集成 2 (设置 → 紧急联系人) 整摘。
 //
 // 模式 (跟 R84 cbt_thought_record_flow 集成测同款):
 // - ProviderContainer + sharedPreferencesProvider + databaseProvider overrides
@@ -15,8 +16,8 @@
 // - SharedPreferences.setMockInitialValues — 模拟用户已选设置
 //
 // 跟 R84 集成测差异:
-// - 5 个 testWidgets 而非 1 个, 每个聚焦 1 个 cross-module 集成点
-// - 5 个都走真 DB, 不 mock repository, 验证完整 round-trip
+// - 多个 test 而非 1 个, 每个聚焦 1 个 cross-module 集成点
+// - 都走真 DB, 不 mock repository, 验证完整 round-trip
 //
 // 已知限制 (跟 R84 cbt 集成测同步):
 // - **不挂 page widget** — production code 用 SingleChildScrollView 包 page
@@ -31,8 +32,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/services/setup_committer.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/logic/streak_calculator.dart';
 import 'package:chroniccare/presentation/providers/assessment_providers.dart';
@@ -106,47 +105,6 @@ void main() {
       isFalse,
       reason: '今天刚打卡 → 不显示断签文案',
     );
-  });
-
-  test('集成 2: 设置 → 紧急联系人 → contactsProvider watch 端到端', () async {
-    final container = ProviderContainer(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sp),
-        databaseProvider.overrideWithValue(db),
-      ],
-    );
-    addTearDown(container.dispose);
-
-    // ===== Step 1: completeSetup 含 1 个紧急联系人 + 1 个同意 (PIPL §13) =====
-    // contactList.length == contactConsents.length (PIPL §13 必填, 见 SetupCommitter 注释)
-    // v0.32 架构批 2 (AR-19): saveSetup 迁到 SetupCommitter (data 层编排)
-    await SetupCommitter(container.read(databaseProvider)).completeSetup(
-      userName: '集成测试用户',
-      contactList: const [
-        (name: '家人A', phone: '13800000001', sortOrder: 0),
-      ],
-      contactConsents: [
-        ConsentArtifact(
-          kind: ConsentKind.emergencyContactSharing,
-          version: 'integration-test-v1',
-          grantedAt: DateTime.now(),
-          grantedBy: 'integration-test-user',
-        ),
-      ],
-      medicationList: const [],
-    );
-
-    // ===== Step 2: 直接走 contactRepository.watchAll (不依赖 StreamProvider autoDispose) =====
-    final contactRepo = container.read(contactRepositoryProvider);
-    final contacts = await contactRepo.watchAll().first;
-    expect(
-      contacts.length,
-      1,
-      reason: 'completeSetup 写 1 联系人 → contactRepository.watchAll 返 1',
-    );
-    expect(contacts.first.name, '家人A');
-    expect(contacts.first.phone, '13800000001');
-    expect(contacts.first.sortOrder, 0);
   });
 
   test(

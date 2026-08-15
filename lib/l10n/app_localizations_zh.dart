@@ -56,15 +56,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupNameHint => '小明';
 
   @override
-  String get setupContacts => '紧急联系人（可选）';
-
-  @override
-  String get setupAddContact => '+ 添加另一个联系人';
-
-  @override
-  String get setupContactConsent => '如添加联系人，请先告知对方可能收到的通知（法律要求）';
-
-  @override
   String get setupNext => '下一步 →';
 
   @override
@@ -102,9 +93,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get setupPrivacy3 => '• 您可以随时导出';
-
-  @override
-  String get settingsContacts => '紧急联系人';
 
   @override
   String get settingsMedication => '常吃药';
@@ -336,9 +324,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get snackbarStopRecording => '请先停止录音';
-
-  @override
-  String get snackbarPhoneInvalid => '号码格式不对（支持大陆／港澳台／国际）';
 
   @override
   String get commonConfirmOk => '确定';
@@ -717,32 +702,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get reminderHubSafetyDescription =>
-      '连续 N 天没打卡 → 自动 SMS 通知所有启用的紧急联系人 + 本地推送';
-
-  @override
-  String get reminderHubTriggerThreshold => '触发阈值（连续 N 天没打卡）';
-
-  @override
   String reminderHubNDays(int days) {
     return '$days 天';
   }
-
-  @override
-  String setupContactNameLabel(int index) {
-    return '联系人 $index 姓名';
-  }
-
-  @override
-  String get setupContactNameHint => '称呼（选填）';
-
-  @override
-  String setupContactPhoneLabel(int index) {
-    return '紧急联系人手机号 $index';
-  }
-
-  @override
-  String get setupContactPhoneHint => '13800138000';
 
   @override
   String get ventListTitle => '我的树洞';
@@ -1304,12 +1266,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupValidationNameRequired => '请输入您的名字';
 
   @override
-  String get setupValidationPhoneInvalid => '手机号格式不对';
-
-  @override
-  String get setupValidationPhoneDuplicate => '紧急联系人手机号不能重复';
-
-  @override
   String get setupPresetTitle => '📋 选择预置方案';
 
   @override
@@ -1383,9 +1339,6 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get setupConsentWithdrawHint =>
       '提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。';
-
-  @override
-  String get setupWelcomeContactHint => '（可选，后续可在设置中添加）';
 
   @override
   String get setupLegalUserAgreement => '用户协议';
@@ -1504,9 +1457,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String homeMedHint(int id) {
     return '💊 准备打卡药物 #$id';
   }
-
-  @override
-  String get homeSafetyAlertSuffix => '（请尽快打卡或联系家人）';
 
   @override
   String safetyAlertBodySent(Object date) {
@@ -1697,21 +1647,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get trendCbtReratedEmptyHint => '先用 5/7 栏 CBT 填表， 才能看到重评效果';
 
   @override
-  String get contactEmptyList => '还没有联系人，请先添加';
-
-  @override
-  String get contactAddAction => '添加联系人';
-
-  @override
-  String get contactAddTitle => '添加紧急联系人';
-
-  @override
   String get contactConsentTitle => '知情同意';
-
-  @override
-  String contactConsentBody(int threshold) {
-    return '您即将把这位联系人的手机号保存在本地数据库中。当您连续 $threshold 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 29 条**（处理敏感个人信息需取得单独同意），请确认您已告知该联系人上述用途，并取得其单独同意。';
-  }
 
   @override
   String get contactConsentAgree => '已告知并取得同意';
@@ -1736,21 +1672,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dataExportConsentVersion => 'v1 · 2026-08-15';
-
-  @override
-  String get contactDefaultName => '联系人';
-
-  @override
-  String get contactNameLabel => '姓名';
-
-  @override
-  String get contactPhoneLabel => '手机号';
-
-  @override
-  String get commonActionDelete => '删除';
-
-  @override
-  String get commonActionSave => '保存';
 
   @override
   String get editMedDialogTitle => '编辑药物';
@@ -1953,9 +1874,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ventEntryDeleted => '已删除树洞条目';
 
   @override
-  String get contactDeleted => '已删除联系人';
-
-  @override
   String get medicationDeleted => '已删除药物';
 
   @override
@@ -2063,14 +1981,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentSaveFailed => '评估结果已显示，但保存失败。请稍后重试。';
 
   @override
-  String setupContactFallbackName(int index) {
-    return '联系人 $index';
-  }
-
-  @override
-  String get setupConsentRejected => '已拒绝该联系人的知情同意，未写入。可重新填写后继续。';
-
-  @override
   String get medicationUnitMg => 'mg';
 
   @override
@@ -2078,40 +1988,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get safetyCheckResultDisabled => '安全开关已关闭';
-
-  @override
-  String safetyCheckResultOk(int days) {
-    return '无风险（$days 天前打卡）';
-  }
-
-  @override
-  String get safetyCheckResultNoData => '新用户，暂无打卡';
-
-  @override
-  String safetyCheckResultAlertedToday(int days) {
-    return '今天已经发过告警（$days 天前打卡）';
-  }
-
-  @override
-  String get safetyCheckResultDndSuppressed => 'DND 时段，跳过告警';
-
-  @override
-  String get safetyCheckResultNoContacts => '无紧急联系人，未发送';
-
-  @override
-  String safetyCheckResultAlertedMocked(int mocked) {
-    return '测试通知已发送（$mocked 位联系人，实际未送达）';
-  }
-
-  @override
-  String safetyCheckResultAlerted(int days, int notified, int failed) {
-    return '已告警：$days 天前打卡，已通知 $notified 位联系人（$failed 失败）';
-  }
-
-  @override
-  String safetyCheckResultError(Object message) {
-    return '错误：$message';
-  }
 
   @override
   String get phoneRegionCn => '中国大陆';
@@ -3579,9 +3455,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get setupCrisisHotlineTitle => '🆘 心理危机干预热线 (24h)';
 
   @override
-  String get consentWithdrawSafetyBody => '失联通知功能将停用。系统不再通过 SMS / 邮件自动通知紧急联系人。';
-
-  @override
   String get consentWithdrawVentBody => '树洞 （私密倾诉） 功能将停用。新增树洞记录会被拒绝， 已有记录保留。';
 
   @override
@@ -4211,15 +4084,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupNameHint => '小明';
 
   @override
-  String get setupContacts => '緊急聯繫人（可選）';
-
-  @override
-  String get setupAddContact => '+ 添加另一個聯繫人';
-
-  @override
-  String get setupContactConsent => '如添加聯繫人，請先告知對方可能收到的通知（法律要求）';
-
-  @override
   String get setupNext => '下一步 →';
 
   @override
@@ -4257,9 +4121,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get setupPrivacy3 => '• 您可以隨時導出';
-
-  @override
-  String get settingsContacts => '緊急聯繫人';
 
   @override
   String get settingsMedication => '常吃藥';
@@ -4491,9 +4352,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get snackbarStopRecording => '請先停止錄音';
-
-  @override
-  String get snackbarPhoneInvalid => '號碼格式不對（支持大陸／港澳臺／國際）';
 
   @override
   String get commonConfirmOk => '確定';
@@ -4872,32 +4730,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get reminderHubSafetyDescription =>
-      '連續 N 天沒打卡 → 自動 SMS 通知所有啟用的緊急聯繫人 + 本地推送';
-
-  @override
-  String get reminderHubTriggerThreshold => '觸發閾值（連續 N 天沒打卡）';
-
-  @override
   String reminderHubNDays(int days) {
     return '$days 天';
   }
-
-  @override
-  String setupContactNameLabel(int index) {
-    return '聯繫人 $index 姓名';
-  }
-
-  @override
-  String get setupContactNameHint => '稱呼（選填）';
-
-  @override
-  String setupContactPhoneLabel(int index) {
-    return '緊急聯繫人手機號 $index';
-  }
-
-  @override
-  String get setupContactPhoneHint => '13800138000';
 
   @override
   String get ventListTitle => '我的樹洞';
@@ -5459,12 +5294,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get setupValidationNameRequired => '請輸入您的名字';
 
   @override
-  String get setupValidationPhoneInvalid => '手機號格式不對';
-
-  @override
-  String get setupValidationPhoneDuplicate => '緊急聯繫人手機號不能重複';
-
-  @override
   String get setupPresetTitle => '📋 選擇預置方案';
 
   @override
@@ -5538,9 +5367,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String get setupConsentWithdrawHint =>
       '提示：您可以隨時在「設置 → 法律與隱私」撤回同意。拒絕或撤回後，App 的相關功能將無法使用。';
-
-  @override
-  String get setupWelcomeContactHint => '（可選，後續可在設置中添加）';
 
   @override
   String get setupLegalUserAgreement => '用戶協議';
@@ -5659,9 +5485,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String homeMedHint(int id) {
     return '💊 準備打卡藥物 #$id';
   }
-
-  @override
-  String get homeSafetyAlertSuffix => '（請儘快打卡或聯繫家人）';
 
   @override
   String safetyAlertBodySent(Object date) {
@@ -5852,21 +5675,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get trendCbtReratedEmptyHint => '先用 5/7 欄 CBT 填表， 才能看到重評效果';
 
   @override
-  String get contactEmptyList => '還沒有聯繫人，請先添加';
-
-  @override
-  String get contactAddAction => '添加聯繫人';
-
-  @override
-  String get contactAddTitle => '添加緊急聯繫人';
-
-  @override
   String get contactConsentTitle => '知情同意';
-
-  @override
-  String contactConsentBody(int threshold) {
-    return '您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 $threshold 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 29 條**（處理敏感個人信息需取得單獨同意），請確認您已告知該聯繫人上述用途，並取得其單獨同意。';
-  }
 
   @override
   String get contactConsentAgree => '已告知並取得同意';
@@ -5891,21 +5700,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get dataExportConsentVersion => 'v1 · 2026-08-15';
-
-  @override
-  String get contactDefaultName => '聯繫人';
-
-  @override
-  String get contactNameLabel => '姓名';
-
-  @override
-  String get contactPhoneLabel => '手機號';
-
-  @override
-  String get commonActionDelete => '刪除';
-
-  @override
-  String get commonActionSave => '保存';
 
   @override
   String get editMedDialogTitle => '編輯藥物';
@@ -6108,9 +5902,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get ventEntryDeleted => '已刪除樹洞條目';
 
   @override
-  String get contactDeleted => '已刪除聯繫人';
-
-  @override
   String get medicationDeleted => '已刪除藥物';
 
   @override
@@ -6218,14 +6009,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentSaveFailed => '評估結果已顯示，但保存失敗。請稍後重試。';
 
   @override
-  String setupContactFallbackName(int index) {
-    return '聯繫人 $index';
-  }
-
-  @override
-  String get setupConsentRejected => '已拒絕該聯繫人的知情同意，未寫入。可重新填寫後繼續。';
-
-  @override
   String get medicationUnitMg => 'mg';
 
   @override
@@ -6233,40 +6016,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get safetyCheckResultDisabled => '安全開關已關閉';
-
-  @override
-  String safetyCheckResultOk(int days) {
-    return '無風險（$days 天前打卡）';
-  }
-
-  @override
-  String get safetyCheckResultNoData => '新用戶，暫無打卡';
-
-  @override
-  String safetyCheckResultAlertedToday(int days) {
-    return '今天已經發過告警（$days 天前打卡）';
-  }
-
-  @override
-  String get safetyCheckResultDndSuppressed => 'DND 時段，跳過告警';
-
-  @override
-  String get safetyCheckResultNoContacts => '無緊急聯繫人，未發送';
-
-  @override
-  String safetyCheckResultAlertedMocked(int mocked) {
-    return '測試通知已發送（$mocked 位聯繫人，實際未送達）';
-  }
-
-  @override
-  String safetyCheckResultAlerted(int days, int notified, int failed) {
-    return '已告警：$days 天前打卡，已通知 $notified 位聯繫人（$failed 失敗）';
-  }
-
-  @override
-  String safetyCheckResultError(Object message) {
-    return '錯誤：$message';
-  }
 
   @override
   String get phoneRegionCn => '中國大陸';
@@ -7732,9 +7481,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get setupCrisisHotlineTitle => '🆘 心理危機干預熱線 (24h)';
-
-  @override
-  String get consentWithdrawSafetyBody => '失聯通知功能將停用。系統不再通過 SMS / 郵件自動通知緊急聯繫人。';
 
   @override
   String get consentWithdrawVentBody => '樹洞 （私密傾訴） 功能將停用。新增樹洞記錄會被拒絕， 已有記錄保留。';

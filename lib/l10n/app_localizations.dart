@@ -177,24 +177,6 @@ abstract class AppLocalizations {
   /// **'小明'**
   String get setupNameHint;
 
-  /// No description provided for @setupContacts.
-  ///
-  /// In zh, this message translates to:
-  /// **'紧急联系人（可选）'**
-  String get setupContacts;
-
-  /// No description provided for @setupAddContact.
-  ///
-  /// In zh, this message translates to:
-  /// **'+ 添加另一个联系人'**
-  String get setupAddContact;
-
-  /// No description provided for @setupContactConsent.
-  ///
-  /// In zh, this message translates to:
-  /// **'如添加联系人，请先告知对方可能收到的通知（法律要求）'**
-  String get setupContactConsent;
-
   /// No description provided for @setupNext.
   ///
   /// In zh, this message translates to:
@@ -272,12 +254,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'• 您可以随时导出'**
   String get setupPrivacy3;
-
-  /// No description provided for @settingsContacts.
-  ///
-  /// In zh, this message translates to:
-  /// **'紧急联系人'**
-  String get settingsContacts;
 
   /// No description provided for @settingsMedication.
   ///
@@ -704,12 +680,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'请先停止录音'**
   String get snackbarStopRecording;
-
-  /// No description provided for @snackbarPhoneInvalid.
-  ///
-  /// In zh, this message translates to:
-  /// **'号码格式不对（支持大陆／港澳台／国际）'**
-  String get snackbarPhoneInvalid;
 
   /// No description provided for @commonConfirmOk.
   ///
@@ -1365,47 +1335,11 @@ abstract class AppLocalizations {
   /// **'每 {days} 天'**
   String reminderHubEveryNDays(int days);
 
-  /// No description provided for @reminderHubSafetyDescription.
-  ///
-  /// In zh, this message translates to:
-  /// **'连续 N 天没打卡 → 自动 SMS 通知所有启用的紧急联系人 + 本地推送'**
-  String get reminderHubSafetyDescription;
-
-  /// No description provided for @reminderHubTriggerThreshold.
-  ///
-  /// In zh, this message translates to:
-  /// **'触发阈值（连续 N 天没打卡）'**
-  String get reminderHubTriggerThreshold;
-
   /// No description provided for @reminderHubNDays.
   ///
   /// In zh, this message translates to:
   /// **'{days} 天'**
   String reminderHubNDays(int days);
-
-  /// No description provided for @setupContactNameLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'联系人 {index} 姓名'**
-  String setupContactNameLabel(int index);
-
-  /// No description provided for @setupContactNameHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'称呼（选填）'**
-  String get setupContactNameHint;
-
-  /// No description provided for @setupContactPhoneLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'紧急联系人手机号 {index}'**
-  String setupContactPhoneLabel(int index);
-
-  /// No description provided for @setupContactPhoneHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'13800138000'**
-  String get setupContactPhoneHint;
 
   /// No description provided for @ventListTitle.
   ///
@@ -2398,18 +2332,6 @@ abstract class AppLocalizations {
   /// **'请输入您的名字'**
   String get setupValidationNameRequired;
 
-  /// No description provided for @setupValidationPhoneInvalid.
-  ///
-  /// In zh, this message translates to:
-  /// **'手机号格式不对'**
-  String get setupValidationPhoneInvalid;
-
-  /// No description provided for @setupValidationPhoneDuplicate.
-  ///
-  /// In zh, this message translates to:
-  /// **'紧急联系人手机号不能重复'**
-  String get setupValidationPhoneDuplicate;
-
   /// No description provided for @setupPresetTitle.
   ///
   /// In zh, this message translates to:
@@ -2547,12 +2469,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'提示：您可以随时在「设置 → 法律与隐私」撤回同意。拒绝或撤回后，App 的相关功能将无法使用。'**
   String get setupConsentWithdrawHint;
-
-  /// No description provided for @setupWelcomeContactHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'（可选，后续可在设置中添加）'**
-  String get setupWelcomeContactHint;
 
   /// No description provided for @setupLegalUserAgreement.
   ///
@@ -2751,12 +2667,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'💊 准备打卡药物 #{id}'**
   String homeMedHint(int id);
-
-  /// Snackbar 後綴 — 跟 displayMessage 組合顯示，提醒用戶儘快打卡或聯繫家人
-  ///
-  /// In zh, this message translates to:
-  /// **'（请尽快打卡或联系家人）'**
-  String get homeSafetyAlertSuffix;
 
   /// SafetyAlert 通知 body — SMS 實際發送成功分支（P0-3 三態修正，v0.27 R60）
   ///
@@ -3088,35 +2998,11 @@ abstract class AppLocalizations {
   /// **'先用 5/7 栏 CBT 填表， 才能看到重评效果'**
   String get trendCbtReratedEmptyHint;
 
-  /// No description provided for @contactEmptyList.
-  ///
-  /// In zh, this message translates to:
-  /// **'还没有联系人，请先添加'**
-  String get contactEmptyList;
-
-  /// No description provided for @contactAddAction.
-  ///
-  /// In zh, this message translates to:
-  /// **'添加联系人'**
-  String get contactAddAction;
-
-  /// No description provided for @contactAddTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'添加紧急联系人'**
-  String get contactAddTitle;
-
   /// No description provided for @contactConsentTitle.
   ///
   /// In zh, this message translates to:
   /// **'知情同意'**
   String get contactConsentTitle;
-
-  /// PIPL §29 單獨同意 dialog 正文， 精神心理患者敏感信息 （手機號 + 病歷關聯） 保護專用 (R77 修： 之前錯引 §13, 應是 §29 敏感 PII)
-  ///
-  /// In zh, this message translates to:
-  /// **'您即将把这位联系人的手机号保存在本地数据库中。当您连续 {threshold} 天未在 App 内打卡时，App 会通过 SMS 短信自动通知该联系人。\n\n**根据《个人信息保护法》第 29 条**（处理敏感个人信息需取得单独同意），请确认您已告知该联系人上述用途，并取得其单独同意。'**
-  String contactConsentBody(int threshold);
 
   /// No description provided for @contactConsentAgree.
   ///
@@ -3160,36 +3046,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'v1 · 2026-08-15'**
   String get dataExportConsentVersion;
-
-  /// No description provided for @contactDefaultName.
-  ///
-  /// In zh, this message translates to:
-  /// **'联系人'**
-  String get contactDefaultName;
-
-  /// No description provided for @contactNameLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'姓名'**
-  String get contactNameLabel;
-
-  /// No description provided for @contactPhoneLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'手机号'**
-  String get contactPhoneLabel;
-
-  /// No description provided for @commonActionDelete.
-  ///
-  /// In zh, this message translates to:
-  /// **'删除'**
-  String get commonActionDelete;
-
-  /// No description provided for @commonActionSave.
-  ///
-  /// In zh, this message translates to:
-  /// **'保存'**
-  String get commonActionSave;
 
   /// No description provided for @editMedDialogTitle.
   ///
@@ -3563,12 +3419,6 @@ abstract class AppLocalizations {
   /// **'已删除树洞条目'**
   String get ventEntryDeleted;
 
-  /// No description provided for @contactDeleted.
-  ///
-  /// In zh, this message translates to:
-  /// **'已删除联系人'**
-  String get contactDeleted;
-
   /// No description provided for @medicationDeleted.
   ///
   /// In zh, this message translates to:
@@ -3749,18 +3599,6 @@ abstract class AppLocalizations {
   /// **'评估结果已显示，但保存失败。请稍后重试。'**
   String get assessmentSaveFailed;
 
-  /// No description provided for @setupContactFallbackName.
-  ///
-  /// In zh, this message translates to:
-  /// **'联系人 {index}'**
-  String setupContactFallbackName(int index);
-
-  /// No description provided for @setupConsentRejected.
-  ///
-  /// In zh, this message translates to:
-  /// **'已拒绝该联系人的知情同意，未写入。可重新填写后继续。'**
-  String get setupConsentRejected;
-
   /// No description provided for @medicationUnitMg.
   ///
   /// In zh, this message translates to:
@@ -3778,54 +3616,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'安全开关已关闭'**
   String get safetyCheckResultDisabled;
-
-  /// No description provided for @safetyCheckResultOk.
-  ///
-  /// In zh, this message translates to:
-  /// **'无风险（{days} 天前打卡）'**
-  String safetyCheckResultOk(int days);
-
-  /// No description provided for @safetyCheckResultNoData.
-  ///
-  /// In zh, this message translates to:
-  /// **'新用户，暂无打卡'**
-  String get safetyCheckResultNoData;
-
-  /// No description provided for @safetyCheckResultAlertedToday.
-  ///
-  /// In zh, this message translates to:
-  /// **'今天已经发过告警（{days} 天前打卡）'**
-  String safetyCheckResultAlertedToday(int days);
-
-  /// No description provided for @safetyCheckResultDndSuppressed.
-  ///
-  /// In zh, this message translates to:
-  /// **'DND 时段，跳过告警'**
-  String get safetyCheckResultDndSuppressed;
-
-  /// No description provided for @safetyCheckResultNoContacts.
-  ///
-  /// In zh, this message translates to:
-  /// **'无紧急联系人，未发送'**
-  String get safetyCheckResultNoContacts;
-
-  /// No description provided for @safetyCheckResultAlertedMocked.
-  ///
-  /// In zh, this message translates to:
-  /// **'测试通知已发送（{mocked} 位联系人，实际未送达）'**
-  String safetyCheckResultAlertedMocked(int mocked);
-
-  /// No description provided for @safetyCheckResultAlerted.
-  ///
-  /// In zh, this message translates to:
-  /// **'已告警：{days} 天前打卡，已通知 {notified} 位联系人（{failed} 失败）'**
-  String safetyCheckResultAlerted(int days, int notified, int failed);
-
-  /// No description provided for @safetyCheckResultError.
-  ///
-  /// In zh, this message translates to:
-  /// **'错误：{message}'**
-  String safetyCheckResultError(Object message);
 
   /// No description provided for @phoneRegionCn.
   ///
@@ -6599,12 +6389,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'🆘 心理危机干预热线 (24h)'**
   String get setupCrisisHotlineTitle;
-
-  /// v0.30 R100 (P1#9): §14 撤回 safety 同意 fallback body （法律文案）
-  ///
-  /// In zh, this message translates to:
-  /// **'失联通知功能将停用。系统不再通过 SMS / 邮件自动通知紧急联系人。'**
-  String get consentWithdrawSafetyBody;
 
   /// v0.30 R100 (P1#9): §14 撤回 vent 同意 fallback body （法律文案）
   ///

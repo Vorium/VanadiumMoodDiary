@@ -44,9 +44,6 @@
   "setupIntro": "1 分鐘設置好，然後每天 1 次打卡",
   "setupName": "您的名字（選填）",
   "setupNameHint": "小明",
-  "setupContacts": "緊急聯繫人（可選）",
-  "setupAddContact": "+ 添加另一個聯繫人",
-  "setupContactConsent": "如添加聯繫人，請先告知對方可能收到的通知（法律要求）",
   "setupNext": "下一步 →",
   "setupMedNameHint": "請輸入藥盒上的名稱（選填）",
   "setupStart": "開始我的第 1 天",
@@ -60,7 +57,6 @@
   "setupPrivacy1": "• 本地加密",
   "setupPrivacy2": "• 不會上傳到任何雲端服務器",
   "setupPrivacy3": "• 您可以隨時導出",
-  "settingsContacts": "緊急聯繫人",
   "settingsMedication": "常吃藥",
   "settingsAbout": "關於",
   "settingsDisclaimer": "免責聲明",
@@ -186,7 +182,6 @@
   "snackbarNeedMicPermission": "需要麥克風權限",
   "snackbarEmptyVent": "寫點東西或錄一段吧",
   "snackbarStopRecording": "請先停止錄音",
-  "snackbarPhoneInvalid": "號碼格式不對（支持大陸／港澳臺／國際）",
   "commonConfirmOk": "確定",
   "commonMedName": "藥名",
   "commonDoseUnit": "片",
@@ -436,8 +431,6 @@
       }
     }
   },
-  "reminderHubSafetyDescription": "連續 N 天沒打卡 → 自動 SMS 通知所有啟用的緊急聯繫人 + 本地推送",
-  "reminderHubTriggerThreshold": "觸發閾值（連續 N 天沒打卡）",
   "reminderHubNDays": "{days} 天",
   "@reminderHubNDays": {
     "placeholders": {
@@ -446,24 +439,6 @@
       }
     }
   },
-  "setupContactNameLabel": "聯繫人 {index} 姓名",
-  "@setupContactNameLabel": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "setupContactNameHint": "稱呼（選填）",
-  "setupContactPhoneLabel": "緊急聯繫人手機號 {index}",
-  "@setupContactPhoneLabel": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "setupContactPhoneHint": "13800138000",
   "ventListTitle": "我的樹洞",
   "legalVentWithdrawTitle": "撤回樹洞同意",
   "legalVentWithdrawBody": "樹洞內容是您最私密的數據。撤回同意後，您可選擇以下方式處理已有數據：",
@@ -835,8 +810,6 @@
   "assessmentScaleGad7": "GAD-7 焦慮篩查",
   "setupConsentRequired": "請先完成法律文件閱讀與同意",
   "setupValidationNameRequired": "請輸入您的名字",
-  "setupValidationPhoneInvalid": "手機號格式不對",
-  "setupValidationPhoneDuplicate": "緊急聯繫人手機號不能重複",
   "setupPresetTitle": "📋 選擇預置方案",
   "setupPresetDescription": "預置方案會填好藥名 + 時間，您可以接著改。最終服藥請按醫囑核對。",
   "setupPresetLoaded": "已載入：{name}（{count} 個藥）請核對藥名和劑量",
@@ -877,7 +850,6 @@
   "setupConsentSensitiveData": "我已閱讀並同意《敏感個人信息處理同意書》",
   "setupConsentStart": "開始設置",
   "setupConsentWithdrawHint": "提示：您可以隨時在「設置 → 法律與隱私」撤回同意。拒絕或撤回後，App 的相關功能將無法使用。",
-  "setupWelcomeContactHint": "（可選，後續可在設置中添加）",
   "setupLegalUserAgreement": "用戶協議",
   "setupLegalPrivacyPolicy": "隱私政策",
   "setupLegalSensitiveData": "敏感個人信息處理同意書",
@@ -971,7 +943,6 @@
       }
     }
   },
-  "homeSafetyAlertSuffix": "（請儘快打卡或聯繫家人）",
   "safetyAlertBodySent": "上次打卡： {date}。已自動通知緊急聯繫人，請確認安全。",
   "@safetyAlertBodySent": {
     "description": "SafetyAlert 通知 body — SMS 實際發送成功分支（P0-3 三態修正，v0.27 R60）",
@@ -1138,20 +1109,7 @@
   "trendCbtReratedChartTitle": "重評效果",
   "trendCbtReratedEmptyTitle": "還沒有 5/7 欄 CBT 數據",
   "trendCbtReratedEmptyHint": "先用 5/7 欄 CBT 填表， 才能看到重評效果",
-  "contactEmptyList": "還沒有聯繫人，請先添加",
-  "contactAddAction": "添加聯繫人",
-  "contactAddTitle": "添加緊急聯繫人",
   "contactConsentTitle": "知情同意",
-  "contactConsentBody": "您即將把這位聯繫人的手機號保存在本地數據庫中。當您連續 {threshold} 天未在 App 內打卡時，App 會通過 SMS 短信自動通知該聯繫人。\n\n**根據《個人信息保護法》第 29 條**（處理敏感個人信息需取得單獨同意），請確認您已告知該聯繫人上述用途，並取得其單獨同意。",
-  "@contactConsentBody": {
-    "description": "PIPL §29 單獨同意 dialog 正文， 精神心理患者敏感信息 （手機號 + 病歷關聯） 保護專用 (R77 修： 之前錯引 §13, 應是 §29 敏感 PII)",
-    "placeholders": {
-      "threshold": {
-        "type": "int",
-        "example": "2"
-      }
-    }
-  },
   "contactConsentAgree": "已告知並取得同意",
   "contactConsentReject": "暫不同意",
   "contactConsentVersion": "v1 · 2026-07-31",
@@ -1176,11 +1134,6 @@
   },
   "dataExportConsentConfirm": "我瞭解並同意導出",
   "dataExportConsentVersion": "v1 · 2026-08-15",
-  "contactDefaultName": "聯繫人",
-  "contactNameLabel": "姓名",
-  "contactPhoneLabel": "手機號",
-  "commonActionDelete": "刪除",
-  "commonActionSave": "保存",
   "editMedDialogTitle": "編輯藥物",
   "editMedValidationNameRequired": "請填寫藥名",
   "editMedValidationDosageInvalid": "劑量必須是大於 0 的數字",
@@ -1296,7 +1249,6 @@
   "snackbarActionFinishSetup": "完成設置",
   "snackbarActionUndo": "撤銷",
   "ventEntryDeleted": "已刪除樹洞條目",
-  "contactDeleted": "已刪除聯繫人",
   "medicationDeleted": "已刪除藥物",
   "moodTodayLabel": "今日情緒：",
   "moodTodayLabelWithValue": "今日情緒：{value}",
@@ -1308,7 +1260,6 @@
       }
     }
   },
-
   "moodLabel1": "很差",
   "@moodLabel1": {
     "description": "情緒分數 1/5 的本地化標籤 (R112-07 emil metadata 補)"
@@ -1358,67 +1309,9 @@
   "moodRatingButtonSemantics": "{score} 分{selected, select, true{，已選} other{}}",
   "medicationTimeWindowSemantics": "時間窗口 {days} 天，7／30／90 單選",
   "assessmentSaveFailed": "評估結果已顯示，但保存失敗。請稍後重試。",
-  "setupContactFallbackName": "聯繫人 {index}",
-  "@setupContactFallbackName": {
-    "placeholders": {
-      "index": {
-        "type": "int"
-      }
-    }
-  },
-  "setupConsentRejected": "已拒絕該聯繫人的知情同意，未寫入。可重新填寫後繼續。",
   "medicationUnitMg": "mg",
   "medicationUnitTablet": "片",
   "safetyCheckResultDisabled": "安全開關已關閉",
-  "safetyCheckResultOk": "無風險（{days} 天前打卡）",
-  "@safetyCheckResultOk": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultNoData": "新用戶，暫無打卡",
-  "safetyCheckResultAlertedToday": "今天已經發過告警（{days} 天前打卡）",
-  "@safetyCheckResultAlertedToday": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultDndSuppressed": "DND 時段，跳過告警",
-  "safetyCheckResultNoContacts": "無緊急聯繫人，未發送",
-  "safetyCheckResultAlertedMocked": "測試通知已發送（{mocked} 位聯繫人，實際未送達）",
-  "@safetyCheckResultAlertedMocked": {
-    "placeholders": {
-      "mocked": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultAlerted": "已告警：{days} 天前打卡，已通知 {notified} 位聯繫人（{failed} 失敗）",
-  "@safetyCheckResultAlerted": {
-    "placeholders": {
-      "days": {
-        "type": "int"
-      },
-      "notified": {
-        "type": "int"
-      },
-      "failed": {
-        "type": "int"
-      }
-    }
-  },
-  "safetyCheckResultError": "錯誤：{message}",
-  "@safetyCheckResultError": {
-    "placeholders": {
-      "message": {
-        "type": "Object"
-      }
-    }
-  },
   "phoneRegionCn": "中國大陸",
   "phoneRegionHk": "中國香港",
   "phoneRegionMo": "中國澳門",
@@ -2952,14 +2845,9 @@
       }
     }
   },
-
   "setupCrisisHotlineTitle": "🆘 心理危機干預熱線 (24h)",
   "@setupCrisisHotlineTitle": {
     "description": "v0.30 R100 (P1#9): setup 法務 dialog 危機熱線區塊標題"
-  },
-  "consentWithdrawSafetyBody": "失聯通知功能將停用。系統不再通過 SMS / 郵件自動通知緊急聯繫人。",
-  "@consentWithdrawSafetyBody": {
-    "description": "v0.30 R100 (P1#9): §14 撤回 safety 同意 fallback body （法律文案）"
   },
   "consentWithdrawVentBody": "樹洞 （私密傾訴） 功能將停用。新增樹洞記錄會被拒絕， 已有記錄保留。",
   "@consentWithdrawVentBody": {
@@ -3259,9 +3147,6 @@
   },
   "@ventReportDialogClose": {
     "description": "R97-P1-4: 舉報對話框關閉按鈕"
-  },
-  "@homeSafetyAlertSuffix": {
-    "description": "Snackbar 後綴 — 跟 displayMessage 組合顯示，提醒用戶儘快打卡或聯繫家人"
   },
   "@medPageTitle": {
     "description": "v0.30 R101: 用藥主頁標題"

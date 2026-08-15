@@ -1,15 +1,16 @@
 // v0.14 (Round 12C) 提醒中心 — 集中查看/管理所有类型的提醒
 //
-// 之前散落在各处的设置（notification / assessment / safety watch）整合到一个页面
+// 之前散落在各处的设置（notification / assessment）整合到一个页面
 //
-// 五大类提醒：
+// 四大类提醒：
 // 1. 每日打卡提醒（notification_service.scheduleDailyReminder，固定 20:00）
 // 2. 用药提醒（notification_service - 每个 medication 的每个 time）
 // 3. 续方提醒（medication.refillAt - refillReminderDays）
 // 4. 心理评估提醒（AssessmentReminderService）
-// 5. 失联通知（SafetyWatchService - "死了么／撸了么"）
+//
+// 1.1.0 round 4: 第 5 类"失联通知"（SafetyWatchService）整摘 —
+// 失联通信业务暂停定版。
 
-import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/reminders_hub_provider.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -134,16 +134,6 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
           _buildAssessmentCard(context, configAsync),
 
           const SizedBox(height: AppTokens.spacingMd),
-
-          // 5. 失联通知
-          // R110 round 3 (AS-07 gate): flag=false (生产默认) 时整段不渲染,
-          // 跟 setup 联系人表单 gate 一致 (App Store 5.1.1 抽审安全)
-          if (FeatureFlags.emergencyContactEnabled) ...[
-            const SizedBox(height: AppTokens.spacingMd),
-            _buildSafetyCard(context, configAsync),
-          ],
-
-          const SizedBox(height: AppTokens.spacingMd),
         ],
       ),
     );
@@ -166,22 +156,6 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     );
   }
 
-  void _showSafetySettings(BuildContext context) {
-    final configAsync = ref.read(remindersHubConfigProvider);
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) {
-        final c = _configOrFallback(configAsync);
-        return _SafetyReminderSheet(
-          initialEnabled: c.safetyEnabled,
-          initialThreshold: c.safetyThreshold,
-          onSaved: () => ref.invalidate(remindersHubConfigProvider),
-        );
-      },
-    );
-  }
-
   Widget _buildAssessmentCard(
     BuildContext context,
     AsyncValue<RemindersHubConfig> configAsync,
@@ -194,19 +168,6 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
     );
   }
 
-  Widget _buildSafetyCard(
-    BuildContext context,
-    AsyncValue<RemindersHubConfig> configAsync,
-  ) {
-    return SafetyReminderCard(
-      enabled: _configOrFallback(configAsync).safetyEnabled,
-      threshold: _configOrFallback(configAsync).safetyThreshold,
-      // P0-1 fix: 检测当前 SMS provider,如果是 mock 状态显示 banner
-      isMockSms: ref.watch(smsProviderNameProvider) == 'mock',
-      onConfigure: () => _showSafetySettings(context),
-    );
-  }
-
   /// configAsync 没加载完时给 fallback 默认值,加载完用真实值
   ///
   /// v0.23 round 41 (spen P3-35): 替代之前 4 个 nullable 字段 + setState
@@ -216,8 +177,6 @@ class _RemindersHubPageState extends ConsumerState<RemindersHubPage> {
       orElse: () => const RemindersHubConfig(
         assessmentEnabled: false,
         assessmentDays: 14,
-        safetyEnabled: false,
-        safetyThreshold: 2,
       ),
     );
   }
@@ -321,142 +280,6 @@ class _AssessmentReminderSheetState
                 selected: _days,
                 labelOf: loc.reminderHubEveryNDays,
                 onSelect: (d) => setState(() => _days = d),
-                disabled: _busy,
-              ),
-            ],
-            const SizedBox(height: AppTokens.spacingLg),
-            Row(
-              children: [
-                Expanded(
-                  child: PrimaryButton(
-                    variant: PrimaryButtonVariant.secondary,
-                    isFullWidth: true,
-                    onPressed: _busy ? null : () => Navigator.pop(context),
-                    child: Text(loc.commonCancel),
-                  ),
-                ),
-                const SizedBox(width: AppTokens.spacingSm),
-                Expanded(
-                  child: PrimaryButton(
-                    isFullWidth: false,
-                    onPressed: _busy ? null : _save,
-                    child: Text(loc.commonSave),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 失联通知设置 sheet
-class _SafetyReminderSheet extends ConsumerStatefulWidget {
-  final bool initialEnabled;
-  final int initialThreshold;
-  final VoidCallback onSaved;
-  const _SafetyReminderSheet({
-    required this.initialEnabled,
-    required this.initialThreshold,
-    required this.onSaved,
-  });
-
-  @override
-  ConsumerState<_SafetyReminderSheet> createState() =>
-      _SafetyReminderSheetState();
-}
-
-class _SafetyReminderSheetState extends ConsumerState<_SafetyReminderSheet> {
-  late bool _enabled;
-  late int _threshold;
-  bool _busy = false;
-
-  static const _options = [1, 2, 3, 5, 7, 14];
-
-  @override
-  void initState() {
-    super.initState();
-    _enabled = widget.initialEnabled;
-    _threshold = widget.initialThreshold;
-  }
-
-  Future<void> _save() async {
-    setState(() => _busy = true);
-    try {
-      // v0.27 round 61 (P1-12 拆分收尾): 改走 safetyConfigServiceProvider
-      // 直接读 SharedPreferences, 不再走 safetyWatchServiceProvider facade 层
-      final config = ref.read(safetyConfigServiceProvider);
-      await config.setEnabled(_enabled);
-      if (_enabled) {
-        await config.setThresholdDays(_threshold);
-      }
-      if (mounted) {
-        widget.onSaved();
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (mounted) {
-        AppSnackBar.showError(
-          context,
-          action: AppLocalizations.of(context).commonSave,
-          error: e,
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return SafeArea(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              loc.reminderHubSafetyTitle,
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeTitle,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: AppTokens.spacingSm),
-            Text(
-              loc.reminderHubSafetyDescription,
-              style: TextStyle(
-                fontSize: AppTokens.fontSizeCaption,
-                color: AppTokens.textSecondaryColor(context),
-              ),
-            ),
-            const SizedBox(height: AppTokens.spacingMd),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(loc.reminderHubEnable),
-              value: _enabled,
-              onChanged: _busy ? null : (v) => setState(() => _enabled = v),
-            ),
-            if (_enabled) ...[
-              const Divider(),
-              Text(
-                loc.reminderHubTriggerThreshold,
-                style: const TextStyle(
-                  fontSize: AppTokens.fontSizeLabel,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: AppTokens.spacingSm),
-              // v0.27 round 67 (C-5): 用 ChoiceChipWrap 集中器
-              ChoiceChipWrap<int>(
-                options: _options,
-                selected: _threshold,
-                labelOf: loc.reminderHubNDays,
-                onSelect: (d) => setState(() => _threshold = d),
                 disabled: _busy,
               ),
             ],

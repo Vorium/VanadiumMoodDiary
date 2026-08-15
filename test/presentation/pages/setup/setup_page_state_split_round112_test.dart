@@ -3,9 +3,11 @@
 // 拆解产物 (1 文件 1 职责, 本文件 1 group 1 类):
 // - SetupConsentState (setup_consent_state.dart): 5 勾选状态 + agreeAll
 // - MedDraft.fromTemplate (setup_widgets.dart): template → 草稿工厂
-// - SetupContactConsentFlow (setup_contact_consent_flow.dart): 同意弹窗循环
 // - SetupSubmitFlow (setup_submit_flow.dart): 提交序列 (错误原样上抛)
 // - SetupWizardFrame (widgets/setup_wizard_frame.dart): 4 步 wizard 壳
+//
+// 1.1.0 round 4: SetupContactConsentFlow group 整摘 (联系人同意弹窗循环
+// 已删除, 失联通信业务暂停定版)。
 //
 // 模式: 拆前 characterization 见 setup_page_state_round112_test.dart
 // (7 case 锁定既有行为), 本文件测新类公开 API。
@@ -16,7 +18,6 @@ import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart'
     as templates;
 import 'package:chroniccare/core/data/services/setup_committer.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
@@ -25,7 +26,6 @@ import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_consent_state.dart';
-import 'package:chroniccare/presentation/pages/setup/setup_contact_consent_flow.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_submit_flow.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/pages/setup/widgets/setup_wizard_frame.dart';
@@ -45,15 +45,18 @@ class _RecordingSetupCommitter extends SetupCommitter {
   Object? throwOnComplete;
   int calls = 0;
   String? receivedUserName;
-  final List<({String name, String phone, int sortOrder})> receivedContacts =
-      [];
-  final List<ConsentArtifact> receivedConsents = [];
+  final List<
+          ({
+            String name,
+            double dosage,
+            String dosageUnit,
+            List<HourMinute> times,
+          })>
+      receivedMeds = [];
 
   @override
   Future<void> completeSetup({
     required String userName,
-    required List<({String name, String phone, int sortOrder})> contactList,
-    required List<ConsentArtifact> contactConsents,
     required List<
             ({
               String name,
@@ -66,8 +69,7 @@ class _RecordingSetupCommitter extends SetupCommitter {
     calls++;
     if (throwOnComplete != null) throw throwOnComplete!;
     receivedUserName = userName;
-    receivedContacts.addAll(contactList);
-    receivedConsents.addAll(contactConsents);
+    receivedMeds.addAll(medicationList);
   }
 }
 
@@ -268,150 +270,6 @@ void main() {
     });
   });
 
-  group('SetupContactConsentFlow (AR-20 批2a)', () {
-    testWidgets('6. 手机号全空 → 0 dialog + 空 result (联系人可选跳过)',
-        (tester) async {
-      final nameCtrl = TextEditingController();
-      final phoneCtrl = TextEditingController();
-      addTearDown(() {
-        nameCtrl.dispose();
-        phoneCtrl.dispose();
-      });
-      late BuildContext ctx;
-      await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            locale: const Locale('zh'),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Scaffold(
-              body: Builder(
-                builder: (c) {
-                  ctx = c;
-                  return const SizedBox();
-                },
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final result = await SetupContactConsentFlow.collect(
-        context: ctx,
-        nameControllers: [nameCtrl],
-        phoneControllers: [phoneCtrl],
-      );
-
-      expect(result, isNotNull);
-      expect(result!.contactList, isEmpty);
-      expect(result.contactConsents, isEmpty);
-      expect(find.byType(AlertDialog), findsNothing);
-    });
-
-    testWidgets('7. 同意 → contactList 1 条 (E.164 normalize + 空名 fallback) + consents 等长',
-        (tester) async {
-      final nameCtrl = TextEditingController();
-      final phoneCtrl = TextEditingController(text: '13800138000');
-      addTearDown(() {
-        nameCtrl.dispose();
-        phoneCtrl.dispose();
-      });
-      late BuildContext ctx;
-      await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            locale: const Locale('zh'),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Scaffold(
-              body: Builder(
-                builder: (c) {
-                  ctx = c;
-                  return const SizedBox();
-                },
-              ),
-            ),
-          ),
-        ),
-      );
-
-      SetupContactConsentResult? result;
-      final future = SetupContactConsentFlow.collect(
-        context: ctx,
-        nameControllers: [nameCtrl],
-        phoneControllers: [phoneCtrl],
-      ).then((r) => result = r);
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget,
-          reason: '填了手机号 → 必须弹 PIPL §13 同意 dialog',);
-
-      await tester.tap(find.text('已告知并取得同意'));
-      await tester.pumpAndSettle();
-      await future;
-
-      expect(result, isNotNull);
-      expect(result!.contactList.length, 1);
-      expect(result!.contactList.single.phone, '+8613800138000',
-          reason: 'phone 走 PhoneValidator.normalize (E.164)',);
-      expect(result!.contactList.single.name, isNotEmpty,
-          reason: '姓名为空 → setupContactFallbackName(i+1) 兜底',);
-      expect(result!.contactConsents.length, 1,
-          reason: 'R68 CC-1: contactList 与 consents 等长',);
-      expect(result!.contactConsents.single.kind,
-          ConsentKind.emergencyContactSharing,);
-    });
-
-    testWidgets('8. 拒绝 → 返回 null + setupConsentRejected snackbar',
-        (tester) async {
-      final nameCtrl = TextEditingController();
-      final phoneCtrl = TextEditingController(text: '13800138000');
-      addTearDown(() {
-        nameCtrl.dispose();
-        phoneCtrl.dispose();
-      });
-      late BuildContext ctx;
-      await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            locale: const Locale('zh'),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Scaffold(
-              body: Builder(
-                builder: (c) {
-                  ctx = c;
-                  return const SizedBox();
-                },
-              ),
-            ),
-          ),
-        ),
-      );
-
-      SetupContactConsentResult? result;
-      var completed = false;
-      final future = SetupContactConsentFlow.collect(
-        context: ctx,
-        nameControllers: [nameCtrl],
-        phoneControllers: [phoneCtrl],
-      ).then((r) {
-        result = r;
-        completed = true;
-      });
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('暂不同意'));
-      await tester.pumpAndSettle();
-      await future;
-
-      expect(completed, isTrue);
-      expect(result, isNull, reason: '拒绝 → null (PIPL §13 严同意, 终止 setup)');
-      expect(find.textContaining('已拒绝该联系人'), findsOneWidget);
-
-      await tester.pump(const Duration(seconds: 5));
-      await tester.pumpAndSettle();
-    });
-  });
-
   group('SetupSubmitFlow (AR-20 批2a)', () {
     testWidgets('9. run 成功序列: completeSetup → recordConsent → 通知重排 (不抛)',
         (tester) async {
@@ -461,8 +319,6 @@ void main() {
           ref: ref,
           context: ctx,
           userName: '小明',
-          contactList: const [],
-          contactConsents: const [],
           medicationList: const [],
         ).then((_) {
           done = true;
@@ -487,9 +343,7 @@ void main() {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(db.close);
       final committer = _RecordingSetupCommitter(db)
-        ..throwOnComplete = StateError(
-          'contactList (1) 与 contactConsents (0) 长度不一致 (E5)',
-        );
+        ..throwOnComplete = StateError('db locked (E5)');
       late WidgetRef ref;
       late BuildContext ctx;
 
@@ -531,8 +385,6 @@ void main() {
           ref: ref,
           context: ctx,
           userName: '小明',
-          contactList: const [],
-          contactConsents: const [],
           medicationList: const [],
         ).then((_) {
           done = true;

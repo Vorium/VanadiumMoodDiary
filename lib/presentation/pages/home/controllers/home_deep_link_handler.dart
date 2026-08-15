@@ -12,6 +12,10 @@
 // - 抽出后 deep link 业务可在 widget test 里直接覆盖 (mock ref 即可),
 //   跟 runSafetyCheck / build 解耦
 //
+// 1.1.0 round 4 (emotion-first refactor): safety rerun 路径整摘 —
+// scheduleSafetyRerun action / reason=safety 分支 / race guard Timer /
+// dispose 全删 (safety check 已从主页移除)。
+//
 // 公共 API:
 // - [HomeDeepLinkHandler] — controller class, 接受 [WidgetRef] 用于 provider 读
 // - [DeepLinkAction] enum — inspect() 返回的动作类型
@@ -20,14 +24,11 @@
 // - [inspect] — 解析 deep link URI + 决定下一步动作 (同步)
 // - [autofireMedicationCheckIn] — 实际自动打卡 (异步, 返回结果给 caller 决定是否显示庆祝)
 // - [showMedicationHint] — 显示"该吃了"提示 (同步)
-// - [scheduleRaceTimer] — 调度 race guard Timer (替代原 state class _deepLinkRaceTimer)
-// - [dispose] — 取消 race Timer, 防 leak
+// - [clearQuery] — 清除 query 防止刷新重复触发
 //
 // 跟 state class 协作:
 // - state class 传 [HomeLifecycleState] 给 inspect(), controller 算 nextLifecycle
 //   返回, state class 应用: `_lifecycle = decision.nextLifecycle`
-// - race Timer 触发回调走 state class 的 [onRaceTimerFire] (闭包) — 检查 mounted
-//   + 调 state class 的 _runSafetyCheck(force: true)
 // - autofire 成功后返回 [AutofireResult] 含 medName, state class 据此调
 //   celebration controller 显示庆祝 overlay
 //
@@ -41,7 +42,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart'
     show HomeLifecycleState;
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
@@ -53,9 +53,6 @@ import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 enum DeepLinkAction {
   /// 无事可做 (lifecycle 已处理 / query 解析失败 / 路径不匹配)
   noop,
-
-  /// reason=safety 路径: 调度 race guard Timer, 到点重跑 safety check
-  scheduleSafetyRerun,
 
   /// medId 路径 + autofire=1: 实际打卡该药
   autofire,
@@ -93,16 +90,10 @@ class AutofireResult {
 /// v0.30 R108 (P1 home_page_state 拆): Home 主页 deep link handler
 ///
 /// 抽自原 home_page_state._handleDeepLink + _autofireMedicationCheckIn +
-/// _showMedicationHint + _deepLinkRaceTimer (90L)。
+/// _showMedicationHint (90L)。1.1.0 round 4: race guard Timer 删除
+/// (safety rerun 路径已摘)。
 class HomeDeepLinkHandler {
   final WidgetRef ref;
-
-  /// v0.27 round 63 (P1-4 修复): race guard Timer
-  ///
-  /// 之前 `_handleDeepLink` 用 `await Future<void>.delayed(...)`, dispose 后
-  /// 回调 fire 触发 setState 撞 defunct widget。改 Timer + dispose cancel,
-  /// 跟 `_celebrationTimer` 模式一致 (R62 P1-6 同样修)。
-  Timer? _raceTimer;
 
   HomeDeepLinkHandler(this.ref);
 
@@ -114,18 +105,17 @@ class HomeDeepLinkHandler {
   ///
   /// 抽 controller 后设计:
   /// - 解析 [uri] + [currentLifecycle] 同步返回 [DeepLinkDecision]
-  /// - state class 应用 nextLifecycle + 按 action 路由 (调 scheduleRaceTimer /
+  /// - state class 应用 nextLifecycle + 按 action 路由 (调
   ///   autofireMedicationCheckIn / showMedicationHint)
-  /// - 不做实际副作用, 副作用都在对应 method 里 (race Timer 调度 + 打卡 + hint)
+  /// - 不做实际副作用, 副作用都在对应 method 里 (打卡 + hint)
   ///
-  /// v0.27 round 64: lifecycle guard 改走 _lifecycle 状态机
-  /// bothHandled 也算"已处理"(_handleDeepLink 路径 + safety check 都完成)
+  /// 1.1.0 round 4: reason=safety 分支删除 (safety check 已从主页移除),
+  /// lifecycle 2 态, 已处理 guard 只查 deepLinkHandled。
   DeepLinkDecision inspect({
     required Uri uri,
     required HomeLifecycleState currentLifecycle,
   }) {
-    if (currentLifecycle == HomeLifecycleState.deepLinkHandled ||
-        currentLifecycle == HomeLifecycleState.bothHandled) {
+    if (currentLifecycle == HomeLifecycleState.deepLinkHandled) {
       return DeepLinkDecision(
         nextLifecycle: currentLifecycle,
         action: DeepLinkAction.noop,
@@ -134,25 +124,6 @@ class HomeDeepLinkHandler {
     final medIdParam = uri.queryParameters['medId'];
     final autofire = uri.queryParameters['autofire'] == '1';
     if (medIdParam == null) {
-      // 不是 deep link 跳来的，处理 safety reason
-      final reason = uri.queryParameters['reason'];
-      if (reason == 'safety') {
-        // 强制重跑一次 (从通知跳来的场景)
-        // v0.14 fix: 用独立 flag,不受 _safetyCheckTriggered 影响
-        // 旧实现 `!_safetyCheckTriggered` 在第一跑已起来后永远 false
-        // v0.27 round 64: 改用 _lifecycle 状态机,onRerunRequested() 内部
-        // 保证 safetyRerunRequested / bothHandled 重复请求 idempotent
-        if (currentLifecycle == HomeLifecycleState.safetyRerunRequested) {
-          return DeepLinkDecision(
-            nextLifecycle: currentLifecycle,
-            action: DeepLinkAction.noop,
-          );
-        }
-        return DeepLinkDecision(
-          nextLifecycle: currentLifecycle.onRerunRequested(),
-          action: DeepLinkAction.scheduleSafetyRerun,
-        );
-      }
       return DeepLinkDecision(
         nextLifecycle: currentLifecycle,
         action: DeepLinkAction.noop,
@@ -227,36 +198,6 @@ class HomeDeepLinkHandler {
       context,
       AppLocalizations.of(context).homeMedHint(medId),
     );
-  }
-
-  /// v0.30 R108 (P1 home_page_state 拆): 调度 race guard Timer
-  ///
-  /// 抽自原 home_page_state._handleDeepLink 内部 _deepLinkRaceTimer 设置逻辑。
-  /// Timer 触发时调 [onRaceTimerFire] (state class 闭包, 内含 mounted 检查 +
-  /// _runSafetyCheck(force: true) 调用)。
-  ///
-  /// v0.27 round 63 (P1-4 修复): 用 Timer 替代 Future.delayed, 跟
-  /// _celebrationTimer 模式一致。Future.delayed 不可 cancel, widget dispose
-  /// 后 fire 触发 _runSafetyCheck 撞 defunct widget。
-  void scheduleRaceTimer(VoidCallback onRaceTimerFire) {
-    _raceTimer?.cancel();
-    _raceTimer = Timer(
-      AppTokens.kDeepLinkRaceGuard,
-      () {
-        // Timer 自身 cancel 已在 dispose 跑, 这里让 caller 负责 mounted 双重保险
-        onRaceTimerFire();
-        _raceTimer = null;
-      },
-    );
-  }
-
-  /// v0.30 R108 (P1 home_page_state 拆): dispose 取消 race Timer
-  ///
-  /// 防 widget dispose 后 race guard timer 仍 fire 调 state class 方法
-  /// 撞 defunct widget。
-  void dispose() {
-    _raceTimer?.cancel();
-    _raceTimer = null;
   }
 
   /// v0.30 R108 (P1 home_page_state 拆): 清除 query 防止刷新页面重复触发

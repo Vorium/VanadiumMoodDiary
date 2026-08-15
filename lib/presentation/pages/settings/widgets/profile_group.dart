@@ -1,29 +1,27 @@
 // v0.30 round 95 (sub-spec 8 task 17): 用户档案 group
 //
-// 用户档案 / 提醒 / 数据 / 法律 4 group 之一。包含原 4 个 section / 卡:
+// 用户档案 / 提醒 / 数据 / 法律 4 group 之一。包含原 3 个 section / 卡:
 //   - 药物 section (medsAsync.when 渲染 MedicationsListWidget)
 //   - 通知自检卡 (NotificationStatusCard)
 //   - 心理评估 section (AssessmentSection)
-//   - 联系人 section (FeatureFlags.emergencyContactEnabled gate)
 //
 // v1.0.0+147: 永久免费, 删商业卡整段 (workspace_premium)。
+//
+// 1.1.0 round 4: 联系人 section 整摘 (outbound contact 业务暂停定版)。
 //
 // 业务封装:
 // - Medication 列表: 走 medsAsync.when (data / loading / error 3 态)
 // - NotificationStatusCard: 5 厂商 OEM 引导 + 测试通知
 // - AssessmentSection: 评估历史 / 周期提醒 / 量表列表 / 关于 / 免责声明
-// - Contact 列表: 走 contactsAsync.when, 失联通知业务暂停期 hidden
 //
 // 模式 (R95 task 1 ConsumerWidget 模式 + onXxx callback 注入点):
 // - ConsumerWidget 自包含, 走 ref 自带 provider
-// - 接受 onMedRetry / onContactRetry 可选 callback (测试注入)
+// - 接受 onMedRetry 可选 callback (测试注入)
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -32,18 +30,17 @@ import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 
-/// 用户档案 group — 药物 + 通知自检 + 心理评估 + 联系人
+/// 用户档案 group — 药物 + 通知自检 + 心理评估
 ///
-/// v0.30 round 95 (sub-spec 8 task 17): 4 group 之一, 包原 4 个 section / 卡。
+/// v0.30 round 95 (sub-spec 8 task 17): 4 group 之一, 包原 3 个 section / 卡。
 ///
-/// 4 section 都已存在, 本 group 仅做拼装 + SectionHeader, 不重复业务逻辑。
+/// 3 section 都已存在, 本 group 仅做拼装 + SectionHeader, 不重复业务逻辑。
 class ProfileGroup extends ConsumerWidget {
   const ProfileGroup({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final contactsAsync = ref.watch(contactsProvider);
     final medsAsync = ref.watch(medicationsProvider);
 
     return Column(
@@ -80,25 +77,6 @@ class ProfileGroup extends ConsumerWidget {
         const SizedBox(height: AppTokens.spacingSm),
         const AssessmentSection(),
         const SizedBox(height: AppTokens.spacingMd),
-
-        // === 联系人 (2026-07-31 挪到最底部, 病耻感考量) ===
-        // v0.30 round 93 (阶段 2 audit-fixes): 整个联系人 section
-        // 走 [FeatureFlags.emergencyContactEnabled] gate, 失联通信业务暂停期间
-        // 完全 hidden (setup step 1 仍可填, 由 setup wizard 独立 gate 控制)。
-        if (FeatureFlags.emergencyContactEnabled) ...[
-          SectionHeader(title: l10n.settingsContacts),
-          const SizedBox(height: AppTokens.spacingSm),
-          contactsAsync.when(
-            data: (contacts) => ContactsListWidget(contacts: contacts),
-            loading: () => const LoadingSkeleton.fullScreen(),
-            error: (e, _) => ErrorState(
-              title: l10n.commonLoadFailed(e.toString()),
-              detail: e.toString(),
-              onRetry: () => ref.invalidate(contactsProvider),
-            ),
-          ),
-        ] else
-          const SizedBox.shrink(),
       ],
     );
   }

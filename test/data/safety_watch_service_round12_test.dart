@@ -12,7 +12,6 @@ import 'package:chroniccare/domain/repositories/contact_repository.dart';
 import 'package:chroniccare/domain/repositories/safety_alert_sender.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/app_localizations_zh.dart';
-import 'package:chroniccare/presentation/services/safety_check_result_l10n.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -246,20 +245,6 @@ void main() {
         () => safetyConfig.setThresholdDays(15),
         throwsA(isA<ArgumentError>()),
       );
-    });
-  });
-
-  group('displayMessageL10n', () {
-    test('各 kind 都有非空文案', () {
-      // R100: 旧 displayMessage getter 已删, 改测 l10n 版 (编译期强制走翻译)
-      for (final kind in SafetyCheckKind.values) {
-        final r = SafetyCheckResult(kind: kind);
-        expect(
-          r.displayMessageL10n(_testL10n()),
-          isNotEmpty,
-          reason: '$kind 没有 displayMessageL10n 文案',
-        );
-      }
     });
   });
 

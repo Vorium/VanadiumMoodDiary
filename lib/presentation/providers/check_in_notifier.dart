@@ -3,10 +3,10 @@
 // 4 层架构：Notifier 只负责 UI state，business logic 走 domain/use case
 // - RecordCheckInUseCase        每日打卡
 // - RecordTempMedicationUseCase  临时吃药
-// - TriggerReminderUseCase       触发失联检测
+//
+// 1.1.0 round 4: TriggerReminderUseCase 调试入口整摘 (失联检测不再从
+// presentation 触发)。
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:chroniccare/presentation/providers/service_providers.dart';
 
 import 'package:chroniccare/domain/usecases/check_in_usecases.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -41,22 +41,6 @@ class CheckInNotifier extends Notifier<AsyncValue<void>> {
       await useCase(name: name, note: note);
     });
   }
-
-  /// 手动触发失联检测（调试用）
-  ///
-  /// 返回 true = 通知已发送，false = 跳过了（未到时间或没联系人）
-  Future<bool> triggerReminder() async {
-    state = const AsyncValue.loading();
-    try {
-      final useCase = ref.read(triggerReminderUseCaseProvider);
-      final result = await useCase();
-      state = const AsyncValue.data(null);
-      return result;
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-      return false;
-    }
-  }
 }
 
 final checkInNotifierProvider =
@@ -79,9 +63,3 @@ final recordTempMedicationUseCaseProvider =
     Provider<RecordTempMedicationUseCase>(
   (ref) => RecordTempMedicationUseCase(ref.watch(checkInRepositoryProvider)),
 );
-
-final triggerReminderUseCaseProvider = Provider<TriggerReminderUseCase>(
-  (ref) => TriggerReminderUseCase(ref.watch(reminderCheckerProvider)),
-);
-// reminderCheckerProvider 是 ReminderService 通过 ReminderChecker 抽象
-// 暴露的版本。use case 不直接拿 ReminderService，避免 domain → data 反向依赖。

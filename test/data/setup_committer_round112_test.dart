@@ -1,16 +1,16 @@
 // v0.32 R112 架构批 2 (AR-19): SetupCommitter 测试
 //
 // 迁移自 app_database_save_setup_round112_test.dart (SP-R112-04)。背景:
-// saveSetup 的 PIPL §13 consent 长度校验 (StateError, R111 E5 fix) 从
-// AppDatabase 迁到 SetupCommitter.completeSetup, transaction 语义必须原样:
-// 1. contactList.length != contactConsents.length → throwsA(StateError),
-//    且整个 transaction 回滚 (0 数据写入)
-// 2. 成功路径: 1 transaction 写 user profile + contacts (含 4 consent 字段)
-//    + medications (timesJson encodeTimes 格式不变)
-// 3. clearAllUserData: 清空所有表, 保持表结构 (PIPL §47 删除权)
+// saveSetup 从 AppDatabase 迁到 SetupCommitter.completeSetup, transaction
+// 语义必须原样:
+// 1. 成功路径: 1 transaction 写 user profile + medications
+//    (timesJson encodeTimes 格式不变)
+// 2. clearAllUserData: 清空所有表, 保持表结构 (PIPL §47 删除权)
+//
+// 1.1.0 round 4 (emotion-first refactor): contacts 写入段整摘 —
+// 原 case 1 (contactList/contactConsents 长度不一致 → StateError) 删除。
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/services/setup_committer.dart';
-import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,48 +29,10 @@ void main() {
   });
 
   test(
-      'completeSetup: contactList 2 条 / contactConsents 1 条 → 抛 StateError '
-      '且 transaction 回滚 (0 数据写入)', () async {
-    final consent = ConsentArtifact(
-      kind: ConsentKind.emergencyContactSharing,
-      grantedAt: DateTime(2026, 1, 1),
-      grantedBy: 'tester',
-      version: '1.0',
-    );
-    expect(
-      () => committer.completeSetup(
-        userName: '张三',
-        contactList: const [
-          (name: '妈妈', phone: '13800138000', sortOrder: 1),
-          (name: '爸爸', phone: '13900139000', sortOrder: 2),
-        ],
-        contactConsents: [consent],
-        medicationList: const [],
-      ),
-      throwsA(isA<StateError>()),
-    );
-
-    // transaction 回滚验证: 用户资料 / 联系人 都不该写进去
-    final profile = await db.userProfileDao.get();
-    expect(profile, isNull, reason: 'StateError 抛在 transaction 内, 应整体回滚');
-    final contacts = await db.contactDao.watchActive().first;
-    expect(contacts, isEmpty, reason: '联系人不应被写入');
-  });
-
-  test(
-      'completeSetup 成功: 1 transaction 写 profile + contacts (4 consent 字段) '
-      '+ medications (timesJson 兼容)', () async {
-    final consent = ConsentArtifact(
-      kind: ConsentKind.emergencyContactSharing,
-      grantedAt: DateTime(2026, 1, 1, 9, 30),
-      grantedBy: 'user',
-      contactId: null,
-      version: 'v0.32-2026-08-13',
-    );
+      'completeSetup 成功: 1 transaction 写 profile + medications '
+      '(timesJson 兼容)', () async {
     await committer.completeSetup(
       userName: '李四',
-      contactList: const [(name: '妈妈', phone: '13800138000', sortOrder: 0)],
-      contactConsents: [consent],
       medicationList: const [
         (
           name: '舍曲林',
@@ -88,15 +50,6 @@ void main() {
     expect(profile, isNotNull);
     expect(profile!.userName, '李四');
 
-    final contacts = await db.contactDao.watchActive().first;
-    expect(contacts.length, 1);
-    expect(contacts.first.name, '妈妈');
-    // R68 CC-1: 4 consent 字段跟着 setup 写 (PIPL §13 留痕)
-    expect(contacts.first.consentAt, DateTime(2026, 1, 1, 9, 30));
-    expect(contacts.first.consentKind, 'emergencyContactSharing');
-    expect(contacts.first.consentBy, 'user');
-    expect(contacts.first.consentVersion, 'v0.32-2026-08-13');
-
     final meds = await db.medicationDao.watchAllIncludingInactive().first;
     expect(meds.length, 1);
     expect(meds.first.name, '舍曲林');
@@ -108,8 +61,6 @@ void main() {
       () async {
     await committer.completeSetup(
       userName: '第一次',
-      contactList: const [],
-      contactConsents: const [],
       medicationList: const [],
     );
     final first = await db.userProfileDao.get();
@@ -125,8 +76,6 @@ void main() {
     final before = DateTime.now().subtract(const Duration(seconds: 1));
     await committer.completeSetup(
       userName: '第二次',
-      contactList: const [],
-      contactConsents: const [],
       medicationList: const [],
     );
     final after = DateTime.now().add(const Duration(seconds: 1));
@@ -142,18 +91,9 @@ void main() {
   });
 
   test('clearAllUserData: 清空全部表数据, 表结构保留 (PIPL §47)', () async {
-    // seed: profile + contact + medication + checkIn + mood
+    // seed: profile + medication + checkIn
     await committer.completeSetup(
       userName: '王五',
-      contactList: const [(name: '妈妈', phone: '13800138000', sortOrder: 0)],
-      contactConsents: [
-        ConsentArtifact(
-          kind: ConsentKind.emergencyContactSharing,
-          grantedAt: DateTime(2026, 1, 1),
-          grantedBy: 'user',
-          version: '1.0',
-        ),
-      ],
       medicationList: const [
         (name: '舍曲林', dosage: 50.0, dosageUnit: 'mg', times: []),
       ],
@@ -164,7 +104,6 @@ void main() {
         type: 'normal',
       ),
     );
-    expect(await db.contactDao.watchActive().first, isNotEmpty);
 
     await committer.clearAllUserData();
 

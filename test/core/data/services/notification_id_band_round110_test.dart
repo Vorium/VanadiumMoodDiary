@@ -12,6 +12,9 @@
 //   - defaultReminderId 1001 (在 2000 之下, 天然安全)
 //
 // 若未来有人把固定 ID 改回低位带, 这个 test 会立刻红。
+//
+// 1.1.0 round 4 (emotion-first refactor): care push (kCarePushBaseId) 随
+// HomeCareEngineDispatcher 整摘, 本 test 固定 ID 列表同步删除该项。
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:chroniccare/core/data/services/assessment_notifier.dart';
@@ -19,7 +22,6 @@ import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/mood_reminder_notifier.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
-import 'package:chroniccare/presentation/pages/home/controllers/home_care_engine_dispatcher.dart';
 
 void main() {
   // 所有 cancel 区间的上界 (> 任何 base + kReminderCancelRange)
@@ -33,7 +35,6 @@ void main() {
         NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
-        HomeCareEngineDispatcher.kCarePushBaseId,
         BadgeSyncService.badgeVirtualId,
       ];
 
@@ -51,7 +52,6 @@ void main() {
         NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
-        HomeCareEngineDispatcher.kCarePushBaseId,
         BadgeSyncService.badgeVirtualId,
       ];
       // dev note: MedicationNotifier.defaultReminderId (1001) 在 2000 之下也
@@ -70,7 +70,6 @@ void main() {
         NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
-        HomeCareEngineDispatcher.kCarePushBaseId,
         BadgeSyncService.badgeVirtualId,
       ];
       for (final id in fixedIds) {
@@ -104,12 +103,9 @@ void main() {
         NotificationService.safetyAlertId,
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
-        HomeCareEngineDispatcher.kCarePushBaseId,
         BadgeSyncService.badgeVirtualId,
-        // care push 用 kCarePushBaseId + strategy.index (0..N), 预留 10 格
-        HomeCareEngineDispatcher.kCarePushBaseId + 9,
       };
-      expect(ids.length, 6, reason: '固定 ID 集合必须全是唯一值');
+      expect(ids.length, 4, reason: '固定 ID 集合必须全是唯一值');
     });
   });
 }

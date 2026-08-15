@@ -9,20 +9,19 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 /// v0.27 round 62 (P0-2 修复): 共享 ConsentDialog 组件
 ///
 /// PIPL §13 单独同意要求处理敏感个人信息时**显式**告知用户 + 取得同意。
-/// 精神心理患者 App 加紧急联系人场景下, 必须确认用户已告知联系人 "App
-/// 会在我失联时给你发短信" 后才能保存。
 ///
 /// v0.27 round 82: 抽象化支持 5 个 [ConsentKind]
 /// 修复前 `show()` 写死 `kind: ConsentKind.emergencyContactSharing` +
 /// `thresholdDays: int` 必传参数, 只能支持加联系人场景。修复后用
 /// `placeholders: Map<String, Object>?` 替代 `thresholdDays`, 内部按 `kind`
 /// 选不同渲染模板:
-/// - [ConsentKind.emergencyContactSharing] → 用 `contactConsent*` 模板
-///   (placeholders 需要 `thresholdDays: int`)
 /// - [ConsentKind.dataExport] → 用新 `dataExportConsent*` 模板
 ///   (placeholders 需要 `purpose` / `dataCategories` / `retention`)
-/// - [ConsentKind.safety] / [ConsentKind.vent] / [ConsentKind.analytics] →
+/// - [ConsentKind.vent] / [ConsentKind.analytics] →
 ///   fallback 模板 (PIPL §14 撤回 toggle 目前不弹 dialog, 留接口给 v1.0)
+///
+/// 1.1.0 round 4 (emotion-first refactor): emergencyContactSharing / safety
+/// 2 分支整摘 (失联通信业务暂停定版, 无 caller)。
 ///
 /// 用法 (dataExport 场景, R82 加):
 /// ```dart
@@ -31,7 +30,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 ///   kind: ConsentKind.dataExport,
 ///   placeholders: const {
 ///     'purpose': '本地备份',
-///     'dataCategories': '用药 / 打卡 / 联系人',
+///     'dataCategories': '用药 / 打卡 / 情绪',
 ///     'retention': '剪贴板 + 用户自行保存',
 ///   },
 /// );
@@ -39,8 +38,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 /// await ref.read(legalConsentStoreProvider).recordDataExportConsent(consent);
 /// ```
 ///
-/// 设计: 复用 showDialog + StatefulBuilder 模式 (跟 contacts_list_widget 的
-/// _showAddContactDialog 一致), 不引入新的 dialog 框架。
+/// 设计: 复用 showDialog + StatefulBuilder 模式, 不引入新的 dialog 框架。
 class ConsentDialog {
   ConsentDialog._();
 
@@ -115,15 +113,6 @@ class ConsentDialog {
     Map<String, Object>? p,
   ) {
     switch (kind) {
-      case ConsentKind.emergencyContactSharing:
-        final thresholdDays = (p?['thresholdDays'] as int?) ?? 2;
-        return _ConsentTemplate(
-          title: l10n.contactConsentTitle,
-          body: Text(l10n.contactConsentBody(thresholdDays)),
-          agreeLabel: l10n.contactConsentAgree,
-          rejectLabel: l10n.contactConsentReject,
-          version: l10n.contactConsentVersion,
-        );
       case ConsentKind.dataExport:
         // R82: 3 个 placeholder (purpose / dataCategories / retention)
         final purpose = (p?['purpose'] as String?) ?? '';
@@ -144,14 +133,13 @@ class ConsentDialog {
           rejectLabel: l10n.contactConsentReject,
           version: l10n.dataExportConsentVersion,
         );
+      case ConsentKind.emergencyContactSharing:
       case ConsentKind.safety:
       case ConsentKind.vent:
       case ConsentKind.analytics:
         // Fallback: §14 撤回 toggle 在 legal_page 走 LegalConsentStore.withdraw,
-        // 目前不弹 ConsentDialog。这里保留 5 kind 全 switch 是为 v1.0
-        // 撤回确认弹窗留接口 (e.g. "关掉失联通知后, CareEngine 不再触发 SMS,
-        // 确认吗?"), 现阶段 fallback 用 contactConsent* 通用文案 +
-        // consentWithdraw*Body 撤回后果文案 (R100 P1#9 走 ARB)。
+        // 目前不弹 ConsentDialog。1.1.0 round 4 后仅 vent / analytics
+        // 可能走此路径 (safety / emergencyContactSharing 无 caller)。
         return _ConsentTemplate(
           title: l10n.contactConsentTitle,
           body: Text(_fallbackBodyFor(kind, l10n)),
@@ -167,8 +155,6 @@ class ConsentDialog {
   /// R100 (P1#9): 3 段法律文案走 ARB (consentWithdraw*Body)
   static String _fallbackBodyFor(ConsentKind kind, AppLocalizations l10n) {
     switch (kind) {
-      case ConsentKind.safety:
-        return l10n.consentWithdrawSafetyBody;
       case ConsentKind.vent:
         return l10n.consentWithdrawVentBody;
       case ConsentKind.analytics:
@@ -179,7 +165,7 @@ class ConsentDialog {
   }
 }
 
-/// R82: 内部模板小类, 让 _resolveTemplate 5 kind 全 switch 时不重复
+/// R82: 内部模板小类, 让 _resolveTemplate 全 switch 时不重复
 /// build AlertDialog 代码。
 class _ConsentTemplate {
   final String title;

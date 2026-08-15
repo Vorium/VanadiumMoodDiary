@@ -1,17 +1,18 @@
-// v0.30 round 93 (test): settings_page 3 section 隐藏验证
+// v0.30 round 93 (test): settings_page section 隐藏验证
 //
 // R93 阶段 2: "所有需要真接的内容先隐藏" 策略
-// 3 section 走 FeatureFlag gate, 业务暂停期间完全 hidden:
+// section 走 FeatureFlag gate, 业务暂停期间完全 hidden:
 //
-// 1. 联系人 section → FeatureFlags.emergencyContactEnabled
-// 2. 5 厂商 OEM 引导 → FeatureFlags.fiveVendorPushEnabled
-// 3. 邮件预览 → FeatureFlags.emailServiceEnabled (R95 task 10 整 widget 删, 永远 hidden)
+// 1. 5 厂商 OEM 引导 → FeatureFlags.fiveVendorPushEnabled
+// 2. 邮件预览 → FeatureFlags.emailServiceEnabled (R95 task 10 整 widget 删, 永远 hidden)
 //
 // v1.0.0+147: 删商业卡 case (永久免费定版, 原 case 2 删除)。
 //
-// 4 case:
-//   - case 1: 3 flag 默认 false → 3 section 全 hidden (verify by find)
-//   - case 2: emergencyContactEnabled=true → ContactsListWidget 渲染
+// 1.1.0 round 4 (emotion-first refactor): 联系人 section 整摘
+// (ProfileGroup 不再渲染 ContactsListWidget, 原 case 2 删除)。
+//
+// 3 case:
+//   - case 1: 2 flag 默认 false → section 全 hidden (verify by find)
 //   - case 3: emailServiceEnabled=true → 邮件预览 仍 hidden (R95 task 10 删 widget 后)
 //   - case 4: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染
 //
@@ -19,7 +20,6 @@
 // tearDown resetForTest 恢复 prod 默认。
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/contact/contacts_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
@@ -45,7 +45,6 @@ void main() {
   Widget buildSettingsPage() {
     return ProviderScope(
       overrides: [
-        contactsProvider.overrideWith((ref) => Stream.value(const [])),
         medicationsProvider.overrideWith((ref) => Stream.value(const [])),
         sharedPreferencesProvider.overrideWithValue(mockSp),
       ],
@@ -58,37 +57,18 @@ void main() {
     );
   }
 
-  testWidgets('R93 case 1: 3 flag 默认 false → 3 section 全 hidden',
+  testWidgets('R93 case 1: 2 flag 默认 false → section 全 hidden',
       (tester) async {
     // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, NotificationStatusCard
     // 挪到 RemindersGroup 末尾, 维持 lazy load 体验, pumpAndSettle 仍可用。
     await tester.pumpWidget(buildSettingsPage());
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
-    // 1. 联系人 section hidden (ContactsListWidget 不应渲染)
-    expect(find.byType(ContactsListWidget), findsNothing);
-
-    // 2. 5 厂商 OEM 引导 hidden (ExpansionTile 标题 "国产手机没收到通知？" 不应渲染)
+    // 1. 5 厂商 OEM 引导 hidden (ExpansionTile 标题 "国产手机没收到通知？" 不应渲染)
     expect(find.text('国产手机没收到通知？'), findsNothing);
 
-    // 3. 邮件预览 hidden (settingsEmailPreview = "预览停药通知邮件" 不应渲染)
+    // 2. 邮件预览 hidden (settingsEmailPreview = "预览停药通知邮件" 不应渲染)
     expect(find.text('预览停药通知邮件'), findsNothing);
-  });
-
-  testWidgets(
-      'R93 case 2: emergencyContactEnabled=true → ContactsListWidget 渲染',
-      (tester) async {
-    // emergencyContactEnabled 没有 setEmergencyContactEnabledForTest setter (R66 兼容)
-    // 用 enableForTest 翻全 true (含 emergencyContactEnabled), 验证联系人 section
-    // 渲染。tearDown resetForTest 恢复 prod 默认。
-    FeatureFlags.enableForTest();
-    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
-    await tester.pumpWidget(buildSettingsPage());
-    await tester.pumpAndSettle(const Duration(milliseconds: 100));
-
-    // 联系人 section 渲染: 滚动到底部找 ContactsListWidget
-    await tester.scrollUntilVisible(find.byType(ContactsListWidget), 100);
-    expect(find.byType(ContactsListWidget), findsOneWidget);
   });
 
   testWidgets(
