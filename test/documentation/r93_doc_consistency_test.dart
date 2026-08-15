@@ -118,10 +118,10 @@ void main() {
         reason: 'DEPLOYMENT.md 阶段 6 缺 R93 阶段 2 标识',
       );
       expect(
-        deployment.contains('6 项 FeatureFlag 全部 hidden'),
+        deployment.contains('4 项 FeatureFlag 当前状态'),
         isTrue,
         reason:
-            'DEPLOYMENT.md 阶段 6 缺 6 项 FeatureFlag checklist 标题 (v1.0.0+147 删 IAP)',
+            'DEPLOYMENT.md 阶段 6 缺 4 项 FeatureFlag checklist 标题 (v1.1.0 删外联 3 flag)',
       );
     });
   });
