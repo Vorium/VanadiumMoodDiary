@@ -32,7 +32,7 @@
 
 ### A1. 整文件删除（~24 个 lib 文件）
 
-**data/services**：`sms_service.dart`(341L) / `email_service.dart`(177L) / `safety_watch_service.dart`(383L) / `safety_alert_builder.dart`(151L) / `safety_alert_sender_impl.dart`(105L) / `safety_config_service.dart`(132L) / `reminder_scheduler.dart`(232L, 失联 SMS 轮询版——与 `reminder_dispatcher.dart` 药物提醒版无关，需在实现时逐行确认无药物提醒逻辑混入)
+**data/services**：`sms_service.dart`(341L) / `email_service.dart`(177L) / `safety_watch_service.dart`(383L) / `safety_alert_builder.dart`(151L) / `safety_alert_sender_impl.dart`(105L) / `safety_config_service.dart`(132L) / `reminder_scheduler.dart`(232L, **已证实** = `ReminderService` 类本体，文件头自述"失联通知服务（应用层）"，依赖 contactRepo + SmsService + lost_contact_sms，无药物提醒逻辑混入——药物提醒在 `reminder_dispatcher.dart`(233L, 保留))
 
 **domain/logic**：`care_engine.dart` / `care_strategies.dart` / `care_copy.dart` / `lost_contact_sms.dart` / `safety_alert_policy.dart` / `safety_detector.dart` / `email_template.dart`
 
@@ -46,7 +46,7 @@
 
 - `database/tables/contact/contacts.dart`、`database/daos/contact_dao.dart`、`repositories/contact/contact_repository_impl.dart`、`database/mappers/contact/contact_mapper.dart`、`domain/entities/contact_entity.dart`、`domain/repositories/contact_repository.dart`
 - `app_database.dart`：删 `Contacts` 表注册、contactDao、contact import
-- `phone_validator.dart` 移到 `core/shared/`（删 contact 后仍被 `l10n/region_display_name.dart` 热线区号用）
+- `phone_validator.dart` 已位于 `core/shared/`，无需移动；删 contact 后仍被 `l10n/region_display_name.dart` 热线区号用，保留
 
 ### A3. schema 22→23 migration（一次完成）
 
@@ -82,8 +82,9 @@ onUpgrade: m.deleteTable('contacts');
 - **settings**：`widgets/profile_group.dart` 删联系人 section（L84-98）；`reminders_hub_page.dart` 删失联卡 + `_SafetyReminderSheet`（L355-431）；`reminders_hub_provider.dart` 删 safety 配置
 - **home**：`home_page_state.dart` 删 `_runSafetyCheck`、safety imports、`HomeLifecycleState` 的 2 个 safety 状态；`home_care_engine_dispatcher.dart` **整删**；`home_deep_link_handler.dart` **保留**（打卡 autofire deep link 仍需），仅删 `scheduleSafetyRerun` 枚举值 + `reason=safety` 分支；`check_in_notifier.dart` 删 TriggerReminderUseCase 调试入口
 - **通知**：`notification_service.dart` 删 `showSafetyAlert`（L348-402）、safety 频道 3 const、id band 5000000；`notification_payload.dart` 删 `safetyAlert` 枚举（4 处）；`notification_delegate.dart` 注释同步；`domain/logic/notification_deep_link_resolver.dart` 删 safety-alert 映射；`app_route_check_in.dart` 删 reason=safety 重定向；`badge_sync_service.dart` id band 注释同步
-- **main.dart**：删 sms/email import、validateForRelease 块、2 个 provider override；`service_providers.dart` 删 5 个 safety/reminder provider（safetyAlertSender / dispatchSafetyAlertUseCase / safetyWatchService / safetyConfigService + reminderService 的 sms 参数）
-- **user_profile_repository / reminder_checker**：删 safety 接口残留（具体以 analyze 报错为准）
+- **main.dart**：删 sms/email import、validateForRelease 块、2 个 provider override；`service_providers.dart` 删 **6 个 provider**：safetyAlertSender / dispatchSafetyAlertUseCase / safetyWatchService / safetyConfigService + **reminderServiceProvider / reminderCheckerProvider（ReminderService 本体删除, 其唯一抽象 `ReminderChecker` 与唯一消费者 `TriggerReminderUseCase` 一并删除, 删除链闭环）**
+- **domain/repositories/reminder_checker.dart 整删**（实现者 ReminderService + 消费者 TriggerReminderUseCase 双亡, 抽象无存在意义）
+- **user_profile_repository**：checkInCycleHours 字段保留（domain/logic/reminder_scheduler.dart 药物提醒仍在用），仅删 safety 相关接口残留（具体以 analyze 报错为准）
 
 ### A7. FeatureFlags 7→4
 
@@ -103,7 +104,8 @@ onUpgrade: m.deleteTable('contacts');
 | 设置 | `/settings` | settings |
 
 - 宽屏 NavigationRail / 窄屏 NavigationBar 同步；`_currentIndex` 前缀匹配更新（`/vent/*` 归树洞 tab）
-- `/medication` 从 tab 移除，路由保留（首页快捷操作 + 趋势页可达）
+- **架构前置条件（已证实）**：当前 ShellRoute 只包 `'/'`、`'/settings'` 和 medication 4 路由（R110 B2-04）。`/vent` 3 路由与 `/trend` 都在顶层 → 必须按 R110 `shellRoutes()` 模式移入 ShellRoute（app_route_main 加 `...AppRouteVent.shellRoutes()` + trend），否则点 tab 进入后底栏/侧栏消失、tab 高亮失效
+- `/medication` 从 tab 移除，路由保留在 shell 内（首页快捷操作 + 趋势页可达）
 - `app_routes.dart` 注释同步；`navCheckIn`/`navMedication` ARB key 替换为 `navMood`/`navVent`/`navTrend`
 
 ### B2. 首页重构（`home_page_state.dart` build）
@@ -115,7 +117,7 @@ onUpgrade: m.deleteTable('contacts');
 3. **VentHeroCard（新）**：最新树洞预览（1 行截断）+ "写心事"按钮 → `/vent/compose`
 4. **打卡**：CheckInButton 保留但从 64pt 巨型 pill 改为次级尺寸（新 `compact: true` 变体，或复用 PrimaryButton pill）
 5. 今日指标 TodaySummaryCard（保留）
-6. 快捷操作 PrimaryActionRow：用药 / 量表 / **情绪回顾** / 热线（FAB 工具栏 4 工具保留，文案"心情测试"→"情绪日记"）
+6. 快捷操作 PrimaryActionRow：用药 / 量表 / **情绪回顾** / 日常追踪（FAB 工具栏 4 工具保留——R91 起已是 日常追踪/心情树洞/紧急热线/回到顶端, 无"心情测试"文案, 仅 `homeFabVent` 值"心情树洞"→"树洞"微调）
 7. EncouragementText + HomeFooter（保留）
 
 - QuickMoodCarousel 与 SecondaryActionRow 从首页移除（功能并入 MoodHeroCard / 快捷操作）
@@ -134,6 +136,7 @@ onUpgrade: m.deleteTable('contacts');
 - **compose**：`vent_compose_page.dart` 加标签 chips 多选 section（预置 chips + 自定义标签输入，复用 mood_tags.dart 交互模式）
 - **列表**：`vent_list_page.dart` 顶部筛选 chips（全部 + 已用标签）；**detail**：显示标签
 - **隐私边界不变**：标签仅本地检索，不进趋势/分析/通知（守门员 `check_cross_feature.py` 已有 vent 边界规则）
+- **PIPL 说明**：tagsJson 明文存储沿 mood tagsJson 先例（PIPL §28 敏感度低于正文；正文 contentTextEnc 仍加密，标签为分类元数据）
 - mapper round-trip + 筛选测试
 
 ### C2. 状态短语
@@ -217,7 +220,8 @@ r4 是最大 commit，若 analyze 报错面过大可拆 r4a（setup/settings 摘
 
 | 风险 | 缓解 |
 |---|---|
-| `reminder_scheduler.dart`(data) 混有药物提醒逻辑 | 实现时逐行核对调用方；domain 版 reminder_scheduler 保留兜底 |
+| ReminderChecker 删除链断裂 | 已证实：唯一实现 ReminderService（reminder_scheduler.dart）与唯一消费者 TriggerReminderUseCase 同批删除, abstract 一并删 |
+| shell 路由迁移回归 | /vent 3 路由 + /trend 移入 ShellRoute 后, 导航测试覆盖 tab 高亮 + 底栏常驻 (Task 11) |
 | l10n 删除波及 3 个生成文件 + gen-l10n 版本差异 | 只删 key、不手改生成文件，重跑 gen-l10n |
 | 老用户升级丢联系人数据（不可逆） | 设计上明确接受（D1 决策）；migration 注释写明 |
 | test 联动面大（~50 文件） | r4/r6 用 explore agent 先列全依赖再删 |

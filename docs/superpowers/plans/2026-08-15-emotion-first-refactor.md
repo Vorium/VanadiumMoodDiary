@@ -4,7 +4,7 @@
 
 **Goal:** 把慢性病管家从"吃药打卡优先"重构为"树洞 + 情绪日记优先"，彻底删除一切外联推送（联系人/SMS/邮件/失联检测/Care Engine），新增树洞标签、情绪状态短语、情绪回顾页三个功能。
 
-**Architecture:** 4 层架构不变（presentation → domain ← data + core/ umbrella）。一次性 schema 22→23（drop contacts + 加 2 列）、export v5→v6（删 contacts 段 + 补新字段 + v5 文件兼容）、导航 4 tab、首页双主卡。6 个 round 系列 / 17 个 task，每 task 结束独立可验证。
+**Architecture:** 4 层架构不变（presentation → domain ← data + core/ umbrella）。一次性 schema 22→23（drop contacts + 加 2 列）、export v5→v6（删 contacts 段 + 补新字段 + v5 文件兼容）、/vent 与 /trend 移入 ShellRoute 后导航改 4 tab、首页双主卡。6 个 round 系列 / 16 个 task，每 task 结束独立可验证。
 
 **Tech Stack:** Flutter 3.41.9 / Dart 3.12.2 / Riverpod 3.3.2 / Drift 2.20.3 (SQLCipher) / go_router 14.6。
 
@@ -14,7 +14,8 @@
 
 - 4 层纯度：domain 0 Flutter / 0 Drift；data 层禁 import `presentation/`、`l10n/`、`core/routing/`；验证 `dart scripts/check_all.dart`（注：用 `dart` 直接跑，不用 `dart run`）
 - 每个 task 结束必跑 `flutter analyze`（0 error / 0 warning）且相关测试全绿，再 commit
-- commit 风格：`1.1.0 round <N>: <标题>`（N = 本计划 round 编号，不是 task 编号）
+- commit 风格：`1.1.0 round <N><后缀>: <标题>`——同一 round 内多个 commit 用字母后缀（`1`/`1b`/`1c`、`5`/`5b`…），沿用仓库 `round 56b-e` 惯例；N = 本计划 round 编号
+- 守门员全程护航：删除代码的 task 同步改对应守门员脚本（Task 8→check_legal_consent、Task 9→check_sms_release_ready、Task 10→check_pii_in_title），不留跨 task 红灯
 - drift 表改动后必跑 `dart run build_runner build --delete-conflicting-outputs`；ARB 改动后必跑 `flutter gen-l10n`（生成文件 app_database.g.dart / app_localizations*.dart 不手改）
 - widget 层硬编码中文必须走 ARB key（守门员 check_strings_hardcoded 规则 2）；domain 层常量中文允许（如 care_copy 先例）
 - 隐私边界：树洞数据（含新标签）不进趋势/分析/通知
@@ -219,7 +220,7 @@ Expected: PASS（3 tests）
 
 ```bash
 git add lib/domain/logic/status_phrase_library.dart test/domain/logic/status_phrase_library_round1_test.dart
-git commit -m "1.1.0 round 1: 情绪状态短语库 status_phrase_library + 测试"
+git commit -m "1.1.0 round 1b: 情绪状态短语库 status_phrase_library + 测试"
 ```
 
 ---
@@ -542,7 +543,7 @@ Expected: PASS（12 tests）
 - [ ] **Step 5: 验证 + 提交**
 
 ```bash
-flutter analyze && git add lib/domain/logic/mood_review_aggregator.dart test/domain/logic/mood_review_aggregator_round1_test.dart && git commit -m "1.1.0 round 1: 情绪回顾聚合器 mood_review_aggregator + 12 case 测试"
+flutter analyze && git add lib/domain/logic/mood_review_aggregator.dart test/domain/logic/mood_review_aggregator_round1_test.dart && git commit -m "1.1.0 round 1c: 情绪回顾聚合器 mood_review_aggregator + 12 case 测试"
 ```
 
 ---
@@ -767,45 +768,52 @@ Expected: PASS。`flutter analyze` 若有老调用方报错（entity 构造调�
 
 ```bash
 git add lib/domain/entities/vent_entry_entity.dart lib/domain/entities/mood_entry_entity.dart lib/core/data/database/mappers/vent/vent_mapper.dart lib/core/data/database/mappers/mood/mood_entry_mapper.dart test/data/vent_tag_roundtrip_round2_test.dart test/data/mood_status_phrase_roundtrip_round2_test.dart
-git commit -m "1.1.0 round 2: entity + mapper 接 vent.tagsJson / mood.statusPhrase + round-trip 测试"
+git commit -m "1.1.0 round 2b: entity + mapper 接 vent.tagsJson / mood.statusPhrase + round-trip 测试"
 ```
 
 ---
 
-## Round 3 — export v5→v6（Tasks 6-7）
+## Round 3 — export v5→v6（Task 6, 导出+导入合并, 避免中间态红灯）
 
-### Task 6: 导出侧 — 删 contacts 段 + 补新字段
+### Task 6: export v6 全量 — 删 contacts 段 + 补新字段 + v5 文件兼容
 
 **Files:**
 - Modify: `lib/core/data/services/export/export_schema_service.dart:51`（currentVersion 5 → 6 + 注释）
 - Modify: `lib/core/data/services/export/export_orchestrator.dart`（L108-111 删 contacts 读取；L183-198 删 `'contacts':` 段；L241-282 moodEntries 加 statusPhrase；L283-298 ventEntries 加 tagsJson；L391-421 ExportCounts 删 contactCount；L440 删 importSummaryContact 行）
-- Test: `test/data/data_export_v6_round3_test.dart`
+- Modify: `lib/core/data/services/export/export_import_pipeline.dart`（L45/53 contactCount 删；L132 删 `db.delete(db.contacts)`；L264-321 删 contacts 导入循环；mood 导入段加 statusPhrase；vent 导入段加 tagsJson）
+- Test: 新 `test/data/data_export_v6_round3_test.dart`、`test/data/data_export_v6_import_round3_test.dart`；改 `test/data/data_export_v5_round8_test.dart` / `test/data/export_import_pipeline_round99_test.dart` 中 contacts 相关断言
 
 **Interfaces:**
-- Produces: v6 JSON（无 `contacts` key；mood 有 `statusPhrase`、vent 有 `tagsJson`）。Task 7（导入）消费。
+- Consumes: Task 5 的 `tagsJson`/`statusPhrase` entity 字段。
+- Produces: v6 JSON（无 `contacts` key；mood 有 `statusPhrase`、vent 有 `tagsJson`）；导入器接受 v1-v6 文件（v5 含 contacts key 时忽略）。
 
 - [ ] **Step 1: 写失败测试**
 
-参考 `test/data/data_export_v5_round8_test.dart` 的 setup 模式（in-memory db + 填充数据 + 调 `DataExportService.exportToJson` 或 orchestrator）。新测试：
+参考 `test/data/data_export_v5_round8_test.dart`（导出侧）与 `export_import_pipeline_round99_test.dart`（导入侧）的 setup 模式（in-memory db + 填充数据）。新测试：
 
 ```dart
-// test/data/data_export_v6_round3_test.dart
-// 核心断言:
+// test/data/data_export_v6_round3_test.dart（导出侧）
 // 1. json['version'] == 6
 // 2. json.containsKey('contacts') == false
 // 3. mood entry 带 statusPhrase '被治愈了' → json['moodEntries'][0]['statusPhrase'] == '被治愈了'
 // 4. vent entry 带 tagsJson '["家庭"]' → json['ventEntries'][0]['tagsJson'] == '["家庭"]'
 // 5. 导出的 summary 字符串不含 '联系人'（contactCount 已删）
+
+// test/data/data_export_v6_import_round3_test.dart（导入侧）
+// 1. 构造 v6 JSON (mood statusPhrase / vent tagsJson) → import → 查 DB 还原
+// 2. v5 兼容: 构造含 'contacts' key 的 v5 风格 JSON (version: 5)
+//    → import 成功 (contacts 忽略, 其他表照常), importSummary 不含 '联系人'
+// 3. 老 v4 风格 mood 无 statusPhrase → 导入后 null
 ```
 
 （测试内填充 mood/vent 用 Task 5 的 entity + companion 方式。）
 
 - [ ] **Step 2: 跑测试确认失败**
 
-Run: `flutter test test/data/data_export_v6_round3_test.dart`
-Expected: FAIL（version 断言 6 != 5 / contacts key 存在）
+Run: `flutter test test/data/data_export_v6_round3_test.dart test/data/data_export_v6_import_round3_test.dart`
+Expected: FAIL（version 断言 6 != 5 / contacts key 存在 / 导入 contacts 断言失败）
 
-- [ ] **Step 3: 改 orchestrator**
+- [ ] **Step 3: 改 orchestrator（导出侧）**
 
 1. 删 `final contacts = await _db.contactDao.watchActive()...`（L108-111）
 2. 删 `'contacts': [ ... ],` 整段（L183-198）
@@ -832,46 +840,7 @@ Expected: FAIL（version 断言 6 != 5 / contacts key 存在）
   static const int currentVersion = 6;
 ```
 
-- [ ] **Step 5: 跑测试（老 v5 测试会 fail, 记下来 Task 7 一起改）**
-
-Run: `flutter test test/data/data_export_v6_round3_test.dart`
-Expected: PASS。同时 `flutter test test/data/` 里 v5 系列 fail 属预期（contacts 断言失效），Task 7 改。
-
-- [ ] **Step 6: 提交**
-
-```bash
-git add lib/core/data/services/export/export_schema_service.dart lib/core/data/services/export/export_orchestrator.dart test/data/data_export_v6_round3_test.dart
-git commit -m "1.1.0 round 3: export v6 导出侧 — 删 contacts 段 + 补 statusPhrase/tagsJson + 测试"
-```
-
----
-
-### Task 7: 导入侧 — v6 解析 + v5 文件兼容
-
-**Files:**
-- Modify: `lib/core/data/services/export/export_import_pipeline.dart`（L45/53 contactCount 删；L132 删 `db.delete(db.contacts)`；L264-321 删 contacts 导入循环；mood 导入段加 statusPhrase；vent 导入段加 tagsJson）
-- Test: 新 `test/data/data_export_v6_import_round3_test.dart`；改 `test/data/data_export_v5_round8_test.dart` / `test/data/export_import_pipeline_round99_test.dart` 中 contacts 相关断言
-
-**Interfaces:**
-- Consumes: Task 6 的 v6 JSON 格式。
-
-- [ ] **Step 1: 写失败测试**
-
-```dart
-// test/data/data_export_v6_import_round3_test.dart
-// 参考 export_import_pipeline_round99_test 的 import 调用模式:
-// 1. 构造 v6 JSON (mood statusPhrase / vent tagsJson) → import → 查 DB 还原
-// 2. v5 兼容: 构造含 'contacts' key 的 v5 风格 JSON (version: 5)
-//    → import 成功 (contacts 忽略, 其他表照常), importSummary 不含 '联系人'
-// 3. 老 v4 风格 mood 无 statusPhrase → 导入后 null
-```
-
-- [ ] **Step 2: 跑测试确认失败**
-
-Run: `flutter test test/data/data_export_v6_import_round3_test.dart`
-Expected: FAIL（编译错：db.contacts 已删 → 但本 task 前 db.contacts 还在。先写测试时 contacts 代码还在, 断言"导入后联系人表为空"会失败）
-
-- [ ] **Step 3: 改 import pipeline**
+- [ ] **Step 5: 改 import pipeline（导入侧）**
 
 1. 删 contacts 导入循环（L264-321）与 `db.delete(db.contacts)`（L132）、`contactCount` 字段/赋值/摘要
 2. mood 导入段（找 moodEntries 反序列化循环, 在 recordingMode 附近）加：
@@ -899,22 +868,22 @@ Expected: FAIL（编译错：db.contacts 已删 → 但本 task 前 db.contacts 
         ),
 ```
 
-4. v5 文件兼容：`data['contacts']` 段不再被引用即自动忽略；版本校验 `validateVersion` 已接受 1..6。
+4. v5 文件兼容：`data['contacts']` 段不再被引用即自动忽略；版本校验 `validateVersion` 已接受 1..6。注意本 task 时 `db.contacts` 表尚在（Task 9 才删表），删 `db.delete(db.contacts)` 后导入不清 contacts 是刻意行为。
 
-- [ ] **Step 4: 改老测试**
+- [ ] **Step 6: 改老测试**
 
-`data_export_v5_round8_test.dart` / `export_import_pipeline_round99_test.dart`：删 contacts 相关断言与填充；v5 文件 fixture 若含 contacts key 可保留（验证忽略）。逐个跑 `flutter test` 直到 data/ 全绿。
+`data_export_v5_round8_test.dart` / `export_import_pipeline_round99_test.dart`：删 contacts 相关断言与填充；v5 文件 fixture 若含 contacts key 可保留（验证忽略）。
 
-- [ ] **Step 5: 跑 data 层全部测试 + analyze**
+- [ ] **Step 7: 跑 data 层全部测试 + analyze**
 
 Run: `flutter test test/data/ && flutter analyze`
 Expected: PASS（data 层全绿）+ 0 error
 
-- [ ] **Step 6: 提交**
+- [ ] **Step 8: 提交**
 
 ```bash
-git add lib/core/data/services/export/export_import_pipeline.dart test/data/
-git commit -m "1.1.0 round 3: export v6 导入侧 — v5 文件兼容 + statusPhrase/tagsJson 还原 + 测试"
+git add lib/core/data/services/export/ test/data/
+git commit -m "1.1.0 round 3: export v6 — 删 contacts 段 + statusPhrase/tagsJson + v5 文件兼容 + 测试"
 ```
 
 ---
@@ -945,21 +914,23 @@ enum HomeLifecycleState {
 
 home_page_state.dart 里所有 `_lifecycle = _lifecycle.onSafetyCheckCompleted()` 调用删；`_lifecycle == HomeLifecycleState.bothHandled` 判断改成 2 态对应。
 
-**测试文件（删/改）**：整删 `test/presentation/widgets/contacts_list_widget_round45_test.dart`、`test/presentation/pages/contact/contact_add_3_step_round95_test.dart`、`test/presentation/reminders_hub_safety_gate_round8_test.dart`、`test/presentation/home_emil_round81_test.dart` 中 care/safety 相关 case（或整删后 Task 17 重建关键 case）。改：`test/presentation/pages/settings/settings_page_r93_hide_test.dart`（删联系人 section case）、`test/presentation/home_lifecycle_round67_test.dart`（改 2 态）、`test/presentation/pages/home/home_fab_toolbar_r93_hide_test.dart`（热线仍保留, 只删 safety 相关）、`test/presentation/pages/home/controllers_round108_test.dart`（删 dispatcher case）、`test/presentation/pages/setup/*`（删 contact 相关 case）。
+**测试文件（删/改）**：整删 `test/presentation/widgets/contacts_list_widget_round45_test.dart`、`test/presentation/pages/contact/contact_add_3_step_round95_test.dart`、`test/presentation/reminders_hub_safety_gate_round8_test.dart`。改：`test/presentation/pages/settings/settings_page_r93_hide_test.dart`（删联系人 section case）、`test/presentation/home_lifecycle_round67_test.dart`（改 2 态）、`test/presentation/home_emil_round81_test.dart`（删 care/safety case）、`test/presentation/pages/home/home_fab_toolbar_r93_hide_test.dart`（热线仍保留, 只删 safety 相关）、`test/presentation/pages/home/controllers_round108_test.dart`（删 dispatcher case）、`test/presentation/pages/setup/*`（删 contact 相关 case）。
+
+**守门员同步（全程护航约束）**：`scripts/check_legal_consent.py` 删扫描 `setup_contact_consent_flow` 与 §13 紧急联系人单独同意的检测逻辑（保留 dataExport/vent 检测），本 task 结束跑 `python scripts/check_legal_consent.py` 必须绿。
 
 - [ ] **Step 1: 删/改测试文件**
 - [ ] **Step 2: 删 lib 文件（git rm）**
 - [ ] **Step 3: 逐文件改 Modify 清单**（每改一个跑 `flutter analyze` 看残留引用, 以 analyze 0 error 为驱动）
-- [ ] **Step 4: 跑 presentation 测试**
+- [ ] **Step 4: 同步 check_legal_consent.py + 跑 presentation 测试**
 
-Run: `flutter test test/presentation/`
-Expected: PASS
+Run: `python scripts/check_legal_consent.py && flutter test test/presentation/`
+Expected: 守门员绿 + PASS
 
 - [ ] **Step 5: 提交**
 
 ```bash
-git add -A lib/presentation test/presentation lib/core/data/services/setup_committer.dart lib/core/shared/consent_gate.dart lib/domain/logic/setup_welcome_form_validator.dart
-git commit -m "1.1.0 round 4: presentation 摘除外联 — contact 页/setup 联系人表单/settings 失联卡/home safety check 全删"
+git add -A lib/presentation test/presentation lib/core/data/services/setup_committer.dart lib/core/shared/consent_gate.dart lib/domain/logic/setup_welcome_form_validator.dart scripts/check_legal_consent.py
+git commit -m "1.1.0 round 4: presentation 摘除外联 — contact 页/setup 联系人表单/settings 失联卡/home safety check 全删 + legal_consent 守门员同步"
 ```
 
 ---
@@ -968,14 +939,15 @@ git commit -m "1.1.0 round 4: presentation 摘除外联 — contact 页/setup �
 
 **Files:**
 - Delete（`git rm`）:
-  - `lib/core/data/services/sms_service.dart`、`email_service.dart`、`safety_watch_service.dart`、`safety_alert_builder.dart`、`safety_alert_sender_impl.dart`、`safety_config_service.dart`、`reminder_scheduler.dart`
+  - `lib/core/data/services/sms_service.dart`、`email_service.dart`、`safety_watch_service.dart`、`safety_alert_builder.dart`、`safety_alert_sender_impl.dart`、`safety_config_service.dart`、`reminder_scheduler.dart`（**已证实 = `ReminderService` 失联通知服务本体**, 文件头自述"失联通知服务（应用层）", 无药物提醒逻辑）
   - `lib/domain/logic/care_engine.dart`、`care_strategies.dart`、`care_copy.dart`、`lost_contact_sms.dart`、`safety_alert_policy.dart`、`safety_detector.dart`、`email_template.dart`
   - `lib/domain/usecases/check_safety.dart`、`dispatch_safety_alert.dart`、`fire_care_strategy.dart`
-  - `lib/domain/repositories/safety_alert_sender.dart`
+  - `lib/domain/repositories/safety_alert_sender.dart`、`lib/domain/repositories/reminder_checker.dart`（**删除链闭环**：实现者 ReminderService 本 task 删, 消费者 TriggerReminderUseCase 本 task 删, 抽象无存在意义）
   - `lib/core/data/database/tables/contact/contacts.dart`、`lib/core/data/database/daos/contact_dao.dart`
   - `lib/core/data/repositories/contact/contact_repository_impl.dart`、`lib/core/data/database/mappers/contact/contact_mapper.dart`
   - `lib/domain/entities/contact_entity.dart`、`lib/domain/repositories/contact_repository.dart`
-- Modify: `lib/core/data/database/app_database.dart`（删 Contacts/contactDao/imports；migration `if (from < 23)` 块**首行**加 `await m.deleteTable('contacts');`）、`lib/presentation/providers/service_providers.dart`（删 5 个 provider + reminderService 的 sms/contact 参数）、`lib/presentation/providers/core_providers.dart`（删 contactRepositoryProvider / smsServiceProvider / emailServiceProvider）、`lib/main.dart`（删 sms/email imports + validateForRelease 块 + 2 个 override）、`lib/core/data/feature_flags.dart`（删 3 flag + setter + 注释）、`lib/core/data/services/consent_preference_store.dart`（删 contactId 段 + safety 偏好）、`lib/domain/entities/consent_artifact.dart`（ConsentKind 删 2 值）、`lib/domain/usecases/check_in_usecases.dart`（删 TriggerReminderUseCase）、`lib/core/data/services/reminder_dispatcher.dart`（若 import reminder_scheduler 或 safety, 修正）
+- Modify: `lib/core/data/database/app_database.dart`（删 Contacts/contactDao/imports；migration `if (from < 23)` 块**首行**加 `await m.deleteTable('contacts');`）、`lib/presentation/providers/service_providers.dart`（删 **6 个 provider**：safetyAlertSenderProvider / dispatchSafetyAlertUseCaseProvider / safetyWatchServiceProvider / safetyConfigServiceProvider / **reminderServiceProvider / reminderCheckerProvider**, 连同 ReminderService 构造的 contactRepo/smsService 参数）、`lib/presentation/providers/core_providers.dart`（删 contactRepositoryProvider / smsServiceProvider / smsProviderNameProvider / emailServiceProvider）、`lib/main.dart`（删 sms/email imports + validateForRelease 块 + 2 个 override）、`lib/core/data/feature_flags.dart`（删 3 flag + setter + 注释）、`lib/core/data/services/consent_preference_store.dart`（删 contactId 段 + safety 偏好）、`lib/domain/entities/consent_artifact.dart`（ConsentKind 删 2 值）、`lib/domain/usecases/check_in_usecases.dart`（删 TriggerReminderUseCase）、`lib/core/data/services/reminder_dispatcher.dart`（若 import reminder_scheduler 或 safety, 修正）
+- Delete: `scripts/check_sms_release_ready.py`（只扫 sms_service.dart, 同步删, 守门员 22→21）
 
 **app_database.dart migration 改动：**
 
@@ -988,7 +960,7 @@ git commit -m "1.1.0 round 4: presentation 摘除外联 — contact 页/setup �
           }
 ```
 
-**测试文件**：整删所有 safety/sms/email/contact/care 命名的测试（Task 8 已删部分 presentation 侧, 本 task 删 data/domain 侧：`test/data/sms_service_round38_test.dart`、`test/data/email_service_round67_test.dart`、`test/data/email_service_round9_test.dart`、`test/data/safety_watch_service_round12_test.dart`、`test/data/contact_consent_persist_round63_test.dart`、`test/data/safety_test_helpers.dart`、`test/core/data/services/safety_config_service_round92_test.dart`、`test/core/data/services/safety_detector_round64_test.dart`、`test/core/data/services/safety_alert_builder_round65_test.dart`、`test/core/data/services/sms_service_round14_test.dart`、`test/core/data/services/aliyun_sms_provider_round57_test.dart`、`test/domain/care_engine_round3_test.dart`、`test/domain/email_template_round19_test.dart`、`test/domain/lost_contact_sms_round82_test.dart`、`test/domain/care_engine_copy_round18_test.dart`、`test/domain/contact_entity_round12_test.dart`、`test/domain/contact_entity_round18_test.dart`、`test/domain/usecases/check_safety_round65_test.dart`、`test/domain/usecases/fire_care_strategy_round65_test.dart`、`test/domain/logic/care_strategies_round43_test.dart`、`test/domain/logic/care_strategies_perf_round48_test.dart`、`test/core/shared/care_copy_round18_test.dart` 等——以 `git ls-files | grep -E "test/.*(safety|sms|email|contact|care|lost_contact)"` 为准全删）。改：`test/core/data/feature_flags_round93_test.dart`、`test/data/feature_flags_round66_test.dart`、`test/data/feature_flags_round67_test.dart`（删 3 flag case）、`test/data/sort_assumption_round19b_test.dart`、`test/integration/end_to_end_flows_round95_test.dart`（删 contact 步骤）、`test/data/legal_consent_enforcement_round67_test.dart`。
+**测试文件**：整删所有 safety/sms/email/contact/care 命名的测试（Task 8 已删部分 presentation 侧, 本 task 删 data/domain 侧：`test/data/sms_service_round38_test.dart`、`test/data/email_service_round67_test.dart`、`test/data/email_service_round9_test.dart`、`test/data/safety_watch_service_round12_test.dart`、`test/data/contact_consent_persist_round63_test.dart`、`test/data/safety_test_helpers.dart`、`test/core/data/services/safety_config_service_round92_test.dart`、`test/core/data/services/safety_detector_round64_test.dart`、`test/core/data/services/safety_alert_builder_round65_test.dart`、`test/core/data/services/sms_service_round14_test.dart`、`test/core/data/services/aliyun_sms_provider_round57_test.dart`、`test/domain/care_engine_round3_test.dart`、`test/domain/email_template_round19_test.dart`、`test/domain/lost_contact_sms_round82_test.dart`、`test/domain/care_engine_copy_round18_test.dart`、`test/domain/contact_entity_round12_test.dart`、`test/domain/contact_entity_round18_test.dart`、`test/domain/usecases/check_safety_round65_test.dart`、`test/domain/usecases/fire_care_strategy_round65_test.dart`、`test/domain/logic/care_strategies_round43_test.dart`、`test/domain/logic/care_strategies_perf_round48_test.dart`、`test/core/shared/care_copy_round18_test.dart` 等——以 `git ls-files | grep -E "test/.*(safety|sms|email|contact|care|lost_contact)"` 为准全删）。改：`test/core/data/feature_flags_round93_test.dart`、`test/data/feature_flags_round66_test.dart`、`test/data/feature_flags_round67_test.dart`（删 3 flag case）、`test/data/sort_assumption_round19b_test.dart`、`test/integration/end_to_end_flows_round95_test.dart`（删 contact 步骤）、`test/data/legal_consent_enforcement_round67_test.dart`、`test/data/database_migration_round37_test.dart`（"5 个核心表"测试删 contacts 断言, 新增反向断言：`PRAGMA table_list` 或 `sqlite_master` 查询确认 `contacts` 表不存在）。
 
 - [ ] **Step 1: 整删测试文件 + 改 feature flag 相关测试**
 - [ ] **Step 2: git rm 全部 Delete 清单**
@@ -997,16 +969,17 @@ git commit -m "1.1.0 round 4: presentation 摘除外联 — contact 页/setup �
 Run: `dart run build_runner build --delete-conflicting-outputs`
 
 - [ ] **Step 4: 改 providers / main.dart / feature_flags / consent / usecases**（以 `flutter analyze` 0 error 驱动）
-- [ ] **Step 5: 跑 data + domain 测试**
+- [ ] **Step 5: 跑 data + domain 测试 + 守门员**
 
-Run: `flutter test test/data/ test/domain/ && flutter analyze`
-Expected: PASS + 0 error
+Run: `flutter test test/data/ test/domain/ && flutter analyze && ls scripts/check_sms_release_ready.py 2>/dev/null && echo "FAIL: script 还在" || echo "OK: check_sms_release_ready.py 已删"`
+
+Expected: PASS + 0 error + script 不存在
 
 - [ ] **Step 6: 提交**
 
 ```bash
-git add -A lib test
-git commit -m "1.1.0 round 4: 外联服务全删 — SMS/邮件/SafetyWatch/CareEngine/contacts 表 + migration drop + flags 7→4"
+git add -A lib test scripts/check_sms_release_ready.py
+git commit -m "1.1.0 round 4b: 外联服务全删 — SMS/邮件/SafetyWatch/CareEngine/ReminderChecker/contacts 表 + migration drop + flags 7→4 + 守门员 22→21"
 ```
 
 ---
@@ -1014,9 +987,9 @@ git commit -m "1.1.0 round 4: 外联服务全删 — SMS/邮件/SafetyWatch/Care
 ### Task 10: 通知/路由/consent 清理 + i18n 删除 + gen-l10n
 
 **Files:**
-- Modify: `lib/core/data/services/notification_service.dart`（删 showSafetyAlert L348-402、safety 频道 3 const、id band 5000000 注释）、`lib/core/data/services/notification_payload.dart`（删 safetyAlert 枚举 4 处）、`lib/core/data/services/notification_delegate.dart`（注释同步）、`lib/domain/logic/notification_deep_link_resolver.dart`（删 safety-alert 映射）、`lib/core/routing/app_route_check_in.dart`（删 reason=safety 重定向）、`lib/core/data/services/badge_sync_service.dart`（注释同步）、`lib/core/l10n/strings.dart`（删 safety/lost-contact/careCopy/userNameFamily/importSummaryContact 段）、`lib/presentation/pages/settings/legal_page.dart`（删 safety 撤回卡 + ConsentKind.safety 路径）
-- Delete: `lib/presentation/pages/settings/legal_page.dart` 不删（页面保留），只删 safety 相关分支
-- ARB: `l10n/app_zh.arb` / `app_en.arb` / `app_zh_Hant.arb` 删 key（`safety*` / `contact*` / `emergency*` / `careCopy*` / `lostContact*` / `reminderHubSafety*` / `legalPageWithdrawSafety*` / `setupContact*` / `importSummaryContact` / `homeFabHotline` 除外）
+- Modify: `lib/core/data/services/notification_service.dart`（删 showSafetyAlert L348-402、safety 频道 3 const、id band 5000000 注释）、`lib/core/data/services/notification_payload.dart`（删 safetyAlert 枚举 4 处）、`lib/core/data/services/notification_delegate.dart`（注释同步）、`lib/domain/logic/notification_deep_link_resolver.dart`（删 safety-alert 映射）、`lib/core/routing/app_route_check_in.dart`（删 reason=safety 重定向）、`lib/core/data/services/badge_sync_service.dart`（注释同步）、`lib/core/l10n/strings.dart`（删 safety/lost-contact/careCopy/userNameFamily/importSummaryContact 段）、`lib/presentation/pages/settings/legal_page.dart`（删 safety 撤回卡 + ConsentKind.safety 路径, 页面保留）
+- Modify: `scripts/check_pii_in_title.py`（守门员同步：删 `safetyAlertTitle` 与 contactName 相关黑名单项, 保留 vent/mood 检测）
+- ARB: `l10n/app_zh.arb` / `app_en.arb` / `app_zh_Hant.arb` 删 key（`safety*` / `contact*` / `emergency*` / `careCopy*` / `lostContact*` / `reminderHubSafety*` / `legalPageWithdrawSafety*` / `setupContact*` / `importSummaryContact`；`homeFabHotline` 除外）
 - 生成：重跑 `flutter gen-l10n`
 - Test: `test/data/notification_payload_round18_test.dart`、`test/data/notification_navigation_round20_test.dart`、`test/core/data/services/notification_service_round4_test.dart` / `_round19b` / `_split_round45b`、`test/core/data/services/notification_id_band_round110_test.dart`、`test/core/data/services/android_notification_pii_round7_test.dart`、`test/core/data/services/darwin_notification_pii_round6_test.dart`（删 safety 相关 case）、`test/ios/info_plist_background_modes_round108_test.dart`（删 aliyunSms 引用）
 
@@ -1025,9 +998,9 @@ git commit -m "1.1.0 round 4: 外联服务全删 — SMS/邮件/SafetyWatch/Care
 - [ ] **Step 1: 删测试中 safety case（先测试红）**
 - [ ] **Step 2: 改 lib 文件清单（analyze 驱动）**
 - [ ] **Step 3: 删 ARB key × 3 语言 → `flutter gen-l10n`**
-- [ ] **Step 4: 验证 l10n 同步**
+- [ ] **Step 4: 验证 l10n 同步 + 守门员**
 
-Run: `python scripts/check_arb_keys.py && python scripts/check_orphan_arb_keys.py && python scripts/check_zh_hant_consistency.py`
+Run: `python scripts/check_arb_keys.py && python scripts/check_orphan_arb_keys.py && python scripts/check_zh_hant_consistency.py && python scripts/check_pii_in_title.py`
 Expected: 全绿
 
 - [ ] **Step 5: 跑全量测试**
@@ -1038,23 +1011,29 @@ Expected: 全过（除 4 个 iOS 资产 fail / 1 skip）+ 0e/0w
 - [ ] **Step 6: 提交**
 
 ```bash
-git add -A lib l10n test
-git commit -m "1.1.0 round 4: 通知/路由/consent 清理 + ARB 删 ~80 key + gen-l10n"
+git add -A lib l10n test scripts/check_pii_in_title.py
+git commit -m "1.1.0 round 4c: 通知/路由/consent 清理 + ARB 删 ~80 key + gen-l10n + pii 守门员同步"
 ```
 
 ---
 
 ## Round 5 — UI 重构 + 新功能 UI（Tasks 11-15）
 
-### Task 11: 导航 4 tab（心情/树洞/趋势/设置）
+### Task 11: 导航 4 tab（心情/树洞/趋势/设置）+ /vent /trend 移入 ShellRoute
 
 **Files:**
 - Modify: `lib/core/routing/app_shell.dart:30-73`（`_destinations` + `_currentIndex`）
+- Modify: `lib/core/routing/app_route_vent.dart`（`all()` 3 路由改名为 `shellRoutes()`, 删 `all()`）
+- Modify: `lib/core/routing/app_route_assessment.dart`（`/trend` 路由从 `all()` 移到新增的 `shellRoutes()`, 其余 4 路由留 `all()`）
+- Modify: `lib/core/routing/app_route_main.dart`（ShellRoute.routes 加 `...AppRouteVent.shellRoutes()` 与 `...AppRouteAssessment.shellRoutes()` + imports）
+- Modify: `lib/core/routing/app_routes.dart`（`all()` 删 `...AppRouteVent.all(),` 行——vent 已并入 main 的 ShellRoute）
 - Modify: `l10n/app_zh.arb` / `app_en.arb` / `app_zh_Hant.arb`（删 `navCheckIn`/`navMedication`, 加 `navMood`/`navVent`/`navTrend`）→ `flutter gen-l10n`
 - Test: `test/presentation/app_shell_round5_test.dart`
 
 **Interfaces:**
-- Produces: tab 路径 `'/'`（心情）/ `'/vent'`（树洞）/ `'/trend'`（趋势）/ `'/settings'`（设置）。
+- Produces: tab 路径 `'/'`（心情）/ `'/vent'`（树洞）/ `'/trend'`（趋势）/ `'/settings'`（设置）；`/vent` 3 路由与 `/trend` 在 ShellRoute 内（底栏常驻 + tab 高亮）。
+
+**背景（已证实）**：当前 ShellRoute 只包 `'/'`、`'/settings'`、medication 4 路由（`app_route_main.dart:49-72`, R110 B2-04 模式 `AppRouteMedication.shellRoutes()`）。`/vent` 3 路由（app_route_vent.dart, 全在 `all()`）与 `/trend`（app_route_assessment.dart `all()` L20-24）都在顶层——不移入 shell 则 tab 高亮和底栏常驻全部失效。
 
 - [ ] **Step 1: 写失败测试**
 
@@ -1066,12 +1045,16 @@ git commit -m "1.1.0 round 4: 通知/路由/consent 清理 + ARB 删 ~80 key + g
 // 3. currentLocation '/vent/compose' → selectedIndex == 1 (前缀匹配)
 // 4. currentLocation '/mood-review' → selectedIndex == 0 (心情 tab)
 // 5. 宽屏 (surfaceSize 1200x800) 走 NavigationRail, 同样 4 destination
+// 另加路由集成断言 (需 MaterialApp.router + routerProvider, 参考 app_route_main 相关测试):
+// 6. context.go('/vent') 后 NavigationBar 仍可见 (find.byType(NavigationBar) 非空)
+// 7. context.go('/trend') 后 NavigationBar 仍可见
+// 8. context.go('/vent/compose') 后 NavigationBar 仍可见
 ```
 
 - [ ] **Step 2: 跑测试确认失败**
 
 Run: `flutter test test/presentation/app_shell_round5_test.dart`
-Expected: FAIL（当前 3 tab）
+Expected: FAIL（当前 3 tab / 集成断言失败）
 
 - [ ] **Step 3: 改 app_shell.dart**
 
@@ -1109,20 +1092,50 @@ Expected: FAIL（当前 3 tab）
 
 `_currentIndex` 更新：`/settings` 前缀 → 3；`/vent` 前缀 → 1；`/trend` 前缀 → 2；其余 → 0。删 `/medication` 分支。
 
-- [ ] **Step 4: 改 ARB + gen-l10n**
+- [ ] **Step 4: 路由移入 ShellRoute**
+
+1. `app_route_vent.dart`：`static List<RouteBase> all()` 改名为 `static List<RouteBase> shellRoutes()`，文件头注释同步（"R110 同款：树洞 3 路由移进 ShellRoute"）
+2. `app_route_assessment.dart`：新增
+
+```dart
+  /// 趋势路由 (v1.1.0 移进 ShellRoute, 底栏常驻 + tab 高亮)
+  static List<RouteBase> shellRoutes() {
+    return [
+      GoRoute(
+        path: '/trend',
+        pageBuilder: (context, state) =>
+            AppRoutes.slideRightPage(state.pageKey, const TrendPage(), context),
+      ),
+    ];
+  }
+```
+
+并把 `all()` 里的 `/trend` GoRoute 删掉（其余 4 路由留 `all()`）
+3. `app_route_main.dart`：ShellRoute 的 `routes:` 里 medication 行后加：
+
+```dart
+          // v1.1.0: 树洞 + 趋势入 shell (导航 tab 高亮 + 底栏常驻)
+          ...AppRouteVent.shellRoutes(),
+          ...AppRouteAssessment.shellRoutes(),
+```
+
+imports 加 `app_route_vent.dart` / `app_route_assessment.dart`
+4. `app_routes.dart`：`all()` 删 `...AppRouteVent.all(),`（vent 已并入 main 的 ShellRoute, 避免重复注册导致 go_router 抛 duplicate path）
+
+- [ ] **Step 5: 改 ARB + gen-l10n**
 
 zh: `"navMood": "心情"`, `"navVent": "树洞"`, `"navTrend": "趋势"`；en: Mood / Vent / Trends；zh_Hant: 心情 / 樹洞 / 趨勢。删 `navCheckIn`/`navMedication`。Run: `flutter gen-l10n`
 
-- [ ] **Step 5: 跑测试 + analyze**
+- [ ] **Step 6: 跑测试 + analyze**
 
-Run: `flutter test test/presentation/app_shell_round5_test.dart && flutter analyze`
-Expected: PASS + 0 error
+Run: `flutter test test/presentation/app_shell_round5_test.dart && flutter analyze && python scripts/check_arb_keys.py && python scripts/check_orphan_arb_keys.py`
+Expected: PASS + 0 error + 守门员绿
 
-- [ ] **Step 6: 提交**
+- [ ] **Step 7: 提交**
 
 ```bash
-git add lib/core/routing/app_shell.dart l10n/ lib/l10n/ test/presentation/app_shell_round5_test.dart
-git commit -m "1.1.0 round 5: 导航 4 tab — 心情/树洞/趋势/设置 + ARB nav key + 测试"
+git add lib/core/routing/ l10n/ lib/l10n/ test/presentation/app_shell_round5_test.dart
+git commit -m "1.1.0 round 5: 导航 4 tab — 心情/树洞/趋势/设置 + /vent /trend 入 ShellRoute + ARB nav key + 测试"
 ```
 
 ---
@@ -1132,24 +1145,26 @@ git commit -m "1.1.0 round 5: 导航 4 tab — 心情/树洞/趋势/设置 + ARB
 **Files:**
 - Create: `lib/presentation/pages/home/widgets/mood_hero_card.dart`、`lib/presentation/pages/home/widgets/vent_hero_card.dart`
 - Modify: `lib/presentation/pages/home/home_page_state.dart`（build 顺序重构：删 QuickMoodCarousel/SecondaryActionRow, 插入 2 张 hero 卡, CheckInButton 降级）、`lib/presentation/widgets/check_in_button.dart`（加 `compact` 参数）、`lib/presentation/pages/home/widgets/primary_action_row.dart`（2x2 改 用药/量表/情绪回顾/日常追踪 + 回调）、`lib/presentation/pages/home/widgets/quick_mood_carousel.dart` 与 `secondary_action_row.dart`（删文件 + 删 import）
-- ARB: 新 key `homeMoodHeroTitle/homeMoodHeroRecord/homeMoodHeroReview/homeMoodHeroNoData/homeMoodHeroLastRecorded`、`homeVentHeroTitle/homeVentHeroWrite/homeVentHeroNoData/homeVentHeroLatest`、`homeActionMedication/homeActionAssessment/homeActionMoodReview/homeActionDailyTracking` → gen-l10n
+- ARB: 新 key `homeMoodHeroTitle/homeMoodHeroRecord/homeMoodHeroReview/homeMoodHeroNoData/homeMoodHeroLastRecorded`、`homeVentHeroTitle/homeVentHeroWrite/homeVentHeroNoData`、`homeActionMedication/homeActionAssessment/homeActionMoodReview/homeActionDailyTracking` → gen-l10n；值微调：`homeFabVent` zh "心情树洞" → "树洞"（与 navVent 一致, 仅改值不改 key）
 - Test: `test/presentation/pages/home/home_hero_cards_round5_test.dart`
 
 **Interfaces:**
-- Consumes: mood/vent repository（看 `home_page_state.dart` 现用 `todayCheckInProvider` 同款 provider 注册方式; mood 数据取 `ref.watch(moodRepositoryProvider)` 的 stream、vent 取 `ref.watch(ventRepositoryProvider)` 的 stream, 取最新一条）、`MoodRecorderPage.show(context, ref)`（现有）、`/vent/compose`、`/mood-review`（Task 16）
+- Consumes: `moodRepositoryProvider`（core_providers.dart:63, 有 `watchLatest()` → Stream<MoodEntryEntity?>）、`ventEntriesProvider`（vent_providers.dart:51, StreamProvider）、`MoodRecorderPage.show(context, ref)`（mood_recorder_page.dart:69 静态方法）、`/vent/compose`、`/mood-review`（Task 15）
 - Produces: MoodHeroCard / VentHeroCard（无参数 ConsumerWidget, 内部取数据）
 
 - [ ] **Step 1: 写失败测试**
 
 ```dart
 // test/presentation/pages/home/home_hero_cards_round5_test.dart
-// ProviderScope overrides (moodRepo 返 1 条带 statusPhrase '被治愈了' 的 entry,
-// ventRepo 返 1 条 contentText '今天想聊聊工作'),
+// ProviderScope overrides (moodRepositoryProvider 返 1 条带 statusPhrase '被治愈了' 的
+// entry 流, ventEntriesProvider 返 1 条 contentText '今天想聊聊工作' 的列表),
 // pump HomePage 断言:
 // 1. 找到 '被治愈了' 文本 (MoodHeroCard 显示短语)
 // 2. 找到 '今天想聊聊工作' 截断预览
-// 3. 空数据: mood/vent repo 返空 → 显示 homeMoodHeroNoData / homeVentHeroNoData
-// 4. CheckInButton 渲染 compact 尺寸 (byKey 'check_in_button' 高度 < 64)
+// 3. 空数据: mood/vent 返空 → 显示 homeMoodHeroNoData / homeVentHeroNoData
+// 4. CheckInButton 渲染 compact 尺寸:
+//    final size = tester.getSize(find.byType(CheckInButton));
+//    expect(size.height, lessThan(64));
 ```
 
 - [ ] **Step 2: 跑测试确认失败**
@@ -1166,6 +1181,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
@@ -1335,7 +1351,7 @@ Expected: PASS + 0 error（home 老测试如有 QuickMoodCarousel 断言, 同步
 
 ```bash
 git add -A lib/presentation/pages/home lib/presentation/widgets/check_in_button.dart l10n/ lib/l10n/ test/presentation/pages/home/
-git commit -m "1.1.0 round 5: 首页双主卡 — 情绪大卡+树洞卡, 打卡降级 compact, 快捷操作换血 + 测试"
+git commit -m "1.1.0 round 5b: 首页双主卡 — 情绪大卡+树洞卡, 打卡降级 compact, 快捷操作换血 + 测试"
 ```
 
 ---
@@ -1448,7 +1464,7 @@ Expected: PASS + 0 error + 0 violation
 
 ```bash
 git add -A lib/presentation/pages/vent l10n/ lib/l10n/ test/presentation/pages/vent/
-git commit -m "1.1.0 round 5: 树洞标签 — compose 选择 + 列表筛选 + 详情显示 + 测试"
+git commit -m "1.1.0 round 5c: 树洞标签 — compose 选择 + 列表筛选 + 详情显示 + 测试"
 ```
 
 ---
@@ -1495,7 +1511,7 @@ Expected: PASS + 0 error
 
 ```bash
 git add -A lib/presentation/pages/mood lib/presentation/pages/mood_list l10n/ lib/l10n/ test/presentation/pages/mood/
-git commit -m "1.1.0 round 5: 状态短语 — 记录 dialog 预设+自定义, 列表/详情显示 + 测试"
+git commit -m "1.1.0 round 5d: 状态短语 — 记录 dialog 预设+自定义, 列表/详情显示 + 测试"
 ```
 
 ---
@@ -1723,7 +1739,7 @@ Expected: PASS + 0 error + 0 violation
 
 ```bash
 git add lib/presentation/pages/mood_list/mood_review_page.dart lib/core/routing/app_route_mood_list.dart l10n/ lib/l10n/ test/presentation/pages/mood_list/mood_review_page_round5_test.dart
-git commit -m "1.1.0 round 5: 情绪回顾页 — 周/月统计摘要 + /mood-review 路由 + 测试"
+git commit -m "1.1.0 round 5e: 情绪回顾页 — 周/月统计摘要 + /mood-review 路由 + 测试"
 ```
 
 ---
@@ -1758,7 +1774,7 @@ README 定位段改：情绪日记 + 树洞倾诉优先、用药记录辅助；�
 
 ```bash
 git add scripts/ README.md docs/CHANGELOG.md AGENTS.md pubspec.yaml test/scripts/
-git commit -m "1.1.0 round 6: 守门员 22→21 + README/CHANGELOG/AGENTS 同步 + 版本 1.1.0+148"
+git commit -m "1.1.0 round 6: 文档/版本收尾 — README/CHANGELOG/AGENTS 同步 + 版本 1.1.0+148"
 ```
 
 ---
@@ -1794,7 +1810,7 @@ Expected: 全绿
 - [ ] **Step 4: 最终提交（若 Step 1-3 有修复）**
 
 ```bash
-git add -A lib test && git commit -m "1.1.0 round 6: 全量终验收尾修复"
+git add -A lib test && git commit -m "1.1.0 round 6b: 全量终验收尾修复"
 ```
 
 - [ ] **Step 5: 汇报**
@@ -1805,6 +1821,8 @@ git add -A lib test && git commit -m "1.1.0 round 6: 全量终验收尾修复"
 
 ## Self-Review 备注
 
-- **Spec 覆盖核对**：§3 A1-A7 → Tasks 8/9/10；§4 B1-B3 → Tasks 11/12；§5 C1-C3 → Tasks 1/3/13/14/15；§6 i18n → Tasks 10/11/12/13/14/15；§7 测试 → 各 task 内嵌；§8 守门员 → Task 16；§9 文档 → Task 16；§10 r1-r6 → Round 1-6 对应；§11 验收 → Task 17。
-- **类型一致性**：`filterByRange(entries, start, endInclusive)` / `summarize(current, previous)` 在 Task 3 定义、Task 15 消费，签名一致；`VentTagLibrary.presetTags` Task 1 定义、Task 13 消费；`StatusPhraseLibrary.phrasesForScore(score)` Task 2 定义、Task 14 消费；`tagsJson`/`statusPhrase` 字段名 Task 4/5 定义、Task 6/7/13/14 消费。
+- **编号说明**：Task 7 已并入 Task 6（export 导出+导入合并, 避免中间态红灯），共 16 个 task，后续编号不变（8-17）。
+- **Spec 覆盖核对**：§3 A1-A7 → Tasks 8/9/10；§4 B1-B3 → Tasks 11/12（B1 的 ShellRoute 前置条件已写入 Task 11 步骤）；§5 C1-C3 → Tasks 1/3/13/14/15；§6 i18n → Tasks 10/11/12/13/14/15；§7 测试 → 各 task 内嵌；§8 守门员 → Tasks 8/9/10（同步改）+ 16（终验）；§9 文档 → Task 16；§10 r1-r6 → Round 1-6 对应；§11 验收 → Task 17。
+- **类型一致性**：`filterByRange(entries, start, endInclusive)` / `summarize(current, previous)` 在 Task 3 定义、Task 15 消费，签名一致；`VentTagLibrary.presetTags` Task 1 定义、Task 13 消费；`StatusPhraseLibrary.phrasesForScore(score)` Task 2 定义、Task 14 消费；`tagsJson`/`statusPhrase` 字段名 Task 4/5 定义、Task 6/13/14 消费。
 - **已知依赖顺序**：Task 13/14/15 依赖 Round 1 的 domain 库与 Round 2 的 schema；Task 8/9 删除会破坏老测试, 必须同 task 内删/改测试；`Strings.importSummaryContact` 在 Task 6 停止使用、Task 10 从 strings.dart 删除。
+- **审计修正记录（2026-08-15 自审）**：① 证实 reminder_scheduler.dart = ReminderService 失联服务本体（spec A1 + Task 9 已写实锤）；② 补 ReminderChecker 删除链（Task 9）；③ phone_validator 已在 core/shared, spec 更正；④ /vent /trend 移入 ShellRoute 补入 Task 11；⑤ 守门员变更前置到 8/9/10；⑥ export 任务合并；⑦ FAB 文案"心情测试"已过时（R91 已改日常追踪）, spec B2 该条作废, Task 12 仅微调 homeFabVent 值。
