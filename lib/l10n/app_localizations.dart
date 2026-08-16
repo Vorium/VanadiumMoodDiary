@@ -261,6 +261,24 @@ abstract class AppLocalizations {
   /// **'常吃药'**
   String get settingsMedication;
 
+  /// No description provided for @settingsHealthData.
+  ///
+  /// In zh, this message translates to:
+  /// **'健康数据'**
+  String get settingsHealthData;
+
+  /// v1.1.0 round 11 (R115): 设置-健康数据-用药副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'{total} 种药物 · 今日 {done}/{total} 已服'**
+  String settingsHealthDataMedSub(int total, int done);
+
+  /// v1.1.0 round 11 (R115): 设置-健康数据-心理评估副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个量表'**
+  String settingsHealthDataAssSub(int count);
+
   /// No description provided for @settingsAbout.
   ///
   /// In zh, this message translates to:
@@ -4091,18 +4109,6 @@ abstract class AppLocalizations {
   /// **'还没有倾诉, 写第一条心事'**
   String get homeVentHeroNoData;
 
-  /// No description provided for @homeActionMedication.
-  ///
-  /// In zh, this message translates to:
-  /// **'用药'**
-  String get homeActionMedication;
-
-  /// No description provided for @homeActionAssessment.
-  ///
-  /// In zh, this message translates to:
-  /// **'量表'**
-  String get homeActionAssessment;
-
   /// No description provided for @homeActionMoodReview.
   ///
   /// In zh, this message translates to:
@@ -4114,6 +4120,114 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'日常追踪'**
   String get homeActionDailyTracking;
+
+  /// No description provided for @homeActionTips.
+  ///
+  /// In zh, this message translates to:
+  /// **'心理技巧'**
+  String get homeActionTips;
+
+  /// No description provided for @homeActionTipsSub.
+  ///
+  /// In zh, this message translates to:
+  /// **'5 个小练习 · 当下可学'**
+  String get homeActionTipsSub;
+
+  /// v1.1.0 round 11 (R115 视觉重构): 情绪回顾快捷操作副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'本周 {count} 次记录 · 均分 {avg}'**
+  String homeActionMoodReviewSub(int count, String avg);
+
+  /// No description provided for @homeActionDailyTrackingSub.
+  ///
+  /// In zh, this message translates to:
+  /// **'睡眠 / 体重 / 社交节律'**
+  String get homeActionDailyTrackingSub;
+
+  /// No description provided for @homeMoreEntryTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'更多'**
+  String get homeMoreEntryTitle;
+
+  /// No description provided for @homeMoreEntrySubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'用药 · 量表 · 危机热线'**
+  String get homeMoreEntrySubtitle;
+
+  /// No description provided for @homeMoreSheetTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'更多入口'**
+  String get homeMoreSheetTitle;
+
+  /// No description provided for @homeMoreMedication.
+  ///
+  /// In zh, this message translates to:
+  /// **'用药管理'**
+  String get homeMoreMedication;
+
+  /// v1.1.0 round 11 (R115): BottomSheet 用药管理副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'{total} 种药物 · 今日 {done}/{total} 已服'**
+  String homeMoreMedicationSub(int total, int done);
+
+  /// No description provided for @homeMoreAssessment.
+  ///
+  /// In zh, this message translates to:
+  /// **'心理评估'**
+  String get homeMoreAssessment;
+
+  /// v1.1.0 round 11 (R115): BottomSheet 心理评估副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个量表'**
+  String homeMoreAssessmentSub(int count);
+
+  /// No description provided for @homeMoreCrisis.
+  ///
+  /// In zh, this message translates to:
+  /// **'危机热线'**
+  String get homeMoreCrisis;
+
+  /// No description provided for @homeMoreCrisisSub.
+  ///
+  /// In zh, this message translates to:
+  /// **'5 区域 · 一键拨打'**
+  String get homeMoreCrisisSub;
+
+  /// No description provided for @homeMoreWorry.
+  ///
+  /// In zh, this message translates to:
+  /// **'烦恼闭环'**
+  String get homeMoreWorry;
+
+  /// v1.1.0 round 11 (R115): BottomSheet 烦恼闭环副标题
+  ///
+  /// In zh, this message translates to:
+  /// **'进行中 {active} · 已闭环 {closed}'**
+  String homeMoreWorrySub(int active, int closed);
+
+  /// No description provided for @homeTodayOverview.
+  ///
+  /// In zh, this message translates to:
+  /// **'今日概览'**
+  String get homeTodayOverview;
+
+  /// No description provided for @todaySummarySleep.
+  ///
+  /// In zh, this message translates to:
+  /// **'睡眠'**
+  String get todaySummarySleep;
+
+  /// No description provided for @todaySummaryWorry.
+  ///
+  /// In zh, this message translates to:
+  /// **'烦恼'**
+  String get todaySummaryWorry;
 
   /// No description provided for @homeFabHotline.
   ///
@@ -4132,12 +4246,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'近 30 天'**
   String get trendChip30Day;
-
-  /// No description provided for @assessmentChipCurrent.
-  ///
-  /// In zh, this message translates to:
-  /// **'本周'**
-  String get assessmentChipCurrent;
 
   /// No description provided for @crisisHotlineCnLabel.
   ///
@@ -7176,29 +7284,11 @@ abstract class AppLocalizations {
   /// **'健康档案、医疗信息'**
   String get settingsProfileSubtitle;
 
-  /// No description provided for @todaySummaryCheckIn.
-  ///
-  /// In zh, this message translates to:
-  /// **'打卡'**
-  String get todaySummaryCheckIn;
-
-  /// No description provided for @todaySummaryMeds.
-  ///
-  /// In zh, this message translates to:
-  /// **'药物'**
-  String get todaySummaryMeds;
-
   /// No description provided for @todaySummaryMood.
   ///
   /// In zh, this message translates to:
   /// **'心情'**
   String get todaySummaryMood;
-
-  /// No description provided for @todaySummaryStreak.
-  ///
-  /// In zh, this message translates to:
-  /// **'连续'**
-  String get todaySummaryStreak;
 
   /// No description provided for @setupConsentMedicalDisclaimer.
   ///
@@ -7403,24 +7493,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'查看'**
   String get homeQuickActionView;
-
-  /// No description provided for @homeQuickActionRecord.
-  ///
-  /// In zh, this message translates to:
-  /// **'记录'**
-  String get homeQuickActionRecord;
-
-  /// No description provided for @homeQuickActionStart.
-  ///
-  /// In zh, this message translates to:
-  /// **'开始'**
-  String get homeQuickActionStart;
-
-  /// No description provided for @homeTodayMetrics.
-  ///
-  /// In zh, this message translates to:
-  /// **'今日指标'**
-  String get homeTodayMetrics;
 
   /// No description provided for @ventTagFamily.
   ///

@@ -98,6 +98,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsMedication => '常吃药';
 
   @override
+  String get settingsHealthData => '健康数据';
+
+  @override
+  String settingsHealthDataMedSub(int total, int done) {
+    return '$total 种药物 · 今日 $done/$total 已服';
+  }
+
+  @override
+  String settingsHealthDataAssSub(int count) {
+    return '$count 个量表';
+  }
+
+  @override
   String get settingsAbout => '关于';
 
   @override
@@ -2220,16 +2233,72 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeVentHeroNoData => '还没有倾诉, 写第一条心事';
 
   @override
-  String get homeActionMedication => '用药';
-
-  @override
-  String get homeActionAssessment => '量表';
-
-  @override
   String get homeActionMoodReview => '情绪回顾';
 
   @override
   String get homeActionDailyTracking => '日常追踪';
+
+  @override
+  String get homeActionTips => '心理技巧';
+
+  @override
+  String get homeActionTipsSub => '5 个小练习 · 当下可学';
+
+  @override
+  String homeActionMoodReviewSub(int count, String avg) {
+    return '本周 $count 次记录 · 均分 $avg';
+  }
+
+  @override
+  String get homeActionDailyTrackingSub => '睡眠 / 体重 / 社交节律';
+
+  @override
+  String get homeMoreEntryTitle => '更多';
+
+  @override
+  String get homeMoreEntrySubtitle => '用药 · 量表 · 危机热线';
+
+  @override
+  String get homeMoreSheetTitle => '更多入口';
+
+  @override
+  String get homeMoreMedication => '用药管理';
+
+  @override
+  String homeMoreMedicationSub(int total, int done) {
+    return '$total 种药物 · 今日 $done/$total 已服';
+  }
+
+  @override
+  String get homeMoreAssessment => '心理评估';
+
+  @override
+  String homeMoreAssessmentSub(int count) {
+    return '$count 个量表';
+  }
+
+  @override
+  String get homeMoreCrisis => '危机热线';
+
+  @override
+  String get homeMoreCrisisSub => '5 区域 · 一键拨打';
+
+  @override
+  String get homeMoreWorry => '烦恼闭环';
+
+  @override
+  String homeMoreWorrySub(int active, int closed) {
+    return '进行中 $active · 已闭环 $closed';
+  }
+
+  @override
+  String get homeTodayOverview => '今日概览';
+
+  @override
+  String get todaySummarySleep => '睡眠';
+
+  @override
+  String get todaySummaryWorry => '烦恼';
 
   @override
   String get homeFabHotline => '紧急热线';
@@ -2239,9 +2308,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get trendChip30Day => '近 30 天';
-
-  @override
-  String get assessmentChipCurrent => '本周';
 
   @override
   String get crisisHotlineCnLabel => '全国 24 小时心理援助热线';
@@ -3845,16 +3911,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsProfileSubtitle => '健康档案、医疗信息';
 
   @override
-  String get todaySummaryCheckIn => '打卡';
-
-  @override
-  String get todaySummaryMeds => '药物';
-
-  @override
   String get todaySummaryMood => '心情';
-
-  @override
-  String get todaySummaryStreak => '连续';
 
   @override
   String get setupConsentMedicalDisclaimer =>
@@ -3976,15 +4033,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeQuickActionView => '查看';
-
-  @override
-  String get homeQuickActionRecord => '记录';
-
-  @override
-  String get homeQuickActionStart => '开始';
-
-  @override
-  String get homeTodayMetrics => '今日指标';
 
   @override
   String get ventTagFamily => '家庭';
@@ -4423,6 +4471,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsMedication => '常吃藥';
+
+  @override
+  String get settingsHealthData => '健康數據';
+
+  @override
+  String settingsHealthDataMedSub(int total, int done) {
+    return '$total 種藥物 · 今日 $done/$total 已服';
+  }
+
+  @override
+  String settingsHealthDataAssSub(int count) {
+    return '$count 個量表';
+  }
 
   @override
   String get settingsAbout => '關於';
@@ -6547,16 +6608,72 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeVentHeroNoData => '還沒有傾訴, 寫第一條心事';
 
   @override
-  String get homeActionMedication => '用藥';
-
-  @override
-  String get homeActionAssessment => '量表';
-
-  @override
   String get homeActionMoodReview => '情緒回顧';
 
   @override
   String get homeActionDailyTracking => '日常追蹤';
+
+  @override
+  String get homeActionTips => '心理技巧';
+
+  @override
+  String get homeActionTipsSub => '5 個小練習 · 當下可學';
+
+  @override
+  String homeActionMoodReviewSub(int count, String avg) {
+    return '本週 $count 次記錄 · 均分 $avg';
+  }
+
+  @override
+  String get homeActionDailyTrackingSub => '睡眠 / 體重 / 社交節律';
+
+  @override
+  String get homeMoreEntryTitle => '更多';
+
+  @override
+  String get homeMoreEntrySubtitle => '用藥 · 量表 · 危機熱線';
+
+  @override
+  String get homeMoreSheetTitle => '更多入口';
+
+  @override
+  String get homeMoreMedication => '用藥管理';
+
+  @override
+  String homeMoreMedicationSub(int total, int done) {
+    return '$total 種藥物 · 今日 $done/$total 已服';
+  }
+
+  @override
+  String get homeMoreAssessment => '心理評估';
+
+  @override
+  String homeMoreAssessmentSub(int count) {
+    return '$count 個量表';
+  }
+
+  @override
+  String get homeMoreCrisis => '危機熱線';
+
+  @override
+  String get homeMoreCrisisSub => '5 區域 · 一鍵撥打';
+
+  @override
+  String get homeMoreWorry => '煩惱閉環';
+
+  @override
+  String homeMoreWorrySub(int active, int closed) {
+    return '進行中 $active · 已閉環 $closed';
+  }
+
+  @override
+  String get homeTodayOverview => '今日概覽';
+
+  @override
+  String get todaySummarySleep => '睡眠';
+
+  @override
+  String get todaySummaryWorry => '煩惱';
 
   @override
   String get homeFabHotline => '緊急熱線';
@@ -6566,9 +6683,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get trendChip30Day => '近 30 天';
-
-  @override
-  String get assessmentChipCurrent => '本週';
 
   @override
   String get crisisHotlineCnLabel => '全國 24 小時心理援助熱線';
@@ -8172,16 +8286,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsProfileSubtitle => '健康檔案、醫療信息';
 
   @override
-  String get todaySummaryCheckIn => '打卡';
-
-  @override
-  String get todaySummaryMeds => '藥物';
-
-  @override
   String get todaySummaryMood => '心情';
-
-  @override
-  String get todaySummaryStreak => '連續';
 
   @override
   String get setupConsentMedicalDisclaimer =>
@@ -8303,15 +8408,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get homeQuickActionView => '查看';
-
-  @override
-  String get homeQuickActionRecord => '記錄';
-
-  @override
-  String get homeQuickActionStart => '開始';
-
-  @override
-  String get homeTodayMetrics => '今日指標';
 
   @override
   String get ventTagFamily => '家庭';

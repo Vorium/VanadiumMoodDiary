@@ -801,7 +801,7 @@ void main() {
       expect(hant, 2, reason: 'zh_Hant.arb 应有 2 notifChannel* key');
     });
 
-    test('3 语 total = 1328 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1340 key (R116 round 4 清 9 orphan, 跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -892,6 +892,14 @@ void main() {
       //   moodRecordSectionTitle (mood recorder ALS 分组标题) → 1331 → 1333;
       //   同批 -5 orphan (moodCbtThreeScoreTitle score 段移出 3 栏 /
       //   moodDimension*Hint × 4 dimension_row 死代码删除连坐) → 1333 → 1328
+      // 1.1.0 R115 (emotion-first 视觉重构, 2026-08-17): +21 key
+      //   (homeMore* × 9 + homeActionTips* × 3 + todaySummarySleep/Worry × 2 +
+      //    homeTodayOverview + settingsHealthData* × 3 + 4 @description)
+      //   → 1328 → 1349
+      // 1.1.0 R116 round 4 (god class 拆): 9 orphan key 清 (R115 batch 1 漏写
+      //   caller, R116 复审发现: todaySummaryStreak/CheckIn/Meds + homeTodayMetrics
+      //   + homeQuickActionRecord/Start + homeActionAssessment/Medication +
+      //   assessmentChipCurrent) → 1349 → 1340
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
@@ -899,18 +907,19 @@ void main() {
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
       expect(
         zh,
-        1328,
-        reason: 'zh.arb 应有 1328 key (Wave D: +2 ALS 标题, -5 orphan)',
+        1340,
+        reason: 'zh.arb 应有 1340 key (R115 emotion-first 视觉重构 +21 变 1349, '
+            'R116 round 4 -9 orphan 变 1340)',
       );
       expect(
         en,
-        1328,
-        reason: 'en.arb 应有 1328 key (Wave D: +2 ALS 标题, -5 orphan)',
+        1340,
+        reason: 'en.arb 应有 1340 key (跟 zh 同步)',
       );
       expect(
         hant,
-        1328,
-        reason: 'zh_Hant.arb 应有 1328 key (Wave D: +2 ALS 标题, -5 orphan)',
+        1340,
+        reason: 'zh_Hant.arb 应有 1340 key (跟 zh 同步)',
       );
     });
   });

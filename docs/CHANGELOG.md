@@ -1,4 +1,140 @@
 ﻿# 变更日志
+## [1.1.0+154 R116 god class 拆解 round 4] - 2026-08-17 (add_medication_page 拆进度条+footer + 清 9 orphan key, 未 commit)
+
+### Changed (R116 round 4)
+- **add_medication_page.dart 247L → 195L (-21%)**:
+  - 抽 `widgets/add_medication_step_indicator.dart` (~50L): 公开
+    `AddMedicationStepIndicator` (currentStep + totalSteps 值注入, 0 callback)
+  - 抽 `widgets/add_medication_step_footer.dart` (~80L): 公开
+    `AddMedicationStepFooter` (currentStep + saving + 3 label + 2 callback),
+    内置"最后一步切到保存文案"逻辑
+  - 模式跟 R116 round 1-3 (mood_trend 3 chart / assessment_reminder_sheet /
+    medication_slot_entry_row) 一致: 抽"纯展示 + 值注入"子 widget, page shell
+    只剩 form state + 步骤编排 + save handler
+- **9 个 orphan ARB key 清掉** (R115 batch 1 漏写 caller, R116 复审发现):
+  - `todaySummaryStreak` / `todaySummaryCheckIn` / `todaySummaryMeds`
+  - `homeTodayMetrics`
+  - `homeQuickActionRecord` / `homeQuickActionStart`
+  - `homeActionAssessment` / `homeActionMedication`
+  - `assessmentChipCurrent`
+  - 3 语 ARB (zh / en / zh_Hant) 同步删除 + `flutter pub get` 重新 gen-l10n
+  - ARB key 总数 1349 → 1340
+  - 同步更新 `scale_strings_arb_lock_in_round95_test.dart` baseline 1349 → 1340
+
+### Fixed (R116 round 4)
+- 0 test 失败: 公开 2 个 widget (`AddMedicationStepIndicator` /
+  `AddMedicationStepFooter`) 是同包内可见, 旧 inline UI 改调用公开 widget
+  不影响外部 caller
+
+### Verification
+- flutter analyze: **0 error / 0 warning** (279 info 是历史 require_trailing_commas 已知)
+- flutter test: **2515 pass / 0 fail / 1 skip** (与 R116 round 3 持平)
+- 27/27 gatekeepers 全绿 (R115 batch 1 + R115 batch 2 27 个守门员无回归)
+- R116 cumulative (4 rounds): mood_trend_page 653→104 / reminders_hub_page
+  312→213 / medication_page 380→281 / add_medication_page 247→195 →
+  主壳总 1592L → 793L (-50%)
+
+## [1.1.0+153 R116 god class 拆解 round 3] - 2026-08-17 (medication_page 拆 _SlotEntryRow, 未 commit)
+
+### Changed (R116 round 3)
+- **medication_page.dart 380L → 278L (-27%)**:
+  - 抽 `widgets/medication_slot_entry_row.dart` (146L): `MedicationSlotEntryRow`
+    public widget (R116 前是 `_SlotEntryRow` private), 装 32pt pill icon +
+    药名/时:分/剂量 + R113 直接打卡 checkbox (PressFeedback 包装 +
+    AsyncValue.guard 错误 snackbar)
+  - 主壳瘦身: 删 _SlotEntryRow (92L ConsumerWidget) + 相关 5 个 import
+    (checkInNotifier / app_snack_bar / feedback / press_feedback /
+    medication_pill_icon), 改 import 公开 widget
+
+### Fixed (R116 round 3)
+- 0 test 失败: 公开 MedicationSlotEntryRow 是同包内可见, 旧 `_SlotEntryRow`
+  private 改名 public 不影响外部 caller
+
+### Verification
+- flutter analyze: **0 error / 0 warning** (278 info 是历史 require_trailing_commas 已知)
+- flutter test: **2515 pass / 0 fail / 1 skip** (与 R116 round 2 持平)
+- medication_page 380L → 278L (主壳) + 146L (widget) = -1L 净瘦身
+
+## [1.1.0+152 R116 god class 拆解 round 2] - 2026-08-17 (reminders_hub_page 拆主壳 + sheet, 未 commit)
+
+### Changed (R116 round 2)
+- **reminders_hub_page.dart 312L → 213L (-32%)**:
+  - 抽 `widgets/assessment_reminder_sheet.dart` (155L): AssessmentReminderSheet
+    public widget (R116 前是 `_AssessmentReminderSheet` private), 装 switch
+    + interval picker + save 逻辑 (AssessmentReminderService.setEnabled /
+    setDays / onSettingsChanged)
+  - 主壳瘦身: 4 段 reminder card 拼装 + 3 个 helper (medicationSection /
+    refillSection / assessmentSection) + _showAssessmentSettings +
+    _configOrFallback, 0 inline widget 业务方法
+  - 占位 / 错误态拆 `_placeholderCard` / `_errorCard` helper 减少 12 行
+    重复 ReminderCard 配置
+
+### Fixed (R116 round 2)
+- 0 test 失败: reminders_hub_page 内部 widget 拆出后 import 路径不变
+  (refactor 公开 API AssessmentReminderSheet 是同包内可见)
+
+### Verification
+- flutter analyze: **0 error / 0 warning** (277 info 是历史 require_trailing_commas 已知)
+- flutter test: **2515 pass / 0 fail / 1 skip** (与 R116 round 1 持平)
+- reminders_hub_page 312L → 213L (主壳) + 155L (sheet) = -3L 净瘦身
+
+## [1.1.0+151 R115+ polish + R116 god class 拆解 round 1] - 2026-08-17 (hero 卡加大 + mood_trend_page 拆 4 文件, 未 commit)
+
+### Changed (R115+ polish)
+- **MoodHeroCard padding 16→18 + font 24px**: 从「次要卡」升格为「双主卡」, 跟 VentHeroCard 视觉对齐
+- **VentHeroCard padding 14→18**: 同步 MoodHeroCard, 加大 hero 卡视觉权重
+- VentHeroCard 加 28pt 圆角 icon + 树洞时间戳 (Formatters.time)
+
+### Changed (R116 god class 拆解 round 1)
+- **mood_trend_page.dart 653L → 104L (-84%)**:
+  - 抽 `lib/domain/logic/mood_trend_calculator.dart` (72L): TimeRange 枚举 + computeDailyAverages + computeTrendSpots 纯函数 (0 Flutter 0 drift 依赖)
+  - 抽 `widgets/mood_trend_line_chart.dart` (226L): MoodTrendTab + MoodTrendTimeRangeSelector + MoodLineChart
+  - 抽 `widgets/mood_distribution_chart.dart` (144L): MoodDistributionChart 5 档分布图
+  - 抽 `widgets/mood_cbt_chart.dart` (180L): MoodCbtEffectChart 重评效果折线图
+- 主壳只留 TabController + 3 tab 拼装, 0 业务方法
+
+### Fixed (R116 test 迁移)
+- `mood_trend_page_round112_test.dart` + `mood_trend_spots_round113_test.dart`: import 路径更新到 mood_trend_calculator
+- `mood_trend_day_change_round113_test.dart`: lock-in 从 1 个 mood_trend_page.dart 拆 4 个文件 (主壳 + 3 chart widget 都查)
+
+### Verification
+- flutter analyze: **0 error / 0 warning** (277 info 是历史 require_trailing_commas 已知)
+- flutter test: **2515 pass / 0 fail / 1 skip** (+3 from R115 baseline)
+- mood_trend_page.dart 拆解前 653L → 拆解后 104L (-549L, -84%)
+- 守门员 27 仍全绿
+
+## [1.1.0+150 R115 emotion-first 视觉重构 + 零外联隐私加固] - 2026-08-17 (情绪优先定位续作 + 5 新守门员, 未 commit)
+
+### Changed (R115 视觉重构 Batch 1)
+- **Home 主页 emotion-first 重设**: 移除「用药」「量表」砖块, 改 3 行 list (情绪回顾 / 日常追踪 / 心理技巧) + 虚线「更多」入口 → BottomSheet
+- **MoreEntrySheet 新组件**: iOS standard BottomSheet, 含 用药管理 / 心理评估 / 危机热线 / 烦恼闭环 4 项 + 动态副标题
+- **TodaySummaryCard 4 指标换血**: 用药/打卡 → **情绪 / 树洞 / 睡眠 / 烦恼** (emotion-first, 全 vent + mood 周边)
+- **Settings 4 group → 5 group**: 新「健康数据」group 置顶 (medication + assessment + 动态副标题)
+- **ProfileGroup 简化**: 删 medication/assessment 段 (已挪走), 只剩 头像卡 + 心理技巧入口
+- **21 个新 ARB key × 3 语** (homeMore* / homeActionTips* / todaySummarySleep/Worry / homeTodayOverview / settingsHealthData*)
+- **iOS 路由表零修改**: 14 个 GoRoute 全部保留, 只改入口位置 (零数据迁移风险)
+
+### Added (R115 隐私加固 Batch 2 — 5 新守门员)
+- **`check_home_quick_actions.py`**: 锁住主页不直接 push medication/assessment/crisis/worry 路由 (走 MoreEntryTrigger)
+- **`check_permissions_whitelist.py`**: 严格白名单 6 个 Android 权限 + 4 个 iOS usage description, 黑名单 30+ 显式禁止
+- **`check_no_network_io.py`**: 扫描 lib/ 禁止 http/dio/WebSocket/Firebase/Sentry 等 10 类云端 import + 禁远程 Socket + 限 url_launcher scheme
+- **`check_encryption_at_rest.py`**: 验证 app docs 写文件走 SQLCipher / .m4a.enc / Keychain, 禁明文 .json/.txt/.log 等
+- **`check_pii_in_assets.py`**: 扫 assets/ 无真实 PII (手机/身份证/邮箱/IP), 行级豁免 `// @pii-ok`
+- **`check_release_no_network.py`**: 扫 lib/ + network_security_config + Info.plist 禁外联 URL (白名单 schemas.android.com / apple.com / 商店链接)
+- **`docs/PRIVACY_HARDENING.md`**: 12 项零外联证据清单 (R115 新文档)
+- 守门员总数: 22 → **27** (+5)
+
+### Fixed (R115 test 迁移)
+- 14 个老 home test + 5 个老 settings test 迁移新 API + 新 provider override
+- ARB baseline 1328 → 1349 (+21 key, R115 emotion-first 视觉重构)
+- `pumpAndSettle` → `pump(100ms)` 修 NotificationStatusCard 永 hang timeout
+
+### Verification
+- flutter analyze: **0 error / 0 warning** (276 info 全是历史 require_trailing_commas)
+- flutter test: **2512 pass / 0 fail / 1 skip** (+10 from R114 baseline)
+- 27 守门员: 21 既有 + 5 新 + 1 dart = 27 全绿
+- 路由表: 0 变更 (零数据迁移)
+
 ## [1.1.0+149 R114 standard 审计修复战役] - 2026-08-16 (10 视角审计 5 wave 全闭环, 未 commit)
 
 ### Fixed (R114, 详见 AGENTS.md R114 章节 + .opencode/audit/)

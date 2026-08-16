@@ -58,6 +58,22 @@
   "setupPrivacy2": "• 不会上传到任何云端服务器",
   "setupPrivacy3": "• 您可以随时导出",
   "settingsMedication": "常吃药",
+  "settingsHealthData": "健康数据",
+  "settingsHealthDataMedSub": "{total} 种药物 · 今日 {done}/{total} 已服",
+  "@settingsHealthDataMedSub": {
+    "description": "v1.1.0 round 11 (R115): 设置-健康数据-用药副标题",
+    "placeholders": {
+      "total": { "type": "int" },
+      "done": { "type": "int" }
+    }
+  },
+  "settingsHealthDataAssSub": "{count} 个量表",
+  "@settingsHealthDataAssSub": {
+    "description": "v1.1.0 round 11 (R115): 设置-健康数据-心理评估副标题",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "settingsAbout": "关于",
   "settingsDisclaimer": "免责声明",
   "settingsMedReport": "用药报告",
@@ -1365,14 +1381,56 @@
   "homeVentHeroTitle": "树洞",
   "homeVentHeroWrite": "写心事",
   "homeVentHeroNoData": "还没有倾诉, 写第一条心事",
-  "homeActionMedication": "用药",
-  "homeActionAssessment": "量表",
   "homeActionMoodReview": "情绪回顾",
   "homeActionDailyTracking": "日常追踪",
+  "homeActionTips": "心理技巧",
+  "homeActionTipsSub": "5 个小练习 · 当下可学",
+  "homeActionMoodReviewSub": "本周 {count} 次记录 · 均分 {avg}",
+  "@homeActionMoodReviewSub": {
+    "description": "v1.1.0 round 11 (R115 视觉重构): 情绪回顾快捷操作副标题",
+    "placeholders": {
+      "count": { "type": "int" },
+      "avg": { "type": "String" }
+    }
+  },
+  "homeActionDailyTrackingSub": "睡眠 / 体重 / 社交节律",
+  "homeMoreEntryTitle": "更多",
+  "homeMoreEntrySubtitle": "用药 · 量表 · 危机热线",
+  "homeMoreSheetTitle": "更多入口",
+  "homeMoreMedication": "用药管理",
+  "homeMoreMedicationSub": "{total} 种药物 · 今日 {done}/{total} 已服",
+  "@homeMoreMedicationSub": {
+    "description": "v1.1.0 round 11 (R115): BottomSheet 用药管理副标题",
+    "placeholders": {
+      "total": { "type": "int" },
+      "done": { "type": "int" }
+    }
+  },
+  "homeMoreAssessment": "心理评估",
+  "homeMoreAssessmentSub": "{count} 个量表",
+  "@homeMoreAssessmentSub": {
+    "description": "v1.1.0 round 11 (R115): BottomSheet 心理评估副标题",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "homeMoreCrisis": "危机热线",
+  "homeMoreCrisisSub": "5 区域 · 一键拨打",
+  "homeMoreWorry": "烦恼闭环",
+  "homeMoreWorrySub": "进行中 {active} · 已闭环 {closed}",
+  "@homeMoreWorrySub": {
+    "description": "v1.1.0 round 11 (R115): BottomSheet 烦恼闭环副标题",
+    "placeholders": {
+      "active": { "type": "int" },
+      "closed": { "type": "int" }
+    }
+  },
+  "homeTodayOverview": "今日概览",
+  "todaySummarySleep": "睡眠",
+  "todaySummaryWorry": "烦恼",
   "homeFabHotline": "紧急热线",
   "homeFabTop": "回到顶端",
   "trendChip30Day": "近 30 天",
-  "assessmentChipCurrent": "本周",
   "crisisHotlineCnLabel": "全国 24 小时心理援助热线",
   "crisisHotlineCnNumber": "400-161-9995",
   "crisisHotlineCnDesc": "中国大陆 24 小时免费",
@@ -2946,10 +3004,7 @@
   "moodPeriodAfternoon": "下午",
   "settingsProfileTitle": "个人资料",
   "settingsProfileSubtitle": "健康档案、医疗信息",
-  "todaySummaryCheckIn": "打卡",
-  "todaySummaryMeds": "药物",
   "todaySummaryMood": "心情",
-  "todaySummaryStreak": "连续",
   "@todaySummaryStreakDays": {
     "description": "R103: 主頁摘要卡連續打卡天數 (placeholder {count} 是天數）",
     "placeholders": {
@@ -3068,9 +3123,6 @@
   "medTodayTaken": "已服",
   "medTodayRefill": "需续方",
   "homeQuickActionView": "查看",
-  "homeQuickActionRecord": "记录",
-  "homeQuickActionStart": "开始",
-  "homeTodayMetrics": "今日指标",
   "@ventReportTooltip": {
     "description": "R97-P1-4 (2026-08-07): 樹洞詳情頁舉報 / 反饋按鈕 tooltip (Apple 1.2.1 UGC 報告機制要求）"
   },

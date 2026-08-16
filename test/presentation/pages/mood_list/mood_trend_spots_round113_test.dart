@@ -13,7 +13,9 @@
 // 5. 早于窗口 cutoff 的条目排除 (全 null)
 
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
-import 'package:chroniccare/presentation/pages/mood_list/mood_trend_page.dart';
+// v1.1.0 R116 (god class 拆): computeTrendSpots 纯函数从 mood_trend_page
+// 拆到 lib/domain/logic/mood_trend_calculator.dart (0 Flutter 0 drift 依赖)。
+import 'package:chroniccare/domain/logic/mood_trend_calculator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 MoodEntryEntity _mood({

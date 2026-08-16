@@ -51,14 +51,30 @@ class MoodHeroCard extends ConsumerWidget {
       title: l10n.homeMoodHeroTitle,
       margin: EdgeInsets.zero,
       children: [
-        ListTile(
-          leading: const Icon(Icons.sentiment_satisfied_outlined),
-          title: Text(l10n.homeMoodHeroNoData),
-          trailing: PressFeedback(
-            child: FilledButton(
-              onPressed: () => MoodRecorderPage.show(context, ref),
-              child: Text(l10n.homeMoodHeroRecord),
-            ),
+        // v1.1.0 round 11 (R115+ polish): padding 16 → 18, 加大 hero 卡视觉权重
+        // 跟 VentHeroCard 一起从「次要卡」升格为「双主卡」(emotion-first)。
+        Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.sentiment_satisfied_outlined,
+                size: 28,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  l10n.homeMoodHeroNoData,
+                  style: AppTokens.textStyleBody(context),
+                ),
+              ),
+              PressFeedback(
+                child: FilledButton(
+                  onPressed: () => MoodRecorderPage.show(context, ref),
+                  child: Text(l10n.homeMoodHeroRecord),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -80,11 +96,19 @@ class MoodHeroCard extends ConsumerWidget {
       margin: EdgeInsets.zero,
       children: [
         Padding(
-          padding: AppTokens.edgeInsetsMd,
+          // v1.1.0 round 11 (R115+ polish): padding 16 → 18, headline 字号 → 24
+          // 升格为「双主卡」, 跟 VentHeroCard 视觉对齐。
+          padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(summary, style: AppTokens.textStyleHeadline(context)),
+              Text(
+                summary,
+                // R115+ polish: 24px 突出大字号, 跟 VentHeroCard 一致
+                style: AppTokens.textStyleHeadline(context).copyWith(
+                  fontSize: 24,
+                ),
+              ),
               const SizedBox(height: AppTokens.spacingXxs),
               Text(
                 l10n.homeMoodHeroLastRecorded(Formatters.time(entry.timestamp)),

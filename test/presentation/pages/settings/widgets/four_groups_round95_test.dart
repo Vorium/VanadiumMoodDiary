@@ -14,10 +14,12 @@
 // 验证 ProfileGroup + Medication list render)。
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_group.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/data_management_section.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/health_data_group.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_group.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_section.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
@@ -50,6 +52,10 @@ void main() {
     return ProviderScope(
       overrides: [
         medicationsProvider.overrideWith((ref) => Stream.value(const [])),
+        // v1.1.0 round 11 (R115): HealthDataGroup 独立 mount 时需要 assessmentsProvider override
+        assessmentsProvider.overrideWith(
+          (ref) => Stream.value(const <CheckInEntity>[]),
+        ),
         sharedPreferencesProvider.overrideWithValue(mockSp),
       ],
       child: MaterialApp(
@@ -64,25 +70,23 @@ void main() {
   }
 
   testWidgets(
-      'ProfileGroup: Medication + Assessment 渲染 (NotificationStatusCard 在 RemindersGroup)',
+      'ProfileGroup: 只剩头像卡 + 心理技巧入口 (med/assess 已挪到 HealthDataGroup)',
       (tester) async {
-    // v0.30 round 95 (sub-spec 8 task 17): ProfileGroup 含 2 section
-    // (Medication / Assessment; v1.0.0+147 删商业卡, 1.1.0 round 4 摘 Contact),
-    // NotificationStatusCard 挪到 RemindersGroup 末尾 (避免 initState 永远
-    // schedule frame 让 widget test hang)。
+    // v1.1.0 round 11 (R115 emotion-first refactor): Medication + Assessment
+    // 段从 ProfileGroup 抽到新 HealthDataGroup (置顶), 本 group 只剩 2 section。
+    // Medication / Assessment widget type 不应在 ProfileGroup 子树。
     await tester.pumpWidget(buildGroup(const ProfileGroup()));
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
     // ProfileGroup 自身 render
     expect(find.byType(ProfileGroup), findsOneWidget);
-    // Medication list 渲染 (ProfileGroup 顶部)
-    expect(find.byType(MedicationsListWidget), findsOneWidget);
-    // Assessment 渲染
-    expect(find.byType(AssessmentSection), findsOneWidget);
-    // NotificationStatusCard 不应在 ProfileGroup (在 RemindersGroup)
+    // Medication list 渲染 已不在 ProfileGroup
+    expect(find.byType(MedicationsListWidget), findsNothing);
+    // Assessment 渲染 已不在 ProfileGroup
+    expect(find.byType(AssessmentSection), findsNothing);
+    // NotificationStatusCard 不在 ProfileGroup (在 RemindersGroup)
     expect(find.byType(NotificationStatusCard), findsNothing);
-    // v0.32 round 14 (R112 F1 遗留): MedicationsListWidget (meds=[] → 空态)
-    // + AssessmentReminderSection 都无 Card — ProfileGroup 子树 0 Card
+    // ProfileGroup 子树 0 Card
     expect(find.byType(Card), findsNothing);
   });
 

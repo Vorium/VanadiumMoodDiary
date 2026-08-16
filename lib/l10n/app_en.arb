@@ -27,6 +27,22 @@
   "setupPrivacy2": "• Never uploaded to any server",
   "setupPrivacy3": "• Exportable anytime",
   "settingsMedication": "Medications",
+  "settingsHealthData": "Health data",
+  "settingsHealthDataMedSub": "{total} meds · {done}/{total} taken today",
+  "@settingsHealthDataMedSub": {
+    "description": "v1.1.0 round 11 (R115): settings-health-data-medication subtitle",
+    "placeholders": {
+      "total": { "type": "int" },
+      "done": { "type": "int" }
+    }
+  },
+  "settingsHealthDataAssSub": "{count} scales",
+  "@settingsHealthDataAssSub": {
+    "description": "v1.1.0 round 11 (R115): settings-health-data-assessment subtitle",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "settingsAbout": "About",
   "settingsDisclaimer": "Disclaimer",
   "settingsMedReport": "Medication report",
@@ -1323,14 +1339,56 @@
   "homeVentHeroTitle": "Vent",
   "homeVentHeroWrite": "Write",
   "homeVentHeroNoData": "Nothing here yet. Write your first thought.",
-  "homeActionMedication": "Meds",
-  "homeActionAssessment": "Scales",
   "homeActionMoodReview": "Mood review",
   "homeActionDailyTracking": "Daily tracking",
+  "homeActionTips": "Tips",
+  "homeActionTipsSub": "5 exercises · Practice now",
+  "homeActionMoodReviewSub": "This week {count} entries · avg {avg}",
+  "@homeActionMoodReviewSub": {
+    "description": "v1.1.0 round 11 (R115 visual refactor): mood review quick action subtitle",
+    "placeholders": {
+      "count": { "type": "int" },
+      "avg": { "type": "String" }
+    }
+  },
+  "homeActionDailyTrackingSub": "Sleep · Weight · Social rhythm",
+  "homeMoreEntryTitle": "More",
+  "homeMoreEntrySubtitle": "Meds · Scales · Crisis hotline",
+  "homeMoreSheetTitle": "More entries",
+  "homeMoreMedication": "Medication",
+  "homeMoreMedicationSub": "{total} meds · {done}/{total} taken today",
+  "@homeMoreMedicationSub": {
+    "description": "v1.1.0 round 11 (R115): BottomSheet medication subtitle",
+    "placeholders": {
+      "total": { "type": "int" },
+      "done": { "type": "int" }
+    }
+  },
+  "homeMoreAssessment": "Assessment",
+  "homeMoreAssessmentSub": "{count} scales",
+  "@homeMoreAssessmentSub": {
+    "description": "v1.1.0 round 11 (R115): BottomSheet assessment subtitle",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "homeMoreCrisis": "Crisis hotline",
+  "homeMoreCrisisSub": "5 regions · Tap to call",
+  "homeMoreWorry": "Worry threads",
+  "homeMoreWorrySub": "{active} active · {closed} resolved",
+  "@homeMoreWorrySub": {
+    "description": "v1.1.0 round 11 (R115): BottomSheet worry subtitle",
+    "placeholders": {
+      "active": { "type": "int" },
+      "closed": { "type": "int" }
+    }
+  },
+  "homeTodayOverview": "Today",
+  "todaySummarySleep": "Sleep",
+  "todaySummaryWorry": "Worries",
   "homeFabHotline": "Hotline",
   "homeFabTop": "Back to top",
   "trendChip30Day": "Last 30 days",
-  "assessmentChipCurrent": "This week",
   "crisisHotlineCnLabel": "National 24-hour psychological assistance hotline",
   "crisisHotlineCnNumber": "400-161-9995",
   "crisisHotlineCnDesc": "Mainland China 24h toll-free",
@@ -2904,10 +2962,7 @@
   "moodPeriodAfternoon": "Afternoon",
   "settingsProfileTitle": "Profile",
   "settingsProfileSubtitle": "Health records, medical info",
-  "todaySummaryCheckIn": "Check-in",
-  "todaySummaryMeds": "Meds",
   "todaySummaryMood": "Mood",
-  "todaySummaryStreak": "Streak",
   "@todaySummaryStreakDays": {
     "description": "R103: Today summary card streak days (placeholder {count} is day count)",
     "placeholders": {
@@ -3026,9 +3081,6 @@
   "medTodayTaken": "Taken",
   "medTodayRefill": "Refill",
   "homeQuickActionView": "View",
-  "homeQuickActionRecord": "Log",
-  "homeQuickActionStart": "Start",
-  "homeTodayMetrics": "Today",
   "ventTagFamily": "Family",
   "ventTagWork": "Work",
   "ventTagStudy": "Study",

@@ -20,6 +20,7 @@
 // 测试模式: 每个 case 调 `setXxxEnabledForTest(true)` 翻 flag, 验证 widget 渲染。
 // tearDown resetForTest 恢复 prod 默认。
 import 'package:chroniccare/core/data/feature_flags.dart';
+import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
@@ -47,6 +48,15 @@ void main() {
     return ProviderScope(
       overrides: [
         medicationsProvider.overrideWith((ref) => Stream.value(const [])),
+        // v1.1.0 round 11 (R115): HealthDataGroup 加 assessmentsProvider watch
+        assessmentsProvider.overrideWith(
+          (ref) => Stream.value(const <CheckInEntity>[]),
+        ),
+        // v1.1.0 round 11 (R115): HealthDataGroup watch todayAllCheckInsProvider
+        // 算今日已服药数 — test 环境需要 override 避免 DB 访问 + Timer leak
+        todayAllCheckInsProvider.overrideWith(
+          (ref) => Stream.value(const <CheckInEntity>[]),
+        ),
         sharedPreferencesProvider.overrideWithValue(mockSp),
       ],
       child: const MaterialApp(
@@ -60,9 +70,10 @@ void main() {
 
   testWidgets('R93 case 1: 2 flag 默认 false → section 全 hidden', (tester) async {
     // v0.30 round 95 (sub-spec 8 task 17): 4 group 重构, NotificationStatusCard
-    // 挪到 RemindersGroup 末尾, 维持 lazy load 体验, pumpAndSettle 仍可用。
+    // 挪到 RemindersGroup 末尾, 维持 lazy load 体验, 用 pump 替代
+    // pumpAndSettle 避免 NotificationStatusCard 永 hang 抛 timeout。
     await tester.pumpWidget(buildSettingsPage());
-    await tester.pumpAndSettle(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
 
     // 1. 5 厂商 OEM 引导 hidden (ExpansionTile 标题 "国产手机没收到通知？" 不应渲染)
     expect(find.text('国产手机没收到通知？'), findsNothing);
@@ -79,9 +90,10 @@ void main() {
       'R93 case 4: fiveVendorPushEnabled=true → OEM 引导 ExpansionTile 渲染',
       (tester) async {
     FeatureFlags.setFiveVendorPushEnabledForTest(true);
-    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1
+    // v0.30 round 95 (sub-spec 8 task 17): 同 case 1, 用 pump 替代
+    // pumpAndSettle 避免 NotificationStatusCard 永 hang。
     await tester.pumpWidget(buildSettingsPage());
-    await tester.pumpAndSettle(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
 
     // OEM 引导: NotificationStatusCard 内 ExpansionTile 标题 "国产手机没收到通知？" 渲染
     await tester.scrollUntilVisible(

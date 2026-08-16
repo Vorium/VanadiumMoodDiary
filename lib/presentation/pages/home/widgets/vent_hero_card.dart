@@ -17,11 +17,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 树洞卡 — 最新倾诉 1 行预览 + 写心事入口
 class VentHeroCard extends ConsumerWidget {
@@ -46,19 +49,59 @@ class VentHeroCard extends ConsumerWidget {
       title: l10n.homeVentHeroTitle,
       margin: EdgeInsets.zero,
       children: [
-        ListTile(
-          leading: Icon(
-            sealed ? Icons.lock_outline : Icons.forum_outlined,
-          ),
-          title: _preview(l10n, latest, sealed: sealed),
-          trailing: sealed
-              // 封存态无写心事入口 (跟 vent_list FAB 隐藏同语义)
-              ? null
-              : FilledButton.tonal(
-                  onPressed: () => context.push('/vent/compose'),
-                  child: Text(l10n.homeVentHeroWrite),
-                ),
+        // v1.1.0 round 11 (R115+ polish): padding 12/14 → 18, 加大 hero 卡视觉权重
+        // 跟 MoodHeroCard 一起从「次要卡」升格为「双主卡」(emotion-first)。
+        InkWell(
           onTap: () => context.push('/vent'),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 28pt 圆角方块 icon, iOS systemPurple (#AF52DE)
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFAF52DE),
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: Icon(
+                    sealed ? Icons.lock_outline : Icons.forum_outlined,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _preview(l10n, latest, sealed: sealed),
+                      if (!sealed && latest != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          Formatters.time(latest.timestamp),
+                          style: AppTokens.textStyleCaption(context).copyWith(
+                            color: AppTokens.textHintColor(context),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (!sealed) ...[
+                  const SizedBox(width: 8),
+                  PressFeedback(
+                    child: FilledButton(
+                      onPressed: () => context.push('/vent/compose'),
+                      child: Text(l10n.homeVentHeroWrite),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ],
     );

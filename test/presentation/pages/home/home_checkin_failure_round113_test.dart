@@ -15,16 +15,20 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
+import 'package:chroniccare/domain/entities/worry_thread_entity.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/domain/usecases/check_in_usecases.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
+import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:chroniccare/presentation/widgets/animations/celebration_bounce.dart';
 import 'package:chroniccare/presentation/widgets/check_in_button.dart';
 
@@ -129,6 +133,14 @@ Widget wrapHome(RecordCheckInUseCase useCase) {
         (ref) => const AsyncValue.data(
           StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
         ),
+      ),
+      // v1.1.0 round 11 (R115): TodaySummaryCard 新增 4 指标 provider
+      // override — 不然会走真实 DB 在 test 环境抛错。
+      sleepEntriesProvider.overrideWith(
+        (ref) => Stream<List<SleepEntryEntity>>.value(const []),
+      ),
+      worryOpenProvider.overrideWith(
+        (ref) => Stream<List<WorryThreadEntity>>.value(const []),
       ),
     ],
     child: MaterialApp.router(

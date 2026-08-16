@@ -335,13 +335,20 @@ class HomePageState extends ConsumerState<HomePage> {
 
             const SizedBox(height: AppTokens.spacingMd),
 
-            // 7: 快捷操作 2x2 彩色 tile 网格 (用药/量表/情绪回顾/日常追踪)
+            // 7: 快捷操作 3 行 list + 「更多」虚线入口
+            // v1.1.0 round 11 (R115): 移除 用药/量表 砖块, 改 情绪回顾/日常追踪/心理技巧
+            // 列表, 加虚线「更多」入口 → BottomSheet (用药/量表/危机热线/烦恼)
             PrimaryActionRow(
-              onMedicationTap: () => context.push('/medication'),
-              onAssessmentTap: () => context.push('/assessment-center'),
               onMoodReviewTap: () => context.push('/mood-review'),
               onDailyTrackingTap: () => context.push('/daily-tracking'),
+              onTipsTap: () => context.push('/tips'),
             ),
+
+            const SizedBox(height: AppTokens.spacingSm),
+
+            // 7b: 「更多」虚线入口 — 弱化二级入口
+            // (用药 / 量表 / 危机热线 / 烦恼 4 项收进 BottomSheet)
+            const MoreEntryTrigger(),
 
             const SizedBox(height: AppTokens.spacingSm),
 

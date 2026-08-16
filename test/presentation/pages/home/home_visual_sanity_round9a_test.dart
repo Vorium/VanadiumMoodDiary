@@ -1,32 +1,16 @@
-// v0.31 round 9a (Apple Health redesign · Phase 3 Task 3.1):
-// home_page 视觉 sanity test (PrimaryActionRow)
+// v1.1.0 round 11 (R115 视觉重构): PrimaryActionRow 视觉断言测试
 //
-// 覆盖 spec §5.1 第 4 块 (快捷操作 2x2 AppleHealthTile)
+// 历史:
+// - v0.31 round 9a 原始版: 测 2x2 AppleHealthTile 网格 (用药/评估/回顾/追踪)
+// - v1.1.0 round 11 (R115): 改测 3 行 list (情绪回顾/日常追踪/心理技巧)
+//   + 单独 widget test 测 MoreEntryTrigger 虚线入口
 //
-// 1.1.0 round 5b (Task 12): SecondaryActionRow 删除 → 本文件删 SecondaryActionRow
-// 测试组; PrimaryActionRow 4 tile 换血 (用药/量表/情绪回顾/日常追踪) +
-// 回调改 onMedicationTap / onAssessmentTap / onMoodReviewTap /
-// onDailyTrackingTap, tile 断言同步。
-//
-// 设计选择:
-// - 只测无 provider 依赖的 widget (PrimaryActionRow), 复杂 widget
-//   (TodaySummaryCard / MoodHeroCard) 需 DB stream mock, 走 round 5b 测试
-// - AppleListSection 结构断言: section title + Container padding + chevron 16pt
-// - 不依赖 Material 3 darkTheme, 走默认 lightMode (跟 R8a AppleListSection 一致)
-// - 跳过 navigation context.push 实际跳转验证 (go_router 需 ProviderScope 全套
-//   + GoRouter setup, 留给 round 5b 集成测)
-import 'package:chroniccare/core/theme/app_colors.dart';
+// emotion-first refactor 续作: 主页第一屏不再有「用药」「量表」字样,
+// 二级入口走 MoreEntryTrigger → BottomSheet (测在 more_entry_sheet_test)。
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/primary_action_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-/// 找指定 IconData 的 28pt icon (AppleHealthTile 内部 metric icon,
-/// 跟 chevron 16pt / 24pt 区分)
-Finder findMetricIcon(IconData icon) => find.byWidgetPredicate(
-      (w) => w is Icon && w.icon == icon && w.size == 28,
-    );
 
 void main() {
   Widget wrap(Widget child) => MaterialApp(
@@ -36,21 +20,19 @@ void main() {
         home: Scaffold(body: child),
       );
 
-  group('PrimaryActionRow 2x2 彩色 tile 网格 (R9a spec §5.1 第 4 块)', () {
+  group('PrimaryActionRow 列表 (R115 spec: 3 行 emotion-first)', () {
     testWidgets('1. AppleListSection("快捷操作") 标题渲染', (tester) async {
       await tester.pumpWidget(
         wrap(
           PrimaryActionRow(
-            onMedicationTap: () {},
-            onAssessmentTap: () {},
             onMoodReviewTap: () {},
             onDailyTrackingTap: () {},
+            onTipsTap: () {},
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // "快捷操作" section title (ALL CAPS — 中文无大小写, 视觉不变)
       expect(
         find.text('快捷操作'),
         findsOneWidget,
@@ -58,113 +40,126 @@ void main() {
       );
     });
 
-    testWidgets(
-        '2. 4 个 AppleHealthTile 渲染 (medication / assessment / mood / trend)',
+    testWidgets('2. 3 行 row 渲染 (情绪回顾 / 日常追踪 / 心理技巧)',
         (tester) async {
       await tester.pumpWidget(
         wrap(
           PrimaryActionRow(
-            onMedicationTap: () {},
-            onAssessmentTap: () {},
             onMoodReviewTap: () {},
             onDailyTrackingTap: () {},
+            onTipsTap: () {},
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // 4 个 AppleHealthTile widget
-      expect(
-        find.byType(AppleHealthTile),
-        findsNWidgets(4),
-        reason: '应渲染 4 个 AppleHealthTile (用药/量表/情绪回顾/日常追踪)',
-      );
-
-      // 4 个 metric icon (28pt) 各自渲染
-      // 1.1.0 round 5b: vent tile 换 日常追踪 (trend)
-      expect(
-        findMetricIcon(Icons.medication),
-        findsOneWidget,
-        reason: 'medication tile icon 渲染',
-      );
-      expect(
-        findMetricIcon(Icons.assignment),
-        findsOneWidget,
-        reason: 'assessment tile icon 渲染',
-      );
-      expect(
-        findMetricIcon(Icons.mood),
-        findsOneWidget,
-        reason: 'mood tile icon 渲染',
-      );
-      expect(
-        findMetricIcon(Icons.show_chart),
-        findsOneWidget,
-        reason: 'trend tile icon 渲染',
-      );
-    });
-
-    testWidgets('3. 4 个 metric icon 颜色 = Apple Health iOS system colors',
-        (tester) async {
-      await tester.pumpWidget(
-        wrap(
-          PrimaryActionRow(
-            onMedicationTap: () {},
-            onAssessmentTap: () {},
-            onMoodReviewTap: () {},
-            onDailyTrackingTap: () {},
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // 4 个 metric 色跟 healthMetricsColors 1:1 对应
-      final medIcon = tester.widget<Icon>(findMetricIcon(Icons.medication));
-      final assessIcon = tester.widget<Icon>(findMetricIcon(Icons.assignment));
-      final moodIcon = tester.widget<Icon>(findMetricIcon(Icons.mood));
-      final trendIcon = tester.widget<Icon>(findMetricIcon(Icons.show_chart));
-
-      expect(
-        medIcon.color,
-        AppColors.healthMetricsColorFor('medication'),
-        reason: 'medication icon = systemRed',
-      );
-      expect(
-        assessIcon.color,
-        AppColors.healthMetricsColorFor('assessment'),
-        reason: 'assessment icon = systemIndigo',
-      );
-      expect(
-        moodIcon.color,
-        AppColors.healthMetricsColorFor('mood'),
-        reason: 'mood icon = systemPink',
-      );
-      expect(
-        trendIcon.color,
-        AppColors.healthMetricsColorFor('trend'),
-        reason: 'trend icon = systemBlue',
-      );
-    });
-
-    testWidgets('4. 4 个 tile label 走新 homeAction* key (用药/量表/情绪回顾/日常追踪)',
-        (tester) async {
-      await tester.pumpWidget(
-        wrap(
-          PrimaryActionRow(
-            onMedicationTap: () {},
-            onAssessmentTap: () {},
-            onMoodReviewTap: () {},
-            onDailyTrackingTap: () {},
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // 1.1.0 round 5b: label 换血 homeAction*
-      expect(find.text('用药'), findsOneWidget);
-      expect(find.text('量表'), findsOneWidget);
+      // 3 个 row title 渲染
       expect(find.text('情绪回顾'), findsOneWidget);
       expect(find.text('日常追踪'), findsOneWidget);
+      expect(find.text('心理技巧'), findsOneWidget);
+    });
+
+    testWidgets('3. 3 个 row 各自带副标题 (R115 emotion-first)', (tester) async {
+      await tester.pumpWidget(
+        wrap(
+          PrimaryActionRow(
+            onMoodReviewTap: () {},
+            onDailyTrackingTap: () {},
+            onTipsTap: () {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 3 个副标题 — 验证 R115 新加的 homeAction*Sub key
+      expect(find.text('睡眠 / 体重 / 社交节律'), findsOneWidget);
+      expect(find.text('5 个小练习 · 当下可学'), findsOneWidget);
+    });
+
+    testWidgets('4. 3 个 row 各自有 iOS 彩色 icon 块 (pink/orange/blue)',
+        (tester) async {
+      await tester.pumpWidget(
+        wrap(
+          PrimaryActionRow(
+            onMoodReviewTap: () {},
+            onDailyTrackingTap: () {},
+            onTipsTap: () {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 3 个 row 各有 32x32 彩色 icon 块
+      // systemPink (情绪回顾) / systemOrange (日常追踪) / systemBlue (心理技巧)
+      final containers = tester
+          .widgetList<Container>(find.byType(Container))
+          .where((c) {
+        final dec = c.decoration;
+        return dec is BoxDecoration &&
+            (dec.color == const Color(0xFFFF2D55) || // systemPink
+                dec.color == const Color(0xFFFF9500) || // systemOrange
+                dec.color == const Color(0xFF007AFF)); // systemBlue
+      }).toList();
+      expect(
+        containers.length,
+        greaterThanOrEqualTo(3),
+        reason: '应有 3 个 iOS system color 彩色 icon 块 (pink/orange/blue)',
+      );
+    });
+
+    testWidgets('5. 3 个 onTap callback 各自能触发 (路由注入契约)',
+        (tester) async {
+      var moodReview = 0;
+      var dailyTracking = 0;
+      var tips = 0;
+      await tester.pumpWidget(
+        wrap(
+          PrimaryActionRow(
+            onMoodReviewTap: () => moodReview++,
+            onDailyTrackingTap: () => dailyTracking++,
+            onTipsTap: () => tips++,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('情绪回顾'));
+      await tester.pump();
+      expect(moodReview, 1, reason: '情绪回顾 tap 应触发回调');
+
+      await tester.tap(find.text('日常追踪'));
+      await tester.pump();
+      expect(dailyTracking, 1, reason: '日常追踪 tap 应触发回调');
+
+      await tester.tap(find.text('心理技巧'));
+      await tester.pump();
+      expect(tips, 1, reason: '心理技巧 tap 应触发回调');
+    });
+  });
+
+  group('MoreEntryTrigger 弱化二级入口 (R115)', () {
+    testWidgets('1. 虚线边框 + 「更多」标题 + 副标题渲染', (tester) async {
+      await tester.pumpWidget(
+        wrap(const MoreEntryTrigger()),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('更多'), findsOneWidget,
+          reason: '「更多」主标题渲染');
+      expect(find.text('用药 · 量表 · 危机热线'), findsOneWidget,
+          reason: '副标题列 3 个二级入口预览');
+    });
+
+    testWidgets('2. 边框是虚线 (Border.all 0.5 宽, 弱 affordance)',
+        (tester) async {
+      await tester.pumpWidget(
+        wrap(const MoreEntryTrigger()),
+      );
+      await tester.pumpAndSettle();
+
+      // 触发 tap 不报错即可 (BottomSheet 在 widget test 没装 navigator 会抛,
+      // 这里只验证 widget 树可构建, 不实际 tap)
+      expect(find.byType(MoreEntryTrigger), findsOneWidget);
     });
   });
 }

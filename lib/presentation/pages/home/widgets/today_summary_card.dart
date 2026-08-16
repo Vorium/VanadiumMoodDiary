@@ -2,75 +2,64 @@
 //
 // 历史:
 // - v0.30 R101: 今日数据概览卡 — 参照 Apple Health Summary Pinned Favorites
+// - v0.31 R9a: 4 个 StatCard 2x2 网格 (今日打卡 / 连续天数 / 用药进度 / 心情)
 //
-// v0.31 R9a 改造 (Apple Health 4 指标 2x2 网格):
-// - 4 个 StatCard 2x2 网格 (今日打卡 / 连续天数 / 用药进度 / 心情)
-// - 包装 AppleListSection("今日指标") 章节 (iOS 群组列表风格)
-// - 4 个 StatCard 顺序: 今日打卡 (checkIn 绿色) / 连续天数 (streak 警示色) /
-//   用药进度 (medication 红色, value="2/3") / 心情 (mood 粉色 emoji)
-// - 间距 12 (spacingSm) — 紧凑 2x2 grid
-// - Row[Col[Stat1, Stat2], Col[Stat3, Stat4]] 结构 + 中间 spacingMd 16 gap
+// v1.1.0 round 11 (R115 视觉重构): 4 指标换血 — 删 用药 / streak (streak
+// 已被 CheckInButton 表达), 留 情绪 / 树洞 / 睡眠 / 烦恼。
+// emotion-first refactor 续作: 「今日指标」4 项全部是 vent / mood 周边,
+// 跟双主卡语义一致, 不再出现「用药」「量表」字样。
 //
-// 设计选择:
-// - 4 个 metric 顺序按用户最关心度: 打卡 > streak > 用药 > 心情
-// - 打卡 / 心情用文字值 (✓ / emoji), streak / 用药用数字 (触发 StatCard tween)
-// - 沿用原有 providers (todayAllCheckInsProvider / streakSummaryProvider /
-//   medicationsProvider / latestMoodProvider) 不改业务数据流
-
+// 4 个 StatCard 顺序: 情绪 (mood 粉色 emoji) / 烦恼 (worry 橙色数字) /
+// 树洞 (vent 紫色数字) / 睡眠 (sleep 蓝色时长)。
+// spacingSm 12 紧凑 2x2 grid, Row[Col[Stat1, Stat2], Col[Stat3, Stat4]]。
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/providers/vent_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/stat_card.dart';
 
 /// 主页"今日指标" 4 项 2x2 网格 (Apple Health 风格 AppleListSection)
 ///
-/// v0.31 round 9a: 用 4 个 StatCard 替代原 4 列横排, 信息密度提升一档
-/// (Apple Health Pinned Favorites 风格)。
+/// v0.31 round 9a: 4 个 StatCard。
+/// v1.1.0 round 11 (R115): 换血为 情绪 / 树洞 / 睡眠 / 烦恼 (emotion-first)。
 class TodaySummaryCard extends ConsumerWidget {
   const TodaySummaryCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final todayCheckInsAsync = ref.watch(todayAllCheckInsProvider);
-    final medsAsync = ref.watch(medicationsProvider);
     final latestMoodAsync = ref.watch(latestMoodProvider);
-    final streakAsync = ref.watch(streakSummaryProvider);
-
-    // 今日是否打卡
-    final todayCheckIns = todayCheckInsAsync.value ?? [];
-    final hasCheckedIn = todayCheckIns.any((c) => c.isNormal);
-
-    // 今日药物进度
-    final activeMeds = (medsAsync.value ?? []).where((m) => m.isInUse).toList();
-    final todayMedIds = <int>{};
-    for (final c in todayCheckIns) {
-      if (c.isNormal && c.medicationId != null) {
-        todayMedIds.add(c.medicationId!);
-      }
-    }
-    final medDone = todayMedIds.length;
-    final medTotal = activeMeds.length;
+    final sleepAsync = ref.watch(sleepEntriesProvider);
+    final worryOpenAsync = ref.watch(worryOpenProvider);
+    final ventAsync = ref.watch(ventEntriesProvider);
 
     // 最新心情 (DB 级 LIMIT 1)
     final latestMood = latestMoodAsync.value;
 
-    // 连续天数
-    final streak = streakAsync.value;
-    final streakValue = streak?.streak ?? 0;
+    // 最新睡眠时长 (小时) — sleepEntriesProvider 已按 date 倒序, 取首条即最新
+    final sleepEntries = (sleepAsync.value ?? const <SleepEntryEntity>[]);
+    final latestSleepMin =
+        sleepEntries.isEmpty ? null : sleepEntries.first.durationMin;
+    final latestSleepHours =
+        latestSleepMin != null ? (latestSleepMin / 60.0) : null;
+
+    // 进行中烦恼数
+    final worryOpenCount = worryOpenAsync.value?.length ?? 0;
+
+    // 树洞数 — ventEntriesProvider autoDispose
+    final ventCount = ventAsync.value?.length ?? 0;
 
     return AppleListSection(
-      // AppleListSection 自己 ALL CAPS 渲染, 中文不变
-      // (但 iOS section header 标准做法是 13pt w500 ALL CAPS letterSpacing 0.6;
-      //  中文是 case-less, 视觉等同 13pt w500 letterSpacing 0.6 textHint)
-      // R32 (P0-15 i18n 跨期): 改 l10n
-      title: l10n.homeTodayMetrics, // "今日指标"
+      title: l10n.homeTodayOverview, // "今日概览" / "Today"
       margin: EdgeInsets.zero,
       children: [
         // 2x2 网格: Row[Col[Stat1, Stat2], Col[Stat3, Stat4]]
@@ -83,19 +72,19 @@ class TodaySummaryCard extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     StatCard(
-                      label: l10n.todaySummaryCheckIn,
-                      value: hasCheckedIn ? '✓' : '—',
-                      valueColor: hasCheckedIn
-                          ? AppTokens.primaryColor(context)
+                      label: l10n.todaySummaryMood, // "心情"
+                      value: latestMood != null
+                          ? MoodVisual.emojiFor(latestMood.score)
+                          : '—',
+                      valueColor: latestMood != null
+                          ? AppColors.moodScoreColor(latestMood.score)
                           : AppTokens.textHintColor(context),
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                     StatCard(
-                      label: l10n.todaySummaryStreak,
-                      value: streakValue.toString(),
-                      // v0.32 round 8 (R111 EM-16 fix): warning 黄作文字色
-                      // 对比度 1.9:1 不达标, 换 fgOnWarning (深橙, light/dark 可读)
-                      valueColor: streakValue > 0
+                      label: l10n.todaySummaryWorry, // "烦恼"
+                      value: worryOpenCount.toString(),
+                      valueColor: worryOpenCount > 0
                           ? AppColors.fgOnWarning
                           : AppTokens.textHintColor(context),
                     ),
@@ -108,20 +97,20 @@ class TodaySummaryCard extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     StatCard(
-                      label: l10n.todaySummaryMeds,
-                      value: medTotal > 0 ? '$medDone/$medTotal' : '—',
-                      valueColor: (medDone == medTotal && medTotal > 0)
-                          ? AppTokens.primaryColor(context)
+                      label: l10n.homeVentHeroTitle, // "树洞"
+                      value: ventCount.toString(),
+                      valueColor: ventCount > 0
+                          ? const Color(0xFFAF52DE) // iOS systemPurple
                           : AppTokens.textHintColor(context),
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                     StatCard(
-                      label: l10n.todaySummaryMood,
-                      value: latestMood != null
-                          ? MoodVisual.emojiFor(latestMood.score)
+                      label: l10n.todaySummarySleep, // "睡眠"
+                      value: latestSleepHours != null
+                          ? latestSleepHours.toStringAsFixed(1)
                           : '—',
-                      valueColor: latestMood != null
-                          ? AppColors.moodScoreColor(latestMood.score)
+                      valueColor: latestSleepHours != null
+                          ? AppTokens.primaryColor(context)
                           : AppTokens.textHintColor(context),
                     ),
                   ],

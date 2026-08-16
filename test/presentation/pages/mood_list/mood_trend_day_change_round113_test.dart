@@ -143,11 +143,36 @@ void main() {
           return i >= 0 ? l.substring(0, i) : l;
         }).join('\n');
 
-    test('mood_trend_page.dart', () async {
+    test('mood_trend_line_chart.dart (R116 god class 拆: watch 移到这里)',
+        () async {
+      // v1.1.0 R116: mood_trend_page 653L 拆 4 文件, watch(todayProvider)
+      // 从主壳移到 widgets/mood_trend_line_chart.dart (MoodLineChart.build
+      // 拿 now 算 spots)。主壳 + 3 个 chart widget 都不应再 DateTime.now()。
+      final src = await readSrc(
+        'presentation/pages/mood_list/widgets/mood_trend_line_chart.dart',
+      );
+      expect(stripComments(src).contains('DateTime.now()'), isFalse);
+      expect(src.contains('ref.watch(todayProvider)'), isTrue);
+    });
+
+    test('mood_trend_page.dart (主壳, R116 拆后无 DateTime.now())', () async {
       final src =
           await readSrc('presentation/pages/mood_list/mood_trend_page.dart');
       expect(stripComments(src).contains('DateTime.now()'), isFalse);
-      expect(src.contains('ref.watch(todayProvider)'), isTrue);
+    });
+
+    test('mood_distribution_chart.dart (R116 拆: 无需 watch)', () async {
+      final src = await readSrc(
+        'presentation/pages/mood_list/widgets/mood_distribution_chart.dart',
+      );
+      expect(stripComments(src).contains('DateTime.now()'), isFalse);
+    });
+
+    test('mood_cbt_chart.dart (R116 拆: 无需 watch)', () async {
+      final src = await readSrc(
+        'presentation/pages/mood_list/widgets/mood_cbt_chart.dart',
+      );
+      expect(stripComments(src).contains('DateTime.now()'), isFalse);
     });
 
     test('vent_list_page.dart', () async {

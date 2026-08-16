@@ -18,12 +18,17 @@
 // - 校验 → domain/logic/add_medication_form_validator.dart (R109)
 // - 提交流程 → add_medication_submit_flow.dart (本目录)
 // 本页只留: form state + 步骤编排 + UX (snackbar / pop / _saving)。
+//
+// v1.1.0 R116 round 4: 247L → 进一步拆 2 个纯展示子 widget
+//   (进度条 + 底部按钮 footer) 到 widgets/ 目录, page shell 只剩
+//   form state + 步骤编排 + save handler。模式跟 R116 round 1-3
+//   (mood_trend 3 chart / assessment_reminder_sheet /
+//   medication_slot_entry_row) 一致。
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_form.dart';
@@ -33,11 +38,12 @@ import 'package:chroniccare/presentation/pages/medication/add_medication_submit_
 import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step1_form.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step2_form.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step3_form.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step_footer.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/add_medication_step_indicator.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
-import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class AddMedicationPage extends ConsumerStatefulWidget {
   const AddMedicationPage({super.key});
@@ -152,28 +158,8 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
       ),
       child: Column(
         children: [
-          // 进度指示器 (iOS hairline 风格, 3pt)
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-            child: Row(
-              children: List.generate(3, (i) {
-                final active = i <= _currentStep;
-                return Expanded(
-                  child: Container(
-                    height: 3,
-                    margin: EdgeInsets.only(right: i < 2 ? 4 : 0),
-                    decoration: BoxDecoration(
-                      color: active
-                          ? AppTokens.primaryColor(context)
-                          : AppTokens.dividerColor(context),
-                      borderRadius: BorderRadius.circular(1.5),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
+          // R116 round 4: 进度指示器抽 AddMedicationStepIndicator 公开 widget
+          AddMedicationStepIndicator(currentStep: _currentStep),
 
           // R104 fix: 条件渲染替代 IndexedStack，setState 立即重建当前步骤
           // R112 AR-20 批2b: 3 步表单抽 widgets/add_medication_form.dart
@@ -207,37 +193,16 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
                       ),
           ),
 
-          // 底部按钮 — v0.31 R11a: 改 PrimaryButton 3 variant
-          SafeArea(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-              child: Row(
-                children: [
-                  if (_currentStep > 0)
-                    Expanded(
-                      child: PrimaryButton(
-                        variant: PrimaryButtonVariant.secondary,
-                        isFullWidth: true,
-                        onPressed: _prevStep,
-                        child: Text(l10n.medAddPrev),
-                      ),
-                    ),
-                  if (_currentStep > 0)
-                    const SizedBox(width: AppTokens.spacingSm),
-                  Expanded(
-                    flex: 2,
-                    child: PrimaryButton(
-                      isFullWidth: true,
-                      onPressed: _saving ? null : _nextStep,
-                      child: Text(
-                        _currentStep < 2 ? l10n.medAddNext : l10n.medAddSave,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          // R116 round 4: 底部按钮抽 AddMedicationStepFooter 公开 widget
+          AddMedicationStepFooter(
+            currentStep: _currentStep,
+            totalSteps: 3,
+            saving: _saving,
+            prevLabel: l10n.medAddPrev,
+            nextLabel: l10n.medAddNext,
+            saveLabel: l10n.medAddSave,
+            onPrev: _prevStep,
+            onNext: _nextStep,
           ),
         ],
       ),
@@ -256,3 +221,11 @@ class _AddMedicationPageState extends ConsumerState<AddMedicationPage> {
 // medicationFormLabel / medicationFormIcon);
 // `_save` 的 repo.add + 双 reschedule 抽 `add_medication_submit_flow.dart`
 // 公开 `AddMedicationSubmitFlow`. page 职责 3 → 1 (编排).
+//
+// v1.1.0 R116 round 4: 247L → 进一步拆 2 个纯展示子 widget:
+// - 进度条 (line 155-176 inline) → `widgets/add_medication_step_indicator.dart`
+//   公开 `AddMedicationStepIndicator` (currentStep 值注入, 0 callback)
+// - 底部按钮 (line 211-241 inline) → `widgets/add_medication_step_footer.dart`
+//   公开 `AddMedicationStepFooter` (currentStep + saving + 3 label + 2 callback)
+// page shell 247L → ~190L (-23%)。纯 UI 抽出后 page 真正只剩 form state
+// + 步骤编排 + save handler 三件事, 易独立测。

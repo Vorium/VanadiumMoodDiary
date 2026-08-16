@@ -32,17 +32,13 @@ import 'package:chroniccare/domain/logic/medication_slot_calculator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_empty_state_cards.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_list_cell.dart';
-import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
-import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
+import 'package:chroniccare/presentation/pages/medication/widgets/medication_slot_entry_row.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
-import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
-import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
-import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// v0.30 R108 (P1 medication_page 拆): 抽到 domain 后, presentation 层只
@@ -257,7 +253,7 @@ class MedicationPage extends ConsumerWidget {
               chip:
                   '${slots[slot]!.where((e) => e.done).length}/${slots[slot]!.length}',
               children: [
-                for (final e in slots[slot]!) _SlotEntryRow(entry: e),
+                for (final e in slots[slot]!) MedicationSlotEntryRow(entry: e),
               ],
             ),
           ),
@@ -275,106 +271,11 @@ class MedicationPage extends ConsumerWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// Sub-widgets
-// ═══════════════════════════════════════════════════════════════════
-
-/// 时间段内的单条药物 — 支持直接打卡
-class _SlotEntryRow extends ConsumerWidget {
-  const _SlotEntryRow({required this.entry});
-  final _SlotEntry entry;
-
-  /// R113 (BUG 6): 从原 inline async closure 抽出, 供 PressFeedback
-  /// (mode 1, 同步 VoidCallback) 调用, unawaited 显式标记 fire-and-forget。
-  ///
-  /// v1.1.0 R113 (BUG 6 续): checkIn 走 AsyncValue.guard — 异常吞进
-  /// state 不 throw (home ref.listen 同款模式)。修前失败时无任何反馈
-  /// (Haptics.success 照跑, 用户以为成功了)。修: 完成后查 hasError →
-  /// 错误 snackbar + 跳过 haptic 成功反馈。
-  void _checkIn(WidgetRef ref, BuildContext context, MedicationSlotEntry e) {
-    unawaited(() async {
-      await ref
-          .read(checkInNotifierProvider.notifier)
-          .checkIn(medicationId: e.med.id);
-      if (!context.mounted) return;
-      final failed = ref.read(checkInNotifierProvider).hasError;
-      if (failed) {
-        AppSnackBar.showError(
-          context,
-          action: AppLocalizations.of(context).snackbarActionCheckin,
-          error: ref.read(checkInNotifierProvider).error,
-        );
-        return;
-      }
-      await Haptics.success();
-    }());
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final e = entry;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          MedicationPillIcon(
-            colorIndex: e.med.colorIndex,
-            size: 32,
-            initial: e.med.name,
-          ),
-          const SizedBox(width: AppTokens.spacingSm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  e.med.name,
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeBody,
-                    fontWeight: FontWeight.w500,
-                    color: AppTokens.textPrimaryColor(context),
-                  ),
-                ),
-                Text(
-                  '${e.time.hour.toString().padLeft(2, '0')}:${e.time.minute.toString().padLeft(2, '0')} · '
-                  '${e.med.dosage}${e.med.dosageUnit.id}',
-                  style: TextStyle(
-                    fontSize: AppTokens.fontSizeCaption,
-                    color: AppTokens.textHintColor(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // 直接打卡按钮 (参照 Apple Health Medications checkbox)
-          // R113 (BUG 6): PressFeedback 包装 (按下 scale 0.97 + haptic,
-          // mode 1 接管 tap — 修前裸 GestureDetector 无任何按压反馈),
-          // AnimatedSwitcher 时长走 Motion.duration (修前裸 AppTokens.durFast
-          // 是全 lib 唯一绕过 Motion wrapper 的动画)。
-          PressFeedback(
-            onTap: e.done ? null : () => _checkIn(ref, context, e),
-            child: AnimatedSwitcher(
-              duration: Motion.duration(context, AppTokens.durFast),
-              child: Icon(
-                e.done
-                    ? Icons.check_circle_rounded
-                    : Icons.radio_button_unchecked,
-                key: ValueKey(e.done),
-                size: 28,
-                color: e.done
-                    ? AppTokens.primaryColor(context)
-                    : AppTokens.textHintColor(context),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // v0.32 R109 (god class 拆 round 3): 删 2 个 private 空态 widget
 //   (`_EmptyMedicationsCard` / `_EmptyScheduleCard`), 移到
 //   `widgets/medication_empty_state_cards.dart` 公开 class (EmptyMedicationsCard
 //   / EmptyScheduleCard), caller 改 import 公开类. emil DRY 跟 R31 R108
 //   子 widget 抽模式一致.
+//
+// v1.1.0 R116 (god class 拆 round 3): _SlotEntryRow (92L) 拆到
+//   widgets/medication_slot_entry_row.dart, 本文件瘦身 380L → ~280L.

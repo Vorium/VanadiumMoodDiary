@@ -99,6 +99,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsMedication => 'Medications';
 
   @override
+  String get settingsHealthData => 'Health data';
+
+  @override
+  String settingsHealthDataMedSub(int total, int done) {
+    return '$total meds · $done/$total taken today';
+  }
+
+  @override
+  String settingsHealthDataAssSub(int count) {
+    return '$count scales';
+  }
+
+  @override
   String get settingsAbout => 'About';
 
   @override
@@ -2333,16 +2346,72 @@ class AppLocalizationsEn extends AppLocalizations {
       'Nothing here yet. Write your first thought.';
 
   @override
-  String get homeActionMedication => 'Meds';
-
-  @override
-  String get homeActionAssessment => 'Scales';
-
-  @override
   String get homeActionMoodReview => 'Mood review';
 
   @override
   String get homeActionDailyTracking => 'Daily tracking';
+
+  @override
+  String get homeActionTips => 'Tips';
+
+  @override
+  String get homeActionTipsSub => '5 exercises · Practice now';
+
+  @override
+  String homeActionMoodReviewSub(int count, String avg) {
+    return 'This week $count entries · avg $avg';
+  }
+
+  @override
+  String get homeActionDailyTrackingSub => 'Sleep · Weight · Social rhythm';
+
+  @override
+  String get homeMoreEntryTitle => 'More';
+
+  @override
+  String get homeMoreEntrySubtitle => 'Meds · Scales · Crisis hotline';
+
+  @override
+  String get homeMoreSheetTitle => 'More entries';
+
+  @override
+  String get homeMoreMedication => 'Medication';
+
+  @override
+  String homeMoreMedicationSub(int total, int done) {
+    return '$total meds · $done/$total taken today';
+  }
+
+  @override
+  String get homeMoreAssessment => 'Assessment';
+
+  @override
+  String homeMoreAssessmentSub(int count) {
+    return '$count scales';
+  }
+
+  @override
+  String get homeMoreCrisis => 'Crisis hotline';
+
+  @override
+  String get homeMoreCrisisSub => '5 regions · Tap to call';
+
+  @override
+  String get homeMoreWorry => 'Worry threads';
+
+  @override
+  String homeMoreWorrySub(int active, int closed) {
+    return '$active active · $closed resolved';
+  }
+
+  @override
+  String get homeTodayOverview => 'Today';
+
+  @override
+  String get todaySummarySleep => 'Sleep';
+
+  @override
+  String get todaySummaryWorry => 'Worries';
 
   @override
   String get homeFabHotline => 'Hotline';
@@ -2352,9 +2421,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trendChip30Day => 'Last 30 days';
-
-  @override
-  String get assessmentChipCurrent => 'This week';
 
   @override
   String get crisisHotlineCnLabel =>
@@ -4021,16 +4087,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsProfileSubtitle => 'Health records, medical info';
 
   @override
-  String get todaySummaryCheckIn => 'Check-in';
-
-  @override
-  String get todaySummaryMeds => 'Meds';
-
-  @override
   String get todaySummaryMood => 'Mood';
-
-  @override
-  String get todaySummaryStreak => 'Streak';
 
   @override
   String get setupConsentMedicalDisclaimer =>
@@ -4153,15 +4210,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeQuickActionView => 'View';
-
-  @override
-  String get homeQuickActionRecord => 'Log';
-
-  @override
-  String get homeQuickActionStart => 'Start';
-
-  @override
-  String get homeTodayMetrics => 'Today';
 
   @override
   String get ventTagFamily => 'Family';

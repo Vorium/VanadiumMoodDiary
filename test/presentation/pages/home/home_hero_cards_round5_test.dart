@@ -14,13 +14,17 @@
 import 'package:chroniccare/domain/entities/check_in_entity.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
+import 'package:chroniccare/domain/entities/worry_thread_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
+import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:chroniccare/presentation/widgets/check_in_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,6 +72,15 @@ Widget wrapHome({
       (ref) => const AsyncValue.data(
         StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
       ),
+    ),
+    // v1.1.0 round 11 (R115): TodaySummaryCard 改 4 指标后新增的
+    // sleepEntriesProvider / worryOpenProvider 需要 override, 否则
+    // 默认走真实 DB provider 在测试环境会抛错 / 留 pending Timer。
+    sleepEntriesProvider.overrideWith(
+      (ref) => Stream<List<SleepEntryEntity>>.value(const []),
+    ),
+    worryOpenProvider.overrideWith(
+      (ref) => Stream<List<WorryThreadEntity>>.value(const []),
     ),
     // R114 BUG 5: VentHeroCard watch ventSealedProvider → 需要真实
     // mock prefs (sealed 状态由 ConsentPreferenceStore 读

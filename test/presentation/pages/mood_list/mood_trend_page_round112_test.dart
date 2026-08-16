@@ -13,7 +13,9 @@
 // 6. 同日 2 条 [3,5] → 4.0 (老算法同值, 3 条案例才暴露偏差)
 
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
-import 'package:chroniccare/presentation/pages/mood_list/mood_trend_page.dart';
+// v1.1.0 R116 (god class 拆): computeDailyAverages 纯函数从 mood_trend_page
+// 拆到 lib/domain/logic/mood_trend_calculator.dart (0 Flutter 0 drift 依赖)。
+import 'package:chroniccare/domain/logic/mood_trend_calculator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 MoodEntryEntity _mood({

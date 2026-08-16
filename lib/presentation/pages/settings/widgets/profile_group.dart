@@ -9,10 +9,12 @@
 //
 // 1.1.0 round 4: 联系人 section 整摘 (outbound contact 业务暂停定版)。
 //
+// v1.1.0 round 11 (R115 emotion-first): medication + assessment 整段挪到
+// 新 HealthDataGroup (置顶), 本 group 只剩: 用户头像卡 + 心理技巧入口。
+//
 // 业务封装:
-// - Medication 列表: 走 medsAsync.when (data / loading / error 3 态)
-// - NotificationStatusCard: 5 厂商 OEM 引导 + 测试通知
-// - AssessmentSection: 评估历史 / 周期提醒 / 量表列表 / 关于 / 免责声明
+// - 用户头像卡: Apple Health Profile 风格
+// - 心理技巧: 5 个本地正念/情绪调节技巧 → /tips
 //
 // 模式 (R95 task 1 ConsumerWidget 模式 + onXxx callback 注入点):
 // - ConsumerWidget 自包含, 走 ref 自带 provider
@@ -23,27 +25,21 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
-import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
-import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
-import 'package:chroniccare/presentation/widgets/error_state.dart';
-import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 
-/// 用户档案 group — 药物 + 通知自检 + 心理评估
+/// 用户档案 group — 用户头像卡 + 心理技巧入口
 ///
-/// v0.30 round 95 (sub-spec 8 task 17): 4 group 之一, 包原 3 个 section / 卡。
-///
-/// 3 section 都已存在, 本 group 仅做拼装 + SectionHeader, 不重复业务逻辑。
+/// v0.30 round 95 (sub-spec 8 task 17): 4 group 之一, 包原 3 section。
+/// v1.1.0 round 11 (R115): medication + assessment 段已挪到 HealthDataGroup
+/// (置顶), 本 group 只剩 2 section。
 class ProfileGroup extends ConsumerWidget {
   const ProfileGroup({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final medsAsync = ref.watch(medicationsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -51,33 +47,6 @@ class ProfileGroup extends ConsumerWidget {
         // v0.30 R101: 用户头像/健康档案入口 (参照 Apple Health Profile)
         _UserProfileCard(l10n: l10n),
 
-        const SizedBox(height: AppTokens.spacingMd),
-
-        // === 药物 ===
-        // 注: MedicationsListWidget 内部 Card 属 medication feature
-        // (跨 feature 不动), 本 section 保留 SectionHeader + 原 list,
-        // 待 medication feature 自转 ALS 后无缝接入。
-        SectionHeader(title: l10n.settingsMedication),
-        const SizedBox(height: AppTokens.spacingSm),
-        medsAsync.when(
-          data: (meds) => MedicationsListWidget(meds: meds),
-          loading: () => const LoadingSkeleton.fullScreen(),
-          error: (e, _) => ErrorState(
-            title: l10n.commonLoadFailed(e.toString()),
-            detail: e.toString(),
-            onRetry: () => ref.invalidate(medicationsProvider),
-          ),
-        ),
-        const SizedBox(height: AppTokens.spacingMd),
-
-        // === 心理评估 + 邮件预览 + 关于 ===
-        // v0.28 R81 (emil design-5): chip 标签 (B 站风格)
-        SectionHeader(
-          title: l10n.settingsAssessment,
-          chip: l10n.assessmentChipCurrent,
-        ),
-        const SizedBox(height: AppTokens.spacingSm),
-        const AssessmentSection(),
         const SizedBox(height: AppTokens.spacingMd),
 
         // === 心理技巧 (v1.1.0 论文落地 F3) ===
