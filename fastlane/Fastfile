@@ -63,16 +63,17 @@ platform :ios do
       output_directory: "./build/ios",
     )
 
-    # 2. 上传 + 提交审核
+    # 2. 上传 (不自动提交审核)
     # skip_metadata=false: 上传 fastlane/metadata/ios/* 内容
     # skip_screenshots=false: 上传 fastlane/metadata/ios/*/screenshots/
-    # submit_for_review=true: 上传完直接提交审核 (节省 1 步手动)
+    # submit_for_review=false: 上传后不自动提交审核, 人工在 ASC 确认无误后手动提交
+    #   (R112 AS-23: 防误提交脚枪 — 首次上架前必须人工过一遍 review_information 真实值)
     # automatic_release=false: 审核通过后不自动发布, 手动控制
     upload_to_app_store(
       force: true,
       skip_metadata: false,
       skip_screenshots: false,
-      submit_for_review: true,
+      submit_for_review: false,
       automatic_release: false,
       precheck_include_in_app_purchases: false,
       # v1.0.0+147 起永久免费, 0 个 in-app purchase

@@ -68,10 +68,10 @@ jobs:
       - name: Drift namespace check
         run: python scripts/check_drift_namespace.py --strict
 
-      - name: DateTime race check (race2: >=2 DateTime.now() in same function)
+      - name: DateTime race check (race2, >=2 DateTime.now() in same function)
         run: python scripts/check_datetime_race2.py
 
-      - name: DateTime race check (race: multi-capture in same call site)
+      - name: DateTime race check (race, multi-capture in same call site)
         run: python scripts/check_datetime_race.py
 
       - name: Fullwidth punctuation check
@@ -98,8 +98,25 @@ jobs:
       - name: 16KB page size alignment check (Google Play 2025-11)
         run: python scripts/check_16kb_alignment.py
 
-      - name: Run tests
-        run: flutter test
+      # v1.1.0 R113 (P2-19): 补 5 个缺失守门员 (此前 CI 只跑 16/21, 守门员形同虚设)
+      - name: Notification lock-screen PII check (title + body)
+        run: python scripts/check_pii_in_title.py
+
+      - name: Apple Health claim check (5.1.3 防假声明)
+        run: python scripts/check_apple_health_claim.py
+
+      - name: Use case layer purity check
+        run: python scripts/check_usecase_layer.py
+
+      - name: Review information TODO / version sync check
+        run: python scripts/check_review_information_todo.py
+
+      - name: Run tests (with coverage for check_coverage.py)
+        # --coverage 生成 coverage/lcov.info, check_coverage.py 需要它
+        run: flutter test --coverage
+
+      - name: Coverage threshold check
+        run: python scripts/check_coverage.py --ci
 
   architecture:
     name: Architecture invariants

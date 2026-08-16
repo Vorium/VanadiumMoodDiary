@@ -85,7 +85,7 @@ lib/
         ├── loading_skeleton.dart  # 统一 loading（fullScreen / card / Spinner）
         ├── secondary_button.dart
         ├── press_feedback.dart    # v0.18: 按钮 :active scale 反馈
-        └── animations/    # 通用动效（FadeIn / SlideUp）
+        └── animations/    # 通用动效（FadeIn / CelebrationBounce / PageTransitionSwitcher）
 ```
 
 **依赖方向**：`presentation → domain ← data`。`domain/` 下任何文件都不能 `import 'package:flutter/...'`。验证方式：`flutter analyze` + `flutter test`，以及 0 error。
@@ -511,6 +511,93 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **round 5c/5d/5e (3 新功能 UI)**: 树洞标签 (compose 选择 + 列表筛选 + 详情显示) / 状态短语 (dialog 预设+自定义 + 列表/详情) / 情绪回顾页 (周/月统计摘要 + /mood-review 路由)
 - **round 6 (文档)**: README/CHANGELOG/AGENTS 同步 + 版本 1.1.0+148
 
-**隐私边界 (1.1.0 更新)**: 失联通知/SafetyWatch 行整删 (外联定版); 树洞仍绝对不进趋势/评估/通知/关怀。
+## v1.1.0 论文落地 (2026-08-16, rounds 8-9, F3 心理技巧 + F4 树洞公约 + F1 烦恼闭环)
+
+**状态**: 基于 4 篇论文的落地方向按 F3→F4→F1→F2 顺序推进; F3/F4/F1 已闭环, F2 待做。版本 1.1.0+149, schemaVersion 24, export schema v7, ARB 1323×3 语, 2338 test / 0 fail / 1 skip, analyze 0e/0w/219 info。**守门员实测 (R113): 17 绿 / 2 红 (check_review_information_todo: notes.txt 版本滞后 + check_coverage: lcov 缺失) / 1 工具缺失 (check_zh_hant_consistency 需 OpenCC) / 1 skip (16KB 产物验证)** — "写全绿前必实跑全套"。
+
+- **round 8 (F3 心理技巧知识库)**: `domain/logic/psychology_tips_library.dart` (5 技巧) + `preset_content_l10n.dart.localizedPsychologyTip()` + 36 ARB key×3 + `/tips` `/tips/:id` 页 + settings 入口 + 11 测试。
+- **round 8 (F4 树洞使用公约)**: `data/services/vent_agreement_store.dart` (SharedPreferences `vent_agreement_acknowledged`) + vent_compose initState 弹窗 + `presentation/pages/vent/widgets/vent_agreement_dialog.dart` (抽 dialog 保 <520 行守门) + 6 测试。
+- **round 9 (F1 烦恼闭环)**: 烦恼主题体系 (记录心情可绑定进行中烦恼 / 新建 / 不关联):
+  - **domain**: `worry_thread_entity.dart` (WorryStatus open/resolved + WorryThreadEntity) + `worry_thread_library.dart` (generateTitle 前 20 字) + `worry_thread_repository.dart`; MoodEntryEntity/Draft +worryThreadId, MoodRepository +watchByThread.
+  - **data**: schemaVersion 23→24 — 新 `worry_threads` 表 + `mood_entries.worryThreadId` 列 + `worry_dao.dart` (watchOpen/watchResolved/getById/getAll/insert/resolve/reopen/rename) + `mood_dao.watchByThread` (时间正序) + `from<24` migration. Export v7 — 新 worryThreads 段 + mood.worryThreadId 原 id 导出 + import old→new 重映射 (老 v6 无此段 → 降级 null, 不建孤儿 FK).
+  - **presentation**: `worry_providers.dart` (worryOpen/Resolved/Entries autoDispose) + `worry_timeline_page.dart` (/worry/:id: 继续倾诉/闭环/reopen/重命名) + `worry_archive_page.dart` (/worry/archive 忆往昔 🎉) + `widgets/worry_section.dart` + `widgets/worry_selector_field.dart` (bottom sheet) — **这两个 widget 放 `presentation/widgets/` 而非 pages/worry/**, 因 mood 页也 import (跨 feature guard 禁 pages/{A}→pages/{B})。
+  - **集成**: `/mood/create?worry=<id>` 路由传 initialWorryThreadId; mood_list_page 插 WorrySection; mood_recorder_page 保存时新建烦恼并绑定.
+  - **测试**: 新 24 测试 (worry_thread_library 8 / worry_thread roundtrip 6 / data_export_v7_worry 4 / worry_timeline widget 5 + 迁移 dry-run 扩 24); 4 个 `implements MoodRepository` 测试补 watchByThread stub; 6 个挂 MoodRecorderPage/MoodListPage 的测试补 worry provider override.
+- **坑 (本批)**: `DateTime` 不能 const → const WorryThreadEntity 报错; WorrySelectorField/Section 跨 feature 需放 widgets/; `MoodEntriesCompanion.insert` 直接构造 (无 toCompanion); `app_tokens` textStyle* 都是 `textStyle*(context)` 非 const getter.
+
+**隐私边界**: 烦恼闭环属情绪日记 (mood) 范畴, 不进树洞/通知/评估/趋势; 树洞仍绝对隔离。
 
 **4 FeatureFlag**: `ventAudioEnabled=true` / `fiveVendorPushEnabled` / `phqGad7I18nEnabled` / `bootReceiverEnabled` 均 false (等外部依赖)。
+
+## v1.1.0 R113 九视角综合审视 (2026-08-16, 并行 subagent 只读审计)
+
+**状态**: 9 个并行 subagent (emil / superpowers / flutter-audit / gdc / AppStore / GooglePlay / AppleHealth + 2 路底层逐行) 从 0 重跑。**加权综合 ≈ 7.2/10**。完整整合报告: `docs/audit/2026-08-16-r113-multi-lens/00-FINAL-CONSOLIDATION.md`。
+
+**评分**: emil 7.5 / superpowers 7.0 (守门员全绿声明不可复现) / flutter-audit 8.7 (0 致命) / gdc 架构健康 (R112 六大架构债全闭环实锤) / AppStore 5.5 / GooglePlay 6.0 / AppleHealth 视觉 8.0 (HealthKit 0 集成但合规 10/10) / 底层逐行 22+21 发现 (0 隐私违规)。
+
+**外部链接隐藏确认 ✅ 100% 干净** (双视角独立实锤): SMS/Email/紧急联系人/失联/5 厂商 push/FCM/阿里云/SendGrid 代码+数据表+UI+ARB+权限全链删除。残留仅 4 处文案 (release_notes.txt "contacts" / ARB 3 语联系人残留 / ARB example 元数据 / BootReceiver.kt 死文件)。
+
+**R113 新发现 (P1 级功能 bug, 按修复顺序)**:
+1. `/worry/archive` 被 `/worry/:id` 遮蔽成死路由 (go_router first-match-wins) — "忆往昔"入口开 threadId=0 永远转圈 (`app_route_worry.dart:11-19`)
+2. 打卡失败仍弹成功庆祝 + streak+1 (`home_page_state.dart:357-369`)
+3. `requestPermission()` 恒返 true — 权限拒绝引导永不触发 (`notification_initializer.dart:129-142`)
+4. 情绪提醒通知点击完全无反应 — `chroniccare://mood-diary` 无 resolver case (`mood_reminder_notifier.dart:70`)
+5. 漏服日期全部落在开药之前 (`medication_stat_calculator.dart:117-124`)
+6. profile 导入被 userName 空值整体跳过 → PIPL §14 留痕丢失 (`export_import_pipeline.dart:200-205`)
+7. refillReminderDays=0 (import 合法) → 全部续方提醒静默中止 (`refill_scheduler.dart:63`)
+8. snooze 硬编码 exactAllowWhileIdle 绕过降级策略 (`snooze_manager.dart:120`)
+9. 趋势日历 8 新量表显示裸 scaleId + 总分恒 0 (R112 E9 未闭环: `day_detail.dart:371-394` tryFromEntity 只读 total 但 R90 写 score)
+10. 评估提醒 body 含量表名 "PHQ9" — iOS 锁屏 PII (守门员只守 title 不守 body)
+
+**上架阻塞 100% 外部依赖** (与 R112 一致): 截图 0/67B 占位 (设计师) / 域名 ICP 7-20d / review 信息 4 占位 / 5.1.3 问卷 / Console 4 表单 / 16KB 真验证 / keystore 备份 / 律师签字。代码侧唯一红色 = notes.txt 版本滞后 (30min)。
+
+**R113+ 路线图**: wave 1 守门员转绿 (notes.txt + lcov + OpenCC + format 142 文件) → wave 2 S 级功能 bug (8 个) → wave 3 UI bug 收口 → wave 4 守门员收口 (CI 补 5 个 + datetime_race exit + 16KB 产物验证) + domain i18n 四路合一 → wave 5 export_import_pipeline 931L 拆 3 文件 (最后真 god class) → wave 6 F1 UI 测试补全 → wave 7 主页动画停播 (StatefulShellRoute) + 跨 midnight stale → 长线 mood ALS 化 + 法务文档 + 上架外部闸门。
+
+## v1.1.0 R113 修复战役 (2026-08-16, 7 wave 全闭环, 未 commit 等用户确认)
+
+**状态**: R113 九视角综合审视发现的代码级 P0/P1/P2 按路线图 7 wave 全修。**终态: 2407 pass / 0 fail / 1 skip; analyze 0e/0w; 21 守门员全绿 + check_all 双绿 + format 0 changed + coverage 全阈值 PASS**。账本: `docs/audit/2026-08-16-r113-multi-lens/00-FINAL-CONSOLIDATION.md` + 各 wave 报告 (git diff)。
+
+**Wave 1 守门员转绿**: notes.txt +149 / spec.md 数字 74 calls/43 files + "Card 清零"措辞收窄 / typography 注释同步 (13pt / 110pt) / dart format 142 文件。
+
+**Wave 2 八个 S 级功能 bug (8/8 + 56 tests)**:
+1. /worry/archive 死路由遮蔽 — 路由顺序对调 + timeline EmptyState (worryThreadNotFound ×3 语)
+2. 打卡失败仍庆祝 — `home_page_state._onCheckIn` hasError 早退
+3. requestPermission() 恒 true — 平台分支 (新 dev_dep flutter_local_notifications_platform_interface)
+4. mood-diary 通知点击无反应 — resolver 加 case → /mood-diary
+5. 漏服日期在开药前 — MissedDateBuilder 加 effectiveStart
+6. _EntrySpring 无视 reduce-motion — didChangeDependencies 归零 + medication 打卡 Motion.duration + PressFeedback
+7. 2 处 success 色作文字色 — fgOnSuccess
+8. 评估通知 body 量表名 PII — Strings 签名删 scaleIdUppercase 参数 (编译期防泄漏)
+
+**Wave 3 UI bug 收口 (8/8 + 12 tests + 2 新发现 bug)**:
+- CBT PDF 硬编码中文 → CbtPdfL10n 12 getter (badge5/7 + moodLabel + originalScoreLabel); **check_strings_hardcoded.py 整文件豁免 → `// rule3-whitelist: 行号/区间` 精确豁免 token**
+- tracking_item_card "今天" → _isToday 日期对比; vent_detail catch 路径 → _storage 字段缓存; mood_recorder 孤儿烦恼 → createdThreadId 回滚删除; vent/treatment Dismissible fire-and-forget → try/catch + swallowError + snackbar; medication 打卡静默失败 → 反馈; mood_trend y=0 → computeTrendSpots FlSpot.nullSpot (折线断开); legal withdraw → try/catch + withdrawnAt 回读
+- **测试 agent 发现 2 个新 bug 并修**: (7b P0) Dismissible dismissed-state 留在树 → FlutterError (Riverpod invalidate 是 isRefreshing 不是 loading) → key rotation (`treatment-{id}-{failCount}`); (8b P1) legal withdraw 3 选 1 dialog 选项 Row 无 onTap 永不可点 → InkWell pop(choice)
+
+**Wave 4 守门员收口**: CI 16→21 守门员 (flutter test --coverage + 5 个补进) + **修 2 处既有 YAML 语法错误 (workflow 此前解析不过!)** + check_datetime_race×2 加 exit 1 + check_16kb 产物缺失 FAIL + **check_pii_in_title 2/5 → title+body 10/10** + 17 pytest 自测。**Ruling: domain i18n 四路合一不半修** (round 7b 已闭环显示层; 量表题目全量 i18n = v1.0 R51b 既定计划)。
+
+**Wave 5 export_import_pipeline 拆解**: 934L → facade 184 + import_entities 656 (meds+mood+worry+6 tracking) + import_profile 86 + import_vent 70 + import_shared 29 (ImportResultBuilder)。**移动中发现并修 3 bug**: refillReminderDays=0 双端防守 (scheduler 返回 null 不抛 + import clamp 1) / piiSafeLog 无 kReleaseMode 守卫 / medication_detail _InfoChip 对比度。
+
+**Wave 6 F1 UI 测试补全 (11 tests)**: worry_archive_page 4 (渲染/空态/reopen/路由) + worry_selector_field 5 (3 分支 + 预绑定 + 新建) + mood_recorder_worry_binding 2 (成功路径 draft.worryThreadId==42 + createCalls==0 防重复建; /mood/create?worry=7 真路由绑定链)。
+
+**Wave 7 主页动画停播 + 跨 midnight stale**: `homeEntryPlayedProvider` (NotifierProvider 进程级 flag) — 首帧全动画, tab 切换后 FadeIn duration.zero + 无 stagger + _EntrySpring 跳 1.0 (未上 StatefulShellRoute — 留 R114); 5 处 build DateTime.now() → ref.watch(todayProvider) (mood_trend behavioral / vent_list / daily_tracking / assessment_center_card / mood_review), 2 behavioral + 3 lock-in tests。
+
+**事故记录 (本批)**: 全量 `for s in scripts/*.py` 循环踩 2 个一次性脚本地雷 — (1) `apply_l10n_implements.py` 把已删 SafetyAlertL10n implements 写回 generated file → 146 test 编译失败; (2) `_clean_orphan_arb_keys.py` 按 round 56e 硬编码列表删 8 个后来重新启用的 live key (moodLabel1-5 / ventDuration*) → 从 HEAD 恢复。**两脚本已删除防再犯**。
+
+**R114 长线**: mood 主流程 ALS 化 (P1, 2-3d) / StatefulShellRoute 分支保活 / 法务文档 3 份残留已删功能 (需用户+律师) / 上架外部闸门 (域名 ICP → 设计师资产 → keystore 备份 → console 表单 → review 真实值) / export_import_pipeline import_entities 656L 可视需再拆 _importDailyTracking。
+
+## v1.1.0 R114 standard 审计 + 修复战役 (2026-08-16, 未 commit)
+
+**状态**: standard skill 全流程 — 规范落地 `.opencode/standards/` (5 份) → 10 并行子代理审计 (6 视角 + 4 底层分批, 报告 `.opencode/audit/01~13` + 00 汇总) → spec 回写 `.opencode/spec.md` → 修复战役 5 wave (A/B1/B2/C/D) 全闭环。**终态: 2509 pass / 0 fail / 1 skip; analyze 0e/0w + lib/ 0 info; 21 守门员 + check_all 全绿; format 0 changed**。
+
+**Wave A (P1 ×11 + 25 tests)**: check-in/today 通知死链 (resolver case + 双 sender 走 encode) / 录音明文 temp 清理 (deleteTempRecordFile 全路径, PIPL §28) / 评估总分恒 0 (total/score 双 key 兼容) / 裸 scaleId + en 中文 (day_detail 3 closure 注入) / vent_hero_card 封存泄漏 (PIPL §47, sealed gate) / medication_row Dismissible key rotation / vent 删除 2 处 try/catch / 裸 db id → 药名 (homeMedHint name 参数) / setup done 幂等 (PopScope + guard) / release_notes 重写 / INTERNET 注释更新 (决定保留)。
+
+**Wave B1 (P2 ×8 + 60 tests)**: eager ListView → **LazyAppleListSection 新集中器** (sliver 化, 视觉 1:1) / snooze exact 注入 scheduleModeProvider / **refill 带 6000→2500000** + legacy 精确清理 (cancel 互杀闭环) / watchToday DAO 跨日重订阅 / 打卡率分母 elapsed 天 / date_utils UTC 归一化避 DST / provider 吞 error → hasError 传播 (4 处) / **DB key 失配 → probeDatabaseReadable + DatabaseResetPromptApp** (重试/重置二次确认, 顺带修 boot apps 裸 MaterialApp 缺 delegates 崩溃)。
+
+**Wave B2 (P2 ×9 + 49 tests)**: tab 过渡统一 fade (4 tab 根) / iOS swipe-back (_SwipeBackCupertinoRoute 子类) / 宽屏返回按钮 (canPop 保留 AppBar) / 双重 inset 统一 20+0 (PageScaffold 唯一负责, ALS margin 归零) / fl_chart Semantics (4 ARB key) / StatCard tabularFigures + tile textScaler clamp 1.3 / import_entities 664→421 (拆 import_daily_tracking.dart) / footer 门控 + 高频 durFast / 裸 InkWell×5 处 PressFeedback + celebration scale 0.5 + **spring bouncy 接 celebration (第 2 真 caller)**。
+
+**Wave C (P3 ×14 + ~40 tests)**: 删死代码 6 项 (uuid 依赖 / MoodQuickButton+todayMoodProvider / flutter_dotenv / encryptionServiceProvider / windowSizeOf / slide_up) / lib lint 清零 (16 trailing comma + dangling doc + prefer_const ×2) / export_schema dynamic→Object? / page_scaffold title! 安全 / loading_text_button spinner 色按 variant / magic spacing token 化 / worry_selector 失效降级同步 draft / consent_dialog ctx / AES-CBC TODO(v1.0 GCM)。
+
+**Wave D (mood ALS 化)**: mood_recorder Dialog 内 2 组 AppleListSection (评分组/记录组) + **MoodScoreButtons 共享 widget (72pt 圆形 + spring 选中 + reduce-motion + 48pt 下限 clamp)** + CBT wizard score 段迁移 + PrimaryButton pill + cbt_explainer_card ALS 化 + 删 4 维死代码 (mood_score_chooser/dimension_row); 裁决: Dialog 保持 modal (sheet 化留 v1.0, 6+ 调用方风险高)。+4 tests, 2509 pass。
+
+**R115 剩余 (外部依赖为主)**: 上架闸门 (域名 ICP / 截图 / review 信息 / console 表单 / ICP 备案+软著) / StatefulShellRoute 分支保活 / mood sheet 化 (v1.0) / 法务文档律师过审 / ARB 1331→1328 基线。**gdc 主矛盾警告: 工程闭环 vs 用户闭环脱节 — 建议今天注册域名 + 本周 sideload 10 真实用户, 停止审计循环**。

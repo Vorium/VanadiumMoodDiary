@@ -1,4 +1,60 @@
 ﻿# 变更日志
+## [1.1.0+149 R114 standard 审计修复战役] - 2026-08-16 (10 视角审计 5 wave 全闭环, 未 commit)
+
+### Fixed (R114, 详见 AGENTS.md R114 章节 + .opencode/audit/)
+- Wave A 11 个 P1: check-in/today 通知死链 / 录音明文 temp 清理 (PIPL §28) / 评估总分恒 0 / 裸 scaleId + en 中文 / vent_hero_card 封存泄漏 (PIPL §47) / medication_row Dismissible 炸树 / vent 删除无 try/catch / 裸 db id / setup 重提交 / release_notes 宣传已删功能
+- Wave B1 8 个 P2: eager ListView 懒加载回归 / snooze exact 降级 / cancel 带互杀 (refill 带 2500000) / watchToday 跨日冻结 / 打卡率分母 / DST 假断 streak / provider 吞 error / DB key 失配恢复路径
+- Wave B2 9 个 P2: tab 过渡统一 / iOS swipe-back / 宽屏返回按钮 / 双重 inset / 图表 Semantics / tabularFigures / import_entities 拆 / footer 动画门控 / 裸 InkWell 反馈 + celebration scale + spring bouncy 接线
+- Wave C 14 项 P3: 死代码 ×6 (uuid/MoodQuickButton/dotenv/encryptionService/windowSizeOf/slide_up) + lib lint 清零 + dynamic 收窄 + spinner 色
+- Wave D: mood 主流程 ALS 化 (72pt 圆形评分按钮 + spring 选中, spec §5.5 闭环)
+
+### Changed
+- 规范落地: .opencode/standards/ 5 份 + .opencode/spec.md + .opencode/audit/ 11 份报告
+- LazyAppleListSection 新集中器 / MoodScoreButtons 新共享 widget / DatabaseResetPromptApp
+- 测试: 2509 pass / 0 fail / 1 skip; analyze 0e/0w + lib/ 0 info; 21 守门员全绿
+
+## [1.1.0+149 R113 修复战役] - 2026-08-16 (9 视角审计 7 wave 全闭环, 未 commit)
+
+### Fixed (R113 修复战役, 详见 AGENTS.md v1.1.0 R113 修复战役章节)
+- 8 个 P1 功能 bug: /worry/archive 死路由遮蔽 / 打卡失败仍庆祝 / requestPermission 恒 true / mood-diary 通知点击无反应 / 漏服日期在开药前 / _EntrySpring 无视 reduce-motion / 2 处 success 色作文字色 / 评估通知 body 量表名 PII
+- 8 个 P2 UI bug: CBT PDF 硬编码中文 / tracking "今天"无条件 / vent_detail ref.read 泄漏 / 孤儿烦恼残留 / Dismissible fire-and-forget / 打卡静默失败 / 趋势 y=0 坠底 / legal withdraw 未 try/catch
+- 2 个测试中发现的新 bug: Dismissible dismissed-key 崩溃 (P0) / legal withdraw 3 选 1 dialog 选项不可点 (P1)
+- 3 个拆分中发现的 bug: refillReminderDays=0 杀全部续方提醒 / piiSafeLog 无 kReleaseMode 守卫 / _InfoChip 对比度
+- 守门员: CI 16→21 个 + 修 2 处 YAML 语法错误 (workflow 此前解析不过) + datetime_race×2 exit 1 + 16KB 产物 FAIL + pii_in_title 2/5→10/10
+- 事故: 2 个一次性脚本地雷 (apply_l10n_implements / _clean_orphan_arb_keys) 已删除
+
+### Changed
+- export_import_pipeline 934L 拆 5 文件 (facade 184 + import_entities/profile/vent/shared)
+- 主页入场动画首帧门控 (homeEntryPlayedProvider); 5 处 build DateTime.now() → watch(todayProvider)
+- 测试: 2407 pass / 0 fail / 1 skip; analyze 0e/0w; 21 守门员全绿
+
+## [1.1.0+149] - 2026-08-16 (论文落地: 心理技巧知识库 + 树洞公约 + 烦恼闭环)
+
+### Added
+- 心理技巧知识库 (F3) — psychology_tips_library 5 技巧 + 知识库列表/详情页 (/tips /tips/:id) + settings 入口 + 36 ARB key × 3 语
+- 树洞使用公约弹窗 (F4) — vent_agreement_store (SharedPreferences) + 首次进 compose 弹窗 + 已读标记
+- 烦恼闭环 (F1) — 烦恼主题体系: 记录心情时可绑定到进行中烦恼 / 新建烦恼 / 不关联
+  - Schema 24 — 新 worry_threads 表 + mood_entries.worryThreadId 列 + migration (from<24)
+  - 烦恼时间线页 (/worry/:id) — 记录列表 + 继续倾诉 + 不再烦恼啦(闭环) + 又烦恼了(reopen) + 重命名
+  - 忆往昔页 (/worry/archive) — 已闭环烦恼 🎉 收藏 + 点击可重新打开
+  - 情绪列表页 WorrySection 入口 (open 烦恼 chips + 忆往昔)
+  - mood recorder WorrySelectorField (底部弹层选关联/新建/不关联)
+  - 标题自动生成 — 首条 note 前 20 字 (WorryThreadLibrary.generateTitle)
+  - Export v7 — 新 worryThreads 段 + mood.worryThreadId 原 id 导出 + import old→new 重映射 (老 v6 降级 null)
+
+### Changed
+- 情绪记录保存路径可携带烦恼关联 (worryThreadId 进 MoodEntryDraft → DB)
+- 守门员实测 17 绿 / 2 红 (check_review_information_todo: notes.txt 版本滞后 / check_coverage: lcov 缺失) / 1 工具缺失 (OpenCC) / 1 skip (16KB 产物); ARB 1297 → 1323 (F1 27 worry key + F4 3 公约 key, F3 36 psychoTip 已在 round 8 记录)
+
+## [1.1.0+149 audit] - 2026-08-16 (R113 九视角综合审视, 只读审计未改代码)
+
+### Added
+- docs/audit/2026-08-16-r113-multi-lens/00-FINAL-CONSOLIDATION.md — 9 视角整合报告 (加权 7.2/10)
+
+### Known (待修, 详见整合报告)
+- P1: /worry/archive 死路由遮蔽 / 打卡失败仍庆祝 / requestPermission 恒 true / mood-diary 通知无反应 / 漏服日期在开药前 / profile 导入 userName 门控丢留痕 / refillReminderDays=0 中止提醒 / snooze 绕过降级 / 趋势新量表裸 id+总分 0 / 评估通知 body 量表名 PII
+- 上架外部闸门: 截图 / 域名 ICP / review 信息 / Console 表单 (100% 外部依赖, 与 R112 一致)
+
 ## [1.1.0+148] - 2026-08-15 (情绪优先重构: 外联删除定版 + 树洞标签/状态短语/情绪回顾 + 导航 4 tab)
 
 ### Added

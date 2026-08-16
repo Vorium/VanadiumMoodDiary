@@ -2,7 +2,7 @@
 
 > 情绪日记 + 树洞倾诉优先 · 用药记录辅助的精神心理自我关怀 App
 
-**v1.1.0+148**（情绪优先重构, 2026-08-15）· Flutter 3.41.9 · 本地加密零云端
+**v1.1.0+149**（情绪优先重构 + R113 修复战役, 2026-08-16）· Flutter 3.41.9 · 本地加密零云端
 
 ## 🎯 产品
 
@@ -100,15 +100,18 @@ lib/
 
 **依赖方向**：`presentation → domain ← data`。架构纯度 + 一致性检查：`dart scripts/check_all.dart`（注：用 `dart` 直接跑，`dart run` 会触发 objective_c build hook 失败）。
 
-## 🧪 测试
+## 🧪 测试与审计
 
 ```bash
-flutter test            # 全部（实测 2280 pass / 1 skip [main_migration_i18n 范围外声明]）
-flutter test --coverage # 阈值: domain ≥ 70% / data ≥ 45% / presentation ≥ 30%
+flutter test            # 全部（实测 2407 pass / 0 fail / 1 skip）
+flutter test --coverage # 阈值: domain ≥ 70% / data ≥ 45% / presentation ≥ 30%（lcov 需生成）
 
 # 21 个守门员（架构纯度 / i18n / 锁屏 PII / 合规 / 覆盖率等）
-for s in scripts/*.py; do python $s; done
+for s in scripts/check_*.py; do python "$s"; done
+dart scripts/check_all.dart
 ```
+
+> **项目审计**: 2026-08-16 十视角团队审计 (上架/规范/决策/工程/设计 ×6 + 底层逐行 ×4) 汇总见 `.opencode/audit/00-FINAL-CONSOLIDATION.md`; 项目 spec 见 `.opencode/spec.md`; 上架/代码/架构规范见 `.opencode/standards/`。
 
 ## 🛠 调试
 
@@ -132,6 +135,7 @@ flutter build web              # Web (H5)
 ## 🐛 已知约束
 
 - 4 FeatureFlag 守门：`ventAudioEnabled=true`；`fiveVendorPushEnabled` / `phqGad7I18nEnabled` / `bootReceiverEnabled` 均 `false`（等外部依赖：5 厂商 push / 法务+临床审核 / WorkManager 完善）
+- 上架阻塞（100% 外部依赖）：域名 ICP + privacy URL / 双平台截图（设计师）/ review_information / console 表单 / 国内 ICP 备案+软著 — 见 `.opencode/audit/00-FINAL-CONSOLIDATION.md`
 - 5 厂商 push 走占位（1-2 月审核）
 - 国产 ROM 静默杀后台：需用户手动开启自启动 + 精确闹钟白名单（设置页有品牌引导）
 - iOS 推送需真机测试（模拟器无 APNs）；Web 走 IndexedDB，Chrome 隐身模式可能失败
@@ -143,7 +147,7 @@ flutter build web              # Web (H5)
 - `privacy_policy.md` — 隐私政策（PIPL / HIPAA / GDPR）
 - `sensitive_data_consent.md` — 敏感个人信息处理同意书（健康 / 树洞，PIPL §13 单独同意）
 
-上架合规清单见 `docs/DEPLOYMENT.md` 附录 A/B + `docs/SUBMISSION_INFO.md`（console 表单文案 + 外部依赖登记）。
+上架合规清单见 `docs/DEPLOYMENT.md` 附录 A/B + `docs/SUBMISSION_INFO.md`（console 表单文案 + 外部依赖登记）。上架规范见 `.opencode/standards/`（appstore / googleplay / cn-android-stores）。
 
 ## 📄 文档
 
@@ -151,6 +155,9 @@ flutter build web              # Web (H5)
 - `docs/DEPLOYMENT.md` — 部署指南
 - `docs/VERSION_1.0_PLAN.md` — 路线图
 - `docs/audit/` — 历次综合审视报告（R95~R112 开发过程存档）
+- `.opencode/spec.md` — 项目 spec（架构 / 模块 / 已知问题 / 路线图）
+- `.opencode/audit/` — 2026-08-16 团队审计报告（6 视角 + 4 底层分批 + 汇总）
+- `.opencode/standards/` — 上架 / 代码 / 架构规范（审计依据）
 
 ## 📜 许可
 

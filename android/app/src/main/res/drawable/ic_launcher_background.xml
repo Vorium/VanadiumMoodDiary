@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#6BCF7F" />
+    <!-- v1.0.0: 与 iOS AppIcon 渐变一致 (#6BCF7F -> #2F9E44, 270° 从上到下) -->
+    <gradient
+        android:startColor="#6BCF7F"
+        android:endColor="#2F9E44"
+        android:angle="270" />
 </shape>

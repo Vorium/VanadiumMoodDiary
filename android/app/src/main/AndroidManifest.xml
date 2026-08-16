@@ -26,17 +26,31 @@
     WorkManager 实现参考 (无 manifest 注册 = 不会被触发)。
   注: RECORD_AUDIO (R97 曾删, R105 恢复, 见权限区注释)。
 
-  permissions 5 个 + queries 1 个 (PROCESS_TEXT):
-  - INTERNET: in_app_purchase plugin 隐式依赖 (即使 iapEnabled=false 仍需)
+  permissions 6 个 + queries 1 个 (PROCESS_TEXT):
+  - INTERNET: 见下方权限声明处注释 (R114 更新: in_app_purchase 已在
+    1.0.0 删除, 理由改写; debug 构建额外由 src/debug/AndroidManifest.xml
+    声明)
   - POST_NOTIFICATIONS: Android 13+ 通知运行时权限
   - SCHEDULE_EXACT_ALARM: user-revocable 精准闹钟 (所有 App 开放)
   - WAKE_LOCK: 通知触发保持 CPU
-  - VIBRATE: safety alert 通知震动
+  - VIBRATE: 通知震动
+  - RECORD_AUDIO: vent / mood 录音 (R105 恢复, 见权限区注释)
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ============ 权限声明 ============ -->
+    <!-- R114 (BUG 11): INTERNET 权限理由更新。
+         原注释称 in_app_purchase 插件隐式依赖 — 1.0.0 已删除 IAP
+         (pubspec 无 in_app_purchase), lib/ 全量 grep 0 网络调用
+         (零云端产品定位), url_launcher tel: 走 ACTION_DIAL 不依赖
+         INTERNET, speech_to_text 平台识别也不需 app 侧权限。
+         保守决策: 保留权限不删 — 本机无 Android SDK 无法跑 release
+         build 回归验证移除安全性 (移除仅影响 release 包; debug 构建
+         的 INTERNET 由 src/debug/AndroidManifest.xml 独立声明,
+         Flutter 调试工具链需要)。保留理由: 未来接入隐私政策网页 /
+         合规检查时可能需要的网络出口预留。待上架前 release build
+         冒烟 + 国内商店权限自检确认后再评估移除。 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />

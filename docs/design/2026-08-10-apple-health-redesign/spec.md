@@ -125,7 +125,7 @@
 | 旧 | 新 | 用途 |
 |---|---|---|
 | `fontSizeTitle 28` | `fontSizeTitle 28` | 不变（页面大标题） |
-| `fontSizeHeadline 24` | `fontSizeHeadline 22` | 略小，更 Apple ⚠️ R112 审计: 未落地, 代码仍 24 (app_typography.dart:40), 待决策改值或删条目 |
+| `fontSizeHeadline 24` | `fontSizeHeadline 24` | **保持 24 不变** (有意保留: 页面级大标题字号维持 M3 观感; 22 只用于 metric 中等数字 `fontSizeMetricMd`) |
 | `fontSizeButton 20` | `fontSizeButton 17` | **关键改：iOS button 标准 17pt** |
 | `fontSizeBody 18` | `fontSizeBody 17` | **关键改：iOS body 标准 17pt** |
 | `fontSizeLabel 16` | `fontSizeLabel 15` | iOS subheadline |
@@ -151,7 +151,7 @@
 - `lineHeightNormal 1.5` → `1.4`（Apple body 紧凑）
 - `lineHeightLoose 1.8` → `1.6`（Apple long-form 紧凑）
 - `lineHeightSnug 1.4` 不变
-- `lineHeightRelaxed 1.6` → `1.5` ⚠️ R112 审计: 未落地, 代码仍 1.6 (app_typography.dart:78), 待决策
+- `lineHeightRelaxed 1.6` 不变 (**有意保留**: 长文/日记正文行高, v0.22 emil P0-4 起即 1.6; 保持可读性, 不改 1.5)
 
 #### 3.2.4 字符间距
 - 大字（≥ 22pt）`letterSpacing: -0.5`（Apple SF Pro Display 收紧）
@@ -317,7 +317,7 @@
 
 ## 5. 页面级应用（11 feature）
 
-> **完成度 (R112 修复战役后 2026-08-13 实测): 11/11 页面级全落地** — 全 lib 实测 `AppleListSection(` **65 处 runtime 调用 / 35 文件**; R112 round 8 (F1/F2 视觉专项) 把 R111 遗留的 8 个 feature (settings 4 组 / contact / crisis_hotline / reminders_hub / vent / assessment / mood_list / daily_tracking) 批量 Card→ALS 化, Card 清零; vent systemPurple FAB (AH-15) + medication 4 tile 语义化 (AH-16) 同批落地。§5.5-5.7 (mood 5 档圆形按钮 spring 选中 / vent pill 录音按钮 / assessment 题目页) 仍为后续打磨项。旧注 "17/20/55 ALS" 数字膨胀不可复现 (R112 AH-13), 统计口径 = 调用点非文件数。
+> **完成度 (2026-08-16 实测): 11/11 页面级全落地** — 全 lib 实测 `AppleListSection(` **74 处 runtime 调用 / 43 文件**; R112 round 8 (F1/F2 视觉专项) 把 R111 遗留的 8 个 feature (settings 4 组 / contact / crisis_hotline / reminders_hub / vent / assessment / mood_list / daily_tracking) 批量 list 容器 Card→ALS 化; vent systemPurple FAB (AH-15) + medication 4 tile 语义化 (AH-16) 同批落地。§5.5 (mood 5 档圆形按钮 spring 选中 + 记录 dialog ALS 化) **1.1.0 R114 Wave D 闭环 (见 §5.5 完成度)**; §5.6-5.7 (vent pill 录音按钮 / assessment 题目页) 仍为后续打磨项。旧注 "17/20/55 ALS" 数字膨胀不可复现 (R112 AH-13), 统计口径 = 调用点非文件数。**"Card 清零"仅指 list 容器 Card→ALS** — 实测 `Card(` 仍存在于 48 个 page 文件, 但均为图表/内容卡 (chart/content card, 如 StatCard 网格、趋势图表容器), 不属于列表容器, 不在 ALS 化范围 (spec §5.4 "图表保留")。
 
 ### 5.1 Home（重点改）— Apple Health 仪表盘
 - 改前：6 区域堆叠
@@ -360,6 +360,23 @@
   - 5 档大圆形 mood button（72x72）横向 spring 选中
   - 记录列表 AppleListSection 风格
   - 颜色：mood = systemPink
+- **完成度 (2026-08-16, 1.1.0 R114 Wave D)**: ✅ 落地 —
+  - 共享 widget `presentation/widgets/mood_score_buttons.dart` (MoodScoreButtons):
+    72pt 圆形 (AppSpacing.moodScoreButtonSize, 窄屏 clamp ≥48pt) × 5, 选中
+    fill R32 moodScoreColor 色板 + 下方 label moodScoreFgColor 深色档
+    (R112 EM-16b 同族对比度), 未选中透明圆 + hairline 边框
+  - spring 选中: Spring.standard.toSimulation (scale 0.92→1.0 轻过冲),
+    reduce-motion 直跳终态 (R113 BUG6 同款 didChangeDependencies)
+  - mood_recorder_page 3 段 → AppleListSection insetGrouped 2 组
+    (情绪评分组 / 记录内容组, ARB 3 语标题), 底部 MoodSubmitPanel 改
+    PrimaryButton pill (primary/secondary 两等宽)
+  - CbtThreeColumnMode score 段移出到评分组; CbtWizard step 2/3
+    ChoiceChip 同批换 MoodScoreButtons (5 档按钮唯一实现)
+  - cbt_explainer_card Card() → ALS 风格 (ClipRRect+Material radiusCard)
+  - mood_score_chooser.dart + dimension_row.dart 死代码删除 (v0.29 后
+    0 caller, 4 维度 UI 与产品单 mood 维度矛盾)
+  - 裁决: Dialog 保持 modal — sheet 化 (showModalBottomSheet) 留 v1.0
+    (6+ 调用方/测试走 showDialog, 改动风险高, 见 R114 Wave D 报告)
 
 ### 5.6 Vent（中等改）— 树洞
 - 改前：列表 + 录音
@@ -400,7 +417,7 @@
 
 ### 7.1 客观
 - `flutter analyze` 0 error
-- `flutter test` 全过（baseline 2103 cases + 5+ 新 widget test；R112 实测 **2377 pass / 4 fail [全 iOS 资产占位, 设计师外部依赖] / 1 skip**, 0 代码 fail; test 声明数 2312）
+- `flutter test` 全过（baseline 2103 cases + 5+ 新 widget test；R112 实测 **2377 pass / 4 fail [全 iOS 资产占位, 设计师外部依赖] / 1 skip**, 0 代码 fail; test 声明数 1743 [2026-08-16 实测 `grep -rc "test(" test`, 另 `testWidgets(` 529 声明, 合计 ≈2272]）
 - 21 守门员全绿
 - Token 覆盖率 ≥ 95%（grep 0 硬编码 `Color(0xFF...)` / `fontSize: X` / `borderRadius: BorderRadius.circular(X)` in `lib/presentation/`）
 
