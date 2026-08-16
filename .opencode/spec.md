@@ -47,20 +47,20 @@ presentation (UI)  →  domain (业务, 0 Flutter 0 Drift)  ←  data (基础设
 - export v7: 12 表 round-trip + old→new id 重映射; import 3 实体簇 (import_profile/entities/vent)
 - SQLCipher + 敏感字段 AES-256 (audit log); 明文音频 temp 文件生命周期 (PIPL §28 关注点)
 
-## 6. 已知问题 (2026-08-16 审计, 详见 .opencode/audit/)
+## 6. 已知问题 (2026-08-16 R114 修复战役后, 详见 .opencode/audit/)
 
-**P0 (上架阻塞, 100% 外部依赖)**: privacy/support URL 占位 (域名 ICP) / review_information 4 占位 / 双平台截图 (设计师) / ICP 备案 + 软著 (国内商店) / **工程闭环 vs 用户闭环脱节** (gdc 主矛盾: 建议先注册域名 + sideload 10 真实用户)
+**P0 (上架阻塞, 100% 外部依赖, 代码不可修)**: privacy/support URL 占位 (域名 ICP) / review_information 4 占位 / 双平台截图 (设计师) / ICP 备案 + 软著 (国内商店) / console 4 表单 / **工程闭环 vs 用户闭环脱节** (gdc 主矛盾: 建议注册域名 + sideload 10 真实用户)
 
-**P1 (合规 + 功能, ~2d)**: 隐私政策邮箱占位 / `check-in/today` 通知死链 (medication_notifier:84) / 录音明文 temp 不清理 (PIPL §28) / 评估历史总分恒 0 (score vs total key 不匹配) / 趋势日历裸 scaleId / vent_hero_card 封存泄漏 (PIPL §47) / medication_row Dismissible key / vent 删除无 try/catch / mood 主流程 0 ALS / 无 iOS swipe-back
+**已闭环 (R114 5 wave, 51 项)**: P1×11 (通知死链/录音明文 temp PIPL §28/评估总分 0/裸 scaleId/树洞封存泄漏 PIPL §47/Dismissible 炸树/setup 幂等等) + P2×17 (懒加载 LazyAppleListSection/snooze 降级/cancel 互杀 refill 带 2500000/watchToday 跨日/DST/打卡率分母/DB key 失配恢复/图表 Semantics/inset 统一/swipe-back/import_entities 拆分等) + P3×14 (死代码 6 项/lib lint 清零等) + mood 主流程 ALS 化 (72pt MoodScoreButtons + spring)
 
-**P2 (~1-2d)**: eager ListView ×2 / import_entities 664L 拆 _importDailyTracking / tab 过渡 3 类混用 / snooze 硬编码 exact / cancel 带互杀 / watchToday 跨 midnight / day_detail 中文 fallback / 打卡率分母 / date_utils DST / provider 吞 error / 裸 db id / completeSetup 无幂等 / DB key 失配无恢复 / fl_chart 0 Semantics / StatCard tabularFigures
+**R115 剩余 (代码级, 低优先)**: StatefulShellRoute 分支保活 / mood sheet 化 (v1.0) / AES-CBC→GCM (v1.0, 需数据迁移) / import_entities _importDailyTracking 再拆 (可选)
 
-**P3**: 死代码 (uuid / MoodQuickButton / flutter_dotenv / spring gentle+bouncy / encryptionServiceProvider / windowSizeOf) + 注释漂移 + magic spacing + build>80 行 39 文件 + AES-CBC 无 HMAC (v1.0 换 GCM)
+**法务 (外部, 需律师)**: 3 份 assets/legal 文档律师过审 + 隐私政策邮箱占位替换 + LEGAL_REVIEW_BRIEF 更新
 
 ## 7. 路线图
 
-R114: P1 bug 修复 (~2d) → P2 数据正确性 (~1-2d) → mood ALS 化 (2-3d) → 上架外部闸门 (域名 → 资产 → console 表单 → review) → v1.0 (2027-Q1: HealthKit / 量表 i18n R51b / AES-GCM / 5 厂商 push)
+R115: 法务文档律师过审 → 上架外部闸门 (域名 ICP → 设计师资产 → console 表单 → review 真实值) → sideload 10 真实用户验证定位 → v1.0 (2027-Q1: HealthKit / 量表 i18n R51b / AES-GCM / 5 厂商 push)
 
 ## 8. 质量门禁 (commit 前)
 
-flutter analyze 0e/0w · flutter test 2407 pass · 21 守门员全绿 · check_all 双绿 · dart format 0 changed · coverage 阈值 (domain 70% / data 45% / presentation 30%)
+flutter analyze 0e/0w + lib 0 info · flutter test 2509 pass / 0 fail / 1 skip · 21 守门员全绿 · check_all 双绿 · dart format 0 changed · coverage 阈值 (domain 70% / data 45% / presentation 30%)

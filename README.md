@@ -2,7 +2,7 @@
 
 > 情绪日记 + 树洞倾诉优先 · 用药记录辅助的精神心理自我关怀 App
 
-**v1.1.0+149**（情绪优先重构 + R113 修复战役, 2026-08-16）· Flutter 3.41.9 · 本地加密零云端
+**v1.1.0+149**（情绪优先重构 + R113/R114 修复战役, 2026-08-16）· Flutter 3.41.9 · 本地加密零云端
 
 ## 🎯 产品
 
@@ -103,7 +103,7 @@ lib/
 ## 🧪 测试与审计
 
 ```bash
-flutter test            # 全部（实测 2407 pass / 0 fail / 1 skip）
+flutter test            # 全部（实测 2509 pass / 0 fail / 1 skip）
 flutter test --coverage # 阈值: domain ≥ 70% / data ≥ 45% / presentation ≥ 30%（lcov 需生成）
 
 # 21 个守门员（架构纯度 / i18n / 锁屏 PII / 合规 / 覆盖率等）
