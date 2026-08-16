@@ -11,8 +11,7 @@ import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 
-class _NoopNotificationService extends NotificationService {
-}
+class _NoopNotificationService extends NotificationService {}
 
 void main() {
   testWidgets(

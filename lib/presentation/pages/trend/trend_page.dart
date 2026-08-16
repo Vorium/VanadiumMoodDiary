@@ -245,7 +245,33 @@ class _TrendPageState extends ConsumerState<TrendPage> {
         // v0.30 round 85 (CBT 重评效果图): 5/7 栏 CBT 重评前后对比 (score 实线 +
         // reratedScore 虚线)。cbtReratedEntriesProvider 已过滤 cbtLevel >= 5,
         // ReratedScoreChart 内部再 filter reratedScore != null (self-contained)。
-        ReratedScoreChart(entries: ref.watch(cbtReratedEntriesProvider)),
+        //
+        // R114 B1-7: mood 流 error 时 cbtReratedEntriesProvider 会抛 (sync
+        // 链上抛) — 这里先 watch allMoodProvider 判 error/loading 渲染
+        // ErrorState/LoadingSkeleton, 数据态才读 chart entries (修前 error
+        // 被吞成空 chart, ErrorState 永不出现)。
+        Consumer(
+          builder: (context, ref, _) {
+            final async = ref.watch(allMoodProvider);
+            return async.when(
+              data: (_) => ReratedScoreChart(
+                entries: ref.watch(cbtReratedEntriesProvider),
+              ),
+              loading: () => const SizedBox(
+                height: AppTokens.chartPlaceholderHeight,
+                child: LoadingSkeleton.fullScreen(),
+              ),
+              error: (e, _) => SizedBox(
+                height: AppTokens.chartPlaceholderHeight,
+                child: ErrorState(
+                  title: AppLocalizations.of(context)
+                      .commonLoadFailed(e.toString()),
+                  detail: e.toString(),
+                ),
+              ),
+            );
+          },
+        ),
         const SizedBox(height: AppTokens.spacingMd),
       ],
     );

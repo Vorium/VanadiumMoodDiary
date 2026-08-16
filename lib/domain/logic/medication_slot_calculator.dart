@@ -117,6 +117,5 @@ class MedicationTimeSlot {
   int get hashCode => Object.hash(name, startHour, endHour);
 
   @override
-  String toString() =>
-      'MedicationTimeSlot($name, $startHour-$endHour)';
+  String toString() => 'MedicationTimeSlot($name, $startHour-$endHour)';
 }

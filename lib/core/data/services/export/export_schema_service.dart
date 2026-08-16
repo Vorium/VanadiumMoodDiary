@@ -29,9 +29,12 @@
 //   + endDate 导出 + mood id 导出 → stress.linkedMoodEntryId /
 //   treatment.linkedMedicationId 重映射 + lastCheckInAt 导入 + isActive
 //   脏数据容错 (is-check 替代裸 cast)。老 v4 文件无新 key → 优雅降级。
-// - v6 (current): v1.1.0 情绪优先重构 (round 3) — 删 contacts 段
+// - v6: v1.1.0 情绪优先重构 (round 3) — 删 contacts 段
 //   (外联全链删除, 表 Task 9 才删, 导入不再清/写 contacts), mood
 //   +statusPhrase, vent +tagsJson。老 v5 文件含 contacts key → 忽略。
+// - v7 (current): v1.1.0 论文落地 (F1 烦恼闭环, round 9) — 新 worryThreads
+//   段 (烦恼主题) + moodEntries +worryThreadId (原 id 导出, import 建
+//   old→new 映射重映射)。老 v6 文件无此段 → mood.worryThreadId 降级 null。
 //
 // **emil 设计决策**:
 // - "decisions should be nameable" — schema version 兼容 + 字段校验 决策独立命名
@@ -51,9 +54,9 @@ import 'package:drift/drift.dart' show Table, TableInfo;
 class ExportSchemaService {
   const ExportSchemaService();
 
-  /// 当前 schema 版本 (v6: v1.1.0 情绪优先重构 — 删 contacts 段,
-  /// mood +statusPhrase, vent +tagsJson)
-  static const int currentVersion = 6;
+  /// 当前 schema 版本 (v7: v1.1.0 F1 烦恼闭环 — 新 worryThreads 段 +
+  /// moodEntries +worryThreadId)
+  static const int currentVersion = 7;
 
   /// 校验 JSON version 字段
   ///
@@ -108,7 +111,7 @@ class ExportSchemaService {
   /// - v.length > maxLen
   /// - v 不匹配 pattern (如 phone regex `^\+?\d{6,20}$`)
   static String? validateString(
-    dynamic v,
+    Object? v,
     String field, {
     int maxLen = 1000,
     RegExp? pattern,
@@ -128,7 +131,7 @@ class ExportSchemaService {
   /// - v 不是 int
   /// - v 超出 [min, max] 范围
   static int? validateInt(
-    dynamic v,
+    Object? v,
     int? defaultValue, {
     int? min,
     int? max,
@@ -148,7 +151,7 @@ class ExportSchemaService {
   ///
   /// 等同 `validateInt(...)?.. ?? defaultValue` 但 0 中间变量, 表达更清晰
   static int validateIntOr(
-    dynamic v,
+    Object? v,
     int defaultValue, {
     int? min,
     int? max,
@@ -177,3 +180,6 @@ class ExportSchemaService {
     return DateTime.tryParse(v);
   }
 }
+// rule3-whitelist: 94
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

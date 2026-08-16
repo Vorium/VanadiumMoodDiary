@@ -104,6 +104,9 @@ class MoodEntryDraft {
   /// v1.1.0 round 5d: 状态短语（预设或自定义, 可空）
   final String? statusPhrase;
 
+  /// v1.1.0 round 9 (F1 烦恼闭环): 关联烦恼主题 id (可空)
+  final int? worryThreadId;
+
   const MoodEntryDraft({
     required this.score,
     required this.tags,
@@ -127,5 +130,6 @@ class MoodEntryDraft {
     this.influenceFactorsJson,
     this.recordingMode,
     this.statusPhrase,
+    this.worryThreadId,
   });
 }

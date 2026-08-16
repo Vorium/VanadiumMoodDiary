@@ -64,6 +64,15 @@ class ReminderDispatcher {
   @visibleForTesting
   bool get useExactAllowWhileIdle => _useExactAllowWhileIdle;
 
+  /// R114 B1-2: 当前 Android 调度 mode (跟 exact-alarm 权限降级同步)
+  ///
+  /// [setExactMode] 之后所有通知 (主提醒 + snooze) 都走这个 mode。
+  /// SnoozeManager 通过注入的 scheduleModeProvider 读本 getter, snooze
+  /// 与主提醒同进退 (修前 snooze 硬编码 exactAllowWhileIdle 绕过降级)。
+  AndroidScheduleMode get scheduleMode => _useExactAllowWhileIdle
+      ? AndroidScheduleMode.exactAllowWhileIdle
+      : AndroidScheduleMode.inexactAllowWhileIdle;
+
   /// 取消 id 在 [base, base+[count]) 范围内的所有 pending 通知
   ///
   /// 配套 [kReminderCancelRange] 公式, 任何 id 公式都遵循 base + N 模式
@@ -148,6 +157,8 @@ class ReminderDispatcher {
       details,
       // R108 (P0#2): Android 12+ SCHEDULE_EXACT_ALARM 权限运行时检查
       // false → inexactAllowWhileIdle 兜底 (允许 ~15min 漂移, 不阻塞)
+      // 注: 内联 ternary 是 R108 lock-in test 断言 (C1/C2), 语义与
+      // [scheduleMode] getter 1:1 — 改这里必须同步改 getter
       androidScheduleMode: useExactAllowWhileIdle
           ? AndroidScheduleMode.exactAllowWhileIdle
           : AndroidScheduleMode.inexactAllowWhileIdle,
@@ -194,6 +205,8 @@ class ReminderDispatcher {
       details,
       // R108 (P0#2): Android 12+ SCHEDULE_EXACT_ALARM 权限运行时检查
       // false → inexactAllowWhileIdle 兜底 (允许 ~15min 漂移, 不阻塞)
+      // 注: 内联 ternary 是 R108 lock-in test 断言 (C1/C2), 语义与
+      // [scheduleMode] getter 1:1 — 改这里必须同步改 getter
       androidScheduleMode: useExactAllowWhileIdle
           ? AndroidScheduleMode.exactAllowWhileIdle
           : AndroidScheduleMode.inexactAllowWhileIdle,

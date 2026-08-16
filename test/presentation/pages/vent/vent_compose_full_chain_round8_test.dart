@@ -26,6 +26,7 @@ import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_compose_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:flutter/material.dart';
@@ -120,9 +121,15 @@ class _FakeVentAudioStorage extends VentAudioStorage {
 
 void main() {
   late _FakeVentRepository repo;
+  late SharedPreferences sp;
 
-  setUp(() {
-    SharedPreferences.setMockInitialValues({});
+  setUp(() async {
+    // v1.1.0 round 9 (F4): 预置公约已读, 避免首次进入弹 dialog 挡住
+    // 测试交互 (公约 dialog 自身测试在 vent_agreement_round9_test.dart)
+    SharedPreferences.setMockInitialValues({
+      'vent_agreement_acknowledged': true,
+    });
+    sp = await SharedPreferences.getInstance();
     FeatureFlags.setVentAudioEnabledForTest(true);
     repo = _FakeVentRepository();
 
@@ -172,6 +179,7 @@ void main() {
       overrides: [
         ventRepositoryProvider.overrideWithValue(repo),
         ventAudioStorageProvider.overrideWithValue(_FakeVentAudioStorage()),
+        sharedPreferencesProvider.overrideWithValue(sp),
       ],
       child: MaterialApp.router(
         theme: ThemeData.light(),
@@ -246,8 +254,7 @@ void main() {
     expect(find.text('按一下开始录音'), findsOneWidget);
   });
 
-  testWidgets('全链路: 空列表 → 写第一句 → 输入文字 → 放进树洞 → 列表出现新条目',
-      (tester) async {
+  testWidgets('全链路: 空列表 → 写第一句 → 输入文字 → 放进树洞 → 列表出现新条目', (tester) async {
     tester.view.physicalSize = const Size(800, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);

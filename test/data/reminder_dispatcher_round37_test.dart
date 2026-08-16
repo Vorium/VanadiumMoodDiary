@@ -151,7 +151,7 @@ void main() {
         channelName: 'Test',
         channelDescription: 'desc',
       );
-      await dispatcher.cancelByIdRange(6000); // refill base
+      await dispatcher.cancelByIdRange(2500000); // refill base (R114 B1-3)
       // 通过
     });
   });

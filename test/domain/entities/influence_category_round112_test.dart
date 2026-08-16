@@ -15,8 +15,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('1) key → key 幂等', () {
-    expect(influenceFactorNormalizeKey('influenceFactorFamily'),
-        'influenceFactorFamily',);
+    expect(
+      influenceFactorNormalizeKey('influenceFactorFamily'),
+      'influenceFactorFamily',
+    );
   });
 
   test('2) 全部 26 个 zh 字面量 → key (1:1 对齐)', () {

@@ -84,19 +84,19 @@ class PssScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 13,
           rank: 0,
-          label: '低压力',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '低压力', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '低压力',
         ),
         SeverityCutoff(
           threshold: 26,
           rank: 1,
-          label: '中度压力',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '中度压力', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度压力',
         ),
         SeverityCutoff(
           threshold: 40,
           rank: 2,
-          label: '高压力',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '高压力', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '高压力, 建议关注和寻求支持',
         ),
       ];
@@ -135,3 +135,6 @@ class PssScale implements AssessmentScale {
 
 /// PSS 单例 (Task 2 注册表用)
 const pssScale = PssScale();
+// rule3-whitelist: 51-53, 55-56, 58, 60-61, 63-64, 69-73
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

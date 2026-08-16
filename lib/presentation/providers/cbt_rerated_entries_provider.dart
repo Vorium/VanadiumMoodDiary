@@ -24,8 +24,19 @@ import 'package:chroniccare/presentation/providers/shared_providers.dart';
 ///
 /// 未到达时返回空 list (UI / 派生 provider 走 fallback 即可)。
 /// 派生 provider [cbtReratedEntriesProvider] 直接读 sync List。
+///
+/// R114 B1-7: 修前 `.value ?? const []` 把 error 吞成空 list — mood 列表 /
+/// 趋势 / 整合页在 DB 读取失败时静默显示 0 条, ErrorState 永不出现。
+/// 修后: hasError 时上抛原 error。列表类 UI (mood_list_page / trend CBT
+/// chart) 先 watch allMoodProvider 判 error/loading 渲染 ErrorState, 数据态
+/// 才读本 provider; 纯图表类消费者 (daily_tracking / tracking_item_card /
+/// cbt_pdf_tile) 改读 allMoodProvider.value 防崩。
 final moodEntriesProvider = Provider.autoDispose<List<MoodEntryEntity>>(
-  (ref) => ref.watch(allMoodProvider).value ?? const <MoodEntryEntity>[],
+  (ref) {
+    final async = ref.watch(allMoodProvider);
+    if (async.hasError) throw async.error!;
+    return async.value ?? const <MoodEntryEntity>[];
+  },
 );
 
 /// 5/7 栏 CBT entries (cbtLevel >= 5), 给 ReratedScoreChart 用

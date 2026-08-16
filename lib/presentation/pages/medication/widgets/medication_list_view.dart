@@ -36,6 +36,9 @@ class MedicationListView extends StatelessWidget {
   final Set<int> editing;
   final Set<int> editingRefill;
 
+  /// R114 BUG 6: swipe 删除失败计数 (medId → 次数, 换 Dismissible key 用)
+  final Map<int, int> deleteFailCounts;
+
   /// 4 个业务流程回调 (parent handler)
   final Future<void> Function(int id) onDelete;
   final Future<void> Function(MedicationEntity med) onEdit;
@@ -48,6 +51,7 @@ class MedicationListView extends StatelessWidget {
     required this.deleting,
     required this.editing,
     required this.editingRefill,
+    required this.deleteFailCounts,
     required this.onDelete,
     required this.onEdit,
     required this.onEditRefill,
@@ -122,6 +126,7 @@ class MedicationListView extends StatelessWidget {
             onEditRefill: () => onEditRefill(med),
             onSwipeDelete: onSwipeDelete,
             enableSwipe: true,
+            deleteFailCount: deleteFailCounts[med.id] ?? 0,
             contentPadding: EdgeInsets.zero,
           ),
       ],
@@ -161,6 +166,7 @@ class MedicationListView extends StatelessWidget {
             onEditRefill: () {}, // 停药不调
             onSwipeDelete: onSwipeDelete,
             enableSwipe: false, // 停药不启用 swipe
+            deleteFailCount: deleteFailCounts[med.id] ?? 0,
             contentPadding: EdgeInsets.zero,
           ),
       ],

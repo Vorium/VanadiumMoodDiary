@@ -114,7 +114,10 @@ void main() {
 
       await manager.snoozeOnce(medicationId: 0, minutes: 5);
 
-      expect(fake.zonedSchedules[0]['payload'], 'chroniccare://check-in/today');
+      // R114 BUG 1: payload 改走 NotificationDeepLink.todayCheckIn().encode()
+      // (host='today' 有 resolver case; 旧串 host='check-in' 点击死链 —
+      // resolver 侧同时加 'check-in' case 兼容已调度旧通知)
+      expect(fake.zonedSchedules[0]['payload'], 'chroniccare://today');
     });
 
     test('medicationId=具体值 payload = medicationCheckIn', () async {

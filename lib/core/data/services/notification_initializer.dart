@@ -126,6 +126,11 @@ class NotificationInitializer {
   ///
   /// 返回 true = 用户授权, false = 拒绝 / 平台不支持 / web。
   /// caller 拿到 false 应走 UI 提示引导用户去系统设置开启。
+  ///
+  /// R113 (BUG 3): 修前 `(iosOk ?? true) || (androidOk ?? true)` 恒返 true —
+  /// 跨平台 resolve 总有一个为 null, null 被 ?? true 吞掉 → 权限拒绝
+  /// 引导永不触发。修后按"当前平台"分支: 只认自己平台的返回值,
+  /// null 视作拒绝 (保守), 双平台都不可用 (web) 才返 true。
   Future<bool> requestPermission() async {
     final ios = _plugin.resolvePlatformSpecificImplementation<
         IOSFlutterLocalNotificationsPlugin>();
@@ -137,8 +142,10 @@ class NotificationInitializer {
       sound: true,
     );
     final androidOk = await android?.requestNotificationsPermission();
-    // 任意一个平台返 true = 用户授权; null = 平台不支持 (web/other) → 视作 true
-    return (iosOk ?? true) || (androidOk ?? true);
+    if (ios != null) return iosOk ?? false;
+    if (android != null) return androidOk ?? false;
+    // 双平台都 null = 平台不支持 (web/other) → 视作 true (跟修前行为一致)
+    return true;
   }
 
   /// R108 (P0#2): 检查 Android SCHEDULE_EXACT_ALARM 权限
@@ -179,3 +186,6 @@ class NotificationInitializer {
     }
   }
 }
+// rule3-whitelist: 98, 111
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

@@ -34,8 +34,7 @@ void main() {
         expect(
           size,
           greaterThanOrEqualTo(1024),
-          reason:
-              '$filename 太小 ($size bytes), 是 R107 报告的 68B 空白占位, '
+          reason: '$filename 太小 ($size bytes), 是 R107 报告的 68B 空白占位, '
               '请用 scripts/generate_ios_assets.sh 生成或设计师提供真实图',
         );
       });
@@ -46,18 +45,27 @@ void main() {
       expect(file.existsSync(), isTrue);
       final content = file.readAsStringSync();
       for (final filename in requiredFiles) {
-        expect(content.contains(filename), isTrue,
-            reason: 'Contents.json 应引用 $filename',);
+        expect(
+          content.contains(filename),
+          isTrue,
+          reason: 'Contents.json 应引用 $filename',
+        );
       }
     });
 
     test('scripts/generate_ios_assets.sh 存在 (设计师/CI 用占位生成器)', () {
       final file = File('scripts/generate_ios_assets.sh');
-      expect(file.existsSync(), isTrue,
-          reason: '占位生成器脚本应存在, 设计师可一键生成占位图通过 lock-in test',);
+      expect(
+        file.existsSync(),
+        isTrue,
+        reason: '占位生成器脚本应存在, 设计师可一键生成占位图通过 lock-in test',
+      );
       final content = file.readAsStringSync();
-      expect(content.contains('LaunchImage'), isTrue,
-          reason: '脚本应处理 LaunchImage',);
+      expect(
+        content.contains('LaunchImage'),
+        isTrue,
+        reason: '脚本应处理 LaunchImage',
+      );
     });
   });
 }

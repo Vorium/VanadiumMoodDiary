@@ -54,7 +54,9 @@ void main() {
       );
     });
 
-    test('main.dart 不再含 _MigrationFailedApp / _MigrationAbortedApp / _MigrationPromptApp / _EarlyLoadingApp', () {
+    test(
+        'main.dart 不再含 _MigrationFailedApp / _MigrationAbortedApp / _MigrationPromptApp / _EarlyLoadingApp',
+        () {
       // 4 占位 widget 全部移到 boot_apps.dart, main.dart 不应再定义
       final mainDart = File('lib/main.dart');
       final content = mainDart.readAsLinesSync().join('\n');
@@ -78,7 +80,8 @@ void main() {
       expect(
         content.contains('_showMigrationConfirmDialog'),
         isFalse,
-        reason: 'main.dart 不应再含 _showMigrationConfirmDialog (已移到 boot_apps.dart)',
+        reason:
+            'main.dart 不应再含 _showMigrationConfirmDialog (已移到 boot_apps.dart)',
       );
     });
 
@@ -88,7 +91,8 @@ void main() {
       expect(
         content.contains('_MigrationPromptController'),
         isFalse,
-        reason: 'main.dart 不应再含 _MigrationPromptController (已移到 boot_apps.dart)',
+        reason:
+            'main.dart 不应再含 _MigrationPromptController (已移到 boot_apps.dart)',
       );
     });
 
@@ -111,7 +115,9 @@ void main() {
       }
     });
 
-    test('boot_apps.dart 含 public MigrationPromptController + showMigrationConfirmDialog', () {
+    test(
+        'boot_apps.dart 含 public MigrationPromptController + showMigrationConfirmDialog',
+        () {
       final bootApps = File('lib/main/boot_apps.dart');
       final content = bootApps.readAsLinesSync().join('\n');
       expect(
@@ -141,18 +147,36 @@ void main() {
       final mainDart = File('lib/main.dart');
       final content = mainDart.readAsLinesSync().join('\n');
       // 应该出现
-      expect(content.contains('runApp(const EarlyLoadingApp()'), isTrue,
-          reason: 'main.dart 应 runApp(EarlyLoadingApp())',);
-      expect(content.contains('runApp(MigrationPromptApp(controller:'), isTrue,
-          reason: 'main.dart 应 runApp(MigrationPromptApp(...))',);
-      expect(content.contains('runApp(MigrationAbortedApp(onRetry:'), isTrue,
-          reason: 'main.dart 应 runApp(MigrationAbortedApp(...))',);
-      expect(content.contains('runApp(MigrationFailedApp(errorMessage:'), isTrue,
-          reason: 'main.dart 应 runApp(MigrationFailedApp(...))',);
-      expect(content.contains('await showMigrationConfirmDialog('), isTrue,
-          reason: 'main.dart 应调 showMigrationConfirmDialog',);
-      expect(content.contains('MigrationPromptController()'), isTrue,
-          reason: 'main.dart 应 new MigrationPromptController()',);
+      expect(
+        content.contains('runApp(const EarlyLoadingApp()'),
+        isTrue,
+        reason: 'main.dart 应 runApp(EarlyLoadingApp())',
+      );
+      expect(
+        content.contains('runApp(MigrationPromptApp(controller:'),
+        isTrue,
+        reason: 'main.dart 应 runApp(MigrationPromptApp(...))',
+      );
+      expect(
+        content.contains('runApp(const MigrationAbortedApp(onRetry:'),
+        isTrue,
+        reason: 'main.dart 应 runApp(MigrationAbortedApp(...))',
+      );
+      expect(
+        content.contains('runApp(MigrationFailedApp(errorMessage:'),
+        isTrue,
+        reason: 'main.dart 应 runApp(MigrationFailedApp(...))',
+      );
+      expect(
+        content.contains('await showMigrationConfirmDialog('),
+        isTrue,
+        reason: 'main.dart 应调 showMigrationConfirmDialog',
+      );
+      expect(
+        content.contains('MigrationPromptController()'),
+        isTrue,
+        reason: 'main.dart 应 new MigrationPromptController()',
+      );
     });
 
     test('R108 P0#12 守卫未破坏: main.dart developer.log 总数 = 3', () {
@@ -164,7 +188,8 @@ void main() {
       expect(
         matches.length,
         equals(3),
-        reason: 'main.dart developer.log 应仍 3 处 (R108 P0#12), 实际 ${matches.length}',
+        reason:
+            'main.dart developer.log 应仍 3 处 (R108 P0#12), 实际 ${matches.length}',
       );
     });
 

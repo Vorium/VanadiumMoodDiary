@@ -115,8 +115,30 @@ class _LegalPageState extends ConsumerState<LegalPage> {
         }
       }
       // 2 个选择都标 withdrawn=true (功能停用)
-      await store.withdraw(kind);
-      _withdrawnAt[kind] = DateTime.now();
+      // v1.1.0 R113 (BUG 8): 修前 `await store.withdraw(kind)` 在 try 外 —
+      // SP 写失败 = unhandled async error。修: try/catch + swallowError +
+      // 错误 snackbar, 失败不置 withdrawn (用户可重试)。
+      // P3 同批: 修前页面再调一次 DateTime.now() 记 _withdrawnAt, 跟 store
+      // 内部 epoch 差几 ms (跨 midnight 显示差 1 天)。修: 回读持久化值。
+      try {
+        await store.withdraw(kind);
+        _withdrawnAt[kind] = await store.withdrawnAt(kind);
+      } catch (e, st) {
+        if (mounted) {
+          AppSnackBar.showError(
+            context,
+            action: AppLocalizations.of(context).legalVentDeleteRetry,
+            error: e,
+          );
+        }
+        swallowError(
+          where: 'legal_page.ventWithdraw',
+          error: e,
+          stack: st,
+          note: 'withdraw failed — snackbar 已提示用户重试',
+        );
+        return;
+      }
       if (mounted) {
         setState(() => _withdrawn[kind] = true);
         // 重新触发 ventSealedProvider 让 vent_list_page 重建
@@ -127,13 +149,30 @@ class _LegalPageState extends ConsumerState<LegalPage> {
     }
 
     // analytics 走原路径 (无数据清理)
-    if (withdraw) {
-      await store.withdraw(kind);
-      _withdrawnAt[kind] = DateTime.now();
-    } else {
-      await store.reset(kind);
-      _withdrawnAt[kind] = null;
+    // v1.1.0 R113 (BUG 8 同批): 同款 try/catch 收口 (跟 vent 路径一致)
+    try {
+      if (withdraw) {
+        await store.withdraw(kind);
+      } else {
+        await store.reset(kind);
+      }
+    } catch (e, st) {
+      if (mounted) {
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).legalVentDeleteRetry,
+          error: e,
+        );
+      }
+      swallowError(
+        where: 'legal_page.analyticsToggle',
+        error: e,
+        stack: st,
+        note: 'consent store write failed — snackbar 已提示用户重试',
+      );
+      return;
     }
+    _withdrawnAt[kind] = await store.withdrawnAt(kind);
     if (mounted) {
       setState(() => _withdrawn[kind] = withdraw);
       // v0.27 round 59 (emil EMIL-T13): 用 showInfo 集中器
@@ -170,6 +209,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
             const SizedBox(height: AppTokens.spacingMd),
             // 立即删除 (红色, 强调不可恢复)
             _WithdrawOption(
+              choice: _VentWithdrawChoice.delete,
               icon: Icons.delete_forever_outlined,
               iconColor: AppTokens.errorColor(context),
               title: l10n.legalVentWithdrawDelete,
@@ -178,6 +218,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
             const SizedBox(height: AppTokens.spacingSm),
             // 加密封存 (info 蓝, 中性)
             _WithdrawOption(
+              choice: _VentWithdrawChoice.sealed,
               icon: Icons.lock_outline,
               iconColor: AppTokens.primaryColor(context),
               title: l10n.legalVentWithdrawSeal,
@@ -452,12 +493,19 @@ Future<void> clearLegalConsentCache() async {
 enum _VentWithdrawChoice { delete, sealed }
 
 class _WithdrawOption extends StatelessWidget {
+  // v1.1.0 R113 (BUG 8b): 修前是裸 Row — 无 onTap/InkWell/GestureDetector,
+  // "立即删除"/"加密封存"两个选项点不了 (R82.5 引入即存在), 用户只能点
+  // "取消"。修: choice 字段 + InkWell 包裹, tap = pop(choice) 让
+  // _showVentWithdrawDialog 的 showDialog<_VentWithdrawChoice> 结果
+  // 传回 _toggle。
+  final _VentWithdrawChoice choice;
   final IconData icon;
   final Color iconColor;
   final String title;
   final String description;
 
   const _WithdrawOption({
+    required this.choice,
     required this.icon,
     required this.iconColor,
     required this.title,
@@ -466,32 +514,42 @@ class _WithdrawOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: iconColor, size: 20),
-        const SizedBox(width: AppTokens.spacingSm),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTokens.textStyleBodyStrong(context),
-              ),
-              const SizedBox(height: AppTokens.spacingXxs),
-              Text(
-                description,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeCaption,
-                  color: AppTokens.textHintColor(context),
-                  height: AppTokens.lineHeightSnug,
-                ),
-              ),
-            ],
-          ),
+    return InkWell(
+      onTap: () => Navigator.of(context).pop(choice),
+      borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTokens.spacingXs,
+          vertical: AppTokens.spacingXs,
         ),
-      ],
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: iconColor, size: 20),
+            const SizedBox(width: AppTokens.spacingSm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTokens.textStyleBodyStrong(context),
+                  ),
+                  const SizedBox(height: AppTokens.spacingXxs),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: AppTokens.fontSizeCaption,
+                      color: AppTokens.textHintColor(context),
+                      height: AppTokens.lineHeightSnug,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

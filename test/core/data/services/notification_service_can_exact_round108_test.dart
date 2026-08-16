@@ -53,7 +53,8 @@ void main() {
       expect(
         rescheduleSection.contains('useExactAllowWhileIdle'),
         isTrue,
-        reason: 'rescheduleAll 应把 canExact 结果同步给 _dispatcher.useExactAllowWhileIdle',
+        reason:
+            'rescheduleAll 应把 canExact 结果同步给 _dispatcher.useExactAllowWhileIdle',
       );
     });
 
@@ -164,6 +165,5 @@ void main() {
 /// ReminderDispatcher 不会实际调)。
 class _NoopNotificationsPlugin implements FlutterLocalNotificationsPlugin {
   @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      super.noSuchMethod(invocation);
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

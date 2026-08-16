@@ -7,7 +7,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// 用途：临时吃药、记一下情绪等"次要操作"
 /// 视觉：主色描边 + 圆角 + label 居中，跟主打卡按钮视觉区分但不抢眼
 ///
-/// 之前 home_page、mood_quick_button、settings 等多处重复同样的
+/// 之前 home_page、settings 等多处重复同样的
 /// `OutlinedButton.styleFrom(side: ... foregroundColor: ... shape: ...)`。
 ///
 /// v0.17 round 12: 从 presentation/pages/home/widgets/home_secondary_button.dart

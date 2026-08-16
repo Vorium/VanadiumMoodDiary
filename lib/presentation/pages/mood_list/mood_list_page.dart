@@ -30,9 +30,13 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_filter_bar.dart';
 import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_item.dart';
 import 'package:chroniccare/presentation/pages/mood_list/widgets/mood_list_period_filter_bar.dart';
+import 'package:chroniccare/presentation/widgets/worry_section.dart';
 import 'package:chroniccare/presentation/providers/mood_list_filter_provider.dart';
-import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/empty_state.dart';
+import 'package:chroniccare/presentation/widgets/error_state.dart';
+import 'package:chroniccare/presentation/widgets/lazy_apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 
 /// v0.30 round 87 (sub-spec 3 mood 列表页): 全部 mood entry 列表
@@ -67,7 +71,10 @@ class _MoodListPageState extends ConsumerState<MoodListPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final entries = ref.watch(filteredMoodEntriesProvider);
+    // R114 B1-7: 直接 watch allMoodProvider 的 AsyncValue — DB 读失败时
+    // 显示 ErrorState + 重试 (修前 filteredMoodEntriesProvider 的 sync 链
+    // `.value ?? const []` 吞 error, 用户看到"0 条"且无重试入口)。
+    final allAsync = ref.watch(allMoodProvider);
     final hasActiveFilter = ref.watch(
       moodListFilterProvider.select(
         (f) =>
@@ -116,54 +123,66 @@ class _MoodListPageState extends ConsumerState<MoodListPage> {
           // v0.30 round 91: 心境时段 chip filter (6 chip: 全部/早/中/晚/夜/未指定)
           const MoodListPeriodFilterBar(),
 
+          // v1.1.0 round 9 (F1 烦恼闭环): 烦恼心事入口 (进行中 + 忆往昔)
+          const WorrySection(),
+
           // 主体 list
           Expanded(
-            child: _buildBody(l10n, entries, hasActiveFilter),
+            child: _buildBody(l10n, allAsync, hasActiveFilter),
           ),
         ],
       ),
     );
   }
 
-  /// 主体: empty / no-match / list
+  /// 主体: loading / error / empty / no-match / list
   ///
+  /// R114 B1-7: error 不再被吞 — AsyncValue.when 渲染 ErrorState。
   /// 区分两种 empty:
   /// - 真没数据 (DB 空) → "还没有 mood 记录" + 📋 icon
   /// - 有数据但 filter / search 后 0 条 → "没有匹配的记录" (引导清空 filter)
   Widget _buildBody(
     AppLocalizations l10n,
-    List<MoodEntryEntity> entries,
+    AsyncValue<List<MoodEntryEntity>> allAsync,
     bool hasActiveFilter,
   ) {
-    if (entries.isEmpty) {
-      return EmptyState(
-        icon: Icons.mood_outlined,
-        title: hasActiveFilter ? l10n.moodListNoMatch : l10n.moodListEmpty,
-      );
-    }
-    // v0.32 R112 (EM-02/AH-04, spec §5.5): ListView.builder 平铺 →
-    // AppleListSection (iOS 群组列表), title 显示 entry count
-    // (l10n.moodListEntryCount, R87 设计"列表 + 顶部 entry count")。
-    return ListView(
-      padding: const EdgeInsets.only(
-        top: AppTokens.spacingXs,
-        bottom: AppTokens.spacingLg,
+    return allAsync.when(
+      loading: () => const LoadingSkeleton.fullScreen(),
+      error: (e, _) => ErrorState(
+        title: l10n.commonLoadFailed(e.toString()),
+        detail: e.toString(),
+        onRetry: () => ref.invalidate(allMoodProvider),
       ),
-      children: [
-        AppleListSection(
+      data: (_) {
+        final entries = ref.watch(filteredMoodEntriesProvider);
+        if (entries.isEmpty) {
+          return EmptyState(
+            icon: Icons.mood_outlined,
+            title: hasActiveFilter ? l10n.moodListNoMatch : l10n.moodListEmpty,
+          );
+        }
+        // R114 B1-1: 懒加载恢复 — ListView(children:[AppleListSection(children:
+        // [for ...])]) 全量构建回归 → LazyAppleListSection (sliver 化,
+        // 只建 viewport 内的 cell), 视觉保留 AppleListSection 外观
+        // (title 显示 entry count, R87 设计"列表 + 顶部 entry count")。
+        return LazyAppleListSection(
           title: l10n.moodListEntryCount(entries.length),
-          margin: EdgeInsets.zero,
-          children: [
-            for (final entry in entries)
-              MoodListItem(
-                entry: entry,
-                // v0.32 R112-02: 点击条目 → 详情页 (路由在
-                // core/routing/app_route_mood_list.dart 注册 /mood/detail/:id)
-                onTap: () => context.push('/mood/detail/${entry.id}'),
-              ),
-          ],
-        ),
-      ],
+          scrollPadding: const EdgeInsets.only(
+            top: AppTokens.spacingXs,
+            bottom: AppTokens.spacingLg,
+          ),
+          itemCount: entries.length,
+          itemBuilder: (context, i) {
+            final entry = entries[i];
+            return MoodListItem(
+              entry: entry,
+              // v0.32 R112-02: 点击条目 → 详情页 (路由在
+              // core/routing/app_route_mood_list.dart 注册 /mood/detail/:id)
+              onTap: () => context.push('/mood/detail/${entry.id}'),
+            );
+          },
+        );
+      },
     );
   }
 }

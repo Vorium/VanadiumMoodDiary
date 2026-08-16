@@ -20,13 +20,11 @@ import 'package:flutter/material.dart'
         EdgeInsets,
         FontWeight; // v0.31 R2 (Task 1.2): facade 转发 fontWeightUltralight/Light 需要
 
-// Re-export top-level symbols (Motion / MotionScheme / WindowSize / windowSizeOf)
+// Re-export top-level symbols (Motion / MotionScheme)
 // 让老 import `package:chroniccare/core/theme/app_tokens.dart` 的 caller
-// 仍能直接用 `Motion.xxx` / `MotionScheme.standard` / `windowSizeOf(w)`。
+// 仍能直接用 `Motion.xxx` / `MotionScheme.standard`。
 export 'package:chroniccare/core/theme/app_motion.dart'
     show Motion, MotionScheme, MotionSchemeTokens;
-export 'package:chroniccare/core/theme/app_spacing.dart'
-    show WindowSize, windowSizeOf;
 
 /// v0.27 round 65 (alibaba B16 god constant 拆分): 慢病管家 · 设计 Token 规范
 ///
@@ -207,6 +205,10 @@ class AppTokens {
   static const double buttonHeight = AppSpacing.buttonHeight;
   static const double buttonHeightSmall = AppSpacing.buttonHeightSmall;
   static const double minTapArea = AppSpacing.minTapArea;
+  // v1.1.0 R114 (Wave D spec §5.5): mood 5 档圆形按钮 72pt + 窄屏下限 48pt
+  static const double moodScoreButtonSize = AppSpacing.moodScoreButtonSize;
+  static const double moodScoreButtonMinSize =
+      AppSpacing.moodScoreButtonMinSize;
   static const double inputHeight = AppSpacing.inputHeight;
   static const double iconSize = AppSpacing.iconSize;
   static const double iconSizeLg = AppSpacing.iconSizeLg;

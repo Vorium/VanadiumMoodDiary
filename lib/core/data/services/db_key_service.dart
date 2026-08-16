@@ -46,4 +46,9 @@ class DbKeyService {
     final v = await _storage.read(key: _keyName);
     return v != null && v.isNotEmpty;
   }
+
+  /// R114 B1-8: 删除加密 key (数据库 key-DB 失配重置流程用)
+  static Future<void> deleteKey() async {
+    await _storage.delete(key: _keyName);
+  }
 }

@@ -26,8 +26,9 @@ class SummaryCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     // v0.31 round 12: 4 StatCard 装在 AppleListSection 内 (2x2 网格)
     // 跟 refill_manage_page Phase 3 R11a 同款模式 (iOS 群组列表容器)
+    // R114 Wave B2 (B2-4): 删 margin: pageMarginH — TrendPage 在
+    // PageScaffold 内 (已包 20px), 显式 20 曾叠加成 40px 双重 inset。
     return AppleListSection(
-      margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
       children: [
         IntrinsicHeight(
           child: Row(

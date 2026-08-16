@@ -14,7 +14,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
@@ -53,11 +52,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// 慢病管家 · App 入口
 ///
 /// 启动顺序：
-/// 1. 加载 .env（缺失不阻断，走代码默认值）
-/// 2. **数据库迁移检查**：如果检测到旧非加密 DB,先 runApp 一个最小 MaterialApp,
+/// 1. **数据库迁移检查**：如果检测到旧非加密 DB,先 runApp 一个最小 MaterialApp,
 ///    等第一帧后再弹确认对话框（弹 dialog 必须有 Navigator）
-/// 3. 初始化通知服务
-/// 4. 启动完整 App
+/// 2. 初始化通知服务
+/// 3. 启动完整 App
 ///
 /// **第二轮审查 fix (N1+N5)**：
 /// 之前 `WidgetsBinding.instance.rootElement` 在 runApp 之前永远是 null,
@@ -117,14 +115,17 @@ Future<void> _bootstrap() async {
   // R104: 先显示最小 loading UI，再并行初始化
   runApp(const EarlyLoadingApp());
 
-  // 1. 并行启动：.env + timezone + 迁移检查 + 通知初始化 + SharedPreferences
+  // 1. 并行启动：timezone + 迁移检查 + 通知初始化 + SharedPreferences
+  //    + R114 B1-8 key-DB 失配探测
   //    之前是串行 await,总耗时 = 各步之和；改并行后总耗时 = 最慢一步
+  //    (P3-CLEAN-3: flutter_dotenv 只 load 不读, 已删 _loadEnv 任务)
   final results = await Future.wait([
-    _loadEnv(),
     _initTimezones(),
     DatabaseMigration.needsMigration(),
     _initNotification(),
     SharedPreferences.getInstance(),
+    // R114 B1-8: 探测 DB 是否可解密打开 (Android 备份恢复 key 失配场景)
+    DatabaseMigration.probeDatabaseReadable(),
   ]);
 
   // 1b. R108 (P0 #1): 标记整个 app docs 目录不参与 iCloud Backup
@@ -133,9 +134,9 @@ Future<void> _bootstrap() async {
   unawaited(_markAppDocsExcludedFromBackup());
 
   // 展开结果
-  final needsMigration = results[2] as bool;
-  final notifResult = results[3] as _NotificationInitResult;
-  final sharedPrefs = results[4] as SharedPreferences;
+  final needsMigration = results[1] as bool;
+  final notifResult = results[2] as _NotificationInitResult;
+  final sharedPrefs = results[3] as SharedPreferences;
 
   // 2. 升级检查：如果需要迁移,弹确认对话框
   if (needsMigration) {
@@ -164,6 +165,12 @@ Future<void> _bootstrap() async {
     return;
   }
 
+  // 3b. R114 B1-8: key-DB 失配 → 重置引导 (不静默删, 用户二次确认)
+  if (!(results[4] as bool)) {
+    runApp(const DatabaseResetPromptApp(onRetry: main));
+    return;
+  }
+
   // 5. 启动完整 App
   final sharedDb = AppDatabase();
   runApp(
@@ -184,21 +191,12 @@ Future<void> _bootstrap() async {
   );
 }
 
-/// 并行任务 1: 加载 .env（缺失时静默跳过）
-Future<void> _loadEnv() async {
-  try {
-    await dotenv.load(fileName: '.env');
-  } catch (e) {
-    piiSafeLog('Main', '⚠️ .env 加载失败（首次启动正常）：$e');
-  }
-}
-
-/// 并行任务 2: 初始化 timezone 数据库（同步 CPU 操作,包一层 Future 让它跑到 isolate pool）
+/// 并行任务 1: 初始化 timezone 数据库（同步 CPU 操作,包一层 Future 让它跑到 isolate pool）
 Future<void> _initTimezones() async {
   tz_data.initializeTimeZones();
 }
 
-/// 并行任务 3: 初始化通知服务 + 返回结果
+/// 并行任务 2: 初始化通知服务 + 返回结果
 ///
 /// v0.32 R112 (R112-ARCH-02): navigation 回调在 app 层接线 — data service
 /// 0 依赖 core/routing (传递 Flutter 依赖)。tap 走

@@ -65,8 +65,7 @@ void main() {
       expect(
         arrayContent.contains('<string>processing</string>'),
         isFalse,
-        reason:
-            'UIBackgroundModes 不应包含 processing (BGProcessingTask 失联检测未真接, '
+        reason: 'UIBackgroundModes 不应包含 processing (BGProcessingTask 失联检测未真接, '
             '加会触发 Apple 2.5.4 拒)',
       );
     });

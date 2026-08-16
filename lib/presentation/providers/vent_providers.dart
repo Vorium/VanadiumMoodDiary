@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/data/repositories/vent/vent_repository_impl.dart';
+import 'package:chroniccare/core/data/services/vent_agreement_store.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/core/shared/consent_gate.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// v0.17 round 14 (P1-3 拆 core_providers): vent-specific provider
@@ -21,6 +23,11 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 /// 树洞 audio 文件管理（独立 service）
 final ventAudioStorageProvider = Provider<VentAudioStorage>(
   (ref) => VentAudioStorage(),
+);
+
+/// v1.1.0 round 9 (F4 树洞使用公约): 公约已读状态存储
+final ventAgreementStoreProvider = Provider<VentAgreementStore>(
+  (ref) => VentAgreementStore(ref.watch(sharedPreferencesProvider)),
 );
 
 /// v0.27 round 67 (Sprint 1 上架前 P0, spzh C-P0-6):

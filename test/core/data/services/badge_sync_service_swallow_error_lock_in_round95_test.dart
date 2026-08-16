@@ -23,7 +23,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('badge_sync_service error sink lock-in (R95 sub-spec 2 task 26 + R112 AR-23)', () {
+  group(
+      'badge_sync_service error sink lock-in (R95 sub-spec 2 task 26 + R112 AR-23)',
+      () {
     late String source;
 
     setUpAll(() {
@@ -73,7 +75,9 @@ void main() {
       );
     });
 
-    test('R79 fix 3: notificationErrorSink 调用带 where / error / stack / note 4 个参数', () {
+    test(
+        'R79 fix 3: notificationErrorSink 调用带 where / error / stack / note 4 个参数',
+        () {
       // 验证 notificationErrorSink 调用带 4 个 named 参数 (swallowError API)
       // - where (位置定位)
       // - error (异常对象)

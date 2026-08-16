@@ -110,6 +110,9 @@ class HomePageState extends ConsumerState<HomePage> {
     // v0.11 (Round 5): 首帧后处理 deep link query param
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_handleDeepLink());
+      // Wave 7 (Task A, R113): 入场动画开始后标记"已播放" — 后续 mount
+      // (tab 切回) 直接 Duration.zero 跳终态, 不再重播 ~650ms 入场。
+      ref.read(homeEntryPlayedProvider.notifier).markPlayed();
     });
   }
 
@@ -206,6 +209,19 @@ class HomePageState extends ConsumerState<HomePage> {
     );
     final nextReminder = _nextReminderTime();
 
+    // Wave 7 (Task A, R113): 入场动画只播一次 — tab 切回不再重播。
+    // entryPlayed=true 时 FadeIn duration/delay = Duration.zero (直接终态),
+    // CheckInButton animateEntry=false (_EntrySpring 跳到 1.0)。首次启动
+    // 完整播放 (FadeIn durSlow 400ms + stagger 30/60ms + spring)。
+    final entryPlayed = ref.watch(homeEntryPlayedProvider);
+    final entryDuration = entryPlayed ? Duration.zero : AppTokens.durSlow;
+    final entryDelay1 = entryPlayed
+        ? Duration.zero
+        : const Duration(milliseconds: AppTokens.staggerStepMs);
+    final entryDelay2 = entryPlayed
+        ? Duration.zero
+        : const Duration(milliseconds: 2 * AppTokens.staggerStepMs);
+
     return PageScaffold(
       title: AppLocalizations.of(context).appName,
       // v0.31 R9a: actions: [ThemeToggleButton()] 移到 HomeHeader 内,
@@ -260,6 +276,7 @@ class HomePageState extends ConsumerState<HomePage> {
 
             // 2: HomeHeader (28pt greeting + 15pt 日期 + 32x32 theme toggle)
             FadeIn(
+              duration: entryDuration,
               child: HomeHeader(userName: userName),
             ),
 
@@ -277,27 +294,31 @@ class HomePageState extends ConsumerState<HomePage> {
 
             // 5: CheckInButton 打卡降级 compact (48pt pill, 主 CTA 位让给双主卡)
             FadeIn(
-              delay: const Duration(milliseconds: AppTokens.staggerStepMs),
+              duration: entryDuration,
+              delay: entryDelay1,
               child: todayAsync.when(
                 data: (today) => CheckInButton(
                   isChecked: today != null,
                   streakDays: streakSnapshot.streak,
                   isLoading: isChecking,
                   compact: true,
+                  animateEntry: !entryPlayed,
                   onPressed: () => _onCheckIn(streakSnapshot.streak),
                 ),
-                loading: () => const CheckInButton(
+                loading: () => CheckInButton(
                   isChecked: false,
                   streakDays: 0,
                   isLoading: true,
                   compact: true,
+                  animateEntry: !entryPlayed,
                   onPressed: _noop,
                 ),
-                error: (_, __) => const CheckInButton(
+                error: (_, __) => CheckInButton(
                   isChecked: false,
                   streakDays: 0,
                   isLoading: false,
                   compact: true,
+                  animateEntry: !entryPlayed,
                   onPressed: _noop,
                 ),
               ),
@@ -306,9 +327,10 @@ class HomePageState extends ConsumerState<HomePage> {
             const SizedBox(height: AppTokens.spacingMd),
 
             // 6: 今日指标 4 项 2x2 网格
-            const FadeIn(
-              delay: Duration(milliseconds: 2 * AppTokens.staggerStepMs),
-              child: TodaySummaryCard(),
+            FadeIn(
+              duration: entryDuration,
+              delay: entryDelay2,
+              child: const TodaySummaryCard(),
             ),
 
             const SizedBox(height: AppTokens.spacingMd),
@@ -328,12 +350,15 @@ class HomePageState extends ConsumerState<HomePage> {
 
             const SizedBox(height: AppTokens.spacingSm),
 
-            // 8: 底部信息
+            // 8: 底部信息 (R114 B2-8: 接 entryDuration/entryDelay 门控,
+            // Wave 7 同款 — tab 切回不再重播 400ms+30ms)
             todayAsync.when(
               data: (today) => HomeFooter(
                 lastCheckIn: today,
                 nextReminder: nextReminder,
                 showStreakBroken: streakSnapshot.shouldShowStreakBroken,
+                entryDuration: entryDuration,
+                entryDelay: entryPlayed ? Duration.zero : entryDelay1,
               ),
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
@@ -359,14 +384,17 @@ class HomePageState extends ConsumerState<HomePage> {
     // R97-P1-12: unawaited 显式标记 fire-and-forget
     unawaited(Haptics.success());
     await ref.read(checkInNotifierProvider.notifier).checkIn();
-    if (mounted) {
-      final newStreak = currentStreak + 1;
-      // 显示庆祝 overlay
-      _celebration.show(
-        context,
-        _celebration.pickStreakMessage(context, newStreak),
-      );
-    }
+    if (!mounted) return;
+    // R113 (BUG 2): 打卡失败 (AsyncValue.guard 把异常吞进 state) →
+    // 只走 ref.listen 的错误 snackbar, 不再弹成功庆祝 + streak+1 文案。
+    // 修前: 用户看到 错误 snackbar + 成功庆祝 同时出现。
+    if (ref.read(checkInNotifierProvider).hasError) return;
+    final newStreak = currentStreak + 1;
+    // 显示庆祝 overlay
+    _celebration.show(
+      context,
+      _celebration.pickStreakMessage(context, newStreak),
+    );
     // 打卡成功：取消所有 snooze
     // v0.22 round 29 (spen-bug-04): 删 cancelSoftReminder 死代码 (scheduleSoftReminder
     // 已在 v0.18 P2-P0-5 删除, cancelSoftReminder 跟着成 no-op)

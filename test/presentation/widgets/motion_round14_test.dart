@@ -4,11 +4,10 @@
 // 1. Motion.prefersReduced(context) 跟随 MediaQuery.disableAnimations
 // 2. Motion.duration(ctx, base) 在 reduce motion 时返 Duration.zero
 // 3. Motion.curve(ctx, base) 在 reduce motion 时返 Curves.linear
-// 4. FadeIn / SlideUp 在 reduce motion 时立即到终态 (controller.value = 1.0)
+// 4. FadeIn 在 reduce motion 时立即到终态 (controller.value = 1.0)
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/animations/fade_in.dart';
-import 'package:chroniccare/presentation/widgets/animations/slide_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -109,7 +108,7 @@ void main() {
     });
   });
 
-  group('FadeIn / SlideUp', () {
+  group('FadeIn', () {
     Widget wrap({required bool reduced, required Widget child}) {
       return MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -131,17 +130,6 @@ void main() {
       );
       // 不需要 pumpAndSettle:reduced motion 立即到 opacity=1.0
       // Text 必须可见 → 渲染到 widget tree
-      final textWidget = tester.widget<Text>(find.text('hello'));
-      expect(textWidget, isNotNull);
-    });
-
-    testWidgets('P0-7: SlideUp reduce motion = true → 立即到终态', (tester) async {
-      await tester.pumpWidget(
-        wrap(
-          reduced: true,
-          child: const SlideUp(child: Text('hello')),
-        ),
-      );
       final textWidget = tester.widget<Text>(find.text('hello'));
       expect(textWidget, isNotNull);
     });

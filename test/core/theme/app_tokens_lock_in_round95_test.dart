@@ -318,9 +318,12 @@ void main() {
       // 批量 Card→AppleListSection 化 (净 +38 处半 token EdgeInsets, 与
       // R110 round 5 同款理由: 均为真实新结构 spacing, 无重复可并) → 阈值 300,
       // buffer 12。仍拒 288+12 的上探。
+      // v1.1.0 round 9 (F1 烦恼闭环): 305 实测 — 新增 worry 时间线/忆往昔页
+      // + 烦恼选择器/入口 section (4 个新组件, 6+4+1+2 处真实新结构 padding,
+      // 与 R112 同款理由) → 阈值 315, buffer 10。
       expect(
         count,
-        lessThanOrEqualTo(300),
+        lessThanOrEqualTo(315),
         reason: 'v0.31 Apple Health redesign baseline',
       );
     });

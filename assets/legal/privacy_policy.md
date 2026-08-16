@@ -116,9 +116,7 @@ App 在首次启动时要求用户分别勾选 3 项同意:
 | `speech_to_text` | Sujan Thapa | 无 (本地 STT, mobile 走平台 on-device / cloud, web 走 Chrome Web Speech API) | 情绪日记语音录入 |
 | `path_provider` / `path` | Flutter Community | 无 (本地路径 API) | App 文件目录访问 |
 | `shared_preferences` | Flutter Community | 无 (本地键值) | 设置项持久化 |
-| `flutter_dotenv` | Christian Gill | 无 (本地 .env 读取) | 编译期环境变量 |
 | `share_plus` | Flutter Community | 无 (本地分享 API) | 主动分享(用户触发) |
-| `uuid` | Yulian Mykhailyshyn | 无 (本地 ID 生成) | 记录 ID 生成 |
 | `intl` | Dart Team | 无 (本地国际化) | 日期 / 数字格式化 |
 | `pointycastle` | The Legion of the Bouncy Castle | 无 (本地加密库) | AES 加密实现 |
 

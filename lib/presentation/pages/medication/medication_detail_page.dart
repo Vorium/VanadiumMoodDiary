@@ -119,8 +119,10 @@ class MedicationDetailPage extends ConsumerWidget {
                     label: med.isInUse
                         ? l10n.medDetailActive
                         : l10n.medDetailStopped,
+                    // R113 (BUG 3): AppColors.success (浅绿 2.4:1) →
+                    // fgOnSuccess (深绿 #2E7D32, 白底 ≈5.1:1, WCAG AA)
                     color: med.isInUse
-                        ? AppColors.success
+                        ? AppColors.fgOnSuccess
                         : AppTokens.textHintColor(context),
                   ),
                 ],
@@ -154,8 +156,10 @@ class MedicationDetailPage extends ConsumerWidget {
                         child: StatCard(
                           value: '$adherencePct%',
                           label: l10n.medDetailLast30,
+                          // R113 (BUG 7): AppColors.success (浅绿 2.4:1) →
+                          // fgOnSuccess (深绿 #2E7D32, 白底 ≈5.1:1, WCAG AA)
                           valueColor: adherencePct >= 80
-                              ? AppColors.success
+                              ? AppColors.fgOnSuccess
                               : AppTokens.warningColor(context),
                         ),
                       ),

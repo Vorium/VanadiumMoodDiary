@@ -15,8 +15,7 @@ import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 
-class _NoopNotificationService extends NotificationService {
-}
+class _NoopNotificationService extends NotificationService {}
 
 Future<void> _pumpSetup(WidgetTester tester) async {
   tester.view.physicalSize = const Size(800, 1600);
@@ -59,7 +58,8 @@ Future<void> _passConsent(WidgetTester tester) async {
   expect(
     checkboxes,
     findsNWidgets(6),
-    reason: 'P0-6 + v0.31.1 R103: setup step 0 (consent) 应该有 6 个 Checkbox (1 全部同意 + 5 单独)',
+    reason:
+        'P0-6 + v0.31.1 R103: setup step 0 (consent) 应该有 6 个 Checkbox (1 全部同意 + 5 单独)',
   );
   for (var i = 1; i < 6; i++) {
     await tester.tap(checkboxes.at(i));

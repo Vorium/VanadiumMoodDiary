@@ -12,17 +12,22 @@ import 'package:chroniccare/presentation/pages/vent/vent_compose_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_detail_page.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 
-/// v0.26 round 57: 树洞路由 (3 个, 全 slide-up 全屏深页)
+/// v0.26 round 57: 树洞路由 (3 个 — 根 fade / compose+detail slide-up 全屏深页)
 class AppRouteVent {
   AppRouteVent._();
 
   /// 1.1.0 round 5: 树洞 3 路由移进 ShellRoute (底栏常驻 + tab 高亮)
+  ///
+  /// R114 Wave B2 (B2-1, emil F1): /vent 根路由改 fadePage — 4 个 shell
+  /// tab 是同一动作 (tens/day), 修前 /vent 用 slideUpPage 400ms 全屏
+  /// modal 感, 跟 / /settings 的 fade 不同体感。统一 fade; slideUpPage
+  /// 只留给 push 子页 (compose / detail)。
   static List<RouteBase> shellRoutes() {
     return [
       GoRoute(
         path: '/vent',
         pageBuilder: (context, state) =>
-            AppRoutes.slideUpPage(state.pageKey, const VentListPage(), context),
+            AppRoutes.fadePage(state.pageKey, const VentListPage(), context),
       ),
       GoRoute(
         path: '/vent/compose',

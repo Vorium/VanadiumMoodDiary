@@ -58,4 +58,17 @@ class MoodDao {
 
   Future<int> delete(int id) =>
       (_db.delete(_db.moodEntries)..where((t) => t.id.equals(id))).go();
+
+  /// v1.1.0 round 9 (F1 烦恼闭环): 监听某个烦恼主题的记录 (时间正序)
+  Stream<List<MoodEntry>> watchByThread(int threadId) {
+    return (_db.select(_db.moodEntries)
+          ..where((t) => t.worryThreadId.equals(threadId))
+          ..orderBy([
+            (t) => OrderingTerm(
+                  expression: t.timestamp,
+                  mode: OrderingMode.asc,
+                ),
+          ]))
+        .watch();
+  }
 }

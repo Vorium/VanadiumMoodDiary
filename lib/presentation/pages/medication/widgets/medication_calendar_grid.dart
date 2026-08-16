@@ -125,8 +125,10 @@ class MedicationCalendarGrid extends StatelessWidget {
             const SizedBox(height: AppTokens.spacingXs),
             // v0.17 round 14 (P2-5): staggered fade-in
             // 每行 delay 40ms (i * 40), 让多药日历逐行出现而不是一起
+            // R114 Wave B2 (B2-8): 显式 durFast 200ms (修前默认 400ms)
             for (int i = 0; i < rows.length; i++)
               FadeIn(
+                duration: AppTokens.durFast,
                 delay: Duration(
                   milliseconds: (i * AppTokens.staggerStepMs)
                       .clamp(0, AppTokens.staggerCapMs),

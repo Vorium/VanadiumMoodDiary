@@ -20,6 +20,7 @@ import 'package:chroniccare/core/data/database/daos/social_rhythm_dao.dart';
 import 'package:chroniccare/core/data/database/daos/stress_event_dao.dart';
 import 'package:chroniccare/core/data/database/daos/treatment_dao.dart';
 import 'package:chroniccare/core/data/database/daos/weight_dao.dart';
+import 'package:chroniccare/core/data/database/daos/worry_dao.dart';
 import 'package:chroniccare/core/data/database/tables/check_in/check_ins.dart';
 import 'package:chroniccare/core/data/database/tables/daily_tracking/anxiety_agitation_entries.dart';
 import 'package:chroniccare/core/data/database/tables/daily_tracking/sleep_entries.dart';
@@ -32,6 +33,7 @@ import 'package:chroniccare/core/data/database/tables/mood/mood_entries.dart';
 import 'package:chroniccare/core/data/database/tables/report/report_histories.dart';
 import 'package:chroniccare/core/data/database/tables/user_profile/user_profiles.dart';
 import 'package:chroniccare/core/data/database/tables/vent/vent_entries.dart';
+import 'package:chroniccare/core/data/database/tables/worry/worry_threads.dart';
 import 'package:chroniccare/core/data/services/encryption_service.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 
@@ -80,6 +82,8 @@ Future<void> _addColumnIfMissing(
     TreatmentEntries,
     WeightEntries,
     AnxietyAgitationEntries,
+    // v1.1.0 round 9 (F1 烦恼闭环): worry_threads 表
+    WorryThreads,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -170,8 +174,13 @@ class AppDatabase extends _$AppDatabase {
   //   - 修: mood + vent 表列操作全部加列存在性守卫
   //     (_columnExists / _addColumnIfMissing, 文件级 top-level helper),
   //     backfill 与 content_text DROP 用 _columnExists 包住
+  //
+  // v1.1.0 round 9 (F1 烦恼闭环): schemaVersion 23 to 24
+  //   - 新表 worry_threads (烦恼主题, 闭环后归档忆往昔)
+  //   - mood_entries +1 column (worryThreadId): 关联烦恼主题, nullable
+  //   - 老数据自动兼容 (未绑定 = null)
   @override
-  int get schemaVersion => 23;
+  int get schemaVersion => 24;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -501,6 +510,18 @@ class AppDatabase extends _$AppDatabase {
               moodEntries.statusPhrase,
             );
           }
+          // v23 to v24 (v1.1.0 round 9 F1 烦恼闭环):
+          // - 新表 worry_threads (烦恼主题)
+          // - mood_entries +worryThreadId (关联烦恼, nullable, 老数据 null)
+          if (from < 24) {
+            await m.createTable(worryThreads);
+            await _addColumnIfMissing(
+              this,
+              m,
+              moodEntries,
+              moodEntries.worryThreadId,
+            );
+          }
         },
         beforeOpen: (details) async {
           // enable foreign keys
@@ -529,6 +550,9 @@ class AppDatabase extends _$AppDatabase {
   late final treatmentDao = TreatmentDao(this);
   late final weightDao = WeightDao(this);
   late final anxietyAgitationDao = AnxietyAgitationDao(this);
+
+  // v1.1.0 round 9 (F1 烦恼闭环): WorryDao
+  late final worryDao = WorryDao(this);
 
   // v0.27 round 65 (spen P1-11): remove 32-line facade delegation (line 264-316), caller
   // fully migrated to _db.xxxDao.xxx() / db.xxxDao.xxx() (94 places).

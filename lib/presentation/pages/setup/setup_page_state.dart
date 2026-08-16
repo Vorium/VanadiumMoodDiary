@@ -63,6 +63,12 @@ class SetupPageState extends ConsumerState<SetupPage> {
   final List<MedDraft> _meds = [];
   bool _saving = false;
 
+  /// R114 BUG 9: setup 已完成标记 — 修前 done 步可返回 step 2 重新
+  /// 提交, completeSetup 无幂等 → 重复插入药物 + 重复写 PIPL §14
+  /// consent 留痕。修: _finishSetup 成功后置 true + 入口早退 guard
+  /// (double-tap / 任何重入路径都只提交 1 次)。
+  bool _setupDone = false;
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +82,10 @@ class SetupPageState extends ConsumerState<SetupPage> {
     if (!mounted) return;
     setState(() {});
   }
+
+  /// R114 BUG 9: done 步 onBack no-op (SetupStepDone 要求非空 onBack,
+  /// done 是终态不允许返回 — 防重复提交)
+  static void _noopBack() {}
 
   @override
   void dispose() {
@@ -157,9 +167,11 @@ class SetupPageState extends ConsumerState<SetupPage> {
           onFinish: _finishSetup,
         );
       case 3:
-        return SetupStepDone(
-          onBack: () => setState(() => _step = 2),
-        );
+        // R114 BUG 9: done 终态不再提供返回入口 (onBack 本身在
+        // SetupStepDone 未被引用, 但显式说明: done 后回 step 2 重提交
+        // 会重复插入药物 + 重复 consent 留痕; PopScope 层同时阻止系统
+        // 返回, 见 setup_wizard_frame.dart)
+        return const SetupStepDone(onBack: _noopBack);
       default:
         return SetupStepWelcome(
           nameController: _nameController,
@@ -229,8 +241,10 @@ class SetupPageState extends ConsumerState<SetupPage> {
 
   Future<void> _finishSetup() async {
     if (_saving) return;
+    // R114 BUG 9: 幂等 guard — setup 完成后任何重入路径 (double-tap /
+    // 返回重提交) 直接 no-op, 防重复药物 + 重复 consent 留痕
+    if (_setupDone) return;
     setState(() => _saving = true);
-
     try {
       final validationError = _validateWelcomeForm();
       if (validationError != null) return;
@@ -248,6 +262,9 @@ class SetupPageState extends ConsumerState<SetupPage> {
       );
       if (!mounted) return;
 
+      // R114 BUG 9: 提交成功先置完成标记再进 done 步 — 后续任何
+      // _finishSetup 重入都早退 (幂等)
+      _setupDone = true;
       setState(() => _step = 3);
     } catch (e, st) {
       if (mounted) {
@@ -276,4 +293,9 @@ class SetupPageState extends ConsumerState<SetupPage> {
       }
     }
   }
+
+  /// R114 BUG 9: 测试入口 — 直接触发 [_finishSetup] 验证 _setupDone
+  /// 幂等 guard (重入不重复提交)。生产代码不调用。
+  @visibleForTesting
+  Future<void> finishSetupForTest() => _finishSetup();
 }

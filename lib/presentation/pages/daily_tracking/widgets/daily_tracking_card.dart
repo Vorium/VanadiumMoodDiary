@@ -1,4 +1,4 @@
-﻿// v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口): 7 卡片通用 widget
+// v0.30 round 91 (sub-spec 7 日常追踪 / Task 5 整合入口): 7 卡片通用 widget
 //
 // - title (子功能名) + lastValue ("上次 X" 摘要, 可空)
 // - tap card → push 子功能 route
@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 7 卡片通用 widget (整合入口页用)
 ///
@@ -45,45 +46,49 @@ class DailyTrackingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Card(
-      child: InkWell(
-        onTap: () => context.push(route),
-        child: Padding(
-          padding: AppTokens.edgeInsetsMd,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 子功能名 (大) — 跟 R90 同款
-              Text(
-                title,
-                style: AppTokens.textStyleTitle(context),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              if (description != null) ...[
-                const SizedBox(height: AppTokens.spacingXxs),
-                // 简短描述 (v0.30 R91 Task 7)
+      // R114 Wave B2 (B2-9, emil F4): 包 PressFeedback (mode 2) — 修前
+      // 卡片只有 ripple 无 scale 0.97 反馈 (全 app 按钮标准的一半体感)
+      child: PressFeedback(
+        child: InkWell(
+          onTap: () => context.push(route),
+          child: Padding(
+            padding: AppTokens.edgeInsetsMd,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 子功能名 (大) — 跟 R90 同款
                 Text(
-                  description!,
-                  style: AppTokens.textStyleCaption(context),
+                  title,
+                  style: AppTokens.textStyleTitle(context),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (description != null) ...[
+                  const SizedBox(height: AppTokens.spacingXxs),
+                  // 简短描述 (v0.30 R91 Task 7)
+                  Text(
+                    description!,
+                    style: AppTokens.textStyleCaption(context),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                const Spacer(),
+                // 上次记录 (caption) — null 时显示 fallback
+                Text(
+                  lastValue ?? l10n.cardStatusNoData,
+                  style: AppTokens.textStyleCaption(context),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: AppTokens.spacingXs),
+                // CTA 按钮 (走 FilledButton.tonal, 跟 R90 卡片风格一致)
+                FilledButton.tonal(
+                  onPressed: () => context.push(route),
+                  child: Text(l10n.dailyTrackingRecord),
+                ),
               ],
-              const Spacer(),
-              // 上次记录 (caption) — null 时显示 fallback
-              Text(
-                lastValue ?? l10n.cardStatusNoData,
-                style: AppTokens.textStyleCaption(context),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: AppTokens.spacingXs),
-              // CTA 按钮 (走 FilledButton.tonal, 跟 R90 卡片风格一致)
-              FilledButton.tonal(
-                onPressed: () => context.push(route),
-                child: Text(l10n.dailyTrackingRecord),
-              ),
-            ],
+            ),
           ),
         ),
       ),

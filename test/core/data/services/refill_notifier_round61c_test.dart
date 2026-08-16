@@ -44,15 +44,15 @@ void main() {
   });
 
   group('RefillNotifier.refillNotificationId (id 公式)', () {
-    test('id = refillBase + medId', () {
-      expect(RefillNotifier.refillNotificationId(1), 6001);
-      expect(RefillNotifier.refillNotificationId(42), 6042);
-      expect(RefillNotifier.refillNotificationId(0), 6000);
+    test('id = refillBase + medId (R114 B1-3: base 2500000)', () {
+      expect(RefillNotifier.refillNotificationId(1), 2500001);
+      expect(RefillNotifier.refillNotificationId(42), 2500042);
+      expect(RefillNotifier.refillNotificationId(0), 2500000);
     });
 
-    test('id 范围 base 6000-206000 (200000 range, v0.16 round 19B)', () {
+    test('id 范围 base 2500000-2700000 (200000 range, v0.16 round 19B)', () {
       // 最大 medId < 200000
-      expect(RefillNotifier.refillNotificationId(199999), 205999);
+      expect(RefillNotifier.refillNotificationId(199999), 2699999);
       // 验证 range 至少 200000 (配套 cancel 范围)
       expect(
         RefillNotifier.refillNotificationId(200000) -
@@ -88,20 +88,20 @@ void main() {
       expect(result, isNull);
     });
 
-    test('reminderDays < 1 → 抛 ArgumentError', () {
+    test('reminderDays < 1 → 返 null (R113 BUG 1: 不抛)', () {
       expect(
-        () => RefillNotifier.computeRefillFireTime(
+        RefillNotifier.computeRefillFireTime(
           refillAt: DateTime(2026, 9, 15),
           reminderDays: 0,
         ),
-        throwsA(isA<ArgumentError>()),
+        isNull,
       );
       expect(
-        () => RefillNotifier.computeRefillFireTime(
+        RefillNotifier.computeRefillFireTime(
           refillAt: DateTime(2026, 9, 15),
           reminderDays: -1,
         ),
-        throwsA(isA<ArgumentError>()),
+        isNull,
       );
     });
 
@@ -311,6 +311,10 @@ class _MockReminderDispatcher implements ReminderDispatcher {
 
   @override
   bool get useExactAllowWhileIdle => true;
+
+  @override
+  AndroidScheduleMode get scheduleMode =>
+      AndroidScheduleMode.exactAllowWhileIdle;
 
   @override
   void setExactMode(bool value) {

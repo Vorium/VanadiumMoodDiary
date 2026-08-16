@@ -82,14 +82,17 @@ void main() {
         // (override 整 entries provider, latestXxxEntryProvider 走 .value
         // 拿 firstOrNull, 避免真实 DB 创建)
         sleepEntriesProvider.overrideWith(
-            (ref) => const Stream<List<SleepEntryEntity>>.empty(),),
+          (ref) => const Stream<List<SleepEntryEntity>>.empty(),
+        ),
         socialRhythmEntriesProvider.overrideWith(
           (ref) => const Stream<List<SocialRhythmEntryEntity>>.empty(),
         ),
         stressEventEntriesProvider.overrideWith(
-            (ref) => const Stream<List<StressEventEntity>>.empty(),),
+          (ref) => const Stream<List<StressEventEntity>>.empty(),
+        ),
         weightEntriesProvider.overrideWith(
-            (ref) => const Stream<List<WeightEntryEntity>>.empty(),),
+          (ref) => const Stream<List<WeightEntryEntity>>.empty(),
+        ),
         anxietyAgitationEntriesProvider.overrideWith(
           (ref) => const Stream<List<AnxietyAgitationEntryEntity>>.empty(),
         ),
@@ -97,7 +100,8 @@ void main() {
         // 用 latestTreatmentEntryProvider 派生. 漏 override 会触发真实 DB
         // 创建, 报 "AppDatabase multiple times" + pending timer.
         treatmentEntriesProvider.overrideWith(
-            (ref) => const Stream<List<TreatmentEntryEntity>>.empty(),),
+          (ref) => const Stream<List<TreatmentEntryEntity>>.empty(),
+        ),
       ],
       child: MaterialApp.router(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

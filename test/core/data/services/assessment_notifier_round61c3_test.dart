@@ -70,8 +70,11 @@ void main() {
       final pastFire = DateTime.now().subtract(const Duration(days: 1));
       await notifier.scheduleAssessmentReminder(fireAt: pastFire);
 
-      expect(mockDispatcher.zonedAtCalls, hasLength(1),
-          reason: '过去 fireAt 必须重排, 不能静默丢弃 (B1-7)',);
+      expect(
+        mockDispatcher.zonedAtCalls,
+        hasLength(1),
+        reason: '过去 fireAt 必须重排, 不能静默丢弃 (B1-7)',
+      );
       final call = mockDispatcher.zonedAtCalls.single;
       expect(call.id, 5000001);
       expect(
@@ -170,6 +173,11 @@ class _MockReminderDispatcher implements ReminderDispatcher {
 
   @override
   bool get useExactAllowWhileIdle => true;
+
+  // R114 B1-2: ReminderDispatcher 新增 scheduleMode getter
+  @override
+  AndroidScheduleMode get scheduleMode =>
+      AndroidScheduleMode.exactAllowWhileIdle;
 
   @override
   void setExactMode(bool value) {

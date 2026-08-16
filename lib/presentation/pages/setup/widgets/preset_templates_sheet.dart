@@ -56,7 +56,8 @@ class PresetTemplatesSheetContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
+              padding:
+                  const EdgeInsets.symmetric(vertical: AppTokens.spacingSm),
               child: Text(
                 l10n.setupPresetTitle,
                 style: const TextStyle(

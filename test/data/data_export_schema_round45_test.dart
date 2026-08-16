@@ -19,9 +19,10 @@ void main() {
   const svc = ExportSchemaService();
 
   group('v0.24 round 45 (Sprint #5c) — ExportSchemaService.currentVersion', () {
-    test('currentVersion = 6 (v1.1.0 情绪优先重构: 删 contacts +statusPhrase/tagsJson)',
+    test(
+        'currentVersion = 7 (v1.1.0 F1 烦恼闭环: worryThreads 段 + mood.worryThreadId)',
         () {
-      expect(ExportSchemaService.currentVersion, 6);
+      expect(ExportSchemaService.currentVersion, 7);
     });
   });
 
@@ -43,8 +44,8 @@ void main() {
       expect(svc.validateVersion(0), isNull);
     });
 
-    test('7 → null (高于 current)', () {
-      expect(svc.validateVersion(7), isNull);
+    test('8 → null (高于 current)', () {
+      expect(svc.validateVersion(8), isNull);
     });
 
     test('99 → null (未来版本)', () {

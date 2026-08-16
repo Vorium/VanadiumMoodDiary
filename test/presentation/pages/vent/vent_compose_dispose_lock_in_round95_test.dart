@@ -63,7 +63,8 @@ void main() {
         );
       });
 
-      test('R108 fix 3: _playerCompleteSub?.cancel() 仍在 (initState 注册 listener)',
+      test(
+          'R108 fix 3: _playerCompleteSub?.cancel() 仍在 (initState 注册 listener)',
           () {
         // R108: player complete stream subscription 仍由 widget 注册
         // (initState), dispose 时由 mixin.asyncDisposeAudio cancel
@@ -91,7 +92,8 @@ void main() {
         );
       });
 
-      test('R108 fix 5: AudioLifecycleMixin 4 状态 (idle/recording/recorded/playing)',
+      test(
+          'R108 fix 5: AudioLifecycleMixin 4 状态 (idle/recording/recorded/playing)',
           () {
         // R108 验证: 4 状态 enum 完整 (替代旧 4 个独立 bool 字段)
         for (final state in [

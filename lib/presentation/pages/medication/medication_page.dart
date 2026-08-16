@@ -17,6 +17,7 @@
 // - 快捷操作 2x2 AppleHealthTile 网格 (medication 内同类操作入口)
 // - 底部 FAB 添加 (systemRed 圆点, spec §5.3 "FAB")
 // - 整体 spacing 16 (spacingMd) 替代 24 (spacingLg)
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,10 +37,12 @@ import 'package:chroniccare/presentation/providers/check_in_notifier.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_health_tile.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 
 /// v0.30 R108 (P1 medication_page 拆): 抽到 domain 后, presentation 层只
@@ -281,6 +284,32 @@ class _SlotEntryRow extends ConsumerWidget {
   const _SlotEntryRow({required this.entry});
   final _SlotEntry entry;
 
+  /// R113 (BUG 6): 从原 inline async closure 抽出, 供 PressFeedback
+  /// (mode 1, 同步 VoidCallback) 调用, unawaited 显式标记 fire-and-forget。
+  ///
+  /// v1.1.0 R113 (BUG 6 续): checkIn 走 AsyncValue.guard — 异常吞进
+  /// state 不 throw (home ref.listen 同款模式)。修前失败时无任何反馈
+  /// (Haptics.success 照跑, 用户以为成功了)。修: 完成后查 hasError →
+  /// 错误 snackbar + 跳过 haptic 成功反馈。
+  void _checkIn(WidgetRef ref, BuildContext context, MedicationSlotEntry e) {
+    unawaited(() async {
+      await ref
+          .read(checkInNotifierProvider.notifier)
+          .checkIn(medicationId: e.med.id);
+      if (!context.mounted) return;
+      final failed = ref.read(checkInNotifierProvider).hasError;
+      if (failed) {
+        AppSnackBar.showError(
+          context,
+          action: AppLocalizations.of(context).snackbarActionCheckin,
+          error: ref.read(checkInNotifierProvider).error,
+        );
+        return;
+      }
+      await Haptics.success();
+    }());
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final e = entry;
@@ -318,17 +347,14 @@ class _SlotEntryRow extends ConsumerWidget {
             ),
           ),
           // 直接打卡按钮 (参照 Apple Health Medications checkbox)
-          GestureDetector(
-            onTap: e.done
-                ? null
-                : () async {
-                    await ref
-                        .read(checkInNotifierProvider.notifier)
-                        .checkIn(medicationId: e.med.id);
-                    await Haptics.success();
-                  },
+          // R113 (BUG 6): PressFeedback 包装 (按下 scale 0.97 + haptic,
+          // mode 1 接管 tap — 修前裸 GestureDetector 无任何按压反馈),
+          // AnimatedSwitcher 时长走 Motion.duration (修前裸 AppTokens.durFast
+          // 是全 lib 唯一绕过 Motion wrapper 的动画)。
+          PressFeedback(
+            onTap: e.done ? null : () => _checkIn(ref, context, e),
             child: AnimatedSwitcher(
-              duration: AppTokens.durFast,
+              duration: Motion.duration(context, AppTokens.durFast),
               child: Icon(
                 e.done
                     ? Icons.check_circle_rounded

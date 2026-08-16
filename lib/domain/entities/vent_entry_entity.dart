@@ -168,3 +168,6 @@ class VentEntryEntity {
   String toString() =>
       'VentEntryEntity(id=$id, ts=$timestamp, text=${contentText?.length ?? 0}字, audio=${audioPath != null})';
 }
+// rule3-whitelist: 90, 96, 103, 169
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

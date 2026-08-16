@@ -40,8 +40,7 @@ const _kExpectedCategoryIdentifier = <String, String>{
       'com.chroniccare.reminder',
   'lib/core/data/services/reminder_dispatcher.dart':
       'com.chroniccare.medication.reminder',
-  'lib/core/data/services/snooze_manager.dart':
-      'com.chroniccare.snooze',
+  'lib/core/data/services/snooze_manager.dart': 'com.chroniccare.snooze',
 };
 
 void main() {
@@ -71,7 +70,8 @@ void main() {
         expect(
           content,
           contains('categoryIdentifier:'),
-          reason: '$relPath: 缺 categoryIdentifier (iOS UNNotificationCategory 归类)',
+          reason:
+              '$relPath: 缺 categoryIdentifier (iOS UNNotificationCategory 归类)',
         );
 
         // 必须有 interruptionLevel: InterruptionLevel.timeSensitive
@@ -147,8 +147,7 @@ void main() {
       );
     });
 
-    test('high=false (被动 push) 同样带 iOS metadata (跟 high=true 行为一致)',
-        () {
+    test('high=false (被动 push) 同样带 iOS metadata (跟 high=true 行为一致)', () {
       final details = dispatcher.buildChannelDetails(high: false);
       expect(
         details.iOS!.categoryIdentifier,

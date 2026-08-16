@@ -105,7 +105,9 @@ const _scaleAbbreviations = <String>{
 };
 
 void main() {
-  group('R108 + v0.31.1 P0-04: description 禁止 HealthKit + 精神疾病字眼 (Apple 5.1.1 + 5.1.3)', () {
+  group(
+      'R108 + v0.31.1 P0-04: description 禁止 HealthKit + 精神疾病字眼 (Apple 5.1.1 + 5.1.3)',
+      () {
     // 测试覆盖的文件清单 — iOS + Android 5 个 description
     final descriptionFiles = <String>[
       'fastlane/metadata/ios/en-US/description.txt',
@@ -170,10 +172,16 @@ void main() {
       final enUsIos = File('fastlane/metadata/ios/en-US/description.txt');
       final content = enUsIos.readAsStringSync();
       // "hypertension" / "diabetes" 必不存在
-      expect(content.toLowerCase().contains('hypertension'), isFalse,
-          reason: 'en-US iOS description 不应再出现 hypertension',);
-      expect(content.toLowerCase().contains('diabetes'), isFalse,
-          reason: 'en-US iOS description 不应再出现 diabetes',);
+      expect(
+        content.toLowerCase().contains('hypertension'),
+        isFalse,
+        reason: 'en-US iOS description 不应再出现 hypertension',
+      );
+      expect(
+        content.toLowerCase().contains('diabetes'),
+        isFalse,
+        reason: 'en-US iOS description 不应再出现 diabetes',
+      );
       // 注: R108 修法是"hypertension, diabetes" → "and others", 但 v0.31.1
       // P0-04 进一步把 5 病名 + PHQ-9/GAD-7 全删, line 27 从疾病列表改成
       // 通用 "daily mental wellbeing" 措辞, "and others" 表述不再适用。
@@ -218,7 +226,8 @@ void main() {
       );
     }
 
-    test('v0.31.1 P0-04b 修复后 5 病名 + 中文病名 + PHQ-9 + GAD-7 已从 5 locale 全删 (回归测试)', () {
+    test('v0.31.1 P0-04b 修复后 5 病名 + 中文病名 + PHQ-9 + GAD-7 已从 5 locale 全删 (回归测试)',
+        () {
       // 防御未来 PR 重新加回具体疾病名 / 量表缩写
       // 覆盖范围: iOS en-US/zh-Hans/zh-Hant + Android en-US/zh-CN
       // 5 份 description, 任意 1 份漏掉任一关键词 → FAIL
@@ -232,23 +241,41 @@ void main() {
           'ptsd',
           'adhd',
         ]) {
-          expect(content.contains(keyword), isFalse,
-              reason: '$relPath 不应再出现 $keyword',);
+          expect(
+            content.contains(keyword),
+            isFalse,
+            reason: '$relPath 不应再出现 $keyword',
+          );
         }
         // 2 中文病名 (简体)
-        expect(content.contains('抑郁'), isFalse,
-            reason: '$relPath 不应再出现 抑郁',);
-        expect(content.contains('焦虑'), isFalse,
-            reason: '$relPath 不应再出现 焦虑',);
+        expect(
+          content.contains('抑郁'),
+          isFalse,
+          reason: '$relPath 不应再出现 抑郁',
+        );
+        expect(
+          content.contains('焦虑'),
+          isFalse,
+          reason: '$relPath 不应再出现 焦虑',
+        );
         // 2 中文病名 (繁体) — zh-Hant iOS 原 line 18 用了繁体
-        expect(content.contains('憂鬱'), isFalse,
-            reason: '$relPath 不应再出现 憂鬱',);
-        expect(content.contains('焦慮'), isFalse,
-            reason: '$relPath 不应再出现 焦慮',);
+        expect(
+          content.contains('憂鬱'),
+          isFalse,
+          reason: '$relPath 不应再出现 憂鬱',
+        );
+        expect(
+          content.contains('焦慮'),
+          isFalse,
+          reason: '$relPath 不应再出现 焦慮',
+        );
         // 2 量表缩写
         for (final keyword in _scaleAbbreviations) {
-          expect(content.contains(keyword), isFalse,
-              reason: '$relPath 不应再出现 ${keyword.toUpperCase()}',);
+          expect(
+            content.contains(keyword),
+            isFalse,
+            reason: '$relPath 不应再出现 ${keyword.toUpperCase()}',
+          );
         }
       }
     });

@@ -73,8 +73,7 @@ void main() {
             final regex = RegExp(r'Divider\(height:\s*1(?!\s*,?\s*thickness)');
             final matches = regex.allMatches(content);
             for (final m in matches) {
-              final lineStart =
-                  content.lastIndexOf('\n', m.start) + 1;
+              final lineStart = content.lastIndexOf('\n', m.start) + 1;
               final lineEnd = content.indexOf('\n', m.start);
               final line = content.substring(lineStart, lineEnd);
               fail(
@@ -95,11 +94,12 @@ void main() {
             final content = readFile(f);
             // 允许注释里有 "ElevatedButton" / "OutlinedButton" 提及,
             // 检查实际代码: "ElevatedButton(" / "OutlinedButton("
-            final elevatedHits = RegExp(r'\bElevatedButton\s*\(').allMatches(content);
-            final outlinedHits = RegExp(r'\bOutlinedButton\s*\(').allMatches(content);
+            final elevatedHits =
+                RegExp(r'\bElevatedButton\s*\(').allMatches(content);
+            final outlinedHits =
+                RegExp(r'\bOutlinedButton\s*\(').allMatches(content);
             for (final m in elevatedHits) {
-              final lineStart =
-                  content.lastIndexOf('\n', m.start) + 1;
+              final lineStart = content.lastIndexOf('\n', m.start) + 1;
               final lineEnd = content.indexOf('\n', m.start);
               final line = content.substring(lineStart, lineEnd);
               fail(
@@ -107,8 +107,7 @@ void main() {
               );
             }
             for (final m in outlinedHits) {
-              final lineStart =
-                  content.lastIndexOf('\n', m.start) + 1;
+              final lineStart = content.lastIndexOf('\n', m.start) + 1;
               final lineEnd = content.indexOf('\n', m.start);
               final line = content.substring(lineStart, lineEnd);
               fail(

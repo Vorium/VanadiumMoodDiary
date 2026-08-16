@@ -54,10 +54,16 @@ void main() {
             'asrm' => t.asrmItem(item.index),
             _ => fail('unknown scale $id'),
           };
-          expect(translated, item.text,
-              reason: '$id item ${item.index} 翻译与 const class 不一致',);
-          expect(translated, isNotEmpty,
-              reason: '$id item ${item.index} 是空 stub',);
+          expect(
+            translated,
+            item.text,
+            reason: '$id item ${item.index} 翻译与 const class 不一致',
+          );
+          expect(
+            translated,
+            isNotEmpty,
+            reason: '$id item ${item.index} 是空 stub',
+          );
         }
       });
 
@@ -74,8 +80,11 @@ void main() {
             'asrm' => t.asrmOption(score),
             _ => fail('unknown scale $id'),
           };
-          expect(translated, text,
-              reason: '$id option $score 翻译与 const class 不一致',);
+          expect(
+            translated,
+            text,
+            reason: '$id option $score 翻译与 const class 不一致',
+          );
         });
       });
 
@@ -104,13 +113,22 @@ void main() {
             'asrm' => t.asrmSeveritySummary(cutoff.rank),
             _ => fail('unknown scale $id'),
           };
-          expect(label, cutoff.label,
-              reason: '$id rank ${cutoff.rank} label 不一致',);
-          expect(summary, cutoff.summary,
-              reason: '$id rank ${cutoff.rank} summary 不一致',);
+          expect(
+            label,
+            cutoff.label,
+            reason: '$id rank ${cutoff.rank} label 不一致',
+          );
+          expect(
+            summary,
+            cutoff.summary,
+            reason: '$id rank ${cutoff.rank} summary 不一致',
+          );
           expect(label, isNotEmpty, reason: '$id rank ${cutoff.rank} label 空');
-          expect(summary, isNotEmpty,
-              reason: '$id rank ${cutoff.rank} summary 空',);
+          expect(
+            summary,
+            isNotEmpty,
+            reason: '$id rank ${cutoff.rank} summary 空',
+          );
         }
       });
 
@@ -143,7 +161,11 @@ void main() {
               t.level2PsychosisShortDescription(),
               t.level2PsychosisInstruction()
             ),
-          'asrm' => (t.asrmName(), t.asrmShortDescription(), t.asrmInstruction()),
+          'asrm' => (
+              t.asrmName(),
+              t.asrmShortDescription(),
+              t.asrmInstruction()
+            ),
           _ => fail('unknown scale $id'),
         };
         expect(name, isNotEmpty, reason: '$id name 空');

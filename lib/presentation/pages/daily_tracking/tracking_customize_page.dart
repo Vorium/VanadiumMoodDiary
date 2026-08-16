@@ -41,7 +41,9 @@ class TrackingCustomizePage extends ConsumerWidget {
           for (int i = 0; i < items.length; i++) {
             final item = items[i];
             if (item.sortOrder != orders[i]) {
-              ref.read(trackingConfigProvider.notifier).reorder(item.id, orders[i]);
+              ref
+                  .read(trackingConfigProvider.notifier)
+                  .reorder(item.id, orders[i]);
             }
           }
         },
@@ -86,6 +88,7 @@ List<int> computeReorderOrders({
 
 class _TrackingItemTile extends StatelessWidget {
   final DailyTrackingItemConfig config;
+
   /// v0.32 R112-05: itemBuilder 位置 (拖拽 listener 用)
   final int index;
   final ThemeData theme;
@@ -138,9 +141,7 @@ class _TrackingItemTile extends StatelessWidget {
           name,
           style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w500,
-            color: config.isHidden
-                ? AppTokens.textHintColor(context)
-                : null,
+            color: config.isHidden ? AppTokens.textHintColor(context) : null,
           ),
         ),
         subtitle: Text(

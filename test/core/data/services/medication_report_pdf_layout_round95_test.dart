@@ -208,10 +208,11 @@ void main() {
     test('100% 依从 (onTime == expected) 不抛', () {
       final w = PdfLayout.summaryBlock(
         _data(
-            expectedDoses: 30,
-            actualDoses: 30,
-            onTimeDoses: 30,
-            missedDoses: 0,),
+          expectedDoses: 30,
+          actualDoses: 30,
+          onTimeDoses: 30,
+          missedDoses: 0,
+        ),
       );
       expect(w, isNotNull);
     });

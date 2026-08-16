@@ -516,4 +516,27 @@ class AppColors {
     if (score < 1 || score > 5) return const Color(0xFF34C759);
     return kMoodScoreColors[score - 1];
   }
+
+  /// v1.1.0 R114 (Wave D spec §5.5): mood score 文字前景色板 (1-5)
+  ///
+  /// 5 档圆形按钮下方 label 选中态文字色。浅色状态色 (kMoodScoreColors) 白底
+  /// 对比度 1.9~2.4:1 不达标, 作文字色必须走深色档 (跟 R112 EM-16b 同族):
+  /// - 1 → fgError 深红 #C62828 (5.6:1)
+  /// - 2 → fgWarningStrong 深橙 #BF360C (5.6:1)
+  /// - 3 → fgOnWarning 深橙 #E65100 (4.5:1+)
+  /// - 4 → fgOnSuccess 深绿 #2E7D32 (5.1:1)
+  /// - 5 → primaryDark 品牌深绿 #248A3D (primary #34C759 白底 2.1:1 不达标)
+  static const List<Color> kMoodScoreFgColors = [
+    fgError, // 1 - 深红
+    fgWarningStrong, // 2 - 深橙
+    fgOnWarning, // 3 - 深橙
+    fgOnSuccess, // 4 - 深绿
+    primaryDark, // 5 - 品牌深绿
+  ];
+
+  /// R114 helper: mood score 1-5 → 文字前景色 (越界 fallback 4=深绿)
+  static Color moodScoreFgColor(int score) {
+    if (score < 1 || score > 5) return fgOnSuccess;
+    return kMoodScoreFgColors[score - 1];
+  }
 }

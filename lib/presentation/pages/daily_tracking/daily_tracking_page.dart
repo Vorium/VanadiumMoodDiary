@@ -29,8 +29,8 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/mood_period_aggregator_chart.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/today_summary_header.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_item_card.dart';
-import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/tracking_config_provider.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/charts/daily_tracking_multi_chart.dart';
@@ -166,9 +166,11 @@ class _LatestSummarySection extends ConsumerWidget {
   const _LatestSummarySection();
 
   /// 判断是否是今天的记录 (从原页面 method 平移, 行为 1:1)
-  static bool _isToday(dynamic entity) {
+  ///
+  /// Wave 7 (Task B, R113): `now` 由 build 的 ref.watch(todayProvider) 传入
+  /// (修前内部 DateTime.now(), 跨 midnight 汇总 stale 到次日)。
+  static bool _isToday(dynamic entity, DateTime now) {
     if (entity == null) return false;
-    final now = DateTime.now();
     try {
       DateTime ts;
       if (entity is MoodEntryEntity) {
@@ -197,7 +199,12 @@ class _LatestSummarySection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final mood = ref.watch(latestMoodEntryProvider);
+    // Wave 7 (Task B, R113): "今天"基准改 watch(todayProvider), 传给
+    // _isToday — 跨 midnight 汇总小节自动刷新 (修前 DateTime.now() stale)。
+    final now = ref.watch(todayProvider);
+    // R114 B1-7: latestMoodEntryProvider 是 sync 链 (error 会抛) — 改读
+    // allMoodProvider.value (error → null → 汇总显示"未记录"不崩)。
+    final mood = ref.watch(allMoodProvider).value?.firstOrNull;
     final anxiety = ref.watch(latestAnxietyAgitationEntryProvider);
     final sleep = ref.watch(latestSleepEntryProvider);
     final socialRhythm = ref.watch(latestSocialRhythmEntryProvider);
@@ -206,13 +213,13 @@ class _LatestSummarySection extends ConsumerWidget {
     final weight = ref.watch(latestWeightEntryProvider);
 
     final trackedItems = <String>[];
-    if (_isToday(mood)) trackedItems.add(l10n.moodDiaryName);
-    if (_isToday(anxiety)) trackedItems.add(l10n.anxietyAgitationName);
-    if (_isToday(sleep)) trackedItems.add(l10n.sleepName);
-    if (_isToday(socialRhythm)) trackedItems.add(l10n.socialRhythmName);
-    if (_isToday(stress)) trackedItems.add(l10n.stressEventName);
-    if (_isToday(treatment)) trackedItems.add(l10n.treatmentName);
-    if (_isToday(weight)) trackedItems.add(l10n.weightName);
+    if (_isToday(mood, now)) trackedItems.add(l10n.moodDiaryName);
+    if (_isToday(anxiety, now)) trackedItems.add(l10n.anxietyAgitationName);
+    if (_isToday(sleep, now)) trackedItems.add(l10n.sleepName);
+    if (_isToday(socialRhythm, now)) trackedItems.add(l10n.socialRhythmName);
+    if (_isToday(stress, now)) trackedItems.add(l10n.stressEventName);
+    if (_isToday(treatment, now)) trackedItems.add(l10n.treatmentName);
+    if (_isToday(weight, now)) trackedItems.add(l10n.weightName);
 
     final totalCount = ref.watch(trackingConfigProvider).allVisibleItems.length;
 
@@ -230,7 +237,9 @@ class _MultiChartSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final moodEntries = ref.watch(moodEntriesProvider);
+    // R114 B1-7: moodEntriesProvider sync 链 error 会抛 — 改读
+    // allMoodProvider.value (error → 空 → 小节隐藏, 不崩)。
+    final moodEntries = ref.watch(allMoodProvider).value ?? const [];
     final weightEntries = ref.watch(weightEntriesProvider).value ?? const [];
     final sleepEntries = ref.watch(sleepEntriesProvider).value ?? const [];
     final stressEvents =
@@ -263,7 +272,9 @@ class _MoodChartSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final moodEntries = ref.watch(moodEntriesProvider);
+    // R114 B1-7: moodEntriesProvider sync 链 error 会抛 — 改读
+    // allMoodProvider.value (error → 空 → 小节隐藏, 不崩)。
+    final moodEntries = ref.watch(allMoodProvider).value ?? const [];
     if (moodEntries.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

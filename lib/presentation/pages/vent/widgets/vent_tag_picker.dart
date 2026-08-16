@@ -9,8 +9,11 @@ import 'package:chroniccare/l10n/preset_content_l10n.dart';
 class VentTagPicker extends StatefulWidget {
   final Set<String> selected;
   final ValueChanged<Set<String>> onChanged;
-  const VentTagPicker(
-      {super.key, required this.selected, required this.onChanged});
+  const VentTagPicker({
+    super.key,
+    required this.selected,
+    required this.onChanged,
+  });
 
   @override
   State<VentTagPicker> createState() => _VentTagPickerState();
@@ -48,8 +51,10 @@ class _VentTagPickerState extends State<VentTagPicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.ventTagSectionTitle,
-            style: AppTokens.textStyleLabelStrong(context)),
+        Text(
+          l10n.ventTagSectionTitle,
+          style: AppTokens.textStyleLabelStrong(context),
+        ),
         const SizedBox(height: AppTokens.spacingXs),
         Wrap(
           spacing: AppTokens.spacingXs,

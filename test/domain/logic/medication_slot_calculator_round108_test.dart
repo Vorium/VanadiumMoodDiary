@@ -132,12 +132,13 @@ void main() {
     });
 
     test('case 19: 不同时段 == 为 false', () {
-      expect(MedicationTimeSlot.morning == MedicationTimeSlot.afternoon, isFalse);
+      expect(
+          MedicationTimeSlot.morning == MedicationTimeSlot.afternoon, isFalse);
     });
 
     test('case 20: const 构造同 name+hour == 为 true', () {
-      const a = MedicationTimeSlot(name: 'morning', startHour: 5, endHour: 11);
-      const b = MedicationTimeSlot(name: 'morning', startHour: 5, endHour: 11);
+      const a = MedicationTimeSlot.morning;
+      const b = MedicationTimeSlot.morning;
       expect(a == b, isTrue);
       expect(a.hashCode, b.hashCode);
     });
@@ -156,7 +157,8 @@ void main() {
     setUpAll(() async {
       // 静态分析 medication_page.dart, 验证 _TimeSlot enum 已删, 改用
       // MedicationTimeSlot (R108 P1 medication_page 拆 防回退)。
-      final file = File('lib/presentation/pages/medication/medication_page.dart');
+      final file =
+          File('lib/presentation/pages/medication/medication_page.dart');
       medicationPageContent = await file.readAsString();
     });
 

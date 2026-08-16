@@ -49,10 +49,15 @@ void main() {
     // greeting 字号 28 = textStyleTitle
     final greetingText = tester.widget<Text>(greetingFinder);
     final greetingStyle = greetingText.style!;
-    expect(greetingStyle.fontSize, AppTokens.fontSizeTitle, // 28
-        reason: 'greeting fontSize = textStyleTitle (28pt)',);
-    expect(greetingStyle.fontWeight, FontWeight.w700,
-        reason: 'greeting fontWeight = w700',);
+    expect(
+      greetingStyle.fontSize, AppTokens.fontSizeTitle, // 28
+      reason: 'greeting fontSize = textStyleTitle (28pt)',
+    );
+    expect(
+      greetingStyle.fontWeight,
+      FontWeight.w700,
+      reason: 'greeting fontWeight = w700',
+    );
   });
 
   testWidgets('2. 副字日期 15pt textSecondary (textStyleLabel)', (tester) async {
@@ -78,14 +83,17 @@ void main() {
     // 日期字号 15 = textStyleLabel
     final dateText = tester.widget<Text>(dateFinder);
     final dateStyle = dateText.style!;
-    expect(dateStyle.fontSize, AppTokens.fontSizeLabel, // 15
-        reason: 'date fontSize = textStyleLabel (15pt)',);
     expect(
-        dateStyle.color,
-        AppTokens.textSecondaryColor(
-          tester.element(find.byType(HomeHeader)),
-        ),
-        reason: 'date color = textSecondary',);
+      dateStyle.fontSize, AppTokens.fontSizeLabel, // 15
+      reason: 'date fontSize = textStyleLabel (15pt)',
+    );
+    expect(
+      dateStyle.color,
+      AppTokens.textSecondaryColor(
+        tester.element(find.byType(HomeHeader)),
+      ),
+      reason: 'date color = textSecondary',
+    );
   });
 
   testWidgets('3. theme toggle 32x32 PressFeedbackIconButton 渲染',
@@ -132,8 +140,11 @@ void main() {
       of: find.byType(HomeHeader),
       matching: find.byType(Container),
     );
-    expect(containerFinder, findsWidgets,
-        reason: 'HomeHeader 应至少渲染 1 个 Container (transparent)',);
+    expect(
+      containerFinder,
+      findsWidgets,
+      reason: 'HomeHeader 应至少渲染 1 个 Container (transparent)',
+    );
     // padding = EdgeInsets.symmetric(vertical: spacingXs)
     final container = tester.widget<Container>(containerFinder.first);
     expect(
@@ -171,9 +182,15 @@ void main() {
     final padding = container.padding as EdgeInsets;
     // EdgeInsets.symmetric(vertical: 8) → top=8 bottom=8, vertical getter=16
     // 这里直接测 top / bottom 各 = 8
-    expect(padding.top, AppTokens.spacingXs,
-        reason: 'HomeHeader padding top = spacingXs (8)',);
-    expect(padding.bottom, AppTokens.spacingXs,
-        reason: 'HomeHeader padding bottom = spacingXs (8)',);
+    expect(
+      padding.top,
+      AppTokens.spacingXs,
+      reason: 'HomeHeader padding top = spacingXs (8)',
+    );
+    expect(
+      padding.bottom,
+      AppTokens.spacingXs,
+      reason: 'HomeHeader padding bottom = spacingXs (8)',
+    );
   });
 }

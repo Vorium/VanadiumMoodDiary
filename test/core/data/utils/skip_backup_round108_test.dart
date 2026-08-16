@@ -57,7 +57,8 @@ void main() {
       );
     });
 
-    test('A2: encrypted_audio_storage.dart 调 SkipBackup.markAsSkipped', () async {
+    test('A2: encrypted_audio_storage.dart 调 SkipBackup.markAsSkipped',
+        () async {
       final content = await File(
         'lib/core/data/privacy/encrypted_audio_storage.dart',
       ).readAsString();
@@ -80,7 +81,8 @@ void main() {
       expect(
         content.contains('SkipBackup.markAsSkipped'),
         isTrue,
-        reason: 'swallow_log_sink.dart (audit log) 应该调 SkipBackup.markAsSkipped',
+        reason:
+            'swallow_log_sink.dart (audit log) 应该调 SkipBackup.markAsSkipped',
       );
       expect(
         content.contains('R108'),
@@ -89,7 +91,8 @@ void main() {
       );
     });
 
-    test('A4: main.dart (4th defense-in-depth) 调 SkipBackup.markAsSkipped', () async {
+    test('A4: main.dart (4th defense-in-depth) 调 SkipBackup.markAsSkipped',
+        () async {
       final content = await File('lib/main.dart').readAsString();
       expect(
         content.contains('SkipBackup.markAsSkipped'),

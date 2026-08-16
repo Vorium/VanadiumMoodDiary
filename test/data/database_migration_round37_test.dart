@@ -20,12 +20,13 @@ import 'package:chroniccare/core/data/database/app_database.dart';
 void main() {
   group('AppDatabase schemaVersion', () {
     test(
-        'schemaVersion == 23 (v1.1.0 round 2: vent.tagsJson + mood.statusPhrase)',
+        'schemaVersion == 24 (v1.1.0 round 9 F1: +worry_threads 表 + mood.worryThreadId)',
         () {
-      // v1.1.0 round 2: 22 → 23 (vent_entries +tagsJson, mood_entries +statusPhrase).
+      // v1.1.0 round 9 (F1 烦恼闭环): 23 → 24 (+worry_threads 表,
+      // mood_entries +worryThreadId).
       // 用 in-memory db 实例化, 不需要打开
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      expect(db.schemaVersion, 23);
+      expect(db.schemaVersion, 24);
       db.close();
     });
   });
@@ -50,13 +51,13 @@ void main() {
       expect(db.migration.onCreate, isA<Function>());
     });
 
-    test('schemaVersion 23 = 22 migration steps (v1→2 ... v22→v23)', () {
-      // v1.1.0 round 2: 21 → 22 steps (v22→v23 +2 列).
-      // v0 (创建) → v23 (当前) = 23 个 step
+    test('schemaVersion 24 = 23 migration steps (v1→2 ... v23→v24)', () {
+      // v1.1.0 round 9 (F1 烦恼闭环): 22 → 23 steps (v23→v24 +表 +列).
+      // v0 (创建) → v24 (当前) = 24 个 step
       // 但 v0 → v1 没 step (v1 是初始 schema)
-      // 所以 onUpgrade 处理 v1→v2 ... v22→v23 共 22 个 step
+      // 所以 onUpgrade 处理 v1→v2 ... v23→v24 共 23 个 step
       // 验证 schemaVersion 跟实际 if (from <= N) block 数量匹配
-      const expectedSteps = 22;
+      const expectedSteps = 23;
       // 简单 sanity: schemaVersion >= 1 + 至少 1 个 onUpgrade step
       expect(db.schemaVersion, greaterThanOrEqualTo(2));
       expect(expectedSteps, db.schemaVersion - 1);

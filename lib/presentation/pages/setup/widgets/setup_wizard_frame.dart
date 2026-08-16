@@ -48,9 +48,17 @@ class SetupWizardFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: step != 0,
+      // R114 BUG 9: done 步 (last step) 也禁系统返回 — 修前 canPop 只在
+      // step 0 为 false, done 步可返回/重入 → completeSetup 无幂等时
+      // 重复插入药物 + 重复 consent 留痕。done 是终态, 只能走
+      // "开始使用" 按钮离开 (setup_page_state 侧另有 _setupDone 幂等
+      // guard 双保险)。
+      canPop: step != 0 && step != totalSteps - 1,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
+        // R114 BUG 9: done 步静默阻止返回 (setupConsentRequired 文案
+        // 对 done 步不适用)
+        if (step == totalSteps - 1) return;
         // v0.22 round 29 (emil-38): 走 AppSnackBar.info 集中器
         AppSnackBar.showInfo(
           context,

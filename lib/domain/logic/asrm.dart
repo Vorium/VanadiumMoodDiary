@@ -70,31 +70,31 @@ class AsrmScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 0,
           rank: 0,
-          label: '无症状',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '无症状', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无症状',
         ),
         SeverityCutoff(
           threshold: 5,
           rank: 1,
-          label: '轻度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '轻度', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '轻度躁狂倾向',
         ),
         SeverityCutoff(
           threshold: 10,
           rank: 2,
-          label: '中度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '中度', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度躁狂, 建议就医',
         ),
         SeverityCutoff(
           threshold: 15,
           rank: 3,
-          label: '重度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '重度', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度躁狂, 建议就医',
         ),
         SeverityCutoff(
           threshold: 20,
           rank: 4,
-          label: '极重度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '极重度', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '极重度躁狂, 强烈建议就医',
         ),
       ];
@@ -125,3 +125,6 @@ class AsrmScale implements AssessmentScale {
 
 /// ASRM 单例 (Task 2 注册表用)
 const asrmScale = AsrmScale();
+// rule3-whitelist: 49-53, 58-62
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

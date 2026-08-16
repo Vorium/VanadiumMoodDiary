@@ -19,7 +19,9 @@
 // 累计 elapsed;到 3min 自动 stopRecording,不依赖用户主动停。
 
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:record/record.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -154,6 +156,36 @@ class MoodAudioServiceImpl implements MoodAudioService {
         _effectiveMaxDuration = maxDuration ?? _maxDuration,
         _effectiveTickInterval = tickInterval ?? _tickInterval;
 
+  /// R114 BUG 2 (PIPL §28): 删除明文录音临时文件 (best-effort)。
+  ///
+  /// cancelRecording / dispose / startRecording 失败 / stopRecording
+  /// 无结果 4 条路径共用 — 修前这 4 条路径都不删 [_tempRecordPath],
+  /// 用户录音中途退出页面 → 明文 m4a 精神心理患者语音永久留在
+  /// [Directory.systemTemp] 直到 OS 碰巧清理。
+  ///
+  /// 不抛: 删除失败走 audioErrorSink (OS 最终会清 temp, 不阻塞 UI)。
+  /// 注: 用 sync 文件操作 (existsSync/deleteSync) — async File future
+  /// 在 testWidgets FakeAsync zone 永不 resolve, widget 测试内 dispose /
+  /// cancelRecording 链会被卡死 (AudioLifecycleMixin 同款决策)。
+  /// @visibleForTesting — 单测直接注入真实临时文件验证删除行为。
+  @visibleForTesting
+  static Future<void> deleteTempRecordFile(String? path) async {
+    if (path == null || path.isEmpty) return;
+    try {
+      final f = File(path);
+      if (f.existsSync()) {
+        f.deleteSync();
+      }
+    } catch (e, st) {
+      audioErrorSink(
+        where: 'mood_audio_service.deleteTempRecordFile',
+        error: e,
+        stack: st,
+        note: 'temp record file delete failed — OS will clean',
+      );
+    }
+  }
+
   @override
   bool get isRecording => _isRecording;
 
@@ -216,14 +248,29 @@ class MoodAudioServiceImpl implements MoodAudioService {
     _tempRecordPath = await _storage.newTempRecordPath();
 
     // 3. recorder.start 写明文
-    await _recorder.start(
-      const RecordConfig(
-        encoder: AudioEncoder.aacLc, // m4a (aac)
-        bitRate: 64000,
-        sampleRate: 44100,
-      ),
-      path: _tempRecordPath!,
-    );
+    try {
+      await _recorder.start(
+        const RecordConfig(
+          encoder: AudioEncoder.aacLc, // m4a (aac)
+          bitRate: 64000,
+          sampleRate: 44100,
+        ),
+        path: _tempRecordPath!,
+      );
+    } catch (e, st) {
+      // R114 BUG 2 (P3 #14 同族): start 失败时 _tempRecordPath 已生成 —
+      // 回滚删除, 否则空明文文件残留 (mic 被占等场景)
+      final tempPath = _tempRecordPath;
+      _tempRecordPath = null;
+      await deleteTempRecordFile(tempPath);
+      audioErrorSink(
+        where: 'mood_audio_service.startRecording',
+        error: e,
+        stack: st,
+        note: 'recorder.start failed — temp record file rolled back',
+      );
+      rethrow;
+    }
 
     _isRecording = true;
     _isPaused = false;
@@ -266,8 +313,8 @@ class MoodAudioServiceImpl implements MoodAudioService {
       if (!_isRecording || _recordingStart == null) return;
       // v0.32 R112 round 8h: 暂停期间冻结 elapsed (不增长)
       if (_isPaused) return;
-      _recordingElapsed = DateTime.now().difference(_recordingStart!) -
-          _pausedTotal;
+      _recordingElapsed =
+          DateTime.now().difference(_recordingStart!) - _pausedTotal;
       _onTickCb?.call(_recordingElapsed);
       if (_recordingElapsed >= _effectiveMaxDuration) {
         // 6. 到 3min 自动 stop
@@ -309,8 +356,16 @@ class MoodAudioServiceImpl implements MoodAudioService {
     final elapsed = _recordingElapsed;
 
     if (plainPath == null) {
+      // R114 BUG 2 (PIPL §28): recorder 未产出文件时, 之前生成的
+      // _tempRecordPath 可能仍有部分明文数据 → best-effort 删除
+      final tempPath = _tempRecordPath;
+      _tempRecordPath = null;
+      await deleteTempRecordFile(tempPath);
       return null;
     }
+    // 成功路径: caller (page) 负责 encryptAndWrite + 删明文 —
+    // _tempRecordPath 清空, dispose 不再二次处理
+    _tempRecordPath = null;
     return MoodAudioResult(
       plainPath: plainPath,
       durationMs: elapsed.inMilliseconds,
@@ -341,6 +396,11 @@ class MoodAudioServiceImpl implements MoodAudioService {
   Future<void> cancelRecording() async {
     if (!_isRecording) return;
     _recordingTimer?.cancel();
+    // R114 BUG 2 (PIPL §28): 取消录音必须删明文临时 m4a —
+    // 修前只置 _tempRecordPath = null 从不 delete, 用户中途退出页面
+    // (widget dispose → cancelRecording) → 明文精神心理语音永留 systemTemp
+    final tempPath = _tempRecordPath;
+    _tempRecordPath = null;
     try {
       await _recorder.stop();
     } catch (e, st) {
@@ -351,12 +411,12 @@ class MoodAudioServiceImpl implements MoodAudioService {
         note: 'recorder.stop() during cancel',
       );
     }
+    await deleteTempRecordFile(tempPath);
     _isRecording = false;
     // v0.32 R112 round 8h: 复位 pause 状态
     _isPaused = false;
     _pausedAt = null;
     _pausedTotal = Duration.zero;
-    _tempRecordPath = null;
     // STT 也停
     await _stopSttInternal();
   }
@@ -402,6 +462,10 @@ class MoodAudioServiceImpl implements MoodAudioService {
   @override
   Future<void> dispose() async {
     _recordingTimer?.cancel();
+    // R114 BUG 2 (PIPL §28): dispose 也删明文录音 temp —
+    // 修前 dispose 只 stop/dispose recorder, _tempRecordPath 文件泄漏
+    final tempPath = _tempRecordPath;
+    _tempRecordPath = null;
     try {
       if (_isRecording) {
         await _recorder.stop();
@@ -414,6 +478,7 @@ class MoodAudioServiceImpl implements MoodAudioService {
         stack: st,
       );
     }
+    await deleteTempRecordFile(tempPath);
     await _stopSttInternal();
     await _sttController.close();
   }
@@ -426,3 +491,6 @@ class MoodAudioException implements Exception {
   @override
   String toString() => 'MoodAudioException: $message';
 }
+// rule3-whitelist: 244
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

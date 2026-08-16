@@ -11,11 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/treatment_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
+import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/swipe_delete_background.dart';
 import 'package:chroniccare/presentation/widgets/section_header.dart';
 
@@ -25,17 +27,30 @@ import 'package:chroniccare/presentation/widgets/section_header.dart';
 /// - 按 entry.timestamp 月份分组
 /// - 每组: SectionHeader "2026-08" + AppListTile 列表
 /// - 每条: AppListTile.carded + Icon + title(category+provider) + subtitle(timestamp + note)
-class TreatmentList extends ConsumerWidget {
+class TreatmentList extends ConsumerStatefulWidget {
   final List<TreatmentEntryEntity> entries;
 
   const TreatmentList({super.key, required this.entries});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TreatmentList> createState() => _TreatmentListState();
+}
+
+class _TreatmentListState extends ConsumerState<TreatmentList> {
+  // v1.1.0 R113 (BUG 7b): 删除失败时给该条目的 Dismissible 换 key —
+  // 已 dismiss 的 Dismissible 必须卸载 (换 key = unmount + remount),
+  // 否则条目从 UI 消失且 rebuild 必抛 FlutterError "A dismissed
+  // Dismissible widget is still part of the tree"。invalidate 走
+  // isRefreshing (skipLoadingOnRefresh 默认 true) 永远不会让 loading
+  // 分支卸载旧 Dismissible。
+  final Map<int, int> _deleteFailCounts = {};
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     // 按月分组: key = "yyyy-MM", value = entries (按 date DESC)
     final byMonth = <String, List<TreatmentEntryEntity>>{};
-    for (final e in entries) {
+    for (final e in widget.entries) {
       final key = DateFormat('yyyy-MM').format(e.timestamp);
       (byMonth[key] ??= <TreatmentEntryEntity>[]).add(e);
     }
@@ -68,11 +83,48 @@ class TreatmentList extends ConsumerWidget {
                   vertical: AppTokens.spacingXxs,
                 ),
                 child: Dismissible(
-                  key: ValueKey('treatment-${entry.id}'),
+                  // v1.1.0 R113 (BUG 7b): key 带失败计数 — 删除失败时
+                  // 计数 +1 → 已 dismiss 的旧 Dismissible unmount, 新 key
+                  // remount 回"未滑走"状态, 条目立即回到列表 (DB 里还在)。
+                  key: ValueKey(
+                    'treatment-${entry.id}-'
+                    '${_deleteFailCounts[entry.id] ?? 0}',
+                  ),
                   background: const SwipeDeleteBackground(),
                   direction: DismissDirection.endToStart,
-                  onDismissed: (_) {
-                    ref.read(treatmentRepositoryProvider).delete(entry.id);
+                  // v1.1.0 R113 (BUG 7): 修前 fire-and-forget 裸调用 —
+                  // delete 抛异常 = unhandled async error + 条目从 UI 消失
+                  // 但 DB 还在。修: try/catch + swallowError + 错误 snackbar
+                  // + invalidate 列表恢复条目 (treatment 无 restore 入口,
+                  // 不做 undo, 保持 scope tight)。repo 在 async gap 前捕获。
+                  onDismissed: (_) async {
+                    final repo = ref.read(treatmentRepositoryProvider);
+                    try {
+                      await repo.delete(entry.id);
+                    } catch (e, st) {
+                      swallowError(
+                        where: 'treatment_list.onDismissed',
+                        error: e,
+                        stack: st,
+                        note: 'treatment delete failed — snackbar 已提示用户',
+                      );
+                      // BUG 7b: 先换 key 卸载已 dismiss 的 Dismissible,
+                      // 让条目回到列表 (setState 同步触发 rebuild)
+                      if (mounted) {
+                        setState(() {
+                          _deleteFailCounts[entry.id] =
+                              (_deleteFailCounts[entry.id] ?? 0) + 1;
+                        });
+                      }
+                      if (!context.mounted) return;
+                      AppSnackBar.showError(
+                        context,
+                        action: AppLocalizations.of(context).commonDelete,
+                        error: e,
+                      );
+                      // 条目仍留在 DB → 重新拉流让它回到列表
+                      ref.invalidate(treatmentEntriesProvider);
+                    }
                   },
                   child: AppListTile.carded(
                     leading: Icon(

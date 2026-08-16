@@ -62,4 +62,3 @@ class SttLiveTranscriptState extends State<SttLiveTranscript> {
     );
   }
 }
-

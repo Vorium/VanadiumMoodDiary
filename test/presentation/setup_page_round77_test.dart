@@ -31,8 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _NoopNotificationService extends NotificationService {
-}
+class _NoopNotificationService extends NotificationService {}
 
 Future<void> _pumpSetup(WidgetTester tester) async {
   tester.view.physicalSize = const Size(800, 1600);

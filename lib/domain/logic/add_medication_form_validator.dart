@@ -51,8 +51,7 @@ class AddMedicationFormValidator {
   /// 步骤 1 (name) 能否前进
   ///
   /// 跟原 `_nextStep` (line 68-77) `if (_currentStep == 0 && name 空) return` 1:1
-  static bool canAdvanceFromStep1(String? name) =>
-      validateName(name) == null;
+  static bool canAdvanceFromStep1(String? name) => validateName(name) == null;
 
   /// 完整 form state → MedicationDraft
   ///

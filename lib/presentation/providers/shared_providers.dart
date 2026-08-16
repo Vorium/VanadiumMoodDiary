@@ -97,11 +97,6 @@ final reportHistoriesProvider =
   (ref) => ref.watch(reportHistoryRepositoryProvider).watchAll(),
 );
 
-/// 今日情绪记录
-final todayMoodProvider = StreamProvider.autoDispose<List<MoodEntryEntity>>(
-  (ref) => ref.watch(moodRepositoryProvider).watchToday(),
-);
-
 /// 最新一条情绪（首页概览卡用，避免全表扫描）
 final latestMoodProvider = StreamProvider.autoDispose<MoodEntryEntity?>(
   (ref) => ref.watch(moodRepositoryProvider).watchLatest(),
@@ -157,3 +152,29 @@ final todayProvider = Provider<DateTime>((ref) {
   ref.watch(dayChangeTickProvider);
   return DateTime.now();
 });
+
+/// Wave 7 (Task A, R113): 主页入场动画"已播放过"进程级标记。
+///
+/// 修前 bug: ShellRoute 每次切 tab 会 dispose/recreate HomePage, 入场动画
+/// (FadeIn durSlow 400ms + stagger 30/60ms + CheckInButton _EntrySpring
+/// ~0.4s) 每次切回主页都重放 ~650ms。
+///
+/// 修法: 本 provider 挂在根 ProviderScope (进程级, 不受 tab 切换影响)。
+/// HomePage 首次 mount 后 postFrame 调 [HomeEntryPlayedNotifier.markPlayed]
+/// 标记 true; 后续 mount 读 true → FadeIn duration/delay = Duration.zero
+/// (直接终态) + CheckInButton animateEntry=false (_EntrySpring 跳到 1.0)。
+/// 首次启动仍完整播放入场 (首启动自然体验保留)。
+final homeEntryPlayedProvider = NotifierProvider<HomeEntryPlayedNotifier, bool>(
+  HomeEntryPlayedNotifier.new,
+);
+
+class HomeEntryPlayedNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  /// 首次 mount 入场动画开始后调用 (postFrame), idempotent。
+  void markPlayed() {
+    if (state) return;
+    state = true;
+  }
+}

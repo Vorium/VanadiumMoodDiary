@@ -490,6 +490,8 @@
     }
   },
   "moodDialogTitle": "今天怎么样？",
+  "moodScoreSectionTitle": "情绪评分",
+  "moodRecordSectionTitle": "记录内容",
   "moodDialogPeriodLabel": "时段",
   "moodPeriodMorning": "早上",
   "moodPeriodNoon": "中",
@@ -499,13 +501,9 @@
   "moodListFilterPeriod": "时段",
   "moodPeriodChartTitle": "心境 4 段趋势（近 30 天）",
   "moodDimensionMood": "情绪",
-  "moodDimensionMoodHint": "1=很差 5=很好",
   "moodDimensionEnergy": "精力",
-  "moodDimensionEnergyHint": "1=很低 5=充沛",
   "moodDimensionSleep": "睡眠",
-  "moodDimensionSleepHint": "1=很差 5=很好",
   "moodDimensionAnxiety": "焦虑",
-  "moodDimensionAnxietyHint": "1=严重 5=平静",
   "moodTagAnxiety": "焦虑",
   "moodTagDepression": "抑郁",
   "moodTagCalm": "平静",
@@ -923,11 +921,11 @@
     }
   },
   "homeAutofireFallbackName": "该药",
-  "homeMedHint": "💊 准备打卡药物 #{id}",
+  "homeMedHint": "💊 准备打卡药物 {name}",
   "@homeMedHint": {
     "placeholders": {
-      "id": {
-        "type": "int"
+      "name": {
+        "type": "String"
       }
     }
   },
@@ -1200,16 +1198,6 @@
   "snackbarActionUndo": "撤销",
   "ventEntryDeleted": "已删除树洞条目",
   "medicationDeleted": "已删除药物",
-  "moodTodayLabel": "今日情绪：",
-  "moodTodayLabelWithValue": "今日情绪：{value}",
-  "@moodTodayLabelWithValue": {
-    "description": "主页情绪快捷按钮: 今日已记录时的完整标签 (R112-06 emil, 参数化拼接)",
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "moodLabel1": "很差",
   "@moodLabel1": {
     "description": "情绪分数 1/5 的本地化标签 (R112-07 emil metadata 补)"
@@ -1230,7 +1218,6 @@
   "@moodLabel5": {
     "description": "情绪分数 5/5 的本地化标签 (R112-07 emil metadata 补)"
   },
-  "moodRecordButton": "记一下情绪 ✏️",
   "medReportFileName": "用药报告_{date}",
   "@medReportFileName": {
     "placeholders": {
@@ -1531,7 +1518,6 @@
   "moodCbtScoreReratedLabel": "重新评分",
   "moodCbtChipBadge5": "CBT 5 栏",
   "moodCbtChipBadge7": "CBT 7 栏",
-  "moodCbtThreeScoreTitle": "你现在的感受？",
   "moodCbtThreeSituationTitle": "发生了什么？",
   "moodCbtThreeAutoTitle": "那一刻脑海里闪过什么想法？",
   "moodCbtPrevStep": "上一步",
@@ -2934,6 +2920,9 @@
   "moodTrendCbtTitle": "CBT 重评效果",
   "moodTrendCbtHint": "正值 = 情绪改善， 负值 = 恶化",
   "moodTrendCbtEmpty": "暂无 CBT 重评数据",
+  "moodTrendSemanticsLine": "情绪趋势折线图，近 {days} 天",
+  "moodTrendSemanticsDist": "情绪分数分布图，最常见 {score} 分，共 {count} 条记录",
+  "moodTrendSemanticsCbt": "CBT 重评效果图，{count} 条重评记录",
   "medDetailActive": "在用",
   "medDetailStopped": "已停",
   "medDetailAdherence": "依从性",
@@ -3207,5 +3196,84 @@
         "type": "int"
       }
     }
-  }
+  },
+  "cbtExportPdfMoodLabel": "情绪",
+  "@cbtExportPdfMoodLabel": {
+    "description": "CBT PDF header — mood score label (R113 BUG A: 硬编码中文 PDF 头本地化)"
+  },
+  "cbtExportPdfOriginalScoreLabel": "原",
+  "@cbtExportPdfOriginalScoreLabel": {
+    "description": "CBT PDF rerated section — original score prefix label (R113 BUG A)"
+  },
+  "psychoTipsTitle": "心理技巧",
+  "psychoTipBreathTitle": "正念呼吸",
+  "psychoTipBreathSummary": "通过关注呼吸回到当下，缓解焦虑与紧张",
+  "psychoTipBreathStep1": "找个舒适的位置坐下，轻轻闭上眼睛",
+  "psychoTipBreathStep2": "深吸气 4 秒，感受空气充满身体",
+  "psychoTipBreathStep3": "屏住呼吸 2 秒",
+  "psychoTipBreathStep4": "缓缓呼气 6 秒，让肩膀和身体放松",
+  "psychoTipBreathStep5": "重复 3-5 分钟，让注意力回到呼吸上",
+  "psychoTipNameTitle": "情绪命名",
+  "psychoTipNameSummary": "给情绪贴上名字，能有效降低它的强度",
+  "psychoTipNameStep1": "停下来，感受此刻身体有哪些反应",
+  "psychoTipNameStep2": "在心里问自己：我现在的情绪是什么",
+  "psychoTipNameStep3": "用一个词描述它，比如「烦躁」「难过」「紧张」",
+  "psychoTipNameStep4": "说出来或写下来：「我感到……」",
+  "psychoTipNameStep5": "观察情绪的变化，不去评判它",
+  "psychoTipCbtTitle": "认知重构",
+  "psychoTipCbtSummary": "识别并调整不合理的自动思维，可搭配 CBT 思维记录",
+  "psychoTipCbtStep1": "记录引发情绪的具体情境",
+  "psychoTipCbtStep2": "写下脑海中冒出的自动思维",
+  "psychoTipCbtStep3": "列出支持与反对这个想法的证据",
+  "psychoTipCbtStep4": "写出更平衡、更符合事实的替代想法",
+  "psychoTipCbtStep5": "在情绪日记中使用 5 栏 CBT 记录练习",
+  "psychoTipGroundTitle": "5-4-3-2-1 感官接地",
+  "psychoTipGroundSummary": "用五种感官觉察当下，把注意力从焦虑中拉回来",
+  "psychoTipGroundStep1": "说出你看到的 5 样东西",
+  "psychoTipGroundStep2": "感受你触碰到的 4 种触感",
+  "psychoTipGroundStep3": "仔细听你听到的 3 种声音",
+  "psychoTipGroundStep4": "闻到你周围的 2 种气味",
+  "psychoTipGroundStep5": "感受口中的 1 种味道",
+  "psychoTipPmrTitle": "渐进式肌肉放松",
+  "psychoTipPmrSummary": "依次收紧再放松身体各肌肉群，释放身体的紧张",
+  "psychoTipPmrStep1": "坐或躺下，找一个舒适的姿势",
+  "psychoTipPmrStep2": "从脚趾开始，用力收紧 5 秒",
+  "psychoTipPmrStep3": "松开，体会放松的感觉约 10 秒",
+  "psychoTipPmrStep4": "依次向上：小腿、大腿、腹部、手臂、肩膀",
+  "psychoTipPmrStep5": "最后放松面部与头皮，完成全身扫描",
+  "ventAgreementTitle": "树洞使用公约",
+  "ventAgreementBody": "你的树洞是只属于你的私密空间，请了解这几点：\n· 所有倾诉内容仅保存在本机并加密，绝不外传\n· 树洞内容不参与任何分析、推荐或通知\n· 请温柔地对待自己，尊重每一份情绪\n· 若感到极度痛苦或有自伤念头，请使用危机热线寻求帮助",
+  "ventAgreementConfirm": "我知道了",
+  "worryTimelineTitle": "烦恼时间线",
+  "worryArchiveTitle": "忆往昔",
+  "worrySectionTitle": "烦恼心事",
+  "worrySectionArchiveAction": "忆往昔",
+  "worryEntryCount": "{count} 条记录",
+  "worryContinueAction": "继续倾诉",
+  "worryResolveAction": "不再烦恼啦",
+  "worryReopenAction": "又烦恼了",
+  "worryResolveConfirmTitle": "放下这个烦恼？",
+  "worryResolveConfirmBody": "确认后它会被收藏到「忆往昔」，随时可以「又烦恼了」重新打开。",
+  "worryResolveConfirmOk": "放下啦",
+  "worryResolveDone": "🎉 恭喜，你放下了一个烦恼",
+  "worryReopenDone": "已重新打开，需要的时候随时来倾诉",
+  "worryRenameTitle": "重命名烦恼",
+  "worryRenameAction": "重命名",
+  "worryNewOption": "新建烦恼",
+  "worryNoWorry": "没有关联烦恼",
+  "worryDefaultTitle": "未命名烦恼",
+  "worryFieldLabel": "关联烦恼",
+  "worryFieldHint": "选择或新建一个烦恼，把这次心情记到它的时间线上",
+  "worryTimelineEmpty": "这个烦恼还没有记录，从「继续倾诉」开始吧",
+  "worryArchiveEmpty": "还没有放下过的烦恼。把心情记成烦恼时间线，成长会被珍藏。",
+  "worryArchiveCount": "已放下 {count} 个烦恼",
+  "worryOpenCount": "{count} 个进行中",
+  "worryStatusOpen": "进行中",
+  "worryStatusResolved": "已放下",
+  "worryThreadNotFound": "这个烦恼找不到了，可能已经删除",
+  "dbResetPromptTitle": "无法打开本地数据库",
+  "dbResetPromptBody": "本地加密数据与密钥不匹配（常见于系统备份恢复只还原了数据、未还原密钥）。你可以先点「重试」看看数据是否恢复；若仍无法打开，可重置本地数据重新开始。",
+  "dbResetPromptReset": "重置本地数据",
+  "dbResetPromptConfirm": "重置将删除本机全部记录，且无法恢复。确认重置吗？",
+  "moodTrendSemanticsAvg": "平均 {average} 分"
 }

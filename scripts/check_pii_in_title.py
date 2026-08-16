@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # v0.30 R108 revisit (P0-012): check_pii_in_title 守门员
 #
-# 作用: 验证通知 title (锁屏可见) 不含 PII (药名 / 剂量 / 患者名 / 病名)
+# 作用: 验证通知 title/body (锁屏可见) 不含 PII (药名 / 剂量 / 患者名 / 病名)
 #
 # 背景: 精神心理 / 慢性病患者用 App, 通知在 iOS / Android 锁屏横幅
 #   可见。title 含药名 = 路人瞥一眼知道用户吃的什么药, 触发病耻感
@@ -16,12 +16,20 @@
 #   strings.dart 所有 `notif*Title` 声明 (const 版 + override 函数版,
 #   body 正则同时放宽: `override ?? (字面量|constRef)` 两种都匹配)。
 #
+# 1.1.0 R113 (P2-21): 范围 Title-only → Title+Body 双覆盖 (5 title +
+#   5 body = 10 个定义动态扫描)。审计 (R113 BUG 10) 指出评估提醒 body
+#   曾含量表名 — 现在只守 title 不守 body = 守门员盲区。body 版 regex
+#   与 title 同构, 零额外复杂度。Legacy 函数 (notifMedicationBodyLegacy,
+#   @Deprecated 过渡 shim) 因名字后缀不匹配 regex, 天然豁免 — 移除
+#   legacy 后无需改本脚本。
+#
 # 规则:
-#   1. lib/core/l10n/strings.dart 的 notif*Title 函数**不应**有 medName
-#      / medicationName / patientName / name / diseaseName 等 PII 字段参数
-#      (签名不收 PII 数据 = 编译期防泄漏)
-#   2. 已有 title 字符串不直接含 "药名" / "<name>" / "$medName" 等动态注入
-#   3. lib/presentation/ 调用 notif*Title() 不传 med.name (defence in depth)
+#   1. lib/core/l10n/strings.dart 的 notif*Title / notif*Body 函数**不应**
+#      有 medName / medicationName / patientName / name / diseaseName 等
+#      PII 字段参数 (签名不收 PII 数据 = 编译期防泄漏)
+#   2. 已有 title/body 字符串不直接含 "药名" / "<name>" / "$medName" 等动态注入
+#   3. lib/presentation/ 调用 notif*Title() / notif*Body() 不传 med.name
+#      (defence in depth)
 #
 # 退出: 0 = pass, 1 = fail
 import io
@@ -38,20 +46,26 @@ if sys.platform == 'win32':
 
 PROJECT_ROOT = Path(__file__).parent.parent
 FAILURES: list[str] = []
+detected_titles: set[str] = set()
 
 # PII 字段名黑名单 (形参 + body 插值两处检查)
 PII_FIELDS = ['medName', 'medicationName', 'patientName',
               'name', 'diseaseName']
 
-strings_file = PROJECT_ROOT / 'lib' / 'core' / 'l10n' / 'strings.dart'
-detected_titles: set[str] = set()
 
-if strings_file.exists():
+def scan_strings_definitions(strings_file: Path) -> None:
+    """规则 1+2: 扫 strings.dart 的 notif*Title / notif*Body 声明"""
+    if not strings_file.exists():
+        FAILURES.append(
+            f'[FAIL] {strings_file.relative_to(PROJECT_ROOT)} 不存在 — '
+            f'无法守护通知 title/body 锁屏 PII'
+        )
+        return
     content = strings_file.read_text(encoding='utf-8')
 
     # 1a. const 声明版: `static const notifDailyCheckInTitle = '...'`
     const_decl_re = re.compile(
-        r'static\s+const\s+(notif\w*Title)\s*=\s*[\'"]([^\'"]*)[\'"]',
+        r'static\s+const\s+(notif\w*(?:Title|Body))\s*=\s*[\'"]([^\'"]*)[\'"]',
     )
     for match in const_decl_re.finditer(content):
         const_name = match.group(1)
@@ -61,14 +75,14 @@ if strings_file.exists():
             if f'${pii}' in literal:
                 FAILURES.append(
                     f'[FAIL] {strings_file.relative_to(PROJECT_ROOT)} '
-                    f':: {const_name} 字面量含 `${pii}`, 锁屏 title 会泄漏 PII'
+                    f':: {const_name} 字面量含 `${pii}`, 锁屏 title/body 会泄漏 PII'
                 )
 
     # 1b. override 函数版 (round 7c 放宽: 字面量 | constRef 两种 body 都匹配)
     #     `static String notifXxxTitle({String? override}) =>
     #        override ?? '字面量'  |  override ?? notifXxxTitle`
     title_func_re = re.compile(
-        r'static\s+String\s+(notif\w*Title)\s*\(([^)]*)\)\s*=>\s*'
+        r'static\s+String\s+(notif\w*(?:Title|Body))\s*\(([^)]*)\)\s*=>\s*'
         r'override\s*\?\?\s*(?:[\'"]([^\'"]*)[\'"]|(\w+))',
     )
     for match in title_func_re.finditer(content):
@@ -81,21 +95,23 @@ if strings_file.exists():
             if re.search(rf'String\s+{pii}\b', params):
                 FAILURES.append(
                     f'[FAIL] {strings_file.relative_to(PROJECT_ROOT)} '
-                    f':: {func_name}() 接收 PII 参数 `{pii}`, 锁屏 title 会泄漏 PII'
+                    f':: {func_name}() 接收 PII 参数 `{pii}`, 锁屏 title/body 会泄漏 PII'
                 )
             # body 模板里直接拼了 PII 字段 (例如 "💊 该吃药了：$medName")
             if f'${pii}' in literal:
                 FAILURES.append(
                     f'[FAIL] {strings_file.relative_to(PROJECT_ROOT)} '
-                    f':: {func_name}() body 含 `${pii}`, 锁屏 title 会泄漏 PII'
+                    f':: {func_name}() body 含 `${pii}`, 锁屏 title/body 会泄漏 PII'
                 )
 
-# 规则 2: lib/ 调 notif*Title() 不传 med.name (defence in depth)
-# round 7c: 检测名单动态来自 strings.dart 扫描结果 (const 名 + 函数名,
-# const 名无 () 调用所以无害, 覆盖 5/5 title 而不是硬编码 2/5)
-title_func_names = sorted(detected_titles)
-lib_dir = PROJECT_ROOT / 'lib'
-if lib_dir.exists():
+
+def scan_call_sites(lib_dir: Path) -> None:
+    """规则 3: lib/ 调 notif*Title()/notif*Body() 不传 med.name (defence in depth)"""
+    # 检测名单动态来自 strings.dart 扫描结果 (const 名 + 函数名,
+    # const 名无 () 调用所以无害, 覆盖 5/5 title + 5/5 body 而不是硬编码 2/5)
+    title_func_names = sorted(detected_titles)
+    if not lib_dir.exists():
+        return
     for dart_file in lib_dir.rglob('*.dart'):
         # 跳过 strings.dart 自己
         if dart_file.name == 'strings.dart':
@@ -113,22 +129,42 @@ if lib_dir.exists():
                     FAILURES.append(
                         f'[FAIL] {dart_file.relative_to(PROJECT_ROOT)} '
                         f':: 调 `{func_name}({args})`, 传了含 "name" 的实参, '
-                        f'锁屏 title 会泄漏 PII'
+                        f'锁屏 title/body 会泄漏 PII'
                     )
 
-# 输出
-if FAILURES:
-    print('=' * 60)
-    print('[check_pii_in_title.py] FAIL')
-    print('=' * 60)
-    for f in FAILURES:
-        print(f)
-    print('=' * 60)
-    print(f'共 {len(FAILURES)} 项违规。锁屏 PII 泄漏风险。')
-    print('修复: notif*Title() 签名去掉 PII 参数, body 不再拼 PII 字段。')
-    sys.exit(1)
-else:
-    print(f'[check_pii_in_title.py] OK — 检测 {len(title_func_names)} 个通知 title 定义, 0 PII 泄漏')
-    for name in title_func_names:
-        print(f'  - {name}')
-    sys.exit(0)
+
+def main() -> int:
+    global FAILURES, detected_titles
+    FAILURES = []
+    detected_titles = set()
+
+    strings_file = PROJECT_ROOT / 'lib' / 'core' / 'l10n' / 'strings.dart'
+    scan_strings_definitions(strings_file)
+
+    lib_dir = PROJECT_ROOT / 'lib'
+    scan_call_sites(lib_dir)
+
+    title_func_names = sorted(detected_titles)
+
+    # 输出
+    if FAILURES:
+        print('=' * 60)
+        print('[check_pii_in_title.py] FAIL')
+        print('=' * 60)
+        for f in FAILURES:
+            print(f)
+        print('=' * 60)
+        print(f'共 {len(FAILURES)} 项违规。锁屏 PII 泄漏风险。')
+        print('修复: notif*Title()/notif*Body() 签名去掉 PII 参数, '
+              'body 不再拼 PII 字段。')
+        return 1
+    else:
+        print(f'[check_pii_in_title.py] OK — 检测 {len(title_func_names)} 个通知 '
+              f'title/body 定义, 0 PII 泄漏')
+        for name in title_func_names:
+            print(f'  - {name}')
+        return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -48,21 +48,29 @@ void main() {
           '${i + 1}. metric=${m.id} → icon=${m.icon} + color 0x${m.color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}',
           (tester) async {
         await tester.pumpWidget(
-          wrap(AppleHealthTile(
-            metricId: m.id,
-            label: 'L-$i',
-            value: 'V-$i',
-          ),),
+          wrap(
+            AppleHealthTile(
+              metricId: m.id,
+              label: 'L-$i',
+              value: 'V-$i',
+            ),
+          ),
         );
 
         // icon 28pt 渲染 (不是默认 24, R7b 视觉关键)
         final iconFinder = findMetricIcon(m.id, m.icon);
-        expect(iconFinder, findsOneWidget,
-            reason: 'metric=${m.id} 应该有 ${m.icon} 28pt',);
+        expect(
+          iconFinder,
+          findsOneWidget,
+          reason: 'metric=${m.id} 应该有 ${m.icon} 28pt',
+        );
 
         final iconWidget = tester.widget<Icon>(iconFinder);
-        expect(iconWidget.color, m.color,
-            reason: 'metric=${m.id} icon color 应是 iOS system color',);
+        expect(
+          iconWidget.color,
+          m.color,
+          reason: 'metric=${m.id} icon color 应是 iOS system color',
+        );
 
         // label / value 都渲染
         expect(find.text('L-$i'), findsOneWidget);
@@ -92,20 +100,25 @@ void main() {
       );
       final decoration = container.decoration! as BoxDecoration;
       // dark mode: alpha 0.18
-      expect(decoration.color!.a, closeTo(0.18, 0.001),
-          reason: 'dark mode 背景 alpha = 0.18',);
+      expect(
+        decoration.color!.a,
+        closeTo(0.18, 0.001),
+        reason: 'dark mode 背景 alpha = 0.18',
+      );
     });
 
     // ===== 10. onTap 触发 =====
     testWidgets('10. onTap 触发 callback (走 PressFeedback 模式 1)', (tester) async {
       int tapCount = 0;
       await tester.pumpWidget(
-        wrap(AppleHealthTile(
-          metricId: 'mood',
-          label: '心情',
-          value: '4',
-          onTap: () => tapCount++,
-        ),),
+        wrap(
+          AppleHealthTile(
+            metricId: 'mood',
+            label: '心情',
+            value: '4',
+            onTap: () => tapCount++,
+          ),
+        ),
       );
       await tester.tap(find.byType(AppleHealthTile));
       await tester.pump();
@@ -115,11 +128,13 @@ void main() {
     // ===== 11. chevron 16pt textHint =====
     testWidgets('11. chevron 16pt + textHint color', (tester) async {
       await tester.pumpWidget(
-        wrap(const AppleHealthTile(
-          metricId: 'trend',
-          label: '趋势',
-          value: '12',
-        ),),
+        wrap(
+          const AppleHealthTile(
+            metricId: 'trend',
+            label: '趋势',
+            value: '12',
+          ),
+        ),
       );
       // 找 chevron: Icons.chevron_right size 16
       final chevronFinder = find.byWidgetPredicate(
@@ -130,8 +145,11 @@ void main() {
       // chevron color = textHint
       final ctx = tester.element(find.byType(AppleHealthTile));
       final chevron = tester.widget<Icon>(chevronFinder);
-      expect(chevron.color, AppTokens.textHintColor(ctx),
-          reason: 'chevron 应该用 textHint color (弱视觉提示)',);
+      expect(
+        chevron.color,
+        AppTokens.textHintColor(ctx),
+        reason: 'chevron 应该用 textHint color (弱视觉提示)',
+      );
     });
   });
 }

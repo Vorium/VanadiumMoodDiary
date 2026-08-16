@@ -32,9 +32,10 @@ void main() {
       final list = [
         _ci(timestamp: DateTime(2026, 7, 15, 8), type: CheckInType.normal),
         _ci(
-            id: 2,
-            timestamp: DateTime(2026, 7, 15, 9),
-            type: CheckInType.normal,),
+          id: 2,
+          timestamp: DateTime(2026, 7, 15, 9),
+          type: CheckInType.normal,
+        ),
       ];
       expect(TempEntryExtractor.extract(list), isEmpty);
     });
@@ -120,9 +121,10 @@ void main() {
     test('normal 全部过滤 temp 按时间倒序保留', () {
       final list = [
         _ci(
-            id: 1,
-            timestamp: DateTime(2026, 7, 15, 8),
-            type: CheckInType.normal,),
+          id: 1,
+          timestamp: DateTime(2026, 7, 15, 8),
+          type: CheckInType.normal,
+        ),
         _ci(
           id: 2,
           timestamp: DateTime(2026, 7, 15, 10),
@@ -130,9 +132,10 @@ void main() {
           note: '{"name":"X","desc":"x"}',
         ),
         _ci(
-            id: 3,
-            timestamp: DateTime(2026, 7, 15, 12),
-            type: CheckInType.normal,),
+          id: 3,
+          timestamp: DateTime(2026, 7, 15, 12),
+          type: CheckInType.normal,
+        ),
         _ci(
           id: 4,
           timestamp: DateTime(2026, 7, 15, 18),

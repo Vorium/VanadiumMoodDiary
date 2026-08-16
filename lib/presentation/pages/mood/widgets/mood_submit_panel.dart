@@ -7,8 +7,13 @@
 // **职责**: 保存按钮 (含 saving 态 spinner) + 取消按钮
 // **接口**: stateless, 2 callback + 1 bool
 //
+// v1.1.0 R114 (Wave D): TextButton/LoadingTextButton → PrimaryButton pill
+// (spec §4.2: 50pt height / 14pt radius / w600 / scale 0.97 press feedback):
+// - 保存 = PrimaryButton primary (saving 时 child 切 spinner + disabled)
+// - 取消 = PrimaryButton secondary
+// Row 两等宽, 跟 iOS dialog 按钮行惯例一致。
+//
 // emil 设计决策 (保留自 v0.24):
-// - 复用 v0.22 round 34 抽的 LoadingTextButton (saving spinner 集中器)
 // - Stateless, 2 callback + 1 bool
 // - emil 频度决策: tens/day 频度, 走 PressFeedback 标准反馈
 //
@@ -20,11 +25,12 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
+import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
+import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// 提交面板 (取消 + 保存按钮)
 ///
-/// saving=true 时保存按钮变 LoadingTextButton spinner, 取消按钮禁用。
+/// saving=true 时保存按钮变 spinner, 取消按钮禁用。
 class MoodSubmitPanel extends StatelessWidget {
   final bool saving;
   final VoidCallback onSave;
@@ -41,17 +47,34 @@ class MoodSubmitPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        TextButton(
-          onPressed: saving ? null : onCancel,
-          child: Text(l10n.commonCancel),
+        Expanded(
+          child: PrimaryButton(
+            variant: PrimaryButtonVariant.secondary,
+            onPressed: saving ? null : onCancel,
+            child: Text(l10n.commonCancel),
+          ),
         ),
-        const SizedBox(width: AppTokens.spacingXs),
-        LoadingTextButton(
-          label: l10n.commonSave,
-          isLoading: saving,
-          onPressed: saving ? null : onSave,
+        const SizedBox(width: AppTokens.spacingSm),
+        Expanded(
+          child: PrimaryButton(
+            variant: PrimaryButtonVariant.primary,
+            onPressed: saving ? null : onSave,
+            child: saving
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      LoadingSpinner(
+                        size: AppTokens.iconSizeInline,
+                        color: AppTokens.fgOnPrimary(context),
+                      ),
+                      const SizedBox(width: AppTokens.spacingXs),
+                      Text(l10n.commonSave),
+                    ],
+                  )
+                : Text(l10n.commonSave),
+          ),
         ),
       ],
     );

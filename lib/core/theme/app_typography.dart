@@ -38,7 +38,8 @@ class AppTypography {
   // bodySm 13→12 (iOS caption2) / captionSm 12→11
   static const double fontSizeTitle = 28.0;
   static const double fontSizeHeadline = 24.0;
-  static const double fontSizeButton = 17.0; // v0.31 R2: 20→17 (iOS button standard)
+  static const double fontSizeButton =
+      17.0; // v0.31 R2: 20→17 (iOS button standard)
   static const double fontSizeBody = 17.0; // v0.31 R2: 18→17 (iOS body)
   static const double fontSizeLabel = 15.0; // v0.31 R2: 16→15 (iOS subheadline)
   static const double fontSizeCaption = 13.0; // v0.31 R2: 14→13 (iOS footnote)

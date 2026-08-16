@@ -93,10 +93,12 @@ class AppleListSection extends StatelessWidget {
   /// 不传则不渲染 footer。
   final String? footer;
 
-  /// 外边距, 默认 EdgeInsets.symmetric(horizontal: pageMarginH=20)
+  /// 外边距, 默认 EdgeInsets.zero
   ///
-  /// 传 null 走默认; 传 EdgeInsets.zero 让 caller 去掉外边距
-  /// (用于 PageScaffold 已包 padding 的内嵌场景)。
+  /// R114 Wave B2 (B2-4, apple F-01): 修前默认 symmetric(horizontal: 20)
+  /// 与 PageScaffold 的 pageMarginH 20 叠加成 40px 双重 inset。裁决统一
+  /// "20+0" — PageScaffold 唯一负责页边距 (20px), 本 widget 默认 0。
+  /// 非 PageScaffold 场景的 caller 需要页边距时显式传 margin。
   final EdgeInsets? margin;
 
   /// iOS section header 字号 (13pt) — AppleListSection 跟 SectionHeader 不同,
@@ -118,8 +120,8 @@ class AppleListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveMargin = margin ??
-        const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH); // 20
+    // R114 Wave B2 (B2-4): 默认 margin zero — PageScaffold 负责 20px 页边距
+    final effectiveMargin = margin ?? EdgeInsets.zero;
     // v0.31 round 8a: dark mode 用静态 surfaceDark (#1C1C1E, iOS
     // secondarySystemGroupedBackground), light mode 走 theme.surface。
     // 不走 theme.surface 是因为 M3 ColorScheme.fromSeed 在 dark 模式会派生

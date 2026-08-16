@@ -66,23 +66,23 @@ void main() {
       expect(result.second, 0);
     });
 
-    test('reminderDays = 0 抛 ArgumentError', () {
+    test('reminderDays = 0 → null (R113 BUG 1: 不抛, caller 跳过)', () {
       expect(
-        () => NotificationService.computeRefillFireTime(
+        NotificationService.computeRefillFireTime(
           refillAt: DateTime(2026, 7, 25),
           reminderDays: 0,
         ),
-        throwsArgumentError,
+        isNull,
       );
     });
 
-    test('reminderDays 负数抛 ArgumentError', () {
+    test('reminderDays 负数 → null (R113 BUG 1: 不抛)', () {
       expect(
-        () => NotificationService.computeRefillFireTime(
+        NotificationService.computeRefillFireTime(
           refillAt: DateTime(2026, 7, 25),
           reminderDays: -1,
         ),
-        throwsArgumentError,
+        isNull,
       );
     });
 

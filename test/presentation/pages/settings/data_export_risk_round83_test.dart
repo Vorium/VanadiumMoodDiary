@@ -52,10 +52,14 @@ void main() {
       final zh = AppLocalizationsZh();
       final en = AppLocalizationsEn();
       // title 在 zh 是 "明文风险提示", en 是 "Plaintext risk warning"
-      expect(zh.settingsExportRiskTitle,
-          isNot(equals(en.settingsExportRiskTitle)),);
-      expect(zh.settingsExportRiskAcknowledge,
-          isNot(equals(en.settingsExportRiskAcknowledge)),);
+      expect(
+        zh.settingsExportRiskTitle,
+        isNot(equals(en.settingsExportRiskTitle)),
+      );
+      expect(
+        zh.settingsExportRiskAcknowledge,
+        isNot(equals(en.settingsExportRiskAcknowledge)),
+      );
     });
   });
 

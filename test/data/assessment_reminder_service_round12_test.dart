@@ -127,7 +127,8 @@ void main() {
     test('默认 enabled=false', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
+        scheduleUseCase:
+            ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.isEnabled(), isFalse);
     });
@@ -135,7 +136,8 @@ void main() {
     test('默认 days=14', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
+        scheduleUseCase:
+            ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.getDays(), 14);
     });
@@ -143,7 +145,8 @@ void main() {
     test('setEnabled + getEnabled', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
+        scheduleUseCase:
+            ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       await service.setEnabled(true);
       expect(await service.isEnabled(), isTrue);
@@ -154,7 +157,8 @@ void main() {
     test('setDays 接受 7/14/30/60/90', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
+        scheduleUseCase:
+            ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       for (final d in AssessmentReminderService.allowedDays) {
         await service.setDays(d);
@@ -165,7 +169,8 @@ void main() {
     test('setDays 非法值抛 ArgumentError', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
+        scheduleUseCase:
+            ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(() => service.setDays(13), throwsArgumentError);
       expect(() => service.setDays(0), throwsArgumentError);
@@ -178,7 +183,8 @@ void main() {
       });
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
+        scheduleUseCase:
+            ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.getDays(), 14);
     });
@@ -186,7 +192,8 @@ void main() {
     test('lastAssessmentAt 读写', () async {
       final service = AssessmentReminderService(
         checkInRepo: checkInRepo,
-        scheduleUseCase: ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
+        scheduleUseCase:
+            ScheduleAssessmentReminderUseCase(NoOpAssessmentReminderSender()),
       );
       expect(await service.getLastAssessmentAt(), isNull);
       await service.setLastAssessmentAt(DateTime(2026, 7, 15, 16, 30));
@@ -266,48 +273,69 @@ void main() {
     });
 
     test('有更新评估但 lastAssessmentAt 旧 → 自动同步', () async {
-      // 旧 last 是 7/1
+      // 日期取相对值: 硬编码日期会在"评估日+14 天"当天 10:00 后触发 catch-up 变成 now,
+      // 导致 fireAt 断言不稳定 (v1.0.0 2026-08-15 实测踩坑)
+      final now = DateTime.now();
+      // 旧 last: 20 天前
       await service.setEnabled(true);
-      await service.setLastAssessmentAt(DateTime(2026, 7, 1));
-      // 实际 db 写 8/1 又做了一次
+      await service.setLastAssessmentAt(now.subtract(const Duration(days: 20)));
+      // 实际 db 写 13 天前 16:30 又做了一次
+      final assessmentTimestamp = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        16,
+        30,
+      ).subtract(const Duration(days: 13));
       await db.checkInDao.insert(
         CheckInsCompanion.insert(
-          timestamp: DateTime(2026, 8, 1, 16, 30),
+          timestamp: assessmentTimestamp,
           type: 'gad7',
           note: const Value('{"scale":"gad7","scores":[0],"total":1}'),
         ),
       );
       await service.onAppStart();
-      // lastAssessmentAt 应被覆盖到 8/1 16:30（评估的实际时间）
+      // lastAssessmentAt 应被覆盖到评估的实际时间
       // v0.22 round 30 (sp-zh P1-1): .toLocal() 因为现在 service 存 UTC
       expect(
         (await service.getLastAssessmentAt())?.toLocal(),
-        DateTime(2026, 8, 1, 16, 30),
+        assessmentTimestamp,
       );
-      // 8/1 + 14 = 8/15 10:00
-      expect(notif.scheduled.first.fireAt, DateTime(2026, 8, 15, 10, 0));
+      // 评估日 + 14 = 明天 10:00 (恒在未来, 不触发 catch-up)
+      final fire = assessmentTimestamp.add(const Duration(days: 14));
+      expect(
+        notif.scheduled.first.fireAt,
+        DateTime(fire.year, fire.month, fire.day, 10, 0),
+      );
     });
 
     test('有更新评估但 lastAssessmentAt 更新 → 不覆盖', () async {
-      // last 是 8/15（更新）, db 写 8/1 是更老的
+      // 日期取相对值 (同上, 防 catch-up 时间漂移)
+      final now = DateTime.now();
+      // last 是 2 天前（更新）, db 写 20 天前是更老的
+      final newerLast = DateTime(now.year, now.month, now.day);
       await service.setEnabled(true);
-      await service.setLastAssessmentAt(DateTime(2026, 8, 15));
+      await service.setLastAssessmentAt(newerLast);
       await db.checkInDao.insert(
         CheckInsCompanion.insert(
-          timestamp: DateTime(2026, 8, 1, 16, 30),
+          timestamp: now.subtract(const Duration(days: 20)),
           type: 'phq9',
           note: const Value('{"scale":"phq9","scores":[0],"total":1}'),
         ),
       );
       await service.onAppStart();
-      // last 不变（因为 8/1 比 8/15 老）
+      // last 不变（因为 20 天前比 last 老）
       // v0.22 round 30 (sp-zh P1-1): .toLocal() 因为现在 service 存 UTC
       expect(
         (await service.getLastAssessmentAt())?.toLocal(),
-        DateTime(2026, 8, 15),
+        newerLast,
       );
-      // 8/15 + 14 = 8/29 10:00
-      expect(notif.scheduled.first.fireAt, DateTime(2026, 8, 29, 10, 0));
+      // last + 14 = 14 天后 10:00 (恒在未来)
+      final fire = newerLast.add(const Duration(days: 14));
+      expect(
+        notif.scheduled.first.fireAt,
+        DateTime(fire.year, fire.month, fire.day, 10, 0),
+      );
     });
   });
 

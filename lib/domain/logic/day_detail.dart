@@ -154,6 +154,23 @@ typedef CheckInLabelFn = String Function(String? medName);
 /// (`dayDetailPhq9` / `dayDetailGad7`)。
 typedef ScaleNameFn = String Function();
 
+/// R114 BUG 4: 量表名按 id 派发 closure (覆盖全部 10 个量表 id)。
+///
+/// caller (trend_day_detail_card) 传 `(id) => scaleNameL10n(id, l10n)`,
+/// 8 个 R90 新量表 (isi/pss/whodas/level2*/asrm) 不再落到 `_scaleName`
+/// default 分支返裸 id 上屏 (R112 E9 / R113 #9 未闭环)。
+typedef ScaleNameByIdFn = String Function(String scaleId);
+
+/// R114 BUG 4: 情绪标签 closure (分数 → l10n 标签, 走 moodLabel1-5 ARB)。
+///
+/// 修前 mood 事件 title 用 MoodVisual.labelFor → core/l10n/strings.dart
+/// 中文 fallback, en locale 趋势日历看到中文 (R112 EM-21 domain 侧漏网)。
+typedef MoodLabelFn = String Function(int score);
+
+/// R114 BUG 4: 评估总分后缀 closure (跟 moodLabelFn 同款, 修 en locale
+/// "总分 N" 中文后缀)。
+typedef TotalScoreFn = String Function(int total);
+
 /// DayDetail 纯函数计算
 class DayDetailCalculator {
   DayDetailCalculator._();
@@ -181,6 +198,9 @@ class DayDetailCalculator {
     String Function()? tempDefaultLabel,
     ScaleNameFn? phq9Name,
     ScaleNameFn? gad7Name,
+    ScaleNameByIdFn? scaleName,
+    MoodLabelFn? moodLabel,
+    TotalScoreFn? totalScoreLabel,
   }) {
     final day = DateTime(date.year, date.month, date.day);
     final nextDay = day.add(const Duration(days: 1));
@@ -249,9 +269,11 @@ class DayDetailCalculator {
               c.type.wire,
               phq9Name: phq9Name,
               gad7Name: gad7Name,
+              scaleName: scaleName,
             ),
             subtitle: total != null
-                ? '${_timeLabel(c.timestamp)} · ${Strings.dayDetailTotalScore(total)}'
+                ? '${_timeLabel(c.timestamp)} · '
+                    '${totalScoreLabel?.call(total) ?? Strings.dayDetailTotalScore(total)}'
                 : _timeLabel(c.timestamp),
             assessmentTotal: total,
             assessmentScaleId: c.type.wire,
@@ -268,7 +290,9 @@ class DayDetailCalculator {
       }
       final tags = m.tags;
       final parts = <String>[
-        '${MoodVisual.emojiFor(m.score)} ${MoodVisual.labelFor(m.score)}',
+        // R114 BUG 4: 情绪标签走 closure 注入 (en locale 不再看中文)
+        '${MoodVisual.emojiFor(m.score)} '
+            '${moodLabel?.call(m.score) ?? MoodVisual.labelFor(m.score)}',
       ];
       if (tags.isNotEmpty) parts.add(tags.join(' / '));
       if (m.note != null && m.note!.isNotEmpty) parts.add(m.note!);
@@ -341,9 +365,7 @@ class DayDetailCalculator {
       case CheckInType.normal:
         return medName != null ? '打卡 · $medName' : '每日打卡';
       case CheckInType.temp:
-        return medName != null && medName.isNotEmpty
-            ? '临时 · $medName'
-            : '临时吃药';
+        return medName != null && medName.isNotEmpty ? '临时 · $medName' : '临时吃药';
       case CheckInType.phq9:
         return 'PHQ-9 抑郁筛查';
       case CheckInType.gad7:
@@ -368,11 +390,17 @@ class DayDetailCalculator {
   /// v0.31 P1-5: 硬编码中文 'PHQ-9 抑郁筛查' / 'GAD-7 焦虑筛查' 迁移到
   /// Strings.dayDetailPhq9() / Strings.dayDetailGad7() — 但这两个已有
   /// ARB key (dayDetailPhq9 / dayDetailGad7), 直接用 Strings 模式。
+  /// R114 BUG 4: 加 [scaleName] 按 id 派发 closure — 8 个 R90 新量表
+  /// 修前落到 default 返裸 scaleId 上屏 ("pss" / "whodas")。
   static String _scaleName(
     String scaleId, {
     ScaleNameFn? phq9Name,
     ScaleNameFn? gad7Name,
+    ScaleNameByIdFn? scaleName,
   }) {
+    if (scaleName != null) {
+      return scaleName(scaleId);
+    }
     if (phq9Name != null || gad7Name != null) {
       switch (scaleId) {
         case 'phq9':
@@ -393,3 +421,6 @@ class DayDetailCalculator {
     }
   }
 }
+// rule3-whitelist: 342, 347, 366, 368, 370, 372, 407, 409, 416, 418
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

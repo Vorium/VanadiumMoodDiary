@@ -30,6 +30,7 @@ import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
+import 'package:chroniccare/presentation/pages/setup/setup_page_state.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -47,13 +48,12 @@ class _RecordingSetupCommitter extends SetupCommitter {
   int calls = 0;
   String? receivedUserName;
   final List<
-          ({
-            String name,
-            double dosage,
-            String dosageUnit,
-            List<HourMinute> times,
-          })>
-      receivedMeds = [];
+      ({
+        String name,
+        double dosage,
+        String dosageUnit,
+        List<HourMinute> times,
+      })> receivedMeds = [];
 
   @override
   Future<void> completeSetup({
@@ -228,8 +228,11 @@ Future<void> _walkToMedicationStep(WidgetTester tester) async {
   await tester.pumpAndSettle();
   await tester.tap(find.text('下一步 →'));
   await tester.pumpAndSettle();
-  expect(find.text('您常吃什么药？'), findsOneWidget,
-      reason: '应该已到 step 2 (medication)',);
+  expect(
+    find.text('您常吃什么药？'),
+    findsOneWidget,
+    reason: '应该已到 step 2 (medication)',
+  );
 }
 
 /// 排空 SnackBar 计时器 (info 2s / error 4s), 避免 test 结束 pending timer
@@ -249,15 +252,21 @@ Future<void> _pumpUntilFound(
     if (finder.evaluate().isNotEmpty) return;
     await tester.pump(const Duration(milliseconds: 100));
   }
-  expect(finder, findsWidgets,
-      reason: '有界 pump 后 finder 仍未出现 (可能提交卡住)',);
+  expect(
+    finder,
+    findsWidgets,
+    reason: '有界 pump 后 finder 仍未出现 (可能提交卡住)',
+  );
 }
 
 /// step 2 完成按钮的 saving 复位断言: saving=true 时 '下一步 →' 文本被
 /// LoadingSpinner 替代, 文本重新可见 = saving=false (按钮可重试)
 void _expectSavingReset(WidgetTester tester) {
-  expect(find.text('下一步 →'), findsOneWidget,
-      reason: 'saving 应复位 (spinner 消失, 完成按钮文本重新可见)',);
+  expect(
+    find.text('下一步 →'),
+    findsOneWidget,
+    reason: 'saving 应复位 (spinner 消失, 完成按钮文本重新可见)',
+  );
 }
 
 void main() {
@@ -281,8 +290,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // step 3 (done)
-      expect(find.text('全部完成！'), findsOneWidget,
-          reason: '提交成功应进 step 3 done 页',);
+      expect(
+        find.text('全部完成！'),
+        findsOneWidget,
+        reason: '提交成功应进 step 3 done 页',
+      );
 
       // committer 收到数据
       expect(committer.calls, 1);
@@ -296,11 +308,13 @@ void main() {
       final container = ProviderScope.containerOf(
         tester.element(find.byType(SetupPage)),
       );
-      final profileRepo =
-          container.read(userProfileRepositoryProvider)
-              as _RecordingUserProfileRepository;
-      expect(profileRepo.recordConsentCalls, 1,
-          reason: 'setup 完成应记录同意时刻 + 协议版本 (PIPL §14)',);
+      final profileRepo = container.read(userProfileRepositoryProvider)
+          as _RecordingUserProfileRepository;
+      expect(
+        profileRepo.recordConsentCalls,
+        1,
+        reason: 'setup 完成应记录同意时刻 + 协议版本 (PIPL §14)',
+      );
     });
 
     testWidgets('2. step 2 上一步 → 回 step 1 (welcome)', (tester) async {
@@ -312,8 +326,11 @@ void main() {
       await tester.tap(find.text('← 上一步'));
       await tester.pumpAndSettle();
 
-      expect(find.text('您好，我是慢病管家'), findsOneWidget,
-          reason: 'step 2 上一步应回 step 1',);
+      expect(
+        find.text('您好，我是慢病管家'),
+        findsOneWidget,
+        reason: 'step 2 上一步应回 step 1',
+      );
     });
   });
 
@@ -332,14 +349,101 @@ void main() {
 
       // v0.27 round 62: error snackbar 走 l10n '完成设置失败：...'
       expect(find.textContaining('完成设置失败'), findsOneWidget);
-      expect(find.text('您常吃什么药？'), findsOneWidget,
-          reason: '提交失败应停留 step 2',);
+      expect(
+        find.text('您常吃什么药？'),
+        findsOneWidget,
+        reason: '提交失败应停留 step 2',
+      );
       expect(committer.calls, 1);
 
       // saving 复位 → 完成按钮可重试
       _expectSavingReset(tester);
 
       await _drainSnackbars(tester);
+    });
+  });
+
+  group('R114 BUG 9: done 终态防重提交 (幂等 + 禁返回)', () {
+    testWidgets('7. done 步系统返回被阻止 → 停留 done + committer 只调 1 次',
+        (tester) async {
+      final committer = await _pumpSetup(tester);
+      await _walkToMedicationStep(tester);
+
+      await tester.tap(find.text('+ 添加药物'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, '药名'), '舍曲林');
+      await tester.enterText(find.widgetWithText(TextField, '剂量'), '50');
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('下一步 →'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('下一步 →'));
+      await _pumpUntilFound(tester, find.text('全部完成！'));
+      await tester.pumpAndSettle();
+
+      // 模拟系统返回 (Android back / iOS swipe-back)
+      // 注: handlePopRoute 返 true = pop 请求被处理 (PopScope canPop=false
+      // 时 maybePop 返回 true 表示"已拦截"), 真正断言看页面是否停留 done
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('全部完成！'),
+        findsOneWidget,
+        reason: '返回被阻止后应停留 done 页 (修前可回 step 2 重提交)',
+      );
+      expect(
+        find.text('您常吃什么药？'),
+        findsNothing,
+        reason: '修前 done 可返回用药步 → 重复提交药物',
+      );
+      expect(
+        committer.calls,
+        1,
+        reason: 'completeSetup 必须只调 1 次 (修前可返回重提交重复插药)',
+      );
+
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SetupPage)),
+      );
+      final profileRepo = container.read(userProfileRepositoryProvider)
+          as _RecordingUserProfileRepository;
+      expect(
+        profileRepo.recordConsentCalls,
+        1,
+        reason: 'PIPL §14 consent 留痕必须只写 1 次 (修前可重复留痕)',
+      );
+    });
+
+    testWidgets('8. done 后再次触发 _finishSetup 路径 → committer 不重调 (幂等)',
+        (tester) async {
+      final committer = await _pumpSetup(tester);
+      await _walkToMedicationStep(tester);
+
+      await tester.tap(find.text('+ 添加药物'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, '药名'), '舍曲林');
+      await tester.enterText(find.widgetWithText(TextField, '剂量'), '50');
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('下一步 →'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('下一步 →'));
+      await _pumpUntilFound(tester, find.text('全部完成！'));
+      await tester.pumpAndSettle();
+      expect(committer.calls, 1);
+
+      // 重复触发提交路径 (模拟重入): 直接调 state._finishSetup —
+      // _setupDone guard 早退, committer 不再被调
+      final state = tester.state(find.byType(SetupPage)) as SetupPageState;
+      await state.finishSetupForTest();
+      await tester.pumpAndSettle();
+
+      expect(
+        committer.calls,
+        1,
+        reason: '_setupDone 幂等 guard: 重入不得重复提交药物 + consent',
+      );
     });
   });
 }

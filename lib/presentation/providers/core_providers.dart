@@ -7,7 +7,7 @@ import 'package:chroniccare/core/data/repositories/medication/medication_reposit
 import 'package:chroniccare/core/data/repositories/mood/mood_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
-import 'package:chroniccare/core/data/services/encryption_service.dart';
+import 'package:chroniccare/core/data/repositories/worry/worry_repository_impl.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 import 'package:chroniccare/presentation/services/legal_version.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
@@ -15,6 +15,7 @@ import 'package:chroniccare/domain/repositories/medication_repository.dart';
 import 'package:chroniccare/domain/repositories/mood_repository.dart';
 import 'package:chroniccare/domain/repositories/report_history_repository.dart';
 import 'package:chroniccare/domain/repositories/user_profile_repository.dart';
+import 'package:chroniccare/domain/repositories/worry_thread_repository.dart';
 
 /// v0.17 round 14 (P1-3 拆 core_providers): 数据库 + 基础服务 + 仓库 provider
 ///
@@ -60,6 +61,11 @@ final moodRepositoryProvider = Provider<MoodRepository>(
   (ref) => MoodRepositoryImpl(ref.watch(databaseProvider)),
 );
 
+/// v1.1.0 round 9 (F1 烦恼闭环): 烦恼主题仓库
+final worryThreadRepositoryProvider = Provider<WorryThreadRepository>(
+  (ref) => WorryThreadRepositoryImpl(ref.watch(databaseProvider)),
+);
+
 /// v0.15 (Round 18) 树洞仓库 provider 已挪到 vent_providers.dart (round 14 避免循环 import)
 
 /// v0.16 (Round 19): 报告历史仓库（domain 接口 + data impl）
@@ -68,10 +74,6 @@ final reportHistoryRepositoryProvider = Provider<ReportHistoryRepository>(
 );
 
 /// 基础服务 provider (无 feature 依赖)
-
-/// 加密服务 (v0.22 round 28 合并自 CryptoService, 走 EncryptionService 单例 + String API)
-final encryptionServiceProvider =
-    Provider<EncryptionService>((ref) => EncryptionService());
 
 /// 通知服务 (本地 + 自动展示)
 final notificationServiceProvider = Provider<NotificationService>(

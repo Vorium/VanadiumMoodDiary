@@ -14,6 +14,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'package:chroniccare/domain/logic/mood_review_aggregator.dart';
+import 'package:chroniccare/domain/logic/psychology_tips_library.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 树洞预设标签本地化 — 8 个 canonical zh 预设 → ARB key, 未知 (自定义) 原样返回
@@ -70,5 +71,91 @@ String localizedEncouragement(
     MoodReviewEncouragementTier.mid => l10n.moodReviewEncouragementMid,
     MoodReviewEncouragementTier.high => l10n.moodReviewEncouragementHigh,
     MoodReviewEncouragementTier.noAvg => l10n.moodReviewEncouragementNoAvg,
+  };
+}
+
+/// 心理技巧本地化结果 (title / summary / steps 全部按 locale 走 ARB)
+class LocalizedPsychologyTip {
+  const LocalizedPsychologyTip({
+    required this.title,
+    required this.summary,
+    required this.steps,
+  });
+
+  final String title;
+  final String summary;
+  final List<String> steps;
+}
+
+/// 心理技巧本地化 — tip id → ARB key, 未知 id 原样返回 canonical zh
+///
+/// 新增/改名由 test/l10n/preset_content_l10n_round7_test.dart 全量映射断言锁同步
+/// (跟 localizedVentTag / localizedStatusPhrase 同模式)。
+LocalizedPsychologyTip localizedPsychologyTip(
+  BuildContext context,
+  PsychologyTip tip,
+) {
+  final l10n = AppLocalizations.of(context);
+  return switch (tip.id) {
+    'mindfulBreathing' => LocalizedPsychologyTip(
+        title: l10n.psychoTipBreathTitle,
+        summary: l10n.psychoTipBreathSummary,
+        steps: [
+          l10n.psychoTipBreathStep1,
+          l10n.psychoTipBreathStep2,
+          l10n.psychoTipBreathStep3,
+          l10n.psychoTipBreathStep4,
+          l10n.psychoTipBreathStep5,
+        ],
+      ),
+    'nameEmotion' => LocalizedPsychologyTip(
+        title: l10n.psychoTipNameTitle,
+        summary: l10n.psychoTipNameSummary,
+        steps: [
+          l10n.psychoTipNameStep1,
+          l10n.psychoTipNameStep2,
+          l10n.psychoTipNameStep3,
+          l10n.psychoTipNameStep4,
+          l10n.psychoTipNameStep5,
+        ],
+      ),
+    'cognitiveReframing' => LocalizedPsychologyTip(
+        title: l10n.psychoTipCbtTitle,
+        summary: l10n.psychoTipCbtSummary,
+        steps: [
+          l10n.psychoTipCbtStep1,
+          l10n.psychoTipCbtStep2,
+          l10n.psychoTipCbtStep3,
+          l10n.psychoTipCbtStep4,
+          l10n.psychoTipCbtStep5,
+        ],
+      ),
+    'grounding54321' => LocalizedPsychologyTip(
+        title: l10n.psychoTipGroundTitle,
+        summary: l10n.psychoTipGroundSummary,
+        steps: [
+          l10n.psychoTipGroundStep1,
+          l10n.psychoTipGroundStep2,
+          l10n.psychoTipGroundStep3,
+          l10n.psychoTipGroundStep4,
+          l10n.psychoTipGroundStep5,
+        ],
+      ),
+    'progressiveMuscleRelaxation' => LocalizedPsychologyTip(
+        title: l10n.psychoTipPmrTitle,
+        summary: l10n.psychoTipPmrSummary,
+        steps: [
+          l10n.psychoTipPmrStep1,
+          l10n.psychoTipPmrStep2,
+          l10n.psychoTipPmrStep3,
+          l10n.psychoTipPmrStep4,
+          l10n.psychoTipPmrStep5,
+        ],
+      ),
+    _ => LocalizedPsychologyTip(
+        title: tip.title,
+        summary: tip.summary,
+        steps: tip.steps,
+      ),
   };
 }

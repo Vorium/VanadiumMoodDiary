@@ -38,6 +38,37 @@ void main() {
       );
     });
 
+    test('mood-diary → /mood-diary (R113 BUG 4: 情绪提醒通知点击直达)', () {
+      expect(
+        resolveNotificationDeepLinkRoute('chroniccare://mood-diary'),
+        '/mood-diary',
+      );
+    });
+
+    test('check-in/today (旧 payload) → /check-in/today (R114 BUG 1)', () {
+      expect(
+        resolveNotificationDeepLinkRoute('chroniccare://check-in/today'),
+        '/check-in/today',
+      );
+    });
+
+    test('R114 BUG 1: 5 类 payload 全部能 resolve (点击通知不落 null)', () {
+      final payloads = <String>[
+        'chroniccare://today', // NotificationDeepLink.todayCheckIn().encode()
+        'chroniccare://check-in/today', // 旧版硬编码 (已调度旧通知)
+        'chroniccare://medication/42',
+        'chroniccare://assessment/gad7',
+        'chroniccare://mood-diary',
+      ];
+      for (final payload in payloads) {
+        expect(
+          resolveNotificationDeepLinkRoute(payload),
+          isNotNull,
+          reason: 'payload [$payload] 必须 resolve (null = 点击通知死链)',
+        );
+      }
+    });
+
     test('safety-alert/5 → null (round 4b: safety-alert action 整摘)', () {
       expect(
         resolveNotificationDeepLinkRoute('chroniccare://safety-alert/5'),
@@ -69,12 +100,16 @@ void main() {
 
     test('medication 缺 path segment → null', () {
       expect(
-          resolveNotificationDeepLinkRoute('chroniccare://medication'), isNull);
+        resolveNotificationDeepLinkRoute('chroniccare://medication'),
+        isNull,
+      );
     });
 
     test('assessment 缺 path segment → null', () {
       expect(
-          resolveNotificationDeepLinkRoute('chroniccare://assessment'), isNull);
+        resolveNotificationDeepLinkRoute('chroniccare://assessment'),
+        isNull,
+      );
     });
   });
 }

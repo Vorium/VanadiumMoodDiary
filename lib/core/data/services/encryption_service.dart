@@ -79,6 +79,11 @@ class EncryptionService {
   /// 加密字节数组 → 加密 blob(IV + ciphertext 拼接)
   ///
   /// 格式: [16-byte IV][N-byte ciphertext]
+  ///
+  /// TODO(v1.0): AES-256-CBC 无完整性认证 (无 HMAC/GCM) — 密文被篡改不可
+  /// 检测 (仅依赖 PKCS7 padding 校验, 可能碰巧通过并产出错误明文)。
+  /// 本地 at-rest 场景可接受, v1.0 评估换 AES-GCM (自带 auth tag),
+  /// 注意需 blob 格式迁移 (现有格式无 tag 段, 老密文解密回退)。
   Future<Uint8List> encrypt(Uint8List plaintext) async {
     final key = await getOrCreateKey();
     final iv = _randomBytes(16);

@@ -201,7 +201,8 @@ void main() {
     });
 
     test('Phq9Scale + 自定义 translations (AR-17 本地替身) → items 走英文', () {
-      final enScale = Phq9Scale(translations: _EnTranslations(AppLocalizationsEn()));
+      final enScale =
+          Phq9Scale(translations: _EnTranslations(AppLocalizationsEn()));
       expect(enScale.items.length, 9);
       expect(
         enScale.items[0].text,
@@ -300,7 +301,8 @@ class _EnTranslations extends StaticScaleTranslations {
   _EnTranslations(this.l10n);
 
   @override
-  String phq9Item(int index, {String? override}) => override ??
+  String phq9Item(int index, {String? override}) =>
+      override ??
       switch (index) {
         0 => l10n.phq9Item0,
         1 => l10n.phq9Item1,
@@ -315,7 +317,8 @@ class _EnTranslations extends StaticScaleTranslations {
       };
 
   @override
-  String phq9Option(int score, {String? override}) => override ??
+  String phq9Option(int score, {String? override}) =>
+      override ??
       switch (score) {
         0 => l10n.phq9Option0,
         1 => l10n.phq9Option1,
@@ -325,7 +328,8 @@ class _EnTranslations extends StaticScaleTranslations {
       };
 
   @override
-  String phq9SeverityLabel(int rank, {String? override}) => override ??
+  String phq9SeverityLabel(int rank, {String? override}) =>
+      override ??
       switch (rank) {
         0 => l10n.phq9SeverityLabel0,
         1 => l10n.phq9SeverityLabel1,
@@ -336,7 +340,8 @@ class _EnTranslations extends StaticScaleTranslations {
       };
 
   @override
-  String gad7Item(int index, {String? override}) => override ??
+  String gad7Item(int index, {String? override}) =>
+      override ??
       switch (index) {
         0 => l10n.gad7Item0,
         1 => l10n.gad7Item1,
@@ -349,7 +354,8 @@ class _EnTranslations extends StaticScaleTranslations {
       };
 
   @override
-  String gad7SeverityLabel(int rank, {String? override}) => override ??
+  String gad7SeverityLabel(int rank, {String? override}) =>
+      override ??
       switch (rank) {
         0 => l10n.gad7SeverityLabel0,
         1 => l10n.gad7SeverityLabel1,

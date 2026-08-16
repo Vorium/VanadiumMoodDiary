@@ -21,7 +21,8 @@ Widget _wrap({required double textScale, required Widget child}) {
     supportedLocales: AppLocalizations.supportedLocales,
     locale: const Locale('zh'),
     builder: (context, w) => MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: TextScaler.linear(textScale)),
       child: w!,
     ),
     home: Scaffold(body: Center(child: child)),
@@ -134,7 +135,8 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('SectionHeader 复合模式 (title + chip + action) 窄屏不溢出', (tester) async {
+      testWidgets('SectionHeader 复合模式 (title + chip + action) 窄屏不溢出',
+          (tester) async {
         tester.view.physicalSize = const Size(320, 640);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(tester.view.resetPhysicalSize);

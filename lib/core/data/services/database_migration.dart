@@ -1,6 +1,8 @@
 // 规则 3 标记: 迁移错误提示 中文 fallback — v1.0+ i18n (显示层走 ARB)
 import 'dart:io';
 
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/services.dart' show MissingPluginException;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -76,6 +78,88 @@ class DatabaseMigration {
       );
     }
   }
+
+  /// R114 B1-8: 探测本地 DB 是否可解密打开 (key-DB 失配检测)
+  ///
+  /// 场景: Android 备份恢复只还原了 DB 文件、没还原 Keystore 里的加密 key
+  /// (或 key 损坏) → SQLCipher "file is not a database" → 修前用户卡死
+  /// 无法启动, 无任何恢复入口。本探测在 bootstrap 并行跑一次 (开连接 +
+  /// 1 条 trivial 查询), 失败 → main.dart 走 [DatabaseResetPromptApp]
+  /// 引导用户"重试 / 重置本地数据"。
+  ///
+  /// 返回 false = 不可读 (key 失配 / 文件损坏); true = 可读或无需探测
+  /// (无 key / 无 DB 文件 / 测试与 web 平台)。
+  static Future<bool> probeDatabaseReadable() async {
+    if (!await DbKeyService.hasKey()) {
+      // 全新安装 (或旧明文 DB 迁移场景) — 不探测
+      return true;
+    }
+    try {
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, _dbFileName));
+      if (!file.existsSync()) {
+        return true; // 还没建库
+      }
+      final password = await DbKeyService.getOrCreate();
+      // 跟 connection/native.dart 同款防御: base64 校验 + 单引号转义
+      if (!RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(password)) {
+        return false;
+      }
+      final escaped = password.replaceAll("'", "''");
+      final db = _ProbeDatabase(
+        NativeDatabase(
+          file,
+          setup: (db) => db.execute("PRAGMA key = '$escaped'"),
+        ),
+      );
+      try {
+        await db.customSelect('SELECT count(*) AS c FROM sqlite_master').get();
+        return true;
+      } finally {
+        try {
+          await db.close();
+        } catch (_) {
+          // open 失败路径的 close 再抛不重要
+        }
+      }
+    } on MissingPluginException {
+      // 测试环境 path_provider / secure storage plugin 不可用
+      return true;
+    } on UnsupportedError {
+      // web 端 dart:io 不可用
+      return true;
+    } catch (_) {
+      // SQLCipher key 失配 ("file is not a database") / 文件损坏 /
+      // 磁盘错误 → 不可读, 走重置引导
+      return false;
+    }
+  }
+
+  /// R114 B1-8: 重置本地数据 (用户两次确认后调)
+  ///
+  /// 删主 DB 文件 + -wal / -shm 伴生文件 + secure storage 里的加密 key。
+  /// 之后重试启动 = 全新安装 (新 key + 空 DB)。失败抛 [MigrationException]
+  /// — 绝不静默删数据。
+  static Future<void> resetLocalData() async {
+    final dbFolder = await getApplicationDocumentsDirectory();
+    final file = File(p.join(dbFolder.path, _dbFileName));
+    try {
+      for (final f in <File>[
+        file,
+        File('${file.path}-wal'),
+        File('${file.path}-shm'),
+      ]) {
+        if (f.existsSync()) {
+          await f.delete();
+        }
+      }
+    } on FileSystemException catch (e) {
+      throw MigrationException(
+        '无法删除本地数据库（$e）。请尝试卸载重装 App。',
+      );
+    }
+    await DbKeyService.deleteKey();
+  }
 }
 
 /// 迁移失败时抛出
@@ -86,3 +170,25 @@ class MigrationException implements Exception {
   @override
   String toString() => message;
 }
+
+/// R114 B1-8: probeDatabaseReadable 用的最小 GeneratedDatabase
+///
+/// 只为跑一条 trivial 查询触发 lazy open (PRAGMA key setup 回调在首次
+/// SQL 前执行), 不需要表定义。
+class _ProbeDatabase extends GeneratedDatabase {
+  _ProbeDatabase(super.executor);
+
+  @override
+  Iterable<TableInfo<Table, dynamic>> get allTables => const Iterable.empty();
+
+  @override
+  int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy();
+}
+// rule3-whitelist: 76-77, 158
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   R114 B1-8: resetLocalData 错误文案 (MigrationException, 显示层拼
+//   l10n.migrationFailedFooter) 扩行 157-158
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

@@ -129,7 +129,8 @@ int _countOccurrences(String haystack, String needle) =>
     needle.allMatches(haystack).length;
 
 void main() {
-  group('v0.31.1 round 11 P0-09: Apple Health 字面提及 lock-in (Apple 5.1.3 抽审防护)', () {
+  group('v0.31.1 round 11 P0-09: Apple Health 字面提及 lock-in (Apple 5.1.3 抽审防护)',
+      () {
     // ===== Test 1: lib/ 主体代码 (非注释) 不含 "Apple Health" =====
     test('lib/ 主体代码 (import / 字符串 / 标识符) 不含 "Apple Health" 字面', () {
       final libDir = Directory('lib');
@@ -154,7 +155,8 @@ void main() {
       expect(
         violations,
         isEmpty,
-        reason: 'lib/ 主体代码含 $_kAppleHealth 字面 (Apple 5.1.3 used-but-not-declared '
+        reason:
+            'lib/ 主体代码含 $_kAppleHealth 字面 (Apple 5.1.3 used-but-not-declared '
             '抽审风险, 注释是设计参考白名单 OK, 但实际 import / 字符串 / 标识符 '
             '必须 0):\n${violations.join('\n')}',
       );
@@ -215,7 +217,9 @@ void main() {
     });
 
     // ===== Test 3: docs/ 范围 (仅 design spec 允许) =====
-    test('docs/design/2026-08-10-apple-health-redesign/ 之外 docs 不含 "Apple Health" 字面', () {
+    test(
+        'docs/design/2026-08-10-apple-health-redesign/ 之外 docs 不含 "Apple Health" 字面',
+        () {
       // 防止审计报告 / CHANGELOG / 其它 spec 被 Apple 团队误读为产品功能依赖
       // 允许的路径:
       //   - docs/design/* (设计 spec, 含 2026-08-10-apple-health-redesign/)

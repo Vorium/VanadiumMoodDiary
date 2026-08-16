@@ -36,18 +36,20 @@ MoodEntryEntity _mood({
 }
 
 Future<void> _pump(WidgetTester tester, List<MoodEntryEntity> entries) async {
-  await tester.pumpWidget(ProviderScope(
-    overrides: [
-      allMoodProvider.overrideWith((ref) => Stream.value(entries)),
-    ],
-    child: MaterialApp(
-      theme: ThemeData.light(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('zh'),
-      home: const MoodTrendPage(),
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        allMoodProvider.overrideWith((ref) => Stream.value(entries)),
+      ],
+      child: MaterialApp(
+        theme: ThemeData.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: const MoodTrendPage(),
+      ),
     ),
-  ),);
+  );
   await tester.pumpAndSettle();
 }
 

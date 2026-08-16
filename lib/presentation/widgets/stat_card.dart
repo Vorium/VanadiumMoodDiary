@@ -21,7 +21,6 @@
 // - StatCardVariant 加字段但 default = defaultVariant → 老 caller 自动走新视觉
 // Apple Health 风格 (spec §3.2.2 ultralight w200 大数字 + §3.4.4 zero shadow + tintedMetricSoft) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
-
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
@@ -88,6 +87,13 @@ class StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseStyle = _baseStyleFor(context);
     final color = valueColor ?? AppTokens.textPrimaryColor(context);
+    // R114 Wave B2 (B2-6, apple F-09): 大数字加 tabularFigures — 修前
+    // 数字变化时比例数字 (1 vs 8) 宽度不同 → 字符宽度跳动; Apple Health
+    // 大数字 (SF 等宽数字特性) 不抖。全 lib 此前仅 2 处 audio 计时器有。
+    final numberStyle = baseStyle.copyWith(
+      color: color,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
     // v0.31.1 R32 (P1-13 superpowers-en): 用公共 TweenNumber widget,
     // 原 _TweenNumber 95% 重复代码删. 非 int 字符串 ("5天" / "1.2kg") 走
     // 静态 Text 不 tween (避免小数 / 后缀抖动). 跨 widget swap 场景
@@ -98,12 +104,12 @@ class StatCard extends StatelessWidget {
             value: parsedInt,
             builder: (ctx, current) => Text(
               current.toString(),
-              style: baseStyle.copyWith(color: color),
+              style: numberStyle,
             ),
           )
         : Text(
             value,
-            style: baseStyle.copyWith(color: color),
+            style: numberStyle,
           );
     return RepaintBoundary(
       child: Column(

@@ -101,12 +101,14 @@ class Strings {
   // 心理评估提醒 — v0.26 R57: 加 override 参数
   static String notifAssessmentTitle({String? override}) =>
       override ?? '🌿 心理评估时间到';
-  static String notifAssessmentBody(
-    int days,
-    String scaleIdUppercase, {
-    String? override,
-  }) =>
-      override ?? '已经 $days 天没做 $scaleIdUppercase 了，请花 2 分钟做一下评估';
+
+  /// R113 (BUG 8): body 不再含量表名 (scale id) — 修前
+  /// "已经 X 天没做 PHQ9 了" 的 PHQ9 是精神健康量表名, iOS 锁屏横幅
+  /// 可见 = 健康 PII (病耻感 + 隐私侵犯)。修后通用文案, 不点名任何量表。
+  /// 同步删掉 scale id 参数 (签名不收 PII 数据 = 编译期防泄漏,
+  /// 跟 R108 P0-3 notifMedicationBody 同款模式)。
+  static String notifAssessmentBody(int days, {String? override}) =>
+      override ?? '已经 $days 天没做心理评估了，花 2 分钟完成一次';
 
   // 情绪记录提醒 — v0.30 R101: 参照 MedicationNotifier 模式
   static const notifMoodReminderTitle = '🌿 今天心情怎么样？';

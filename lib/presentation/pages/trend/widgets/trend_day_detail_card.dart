@@ -1,4 +1,4 @@
-﻿// trend_day_detail_card.dart — 趋势页日历选中日详情卡片
+// trend_day_detail_card.dart — 趋势页日历选中日详情卡片
 //
 // v0.30 round 95 (sub-spec 4 task 6): 从 trend_calendar.dart 抽出
 //
@@ -18,6 +18,8 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/trend/widgets/trend_event_row.dart';
+import 'package:chroniccare/presentation/services/scale_name_l10n.dart';
+import 'package:chroniccare/presentation/widgets/mood_label.dart';
 
 /// 选中日详情卡片
 ///
@@ -54,6 +56,11 @@ class DayDetailCard extends StatelessWidget {
       tempDefaultLabel: () => l10n.dayDetailTempMed,
       phq9Name: () => l10n.dayDetailPhq9,
       gad7Name: () => l10n.dayDetailGad7,
+      // R114 BUG 4: 全量表名按 id 派发 (8 个 R90 新量表修前显示裸 id)
+      scaleName: (id) => scaleNameL10n(id, l10n),
+      // R114 BUG 4: 情绪标签 + 总分后缀走 l10n (修前 en locale 看中文)
+      moodLabel: (score) => moodLabel(l10n, score),
+      totalScoreLabel: l10n.dayDetailTotalScore,
     );
     final dateStr =
         '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
@@ -181,7 +188,8 @@ class DayDetailCard extends StatelessWidget {
               Column(
                 children: [
                   for (int i = 0; i < detail.events.length; i++) ...[
-                    if (i > 0) const Divider(height: 1, thickness: 0.5, indent: 32),
+                    if (i > 0)
+                      const Divider(height: 1, thickness: 0.5, indent: 32),
                     EventRow(event: detail.events[i]),
                     // v0.29 round 84 (CBT 思维记录): 在 mood event 行下展开 CBT 摘要
                     if (detail.events[i].kind == DayEventKind.mood)

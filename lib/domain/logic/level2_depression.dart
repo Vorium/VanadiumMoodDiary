@@ -38,7 +38,8 @@ class Level2DepressionScale implements AssessmentScale {
   String get displayName => translations.level2DepressionName();
 
   @override
-  String get shortDescription => translations.level2DepressionShortDescription();
+  String get shortDescription =>
+      translations.level2DepressionShortDescription();
 
   @override
   String get instruction => translations.level2DepressionInstruction();
@@ -71,25 +72,25 @@ class Level2DepressionScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 5,
           rank: 0,
-          label: '无抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '无抑郁', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无抑郁倾向',
         ),
         SeverityCutoff(
           threshold: 10,
           rank: 1,
-          label: '轻度抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '轻度抑郁', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '轻度抑郁倾向',
         ),
         SeverityCutoff(
           threshold: 15,
           rank: 2,
-          label: '中度抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '中度抑郁', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度抑郁, 建议就医',
         ),
         SeverityCutoff(
           threshold: 24,
           rank: 3,
-          label: '重度抑郁',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '重度抑郁', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度抑郁, 强烈建议就医',
         ),
       ];
@@ -120,3 +121,6 @@ class Level2DepressionScale implements AssessmentScale {
 
 /// Level 2 抑郁单例 (Task 2 注册表用)
 const level2DepressionScale = Level2DepressionScale();
+// rule3-whitelist: 49-56, 61-64
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

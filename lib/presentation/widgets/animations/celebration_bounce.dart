@@ -1,6 +1,9 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart' show SpringSimulation;
+import 'package:flutter/scheduler.dart' show Ticker;
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare/core/theme/spring.dart';
 
 /// 庆祝动画 — 短暂弹跳 + 淡入淡出
 ///
@@ -8,12 +11,18 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 /// 之前 v0.22 round 30 自研 5 段 TweenSequence (40+ 行) 在
 /// `presentation/pages/home/widgets/celebration_overlay.dart` 唯一使用,
 /// 体系外"野生动效"。现在抽到 `animations/celebration_bounce.dart`,
-/// 跟 FadeIn / SlideUp / PageTransitionSwitcher 并列,token 化保留。
+/// 跟 FadeIn / PageTransitionSwitcher 并列,token 化保留。
 ///
 /// emil 决策框架:
 /// - 频度: rare (1-2 次/周 用户答卷后庆祝) → MotionScheme.delight
-/// - 曲线: scale 0→1.2→1.0 用 curveBackOut (过冲); opacity 用 curveStandard
-/// - 时长: durSlow (500ms, 短促, 不要拖泥带水)
+/// - R114 Wave B2 (B2-9, emil F10/F11):
+///   scale 用 Spring.bouncy.toSimulation(from: 0.5, to: 1.0) 替代
+///   curveBackOut TweenSequence — 物理模型第 2 个真 caller (第 1 个 =
+///   CheckInButton 的 Spring.standard), 欠阻尼 0.42 自然过冲 ~1.12
+///   后收敛 1.0; from 0.5 = "可见的瘪气形状"再膨胀 (修前 0 = 从虚空迸出)
+/// - 实现注: AnimationController.animateWith 会 clamp 值到 [0,1] (过冲被
+///   削平), 所以 scale 用裸 Ticker 直接采样 SpringSimulation (不过冲的
+///   弹簧就不是弹簧)。opacity 保留 TweenSequence 淡入淡出 (独立 controller)。
 class CelebrationBounce extends StatefulWidget {
   final String message;
   final VoidCallback? onCompleted;
@@ -29,33 +38,33 @@ class CelebrationBounce extends StatefulWidget {
 }
 
 class _CelebrationBounceState extends State<CelebrationBounce>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _scale;
+    with TickerProviderStateMixin {
+  /// opacity 淡入淡出 (delight 时长, onCompleted 挂它)
+  late final AnimationController _opacityController;
+
   late final Animation<double> _opacity;
+
+  /// scale 弹簧模拟 + 裸 Ticker (AnimationController.animateWith 会 clamp
+  /// 过冲到 1.0, 无法表达 bouncy 的 >1.0 形态)
+  late final SpringSimulation _scaleSimulation;
+  late final Ticker _scaleTicker;
+
+  /// 当前 scale (ticker 驱动, isDone 后定格 1.0)
+  double _scaleValue = 0.5;
 
   @override
   void initState() {
     super.initState();
     // v0.23 round 40 (emil F2 fix): 改用 MotionScheme.delight token 显式标档位
     // v0.23 round 40 (P1-12 fix): emil "rare/delight 频度上限 1000ms", 之前 1500ms 偏长
-    _controller = AnimationController(
+    _opacityController = AnimationController(
       vsync: this,
       duration: MotionScheme.delight.duration,
     );
-    _scale = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.2)
-            .chain(CurveTween(curve: AppTokens.curveBackOut)),
-        weight: 30,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0)
-            .chain(CurveTween(curve: AppTokens.curveStandard)),
-        weight: 20,
-      ),
-      TweenSequenceItem(tween: ConstantTween(1.0), weight: 50),
-    ]).animate(_controller);
+    // R114 Wave B2 (B2-9, emil F10/F11): Spring.bouncy 物理过冲替代
+    // curveBackOut TweenSequence; from 0.5 = 不从虚空迸出
+    _scaleSimulation = Spring.bouncy.toSimulation(from: 0.5, to: 1.0);
+    _scaleTicker = createTicker(_onScaleTick)..start();
     _opacity = TweenSequence<double>([
       TweenSequenceItem(tween: ConstantTween(0.0), weight: 5),
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 10),
@@ -65,10 +74,10 @@ class _CelebrationBounceState extends State<CelebrationBounce>
             .chain(CurveTween(curve: AppTokens.curveStandard)),
         weight: 25,
       ),
-    ]).animate(_controller);
-    _controller.forward();
+    ]).animate(_opacityController);
+    _opacityController.forward();
     if (widget.onCompleted != null) {
-      _controller.addStatusListener((status) {
+      _opacityController.addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           widget.onCompleted?.call();
         }
@@ -76,18 +85,33 @@ class _CelebrationBounceState extends State<CelebrationBounce>
     }
   }
 
+  /// 裸 Ticker 采样弹簧 (不 clamp — 保留过冲形态)
+  void _onScaleTick(Duration elapsed) {
+    if (!mounted) return;
+    final t = elapsed.inMicroseconds / Duration.microsecondsPerSecond;
+    if (_scaleSimulation.isDone(t)) {
+      _scaleTicker.stop();
+      setState(() => _scaleValue = 1.0);
+    } else {
+      setState(() => _scaleValue = _scaleSimulation.x(t));
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // P0-7: 尊重系统 prefers-reduced-motion。开了就直接跳到终态
-    if (MediaQuery.of(context).disableAnimations && _controller.value < 1.0) {
-      _controller.value = 1.0;
+    if (MediaQuery.of(context).disableAnimations) {
+      _scaleTicker.stop();
+      _scaleValue = 1.0;
+      if (_opacityController.value < 1.0) _opacityController.value = 1.0;
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _opacityController.dispose();
+    _scaleTicker.dispose();
     super.dispose();
   }
 
@@ -98,12 +122,12 @@ class _CelebrationBounceState extends State<CelebrationBounce>
     // 让父 widget 重建不重 paint 庆祝气泡
     return RepaintBoundary(
       child: AnimatedBuilder(
-        animation: _controller,
+        animation: _opacityController,
         builder: (ctx, child) {
           return Opacity(
             opacity: _opacity.value,
             child: Transform.scale(
-              scale: _scale.value,
+              scale: _scaleValue,
               child: child,
             ),
           );

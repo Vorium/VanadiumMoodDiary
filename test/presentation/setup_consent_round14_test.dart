@@ -19,8 +19,7 @@ import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/core/data/services/notification_service.dart';
 
-class _NoopNotificationService extends NotificationService {
-}
+class _NoopNotificationService extends NotificationService {}
 
 Future<void> _pumpSetup(WidgetTester tester) async {
   tester.view.physicalSize = const Size(800, 1600);
@@ -49,7 +48,8 @@ Future<void> _pumpSetup(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('P0-6: step 0 显示 6 个 Checkbox + 5 个法律 label (R103 加医学免责声明)', (tester) async {
+  testWidgets('P0-6: step 0 显示 6 个 Checkbox + 5 个法律 label (R103 加医学免责声明)',
+      (tester) async {
     await _pumpSetup(tester);
 
     // v0.27 R83: 第 4 个 checkbox 是年龄严正声明 (setupLegalAgeAttestation)
@@ -118,7 +118,8 @@ void main() {
     expect(btn3.onPressed, isNull, reason: '只勾 3 个 (含年龄声明), 仍 disabled');
   });
 
-  testWidgets('P0-6: 勾 5 个单独 → 开始设置 enabled (R103 加医学免责后需 5 勾)', (tester) async {
+  testWidgets('P0-6: 勾 5 个单独 → 开始设置 enabled (R103 加医学免责后需 5 勾)',
+      (tester) async {
     await _pumpSetup(tester);
 
     // 6 个 checkbox: 0=全部同意 master, 1-5=5 单独 consent

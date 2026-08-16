@@ -25,6 +25,7 @@
 // **频度 (emil 决策)**: 100+/day (mood 录音) + tens/day (vent 录音),
 // 状态切换是用户主路径, 必须可测。
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/widgets.dart';
@@ -109,6 +110,15 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
   /// P0-2: 播放时生成的临时解密文件路径, dispose 时清理
   @protected
   String? tempDecryptedPath;
+
+  /// R114 BUG 2 (PIPL §28): 录音明文 temp 路径 — subclass 在
+  /// startRecordingImpl 生成后写入本字段, mixin dispose 链第 3.5 步
+  /// best-effort 删除。修前 dispose 链只删 playback temp (第 6 步),
+  /// 录音中途退出页面 → 明文 m4a 永久残留 OS temp。
+  /// mood_audio_recorder_widget 走 MoodAudioService (service 层自管
+  /// 路径 + 自删), 本字段保持 null 即可。
+  @protected
+  String? tempRecordPath;
 
   /// 播放 complete 事件 stream subscription
   ///
@@ -268,6 +278,33 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
+  /// R114 BUG 2 (PIPL §28): 删除录音明文 temp 文件 (best-effort, 不抛)
+  ///
+  /// dispose 链第 3.5 步 + startRecordingImpl 异常回滚共用。
+  /// 删除失败走 audioErrorSink (OS 最终会清 temp, 不阻塞 UI)。
+  /// 注: 用 sync 文件操作 (existsSync/deleteSync) — async File future
+  /// 在 testWidgets FakeAsync zone 永不 resolve, 会卡死 dispose 链
+  /// (后续 player.stop / temp 清理全不跑, R114 BUG 2 实测踩坑)。
+  /// 公共静态 (无 @protected): 子类 (vent_compose 异常回滚) 与
+  /// audio_lifecycle_round108_test 都直接调用, 静态方法无法从子类实例
+  /// 语义访问, 加 @protected 会让其中一方 warning。
+  static Future<void> deleteRecordTempBestEffort(String? path) async {
+    if (path == null || path.isEmpty) return;
+    try {
+      final f = File(path);
+      if (f.existsSync()) {
+        f.deleteSync();
+      }
+    } catch (e, st) {
+      audioErrorSink(
+        where: 'AudioLifecycleMixin.deleteRecordTempBestEffort',
+        error: e,
+        stack: st,
+        note: 'record temp file delete failed — OS will clean',
+      );
+    }
+  }
+
   // ===== 状态机方法 (mixin 统一处理 setState + try/catch) =====
 
   /// 启动录音
@@ -293,6 +330,13 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
         error: e,
         stack: st,
       );
+      // R114 BUG 2 (PIPL §28): startRecordingImpl 半途抛异常 (temp 路径
+      // 已生成) → 回滚删除明文 temp, 否则残留空明文文件
+      final recordTemp = tempRecordPath;
+      tempRecordPath = null;
+      if (recordTemp != null) {
+        await deleteRecordTempBestEffort(recordTemp);
+      }
       if (mounted) {
         setState(() => audioState = AudioState.idle);
       }
@@ -518,7 +562,8 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
     _stopElapsedTicker();
 
     // 3) 如果还在录音 (含 paused), 先 stop (不 await 失败, 防止 hang)
-    if ((audioState == AudioState.recording || audioState == AudioState.paused) &&
+    if ((audioState == AudioState.recording ||
+            audioState == AudioState.paused) &&
         recorder != null) {
       try {
         await recorder.stop();
@@ -530,6 +575,16 @@ mixin AudioLifecycleMixin<T extends StatefulWidget> on State<T> {
           stack: st,
         );
       }
+    }
+
+    // 3.5) R114 BUG 2 (PIPL §28): 删除录音明文 temp — 修前 dispose 链
+    // 只删 playback temp (第 6 步 cleanupTempFile), 录音中途退出页面时
+    // startRecordingImpl 生成的明文 m4a (精神心理患者语音) 永久残留
+    // OS temp。best-effort, 不阻塞链。
+    final recordTemp = tempRecordPath;
+    tempRecordPath = null;
+    if (recordTemp != null) {
+      await deleteRecordTempBestEffort(recordTemp);
     }
 
     // 4) dispose recorder (audioplayers 5.0+ dispose 释放 native handle)

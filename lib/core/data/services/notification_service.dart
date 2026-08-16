@@ -111,7 +111,13 @@ class NotificationService implements NotificationSender {
       channelName: _channelName,
       channelDescription: _channelDesc,
     );
-    _snoozeManager = SnoozeManager(plugin: _plugin);
+    // R114 B1-2: snooze 接 dispatcher.scheduleMode — 与主提醒同进退
+    // (修前硬编码 exactAllowWhileIdle, Android 13+ 撤回 exact 权限后
+    // 主提醒走 inexact 兜底, snooze 却静默丢失/延迟)。
+    _snoozeManager = SnoozeManager(
+      plugin: _plugin,
+      scheduleModeProvider: () => _dispatcher.scheduleMode,
+    );
     _badgeSync = BadgeSyncService(plugin: _plugin);
     _medicationNotifier = MedicationNotifier(
       plugin: _plugin,
@@ -338,7 +344,10 @@ class NotificationService implements NotificationSender {
   // 6 类常量散落到 6 sub-service (单一职责), 这里留文档化列表:
   //   - MedicationNotifier.defaultReminderId        = 1001
   //   - MedicationNotifier.medicationReminderBaseId = 2000  (cancel [2000, 202000))
-  //   - RefillNotifier.refillBaseId                = 6000  (cancel [6000, 206000))
+  //   - RefillNotifier.refillBaseId                = 2500000 (cancel [2500000, 2700000))
+  //       R114 B1-3: 从 6000 迁出 — 修前 refill cancel [6000, 206000) 与
+  //       medication cancel [2000, 202000) 互杀 (单侧 reschedule 静默杀另一类)。
+  //       新位置避开 med / snooze / 固定带; 老 6000 段 id 由 refill 侧精确清理。
   //   - SnoozeManager.snoozeBaseId + cancelRange    = 300000 + 2000000 → [300000, 2300000)
   //   - 固定带 (v0.32 R110 B1-1, 原 5000/7000/8000/9999 落入上面 cancel
   //     区间被静默误杀后全部迁到 5M+; 回归测试 notification_id_band_round110):
@@ -371,3 +380,7 @@ class NotificationService implements NotificationSender {
         reminderDays: reminderDays,
       );
 }
+// rule3-whitelist: 205, 271, 303, 312-313
+//   R114 B1-2/B1-3: 行号随 snooze wiring + 文档注释插入位移
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

@@ -76,7 +76,9 @@ class ConsentDialog {
               // 版本号留痕 (PIPL §13 + §17)
               Text(
                 template.version,
-                style: AppTokens.textStyleCaptionHint(context),
+                // P3-CLEAN-13: 用 builder ctx 而非外层 context — caller
+                // dispose 而 dialog 仍挂时 rebuild 用 defunct element 会崩
+                style: AppTokens.textStyleCaptionHint(ctx),
               ),
             ],
           ),

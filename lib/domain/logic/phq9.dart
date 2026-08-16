@@ -194,3 +194,6 @@ class Phq9Scale implements AssessmentScale {
 /// v0.28 round 65: const Phq9Scale() 默认走
 /// `const StaticScaleTranslations()` 中文 fallback, 21 case test 不破。
 const phq9Scale = Phq9Scale();
+// rule3-whitelist: 36-39
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

@@ -39,8 +39,21 @@ import 'package:chroniccare/domain/usecases/schedule_refill_reminder.dart';
 ///
 /// v0.24 round 45: 委托 ReminderDispatcher 处理 cancel/zonedSchedule。
 class RefillNotifier {
-  /// 续方提醒 id 起始基数 (id = base + medId, 范围 6000-206000)
-  static const int refillBaseId = 6000;
+  /// 续方提醒 id 起始基数 (id = base + medId, cancel [2500000, 2700000))
+  ///
+  /// R114 B1-3: 从 6000 迁到 2,500,000 — 修前 cancel [6000, 206000) 与
+  /// medication cancel [2000, 202000) 互相覆盖: 单侧 reschedule
+  /// (medications_list_widget 软停药只调 rescheduleRefillReminders) 会静默
+  /// 杀死另一类提醒。新位置避开 medication / snooze [300000, 2300000) /
+  /// 固定带 5M+ 三个区间。
+  static const int refillBaseId = 2500000;
+
+  /// R114 B1-3: 升级前的 legacy refill base (v1.1.0+149 之前)
+  ///
+  /// 升级前调度的 refill 提醒 id = 6000 + medId。medication cancel 范围
+  /// [2000, 202000) 会顺带扫掉大部分 legacy id (恰好防重复提醒), 但
+  /// 单侧 refill reschedule 时靠这里按 med 精确取消兜底。
+  static const int legacyRefillBaseId = 6000;
 
   final FlutterLocalNotificationsPlugin _plugin;
   final ReminderDispatcher _dispatcher;
@@ -71,6 +84,7 @@ class RefillNotifier {
   ///
   /// v0.16 round 19B: range 改 200000，配套 rescheduleRefillReminders
   /// 的 cancel 范围。修前 1000 范围，medId >= 1000 漏 cancel。
+  /// R114 B1-3: base 6000 → 2500000 (cancel 带分家, 详见 [refillBaseId])。
   ///
   /// 公开 API: facade `NotificationService.refillNotificationId` 委托本方法,
   /// 现有 test (round 9 / 19B) 直接调 facade 静态 method, 不需改 import。
@@ -78,12 +92,17 @@ class RefillNotifier {
     return refillBaseId + medicationId;
   }
 
+  /// R114 B1-3: legacy id 公式 (升级前 6000 段, 精确清理用)
+  static int legacyRefillNotificationId(int medicationId) {
+    return legacyRefillBaseId + medicationId;
+  }
+
   /// 计算续方提醒的触发时间 (refillAt - reminderDays 当天 9 点本地时间)
   ///
   /// facade 委托到 [RefillScheduler.computeRefillFireTime] (v0.27 round 82 抽离)。
   /// 纯函数, 0 副作用, 0 Flutter 依赖。
-  /// 返回 null 当且仅当 [refillAt] 本身为 null。
-  /// [reminderDays] < 1 时抛 ArgumentError。
+  /// 返回 null 当且仅当 [refillAt] 为 null 或 [reminderDays] < 1
+  /// (R113 BUG 1: 后者从抛 ArgumentError 改为返 null)。
   ///
   /// 公开 API: facade `NotificationService.computeRefillFireTime` 委托本方法,
   /// 现有 test (round 9) 直接调 facade 静态 method, 不需改 import。
@@ -174,6 +193,19 @@ class RefillNotifier {
     await _ensureInitialized();
     final id = refillNotificationId(medication.id);
     await _plugin.cancel(id); // 覆盖前一次
+    // R114 B1-3: legacy id 精确清理 (升级前 6000 段) — 防同药重复提醒。
+    // medication cancel [2000, 202000) 也会扫到 legacy, 但本路径单侧
+    // 调度时必须自己清, 否则 legacy + 新 id 双响。
+    try {
+      await _plugin.cancel(legacyRefillNotificationId(medication.id));
+    } catch (e, st) {
+      piiSafeLog(
+        'RefillNotifier',
+        '⚠️ cancel legacy refill 失败 (medId=${medication.id}): $e',
+        error: e,
+        stackTrace: st,
+      );
+    }
 
     final daysLeft = daysUntilRefill(medication.refillAt!, now);
     final details = _dispatcher.buildChannelDetails();
@@ -201,10 +233,21 @@ class RefillNotifier {
     }
   }
 
-  /// 取消一个 medication 的续方提醒
+  /// 取消一个 medication 的续方提醒 (新 id + R114 B1-3 legacy id)
   Future<void> cancelRefillReminder(int medicationId) async {
     await _ensureInitialized();
     await _plugin.cancel(refillNotificationId(medicationId));
+    try {
+      await _plugin.cancel(legacyRefillNotificationId(medicationId));
+    } catch (e, st) {
+      // legacy 清理 best-effort — 单次通知, 失败也只多响一次
+      piiSafeLog(
+        'RefillNotifier',
+        '⚠️ cancel legacy refill 失败 (medId=$medicationId): $e',
+        error: e,
+        stackTrace: st,
+      );
+    }
   }
 
   /// 重排所有 medication 的续方提醒
@@ -225,7 +268,23 @@ class RefillNotifier {
   ) async {
     await _ensureInitialized();
     // v0.23 (Round 37): cancel 范围走 dispatcher 集中
+    // R114 B1-3: base 迁 2,500,000 后 cancel 带 [2500000, 2700000) 与
+    // medication [2000, 202000) 不相交, 单侧 reschedule 不再互杀。
     await _dispatcher.cancelByIdRange(refillBaseId);
+    // R114 B1-3: legacy 6000 段按 med 精确取消 (升级兼容)。单侧调本方法
+    // (软停药 toggle) 时 medication reschedule 不跑, legacy 靠这里清。
+    for (final med in medications) {
+      try {
+        await _plugin.cancel(legacyRefillNotificationId(med.id));
+      } catch (e, st) {
+        piiSafeLog(
+          'RefillNotifier',
+          '⚠️ cancel legacy refill 失败 (medId=${med.id}): $e',
+          error: e,
+          stackTrace: st,
+        );
+      }
+    }
     final now = DateTime.now();
     final schedules = _scheduleUseCase(medications: medications, now: now);
     int scheduled = 0;
@@ -243,3 +302,7 @@ class RefillNotifier {
     );
   }
 }
+// rule3-whitelist: 154, 163, 173, 185, 204, 228, 232, 246, 282, 301
+//   R114 B1-3: 行号随 legacy cancel 插入位移, 新 CJK 字面量 (legacy cancel 日志) 同步入清单
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

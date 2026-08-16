@@ -1,7 +1,7 @@
 // lib/domain/logic/mood_review_aggregator.dart
-/// 情绪回顾聚合器（v1.1.0）— 周/月统计摘要纯函数
-///
-/// 0 Flutter / 0 Drift 依赖, 输入 entity 列表输出摘要。
+// 情绪回顾聚合器（v1.1.0）— 周/月统计摘要纯函数
+//
+// 0 Flutter / 0 Drift 依赖, 输入 entity 列表输出摘要。
 import 'package:chroniccare/core/shared/json_codec.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 
@@ -51,8 +51,10 @@ List<MoodEntryEntity> filterByRange(
   DateTime endInclusive,
 ) {
   return entries
-      .where((e) =>
-          !e.timestamp.isBefore(start) && !e.timestamp.isAfter(endInclusive))
+      .where(
+        (e) =>
+            !e.timestamp.isBefore(start) && !e.timestamp.isAfter(endInclusive),
+      )
       .toList(growable: false);
 }
 
@@ -108,15 +110,17 @@ MoodReviewSummary summarize(
     periodCounts[p] = (periodCounts[p] ?? 0) + 1;
   }
   final cbtCount = current
-      .where((e) =>
-          e.situation != null ||
-          e.automaticThought != null ||
-          e.evidenceFor != null ||
-          e.evidenceAgainst != null ||
-          e.alternativeThought != null ||
-          e.reratedScore != null ||
-          e.coreBelief != null ||
-          e.behaviorResponse != null)
+      .where(
+        (e) =>
+            e.situation != null ||
+            e.automaticThought != null ||
+            e.evidenceFor != null ||
+            e.evidenceAgainst != null ||
+            e.alternativeThought != null ||
+            e.reratedScore != null ||
+            e.coreBelief != null ||
+            e.behaviorResponse != null,
+      )
       .length;
 
   return MoodReviewSummary(

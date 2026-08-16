@@ -39,9 +39,9 @@ void main() {
   Map<String, dynamic> parseJson(String json) =>
       jsonDecode(json) as Map<String, dynamic>;
 
-  test('1. version = 6', () async {
+  test('1. version = 7', () async {
     final json = parseJson(await svc.exportToJson());
-    expect(json['version'], 6);
+    expect(json['version'], 7);
   });
 
   test('2. 导出不含 contacts key (1.1.0 round 4b: 表已整删)', () async {

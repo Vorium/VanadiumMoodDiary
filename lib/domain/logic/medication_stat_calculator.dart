@@ -80,8 +80,12 @@ class MedicationStatCalculator {
     // 旧逻辑 days - daysWithDose = 14 - 0 = 14 phantom 漏服).
     final missedDays =
         (effectiveDaysClamped - daysWithDose.length).clamp(0, days);
+    // R113 (BUG 5): missedDates 从 effectiveStart (max(periodStart,
+    // med.startDate)) 开始构造, 而不是 periodStart — 修前窗口中途开始的药
+    // (今天刚添加) 的漏服日期全部落在开药之前, 报告里"漏服 7/1、7/2..."
+    // 用户根本没开始吃。
     final missedDates = MissedDateBuilder.build(
-      periodStart: periodStart,
+      periodStart: effectiveStart,
       daysWithDose: daysWithDose,
       missedDays: missedDays,
     );
@@ -107,6 +111,11 @@ class MissedDateBuilder {
   MissedDateBuilder._();
 
   /// 构造漏服日期列表: 按时间正序, 填前 missedDays 天未服药的日子
+  ///
+  /// R113 (BUG 5): [periodStart] 语义 = 漏服扫描起点, caller 应传
+  /// effectiveStart = max(报告窗口起点, 药物 startDate), 保证不报
+  /// "开药之前的漏服"。修前 caller 传窗口起点, 窗口中途开始/今天刚
+  /// 添加的药会报一堆 startDate 之前的 phantom 漏服日期。
   static List<DateTime> build({
     required DateTime periodStart,
     required Set<String> daysWithDose,

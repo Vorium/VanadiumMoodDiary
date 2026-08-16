@@ -64,10 +64,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            medicationsProvider
-                .overrideWith((ref) => Stream.value([_med()])),
-            allCheckInsProvider
-                .overrideWith((ref) => Stream.value(const [])),
+            medicationsProvider.overrideWith((ref) => Stream.value([_med()])),
+            allCheckInsProvider.overrideWith((ref) => Stream.value(const [])),
             checkInNotifierProvider.overrideWith(() => fake),
           ],
           child: MaterialApp(
@@ -103,10 +101,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            medicationsProvider
-                .overrideWith((ref) => Stream.value([_med()])),
-            allCheckInsProvider
-                .overrideWith((ref) => Stream.value(const [])),
+            medicationsProvider.overrideWith((ref) => Stream.value([_med()])),
+            allCheckInsProvider.overrideWith((ref) => Stream.value(const [])),
             checkInNotifierProvider.overrideWith(() => fake),
           ],
           child: MaterialApp(
@@ -152,10 +148,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            medicationsProvider
-                .overrideWith((ref) => Stream.value([_med()])),
-            allCheckInsProvider
-                .overrideWith((ref) => Stream.value(const [])),
+            medicationsProvider.overrideWith((ref) => Stream.value([_med()])),
+            allCheckInsProvider.overrideWith((ref) => Stream.value(const [])),
             checkInNotifierProvider.overrideWith(() => fake),
           ],
           child: MaterialApp(

@@ -17,8 +17,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
-import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
-import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
+import 'package:chroniccare/presentation/widgets/lazy_apple_list_section.dart';
 
 void main() {
   // helper: 3 条 mood entries (覆盖不同 score / note)
@@ -46,7 +47,13 @@ void main() {
   Widget wrap({List<MoodEntryEntity> entries = const []}) {
     return ProviderScope(
       overrides: [
-        moodEntriesProvider.overrideWith((ref) => entries),
+        // R114 B1-7: MoodListPage 直接 watch allMoodProvider (AsyncValue)
+        // 判 loading/error/data — override 真源 Stream
+        allMoodProvider.overrideWith((ref) => Stream.value(entries)),
+        // v1.1.0 round 9 (F1): MoodListPage 内嵌 WorrySection (worry 流),
+        // 测试 override 空列表避免拉起真 DB
+        worryOpenProvider.overrideWith((ref) => Stream.value(const [])),
+        worryResolvedProvider.overrideWith((ref) => Stream.value(const [])),
       ],
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -77,7 +84,8 @@ void main() {
 
     // v0.32 R112 (EM-02/AH-04, spec §5.5): 列表走 AppleListSection
     // + entry count title ("3 条记录", l10n.moodListEntryCount)
-    expect(find.byType(AppleListSection), findsOneWidget);
+    // R114 B1-1: 懒加载恢复 → LazyAppleListSection (sliver 化, 外观不变)
+    expect(find.byType(LazyAppleListSection), findsOneWidget);
     expect(find.text('3 条记录'), findsOneWidget);
   });
 

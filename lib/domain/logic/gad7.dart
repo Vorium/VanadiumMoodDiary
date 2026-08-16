@@ -132,3 +132,6 @@ class Gad7Scale implements AssessmentScale {
 
 /// GAD-7 单例（注册表用）
 const gad7Scale = Gad7Scale();
+// rule3-whitelist: 31-37, 42-45
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

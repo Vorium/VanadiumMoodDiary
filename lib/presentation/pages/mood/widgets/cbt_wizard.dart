@@ -27,6 +27,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_section_field.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_explainer_card.dart';
+import 'package:chroniccare/presentation/widgets/mood_score_buttons.dart';
 
 class CbtWizard extends ConsumerWidget {
   /// v0.30 round 92 (audit-fixes / P0 #11): 5/7 栏 "完成" 按钮回调
@@ -117,7 +118,8 @@ class CbtWizard extends ConsumerWidget {
                   }
                 },
                 child: Text(
-                    isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep,),
+                  isLastStep ? l10n.moodCbtComplete : l10n.moodCbtNextStep,
+                ),
               ),
             ],
           ),
@@ -167,21 +169,15 @@ class CbtWizard extends ConsumerWidget {
             style: AppTokens.textStyleLabel(context),
           ),
           const SizedBox(height: AppTokens.spacingSm),
-          // score 选择 (5 档:1-5)
-          // v0.29 round 84 (Task 6 fix): chip 现在写 notifier.updateScore
+          // score 选择 (5 档:1-5) — v1.1.0 R114 (Wave D, spec §5.5):
+          // ChoiceChip 改 5 档 72pt 圆形 MoodScoreButtons (跟 3 栏评分组同款)
+          // v0.29 round 84 (Task 6 fix): 现在写 notifier.updateScore
           // (overwrite, 走 CBT 路径保留 8 个 CBT 字段)。
-          Wrap(
-            spacing: AppTokens.spacingSm,
-            children: List.generate(5, (i) {
-              final score = i + 1;
-              return ChoiceChip(
-                label: Text('$score'),
-                selected: state.draft.score == score,
-                onSelected: (_) {
-                  notifier.updateScore(score);
-                },
-              );
-            }),
+          MoodScoreButtons(
+            value: state.draft.score,
+            onChanged: (score) {
+              notifier.updateScore(score);
+            },
           ),
           const SizedBox(height: AppTokens.spacingMd),
           CbtSectionField(
@@ -221,18 +217,14 @@ class CbtWizard extends ConsumerWidget {
             l10n.moodCbtScoreReratedLabel,
             style: AppTokens.textStyleLabel(context),
           ),
-          Wrap(
-            spacing: AppTokens.spacingSm,
-            children: List.generate(5, (i) {
-              final score = i + 1;
-              return ChoiceChip(
-                label: Text('$score'),
-                selected: state.draft.reratedScore == score,
-                onSelected: (_) {
-                  notifier.updateField(reratedScore: score);
-                },
-              );
-            }),
+          const SizedBox(height: AppTokens.spacingSm),
+          // v1.1.0 R114 (Wave D, spec §5.5): 重新评分同样走 5 档圆形按钮
+          // reratedScore 可空 (未评) → 0 = 无选中 (MoodScoreButtons 容忍越界值)
+          MoodScoreButtons(
+            value: state.draft.reratedScore ?? 0,
+            onChanged: (score) {
+              notifier.updateField(reratedScore: score);
+            },
           ),
         ],
       );

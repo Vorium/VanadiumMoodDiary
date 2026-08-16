@@ -80,8 +80,12 @@ class MedicationNotifier {
     final details = _dispatcher.buildChannelDetails();
 
     try {
-      // v0.11: payload = "chroniccare://check-in/today"
-      const payload = 'chroniccare://check-in/today';
+      // R114 BUG 1: payload 改走 NotificationDeepLink.encode() —
+      // 修前硬编码 'chroniccare://check-in/today' (host='check-in'),
+      // resolver 只认 host 'today' → 点击通知完全无反应 (R113 BUG 4
+      // mood-diary 同款死链漏网)。resolver 同时加了 'check-in' case
+      // 兼容已调度的旧 payload。
+      final payload = NotificationDeepLink.todayCheckIn().encode();
       await _dispatcher.zonedDaily(
         id: defaultReminderId,
         title: Strings.notifDailyCheckInTitle,
@@ -159,3 +163,6 @@ class MedicationNotifier {
     );
   }
 }
+// rule3-whitelist: 98, 100, 122, 155, 162
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

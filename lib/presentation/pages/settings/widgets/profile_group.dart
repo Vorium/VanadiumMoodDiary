@@ -19,12 +19,14 @@
 // - 接受 onMedRetry 可选 callback (测试注入)
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medications_list_widget.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/assessment_section.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
@@ -77,9 +79,38 @@ class ProfileGroup extends ConsumerWidget {
         const SizedBox(height: AppTokens.spacingSm),
         const AssessmentSection(),
         const SizedBox(height: AppTokens.spacingMd),
+
+        // === 心理技巧 (v1.1.0 论文落地 F3) ===
+        // 本地正念/情绪调节技巧库入口 → /tips
+        SectionHeader(title: l10n.psychoTipsTitle),
+        const SizedBox(height: AppTokens.spacingSm),
+        AppleListSection(
+          margin: EdgeInsets.zero,
+          children: [
+            _alsCell(
+              AppListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(
+                  Icons.self_improvement,
+                  color: AppTokens.primaryColor(context),
+                ),
+                title: Text(l10n.psychoTipsTitle),
+                subtitle: Text(l10n.psychoTipBreathSummary),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/tips'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTokens.spacingMd),
       ],
     );
   }
+}
+
+/// AppListTile 在 AppleListSection 白色容器内需包透明 Material
+Widget _alsCell(Widget child) {
+  return Material(type: MaterialType.transparency, child: child);
 }
 
 /// 用户头像/健康档案入口卡 (参照 Apple Health Profile)

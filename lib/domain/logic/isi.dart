@@ -73,25 +73,25 @@ class IsiScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 7,
           rank: 0,
-          label: '无失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '无失眠', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无临床失眠',
         ),
         SeverityCutoff(
           threshold: 14,
           rank: 1,
-          label: '阈下失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '阈下失眠', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '亚临床失眠, 建议关注',
         ),
         SeverityCutoff(
           threshold: 21,
           rank: 2,
-          label: '中度失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '中度失眠', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度失眠, 建议就医',
         ),
         SeverityCutoff(
           threshold: 28,
           rank: 3,
-          label: '重度失眠',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '重度失眠', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度失眠, 强烈建议就医',
         ),
       ];
@@ -122,3 +122,6 @@ class IsiScale implements AssessmentScale {
 
 /// ISI 单例 (Task 2 注册表用)
 const isiScale = IsiScale();
+// rule3-whitelist: 50-56, 61-65
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

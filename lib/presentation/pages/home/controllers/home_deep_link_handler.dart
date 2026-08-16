@@ -41,6 +41,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart'
     show HomeLifecycleState;
@@ -193,10 +194,19 @@ class HomeDeepLinkHandler {
   /// v0.30 R108 (P1 home_page_state 拆): 显示"该吃了"提示
   ///
   /// 抽自原 home_page_state._showMedicationHint (5L)。
+  /// R114 BUG 8: 修前直接 `homeMedHint(medId)` → 用户看到 "准备打卡药物
+  /// #5" 裸数据库 id。修: 从 medicationsProvider 缓存查药名 (跟
+  /// autofireMedicationCheckIn 同款), 查不到 fallback 通用名
+  /// (homeAutofireFallbackName), 不再泄漏内部 id。
   void showMedicationHint(int medId, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final meds =
+        ref.read(medicationsProvider).value ?? const <MedicationEntity>[];
+    final med = meds.where((m) => m.id == medId).firstOrNull;
+    final name = med?.name ?? l10n.homeAutofireFallbackName;
     AppSnackBar.showInfo(
       context,
-      AppLocalizations.of(context).homeMedHint(medId),
+      l10n.homeMedHint(name),
     );
   }
 

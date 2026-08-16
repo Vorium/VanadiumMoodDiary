@@ -71,25 +71,25 @@ class Level2PsychosisScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 5,
           rank: 0,
-          label: '无症状',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '无症状', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无精神病性症状',
         ),
         SeverityCutoff(
           threshold: 10,
           rank: 1,
-          label: '轻度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '轻度', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '轻度精神病性症状',
         ),
         SeverityCutoff(
           threshold: 15,
           rank: 2,
-          label: '中度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '中度', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度精神病性症状, 建议就医',
         ),
         SeverityCutoff(
           threshold: 24,
           rank: 3,
-          label: '重度',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '重度', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度精神病性症状, 强烈建议就医',
         ),
       ];
@@ -120,3 +120,6 @@ class Level2PsychosisScale implements AssessmentScale {
 
 /// Level 2 精神病单例 (Task 2 注册表用)
 const level2PsychosisScale = Level2PsychosisScale();
+// rule3-whitelist: 48-55, 60-63
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

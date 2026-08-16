@@ -148,7 +148,8 @@ class AppMotion {
   ///
   /// 保留 theme-aware getter 签名 (走 BuildContext), 当前固定返 `[]`。
   /// 调用方无感知, 0 渲染开销。
-  static List<BoxShadow> shadowCardOf(BuildContext context) => const <BoxShadow>[];
+  static List<BoxShadow> shadowCardOf(BuildContext context) =>
+      const <BoxShadow>[];
 
   /// Apple Health 卡片深阴影: **0 阴影** (空 list, 跟 shadowCardOf 同步)
   ///

@@ -214,7 +214,9 @@ class _ImportDialogState extends State<ImportDialog> {
               final l10n = AppLocalizations.of(context);
               final summary = _localizedImportSummary(l10n, result);
               AppSnackBar.showInfo(
-                  context, l10n.settingsImportSuccess(summary));
+                context,
+                l10n.settingsImportSuccess(summary),
+              );
             } else {
               setState(() => _importing = false);
               // v0.27 round 59 (emil EMIL-T13): 用 showError 集中器

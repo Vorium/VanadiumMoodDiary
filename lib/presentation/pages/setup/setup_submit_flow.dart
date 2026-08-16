@@ -28,20 +28,18 @@ class SetupSubmitFlow {
   /// 跟原 _finishSetup 1:1: name 走 trim, 空 name 跳过,
   /// double.tryParse 失败 → 0, times 转 HourMinute。
   static List<
-          ({
-            String name,
-            double dosage,
-            String dosageUnit,
-            List<HourMinute> times,
-          })>
-      collectMedications(List<MedDraft> meds) {
-    final medicationList = <
-        ({
-          String name,
-          double dosage,
-          String dosageUnit,
-          List<HourMinute> times,
-        })>[];
+      ({
+        String name,
+        double dosage,
+        String dosageUnit,
+        List<HourMinute> times,
+      })> collectMedications(List<MedDraft> meds) {
+    final medicationList = <({
+      String name,
+      double dosage,
+      String dosageUnit,
+      List<HourMinute> times,
+    })>[];
     for (final m in meds) {
       final name = m.nameController.text.trim();
       if (name.isEmpty) continue;

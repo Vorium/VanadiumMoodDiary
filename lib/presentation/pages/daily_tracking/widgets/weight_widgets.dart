@@ -58,8 +58,8 @@ class WeightListWidget extends ConsumerWidget {
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
               error: (e, st) => ErrorState(
-                  title: l10n.commonLoadFailed(e.toString()),
-                ),
+                title: l10n.commonLoadFailed(e.toString()),
+              ),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.monitor_weight_outlined,

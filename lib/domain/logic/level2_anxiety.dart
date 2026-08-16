@@ -70,25 +70,25 @@ class Level2AnxietyScale implements AssessmentScale {
         SeverityCutoff(
           threshold: 4,
           rank: 0,
-          label: '无焦虑',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '无焦虑', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '无焦虑倾向',
         ),
         SeverityCutoff(
           threshold: 9,
           rank: 1,
-          label: '轻度焦虑',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '轻度焦虑', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '轻度焦虑倾向',
         ),
         SeverityCutoff(
           threshold: 14,
           rank: 2,
-          label: '中度焦虑',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '中度焦虑', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '中度焦虑, 建议就医',
         ),
         SeverityCutoff(
           threshold: 21,
           rank: 3,
-          label: '重度焦虑',  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+          label: '重度焦虑', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
           summary: '重度焦虑, 强烈建议就医',
         ),
       ];
@@ -119,3 +119,6 @@ class Level2AnxietyScale implements AssessmentScale {
 
 /// Level 2 焦虑单例 (Task 2 注册表用)
 const level2AnxietyScale = Level2AnxietyScale();
+// rule3-whitelist: 48-54, 59-62
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

@@ -27,6 +27,11 @@ import 'package:chroniccare/core/data/services/notification_payload.dart';
 class SnoozeManager {
   final FlutterLocalNotificationsPlugin _plugin;
 
+  /// R114 B1-2: Android 调度 mode 决策注入 (生产接 ReminderDispatcher.scheduleMode,
+  /// 与主提醒同进退)。修前 snooze 硬编码 exactAllowWhileIdle, Android 13+ 用户
+  /// 撤回 SCHEDULE_EXACT_ALARM 后主提醒走 inexact 兜底、snooze 静默丢失。
+  final AndroidScheduleMode Function() _scheduleModeProvider;
+
   /// snooze id 起始基数（300000+ 范围，远离 medication/reminder cancel range）
   final int snoozeBaseId;
 
@@ -38,6 +43,8 @@ class SnoozeManager {
 
   SnoozeManager({
     required FlutterLocalNotificationsPlugin plugin,
+    // R114 B1-2: 可选注入 (默认 exact, 向后兼容老测试 / 无 dispatcher 场景)
+    AndroidScheduleMode Function()? scheduleModeProvider,
     // v0.23 (P0-1 H3 fix): snooze base 从 4000 挪到 300000, 避免被
     //   _dispatcher.cancelByIdRange(2000) [范围 2000..202000) 误杀
     //   旧公式 4000 + medId*1440 + minutes 范围 [5441, 6880] (medId=1) 落入
@@ -47,7 +54,9 @@ class SnoozeManager {
     this.snoozeBaseId = 300000,
     this.minutesPerMedication = 1440,
     this.cancelRange = 2000000,
-  }) : _plugin = plugin;
+  })  : _plugin = plugin,
+        _scheduleModeProvider = scheduleModeProvider ??
+            (() => AndroidScheduleMode.exactAllowWhileIdle);
 
   /// 调度一个**一次性**延迟通知（snooze 用）
   ///
@@ -107,8 +116,12 @@ class SnoozeManager {
     );
 
     final fireAt = tz.TZDateTime.now(tz.local).add(Duration(minutes: minutes));
+    // R114 BUG 1: medId=0 payload 改走 NotificationDeepLink.encode()
+    // (修前硬编码 'chroniccare://check-in/today' host='check-in' 无
+    // resolver case → 点击死链; resolver 侧同时加 'check-in' case 兼容
+    // 已调度的旧 payload)
     final payload = medicationId == 0
-        ? 'chroniccare://check-in/today'
+        ? NotificationDeepLink.todayCheckIn().encode()
         : NotificationDeepLink.medicationCheckIn(medicationId).encode();
     try {
       await _plugin.zonedSchedule(
@@ -117,7 +130,8 @@ class SnoozeManager {
         body ?? Strings.snoozeBody,
         fireAt,
         details,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        // R114 B1-2: 走注入的 mode 决策 (默认 exact 向后兼容), 不再硬编码
+        androidScheduleMode: _scheduleModeProvider(),
         // 不加 matchDateTimeComponents：只触发一次
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
@@ -159,3 +173,7 @@ class SnoozeManager {
     }
   }
 }
+// rule3-whitelist: 78, 142, 145
+//   R114 B1-2: 行号随 scheduleModeProvider 插入位移
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

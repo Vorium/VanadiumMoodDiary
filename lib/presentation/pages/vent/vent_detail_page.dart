@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
@@ -128,11 +129,14 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
         if (context.mounted) setState(() => _isPlaying = true);
       } catch (e) {
         // v0.22 round 28 (spen-bug-02): 失败时清 temp file 避免堆积
+        // v1.1.0 R113 (BUG 5): 修前这里 `ref.read(ventAudioStorageProvider)`
+        // — async gap (decryptToTemp/play await) 里 widget 可能已 unmount,
+        // Riverpod 3 ref.read 抛 StateError (跟 dispose 段 B1-11 同款 bug)。
+        // 修: 用 initState/build 阶段缓存的 `_storage!` 字段 (其他 3 个
+        // 调用点同款模式)。
         if (_tempDecryptedPath != null) {
           try {
-            await ref
-                .read(ventAudioStorageProvider)
-                .deleteTempFile(_tempDecryptedPath!);
+            await _storage!.deleteTempFile(_tempDecryptedPath!);
           } catch (e, st) {
             // v0.22 round 30 (sp-en P1-3): 走 swallowError
             audioErrorSink(
@@ -192,6 +196,8 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
     final l10n = AppLocalizations.of(context);
     await Haptics.warning();
     if (!mounted) return;
+    // R112-10: repo 在 async gap 前捕获 — ref 不跨 unmount 使用
+    final repo = ref.read(ventRepositoryProvider);
     final ok = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -225,9 +231,35 @@ class _VentDetailPageState extends ConsumerState<VentDetailPage> {
           note: 'player.stop failed, continuing to delete entry',
         );
       }
-      // 删
-      await ref.read(ventRepositoryProvider).delete(entry.id);
-      if (mounted) context.pop();
+      // R114 BUG 7 (R113 BUG 7 只修列表页): 详情页删除裸 await 无
+      // try/catch — delete 抛异常 = unhandled async error + 页面停留
+      // 无提示。修: try/catch + swallowError + 错误 snackbar (与
+      // vent_list_page._confirmDelete 对齐); ok==false (行已不存在)
+      // → invalidate 让详情页走 EmptyState。
+      try {
+        final deleted = await repo.delete(entry.id);
+        if (!mounted) return;
+        if (deleted) {
+          context.pop();
+        } else {
+          // 行已不存在 (并发删除) — 刷新详情流 → EmptyState
+          ref.invalidate(ventEntryByIdProvider(entry.id));
+        }
+      } catch (e, st) {
+        swallowError(
+          where: 'vent_detail_page._delete',
+          error: e,
+          stack: st,
+          note: 'vent 详情删除失败 — snackbar 已提示用户',
+        );
+        if (mounted) {
+          AppSnackBar.showError(
+            context,
+            action: l10n.commonDelete,
+            error: e,
+          );
+        }
+      }
     }
   }
 

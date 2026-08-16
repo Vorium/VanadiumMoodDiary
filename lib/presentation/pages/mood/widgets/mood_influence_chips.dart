@@ -67,8 +67,6 @@ class MoodInfluenceChips extends StatelessWidget {
       ],
     );
   }
-
-
 }
 
 class _CategorySection extends StatelessWidget {

@@ -89,7 +89,9 @@ void main() {
   });
 
   group('medication_notifier.dart R108 P0#3 caller 静态分析', () {
-    test('caller 1: medication_notifier.dart 调无参版 Strings.notifMedicationBody()', () async {
+    test(
+        'caller 1: medication_notifier.dart 调无参版 Strings.notifMedicationBody()',
+        () async {
       // 读源文件做静态检查
       final file = dart_io.File(
         'lib/core/data/services/medication_notifier.dart',
@@ -110,6 +112,75 @@ void main() {
         oldPattern.hasMatch(content),
         isFalse,
         reason: 'medication_notifier.dart 不应再传 med.dosage 给 body (PII 风险)',
+      );
+    });
+  });
+
+  group('Strings.notifAssessmentBody R113 BUG 8 锁屏 body 脱敏验证', () {
+    test('case 1: 默认 body 不含量表名 (PHQ9 / GAD7 等 scaleId)', () {
+      // 修前: "已经 X 天没做 PHQ9 了，请花 2 分钟做一下评估" —
+      //   PHQ9 是精神健康量表名, iOS 锁屏横幅可见 = 健康 PII
+      final body = Strings.notifAssessmentBody(14);
+      for (final scale in ['PHQ9', 'PHQ-9', 'GAD7', 'GAD-7', 'phq9', 'gad7']) {
+        expect(
+          body.contains(scale),
+          isFalse,
+          reason: 'body 不应含量表名 "$scale" (锁屏 PII 风险)',
+        );
+      }
+    });
+
+    test('case 2: 默认 body 是通用引导文案 (含"评估", 不含量表名)', () {
+      final body = Strings.notifAssessmentBody(14);
+      expect(
+        body.contains('评估'),
+        isTrue,
+        reason: 'body 应保留通用"评估"引导语义, 实际: "$body"',
+      );
+      expect(
+        RegExp(r'[A-Z]{2,}\d*').hasMatch(body),
+        isFalse,
+        reason: 'body 不应含大写缩写量表名 (PHQ9/GAD7 形态), 实际: "$body"',
+      );
+    });
+
+    test('case 3: override 参数支持 i18n 注入', () {
+      final customBody = Strings.notifAssessmentBody(
+        14,
+        override: 'Custom assessment reminder body',
+      );
+      expect(customBody, 'Custom assessment reminder body');
+    });
+
+    test('case 4: 签名不再接收 scaleIdUppercase 参数 (编译期防泄漏)', () async {
+      final file = dart_io.File('lib/core/l10n/strings.dart');
+      final content = await file.readAsString();
+      expect(
+        content.contains('scaleIdUppercase'),
+        isFalse,
+        reason: 'notifAssessmentBody 不应再接收 scaleId 参数 (R113 BUG 8)',
+      );
+    });
+  });
+
+  group('assessment_notifier.dart R113 BUG 8 caller 静态分析', () {
+    test('caller: assessment_notifier.dart 不再传 scaleId 给 body', () async {
+      final file = dart_io.File(
+        'lib/core/data/services/assessment_notifier.dart',
+      );
+      final content = await file.readAsString();
+      // 应调无 scaleId 版: Strings.notifAssessmentBody(days)
+      expect(
+        RegExp(r'Strings\.notifAssessmentBody\(\s*days\s*\)').hasMatch(content),
+        isTrue,
+        reason:
+            'assessment_notifier.dart 应调无 scaleId 版 notifAssessmentBody(days)',
+      );
+      // 不应再把 scaleId.toUpperCase() 拼进 body (修前: notifAssessmentBody(days, scaleId.toUpperCase()))
+      expect(
+        content.contains('scaleId.toUpperCase()'),
+        isFalse,
+        reason: 'assessment_notifier.dart 不应再把 scaleId 拼进 body (锁屏 PII)',
       );
     });
   });

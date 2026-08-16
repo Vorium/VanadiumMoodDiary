@@ -2,12 +2,13 @@
 //
 // 背景 (BUG): 固定 ID (safety 5000 / assessment 7000 / mood 8000 /
 // badge 9999 / care push 8000+) 全部落在 medication [2000, 202000) 与
-// refill [6000, 206000) 的 cancelByIdRange 区间内 — 每次启动 / 改药 /
+// refill 的 cancelByIdRange 区间内 — 每次启动 / 改药 /
 // 续方重排都会静默删除这些 pending 通知。
 //
 // 修法: 全部迁到 5,000,000+ 固定带, 远离:
 //   - med   cancel [medicationReminderBaseId, +kReminderCancelRange) = [2000, 202000)
-//   - refill cancel [refillBaseId, +kReminderCancelRange)          = [6000, 206000)
+//   - refill cancel [refillBaseId, +kReminderCancelRange)          = [2500000, 2700000)
+//       (R114 B1-3: 从 [6000, 206000) 迁出, 与 medication cancel 分家)
 //   - snooze base 300000 + cancel 2000000                          = [300000, 2300000)
 //   - defaultReminderId 1001 (在 2000 之下, 天然安全)
 //
@@ -22,11 +23,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/core/data/services/assessment_notifier.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/mood_reminder_notifier.dart';
+import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 
 void main() {
   // 所有 cancel 区间的上界 (> 任何 base + kReminderCancelRange)
-  const int medRefillCancelMax = 206000;
+  // R114 B1-3: refill cancel 区间 [2500000, 2700000)
+  const int refillCancelMax =
+      RefillNotifier.refillBaseId + kReminderCancelRange;
   // snooze 上界 = snoozeBaseId + cancelRange (可配置, 用最坏情形 2300000)
   const int snoozeCancelMax = 300000 + 2000000;
 
@@ -64,7 +68,7 @@ void main() {
       }
     });
 
-    test('固定 ID 不落在 refill cancel 区间 [6000, 206000)', () {
+    test('固定 ID 不落在 refill cancel 区间 (R114 B1-3: [2500000, 2700000))', () {
       final fixedIds = <int>[
         AssessmentNotifier.assessmentReminderId,
         MoodReminderNotifier.moodReminderId,
@@ -72,9 +76,10 @@ void main() {
       ];
       for (final id in fixedIds) {
         expect(
-          id < 6000 || id >= medRefillCancelMax,
+          id < RefillNotifier.refillBaseId || id >= refillCancelMax,
           isTrue,
-          reason: '固定 ID $id 不得落入 [6000, 206000)',
+          reason: '固定 ID $id 不得落入 refill cancel 区间 '
+              '[${RefillNotifier.refillBaseId}, $refillCancelMax)',
         );
       }
     });
@@ -86,14 +91,20 @@ void main() {
       const maxMedIdValue = 2000 + maxMedId * 10 + 9;
       expect(maxMedIdValue, lessThan(2000 + kReminderCancelRange));
 
-      // refill id 公式: 6000 + medId; 上限 medId 19999 → 25999 < 206000 安全
+      // refill id 公式: 2500000 + medId (R114 B1-3); 上限 medId 19999 → 2519999
       for (final medId in [0, 1, 398, 399, 19999]) {
-        final refillId = 6000 + medId;
-        expect(refillId, greaterThanOrEqualTo(6000));
-        expect(refillId, lessThan(medRefillCancelMax));
+        final refillId = RefillNotifier.refillBaseId + medId;
+        expect(refillId, greaterThanOrEqualTo(RefillNotifier.refillBaseId));
+        expect(refillId, lessThan(refillCancelMax));
       }
 
-      // 固定带成员不能撞 med/refill/snooze 任一区间 — 上面 2 个 test 已覆盖
+      // R114 B1-3 双向不串: refill id 空间 [2500000, 2700000) 与
+      // med cancel 上界 202000 不相交 (refill 下界 > med 上界)
+      expect(
+        RefillNotifier.refillBaseId,
+        greaterThan(2000 + kReminderCancelRange),
+        reason: 'refill 下界必须大于 medication cancel 上界 (B1-3 分家)',
+      );
     });
 
     test('固定 ID 彼此互不冲突', () {

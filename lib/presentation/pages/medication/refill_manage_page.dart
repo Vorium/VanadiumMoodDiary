@@ -141,14 +141,11 @@ class RefillManagePage extends ConsumerWidget {
         // 章节 1: 顶部汇总 — SectionHeader ALL CAPS + AppleListSection
         // v0.31 R11a: 4 StatCard 改 ultralight large variant (34pt w200)
         // 装在 AppleListSection 内 (iOS 群组列表风格)
-        Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          child: SectionHeader(title: l10n.refillManageSummary),
-        ),
+        // R114 Wave B2 (B2-4): 页面内所有 pageMarginH 20 删除 — 本页在
+        // PageScaffold 内 (已包 20px), 内部再包 20 曾叠加成 40px 双重 inset。
+        SectionHeader(title: l10n.refillManageSummary),
         const SizedBox(height: AppTokens.spacingXxs),
         AppleListSection(
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             // 2x2 StatCard 网格 — ultralight large variant (34pt w200)
             IntrinsicHeight(
@@ -204,32 +201,23 @@ class RefillManagePage extends ConsumerWidget {
         const SizedBox(height: AppTokens.spacingMd),
 
         // 章节 2: 续方列表 — SectionHeader ALL CAPS + AppleListSection
-        Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          child: SectionHeader(
-            title: l10n.refillManageMedsList,
-            chip: '${rows.length}', // 数量 chip
-          ),
+        // (R114 B2-4: 页边距由 PageScaffold 负责, 不再页面内包 20)
+        SectionHeader(
+          title: l10n.refillManageMedsList,
+          chip: '${rows.length}', // 数量 chip
         ),
         const SizedBox(height: AppTokens.spacingXxs),
 
         if (rows.isEmpty)
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-            child: Center(
-              child: Text(
-                l10n.medsNoMedicationsAdded,
-                style: AppTokens.textStyleBody(context)
-                    .copyWith(color: AppTokens.textHintColor(context)),
-              ),
+          Center(
+            child: Text(
+              l10n.medsNoMedicationsAdded,
+              style: AppTokens.textStyleBody(context)
+                  .copyWith(color: AppTokens.textHintColor(context)),
             ),
           )
         else
           AppleListSection(
-            margin:
-                const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
             children: [
               // v0.31 R11a: 列表项 - 改用 _RefillRow (已包 AppListTile.standard)
               for (final r in rows)
@@ -242,15 +230,12 @@ class RefillManagePage extends ConsumerWidget {
 
         const SizedBox(height: AppTokens.spacingMd),
         // iOS section footer — 章节下方说明文字
-        Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
-          child: Text(
-            l10n.medsRefillEditHint,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHintColor(context),
-            ),
+        // (R114 B2-4: 页边距由 PageScaffold 负责, 不再页面内包 20)
+        Text(
+          l10n.medsRefillEditHint,
+          style: TextStyle(
+            fontSize: AppTokens.fontSizeCaption,
+            color: AppTokens.textHintColor(context),
           ),
         ),
         const SizedBox(height: AppTokens.spacingLg),

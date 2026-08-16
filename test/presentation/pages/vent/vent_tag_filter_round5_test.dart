@@ -215,7 +215,8 @@ void main() {
     expect(find.widgetWithText(FilterChip, '全部'), findsNothing);
   });
 
-  testWidgets('6) 筛选后 stream re-emit 变空 → ventTagFilterEmpty 空态', (tester) async {
+  testWidgets('6) 筛选后 stream re-emit 变空 → ventTagFilterEmpty 空态',
+      (tester) async {
     _setBigView(tester);
     final repo = _FakeVentRepository(_taggedEntries());
     await tester.pumpWidget(_wrap(repo));

@@ -93,15 +93,15 @@ class _FakeMoodAudioService implements MoodAudioService {
 
   @override
   @override
-Future<void> pauseRecording() async {}
+  Future<void> pauseRecording() async {}
 
-@override
-Future<void> resumeRecording() async {}
+  @override
+  Future<void> resumeRecording() async {}
 
-@override
-bool get isPaused => false;
+  @override
+  bool get isPaused => false;
 
-@override
+  @override
   Future<MoodAudioResult?> stopRecording() async {
     _isRecording = false;
     _isSttListening = false;

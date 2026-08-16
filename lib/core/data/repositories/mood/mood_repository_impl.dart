@@ -67,10 +67,18 @@ class MoodRepositoryImpl implements MoodRepository {
         influenceFactorsJson: Value(draft.influenceFactorsJson ?? '[]'),
         recordingMode: Value(draft.recordingMode),
         statusPhrase: Value(draft.statusPhrase),
+        worryThreadId: Value(draft.worryThreadId),
       ),
     );
   }
 
   @override
   Future<int> delete(int id) => _db.moodDao.delete(id);
+
+  @override
+  Stream<List<MoodEntryEntity>> watchByThread(int threadId) {
+    return _db.moodDao
+        .watchByThread(threadId)
+        .map((rows) => rows.map((r) => r.toEntity()).toList(growable: false));
+  }
 }

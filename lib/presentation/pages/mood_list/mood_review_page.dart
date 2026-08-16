@@ -93,7 +93,12 @@ class _MoodReviewPageState extends ConsumerState<MoodReviewPage> {
       title: l10n.moodReviewTitle,
       child: entriesAsync.when(
         data: (entries) {
-          final now = widget.now ?? DateTime.now();
+          // Wave 7 (Task B, R113): 修前 widget.now ?? DateTime.now() 跨
+          // midnight 不 rebuild → 周/月窗口 stale 到次日。改 ?? 右侧
+          // ref.watch(todayProvider) (watch dayChangeTickProvider, AppRoot
+          // 跨日 tick 自动刷新)。widget.now 测试注入优先, 行为不变。
+          // (`!`: ?? 的 LUB 把非空右值又变回可空类型)
+          final now = widget.now ?? ref.watch(todayProvider)!;
           final start =
               _monthly ? DateTime(now.year, now.month, 1) : _weekStart(now);
           final prevStart = _monthly

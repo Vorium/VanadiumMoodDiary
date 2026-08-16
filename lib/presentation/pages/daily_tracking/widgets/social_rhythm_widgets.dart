@@ -58,8 +58,8 @@ class SocialRhythmListWidget extends ConsumerWidget {
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
               error: (e, st) => ErrorState(
-                  title: l10n.commonLoadFailed(e.toString()),
-                ),
+                title: l10n.commonLoadFailed(e.toString()),
+              ),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.schedule_outlined,
@@ -106,7 +106,8 @@ class _SocialRhythmEntryTile extends StatelessWidget {
     );
   }
 
-  static String _fmt(DateTime t) => DailyTrackingTimeFormat.formatDateTimeHHmm(t);
+  static String _fmt(DateTime t) =>
+      DailyTrackingTimeFormat.formatDateTimeHHmm(t);
 }
 
 /// SocialRhythmEntryDialog — 6 字段 (3 TimeOfDay + 3 number)

@@ -9,9 +9,10 @@
 // - 顶部 chip 列表: 全部 / 早 / 中 / 晚 / 夜 / 未指定
 // - 点 "早" chip → filteredMoodEntriesProvider 只返 1 条
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
-import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -59,7 +60,12 @@ void main() {
   Widget wrap({List<MoodEntryEntity> entries = const []}) {
     return ProviderScope(
       overrides: [
-        moodEntriesProvider.overrideWith((ref) => entries),
+        // R114 B1-7: MoodListPage 直接 watch allMoodProvider (AsyncValue) —
+        // override 真源 Stream (修前 override moodEntriesProvider sync 包装)
+        allMoodProvider.overrideWith((ref) => Stream.value(entries)),
+        // v1.1.0 round 9 (F1): MoodListPage 内嵌 WorrySection, override 空列表
+        worryOpenProvider.overrideWith((ref) => Stream.value(const [])),
+        worryResolvedProvider.overrideWith((ref) => Stream.value(const [])),
       ],
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

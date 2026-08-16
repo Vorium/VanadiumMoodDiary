@@ -126,18 +126,24 @@ void main() {
     });
 
     test('RefillNotifier 1 const', () {
-      expect(RefillNotifier.refillBaseId, 6000);
-      // 6000 > 2000 (refill base > med base)
+      // R114 B1-3: base 6000 → 2500000 (与 medication cancel [2000, 202000) 分家)
+      expect(RefillNotifier.refillBaseId, 2500000);
+      // 2500000 > 2000 (refill base > med base)
       expect(
         RefillNotifier.refillBaseId,
         greaterThan(MedicationNotifier.medicationReminderBaseId),
+      );
+      // refill cancel 下界 > medication cancel 上界 (互杀根治)
+      expect(
+        RefillNotifier.refillBaseId,
+        greaterThan(MedicationNotifier.medicationReminderBaseId + 200000),
       );
     });
 
     test('AssessmentNotifier 1 const', () {
       // R110 (B1-1): 原 7000 落入 refill cancel 区间, 迁 5M+ 固定带
       expect(AssessmentNotifier.assessmentReminderId, 5000001);
-      // 5000001 > 6000 (assessment > refill base, 且 > refill cancel 上界)
+      // 5000001 > 2500000 (assessment > refill base, 且 > refill cancel 上界)
       expect(
         AssessmentNotifier.assessmentReminderId,
         greaterThan(RefillNotifier.refillBaseId),
@@ -194,46 +200,46 @@ void main() {
       expect(result, DateTime(2026, 7, 18, 9, 0));
     });
 
-    test('reminderDays = 0 抛 ArgumentError', () {
+    test('reminderDays = 0 → null (R113 BUG 1: 不抛)', () {
       expect(
-        () => NotificationService.computeRefillFireTime(
+        NotificationService.computeRefillFireTime(
           refillAt: DateTime(2026, 7, 25),
           reminderDays: 0,
         ),
-        throwsArgumentError,
+        isNull,
       );
     });
 
-    test('reminderDays 负数抛 ArgumentError', () {
+    test('reminderDays 负数 → null (R113 BUG 1: 不抛)', () {
       expect(
-        () => NotificationService.computeRefillFireTime(
+        NotificationService.computeRefillFireTime(
           refillAt: DateTime(2026, 7, 25),
           reminderDays: -1,
         ),
-        throwsArgumentError,
+        isNull,
       );
     });
   });
 
   group('RefillNotifier.refillNotificationId (跟现有 round 19B 兼容)', () {
-    test('medId=0 → id=6000', () {
-      expect(NotificationService.refillNotificationId(0), 6000);
+    test('medId=0 → id=2500000 (R114 B1-3 新 base)', () {
+      expect(NotificationService.refillNotificationId(0), 2500000);
     });
 
-    test('medId=1000 → id=7000 (修前 OUT of range, 修后 in range)', () {
+    test('medId=1000 → id=2501000 (修前 OUT of range, 修后 in range)', () {
       final id = NotificationService.refillNotificationId(1000);
-      expect(id, 7000);
+      expect(id, 2501000);
       expect(
-        id >= 6000 && id < 6000 + 200000,
+        id >= 2500000 && id < 2500000 + 200000,
         isTrue,
         reason: 'medId=1000 的 id 必须被 200000 range 覆盖',
       );
     });
 
-    test('medId=50000 → id=56000 (极端场景)', () {
+    test('medId=50000 → id=2550000 (极端场景)', () {
       final id = NotificationService.refillNotificationId(50000);
-      expect(id, 56000);
-      expect(id < 6000 + 200000, isTrue);
+      expect(id, 2550000);
+      expect(id < 2500000 + 200000, isTrue);
     });
   });
 

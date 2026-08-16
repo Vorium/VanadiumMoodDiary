@@ -142,8 +142,7 @@ void main() {
         expect(
           hasReleaseGuard || hasDebugGuard,
           isTrue,
-          reason:
-              'developer.log 在 offset=${match.start} 处, 之前 500 字符内应含 '
+          reason: 'developer.log 在 offset=${match.start} 处, 之前 500 字符内应含 '
               '!kReleaseMode 或 kDebugMode 守卫',
         );
       }

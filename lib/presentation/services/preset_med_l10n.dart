@@ -19,7 +19,8 @@ extension MedicationDraftL10n on MedicationDraft {
         'presetMedMoodStabilizerName' => l10n.presetMedMoodStabilizerName,
         'presetMedSleepAidName' => l10n.presetMedSleepAidName,
         'presetMedAntipsychoticName' => l10n.presetMedAntipsychoticName,
-        'presetMedSedativeAnxiolyticName' => l10n.presetMedSedativeAnxiolyticName,
+        'presetMedSedativeAnxiolyticName' =>
+          l10n.presetMedSedativeAnxiolyticName,
         _ => nameKey,
       };
 
@@ -31,7 +32,8 @@ extension MedicationDraftL10n on MedicationDraft {
           'presetMedMoodStabilizerHint' => l10n.presetMedMoodStabilizerHint,
           'presetMedSleepAidHint' => l10n.presetMedSleepAidHint,
           'presetMedAntipsychoticHint' => l10n.presetMedAntipsychoticHint,
-          'presetMedSedativeAnxiolyticHint' => l10n.presetMedSedativeAnxiolyticHint,
+          'presetMedSedativeAnxiolyticHint' =>
+            l10n.presetMedSedativeAnxiolyticHint,
           _ => hintKey,
         };
 }

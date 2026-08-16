@@ -130,19 +130,21 @@ Future<void> _pumpPage(
     ],
   );
 
-  await tester.pumpWidget(ProviderScope(
-    overrides: [
-      ventRepositoryProvider.overrideWithValue(repo),
-      ventAudioStorageProvider.overrideWithValue(storage),
-    ],
-    child: MaterialApp.router(
-      routerConfig: router,
-      theme: ThemeData.light(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('zh'),
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        ventRepositoryProvider.overrideWithValue(repo),
+        ventAudioStorageProvider.overrideWithValue(storage),
+      ],
+      child: MaterialApp.router(
+        routerConfig: router,
+        theme: ThemeData.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+      ),
     ),
-  ),);
+  );
   await tester.pumpAndSettle();
   await tester.tap(find.text('open-detail'));
   await tester.pumpAndSettle();
@@ -156,8 +158,8 @@ void main() {
     // 保证 _lastGlobal != _platform → 每次都重新 init。
     AudioplayersPlatformInterface.instance = AudioplayersPlatform();
     GlobalAudioplayersPlatformInterface.instance = GlobalAudioplayersPlatform();
-    final messenger = TestWidgetsFlutterBinding.ensureInitialized()
-        .defaultBinaryMessenger;
+    final messenger =
+        TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger;
     // audioplayers 6.x 三件套 (缺一会挂/抛):
     // 1. global channel 'init' → null (否则 MissingPluginException)
     // 2. player channel 'create' → 捕获 playerId, 注册对应 EventChannel
@@ -221,7 +223,8 @@ void main() {
     await _pumpPage(
       tester,
       _FakeVentRepository(
-        _entry(text: null, audioPath: '/data/vent_x.m4a.enc', audioDurationSec: 5),
+        _entry(
+            text: null, audioPath: '/data/vent_x.m4a.enc', audioDurationSec: 5),
       ),
       storage,
     );

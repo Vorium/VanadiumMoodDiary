@@ -70,7 +70,7 @@ class RefillSchedule {
 /// 业务规则:
 /// - inactive 药物跳过 (跟 RefillNotifier.rescheduleRefillReminders 1:1)
 /// - 无 refillAt 跳过 (fireAt = null)
-/// - reminderDays < 1 抛 ArgumentError (跟 RefillScheduler.computeRefillFireTime 1:1)
+/// - reminderDays < 1 → fireAt = null (R113 BUG 1: 跳过该 med, 不抛)
 /// - fireAt < now 标 isExpired = true
 ///
 /// 0 副作用: 不调 Plugin / Dispatcher / Notifier, 不写 DB, 不发通知。

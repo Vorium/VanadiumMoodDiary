@@ -1587,6 +1587,18 @@ abstract class AppLocalizations {
   /// **'今天怎么样？'**
   String get moodDialogTitle;
 
+  /// No description provided for @moodScoreSectionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪评分'**
+  String get moodScoreSectionTitle;
+
+  /// No description provided for @moodRecordSectionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'记录内容'**
+  String get moodRecordSectionTitle;
+
   /// No description provided for @moodDialogPeriodLabel.
   ///
   /// In zh, this message translates to:
@@ -1641,23 +1653,11 @@ abstract class AppLocalizations {
   /// **'情绪'**
   String get moodDimensionMood;
 
-  /// No description provided for @moodDimensionMoodHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'1=很差 5=很好'**
-  String get moodDimensionMoodHint;
-
   /// No description provided for @moodDimensionEnergy.
   ///
   /// In zh, this message translates to:
   /// **'精力'**
   String get moodDimensionEnergy;
-
-  /// No description provided for @moodDimensionEnergyHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'1=很低 5=充沛'**
-  String get moodDimensionEnergyHint;
 
   /// No description provided for @moodDimensionSleep.
   ///
@@ -1665,23 +1665,11 @@ abstract class AppLocalizations {
   /// **'睡眠'**
   String get moodDimensionSleep;
 
-  /// No description provided for @moodDimensionSleepHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'1=很差 5=很好'**
-  String get moodDimensionSleepHint;
-
   /// No description provided for @moodDimensionAnxiety.
   ///
   /// In zh, this message translates to:
   /// **'焦虑'**
   String get moodDimensionAnxiety;
-
-  /// No description provided for @moodDimensionAnxietyHint.
-  ///
-  /// In zh, this message translates to:
-  /// **'1=严重 5=平静'**
-  String get moodDimensionAnxietyHint;
 
   /// No description provided for @moodTagAnxiety.
   ///
@@ -2677,8 +2665,8 @@ abstract class AppLocalizations {
   /// No description provided for @homeMedHint.
   ///
   /// In zh, this message translates to:
-  /// **'💊 准备打卡药物 #{id}'**
-  String homeMedHint(int id);
+  /// **'💊 准备打卡药物 {name}'**
+  String homeMedHint(String name);
 
   /// No description provided for @homeSnoozeTitle.
   ///
@@ -3401,18 +3389,6 @@ abstract class AppLocalizations {
   /// **'已删除药物'**
   String get medicationDeleted;
 
-  /// No description provided for @moodTodayLabel.
-  ///
-  /// In zh, this message translates to:
-  /// **'今日情绪：'**
-  String get moodTodayLabel;
-
-  /// 主页情绪快捷按钮: 今日已记录时的完整标签 (R112-06 emil, 参数化拼接)
-  ///
-  /// In zh, this message translates to:
-  /// **'今日情绪：{value}'**
-  String moodTodayLabelWithValue(String value);
-
   /// 情绪分数 1/5 的本地化标签 (R112-07 emil metadata 补)
   ///
   /// In zh, this message translates to:
@@ -3442,12 +3418,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'很好'**
   String get moodLabel5;
-
-  /// No description provided for @moodRecordButton.
-  ///
-  /// In zh, this message translates to:
-  /// **'记一下情绪 ✏️'**
-  String get moodRecordButton;
 
   /// No description provided for @medReportFileName.
   ///
@@ -4606,12 +4576,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'CBT 7 栏'**
   String get moodCbtChipBadge7;
-
-  /// No description provided for @moodCbtThreeScoreTitle.
-  ///
-  /// In zh, this message translates to:
-  /// **'你现在的感受？'**
-  String get moodCbtThreeScoreTitle;
 
   /// No description provided for @moodCbtThreeSituationTitle.
   ///
@@ -7056,6 +7020,24 @@ abstract class AppLocalizations {
   /// **'暂无 CBT 重评数据'**
   String get moodTrendCbtEmpty;
 
+  /// No description provided for @moodTrendSemanticsLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪趋势折线图，近 {days} 天'**
+  String moodTrendSemanticsLine(Object days);
+
+  /// No description provided for @moodTrendSemanticsDist.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪分数分布图，最常见 {score} 分，共 {count} 条记录'**
+  String moodTrendSemanticsDist(Object count, Object score);
+
+  /// No description provided for @moodTrendSemanticsCbt.
+  ///
+  /// In zh, this message translates to:
+  /// **'CBT 重评效果图，{count} 条重评记录'**
+  String moodTrendSemanticsCbt(Object count);
+
   /// No description provided for @medDetailActive.
   ///
   /// In zh, this message translates to:
@@ -7649,6 +7631,444 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'{n} 树洞'**
   String importSummaryVent(int n);
+
+  /// CBT PDF header — mood score label (R113 BUG A: 硬编码中文 PDF 头本地化)
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪'**
+  String get cbtExportPdfMoodLabel;
+
+  /// CBT PDF rerated section — original score prefix label (R113 BUG A)
+  ///
+  /// In zh, this message translates to:
+  /// **'原'**
+  String get cbtExportPdfOriginalScoreLabel;
+
+  /// No description provided for @psychoTipsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'心理技巧'**
+  String get psychoTipsTitle;
+
+  /// No description provided for @psychoTipBreathTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'正念呼吸'**
+  String get psychoTipBreathTitle;
+
+  /// No description provided for @psychoTipBreathSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'通过关注呼吸回到当下，缓解焦虑与紧张'**
+  String get psychoTipBreathSummary;
+
+  /// No description provided for @psychoTipBreathStep1.
+  ///
+  /// In zh, this message translates to:
+  /// **'找个舒适的位置坐下，轻轻闭上眼睛'**
+  String get psychoTipBreathStep1;
+
+  /// No description provided for @psychoTipBreathStep2.
+  ///
+  /// In zh, this message translates to:
+  /// **'深吸气 4 秒，感受空气充满身体'**
+  String get psychoTipBreathStep2;
+
+  /// No description provided for @psychoTipBreathStep3.
+  ///
+  /// In zh, this message translates to:
+  /// **'屏住呼吸 2 秒'**
+  String get psychoTipBreathStep3;
+
+  /// No description provided for @psychoTipBreathStep4.
+  ///
+  /// In zh, this message translates to:
+  /// **'缓缓呼气 6 秒，让肩膀和身体放松'**
+  String get psychoTipBreathStep4;
+
+  /// No description provided for @psychoTipBreathStep5.
+  ///
+  /// In zh, this message translates to:
+  /// **'重复 3-5 分钟，让注意力回到呼吸上'**
+  String get psychoTipBreathStep5;
+
+  /// No description provided for @psychoTipNameTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'情绪命名'**
+  String get psychoTipNameTitle;
+
+  /// No description provided for @psychoTipNameSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'给情绪贴上名字，能有效降低它的强度'**
+  String get psychoTipNameSummary;
+
+  /// No description provided for @psychoTipNameStep1.
+  ///
+  /// In zh, this message translates to:
+  /// **'停下来，感受此刻身体有哪些反应'**
+  String get psychoTipNameStep1;
+
+  /// No description provided for @psychoTipNameStep2.
+  ///
+  /// In zh, this message translates to:
+  /// **'在心里问自己：我现在的情绪是什么'**
+  String get psychoTipNameStep2;
+
+  /// No description provided for @psychoTipNameStep3.
+  ///
+  /// In zh, this message translates to:
+  /// **'用一个词描述它，比如「烦躁」「难过」「紧张」'**
+  String get psychoTipNameStep3;
+
+  /// No description provided for @psychoTipNameStep4.
+  ///
+  /// In zh, this message translates to:
+  /// **'说出来或写下来：「我感到……」'**
+  String get psychoTipNameStep4;
+
+  /// No description provided for @psychoTipNameStep5.
+  ///
+  /// In zh, this message translates to:
+  /// **'观察情绪的变化，不去评判它'**
+  String get psychoTipNameStep5;
+
+  /// No description provided for @psychoTipCbtTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'认知重构'**
+  String get psychoTipCbtTitle;
+
+  /// No description provided for @psychoTipCbtSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'识别并调整不合理的自动思维，可搭配 CBT 思维记录'**
+  String get psychoTipCbtSummary;
+
+  /// No description provided for @psychoTipCbtStep1.
+  ///
+  /// In zh, this message translates to:
+  /// **'记录引发情绪的具体情境'**
+  String get psychoTipCbtStep1;
+
+  /// No description provided for @psychoTipCbtStep2.
+  ///
+  /// In zh, this message translates to:
+  /// **'写下脑海中冒出的自动思维'**
+  String get psychoTipCbtStep2;
+
+  /// No description provided for @psychoTipCbtStep3.
+  ///
+  /// In zh, this message translates to:
+  /// **'列出支持与反对这个想法的证据'**
+  String get psychoTipCbtStep3;
+
+  /// No description provided for @psychoTipCbtStep4.
+  ///
+  /// In zh, this message translates to:
+  /// **'写出更平衡、更符合事实的替代想法'**
+  String get psychoTipCbtStep4;
+
+  /// No description provided for @psychoTipCbtStep5.
+  ///
+  /// In zh, this message translates to:
+  /// **'在情绪日记中使用 5 栏 CBT 记录练习'**
+  String get psychoTipCbtStep5;
+
+  /// No description provided for @psychoTipGroundTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'5-4-3-2-1 感官接地'**
+  String get psychoTipGroundTitle;
+
+  /// No description provided for @psychoTipGroundSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'用五种感官觉察当下，把注意力从焦虑中拉回来'**
+  String get psychoTipGroundSummary;
+
+  /// No description provided for @psychoTipGroundStep1.
+  ///
+  /// In zh, this message translates to:
+  /// **'说出你看到的 5 样东西'**
+  String get psychoTipGroundStep1;
+
+  /// No description provided for @psychoTipGroundStep2.
+  ///
+  /// In zh, this message translates to:
+  /// **'感受你触碰到的 4 种触感'**
+  String get psychoTipGroundStep2;
+
+  /// No description provided for @psychoTipGroundStep3.
+  ///
+  /// In zh, this message translates to:
+  /// **'仔细听你听到的 3 种声音'**
+  String get psychoTipGroundStep3;
+
+  /// No description provided for @psychoTipGroundStep4.
+  ///
+  /// In zh, this message translates to:
+  /// **'闻到你周围的 2 种气味'**
+  String get psychoTipGroundStep4;
+
+  /// No description provided for @psychoTipGroundStep5.
+  ///
+  /// In zh, this message translates to:
+  /// **'感受口中的 1 种味道'**
+  String get psychoTipGroundStep5;
+
+  /// No description provided for @psychoTipPmrTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'渐进式肌肉放松'**
+  String get psychoTipPmrTitle;
+
+  /// No description provided for @psychoTipPmrSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'依次收紧再放松身体各肌肉群，释放身体的紧张'**
+  String get psychoTipPmrSummary;
+
+  /// No description provided for @psychoTipPmrStep1.
+  ///
+  /// In zh, this message translates to:
+  /// **'坐或躺下，找一个舒适的姿势'**
+  String get psychoTipPmrStep1;
+
+  /// No description provided for @psychoTipPmrStep2.
+  ///
+  /// In zh, this message translates to:
+  /// **'从脚趾开始，用力收紧 5 秒'**
+  String get psychoTipPmrStep2;
+
+  /// No description provided for @psychoTipPmrStep3.
+  ///
+  /// In zh, this message translates to:
+  /// **'松开，体会放松的感觉约 10 秒'**
+  String get psychoTipPmrStep3;
+
+  /// No description provided for @psychoTipPmrStep4.
+  ///
+  /// In zh, this message translates to:
+  /// **'依次向上：小腿、大腿、腹部、手臂、肩膀'**
+  String get psychoTipPmrStep4;
+
+  /// No description provided for @psychoTipPmrStep5.
+  ///
+  /// In zh, this message translates to:
+  /// **'最后放松面部与头皮，完成全身扫描'**
+  String get psychoTipPmrStep5;
+
+  /// No description provided for @ventAgreementTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'树洞使用公约'**
+  String get ventAgreementTitle;
+
+  /// No description provided for @ventAgreementBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'你的树洞是只属于你的私密空间，请了解这几点：\n· 所有倾诉内容仅保存在本机并加密，绝不外传\n· 树洞内容不参与任何分析、推荐或通知\n· 请温柔地对待自己，尊重每一份情绪\n· 若感到极度痛苦或有自伤念头，请使用危机热线寻求帮助'**
+  String get ventAgreementBody;
+
+  /// No description provided for @ventAgreementConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'我知道了'**
+  String get ventAgreementConfirm;
+
+  /// No description provided for @worryTimelineTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'烦恼时间线'**
+  String get worryTimelineTitle;
+
+  /// No description provided for @worryArchiveTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'忆往昔'**
+  String get worryArchiveTitle;
+
+  /// No description provided for @worrySectionTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'烦恼心事'**
+  String get worrySectionTitle;
+
+  /// No description provided for @worrySectionArchiveAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'忆往昔'**
+  String get worrySectionArchiveAction;
+
+  /// No description provided for @worryEntryCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 条记录'**
+  String worryEntryCount(Object count);
+
+  /// No description provided for @worryContinueAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'继续倾诉'**
+  String get worryContinueAction;
+
+  /// No description provided for @worryResolveAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'不再烦恼啦'**
+  String get worryResolveAction;
+
+  /// No description provided for @worryReopenAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'又烦恼了'**
+  String get worryReopenAction;
+
+  /// No description provided for @worryResolveConfirmTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'放下这个烦恼？'**
+  String get worryResolveConfirmTitle;
+
+  /// No description provided for @worryResolveConfirmBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认后它会被收藏到「忆往昔」，随时可以「又烦恼了」重新打开。'**
+  String get worryResolveConfirmBody;
+
+  /// No description provided for @worryResolveConfirmOk.
+  ///
+  /// In zh, this message translates to:
+  /// **'放下啦'**
+  String get worryResolveConfirmOk;
+
+  /// No description provided for @worryResolveDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'🎉 恭喜，你放下了一个烦恼'**
+  String get worryResolveDone;
+
+  /// No description provided for @worryReopenDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'已重新打开，需要的时候随时来倾诉'**
+  String get worryReopenDone;
+
+  /// No description provided for @worryRenameTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名烦恼'**
+  String get worryRenameTitle;
+
+  /// No description provided for @worryRenameAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名'**
+  String get worryRenameAction;
+
+  /// No description provided for @worryNewOption.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建烦恼'**
+  String get worryNewOption;
+
+  /// No description provided for @worryNoWorry.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有关联烦恼'**
+  String get worryNoWorry;
+
+  /// No description provided for @worryDefaultTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'未命名烦恼'**
+  String get worryDefaultTitle;
+
+  /// No description provided for @worryFieldLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'关联烦恼'**
+  String get worryFieldLabel;
+
+  /// No description provided for @worryFieldHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择或新建一个烦恼，把这次心情记到它的时间线上'**
+  String get worryFieldHint;
+
+  /// No description provided for @worryTimelineEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个烦恼还没有记录，从「继续倾诉」开始吧'**
+  String get worryTimelineEmpty;
+
+  /// No description provided for @worryArchiveEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有放下过的烦恼。把心情记成烦恼时间线，成长会被珍藏。'**
+  String get worryArchiveEmpty;
+
+  /// No description provided for @worryArchiveCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'已放下 {count} 个烦恼'**
+  String worryArchiveCount(Object count);
+
+  /// No description provided for @worryOpenCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个进行中'**
+  String worryOpenCount(Object count);
+
+  /// No description provided for @worryStatusOpen.
+  ///
+  /// In zh, this message translates to:
+  /// **'进行中'**
+  String get worryStatusOpen;
+
+  /// No description provided for @worryStatusResolved.
+  ///
+  /// In zh, this message translates to:
+  /// **'已放下'**
+  String get worryStatusResolved;
+
+  /// No description provided for @worryThreadNotFound.
+  ///
+  /// In zh, this message translates to:
+  /// **'这个烦恼找不到了，可能已经删除'**
+  String get worryThreadNotFound;
+
+  /// No description provided for @dbResetPromptTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法打开本地数据库'**
+  String get dbResetPromptTitle;
+
+  /// No description provided for @dbResetPromptBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'本地加密数据与密钥不匹配（常见于系统备份恢复只还原了数据、未还原密钥）。你可以先点「重试」看看数据是否恢复；若仍无法打开，可重置本地数据重新开始。'**
+  String get dbResetPromptBody;
+
+  /// No description provided for @dbResetPromptReset.
+  ///
+  /// In zh, this message translates to:
+  /// **'重置本地数据'**
+  String get dbResetPromptReset;
+
+  /// No description provided for @dbResetPromptConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'重置将删除本机全部记录，且无法恢复。确认重置吗？'**
+  String get dbResetPromptConfirm;
+
+  /// No description provided for @moodTrendSemanticsAvg.
+  ///
+  /// In zh, this message translates to:
+  /// **'平均 {average} 分'**
+  String moodTrendSemanticsAvg(Object average);
 }
 
 class _AppLocalizationsDelegate

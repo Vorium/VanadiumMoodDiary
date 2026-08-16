@@ -373,5 +373,114 @@ void main() {
       );
       expect(d.date, DateTime(2026, 7, 15));
     });
+
+    // ===== R114 BUG 4: 8 新量表名 + 情绪标签 closure 注入 =====
+
+    test('R114 BUG 4: scaleName closure 覆盖全部 10 量表 (不落裸 id)', () {
+      const names = <String, String>{
+        'phq9': 'PHQ-9',
+        'gad7': 'GAD-7',
+        'isi': 'ISI',
+        'pss': 'PSS',
+        'whodas': 'WHODAS',
+        'level2_depression': 'L2-DEP',
+        'level2_anxiety': 'L2-ANX',
+        'level2_mania': 'L2-MANIA',
+        'asrm': 'ASRM',
+        'level2_psychosis': 'L2-PSY',
+      };
+      for (final entry in names.entries) {
+        final d = DayDetailCalculator.fromData(
+          date: DateTime(2026, 7, 15),
+          checkIns: [
+            ci(
+              id: 1,
+              timestamp: DateTime(2026, 7, 15, 21),
+              type: entry.key,
+              note: '{"score":3,"answers":[1,2]}',
+            ),
+          ],
+          moodEntries: const [],
+          medications: const [],
+          scaleName: (id) => names[id] ?? id,
+        );
+        final a = d.events.single;
+        expect(
+          a.title,
+          entry.value,
+          reason: '量表 ${entry.key} 应显示注入名 ${entry.value}',
+        );
+        expect(
+          a.title,
+          isNot(entry.key),
+          reason: '量表 ${entry.key} 修前显示裸 id (R112 E9 / R113 #9)',
+        );
+      }
+    });
+
+    test('R114 BUG 4: moodLabel closure 注入 → mood 事件 title 走 l10n', () {
+      final d = DayDetailCalculator.fromData(
+        date: DateTime(2026, 7, 15),
+        checkIns: const [],
+        moodEntries: [
+          mood(id: 1, timestamp: DateTime(2026, 7, 15, 21, 30), score: 4),
+        ],
+        medications: const [],
+        moodLabel: (score) => 'label-$score',
+      );
+      expect(d.events.single.title, '🙂 label-4');
+      expect(
+        d.events.single.title,
+        isNot(contains('好')),
+        reason: 'en locale 修前看到中文 fallback "好"',
+      );
+    });
+
+    test('R114 BUG 4: totalScoreLabel closure 注入 → 评估 subtitle 走 l10n', () {
+      final d = DayDetailCalculator.fromData(
+        date: DateTime(2026, 7, 15),
+        checkIns: [
+          ci(
+            id: 1,
+            timestamp: DateTime(2026, 7, 15, 21),
+            type: 'phq9',
+            note: '{"score":8,"answers":[0,0,0,0,0,0,0,0,0]}',
+          ),
+        ],
+        moodEntries: const [],
+        medications: const [],
+        totalScoreLabel: (total) => 'Total $total',
+      );
+      expect(d.events.single.subtitle, contains('Total 8'));
+      expect(
+        d.events.single.subtitle,
+        isNot(contains('总分')),
+        reason: 'en locale 修前看到中文后缀 "总分"',
+      );
+    });
+
+    test('R114 BUG 4: closure 不传 → 中文 fallback 行为不变', () {
+      final d = DayDetailCalculator.fromData(
+        date: DateTime(2026, 7, 15),
+        checkIns: [
+          ci(
+            id: 1,
+            timestamp: DateTime(2026, 7, 15, 21),
+            type: 'phq9',
+            note: '{"score":8,"answers":[0,0,0,0,0,0,0,0,0]}',
+          ),
+        ],
+        moodEntries: [
+          mood(id: 2, timestamp: DateTime(2026, 7, 15, 8), score: 5)
+        ],
+        medications: const [],
+      );
+      final assessment =
+          d.events.firstWhere((e) => e.kind == DayEventKind.assessment);
+      expect(assessment.title, 'PHQ-9 抑郁筛查');
+      expect(assessment.subtitle, contains('总分 8'));
+      final moodEvent = d.events.firstWhere((e) => e.kind == DayEventKind.mood);
+      expect(moodEvent.title, '😄 很好');
+    });
   });
 }

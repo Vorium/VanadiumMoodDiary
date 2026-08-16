@@ -24,6 +24,7 @@ import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// 情绪大卡 — 最新状态短语 + 4 维迷你分退化 + 记录/回顾入口
 class MoodHeroCard extends ConsumerWidget {
@@ -53,9 +54,11 @@ class MoodHeroCard extends ConsumerWidget {
         ListTile(
           leading: const Icon(Icons.sentiment_satisfied_outlined),
           title: Text(l10n.homeMoodHeroNoData),
-          trailing: FilledButton(
-            onPressed: () => MoodRecorderPage.show(context, ref),
-            child: Text(l10n.homeMoodHeroRecord),
+          trailing: PressFeedback(
+            child: FilledButton(
+              onPressed: () => MoodRecorderPage.show(context, ref),
+              child: Text(l10n.homeMoodHeroRecord),
+            ),
           ),
         ),
       ],
@@ -77,33 +80,42 @@ class MoodHeroCard extends ConsumerWidget {
       margin: EdgeInsets.zero,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppTokens.edgeInsetsMd,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(summary, style: AppTokens.textStyleHeadline(context)),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppTokens.spacingXxs),
               Text(
                 l10n.homeMoodHeroLastRecorded(Formatters.time(entry.timestamp)),
                 style: AppTokens.textStyleCaption(context),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppTokens.spacingXs),
               Row(
                 children: [
-                  FilledButton(
-                    onPressed: () => MoodRecorderPage.show(context, ref),
-                    child: Text(l10n.homeMoodHeroRecord),
+                  // R114 Wave B2 (B2-9, emil F4): 主页双主卡入口按钮补
+                  // scale 0.97 反馈 (修前只有 M3 ripple, 跟 CheckInButton
+                  // "被听见"标准不一致)
+                  PressFeedback(
+                    child: FilledButton(
+                      onPressed: () => MoodRecorderPage.show(context, ref),
+                      child: Text(l10n.homeMoodHeroRecord),
+                    ),
                   ),
                   const SizedBox(width: AppTokens.spacingSm),
-                  TextButton(
-                    onPressed: () => context.push('/mood-review'),
-                    child: Text(l10n.homeMoodHeroReview),
+                  PressFeedback(
+                    child: TextButton(
+                      onPressed: () => context.push('/mood-review'),
+                      child: Text(l10n.homeMoodHeroReview),
+                    ),
                   ),
                   // round 7c: /mood-list 死路由入口补齐 (P2 gatekeeper blind spot)
                   const SizedBox(width: AppTokens.spacingSm),
-                  TextButton(
-                    onPressed: () => context.push('/mood-list'),
-                    child: Text(l10n.homeMoodHeroViewAll),
+                  PressFeedback(
+                    child: TextButton(
+                      onPressed: () => context.push('/mood-list'),
+                      child: Text(l10n.homeMoodHeroViewAll),
+                    ),
                   ),
                 ],
               ),

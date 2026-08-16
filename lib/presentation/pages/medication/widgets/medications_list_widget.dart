@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/formatters.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -45,6 +46,13 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
   final Set<int> _editingRefill = {};
   final Set<int> _editing = {};
 
+  /// R114 BUG 6 (R113 BUG 7b 同款): swipe 删除失败计数 — 删除失败时
+  /// 计数 +1 → 已 dismiss 的旧 Dismissible 换 key unmount, 新 key
+  /// remount 回"未滑走"状态, 条目立即回到列表 (DB 里还在)。修前 key
+  /// 固定 → 删除失败 rebuild 必抛 "A dismissed Dismissible widget is
+  /// still part of the tree"。
+  final Map<int, int> _deleteFailCounts = {};
+
   @override
   Widget build(BuildContext context) {
     if (widget.meds.isEmpty) {
@@ -55,6 +63,7 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
       deleting: _deleting,
       editing: _editing,
       editingRefill: _editingRefill,
+      deleteFailCounts: _deleteFailCounts,
       onDelete: _deleteMedication,
       onEdit: _editMedication,
       onEditRefill: _editRefill,
@@ -109,6 +118,10 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
   /// 与 IconButton 删除共享底层逻辑,但跳过 explicit dialog
   /// (Dismissible 的 swipe gesture 本身已表达删除意图,
   /// Undo snackbar 给反悔窗口)。
+  ///
+  /// R114 BUG 6: catch 补 swallowError + 失败计数换 key + invalidate
+  /// (vent_list_page R113 BUG 7b 同款修法 — 修前 catch 只弹 snackbar,
+  /// Dismissible 已 dismiss 仍留在树 → 下次 rebuild 抛 FlutterError)。
   Future<void> _swipeDeleteMedication(MedicationEntity med) async {
     if (_deleting.contains(med.id)) return;
     setState(() => _deleting.add(med.id));
@@ -142,13 +155,26 @@ class _MedicationsListWidgetState extends ConsumerState<MedicationsListWidget> {
               );
         },
       );
-    } catch (e) {
+    } catch (e, st) {
+      // R114 BUG 6: 先换 key 卸载已 dismiss 的 Dismissible, 让条目
+      // 回到列表 (setState 同步触发 rebuild)
+      swallowError(
+        where: 'medications_list_widget._swipeDeleteMedication',
+        error: e,
+        stack: st,
+        note: 'medication swipe delete failed — snackbar 已提示用户',
+      );
       if (mounted) {
+        setState(() {
+          _deleteFailCounts[med.id] = (_deleteFailCounts[med.id] ?? 0) + 1;
+        });
         AppSnackBar.showError(
           context,
           action: AppLocalizations.of(context).commonDelete,
           error: e,
         );
+        // 条目仍留在 DB → 重新拉流让它回到列表
+        ref.invalidate(medicationsProvider);
       }
     } finally {
       if (mounted) setState(() => _deleting.remove(med.id));

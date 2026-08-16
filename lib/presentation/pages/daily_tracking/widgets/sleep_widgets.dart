@@ -67,8 +67,8 @@ class SleepListWidget extends ConsumerWidget {
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
               error: (e, st) => ErrorState(
-                  title: l10n.commonLoadFailed(e.toString()),
-                ),
+                title: l10n.commonLoadFailed(e.toString()),
+              ),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.bedtime_outlined,
@@ -116,7 +116,8 @@ class _SleepEntryTile extends StatelessWidget {
     );
   }
 
-  static String _fmt(DateTime t) => DailyTrackingTimeFormat.formatDateTimeHHmm(t);
+  static String _fmt(DateTime t) =>
+      DailyTrackingTimeFormat.formatDateTimeHHmm(t);
 }
 
 /// SleepEntryDialog — 4 字段 (bedtime / wakeTime / regularity / note)
@@ -169,7 +170,8 @@ class _SleepEntryDialogState extends ConsumerState<SleepEntryDialog> {
     return SleepCalculator.durationMin(bedtime, wakeTime);
   }
 
-  String get _durationLabel => DailyTrackingTimeFormat.formatDurationMin(_durationMin);
+  String get _durationLabel =>
+      DailyTrackingTimeFormat.formatDurationMin(_durationMin);
 
   Future<void> _pickBedtime() async {
     final picked = await showTimePicker(

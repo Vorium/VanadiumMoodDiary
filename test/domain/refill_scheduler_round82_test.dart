@@ -8,7 +8,8 @@
 // 1. 正常: refillAt=9/15 + reminderDays=7 → 9/8 09:00
 // 2. 边界: reminderDays=1 (最小值) → refillAt - 1 天 09:00
 // 3. 边界: refillAt = null → null (caller no-op)
-// 4. 边界: reminderDays < 1 → 抛 ArgumentError (跟原行为 1:1)
+// 4. 边界: reminderDays < 1 → null (R113 BUG 1: 从抛 ArgumentError 改为
+//    返 null, 避免 0 天脏数据 abort 整个 rescheduleRefillReminders)
 // 5. 跨月: refillAt = 1/5 + reminderDays=7 → 上一年 12/29 09:00
 // 6. 跨年: refillAt = 闰年 2/29 + reminderDays=1 → 2/28 09:00 (闰年特殊)
 // 7. 时区无关: refillAt = 23:59:59 → fireTime 仍是 9:00 (忽略时分秒)
@@ -42,30 +43,30 @@ void main() {
       expect(result, isNull);
     });
 
-    test('边界: reminderDays < 1 → 抛 ArgumentError (跟原行为 1:1)', () {
+    test('边界: reminderDays < 1 → null (R113 BUG 1: 不抛, caller 跳过)', () {
       // reminderDays = 0
       expect(
-        () => RefillScheduler.computeRefillFireTime(
+        RefillScheduler.computeRefillFireTime(
           refillAt: DateTime(2026, 9, 15),
           reminderDays: 0,
         ),
-        throwsArgumentError,
+        isNull,
       );
       // reminderDays < 0
       expect(
-        () => RefillScheduler.computeRefillFireTime(
+        RefillScheduler.computeRefillFireTime(
           refillAt: DateTime(2026, 9, 15),
           reminderDays: -1,
         ),
-        throwsArgumentError,
+        isNull,
       );
       // reminderDays = -365 (极端)
       expect(
-        () => RefillScheduler.computeRefillFireTime(
+        RefillScheduler.computeRefillFireTime(
           refillAt: DateTime(2026, 9, 15),
           reminderDays: -365,
         ),
-        throwsArgumentError,
+        isNull,
       );
     });
 

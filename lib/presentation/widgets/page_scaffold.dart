@@ -67,7 +67,10 @@ class PageScaffold extends StatelessWidget {
         // spec §4.9 已同步 (spec 决策 #7 translucent 从 blur 改为 solid
         // alpha, blur 待 v1.0+ 平台层 blur 方案再评估)。
         final translucentBar = AppBar(
-          title: Text(title!),
+          // P3-CLEAN-9: title 可为 null (窄屏无 title 页面走 appBar: null),
+          // 但 translucentBar 无条件构建 — 修前 `Text(title!)` 漏传 title
+          // 即 runtime null-check 崩溃。修后空 title 不渲染 title widget。
+          title: title == null ? null : Text(title!),
           actions: actions,
           bottom: appBarBottom,
           leading: showLeading,
@@ -84,8 +87,13 @@ class PageScaffold extends StatelessWidget {
           ),
         );
         return Scaffold(
-          // 宽屏下不显示 AppBar（NavigationRail 在 AppShell 里负责导航）
-          appBar: (title != null && !isWide) ? translucentBar : null,
+          // R114 Wave B2 (B2-3, apple F-04): 修前宽屏 (>= 840) 一律不显示
+          // AppBar — push 进去的顶层路由 (/tips/:id /worry/:id ...) 无任何
+          // 返回入口。修后: 宽屏 + canPop (push 子页) 保留 AppBar (title +
+          // 返回按钮); 宽屏 + 不可 pop (shell tab 根) 仍无 AppBar
+          // (NavigationRail 在 AppShell 里负责导航)。
+          appBar:
+              (title != null && (!isWide || canPop)) ? translucentBar : null,
           body: SafeArea(
             child: Center(
               child: ConstrainedBox(

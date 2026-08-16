@@ -96,7 +96,11 @@ class MedicationPageStatsCalculator {
   static int refillAlertCount(List<MedicationEntity> meds) {
     final now = DateTime.now();
     return meds
-        .where((m) => m.hasRefill && (m.isInRefillWindow(now) || m.isRefillOverdue(now)))
+        .where(
+          (m) =>
+              m.hasRefill &&
+              (m.isInRefillWindow(now) || m.isRefillOverdue(now)),
+        )
         .length;
   }
 

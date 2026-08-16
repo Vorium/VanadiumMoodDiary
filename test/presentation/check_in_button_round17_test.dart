@@ -217,4 +217,84 @@ void main() {
       expect(decoration.borderRadius, BorderRadius.circular(32));
     });
   });
+
+  // R113 (BUG 6): _EntrySpring 是全 lib 唯一绕过 Motion wrapper 的动画
+  // (spring 物理模型进场无条件跑)。修后: prefers-reduced-motion →
+  // didChangeDependencies 直接把 controller 跳到终态 (scale 1.0 / opacity 1.0)。
+  group('R113 (BUG 6) _EntrySpring prefers-reduced-motion', () {
+    Widget wrap({required bool reduced}) {
+      return MaterialApp(
+        theme: ThemeData.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: MediaQuery(
+          data: MediaQueryData(disableAnimations: reduced),
+          child: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 400,
+                child: CheckInButton(
+                  isChecked: false,
+                  streakDays: 0,
+                  isLoading: false,
+                  onPressed: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('reduce motion → 首帧即终态 (scale 1.0 / opacity 1.0)',
+        (tester) async {
+      await tester.pumpWidget(wrap(reduced: true));
+      await tester.pump();
+
+      final transform = tester.widget<Transform>(
+        find
+            .descendant(
+              of: find.byType(CheckInButton),
+              matching: find.byType(Transform),
+            )
+            .first,
+      );
+      // Matrix4 storage[0] = m00 = x-scale (getMaxScaleOnAxis 在
+      // diagonal matrix 上实测误报 1.0, 直接读矩阵元素)
+      expect(
+        transform.transform.storage[0],
+        1.0,
+        reason: '修前 spring 从 0.95 起步, reduce-motion 用户仍看到弹跳进场',
+      );
+      final opacity = tester.widget<Opacity>(
+        find
+            .descendant(
+              of: find.byType(CheckInButton),
+              matching: find.byType(Opacity),
+            )
+            .first,
+      );
+      expect(opacity.opacity, 1.0);
+    });
+
+    testWidgets('无 reduce motion → 进场从 0.95 起步 (回归守卫)', (tester) async {
+      await tester.pumpWidget(wrap(reduced: false));
+      await tester.pump();
+
+      final transform = tester.widget<Transform>(
+        find
+            .descendant(
+              of: find.byType(CheckInButton),
+              matching: find.byType(Transform),
+            )
+            .first,
+      );
+      expect(
+        transform.transform.storage[0],
+        lessThan(1.0),
+        reason: '正常模式 spring 从 0.95 起步渐进 1.0 (防过度修复)',
+      );
+    });
+  });
 }

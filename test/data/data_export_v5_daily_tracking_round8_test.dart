@@ -43,7 +43,8 @@ void main() {
   Map<String, dynamic> parseJson(String json) =>
       jsonDecode(json) as Map<String, dynamic>;
 
-  test('1. sleep_entries round-trip (date/bedtime/wakeTime/durationMin/'
+  test(
+      '1. sleep_entries round-trip (date/bedtime/wakeTime/durationMin/'
       'regularityScore/note)', () async {
     await db.sleepDao.insert(
       SleepEntriesCompanion.insert(

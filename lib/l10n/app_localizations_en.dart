@@ -887,6 +887,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodDialogTitle => 'How are you today?';
 
   @override
+  String get moodScoreSectionTitle => 'Mood Rating';
+
+  @override
+  String get moodRecordSectionTitle => 'Record Details';
+
+  @override
   String get moodDialogPeriodLabel => 'Period';
 
   @override
@@ -914,25 +920,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodDimensionMood => 'Mood';
 
   @override
-  String get moodDimensionMoodHint => '1=very bad 5=great';
-
-  @override
   String get moodDimensionEnergy => 'Energy';
-
-  @override
-  String get moodDimensionEnergyHint => '1=very low 5=energized';
 
   @override
   String get moodDimensionSleep => 'Sleep';
 
   @override
-  String get moodDimensionSleepHint => '1=very bad 5=great';
-
-  @override
   String get moodDimensionAnxiety => 'Anxiety';
-
-  @override
-  String get moodDimensionAnxietyHint => '1=severe 5=calm';
 
   @override
   String get moodTagAnxiety => 'Anxious';
@@ -1528,8 +1522,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeAutofireFallbackName => 'this med';
 
   @override
-  String homeMedHint(int id) {
-    return '💊 Ready to check in medication #$id';
+  String homeMedHint(String name) {
+    return '💊 Ready to check in medication $name';
   }
 
   @override
@@ -1936,14 +1930,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medicationDeleted => 'Medication deleted';
 
   @override
-  String get moodTodayLabel => 'Mood: ';
-
-  @override
-  String moodTodayLabelWithValue(String value) {
-    return 'Mood: $value';
-  }
-
-  @override
   String get moodLabel1 => 'Very bad';
 
   @override
@@ -1957,9 +1943,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodLabel5 => 'Very good';
-
-  @override
-  String get moodRecordButton => 'Log mood ✏️';
 
   @override
   String medReportFileName(Object date) {
@@ -2614,9 +2597,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodCbtChipBadge7 => 'CBT 7-column';
-
-  @override
-  String get moodCbtThreeScoreTitle => 'How do you feel right now?';
 
   @override
   String get moodCbtThreeSituationTitle => 'What happened?';
@@ -3957,6 +3937,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodTrendCbtEmpty => 'No CBT re-rating data yet';
 
   @override
+  String moodTrendSemanticsLine(Object days) {
+    return 'Mood trend line chart, last $days days';
+  }
+
+  @override
+  String moodTrendSemanticsDist(Object count, Object score) {
+    return 'Mood score distribution chart, most common $score out of 5, $count records';
+  }
+
+  @override
+  String moodTrendSemanticsCbt(Object count) {
+    return 'CBT re-rating chart, $count re-rating records';
+  }
+
+  @override
   String get medDetailActive => 'Active';
 
   @override
@@ -4285,5 +4280,260 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String importSummaryVent(int n) {
     return '$n vents';
+  }
+
+  @override
+  String get cbtExportPdfMoodLabel => 'Mood';
+
+  @override
+  String get cbtExportPdfOriginalScoreLabel => 'original';
+
+  @override
+  String get psychoTipsTitle => 'Self-care tips';
+
+  @override
+  String get psychoTipBreathTitle => 'Mindful breathing';
+
+  @override
+  String get psychoTipBreathSummary =>
+      'Anchor yourself in the present by focusing on your breath';
+
+  @override
+  String get psychoTipBreathStep1 =>
+      'Sit somewhere comfortable and gently close your eyes';
+
+  @override
+  String get psychoTipBreathStep2 =>
+      'Breathe in for 4 seconds, feeling the air fill your body';
+
+  @override
+  String get psychoTipBreathStep3 => 'Hold your breath for 2 seconds';
+
+  @override
+  String get psychoTipBreathStep4 =>
+      'Exhale slowly for 6 seconds, relaxing your shoulders and body';
+
+  @override
+  String get psychoTipBreathStep5 =>
+      'Repeat for 3-5 minutes, keeping your attention on your breath';
+
+  @override
+  String get psychoTipNameTitle => 'Name the emotion';
+
+  @override
+  String get psychoTipNameSummary => 'Naming an emotion reduces its intensity';
+
+  @override
+  String get psychoTipNameStep1 => 'Pause and notice how your body is reacting';
+
+  @override
+  String get psychoTipNameStep2 =>
+      'Ask yourself: what emotion am I feeling right now';
+
+  @override
+  String get psychoTipNameStep3 =>
+      'Describe it in one word, like \"irritated\", \"sad\" or \"anxious\"';
+
+  @override
+  String get psychoTipNameStep4 => 'Say it or write it down: \"I feel…\"';
+
+  @override
+  String get psychoTipNameStep5 =>
+      'Watch how the emotion shifts, without judging it';
+
+  @override
+  String get psychoTipCbtTitle => 'Cognitive reframing';
+
+  @override
+  String get psychoTipCbtSummary =>
+      'Identify and adjust unhelpful automatic thoughts — pairs well with CBT records';
+
+  @override
+  String get psychoTipCbtStep1 =>
+      'Write down the specific situation that triggered the feeling';
+
+  @override
+  String get psychoTipCbtStep2 =>
+      'Record the automatic thought that came to mind';
+
+  @override
+  String get psychoTipCbtStep3 =>
+      'List the evidence for and against this thought';
+
+  @override
+  String get psychoTipCbtStep4 =>
+      'Write a more balanced, fact-based alternative thought';
+
+  @override
+  String get psychoTipCbtStep5 =>
+      'Practice with a 5-column CBT record in your mood diary';
+
+  @override
+  String get psychoTipGroundTitle => '5-4-3-2-1 grounding';
+
+  @override
+  String get psychoTipGroundSummary =>
+      'Use your five senses to return to the present and step back from anxiety';
+
+  @override
+  String get psychoTipGroundStep1 => 'Name 5 things you can see';
+
+  @override
+  String get psychoTipGroundStep2 => 'Notice 4 things you can touch';
+
+  @override
+  String get psychoTipGroundStep3 => 'Listen for 3 sounds you can hear';
+
+  @override
+  String get psychoTipGroundStep4 => 'Notice 2 smells around you';
+
+  @override
+  String get psychoTipGroundStep5 => 'Feel 1 taste in your mouth';
+
+  @override
+  String get psychoTipPmrTitle => 'Progressive muscle relaxation';
+
+  @override
+  String get psychoTipPmrSummary =>
+      'Release physical tension by tensing and relaxing muscle groups';
+
+  @override
+  String get psychoTipPmrStep1 => 'Sit or lie down in a comfortable position';
+
+  @override
+  String get psychoTipPmrStep2 =>
+      'Starting with your toes, tense them tightly for 5 seconds';
+
+  @override
+  String get psychoTipPmrStep3 =>
+      'Release and enjoy the relaxed feeling for about 10 seconds';
+
+  @override
+  String get psychoTipPmrStep4 =>
+      'Move upward: calves, thighs, belly, arms, shoulders';
+
+  @override
+  String get psychoTipPmrStep5 =>
+      'Finish by relaxing your face and scalp for a full-body scan';
+
+  @override
+  String get ventAgreementTitle => 'Tree hole guidelines';
+
+  @override
+  String get ventAgreementBody =>
+      'Your tree hole is a private space that belongs only to you. Please remember:\n· Everything you share stays on this device, encrypted and private\n· Vent content is never used in any analysis, recommendations or notifications\n· Be gentle with yourself and honor every feeling\n· If you feel intense distress or think of harming yourself, please use the crisis hotline for help';
+
+  @override
+  String get ventAgreementConfirm => 'Got it';
+
+  @override
+  String get worryTimelineTitle => 'Worry timeline';
+
+  @override
+  String get worryArchiveTitle => 'Memories';
+
+  @override
+  String get worrySectionTitle => 'Worries';
+
+  @override
+  String get worrySectionArchiveAction => 'Memories';
+
+  @override
+  String worryEntryCount(Object count) {
+    return '$count entries';
+  }
+
+  @override
+  String get worryContinueAction => 'Keep writing';
+
+  @override
+  String get worryResolveAction => 'Let it go';
+
+  @override
+  String get worryReopenAction => 'It\'s back';
+
+  @override
+  String get worryResolveConfirmTitle => 'Let go of this worry?';
+
+  @override
+  String get worryResolveConfirmBody =>
+      'It will be kept in Memories. You can reopen it anytime.';
+
+  @override
+  String get worryResolveConfirmOk => 'Let it go';
+
+  @override
+  String get worryResolveDone => '🎉 You let go of a worry';
+
+  @override
+  String get worryReopenDone => 'Reopened — write whenever you need';
+
+  @override
+  String get worryRenameTitle => 'Rename worry';
+
+  @override
+  String get worryRenameAction => 'Rename';
+
+  @override
+  String get worryNewOption => 'New worry';
+
+  @override
+  String get worryNoWorry => 'No linked worry';
+
+  @override
+  String get worryDefaultTitle => 'Unnamed worry';
+
+  @override
+  String get worryFieldLabel => 'Linked worry';
+
+  @override
+  String get worryFieldHint =>
+      'Choose or create a worry to add this mood to its timeline';
+
+  @override
+  String get worryTimelineEmpty =>
+      'This worry has no entries yet. Start with \"Keep writing\".';
+
+  @override
+  String get worryArchiveEmpty =>
+      'No worries let go yet. Turning moods into worry timelines makes growth last.';
+
+  @override
+  String worryArchiveCount(Object count) {
+    return '$count worries let go';
+  }
+
+  @override
+  String worryOpenCount(Object count) {
+    return '$count in progress';
+  }
+
+  @override
+  String get worryStatusOpen => 'In progress';
+
+  @override
+  String get worryStatusResolved => 'Let go';
+
+  @override
+  String get worryThreadNotFound =>
+      'This worry is no longer available — it may have been deleted.';
+
+  @override
+  String get dbResetPromptTitle => 'Can\'t open local database';
+
+  @override
+  String get dbResetPromptBody =>
+      'The encrypted local data doesn\'t match its key (often caused by a backup restore that recovered data but not the key). You can tap \"Retry\" first to see if your data comes back; if it still can\'t open, you can reset local data and start over.';
+
+  @override
+  String get dbResetPromptReset => 'Reset local data';
+
+  @override
+  String get dbResetPromptConfirm =>
+      'Resetting will delete all local records and cannot be undone. Confirm reset?';
+
+  @override
+  String moodTrendSemanticsAvg(Object average) {
+    return 'average $average out of 5';
   }
 }

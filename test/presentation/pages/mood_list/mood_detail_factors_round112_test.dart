@@ -40,8 +40,10 @@ void main() {
 
   testWidgets('1) 新数据 (key) → zh 本地化文案', (tester) async {
     await tester.pumpWidget(
-      wrap(entryWith('["influenceFactorFamily","influenceFactorSunny"]'),
-          const Locale('zh'),),
+      wrap(
+        entryWith('["influenceFactorFamily","influenceFactorSunny"]'),
+        const Locale('zh'),
+      ),
     );
     await tester.pumpAndSettle();
 

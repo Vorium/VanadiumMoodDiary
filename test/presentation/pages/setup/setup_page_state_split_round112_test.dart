@@ -46,13 +46,12 @@ class _RecordingSetupCommitter extends SetupCommitter {
   int calls = 0;
   String? receivedUserName;
   final List<
-          ({
-            String name,
-            double dosage,
-            String dosageUnit,
-            List<HourMinute> times,
-          })>
-      receivedMeds = [];
+      ({
+        String name,
+        double dosage,
+        String dosageUnit,
+        List<HourMinute> times,
+      })> receivedMeds = [];
 
   @override
   Future<void> completeSetup({
@@ -91,6 +90,7 @@ class _RecordingUserProfileRepository implements UserProfileRepository {
   }) async {
     recordConsentCalls++;
   }
+
   @override
   Future<void> withdrawConsent() async {}
   @override
@@ -190,15 +190,19 @@ void main() {
       state.privacyPolicy = true;
       state.sensitiveData = true;
       state.ageAttestation = true;
-      expect(state.allAgreed, isFalse,
-          reason: '医学免责声明未勾 → 不允进入下一步 (R103)',);
+      expect(
+        state.allAgreed,
+        isFalse,
+        reason: '医学免责声明未勾 → 不允进入下一步 (R103)',
+      );
       state.medicalDisclaimer = true;
       expect(state.allAgreed, isTrue);
     });
   });
 
   group('MedDraft.fromTemplate (AR-20 批2a)', () {
-    testWidgets('4. template → 草稿: name i18n / dosage 整数化 / unit / times 转 TimeOfDay',
+    testWidgets(
+        '4. template → 草稿: name i18n / dosage 整数化 / unit / times 转 TimeOfDay',
         (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
@@ -251,8 +255,11 @@ void main() {
         ),
         l10n,
       );
-      expect(intDosage.dosageController.text, '40',
-          reason: '40.0 → "40" (整数去 .0)',);
+      expect(
+        intDosage.dosageController.text,
+        '40',
+        reason: '40.0 → "40" (整数去 .0)',
+      );
       intDosage.dispose();
 
       final fracDosage = MedDraft.fromTemplate(
@@ -264,8 +271,11 @@ void main() {
         ),
         l10n,
       );
-      expect(fracDosage.dosageController.text, '12.5',
-          reason: '12.5 → "12.5" (保留小数)',);
+      expect(
+        fracDosage.dosageController.text,
+        '12.5',
+        reason: '12.5 → "12.5" (保留小数)',
+      );
       fracDosage.dispose();
     });
   });
@@ -331,8 +341,11 @@ void main() {
       expect(thrown, isNull, reason: '完整序列不应抛');
       expect(committer.calls, 1);
       expect(committer.receivedUserName, '小明');
-      expect(profileRepo.recordConsentCalls, 1,
-          reason: 'PIPL §14 同意留痕应在提交序列内调用',);
+      expect(
+        profileRepo.recordConsentCalls,
+        1,
+        reason: 'PIPL §14 同意留痕应在提交序列内调用',
+      );
     });
 
     testWidgets('10. committer 抛 StateError → run 原样上抛 (caller 管 snackbar)',
@@ -395,8 +408,11 @@ void main() {
       await _pumpUntil(tester, () => done || thrown != null);
 
       expect(done, isFalse);
-      expect(thrown, isA<StateError>(),
-          reason: 'E5 StateError 原样上抛, 由 SetupPageState 管 error snackbar',);
+      expect(
+        thrown,
+        isA<StateError>(),
+        reason: 'E5 StateError 原样上抛, 由 SetupPageState 管 error snackbar',
+      );
       expect(committer.calls, 1);
     });
 
@@ -434,8 +450,11 @@ void main() {
       final result = SetupSubmitFlow.collectMedications([invalid]);
       addTearDown(invalid.dispose);
 
-      expect(result.single.dosage, 0,
-          reason: 'double.tryParse 失败 → 0 (跟原 _finishSetup 1:1)',);
+      expect(
+        result.single.dosage,
+        0,
+        reason: 'double.tryParse 失败 → 0 (跟原 _finishSetup 1:1)',
+      );
     });
   });
 
@@ -461,8 +480,11 @@ void main() {
           matching: find.byWidgetPredicate((w) => w is PopScope),
         ),
       );
-      expect(popScope.canPop, isFalse,
-          reason: 'step 0 (consent) 不可 pop (必须显式走流程)',);
+      expect(
+        popScope.canPop,
+        isFalse,
+        reason: 'step 0 (consent) 不可 pop (必须显式走流程)',
+      );
       expect(find.text('step-0'), findsOneWidget);
 
       await tester.pumpWidget(
@@ -481,8 +503,11 @@ void main() {
           matching: find.byWidgetPredicate((w) => w is PopScope),
         ),
       );
-      expect(popScope.canPop, isTrue,
-          reason: 'step > 0 可 pop',);
+      expect(
+        popScope.canPop,
+        isTrue,
+        reason: 'step > 0 可 pop',
+      );
       expect(find.text('step-2'), findsOneWidget);
     });
 
@@ -501,8 +526,11 @@ void main() {
       final l10n = AppLocalizations.of(
         tester.element(find.byType(SetupWizardFrame)),
       );
-      expect(find.text(l10n.setupStep(3, 4)), findsOneWidget,
-          reason: 'title 应显示 "第 3 步 ／ 共 4 步"',);
+      expect(
+        find.text(l10n.setupStep(3, 4)),
+        findsOneWidget,
+        reason: 'title 应显示 "第 3 步 ／ 共 4 步"',
+      );
 
       final progressBar = tester.widget<SetupProgressBar>(
         find.byType(SetupProgressBar),

@@ -7,7 +7,8 @@
 // - mock 走 ReminderDispatcher interface, 跟踪 zonedDaily / cancelByIdRange 调用
 // - flutter_local_notifications platform channel 全局 mock 让 _plugin.cancel()
 //   (scheduleDailyReminder 第 2 行) 在 test 不抛 MissingPluginException
-// - payload 是 chroniccare://check-in/today (daily) 或 chroniccare://check-in/med/N (per-med)
+// - payload 是 chroniccare://today (daily, R114 BUG 1 改走
+//   NotificationDeepLink.encode()) 或 chroniccare://medication/N (per-med)
 import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
@@ -479,6 +480,11 @@ class _MockReminderDispatcher implements ReminderDispatcher {
 
   @override
   bool get useExactAllowWhileIdle => true;
+
+  // R114 B1-2: ReminderDispatcher 新增 scheduleMode getter
+  @override
+  AndroidScheduleMode get scheduleMode =>
+      AndroidScheduleMode.exactAllowWhileIdle;
 
   @override
   void setExactMode(bool value) {

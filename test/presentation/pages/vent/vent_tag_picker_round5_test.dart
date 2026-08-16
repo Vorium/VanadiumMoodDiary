@@ -21,7 +21,8 @@ Widget _wrap(Set<String> selected, ValueChanged<Set<String>> onChanged) {
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     locale: const Locale('zh'),
-    home: Scaffold(body: VentTagPicker(selected: selected, onChanged: onChanged)),
+    home:
+        Scaffold(body: VentTagPicker(selected: selected, onChanged: onChanged)),
   );
 }
 
@@ -55,8 +56,7 @@ void main() {
     expect(received, {'工作'});
   });
 
-  testWidgets('3) 自定义输入 + onSubmitted → onChanged 含新标签 + 输入清空',
-      (tester) async {
+  testWidgets('3) 自定义输入 + onSubmitted → onChanged 含新标签 + 输入清空', (tester) async {
     Set<String>? received;
     await tester.pumpWidget(_wrap({}, (next) => received = next));
 
@@ -94,8 +94,7 @@ void main() {
     expect(received, {'长' * VentTagLibrary.maxCustomTagLength});
   });
 
-  testWidgets('6) 自定义输入 = 已选预设 → 保持选中 (不 toggle 掉), 只清输入',
-      (tester) async {
+  testWidgets('6) 自定义输入 = 已选预设 → 保持选中 (不 toggle 掉), 只清输入', (tester) async {
     Set<String>? received;
     await tester.pumpWidget(_wrap({'家庭'}, (next) => received = next));
 

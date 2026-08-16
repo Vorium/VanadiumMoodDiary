@@ -490,6 +490,8 @@
     }
   },
   "moodDialogTitle": "今天怎麼樣？",
+  "moodScoreSectionTitle": "情緒評分",
+  "moodRecordSectionTitle": "記錄內容",
   "moodDialogPeriodLabel": "時段",
   "moodPeriodMorning": "早上",
   "moodPeriodNoon": "中",
@@ -499,13 +501,9 @@
   "moodListFilterPeriod": "時段",
   "moodPeriodChartTitle": "心境 4 段趨勢（近 30 天）",
   "moodDimensionMood": "情緒",
-  "moodDimensionMoodHint": "1=很差 5=很好",
   "moodDimensionEnergy": "精力",
-  "moodDimensionEnergyHint": "1=很低 5=充沛",
   "moodDimensionSleep": "睡眠",
-  "moodDimensionSleepHint": "1=很差 5=很好",
   "moodDimensionAnxiety": "焦慮",
-  "moodDimensionAnxietyHint": "1=嚴重 5=平靜",
   "moodTagAnxiety": "焦慮",
   "moodTagDepression": "抑鬱",
   "moodTagCalm": "平靜",
@@ -923,11 +921,11 @@
     }
   },
   "homeAutofireFallbackName": "該藥",
-  "homeMedHint": "💊 準備打卡藥物 #{id}",
+  "homeMedHint": "💊 準備打卡藥物 {name}",
   "@homeMedHint": {
     "placeholders": {
-      "id": {
-        "type": "int"
+      "name": {
+        "type": "String"
       }
     }
   },
@@ -1200,16 +1198,6 @@
   "snackbarActionUndo": "撤銷",
   "ventEntryDeleted": "已刪除樹洞條目",
   "medicationDeleted": "已刪除藥物",
-  "moodTodayLabel": "今日情緒：",
-  "moodTodayLabelWithValue": "今日情緒：{value}",
-  "@moodTodayLabelWithValue": {
-    "description": "首頁情緒快捷按鈕: 今日已記錄時的完整標籤 (R112-06 emil, 參數化拼接)",
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "moodLabel1": "很差",
   "@moodLabel1": {
     "description": "情緒分數 1/5 的本地化標籤 (R112-07 emil metadata 補)"
@@ -1230,7 +1218,6 @@
   "@moodLabel5": {
     "description": "情緒分數 5/5 的本地化標籤 (R112-07 emil metadata 補)"
   },
-  "moodRecordButton": "記一下情緒 ✏️",
   "medReportFileName": "用藥報告_{date}",
   "@medReportFileName": {
     "placeholders": {
@@ -1531,7 +1518,6 @@
   "moodCbtScoreReratedLabel": "重新評分",
   "moodCbtChipBadge5": "CBT 5 欄",
   "moodCbtChipBadge7": "CBT 7 欄",
-  "moodCbtThreeScoreTitle": "你現在的感受？",
   "moodCbtThreeSituationTitle": "發生了什麼？",
   "moodCbtThreeAutoTitle": "那一刻腦海裡閃過什麼想法？",
   "moodCbtPrevStep": "上一步",
@@ -2934,6 +2920,9 @@
   "moodTrendCbtTitle": "CBT 重評效果",
   "moodTrendCbtHint": "正值 = 情緒改善， 負值 = 惡化",
   "moodTrendCbtEmpty": "暫無 CBT 重評數據",
+  "moodTrendSemanticsLine": "情緒趨勢折線圖，近 {days} 天",
+  "moodTrendSemanticsDist": "情緒分數分佈圖，最常見 {score} 分，共 {count} 條記錄",
+  "moodTrendSemanticsCbt": "CBT 重評效果圖，{count} 條重評記錄",
   "medDetailActive": "在用",
   "medDetailStopped": "已停",
   "medDetailAdherence": "依從性",
@@ -3167,5 +3156,84 @@
   "importSummaryCheckIn": "{n} 打卡",
   "importSummaryReport": "{n} 報告",
   "importSummaryMood": "{n} 情緒",
-  "importSummaryVent": "{n} 樹洞"
+  "importSummaryVent": "{n} 樹洞",
+  "cbtExportPdfMoodLabel": "情緒",
+  "@cbtExportPdfMoodLabel": {
+    "description": "CBT PDF header — mood score label (R113 BUG A: 硬編碼中文 PDF 頭本地化)"
+  },
+  "cbtExportPdfOriginalScoreLabel": "原",
+  "@cbtExportPdfOriginalScoreLabel": {
+    "description": "CBT PDF rerated section — original score prefix label (R113 BUG A)"
+  },
+  "psychoTipBreathStep1": "找個舒適的位置坐下，輕輕閉上眼睛",
+  "psychoTipBreathStep2": "深吸氣 4 秒，感受空氣充滿身體",
+  "psychoTipBreathStep3": "屏住呼吸 2 秒",
+  "psychoTipBreathStep4": "緩緩呼氣 6 秒，讓肩膀和身體放鬆",
+  "psychoTipBreathStep5": "重複 3-5 分鐘，讓注意力回到呼吸上",
+  "psychoTipBreathSummary": "通過關注呼吸回到當下，緩解焦慮與緊張",
+  "psychoTipBreathTitle": "正念呼吸",
+  "psychoTipCbtStep1": "記錄引發情緒的具體情境",
+  "psychoTipCbtStep2": "寫下腦海中冒出的自動思維",
+  "psychoTipCbtStep3": "列出支持與反對這個想法的證據",
+  "psychoTipCbtStep4": "寫出更平衡、更符合事實的替代想法",
+  "psychoTipCbtStep5": "在情緒日記中使用 5 欄 CBT 記錄練習",
+  "psychoTipCbtSummary": "識別並調整不合理的自動思維，可搭配 CBT 思維記錄",
+  "psychoTipCbtTitle": "認知重構",
+  "psychoTipGroundStep1": "說出你看到的 5 樣東西",
+  "psychoTipGroundStep2": "感受你觸碰到的 4 種觸感",
+  "psychoTipGroundStep3": "仔細聽你聽到的 3 種聲音",
+  "psychoTipGroundStep4": "聞到你周圍的 2 種氣味",
+  "psychoTipGroundStep5": "感受口中的 1 種味道",
+  "psychoTipGroundSummary": "用五種感官覺察當下，把注意力從焦慮中拉回來",
+  "psychoTipGroundTitle": "5-4-3-2-1 感官接地",
+  "psychoTipNameStep1": "停下來，感受此刻身體有哪些反應",
+  "psychoTipNameStep2": "在心裡問自己：我現在的情緒是什麼",
+  "psychoTipNameStep3": "用一個詞描述它，比如「煩躁」「難過」「緊張」",
+  "psychoTipNameStep4": "說出來或寫下來：「我感到……」",
+  "psychoTipNameStep5": "觀察情緒的變化，不去評判它",
+  "psychoTipNameSummary": "給情緒貼上名字，能有效降低它的強度",
+  "psychoTipNameTitle": "情緒命名",
+  "psychoTipPmrStep1": "坐或躺下，找一個舒適的姿勢",
+  "psychoTipPmrStep2": "從腳趾開始，用力收緊 5 秒",
+  "psychoTipPmrStep3": "鬆開，體會放鬆的感覺約 10 秒",
+  "psychoTipPmrStep4": "依次向上：小腿、大腿、腹部、手臂、肩膀",
+  "psychoTipPmrStep5": "最後放鬆面部與頭皮，完成全身掃描",
+  "psychoTipPmrSummary": "依次收緊再放鬆身體各肌肉群，釋放身體的緊張",
+  "psychoTipPmrTitle": "漸進式肌肉放鬆",
+  "psychoTipsTitle": "心理技巧",
+  "ventAgreementTitle": "樹洞使用公約",
+  "ventAgreementBody": "你的樹洞是隻屬於你的私密空間，請了解這幾點：\n· 所有傾訴內容僅保存在本機並加密，絕不外傳\n· 樹洞內容不參與任何分析、推薦或通知\n· 請溫柔地對待自己，尊重每一份情緒\n· 若感到極度痛苦或有自傷念頭，請使用危機熱線尋求幫助",
+  "ventAgreementConfirm": "我知道了",
+  "worryTimelineTitle": "煩惱時間線",
+  "worryArchiveTitle": "憶往昔",
+  "worrySectionTitle": "煩惱心事",
+  "worrySectionArchiveAction": "憶往昔",
+  "worryEntryCount": "{count} 條記錄",
+  "worryContinueAction": "繼續傾訴",
+  "worryResolveAction": "不再煩惱啦",
+  "worryReopenAction": "又煩惱了",
+  "worryResolveConfirmTitle": "放下這個煩惱？",
+  "worryResolveConfirmBody": "確認後它會被收藏到「憶往昔」，隨時可以「又煩惱了」重新打開。",
+  "worryResolveConfirmOk": "放下啦",
+  "worryResolveDone": "🎉 恭喜，你放下了一個煩惱",
+  "worryReopenDone": "已重新打開，需要的時候隨時來傾訴",
+  "worryRenameTitle": "重命名煩惱",
+  "worryRenameAction": "重命名",
+  "worryNewOption": "新建煩惱",
+  "worryNoWorry": "沒有關聯煩惱",
+  "worryDefaultTitle": "未命名煩惱",
+  "worryFieldLabel": "關聯煩惱",
+  "worryFieldHint": "選擇或新建一個煩惱，把這次心情記到它的時間線上",
+  "worryTimelineEmpty": "這個煩惱還沒有記錄，從「繼續傾訴」開始吧",
+  "worryArchiveEmpty": "還沒有放下過的煩惱。把心情記成煩惱時間線，成長會被珍藏。",
+  "worryArchiveCount": "已放下 {count} 個煩惱",
+  "worryOpenCount": "{count} 個進行中",
+  "worryStatusOpen": "進行中",
+  "worryStatusResolved": "已放下",
+  "worryThreadNotFound": "這個煩惱找不到了，可能已經刪除",
+  "dbResetPromptTitle": "無法打開本地數據庫",
+  "dbResetPromptBody": "本地加密數據與密鑰不匹配（常見於系統備份恢復只還原了數據、未還原密鑰）。你可以先點「重試」看看數據是否恢復；若仍無法打開，可重置本地數據重新開始。",
+  "dbResetPromptReset": "重置本地數據",
+  "dbResetPromptConfirm": "重置將刪除本機全部記錄，且無法恢復。確認重置嗎？",
+  "moodTrendSemanticsAvg": "平均 {average} 分"
 }

@@ -269,15 +269,15 @@ void main() {
       expect(json['exportedAt'], '2026-07-01T10:00:00.000Z');
     });
 
-    test('version = 6 (v1.1.0 情绪优先重构: 删 contacts +statusPhrase/tagsJson)',
+    test('version = 7 (v1.1.0 F1 烦恼闭环: +worryThreads 段 + mood.worryThreadId)',
         () async {
       final json = parseJson(await svc.exportToJson());
-      expect(json['version'], 6);
+      expect(json['version'], 7);
     });
 
     test('空 DB 导出 → 全空数组,null profile', () async {
       final json = parseJson(await svc.exportToJson());
-      expect(json['version'], 6);
+      expect(json['version'], 7);
       expect(json['profile'], isNull);
       expect(json.containsKey('contacts'), isFalse);
       expect(json['medications'], isEmpty);

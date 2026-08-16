@@ -46,10 +46,9 @@ class AddMedicationStep1Form extends StatelessWidget {
         MedicationStepTitle(text: l10n.medAddStep1Title),
         const SizedBox(height: AppTokens.spacingMd),
 
-        // "基本信息" AppleListSection
+        // "基本信息" AppleListSection (R114 B2-4: 页边距由 PageScaffold 负责)
         AppleListSection(
           title: l10n.medAddBasicInfo,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             // 药名
             Padding(

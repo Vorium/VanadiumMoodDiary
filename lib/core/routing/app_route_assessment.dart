@@ -17,12 +17,16 @@ class AppRouteAssessment {
   AppRouteAssessment._();
 
   /// 趋势路由 (1.1.0 round 5 移进 ShellRoute, 底栏常驻 + tab 高亮)
+  ///
+  /// R114 Wave B2 (B2-1, emil F1): /trend 根路由改 fadePage — 4 个 shell
+  /// tab 统一体感 (修前 slideRightPage); slideRightPage 只留给 push 子页
+  /// (assessment-center / history / :id)。
   static List<RouteBase> shellRoutes() {
     return [
       GoRoute(
         path: '/trend',
         pageBuilder: (context, state) =>
-            AppRoutes.slideRightPage(state.pageKey, const TrendPage(), context),
+            AppRoutes.fadePage(state.pageKey, const TrendPage(), context),
       ),
     ];
   }

@@ -77,6 +77,11 @@ void exportErrorSink({
   StackTrace? stack,
   String? note,
 }) {
-  _swallowScoped('export',
-      where: where, error: error, stack: stack, note: note,);
+  _swallowScoped(
+    'export',
+    where: where,
+    error: error,
+    stack: stack,
+    note: note,
+  );
 }

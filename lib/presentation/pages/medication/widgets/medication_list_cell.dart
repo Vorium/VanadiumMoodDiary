@@ -92,8 +92,11 @@ class MedicationListCell extends StatelessWidget {
                 style: TextStyle(
                   fontSize: AppTokens.fontSizeCaptionSm,
                   fontWeight: FontWeight.w600,
+                  // R113 (BUG 7): AppColors.success (浅绿 2.4:1) → fgOnSuccess
+                  // (深绿 #2E7D32, 白底 ≈5.1:1, WCAG AA) — 状态色作文字色
+                  // 对比度不达标
                   color: med.isInUse
-                      ? AppColors.success
+                      ? AppColors.fgOnSuccess
                       : AppTokens.textHintColor(context),
                 ),
               ),

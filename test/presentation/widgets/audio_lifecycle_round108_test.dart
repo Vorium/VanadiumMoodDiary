@@ -15,8 +15,12 @@
 //
 // **跟 R95 / R108 同模式**: 静态源码 grep 守门, 不依赖 audioplayers /
 // record / speech_to_text platform channel mock。
+//
+// R114 BUG 2 补: group B 用真实 dart:io 临时文件验证
+// deleteRecordTempBestEffort 删除行为 (不碰 platform channel)。
 import 'dart:io';
 
+import 'package:chroniccare/presentation/widgets/audio_lifecycle.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -37,7 +41,8 @@ void main() {
       ).readAsStringSync();
     });
 
-    test('A1: AudioLifecycleMixin 文件存在 + 4 状态 enum (idle/recording/recorded/playing)',
+    test(
+        'A1: AudioLifecycleMixin 文件存在 + 4 状态 enum (idle/recording/recorded/playing)',
         () {
       // R108 Fix #1 文件必须存在
       final mixinFile = File('lib/presentation/widgets/audio_lifecycle.dart');
@@ -61,8 +66,8 @@ void main() {
           mixinSource.contains('AudioState.$state'),
           isTrue,
           reason: 'AudioState enum 必须含 4 状态 (替代 vent_compose / '
-                'mood_audio 的 _isRecording / _isPlaying 等独立字段), '
-                '缺: $state',
+              'mood_audio 的 _isRecording / _isPlaying 等独立字段), '
+              '缺: $state',
         );
       }
     });
@@ -93,7 +98,8 @@ void main() {
       expect(
         ventSource.contains('bool _isRecording = false'),
         isFalse,
-        reason: 'vent_compose 不能再有 _isRecording 字段 (已走 mixin.isRecording getter)',
+        reason:
+            'vent_compose 不能再有 _isRecording 字段 (已走 mixin.isRecording getter)',
       );
       expect(
         ventSource.contains('bool _isPlaying = false'),
@@ -163,7 +169,8 @@ void main() {
 
       // audioErrorSink (R17 模式防御: 单步异常阻断后续资源释放;
       // R112 AR-23: audio 簇改调 scoped wrapper, 内部仍走 swallowError)
-      final audioErrorSinkCount = 'audioErrorSink('.allMatches(mixinSource).length;
+      final audioErrorSinkCount =
+          'audioErrorSink('.allMatches(mixinSource).length;
       expect(
         audioErrorSinkCount,
         greaterThanOrEqualTo(6),
@@ -192,9 +199,12 @@ void main() {
         // v0.32 R112 round 8h: 阈值 500 → 520 — 录音暂停/继续功能 +35 行
         // (pause/resume impl + _togglePause + 3 UI 参数, mixin 已承载状态机,
         // 页面侧仅剩必实现抽象方法), 仍拒 god class 回归 (445 基线 +75 buffer)
-        lessThan(520),
-        reason: 'vent_compose 应保持 < 520 行 (R108 原 445, 8h pause 功能 +35), '
-            '实际: $ventLines',
+        // 1.1.0 round 8 (F4 树洞公约): +5 行 (vent_agreement_dialog import
+        // + showVentAgreementIfNeeded initState 调用 + dart format 换行)
+        // → 阈值 520 → 540 (515 基线 +25 buffer)
+        lessThan(540),
+        reason: 'vent_compose 应保持 < 540 行 (R108 原 445, 8h pause +35, '
+            'round 8 F4 公约 +5), 实际: $ventLines',
       );
       expect(
         moodLines,
@@ -204,6 +214,49 @@ void main() {
         lessThan(640),
         reason: 'mood_audio_recorder 应保持 < 640 行 (R108 原 530, 8h pause '
             '+ E-01 注释, 8i 抽转写 widget 后 612), 实际: $moodLines',
+      );
+    });
+  });
+
+  group('R114 BUG 2: deleteRecordTempBestEffort 录音明文 temp 清理', () {
+    test('B1: 删除真实存在的录音 temp 文件 (PIPL §28)', () async {
+      final dir = await Directory.systemTemp.createTemp('al_r114_');
+      addTearDown(() async {
+        if (await dir.exists()) await dir.delete(recursive: true);
+      });
+      final f = File('${dir.path}/record.m4a');
+      await f.writeAsString('fake-audio');
+      expect(await f.exists(), isTrue);
+
+      await AudioLifecycleMixin.deleteRecordTempBestEffort(f.path);
+
+      expect(await f.exists(), isFalse);
+    });
+
+    test('B2: null / 不存在路径 → 不抛 (idempotent)', () async {
+      await expectLater(
+        AudioLifecycleMixin.deleteRecordTempBestEffort(null),
+        completes,
+      );
+      await expectLater(
+        AudioLifecycleMixin.deleteRecordTempBestEffort('/no/such/x.m4a'),
+        completes,
+      );
+    });
+
+    test('B3: dispose 链含 3.5 步录音 temp 清理 (lock-in)', () {
+      final mixinSource = File(
+        'lib/presentation/widgets/audio_lifecycle.dart',
+      ).readAsStringSync();
+      expect(
+        mixinSource.contains('tempRecordPath'),
+        isTrue,
+        reason: 'mixin 应有 tempRecordPath 字段 (subclass 写入, dispose 链删)',
+      );
+      expect(
+        mixinSource.contains('deleteRecordTempBestEffort(recordTemp)'),
+        isTrue,
+        reason: 'asyncDisposeAudio 第 3.5 步必须删除录音明文 temp',
       );
     });
   });

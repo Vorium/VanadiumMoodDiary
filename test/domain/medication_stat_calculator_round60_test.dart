@@ -128,6 +128,30 @@ void main() {
       );
     });
 
+    test('R113 (BUG 5): startDate 在窗口中间 → 漏服日期全部 ≥ startDate', () {
+      // 修前: MissedDateBuilder 从 periodStart (7/1) 起扫, 药 7/8 才开始,
+      // 却报 7/1..7/7 的"漏服" (用户根本没开始吃)。
+      // 修后: 从 effectiveStart = max(periodStart, med.startDate) 起扫。
+      final start = periodStart.add(const Duration(days: 7)); // 7/8
+      final stat = MedicationStatCalculator.calculate(
+        med: med(startDate: start),
+        days: 14,
+        inWindow: const [],
+        periodStart: periodStart,
+      );
+      expect(stat.missedDates.length, 7);
+      expect(
+        stat.missedDates.first,
+        start,
+        reason: '第一条漏服日期应为开药当天 (7/8), 而非 7/1',
+      );
+      expect(
+        stat.missedDates.every((d) => !d.isBefore(start)),
+        isTrue,
+        reason: '修前 bug: 漏服日期全部落在开药之前',
+      );
+    });
+
     test('startDate 在未来 + 已有打卡 (edge case): 未来打卡不算 → 仍 empty', () {
       // 修正后行为: effectiveDays ≤ 0 → 早返, 任何 checkIn (哪怕时间在窗口内) 都忽略
       // 这是修正应该有的语义: 药物未开始时, 不管打没打卡, 都不应计入"漏服"

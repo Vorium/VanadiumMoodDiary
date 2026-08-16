@@ -67,6 +67,8 @@ class _HomeFabToolbarState extends State<HomeFabToolbar> {
               ? Column(
                   children: [
                     FadeIn(
+                      // R114 Wave B2 (B2-8): 显式 durFast 200ms (修前默认 400ms)
+                      duration: AppTokens.durFast,
                       delay: Duration.zero,
                       child: _FabButton(
                         icon: Icons.psychology_outlined,
@@ -87,8 +89,11 @@ class _HomeFabToolbarState extends State<HomeFabToolbar> {
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                     FadeIn(
+                      // R114 Wave B2 (B2-8): 显式 durFast 200ms (修前默认 400ms)
+                      duration: AppTokens.durFast,
                       delay: const Duration(
-                          milliseconds: AppTokens.staggerStepMs,),
+                        milliseconds: AppTokens.staggerStepMs,
+                      ),
                       child: _FabButton(
                         icon: Icons.forest_outlined,
                         label: l10n.homeFabVent,
@@ -114,8 +119,11 @@ class _HomeFabToolbarState extends State<HomeFabToolbar> {
                     // (safety_watch_service._checkAndAlert 内 FeatureFlag
                     // gate 不变)。
                     FadeIn(
+                      // R114 Wave B2 (B2-8): 显式 durFast 200ms (修前默认 400ms)
+                      duration: AppTokens.durFast,
                       delay: const Duration(
-                          milliseconds: 2 * AppTokens.staggerStepMs,),
+                        milliseconds: 2 * AppTokens.staggerStepMs,
+                      ),
                       child: _FabButton(
                         icon: Icons.phone_in_talk_outlined,
                         label: l10n.homeFabHotline,
@@ -138,8 +146,11 @@ class _HomeFabToolbarState extends State<HomeFabToolbar> {
                     ),
                     const SizedBox(height: AppTokens.spacingSm),
                     FadeIn(
+                      // R114 Wave B2 (B2-8): 显式 durFast 200ms (修前默认 400ms)
+                      duration: AppTokens.durFast,
                       delay: const Duration(
-                          milliseconds: 3 * AppTokens.staggerStepMs,),
+                        milliseconds: 3 * AppTokens.staggerStepMs,
+                      ),
                       child: _FabButton(
                         icon: Icons.vertical_align_top,
                         label: l10n.homeFabTop,
@@ -162,9 +173,13 @@ class _HomeFabToolbarState extends State<HomeFabToolbar> {
                             ctrl.animateTo(
                               0.0,
                               duration: Motion.duration(
-                                  context, AppTokens.durNormal,),
+                                context,
+                                AppTokens.durNormal,
+                              ),
                               curve: Motion.curve(
-                                  context, AppTokens.curveStandard,),
+                                context,
+                                AppTokens.curveStandard,
+                              ),
                             );
                           }
                         },

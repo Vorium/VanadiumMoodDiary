@@ -7,13 +7,14 @@
 //
 // v0.31 round 8b (Apple Health redesign · Phase 2 Task 2.4):
 // iOS ALL CAPS section header 改造:
-// - 字号 16 → 11 (fontSizeCaptionSm, iOS section header 标准 11pt)
+// - 字号 16 → 11 → 13 (v0.31 round 8b 16→11, v0.32 round 8 11→13 跟 AppleListSection
+//   title 统一, iOS insetGrouped section header 实际是 13pt)
 // - 字重 w500 (不变)
 // - 颜色 textSecondary → textHint (iOS section header 弱化色)
 // - 新增 `isAllCaps` (默认 true) — toUpperCase() + letterSpacing 0.6
 // - 保留 API: title / leading / action / chip (4 字段不破)
 import 'package:flutter/material.dart';
-// Apple Health 风格 (spec §4.5 section header (11pt w500 ALL CAPS letter-spacing 0.6 textHint)) [R32 集中器注释, 防后续误改为 Material 3 风格]
+// Apple Health 风格 (spec §4.5 section header (13pt w500 ALL CAPS letter-spacing 0.6 textHint)) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
@@ -22,7 +23,7 @@ import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 ///
 /// 用法:
 /// ```dart
-/// SectionHeader(title: '近 30 天')                    // 默认 ALL CAPS + 11pt + letterSpacing 0.6
+/// SectionHeader(title: '近 30 天')                    // 默认 ALL CAPS + 13pt + letterSpacing 0.6
 /// SectionHeader(title: '近 30 天', isAllCaps: false)   // 关闭 ALL CAPS (大小写敏感标题)
 /// SectionHeader(title: '设置', leading: Icon(...))     // + 前置 icon
 /// SectionHeader(title: '导出', action: TextButton(...)) // + 右侧 action button
@@ -38,7 +39,8 @@ import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 /// v0.28 R81 (emil design-5): 加 chip 字段 (B 站"哗哩哗哩能量加油站"风格)
 ///
 /// v0.31 round 8b (Apple Health redesign · Phase 2 Task 2.4):
-/// 字号 16 → 11 (fontSizeCaptionSm), 颜色 textSecondary → textHint,
+/// 字号 16 → 11 → 13 (v0.32 round 8 11→13 跟 AppleListSection title 统一),
+/// 颜色 textSecondary → textHint,
 /// 新增 `isAllCaps` (默认 true) — iOS section header ALL CAPS + letterSpacing 0.6
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
@@ -69,7 +71,7 @@ class SectionHeader extends StatelessWidget {
   /// v0.31 round 8b (Apple Health redesign · Phase 2 Task 2.4):
   /// 是否 ALL CAPS (iOS section header 标准)
   ///
-  /// 默认 true — 配合 iOS 11pt + letterSpacing 0.6 的 ALL CAPS 视觉。
+  /// 默认 true — 配合 iOS 13pt + letterSpacing 0.6 的 ALL CAPS 视觉。
   /// 传 false 让标题保持原始大小写 (适用于中文标题 / 品牌名 / 缩写敏感的文案)。
   final bool isAllCaps;
 
@@ -79,6 +81,7 @@ class SectionHeader extends StatelessWidget {
   /// v0.32 round 8 (R111 EM-02b fix): 11 → 13 (fontSizeCaption) 跟
   /// AppleListSection title 统一 — 修前同屏两套 header 字号 (SectionHeader
   /// 11pt vs AppleListSection 13pt, Apple iOS insetGrouped 实际是 13pt)
+  /// → 最终 13pt (fontSizeCaption)
   static const double _fontSize = AppTokens.fontSizeCaption; // 13.0
 
   /// v0.31 round 8b: 字重 w500 (不变)

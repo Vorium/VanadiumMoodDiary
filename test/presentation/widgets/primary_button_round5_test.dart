@@ -46,12 +46,14 @@ void main() {
     // 验证背景 = colorScheme.primary
     final ctx = tester.element(find.byType(PrimaryButton));
     final material = tester.widget<Material>(
-      find.descendant(of: find.byType(FilledButton), matching: find.byType(Material)),
+      find.descendant(
+          of: find.byType(FilledButton), matching: find.byType(Material)),
     );
     expect(material.color, Theme.of(ctx).colorScheme.primary);
   });
 
-  testWidgets('R5-PB-V2: secondary variant → FilledButton.tonal 背景=secondaryContainer',
+  testWidgets(
+      'R5-PB-V2: secondary variant → FilledButton.tonal 背景=secondaryContainer',
       (tester) async {
     await tester.pumpWidget(
       wrap(
@@ -70,7 +72,8 @@ void main() {
     // 验证背景 = colorScheme.secondaryContainer (区别于 primary)
     final ctx = tester.element(find.byType(PrimaryButton));
     final material = tester.widget<Material>(
-      find.descendant(of: find.byType(FilledButton), matching: find.byType(Material)),
+      find.descendant(
+          of: find.byType(FilledButton), matching: find.byType(Material)),
     );
     expect(material.color, Theme.of(ctx).colorScheme.secondaryContainer);
   });
@@ -124,7 +127,8 @@ void main() {
 
     // leadingIcon 走 Row[IconTheme, SizedBox, child]
     expect(
-      find.descendant(of: find.byType(PrimaryButton), matching: find.byType(Row)),
+      find.descendant(
+          of: find.byType(PrimaryButton), matching: find.byType(Row)),
       findsOneWidget,
       reason: 'leadingIcon 应该把 icon + child 包装成 Row',
     );

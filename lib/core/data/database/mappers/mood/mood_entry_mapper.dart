@@ -42,6 +42,7 @@ extension MoodEntryToEntity on MoodEntry {
       influenceFactorsJson: influenceFactorsJson,
       recordingMode: recordingMode,
       statusPhrase: statusPhrase,
+      worryThreadId: worryThreadId,
     );
   }
 }
@@ -72,6 +73,7 @@ extension MoodEntryEntityToDrift on MoodEntryEntity {
       influenceFactorsJson: Value(influenceFactorsJson),
       recordingMode: Value(recordingMode),
       statusPhrase: Value(statusPhrase),
+      worryThreadId: Value(worryThreadId),
     );
   }
 }
@@ -109,6 +111,7 @@ MoodEntryEntity buildMoodEntryEntity({
   String? influenceFactorsJson,
   String? recordingMode,
   String? statusPhrase,
+  int? worryThreadId,
 }) {
   return MoodEntryEntity(
     id: id,
@@ -133,5 +136,6 @@ MoodEntryEntity buildMoodEntryEntity({
     influenceFactorsJson: influenceFactorsJson ?? '[]',
     recordingMode: recordingMode,
     statusPhrase: statusPhrase,
+    worryThreadId: worryThreadId,
   );
 }

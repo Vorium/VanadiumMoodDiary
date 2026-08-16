@@ -12,7 +12,7 @@ import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_list_page.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
-import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/lazy_apple_list_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -241,7 +241,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // Card 方言清除 (spec §5.6: AppleListSection 替代 Card + Padding)
-    expect(find.byType(AppleListSection), findsOneWidget);
+    // R114 B1-1: 懒加载恢复 → LazyAppleListSection (外观不变)
+    expect(find.byType(LazyAppleListSection), findsOneWidget);
     expect(find.byType(Card), findsNothing);
 
     // AH-15: systemPurple FAB (跟 medication systemRed FAB 同模式)

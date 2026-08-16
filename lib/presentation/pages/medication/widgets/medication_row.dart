@@ -40,6 +40,13 @@ class MedicationRow extends StatelessWidget {
   /// false = stopped 药不启用 swipe (IconButton 路径已覆盖)
   final bool enableSwipe;
 
+  /// R114 BUG 6 (R113 BUG 7b 同款): 删除失败计数 — swipe 删除失败时
+  /// parent 计数 +1 → Dismissible key 变 → 已 dismiss 的旧 Dismissible
+  /// unmount, 新 key remount 回"未滑走"状态 (条目回到列表)。
+  /// 修前 key 固定 `medication-<id>` → 删除失败 rebuild 必抛
+  /// "A dismissed Dismissible widget is still part of the tree"。
+  final int deleteFailCount;
+
   /// v0.32 round 14 (R112 F1 遗留): ListTile contentPadding 透传 —
   /// 放进 AppleListSection 时传 EdgeInsets.zero (cell padding 16/12
   /// 由容器提供, 避免 ListTile 自带 16 横向 double padding)
@@ -56,6 +63,7 @@ class MedicationRow extends StatelessWidget {
     required this.onEditRefill,
     required this.onSwipeDelete,
     this.enableSwipe = true,
+    this.deleteFailCount = 0,
     this.contentPadding,
   });
 
@@ -171,7 +179,8 @@ class MedicationRow extends StatelessWidget {
 
     // v0.21 Round 23 (P1-26): swipe-to-dismiss 左滑删除
     return Dismissible(
-      key: ValueKey('medication-${med.id}'),
+      // R114 BUG 6: key 带失败计数 (vent_list_page.dart:311 同款修法)
+      key: ValueKey('medication-${med.id}-$deleteFailCount'),
       direction: DismissDirection.endToStart,
       background: const SwipeDeleteBackground(),
       // IconButton 路径已走 onDelete (含 confirm);

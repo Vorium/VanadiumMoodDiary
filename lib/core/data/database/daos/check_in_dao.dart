@@ -9,13 +9,70 @@
 // _db.select(_db.checkIns) 访问 table — drift 生成的 getter 在
 // _$AppDatabase 里。
 
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
 
 class CheckInDao {
   final AppDatabase _db;
-  CheckInDao(this._db);
+
+  /// R114 B1-4: 可注入 clock / midnightDelay — 生产用 DateTime.now +
+  /// 下一个 00:00:05, 测试注入假时钟 + 短 delay 快进跨日。
+  final DateTime Function() _clock;
+  final Duration Function(DateTime) _midnightDelay;
+
+  CheckInDao(
+    this._db, {
+    DateTime Function()? clock,
+    Duration Function(DateTime)? midnightDelay,
+  })  : _clock = clock ?? DateTime.now,
+        _midnightDelay = midnightDelay ?? _nextMidnightDelay;
+
+  /// 距离下一个 00:00:05 的时长
+  ///
+  /// 跟 app.dart [nextMidnightRefresh] 同款语义 (5s buffer 防 00:00 边界
+  /// race); 跨月/跨年由 DateTime(y, m, day + 1) 自动进位。
+  static Duration _nextMidnightDelay(DateTime now) {
+    final nextDay = DateTime(now.year, now.month, now.day + 1);
+    return nextDay.difference(now) + const Duration(seconds: 5);
+  }
+
+  /// R114 B1-4: 跨日窗口流模板
+  ///
+  /// 每次"今天"变化时取消旧查询订阅, 按新窗口重新查询再订阅 —
+  /// 到下一个 00:00:05 再切一次 (App 跨 midnight 长开时窗口不再冻结)。
+  ///
+  /// 注: 不用 `Stream.asyncExpand` 接 drift watch — 实测 asyncExpand 对
+  /// 永不 complete 的 drift watch 流只拉第一个外层事件就停 (外层 generator
+  /// 不再被请求), 窗口永远切不动; 显式 cancel + 重订阅可靠 (drift 按
+  /// (sql, boundVariables) 缓存同 key 流, 重订阅直接推 _lastData)。
+  Stream<T> _watchWindowed<T>(Stream<T> Function(DateTime start) query) {
+    final controller = StreamController<T>();
+    StreamSubscription<T>? current;
+    Timer? timer;
+
+    void resubscribe() {
+      final now = _clock();
+      final start = DateTime(now.year, now.month, now.day);
+      unawaited(current?.cancel());
+      current = query(start).listen(
+        controller.add,
+        onError: controller.addError,
+      );
+      timer?.cancel();
+      timer = Timer(_midnightDelay(now), resubscribe);
+    }
+
+    controller.onListen = resubscribe;
+    controller.onCancel = () async {
+      timer?.cancel();
+      await current?.cancel();
+      await controller.close();
+    };
+    return controller.stream;
+  }
 
   /// 监听所有打卡（按时间倒序）
   Stream<List<CheckIn>> watchAll() {
@@ -59,40 +116,49 @@ class CheckInDao {
   }
 
   /// 监听今天的打卡 (跨 midnight 单次 DateTime.now())
+  ///
+  /// R114 B1-4: 修前流创建时一次性捕获 now — App 跨 00:00 长开时窗口永远
+  /// 停在昨天。修后: 走 [_watchWindowed] 每个跨日 tick 重算窗口 + 重查。
   Stream<CheckIn?> watchToday() {
-    final now = DateTime.now();
-    final startOfDay = DateTime(now.year, now.month, now.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
-    return (_db.select(_db.checkIns)
-          ..where(
-            (t) =>
-                t.timestamp.isBiggerOrEqualValue(startOfDay) &
-                t.timestamp.isSmallerThanValue(endOfDay),
-          )
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ])
-          ..limit(1))
-        .watchSingleOrNull();
+    return _watchWindowed((startOfDay) {
+      final endOfDay = startOfDay.add(const Duration(days: 1));
+      return (_db.select(_db.checkIns)
+            ..where(
+              (t) =>
+                  t.timestamp.isBiggerOrEqualValue(startOfDay) &
+                  t.timestamp.isSmallerThanValue(endOfDay),
+            )
+            ..orderBy([
+              (t) => OrderingTerm(
+                    expression: t.timestamp,
+                    mode: OrderingMode.desc,
+                  ),
+            ])
+            ..limit(1))
+          .watchSingleOrNull();
+    });
   }
 
   /// 监听今天所有打卡（用于首页概览卡统计今日药物进度）
+  ///
+  /// R114 B1-4: 同 [watchToday] — 跨日窗口流驱动重查, 窗口不再冻结。
   Stream<List<CheckIn>> watchTodayAll() {
-    final now = DateTime.now();
-    final startOfDay = DateTime(now.year, now.month, now.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
-    return (_db.select(_db.checkIns)
-          ..where(
-            (t) =>
-                t.timestamp.isBiggerOrEqualValue(startOfDay) &
-                t.timestamp.isSmallerThanValue(endOfDay),
-          )
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.timestamp, mode: OrderingMode.desc),
-          ]))
-        .watch();
+    return _watchWindowed((startOfDay) {
+      final endOfDay = startOfDay.add(const Duration(days: 1));
+      return (_db.select(_db.checkIns)
+            ..where(
+              (t) =>
+                  t.timestamp.isBiggerOrEqualValue(startOfDay) &
+                  t.timestamp.isSmallerThanValue(endOfDay),
+            )
+            ..orderBy([
+              (t) => OrderingTerm(
+                    expression: t.timestamp,
+                    mode: OrderingMode.desc,
+                  ),
+            ]))
+          .watch();
+    });
   }
 
   /// 监听"正常"打卡 (排除评估/临时), 按时间倒序

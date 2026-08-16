@@ -801,7 +801,7 @@ void main() {
       expect(hant, 2, reason: 'zh_Hant.arb 应有 2 notifChannel* key');
     });
 
-    test('3 语 total = 1221 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
+    test('3 语 total = 1328 key (跟 check_arb_keys.py baseline 同步, R24 P1-21 修)',
         () {
       // 防御: 任意单语加 key 漏同步, 数字立刻不等 (R24 round 48 修)
       // v0.30 R95 sub-spec 7 task 53/55 加 13 new (8 migration + 5 timeAgo/dailyTracking) → 1045 → 1058
@@ -873,14 +873,45 @@ void main() {
       //   5 importSummary* 导入摘要带 {n}) → 1221 → 1256
       // 1.1.0 round 7c (P2 gatekeeper, 2026-08-16): +2 new (homeMoodHeroViewAll
       //   /mood-list 入口 + moodReviewViewTrend /mood-trend 入口) → 1256 → 1258
+      // 1.1.0 round 8-9 (论文落地, 2026-08-16): +36 psychoTip* 心理技巧知识库
+      //   (F3, 5 技巧 × 7 key) → 1258 → 1294; +3 ventAgreement* 树洞使用公约
+      //   (F4) → 1294 → 1297; +27 worry* 烦恼闭环 (F1) → 1297 → 1324;
+      //   -1 worrySectionOpenPrefix orphan 删除 → 1324 → 1323
+      // 1.1.0 R113 (2026-08-16): +1 worryThreadNotFound (wave 2 死路由修复)
+      //   +2 cbtExportPdf{MoodLabel,OriginalScoreLabel} (wave 3 PDF i18n)
+      //   → 1323 → 1326
+      // 1.1.0 R114 (2026-08-16): +4 dbResetPrompt{Title,Body,Reset,Confirm}
+      //   (B1-8 key-DB 失配重置引导) → 1326 → 1330
+      // 1.1.0 R114 Wave B (2026-08-16): +4 homeMedHint (medication 打卡
+      //   失败反馈) + moodTrendSemantics{Line,Dist,Cbt} (图表 Semantics)
+      //   → 1330 → 1334
+      // 1.1.0 R114 Wave C (2026-08-16): -3 moodRecordButton /
+      //   moodTodayLabel / moodTodayLabelWithValue orphan (P3-CLEAN-2
+      //   MoodQuickButton 死 widget 删除连坐) → 1334 → 1331
+      // 1.1.0 R114 Wave D (2026-08-16): +2 moodScoreSectionTitle /
+      //   moodRecordSectionTitle (mood recorder ALS 分组标题) → 1331 → 1333;
+      //   同批 -5 orphan (moodCbtThreeScoreTitle score 段移出 3 栏 /
+      //   moodDimension*Hint × 4 dimension_row 死代码删除连坐) → 1333 → 1328
       const pattern = r'^  "([a-zA-Z][a-zA-Z0-9]+)":';
       const l10nDir = 'lib/l10n';
       final zh = countIn('$l10nDir/app_zh.arb', pattern);
       final en = countIn('$l10nDir/app_en.arb', pattern);
       final hant = countIn('$l10nDir/app_zh_Hant.arb', pattern);
-      expect(zh, 1258, reason: 'zh.arb 应有 1258 key');
-      expect(en, 1258, reason: 'en.arb 应有 1258 key');
-      expect(hant, 1258, reason: 'zh_Hant.arb 应有 1258 key');
+      expect(
+        zh,
+        1328,
+        reason: 'zh.arb 应有 1328 key (Wave D: +2 ALS 标题, -5 orphan)',
+      );
+      expect(
+        en,
+        1328,
+        reason: 'en.arb 应有 1328 key (Wave D: +2 ALS 标题, -5 orphan)',
+      );
+      expect(
+        hant,
+        1328,
+        reason: 'zh_Hant.arb 应有 1328 key (Wave D: +2 ALS 标题, -5 orphan)',
+      );
     });
   });
 

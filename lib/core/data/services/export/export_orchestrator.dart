@@ -123,6 +123,8 @@ class ExportOrchestrator {
         .watchAll()
         .first
         .timeout(streamTimeout, onTimeout: () => const []);
+    // v1.1.0 round 9 (F1 烦恼闭环): 烦恼主题导出
+    final worryThreads = await _db.worryDao.getAll();
 
     // v0.32 round 8 (R112 E6 fix): 6 张 daily tracking 表 (R91, DB schema 22)。
     // 之前 export/import 完全缺这 6 段 → 换机整块静默丢失。
@@ -172,7 +174,8 @@ class ExportOrchestrator {
               if (profile.privacyPolicyVersion != null)
                 'privacyPolicyVersion': profile.privacyPolicyVersion,
               if (profile.sensitiveDataConsentAt != null)
-                'sensitiveDataConsentAt': isoUtc(profile.sensitiveDataConsentAt!),
+                'sensitiveDataConsentAt':
+                    isoUtc(profile.sensitiveDataConsentAt!),
               if (profile.consentRevokedAt != null)
                 'consentRevokedAt': isoUtc(profile.consentRevokedAt!),
             },
@@ -251,8 +254,7 @@ class ExportOrchestrator {
             // influenceFactors / recordingMode (R31/R91/R101 加, 全部漏 export
             // → 换机静默丢失)。audioPath 不导出 — vent 先例: stale 路径跨
             // 设备不可用, 只保文字转录 + 元数据。
-            if (m.audioTranscript != null)
-              'audioTranscript': m.audioTranscript,
+            if (m.audioTranscript != null) 'audioTranscript': m.audioTranscript,
             if (m.audioDurationMs != null) 'audioDurationMs': m.audioDurationMs,
             if (m.period != null) 'period': m.period,
             // influenceFactorsJson 非 nullable (DB 默认 '[]')
@@ -260,6 +262,20 @@ class ExportOrchestrator {
             if (m.recordingMode != null) 'recordingMode': m.recordingMode,
             // v1.1.0: 状态短语 (预设或自定义)
             if (m.statusPhrase != null) 'statusPhrase': m.statusPhrase,
+            // v1.1.0 round 9 (F1 烦恼闭环): 关联烦恼主题 id
+            if (m.worryThreadId != null) 'worryThreadId': m.worryThreadId,
+          },
+      ],
+      // v1.1.0 round 9 (F1 烦恼闭环): 烦恼主题段 (moodEntries.worryThreadId
+      // 引用的原 id, import 时建 old→new 映射重映射)
+      'worryThreads': [
+        for (final w in worryThreads)
+          {
+            'id': w.id,
+            'title': w.title,
+            'createdAt': isoUtc(w.createdAt),
+            'status': w.status,
+            if (w.resolvedAt != null) 'resolvedAt': isoUtc(w.resolvedAt!),
           },
       ],
       'ventEntries': [

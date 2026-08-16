@@ -80,8 +80,15 @@ class AssessmentRecord {
     if (note == null || note.isEmpty) return null;
     try {
       final json = jsonDecode(note) as Map<String, dynamic>;
-      final total = json['total'] as int? ?? 0;
-      final rawScores = json['scores'] as List<dynamic>? ?? const [];
+      // R114 BUG 3: 双 key 兼容 — R90 量表中心 submitEntry 写
+      // 'score'/'answers', 老路径 (round 12 之前) 写 'total'/'scores'。
+      // 修前只读 'total' → 经量表中心提交的所有评估在历史/对比/趋势
+      // 总分恒 0、scores 恒空 (R113 #9 未闭环实锤; DAO 已双读, 只漏
+      // domain 这个解析器)。
+      final total = (json['total'] as int?) ?? (json['score'] as int?) ?? 0;
+      final rawScores = (json['scores'] as List<dynamic>?) ??
+          (json['answers'] as List<dynamic>?) ??
+          const [];
       final scores = rawScores.map((e) => (e as num).toInt()).toList();
       return AssessmentRecord(
         scaleId: c.type.wire,
@@ -102,3 +109,6 @@ class AssessmentRecord {
     }
   }
 }
+// rule3-whitelist: 106
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

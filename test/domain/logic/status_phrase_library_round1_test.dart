@@ -33,12 +33,11 @@ void main() {
           [...StatusPhraseLibrary.low, ...StatusPhraseLibrary.tired]);
       expect(StatusPhraseLibrary.phrasesForScore(2),
           [...StatusPhraseLibrary.low, ...StatusPhraseLibrary.tired]);
-      expect(StatusPhraseLibrary.phrasesForScore(3),
-          StatusPhraseLibrary.calm);
-      expect(StatusPhraseLibrary.phrasesForScore(4),
-          StatusPhraseLibrary.positive);
-      expect(StatusPhraseLibrary.phrasesForScore(5),
-          StatusPhraseLibrary.positive);
+      expect(StatusPhraseLibrary.phrasesForScore(3), StatusPhraseLibrary.calm);
+      expect(
+          StatusPhraseLibrary.phrasesForScore(4), StatusPhraseLibrary.positive);
+      expect(
+          StatusPhraseLibrary.phrasesForScore(5), StatusPhraseLibrary.positive);
     });
   });
 }

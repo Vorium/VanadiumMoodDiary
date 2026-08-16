@@ -37,7 +37,9 @@ void main() {
       );
       expect(
         setupRedirect(
-            isSetupDone: false, matchedLocation: '/setup/medication/confirm',),
+          isSetupDone: false,
+          matchedLocation: '/setup/medication/confirm',
+        ),
         isNull,
       );
     });
@@ -59,7 +61,9 @@ void main() {
     test('未完成 setup + 在 /settings/reminders → /setup (嵌套子页也算引导)', () {
       expect(
         setupRedirect(
-            isSetupDone: false, matchedLocation: '/settings/reminders',),
+          isSetupDone: false,
+          matchedLocation: '/settings/reminders',
+        ),
         '/setup',
       );
     });

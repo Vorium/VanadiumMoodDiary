@@ -102,37 +102,41 @@ void main() {
       // checkIn normal
       var (icon, _, _) = EventRow.kindVisuals(
         DayEvent(
-            kind: DayEventKind.checkInNormal,
-            time: DateTime(2026, 8, 6, 8, 30),
-            title: 'x',),
+          kind: DayEventKind.checkInNormal,
+          time: DateTime(2026, 8, 6, 8, 30),
+          title: 'x',
+        ),
         context,
       );
       expect(icon, Icons.check_circle);
       // checkIn temp
       (icon, _, _) = EventRow.kindVisuals(
         DayEvent(
-            kind: DayEventKind.checkInTemp,
-            time: DateTime(2026, 8, 6, 8, 30),
-            title: 'x',),
+          kind: DayEventKind.checkInTemp,
+          time: DateTime(2026, 8, 6, 8, 30),
+          title: 'x',
+        ),
         context,
       );
       expect(icon, Icons.healing_outlined);
       // assessment
       (icon, _, _) = EventRow.kindVisuals(
         DayEvent(
-            kind: DayEventKind.assessment,
-            time: DateTime(2026, 8, 6, 8, 30),
-            title: 'x',),
+          kind: DayEventKind.assessment,
+          time: DateTime(2026, 8, 6, 8, 30),
+          title: 'x',
+        ),
         context,
       );
       expect(icon, Icons.psychology_outlined);
       // mood
       (icon, _, _) = EventRow.kindVisuals(
         DayEvent(
-            kind: DayEventKind.mood,
-            time: DateTime(2026, 8, 6, 8, 30),
-            title: 'x',
-            moodScore: 3,),
+          kind: DayEventKind.mood,
+          time: DateTime(2026, 8, 6, 8, 30),
+          title: 'x',
+          moodScore: 3,
+        ),
         context,
       );
       expect(icon, Icons.mood_outlined);

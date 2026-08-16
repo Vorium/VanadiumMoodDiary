@@ -6,7 +6,7 @@
 // 2. medication 无 refillAt → fireAt=null (caller 跳过)
 // 3. refillAt + reminderDays=7 → fireAt = refillAt - 7天 当天 9:00 (跟
 //    RefillNotifier.computeRefillFireTime 1:1 行为)
-// 4. reminderDays=0 → 抛 ArgumentError (跟 computeRefillFireTime 1:1)
+// 4. reminderDays=0 → fireAt=null (R113 BUG 1: 从抛 ArgumentError 改为跳过)
 // 5. fireAt < now → isExpired=true (caller 跳过调度, 走 cancel 路径)
 
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
@@ -72,21 +72,21 @@ void main() {
       expect(s.first.isExpired, isFalse);
     });
 
-    test('reminderDays=0 → 抛 ArgumentError (跟 computeRefillFireTime 1:1)', () {
-      expect(
-        () => usecase(
-          medications: [
-            _med(
-              id: 1,
-              isActive: true,
-              refillAt: DateTime(2026, 7, 20),
-              reminderDays: 0,
-            ),
-          ],
-          now: now,
-        ),
-        throwsArgumentError,
+    test('reminderDays=0 → fireAt=null (R113 BUG 1: 不抛, 跳过该 med)', () {
+      final s = usecase(
+        medications: [
+          _med(
+            id: 1,
+            isActive: true,
+            refillAt: DateTime(2026, 7, 20),
+            reminderDays: 0,
+          ),
+        ],
+        now: now,
       );
+      expect(s, hasLength(1));
+      expect(s.first.fireAt, isNull);
+      expect(s.first.isExpired, isFalse);
     });
 
     test('fireAt < now → isExpired=true (跳过调度, 走 cancel)', () {

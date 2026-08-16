@@ -6,6 +6,9 @@ v0.23 (Round 37) 修: 之前脚本把 `// 之前 3 次 DateTime.now()` 注释里
 
 v0.23 (P0-14) 修: ROOT 改相对路径, 兼容 CI (ubuntu) 和本地 (Windows)
 
+v1.1.0 R113 (P2-20) 修: 加 main() + exit-code 语义 — 之前只打印报告从不
+exit non-zero (CI 假绿), 现在真 race -> exit 1, clean -> exit 0。
+
 修法:
 1) 先去掉 // 之后内容
 2) 多行 /// 块注释简单按行算 (/// 开头的)
@@ -13,6 +16,7 @@ v0.23 (P0-14) 修: ROOT 改相对路径, 兼容 CI (ubuntu) 和本地 (Windows)
 """
 import os
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(os.getcwd()) / "lib"
@@ -33,25 +37,39 @@ def strip_comment(line: str) -> str:
     return line
 
 
-race_files = []
+def main() -> int:
+    race_files = []
 
-for f in ROOT.rglob('*.dart'):
-    if '.g.dart' in f.name or '.freezed.dart' in f.name:
-        continue
-    txt = f.read_text(encoding='utf-8')
-    lines = txt.splitlines()
-    for i, raw in enumerate(lines):
-        # 跳过纯注释行 (但保留 inline 注释的代码部分)
-        stripped = strip_comment(raw)
-        if not LITERAL_RE.search(stripped):
+    for f in ROOT.rglob('*.dart'):
+        if '.g.dart' in f.name or '.freezed.dart' in f.name:
             continue
-        # 5 行窗口: 排除注释行后字面量 ≥ 2 次
-        window = lines[max(0, i - 5):min(len(lines), i + 6)]
-        count = sum(1 for w in window if LITERAL_RE.search(strip_comment(w)))
-        if count >= 2:
-            race_files.append((str(f.relative_to(ROOT.parent)), i + 1, count))
-            break  # 一个文件只报一次
+        txt = f.read_text(encoding='utf-8')
+        lines = txt.splitlines()
+        for i, raw in enumerate(lines):
+            # 跳过纯注释行 (但保留 inline 注释的代码部分)
+            stripped = strip_comment(raw)
+            if not LITERAL_RE.search(stripped):
+                continue
+            # 5 行窗口: 排除注释行后字面量 ≥ 2 次
+            window = lines[max(0, i - 5):min(len(lines), i + 6)]
+            count = sum(1 for w in window if LITERAL_RE.search(strip_comment(w)))
+            if count >= 2:
+                race_files.append((str(f.relative_to(ROOT.parent)), i + 1, count))
+                break  # 一个文件只报一次
 
-print(f'可疑同函数多次 DateTime.now() 文件数: {len(race_files)}')
-for path, line, count in race_files:
-    print(f'  {path}:{line}  窗口内 {count} 次')
+    print(f'可疑同函数多次 DateTime.now() 文件数: {len(race_files)}')
+    for path, line, count in race_files:
+        print(f'  {path}:{line}  窗口内 {count} 次')
+
+    if race_files:
+        print('=' * 60)
+        print('[check_datetime_race.py] FAIL — 同函数多次 DateTime.now() 跨 '
+              'midnight 会拿到不同日期 (提醒漂移)')
+        print('修复: 函数入口 final now = DateTime.now(); 一次, 下面所有判断复用 now')
+        return 1
+    print('[check_datetime_race.py] OK — 0 可疑 race')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

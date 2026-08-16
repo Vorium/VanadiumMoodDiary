@@ -76,7 +76,6 @@ class AddMedicationStep3Form extends StatelessWidget {
         // "颜色" AppleListSection
         AppleListSection(
           title: l10n.medAddColor,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             Text(
               l10n.medAddColorLabel,
@@ -121,7 +120,6 @@ class AddMedicationStep3Form extends StatelessWidget {
         // "确认信息" AppleListSection
         AppleListSection(
           title: l10n.medAddConfirm,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             MedicationConfirmRow(
               label: l10n.medAddConfirmName,

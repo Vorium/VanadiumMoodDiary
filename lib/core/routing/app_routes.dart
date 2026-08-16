@@ -17,6 +17,9 @@
 // 进度延续 R59 (app_router 拆 2 文件) 的渐进 facade 模式:
 //   R59: app_router 418 → 51 行 (-88%)
 //   R57: 14 路由按 feature 拆 5 文件, subagent 加新 route 只碰 1 个 feature 文件
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +29,8 @@ import 'package:chroniccare/core/routing/app_route_daily_tracking.dart';
 import 'package:chroniccare/core/routing/app_route_main.dart';
 import 'package:chroniccare/core/routing/app_route_medication.dart';
 import 'package:chroniccare/core/routing/app_route_mood_list.dart';
+import 'package:chroniccare/core/routing/app_route_tips.dart';
+import 'package:chroniccare/core/routing/app_route_worry.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
@@ -36,9 +41,11 @@ class AppRoutes {
   // ============== Page transition helpers (v0.17 round 2 / A2 emil 动效) ==============
   //
   // 频度决策 (emil 决策框架):
-  // - 主导航 (/, /settings) → 偶尔切 → 简单 fade
-  // - 子页 (/trend, /assessment/*, /settings/reminders) → occasional → slide-from-right
-  // - 全屏深页 (/setup, /vent/*) → rare → slide-up + fade (full-screen modal 感)
+  // - 主导航 (/, /settings, /vent, /trend — 4 shell tab 根) → tens/day → 统一 fade
+  //   (R114 Wave B2-1: 修前 /vent slide-up 400ms / /trend slide-right, 同动作 3 体感)
+  // - 子页 (/assessment/*, /settings/reminders, /medication/*) → occasional → slide-from-right
+  //   (iOS 平台走 CupertinoPageRoute 原生 swipe-back — R114 Wave B2-2)
+  // - 全屏深页 (/setup, /vent/compose, /vent/detail, /crisis-hotline) → rare → slide-up
   //
   // v0.21 Round 22 (P1-13 修复): helper 接收 BuildContext 用于
   // 尊重 prefers-reduced-motion (Motion.duration 类)
@@ -56,11 +63,19 @@ class AppRoutes {
   }
 
   /// Slide-from-right + fade (子页 occasional)
+  ///
+  /// R114 Wave B2 (B2-2, apple F-05): iOS 平台改走 [_SwipeBackCupertinoPage]
+  /// (CupertinoPageRoute) — 原生滑入 + 右滑返回手势 + 33% 视差, 修前
+  /// CustomTransitionPage 无 interactive pop。其他平台保留 10% 微滑 +
+  /// fade 自定义过渡。
   static Page<T> slideRightPage<T>(
     LocalKey key,
     Widget child,
     BuildContext context,
   ) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return _SwipeBackCupertinoPage<T>(key: key, child: child);
+    }
     return CustomTransitionPage<T>(
       key: key,
       child: child,
@@ -82,6 +97,10 @@ class AppRoutes {
   }
 
   /// Slide-up + fade (全屏深页 rare)
+  ///
+  /// R114 Wave B2 (B2-2 裁决): 保持 CustomTransitionPage (各平台一致) —
+  /// slide-up 语义 = 全屏 modal (/setup /crisis-hotline /vent/compose /
+  /// /vent/detail), iOS 惯例 modal 无 swipe-back, 返回走 AppBar/按钮。
   static Page<T> slideUpPage<T>(
     LocalKey key,
     Widget child,
@@ -132,6 +151,8 @@ class AppRoutes {
       ...AppRouteCheckIn.all(),
       ...AppRouteMoodList.all(),
       ...AppRouteDailyTracking.all(),
+      ...AppRouteTips.all(),
+      ...AppRouteWorry.all(),
     ];
   }
 
@@ -179,5 +200,59 @@ class AppRoutes {
         ),
       ),
     );
+  }
+}
+// rule3-whitelist: 180, 196
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
+
+/// R114 Wave B2 (B2-2, apple F-05): iOS 原生 swipe-back Page
+///
+/// go_router 14.x 已移除 MaterialPage/CupertinoPage, 只剩
+/// CustomTransitionPage (无 interactive pop)。本类返回 [_SwipeBackCupertinoRoute]
+/// (Flutter 原生 CupertinoPageRoute 子类) — 自带 iOS 右滑返回手势 + 上一页
+/// 33% 视差跟随 + 可打断过渡。时长走 Motion (navigator context 上读
+/// MediaQuery.disableAnimations → reduce-motion 直跳终态, 跟 MaterialPageRoute
+/// 从 navigator!.context 取 transitionDuration 同模式)。
+///
+/// 仅 slideRightPage 在 iOS 用; Android/web 保留 10% 微滑自定义过渡
+/// (emil: 微妙滑入 > Material 默认 100%)。
+class _SwipeBackCupertinoPage<T> extends Page<T> {
+  const _SwipeBackCupertinoPage({
+    required this.child,
+    super.key,
+    super.name,
+    super.arguments,
+    super.restorationId,
+  });
+
+  final Widget child;
+
+  @override
+  Route<T> createRoute(BuildContext context) {
+    return _SwipeBackCupertinoRoute<T>(
+      settings: this,
+      builder: (_) => child,
+    );
+  }
+}
+
+/// CupertinoPageRoute 子类 — 时长走 Motion (250 进 / 200 出 +
+/// reduce-motion 直跳), 其余行为 (swipe-back 手势 / 33% 视差) 与原生一致。
+class _SwipeBackCupertinoRoute<T> extends CupertinoPageRoute<T> {
+  _SwipeBackCupertinoRoute({required super.builder, super.settings});
+
+  @override
+  Duration get transitionDuration {
+    final nav = navigator;
+    if (nav == null) return super.transitionDuration;
+    return Motion.duration(nav.context, AppTokens.durNormal);
+  }
+
+  @override
+  Duration get reverseTransitionDuration {
+    final nav = navigator;
+    if (nav == null) return super.reverseTransitionDuration;
+    return Motion.duration(nav.context, AppTokens.durFast);
   }
 }

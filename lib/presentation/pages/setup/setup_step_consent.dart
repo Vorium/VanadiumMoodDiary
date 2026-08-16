@@ -112,26 +112,30 @@ class SetupStepConsent extends StatelessWidget {
               ConsentCheckRow(
                 checked: consentUserAgreement,
                 label: l10n.setupConsentUserAgreement,
-                onTap: () => onConsentUserAgreementChanged(!consentUserAgreement),
+                onTap: () =>
+                    onConsentUserAgreementChanged(!consentUserAgreement),
                 onView: onViewUserAgreement,
               ),
               ConsentCheckRow(
                 checked: consentPrivacyPolicy,
                 label: l10n.setupConsentPrivacyPolicy,
-                onTap: () => onConsentPrivacyPolicyChanged(!consentPrivacyPolicy),
+                onTap: () =>
+                    onConsentPrivacyPolicyChanged(!consentPrivacyPolicy),
                 onView: onViewPrivacyPolicy,
               ),
               ConsentCheckRow(
                 checked: consentSensitiveData,
                 label: l10n.setupConsentSensitiveData,
-                onTap: () => onConsentSensitiveDataChanged(!consentSensitiveData),
+                onTap: () =>
+                    onConsentSensitiveDataChanged(!consentSensitiveData),
                 onView: onViewSensitiveData,
               ),
               // v0.27 R83 (Q11a 律师审核 ⚠️): 第 4 个勾选 — 年龄严正声明
               ConsentCheckRow(
                 checked: consentAgeAttestation,
                 label: l10n.setupLegalAgeAttestation,
-                onTap: () => onConsentAgeAttestationChanged(!consentAgeAttestation),
+                onTap: () =>
+                    onConsentAgeAttestationChanged(!consentAgeAttestation),
                 onView: () {},
               ),
               // R103 (P0-9): 第 5 个勾选 — 医学免责声明

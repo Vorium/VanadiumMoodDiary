@@ -84,12 +84,21 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('通知权限已关闭'), findsOneWidget,
-          reason: '拒绝权限后应弹引导 dialog',);
-      expect(find.text('前往系统设置'), findsOneWidget,
-          reason: '给用户系统设置重新授权入口 (GP-10)',);
-      expect(service.showNowCalled, isFalse,
-          reason: '权限被拒时不发测试通知',);
+      expect(
+        find.text('通知权限已关闭'),
+        findsOneWidget,
+        reason: '拒绝权限后应弹引导 dialog',
+      );
+      expect(
+        find.text('前往系统设置'),
+        findsOneWidget,
+        reason: '给用户系统设置重新授权入口 (GP-10)',
+      );
+      expect(
+        service.showNowCalled,
+        isFalse,
+        reason: '权限被拒时不发测试通知',
+      );
     });
 
     testWidgets('2. 点"前往系统设置" → openAppSettings 被调 + dialog 关闭',
@@ -124,10 +133,16 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(lastMethod, 'openAppSettings',
-          reason: '点前往系统设置应调 openAppSettings',);
-      expect(find.text('通知权限已关闭'), findsNothing,
-          reason: 'dialog 应关闭',);
+      expect(
+        lastMethod,
+        'openAppSettings',
+        reason: '点前往系统设置应调 openAppSettings',
+      );
+      expect(
+        find.text('通知权限已关闭'),
+        findsNothing,
+        reason: 'dialog 应关闭',
+      );
     });
 
     testWidgets('3. requestPermission=true → 正常发测试通知 (无 dialog)',

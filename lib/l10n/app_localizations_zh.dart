@@ -842,6 +842,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodDialogTitle => '今天怎么样？';
 
   @override
+  String get moodScoreSectionTitle => '情绪评分';
+
+  @override
+  String get moodRecordSectionTitle => '记录内容';
+
+  @override
   String get moodDialogPeriodLabel => '时段';
 
   @override
@@ -869,25 +875,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodDimensionMood => '情绪';
 
   @override
-  String get moodDimensionMoodHint => '1=很差 5=很好';
-
-  @override
   String get moodDimensionEnergy => '精力';
-
-  @override
-  String get moodDimensionEnergyHint => '1=很低 5=充沛';
 
   @override
   String get moodDimensionSleep => '睡眠';
 
   @override
-  String get moodDimensionSleepHint => '1=很差 5=很好';
-
-  @override
   String get moodDimensionAnxiety => '焦虑';
-
-  @override
-  String get moodDimensionAnxietyHint => '1=严重 5=平静';
 
   @override
   String get moodTagAnxiety => '焦虑';
@@ -1456,8 +1450,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeAutofireFallbackName => '该药';
 
   @override
-  String homeMedHint(int id) {
-    return '💊 准备打卡药物 #$id';
+  String homeMedHint(String name) {
+    return '💊 准备打卡药物 $name';
   }
 
   @override
@@ -1853,14 +1847,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medicationDeleted => '已删除药物';
 
   @override
-  String get moodTodayLabel => '今日情绪：';
-
-  @override
-  String moodTodayLabelWithValue(String value) {
-    return '今日情绪：$value';
-  }
-
-  @override
   String get moodLabel1 => '很差';
 
   @override
@@ -1874,9 +1860,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodLabel5 => '很好';
-
-  @override
-  String get moodRecordButton => '记一下情绪 ✏️';
 
   @override
   String medReportFileName(Object date) {
@@ -2488,9 +2471,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get moodCbtChipBadge7 => 'CBT 7 栏';
-
-  @override
-  String get moodCbtThreeScoreTitle => '你现在的感受？';
 
   @override
   String get moodCbtThreeSituationTitle => '发生了什么？';
@@ -3781,6 +3761,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moodTrendCbtEmpty => '暂无 CBT 重评数据';
 
   @override
+  String moodTrendSemanticsLine(Object days) {
+    return '情绪趋势折线图，近 $days 天';
+  }
+
+  @override
+  String moodTrendSemanticsDist(Object count, Object score) {
+    return '情绪分数分布图，最常见 $score 分，共 $count 条记录';
+  }
+
+  @override
+  String moodTrendSemanticsCbt(Object count) {
+    return 'CBT 重评效果图，$count 条重评记录';
+  }
+
+  @override
   String get medDetailActive => '在用';
 
   @override
@@ -4104,6 +4099,235 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String importSummaryVent(int n) {
     return '$n 树洞';
+  }
+
+  @override
+  String get cbtExportPdfMoodLabel => '情绪';
+
+  @override
+  String get cbtExportPdfOriginalScoreLabel => '原';
+
+  @override
+  String get psychoTipsTitle => '心理技巧';
+
+  @override
+  String get psychoTipBreathTitle => '正念呼吸';
+
+  @override
+  String get psychoTipBreathSummary => '通过关注呼吸回到当下，缓解焦虑与紧张';
+
+  @override
+  String get psychoTipBreathStep1 => '找个舒适的位置坐下，轻轻闭上眼睛';
+
+  @override
+  String get psychoTipBreathStep2 => '深吸气 4 秒，感受空气充满身体';
+
+  @override
+  String get psychoTipBreathStep3 => '屏住呼吸 2 秒';
+
+  @override
+  String get psychoTipBreathStep4 => '缓缓呼气 6 秒，让肩膀和身体放松';
+
+  @override
+  String get psychoTipBreathStep5 => '重复 3-5 分钟，让注意力回到呼吸上';
+
+  @override
+  String get psychoTipNameTitle => '情绪命名';
+
+  @override
+  String get psychoTipNameSummary => '给情绪贴上名字，能有效降低它的强度';
+
+  @override
+  String get psychoTipNameStep1 => '停下来，感受此刻身体有哪些反应';
+
+  @override
+  String get psychoTipNameStep2 => '在心里问自己：我现在的情绪是什么';
+
+  @override
+  String get psychoTipNameStep3 => '用一个词描述它，比如「烦躁」「难过」「紧张」';
+
+  @override
+  String get psychoTipNameStep4 => '说出来或写下来：「我感到……」';
+
+  @override
+  String get psychoTipNameStep5 => '观察情绪的变化，不去评判它';
+
+  @override
+  String get psychoTipCbtTitle => '认知重构';
+
+  @override
+  String get psychoTipCbtSummary => '识别并调整不合理的自动思维，可搭配 CBT 思维记录';
+
+  @override
+  String get psychoTipCbtStep1 => '记录引发情绪的具体情境';
+
+  @override
+  String get psychoTipCbtStep2 => '写下脑海中冒出的自动思维';
+
+  @override
+  String get psychoTipCbtStep3 => '列出支持与反对这个想法的证据';
+
+  @override
+  String get psychoTipCbtStep4 => '写出更平衡、更符合事实的替代想法';
+
+  @override
+  String get psychoTipCbtStep5 => '在情绪日记中使用 5 栏 CBT 记录练习';
+
+  @override
+  String get psychoTipGroundTitle => '5-4-3-2-1 感官接地';
+
+  @override
+  String get psychoTipGroundSummary => '用五种感官觉察当下，把注意力从焦虑中拉回来';
+
+  @override
+  String get psychoTipGroundStep1 => '说出你看到的 5 样东西';
+
+  @override
+  String get psychoTipGroundStep2 => '感受你触碰到的 4 种触感';
+
+  @override
+  String get psychoTipGroundStep3 => '仔细听你听到的 3 种声音';
+
+  @override
+  String get psychoTipGroundStep4 => '闻到你周围的 2 种气味';
+
+  @override
+  String get psychoTipGroundStep5 => '感受口中的 1 种味道';
+
+  @override
+  String get psychoTipPmrTitle => '渐进式肌肉放松';
+
+  @override
+  String get psychoTipPmrSummary => '依次收紧再放松身体各肌肉群，释放身体的紧张';
+
+  @override
+  String get psychoTipPmrStep1 => '坐或躺下，找一个舒适的姿势';
+
+  @override
+  String get psychoTipPmrStep2 => '从脚趾开始，用力收紧 5 秒';
+
+  @override
+  String get psychoTipPmrStep3 => '松开，体会放松的感觉约 10 秒';
+
+  @override
+  String get psychoTipPmrStep4 => '依次向上：小腿、大腿、腹部、手臂、肩膀';
+
+  @override
+  String get psychoTipPmrStep5 => '最后放松面部与头皮，完成全身扫描';
+
+  @override
+  String get ventAgreementTitle => '树洞使用公约';
+
+  @override
+  String get ventAgreementBody =>
+      '你的树洞是只属于你的私密空间，请了解这几点：\n· 所有倾诉内容仅保存在本机并加密，绝不外传\n· 树洞内容不参与任何分析、推荐或通知\n· 请温柔地对待自己，尊重每一份情绪\n· 若感到极度痛苦或有自伤念头，请使用危机热线寻求帮助';
+
+  @override
+  String get ventAgreementConfirm => '我知道了';
+
+  @override
+  String get worryTimelineTitle => '烦恼时间线';
+
+  @override
+  String get worryArchiveTitle => '忆往昔';
+
+  @override
+  String get worrySectionTitle => '烦恼心事';
+
+  @override
+  String get worrySectionArchiveAction => '忆往昔';
+
+  @override
+  String worryEntryCount(Object count) {
+    return '$count 条记录';
+  }
+
+  @override
+  String get worryContinueAction => '继续倾诉';
+
+  @override
+  String get worryResolveAction => '不再烦恼啦';
+
+  @override
+  String get worryReopenAction => '又烦恼了';
+
+  @override
+  String get worryResolveConfirmTitle => '放下这个烦恼？';
+
+  @override
+  String get worryResolveConfirmBody => '确认后它会被收藏到「忆往昔」，随时可以「又烦恼了」重新打开。';
+
+  @override
+  String get worryResolveConfirmOk => '放下啦';
+
+  @override
+  String get worryResolveDone => '🎉 恭喜，你放下了一个烦恼';
+
+  @override
+  String get worryReopenDone => '已重新打开，需要的时候随时来倾诉';
+
+  @override
+  String get worryRenameTitle => '重命名烦恼';
+
+  @override
+  String get worryRenameAction => '重命名';
+
+  @override
+  String get worryNewOption => '新建烦恼';
+
+  @override
+  String get worryNoWorry => '没有关联烦恼';
+
+  @override
+  String get worryDefaultTitle => '未命名烦恼';
+
+  @override
+  String get worryFieldLabel => '关联烦恼';
+
+  @override
+  String get worryFieldHint => '选择或新建一个烦恼，把这次心情记到它的时间线上';
+
+  @override
+  String get worryTimelineEmpty => '这个烦恼还没有记录，从「继续倾诉」开始吧';
+
+  @override
+  String get worryArchiveEmpty => '还没有放下过的烦恼。把心情记成烦恼时间线，成长会被珍藏。';
+
+  @override
+  String worryArchiveCount(Object count) {
+    return '已放下 $count 个烦恼';
+  }
+
+  @override
+  String worryOpenCount(Object count) {
+    return '$count 个进行中';
+  }
+
+  @override
+  String get worryStatusOpen => '进行中';
+
+  @override
+  String get worryStatusResolved => '已放下';
+
+  @override
+  String get worryThreadNotFound => '这个烦恼找不到了，可能已经删除';
+
+  @override
+  String get dbResetPromptTitle => '无法打开本地数据库';
+
+  @override
+  String get dbResetPromptBody =>
+      '本地加密数据与密钥不匹配（常见于系统备份恢复只还原了数据、未还原密钥）。你可以先点「重试」看看数据是否恢复；若仍无法打开，可重置本地数据重新开始。';
+
+  @override
+  String get dbResetPromptReset => '重置本地数据';
+
+  @override
+  String get dbResetPromptConfirm => '重置将删除本机全部记录，且无法恢复。确认重置吗？';
+
+  @override
+  String moodTrendSemanticsAvg(Object average) {
+    return '平均 $average 分';
   }
 }
 
@@ -4945,6 +5169,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodDialogTitle => '今天怎麼樣？';
 
   @override
+  String get moodScoreSectionTitle => '情緒評分';
+
+  @override
+  String get moodRecordSectionTitle => '記錄內容';
+
+  @override
   String get moodDialogPeriodLabel => '時段';
 
   @override
@@ -4972,25 +5202,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodDimensionMood => '情緒';
 
   @override
-  String get moodDimensionMoodHint => '1=很差 5=很好';
-
-  @override
   String get moodDimensionEnergy => '精力';
-
-  @override
-  String get moodDimensionEnergyHint => '1=很低 5=充沛';
 
   @override
   String get moodDimensionSleep => '睡眠';
 
   @override
-  String get moodDimensionSleepHint => '1=很差 5=很好';
-
-  @override
   String get moodDimensionAnxiety => '焦慮';
-
-  @override
-  String get moodDimensionAnxietyHint => '1=嚴重 5=平靜';
 
   @override
   String get moodTagAnxiety => '焦慮';
@@ -5559,8 +5777,8 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get homeAutofireFallbackName => '該藥';
 
   @override
-  String homeMedHint(int id) {
-    return '💊 準備打卡藥物 #$id';
+  String homeMedHint(String name) {
+    return '💊 準備打卡藥物 $name';
   }
 
   @override
@@ -5956,14 +6174,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medicationDeleted => '已刪除藥物';
 
   @override
-  String get moodTodayLabel => '今日情緒：';
-
-  @override
-  String moodTodayLabelWithValue(String value) {
-    return '今日情緒：$value';
-  }
-
-  @override
   String get moodLabel1 => '很差';
 
   @override
@@ -5977,9 +6187,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodLabel5 => '很好';
-
-  @override
-  String get moodRecordButton => '記一下情緒 ✏️';
 
   @override
   String medReportFileName(Object date) {
@@ -6591,9 +6798,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get moodCbtChipBadge7 => 'CBT 7 欄';
-
-  @override
-  String get moodCbtThreeScoreTitle => '你現在的感受？';
 
   @override
   String get moodCbtThreeSituationTitle => '發生了什麼？';
@@ -7884,6 +8088,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get moodTrendCbtEmpty => '暫無 CBT 重評數據';
 
   @override
+  String moodTrendSemanticsLine(Object days) {
+    return '情緒趨勢折線圖，近 $days 天';
+  }
+
+  @override
+  String moodTrendSemanticsDist(Object count, Object score) {
+    return '情緒分數分佈圖，最常見 $score 分，共 $count 條記錄';
+  }
+
+  @override
+  String moodTrendSemanticsCbt(Object count) {
+    return 'CBT 重評效果圖，$count 條重評記錄';
+  }
+
+  @override
   String get medDetailActive => '在用';
 
   @override
@@ -8207,5 +8426,234 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String importSummaryVent(int n) {
     return '$n 樹洞';
+  }
+
+  @override
+  String get cbtExportPdfMoodLabel => '情緒';
+
+  @override
+  String get cbtExportPdfOriginalScoreLabel => '原';
+
+  @override
+  String get psychoTipsTitle => '心理技巧';
+
+  @override
+  String get psychoTipBreathTitle => '正念呼吸';
+
+  @override
+  String get psychoTipBreathSummary => '通過關注呼吸回到當下，緩解焦慮與緊張';
+
+  @override
+  String get psychoTipBreathStep1 => '找個舒適的位置坐下，輕輕閉上眼睛';
+
+  @override
+  String get psychoTipBreathStep2 => '深吸氣 4 秒，感受空氣充滿身體';
+
+  @override
+  String get psychoTipBreathStep3 => '屏住呼吸 2 秒';
+
+  @override
+  String get psychoTipBreathStep4 => '緩緩呼氣 6 秒，讓肩膀和身體放鬆';
+
+  @override
+  String get psychoTipBreathStep5 => '重複 3-5 分鐘，讓注意力回到呼吸上';
+
+  @override
+  String get psychoTipNameTitle => '情緒命名';
+
+  @override
+  String get psychoTipNameSummary => '給情緒貼上名字，能有效降低它的強度';
+
+  @override
+  String get psychoTipNameStep1 => '停下來，感受此刻身體有哪些反應';
+
+  @override
+  String get psychoTipNameStep2 => '在心裡問自己：我現在的情緒是什麼';
+
+  @override
+  String get psychoTipNameStep3 => '用一個詞描述它，比如「煩躁」「難過」「緊張」';
+
+  @override
+  String get psychoTipNameStep4 => '說出來或寫下來：「我感到……」';
+
+  @override
+  String get psychoTipNameStep5 => '觀察情緒的變化，不去評判它';
+
+  @override
+  String get psychoTipCbtTitle => '認知重構';
+
+  @override
+  String get psychoTipCbtSummary => '識別並調整不合理的自動思維，可搭配 CBT 思維記錄';
+
+  @override
+  String get psychoTipCbtStep1 => '記錄引發情緒的具體情境';
+
+  @override
+  String get psychoTipCbtStep2 => '寫下腦海中冒出的自動思維';
+
+  @override
+  String get psychoTipCbtStep3 => '列出支持與反對這個想法的證據';
+
+  @override
+  String get psychoTipCbtStep4 => '寫出更平衡、更符合事實的替代想法';
+
+  @override
+  String get psychoTipCbtStep5 => '在情緒日記中使用 5 欄 CBT 記錄練習';
+
+  @override
+  String get psychoTipGroundTitle => '5-4-3-2-1 感官接地';
+
+  @override
+  String get psychoTipGroundSummary => '用五種感官覺察當下，把注意力從焦慮中拉回來';
+
+  @override
+  String get psychoTipGroundStep1 => '說出你看到的 5 樣東西';
+
+  @override
+  String get psychoTipGroundStep2 => '感受你觸碰到的 4 種觸感';
+
+  @override
+  String get psychoTipGroundStep3 => '仔細聽你聽到的 3 種聲音';
+
+  @override
+  String get psychoTipGroundStep4 => '聞到你周圍的 2 種氣味';
+
+  @override
+  String get psychoTipGroundStep5 => '感受口中的 1 種味道';
+
+  @override
+  String get psychoTipPmrTitle => '漸進式肌肉放鬆';
+
+  @override
+  String get psychoTipPmrSummary => '依次收緊再放鬆身體各肌肉群，釋放身體的緊張';
+
+  @override
+  String get psychoTipPmrStep1 => '坐或躺下，找一個舒適的姿勢';
+
+  @override
+  String get psychoTipPmrStep2 => '從腳趾開始，用力收緊 5 秒';
+
+  @override
+  String get psychoTipPmrStep3 => '鬆開，體會放鬆的感覺約 10 秒';
+
+  @override
+  String get psychoTipPmrStep4 => '依次向上：小腿、大腿、腹部、手臂、肩膀';
+
+  @override
+  String get psychoTipPmrStep5 => '最後放鬆面部與頭皮，完成全身掃描';
+
+  @override
+  String get ventAgreementTitle => '樹洞使用公約';
+
+  @override
+  String get ventAgreementBody =>
+      '你的樹洞是隻屬於你的私密空間，請了解這幾點：\n· 所有傾訴內容僅保存在本機並加密，絕不外傳\n· 樹洞內容不參與任何分析、推薦或通知\n· 請溫柔地對待自己，尊重每一份情緒\n· 若感到極度痛苦或有自傷念頭，請使用危機熱線尋求幫助';
+
+  @override
+  String get ventAgreementConfirm => '我知道了';
+
+  @override
+  String get worryTimelineTitle => '煩惱時間線';
+
+  @override
+  String get worryArchiveTitle => '憶往昔';
+
+  @override
+  String get worrySectionTitle => '煩惱心事';
+
+  @override
+  String get worrySectionArchiveAction => '憶往昔';
+
+  @override
+  String worryEntryCount(Object count) {
+    return '$count 條記錄';
+  }
+
+  @override
+  String get worryContinueAction => '繼續傾訴';
+
+  @override
+  String get worryResolveAction => '不再煩惱啦';
+
+  @override
+  String get worryReopenAction => '又煩惱了';
+
+  @override
+  String get worryResolveConfirmTitle => '放下這個煩惱？';
+
+  @override
+  String get worryResolveConfirmBody => '確認後它會被收藏到「憶往昔」，隨時可以「又煩惱了」重新打開。';
+
+  @override
+  String get worryResolveConfirmOk => '放下啦';
+
+  @override
+  String get worryResolveDone => '🎉 恭喜，你放下了一個煩惱';
+
+  @override
+  String get worryReopenDone => '已重新打開，需要的時候隨時來傾訴';
+
+  @override
+  String get worryRenameTitle => '重命名煩惱';
+
+  @override
+  String get worryRenameAction => '重命名';
+
+  @override
+  String get worryNewOption => '新建煩惱';
+
+  @override
+  String get worryNoWorry => '沒有關聯煩惱';
+
+  @override
+  String get worryDefaultTitle => '未命名煩惱';
+
+  @override
+  String get worryFieldLabel => '關聯煩惱';
+
+  @override
+  String get worryFieldHint => '選擇或新建一個煩惱，把這次心情記到它的時間線上';
+
+  @override
+  String get worryTimelineEmpty => '這個煩惱還沒有記錄，從「繼續傾訴」開始吧';
+
+  @override
+  String get worryArchiveEmpty => '還沒有放下過的煩惱。把心情記成煩惱時間線，成長會被珍藏。';
+
+  @override
+  String worryArchiveCount(Object count) {
+    return '已放下 $count 個煩惱';
+  }
+
+  @override
+  String worryOpenCount(Object count) {
+    return '$count 個進行中';
+  }
+
+  @override
+  String get worryStatusOpen => '進行中';
+
+  @override
+  String get worryStatusResolved => '已放下';
+
+  @override
+  String get worryThreadNotFound => '這個煩惱找不到了，可能已經刪除';
+
+  @override
+  String get dbResetPromptTitle => '無法打開本地數據庫';
+
+  @override
+  String get dbResetPromptBody =>
+      '本地加密數據與密鑰不匹配（常見於系統備份恢復只還原了數據、未還原密鑰）。你可以先點「重試」看看數據是否恢復；若仍無法打開，可重置本地數據重新開始。';
+
+  @override
+  String get dbResetPromptReset => '重置本地數據';
+
+  @override
+  String get dbResetPromptConfirm => '重置將刪除本機全部記錄，且無法恢復。確認重置嗎？';
+
+  @override
+  String moodTrendSemanticsAvg(Object average) {
+    return '平均 $average 分';
   }
 }

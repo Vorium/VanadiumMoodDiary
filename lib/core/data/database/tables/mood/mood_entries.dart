@@ -117,4 +117,10 @@ class MoodEntries extends Table {
   /// 记录 dialog 的"此刻状态"section 写入; 主页情绪大卡展示。
   /// 老数据 = null（大卡退化显示 4 维概括）。
   TextColumn get statusPhrase => text().nullable()();
+
+  /// v1.1.0 round 9 (F1 烦恼闭环): 关联的烦恼主题 id (可空)
+  ///
+  /// 外键指向 worry_threads.id; 未绑定 = null。用 int 而非 FK constraint,
+  /// 因为烦恼主题可删 (闭环后仍保留在忆往昔, 不物理删除) — 无级联需求。
+  IntColumn get worryThreadId => integer().nullable()();
 }

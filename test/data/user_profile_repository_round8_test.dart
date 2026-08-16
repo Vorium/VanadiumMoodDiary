@@ -36,8 +36,11 @@ void main() {
       await repo.save(userName: null);
       final p = await db.userProfileDao.get();
       expect(p, isNotNull);
-      expect(p!.userName, isNull,
-          reason: 'insertOnConflictUpdate 忽略 Value(null); 显式 update 才清名',);
+      expect(
+        p!.userName,
+        isNull,
+        reason: 'insertOnConflictUpdate 忽略 Value(null); 显式 update 才清名',
+      );
     });
 
     test('清名后再 save(新名) → 新名写入', () async {

@@ -48,33 +48,40 @@ class _CbtExplainerCardState extends State<CbtExplainerCard> {
   @override
   Widget build(BuildContext context) {
     final expanded = _effectiveExpanded;
-    return Card(
-      color: AppTokens.tintedPrimarySoft(context),
-      child: InkWell(
-        onTap: _handleToggle,
-        child: Padding(
-          padding: AppTokens.edgeInsetsMd,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.info_outline, size: 18),
-                  const SizedBox(width: AppTokens.spacingXxs),
-                  Expanded(
-                    child: Text(
-                      widget.title,
-                      style: AppTokens.textStyleLabel(context),
+    // v1.1.0 R114 (Wave D): Card() → ALS 风格内容卡 — 圆角 16 Material
+    // (tintedPrimarySoft 语义底保留, 0 阴影, 跟 apple_list_section.dart
+    // ClipRRect+Material 同款结构保证 ink 支持)
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppTokens.radiusCard),
+      child: Material(
+        color: AppTokens.tintedPrimarySoft(context),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: _handleToggle,
+          child: Padding(
+            padding: AppTokens.edgeInsetsMd,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.info_outline, size: 18),
+                    const SizedBox(width: AppTokens.spacingXxs),
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: AppTokens.textStyleLabel(context),
+                      ),
                     ),
-                  ),
-                  Icon(expanded ? Icons.expand_less : Icons.expand_more),
+                    Icon(expanded ? Icons.expand_less : Icons.expand_more),
+                  ],
+                ),
+                if (expanded) ...[
+                  const SizedBox(height: AppTokens.spacingXs),
+                  Text(widget.body, style: AppTokens.textStyleBody(context)),
                 ],
-              ),
-              if (expanded) ...[
-                const SizedBox(height: AppTokens.spacingXs),
-                Text(widget.body, style: AppTokens.textStyleBody(context)),
               ],
-            ],
+            ),
           ),
         ),
       ),

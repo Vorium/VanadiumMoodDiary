@@ -16,6 +16,7 @@ import 'package:chroniccare/presentation/pages/mood_list/mood_detail_page.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
 import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,7 +49,8 @@ void main() {
         GoRouter(
           initialLocation: '/mood-list',
           routes: [
-            GoRoute(path: '/mood-list', builder: (c, s) => const MoodListPage()),
+            GoRoute(
+                path: '/mood-list', builder: (c, s) => const MoodListPage()),
             GoRoute(
               path: '/mood/detail/:id',
               builder: (c, s) => MoodDetailPage(
@@ -61,6 +63,9 @@ void main() {
       overrides: [
         moodEntriesProvider.overrideWith((ref) => entries),
         allMoodProvider.overrideWith((ref) => Stream.value(entries)),
+        // v1.1.0 round 9 (F1): MoodListPage 内嵌 WorrySection, override 空列表
+        worryOpenProvider.overrideWith((ref) => Stream.value(const [])),
+        worryResolvedProvider.overrideWith((ref) => Stream.value(const [])),
       ],
       child: MaterialApp.router(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

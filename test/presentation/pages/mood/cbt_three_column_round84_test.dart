@@ -1,6 +1,10 @@
 // v0.29 round 84 (CBT 思维记录): CbtThreeColumnMode widget 测试
 //
-// 覆盖: 3 栏 mode 渲染 score + situation + automaticThought 三个 section
+// 覆盖: 3 栏 mode 渲染 situation + automaticThought 两个 section
+//
+// v1.1.0 R114 (Wave D, spec §5.5): score 段移出到 mood_recorder_page
+// 情绪评分组 (5 档 72pt 圆形 MoodScoreButtons), 本 widget 只剩 2 section
+// — 原 Slider 断言移除。
 //
 // 模式: 跟 R84 cbt_widgets_round84_test 同款 — ProviderScope + MaterialApp +
 // tester.pumpAndSettle
@@ -15,7 +19,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_three_column_mode.dart';
 
 void main() {
-  testWidgets('3 栏 mode 显示 score + situation + automaticThought 三个 section',
+  testWidgets('3 栏 mode 显示 situation + automaticThought 两个 section',
       (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
@@ -30,12 +34,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('你现在的感受？'), findsOneWidget);
     expect(find.text('发生了什么？'), findsOneWidget);
     expect(find.text('那一刻脑海里闪过什么想法？'), findsOneWidget);
-    // v0.30 R101: ChoiceChip 改为 Slider + emoji, 断言 Slider 存在
-    expect(find.byType(Slider), findsOneWidget);
-    expect(find.text('😢'), findsOneWidget);
-    expect(find.text('😄'), findsOneWidget);
   });
 }

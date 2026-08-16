@@ -1,4 +1,4 @@
-﻿// v0.15 (Round 18) 树洞撰写页
+// v0.15 (Round 18) 树洞撰写页
 //
 // 用户在这里：
 // - 写文字（TextField，长文本，最大 2000 字）
@@ -45,6 +45,7 @@ import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/widgets/audio_lifecycle.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
+import 'package:chroniccare/presentation/pages/vent/widgets/vent_agreement_dialog.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_audio_section.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_tag_picker.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_text_input.dart';
@@ -89,6 +90,13 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
     playerCompleteSub = _player.onPlayerComplete.listen((_) {
       if (mounted) setState(() => audioState = AudioState.recorded);
     });
+    // F4 公约: 首次进入弹 dialog (弹窗逻辑在 widgets/vent_agreement_dialog.dart)
+    unawaited(
+      showVentAgreementIfNeeded(
+        context,
+        ref.read(ventAgreementStoreProvider),
+      ),
+    );
   }
 
   @override
@@ -135,6 +143,10 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
     // record 写明文 m4a 会被理解为加密文件,bug。
     final storage = ref.read(ventAudioStorageProvider);
     final tempPath = await storage.newTempRecordPath();
+    // R114 BUG 2 (PIPL §28): 路径写进 mixin 字段 — dispose 链第 3.5 步
+    // + startRecordingImpl 异常回滚负责 best-effort 删除 (修前录音中途
+    // 退出页面 → 明文 m4a 永久残留 OS temp)
+    tempRecordPath = tempPath;
     await _recorder.start(
       const RecordConfig(
         encoder: AudioEncoder.aacLc, // m4a (aac)
@@ -161,7 +173,14 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
         plainPath: plainPath,
         encryptedPath: encryptedPath,
       );
+      // 成功路径: encryptAndWrite 内部已删明文 — 清 mixin 字段防 dispose
+      // 链重复处理
+      tempRecordPath = null;
     } catch (e) {
+      // R114 BUG 2 (PIPL §28): 加密失败时 encryptAndWrite 的成功路径
+      // 内部删明文不跑 → best-effort 补删, 否则明文 m4a 残留
+      tempRecordPath = null;
+      await AudioLifecycleMixin.deleteRecordTempBestEffort(plainPath);
       // 加密失败 → 不保存音频, subclass 已 fire AppSnackBar
       if (mounted) {
         AppSnackBar.showError(
@@ -384,7 +403,8 @@ class _VentComposePageState extends ConsumerState<VentComposePage>
             audioDurationSec: _audioDurationSec,
             audioSizeBytes: sizeBytes,
             // 1.1.0 round 5c: 标签 JSON (排序保证存储稳定, 便于 diff/导出)
-            tagsJson: JsonCodec.encodeStringList(_selectedTags.toList()..sort()),
+            tagsJson:
+                JsonCodec.encodeStringList(_selectedTags.toList()..sort()),
           );
       if (mounted) {
         context.pop(); // 回到列表

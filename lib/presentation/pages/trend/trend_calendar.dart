@@ -20,6 +20,7 @@ import 'package:chroniccare/core/shared/mood_visual.dart';
 import 'package:chroniccare/domain/logic/trend_calculator.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/core/theme/app_colors.dart';
+import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback_icon_button.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
@@ -245,34 +246,39 @@ class _CalendarCell extends StatelessWidget {
                 ? BorderSide(color: theme.colorScheme.primary, width: 1.5)
                 : BorderSide.none,
           ),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-            child: Center(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Opacity(
-                    opacity: opacity,
-                    child: Text(
-                      '${day.date.day}',
-                      style: TextStyle(
-                        fontSize: AppTokens.fontSizeBodySm,
-                        fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
-                        color: fg,
-                      ),
-                    ),
-                  ),
-                  if (day.moodScore != null && inMonth)
-                    Positioned(
-                      right: 2,
-                      bottom: 1,
+          // R114 Wave B2 (B2-9, emil F4): 包 PressFeedback (mode 2) —
+          // 日历日 cell tens/day 点击, 修前只有 ripple 无 scale 0.97
+          child: PressFeedback(
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(AppTokens.radiusChip),
+              child: Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Opacity(
+                      opacity: opacity,
                       child: Text(
-                        MoodVisual.emojiFor(day.moodScore!),
-                        style: AppTokens.textStyleMicro(context),
+                        '${day.date.day}',
+                        style: TextStyle(
+                          fontSize: AppTokens.fontSizeBodySm,
+                          fontWeight:
+                              isToday ? FontWeight.w700 : FontWeight.w500,
+                          color: fg,
+                        ),
                       ),
                     ),
-                ],
+                    if (day.moodScore != null && inMonth)
+                      Positioned(
+                        right: 2,
+                        bottom: 1,
+                        child: Text(
+                          MoodVisual.emojiFor(day.moodScore!),
+                          style: AppTokens.textStyleMicro(context),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

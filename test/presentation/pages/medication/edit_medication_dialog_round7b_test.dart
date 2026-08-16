@@ -91,30 +91,35 @@ MedicationEntity _med({
   );
 }
 
-Future<void> _openDialog(WidgetTester tester, _RecordingMedicationRepository repo) async {
-  await tester.pumpWidget(ProviderScope(
-    overrides: [
-      medicationRepositoryProvider.overrideWithValue(repo),
-      notificationServiceProvider.overrideWithValue(_NoopNotificationService()),
-      medicationsProvider.overrideWith((ref) => repo.watchAll()),
-    ],
-    child: MaterialApp(
-      theme: ThemeData.light(),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('zh'),
-      home: Builder(
-        builder: (context) => Scaffold(
-          body: Center(
-            child: ElevatedButton(
-              onPressed: () => showEditMedicationDialog(context, repo.current),
-              child: const Text('open'),
+Future<void> _openDialog(
+    WidgetTester tester, _RecordingMedicationRepository repo) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        medicationRepositoryProvider.overrideWithValue(repo),
+        notificationServiceProvider
+            .overrideWithValue(_NoopNotificationService()),
+        medicationsProvider.overrideWith((ref) => repo.watchAll()),
+      ],
+      child: MaterialApp(
+        theme: ThemeData.light(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () =>
+                    showEditMedicationDialog(context, repo.current),
+                child: const Text('open'),
+              ),
             ),
           ),
         ),
       ),
     ),
-  ),);
+  );
   await tester.pumpAndSettle();
   await tester.tap(find.text('open'));
   await tester.pumpAndSettle();
@@ -122,22 +127,25 @@ Future<void> _openDialog(WidgetTester tester, _RecordingMedicationRepository rep
 
 void main() {
   setUp(() {
-    TestWidgetsFlutterBinding.ensureInitialized().defaultBinaryMessenger
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('dexterous.com/flutter/local_notifications'),
-      (call) async => switch (call.method) {
-        'pendingNotificationRequests' => <Map<String, Object?>>[],
-        _ => null,
-      },
-    );
+          const MethodChannel('dexterous.com/flutter/local_notifications'),
+          (call) async => switch (call.method) {
+            'pendingNotificationRequests' => <Map<String, Object?>>[],
+            _ => null,
+          },
+        );
   });
 
   testWidgets('1) 打开 dialog → 预填字段 + 服药中状态', (tester) async {
     final repo = _RecordingMedicationRepository(
-      _med(times: const [
-        HourMinute(hour: 8, minute: 0),
-        HourMinute(hour: 20, minute: 0),
-      ],),
+      _med(
+        times: const [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
+        ],
+      ),
     );
     await _openDialog(tester, repo);
 
@@ -247,10 +255,12 @@ void main() {
 
   testWidgets('7) 删除时间 chip → 保存 → times 少一个', (tester) async {
     final repo = _RecordingMedicationRepository(
-      _med(times: const [
-        HourMinute(hour: 8, minute: 0),
-        HourMinute(hour: 20, minute: 0),
-      ],),
+      _med(
+        times: const [
+          HourMinute(hour: 8, minute: 0),
+          HourMinute(hour: 20, minute: 0),
+        ],
+      ),
     );
     await _openDialog(tester, repo);
 

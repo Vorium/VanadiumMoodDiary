@@ -131,8 +131,12 @@ class TrendCalculator {
     for (int i = months - 1; i >= 0; i--) {
       final m = DateTime(today.year, today.month - i, 1);
       final key = _monthKey(m);
-      final nextMonth = DateTime(m.year, m.month + 1, 1);
-      final totalDays = nextMonth.difference(m).inDays;
+      // R114 B1-5: 当前月 (i==0) 分母 = 已过天数 (today.day, 从月首到 now),
+      // 不再用整月天数 — 修前月中报告依从率被稀释 (8/16 时上限 16/31=52%),
+      // 柱状图首柱永久偏低。历史月 (i>0) 保留整月天数。
+      final totalDays = i == 0
+          ? today.day
+          : DateTime(m.year, m.month + 1, 1).difference(m).inDays;
       final checkedDays = checkedByMonth[key]?.length ?? 0;
       result.add(
         MonthlyCheckIn(

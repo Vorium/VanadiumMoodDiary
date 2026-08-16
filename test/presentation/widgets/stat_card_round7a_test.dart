@@ -27,11 +27,13 @@ void main() {
   group('StatCard (R7a 4 variant + ultralight)', () {
     testWidgets('1. variant=default → metricLg 28 ultralight', (tester) async {
       await tester.pumpWidget(
-        wrap(const StatCard(
-          label: '今日',
-          value: '3',
-          variant: StatCardVariant.defaultVariant,
-        ),),
+        wrap(
+          const StatCard(
+            label: '今日',
+            value: '3',
+            variant: StatCardVariant.defaultVariant,
+          ),
+        ),
       );
       final style = valueStyle(tester, '3');
       expect(style.fontSize, AppTokens.fontSizeMetricLg); // 28
@@ -41,11 +43,13 @@ void main() {
     testWidgets('2. variant=large → metricXl 34 ultralight (最大)',
         (tester) async {
       await tester.pumpWidget(
-        wrap(const StatCard(
-          label: '总打卡',
-          value: '128',
-          variant: StatCardVariant.large,
-        ),),
+        wrap(
+          const StatCard(
+            label: '总打卡',
+            value: '128',
+            variant: StatCardVariant.large,
+          ),
+        ),
       );
       final style = valueStyle(tester, '128');
       expect(style.fontSize, AppTokens.fontSizeMetricXl); // 34 (max)
@@ -56,11 +60,13 @@ void main() {
         '3. variant=xl → textStyleTitle 改 w200 (28 + letterSpacing -0.5)',
         (tester) async {
       await tester.pumpWidget(
-        wrap(const StatCard(
-          label: '评估',
-          value: '12',
-          variant: StatCardVariant.xl,
-        ),),
+        wrap(
+          const StatCard(
+            label: '评估',
+            value: '12',
+            variant: StatCardVariant.xl,
+          ),
+        ),
       );
       final style = valueStyle(tester, '12');
       // xl = textStyleTitle 字号 28 + 改 w200
@@ -73,11 +79,13 @@ void main() {
     testWidgets('4. variant=inline → metricMd 22 ultralight (最小)',
         (tester) async {
       await tester.pumpWidget(
-        wrap(const StatCard(
-          label: '简报',
-          value: '7',
-          variant: StatCardVariant.inline,
-        ),),
+        wrap(
+          const StatCard(
+            label: '简报',
+            value: '7',
+            variant: StatCardVariant.inline,
+          ),
+        ),
       );
       final style = valueStyle(tester, '7');
       expect(style.fontSize, AppTokens.fontSizeMetricMd); // 22 (min)

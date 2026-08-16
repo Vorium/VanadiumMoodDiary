@@ -21,6 +21,7 @@ import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.d
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/mood_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -96,6 +97,10 @@ class _FakeMoodRepository implements MoodRepository {
   Stream<List<MoodEntryEntity>> watchToday() => Stream.value(const []);
 
   @override
+  Stream<List<MoodEntryEntity>> watchByThread(int threadId) =>
+      Stream.value(const []);
+
+  @override
   Stream<MoodEntryEntity?> watchLatest() =>
       Stream.value(_store.isNotEmpty ? _store.last : null);
 }
@@ -125,6 +130,9 @@ void main() {
         sharedPreferencesProvider.overrideWithValue(sp),
         moodAudioServiceProvider.overrideWithValue(_FakeMoodAudioService()),
         moodRepositoryProvider.overrideWithValue(fakeRepo),
+        // v1.1.0 round 9 (F1): MoodRecorderPage 内嵌 WorrySelectorField
+        worryOpenProvider.overrideWith((ref) => Stream.value(const [])),
+        worryResolvedProvider.overrideWith((ref) => Stream.value(const [])),
       ],
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -180,8 +188,7 @@ void main() {
     );
   });
 
-  testWidgets('自定义短语输入 → 提交 → statusPhrase == 自定义短语',
-      (tester) async {
+  testWidgets('自定义短语输入 → 提交 → statusPhrase == 自定义短语', (tester) async {
     setBigView(tester);
     final fakeRepo = _FakeMoodRepository();
     await tester.pumpWidget(wrap(fakeRepo: fakeRepo));

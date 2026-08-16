@@ -181,24 +181,44 @@ enum HotlineRegion {
 const Map<HotlineRegion, List<({String label, String number})>>
     hotlineByRegion = {
   HotlineRegion.cn: [
-    (label: '全国24小时心理援助热线', number: '400-161-9995'),  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
-    (label: '北京心理危机研究与干预中心', number: '010-82951332'),  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+    (
+      label: '全国24小时心理援助热线', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+      number: '400-161-9995'
+    ),
+    (
+      label: '北京心理危机研究与干预中心', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+      number: '010-82951332'
+    ),
   ],
   HotlineRegion.us: [
     (label: '988 Suicide & Crisis Lifeline (US)', number: '988'),
     (label: 'Crisis Text Line (text HOME)', number: '741741'),
   ],
   HotlineRegion.hk: [
-    (label: '撒玛利亚防止自杀会 (24h 多语言)', number: '2389 2222'),  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+    (
+      label:
+          '撒玛利亚防止自杀会 (24h 多语言)', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+      number: '2389 2222'
+    ),
   ],
   HotlineRegion.tw: [
-    (label: '生命线 (24h)', number: '1995'),  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
-    (label: '安心专线 (心理咨商)', number: '1925'),  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+    (
+      label: '生命线 (24h)', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+      number: '1995'
+    ),
+    (
+      label: '安心专线 (心理咨商)', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+      number: '1925'
+    ),
   ],
   HotlineRegion.sg: [
     (label: 'Samaritans of Singapore (24h)', number: '1800-221-4444'),
   ],
   HotlineRegion.uk: [
-    (label: 'Samaritans UK & ROI (24h 免费)', number: '116 123'),  // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+    (
+      label:
+          'Samaritans UK & ROI (24h 免费)', // v1.0+ i18n (R51b: 量表严重度/危机电话走 ARB backlog)
+      number: '116 123'
+    ),
   ],
 };

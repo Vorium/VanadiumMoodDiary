@@ -38,6 +38,7 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
+import 'package:chroniccare/presentation/widgets/mood_score_buttons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -164,14 +165,18 @@ void main() {
     // ===== Step 6: 下一步 → step 2 = 评分 + 证据 =====
     await tester.tap(find.text('下一步'));
     await tester.pumpAndSettle();
-    final scoreChips = find.byType(ChoiceChip);
+    // v1.1.0 R114 (Wave D, spec §5.5): ChoiceChip 5 档 → 72pt 圆形
+    // MoodScoreButtons (唯一 5 档按钮实现)
+    final scoreButtons = find.byType(MoodScoreButtons);
     expect(
-      scoreChips,
-      findsNWidgets(5),
-      reason: 'wizard step 2 情绪评分 5 档 ChoiceChip',
+      scoreButtons,
+      findsOneWidget,
+      reason: 'wizard step 2 情绪评分 5 档圆形按钮',
     );
-    // tap 第 4 个 chip (score=4)
-    await tester.tap(scoreChips.at(3));
+    // tap 第 4 档 (score=4, emoji 🙂)
+    await tester.tap(
+      find.descendant(of: scoreButtons, matching: find.text('🙂')),
+    );
     await tester.pumpAndSettle();
     expect(
       container.read(cbtDraftProvider).draft.score,

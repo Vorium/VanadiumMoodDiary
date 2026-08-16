@@ -30,7 +30,6 @@
 //   在 OLED 黑底下需要更强对比一致)
 // Apple Health 风格 (spec §3.1.3 8 metric palette + §4.4 tile (12pt radius, 28pt icon, metricLg ultralight)) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
-
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/theme/app_colors.dart';
@@ -68,7 +67,7 @@ class AppleHealthTile extends StatelessWidget {
   /// 点击回调 (可选)
   final VoidCallback? onTap;
 
-  /// 默认高度 (88pt — 16 padding * 2 + ~56 content)
+  /// 默认高度 (110pt — icon 28 + label caption 13 + value metricLg 28 + spacing; v0.32 R109 round 6 从 88 升到 110)
   static const double tileHeight = 110;
 
   /// 默认 tile 宽度 (跟 height 配套, ListView 横滚 / Wrap 自适应)
@@ -81,6 +80,13 @@ class AppleHealthTile extends StatelessWidget {
   /// 配套 height 88 → 110 (放 icon 28 + label caption 13 + value metricLg 28 + spacing).
   static const double tileWidth = 140;
 
+  /// R114 Wave B2 (B2-6, apple F-07): 固定 110×140 容器的 Dynamic Type
+  /// 上限 — label 13pt + value 28pt 在 textScaler 1.6+ 即溢出 110pt 高
+  /// (2.0 时 label 26 + value 56 + padding 32 = 114 > 110)。140pt 宽 tile
+  /// 物理上限 clamp 1.3 (label/value ellipsis 兜底); 全动态支持 (布局弹性)
+  /// 留 v1.0 随 tile 尺寸 token 化一并评估。
+  static const double maxTextScaler = 1.3;
+
   @override
   Widget build(BuildContext context) {
     final metricColor = AppColors.healthMetricsColorFor(metricId);
@@ -90,60 +96,64 @@ class AppleHealthTile extends StatelessWidget {
 
     return PressFeedback(
       onTap: onTap,
-      child: Container(
-        height: tileHeight,
-        width: tileWidth,
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(AppTokens.radiusTile),
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppTokens.spacingMd,
-          vertical: AppTokens.spacingMd,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // 左: metric icon (28pt, metric 色)
-            Icon(
-              _iconFor(metricId),
-              color: metricColor,
-              size: 28,
-            ),
-            const SizedBox(width: AppTokens.spacingSm),
-            // 中: label + value — FittedBox 让长 label 缩字不溢出
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    label,
-                    style: AppTokens.textStyleCaption(context).copyWith(
-                      color: AppTokens.textSecondaryColor(context),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: AppTypography.textStyleMetricLg(context),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+      // B2-6: tile 内容 clamp textScaler, 防固定高容器挤压
+      child: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: maxTextScaler,
+        child: Container(
+          height: tileHeight,
+          width: tileWidth,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(AppTokens.radiusTile),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTokens.spacingMd,
+            vertical: AppTokens.spacingMd,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // 左: metric icon (28pt, metric 色)
+              Icon(
+                _iconFor(metricId),
+                color: metricColor,
+                size: 28,
               ),
-            ),
-            // 右: chevron (16pt, textHint)
-            Icon(
-              Icons.chevron_right,
-              color: AppTokens.textHintColor(context),
-              size: 16,
-            ),
-          ],
+              const SizedBox(width: AppTokens.spacingSm),
+              // 中: label + value — FittedBox 让长 label 缩字不溢出
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      label,
+                      style: AppTokens.textStyleCaption(context).copyWith(
+                        color: AppTokens.textSecondaryColor(context),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      value,
+                      style: AppTypography.textStyleMetricLg(context),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              // 右: chevron (16pt, textHint)
+              Icon(
+                Icons.chevron_right,
+                color: AppTokens.textHintColor(context),
+                size: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );

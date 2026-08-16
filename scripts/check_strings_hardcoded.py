@@ -89,10 +89,57 @@ RULE3_MARKER_RE = re.compile(
     r'i18n|走\s*l10n|canonical fallback|v1\.0\+ i18n', re.IGNORECASE
 )
 
+# 规则 3 (1.1.0 R113 BUG A 修正): 精确行号豁免 token
+# `// rule3-whitelist: 70,92` 或 `// rule3-whitelist: 70-92,100-120`
+# — 只豁免显式列出的行, 新增行必须自带标记, 杜绝"文件头提 i18n = 整文件
+# 豁免"盲区 (修前 cbt_thought_record_pdf_layout.dart 头注释提 "i18n keys"
+# → 第 92 行硬编码中文 PDF 头静默通过)。
+RULE3_WHITELIST_RE = re.compile(
+    r'rule3-whitelist\s*:\s*((?:\d+\s*(?:-\s*\d+)?\s*,?\s*)+)',
+    re.IGNORECASE,
+)
+
 # 规则 3 (round 7c): CJK 字符串字面量 (单行, 含引号内中文)
 RULE3_STR_LIT_RE = re.compile(
     r'''['"][^'"]*[\u4e00-\u9fff][^'"]*['"]'''
 )
+
+
+def parse_rule3_whitelist(lines: list[str]) -> set[int]:
+    """解析 `// rule3-whitelist: <行号/区间>` token → 豁免行号集合
+
+    支持: `70`, `70-92`, `70 - 92`, 逗号分隔多个。token 出现在任何
+    comment 行都有效 (惯例放文件头, 注明缘由)。未知格式 → 抛 ValueError
+    (fail-fast, 防手滑写错 token 静默失效)。
+    """
+    exempt: set[int] = set()
+    for line in lines:
+        m = RULE3_WHITELIST_RE.search(comment_part(line))
+        if m is None:
+            continue
+        for part in m.group(1).split(','):
+            part = part.strip()
+            if not part:
+                continue
+            if '-' in part:
+                a, b = (s.strip() for s in part.split('-', 1))
+                if not a.isdigit() or not b.isdigit():
+                    raise ValueError(
+                        f'rule3-whitelist 区间格式错误: "{part}" (期望 "70-92")'
+                    )
+                start, end = int(a), int(b)
+                if start > end:
+                    raise ValueError(
+                        f'rule3-whitelist 区间倒置: "{part}" (start > end)'
+                    )
+                exempt.update(range(start, end + 1))
+            else:
+                if not part.isdigit():
+                    raise ValueError(
+                        f'rule3-whitelist 行号格式错误: "{part}" (期望数字)'
+                    )
+                exempt.add(int(part))
+    return exempt
 
 
 def has_i18n_todo(line: str, comment_lines: list[str]) -> bool:
@@ -161,7 +208,11 @@ def scan_rule3_cjk() -> list[tuple[str, int, str]]:
     """1.1.0 round 7c: 扫 lib/domain/ + lib/core/ 的 CJK 字面量源码行
 
     排除: strings.dart (规则 1 覆盖) / *.g.dart / 注释行。
-    放行: 本行或前 10 行注释含规则 3 标记, 或文件头前 20 行有同款标记。
+    放行 (v1.1.0 R113 BUG A 修正后, 精确到行):
+    1. `// rule3-whitelist: <行号/区间>` token 显式列出的行 (token 可
+       在文件任何 comment 行, 惯例放文件头)
+    2. 文件头 (前 20 行) 有标记时只豁免头 20 行本身 — 不再整文件豁免
+    3. 本行或前 10 行注释含规则 3 标记
     """
     violations: list[tuple[str, int, str]] = []
     for sub in ('lib/domain', 'lib/core'):
@@ -175,7 +226,14 @@ def scan_rule3_cjk() -> list[tuple[str, int, str]]:
                 lines = p.read_text(encoding='utf-8').splitlines()
             except (UnicodeDecodeError, OSError):
                 continue
-            # 文件头前 20 行注释含标记 -> 整个文件放行
+            # R113 BUG A: 精确豁免 token (显式行号) — 修前这里 header_marked
+            # 整文件放行, 头注释提 "i18n keys" 的文件里任何行都漏网
+            try:
+                whitelisted = parse_rule3_whitelist(lines)
+            except ValueError as e:
+                violations.append((p, 1, f'rule3-whitelist 解析失败: {e}'))
+                continue
+            # 文件头前 20 行有标记 → 只豁免头 20 行 (本身几乎全是注释)
             header_marked = any(
                 RULE3_MARKER_RE.search(comment_part(l)) for l in lines[:20]
             )
@@ -187,7 +245,9 @@ def scan_rule3_cjk() -> list[tuple[str, int, str]]:
                 code = strip_comments(line)
                 if not RULE3_STR_LIT_RE.search(code):
                     continue
-                if header_marked:
+                if line_no <= 20 and header_marked:
+                    continue
+                if line_no in whitelisted:
                     continue
                 # 本行 + 前 10 行注释标记
                 ctx = lines[max(0, line_no - 11):line_no]
@@ -273,7 +333,8 @@ def main() -> int:
               f"{len(rule3)} 处 domain/core CJK 字面量无标记")
         print(f"  规则: lib/domain/ + lib/core/ 源码行 (去注释后) 含 CJK 字面量")
         print(f"    必须: 本行/前 10 行注释含 'i18n' / '走 l10n' / 'canonical fallback' /")
-        print(f"    'v1.0+ i18n' 标记, 或文件头前 20 行有同款标记 (如 '量表中文 fallback')")
+        print(f"    'v1.0+ i18n' 标记, 或文件头前 20 行有同款标记 (只豁免头 20 行, 修前整文件豁免),")
+        print(f"    或行号精确豁免 token '// rule3-whitelist: 70,92' / '70-92' (R113 BUG A)")
         for path, line_no, snippet in rule3[:40]:
             print(f"    {path.relative_to(ROOT).as_posix()}:{line_no}: {snippet}")
         if len(rule3) > 40:

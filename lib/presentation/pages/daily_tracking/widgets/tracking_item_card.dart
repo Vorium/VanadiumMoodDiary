@@ -11,6 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/anxiety_agitation_entry.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
@@ -23,8 +24,8 @@ import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_item_config_ext.dart';
-import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 
 /// 追踪项卡片（模块化, Apple Health 风格）
 class TrackingItemCard extends ConsumerWidget {
@@ -218,7 +219,12 @@ class TrackingItemCard extends ConsumerWidget {
   ) {
     switch (id) {
       case 'mood':
-        return _moodLastValue(ref.watch(latestMoodEntryProvider), l10n);
+        // R114 B1-7: latestMoodEntryProvider sync 链 error 会抛 — 改读
+        // allMoodProvider.value (error → null → 显示"未记录"不崩)
+        return _moodLastValue(
+          ref.watch(allMoodProvider).value?.firstOrNull,
+          l10n,
+        );
       case 'anxiety':
         return _anxietyLastValue(
           ref.watch(latestAnxietyAgitationEntryProvider),
@@ -232,7 +238,10 @@ class TrackingItemCard extends ConsumerWidget {
           l10n,
         );
       case 'stress':
-        return _stressLastValue(ref.watch(latestStressEventEntryProvider), l10n);
+        return _stressLastValue(
+          ref.watch(latestStressEventEntryProvider),
+          l10n,
+        );
       case 'treatment':
         return _treatmentLastValue(
           ref.watch(latestTreatmentEntryProvider),
@@ -248,14 +257,25 @@ class TrackingItemCard extends ConsumerWidget {
     if (e == null) return null;
     final period = MoodPeriod.normalize(e.period);
     final periodLabel = _periodShortLabel(period, l10n);
+    // v1.1.0 R113 (BUG 3): "上次记录: 今天" 无条件显示 — 3 天前的 entry
+    // 也标 "今天"。修: 跟今天同日才 "今天", 否则显示日期 (MM/dd)。
+    final timeLabel = _isToday(e.timestamp)
+        ? l10n.cardStatusToday
+        : Formatters.monthDay(e.timestamp);
     if (periodLabel.isEmpty) {
       return l10n.moodDiaryScore(e.score);
     }
     return l10n.moodDiaryLast(
-      l10n.dailyTrackingLastTime(l10n.cardStatusToday),
+      l10n.dailyTrackingLastTime(timeLabel),
       l10n.moodDiaryScore(e.score),
       periodLabel,
     );
+  }
+
+  /// 判断 [t] 是否今天 (本地日期对比, 跨 midnight 一次求值)
+  static bool _isToday(DateTime t) {
+    final now = DateTime.now();
+    return t.year == now.year && t.month == now.month && t.day == now.day;
   }
 
   static String? _anxietyLastValue(

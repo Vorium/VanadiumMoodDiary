@@ -67,7 +67,6 @@ class AddMedicationStep2Form extends StatelessWidget {
         // "用药时间" AppleListSection
         AppleListSection(
           title: l10n.medAddTime,
-          margin: const EdgeInsets.symmetric(horizontal: AppTokens.pageMarginH),
           children: [
             // 剂量 + 单位
             Padding(

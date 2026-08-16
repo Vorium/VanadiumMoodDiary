@@ -3,7 +3,7 @@ name: chroniccare
 # 1.1.0 round 6d: 改情绪优先定位 (情绪日记 + 树洞倾诉优先, 用药记录辅助, 对齐 README)
 description: "情绪日记 + 树洞倾诉优先 — ChronicCare: mood journal & vent-first self-care app for mental wellness, with medication tracking as support"
 publish_to: 'none'
-version: 1.1.0+148
+version: 1.1.0+149
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -50,8 +50,6 @@ dependencies:
   intl: ^0.20.2
 
   # 工具
-  uuid: ^4.5.1
-  flutter_dotenv: ^6.0.1
   share_plus: ^10.1.4
   shared_preferences: ^2.3.3
   # R97-P1-11 (2026-08-07): 危机热线一键拨打 tel: intent。
@@ -80,6 +78,12 @@ dev_dependencies:
   # depend_on_referenced_packages info (它只是 audioplayers 的传递依赖)。
   # 用 dev 声明 (只测试 mock 平台通道用), 保持 runtime 依赖面不变。
   audioplayers_platform_interface: ^7.1.0
+
+  # R113 (BUG 3): 显式声明 — notification_initializer_round113_test 直接
+  # import flutter_local_notifications_platform_interface (替换
+  # FlutterLocalNotificationsPlatform.instance 为 fake 平台实现, 测试
+  # requestPermission 平台分支)。同 audioplayers_platform_interface 模式。
+  flutter_local_notifications_platform_interface: ^7.2.0
 
   # 代码生成
   build_runner: ^2.4.13

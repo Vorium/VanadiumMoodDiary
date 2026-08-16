@@ -6,7 +6,12 @@
 //
 // 设计决策: 不测完整录音生命周期 (需要 mock record + speech_to_text +
 // path_provider 3 个 platform channel, 复杂度大), 只测 MoodAudioServiceImpl
-// 能在 test 环境构造出来 + 初始状态正确 + dispose 不抛.
+// 能在 test 环境构造出来 + 初始状态正确 + dispose 不抛。
+//
+// R114 BUG 2 补: deleteTempRecordFile 用真实 dart:io 临时文件验证
+// (best-effort 删除行为), 不碰 platform channel。
+import 'dart:io';
+
 import 'package:chroniccare/core/data/services/mood_audio_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -147,6 +152,66 @@ void main() {
       await svc.dispose();
       // dispose 后 stopStt → idempotent, no throw
       await expectLater(svc.stopStt(), completes);
+    });
+  });
+
+  // ============ R114 BUG 2: 明文录音临时文件清理 (PIPL §28) ============
+  //
+  // 修前 cancelRecording / dispose / startRecording 失败 / stopRecording
+  // 无结果 4 条路径只置 _tempRecordPath = null 从不 delete → 明文 m4a
+  // (精神心理患者语音) 永久留在 Directory.systemTemp。R114 抽
+  // deleteTempRecordFile (best-effort, 不抛), 4 条路径共用。
+  // 本 group 用真实 temp 文件验证删除行为 (纯 dart:io, 不碰 platform
+  // channel — 与本文件"不测完整录音生命周期"的既定策略一致)。
+
+  group('R114 BUG 2: deleteTempRecordFile 明文 temp 清理', () {
+    test('删除真实存在的临时录音文件', () async {
+      final dir = await Directory.systemTemp.createTemp('mood_audio_r114_');
+      addTearDown(() async {
+        if (await dir.exists()) await dir.delete(recursive: true);
+      });
+      final f = File('${dir.path}/record.m4a');
+      await f.writeAsString('fake-audio-bytes');
+      expect(await f.exists(), isTrue);
+
+      await MoodAudioServiceImpl.deleteTempRecordFile(f.path);
+
+      expect(
+        await f.exists(),
+        isFalse,
+        reason: '取消录音后明文 m4a 必须删除 (PIPL §28)',
+      );
+    });
+
+    test('path 为 null → 不抛 (idempotent no-op)', () async {
+      await expectLater(
+        MoodAudioServiceImpl.deleteTempRecordFile(null),
+        completes,
+      );
+    });
+
+    test('path 不存在 → 不抛 (文件已删/从未生成, idempotent)', () async {
+      await expectLater(
+        MoodAudioServiceImpl.deleteTempRecordFile(
+          '/no/such/dir/record.m4a',
+        ),
+        completes,
+      );
+    });
+
+    test('重复删除同一路径 → 第二次不抛', () async {
+      final dir = await Directory.systemTemp.createTemp('mood_audio_r114b_');
+      addTearDown(() async {
+        if (await dir.exists()) await dir.delete(recursive: true);
+      });
+      final f = File('${dir.path}/record.m4a');
+      await f.writeAsString('x');
+      await MoodAudioServiceImpl.deleteTempRecordFile(f.path);
+      await expectLater(
+        MoodAudioServiceImpl.deleteTempRecordFile(f.path),
+        completes,
+        reason: 'cancel 之后 dispose 再删同一路径必须安全',
+      );
     });
   });
 }

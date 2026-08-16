@@ -20,16 +20,26 @@
 // 3. 4 维度评分 (energy/sleep/anxiety) 移除 — 新设计单 mood 维度 + CBT 字段
 // 4. 录音 / 标签 / 文字备注 / 保存按钮保持现有行为
 // 5. cbtDraftProvider 状态 dialog 关闭时 reset (下回打开恢复初始 3 栏)
+//
+// v1.1.0 R114 (Wave D, spec §5.5) ALS 化:
+// - body 3 段改 AppleListSection insetGrouped 2 组 (情绪评分组: 5 档 72pt
+//   圆形 spring 选中 / 记录内容组: period+影响因素+标签+状态短语+烦恼+note+audio)
+// - Dialog 保持 modal (sheet 化留 v1.0, 裁决见 build 注释)
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/error_sinks.dart';
+import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/domain/entities/influence_category.dart';
 import 'package:chroniccare/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';
+import 'package:chroniccare/domain/logic/worry_thread_library.dart';
+import 'package:chroniccare/presentation/widgets/worry_selector_field.dart';
+import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
+import 'package:chroniccare/presentation/widgets/mood_score_buttons.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -64,7 +74,11 @@ import 'package:chroniccare/presentation/pages/mood/widgets/cbt_wizard.dart';
 /// v0.28 (round 64): god-split 收尾, 5 子 widget 重命名
 /// v0.29 (round 84): 4 维度评分移除, 改 CBT 思维记录
 class MoodRecorderPage extends ConsumerStatefulWidget {
-  const MoodRecorderPage({super.key});
+  /// v1.1.0 round 9 (F1 烦恼闭环): 预绑定烦恼主题 id (从时间线"继续倾诉"
+  /// 进入时带 query `worry=<id>`; 普通入口 = null)
+  final int? initialWorryThreadId;
+
+  const MoodRecorderPage({super.key, this.initialWorryThreadId});
 
   /// 静态入口 — Dialog 模态
   static Future<void> show(BuildContext context, WidgetRef ref) {
@@ -94,6 +108,10 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   // ===== v1.1.0 round 5d: 状态短语 (预设 chip / 自定义, 可空) =====
   String? _statusPhrase;
 
+  // ===== v1.1.0 round 9 (F1 烦恼闭环): 烦恼绑定 =====
+  int? _worryThreadId;
+  bool _createNewWorry = false;
+
   // ===== 保存状态 =====
   bool _saving = false;
 
@@ -110,6 +128,8 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
   void initState() {
     super.initState();
     _noteController = TextEditingController();
+    // v1.1.0 round 9 (F1): 从时间线"继续倾诉"进入时预绑定烦恼
+    _worryThreadId = widget.initialWorryThreadId;
     _recorderController = MoodRecorderController(
       onError: _handleRecorderError,
     );
@@ -194,10 +214,29 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
       return;
     }
     setState(() => _saving = true);
+    // v1.1.0 R113 (BUG 4): catch 块读不到 try 内局部变量 → 提升到 try 外
+    // (回滚删除本次新建的烦恼主题)
+    var createdThreadId = 0;
     try {
       // cbtState.draft 已有 score + cbt 字段; 合并 tags/note/audio
       // (MoodEntryDraft 无 copyWith, 手动展开 8 个 CBT 字段)
       final d = cbtState.draft;
+      // v1.1.0 round 9 (F1 烦恼闭环): 新建烦恼 → 先建主题 (title = 首条
+      // note 前 20 字), 再绑到本条记录。生成规则在 domain library。
+      // v1.1.0 R113 (BUG 4): 修前创建后 mood add 失败 → 孤儿主题 (无
+      // 任何记录引用, 永远躺在"进行中"列表)。修: 记 createdThreadId,
+      // catch 里回滚 delete。
+      var worryThreadId = _worryThreadId;
+      if (_createNewWorry) {
+        final note = hasText ? _noteController.text.trim() : null;
+        final title = WorryThreadLibrary.generateTitle(note) ??
+            AppLocalizations.of(context).worryDefaultTitle;
+        final now = DateTime.now();
+        createdThreadId = await ref
+            .read(worryThreadRepositoryProvider)
+            .create(title: title, at: now);
+        worryThreadId = createdThreadId;
+      }
       await ref.read(moodRepositoryProvider).add(
             draft: MoodEntryDraft(
               score: d.score,
@@ -226,6 +265,8 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
               recordingMode: _recordingMode,
               // v1.1.0 round 5d: 状态短语 (预设或自定义, null = 未选)
               statusPhrase: _statusPhrase,
+              // v1.1.0 round 9 (F1 烦恼闭环): 烦恼主题绑定
+              worryThreadId: worryThreadId,
             ),
           );
       if (!mounted) return;
@@ -236,6 +277,21 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
       );
       Navigator.pop(context);
     } catch (e) {
+      // v1.1.0 R113 (BUG 4): 本次新建的烦恼主题回滚删除 — 否则 mood
+      // 保存失败后主题孤儿残留 (无记录引用)。best-effort: 回滚失败走
+      // swallowError (主题还在列表里, 用户可自行删除, 不阻断错误提示)。
+      if (createdThreadId != 0) {
+        try {
+          await ref.read(worryThreadRepositoryProvider).delete(createdThreadId);
+        } catch (e2, st2) {
+          swallowError(
+            where: 'mood_recorder_page._save.rollbackWorryThread',
+            error: e2,
+            stack: st2,
+            note: '新建烦恼主题回滚失败, 主题留在列表 (用户可手动删)',
+          );
+        }
+      }
       if (!mounted) return;
       setState(() => _saving = false);
       AppSnackBar.showError(
@@ -252,8 +308,14 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
     final cbtState = ref.watch(cbtDraftProvider);
     final cbtNotifier = ref.read(cbtDraftProvider.notifier);
     final levelNotifier = ref.read(thoughtRecordLevelProvider.notifier);
+    final isThreeColumn = cbtState.level == ThoughtRecordLevel.three;
 
     // v0.27 R72 (P5.4): 整 build 包 RepaintBoundary
+    //
+    // v1.1.0 R114 (Wave D, spec §5.5): Dialog+Column → AppleListSection
+    // insetGrouped 2 组 (情绪评分组 / 记录内容组)。裁决: Dialog 保持 modal
+    // (showModalBottomSheet 化留 v1.0 — 现有 6+ 调用方/测试走 showDialog,
+    // 改动风险高, apple-design 审计 F-mood 的 sheet 化记为后续项)。
     return RepaintBoundary(
       child: Dialog(
         child: ConstrainedBox(
@@ -300,7 +362,7 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                         levelNotifier.setLevel(newLevel);
                       },
                     ),
-                    const SizedBox(height: AppTokens.spacingMd),
+                    const SizedBox(height: AppTokens.spacingSm),
 
                     // v0.30 R101: 记录模式切换 (此刻/今天)
                     SegmentedButton<String>(
@@ -323,7 +385,25 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                         });
                       },
                     ),
-                    const SizedBox(height: AppTokens.spacingSm),
+                    const SizedBox(height: AppTokens.spacingMd),
+
+                    // ===== 情绪评分组 (spec §5.5: 5 档 72pt 圆形 + spring 选中) =====
+                    // 仅 3 栏模式 — 5/7 栏 wizard 在 step 2 自管 score。
+                    // score 从 CbtThreeColumnMode 移出 (v0.29 后单 mood 维度,
+                    // 评分属于 dialog 顶层, 不进模式内容)。
+                    if (isThreeColumn) ...[
+                      AppleListSection(
+                        title: l10n.moodScoreSectionTitle,
+                        margin: EdgeInsets.zero,
+                        children: [
+                          MoodScoreButtons(
+                            value: cbtState.draft.score,
+                            onChanged: cbtNotifier.updateScore,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppTokens.spacingMd),
+                    ],
 
                     // 中间: 模式内容 (3 栏 vs wizard)
                     // v0.30 round 92 (audit-fixes / P0 #11): wizard
@@ -336,62 +416,79 @@ class _MoodRecorderPageState extends ConsumerState<MoodRecorderPage> {
                       ThoughtRecordLevel.seven =>
                         CbtWizard(onSaveRequested: _save),
                     },
-                    const SizedBox(height: AppTokens.spacingSm),
+                    const SizedBox(height: AppTokens.spacingMd),
 
-                    // v0.30 round 91 (sub-spec 7 日常追踪): 心境时段 dropdown
-                    // 5 段 (morning/noon/evening/night/unspecified), 默认 unspecified
-                    // 走 cbtDraftProvider 状态, 透传到 save → DB。
-                    const PeriodField(),
-                    const SizedBox(height: AppTokens.spacingSm),
+                    // ===== 记录内容组 (period / 影响因素 / 标签 / 状态短语 /
+                    // 烦恼绑定 / note / audio) =====
+                    // v1.1.0 R114: Dialog+Column → ALS insetGrouped 分组,
+                    // hairline 0.5 分隔各 cell。
+                    AppleListSection(
+                      title: l10n.moodRecordSectionTitle,
+                      margin: EdgeInsets.zero,
+                      children: [
+                        // v0.30 round 91 (sub-spec 7 日常追踪): 心境时段 dropdown
+                        // 5 段 (morning/noon/evening/night/unspecified), 默认
+                        // unspecified, 走 cbtDraftProvider 状态, 透传到 save → DB。
+                        const PeriodField(),
 
-                    // v0.30 R101: 影响因素标签 (参照 Apple Health State of Mind)
-                    MoodInfluenceChips(
-                      selected: _influenceFactors,
-                      onChanged: (factors) {
-                        setState(() {
-                          _influenceFactors
-                            ..clear()
-                            ..addAll(factors);
-                        });
-                      },
-                    ),
-                    const SizedBox(height: AppTokens.spacingSm),
+                        // v0.30 R101: 影响因素标签 (参照 Apple Health State of Mind)
+                        MoodInfluenceChips(
+                          selected: _influenceFactors,
+                          onChanged: (factors) {
+                            setState(() {
+                              _influenceFactors
+                                ..clear()
+                                ..addAll(factors);
+                            });
+                          },
+                        ),
 
-                    // 底部: 标签 + 文字备注 + 录音 + 保存/取消
-                    MoodTags(
-                      selected: _tags,
-                      onToggle: (tag) {
-                        setState(() {
-                          if (_tags.contains(tag)) {
-                            _tags.remove(tag);
-                          } else {
-                            _tags.add(tag);
-                          }
-                        });
-                      },
+                        // 标签
+                        MoodTags(
+                          selected: _tags,
+                          onToggle: (tag) {
+                            setState(() {
+                              if (_tags.contains(tag)) {
+                                _tags.remove(tag);
+                              } else {
+                                _tags.add(tag);
+                              }
+                            });
+                          },
+                        ),
+
+                        // v1.1.0 round 5d: 状态短语 (预设 chip 按 score 方向
+                        // 优先 + 自定义输入), score 来自上方评分组 (3 栏) 或
+                        // wizard step 2 (5/7 栏)。
+                        StatusPhraseField(
+                          score: cbtState.draft.score,
+                          value: _statusPhrase,
+                          onChanged: (v) => setState(() => _statusPhrase = v),
+                        ),
+
+                        // v1.1.0 round 9 (F1 烦恼闭环): 烦恼绑定选择器
+                        // (不关联 / 关联进行中烦恼 / 新建烦恼)
+                        WorrySelectorField(
+                          initialThreadId: widget.initialWorryThreadId,
+                          onChanged: (sel) {
+                            setState(() {
+                              _worryThreadId = sel.threadId;
+                              _createNewWorry = sel.createNew;
+                            });
+                          },
+                        ),
+
+                        MoodTextInput(controller: _noteController),
+
+                        // v0.30 round 93 (阶段 2 audit-fixes): mood audio 录音
+                        // 业务闭环不全, 走 [FeatureFlags.ventAudioEnabled] gate,
+                        // 默认 false 隐藏。MoodTextInput 文字输入保留 (用户主路径
+                        // 不依赖 audio)。MoodTags + PeriodField + CbtThreeColumnMode
+                        // 也保留 (核心情绪日记业务)。
+                        if (FeatureFlags.ventAudioEnabled)
+                          MoodRecorder(controller: _recorderController),
+                      ],
                     ),
-                    const SizedBox(height: AppTokens.spacingSm),
-                    // v1.1.0 round 5d: 状态短语 (预设 chip 按 score 方向
-                    // 优先 + 自定义输入), 插入在 mood tags section 之后。
-                    // score 来自 cbtDraftProvider (3 栏 score chooser 或
-                    // 5/7 栏 wizard step 2 写入)。
-                    StatusPhraseField(
-                      score: cbtState.draft.score,
-                      value: _statusPhrase,
-                      onChanged: (v) => setState(() => _statusPhrase = v),
-                    ),
-                    const SizedBox(height: AppTokens.spacingSm),
-                    MoodTextInput(controller: _noteController),
-                    const SizedBox(height: AppTokens.spacingSm),
-                    // v0.30 round 93 (阶段 2 audit-fixes): mood audio 录音
-                    // 业务闭环不全, 走 [FeatureFlags.ventAudioEnabled] gate,
-                    // 默认 false 隐藏。MoodTextInput 文字输入保留 (用户主路径
-                    // 不依赖 audio)。MoodTags + PeriodField + CbtThreeColumnMode
-                    // 也保留 (核心情绪日记业务)。
-                    if (FeatureFlags.ventAudioEnabled)
-                      MoodRecorder(controller: _recorderController)
-                    else
-                      const SizedBox.shrink(),
                     const SizedBox(height: AppTokens.spacingSm),
                     MoodSubmitPanel(
                       saving: _saving,

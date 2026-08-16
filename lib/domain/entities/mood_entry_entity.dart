@@ -113,6 +113,12 @@ class MoodEntryEntity {
   /// 状态短语（预设或自定义, 可空）
   final String? statusPhrase;
 
+  /// v1.1.0 round 9 (F1 烦恼闭环): 关联的烦恼主题 id (可空)
+  ///
+  /// 记录时绑定到 [WorryThreadEntity]; 未绑定 = null。同一烦恼的多条
+  /// 记录通过这个字段组成时间线。
+  final int? worryThreadId;
+
   const MoodEntryEntity({
     required this.id,
     required this.timestamp,
@@ -137,6 +143,7 @@ class MoodEntryEntity {
     this.influenceFactorsJson = '[]',
     this.recordingMode,
     this.statusPhrase,
+    this.worryThreadId,
   });
 
   // ===== 业务方法 =====
@@ -181,6 +188,7 @@ class MoodEntryEntity {
     String? influenceFactorsJson,
     DomainValue<String?>? recordingMode,
     DomainValue<String?>? statusPhrase,
+    DomainValue<int?>? worryThreadId,
   }) {
     return MoodEntryEntity(
       id: id ?? this.id,
@@ -221,6 +229,8 @@ class MoodEntryEntity {
           recordingMode == null ? this.recordingMode : recordingMode.value,
       statusPhrase:
           statusPhrase == null ? this.statusPhrase : statusPhrase.value,
+      worryThreadId:
+          worryThreadId == null ? this.worryThreadId : worryThreadId.value,
     );
   }
 
@@ -288,7 +298,8 @@ class MoodEntryEntity {
         other.period == period &&
         other.influenceFactorsJson == influenceFactorsJson &&
         other.recordingMode == recordingMode &&
-        other.statusPhrase == statusPhrase;
+        other.statusPhrase == statusPhrase &&
+        other.worryThreadId == worryThreadId;
   }
 
   @override
@@ -316,6 +327,7 @@ class MoodEntryEntity {
         influenceFactorsJson,
         recordingMode,
         statusPhrase,
+        worryThreadId,
       ]);
 
   @override
@@ -330,5 +342,6 @@ class MoodEntryEntity {
       'coreBelief=$coreBelief, behaviorResponse=$behaviorResponse, '
       'period=$period, '
       'influenceFactors=$influenceFactorsJson, '
+      'worryThreadId=$worryThreadId, '
       'at=$timestamp)';
 }

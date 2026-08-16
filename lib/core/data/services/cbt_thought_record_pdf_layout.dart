@@ -24,7 +24,7 @@ import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 
 /// CBT PDF 文案接口 — caller (presentation) 注入实现, data 0 依赖 ARB
 ///
-/// 10 个 getter 跟 ARB moodCbt* / cbtExportPdfEmpty key 1:1。
+/// 12 个 getter 跟 ARB moodCbt* / cbtExportPdfEmpty key 1:1。
 abstract interface class CbtPdfL10n {
   String get moodCbtSectionSituation;
   String get moodCbtSectionAutomaticThought;
@@ -36,6 +36,14 @@ abstract interface class CbtPdfL10n {
   String get moodCbtSectionCoreBelief;
   String get moodCbtSectionBehavior;
   String get cbtExportPdfEmpty;
+
+  // v1.1.0 R113 (BUG A): PDF header 硬编码中文 ("CBT 7 栏"/"情绪"/"原")
+  // 本地化 — 复用已有 moodCbtChipBadge5/7 (UI chip 同款文案), 新增
+  // cbtExportPdfMoodLabel / cbtExportPdfOriginalScoreLabel 2 个 key。
+  String get moodCbtChipBadge5;
+  String get moodCbtChipBadge7;
+  String get cbtExportPdfMoodLabel;
+  String get cbtExportPdfOriginalScoreLabel;
 }
 
 /// v0.30 round 88: CBT 思维记录 PDF 排版纯函数集合
@@ -56,7 +64,13 @@ class CbtLayout {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          _header(e),
+          pw.Text(
+            header(e, l10n),
+            style: const pw.TextStyle(
+              fontSize: 14,
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
           pw.SizedBox(height: 16),
           _section(l10n.moodCbtSectionSituation, e.situation),
           _section(l10n.moodCbtSectionAutomaticThought, e.automaticThought),
@@ -67,7 +81,7 @@ class CbtLayout {
           _section(l10n.moodCbtSectionAlternative, e.alternativeThought),
           _section(
             '${l10n.moodCbtSectionRerated} (${l10n.moodCbtScoreReratedLabel})',
-            '${e.reratedScore ?? '-'} (原 ${e.score})',
+            reratedBody(e, l10n),
           ),
           if (e.coreBelief != null)
             _section(l10n.moodCbtSectionCoreBelief, e.coreBelief),
@@ -83,15 +97,25 @@ class CbtLayout {
     return pw.Center(child: pw.Text(l10n.cbtExportPdfEmpty));
   }
 
-  /// 页面 header — CBT 档位 (5/7) + 时间戳 + 原始情绪分
-  static pw.Widget _header(MoodEntryEntity e) {
+  /// 页面 header 文案 — CBT 档位 (5/7) + 时间戳 + 原始情绪分
+  ///
+  /// v1.1.0 R113 (BUG A): 修前硬编码 'CBT 7 栏' / '情绪' (en/zh_Hant 用户
+  /// PDF 头混中文), 修后全走 [CbtPdfL10n] (badge5/7 + moodLabel)。public
+  /// 供 unit test 直接断言文案, 不依赖 PDF 二进制文本提取。
+  static String header(MoodEntryEntity e, CbtPdfL10n l10n) {
+    final level =
+        e.cbtLevel == 7 ? l10n.moodCbtChipBadge7 : l10n.moodCbtChipBadge5;
     final ts =
         '${e.timestamp.year}-${e.timestamp.month.toString().padLeft(2, '0')}-${e.timestamp.day.toString().padLeft(2, '0')} '
         '${e.timestamp.hour.toString().padLeft(2, '0')}:${e.timestamp.minute.toString().padLeft(2, '0')}';
-    return pw.Text(
-      '${e.cbtLevel == 7 ? "CBT 7 栏" : "CBT 5 栏"}  $ts  情绪 ${e.score}/5',
-      style: const pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-    );
+    return '$level  $ts  ${l10n.cbtExportPdfMoodLabel} ${e.score}/5';
+  }
+
+  /// 重新评分 section 正文 — '7 (原 5)' / '7 (original 5)'
+  ///
+  /// v1.1.0 R113 (BUG A): 修前 '(原 ${e.score})' 硬编码中文, 改走 l10n 前缀。
+  static String reratedBody(MoodEntryEntity e, CbtPdfL10n l10n) {
+    return '${e.reratedScore ?? '-'} (${l10n.cbtExportPdfOriginalScoreLabel} ${e.score})';
   }
 
   /// 单个 section 块 — 标题加粗 + 4 间距 + 正文
@@ -106,7 +130,10 @@ class CbtLayout {
         children: [
           pw.Text(
             title,
-            style: const pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
+            style: const pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 12,
+            ),
           ),
           pw.SizedBox(height: 4),
           pw.Text(body, style: const pw.TextStyle(fontSize: 11)),

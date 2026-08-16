@@ -48,15 +48,15 @@ class _FakeMoodAudioService implements MoodAudioService {
   }) async {}
   @override
   @override
-Future<void> pauseRecording() async {}
+  Future<void> pauseRecording() async {}
 
-@override
-Future<void> resumeRecording() async {}
+  @override
+  Future<void> resumeRecording() async {}
 
-@override
-bool get isPaused => false;
+  @override
+  bool get isPaused => false;
 
-@override
+  @override
   Future<MoodAudioResult?> stopRecording() async => null;
   @override
   Future<void> cancelRecording() async {}
@@ -109,8 +109,13 @@ class _FakeMoodRepository implements MoodRepository {
   Stream<List<MoodEntryEntity>> watchToday() => const Stream.empty();
 
   @override
+  Stream<List<MoodEntryEntity>> watchByThread(int threadId) =>
+      const Stream.empty();
+
+  @override
   Stream<MoodEntryEntity?> watchLatest() => Stream.value(
-      _store.isNotEmpty ? _store.last : null,);
+        _store.isNotEmpty ? _store.last : null,
+      );
 }
 
 void main() {

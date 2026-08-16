@@ -109,11 +109,13 @@ void main() {
             ),
           )
           .toList();
-      final segments = containerWidgets
-          .where((c) => c.decoration is BoxDecoration)
-          .toList();
-      expect(segments.length, 4,
-          reason: 'SetupProgressBar 渲染 4 segment 容器 (有 BoxDecoration)',);
+      final segments =
+          containerWidgets.where((c) => c.decoration is BoxDecoration).toList();
+      expect(
+        segments.length,
+        4,
+        reason: 'SetupProgressBar 渲染 4 segment 容器 (有 BoxDecoration)',
+      );
 
       // currentStep=2 → i<=2 (3 个) 走 activeColor, 1 个走 inactiveColor
       final activeCount = segments
@@ -156,9 +158,8 @@ void main() {
             ),
           )
           .toList();
-      final segments = containerWidgets
-          .where((c) => c.decoration is BoxDecoration)
-          .toList();
+      final segments =
+          containerWidgets.where((c) => c.decoration is BoxDecoration).toList();
       expect(segments.length, 4);
 
       final activeCount = segments
@@ -172,8 +173,7 @@ void main() {
     });
   });
 
-  group('SetupPage 集成 + AppleListSection + 底部 PrimaryButton (v0.31 R10)',
-      () {
+  group('SetupPage 集成 + AppleListSection + 底部 PrimaryButton (v0.31 R10)', () {
     testWidgets('集成: 4 step 状态机 step 0 → step 1 (consent→welcome)',
         (tester) async {
       await _pumpSetup(tester);
@@ -197,11 +197,17 @@ void main() {
 
       // ===== step 1 (welcome) =====
       // SetupStepHeader 标题 (大标题 28pt)
-      expect(find.text('您好，我是慢病管家'), findsOneWidget,
-          reason: 'spec §5.2: step 1 大标题 28pt',);
+      expect(
+        find.text('您好，我是慢病管家'),
+        findsOneWidget,
+        reason: 'spec §5.2: step 1 大标题 28pt',
+      );
       // SetupStepHeader 副标题 15pt (走 setupIntro)
-      expect(find.byType(SetupStepHeader), findsOneWidget,
-          reason: 'spec §5.2: 顶部 SetupStepHeader',);
+      expect(
+        find.byType(SetupStepHeader),
+        findsOneWidget,
+        reason: 'spec §5.2: 顶部 SetupStepHeader',
+      );
       // 进度条 currentStep=1
       final progressBar = tester.widget<SetupProgressBar>(
         find.byType(SetupProgressBar),
@@ -217,8 +223,11 @@ void main() {
       await _pumpSetup(tester);
 
       // step 0 consent: SetupStepHeader
-      expect(find.byType(SetupStepHeader), findsOneWidget,
-          reason: 'step 0 顶部 SetupStepHeader (大标题 28pt)',);
+      expect(
+        find.byType(SetupStepHeader),
+        findsOneWidget,
+        reason: 'step 0 顶部 SetupStepHeader (大标题 28pt)',
+      );
     });
 
     testWidgets('section: step 0 consent 渲染 AppleListSection 容器 (2 段)',
@@ -226,8 +235,11 @@ void main() {
       await _pumpSetup(tester);
 
       // step 0: 全部同意 section + 单独同意 section = 2 个 AppleListSection
-      expect(find.byType(AppleListSection), findsNWidgets(2),
-          reason: 'step 0: "全部同意" + "单独同意" = 2 AppleListSection',);
+      expect(
+        find.byType(AppleListSection),
+        findsNWidgets(2),
+        reason: 'step 0: "全部同意" + "单独同意" = 2 AppleListSection',
+      );
     });
 
     testWidgets('底部按钮: step 0 底部 PrimaryButton isFullWidth: true',
@@ -245,8 +257,11 @@ void main() {
           matching: find.byType(PrimaryButton),
         ),
       );
-      expect(primaryBtn.isFullWidth, isTrue,
-          reason: 'spec §5.2: 底部 PrimaryButton isFullWidth: true',);
+      expect(
+        primaryBtn.isFullWidth,
+        isTrue,
+        reason: 'spec §5.2: 底部 PrimaryButton isFullWidth: true',
+      );
     });
   });
 }

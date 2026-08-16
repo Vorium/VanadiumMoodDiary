@@ -19,8 +19,12 @@
 // v0.32 round 8 (R112-03 fix): 删 `SpringType` enum + `Spring.of` factory
 // 死代码 (0 caller, 内部 `final _ = context` 占位 hack 纯属摆设)。保留
 // 3 个静态实例 (standard/gentle/bouncy) + toDescription/toSimulation 作为
-// 物理模型公共 API — gentle/bouncy 当前也 0 caller, 但作为 spec §3.4.3
-// 的完整模型面保留 (接真 caller 时直接用)。
+// 物理模型公共 API。
+//
+// R114 Wave B2 (B2-9): bouncy 接真 caller (celebration_bounce scale,
+// 替代 curveBackOut 曲线模拟) — standard/bouncy 各有 1 个 runtime caller;
+// gentle 仍 0 caller, 作为 spec §3.4.3 完整模型面保留 (drawer/sheet
+// 收起场景待接, 接线时直接用)。
 import 'package:flutter/physics.dart' show SpringDescription, SpringSimulation;
 
 /// v0.31 R4 (Apple Health redesign · Task 1.4): iOS Spring 物理模型

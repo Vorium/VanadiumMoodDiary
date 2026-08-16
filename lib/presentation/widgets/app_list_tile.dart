@@ -59,7 +59,7 @@ class AppListTile extends StatelessWidget {
     this.isThreeLine,
     this.contentPadding,
     this.onLongPress,
-  })  : _isCarded = false;
+  }) : _isCarded = false;
 
   /// v0.26 round 57 (emil C-12): 显式 .standard 命名构造
   /// 跟 unnamed constructor 等价, 让调用方一眼看出"标准行, 非 carded"
@@ -74,7 +74,7 @@ class AppListTile extends StatelessWidget {
     this.isThreeLine,
     this.contentPadding,
     this.onLongPress,
-  })  : _isCarded = false;
+  }) : _isCarded = false;
 
   /// Card 包裹, 用于 content 区
   const AppListTile.carded({
@@ -88,7 +88,7 @@ class AppListTile extends StatelessWidget {
     this.isThreeLine,
     this.contentPadding,
     this.onLongPress,
-  })  : _isCarded = true;
+  }) : _isCarded = true;
 
   final Widget leading;
   final Widget title;

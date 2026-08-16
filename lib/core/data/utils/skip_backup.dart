@@ -103,7 +103,9 @@ class SkipBackup {
             'path.len=${path.length}',
       );
       if (kDebugMode) {
-        debugPrint('[SkipBackup] iOS mark failed (path.len=${path.length}): $e');
+        debugPrint(
+          '[SkipBackup] iOS mark failed (path.len=${path.length}): $e',
+        );
       }
     }
   }

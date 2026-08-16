@@ -90,7 +90,8 @@ void main() {
 
     test('case 4: HomeCelebrationController class 存在 + 关键 method', () {
       expect(
-        RegExp(r'class\s+HomeCelebrationController').hasMatch(celebrationContent),
+        RegExp(r'class\s+HomeCelebrationController')
+            .hasMatch(celebrationContent),
         isTrue,
         reason: 'R108 应抽 HomeCelebrationController class',
       );
@@ -147,7 +148,8 @@ void main() {
       );
       // round 4: 不再含 safety check
       expect(
-        RegExp(r'Future<void>\s+_runSafetyCheck').hasMatch(homePageStateContent),
+        RegExp(r'Future<void>\s+_runSafetyCheck')
+            .hasMatch(homePageStateContent),
         isFalse,
         reason: '1.1.0 round 4: _runSafetyCheck 已整摘',
       );
@@ -155,7 +157,8 @@ void main() {
 
     test('case 7: 不再含 _runAfterCheckIn (已随 dispatcher 整摘)', () {
       expect(
-        RegExp(r'Future<void>\s+_runAfterCheckIn').hasMatch(homePageStateContent),
+        RegExp(r'Future<void>\s+_runAfterCheckIn')
+            .hasMatch(homePageStateContent),
         isFalse,
         reason: '_runAfterCheckIn 已随 HomeCareEngineDispatcher 删除',
       );
@@ -163,7 +166,8 @@ void main() {
 
     test('case 8: 不再含 _fireCareEngine 业务 (已随 dispatcher 整摘)', () {
       expect(
-        RegExp(r'Future<void>\s+_fireCareEngine').hasMatch(homePageStateContent),
+        RegExp(r'Future<void>\s+_fireCareEngine')
+            .hasMatch(homePageStateContent),
         isFalse,
         reason: '_fireCareEngine 已随 HomeCareEngineDispatcher 删除',
       );
@@ -173,13 +177,16 @@ void main() {
       expect(
         RegExp(r'String\s+_celebrationFor').hasMatch(homePageStateContent),
         isFalse,
-        reason: '_celebrationFor 已抽到 HomeCelebrationController.pickStreakMessage',
+        reason:
+            '_celebrationFor 已抽到 HomeCelebrationController.pickStreakMessage',
       );
     });
 
-    test('case 10: 不再含 _showCelebrationOverlay (已抽到 HomeCelebrationController)', () {
+    test('case 10: 不再含 _showCelebrationOverlay (已抽到 HomeCelebrationController)',
+        () {
       expect(
-        RegExp(r'void\s+_showCelebrationOverlay').hasMatch(homePageStateContent),
+        RegExp(r'void\s+_showCelebrationOverlay')
+            .hasMatch(homePageStateContent),
         isFalse,
         reason: '_showCelebrationOverlay 已抽到 HomeCelebrationController.show',
       );

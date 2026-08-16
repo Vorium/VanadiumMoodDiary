@@ -67,8 +67,8 @@ class TreatmentPage extends ConsumerWidget {
             child: entriesAsync.when(
               loading: () => const LoadingSkeleton.fullScreen(),
               error: (e, st) => ErrorState(
-                  title: l10n.commonLoadFailed(e.toString()),
-                ),
+                title: l10n.commonLoadFailed(e.toString()),
+              ),
               data: (entries) => entries.isEmpty
                   ? EmptyState(
                       icon: Icons.medical_services_outlined,

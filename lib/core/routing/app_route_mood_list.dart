@@ -40,11 +40,15 @@ class AppRouteMoodList {
         ),
       ),
       // R104: /mood/create — 新建情绪日记 (MoodRecorderPage 作为页面)
+      // v1.1.0 round 9 (F1): ?worry=<id> 从烦恼时间线"继续倾诉"进入时预绑定
       GoRoute(
         path: '/mood/create',
         pageBuilder: (context, state) => AppRoutes.slideUpPage(
           state.pageKey,
-          const MoodRecorderPage(),
+          MoodRecorderPage(
+            initialWorryThreadId:
+                int.tryParse(state.uri.queryParameters['worry'] ?? ''),
+          ),
           context,
         ),
       ),

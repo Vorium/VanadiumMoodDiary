@@ -43,11 +43,13 @@ import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/domain/repositories/vent_repository.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/vent/vent_compose_page.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class _FakeVentRepository implements VentRepository {
   @override
@@ -94,12 +96,21 @@ class _FakeVentAudioStorage extends VentAudioStorage {
 void main() {
   late List<String> recordCalls;
   late List<String> audioCalls;
+  late SharedPreferences sp;
 
-  setUp(() {
+  setUp(() async {
     // vent audio 录音业务必须打开 (prod 默认 true, 显式设置防 prod 翻转)
     FeatureFlags.setVentAudioEnabledForTest(true);
     recordCalls = [];
     audioCalls = [];
+    // v1.1.0 round 9 (F4): ventAgreementStoreProvider watch
+    // sharedPreferencesProvider, 测试必须 override (默认 throw)
+    // v1.1.0 round 9 (F4): 预置公约已读, 避免首次进入弹 dialog 挡住
+    // 测试交互 (公约 dialog 自身测试在 vent_agreement_round9_test.dart)
+    SharedPreferences.setMockInitialValues({
+      'vent_agreement_acknowledged': true,
+    });
+    sp = await SharedPreferences.getInstance();
     // audioplayers 的 GlobalAudioScope + platform 是进程级单例, _initCompleter
     // 跨 testWidgets 残留 → 每个测试重置 platform (vent_detail 同款)。
     AudioplayersPlatformInterface.instance = AudioplayersPlatform();
@@ -178,6 +189,7 @@ void main() {
         overrides: [
           ventRepositoryProvider.overrideWithValue(_FakeVentRepository()),
           ventAudioStorageProvider.overrideWithValue(_FakeVentAudioStorage()),
+          sharedPreferencesProvider.overrideWithValue(sp),
         ],
         child: MaterialApp(
           theme: ThemeData.light(),

@@ -12,11 +12,17 @@
 // `Uri.parse('chroniccare://check-in/today')` 把 'check-in' 解析为 host,
 // 'today' 为 path)。
 //
-// 3 类 action → 最终 go_router path (注意: app_router 可能有 redirect,
+// 4 类 action → 最终 go_router path (注意: app_router 可能有 redirect,
 // 这里写最终 path):
 // - today        → /check-in/today
+// - check-in     → /check-in/today (R114 BUG 1: 旧 payload
+//   'chroniccare://check-in/today' host='check-in' — 每日 20:00 打卡提醒
+//   用原始字符串发了多个版本, 已调度的旧通知还带这个 host, resolver 必须
+//   兼容否则点击死链。新 payload 已统一走 NotificationDeepLink.encode())
 // - medication   → /check-in/medication/{medId}
 // - assessment   → /assessment/{scaleId}
+// - mood-diary   → /mood-diary (R113 BUG 4: 情绪提醒通知点击直达情绪日记;
+//   修前 payload 'chroniccare://mood-diary' 无 case → null → 点击无反应)
 // 1.1.0 round 4b: safety-alert (→ /check-in/today?reason=safety) 随外联
 // 服务整摘删除。
 
@@ -35,6 +41,11 @@ String? resolveNotificationDeepLinkRoute(String? payload) {
   switch (action) {
     case 'today':
       return '/check-in/today';
+    case 'check-in':
+      // R114 BUG 1: 旧 payload 'chroniccare://check-in/today' (host
+      // 'check-in') 兼容 — 每日 20:00 打卡提醒旧版 + snooze medId=0 旧版
+      // 用此串, 已调度的 pending 通知点击必须能 resolve。
+      return '/check-in/today';
     case 'medication':
       // path = "/42"
       final segs = uri.pathSegments;
@@ -46,6 +57,10 @@ String? resolveNotificationDeepLinkRoute(String? payload) {
       final segs = uri.pathSegments;
       if (segs.isEmpty) return null;
       return '/assessment/${segs[0]}';
+    case 'mood-diary':
+      // R113 (BUG 4): 情绪记录提醒 (MoodReminderNotifier payload)
+      // → 情绪日记列表页
+      return '/mood-diary';
     default:
       return null;
   }

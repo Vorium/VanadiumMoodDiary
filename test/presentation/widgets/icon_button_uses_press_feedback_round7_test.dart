@@ -20,8 +20,11 @@ void main() {
   group('P0-07: 全 lib/ 不应再有 raw IconButton(', () {
     test('lib/ 0 raw IconButton( 漏网 (排除集中器自身)', () async {
       final libDir = Directory('lib');
-      expect(libDir.existsSync(), isTrue,
-          reason: 'lib/ 目录必须存在 (从项目根运行)',);
+      expect(
+        libDir.existsSync(),
+        isTrue,
+        reason: 'lib/ 目录必须存在 (从项目根运行)',
+      );
 
       // 排除名单 (集中器自身)
       const excludedFiles = <String>{
@@ -46,8 +49,7 @@ void main() {
         final content = await entity.readAsString();
 
         // 注释行 / 文档行不算 (避免 /* IconButton( */ 误报)
-        for (final lineMatch
-            in content.split('\n').asMap().entries.where((e) {
+        for (final lineMatch in content.split('\n').asMap().entries.where((e) {
           final line = e.value.trimLeft();
           // 跳过纯注释行 + dartdoc 行
           return !line.startsWith('//') && !line.startsWith('*');

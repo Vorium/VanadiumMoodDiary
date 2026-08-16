@@ -11,6 +11,8 @@
 //
 // 测试模式: ProviderScope + MaterialApp 渲染 MoodRecorderPage (走静态 show() 方法)
 // + cbtDraftProvider override (避免 initState 走 addPostFrameCallback 同步 SP)
+import 'dart:async';
+
 import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/core/data/services/mood_audio_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
@@ -18,6 +20,7 @@ import 'package:chroniccare/presentation/pages/mood/widgets/mood_audio_section.d
 import 'package:chroniccare/presentation/pages/mood/widgets/mood_recorder_page.dart';
 import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/mood_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,15 +44,15 @@ class _FakeMoodAudioService implements MoodAudioService {
   }) async {}
   @override
   @override
-Future<void> pauseRecording() async {}
+  Future<void> pauseRecording() async {}
 
-@override
-Future<void> resumeRecording() async {}
+  @override
+  Future<void> resumeRecording() async {}
 
-@override
-bool get isPaused => false;
+  @override
+  bool get isPaused => false;
 
-@override
+  @override
   Future<MoodAudioResult?> stopRecording() async => null;
   @override
   Future<void> cancelRecording() async {}
@@ -79,6 +82,9 @@ void main() {
         // cbtDraftProvider 走默认 (3 栏), initState addPostFrameCallback 同步
         // SP 后 cbtDraft.level = 3
         moodAudioServiceProvider.overrideWithValue(_FakeMoodAudioService()),
+        // v1.1.0 round 9 (F1): MoodRecorderPage 内嵌 WorrySelectorField
+        worryOpenProvider.overrideWith((ref) => Stream.value(const [])),
+        worryResolvedProvider.overrideWith((ref) => Stream.value(const [])),
       ],
       child: const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

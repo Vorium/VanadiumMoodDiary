@@ -68,8 +68,7 @@ void main() {
             content.contains('no login') ||
             content.contains('no account'),
         isTrue,
-        reason:
-            'demo_user.txt 必须明确说明 app 无 login 需求, 避免审核员追问 demo 账号',
+        reason: 'demo_user.txt 必须明确说明 app 无 login 需求, 避免审核员追问 demo 账号',
       );
     });
 

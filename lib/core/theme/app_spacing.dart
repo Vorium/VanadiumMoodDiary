@@ -127,6 +127,10 @@ class AppSpacing {
   static const double buttonHeight = 50.0;
   static const double buttonHeightSmall = 44.0;
   static const double minTapArea = 48.0;
+  // v1.1.0 R114 (Wave D spec §5.5): mood 5 档圆形按钮直径 (Apple Health
+  // 72pt 大触达) + 窄屏下限 (5 个按钮并排装不下时按比例收缩, ≥ 48pt 触达下限)
+  static const double moodScoreButtonSize = 72.0;
+  static const double moodScoreButtonMinSize = 48.0;
   static const double inputHeight = 44.0;
   static const double iconSize = 22.0;
   static const double iconSizeLg = 28.0;
@@ -173,13 +177,4 @@ class AppSpacing {
   /// NavigationRail 宽度（仅 >= breakpointExpanded 时显示）
   static const double navRailWidth = 80.0;
   static const double navRailExtendedWidth = 240.0;
-}
-
-/// 便捷判断当前窗口尺寸
-enum WindowSize { compact, medium, expanded }
-
-WindowSize windowSizeOf(double width) {
-  if (width < AppSpacing.breakpointMedium) return WindowSize.compact;
-  if (width < AppSpacing.breakpointExpanded) return WindowSize.medium;
-  return WindowSize.expanded;
 }

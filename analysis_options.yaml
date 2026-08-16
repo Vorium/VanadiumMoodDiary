@@ -13,6 +13,13 @@ analyzer:
     - "_archive_r11/**"
     - "_archive_r12/**"
     - "scripts/_archive/**"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:

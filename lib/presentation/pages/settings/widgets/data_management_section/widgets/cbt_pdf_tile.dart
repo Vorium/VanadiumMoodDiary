@@ -27,7 +27,7 @@ import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart'
     show CbtThoughtRecordPdf, DateRange;
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/services/cbt_pdf_l10n.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
@@ -110,7 +110,13 @@ class CbtPdfTile extends ConsumerWidget {
     // cbtReratedEntriesProvider 已过滤 cbtLevel >= 5 (5/7 栏) — 见
     // cbt_rerated_entries_provider.dart。在 handler 内再按 dateRange 过滤一次,
     // 跟 facade 内部 filter 同语义, 但 SnackBar 数字 = 实际 PDF 页数。
-    final all = ref.read(cbtReratedEntriesProvider);
+    //
+    // R114 B1-7: cbtReratedEntriesProvider sync 链 error 会抛 — 改读
+    // allMoodProvider.value 自己过滤 (error → 空 → 下面走
+    // "0 条" 提示, 不炸 handler)。
+    final all = (ref.read(allMoodProvider).value ?? const [])
+        .where((e) => (e.cbtLevel ?? 0) >= 5)
+        .toList();
     final filtered = all
         .where(
           (e) =>

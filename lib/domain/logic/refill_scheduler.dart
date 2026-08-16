@@ -19,6 +19,7 @@
 //   - 静态方法, 接受 now (caller 注入防 midnight race)
 //   - 返回值不可变 (DateTime 是 immutable, 没事)
 //   - 错误走 throws (跟原 computeRefillFireTime 1:1 行为)
+//     — v1.1.0 R113 BUG 1 例外: reminderDays < 1 改返 null, 见方法注释
 //   - dartdoc 详细, 跟 R65/R56c 风格统一
 
 /// v0.27 round 82: 续方提醒时间计算 (domain 层纯函数)
@@ -27,8 +28,10 @@
 /// - fire time = `(refillAt - reminderDays) 当天 9:00 本地时间`
 /// - 跨月 / 跨年 / 闰年走 Dart `DateTime.subtract(Duration)`,自动正确
 /// - `refillAt == null` → 返回 `null` (caller 跳过此 med, no-op)
-/// - `reminderDays < 1` → 抛 [ArgumentError] (跟原
-///   `RefillNotifier.computeRefillFireTime` 1:1 行为, 老 test 不破)
+/// - `reminderDays < 1` → 返回 `null` (v1.1.0 R113 BUG 1 从抛
+///   [ArgumentError] 改为返 null — 0 天脏数据曾让
+///   rescheduleRefillReminders 整体 abort, 全部续方提醒静默死掉;
+///   caller 拿到 null 自然跳过该 med, 不 abort 整个重排)
 ///
 /// 0 副作用 / 0 Flutter 依赖 / 0 Drift 依赖。
 /// 抽出原因: 满足 4 层架构 (domain 0 flutter), 让 use case 层能
@@ -40,7 +43,7 @@ class RefillScheduler {
   ///
   /// 参数:
   /// - [refillAt] 续方日期 (DateTime), null = 该 med 无续方计划, 返回 null
-  /// - [reminderDays] 提前多少天提醒, 必须 >= 1, 否则抛 [ArgumentError]
+  /// - [reminderDays] 提前多少天提醒; < 1 时返回 null (caller 跳过, 不抛)
   ///
   /// 返回:
   /// - null: [refillAt] 为 null
@@ -51,8 +54,8 @@ class RefillScheduler {
   /// - `subtract(Duration(days: reminderDays))` 自动处理跨月/跨年/闰年
   /// - 最终 `DateTime(y, m, d, 9)` 拼装 9:00:00 本地时间
   ///
-  /// 锁 (R82 复测 R56c 8 case 行为不变):
-  /// - reminderDays < 1 → ArgumentError
+  /// 锁 (R82 复测 R56c 8 case 行为不变; R113 BUG 1 改 <1 为返 null):
+  /// - reminderDays < 1 → null (不抛, caller 跳过该 med)
   /// - refillAt = null → null
   /// - 跨月 / 跨年 / 时分秒 (00:00:00 / 23:59:59) → fireTime 一致
   static DateTime? computeRefillFireTime({
@@ -60,9 +63,7 @@ class RefillScheduler {
     required int reminderDays,
   }) {
     if (refillAt == null) return null;
-    if (reminderDays < 1) {
-      throw ArgumentError('reminderDays must be >= 1; got: $reminderDays');
-    }
+    if (reminderDays < 1) return null;
     // 续方日期当天的 0 点, 再 - reminderDays 天, 再 + 9 小时
     final day = DateTime(refillAt.year, refillAt.month, refillAt.day);
     final triggerDay = day.subtract(Duration(days: reminderDays));

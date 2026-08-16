@@ -50,6 +50,19 @@ class LoadingTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // P3-CLEAN-10: spinner 色按 variant 语义映射 (跟各 variant 正常态
+    // foreground 一致) — 修前硬编码 fgOnPrimary (白), outlined/text/tonal
+    // 浅底 + isLoading 时白 spinner 不可见。
+    // filled → onPrimary (白, 主色底) / tonal → onSecondaryContainer /
+    // outlined & text → primary。
+    final spinnerColor = switch (variant) {
+      LoadingTextButtonVariant.filled => AppTokens.fgOnPrimary(context),
+      LoadingTextButtonVariant.tonal =>
+        Theme.of(context).colorScheme.onSecondaryContainer,
+      LoadingTextButtonVariant.outlined ||
+      LoadingTextButtonVariant.text =>
+        AppTokens.primaryColor(context),
+    };
     return switch (variant) {
       LoadingTextButtonVariant.filled => FilledButton(
           onPressed: isLoading ? null : onPressed,
@@ -57,6 +70,7 @@ class LoadingTextButton extends StatelessWidget {
             label: label,
             isLoading: isLoading,
             icon: icon,
+            spinnerColor: spinnerColor,
           ),
         ),
       LoadingTextButtonVariant.outlined => OutlinedButton(
@@ -65,6 +79,7 @@ class LoadingTextButton extends StatelessWidget {
             label: label,
             isLoading: isLoading,
             icon: icon,
+            spinnerColor: spinnerColor,
           ),
         ),
       LoadingTextButtonVariant.text => TextButton(
@@ -73,6 +88,7 @@ class LoadingTextButton extends StatelessWidget {
             label: label,
             isLoading: isLoading,
             icon: icon,
+            spinnerColor: spinnerColor,
           ),
         ),
       LoadingTextButtonVariant.tonal => FilledButton.tonal(
@@ -81,6 +97,7 @@ class LoadingTextButton extends StatelessWidget {
             label: label,
             isLoading: isLoading,
             icon: icon,
+            spinnerColor: spinnerColor,
           ),
         ),
     };
@@ -93,11 +110,13 @@ class _ChildStack extends StatelessWidget {
   const _ChildStack({
     required this.label,
     required this.isLoading,
+    required this.spinnerColor,
     this.icon,
   });
 
   final String label;
   final bool isLoading;
+  final Color spinnerColor;
   final IconData? icon;
 
   @override
@@ -111,7 +130,7 @@ class _ChildStack extends StatelessWidget {
             child: isLoading
                 ? LoadingSpinner(
                     size: AppTokens.iconSizeInline,
-                    color: AppTokens.fgOnPrimary(context),
+                    color: spinnerColor,
                   )
                 : Icon(icon, size: AppTokens.iconSizeInline),
           )
@@ -139,9 +158,7 @@ class _ChildStack extends StatelessWidget {
               height: 18,
               child: LoadingSpinner(
                 size: AppTokens.iconSizeInline,
-                // v0.22 round 34: fgOnPrimary 是函数, 没法在 const 构造里用,
-                // 把 IgnorePointer 改成 runtime 版本 (去掉 const)
-                color: AppTokens.fgOnPrimary(context),
+                color: spinnerColor,
               ),
             ),
           ),

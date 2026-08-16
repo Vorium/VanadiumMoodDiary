@@ -5,6 +5,9 @@
 // 2. VentHeroCard 显示最新倾诉 1 行预览
 // 3. 空数据 → homeMoodHeroNoData / homeVentHeroNoData
 // 4. CheckInButton 渲染 compact 尺寸 (height < 64, 打卡降级)
+// 5. audio-only 树洞条目显示语音预览
+// 6. tap 查看全部 → /mood-list 路由
+// 7. R114 BUG 5: vent 封存 → 首页不泄漏预览 (PIPL §47)
 //
 // 测试策略: pump 完整 HomePage + ProviderScope overrides 轻量 fake 数据,
 // 断言 hero 卡渲染内容 + CheckInButton compact 高度。
@@ -15,6 +18,7 @@ import 'package:chroniccare/domain/entities/user_profile_entity.dart';
 import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
+import 'package:chroniccare/presentation/providers/cbt_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/check_in_button.dart';
@@ -22,10 +26,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Widget wrapHome({
   MoodEntryEntity? mood,
   List<VentEntryEntity> vent = const [],
+  SharedPreferences? prefs,
 }) {
   final router = GoRouter(
     initialLocation: '/',
@@ -39,32 +45,39 @@ Widget wrapHome({
       ),
     ],
   );
+  final overrides = [
+    latestMoodProvider.overrideWith(
+      (ref) => Stream<MoodEntryEntity?>.value(mood),
+    ),
+    ventEntriesProvider.overrideWith(
+      (ref) => Stream<List<VentEntryEntity>>.value(vent),
+    ),
+    todayCheckInProvider.overrideWith(
+      (ref) => Stream<CheckInEntity?>.value(null),
+    ),
+    userProfileProvider.overrideWith(
+      (ref) => Stream<UserProfileEntity?>.value(null),
+    ),
+    todayAllCheckInsProvider.overrideWith(
+      (ref) => Stream<List<CheckInEntity>>.value(const []),
+    ),
+    medicationsProvider.overrideWith(
+      (ref) => Stream<List<MedicationEntity>>.value(const []),
+    ),
+    streakSummaryProvider.overrideWith(
+      (ref) => const AsyncValue.data(
+        StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
+      ),
+    ),
+    // R114 BUG 5: VentHeroCard watch ventSealedProvider → 需要真实
+    // mock prefs (sealed 状态由 ConsentPreferenceStore 读
+    // 'legal_consent_vent_sealed_at' key)。不传 prefs 时省略 override
+    // 走 provider 默认 throw → StreamProvider AsyncError → orElse
+    // (sealed=false) 兜底。
+    if (prefs != null) sharedPreferencesProvider.overrideWithValue(prefs),
+  ];
   return ProviderScope(
-    overrides: [
-      latestMoodProvider.overrideWith(
-        (ref) => Stream<MoodEntryEntity?>.value(mood),
-      ),
-      ventEntriesProvider.overrideWith(
-        (ref) => Stream<List<VentEntryEntity>>.value(vent),
-      ),
-      todayCheckInProvider.overrideWith(
-        (ref) => Stream<CheckInEntity?>.value(null),
-      ),
-      userProfileProvider.overrideWith(
-        (ref) => Stream<UserProfileEntity?>.value(null),
-      ),
-      todayAllCheckInsProvider.overrideWith(
-        (ref) => Stream<List<CheckInEntity>>.value(const []),
-      ),
-      medicationsProvider.overrideWith(
-        (ref) => Stream<List<MedicationEntity>>.value(const []),
-      ),
-      streakSummaryProvider.overrideWith(
-        (ref) => const AsyncValue.data(
-          StreakSnapshot(streak: 0, shouldShowStreakBroken: false),
-        ),
-      ),
-    ],
+    overrides: overrides,
     child: MaterialApp.router(
       routerConfig: router,
       locale: const Locale('zh'),
@@ -72,6 +85,14 @@ Widget wrapHome({
       supportedLocales: AppLocalizations.supportedLocales,
     ),
   );
+}
+
+/// 用 mock SharedPreferences 造 vent 封存状态 (R114 BUG 5)
+Future<SharedPreferences> mockPrefs({bool ventSealed = false}) async {
+  SharedPreferences.setMockInitialValues({
+    if (ventSealed) 'legal_consent_vent_sealed_at': 1,
+  });
+  return SharedPreferences.getInstance();
 }
 
 void main() {
@@ -83,7 +104,7 @@ void main() {
         score: 4,
         statusPhrase: '被治愈了',
       );
-      await tester.pumpWidget(wrapHome(mood: mood));
+      await tester.pumpWidget(wrapHome(mood: mood, prefs: await mockPrefs()));
       await tester.pumpAndSettle();
 
       expect(
@@ -99,7 +120,7 @@ void main() {
         timestamp: DateTime(2026, 8, 15, 10, 0),
         contentText: '今天想聊聊工作',
       );
-      await tester.pumpWidget(wrapHome(vent: [vent]));
+      await tester.pumpWidget(wrapHome(vent: [vent], prefs: await mockPrefs()));
       await tester.pumpAndSettle();
 
       expect(
@@ -111,7 +132,7 @@ void main() {
 
     testWidgets('3. 空数据 → 显示 homeMoodHeroNoData / homeVentHeroNoData',
         (tester) async {
-      await tester.pumpWidget(wrapHome());
+      await tester.pumpWidget(wrapHome(prefs: await mockPrefs()));
       await tester.pumpAndSettle();
 
       expect(
@@ -127,7 +148,7 @@ void main() {
     });
 
     testWidgets('4. CheckInButton 渲染 compact 尺寸 (height < 64)', (tester) async {
-      await tester.pumpWidget(wrapHome());
+      await tester.pumpWidget(wrapHome(prefs: await mockPrefs()));
       await tester.pumpAndSettle();
 
       final size = tester.getSize(find.byType(CheckInButton));
@@ -145,7 +166,7 @@ void main() {
         audioPath: 'vent_audio/1.m4a.enc',
         audioDurationSec: 30,
       );
-      await tester.pumpWidget(wrapHome(vent: [vent]));
+      await tester.pumpWidget(wrapHome(vent: [vent], prefs: await mockPrefs()));
       await tester.pumpAndSettle();
 
       expect(
@@ -168,7 +189,7 @@ void main() {
         score: 4,
         statusPhrase: '被治愈了',
       );
-      await tester.pumpWidget(wrapHome(mood: mood));
+      await tester.pumpWidget(wrapHome(mood: mood, prefs: await mockPrefs()));
       await tester.pumpAndSettle();
 
       await tester.ensureVisible(find.text('查看全部'));
@@ -180,6 +201,60 @@ void main() {
         findsOneWidget,
         reason: 'tap 查看全部应 push /mood-list 路由',
       );
+    });
+
+    testWidgets('7. R114 BUG 5: vent 封存 → 首页不泄漏预览 (PIPL §47) + 隐藏写心事',
+        (tester) async {
+      final vent = VentEntryEntity(
+        id: 1,
+        timestamp: DateTime(2026, 8, 15, 10, 0),
+        contentText: '这是一条封存后不该出现在首页的内容',
+      );
+      await tester.pumpWidget(
+        wrapHome(
+          vent: [vent],
+          prefs: await mockPrefs(ventSealed: true),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('这是一条封存后不该出现在首页的内容'),
+        findsNothing,
+        reason: 'sealed=true 时 VentHeroCard 不得显示树洞内容预览 (PIPL §47)',
+      );
+      expect(
+        find.text('已加密封存'),
+        findsOneWidget,
+        reason: '封存态应显示 ventSealedTitle 占位',
+      );
+      expect(
+        find.text('写心事'),
+        findsNothing,
+        reason: '封存态隐藏写心事入口 (跟 vent_list FAB 隐藏同语义)',
+      );
+    });
+
+    testWidgets('8. R114 BUG 5: 未封存 → 预览正常显示 (gate 不误伤)', (tester) async {
+      final vent = VentEntryEntity(
+        id: 1,
+        timestamp: DateTime(2026, 8, 15, 10, 0),
+        contentText: '今天想聊聊工作',
+      );
+      await tester.pumpWidget(
+        wrapHome(
+          vent: [vent],
+          prefs: await mockPrefs(ventSealed: false),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('今天想聊聊工作'),
+        findsOneWidget,
+        reason: '未封存时预览应正常显示',
+      );
+      expect(find.text('写心事'), findsOneWidget);
     });
   });
 }

@@ -66,13 +66,14 @@ class AssessmentNotifier {
       piiSafeLog(
         'AssessmentNotifier',
         '⏭️ scheduleAssessmentReminder: fireAt=$fireAt 已过, catch-up '
-        '重排到 $catchUp (不再静默丢弃, B1-7)',
+            '重排到 $catchUp (不再静默丢弃, B1-7)',
       );
       try {
         await _dispatcher.zonedAt(
           id: assessmentReminderId,
           title: Strings.notifAssessmentTitle(),
-          body: Strings.notifAssessmentBody(days, scaleId.toUpperCase()),
+          // R113 (BUG 8): 不含量表名 (锁屏 PII)
+          body: Strings.notifAssessmentBody(days),
           fireAt: catchUp,
           details: _dispatcher.buildChannelDetails(),
           payload: NotificationDeepLink.assessment(scaleId).encode(),
@@ -93,7 +94,8 @@ class AssessmentNotifier {
       await _dispatcher.zonedAt(
         id: assessmentReminderId,
         title: Strings.notifAssessmentTitle(),
-        body: Strings.notifAssessmentBody(days, scaleId.toUpperCase()),
+        // R113 (BUG 8): 不含量表名 (锁屏 PII)
+        body: Strings.notifAssessmentBody(days),
         fireAt: fireAt,
         details: details,
         payload: payload,
@@ -113,3 +115,6 @@ class AssessmentNotifier {
     await _plugin.cancel(assessmentReminderId);
   }
 }
+// rule3-whitelist: 68-69, 84, 105, 108
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

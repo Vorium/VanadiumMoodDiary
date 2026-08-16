@@ -51,8 +51,9 @@ import 'package:chroniccare/presentation/pages/daily_tracking/widgets/social_rhy
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/stress_event_widgets.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/weight_widgets.dart';
 import 'package:chroniccare/presentation/pages/mood_list/mood_list_page.dart';
-import 'package:chroniccare/presentation/providers/cbt_rerated_entries_provider.dart';
+import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
+import 'package:chroniccare/presentation/providers/worry_providers.dart';
 
 /// Fake repo 集合: 6 sub-feature 共享 (StreamController + 空 entries, 跟 R91
 /// sleep/social_rhythm 等 5 widget test 同款 pattern, 避免 StreamProvider 跟
@@ -263,9 +264,13 @@ void main() {
             weightRepositoryProvider.overrideWithValue(repos.weight),
             anxietyAgitationRepositoryProvider.overrideWithValue(repos.anxiety),
             treatmentRepositoryProvider.overrideWithValue(repos.treatment),
-            // moodEntriesProvider 给 MoodListPage 用, 避免 drift stream 挂起
-            moodEntriesProvider
-                .overrideWith((ref) => const <MoodEntryEntity>[]),
+            // R114 B1-7: MoodListPage 直接 watch allMoodProvider —
+            // override 真源 Stream (修前 override moodEntriesProvider sync 包装)
+            allMoodProvider
+                .overrideWith((ref) => Stream.value(const <MoodEntryEntity>[])),
+            // v1.1.0 round 9 (F1): MoodListPage 内嵌 WorrySection
+            worryOpenProvider.overrideWith((ref) => Stream.value(const [])),
+            worryResolvedProvider.overrideWith((ref) => Stream.value(const [])),
           ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,

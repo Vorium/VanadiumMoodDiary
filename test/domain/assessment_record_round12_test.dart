@@ -116,5 +116,58 @@ void main() {
       expect(r!.total, 5);
       expect(r.scores, isEmpty);
     });
+
+    // ===== R114 BUG 3: R90 量表中心 'score'/'answers' key 兼容 =====
+
+    test('R114 BUG 3: R90 新格式 score/answers → 正确反序列化', () {
+      final c = _ci(
+        id: 3,
+        type: 'pss',
+        timestamp: DateTime(2026, 8, 10, 9, 0),
+        note: '{"score":18,"severity":2,"answers":[2,3,1,2,3,0,2,3,1,1]}',
+      );
+      final r = AssessmentRecord.tryFromEntity(c);
+      expect(r, isNotNull);
+      expect(r!.scaleId, 'pss');
+      expect(r.total, 18);
+      expect(r.scores, [2, 3, 1, 2, 3, 0, 2, 3, 1, 1]);
+    });
+
+    test('R114 BUG 3: 8 新量表 score/answers key 全走 score 兜底', () {
+      for (final scaleId in [
+        'isi',
+        'pss',
+        'whodas',
+        'level2_depression',
+        'level2_anxiety',
+        'level2_mania',
+        'asrm',
+        'level2_psychosis',
+      ]) {
+        final c = _ci(
+          id: 1,
+          type: scaleId,
+          timestamp: DateTime(2026, 8, 10, 9, 0),
+          note: '{"score":7,"answers":[1,2,3]}',
+        );
+        final r = AssessmentRecord.tryFromEntity(c);
+        expect(r, isNotNull, reason: '$scaleId 应能解析 (R90 格式)');
+        expect(r!.total, 7, reason: '$scaleId total 应读 score key');
+        expect(r.scores, [1, 2, 3]);
+      }
+    });
+
+    test('R114 BUG 3: 两 key 同时存在时 total 优先 (老格式兼容)', () {
+      final c = _ci(
+        id: 1,
+        type: 'phq9',
+        timestamp: DateTime(2026, 7, 13, 8, 0),
+        note: '{"total":10,"score":99,"scores":[1],"answers":[2,3]}',
+      );
+      final r = AssessmentRecord.tryFromEntity(c);
+      expect(r, isNotNull);
+      expect(r!.total, 10, reason: 'total key 存在时应优先');
+      expect(r.scores, [1], reason: 'scores key 存在时应优先');
+    });
   });
 }

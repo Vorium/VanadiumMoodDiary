@@ -201,112 +201,159 @@ Map<DateTime, double> computeDailyAverages(
   return sums.map((day, acc) => MapEntry(day, acc.$1 / acc.$2));
 }
 
-class _MoodLineChart extends StatelessWidget {
+/// v1.1.0 R113 (BUG 9): 生成近 [days] 天趋势折线 spots
+///
+/// 修前 bug: 无数据日 `dailyAvg[day] ?? 0` 画在 y=0 (minY 0.5 之下) —
+/// 没记录的日子看起来像 0 分抑郁日。修: 无数据日放 [FlSpot.nullSpot]
+/// (fl_chart 0.69 `splitByNullSpots` 把折线在缺口断开, touch/dot/paint
+/// 全跳过 null spot), 有数据日 x = 距今天数 (0 = 今天)。
+///
+/// public 供 unit test 直接断言 spots, 不依赖图表渲染。
+List<FlSpot> computeTrendSpots(
+  List<MoodEntryEntity> entries,
+  DateTime now,
+  int days,
+) {
+  final cutoff = now.subtract(Duration(days: days - 1));
+  final dailyAvg = computeDailyAverages(entries, cutoff);
+  final spots = <FlSpot>[];
+  for (int i = days - 1; i >= 0; i--) {
+    final day = DateTime(now.year, now.month, now.day - i);
+    final avg = dailyAvg[day];
+    spots.add(
+      avg == null ? FlSpot.nullSpot : FlSpot((days - 1 - i).toDouble(), avg),
+    );
+  }
+  return spots;
+}
+
+class _MoodLineChart extends ConsumerWidget {
   const _MoodLineChart({required this.entries, required this.days});
   final List<MoodEntryEntity> entries;
   final int days;
 
   @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final cutoff = now.subtract(Duration(days: days - 1));
-    // v0.32 R112-01: 真均值 (修前是加权衰减平均)
-    final dailyAvg = computeDailyAverages(entries, cutoff);
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Wave 7 (Task B, R113): 修前 build 内 DateTime.now() 跨 midnight 不
+    // rebuild → 图表窗口 stale 到次日。改 watch(todayProvider)
+    // (watch dayChangeTickProvider, AppRoot 跨日 tick 自动刷新)。
+    final now = ref.watch(todayProvider);
+    // v1.1.0 R113 (BUG 9): 无数据日 = nullSpot (折线断开),
+    // 修前 y=0 画成 0 分抑郁日
+    final spots = computeTrendSpots(entries, now, days);
 
-    final spots = <FlSpot>[];
-    for (int i = days - 1; i >= 0; i--) {
-      final day = DateTime(now.year, now.month, now.day - i);
-      spots.add(FlSpot((days - 1 - i).toDouble(), dailyAvg[day] ?? 0));
-    }
+    // R114 Wave B2 (B2-5, 04-engineering A-01): 图表 0 Semantics — 修前
+    // 视力障碍用户完全无法读趋势数据 (fl_chart 无内置语义)。外层
+    // container label = 图表标题, 内层平均分 label 只在窗口内有数据时
+    // 出现 (无数据日不参与均值 — 避免"空窗口 = 平均 0 分"误读,
+    // 跟 R113 BUG 9 nullSpot 同原则)。
+    final l10n = AppLocalizations.of(context);
+    final valid = spots.where((s) => !s.y.isNaN).toList();
+    final avg = valid.isEmpty
+        ? null
+        : valid.map((s) => s.y).reduce((a, b) => a + b) / valid.length;
 
     // 底部标签间隔
     final labelInterval = days <= 7 ? 1.0 : (days <= 30 ? 5.0 : 30.0);
 
     // v0.32 R112 round 8i (渲染专项): RepaintBoundary 隔离图表绘制 —
     // 外层 tab/时间范围切换时图表自身 paint 不进父 layer 重绘
-    return RepaintBoundary(
-      child: LineChart(
-        LineChartData(
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: 1,
-                reservedSize: 30,
-                getTitlesWidget: (v, _) => v < 1 || v > 5
-                    ? const SizedBox()
-                    : Text(
-                        v.toInt().toString(),
+    return Semantics(
+      container: true,
+      label: l10n.moodTrendSemanticsLine(days),
+      child: Semantics(
+        label: avg == null
+            ? null
+            : l10n.moodTrendSemanticsAvg(avg.toStringAsFixed(1)),
+        child: RepaintBoundary(
+          child: LineChart(
+            LineChartData(
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 1,
+                    reservedSize: 30,
+                    getTitlesWidget: (v, _) => v < 1 || v > 5
+                        ? const SizedBox()
+                        : Text(
+                            v.toInt().toString(),
+                            style: TextStyle(
+                              fontSize: AppTokens.fontSizeCaptionSm,
+                              color: AppTokens.textHintColor(context),
+                            ),
+                          ),
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 30,
+                    interval: labelInterval,
+                    getTitlesWidget: (v, _) {
+                      final idx = v.toInt();
+                      if (idx < 0 || idx >= days) return const SizedBox();
+                      final day = DateTime(
+                        now.year,
+                        now.month,
+                        now.day - (days - 1 - idx),
+                      );
+                      // 只显示月/日，短格式
+                      return Text(
+                        '${day.month}/${day.day}',
                         style: TextStyle(
                           fontSize: AppTokens.fontSizeCaptionSm,
                           color: AppTokens.textHintColor(context),
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                ),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 30,
-                interval: labelInterval,
-                getTitlesWidget: (v, _) {
-                  final idx = v.toInt();
-                  if (idx < 0 || idx >= days) return const SizedBox();
-                  final day =
-                      DateTime(now.year, now.month, now.day - (days - 1 - idx));
-                  // 只显示月/日，短格式
-                  return Text(
-                    '${day.month}/${day.day}',
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaptionSm,
-                      color: AppTokens.textHintColor(context),
-                    ),
-                  );
-                },
-              ),
-            ),
-            topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          minY: 0.5,
-          maxY: 5.5,
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: days <= 30,
-              color: AppTokens.primaryColor(context),
-              barWidth: days <= 30 ? 3 : 1.5,
-              dotData: FlDotData(
-                show: days <= 7,
-                getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
-                  radius: 4,
+              minY: 0.5,
+              maxY: 5.5,
+              lineBarsData: [
+                LineChartBarData(
+                  spots: spots,
+                  isCurved: days <= 30,
                   color: AppTokens.primaryColor(context),
-                  strokeWidth: 2,
-                  strokeColor: Colors.white,
+                  barWidth: days <= 30 ? 3 : 1.5,
+                  dotData: FlDotData(
+                    show: days <= 7,
+                    getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
+                      radius: 4,
+                      color: AppTokens.primaryColor(context),
+                      strokeWidth: 2,
+                      strokeColor: Colors.white,
+                    ),
+                  ),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    color:
+                        AppTokens.primaryColor(context).withValues(alpha: 0.1),
+                  ),
+                ),
+              ],
+              lineTouchData: LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipItems: (spots) => spots
+                      .map(
+                        (s) => LineTooltipItem(
+                          s.y.toStringAsFixed(1),
+                          const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: AppTokens.fontSizeCaption,
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
-              belowBarData: BarAreaData(
-                show: true,
-                color: AppTokens.primaryColor(context).withValues(alpha: 0.1),
-              ),
-            ),
-          ],
-          lineTouchData: LineTouchData(
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipItems: (spots) => spots
-                  .map(
-                    (s) => LineTooltipItem(
-                      s.y.toStringAsFixed(1),
-                      const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: AppTokens.fontSizeCaption,
-                      ),
-                    ),
-                  )
-                  .toList(),
             ),
           ),
         ),
@@ -333,96 +380,109 @@ class _DistributionChart extends StatelessWidget {
     // R32 (P0-10 集中器): 5 元素 mood 色板移到 AppColors.kMoodScoreColors
     const colors = AppColors.kMoodScoreColors;
 
+    // R114 Wave B2 (B2-5): 分布图语义摘要 (最常见分 + 总条数)
+    final total = entries.length;
+    final mostCommon = maxCount == 0
+        ? null
+        : distribution.entries.firstWhere((e) => e.value == maxCount).key;
+    final l10n = AppLocalizations.of(context);
+
     return RepaintBoundary(
-      child: Padding(
-        padding: AppTokens.edgeInsetsMd,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: AppTokens.fontSizeBody,
-                fontWeight: FontWeight.w600,
+      child: Semantics(
+        container: true,
+        label: mostCommon == null
+            ? null
+            : l10n.moodTrendSemanticsDist(mostCommon, total),
+        child: Padding(
+          padding: AppTokens.edgeInsetsMd,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: AppTokens.fontSizeBody,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: AppTokens.spacingMd),
-            Expanded(
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: maxCount > 0 ? maxCount.toDouble() * 1.2 : 5,
-                  barGroups: List.generate(5, (i) {
-                    return BarChartGroupData(
-                      x: i + 1,
-                      barRods: [
-                        BarChartRodData(
-                          toY: (distribution[i + 1] ?? 0).toDouble(),
-                          color: colors[i],
-                          width: 40,
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(6),
+              const SizedBox(height: AppTokens.spacingMd),
+              Expanded(
+                child: BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: maxCount > 0 ? maxCount.toDouble() * 1.2 : 5,
+                    barGroups: List.generate(5, (i) {
+                      return BarChartGroupData(
+                        x: i + 1,
+                        barRods: [
+                          BarChartRodData(
+                            toY: (distribution[i + 1] ?? 0).toDouble(),
+                            color: colors[i],
+                            width: 40,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(6),
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  }),
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: maxCount > 0
-                        ? (maxCount / 4)
-                            .ceilToDouble()
-                            .clamp(1, double.infinity)
-                        : 1,
-                    getDrawingHorizontalLine: (v) => FlLine(
-                      color: AppTokens.dividerColor(context),
-                      strokeWidth: 0.5,
+                        ],
+                      );
+                    }),
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      horizontalInterval: maxCount > 0
+                          ? (maxCount / 4)
+                              .ceilToDouble()
+                              .clamp(1, double.infinity)
+                          : 1,
+                      getDrawingHorizontalLine: (v) => FlLine(
+                        color: AppTokens.dividerColor(context),
+                        strokeWidth: 0.5,
+                      ),
                     ),
-                  ),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 30,
-                        getTitlesWidget: (v, _) => v != v.roundToDouble()
-                            ? const SizedBox()
-                            : Text(
-                                v.toInt().toString(),
-                                style: TextStyle(
-                                  fontSize: AppTokens.fontSizeCaptionSm,
-                                  color: AppTokens.textHintColor(context),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 30,
+                          getTitlesWidget: (v, _) => v != v.roundToDouble()
+                              ? const SizedBox()
+                              : Text(
+                                  v.toInt().toString(),
+                                  style: TextStyle(
+                                    fontSize: AppTokens.fontSizeCaptionSm,
+                                    color: AppTokens.textHintColor(context),
+                                  ),
                                 ),
-                              ),
+                        ),
                       ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (v, _) {
-                          const labels = ['', '😢', '😟', '😐', '🙂', '😄'];
-                          final idx = v.toInt();
-                          if (idx < 1 || idx > 5) return const SizedBox();
-                          return Text(
-                            labels[idx],
-                            // EM-08: chart 横轴 emoji 刻度装饰性 20,
-                            // deliberate 保留 (emoji 有 size cap)
-                            style: const TextStyle(fontSize: 20),
-                          );
-                        },
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (v, _) {
+                            const labels = ['', '😢', '😟', '😐', '🙂', '😄'];
+                            final idx = v.toInt();
+                            if (idx < 1 || idx > 5) return const SizedBox();
+                            return Text(
+                              labels[idx],
+                              // EM-08: chart 横轴 emoji 刻度装饰性 20,
+                              // deliberate 保留 (emoji 有 size cap)
+                              style: const TextStyle(fontSize: 20),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -471,115 +531,122 @@ class _CbtEffectChart extends StatelessWidget {
       spots.add(FlSpot(i.toDouble(), shift));
     }
 
-    return Padding(
-      padding: AppTokens.edgeInsetsMd,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: AppTokens.fontSizeBody,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingXxs),
-          Text(
-            hint,
-            style: TextStyle(
-              fontSize: AppTokens.fontSizeCaption,
-              color: AppTokens.textHintColor(context),
-            ),
-          ),
-          const SizedBox(height: AppTokens.spacingMd),
-          Expanded(
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 1,
-                  getDrawingHorizontalLine: (v) => FlLine(
-                    color: v == 0
-                        ? AppTokens.textHintColor(context)
-                        : AppTokens.dividerColor(context),
-                    strokeWidth: v == 0 ? 1.5 : 0.5,
-                  ),
-                ),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 1,
-                      reservedSize: 30,
-                      getTitlesWidget: (v, _) => v != v.roundToDouble()
-                          ? const SizedBox()
-                          : Text(
-                              v.toInt().toString(),
-                              style: TextStyle(
-                                fontSize: AppTokens.fontSizeCaptionSm,
-                                color: AppTokens.textHintColor(context),
-                              ),
-                            ),
-                    ),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: (v, _) {
-                        final idx = v.toInt();
-                        if (idx < 0 || idx >= cbtEntries.length) {
-                          return const SizedBox();
-                        }
-                        final e = cbtEntries[idx];
-                        return Text(
-                          '${e.timestamp.month}/${e.timestamp.day}',
-                          style: TextStyle(
-                            fontSize: AppTokens.fontSizeCaptionSm,
-                            color: AppTokens.textHintColor(context),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: spots,
-                    isCurved: false,
-                    color: AppTokens.primaryColor(context),
-                    barWidth: 2,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, _, __, ___) {
-                        // R32 (P0-10 集中器): mood score 颜色走 AppColors.moodScoreColor
-                        final color = AppColors.moodScoreColor(spot.y.round());
-                        return FlDotCirclePainter(
-                          radius: 4,
-                          color: color,
-                          strokeWidth: 2,
-                          strokeColor: Colors.white,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: AppTokens.primaryColor(context)
-                          .withValues(alpha: 0.05),
-                    ),
-                  ),
-                ],
+    // R114 Wave B2 (B2-5): CBT 图语义摘要 (重评条数)
+    return Semantics(
+      container: true,
+      label:
+          AppLocalizations.of(context).moodTrendSemanticsCbt(cbtEntries.length),
+      child: Padding(
+        padding: AppTokens.edgeInsetsMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: AppTokens.fontSizeBody,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: AppTokens.spacingXxs),
+            Text(
+              hint,
+              style: TextStyle(
+                fontSize: AppTokens.fontSizeCaption,
+                color: AppTokens.textHintColor(context),
+              ),
+            ),
+            const SizedBox(height: AppTokens.spacingMd),
+            Expanded(
+              child: LineChart(
+                LineChartData(
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: 1,
+                    getDrawingHorizontalLine: (v) => FlLine(
+                      color: v == 0
+                          ? AppTokens.textHintColor(context)
+                          : AppTokens.dividerColor(context),
+                      strokeWidth: v == 0 ? 1.5 : 0.5,
+                    ),
+                  ),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 1,
+                        reservedSize: 30,
+                        getTitlesWidget: (v, _) => v != v.roundToDouble()
+                            ? const SizedBox()
+                            : Text(
+                                v.toInt().toString(),
+                                style: TextStyle(
+                                  fontSize: AppTokens.fontSizeCaptionSm,
+                                  color: AppTokens.textHintColor(context),
+                                ),
+                              ),
+                      ),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                        getTitlesWidget: (v, _) {
+                          final idx = v.toInt();
+                          if (idx < 0 || idx >= cbtEntries.length) {
+                            return const SizedBox();
+                          }
+                          final e = cbtEntries[idx];
+                          return Text(
+                            '${e.timestamp.month}/${e.timestamp.day}',
+                            style: TextStyle(
+                              fontSize: AppTokens.fontSizeCaptionSm,
+                              color: AppTokens.textHintColor(context),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: false,
+                      color: AppTokens.primaryColor(context),
+                      barWidth: 2,
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, _, __, ___) {
+                          // R32 (P0-10 集中器): mood score 颜色走 AppColors.moodScoreColor
+                          final color =
+                              AppColors.moodScoreColor(spot.y.round());
+                          return FlDotCirclePainter(
+                            radius: 4,
+                            color: color,
+                            strokeWidth: 2,
+                            strokeColor: Colors.white,
+                          );
+                        },
+                      ),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: AppTokens.primaryColor(context)
+                            .withValues(alpha: 0.05),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -22,7 +22,8 @@ void main() {
   }
 
   group('v0.32 round 8 (R111 EM-14) — PressFeedback.enabled', () {
-    testWidgets('enabled=false → 无 AnimatedScale (按下无 scale 反馈)', (tester) async {
+    testWidgets('enabled=false → 无 AnimatedScale (按下无 scale 反馈)',
+        (tester) async {
       await tester.pumpWidget(
         wrap(
           child: const PressFeedback(
@@ -34,8 +35,8 @@ void main() {
       expect(find.byType(AnimatedScale), findsNothing);
 
       // 按下抬起不报错 (child 原样, 无事件监听)
-      final gesture =
-          await tester.startGesture(tester.getCenter(find.byType(PressFeedback)));
+      final gesture = await tester
+          .startGesture(tester.getCenter(find.byType(PressFeedback)));
       await tester.pump();
       await gesture.up();
       await tester.pump();

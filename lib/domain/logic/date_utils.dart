@@ -13,10 +13,15 @@
 ///
 /// 不直接用 Duration.inDays, 因为 DST / 时区可能导致 23.98 小时 ≈ 1 天
 /// 之类边界。
+///
+/// R114 B1-6: 修前实现是 `bDay.difference(aDay).inDays` (本地午夜相减) —
+/// DST 春季调表日两个相邻本地午夜只差 23h → inDays == 0 → streak 假断 /
+/// heatmap 差格; 秋季回拨 25h 同理。修后: 先按 (y,m,d) 分量构造 UTC 日期
+/// 再相减 — UTC 无 DST, 差值恒为 24h 整数倍, 日历差 = 分量差, 与机器时区无关。
 int calendarDaysBetween(DateTime a, DateTime b) {
-  final aDay = DateTime(a.year, a.month, a.day);
-  final bDay = DateTime(b.year, b.month, b.day);
-  return bDay.difference(aDay).inDays;
+  final aUtc = DateTime.utc(a.year, a.month, a.day);
+  final bUtc = DateTime.utc(b.year, b.month, b.day);
+  return bUtc.difference(aUtc).inDays;
 }
 
 /// 判断两个 DateTime 是否在同一天 (本地日期)

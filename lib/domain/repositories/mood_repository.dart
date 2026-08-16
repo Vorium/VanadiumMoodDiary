@@ -47,4 +47,7 @@ abstract class MoodRepository {
   /// v0.23 (Round 31): 注意 — audio 文件**不**在这里删,caller (page/service)
   /// 拿到 id 后单独调 audio storage 删。repository 只管 DB 行,保持职责清晰。
   Future<int> delete(int id);
+
+  /// v1.1.0 round 9 (F1 烦恼闭环): 监听某个烦恼主题下的记录 (时间正序)
+  Stream<List<MoodEntryEntity>> watchByThread(int threadId);
 }

@@ -60,6 +60,12 @@ class CheckInButton extends StatelessWidget {
   /// 降级为普通按钮后使用 (height 48 / radius 24 / 字号 fontSizeButton 17)
   final bool compact;
 
+  /// Wave 7 (Task A, R113): 是否播放 _EntrySpring 进场 (scale 0.95→1 +
+  /// opacity 0→1)。false → 直接跳到终态 (controller.value=1.0)。
+  /// 主页 tab 切回 (非首次 mount) 时传 false, 避免每次切 tab 重播
+  /// ~0.4s spring。其他 caller 默认 true (行为不变)。
+  final bool animateEntry;
+
   const CheckInButton({
     super.key,
     required this.isChecked,
@@ -67,6 +73,7 @@ class CheckInButton extends StatelessWidget {
     required this.onPressed,
     this.isLoading = false,
     this.compact = false,
+    this.animateEntry = true,
   });
 
   @override
@@ -93,6 +100,7 @@ class CheckInButton extends StatelessWidget {
       width: double.infinity,
       height: height,
       child: _EntrySpring(
+        animateEntry: animateEntry,
         child: PressFeedback(
           // v0.31 R6: PressFeedback 替换 InkWell, mode 1 (带 onTap) 处理
           // tap+disabled. onTap null 时 PressFeedback 降级到 mode 2 (Listener)
@@ -228,7 +236,8 @@ class _PillContent extends StatelessWidget {
 ///   破坏物理形态). pumpAndSettle 自然等待 SpringSimulation.isDone.
 class _EntrySpring extends StatefulWidget {
   final Widget child;
-  const _EntrySpring({required this.child});
+  final bool animateEntry;
+  const _EntrySpring({required this.child, this.animateEntry = true});
 
   @override
   State<_EntrySpring> createState() => _EntrySpringState();
@@ -244,6 +253,13 @@ class _EntrySpringState extends State<_EntrySpring>
     // v0.31.1 R10 (P0-08): Spring 物理模型 (spec §3.4.3)
     // unbounded controller 是 SpringSimulation 必要条件
     _controller = AnimationController.unbounded(vsync: this);
+    // Wave 7 (Task A, R113): 非首次 mount (tab 切回) 直接跳到终态
+    // (scale 1.0 / opacity 1.0), 不播 ~0.4s spring。首次 mount 走
+    // animateWith 完整播放 (首启动自然体验保留)。
+    if (!widget.animateEntry) {
+      _controller.value = 1.0;
+      return;
+    }
     // Spring.standard = (mass: 1, stiffness: 200, damping: 20) —
     // 临界阻尼 ~0.4s, 轻度过冲, iOS push 行为
     // from=0.0, to=1.0: SpringSimulation 的 0→1 进程,
@@ -251,6 +267,18 @@ class _EntrySpringState extends State<_EntrySpring>
     _controller.animateWith(
       Spring.standard.toSimulation(from: 0.0, to: 1.0, velocity: 0.0),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // R113 (BUG 6): 尊重 prefers-reduced-motion — 全 lib 唯一绕过 Motion
+    // 包装的动画。修前 Spring 进场无条件跑 (0.4s 弹跳), reduce-motion
+    // 用户每次进首页都眩晕。修后跟 FadeIn.didChangeDependencies 同款:
+    // 系统开了直接跳到终态 (scale 1.0 / opacity 1.0), 并停止 simulation。
+    if (Motion.prefersReduced(context) && _controller.value < 1.0) {
+      _controller.value = 1.0;
+    }
   }
 
   @override
