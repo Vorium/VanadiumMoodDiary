@@ -2,12 +2,18 @@
 //
 // v0.30 round 90 (sub-spec 6 量表中心): 扩 10 量表
 // (PHQ-9 / GAD-7 R60 已有 + 6 公开新 + ISI / PSS R60 补全 = 10)。
-// NSESSS / CRDPSS TODO (user 选 hybrid, 后续 v0.31+ 法务审核 + 用户定义决定)。
+//
+// R117 综合审视 P2-6 (2026-08-17, emotion-first 定版后): 原 TODO
+//   "v0.31+ 决定, user 选 hybrid" → **永久 unavailable** 决策:
+//   - NSESSS (NCS Pearson 收费量表): emotion-first 0 商业, 永久关闭
+//   - CRDPSS (内部自定义量表): 跟 1.1.0 round 4b 删"用户定义"业务一致, 永久关闭
+// 守门员: check_no_network_io / check_release_no_network / check_legal_consent
+//   (R57 PIPL §13 删 1.1.0 round 4b) 维持 emotion-first 0 商业 + 0 外联定版。
 //
 // 中心化的好处:
 // - 新增量表 → 加一个 import + 一行
 // - Task 3 watchAssessments 跨 type IN 走 `allScales().map((s) => s.id)`
-// - Task 4 中心化入口页 12 卡片 (10 开放 + 2 TODO) 走 `allScales()` + unavailableScaleIds
+// - Task 4 中心化入口页 10 卡片 (10 开放 + 2 unavailable) 走 `allScales()` + unavailableScaleIds
 // - Task 5 多线趋势图 各量表 totalRange 走 `scaleById(id).totalRange`
 // - Task 6 i18n ScaleTranslations 抽象 走 `scaleById(id).translations.xxx`
 //
@@ -37,12 +43,13 @@ List<AssessmentScale> allScales() => const [
       level2ManiaScale, // 8. DSM-5 Level 2 躁狂严重度
       asrmScale, // 9. ASRM 自评躁狂量表
       level2PsychosisScale, // 10. DSM-5 Level 2 精神病性症状
-      // TODO (v0.31+ 决定, user 选 hybrid):
-      //   nsesssScale (NSESSS 收费 NCS Pearson, 法务审核后)
-      //   crdpssScale (CRDPSS 内部量表, 用户定义后)
     ];
 
 /// 未开放量表 (标 unavailable, UI 灰卡 + 锁 icon)
+///
+/// R117 P2-6 定版:
+/// - nsesss (NSESSS, NCS Pearson 收费): emotion-first 0 商业, 永久关闭
+/// - crdpss (CRDPSS, 用户定义): 跟 1.1.0 round 4b 删"用户定义"业务一致, 永久关闭
 const List<String> unavailableScaleIds = ['nsesss', 'crdpss'];
 
 /// 量表是否对当前用户开放

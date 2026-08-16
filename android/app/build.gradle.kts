@@ -11,7 +11,9 @@ android {
     namespace = "com.chroniccare.chroniccare"
     compileSdk = flutter.compileSdkVersion
     // GP-R112-07: pin 固定 NDK 版本 (16KB 对齐不随 flutter.ndkVersion 漂移)
-    ndkVersion = "27.0.12077973"
+    // R116 round 5 (2026-08-17): NDK 27 → 28.2.13676358, 适配 Flutter 3.47 + jni +
+    //   speech_to_text 插件要求 (3.47 build 警告 NDK 不匹配)。28.x 跟 27.x 兼容。
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true

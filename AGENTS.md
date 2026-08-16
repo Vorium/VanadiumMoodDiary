@@ -1,6 +1,8 @@
 ﻿# AGENTS.md
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
+>
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2515 tests pass, 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5.
 
 ## 项目速览
 

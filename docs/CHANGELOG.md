@@ -1,4 +1,6 @@
 ﻿# 变更日志
+> **EN Summary**: v1.1.0+154 (2026-08-17). Recent batches: R115 emotion-first refactor (visual + privacy hardening) + R116 god class split 4 rounds. 2515 tests pass, 27/27 gatekeepers green, 1340 ARB keys, 4 FeatureFlag state (ventAudio=true, three others false awaiting external resources). 5 priority P0 external blockers: iOS/Android screenshots, LaunchImage, AppIcon ≥200KB, chroniccare.app domain ICP, 5-vendor push + Aliyun SMS. See [DEVELOPMENT_REQUIREMENTS.md](DEVELOPMENT_REQUIREMENTS.md) v2.0 for full P0/P1/P2/P3 plan.
+
 ## [1.1.0+154 R116 god class 拆解 round 4] - 2026-08-17 (add_medication_page 拆进度条+footer + 清 9 orphan key, 未 commit)
 
 ### Changed (R116 round 4)
