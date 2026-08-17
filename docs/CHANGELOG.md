@@ -1,3 +1,44 @@
+## [1.1.0+172 R126 (R110 feature-first 阶段 2 step 1) — stress_event 子表端到端迁移 (R125 样板扩展)] - 2026-08-17 (daily_tracking 第 2 子表 stress_event 5 file 端到端, R125 样板同模式, 10 regression test)
+
+### Changed (R126 阶段 2 step 1)
+- **`lib/features/daily_tracking/` 扩第 2 子表 stress_event 5 file** (跟 R125 anxiety_agitation 样板同模式):
+  - `data/tables/stress_events.dart` — drift table (5 字段含 linkedMoodEntryId 弱 FK)
+  - `data/mappers/stress_event_mapper.dart` — row→entity 翻译 (R125 模式)
+  - `data/repositories/stress_event_repository_impl.dart` — impl (R125 模式)
+  - `domain/entities/stress_event.dart` — entity (R125 模式)
+  - `domain/repositories/stress_event_repository.dart` — abstract (R125 模式)
+- **旧路径 re-export 兼容** (现有用户 0 改动):
+  - `lib/domain/entities/stress_event.dart` 改 re-export
+  - `lib/domain/repositories/stress_event_repository.dart` 改 re-export
+- **`test/core/data/feature_first_migration_split_round125_test.dart`** (R125 修正):
+  - 删 2 unused import (旧路径 impl 实际 test 不调, 旧 abstract 改 re-export 后多余)
+- **`test/core/data/feature_first_migration_split_round126_test.dart`** (新增 10 case):
+  - stress_event 5 file 端到端验证
+  - 旧路径 re-export 兼容
+  - 新旧 entity 路径 import 同一 class
+  - R125 + R126 同一 feature 2 子表共存 (daily_tracking 验证 R110 阶段 2 step 1 "扩第 2 子表" 设计)
+  - 4 子表仍未迁 (sleep / weight / social_rhythm / treatment) 留 R126 续 / R127 阶段 3
+
+### R126 阶段 2 step 1 关键设计
+- **同 feature 扩第 2 子表**: 跟 R125 anxiety_agitation 同 feature (daily_tracking) 扩 stress_event, 验证"1 feature 多子表"模板
+- **跟 R125 完全同模式**: 5 file 端到端 + 旧路径 re-export + 0 跨 service 依赖
+- **业务字段略不同**: 5 字段 (vs anxiety 4 字段), 含 linkedMoodEntryId 弱 FK (R60 drift 不强制外键模式)
+- **0 重构现有用户**: R125 同款, 旧路径 re-export 兼容, 旧 impl 仍 work
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2660 pass / 0 fail / 1 skip** (R125 baseline 2650 +10 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- `python3 scripts/check_feature_first_migration.py`: 阶段 1 ✅ 阶段 2+ warn (R110 阶段 2 预期, 5+ feature 留 R126 续)
+
+### R110 路线图进度
+- ✅ 阶段 1 (R125, 1-2h) — design + 1 子表样板 (anxiety_agitation)
+- ✅ 阶段 2 step 1 (R126, 1-1.5h, 本批) — 同 feature 扩第 2 子表 (stress_event)
+- ⏸ 阶段 2 step 2-5 (R126 续, 1-1.5 周) — 4 feature 完整迁移 (mood / vent / assessment / medication) + daily_tracking 其他 4 子表
+- ⏸ 阶段 3 (R127, 1 周) — pub workspace 3 package 拆分
+- ⏸ 阶段 4 (R128, 3-5 天) — 跨 feature 共享 (core/platform/) 抽取
+- ⏸ 阶段 5 (R129, 1 周 + 综合审视) — 5 token 集中器转 pub workspace 公共 package
+
 ## [1.1.0+171 R125 (R110 feature-first 阶段 1) — design + 守门员 + 1 子表样板迁移] - 2026-08-17 (R110 路线图启动, 1 子表 5 file 端到端验证, 13 regression test + 1 gatekeeper)
 
 ### 背景 (R110 路线图启动)

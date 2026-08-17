@@ -1,73 +1,8 @@
-// v0.30 round 91 (sub-spec 7 日常追踪): StressEventEntity
+// v1.1.0+172 R126 (R110 feature-first 阶段 2) — 旧路径 re-export
 //
-// 4 层架构: domain 0 flutter 0 drift。
-// eventType 是 TextColumn 自由 (R60 模式), 用 String 不用 enum。
+// R126 阶段 2 step 1 样板: 旧路径 lib/domain/entities/stress_event.dart
+// 保留为 re-export, 现有用户 (repository_impl 等) 仍能 import, 避免大批
+// 改动。R126 阶段 2 step 2+ 批量删旧路径。
 
-import 'package:chroniccare/core/shared/domain_value.dart';
-
-/// 生活事件/应激源（领域实体）
-class StressEventEntity {
-  final int id;
-  final DateTime timestamp;
-
-  /// 'work' / 'relationship' / 'health' / 'financial' / 'other'
-  final String eventType;
-
-  /// 1-5 (1=轻微 5=极重)
-  final int intensity;
-  final String? note;
-
-  /// 弱 FK mood_entries.id (nullable, 应用层维护)
-  final int? linkedMoodEntryId;
-
-  const StressEventEntity({
-    required this.id,
-    required this.timestamp,
-    required this.eventType,
-    required this.intensity,
-    this.note,
-    this.linkedMoodEntryId,
-  });
-
-  bool get isLinkedToMood => linkedMoodEntryId != null;
-
-  StressEventEntity copyWith({
-    int? id,
-    DateTime? timestamp,
-    String? eventType,
-    int? intensity,
-    DomainValue<String?>? note,
-    DomainValue<int?>? linkedMoodEntryId,
-  }) {
-    return StressEventEntity(
-      id: id ?? this.id,
-      timestamp: timestamp ?? this.timestamp,
-      eventType: eventType ?? this.eventType,
-      intensity: intensity ?? this.intensity,
-      note: note == null ? this.note : note.value,
-      linkedMoodEntryId: linkedMoodEntryId == null
-          ? this.linkedMoodEntryId
-          : linkedMoodEntryId.value,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is StressEventEntity &&
-        other.id == id &&
-        other.timestamp == timestamp &&
-        other.eventType == eventType &&
-        other.intensity == intensity &&
-        other.note == note &&
-        other.linkedMoodEntryId == linkedMoodEntryId;
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, timestamp, eventType, intensity, note, linkedMoodEntryId);
-
-  @override
-  String toString() => 'StressEventEntity('
-      'id=$id, type=$eventType, intensity=$intensity, linkedMood=$linkedMoodEntryId)';
-}
+export 'package:chroniccare/features/daily_tracking/domain/entities/stress_event.dart'
+    show StressEventEntity;

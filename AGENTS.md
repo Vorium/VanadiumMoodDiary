@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图启动 (lib/features/ 顶层 + 1 子表样板 daily_tracking/anxiety_agitation), 29/29 CI gatekeepers, 2650 tests pass (R125 R110 阶段 1 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修). R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 R110 阶段 1 启动 (1 子表样板 + 守门员 + 旧路径 re-export 兼容).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图启动 (lib/features/daily_tracking/ 2 子表 anxiety_agitation + stress_event 端到端迁移, 4 feature 待推), 29/29 CI gatekeepers, 2660 tests pass (R126 R110 阶段 2 step 1 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 step 1 启动 (lib/features/daily_tracking/ 2 子表样板 + 守门员 + 旧路径 re-export 兼容).
 
 ## 项目速览
 
@@ -794,3 +794,36 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **drift 共享限制**: app_database 持有所有 table, 阶段 1 仍通过 app_database 访问 (阶段 3 拆 workspace 时跨包共享 challenge)
 
 **守门员总数 23 → 24 (R125 +1)**。**R125 闭环后 R110 5 阶段路线图阶段 1 完成, 4 阶段待推 (R126-R129 1-2 月)**。
+
+## v1.1.0 R126 (R110 feature-first 阶段 2 step 1) — stress_event 子表端到端迁移 (R125 样板扩展) (2026-08-17, 1 commit, 1.1.0+172)
+
+**状态**: R110 阶段 2 step 1 闭环, 跟 R125 同模式扩 daily_tracking 第 2 子表 stress_event (5 file 端到端), 验证"1 feature 多子表"模板。R110 阶段 2 完整 (5 feature 批量迁移) 是 1-1.5 周真实工作, R126 续 / R127 阶段 3 时做 4 feature + daily_tracking 4 子表。
+
+**新增 `lib/features/daily_tracking/` 5 file** (第 2 子表 stress_event):
+- `data/tables/stress_events.dart` — drift table (5 字段含 linkedMoodEntryId 弱 FK)
+- `data/mappers/stress_event_mapper.dart` — row→entity 翻译 (R125 模式)
+- `data/repositories/stress_event_repository_impl.dart` — impl (R125 模式)
+- `domain/entities/stress_event.dart` — entity (R125 模式)
+- `domain/repositories/stress_event_repository.dart` — abstract (R125 模式)
+
+**旧路径 re-export 兼容** (现有用户 0 改动):
+- `lib/domain/entities/stress_event.dart` 改 re-export
+- `lib/domain/repositories/stress_event_repository.dart` 改 re-export
+
+**R125 test 修正** (1 file, 2 unused import): R125 引入 stress_event 后, 旧 abstract 改 re-export, 删 `anxiety_agitation_repository_impl` 旧路径 impl import (test 没实际用此 class) + `anxiety_agitation_repository` 旧路径 import (re-export 后多余)。
+
+**新增 `test/core/data/feature_first_migration_split_round126_test.dart`** (10 case): stress_event 5 file 端到端 / 旧路径 re-export 兼容 / 新旧 entity 路径 import 同一 class / R125 + R126 同一 feature 2 子表共存 / 4 子表仍未迁 (sleep / weight / social_rhythm / treatment 留 R126 续)。
+
+**R126 阶段 2 step 1 关键设计**:
+- **同 feature 扩第 2 子表**: 跟 R125 anxiety_agitation 同 feature (daily_tracking) 扩 stress_event, 验证"1 feature 多子表"模板
+- **跟 R125 完全同模式**: 5 file 端到端 + 旧路径 re-export + 0 跨 service 依赖
+- **业务字段略不同**: 5 字段 (vs anxiety 4 字段), 含 linkedMoodEntryId 弱 FK (R60 drift 不强制外键模式)
+- **0 重构现有用户**: R125 同款, 旧路径 re-export 兼容, 旧 impl 仍 work
+
+**R110 路线图进度**:
+- ✅ 阶段 1 (R125, 1-2h) — design + 1 子表样板 (anxiety_agitation)
+- ✅ 阶段 2 step 1 (R126, 1-1.5h, 本批) — 同 feature 扩第 2 子表 (stress_event)
+- ⏸ 阶段 2 step 2-5 (R126 续, 1-1.5 周) — 4 feature 完整迁移 (mood / vent / assessment / medication) + daily_tracking 其他 4 子表
+- ⏸ 阶段 3 (R127, 1 周) — pub workspace 3 package 拆分
+- ⏸ 阶段 4 (R128, 3-5 天) — 跨 feature 共享 (core/platform/) 抽取
+- ⏸ 阶段 5 (R129, 1 周 + 综合审视) — 5 token 集中器转 pub workspace 公共 package
