@@ -123,17 +123,27 @@ void main() {
     test(
         'legal_page: 用 textStyleXxx 集中器 (textStyleBodyStrong + textStyleLabelMedium)',
         () {
-      final file = File('lib/presentation/pages/settings/legal_page.dart');
-      expect(file.existsSync(), true);
-      final content = file.readAsStringSync();
+      // R122 P2-2: 拆 4 widget + 1 enum 到 widgets/legal_*.dart 后, 集中器
+      // 引用分散在主壳 + 拆出 widget。检查整个 legal_page 模块 (主壳 + 5
+      // widgets/legal_*.dart), 跟 R121 vent_list_page 拆 widget 模式一致。
+      final module = <String>[
+        'lib/presentation/pages/settings/legal_page.dart',
+        'lib/presentation/pages/settings/widgets/legal_section_title.dart',
+        'lib/presentation/pages/settings/widgets/legal_doc_tile.dart',
+        'lib/presentation/pages/settings/widgets/legal_consent_tile.dart',
+        'lib/presentation/pages/settings/widgets/legal_withdraw_option.dart',
+        'lib/presentation/pages/settings/widgets/legal_withdraw_choice.dart',
+      ];
+      final moduleContent =
+          module.map((p) => File(p).readAsStringSync()).join('\n');
       // R95 sub-spec 5 task 3-4 修真后用集中器
       expect(
-        content.contains('AppTokens.textStyleBodyStrong(context)'),
+        moduleContent.contains('AppTokens.textStyleBodyStrong(context)'),
         true,
         reason: 'should use textStyleBodyStrong for body+w600+textPrimary',
       );
       expect(
-        content.contains('AppTokens.textStyleLabelMedium(context)'),
+        moduleContent.contains('AppTokens.textStyleLabelMedium(context)'),
         true,
         reason: 'should use textStyleLabelMedium for label+w500+textPrimary',
       );

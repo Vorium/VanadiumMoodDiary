@@ -1,3 +1,42 @@
+## [1.1.0+167 R122 P2-2 — legal_page 555L 拆 4 widget + 1 enum] - 2026-08-17 (主壳 555L→344L -38%, 跟 R121 vent_list_page 模式对齐, 8 regression test)
+
+### Changed (R122 P2-2)
+- **legal_page.dart 555L → 344L 主壳 (-38%)** — R108 §六 真实 god class 候选闭环 (R108 估算 460L 接近, 实际 555L):
+  - 抽 4 widget 到 `lib/presentation/pages/settings/widgets/` (跟 R121 vent_list_page 拆 widget 模式对齐):
+    - `legal_section_title.dart` (34L) — `LegalSectionTitle` 公开 (section 标题渲染)
+    - `legal_doc_tile.dart` (34L) — `LegalDocTile` 公开 (法律文档入口: 用户协议 / 隐私政策 / 敏感数据同意)
+    - `legal_consent_tile.dart` (119L) — `LegalConsentTile` 公开 (撤回同意 toggle 行, R95 sub-spec 8 task 46 chip 标识)
+    - `legal_withdraw_option.dart` (73L) — `LegalWithdrawOption` 公开 (vent 撤回 3 选 1 dialog 内部选项, R113 BUG 8b 修 InkWell)
+  - 抽 1 enum 到 `widgets/legal_withdraw_choice.dart` (18L) — `LegalWithdrawChoice` 公开 (替代 _VentWithdrawChoice)
+  - 5 文件全部 `super.key` (跟 project widget 集中器模式一致)
+  - 主壳只剩 2 class: `LegalPage` + `_LegalPageState` (业务方法 _load / _toggle / _showVentWithdrawDialog 跟 state 紧耦合保留, R121 P1-2 同款决策)
+- **legal_page_split_round122_test.dart** (新增 8 case) — 守门员防回填:
+  - 6 文件双存在 (主壳 + 4 widget + 1 enum)
+  - 主壳 < 400L (344L god-class size guard)
+  - 主壳不再含 4 private widget class (_SectionTitle / _DocTile / _ConsentTile / _WithdrawOption)
+  - 主壳不再含 _VentWithdrawChoice private enum
+  - 5 公开 widget/enum 各自提供 `super.key`
+  - 公开 widget 命名一致 (Legal* 前缀)
+  - 主壳用公开 widget 名替换
+  - 6 文件总和 < 700L (拆前 555L, +overhead 限 < 26%)
+- **app_tokens_lock_in_round95_test.dart** (1 case 适配) — R95 sub-spec 5 task 3-4 lock-in: legal_page textStyleBodyStrong + textStyleLabelMedium 集中器检查从单文件 → 整个 legal_page 模块 (主壳 + 5 widgets/legal_*.dart), 跟 R121 vent_list_page 拆 widget 模式协同
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2616 pass / 0 fail / 1 skip** (R122 P2-1 step 3 baseline 2608 +8 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- `python3 scripts/check_coverage.py`: 18 gatekeeper 全过 (拆 4 widget + 1 enum 未掉阈值)
+
+### R108 §六 god class 候选 6/12 闭环 ✅
+- R118 P2-7 10 量表 (659→394L) ✅
+- R119 P1-1 app_database (564→139L) ✅
+- R120 P1-2 notification_service (386→252L) ✅
+- R116 round 4 add_medication_page (506→258L) ✅
+- R122 P2-1 mood_audio_service (496→251L) ✅
+- **R122 P2-2 legal_page (555→344L) ✅ 本批闭环**
+
+剩 5 候选 (过时, R116/R121 已拆): `medication_page 553L` (R116 round 1 拆) / `mood_trend_page 517L` (R116 拆 104L) / `reminders_hub_page 441L` (R116 拆 213L) / `setup_page_state 506L` (R116 拆 301L) / `static_scale_translations 659L` (R118 P2-7 替代)
+
 ## [1.1.0+166 R122 P2-1 step 3 — mood_audio_storage 独立验证 (拆 3 facade 闭环)] - 2026-08-17 (storage 67L 已独立, 0 业务逻辑在 EncryptedAudioStorage 基类, 6 regression test)
 
 ### Changed (R122 P2-1 step 3)

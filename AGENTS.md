@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2608 tests pass (R122 P2-1 step 3 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 5/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2616 tests pass (R122 P2-2 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L).
 
 ## 项目速览
 
@@ -675,3 +675,20 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **状态**: 拆 3 facade 闭环 — `mood_audio_storage.dart` 67L 已 100% 独立 (R0.23 round 43 spen-2 抽 EncryptedAudioStorage 基类已完成 99% 业务逻辑, MoodAudioStorage 仅 mood-specific 配置)。`mood_audio_storage_split_round122_test.dart` 6 case 守门员 (4 文件双存在 / storage < 100L / storage 0 业务方法含不 import dart:io / storage extends EncryptedAudioStorage + export 基类 / 主 service 不 import EncryptedAudioStorage 基类 (委派路径完整) / 4 文件总和 < 800L)。
 
 **R122 路线图 ✅ 闭环**: P2-1 step 1 (STT 154L) + step 2 (recorder 307L) + step 3 (storage 66L review) — 主 MoodAudioServiceImpl 最终 251L (-49.4%, 超路线图预期 50%)。拆 3 facade 总 780L (拆前 496L, +284L = +57.3% overhead, 主要是 import / 文档 / 业务注释, 0 facade 业务回填)。**R108 §六 god class 候选 5/12 闭环** (R118 P2-7 10 量表 / R119 P1-1 app_database / R120 P1-2 notification_service / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service)。
+
+## v1.1.0 R122 P2-2 — legal_page 555L 拆 4 widget + 1 enum (2026-08-17, 1 commit, 1.1.0+167)
+
+**状态**: R108 §六 真实 god class 候选闭环 (R108 估算 460L 接近, 实际 555L)。R116 / R121 期间没动, R122 P2-2 拆 4 widget + 1 enum 跟 R121 P1-2 vent_list_page 模式对齐。`lib/presentation/pages/settings/widgets/` 新增 5 文件:
+- `legal_section_title.dart` (34L) — `LegalSectionTitle` 公开 (super.key, section 标题渲染)
+- `legal_doc_tile.dart` (34L) — `LegalDocTile` 公开 (法律文档入口: 用户协议 / 隐私政策 / 敏感数据同意)
+- `legal_consent_tile.dart` (119L) — `LegalConsentTile` 公开 (撤回同意 toggle 行, R95 sub-spec 8 task 46 chip 标识)
+- `legal_withdraw_option.dart` (73L) — `LegalWithdrawOption` 公开 (vent 撤回 3 选 1 dialog 内部选项, R113 BUG 8b 修 InkWell)
+- `legal_withdraw_choice.dart` (18L) — `LegalWithdrawChoice` 公开 enum (替代 _VentWithdrawChoice)
+
+主 `legal_page.dart` 555L → **344L (-38%)**, 只剩 2 class (`LegalPage` + `_LegalPageState`) + 1 顶层 helper `clearLegalConsentCache`。业务方法 `_load` / `_toggle` / `_showVentWithdrawDialog` 跟 state 紧耦合保留 (R121 P1-2 同款决策, 跟 _VentListPageState 60L 业务编排 state 类比)。
+
+**R95 sub-spec 5 task 3-4 lock-in 协同**: `app_tokens_lock_in_round95_test.dart` 1 case 适配 — legal_page textStyleBodyStrong + textStyleLabelMedium 集中器检查从单文件 (主壳) → 整个 legal_page 模块 (主壳 + 5 widgets/legal_*.dart), 跟 R121 vent_list_page 拆 widget 模式协同。R95 lock-in 当时没考虑 page → 多 widget 拆解, 本批补 R95 + R122 跨期协同。
+
+**`legal_page_split_round122_test.dart`** (新增 8 case) 守门员: 6 文件双存在 / 主壳 < 400L / 主壳不再含 4 private widget + 1 enum / 5 公开 widget/enum 各自 super.key / 公开命名一致 / 主壳用公开 widget 名替换 / 6 文件总和 < 700L (拆前 555L, +12% overhead, 跟 R122 mood_audio_service 拆 3 facade +57% overhead 比优秀)。
+
+**R108 §六 god class 候选 6/12 闭环** (R118 P2-7 10 量表 / R119 P1-1 app_database / R120 P1-2 notification_service / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service / R122 P2-2 legal_page)。剩 5 候选过时 (R116 / R118 已拆): `medication_page 553L` (R116 round 1 拆) / `mood_trend_page 517L` (R116 拆 104L) / `reminders_hub_page 441L` (R116 拆 213L) / `setup_page_state 506L` (R116 拆 301L) / `static_scale_translations 659L` (R118 P2-7 替代)。

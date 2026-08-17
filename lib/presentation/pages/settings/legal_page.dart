@@ -6,6 +6,9 @@
 //   (1.1.0 round 4b: 失联通知 toggle 随外联服务整摘)
 // - 每个 toggle 旁边显示"撤回时间"或"从未撤回"
 // - toggle 持久化到 SharedPreferences
+//
+// v1.1.0+167 R122 P2-2: 555L → 120L 主壳, 拆 4 widget + 1 enum 到
+// widgets/legal_*.dart (跟 R121 vent_list_page 模式对齐)。
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,12 +18,16 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/legal_consent_tile.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/legal_doc_tile.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/legal_section_title.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/legal_withdraw_choice.dart';
+import 'package:chroniccare/presentation/pages/settings/widgets/legal_withdraw_option.dart';
 import 'package:chroniccare/presentation/providers/legal_consent_provider.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
-import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 class LegalPage extends ConsumerStatefulWidget {
   const LegalPage({super.key});
@@ -72,7 +79,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
     if (withdraw && kind == ConsentKind.vent) {
       final choice = await _showVentWithdrawDialog();
       if (choice == null) return; // 用户取消, 状态不变
-      if (choice == _VentWithdrawChoice.delete) {
+      if (choice == LegalWithdrawChoice.delete) {
         // 立即删除: 物理删所有 vent 行 + audio 文件
         try {
           final repo = ref.read(ventRepositoryProvider);
@@ -193,9 +200,9 @@ class _LegalPageState extends ConsumerState<LegalPage> {
   /// v0.28 R82.5 (法务 Q7b 必改): vent 撤回 3 选 1 dialog
   ///
   /// 返回用户选择, null = 取消。dialog 不可 barrierDismissible (防误关)。
-  Future<_VentWithdrawChoice?> _showVentWithdrawDialog() async {
+  Future<LegalWithdrawChoice?> _showVentWithdrawDialog() async {
     final l10n = AppLocalizations.of(context);
-    return showDialog<_VentWithdrawChoice>(
+    return showDialog<LegalWithdrawChoice>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
@@ -208,8 +215,8 @@ class _LegalPageState extends ConsumerState<LegalPage> {
             Text(l10n.legalVentWithdrawBody),
             const SizedBox(height: AppTokens.spacingMd),
             // 立即删除 (红色, 强调不可恢复)
-            _WithdrawOption(
-              choice: _VentWithdrawChoice.delete,
+            LegalWithdrawOption(
+              choice: LegalWithdrawChoice.delete,
               icon: Icons.delete_forever_outlined,
               iconColor: AppTokens.errorColor(context),
               title: l10n.legalVentWithdrawDelete,
@@ -217,8 +224,8 @@ class _LegalPageState extends ConsumerState<LegalPage> {
             ),
             const SizedBox(height: AppTokens.spacingSm),
             // 加密封存 (info 蓝, 中性)
-            _WithdrawOption(
-              choice: _VentWithdrawChoice.sealed,
+            LegalWithdrawOption(
+              choice: LegalWithdrawChoice.sealed,
               icon: Icons.lock_outline,
               iconColor: AppTokens.primaryColor(context),
               title: l10n.legalVentWithdrawSeal,
@@ -247,11 +254,11 @@ class _LegalPageState extends ConsumerState<LegalPage> {
               padding: AppTokens.edgeInsetsMd,
               children: [
                 // ===== 法律文档 =====
-                _SectionTitle(text: l10n.legalPageDocuments),
+                LegalSectionTitle(text: l10n.legalPageDocuments),
                 Card(
                   child: Column(
                     children: [
-                      _DocTile(
+                      LegalDocTile(
                         icon: Icons.description_outlined,
                         title: l10n.setupLegalUserAgreement,
                         onTap: () => showLegalDocument(
@@ -260,7 +267,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                         ),
                       ),
                       const Divider(height: 1, thickness: 0.5),
-                      _DocTile(
+                      LegalDocTile(
                         icon: Icons.privacy_tip_outlined,
                         title: l10n.setupLegalPrivacyPolicy,
                         onTap: () => showLegalDocument(
@@ -269,7 +276,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                         ),
                       ),
                       const Divider(height: 1, thickness: 0.5),
-                      _DocTile(
+                      LegalDocTile(
                         icon: Icons.medical_services_outlined,
                         title: l10n.setupLegalSensitiveData,
                         onTap: () => showLegalDocument(
@@ -283,7 +290,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                 const SizedBox(height: AppTokens.spacingLg),
 
                 // ===== 撤回同意 =====
-                _SectionTitle(text: l10n.legalPageWithdrawTitle),
+                LegalSectionTitle(text: l10n.legalPageWithdrawTitle),
                 Container(
                   padding: AppTokens.edgeInsetsSm,
                   decoration: BoxDecoration(
@@ -299,7 +306,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                 Card(
                   child: Column(
                     children: [
-                      _ConsentTile(
+                      LegalConsentTile(
                         kind: ConsentKind.vent,
                         title: l10n.legalPageWithdrawVent,
                         subtitle: l10n.legalPageWithdrawVentSubtitle,
@@ -308,7 +315,7 @@ class _LegalPageState extends ConsumerState<LegalPage> {
                         onToggle: (v) => _toggle(ConsentKind.vent, v),
                       ),
                       const Divider(height: 1, thickness: 0.5),
-                      _ConsentTile(
+                      LegalConsentTile(
                         kind: ConsentKind.analytics,
                         title: l10n.legalPageWithdrawAnalytics,
                         subtitle: l10n.legalPageWithdrawAnalyticsSubtitle,
@@ -325,156 +332,6 @@ class _LegalPageState extends ConsumerState<LegalPage> {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  final String text;
-  const _SectionTitle({required this.text});
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(
-          left: AppTokens.spacingXs,
-          bottom: AppTokens.spacingSm,
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: AppTokens.fontSizeHeadline,
-            fontWeight: FontWeight.w600,
-            color: AppTokens.textPrimaryColor(context),
-          ),
-        ),
-      );
-}
-
-class _DocTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-  const _DocTile({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // v0.26 round 57 (emil C-12): 走 AppListTile.standard 集中器
-    // 替代 inline ListTile + PressFeedback
-    return AppListTile.standard(
-      leading: Icon(icon, color: AppTokens.primaryColor(context)),
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: onTap,
-    );
-  }
-}
-
-class _ConsentTile extends StatelessWidget {
-  final ConsentKind kind;
-  final String title;
-  final String subtitle;
-  final bool withdrawn;
-  final DateTime? withdrawnAt;
-  final ValueChanged<bool> onToggle;
-
-  const _ConsentTile({
-    required this.kind,
-    required this.title,
-    required this.subtitle,
-    required this.withdrawn,
-    required this.withdrawnAt,
-    required this.onToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final timeText = withdrawnAt == null
-        ? l10n.legalPageConsentNever
-        : l10n.legalPageConsentRecorded(
-            '${withdrawnAt!.year.toString().padLeft(4, '0')}-'
-            '${withdrawnAt!.month.toString().padLeft(2, '0')}-'
-            '${withdrawnAt!.day.toString().padLeft(2, '0')} '
-            '${withdrawnAt!.hour.toString().padLeft(2, '0')}:'
-            '${withdrawnAt!.minute.toString().padLeft(2, '0')}',
-          );
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTokens.spacingMd,
-        vertical: AppTokens.spacingSm,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTokens.textStyleLabelMedium(context),
-                    ),
-                    const SizedBox(height: AppTokens.spacingXxs),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: AppTokens.fontSizeCaptionSm,
-                        color: AppTokens.textHintColor(context),
-                        height: AppTokens.lineHeightSnug,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Switch(
-                value: withdrawn,
-                onChanged: onToggle,
-                activeThumbColor: AppTokens.errorColor(context),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: AppTokens.spacingXxs),
-            // v0.30 R95 sub-spec 8 task 46: legal_page toggle 撤回时间 chip 标识
-            // 修前: Text 渲染时间 (无视觉标识, 用户难一眼看出"已撤回"状态)
-            // 修后: Chip widget 包时间 (B 站风格 chip 标签, emil design
-            // 反复提 — 状态时间需有视觉标识, withdrawn 状态用 error 色 chip
-            // 强调, 正常状态用 hint 色 chip 低调)
-            child: Chip(
-              label: Text(
-                timeText,
-                style: TextStyle(
-                  fontSize: AppTokens.fontSizeLabelSm,
-                  color: withdrawn
-                      ? AppTokens.fgOnError(context)
-                      : AppTokens.textHintColor(context),
-                ),
-              ),
-              backgroundColor: withdrawn
-                  ? AppTokens.tintedErrorSoft(context)
-                  : AppTokens.dividerColor(context),
-              side: BorderSide(
-                color: withdrawn
-                    ? AppTokens.errorColor(context)
-                    : AppTokens.textHintColor(context),
-                width: 0.5,
-              ),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTokens.spacingXs,
-                vertical: 0,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// 提供给 legal_page 内部用的清理方法(测试 / 调试)
 Future<void> clearLegalConsentCache() async {
   final prefs = await SharedPreferences.getInstance();
@@ -484,72 +341,4 @@ Future<void> clearLegalConsentCache() async {
   }
   // v0.28 R82.5: 同步清封存标志
   await prefs.remove('legal_consent_vent_sealed_at');
-}
-
-// ===== v0.28 R82.5: vent 撤回 3 选 1 dialog 内部类型 + widget =====
-
-// ignore: unused_element
-// ignore: unused_field
-enum _VentWithdrawChoice { delete, sealed }
-
-class _WithdrawOption extends StatelessWidget {
-  // v1.1.0 R113 (BUG 8b): 修前是裸 Row — 无 onTap/InkWell/GestureDetector,
-  // "立即删除"/"加密封存"两个选项点不了 (R82.5 引入即存在), 用户只能点
-  // "取消"。修: choice 字段 + InkWell 包裹, tap = pop(choice) 让
-  // _showVentWithdrawDialog 的 showDialog<_VentWithdrawChoice> 结果
-  // 传回 _toggle。
-  final _VentWithdrawChoice choice;
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String description;
-
-  const _WithdrawOption({
-    required this.choice,
-    required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.of(context).pop(choice),
-      borderRadius: BorderRadius.circular(AppTokens.radiusCard),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppTokens.spacingXs,
-          vertical: AppTokens.spacingXs,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: iconColor, size: 20),
-            const SizedBox(width: AppTokens.spacingSm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTokens.textStyleBodyStrong(context),
-                  ),
-                  const SizedBox(height: AppTokens.spacingXxs),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: AppTokens.fontSizeCaption,
-                      color: AppTokens.textHintColor(context),
-                      height: AppTokens.lineHeightSnug,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
