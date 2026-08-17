@@ -1,3 +1,42 @@
+## [1.1.0+173 R126 (R110 feature-first 阶段 2 step 2) — sleep 子表端到端迁移 (R125 样板扩展, daily_tracking 3/6 子表)] - 2026-08-17 (sleep 5 file 端到端, 含 durationLabel/hasRegularityScore 业务方法, 9 regression test)
+
+### Changed (R126 阶段 2 step 2)
+- **`lib/features/daily_tracking/` 扩第 3 子表 sleep 5 file** (跟 R125 anxiety + R126 step 1 stress_event 样板同模式):
+  - `data/tables/sleep_entries.dart` — drift table (6 字段含 regularityScore 1-5 nullable + durationMin 自动算)
+  - `data/mappers/sleep_mapper.dart` — row→entity 翻译
+  - `data/repositories/sleep_repository_impl.dart` — impl
+  - `domain/entities/sleep_entry.dart` — entity (含业务方法 `durationLabel` / `hasRegularityScore` 跟旧版本一致, 0 break 旧 widget 端)
+  - `domain/repositories/sleep_repository.dart` — abstract
+- **旧路径 re-export 兼容** (现有用户 0 改动):
+  - `lib/domain/entities/sleep_entry.dart` 改 re-export
+  - `lib/domain/repositories/sleep_repository.dart` 改 re-export
+- **`test/core/data/feature_first_migration_split_round126_test.dart`** (1 case 改): R126 step 1 写"4 子表仍未迁" 改 "3 子表已迁 (anxiety + stress + sleep), 3 子表未迁 (weight / social_rhythm / treatment)" — 适配 R126 step 2 加 sleep
+- **`test/core/data/feature_first_migration_split_round126_step2_test.dart`** (新增 9 case):
+  - sleep 5 file 端到端
+  - 旧路径 re-export 兼容
+  - 新旧 entity 路径 import 同一 class + 业务方法 work (durationLabel / hasRegularityScore 跟旧版本一致)
+  - daily_tracking 3/6 子表迁移进度 (anxiety + stress + sleep 已迁, weight / social_rhythm / treatment 未迁)
+
+### R126 阶段 2 step 2 关键设计
+- **同 feature 扩第 3 子表**: 跟 R125 anxiety_agitation + R126 step 1 stress_event 同 feature (daily_tracking) 扩 sleep, 验证"1 feature 多子表"模板
+- **业务方法保留**: `durationLabel` (450min → "7h30min") + `hasRegularityScore` (1-5 范围) 跟旧 entity 字段一致, 旧 widget 端 (`sleep_widgets.dart` / `tracking_item_card.dart`) 0 break
+- **0 跨 service 依赖**: SleepCalculator 只在 dartdoc 提到, 实际 impl 不依赖
+- **0 重构现有用户**: R125 同款, 旧路径 re-export 兼容, 旧 impl 仍 work
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2669 pass / 0 fail / 1 skip** (R126 step 1 baseline 2660 +9 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- `python3 scripts/check_feature_first_migration.py`: 阶段 1 ✅ 阶段 2+ warn
+
+### R110 阶段 2 daily_tracking 子表迁移进度
+- ✅ R125 anxiety_agitation (阶段 1)
+- ✅ R126 step 1 stress_event (阶段 2 step 1)
+- ✅ **R126 step 2 sleep (阶段 2 step 2, 本批)**
+- ⏸ weight_entries (阶段 2 step 3+)
+- ⏸ social_rhythm_entries (阶段 2 step 3+)
+- ⏸ treatment_entries (阶段 2 step 3+)
+
 ## [1.1.0+172 R126 (R110 feature-first 阶段 2 step 1) — stress_event 子表端到端迁移 (R125 样板扩展)] - 2026-08-17 (daily_tracking 第 2 子表 stress_event 5 file 端到端, R125 样板同模式, 10 regression test)
 
 ### Changed (R126 阶段 2 step 1)

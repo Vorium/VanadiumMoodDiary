@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图启动 (lib/features/daily_tracking/ 2 子表 anxiety_agitation + stress_event 端到端迁移, 4 feature 待推), 29/29 CI gatekeepers, 2660 tests pass (R126 R110 阶段 2 step 1 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 step 1 启动 (lib/features/daily_tracking/ 2 子表样板 + 守门员 + 旧路径 re-export 兼容).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图启动 (lib/features/daily_tracking/ 3 子表 anxiety_agitation + stress_event + sleep 端到端迁移, 3 子表 + 4 feature 待推), 29/29 CI gatekeepers, 2669 tests pass (R126 阶段 2 step 2 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 step 1+2 启动 (lib/features/daily_tracking/ 3 子表样板 + 守门员 + 旧路径 re-export 兼容, daily_tracking 50% 子表迁移).
 
 ## 项目速览
 
@@ -827,3 +827,34 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - ⏸ 阶段 3 (R127, 1 周) — pub workspace 3 package 拆分
 - ⏸ 阶段 4 (R128, 3-5 天) — 跨 feature 共享 (core/platform/) 抽取
 - ⏸ 阶段 5 (R129, 1 周 + 综合审视) — 5 token 集中器转 pub workspace 公共 package
+
+## v1.1.0 R126 (R110 feature-first 阶段 2 step 2) — sleep 子表端到端迁移 (daily_tracking 3/6 子表) (2026-08-17, 1 commit, 1.1.0+173)
+
+**状态**: R110 阶段 2 step 2 闭环, 跟 R125 + R126 step 1 样板同模式扩 daily_tracking 第 3 子表 sleep (6 字段含 regularityScore + durationMin + 业务方法 durationLabel / hasRegularityScore 跟旧版一致, 0 break widget 端)。
+
+**新增 `lib/features/daily_tracking/` 5 file** (第 3 子表 sleep):
+- `data/tables/sleep_entries.dart` — drift table (6 字段)
+- `data/mappers/sleep_mapper.dart` — row→entity
+- `data/repositories/sleep_repository_impl.dart` — impl
+- `domain/entities/sleep_entry.dart` — entity (含业务方法)
+- `domain/repositories/sleep_repository.dart` — abstract
+
+**旧路径 re-export 兼容**: 2 file (`sleep_entry.dart` entity / `sleep_repository.dart` abstract) 改 re-export, 现有用户 0 改动。
+
+**R126 step 1 test 改 1 case**: R126 step 1 写"4 子表仍未迁" 改 "3 子表已迁 (anxiety + stress + sleep), 3 子表未迁 (weight / social_rhythm / treatment)"。
+
+**新增 `test/core/data/feature_first_migration_split_round126_step2_test.dart`** (9 case): sleep 5 file 端到端 / 旧路径 re-export 兼容 / 新旧 entity 路径 import 同一 class + 业务方法 work / daily_tracking 3/6 子表迁移进度。
+
+**R126 阶段 2 step 2 关键设计**:
+- **同 feature 扩第 3 子表**: 跟 R125 anxiety_agitation + R126 step 1 stress_event 同 feature (daily_tracking) 扩 sleep
+- **业务方法保留**: `durationLabel` (450min → "7h30min") + `hasRegularityScore` (1-5 范围) 跟旧 entity 一致, 旧 widget (`sleep_widgets.dart` / `tracking_item_card.dart`) 0 break
+- **0 跨 service 依赖**: SleepCalculator 只在 dartdoc 提到, 实际 impl 不依赖
+- **0 重构现有用户**: R125 同款, 旧路径 re-export 兼容
+
+**R110 阶段 2 daily_tracking 子表迁移进度 (3/6 = 50%)**:
+- ✅ R125 anxiety_agitation (阶段 1)
+- ✅ R126 step 1 stress_event (阶段 2 step 1)
+- ✅ **R126 step 2 sleep (阶段 2 step 2, 本批)**
+- ⏸ weight_entries (阶段 2 step 3+)
+- ⏸ social_rhythm_entries (阶段 2 step 3+)
+- ⏸ treatment_entries (阶段 2 step 3+)

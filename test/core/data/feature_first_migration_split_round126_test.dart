@@ -101,12 +101,13 @@ void main() {
   });
 
   group('R126 阶段 2 step 1 — R125 + R126 同一 feature 2 子表共存 (daily_tracking)', () {
-    test('R125 anxiety_agitation + R126 stress_event 同一 features/daily_tracking/', () {
+    test('R125 + R126 同一 feature 多子表共存 (daily_tracking anxiety + stress)', () {
       // R125 + R126 阶段 2 step 1 同一 feature 2 子表共存, 验证 R110 阶段 2
-      // step 1 "扩第 2 子表" 设计
+      // step 1 "扩第 2 子表" 设计 (R126 step 2 扩第 3 子表 sleep, 累计 3 子表)
       final dailyTrackingDir = Directory('lib/features/daily_tracking');
       expect(dailyTrackingDir.existsSync(), isTrue);
-      // 6 子表中 2 个已迁 (R125 anxiety_agitation + R126 stress_event)
+      // 6 子表中 3 个已迁 (R125 anxiety_agitation + R126 step 1 stress_event
+      // + R126 step 2 sleep)
       expect(
         File('lib/features/daily_tracking/data/tables/anxiety_agitation_entries.dart')
             .existsSync(),
@@ -117,24 +118,32 @@ void main() {
         File('lib/features/daily_tracking/data/tables/stress_events.dart')
             .existsSync(),
         isTrue,
-        reason: 'R126 stress_event 子表已迁 (R110 阶段 2 step 1)',
+        reason: 'R126 step 1 stress_event 子表已迁',
       );
-      // 4 子表仍未迁 (sleep / weight / social_rhythm / treatment)
       expect(
         File('lib/features/daily_tracking/data/tables/sleep_entries.dart')
             .existsSync(),
+        isTrue,
+        reason: 'R126 step 2 sleep 子表已迁 (本批)',
+      );
+      // 3 子表仍未迁 (weight / social_rhythm / treatment)
+      expect(
+        File('lib/features/daily_tracking/data/tables/weight_entries.dart')
+            .existsSync(),
         isFalse,
-        reason: 'sleep 子表未迁 (R126 step 2+)',
+        reason: 'weight 子表未迁 (R126 step 3+)',
       );
     });
 
-    test('R125 + R126 旧路径 re-export 共存 2 个 (anxiety + stress)', () {
-      // 2 子表旧路径都改 re-export, 现有用户 (repository_impl 等) 0 改动
+    test('R125 + R126 旧路径 re-export 共存 3 个 (anxiety + stress + sleep)', () {
+      // 3 子表旧路径都改 re-export, 现有用户 (repository_impl 等) 0 改动
       final oldEntityAnxiety =
           File('lib/domain/entities/anxiety_agitation_entry.dart')
               .readAsStringSync();
       final oldEntityStress =
           File('lib/domain/entities/stress_event.dart').readAsStringSync();
+      final oldEntitySleep =
+          File('lib/domain/entities/sleep_entry.dart').readAsStringSync();
       expect(
         oldEntityAnxiety.contains(
             "export 'package:chroniccare/features/daily_tracking/domain/entities/anxiety_agitation_entry.dart'"),
@@ -143,6 +152,11 @@ void main() {
       expect(
         oldEntityStress.contains(
             "export 'package:chroniccare/features/daily_tracking/domain/entities/stress_event.dart'"),
+        isTrue,
+      );
+      expect(
+        oldEntitySleep.contains(
+            "export 'package:chroniccare/features/daily_tracking/domain/entities/sleep_entry.dart'"),
         isTrue,
       );
     });
