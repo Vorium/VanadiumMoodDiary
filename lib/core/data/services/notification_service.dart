@@ -250,3 +250,8 @@ class NotificationService implements NotificationSender {
       );
 }
 // 跨 sub-service ID range 编排: docs/architecture/NOTIFICATION_ID_BANDS.md
+// rule3-whitelist: 137, 193, 207, 215-216
+//   R120 P1-2 (1.1.0 round 12k): 行号随 facade 收紧 (386L→252L) 重新计位
+//   原行号 205, 271, 303, 312-313 (R114 B1-2/B1-3 + R113 BUG A 历史 baseline)
+//   新行号对应同样 4 处 piiSafeLog CJK 字面量 (developer log, 非用户 UI)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
