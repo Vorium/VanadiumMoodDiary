@@ -1,3 +1,53 @@
+## [1.1.0+170 R124 (v1.0 长期 5 厂商 push facade 接入) — 5 通道抽象 + NoOp 默认 + 5 厂商占位 impl] - 2026-08-17 (v1.0 准备, 5 厂商 SDK 真接 1-2 月后开阶段 2, 10 regression test + 1 gatekeeper)
+
+### 背景 (R93 阶段 2 + 1.1.0 round 4b → R124 闭环)
+- 1.1.0 round 4b: 失联通知 100% 失效, 5 厂商 push SDK 1-2 月审核中
+- R93 阶段 2 加了 [FeatureFlags.fiveVendorPushEnabled] flag (默认 false),
+  但 FiveVendorPushService.register 早返 false 的承诺代码没写
+- R124 阶段 1: 写 facade 骨架 (5 通道抽象 + NoOp 默认 + 5 厂商占位 impl
+  + factory + 公开 service), 5 厂商 SDK 真接推迟 (1-2 月厂商审核)
+
+### Changed (R124 阶段 1)
+- **`lib/core/data/services/five_vendor_push_service.dart`** (新增 ~270L):
+  - `abstract class FiveVendorPushChannel` (5 通道抽象) — 4 method 公开:
+    `vendorName` getter / `register()` / `unregister()` / `getPushToken()`
+  - `NoOpFiveVendorPushChannel` 默认实现 (vendorName="NoOp", register 早返 false,
+    unregister no-op, getPushToken 早返 null)
+  - `abstract class FiveVendorPushFactory` + `static createChannel()` 工厂方法
+    (R124 阶段 1 返 NoOp, 5 厂商 SDK 真接后改按 device brand 选 impl)
+  - 5 厂商占位 impl class 框架 (MiPush / HmsPush / OppoPush / VivoPush /
+    MeizuPush) — 现阶段 throw UnimplementedError, SDK 真接后改 implement
+  - `class FiveVendorPushService` 公开 facade — 5 method 委派 + flag gate:
+    `register()` / `unregister()` / `isAvailable()` / `getPushToken()` / private `_`
+- **`scripts/check_five_vendor_push_ready.py`** (新增 1 守门员):
+  - 阶段 1 gate (R124 必过): 5 通道抽象 / 5 厂商占位 / NoOp / factory / 5 公开
+    method / FeatureFlags gate 全齐
+  - 阶段 2 gate (v1.0 真接 SDK 后开, 阶段 1 必 warn): pubspec 5 厂商 SDK dep /
+    AndroidManifest 5 厂商 service-receiver / 5 厂商 impl 不再 throw
+    UnimplementedError
+- **`test/core/data/services/five_vendor_push_service_split_round124_test.dart`**
+  (新增 10 case): 5 通道抽象 / 5 厂商 impl throw UnimplementedError / vendorName
+  getter / NoOp 默认行为 / Factory 返 NoOp / flag=false 早返 / flag=true 走 NoOp
+
+### v1.0 准备进度
+- ✅ **5 厂商 push facade 抽象完整** (R124 阶段 1) — 5 通道 + NoOp + factory + flag gate
+- ⏸ **5 厂商 SDK 真接** (R124 阶段 2, 1-2 月):
+  - 小米 MiPush (mipush SDK + AndroidManifest service/receiver + AppID/Key/Secret)
+  - 华为 HMS Push (huawei.hms:push + agconnect)
+  - OPPO HeyTap Push (com.heytap.msp)
+  - vivo Push (com.vivo.push)
+  - 魅族 FlymePush (com.meizu.cloud)
+- ⏸ AndroidManifest 5 厂商 service / receiver 接入
+- ⏸ pubspec.yaml 5 厂商 dependency
+- ⏸ Factory 按 device brand 选 impl (替代 NoOp)
+- ⏸ FeatureFlags.fiveVendorPushEnabled 翻 true (prod)
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2637 pass / 0 fail / 1 skip** (R123 baseline 2627 +10 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- `python3 scripts/check_five_vendor_push_ready.py`: 阶段 1 ✅ 阶段 2 warn (R124 阶段 1 预期)
+
 ## [1.1.0+169 R123 跨期 P0 续 — 本地可推进 2 项闭环] - 2026-08-17 (R32 P0-02 notes.txt 同步 + R113 BUG A 6 处 CJK 字面量 token 豁免, 0 回归)
 
 ### 跨期 P0 #3 续 审查 (R117 综合审视 8+ round 跨期残留)

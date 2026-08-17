@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2627 tests pass (R123 跨期 P0 #3 续 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修). R123 跨期 P0 缩到 5 项全部 100% 等外部 (R32 P0-02 + R113 BUG A 本批闭环).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 28/28 CI gatekeepers, 2637 tests pass (R124 v1.0 5 厂商 push facade 接入 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修). R123 跨期 P0 缩到 5 项全部 100% 等外部 (R32 P0-02 + R113 BUG A 本批闭环). R124 v1.0 5 厂商 push facade 接入 (5 通道抽象 + NoOp 默认 + 5 厂商占位, 5 厂商 SDK 真接推迟 1-2 月).
 
 ## 项目速览
 
@@ -730,3 +730,30 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 6. **privacy_url / support_url 12 个 PENDING_DOMAIN** (域名注册后) — `check_review_information_todo.py` 9 warn
 
 **22 守门员状态**: 17 ✅ (本批闭环 2: R113 BUG A + R32 P0-02) + 5 ❌ (100% 等外部资源, 已知跨期 8+ round)。**R123 闭环后跨期 P0 缩到 5 项, 全部 100% 等外部, 0 本地可推进项**。
+
+## v1.1.0 R124 (v1.0 长期 5 厂商 push facade 接入) — 5 通道抽象 + NoOp 默认 + 5 厂商占位 impl (2026-08-17, 1 commit, 1.1.0+170)
+
+**状态**: v1.0 长期 5 项中**第一项**推进完成。R93 阶段 2 加了 `FeatureFlags.fiveVendorPushEnabled` flag (默认 false), 但 `FiveVendorPushService.register 早返 false` 的承诺代码 R93→R124 跨 9 round 一直未写。R124 阶段 1 闭环 facade 骨架, 5 厂商 SDK 真接推迟 1-2 月 (厂商审核)。
+
+**新增 `lib/core/data/services/five_vendor_push_service.dart` (~270L)**:
+- `abstract class FiveVendorPushChannel` (5 通道抽象) — 4 method 公开: `vendorName` / `register()` / `unregister()` / `getPushToken()`
+- `NoOpFiveVendorPushChannel` 默认实现 (vendorName="NoOp", register 早返 false, unregister no-op, getPushToken 早返 null)
+- `abstract class FiveVendorPushFactory` + `static createChannel()` (阶段 1 返 NoOp, 真接后按 device brand 选 impl)
+- 5 厂商占位 impl class 框架 (MiPush / HmsPush / OppoPush / VivoPush / MeizuPush) — 现阶段 throw UnimplementedError
+- `class FiveVendorPushService` 公开 facade — `register()` / `unregister()` / `isAvailable()` / `getPushToken()` + FeatureFlags gate
+
+**新增 `scripts/check_five_vendor_push_ready.py`** (1 守门员, 双 gate):
+- 阶段 1 gate (R124 必过): 5 通道抽象 / 5 厂商占位 / NoOp / factory / 5 公开 method / FeatureFlags gate 全齐 ✅
+- 阶段 2 gate (v1.0 真接 SDK 后开, 阶段 1 必 warn): pubspec 5 厂商 SDK dep / AndroidManifest 5 厂商 service-receiver / 5 厂商 impl 不再 throw UnimplementedError
+
+**新增 `test/core/data/services/five_vendor_push_service_split_round124_test.dart`** (10 case): 5 通道抽象 / 5 厂商 impl throw UnimplementedError / vendorName getter / NoOp 默认行为 / Factory 返 NoOp / flag=false 早返 / flag=true 走 NoOp
+
+**v1.0 5 厂商 push 准备进度**:
+- ✅ 5 厂商 push facade 抽象完整 (R124 阶段 1) — 5 通道 + NoOp + factory + flag gate
+- ⏸ 5 厂商 SDK 真接 (R124 阶段 2, 1-2 月): 小米 MiPush / 华为 HMS / OPPO HeyTap / vivo / 魅族 FlymePush
+- ⏸ AndroidManifest 5 厂商 service / receiver 接入
+- ⏸ pubspec.yaml 5 厂商 dependency
+- ⏸ Factory 按 device brand 选 impl (替代 NoOp)
+- ⏸ FeatureFlags.fiveVendorPushEnabled 翻 true (prod)
+
+**守门员总数 22 → 23 (R124 +1)**。**R124 闭环后 v1.0 长期 5 项中 1 项 (5 厂商 push facade) 完成本地可推进部分, 4 项 (HealthKit / 鸿蒙 / 阿里云 SMS / IAP) 仍等外部资源或用户拍板**。
