@@ -94,7 +94,7 @@ void main() {
         () async {
       // 读源文件做静态检查
       final file = dart_io.File(
-        'lib/core/data/services/medication_notifier.dart',
+        'lib/features/medication/data/services/medication_notifier.dart',
       );
       final content = await file.readAsString();
       // 应调无参版: Strings.notifMedicationBody()

@@ -1,3 +1,93 @@
+## [1.1.0+179 R126 续 (R110 feature-first 阶段 2 续 step 7) — medication 1 commit 整包 完整迁移, 4/4 = 100% 收官] - 2026-08-18 (R110 阶段 2 续 4 feature 最后 1 个 1 feature 完整迁移, 39 file 端到端 + 39 旧 path re-export + 9 test 适配, R110 阶段 2 续 4/4 = 100% 收官)
+
+### Changed (R126 续 step 7 medication 1 commit 整包)
+- **新增 `lib/features/medication/`** (1 feature 完整 3 子目录, 39 file 端到端):
+  - **4 domain file**: 3 entity (MedicationEntity 13 字段 + MedicationDraft + MedicationForm enum) + 1 abstract (MedicationRepository 7 method)
+  - **7 data file**: 1 impl (MedicationRepositoryImpl) + 2 mapper (medication_mapper + medication_times) + 1 table (medications drift) + 3 service (medication_notifier + medication_report_pdf + medication_report_pdf_layout)
+  - **28 presentation file**: 4 page (medication_page + medication_detail_page + medication_calendar_page + add_medication_page) + 3 sub-page (add_medication_submit_flow + refill_manage_page + today_med_schedule) + 21 widget
+- **39 旧 path 改 1 行 re-export** (跟 R125 阶段 1 + R126 续 step 4/5/6 模式一致):
+  - 4 domain: lib/domain/{entities,repositories}/medication_*.dart
+  - 7 data: lib/core/data/{database/tables/medication,database/mappers/medication,repositories/medication,services}/medication_*.dart
+  - 28 presentation: lib/presentation/pages/medication/{,widgets/}medication_*.dart
+  - 旧 file body 改 `export 'package:chroniccare/features/medication/...'` 1 行, 现有用户 import 旧 path 仍 work
+
+### R110 阶段 2 续 4 feature 完整迁移 4/4 = 100% 收官 🎉
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 1.1.0+176)
+- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 1.1.0+177)
+- ✅ R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 1.1.0+178)
+- ✅ **R126 续 step 7 medication (1 commit 整包, 39 file 端到端, 1.1.0+179) — 本批**
+- **4 commit 累计 125 file 端到端 (27 + 40 + 19 + 39) + 125 旧 path re-export + 33 test 适配 + 2 守门员适配**
+- **lib/features/ 顶层 5 feature: daily_tracking (R125 阶段 1 1 sub_table) + assessment + mood + vent + medication (4 commit 1 feature 完整)**
+
+### medication_notifier 跨 notification_service 协同
+- **medication_notifier** 迁 features/medication/data/services/ — 跨 notification_service + reminder_dispatcher (留 core/)
+- 公开 API 完整保留, 0 break widget 端
+
+### medication_report_pdf PDF 特殊排版
+- **medication_report_pdf + medication_report_pdf_layout** 迁 features/medication/data/services/ — PDF 字体特殊, R95 lock-in baseline 修真豁免 (跟 assessment + R95 lock-in 修真豁免规则一致)
+
+### 跨域 import 处理 (跨 feature 共享留 R128 阶段 4)
+- 4 domain + 7 data + 28 presentation 内 file 跨域引用全部是 core 共享层 (留 core/ 跨层):
+  - `domain/entities/check_in_entity` (跨 check_in 留 core/)
+  - `domain/entities/dosage_unit` + `domain/entities/hour_minute` (跨 logic 留 core/)
+  - `domain/logic/medication_page_stats_calculator` + `domain/logic/medication_slot_calculator` (跨 logic 留 core/)
+  - `domain/logic/medication_report` (跨 logic 留 core/)
+  - `core/shared/formatters` + `core/theme/app_tokens` (跨层 留 core)
+  - `core/data/services/notification_payload` + `reminder_dispatcher` (跨 notification 留 core)
+  - `core/data/services/pii_safe_log` (跨 5 厂商 push 留 core)
+- 0 features 跨 feature 引用 (R128 阶段 4 抽 core/platform/ umbrella 处理)
+
+### 新增测试 (R126 续 step 7 medication)
+- **`test/core/data/feature_first_migration_split_round126_step7_test.dart`** (新增 12 case):
+  - features/medication/ 目录结构 3 子目录
+  - medication 4 domain file 端到端 (3 entity + 1 abstract)
+  - medication 7 data file 端到端 (1 impl + 2 mapper + 1 table + 3 service)
+  - medication 28 presentation file 端到端 (4 page + 3 sub-page + 21 widget)
+  - 39 file 端到端 全部存在
+  - 39 旧 path 全部 re-export (1 行 export 新 path)
+  - 旧 path import 仍 work (现有用户 0 改动)
+  - 跨 feature import 边界 0 违规 (features/medication 不引用其他 features/)
+  - 业务方法 0 break (MedicationEntity 13 字段 + MedicationRepository 7 method 跟旧版一致)
+  - medication_notifier 公开 API 完整 (跟 notification_service 桥)
+  - R95 lock-in baseline 协同 (features/medication/presentation ≤ 2 raw EdgeInsets 数字, medication_calendar_grid + add_medication_step3_form 历史 baseline 已知 2 处, 留 R31+ 跨期修真)
+  - R110 阶段 2 续 step 7 medication 1 commit 整包 1 feature 完整迁移 收官 (features/ 5 feature: daily_tracking + assessment + medication + mood + vent, 4/4 100% 收官)
+
+### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
+- **`test/core/l10n/strings_notif_body_round108_test.dart`** 1 case 适配: medication_notifier 改读新 path
+- **`test/core/theme/app_tokens_lock_in_round95_test.dart`** 1 case 适配: medication_report_pdf_layout 改读新 path
+- **`test/core/data/feature_first_migration_split_round126_step4/5/6_test.dart`** 3 case 改: features/ 期望 4 → 5 feature (assessment + daily_tracking + medication + mood + vent)
+- **`test/domain/logic/medication_slot_calculator_round108_test.dart`** 2 case 适配: medication_page 改读新 path
+- **`test/presentation/pages/home/home_footer_fade_gating_round114_test.dart`** 1 case 适配: medication_calendar_grid 改读新 path
+
+### R126 续 step 7 关键设计
+- **R110 阶段 2 续 4 feature 完整迁移 4/4 = 100% 收官**: R126 续 step 4 评估 (27 file) + R126 续 step 5 mood (40 file) + R126 续 step 6 vent (19 file) 走 1 feature 完整迁移模式, 本批 medication 走 1 feature 完整 39 file 端到端 (含 presentation 28 file + medication_notifier 跨 notification + medication_report_pdf PDF 特殊排版)
+- **业务方法 0 break**: MedicationEntity 13 字段 (id / name / dosage / dosageUnit / times / startDate / endDate / isActive / refillAt / refillReminderDays / form / colorIndex / notes) + MedicationRepository 7 method (watchAll / watchAllIncludingInactive / add / update / setActive / delete / updateRefill) 跟旧版完全一致, 旧 widget 端 0 改动
+- **medication_notifier 跨 notification_service 桥**: 跨 notification 跟 reminder_dispatcher 留 core/ 共享层, 公开 API 完整保留
+- **medication_report_pdf PDF 特殊排版**: PDF 字体特殊, R95 lock-in baseline 修真豁免 (跟 assessment + R95 lock-in 修真豁免规则一致)
+- **跨域引用全部留 core/ 共享层**: 0 features 跨 feature 引用, R128 阶段 4 抽 core/platform/ umbrella 处理
+- **39 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../medication_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
+- **R95 修真 baseline 接受 ≤ 2**: features/medication/presentation 28 file 修真有效, medication_calendar_grid (1 处 EdgeInsets.all(1)) + add_medication_step3_form (1 处 EdgeInsets.all(3)) 修真漏 (R31+ 跨期修真已知), 接受 ≤ 2 raw, 不影响 R126 续 step 7 1 commit 推完
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning (459 info-level, 跟 R126 续 step 6 baseline 458 + 1 trailing comma 一致)
+- `flutter test`: **2728 pass / 0 fail / 1 skip** (R126 续 step 6 baseline 2716 + R126 续 step 7 新 test 12 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- 22 .py 守门员: 14 OK + 6 跨期已知 warning, 0 R126 续 step 7 引入新违规
+- `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ 5/5 feature 完整迁移 100% 收官 (daily_tracking 1 sub_table 阶段 1 + 4 feature 阶段 2 续 1 commit 整包 5 file 端到端)
+
+### R110 阶段 2 续 4 feature 迁移进度 (4/4 = 100% 收官) 🎉
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation)
+- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修真 baseline ≤ 2)
+- ✅ R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修真 0 violation)
+- ✅ **R126 续 step 7 medication (1 commit 整包, 39 file 端到端, 业务方法 0 break, medication_notifier 跨 notification + medication_report_pdf PDF 特殊排版, R95 修真 baseline ≤ 2) — 本批**
+
+### 下一站 R127 阶段 3 pub workspace 3 package 拆分
+- `packages/chroniccare_core/` (5 umbrella: theme/routing/l10n/shared/platform)
+- `packages/chroniccare_features_mood/` (试点 1 feature)
+- `packages/chroniccare_app/` (app shell: main.dart + app.dart)
+- 3 package 互依赖, 编译依赖减轻 ~40%
+- 1 周真实工作
+
 ## [1.1.0+178 R126 续 (R110 feature-first 阶段 2 续 step 6) — vent 1 commit 整包 完整迁移] - 2026-08-18 (R110 阶段 2 续 3rd 跨 presentation 1 feature 完整迁移, 19 file 端到端 + 19 旧 path re-export + 12 test 适配)
 
 ### Changed (R126 续 step 6 vent 1 commit 整包)

@@ -257,7 +257,7 @@ void main() {
         'medication_report_pdf_layout.dart 仍含 literal fontSize (PDF 字体特殊, 不修真)',
         () {
       final file = File(
-        'lib/core/data/services/medication_report_pdf_layout.dart',
+        'lib/features/medication/data/services/medication_report_pdf_layout.dart',
       );
       expect(file.existsSync(), true);
       final content = file.readAsStringSync();

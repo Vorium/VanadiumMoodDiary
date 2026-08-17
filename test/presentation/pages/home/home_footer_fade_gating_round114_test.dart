@@ -100,7 +100,7 @@ void main() {
 
     test('medication_calendar_grid 行 FadeIn duration: durFast', () async {
       final src = await read(
-        'presentation/pages/medication/widgets/medication_calendar_grid.dart',
+        'features/medication/presentation/pages/medication/widgets/medication_calendar_grid.dart',
       );
       expect(src.contains('duration: AppTokens.durFast'), isTrue);
     });

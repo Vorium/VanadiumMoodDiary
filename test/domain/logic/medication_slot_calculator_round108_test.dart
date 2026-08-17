@@ -158,7 +158,7 @@ void main() {
       // 静态分析 medication_page.dart, 验证 _TimeSlot enum 已删, 改用
       // MedicationTimeSlot (R108 P1 medication_page 拆 防回退)。
       final file =
-          File('lib/presentation/pages/medication/medication_page.dart');
+          File('lib/features/medication/presentation/pages/medication/medication_page.dart');
       medicationPageContent = await file.readAsString();
     });
 
