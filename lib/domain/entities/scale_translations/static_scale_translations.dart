@@ -24,7 +24,9 @@
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/gad7_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/isi_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/pss_translations.dart';
 
 /// 静态中文 fallback (老 caller / 单测 / domain 0 flutter 边界)
 class StaticScaleTranslations implements ScaleTranslations {
@@ -33,9 +35,12 @@ class StaticScaleTranslations implements ScaleTranslations {
   // v1.1.0 R118 (god class 拆 P2-7): composition 委托 10 个量表到独立 class
   // 阶段 1: PHQ-9 → Phq9Translations (R118 round 1)
   // 阶段 2: GAD-7 → Gad7Translations (R118 round 2)
-  // 阶段 3-5: 拆其他 8 个 (ISI/PSS/WHODAS/Level2x4/ASRM)
+  // 阶段 3: ISI + PSS → IsiTranslations + PssTranslations (R118 round 3)
+  // 阶段 4-5: 拆 WHODAS + 4 个 Level2 + ASRM
   static const _phq9 = Phq9Translations();
   static const _gad7 = Gad7Translations();
+  static const _isi = IsiTranslations();
+  static const _pss = PssTranslations();
 
   // === PHQ-9 7 method 委托 (R118 P2-7 阶段 1) ===
   @override
@@ -93,6 +98,62 @@ class StaticScaleTranslations implements ScaleTranslations {
   String gad7SeveritySummary(int rank, {String? override}) =>
       _gad7.gad7SeveritySummary(rank, override: override);
 
+  // === ISI 7 method 委托 (R118 P2-7 阶段 3) ===
+  @override
+  String isiName({String? override}) => _isi.isiName(override: override);
+
+  @override
+  String isiShortDescription({String? override}) =>
+      _isi.isiShortDescription(override: override);
+
+  @override
+  String isiInstruction({String? override}) =>
+      _isi.isiInstruction(override: override);
+
+  @override
+  String isiItem(int index, {String? override}) =>
+      _isi.isiItem(index, override: override);
+
+  @override
+  String isiOption(int score, {String? override}) =>
+      _isi.isiOption(score, override: override);
+
+  @override
+  String isiSeverityLabel(int rank, {String? override}) =>
+      _isi.isiSeverityLabel(rank, override: override);
+
+  @override
+  String isiSeveritySummary(int rank, {String? override}) =>
+      _isi.isiSeveritySummary(rank, override: override);
+
+  // === PSS 7 method 委托 (R118 P2-7 阶段 3) ===
+  @override
+  String pssName({String? override}) => _pss.pssName(override: override);
+
+  @override
+  String pssShortDescription({String? override}) =>
+      _pss.pssShortDescription(override: override);
+
+  @override
+  String pssInstruction({String? override}) =>
+      _pss.pssInstruction(override: override);
+
+  @override
+  String pssItem(int index, {String? override}) =>
+      _pss.pssItem(index, override: override);
+
+  @override
+  String pssOption(int score, {String? override}) =>
+      _pss.pssOption(score, override: override);
+
+  @override
+  String pssSeverityLabel(int rank, {String? override}) =>
+      _pss.pssSeverityLabel(rank, override: override);
+
+  @override
+  String pssSeveritySummary(int rank, {String? override}) =>
+      _pss.pssSeveritySummary(rank, override: override);
+
   @override
   String crisisHotlineLabel(
     HotlineRegion region, {
@@ -130,148 +191,7 @@ class StaticScaleTranslations implements ScaleTranslations {
   // 跟 const class 同步: 重构量表题目 / 严重度档名时, 这里同步改。
   // ============================================================
 
-  // ---- ISI (Morin 1993) ----
-  static const _isiItemsZh = [
-    '入睡困难程度',
-    '维持睡眠困难程度 (夜间醒来)',
-    '早醒问题程度',
-    '对当前睡眠模式的满意度',
-    '睡眠问题对日常功能的影响程度',
-    '睡眠问题在他人眼中明显的程度',
-    '对当前睡眠问题的担忧 / 痛苦程度',
-  ];
-
-  static const _isiOptionsZh = {
-    0: '无',
-    1: '轻度',
-    2: '中度',
-    3: '重度',
-    4: '极重度',
-  };
-
-  static const _isiSeverityLabelZh = [
-    '无失眠',
-    '阈下失眠',
-    '中度失眠',
-    '重度失眠',
-  ];
-
-  static const _isiSeveritySummaryZh = [
-    '无临床失眠',
-    '亚临床失眠, 建议关注',
-    '中度失眠, 建议就医',
-    '重度失眠, 强烈建议就医',
-  ];
-
-  @override
-  String isiName({String? override}) => override ?? 'ISI 失眠严重指数';
-
-  @override
-  String isiShortDescription({String? override}) =>
-      override ?? 'Morin 1993 失眠严重指数 7 题';
-
-  @override
-  String isiInstruction({String? override}) =>
-      override ?? '过去 2 周内, 您的睡眠问题有多严重?';
-
-  @override
-  String isiItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _isiItemsZh.length) return '';
-    return _isiItemsZh[index];
-  }
-
-  @override
-  String isiOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _isiOptionsZh[score] ?? '';
-  }
-
-  @override
-  String isiSeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _isiSeverityLabelZh.length) return '';
-    return _isiSeverityLabelZh[rank];
-  }
-
-  @override
-  String isiSeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _isiSeveritySummaryZh.length) return '';
-    return _isiSeveritySummaryZh[rank];
-  }
-
-  // ---- PSS (Cohen 1983) ----
-  static const _pssItemsZh = [
-    '因为意外发生的事情而感到心烦意乱',
-    '感到无法控制生活中重要的事情',
-    '感到紧张和有压力',
-    '自信能处理好个人问题 (反向)',
-    '感到事情在按您期望的方向发展 (反向)',
-    '发现自己无法应对必须完成的事情',
-    '能控制生活中的烦人事 (反向)',
-    '感到自己能掌控一切 (反向)',
-    '因为无法控制的事情而恼火',
-    '感到困难堆积得无法克服',
-  ];
-
-  static const _pssOptionsZh = {
-    0: '从未',
-    1: '几乎不',
-    2: '有时',
-    3: '经常',
-    4: '总是',
-  };
-
-  static const _pssSeverityLabelZh = [
-    '低压力',
-    '中度压力',
-    '高压力',
-  ];
-
-  static const _pssSeveritySummaryZh = [
-    '低压力',
-    '中度压力',
-    '高压力, 建议关注和寻求支持',
-  ];
-
-  @override
-  String pssName({String? override}) => override ?? 'PSS 压力量表';
-
-  @override
-  String pssShortDescription({String? override}) =>
-      override ?? 'Cohen 1983 压力量表 (10 题, 含 4 题反向)';
-
-  @override
-  String pssInstruction({String? override}) =>
-      override ?? '过去 1 个月里, 您有多经常有下列感受?';
-
-  @override
-  String pssItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _pssItemsZh.length) return '';
-    return _pssItemsZh[index];
-  }
-
-  @override
-  String pssOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _pssOptionsZh[score] ?? '';
-  }
-
-  @override
-  String pssSeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _pssSeverityLabelZh.length) return '';
-    return _pssSeverityLabelZh[rank];
-  }
-
-  @override
-  String pssSeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _pssSeveritySummaryZh.length) return '';
-    return _pssSeveritySummaryZh[rank];
-  }
+  // ---- ISI + PSS 段抽到 isi_translations.dart + pss_translations.dart (R118 P2-7 阶段 3) ----
 
   // ---- WHODAS 2.0 (WHO 12 题简化) ----
   static const _whodasItemsZh = [
@@ -714,6 +634,6 @@ class StaticScaleTranslations implements ScaleTranslations {
     return _level2PsychosisSeveritySummaryZh[rank];
   }
 }
-// rule3-whitelist: 110, 114, 135-141, 145-149, 153-156, 160-163, 167, 171, 175, 206-215, 219-223, 227-229, 233-235, 239, 243, 247, 278-289, 293-297, 301-305, 309-313, 317, 321, 325, 356-363, 367-370, 374-377, 381-384, 389, 393, 397, 432-438, 442-445, 449-452, 456-459, 464, 468, 472, 503-507, 511-514, 518-521, 525-528, 533, 537, 541, 572-576, 580-584, 588-592, 596-600, 604, 608, 612, 643-650, 654-657, 661-664, 668-671, 676, 680, 684
+// rule3-whitelist: 171, 175, 198-209, 213-217, 221-225, 229-233, 237, 241, 245, 276-283, 287-290, 294-297, 301-304, 309, 313, 317, 352-358, 362-365, 369-372, 376-379, 384, 388, 392, 423-427, 431-434, 438-441, 445-448, 453, 457, 461, 492-496, 500-504, 508-512, 516-520, 524, 528, 532, 563-570, 574-577, 581-584, 588-591, 596, 600, 604
 //   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
 //   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
