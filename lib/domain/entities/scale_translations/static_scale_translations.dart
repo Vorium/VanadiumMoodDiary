@@ -25,6 +25,8 @@ import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/gad7_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/isi_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/level2_anxiety_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/level2_depression_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/pss_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/whodas_translations.dart';
@@ -38,12 +40,15 @@ class StaticScaleTranslations implements ScaleTranslations {
   // 阶段 2: GAD-7 → Gad7Translations (R118 round 2)
   // 阶段 3: ISI + PSS → IsiTranslations + PssTranslations (R118 round 3)
   // 阶段 4: WHODAS → WhodasTranslations (R118 round 4)
-  // 阶段 5: 拆 4 个 Level2 + ASRM
+  // 阶段 5: Level2 Depression + Anxiety (R118 round 5)
+  // 阶段 6-7: 拆 Level2 Mania + Psychosis + ASRM
   static const _phq9 = Phq9Translations();
   static const _gad7 = Gad7Translations();
   static const _isi = IsiTranslations();
   static const _pss = PssTranslations();
   static const _whodas = WhodasTranslations();
+  static const _level2Depression = Level2DepressionTranslations();
+  static const _level2Anxiety = Level2AnxietyTranslations();
 
   // === PHQ-9 7 method 委托 (R118 P2-7 阶段 1) ===
   @override
@@ -185,6 +190,64 @@ class StaticScaleTranslations implements ScaleTranslations {
   String whodasSeveritySummary(int rank, {String? override}) =>
       _whodas.whodasSeveritySummary(rank, override: override);
 
+  // === Level2 Depression 7 method 委托 (R118 P2-7 阶段 5) ===
+  @override
+  String level2DepressionName({String? override}) =>
+      _level2Depression.level2DepressionName(override: override);
+
+  @override
+  String level2DepressionShortDescription({String? override}) =>
+      _level2Depression.level2DepressionShortDescription(override: override);
+
+  @override
+  String level2DepressionInstruction({String? override}) =>
+      _level2Depression.level2DepressionInstruction(override: override);
+
+  @override
+  String level2DepressionItem(int index, {String? override}) =>
+      _level2Depression.level2DepressionItem(index, override: override);
+
+  @override
+  String level2DepressionOption(int score, {String? override}) =>
+      _level2Depression.level2DepressionOption(score, override: override);
+
+  @override
+  String level2DepressionSeverityLabel(int rank, {String? override}) =>
+      _level2Depression.level2DepressionSeverityLabel(rank, override: override);
+
+  @override
+  String level2DepressionSeveritySummary(int rank, {String? override}) =>
+      _level2Depression.level2DepressionSeveritySummary(rank, override: override);
+
+  // === Level2 Anxiety 7 method 委托 (R118 P2-7 阶段 5) ===
+  @override
+  String level2AnxietyName({String? override}) =>
+      _level2Anxiety.level2AnxietyName(override: override);
+
+  @override
+  String level2AnxietyShortDescription({String? override}) =>
+      _level2Anxiety.level2AnxietyShortDescription(override: override);
+
+  @override
+  String level2AnxietyInstruction({String? override}) =>
+      _level2Anxiety.level2AnxietyInstruction(override: override);
+
+  @override
+  String level2AnxietyItem(int index, {String? override}) =>
+      _level2Anxiety.level2AnxietyItem(index, override: override);
+
+  @override
+  String level2AnxietyOption(int score, {String? override}) =>
+      _level2Anxiety.level2AnxietyOption(score, override: override);
+
+  @override
+  String level2AnxietySeverityLabel(int rank, {String? override}) =>
+      _level2Anxiety.level2AnxietySeverityLabel(rank, override: override);
+
+  @override
+  String level2AnxietySeveritySummary(int rank, {String? override}) =>
+      _level2Anxiety.level2AnxietySeveritySummary(rank, override: override);
+
   @override
   String crisisHotlineLabel(
     HotlineRegion region, {
@@ -226,152 +289,8 @@ class StaticScaleTranslations implements ScaleTranslations {
 
   // ---- WHODAS 段抽到 whodas_translations.dart (R118 P2-7 阶段 4) ----
 
-  // ---- DSM-5 Level 2 抑郁严重度 (PROMIS 简化) ----
-  static const _level2DepressionItemsZh = [
-    '感到心情低落',
-    '感到没有希望',
-    '感到自己很失败',
-    '对任何事都提不起兴趣',
-    '感到自己毫无价值',
-    '感到内疚或羞耻',
-    '感到无助',
-    '觉得生活没有意义',
-  ];
-
-  static const _level2DepressionOptionsZh = {
-    0: '完全没有',
-    1: '几天',
-    2: '一半以上的天数',
-    3: '几乎每天',
-  };
-
-  static const _level2DepressionSeverityLabelZh = [
-    '无抑郁',
-    '轻度抑郁',
-    '中度抑郁',
-    '重度抑郁',
-  ];
-
-  static const _level2DepressionSeveritySummaryZh = [
-    '无抑郁倾向',
-    '轻度抑郁倾向',
-    '中度抑郁, 建议就医',
-    '重度抑郁, 强烈建议就医',
-  ];
-
-  @override
-  String level2DepressionName({String? override}) =>
-      override ?? 'DSM-5 Level 2 抑郁严重度';
-
-  @override
-  String level2DepressionShortDescription({String? override}) =>
-      override ?? '成人抑郁严重度 8 题 (DSM-5 PROMIS 简化版)';
-
-  @override
-  String level2DepressionInstruction({String? override}) =>
-      override ?? '过去 7 天内, 您有多经常被以下情绪困扰?';
-
-  @override
-  String level2DepressionItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _level2DepressionItemsZh.length) return '';
-    return _level2DepressionItemsZh[index];
-  }
-
-  @override
-  String level2DepressionOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _level2DepressionOptionsZh[score] ?? '';
-  }
-
-  @override
-  String level2DepressionSeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2DepressionSeverityLabelZh.length) {
-      return '';
-    }
-    return _level2DepressionSeverityLabelZh[rank];
-  }
-
-  @override
-  String level2DepressionSeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2DepressionSeveritySummaryZh.length) {
-      return '';
-    }
-    return _level2DepressionSeveritySummaryZh[rank];
-  }
-
-  // ---- DSM-5 Level 2 焦虑严重度 (PROMIS 简化) ----
-  static const _level2AnxietyItemsZh = [
-    '感到紧张',
-    '感到担心',
-    '感到烦躁不安',
-    '感到害怕',
-    '感到惊慌',
-    '感到坐立不安',
-    '感到难以放松',
-  ];
-
-  static const _level2AnxietyOptionsZh = {
-    0: '完全没有',
-    1: '几天',
-    2: '一半以上的天数',
-    3: '几乎每天',
-  };
-
-  static const _level2AnxietySeverityLabelZh = [
-    '无焦虑',
-    '轻度焦虑',
-    '中度焦虑',
-    '重度焦虑',
-  ];
-
-  static const _level2AnxietySeveritySummaryZh = [
-    '无焦虑倾向',
-    '轻度焦虑倾向',
-    '中度焦虑, 建议就医',
-    '重度焦虑, 强烈建议就医',
-  ];
-
-  @override
-  String level2AnxietyName({String? override}) =>
-      override ?? 'DSM-5 Level 2 焦虑严重度';
-
-  @override
-  String level2AnxietyShortDescription({String? override}) =>
-      override ?? '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)';
-
-  @override
-  String level2AnxietyInstruction({String? override}) =>
-      override ?? '过去 7 天内, 您有多经常被以下感受困扰?';
-
-  @override
-  String level2AnxietyItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _level2AnxietyItemsZh.length) return '';
-    return _level2AnxietyItemsZh[index];
-  }
-
-  @override
-  String level2AnxietyOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _level2AnxietyOptionsZh[score] ?? '';
-  }
-
-  @override
-  String level2AnxietySeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2AnxietySeverityLabelZh.length) return '';
-    return _level2AnxietySeverityLabelZh[rank];
-  }
-
-  @override
-  String level2AnxietySeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2AnxietySeveritySummaryZh.length) return '';
-    return _level2AnxietySeveritySummaryZh[rank];
-  }
+  // ---- Level2 Depression + Anxiety 段抽到 level2_depression_translations.dart
+  //      + level2_anxiety_translations.dart (R118 P2-7 阶段 5) ----
 
   // ---- DSM-5 Level 2 躁狂严重度 (PROMIS 简化) ----
   static const _level2ManiaItemsZh = [
@@ -589,6 +508,6 @@ class StaticScaleTranslations implements ScaleTranslations {
     return _level2PsychosisSeveritySummaryZh[rank];
   }
 }
-// rule3-whitelist: 202, 206, 231-238, 242-245, 249-252, 256-259, 264, 268, 272, 307-313, 317-320, 324-327, 331-334, 339, 343, 347, 378-382, 386-389, 393-396, 400-403, 408, 412, 416, 447-451, 455-459, 463-467, 471-475, 479, 483, 487, 518-525, 529-532, 536-539, 543-546, 551, 555, 559
+// rule3-whitelist: 265, 269, 297-301, 305-308, 312-315, 319-322, 327, 331, 335, 366-370, 374-378, 382-386, 390-394, 398, 402, 406, 437-444, 448-451, 455-458, 462-465, 470, 474, 478
 //   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
 //   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
