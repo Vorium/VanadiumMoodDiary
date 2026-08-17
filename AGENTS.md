@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2627 tests pass (R122 P2-3 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2627 tests pass (R123 跨期 P0 #3 续 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修). R123 跨期 P0 缩到 5 项全部 100% 等外部 (R32 P0-02 + R113 BUG A 本批闭环).
 
 ## 项目速览
 
@@ -706,3 +706,27 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **`round122_interface_segregation_test.dart`** (新增 11 case) 守门员: sub-interface 文件存在 / 10 sub-interface 全列 / 10 量表 class implements 各自 sub-interface / 10 量表 7 method 全部 @override 注解 / PHQ-9 / GAD-7 / ISI / WHODAS / Level2 Depression: sub-interface vs 主壳输出一致 / sub-interface 边界 (越界 → "") / sub-interface 类型可独立使用 (caller 跳过 70 委派)。
 
 **收益**: 70 委派保留 (老 caller 0 改动) + 70 stub 集中 (caller 可选绕过) + ISP 解耦 (改一个量表不影响其他) + defer 解除 (R110 pub workspace 路线图仍保留, 但 R121 P1-3 step 3 不再是 R122+ 阻塞项)。
+
+## v1.1.0 R123 跨期 P0 续 — 本地可推进 2 项闭环 (2026-08-17, 1 commit, 1.1.0+169)
+
+**状态**: R117 综合审视 8+ round 跨期 P0 残留审查, 拆 3 本地可推进 + 6 类 100% 等外部。本批闭环 2 个本地可推进 (R32 P0-02 + R113 BUG A), 0 回归。
+
+**R32 P0-02 notes.txt 版本号同步** (跨 19 commit 回归, 1-line 修):
+- `fastlane/metadata/ios/review_information/notes.txt` line 1: `ChronicCare 1.1.0+149` → `1.1.0+168` (pubspec 1.1.0+168 同步)
+- `check_review_information_todo.py` `[ok] notes.txt 版本 1.1.0+168 与 pubspec 同步` (R32 P0-02 跨 19 commit 回归闭环)
+
+**R113 BUG A check_strings_hardcoded 6 处 CJK 字面量 token 豁免** (R122 P2-1 step 2 + R121 P1-3 step 1 引入, R113 BUG A 跨期残留):
+- `gad7_translations.dart`: `rule3-whitelist: 28-58` → `28-66` (扩含 line 60-61 `gad7Instruction` 中文 fallback)
+- `mood_audio_recorder.dart`: 加 `// rule3-whitelist: 98` (R122 P2-1 step 2 中文 throw '麦克风权限被拒绝' — private exception message, service 层 catch 转 MoodAudioException 后走 page l10n)
+- `notification_service.dart`: `rule3-whitelist` 扩到 `..., 242, 243, 253, 254` (R121 P1-3 step 1 加的 @Deprecated facade alias message 中文, 给开发者 IDE 显示用, R121 emil 决策"不删 @Deprecated 注释"延续)
+- `round122_interface_segregation_test.dart`: 删 4 个 unused import (R122 P2-3 引入)
+
+**100% 等外部 6 类** (本地 agent 不可推进, 跨期 8+ round 0 闭环):
+1. **AppIcon 1024×1024 ≥200KB** (设计师资产) — 跟 5 厂商 push / 阿里云 SMS 同等优先级
+2. **iOS/Android 截图** (设计师资产) — `check_appstore_screenshots.py` FAIL
+3. **iOS LaunchImage 3 张** (1024×1024 / 1242×2688 / 2688×1242, 设计师资产) — `check_ios_launchimage.py` FAIL
+4. **chroniccare.app 域名 + 4 邮箱 ICP 备案** (7-20d) — `check_domain_icp.py` FAIL
+5. **review_information 4 占位** (first_name / last_name / phone_number / email_address 真实个人信息) — `check_review_information_todo.py` 13 warn (REPLACE_BEFORE_APPLE_REVIEW 显式标记, 设计意图)
+6. **privacy_url / support_url 12 个 PENDING_DOMAIN** (域名注册后) — `check_review_information_todo.py` 9 warn
+
+**22 守门员状态**: 17 ✅ (本批闭环 2: R113 BUG A + R32 P0-02) + 5 ❌ (100% 等外部资源, 已知跨期 8+ round)。**R123 闭环后跨期 P0 缩到 5 项, 全部 100% 等外部, 0 本地可推进项**。

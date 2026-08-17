@@ -19,15 +19,10 @@ import 'dart:io';
 
 import 'package:chroniccare/domain/entities/scale_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
-import 'package:chroniccare/domain/entities/scale_translations/asrm_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/gad7_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/isi_translations.dart';
-import 'package:chroniccare/domain/entities/scale_translations/level2_anxiety_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/level2_depression_translations.dart';
-import 'package:chroniccare/domain/entities/scale_translations/level2_mania_translations.dart';
-import 'package:chroniccare/domain/entities/scale_translations/level2_psychosis_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
-import 'package:chroniccare/domain/entities/scale_translations/pss_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/whodas_translations.dart';
 import 'package:flutter_test/flutter_test.dart';
 

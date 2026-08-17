@@ -17,7 +17,7 @@ import 'package:chroniccare/domain/entities/scale_translations/_scale_translatio
 ///
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
-// rule3-whitelist: 28-58
+// rule3-whitelist: 28-66
 class Gad7Translations implements Gad7TranslationsInterface {
   const Gad7Translations();
 

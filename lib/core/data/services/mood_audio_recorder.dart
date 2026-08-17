@@ -11,6 +11,11 @@
 // pause / resume / cancel / dispose) + 4 getter (isRecording / isPaused /
 // recordingElapsed / tempRecordPath) + 1 callback (onMaxReached 触发
 // service 层 stopRecording auto-stop)
+//
+// R123 (跨期 P0 #3 续): MoodAudioRecorderException 中文 fallback
+// 是 service 层 catch 转 MoodAudioException 后走 page l10n 翻译, 本地
+// 异常 message 保持中文即可 (仅作为日志/调试信号, 不显示给用户)。
+// rule3-whitelist: 98 (R113 BUG A 精确豁免 token, line 98 中文 throw 豁免)
 
 import 'dart:async';
 import 'dart:io';

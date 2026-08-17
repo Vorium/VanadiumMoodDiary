@@ -1,3 +1,37 @@
+## [1.1.0+169 R123 跨期 P0 续 — 本地可推进 2 项闭环] - 2026-08-17 (R32 P0-02 notes.txt 同步 + R113 BUG A 6 处 CJK 字面量 token 豁免, 0 回归)
+
+### 跨期 P0 #3 续 审查 (R117 综合审视 8+ round 跨期残留)
+
+**本地可推进 3 类**:
+- ✅ R32 P0-02 notes.txt 版本号同步 (跨 19 commit 回归, 1-line 修)
+- ✅ R113 BUG A check_strings_hardcoded 6 处 CJK 字面量 (R122 P2-1 step 2 + R121 P1-3 step 1 引入, R113 BUG A 跨期残留)
+- ⚠️ review_information.txt / description.txt 缺失 — 部分本地可 (description.txt 业务内容 + review 占位), 1.1.0 round 12 守门员 13 warn 提示
+
+**100% 等外部 6 类** (本地 agent 不可推进, 跨期 8+ round 0 闭环):
+- AppIcon 1024×1024 ≥200KB (设计师资产)
+- iOS/Android 截图 (设计师资产)
+- iOS LaunchImage 3 张 1024×1024 / 1242×2688 / 2688×1242 (设计师资产)
+- chroniccare.app 域名 + 4 邮箱 ICP 备案 (7-20d)
+- review_information 4 占位 (first_name / last_name / phone_number / email_address 真实个人信息)
+- privacy_url / support_url 12 个 PENDING_DOMAIN (域名注册后)
+
+### Changed (R123 跨期 P0 续)
+- **notes.txt 版本号同步** (R32 P0-02 闭环):
+  - `fastlane/metadata/ios/review_information/notes.txt` line 1: `ChronicCare 1.1.0+149` → `1.1.0+168`
+  - pubspec 1.1.0+168 同步, check_review_information_todo.py `[ok] notes.txt 版本 1.1.0+168 与 pubspec 同步`
+- **check_strings_hardcoded R113 BUG A 6 处豁免**:
+  - `lib/domain/entities/scale_translations/gad7_translations.dart`: `rule3-whitelist: 28-58` → `28-66` (扩含 line 60-61 `gad7Instruction` 中文 fallback)
+  - `lib/core/data/services/mood_audio_recorder.dart`: 加 `// rule3-whitelist: 98` (R122 P2-1 step 2 中文 throw '麦克风权限被拒绝' — private exception message, service 层 catch 转 MoodAudioException 后走 page l10n)
+  - `lib/core/data/services/notification_service.dart`: `rule3-whitelist: 137, 193, 207, 215-216` → `137, 193, 207, 215-216, 242, 243, 253, 254` (R121 P1-3 step 1 加的 @Deprecated facade alias message 中文, 给开发者 IDE 显示用, R121 emil 决策"不删 @Deprecated 注释"延续)
+  - `test/domain/entities/scale_translations/round122_interface_segregation_test.dart`: 删 4 个 unused import (R122 P2-3 引入)
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2627 pass / 0 fail / 1 skip** (R122 P2-3 baseline 2627, 0 回归)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- `python3 scripts/check_coverage.py`: 18 gatekeeper 全过
+- 22 守门员状态: 17 ✅ (本批闭环 2: R113 BUG A + R32 P0-02) + 5 ❌ (100% 等外部资源, 已知跨期 8+ round)
+
 ## [1.1.0+168 R122 P2-3 (R121 P1-3 step 3 续) — 10 量表 sub-interface 拆分 (Interface Segregation)] - 2026-08-17 (拆 1 个 70-method interface → 10 个 7-method sub-interface, caller 可跳过 70 委派链, 11 regression test)
 
 ### Changed (R122 P2-3, R121 P1-3 step 3 续)
