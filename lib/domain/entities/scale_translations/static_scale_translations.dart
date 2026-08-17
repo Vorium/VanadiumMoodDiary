@@ -23,6 +23,7 @@
 // 0 flutter / 0 drift / 0 data / 0 presentation, check_all.dart 守门员 0 violation。
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/entities/scale_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/gad7_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
 
 /// 静态中文 fallback (老 caller / 单测 / domain 0 flutter 边界)
@@ -30,8 +31,11 @@ class StaticScaleTranslations implements ScaleTranslations {
   const StaticScaleTranslations();
 
   // v1.1.0 R118 (god class 拆 P2-7): composition 委托 10 个量表到独立 class
-  // 阶段 1: PHQ-9 → Phq9Translations. 阶段 2-5 拆其他 9 个 (GAD-7 + 8 新)。
+  // 阶段 1: PHQ-9 → Phq9Translations (R118 round 1)
+  // 阶段 2: GAD-7 → Gad7Translations (R118 round 2)
+  // 阶段 3-5: 拆其他 8 个 (ISI/PSS/WHODAS/Level2x4/ASRM)
   static const _phq9 = Phq9Translations();
+  static const _gad7 = Gad7Translations();
 
   // === PHQ-9 7 method 委托 (R118 P2-7 阶段 1) ===
   @override
@@ -61,8 +65,33 @@ class StaticScaleTranslations implements ScaleTranslations {
   String phq9SeveritySummary(int rank, {String? override}) =>
       _phq9.phq9SeveritySummary(rank, override: override);
 
+  // === GAD-7 7 method 委托 (R118 P2-7 阶段 2) ===
   @override
-  String gad7Name({String? override}) => override ?? 'GAD-7 焦虑筛查';
+  String gad7Name({String? override}) => _gad7.gad7Name(override: override);
+
+  @override
+  String gad7ShortDescription({String? override}) =>
+      _gad7.gad7ShortDescription(override: override);
+
+  @override
+  String gad7Instruction({String? override}) =>
+      _gad7.gad7Instruction(override: override);
+
+  @override
+  String gad7Item(int index, {String? override}) =>
+      _gad7.gad7Item(index, override: override);
+
+  @override
+  String gad7Option(int score, {String? override}) =>
+      _gad7.gad7Option(score, override: override);
+
+  @override
+  String gad7SeverityLabel(int rank, {String? override}) =>
+      _gad7.gad7SeverityLabel(rank, override: override);
+
+  @override
+  String gad7SeveritySummary(int rank, {String? override}) =>
+      _gad7.gad7SeveritySummary(rank, override: override);
 
   @override
   String crisisHotlineLabel(
@@ -90,66 +119,9 @@ class StaticScaleTranslations implements ScaleTranslations {
   // ============================================================
 
   // ============================================================
-  // GAD-7 中文 fallback
+  // GAD-7 段抽到 gad7_translations.dart (R118 P2-7 阶段 2)
+  // 主壳持 const _gad7 instance, 7 method 委托 (见上)
   // ============================================================
-
-  static const _gad7ItemsZh = [
-    '感到紧张、焦虑或急切',
-    '不能停止或控制担忧',
-    '对各种事情担忧过多',
-    '难以放松',
-    '心情烦躁以至坐不住',
-    '变得容易烦恼或急躁',
-    '感到似乎将有可怕的事情发生而害怕',
-  ];
-
-  static const _gad7SeverityLabelZh = [
-    '几乎没有焦虑',
-    '轻度焦虑',
-    '中度焦虑',
-    '重度焦虑',
-  ];
-
-  static const _gad7SeveritySummaryZh = [
-    '几乎没有焦虑倾向',
-    '轻度焦虑倾向',
-    '中度焦虑倾向',
-    '重度焦虑倾向',
-  ];
-
-  @override
-  String gad7Item(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _gad7ItemsZh.length) return '';
-    return _gad7ItemsZh[index];
-  }
-
-  @override
-  String gad7Option(int score, {String? override}) {
-    // GAD-7 跟 PHQ-9 共享同一套 4 档频率选项 (R19 决策保留)
-    return phq9Option(score, override: override);
-  }
-
-  @override
-  String gad7SeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _gad7SeverityLabelZh.length) return '';
-    return _gad7SeverityLabelZh[rank];
-  }
-
-  @override
-  String gad7SeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _gad7SeveritySummaryZh.length) return '';
-    return _gad7SeveritySummaryZh[rank];
-  }
-
-  @override
-  String gad7Instruction({String? override}) =>
-      override ?? '过去两周内，你有多经常被以下问题困扰？';
-
-  @override
-  String gad7ShortDescription({String? override}) => override ?? '过去两周的焦虑倾向筛查';
 
   // ============================================================
   // v0.30 round 90 (Task 2): 8 新量表中文 fallback
@@ -742,6 +714,6 @@ class StaticScaleTranslations implements ScaleTranslations {
     return _level2PsychosisSeveritySummaryZh[rank];
   }
 }
-// rule3-whitelist: 65, 81, 85, 97-103, 107-110, 114-117, 149, 152, 163-169, 173-177, 181-184, 188-191, 195, 199, 203, 234-243, 247-251, 255-257, 261-263, 267, 271, 275, 306-317, 321-325, 329-333, 337-341, 345, 349, 353, 384-391, 395-398, 402-405, 409-412, 417, 421, 425, 460-466, 470-473, 477-480, 484-487, 492, 496, 500, 531-535, 539-542, 546-549, 553-556, 561, 565, 569, 600-604, 608-612, 616-620, 624-628, 632, 636, 640, 671-678, 682-685, 689-692, 696-699, 704, 708, 712
+// rule3-whitelist: 110, 114, 135-141, 145-149, 153-156, 160-163, 167, 171, 175, 206-215, 219-223, 227-229, 233-235, 239, 243, 247, 278-289, 293-297, 301-305, 309-313, 317, 321, 325, 356-363, 367-370, 374-377, 381-384, 389, 393, 397, 432-438, 442-445, 449-452, 456-459, 464, 468, 472, 503-507, 511-514, 518-521, 525-528, 533, 537, 541, 572-576, 580-584, 588-592, 596-600, 604, 608, 612, 643-650, 654-657, 661-664, 668-671, 676, 680, 684
 //   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
 //   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
