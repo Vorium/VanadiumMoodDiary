@@ -1,3 +1,4 @@
+import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 // v1.1.0 R118 (god class 拆 P2-7 阶段 3): ISI 中文 fallback 独立 class
 //
 // 改前: static_scale_translations.dart 9 量表 inline
@@ -13,7 +14,7 @@
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
 // rule3-whitelist: 24-87
-class IsiTranslations {
+class IsiTranslations implements IsiTranslationsInterface {
   const IsiTranslations();
 
   static const _itemsZh = <String>[
@@ -50,31 +51,38 @@ class IsiTranslations {
 
   // === 7 method (主壳委托调用) ===
 
+  @override
   String isiName({String? override}) => override ?? 'ISI 失眠严重指数';
 
+  @override
   String isiShortDescription({String? override}) =>
       override ?? 'Morin 1993 失眠严重指数 7 题';
 
+  @override
   String isiInstruction({String? override}) =>
       override ?? '过去 2 周内, 您的睡眠问题有多严重?';
 
+  @override
   String isiItem(int index, {String? override}) {
     if (override != null) return override;
     if (index < 0 || index >= _itemsZh.length) return '';
     return _itemsZh[index];
   }
 
+  @override
   String isiOption(int score, {String? override}) {
     if (override != null) return override;
     return _optionsZh[score] ?? '';
   }
 
+  @override
   String isiSeverityLabel(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severityLabelZh.length) return '';
     return _severityLabelZh[rank];
   }
 
+  @override
   String isiSeveritySummary(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severitySummaryZh.length) return '';

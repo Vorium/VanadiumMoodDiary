@@ -1,3 +1,4 @@
+import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 // v1.1.0 R118 (god class 拆 P2-7 阶段 4): WHODAS 中文 fallback 独立 class
 //
 // 改前: static_scale_translations.dart 8 量表 inline (PHQ-9/GAD-7/ISI/PSS 已抽)
@@ -13,7 +14,7 @@
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
 // rule3-whitelist: 24-92
-class WhodasTranslations {
+class WhodasTranslations implements WhodasTranslationsInterface {
   const WhodasTranslations();
 
   static const _itemsZh = <String>[
@@ -57,31 +58,38 @@ class WhodasTranslations {
 
   // === 7 method (主壳委托调用) ===
 
+  @override
   String whodasName({String? override}) => override ?? 'WHODAS 2.0 残疾评定';
 
+  @override
   String whodasShortDescription({String? override}) =>
       override ?? 'WHO 通用残疾评估 12 题简化版';
 
+  @override
   String whodasInstruction({String? override}) =>
       override ?? '过去 30 天内, 您在以下活动中遇到多大困难?';
 
+  @override
   String whodasItem(int index, {String? override}) {
     if (override != null) return override;
     if (index < 0 || index >= _itemsZh.length) return '';
     return _itemsZh[index];
   }
 
+  @override
   String whodasOption(int score, {String? override}) {
     if (override != null) return override;
     return _optionsZh[score] ?? '';
   }
 
+  @override
   String whodasSeverityLabel(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severityLabelZh.length) return '';
     return _severityLabelZh[rank];
   }
 
+  @override
   String whodasSeveritySummary(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severitySummaryZh.length) return '';

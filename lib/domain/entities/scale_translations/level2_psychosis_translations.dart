@@ -1,3 +1,4 @@
+import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 // v1.1.0 R118 (god class 拆 P2-7 阶段 6): Level2 Psychosis 中文 fallback
 //
 // 改前: static_scale_translations.dart 4 量表 inline
@@ -13,7 +14,7 @@
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
 // rule3-whitelist: 24-92
-class Level2PsychosisTranslations {
+class Level2PsychosisTranslations implements Level2PsychosisTranslationsInterface {
   const Level2PsychosisTranslations();
 
   static const _itemsZh = <String>[
@@ -50,26 +51,32 @@ class Level2PsychosisTranslations {
 
   // === 7 method (主壳委托调用) ===
 
+  @override
   String level2PsychosisName({String? override}) =>
       override ?? 'DSM-5 Level 2 精神病性症状';
 
+  @override
   String level2PsychosisShortDescription({String? override}) =>
       override ?? '成人精神病性症状 8 题 (DSM-5 简化版)';
 
+  @override
   String level2PsychosisInstruction({String? override}) =>
       override ?? '过去 7 天内, 您有多经常体验以下情况?';
 
+  @override
   String level2PsychosisItem(int index, {String? override}) {
     if (override != null) return override;
     if (index < 0 || index >= _itemsZh.length) return '';
     return _itemsZh[index];
   }
 
+  @override
   String level2PsychosisOption(int score, {String? override}) {
     if (override != null) return override;
     return _optionsZh[score] ?? '';
   }
 
+  @override
   String level2PsychosisSeverityLabel(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severityLabelZh.length) {
@@ -78,6 +85,7 @@ class Level2PsychosisTranslations {
     return _severityLabelZh[rank];
   }
 
+  @override
   String level2PsychosisSeveritySummary(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severitySummaryZh.length) {

@@ -1,3 +1,4 @@
+import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 // v1.1.0 R118 (god class 拆 P2-7 阶段 3): PSS 中文 fallback 独立 class
 //
 // 改前: static_scale_translations.dart 9 量表 inline
@@ -13,7 +14,7 @@
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
 // rule3-whitelist: 24-87
-class PssTranslations {
+class PssTranslations implements PssTranslationsInterface {
   const PssTranslations();
 
   static const _itemsZh = <String>[
@@ -51,31 +52,38 @@ class PssTranslations {
 
   // === 7 method (主壳委托调用) ===
 
+  @override
   String pssName({String? override}) => override ?? 'PSS 压力量表';
 
+  @override
   String pssShortDescription({String? override}) =>
       override ?? 'Cohen 1983 压力量表 (10 题, 含 4 题反向)';
 
+  @override
   String pssInstruction({String? override}) =>
       override ?? '过去 1 个月里, 您有多经常有下列感受?';
 
+  @override
   String pssItem(int index, {String? override}) {
     if (override != null) return override;
     if (index < 0 || index >= _itemsZh.length) return '';
     return _itemsZh[index];
   }
 
+  @override
   String pssOption(int score, {String? override}) {
     if (override != null) return override;
     return _optionsZh[score] ?? '';
   }
 
+  @override
   String pssSeverityLabel(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severityLabelZh.length) return '';
     return _severityLabelZh[rank];
   }
 
+  @override
   String pssSeveritySummary(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severitySummaryZh.length) return '';

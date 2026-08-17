@@ -1,3 +1,4 @@
+import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 // v1.1.0 R118 (god class 拆 P2-7 阶段 5): Level2 Anxiety 中文 fallback
 //
 // 改前: static_scale_translations.dart 6 量表 inline
@@ -13,7 +14,7 @@
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
 // rule3-whitelist: 24-88
-class Level2AnxietyTranslations {
+class Level2AnxietyTranslations implements Level2AnxietyTranslationsInterface {
   const Level2AnxietyTranslations();
 
   static const _itemsZh = <String>[
@@ -49,32 +50,39 @@ class Level2AnxietyTranslations {
 
   // === 7 method (主壳委托调用) ===
 
+  @override
   String level2AnxietyName({String? override}) =>
       override ?? 'DSM-5 Level 2 焦虑严重度';
 
+  @override
   String level2AnxietyShortDescription({String? override}) =>
       override ?? '成人焦虑严重度 7 题 (DSM-5 PROMIS 简化版)';
 
+  @override
   String level2AnxietyInstruction({String? override}) =>
       override ?? '过去 7 天内, 您有多经常被以下感受困扰?';
 
+  @override
   String level2AnxietyItem(int index, {String? override}) {
     if (override != null) return override;
     if (index < 0 || index >= _itemsZh.length) return '';
     return _itemsZh[index];
   }
 
+  @override
   String level2AnxietyOption(int score, {String? override}) {
     if (override != null) return override;
     return _optionsZh[score] ?? '';
   }
 
+  @override
   String level2AnxietySeverityLabel(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severityLabelZh.length) return '';
     return _severityLabelZh[rank];
   }
 
+  @override
   String level2AnxietySeveritySummary(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severitySummaryZh.length) return '';

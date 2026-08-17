@@ -1,3 +1,4 @@
+import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 // v1.1.0 R118 (god class 拆 P2-7 阶段 7): ASRM 中文 fallback
 //
 // 改前: static_scale_translations.dart 9 量表 inline
@@ -13,7 +14,7 @@
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
 // rule3-whitelist: 24-90
-class AsrmTranslations {
+class AsrmTranslations implements AsrmTranslationsInterface {
   const AsrmTranslations();
 
   static const _itemsZh = <String>[
@@ -50,31 +51,38 @@ class AsrmTranslations {
 
   // === 7 method (主壳委托调用) ===
 
+  @override
   String asrmName({String? override}) => override ?? 'ASRM 自评躁狂量表';
 
+  @override
   String asrmShortDescription({String? override}) =>
       override ?? 'Altman 1997 自评躁狂量表 (5 题)';
 
+  @override
   String asrmInstruction({String? override}) =>
       override ?? '过去 1 周内, 您有 (或感觉到) 以下情况的程度?';
 
+  @override
   String asrmItem(int index, {String? override}) {
     if (override != null) return override;
     if (index < 0 || index >= _itemsZh.length) return '';
     return _itemsZh[index];
   }
 
+  @override
   String asrmOption(int score, {String? override}) {
     if (override != null) return override;
     return _optionsZh[score] ?? '';
   }
 
+  @override
   String asrmSeverityLabel(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severityLabelZh.length) return '';
     return _severityLabelZh[rank];
   }
 
+  @override
   String asrmSeveritySummary(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severitySummaryZh.length) return '';

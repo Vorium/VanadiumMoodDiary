@@ -5,6 +5,13 @@
 //
 // v1.0+ i18n canonical fallback (走 l10n, 显示层 l10n 优先)
 // R108 §六 候选 拆解 (frame-thinking 评估)。
+//
+// v1.1.0+168 R122 P2-3 (R121 P1-3 step 3 续): implements Phq9TranslationsInterface
+// (Interface Segregation Principle, R19 决策保留) — caller 可直接用
+// `Phq9Translations().phq9Item(0)` 跳过 70 委派链, 老 caller (走
+// StaticScaleTranslations 70 委派) 0 改动。
+
+import 'package:chroniccare/domain/entities/scale_translations/_scale_translations_interfaces.dart';
 
 /// PHQ-9 (Patient Health Questionnaire-9 抑郁筛查 9 题) 中文 fallback
 ///
@@ -15,10 +22,9 @@
 /// **v1.0+ i18n canonical fallback** — R107 R113 已加 i18n l10n,
 /// 本 class 是 ARB key 缺失时的 fallback, 显示层优先走 l10n。
 ///
-/// 注意: 本 class **不 implements ScaleTranslations** — 只放 PHQ-9 相关
-/// const + method, 不实现其他 9 个量表 (留给 Gad7Translations /
-/// IsiTranslations / ... 各自实现)。R118 阶段 2-5 拆其他 9 个量表。
-class Phq9Translations {
+/// R122 P2-3: implements [Phq9TranslationsInterface] (7 method sub-interface),
+/// caller 可直接通过 sub-interface 拿 PHQ-9 翻译, 跳过主壳 70 委派链。
+class Phq9Translations implements Phq9TranslationsInterface {
   const Phq9Translations();
 
   // === 中文 fallback data (跟 const phq9Scale 同步, 改一处必同步) ===
@@ -59,33 +65,40 @@ class Phq9Translations {
     '重度抑郁倾向',
   ];
 
-  // === 7 method (主壳委托调用, 不带 @override) ===
+  // === 7 method (R122 P2-3: 加 @override, 满足 Phq9TranslationsInterface) ===
 
+  @override
   String phq9Name({String? override}) => override ?? 'PHQ-9 抑郁筛查';
 
+  @override
   String phq9ShortDescription({String? override}) =>
       override ?? '过去两周的抑郁倾向筛查';
 
+  @override
   String phq9Instruction({String? override}) =>
       override ?? '过去两周内，你有多经常被以下问题困扰？';
 
+  @override
   String phq9Item(int index, {String? override}) {
     if (override != null) return override;
     if (index < 0 || index >= _itemsZh.length) return '';
     return _itemsZh[index];
   }
 
+  @override
   String phq9Option(int score, {String? override}) {
     if (override != null) return override;
     return _optionsZh[score] ?? '';
   }
 
+  @override
   String phq9SeverityLabel(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severityLabelZh.length) return '';
     return _severityLabelZh[rank];
   }
 
+  @override
   String phq9SeveritySummary(int rank, {String? override}) {
     if (override != null) return override;
     if (rank < 0 || rank >= _severitySummaryZh.length) return '';

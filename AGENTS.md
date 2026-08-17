@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2616 tests pass (R122 P2-2 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2627 tests pass (R122 P2-3 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修).
 
 ## 项目速览
 
@@ -692,3 +692,17 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **`legal_page_split_round122_test.dart`** (新增 8 case) 守门员: 6 文件双存在 / 主壳 < 400L / 主壳不再含 4 private widget + 1 enum / 5 公开 widget/enum 各自 super.key / 公开命名一致 / 主壳用公开 widget 名替换 / 6 文件总和 < 700L (拆前 555L, +12% overhead, 跟 R122 mood_audio_service 拆 3 facade +57% overhead 比优秀)。
 
 **R108 §六 god class 候选 6/12 闭环** (R118 P2-7 10 量表 / R119 P1-1 app_database / R120 P1-2 notification_service / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service / R122 P2-2 legal_page)。剩 5 候选过时 (R116 / R118 已拆): `medication_page 553L` (R116 round 1 拆) / `mood_trend_page 517L` (R116 拆 104L) / `reminders_hub_page 441L` (R116 拆 213L) / `setup_page_state 506L` (R116 拆 301L) / `static_scale_translations 659L` (R118 P2-7 替代)。
+
+## v1.1.0 R122 P2-3 (R121 P1-3 step 3 续) — 10 量表 sub-interface 拆分 (Interface Segregation) (2026-08-17, 1 commit, 1.1.0+168)
+
+**状态**: R121 P1-3 step 3 defer 解除 — 当时算 "10 × 70 = 700 method stub 远超 70 委派" 是把"全 interface 实现"当 700 算, 实际 ISP 拆 sub-interface 后是 10 × 7 = 70 stub (跟 70 委派同档, 但 caller 可绕过主壳)。真问题是 ISP violation, 不是 pub workspace 规模问题, 1-2h 拆 sub-interface 即可, defer 解除。
+
+新增 `lib/domain/entities/scale_translations/_scale_translations_interfaces.dart` (~80L), 拆 1 个 70-method `ScaleTranslations` 大 interface → 10 个 7-method sub-interface (Phq9 / Gad7 / Isi / Pss / Whodas / Level2Depression / Level2Anxiety / Level2Mania / Level2Psychosis / Asrm × Interface)。10 × 7 = 70 stub 集中。
+
+10 量表 class 改 `implements` 各自 sub-interface (R118 P2-7 决策"不 implements ScaleTranslations"解除, R19 决策保留升级 — sub-interface 拆法让 implements 不再是 ISP violation), 70 method 加 `@override` 注解。
+
+主壳 `StaticScaleTranslations` 不变 — 仍持 10 const instance + 70 method 1:1 委派, 老 caller (`const StaticScaleTranslations()`) 0 改动, 21 case crisis test 0 回归。
+
+**`round122_interface_segregation_test.dart`** (新增 11 case) 守门员: sub-interface 文件存在 / 10 sub-interface 全列 / 10 量表 class implements 各自 sub-interface / 10 量表 7 method 全部 @override 注解 / PHQ-9 / GAD-7 / ISI / WHODAS / Level2 Depression: sub-interface vs 主壳输出一致 / sub-interface 边界 (越界 → "") / sub-interface 类型可独立使用 (caller 跳过 70 委派)。
+
+**收益**: 70 委派保留 (老 caller 0 改动) + 70 stub 集中 (caller 可选绕过) + ISP 解耦 (改一个量表不影响其他) + defer 解除 (R110 pub workspace 路线图仍保留, 但 R121 P1-3 step 3 不再是 R122+ 阻塞项)。

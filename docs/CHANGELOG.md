@@ -1,3 +1,53 @@
+## [1.1.0+168 R122 P2-3 (R121 P1-3 step 3 续) — 10 量表 sub-interface 拆分 (Interface Segregation)] - 2026-08-17 (拆 1 个 70-method interface → 10 个 7-method sub-interface, caller 可跳过 70 委派链, 11 regression test)
+
+### Changed (R122 P2-3, R121 P1-3 step 3 续)
+- **Interface Segregation Principle 拆分**:
+  - 新增 `lib/domain/entities/scale_translations/_scale_translations_interfaces.dart` (~80L)
+  - 拆 1 个 70-method `ScaleTranslations` 大 interface → 10 个 7-method sub-interface:
+    - `Phq9TranslationsInterface` (7 method: Name/ShortDescription/Instruction/Item/Option/SeverityLabel/SeveritySummary)
+    - `Gad7TranslationsInterface` (7 method)
+    - `IsiTranslationsInterface` (7 method)
+    - `PssTranslationsInterface` (7 method)
+    - `WhodasTranslationsInterface` (7 method)
+    - `Level2DepressionTranslationsInterface` (7 method)
+    - `Level2AnxietyTranslationsInterface` (7 method)
+    - `Level2ManiaTranslationsInterface` (7 method)
+    - `Level2PsychosisTranslationsInterface` (7 method)
+    - `AsrmTranslationsInterface` (7 method)
+  - 10 × 7 = 70 stub (跟 70 委派同档, 但 caller 可绕过主壳)
+- **10 量表 class 改 `implements` 各自 sub-interface** + 70 method 加 `@override` 注解:
+  - `Phq9Translations implements Phq9TranslationsInterface` 等 10 个
+  - R118 P2-7 决策"不 implements ScaleTranslations" 解除, R19 决策保留升级 — sub-interface 拆法让 implements 不再是 ISP violation
+- **主壳 `StaticScaleTranslations` 不变** — 仍持 10 const instance + 70 method 1:1 委派, 老 caller (`const StaticScaleTranslations()`) 0 改动
+- **R121 P1-3 step 3 评估闭环** — 当时算 "10 × 70 = 700 method stub 远超 70 委派" 是把"全 interface 实现"当 700 算, 实际 ISP 拆 sub-interface 后是 10 × 7 = 70 stub (跟 70 委派同档)。结论: **真问题是 ISP violation, 不是 pub workspace 规模问题**, 1-2h 拆 sub-interface 即可, defer 解除
+
+### 收益 (跟 R121 P1-3 step 3 评估对比)
+- **70 委派保留**: StaticScaleTranslations 仍 1 行委派, 21 case crisis test 老 caller 0 改动
+- **70 stub 集中**: 10 sub-interface × 7 method = 70 stub, 跟 70 委派同档, 但 caller 可选绕过
+- **caller 简化**: 任何只关心 PHQ-9 / GAD-7 等单量表的 widget 可直接 `const Phq9Translations().phq9Item(0)`, 跳过 70 委派链
+- **ISP 解耦**: 10 量表各自 7 stub, 改一个不影响其他
+
+### round122_interface_segregation_test.dart (新增 11 case)
+- sub-interface 文件存在
+- 10 sub-interface 全列 (Phq9..Asrm × 10)
+- 10 量表 class `implements` 各自 sub-interface
+- 10 量表 7 method 全部 `@override` 注解 (sub-interface 满足)
+- PHQ-9 / GAD-7 / ISI / WHODAS / Level2 Depression: sub-interface vs 主壳输出一致
+- sub-interface 边界: 越界 → "" (跟主壳一致)
+- sub-interface 类型可独立使用 (caller 跳过 70 委派)
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2627 pass / 0 fail / 1 skip** (R122 P2-2 baseline 2616 +11 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- `python3 scripts/check_coverage.py`: 18 gatekeeper 全过 (拆 sub-interface 未掉阈值)
+
+### R121 P1-3 step 3 defer 解除 ✅
+- R121 当时算 "10 × 70 = 700 method stub 远超 70 委派" — 把"全 interface 实现"当 700 算
+- R122 P2-3 重新评估: 1 个 70-method 大 interface 是 ISP violation, 真实问题不是"10 class 都要实现 70 method", 而是"interface 应该拆 sub-interface"
+- 修法: 拆 10 sub-interface × 7 method, 10 class 各自 implements 7 stub (同 70 委派, 但 caller 可绕过)
+- defer 解除, R110 pub workspace 路线图 仍保留 (其他场景需要)
+
 ## [1.1.0+167 R122 P2-2 — legal_page 555L 拆 4 widget + 1 enum] - 2026-08-17 (主壳 555L→344L -38%, 跟 R121 vent_list_page 模式对齐, 8 regression test)
 
 ### Changed (R122 P2-2)
