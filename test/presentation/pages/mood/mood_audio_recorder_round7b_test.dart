@@ -391,7 +391,7 @@ void main() {
 
     setUpAll(() {
       source = File(
-        'lib/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart',
+        'lib/features/mood/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart',
       ).readAsStringSync();
     });
 

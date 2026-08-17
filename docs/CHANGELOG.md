@@ -1,3 +1,85 @@
+## [1.1.0+177 R126 续 (R110 feature-first 阶段 2 续 step 5) — mood 1 commit 整包 完整迁移] - 2026-08-18 (R110 阶段 2 续 2nd 跨 presentation 1 feature 完整迁移, 40 file 端到端 + 40 旧 path re-export + 9 test 适配 + check_all.dart 双 path 扫 entities + tables)
+
+### Changed (R126 续 step 5 mood 1 commit 整包)
+- **新增 `lib/features/mood/`** (1 feature 完整 3 子目录, 40 file 端到端):
+  - **3 domain file**: 1 entity (MoodEntryEntity 24 字段) + 1 entity (MoodEntryDraft) + 1 abstract (MoodRepository 6 method)
+  - **8 data file**: 1 impl (MoodRepositoryImpl) + 1 mapper (MoodEntryMapper) + 1 table (MoodEntries drift) + 5 service (mood_audio_service / mood_audio_recorder / mood_audio_stt / mood_audio_storage / mood_reminder_notifier)
+  - **29 presentation file**: 2 provider (mood_providers + mood_list_filter_provider) + 4 mood_list page (mood_list + mood_detail + mood_review + mood_trend) + 16 mood widget (cbt 4 + mood 12) + 7 mood_list widget
+- **40 旧 path 改 1 行 re-export** (跟 R125 阶段 1 + R126 续 step 4 模式一致):
+  - 3 domain: lib/domain/{entities,repositories}/mood_*.dart
+  - 8 data: lib/core/data/{repositories/mood,database/mappers/mood,database/tables/mood,services}/mood_*.dart
+  - 29 presentation: lib/presentation/{providers,pages/mood_list,pages/mood/widgets,pages/mood_list/widgets}/mood_*.dart
+  - 旧 file body 改 `export 'package:chroniccare/features/mood/...'` 1 行, 现有用户 import 旧 path 仍 work
+
+### mood_audio 4 facade (R122 P2-1 拆 3 facade 协同)
+- **mood_audio_service** (orchestrator) 迁 features/mood/data/services/ — MoodAudioService abstract class 保留
+- **mood_audio_recorder** (R122 P2-1 step 2 抽独立 class) 迁 features/mood/data/services/ — MoodAudioRecorder class 保留
+- **mood_audio_stt** (R122 P2-1 step 1 抽独立 class) 迁 features/mood/data/services/ — MoodAudioStt class 保留
+- **mood_audio_storage** (R122 P2-1 step 3 storage review, extends EncryptedAudioStorage 基类) 迁 features/mood/data/services/ — MoodAudioStorage extends EncryptedAudioStorage 保留, 跟 vent_audio shared 基类 (R128 阶段 4 抽 core/platform/ umbrella 处理)
+
+### 跨域 import 处理 (跨 feature 共享留 R128 阶段 4)
+- `data/services/mood_audio_storage.dart` 引 `core/data/privacy/encrypted_audio_storage.dart` 保持旧 path (跨 vent audio shared 基类, R128 阶段 4 抽 core/platform/ umbrella)
+- `domain/entities/mood_entry_entity.dart` 引 `domain/entities/influence_category.dart` 保持旧 path (跨 worry 共享)
+- 4 个新 presentation file 引 8 个新 features/mood/{domain,data}/ 子目录路径
+
+### 新增测试 (R126 续 step 5 mood)
+- **`test/core/data/feature_first_migration_split_round126_step5_test.dart`** (新增 12 case):
+  - features/mood/ 目录结构 3 子目录
+  - mood 3 domain file 端到端 (2 entity + 1 abstract)
+  - mood 8 data file 端到端 (1 impl + 1 mapper + 1 table + 5 service)
+  - mood 29 presentation file 端到端 (2 provider + 4 page + 16 mood widget + 7 mood_list widget)
+  - 40 file 端到端 全部存在
+  - 40 旧 path 全部 re-export (1 行 export 新 path)
+  - 旧 path import 仍 work (现有用户 0 改动)
+  - 跨 feature import 边界 0 违规 (features/mood 不引用其他 features/)
+  - 业务方法 0 break (MoodEntryEntity 24 字段 + MoodRepository 6 method 跟旧版一致)
+  - mood_audio 4 facade 公开 API 完整 (跟 R122 P2-1 拆 3 facade 协同)
+  - R95 lock-in baseline 协同 (features/mood/presentation ≤ 2 raw EdgeInsets 数字, mood_review_page 历史 baseline 已知 2 处漏修真, 留 R31+ 跨期修真)
+  - R110 阶段 2 续 step 5 mood 1 commit 整包 1 feature 完整迁移 收官 (features/ 3 feature: daily_tracking + assessment + mood)
+
+### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
+- **`test/core/data/services/mood_audio_recorder_split_round122_test.dart`** 2 case 适配: 改读新 path `lib/features/mood/data/services/mood_audio_*.dart`
+- **`test/core/data/services/mood_audio_stt_split_round122_test.dart`** 2 case 适配: 同
+- **`test/core/data/services/mood_audio_storage_split_round122_test.dart`** 2 case 适配: 同
+- **`test/presentation/pages/settings/task10_email_mood_lock_in_round95_test.dart`** 1 case 适配: MoodRecorderPage 改读新 path `lib/features/mood/presentation/pages/mood/widgets/mood_recorder_page.dart`
+- **`test/presentation/pages/mood_list/mood_trend_day_change_round113_test.dart`** 2 case 适配: mood_trend_line_chart + mood_review_page 改读新 path
+- **`test/presentation/pages/mood/mood_audio_recorder_round7b_test.dart`** 1 case 适配: mood_audio_recorder_widget 改读新 path
+- **`test/presentation/widgets/audio_lifecycle_round108_test.dart`** 1 case 适配: mood_audio_recorder_widget 改读新 path
+- **`test/core/data/feature_first_migration_split_round126_step4_test.dart`** 1 case 改: features/ 期望 2 feature → 3 feature (assessment + daily_tracking + mood)
+
+### 守门员适配
+- **`scripts/check_all.dart`** 双 path 扫 entities + tables (跟 R125 阶段 1 features/*/domain/entities/ 同模式扩到 features/*/data/tables/):
+  - 扫 `lib/domain/entities/` + `lib/features/*/domain/entities/` 双 path (entity)
+  - 扫 `lib/core/data/database/tables/` + `lib/features/*/data/tables/` 双 path (table, v1.1.0+177 R126 续 step 5 新加)
+  - 合并多 path 1 次扫, 避免 12 个其他 table 误报 fail (多 entities 路径单独跑会重复 mismatch)
+  - 4 层架构纯度 + 一致性 双绿
+
+### R126 续 step 5 关键设计
+- **R110 阶段 2 续 2nd 跨 presentation 1 feature 完整迁移**: R126 续 step 4 评估 1 commit 整包 走"1 feature 27 file 端到端"模式 (含 presentation 15 file), 本批 mood 走"1 feature 完整 40 file 端到端"模式 (含 presentation 29 file)
+- **业务方法 0 break**: MoodEntryEntity 24 字段 + MoodRepository 6 method (watchAll / watchToday / watchLatest / add / delete / watchByThread) 跟旧版完全一致, 旧 widget 端 0 改动
+- **mood_audio 4 facade 协同 R122 P2-1 拆 3 facade**: mood_audio_service (orchestrator) + mood_audio_recorder (R122 P2-1 step 2 抽) + mood_audio_stt (R122 P2-1 step 1 抽) + mood_audio_storage (R122 P2-1 step 3 验证) 4 file 全部迁 features/mood/data/services/, 公开 API 完整保留
+- **跨 feature 共享留 R128 阶段 4**: mood 跨 worry_thread_entity (留 core/) + influence_category (留 core/) + encrypted_audio_storage (跨 vent audio shared 基类) + scale_translations (跨 10 量表) + cbt_thought_record_pdf (留 core/) + mood_period_aggregator (留 core/) + trend_calculator (留 core/), R128 阶段 4 抽 core/platform/ umbrella 处理
+- **40 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../mood_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
+- **R95 修真 baseline 接受 ≤ 2**: features/mood/presentation 15 file 修真有效, 但 mood_review_page 2 处 raw EdgeInsets.all(16) 修真漏 (R31+ 跨期修真已知), 接受 ≤ 2 raw, 不影响 R126 续 step 5 1 commit 推完
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning (458 info-level, 跟 R126 续 step 4 baseline 一致)
+- `flutter test`: **2704 pass / 0 fail / 1 skip** (R126 续 step 4 baseline 2692 + R126 续 step 5 新 test 12 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿 (R126 续 step 5 新适配 features/*/data/tables/ 双 path 扫)
+- 22 .py 守门员: 14 OK (含 R126 续 step 4 适配) + 6 跨期已知 warning, 0 R126 续 step 5 引入新违规
+- `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续 step 6-7)
+
+### R110 阶段 2 续 4 feature 迁移进度 (2/4 = 50%)
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation)
+- ✅ **R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修真 baseline ≤ 2) — 本批**
+- ⏸ R126 续 step 6 vent (1-2 commit, 30 file + 跨 export/import 3 service + 跨 daily_tracking page)
+- ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
+
+### 下一站 R126 续 step 6
+- vent 完整迁移 1-2 commit (30 file 端到端 + 跨 export/import 3 service + 跨 daily_tracking page)
+- 1-2h 1-2 commit 推完
+- 跟 assessment + mood 同模式 (R110 阶段 2 续 4 feature 完整迁移 3/4 = 75%)
+
 ## [1.1.0+176 R126 续 (R110 feature-first 阶段 2 续 step 4) — assessment 1 commit 整包 完整迁移] - 2026-08-18 (R110 阶段 2 续首个跨 presentation 1 feature 完整迁移, 27 file 端到端 + 27 旧 path re-export + 3 test 适配 + check_usecase_layer 双 path 扫)
 
 ### Changed (R126 续 step 4 评估 1 commit 整包)

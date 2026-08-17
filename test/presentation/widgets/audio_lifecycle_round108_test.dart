@@ -37,7 +37,7 @@ void main() {
         'lib/presentation/pages/vent/vent_compose_page.dart',
       ).readAsStringSync();
       moodSource = File(
-        'lib/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart',
+        'lib/features/mood/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart',
       ).readAsStringSync();
     });
 

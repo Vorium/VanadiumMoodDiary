@@ -160,7 +160,7 @@ void main() {
     test('R95 fix 3: MoodRecorderPage 静态入口 show() 仍存在', () {
       // 验证 MoodRecorderPage.show 公开 API 仍存在 (caller 调用面不变)
       final source = File(
-        'lib/presentation/pages/mood/widgets/mood_recorder_page.dart',
+        'lib/features/mood/presentation/pages/mood/widgets/mood_recorder_page.dart',
       ).readAsStringSync();
       expect(
         source.contains('static Future<void> show('),

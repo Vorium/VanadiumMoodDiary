@@ -288,17 +288,17 @@ void main() {
     });
 
     test('R110 阶段 2 续 step 4 评估 1 commit 整包 1 feature 完整迁移 收官', () {
-      // 验收: features/ 顶层 2 个 feature (daily_tracking + assessment),
-      // 阶段 2 续 step 4 是 R110 阶段 2 跨 presentation 完整迁移首个 1 feature.
-      // 阶段 2 续剩余 3 feature (mood / vent / medication) 留 R126 续 step 5-7.
+      // 验收: features/ 顶层 3 个 feature (daily_tracking + assessment + mood),
+      // 阶段 2 续 step 4 + step 5 是 R110 阶段 2 跨 presentation 完整迁移.
+      // 阶段 2 续剩余 2 feature (vent / medication) 留 R126 续 step 6-7.
       final featureDirs = Directory('lib/features')
           .listSync()
           .whereType<Directory>()
           .toList();
       expect(
         featureDirs.map((d) => d.path.split('/').last).toList()..sort(),
-        equals(['assessment', 'daily_tracking']),
-        reason: 'R126 续 step 4 收官 features/ 顶层 2 feature (daily_tracking + assessment)',
+        equals(['assessment', 'daily_tracking', 'mood']),
+        reason: 'R126 续 step 4 + step 5 收官 features/ 顶层 3 feature (daily_tracking + assessment + mood)',
       );
     });
   });

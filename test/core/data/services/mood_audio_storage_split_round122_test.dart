@@ -24,7 +24,7 @@ void main() {
     const mainPath = 'lib/core/data/services/mood_audio_service.dart';
     const sttPath = 'lib/core/data/services/mood_audio_stt.dart';
     const recorderPath = 'lib/core/data/services/mood_audio_recorder.dart';
-    const storagePath = 'lib/core/data/services/mood_audio_storage.dart';
+    const storagePath = 'lib/features/mood/data/services/mood_audio_storage.dart';
 
     test('拆 3 facade 4 文件双存在 (主 service + stt + recorder + storage)', () {
       // 验证: 拆 3 facade 后 4 个独立文件全在 — 缺一即 facade 跨边界 bug

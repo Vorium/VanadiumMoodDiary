@@ -149,7 +149,7 @@ void main() {
       // 从主壳移到 widgets/mood_trend_line_chart.dart (MoodLineChart.build
       // 拿 now 算 spots)。主壳 + 3 个 chart widget 都不应再 DateTime.now()。
       final src = await readSrc(
-        'presentation/pages/mood_list/widgets/mood_trend_line_chart.dart',
+        'features/mood/presentation/pages/mood_list/widgets/mood_trend_line_chart.dart',
       );
       expect(stripComments(src).contains('DateTime.now()'), isFalse);
       expect(src.contains('ref.watch(todayProvider)'), isTrue);
@@ -214,7 +214,7 @@ void main() {
     test('mood_review_page.dart (widget.now ?? watch(todayProvider))',
         () async {
       final src =
-          await readSrc('presentation/pages/mood_list/mood_review_page.dart');
+          await readSrc('features/mood/presentation/pages/mood_list/mood_review_page.dart');
       expect(src.contains('widget.now ?? ref.watch(todayProvider)!'), isTrue);
     });
   });

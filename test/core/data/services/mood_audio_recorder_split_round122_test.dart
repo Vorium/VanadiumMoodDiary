@@ -26,8 +26,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('R122 P2-1 step 2 — mood_audio_service recorder 抽独立 class', () {
-    const mainPath = 'lib/core/data/services/mood_audio_service.dart';
-    const recorderPath = 'lib/core/data/services/mood_audio_recorder.dart';
+    const mainPath = 'lib/features/mood/data/services/mood_audio_service.dart';
+    const recorderPath = 'lib/features/mood/data/services/mood_audio_recorder.dart';
 
     test('主 service + MoodAudioRecorder 文件双存在', () {
       expect(File(mainPath).existsSync(), isTrue, reason: mainPath);

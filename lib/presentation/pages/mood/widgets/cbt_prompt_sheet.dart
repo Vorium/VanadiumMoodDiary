@@ -1,60 +1,7 @@
-// v0.29 round 84 (CBT 思维记录): prompt 库 bottom sheet
-//
-// 点击问题追加到当前文本框末尾 (不替换)
-//
-// 频度: 5/7 栏 wizard 每步都可能调, tens/day
-import 'package:flutter/material.dart';
+/// mood widget (R126 续 step 5 1.1.0+177 re-export)
+///
+/// 实际定义已迁到 `lib/features/mood/presentation/pages/mood/widgets/cbt_prompt_sheet.dart`。
+/// 本文件 re-export 保持旧 import path 兼容 (现有用户 0 改动)。
+library;
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/l10n/app_localizations.dart';
-
-class CbtPromptSheet {
-  CbtPromptSheet._();
-
-  static Future<void> show(
-    BuildContext context, {
-    required List<String> prompts,
-    required ValueChanged<String> onSelected,
-  }) async {
-    final l10n = AppLocalizations.of(context);
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppTokens.spacingMd,
-                AppTokens.spacingMd,
-                AppTokens.spacingMd,
-                AppTokens.spacingXxs,
-              ),
-              child: Text(
-                l10n.moodCbtPromptTitle,
-                style: AppTokens.textStyleLabelStrong(context),
-              ),
-            ),
-            Flexible(
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: prompts.length,
-                separatorBuilder: (_, __) =>
-                    const Divider(height: 1, thickness: 0.5),
-                itemBuilder: (_, i) => ListTile(
-                  leading: const Icon(Icons.chat_bubble_outline),
-                  title: Text(prompts[i]),
-                  onTap: () {
-                    onSelected(prompts[i]);
-                    Navigator.of(ctx).pop();
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+export 'package:chroniccare/features/mood/presentation/pages/mood/widgets/cbt_prompt_sheet.dart';

@@ -24,8 +24,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('R122 P2-1 step 1 — mood_audio_service STT 抽独立 class', () {
-    const mainPath = 'lib/core/data/services/mood_audio_service.dart';
-    const sttPath = 'lib/core/data/services/mood_audio_stt.dart';
+    const mainPath = 'lib/features/mood/data/services/mood_audio_service.dart';
+    const sttPath = 'lib/features/mood/data/services/mood_audio_stt.dart';
 
     test('主 service + MoodAudioStt 文件双存在', () {
       expect(File(mainPath).existsSync(), isTrue, reason: mainPath);

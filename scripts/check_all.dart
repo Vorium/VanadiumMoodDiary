@@ -297,13 +297,16 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
   final oldEntitiesDir = Directory(
     '$root${Platform.pathSeparator}lib${Platform.pathSeparator}domain${Platform.pathSeparator}entities',
   );
-  final tablesDir = Directory(
+  final oldTablesDir = Directory(
     '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}data${Platform.pathSeparator}database${Platform.pathSeparator}tables',
   );
   final sharedDir = Directory(
     '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}shared',
   );
   final featuresEntitiesDirs = <Directory>[];
+  // v1.1.0+177 R126 续 step 5: 扫 features/*/data/tables/ 新 drift 路径
+  // (feature-first 迁移后 drift table 也迁 features/, 跟 entity 协同).
+  final featuresTablesDirs = <Directory>[];
   final featuresDir = Directory(
     '$root${Platform.pathSeparator}lib${Platform.pathSeparator}features',
   );
@@ -315,6 +318,12 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
       if (domainEntitiesDir.existsSync()) {
         featuresEntitiesDirs.add(domainEntitiesDir);
       }
+      final dataTablesDir = Directory(
+        '${featureDir.path}${Platform.pathSeparator}data${Platform.pathSeparator}tables',
+      );
+      if (dataTablesDir.existsSync()) {
+        featuresTablesDirs.add(dataTablesDir);
+      }
     }
   }
 
@@ -323,8 +332,12 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
   final allEntitiesDirs = <Directory>[];
   if (oldEntitiesDir.existsSync()) allEntitiesDirs.add(oldEntitiesDir);
   allEntitiesDirs.addAll(featuresEntitiesDirs);
-  if (allEntitiesDirs.isNotEmpty && tablesDir.existsSync()) {
-    _checkEntityTablePair(allEntitiesDirs, tablesDir, issues);
+  // v1.1.0+177 R126 续 step 5: 合并多 tables 路径 1 次扫
+  final allTablesDirs = <Directory>[];
+  if (oldTablesDir.existsSync()) allTablesDirs.add(oldTablesDir);
+  allTablesDirs.addAll(featuresTablesDirs);
+  if (allEntitiesDirs.isNotEmpty && allTablesDirs.isNotEmpty) {
+    _checkEntityTablePair(allEntitiesDirs, allTablesDirs, issues);
   }
   if (sharedDir.existsSync()) {
     _checkSharedUsage(root, sharedDir, issues);
@@ -334,7 +347,7 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
 
 void _checkEntityTablePair(
   List<Directory> entitiesDirs,
-  Directory tablesDir,
+  List<Directory> tablesDirs,
   List<ConsistencyIssue> issues,
 ) {
   // 收集 domain entity 类名 (合并多 entities 路径, R125 R110 阶段 1 兼容)
@@ -354,15 +367,18 @@ void _checkEntityTablePair(
     }
   }
 
-  // 收集 drift table data class 名（@DataClassName('X')）
+  // 收集 drift table data class 名（@DataClassName('X')）— 合并多 tables 路径
+  // v1.1.0+177 R126 续 step 5: 跟 entity 协同扫 features/*/data/tables/ 新 path.
   final tableDataNames = <String, String>{};
-  for (final f in tablesDir.listSync(recursive: true).whereType<File>()) {
-    if (!f.path.endsWith('.dart')) continue;
-    if (f.path.endsWith('.g.dart')) continue;
-    final content = f.readAsStringSync();
-    final dc = _dataClassNameRe.firstMatch(content);
-    if (dc != null) {
-      tableDataNames[dc.group(1)!] = f.path;
+  for (final tablesDir in tablesDirs) {
+    for (final f in tablesDir.listSync(recursive: true).whereType<File>()) {
+      if (!f.path.endsWith('.dart')) continue;
+      if (f.path.endsWith('.g.dart')) continue;
+      final content = f.readAsStringSync();
+      final dc = _dataClassNameRe.firstMatch(content);
+      if (dc != null) {
+        tableDataNames[dc.group(1)!] = f.path;
+      }
     }
   }
 
