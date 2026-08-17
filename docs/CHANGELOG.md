@@ -1,6 +1,47 @@
-## [1.1.0+163 R121 P1-3 step 3 评估 — 量表 implements ScaleTranslations 建议 defer 到 R122] - 2026-08-17 (emil 8.0→8.5 拖分项 #3 评估, 不动手)
+## [1.1.0+164 R122 P2-1 step 1 — mood_audio_service STT 抽独立 class] - 2026-08-17 (496L→406L 主壳, STT 状态+方法全迁出, 6 regression test)
 
-### R121 P1-3 step 3 评估 (1.1.0+163, 评估后 defer)
+### Changed (R122 P2-1 step 1)
+- **mood_audio_service.dart 496L → 406L (-18.0%)**:
+  - 抽 `mood_audio_stt.dart` (154L) 含:
+    - `MoodAudioStt` public class — STT 状态机 (_isSttListening / _sttAvailable / _sttController) + 4 method (initialize / startListen / stop / _stopInternal) + 1 stream getter (sttTranscriptStream) + 1 public getter (sttAvailable)
+    - 完全封装 SpeechToText + StreamController<String> + audioErrorSink STT 错误处理
+  - 主 MoodAudioServiceImpl 改 5 处委派:
+    - `_stt` 字段 (SpeechToText) → `_sttController` 字段 (MoodAudioStt)
+    - `initialize()` → 1-line 委派 `_sttController.initialize()`
+    - `startRecording()` STT 启动 → 1-line 委派 `_sttController.startListen()`
+    - `cancelRecording()` STT 停止 → 委派 `_sttController.stop()`
+    - `stopStt()` 公开 API → 1-line 委派
+    - `dispose()` STT 释放 → 委派 `_sttController.dispose()`
+    - getter `isSttListening` → 委派 `_sttController.isSttListening`
+  - 清 2 个无用 import (speech_to_text / speech_recognition_result — STT 逻辑全委派后不需要直接用)
+
+### Tests (R122 P2-1 step 1 regression protection)
+- **新增** `test/core/data/services/mood_audio_stt_split_round122_test.dart` (6 case, 1 group):
+  - 主 service + MoodAudioStt 文件双存在
+  - 主 service < 450L (R122 拆后 406L, god-class size guard)
+  - 主 service 不再含 STT 私有 state fields (_isSttListening / _sttAvailable / _sttController)
+  - 主 service 不再直接用 speech_to_text 包
+  - MoodAudioStt public API 完整 (2 getter + 1 stream getter + 5 method)
+  - 主 service 通过 _sttController 委派 STT (行为不变)
+
+### Validation (R122 P2-1 step 1)
+- `flutter analyze`: 0 error / 0 warning
+- `flutter test`: **2592 pass / 0 fail / 1 skip** (2586 R121 baseline + 6 R122 P2-1 step 1 split test)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 0 violation
+- 27/27 守门员 = 20 ✅ + 5 上架 P0 external + 2 warn (跟 R121 一致)
+
+### Risk (R122 P2-1 step 1)
+- **低风险** — 抽象 MoodAudioStt 行为 1:1 保留主 service, 公开 API (initialize / isSttListening / startListen / stop / dispose / sttTranscriptStream) 跟原 MoodAudioServiceImpl STT 行为完全一致
+- 测试覆盖: 17 既有 service test + 6 新 split test = 23 case 锁住行为不变
+- 行为差异风险: startRecording 链 1 个空 catch (e, st) 块删除 (委派到 _sttController.startListen 内部处理), 仍走 audioErrorSink graceful degrade
+
+### R122 P2-1 路线图 (step 1/2-3)
+- ✅ step 1: STT 抽独立 (本 commit, 1.5h)
+- ⏭ step 2: recorder 抽独立 (状态机 + timer + pause/resume, 1.5h)
+- ⏭ step 3: storage 部分 review (mood_audio_storage 已独立, 验证接口, 0.5h)
+- 主 MoodAudioServiceImpl 最终缩到 ~250L (从 496L 减 50%)
+
+
 
 **emil 维度 8.0→8.5 拖分项 #3**: 10 量表 class 全部 `不 implements ScaleTranslations` (Phq9Translations.dart:18 显式注释说明), 主壳 StaticScaleTranslations 仍 70 method 委托 (7 method × 10 scale)。
 

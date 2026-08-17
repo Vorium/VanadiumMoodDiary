@@ -23,10 +23,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:record/record.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 import 'package:chroniccare/core/data/services/mood_audio_storage.dart';
+import 'package:chroniccare/core/data/services/mood_audio_stt.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
 
 /// 录音 + STT 编排结果
@@ -112,7 +111,7 @@ abstract class MoodAudioService {
 /// 测试通过 ProviderScope override 注入 [MoodAudioService] 的 fake 实现。
 class MoodAudioServiceImpl implements MoodAudioService {
   final AudioRecorder _recorder;
-  final SpeechToText _stt;
+  final MoodAudioStt _sttController;
   final MoodAudioStorage _storage;
 
   // ===== 录音状态 =====
@@ -128,11 +127,6 @@ class MoodAudioServiceImpl implements MoodAudioService {
   void Function(Duration)? _onTickCb;
   void Function()? _onMaxReachedCb;
 
-  // ===== STT 状态 =====
-  bool _isSttListening = false;
-  bool _sttAvailable = false;
-  final StreamController<String> _sttController = StreamController.broadcast();
-
   // 3min 上限
   static const Duration _maxDuration = Duration(minutes: 3);
 
@@ -146,12 +140,12 @@ class MoodAudioServiceImpl implements MoodAudioService {
 
   MoodAudioServiceImpl({
     AudioRecorder? recorder,
-    SpeechToText? stt,
+    MoodAudioStt? stt,
     MoodAudioStorage? storage,
     Duration? maxDuration,
     Duration? tickInterval,
   })  : _recorder = recorder ?? AudioRecorder(),
-        _stt = stt ?? SpeechToText(),
+        _sttController = stt ?? MoodAudioStt(),
         _storage = storage ?? MoodAudioStorage(),
         _effectiveMaxDuration = maxDuration ?? _maxDuration,
         _effectiveTickInterval = tickInterval ?? _tickInterval;
@@ -193,40 +187,13 @@ class MoodAudioServiceImpl implements MoodAudioService {
   bool get isPaused => _isPaused;
 
   @override
-  bool get isSttListening => _isSttListening;
+  bool get isSttListening => _sttController.isSttListening;
 
   @override
   Duration get recordingElapsed => _recordingElapsed;
 
   @override
-  Future<bool> initialize() async {
-    try {
-      _sttAvailable = await _stt.initialize(
-        onError: (errorNotification) {
-          // STT 错误 = graceful degrade, 不影响录音
-          audioErrorSink(
-            where: 'mood_audio_service.stt.onError',
-            error: errorNotification.errorMsg,
-            note: 'STT error during listen — recording continues',
-          );
-        },
-        onStatus: (status) {
-          // 'done' / 'notListening' 状态由 stopStt / cancelStt 处理
-        },
-      );
-      return _sttAvailable;
-    } catch (e, st) {
-      // 设备不支持 / 初始化失败 = graceful degrade
-      audioErrorSink(
-        where: 'mood_audio_service.initialize',
-        error: e,
-        stack: st,
-        note: 'STT initialize failed — recording without transcript',
-      );
-      _sttAvailable = false;
-      return false;
-    }
-  }
+  Future<bool> initialize() => _sttController.initialize();
 
   @override
   Future<void> startRecording({
@@ -279,33 +246,8 @@ class MoodAudioServiceImpl implements MoodAudioService {
     _recordingStart = DateTime.now();
     _recordingElapsed = Duration.zero;
 
-    // 4. STT 启动 listen (如果可用)
-    if (_sttAvailable) {
-      try {
-        await _stt.listen(
-          onResult: (SpeechRecognitionResult result) {
-            // partial / final 都推,UI 实时显示 partial,save 时用 final
-            final text = result.recognizedWords;
-            if (text.isNotEmpty) {
-              _sttController.add(text);
-            }
-          },
-          listenOptions: SpeechListenOptions(
-            partialResults: true,
-            listenMode: ListenMode.dictation,
-          ),
-        );
-        _isSttListening = true;
-      } catch (e, st) {
-        audioErrorSink(
-          where: 'mood_audio_service.startSttListen',
-          error: e,
-          stack: st,
-          note: 'STT listen failed — recording continues without transcript',
-        );
-        _isSttListening = false;
-      }
-    }
+    // 4. STT 启动 listen (如果可用) — R122 P2-1 step 1 委派到 _sttController
+    await _sttController.startListen();
 
     // 5. 启动 100ms tick Timer
     _recordingTimer?.cancel();
@@ -417,47 +359,15 @@ class MoodAudioServiceImpl implements MoodAudioService {
     _isPaused = false;
     _pausedAt = null;
     _pausedTotal = Duration.zero;
-    // STT 也停
-    await _stopSttInternal();
+    // STT 也停 — R122 P2-1 step 1 委派到 _sttController
+    await _sttController.stop();
   }
 
   @override
-  Stream<String> get sttTranscriptStream => _sttController.stream;
+  Stream<String> get sttTranscriptStream => _sttController.sttTranscriptStream;
 
   @override
-  Future<void> stopStt() async {
-    try {
-      if (_isSttListening) {
-        await _stt.stop();
-        // 注意: speech_to_text 在 stop() 时会触发最后 1 次 onResult with final=true,
-      }
-    } catch (e, st) {
-      audioErrorSink(
-        where: 'mood_audio_service.stopStt',
-        error: e,
-        stack: st,
-        note: 'STT stop failed',
-      );
-    }
-    _isSttListening = false;
-    // 最终文本由 sttTranscriptStream 的最后一条推送决定
-    // (page 端会收集 stream 里的 final recognized text 存到 mood_entry)
-  }
-
-  Future<void> _stopSttInternal() async {
-    try {
-      if (_isSttListening) {
-        await _stt.stop();
-      }
-    } catch (e, st) {
-      audioErrorSink(
-        where: 'mood_audio_service._stopSttInternal',
-        error: e,
-        stack: st,
-      );
-    }
-    _isSttListening = false;
-  }
+  Future<void> stopStt() => _sttController.stop();
 
   @override
   Future<void> dispose() async {
@@ -479,8 +389,8 @@ class MoodAudioServiceImpl implements MoodAudioService {
       );
     }
     await deleteTempRecordFile(tempPath);
-    await _stopSttInternal();
-    await _sttController.close();
+    // R122 P2-1 step 1: STT dispose 委派
+    await _sttController.dispose();
   }
 }
 
