@@ -200,8 +200,11 @@ void main() {
     });
 
     test('assessment_center_card.dart (ConsumerWidget)', () async {
+      // R126 续 评估 1 commit 整包 (1.1.0+176): assessment_center_card.dart
+      // 实际定义已迁到 lib/features/assessment/presentation/pages/widgets/.
+      // 旧 path 改 1 行 re-export. 跟 R122 P2-2 R95 lock-in 适配 1 case 同模式.
       final src = await readSrc(
-        'presentation/pages/assessment/widgets/assessment_center_card.dart',
+        'features/assessment/presentation/pages/widgets/assessment_center_card.dart',
       );
       expect(stripComments(src).contains('DateTime.now()'), isFalse);
       expect(src.contains('ref.watch(todayProvider)'), isTrue);

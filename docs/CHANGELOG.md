@@ -1,3 +1,71 @@
+## [1.1.0+176 R126 续 (R110 feature-first 阶段 2 续 step 4) — assessment 1 commit 整包 完整迁移] - 2026-08-18 (R110 阶段 2 续首个跨 presentation 1 feature 完整迁移, 27 file 端到端 + 27 旧 path re-export + 3 test 适配 + check_usecase_layer 双 path 扫)
+
+### Changed (R126 续 step 4 评估 1 commit 整包)
+- **新增 `lib/features/assessment/`** (1 feature 完整 3 子目录, 27 file 端到端):
+  - **7 domain file**: 1 entity + 4 logic (assessment_scale / record / comparison / reminder_policy) + 1 abstract sender + 1 usecase (schedule_assessment_reminder)
+  - **5 data file**: 1 dao (assessment_dao) + 1 impl (assessment_repository_impl) + 3 service (assessment_notifier / reminder_service / reminder_sender_impl)
+  - **15 presentation file**: 1 provider + 4 page (assessment_page / assessment_widgets / assessment_center_page / assessment_history_page) + 10 widget
+- **27 旧 path 改 1 行 re-export** (跟 R125 阶段 1 + R126 step 1+2+3 模式一致):
+  - 7 domain: lib/domain/{entities,logic,repositories,usecases}/assessment_*.dart
+  - 5 data: lib/core/data/{database/daos,repositories/assessment,services}/assessment_*.dart
+  - 15 presentation: lib/presentation/{providers,pages/assessment,pages/assessment/widgets}/assessment_*.dart
+  - 旧 file body 改 `export 'package:chroniccare/features/assessment/...'` 1 行, 现有用户 import 旧 path 仍 work
+- **跨域 import 处理** (跨 feature 共享留 R128 阶段 4):
+  - `domain/logic/assessment_record.dart` 引 `domain/entities/check_in_entity.dart` 保持旧 path (check_in 留 core/)
+  - `domain/logic/assessment_scale.dart` 引 `domain/entities/scale_translations.dart` 保持旧 path (跨 10 量表, R127 阶段 3 抽)
+  - `domain/logic/assessment_comparison.dart` 引 `domain/logic/scale_registry.dart` 保持旧 path (跨 10 量表)
+  - 4 个新 presentation file 引 5 个新 features/assessment/domain/{logic,entities}/ 路径
+
+### 新增测试 (R126 续 step 4)
+- **`test/core/data/feature_first_migration_split_round126_step4_test.dart`** (新增 11 case):
+  - features/assessment/ 目录结构 3 子目录
+  - 7 domain file 端到端 (1 entity + 4 logic + 1 usecase + 1 abstract)
+  - 5 data file 端到端 (1 dao + 1 impl + 3 service)
+  - 15 presentation file 端到端 (1 provider + 4 page + 10 widget)
+  - 27 file 端到端 全部存在
+  - 27 旧 path 全部 re-export (1 行 export 新 path)
+  - 旧 path import 仍 work (现有用户 0 改动)
+  - 跨 feature import 边界 0 违规 (features/assessment 不引用其他 features/)
+  - 业务方法 0 break (AssessmentEntry 7 字段 + AssessmentRepository 5 method 跟旧版一致)
+  - R95 lock-in 协同: features/assessment/presentation 0 raw EdgeInsets 数字 (R95 修真有效)
+  - R110 阶段 2 续 step 4 收官 (features/ 2 feature: daily_tracking + assessment)
+
+### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
+- **`test/core/l10n/strings_notif_body_round108_test.dart`** 1 case 适配: assessment_notifier.dart 改读新 path `lib/features/assessment/data/services/assessment_notifier.dart` (旧 path 改 1 行 re-export, 实际 content 在新 path)
+- **`test/presentation/pages/mood_list/mood_trend_day_change_round113_test.dart`** 1 case 适配: assessment_center_card.dart 改读新 path `lib/features/assessment/presentation/pages/widgets/assessment_center_card.dart`
+- **`test/presentation/widgets/press_feedback_inkwell_coverage_round114_test.dart`** 1 case 适配: 同上
+
+### 守门员适配
+- **`scripts/check_usecase_layer.py`** 双 path 扫 + re-export 跳过 class 验证:
+  - 扫 `lib/domain/usecases/` + `lib/features/*/domain/usecases/` 双 path (R125 check_feature_first_migration 阶段 1 同款多 path 扫策略)
+  - re-export file (1 行 `export 'package:chroniccare/features/.../usecases/'` 模式) 跳过 class 验证 (实际 class 在新 path, 跟 R122 P2-2 R95 lock-in 适配 1 case 同模式)
+  - 4 usecase 全合规 (3 旧 + 1 新 schedule_assessment_reminder)
+
+### R126 续 step 4 关键设计
+- **R110 阶段 2 续首个跨 presentation 1 feature 完整迁移**: R125 + R126 step 1+2+3 走"1 sub_table 5 file 端到端"模式 (0 presentation), R126 续 step 4 评估 1 commit 整包 走"1 feature 完整 27 file 端到端"模式 (含 presentation 15 file)
+- **业务方法 0 break**: AssessmentEntry 7 字段 (id / timestamp / scaleId / score / severityRank / answers / note) + AssessmentRepository 5 method (watchAll / getLatest / countByScale / watchByScale / submitEntry) 跟旧版完全一致, 旧 widget 端 0 改动
+- **跨 feature 共享留 R128 阶段 4**: assessment 跨 check_in_entity (留 core/) + scale_registry (跨 10 量表) + scale_translations (跨 10 量表) + notification_service (跨 5 厂商 push) + date_utils (跨 logic), 留 R128 阶段 4 抽 core/platform/ umbrella
+- **27 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../assessment_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
+- **R95 修真 0 violation**: features/assessment/presentation 15 file 0 raw EdgeInsets 数字 (R95 修真有效, 修真 cross check 通过)
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning (458 info-level, 跟 R126 baseline 457 + 1 trailing comma 一致)
+- `flutter test`: **2692 pass / 0 fail / 1 skip** (R126 baseline 2681 + R126 续 step 4 新 test 11 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- 22 .py 守门员: 14 OK (含 R126 续 step 4 新适配 check_usecase_layer) + 6 跨期已知 warning (R32/R108 baseline + R110 阶段 2+ / R124 阶段 2 设计意图), 0 R126 续 step 4 引入新违规
+- `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续 step 5-7)
+
+### R110 阶段 2 续 4 feature 迁移进度 (1/4 = 25%)
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation) — 本批
+- ⏸ R126 续 step 5 mood (1 commit 整包, 35 file 端到端, 含 mood_audio 4 facade)
+- ⏸ R126 续 step 6 vent (1-2 commit, 30 file + 跨 export/import 3 service + 跨 daily_tracking page)
+- ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
+
+### 下一站 R126 续 step 5
+- mood 完整迁移 1 commit 整包 (35 file 端到端, 含 mood_audio 4 facade 跟 vent_audio shared EncryptedAudioStorage 基类)
+- 1-1.5h 1 commit 推完
+- 跟 assessment 同模式 (R110 阶段 2 续 4 feature 完整迁移)
+
 ## [1.1.0+175 R126 全清 (R110 阶段 2 daily_tracking 100% 收官 doc 同步)] - 2026-08-18 (R126 阶段 2 step 3 收官后 doc 闭环, AGENTS.md 校准 + R110 路线图进度收尾)
 
 ### Changed (R126 全清 doc 同步)

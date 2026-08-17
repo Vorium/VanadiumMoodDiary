@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图阶段 1+2 收官 (lib/features/daily_tracking/ 6/6 子表 100% 收官, 4 feature 待推), 24 CI gatekeepers (R125+1 起 baseline 21 → R122 +1 → R124 +1 → R125 +1), 2681 tests pass (R126 阶段 2 100% 收官 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 收官 (lib/features/daily_tracking/ 6/6 子表全迁 + 守门员 + 旧路径 re-export 兼容).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图阶段 1+2 续启动 (lib/features/ 2 feature: daily_tracking 6/6 子表 100% 收官 + assessment 1 commit 整包, 3 feature 待推), 24 CI gatekeepers (R125+1 起 baseline 21 → R122 +1 → R124 +1 → R125 +1), 2692 tests pass (R126 续 step 4 评估 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 收官 (lib/features/daily_tracking/ 6/6 子表全迁 + 守门员 + 旧路径 re-export 兼容). R126 续 step 4 R110 阶段 2 续首个跨 presentation 1 feature 完整迁移 (assessment 27 file 端到端 + 27 旧 path re-export + 3 test 适配 + check_usecase_layer 双 path 扫).
 
 ## 项目速览
 
@@ -838,6 +838,50 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **守门员 24 全绿**: check_feature_first_migration.py 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续)
 - **测试 baseline 2681 pass**: R122 baseline 2589 → R124 +5 → R125 +13 → R126 step 1 +10 → R126 step 2 +9 → R126 step 3 +12 = 2681
 - **下一站**: R126 续 4 feature 完整迁移 (mood 51 / vent 30 / assessment 16 / medication 50 file) + R127 阶段 3 pub workspace 3 package 拆分
+
+## v1.1.0 R126 续 step 4 (R110 feature-first 阶段 2 续) — assessment 1 commit 整包 完整迁移 (2026-08-18, 1 commit, 1.1.0+176)
+
+**状态**: R110 阶段 2 续首个跨 presentation 1 feature 完整迁移收官 ✅。R125 + R126 step 1+2+3 走"1 sub_table 5 file 端到端"模式 (0 presentation), 本批评估 1 commit 整包 走"1 feature 完整 27 file 端到端"模式 (含 presentation 15 file, R110 阶段 2 续首个跨 presentation 1 feature 完整迁移)。
+
+**新增 `lib/features/assessment/`** (1 feature 完整 3 子目录, 27 file 端到端):
+- **7 domain file**: 1 entity (AssessmentEntry 7 字段) + 4 logic (assessment_scale / record / comparison / reminder_policy) + 1 abstract sender + 1 usecase (schedule_assessment_reminder)
+- **5 data file**: 1 dao (assessment_dao) + 1 impl (AssessmentRepository 5 method) + 3 service (assessment_notifier / reminder_service / reminder_sender_impl)
+- **15 presentation file**: 1 provider (assessment_providers) + 4 page (assessment_page / assessment_widgets / assessment_center_page / assessment_history_page) + 10 widget
+
+**27 旧 path 改 1 行 re-export** (跟 R125 阶段 1 + R126 step 1+2+3 模式一致):
+- 7 domain: lib/domain/{entities,logic,repositories,usecases}/assessment_*.dart
+- 5 data: lib/core/data/{database/daos,repositories/assessment,services}/assessment_*.dart
+- 15 presentation: lib/presentation/{providers,pages/assessment,pages/assessment/widgets}/assessment_*.dart
+- 旧 file body 改 `export 'package:chroniccare/features/assessment/...'` 1 行, 现有用户 import 旧 path 仍 work (re-export 机制)
+
+**新增 test 11 case + 3 test 适配**:
+- `test/core/data/feature_first_migration_split_round126_step4_test.dart` (新 11 case): 目录结构 + 7/5/15 file 端到端 + 27 file 总 + 27 旧 re-export + 旧 path work + 跨 feature 0 违规 + 业务方法 0 break + R95 修真 0 violation + R110 阶段 2 续 收官 (features/ 2 feature)
+- 3 test 适配 (跟 R122 P2-2 R95 lock-in 适配 1 case 同模式, 单文件 → 整个 assessment 模块): `strings_notif_body_round108_test` (assessment_notifier caller) + `mood_trend_day_change_round113_test` (assessment_center_card ConsumerWidget) + `press_feedback_inkwell_coverage_round114_test` (assessment_center_card PressFeedback)
+
+**新增守门员适配**:
+- `scripts/check_usecase_layer.py` 双 path 扫 (lib/domain/usecases/ + lib/features/*/domain/usecases/) + re-export file 跳过 class 验证 (跟 R125 check_feature_first_migration 阶段 1 多 path 扫策略 + R122 P2-2 R95 lock-in 适配 1 case 同模式)
+
+**R126 续 step 4 关键设计**:
+- **R110 阶段 2 续首个跨 presentation 1 feature 完整迁移**: R125 + R126 step 1+2+3 走"1 sub_table 5 file 端到端"模式 (0 presentation, 6 子表 30 file), R126 续 step 4 评估 1 commit 整包 走"1 feature 完整 27 file 端到端"模式 (含 presentation 15 file)
+- **业务方法 0 break**: AssessmentEntry 7 字段 (id / timestamp / scaleId / score / severityRank / answers / note) + AssessmentRepository 5 method (watchAll / getLatest / countByScale / watchByScale / submitEntry) 跟旧版完全一致, 旧 widget 端 0 改动
+- **跨 feature 共享留 R128 阶段 4**: assessment 跨 check_in_entity (留 core/) + scale_registry (跨 10 量表) + scale_translations (跨 10 量表) + notification_service (跨 5 厂商 push) + date_utils (跨 logic), 留 R128 阶段 4 抽 core/platform/ umbrella
+- **27 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../assessment_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
+- **R95 修真 0 violation**: features/assessment/presentation 15 file 0 raw EdgeInsets 数字 (R95 修真有效, 修真 cross check 通过)
+
+**R110 阶段 2 续 4 feature 迁移进度 (1/4 = 25%)**:
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation) — 本批
+- ⏸ R126 续 step 5 mood (1 commit 整包, 35 file 端到端, 含 mood_audio 4 facade 跟 vent_audio shared EncryptedAudioStorage 基类)
+- ⏸ R126 续 step 6 vent (1-2 commit, 30 file + 跨 export/import 3 service + 跨 daily_tracking page)
+- ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
+
+**R126 续 step 4 verification**:
+- `flutter analyze`: 0 error / 0 新 warning (458 info-level, 跟 R126 baseline 457 + 1 trailing comma 一致)
+- `flutter test`: **2692 pass / 0 fail / 1 skip** (R126 baseline 2681 + R126 续 step 4 新 test 11 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- 22 .py 守门员: 14 OK (含 R126 续 step 4 新适配 check_usecase_layer) + 6 跨期已知 warning, 0 R126 续 step 4 引入新违规
+- `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续 step 5-7)
+
+**下一站 R126 续 step 5**: mood 完整迁移 1 commit 整包 (35 file 端到端, 含 mood_audio 4 facade 跟 vent_audio shared EncryptedAudioStorage 基类), 1-1.5h 1 commit 推完, 跟 assessment 同模式 (R110 阶段 2 续 4 feature 完整迁移)
 
 ## v1.1.0 R126 (R110 feature-first 阶段 2 step 2) — sleep 子表端到端迁移 (daily_tracking 3/6 子表) (2026-08-17, 1 commit, 1.1.0+173)
 

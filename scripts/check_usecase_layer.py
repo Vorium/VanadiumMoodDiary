@@ -108,9 +108,22 @@ def check_usecase_file(filepath: Path) -> list[str]:
 
     # 规则 4: usecase class 命名
     # 找 `class XxxUseCase` 或 `class Xxx` (后者需配合 @visibleForTesting 公开)
+    # R126 续 评估 1 commit 整包 (1.1.0+176): re-export file (1 行 export 新
+    # features/*/domain/usecases/ path) 跳过 class 验证 — 实际 class 在新 path,
+    # 跟 R122 P2-2 R95 lock-in 适配 1 case 同模式.
+    is_re_export = bool(
+        re.search(
+            r"^export\s+'package:chroniccare/features/.*/domain/usecases/",
+            content,
+            re.MULTILINE,
+        )
+    )
     class_matches = re.findall(r"^\s*class\s+(\w+)", content, re.MULTILINE)
-    if not class_matches:
+    if not class_matches and not is_re_export:
         errors.append(f"❌ {rel}: 文件无 public class 定义")
+    elif is_re_export:
+        # re-export file 不需要 public class (实际 class 在新 path)
+        pass
     else:
         for cls in class_matches:
             # 允许: UseCase / Policy (业务类) + Input/Output/Config/Result/Schedule/State (DTO)
@@ -170,11 +183,19 @@ def main() -> int:
         return 1
 
     files = sorted(USECASE_DIR.glob("**/*.dart"))
+    # R126 续 评估 1 commit 整包 (1.1.0+176): 也扫 lib/features/*/domain/usecases/
+    # 新 path, 验证 R110 feature-first 阶段 2 续 step 4 评估 完整迁移. 跟 R125
+    # check_feature_first_migration 阶段 1 gate 同款多 path 扫策略.
+    feature_usecase_dirs = sorted(
+        (PROJECT_ROOT / "lib" / "features").glob("*/domain/usecases")
+    )
+    for d in feature_usecase_dirs:
+        files.extend(sorted(d.glob("*.dart")))
     if not files:
         print(f"❌ {USECASE_DIR} 0 文件 (R109 期望至少 1 个 use case)")
         return 1
 
-    print(f"🔍 check_usecase_layer: 扫 {len(files)} 个 usecase 文件")
+    print(f"🔍 check_usecase_layer: 扫 {len(files)} 个 usecase 文件 (含 features/*)")
 
     all_errors = []
     for f in files:

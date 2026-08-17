@@ -1,0 +1,274 @@
+// v0.13 (Round 8) 评估历史对比
+//
+// 思路：
+// - 用户在 result 页能看到"对比上次"（Δ 分数 + 严重度变化方向）
+// - 提供 sparkline 数据给结果页画趋势
+// - 纯函数，不依赖 Flutter；方便测试
+//
+// 严重度等级（不同量表的分段数不一样）：
+// - PHQ-9 (0-27): 5 档 → 0-4 / 5-9 / 10-14 / 15-19 / 20+
+// - GAD-7 (0-21): 4 档 → 0-4 / 5-9 / 10-14 / 15+
+// 我们用 rank（0..N-1）来量化，等级下降 = 好转。
+
+import 'package:chroniccare/core/l10n/strings.dart';
+import 'package:chroniccare/domain/logic/date_utils.dart';
+import 'package:chroniccare/domain/logic/scale_registry.dart';
+import 'package:chroniccare/features/assessment/domain/logic/assessment_record.dart';
+import 'package:chroniccare/features/assessment/domain/logic/assessment_scale.dart'
+    show AssessmentScale;
+
+/// 严重度排名方向
+enum ComparisonTrend {
+  /// 严重度下降（好转）
+  improved,
+
+  /// 严重度上升（恶化）
+  worsened,
+
+  /// 严重度不变
+  unchanged,
+
+  /// 没有上次记录，无法对比
+  firstAssessment,
+}
+
+/// 单次对比结果
+class AssessmentComparison {
+  /// 当前评估
+  final AssessmentRecord current;
+
+  /// 上次评估（null = 首次评估）
+  final AssessmentRecord? previous;
+
+  /// 分数差：current.total - previous.total（null = 无上次）
+  final int? scoreDelta;
+
+  /// 严重度方向
+  final ComparisonTrend trend;
+
+  /// 当前严重度 rank（0..N-1，rank 越大越严重）
+  final int currentSeverityRank;
+
+  /// 上次严重度 rank
+  final int? previousSeverityRank;
+
+  /// 距离上次评估多少天（null = 无上次）
+  final int? daysSincePrevious;
+
+  const AssessmentComparison({
+    required this.current,
+    required this.previous,
+    required this.scoreDelta,
+    required this.trend,
+    required this.currentSeverityRank,
+    required this.previousSeverityRank,
+    required this.daysSincePrevious,
+  });
+
+  /// UI 用的趋势文案
+  ///
+  /// v0.31 P1-5: 硬编码中文迁移到 ARB — 走 Strings.xxx({override}) 模式
+  String trendLabel({
+    String? improvedOverride,
+    String? worsenedOverride,
+    String? unchangedOverride,
+    String? firstAssessmentOverride,
+  }) {
+    switch (trend) {
+      case ComparisonTrend.improved:
+        return Strings.assessmentComparisonImproved(
+          override: improvedOverride,
+        );
+      case ComparisonTrend.worsened:
+        return Strings.assessmentComparisonWorsened(
+          override: worsenedOverride,
+        );
+      case ComparisonTrend.unchanged:
+        return Strings.assessmentComparisonUnchanged(
+          override: unchangedOverride,
+        );
+      case ComparisonTrend.firstAssessment:
+        return Strings.assessmentComparisonFirst(
+          override: firstAssessmentOverride,
+        );
+    }
+  }
+
+  /// UI 用的趋势符号
+  String get trendSymbol {
+    switch (trend) {
+      case ComparisonTrend.improved:
+        return '↓';
+      case ComparisonTrend.worsened:
+        return '↑';
+      case ComparisonTrend.unchanged:
+        return '→';
+      case ComparisonTrend.firstAssessment:
+        return '★';
+    }
+  }
+
+  /// UI 用的"和上次比"完整文案
+  ///
+  /// v0.31 P1-5: 硬编码中文迁移到 ARB — 走 Strings.xxx({override}) 模式
+  String? deltaLabel({
+    String? sameOverride,
+    String? higherOverride,
+    String? lowerOverride,
+  }) {
+    if (previous == null || scoreDelta == null) return null;
+    final d = scoreDelta!;
+    if (d == 0) return Strings.assessmentDeltaSame(d, override: sameOverride);
+    if (d > 0) {
+      return Strings.assessmentDeltaHigher(d, override: higherOverride);
+    }
+    return Strings.assessmentDeltaLower(-d, override: lowerOverride);
+  }
+}
+
+/// 历史数据（sparkline 用）
+class AssessmentHistory {
+  /// 按时间正序的所有评估
+  final List<AssessmentRecord> records;
+
+  /// 同步提取的总分序列
+  List<int> get totals => records.map((r) => r.total).toList(growable: false);
+
+  /// 同步的时间戳
+  List<DateTime> get timestamps =>
+      records.map((r) => r.timestamp).toList(growable: false);
+
+  /// 平均分（null = 无记录）
+  double? get average {
+    if (records.isEmpty) return null;
+    final s = totals.fold<int>(0, (a, b) => a + b);
+    return s / records.length;
+  }
+
+  /// 最高分（null = 无记录）
+  int? get max =>
+      records.isEmpty ? null : totals.reduce((a, b) => a > b ? a : b);
+
+  /// 最低分
+  int? get min =>
+      records.isEmpty ? null : totals.reduce((a, b) => a < b ? a : b);
+
+  const AssessmentHistory({required this.records});
+}
+
+/// 评估对比计算器（纯函数集合）
+class AssessmentComparisonCalculator {
+  AssessmentComparisonCalculator._();
+
+  /// 计算给定 [total] 在 [scaleId] 量表中的严重度 rank
+  ///
+  /// rank 越大越严重。数据源为各量表的 [AssessmentScale.severityCutoffs]。
+  static int severityRankFor({
+    required String scaleId,
+    required int total,
+  }) {
+    final scale = scaleById(scaleId);
+    if (scale != null) {
+      final cutoff = scale.severityCutoffs.firstWhere(
+        (c) => total <= c.threshold,
+        orElse: () => scale.severityCutoffs.last,
+      );
+      return cutoff.rank;
+    }
+    // 未知量表 — 兜底：按 total 每 5 分一档
+    return (total / 5).floor().clamp(0, 4);
+  }
+
+  /// 严重度档位名（中文）
+  ///
+  /// 数据源为各量表的 [AssessmentScale.severityCutoffs]。
+  ///
+  /// v0.31 P1-5: 硬编码中文迁移到 ARB — 走 Strings.xxx({override}) 模式
+  static String severityLabelFor({
+    required String scaleId,
+    required int total,
+    String? override,
+  }) {
+    final scale = scaleById(scaleId);
+    if (scale != null) {
+      final cutoff = scale.severityCutoffs.firstWhere(
+        (c) => total <= c.threshold,
+        orElse: () => scale.severityCutoffs.last,
+      );
+      return cutoff.label;
+    }
+    final rank = severityRankFor(scaleId: scaleId, total: total);
+    return Strings.assessmentSeverityRank(rank, override: override);
+  }
+
+  /// 从历史 records 提取最近一次 + 上一次的对比
+  ///
+  /// [records] 推荐按时间正序传入（最早在前），但函数内部也会显式 sort
+  /// （v0.16 round 19 修复：之前依赖 caller 传 ASC，否则 current/previous 取错）
+  /// [scaleId] 用于查 severityRank
+  /// [now] 默认 DateTime.now()，可注入测试
+  static AssessmentComparison fromRecords({
+    required List<AssessmentRecord> records,
+    required String scaleId,
+    DateTime? now,
+  }) {
+    if (records.isEmpty) {
+      throw ArgumentError('records must not be empty');
+    }
+    // 显式按 timestamp 升序（早→晚），防止 caller 传未排序数据时 current/previous 取错
+    final sorted = [...records]
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    final current = sorted.last;
+    final previous = sorted.length >= 2 ? sorted[sorted.length - 2] : null;
+
+    final currentRank = severityRankFor(
+      scaleId: scaleId,
+      total: current.total,
+    );
+
+    if (previous == null) {
+      return AssessmentComparison(
+        current: current,
+        previous: null,
+        scoreDelta: null,
+        trend: ComparisonTrend.firstAssessment,
+        currentSeverityRank: currentRank,
+        previousSeverityRank: null,
+        daysSincePrevious: null,
+      );
+    }
+
+    final previousRank = severityRankFor(
+      scaleId: scaleId,
+      total: previous.total,
+    );
+    final delta = current.total - previous.total;
+    final ComparisonTrend trend;
+    if (currentRank < previousRank) {
+      trend = ComparisonTrend.improved;
+    } else if (currentRank > previousRank) {
+      trend = ComparisonTrend.worsened;
+    } else {
+      trend = ComparisonTrend.unchanged;
+    }
+    final days = _daysBetween(previous.timestamp, now ?? DateTime.now());
+    return AssessmentComparison(
+      current: current,
+      previous: previous,
+      scoreDelta: delta,
+      trend: trend,
+      currentSeverityRank: currentRank,
+      previousSeverityRank: previousRank,
+      daysSincePrevious: days,
+    );
+  }
+
+  /// 提取历史 sparkline 数据
+  static AssessmentHistory historyFromRecords(List<AssessmentRecord> records) {
+    return AssessmentHistory(records: List.unmodifiable(records));
+  }
+
+  /// 跨日天数（同 trend_calculator 的逻辑）
+  /// R102 (P2): 改用 core/shared/date_utils.dart 单一来源
+  static int _daysBetween(DateTime a, DateTime b) => calendarDaysBetween(a, b);
+}

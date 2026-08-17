@@ -1,0 +1,197 @@
+// 规则 3 标记: CJK 字面量 = developer 日志/内部 note (非用户可见 UI 文案), 豁免 i18n 扫描
+// v0.13 (Round 7) 心理评估周期提醒服务
+//
+// 思路（参考 Apple Health / WWDC '23 Health Reminders）：
+// - 用户在 settings 开启 "每 N 天提醒做心理评估"
+// - 调度时间 = 上次评估时间 + N 天
+// - 评估完成后，自动从"今天"重算下次
+// - 一次只调度一条推送，id 稳定
+//
+// 设计取舍：
+// - **默认关闭**（侵入性功能）
+// - 配置存 SharedPreferences（不动 schema）
+// - 评估 type='phq9' / 'gad7'（沿用 v0.8 设计）
+// - 跨时区：fireAt 用本地时间（与 medication reminders 一致）
+//
+// v0.31.1 R109 (god class 拆 round 1):
+// service 退化 thin facade, 业务编排 (算 fire time + 调 sender) 搬到
+// `domain/usecases/schedule_assessment_reminder.dart`. 改前 199L → 改后 ~150L.
+// - 公开 API 保留: defaultDays / allowedDays / computeNextFireTime
+//   (从 AssessmentReminderPolicy 透传, 避免 caller 改 import 路径)
+// - prefs 持久化 5 个 API 保留 (isEnabled / setEnabled / getDays / setDays /
+//   getLastAssessmentAt / setLastAssessmentAt)
+// - 触发入口 (onAppStart / onAssessmentCompleted) 调 use case 替代直接调
+//   NotificationService.
+import 'dart:async';
+
+import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:chroniccare/core/data/services/pii_safe_log.dart';
+import 'package:chroniccare/domain/repositories/check_in_repository.dart';
+import 'package:chroniccare/features/assessment/domain/logic/assessment_reminder_policy.dart';
+import 'package:chroniccare/features/assessment/domain/usecases/schedule_assessment_reminder.dart';
+
+/// 心理评估周期提醒服务 (R109 退化 thin facade)
+///
+/// 改前: service 199L, 混合 prefs 持久化 + 业务编排 + 调 NotificationService
+/// 改后: service 只负责 prefs 持久化 + 触发入口委派, 业务编排走 use case
+///
+/// 公开 API 保留 (caller 不动):
+/// - `defaultDays` / `allowedDays` (settings UI 用)
+/// - `computeNextFireTime` (@visibleForTesting, widget test 用)
+/// - `isEnabled` / `setEnabled` / `getDays` / `setDays`
+/// - `getLastAssessmentAt` / `setLastAssessmentAt`
+/// - `onAppStart` / `onAssessmentCompleted` / `onSettingsChanged`
+class AssessmentReminderService {
+  static const _kEnabled = 'assessment_reminder_enabled';
+  static const _kDays = 'assessment_reminder_days';
+  static const _kLastAssessmentAt = 'assessment_reminder_last_at';
+
+  /// 默认提醒间隔：14 天
+  /// R109: 透传 AssessmentReminderPolicy.defaultDays, 避免 caller 改 import
+  static const int defaultDays = AssessmentReminderPolicy.defaultDays;
+
+  /// 允许的间隔选项 (settings UI 用的也是这几个)
+  /// R109: 透传 AssessmentReminderPolicy.allowedDays
+  static const List<int> allowedDays = AssessmentReminderPolicy.allowedDays;
+
+  final CheckInRepository _checkInRepo;
+  final ScheduleAssessmentReminderUseCase _scheduleUseCase;
+
+  AssessmentReminderService({
+    required CheckInRepository checkInRepo,
+    required ScheduleAssessmentReminderUseCase scheduleUseCase,
+  })  : _checkInRepo = checkInRepo,
+        _scheduleUseCase = scheduleUseCase;
+
+  // ============== 配置 API ==============
+
+  /// 是否启用
+  Future<bool> isEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_kEnabled) ?? false;
+  }
+
+  Future<void> setEnabled(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kEnabled, value);
+  }
+
+  /// 提醒间隔（天）
+  Future<int> getDays() async {
+    final prefs = await SharedPreferences.getInstance();
+    final v = prefs.getInt(_kDays) ?? defaultDays;
+    if (!allowedDays.contains(v)) return defaultDays;
+    return v;
+  }
+
+  Future<void> setDays(int days) async {
+    if (!allowedDays.contains(days)) {
+      throw ArgumentError(
+        'assessment reminder interval must be one of $allowedDays; got: $days',
+      );
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kDays, days);
+  }
+
+  /// 上次评估时间（用户设置后的"基准时间"）
+  ///
+  /// 注意：这里**只读** SharedPreferences。
+  /// 真实评估时间应从 [CheckInRepository.watchAssessments] 拉，但那样
+  /// 需要把 [CheckInRepository] 注入到纯函数。简化版：让 UI 在评估完成后
+  /// 调 [onAssessmentCompleted] 显式写入。
+  Future<DateTime?> getLastAssessmentAt() async {
+    final prefs = await SharedPreferences.getInstance();
+    final s = prefs.getString(_kLastAssessmentAt);
+    if (s == null) return null;
+    // v0.22 round 30 (sp-zh P1-1): setLastAssessmentAt 改用 toUtc 存
+    // (避免 local 字符串跨时区漂移),get 时 tryParse 返回 UTC DateTime
+    // → 转 local 让 service 内部 fireAt 计算 (DateTime(fire.year, ...))
+    // 跟原 local-time 行为一致。
+    return DateTime.tryParse(s)?.toLocal();
+  }
+
+  Future<void> setLastAssessmentAt(DateTime when) async {
+    final prefs = await SharedPreferences.getInstance();
+    // v0.22 round 30 (sp-zh P1-1): 显式 toUtc,跟 data_export_service 同款修复
+    // 详见 safety_watch_service._setLastAlertAt 注释
+    await prefs.setString(_kLastAssessmentAt, when.toUtc().toIso8601String());
+  }
+
+  // ============== 纯函数：下次触发时间 (R109 透传) ==============
+
+  /// 计算下次提醒的触发时间 (透传 policy, 公开 API 保留)
+  ///
+  /// R109: 内部转调 `AssessmentReminderPolicy.computeNextFireTime`,
+  /// 行为跟原 `@visibleForTesting static` 100% 一致 (同源码搬过去).
+  /// @visibleForTesting 保留, 防止 production caller 误用.
+  @visibleForTesting
+  static DateTime? computeNextFireTime({
+    required bool enabled,
+    required int days,
+    required DateTime? lastAssessmentAt,
+    DateTime? now,
+  }) =>
+      AssessmentReminderPolicy.computeNextFireTime(
+        enabled: enabled,
+        days: days,
+        lastAssessmentAt: lastAssessmentAt,
+        now: now,
+      );
+
+  // ============== 触发入口 (R109 调 use case 替代直接调 NotificationService) ==============
+
+  /// App 启动时调用（main.dart 调）
+  ///
+  /// R109: 调 use case 替代直接调 notification_service.delegate.
+  ///   - enabled=false → use case 会调 sender.cancel()
+  ///   - enabled=true → use case 算 fire time + sender.schedule
+  Future<void> onAppStart() async {
+    final enabled = await isEnabled();
+    final days = await getDays();
+    final last = await getLastAssessmentAt();
+    // P0 fix: DB 级查询最近评估时间戳，不再全表 reduce
+    final realLast = await _checkInRepo.getLatestAssessmentTimestamp();
+    if (realLast != null) {
+      if (last == null || realLast.isAfter(last)) {
+        await setLastAssessmentAt(realLast);
+      }
+    }
+    await _scheduleUseCase.reschedule(
+      enabled: enabled,
+      days: days,
+      lastAssessmentAt: await getLastAssessmentAt(),
+    );
+  }
+
+  /// 评估完成后调用（assessment_page._submit 调）
+  ///
+  /// R109: 调 use case 替代直接调 notification_service.delegate.
+  Future<void> onAssessmentCompleted() async {
+    final enabled = await isEnabled();
+    if (!enabled) return;
+    final now = DateTime.now();
+    await setLastAssessmentAt(now);
+    final days = await getDays();
+    await _scheduleUseCase.reschedule(
+      enabled: true,
+      days: days,
+      lastAssessmentAt: now,
+      now: now,
+    );
+    piiSafeLog(
+      'AssessmentReminderService',
+      '✅ 评估完成, 下次提醒: (走 use case 编排, $days天后)',
+    );
+  }
+
+  /// 用户改设置后调用（settings 切换 enabled / days）
+  ///
+  /// 重新跑一次 onAppStart 逻辑（开关/天数变 → 立即生效）
+  Future<void> onSettingsChanged() => onAppStart();
+}
+// rule3-whitelist: 186
+//   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
+//   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py

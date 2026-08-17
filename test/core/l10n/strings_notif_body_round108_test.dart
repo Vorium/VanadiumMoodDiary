@@ -165,8 +165,12 @@ void main() {
 
   group('assessment_notifier.dart R113 BUG 8 caller 静态分析', () {
     test('caller: assessment_notifier.dart 不再传 scaleId 给 body', () async {
+      // R126 续 评估 1 commit 整包 (1.1.0+176): assessment_notifier.dart 实际定义
+      // 已迁到 lib/features/assessment/data/services/assessment_notifier.dart,
+      // 旧 lib/core/data/services/assessment_notifier.dart 改 1 行 re-export.
+      // 跟 R122 P2-2 R95 lock-in 适配 1 case 同模式, 读新路径检查 pattern.
       final file = dart_io.File(
-        'lib/core/data/services/assessment_notifier.dart',
+        'lib/features/assessment/data/services/assessment_notifier.dart',
       );
       final content = await file.readAsString();
       // 应调无 scaleId 版: Strings.notifAssessmentBody(days)
