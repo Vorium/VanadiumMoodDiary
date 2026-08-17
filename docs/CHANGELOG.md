@@ -1,6 +1,34 @@
-## [1.1.0+159 R121 P1-2 续抽 — vent_list_page 684L→251L 主壳 + 232L + 189L 子文件] - 2026-08-17 (P1-2 续拆 2/3, 6 regression test, 主壳 < 350L god-class size guard)
+## [1.1.0+163 R121 P1-3 step 3 评估 — 量表 implements ScaleTranslations 建议 defer 到 R122] - 2026-08-17 (emil 8.0→8.5 拖分项 #3 评估, 不动手)
 
-### Changed (R121 P1-2 续抽)
+### R121 P1-3 step 3 评估 (1.1.0+163, 评估后 defer)
+
+**emil 维度 8.0→8.5 拖分项 #3**: 10 量表 class 全部 `不 implements ScaleTranslations` (Phq9Translations.dart:18 显式注释说明), 主壳 StaticScaleTranslations 仍 70 method 委托 (7 method × 10 scale)。
+
+**emil 建议 (R120 综合审视)**:
+> 让 10 个 class 各自 implements ScaleTranslations, 主壳 70 method 委派可考虑替换为
+> `late final Map<Type, ScaleTranslations> _byType;` 1 个 lookup, 主壳可缩到 < 200L
+
+**实际评估 (R121)**:
+- 10 量表 class 全部 implements ScaleTranslations → 每个 class 需实现 **73 method** (70 量表 + 3 crisis)
+  - 例如 Phq9Translations 实现 ScaleTranslations → 必须 stub `gad7Name` / `isiItem` / `level2DepressionSeverityLabel` 等 63 个 method 全部 `throw UnimplementedError()`
+- 10 class × 70 method = 700 method stub, 远超当前 70 委派
+- 主壳 lookup `Map<Type, ScaleTranslations>` 也行不通: 任何 `_byType[Phq9Translations]!.phq9Name()` 仍需主壳 70 委派 (因为 ScaleTranslations 接口有 70 method, 通用 dispatch 不能跨量表)
+- 真正消除 70 委派需抽象 `Translation` interface (7 method/scale) + 10 impl + 主壳泛型 dispatch — 这是 pub workspace 重构 (R110 路线图), 不是单 commit 改得动
+
+**结论**: R121 P1-3 step 3 实际成本 ≥ 1-2 周 (pub workspace 规模, R110 路线图), 不是 2h 改得动。Defer 到 R122+ 跟 R110 feature-first 重构一起做。
+
+**R121 已闭环累计**:
+- P1-1: 文档同步 4 项 (1.1.0+157)
+- P1-2: vent_list_page 抽 VentEntryCell + VentHintHelper (1.1.0+158)
+- P1-2 续: vent_list_page 抽 VentEntryList (1.1.0+159)
+- P1-3 step 1: 2 alias @Deprecated (1.1.0+160)
+- P1-3 step 2: app_database_migrations 拆 4 sub-part (1.1.0+161)
+- P1-4: CI coverage + spring.gentle (1.1.0+162)
+- P1-3 step 3: 评估后 defer (1.1.0+163, 本 commit)
+
+**R121 4 视角加权综合预期**: 7.5 → 7.7 (P1-1 文档同步 +0.05, P1-2/2续 vent_list_page 拆 -0.05 收紧主壳但 +L 文件 overhead, P1-3 step 1 @Deprecated +0.02, P1-3 step 2 part 拆 4 +0.05, P1-4 coverage + gentle +0.05)
+
+
 - **vent_list_page.dart 424L → 251L (-40.8%)**:
   - 抽 `widgets/vent_entry_list.dart` (189L) 含:
     - `VentEntryList` public widget (前 `_EntryList`, 189L) — LazyAppleListSection + Dismissible 左滑删除 + stagger fade-in + R113 BUG 7b 删除失败换 key 机制
