@@ -210,7 +210,7 @@ void main() {
 
     setUpAll(() {
       source = File(
-        'lib/presentation/pages/vent/vent_detail_page.dart',
+        'lib/features/vent/presentation/pages/vent/vent_detail_page.dart',
       ).readAsStringSync();
     });
 

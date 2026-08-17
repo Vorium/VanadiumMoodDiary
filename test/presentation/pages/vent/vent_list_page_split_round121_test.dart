@@ -25,11 +25,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('R121 P1-2 — vent_list_page god class split', () {
-    const mainPath = 'lib/presentation/pages/vent/vent_list_page.dart';
+    const mainPath = 'lib/features/vent/presentation/pages/vent/vent_list_page.dart';
     const cellPath =
-        'lib/presentation/pages/vent/widgets/vent_entry_cell.dart';
+        'lib/features/vent/presentation/pages/vent/widgets/vent_entry_cell.dart';
     const listPath =
-        'lib/presentation/pages/vent/widgets/vent_entry_list.dart';
+        'lib/features/vent/presentation/pages/vent/widgets/vent_entry_list.dart';
 
     test('main + entry cell + entry list 文件三存在', () {
       expect(File(mainPath).existsSync(), isTrue, reason: mainPath);

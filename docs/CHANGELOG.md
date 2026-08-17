@@ -1,3 +1,81 @@
+## [1.1.0+178 R126 续 (R110 feature-first 阶段 2 续 step 6) — vent 1 commit 整包 完整迁移] - 2026-08-18 (R110 阶段 2 续 3rd 跨 presentation 1 feature 完整迁移, 19 file 端到端 + 19 旧 path re-export + 12 test 适配)
+
+### Changed (R126 续 step 6 vent 1 commit 整包)
+- **新增 `lib/features/vent/`** (1 feature 完整 3 子目录, 19 file 端到端):
+  - **2 domain file**: 1 entity (VentEntryEntity 7 字段) + 1 abstract (VentRepository 6 method)
+  - **6 data file**: 1 impl (VentRepositoryImpl) + 1 mapper (VentMapper) + 1 dao (VentDao) + 1 table (VentEntries drift) + 2 service (vent_agreement_store + vent_audio_storage)
+  - **11 presentation file**: 1 provider (vent_providers) + 3 page (vent_compose + vent_detail + vent_list) + 7 widget (vent_agreement_dialog + vent_audio_section + vent_entry_cell + vent_entry_list + vent_save_bar + vent_tag_picker + vent_text_input)
+- **19 旧 path 改 1 行 re-export** (跟 R125 阶段 1 + R126 续 step 4/5 模式一致):
+  - 2 domain: lib/domain/{entities,repositories}/vent_*.dart
+  - 6 data: lib/core/data/{repositories/vent,database/mappers/vent,database/daos,database/tables/vent,services}/vent_*.dart
+  - 11 presentation: lib/presentation/{providers,pages/vent,pages/vent/widgets}/vent_*.dart
+  - 旧 file body 改 `export 'package:chroniccare/features/vent/...'` 1 行, 现有用户 import 旧 path 仍 work
+
+### vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类
+- **vent_audio_storage** 迁 features/vent/data/services/ — `extends EncryptedAudioStorage` 保留
+- 跟 mood_audio_storage 共享 EncryptedAudioStorage 基类 (R121 抽), R128 阶段 4 抽 core/platform/ umbrella 处理
+
+### 跨域 import 处理 (跨 feature 共享留 R128 阶段 4)
+- `data/services/vent_audio_storage.dart` 引 `core/data/privacy/encrypted_audio_storage.dart` 保持旧 path (跨 mood audio shared 基类)
+- `data/repositories/vent/vent_repository_impl.dart` 引 `core/data/services/encryption_service.dart` + `core/shared/consent_gate.dart` 保持旧 path (跨平台服务)
+- `data/repositories/vent/vent_repository_impl.dart` 引 `domain/entities/consent_artifact.dart` 保持旧 path (留 core/ 共享)
+- 跨 home_hero_card + daily_tracking + trend widget 留 R128 阶段 4 抽 core/platform/ umbrella 处理
+- 跨 export/import 3 service (export_crypto_service + import_shared + export_orchestrator + import_vent) 留 core/ 跨 feature 共享
+
+### 新增测试 (R126 续 step 6 vent)
+- **`test/core/data/feature_first_migration_split_round126_step6_test.dart`** (新增 12 case):
+  - features/vent/ 目录结构 3 子目录
+  - vent 2 domain file 端到端 (1 entity + 1 abstract)
+  - vent 6 data file 端到端 (1 impl + 1 mapper + 1 dao + 1 table + 2 service)
+  - vent 11 presentation file 端到端 (1 provider + 3 page + 7 widget)
+  - 19 file 端到端 全部存在
+  - 19 旧 path 全部 re-export (1 行 export 新 path)
+  - 旧 path import 仍 work (现有用户 0 改动)
+  - 跨 feature import 边界 0 违规 (features/vent 不引用其他 features/)
+  - 业务方法 0 break (VentEntryEntity 7 字段 + VentRepository 6 method 跟旧版一致)
+  - vent_audio_storage 公开 API 完整 (跟 R121 抽 EncryptedAudioStorage 基类协同)
+  - R95 lock-in 协同: features/vent/presentation 0 raw EdgeInsets 数字 (R95 修真有效)
+  - R110 阶段 2 续 step 6 vent 1 commit 整包 1 feature 完整迁移 收官 (features/ 4 feature: daily_tracking + assessment + mood + vent)
+
+### 适配已有测试 (R122 P2-2 R95 lock-in 适配 1 case 同模式, 跟 R125/R126 模式一致)
+- **`test/core/theme/app_tokens_lock_in_round95_test.dart`** 1 case 适配: vent_detail_page 改读新 path
+- **`test/core/data/feature_first_migration_split_round126_step4_test.dart`** 1 case 改: features/ 期望 3 → 4 feature
+- **`test/core/data/feature_first_migration_split_round126_step5_test.dart`** 1 case 改: features/ 期望 3 → 4 feature
+- **`test/presentation/pages/home/home_footer_fade_gating_round114_test.dart`** 1 case 适配: vent_list_page 改读新 path
+- **`test/presentation/pages/mood_list/mood_trend_day_change_round113_test.dart`** 1 case 适配: vent_list_page 改读新 path
+- **`test/presentation/pages/vent/vent_compose_dispose_lock_in_round95_test.dart`** 1 case 适配: vent_compose_page 改读新 path
+- **`test/presentation/pages/vent/vent_list_page_split_round121_test.dart`** 2 case 适配: vent_list_page + vent_entry_cell + vent_entry_list 改读新 path
+- **`test/presentation/pages/vent/vent_detail_storage_cache_round113_test.dart`** 1 case 适配: vent_detail_page 改读新 path
+- **`test/presentation/pages/vent/vent_compose_dispose_ref_leak_round112_test.dart`** 1 case 适配: vent_compose_page 改读新 path
+- **`test/presentation/widgets/audio_lifecycle_round108_test.dart`** 1 case 适配: vent_compose_page 改读新 path
+
+### R126 续 step 6 关键设计
+- **R110 阶段 2 续 3rd 跨 presentation 1 feature 完整迁移**: R126 续 step 4 评估 (27 file) + R126 续 step 5 mood (40 file) 走 1 feature 完整迁移模式, 本批 vent 走 1 feature 完整 19 file 端到端 (含 presentation 11 file + vent_audio_storage 跟 mood_audio_storage 共享 EncryptedAudioStorage 基类)
+- **业务方法 0 break**: VentEntryEntity 7 字段 (id / timestamp / contentText / audioPath / audioDurationSec / audioSizeBytes / tagsJson) + VentRepository 6 method (watchAll / add / delete / getById / restore / deleteAll) 跟旧版完全一致, 旧 widget 端 0 改动
+- **vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类**: 跟 mood_audio_storage 共享基类, R128 阶段 4 抽 core/platform/ umbrella 处理
+- **跨 feature 共享留 R128 阶段 4**: vent 跨 consent_artifact (留 core/) + encryption_service (留 core/) + consent_gate (留 core/) + home_hero_card (留 home) + daily_tracking widget (留 daily_tracking) + trend widget (留 trend) + 4 export/import service (留 core/data/services/export/), R128 阶段 4 抽 core/platform/ umbrella 处理
+- **19 旧 path 1 行 re-export 兼容**: 现有用户 import 旧 path (`lib/domain/.../vent_*` 等) 仍 work, 旧 file body 改 1 行 export 新 path 即可 (跟 R120 facade 收紧 + R110 feature-first 迁移 re-export 模式)
+- **R95 修真 0 violation**: features/vent/presentation 11 file 0 raw EdgeInsets 数字 (R95 修真有效, 修真 cross check 通过)
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning (458 info-level, 跟 R126 续 step 5 baseline 一致)
+- `flutter test`: **2716 pass / 0 fail / 1 skip** (R126 续 step 5 baseline 2704 + R126 续 step 6 新 test 12 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿 (R126 续 step 5 features/*/data/tables/ 双 path 扫扩到 vent)
+- 22 .py 守门员: 14 OK + 6 跨期已知 warning, 0 R126 续 step 6 引入新违规
+- `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续 step 7)
+
+### R110 阶段 2 续 4 feature 迁移进度 (3/4 = 75%)
+- ✅ R126 续 step 4 assessment (1 commit 整包, 27 file 端到端, 业务方法 0 break, R95 修真 0 violation)
+- ✅ R126 续 step 5 mood (1 commit 整包, 40 file 端到端, 业务方法 0 break, mood_audio 4 facade 协同 R122 P2-1 拆 3 facade, R95 修真 baseline ≤ 2)
+- ✅ **R126 续 step 6 vent (1 commit 整包, 19 file 端到端, 业务方法 0 break, vent_audio_storage 协同 R121 抽 EncryptedAudioStorage 基类, R95 修真 0 violation) — 本批**
+- ⏸ R126 续 step 7 medication (2-3 commit, 50 file + 28 widget)
+
+### 下一站 R126 续 step 7
+- medication 完整迁移 2-3 commit (50 file 端到端 + 28 widget)
+- 1-2h 2-3 commit 推完
+- R110 阶段 2 续 4 feature 完整迁移 4/4 = 100% 收官
+- 下一站 R127 阶段 3 pub workspace 3 package 拆分
+
 ## [1.1.0+177 R126 续 (R110 feature-first 阶段 2 续 step 5) — mood 1 commit 整包 完整迁移] - 2026-08-18 (R110 阶段 2 续 2nd 跨 presentation 1 feature 完整迁移, 40 file 端到端 + 40 旧 path re-export + 9 test 适配 + check_all.dart 双 path 扫 entities + tables)
 
 ### Changed (R126 续 step 5 mood 1 commit 整包)

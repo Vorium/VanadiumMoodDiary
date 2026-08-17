@@ -161,7 +161,7 @@ void main() {
     });
 
     test('vent_detail_page: 用 textStyleCaptionHint 集中器', () {
-      final file = File('lib/presentation/pages/vent/vent_detail_page.dart');
+      final file = File('lib/features/vent/presentation/pages/vent/vent_detail_page.dart');
       expect(file.existsSync(), true);
       final content = file.readAsStringSync();
       expect(

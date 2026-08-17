@@ -34,7 +34,7 @@ void main() {
       setUpAll(() {
         // 静态读源文件 (跟 R93 vent_compose_page_r93_hide_test 风格一致)
         source = File(
-          'lib/presentation/pages/vent/vent_compose_page.dart',
+          'lib/features/vent/presentation/pages/vent/vent_compose_page.dart',
         ).readAsStringSync();
         mixinSource = File(
           'lib/presentation/widgets/audio_lifecycle.dart',

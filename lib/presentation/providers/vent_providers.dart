@@ -1,68 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:chroniccare/core/data/repositories/vent/vent_repository_impl.dart';
-import 'package:chroniccare/core/data/services/vent_agreement_store.dart';
-import 'package:chroniccare/core/data/services/vent_audio_storage.dart';
-import 'package:chroniccare/core/shared/consent_gate.dart';
-import 'package:chroniccare/domain/entities/vent_entry_entity.dart';
-import 'package:chroniccare/domain/repositories/vent_repository.dart';
-import 'package:chroniccare/presentation/providers/cbt_providers.dart';
-import 'package:chroniccare/presentation/providers/core_providers.dart';
-
-/// v0.17 round 14 (P1-3 拆 core_providers): vent-specific provider
+/// 树洞 providers (Riverpod 状态 + 依赖注入, 含 audio + agreement)
 ///
-/// 之前在 core_providers.dart 里。vent 是独立 privacy 模块,stream provider
-/// 跟 vent 业务紧绑，放 core_providers 不合适。
-///
-/// 整组放这里 (含 vent repository, 跟 vent audio storage 同组), 避免
-/// core_providers ↔ vent_providers 循环 import。
-///
-/// autoDispose: 离开 vent 列表页时 stream subscription 自动取消
-/// (隐私边界 + 省资源, round 8 C5 决策)
+/// **R126 续 step 6 (1.1.0+178)**: 实际定义已迁到
+/// `lib/features/vent/presentation/providers/vent_providers.dart`。
+/// 本文件 re-export 保持旧 import path 兼容 (现有用户 0 改动)。
+library;
 
-/// 树洞 audio 文件管理（独立 service）
-final ventAudioStorageProvider = Provider<VentAudioStorage>(
-  (ref) => VentAudioStorage(),
-);
-
-/// v1.1.0 round 9 (F4 树洞使用公约): 公约已读状态存储
-final ventAgreementStoreProvider = Provider<VentAgreementStore>(
-  (ref) => VentAgreementStore(ref.watch(sharedPreferencesProvider)),
-);
-
-/// v0.27 round 67 (Sprint 1 上架前 P0, spzh C-P0-6):
-/// 同意状态网关 (consent gate) provider — vent repository 注入用
-///
-/// 默认用 [SharedPrefsConsentGate] (跟 [legalConsentStoreProvider] 共享同一份
-/// SharedPreferences key)。测试时可 override 为 fake gate (e.g. 永远返 false)
-final consentGateProvider = Provider<ConsentGate>(
-  (ref) => const SharedPrefsConsentGate(),
-);
-
-/// v0.15 (Round 18) 树洞仓库 provider
-final ventRepositoryProvider = Provider<VentRepository>(
-  (ref) => VentRepositoryImpl(
-    ref.watch(databaseProvider),
-    ref.watch(ventAudioStorageProvider),
-    null, // EncryptionService 默认实例
-    ref.watch(consentGateProvider), // v0.27 R67: 注入同意网关
-  ),
-);
-
-/// 树洞条目流（按时间倒序，UI 监听用）
-///
-/// v0.17 round 8 (C5): 加 .autoDispose，离开 vent 列表页时 stream subscription 自动
-/// 取消，DB watch 释放。重新进页面 re-subscribe 一次性重 fetch。树洞数据通常
-/// 几十~几百条，re-fetch 成本可接受；好处是切到 home/settings 后不再后台
-/// 监听 vent 表的更新（隐私边界 + 省资源）。
-final ventEntriesProvider = StreamProvider.autoDispose<List<VentEntryEntity>>(
-  (ref) => ref.watch(ventRepositoryProvider).watchAll(),
-);
-
-/// 单条树洞（详情页用）
-///
-/// v0.17 round 8 (C5): 加 .autoDispose，详情页 pop 后缓存自动清。
-final ventEntryByIdProvider =
-    FutureProvider.autoDispose.family<VentEntryEntity?, int>(
-  (ref, id) => ref.watch(ventRepositoryProvider).getById(id),
-);
+export 'package:chroniccare/features/vent/presentation/providers/vent_providers.dart';

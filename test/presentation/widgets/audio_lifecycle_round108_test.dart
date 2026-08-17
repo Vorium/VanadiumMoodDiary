@@ -34,7 +34,7 @@ void main() {
         'lib/presentation/widgets/audio_lifecycle.dart',
       ).readAsStringSync();
       ventSource = File(
-        'lib/presentation/pages/vent/vent_compose_page.dart',
+        'lib/features/vent/presentation/pages/vent/vent_compose_page.dart',
       ).readAsStringSync();
       moodSource = File(
         'lib/features/mood/presentation/pages/mood/widgets/mood_audio_recorder_widget.dart',

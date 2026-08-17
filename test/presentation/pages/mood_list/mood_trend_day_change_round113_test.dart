@@ -178,9 +178,9 @@ void main() {
     test('vent_list_page.dart', () async {
       // v1.1.0+158 R121 P1-2 (frame-thinking): _EntryCell → widgets/vent_entry_cell.dart
       // todayProvider 引用迁到子文件, 主壳和子文件都需验证
-      final mainSrc = await readSrc('presentation/pages/vent/vent_list_page.dart');
+      final mainSrc = await readSrc('features/vent/presentation/pages/vent/vent_list_page.dart');
       final cellSrc = await readSrc(
-        'presentation/pages/vent/widgets/vent_entry_cell.dart',
+        'features/vent/presentation/pages/vent/widgets/vent_entry_cell.dart',
       );
       expect(stripComments(mainSrc).contains('DateTime.now()'), isFalse);
       expect(stripComments(cellSrc).contains('DateTime.now()'), isFalse);
