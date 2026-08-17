@@ -27,6 +27,8 @@ import 'package:chroniccare/domain/entities/scale_translations/gad7_translations
 import 'package:chroniccare/domain/entities/scale_translations/isi_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/level2_anxiety_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/level2_depression_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/level2_mania_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/level2_psychosis_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/pss_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/whodas_translations.dart';
@@ -41,7 +43,8 @@ class StaticScaleTranslations implements ScaleTranslations {
   // 阶段 3: ISI + PSS → IsiTranslations + PssTranslations (R118 round 3)
   // 阶段 4: WHODAS → WhodasTranslations (R118 round 4)
   // 阶段 5: Level2 Depression + Anxiety (R118 round 5)
-  // 阶段 6-7: 拆 Level2 Mania + Psychosis + ASRM
+  // 阶段 6: Level2 Mania + Psychosis (R118 round 6)
+  // 阶段 7: ASRM
   static const _phq9 = Phq9Translations();
   static const _gad7 = Gad7Translations();
   static const _isi = IsiTranslations();
@@ -49,6 +52,8 @@ class StaticScaleTranslations implements ScaleTranslations {
   static const _whodas = WhodasTranslations();
   static const _level2Depression = Level2DepressionTranslations();
   static const _level2Anxiety = Level2AnxietyTranslations();
+  static const _level2Mania = Level2ManiaTranslations();
+  static const _level2Psychosis = Level2PsychosisTranslations();
 
   // === PHQ-9 7 method 委托 (R118 P2-7 阶段 1) ===
   @override
@@ -248,6 +253,64 @@ class StaticScaleTranslations implements ScaleTranslations {
   String level2AnxietySeveritySummary(int rank, {String? override}) =>
       _level2Anxiety.level2AnxietySeveritySummary(rank, override: override);
 
+  // === Level2 Mania 7 method 委托 (R118 P2-7 阶段 6) ===
+  @override
+  String level2ManiaName({String? override}) =>
+      _level2Mania.level2ManiaName(override: override);
+
+  @override
+  String level2ManiaShortDescription({String? override}) =>
+      _level2Mania.level2ManiaShortDescription(override: override);
+
+  @override
+  String level2ManiaInstruction({String? override}) =>
+      _level2Mania.level2ManiaInstruction(override: override);
+
+  @override
+  String level2ManiaItem(int index, {String? override}) =>
+      _level2Mania.level2ManiaItem(index, override: override);
+
+  @override
+  String level2ManiaOption(int score, {String? override}) =>
+      _level2Mania.level2ManiaOption(score, override: override);
+
+  @override
+  String level2ManiaSeverityLabel(int rank, {String? override}) =>
+      _level2Mania.level2ManiaSeverityLabel(rank, override: override);
+
+  @override
+  String level2ManiaSeveritySummary(int rank, {String? override}) =>
+      _level2Mania.level2ManiaSeveritySummary(rank, override: override);
+
+  // === Level2 Psychosis 7 method 委托 (R118 P2-7 阶段 6) ===
+  @override
+  String level2PsychosisName({String? override}) =>
+      _level2Psychosis.level2PsychosisName(override: override);
+
+  @override
+  String level2PsychosisShortDescription({String? override}) =>
+      _level2Psychosis.level2PsychosisShortDescription(override: override);
+
+  @override
+  String level2PsychosisInstruction({String? override}) =>
+      _level2Psychosis.level2PsychosisInstruction(override: override);
+
+  @override
+  String level2PsychosisItem(int index, {String? override}) =>
+      _level2Psychosis.level2PsychosisItem(index, override: override);
+
+  @override
+  String level2PsychosisOption(int score, {String? override}) =>
+      _level2Psychosis.level2PsychosisOption(score, override: override);
+
+  @override
+  String level2PsychosisSeverityLabel(int rank, {String? override}) =>
+      _level2Psychosis.level2PsychosisSeverityLabel(rank, override: override);
+
+  @override
+  String level2PsychosisSeveritySummary(int rank, {String? override}) =>
+      _level2Psychosis.level2PsychosisSeveritySummary(rank, override: override);
+
   @override
   String crisisHotlineLabel(
     HotlineRegion region, {
@@ -292,74 +355,6 @@ class StaticScaleTranslations implements ScaleTranslations {
   // ---- Level2 Depression + Anxiety 段抽到 level2_depression_translations.dart
   //      + level2_anxiety_translations.dart (R118 P2-7 阶段 5) ----
 
-  // ---- DSM-5 Level 2 躁狂严重度 (PROMIS 简化) ----
-  static const _level2ManiaItemsZh = [
-    '感到精力异常旺盛',
-    '思维奔逸',
-    '睡眠需求减少但仍感精力充沛',
-    '说话比平时多',
-    '冲动做决定 (花钱、社交、性行为等)',
-  ];
-
-  static const _level2ManiaOptionsZh = {
-    0: '完全没有',
-    1: '几天',
-    2: '一半以上的天数',
-    3: '几乎每天',
-  };
-
-  static const _level2ManiaSeverityLabelZh = [
-    '无躁狂',
-    '轻度躁狂',
-    '中度躁狂',
-    '重度躁狂',
-  ];
-
-  static const _level2ManiaSeveritySummaryZh = [
-    '无躁狂倾向',
-    '轻度躁狂倾向',
-    '中度躁狂, 建议就医',
-    '重度躁狂, 强烈建议就医',
-  ];
-
-  @override
-  String level2ManiaName({String? override}) =>
-      override ?? 'DSM-5 Level 2 躁狂严重度';
-
-  @override
-  String level2ManiaShortDescription({String? override}) =>
-      override ?? '成人躁狂严重度 5 题 (DSM-5 PROMIS 简化版)';
-
-  @override
-  String level2ManiaInstruction({String? override}) =>
-      override ?? '过去 7 天内, 您有多经常体验以下情况?';
-
-  @override
-  String level2ManiaItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _level2ManiaItemsZh.length) return '';
-    return _level2ManiaItemsZh[index];
-  }
-
-  @override
-  String level2ManiaOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _level2ManiaOptionsZh[score] ?? '';
-  }
-
-  @override
-  String level2ManiaSeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2ManiaSeverityLabelZh.length) return '';
-    return _level2ManiaSeverityLabelZh[rank];
-  }
-
-  @override
-  String level2ManiaSeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2ManiaSeveritySummaryZh.length) return '';
-    return _level2ManiaSeveritySummaryZh[rank];
-  }
 
   // ---- ASRM (Altman 1997) ----
   static const _asrmItemsZh = [
@@ -431,83 +426,7 @@ class StaticScaleTranslations implements ScaleTranslations {
     if (rank < 0 || rank >= _asrmSeveritySummaryZh.length) return '';
     return _asrmSeveritySummaryZh[rank];
   }
-
-  // ---- DSM-5 Level 2 精神病性症状 (PROMIS 简化) ----
-  static const _level2PsychosisItemsZh = [
-    '听到别人听不到的声音',
-    '觉得有人想伤害您',
-    '觉得有人在监视您',
-    '觉得自己的思维被控制或被广播',
-    '看到别人看不到的东西',
-    '觉得自己的思维被打断或被插入',
-    '觉得周围的事情与自己有关',
-    '感到现实不太真实',
-  ];
-
-  static const _level2PsychosisOptionsZh = {
-    0: '从来没有',
-    1: '很少',
-    2: '有时',
-    3: '经常',
-  };
-
-  static const _level2PsychosisSeverityLabelZh = [
-    '无症状',
-    '轻度',
-    '中度',
-    '重度',
-  ];
-
-  static const _level2PsychosisSeveritySummaryZh = [
-    '无精神病性症状',
-    '轻度精神病性症状',
-    '中度精神病性症状, 建议就医',
-    '重度精神病性症状, 强烈建议就医',
-  ];
-
-  @override
-  String level2PsychosisName({String? override}) =>
-      override ?? 'DSM-5 Level 2 精神病性症状';
-
-  @override
-  String level2PsychosisShortDescription({String? override}) =>
-      override ?? '成人精神病性症状 8 题 (DSM-5 简化版)';
-
-  @override
-  String level2PsychosisInstruction({String? override}) =>
-      override ?? '过去 7 天内, 您有多经常体验以下情况?';
-
-  @override
-  String level2PsychosisItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _level2PsychosisItemsZh.length) return '';
-    return _level2PsychosisItemsZh[index];
-  }
-
-  @override
-  String level2PsychosisOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _level2PsychosisOptionsZh[score] ?? '';
-  }
-
-  @override
-  String level2PsychosisSeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2PsychosisSeverityLabelZh.length) {
-      return '';
-    }
-    return _level2PsychosisSeverityLabelZh[rank];
-  }
-
-  @override
-  String level2PsychosisSeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _level2PsychosisSeveritySummaryZh.length) {
-      return '';
-    }
-    return _level2PsychosisSeveritySummaryZh[rank];
-  }
 }
-// rule3-whitelist: 265, 269, 297-301, 305-308, 312-315, 319-322, 327, 331, 335, 366-370, 374-378, 382-386, 390-394, 398, 402, 406, 437-444, 448-451, 455-458, 462-465, 470, 474, 478
+// rule3-whitelist: 328, 332, 361-365, 369-373, 377-381, 385-389, 393, 397, 401
 //   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
 //   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
