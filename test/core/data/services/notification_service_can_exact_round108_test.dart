@@ -46,10 +46,10 @@ void main() {
         'lib/core/data/services/notification_service.dart',
       ).readAsString();
       // rescheduleAll 内部: 调 _canScheduleExact, 写到 _dispatcher.useExactAllowWhileIdle
-      final rescheduleSection = content.substring(
-        content.indexOf('Future<void> rescheduleAll('),
-        content.indexOf('Future<void> rescheduleAll(') + 3000,
-      );
+      // R120 P1-2 (1.1.0 round 12k god class split): 截到文件结尾, 不用硬编码 3000 缓冲
+      // (原 386L 文件有 3000+ 字节缓冲, R120 缩到 252L 后越界)
+      final rescheduleStart = content.indexOf('Future<void> rescheduleAll(');
+      final rescheduleSection = content.substring(rescheduleStart);
       expect(
         rescheduleSection.contains('useExactAllowWhileIdle'),
         isTrue,

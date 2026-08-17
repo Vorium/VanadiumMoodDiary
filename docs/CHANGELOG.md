@@ -1,3 +1,38 @@
+## [1.1.0+156 R120 P1-2 god class 续拆 — notification_service facade 收紧] - 2026-08-17 (主壳 386L→252L, ID range 文档外移, 5 regression test)
+
+### Changed (R120 P1-2)
+- **notification_service.dart 386L → 252L (-34.7%)**:
+  - 抽 `_buildNotificationDetails()` 私有方法: `showNow` 内 30L Android+iOS NotificationDetails 块 (含 v0.31.1 round 6/7 iOS 锁屏 PII / timeSensitive / Android visibility=secret 修) 封装成单 method, `showNow` 主体缩到 4L
+  - 40L 跨 sub-service ID range 文档 (`5 类 ID 范围常量`) 抽到 `docs/architecture/NOTIFICATION_ID_BANDS.md` 独立 doc, 类内 1 行引用
+  - 32L 类头历史注释压缩到 12L 摘要 (R24→R108→R120 时间线 + 5 大 facade method 责任)
+- **新增** `docs/architecture/NOTIFICATION_ID_BANDS.md` (2.7KB):
+  - 6 类 ID 范围常量 markdown 表格 (含 1.1.0 round 4b 整摘的 5000000)
+  - 顺序保证 (固定带 ≥ snooze cancel 上界, 不被静默误杀)
+  - R114 B1-3 / v0.32 R110 B1-1 关键历史决策 (refill 从 6000 段迁出 2.5M+, 固定带 5M+)
+  - 验证脚本 `test/core/data/notification_id_band_round110_test.dart` 引用
+
+### Tests (R120 P1-2 regression protection)
+- **新增** `test/core/data/services/notification_service_split_round120_test.dart` (5 case, 1 group):
+  - main facade + NOTIFICATION_ID_BANDS.md 双存在
+  - `_buildNotificationDetails()` 私有方法存在
+  - `showNow` 是 1-line 委托 (内联 NotificationDetails 不应有)
+  - 跨 sub-service ID range 文档外移 (NOTIFICATION_ID_BANDS.md 表格 + 6 sub-service 名字)
+  - main 主壳 < 350L (god-class size guard 防回填)
+- **更新** `test/core/data/services/notification_service_can_exact_round108_test.dart`:
+  - A2 测试改用 `substring(rescheduleStart)` 而非 `+ 3000` 硬编码缓冲 (R120 文件 11064→9930 字节后越界)
+
+### Validation (R120 P1-2)
+- `flutter analyze`: 0 error / 0 warning
+- `flutter test`: **2571 pass / 0 fail / 1 skip** (2566 baseline + 5 R120 split test)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 0 violation
+- 20/27 守门员 ✅ (5 上架 P0 external + 2 transitional warn 跟 R119 一致)
+
+### Risk (R120 P1-2)
+- **低风险** — 纯 facade 收紧, 不改任何 sub-service 接口, 不改公共 API surface
+- NotificationDetails 构建 1:1 保留 (Android visibility=secret / iOS interruptionLevel=timeSensitive 不动)
+- ID range 分配语义 0 变化 (sub-service const + 静态分析测试 `notification_id_band_round110` 仍 100% 覆盖)
+
+
 ## [1.1.0+155 R119 P1-1 god class 续拆 — app_database 拆 part 文件] - 2026-08-17 (onUpgrade 体抽 part of, 主壳 564L→139L, 5 regression test)
 
 ### Changed (R119 P1-1)
