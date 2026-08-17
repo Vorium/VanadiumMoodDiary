@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2571 tests pass, 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 4/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2602 tests pass (R122 P2-1 step 2 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 5/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 step 2 mood_audio_service 406→251L).
 
 ## 项目速览
 
@@ -643,3 +643,29 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 ## v1.1.0 R121 hotfix — superpowers-zh P0 文档同步 4 项 (2026-08-17, 1 commit)
 
 **状态**: AGENTS.md 顶部 EN Summary 2515 → 2571 (R120 baseline) + 加 R115/R116/R117/R118/R119/R120/R120-audit 7 章节 (原 R115-R120 缺, superpowers-zh 独家 P0 漏洞) + PRIVACY_HARDENING.md 改 R115 → R120 framing + CHANGELOG 1.1.0+15X 段补 R118 P2-7 entry。scale_translations.dart 头部注释加 R118 段, AGENTS.md 21 守门员清单重写为 27 (R115 +5)。1.1.0+155 R119 / 1.1.0+156 R120 CHANGELOG entry 已加, R118 P2-7 8 commit 流水 entry 补完。
+
+## v1.1.0 R121 P1-2 — vent_list_page 684L 拆 2/3 (2026-08-17, 2 commit 2ed079fb / fd5bce85)
+
+**状态**: frame-thinking Focus 维度跨期残留 — vent_list_page 684L 拆 2/3 (emotion-first 主路径)。step 1 抽 `widgets/vent_entry_cell.dart` (232L, VentEntryCell + VentHintHelper 公开 widget 集中器模式 + super.key) — commit 2ed079fb。step 2 续抽 `widgets/vent_entry_list.dart` (189L, VentEntryList 公开) — commit fd5bce85。主壳 684L → 251L (-63%)。`_VentListPageState` 60L 业务编排 state 暂不拆 (跟 _VentEmptyState / _VentSealedState 紧耦合, 单独拆需传 5+ callback 不划算)。修 mood_trend_day_change_round113 + home_footer_fade_gating_round114 改读双文件 0 业务行为变化。
+
+## v1.1.0 R121 P1-3 — notification alias @Deprecated + migrations 拆 4 sub-part (2026-08-17, 3 commit 1b134650 / 5c5b9110 / 82a0f4a4)
+
+**状态**: step 1 (1.1.0+160, emil 决策) — notification_service 2 facade alias `refillNotificationId` + `computeRefillFireTime` 加 @Deprecated 标记, 注释指向新 `_` 私有实现 (R120 facade 收紧的子层收口, 后续 v1.1 删)。step 2 (1.1.0+161, emil 决策) — app_database_migrations 480L → 60L 薄壳 + 4 sub-part (`v1_v5.dart` 60L / `v6_v12.dart` 162L / `v13_v18.dart` 110L / `v19_v24.dart` 109L), 主 orchestrator 4 行调用 4 sub-part, 共享 library scope 让 drift 生成的 `db.moodEntries` / `db.ventEntries` / `db.medications` 顶层引用 0 编译 boilerplate。step 3 (1.1.0+163, 评估) — 量表各自 implements ScaleTranslations 实测 10 class × 70 method = 700 method stub 远超 70 委派, 真正消除需抽象 Translation interface + pub workspace 规模, defer 到 R122+ 路线图。
+
+## v1.1.0 R121 P1-4 — CI coverage gate + spring.gentle 真实动画 caller (2026-08-17, 1 commit f250c6f2)
+
+**状态**: flutter-spec 跨期残留 — CI 配 `flutter test --coverage` + `python3 scripts/check_coverage.py` 75.4% 阈值 (5 layer + 2 critical file) 全过 (TOTAL 75.4% / domain 82.0% / data 75.4% / presentation 75.4% / shared 88.4% / core 62.3% / streak_calculator.dart 96.4% ≥90% / notification_service.dart 63.5% ≥25%)。spring.gentle 真实动画 caller: `test/core/theme/spring_gentle_round121_test.dart` 3 case — Spring.gentle 0→1 收敛 + 阻尼比 ζ=0.735 欠阻尼 (mass=1 / stiffness=150 / damping=18) + 真实 widget 动画 `animateWith(Spring.gentle.toSimulation)` 在 0.5s 收敛 (跟 mood_score_buttons 同模式, 满足 "1 个真实 caller" 验收)。不改 PressFeedback/showModalBottomSheet 30+ 调用点 (M3 动画跟 iOS spring 不同档, 改 custom transition 风险大)。
+
+## v1.1.0 R122 P2-1 step 1 — mood_audio_service STT 抽独立 class (2026-08-17, 1 commit 779e6d8d, 1.1.0+164)
+
+**状态**: flutter-spec 跨期残留 (R31 误判"已闭环" cross-residual) — mood_audio_service.dart 496L 跨 audio recording + STT + storage 3 业务。抽 `mood_audio_stt.dart` (154L) 含 MoodAudioStt public class, 完全封装 SpeechToText + StreamController + STT 错误处理 (audioErrorSink)。主 MoodAudioServiceImpl 5 处委派: _stt 字段 → _sttController 字段 / initialize → 1-line / startRecording STT 启动 → 1-line / cancelRecording STT 停止 → 1-line / dispose STT 释放 → 1-line / isSttListening getter → 1-line。step 1 拆 STT 496L → 406L (-18%)。
+
+## v1.1.0 R122 P2-1 step 2 — mood_audio_service recorder 抽独立 class (2026-08-17, 1 commit, 1.1.0+165)
+
+**状态**: 拆 3 facade step 2 — 抽 `mood_audio_recorder.dart` (307L) 含 MoodAudioRecorder public class — recorder 状态机 (start / stop / pause / resume / cancel / dispose) + 3min 上限 + 100ms tick timer + 暂停冻结 elapsed + temp file 清理 (R114 BUG 2 跨期残留)。4 getter: isRecording / isPaused / recordingElapsed / tempRecordPath + `setAutoStopCallback(onAutoStop)` (3min 到期回调, service 层挂) + `MoodAudioRecordingOutcome` value class (plainPath + durationMs, 跟 service 层 `MoodAudioResult` 区分) + `MoodAudioRecorderException` public exception (service 层 catch 转 `MoodAudioException` 保持公开 API 兼容) + `_deleteTempFile` → `deleteTempFile` 公开 (让 service 层 `deleteTempRecordFile` 1-line 委派, single source of truth)。
+
+主 MoodAudioServiceImpl 6 方法全部委派: startRecording → `_recorderController.start()` + catch 转译 + `_sttController.startListen()` / stopRecording → `_recorderController.stop()` + 转换 outcome → result / pauseRecording / resumeRecording → 1-line / cancelRecording → `_recorderController.cancel()` + `_sttController.stop()` / dispose → `_recorderController.dispose()` + `_sttController.dispose()` / `deleteTempRecordFile` 静态 → 1-line 委派到 `MoodAudioRecorder.deleteTempFile`。
+
+主 service 删 13 字段 + 2 imports: `_recorder` (AudioRecorder) / `_isRecording` / `_isPaused` / `_pausedAt` / `_pausedTotal` / `_recordingStart` / `_recordingTimer` / `_recordingElapsed` / `_tempRecordPath` / `_onTickCb` / `_onMaxReachedCb` / `_effectiveMaxDuration` / `_effectiveTickInterval` + `dart:io` (不再直接用 File) + `package:record/record.dart` (不再直接用 AudioRecorder/RecordConfig)。构造器签名改: `AudioRecorder? + maxDuration? + tickInterval?` (3 直接参数) → `MoodAudioRecorder? recorderController` (1 facade 参数)。
+
+**R122 P2-1 step 2 主 service 缩 406L → 251L (-38.2%)**, 跟 R122 路线图预期 ~250L 完全对齐。`mood_audio_recorder_split_round122_test.dart` 10 case 守门员 (主 service < 280L / 不含 5 recorder state 字段 / 不含 `_recordingTimer` / 不含 `_tempRecordPath` / 不直接用 `package:record/record.dart` 含 negative lookbehind 排除 Mood 前缀 / 不直接用 `dart:io` / MoodAudioRecorder public API 完整 4+5+1+1+1 / 6 委派 + 4 getter 委派 / 异常转译)。`mood_audio_service_round61c3_test.dart` 2 case 适配新构造器签名。

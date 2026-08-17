@@ -10,21 +10,29 @@
 //
 // R114 BUG 2 补: deleteTempRecordFile 用真实 dart:io 临时文件验证
 // (best-effort 删除行为), 不碰 platform channel。
+//
+// R122 P2-1 step 2: 构造器签名改 — AudioRecorder + maxDuration +
+// tickInterval 3 个直接参数 → MoodAudioRecorder 1 个 facade 参数
+// (R122 拆 3 facade 模式, 构造器只接受高层 facade)
 import 'dart:io';
 
+import 'package:chroniccare/core/data/services/mood_audio_recorder.dart';
 import 'package:chroniccare/core/data/services/mood_audio_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('MoodAudioServiceImpl 基础状态', () {
-    test('构造: 不抛 (注入 maxDuration + tickInterval)', () {
+    test('构造: 不抛 (注入短 maxDuration + tickInterval 通过 MoodAudioRecorder)',
+        () {
       // 验证: 1) 不依赖 platform channel 即可构造
-      //       2) 注入短 maxDuration + tickInterval 是为了 spen-4 test helper
-      //          (之前手工 _recordingTimer.periodic 没法注入, 现在可)
+      //       2) R122 P2-1 step 2: 短 maxDuration + tickInterval 通过
+      //          MoodAudioRecorder (recorder facade) 注入
       expect(
         () => MoodAudioServiceImpl(
-          maxDuration: const Duration(milliseconds: 100),
-          tickInterval: const Duration(milliseconds: 10),
+          recorderController: MoodAudioRecorder(
+            maxDuration: const Duration(milliseconds: 100),
+            tickInterval: const Duration(milliseconds: 10),
+          ),
         ),
         returnsNormally,
       );
@@ -118,8 +126,10 @@ void main() {
       // 但 recorder 已 dispose → 抛 LateError / StateError
       // 锁: 串行 stopRecording → dispose 不抛, 状态全部 idempotent
       final svc = MoodAudioServiceImpl(
-        maxDuration: const Duration(milliseconds: 100),
-        tickInterval: const Duration(milliseconds: 10),
+        recorderController: MoodAudioRecorder(
+          maxDuration: const Duration(milliseconds: 100),
+          tickInterval: const Duration(milliseconds: 10),
+        ),
       );
 
       // 未启动时直接 stopRecording (idempotent no-op) → 立即 null

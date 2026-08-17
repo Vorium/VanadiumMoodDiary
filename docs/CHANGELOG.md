@@ -1,3 +1,48 @@
+## [1.1.0+165 R122 P2-1 step 2 — mood_audio_service recorder 抽独立 class] - 2026-08-17 (406L→251L 主壳, recorder 状态机+3min 上限+暂停全迁出, 10 regression test)
+
+### Changed (R122 P2-1 step 2)
+- **mood_audio_service.dart 406L → 251L (-38.2%)**:
+  - 抽 `mood_audio_recorder.dart` (307L) 含:
+    - `MoodAudioRecorder` public class — recorder 状态机 (start / stop / pause / resume / cancel / dispose) + 3min 上限 + 100ms tick timer + 暂停冻结 elapsed
+    - 4 getter: `isRecording` / `isPaused` / `recordingElapsed` / `tempRecordPath`
+    - `setAutoStopCallback(onAutoStop)` — 3min 到期回调 (service 层挂)
+    - `MoodAudioRecordingOutcome` value class (plainPath + durationMs) — 跟 service 层 `MoodAudioResult` 区分
+    - `MoodAudioRecorderException` public exception — service 层 catch 转 `MoodAudioException` 保持公开 API 兼容
+    - `_deleteTempFile` → `deleteTempFile` 公开 (让 service 层 `deleteTempRecordFile` 1 行委派)
+  - 主 service MoodAudioServiceImpl 改 6 方法全部委派:
+    - `startRecording` → `_recorderController.start()` + catch `MoodAudioRecorderException` 转 `MoodAudioException` + `_sttController.startListen()`
+    - `stopRecording` → `_recorderController.stop()` + 转换 `MoodAudioRecordingOutcome → MoodAudioResult`
+    - `pauseRecording` / `resumeRecording` → 1-line 委派
+    - `cancelRecording` → `_recorderController.cancel()` + `_sttController.stop()`
+    - `dispose` → `_recorderController.dispose()` + `_sttController.dispose()`
+    - `deleteTempRecordFile` 静态 → 1-line 委派到 `MoodAudioRecorder.deleteTempFile`
+  - 主 service 删 9 字段 + 2 imports:
+    - 字段: `_recorder` (AudioRecorder) / `_isRecording` / `_isPaused` / `_pausedAt` / `_pausedTotal` / `_recordingStart` / `_recordingTimer` / `_recordingElapsed` / `_tempRecordPath` / `_onTickCb` / `_onMaxReachedCb` / `_effectiveMaxDuration` / `_effectiveTickInterval`
+    - imports: `dart:io` (不再直接用 File) / `package:record/record.dart` (不再直接用 AudioRecorder/RecordConfig)
+  - 构造器签名改: `AudioRecorder? + maxDuration? + tickInterval?` (3 直接参数) → `MoodAudioRecorder? recorderController` (1 facade 参数, R122 拆 3 facade 模式)
+- **mood_audio_recorder_split_round122_test.dart** (新增 10 case) — 守门员防回填:
+  - 主 service < 280L (251L god-class size guard)
+  - 主 service 不含 recorder 私有 state 字段 (5 项)
+  - 主 service 不含 `_recordingTimer` / `_tempRecordPath`
+  - 主 service 不直接用 `package:record/record.dart` / `dart:io` (含 negative lookbehind 排除 Mood 前缀)
+  - MoodAudioRecorder public API 完整 (4 getter + 5 method + 1 callback + 1 value + 1 exception)
+  - 主 service 通过 `_recorderController` 委派 6 方法 + 4 getter
+  - 异常转译 `MoodAudioRecorderException → MoodAudioException` 行为不变
+- **mood_audio_service_round61c3_test.dart** (2 case 适配) — 构造器签名改
+
+### Verification
+- `flutter analyze`: 0 error (2 跨期 warning 跟本批无关)
+- `flutter test`: **2602 pass / 0 fail / 1 skip** (R122 step 1 baseline 2592 +10 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 ✅ + 一致性 ✅
+- `python3 scripts/check_coverage.py`: 18 gatekeeper 全过 (TOTAL 75.4% / domain 82.0% / data 75.4% / presentation 75.4% / shared 88.4% / core 62.3% + 2 critical file, R122 拆解未掉阈值)
+- 27 守门员: 14 真实 green + 8 跨期 P0 残留 (外部依赖, 已知) + 3 工具脚本 (Windows path / 缺模块) + 2 手动跑 (data_safety / health_questionnaire)
+
+### R122 路线图进度
+- P2-1 step 1 ✅ (1.5h, +164) — STT 拆独立
+- **P2-1 step 2 ✅ (1.5h, +165, 本 commit) — recorder 拆独立**
+- P2-1 step 3 (0.5h) — storage review (mood_audio_storage 已独立, 验证接口)
+- 期望主 MoodAudioServiceImpl 最终 ~250L (从 496L 减 50%, 本批已达标 251L)
+
 ## [1.1.0+164 R122 P2-1 step 1 — mood_audio_service STT 抽独立 class] - 2026-08-17 (496L→406L 主壳, STT 状态+方法全迁出, 6 regression test)
 
 ### Changed (R122 P2-1 step 1)
