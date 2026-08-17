@@ -1,6 +1,33 @@
-## [1.1.0+158 R121 hotfix — superpowers-zh 文档同步 + vent_list_page god class 续拆] - 2026-08-17 (AGENTS/CHANGELOG/PRIVACY_HARDENING 同步 + vent_list_page 684L→424L + 5 regression test)
+## [1.1.0+159 R121 P1-2 续抽 — vent_list_page 684L→251L 主壳 + 232L + 189L 子文件] - 2026-08-17 (P1-2 续拆 2/3, 6 regression test, 主壳 < 350L god-class size guard)
 
-### Changed (R121 P1-1 superpowers-zh 文档同步 4 项)
+### Changed (R121 P1-2 续抽)
+- **vent_list_page.dart 424L → 251L (-40.8%)**:
+  - 抽 `widgets/vent_entry_list.dart` (189L) 含:
+    - `VentEntryList` public widget (前 `_EntryList`, 189L) — LazyAppleListSection + Dismissible 左滑删除 + stagger fade-in + R113 BUG 7b 删除失败换 key 机制
+  - 主壳剩: VentListPage / _VentListPageState / _VentEmptyState / _VentSealedState (4 个类)
+  - **R121 续拆 2/3** (frame-thinking 推荐 vent_list_page 拆 3 file, 剩 _VentListPageState 60L 暂不拆 — 业务逻辑 state, 跟 _VentEmptyState / _VentSealedState 紧耦合, 单独拆需要传 5+ callback 不划算)
+- **公开 widget 提供 `super.key` 构造** (跟 project widget 集中器模式一致)
+- **清 5 个无用 import** (swallow_error / app_snack_bar / feedback / swipe_delete_background / lazy_apple_list_section — 抽到 vent_entry_list.dart 后主壳不再用)
+
+### Tests (R121 P1-2 续抽 regression protection)
+- **更新** `test/presentation/pages/vent/vent_list_page_split_round121_test.dart` (5 → 6 case, 1 group):
+  - 新增 "VentEntryList public widget 在 entry list 文件" + "主壳不再含 _EntryList / _EntryListState"
+  - 主壳 < 500L → **< 350L** (R121 续拆后 251L, god-class size guard 收紧)
+- **更新** `test/presentation/pages/home/home_footer_fade_gating_round114_test.dart`:
+  - vent_list_page 树洞行 FadeIn duration 验证改读 main + widgets/vent_entry_list.dart 双文件
+
+### Validation (R121 P1-2 续抽)
+- `flutter analyze`: 0 error / 0 warning (305 info-level 全是历史 `require_trailing_commas` baseline)
+- `flutter test`: **2577 pass / 0 fail / 1 skip** (2571 R120 baseline + 5 R121 P1-2 split test + 1 R121 P1-2 续 split test)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 0 violation
+- 27/27 守门员 = 20 ✅ + 5 上架 P0 external + 2 warn (跟 R120 一致)
+
+### Risk (R121 P1-2 续抽)
+- **低风险** — 公开 widget 0 影响 caller (1 caller 在 _VentListPageState.build)
+- _VentListPageState 60L 暂不拆 (frame-thinking 拆 3 file 计划剩 1/3) — 业务编排 state 跟 _VentEmptyState / _VentSealedState 紧耦合, 单独拆需要传 5+ callback 不划算, R121 跳过
+- spring.gentle 接入 (R121 P1-2 计划 2/3) 跳过 — 需 drawer/sheet 接入点, R122 续
+
+
 - **AGENTS.md 顶部 EN Summary**: "2515 tests pass" → "**2571 tests pass**" (R120 baseline), 加 R120 综合审视 7.5/10 段
 - **AGENTS.md 加 R115/R116/R117/R118/R119/R120/R120-audit 7 章节** (原 R115-R120 缺, R120 综合审视 superpowers-zh 独家 P0 漏洞)
 - **docs/PRIVACY_HARDENING.md**: 改 R115 单章节 → R115-R120 跨期段, 加 R120 跨期残留 7 P0 external (frame-thinking Focus 维度降 1 分根因)

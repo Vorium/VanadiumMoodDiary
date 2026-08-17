@@ -85,8 +85,17 @@ void main() {
     Future<String> read(String path) => File('lib/$path').readAsString();
 
     test('vent_list_page 树洞行 FadeIn duration: durFast', () async {
-      final src = await read('presentation/pages/vent/vent_list_page.dart');
-      expect(src.contains('duration: AppTokens.durFast'), isTrue);
+      // v1.1.0+159 R121 P1-2 续抽 _EntryList → widgets/vent_entry_list.dart
+      // FadeIn 在子文件, 主壳和子文件都需验证
+      final main = await read('presentation/pages/vent/vent_list_page.dart');
+      final listFile = await read(
+        'presentation/pages/vent/widgets/vent_entry_list.dart',
+      );
+      expect(
+        main.contains('duration: AppTokens.durFast') ||
+            listFile.contains('duration: AppTokens.durFast'),
+        isTrue,
+      );
     });
 
     test('medication_calendar_grid 行 FadeIn duration: durFast', () async {
