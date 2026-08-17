@@ -62,6 +62,13 @@ final _importRe = RegExp(
 );
 final _dataClassNameRe = RegExp(r"@DataClassName\('(\w+)'\)");
 final _entityClassRe = RegExp(r'^class (\w+Entity)\b', multiLine: true);
+// v1.1.0+171 R125 (R110 feature-first 阶段 1): re-export 模式 — 旧路径
+// file 只 export 新路径 class, 不重新声明 class (R120 facade 收紧 + R110
+// feature-first 迁移都用 re-export 模式)
+final _entityExportRe = RegExp(
+  r"^export\s+.*\s+show\s+(\w+Entity)\b",
+  multiLine: true,
+);
 
 class PurityViolation {
   final String file;
@@ -285,7 +292,9 @@ void _printPurityReport(List<PurityViolation> violations) {
 
 List<ConsistencyIssue> _runConsistencyCheck(String root) {
   final issues = <ConsistencyIssue>[];
-  final entitiesDir = Directory(
+  // v1.1.0+171 R125 (R110 feature-first 阶段 1): 扫 features/*/domain/entities/
+  // 新路径 (feature-first 迁移后) 跟旧路径 lib/domain/entities/ 共存
+  final oldEntitiesDir = Directory(
     '$root${Platform.pathSeparator}lib${Platform.pathSeparator}domain${Platform.pathSeparator}entities',
   );
   final tablesDir = Directory(
@@ -294,9 +303,28 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
   final sharedDir = Directory(
     '$root${Platform.pathSeparator}lib${Platform.pathSeparator}core${Platform.pathSeparator}shared',
   );
+  final featuresEntitiesDirs = <Directory>[];
+  final featuresDir = Directory(
+    '$root${Platform.pathSeparator}lib${Platform.pathSeparator}features',
+  );
+  if (featuresDir.existsSync()) {
+    for (final featureDir in featuresDir.listSync().whereType<Directory>()) {
+      final domainEntitiesDir = Directory(
+        '${featureDir.path}${Platform.pathSeparator}domain${Platform.pathSeparator}entities',
+      );
+      if (domainEntitiesDir.existsSync()) {
+        featuresEntitiesDirs.add(domainEntitiesDir);
+      }
+    }
+  }
 
-  if (entitiesDir.existsSync() && tablesDir.existsSync()) {
-    _checkEntityTablePair(entitiesDir, tablesDir, issues);
+  // R125 (R110 阶段 1): 合并多 entities 路径 1 次扫, 避免 12 个其他 table
+  // 误报 fail (多 entities 路径单独跑会重复 mismatch)
+  final allEntitiesDirs = <Directory>[];
+  if (oldEntitiesDir.existsSync()) allEntitiesDirs.add(oldEntitiesDir);
+  allEntitiesDirs.addAll(featuresEntitiesDirs);
+  if (allEntitiesDirs.isNotEmpty && tablesDir.existsSync()) {
+    _checkEntityTablePair(allEntitiesDirs, tablesDir, issues);
   }
   if (sharedDir.existsSync()) {
     _checkSharedUsage(root, sharedDir, issues);
@@ -305,17 +333,25 @@ List<ConsistencyIssue> _runConsistencyCheck(String root) {
 }
 
 void _checkEntityTablePair(
-  Directory entitiesDir,
+  List<Directory> entitiesDirs,
   Directory tablesDir,
   List<ConsistencyIssue> issues,
 ) {
-  // 收集 domain entity 类名
+  // 收集 domain entity 类名 (合并多 entities 路径, R125 R110 阶段 1 兼容)
   final entityNames = <String>{};
-  for (final f in entitiesDir.listSync(recursive: true).whereType<File>()) {
-    if (!f.path.endsWith('.dart')) continue;
-    final content = f.readAsStringSync();
-    final m = _entityClassRe.firstMatch(content);
-    if (m != null) entityNames.add(m.group(1)!);
+  for (final entitiesDir in entitiesDirs) {
+    for (final f in entitiesDir.listSync(recursive: true).whereType<File>()) {
+      if (!f.path.endsWith('.dart')) continue;
+      final content = f.readAsStringSync();
+      final m = _entityClassRe.firstMatch(content);
+      if (m != null) {
+        entityNames.add(m.group(1)!);
+      } else {
+        // R125 (R110 阶段 1): re-export 模式兼容
+        final m2 = _entityExportRe.firstMatch(content);
+        if (m2 != null) entityNames.add(m2.group(1)!);
+      }
+    }
   }
 
   // 收集 drift table data class 名（@DataClassName('X')）

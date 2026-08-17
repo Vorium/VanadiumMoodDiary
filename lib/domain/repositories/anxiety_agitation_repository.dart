@@ -1,19 +1,8 @@
-// v0.30 round 91 (sub-spec 7 日常追踪): AnxietyAgitationRepository — domain 层 abstract
+// v1.1.0+171 R125 (R110 feature-first 阶段 1) — 旧路径 re-export
 //
-// R97-P1-1 (2026-08-07): 新增 abstract interface, 修复 4 层架构违规
-// (跟 sleep_repository.dart 同模式, 详见该文件注释)。
-import 'package:chroniccare/domain/entities/anxiety_agitation_entry.dart';
+// R110 阶段 1 样板: 旧路径 lib/domain/repositories/anxiety_agitation_repository.dart
+// 保留为 re-export, 现有用户 (repository_impl 等) 仍能 import, 避免大批
+// 改动。R110 阶段 2 批量删旧路径。
 
-/// 焦虑急躁仓库 (domain 接口)
-abstract class AnxietyAgitationRepository {
-  Stream<List<AnxietyAgitationEntryEntity>> watchAll();
-
-  Future<int> add({
-    required DateTime timestamp,
-    required int anxietyScore,
-    required int agitationScore,
-    String? note,
-  });
-
-  Future<int> delete(int id);
-}
+export 'package:chroniccare/features/daily_tracking/domain/repositories/anxiety_agitation_repository.dart'
+    show AnxietyAgitationRepository;

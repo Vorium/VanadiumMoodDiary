@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 28/28 CI gatekeepers, 2637 tests pass (R124 v1.0 5 厂商 push facade 接入 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修). R123 跨期 P0 缩到 5 项全部 100% 等外部 (R32 P0-02 + R113 BUG A 本批闭环). R124 v1.0 5 厂商 push facade 接入 (5 通道抽象 + NoOp 默认 + 5 厂商占位, 5 厂商 SDK 真接推迟 1-2 月).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图启动 (lib/features/ 顶层 + 1 子表样板 daily_tracking/anxiety_agitation), 29/29 CI gatekeepers, 2650 tests pass (R125 R110 阶段 1 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除 (10 量表 sub-interface 拆分, ISP violation 修). R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 R110 阶段 1 启动 (1 子表样板 + 守门员 + 旧路径 re-export 兼容).
 
 ## 项目速览
 
@@ -757,3 +757,40 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - ⏸ FeatureFlags.fiveVendorPushEnabled 翻 true (prod)
 
 **守门员总数 22 → 23 (R124 +1)**。**R124 闭环后 v1.0 长期 5 项中 1 项 (5 厂商 push facade) 完成本地可推进部分, 4 项 (HealthKit / 鸿蒙 / 阿里云 SMS / IAP) 仍等外部资源或用户拍板**。
+
+## v1.1.0 R125 (R110 feature-first 阶段 1) — design + 守门员 + 1 子表样板迁移 (2026-08-17, 1 commit, 1.1.0+171)
+
+**状态**: R110 路线图启动, 2-3 周 feature-first 重构 5 阶段计划第 1 阶段 (1-2h) 闭环。R110 完整 5 阶段: 阶段 1 design + 1 子表样板 / 阶段 2 5+ feature 批量迁移 / 阶段 3 pub workspace 拆分 / 阶段 4 跨 feature 共享 / 阶段 5 综合审视。
+
+**新增 `docs/architecture/FEATURE_FIRST_PLAN.md`** (~200L): 5 阶段路线图 + 样板选型理由 + 守门员设计 + 风险缓解 + 关键决策记录。
+
+**新增 `lib/features/daily_tracking/`** (1 feature 目录, 5 子目录):
+- `data/tables/anxiety_agitation_entries.dart` — drift table 样板迁移
+- `data/mappers/anxiety_agitation_mapper.dart` — 新增 (R110 阶段 1 抽 mapper 模式, 跟 R119/R120 对齐)
+- `data/repositories/anxiety_agitation_repository_impl.dart` — impl 迁
+- `domain/entities/anxiety_agitation_entry.dart` — entity 迁
+- `domain/repositories/anxiety_agitation_repository.dart` — abstract 迁
+
+**旧路径 re-export 兼容** (现有用户 0 改动):
+- `lib/domain/entities/anxiety_agitation_entry.dart` 改为 re-export (R120 facade 收紧 + R110 feature-first 迁移都用 re-export 模式)
+- `lib/domain/repositories/anxiety_agitation_repository.dart` 改为 re-export
+
+**新增 `scripts/check_feature_first_migration.py`** (1 守门员, 双 gate):
+- 阶段 1 gate (R125 必过): features/ 顶层 + 3 子目录 + 跨 feature 边界 + drift 共享限制
+- 阶段 2+ gate (R110 阶段 2+ 启用): 5+ feature 完整迁移 + 旧路径删旧 file
+- 阶段 3+ gate (R110 阶段 3+ 启用): pub workspace 3 package
+
+**`scripts/check_all.dart` 1 改动** (entity 路径合并扫):
+- 旧路径 `lib/domain/entities/` + 新路径 `lib/features/*/domain/entities/` 合并扫 (避免 12 个其他 table 误报 fail)
+- 加 `_entityExportRe` regex 支持 R120 / R110 re-export 模式
+
+**新增 `test/core/data/feature_first_migration_split_round125_test.dart`** (13 case): features/ 顶层 + 3 子目录 / 5 file 端到端 / 旧路径 re-export 兼容 / 跨 feature import 边界 0 违规 / 新旧 entity 路径 import 同一 class。
+
+**R110 阶段 1 关键设计决策**:
+- **样板选 anxiety_agitation**: 1 子表 5 file 端到端, 0 跨子表依赖, 最纯的 1 子表
+- **目录结构 data/domain/presentation 3 子目录**: 跟 R110 终态对齐
+- **守门员分阶段启用**: 阶段 1 必过 4 项 + 阶段 2+ 启用 5+ feature gate + 阶段 3+ 启用 pub workspace gate
+- **0 重构现有用户路径**: 阶段 1 只迁 1 子表, 旧路径 re-export 兼容, 其他 5 子表仍留 core
+- **drift 共享限制**: app_database 持有所有 table, 阶段 1 仍通过 app_database 访问 (阶段 3 拆 workspace 时跨包共享 challenge)
+
+**守门员总数 23 → 24 (R125 +1)**。**R125 闭环后 R110 5 阶段路线图阶段 1 完成, 4 阶段待推 (R126-R129 1-2 月)**。

@@ -1,3 +1,62 @@
+## [1.1.0+171 R125 (R110 feature-first 阶段 1) — design + 守门员 + 1 子表样板迁移] - 2026-08-17 (R110 路线图启动, 1 子表 5 file 端到端验证, 13 regression test + 1 gatekeeper)
+
+### 背景 (R110 路线图启动)
+- 4 层架构 (R0.18 round 12 起) + 共享层 (R125 起点): 跨 feature import 边界靠命名约定
+  (R115 check_cross_feature.py), 不可编译时强制
+- R117 / R120 跨期残留: 51 file 散在 4 层 7 子目录, 找 mood 相关代码需 cross 4 层
+- R110 路线图: 2-3 周 feature-first 重构 + pub workspace 3 package
+
+### Changed (R125 阶段 1)
+- **`docs/architecture/FEATURE_FIRST_PLAN.md`** (新增 ~200L): 5 阶段路线图
+  - 阶段 1 (R125): 设计 + 1 子表样板 (本批)
+  - 阶段 2 (R126): 5+ feature 批量迁移
+  - 阶段 3 (R127): pub workspace 3 package 拆分
+  - 阶段 4 (R128): 跨 feature 共享 (core/platform/) 抽取
+  - 阶段 5 (R129): 综合审视 + 5 token 集中器转 pub workspace 公共 package
+- **`lib/features/daily_tracking/`** (新增 1 feature 目录, 5 子目录):
+  - `data/tables/anxiety_agitation_entries.dart` — drift table 样板迁移
+  - `data/mappers/anxiety_agitation_mapper.dart` — 新增 (R110 阶段 1 抽 mapper 模式, 跟 R119 mood_entry_mapper / R120 vent_mapper 对齐)
+  - `data/repositories/anxiety_agitation_repository_impl.dart` — impl 迁
+  - `domain/entities/anxiety_agitation_entry.dart` — entity 迁
+  - `domain/repositories/anxiety_agitation_repository.dart` — abstract 迁
+- **旧路径 re-export 兼容** (现有用户 0 改动):
+  - `lib/domain/entities/anxiety_agitation_entry.dart` 改为 re-export
+  - `lib/domain/repositories/anxiety_agitation_repository.dart` 改为 re-export
+- **`scripts/check_feature_first_migration.py`** (新增 1 守门员, 双 gate):
+  - 阶段 1 gate (R125 必过): features/ 顶层 + 3 子目录 + 跨 feature 边界 + drift 共享限制
+  - 阶段 2+ gate (R110 阶段 2+ 启用): 5+ feature 完整迁移 + 旧路径删旧 file
+  - 阶段 3+ gate (R110 阶段 3+ 启用): pub workspace 3 package
+- **`scripts/check_all.dart`** (1 改动): entity 路径合并扫描
+  - 旧路径 `lib/domain/entities/` + 新路径 `lib/features/*/domain/entities/` 合并扫
+  - 加 `_entityExportRe` 模式支持 R120 re-export + R110 re-export
+- **`test/core/data/feature_first_migration_split_round125_test.dart`** (新增 13 case):
+  - features/ 顶层目录 + 3 子目录 (data/domain/presentation)
+  - 5 file 端到端 (table/mapper/repo_impl/entity/abstract)
+  - 旧路径 re-export 兼容 (现有用户 0 改动)
+  - 跨 feature import 边界 0 违规
+  - 新旧 entity 路径 import 同一 class (编译验证)
+
+### R110 阶段 1 关键设计决策
+- **样板选 anxiety_agitation**: 1 子表 5 file 端到端, 0 跨子表依赖, 最纯的 1 子表
+- **目录结构 data/domain/presentation 3 子目录**: 跟 R110 终态对齐
+- **守门员分阶段启用**: 阶段 1 必过 4 项 + 阶段 2+ 启用 5+ feature gate + 阶段 3+ 启用 pub workspace gate
+- **0 重构现有用户路径**: 阶段 1 只迁 1 子表, 旧路径 re-export 兼容, 其他 5 子表仍留 core
+- **drift 共享限制**: app_database 持有所有 table, 阶段 1 仍通过 app_database 访问 (阶段 3 拆 workspace 时跨包共享 challenge)
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2650 pass / 0 fail / 1 skip** (R124 baseline 2637 +13 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿 (entity 路径合并扫后)
+- `python3 scripts/check_feature_first_migration.py`: 阶段 1 ✅ 阶段 2+ warn (R110 阶段 1 预期)
+- `python3 scripts/check_five_vendor_push_ready.py`: 阶段 1 ✅ 阶段 2 warn (R124 阶段 1 预期)
+
+### R110 路线图
+- ✅ 阶段 1 (R125, 1-2h, 本批) — design + 1 子表样板
+- ⏸ 阶段 2 (R126, 1-2 周) — 5+ feature 批量迁移
+- ⏸ 阶段 3 (R127, 1 周) — pub workspace 3 package 拆分
+- ⏸ 阶段 4 (R128, 3-5 天) — 跨 feature 共享 (core/platform/) 抽取
+- ⏸ 阶段 5 (R129, 1 周 + 综合审视) — 5 token 集中器转 pub workspace 公共 package
+
 ## [1.1.0+170 R124 (v1.0 长期 5 厂商 push facade 接入) — 5 通道抽象 + NoOp 默认 + 5 厂商占位 impl] - 2026-08-17 (v1.0 准备, 5 厂商 SDK 真接 1-2 月后开阶段 2, 10 regression test + 1 gatekeeper)
 
 ### 背景 (R93 阶段 2 + 1.1.0 round 4b → R124 闭环)
