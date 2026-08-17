@@ -1,5 +1,42 @@
-# 变更日志
-> **EN Summary**: v1.1.0+157 (2026-08-17). R118 P2-7 + R119 P1-1 + R120 P1-2 god class 续拆 3 round 闭环 + R120 综合审视 4 视角加权 7.5/10. 2571 tests pass (2566 R119 baseline + 5 R120 split regression test), 27/27 gatekeepers (20 ✅ + 5 上架 P0 external expected fail + 2 warn), 1340 ARB keys, 4 FeatureFlag state (ventAudio=true, three others false awaiting external resources). R108 §六 god class 候选 4/12 闭环 (R116 round 4 + R118 10 量表 + R119 app_database + R120 notification_service). See [DEVELOPMENT_REQUIREMENTS.md](DEVELOPMENT_REQUIREMENTS.md) v2.0 for full P0/P1/P2/P3 plan.
+## [1.1.0+158 R121 hotfix — superpowers-zh 文档同步 + vent_list_page god class 续拆] - 2026-08-17 (AGENTS/CHANGELOG/PRIVACY_HARDENING 同步 + vent_list_page 684L→424L + 5 regression test)
+
+### Changed (R121 P1-1 superpowers-zh 文档同步 4 项)
+- **AGENTS.md 顶部 EN Summary**: "2515 tests pass" → "**2571 tests pass**" (R120 baseline), 加 R120 综合审视 7.5/10 段
+- **AGENTS.md 加 R115/R116/R117/R118/R119/R120/R120-audit 7 章节** (原 R115-R120 缺, R120 综合审视 superpowers-zh 独家 P0 漏洞)
+- **docs/PRIVACY_HARDENING.md**: 改 R115 单章节 → R115-R120 跨期段, 加 R120 跨期残留 7 P0 external (frame-thinking Focus 维度降 1 分根因)
+- **docs/CHANGELOG.md 补 1.1.0+155 R118 P2-7 entry**: 8 commit 流水 (db920d50~b29d3bd7) + 10 量表 class 名 + 42 case test, 重新编号 R119→+156, R120→+157
+- **lib/domain/entities/scale_translations.dart 头部**: 加 R118 段 (10 子文件 + composition 委托 + GAD-7 走 PHQ-9 共享)
+
+### Changed (R121 P1-2 frame-thinking vent_list_page 续拆)
+- **vent_list_page.dart 684L → 424L (-38.0%)**:
+  - 抽 `widgets/vent_entry_cell.dart` (232L) 含:
+    - `VentEntryCell` public widget (前 `_EntryCell`, 218L) — 头像 + 摘要预览 + 相对时间 + 录音时长 + chevron + onTap/onLongPress
+    - `VentHintHelper` public static class (前 `_VentHintHelper`, 24L) — 首次 swipe/long-press visual hint
+  - 主壳剩: VentListPage / _VentListPageState / _VentEmptyState / _VentSealedState / _EntryList / _EntryListState (含 swipe-to-dismiss 删除逻辑)
+  - **R121 续拆 1 of 3** (frame-thinking 推荐 vent_list_page 拆 3 file, 已完成 1/3 = VentEntryCell + VentHintHelper, 剩 _EntryList 待 R121 续拆或留 R122)
+- **公开 widget 提供 `super.key` 构造** (跟 project widget 集中器模式一致, flutter analyze `use_key_in_widget_constructors` 通过)
+
+### Tests (R121 hotfix regression protection)
+- **新增** `test/presentation/pages/vent/vent_list_page_split_round121_test.dart` (5 case, 1 group):
+  - main + entry cell 文件双存在
+  - 主壳 < 500L (god-class size guard, R121 拆后 424L)
+  - VentEntryCell public widget 在 entry cell 文件 + super.key
+  - VentHintHelper public static class 在 entry cell 文件
+  - 主壳不再含 `_EntryCell` / `_VentHintHelper`
+- **更新** `test/presentation/pages/mood_list/mood_trend_day_change_round113_test.dart`:
+  - vent_list_page.dart 测试改读 main + widgets/vent_entry_cell.dart 双文件 (R121 P1-2 拆后 todayProvider 引用迁到子文件)
+
+### Validation (R121 hotfix)
+- `flutter analyze`: 0 error / 0 warning (296 info-level 全是历史 `require_trailing_commas` baseline)
+- `flutter test`: **2576 pass / 0 fail / 1 skip** (2571 R120 baseline + 5 R121 split regression test)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 0 violation
+- 27/27 守门员 = 20 ✅ + 5 上架 P0 external + 2 warn (跟 R120 一致)
+- 4 视角加权综合 7.5/10 (R120 baseline, 文档同步 4 项预期升 7.6/10)
+
+### Risk (R121 hotfix)
+- **低风险** — 文档同步 0 引入 code 行为变化; vent_list_page 续拆公开 widget 0 影响 caller (1 caller 在 _EntryList.build line 418)
+- spring.gentle 接入 (frame-thinking P1 候选) **R121 跳过** (需 drawer/sheet 接入点, R122 续)
+
 
 ## [1.1.0+157 R120 P1-2 god class 续拆 — notification_service facade 收紧] - 2026-08-17 (主壳 386L→252L, ID range 文档外移, 5 regression test)
 
