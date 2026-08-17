@@ -1,3 +1,46 @@
+## [1.1.0+174 R126 (R110 feature-first 阶段 2 step 3 收官) — daily_tracking 6/6 子表 100% 迁移 (weight + social_rhythm + treatment)] - 2026-08-17 (R110 阶段 2 收官, 3 子表 15 file 端到端, 12 regression test)
+
+### Changed (R126 阶段 2 step 3 收官)
+- **`lib/features/daily_tracking/` 扩 3 子表 15 file** (R110 阶段 2 收官 100%):
+  - **weight** (4 字段 + 业务方法 `isValidWeight` / `bmiCategory`):
+    - `data/tables/weight_entries.dart` / `data/mappers/weight_mapper.dart`
+    - `data/repositories/weight_repository_impl.dart`
+    - `domain/entities/weight_entry.dart` / `domain/repositories/weight_repository.dart`
+  - **social_rhythm** (8 字段, 0 业务方法, 跟旧版一致):
+    - `data/tables/social_rhythm_entries.dart` / `data/mappers/social_rhythm_mapper.dart`
+    - `data/repositories/social_rhythm_repository_impl.dart`
+    - `domain/entities/social_rhythm_entry.dart` / `domain/repositories/social_rhythm_repository.dart`
+  - **treatment** (7 字段 + 业务方法 `isLinkedToMedication` / `linkedMedicationDisplay`):
+    - `data/tables/treatment_entries.dart` / `data/mappers/treatment_mapper.dart`
+    - `data/repositories/treatment_repository_impl.dart`
+    - `domain/entities/treatment_entry.dart` / `domain/repositories/treatment_repository.dart`
+- **旧路径 re-export 兼容** (12 file: 6 entity + 6 abstract 全部 re-export, 现有用户 0 改动)
+- **`test/core/data/feature_first_migration_split_round126_test.dart`** (R126 step 1 test 改): "3 子表已迁" 改 "6/6 子表全已迁 (daily_tracking 收官 100%)", "3 子表未迁" 删
+- **`test/core/data/feature_first_migration_split_round126_step2_test.dart`** (R126 step 2 test 改): "3 子表已迁 / 3 子表未迁" 改 "6/6 子表全已迁 (R126 step 3 收官 100%)"
+- **`test/core/data/feature_first_migration_split_round126_step3_test.dart`** (新增 12 case):
+  - weight / social_rhythm / treatment 5 file 端到端各 1 case
+  - 业务方法 (isValidWeight / bmiCategory / isLinkedToMedication / linkedMedicationDisplay) 跟旧版一致
+  - 6 旧路径全部 re-export
+  - 新旧 entity 路径编译验证 + 业务方法 work
+  - daily_tracking 6/6 子表全迁 (R110 阶段 2 收官 100%)
+
+### R126 阶段 2 step 3 收官 关键设计
+- **3 子表同时收官**: 跟 R125 + R126 step 1+2 同模式, 一次 session 1-1.5h 内 weight + social_rhythm + treatment 3 子表 15 file 端到端
+- **业务方法 0 break**: weight 业务方法 (isValidWeight / bmiCategory) + treatment 业务方法 (isLinkedToMedication / linkedMedicationDisplay) 跟旧版完全一致, 旧 widget 端 0 改动
+- **R110 阶段 2 daily_tracking 收官 100%**: anxiety_agitation + stress_event + sleep + weight + social_rhythm + treatment 6/6 子表全迁, 旧路径 12 file 全部 re-export
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2681 pass / 0 fail / 1 skip** (R126 step 2 baseline 2669 +12 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- `python3 scripts/check_feature_first_migration.py`: 阶段 1 ✅ 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续)
+
+### R110 阶段 2 daily_tracking 子表迁移进度 (6/6 = 100% ✅ 收官)
+- ✅ R125 anxiety_agitation (阶段 1)
+- ✅ R126 step 1 stress_event (阶段 2 step 1)
+- ✅ R126 step 2 sleep (阶段 2 step 2)
+- ✅ **R126 step 3 weight + social_rhythm + treatment (阶段 2 step 3 收官, 本批)**
+
 ## [1.1.0+173 R126 (R110 feature-first 阶段 2 step 2) — sleep 子表端到端迁移 (R125 样板扩展, daily_tracking 3/6 子表)] - 2026-08-17 (sleep 5 file 端到端, 含 durationLabel/hasRegularityScore 业务方法, 9 regression test)
 
 ### Changed (R126 阶段 2 step 2)

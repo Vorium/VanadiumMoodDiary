@@ -101,64 +101,47 @@ void main() {
   });
 
   group('R126 阶段 2 step 1 — R125 + R126 同一 feature 2 子表共存 (daily_tracking)', () {
-    test('R125 + R126 同一 feature 多子表共存 (daily_tracking anxiety + stress)', () {
-      // R125 + R126 阶段 2 step 1 同一 feature 2 子表共存, 验证 R110 阶段 2
-      // step 1 "扩第 2 子表" 设计 (R126 step 2 扩第 3 子表 sleep, 累计 3 子表)
+    test('R125 + R126 同一 feature 多子表共存 (daily_tracking 6/6 子表收官)', () {
+      // R125 + R126 阶段 2 step 1+2+3 累计 daily_tracking 6/6 子表全迁
+      // (R125 anxiety_agitation + R126 step 1 stress_event + R126 step 2 sleep
+      //  + R126 step 3 weight + social_rhythm + treatment)
       final dailyTrackingDir = Directory('lib/features/daily_tracking');
       expect(dailyTrackingDir.existsSync(), isTrue);
-      // 6 子表中 3 个已迁 (R125 anxiety_agitation + R126 step 1 stress_event
-      // + R126 step 2 sleep)
-      expect(
-        File('lib/features/daily_tracking/data/tables/anxiety_agitation_entries.dart')
-            .existsSync(),
-        isTrue,
-        reason: 'R125 anxiety_agitation 子表已迁',
-      );
-      expect(
-        File('lib/features/daily_tracking/data/tables/stress_events.dart')
-            .existsSync(),
-        isTrue,
-        reason: 'R126 step 1 stress_event 子表已迁',
-      );
-      expect(
-        File('lib/features/daily_tracking/data/tables/sleep_entries.dart')
-            .existsSync(),
-        isTrue,
-        reason: 'R126 step 2 sleep 子表已迁 (本批)',
-      );
-      // 3 子表仍未迁 (weight / social_rhythm / treatment)
-      expect(
-        File('lib/features/daily_tracking/data/tables/weight_entries.dart')
-            .existsSync(),
-        isFalse,
-        reason: 'weight 子表未迁 (R126 step 3+)',
-      );
+      // 6/6 子表全迁 (daily_tracking 收官 100%)
+      for (final f in [
+        'anxiety_agitation_entries.dart',
+        'stress_events.dart',
+        'sleep_entries.dart',
+        'weight_entries.dart',
+        'social_rhythm_entries.dart',
+        'treatment_entries.dart',
+      ]) {
+        expect(
+          File('lib/features/daily_tracking/data/tables/$f').existsSync(),
+          isTrue,
+          reason: '$f 已迁 (R125 + R126 step 1+2+3 收官)',
+        );
+      }
     });
 
-    test('R125 + R126 旧路径 re-export 共存 3 个 (anxiety + stress + sleep)', () {
-      // 3 子表旧路径都改 re-export, 现有用户 (repository_impl 等) 0 改动
-      final oldEntityAnxiety =
-          File('lib/domain/entities/anxiety_agitation_entry.dart')
-              .readAsStringSync();
-      final oldEntityStress =
-          File('lib/domain/entities/stress_event.dart').readAsStringSync();
-      final oldEntitySleep =
-          File('lib/domain/entities/sleep_entry.dart').readAsStringSync();
-      expect(
-        oldEntityAnxiety.contains(
-            "export 'package:chroniccare/features/daily_tracking/domain/entities/anxiety_agitation_entry.dart'"),
-        isTrue,
-      );
-      expect(
-        oldEntityStress.contains(
-            "export 'package:chroniccare/features/daily_tracking/domain/entities/stress_event.dart'"),
-        isTrue,
-      );
-      expect(
-        oldEntitySleep.contains(
-            "export 'package:chroniccare/features/daily_tracking/domain/entities/sleep_entry.dart'"),
-        isTrue,
-      );
+    test('R125 + R126 旧路径 re-export 共存 6 个 (6/6 daily_tracking 子表)', () {
+      // 6 子表旧路径都改 re-export, 现有用户 (repository_impl 等) 0 改动
+      final oldEntities = [
+        'anxiety_agitation_entry.dart',
+        'stress_event.dart',
+        'sleep_entry.dart',
+        'weight_entry.dart',
+        'social_rhythm_entry.dart',
+        'treatment_entry.dart',
+      ];
+      for (final f in oldEntities) {
+        final content = File('lib/domain/entities/$f').readAsStringSync();
+        expect(
+          content.contains("export 'package:chroniccare/features/daily_tracking/domain/entities/${f.replaceFirst('.dart', '.dart')}'"),
+          isTrue,
+          reason: '$f 旧路径应 re-export 新路径',
+        );
+      }
     });
   });
 }

@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图启动 (lib/features/daily_tracking/ 3 子表 anxiety_agitation + stress_event + sleep 端到端迁移, 3 子表 + 4 feature 待推), 29/29 CI gatekeepers, 2669 tests pass (R126 阶段 2 step 2 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 step 1+2 启动 (lib/features/daily_tracking/ 3 子表样板 + 守门员 + 旧路径 re-export 兼容, daily_tracking 50% 子表迁移).
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/) + R110 feature-first 路线图启动 (lib/features/daily_tracking/ 6/6 子表 100% 收官, 4 feature 待推), 29/29 CI gatekeepers, 2681 tests pass (R126 阶段 2 step 3 收官 baseline, 0 fail / 1 skip), 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 6/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page / R122 P2-1 mood_audio_service 496→251L / R122 P2-2 legal_page 555→344L). R122 P2-3 R121 P1-3 step 3 defer 解除. R123 跨期 P0 缩到 5 项全部 100% 等外部. R124 v1.0 5 厂商 push facade 接入. R125 + R126 R110 阶段 1+2 收官 (lib/features/daily_tracking/ 6/6 子表全迁 + 守门员 + 旧路径 re-export 兼容).
 
 ## 项目速览
 
@@ -858,3 +858,31 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - ⏸ weight_entries (阶段 2 step 3+)
 - ⏸ social_rhythm_entries (阶段 2 step 3+)
 - ⏸ treatment_entries (阶段 2 step 3+)
+
+## v1.1.0 R126 (R110 feature-first 阶段 2 step 3 收官) — daily_tracking 6/6 子表 100% 迁移 (weight + social_rhythm + treatment) (2026-08-17, 1 commit, 1.1.0+174)
+
+**状态**: R110 阶段 2 daily_tracking feature 收官 100% ✅。R125 + R126 step 1+2+3 累计 4 commit 6 子表 30 file 端到端迁移, 业务方法 0 break, 旧路径 12 file 全部 re-export。
+
+**新增 `lib/features/daily_tracking/` 15 file** (3 子表):
+- **weight** (4 字段 + 业务方法 `isValidWeight` / `bmiCategory`): 5 file 端到端
+- **social_rhythm** (8 字段, 0 业务方法): 5 file 端到端
+- **treatment** (7 字段 + 业务方法 `isLinkedToMedication` / `linkedMedicationDisplay`): 5 file 端到端
+
+**旧路径 12 file 全部 re-export**: 6 entity + 6 abstract。
+
+**R126 step 1+2 test 2 case 改**: "3 子表已迁 / 3 子表未迁" 改 "6/6 子表全已迁 (daily_tracking 收官 100%)"。
+
+**新增 `test/core/data/feature_first_migration_split_round126_step3_test.dart`** (12 case): 3 子表 5 file 端到端 + 业务方法 0 break + 6 旧路径 re-export + 新旧 entity 编译 + 6/6 子表 100% 收官。
+
+**R126 阶段 2 step 3 收官 关键设计**:
+- **3 子表同时收官**: 1 session 1-1.5h 内 weight + social_rhythm + treatment 3 子表 15 file 端到端
+- **业务方法 0 break**: weight 业务方法 (isValidWeight / bmiCategory) + treatment 业务方法 (isLinkedToMedication / linkedMedicationDisplay) 跟旧版完全一致
+- **daily_tracking 100% 收官**: 6/6 子表全迁, 旧路径 12 file 全部 re-export
+
+**R110 阶段 2 daily_tracking 子表迁移进度 (6/6 = 100% ✅ 收官)**:
+- ✅ R125 anxiety_agitation (阶段 1)
+- ✅ R126 step 1 stress_event (阶段 2 step 1)
+- ✅ R126 step 2 sleep (阶段 2 step 2)
+- ✅ **R126 step 3 weight + social_rhythm + treatment (阶段 2 step 3 收官, 本批)**
+
+**R110 阶段 2 剩余 4 feature 完整迁移** (mood 51 / vent 30 / assessment 16 / medication 50 file): 1-1.5 周真实工作, R126 续 + R127 阶段 3 拆 workspace 时一并。

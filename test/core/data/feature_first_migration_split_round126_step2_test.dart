@@ -116,32 +116,22 @@ void main() {
     });
   });
 
-  group('R126 阶段 2 step 2 — daily_tracking 3/6 子表迁移进度', () {
-    test('3 子表已迁 (anxiety + stress + sleep), 3 子表未迁 (weight / social_rhythm / treatment)', () {
-      // R125 anxiety + R126 step 1 stress + R126 step 2 sleep = 3 子表
-      // 3 子表待 R126 step 3+ 迁
+  group('R126 阶段 2 step 2 + step 3 — daily_tracking 6/6 子表收官 100%', () {
+    test('6/6 子表全已迁 (anxiety + stress + sleep + weight + social_rhythm + treatment)', () {
+      // R125 + R126 step 1+2+3 累计 daily_tracking 6/6 子表全迁
       final migrated = [
         'anxiety_agitation_entries.dart',
         'stress_events.dart',
         'sleep_entries.dart',
+        'weight_entries.dart',
+        'social_rhythm_entries.dart',
+        'treatment_entries.dart',
       ];
       for (final f in migrated) {
         expect(
           File('lib/features/daily_tracking/data/tables/$f').existsSync(),
           isTrue,
-          reason: '$f 已迁 (R125 + R126 step 1+2)',
-        );
-      }
-      final notMigrated = [
-        'weight_entries.dart',
-        'social_rhythm_entries.dart',
-        'treatment_entries.dart',
-      ];
-      for (final f in notMigrated) {
-        expect(
-          File('lib/features/daily_tracking/data/tables/$f').existsSync(),
-          isFalse,
-          reason: '$f 未迁 (R126 step 3+)',
+          reason: '$f 已迁 (R125 + R126 step 1+2+3 收官)',
         );
       }
     });
