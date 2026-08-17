@@ -397,20 +397,22 @@ void main() {
       final schemaVersion = db.schemaVersion;
       await db.close();
 
-      final src =
+      // R119 P1-1 (1.1.0 round 12j god class split): onUpgrade body lives
+      // in `app_database_migrations.dart` (part of), not inline in
+      // `app_database.dart`. Read the part file to find the guards.
+      // Concatenate both files so the regex can match any `if (from ...)`
+      // across the same library.
+      final main =
           File('lib/core/data/database/app_database.dart').readAsStringSync();
+      final part = File('lib/core/data/database/app_database_migrations.dart')
+          .readAsStringSync();
+      final src = '$main\n$part';
 
-      // 只解析 onUpgrade block 内的 guard (截取 onUpgrade 到 beforeOpen 之间)
-      final upgradeStart = src.indexOf('onUpgrade:');
-      final upgradeEnd = src.indexOf('beforeOpen:');
-      expect(upgradeStart, greaterThan(0), reason: '找不到 onUpgrade block');
-      expect(upgradeEnd, greaterThan(upgradeStart));
-      final upgradeBlock = src.substring(upgradeStart, upgradeEnd);
-
-      // 解析 `if (from == N)` / `if (from <= N)` / `if (from < N)`
+      // 解析所有 `if (from == N)` / `if (from <= N)` / `if (from < N)` —
+      // 不再依赖源文件里 onUpgrade 块位置 (R119 后 block 已拆到 part 文件)
       final guardRe = RegExp(r'if \(from (==|<=|<) (\d+)\)');
       final guards = <(String, int)>[];
-      for (final m in guardRe.allMatches(upgradeBlock)) {
+      for (final m in guardRe.allMatches(src)) {
         guards.add((m.group(1)!, int.parse(m.group(2)!)));
       }
       expect(guards, isNotEmpty, reason: 'onUpgrade 一个 guard 都没有');

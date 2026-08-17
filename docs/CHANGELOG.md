@@ -1,5 +1,42 @@
-﻿# 变更日志
-> **EN Summary**: v1.1.0+154 (2026-08-17). Recent batches: R115 emotion-first refactor (visual + privacy hardening) + R116 god class split 4 rounds. 2515 tests pass, 27/27 gatekeepers green, 1340 ARB keys, 4 FeatureFlag state (ventAudio=true, three others false awaiting external resources). 5 priority P0 external blockers: iOS/Android screenshots, LaunchImage, AppIcon ≥200KB, chroniccare.app domain ICP, 5-vendor push + Aliyun SMS. See [DEVELOPMENT_REQUIREMENTS.md](DEVELOPMENT_REQUIREMENTS.md) v2.0 for full P0/P1/P2/P3 plan.
+## [1.1.0+155 R119 P1-1 god class 续拆 — app_database 拆 part 文件] - 2026-08-17 (onUpgrade 体抽 part of, 主壳 564L→139L, 5 regression test)
+
+### Changed (R119 P1-1)
+- **app_database.dart 564L → 139L (-75.4%)**:
+  - 抽 `app_database_migrations.dart` (480L) 作 `part of 'app_database.dart'`:
+    - 24-version schemaVersion history 注释整段 (88L)
+    - 2 column-existence helpers: `_columnExists` / `_addColumnIfMissing` (P3 老库升级链幂等守卫)
+    - `_runAppDatabaseMigrations(AppDatabase db, Migrator m, int from, int to)` 函数, 23 个 `if (from ...)` 块覆盖 v1→v24
+  - 主壳只剩: imports + `@DriftDatabase` + 2 constructor + `schemaVersion => 24` + 1-line migration getter (委托到 part) + 15 DAO facade + closing notes
+  - **关键设计**:
+    - `part of` 模式保持 drift 生成的 `db.moodEntries`/`db.ventEntries` 顶层 TableInfo 字段可见, 0 编译风险
+    - `db.medications` 等所有 TableInfo 引用 + `db.customStatement()`/`db.customSelect()` 全部 instance 调用, 因为它们是 `_$AppDatabase` 实例字段/方法, 不是顶层
+    - SQL 字符串里的表名 (snake_case `medications`/`mood_entries` 等) 不动 — perl replace 误改 1 处 (`medications` 在 SQL 字符串里) 已修
+  - **为什么 `part of` 而不是独立 import 文件**:
+    - drift 生成的 `moodEntries`/`ventEntries` 等是 `_$AppDatabase` 字段, 不能跨文件 import
+    - `part of` 共享 library scope, 0 编译 boilerplate, 0 drift schema 风险
+    - 拆 cost 0 (无新 API surface, 无 caller 改动, drift .g.dart 不变)
+
+### Tests (R119 P1-1 regression protection)
+- **新增** `test/core/data/database/app_database_split_round119_test.dart` (5 case, 1 group):
+  - main + part 文件双存在
+  - main `part` 指令存在
+  - main onUpgrade 是 1-line 委托 (无 inline guard)
+  - part 文件含 24 version guard (重复 `database_migration_dryrun_round8_test` 覆盖测试, 但只解析 part)
+  - main 主壳 < 200L (god-class size guard 防回填)
+- **更新** `test/data/database_migration_dryrun_round8_test.dart`:
+  - `migration guard 覆盖自动比对` 测试改读 main + part 双文件 (concat), 不再依赖 main 文件 onUpgrade block 位置
+
+### Validation (R119 P1-1)
+- `flutter analyze`: 0 error / 0 warning (296 info-level 全是历史 `require_trailing_commas` baseline)
+- `flutter test`: **2566 pass / 0 fail / 1 skip** (2561 baseline + 5 R119 split test)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 0 violation
+- 27/27 守门员全绿 (5 个上架 P0 external 阻塞预期 fail, 资源到位即跑)
+
+### Risk (R119 P1-1)
+- **低风险** — `part of` 模式不改 drift schema, 不改 onUpgrade 语义, 不改 DAO API surface
+- 验证 4 个真实 DB 升级场景 (v3/v5/v19 → v24 dry-run) + 24 version guard 覆盖测试全过
+- 0 数据迁移风险 (schemaVersion 24 不变, onUpgrade 行为 1:1 保留)
+
 
 ## [1.1.0+154 R116 god class 拆解 round 4] - 2026-08-17 (add_medication_page 拆进度条+footer + 清 9 orphan key, 未 commit)
 
