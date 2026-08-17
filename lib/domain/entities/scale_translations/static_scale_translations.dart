@@ -23,6 +23,7 @@
 // 0 flutter / 0 drift / 0 data / 0 presentation, check_all.dart 守门员 0 violation。
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/entities/scale_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/asrm_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/gad7_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/isi_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/level2_anxiety_translations.dart';
@@ -44,7 +45,7 @@ class StaticScaleTranslations implements ScaleTranslations {
   // 阶段 4: WHODAS → WhodasTranslations (R118 round 4)
   // 阶段 5: Level2 Depression + Anxiety (R118 round 5)
   // 阶段 6: Level2 Mania + Psychosis (R118 round 6)
-  // 阶段 7: ASRM
+  // 阶段 7: ASRM (R118 round 7, 最后 1 个量表, P2-7 闭环)
   static const _phq9 = Phq9Translations();
   static const _gad7 = Gad7Translations();
   static const _isi = IsiTranslations();
@@ -54,6 +55,7 @@ class StaticScaleTranslations implements ScaleTranslations {
   static const _level2Anxiety = Level2AnxietyTranslations();
   static const _level2Mania = Level2ManiaTranslations();
   static const _level2Psychosis = Level2PsychosisTranslations();
+  static const _asrm = AsrmTranslations();
 
   // === PHQ-9 7 method 委托 (R118 P2-7 阶段 1) ===
   @override
@@ -311,6 +313,34 @@ class StaticScaleTranslations implements ScaleTranslations {
   String level2PsychosisSeveritySummary(int rank, {String? override}) =>
       _level2Psychosis.level2PsychosisSeveritySummary(rank, override: override);
 
+  // === ASRM 7 method 委托 (R118 P2-7 阶段 7, 最后 1 个量表) ===
+  @override
+  String asrmName({String? override}) => _asrm.asrmName(override: override);
+
+  @override
+  String asrmShortDescription({String? override}) =>
+      _asrm.asrmShortDescription(override: override);
+
+  @override
+  String asrmInstruction({String? override}) =>
+      _asrm.asrmInstruction(override: override);
+
+  @override
+  String asrmItem(int index, {String? override}) =>
+      _asrm.asrmItem(index, override: override);
+
+  @override
+  String asrmOption(int score, {String? override}) =>
+      _asrm.asrmOption(score, override: override);
+
+  @override
+  String asrmSeverityLabel(int rank, {String? override}) =>
+      _asrm.asrmSeverityLabel(rank, override: override);
+
+  @override
+  String asrmSeveritySummary(int rank, {String? override}) =>
+      _asrm.asrmSeveritySummary(rank, override: override);
+
   @override
   String crisisHotlineLabel(
     HotlineRegion region, {
@@ -356,77 +386,9 @@ class StaticScaleTranslations implements ScaleTranslations {
   //      + level2_anxiety_translations.dart (R118 P2-7 阶段 5) ----
 
 
-  // ---- ASRM (Altman 1997) ----
-  static const _asrmItemsZh = [
-    '心情比平时更好, 或感到兴奋 (elevated mood)',
-    '自信增加, 或感到自己很重要',
-    '睡眠需求减少, 仍感精力充沛',
-    '话比平时多, 或说话速度加快',
-    '思维奔逸, 想法快速跳跃',
-  ];
+  // ---- ASRM 段抽到 asrm_translations.dart (R118 P2-7 阶段 7, 最后 1 个量表) ----
 
-  static const _asrmOptionsZh = {
-    0: '完全没有',
-    1: '轻微',
-    2: '中度',
-    3: '明显',
-    4: '严重',
-  };
-
-  static const _asrmSeverityLabelZh = [
-    '无症状',
-    '轻度',
-    '中度',
-    '重度',
-    '极重度',
-  ];
-
-  static const _asrmSeveritySummaryZh = [
-    '无症状',
-    '轻度躁狂倾向',
-    '中度躁狂, 建议就医',
-    '重度躁狂, 建议就医',
-    '极重度躁狂, 强烈建议就医',
-  ];
-
-  @override
-  String asrmName({String? override}) => override ?? 'ASRM 自评躁狂量表';
-
-  @override
-  String asrmShortDescription({String? override}) =>
-      override ?? 'Altman 1997 自评躁狂量表 (5 题)';
-
-  @override
-  String asrmInstruction({String? override}) =>
-      override ?? '过去 1 周内, 您有 (或感觉到) 以下情况的程度?';
-
-  @override
-  String asrmItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _asrmItemsZh.length) return '';
-    return _asrmItemsZh[index];
-  }
-
-  @override
-  String asrmOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _asrmOptionsZh[score] ?? '';
-  }
-
-  @override
-  String asrmSeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _asrmSeverityLabelZh.length) return '';
-    return _asrmSeverityLabelZh[rank];
-  }
-
-  @override
-  String asrmSeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _asrmSeveritySummaryZh.length) return '';
-    return _asrmSeveritySummaryZh[rank];
-  }
 }
-// rule3-whitelist: 328, 332, 361-365, 369-373, 377-381, 385-389, 393, 397, 401
+// rule3-whitelist: 358, 362
 //   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
 //   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
