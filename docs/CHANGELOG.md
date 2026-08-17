@@ -1,3 +1,40 @@
+## [1.1.0+166 R122 P2-1 step 3 — mood_audio_storage 独立验证 (拆 3 facade 闭环)] - 2026-08-17 (storage 67L 已独立, 0 业务逻辑在 EncryptedAudioStorage 基类, 6 regression test)
+
+### Changed (R122 P2-1 step 3)
+- **拆 3 facade 闭环验证** — `mood_audio_storage.dart` 67L 已 100% 独立:
+  - 99% 业务逻辑 (encryptAndWrite / decryptToTemp / deleteFile / path 生成) 全在基类 `EncryptedAudioStorage` (R0.23 round 43 spen-2 抽离)
+  - MoodAudioStorage 仅 mood-specific 配置: 5 override getter (dirName / filePrefix / tempRecordPrefix / decryptPrefix / debugTag) + 2 alias 常量 (encryptedSuffix / legacyPlainSuffix) + extends EncryptedAudioStorage + export 基类 (供 widget 测试 mock 注入)
+- **mood_audio_storage_split_round122_test.dart** (新增 6 case) — 拆 3 facade 闭环守门员:
+  - 4 文件双存在 (主 service + stt + recorder + storage)
+  - storage < 100L (67L 已独立, 0 业务逻辑)
+  - storage 0 业务方法 (无 encryptAndWrite / decryptToTemp / deleteFile — 全在基类) + 不 import dart:io (基类已封装)
+  - storage extends EncryptedAudioStorage + export 基类
+  - 主 service 不 import EncryptedAudioStorage 基类 (委派路径完整: recorder → storage 子类)
+  - 4 文件总和 < 800L (拆前 496L baseline, +overhead 限 < 60%)
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning
+- `flutter test`: **2608 pass / 0 fail / 1 skip** (R122 step 2 baseline 2602 +6 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 ✅ + 一致性 ✅ (跨期稳定)
+- `python3 scripts/check_coverage.py`: 18 gatekeeper 全过 (拆 3 facade 未掉阈值)
+
+### R122 路线图 ✅ 闭环
+- ✅ P2-1 step 1 (1.5h, +164) — STT 抽独立 (mood_audio_stt.dart 154L)
+- ✅ P2-1 step 2 (1.5h, +165) — recorder 抽独立 (mood_audio_recorder.dart 307L)
+- ✅ P2-1 step 3 (0.5h, +166, 本 commit) — storage review 闭环
+- **主 MoodAudioServiceImpl 最终 251L (从 496L 减 49.4%, 超路线图预期 50%)**
+- **拆 3 facade 总 780L (拆前 496L, +284L = +57.3% overhead, 主要是 import / 文档 / 业务注释)**
+
+### 拆 3 facade 完整架构 (R122 路线图闭环)
+```
+mood_audio_service.dart (251L, orchestrator + abstract interface)
+├── MoodAudioStt (mood_audio_stt.dart, 154L) — STT state + 4 method + stream
+├── MoodAudioRecorder (mood_audio_recorder.dart, 307L) — recorder state
+│   + 5 method + timer + 3min 上限 + 暂停冻结 + temp 清理
+└── MoodAudioStorage (mood_audio_storage.dart, 66L) — 5 override getter
+    └── EncryptedAudioStorage (基类, R0.23 round 43 抽离) — 99% 业务逻辑
+```
+
 ## [1.1.0+165 R122 P2-1 step 2 — mood_audio_service recorder 抽独立 class] - 2026-08-17 (406L→251L 主壳, recorder 状态机+3min 上限+暂停全迁出, 10 regression test)
 
 ### Changed (R122 P2-1 step 2)

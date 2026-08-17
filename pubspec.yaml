@@ -3,7 +3,7 @@ name: chroniccare
 # 1.1.0 round 6d: 改情绪优先定位 (情绪日记 + 树洞倾诉优先, 用药记录辅助, 对齐 README)
 description: "情绪日记 + 树洞倾诉优先 — ChronicCare: mood journal & vent-first self-care app for mental wellness, with medication tracking as support"
 publish_to: 'none'
-version: 1.1.0+165
+version: 1.1.0+166
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
