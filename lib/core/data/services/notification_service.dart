@@ -234,11 +234,25 @@ class NotificationService implements NotificationSender {
 
   /// v0.16 round 19B: 通知 id 公式兼容访问 (供现有 test 引用)。
   /// 新代码请用 `RefillNotifier.refillNotificationId(medId)`。
+  ///
+  /// v1.1.0+160 R121 P1-3 (emil 维度): 加 @Deprecated 标记, 提示 caller 主动迁移
+  /// 到 RefillNotifier 静态方法。此 facade 静态方法将在 v1.1 移除
+  /// (refill_notification_id_band_round110 回归测试覆盖, 不破坏 test 链)
+  @Deprecated(
+    '新代码请用 RefillNotifier.refillNotificationId(medId); '
+    '此 facade 静态 alias 将在 v1.1 移除',
+  )
   @visibleForTesting
   static int refillNotificationId(int medicationId) =>
       RefillNotifier.refillNotificationId(medicationId);
 
   /// v0.16 round 19B: 续方触发时间公式兼容访问
+  ///
+  /// v1.1.0+160 R121 P1-3 (emil 维度): 加 @Deprecated 标记
+  @Deprecated(
+    '新代码请用 RefillNotifier.computeRefillFireTime; '
+    '此 facade 静态 alias 将在 v1.1 移除',
+  )
   @visibleForTesting
   static DateTime? computeRefillFireTime({
     required DateTime? refillAt,
