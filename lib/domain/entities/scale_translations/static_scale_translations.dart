@@ -27,6 +27,7 @@ import 'package:chroniccare/domain/entities/scale_translations/gad7_translations
 import 'package:chroniccare/domain/entities/scale_translations/isi_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
 import 'package:chroniccare/domain/entities/scale_translations/pss_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/whodas_translations.dart';
 
 /// 静态中文 fallback (老 caller / 单测 / domain 0 flutter 边界)
 class StaticScaleTranslations implements ScaleTranslations {
@@ -36,11 +37,13 @@ class StaticScaleTranslations implements ScaleTranslations {
   // 阶段 1: PHQ-9 → Phq9Translations (R118 round 1)
   // 阶段 2: GAD-7 → Gad7Translations (R118 round 2)
   // 阶段 3: ISI + PSS → IsiTranslations + PssTranslations (R118 round 3)
-  // 阶段 4-5: 拆 WHODAS + 4 个 Level2 + ASRM
+  // 阶段 4: WHODAS → WhodasTranslations (R118 round 4)
+  // 阶段 5: 拆 4 个 Level2 + ASRM
   static const _phq9 = Phq9Translations();
   static const _gad7 = Gad7Translations();
   static const _isi = IsiTranslations();
   static const _pss = PssTranslations();
+  static const _whodas = WhodasTranslations();
 
   // === PHQ-9 7 method 委托 (R118 P2-7 阶段 1) ===
   @override
@@ -154,6 +157,34 @@ class StaticScaleTranslations implements ScaleTranslations {
   String pssSeveritySummary(int rank, {String? override}) =>
       _pss.pssSeveritySummary(rank, override: override);
 
+  // === WHODAS 7 method 委托 (R118 P2-7 阶段 4) ===
+  @override
+  String whodasName({String? override}) => _whodas.whodasName(override: override);
+
+  @override
+  String whodasShortDescription({String? override}) =>
+      _whodas.whodasShortDescription(override: override);
+
+  @override
+  String whodasInstruction({String? override}) =>
+      _whodas.whodasInstruction(override: override);
+
+  @override
+  String whodasItem(int index, {String? override}) =>
+      _whodas.whodasItem(index, override: override);
+
+  @override
+  String whodasOption(int score, {String? override}) =>
+      _whodas.whodasOption(score, override: override);
+
+  @override
+  String whodasSeverityLabel(int rank, {String? override}) =>
+      _whodas.whodasSeverityLabel(rank, override: override);
+
+  @override
+  String whodasSeveritySummary(int rank, {String? override}) =>
+      _whodas.whodasSeveritySummary(rank, override: override);
+
   @override
   String crisisHotlineLabel(
     HotlineRegion region, {
@@ -193,83 +224,7 @@ class StaticScaleTranslations implements ScaleTranslations {
 
   // ---- ISI + PSS 段抽到 isi_translations.dart + pss_translations.dart (R118 P2-7 阶段 3) ----
 
-  // ---- WHODAS 2.0 (WHO 12 题简化) ----
-  static const _whodasItemsZh = [
-    '理解并与他人交流',
-    '四处走动',
-    '自我照顾 (如洗澡、穿衣)',
-    '与他人相处',
-    '承担家庭 / 工作责任',
-    '参与社区活动',
-    '集中注意力做事',
-    '短距离步行',
-    '清洗全身',
-    '与陌生人相处',
-    '维持朋友关系',
-    '完成日常工作任务',
-  ];
-
-  static const _whodasOptionsZh = {
-    0: '没有',
-    1: '轻微',
-    2: '中度',
-    3: '重度',
-    4: '极重度',
-  };
-
-  static const _whodasSeverityLabelZh = [
-    '无残疾',
-    '轻度残疾',
-    '中度残疾',
-    '重度残疾',
-    '极重度残疾',
-  ];
-
-  static const _whodasSeveritySummaryZh = [
-    '无残疾',
-    '轻度残疾',
-    '中度残疾, 建议就医评估',
-    '重度残疾, 建议就医',
-    '极重度残疾, 强烈建议就医',
-  ];
-
-  @override
-  String whodasName({String? override}) => override ?? 'WHODAS 2.0 残疾评定';
-
-  @override
-  String whodasShortDescription({String? override}) =>
-      override ?? 'WHO 通用残疾评估 12 题简化版';
-
-  @override
-  String whodasInstruction({String? override}) =>
-      override ?? '过去 30 天内, 您在以下活动中遇到多大困难?';
-
-  @override
-  String whodasItem(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _whodasItemsZh.length) return '';
-    return _whodasItemsZh[index];
-  }
-
-  @override
-  String whodasOption(int score, {String? override}) {
-    if (override != null) return override;
-    return _whodasOptionsZh[score] ?? '';
-  }
-
-  @override
-  String whodasSeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _whodasSeverityLabelZh.length) return '';
-    return _whodasSeverityLabelZh[rank];
-  }
-
-  @override
-  String whodasSeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _whodasSeveritySummaryZh.length) return '';
-    return _whodasSeveritySummaryZh[rank];
-  }
+  // ---- WHODAS 段抽到 whodas_translations.dart (R118 P2-7 阶段 4) ----
 
   // ---- DSM-5 Level 2 抑郁严重度 (PROMIS 简化) ----
   static const _level2DepressionItemsZh = [
@@ -634,6 +589,6 @@ class StaticScaleTranslations implements ScaleTranslations {
     return _level2PsychosisSeveritySummaryZh[rank];
   }
 }
-// rule3-whitelist: 171, 175, 198-209, 213-217, 221-225, 229-233, 237, 241, 245, 276-283, 287-290, 294-297, 301-304, 309, 313, 317, 352-358, 362-365, 369-372, 376-379, 384, 388, 392, 423-427, 431-434, 438-441, 445-448, 453, 457, 461, 492-496, 500-504, 508-512, 516-520, 524, 528, 532, 563-570, 574-577, 581-584, 588-591, 596, 600, 604
+// rule3-whitelist: 202, 206, 231-238, 242-245, 249-252, 256-259, 264, 268, 272, 307-313, 317-320, 324-327, 331-334, 339, 343, 347, 378-382, 386-389, 393-396, 400-403, 408, 412, 416, 447-451, 455-459, 463-467, 471-475, 479, 483, 487, 518-525, 529-532, 536-539, 543-546, 551, 555, 559
 //   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
 //   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
