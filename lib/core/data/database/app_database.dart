@@ -42,7 +42,13 @@ part 'app_database.g.dart';
 // schemaVersion history extracted to this part file. Same library scope,
 // so generated `moodEntries`/`ventEntries`/etc. top-level references remain
 // visible without import/export plumbing.
+// R121 P1-3 (1.1.0 round 12k emil dimension): onUpgrade body 480L 拆 4 sub-part
+// (v1-v5 / v6-v12 / v13-v18 / v19-v24), 主 orchestrator 4 行编排。
 part 'app_database_migrations.dart';
+part 'app_database_migrations_v1_v5.dart';
+part 'app_database_migrations_v6_v12.dart';
+part 'app_database_migrations_v13_v18.dart';
+part 'app_database_migrations_v19_v24.dart';
 
 /// Chronic care database
 ///

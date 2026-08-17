@@ -64,13 +64,23 @@ void main() {
       );
     });
 
-    test('part file contains all 24 version guards', () {
-      final part = File(partPath).readAsStringSync();
-      final guards = RegExp(r'if \(from (==|<=|<) (\d+)\)').allMatches(part);
+    test('part file + 4 sub-part 跨 24 version guards', () {
+      // v1.1.0+161 R121 P1-3 (emil dimension): 24-version guards 拆到 4 sub-part
+      // (v1-v5 / v6-v12 / v13-v18 / v19-v24), 主 part 文件只剩 60L 薄壳
+      // orchestrator。读 5 文件跨 24 version guard 覆盖测试
+      const subParts = [
+        'lib/core/data/database/app_database_migrations.dart',
+        'lib/core/data/database/app_database_migrations_v1_v5.dart',
+        'lib/core/data/database/app_database_migrations_v6_v12.dart',
+        'lib/core/data/database/app_database_migrations_v13_v18.dart',
+        'lib/core/data/database/app_database_migrations_v19_v24.dart',
+      ];
+      final allSrc = subParts.map((p) => File(p).readAsStringSync()).join('\n');
+      final guards = RegExp(r'if \(from (==|<=|<) (\d+)\)').allMatches(allSrc);
 
       // 24 个 version (1 to 24) 必须每个都至少被 1 个 guard 覆盖
       // — 等价于 database_migration_dryrun_round8_test.dart 的覆盖测试
-      // 但只解析 part 文件 (R119 前 main 文件 564L 包含全部 guard)
+      // 但 R121 拆 4 sub-part 后跨 5 文件解析
       final covered = <int>{};
       for (final m in guards) {
         final op = m.group(1)!;

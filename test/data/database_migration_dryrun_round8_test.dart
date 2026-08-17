@@ -397,16 +397,22 @@ void main() {
       final schemaVersion = db.schemaVersion;
       await db.close();
 
-      // R119 P1-1 (1.1.0 round 12j god class split): onUpgrade body lives
-      // in `app_database_migrations.dart` (part of), not inline in
-      // `app_database.dart`. Read the part file to find the guards.
-      // Concatenate both files so the regex can match any `if (from ...)`
-      // across the same library.
+      // R121 P1-3 (1.1.0 round 12k emil dimension): 24-version onUpgrade body
+      // 拆 4 sub-part (v1-v5 / v6-v12 / v13-v18 / v19-v24), 主 part 文件
+      // 变成 60L 薄壳 orchestrator。读 5 文件跨 24 guard 覆盖测试
+      const migrationFiles = [
+        'lib/core/data/database/app_database_migrations.dart',
+        'lib/core/data/database/app_database_migrations_v1_v5.dart',
+        'lib/core/data/database/app_database_migrations_v6_v12.dart',
+        'lib/core/data/database/app_database_migrations_v13_v18.dart',
+        'lib/core/data/database/app_database_migrations_v19_v24.dart',
+      ];
       final main =
           File('lib/core/data/database/app_database.dart').readAsStringSync();
-      final part = File('lib/core/data/database/app_database_migrations.dart')
-          .readAsStringSync();
-      final src = '$main\n$part';
+      final parts = migrationFiles
+          .map((p) => File(p).readAsStringSync())
+          .join('\n');
+      final src = '$main\n$parts';
 
       // 解析所有 `if (from == N)` / `if (from <= N)` / `if (from < N)` —
       // 不再依赖源文件里 onUpgrade 块位置 (R119 后 block 已拆到 part 文件)
