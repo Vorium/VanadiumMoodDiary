@@ -1,3 +1,38 @@
+## [1.1.0+175 R126 全清 (R110 阶段 2 daily_tracking 100% 收官 doc 同步)] - 2026-08-18 (R126 阶段 2 step 3 收官后 doc 闭环, AGENTS.md 校准 + R110 路线图进度收尾)
+
+### Changed (R126 全清 doc 同步)
+- **AGENTS.md** 校准:
+  - 顶部 EN Summary: "29/29 CI gatekeepers" → "24 CI gatekeepers (R125+1 起 baseline 21 → R122 +1 → R124 +1 → R125 +1)", 校准 R126 baseline 2681 tests + 阶段 2 100% 收官状态
+  - R110 路线图进度 (R125 段后): 把 R126 step 2 + step 3 标 ✅, 加 "R126 阶段 2 daily_tracking 100% 收官 总览" 段 (30 file / 业务方法 0 break / 旧路径 12 file re-export / 测试 baseline 2681 / 守门员 24)
+  - 新增 "v1.1.0 R126 全清" 段: doc 改动清单 + R126 全清 verification (重跑 22 守门员 + flutter test 2681 / analyze 0 / check_all 双绿) + R126 全清 关键设计 (24 守门员构成 / 2681 baseline 跨 4 commit 累积 / 下一站 R127)
+
+### R126 全清 关键里程碑
+- **R110 阶段 2 daily_tracking 100% 收官 ✅**: R125 (1 commit) + R126 step 1+2+3 (3 commit) 累计 4 commit 6 子表 30 file 端到端迁移
+- **业务方法 0 break**: sleep `durationLabel` / `hasRegularityScore` + weight `isValidWeight` / `bmiCategory` + treatment `isLinkedToMedication` / `linkedMedicationDisplay` 跟旧版完全一致
+- **旧路径 12 file 全部 re-export**: 6 entity + 6 abstract (R120 facade 收紧 + R110 feature-first 迁移都走 export 新路径模式)
+- **守门员 24 = 21 baseline + 3 累加**: R109 check_usecase_layer + R111 check_review_information_todo + R124 check_five_vendor_push_ready + R125 check_feature_first_migration = 24
+- **测试 2681 baseline**: R122 baseline 2589 → R124 +5 → R125 +13 → R126 step 1 +10 → R126 step 2 +9 → R126 step 3 +12 = 2681
+
+### R110 路线图 5 阶段进度 (1 个 feature 100% 收官)
+- ✅ 阶段 1 (R125) — design + 1 子表样板
+- ✅ 阶段 2 (R126) — daily_tracking 6/6 子表 100% 收官 (本批 4 commit)
+- ⏸ 阶段 2 续 (R126 续) — mood / vent / assessment / medication 4 feature 完整迁移
+- ⏸ 阶段 3 (R127) — pub workspace 3 package 拆分
+- ⏸ 阶段 4 (R128) — 跨 feature 共享 (core/platform/) 抽取
+- ⏸ 阶段 5 (R129) — 5 token 集中器转 pub workspace 公共 package + 综合审视
+
+### Verification
+- `flutter analyze`: 0 error / 0 新 warning (457 info-level 全是 trailing comma, 跟 R120 baseline 一致)
+- `flutter test`: **2681 pass / 0 fail / 1 skip** (R126 step 2 baseline 2669 + R126 step 3 +12 case)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 双绿
+- 22 .py 守门员: 16 OK + 6 已知 warning (跨期 R32/R108 baseline + R110 阶段 2+ / R124 阶段 2 设计意图), 0 R126 引入新违规
+- `check_feature_first_migration.py`: 阶段 1 ✅ + 阶段 2+ warn (5+ feature 仍未迁, 留 R126 续)
+
+### 下一站 R127
+- 4 feature 完整迁移 (mood 51 / vent 30 / assessment 16 / medication 50 file) — 1-1.5 周真实工作
+- pub workspace 3 package 拆分 — 1 周
+- 优先 R127 阶段 3 还是 R126 续, 看用户下一步指令
+
 ## [1.1.0+174 R126 (R110 feature-first 阶段 2 step 3 收官) — daily_tracking 6/6 子表 100% 迁移 (weight + social_rhythm + treatment)] - 2026-08-17 (R110 阶段 2 收官, 3 子表 15 file 端到端, 12 regression test)
 
 ### Changed (R126 阶段 2 step 3 收官)
