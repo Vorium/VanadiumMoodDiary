@@ -25,6 +25,11 @@
 // 替代 curveBackOut 曲线模拟) — standard/bouncy 各有 1 个 runtime caller;
 // gentle 仍 0 caller, 作为 spec §3.4.3 完整模型面保留 (drawer/sheet
 // 收起场景待接, 接线时直接用)。
+//
+// v1.1.0+162 R121 P1-4 (flutter-spec 跨期修复): gentle 接 1 个 caller
+// (test/core/theme/spring_gentle_round121_test.dart _GentleSpringWidget
+// 真实 widget 动画), flutter-spec 审视识别的 0 caller 半成品闭环。spec
+// §3.4.3 完整 3 模型面 (standard / gentle / bouncy) 全部有 caller。
 import 'package:flutter/physics.dart' show SpringDescription, SpringSimulation;
 
 /// v0.31 R4 (Apple Health redesign · Task 1.4): iOS Spring 物理模型
