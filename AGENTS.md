@@ -2,7 +2,7 @@
 
 > 给 AI 编程 Agent 看的项目指引。先读 README.md 看产品视角，再读这份看代码视角。
 >
-> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2515 tests pass, 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5.
+> **EN Summary**: A mental-health self-care Flutter app (emotion-first: vent + mood primary, medication/assessment secondary), 4-layer architecture (data/domain/presentation + 5-umbrella core/), 27/27 CI gatekeepers, 2571 tests pass, 1340 ARB keys (zh/en/zh-Hant), zero cloud + zero push + zero exfil, SQLCipher local encryption. See [DEVELOPMENT_REQUIREMENTS.md](docs/DEVELOPMENT_REQUIREMENTS.md) for v2.0 requirements (R117). Toolchain: Flutter 3.47 (Gradle 8.14 + NDK 28.2 + newDsl=true) after R117 round 5. R120 综合审视加权 7.5/10 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5). R108 §六 god class 候选 4/12 闭环 (R118 P2-7 10 量表 / R119 P1-1 app_database 564→139L / R120 P1-2 notification_service 386→252L / R116 round 4 add_medication_page).
 
 ## 项目速览
 
@@ -603,3 +603,43 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **Wave D (mood ALS 化)**: mood_recorder Dialog 内 2 组 AppleListSection (评分组/记录组) + **MoodScoreButtons 共享 widget (72pt 圆形 + spring 选中 + reduce-motion + 48pt 下限 clamp)** + CBT wizard score 段迁移 + PrimaryButton pill + cbt_explainer_card ALS 化 + 删 4 维死代码 (mood_score_chooser/dimension_row); 裁决: Dialog 保持 modal (sheet 化留 v1.0, 6+ 调用方风险高)。+4 tests, 2509 pass。
 
 **R115 剩余 (外部依赖为主)**: 上架闸门 (域名 ICP / 截图 / review 信息 / console 表单 / ICP 备案+软著) / StatefulShellRoute 分支保活 / mood sheet 化 (v1.0) / 法务文档律师过审 / ARB 1331→1328 基线。**gdc 主矛盾警告: 工程闭环 vs 用户闭环脱节 — 建议今天注册域名 + 本周 sideload 10 真实用户, 停止审计循环**。
+
+## v1.1.0 R115 emotion-first 重构 (2026-08-17, Batch 1 视觉 + Batch 2 隐私加固)
+
+**状态**: 1.1.0+150 commit, 14 新 ARB key (3 langs), more_entry_sheet.dart + primary_action_row.dart (3 list rows + MoreEntryTrigger) + today_summary_card.dart (mood/vent/sleep/worry) + health_data_group.dart + settings_page.dart (5 groups) + profile_group.dart cleanup。Batch 2 隐私加固: 5 新守门员 (check_no_network_io / check_release_no_network / check_permissions_whitelist / check_encryption_at_rest / check_pii_in_assets) + docs/PRIVACY_HARDENING.md 13KB。22→27 守门员, 2515 tests pass, 1340 ARB keys (zh/en/zh-Hant)。
+
+## v1.1.0 R116 god class 拆解 4 round (2026-08-17, 1.1.0+150~+154)
+
+**状态**: round 1 mood_trend_page 653L → 104L 主壳 + 4 chart 子文件 / round 2 reminders_hub_page 312L → 213L 主壳 + 155L assessment_reminder_sheet / round 3 medication_page 380L → 281L 主壳 + 121L medication_slot_entry_row / round 4 add_medication_page 247L → 195L + AddMedicationStepIndicator + AddMedicationStepFooter (1.1.0+154 5 widgets + 9 orphan ARB key 清掉)。R108 §六 4/12 闭环 (1 提前)。
+
+## v1.1.0 R117 综合审视 11 视角 (2026-08-17, docs/audit/2026-08-17-comprehensive/ ~63KB)
+
+**状态**: 11 视角 subagent 报告 + 00-FINAL-CONSOLIDATION.md + docs/DEVELOPMENT_REQUIREMENTS.md v2.0 (239L) + 5 新上架守门员 (check_appstore_screenshots / check_ios_launchimage / check_appicon_size / check_domain_icp / check_appstore_metadata)。加权综合 7.0/10 (R31 6.5 → +0.5)。27/27 守门员 = 22 现有 + 5 上架 P0 external (expected fail 等资源)。25 P0/P1/P2/P3 修复需求 (11 误判已识别)。
+
+## v1.1.0 R118 god class 续拆 P2-7 — 10 量表抽独立 class (2026-08-17, 8 commit db920d50~b29d3bd7)
+
+**状态**: 10 量表抽独立 class (Phq9Translations 94L / Gad7Translations 84L / IsiTranslations 83L / PssTranslations 84L / WhodasTranslations 90L / AsrmTranslations 83L / Level2Depression 84L / Level2Anxiety 83L / Level2Mania 81L / Level2Psychosis 88L) + 主壳 StaticScaleTranslations 659L → 394L (-40%)。composition 委托: 10 const instance + 70 method (7 × 10) 1:1 委托。test/domain/entities/scale_translations/round118_direct_test.dart 42 case (边界 20 / 主壳委托 10 / 跨 class 共享 2 / 真实输出非空 10)。0 公共 API 变化, 0 跨层 import regression, 0 drift schema 破坏。
+
+## v1.1.0 R119 god class 续拆 P1-1 — app_database 564L → 139L 主壳 + 480L part 文件 (2026-08-17, 1 commit 82fe9e9b)
+
+**状态**: 抽 app_database_migrations.dart 作 `part of 'app_database.dart'`, 共享 library scope 让 drift 生成 `db.moodEntries` / `db.ventEntries` 等 TableInfo 顶层引用无需 import/export。主壳 139L (-75%) = imports + `@DriftDatabase` + 2 constructor + `schemaVersion 24` + 1-line migration getter + 15 DAO facade。SQL 字符串 snake_case 保持 (1 处 perl replace 误改已修)。test/core/data/database/app_database_split_round119_test.dart 5 case (双存在 / part 指令 / 1-line 委托 / 24 guard / 主壳 < 200L)。schemaVersion 24 不变, 24-version onUpgrade 1:1 保留, 0 数据迁移风险。
+
+## v1.1.0 R120 god class 续拆 P1-2 — notification_service 386L → 252L facade 收紧 (2026-08-17, 1 commit e07ae845)
+
+**状态**: 抽 `_buildNotificationDetails()` 私有方法 (showNow 内 30L Android+iOS NotificationDetails 块封装) + 40L 跨 sub-service ID range 文档外移到 `docs/architecture/NOTIFICATION_ID_BANDS.md` 独立 doc + 32L 类头历史注释压缩到 12L 摘要。test/core/data/services/notification_service_split_round120_test.dart 5 case (双存在 / 私有方法 / showNow 1-line 委托 / ID doc 外移 / 主壳 < 350L)。test/core/data/services/notification_service_can_exact_round108_test.dart A2 修 `+ 3000` 硬编码缓冲 (R120 文件 11064→9930 字节后越界)。0 sub-service 接口变化, 0 公共 API 变化。
+
+## v1.1.0 R120 综合审视 4 视角 (2026-08-17, docs/audit/2026-08-17-round120/ 6 文件 1186 行)
+
+**状态**: 1 主 agent 自查 + 4 subagent 并行 (emil 8.0 / flutter-spec 97% / superpowers-zh 7.0 / frame-thinking 8.5), 加权综合 **7.5/10** (R117 7.0 → +0.5)。R108 §六 god class 候选 **4/12 闭环** (R116 round 4 add_medication_page + R118 P2-7 10 量表 + R119 P1-1 app_database + R120 P1-2 notification_service)。修 1 守门员回归: notification_service rule3-whitelist 行号重生 (205,271,303,312-313 → 137,193,207,215-216)。
+
+**R121 优先级 1 综合 (4 视角加权, 估时 12.1h, 预期加权 7.5→8.0)**:
+- superpowers-zh: 文档同步 4 项 (CHANGELOG 缺 R118 P2-7 + AGENTS 缺 4 章节 + EN Summary 2515→2571 + PRIVACY_HARDENING 改 R120 framing) — 3.1h
+- frame-thinking: vent_list_page 684L 拆 3 (emotion-first 主路径) + spring.dart 145L 接入 _EntrySpring — 3.5h
+- emil: R120 2 alias @Deprecated 标记 + R119 part 文件拆 4 子文件 + R118 量表 class 各自 implements ScaleTranslations — 4h
+- flutter-spec: CI 接入 `flutter test --coverage` + spring.dart gentle 接入 — 1.5h
+
+**R121 战略** = 70% god class 续拆 + 20% P0 external 主动动作 (域名 ICP / 设计师 RFP) + 10% 文档同步 + 跨期 P0 等外部。**跨期 7 P0 external 0 闭环已 8 round** (frame-thinking Focus 维度降 1 分, R121 该并行推主动动作)。
+
+## v1.1.0 R121 hotfix — superpowers-zh P0 文档同步 4 项 (2026-08-17, 1 commit)
+
+**状态**: AGENTS.md 顶部 EN Summary 2515 → 2571 (R120 baseline) + 加 R115/R116/R117/R118/R119/R120/R120-audit 7 章节 (原 R115-R120 缺, superpowers-zh 独家 P0 漏洞) + PRIVACY_HARDENING.md 改 R115 → R120 framing + CHANGELOG 1.1.0+15X 段补 R118 P2-7 entry。scale_translations.dart 头部注释加 R118 段, AGENTS.md 21 守门员清单重写为 27 (R115 +5)。1.1.0+155 R119 / 1.1.0+156 R120 CHANGELOG entry 已加, R118 P2-7 8 commit 流水 entry 补完。

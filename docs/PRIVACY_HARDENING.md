@@ -1,8 +1,9 @@
-# v1.1.0 round 11 (R115) 零外联隐私加固证据清单
+# v1.1.0 R115-R120 零外联隐私加固证据清单 (R120 综合审视更新)
 
-> **状态**: 5/5 新守门员绿, 总守门员数 22→27 (+5)
+> **状态 (R120 2026-08-17)**: R115 5/5 新守门员全绿 + R118/R119/R120 3 round god class 续拆 0 隐私回归 + R120 4 视角综合审视加权 7.5/10 (superpowers-zh 7.0 文档同步是 R121 hotfix)
 > **目标**: 锁住"零云端 + 零推送 + 零外联"产品定位, 防止未来 commit 偷偷引入网络/权限
-> **日期**: 2026-08-17
+> **R115 落地**: 5 新守门员 (B1 权限白名单 + B2 网络 IO 禁 + B3 加密断言 + B4 PII 资产 + B5 release 网络禁) — 总守门员数 22→27
+> **R120 跨期**: 7 P0 external 跨期 0 闭环已 8 round (frame-thinking Focus 维度降 1 分), 1.1.0 round 4b emotion-first refactor 后零外联架构保持
 
 ## 1. 设计原则 (why)
 
@@ -13,6 +14,15 @@
 - **Google Play Health/Sensitive Apps policy**: 通知 / 提醒功能需本地化, 不外联
 
 **产品定位翻转 (1.1.0 round 4b emotion-first refactor)**: 精神心理自我关怀 App, 永久免费 + 零云端 + 零推送, 走 SQLCipher 本地加密。这份文档是 R115 视觉重构 (Batch 2) 加固零外联架构的硬约束证据。
+
+**R120 跨期残留** (frame-thinking 综合审视识别):
+- **5 实物资产** (iOS 截图 / iOS LaunchImage / Android 截图 + feature_graphic / AppIcon 1024×1024 ≥ 200KB) = 设计师依赖
+- **chroniccare.app 域名 + 4 邮箱 ICP** = 阿里云备案 7-20d
+- **5 厂商 push SDK** = 5 厂商审核 1-2 月
+- **阿里云 SMS** = 失联通知 100% 失效, 1-2 月
+- **5.1.3 抽审问卷** = 等 iOS 5.1.3 官方
+
+R121 该并行推 P0 external 主动动作 (域名 ICP 申请 + 设计师 RFP), 不应再 100% 投入内部 god class 续拆。
 
 ## 2. 5 个新守门员 (R115 落地)
 

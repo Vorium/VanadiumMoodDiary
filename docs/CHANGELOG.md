@@ -1,4 +1,7 @@
-## [1.1.0+156 R120 P1-2 god class 续拆 — notification_service facade 收紧] - 2026-08-17 (主壳 386L→252L, ID range 文档外移, 5 regression test)
+# 变更日志
+> **EN Summary**: v1.1.0+157 (2026-08-17). R118 P2-7 + R119 P1-1 + R120 P1-2 god class 续拆 3 round 闭环 + R120 综合审视 4 视角加权 7.5/10. 2571 tests pass (2566 R119 baseline + 5 R120 split regression test), 27/27 gatekeepers (20 ✅ + 5 上架 P0 external expected fail + 2 warn), 1340 ARB keys, 4 FeatureFlag state (ventAudio=true, three others false awaiting external resources). R108 §六 god class 候选 4/12 闭环 (R116 round 4 + R118 10 量表 + R119 app_database + R120 notification_service). See [DEVELOPMENT_REQUIREMENTS.md](DEVELOPMENT_REQUIREMENTS.md) v2.0 for full P0/P1/P2/P3 plan.
+
+## [1.1.0+157 R120 P1-2 god class 续拆 — notification_service facade 收紧] - 2026-08-17 (主壳 386L→252L, ID range 文档外移, 5 regression test)
 
 ### Changed (R120 P1-2)
 - **notification_service.dart 386L → 252L (-34.7%)**:
@@ -33,7 +36,7 @@
 - ID range 分配语义 0 变化 (sub-service const + 静态分析测试 `notification_id_band_round110` 仍 100% 覆盖)
 
 
-## [1.1.0+155 R119 P1-1 god class 续拆 — app_database 拆 part 文件] - 2026-08-17 (onUpgrade 体抽 part of, 主壳 564L→139L, 5 regression test)
+## [1.1.0+156 R119 P1-1 god class 续拆 — app_database 拆 part 文件] - 2026-08-17 (onUpgrade 体抽 part of, 主壳 564L→139L, 5 regression test)
 
 ### Changed (R119 P1-1)
 - **app_database.dart 564L → 139L (-75.4%)**:
@@ -71,6 +74,36 @@
 - **低风险** — `part of` 模式不改 drift schema, 不改 onUpgrade 语义, 不改 DAO API surface
 - 验证 4 个真实 DB 升级场景 (v3/v5/v19 → v24 dry-run) + 24 version guard 覆盖测试全过
 - 0 数据迁移风险 (schemaVersion 24 不变, onUpgrade 行为 1:1 保留)
+
+## [1.1.0+155 R118 P2-7 god class 续拆 — 10 量表抽独立 class] - 2026-08-17 (主壳 659L→394L, 10 子文件, 42 regression test, 8 commit 流水)
+
+### Changed (R118 P2-7)
+- **StaticScaleTranslations 主壳 659L → 394L (-40%)**:
+  - 抽 10 量表独立 class 到 `lib/domain/entities/scale_translations/`:
+    - `phq9_translations.dart` (94L) / `gad7_translations.dart` (84L) / `isi_translations.dart` (83L)
+    - `pss_translations.dart` (84L) / `whodas_translations.dart` (90L) / `asrm_translations.dart` (83L)
+    - `level2_depression_translations.dart` (84L) / `level2_anxiety_translations.dart` (83L)
+    - `level2_mania_translations.dart` (81L) / `level2_psychosis_translations.dart` (88L)
+  - 10 文件全部 `不 implements ScaleTranslations` (显式注释说明, 避免 70+ method stub)
+  - 主壳 10 const instance + 70 method 委托 (7 × 10) 1:1 转发
+  - GAD-7 `gad7Option` 委托 `Phq9Translations.phq9Option` (4 档频率选项共享, R19 决策保留)
+
+### Tests (R118 P2-7 regression protection)
+- **新增** `test/domain/entities/scale_translations/round118_direct_test.dart` (42 case, 4 group):
+  - 边界 (20) / 主壳委托=直调 (10) / 跨 class 共享 GAD-7 走 PHQ-9 (2) / 真实输出非空 (10)
+- 8 commit 流水: db920d50 (PHQ-9) → 0f0a32ca (GAD-7) → ea835c18 (ISI + PSS) → b9490783 (WHODAS)
+  → d528c8f8 (Level2 D + A) → be3f0833 (Level2 M + P) → 325e3551 (ASRM) → b29d3bd7 (回归保护 42 test)
+
+### Validation (R118 P2-7)
+- `flutter analyze`: 0 error / 0 warning
+- `flutter test`: **2561 pass / 0 fail / 1 skip** (2515 baseline + 46 R118 新增 test)
+- `dart scripts/check_all.dart`: 4 层架构纯度 + 一致性 0 violation
+- 27/27 守门员全绿 (5 个上架 P0 external 预期 fail, 资源到位即跑)
+
+### Risk (R118 P2-7)
+- **低风险** — 纯 composition 委托, 公开 API 0 变化, 0 跨层 import 引入
+- 量表 class 全部 const constructor, 实例化 0 副作用
+- 70 method 委派是 trivial forwarding, 维护风险在"interface ↔ impl drift" — 由 round118 test 守护
 
 
 ## [1.1.0+154 R116 god class 拆解 round 4] - 2026-08-17 (add_medication_page 拆进度条+footer + 清 9 orphan key, 未 commit)

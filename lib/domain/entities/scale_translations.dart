@@ -34,6 +34,15 @@
 // - scale_translations.dart (本文件, 200 行): abstract class ScaleTranslations interface
 // - scale_translations/static_scale_translations.dart (753 行): StaticScaleTranslations
 //   实现 (10 量表 50+ method 中文 fallback)
+//
+// v1.1.0+155 R118 P2-7 (1.1.0 round 12b~12i, 8 commit 流水): 10 量表抽 10 独立 class
+//   见 scale_translations/*_translations.dart (10 文件 81-94L)
+// - composition 委托: 主壳持 10 const instance + 70 method 1:1 委托
+// - 10 class 全部 不 implements ScaleTranslations (避免 70+ method stub, R19 决策保留)
+// - GAD-7 gad7Option 委托 Phq9Translations.phq9Option (4 档频率选项共享)
+// - 主壳 659L → 394L (-40%)
+// - test/domain/entities/scale_translations/round118_direct_test.dart 42 case
+//   (边界 20 / 主壳委托 10 / 跨 class 共享 2 / 真实输出非空 10)
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 
 export 'package:chroniccare/domain/entities/scale_translations/static_scale_translations.dart'
