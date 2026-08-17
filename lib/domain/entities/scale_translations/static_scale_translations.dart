@@ -23,13 +23,43 @@
 // 0 flutter / 0 drift / 0 data / 0 presentation, check_all.dart 守门员 0 violation。
 import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/entities/scale_translations.dart';
+import 'package:chroniccare/domain/entities/scale_translations/phq9_translations.dart';
 
 /// 静态中文 fallback (老 caller / 单测 / domain 0 flutter 边界)
 class StaticScaleTranslations implements ScaleTranslations {
   const StaticScaleTranslations();
 
+  // v1.1.0 R118 (god class 拆 P2-7): composition 委托 10 个量表到独立 class
+  // 阶段 1: PHQ-9 → Phq9Translations. 阶段 2-5 拆其他 9 个 (GAD-7 + 8 新)。
+  static const _phq9 = Phq9Translations();
+
+  // === PHQ-9 7 method 委托 (R118 P2-7 阶段 1) ===
   @override
-  String phq9Name({String? override}) => override ?? 'PHQ-9 抑郁筛查';
+  String phq9Name({String? override}) => _phq9.phq9Name(override: override);
+
+  @override
+  String phq9ShortDescription({String? override}) =>
+      _phq9.phq9ShortDescription(override: override);
+
+  @override
+  String phq9Instruction({String? override}) =>
+      _phq9.phq9Instruction(override: override);
+
+  @override
+  String phq9Item(int index, {String? override}) =>
+      _phq9.phq9Item(index, override: override);
+
+  @override
+  String phq9Option(int score, {String? override}) =>
+      _phq9.phq9Option(score, override: override);
+
+  @override
+  String phq9SeverityLabel(int rank, {String? override}) =>
+      _phq9.phq9SeverityLabel(rank, override: override);
+
+  @override
+  String phq9SeveritySummary(int rank, {String? override}) =>
+      _phq9.phq9SeveritySummary(rank, override: override);
 
   @override
   String gad7Name({String? override}) => override ?? 'GAD-7 焦虑筛查';
@@ -55,77 +85,9 @@ class StaticScaleTranslations implements ScaleTranslations {
       override ?? '你提到了想伤害自己的念头。\n请记住：寻求帮助是勇敢的，不是软弱。';
 
   // ============================================================
-  // PHQ-9 中文 fallback (跟原 hardcode 1:1 一致)
+  // PHQ-9 段抽到 phq9_translations.dart (R118 P2-7 阶段 1)
+  // 主壳持 const _phq9 instance, 7 method 委托 (见上)
   // ============================================================
-
-  static const _phq9ItemsZh = [
-    '做事时提不起劲或没有兴趣',
-    '感到心情低落、沮丧或绝望',
-    '入睡困难、睡不安稳或睡得过多',
-    '感觉疲倦或没有活力',
-    '食欲不振或吃太多',
-    '觉得自己很糟、很失败，或让自己和家人失望',
-    '对事物专注有困难，例如看报纸或看电视时',
-    '动作或说话速度缓慢到别人能察觉？\n或正好相反——烦躁或坐立不安',
-    '有不如死掉或用某种方式伤害自己的念头',
-  ];
-
-  static const _phq9OptionsZh = {
-    0: '完全不会',
-    1: '好几天',
-    2: '一半以上的天数',
-    3: '几乎每天',
-  };
-
-  static const _phq9SeverityLabelZh = [
-    '几乎没有抑郁',
-    '轻度抑郁',
-    '中度抑郁',
-    '中重度抑郁',
-    '重度抑郁',
-  ];
-
-  static const _phq9SeveritySummaryZh = [
-    '几乎没有抑郁倾向',
-    '轻度抑郁倾向',
-    '中度抑郁倾向',
-    '中重度抑郁倾向',
-    '重度抑郁倾向',
-  ];
-
-  @override
-  String phq9Item(int index, {String? override}) {
-    if (override != null) return override;
-    if (index < 0 || index >= _phq9ItemsZh.length) return '';
-    return _phq9ItemsZh[index];
-  }
-
-  @override
-  String phq9Option(int score, {String? override}) {
-    if (override != null) return override;
-    return _phq9OptionsZh[score] ?? '';
-  }
-
-  @override
-  String phq9SeverityLabel(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _phq9SeverityLabelZh.length) return '';
-    return _phq9SeverityLabelZh[rank];
-  }
-
-  @override
-  String phq9SeveritySummary(int rank, {String? override}) {
-    if (override != null) return override;
-    if (rank < 0 || rank >= _phq9SeveritySummaryZh.length) return '';
-    return _phq9SeveritySummaryZh[rank];
-  }
-
-  @override
-  String phq9Instruction({String? override}) =>
-      override ?? '过去两周内，你有多经常被以下问题困扰？';
-
-  @override
-  String phq9ShortDescription({String? override}) => override ?? '过去两周的抑郁倾向筛查';
 
   // ============================================================
   // GAD-7 中文 fallback
@@ -780,6 +742,6 @@ class StaticScaleTranslations implements ScaleTranslations {
     return _level2PsychosisSeveritySummaryZh[rank];
   }
 }
-// rule3-whitelist: 32, 35, 51, 55, 62-70, 74-77, 81-85, 89-93, 125, 128, 135-141, 145-148, 152-155, 187, 190, 201-207, 211-215, 219-222, 226-229, 233, 237, 241, 272-281, 285-289, 293-295, 299-301, 305, 309, 313, 344-355, 359-363, 367-371, 375-379, 383, 387, 391, 422-429, 433-436, 440-443, 447-450, 455, 459, 463, 498-504, 508-511, 515-518, 522-525, 530, 534, 538, 569-573, 577-580, 584-587, 591-594, 599, 603, 607, 638-642, 646-650, 654-658, 662-666, 670, 674, 678, 709-716, 720-723, 727-730, 734-737, 742, 746, 750
+// rule3-whitelist: 65, 81, 85, 97-103, 107-110, 114-117, 149, 152, 163-169, 173-177, 181-184, 188-191, 195, 199, 203, 234-243, 247-251, 255-257, 261-263, 267, 271, 275, 306-317, 321-325, 329-333, 337-341, 345, 349, 353, 384-391, 395-398, 402-405, 409-412, 417, 421, 425, 460-466, 470-473, 477-480, 484-487, 492, 496, 500, 531-535, 539-542, 546-549, 553-556, 561, 565, 569, 600-604, 608-612, 616-620, 624-628, 632, 636, 640, 671-678, 682-685, 689-692, 696-699, 704, 708, 712
 //   R113 BUG A: 精确行号豁免 (修前文件头 i18n 标记整文件豁免)
 //   新增 CJK 字面量需自带 i18n 标记或扩本清单 — 详见 scripts/check_strings_hardcoded.py
