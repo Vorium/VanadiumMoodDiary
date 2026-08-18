@@ -174,7 +174,7 @@ def cn_domestic_icons(master: Image.Image) -> None:
         canvas_size = 512
         # Draw with border
         if border > 0:
-            canvas = Image.new('RGB', (canvas_size, canvas_size), (255, 255, 255))
+            canvas = Image.new('RGBA', (canvas_size, canvas_size), (0, 0, 0, 0))
             icon_size = canvas_size - 2 * border
             icon = master.resize((icon_size, icon_size), Image.LANCZOS)
             canvas.paste(icon, (border, border))
