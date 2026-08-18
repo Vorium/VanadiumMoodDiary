@@ -183,7 +183,7 @@ class _TreatmentListState extends ConsumerState<TreatmentList> {
     return Icons.medical_services_outlined;
   }
 
-  /// entry 显示： "类别 · 医生／医院"
+  /// entry 显示： "类别 · 照护来源" (R128e 医疗声称降级: 治疗 → 自我照护)
   String _entryTitle(TreatmentEntryEntity e, AppLocalizations l10n) {
     final category = _categoryLabel(e.treatmentType, l10n);
     return e.description.isEmpty ? category : '$category · ${e.description}';

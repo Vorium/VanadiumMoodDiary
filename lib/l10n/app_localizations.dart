@@ -2143,31 +2143,31 @@ abstract class AppLocalizations {
   /// No description provided for @assessmentReminderHintAcute.
   ///
   /// In zh, this message translates to:
-  /// **'高强度监测（适合急性期）'**
+  /// **'高频回顾（适合变动期）'**
   String get assessmentReminderHintAcute;
 
   /// No description provided for @assessmentReminderHintCommon.
   ///
   /// In zh, this message translates to:
-  /// **'推荐（精神科常用）'**
+  /// **'推荐（常用频率）'**
   String get assessmentReminderHintCommon;
 
   /// No description provided for @assessmentReminderHintStable.
   ///
   /// In zh, this message translates to:
-  /// **'稳定期 ／ 月度覆盘'**
+  /// **'稳定期 ／ 月度回顾'**
   String get assessmentReminderHintStable;
 
   /// No description provided for @assessmentReminderHintMaintenance.
   ///
   /// In zh, this message translates to:
-  /// **'维持治疗期'**
+  /// **'维持观察期'**
   String get assessmentReminderHintMaintenance;
 
   /// No description provided for @assessmentReminderHintLongTerm.
   ///
   /// In zh, this message translates to:
-  /// **'长期随访'**
+  /// **'长期回顾'**
   String get assessmentReminderHintLongTerm;
 
   /// No description provided for @assessmentHistoryTrend.
@@ -6038,25 +6038,25 @@ abstract class AppLocalizations {
   /// v0.30 R91: 治療 子功能名 （整合頁 + 列表頁 placeholder)
   ///
   /// In zh, this message translates to:
-  /// **'治疗'**
+  /// **'自我照护'**
   String get treatmentName;
 
   /// v0.30 R91: 治療 子功能簡短描述 （卡片用）
   ///
   /// In zh, this message translates to:
-  /// **'用药 / 咨询 / 物理治疗， 关联 medication'**
+  /// **'照护记录：用药变化 / 咨询 / 复健， 可关联用药'**
   String get treatmentShortDesc;
 
   /// v0.30 R91: 治療 提示 （列表頁說明）
   ///
   /// In zh, this message translates to:
-  /// **'治疗条目可关联 medication, 写入功能 v0.31+'**
+  /// **'照护条目可关联用药记录'**
   String get treatmentHint;
 
   /// v0.30 R91: 治療 列表頁 空狀態
   ///
   /// In zh, this message translates to:
-  /// **'暂无治疗记录'**
+  /// **'暂无照护记录'**
   String get treatmentNoData;
 
   /// v0.30 round 92 (audit-fixes / P0 #15): 治療 添加按鈕 （列表頁右上角）
@@ -6068,7 +6068,7 @@ abstract class AppLocalizations {
   /// v0.30 round 92: 治療 AddTreatmentDialog title
   ///
   /// In zh, this message translates to:
-  /// **'添加治疗记录'**
+  /// **'添加照护记录'**
   String get treatmentAddTitle;
 
   /// v0.30 round 92: 治療 日期 field
@@ -6086,19 +6086,19 @@ abstract class AppLocalizations {
   /// v0.30 round 92: 治療 類別 1/4 藥物調整
   ///
   /// In zh, this message translates to:
-  /// **'药物调整'**
+  /// **'用药变化'**
   String get treatmentCategoryMedicationAdjustment;
 
   /// v0.30 round 92: 治療 類別 2/4 心理諮詢
   ///
   /// In zh, this message translates to:
-  /// **'心理咨询'**
+  /// **'倾诉 / 咨询'**
   String get treatmentCategoryConsultation;
 
   /// v0.30 round 92: 治療 類別 3/4 住院
   ///
   /// In zh, this message translates to:
-  /// **'住院'**
+  /// **'复健 / 休养'**
   String get treatmentCategoryHospitalization;
 
   /// v0.30 round 92: 治療 類別 4/4 其他
@@ -6110,19 +6110,19 @@ abstract class AppLocalizations {
   /// v0.30 round 92: 治療 醫療機構 / 醫生 (description 字段）
   ///
   /// In zh, this message translates to:
-  /// **'医疗机构 / 医生'**
+  /// **'照护来源'**
   String get treatmentProvider;
 
   /// v0.30 round 92: 治療 醫療機構 hint
   ///
   /// In zh, this message translates to:
-  /// **'例如： 心理医生王医生 / 北京协和医院'**
+  /// **'例如： 咨询师 / 家人 / 自己'**
   String get treatmentProviderHint;
 
   /// v0.30 round 92: 治療 醫療機構為空 snackbar 提示
   ///
   /// In zh, this message translates to:
-  /// **'请填写医疗机构 / 医生'**
+  /// **'请填写照护来源'**
   String get treatmentProviderRequired;
 
   /// v0.30 round 92: 治療 備註 field
@@ -6134,13 +6134,13 @@ abstract class AppLocalizations {
   /// v0.30 round 92: 治療 備註 hint
   ///
   /// In zh, this message translates to:
-  /// **'可选， 简短记录治疗要点'**
+  /// **'可选， 简短记录照护要点'**
   String get treatmentNoteHint;
 
   /// v0.30 R91: 治療 治療類型 標籤 （對話框 dropdown)
   ///
   /// In zh, this message translates to:
-  /// **'治疗类型'**
+  /// **'照护类型'**
   String get treatmentType;
 
   /// v0.30 R91: 治療 整合卡片 lastValue 摘要

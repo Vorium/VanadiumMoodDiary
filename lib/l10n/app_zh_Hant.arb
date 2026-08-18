@@ -729,11 +729,11 @@
     }
   },
   "assessmentReminderHelpText": "完成一次評估後，下次提醒會從今天重新算起。\n評估結果僅您自己看得到。",
-  "assessmentReminderHintAcute": "高強度監測（適合急性期）",
+  "assessmentReminderHintAcute": "高頻回顧（適合變動期）",
   "assessmentReminderHintCommon": "推薦（精神科常用）",
-  "assessmentReminderHintStable": "穩定期 ／ 月度覆盤",
-  "assessmentReminderHintMaintenance": "維持治療期",
-  "assessmentReminderHintLongTerm": "長期隨訪",
+  "assessmentReminderHintStable": "穩定期 ／ 月度回顧",
+  "assessmentReminderHintMaintenance": "維持觀察期",
+  "assessmentReminderHintLongTerm": "長期回顧",
   "assessmentHistoryTrend": "歷史趨勢",
   "assessmentAverageScore": "平均 {score}",
   "@assessmentAverageScore": {
@@ -2458,7 +2458,7 @@
       }
     }
   },
-  "treatmentName": "治療",
+  "treatmentName": "自我照護",
   "@treatmentName": {
     "description": "v0.30 R91: 治療 子功能名 （整合頁 + 列表頁 placeholder)"
   },
@@ -2470,7 +2470,7 @@
   "@treatmentHint": {
     "description": "v0.30 R91: 治療 提示 （列表頁說明）"
   },
-  "treatmentNoData": "暫無治療記錄",
+  "treatmentNoData": "暫無照護記錄",
   "@treatmentNoData": {
     "description": "v0.30 R91: 治療 列表頁 空狀態"
   },
@@ -2481,7 +2481,7 @@
   "@treatmentAddTitle": {
     "description": "v0.30 round 92: 治療 AddTreatmentDialog title"
   },
-  "treatmentAddTitle": "添加治療記錄",
+  "treatmentAddTitle": "添加照護記錄",
   "@treatmentDate": {
     "description": "v0.30 round 92: 治療 日期 field"
   },
@@ -2509,7 +2509,7 @@
   "@treatmentProvider": {
     "description": "v0.30 round 92: 治療 醫療機構 / 醫生 (description 字段）"
   },
-  "treatmentProvider": "醫療機構 / 醫生",
+  "treatmentProvider": "照護來源",
   "@treatmentProviderHint": {
     "description": "v0.30 round 92: 治療 醫療機構 hint"
   },
@@ -2517,7 +2517,7 @@
   "@treatmentProviderRequired": {
     "description": "v0.30 round 92: 治療 醫療機構為空 snackbar 提示"
   },
-  "treatmentProviderRequired": "請填寫醫療機構 / 醫生",
+  "treatmentProviderRequired": "請填寫照護來源",
   "@treatmentNote": {
     "description": "v0.30 round 92: 治療 備註 field"
   },
@@ -2526,7 +2526,7 @@
     "description": "v0.30 round 92: 治療 備註 hint"
   },
   "treatmentNoteHint": "可選， 簡短記錄治療要點",
-  "treatmentType": "治療類型",
+  "treatmentType": "照護類型",
   "@treatmentType": {
     "description": "v0.30 R91: 治療 治療類型 標籤 （對話框 dropdown)"
   },

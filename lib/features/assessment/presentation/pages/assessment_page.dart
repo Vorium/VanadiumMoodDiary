@@ -27,7 +27,6 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/pages/assessment/assessment_widgets.dart';
-import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 class AssessmentPage extends ConsumerStatefulWidget {
   final String scaleId; // 'phq9' / 'gad7'
@@ -162,14 +161,10 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
       );
     }
 
-    // 危机检测（PHQ-9 第 9 题阳性等）
-    // v0.25 round 51: region 默认 cn — 后续 R51b 让用户从设置选 region
-    // 或者从 emergency contact phone region 推断
-    final crisis = scale.detectCrisis(scores, result);
-    if (crisis != null) {
-      if (!mounted) return;
-      await _showCrisisDialog(crisis);
-    }
+    // R128e 医疗声称降级: 删危机检测 (临床阈值诊断行为) —
+    // 量表结果只显示总分, 不基于分数弹"你可能处于危机"弹窗。
+    // 危机热线入口保留在设置页 + VentHero (App Store 1.4.1 强制,
+    // 但入口是用户主动寻求帮助, 不是 App 诊断)。
 
     if (!mounted) return;
     setState(() {
@@ -185,68 +180,8 @@ class _AssessmentPageState extends ConsumerState<AssessmentPage> {
     }
   }
 
-  Future<void> _showCrisisDialog(CrisisSignal crisis) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.warning_amber, color: AppTokens.errorColor(context)),
-            const SizedBox(width: AppTokens.spacingXs),
-            Expanded(child: Text(crisis.title)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(crisis.message),
-            const SizedBox(height: AppTokens.spacingSm),
-            for (final h in crisis.hotlines) ...[
-              // v0.22 round 29 (emil-21): 拆 '📞 ${h.label}\n   ${h.number}' emoji hack
-              // → Row(Icon(phone), Text(h.label)) + 单独 Text(h.number)
-              // (a11y 屏幕阅读器能识别 Icon 跟 Text 是不同元素, 不用解释空格 hack)
-              Row(
-                children: [
-                  const Icon(Icons.phone, size: AppTokens.iconSizeInline),
-                  const SizedBox(width: AppTokens.spacingXs),
-                  Expanded(
-                    child: Text(
-                      h.label,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                // v0.24 round 48 (emil P2-13): 修正 3 个裸数字 → spacing token
-                // left: 26 ≈ 评估题 1-9 编号对齐 (跟缩进编号文字视觉对齐)
-                // top: 2 + bottom: 8 ≈ 跟 options 列表行高对齐
-                // 26 不在 token sequence, 加注释说明 design decision (1 处用, 不抽 token)
-                padding: const EdgeInsets.only(
-                  left: 26, // 编号缩进对齐 (deliberate, 不抽 token)
-                  top: AppTokens.spacingXxxs, // 2
-                  bottom: AppTokens.spacingXs, // 8
-                ),
-                child: Text(
-                  h.number,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ),
-            ],
-          ],
-        ),
-        actions: [
-          PrimaryButton(
-            isFullWidth: false,
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context).commonGotIt),
-          ),
-        ],
-      ),
-    );
-  }
+  // R128e 医疗声称降级: 删 _showCrisisDialog (基于分数的危机弹窗 = 诊断行为)。
+  // 危机热线保留为设置页/VentHero 主动入口 (App Store 1.4.1 合规)。
 
   Widget _buildResultView() {
     // v0.30 R92: 拆 god page, ResultPanel 走 props callback 模式

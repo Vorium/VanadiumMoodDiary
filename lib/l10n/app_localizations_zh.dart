@@ -1161,19 +1161,19 @@ class AppLocalizationsZh extends AppLocalizations {
       '完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅您自己看得到。';
 
   @override
-  String get assessmentReminderHintAcute => '高强度监测（适合急性期）';
+  String get assessmentReminderHintAcute => '高频回顾（适合变动期）';
 
   @override
-  String get assessmentReminderHintCommon => '推荐（精神科常用）';
+  String get assessmentReminderHintCommon => '推荐（常用频率）';
 
   @override
-  String get assessmentReminderHintStable => '稳定期 ／ 月度覆盘';
+  String get assessmentReminderHintStable => '稳定期 ／ 月度回顾';
 
   @override
-  String get assessmentReminderHintMaintenance => '维持治疗期';
+  String get assessmentReminderHintMaintenance => '维持观察期';
 
   @override
-  String get assessmentReminderHintLongTerm => '长期随访';
+  String get assessmentReminderHintLongTerm => '长期回顾';
 
   @override
   String get assessmentHistoryTrend => '历史趋势';
@@ -3254,22 +3254,22 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get treatmentName => '治疗';
+  String get treatmentName => '自我照护';
 
   @override
-  String get treatmentShortDesc => '用药 / 咨询 / 物理治疗， 关联 medication';
+  String get treatmentShortDesc => '照护记录：用药变化 / 咨询 / 复健， 可关联用药';
 
   @override
-  String get treatmentHint => '治疗条目可关联 medication, 写入功能 v0.31+';
+  String get treatmentHint => '照护条目可关联用药记录';
 
   @override
-  String get treatmentNoData => '暂无治疗记录';
+  String get treatmentNoData => '暂无照护记录';
 
   @override
   String get treatmentAddButton => '添加';
 
   @override
-  String get treatmentAddTitle => '添加治疗记录';
+  String get treatmentAddTitle => '添加照护记录';
 
   @override
   String get treatmentDate => '日期';
@@ -3278,34 +3278,34 @@ class AppLocalizationsZh extends AppLocalizations {
   String get treatmentCategory => '类别';
 
   @override
-  String get treatmentCategoryMedicationAdjustment => '药物调整';
+  String get treatmentCategoryMedicationAdjustment => '用药变化';
 
   @override
-  String get treatmentCategoryConsultation => '心理咨询';
+  String get treatmentCategoryConsultation => '倾诉 / 咨询';
 
   @override
-  String get treatmentCategoryHospitalization => '住院';
+  String get treatmentCategoryHospitalization => '复健 / 休养';
 
   @override
   String get treatmentCategoryOther => '其他';
 
   @override
-  String get treatmentProvider => '医疗机构 / 医生';
+  String get treatmentProvider => '照护来源';
 
   @override
-  String get treatmentProviderHint => '例如： 心理医生王医生 / 北京协和医院';
+  String get treatmentProviderHint => '例如： 咨询师 / 家人 / 自己';
 
   @override
-  String get treatmentProviderRequired => '请填写医疗机构 / 医生';
+  String get treatmentProviderRequired => '请填写照护来源';
 
   @override
   String get treatmentNote => '备注';
 
   @override
-  String get treatmentNoteHint => '可选， 简短记录治疗要点';
+  String get treatmentNoteHint => '可选， 简短记录照护要点';
 
   @override
-  String get treatmentType => '治疗类型';
+  String get treatmentType => '照护类型';
 
   @override
   String treatmentLast(Object type, Object description) {
@@ -5551,19 +5551,19 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
       '完成一次評估後，下次提醒會從今天重新算起。\n評估結果僅您自己看得到。';
 
   @override
-  String get assessmentReminderHintAcute => '高強度監測（適合急性期）';
+  String get assessmentReminderHintAcute => '高頻回顧（適合變動期）';
 
   @override
   String get assessmentReminderHintCommon => '推薦（精神科常用）';
 
   @override
-  String get assessmentReminderHintStable => '穩定期 ／ 月度覆盤';
+  String get assessmentReminderHintStable => '穩定期 ／ 月度回顧';
 
   @override
-  String get assessmentReminderHintMaintenance => '維持治療期';
+  String get assessmentReminderHintMaintenance => '維持觀察期';
 
   @override
-  String get assessmentReminderHintLongTerm => '長期隨訪';
+  String get assessmentReminderHintLongTerm => '長期回顧';
 
   @override
   String get assessmentHistoryTrend => '歷史趨勢';
@@ -7644,7 +7644,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get treatmentName => '治療';
+  String get treatmentName => '自我照護';
 
   @override
   String get treatmentShortDesc => '用藥 / 諮詢 / 物理治療， 關聯 medication';
@@ -7653,13 +7653,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get treatmentHint => '治療條目可關聯 medication, 寫入功能 v0.31+';
 
   @override
-  String get treatmentNoData => '暫無治療記錄';
+  String get treatmentNoData => '暫無照護記錄';
 
   @override
   String get treatmentAddButton => '添加';
 
   @override
-  String get treatmentAddTitle => '添加治療記錄';
+  String get treatmentAddTitle => '添加照護記錄';
 
   @override
   String get treatmentDate => '日期';
@@ -7680,13 +7680,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get treatmentCategoryOther => '其他';
 
   @override
-  String get treatmentProvider => '醫療機構 / 醫生';
+  String get treatmentProvider => '照護來源';
 
   @override
   String get treatmentProviderHint => '例如： 心理醫生王醫生 / 北京協和醫院';
 
   @override
-  String get treatmentProviderRequired => '請填寫醫療機構 / 醫生';
+  String get treatmentProviderRequired => '請填寫照護來源';
 
   @override
   String get treatmentNote => '備註';
@@ -7695,7 +7695,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get treatmentNoteHint => '可選， 簡短記錄治療要點';
 
   @override
-  String get treatmentType => '治療類型';
+  String get treatmentType => '照護類型';
 
   @override
   String treatmentLast(Object type, Object description) {

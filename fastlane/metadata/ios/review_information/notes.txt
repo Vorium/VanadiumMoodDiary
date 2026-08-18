@@ -1,10 +1,11 @@
-App Reviewer Guide — ChronicCare 1.1.0+185
+App Reviewer Guide — MoodDiary 1.1.0+185
 
 1. No login required. The app is fully local — no accounts, no cloud, no analytics.
-2. First-time setup: app shows a 4-step onboarding flow (consent → welcome → medication → done).
-3. Daily use: home leads with mood check-in and vent (private journal); medication check-in button records adherence.
+2. First-time setup: a 4-step onboarding flow (consent → welcome → optional setup → done).
+3. Daily use: home leads with mood journal and vent (private space); self-care and reminder features are supporting tools.
 4. Privacy: all data encrypted with SQLCipher (AES-256). No analytics, ad, or tracking SDKs.
 5. Languages: en-US / zh-Hans / zh-Hant (Simplified + Traditional Chinese). Switch in Settings.
 6. Crisis resources: accessible from Settings → Crisis Hotlines (5 regions + international). Tap to dial.
 7. Voice notes (vent/mood): optional feature, requires microphone permission. All recordings encrypted.
 8. The app is permanently free. No in-app purchases, no accounts, no web links.
+9. Positioning: MoodDiary is a personal mood journal / vent space — NOT a medical device. It does not provide medical advice, diagnosis, or treatment. Self-reflection questionnaires show scores for personal reference only, without severity interpretation.

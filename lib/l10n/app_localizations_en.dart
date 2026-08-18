@@ -1221,7 +1221,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assessmentReminderHintStable => 'Stable phase / Monthly review';
 
   @override
-  String get assessmentReminderHintMaintenance => 'Maintenance phase';
+  String get assessmentReminderHintMaintenance => 'Check-in phase';
 
   @override
   String get assessmentReminderHintLongTerm => 'Long-term follow-up';
@@ -3417,24 +3417,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get treatmentName => 'Treatment';
+  String get treatmentName => 'Self-care';
 
   @override
   String get treatmentShortDesc =>
-      'Medication / consultation / physiotherapy, link to meds';
+      'Self-care log: med changes / talks / recovery, link to meds';
 
   @override
-  String get treatmentHint =>
-      'Treatment entries can link to medication, write UI v0.31+';
+  String get treatmentHint => 'Self-care entries can link to medication';
 
   @override
-  String get treatmentNoData => 'No treatment entries yet';
+  String get treatmentNoData => 'No self-care entries yet';
 
   @override
   String get treatmentAddButton => 'Add';
 
   @override
-  String get treatmentAddTitle => 'Add Treatment Record';
+  String get treatmentAddTitle => 'Add Self-care Record';
 
   @override
   String get treatmentDate => 'Date';
@@ -3443,34 +3442,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get treatmentCategory => 'Category';
 
   @override
-  String get treatmentCategoryMedicationAdjustment => 'Medication adjustment';
+  String get treatmentCategoryMedicationAdjustment => 'Med changes';
 
   @override
-  String get treatmentCategoryConsultation => 'Consultation';
+  String get treatmentCategoryConsultation => 'Talk / counseling';
 
   @override
-  String get treatmentCategoryHospitalization => 'Hospitalization';
+  String get treatmentCategoryHospitalization => 'Recovery / rest';
 
   @override
   String get treatmentCategoryOther => 'Other';
 
   @override
-  String get treatmentProvider => 'Provider / Doctor';
+  String get treatmentProvider => 'Care source';
 
   @override
-  String get treatmentProviderHint => 'e.g. Dr. Smith / Mayo Clinic';
+  String get treatmentProviderHint => 'e.g. counselor / family / self';
 
   @override
-  String get treatmentProviderRequired => 'Please enter provider / doctor';
+  String get treatmentProviderRequired => 'Please enter care source';
 
   @override
   String get treatmentNote => 'Note';
 
   @override
-  String get treatmentNoteHint => 'Optional, brief summary';
+  String get treatmentNoteHint => 'Optional, brief self-care note';
 
   @override
-  String get treatmentType => 'Treatment type';
+  String get treatmentType => 'Self-care type';
 
   @override
   String treatmentLast(Object type, Object description) {

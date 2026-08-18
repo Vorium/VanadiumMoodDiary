@@ -104,8 +104,8 @@ class _HistoryItem extends StatelessWidget {
                     ),
                     style: AppTokens.textStyleCaptionStrong(context),
                   ),
-                  const SizedBox(width: AppTokens.spacingSm),
-                  _SeverityChip(scaleId: record.scaleId, score: record.total),
+                  // R128e 医疗声称降级: 删 _SeverityChip (显示"轻度/中度/重度"
+                  // 临床严重度 = 诊断行为)
                 ],
               ),
               const SizedBox(height: AppTokens.spacingXxxs),
@@ -165,38 +165,5 @@ class _HistoryItem extends StatelessWidget {
   }
 }
 
-class _SeverityChip extends StatelessWidget {
-  final String scaleId;
-  final int score;
-  const _SeverityChip({required this.scaleId, required this.score});
-
-  @override
-  Widget build(BuildContext context) {
-    final sev = assessmentSeverityStyle(
-      context,
-      scaleId,
-      score,
-      AppLocalizations.of(context),
-    );
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTokens.spacingChipGap,
-        vertical: AppTokens.spacingXxxs,
-      ),
-      decoration: BoxDecoration(
-        // v0.22 round 30 (sp-zh P2-3): 走 tintedXxxDeep 集中器
-        color: sev.color == AppTokens.primaryColor(context)
-            ? AppTokens.tintedPrimaryDeep(context)
-            : AppTokens.tintedErrorDeep(context),
-        borderRadius: BorderRadius.circular(AppTokens.radiusChip),
-      ),
-      child: Text(
-        sev.label,
-        style: AppTokens.textStyleMicro(context).copyWith(
-          color: sev.color,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
+// R128e 医疗声称降级: 删 _SeverityChip (显示"轻度/中度/重度"临床严重度
+// = 诊断行为)。历史列表只显示量表名 + 分数 + 时间。

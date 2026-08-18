@@ -144,12 +144,13 @@
 	<!--
 		v0.27 round 66 (R66) 上架修正: LSApplicationCategoryType
 		Apple App Store Connect 提交时需要这个 key 跟 iTunes Connect 后台勾选的
-		Primary Category 呼应。本项目归 Health & Fitness → Medical 类别。
-		缺失: Apple 审核员 review 时找不到分类对应,可能被打回"信息缺失"。
-		参考: Apple HIG + App Store Review Guidelines §1.4.1 Physical Harm / Medical。
+		Primary Category 呼应。
+		R128e 医疗声称降级 (2026-08-18): healthcare-fitness (医疗类目, 触发
+		Health apps 政策审查) → lifestyle (个人开发者无医疗资质, 记录工具定位)。
+		参考: Apple HIG + App Store Review Guidelines §1.4.1 Physical Harm。
 	-->
 	<key>LSApplicationCategoryType</key>
-	<string>healthcare-fitness</string>
+	<string>lifestyle</string>
 	<!--
 		v0.30 R108 (P0#2, appstore A-3): 恢复 UIBackgroundModes audio
 		原因: R100 (2026-08-08) 因 ventAudio 业务 FeatureFlags 关闭删 audio,

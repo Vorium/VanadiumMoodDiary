@@ -44,21 +44,19 @@ class AssessmentResultPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isUrgent = result.urgentDoctorVisit;
-    final recommend = result.recommendDoctorVisit;
+    // R128e 医疗声称降级: 删 isUrgent/recommend 医疗警示逻辑
+    // (urgentDoctorVisit 红色 + recommendDoctorVisit 就医建议 = 诊断行为)
 
     return SingleChildScrollView(
       padding: AppTokens.edgeInsetsMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 大数字 + 严重度 + 总分范围
+          // 大数字 + 总分范围 (删严重度解读文案)
           Container(
             padding: AppTokens.edgeInsetsLg,
             decoration: BoxDecoration(
-              color: isUrgent
-                  ? AppTokens.tintedErrorSoft(context)
-                  : AppTokens.primaryLightColor(context),
+              color: AppTokens.primaryLightColor(context),
               borderRadius: BorderRadius.circular(AppTokens.radiusCard),
             ),
             child: Column(
@@ -68,9 +66,7 @@ class AssessmentResultPanel extends StatelessWidget {
                   style: TextStyle(
                     fontSize: AppTokens.fontSizeScoreXxl,
                     fontWeight: FontWeight.bold,
-                    color: isUrgent
-                        ? AppTokens.errorColor(context)
-                        : AppTokens.primaryColor(context),
+                    color: AppTokens.primaryColor(context),
                   ),
                 ),
                 Text(
@@ -78,51 +74,13 @@ class AssessmentResultPanel extends StatelessWidget {
                   style: AppTokens.textStyleBody(context)
                       .copyWith(color: AppTokens.textSecondaryColor(context)),
                 ),
-                const SizedBox(height: AppTokens.spacingSm),
-                Text(
-                  result.summary,
-                  style: const TextStyle(
-                    fontSize: AppTokens.fontSizeHeadline,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
               ],
             ),
           ),
           // v0.13 (Round 8): 历史对比 + sparkline (父 widget 传入)
           ...historyWidgets,
           const SizedBox(height: AppTokens.spacingMd),
-          // 推荐就医
-          if (recommend)
-            Card(
-              color: AppTokens.tintedWarningSoft(context),
-              child: Padding(
-                padding: AppTokens.edgeInsetsMd,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.medical_services_outlined,
-                      color: AppTokens.warningColor(context),
-                    ),
-                    const SizedBox(width: AppTokens.spacingSm),
-                    Expanded(
-                      child: Text(
-                        isUrgent
-                            ? l10n.assessmentRecommendUrgent
-                            : l10n.assessmentRecommend,
-                        style: TextStyle(
-                          color: AppTokens.textPrimaryColor(context),
-                          fontSize: AppTokens.fontSizeBody,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          const SizedBox(height: AppTokens.spacingMd),
-          // 免责声明
+          // 免责声明 (R128e 强化: 仅供参考, 不构成诊断)
           Card(
             child: Padding(
               padding: AppTokens.edgeInsetsMd,

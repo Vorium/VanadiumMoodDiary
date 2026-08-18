@@ -1,1 +1,1 @@
-Private, encrypted medication tracker for chronic patients. Mood, vent space, and guided self-reflection check-ins. 100% on-device, zero cloud.
+Private, encrypted mood journal and vent space. 100% on-device, zero cloud.

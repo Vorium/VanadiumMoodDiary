@@ -690,7 +690,7 @@
   "assessmentReminderHintAcute": "High-frequency monitoring (for acute phase)",
   "assessmentReminderHintCommon": "Recommended (standard in psychiatry)",
   "assessmentReminderHintStable": "Stable phase / Monthly review",
-  "assessmentReminderHintMaintenance": "Maintenance phase",
+  "assessmentReminderHintMaintenance": "Check-in phase",
   "assessmentReminderHintLongTerm": "Long-term follow-up",
   "assessmentHistoryTrend": "Historical Trend",
   "assessmentAverageScore": "Average {score}",
@@ -2416,19 +2416,19 @@
       }
     }
   },
-  "treatmentName": "Treatment",
+  "treatmentName": "Self-care",
   "@treatmentName": {
     "description": "v0.30 R91: Treatment sub-feature name"
   },
-  "treatmentShortDesc": "Medication / consultation / physiotherapy, link to meds",
+  "treatmentShortDesc": "Self-care log: med changes / talks / recovery, link to meds",
   "@treatmentShortDesc": {
     "description": "v0.30 R91: Treatment sub-feature short description"
   },
-  "treatmentHint": "Treatment entries can link to medication, write UI v0.31+",
+  "treatmentHint": "Self-care entries can link to medication",
   "@treatmentHint": {
     "description": "v0.30 R91: Treatment hint (list page)"
   },
-  "treatmentNoData": "No treatment entries yet",
+  "treatmentNoData": "No self-care entries yet",
   "@treatmentNoData": {
     "description": "v0.30 R91: Treatment list page empty state"
   },
@@ -2439,7 +2439,7 @@
   "@treatmentAddTitle": {
     "description": "v0.30 round 92: Treatment AddTreatmentDialog title"
   },
-  "treatmentAddTitle": "Add Treatment Record",
+  "treatmentAddTitle": "Add Self-care Record",
   "@treatmentDate": {
     "description": "v0.30 round 92: Treatment date field"
   },
@@ -2451,15 +2451,15 @@
   "@treatmentCategoryMedicationAdjustment": {
     "description": "v0.30 round 92: Treatment category 1/4"
   },
-  "treatmentCategoryMedicationAdjustment": "Medication adjustment",
+  "treatmentCategoryMedicationAdjustment": "Med changes",
   "@treatmentCategoryConsultation": {
     "description": "v0.30 round 92: Treatment category 2/4"
   },
-  "treatmentCategoryConsultation": "Consultation",
+  "treatmentCategoryConsultation": "Talk / counseling",
   "@treatmentCategoryHospitalization": {
     "description": "v0.30 round 92: Treatment category 3/4"
   },
-  "treatmentCategoryHospitalization": "Hospitalization",
+  "treatmentCategoryHospitalization": "Recovery / rest",
   "@treatmentCategoryOther": {
     "description": "v0.30 round 92: Treatment category 4/4"
   },
@@ -2467,15 +2467,15 @@
   "@treatmentProvider": {
     "description": "v0.30 round 92: Treatment provider"
   },
-  "treatmentProvider": "Provider / Doctor",
+  "treatmentProvider": "Care source",
   "@treatmentProviderHint": {
     "description": "v0.30 round 92: Treatment provider hint"
   },
-  "treatmentProviderHint": "e.g. Dr. Smith / Mayo Clinic",
+  "treatmentProviderHint": "e.g. counselor / family / self",
   "@treatmentProviderRequired": {
     "description": "v0.30 round 92: Treatment empty provider snackbar"
   },
-  "treatmentProviderRequired": "Please enter provider / doctor",
+  "treatmentProviderRequired": "Please enter care source",
   "@treatmentNote": {
     "description": "v0.30 round 92: Treatment note field"
   },
@@ -2483,8 +2483,8 @@
   "@treatmentNoteHint": {
     "description": "v0.30 round 92: Treatment note hint"
   },
-  "treatmentNoteHint": "Optional, brief summary",
-  "treatmentType": "Treatment type",
+  "treatmentNoteHint": "Optional, brief self-care note",
+  "treatmentType": "Self-care type",
   "@treatmentType": {
     "description": "v0.30 R91: Treatment type label (dialog dropdown)"
   },

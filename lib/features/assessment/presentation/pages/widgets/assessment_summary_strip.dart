@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/assessment/domain/logic/assessment_record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_severity_style.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 
 class AssessmentSummaryStrip extends StatelessWidget {
@@ -41,22 +40,11 @@ class AssessmentSummaryStrip extends StatelessWidget {
               child: _Stat(
                 label: l10n.assessmentHistoryLatestPhq9,
                 value: latestPhq9 == null ? '—' : '${latestPhq9.total}',
+                // R128e 医疗声称降级: sub 不再显示"轻度/中度/重度"
+                // 临床严重度, 改显示最近一次日期 (中性信息)
                 sub: latestPhq9 == null
                     ? l10n.assessmentHistoryNotDone
-                    : assessmentSeverityStyle(
-                        context,
-                        'phq9',
-                        latestPhq9.total,
-                        l10n,
-                      ).label,
-                severity: latestPhq9 == null
-                    ? null
-                    : assessmentSeverityStyle(
-                        context,
-                        'phq9',
-                        latestPhq9.total,
-                        l10n,
-                      ).color,
+                    : _formatDate(latestPhq9.timestamp),
               ),
             ),
             Expanded(
@@ -65,26 +53,17 @@ class AssessmentSummaryStrip extends StatelessWidget {
                 value: latestGad7 == null ? '—' : '${latestGad7.total}',
                 sub: latestGad7 == null
                     ? l10n.assessmentHistoryNotDone
-                    : assessmentSeverityStyle(
-                        context,
-                        'gad7',
-                        latestGad7.total,
-                        l10n,
-                      ).label,
-                severity: latestGad7 == null
-                    ? null
-                    : assessmentSeverityStyle(
-                        context,
-                        'gad7',
-                        latestGad7.total,
-                        l10n,
-                      ).color,
+                    : _formatDate(latestGad7.timestamp),
               ),
             ),
           ],
         ),
       ],
     );
+  }
+
+  String _formatDate(DateTime dt) {
+    return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
   }
 
   AssessmentRecord? _latest(List<AssessmentRecord> records, String scaleId) {
@@ -99,12 +78,10 @@ class _Stat extends StatelessWidget {
   final String label;
   final String value;
   final String? sub;
-  final Color? severity; // null = 灰色，otherwise 严重度配色
   const _Stat({
     required this.label,
     required this.value,
     this.sub,
-    this.severity,
   });
 
   @override
@@ -129,7 +106,7 @@ class _Stat extends StatelessWidget {
             sub!,
             style: TextStyle(
               fontSize: AppTokens.fontSizeCaptionSm,
-              color: severity ?? AppTokens.textHintColor(context),
+              color: AppTokens.textHintColor(context),
               fontWeight: FontWeight.w500,
             ),
           ),

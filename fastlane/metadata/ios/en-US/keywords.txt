@@ -1,1 +1,1 @@
-medication,reminder,mood,health,chronic,tracker
+mood,journal,vent,diary,wellbeing

@@ -729,11 +729,11 @@
     }
   },
   "assessmentReminderHelpText": "完成一次评估后，下次提醒会从今天重新算起。\n评估结果仅您自己看得到。",
-  "assessmentReminderHintAcute": "高强度监测（适合急性期）",
-  "assessmentReminderHintCommon": "推荐（精神科常用）",
-  "assessmentReminderHintStable": "稳定期 ／ 月度覆盘",
-  "assessmentReminderHintMaintenance": "维持治疗期",
-  "assessmentReminderHintLongTerm": "长期随访",
+  "assessmentReminderHintAcute": "高频回顾（适合变动期）",
+  "assessmentReminderHintCommon": "推荐（常用频率）",
+  "assessmentReminderHintStable": "稳定期 ／ 月度回顾",
+  "assessmentReminderHintMaintenance": "维持观察期",
+  "assessmentReminderHintLongTerm": "长期回顾",
   "assessmentHistoryTrend": "历史趋势",
   "assessmentAverageScore": "平均 {score}",
   "@assessmentAverageScore": {
@@ -2458,19 +2458,19 @@
       }
     }
   },
-  "treatmentName": "治疗",
+  "treatmentName": "自我照护",
   "@treatmentName": {
     "description": "v0.30 R91: 治療 子功能名 （整合頁 + 列表頁 placeholder)"
   },
-  "treatmentShortDesc": "用药 / 咨询 / 物理治疗， 关联 medication",
+  "treatmentShortDesc": "照护记录：用药变化 / 咨询 / 复健， 可关联用药",
   "@treatmentShortDesc": {
     "description": "v0.30 R91: 治療 子功能簡短描述 （卡片用）"
   },
-  "treatmentHint": "治疗条目可关联 medication, 写入功能 v0.31+",
+  "treatmentHint": "照护条目可关联用药记录",
   "@treatmentHint": {
     "description": "v0.30 R91: 治療 提示 （列表頁說明）"
   },
-  "treatmentNoData": "暂无治疗记录",
+  "treatmentNoData": "暂无照护记录",
   "@treatmentNoData": {
     "description": "v0.30 R91: 治療 列表頁 空狀態"
   },
@@ -2481,7 +2481,7 @@
   "@treatmentAddTitle": {
     "description": "v0.30 round 92: 治療 AddTreatmentDialog title"
   },
-  "treatmentAddTitle": "添加治疗记录",
+  "treatmentAddTitle": "添加照护记录",
   "@treatmentDate": {
     "description": "v0.30 round 92: 治療 日期 field"
   },
@@ -2493,15 +2493,15 @@
   "@treatmentCategoryMedicationAdjustment": {
     "description": "v0.30 round 92: 治療 類別 1/4 藥物調整"
   },
-  "treatmentCategoryMedicationAdjustment": "药物调整",
+  "treatmentCategoryMedicationAdjustment": "用药变化",
   "@treatmentCategoryConsultation": {
     "description": "v0.30 round 92: 治療 類別 2/4 心理諮詢"
   },
-  "treatmentCategoryConsultation": "心理咨询",
+  "treatmentCategoryConsultation": "倾诉 / 咨询",
   "@treatmentCategoryHospitalization": {
     "description": "v0.30 round 92: 治療 類別 3/4 住院"
   },
-  "treatmentCategoryHospitalization": "住院",
+  "treatmentCategoryHospitalization": "复健 / 休养",
   "@treatmentCategoryOther": {
     "description": "v0.30 round 92: 治療 類別 4/4 其他"
   },
@@ -2509,15 +2509,15 @@
   "@treatmentProvider": {
     "description": "v0.30 round 92: 治療 醫療機構 / 醫生 (description 字段）"
   },
-  "treatmentProvider": "医疗机构 / 医生",
+  "treatmentProvider": "照护来源",
   "@treatmentProviderHint": {
     "description": "v0.30 round 92: 治療 醫療機構 hint"
   },
-  "treatmentProviderHint": "例如： 心理医生王医生 / 北京协和医院",
+  "treatmentProviderHint": "例如： 咨询师 / 家人 / 自己",
   "@treatmentProviderRequired": {
     "description": "v0.30 round 92: 治療 醫療機構為空 snackbar 提示"
   },
-  "treatmentProviderRequired": "请填写医疗机构 / 医生",
+  "treatmentProviderRequired": "请填写照护来源",
   "@treatmentNote": {
     "description": "v0.30 round 92: 治療 備註 field"
   },
@@ -2525,8 +2525,8 @@
   "@treatmentNoteHint": {
     "description": "v0.30 round 92: 治療 備註 hint"
   },
-  "treatmentNoteHint": "可选， 简短记录治疗要点",
-  "treatmentType": "治疗类型",
+  "treatmentNoteHint": "可选， 简短记录照护要点",
+  "treatmentType": "照护类型",
   "@treatmentType": {
     "description": "v0.30 R91: 治療 治療類型 標籤 （對話框 dropdown)"
   },
