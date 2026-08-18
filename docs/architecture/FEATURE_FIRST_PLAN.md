@@ -128,13 +128,15 @@ lib/
 
 ```
 packages/
-├── chroniccare_core/         # 5 umbrella (theme/routing/l10n/shared/platform)
+├── chroniccare_core/         # 跨 feature 共享基础设施 (R127 stage3 占位, 0 业务代码)
 │   └── pubspec.yaml          # chroniccare_features_*: ^1.1.0
-├── chroniccare_features_mood/  # 试点 1 feature
+├── chroniccare_features_mood/  # 试点 1 feature (R127 stage3 占位, 0 业务代码)
 │   └── pubspec.yaml          # chroniccare_core: ^1.1.0
-└── chroniccare_app/          # app shell (main.dart + app.dart)
-    └── pubspec.yaml          # chroniccare_core + chroniccare_features_*
+└── chroniccare_theme/         # 5 token 集中器公共入口 (R128d 完成, 6 token public)
+    └── pubspec.yaml          # 0 依赖
 ```
+
+> **gdc R128e audit 2026-08-18 修正**: 实际实施阶段 3 时, **未拆 `chroniccare_app` 包** (app shell 仍在 root), 改为优先拆 `chroniccare_theme` (5 token 集中器公共化 R128d)。原因: 5 token 集中器跨 package 复用价值高于 app shell 隔离 (app shell 只 1 处使用, 抽 package 0 价值)。`chroniccare_core/` + `chroniccare_features_mood/` 仍是 0 业务代码占位 (`.gitkeep`), 待 R129+ 阶段 4 续迁时再激活。
 
 **预计**: 1 周
 
