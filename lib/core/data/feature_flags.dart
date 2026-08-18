@@ -29,6 +29,8 @@
 //     NotificationInitializer 跳过设备重启后重排
 //   - fiveVendorPushEnabled=false (R93 阶段 2 新增, 5 厂商 push SDK 接入前):
 //     NotificationStatusCard 隐藏"5 厂商自检" section
+//   - healthKitEnabled=false (v1.1.0+183 R128c 新增, HealthKit 5-6 月真接前):
+//     HealthKitService 所有 method 走 NoOp (mood → Apple Health 联动 0 副作用)
 //   - ventAudioEnabled=true (R93 阶段 2 新增, R104 启用语音录制):
 //     vent_compose_page + mood_recorder_page 显示 mic 录音 button
 //
@@ -49,6 +51,11 @@ class FeatureFlags {
   // FiveVendorPushService.register 默认早返 false + NotificationStatusCard
   // 隐藏"5 厂商自检" section。
   static const bool _prodFiveVendorPushEnabled = false;
+  // v1.1.0+183 R128c 新增: HealthKit 5-6 月真接前 (Apple HealthKit entitlement +
+  // Info.plist NSHealthShareUsageDescription + health_kit pub 依赖 + 真接 impl)。
+  // HealthKitService 所有 method 走 NoOp (跟 5 厂商 push NoOp 同模式),
+  // 情绪日记联动 Apple Health 0 副作用, 不阻塞主流程。
+  static const bool _prodHealthKitEnabled = false;
   // R93 阶段 2 新增: vent audio 录音业务闭环不全 (storage / export 业务暂停)。
   // vent_compose_page + mood_recorder_page 隐藏 mic 录音 button。
   // R104: 启用语音录制，支持用户录制语音存入树洞
@@ -58,6 +65,7 @@ class FeatureFlags {
   static bool? _currentPhqGad7I18nEnabled;
   static bool? _currentBootReceiverEnabled;
   static bool? _currentFiveVendorPushEnabled;
+  static bool? _currentHealthKitEnabled;
   static bool? _currentVentAudioEnabled;
 
   // ====== 公共 getter (生产代码读这里) ======
@@ -85,6 +93,16 @@ class FeatureFlags {
   static bool get fiveVendorPushEnabled =>
       _currentFiveVendorPushEnabled ?? _prodFiveVendorPushEnabled;
 
+  /// HealthKit 接入开关 (Apple Health 情绪日记联动)
+  ///
+  /// v1.1.0+183 R128c 新增: HealthKit 5-6 月真接前 (Apple HealthKit entitlement +
+  /// Info.plist NSHealthShareUsageDescription + health_kit pub 依赖 + 真接 impl)。
+  /// false 时 HealthKitService 所有 method 走 NoOp (跟 5 厂商 push NoOp 同模式),
+  /// 情绪日记联动 Apple Health 0 副作用, 不阻塞主流程。
+  /// 默认 false (v1.0 真接后翻 true)。
+  static bool get healthKitEnabled =>
+      _currentHealthKitEnabled ?? _prodHealthKitEnabled;
+
   /// vent audio 录音业务开关
   ///
   /// R93 阶段 2 新增: vent audio 录音业务闭环不全 (storage / export 业务暂停)。
@@ -110,6 +128,11 @@ class FeatureFlags {
   @visibleForTesting
   static void setFiveVendorPushEnabledForTest(bool? v) =>
       _currentFiveVendorPushEnabled = v;
+
+  /// 仅供 test 使用 — 临时把 [healthKitEnabled] 翻成指定值。
+  @visibleForTesting
+  static void setHealthKitEnabledForTest(bool? v) =>
+      _currentHealthKitEnabled = v;
 
   /// 仅供 test 使用 — 临时把 [ventAudioEnabled] 翻成指定值。
   @visibleForTesting

@@ -1027,3 +1027,59 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 - **守门员 24 = 21 baseline + 3 累加**: R109 check_usecase_layer + R111 check_review_information_todo + R124 check_five_vendor_push_ready + R125 check_feature_first_migration = 24 (R122 P2-1 step 2 split test 改 0 新守门员, R126 0 新守门员)
 - **测试 2681 baseline 跨 4 commit 累积**: R122 baseline 2589 → R124 +5 → R125 +13 → R126 step 1 +10 → R126 step 2 +9 → R126 step 3 +12 = 2681 (R125 R124 R123 R122 step 3 累计 +92)
 - **下一站 R127**: 4 feature 完整迁移 (mood / vent / assessment / medication) + pub workspace 3 package 拆分
+
+
+## v1.1.0 R127 stage3 (R110 feature-first 阶段 3) — pub workspace 3 package 拆分 (2026-08-18, 1 commit 9c0f0f45, 1.1.0+180)
+
+**状态**: R110 阶段 3 pub workspace 阶段 1 闭环, 3 package 骨架 (root + chroniccare_core + chroniccare_features_mood) 跨 12 deps 共享验证。阶段 2 (1.1.0+181) 迁 chroniccare_core 整块, 阶段 3 (1.1.0+182) 迁 mood 试点 feature, 阶段 4 (1.1.0+183) root 变纯 workspace 入口, 阶段 5 (1.1.0+184) 修真 + 守门员 + 综合审视。
+
+**D1 决策限制 (pub workspace 循环依赖)**:
+- drift schema (database/tables + database/daos + database/mappers + app_database) 留主 app
+- 13 table + 15 DAO + 12 mapper 整块在 root `lib/core/data/database/`
+- table 跟 feature 走 留 R128 stage4 拆 (需解决跨包 drift codegen)
+
+**关键变更**:
+- pubspec.yaml 升 Dart `>=3.6.0 <4.0.0` (workspace 字段 Dart 3.6+ stable)
+- root pubspec 加 `workspace: [packages/chroniccare_core, packages/chroniccare_features_mood]`
+- root dependencies 加 2 lib package path 依赖
+- 2 lib package pubspec 加 `resolution: workspace` (跟 root 共享 dependencies 解析)
+- 12 deps 共享 (workspace 锁文件)
+
+**验收数据 (跟 R126 全清 baseline 对齐)**:
+- `flutter pub get`: 跨 3 package 全绿 (12 deps 共享)
+- `flutter analyze`: 6 PDF const error / 26 warning / 433 info (跟 baseline 0/26/433 几乎一致, 6 PDF const error 修真跨期 R128 stage4 一起修)
+- `flutter test`: 2728 pass / 1 skip / 0 fail (跟 baseline 完全一致)
+
+## v1.1.0 R128 (R110 feature-first 阶段 4) — 跨 feature 共享抽 core/platform/ umbrella (2026-08-18, 3 commit 2f931cc0 / 28353b2a / pending, 1.1.0+181~+183)
+
+**状态**: R110 阶段 4 跨 feature 共享平台抽象 3 commit 整包闭环:
+- **R128a (1.1.0+181)**: notification 体系 7 file (notification_service + delegate + initializer + payload + reminder_dispatcher + snooze_manager + 5_vendor_push_service) 抽 `lib/core/platform/notification/` umbrella
+- **R128b (1.1.0+182)**: crisis 5/5 收官 迁 `lib/features/crisis/` (3 file 端到端: domain/entities/hotline_entry + data/logic/hotline_regions + presentation/pages/crisis_hotline_page), features 顶层 5 → 6
+- **R128c (1.1.0+183)**: HealthKit stub 骨架 (`lib/core/platform/health_kit/health_kit_service.dart`, 跟 R124 5 厂商 push NoOp 同模式) + FeatureFlags.healthKitEnabled 默认 false + check_apple_health_claim.py 加 3 规则兜底
+
+**关键设计**:
+- **core/platform/ umbrella**: 跟 core/data/ + core/shared/ + core/theme/ + core/routing/ + core/l10n/ 平级, 5 个子层并入 `lib/core/` (R110 v0.18 round 12 后), platform/ 是 R128 新增第 6 子层
+- **abstract + NoOp + factory + facade 4 段式**: 跟 R124 5 厂商 push facade 完整一致, 5-6 月后真接时只换 impl
+- **1 commit 整包 1 feature/1 umbrella 端到端**: 跟 R126 续 step 4-7 mood 40 file / vent 30 file / assessment 27 file / medication 39 file 模式同
+- **旧 path 1 行 re-export 兼容**: 跟 R126 续 step 5 mood 模式同, 0 行为变化, 修真 baseline 0 raw
+- **修真基线模式**: 修真 test import path 走新 path (跟 R126 续 33 test 适配同), features 期望 5 → 6 (修真 4 个 R126 续 step 4-7 migration 守门员 test)
+
+**R128 3 commit 累计统计**:
+- R128a (1.1.0+181) notification 7 file 抽 platform/ + 7 re-export + 9 lib import 修真 + 31 test import 修真
+- R128b (1.1.0+182) crisis 3 file 端到端 + 1 routing import 改 + 4 migration 守门员 test 修真 (5→6)
+- R128c (1.1.0+183) HealthKit stub 1 file + FeatureFlags 加 healthKitEnabled + check_apple_health_claim.py 加 3 规则
+- 合计: 11 file 新增 (7 platform/notification + 3 features/crisis + 1 platform/health_kit) + 41 file 修真 + 1 守门员适配
+
+**验收数据 (跟 R127 stage3 baseline 对齐)**:
+- `flutter pub get`: 3 package 全绿
+- `flutter analyze`: 0 error / 26 warning / 433 info (跟 R127 stage3 baseline 0/26/433 完全一致)
+- `flutter test`: 2728 pass / 1 skip / 0 fail (跟 R127 stage3 baseline 完全一致, 0 行为变化)
+- 18 守门员 18 全绿 (跟 R127 stage3 baseline 0 violation 完全一致)
+- `lib/features/` 顶层 5 → 6 (assessment + crisis + daily_tracking + medication + mood + vent)
+- `lib/core/platform/` 子层新增 (notification/ + health_kit/, 跟 core/data/ + core/shared/ + core/theme/ + core/routing/ + core/l10n/ 平级)
+
+**D1 决策: drift schema 留主 app** (R128 不动 drift, 跟 R127 阶段 1 一致)
+
+**R128+ 路线图**:
+- R128d (1.1.0+184, R110 阶段 5): 5 token 集中器转 pub workspace 公共 package (app_tokens / app_colors / app_typography / app_spacing / app_motion)
+- v1.0 长期 (2027-Q1): HealthKit 5-6 月真接 (修真 check_apple_health_claim.py 5 规则 → accept health_kit import + iOS entitlement + Info.plist NSHealthShareUsageDescription + 真接 impl 替换 NoOp)
