@@ -26,7 +26,8 @@ def gradient_bg() -> Image.Image:
     return grad.resize((W, H))
 
 
-def make_graphic(title: str, font_path: str, master_icon_path: str) -> Image.Image:
+def make_graphic(title: str, font_path: str, font_size: int,
+                 master_icon_path: str) -> Image.Image:
     bg = gradient_bg()
     # Load master icon, place left
     icon = Image.open(master_icon_path).convert('RGB')
@@ -35,9 +36,9 @@ def make_graphic(title: str, font_path: str, master_icon_path: str) -> Image.Ima
     ImageDraw.Draw(mask).rounded_rectangle([0, 0, 329, 329], radius=74, fill=255)
     icon.putalpha(mask)
     bg.paste(icon, (150, (H - 330) // 2), icon)
-    # Title text right
+    # Title text right (per-locale font size: en-US 80pt fits 390px, zh-CN 45pt fits 438px)
     d = ImageDraw.Draw(bg)
-    font = ImageFont.truetype(font_path, 80)
+    font = ImageFont.truetype(font_path, font_size)
     d.text((540, H // 2), title, font=font, fill=WHITE, anchor='lm')
     return bg
 
@@ -45,16 +46,16 @@ def make_graphic(title: str, font_path: str, master_icon_path: str) -> Image.Ima
 def main() -> None:
     master = os.path.join(ROOT, 'assets/brand/app_icon_master.png')
     configs = [
-        ('en-US', 'MoodDiary', '/System/Library/Fonts/Helvetica.ttc',
+        ('en-US', 'MoodDiary', 80, '/System/Library/Fonts/Helvetica.ttc',
          'fastlane/metadata/android/en-US/feature_graphic.png'),
-        ('zh-CN', 'MoodDiary 心情日记', '/System/Library/Fonts/Hiragino Sans GB.ttc',
+        ('zh-CN', 'MoodDiary 心情日记', 45, '/System/Library/Fonts/Hiragino Sans GB.ttc',
          'fastlane/metadata/android/zh-CN/feature_graphic.png'),
     ]
-    for locale, title, font_path, rel_path in configs:
+    for locale, title, font_size, font_path, rel_path in configs:
         if not os.path.exists(font_path):
             print(f'  skip {locale}: font missing {font_path}')
             continue
-        img = make_graphic(title, font_path, master)
+        img = make_graphic(title, font_path, font_size, master)
         out = os.path.join(ROOT, rel_path)
         img.save(out)
         print(f'  {locale}/feature_graphic.png ({W}x{H})')
