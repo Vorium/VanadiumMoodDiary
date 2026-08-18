@@ -3303,6 +3303,7 @@
   "worryEntryCount": "{count} 条记录",
   "worryContinueAction": "继续倾诉",
   "worryResolveAction": "不再烦恼啦",
+  "worryRelapseAction": "我又烦恼了",
   "worryReopenAction": "又烦恼了",
   "worryResolveConfirmTitle": "放下这个烦恼？",
   "worryResolveConfirmBody": "确认后它会被收藏到「忆往昔」，随时可以「又烦恼了」重新打开。",

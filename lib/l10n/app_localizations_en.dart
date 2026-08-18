@@ -4498,6 +4498,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get worryResolveAction => 'Let it go';
 
   @override
+  String get worryRelapseAction => 'Worried again';
+
+  @override
   String get worryReopenAction => 'It\'s back';
 
   @override

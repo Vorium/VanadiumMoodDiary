@@ -7992,6 +7992,12 @@ abstract class AppLocalizations {
   /// **'不再烦恼啦'**
   String get worryResolveAction;
 
+  /// No description provided for @worryRelapseAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'我又烦恼了'**
+  String get worryRelapseAction;
+
   /// No description provided for @worryReopenAction.
   ///
   /// In zh, this message translates to:

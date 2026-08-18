@@ -7,6 +7,8 @@
 // - 重命名: title 可编辑 (首条 note 前 20 字自动生成, 可改)
 //
 // AppleListSection 风格 (v0.31), 跟 mood list / tips 页一致。
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -116,38 +118,77 @@ class _WorryTimelinePageState extends ConsumerState<WorryTimelinePage> {
     );
   }
 
-  /// 3 个动作按钮 (2 行: 主动作 + 次动作)
+  /// 3 个闭环动作按钮 (论文 3 §5.3 R128e 优化):
+///   1. 继续倾诉该烦恼 (主动作, FilledButton)
+///   2. 我又烦恼了 (R128e 新增, "复发"语义, 区别于 resolved 状态的"又烦恼了")
+///   3. 不再烦恼啦 (次动作, OutlinedButton, 走忆往昔)
   Widget _actions(AppLocalizations l10n, WorryThreadEntity thread) {
-    final mainAction =
-        thread.isResolved ? l10n.worryReopenAction : l10n.worryContinueAction;
-    final secondaryAction = thread.isResolved ? null : l10n.worryResolveAction;
+    if (thread.isResolved) {
+      // 已闭环状态: 只显示"又烦恼了"重新打开
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTokens.pageMarginH,
+          vertical: AppTokens.spacingSm,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: PressFeedback(
+                child: FilledButton(
+                  onPressed: () => _reopen(l10n),
+                  child: Text(l10n.worryReopenAction),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // 进行中状态: 3 个动作 (2 行布局)
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppTokens.pageMarginH,
         vertical: AppTokens.spacingSm,
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            // R114 Wave B2 (B2-9, emil F4): 包 PressFeedback (mode 2)
-            child: PressFeedback(
-              child: FilledButton(
-                onPressed: thread.isResolved ? () => _reopen(l10n) : _continue,
-                child: Text(mainAction),
-              ),
-            ),
-          ),
-          if (secondaryAction != null) ...[
-            const SizedBox(width: AppTokens.spacingSm),
-            Expanded(
-              child: PressFeedback(
-                child: OutlinedButton(
-                  onPressed: () => _resolve(l10n),
-                  child: Text(secondaryAction),
+          // Row 1: 主动作 (继续倾诉)
+          Row(
+            children: [
+              Expanded(
+                child: PressFeedback(
+                  child: FilledButton(
+                    onPressed: _continue,
+                    child: Text(l10n.worryContinueAction),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+          const SizedBox(height: AppTokens.spacingXs),
+          // Row 2: 复发 + 闭环 (两个次动作)
+          Row(
+            children: [
+              Expanded(
+                child: PressFeedback(
+                  child: TextButton(
+                    onPressed: () => _relapse(l10n),
+                    child: Text(l10n.worryRelapseAction),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppTokens.spacingSm),
+              Expanded(
+                child: PressFeedback(
+                  child: OutlinedButton(
+                    onPressed: () => _resolve(l10n),
+                    child: Text(l10n.worryResolveAction),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -193,6 +234,24 @@ class _WorryTimelinePageState extends ConsumerState<WorryTimelinePage> {
 
   void _continue() {
     // R104 路由: /mood/create?worry=<id> — 记录心情并绑定本烦恼
+    context.push('/mood/create?worry=${widget.threadId}');
+  }
+
+  /// R128e gdc audit 优化 (论文 3 §5.3 "我又烦恼了"):
+  /// 跟 _continue 同样开 MoodRecorderPage 但走"复发"语义
+  /// (用户承认这个烦恼的强度回升, 跟新烦恼区别).
+  Future<void> _relapse(AppLocalizations l10n) async {
+    // 复用现有 mood_entries.worryThreadId 关联机制
+    // (用户保存新记录会自动延伸 timeline), 避免新增 schema 列
+    unawaited(
+      ref
+          .read(worryThreadRepositoryProvider)
+          .noteRelapse(widget.threadId, at: DateTime.now()),
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.worryReopenDone)),
+    );
     context.push('/mood/create?worry=${widget.threadId}');
   }
 

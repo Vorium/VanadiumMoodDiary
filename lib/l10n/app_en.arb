@@ -3171,6 +3171,7 @@
   "worryContinueAction": "Keep writing",
   "worryResolveAction": "Let it go",
   "worryReopenAction": "It's back",
+  "worryRelapseAction": "Worried again",
   "worryResolveConfirmTitle": "Let go of this worry?",
   "worryResolveConfirmBody": "It will be kept in Memories. You can reopen it anytime.",
   "worryResolveConfirmOk": "Let it go",

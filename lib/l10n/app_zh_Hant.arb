@@ -3264,6 +3264,7 @@
   "worryContinueAction": "繼續傾訴",
   "worryResolveAction": "不再煩惱啦",
   "worryReopenAction": "又煩惱了",
+  "worryRelapseAction": "我又煩惱了",
   "worryResolveConfirmTitle": "放下這個煩惱？",
   "worryResolveConfirmBody": "確認後它會被收藏到「憶往昔」，隨時可以「又煩惱了」重新打開。",
   "worryResolveConfirmOk": "放下啦",

@@ -40,6 +40,9 @@ class _FakeWorryRepo implements WorryThreadRepository {
   Future<int> reopen(int id) async => 1;
 
   @override
+  Future<void> noteRelapse(int id, {required DateTime at}) async {}
+
+  @override
   Future<int> rename(int id, String title) async => 1;
 
   @override

@@ -4297,6 +4297,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get worryResolveAction => '不再烦恼啦';
 
   @override
+  String get worryRelapseAction => '我又烦恼了';
+
+  @override
   String get worryReopenAction => '又烦恼了';
 
   @override
@@ -8670,6 +8673,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get worryResolveAction => '不再煩惱啦';
+
+  @override
+  String get worryRelapseAction => '我又煩惱了';
 
   @override
   String get worryReopenAction => '又煩惱了';

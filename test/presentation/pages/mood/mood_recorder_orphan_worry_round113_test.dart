@@ -129,6 +129,8 @@ class _FakeWorryThreadRepository implements WorryThreadRepository {
     deleted.add(id);
     return id;
   }
+  @override
+  Future<void> noteRelapse(int id, {required DateTime at}) async {}
 }
 
 void main() {

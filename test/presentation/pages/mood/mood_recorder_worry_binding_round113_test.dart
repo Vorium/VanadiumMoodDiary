@@ -126,6 +126,9 @@ class _FakeWorryThreadRepository implements WorryThreadRepository {
   Future<int> reopen(int id) async => id;
 
   @override
+  Future<void> noteRelapse(int id, {required DateTime at}) async {}
+
+  @override
   Future<int> rename(int id, String title) async => id;
 
   @override
@@ -155,6 +158,8 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
   }
+  @override
+  Future<void> noteRelapse(int id, {required DateTime at}) async {}
 
   testWidgets('预绑定 SUCCESS: draft.worryThreadId == 42 且不重复 create',
       (tester) async {
