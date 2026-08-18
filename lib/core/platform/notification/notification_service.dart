@@ -148,8 +148,7 @@ class NotificationService implements NotificationSender {
     String? payload,
   }) async {
     await init();
-    await _plugin.show(id, title, body, _buildNotificationDetails(),
-        payload: payload);
+    await _plugin.show(id, title, body, _buildNotificationDetails(), payload: payload);
   }
 
   /// R120 P1-2 抽出: 通知详情构建 (Android 锁屏 PII secret + iOS timeSensitive)
@@ -173,7 +172,7 @@ class NotificationService implements NotificationSender {
         iOS: DarwinNotificationDetails(
           categoryIdentifier: 'com.chroniccare.reminder',
           interruptionLevel: InterruptionLevel.timeSensitive,
-          // R129 hotfix P0-2: 锁屏禁显示通知详情 (R32 P0-03 跨 8 round 修正)
+          // R129 hotfix P0-2: 锁屏禁显示通知详情 (R32 P0-03 跨 8 round 修真)
           // 精神心理用户锁屏 "该吃药了"+"该续方了"+"心理评估时间到" 可推断病情
           presentAlert: false,
         ),

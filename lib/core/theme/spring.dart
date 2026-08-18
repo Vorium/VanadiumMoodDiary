@@ -1,7 +1,7 @@
-// v1.1.0+186 R129 P0-3 (R128e 综合审视修正) — spring 物理模型 re-export shim
+// v1.1.0+186 R129 P0-3 (R128e 综合审视修真) — spring 物理模型 re-export shim
 //
 // R128d step 1 拆 5 token 集中器时漏拆 spring.dart (留 lib/core/theme/), R129 P0-3
-// 修正将其迁到 packages/chroniccare_theme/lib/src/spring.dart (完整 6 集中器闭环).
+// 修真将其迁到 packages/chroniccare_theme/lib/src/spring.dart (完整 6 集中器闭环).
 // 本 shim 跟 R128a notification umbrella 7 re-export + R128d 5 旧 path re-export 同
 // 模式, 旧 caller 0 改动.
 //

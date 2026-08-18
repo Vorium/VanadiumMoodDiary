@@ -98,8 +98,8 @@ class AppleHealthTile extends StatelessWidget {
       child: MediaQuery.withClampedTextScaling(
         maxScaleFactor: maxTextScaler,
         child: Tooltip(
-          // R129 P0-10 (R128e 综合审视修正): tooltip "应用内数据, 不上 Apple Health"
-          // R31 P0-08 跨 8 round 修正 — 视觉 vs 数据 gap 防御 (R128c 5.1.3 used-but-not-declared
+          // R129 P0-10 (R128e 综合审视修真): tooltip "应用内数据, 不上 Apple Health"
+          // R31 P0-08 跨 8 round 修真 — 视觉 vs 数据 gap 防御 (R128c 5.1.3 used-but-not-declared
           // 防御一致战线, emotion-first 0 HealthKit 集成, 避免用户疑惑 "为何没数据")
           message: '应用内数据，不上 Apple Health',
           child: Container(
@@ -122,43 +122,43 @@ class AppleHealthTile extends StatelessWidget {
                   color: metricColor,
                   size: 28,
                 ),
-                const SizedBox(width: AppTokens.spacingSm),
-                // 中: label + value — FittedBox 让长 label 缩字不溢出
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        label,
-                        style: AppTokens.textStyleCaption(context).copyWith(
-                          color: AppTokens.textSecondaryColor(context),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+              const SizedBox(width: AppTokens.spacingSm),
+              // 中: label + value — FittedBox 让长 label 缩字不溢出
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      label,
+                      style: AppTokens.textStyleCaption(context).copyWith(
+                        color: AppTokens.textSecondaryColor(context),
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        value,
-                        style: AppTypography.textStyleMetricLg(context),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      value,
+                      style: AppTypography.textStyleMetricLg(context),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                // 右: chevron (16pt, textHint)
-                Icon(
-                  Icons.chevron_right,
-                  color: AppTokens.textHintColor(context),
-                  size: 16,
-                ),
-              ],
-            ),
+              ),
+              // 右: chevron (16pt, textHint)
+              Icon(
+                Icons.chevron_right,
+                color: AppTokens.textHintColor(context),
+                size: 16,
+              ),
+            ],
           ),
         ),
+      ),
       ),
     );
   }
