@@ -260,10 +260,10 @@ void main() {
       }
     });
 
-    test('R95 lock-in 协同: features/assessment/presentation 0 新增 raw EdgeInsets 数字 (R95 修真有效)', () {
+    test('R95 lock-in 协同: features/assessment/presentation 0 新增 raw EdgeInsets 数字 (R95 修正有效)', () {
       // 跟 R125 阶段 1 + R126 step 1+2+3 模式: features/ 内 file 应走 spacing token
-      // 不直接用 EdgeInsets.all(16) 等 raw 数字. R95 lock-in 修真效果.
-      // 接受 0 violation (现有 assessment 修真彻底).
+      // 不直接用 EdgeInsets.all(16) 等 raw 数字. R95 lock-in 修正效果.
+      // 接受 0 violation (现有 assessment 修正彻底).
       final files = Directory('lib/features/assessment')
           .listSync(recursive: true)
           .whereType<File>()
@@ -272,18 +272,18 @@ void main() {
       var rawEdgeInsetsCount = 0;
       for (final f in files) {
         final content = f.readAsStringSync();
-        // 修真 pattern: EdgeInsets.all(数字) / EdgeInsets.symmetric(数字) / EdgeInsets.only(数字)
+        // 修正 pattern: EdgeInsets.all(数字) / EdgeInsets.symmetric(数字) / EdgeInsets.only(数字)
         // 排除: EdgeInsets.zero / AppTokens.spacingXxx / AppTokens.edgeInsetsXxx
         final m = RegExp(
           r'EdgeInsets\.(?:all|symmetric|only|fromLTRB)\(\s*\d+',
         ).allMatches(content);
         rawEdgeInsetsCount += m.length;
       }
-      // R95 修真后 0 raw 数字 (所有 EdgeInsets 都走 token)
+      // R95 修正后 0 raw 数字 (所有 EdgeInsets 都走 token)
       expect(
         rawEdgeInsetsCount,
         0,
-        reason: 'R95 修真后 features/assessment/presentation 应 0 raw EdgeInsets 数字',
+        reason: 'R95 修正后 features/assessment/presentation 应 0 raw EdgeInsets 数字',
       );
     });
 

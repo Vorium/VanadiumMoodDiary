@@ -1,10 +1,10 @@
 // v0.30 round 95 (sub-spec 5 task 3-4 lock-in): token 化集中器锁住
 //
 // **R95 报告 §6.1-6.3 stale audit 数字** (估 224 + 208 + 96):
-// R95 sub-spec 5 task 3-4 修真后实测:
-//   TextStyle 220 → 214 (-6 真 magic 修真)
-//   EdgeInsets 205 → 131 (-74 半 token 简化 + 修真)
-//   Duration 95 → 95 (修真 3 个 snackbar 2s → snackBarDurationShort)
+// R95 sub-spec 5 task 3-4 修正后实测:
+//   TextStyle 220 → 214 (-6 真 magic 修正)
+//   EdgeInsets 205 → 131 (-74 半 token 简化 + 修正)
+//   Duration 95 → 95 (修正 3 个 snackbar 2s → snackBarDurationShort)
 //
 // **本 test 锁住的关键不变量** (防 regression):
 // 1. 5 个核心业务文件已用 AppTokens.textStyleXxx(c) 集中器 (替代半 token inline)
@@ -99,18 +99,18 @@ void main() {
     });
   });
 
-  // ==================== 3. 修真后业务文件用集中器 (key files) ====================
+  // ==================== 3. 修正后业务文件用集中器 (key files) ====================
   // 验证 5 个核心业务文件已用 AppTokens.textStyleXxx(c) / edgeInsetsXxx 集中器
   // 用 file read + string contains 测, 不 mock 任何东西
 
-  group('修真后业务文件用集中器 (lock-in)', () {
+  group('修正后业务文件用集中器 (lock-in)', () {
     test('edit_medication_dialog: 不再有 literal `EdgeInsets.all(8)` 等', () {
       final file = File(
         'lib/presentation/pages/medication/widgets/edit_medication_dialog.dart',
       );
       expect(file.existsSync(), true, reason: 'file should exist');
       final content = file.readAsStringSync();
-      // 修真后 0 个 literal EdgeInsets.all(8/16/24)
+      // 修正后 0 个 literal EdgeInsets.all(8/16/24)
       expect(
         content.contains('EdgeInsets.all(8)') ||
             content.contains('EdgeInsets.all(16)') ||
@@ -136,7 +136,7 @@ void main() {
       ];
       final moduleContent =
           module.map((p) => File(p).readAsStringSync()).join('\n');
-      // R95 sub-spec 5 task 3-4 修真后用集中器
+      // R95 sub-spec 5 task 3-4 修正后用集中器
       expect(
         moduleContent.contains('AppTokens.textStyleBodyStrong(context)'),
         true,
@@ -177,7 +177,7 @@ void main() {
       );
       expect(file.existsSync(), true);
       final content = file.readAsStringSync();
-      // 修真后 0 个 `horizontal: 6` literal
+      // 修正后 0 个 `horizontal: 6` literal
       expect(
         content.contains('horizontal: 6'),
         false,
@@ -250,11 +250,11 @@ void main() {
 
   // ==================== 5. PDF 特殊保留 (medication_report_pdf_layout) ====================
   // v0.25 R56: PDF 字体 12 + 12 不走 token 集中器 (PDF 字体表特殊)
-  // 防 regression: 修真时不能误改 PDF 文件
+  // 防 regression: 修正时不能误改 PDF 文件
 
   group('PDF 特殊保留 (R95 sub-spec 5 task 3-4 lock-in)', () {
     test(
-        'medication_report_pdf_layout.dart 仍含 literal fontSize (PDF 字体特殊, 不修真)',
+        'medication_report_pdf_layout.dart 仍含 literal fontSize (PDF 字体特殊, 不修正)',
         () {
       final file = File(
         'lib/features/medication/data/services/medication_report_pdf_layout.dart',
@@ -272,12 +272,12 @@ void main() {
     });
   });
 
-  // ==================== 6. TextStyle 修真后总数字下降 ====================
+  // ==================== 6. TextStyle 修正后总数字下降 ====================
   // v0.31 Apple Health redesign: 新增 3 个 textStyleMetric* (Xl/Lg/Md) + 7 helper
   // 加 letterSpacing, 阈值从 220 放宽到 300 (合理: 3 metric × 1 + 集中器)
   // v0.30 R95 baseline 220 → v0.31 实际 287 (新增 metric helper 67, 包括 letterSpacing 内部)
 
-  group('R95 sub-spec 5 task 3-4 修真效果 (lock-in)', () {
+  group('R95 sub-spec 5 task 3-4 修正效果 (lock-in)', () {
     test('全局 TextStyle 数字 ≤ 300 (v0.31 Apple Health baseline)', () {
       final files = Directory('lib')
           .listSync(recursive: true)

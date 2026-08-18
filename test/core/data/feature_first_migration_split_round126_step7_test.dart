@@ -323,12 +323,12 @@ void main() {
       );
     });
 
-    test('R95 lock-in 协同: features/medication/presentation ≤ 2 raw EdgeInsets 数字 (R95 修真 baseline)', () {
+    test('R95 lock-in 协同: features/medication/presentation ≤ 2 raw EdgeInsets 数字 (R95 修正 baseline)', () {
       // 跟 R126 续 step 4/5/6 模式: features/ 内 file 应走 spacing token
-      // 不直接用 EdgeInsets.all(16) 等 raw 数字. R95 lock-in 修真效果.
-      // R95 修真 baseline 漏修真 medication_calendar_grid (1 处 EdgeInsets.all(1)) +
+      // 不直接用 EdgeInsets.all(16) 等 raw 数字. R95 lock-in 修正效果.
+      // R95 修正 baseline 漏修正 medication_calendar_grid (1 处 EdgeInsets.all(1)) +
       // add_medication_step3_form (1 处 EdgeInsets.all(3)) 2 处, 历史 baseline 已知,
-      // 留 R31+ 跨期修真, 不在本批 R126 续 step 7 范围. 因此接受 ≤ 2 raw.
+      // 留 R31+ 跨期修正, 不在本批 R126 续 step 7 范围. 因此接受 ≤ 2 raw.
       final files = Directory('lib/features/medication')
           .listSync(recursive: true)
           .whereType<File>()
@@ -342,11 +342,11 @@ void main() {
         ).allMatches(content);
         rawEdgeInsetsCount += m.length;
       }
-      // R95 修真 baseline 接受 ≤ 2 (medication_calendar_grid + add_medication_step3_form 已知 2 处)
+      // R95 修正 baseline 接受 ≤ 2 (medication_calendar_grid + add_medication_step3_form 已知 2 处)
       expect(
         rawEdgeInsetsCount,
         lessThanOrEqualTo(2),
-        reason: 'R95 修真 baseline 接受 ≤ 2 raw EdgeInsets 数字 (medication_calendar_grid + add_medication_step3_form 已知 2 处)',
+        reason: 'R95 修正 baseline 接受 ≤ 2 raw EdgeInsets 数字 (medication_calendar_grid + add_medication_step3_form 已知 2 处)',
       );
     });
 

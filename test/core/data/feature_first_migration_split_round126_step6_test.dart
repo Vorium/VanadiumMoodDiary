@@ -252,9 +252,9 @@ void main() {
       );
     });
 
-    test('R95 lock-in 协同: features/vent/presentation 0 新增 raw EdgeInsets 数字 (R95 修真有效)', () {
+    test('R95 lock-in 协同: features/vent/presentation 0 新增 raw EdgeInsets 数字 (R95 修正有效)', () {
       // 跟 R126 续 step 4/5 模式: features/ 内 file 应走 spacing token
-      // 不直接用 EdgeInsets.all(16) 等 raw 数字. R95 lock-in 修真效果.
+      // 不直接用 EdgeInsets.all(16) 等 raw 数字. R95 lock-in 修正效果.
       final files = Directory('lib/features/vent')
           .listSync(recursive: true)
           .whereType<File>()
@@ -268,11 +268,11 @@ void main() {
         ).allMatches(content);
         rawEdgeInsetsCount += m.length;
       }
-      // R95 修真后 0 raw 数字 (所有 EdgeInsets 都走 token)
+      // R95 修正后 0 raw 数字 (所有 EdgeInsets 都走 token)
       expect(
         rawEdgeInsetsCount,
         0,
-        reason: 'R95 修真后 features/vent/presentation 应 0 raw EdgeInsets 数字',
+        reason: 'R95 修正后 features/vent/presentation 应 0 raw EdgeInsets 数字',
       );
     });
 
