@@ -1,0 +1,9 @@
+1.1.0+185 (emotion-first refactor closure):
+
+• Project positioning: from "chronic disease management" → "mood journal & vent-first self-care", with medication/assessment/tracking kept as supporting features.
+• Apple Health visual redesign (R31 5 phases) complete — 5 token concentrators + 6 widget concentrators + 11+ features aligned with iOS 17/18 style.
+• Home tab simplified to 4 tabs (Mood / Vent / Trend / Settings).
+• Permanent free version (1.0.0+147) — all IAP code/dependencies/copy removed.
+• Data security: SQLCipher encryption + flutter_secure_storage key, zero plaintext local data on iOS/Android.
+• Accessibility: prefers-reduced-motion full adaptation + global textScaler 1.5x clamp.
+• R128e audit fixes: 7-perspective audit, fix R93 spec contradiction + 3 prod-false flag trigger conditions + Apple Health gatekeeper 7 rules + 4 Colors.white → theme-aware + dual hero card tokenization + pinned section widget extraction + 9 16KB page size auto-verification.

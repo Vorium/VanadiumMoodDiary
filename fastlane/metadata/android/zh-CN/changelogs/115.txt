@@ -1,0 +1,9 @@
+1.1.0+185 版本 (emotion-first refactor 闭环):
+
+• 项目定位调整: 从"慢病管理" → "情绪日记 + 树洞倾诉优先", 用药/评估/追踪保留为辅助。
+• Apple Health 视觉重设 (R31 5 阶段) 完成 — 5 token 集中器 + 6 widget 集中器 + 11+ feature 视觉对齐 iOS 17/18 风格。
+• 主页升级 4 tab 简化 (Mood / Vent / Trend / Settings)。
+• 永久免费定版 (1.0.0+147) — 删除所有 IAP 代码/依赖/文案。
+• 数据安全: SQLCipher 加密 + flutter_secure_storage key, iOS/Android 全平台零明文本地数据。
+• a11y: prefers-reduced-motion 完整适配 + 全局 textScaler 1.5x 兜底。
+• R128e audit 修复: 7 视角多视角审计, 修复 R93 spec 矛盾 + 3 prod-false flag 触发条件 + Apple Health 守门员 7 规则 + 4 处 Colors.white → theme-aware + 双主卡 token 化 + 收藏区 widget 抽出 + 9 端 16KB page size 自动验证。

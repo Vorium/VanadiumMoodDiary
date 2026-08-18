@@ -146,7 +146,12 @@ class HealthKitService {
     }
   }
 
-  /// 请求 HealthKit 授权 (用户首次点"同步到 Apple Health"时调)
+  /// 请求 HealthKit 授权
+  ///
+  /// 当前 UI 无入口调用此方法 (gdc R128e audit 2026-08-18: 原注释"用户首次点
+  /// 同步到 Apple Health 时调" 是早期设计意图, 但 emotion-first refactor 1.1.0
+  /// round 4b 已删除 contact / mood-to-Apple-Health 联动入口)。
+  /// 真接 HealthKit (5-6 月后) 时需重新设计 UI 入口 + 翻 FeatureFlags.healthKitEnabled = true。
   static Future<bool> requestAuthorization() async {
     if (!FeatureFlags.healthKitEnabled) return false;
     try {

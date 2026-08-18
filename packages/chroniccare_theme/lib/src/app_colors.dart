@@ -484,6 +484,13 @@ class AppColors {
   /// 替代散落 5 处 `Colors.transparent` 硬编码
   static const Color transparent = Color(0x00000000);
 
+  // gdc R128e audit 2026-08-18: 3 个空态 alpha magic 抽 token
+  // 替代散落 `primaryColor.withValues(alpha: 0.08/0.02/0.6)` literal
+  // (empty_state.dart:66-74 是已知 case)。未来调空态调性 grep 改即可。
+  static const double alphaEmptyHeroOuter = 0.08; // 圆形渐变外圈
+  static const double alphaEmptyHeroInner = 0.02; // 圆形渐变内圈
+  static const double alphaEmptyHeroIcon = 0.6;   // icon 自身 alpha
+
   /// R32 (P0-09 集中器): 6 元素药物药丸颜色 (medication_page 专用)
   ///
   /// 跟 `healthMetricsColors` (8 metric) 1:1 重叠 4 个 (绿/红/蓝/紫),

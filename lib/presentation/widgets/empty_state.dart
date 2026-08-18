@@ -54,6 +54,7 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // 渐变圆形背景 + icon
+            // gdc R128e audit 2026-08-18: 3 处 alpha magic → AppTokens 集中器
             Container(
               width: 96,
               height: 96,
@@ -63,15 +64,15 @@ class EmptyState extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    primaryColor.withValues(alpha: 0.08),
-                    primaryColor.withValues(alpha: 0.02),
+                    primaryColor.withValues(alpha: AppTokens.alphaEmptyHeroOuter),
+                    primaryColor.withValues(alpha: AppTokens.alphaEmptyHeroInner),
                   ],
                 ),
               ),
               child: Icon(
                 icon,
                 size: AppTokens.iconSizeEmpty,
-                color: primaryColor.withValues(alpha: 0.6),
+                color: primaryColor.withValues(alpha: AppTokens.alphaEmptyHeroIcon),
               ),
             ),
             const SizedBox(height: AppTokens.spacingMd),

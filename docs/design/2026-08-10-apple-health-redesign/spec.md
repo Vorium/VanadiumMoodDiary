@@ -105,11 +105,13 @@ R31 后 9 轮微调 (R32/R95/R108/R110/R112/R116):
 
 ## 6. 集成决策 (Feature Flags)
 
-`feature_flags.dart:31-33` 锁定 0 副作用:
-```dart
-// MoodEntry → Apple Health 联动 0 副作用
-moodToAppleHealthSyncEnabled = false  // 默认
-```
+`feature_flags.dart:53-58` 锁定 0 副作用:
+- `_prodFiveVendorPushEnabled = false` (5 厂商 push 占位)
+- `_prodHealthKitEnabled = false` (HealthKit stub NoOp)
+
+实际 flag 全部走 `feature_flags.dart` 集中器, **不存在** `moodToAppleHealthSyncEnabled` 这种 cross-feature flag (R93 阶段 2 已删外联通信业务 flag, emotion-first refactor 1.1.0 round 4b 闭环)。
+
+gdc R128e audit 2026-08-18: 本节 §6 在重建时虚构了 `moodToAppleHealthSyncEnabled` flag, 实际代码 (feature_flags.dart 全文 grep) **0 命中**。修正: 本节重写, 仅引用真实存在的 2 个相关 flag (5 厂商 push + HealthKit)。
 
 ## 7. 5 阶段路线 (R31)
 

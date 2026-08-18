@@ -87,6 +87,10 @@ class AppTokens {
   static const Color dividerDark = AppColors.dividerDark;
   static const Color disabledDark = AppColors.disabledDark;
   static const Color primaryLightDark = AppColors.primaryLightDark;
+  // gdc R128e audit 2026-08-18: 3 个空态 alpha magic 集中器 (empty_state.dart)
+  static const double alphaEmptyHeroOuter = AppColors.alphaEmptyHeroOuter;
+  static const double alphaEmptyHeroInner = AppColors.alphaEmptyHeroInner;
+  static const double alphaEmptyHeroIcon = AppColors.alphaEmptyHeroIcon;
   static const Color success = AppColors.success;
   static const Color warning = AppColors.warning;
   static const Color warningStrong = AppColors.warningStrong;
