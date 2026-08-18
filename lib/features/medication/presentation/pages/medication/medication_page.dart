@@ -128,12 +128,12 @@ class MedicationPage extends ConsumerWidget {
                     const SizedBox(width: AppTokens.spacingSm),
                     // v0.32 R112 (AH-16): 已服 → checkIn (systemGreen,
                     // 打卡/完成语义; 修前 4 tile 全同色同 icon)
-                    // v1.1.0+186 R129 P0-10 (R128e 综合审视修真): checkIn
-                    // metricId 修真 跟 apple_health_tile 8 metric 修真中 checkIn
-                    // 修真 enum 修真冲突 (medication 业务"已服"修真 vs 修真
-                    // metric 修真 "打卡" 修真), 修真 修真 'medication' 修真
-                    // (跟 tile 修真 'medication' 修真 修真 metric, 同色同 icon
-                    // 修真 修真 修真 修真)
+                    // v1.1.0+186 R129 P0-10 (R128e 综合审视修正): checkIn
+                    // metricId 修正 跟 apple_health_tile 8 metric 修正中 checkIn
+                    // 修正 enum 修正冲突 (medication 业务"已服"修正 vs 修正
+                    // metric 修正 "打卡" 修正), 修正 修正 'medication' 修正
+                    // (跟 tile 修正 'medication' 修正 修正 metric, 同色同 icon
+                    // 修正 修正 修正 修正)
                     AppleHealthTile(
                       metricId: 'medication',
                       label: l10n.medTodayTaken, // "已服"

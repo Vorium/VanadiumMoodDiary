@@ -4,8 +4,8 @@ description: >-
   app_spacing / app_motion / **spring** 物理模型) — 跨 6 feature (assessment/crisis/
   daily_tracking/medication/mood/vent) + presentation/widgets + core/ + main 全 app
   共享设计语言.
-  R128d (R110 阶段 5) pub workspace 拆包 5 集中器, R129 P0-3 (R128e 综合审视修真)
-  修真 spring 迁入补完整 6 集中器 (R128d step 1 漏拆). 跨 app + 测试 + 主题 widget
+  R128d (R110 阶段 5) pub workspace 拆包 5 集中器, R129 P0-3 (R128e 综合审视修正)
+  修正 spring 迁入补完整 6 集中器 (R128d step 1 漏拆). 跨 app + 测试 + 主题 widget
   全依赖. 0 业务逻辑, 0 持久化, 0 网络, 0 drift — pure design token, 是 R31 视觉层
   9.5/10 优秀 (R31 综合审视 6.2 → 7.5/10 拉升主因) 的基础设施沉淀.
 publish_to: 'none'
