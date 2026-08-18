@@ -79,7 +79,7 @@ R107 阶段半完成：4 文件是 R71 commit 创建时占位；v0.31.1 P0-01 �
 | **P0-20** | `<supports-screens android:largeScreens="true">` 平板适配声明 | `AndroidManifest.xml` | ⏳ | v0.31.1 round 8 |
 | **P0-21** | `usesCleartextTraffic="false"` 显式 | `AndroidManifest.xml` | ⏳ | v0.31.1 round 9 |
 | **P0-22** | `FOREGROUND_SERVICE` 权限（5 厂商 push 时）| `AndroidManifest.xml` | ⏳ | 1-2 月（外部）|
-| **P0-23** | Data Safety Form（4 大类 28 子项）+ Health Apps Questionnaire | Google Play Console | ⏳ | 上架前 1 周 |
+| **P0-23** | Data Safety Form（4 大类 28 子项）+ App Review Questionnaire | Google Play Console | ⏳ | 上架前 1 周 |
 | **P0-24** | 16KB page size 验证（Google Play 2025-11-01 强制）| CI pipeline | ⏳ | 上架前 1 周（已有 `check_16kb_alignment.py` 守门员，需 CI 实跑）|
 
 ### 2.2 Android 实物资产（P0-15 / P0-16）
@@ -133,7 +133,7 @@ R107 阶段半完成：4 文件是 R71 commit 创建时占位；v0.31.1 P0-01 �
 | 危机处理 | 提供各地区危机热线 (tel: 链接), 明确声明非危机干预服务 |
 | 数据位置 | 100% on-device, SQLCipher AES-256, 零云端 |
 
-**说明**: 问卷答案与 `scripts/generate_health_apps_questionnaire.py` 4 大块 disclosure 保持一致 (R112 已把 PHQ-9/GAD-7 点名改通用量表措辞 + 补录音声明)。
+**说明**: 问卷答案与 `scripts/generate_app_review_questionnaire.py` 4 大块 disclosure 保持一致 (R128e+ emotion-first 重命名 + framing, R112 已把 PHQ-9/GAD-7 点名改通用量表措辞 + 补录音声明)。
 
 ---
 
