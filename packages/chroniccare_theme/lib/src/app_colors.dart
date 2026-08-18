@@ -1,5 +1,6 @@
-// v0.31 round 1 (Apple Health redesign · Phase 1 Task 1.1):
-// 颜色 token 从 M3 嫩绿系 → Apple Health iOS system color + 8 metric palette。
+// v1.1.0 R128e+ round 1 (CN Domestic Icon Redesign Task 1):
+// 品牌强调色 accentAppleHealth → accentSunsetPeach (#FFB088,日落桃),
+// emotion-first 重定义。详见 §品牌强调色 段注释。
 //
 // 历史:
 // - v0.27 round 65 (alibaba B16 god constant 拆分): 颜色 token 独立
@@ -12,13 +13,22 @@
 //     - app_motion.dart     (~200 行) duration + curve + shadow + MotionScheme + Motion
 //     - app_tokens.dart     (≤50 行)  facade 入口, static const re-export, 老 caller 不动
 //
-// - v0.31 round 1 (本轮 Apple Health redesign):
+// - v0.31 round 1 (Apple Health redesign):
 //   改 8 个 light 静态 const (background / surface / textPrimary / textSecondary /
 //     textHint / border / divider / primary / primaryDark) → iOS 风格
 //   改 3 个 dark 静态 const (backgroundDark / surfaceDark / textPrimaryDark)
 //   新增 healthMetricsColors (8 iOS system colors) + healthMetricsIds +
 //     healthMetricsColorFor (v0.32 R112 AH-16: tintedMetricSoft 0 caller 删)
 //   保留 success / warning / error / 16 个 dynamic getter / 现有 18 个 dark 静态 const
+//
+// - R128e (2026-08-18 论文1 §4.3): primary 海洋蓝 (#0A84FF),Apple Health 绿色
+//   从主色退场,但 healthMetricsColors[4] (checkIn) 仍保留绿色语义
+//
+// - v1.1.0 R128e+ round 1 (本轮 CN Domestic Icon Redesign): 新增
+//   `accentSunsetPeach` (#FFB088) 品牌强调色,旧 Apple Health 绿 (#34C759)
+//   改为 `@Deprecated` throwing getter `accentAppleHealth`,访问抛
+//   StateError 提示迁移。后续 task 2-6 (图标生成 + 品牌资产) 引用本 token
+//   作为 single source of truth
 //
 // 设计原则:
 // - 单一职责: 颜色 + tinted + fg + health metric palette 全部在 AppColors 一处
@@ -33,12 +43,17 @@ import 'package:flutter/material.dart';
 ///
 /// v0.31 round 1 (Apple Health redesign): 加 8 iOS system metric palette
 ///
+/// v1.1.0 R128e+ round 1: 加 `accentSunsetPeach` 品牌强调色 (Combo 1
+/// "Sunset Breath" 图标主色),弃用 `accentAppleHealth` (旧 Apple Health 绿)
+///
 /// 5 大类:
 /// 1. **静态 const Color** (light/dark 二选一, 不依赖 BuildContext)
 /// 2. **Dynamic color getter** (接受 BuildContext, 走 M3 ColorScheme 适配)
 /// 3. **Tinted color getter** (alpha 0.08-0.85 调色, 软背景用)
 /// 4. **Foreground color getter** (text on top, 走 M3 onXxx)
 /// 5. **Health metric palette** (8 iOS system color, 跨 light/dark 稳定)
+/// 6. **Brand accent** (R128e+ round 1): `accentSunsetPeach` 暖橙,用于图标/
+///    启动图/营销素材 — 不进 M3 seedColor,跟 `primary` (海洋蓝) 区分
 class AppColors {
   AppColors._();
 
@@ -53,6 +68,33 @@ class AppColors {
 
   /// v0.31 R1: 主色按下态 (dark)。R128e 改海洋蓝按下态。
   static const Color primaryDark = Color(0xFF0066CC);
+
+  // ============= 品牌强调色 (R128e+ emotion-first) =============
+  /// R128e+ round 1 (CN Domestic Icon Redesign): emotion-first 品牌强调色 →
+  /// 日落桃 (sunset peach) #FFB088。Combo 1 "Sunset Breath" 图标主色,
+  /// 跟新品牌定位 "情绪日记 + 树洞倾诉" 一致 (暖橙→浅紫渐变背景的起点)。
+  ///
+  /// 跟 `primary` (海洋蓝 #0A84FF) 区分:
+  /// - `primary` 是 M3 seedColor + check-in FAB + 强调按钮,冷色 (论文1 §4.3 海洋)
+  /// - `accentSunsetPeach` 是品牌资产 (图标 / 启动图 / 营销素材) 暖色,
+  ///   不进 M3 seedColor,不影响现有 FAB/按钮色调
+  ///
+  /// 后续 task 2 (generate_app_icon.py) + task 3-4 (图标生成) + task 5-6
+  /// (品牌资产) 全部引用本 token 作为 single source of truth。
+  static const Color accentSunsetPeach = Color(0xFFFFB088);
+
+  /// R128e+ round 1: 已弃用别名 — Apple Health 绿色 (#34C759) 不再作为品牌色。
+  ///
+  /// 历史:
+    /// - v0.31 R1 (Apple Health redesign): `primary` 是 iOS systemGreen
+  ///   (#34C759),作为 Apple Health 风格主色
+  /// - R128e (论文1 §4.3): `primary` 改海洋蓝 (#0A84FF),Apple Health 绿色
+  ///   从品牌色退场
+  /// - R128e+ round 1: 品牌强调色改日落桃 (`accentSunsetPeach` #FFB088),
+  ///   本 token 仅保留为 deprecation marker,访问抛 [StateError] 提示迁移。
+  @Deprecated('Use accentSunsetPeach — emotion-first R128e sunset peach')
+  static Color get accentAppleHealth =>
+      throw StateError('accentAppleHealth has been removed — use accentSunsetPeach');
 
   // ============= 亮色色板 =============
   static const Color primaryLight = Color(0xFFE3F0FF);
