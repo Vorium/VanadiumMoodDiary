@@ -118,6 +118,12 @@ jobs:
       - name: Coverage threshold check
         run: python scripts/check_coverage.py --ci
 
+      - name: Check icon quality
+        run: python3 scripts/check_icon_quality.py
+
+      - name: Check CN domestic metadata
+        run: python3 scripts/check_cn_metadata.py
+
   architecture:
     name: Architecture invariants
     runs-on: ubuntu-latest
