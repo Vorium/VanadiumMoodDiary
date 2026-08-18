@@ -119,14 +119,14 @@ void main() {
         reason: '填了名字后, 按钮 enabled',
       );
 
-      // 3) 点击进入 step 2 (P0-6 后是 medication = 第 2 步,共 4 步)
+      // 3) 点击进入 done (R128e: 药物步移出引导, welcome → done 3 步流程)
       await tester.tap(nextFinder);
       await tester.pumpAndSettle();
-      expect(find.text('您常吃什么药？'), findsOneWidget);
+      expect(find.text('您常吃什么药？'), findsNothing);
       expect(
         find.textContaining('步 ／ 共'),
         findsOneWidget,
-        reason: 'P0-6: 顶部应该显示"第 X 步 ／ 共 X 步" (4 步流程, spzh v0.26 半角→全角规范化)',
+        reason: '顶部显示"第 X 步 ／ 共 X 步" (R128e 3 步流程, spzh v0.26 半角→全角规范化)',
       );
     },
   );
