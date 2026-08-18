@@ -360,7 +360,7 @@ void main() {
           .toList();
       expect(
         featureDirs.map((d) => d.path.split('/').last).toList()..sort(),
-        equals(['assessment', 'daily_tracking', 'medication', 'mood', 'vent']),
+        equals(['assessment', 'crisis', 'daily_tracking', 'medication', 'mood', 'vent']),
         reason: 'R126 续 step 4-7 收官 features/ 顶层 5 feature (daily_tracking + assessment + medication + mood + vent)',
       );
     });

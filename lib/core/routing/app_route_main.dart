@@ -19,7 +19,7 @@ import 'package:chroniccare/core/routing/app_route_medication.dart';
 import 'package:chroniccare/core/routing/app_route_vent.dart';
 import 'package:chroniccare/core/routing/app_routes.dart';
 import 'package:chroniccare/core/routing/app_shell.dart';
-import 'package:chroniccare/presentation/pages/crisis_hotline_page.dart';
+import 'package:chroniccare/features/crisis/presentation/pages/crisis_hotline_page.dart';
 import 'package:chroniccare/presentation/pages/home/home_page.dart';
 import 'package:chroniccare/presentation/pages/settings/settings_page.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
