@@ -489,7 +489,7 @@
   "moodTagCalm": "Calm",
   "moodTagInsomnia": "Insomnia",
   "moodTagIrritable": "Irritable",
-    "moodTagLowEnergy": "Low energy",
+  "moodTagLowEnergy": "Low energy",
   "moodTagSmallJoy": "Small joy",
   "moodTagGrateful": "Grateful",
   "moodTagProgress": "Made progress",
@@ -1256,7 +1256,7 @@
       }
     }
   },
-    "dayDetailTempMed": "Temp dose",
+  "dayDetailTempMed": "Temp dose",
   "dayDetailWorryCount": "Wrote {count} worry(ies) on that day",
   "@dayDetailWorryCount": {
     "placeholders": {

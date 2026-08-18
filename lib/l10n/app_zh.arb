@@ -531,7 +531,7 @@
   "moodTagCalm": "平静",
   "moodTagInsomnia": "失眠",
   "moodTagIrritable": "烦躁",
-      "moodTagLowEnergy": "能量低",
+  "moodTagLowEnergy": "能量低",
   "moodTagSmallJoy": "小确幸",
   "moodTagGrateful": "感恩",
   "moodTagProgress": "有进步",
@@ -1298,7 +1298,7 @@
       }
     }
   },
-    "dayDetailTempMed": "临时吃药",
+  "dayDetailTempMed": "临时吃药",
   "dayDetailWorryCount": "那天写下了 {count} 个烦恼",
   "@dayDetailWorryCount": {
     "placeholders": {

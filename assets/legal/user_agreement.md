@@ -94,7 +94,6 @@ App 类别 (iOS LSApplicationCategoryType): **`lifestyle`** (个人记录工具,
 如未来引入增值订阅模式:
 
 - **订阅类**: 退订立即生效,已支付周期按比例退款 (Apple IAP 遵循 Apple Store 政策 / Google Play 遵循 Google Play 政策)
-- **买断类**: 7 天无理由退款 (依《消费者权益保护法》§25)
 
 具体退款路径会写入增值订阅的服务条款,届时另行告知。
 

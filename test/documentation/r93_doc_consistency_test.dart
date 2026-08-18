@@ -13,14 +13,16 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('R93 阶段 2 文档一致性', () {
-    test('3 法律 md 都有 v0.30 业务暂停说明', () {
-      // privacy_policy.md 加 §0.6 "v0.30 业务暂停" section (强约束)
+  group('法律文档文档一致性 (R128e 定版结构)', () {
+    test('3 法律 md 都有 v1.0.0 定版标记 + 无 IAP/买断 残留', () {
+      // R128e (2026-08-18): 法律文档重写为新结构 (v1.0.0 定版), 原
+      // "## 0.6 v0.30 业务暂停" section 随 R93 业务删除一并移除。
+      // 改验新结构标记 (v1.0.0 定版 + lifestyle 类别 + 无 IAP 残留)。
       final privacy = File('assets/legal/privacy_policy.md').readAsStringSync();
       expect(
-        privacy.contains('## 0.6 v0.30 业务暂停'),
+        privacy.contains('v1.0.0') && privacy.contains('定版'),
         isTrue,
-        reason: 'privacy_policy.md 缺 §0.6 v0.30 业务暂停 section',
+        reason: 'privacy_policy.md 缺 v1.0.0 定版标记 (R128e 重写)',
       );
       // v1.0.0+147: 永久免费, 法务文档 0 IAP / 0 买断残留 (lock-in 防回退)
       expect(
@@ -30,21 +32,19 @@ void main() {
         isFalse,
         reason: 'privacy_policy.md 含 IAP / 买断残留 (v1.0.0+147 已删, 防回退)',
       );
-      // 1.1.0 round 4b: emergencyContactEnabled flag 随外联服务整摘, 文档
-      // 一致性断言移除 (docs 全文去外联由文档任务跟进)。
 
-      // sensitive_data_consent.md 加修订历史 entry (R93 阶段 2 集中隐藏)
+      // sensitive_data_consent.md: v1.0.0 定版标记 + 情绪健康去医疗化
       final sensitive =
           File('assets/legal/sensitive_data_consent.md').readAsStringSync();
       expect(
-        sensitive.contains('v0.30 R93'),
+        sensitive.contains('v1.0.0') && sensitive.contains('定版'),
         isTrue,
-        reason: 'sensitive_data_consent.md 缺 v0.30 R93 修订历史 entry',
+        reason: 'sensitive_data_consent.md 缺 v1.0.0 定版标记 (R128e 重写)',
       );
       expect(
-        sensitive.contains('R93 阶段 2'),
+        sensitive.contains('情绪健康'),
         isTrue,
-        reason: 'sensitive_data_consent.md 缺 R93 阶段 2 说明',
+        reason: 'sensitive_data_consent.md 缺 "情绪健康" 去医疗化标记 (R128e)',
       );
       expect(
         sensitive.contains('IAP') || sensitive.contains('买断'),
@@ -52,18 +52,18 @@ void main() {
         reason: 'sensitive_data_consent.md 含 IAP / 买断残留 (v1.0.0+147 已删, 防回退)',
       );
 
-      // user_agreement.md 加修订历史 entry (R93 阶段 2 集中隐藏)
+      // user_agreement.md: v1.0.0 定版 + 永久免费 + 非医疗工具
       final userAgreement =
           File('assets/legal/user_agreement.md').readAsStringSync();
       expect(
-        userAgreement.contains('v0.30 R93'),
-        isTrue,
-        reason: 'user_agreement.md 缺 v0.30 R93 修订历史 entry',
-      );
-      expect(
         userAgreement.contains('永久完全免费'),
         isTrue,
-        reason: 'user_agreement.md 缺 §3 永久免费承诺 (v1.0.0+147 定版)',
+        reason: 'user_agreement.md 缺永久免费承诺 (v1.0.0+147 定版)',
+      );
+      expect(
+        userAgreement.contains('非医疗工具'),
+        isTrue,
+        reason: 'user_agreement.md 缺 "非医疗工具" 标记 (R128e 医疗声称降级)',
       );
       expect(
         userAgreement.contains('买断') || userAgreement.contains('8 元'),
