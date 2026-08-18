@@ -1,1 +1,1 @@
-mood,journal,vent,diary,wellbeing
+mood,journal,vent,diary,wellbeing,self-care,mind,private,encrypted,free

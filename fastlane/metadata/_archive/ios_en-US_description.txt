@@ -1,0 +1,40 @@
+MoodDiary is a private mood journal and vent space. Write down what's on your mind, track your emotions, and see your own progress — all while keeping your data 100% on your phone.
+
+Not a medical tool. It cannot replace a doctor's diagnosis or treatment. But it can help you notice patterns in how you feel, day by day.
+
+KEY FEATURES
+
+• Mood journal
+Rate today across 4 dimensions (mood, energy, sleep, stress). Attach voice notes, influence factors, and optional CBT thought records to untangle your thoughts.
+
+• Vent space
+A completely private corner to write what's on your mind. Encrypted and stored only on your device. Voice recording supported.
+
+• Worry closure
+Start a worry thread, and record every time it comes back. The day you say "I'm no longer worried", it moves to your memory archive.
+
+• Trends
+Cross-mood, cross-vent trend charts — see yourself getting better, one day at a time.
+
+• Self-reflection
+Optional self-reflection questionnaires to observe patterns in your feelings. Results are for reference only. Answers stay on your device.
+
+• Crisis resources
+Local crisis hotlines (5 regions) are built into Settings — one tap to dial.
+
+PRIVACY PROMISE
+
+• 100% local: all data and recordings stay on your phone, encrypted with SQLCipher
+• Zero cloud: no servers, no accounts, no tracking
+• Zero ads: no ad SDKs, no third-party analytics
+• Exportable: export JSON backups anytime, or delete everything with one tap
+
+IMPORTANT DISCLAIMER
+
+This app does not provide medical advice, diagnosis, or treatment. MoodDiary is a personal journaling tool and is not a substitute for professional care. If you are in an emergency, please contact local emergency services or a crisis hotline:
+
+• US: 988 (Suicide & Crisis Lifeline)
+• UK: 116 123 (Samaritans)
+• International: https://findahelpline.com
+
+For everyone who needs a little support.

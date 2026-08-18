@@ -1,38 +1,39 @@
-MoodDiary is a private mood journal and vent space. Write down what's on your mind, track your emotions, and see your own progress — all while keeping your data 100% on your phone.
+MoodDiary is more than a mood journal — it's a private vent space where your words stay yours.
 
-Not a medical tool. It cannot replace a doctor's diagnosis or treatment. But it can help you notice patterns in how you feel, day by day.
+Every day has unspoken moments. MoodDiary gives you a quiet corner to:
+• Rate today across 4 dimensions (mood, energy, sleep, stress)
+• Vent freely with voice or text — fully encrypted, on your phone
+• Watch patterns over time and see yourself getting better, one day at a time
 
-KEY FEATURES
+This is not a medical tool. It doesn't diagnose or treat. But it can help you notice how you feel.
 
-• Mood journal
-Rate today across 4 dimensions (mood, energy, sleep, stress). Attach voice notes, influence factors, and optional CBT thought records to untangle your thoughts.
+VENT FIRST
+A completely private space to write or record what's on your mind. No judgment, no cloud, no one watching. Voice notes supported.
 
-• Vent space
-A completely private corner to write what's on your mind. Encrypted and stored only on your device. Voice recording supported.
+MOOD JOURNAL
+Rate today across mood, energy, sleep, and stress. Attach voice notes, influence factors, and optional CBT thought records.
 
-• Worry closure
+WORRY CLOSURE
 Start a worry thread, and record every time it comes back. The day you say "I'm no longer worried", it moves to your memory archive.
 
-• Trends
-Cross-mood, cross-vent trend charts — see yourself getting better, one day at a time.
+TRENDS
+Cross-mood, cross-vent trend charts — see yourself getting better, day by day.
 
-• Self-reflection
+SELF-REFLECTION
 Optional self-reflection questionnaires to observe patterns in your feelings. Results are for reference only. Answers stay on your device.
 
-• Crisis resources
-Local crisis hotlines (5 regions) are built into Settings — one tap to dial.
+CRISIS RESOURCES
+Local crisis hotlines (5 regions) — one tap to dial.
 
-PRIVACY PROMISE
-
+OUR PROMISE
 • 100% local: all data and recordings stay on your phone, encrypted with SQLCipher
 • Zero cloud: no servers, no accounts, no tracking
 • Zero ads: no ad SDKs, no third-party analytics
-• Exportable: export JSON backups anytime, or delete everything with one tap
+• Permanently free: no in-app purchases, ever
+• Exportable: JSON backups anytime, or delete everything with one tap
 
 IMPORTANT DISCLAIMER
-
-This app does not provide medical advice, diagnosis, or treatment. MoodDiary is a personal journaling tool and is not a substitute for professional care. If you are in an emergency, please contact local emergency services or a crisis hotline:
-
+This app does not provide medical advice, diagnosis, or treatment. It is a personal journaling tool. If you are in an emergency, contact local emergency services:
 • US: 988 (Suicide & Crisis Lifeline)
 • UK: 116 123 (Samaritans)
 • International: https://findahelpline.com
