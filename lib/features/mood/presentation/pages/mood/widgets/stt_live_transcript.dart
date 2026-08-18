@@ -10,7 +10,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 class SttLiveTranscript extends StatefulWidget {
   final Stream<String> stream;

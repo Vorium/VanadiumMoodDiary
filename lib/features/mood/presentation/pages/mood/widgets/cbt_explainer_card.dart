@@ -8,7 +8,7 @@
 // - 任一为 null (expanded==null || onToggle==null) → 走内部 _expanded
 // - 两者都给 → 走外部 (parent 控制 state, widget 只是 view)
 import 'package:flutter/material.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 class CbtExplainerCard extends StatefulWidget {
   final String title;

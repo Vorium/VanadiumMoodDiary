@@ -7,7 +7,7 @@
 // 取数: 路由 /tips/:id → PsychologyTipsLibrary.byId, 未知 id 走 error state。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/logic/psychology_tips_library.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/preset_content_l10n.dart';

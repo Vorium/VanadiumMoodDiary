@@ -19,7 +19,7 @@ import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/services/scale_name_l10n.dart';
 import 'package:chroniccare/features/assessment/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_quiz_panel.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_result_panel.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';

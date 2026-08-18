@@ -30,7 +30,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/entities/sleep_entry.dart';
 import 'package:chroniccare/domain/entities/stress_event.dart';

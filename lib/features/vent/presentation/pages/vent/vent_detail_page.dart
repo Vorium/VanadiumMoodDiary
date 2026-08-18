@@ -20,7 +20,7 @@ import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/preset_content_l10n.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';

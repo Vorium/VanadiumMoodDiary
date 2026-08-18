@@ -32,9 +32,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_colors.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/core/theme/app_typography.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// Apple Health "favorites" 风格彩色 metric 模块

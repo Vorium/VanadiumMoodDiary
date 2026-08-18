@@ -10,7 +10,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/services/preset_med_l10n.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';

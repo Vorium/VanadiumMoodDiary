@@ -11,8 +11,7 @@
 // 历史遗留, 现在拆出来后 import 测更顺。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/core/theme/app_colors.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/logic/day_detail.dart';
 
 /// 单条事件行 (public, v0.30 round 95 拆出, 原 _EventRow 私有)

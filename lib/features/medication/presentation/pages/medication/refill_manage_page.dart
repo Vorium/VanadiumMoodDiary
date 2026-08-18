@@ -21,8 +21,7 @@ import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 import 'package:chroniccare/features/medication/domain/entities/medication_entity.dart';
-import 'package:chroniccare/core/theme/app_colors.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';

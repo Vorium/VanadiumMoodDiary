@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// Material 3 主题
 /// v0.5 加 dark() + 暗色适配

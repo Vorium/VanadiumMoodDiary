@@ -11,7 +11,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// 3 步添加用药向导的进度条 (iOS hairline 风格, 高 3pt, 1.5 圆角)
 ///

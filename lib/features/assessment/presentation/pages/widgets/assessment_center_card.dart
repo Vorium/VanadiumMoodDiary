@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/assessment/domain/entities/assessment_entry.dart';
 import 'package:chroniccare/features/assessment/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';

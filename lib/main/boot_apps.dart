@@ -34,7 +34,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chroniccare/core/data/services/database_migration.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 

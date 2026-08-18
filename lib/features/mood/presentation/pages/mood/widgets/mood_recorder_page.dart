@@ -32,7 +32,7 @@ import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/data/feature_flags.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/entities/influence_category.dart';
 import 'package:chroniccare/features/mood/domain/entities/mood_entry_draft.dart';
 import 'package:chroniccare/domain/entities/thought_record_level.dart';

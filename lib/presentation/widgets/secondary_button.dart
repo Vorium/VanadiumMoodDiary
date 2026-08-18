@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// 通用次要按钮（v0.9 重构：抽出共用 widget）
 ///

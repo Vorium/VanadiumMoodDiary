@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 
 /// legal_page 法律文档入口 (用户协议 / 隐私政策 / 敏感数据同意)

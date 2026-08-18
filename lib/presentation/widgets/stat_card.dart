@@ -23,8 +23,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
-import 'package:chroniccare/core/theme/app_typography.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/animations/tween_number.dart';
 
 /// 4 种 StatCard 视觉变体

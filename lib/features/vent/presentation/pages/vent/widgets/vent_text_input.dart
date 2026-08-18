@@ -6,7 +6,7 @@
 // 低耦合：orchestrator 持 controller + watch 字符数变化
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 class VentTextInput extends StatelessWidget {

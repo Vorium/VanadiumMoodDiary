@@ -12,7 +12,7 @@ import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/core/routing/app_router.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/core/theme/app_theme.dart';
 import 'package:chroniccare/core/theme/theme_provider.dart';
 import 'package:chroniccare/presentation/widgets/last_startup_error_banner.dart';

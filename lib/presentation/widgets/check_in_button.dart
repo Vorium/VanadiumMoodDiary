@@ -35,7 +35,7 @@
 import 'package:flutter/material.dart';
 // Apple Health 风格 (spec §3.4.3 spring physics + §4.2 Apple Health giant pill (64pt height, 32pt radius, w700 fontWeight)) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/core/theme/spring.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/animations/tween_number.dart';

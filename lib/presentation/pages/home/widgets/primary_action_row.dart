@@ -17,7 +17,7 @@
 // - 4 个 onXxxTap 回调: 情绪回顾 / 日常追踪 / 心理技巧 / 更多。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/home/widgets/more_entry_sheet.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';

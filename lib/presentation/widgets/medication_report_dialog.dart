@@ -7,7 +7,7 @@ import 'package:chroniccare/core/data/services/medication_report_pdf.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';

@@ -10,7 +10,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_withdraw_choice.dart';
 
 /// vent 撤回 3 选 1 dialog 内部选项 (立即删除 / 加密封存)

@@ -12,8 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/theme/app_colors.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/medication_pill_icon.dart';
 import 'package:chroniccare/presentation/pages/medication/widgets/edit_medication_dialog.dart';

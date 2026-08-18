@@ -13,7 +13,7 @@
 // 抽 1 个 widget 接 [ChipBadgeTone] enum,集中配色。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// 小 chip 标签
 ///

@@ -26,7 +26,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/logic/medication_report.dart';
 
 /// v0.26 round 57: PDF 排版纯函数集合

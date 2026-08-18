@@ -8,7 +8,7 @@
 // 公开 VentEntryList / VentEntryListState 命名, 跟项目 widget 集中器
 // 模式一致 (VentEntryCell / VentHintHelper R121 P1-2 已公开化)。
 import 'package:chroniccare/core/shared/swallow_error.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/vent/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';

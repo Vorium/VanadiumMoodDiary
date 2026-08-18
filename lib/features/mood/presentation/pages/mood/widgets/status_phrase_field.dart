@@ -13,7 +13,7 @@
 //   score 后已选预设短语整组不可见且无法取消), tap → onChanged(null)
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/logic/status_phrase_library.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/preset_content_l10n.dart';

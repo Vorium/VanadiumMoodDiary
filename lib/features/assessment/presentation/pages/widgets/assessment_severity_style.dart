@@ -14,7 +14,7 @@
 // 低耦合：被 SummaryStrip / ChartCard / HistoryItem / SeverityChip 共用
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/assessment/domain/logic/assessment_comparison.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 

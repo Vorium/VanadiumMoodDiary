@@ -15,7 +15,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// 3 步添加用药向导的底部 prev/next 按钮 footer

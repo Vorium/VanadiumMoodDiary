@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_legal_dialog.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_consent_tile.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/legal_doc_tile.dart';

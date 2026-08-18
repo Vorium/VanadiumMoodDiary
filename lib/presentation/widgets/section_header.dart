@@ -16,7 +16,7 @@
 import 'package:flutter/material.dart';
 // Apple Health 风格 (spec §4.5 section header (13pt w500 ALL CAPS letter-spacing 0.6 textHint)) [R32 集中器注释, 防后续误改为 Material 3 风格]
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 
 /// section 标题文字

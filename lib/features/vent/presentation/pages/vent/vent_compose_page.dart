@@ -41,7 +41,7 @@ import 'package:chroniccare/core/data/feature_flags.dart';
 import 'package:chroniccare/features/vent/data/services/vent_audio_storage.dart';
 import 'package:chroniccare/core/shared/error_sinks.dart';
 import 'package:chroniccare/core/shared/json_codec.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/audio_lifecycle.dart';
 import 'package:chroniccare/presentation/widgets/page_scaffold.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';

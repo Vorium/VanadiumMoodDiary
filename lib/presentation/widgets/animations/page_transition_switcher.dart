@@ -12,7 +12,7 @@
 // 等需要 vertical slide + fade 的场景也能用集中器,而不是 inline
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// 视图切换 (list/calendar, quiz/result, step1/step2...) 用 fade transition
 ///

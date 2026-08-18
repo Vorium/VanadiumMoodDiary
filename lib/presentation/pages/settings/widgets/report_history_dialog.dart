@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/domain/entities/report_history_entity.dart';
 import 'package:chroniccare/core/shared/formatters.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/error_state.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';

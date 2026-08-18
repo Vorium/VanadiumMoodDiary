@@ -26,7 +26,7 @@ import 'package:printing/printing.dart';
 import 'package:chroniccare/core/data/services/cbt_thought_record_pdf.dart'
     show CbtThoughtRecordPdf, DateRange;
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';
 import 'package:chroniccare/presentation/services/cbt_pdf_l10n.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';

@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/logic/mood_period_aggregator.dart';
 import 'package:chroniccare/domain/logic/mood_review_aggregator.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';

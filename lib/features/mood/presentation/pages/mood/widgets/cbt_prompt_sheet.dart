@@ -5,7 +5,7 @@
 // 频度: 5/7 栏 wizard 每步都可能调, tens/day
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 class CbtPromptSheet {

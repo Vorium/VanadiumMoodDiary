@@ -13,7 +13,7 @@
 // 失联通信业务暂停定版, step 1 只剩姓名输入。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';

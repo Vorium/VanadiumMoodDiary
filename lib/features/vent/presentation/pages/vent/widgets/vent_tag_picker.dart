@@ -1,6 +1,6 @@
 // lib/presentation/pages/vent/widgets/vent_tag_picker.dart
 import 'package:flutter/material.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/logic/vent_tag_library.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/preset_content_l10n.dart';

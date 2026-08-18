@@ -31,7 +31,7 @@ import 'package:chroniccare/core/routing/app_route_medication.dart';
 import 'package:chroniccare/core/routing/app_route_mood_list.dart';
 import 'package:chroniccare/core/routing/app_route_tips.dart';
 import 'package:chroniccare/core/routing/app_route_worry.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// v0.26 round 57: 路由 facade — 3 transition helper + 14 route 委托 + errorBuilder

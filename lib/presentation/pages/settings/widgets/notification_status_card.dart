@@ -22,8 +22,7 @@ import 'package:permission_handler/permission_handler.dart'
     show openAppSettings;
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
-import 'package:chroniccare/core/theme/app_colors.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';

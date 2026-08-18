@@ -8,7 +8,7 @@
 // v0.32 R112 (EM-02/AH-04, spec §5.7): Card → AppleListSection
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/assessment/domain/logic/assessment_record.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/assessment/widgets/assessment_severity_style.dart';

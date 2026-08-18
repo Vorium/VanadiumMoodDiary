@@ -12,7 +12,7 @@
 //   inline AnimatedSwitcher + 自定义 transitionBuilder (40+ 行)
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_widgets.dart';
 import 'package:chroniccare/presentation/widgets/animations/animations.dart';

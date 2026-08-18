@@ -10,7 +10,7 @@
 // 剩 _EntryList (~180L) 待 R121 续抽
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
 import 'package:chroniccare/features/vent/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';

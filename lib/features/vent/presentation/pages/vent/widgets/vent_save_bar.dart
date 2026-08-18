@@ -6,7 +6,7 @@
 // 低耦合：orchestrator 传 isSaving + 2 个 callback
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';

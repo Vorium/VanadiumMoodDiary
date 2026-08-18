@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/core/shared/formatters.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/domain/entities/anxiety_agitation_entry.dart';
 import 'package:chroniccare/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/domain/entities/sleep_entry.dart';

@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';
 
 /// v0.18 round 14 (P1-2): 通用空态 widget

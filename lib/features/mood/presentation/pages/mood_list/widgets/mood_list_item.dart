@@ -14,7 +14,7 @@
 // ListTile 在 debug 断言 "ink splashes may be invisible" → 改平铺 cell。
 import 'package:flutter/material.dart';
 import 'package:chroniccare/core/shared/mood_visual.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/mood/domain/entities/mood_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/preset_content_l10n.dart';

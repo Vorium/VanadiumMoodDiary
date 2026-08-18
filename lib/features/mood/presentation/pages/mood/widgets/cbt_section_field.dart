@@ -8,7 +8,7 @@
 // v0.29 round 84 (fix): 改 StatefulWidget + initState/dispose,
 // 避免父 setState 重建时丢用户输入 + 泄漏 controller.
 import 'package:flutter/material.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/mood/widgets/cbt_prompt_sheet.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';

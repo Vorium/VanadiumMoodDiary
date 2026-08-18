@@ -11,7 +11,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// Dismissible 左滑删除时的"红底 + delete icon" 背景
 ///

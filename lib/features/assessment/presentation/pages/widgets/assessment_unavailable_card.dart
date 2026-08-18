@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 不可用量表卡片 (NSESSS / CRDPSS — 收费 / 内部, 法务审核中)

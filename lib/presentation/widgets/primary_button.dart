@@ -31,7 +31,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/press_feedback.dart';
 
 /// v0.31 round 5 (Apple Health redesign · Phase 2 Task 2.1): 主操作按钮 (3 variant)

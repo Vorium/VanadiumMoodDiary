@@ -8,7 +8,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_colors.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// 6 种药物颜色 (R32 集中器, 转发到 AppColors.kMedicationPillColors)
 /// 保留为 backward-compat alias (caller: add_medication_page.dart:467)

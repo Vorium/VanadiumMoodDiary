@@ -32,7 +32,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 
 /// Apple Health / iOS 群组列表 (insetGrouped) 风格章节

@@ -20,7 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:chroniccare/core/data/services/data_export_service.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/providers/service_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/app_snack_bar.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/domain/entities/consent_artifact.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 
 /// v0.27 round 62 (P0-2 修复): 共享 ConsentDialog 组件

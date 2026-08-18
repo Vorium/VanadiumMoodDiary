@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// v0.17 round 14 (P1-7): 集中 SnackBar 文案 + 时长

@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_add_dialog.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/treatment_list.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';

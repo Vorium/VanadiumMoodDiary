@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// 通用 loading 占位（v0.17 round 13 P0-4）
 

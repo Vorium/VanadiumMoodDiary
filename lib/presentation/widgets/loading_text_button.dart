@@ -14,7 +14,7 @@
 // (icon 位置也在 loading 时切 spinner)
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 
 /// "保存中／提交中" 状态的 button

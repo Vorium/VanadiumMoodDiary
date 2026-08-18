@@ -23,7 +23,7 @@
 //   snackbar), 庆祝动画 / 上次心情链接是产品新功能, 不在本 god-split 范围。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';
 import 'package:chroniccare/presentation/widgets/primary_button.dart';

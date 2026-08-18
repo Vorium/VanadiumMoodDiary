@@ -19,7 +19,7 @@
 // 死参数; 页边距统一由 PageScaffold 负责 20px, 同 AppleListSection 裁决)。
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/chip_badge.dart';
 
 class LazyAppleListSection extends StatelessWidget {

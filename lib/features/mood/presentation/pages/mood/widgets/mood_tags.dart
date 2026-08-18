@@ -9,7 +9,7 @@
 // - l10n 标签文本在子 widget 内取, 靠近显示位置
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 
 /// 6 个预设情绪标签的多选

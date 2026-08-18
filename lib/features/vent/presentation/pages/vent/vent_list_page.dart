@@ -16,11 +16,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/shared/json_codec.dart';
-import 'package:chroniccare/core/theme/app_colors.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/vent/domain/entities/vent_entry_entity.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/l10n/preset_content_l10n.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_entry_cell.dart';
 import 'package:chroniccare/presentation/pages/vent/widgets/vent_entry_list.dart';
 import 'package:chroniccare/presentation/widgets/loading_skeleton.dart';

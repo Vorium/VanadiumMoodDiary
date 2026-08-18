@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/loading_text_button.dart';
 
 /// Dialog 底部 Cancel/Confirm 按钮行

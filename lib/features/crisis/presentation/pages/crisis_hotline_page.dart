@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/features/crisis/data/logic/hotline_regions.dart';
 import 'package:chroniccare/features/crisis/domain/entities/hotline_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';

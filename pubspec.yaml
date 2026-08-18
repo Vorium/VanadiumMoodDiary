@@ -14,6 +14,7 @@ environment:
 workspace:
   - packages/chroniccare_core
   - packages/chroniccare_features_mood
+  - packages/chroniccare_theme
 
 dependencies:
   flutter:
@@ -21,11 +22,13 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # 跨 feature 共享 (R127 stage3)
+  # 跨 feature 共享 (R127 stage3 + R128d 阶段 5)
   chroniccare_core:
     path: packages/chroniccare_core
   chroniccare_features_mood:
     path: packages/chroniccare_features_mood
+  chroniccare_theme:
+    path: packages/chroniccare_theme
 
   # 状态管理
   flutter_riverpod: ^3.3.2

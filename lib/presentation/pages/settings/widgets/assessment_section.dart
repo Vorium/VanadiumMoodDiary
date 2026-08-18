@@ -15,7 +15,7 @@ import 'package:chroniccare/domain/logic/assessment_scale.dart';
 import 'package:chroniccare/domain/logic/scale_registry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/services/scale_name_l10n.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';
 import 'package:chroniccare/presentation/widgets/apple_list_section.dart';
 import 'package:chroniccare/presentation/services/legal_version.dart';

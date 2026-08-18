@@ -45,7 +45,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_celebration_controller.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_deep_link_handler.dart';
 import 'package:chroniccare/presentation/providers/check_in_notifier.dart';

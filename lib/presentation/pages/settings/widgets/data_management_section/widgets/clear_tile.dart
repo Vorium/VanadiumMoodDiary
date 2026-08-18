@@ -20,7 +20,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
 import 'package:chroniccare/presentation/providers/vent_providers.dart';
 import 'package:chroniccare/presentation/widgets/app_list_tile.dart';

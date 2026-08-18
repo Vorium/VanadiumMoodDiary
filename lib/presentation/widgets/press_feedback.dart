@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/widgets/feedback.dart' show Haptics;
 
 /// v0.18 round 14 (P0-8): 按钮按下时给 scale 反馈 (emil 必备)

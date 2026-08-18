@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
-import 'package:chroniccare/core/theme/app_tokens.dart';
+import 'package:chroniccare_theme/chroniccare_theme.dart';
 
 /// 副信息：最后吃药时间 / 下次提醒
 ///
