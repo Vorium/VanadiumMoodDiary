@@ -81,7 +81,7 @@ def ios_appicons(master: Image.Image) -> None:
 
 def launch_images(master: Image.Image) -> None:
     out = os.path.join(ROOT, 'ios/Runner/Assets.xcassets/LaunchImage.imageset')
-    for scale, w, h in [(1, 320, 568), (2, 640, 1136), (3, 960, 1704)]:
+    for scale, w, h in [(1, 750, 1334), (2, 1242, 2208), (3, 1242, 2688)]:
         bg = Image.new('RGB', (w, h), WHITE)
         iw = int(w * 0.30)
         icon = master.resize((iw, iw), Image.LANCZOS)
