@@ -155,6 +155,44 @@ def android_adaptive_icon(master: Image.Image) -> None:
     print(f'  Android adaptive icon (foreground + background)')
 
 
+def cn_domestic_icons(master: Image.Image) -> None:
+    """8 CN domestic platform icon variants with platform-specific safe zones."""
+    specs = {
+        # platform: (filename, transparent_border_px, corner_radius_px)
+        'huawei': ('huawei-icon-512.png', 5, 0),       # 5px border
+        'xiaomi': ('xiaomi-icon-512.png', 41, 0),       # 8% safe zone
+        'oppo': ('oppo-icon-512.png', 51, 0),           # 10% safe zone
+        'vivo': ('vivo-icon-512.png', 0, 256),          # circular mask
+        'meizu': ('meizu-icon-512.png', 0, 0),          # square, no mask
+        'tencent': ('tencent-icon-512.png', 0, 0),      # square, no mask
+        'qihoo': ('qihoo-icon-512.png', 0, 25),         # 25px corner radius
+        'baidu': ('baidu-icon-512.png', 0, 0),          # square, no mask
+    }
+    out_dir = os.path.join(ROOT, 'assets/brand/cn')
+    os.makedirs(out_dir, exist_ok=True)
+    for platform, (fname, border, radius) in specs.items():
+        canvas_size = 512
+        # Draw with border
+        if border > 0:
+            canvas = Image.new('RGB', (canvas_size, canvas_size), (255, 255, 255))
+            icon_size = canvas_size - 2 * border
+            icon = master.resize((icon_size, icon_size), Image.LANCZOS)
+            canvas.paste(icon, (border, border))
+        else:
+            canvas = master.resize((canvas_size, canvas_size), Image.LANCZOS)
+        # Apply corner radius mask
+        if radius > 0:
+            mask = Image.new('L', (canvas_size, canvas_size), 0)
+            if radius >= 256:  # circular
+                ImageDraw.Draw(mask).ellipse([0, 0, canvas_size - 1, canvas_size - 1], fill=255)
+            else:
+                ImageDraw.Draw(mask).rounded_rectangle(
+                    [0, 0, canvas_size - 1, canvas_size - 1], radius=radius, fill=255)
+            canvas.putalpha(mask)
+        canvas.save(os.path.join(out_dir, fname))
+        print(f'  CN {platform}/{fname}')
+
+
 def main() -> None:
     print('[1/8] Generating 1024×1024 master ...')
     master = master_icon()
@@ -170,7 +208,8 @@ def main() -> None:
     print('[6/8] Android adaptive icon ...')
     android_adaptive_icon(master)
     print('[7/8] Feature graphic (covered in generate_feature_graphic.py) ...')
-    print('[8/8] 8 CN domestic icons (covered in cn_domestic_icons() task) ...')
+    print('[8/8] 8 CN domestic icon variants ...')
+    cn_domestic_icons(master)
     print('[OK] All icon variants generated')
 
 
