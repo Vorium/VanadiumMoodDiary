@@ -3,8 +3,8 @@
 // 灰色 + 锁 icon + "需法务／临床审核" badge
 // 走 surfaceVariant 50% opacity (M3 兼容 dark/light)
 //
-// 不在 scale_registry.allScales() 里 (TODO 状态), 卡片独立 widget 渲染,
-// UI 提示用户"暂未开放"。
+// 不在 scale_registry.allScales() 里 (永久 unavailable — R117 P2-6 决议
+// NSESSS/CRDPSS 永久关闭), 卡片独立 widget 渲染, UI 提示用户"暂未开放"。
 
 import 'package:flutter/material.dart';
 
