@@ -28,6 +28,7 @@ import 'package:chroniccare/domain/entities/weight_entry.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/mood_period_aggregator_chart.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/today_summary_header.dart';
+import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_pinned_section.dart';
 import 'package:chroniccare/presentation/pages/daily_tracking/widgets/tracking_item_card.dart';
 import 'package:chroniccare/presentation/providers/daily_tracking_providers.dart';
 import 'package:chroniccare/presentation/providers/shared_providers.dart';

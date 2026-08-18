@@ -203,6 +203,7 @@ class AppTokens {
   static const EdgeInsets edgeInsetsMd = AppSpacing.edgeInsetsMd;
   static const EdgeInsets edgeInsetsLg = AppSpacing.edgeInsetsLg;
   static const EdgeInsets edgeInsetsXl = AppSpacing.edgeInsetsXl;
+  static const EdgeInsets edgeInsetsHero = AppSpacing.edgeInsetsHero;
   static const double buttonHeight = AppSpacing.buttonHeight;
   static const double buttonHeightSmall = AppSpacing.buttonHeightSmall;
   static const double minTapArea = AppSpacing.minTapArea;
