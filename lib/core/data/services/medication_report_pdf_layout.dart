@@ -1,4 +1,4 @@
-/// 用药报告 PDF 排版 (PDF 字体特殊, 不修真 R95 lock-in)
+/// 用药报告 PDF 排版 (PDF 字体特殊, 不修正 R95 lock-in)
 ///
 /// **R126 续 step 7 (1.1.0+179)**: 实际定义已迁到
 /// `lib/features/medication/data/services/medication_report_pdf_layout.dart`。

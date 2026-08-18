@@ -11,7 +11,7 @@
 //  - features/{name}/data/logic = feature 内部组合 (e.g. crisis hotline
 //    5 region 模板, mood audio service facade), 用 l10n 但 0 flutter widgets)
 //
-// 修真: buildHotlineGroups(AppLocalizations l10n) 接收 l10n 实例,
+// 修正: buildHotlineGroups(AppLocalizations l10n) 接收 l10n 实例,
 // 返 List<RegionGroup> 给 page 渲染。5 region 模板跟 R92 一致。
 
 import 'package:chroniccare/l10n/app_localizations.dart';

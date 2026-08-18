@@ -113,7 +113,7 @@ assessment_chart_card / medication_page (4 tile) / app_colors + app_tokens
 
 1. **lock-in EdgeInsets 阈值** (见上): 需主 agent 拍板阈值数字; 我名下
    +17 全部是 `EdgeInsets.zero` (ALS margin, 既有样板模式) + 2 处
-   `EdgeInsets.only(top/bottom)` — 无 magic number, 无"修真回退"。
+   `EdgeInsets.only(top/bottom)` — 无 magic number, 无"修正回退"。
 2. **ALS doc "ListTile OK" 与 debug 断言矛盾** — apple_list_section.dart
    (非我所有权) 文档注释需修正, 否则后续 agent 会再踩。
 3. **TrackingItemCard 内 Card 未清** (决策 3) — daily_tracking 视觉上

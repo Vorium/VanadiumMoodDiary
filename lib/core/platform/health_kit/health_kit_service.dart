@@ -6,7 +6,7 @@
 //   flag=false 默认走 NoOp, 5-6 月后真接时只换 impl + 加 health_kit pub
 //   依赖 + iOS HealthKit entitlement
 //
-// 修真模式 (跟 R124 5 厂商 push facade 完整一致):
+// 修正模式 (跟 R124 5 厂商 push facade 完整一致):
 // - 1 个 abstract HealthKitChannel (4 method: isAvailable / authorize /
 //   writeMindfulSession / readMindfulSession)
 // - 1 个 NoOpHealthKitChannel 默认实现 (未接 SDK 时早返 false / null)
@@ -17,10 +17,10 @@
 // 1. pubspec.yaml 加 `health_kit: ^4.x` (Apple HealthKit Flutter 插件)
 // 2. iOS Runner.entitlements 加 `com.apple.developer.healthkit: true`
 // 3. iOS Info.plist 加 `NSHealthShareUsageDescription` + `NSHealthUpdateUsageDescription`
-// 4. 修真 PrivacyInfo.xcprivacy 加 NSPrivacyAccessedAPITypesUserDefaults (read-only)
+// 4. 修正 PrivacyInfo.xcprivacy 加 NSPrivacyAccessedAPITypesUserDefaults (read-only)
 // 5. 真接 impl: AppleHealthKitChannel implements HealthKitChannel (走 health_kit
 //    插件的 requestAuthorization + writeData + readData)
-// 6. 修真 check_apple_health_claim.py (5.1.3 拒审防护 → 改成 accept health_kit import)
+// 6. 修正 check_apple_health_claim.py (5.1.3 拒审防护 → 改成 accept health_kit import)
 // 7. flag 翻 true (5 厂商 push 审核 1-2 月 + HealthKit 审核 1 周同步翻)
 //
 // 4 层架构纯度: 0 flutter / 0 drift / 0 data / 0 presentation, 本文件是

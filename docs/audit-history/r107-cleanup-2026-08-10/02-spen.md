@@ -46,7 +46,7 @@
 - **`setup_page.dart` 517 → 25 + `setup_page_state.dart` 480 行** (R95 sub-spec 6 commit 3)
 - **`scale_translations_l10n.dart` 785 → 24 + `static_scale_translations_l10n.dart` 760 行** (R95 sub-spec 6 commit 2)
 - **`medication_calendar_page` 642 → 209 行** (R93 task 1)
-- **`mood_period_aggregator` 集成遗留 fail 修** (R95 sub-spec 6 commit 1, 修真 +7 行加 `now` 参数)
+- **`mood_period_aggregator` 集成遗留 fail 修** (R95 sub-spec 6 commit 1, 修正 +7 行加 `now` 参数)
 
 ### 1.3 守门员体系 (18 脚本, 16 绿 + 2 已知 FAIL)
 - `check_coverage.py` (R95 sub-spec 6 新增, 5 层阈值 + 3 critical file + lcov 解析)
@@ -102,7 +102,7 @@
 | 13 | `lib/presentation/providers/tracking_config_provider.dart:90-128,23-29` | `_save` fire-and-forget (快速连续 toggle 可丢写); `get(id)` 未查 id 静默返空, mood 配置丢失 (R105 N18) | 正确性 | 简单 | P3 | 合并写 + 队列化; 未查 id 走 `kDefaultTrackingItems` 反查, 找不到返空 config |
 | 14 | `lib/presentation/pages/medication/medication_detail_page.dart:181` | R105 N7 提的编辑按钮 `onPressed: () {}` no-op 仍未挂 (本审计 grep 未匹配, 实际可能改了) | 半成品 | 中 | P2 | 验证现状; 接 `EditMedicationDialog` 或先隐藏按钮 (no-op 比没按钮更糟) |
 | **R101+ 新发现** ||||||
-| 15 | `lib/presentation/pages/medication/medication_detail_page.dart:415` + `medication_page.dart` | R105 N1 提的"列表/详情页同款 TODO" 仍存在, `colorIndex: 0` TODO 未改取实体值 | 正确性 | 简单 | **P1** | 跟 N1 一起, 修真 2 处实体读取 |
+| 15 | `lib/presentation/pages/medication/medication_detail_page.dart:415` + `medication_page.dart` | R105 N1 提的"列表/详情页同款 TODO" 仍存在, `colorIndex: 0` TODO 未改取实体值 | 正确性 | 简单 | **P1** | 跟 N1 一起, 修正 2 处实体读取 |
 | 16 | `lib/presentation/pages/daily_tracking/widgets/sleep_widgets.dart` (12.7KB) + `weight_widgets.dart` + `anxiety_agitation_widgets.dart` + `social_rhythm_widgets.dart` + `stress_event_widgets.dart` + `treatment_list.dart` + `treatment_add_dialog.dart` (各 10-12KB) | **新增日常追踪模块 7+ widget 各自 god class, 跨 widget 重复 `_formatTime` / `_buildSliderField` / `_buildCategoryChip` 模式** (本批新功能未经 spen 审计) | 架构/DRY | 中 | **P1** | 抽 `daily_tracking_widgets.dart` 公共 helper: `buildSliderField` / `buildCategoryChip` / `formatDuration`; 7 widget 共用 |
 | 17 | `lib/presentation/pages/daily_tracking/daily_tracking_page.dart:55-61,153` | R105 N9 提的 `_isToday` build 内 `DateTime.now()` 未走 `todayProvider`, 跨 midnight 判定 stale (R17 round 4 同款 pattern) | 正确性 | 简单 | P2 | watch `todayProvider` 复用同一 now |
 | 18 | `lib/presentation/pages/daily_tracking/widgets/tracking_item_card.dart:152-235` + `tracking_customize_page.dart:175-207` | R105 N12 提的 `_getLocalizedName` (152-235) + `_getCategoryLabel` (175-207) 两个 switch 重复, `category→label/icon` 映射硬落 | 架构/DRY | 简单 | P2 | 抽 `tracking_item_config_ext.dart` 统一 `nameKey/categoryKey → l10n` 映射 |
@@ -189,7 +189,7 @@
 | 优先级 | 任务 | ROI | 估时 |
 |--------|------|-----|------|
 | P1 | `daily_tracking_widgets.dart` 公共 helper 抽离 (7 widget 减 30 行) | 高 | 2-3d |
-| P1 | R105 N1 修真 (`notes` + 2 处列表/详情) | 高 | 1d |
+| P1 | R105 N1 修正 (`notes` + 2 处列表/详情) | 高 | 1d |
 | P1 | R105 N3 修守门员 FAIL (42 orphan + 16 zh_hant) | 中 | 1-2d |
 | P1 | R105 N15 chips i18n 接线 (25 个 influenceFactor* ARB key) | 中 | 2d |
 | P1 | R101+ N15 列表/详情 `colorIndex: 0` TODO | 高 | 1d |
@@ -304,7 +304,7 @@
 | # | 任务 | ROI | 估时 | 优先级 |
 |---|------|-----|------|--------|
 | 1 | **修 2 守门员 FAIL** (orphan 42 + zh_hant 16) | 中 | 1-2d | P1 |
-| 2 | **R105 N1 修真** (notes + 列表/详情 colorIndex: 0) | 高 | 1d | P1 |
+| 2 | **R105 N1 修正** (notes + 列表/详情 colorIndex: 0) | 高 | 1d | P1 |
 | 3 | **daily_tracking 7 widget 公共 helper 抽离** | 高 | 2-3d | P1 |
 | 4 | **R105 N15 chips i18n 接线** (25 influenceFactor* ARB key + 删 domain 硬编) | 中 | 2d | P1 |
 | 5 | **R105 N14 `Random() → Random.secure()`** | 高 | 30min | P2 |

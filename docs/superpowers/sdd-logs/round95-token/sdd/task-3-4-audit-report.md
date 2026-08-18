@@ -110,9 +110,9 @@
 
 ---
 
-## 4. 修真策略 (stale audit 模式)
+## 4. 修正策略 (stale audit 模式)
 
-### 4.1 修真原则
+### 4.1 修正原则
 
 1. **完美等价替换**: color + fontSize 都对应集中器 → 改 textStyleXxx
 2. **半 token 优化**: 现是 `TextStyle(fontSize: AppTokens.fontSizeCaption, color: AppTokens.textHintColor(c))` → 改 `AppTokens.textStyleCaptionHint(c)` (有现成集中器)
@@ -148,7 +148,7 @@
 
 ## 5. 守门员要求
 
-修真后必保:
+修正后必保:
 1. `flutter analyze` 0 error
 2. `flutter test` 全过 (1780 baseline + 估 30+ lock-in test)
 3. `dart scripts/check_all.dart` 4 层架构纯度
@@ -163,4 +163,4 @@
 R95 报告数字准确 (差 1-3 是 grep 模式差异), 无低估。stale audit 模式处理:
 - **加 lock-in test** (估 +30) 验证 50+ 真 magic 残留修后改用 `AppTokens.xxx` 引用
 - 验证 PDF 特殊 + 集中器自身保留
-- 修真后 grep 验 `TextStyle(` 总数从 220 减到估 100 (业务 50-100 处), EdgeInsets 从 205 减到估 100, Duration 从 95 减到估 50
+- 修正后 grep 验 `TextStyle(` 总数从 220 减到估 100 (业务 50-100 处), EdgeInsets 从 205 减到估 100, Duration 从 95 减到估 50

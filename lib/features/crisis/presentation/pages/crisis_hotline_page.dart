@@ -13,7 +13,7 @@
 // 频度: 极低 (用户遇到危机才点, rare), 走 emil rare 频度 — slide-up 路由 +
 // AppTokens.durSlow 慢动画, 鼓励用户停下思考, 不催赶。
 //
-// 修真 (R128b 抽 public + logic 复用):
+// 修正 (R128b 抽 public + logic 复用):
 // - _HotlineEntry (private) → HotlineEntry (public, features/crisis/domain/entities/)
 // - _RegionGroup (private) → RegionGroup (public, 同上)
 // - 5 region inline list → buildHotlineGroups(l10n) (features/crisis/data/logic/)

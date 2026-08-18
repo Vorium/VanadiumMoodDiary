@@ -46,7 +46,7 @@
 | **sub-spec 2** | task 8 + 10 + 25 + 26 + 9-audit | 6 | 1733 | 4 stale audit lock-in, 修 4 半成品 widget, 删 email_preview |
 | **sub-spec 3** | task 9 P0 硬编码中文 → ARB | 1 | 1770 | 37 lock-in tests (R65/R78/R90/R23/R39/R57 已加 188 ARB key) |
 | **sub-spec 4** | task 2/5/6/7 拆 4 god page | 5 | 1780 | 4 god page 2943→661 行 (-78% 主壳减肥) |
-| **sub-spec 5** | task 3-4 token 化 | 6 | 1810 | 102+ 处修真, 保留 220+ 半 token + 12 PDF + 集中器自身 |
+| **sub-spec 5** | task 3-4 token 化 | 6 | 1810 | 102+ 处修正, 保留 220+ 半 token + 12 PDF + 集中器自身 |
 | **sub-spec 6** | pre-existing fail + god widget + 集成测试 + coverage | 6 | 1951 | +171 tests, 18 守门员, domain 73.8% / data 47.0% |
 | **sub-spec 7** | task 30/31/32/53/54/55 + R96 留待 3 fail | 13 | 2008 | 13 new ARB keys, app_database 注释翻译 1499→0 中文 |
 | **sub-spec 8** | task 17/18/19/45-67 P3 UX | 12 | 2019 | settings_page 261→70 行 (-73%) |
@@ -144,7 +144,7 @@ R95 增量综合审视报告 (00-r95-summary.md) 是基于 R92 baseline 写的, 
 | 2 | task 25 vent_compose dispose await | R72 跨 5 轮未修 | R79 cf3db24 已修过 | R79 修过, R95 加 lock-in test 防御 |
 | 3 | task 26 badge_sync catch swallowError | R76 P3-3 仍未修 | R79 fec978f 已修过 | R79 修过, R95 加 lock-in test 防御 |
 | 4 | task 9 硬编码中文 30+ 处 | 1528 + 580 + 479 = 2587 字符 | 3056 + 2174 + 1543 = 6773 字符 (+162%) | R88-91 增量, R65/R78/R90/R23/R39/R57 已加 188 ARB key |
-| 5 | task 3-4 token 化 488 处 | 488 修真 | 443 业务真 magic + 220+ 半 token 总 663, 保守修 102+ | 保留 220+ 半 token + 12 PDF + 集中器自身 |
+| 5 | task 3-4 token 化 488 处 | 488 修正 | 443 业务真 magic + 220+ 半 token 总 663, 保守修 102+ | 保留 220+ 半 token + 12 PDF + 集中器自身 |
 | 6 | task 6-7 god page 估 642+553 行 | 642 + 553 | 668 + 591 (+26 / +38) | R88-91 增量 |
 
 **元结论**: R95+ audit 应该用 PowerShell + grep 实际代码, 不用历史 baseline。
@@ -269,9 +269,9 @@ R95 实施后, 5 集成测试 (1 → 6, +5) 走 ProviderContainer + 真 in-memor
 | test/ 1672 pass → 2019+ | 1596 | **2019** | +423 (+26.5%) |
 | 守门员数 | 16 | **18** | +2 (check_all.dart + check_coverage) |
 | analyzer error | 0 | **0** | 持平 |
-| TextStyle 字面量 | 158 (估) | **214** | R95 修真 -6, 但 R88-91 增量 66 |
-| EdgeInsets 字面量 | 162 (估) | **131** | R95 修真 -74, R88-91 增量 38 |
-| Duration 字面量 | 50+ (估) | **95** | R95 修真 4, R88-91 增量 41 |
+| TextStyle 字面量 | 158 (估) | **214** | R95 修正 -6, 但 R88-91 增量 66 |
+| EdgeInsets 字面量 | 162 (估) | **131** | R95 修正 -74, R88-91 增量 38 |
+| Duration 字面量 | 50+ (估) | **95** | R95 修正 4, R88-91 增量 41 |
 | catch (_) 静默吞错 | 11+ (估) | **0** (R95 实施后 1-2 处) | R23/R79 已修 + R95 lock-in |
 | 硬编码中文业务 hotspot | 30+ 处 (估) | **0 (P0)** | R65/R78/R90 已加 188 ARB key + R95 lock-in |
 | 集成测试 | 1 | **6** | +5 (R95 sub-spec 6) |

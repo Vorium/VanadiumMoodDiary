@@ -82,7 +82,7 @@
 **Evidence:**
   - 内聚: 4 个新 widget 各自 single responsibility (AppleListSection = iOS 群组列表容器 / AppleHealthTile = 彩色 metric 模块 / Spring = 物理模型 / PrimaryButton 3 variant)
   - 解耦: 4 个新 widget 互不依赖 (AppleListSection 注释明确"不用 SectionHeader 因为 13pt vs 11pt", 独立 _ChipBadge 避免 widget 互依赖)
-  - token 改造走 5 个集中器 (app_colors/spacing/typography/motion/tokens), 改前 22+ 处 magic number 修真到 287 (含 3 metric helper + 7 letterSpacing)
+  - token 改造走 5 个集中器 (app_colors/spacing/typography/motion/tokens), 改前 22+ 处 magic number 修正到 287 (含 3 metric helper + 7 letterSpacing)
   - 11 feature 页面**自动**升级 (0 业务逻辑改动, R7a/R9a/R10a/R11a 全部纯 UI 改造)
 **Result: PASS** (高内聚低耦合 9/10, 唯一扣分: spring.dart 0 caller)
 

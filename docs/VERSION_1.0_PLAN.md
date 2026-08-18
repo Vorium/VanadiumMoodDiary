@@ -769,7 +769,7 @@ $ flutter analyze --no-pub
 | **R95 sub-spec 2** | **task 8 catch + task 10 半成品 + task 25 vent dispose + task 26 badge sync + task 9 audit** | **6 commit, 4 stale audit lock-in tests** |
 | **R95 sub-spec 3** | **task 9 硬编码中文 → ARB (3056+1543 = 4599 字符)** | **1 commit, 37 lock-in tests (R65/R78/R90/R23/R39/R57 已加 188 ARB key)** |
 | **R95 sub-spec 4** | **task 2/5/6/7 拆 4 god page (scale_translations 953 + home_page 731 + trend_calendar 668 + mood_audio_section 591)** | **5 commit, 4 god page 2943→661 行 (-78% 主壳减肥)** |
-| **R95 sub-spec 5** | **task 3-4 token 化 (220 TextStyle + 205 EdgeInsets + 95 Duration)** | **6 commit, 102+ 处修真 + 20 lock-in tests** |
+| **R95 sub-spec 5** | **task 3-4 token 化 (220 TextStyle + 205 EdgeInsets + 95 Duration)** | **6 commit, 102+ 处修正 + 20 lock-in tests** |
 | **R95 sub-spec 6** | **pre-existing fail + god widget + 集成测试 + coverage** | **6 commit, 5 集成测试 (1→6), 18 守门员 (新加 check_coverage.py), coverage 阈值 (domain 73.8% / data 47% / presentation 57.4%)** |
 | **R95 sub-spec 7** | **task 30/31/32/53/54/55 + R96 留待 3 pre-existing fail** | **13 commit, 修 3 pre-existing fail, +57 tests 1951→2008, 13 new ARB keys, app_database 注释 1499→0 中文** |
 | **R95 sub-spec 8** | **task 17/18/19/45-67 P3 UX** | **12 commit, settings 261→70 (-73%), 紧急联系人 5→3 步, 数据导出 5→3 步, Tooltip/chip/visual hint, main.dart mutable static 改 late final** |
@@ -815,9 +815,9 @@ $ flutter analyze --no-pub
 | 600+ 行大文件 (真业务) | 3 (估) | **0** ✅ | **-100%** (R95 拆 6 个) | sub-spec 1+4+6+8 |
 | 守门员数 | 16 | **18** | +2 (check_all.dart + check_coverage) | R95 sub-spec 6 |
 | analyzer error | 0 | **0** | 持平 | — |
-| TextStyle 字面量 | 158 (估) | **214** (实测) | R95 修真 -6, R88-91 增量 66 | sub-spec 5 |
-| EdgeInsets 字面量 | 162 (估) | **131** (实测) | R95 修真 -74, R88-91 增量 38 | sub-spec 5 |
-| Duration 字面量 | 50+ (估) | **95** (实测) | R95 修真 4, R88-91 增量 41 | sub-spec 5 |
+| TextStyle 字面量 | 158 (估) | **214** (实测) | R95 修正 -6, R88-91 增量 66 | sub-spec 5 |
+| EdgeInsets 字面量 | 162 (估) | **131** (实测) | R95 修正 -74, R88-91 增量 38 | sub-spec 5 |
+| Duration 字面量 | 50+ (估) | **95** (实测) | R95 修正 4, R88-91 增量 41 | sub-spec 5 |
 | Curves 字面量 | 50+ (估) | **9** (实测) | R93 大幅减少 (全部 token 化) | — |
 | `catch (_) {` 静默吞错 | 11+ (估) | **0** (实施后 1-2 处) | R23/R79 已修 + R95 lock-in | sub-spec 2 |
 | 硬编码中文业务 hotspot | 30+ 处 (估) | **0 (P0 必修)** | R65/R78/R90 + R95 sub-spec 3/7 锁住 | sub-spec 3+7 |
@@ -844,13 +844,13 @@ $ flutter analyze --no-pub
 | 7 | `lib/presentation/pages/setup/setup_page.dart` | **25** | ✅ R95 sub-spec 6 task 6c (2026-08-07) — 主壳 25 ConsumerStatefulWidget 入口, SetupPageState 480 抽 sub-file |
 | 7b | `lib/presentation/pages/setup/setup_page_state.dart` | **480** | ✅ R95 sub-spec 6 task 6c (2026-08-07) 新建 — SetupPageState public 8 business method + build (跟 R95 sub-spec 4 task 5 拆 home_page_state 同模式) |
 
-### 1.3 token 残留 (R95 实施后实测, 修真 102+ 处, 保留 220+ 半 token + 集中器自身)
+### 1.3 token 残留 (R95 实施后实测, 修正 102+ 处, 保留 220+ 半 token + 集中器自身)
 
-| 类型 | R92 报告 | R93 后实测 | **R95 实施后实测** | 修真 | 主要集中 |
+| 类型 | R92 报告 | R93 后实测 | **R95 实施后实测** | 修正 | 主要集中 |
 |------|----------|----------------|----------------------|------|----------|
-| `TextStyle(...)` 字面量 | 158 | 224 | **214** (修真 -6, lock-in +20 tests) | 5 literal fontSize + 5 完美匹配 textStyleXxx | `app_typography.dart` 18 (token) + `app_theme.dart` 14 (token) + `medication_report_pdf_layout.dart` 12 (PDF 特殊, 保留) |
-| `EdgeInsets.*` 字面量 | 162 | 208 | **131** (修真 -74, lock-in +20 tests) | 18 literal → AppTokens 集中器 + 74+ 半 token → edgeInsetsXxx 简化 | `medication_report_pdf_layout.dart` 12 (PDF 特殊) + `trend_calendar.dart` 10 |
-| `Duration(...)` 字面量 | 50+ | 96 | **95** (修真 4, 业务 timeout 保留) | 3 snackbar 2s → snackBarDurationShort + 1 slide example → durFast | `app_motion.dart` 11 (token) + `app_routes.dart` 6 (token) + `app_spacing.dart` 4 (token) |
+| `TextStyle(...)` 字面量 | 158 | 224 | **214** (修正 -6, lock-in +20 tests) | 5 literal fontSize + 5 完美匹配 textStyleXxx | `app_typography.dart` 18 (token) + `app_theme.dart` 14 (token) + `medication_report_pdf_layout.dart` 12 (PDF 特殊, 保留) |
+| `EdgeInsets.*` 字面量 | 162 | 208 | **131** (修正 -74, lock-in +20 tests) | 18 literal → AppTokens 集中器 + 74+ 半 token → edgeInsetsXxx 简化 | `medication_report_pdf_layout.dart` 12 (PDF 特殊) + `trend_calendar.dart` 10 |
+| `Duration(...)` 字面量 | 50+ | 96 | **95** (修正 4, 业务 timeout 保留) | 3 snackbar 2s → snackBarDurationShort + 1 slide example → durFast | `app_motion.dart` 11 (token) + `app_routes.dart` 6 (token) + `app_spacing.dart` 4 (token) |
 | `Curves.*` 字面量 | 50+ | 9 | **9** (R93 已 token) | 0 | 全部在 token 层 ✅ |
 | `catch (_) {` 静默吞错 | 11+ | 10 | **0** (R23/R79 已修 + R95 lock-in +16+5+3 tests) | 0 业务改动 | `swallow_error.dart` 集中器自身 1 处保留 |
 
@@ -881,8 +881,8 @@ $ flutter analyze --no-pub
 |------|------|------|------|------|------|
 | **R95 task 1** | ✅ 拆 `data_management_section.dart` 606→49 行 → 6 sub-tile + 1 export_dialog (R95 sub-spec 1, 2026-08-06) | 底层 (god section) | L | 1-2 周 | — |
 | **R95 task 2** | ✅ 拆 `scale_translations.dart` 953 → 2 文件 (abstract 200 + StaticScaleTranslations 753, R95 sub-spec 4, 2026-08-07) | 底层 (god service) + i18n | L | 2-3 周 | — |
-| **R95 task 3** | ✅ 224 TextStyle + 208 EdgeInsets 集中器化 (R95 sub-spec 5 task 3-4, 2026-08-07, 加 5 EdgeInsets helper + 修真 28 真 magic + 简化 74+ 半 token + 20 lock-in test, baseline 1780 → 1800 pass) | 底层 (token 化) | L | 1-2 周 | — |
-| **R95 task 4** | ✅ 96 Duration 集中器化 (R95 sub-spec 5 task 3-4, 2026-08-07, 修真 3 snackbar + 1 slide example, 业务 timeout 5s/100ms 保留) | 底层 (token 化) | L | 1-2 周 | task 3 |
+| **R95 task 3** | ✅ 224 TextStyle + 208 EdgeInsets 集中器化 (R95 sub-spec 5 task 3-4, 2026-08-07, 加 5 EdgeInsets helper + 修正 28 真 magic + 简化 74+ 半 token + 20 lock-in test, baseline 1780 → 1800 pass) | 底层 (token 化) | L | 1-2 周 | — |
+| **R95 task 4** | ✅ 96 Duration 集中器化 (R95 sub-spec 5 task 3-4, 2026-08-07, 修正 3 snackbar + 1 slide example, 业务 timeout 5s/100ms 保留) | 底层 (token 化) | L | 1-2 周 | task 3 |
 | **R95 task 5** | ✅ 拆 `home_page.dart` 731 → 2 文件 (主壳 124 + state 650, R95 sub-spec 4, 2026-08-07) | 底层 (god page) | XL | 1-2 周 | — |
 | **R95 task 6** | ✅ 拆 `trend_calendar.dart` 668 → 3 文件 (CalendarView 281 + DayDetailCard 335 + EventRow 104, R95 sub-spec 4, 2026-08-07) | 底层 (god page) | XL | 1-2 周 | — |
 | **R95 task 7** | ✅ 拆 `mood_audio_section.dart` 591 → 3 文件 (主壳 36 re-export + types 68 + recorder 535, R95 sub-spec 4, 2026-08-07) | 底层 (god widget) | L | 1-2 周 | — |
@@ -1037,7 +1037,7 @@ $ flutter analyze --no-pub
 | 5 | EmailService 真接 SendGrid | spzh / AppStore / GooglePlay | L | 1-2 周 | ⏸️ 等 API key (task 15) |
 | 6 | 域名 + 邮箱注册 | spzh / AppStore / GooglePlay | S-M | 1-2d | ⏸️ 留 R96+ (task 40/41) |
 | 8 | 拆 6 个 god page (data_mgmt / scale / scale_l10n / home / trend / mood_audio + setup + settings) | emil / spen / flutter-spec | L-XL | 6-9 周 | ✅ **R95 sub-spec 1+4+6+8** 跑完 (8 god widget 全拆) |
-| 9 | 224 TextStyle + 208 EdgeInsets 集中器化 | emil / flutter-spec | L | 1-2 周 | ✅ **R95 sub-spec 5** 跑完 (102+ 处修真 + 20 lock-in tests) |
+| 9 | 224 TextStyle + 208 EdgeInsets 集中器化 | emil / flutter-spec | L | 1-2 周 | ✅ **R95 sub-spec 5** 跑完 (102+ 处修正 + 20 lock-in tests) |
 | 10 | 30+ 硬编码中文 → 走 ARB | spzh / flutter-spec | L | 1-2 周 | ✅ **R95 sub-spec 3+7** 跑完 (P0 全走 ARB + 注释翻译 app_database 1499→0 中文) |
 | 11 | 10 处 catch (_) 静默吞错 → swallowError | spen / flutter-spec | M | 1 周 | ✅ **R95 sub-spec 2** 跑完 (R23 已修 + 16 lock-in tests) |
 | 12 | Android keystore + Play App Signing | GooglePlay / flutter-spec | S | 1-2h | ⏸️ 留 R96+ (task 37) |
@@ -1146,7 +1146,7 @@ $ flutter analyze --no-pub
 | 1 | god page 拆 5 个风险大, 1000+ 行 sub-widget 移动可能引 bug | 中 | 高 | ✅ **R95 已拆 8 个 god widget 跑完, 0 老 test fail** |
 | 2 | 法务过审 ¥45-90k 预算 + 1-2 月时长, 现金流风险 | 中 | 高 | ⏸️ 等付费, R95 持续 (task 20) |
 | 3 | 5 厂商 push SDK 接入 1-2 月审核, 可能失败 1-2 个 | 中 | 高 | ⏸️ 等审核启动, R95 hidden (task 11) |
-| 4 | 224 TextStyle + 208 EdgeInsets 集中器化, 守门员加严可能引 50+ 老 test 失败 | 高 | 中 | ✅ **R95 修真 102+ 处 + 保留 220+ 半 token + 20 lock-in tests, 0 老 test fail** |
+| 4 | 224 TextStyle + 208 EdgeInsets 集中器化, 守门员加严可能引 50+ 老 test 失败 | 高 | 中 | ✅ **R95 修正 102+ 处 + 保留 220+ 半 token + 20 lock-in tests, 0 老 test fail** |
 | 5 | PHQ-9 / GAD-7 临床审核可能 1-2 月 + 多次返工 | 中 | 中 | ⏸️ R95 lock-in 37 tests 锁住, 等临床审核启动 (task 12) |
 | 6 | `mood_period_aggregator` pre-existing fail 修可能引其他 test 失败 | 低 | 中 | ✅ **R95 sub-spec 6 task 6a 修完, 0 老 test fail** |
 | 7 | 主页信息架构重排 emil XL, 可能 2-3 周 | 中 | 中 | ⏸️ 留 R96+ (task 16) |
@@ -1156,7 +1156,7 @@ $ flutter analyze --no-pub
 | 11 | **gen-l10n 误删 ARB key** (AGENTS.md 已知坑) | 中 | 中 | ✅ **R95 sub-spec 3 触发, 加 lock-in test 防御, 误删用 `git checkout HEAD -- lib/l10n/app_*.arb` revert** |
 | 12 | **半成品 widget 删后引 老 test fail** (R95 task 10 删 email_preview 整文件) | 中 | 中 | ✅ **R95 sub-spec 2 task 10 跑 2 老 test 适配, 0 老 test fail** |
 | 13 | **R95 sub-spec 3 task 9 stale audit 模式** (R95 估 30+ 硬编码中文, 实际 0 改动需要) | 高 | 低 | ✅ **R95 task 9 audit 验证数字低估 2-4 倍, 改加 37 lock-in tests 锁住** |
-| 14 | **R95 sub-spec 5 token 化 488 处修真** (实际 102+ 处修) | 高 | 低 | ✅ **R95 务实修真 102+ 处, 保留 220+ 半 token + 12 PDF + 集中器自身, 20 lock-in tests** |
+| 14 | **R95 sub-spec 5 token 化 488 处修正** (实际 102+ 处修) | 高 | 低 | ✅ **R95 务实修正 102+ 处, 保留 220+ 半 token + 12 PDF + 集中器自身, 20 lock-in tests** |
 
 ### 6.2 备选方案 (R95 实施后)
 

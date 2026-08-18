@@ -10,7 +10,7 @@
 // (label + number + optional desc + RegionGroup title 列表), 让
 // data/logic/hotline_regions.dart 5 region 模板复用, 跟 l10n 解耦。
 //
-// R128b 修真: private (_HotlineEntry) → public (HotlineEntry) + RegionGroup
+// R128b 修正: private (_HotlineEntry) → public (HotlineEntry) + RegionGroup
 // 同 public 化 (logic 调用需要构造 List<HotlineEntry> 给 RegionGroup)。
 // (字段全 final, 已是 immutable, 不需要 @immutable 注解, 避免 depend_on_referenced_packages)
 

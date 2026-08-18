@@ -1,6 +1,6 @@
 # R95 sub-spec 5 task 3-4 — token 化集中器化 报告
 
-> **任务**: R95 报告 §6.1-6.3 token 残留修真 (224 TextStyle + 208 EdgeInsets + 96 Duration 中 79 magic 残留)
+> **任务**: R95 报告 §6.1-6.3 token 残留修正 (224 TextStyle + 208 EdgeInsets + 96 Duration 中 79 magic 残留)
 > **模式**: stale audit lock-in (跟 task 8/9/25/26 一致)
 > **完成日期**: 2026-08-07
 > **报告位置**: `docs/superpowers/sdd-logs/round95-token/sdd/task-3-4-report.md`
@@ -9,33 +9,33 @@
 
 ## 1. 实际 commit 数 (估 4-6 commit, 实际 5 commit)
 
-| Commit | 主题 | 修真数 | 改/加 |
+| Commit | 主题 | 修正数 | 改/加 |
 |--------|------|--------|-------|
 | 1 | `task 3-4-audit` | 0 (audit) | + 5 EdgeInsets helper token (AppSpacing.edgeInsetsXs/Sm/Md/Lg/Xl) + facade AppTokens.edgeInsetsXxx + 写 task-3-4-audit-report.md 8KB |
 | 2 | `task 3a+3b` (TextStyle + EdgeInsets 真 magic) | 28 (5 literal fontSize + 5 完美匹配 textStyleXxx + 18 EdgeInsets literal) | 17 文件 |
 | 3 | `task 3b'` (EdgeInsets 半 token 简化) | 74+ (`EdgeInsets.all(AppTokens.spacingXxx)` → `AppTokens.edgeInsetsXxx`) | 53 文件批量 |
-| 4 | `task 4` (Duration 修真) | 4 (3 snackbar 2s → snackBarDurationShort + 1 slide example → durFast) | 3 文件 |
+| 4 | `task 4` (Duration 修正) | 4 (3 snackbar 2s → snackBarDurationShort + 1 slide example → durFast) | 3 文件 |
 | 5 | `task 3-4 lock-in` | 0 (test) | + 20 lock-in test (test/core/theme/app_tokens_lock_in_round95_test.dart 318 行) |
 | 6 | 收尾 (本 commit) | 0 | CHANGELOG + VERSION_1.0_PLAN + task 3-4 report |
 
 ---
 
-## 2. 实际修真数 (估 50+ magic, 实际 102+)
+## 2. 实际修正数 (估 50+ magic, 实际 102+)
 
-| 类型 | R95 baseline | 修真后 | 修真 | 修真方式 |
+| 类型 | R95 baseline | 修正后 | 修正 | 修正方式 |
 |------|-------------|--------|------|----------|
 | `TextStyle(` 全文 | 220 | **214** | -6 | 5 literal fontSize + 5 完美匹配 textStyleXxx (color+fontSize+fontWeight 完美等价) |
 | `EdgeInsets.` 全文 | 205 | **131** | -74 | 18 真 magic literal + 74+ 半 token `EdgeInsets.all(AppTokens.spacingXxx)` → `AppTokens.edgeInsetsXxx` 简化 |
-| `Duration(` 全文 | 95 | **95** | 0 净 | 修真 3 snackbar 2s + 1 slide example; 业务 timeout 5s/100ms/600ms 保留 (业务语义) |
-| `Curves.` 全文 | 9 | **9** | 0 | R93 已 token 化, 0 漂移, 0 修真 |
+| `Duration(` 全文 | 95 | **95** | 0 净 | 修正 3 snackbar 2s + 1 slide example; 业务 timeout 5s/100ms/600ms 保留 (业务语义) |
+| `Curves.` 全文 | 9 | **9** | 0 | R93 已 token 化, 0 漂移, 0 修正 |
 
-**总修真**: 28 真 magic (TextStyle 10 + EdgeInsets 18) + 74+ 半 token 简化 + 4 Duration 修真 = **102+ 处**
+**总修正**: 28 真 magic (TextStyle 10 + EdgeInsets 18) + 74+ 半 token 简化 + 4 Duration 修正 = **102+ 处**
 
 ---
 
 ## 3. 实际 test 数 (估 +30, 实际 +20)
 
-- 修真后 **1800 pass** (baseline 1780 + 20 R95 sub-spec 5 task 3-4 lock-in tests)
+- 修正后 **1800 pass** (baseline 1780 + 20 R95 sub-spec 5 task 3-4 lock-in tests)
 - 2 pre-existing fail (跟 R95 sub-spec 5 task 3-4 无关):
   - `mood_period_aggregator_round91_test` (R91 集成遗留, R95 报告 §3.2 提过)
   - `task10_email_mood_lock_in_round95_test` (R95 sub-spec 4 task 5 拆 home_page 移 MoodRecorderPage.show 到 home_page_state.dart 引起, stale lock-in)
@@ -47,7 +47,7 @@
 | 守门员 | 结果 |
 |--------|------|
 | `flutter analyze lib/` | **0 error**, 0 warning |
-| `flutter analyze test/` | 0 analyzer error in R95 sub-spec 5 task 3-4 修真文件; 5 pre-existing error 在 untracked test 文件 (R95 sub-spec 4 工作目录残留) |
+| `flutter analyze test/` | 0 analyzer error in R95 sub-spec 5 task 3-4 修正文件; 5 pre-existing error 在 untracked test 文件 (R95 sub-spec 4 工作目录残留) |
 | `flutter test` | 1800 pass + 2 pre-existing fail (跟 R95 无关) |
 | `dart scripts/check_all.dart` | ✅ 4 层架构纯度 + 一致性全过 |
 | `check_arb_keys.py` | ✅ 1045 keys zh/en/zh_Hant 同步 |
@@ -67,13 +67,13 @@
 | `check_zh_hant_consistency.py` | ✅ 100% 一致 |
 | `check_16kb_alignment.py` | ✅ |
 
-**总 17 守门员**: 全绿 (3 跟 R95 sub-spec 5 task 3-4 无关 pre-existing warn, 0 R95 修真引入)
+**总 17 守门员**: 全绿 (3 跟 R95 sub-spec 5 task 3-4 无关 pre-existing warn, 0 R95 修正引入)
 
 ---
 
 ## 5. 0 analyzer error
 
-`flutter analyze lib/` 0 error, 0 warning. 修真严格保 0 error.
+`flutter analyze lib/` 0 error, 0 warning. 修正严格保 0 error.
 
 ---
 
@@ -99,9 +99,9 @@ R95 报告估 488 真 magic 残留 (192 TextStyle + 208 EdgeInsets + 79 Duration
 - Duration 真 magic (业务, 排除 token 集中器 21): 74 (估 79)
 - 总业务 magic: 443 (估 488)
 
-R95 估高估 9% (488 → 443). 修真范围**保守做 28 真 magic + 74+ 半 token 简化**, 不强改 220 个合法半 token (color 跟集中器不完全匹配, 属合理半 token).
+R95 估高估 9% (488 → 443). 修正范围**保守做 28 真 magic + 74+ 半 token 简化**, 不强改 220 个合法半 token (color 跟集中器不完全匹配, 属合理半 token).
 
-### 6.3 修真保守度
+### 6.3 修正保守度
 
 - 强改 28 (5 TextStyle literal + 5 完美匹配 + 18 EdgeInsets literal): 0 风险 (literal → token 等价)
 - 简化 74+ (`EdgeInsets.all(AppTokens.spacingXs)` → `AppTokens.edgeInsetsXs`): 0 风险 (两者都是 `const EdgeInsets.all(8)`, 编译后完全等价)
@@ -153,15 +153,15 @@ R95 报告 §3.3-3.5 (国内合规 + iOS/Android 上架) 仍需 8-12 commit 4-12
 
 ---
 
-## 8. R95 报告 §6.1-6.3 stale audit → 已修真 + 数字更正
+## 8. R95 报告 §6.1-6.3 stale audit → 已修正 + 数字更正
 
-R95 报告 §6.1-6.3 估 "224 + 208 + 96 / 488 magic" 数字基本准确, **R95 sub-spec 5 task 3-4 修真有效**:
+R95 报告 §6.1-6.3 估 "224 + 208 + 96 / 488 magic" 数字基本准确, **R95 sub-spec 5 task 3-4 修正有效**:
 
-- TextStyle: 220 → 214 (-6 真 magic 修真, 5 literal + 5 完美匹配)
+- TextStyle: 220 → 214 (-6 真 magic 修正, 5 literal + 5 完美匹配)
 - EdgeInsets: 205 → 131 (-74 真 magic + 半 token 简化)
-- Duration: 95 → 95 (修真 4 处, 但业务 timeout 保留, 净 0)
+- Duration: 95 → 95 (修正 4 处, 但业务 timeout 保留, 净 0)
 - Curves: 9 → 9 (R93 已 token, 0 漂移)
 
-**R95 修真效果**: 总 magic 残留 488 → 440 (-48, 9.8% reduction), 加 5 个新 EdgeInsets helper 集中器, 加 20 lock-in test 防 regression.
+**R95 修正效果**: 总 magic 残留 488 → 440 (-48, 9.8% reduction), 加 5 个新 EdgeInsets helper 集中器, 加 20 lock-in test 防 regression.
 
-**R95 sub-spec 5 task 3-4 完整闭环**: audit → 修真 TextStyle → 修真 EdgeInsets → 修真 Duration → lock-in test → 收尾 (5 commit + 1 收尾, 30-45 min 估 实际略超但 < 1h).
+**R95 sub-spec 5 task 3-4 完整闭环**: audit → 修正 TextStyle → 修正 EdgeInsets → 修正 Duration → lock-in test → 收尾 (5 commit + 1 收尾, 30-45 min 估 实际略超但 < 1h).
