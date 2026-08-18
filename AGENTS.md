@@ -1083,3 +1083,40 @@ dart scripts/check_all.dart   # 一次出两份报告：purity + consistency
 **R128+ 路线图**:
 - R128d (1.1.0+184, R110 阶段 5): 5 token 集中器转 pub workspace 公共 package (app_tokens / app_colors / app_typography / app_spacing / app_motion)
 - v1.0 长期 (2027-Q1): HealthKit 5-6 月真接 (修真 check_apple_health_claim.py 5 规则 → accept health_kit import + iOS entitlement + Info.plist NSHealthShareUsageDescription + 真接 impl 替换 NoOp)
+
+
+## v1.1.0 R128d (R110 feature-first 阶段 5) — 5 token 集中器转 pub workspace 公共 package (2026-08-18, 1 commit ad6abab3, 1.1.0+184)
+
+**状态**: R110 阶段 5 step 1 闭环, 5 token 集中器 (app_tokens / app_colors / app_typography / app_spacing / app_motion) 从 `lib/core/theme/` 迁到 `packages/chroniccare_theme/lib/src/` (第 4 个 pub workspace lib package), 188 lib files 改 import path 走公共入口 `package:chroniccare_theme/chroniccare_theme.dart`。修真基线 0 raw (0 error / 26 warn / 433 info, 跟 R128 baseline 完全一致)。
+
+**关键设计**:
+- **pub workspace 第 4 member**: `packages/chroniccare_theme/` 跟 `chroniccare_core` / `chroniccare_features_mood` 平级
+- **public 入口修真 Dart linter**: 加 `lib/chroniccare_theme.dart` 顶层入口 export src/ 5 file, 修真 207 个 `implementation_imports` 警告 (修真后 0 violation)
+- **5 file 旧 path re-export 兼容**: 跟 R128a notification 7 re-export 模式同, 188 lib files 修真 0 行为变化
+- **23 file duplicate_import 修真**: 旧 import app_tokens + app_colors 2 个集中器合并成 chroniccare_theme 1 个公共入口, awk 去重修真 23 file
+- **跨期 1 周综合审视**: R128d step 2 派 subagent 跑 4-7 视角 (emil / superpowers-zh / superpowers-en / flutter-spec / frame-thinking / Apple Health / 顶层架构), 整合 1 份主报告 (R108 revisit 9 视角 40KB 整合模式)
+
+**pub workspace 4 package 互依赖现状**:
+- `root` (chroniccare): main app + 3 lib package path 依赖 + 1 workspace 字段
+- `chroniccare_core` (空骨架): 跨期 R127 阶段 2 (R128d step 2 续) 迁 `lib/core/(除 database/theme) + lib/domain/`
+- `chroniccare_features_mood` (空骨架): 跨期 R127 阶段 3 迁 `lib/features/mood/presentation/`
+- `chroniccare_theme` (本批): 5 token 集中器, 0 flutter widgets, 0 drift, 0 业务 — pure design token 沉淀
+
+**R128d 3 step 路线图**:
+- ✅ R128d step 1 (1.1.0+184, 本批): 5 token 集中器迁 packages/chroniccare_theme/ 1 commit 整包
+- ⏸ R128d step 2 (1.1.0+185, 跨期 1 周): 综合审视 4-7 视角 + 整合主报告, 1 commit
+- ⏸ R128d step 3 (1.1.0+186): 修真 AGENTS.md + 修真基线 0 raw + 收官 (已并入本批, R128d 1 commit 整包 100% 收官)
+
+**验收数据 (跟 R128 baseline 对齐)**:
+- `flutter pub get`: 4 package 全绿 (root + chroniccare_core + chroniccare_features_mood + chroniccare_theme)
+- `flutter analyze`: 0 error / 26 warning / 433 info (跟 R128 baseline 0/26/433 完全一致)
+- `flutter test`: 2728 pass / 1 skip / 0 fail (跟 R128 baseline 完全一致, 0 行为变化)
+- 18 守门员 18 全绿 (跟 R128 baseline 0 violation 完全一致)
+- 199 file 改动: 5 file 新 + 1 public 入口 + 5 re-export + 188 lib import 修真
+- `lib/core/theme/` 5 token 集中器 → `packages/chroniccare_theme/lib/src/` 5 file
+
+**R128d+ 路线图**:
+- R128d step 2 续: 跨期 1 周综合审视 (4-7 视角 subagent + 整合主报告), 1 commit
+- R127 阶段 2 续 (R128d 修真 R127 路线): 迁 chroniccare_core 整块 (`lib/core/(除 database/theme) + lib/domain/`)
+- R127 阶段 3 续: 迁 chroniccare_features_mood 试点 (`lib/features/mood/presentation/`)
+- v1.0 长期 (2027-Q1): HealthKit 5-6 月真接 + 5 厂商 push 真接 + 阿里云 SMS + 鸿蒙 + IAP
