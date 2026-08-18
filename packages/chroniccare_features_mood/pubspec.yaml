@@ -1,0 +1,37 @@
+name: chroniccare_features_mood
+description: >-
+  ChronicCare mood feature presentation layer — 情绪日记 1.1.0 情绪优先
+  定位下的 P0 feature. R127 阶段 3 拆包 5 feature 中第 1 个完整 feature
+  package (仅 presentation, data/domain/database 留主 app, R128 stage4
+  按 D1 决策拆).
+publish_to: 'none'
+version: 1.1.0+1
+
+# R127 stage3: workspace member
+resolution: workspace
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: '>=3.41.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.3.2
+
+  # 跨 feature 共享 (R127 stage3)
+  chroniccare_core:
+    path: ../chroniccare_core
+
+  # 主 app (R127 stage3 阶段 1: 仅声明依赖, 实际不引用, 留 R128 stage4 拆)
+  # chroniccare:
+  #   path: ../chroniccare
+
+  # utility
+  intl: ^0.20.2
+  collection: ^1.18.0
+  meta: ^1.15.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
