@@ -1,0 +1,35 @@
+name: chroniccare_core
+description: >-
+  ChronicCare core layer — 跨 feature 共享基础设施 (core/data/services +
+  core/data/privacy + core/data/utils + feature_flags + core/shared +
+  core/theme + core/routing + core/l10n + 0-Flutter 0-Drift 业务层
+  domain entities/logic/repositories abstract/usecases). R127 阶段 3
+  pub workspace 拆包, 5 feature (assessment/daily_tracking/medication/
+  mood/vent) 全部依赖此层.
+publish_to: 'none'
+version: 1.1.0+1
+
+# R127 stage3: workspace member, 跟 root 共享 dependencies 解析
+resolution: workspace
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: '>=3.41.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # 状态管理
+  flutter_riverpod: ^3.3.2
+
+  # 工具
+  intl: ^0.20.2
+  collection: ^1.18.0
+  meta: ^1.15.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

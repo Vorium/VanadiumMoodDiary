@@ -3,17 +3,29 @@ name: chroniccare
 # 1.1.0 round 6d: 改情绪优先定位 (情绪日记 + 树洞倾诉优先, 用药记录辅助, 对齐 README)
 description: "情绪日记 + 树洞倾诉优先 — ChronicCare: mood journal & vent-first self-care app for mental wellness, with medication tracking as support"
 publish_to: 'none'
-version: 1.1.0+179
+version: 1.1.0+180
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.6.0 <4.0.0'
   flutter: '>=3.41.0'
+
+# Dart 3.6+ workspace 字段 (https://dart.dev/tools/pub/workspaces)
+# R127 stage3 (1.1.0+180): root = main app + 2 lib package 拆出
+workspace:
+  - packages/chroniccare_core
+  - packages/chroniccare_features_mood
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+
+  # 跨 feature 共享 (R127 stage3)
+  chroniccare_core:
+    path: packages/chroniccare_core
+  chroniccare_features_mood:
+    path: packages/chroniccare_features_mood
 
   # 状态管理
   flutter_riverpod: ^3.3.2
