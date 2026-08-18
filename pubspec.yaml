@@ -10,10 +10,12 @@ environment:
   flutter: '>=3.41.0'
 
 # Dart 3.6+ workspace 字段 (https://dart.dev/tools/pub/workspaces)
-# R127 stage3 (1.1.0+180): root = main app + 2 lib package 拆出
+# R127 stage3 (1.1.0+180): root = main app + 1 lib package 拆出
+# R128e gdc audit 2026-08-18 (user 决策): 撤销 chroniccare_core 和
+#   chroniccare_features_mood 两个空 package (各只有 .gitkeep 占位,
+#   0 业务代码, 编译依赖增加但 0 价值), 只保留 chroniccare_theme (R128d 完成,
+#   6 token 集中器公共入口)
 workspace:
-  - packages/chroniccare_core
-  - packages/chroniccare_features_mood
   - packages/chroniccare_theme
 
 dependencies:
@@ -22,11 +24,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # 跨 feature 共享 (R127 stage3 + R128d 阶段 5)
-  chroniccare_core:
-    path: packages/chroniccare_core
-  chroniccare_features_mood:
-    path: packages/chroniccare_features_mood
+  # 跨 feature 共享 (R128d 阶段 5: 5 token 集中器转 pub workspace 公共 package)
   chroniccare_theme:
     path: packages/chroniccare_theme
 
