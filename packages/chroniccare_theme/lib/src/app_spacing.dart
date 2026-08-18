@@ -92,6 +92,14 @@ class AppSpacing {
   static const double pageMarginH = 20.0;
   static const double pageMarginV = 16.0;
 
+  // v1.1.0 R115 (emotion-first refactor · Polish · gdc R128e audit 2026-08-18):
+  // 双主卡 (MoodHeroCard / VentHeroCard) 专属 padding 18 — 介于 spacingMd=16
+  // 和 spacingLg=24 之间, 用于"双主卡"视觉权重提升。1.1.0 round 11 从 16 → 18。
+  // 语义独立, 不复用 spacingMd (避免跟列表 cell padding 混用)。
+  static const double paddingHero = 18.0;
+  // 配套 EdgeInsets
+  static const EdgeInsets edgeInsetsHero = EdgeInsets.all(paddingHero);
+
   // ============= 圆角 =============
   // v0.31 R3: iOS standard radius
   // - radiusButton 24→14 (iOS 14pt button radius, **关键改**)

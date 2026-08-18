@@ -295,8 +295,16 @@ class _AppRootState extends ConsumerState<AppRoot> with WidgetsBindingObserver {
       // release 模式 runZonedGuarded 之前直接 swallow, 用户看不到任何信号。
       // 改: error 存 SharedPreferences, 下次启动 AppRoot 通过 builder 显示
       // 顶部 banner "上次启动出错，请截图反馈"。
-      builder: (context, child) =>
-          LastStartupErrorBanner(child: child ?? const SizedBox.shrink()),
+      //
+      // gdc R128e audit 2026-08-18 (P1 #9): 全局 textScaler 兜底 clamp 1.5x
+      // 精神心理患者用户开 Dynamic Type 至 1.5-2.0 是常见诉求 (老年 / 视障),
+      // 但 widget 普遍未适配 ≥1.5x 字号 (StatCard / SectionHeader / PrimaryButton
+      // 文字溢出 / 按钮挤压)。仅 AppleHealthTile 单点 clamp 不够 (line 98)。
+      // 全局 clamp 1.5x 既满足大字号诉求又防 UI 破裂。
+      builder: (context, child) => MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.5,
+        child: LastStartupErrorBanner(child: child ?? const SizedBox.shrink()),
+      ),
     );
   }
 }

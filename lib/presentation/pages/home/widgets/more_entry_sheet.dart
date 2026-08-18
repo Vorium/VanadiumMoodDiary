@@ -183,7 +183,8 @@ class _SheetRow extends StatelessWidget {
                   color: iconColor,
                   borderRadius: BorderRadius.circular(AppTokens.spacingXs),
                 ),
-                child: Icon(icon, color: Colors.white, size: 20),
+                // gdc R128e audit 2026-08-18: Colors.white → AppColors.fgOnPrimary
+                child: Icon(icon, color: AppColors.fgOnPrimary(context), size: 20),
               ),
               const SizedBox(width: AppTokens.spacingMd),
               Expanded(

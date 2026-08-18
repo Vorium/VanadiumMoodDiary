@@ -51,10 +51,11 @@ class VentHeroCard extends ConsumerWidget {
       children: [
         // v1.1.0 round 11 (R115+ polish): padding 12/14 → 18, 加大 hero 卡视觉权重
         // 跟 MoodHeroCard 一起从「次要卡」升格为「双主卡」(emotion-first)。
+        // gdc R128e audit 2026-08-18: 抽 AppSpacing.paddingHero token 化
         InkWell(
           onTap: () => context.push('/vent'),
           child: Padding(
-            padding: const EdgeInsets.all(18),
+            padding: AppTokens.edgeInsetsHero,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -66,9 +67,11 @@ class VentHeroCard extends ConsumerWidget {
                     color: const Color(0xFFAF52DE),
                     borderRadius: BorderRadius.circular(7),
                   ),
+                  // gdc R128e audit 2026-08-18: Colors.white → AppColors.fgOnPrimary
+                  // (theme-aware, 自动适配 light/dark)
                   child: Icon(
                     sealed ? Icons.lock_outline : Icons.forum_outlined,
-                    color: Colors.white,
+                    color: AppColors.fgOnPrimary(context),
                     size: 16,
                   ),
                 ),

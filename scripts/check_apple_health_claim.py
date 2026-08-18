@@ -2,6 +2,8 @@
 # v0.30 R108 revisit (P0-020): check_apple_health_claim 守门员
 # v1.1.0+183 R128c (R110 阶段 4): 加 5 规则 — lib/core/platform/health_kit/
 #   stub 占位声明, 但 stub 不 import health_kit 包 (跟 5 厂商 push NoOp 同模式)
+# v1.1.0+185 gdc R128e audit (2026-08-18): 加 6/7/8 规则 — entitlements / Info.plist update
+#   / Xcode capability 全方位防御, 防止任何 1 处单边声明触发 Apple 5.1.3 抽审
 #
 # 作用: 验证项目**没有**声明 / 集成 Apple Health / HealthKit 但不接的实际代码
 #   (避免 Apple 5.1.3 used-but-not-declared / declared-but-not-used 抽审拒)
@@ -18,11 +20,15 @@
 #   1. PrivacyInfo.xcprivacy 不应含 NSPrivacyCollectedDataTypeHealthAndFitness
 #   2. lib/ 不应含 `import 'package:health_kit/...'` / `import 'package:health/...'`
 #      (等真接 HealthKit 时再加回)
-#   3. Info.plist 不应含 NSHealthShareUsageDescription (除非真接)
+#   3. Info.plist 不应含 NSHealthShareUsageDescription / NSHealthUpdateUsageDescription
+#      (gdc R128e audit 2026-08-18: 加 update 双保险)
 #   4. pubspec.yaml 不应含 health_kit 依赖
 #   5. R128c stub 占位声明 — lib/core/platform/health_kit/health_kit_service.dart
 #      存在 + 是 pure NoOp (不 import health_kit 包) + flag 默认 false
 #      (修正 5-6 月后真接时, 同步加 pub 依赖 + iOS entitlement + 修正 stub 为真接 impl)
+#   6. Runner.entitlements 不应含 com.apple.developer.healthkit (gdc R128e)
+#   7. project.pbxproj 不应含 com.apple.developer.healthkit (gdc R128e)
+#      (Xcode HealthKit capability 已勾 → 必须真接 SDK, 否则 declared-but-not-used)
 #
 # 例外: docs/superpowers/ + docs/audit*/ 文档可提"Apple Health"(设计意图),
 #   本守门员只扫代码 + iOS 配置, 不扫文档。
@@ -70,15 +76,17 @@ if lib_dir.exists():
                 )
                 break
 
-# 规则 3: Info.plist 不应含 NSHealthShareUsageDescription (除非真接)
+# 规则 3: Info.plist 不应含 NSHealthShareUsageDescription / NSHealthUpdateUsageDescription
+# (除非真接) — gdc R128e audit 2026-08-18 加 update 双保险, 防单边声明
 info_plist = PROJECT_ROOT / 'ios' / 'Runner' / 'Info.plist'
 if info_plist.exists():
     content = info_plist.read_text(encoding='utf-8')
-    if 'NSHealthShareUsageDescription' in content:
-        FAILURES.append(
-            f'[FAIL] {info_plist.relative_to(PROJECT_ROOT)}: 含 NSHealthShareUsageDescription, '
-            f'但 lib/ 没 import health_kit → Apple 5.1.3 declared-but-not-used 拒审'
-        )
+    for usage_desc in ['NSHealthShareUsageDescription', 'NSHealthUpdateUsageDescription']:
+        if usage_desc in content:
+            FAILURES.append(
+                f'[FAIL] {info_plist.relative_to(PROJECT_ROOT)}: 含 {usage_desc}, '
+                f'但 lib/ 没 import health_kit → Apple 5.1.3 declared-but-not-used 拒审'
+            )
 
 # 规则 4: pubspec.yaml 不应含 health_kit 依赖
 pubspec = PROJECT_ROOT / 'pubspec.yaml'
@@ -88,6 +96,30 @@ if pubspec.exists():
         FAILURES.append(
             f'[FAIL] pubspec.yaml: 含 health_kit 依赖, 但未真接 HealthKit '
             f'→ 5.1.3 拒审 (真接后再加回)'
+        )
+
+# 规则 6: Runner.entitlements 不应含 com.apple.developer.healthkit entitlement
+# (除非真接) — gdc R128e audit 2026-08-18 加, 防止 entitlement 文件误加
+entitlements = PROJECT_ROOT / 'ios' / 'Runner' / 'Runner.entitlements'
+if entitlements.exists():
+    content = entitlements.read_text(encoding='utf-8')
+    if 'com.apple.developer.healthkit' in content:
+        FAILURES.append(
+            f'[FAIL] {entitlements.relative_to(PROJECT_ROOT)}: 含 com.apple.developer.healthkit entitlement, '
+            f'但 lib/ 没 import health_kit → Apple 5.1.3 declared-but-not-used 拒审 '
+            f'(真接时同步加 entitlement)'
+        )
+
+# 规则 7: project.pbxproj 不应含 com.apple.developer.healthkit (Xcode capability)
+# (除非真接) — gdc R128e audit 2026-08-18 加, 防 Xcode capability 自动写入
+pbxproj = PROJECT_ROOT / 'ios' / 'Runner.xcodeproj' / 'project.pbxproj'
+if pbxproj.exists():
+    content = pbxproj.read_text(encoding='utf-8')
+    if 'com.apple.developer.healthkit' in content:
+        FAILURES.append(
+            f'[FAIL] {pbxproj.relative_to(PROJECT_ROOT)}: 含 com.apple.developer.healthkit '
+            f'(Xcode HealthKit capability 已勾), 但 lib/ 没 import health_kit '
+            f'→ Apple 5.1.3 declared-but-not-used 拒审 (真接时同步勾勾 capability + 加 entitlement)'
         )
 
 # 规则 5: R128c stub 占位声明 + 不 import health_kit 包 + flag 默认 false

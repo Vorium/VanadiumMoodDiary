@@ -23,22 +23,27 @@ FeatureFlags.phqGad7I18nEnabled  // default: false
 
 ### 2.2 5 厂商 push flag 新增
 
-**位置**: `lib/core/data/feature_flags.dart:50-53`
+**位置**: `lib/core/data/feature_flags.dart:53` (`_prodFiveVendorPushEnabled`)
 
-**新增 5 个 flag** (默认全 false):
-- `huaweiPushEnabled`
-- `xiaomiPushEnabled`
-- `oppoPushEnabled`
-- `vivoPushEnabled`
-- `honorPushEnabled`
+**新增 1 个聚合 flag** (`fiveVendorPushEnabled`, 默认 `false`), 而非 5 个独立厂商 flag:
+- 单一总开关: `fiveVendorPushEnabled`
+- 内部封装: `FiveVendorPushService` 内部已含 5 厂商抽象 + NoOp (`lib/core/platform/notification/five_vendor_push_service.dart:316`, R124 1.1.0+170)
+- 触发条件: "v1.0 真接后翻 true" (代码注释 `feature_flags.dart:92`)
+- 5 厂商覆盖: 米/华/OPP/vivo/魅族 (`feature_flags.dart:50` 注释)
 
-### 2.3 4 个外联 flag 删除 (R93 阶段 2 → 1.1.0 round 4b)
+**为何用 1 个聚合 flag 而非 5 独立**: R93 阶段 2 计划用 5 个独立 flag, 实际实施收敛为 1 个总开关 (降低 feature flag 数量, 跟 "bootReceiverEnabled" 等单业务单 flag 模式一致)。
 
-**删除**:
-- `emergencyContactEnabled`
-- `aliyunSmsEnabled`
-- `emailServiceEnabled`
-- (其他 1 个)
+### 2.3 3 个外联 flag 删除 (R93 阶段 2 → 1.1.0 round 4b emotion-first refactor)
+
+**实际删除 3 个** (非 4 个):
+
+| 删除 flag | 业务 | 删除时机 |
+|---|---|---|
+| `emergencyContactEnabled` | 紧急联系人 | 1.1.0 round 4b emotion-first 闭环 |
+| `aliyunSmsEnabled` | 阿里云 SMS | 同上 |
+| `emailServiceEnabled` | Email Service | 同上 |
+
+数量: 7 → 4 flag (非 8 → 4, 见 `feature_flags.dart:12-16` 注释)。
 
 **影响**:
 - `Contacts` 表 (数据库迁移 `< 23 → deleteTable('contacts')`)

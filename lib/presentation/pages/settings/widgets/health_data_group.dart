@@ -118,7 +118,8 @@ class _Cell extends StatelessWidget {
           color: leadingColor,
           borderRadius: BorderRadius.circular(AppTokens.spacingXs),
         ),
-        child: Icon(leadingIcon, color: Colors.white, size: 20),
+        // gdc R128e audit 2026-08-18: Colors.white → AppColors.fgOnPrimary
+        child: Icon(leadingIcon, color: AppColors.fgOnPrimary(context), size: 20),
       ),
       title: Text(title),
       subtitle: Text(

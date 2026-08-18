@@ -46,15 +46,35 @@ class FeatureFlags {
   // R93 阶段 2: BootReceiver 完善前 (R55 阶段), 设备重启后 WorkManager 触发
   // 可能 crash。临时关闭避风险, 等 v0.28 真接 WorkManager 完善后翻 true。
   // 跟 R72 Sprint 撤回逻辑一致 (Sprint 1 撤回后默认不开)。
+  //
+  // **翻 true检查清单 (gdc R128e audit 2026-08-18 添加)**:
+  //   [ ] WorkManager v0.28+ 在 release 设备 30 天内 0 crash (Sentry 监控)
+  //   [ ] bootReceiverHandler 重排逻辑走 happy path 实测 100%
+  //   [ ] check_boot_receiver.py 守门员已加 (验证 reboot 后通知重排)
   static const bool _prodBootReceiverEnabled = false;
   // R93 阶段 2 新增: 5 厂商 push SDK 接入前 (米/华/OPP/vivo/魅族, 1-2 月审核)。
   // FiveVendorPushService.register 默认早返 false + NotificationStatusCard
   // 隐藏"5 厂商自检" section。
+  //
+  // **翻 true检查清单 (gdc R128e audit 2026-08-18 添加)**:
+  //   [ ] 5 厂商 SDK (MiPush / HmsPush / OppoPush / VivoPush / MeizuPush) 全部
+  //       通过厂商开发者中心审核 + AppId / AppKey / AppSecret 三件套齐备
+  //   [ ] check_five_vendor_push_service.py 跑通 (验证 register 真返 true)
+  //   [ ] NotificationStatusCard 真显示"5 厂商自检" section
+  //   [ ] 用户通知可达率实测 ≥ 95% (5 厂商设备各 100 台 push 测试)
   static const bool _prodFiveVendorPushEnabled = false;
   // v1.1.0+183 R128c 新增: HealthKit 5-6 月真接前 (Apple HealthKit entitlement +
   // Info.plist NSHealthShareUsageDescription + health_kit pub 依赖 + 真接 impl)。
   // HealthKitService 所有 method 走 NoOp (跟 5 厂商 push NoOp 同模式),
   // 情绪日记联动 Apple Health 0 副作用, 不阻塞主流程。
+  //
+  // **翻 true检查清单 (gdc R128e audit 2026-08-18 添加)**:
+  //   [ ] ios/Runner/Runner.entitlements 含 `com.apple.developer.healthkit`
+  //   [ ] ios/Runner/Info.plist 含 `NSHealthShareUsageDescription` + `NSHealthUpdateUsageDescription`
+  //   [ ] pubspec.yaml 含 `health_kit: ^4.x` 依赖
+  //   [ ] lib/core/platform/health_kit/health_kit_service.dart 真接 SDK (替换 NoOpHealthKitChannel)
+  //   [ ] check_apple_health_claim.py 5 规则扩 3 项 (entitlement / update / pbxproj) 跑绿
+  //   [ ] App Store 5.1.3 抽审 (used-but-not-declared + declared-but-not-used) 通过实测
   static const bool _prodHealthKitEnabled = false;
   // R93 阶段 2 新增: vent audio 录音业务闭环不全 (storage / export 业务暂停)。
   // vent_compose_page + mood_recorder_page 隐藏 mic 录音 button。

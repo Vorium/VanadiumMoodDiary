@@ -53,8 +53,9 @@ class MoodHeroCard extends ConsumerWidget {
       children: [
         // v1.1.0 round 11 (R115+ polish): padding 16 → 18, 加大 hero 卡视觉权重
         // 跟 VentHeroCard 一起从「次要卡」升格为「双主卡」(emotion-first)。
+        // gdc R128e audit 2026-08-18: 抽 AppSpacing.paddingHero token 化
         Padding(
-          padding: const EdgeInsets.all(18),
+          padding: AppTokens.edgeInsetsHero,
           child: Row(
             children: [
               const Icon(
@@ -98,16 +99,17 @@ class MoodHeroCard extends ConsumerWidget {
         Padding(
           // v1.1.0 round 11 (R115+ polish): padding 16 → 18, headline 字号 → 24
           // 升格为「双主卡」, 跟 VentHeroCard 视觉对齐。
-          padding: const EdgeInsets.all(18),
+          // gdc R128e audit 2026-08-18: 抽 AppSpacing.paddingHero + 复用
+          // AppTypography.fontSizeHeadline (已 = 24) token 化
+          padding: AppTokens.edgeInsetsHero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 summary,
                 // R115+ polish: 24px 突出大字号, 跟 VentHeroCard 一致
-                style: AppTokens.textStyleHeadline(context).copyWith(
-                  fontSize: 24,
-                ),
+                // gdc R128e audit 2026-08-18: 复用 fontSizeHeadline token (24)
+                style: AppTokens.textStyleHeadline(context),
               ),
               const SizedBox(height: AppTokens.spacingXxs),
               Text(
