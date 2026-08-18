@@ -1,0 +1,9 @@
+# 截图规格占位 (R128e+)
+# 用户上架前由设计师出图后填入以下 5 张:
+#   01_home.png         — 主页 (mood 横滑 + vent 入口)
+#   02_mood.png         — 情绪日记评分页 (4 维度)
+#   03_vent.png         — 树洞倾诉页
+#   04_medication.png   — 用药日历
+#   05_assessment.png   — 心理评估问卷
+# 规格: 1080×1920 PNG (各商店通用)
+# 命名: screenshot_1.png ... screenshot_5.png

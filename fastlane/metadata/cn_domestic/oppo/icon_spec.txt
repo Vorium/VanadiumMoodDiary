@@ -1,0 +1,6 @@
+# 应用图标规格占位
+# 当前已生成: assets/brand/cn/oppo-icon-512.png (脚本 generate_app_icon.py 产物)
+# 用户上架前:
+#   - 华为: 上传 216×216 PNG (从 512 等比缩放)
+#   - 小米: 上传 512×512 PNG (已生成)
+#   - OPPO/vivo/魅族/应用宝/360/百度: 上传 512×512 PNG (已生成)
