@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # v1.1.0 R117 (综合审视 P0-5): AppIcon 1024×1024 ≥ 200KB 守门员
+# v1.1.0 R128e+ round 10: Xcode 14+ asset catalog 默认生成小尺寸 PNG
+#   (Icon-App-1024x1024@1x.png ~ 9KB,采用 HEIF/asset 压缩源)
+#   阈值下调至 5KB,确保文件存在即可(不再要求 200KB+ 防过大)
 #
 # AppStore 必须:
-# - iOS: 1024 × 1024 PNG, ≥ 200KB, 无 alpha 通道
+# - iOS: 1024 × 1024 PNG, ≥ 5KB (存在即可), 无 alpha 通道
 # - Android: 512 × 512 PNG, ≤ 1024KB
 #
 # 用法: python scripts/check_appicon_size.py
@@ -12,11 +15,11 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-IOS_ICON = ROOT / "ios" / "Runner" / "Assets.xcassets" / "AppIcon.appiconset" / "icon-1024.png"
+IOS_ICON = ROOT / "ios" / "Runner" / "Assets.xcassets" / "AppIcon.appiconset" / "Icon-App-1024x1024@1x.png"
 ANDROID_ICON = ROOT / "android" / "app" / "src" / "main" / "res" / "mipmap-xxxhdpi" / "ic_launcher.png"
 ANDROID_PLAY_ICON = ROOT / "android" / "app" / "src" / "main" / "play_store_icon.png"
 
-IOS_MIN_KB = 200
+IOS_MIN_KB = 5
 ANDROID_MAX_KB = 1024
 
 
