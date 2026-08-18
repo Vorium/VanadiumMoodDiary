@@ -1,47 +1,40 @@
-ChronicCare helps you take medication on time, track your mood, and build steady daily routines — all while keeping your data 100% on your phone.
+MoodDiary is a private mood journal and vent space. Write down what's on your mind, track your emotions, and see your own progress — all while keeping your data 100% on your phone.
 
-Designed for people living with chronic conditions, mental health challenges, and anyone who needs gentle, daily support to build healthy routines.
+Not a medical tool. It cannot replace a doctor's diagnosis or treatment. But it can help you notice patterns in how you feel, day by day.
 
 KEY FEATURES
 
-• One-tap daily check-in
-Did you take your medication today? A single tap records it. Build a streak. Celebrate small wins.
-
-• Medication reminders
-Schedule multiple daily reminders. Never miss a dose. Customizable snooze, refill tracking, and "I'm running low" alerts.
-
-• Mood & mental health journal
-Daily mood check-ins to track your emotional patterns over weeks and months. Record your thoughts in a private vent space.
-
-• Self-reflection check-ins
-Optional guided self-reflection questionnaires to help you notice patterns in your feelings over time. Your answers stay on your device. If you ever feel you need extra support, crisis resources are listed in Settings.
-
-• Privacy by design
-All data stays on your phone. SQLCipher encryption. No accounts, no cloud, no analytics. We can't see your data — neither can anyone else.
+• Mood journal
+Rate today across 4 dimensions (mood, energy, sleep, anxiety). Attach voice notes, influence factors, and optional CBT thought records to untangle your thoughts.
 
 • Vent space
-A private space to write your thoughts. Encrypted and stored only on your device.
+A completely private corner to write what's on your mind. Encrypted and stored only on your device. Voice recording supported.
 
-WHO IS THIS FOR?
+• Worry closure
+Start a worry thread, and record every time it comes back. The day you say "I'm no longer worried", it moves to your memory archive.
 
-• People who want to track daily mental wellbeing and build healthy routines
-• Anyone working to build a consistent medication routine
-• People who prefer an offline-first, private tracking tool
+• Trends
+Cross-mood, cross-vent trend charts — see yourself getting better, one day at a time.
 
-IMPORTANT
+• Self-reflection
+Optional self-reflection questionnaires to observe patterns in your feelings. Results are for reference only. Answers stay on your device.
 
-ChronicCare is NOT a medical device and does not provide medical advice, diagnosis, or treatment. It is a personal tracking tool only. Always consult your doctor for medical decisions.
+• Crisis resources
+Local crisis hotlines (5 regions) are built into Settings — one tap to dial.
 
-PRIVACY COMMITMENT
+PRIVACY PROMISE
 
-• 100% on-device: All data, including voice recordings, are stored locally in an encrypted database.
-• Zero cloud: We don't have servers, accounts, or analytics.
-• Zero ads: No ad SDKs, no tracking pixels, no third-party data sharing.
-• Open permission: You can export your data as JSON at any time. You can also delete everything with one tap.
+• 100% local: all data and recordings stay on your phone, encrypted with SQLCipher
+• Zero cloud: no servers, no accounts, no tracking
+• Zero ads: no ad SDKs, no third-party analytics
+• Exportable: export JSON backups anytime, or delete everything with one tap
 
-If you are in crisis, please contact your local emergency services or a crisis hotline:
+IMPORTANT DISCLAIMER
+
+This app does not provide medical advice, diagnosis, or treatment. MoodDiary is a personal journaling tool and is not a substitute for professional care. If you are in an emergency, please contact local emergency services or a crisis hotline:
+
 • US: 988 (Suicide & Crisis Lifeline)
 • UK: 116 123 (Samaritans)
 • International: https://findahelpline.com
 
-Built with care for people who need a little extra support.
+For everyone who needs a little support.

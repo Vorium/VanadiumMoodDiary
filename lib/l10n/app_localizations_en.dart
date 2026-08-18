@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Chronic Care';
+  String get appName => 'MoodDiary';
 
   @override
   String get homeCheckIn => 'I took my meds today';
@@ -44,7 +44,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get setupHello => 'Hi, I\'m Chronic Care';
+  String get setupHello => 'Hi, I\'m MoodDiary';
 
   @override
   String get setupIntro => '1 minute setup, then 1 tap per day';
@@ -211,7 +211,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsExportRiskLiability =>
-      'Once exported, the security and confidentiality of the file is your responsibility. ChronicCare no longer bears protection duty (PIPL §17 informed + user-confirmed).';
+      'Once exported, the security and confidentiality of the file is your responsibility. MoodDiary no longer bears protection duty (PIPL §17 informed + user-confirmed).';
 
   @override
   String get settingsExportRiskAcknowledge =>
@@ -528,26 +528,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepXiaomi1 =>
-      'Settings → Apps → Chronic Care → Autostart → Enable';
+      'Settings → Apps → MoodDiary → Autostart → Enable';
 
   @override
   String get notificationStatusCardOemStepXiaomi2 =>
-      'Settings → Apps → Chronic Care → Battery → No restrictions';
+      'Settings → Apps → MoodDiary → Battery → No restrictions';
 
   @override
   String get notificationStatusCardOemStepXiaomi3 =>
-      'Settings → Notifications → Chronic Care → Allow + Lock screen';
+      'Settings → Notifications → MoodDiary → Allow + Lock screen';
 
   @override
   String get notificationStatusCardOemBrandHuawei => 'Huawei / Honor';
 
   @override
   String get notificationStatusCardOemStepHuawei1 =>
-      'Settings → Apps → Chronic Care → Battery → Launch → Allow auto-launch';
+      'Settings → Apps → MoodDiary → Battery → Launch → Allow auto-launch';
 
   @override
   String get notificationStatusCardOemStepHuawei2 =>
-      'Settings → Apps → Chronic Care → Notifications → Enable all';
+      'Settings → Apps → MoodDiary → Notifications → Enable all';
 
   @override
   String get notificationStatusCardOemStepHuawei3 =>
@@ -558,11 +558,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepOppo1 =>
-      'Settings → Battery → Power saving → Chronic Care → Allow background';
+      'Settings → Battery → Power saving → MoodDiary → Allow background';
 
   @override
   String get notificationStatusCardOemStepOppo2 =>
-      'Settings → Notifications → Chronic Care → Enable all';
+      'Settings → Notifications → MoodDiary → Enable all';
 
   @override
   String get notificationStatusCardOemStepOppo3 =>
@@ -573,11 +573,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepVivo1 =>
-      'Settings → Battery → High background power → Chronic Care → Allow';
+      'Settings → Battery → High background power → MoodDiary → Allow';
 
   @override
   String get notificationStatusCardOemStepVivo2 =>
-      'Settings → Notifications → Chronic Care → Enable all';
+      'Settings → Notifications → MoodDiary → Enable all';
 
   @override
   String get notificationStatusCardOemStepVivo3 =>
@@ -588,22 +588,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepMeizu1 =>
-      'Settings → App Management → Chronic Care → Permissions → Autostart → Allow';
+      'Settings → App Management → MoodDiary → Permissions → Autostart → Allow';
 
   @override
   String get notificationStatusCardOemStepMeizu2 =>
-      'Settings → Notification Management → Chronic Care → Enable all';
+      'Settings → Notification Management → MoodDiary → Enable all';
 
   @override
   String get notificationStatusCardOemBrandSamsung => 'Samsung (OneUI)';
 
   @override
   String get notificationStatusCardOemStepSamsung1 =>
-      'Settings → Apps → Chronic Care → Notifications → Enable all';
+      'Settings → Apps → MoodDiary → Notifications → Enable all';
 
   @override
   String get notificationStatusCardOemStepSamsung2 =>
-      'Settings → Battery → Background usage limits → Chronic Care → Unrestricted';
+      'Settings → Battery → Background usage limits → MoodDiary → Unrestricted';
 
   @override
   String get notificationStatusCardOemBrandOthers =>
@@ -611,7 +611,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepOthers1 =>
-      'Settings → Apps → Chronic Care → Notifications → Enable all';
+      'Settings → Apps → MoodDiary → Notifications → Enable all';
 
   @override
   String get notificationStatusCardOemStepOthers2 =>
@@ -1127,7 +1127,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assessmentRetake => 'Take Again';
 
   @override
-  String get homeHeaderDefaultTitle => 'Chronic Care';
+  String get homeHeaderDefaultTitle => 'MoodDiary';
 
   @override
   String homeHeaderKeepGoing(Object name) {
@@ -1176,7 +1176,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSettings => 'Settings';
 
   @override
-  String get navAppName => 'Chronic Care';
+  String get navAppName => 'MoodDiary';
 
   @override
   String errorPageNotFound(Object path) {
@@ -1807,7 +1807,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medReportPdfLoading => 'Generating PDF……';
 
   @override
-  String get medReportShareSubject => 'Chronic Care · Medication Report';
+  String get medReportShareSubject => 'MoodDiary · Medication Report';
 
   @override
   String get tempMedNoLink => 'No link';

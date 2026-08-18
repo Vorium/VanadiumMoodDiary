@@ -129,15 +129,15 @@ class Strings {
   // 本类的 `static String xxxText` 函数不同义。
 
   // 报告头/页脚 — const 保留 (caller 用 const Strings.pdfTitle 等)
-  static const pdfTitle = '慢病管家 · 用药报告';
-  static const pdfAuthor = '慢病管家';
+  static const pdfTitle = 'MoodDiary 心情日记 · 用药报告';
+  static const pdfAuthor = 'MoodDiary 心情日记';
   static String pdfTitleText({String? override}) => override ?? pdfTitle;
   static String pdfAuthorText({String? override}) => override ?? pdfAuthor;
   static String pdfSubject(int days, {String? override}) =>
       override ?? '$days 天用药情况';
   static String pdfRecentDays(int days, {String? override}) =>
       override ?? '近 $days 天';
-  static const pdfFooterNotice = '本报告由「慢病管家」自动生成 · 本应用不提供医疗建议';
+  static const pdfFooterNotice = '本报告由「MoodDiary 心情日记」自动生成 · 本应用不提供医疗建议';
   static String pdfFooterNoticeText({String? override}) =>
       override ?? pdfFooterNotice;
   static String pdfPageN(int page, int total, {String? override}) =>

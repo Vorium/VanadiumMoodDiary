@@ -128,8 +128,8 @@ class AppShell extends ConsumerWidget {
                               AppLocalizations,
                             )?.navAppName ??
                             // v0.25 round 52 (spen P0 #11): i18n 失败 fallback
-                            // 改英文 'ChronicCare', 不用 '慢病管家' 硬编
-                            'ChronicCare',
+                            // 改英文 'MoodDiary', 不用中文硬编
+                            'MoodDiary',
                         // v0.27 round 63 (P1-10 修复): 走
                         // AppTokens.textStyleLabelStrong 集中器, 替代 inline
                         // TextStyle(fontSize + fontWeight + color)。emil P2-12

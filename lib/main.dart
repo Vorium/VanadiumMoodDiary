@@ -49,7 +49,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 //   (外联通信业务删除定版), 上面的 validateForRelease + 2 个 override
 //   随 SmsService / EmailService 一起摘掉。
 
-/// 慢病管家 · App 入口
+/// MoodDiary 心情日记 · App 入口
 ///
 /// 启动顺序：
 /// 1. **数据库迁移检查**：如果检测到旧非加密 DB,先 runApp 一个最小 MaterialApp,

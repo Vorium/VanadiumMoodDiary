@@ -198,7 +198,7 @@ void main() {
       // ===== step 1 (welcome) =====
       // SetupStepHeader 标题 (大标题 28pt)
       expect(
-        find.text('您好，我是慢病管家'),
+        find.text('您好，我是 MoodDiary 心情日记'),
         findsOneWidget,
         reason: 'spec §5.2: step 1 大标题 28pt',
       );

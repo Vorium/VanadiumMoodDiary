@@ -23,7 +23,7 @@ import 'package:flutter/material.dart'
 export 'package:chroniccare_theme/chroniccare_theme.dart'
     show Motion, MotionScheme, MotionSchemeTokens;
 
-/// v0.27 round 65 (alibaba B16 god constant 拆分): 慢病管家 · 设计 Token 规范
+/// v0.27 round 65 (alibaba B16 god constant 拆分): MoodDiary 心情日记 · 设计 Token 规范
 ///
 /// **Deprecation notice**: 新代码推荐直接使用子模块:
 /// - `AppColors` — 颜色 + tinted + fg + dynamic color getter

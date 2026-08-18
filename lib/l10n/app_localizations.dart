@@ -102,7 +102,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In zh, this message translates to:
-  /// **'慢病管家'**
+  /// **'MoodDiary 心情日记'**
   String get appName;
 
   /// No description provided for @homeCheckIn.
@@ -156,7 +156,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupHello.
   ///
   /// In zh, this message translates to:
-  /// **'您好，我是慢病管家'**
+  /// **'您好，我是 MoodDiary 心情日记'**
   String get setupHello;
 
   /// No description provided for @setupIntro.
@@ -1002,19 +1002,19 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemStepXiaomi1.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 应用 → 慢病管家 → 自启动 → 开启'**
+  /// **'设置 → 应用 → MoodDiary 心情日记 → 自启动 → 开启'**
   String get notificationStatusCardOemStepXiaomi1;
 
   /// No description provided for @notificationStatusCardOemStepXiaomi2.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 应用 → 慢病管家 → 省电策略 → 无限制'**
+  /// **'设置 → 应用 → MoodDiary 心情日记 → 省电策略 → 无限制'**
   String get notificationStatusCardOemStepXiaomi2;
 
   /// No description provided for @notificationStatusCardOemStepXiaomi3.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 通知 → 慢病管家 → 允许通知 + 锁屏通知'**
+  /// **'设置 → 通知 → MoodDiary 心情日记 → 允许通知 + 锁屏通知'**
   String get notificationStatusCardOemStepXiaomi3;
 
   /// No description provided for @notificationStatusCardOemBrandHuawei.
@@ -1026,13 +1026,13 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemStepHuawei1.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 应用 → 慢病管家 → 电池 → 启动管理 → 允许自启动'**
+  /// **'设置 → 应用 → MoodDiary 心情日记 → 电池 → 启动管理 → 允许自启动'**
   String get notificationStatusCardOemStepHuawei1;
 
   /// No description provided for @notificationStatusCardOemStepHuawei2.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 应用 → 慢病管家 → 通知 → 全部开启'**
+  /// **'设置 → 应用 → MoodDiary 心情日记 → 通知 → 全部开启'**
   String get notificationStatusCardOemStepHuawei2;
 
   /// No description provided for @notificationStatusCardOemStepHuawei3.
@@ -1050,13 +1050,13 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemStepOppo1.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 电池 → 耗电保护 → 慢病管家 → 允许后台运行'**
+  /// **'设置 → 电池 → 耗电保护 → MoodDiary 心情日记 → 允许后台运行'**
   String get notificationStatusCardOemStepOppo1;
 
   /// No description provided for @notificationStatusCardOemStepOppo2.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 通知 → 慢病管家 → 全部开启'**
+  /// **'设置 → 通知 → MoodDiary 心情日记 → 全部开启'**
   String get notificationStatusCardOemStepOppo2;
 
   /// No description provided for @notificationStatusCardOemStepOppo3.
@@ -1074,13 +1074,13 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemStepVivo1.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 电池 → 后台高耗电 → 慢病管家 → 允许'**
+  /// **'设置 → 电池 → 后台高耗电 → MoodDiary 心情日记 → 允许'**
   String get notificationStatusCardOemStepVivo1;
 
   /// No description provided for @notificationStatusCardOemStepVivo2.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 通知 → 慢病管家 → 全部开启'**
+  /// **'设置 → 通知 → MoodDiary 心情日记 → 全部开启'**
   String get notificationStatusCardOemStepVivo2;
 
   /// No description provided for @notificationStatusCardOemStepVivo3.
@@ -1098,13 +1098,13 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemStepMeizu1.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 应用管理 → 慢病管家 → 权限管理 → 自启动 → 允许'**
+  /// **'设置 → 应用管理 → MoodDiary 心情日记 → 权限管理 → 自启动 → 允许'**
   String get notificationStatusCardOemStepMeizu1;
 
   /// No description provided for @notificationStatusCardOemStepMeizu2.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 通知管理 → 慢病管家 → 全部开启'**
+  /// **'设置 → 通知管理 → MoodDiary 心情日记 → 全部开启'**
   String get notificationStatusCardOemStepMeizu2;
 
   /// No description provided for @notificationStatusCardOemBrandSamsung.
@@ -1116,13 +1116,13 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemStepSamsung1.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 应用程序 → 慢病管家 → 通知 → 全部开启'**
+  /// **'设置 → 应用程序 → MoodDiary 心情日记 → 通知 → 全部开启'**
   String get notificationStatusCardOemStepSamsung1;
 
   /// No description provided for @notificationStatusCardOemStepSamsung2.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 电池 → 后台使用限制 → 慢病管家 → 改为「不受限」'**
+  /// **'设置 → 电池 → 后台使用限制 → MoodDiary 心情日记 → 改为「不受限」'**
   String get notificationStatusCardOemStepSamsung2;
 
   /// No description provided for @notificationStatusCardOemBrandOthers.
@@ -1134,7 +1134,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationStatusCardOemStepOthers1.
   ///
   /// In zh, this message translates to:
-  /// **'设置 → 应用 → 慢病管家 → 通知 → 全部开启'**
+  /// **'设置 → 应用 → MoodDiary 心情日记 → 通知 → 全部开启'**
   String get notificationStatusCardOemStepOthers1;
 
   /// No description provided for @notificationStatusCardOemStepOthers2.
@@ -2017,7 +2017,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeHeaderDefaultTitle.
   ///
   /// In zh, this message translates to:
-  /// **'慢病管家'**
+  /// **'MoodDiary 心情日记'**
   String get homeHeaderDefaultTitle;
 
   /// No description provided for @homeHeaderKeepGoing.
@@ -2095,7 +2095,7 @@ abstract class AppLocalizations {
   /// No description provided for @navAppName.
   ///
   /// In zh, this message translates to:
-  /// **'慢病管家'**
+  /// **'MoodDiary 心情日记'**
   String get navAppName;
 
   /// No description provided for @errorPageNotFound.
@@ -3164,7 +3164,7 @@ abstract class AppLocalizations {
   /// No description provided for @medReportShareSubject.
   ///
   /// In zh, this message translates to:
-  /// **'慢病管家 · 用药报告'**
+  /// **'MoodDiary 心情日记 · 用药报告'**
   String get medReportShareSubject;
 
   /// No description provided for @tempMedNoLink.

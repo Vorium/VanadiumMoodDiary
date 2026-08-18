@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appName => '慢病管家';
+  String get appName => 'MoodDiary 心情日记';
 
   @override
   String get homeCheckIn => '我今天吃了药';
@@ -44,7 +44,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get setupHello => '您好，我是慢病管家';
+  String get setupHello => '您好，我是 MoodDiary 心情日记';
 
   @override
   String get setupIntro => '1 分钟设置好，然后每天 1 次打卡';
@@ -503,26 +503,26 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepXiaomi1 =>
-      '设置 → 应用 → 慢病管家 → 自启动 → 开启';
+      '设置 → 应用 → MoodDiary 心情日记 → 自启动 → 开启';
 
   @override
   String get notificationStatusCardOemStepXiaomi2 =>
-      '设置 → 应用 → 慢病管家 → 省电策略 → 无限制';
+      '设置 → 应用 → MoodDiary 心情日记 → 省电策略 → 无限制';
 
   @override
   String get notificationStatusCardOemStepXiaomi3 =>
-      '设置 → 通知 → 慢病管家 → 允许通知 + 锁屏通知';
+      '设置 → 通知 → MoodDiary 心情日记 → 允许通知 + 锁屏通知';
 
   @override
   String get notificationStatusCardOemBrandHuawei => '华为 ／ 荣耀';
 
   @override
   String get notificationStatusCardOemStepHuawei1 =>
-      '设置 → 应用 → 慢病管家 → 电池 → 启动管理 → 允许自启动';
+      '设置 → 应用 → MoodDiary 心情日记 → 电池 → 启动管理 → 允许自启动';
 
   @override
   String get notificationStatusCardOemStepHuawei2 =>
-      '设置 → 应用 → 慢病管家 → 通知 → 全部开启';
+      '设置 → 应用 → MoodDiary 心情日记 → 通知 → 全部开启';
 
   @override
   String get notificationStatusCardOemStepHuawei3 => '手机管家 → 应用启动管理 → 关闭「自动管理」';
@@ -532,10 +532,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepOppo1 =>
-      '设置 → 电池 → 耗电保护 → 慢病管家 → 允许后台运行';
+      '设置 → 电池 → 耗电保护 → MoodDiary 心情日记 → 允许后台运行';
 
   @override
-  String get notificationStatusCardOemStepOppo2 => '设置 → 通知 → 慢病管家 → 全部开启';
+  String get notificationStatusCardOemStepOppo2 =>
+      '设置 → 通知 → MoodDiary 心情日记 → 全部开启';
 
   @override
   String get notificationStatusCardOemStepOppo3 => '「最近任务」界面上锁 App（下滑小锁图标）';
@@ -545,10 +546,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepVivo1 =>
-      '设置 → 电池 → 后台高耗电 → 慢病管家 → 允许';
+      '设置 → 电池 → 后台高耗电 → MoodDiary 心情日记 → 允许';
 
   @override
-  String get notificationStatusCardOemStepVivo2 => '设置 → 通知 → 慢病管家 → 全部开启';
+  String get notificationStatusCardOemStepVivo2 =>
+      '设置 → 通知 → MoodDiary 心情日记 → 全部开启';
 
   @override
   String get notificationStatusCardOemStepVivo3 => '「最近任务」界面上锁 App';
@@ -558,28 +560,29 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get notificationStatusCardOemStepMeizu1 =>
-      '设置 → 应用管理 → 慢病管家 → 权限管理 → 自启动 → 允许';
+      '设置 → 应用管理 → MoodDiary 心情日记 → 权限管理 → 自启动 → 允许';
 
   @override
-  String get notificationStatusCardOemStepMeizu2 => '设置 → 通知管理 → 慢病管家 → 全部开启';
+  String get notificationStatusCardOemStepMeizu2 =>
+      '设置 → 通知管理 → MoodDiary 心情日记 → 全部开启';
 
   @override
   String get notificationStatusCardOemBrandSamsung => '三星 (OneUI)';
 
   @override
   String get notificationStatusCardOemStepSamsung1 =>
-      '设置 → 应用程序 → 慢病管家 → 通知 → 全部开启';
+      '设置 → 应用程序 → MoodDiary 心情日记 → 通知 → 全部开启';
 
   @override
   String get notificationStatusCardOemStepSamsung2 =>
-      '设置 → 电池 → 后台使用限制 → 慢病管家 → 改为「不受限」';
+      '设置 → 电池 → 后台使用限制 → MoodDiary 心情日记 → 改为「不受限」';
 
   @override
   String get notificationStatusCardOemBrandOthers => '其他（中兴／努比亚／红魔／联想／三星 Knox）';
 
   @override
   String get notificationStatusCardOemStepOthers1 =>
-      '设置 → 应用 → 慢病管家 → 通知 → 全部开启';
+      '设置 → 应用 → MoodDiary 心情日记 → 通知 → 全部开启';
 
   @override
   String get notificationStatusCardOemStepOthers2 => '设置 → 电池 → 后台运行 → 改为「允许」';
@@ -1076,7 +1079,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get assessmentRetake => '再做一次';
 
   @override
-  String get homeHeaderDefaultTitle => '慢病管家';
+  String get homeHeaderDefaultTitle => 'MoodDiary 心情日记';
 
   @override
   String homeHeaderKeepGoing(Object name) {
@@ -1125,7 +1128,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get navSettings => '设置';
 
   @override
-  String get navAppName => '慢病管家';
+  String get navAppName => 'MoodDiary 心情日记';
 
   @override
   String errorPageNotFound(Object path) {
@@ -1727,7 +1730,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get medReportPdfLoading => '生成 PDF 中……';
 
   @override
-  String get medReportShareSubject => '慢病管家 · 用药报告';
+  String get medReportShareSubject => 'MoodDiary 心情日记 · 用药报告';
 
   @override
   String get tempMedNoLink => '不关联';
@@ -4396,7 +4399,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
 
   @override
-  String get appName => '慢病管家';
+  String get appName => 'MoodDiary 心情日記';
 
   @override
   String get homeCheckIn => '我今天吃了藥';
@@ -4431,7 +4434,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get setupHello => '您好，我是慢病管家';
+  String get setupHello => '您好，我是 MoodDiary 心情日記';
 
   @override
   String get setupIntro => '1 分鐘設置好，然後每天 1 次打卡';
@@ -4890,26 +4893,26 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get notificationStatusCardOemStepXiaomi1 =>
-      '設置 → 應用 → 慢病管家 → 自啟動 → 開啟';
+      '設置 → 應用 → MoodDiary 心情日記 → 自啟動 → 開啟';
 
   @override
   String get notificationStatusCardOemStepXiaomi2 =>
-      '設置 → 應用 → 慢病管家 → 省電策略 → 無限制';
+      '設置 → 應用 → MoodDiary 心情日記 → 省電策略 → 無限制';
 
   @override
   String get notificationStatusCardOemStepXiaomi3 =>
-      '設置 → 通知 → 慢病管家 → 允許通知 + 鎖屏通知';
+      '設置 → 通知 → MoodDiary 心情日記 → 允許通知 + 鎖屏通知';
 
   @override
   String get notificationStatusCardOemBrandHuawei => '華為 ／ 榮耀';
 
   @override
   String get notificationStatusCardOemStepHuawei1 =>
-      '設置 → 應用 → 慢病管家 → 電池 → 啟動管理 → 允許自啟動';
+      '設置 → 應用 → MoodDiary 心情日記 → 電池 → 啟動管理 → 允許自啟動';
 
   @override
   String get notificationStatusCardOemStepHuawei2 =>
-      '設置 → 應用 → 慢病管家 → 通知 → 全部開啟';
+      '設置 → 應用 → MoodDiary 心情日記 → 通知 → 全部開啟';
 
   @override
   String get notificationStatusCardOemStepHuawei3 => '手機管家 → 應用啟動管理 → 關閉「自動管理」';
@@ -4919,10 +4922,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get notificationStatusCardOemStepOppo1 =>
-      '設置 → 電池 → 耗電保護 → 慢病管家 → 允許後臺運行';
+      '設置 → 電池 → 耗電保護 → MoodDiary 心情日記 → 允許後臺運行';
 
   @override
-  String get notificationStatusCardOemStepOppo2 => '設置 → 通知 → 慢病管家 → 全部開啟';
+  String get notificationStatusCardOemStepOppo2 =>
+      '設置 → 通知 → MoodDiary 心情日記 → 全部開啟';
 
   @override
   String get notificationStatusCardOemStepOppo3 => '「最近任務」界面上鎖 App（下滑小鎖圖標）';
@@ -4932,10 +4936,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get notificationStatusCardOemStepVivo1 =>
-      '設置 → 電池 → 後臺高耗電 → 慢病管家 → 允許';
+      '設置 → 電池 → 後臺高耗電 → MoodDiary 心情日記 → 允許';
 
   @override
-  String get notificationStatusCardOemStepVivo2 => '設置 → 通知 → 慢病管家 → 全部開啟';
+  String get notificationStatusCardOemStepVivo2 =>
+      '設置 → 通知 → MoodDiary 心情日記 → 全部開啟';
 
   @override
   String get notificationStatusCardOemStepVivo3 => '「最近任務」界面上鎖 App';
@@ -4945,28 +4950,29 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get notificationStatusCardOemStepMeizu1 =>
-      '設置 → 應用管理 → 慢病管家 → 權限管理 → 自啟動 → 允許';
+      '設置 → 應用管理 → MoodDiary 心情日記 → 權限管理 → 自啟動 → 允許';
 
   @override
-  String get notificationStatusCardOemStepMeizu2 => '設置 → 通知管理 → 慢病管家 → 全部開啟';
+  String get notificationStatusCardOemStepMeizu2 =>
+      '設置 → 通知管理 → MoodDiary 心情日記 → 全部開啟';
 
   @override
   String get notificationStatusCardOemBrandSamsung => '三星 (OneUI)';
 
   @override
   String get notificationStatusCardOemStepSamsung1 =>
-      '設置 → 應用程序 → 慢病管家 → 通知 → 全部開啟';
+      '設置 → 應用程序 → MoodDiary 心情日記 → 通知 → 全部開啟';
 
   @override
   String get notificationStatusCardOemStepSamsung2 =>
-      '設置 → 電池 → 後臺使用限制 → 慢病管家 → 改為「不受限」';
+      '設置 → 電池 → 後臺使用限制 → MoodDiary 心情日記 → 改為「不受限」';
 
   @override
   String get notificationStatusCardOemBrandOthers => '其他（中興／努比亞／紅魔／聯想／三星 Knox）';
 
   @override
   String get notificationStatusCardOemStepOthers1 =>
-      '設置 → 應用 → 慢病管家 → 通知 → 全部開啟';
+      '設置 → 應用 → MoodDiary 心情日記 → 通知 → 全部開啟';
 
   @override
   String get notificationStatusCardOemStepOthers2 => '設置 → 電池 → 後臺運行 → 改為「允許」';
@@ -5463,7 +5469,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get assessmentRetake => '再做一次';
 
   @override
-  String get homeHeaderDefaultTitle => '慢病管家';
+  String get homeHeaderDefaultTitle => 'MoodDiary 心情日記';
 
   @override
   String homeHeaderKeepGoing(Object name) {
@@ -5512,7 +5518,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get navSettings => '設置';
 
   @override
-  String get navAppName => '慢病管家';
+  String get navAppName => 'MoodDiary 心情日記';
 
   @override
   String errorPageNotFound(Object path) {
@@ -6114,7 +6120,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get medReportPdfLoading => '生成 PDF 中……';
 
   @override
-  String get medReportShareSubject => '慢病管家 · 用藥報告';
+  String get medReportShareSubject => 'MoodDiary 心情日記 · 用藥報告';
 
   @override
   String get tempMedNoLink => '不關聯';

@@ -327,7 +327,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('您好，我是慢病管家'),
+        find.text('您好，我是 MoodDiary 心情日记'),
         findsOneWidget,
         reason: 'step 2 上一步应回 step 1',
       );

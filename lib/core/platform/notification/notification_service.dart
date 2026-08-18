@@ -158,7 +158,7 @@ class NotificationService implements NotificationSender {
   /// - interruptionLevel: timeSensitive → 紧急通知穿透勿扰 + Focus 模式
   /// v0.31.1 round 7 (P0-06 修 GooglePlay P0-006): Android 锁屏 PII 防护
   /// - visibility: NotificationVisibility.secret → Android 7+ 锁屏完全不显示
-  ///   title/body (仅显示 "ChronicCare"), 防止偷看手机时推断精神心理 / 慢病
+  ///   title/body (仅显示 "MoodDiary"), 防止偷看手机时推断精神心理 / 慢病
   /// 1.1.0 round 4b: 原 safety_alert_builder.dart 模板已随外联服务整摘。
   NotificationDetails _buildNotificationDetails() => const NotificationDetails(
         android: AndroidNotificationDetails(

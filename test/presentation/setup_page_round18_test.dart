@@ -70,9 +70,9 @@ Future<void> _passConsent(WidgetTester tester) async {
   expect(startBtn, findsOneWidget);
   await tester.tap(startBtn);
   await tester.pumpAndSettle();
-  // 现在应该到 step 1 (welcome) — "您好,我是慢病管家"
+  // 现在应该到 step 1 (welcome) — "您好,我是 MoodDiary 心情日记"
   expect(
-    find.text('您好，我是慢病管家'),
+    find.text('您好，我是 MoodDiary 心情日记'),
     findsOneWidget,
   );
 
@@ -92,7 +92,7 @@ void main() {
       await _pumpSetup(tester);
       await _passConsent(tester);
 
-      expect(find.text('您好，我是慢病管家'), findsOneWidget);
+      expect(find.text('您好，我是 MoodDiary 心情日记'), findsOneWidget);
 
       final nextFinder = find.widgetWithText(FilledButton, '下一步 →');
       expect(nextFinder, findsOneWidget);

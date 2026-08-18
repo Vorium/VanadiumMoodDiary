@@ -451,7 +451,7 @@ void main() {
         now: now,
       );
       final s = r.toReportString();
-      expect(s, contains('慢病管家 · 用药报告'));
+      expect(s, contains('MoodDiary 心情日记 · 用药报告'));
       expect(s, contains('小明'));
       expect(s, contains('2026-06-30'));
       expect(s, contains('2026-07-13'));

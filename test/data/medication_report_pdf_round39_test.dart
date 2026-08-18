@@ -83,9 +83,9 @@ MedicationStat _buildStat({
 void main() {
   // ============== toReportString ==============
   group('v0.23 round 39 (P1-6) — toReportString 关键字段', () {
-    test('报告头含"慢病管家 · 用药报告"', () {
+    test('报告头含"MoodDiary 心情日记 · 用药报告"', () {
       final s = _buildData().toReportString();
-      expect(s, contains('慢病管家 · 用药报告'));
+      expect(s, contains('MoodDiary 心情日记 · 用药报告'));
     });
 
     test('含 patient userName', () {
@@ -333,13 +333,13 @@ void main() {
 
   // ============== PDF title / footer Strings (P1-9 fix 验证) ==============
   group('v0.23 round 39 (P1-6) — PDF Strings 已集中', () {
-    test('Strings.pdfTitle 包含"慢病管家 · 用药报告"', () {
+    test('Strings.pdfTitle 包含"MoodDiary 心情日记 · 用药报告"', () {
       // v0.23 round 39 P1-9: PDF title 走 Strings
       // 这里只验证 Strings 存在,build 时引用
       // import 直接引用 Strings.pdfTitle 不在本测试
       // 用 toReportString 兜底验证(虽然 toReportString 是 legacy 但 header 仍含相同文案)
       final s = _buildData().toReportString();
-      expect(s, contains('慢病管家 · 用药报告'));
+      expect(s, contains('MoodDiary 心情日记 · 用药报告'));
     });
   });
 }
