@@ -613,6 +613,14 @@
       }
     }
   },
+  "homeCompanionDays": "Been with you for {days} days",
+  "@homeCompanionDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "ventSwipeHint": "Swipe left or long-press to delete",
   "homeStreakRestart": "Start fresh today 🌱",
   "homeStreakDay1": "Day 1, taking the first step 🌱",

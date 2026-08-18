@@ -655,6 +655,14 @@
       }
     }
   },
+  "homeCompanionDays": "已陪伴你 {days} 天",
+  "@homeCompanionDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "ventSwipeHint": "左滑或长按条目可删除",
   "homeStreakRestart": "今天重新开始 🌱",
   "homeStreakDay1": "第 1 天，迈出第一步 🌱",

@@ -34,10 +34,15 @@ class HomeHeader extends ConsumerWidget {
   final String userName;
   final DateTime? date;
 
+  /// R128e (论文2 §2.1.3 个人模块 "加入树洞一共多少天"): 陪伴天数
+  /// null = 无 firstLaunchAt, 不显示陪伴天数。
+  final int? daysCompanion;
+
   const HomeHeader({
     super.key,
     required this.userName,
     this.date,
+    this.daysCompanion,
   });
 
   @override
@@ -88,6 +93,18 @@ class HomeHeader extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                // R128e (论文2 个人模块): 陪伴天数副行
+                if (daysCompanion != null && daysCompanion! > 0) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.homeCompanionDays(daysCompanion!),
+                    style: AppTokens.textStyleLabel(context).copyWith(
+                      color: AppTokens.textHintColor(context),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ],
             ),
           ),

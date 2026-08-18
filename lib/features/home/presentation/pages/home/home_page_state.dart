@@ -45,6 +45,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/core/shared/swallow_error.dart';
+import 'package:chroniccare/domain/logic/date_utils.dart';
 import 'package:chroniccare_theme/chroniccare_theme.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_celebration_controller.dart';
 import 'package:chroniccare/presentation/pages/home/controllers/home_deep_link_handler.dart';
@@ -207,6 +208,14 @@ class HomePageState extends ConsumerState<HomePage> {
       data: (profile) => profile?.userName ?? '',
       orElse: () => '',
     );
+    // R128e (论文2 个人模块 "加入树洞一共多少天"): 陪伴天数 = 首次启动到今天
+    final firstLaunch = userProfileAsync.maybeWhen(
+      data: (profile) => profile?.firstLaunchAt,
+      orElse: () => null,
+    );
+    final daysCompanion = firstLaunch == null
+        ? null
+        : calendarDaysBetween(firstLaunch, DateTime.now()) + 1;
     final nextReminder = _nextReminderTime();
 
     // Wave 7 (Task A, R113): 入场动画只播一次 — tab 切回不再重播。
@@ -274,10 +283,10 @@ class HomePageState extends ConsumerState<HomePage> {
             if (!notifResult.ok)
               NotificationFailureBanner(error: notifResult.error),
 
-            // 2: HomeHeader (28pt greeting + 15pt 日期 + 32x32 theme toggle)
+            // 2: HomeHeader (28pt greeting + 15pt 日期 + 陪伴天数 + 32x32 theme toggle)
             FadeIn(
               duration: entryDuration,
-              child: HomeHeader(userName: userName),
+              child: HomeHeader(userName: userName, daysCompanion: daysCompanion),
             ),
 
             const SizedBox(height: AppTokens.spacingXs),

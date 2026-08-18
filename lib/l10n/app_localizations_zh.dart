@@ -1090,6 +1090,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String homeCompanionDays(int days) {
+    return '已陪伴你 $days 天';
+  }
+
+  @override
   String get ventSwipeHint => '左滑或长按条目可删除';
 
   @override
@@ -5480,6 +5485,11 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String homeHeaderKeepGoing(Object name) {
     return '$name 還在堅持';
+  }
+
+  @override
+  String homeCompanionDays(int days) {
+    return '已陪伴你 $days 天';
   }
 
   @override

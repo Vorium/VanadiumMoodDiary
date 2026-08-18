@@ -1139,6 +1139,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String homeCompanionDays(int days) {
+    return 'Been with you for $days days';
+  }
+
+  @override
   String get ventSwipeHint => 'Swipe left or long-press to delete';
 
   @override

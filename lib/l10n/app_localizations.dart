@@ -2032,6 +2032,12 @@ abstract class AppLocalizations {
   /// **'{name} 还在坚持'**
   String homeHeaderKeepGoing(Object name);
 
+  /// No description provided for @homeCompanionDays.
+  ///
+  /// In zh, this message translates to:
+  /// **'已陪伴你 {days} 天'**
+  String homeCompanionDays(int days);
+
   /// No description provided for @ventSwipeHint.
   ///
   /// In zh, this message translates to:

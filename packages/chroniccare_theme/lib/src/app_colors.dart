@@ -42,17 +42,20 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // ============= 品牌色（亮/暗通用）=============
-  /// v0.31 R1 (Apple Health redesign): 主色 → iOS systemGreen
-  /// (原 0xFF6BCF7F 嫩绿偏冷; iOS 0xFF34C759 更鲜亮, 是 Apple Health "favorites" 标准绿)
-  /// 决策记录: spec.md §6 决策 #1 ✅ 用户已确认
-  static const Color primary = Color(0xFF34C759);
+    // ============= 品牌色（亮/暗通用）=============
+  /// v0.31 R1 (Apple Health redesign): 主色 → iOS systemGreen (0xFF34C759)
+  /// R128e (2026-08-18, 论文1 服务设计树洞 §4.3 视觉设计): 主色 → 海洋蓝
+  ///   论文1 决策: 海洋蓝能使人联想到海洋和水, 是一个冷静、宽阔的色调,
+  ///   能够贴合"心灵治愈"概念主题, 使人情绪平静, 提供愉悦的视觉体验。
+  ///   primary 是品牌色 (M3 seedColor / check-in 按钮 / FAB), 改蓝不影响
+  ///   checkIn metric tile 色 (healthMetricsColors[4] 独立绿色语义)。
+  static const Color primary = Color(0xFF0A84FF);
 
-  /// v0.31 R1: 主色按下态 → iOS systemGreen dark
-  static const Color primaryDark = Color(0xFF248A3D);
+  /// v0.31 R1: 主色按下态 (dark)。R128e 改海洋蓝按下态。
+  static const Color primaryDark = Color(0xFF0066CC);
 
   // ============= 亮色色板 =============
-  static const Color primaryLight = Color(0xFFE8F8EC);
+  static const Color primaryLight = Color(0xFFE3F0FF);
 
   /// v0.31 R1: 背景 → iOS systemGroupedBackground (#F2F2F7)
   static const Color background = Color(0xFFF2F2F7);
@@ -97,7 +100,7 @@ class AppColors {
   static const Color borderDark = Color(0xFF2A2A2A);
   static const Color dividerDark = Color(0xFF242424);
   static const Color disabledDark = Color(0xFF4A4A4A);
-  static const Color primaryLightDark = Color(0xFF1F3A26);
+    static const Color primaryLightDark = Color(0xFF0A3B5E);
 
   // 状态色（仅 3 个，亮/暗共用，error 在暗色下提亮）
   // v0.22 round 30 (emil P1-8): success 之前 = primary（等于没用）,
@@ -452,7 +455,7 @@ class AppColors {
     Color(0xFFFF2D55), // systemPink    — mood (心情 / 应激)
     Color(0xFFAF52DE), // systemPurple  — vent (树洞 / 录音)
     Color(0xFF5856D6), // systemIndigo  — assessment (心理评估)
-    Color(0xFF34C759), // systemGreen   — checkIn (打卡 / streak)  ← 同 primary
+    Color(0xFF34C759), // systemGreen   — checkIn (打卡 / streak, 独立绿色语义, R128e 起不再跟随 primary 海洋蓝)
     Color(0xFF007AFF), // systemBlue    — trend (趋势 / 图表)
     Color(0xFFFF9500), // systemOrange  — contact (紧急联系人)
     Color(0xFF5AC8FA), // systemTeal    — sleep (睡眠 / 日常, R1 暂未接入)
