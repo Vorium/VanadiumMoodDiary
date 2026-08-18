@@ -4,7 +4,7 @@ import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chroniccare/core/data/services/notification_payload.dart';
+import 'package:chroniccare/core/platform/notification/notification_payload.dart';
 import 'package:chroniccare/domain/logic/notification_deep_link_resolver.dart';
 
 /// 全局 Deep Link 路由器

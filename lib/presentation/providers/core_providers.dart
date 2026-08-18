@@ -8,7 +8,7 @@ import 'package:chroniccare/core/data/repositories/mood/mood_repository_impl.dar
 import 'package:chroniccare/core/data/repositories/report_history/report_history_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/user_profile/user_profile_repository_impl.dart';
 import 'package:chroniccare/core/data/repositories/worry/worry_repository_impl.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/presentation/services/legal_version.dart';
 import 'package:chroniccare/domain/repositories/check_in_repository.dart';
 import 'package:chroniccare/domain/repositories/medication_repository.dart';

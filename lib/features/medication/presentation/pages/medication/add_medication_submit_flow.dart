@@ -14,7 +14,7 @@
 // 改用 repository.watchAll().first 拿最新列表 (repo 非 autoDispose, 无
 // 生命周期问题), 语义等价 (单次最新快照)。不回归。
 
-import 'package:chroniccare/core/data/services/notification_delegate.dart';
+import 'package:chroniccare/core/platform/notification/notification_delegate.dart';
 import 'package:chroniccare/features/medication/domain/entities/medication_draft.dart';
 import 'package:chroniccare/features/medication/domain/repositories/medication_repository.dart';
 

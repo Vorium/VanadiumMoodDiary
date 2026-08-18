@@ -12,7 +12,7 @@
 // - "已过期" test 验证 zonedAtCalled==0 (核心意图: 不调度过期提醒)
 //   旁路 cancel 走 _plugin.cancel 不走 dispatcher, 不验证 cancelCalled
 //   (cancel 路径单独测, 见 medication_repository_refill_round9_test.dart)
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';

@@ -12,8 +12,8 @@ import 'package:chroniccare/core/l10n/strings.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:chroniccare/core/data/services/notification_payload.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/notification_payload.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 
 /// 心理评估周期提醒编排 (id=7000, 单条推送)
 ///

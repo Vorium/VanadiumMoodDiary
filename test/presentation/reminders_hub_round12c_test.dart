@@ -3,7 +3,7 @@
 // 验证 4 个提醒卡片的渲染 + 状态显示
 //
 // 1.1.0 round 4 (emotion-first refactor): 失联通知卡整摘, 5 卡 → 4 卡。
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -25,22 +25,22 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 
-/// 3 个待检查文件 (相对 worktree 根)
+/// 3 个待检查文件 (相对 worktree 根, v1.1.0+181 R128a 抽 core/platform/notification/)
 const _kTargetFiles = <String>[
-  'lib/core/data/services/notification_service.dart',
-  'lib/core/data/services/reminder_dispatcher.dart',
-  'lib/core/data/services/snooze_manager.dart',
+  'lib/core/platform/notification/notification_service.dart',
+  'lib/core/platform/notification/reminder_dispatcher.dart',
+  'lib/core/platform/notification/snooze_manager.dart',
 ];
 
 /// 3 个文件期望的 categoryIdentifier
 const _kExpectedCategoryIdentifier = <String, String>{
-  'lib/core/data/services/notification_service.dart':
+  'lib/core/platform/notification/notification_service.dart':
       'com.chroniccare.reminder',
-  'lib/core/data/services/reminder_dispatcher.dart':
+  'lib/core/platform/notification/reminder_dispatcher.dart':
       'com.chroniccare.medication.reminder',
-  'lib/core/data/services/snooze_manager.dart': 'com.chroniccare.snooze',
+  'lib/core/platform/notification/snooze_manager.dart': 'com.chroniccare.snooze',
 };
 
 void main() {

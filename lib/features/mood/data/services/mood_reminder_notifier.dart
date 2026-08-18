@@ -14,7 +14,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 import 'package:chroniccare/core/l10n/strings.dart';
 
 /// 情绪记录提醒通知编排

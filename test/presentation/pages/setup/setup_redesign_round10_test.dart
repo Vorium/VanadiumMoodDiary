@@ -12,7 +12,7 @@
 // 2. 进度条 (progress bar) — SetupProgressBar 渲染 4 段, currentStep 控制高亮
 // 3. section (section) — step 0 渲染 AppleListSection 容器
 // 4. 底部按钮 (bottom button) — step 0 底部 PrimaryButton isFullWidth: true
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/core/theme/app_tokens.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';

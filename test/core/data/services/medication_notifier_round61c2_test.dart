@@ -10,7 +10,7 @@
 // - payload 是 chroniccare://today (daily, R114 BUG 1 改走
 //   NotificationDeepLink.encode()) 或 chroniccare://medication/N (per-med)
 import 'package:chroniccare/core/data/services/medication_notifier.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';

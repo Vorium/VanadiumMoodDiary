@@ -9,7 +9,7 @@
 // 4 层架构: data 层可以依赖 domain interface, 不可以反过来.
 // 跟 `ReminderChecker` 隐式实现同款 (1.1.0 round 4b: 后者已随外联整摘).
 
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/features/assessment/domain/repositories/assessment_reminder_sender.dart';
 
 /// 心理评估提醒发送器 (NotificationService 实现)

@@ -24,7 +24,7 @@ import 'dart:developer' as developer;
 import 'package:chroniccare/app.dart';
 import 'package:chroniccare/core/data/database/app_database.dart';
 import 'package:chroniccare/core/data/services/database_migration.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/core/data/services/last_error_capture.dart';
 import 'package:chroniccare/core/data/services/pii_safe_log.dart';
 import 'package:chroniccare/core/data/utils/skip_backup.dart';

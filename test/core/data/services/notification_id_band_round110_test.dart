@@ -24,7 +24,7 @@ import 'package:chroniccare/core/data/services/assessment_notifier.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/mood_reminder_notifier.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 
 void main() {
   // 所有 cancel 区间的上界 (> 任何 base + kReminderCancelRange)

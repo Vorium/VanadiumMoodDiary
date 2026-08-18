@@ -9,7 +9,7 @@
 // 1. requestPermission=false → 引导 dialog 弹出 + 不发测试通知
 // 2. 点"前往系统设置" → openAppSettings 被调 + dialog 关闭
 // 3. requestPermission=true → 正常发测试通知 (回归守卫)
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/settings/widgets/notification_status_card.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';

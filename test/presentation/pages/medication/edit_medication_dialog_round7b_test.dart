@@ -12,7 +12,7 @@
 // 注: 保存后重排走 delegate → plugin, 需 mock 通知 channel
 // (见 setUp, 跟 add_medication_page_round7b_test 同款)。
 
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';

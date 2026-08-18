@@ -20,8 +20,8 @@ import 'package:chroniccare/core/l10n/strings.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:chroniccare/core/data/services/notification_payload.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/notification_payload.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
 import 'package:chroniccare/domain/logic/refill_scheduler.dart';
 import 'package:chroniccare/domain/usecases/schedule_refill_reminder.dart';

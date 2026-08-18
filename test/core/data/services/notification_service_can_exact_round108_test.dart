@@ -24,7 +24,7 @@
 // 7. platform 兼容: iOS 返 true / Android 调 plugin / Web 返 false
 import 'dart:io' as dart_io;
 
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -32,7 +32,7 @@ void main() {
   group('Part A: 静态分析 — NotificationService R108 P0#2 修复', () {
     test('A1: NotificationService 含 _canScheduleExact method', () async {
       final content = await dart_io.File(
-        'lib/core/data/services/notification_service.dart',
+        'lib/core/platform/notification/notification_service.dart',
       ).readAsString();
       expect(
         content.contains('_canScheduleExact'),
@@ -43,7 +43,7 @@ void main() {
 
     test('A2: rescheduleAll 调 _canScheduleExact 同步设 dispatcher mode', () async {
       final content = await dart_io.File(
-        'lib/core/data/services/notification_service.dart',
+        'lib/core/platform/notification/notification_service.dart',
       ).readAsString();
       // rescheduleAll 内部: 调 _canScheduleExact, 写到 _dispatcher.useExactAllowWhileIdle
       // R120 P1-2 (1.1.0 round 12k god class split): 截到文件结尾, 不用硬编码 3000 缓冲
@@ -60,7 +60,7 @@ void main() {
 
     test('A3: _canScheduleExact 走 swallowError 失败兜底', () async {
       final content = await dart_io.File(
-        'lib/core/data/services/notification_service.dart',
+        'lib/core/platform/notification/notification_service.dart',
       ).readAsString();
       expect(
         content.contains('swallowError'),
@@ -107,7 +107,7 @@ void main() {
   group('Part C: ReminderDispatcher 静态分析 — zonedDaily / zonedAt mode 切换', () {
     test('C1: zonedDaily 用 useExactAllowWhileIdle 选 mode', () async {
       final content = await dart_io.File(
-        'lib/core/data/services/reminder_dispatcher.dart',
+        'lib/core/platform/notification/reminder_dispatcher.dart',
       ).readAsString();
       // zonedDaily 应含 useExactAllowWhileIdle ? exactAllowWhileIdle : inexactAllowWhileIdle
       final zonedDailyIdx = content.indexOf('Future<void> zonedDaily(');
@@ -135,7 +135,7 @@ void main() {
 
     test('C2: zonedAt 同样用 useExactAllowWhileIdle 选 mode', () async {
       final content = await dart_io.File(
-        'lib/core/data/services/reminder_dispatcher.dart',
+        'lib/core/platform/notification/reminder_dispatcher.dart',
       ).readAsString();
       final zonedAtIdx = content.indexOf('Future<void> zonedAt(');
       expect(zonedAtIdx, greaterThan(0), reason: 'zonedAt 存在');

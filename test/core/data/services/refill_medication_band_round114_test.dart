@@ -17,7 +17,7 @@ import 'package:timezone/data/latest_all.dart' as tz_data;
 
 import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';

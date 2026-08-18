@@ -14,7 +14,7 @@
 import 'dart:async';
 
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/core/data/services/preset_medication_templates.dart'
     as templates;
 import 'package:chroniccare/core/data/services/setup_committer.dart';

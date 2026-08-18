@@ -11,8 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
-import 'package:chroniccare/core/data/services/snooze_manager.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/snooze_manager.dart';
 
 /// 记录 androidScheduleMode 的 fake plugin
 class _FakePlugin implements FlutterLocalNotificationsPlugin {

@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 
 class _NoopNotificationService extends NotificationService {}
 

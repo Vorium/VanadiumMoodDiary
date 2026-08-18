@@ -28,10 +28,10 @@ void main() {
 
     setUpAll(() {
       facadeSource = File(
-        'lib/core/data/services/notification_service.dart',
+        'lib/core/platform/notification/notification_service.dart',
       ).readAsStringSync();
       delegateSource = File(
-        'lib/core/data/services/notification_delegate.dart',
+        'lib/core/platform/notification/notification_delegate.dart',
       ).readAsStringSync();
 
       // 8 caller 文件 (R108 Fix #2 迁移清单, R112 AR-20 批2b 加 submit flow):
@@ -59,12 +59,12 @@ void main() {
     test('B1: NotificationDelegate 文件存在 + 6 sub-service field', () {
       // R108 Fix #2 新文件必须存在
       final delegateFile = File(
-        'lib/core/data/services/notification_delegate.dart',
+        'lib/core/platform/notification/notification_delegate.dart',
       );
       expect(
         delegateFile.existsSync(),
         isTrue,
-        reason: 'lib/core/data/services/notification_delegate.dart 必须存在 '
+        reason: 'lib/core/platform/notification/notification_delegate.dart 必须存在 '
             '(R108 Fix #2 新文件)',
       );
 

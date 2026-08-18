@@ -6,7 +6,7 @@
 // 不测业务流程 (业务流程 974 个 test 已覆盖),
 // 仅测 mount + 子 widget 路由通.
 
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';

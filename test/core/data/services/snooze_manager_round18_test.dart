@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'package:chroniccare/core/data/services/snooze_manager.dart';
+import 'package:chroniccare/core/platform/notification/snooze_manager.dart';
 
 /// Test plugin 记录 cancel/show/zonedSchedule 调用
 ///

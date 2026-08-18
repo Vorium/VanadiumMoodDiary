@@ -11,7 +11,7 @@
 //   6. FeatureFlags.fiveVendorPushEnabled flag gate 正确
 
 import 'package:chroniccare/core/data/feature_flags.dart';
-import 'package:chroniccare/core/data/services/five_vendor_push_service.dart';
+import 'package:chroniccare/core/platform/notification/five_vendor_push_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

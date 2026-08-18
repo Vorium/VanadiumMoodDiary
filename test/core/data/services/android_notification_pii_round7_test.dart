@@ -26,15 +26,16 @@ library;
 
 import 'dart:io';
 
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// 3 个待检查文件 (相对 worktree 根, round 4b: safety_alert_builder 已摘)
+/// 3 个待检查文件 (相对 worktree 根, round 4b: safety_alert_builder 已摘,
+/// v1.1.0+181 R128a 抽 core/platform/notification/)
 const _kTargetFiles = <String>[
-  'lib/core/data/services/notification_service.dart',
-  'lib/core/data/services/reminder_dispatcher.dart',
-  'lib/core/data/services/snooze_manager.dart',
+  'lib/core/platform/notification/notification_service.dart',
+  'lib/core/platform/notification/reminder_dispatcher.dart',
+  'lib/core/platform/notification/snooze_manager.dart',
 ];
 
 void main() {

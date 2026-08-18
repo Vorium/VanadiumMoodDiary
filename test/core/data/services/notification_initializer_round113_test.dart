@@ -17,11 +17,11 @@ import 'package:chroniccare/core/data/services/assessment_notifier.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/mood_reminder_notifier.dart';
-import 'package:chroniccare/core/data/services/notification_delegate.dart';
-import 'package:chroniccare/core/data/services/notification_initializer.dart';
+import 'package:chroniccare/core/platform/notification/notification_delegate.dart';
+import 'package:chroniccare/core/platform/notification/notification_initializer.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
-import 'package:chroniccare/core/data/services/snooze_manager.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/snooze_manager.dart';
 
 /// Android fake: requestNotificationsPermission() 返回注入值
 class _FakeAndroidPlugin extends AndroidFlutterLocalNotificationsPlugin {

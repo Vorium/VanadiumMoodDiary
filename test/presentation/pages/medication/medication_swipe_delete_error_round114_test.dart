@@ -18,7 +18,7 @@
 // plugin channel (cancelRefillReminder/cancelSnoozeForMedication 走
 // channel, setup_page_state_round112 同款 harness)。
 
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';

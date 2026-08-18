@@ -20,7 +20,7 @@
 // - 数据面全部 fake (committer / userProfileRepo / medicationRepo), 不碰真
 //   drift isolate (testWidgets FakeAsync 下真 DB await 会 hang)
 import 'package:chroniccare/core/data/database/app_database.dart';
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/core/data/services/setup_committer.dart';
 import 'package:chroniccare/domain/entities/hour_minute.dart';
 import 'package:chroniccare/domain/entities/medication_draft.dart';

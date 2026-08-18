@@ -23,7 +23,7 @@
 // **v0.27 R83 更新**: consent step 加了第 4 个 `ConsentCheckRow`
 // (`setupLegalAgeAttestation` 年龄严正声明), 全 setup_* test 同步从 3 → 4
 // 个 Checkbox (Q11a 律师审核 ⚠️ 修复).
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/l10n/app_localizations.dart';
 import 'package:chroniccare/presentation/pages/setup/setup_page.dart';
 import 'package:chroniccare/presentation/providers/core_providers.dart';

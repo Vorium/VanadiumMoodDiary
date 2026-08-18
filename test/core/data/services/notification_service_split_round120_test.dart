@@ -23,7 +23,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('R120 P1-2 — notification_service god class split', () {
-    const mainPath = 'lib/core/data/services/notification_service.dart';
+    // v1.1.0+181 R128a: notification 抽 core/platform/notification/, 旧 path
+    // services/notification_service.dart 改 1 行 re-export 兼容
+    const mainPath = 'lib/core/platform/notification/notification_service.dart';
     const idBandsPath = 'docs/architecture/NOTIFICATION_ID_BANDS.md';
 
     test('main facade + NOTIFICATION_ID_BANDS.md both exist on disk', () {

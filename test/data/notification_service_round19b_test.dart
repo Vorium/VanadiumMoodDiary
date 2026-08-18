@@ -13,7 +13,7 @@
 //
 // 这些测试通过 [refillNotificationId] 公式验证 id 落在
 // [2500000, 2700000) 内。
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

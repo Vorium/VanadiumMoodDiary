@@ -23,12 +23,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:chroniccare/core/data/services/notification_service.dart';
+import 'package:chroniccare/core/platform/notification/notification_service.dart';
 import 'package:chroniccare/core/data/services/refill_notifier.dart';
 import 'package:chroniccare/core/data/services/medication_notifier.dart';
 import 'package:chroniccare/core/data/services/assessment_notifier.dart';
-import 'package:chroniccare/core/data/services/reminder_dispatcher.dart';
-import 'package:chroniccare/core/data/services/snooze_manager.dart';
+import 'package:chroniccare/core/platform/notification/reminder_dispatcher.dart';
+import 'package:chroniccare/core/platform/notification/snooze_manager.dart';
 import 'package:chroniccare/core/data/services/badge_sync_service.dart';
 import 'package:chroniccare/domain/entities/dosage_unit.dart';
 import 'package:chroniccare/domain/entities/medication_entity.dart';
