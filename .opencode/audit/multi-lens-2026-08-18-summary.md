@@ -37,7 +37,7 @@
 | **P0** | Android 域名 + ICP (中国上架必备, 7-20 天流程) | GooglePlay | XL | 域名注册 + ICP 备案 |
 | **P0** | `git revert b2d9744f` 恢复 322 文件 (gdc 视角) | gdc | S | `git revert` 无冲突 |
 | **P0** | `encryption_service.dart:83` "TODO(v1.0): AES-256-CBC 无完整性认证" | super | L | HMAC/GCM 升级 (PIPL §38) |
-| **P0** | R93 重建 spec 5 flag → 实际 1 flag 矛盾 | gdc | S | 修 spec 6 行 |
+| ~~**P0**~~ | ~~R93 重建 spec 5 flag → 实际 1 flag 矛盾~~ ⚠️ **误报** | gdc | S | 已撤销 (revert 后原版正确, 我重建版才错了) |
 | **P0** | 盘点 2 个空 package (`chroniccare_core/` + `chroniccare_features_mood/` 只有 .gitkeep) | gdc | S 或 L | 撤 OR 完整迁 |
 
 **P0 总数: 10 项** (AppStore 5 + GooglePlay 1 + gdc 3 + super 1)

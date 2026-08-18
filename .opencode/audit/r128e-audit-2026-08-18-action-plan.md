@@ -7,6 +7,19 @@
 
 ---
 
+## 一、用户决策后已修复 (2026-08-18 后续)
+
+### A1 - git revert b2d9744f ✅ (commit 01ac6437)
+- 恢复 322 文件 (5245L CHANGELOG + 1879L VERSION_1.0_PLAN + 1268L AGENTS + 5 ADR + 4 refactor design + 7 spec + 9 README + 9 audit 等)
+- 冲突解决: 9 add/add (spec/README) 走 `--theirs` 恢复原版, 3 content (medication_page 等) 走 `--ours` 保留 R128e 修真修真修真清理版
+- 删 3 个新建根目录文档 (CHANGELOG/SUBMISSION_INFO/VERSION_1.0_PLAN 在 root), 保留原 `docs/` 路径版本
+- **重要发现**: R93 spec 原版**正确**, 不需要"5→1 flag"修正。gdc R128e audit 的"P0 矛盾"结论基于我重建版的虚构内容 (我重建时误写了 5 个独立 flag + 4 外联 flag 删除)。代码与原 spec 一致: 1 个聚合 flag `fiveVendorPushEnabled` + 3 个外联 flag 删除
+
+### A3 - 撤销 2 空 package ✅ (commit)
+- 撤销 `packages/chroniccare_core/` + `packages/chroniccare_features_mood/` (各只有 `.gitkeep` 占位)
+- pubspec.yaml workspace 3 → 1 (只留 `chroniccare_theme`)
+- pub get 验证通过
+
 ## 一、已修复 (我能解决的)
 
 ### Wave 1: P0/P1 快修 (24 项)
